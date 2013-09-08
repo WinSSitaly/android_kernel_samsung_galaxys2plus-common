@@ -61,6 +61,10 @@ struct scoop_pcmcia_dev {
 struct scoop_pcmcia_config {
 	struct scoop_pcmcia_dev *devs;
 	int num_devs;
+<<<<<<< HEAD
+=======
+	void (*pcmcia_init)(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void (*power_ctrl)(struct device *scoop, unsigned short cpr, int nr);
 };
 

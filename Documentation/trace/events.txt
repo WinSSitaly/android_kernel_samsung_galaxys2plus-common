@@ -191,6 +191,11 @@ And for string fields they are:
 
 Currently, only exact string matches are supported.
 
+<<<<<<< HEAD
+=======
+Currently, the maximum number of predicates in a filter is 16.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 5.2 Setting filters
 -------------------
 

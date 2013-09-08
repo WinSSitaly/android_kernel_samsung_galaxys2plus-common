@@ -9,7 +9,10 @@
  */
 
 #include <linux/err.h>
+<<<<<<< HEAD
 #include <linux/smp.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 
 static struct platform_device loongson2_cpufreq_device = {

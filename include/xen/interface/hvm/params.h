@@ -90,10 +90,14 @@
 /* Boolean: Enable aligning all periodic vpts to reduce interrupts */
 #define HVM_PARAM_VPT_ALIGN    16
 
+<<<<<<< HEAD
 /* Console debug shared memory ring and event channel */
 #define HVM_PARAM_CONSOLE_PFN    17
 #define HVM_PARAM_CONSOLE_EVTCHN 18
 
 #define HVM_NR_PARAMS          19
+=======
+#define HVM_NR_PARAMS          17
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __XEN_PUBLIC_HVM_PARAMS_H__ */

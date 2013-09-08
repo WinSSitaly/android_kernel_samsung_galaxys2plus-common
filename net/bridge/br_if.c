@@ -13,7 +13,10 @@
 
 #include <linux/kernel.h>
 #include <linux/netdevice.h>
+<<<<<<< HEAD
 #include <linux/etherdevice.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/netpoll.h>
 #include <linux/ethtool.h>
 #include <linux/if_arp.h>
@@ -34,6 +37,7 @@
  */
 static int port_cost(struct net_device *dev)
 {
+<<<<<<< HEAD
 	struct ethtool_cmd ecmd;
 
 	if (!__ethtool_get_settings(dev, &ecmd)) {
@@ -46,6 +50,22 @@ static int port_cost(struct net_device *dev)
 			return 19;
 		case SPEED_10:
 			return 100;
+=======
+	if (dev->ethtool_ops && dev->ethtool_ops->get_settings) {
+		struct ethtool_cmd ecmd = { .cmd = ETHTOOL_GSET, };
+
+		if (!dev_ethtool_get_settings(dev, &ecmd)) {
+			switch (ethtool_cmd_speed(&ecmd)) {
+			case SPEED_10000:
+				return 2;
+			case SPEED_1000:
+				return 4;
+			case SPEED_100:
+				return 19;
+			case SPEED_10:
+				return 100;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -240,7 +260,10 @@ int br_add_bridge(struct net *net, const char *name)
 		return -ENOMEM;
 
 	dev_net_set(dev, net);
+<<<<<<< HEAD
 	dev->rtnl_link_ops = &br_link_ops;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	res = register_netdev(dev);
 	if (res)
@@ -297,11 +320,18 @@ int br_min_mtu(const struct net_bridge *br)
 /*
  * Recomputes features using slave's features
  */
+<<<<<<< HEAD
 netdev_features_t br_features_recompute(struct net_bridge *br,
 	netdev_features_t features)
 {
 	struct net_bridge_port *p;
 	netdev_features_t mask;
+=======
+u32 br_features_recompute(struct net_bridge *br, u32 features)
+{
+	struct net_bridge_port *p;
+	u32 mask;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (list_empty(&br->port_list))
 		return features;
@@ -326,8 +356,12 @@ int br_add_if(struct net_bridge *br, struct net_device *dev)
 
 	/* Don't allow bridging non-ethernet like devices */
 	if ((dev->flags & IFF_LOOPBACK) ||
+<<<<<<< HEAD
 	    dev->type != ARPHRD_ETHER || dev->addr_len != ETH_ALEN ||
 	    !is_valid_ether_addr(dev->dev_addr))
+=======
+	    dev->type != ARPHRD_ETHER || dev->addr_len != ETH_ALEN)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	/* No bridging of bridges */
@@ -355,6 +389,13 @@ int br_add_if(struct net_bridge *br, struct net_device *dev)
 	err = kobject_init_and_add(&p->kobj, &brport_ktype, &(dev->dev.kobj),
 				   SYSFS_BRIDGE_PORT_ATTR);
 	if (err)
+<<<<<<< HEAD
+=======
+		goto err0;
+
+	err = br_fdb_insert(br, p, dev->dev_addr);
+	if (err)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err1;
 
 	err = br_sysfs_addif(p);
@@ -391,6 +432,7 @@ int br_add_if(struct net_bridge *br, struct net_device *dev)
 	br_ifinfo_notify(RTM_NEWLINK, p);
 
 	if (changed_addr)
+<<<<<<< HEAD
 		call_netdevice_notifiers(NETDEV_CHANGEADDR, br->dev);
 
 	dev_set_mtu(br->dev, br_min_mtu(br));
@@ -398,6 +440,12 @@ int br_add_if(struct net_bridge *br, struct net_device *dev)
 	if (br_fdb_insert(br, p, dev->dev_addr))
 		netdev_err(dev, "failed insert local address bridge forwarding table\n");
 
+=======
+		call_netdevice_notifiers(NETDEV_CHANGEADDR, dev);
+
+	dev_set_mtu(br->dev, br_min_mtu(br));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kobject_uevent(&p->kobj, KOBJ_ADD);
 
 	return 0;
@@ -407,9 +455,17 @@ err4:
 err3:
 	sysfs_remove_link(br->ifobj, p->dev->name);
 err2:
+<<<<<<< HEAD
 	kobject_put(&p->kobj);
 	p = NULL; /* kobject_put frees */
 err1:
+=======
+	br_fdb_delete_by_port(br, p, 1);
+err1:
+	kobject_put(&p->kobj);
+	p = NULL; /* kobject_put frees */
+err0:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_set_promiscuity(dev, -1);
 put_back:
 	dev_put(dev);
@@ -421,7 +477,10 @@ put_back:
 int br_del_if(struct net_bridge *br, struct net_device *dev)
 {
 	struct net_bridge_port *p;
+<<<<<<< HEAD
 	bool changed_addr;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	p = br_port_get_rtnl(dev);
 	if (!p || p->br != br)
@@ -430,12 +489,18 @@ int br_del_if(struct net_bridge *br, struct net_device *dev)
 	del_nbp(p);
 
 	spin_lock_bh(&br->lock);
+<<<<<<< HEAD
 	changed_addr = br_stp_recalculate_bridge_id(br);
 	spin_unlock_bh(&br->lock);
 
 	if (changed_addr)
 		call_netdevice_notifiers(NETDEV_CHANGEADDR, br->dev);
 
+=======
+	br_stp_recalculate_bridge_id(br);
+	spin_unlock_bh(&br->lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	netdev_update_features(br->dev);
 
 	return 0;

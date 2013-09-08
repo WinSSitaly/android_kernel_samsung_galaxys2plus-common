@@ -22,7 +22,11 @@
  */
 struct rw_semaphore {
 	__s32			activity;
+<<<<<<< HEAD
 	raw_spinlock_t		wait_lock;
+=======
+	spinlock_t		wait_lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head	wait_list;
 #ifdef CONFIG_DEBUG_LOCK_ALLOC
 	struct lockdep_map dep_map;

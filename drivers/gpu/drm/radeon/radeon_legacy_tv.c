@@ -864,7 +864,11 @@ void radeon_legacy_tv_adjust_crtc_reg(struct drm_encoder *encoder,
 	*v_sync_strt_wid = tmp;
 }
 
+<<<<<<< HEAD
 static int get_post_div(int value)
+=======
+static inline int get_post_div(int value)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int post_div;
 	switch (value) {

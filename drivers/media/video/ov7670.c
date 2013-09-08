@@ -19,13 +19,22 @@
 #include <media/v4l2-device.h>
 #include <media/v4l2-chip-ident.h>
 #include <media/v4l2-mediabus.h>
+<<<<<<< HEAD
 #include <media/ov7670.h>
+=======
+
+#include "ov7670.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Jonathan Corbet <corbet@lwn.net>");
 MODULE_DESCRIPTION("A low-level driver for OmniVision ov7670 sensors");
 MODULE_LICENSE("GPL");
 
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(debug, bool, 0644);
 MODULE_PARM_DESC(debug, "Debug level (0-1)");
 
@@ -1583,4 +1592,19 @@ static struct i2c_driver ov7670_driver = {
 	.id_table	= ov7670_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(ov7670_driver);
+=======
+static __init int init_ov7670(void)
+{
+	return i2c_add_driver(&ov7670_driver);
+}
+
+static __exit void exit_ov7670(void)
+{
+	i2c_del_driver(&ov7670_driver);
+}
+
+module_init(init_ov7670);
+module_exit(exit_ov7670);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

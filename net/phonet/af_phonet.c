@@ -491,7 +491,11 @@ void phonet_proto_unregister(unsigned int protocol, struct phonet_protocol *pp)
 {
 	mutex_lock(&proto_tab_lock);
 	BUG_ON(proto_tab[protocol] != pp);
+<<<<<<< HEAD
 	RCU_INIT_POINTER(proto_tab[protocol], NULL);
+=======
+	rcu_assign_pointer(proto_tab[protocol], NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&proto_tab_lock);
 	synchronize_rcu();
 	proto_unregister(pp->prot);

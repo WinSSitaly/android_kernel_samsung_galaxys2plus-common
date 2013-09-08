@@ -32,7 +32,10 @@
 #include <drm/radeon_drm.h>
 #include <linux/vgaarb.h>
 #include <linux/vga_switcheroo.h>
+<<<<<<< HEAD
 #include <linux/efi.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "radeon_reg.h"
 #include "radeon.h"
 #include "atom.h"
@@ -89,10 +92,13 @@ static const char radeon_family_name[][16] = {
 	"TURKS",
 	"CAICOS",
 	"CAYMAN",
+<<<<<<< HEAD
 	"ARUBA",
 	"TAHITI",
 	"PITCAIRN",
 	"VERDE",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"LAST",
 };
 
@@ -241,8 +247,13 @@ int radeon_wb_init(struct radeon_device *rdev)
 				rdev->wb.use_event = true;
 		}
 	}
+<<<<<<< HEAD
 	/* always use writeback/events on NI, APUs */
 	if (rdev->family >= CHIP_PALM) {
+=======
+	/* always use writeback/events on NI */
+	if (ASIC_IS_DCE5(rdev)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rdev->wb.enabled = true;
 		rdev->wb.use_event = true;
 	}
@@ -308,8 +319,11 @@ void radeon_vram_location(struct radeon_device *rdev, struct radeon_mc *mc, u64 
 		mc->mc_vram_size = mc->aper_size;
 	}
 	mc->vram_end = mc->vram_start + mc->mc_vram_size - 1;
+<<<<<<< HEAD
 	if (radeon_vram_limit && radeon_vram_limit < mc->real_vram_size)
 		mc->real_vram_size = radeon_vram_limit;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_info(rdev->dev, "VRAM: %lluM 0x%016llX - 0x%016llX (%lluM used)\n",
 			mc->mc_vram_size >> 20, mc->vram_start,
 			mc->vram_end, mc->real_vram_size >> 20);
@@ -358,6 +372,7 @@ bool radeon_card_posted(struct radeon_device *rdev)
 {
 	uint32_t reg;
 
+<<<<<<< HEAD
 	if (efi_enabled(EFI_BOOT) &&
 	    rdev->pdev->subsystem_vendor == PCI_VENDOR_ID_APPLE)
 		return false;
@@ -374,6 +389,21 @@ bool radeon_card_posted(struct radeon_device *rdev)
 				reg |= RREG32(EVERGREEN_CRTC_CONTROL + EVERGREEN_CRTC4_REGISTER_OFFSET) |
 					RREG32(EVERGREEN_CRTC_CONTROL + EVERGREEN_CRTC5_REGISTER_OFFSET);
 			}
+=======
+	/* first check CRTCs */
+	if (ASIC_IS_DCE41(rdev)) {
+		reg = RREG32(EVERGREEN_CRTC_CONTROL + EVERGREEN_CRTC0_REGISTER_OFFSET) |
+			RREG32(EVERGREEN_CRTC_CONTROL + EVERGREEN_CRTC1_REGISTER_OFFSET);
+		if (reg & EVERGREEN_CRTC_MASTER_EN)
+			return true;
+	} else if (ASIC_IS_DCE4(rdev)) {
+		reg = RREG32(EVERGREEN_CRTC_CONTROL + EVERGREEN_CRTC0_REGISTER_OFFSET) |
+			RREG32(EVERGREEN_CRTC_CONTROL + EVERGREEN_CRTC1_REGISTER_OFFSET) |
+			RREG32(EVERGREEN_CRTC_CONTROL + EVERGREEN_CRTC2_REGISTER_OFFSET) |
+			RREG32(EVERGREEN_CRTC_CONTROL + EVERGREEN_CRTC3_REGISTER_OFFSET) |
+			RREG32(EVERGREEN_CRTC_CONTROL + EVERGREEN_CRTC4_REGISTER_OFFSET) |
+			RREG32(EVERGREEN_CRTC_CONTROL + EVERGREEN_CRTC5_REGISTER_OFFSET);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (reg & EVERGREEN_CRTC_MASTER_EN)
 			return true;
 	} else if (ASIC_IS_AVIVO(rdev)) {
@@ -723,16 +753,23 @@ int radeon_device_init(struct radeon_device *rdev,
 
 	/* mutex initialization are all done here so we
 	 * can recall function without having locking issues */
+<<<<<<< HEAD
 	radeon_mutex_init(&rdev->cs_mutex);
 	radeon_mutex_init(&rdev->ib_pool.mutex);
 	for (i = 0; i < RADEON_NUM_RINGS; ++i)
 		mutex_init(&rdev->ring[i].mutex);
+=======
+	mutex_init(&rdev->cs_mutex);
+	mutex_init(&rdev->ib_pool.mutex);
+	mutex_init(&rdev->cp.mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_init(&rdev->dc_hw_i2c_mutex);
 	if (rdev->family >= CHIP_R600)
 		spin_lock_init(&rdev->ih.lock);
 	mutex_init(&rdev->gem.mutex);
 	mutex_init(&rdev->pm.mutex);
 	mutex_init(&rdev->vram_mutex);
+<<<<<<< HEAD
 	rwlock_init(&rdev->fence_lock);
 	rwlock_init(&rdev->semaphore_drv.lock);
 	INIT_LIST_HEAD(&rdev->gem.objects);
@@ -743,6 +780,12 @@ int radeon_device_init(struct radeon_device *rdev,
 	rdev->vm_manager.use_bitmap = 1;
 	rdev->vm_manager.max_pfn = 1 << 20;
 	INIT_LIST_HEAD(&rdev->vm_manager.lru_vm);
+=======
+	rwlock_init(&rdev->fence_drv.lock);
+	INIT_LIST_HEAD(&rdev->gem.objects);
+	init_waitqueue_head(&rdev->irq.vblank_queue);
+	init_waitqueue_head(&rdev->irq.idle_queue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Set asic functions */
 	r = radeon_asic_init(rdev);
@@ -764,21 +807,32 @@ int radeon_device_init(struct radeon_device *rdev,
 
 	/* set DMA mask + need_dma32 flags.
 	 * PCIE - can handle 40-bits.
+<<<<<<< HEAD
 	 * IGP - can handle 40-bits
 	 * AGP - generally dma32 is safest
 	 * PCI - dma32 for legacy pci gart, 40 bits on newer asics
+=======
+	 * IGP - can handle 40-bits (in theory)
+	 * AGP - generally dma32 is safest
+	 * PCI - only dma32
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	rdev->need_dma32 = false;
 	if (rdev->flags & RADEON_IS_AGP)
 		rdev->need_dma32 = true;
+<<<<<<< HEAD
 	if ((rdev->flags & RADEON_IS_PCI) &&
 	    (rdev->family <= CHIP_RS740))
+=======
+	if (rdev->flags & RADEON_IS_PCI)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rdev->need_dma32 = true;
 
 	dma_bits = rdev->need_dma32 ? 32 : 40;
 	r = pci_set_dma_mask(rdev->pdev, DMA_BIT_MASK(dma_bits));
 	if (r) {
 		rdev->need_dma32 = true;
+<<<<<<< HEAD
 		dma_bits = 32;
 		printk(KERN_WARNING "radeon: No suitable DMA available.\n");
 	}
@@ -787,6 +841,10 @@ int radeon_device_init(struct radeon_device *rdev,
 		pci_set_consistent_dma_mask(rdev->pdev, DMA_BIT_MASK(32));
 		printk(KERN_WARNING "radeon: No coherent DMA available.\n");
 	}
+=======
+		printk(KERN_WARNING "radeon: No suitable DMA available.\n");
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Registers mapping */
 	/* TODO: block userspace mapping of io register */
@@ -834,6 +892,7 @@ int radeon_device_init(struct radeon_device *rdev,
 		if (r)
 			return r;
 	}
+<<<<<<< HEAD
 	if ((radeon_testing & 1)) {
 		if (rdev->accel_working)
 			radeon_test_moves(rdev);
@@ -851,12 +910,22 @@ int radeon_device_init(struct radeon_device *rdev,
 			radeon_benchmark(rdev, radeon_benchmarking);
 		else
 			DRM_INFO("radeon: acceleration disabled, skipping benchmarks\n");
+=======
+	if (radeon_testing) {
+		radeon_test_moves(rdev);
+	}
+	if (radeon_benchmarking) {
+		radeon_benchmark(rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }
 
+<<<<<<< HEAD
 static void radeon_debugfs_remove_files(struct radeon_device *rdev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void radeon_device_fini(struct radeon_device *rdev)
 {
 	DRM_INFO("radeon: finishing device.\n");
@@ -871,7 +940,10 @@ void radeon_device_fini(struct radeon_device *rdev)
 	rdev->rio_mem = NULL;
 	iounmap(rdev->rmmio);
 	rdev->rmmio = NULL;
+<<<<<<< HEAD
 	radeon_debugfs_remove_files(rdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -883,7 +955,11 @@ int radeon_suspend_kms(struct drm_device *dev, pm_message_t state)
 	struct radeon_device *rdev;
 	struct drm_crtc *crtc;
 	struct drm_connector *connector;
+<<<<<<< HEAD
 	int i, r;
+=======
+	int r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dev == NULL || dev->dev_private == NULL) {
 		return -ENODEV;
@@ -924,8 +1000,12 @@ int radeon_suspend_kms(struct drm_device *dev, pm_message_t state)
 	/* evict vram memory */
 	radeon_bo_evict_vram(rdev);
 	/* wait for gpu to finish processing current batch */
+<<<<<<< HEAD
 	for (i = 0; i < RADEON_NUM_RINGS; i++)
 		radeon_fence_wait_last(rdev, i);
+=======
+	radeon_fence_wait_last(rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	radeon_save_bios_scratch_regs(rdev);
 
@@ -974,11 +1054,17 @@ int radeon_resume_kms(struct drm_device *dev)
 	radeon_fbdev_set_suspend(rdev, 0);
 	console_unlock();
 
+<<<<<<< HEAD
 	/* init dig PHYs, disp eng pll */
 	if (rdev->is_atom_bios) {
 		radeon_atom_encoder_init(rdev);
 		radeon_atom_disp_eng_pll_init(rdev);
 	}
+=======
+	/* init dig PHYs */
+	if (rdev->is_atom_bios)
+		radeon_atom_encoder_init(rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* reset hpd state */
 	radeon_hpd_init(rdev);
 	/* blat the mode back in */
@@ -997,9 +1083,12 @@ int radeon_gpu_reset(struct radeon_device *rdev)
 	int r;
 	int resched;
 
+<<<<<<< HEAD
 	/* Prevent CS ioctl from interfering */
 	radeon_mutex_lock(&rdev->cs_mutex);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	radeon_save_bios_scratch_regs(rdev);
 	/* block TTM */
 	resched = ttm_bo_lock_delayed_workqueue(&rdev->mman.bdev);
@@ -1012,6 +1101,7 @@ int radeon_gpu_reset(struct radeon_device *rdev)
 		radeon_restore_bios_scratch_regs(rdev);
 		drm_helper_resume_force_mode(rdev->ddev);
 		ttm_bo_unlock_delayed_workqueue(&rdev->mman.bdev, resched);
+<<<<<<< HEAD
 	}
 
 	radeon_mutex_unlock(&rdev->cs_mutex);
@@ -1021,6 +1111,12 @@ int radeon_gpu_reset(struct radeon_device *rdev)
 		dev_info(rdev->dev, "GPU reset failed\n");
 	}
 
+=======
+		return 0;
+	}
+	/* bad news, how to tell it to userspace ? */
+	dev_info(rdev->dev, "GPU reset failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return r;
 }
 
@@ -1028,18 +1124,34 @@ int radeon_gpu_reset(struct radeon_device *rdev)
 /*
  * Debugfs
  */
+<<<<<<< HEAD
+=======
+struct radeon_debugfs {
+	struct drm_info_list	*files;
+	unsigned		num_files;
+};
+static struct radeon_debugfs _radeon_debugfs[RADEON_DEBUGFS_MAX_NUM_FILES];
+static unsigned _radeon_debugfs_count = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int radeon_debugfs_add_files(struct radeon_device *rdev,
 			     struct drm_info_list *files,
 			     unsigned nfiles)
 {
 	unsigned i;
 
+<<<<<<< HEAD
 	for (i = 0; i < rdev->debugfs_count; i++) {
 		if (rdev->debugfs[i].files == files) {
+=======
+	for (i = 0; i < _radeon_debugfs_count; i++) {
+		if (_radeon_debugfs[i].files == files) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Already registered */
 			return 0;
 		}
 	}
+<<<<<<< HEAD
 
 	i = rdev->debugfs_count + 1;
 	if (i > RADEON_DEBUGFS_MAX_COMPONENTS) {
@@ -1051,6 +1163,16 @@ int radeon_debugfs_add_files(struct radeon_device *rdev,
 	rdev->debugfs[rdev->debugfs_count].files = files;
 	rdev->debugfs[rdev->debugfs_count].num_files = nfiles;
 	rdev->debugfs_count = i;
+=======
+	if ((_radeon_debugfs_count + nfiles) > RADEON_DEBUGFS_MAX_NUM_FILES) {
+		DRM_ERROR("Reached maximum number of debugfs files.\n");
+		DRM_ERROR("Report so we increase RADEON_DEBUGFS_MAX_NUM_FILES.\n");
+		return -EINVAL;
+	}
+	_radeon_debugfs[_radeon_debugfs_count].files = files;
+	_radeon_debugfs[_radeon_debugfs_count].num_files = nfiles;
+	_radeon_debugfs_count++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_DEBUG_FS)
 	drm_debugfs_create_files(files, nfiles,
 				 rdev->ddev->control->debugfs_root,
@@ -1062,6 +1184,7 @@ int radeon_debugfs_add_files(struct radeon_device *rdev,
 	return 0;
 }
 
+<<<<<<< HEAD
 static void radeon_debugfs_remove_files(struct radeon_device *rdev)
 {
 #if defined(CONFIG_DEBUG_FS)
@@ -1078,6 +1201,8 @@ static void radeon_debugfs_remove_files(struct radeon_device *rdev)
 #endif
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_DEBUG_FS)
 int radeon_debugfs_init(struct drm_minor *minor)
 {
@@ -1086,5 +1211,14 @@ int radeon_debugfs_init(struct drm_minor *minor)
 
 void radeon_debugfs_cleanup(struct drm_minor *minor)
 {
+<<<<<<< HEAD
+=======
+	unsigned i;
+
+	for (i = 0; i < _radeon_debugfs_count; i++) {
+		drm_debugfs_remove_files(_radeon_debugfs[i].files,
+					 _radeon_debugfs[i].num_files, minor);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif

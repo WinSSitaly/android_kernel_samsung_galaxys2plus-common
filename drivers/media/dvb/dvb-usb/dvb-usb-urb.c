@@ -82,6 +82,7 @@ static void dvb_usb_data_complete_204(struct usb_data_stream *stream, u8 *buffer
 
 int dvb_usb_adapter_stream_init(struct dvb_usb_adapter *adap)
 {
+<<<<<<< HEAD
 	int i, ret = 0;
 	for (i = 0; i < adap->props.num_frontends; i++) {
 
@@ -98,12 +99,25 @@ int dvb_usb_adapter_stream_init(struct dvb_usb_adapter *adap)
 			break;
 	}
 	return ret;
+=======
+	adap->stream.udev      = adap->dev->udev;
+	if (adap->props.caps & DVB_USB_ADAP_RECEIVES_204_BYTE_TS)
+		adap->stream.complete = dvb_usb_data_complete_204;
+	else
+	adap->stream.complete  = dvb_usb_data_complete;
+	adap->stream.user_priv = adap;
+	return usb_urb_init(&adap->stream, &adap->props.stream);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int dvb_usb_adapter_stream_exit(struct dvb_usb_adapter *adap)
 {
+<<<<<<< HEAD
 	int i;
 	for (i = 0; i < adap->props.num_frontends; i++)
 		usb_urb_exit(&adap->fe_adap[i].stream);
 	return 0;
+=======
+	return usb_urb_exit(&adap->stream);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

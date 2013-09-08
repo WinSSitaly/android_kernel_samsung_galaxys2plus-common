@@ -48,6 +48,7 @@
 #define PAL_retsys	61
 #define PAL_rti		63
 
+<<<<<<< HEAD
 #ifdef __KERNEL__
 #ifndef __ASSEMBLY__
 
@@ -160,4 +161,6 @@ __CALL_PAL_W1(wrvptptr, unsigned long);
 #endif /* !__ASSEMBLY__ */
 #endif /* __KERNEL__ */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ALPHA_PAL_H */

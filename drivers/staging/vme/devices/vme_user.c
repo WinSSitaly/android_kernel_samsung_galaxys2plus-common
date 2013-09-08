@@ -41,9 +41,15 @@
 #include "vme_user.h"
 
 static DEFINE_MUTEX(vme_user_mutex);
+<<<<<<< HEAD
 static const char driver_name[] = "vme_user";
 
 static int bus[VME_USER_BUS_MAX];
+=======
+static char driver_name[] = "vme_user";
+
+static int bus[USER_BUS_MAX];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned int bus_num;
 
 /* Currently Documentation/devices.txt defines the following for VME:
@@ -91,7 +97,11 @@ static unsigned int bus_num;
 /*
  * Structure to handle image related parameters.
  */
+<<<<<<< HEAD
 struct image_desc {
+=======
+typedef struct {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *kern_buf;	/* Buffer address in kernel space */
 	dma_addr_t pci_buf;	/* Buffer address in PCI address space */
 	unsigned long long size_buf;	/* Buffer size */
@@ -99,10 +109,17 @@ struct image_desc {
 	struct device *device;	/* Sysfs device */
 	struct vme_resource *resource;	/* VME resource */
 	int users;		/* Number of current users */
+<<<<<<< HEAD
 };
 static struct image_desc image[VME_DEVS];
 
 struct driver_stats {
+=======
+} image_desc_t;
+static image_desc_t image[VME_DEVS];
+
+typedef struct {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long reads;
 	unsigned long writes;
 	unsigned long ioctls;
@@ -111,12 +128,21 @@ struct driver_stats {
 	unsigned long dmaErrors;
 	unsigned long timeouts;
 	unsigned long external;
+<<<<<<< HEAD
 };
 static struct driver_stats statistics;
 
 static struct cdev *vme_user_cdev;		/* Character device */
 static struct class *vme_user_sysfs_class;	/* Sysfs class */
 static struct vme_dev *vme_user_bridge;		/* Pointer to user device */
+=======
+} driver_stats_t;
+static driver_stats_t statistics;
+
+static struct cdev *vme_user_cdev;		/* Character device */
+static struct class *vme_user_sysfs_class;	/* Sysfs class */
+static struct device *vme_user_bridge;		/* Pointer to bridge device */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 static const int type[VME_DEVS] = {	MASTER_MINOR,	MASTER_MINOR,
@@ -135,11 +161,18 @@ static ssize_t vme_user_write(struct file *, const char __user *, size_t,
 static loff_t vme_user_llseek(struct file *, loff_t, int);
 static long vme_user_unlocked_ioctl(struct file *, unsigned int, unsigned long);
 
+<<<<<<< HEAD
 static int vme_user_match(struct vme_dev *);
 static int __devinit vme_user_probe(struct vme_dev *);
 static int __devexit vme_user_remove(struct vme_dev *);
 
 static const struct file_operations vme_user_fops = {
+=======
+static int __devinit vme_user_probe(struct device *, int, int);
+static int __devexit vme_user_remove(struct device *, int, int);
+
+static struct file_operations vme_user_fops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.open = vme_user_open,
 	.release = vme_user_release,
 	.read = vme_user_read,
@@ -169,8 +202,13 @@ static int vme_user_open(struct inode *inode, struct file *file)
 	unsigned int minor = MINOR(inode->i_rdev);
 
 	down(&image[minor].sem);
+<<<<<<< HEAD
 	/* Allow device to be opened if a resource is needed and allocated. */
 	if (minor < CONTROL_MINOR && image[minor].resource == NULL) {
+=======
+	/* Only allow device to be opened if a resource is allocated */
+	if (image[minor].resource == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR "No resources allocated for device\n");
 		err = -EINVAL;
 		goto err_res;
@@ -322,9 +360,12 @@ static ssize_t vme_user_read(struct file *file, char __user *buf, size_t count,
 	size_t image_size;
 	size_t okcount;
 
+<<<<<<< HEAD
 	if (minor == CONTROL_MINOR)
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	down(&image[minor].sem);
 
 	/* XXX Do we *really* want this helper - we can use vme_*_get ? */
@@ -369,9 +410,12 @@ static ssize_t vme_user_write(struct file *file, const char __user *buf,
 	size_t image_size;
 	size_t okcount;
 
+<<<<<<< HEAD
 	if (minor == CONTROL_MINOR)
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	down(&image[minor].sem);
 
 	image_size = vme_get_size(image[minor].resource);
@@ -413,9 +457,12 @@ static loff_t vme_user_llseek(struct file *file, loff_t off, int whence)
 	unsigned int minor = MINOR(file->f_dentry->d_inode->i_rdev);
 	size_t image_size;
 
+<<<<<<< HEAD
 	if (minor == CONTROL_MINOR)
 		return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	down(&image[minor].sem);
 	image_size = vme_get_size(image[minor].resource);
 
@@ -462,7 +509,10 @@ static int vme_user_ioctl(struct inode *inode, struct file *file,
 {
 	struct vme_master master;
 	struct vme_slave slave;
+<<<<<<< HEAD
 	struct vme_irq_id irq_req;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long copied;
 	unsigned int minor = MINOR(inode->i_rdev);
 	int retval;
@@ -473,6 +523,7 @@ static int vme_user_ioctl(struct inode *inode, struct file *file,
 
 	switch (type[minor]) {
 	case CONTROL_MINOR:
+<<<<<<< HEAD
 		switch (cmd) {
 		case VME_IRQ_GEN:
 			copied = copy_from_user(&irq_req, (char *)arg,
@@ -488,6 +539,8 @@ static int vme_user_ioctl(struct inode *inode, struct file *file,
 
 			return retval;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case MASTER_MINOR:
 		switch (cmd) {
@@ -621,7 +674,10 @@ static void buf_unalloc(int num)
 
 static struct vme_driver vme_user_driver = {
 	.name = driver_name,
+<<<<<<< HEAD
 	.match = vme_user_match,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.probe = vme_user_probe,
 	.remove = __devexit_p(vme_user_remove),
 };
@@ -630,6 +686,11 @@ static struct vme_driver vme_user_driver = {
 static int __init vme_user_init(void)
 {
 	int retval = 0;
+<<<<<<< HEAD
+=======
+	int i;
+	struct vme_device_id *ids;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	printk(KERN_INFO "VME User Space Access Driver\n");
 
@@ -643,6 +704,7 @@ static int __init vme_user_init(void)
 	/* Let's start by supporting one bus, we can support more than one
 	 * in future revisions if that ever becomes necessary.
 	 */
+<<<<<<< HEAD
 	if (bus_num > VME_USER_BUS_MAX) {
 		printk(KERN_ERR "%s: Driver only able to handle %d buses\n",
 			driver_name, VME_USER_BUS_MAX);
@@ -656,16 +718,55 @@ static int __init vme_user_init(void)
 	 * we just change the code in vme_user_match().
 	 */
 	retval = vme_register_driver(&vme_user_driver, VME_MAX_SLOTS);
+=======
+	if (bus_num > USER_BUS_MAX) {
+		printk(KERN_ERR "%s: Driver only able to handle %d buses\n",
+			driver_name, USER_BUS_MAX);
+		bus_num = USER_BUS_MAX;
+	}
+
+
+	/* Dynamically create the bind table based on module parameters */
+	ids = kmalloc(sizeof(struct vme_device_id) * (bus_num + 1), GFP_KERNEL);
+	if (ids == NULL) {
+		printk(KERN_ERR "%s: Unable to allocate ID table\n",
+			driver_name);
+		retval = -ENOMEM;
+		goto err_id;
+	}
+
+	memset(ids, 0, (sizeof(struct vme_device_id) * (bus_num + 1)));
+
+	for (i = 0; i < bus_num; i++) {
+		ids[i].bus = bus[i];
+		/*
+		 * We register the driver against the slot occupied by *this*
+		 * card, since it's really a low level way of controlling
+		 * the VME bridge
+		 */
+		ids[i].slot = VME_SLOT_CURRENT;
+	}
+
+	vme_user_driver.bind_table = ids;
+
+	retval = vme_register_driver(&vme_user_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval != 0)
 		goto err_reg;
 
 	return retval;
 
 err_reg:
+<<<<<<< HEAD
+=======
+	kfree(ids);
+err_id:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_nocard:
 	return retval;
 }
 
+<<<<<<< HEAD
 static int vme_user_match(struct vme_dev *vdev)
 {
 	if (vdev->num >= VME_USER_BUS_MAX)
@@ -673,12 +774,19 @@ static int vme_user_match(struct vme_dev *vdev)
 	return 1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * In this simple access driver, the old behaviour is being preserved as much
  * as practical. We will therefore reserve the buffers and request the images
  * here so that we don't have to do it later.
  */
+<<<<<<< HEAD
 static int __devinit vme_user_probe(struct vme_dev *vdev)
+=======
+static int __devinit vme_user_probe(struct device *dev, int cur_bus,
+	int cur_slot)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i, err;
 	char name[12];
@@ -690,7 +798,11 @@ static int __devinit vme_user_probe(struct vme_dev *vdev)
 		err = -EINVAL;
 		goto err_dev;
 	}
+<<<<<<< HEAD
 	vme_user_bridge = vdev;
+=======
+	vme_user_bridge = dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Initialise descriptors */
 	for (i = 0; i < VME_DEVS; i++) {
@@ -784,7 +896,10 @@ static int __devinit vme_user_probe(struct vme_dev *vdev)
 
 	/* Add sysfs Entries */
 	for (i = 0; i < VME_DEVS; i++) {
+<<<<<<< HEAD
 		int num;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		switch (type[i]) {
 		case MASTER_MINOR:
 			sprintf(name, "bus/vme/m%%d");
@@ -801,9 +916,16 @@ static int __devinit vme_user_probe(struct vme_dev *vdev)
 			break;
 		}
 
+<<<<<<< HEAD
 		num = (type[i] == SLAVE_MINOR) ? i - (MASTER_MAX + 1) : i;
 		image[i].device = device_create(vme_user_sysfs_class, NULL,
 					MKDEV(VME_MAJOR, i), NULL, name, num);
+=======
+		image[i].device =
+			device_create(vme_user_sysfs_class, NULL,
+				MKDEV(VME_MAJOR, i), NULL, name,
+				(type[i] == SLAVE_MINOR) ? i - (MASTER_MAX + 1) : i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (IS_ERR(image[i].device)) {
 			printk(KERN_INFO "%s: Error creating sysfs device\n",
 				driver_name);
@@ -853,7 +975,12 @@ err_dev:
 	return err;
 }
 
+<<<<<<< HEAD
 static int __devexit vme_user_remove(struct vme_dev *dev)
+=======
+static int __devexit vme_user_remove(struct device *dev, int cur_bus,
+	int cur_slot)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 
@@ -885,6 +1012,11 @@ static int __devexit vme_user_remove(struct vme_dev *dev)
 static void __exit vme_user_exit(void)
 {
 	vme_unregister_driver(&vme_user_driver);
+<<<<<<< HEAD
+=======
+
+	kfree(vme_user_driver.bind_table);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 

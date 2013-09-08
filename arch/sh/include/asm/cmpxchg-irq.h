@@ -1,8 +1,11 @@
 #ifndef __ASM_SH_CMPXCHG_IRQ_H
 #define __ASM_SH_CMPXCHG_IRQ_H
 
+<<<<<<< HEAD
 #include <linux/irqflags.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline unsigned long xchg_u32(volatile u32 *m, unsigned long val)
 {
 	unsigned long flags, retval;

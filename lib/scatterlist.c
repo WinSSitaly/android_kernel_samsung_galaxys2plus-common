@@ -6,7 +6,11 @@
  * This source code is licensed under the GNU General Public License,
  * Version 2. See the file COPYING for more details.
  */
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/scatterlist.h>
 #include <linux/highmem.h>
@@ -390,7 +394,11 @@ bool sg_miter_next(struct sg_mapping_iter *miter)
 	miter->consumed = miter->length;
 
 	if (miter->__flags & SG_MITER_ATOMIC)
+<<<<<<< HEAD
 		miter->addr = kmap_atomic(miter->page) + off;
+=======
+		miter->addr = kmap_atomic(miter->page, KM_BIO_SRC_IRQ) + off;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		miter->addr = kmap(miter->page) + off;
 
@@ -424,7 +432,11 @@ void sg_miter_stop(struct sg_mapping_iter *miter)
 
 		if (miter->__flags & SG_MITER_ATOMIC) {
 			WARN_ON(!irqs_disabled());
+<<<<<<< HEAD
 			kunmap_atomic(miter->addr);
+=======
+			kunmap_atomic(miter->addr, KM_BIO_SRC_IRQ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else
 			kunmap(miter->page);
 

@@ -28,6 +28,13 @@
 #include <linux/list.h>
 #include <linux/slab.h>
 
+<<<<<<< HEAD
+=======
+#ifdef 	CONFIG_PROC_FS
+#include <linux/proc_fs.h>
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/ipv6.h>
 #include <net/ndisc.h>
 #include <net/addrconf.h>
@@ -190,7 +197,11 @@ static struct fib6_table *fib6_alloc_table(struct net *net, u32 id)
 	struct fib6_table *table;
 
 	table = kzalloc(sizeof(*table), GFP_ATOMIC);
+<<<<<<< HEAD
 	if (table) {
+=======
+	if (table != NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		table->tb6_id = id;
 		table->tb6_root.leaf = net->ipv6.ip6_null_entry;
 		table->tb6_root.fn_flags = RTN_ROOT | RTN_TL_ROOT | RTN_RTINFO;
@@ -210,7 +221,11 @@ struct fib6_table *fib6_new_table(struct net *net, u32 id)
 		return tb;
 
 	tb = fib6_alloc_table(net, id);
+<<<<<<< HEAD
 	if (tb)
+=======
+	if (tb != NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fib6_link_table(net, tb);
 
 	return tb;
@@ -367,7 +382,11 @@ static int inet6_dump_fib(struct sk_buff *skb, struct netlink_callback *cb)
 	s_e = cb->args[1];
 
 	w = (void *)cb->args[2];
+<<<<<<< HEAD
 	if (!w) {
+=======
+	if (w == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* New dump:
 		 *
 		 * 1. hook callback destructor.
@@ -379,7 +398,11 @@ static int inet6_dump_fib(struct sk_buff *skb, struct netlink_callback *cb)
 		 * 2. allocate and initialize walker.
 		 */
 		w = kzalloc(sizeof(*w), GFP_ATOMIC);
+<<<<<<< HEAD
 		if (!w)
+=======
+		if (w == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ENOMEM;
 		w->func = fib6_dump_node;
 		cb->args[2] = (long)w;
@@ -425,8 +448,12 @@ out:
 
 static struct fib6_node * fib6_add_1(struct fib6_node *root, void *addr,
 				     int addrlen, int plen,
+<<<<<<< HEAD
 				     int offset, int allow_create,
 				     int replace_required)
+=======
+				     int offset)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct fib6_node *fn, *in, *ln;
 	struct fib6_node *pn = NULL;
@@ -448,6 +475,7 @@ static struct fib6_node * fib6_add_1(struct fib6_node *root, void *addr,
 		 *	Prefix match
 		 */
 		if (plen < fn->fn_bit ||
+<<<<<<< HEAD
 		    !ipv6_prefix_equal(&key->addr, addr, fn->fn_bit)) {
 			if (!allow_create) {
 				if (replace_required) {
@@ -460,6 +488,10 @@ static struct fib6_node * fib6_add_1(struct fib6_node *root, void *addr,
 			}
 			goto insert_above;
 		}
+=======
+		    !ipv6_prefix_equal(&key->addr, addr, fn->fn_bit))
+			goto insert_above;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 *	Exact match ?
@@ -467,7 +499,11 @@ static struct fib6_node * fib6_add_1(struct fib6_node *root, void *addr,
 
 		if (plen == fn->fn_bit) {
 			/* clean up an intermediate node */
+<<<<<<< HEAD
 			if (!(fn->fn_flags & RTN_RTINFO)) {
+=======
+			if ((fn->fn_flags & RTN_RTINFO) == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				rt6_release(fn->leaf);
 				fn->leaf = NULL;
 			}
@@ -488,6 +524,7 @@ static struct fib6_node * fib6_add_1(struct fib6_node *root, void *addr,
 		fn = dir ? fn->right: fn->left;
 	} while (fn);
 
+<<<<<<< HEAD
 	if (!allow_create) {
 		/* We should not create new node because
 		 * NLM_F_REPLACE was specified without NLM_F_CREATE
@@ -505,6 +542,8 @@ static struct fib6_node * fib6_add_1(struct fib6_node *root, void *addr,
 		pr_warn("IPv6: NLM_F_CREATE should be set "
 			"when creating new route\n");
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 *	We walked to the bottom of tree.
 	 *	Create new leaf node without children.
@@ -512,7 +551,11 @@ static struct fib6_node * fib6_add_1(struct fib6_node *root, void *addr,
 
 	ln = node_alloc();
 
+<<<<<<< HEAD
 	if (!ln)
+=======
+	if (ln == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 	ln->fn_bit = plen;
 
@@ -555,7 +598,11 @@ insert_above:
 		in = node_alloc();
 		ln = node_alloc();
 
+<<<<<<< HEAD
 		if (!in || !ln) {
+=======
+		if (in == NULL || ln == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (in)
 				node_free(in);
 			if (ln)
@@ -609,7 +656,11 @@ insert_above:
 
 		ln = node_alloc();
 
+<<<<<<< HEAD
 		if (!ln)
+=======
+		if (ln == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return NULL;
 
 		ln->fn_bit = plen;
@@ -642,6 +693,7 @@ static int fib6_add_rt2node(struct fib6_node *fn, struct rt6_info *rt,
 {
 	struct rt6_info *iter = NULL;
 	struct rt6_info **ins;
+<<<<<<< HEAD
 	int replace = (info->nlh &&
 		       (info->nlh->nlmsg_flags & NLM_F_REPLACE));
 	int add = (!info->nlh ||
@@ -651,6 +703,12 @@ static int fib6_add_rt2node(struct fib6_node *fn, struct rt6_info *rt,
 	ins = &fn->leaf;
 
 	for (iter = fn->leaf; iter; iter = iter->dst.rt6_next) {
+=======
+
+	ins = &fn->leaf;
+
+	for (iter = fn->leaf; iter; iter=iter->dst.rt6_next) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 *	Search for duplicates
 		 */
@@ -659,6 +717,7 @@ static int fib6_add_rt2node(struct fib6_node *fn, struct rt6_info *rt,
 			/*
 			 *	Same priority level
 			 */
+<<<<<<< HEAD
 			if (info->nlh &&
 			    (info->nlh->nlmsg_flags & NLM_F_EXCL))
 				return -EEXIST;
@@ -677,6 +736,20 @@ static int fib6_add_rt2node(struct fib6_node *fn, struct rt6_info *rt,
 					rt6_clean_expires(iter);
 				else
 					rt6_set_expires(iter, rt->dst.expires);
+=======
+
+			if (iter->rt6i_dev == rt->rt6i_dev &&
+			    iter->rt6i_idev == rt->rt6i_idev &&
+			    ipv6_addr_equal(&iter->rt6i_gateway,
+					    &rt->rt6i_gateway)) {
+				if (!(iter->rt6i_flags&RTF_EXPIRES))
+					return -EEXIST;
+				iter->rt6i_expires = rt->rt6i_expires;
+				if (!(rt->rt6i_flags&RTF_EXPIRES)) {
+					iter->rt6i_flags &= ~RTF_EXPIRES;
+					iter->rt6i_expires = 0;
+				}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return -EEXIST;
 			}
 		}
@@ -694,6 +767,7 @@ static int fib6_add_rt2node(struct fib6_node *fn, struct rt6_info *rt,
 	/*
 	 *	insert node
 	 */
+<<<<<<< HEAD
 	if (!replace) {
 		if (!add)
 			pr_warn("IPv6: NLM_F_CREATE should be set when creating new route\n");
@@ -728,6 +802,19 @@ add:
 			info->nl_net->ipv6.rt6_stats->fib_route_nodes++;
 			fn->fn_flags |= RTN_RTINFO;
 		}
+=======
+
+	rt->dst.rt6_next = iter;
+	*ins = rt;
+	rt->rt6i_node = fn;
+	atomic_inc(&rt->rt6i_ref);
+	inet6_rt_notify(RTM_NEWROUTE, rt, info);
+	info->nl_net->ipv6.rt6_stats->fib_rt_entries++;
+
+	if ((fn->fn_flags & RTN_RTINFO) == 0) {
+		info->nl_net->ipv6.rt6_stats->fib_route_nodes++;
+		fn->fn_flags |= RTN_RTINFO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -736,7 +823,11 @@ add:
 static __inline__ void fib6_start_gc(struct net *net, struct rt6_info *rt)
 {
 	if (!timer_pending(&net->ipv6.ip6_fib_timer) &&
+<<<<<<< HEAD
 	    (rt->rt6i_flags & (RTF_EXPIRES | RTF_CACHE)))
+=======
+	    (rt->rt6i_flags & (RTF_EXPIRES|RTF_CACHE)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mod_timer(&net->ipv6.ip6_fib_timer,
 			  jiffies + net->ipv6.sysctl.ip6_rt_gc_interval);
 }
@@ -758,6 +849,7 @@ int fib6_add(struct fib6_node *root, struct rt6_info *rt, struct nl_info *info)
 {
 	struct fib6_node *fn, *pn = NULL;
 	int err = -ENOMEM;
+<<<<<<< HEAD
 	int allow_create = 1;
 	int replace_required = 0;
 
@@ -780,6 +872,13 @@ int fib6_add(struct fib6_node *root, struct rt6_info *rt, struct nl_info *info)
 	}
 
 	if (!fn)
+=======
+
+	fn = fib6_add_1(root, &rt->rt6i_dst.addr, sizeof(struct in6_addr),
+			rt->rt6i_dst.plen, offsetof(struct rt6_info, rt6i_dst));
+
+	if (fn == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	pn = fn;
@@ -788,7 +887,11 @@ int fib6_add(struct fib6_node *root, struct rt6_info *rt, struct nl_info *info)
 	if (rt->rt6i_src.plen) {
 		struct fib6_node *sn;
 
+<<<<<<< HEAD
 		if (!fn->subtree) {
+=======
+		if (fn->subtree == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			struct fib6_node *sfn;
 
 			/*
@@ -803,7 +906,11 @@ int fib6_add(struct fib6_node *root, struct rt6_info *rt, struct nl_info *info)
 
 			/* Create subtree root node */
 			sfn = node_alloc();
+<<<<<<< HEAD
 			if (!sfn)
+=======
+			if (sfn == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto st_failure;
 
 			sfn->leaf = info->nl_net->ipv6.ip6_null_entry;
@@ -815,6 +922,7 @@ int fib6_add(struct fib6_node *root, struct rt6_info *rt, struct nl_info *info)
 
 			sn = fib6_add_1(sfn, &rt->rt6i_src.addr,
 					sizeof(struct in6_addr), rt->rt6i_src.plen,
+<<<<<<< HEAD
 					offsetof(struct rt6_info, rt6i_src),
 					allow_create, replace_required);
 
@@ -823,6 +931,11 @@ int fib6_add(struct fib6_node *root, struct rt6_info *rt, struct nl_info *info)
 				sn = NULL;
 			}
 			if (!sn) {
+=======
+					offsetof(struct rt6_info, rt6i_src));
+
+			if (sn == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/* If it is failed, discard just allocated
 				   root, and then (in st_failure) stale node
 				   in main tree.
@@ -837,6 +950,7 @@ int fib6_add(struct fib6_node *root, struct rt6_info *rt, struct nl_info *info)
 		} else {
 			sn = fib6_add_1(fn->subtree, &rt->rt6i_src.addr,
 					sizeof(struct in6_addr), rt->rt6i_src.plen,
+<<<<<<< HEAD
 					offsetof(struct rt6_info, rt6i_src),
 					allow_create, replace_required);
 
@@ -849,6 +963,15 @@ int fib6_add(struct fib6_node *root, struct rt6_info *rt, struct nl_info *info)
 		}
 
 		if (!fn->leaf) {
+=======
+					offsetof(struct rt6_info, rt6i_src));
+
+			if (sn == NULL)
+				goto st_failure;
+		}
+
+		if (fn->leaf == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			fn->leaf = rt;
 			atomic_inc(&rt->rt6i_ref);
 		}
@@ -857,9 +980,16 @@ int fib6_add(struct fib6_node *root, struct rt6_info *rt, struct nl_info *info)
 #endif
 
 	err = fib6_add_rt2node(fn, rt, info);
+<<<<<<< HEAD
 	if (!err) {
 		fib6_start_gc(info->nl_net, rt);
 		if (!(rt->rt6i_flags & RTF_CACHE))
+=======
+
+	if (err == 0) {
+		fib6_start_gc(info->nl_net, rt);
+		if (!(rt->rt6i_flags&RTF_CACHE))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			fib6_prune_clones(info->nl_net, pn, rt);
 	}
 
@@ -907,7 +1037,11 @@ st_failure:
  */
 
 struct lookup_args {
+<<<<<<< HEAD
 	int			offset;		/* key offset on rt6_info	*/
+=======
+	int		offset;		/* key offset on rt6_info	*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const struct in6_addr	*addr;		/* search key			*/
 };
 
@@ -937,10 +1071,18 @@ static struct fib6_node * fib6_lookup_1(struct fib6_node *root,
 			fn = next;
 			continue;
 		}
+<<<<<<< HEAD
 		break;
 	}
 
 	while (fn) {
+=======
+
+		break;
+	}
+
+	while(fn) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (FIB6_SUBTREE(fn) || fn->fn_flags & RTN_RTINFO) {
 			struct rt6key *key;
 
@@ -949,6 +1091,7 @@ static struct fib6_node * fib6_lookup_1(struct fib6_node *root,
 
 			if (ipv6_prefix_equal(&key->addr, args->addr, key->plen)) {
 #ifdef CONFIG_IPV6_SUBTREES
+<<<<<<< HEAD
 				if (fn->subtree) {
 					struct fib6_node *sfn;
 					sfn = fib6_lookup_1(fn->subtree,
@@ -965,6 +1108,16 @@ static struct fib6_node * fib6_lookup_1(struct fib6_node *root,
 #ifdef CONFIG_IPV6_SUBTREES
 backtrack:
 #endif
+=======
+				if (fn->subtree)
+					fn = fib6_lookup_1(fn->subtree, args + 1);
+#endif
+				if (!fn || fn->fn_flags & RTN_RTINFO)
+					return fn;
+			}
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (fn->fn_flags & RTN_ROOT)
 			break;
 
@@ -995,7 +1148,12 @@ struct fib6_node * fib6_lookup(struct fib6_node *root, const struct in6_addr *da
 	};
 
 	fn = fib6_lookup_1(root, daddr ? args : args + 1);
+<<<<<<< HEAD
 	if (!fn || fn->fn_flags & RTN_TL_ROOT)
+=======
+
+	if (fn == NULL || fn->fn_flags & RTN_TL_ROOT)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fn = root;
 
 	return fn;
@@ -1055,7 +1213,11 @@ struct fib6_node * fib6_locate(struct fib6_node *root,
 	}
 #endif
 
+<<<<<<< HEAD
 	if (fn && fn->fn_flags & RTN_RTINFO)
+=======
+	if (fn && fn->fn_flags&RTN_RTINFO)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return fn;
 
 	return NULL;
@@ -1069,6 +1231,7 @@ struct fib6_node * fib6_locate(struct fib6_node *root,
 
 static struct rt6_info *fib6_find_prefix(struct net *net, struct fib6_node *fn)
 {
+<<<<<<< HEAD
 	if (fn->fn_flags & RTN_ROOT)
 		return net->ipv6.ip6_null_entry;
 
@@ -1076,6 +1239,16 @@ static struct rt6_info *fib6_find_prefix(struct net *net, struct fib6_node *fn)
 		if (fn->left)
 			return fn->left->leaf;
 		if (fn->right)
+=======
+	if (fn->fn_flags&RTN_ROOT)
+		return net->ipv6.ip6_null_entry;
+
+	while(fn) {
+		if(fn->left)
+			return fn->left->leaf;
+
+		if(fn->right)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return fn->right->leaf;
 
 		fn = FIB6_SUBTREE(fn);
@@ -1113,12 +1286,20 @@ static struct fib6_node *fib6_repair_tree(struct net *net,
 		if (children == 3 || FIB6_SUBTREE(fn)
 #ifdef CONFIG_IPV6_SUBTREES
 		    /* Subtree root (i.e. fn) may have one child */
+<<<<<<< HEAD
 		    || (children && fn->fn_flags & RTN_ROOT)
+=======
+		    || (children && fn->fn_flags&RTN_ROOT)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 		    ) {
 			fn->leaf = fib6_find_prefix(net, fn);
 #if RT6_DEBUG >= 2
+<<<<<<< HEAD
 			if (!fn->leaf) {
+=======
+			if (fn->leaf==NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				WARN_ON(!fn->leaf);
 				fn->leaf = net->ipv6.ip6_null_entry;
 			}
@@ -1151,7 +1332,11 @@ static struct fib6_node *fib6_repair_tree(struct net *net,
 
 		read_lock(&fib6_walker_lock);
 		FOR_WALKERS(w) {
+<<<<<<< HEAD
 			if (!child) {
+=======
+			if (child == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				if (w->root == fn) {
 					w->root = w->node = NULL;
 					RT6_TRACE("W %p adjusted by delroot 1\n", w);
@@ -1180,7 +1365,11 @@ static struct fib6_node *fib6_repair_tree(struct net *net,
 		read_unlock(&fib6_walker_lock);
 
 		node_free(fn);
+<<<<<<< HEAD
 		if (pn->fn_flags & RTN_RTINFO || FIB6_SUBTREE(pn))
+=======
+		if (pn->fn_flags&RTN_RTINFO || FIB6_SUBTREE(pn))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return pn;
 
 		rt6_release(pn->leaf);
@@ -1214,7 +1403,11 @@ static void fib6_del_route(struct fib6_node *fn, struct rt6_info **rtp,
 		if (w->state == FWS_C && w->leaf == rt) {
 			RT6_TRACE("walker %p adjusted by delroute\n", w);
 			w->leaf = rt->dst.rt6_next;
+<<<<<<< HEAD
 			if (!w->leaf)
+=======
+			if (w->leaf == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				w->state = FWS_U;
 		}
 	}
@@ -1223,7 +1416,11 @@ static void fib6_del_route(struct fib6_node *fn, struct rt6_info **rtp,
 	rt->dst.rt6_next = NULL;
 
 	/* If it was last route, expunge its radix tree node */
+<<<<<<< HEAD
 	if (!fn->leaf) {
+=======
+	if (fn->leaf == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fn->fn_flags &= ~RTN_RTINFO;
 		net->ipv6.rt6_stats->fib_route_nodes--;
 		fn = fib6_repair_tree(net, fn);
@@ -1237,7 +1434,11 @@ static void fib6_del_route(struct fib6_node *fn, struct rt6_info **rtp,
 		 * to still alive ones.
 		 */
 		while (fn) {
+<<<<<<< HEAD
 			if (!(fn->fn_flags & RTN_RTINFO) && fn->leaf == rt) {
+=======
+			if (!(fn->fn_flags&RTN_RTINFO) && fn->leaf == rt) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				fn->leaf = fib6_find_prefix(net, fn);
 				atomic_inc(&fn->leaf->rt6i_ref);
 				rt6_release(rt);
@@ -1264,17 +1465,29 @@ int fib6_del(struct rt6_info *rt, struct nl_info *info)
 		return -ENOENT;
 	}
 #endif
+<<<<<<< HEAD
 	if (!fn || rt == net->ipv6.ip6_null_entry)
+=======
+	if (fn == NULL || rt == net->ipv6.ip6_null_entry)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOENT;
 
 	WARN_ON(!(fn->fn_flags & RTN_RTINFO));
 
+<<<<<<< HEAD
 	if (!(rt->rt6i_flags & RTF_CACHE)) {
+=======
+	if (!(rt->rt6i_flags&RTF_CACHE)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct fib6_node *pn = fn;
 #ifdef CONFIG_IPV6_SUBTREES
 		/* clones of this route might be in another subtree */
 		if (rt->rt6i_src.plen) {
+<<<<<<< HEAD
 			while (!(pn->fn_flags & RTN_ROOT))
+=======
+			while (!(pn->fn_flags&RTN_ROOT))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				pn = pn->parent;
 			pn = pn->parent;
 		}
@@ -1325,11 +1538,19 @@ static int fib6_walk_continue(struct fib6_walker_t *w)
 
 	for (;;) {
 		fn = w->node;
+<<<<<<< HEAD
 		if (!fn)
 			return 0;
 
 		if (w->prune && fn != w->root &&
 		    fn->fn_flags & RTN_RTINFO && w->state < FWS_C) {
+=======
+		if (fn == NULL)
+			return 0;
+
+		if (w->prune && fn != w->root &&
+		    fn->fn_flags&RTN_RTINFO && w->state < FWS_C) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			w->state = FWS_C;
 			w->leaf = fn->leaf;
 		}
@@ -1358,7 +1579,11 @@ static int fib6_walk_continue(struct fib6_walker_t *w)
 			w->state = FWS_C;
 			w->leaf = fn->leaf;
 		case FWS_C:
+<<<<<<< HEAD
 			if (w->leaf && fn->fn_flags & RTN_RTINFO) {
+=======
+			if (w->leaf && fn->fn_flags&RTN_RTINFO) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				int err;
 
 				if (w->count < w->skip) {
@@ -1473,6 +1698,7 @@ static void fib6_clean_tree(struct net *net, struct fib6_node *root,
 	fib6_walk(&c.w);
 }
 
+<<<<<<< HEAD
 void fib6_clean_all_ro(struct net *net, int (*func)(struct rt6_info *, void *arg),
 		    int prune, void *arg)
 {
@@ -1493,6 +1719,8 @@ void fib6_clean_all_ro(struct net *net, int (*func)(struct rt6_info *, void *arg
 	}
 	rcu_read_unlock();
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void fib6_clean_all(struct net *net, int (*func)(struct rt6_info *, void *arg),
 		    int prune, void *arg)
 {
@@ -1552,8 +1780,13 @@ static int fib6_age(struct rt6_info *rt, void *arg)
 	 *	only if they are not in use now.
 	 */
 
+<<<<<<< HEAD
 	if (rt->rt6i_flags & RTF_EXPIRES && rt->dst.expires) {
 		if (time_after(now, rt->dst.expires)) {
+=======
+	if (rt->rt6i_flags&RTF_EXPIRES && rt->rt6i_expires) {
+		if (time_after(now, rt->rt6i_expires)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			RT6_TRACE("expiring %p\n", rt);
 			return -1;
 		}
@@ -1563,6 +1796,7 @@ static int fib6_age(struct rt6_info *rt, void *arg)
 		    time_after_eq(now, rt->dst.lastuse + gc_args.timeout)) {
 			RT6_TRACE("aging clone %p\n", rt);
 			return -1;
+<<<<<<< HEAD
 		} else if (rt->rt6i_flags & RTF_GATEWAY) {
 			struct neighbour *neigh;
 			__u8 neigh_flags = 0;
@@ -1577,6 +1811,13 @@ static int fib6_age(struct rt6_info *rt, void *arg)
 					  rt);
 				return -1;
 			}
+=======
+		} else if ((rt->rt6i_flags & RTF_GATEWAY) &&
+			   (!(dst_get_neighbour_raw(&rt->dst)->flags & NTF_ROUTER))) {
+			RT6_TRACE("purging route %p via non-router but gateway\n",
+				  rt);
+			return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		gc_args.more++;
 	}
@@ -1704,8 +1945,12 @@ int __init fib6_init(void)
 	if (ret)
 		goto out_kmem_cache_create;
 
+<<<<<<< HEAD
 	ret = __rtnl_register(PF_INET6, RTM_GETROUTE, NULL, inet6_dump_fib,
 			      NULL);
+=======
+	ret = __rtnl_register(PF_INET6, RTM_GETROUTE, NULL, inet6_dump_fib);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto out_unregister_subsys;
 out:

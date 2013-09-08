@@ -228,7 +228,11 @@ static int __init sa1100_cpu_init(struct cpufreq_policy *policy)
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct cpufreq_driver sa1100_driver __refdata = {
+=======
+static struct cpufreq_driver sa1100_driver = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.flags		= CPUFREQ_STICKY,
 	.verify		= sa11x0_verify_speed,
 	.target		= sa1100_target,

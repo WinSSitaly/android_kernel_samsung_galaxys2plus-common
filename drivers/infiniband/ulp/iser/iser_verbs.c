@@ -155,13 +155,18 @@ static int iser_create_ib_conn_res(struct iser_conn *ib_conn)
 {
 	struct iser_device	*device;
 	struct ib_qp_init_attr	init_attr;
+<<<<<<< HEAD
 	int			req_err, resp_err, ret = -ENOMEM;
+=======
+	int			ret = -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ib_fmr_pool_param params;
 
 	BUG_ON(ib_conn->device == NULL);
 
 	device = ib_conn->device;
 
+<<<<<<< HEAD
 	ib_conn->login_buf = kmalloc(ISCSI_DEF_MAX_RECV_SEG_LEN +
 					ISER_RX_LOGIN_SIZE, GFP_KERNEL);
 	if (!ib_conn->login_buf)
@@ -188,6 +193,15 @@ static int iser_create_ib_conn_res(struct iser_conn *ib_conn)
 			ib_conn->login_resp_dma = 0;
 		goto out_err;
 	}
+=======
+	ib_conn->login_buf = kmalloc(ISER_RX_LOGIN_SIZE, GFP_KERNEL);
+	if (!ib_conn->login_buf)
+		goto out_err;
+
+	ib_conn->login_dma = ib_dma_map_single(ib_conn->device->ib_device,
+				(void *)ib_conn->login_buf, ISER_RX_LOGIN_SIZE,
+				DMA_FROM_DEVICE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ib_conn->page_vec = kmalloc(sizeof(struct iser_page_vec) +
 				    (sizeof(u64) * (ISCSI_ISER_SG_TABLESIZE +1)),
@@ -274,6 +288,7 @@ static int iser_free_ib_conn_res(struct iser_conn *ib_conn, int can_destroy_id)
 	ib_conn->cma_id   = NULL;
 	kfree(ib_conn->page_vec);
 
+<<<<<<< HEAD
 	if (ib_conn->login_buf) {
 		if (ib_conn->login_req_dma)
 			ib_dma_unmap_single(ib_conn->device->ib_device,
@@ -286,6 +301,8 @@ static int iser_free_ib_conn_res(struct iser_conn *ib_conn, int can_destroy_id)
 		kfree(ib_conn->login_buf);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -689,11 +706,19 @@ int iser_post_recvl(struct iser_conn *ib_conn)
 	struct ib_sge	  sge;
 	int ib_ret;
 
+<<<<<<< HEAD
 	sge.addr   = ib_conn->login_resp_dma;
 	sge.length = ISER_RX_LOGIN_SIZE;
 	sge.lkey   = ib_conn->device->mr->lkey;
 
 	rx_wr.wr_id   = (unsigned long)ib_conn->login_resp_buf;
+=======
+	sge.addr   = ib_conn->login_dma;
+	sge.length = ISER_RX_LOGIN_SIZE;
+	sge.lkey   = ib_conn->device->mr->lkey;
+
+	rx_wr.wr_id   = (unsigned long)ib_conn->login_buf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rx_wr.sg_list = &sge;
 	rx_wr.num_sge = 1;
 	rx_wr.next    = NULL;

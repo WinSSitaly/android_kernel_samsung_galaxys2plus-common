@@ -17,7 +17,11 @@
 #include <linux/highmem.h>
 #include <linux/mutex.h>
 #include <linux/radix-tree.h>
+<<<<<<< HEAD
 #include <linux/fs.h>
+=======
+#include <linux/buffer_head.h> /* invalidate_bh_lrus() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 
 #include <asm/uaccess.h>
@@ -117,13 +121,21 @@ static struct page *brd_insert_page(struct brd_device *brd, sector_t sector)
 
 	spin_lock(&brd->brd_lock);
 	idx = sector >> PAGE_SECTORS_SHIFT;
+<<<<<<< HEAD
 	page->index = idx;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (radix_tree_insert(&brd->brd_pages, idx, page)) {
 		__free_page(page);
 		page = radix_tree_lookup(&brd->brd_pages, idx);
 		BUG_ON(!page);
 		BUG_ON(page->index != idx);
+<<<<<<< HEAD
 	}
+=======
+	} else
+		page->index = idx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&brd->brd_lock);
 
 	radix_tree_preload_end();
@@ -242,9 +254,15 @@ static void copy_to_brd(struct brd_device *brd, const void *src,
 	page = brd_lookup_page(brd, sector);
 	BUG_ON(!page);
 
+<<<<<<< HEAD
 	dst = kmap_atomic(page);
 	memcpy(dst + offset, src, copy);
 	kunmap_atomic(dst);
+=======
+	dst = kmap_atomic(page, KM_USER1);
+	memcpy(dst + offset, src, copy);
+	kunmap_atomic(dst, KM_USER1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (copy < n) {
 		src += copy;
@@ -253,9 +271,15 @@ static void copy_to_brd(struct brd_device *brd, const void *src,
 		page = brd_lookup_page(brd, sector);
 		BUG_ON(!page);
 
+<<<<<<< HEAD
 		dst = kmap_atomic(page);
 		memcpy(dst, src, copy);
 		kunmap_atomic(dst);
+=======
+		dst = kmap_atomic(page, KM_USER1);
+		memcpy(dst, src, copy);
+		kunmap_atomic(dst, KM_USER1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -273,9 +297,15 @@ static void copy_from_brd(void *dst, struct brd_device *brd,
 	copy = min_t(size_t, n, PAGE_SIZE - offset);
 	page = brd_lookup_page(brd, sector);
 	if (page) {
+<<<<<<< HEAD
 		src = kmap_atomic(page);
 		memcpy(dst, src + offset, copy);
 		kunmap_atomic(src);
+=======
+		src = kmap_atomic(page, KM_USER1);
+		memcpy(dst, src + offset, copy);
+		kunmap_atomic(src, KM_USER1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		memset(dst, 0, copy);
 
@@ -285,9 +315,15 @@ static void copy_from_brd(void *dst, struct brd_device *brd,
 		copy = n - copy;
 		page = brd_lookup_page(brd, sector);
 		if (page) {
+<<<<<<< HEAD
 			src = kmap_atomic(page);
 			memcpy(dst, src, copy);
 			kunmap_atomic(src);
+=======
+			src = kmap_atomic(page, KM_USER1);
+			memcpy(dst, src, copy);
+			kunmap_atomic(src, KM_USER1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else
 			memset(dst, 0, copy);
 	}
@@ -309,7 +345,11 @@ static int brd_do_bvec(struct brd_device *brd, struct page *page,
 			goto out;
 	}
 
+<<<<<<< HEAD
 	mem = kmap_atomic(page);
+=======
+	mem = kmap_atomic(page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rw == READ) {
 		copy_from_brd(mem + off, brd, sector, len);
 		flush_dcache_page(page);
@@ -317,13 +357,21 @@ static int brd_do_bvec(struct brd_device *brd, struct page *page,
 		flush_dcache_page(page);
 		copy_to_brd(brd, mem + off, sector, len);
 	}
+<<<<<<< HEAD
 	kunmap_atomic(mem);
+=======
+	kunmap_atomic(mem, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	return err;
 }
 
+<<<<<<< HEAD
 static void brd_make_request(struct request_queue *q, struct bio *bio)
+=======
+static int brd_make_request(struct request_queue *q, struct bio *bio)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct block_device *bdev = bio->bi_bdev;
 	struct brd_device *brd = bdev->bd_disk->private_data;
@@ -359,6 +407,11 @@ static void brd_make_request(struct request_queue *q, struct bio *bio)
 
 out:
 	bio_endio(bio, err);
+<<<<<<< HEAD
+=======
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_BLK_DEV_XIP
@@ -402,13 +455,23 @@ static int brd_ioctl(struct block_device *bdev, fmode_t mode,
 	error = -EBUSY;
 	if (bdev->bd_openers <= 1) {
 		/*
+<<<<<<< HEAD
 		 * Kill the cache first, so it isn't written back to the
 		 * device.
+=======
+		 * Invalidate the cache first, so it isn't written
+		 * back to the device.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 *
 		 * Another thread might instantiate more buffercache here,
 		 * but there is not much we can do to close that race.
 		 */
+<<<<<<< HEAD
 		kill_bdev(bdev);
+=======
+		invalidate_bh_lrus();
+		truncate_inode_pages(bdev->bd_inode->i_mapping, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		brd_free_pages(brd);
 		error = 0;
 	}

@@ -81,6 +81,7 @@ static unsigned char hidp_mkeyspat[] = { 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 };
 static struct hidp_session *__hidp_get_session(bdaddr_t *bdaddr)
 {
 	struct hidp_session *session;
+<<<<<<< HEAD
 
 	BT_DBG("");
 
@@ -89,12 +90,30 @@ static struct hidp_session *__hidp_get_session(bdaddr_t *bdaddr)
 			return session;
 	}
 
+=======
+	struct list_head *p;
+
+	BT_DBG("");
+
+	list_for_each(p, &hidp_session_list) {
+		session = list_entry(p, struct hidp_session, list);
+		if (!bacmp(bdaddr, &session->bdaddr))
+			return session;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NULL;
 }
 
 static void __hidp_link_session(struct hidp_session *session)
 {
+<<<<<<< HEAD
 	list_add(&session->list, &hidp_session_list);
+=======
+	__module_get(THIS_MODULE);
+	list_add(&session->list, &hidp_session_list);
+
+	hci_conn_hold_device(session->conn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __hidp_unlink_session(struct hidp_session *session)
@@ -102,6 +121,10 @@ static void __hidp_unlink_session(struct hidp_session *session)
 	hci_conn_put_device(session->conn);
 
 	list_del(&session->list);
+<<<<<<< HEAD
+=======
+	module_put(THIS_MODULE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __hidp_copy_session(struct hidp_session *session, struct hidp_conninfo *ci)
@@ -250,9 +273,12 @@ static int __hidp_send_ctrl_message(struct hidp_session *session,
 
 	BT_DBG("session %p data %p size %d", session, data, size);
 
+<<<<<<< HEAD
 	if (atomic_read(&session->terminate))
 		return -EIO;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skb = alloc_skb(size + 1, GFP_ATOMIC);
 	if (!skb) {
 		BT_ERR("Can't allocate memory for new frame");
@@ -327,7 +353,10 @@ static int hidp_get_raw_report(struct hid_device *hid,
 	struct sk_buff *skb;
 	size_t len;
 	int numbered_reports = hid->report_enum[report_type].numbered;
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (report_type) {
 	case HID_FEATURE_REPORT:
@@ -351,9 +380,14 @@ static int hidp_get_raw_report(struct hid_device *hid,
 	session->waiting_report_number = numbered_reports ? report_number : -1;
 	set_bit(HIDP_WAITING_FOR_RETURN, &session->flags);
 	data[0] = report_number;
+<<<<<<< HEAD
 	ret = hidp_send_ctrl_message(hid->driver_data, report_type, data, 1);
 	if (ret)
 		goto err;
+=======
+	if (hidp_send_ctrl_message(hid->driver_data, report_type, data, 1))
+		goto err_eio;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Wait for the return of the report. The returned report
 	   gets put in session->report_return.  */
@@ -365,6 +399,7 @@ static int hidp_get_raw_report(struct hid_device *hid,
 			5*HZ);
 		if (res == 0) {
 			/* timeout */
+<<<<<<< HEAD
 			ret = -EIO;
 			goto err;
 		}
@@ -372,6 +407,13 @@ static int hidp_get_raw_report(struct hid_device *hid,
 			/* signal */
 			ret = -ERESTARTSYS;
 			goto err;
+=======
+			goto err_eio;
+		}
+		if (res < 0) {
+			/* signal */
+			goto err_restartsys;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -392,10 +434,21 @@ static int hidp_get_raw_report(struct hid_device *hid,
 
 	return len;
 
+<<<<<<< HEAD
 err:
 	clear_bit(HIDP_WAITING_FOR_RETURN, &session->flags);
 	mutex_unlock(&session->report_mutex);
 	return ret;
+=======
+err_restartsys:
+	clear_bit(HIDP_WAITING_FOR_RETURN, &session->flags);
+	mutex_unlock(&session->report_mutex);
+	return -ERESTARTSYS;
+err_eio:
+	clear_bit(HIDP_WAITING_FOR_RETURN, &session->flags);
+	mutex_unlock(&session->report_mutex);
+	return -EIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int hidp_output_raw_report(struct hid_device *hid, unsigned char *data, size_t count,
@@ -420,10 +473,18 @@ static int hidp_output_raw_report(struct hid_device *hid, unsigned char *data, s
 
 	/* Set up our wait, and send the report request to the device. */
 	set_bit(HIDP_WAITING_FOR_SEND_ACK, &session->flags);
+<<<<<<< HEAD
 	ret = hidp_send_ctrl_message(hid->driver_data, report_type, data,
 									count);
 	if (ret)
 		goto err;
+=======
+	if (hidp_send_ctrl_message(hid->driver_data, report_type,
+			data, count)) {
+		ret = -ENOMEM;
+		goto err;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Wait for the ACK from the device. */
 	while (test_bit(HIDP_WAITING_FOR_SEND_ACK, &session->flags)) {
@@ -493,9 +554,16 @@ static void hidp_process_handshake(struct hidp_session *session,
 	case HIDP_HSHK_ERR_INVALID_REPORT_ID:
 	case HIDP_HSHK_ERR_UNSUPPORTED_REQUEST:
 	case HIDP_HSHK_ERR_INVALID_PARAMETER:
+<<<<<<< HEAD
 		if (test_and_clear_bit(HIDP_WAITING_FOR_RETURN, &session->flags))
 			wake_up_interruptible(&session->report_queue);
 
+=======
+		if (test_bit(HIDP_WAITING_FOR_RETURN, &session->flags)) {
+			clear_bit(HIDP_WAITING_FOR_RETURN, &session->flags);
+			wake_up_interruptible(&session->report_queue);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* FIXME: Call into SET_ GET_ handlers here */
 		break;
 
@@ -516,8 +584,15 @@ static void hidp_process_handshake(struct hidp_session *session,
 	}
 
 	/* Wake up the waiting thread. */
+<<<<<<< HEAD
 	if (test_and_clear_bit(HIDP_WAITING_FOR_SEND_ACK, &session->flags))
 		wake_up_interruptible(&session->report_queue);
+=======
+	if (test_bit(HIDP_WAITING_FOR_SEND_ACK, &session->flags)) {
+		clear_bit(HIDP_WAITING_FOR_SEND_ACK, &session->flags);
+		wake_up_interruptible(&session->report_queue);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void hidp_process_hid_control(struct hidp_session *session,
@@ -657,21 +732,32 @@ static int hidp_send_frame(struct socket *sock, unsigned char *data, int len)
 	return kernel_sendmsg(sock, &msg, &iv, 1, len);
 }
 
+<<<<<<< HEAD
 static void hidp_process_intr_transmit(struct hidp_session *session)
+=======
+static void hidp_process_transmit(struct hidp_session *session)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sk_buff *skb;
 
 	BT_DBG("session %p", session);
 
+<<<<<<< HEAD
 	while ((skb = skb_dequeue(&session->intr_transmit))) {
 		if (hidp_send_frame(session->intr_sock, skb->data, skb->len) < 0) {
 			skb_queue_head(&session->intr_transmit, skb);
+=======
+	while ((skb = skb_dequeue(&session->ctrl_transmit))) {
+		if (hidp_send_frame(session->ctrl_sock, skb->data, skb->len) < 0) {
+			skb_queue_head(&session->ctrl_transmit, skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 
 		hidp_set_timer(session);
 		kfree_skb(skb);
 	}
+<<<<<<< HEAD
 }
 
 static void hidp_process_ctrl_transmit(struct hidp_session *session)
@@ -683,6 +769,12 @@ static void hidp_process_ctrl_transmit(struct hidp_session *session)
 	while ((skb = skb_dequeue(&session->ctrl_transmit))) {
 		if (hidp_send_frame(session->ctrl_sock, skb->data, skb->len) < 0) {
 			skb_queue_head(&session->ctrl_transmit, skb);
+=======
+
+	while ((skb = skb_dequeue(&session->intr_transmit))) {
+		if (hidp_send_frame(session->intr_sock, skb->data, skb->len) < 0) {
+			skb_queue_head(&session->intr_transmit, skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 
@@ -701,7 +793,10 @@ static int hidp_session(void *arg)
 
 	BT_DBG("session %p", session);
 
+<<<<<<< HEAD
 	__module_get(THIS_MODULE);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_user_nice(current, -15);
 
 	init_waitqueue_entry(&ctrl_wait, current);
@@ -716,6 +811,7 @@ static int hidp_session(void *arg)
 				intr_sk->sk_state != BT_CONNECTED)
 			break;
 
+<<<<<<< HEAD
 		while ((skb = skb_dequeue(&intr_sk->sk_receive_queue))) {
 			skb_orphan(skb);
 			if (!skb_linearize(skb))
@@ -735,6 +831,19 @@ static int hidp_session(void *arg)
 		}
 
 		hidp_process_ctrl_transmit(session);
+=======
+		while ((skb = skb_dequeue(&ctrl_sk->sk_receive_queue))) {
+			skb_orphan(skb);
+			hidp_recv_ctrl_frame(session, skb);
+		}
+
+		while ((skb = skb_dequeue(&intr_sk->sk_receive_queue))) {
+			skb_orphan(skb);
+			hidp_recv_intr_frame(session, skb);
+		}
+
+		hidp_process_transmit(session);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		schedule();
 		set_current_state(TASK_INTERRUPTIBLE);
@@ -743,10 +852,13 @@ static int hidp_session(void *arg)
 	remove_wait_queue(sk_sleep(intr_sk), &intr_wait);
 	remove_wait_queue(sk_sleep(ctrl_sk), &ctrl_wait);
 
+<<<<<<< HEAD
 	clear_bit(HIDP_WAITING_FOR_SEND_ACK, &session->flags);
 	clear_bit(HIDP_WAITING_FOR_RETURN, &session->flags);
 	wake_up_interruptible(&session->report_queue);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	down_write(&hidp_session_sem);
 
 	hidp_del_timer(session);
@@ -780,6 +892,7 @@ static int hidp_session(void *arg)
 
 	kfree(session->rd_data);
 	kfree(session);
+<<<<<<< HEAD
 	module_put_and_exit(0);
 	return 0;
 }
@@ -789,12 +902,23 @@ static struct hci_conn *hidp_get_connection(struct hidp_session *session)
 	bdaddr_t *src = &bt_sk(session->ctrl_sock->sk)->src;
 	bdaddr_t *dst = &bt_sk(session->ctrl_sock->sk)->dst;
 	struct hci_conn *conn;
+=======
+	return 0;
+}
+
+static struct device *hidp_get_device(struct hidp_session *session)
+{
+	bdaddr_t *src = &bt_sk(session->ctrl_sock->sk)->src;
+	bdaddr_t *dst = &bt_sk(session->ctrl_sock->sk)->dst;
+	struct device *device = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct hci_dev *hdev;
 
 	hdev = hci_get_route(dst, src);
 	if (!hdev)
 		return NULL;
 
+<<<<<<< HEAD
 	hci_dev_lock(hdev);
 	conn = hci_conn_hash_lookup_ba(hdev, ACL_LINK, dst);
 	if (conn)
@@ -804,13 +928,26 @@ static struct hci_conn *hidp_get_connection(struct hidp_session *session)
 	hci_dev_put(hdev);
 
 	return conn;
+=======
+	session->conn = hci_conn_hash_lookup_ba(hdev, ACL_LINK, dst);
+	if (session->conn)
+		device = &session->conn->dev;
+
+	hci_dev_put(hdev);
+
+	return device;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int hidp_setup_input(struct hidp_session *session,
 				struct hidp_connadd_req *req)
 {
 	struct input_dev *input;
+<<<<<<< HEAD
 	int i;
+=======
+	int err, i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	input = input_allocate_device();
 	if (!input)
@@ -853,10 +990,24 @@ static int hidp_setup_input(struct hidp_session *session,
 		input->relbit[0] |= BIT_MASK(REL_WHEEL);
 	}
 
+<<<<<<< HEAD
 	input->dev.parent = &session->conn->dev;
 
 	input->event = hidp_input_event;
 
+=======
+	input->dev.parent = hidp_get_device(session);
+
+	input->event = hidp_input_event;
+
+	err = input_register_device(input);
+	if (err < 0) {
+		input_free_device(input);
+		session->input = NULL;
+		return err;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -882,9 +1033,12 @@ static int hidp_start(struct hid_device *hid)
 	struct hidp_session *session = hid->driver_data;
 	struct hid_report *report;
 
+<<<<<<< HEAD
 	if (hid->quirks & HID_QUIRK_NO_INIT_REPORTS)
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(report, &hid->report_enum[HID_INPUT_REPORT].
 			report_list, list)
 		hidp_send_report(session, report);
@@ -949,11 +1103,19 @@ static int hidp_setup_hid(struct hidp_session *session,
 	hid->version = req->version;
 	hid->country = req->country;
 
+<<<<<<< HEAD
 	strncpy(hid->name, req->name, sizeof(req->name) - 1);
 	strncpy(hid->phys, batostr(&bt_sk(session->ctrl_sock->sk)->src), 64);
 	strncpy(hid->uniq, batostr(&bt_sk(session->ctrl_sock->sk)->dst), 64);
 
 	hid->dev.parent = &session->conn->dev;
+=======
+	strncpy(hid->name, req->name, 128);
+	strncpy(hid->phys, batostr(&bt_sk(session->ctrl_sock->sk)->src), 64);
+	strncpy(hid->uniq, batostr(&bt_sk(session->ctrl_sock->sk)->dst), 64);
+
+	hid->dev.parent = hidp_get_device(session);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hid->ll_driver = &hidp_hid_driver;
 
 	hid->hid_get_raw_report = hidp_get_raw_report;
@@ -980,12 +1142,20 @@ int hidp_add_connection(struct hidp_connadd_req *req, struct socket *ctrl_sock, 
 			bacmp(&bt_sk(ctrl_sock->sk)->dst, &bt_sk(intr_sock->sk)->dst))
 		return -ENOTUNIQ;
 
+<<<<<<< HEAD
+=======
+	session = kzalloc(sizeof(struct hidp_session), GFP_KERNEL);
+	if (!session)
+		return -ENOMEM;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BT_DBG("rd_data %p rd_size %d", req->rd_data, req->rd_size);
 
 	down_write(&hidp_session_sem);
 
 	s = __hidp_get_session(&bt_sk(ctrl_sock->sk)->dst);
 	if (s && s->state == BT_CONNECTED) {
+<<<<<<< HEAD
 		up_write(&hidp_session_sem);
 		return -EEXIST;
 	}
@@ -994,6 +1164,10 @@ int hidp_add_connection(struct hidp_connadd_req *req, struct socket *ctrl_sock, 
 	if (!session) {
 		up_write(&hidp_session_sem);
 		return -ENOMEM;
+=======
+		err = -EEXIST;
+		goto failed;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	bacpy(&session->bdaddr, &bt_sk(ctrl_sock->sk)->dst);
@@ -1009,12 +1183,15 @@ int hidp_add_connection(struct hidp_connadd_req *req, struct socket *ctrl_sock, 
 	session->intr_sock = intr_sock;
 	session->state     = BT_CONNECTED;
 
+<<<<<<< HEAD
 	session->conn = hidp_get_connection(session);
 	if (!session->conn) {
 		err = -ENOTCONN;
 		goto failed;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	setup_timer(&session->timer, hidp_idle_timeout, (unsigned long)session);
 
 	skb_queue_head_init(&session->ctrl_transmit);
@@ -1027,11 +1204,17 @@ int hidp_add_connection(struct hidp_connadd_req *req, struct socket *ctrl_sock, 
 	session->flags   = req->flags & (1 << HIDP_BLUETOOTH_VENDOR_ID);
 	session->idle_to = req->idle_to;
 
+<<<<<<< HEAD
 	__hidp_link_session(session);
 
 	if (req->rd_size > 0) {
 		err = hidp_setup_hid(session, req);
 		if (err)
+=======
+	if (req->rd_size > 0) {
+		err = hidp_setup_hid(session, req);
+		if (err && err != -ENODEV)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto purge;
 	}
 
@@ -1041,6 +1224,11 @@ int hidp_add_connection(struct hidp_connadd_req *req, struct socket *ctrl_sock, 
 			goto purge;
 	}
 
+<<<<<<< HEAD
+=======
+	__hidp_link_session(session);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hidp_set_timer(session);
 
 	if (session->hid) {
@@ -1066,11 +1254,15 @@ int hidp_add_connection(struct hidp_connadd_req *req, struct socket *ctrl_sock, 
 			!session->waiting_for_startup);
 	}
 
+<<<<<<< HEAD
 	if (session->hid)
 		err = hid_add_device(session->hid);
 	else
 		err = input_register_device(session->input);
 
+=======
+	err = hid_add_device(session->hid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0) {
 		atomic_inc(&session->terminate);
 		wake_up_process(session->task);
@@ -1093,6 +1285,11 @@ int hidp_add_connection(struct hidp_connadd_req *req, struct socket *ctrl_sock, 
 unlink:
 	hidp_del_timer(session);
 
+<<<<<<< HEAD
+=======
+	__hidp_unlink_session(session);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (session->input) {
 		input_unregister_device(session->input);
 		session->input = NULL;
@@ -1107,8 +1304,11 @@ unlink:
 	session->rd_data = NULL;
 
 purge:
+<<<<<<< HEAD
 	__hidp_unlink_session(session);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skb_queue_purge(&session->ctrl_transmit);
 	skb_queue_purge(&session->intr_transmit);
 
@@ -1150,16 +1350,29 @@ int hidp_del_connection(struct hidp_conndel_req *req)
 
 int hidp_get_connlist(struct hidp_connlist_req *req)
 {
+<<<<<<< HEAD
 	struct hidp_session *session;
+=======
+	struct list_head *p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err = 0, n = 0;
 
 	BT_DBG("");
 
 	down_read(&hidp_session_sem);
 
+<<<<<<< HEAD
 	list_for_each_entry(session, &hidp_session_list, list) {
 		struct hidp_conninfo ci;
 
+=======
+	list_for_each(p, &hidp_session_list) {
+		struct hidp_session *session;
+		struct hidp_conninfo ci;
+
+		session = list_entry(p, struct hidp_session, list);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__hidp_copy_session(session, &ci);
 
 		if (copy_to_user(req->ci, &ci, sizeof(ci))) {

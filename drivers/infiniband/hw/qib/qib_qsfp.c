@@ -273,12 +273,25 @@ int qib_refresh_qsfp_cache(struct qib_pportdata *ppd, struct qib_qsfp_cache *cp)
 	int ret;
 	int idx;
 	u16 cks;
+<<<<<<< HEAD
+=======
+	u32 mask;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 peek[4];
 
 	/* ensure sane contents on invalid reads, for cable swaps */
 	memset(cp, 0, sizeof(*cp));
 
+<<<<<<< HEAD
 	if (!qib_qsfp_mod_present(ppd)) {
+=======
+	mask = QSFP_GPIO_MOD_PRS_N;
+	if (ppd->hw_pidx)
+		mask <<= QSFP_GPIO_PORT2_SHIFT;
+
+	ret = ppd->dd->f_gpio_mod(ppd->dd, 0, 0, 0);
+	if (ret & mask) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENODEV;
 		goto bail;
 	}
@@ -438,6 +451,7 @@ const char * const qib_qsfp_devtech[16] = {
 
 static const char *pwr_codes = "1.5W2.0W2.5W3.5W";
 
+<<<<<<< HEAD
 int qib_qsfp_mod_present(struct qib_pportdata *ppd)
 {
 	u32 mask;
@@ -451,6 +465,8 @@ int qib_qsfp_mod_present(struct qib_pportdata *ppd)
 		 ((ppd->hw_pidx * QSFP_GPIO_PORT2_SHIFT) + 3));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Initialize structures that control access to QSFP. Called once per port
  * on cards that support QSFP.
@@ -459,6 +475,10 @@ void qib_qsfp_init(struct qib_qsfp_data *qd,
 		   void (*fevent)(struct work_struct *))
 {
 	u32 mask, highs;
+<<<<<<< HEAD
+=======
+	int pins;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct qib_devdata *dd = qd->ppd->dd;
 
@@ -480,6 +500,22 @@ void qib_qsfp_init(struct qib_qsfp_data *qd,
 	udelay(20); /* Generous RST dwell */
 
 	dd->f_gpio_mod(dd, mask, mask, mask);
+<<<<<<< HEAD
+=======
+	/* Spec says module can take up to two seconds! */
+	mask = QSFP_GPIO_MOD_PRS_N;
+	if (qd->ppd->hw_pidx)
+		mask <<= QSFP_GPIO_PORT2_SHIFT;
+
+	/* Do not try to wait here. Better to let event handle it */
+	pins = dd->f_gpio_mod(dd, 0, 0, 0);
+	if (pins & mask)
+		goto bail;
+	/* We see a module, but it may be unwise to look yet. Just schedule */
+	qd->t_insert = get_jiffies_64();
+	queue_work(ib_wq, &qd->work);
+bail:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 }
 

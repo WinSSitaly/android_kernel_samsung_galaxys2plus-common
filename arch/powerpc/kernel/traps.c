@@ -39,6 +39,10 @@
 #include <asm/emulated_ops.h>
 #include <asm/pgtable.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/machdep.h>
 #include <asm/rtas.h>
@@ -56,9 +60,12 @@
 #include <asm/kexec.h>
 #include <asm/ppc-opcode.h>
 #include <asm/rio.h>
+<<<<<<< HEAD
 #include <asm/fadump.h>
 #include <asm/switch_to.h>
 #include <asm/debug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if defined(CONFIG_DEBUGGER) || defined(CONFIG_KEXEC)
 int (*__debugger)(struct pt_regs *regs) __read_mostly;
@@ -100,6 +107,7 @@ static void pmac_backlight_unblank(void)
 static inline void pmac_backlight_unblank(void) { }
 #endif
 
+<<<<<<< HEAD
 static arch_spinlock_t die_lock = __ARCH_SPIN_LOCK_UNLOCKED;
 static int die_owner = -1;
 static unsigned int die_nest_count;
@@ -108,6 +116,20 @@ static int die_counter;
 static unsigned __kprobes long oops_begin(struct pt_regs *regs)
 {
 	int cpu;
+=======
+int die(const char *str, struct pt_regs *regs, long err)
+{
+	static struct {
+		raw_spinlock_t lock;
+		u32 lock_owner;
+		int lock_owner_depth;
+	} die = {
+		.lock =			__RAW_SPIN_LOCK_UNLOCKED(die.lock),
+		.lock_owner =		-1,
+		.lock_owner_depth =	0
+	};
+	static int die_counter;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	if (debugger(regs))
@@ -115,6 +137,7 @@ static unsigned __kprobes long oops_begin(struct pt_regs *regs)
 
 	oops_enter();
 
+<<<<<<< HEAD
 	/* racy, but better than risking deadlock. */
 	raw_local_irq_save(flags);
 	cpu = smp_processor_id();
@@ -218,6 +241,66 @@ void die(const char *str, struct pt_regs *regs, long err)
 	if (__die(str, regs, err))
 		err = 0;
 	oops_end(flags, regs, err);
+=======
+	if (die.lock_owner != raw_smp_processor_id()) {
+		console_verbose();
+		raw_spin_lock_irqsave(&die.lock, flags);
+		die.lock_owner = smp_processor_id();
+		die.lock_owner_depth = 0;
+		bust_spinlocks(1);
+		if (machine_is(powermac))
+			pmac_backlight_unblank();
+	} else {
+		local_save_flags(flags);
+	}
+
+	if (++die.lock_owner_depth < 3) {
+		printk("Oops: %s, sig: %ld [#%d]\n", str, err, ++die_counter);
+#ifdef CONFIG_PREEMPT
+		printk("PREEMPT ");
+#endif
+#ifdef CONFIG_SMP
+		printk("SMP NR_CPUS=%d ", NR_CPUS);
+#endif
+#ifdef CONFIG_DEBUG_PAGEALLOC
+		printk("DEBUG_PAGEALLOC ");
+#endif
+#ifdef CONFIG_NUMA
+		printk("NUMA ");
+#endif
+		printk("%s\n", ppc_md.name ? ppc_md.name : "");
+
+		if (notify_die(DIE_OOPS, str, regs, err, 255,
+			       SIGSEGV) == NOTIFY_STOP)
+			return 1;
+
+		print_modules();
+		show_regs(regs);
+	} else {
+		printk("Recursive die() failure, output suppressed\n");
+	}
+
+	bust_spinlocks(0);
+	die.lock_owner = -1;
+	add_taint(TAINT_DIE);
+	raw_spin_unlock_irqrestore(&die.lock, flags);
+
+	if (kexec_should_crash(current) ||
+		kexec_sr_activated(smp_processor_id()))
+		crash_kexec(regs);
+	crash_kexec_secondary(regs);
+
+	if (in_interrupt())
+		panic("Fatal exception in interrupt");
+
+	if (panic_on_oops)
+		panic("Fatal exception");
+
+	oops_exit();
+	do_exit(err);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void user_single_step_siginfo(struct task_struct *tsk,
@@ -238,19 +321,29 @@ void _exception(int signr, struct pt_regs *regs, int code, unsigned long addr)
 			"at %016lx nip %016lx lr %016lx code %x\n";
 
 	if (!user_mode(regs)) {
+<<<<<<< HEAD
 		die("Exception in kernel mode", regs, signr);
 		return;
 	}
 
 	if (show_unhandled_signals && unhandled_signal(current, signr)) {
+=======
+		if (die("Exception in kernel mode", regs, signr))
+			return;
+	} else if (show_unhandled_signals &&
+		   unhandled_signal(current, signr)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk_ratelimited(regs->msr & MSR_64BIT ? fmt64 : fmt32,
 				   current->comm, current->pid, signr,
 				   addr, regs->nip, regs->link, code);
 	}
 
+<<<<<<< HEAD
 	if (arch_irqs_disabled() && !arch_irq_disabled_regs(regs))
 		local_irq_enable();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(&info, 0, sizeof(info));
 	info.si_signo = signr;
 	info.si_code = code;
@@ -267,8 +360,30 @@ void system_reset_exception(struct pt_regs *regs)
 			return;
 	}
 
+<<<<<<< HEAD
 	die("System Reset", regs, SIGABRT);
 
+=======
+#ifdef CONFIG_KEXEC
+	cpumask_set_cpu(smp_processor_id(), &cpus_in_sr);
+#endif
+
+	die("System Reset", regs, SIGABRT);
+
+	/*
+	 * Some CPUs when released from the debugger will execute this path.
+	 * These CPUs entered the debugger via a soft-reset. If the CPU was
+	 * hung before entering the debugger it will return to the hung
+	 * state when exiting this function.  This causes a problem in
+	 * kdump since the hung CPU(s) will not respond to the IPI sent
+	 * from kdump. To prevent the problem we call crash_kexec_secondary()
+	 * here. If a kdump had not been initiated or we exit the debugger
+	 * with the "exit and recover" command (x) crash_kexec_secondary()
+	 * will return after 5ms and the CPU returns to its previous state.
+	 */
+	crash_kexec_secondary(regs);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Must die if the interrupt is not recoverable */
 	if (!(regs->msr & MSR_RI))
 		panic("Unrecoverable System Reset");
@@ -487,6 +602,7 @@ int machine_check_e500mc(struct pt_regs *regs)
 
 	if (reason & MCSR_DCPERR_MC) {
 		printk("Data Cache Parity Error\n");
+<<<<<<< HEAD
 
 		/*
 		 * In write shadow mode we auto-recover from the error, but it
@@ -495,6 +611,9 @@ int machine_check_e500mc(struct pt_regs *regs)
 		 */
 		if (!(mfspr(SPRN_L1CSR2) & L1CSR2_DCWS))
 			recoverable = 0;
+=======
+		recoverable = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (reason & MCSR_L2MMU_MHIT) {
@@ -960,10 +1079,14 @@ static int emulate_instruction(struct pt_regs *regs)
 
 #ifdef CONFIG_PPC64
 	/* Emulate the mfspr rD, DSCR. */
+<<<<<<< HEAD
 	if ((((instword & PPC_INST_MFSPR_DSCR_USER_MASK) ==
 		PPC_INST_MFSPR_DSCR_USER) ||
 	     ((instword & PPC_INST_MFSPR_DSCR_MASK) ==
 		PPC_INST_MFSPR_DSCR)) &&
+=======
+	if (((instword & PPC_INST_MFSPR_DSCR_MASK) == PPC_INST_MFSPR_DSCR) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cpu_has_feature(CPU_FTR_DSCR)) {
 		PPC_WARN_EMULATED(mfdscr, regs);
 		rd = (instword >> 21) & 0x1f;
@@ -971,6 +1094,7 @@ static int emulate_instruction(struct pt_regs *regs)
 		return 0;
 	}
 	/* Emulate the mtspr DSCR, rD. */
+<<<<<<< HEAD
 	if ((((instword & PPC_INST_MTSPR_DSCR_USER_MASK) ==
 		PPC_INST_MTSPR_DSCR_USER) ||
 	     ((instword & PPC_INST_MTSPR_DSCR_MASK) ==
@@ -981,6 +1105,14 @@ static int emulate_instruction(struct pt_regs *regs)
 		current->thread.dscr = regs->gpr[rd];
 		current->thread.dscr_inherit = 1;
 		mtspr(SPRN_DSCR, current->thread.dscr);
+=======
+	if (((instword & PPC_INST_MTSPR_DSCR_MASK) == PPC_INST_MTSPR_DSCR) &&
+			cpu_has_feature(CPU_FTR_DSCR)) {
+		PPC_WARN_EMULATED(mtdscr, regs);
+		rd = (instword >> 21) & 0x1f;
+		mtspr(SPRN_DSCR, regs->gpr[rd]);
+		current->thread.dscr_inherit = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 #endif
@@ -1026,9 +1158,13 @@ void __kprobes program_check_exception(struct pt_regs *regs)
 		return;
 	}
 
+<<<<<<< HEAD
 	/* We restore the interrupt state now */
 	if (!arch_irq_disabled_regs(regs))
 		local_irq_enable();
+=======
+	local_irq_enable();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_MATH_EMULATION
 	/* (reason & REASON_ILLEGAL) would be the obvious thing here,
@@ -1078,10 +1214,13 @@ void alignment_exception(struct pt_regs *regs)
 {
 	int sig, code, fixed = 0;
 
+<<<<<<< HEAD
 	/* We restore the interrupt state now */
 	if (!arch_irq_disabled_regs(regs))
 		local_irq_enable();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* we don't implement logging of alignment exceptions */
 	if (!(current->thread.align_ctl & PR_UNALIGN_SIGBUS))
 		fixed = fix_alignment(regs);
@@ -1341,12 +1480,20 @@ void __kprobes DebugException(struct pt_regs *regs, unsigned long debug_status)
 
 		if (user_mode(regs)) {
 			current->thread.dbcr0 &= ~DBCR0_IC;
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_PPC_ADV_DEBUG_REGS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (DBCR_ACTIVE_EVENTS(current->thread.dbcr0,
 					       current->thread.dbcr1))
 				regs->msr |= MSR_DE;
 			else
 				/* Make sure the IDM bit is off */
 				current->thread.dbcr0 &= ~DBCR0_IDM;
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		_exception(SIGTRAP, regs, TRAP_TRACE, regs->nip);
@@ -1435,7 +1582,14 @@ void SPEFloatingPointException(struct pt_regs *regs)
 	int code = 0;
 	int err;
 
+<<<<<<< HEAD
 	flush_spe_to_thread(current);
+=======
+	preempt_disable();
+	if (regs->msr & MSR_SPE)
+		giveup_spe(current);
+	preempt_enable();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spefscr = current->thread.spefscr;
 	fpexc_mode = current->thread.fpexc_mode;

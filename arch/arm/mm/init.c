@@ -13,22 +13,36 @@
 #include <linux/init.h>
 #include <linux/bootmem.h>
 #include <linux/mman.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/nodemask.h>
 #include <linux/initrd.h>
 #include <linux/of_fdt.h>
 #include <linux/highmem.h>
 #include <linux/gfp.h>
 #include <linux/memblock.h>
+<<<<<<< HEAD
 
 #include <asm/mach-types.h>
 #include <asm/memblock.h>
+=======
+#include <linux/sort.h>
+#include <linux/dma-contiguous.h>
+
+#include <asm/mach-types.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/prom.h>
 #include <asm/sections.h>
 #include <asm/setup.h>
 #include <asm/sizes.h>
 #include <asm/tlb.h>
 #include <asm/fixmap.h>
+<<<<<<< HEAD
+=======
+#include <asm/memory.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
@@ -133,12 +147,48 @@ void show_mem(unsigned int filter)
 	printk("%d pages swap cached\n", cached);
 }
 
+<<<<<<< HEAD
 static void __init find_limits(unsigned long *min, unsigned long *max_low,
 			       unsigned long *max_high)
+=======
+#ifdef CONFIG_MEMORY_HOTPLUG
+int arch_add_memory(int nid, u64 start, u64 size)
+{
+	pg_data_t *pgdat;
+	unsigned long start_pfn = start >> PAGE_SHIFT;
+	unsigned long nr_pages = size >> PAGE_SHIFT;
+	int ret;
+
+	pgdat = NODE_DATA(nid);
+
+	/* We only have ZONE_NORMAL, so this is easy.. */
+	ret = __add_pages(nid, pgdat->node_zones + ZONE_NORMAL,
+				start_pfn, nr_pages);
+	if (unlikely(ret))
+		printk("%s: Failed, __add_pages() == %d\n", __func__, ret);
+
+	return ret;
+}
+EXPORT_SYMBOL_GPL(arch_add_memory);
+
+#ifdef CONFIG_NUMA
+int memory_add_physaddr_to_nid(u64 addr)
+{
+	/* Node 0 for now.. */
+	return 0;
+}
+EXPORT_SYMBOL_GPL(memory_add_physaddr_to_nid);
+#endif
+#endif /* CONFIG_MEMORY_HOTPLUG */
+
+static void __init find_limits(unsigned long *min, unsigned long *max_low,
+	unsigned long *max_high)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct meminfo *mi = &meminfo;
 	int i;
 
+<<<<<<< HEAD
 	/* This assumes the meminfo array is properly sorted */
 	*min = bank_pfn_start(&mi->bank[0]);
 	for_each_bank (i, mi)
@@ -146,6 +196,27 @@ static void __init find_limits(unsigned long *min, unsigned long *max_low,
 				break;
 	*max_low = bank_pfn_end(&mi->bank[i - 1]);
 	*max_high = bank_pfn_end(&mi->bank[mi->nr_banks - 1]);
+=======
+	*min = -1UL;
+	*max_low = *max_high = 0;
+
+	for_each_bank (i, mi) {
+		struct membank *bank = &mi->bank[i];
+		unsigned long start, end;
+
+		start = bank_pfn_start(bank);
+		end = bank_pfn_end(bank);
+
+		if (*min > start)
+			*min = start;
+		if (*max_high < end)
+			*max_high = end;
+		if (bank->highmem)
+			continue;
+		if (*max_low < end)
+			*max_low = end;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __init arm_bootmem_init(unsigned long start_pfn,
@@ -202,7 +273,15 @@ static void __init arm_bootmem_init(unsigned long start_pfn,
 
 #ifdef CONFIG_ZONE_DMA
 
+<<<<<<< HEAD
 unsigned long arm_dma_zone_size __read_mostly;
+=======
+#ifdef ARM_DMA_ZONE_SIZE
+unsigned long arm_dma_zone_size = ARM_DMA_ZONE_SIZE;
+#else
+unsigned long arm_dma_zone_size __read_mostly;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL(arm_dma_zone_size);
 
 /*
@@ -226,6 +305,20 @@ static void __init arm_adjust_dma_zone(unsigned long *size, unsigned long *hole,
 }
 #endif
 
+<<<<<<< HEAD
+=======
+void __init setup_dma_zone(struct machine_desc *mdesc)
+{
+#ifdef CONFIG_ZONE_DMA
+	if (mdesc->dma_zone_size) {
+		arm_dma_zone_size = mdesc->dma_zone_size;
+		arm_dma_limit = PHYS_OFFSET + arm_dma_zone_size - 1;
+	} else
+		arm_dma_limit = 0xffffffff;
+#endif
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init arm_bootmem_free(unsigned long min, unsigned long max_low,
 	unsigned long max_high)
 {
@@ -273,12 +366,18 @@ static void __init arm_bootmem_free(unsigned long min, unsigned long max_low,
 	 * Adjust the sizes according to any special requirements for
 	 * this machine type.
 	 */
+<<<<<<< HEAD
 	if (arm_dma_zone_size) {
 		arm_adjust_dma_zone(zone_size, zhole_size,
 			arm_dma_zone_size >> PAGE_SHIFT);
 		arm_dma_limit = PHYS_OFFSET + arm_dma_zone_size - 1;
 	} else
 		arm_dma_limit = 0xffffffff;
+=======
+	if (arm_dma_zone_size)
+		arm_adjust_dma_zone(zone_size, zhole_size,
+			arm_dma_zone_size >> PAGE_SHIFT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	free_area_init_node(0, zone_size, min, zhole_size);
@@ -287,17 +386,29 @@ static void __init arm_bootmem_free(unsigned long min, unsigned long max_low,
 #ifdef CONFIG_HAVE_ARCH_PFN_VALID
 int pfn_valid(unsigned long pfn)
 {
+<<<<<<< HEAD
 	return memblock_is_memory(__pfn_to_phys(pfn));
+=======
+	return memblock_is_memory(pfn << PAGE_SHIFT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(pfn_valid);
 #endif
 
 #ifndef CONFIG_SPARSEMEM
+<<<<<<< HEAD
 static void __init arm_memory_present(void)
 {
 }
 #else
 static void __init arm_memory_present(void)
+=======
+static void arm_memory_present(void)
+{
+}
+#else
+static void arm_memory_present(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct memblock_region *reg;
 
@@ -307,6 +418,7 @@ static void __init arm_memory_present(void)
 }
 #endif
 
+<<<<<<< HEAD
 static bool arm_memblock_steal_permitted = true;
 
 phys_addr_t __init arm_memblock_steal(phys_addr_t size, phys_addr_t align)
@@ -320,12 +432,25 @@ phys_addr_t __init arm_memblock_steal(phys_addr_t size, phys_addr_t align)
 	memblock_remove(phys, size);
 
 	return phys;
+=======
+static int __init meminfo_cmp(const void *_a, const void *_b)
+{
+	const struct membank *a = _a, *b = _b;
+	long cmp = bank_pfn_start(a) - bank_pfn_start(b);
+	return cmp < 0 ? -1 : cmp > 0 ? 1 : 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __init arm_memblock_init(struct meminfo *mi, struct machine_desc *mdesc)
 {
 	int i;
 
+<<<<<<< HEAD
+=======
+	sort(&meminfo.bank, meminfo.nr_banks, sizeof(meminfo.bank[0]), meminfo_cmp, NULL);
+
+	memblock_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < mi->nr_banks; i++)
 		memblock_add(mi->bank[i].start, mi->bank[i].size);
 
@@ -364,8 +489,16 @@ void __init arm_memblock_init(struct meminfo *mi, struct machine_desc *mdesc)
 	if (mdesc->reserve)
 		mdesc->reserve();
 
+<<<<<<< HEAD
 	arm_memblock_steal_permitted = false;
 	memblock_allow_resize();
+=======
+	/* reserve memory for DMA contigouos allocations,
+	   must come from DMA area inside low memory */
+	dma_contiguous_reserve(arm_dma_limit < arm_lowmem_limit ?
+			       arm_dma_limit : arm_lowmem_limit);
+	memblock_analyze();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memblock_dump_all();
 }
 
@@ -397,6 +530,11 @@ void __init bootmem_init(void)
 	 */
 	arm_bootmem_free(min, max_low, max_high);
 
+<<<<<<< HEAD
+=======
+	high_memory = __va(((phys_addr_t)max_low << PAGE_SHIFT) - 1) + 1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * This doesn't seem to be used by the Linux memory manager any
 	 * more, but is used by ll_rw_block.  If we can get rid of it, we
@@ -427,6 +565,7 @@ static inline int free_area(unsigned long pfn, unsigned long end, char *s)
 	return pages;
 }
 
+<<<<<<< HEAD
 /*
  * Poison init memory with an undefined instruction (ARM) or a branch to an
  * undefined instruction (Thumb).
@@ -438,6 +577,8 @@ static inline void poison_init_mem(void *s, size_t count)
 		*p++ = 0xe7fddef0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void
 free_memmap(unsigned long start_pfn, unsigned long end_pfn)
 {
@@ -658,11 +799,17 @@ void __init mem_init(void)
 #ifdef CONFIG_HIGHMEM
 			"    pkmap   : 0x%08lx - 0x%08lx   (%4ld MB)\n"
 #endif
+<<<<<<< HEAD
 #ifdef CONFIG_MODULES
 			"    modules : 0x%08lx - 0x%08lx   (%4ld MB)\n"
 #endif
 			"      .text : 0x%p" " - 0x%p" "   (%4d kB)\n"
 			"      .init : 0x%p" " - 0x%p" "   (%4d kB)\n"
+=======
+			"    modules : 0x%08lx - 0x%08lx   (%4ld MB)\n"
+			"      .init : 0x%p" " - 0x%p" "   (%4d kB)\n"
+			"      .text : 0x%p" " - 0x%p" "   (%4d kB)\n"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"      .data : 0x%p" " - 0x%p" "   (%4d kB)\n"
 			"       .bss : 0x%p" " - 0x%p" "   (%4d kB)\n",
 
@@ -679,12 +826,19 @@ void __init mem_init(void)
 			MLM(PKMAP_BASE, (PKMAP_BASE) + (LAST_PKMAP) *
 				(PAGE_SIZE)),
 #endif
+<<<<<<< HEAD
 #ifdef CONFIG_MODULES
 			MLM(MODULES_VADDR, MODULES_END),
 #endif
 
 			MLK_ROUNDUP(_text, _etext),
 			MLK_ROUNDUP(__init_begin, __init_end),
+=======
+			MLM(MODULES_VADDR, MODULES_END),
+
+			MLK_ROUNDUP(__init_begin, __init_end),
+			MLK_ROUNDUP(_text, _etext),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			MLK_ROUNDUP(_sdata, _edata),
 			MLK_ROUNDUP(__bss_start, __bss_stop));
 
@@ -722,13 +876,19 @@ void free_initmem(void)
 #ifdef CONFIG_HAVE_TCM
 	extern char __tcm_start, __tcm_end;
 
+<<<<<<< HEAD
 	poison_init_mem(&__tcm_start, &__tcm_end - &__tcm_start);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	totalram_pages += free_area(__phys_to_pfn(__pa(&__tcm_start)),
 				    __phys_to_pfn(__pa(&__tcm_end)),
 				    "TCM link");
 #endif
 
+<<<<<<< HEAD
 	poison_init_mem(__init_begin, __init_end - __init_begin);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!machine_is_integrator() && !machine_is_cintegrator())
 		totalram_pages += free_area(__phys_to_pfn(__pa(__init_begin)),
 					    __phys_to_pfn(__pa(__init_end)),
@@ -741,12 +901,19 @@ static int keep_initrd;
 
 void free_initrd_mem(unsigned long start, unsigned long end)
 {
+<<<<<<< HEAD
 	if (!keep_initrd) {
 		poison_init_mem((void *)start, PAGE_ALIGN(end) - start);
 		totalram_pages += free_area(__phys_to_pfn(__pa(start)),
 					    __phys_to_pfn(__pa(end)),
 					    "initrd");
 	}
+=======
+	if (!keep_initrd)
+		totalram_pages += free_area(__phys_to_pfn(__pa(start)),
+					    __phys_to_pfn(__pa(end)),
+					    "initrd");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __init keepinitrd_setup(char *__unused)

@@ -29,6 +29,12 @@
 #include <dspbridge/dev.h>
 #include "_tiomap.h"
 
+<<<<<<< HEAD
+=======
+/*  ----------------------------------- Trace & Debug */
+#include <dspbridge/dbc.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*  ----------------------------------- This */
 #include <dspbridge/clk.h>
 
@@ -51,7 +57,10 @@
 
 /* Bridge GPT id (1 - 4), DM Timer id (5 - 8) */
 #define DMT_ID(id) ((id) + 4)
+<<<<<<< HEAD
 #define DM_TIMER_CLOCKS		4
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Bridge MCBSP id (6 - 10), OMAP Mcbsp id (0 - 4) */
 #define MCBSP_ID(id) ((id) - 6)
@@ -112,6 +121,7 @@ static s8 get_clk_type(u8 id)
  */
 void dsp_clk_exit(void)
 {
+<<<<<<< HEAD
 	int i;
 
 	dsp_clock_disable_all(dsp_clocks);
@@ -119,6 +129,10 @@ void dsp_clk_exit(void)
 	for (i = 0; i < DM_TIMER_CLOCKS; i++)
 		omap_dm_timer_free(timer[i]);
 
+=======
+	dsp_clock_disable_all(dsp_clocks);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clk_put(iva2_clk);
 	clk_put(ssi.sst_fck);
 	clk_put(ssi.ssr_fck);
@@ -133,6 +147,7 @@ void dsp_clk_exit(void)
 void dsp_clk_init(void)
 {
 	static struct platform_device dspbridge_device;
+<<<<<<< HEAD
 	int i, id;
 
 	dspbridge_device.dev.bus = &platform_bus_type;
@@ -140,6 +155,11 @@ void dsp_clk_init(void)
 	for (i = 0, id = 5; i < DM_TIMER_CLOCKS; i++, id++)
 		timer[i] = omap_dm_timer_request_specific(id);
 
+=======
+
+	dspbridge_device.dev.bus = &platform_bus_type;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iva2_clk = clk_get(&dspbridge_device.dev, "iva2_ck");
 	if (IS_ERR(iva2_clk))
 		dev_err(bridge, "failed to get iva2 clock %p\n", iva2_clk);
@@ -211,10 +231,19 @@ int dsp_clk_enable(enum dsp_clk_id clk_id)
 		clk_enable(iva2_clk);
 		break;
 	case GPT_CLK:
+<<<<<<< HEAD
 		status = omap_dm_timer_start(timer[clk_id - 1]);
 		break;
 #ifdef CONFIG_OMAP_MCBSP
 	case MCBSP_CLK:
+=======
+		timer[clk_id - 1] =
+				omap_dm_timer_request_specific(DMT_ID(clk_id));
+		break;
+#ifdef CONFIG_OMAP_MCBSP
+	case MCBSP_CLK:
+		omap_mcbsp_set_io_type(MCBSP_ID(clk_id), OMAP_MCBSP_POLL_IO);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		omap_mcbsp_request(MCBSP_ID(clk_id));
 		omap2_mcbsp_set_clks_src(MCBSP_ID(clk_id), MCBSP_CLKS_PAD_SRC);
 		break;
@@ -287,7 +316,11 @@ int dsp_clk_disable(enum dsp_clk_id clk_id)
 		clk_disable(iva2_clk);
 		break;
 	case GPT_CLK:
+<<<<<<< HEAD
 		status = omap_dm_timer_stop(timer[clk_id - 1]);
+=======
+		omap_dm_timer_free(timer[clk_id - 1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 #ifdef CONFIG_OMAP_MCBSP
 	case MCBSP_CLK:

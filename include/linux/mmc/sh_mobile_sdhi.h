@@ -1,11 +1,17 @@
+<<<<<<< HEAD
 #ifndef LINUX_MMC_SH_MOBILE_SDHI_H
 #define LINUX_MMC_SH_MOBILE_SDHI_H
+=======
+#ifndef __SH_MOBILE_SDHI_H__
+#define __SH_MOBILE_SDHI_H__
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/types.h>
 
 struct platform_device;
 struct tmio_mmc_data;
 
+<<<<<<< HEAD
 #define SH_MOBILE_SDHI_IRQ_CARD_DETECT	"card_detect"
 #define SH_MOBILE_SDHI_IRQ_SDCARD	"sdcard"
 #define SH_MOBILE_SDHI_IRQ_SDIO		"sdio"
@@ -18,12 +24,15 @@ struct sh_mobile_sdhi_ops {
 	void (*cd_wakeup)(const struct platform_device *pdev);
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct sh_mobile_sdhi_info {
 	int dma_slave_tx;
 	int dma_slave_rx;
 	unsigned long tmio_flags;
 	unsigned long tmio_caps;
 	u32 tmio_ocr_mask;	/* available MMC voltages */
+<<<<<<< HEAD
 	unsigned int cd_gpio;
 	struct tmio_mmc_data *pdata;
 	void (*set_pwr)(struct platform_device *pdev, int state);
@@ -36,3 +45,11 @@ struct sh_mobile_sdhi_info {
 };
 
 #endif /* LINUX_MMC_SH_MOBILE_SDHI_H */
+=======
+	struct tmio_mmc_data *pdata;
+	void (*set_pwr)(struct platform_device *pdev, int state);
+	int (*get_cd)(struct platform_device *pdev);
+};
+
+#endif /* __SH_MOBILE_SDHI_H__ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

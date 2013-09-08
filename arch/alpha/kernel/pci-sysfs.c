@@ -10,7 +10,10 @@
  */
 
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <linux/stat.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/pci.h>
 

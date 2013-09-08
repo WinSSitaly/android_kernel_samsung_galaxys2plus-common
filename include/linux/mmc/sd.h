@@ -9,8 +9,13 @@
  * your option) any later version.
  */
 
+<<<<<<< HEAD
 #ifndef LINUX_MMC_SD_H
 #define LINUX_MMC_SD_H
+=======
+#ifndef MMC_SD_H
+#define MMC_SD_H
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* SD commands                           type  argument     response */
   /* class 0 */
@@ -91,4 +96,9 @@
 #define SD_SWITCH_ACCESS_DEF	0
 #define SD_SWITCH_ACCESS_HS	1
 
+<<<<<<< HEAD
 #endif /* LINUX_MMC_SD_H */
+=======
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

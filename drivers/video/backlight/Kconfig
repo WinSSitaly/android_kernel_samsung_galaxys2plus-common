@@ -117,6 +117,7 @@ config LCD_LD9040
 	  If you have an LD9040 Panel, say Y to enable its
 	  control driver.
 
+<<<<<<< HEAD
 config LCD_AMS369FG06
 	tristate "AMS369FG06 AMOLED LCD Driver"
 	depends on SPI && BACKLIGHT_CLASS_DEVICE
@@ -125,6 +126,8 @@ config LCD_AMS369FG06
 	  If you have an AMS369FG06 AMOLED Panel, say Y to enable its
 	  LCD control driver.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endif # LCD_CLASS_DEVICE
 
 #
@@ -245,12 +248,15 @@ config BACKLIGHT_DA903X
 	  If you have a LCD backlight connected to the WLED output of DA9030
 	  or DA9034 WLED output, say Y here to enable this driver.
 
+<<<<<<< HEAD
 config BACKLIGHT_DA9052
 	tristate "Dialog DA9052/DA9053 WLED"
 	depends on PMIC_DA9052
 	help
 	  Enable the Backlight Driver for DA9052-BC and DA9053-AA/Bx PMICs.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config BACKLIGHT_MAX8925
 	tristate "Backlight driver for MAX8925"
 	depends on MFD_MAX8925
@@ -286,6 +292,17 @@ config BACKLIGHT_WM831X
 	  If you have a backlight driven by the ISINK and DCDC of a
 	  WM831x PMIC say y to enable the backlight driver for it.
 
+<<<<<<< HEAD
+=======
+config BACKLIGHT_ADX
+	tristate "Avionic Design Xanthos Backlight Driver"
+	depends on ARCH_PXA_ADX
+	default y
+	help
+	  Say Y to enable the backlight driver on Avionic Design Xanthos-based
+	  boards.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config BACKLIGHT_ADP5520
 	tristate "Backlight Driver for ADP5520/ADP5501 using WLED"
 	depends on PMIC_ADP5520
@@ -308,6 +325,23 @@ config BACKLIGHT_ADP8860
 	  To compile this driver as a module, choose M here: the module will
 	  be called adp8860_bl.
 
+<<<<<<< HEAD
+=======
+config BACKLIGHT_KTD3102
+	tristate "backlight driver"
+	depends on y
+	default n
+	help
+        backlight driver.
+
+ config BACKLIGHT_KTD3103
+	tristate "backlight driver"
+	depends on y
+	default n
+	help
+        backlight driver. 
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config BACKLIGHT_ADP8870
 	tristate "Backlight Driver for ADP8870 using WLED"
 	depends on BACKLIGHT_CLASS_DEVICE && I2C
@@ -333,6 +367,7 @@ config BACKLIGHT_PCF50633
 	  If you have a backlight driven by a NXP PCF50633 MFD, say Y here to
 	  enable its driver.
 
+<<<<<<< HEAD
 config BACKLIGHT_AAT2870
 	tristate "AnalogicTech AAT2870 Backlight"
 	depends on BACKLIGHT_CLASS_DEVICE && MFD_AAT2870_CORE
@@ -360,6 +395,14 @@ config BACKLIGHT_PANDORA
 	help
 	  If you have a Pandora console, say Y to enable the
 	  backlight driver.
+=======
+config TOUCHKEY_BACKLIGHT
+	tristate "backlight driver"
+	depends on y
+	default n
+	help
+        backlight driver.     
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 endif # BACKLIGHT_CLASS_DEVICE
 

@@ -168,6 +168,7 @@ that if the completion handler or anyone else tries to resubmit it
 they will get a -EPERM error.  Thus you can be sure that when
 usb_kill_urb() returns, the URB is totally idle.
 
+<<<<<<< HEAD
 There is a lifetime issue to consider.  An URB may complete at any
 time, and the completion handler may free the URB.  If this happens
 while usb_unlink_urb or usb_kill_urb is running, it will cause a
@@ -190,6 +191,8 @@ decrement the reference count by calling usb_free_urb.  Of course,
 none of this is necessary if there's no danger of the URB being freed
 by the completion handler.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 1.7. What about the completion handler?
 

@@ -66,6 +66,7 @@ done:
 	return ret;
 }
 
+<<<<<<< HEAD
 int res_counter_charge_nofail(struct res_counter *counter, unsigned long val,
 			      struct res_counter **limit_fail_at)
 {
@@ -91,6 +92,8 @@ int res_counter_charge_nofail(struct res_counter *counter, unsigned long val,
 
 	return ret;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void res_counter_uncharge_locked(struct res_counter *counter, unsigned long val)
 {
 	if (WARN_ON(counter->usage < val))
@@ -184,7 +187,12 @@ int res_counter_memparse_write_strategy(const char *buf,
 		return 0;
 	}
 
+<<<<<<< HEAD
 	*res = memparse(buf, &end);
+=======
+	/* FIXME - make memparse() take const char* args */
+	*res = memparse((char *)buf, &end);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (*end != '\0')
 		return -EINVAL;
 

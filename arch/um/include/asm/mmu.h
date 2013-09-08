@@ -1,4 +1,5 @@
 /* 
+<<<<<<< HEAD
  * Copyright (C) 2002 - 2007 Jeff Dike (jdike@{addtoit,linux.intel}.com)
  * Licensed under the GPL
  */
@@ -22,3 +23,16 @@ extern long init_new_ldt(struct mm_context *to_mm, struct mm_context *from_mm);
 extern void free_ldt(struct mm_context *mm);
 
 #endif
+=======
+ * Copyright (C) 2002 Jeff Dike (jdike@karaya.com)
+ * Licensed under the GPL
+ */
+
+#ifndef __MMU_H
+#define __MMU_H
+
+#include "um_mmu.h"
+
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

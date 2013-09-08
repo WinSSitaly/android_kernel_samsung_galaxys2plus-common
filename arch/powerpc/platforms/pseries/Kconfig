@@ -1,9 +1,13 @@
 config PPC_PSERIES
 	depends on PPC64 && PPC_BOOK3S
 	bool "IBM pSeries & new (POWER5-based) iSeries"
+<<<<<<< HEAD
 	select HAVE_PCSPKR_PLATFORM
 	select MPIC
 	select OF_DYNAMIC
+=======
+	select MPIC
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select PCI_MSI
 	select PPC_XICS
 	select PPC_ICP_NATIVE
@@ -16,7 +20,10 @@ config PPC_PSERIES
 	select PPC_UDBG_16550
 	select PPC_NATIVE
 	select PPC_PCI_CHOICE if EXPERT
+<<<<<<< HEAD
 	select ZLIB_DEFLATE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default y
 
 config PPC_SPLPAR
@@ -30,9 +37,15 @@ config PPC_SPLPAR
 	  two or more partitions.
 
 config EEH
+<<<<<<< HEAD
 	bool
 	depends on PPC_PSERIES && PCI
 	default y
+=======
+	bool "PCI Extended Error Handling (EEH)" if EXPERT
+	depends on PPC_PSERIES && PCI
+	default y if !EXPERT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config PSERIES_MSI
        bool
@@ -73,7 +86,11 @@ config IO_EVENT_IRQ
 
 config LPARCFG
 	bool "LPAR Configuration Data"
+<<<<<<< HEAD
 	depends on PPC_PSERIES
+=======
+	depends on PPC_PSERIES || PPC_ISERIES
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	Provide system capacity information via human readable
 	<key word>=<value> pairs through a /proc/ppc64/lparcfg interface.
@@ -121,6 +138,7 @@ config DTL
 	  which are accessible through a debugfs file.
 
 	  Say N if you are unsure.
+<<<<<<< HEAD
 
 config PSERIES_IDLE
 	bool "Cpuidle driver for pSeries platforms"
@@ -130,3 +148,5 @@ config PSERIES_IDLE
 	help
 	  Select this option to enable processor idle state management
 	  through cpuidle subsystem.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

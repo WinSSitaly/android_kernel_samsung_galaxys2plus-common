@@ -410,7 +410,11 @@ int ubi_leb_read(struct ubi_volume_desc *desc, int lnum, char *buf, int offset,
 		return 0;
 
 	err = ubi_eba_read_leb(ubi, vol, lnum, buf, offset, len, check);
+<<<<<<< HEAD
 	if (err && mtd_is_eccerr(err) && vol->vol_type == UBI_STATIC_VOLUME) {
+=======
+	if (err && err == -EBADMSG && vol->vol_type == UBI_STATIC_VOLUME) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ubi_warn("mark volume %d as corrupted", vol_id);
 		vol->corrupted = 1;
 	}
@@ -714,7 +718,13 @@ int ubi_sync(int ubi_num)
 	if (!ubi)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	mtd_sync(ubi->mtd);
+=======
+	if (ubi->mtd->sync)
+		ubi->mtd->sync(ubi->mtd);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ubi_put_device(ubi);
 	return 0;
 }

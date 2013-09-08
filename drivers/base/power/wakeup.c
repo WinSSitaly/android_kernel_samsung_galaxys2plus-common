@@ -10,7 +10,10 @@
 #include <linux/slab.h>
 #include <linux/sched.h>
 #include <linux/capability.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/suspend.h>
 #include <linux/seq_file.h>
 #include <linux/debugfs.h>
@@ -53,6 +56,7 @@ static void pm_wakeup_timer_fn(unsigned long data);
 static LIST_HEAD(wakeup_sources);
 
 /**
+<<<<<<< HEAD
  * wakeup_source_prepare - Prepare a new wakeup source for initialization.
  * @ws: Wakeup source to prepare.
  * @name: Pointer to the name of the new wakeup source.
@@ -70,6 +74,8 @@ void wakeup_source_prepare(struct wakeup_source *ws, const char *name)
 EXPORT_SYMBOL_GPL(wakeup_source_prepare);
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * wakeup_source_create - Create a struct wakeup_source object.
  * @name: Name of the new wakeup source.
  */
@@ -77,16 +83,28 @@ struct wakeup_source *wakeup_source_create(const char *name)
 {
 	struct wakeup_source *ws;
 
+<<<<<<< HEAD
 	ws = kmalloc(sizeof(*ws), GFP_KERNEL);
 	if (!ws)
 		return NULL;
 
 	wakeup_source_prepare(ws, name ? kstrdup(name, GFP_KERNEL) : NULL);
+=======
+	ws = kzalloc(sizeof(*ws), GFP_KERNEL);
+	if (!ws)
+		return NULL;
+
+	spin_lock_init(&ws->lock);
+	if (name)
+		ws->name = kstrdup(name, GFP_KERNEL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ws;
 }
 EXPORT_SYMBOL_GPL(wakeup_source_create);
 
 /**
+<<<<<<< HEAD
  * wakeup_source_drop - Prepare a struct wakeup_source object for destruction.
  * @ws: Wakeup source to prepare for destruction.
  *
@@ -108,13 +126,30 @@ EXPORT_SYMBOL_GPL(wakeup_source_drop);
  * @ws: Wakeup source to destroy.
  *
  * Use only for wakeup source objects created with wakeup_source_create().
+=======
+ * wakeup_source_destroy - Destroy a struct wakeup_source object.
+ * @ws: Wakeup source to destroy.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void wakeup_source_destroy(struct wakeup_source *ws)
 {
 	if (!ws)
 		return;
 
+<<<<<<< HEAD
 	wakeup_source_drop(ws);
+=======
+	spin_lock_irq(&ws->lock);
+	while (ws->active) {
+		spin_unlock_irq(&ws->lock);
+
+		schedule_timeout_interruptible(msecs_to_jiffies(TIMEOUT));
+
+		spin_lock_irq(&ws->lock);
+	}
+	spin_unlock_irq(&ws->lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(ws->name);
 	kfree(ws);
 }
@@ -129,7 +164,10 @@ void wakeup_source_add(struct wakeup_source *ws)
 	if (WARN_ON(!ws))
 		return;
 
+<<<<<<< HEAD
 	spin_lock_init(&ws->lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	setup_timer(&ws->timer, pm_wakeup_timer_fn, (unsigned long)ws);
 	ws->active = false;
 
@@ -177,10 +215,15 @@ EXPORT_SYMBOL_GPL(wakeup_source_register);
  */
 void wakeup_source_unregister(struct wakeup_source *ws)
 {
+<<<<<<< HEAD
 	if (ws) {
 		wakeup_source_remove(ws);
 		wakeup_source_destroy(ws);
 	}
+=======
+	wakeup_source_remove(ws);
+	wakeup_source_destroy(ws);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(wakeup_source_unregister);
 
@@ -304,9 +347,13 @@ EXPORT_SYMBOL_GPL(device_set_wakeup_capable);
  *
  * By default, most devices should leave wakeup disabled.  The exceptions are
  * devices that everyone expects to be wakeup sources: keyboards, power buttons,
+<<<<<<< HEAD
  * possibly network interfaces, etc.  Also, devices that don't generate their
  * own wakeup requests but merely forward requests from one bus to another
  * (like PCI bridges) should have wakeup enabled by default.
+=======
+ * possibly network interfaces, etc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int device_init_wakeup(struct device *dev, bool enable)
 {
@@ -376,6 +423,10 @@ static void wakeup_source_activate(struct wakeup_source *ws)
 {
 	ws->active = true;
 	ws->active_count++;
+<<<<<<< HEAD
+=======
+	ws->timer_expires = jiffies;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ws->last_time = ktime_get();
 
 	/* Increment the counter of events in progress. */
@@ -396,6 +447,7 @@ void __pm_stay_awake(struct wakeup_source *ws)
 		return;
 
 	spin_lock_irqsave(&ws->lock, flags);
+<<<<<<< HEAD
 
 	ws->event_count++;
 	if (!ws->active)
@@ -404,6 +456,11 @@ void __pm_stay_awake(struct wakeup_source *ws)
 	del_timer(&ws->timer);
 	ws->timer_expires = 0;
 
+=======
+	ws->event_count++;
+	if (!ws->active)
+		wakeup_source_activate(ws);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&ws->lock, flags);
 }
 EXPORT_SYMBOL_GPL(__pm_stay_awake);
@@ -469,7 +526,10 @@ static void wakeup_source_deactivate(struct wakeup_source *ws)
 		ws->max_time = duration;
 
 	del_timer(&ws->timer);
+<<<<<<< HEAD
 	ws->timer_expires = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Increment the counter of registered wakeup events and decrement the
@@ -524,6 +584,7 @@ EXPORT_SYMBOL_GPL(pm_relax);
  * pm_wakeup_timer_fn - Delayed finalization of a wakeup event.
  * @data: Address of the wakeup source object associated with the event source.
  *
+<<<<<<< HEAD
  * Call wakeup_source_deactivate() for the wakeup source whose address is stored
  * in @data if it is currently active and its timer has not been canceled and
  * the expiration time of the timer is not in future.
@@ -540,6 +601,13 @@ static void pm_wakeup_timer_fn(unsigned long data)
 		wakeup_source_deactivate(ws);
 
 	spin_unlock_irqrestore(&ws->lock, flags);
+=======
+ * Call __pm_relax() for the wakeup source whose address is stored in @data.
+ */
+static void pm_wakeup_timer_fn(unsigned long data)
+{
+	__pm_relax((struct wakeup_source *)data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -577,7 +645,11 @@ void __pm_wakeup_event(struct wakeup_source *ws, unsigned int msec)
 	if (!expires)
 		expires = 1;
 
+<<<<<<< HEAD
 	if (!ws->timer_expires || time_after(expires, ws->timer_expires)) {
+=======
+	if (time_after(expires, ws->timer_expires)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mod_timer(&ws->timer, expires);
 		ws->timer_expires = expires;
 	}

@@ -387,7 +387,10 @@ struct cx231xx_board cx231xx_boards[] = {
 		.norm = V4L2_STD_NTSC,
 		.no_alt_vanc = 1,
 		.external_av = 1,
+<<<<<<< HEAD
 		.dont_use_port_3 = 1,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.input = {{
 			.type = CX231XX_VMUX_COMPOSITE1,
 			.vmux = CX231XX_VIN_2_1,
@@ -533,6 +536,7 @@ struct cx231xx_board cx231xx_boards[] = {
 			.gpio = NULL,
 		} },
 	},
+<<<<<<< HEAD
 	[CX231XX_BOARD_HAUPPAUGE_USB2_FM_PAL] = {
 		.name = "Hauppauge WinTV USB2 FM (PAL)",
 		.tuner_type = TUNER_NXP_TDA18271,
@@ -603,6 +607,8 @@ struct cx231xx_board cx231xx_boards[] = {
 			.gpio = NULL,
 		} },
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 const unsigned int cx231xx_bcount = ARRAY_SIZE(cx231xx_boards);
 
@@ -624,10 +630,13 @@ struct usb_device_id cx231xx_id_table[] = {
 	 .driver_info = CX231XX_BOARD_CNXT_RDE_250},
 	{USB_DEVICE(0x0572, 0x58A0),
 	 .driver_info = CX231XX_BOARD_CNXT_RDU_250},
+<<<<<<< HEAD
 	{USB_DEVICE(0x2040, 0xb110),
 	 .driver_info = CX231XX_BOARD_HAUPPAUGE_USB2_FM_PAL},
 	{USB_DEVICE(0x2040, 0xb111),
 	 .driver_info = CX231XX_BOARD_HAUPPAUGE_USB2_FM_NTSC},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{USB_DEVICE(0x2040, 0xb120),
 	 .driver_info = CX231XX_BOARD_HAUPPAUGE_EXETER},
 	{USB_DEVICE(0x2040, 0xb140),
@@ -843,6 +852,7 @@ void cx231xx_release_resources(struct cx231xx *dev)
 
 	cx231xx_remove_from_devlist(dev);
 
+<<<<<<< HEAD
 	cx231xx_ir_exit(dev);
 
 	/* Release I2C buses */
@@ -850,10 +860,17 @@ void cx231xx_release_resources(struct cx231xx *dev)
 
 	/* delete v4l2 device */
 	v4l2_device_unregister(&dev->v4l2_dev);
+=======
+	/* Release I2C buses */
+	cx231xx_dev_uninit(dev);
+
+	cx231xx_ir_exit(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	usb_put_dev(dev->udev);
 
 	/* Mark device as unused */
+<<<<<<< HEAD
 	clear_bit(dev->devno, &cx231xx_devused);
 
 	kfree(dev->video_mode.alt_max_pkt_size);
@@ -861,15 +878,25 @@ void cx231xx_release_resources(struct cx231xx *dev)
 	kfree(dev->sliced_cc_mode.alt_max_pkt_size);
 	kfree(dev->ts1_mode.alt_max_pkt_size);
 	kfree(dev);
+=======
+	cx231xx_devused &= ~(1 << dev->devno);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * cx231xx_init_dev()
  * allocates and inits the device structs, registers i2c bus and v4l device
  */
+<<<<<<< HEAD
 static int cx231xx_init_dev(struct cx231xx *dev, struct usb_device *udev,
 			    int minor)
 {
+=======
+static int cx231xx_init_dev(struct cx231xx **devhandle, struct usb_device *udev,
+			    int minor)
+{
+	struct cx231xx *dev = *devhandle;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int retval = -ENOMEM;
 	int errCode;
 	unsigned int maxh, maxw;
@@ -1024,6 +1051,10 @@ static int cx231xx_usb_probe(struct usb_interface *interface,
 	int i, isoc_pipe = 0;
 	char *speed;
 	char descr[255] = "";
+<<<<<<< HEAD
+=======
+	struct usb_interface *lif = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct usb_interface_assoc_descriptor *assoc_desc;
 
 	udev = usb_get_dev(interface_to_usbdev(interface));
@@ -1037,6 +1068,7 @@ static int cx231xx_usb_probe(struct usb_interface *interface,
 		return -ENODEV;
 
 	/* Check to see next free device and mark as used */
+<<<<<<< HEAD
 	do {
 		nr = find_first_zero_bit(&cx231xx_devused, CX231XX_MAXBOARDS);
 		if (nr >= CX231XX_MAXBOARDS) {
@@ -1046,12 +1078,27 @@ static int cx231xx_usb_probe(struct usb_interface *interface,
 			return -ENOMEM;
 		}
 	} while (test_and_set_bit(nr, &cx231xx_devused));
+=======
+	nr = find_first_zero_bit(&cx231xx_devused, CX231XX_MAXBOARDS);
+	cx231xx_devused |= 1 << nr;
+
+	if (nr >= CX231XX_MAXBOARDS) {
+		cx231xx_err(DRIVER_NAME
+		 ": Supports only %i cx231xx boards.\n", CX231XX_MAXBOARDS);
+		cx231xx_devused &= ~(1 << nr);
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* allocate memory for our device state and initialize it */
 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
 	if (dev == NULL) {
 		cx231xx_err(DRIVER_NAME ": out of memory!\n");
+<<<<<<< HEAD
 		clear_bit(nr, &cx231xx_devused);
+=======
+		cx231xx_devused &= ~(1 << nr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 
@@ -1078,6 +1125,12 @@ static int cx231xx_usb_probe(struct usb_interface *interface,
 
 	/* init CIR module TBD */
 
+<<<<<<< HEAD
+=======
+	/* store the current interface */
+	lif = interface;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*mode_tv: digital=1 or analog=0*/
 	dev->mode_tv = 0;
 
@@ -1117,6 +1170,12 @@ static int cx231xx_usb_probe(struct usb_interface *interface,
 	     le16_to_cpu(udev->descriptor.idProduct),
 	     dev->max_iad_interface_count);
 
+<<<<<<< HEAD
+=======
+	/* store the interface 0 back */
+	lif = udev->actconfig->interface[0];
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* increment interface count */
 	dev->interface_count++;
 
@@ -1127,16 +1186,23 @@ static int cx231xx_usb_probe(struct usb_interface *interface,
 	if (assoc_desc->bFirstInterface != ifnum) {
 		cx231xx_err(DRIVER_NAME ": Not found "
 			    "matching IAD interface\n");
+<<<<<<< HEAD
 		clear_bit(dev->devno, &cx231xx_devused);
 		kfree(dev);
 		dev = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
 	cx231xx_info("registering interface %d\n", ifnum);
 
 	/* save our data pointer in this interface device */
+<<<<<<< HEAD
 	usb_set_intfdata(interface, dev);
+=======
+	usb_set_intfdata(lif, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * AV device initialization - only done at the last interface
@@ -1146,12 +1212,17 @@ static int cx231xx_usb_probe(struct usb_interface *interface,
 	retval = v4l2_device_register(&interface->dev, &dev->v4l2_dev);
 	if (retval) {
 		cx231xx_errdev("v4l2_device_register failed\n");
+<<<<<<< HEAD
 		clear_bit(dev->devno, &cx231xx_devused);
+=======
+		cx231xx_devused &= ~(1 << nr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(dev);
 		dev = NULL;
 		return -EIO;
 	}
 	/* allocate device struct */
+<<<<<<< HEAD
 	retval = cx231xx_init_dev(dev, udev, nr);
 	if (retval) {
 		clear_bit(dev->devno, &cx231xx_devused);
@@ -1159,6 +1230,15 @@ static int cx231xx_usb_probe(struct usb_interface *interface,
 		kfree(dev);
 		dev = NULL;
 		usb_set_intfdata(interface, NULL);
+=======
+	retval = cx231xx_init_dev(&dev, udev, nr);
+	if (retval) {
+		cx231xx_devused &= ~(1 << dev->devno);
+		v4l2_device_unregister(&dev->v4l2_dev);
+		kfree(dev);
+		dev = NULL;
+		usb_set_intfdata(lif, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		return retval;
 	}
@@ -1179,7 +1259,11 @@ static int cx231xx_usb_probe(struct usb_interface *interface,
 
 	if (dev->video_mode.alt_max_pkt_size == NULL) {
 		cx231xx_errdev("out of memory!\n");
+<<<<<<< HEAD
 		clear_bit(dev->devno, &cx231xx_devused);
+=======
+		cx231xx_devused &= ~(1 << nr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		v4l2_device_unregister(&dev->v4l2_dev);
 		kfree(dev);
 		dev = NULL;
@@ -1213,7 +1297,11 @@ static int cx231xx_usb_probe(struct usb_interface *interface,
 
 	if (dev->vbi_mode.alt_max_pkt_size == NULL) {
 		cx231xx_errdev("out of memory!\n");
+<<<<<<< HEAD
 		clear_bit(dev->devno, &cx231xx_devused);
+=======
+		cx231xx_devused &= ~(1 << nr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		v4l2_device_unregister(&dev->v4l2_dev);
 		kfree(dev);
 		dev = NULL;
@@ -1248,7 +1336,11 @@ static int cx231xx_usb_probe(struct usb_interface *interface,
 
 	if (dev->sliced_cc_mode.alt_max_pkt_size == NULL) {
 		cx231xx_errdev("out of memory!\n");
+<<<<<<< HEAD
 		clear_bit(dev->devno, &cx231xx_devused);
+=======
+		cx231xx_devused &= ~(1 << nr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		v4l2_device_unregister(&dev->v4l2_dev);
 		kfree(dev);
 		dev = NULL;
@@ -1284,7 +1376,11 @@ static int cx231xx_usb_probe(struct usb_interface *interface,
 
 		if (dev->ts1_mode.alt_max_pkt_size == NULL) {
 			cx231xx_errdev("out of memory!\n");
+<<<<<<< HEAD
 			clear_bit(dev->devno, &cx231xx_devused);
+=======
+			cx231xx_devused &= ~(1 << nr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			v4l2_device_unregister(&dev->v4l2_dev);
 			kfree(dev);
 			dev = NULL;
@@ -1335,10 +1431,18 @@ static void cx231xx_usb_disconnect(struct usb_interface *interface)
 	if (!dev->udev)
 		return;
 
+<<<<<<< HEAD
 	dev->state |= DEV_DISCONNECTED;
 
 	flush_request_modules(dev);
 
+=======
+	flush_request_modules(dev);
+
+	/* delete v4l2 device */
+	v4l2_device_unregister(&dev->v4l2_dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* wait until all current v4l2 io is finished then deallocate
 	   resources */
 	mutex_lock(&dev->lock);
@@ -1351,24 +1455,48 @@ static void cx231xx_usb_disconnect(struct usb_interface *interface)
 		     "deallocation are deferred on close.\n",
 		     video_device_node_name(dev->vdev));
 
+<<<<<<< HEAD
 		/* Even having users, it is safe to remove the RC i2c driver */
 		cx231xx_ir_exit(dev);
 
+=======
+		dev->state |= DEV_MISCONFIGURED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (dev->USE_ISO)
 			cx231xx_uninit_isoc(dev);
 		else
 			cx231xx_uninit_bulk(dev);
+<<<<<<< HEAD
 		wake_up_interruptible(&dev->wait_frame);
 		wake_up_interruptible(&dev->wait_stream);
 	} else {
+=======
+		dev->state |= DEV_DISCONNECTED;
+		wake_up_interruptible(&dev->wait_frame);
+		wake_up_interruptible(&dev->wait_stream);
+	} else {
+		dev->state |= DEV_DISCONNECTED;
+		cx231xx_release_resources(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	cx231xx_close_extension(dev);
 
 	mutex_unlock(&dev->lock);
 
+<<<<<<< HEAD
 	if (!dev->users)
 		cx231xx_release_resources(dev);
+=======
+	if (!dev->users) {
+		kfree(dev->video_mode.alt_max_pkt_size);
+		kfree(dev->vbi_mode.alt_max_pkt_size);
+		kfree(dev->sliced_cc_mode.alt_max_pkt_size);
+		kfree(dev->ts1_mode.alt_max_pkt_size);
+		kfree(dev);
+		dev = NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct usb_driver cx231xx_usb_driver = {
@@ -1378,4 +1506,30 @@ static struct usb_driver cx231xx_usb_driver = {
 	.id_table = cx231xx_id_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(cx231xx_usb_driver);
+=======
+static int __init cx231xx_module_init(void)
+{
+	int result;
+
+	printk(KERN_INFO DRIVER_NAME " v4l2 driver loaded.\n");
+
+	/* register this driver with the USB subsystem */
+	result = usb_register(&cx231xx_usb_driver);
+	if (result)
+		cx231xx_err(DRIVER_NAME
+			    " usb_register failed. Error number %d.\n", result);
+
+	return result;
+}
+
+static void __exit cx231xx_module_exit(void)
+{
+	/* deregister this driver with the USB subsystem */
+	usb_deregister(&cx231xx_usb_driver);
+}
+
+module_init(cx231xx_module_init);
+module_exit(cx231xx_module_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -42,9 +42,15 @@
 #include <linux/device.h>
 #include <linux/debugfs.h>
 #include <linux/seq_file.h>
+<<<<<<< HEAD
 #include <linux/security.h>
 #include <net/sock.h>
 
+=======
+#include <net/sock.h>
+
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/uaccess.h>
 
 #include <net/bluetooth/bluetooth.h>
@@ -264,8 +270,11 @@ static void rfcomm_sock_init(struct sock *sk, struct sock *parent)
 
 		pi->sec_level = rfcomm_pi(parent)->sec_level;
 		pi->role_switch = rfcomm_pi(parent)->role_switch;
+<<<<<<< HEAD
 
 		security_sk_clone(parent, sk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		pi->dlc->defer_setup = 0;
 
@@ -369,7 +378,11 @@ static int rfcomm_sock_bind(struct socket *sock, struct sockaddr *addr, int addr
 		goto done;
 	}
 
+<<<<<<< HEAD
 	write_lock(&rfcomm_sk_list.lock);
+=======
+	write_lock_bh(&rfcomm_sk_list.lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (sa->rc_channel && __rfcomm_get_sock_by_addr(sa->rc_channel, &sa->rc_bdaddr)) {
 		err = -EADDRINUSE;
@@ -380,7 +393,11 @@ static int rfcomm_sock_bind(struct socket *sock, struct sockaddr *addr, int addr
 		sk->sk_state = BT_BOUND;
 	}
 
+<<<<<<< HEAD
 	write_unlock(&rfcomm_sk_list.lock);
+=======
+	write_unlock_bh(&rfcomm_sk_list.lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 done:
 	release_sock(sk);
@@ -454,7 +471,11 @@ static int rfcomm_sock_listen(struct socket *sock, int backlog)
 
 		err = -EINVAL;
 
+<<<<<<< HEAD
 		write_lock(&rfcomm_sk_list.lock);
+=======
+		write_lock_bh(&rfcomm_sk_list.lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		for (channel = 1; channel < 31; channel++)
 			if (!__rfcomm_get_sock_by_addr(channel, src)) {
@@ -463,7 +484,11 @@ static int rfcomm_sock_listen(struct socket *sock, int backlog)
 				break;
 			}
 
+<<<<<<< HEAD
 		write_unlock(&rfcomm_sk_list.lock);
+=======
+		write_unlock_bh(&rfcomm_sk_list.lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (err < 0)
 			goto done;
@@ -485,7 +510,11 @@ static int rfcomm_sock_accept(struct socket *sock, struct socket *newsock, int f
 	long timeo;
 	int err = 0;
 
+<<<<<<< HEAD
 	lock_sock_nested(sk, SINGLE_DEPTH_NESTING);
+=======
+	lock_sock(sk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (sk->sk_type != SOCK_STREAM) {
 		err = -EINVAL;
@@ -522,7 +551,11 @@ static int rfcomm_sock_accept(struct socket *sock, struct socket *newsock, int f
 
 		release_sock(sk);
 		timeo = schedule_timeout(timeo);
+<<<<<<< HEAD
 		lock_sock_nested(sk, SINGLE_DEPTH_NESTING);
+=======
+		lock_sock(sk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	__set_current_state(TASK_RUNNING);
 	remove_wait_queue(sk_sleep(sk), &wait);
@@ -546,7 +579,10 @@ static int rfcomm_sock_getname(struct socket *sock, struct sockaddr *addr, int *
 
 	BT_DBG("sock %p, sk %p", sock, sk);
 
+<<<<<<< HEAD
 	memset(sa, 0, sizeof(*sa));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sa->rc_family  = AF_BLUETOOTH;
 	sa->rc_channel = rfcomm_pi(sk)->channel;
 	if (peer)
@@ -600,8 +636,11 @@ static int rfcomm_sock_sendmsg(struct kiocb *iocb, struct socket *sock,
 			break;
 		}
 
+<<<<<<< HEAD
 		skb->priority = sk->sk_priority;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = rfcomm_dlc_send(d, skb);
 		if (err < 0) {
 			kfree_skb(skb);
@@ -628,7 +667,10 @@ static int rfcomm_sock_recvmsg(struct kiocb *iocb, struct socket *sock,
 
 	if (test_and_clear_bit(RFCOMM_DEFER_SETUP, &d->flags)) {
 		rfcomm_dlc_accept(d);
+<<<<<<< HEAD
 		msg->msg_namelen = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
@@ -792,6 +834,10 @@ static int rfcomm_sock_getsockopt_old(struct socket *sock, int optname, char __u
 			break;
 		}
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		memset(&cinfo, 0, sizeof(cinfo));
 		cinfo.hci_handle = conn->hcon->handle;
 		memcpy(cinfo.dev_class, conn->hcon->dev_class, 3);
@@ -838,7 +884,10 @@ static int rfcomm_sock_getsockopt(struct socket *sock, int level, int optname, c
 		}
 
 		sec.level = rfcomm_pi(sk)->sec_level;
+<<<<<<< HEAD
 		sec.key_size = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		len = min_t(unsigned int, len, sizeof(sec));
 		if (copy_to_user(optval, (char *) &sec, len))
@@ -958,8 +1007,11 @@ int rfcomm_connect_ind(struct rfcomm_session *s, u8 channel, struct rfcomm_dlc *
 	if (!sk)
 		goto done;
 
+<<<<<<< HEAD
 	bt_sock_reclassify_lock(sk, BTPROTO_RFCOMM);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rfcomm_sock_init(sk, parent);
 	bacpy(&bt_sk(sk)->src, &src);
 	bacpy(&bt_sk(sk)->dst, &dst);
@@ -986,7 +1038,11 @@ static int rfcomm_sock_debugfs_show(struct seq_file *f, void *p)
 	struct sock *sk;
 	struct hlist_node *node;
 
+<<<<<<< HEAD
 	read_lock(&rfcomm_sk_list.lock);
+=======
+	read_lock_bh(&rfcomm_sk_list.lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sk_for_each(sk, node, &rfcomm_sk_list.head) {
 		seq_printf(f, "%s %s %d %d\n",
@@ -995,7 +1051,11 @@ static int rfcomm_sock_debugfs_show(struct seq_file *f, void *p)
 				sk->sk_state, rfcomm_pi(sk)->channel);
 	}
 
+<<<<<<< HEAD
 	read_unlock(&rfcomm_sk_list.lock);
+=======
+	read_unlock_bh(&rfcomm_sk_list.lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

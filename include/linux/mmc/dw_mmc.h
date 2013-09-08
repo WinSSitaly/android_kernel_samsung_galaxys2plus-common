@@ -11,10 +11,15 @@
  * (at your option) any later version.
  */
 
+<<<<<<< HEAD
 #ifndef LINUX_MMC_DW_MMC_H
 #define LINUX_MMC_DW_MMC_H
 
 #include <linux/scatterlist.h>
+=======
+#ifndef _LINUX_MMC_DW_MMC_H_
+#define _LINUX_MMC_DW_MMC_H_
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MAX_MCI_SLOTS	2
 
@@ -42,7 +47,11 @@ struct mmc_data;
  * @lock: Spinlock protecting the queue and associated data.
  * @regs: Pointer to MMIO registers.
  * @sg: Scatterlist entry currently being processed by PIO code, if any.
+<<<<<<< HEAD
  * @sg_miter: PIO mapping scatterlist iterator.
+=======
+ * @pio_offset: Offset into the current scatterlist entry.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @cur_slot: The slot which is currently using the controller.
  * @mrq: The request currently being processed on @cur_slot,
  *	or NULL if the controller is idle.
@@ -50,7 +59,10 @@ struct mmc_data;
  * @data: The data currently being transferred, or NULL if no data
  *	transfer is in progress.
  * @use_dma: Whether DMA channel is initialized or not.
+<<<<<<< HEAD
  * @using_dma: Whether DMA is in use for the current transfer.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @sg_dma: Bus address of DMA buffer.
  * @sg_cpu: Virtual address of DMA buffer.
  * @dma_ops: Pointer to platform-specific DMA callbacks.
@@ -74,6 +86,7 @@ struct mmc_data;
  *	rate and timeout calculations.
  * @current_speed: Configured rate of the controller.
  * @num_slots: Number of slots available.
+<<<<<<< HEAD
  * @verid: Denote Version ID.
  * @data_offset: Set the offset of DATA register according to VERID.
  * @dev: Device associated with the MMC controller.
@@ -89,6 +102,15 @@ struct mmc_data;
  * @quirks: Set of quirks that apply to specific versions of the IP.
  * @irq_flags: The flags to be passed to request_irq.
  * @irq: The irq value to be passed to request_irq.
+=======
+ * @pdev: Platform device associated with the MMC controller.
+ * @pdata: Platform data associated with the MMC controller.
+ * @slot: Slots sharing this MMC controller.
+ * @data_shift: log2 of FIFO item size.
+ * @push_data: Pointer to FIFO push function.
+ * @pull_data: Pointer to FIFO pull function.
+ * @quirks: Set of quirks that apply to specific versions of the IP.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Locking
  * =======
@@ -119,7 +141,11 @@ struct dw_mci {
 	void __iomem		*regs;
 
 	struct scatterlist	*sg;
+<<<<<<< HEAD
 	struct sg_mapping_iter	sg_miter;
+=======
+	unsigned int		pio_offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct dw_mci_slot	*cur_slot;
 	struct mmc_request	*mrq;
@@ -128,7 +154,10 @@ struct dw_mci {
 
 	/* DMA interface members*/
 	int			use_dma;
+<<<<<<< HEAD
 	int			using_dma;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dma_addr_t		sg_dma;
 	void			*sg_cpu;
@@ -143,7 +172,11 @@ struct dw_mci {
 	u32			stop_cmdr;
 	u32			dir_status;
 	struct tasklet_struct	tasklet;
+<<<<<<< HEAD
 	struct work_struct	card_work;
+=======
+	struct tasklet_struct	card_tasklet;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long		pending_events;
 	unsigned long		completed_events;
 	enum dw_mci_state	state;
@@ -153,13 +186,18 @@ struct dw_mci {
 	u32			current_speed;
 	u32			num_slots;
 	u32			fifoth_val;
+<<<<<<< HEAD
 	u16			verid;
 	u16			data_offset;
 	struct device		dev;
+=======
+	struct platform_device	*pdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dw_mci_board	*pdata;
 	struct dw_mci_slot	*slot[MAX_MCI_SLOTS];
 
 	/* FIFO push and pull */
+<<<<<<< HEAD
 	int			fifo_depth;
 	int			data_shift;
 	u8			part_buf_start;
@@ -169,6 +207,9 @@ struct dw_mci {
 		u32		part_buf32;
 		u64		part_buf;
 	};
+=======
+	int			data_shift;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void (*push_data)(struct dw_mci *host, void *buf, int cnt);
 	void (*pull_data)(struct dw_mci *host, void *buf, int cnt);
 
@@ -176,8 +217,11 @@ struct dw_mci {
 	u32			quirks;
 
 	struct regulator	*vmmc;	/* Power regulator */
+<<<<<<< HEAD
 	unsigned long		irq_flags; /* IRQ flags */
 	unsigned int		irq;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* DMA ops for Internal/External DMAC interface */
@@ -220,6 +264,7 @@ struct dw_mci_board {
 	unsigned int bus_hz; /* Bus speed */
 
 	unsigned int caps;	/* Capabilities */
+<<<<<<< HEAD
 	unsigned int caps2;	/* More capabilities */
 	/*
 	 * Override fifo depth. If 0, autodetect it from the FIFOTH register,
@@ -227,6 +272,8 @@ struct dw_mci_board {
 	 * it.
 	 */
 	unsigned int fifo_depth;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* delay in mS before detecting cards after interrupt */
 	u32 detect_delay_ms;
@@ -250,4 +297,8 @@ struct dw_mci_board {
 	struct block_settings *blk_settings;
 };
 
+<<<<<<< HEAD
 #endif /* LINUX_MMC_DW_MMC_H */
+=======
+#endif /* _LINUX_MMC_DW_MMC_H_ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

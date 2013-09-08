@@ -15,23 +15,35 @@
 #include <linux/fs.h>
 #include <linux/exportfs.h>
 #include <linux/mm.h>
+<<<<<<< HEAD
 #include <linux/debugfs.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/cleancache.h>
 
 /*
  * This global enablement flag may be read thousands of times per second
+<<<<<<< HEAD
  * by cleancache_get/put/invalidate even on systems where cleancache_ops
+=======
+ * by cleancache_get/put/flush even on systems where cleancache_ops
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * is not claimed (e.g. cleancache is config'ed on but remains
  * disabled), so is preferred to the slower alternative: a function
  * call that checks a non-global.
  */
+<<<<<<< HEAD
 int cleancache_enabled __read_mostly;
+=======
+int cleancache_enabled;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL(cleancache_enabled);
 
 /*
  * cleancache_ops is set by cleancache_ops_register to contain the pointers
  * to the cleancache "backend" implementation functions.
  */
+<<<<<<< HEAD
 static struct cleancache_ops cleancache_ops __read_mostly;
 
 /*
@@ -43,6 +55,15 @@ static u64 cleancache_succ_gets;
 static u64 cleancache_failed_gets;
 static u64 cleancache_puts;
 static u64 cleancache_invalidates;
+=======
+static struct cleancache_ops cleancache_ops;
+
+/* useful stats available in /sys/kernel/mm/cleancache */
+static unsigned long cleancache_succ_gets;
+static unsigned long cleancache_failed_gets;
+static unsigned long cleancache_puts;
+static unsigned long cleancache_flushes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * register operations for cleancache, returning previous thus allowing
@@ -153,11 +174,18 @@ void __cleancache_put_page(struct page *page)
 EXPORT_SYMBOL(__cleancache_put_page);
 
 /*
+<<<<<<< HEAD
  * Invalidate any data from cleancache associated with the poolid and the
  * page's inode and page index so that a subsequent "get" will fail.
  */
 void __cleancache_invalidate_page(struct address_space *mapping,
 					struct page *page)
+=======
+ * Flush any data from cleancache associated with the poolid and the
+ * page's inode and page index so that a subsequent "get" will fail.
+ */
+void __cleancache_flush_page(struct address_space *mapping, struct page *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* careful... page->mapping is NULL sometimes when this is called */
 	int pool_id = mapping->host->i_sb->cleancache_poolid;
@@ -166,6 +194,7 @@ void __cleancache_invalidate_page(struct address_space *mapping,
 	if (pool_id >= 0) {
 		VM_BUG_ON(!PageLocked(page));
 		if (cleancache_get_key(mapping->host, &key) >= 0) {
+<<<<<<< HEAD
 			(*cleancache_ops.invalidate_page)(pool_id,
 							  key, page->index);
 			cleancache_invalidates++;
@@ -180,25 +209,51 @@ EXPORT_SYMBOL(__cleancache_invalidate_page);
  * will fail.
  */
 void __cleancache_invalidate_inode(struct address_space *mapping)
+=======
+			(*cleancache_ops.flush_page)(pool_id, key, page->index);
+			cleancache_flushes++;
+		}
+	}
+}
+EXPORT_SYMBOL(__cleancache_flush_page);
+
+/*
+ * Flush all data from cleancache associated with the poolid and the
+ * mappings's inode so that all subsequent gets to this poolid/inode
+ * will fail.
+ */
+void __cleancache_flush_inode(struct address_space *mapping)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int pool_id = mapping->host->i_sb->cleancache_poolid;
 	struct cleancache_filekey key = { .u.key = { 0 } };
 
 	if (pool_id >= 0 && cleancache_get_key(mapping->host, &key) >= 0)
+<<<<<<< HEAD
 		(*cleancache_ops.invalidate_inode)(pool_id, key);
 }
 EXPORT_SYMBOL(__cleancache_invalidate_inode);
+=======
+		(*cleancache_ops.flush_inode)(pool_id, key);
+}
+EXPORT_SYMBOL(__cleancache_flush_inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Called by any cleancache-enabled filesystem at time of unmount;
  * note that pool_id is surrendered and may be reutrned by a subsequent
  * cleancache_init_fs or cleancache_init_shared_fs
  */
+<<<<<<< HEAD
 void __cleancache_invalidate_fs(struct super_block *sb)
+=======
+void __cleancache_flush_fs(struct super_block *sb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (sb->cleancache_poolid >= 0) {
 		int old_poolid = sb->cleancache_poolid;
 		sb->cleancache_poolid = -1;
+<<<<<<< HEAD
 		(*cleancache_ops.invalidate_fs)(old_poolid);
 	}
 }
@@ -217,6 +272,55 @@ static int __init init_cleancache(void)
 	debugfs_create_u64("invalidates", S_IRUGO,
 				root, &cleancache_invalidates);
 #endif
+=======
+		(*cleancache_ops.flush_fs)(old_poolid);
+	}
+}
+EXPORT_SYMBOL(__cleancache_flush_fs);
+
+#ifdef CONFIG_SYSFS
+
+/* see Documentation/ABI/xxx/sysfs-kernel-mm-cleancache */
+
+#define CLEANCACHE_SYSFS_RO(_name) \
+	static ssize_t cleancache_##_name##_show(struct kobject *kobj, \
+				struct kobj_attribute *attr, char *buf) \
+	{ \
+		return sprintf(buf, "%lu\n", cleancache_##_name); \
+	} \
+	static struct kobj_attribute cleancache_##_name##_attr = { \
+		.attr = { .name = __stringify(_name), .mode = 0444 }, \
+		.show = cleancache_##_name##_show, \
+	}
+
+CLEANCACHE_SYSFS_RO(succ_gets);
+CLEANCACHE_SYSFS_RO(failed_gets);
+CLEANCACHE_SYSFS_RO(puts);
+CLEANCACHE_SYSFS_RO(flushes);
+
+static struct attribute *cleancache_attrs[] = {
+	&cleancache_succ_gets_attr.attr,
+	&cleancache_failed_gets_attr.attr,
+	&cleancache_puts_attr.attr,
+	&cleancache_flushes_attr.attr,
+	NULL,
+};
+
+static struct attribute_group cleancache_attr_group = {
+	.attrs = cleancache_attrs,
+	.name = "cleancache",
+};
+
+#endif /* CONFIG_SYSFS */
+
+static int __init init_cleancache(void)
+{
+#ifdef CONFIG_SYSFS
+	int err;
+
+	err = sysfs_create_group(mm_kobj, &cleancache_attr_group);
+#endif /* CONFIG_SYSFS */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 module_init(init_cleancache)

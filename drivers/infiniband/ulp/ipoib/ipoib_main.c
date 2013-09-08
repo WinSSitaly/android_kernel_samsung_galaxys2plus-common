@@ -148,7 +148,11 @@ static int ipoib_stop(struct net_device *dev)
 
 	netif_stop_queue(dev);
 
+<<<<<<< HEAD
 	ipoib_ib_dev_down(dev, 1);
+=======
+	ipoib_ib_dev_down(dev, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ipoib_ib_dev_stop(dev, 0);
 
 	if (!test_bit(IPOIB_FLAG_SUBINTERFACE, &priv->flags)) {
@@ -171,7 +175,11 @@ static int ipoib_stop(struct net_device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static netdev_features_t ipoib_fix_features(struct net_device *dev, netdev_features_t features)
+=======
+static u32 ipoib_fix_features(struct net_device *dev, u32 features)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ipoib_dev_priv *priv = netdev_priv(dev);
 
@@ -432,7 +440,11 @@ static void path_rec_completion(int status,
 
 	spin_lock_irqsave(&priv->lock, flags);
 
+<<<<<<< HEAD
 	if (!IS_ERR_OR_NULL(ah)) {
+=======
+	if (ah) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		path->pathrec = *pathrec;
 
 		old_ah   = path->ah;
@@ -556,13 +568,24 @@ static int path_rec_start(struct net_device *dev,
 }
 
 /* called with rcu_read_lock */
+<<<<<<< HEAD
 static void neigh_add_path(struct sk_buff *skb, struct neighbour *n, struct net_device *dev)
+=======
+static void neigh_add_path(struct sk_buff *skb, struct net_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ipoib_dev_priv *priv = netdev_priv(dev);
 	struct ipoib_path *path;
 	struct ipoib_neigh *neigh;
+<<<<<<< HEAD
 	unsigned long flags;
 
+=======
+	struct neighbour *n;
+	unsigned long flags;
+
+	n = dst_get_neighbour(skb_dst(skb));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	neigh = ipoib_neigh_alloc(n, skb->dev);
 	if (!neigh) {
 		++dev->stats.tx_dropped;
@@ -636,6 +659,7 @@ err_drop:
 }
 
 /* called with rcu_read_lock */
+<<<<<<< HEAD
 static void ipoib_path_lookup(struct sk_buff *skb, struct neighbour *n, struct net_device *dev)
 {
 	struct ipoib_dev_priv *priv = netdev_priv(skb->dev);
@@ -643,6 +667,18 @@ static void ipoib_path_lookup(struct sk_buff *skb, struct neighbour *n, struct n
 	/* Look up path record for unicasts */
 	if (n->ha[4] != 0xff) {
 		neigh_add_path(skb, n, dev);
+=======
+static void ipoib_path_lookup(struct sk_buff *skb, struct net_device *dev)
+{
+	struct ipoib_dev_priv *priv = netdev_priv(skb->dev);
+	struct dst_entry *dst = skb_dst(skb);
+	struct neighbour *n;
+
+	/* Look up path record for unicasts */
+	n = dst_get_neighbour(dst);
+	if (n->ha[4] != 0xff) {
+		neigh_add_path(skb, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -714,6 +750,7 @@ static int ipoib_start_xmit(struct sk_buff *skb, struct net_device *dev)
 	unsigned long flags;
 
 	rcu_read_lock();
+<<<<<<< HEAD
 	if (likely(skb_dst(skb))) {
 		n = dst_get_neighbour_noref(skb_dst(skb));
 		if (!n) {
@@ -725,6 +762,14 @@ static int ipoib_start_xmit(struct sk_buff *skb, struct net_device *dev)
 	if (likely(n)) {
 		if (unlikely(!*to_ipoib_neigh(n))) {
 			ipoib_path_lookup(skb, n, dev);
+=======
+	if (likely(skb_dst(skb)))
+		n = dst_get_neighbour(skb_dst(skb));
+
+	if (likely(n)) {
+		if (unlikely(!*to_ipoib_neigh(n))) {
+			ipoib_path_lookup(skb, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto unlock;
 		}
 
@@ -747,7 +792,11 @@ static int ipoib_start_xmit(struct sk_buff *skb, struct net_device *dev)
 			list_del(&neigh->list);
 			ipoib_neigh_free(dev, neigh);
 			spin_unlock_irqrestore(&priv->lock, flags);
+<<<<<<< HEAD
 			ipoib_path_lookup(skb, n, dev);
+=======
+			ipoib_path_lookup(skb, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto unlock;
 		}
 
@@ -989,7 +1038,11 @@ static const struct net_device_ops ipoib_netdev_ops = {
 	.ndo_fix_features	 = ipoib_fix_features,
 	.ndo_start_xmit	 	 = ipoib_start_xmit,
 	.ndo_tx_timeout		 = ipoib_timeout,
+<<<<<<< HEAD
 	.ndo_set_rx_mode	 = ipoib_set_mcast_list,
+=======
+	.ndo_set_multicast_list	 = ipoib_set_mcast_list,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ndo_neigh_setup	 = ipoib_neigh_setup_dev,
 };
 
@@ -1205,8 +1258,11 @@ static struct net_device *ipoib_add_port(const char *format,
 	priv->dev->mtu  = IPOIB_UD_MTU(priv->max_ib_mtu);
 	priv->mcast_mtu  = priv->admin_mtu = priv->dev->mtu;
 
+<<<<<<< HEAD
 	priv->dev->neigh_priv_len = sizeof(struct ipoib_neigh);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	result = ib_query_pkey(hca, port, 0, &priv->pkey);
 	if (result) {
 		printk(KERN_WARNING "%s: ib_query_pkey port %d failed (ret = %d)\n",

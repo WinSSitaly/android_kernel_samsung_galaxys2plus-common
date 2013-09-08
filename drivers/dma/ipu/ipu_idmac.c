@@ -9,7 +9,10 @@
  * published by the Free Software Foundation.
  */
 
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/platform_device.h>
 #include <linux/err.h>
@@ -21,11 +24,17 @@
 #include <linux/string.h>
 #include <linux/interrupt.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 
 #include <mach/ipu.h>
 
 #include "../dmaengine.h"
+=======
+
+#include <mach/ipu.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "ipu_intern.h"
 
 #define FS_VF_IN_VALID	0x00000002
@@ -313,7 +322,11 @@ static void ipu_ch_param_set_size(union chan_param_mem *params,
 	case IPU_PIX_FMT_RGB565:
 		params->ip.bpp	= 2;
 		params->ip.pfs	= 4;
+<<<<<<< HEAD
 		params->ip.npb	= 15;
+=======
+		params->ip.npb	= 7;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		params->ip.sat	= 2;		/* SAT = 32-bit access */
 		params->ip.ofs0	= 0;		/* Red bit offset */
 		params->ip.ofs1	= 5;		/* Green bit offset */
@@ -423,6 +436,15 @@ static void ipu_ch_param_set_size(union chan_param_mem *params,
 	params->pp.nsb = 1;
 }
 
+<<<<<<< HEAD
+=======
+static void ipu_ch_param_set_burst_size(union chan_param_mem *params,
+					uint16_t burst_pixels)
+{
+	params->pp.npb = burst_pixels - 1;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ipu_ch_param_set_buffer(union chan_param_mem *params,
 				    dma_addr_t buf0, dma_addr_t buf1)
 {
@@ -685,6 +707,26 @@ static int ipu_init_channel_buffer(struct idmac_channel *ichan,
 	ipu_ch_param_set_size(&params, pixel_fmt, width, height, stride_bytes);
 	ipu_ch_param_set_buffer(&params, phyaddr_0, phyaddr_1);
 	ipu_ch_param_set_rotation(&params, rot_mode);
+<<<<<<< HEAD
+=======
+	/* Some channels (rotation) have restriction on burst length */
+	switch (channel) {
+	case IDMAC_IC_7:	/* Hangs with burst 8, 16, other values
+				   invalid - Table 44-30 */
+/*
+		ipu_ch_param_set_burst_size(&params, 8);
+ */
+		break;
+	case IDMAC_SDC_0:
+	case IDMAC_SDC_1:
+		/* In original code only IPU_PIX_FMT_RGB565 was setting burst */
+		ipu_ch_param_set_burst_size(&params, 16);
+		break;
+	case IDMAC_IC_0:
+	default:
+		break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&ipu->lock, flags);
 
@@ -867,7 +909,18 @@ static dma_cookie_t idmac_tx_submit(struct dma_async_tx_descriptor *tx)
 
 	dev_dbg(dev, "Submitting sg %p\n", &desc->sg[0]);
 
+<<<<<<< HEAD
 	cookie = dma_cookie_assign(tx);
+=======
+	cookie = ichan->dma_chan.cookie;
+
+	if (++cookie < 0)
+		cookie = 1;
+
+	/* from dmaengine.h: "last cookie value returned to client" */
+	ichan->dma_chan.cookie = cookie;
+	tx->cookie = cookie;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* ipu->lock can be taken under ichan->lock, but not v.v. */
 	spin_lock_irqsave(&ichan->lock, flags);
@@ -1279,7 +1332,10 @@ static irqreturn_t idmac_interrupt(int irq, void *dev_id)
 	    ipu_submit_buffer(ichan, descnew, sgnew, ichan->active_buffer) < 0) {
 		callback = descnew->txd.callback;
 		callback_param = descnew->txd.callback_param;
+<<<<<<< HEAD
 		list_del_init(&descnew->list);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock(&ichan->lock);
 		if (callback)
 			callback(callback_param);
@@ -1289,7 +1345,11 @@ static irqreturn_t idmac_interrupt(int irq, void *dev_id)
 	/* Flip the active buffer - even if update above failed */
 	ichan->active_buffer = !ichan->active_buffer;
 	if (done)
+<<<<<<< HEAD
 		dma_cookie_complete(&desc->txd);
+=======
+		ichan->completed = desc->txd.cookie;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	callback = desc->txd.callback;
 	callback_param = desc->txd.callback_param;
@@ -1335,8 +1395,12 @@ static void ipu_gc_tasklet(unsigned long arg)
 /* Allocate and initialise a transfer descriptor. */
 static struct dma_async_tx_descriptor *idmac_prep_slave_sg(struct dma_chan *chan,
 		struct scatterlist *sgl, unsigned int sg_len,
+<<<<<<< HEAD
 		enum dma_transfer_direction direction, unsigned long tx_flags,
 		void *context)
+=======
+		enum dma_data_direction direction, unsigned long tx_flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct idmac_channel *ichan = to_idmac_chan(chan);
 	struct idmac_tx_desc *desc = NULL;
@@ -1348,7 +1412,11 @@ static struct dma_async_tx_descriptor *idmac_prep_slave_sg(struct dma_chan *chan
 	    chan->chan_id != IDMAC_IC_7)
 		return NULL;
 
+<<<<<<< HEAD
 	if (direction != DMA_DEV_TO_MEM && direction != DMA_MEM_TO_DEV) {
+=======
+	if (direction != DMA_FROM_DEVICE && direction != DMA_TO_DEVICE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_err(chan->device->dev, "Invalid DMA direction %d!\n", direction);
 		return NULL;
 	}
@@ -1402,6 +1470,7 @@ static int __idmac_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
 {
 	struct idmac_channel *ichan = to_idmac_chan(chan);
 	struct idmac *idmac = to_idmac(chan->device);
+<<<<<<< HEAD
 	struct ipu *ipu = to_ipu(idmac);
 	struct list_head *list, *tmp;
 	unsigned long flags;
@@ -1454,6 +1523,41 @@ static int __idmac_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
 	default:
 		return -ENOSYS;
 	}
+=======
+	unsigned long flags;
+	int i;
+
+	/* Only supports DMA_TERMINATE_ALL */
+	if (cmd != DMA_TERMINATE_ALL)
+		return -ENXIO;
+
+	ipu_disable_channel(idmac, ichan,
+			    ichan->status >= IPU_CHANNEL_ENABLED);
+
+	tasklet_disable(&to_ipu(idmac)->tasklet);
+
+	/* ichan->queue is modified in ISR, have to spinlock */
+	spin_lock_irqsave(&ichan->lock, flags);
+	list_splice_init(&ichan->queue, &ichan->free_list);
+
+	if (ichan->desc)
+		for (i = 0; i < ichan->n_tx_desc; i++) {
+			struct idmac_tx_desc *desc = ichan->desc + i;
+			if (list_empty(&desc->list))
+				/* Descriptor was prepared, but not submitted */
+				list_add(&desc->list, &ichan->free_list);
+
+			async_tx_clear_ack(&desc->txd);
+		}
+
+	ichan->sg[0] = NULL;
+	ichan->sg[1] = NULL;
+	spin_unlock_irqrestore(&ichan->lock, flags);
+
+	tasklet_enable(&to_ipu(idmac)->tasklet);
+
+	ichan->status = IPU_CHANNEL_INITIALIZED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1505,7 +1609,12 @@ static int idmac_alloc_chan_resources(struct dma_chan *chan)
 	BUG_ON(chan->client_count > 1);
 	WARN_ON(ichan->status != IPU_CHANNEL_FREE);
 
+<<<<<<< HEAD
 	dma_cookie_init(chan);
+=======
+	chan->cookie		= 1;
+	ichan->completed	= -ENXIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = ipu_irq_map(chan->chan_id);
 	if (ret < 0)
@@ -1594,7 +1703,13 @@ static void idmac_free_chan_resources(struct dma_chan *chan)
 static enum dma_status idmac_tx_status(struct dma_chan *chan,
 		       dma_cookie_t cookie, struct dma_tx_state *txstate)
 {
+<<<<<<< HEAD
 	dma_set_tx_state(txstate, chan->completed_cookie, chan->cookie, 0);
+=======
+	struct idmac_channel *ichan = to_idmac_chan(chan);
+
+	dma_set_tx_state(txstate, ichan->completed, chan->cookie, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cookie != chan->cookie)
 		return DMA_ERROR;
 	return DMA_SUCCESS;
@@ -1630,10 +1745,18 @@ static int __init ipu_idmac_init(struct ipu *ipu)
 
 		ichan->status		= IPU_CHANNEL_FREE;
 		ichan->sec_chan_en	= false;
+<<<<<<< HEAD
 		snprintf(ichan->eof_name, sizeof(ichan->eof_name), "IDMAC EOF %d", i);
 
 		dma_chan->device	= &idmac->dma;
 		dma_cookie_init(dma_chan);
+=======
+		ichan->completed	= -ENXIO;
+		snprintf(ichan->eof_name, sizeof(ichan->eof_name), "IDMAC EOF %d", i);
+
+		dma_chan->device	= &idmac->dma;
+		dma_chan->cookie	= 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dma_chan->chan_id	= i;
 		list_add_tail(&dma_chan->device_node, &dma->channels);
 	}
@@ -1652,6 +1775,10 @@ static void __exit ipu_idmac_exit(struct ipu *ipu)
 		struct idmac_channel *ichan = ipu->channel + i;
 
 		idmac_control(&ichan->dma_chan, DMA_TERMINATE_ALL, 0);
+<<<<<<< HEAD
+=======
+		idmac_prep_slave_sg(&ichan->dma_chan, NULL, 0, DMA_NONE, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	dma_async_device_unregister(&idmac->dma);
@@ -1694,14 +1821,24 @@ static int __init ipu_probe(struct platform_device *pdev)
 		ipu_data.irq_fn, ipu_data.irq_err, ipu_data.irq_base);
 
 	/* Remap IPU common registers */
+<<<<<<< HEAD
 	ipu_data.reg_ipu = ioremap(mem_ipu->start, resource_size(mem_ipu));
+=======
+	ipu_data.reg_ipu = ioremap(mem_ipu->start,
+				   mem_ipu->end - mem_ipu->start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ipu_data.reg_ipu) {
 		ret = -ENOMEM;
 		goto err_ioremap_ipu;
 	}
 
 	/* Remap Image Converter and Image DMA Controller registers */
+<<<<<<< HEAD
 	ipu_data.reg_ic = ioremap(mem_ic->start, resource_size(mem_ic));
+=======
+	ipu_data.reg_ic = ioremap(mem_ic->start,
+				  mem_ic->end - mem_ic->start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ipu_data.reg_ic) {
 		ret = -ENOMEM;
 		goto err_ioremap_ic;

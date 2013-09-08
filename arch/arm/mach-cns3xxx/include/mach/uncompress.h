@@ -8,6 +8,10 @@
  */
 
 #include <asm/mach-types.h>
+<<<<<<< HEAD
+=======
+#include <mach/hardware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/cns3xxx.h>
 
 #define AMBA_UART_DR(base)	(*(volatile unsigned char *)((base) + 0x00))

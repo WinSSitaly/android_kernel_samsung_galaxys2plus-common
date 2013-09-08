@@ -67,7 +67,10 @@ struct nlm_host {
 	struct list_head	h_reclaim;	/* Locks in RECLAIM state */
 	struct nsm_handle	*h_nsmhandle;	/* NSM status handle */
 	char			*h_addrbuf;	/* address eyecatcher */
+<<<<<<< HEAD
 	struct net		*net;		/* host net */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -189,14 +192,22 @@ struct nlm_block {
 /*
  * Global variables
  */
+<<<<<<< HEAD
 extern const struct rpc_program	nlm_program;
+=======
+extern struct rpc_program	nlm_program;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct svc_procedure	nlmsvc_procedures[];
 #ifdef CONFIG_LOCKD_V4
 extern struct svc_procedure	nlmsvc_procedures4[];
 #endif
 extern int			nlmsvc_grace_period;
 extern unsigned long		nlmsvc_timeout;
+<<<<<<< HEAD
 extern bool			nsm_use_hostnames;
+=======
+extern int			nsm_use_hostnames;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern u32			nsm_local_state;
 
 /*
@@ -223,8 +234,12 @@ struct nlm_host  *nlmclnt_lookup_host(const struct sockaddr *sap,
 					const unsigned short protocol,
 					const u32 version,
 					const char *hostname,
+<<<<<<< HEAD
 					int noresvport,
 					struct net *net);
+=======
+					int noresvport);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void		  nlmclnt_release_host(struct nlm_host *);
 struct nlm_host  *nlmsvc_lookup_host(const struct svc_rqst *rqstp,
 					const char *hostname,
@@ -234,7 +249,10 @@ struct rpc_clnt * nlm_bind_host(struct nlm_host *);
 void		  nlm_rebind_host(struct nlm_host *);
 struct nlm_host * nlm_get_host(struct nlm_host *);
 void		  nlm_shutdown_hosts(void);
+<<<<<<< HEAD
 void		  nlm_shutdown_hosts_net(struct net *net);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void		  nlm_host_rebooted(const struct nlm_reboot *);
 
 /*
@@ -304,7 +322,11 @@ static inline int __nlm_privileged_request4(const struct sockaddr *sap)
 	return ipv4_is_loopback(sin->sin_addr.s_addr);
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int __nlm_privileged_request6(const struct sockaddr *sap)
 {
 	const struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sap;
@@ -317,12 +339,20 @@ static inline int __nlm_privileged_request6(const struct sockaddr *sap)
 
 	return ipv6_addr_type(&sin6->sin6_addr) & IPV6_ADDR_LOOPBACK;
 }
+<<<<<<< HEAD
 #else	/* IS_ENABLED(CONFIG_IPV6) */
+=======
+#else	/* defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int __nlm_privileged_request6(const struct sockaddr *sap)
 {
 	return 0;
 }
+<<<<<<< HEAD
 #endif	/* IS_ENABLED(CONFIG_IPV6) */
+=======
+#endif	/* defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Ensure incoming requests are from local privileged callers.

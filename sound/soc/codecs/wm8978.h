@@ -67,8 +67,11 @@
 #define WM8978_OUT3_MIXER_CONTROL		0x38
 #define WM8978_OUT4_MIXER_CONTROL		0x39
 
+<<<<<<< HEAD
 #define WM8978_MAX_REGISTER			0x39
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define WM8978_CACHEREGNUM			58
 
 /* Clock divider Id's */

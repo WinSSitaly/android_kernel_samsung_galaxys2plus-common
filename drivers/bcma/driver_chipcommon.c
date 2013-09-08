@@ -3,13 +3,20 @@
  * ChipCommon core driver
  *
  * Copyright 2005, Broadcom Corporation
+<<<<<<< HEAD
  * Copyright 2006, 2007, Michael Buesch <m@bues.ch>
+=======
+ * Copyright 2006, 2007, Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Licensed under the GNU/GPL. See COPYING for details.
  */
 
 #include "bcma_private.h"
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bcma/bcma.h>
 
 static inline u32 bcma_cc_write32_masked(struct bcma_drv_cc *cc, u16 offset,
@@ -24,12 +31,15 @@ static inline u32 bcma_cc_write32_masked(struct bcma_drv_cc *cc, u16 offset,
 
 void bcma_core_chipcommon_init(struct bcma_drv_cc *cc)
 {
+<<<<<<< HEAD
 	u32 leddc_on = 10;
 	u32 leddc_off = 90;
 
 	if (cc->setup_done)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cc->core->id.rev >= 11)
 		cc->status = bcma_cc_read32(cc, BCMA_CC_CHIPSTAT);
 	cc->capabilities = bcma_cc_read32(cc, BCMA_CC_CAP);
@@ -45,6 +55,7 @@ void bcma_core_chipcommon_init(struct bcma_drv_cc *cc)
 		bcma_pmu_init(cc);
 	if (cc->capabilities & BCMA_CC_CAP_PCTL)
 		pr_err("Power control not implemented!\n");
+<<<<<<< HEAD
 
 	if (cc->core->id.rev >= 16) {
 		if (cc->core->bus->sprom.leddc_on_time &&
@@ -58,6 +69,8 @@ void bcma_core_chipcommon_init(struct bcma_drv_cc *cc)
 	}
 
 	cc->setup_done = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Set chip watchdog reset timer to fire in 'ticks' backplane cycles */
@@ -107,6 +120,7 @@ u32 bcma_chipco_gpio_polarity(struct bcma_drv_cc *cc, u32 mask, u32 value)
 {
 	return bcma_cc_write32_masked(cc, BCMA_CC_GPIOPOL, mask, value);
 }
+<<<<<<< HEAD
 
 #ifdef CONFIG_BCMA_DRIVER_MIPS
 void bcma_chipco_serial_init(struct bcma_drv_cc *cc)
@@ -155,3 +169,5 @@ void bcma_chipco_serial_init(struct bcma_drv_cc *cc)
 	}
 }
 #endif /* CONFIG_BCMA_DRIVER_MIPS */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

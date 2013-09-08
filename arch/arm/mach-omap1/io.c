@@ -15,6 +15,7 @@
 
 #include <asm/tlb.h>
 #include <asm/mach/map.h>
+<<<<<<< HEAD
 
 #include <plat/mux.h>
 #include <plat/tc.h>
@@ -24,6 +25,15 @@
 #include "clock.h"
 
 extern void omap_check_revision(void);
+=======
+#include <plat/mux.h>
+#include <plat/tc.h>
+
+#include "clock.h"
+
+extern void omap_check_revision(void);
+extern void omap_sram_init(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * The machine specific code may provide the extra mapping besides the
@@ -87,6 +97,7 @@ static struct map_desc omap16xx_io_desc[] __initdata = {
 #endif
 
 /*
+<<<<<<< HEAD
  * Maps common IO regions for omap1
  */
 static void __init omap1_map_common_io(void)
@@ -125,6 +136,52 @@ void __init omap1_init_early(void)
 {
 	omap_check_revision();
 
+=======
+ * Maps common IO regions for omap1. This should only get called from
+ * board specific init.
+ */
+void __init omap1_map_common_io(void)
+{
+	iotable_init(omap_io_desc, ARRAY_SIZE(omap_io_desc));
+
+	/* Normally devicemaps_init() would flush caches and tlb after
+	 * mdesc->map_io(), but we must also do it here because of the CPU
+	 * revision check below.
+	 */
+	local_flush_tlb_all();
+	flush_cache_all();
+
+	/* We want to check CPU revision early for cpu_is_omapxxxx() macros.
+	 * IO space mapping must be initialized before we can do that.
+	 */
+	omap_check_revision();
+
+#if defined (CONFIG_ARCH_OMAP730) || defined (CONFIG_ARCH_OMAP850)
+	if (cpu_is_omap7xx()) {
+		iotable_init(omap7xx_io_desc, ARRAY_SIZE(omap7xx_io_desc));
+	}
+#endif
+#ifdef CONFIG_ARCH_OMAP15XX
+	if (cpu_is_omap15xx()) {
+		iotable_init(omap1510_io_desc, ARRAY_SIZE(omap1510_io_desc));
+	}
+#endif
+#if defined(CONFIG_ARCH_OMAP16XX)
+	if (cpu_is_omap16xx()) {
+		iotable_init(omap16xx_io_desc, ARRAY_SIZE(omap16xx_io_desc));
+	}
+#endif
+
+	omap_sram_init();
+}
+
+/*
+ * Common low-level hardware init for omap1. This should only get called from
+ * board specific init.
+ */
+void __init omap1_init_common_hw(void)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* REVISIT: Refer to OMAP5910 Errata, Advisory SYS_1: "Timeout Abort
 	 * on a Posted Write in the TIPB Bridge".
 	 */
@@ -134,8 +191,13 @@ void __init omap1_init_early(void)
 	/* Must init clocks early to assure that timer interrupt works
 	 */
 	omap1_clk_init();
+<<<<<<< HEAD
 	omap1_mux_init();
 	omap_init_consistent_dma_size();
+=======
+
+	omap1_mux_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*

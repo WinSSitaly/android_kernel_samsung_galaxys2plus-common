@@ -90,6 +90,11 @@ static int e750_ac97_init(struct snd_soc_pcm_runtime *rtd)
 
 	snd_soc_dapm_add_routes(dapm, audio_map, ARRAY_SIZE(audio_map));
 
+<<<<<<< HEAD
+=======
+	snd_soc_dapm_sync(dapm);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -116,11 +121,15 @@ static struct snd_soc_dai_link e750_dai[] = {
 
 static struct snd_soc_card e750 = {
 	.name = "Toshiba e750",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link = e750_dai,
 	.num_links = ARRAY_SIZE(e750_dai),
 };
 
+<<<<<<< HEAD
 static struct gpio e750_audio_gpios[] = {
 	{ GPIO_E750_HP_AMP_OFF, GPIOF_OUT_INIT_HIGH, "Headphone amp" },
 	{ GPIO_E750_SPK_AMP_OFF, GPIOF_OUT_INIT_HIGH, "Speaker amp" },
@@ -166,9 +175,70 @@ static struct platform_driver e750_driver = {
 };
 
 module_platform_driver(e750_driver);
+=======
+static struct platform_device *e750_snd_device;
+
+static int __init e750_init(void)
+{
+	int ret;
+
+	if (!machine_is_e750())
+		return -ENODEV;
+
+	ret = gpio_request(GPIO_E750_HP_AMP_OFF,  "Headphone amp");
+	if (ret)
+		return ret;
+
+	ret = gpio_request(GPIO_E750_SPK_AMP_OFF, "Speaker amp");
+	if (ret)
+		goto free_hp_amp_gpio;
+
+	ret = gpio_direction_output(GPIO_E750_HP_AMP_OFF, 1);
+	if (ret)
+		goto free_spk_amp_gpio;
+
+	ret = gpio_direction_output(GPIO_E750_SPK_AMP_OFF, 1);
+	if (ret)
+		goto free_spk_amp_gpio;
+
+	e750_snd_device = platform_device_alloc("soc-audio", -1);
+	if (!e750_snd_device) {
+		ret = -ENOMEM;
+		goto free_spk_amp_gpio;
+	}
+
+	platform_set_drvdata(e750_snd_device, &e750);
+	ret = platform_device_add(e750_snd_device);
+
+	if (!ret)
+		return 0;
+
+/* Fail gracefully */
+	platform_device_put(e750_snd_device);
+free_spk_amp_gpio:
+	gpio_free(GPIO_E750_SPK_AMP_OFF);
+free_hp_amp_gpio:
+	gpio_free(GPIO_E750_HP_AMP_OFF);
+
+	return ret;
+}
+
+static void __exit e750_exit(void)
+{
+	platform_device_unregister(e750_snd_device);
+	gpio_free(GPIO_E750_SPK_AMP_OFF);
+	gpio_free(GPIO_E750_HP_AMP_OFF);
+}
+
+module_init(e750_init);
+module_exit(e750_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Module information */
 MODULE_AUTHOR("Ian Molton <spyro@f2s.com>");
 MODULE_DESCRIPTION("ALSA SoC driver for e750");
 MODULE_LICENSE("GPL v2");
+<<<<<<< HEAD
 MODULE_ALIAS("platform:e750-audio");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

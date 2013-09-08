@@ -16,9 +16,12 @@ This command displays the buildids found in a perf.data file, so that other
 tools can be used to fetch packages with matching symbol tables for use by
 perf report.
 
+<<<<<<< HEAD
 It can also be used to show the build id of the running kernel or in an ELF
 file using -i/--input.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 OPTIONS
 -------
 -H::
@@ -26,6 +29,7 @@ OPTIONS
         Show only DSOs with hits.
 -i::
 --input=::
+<<<<<<< HEAD
         Input file name. (default: perf.data unless stdin is a fifo)
 -f::
 --force::
@@ -33,6 +37,12 @@ OPTIONS
 -k::
 --kernel::
 	Show running kernel build id.
+=======
+        Input file name. (default: perf.data)
+-f::
+--force::
+	Don't do ownership validation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 -v::
 --verbose::
 	Be more verbose.

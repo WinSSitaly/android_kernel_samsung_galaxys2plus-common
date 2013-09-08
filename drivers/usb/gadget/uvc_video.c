@@ -8,6 +8,10 @@
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
  *	(at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/kernel.h>

@@ -126,6 +126,30 @@ nv04_display_create(struct drm_device *dev)
 
 	nouveau_hw_save_vga_fonts(dev, 1);
 
+<<<<<<< HEAD
+=======
+	drm_mode_config_init(dev);
+	drm_mode_create_scaling_mode_property(dev);
+	drm_mode_create_dithering_property(dev);
+
+	dev->mode_config.funcs = (void *)&nouveau_mode_config_funcs;
+
+	dev->mode_config.min_width = 0;
+	dev->mode_config.min_height = 0;
+	switch (dev_priv->card_type) {
+	case NV_04:
+		dev->mode_config.max_width = 2048;
+		dev->mode_config.max_height = 2048;
+		break;
+	default:
+		dev->mode_config.max_width = 4096;
+		dev->mode_config.max_height = 4096;
+		break;
+	}
+
+	dev->mode_config.fb_base = dev_priv->fb_phys;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nv04_crtc_create(dev, 0);
 	if (nv_two_heads(dev))
 		nv04_crtc_create(dev, 1);
@@ -214,6 +238,11 @@ nv04_display_destroy(struct drm_device *dev)
 	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head)
 		crtc->funcs->restore(crtc);
 
+<<<<<<< HEAD
+=======
+	drm_mode_config_cleanup(dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nouveau_hw_save_vga_fonts(dev, 0);
 }
 
@@ -243,11 +272,14 @@ nv04_display_init(struct drm_device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 void
 nv04_display_fini(struct drm_device *dev)
 {
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 nv04_vblank_crtc0_isr(struct drm_device *dev)
 {

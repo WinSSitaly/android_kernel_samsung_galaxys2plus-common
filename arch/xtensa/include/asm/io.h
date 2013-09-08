@@ -14,7 +14,10 @@
 #ifdef __KERNEL__
 #include <asm/byteorder.h>
 #include <asm/page.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 
 #include <linux/types.h>

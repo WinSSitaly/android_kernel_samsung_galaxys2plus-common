@@ -24,7 +24,10 @@
 #include <linux/io.h>
 #include <linux/pci.h>
 #include <linux/acpi.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct backlight_device *apple_backlight_device;
 
@@ -222,6 +225,7 @@ static struct acpi_driver apple_bl_driver = {
 	},
 };
 
+<<<<<<< HEAD
 static atomic_t apple_bl_registered = ATOMIC_INIT(0);
 
 int apple_bl_register(void)
@@ -243,11 +247,20 @@ EXPORT_SYMBOL_GPL(apple_bl_unregister);
 static int __init apple_bl_init(void)
 {
 	return apple_bl_register();
+=======
+static int __init apple_bl_init(void)
+{
+	return acpi_bus_register_driver(&apple_bl_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit apple_bl_exit(void)
 {
+<<<<<<< HEAD
 	apple_bl_unregister();
+=======
+	acpi_bus_unregister_driver(&apple_bl_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(apple_bl_init);

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #ifndef _M68K_DELAY_H
 #define _M68K_DELAY_H
 
@@ -94,3 +95,10 @@ static inline void __udelay(unsigned long usecs)
 
 
 #endif /* defined(_M68K_DELAY_H) */
+=======
+#ifdef __uClinux__
+#include "delay_no.h"
+#else
+#include "delay_mm.h"
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

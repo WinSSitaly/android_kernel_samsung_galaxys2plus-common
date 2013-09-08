@@ -10,8 +10,11 @@
  *  2 of the License, or (at your option) any later version.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bitops.h>
 #include <linux/errno.h>
 #include <linux/fs.h>
@@ -35,14 +38,22 @@
 #define WDT_MAX_TIME		255	/* seconds */
 
 static int wdt_time = WDT_DEFAULT_TIME;
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(wdt_time, int, 0);
 MODULE_PARM_DESC(wdt_time, "Watchdog time in seconds. (default="
 				__MODULE_STRING(WDT_DEFAULT_TIME) ")");
 
 #ifdef CONFIG_WATCHDOG_NOWAYOUT
+<<<<<<< HEAD
 module_param(nowayout, bool, 0);
+=======
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout,
 		"Watchdog cannot be stopped once started (default="
 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
@@ -56,6 +67,7 @@ static atomic_t ticks;
 static inline void bcm47xx_wdt_hw_start(void)
 {
 	/* this is 2,5s on 100Mhz clock  and 2s on 133 Mhz */
+<<<<<<< HEAD
 	switch (bcm47xx_bus_type) {
 #ifdef CONFIG_BCM47XX_SSB
 	case BCM47XX_BUS_TYPE_SSB:
@@ -69,10 +81,14 @@ static inline void bcm47xx_wdt_hw_start(void)
 		break;
 #endif
 	}
+=======
+	ssb_watchdog_timer_set(&ssb_bcm47xx, 0xfffffff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int bcm47xx_wdt_hw_stop(void)
 {
+<<<<<<< HEAD
 	switch (bcm47xx_bus_type) {
 #ifdef CONFIG_BCM47XX_SSB
 	case BCM47XX_BUS_TYPE_SSB:
@@ -85,6 +101,9 @@ static inline int bcm47xx_wdt_hw_stop(void)
 #endif
 	}
 	return -EINVAL;
+=======
+	return ssb_watchdog_timer_set(&ssb_bcm47xx, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void bcm47xx_timer_tick(unsigned long unused)
@@ -93,7 +112,11 @@ static void bcm47xx_timer_tick(unsigned long unused)
 		bcm47xx_wdt_hw_start();
 		mod_timer(&wdt_timer, jiffies + HZ);
 	} else {
+<<<<<<< HEAD
 		pr_crit("Watchdog will fire soon!!!\n");
+=======
+		printk(KERN_CRIT DRV_NAME "Watchdog will fire soon!!!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -142,7 +165,12 @@ static int bcm47xx_wdt_release(struct inode *inode, struct file *file)
 	if (expect_release == 42) {
 		bcm47xx_wdt_stop();
 	} else {
+<<<<<<< HEAD
 		pr_crit("Unexpected close, not stopping watchdog!\n");
+=======
+		printk(KERN_CRIT DRV_NAME
+			": Unexpected close, not stopping watchdog!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bcm47xx_wdt_start();
 	}
 
@@ -271,7 +299,12 @@ static int __init bcm47xx_wdt_init(void)
 
 	if (bcm47xx_wdt_settimeout(wdt_time)) {
 		bcm47xx_wdt_settimeout(WDT_DEFAULT_TIME);
+<<<<<<< HEAD
 		pr_info("wdt_time value must be 0 < wdt_time < %d, using %d\n",
+=======
+		printk(KERN_INFO DRV_NAME ": "
+			"wdt_time value must be 0 < wdt_time < %d, using %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			(WDT_MAX_TIME + 1), wdt_time);
 	}
 
@@ -285,8 +318,13 @@ static int __init bcm47xx_wdt_init(void)
 		return ret;
 	}
 
+<<<<<<< HEAD
 	pr_info("BCM47xx Watchdog Timer enabled (%d seconds%s)\n",
 		wdt_time, nowayout ? ", nowayout" : "");
+=======
+	printk(KERN_INFO "BCM47xx Watchdog Timer enabled (%d seconds%s)\n",
+				wdt_time, nowayout ? ", nowayout" : "");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

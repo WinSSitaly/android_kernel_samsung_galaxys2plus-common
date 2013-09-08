@@ -41,7 +41,10 @@ asmlinkage void *sys_dma_memcpy(void *dest, const void *src, size_t len)
 
 #if defined(CONFIG_FB) || defined(CONFIG_FB_MODULE)
 #include <linux/fb.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 unsigned long get_fb_unmapped_area(struct file *filp, unsigned long orig_addr,
 	unsigned long len, unsigned long pgoff, unsigned long flags)
 {

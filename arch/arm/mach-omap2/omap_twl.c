@@ -42,11 +42,16 @@
 
 #define OMAP4_SRI2C_SLAVE_ADDR		0x12
 #define OMAP4_VDD_MPU_SR_VOLT_REG	0x55
+<<<<<<< HEAD
 #define OMAP4_VDD_MPU_SR_CMD_REG	0x56
 #define OMAP4_VDD_IVA_SR_VOLT_REG	0x5B
 #define OMAP4_VDD_IVA_SR_CMD_REG	0x5C
 #define OMAP4_VDD_CORE_SR_VOLT_REG	0x61
 #define OMAP4_VDD_CORE_SR_CMD_REG	0x62
+=======
+#define OMAP4_VDD_IVA_SR_VOLT_REG	0x5B
+#define OMAP4_VDD_CORE_SR_VOLT_REG	0x61
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define OMAP4_VP_CONFIG_ERROROFFSET	0x00
 #define OMAP4_VP_VSTEPMIN_VSTEPMIN	0x01
@@ -98,8 +103,11 @@ static unsigned long twl6030_vsel_to_uv(const u8 vsel)
 		is_offset_valid = true;
 	}
 
+<<<<<<< HEAD
 	if (!vsel)
 		return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * There is no specific formula for voltage to vsel
 	 * conversion above 1.3V. There are special hardcoded
@@ -111,9 +119,15 @@ static unsigned long twl6030_vsel_to_uv(const u8 vsel)
 		return 1350000;
 
 	if (smps_offset & 0x8)
+<<<<<<< HEAD
 		return ((((vsel - 1) * 1266) + 70900)) * 10;
 	else
 		return ((((vsel - 1) * 1266) + 60770)) * 10;
+=======
+		return ((((vsel - 1) * 125) + 7000)) * 100;
+	else
+		return ((((vsel - 1) * 125) + 6000)) * 100;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static u8 twl6030_uv_to_vsel(unsigned long uv)
@@ -132,8 +146,11 @@ static u8 twl6030_uv_to_vsel(unsigned long uv)
 		is_offset_valid = true;
 	}
 
+<<<<<<< HEAD
 	if (!uv)
 		return 0x00;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * There is no specific formula for voltage to vsel
 	 * conversion above 1.3V. There are special hardcoded
@@ -141,6 +158,7 @@ static u8 twl6030_uv_to_vsel(unsigned long uv)
 	 * hardcoding only for 1.35 V which is used for 1GH OPP for
 	 * OMAP4430.
 	 */
+<<<<<<< HEAD
 	if (uv > twl6030_vsel_to_uv(0x39)) {
 		if (uv == 1350000)
 			return 0x3A;
@@ -156,6 +174,18 @@ static u8 twl6030_uv_to_vsel(unsigned long uv)
 }
 
 static struct omap_voltdm_pmic omap3_mpu_pmic = {
+=======
+	if (uv == 1350000)
+		return 0x3A;
+
+	if (smps_offset & 0x8)
+		return DIV_ROUND_UP(uv - 700000, 12500) + 1;
+	else
+		return DIV_ROUND_UP(uv - 600000, 12500) + 1;
+}
+
+static struct omap_volt_pmic_info omap3_mpu_volt_info = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.slew_rate		= 4000,
 	.step_size		= 12500,
 	.on_volt		= 1200000,
@@ -170,13 +200,21 @@ static struct omap_voltdm_pmic omap3_mpu_pmic = {
 	.vp_vddmax		= OMAP3430_VP1_VLIMITTO_VDDMAX,
 	.vp_timeout_us		= OMAP3_VP_VLIMITTO_TIMEOUT_US,
 	.i2c_slave_addr		= OMAP3_SRI2C_SLAVE_ADDR,
+<<<<<<< HEAD
 	.volt_reg_addr		= OMAP3_VDD_MPU_SR_CONTROL_REG,
 	.i2c_high_speed		= true,
+=======
+	.pmic_reg		= OMAP3_VDD_MPU_SR_CONTROL_REG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.vsel_to_uv		= twl4030_vsel_to_uv,
 	.uv_to_vsel		= twl4030_uv_to_vsel,
 };
 
+<<<<<<< HEAD
 static struct omap_voltdm_pmic omap3_core_pmic = {
+=======
+static struct omap_volt_pmic_info omap3_core_volt_info = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.slew_rate		= 4000,
 	.step_size		= 12500,
 	.on_volt                = 1200000,
@@ -191,12 +229,17 @@ static struct omap_voltdm_pmic omap3_core_pmic = {
 	.vp_vddmax		= OMAP3430_VP2_VLIMITTO_VDDMAX,
 	.vp_timeout_us		= OMAP3_VP_VLIMITTO_TIMEOUT_US,
 	.i2c_slave_addr		= OMAP3_SRI2C_SLAVE_ADDR,
+<<<<<<< HEAD
 	.volt_reg_addr		= OMAP3_VDD_CORE_SR_CONTROL_REG,
 	.i2c_high_speed		= true,
+=======
+	.pmic_reg		= OMAP3_VDD_CORE_SR_CONTROL_REG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.vsel_to_uv		= twl4030_vsel_to_uv,
 	.uv_to_vsel		= twl4030_uv_to_vsel,
 };
 
+<<<<<<< HEAD
 static struct omap_voltdm_pmic omap4_mpu_pmic = {
 	.slew_rate		= 4000,
 	.step_size		= 12660,
@@ -204,6 +247,15 @@ static struct omap_voltdm_pmic omap4_mpu_pmic = {
 	.onlp_volt		= 1375000,
 	.ret_volt		= 830000,
 	.off_volt		= 0,
+=======
+static struct omap_volt_pmic_info omap4_mpu_volt_info = {
+	.slew_rate		= 4000,
+	.step_size		= 12500,
+	.on_volt		= 1350000,
+	.onlp_volt		= 1350000,
+	.ret_volt		= 837500,
+	.off_volt		= 600000,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.volt_setup_time	= 0,
 	.vp_erroroffset		= OMAP4_VP_CONFIG_ERROROFFSET,
 	.vp_vstepmin		= OMAP4_VP_VSTEPMIN_VSTEPMIN,
@@ -212,13 +264,18 @@ static struct omap_voltdm_pmic omap4_mpu_pmic = {
 	.vp_vddmax		= OMAP4_VP_MPU_VLIMITTO_VDDMAX,
 	.vp_timeout_us		= OMAP4_VP_VLIMITTO_TIMEOUT_US,
 	.i2c_slave_addr		= OMAP4_SRI2C_SLAVE_ADDR,
+<<<<<<< HEAD
 	.volt_reg_addr		= OMAP4_VDD_MPU_SR_VOLT_REG,
 	.cmd_reg_addr		= OMAP4_VDD_MPU_SR_CMD_REG,
 	.i2c_high_speed		= true,
+=======
+	.pmic_reg		= OMAP4_VDD_MPU_SR_VOLT_REG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.vsel_to_uv		= twl6030_vsel_to_uv,
 	.uv_to_vsel		= twl6030_uv_to_vsel,
 };
 
+<<<<<<< HEAD
 static struct omap_voltdm_pmic omap4_iva_pmic = {
 	.slew_rate		= 4000,
 	.step_size		= 12660,
@@ -226,6 +283,15 @@ static struct omap_voltdm_pmic omap4_iva_pmic = {
 	.onlp_volt		= 1188000,
 	.ret_volt		= 830000,
 	.off_volt		= 0,
+=======
+static struct omap_volt_pmic_info omap4_iva_volt_info = {
+	.slew_rate		= 4000,
+	.step_size		= 12500,
+	.on_volt		= 1100000,
+	.onlp_volt		= 1100000,
+	.ret_volt		= 837500,
+	.off_volt		= 600000,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.volt_setup_time	= 0,
 	.vp_erroroffset		= OMAP4_VP_CONFIG_ERROROFFSET,
 	.vp_vstepmin		= OMAP4_VP_VSTEPMIN_VSTEPMIN,
@@ -234,13 +300,18 @@ static struct omap_voltdm_pmic omap4_iva_pmic = {
 	.vp_vddmax		= OMAP4_VP_IVA_VLIMITTO_VDDMAX,
 	.vp_timeout_us		= OMAP4_VP_VLIMITTO_TIMEOUT_US,
 	.i2c_slave_addr		= OMAP4_SRI2C_SLAVE_ADDR,
+<<<<<<< HEAD
 	.volt_reg_addr		= OMAP4_VDD_IVA_SR_VOLT_REG,
 	.cmd_reg_addr		= OMAP4_VDD_IVA_SR_CMD_REG,
 	.i2c_high_speed		= true,
+=======
+	.pmic_reg		= OMAP4_VDD_IVA_SR_VOLT_REG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.vsel_to_uv		= twl6030_vsel_to_uv,
 	.uv_to_vsel		= twl6030_uv_to_vsel,
 };
 
+<<<<<<< HEAD
 static struct omap_voltdm_pmic omap4_core_pmic = {
 	.slew_rate		= 4000,
 	.step_size		= 12660,
@@ -248,6 +319,15 @@ static struct omap_voltdm_pmic omap4_core_pmic = {
 	.onlp_volt		= 1200000,
 	.ret_volt		= 830000,
 	.off_volt		= 0,
+=======
+static struct omap_volt_pmic_info omap4_core_volt_info = {
+	.slew_rate		= 4000,
+	.step_size		= 12500,
+	.on_volt		= 1100000,
+	.onlp_volt		= 1100000,
+	.ret_volt		= 837500,
+	.off_volt		= 600000,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.volt_setup_time	= 0,
 	.vp_erroroffset		= OMAP4_VP_CONFIG_ERROROFFSET,
 	.vp_vstepmin		= OMAP4_VP_VSTEPMIN_VSTEPMIN,
@@ -256,8 +336,12 @@ static struct omap_voltdm_pmic omap4_core_pmic = {
 	.vp_vddmax		= OMAP4_VP_CORE_VLIMITTO_VDDMAX,
 	.vp_timeout_us		= OMAP4_VP_VLIMITTO_TIMEOUT_US,
 	.i2c_slave_addr		= OMAP4_SRI2C_SLAVE_ADDR,
+<<<<<<< HEAD
 	.volt_reg_addr		= OMAP4_VDD_CORE_SR_VOLT_REG,
 	.cmd_reg_addr		= OMAP4_VDD_CORE_SR_CMD_REG,
+=======
+	.pmic_reg		= OMAP4_VDD_CORE_SR_VOLT_REG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.vsel_to_uv		= twl6030_vsel_to_uv,
 	.uv_to_vsel		= twl6030_uv_to_vsel,
 };
@@ -269,6 +353,7 @@ int __init omap4_twl_init(void)
 	if (!cpu_is_omap44xx())
 		return -ENODEV;
 
+<<<<<<< HEAD
 	voltdm = voltdm_lookup("mpu");
 	omap_voltage_register_pmic(voltdm, &omap4_mpu_pmic);
 
@@ -277,6 +362,16 @@ int __init omap4_twl_init(void)
 
 	voltdm = voltdm_lookup("core");
 	omap_voltage_register_pmic(voltdm, &omap4_core_pmic);
+=======
+	voltdm = omap_voltage_domain_lookup("mpu");
+	omap_voltage_register_pmic(voltdm, &omap4_mpu_volt_info);
+
+	voltdm = omap_voltage_domain_lookup("iva");
+	omap_voltage_register_pmic(voltdm, &omap4_iva_volt_info);
+
+	voltdm = omap_voltage_domain_lookup("core");
+	omap_voltage_register_pmic(voltdm, &omap4_core_volt_info);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -289,10 +384,17 @@ int __init omap3_twl_init(void)
 		return -ENODEV;
 
 	if (cpu_is_omap3630()) {
+<<<<<<< HEAD
 		omap3_mpu_pmic.vp_vddmin = OMAP3630_VP1_VLIMITTO_VDDMIN;
 		omap3_mpu_pmic.vp_vddmax = OMAP3630_VP1_VLIMITTO_VDDMAX;
 		omap3_core_pmic.vp_vddmin = OMAP3630_VP2_VLIMITTO_VDDMIN;
 		omap3_core_pmic.vp_vddmax = OMAP3630_VP2_VLIMITTO_VDDMAX;
+=======
+		omap3_mpu_volt_info.vp_vddmin = OMAP3630_VP1_VLIMITTO_VDDMIN;
+		omap3_mpu_volt_info.vp_vddmax = OMAP3630_VP1_VLIMITTO_VDDMAX;
+		omap3_core_volt_info.vp_vddmin = OMAP3630_VP2_VLIMITTO_VDDMIN;
+		omap3_core_volt_info.vp_vddmax = OMAP3630_VP2_VLIMITTO_VDDMAX;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -307,11 +409,19 @@ int __init omap3_twl_init(void)
 	if (!twl_sr_enable_autoinit)
 		omap3_twl_set_sr_bit(true);
 
+<<<<<<< HEAD
 	voltdm = voltdm_lookup("mpu_iva");
 	omap_voltage_register_pmic(voltdm, &omap3_mpu_pmic);
 
 	voltdm = voltdm_lookup("core");
 	omap_voltage_register_pmic(voltdm, &omap3_core_pmic);
+=======
+	voltdm = omap_voltage_domain_lookup("mpu");
+	omap_voltage_register_pmic(voltdm, &omap3_mpu_volt_info);
+
+	voltdm = omap_voltage_domain_lookup("core");
+	omap_voltage_register_pmic(voltdm, &omap3_core_volt_info);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

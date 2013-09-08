@@ -14,7 +14,11 @@
 #include <mach/hardware.h>
 #include <mach/regs-uart.h>
 
+<<<<<<< HEAD
 	.macro	addruart, rp, rv, tmp
+=======
+	.macro	addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ldr	\rp, =KS8695_UART_PA		@ physical base address
 		ldr	\rv, =KS8695_UART_VA		@ virtual base address
 	.endm

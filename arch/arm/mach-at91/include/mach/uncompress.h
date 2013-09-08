@@ -23,12 +23,18 @@
 
 #include <linux/io.h>
 #include <linux/atmel_serial.h>
+<<<<<<< HEAD
 #include <mach/hardware.h>
 
 #if defined(CONFIG_AT91_EARLY_DBGU0)
 #define UART_OFFSET AT91_BASE_DBGU0
 #elif defined(CONFIG_AT91_EARLY_DBGU1)
 #define UART_OFFSET AT91_BASE_DBGU1
+=======
+
+#if defined(CONFIG_AT91_EARLY_DBGU)
+#define UART_OFFSET (AT91_DBGU + AT91_BASE_SYS)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #elif defined(CONFIG_AT91_EARLY_USART0)
 #define UART_OFFSET AT91_USART0
 #elif defined(CONFIG_AT91_EARLY_USART1)

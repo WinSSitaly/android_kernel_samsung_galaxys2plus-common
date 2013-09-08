@@ -78,6 +78,10 @@ struct mv_xor_device {
 /**
  * struct mv_xor_chan - internal representation of a XOR channel
  * @pending: allows batching of hardware operations
+<<<<<<< HEAD
+=======
+ * @completed_cookie: identifier for the most recently completed operation
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @lock: serializes enqueue/dequeue operations to the descriptors pool
  * @mmr_base: memory mapped register base
  * @idx: the index of the xor channel
@@ -92,6 +96,10 @@ struct mv_xor_device {
  */
 struct mv_xor_chan {
 	int			pending;
+<<<<<<< HEAD
+=======
+	dma_cookie_t		completed_cookie;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spinlock_t		lock; /* protects the descriptor slot pool */
 	void __iomem		*mmr_base;
 	unsigned int		idx;
@@ -107,6 +115,10 @@ struct mv_xor_chan {
 #ifdef USE_TIMER
 	unsigned long		cleanup_time;
 	u32			current_on_last_cleanup;
+<<<<<<< HEAD
+=======
+	dma_cookie_t		is_complete_cookie;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 };
 

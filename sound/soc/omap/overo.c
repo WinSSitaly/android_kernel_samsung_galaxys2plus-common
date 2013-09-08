@@ -21,7 +21,10 @@
 
 #include <linux/clk.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/pcm.h>
 #include <sound/soc.h>
@@ -39,8 +42,34 @@ static int overo_hw_params(struct snd_pcm_substream *substream,
 {
 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+<<<<<<< HEAD
 	int ret;
 
+=======
+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+	int ret;
+
+	/* Set codec DAI configuration */
+	ret = snd_soc_dai_set_fmt(codec_dai,
+				  SND_SOC_DAIFMT_I2S |
+				  SND_SOC_DAIFMT_NB_NF |
+				  SND_SOC_DAIFMT_CBM_CFM);
+	if (ret < 0) {
+		printk(KERN_ERR "can't set codec DAI configuration\n");
+		return ret;
+	}
+
+	/* Set cpu DAI configuration */
+	ret = snd_soc_dai_set_fmt(cpu_dai,
+				  SND_SOC_DAIFMT_I2S |
+				  SND_SOC_DAIFMT_NB_NF |
+				  SND_SOC_DAIFMT_CBM_CFM);
+	if (ret < 0) {
+		printk(KERN_ERR "can't set cpu DAI configuration\n");
+		return ret;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Set the codec system clock for DAC and ADC */
 	ret = snd_soc_dai_set_sysclk(codec_dai, 0, 26000000,
 					    SND_SOC_CLOCK_IN);
@@ -60,19 +89,29 @@ static struct snd_soc_ops overo_ops = {
 static struct snd_soc_dai_link overo_dai = {
 	.name = "TWL4030",
 	.stream_name = "TWL4030",
+<<<<<<< HEAD
 	.cpu_dai_name = "omap-mcbsp.2",
 	.codec_dai_name = "twl4030-hifi",
 	.platform_name = "omap-pcm-audio",
 	.codec_name = "twl4030-codec",
 	.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
 		   SND_SOC_DAIFMT_CBM_CFM,
+=======
+	.cpu_dai_name = "omap-mcbsp-dai.1",
+	.codec_dai_name = "twl4030-hifi",
+	.platform_name = "omap-pcm-audio",
+	.codec_name = "twl4030-codec",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ops = &overo_ops,
 };
 
 /* Audio machine driver */
 static struct snd_soc_card snd_soc_card_overo = {
 	.name = "overo",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link = &overo_dai,
 	.num_links = 1,
 };

@@ -33,7 +33,10 @@
 
 #include <linux/errno.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/jhash.h>
 #include <linux/kthread.h>

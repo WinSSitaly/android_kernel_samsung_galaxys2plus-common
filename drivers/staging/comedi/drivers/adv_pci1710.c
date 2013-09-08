@@ -1382,14 +1382,25 @@ static int pci1710_attach(struct comedi_device *dev,
 	int i;
 	int board_index;
 
+<<<<<<< HEAD
 	dev_info(dev->hw_dev, "comedi%d: adv_pci1710:\n", dev->minor);
+=======
+	printk("comedi%d: adv_pci1710: ", dev->minor);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	opt_bus = it->options[0];
 	opt_slot = it->options[1];
 
 	ret = alloc_private(dev, sizeof(struct pci1710_private));
+<<<<<<< HEAD
 	if (ret < 0)
 		return -ENOMEM;
+=======
+	if (ret < 0) {
+		printk(" - Allocation failed!\n");
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Look for matching PCI device */
 	errstr = "not found!";
@@ -1434,10 +1445,17 @@ static int pci1710_attach(struct comedi_device *dev,
 
 	if (!pcidev) {
 		if (opt_bus || opt_slot) {
+<<<<<<< HEAD
 			dev_err(dev->hw_dev, "- Card at b:s %d:%d %s\n",
 				opt_bus, opt_slot, errstr);
 		} else {
 			dev_err(dev->hw_dev, "- Card %s\n", errstr);
+=======
+			printk(" - Card at b:s %d:%d %s\n",
+			       opt_bus, opt_slot, errstr);
+		} else {
+			printk(" - Card %s\n", errstr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		return -EIO;
 	}
@@ -1448,8 +1466,13 @@ static int pci1710_attach(struct comedi_device *dev,
 	irq = pcidev->irq;
 	iobase = pci_resource_start(pcidev, 2);
 
+<<<<<<< HEAD
 	dev_dbg(dev->hw_dev, "b:s:f=%d:%d:%d, io=0x%4lx\n", pci_bus, pci_slot,
 		pci_func, iobase);
+=======
+	printk(", b:s:f=%d:%d:%d, io=0x%4lx", pci_bus, pci_slot, pci_func,
+	       iobase);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev->iobase = iobase;
 
@@ -1469,8 +1492,15 @@ static int pci1710_attach(struct comedi_device *dev,
 		n_subdevices++;
 
 	ret = alloc_subdevices(dev, n_subdevices);
+<<<<<<< HEAD
 	if (ret < 0)
 		return ret;
+=======
+	if (ret < 0) {
+		printk(" - Allocation failed!\n");
+		return ret;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pci1710_reset(dev);
 
@@ -1479,6 +1509,7 @@ static int pci1710_attach(struct comedi_device *dev,
 			if (request_irq(irq, interrupt_service_pci1710,
 					IRQF_SHARED, "Advantech PCI-1710",
 					dev)) {
+<<<<<<< HEAD
 				dev_dbg(dev->hw_dev, "unable to allocate IRQ %d, DISABLING IT",
 					irq);
 				irq = 0;	/* Can't use IRQ */
@@ -1487,12 +1518,29 @@ static int pci1710_attach(struct comedi_device *dev,
 			}
 		} else {
 			dev_dbg(dev->hw_dev, "IRQ disabled");
+=======
+				printk
+				    (", unable to allocate IRQ %d, DISABLING IT",
+				     irq);
+				irq = 0;	/* Can't use IRQ */
+			} else {
+				printk(", irq=%u", irq);
+			}
+		} else {
+			printk(", IRQ disabled");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		irq = 0;
 	}
 
 	dev->irq = irq;
+<<<<<<< HEAD
+=======
+
+	printk(".\n");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	subdev = 0;
 
 	if (this_board->n_aichan) {

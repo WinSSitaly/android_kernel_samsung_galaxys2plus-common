@@ -47,13 +47,18 @@ int dump_printf(const char *fmt, ...)
 }
 
 #ifdef NO_NEWT_SUPPORT
+<<<<<<< HEAD
 int ui__warning(const char *format, ...)
+=======
+void ui__warning(const char *format, ...)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	va_list args;
 
 	va_start(args, format);
 	vfprintf(stderr, format, args);
 	va_end(args);
+<<<<<<< HEAD
 	return 0;
 }
 #endif
@@ -61,6 +66,14 @@ int ui__warning(const char *format, ...)
 int ui__error_paranoid(void)
 {
 	return ui__error("Permission error - are you root?\n"
+=======
+}
+#endif
+
+void ui__warning_paranoid(void)
+{
+	ui__warning("Permission error - are you root?\n"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    "Consider tweaking /proc/sys/kernel/perf_event_paranoid:\n"
 		    " -1 - Not paranoid at all\n"
 		    "  0 - Disallow raw tracepoint access for unpriv\n"

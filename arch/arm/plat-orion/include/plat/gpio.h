@@ -12,7 +12,19 @@
 #define __PLAT_GPIO_H
 
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/types.h>
+=======
+#include <asm-generic/gpio.h>
+
+/*
+ * GENERIC_GPIO primitives.
+ */
+#define gpio_get_value  __gpio_get_value
+#define gpio_set_value  __gpio_set_value
+#define gpio_cansleep   __gpio_cansleep
+#define gpio_to_irq     __gpio_to_irq
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Orion-specific GPIO API extensions.

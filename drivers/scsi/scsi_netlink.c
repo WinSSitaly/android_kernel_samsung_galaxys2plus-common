@@ -23,7 +23,10 @@
 #include <linux/security.h>
 #include <linux/delay.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/sock.h>
 #include <net/netlink.h>
 
@@ -112,7 +115,11 @@ scsi_nl_rcv_msg(struct sk_buff *skb)
 			goto next_msg;
 		}
 
+<<<<<<< HEAD
 		if (!capable(CAP_SYS_ADMIN)) {
+=======
+		if (security_netlink_recv(skb, CAP_SYS_ADMIN)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			err = -EPERM;
 			goto next_msg;
 		}

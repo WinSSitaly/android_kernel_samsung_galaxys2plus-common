@@ -43,9 +43,15 @@ endif
 
 OBJCOPYFLAGS += -R .empty_zero_page
 
+<<<<<<< HEAD
 suffix-$(CONFIG_KERNEL_GZIP)	= gz
 suffix-$(CONFIG_KERNEL_BZIP2)	= bz2
 suffix-$(CONFIG_KERNEL_LZMA)	= lzma
+=======
+suffix_$(CONFIG_KERNEL_GZIP)	= gz
+suffix_$(CONFIG_KERNEL_BZIP2)	= bz2
+suffix_$(CONFIG_KERNEL_LZMA)	= lzma
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 $(obj)/piggy.o: $(obj)/vmlinux.scr $(obj)/vmlinux.bin.$(suffix-y) FORCE
 	$(call if_changed,ld)

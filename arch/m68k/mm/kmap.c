@@ -20,6 +20,10 @@
 #include <asm/page.h>
 #include <asm/pgalloc.h>
 #include <asm/io.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #undef DEBUG
 
@@ -170,8 +174,12 @@ void __iomem *__ioremap(unsigned long physaddr, unsigned long size, int cachefla
 			break;
 		}
 	} else {
+<<<<<<< HEAD
 		physaddr |= (_PAGE_PRESENT | _PAGE_ACCESSED |
 			     _PAGE_DIRTY | _PAGE_READWRITE);
+=======
+		physaddr |= (_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_DIRTY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		switch (cacheflag) {
 		case IOMAP_NOCACHE_SER:
 		case IOMAP_NOCACHE_NONSER:

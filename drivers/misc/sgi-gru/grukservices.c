@@ -31,7 +31,10 @@
 #include <linux/interrupt.h>
 #include <linux/uaccess.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io_apic.h>
 #include "gru.h"
 #include "grulib.h"

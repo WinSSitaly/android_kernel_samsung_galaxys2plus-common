@@ -1021,7 +1021,11 @@ struct fc_symname_s {
 #define FC_ED_TOV	2
 #define FC_REC_TOV	(FC_ED_TOV + 1)
 #define FC_RA_TOV	10
+<<<<<<< HEAD
 #define FC_ELS_TOV	((2 * FC_RA_TOV) + 1)
+=======
+#define FC_ELS_TOV	(2 * FC_RA_TOV)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define FC_FCCT_TOV	(3 * FC_RA_TOV)
 
 /*
@@ -1049,6 +1053,18 @@ struct fc_vft_s {
 };
 
 /*
+<<<<<<< HEAD
+=======
+ * FCP
+ */
+enum {
+	FCP_RJT		= 0x01000000,	/* SRR reject */
+	FCP_SRR_ACCEPT	= 0x02000000,	/* SRR accept */
+	FCP_SRR		= 0x14000000,	/* Sequence Retransmission Request */
+};
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * FCP_CMND definitions
  */
 #define FCP_CMND_CDB_LEN    16

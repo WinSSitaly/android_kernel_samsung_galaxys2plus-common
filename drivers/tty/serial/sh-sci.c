@@ -47,15 +47,27 @@
 #include <linux/ctype.h>
 #include <linux/err.h>
 #include <linux/dmaengine.h>
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
 #include <linux/scatterlist.h>
 #include <linux/slab.h>
 #include <linux/gpio.h>
+=======
+#include <linux/scatterlist.h>
+#include <linux/slab.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_SUPERH
 #include <asm/sh_bios.h>
 #endif
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_H8300
+#include <asm/gpio.h>
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "sh-sci.h"
 
 struct sci_port {
@@ -64,6 +76,15 @@ struct sci_port {
 	/* Platform configuration */
 	struct plat_sci_port	*cfg;
 
+<<<<<<< HEAD
+=======
+	/* Port enable callback */
+	void			(*enable)(struct uart_port *port);
+
+	/* Port disable callback */
+	void			(*disable)(struct uart_port *port);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Break timer */
 	struct timer_list	break_timer;
 	int			break_flag;
@@ -73,9 +94,12 @@ struct sci_port {
 	/* Function clock */
 	struct clk		*fclk;
 
+<<<<<<< HEAD
 	char			*irqstr[SCIx_NR_IRQS];
 	char			*gpiostr[SCIx_NR_FNS];
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dma_chan			*chan_tx;
 	struct dma_chan			*chan_rx;
 
@@ -98,12 +122,15 @@ struct sci_port {
 #endif
 
 	struct notifier_block		freq_transition;
+<<<<<<< HEAD
 
 #ifdef CONFIG_SERIAL_SH_SCI_CONSOLE
 	unsigned short saved_smr;
 	unsigned short saved_fcr;
 	unsigned char saved_brr;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Function prototypes */
@@ -122,6 +149,7 @@ to_sci_port(struct uart_port *uart)
 	return container_of(uart, struct sci_port, port);
 }
 
+<<<<<<< HEAD
 struct plat_sci_reg {
 	u8 offset, size;
 };
@@ -410,6 +438,8 @@ static void sci_port_disable(struct sci_port *sci_port)
 	pm_runtime_put_sync(sci_port->port.dev);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_CONSOLE_POLL) || defined(CONFIG_SERIAL_SH_SCI_CONSOLE)
 
 #ifdef CONFIG_CONSOLE_POLL
@@ -419,9 +449,15 @@ static int sci_poll_get_char(struct uart_port *port)
 	int c;
 
 	do {
+<<<<<<< HEAD
 		status = serial_port_in(port, SCxSR);
 		if (status & SCxSR_ERRORS(port)) {
 			serial_port_out(port, SCxSR, SCxSR_ERROR_CLEAR(port));
+=======
+		status = sci_in(port, SCxSR);
+		if (status & SCxSR_ERRORS(port)) {
+			sci_out(port, SCxSR, SCxSR_ERROR_CLEAR(port));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 		break;
@@ -430,11 +466,19 @@ static int sci_poll_get_char(struct uart_port *port)
 	if (!(status & SCxSR_RDxF(port)))
 		return NO_POLL_CHAR;
 
+<<<<<<< HEAD
 	c = serial_port_in(port, SCxRDR);
 
 	/* Dummy read */
 	serial_port_in(port, SCxSR);
 	serial_port_out(port, SCxSR, SCxSR_RDxF_CLEAR(port));
+=======
+	c = sci_in(port, SCxRDR);
+
+	/* Dummy read */
+	sci_in(port, SCxSR);
+	sci_out(port, SCxSR, SCxSR_RDxF_CLEAR(port));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return c;
 }
@@ -445,6 +489,7 @@ static void sci_poll_put_char(struct uart_port *port, unsigned char c)
 	unsigned short status;
 
 	do {
+<<<<<<< HEAD
 		status = serial_port_in(port, SCxSR);
 	} while (!(status & SCxSR_TDxE(port)));
 
@@ -530,6 +575,233 @@ static inline int sci_rxd_in(struct uart_port *port)
 		return 1;
 
 	return !!__raw_readb(s->cfg->port_reg);
+=======
+		status = sci_in(port, SCxSR);
+	} while (!(status & SCxSR_TDxE(port)));
+
+	sci_out(port, SCxTDR, c);
+	sci_out(port, SCxSR, SCxSR_TDxE_CLEAR(port) & ~SCxSR_TEND(port));
+}
+#endif /* CONFIG_CONSOLE_POLL || CONFIG_SERIAL_SH_SCI_CONSOLE */
+
+#if defined(__H8300H__) || defined(__H8300S__)
+static void sci_init_pins(struct uart_port *port, unsigned int cflag)
+{
+	int ch = (port->mapbase - SMR0) >> 3;
+
+	/* set DDR regs */
+	H8300_GPIO_DDR(h8300_sci_pins[ch].port,
+		       h8300_sci_pins[ch].rx,
+		       H8300_GPIO_INPUT);
+	H8300_GPIO_DDR(h8300_sci_pins[ch].port,
+		       h8300_sci_pins[ch].tx,
+		       H8300_GPIO_OUTPUT);
+
+	/* tx mark output*/
+	H8300_SCI_DR(ch) |= h8300_sci_pins[ch].tx;
+}
+#elif defined(CONFIG_CPU_SUBTYPE_SH7710) || defined(CONFIG_CPU_SUBTYPE_SH7712)
+static inline void sci_init_pins(struct uart_port *port, unsigned int cflag)
+{
+	if (port->mapbase == 0xA4400000) {
+		__raw_writew(__raw_readw(PACR) & 0xffc0, PACR);
+		__raw_writew(__raw_readw(PBCR) & 0x0fff, PBCR);
+	} else if (port->mapbase == 0xA4410000)
+		__raw_writew(__raw_readw(PBCR) & 0xf003, PBCR);
+}
+#elif defined(CONFIG_CPU_SUBTYPE_SH7720) || defined(CONFIG_CPU_SUBTYPE_SH7721)
+static inline void sci_init_pins(struct uart_port *port, unsigned int cflag)
+{
+	unsigned short data;
+
+	if (cflag & CRTSCTS) {
+		/* enable RTS/CTS */
+		if (port->mapbase == 0xa4430000) { /* SCIF0 */
+			/* Clear PTCR bit 9-2; enable all scif pins but sck */
+			data = __raw_readw(PORT_PTCR);
+			__raw_writew((data & 0xfc03), PORT_PTCR);
+		} else if (port->mapbase == 0xa4438000) { /* SCIF1 */
+			/* Clear PVCR bit 9-2 */
+			data = __raw_readw(PORT_PVCR);
+			__raw_writew((data & 0xfc03), PORT_PVCR);
+		}
+	} else {
+		if (port->mapbase == 0xa4430000) { /* SCIF0 */
+			/* Clear PTCR bit 5-2; enable only tx and rx  */
+			data = __raw_readw(PORT_PTCR);
+			__raw_writew((data & 0xffc3), PORT_PTCR);
+		} else if (port->mapbase == 0xa4438000) { /* SCIF1 */
+			/* Clear PVCR bit 5-2 */
+			data = __raw_readw(PORT_PVCR);
+			__raw_writew((data & 0xffc3), PORT_PVCR);
+		}
+	}
+}
+#elif defined(CONFIG_CPU_SH3)
+/* For SH7705, SH7706, SH7707, SH7709, SH7709A, SH7729 */
+static inline void sci_init_pins(struct uart_port *port, unsigned int cflag)
+{
+	unsigned short data;
+
+	/* We need to set SCPCR to enable RTS/CTS */
+	data = __raw_readw(SCPCR);
+	/* Clear out SCP7MD1,0, SCP6MD1,0, SCP4MD1,0*/
+	__raw_writew(data & 0x0fcf, SCPCR);
+
+	if (!(cflag & CRTSCTS)) {
+		/* We need to set SCPCR to enable RTS/CTS */
+		data = __raw_readw(SCPCR);
+		/* Clear out SCP7MD1,0, SCP4MD1,0,
+		   Set SCP6MD1,0 = {01} (output)  */
+		__raw_writew((data & 0x0fcf) | 0x1000, SCPCR);
+
+		data = __raw_readb(SCPDR);
+		/* Set /RTS2 (bit6) = 0 */
+		__raw_writeb(data & 0xbf, SCPDR);
+	}
+}
+#elif defined(CONFIG_CPU_SUBTYPE_SH7722)
+static inline void sci_init_pins(struct uart_port *port, unsigned int cflag)
+{
+	unsigned short data;
+
+	if (port->mapbase == 0xffe00000) {
+		data = __raw_readw(PSCR);
+		data &= ~0x03cf;
+		if (!(cflag & CRTSCTS))
+			data |= 0x0340;
+
+		__raw_writew(data, PSCR);
+	}
+}
+#elif defined(CONFIG_CPU_SUBTYPE_SH7757) || \
+      defined(CONFIG_CPU_SUBTYPE_SH7763) || \
+      defined(CONFIG_CPU_SUBTYPE_SH7780) || \
+      defined(CONFIG_CPU_SUBTYPE_SH7785) || \
+      defined(CONFIG_CPU_SUBTYPE_SH7786) || \
+      defined(CONFIG_CPU_SUBTYPE_SHX3)
+static inline void sci_init_pins(struct uart_port *port, unsigned int cflag)
+{
+	if (!(cflag & CRTSCTS))
+		__raw_writew(0x0080, SCSPTR0); /* Set RTS = 1 */
+}
+#elif defined(CONFIG_CPU_SH4) && !defined(CONFIG_CPU_SH4A)
+static inline void sci_init_pins(struct uart_port *port, unsigned int cflag)
+{
+	if (!(cflag & CRTSCTS))
+		__raw_writew(0x0080, SCSPTR2); /* Set RTS = 1 */
+}
+#else
+static inline void sci_init_pins(struct uart_port *port, unsigned int cflag)
+{
+	/* Nothing to do */
+}
+#endif
+
+#if defined(CONFIG_CPU_SUBTYPE_SH7760) || \
+    defined(CONFIG_CPU_SUBTYPE_SH7780) || \
+    defined(CONFIG_CPU_SUBTYPE_SH7785) || \
+    defined(CONFIG_CPU_SUBTYPE_SH7786)
+static int scif_txfill(struct uart_port *port)
+{
+	return sci_in(port, SCTFDR) & 0xff;
+}
+
+static int scif_txroom(struct uart_port *port)
+{
+	return SCIF_TXROOM_MAX - scif_txfill(port);
+}
+
+static int scif_rxfill(struct uart_port *port)
+{
+	return sci_in(port, SCRFDR) & 0xff;
+}
+#elif defined(CONFIG_CPU_SUBTYPE_SH7763)
+static int scif_txfill(struct uart_port *port)
+{
+	if (port->mapbase == 0xffe00000 ||
+	    port->mapbase == 0xffe08000)
+		/* SCIF0/1*/
+		return sci_in(port, SCTFDR) & 0xff;
+	else
+		/* SCIF2 */
+		return sci_in(port, SCFDR) >> 8;
+}
+
+static int scif_txroom(struct uart_port *port)
+{
+	if (port->mapbase == 0xffe00000 ||
+	    port->mapbase == 0xffe08000)
+		/* SCIF0/1*/
+		return SCIF_TXROOM_MAX - scif_txfill(port);
+	else
+		/* SCIF2 */
+		return SCIF2_TXROOM_MAX - scif_txfill(port);
+}
+
+static int scif_rxfill(struct uart_port *port)
+{
+	if ((port->mapbase == 0xffe00000) ||
+	    (port->mapbase == 0xffe08000)) {
+		/* SCIF0/1*/
+		return sci_in(port, SCRFDR) & 0xff;
+	} else {
+		/* SCIF2 */
+		return sci_in(port, SCFDR) & SCIF2_RFDC_MASK;
+	}
+}
+#elif defined(CONFIG_ARCH_SH7372)
+static int scif_txfill(struct uart_port *port)
+{
+	if (port->type == PORT_SCIFA)
+		return sci_in(port, SCFDR) >> 8;
+	else
+		return sci_in(port, SCTFDR);
+}
+
+static int scif_txroom(struct uart_port *port)
+{
+	return port->fifosize - scif_txfill(port);
+}
+
+static int scif_rxfill(struct uart_port *port)
+{
+	if (port->type == PORT_SCIFA)
+		return sci_in(port, SCFDR) & SCIF_RFDC_MASK;
+	else
+		return sci_in(port, SCRFDR);
+}
+#else
+static int scif_txfill(struct uart_port *port)
+{
+	return sci_in(port, SCFDR) >> 8;
+}
+
+static int scif_txroom(struct uart_port *port)
+{
+	return SCIF_TXROOM_MAX - scif_txfill(port);
+}
+
+static int scif_rxfill(struct uart_port *port)
+{
+	return sci_in(port, SCFDR) & SCIF_RFDC_MASK;
+}
+#endif
+
+static int sci_txfill(struct uart_port *port)
+{
+	return !(sci_in(port, SCxSR) & SCI_TDRE);
+}
+
+static int sci_txroom(struct uart_port *port)
+{
+	return !sci_txfill(port);
+}
+
+static int sci_rxfill(struct uart_port *port)
+{
+	return (sci_in(port, SCxSR) & SCxSR_RDxF(port)) != 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* ********************************************************************** *
@@ -544,18 +816,35 @@ static void sci_transmit_chars(struct uart_port *port)
 	unsigned short ctrl;
 	int count;
 
+<<<<<<< HEAD
 	status = serial_port_in(port, SCxSR);
 	if (!(status & SCxSR_TDxE(port))) {
 		ctrl = serial_port_in(port, SCSCR);
+=======
+	status = sci_in(port, SCxSR);
+	if (!(status & SCxSR_TDxE(port))) {
+		ctrl = sci_in(port, SCSCR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (uart_circ_empty(xmit))
 			ctrl &= ~SCSCR_TIE;
 		else
 			ctrl |= SCSCR_TIE;
+<<<<<<< HEAD
 		serial_port_out(port, SCSCR, ctrl);
 		return;
 	}
 
 	count = sci_txroom(port);
+=======
+		sci_out(port, SCSCR, ctrl);
+		return;
+	}
+
+	if (port->type == PORT_SCI)
+		count = sci_txroom(port);
+	else
+		count = scif_txroom(port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	do {
 		unsigned char c;
@@ -570,18 +859,27 @@ static void sci_transmit_chars(struct uart_port *port)
 			break;
 		}
 
+<<<<<<< HEAD
 		serial_port_out(port, SCxTDR, c);
+=======
+		sci_out(port, SCxTDR, c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		port->icount.tx++;
 	} while (--count > 0);
 
+<<<<<<< HEAD
 	serial_port_out(port, SCxSR, SCxSR_TDxE_CLEAR(port));
+=======
+	sci_out(port, SCxSR, SCxSR_TDxE_CLEAR(port));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
 		uart_write_wakeup(port);
 	if (uart_circ_empty(xmit)) {
 		sci_stop_tx(port);
 	} else {
+<<<<<<< HEAD
 		ctrl = serial_port_in(port, SCSCR);
 
 		if (port->type != PORT_SCI) {
@@ -591,6 +889,17 @@ static void sci_transmit_chars(struct uart_port *port)
 
 		ctrl |= SCSCR_TIE;
 		serial_port_out(port, SCSCR, ctrl);
+=======
+		ctrl = sci_in(port, SCSCR);
+
+		if (port->type != PORT_SCI) {
+			sci_in(port, SCxSR); /* Dummy read */
+			sci_out(port, SCxSR, SCxSR_TDxE_CLEAR(port));
+		}
+
+		ctrl |= SCSCR_TIE;
+		sci_out(port, SCSCR, ctrl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -605,20 +914,38 @@ static void sci_receive_chars(struct uart_port *port)
 	unsigned short status;
 	unsigned char flag;
 
+<<<<<<< HEAD
 	status = serial_port_in(port, SCxSR);
+=======
+	status = sci_in(port, SCxSR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!(status & SCxSR_RDxF(port)))
 		return;
 
 	while (1) {
+<<<<<<< HEAD
 		/* Don't copy more bytes than there is room for in the buffer */
 		count = tty_buffer_request_room(tty, sci_rxfill(port));
+=======
+		if (port->type == PORT_SCI)
+			count = sci_rxfill(port);
+		else
+			count = scif_rxfill(port);
+
+		/* Don't copy more bytes than there is room for in the buffer */
+		count = tty_buffer_request_room(tty, count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* If for any reason we can't copy more data, we're done! */
 		if (count == 0)
 			break;
 
 		if (port->type == PORT_SCI) {
+<<<<<<< HEAD
 			char c = serial_port_in(port, SCxRDR);
+=======
+			char c = sci_in(port, SCxRDR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (uart_handle_sysrq_char(port, c) ||
 			    sci_port->break_flag)
 				count = 0;
@@ -626,9 +953,14 @@ static void sci_receive_chars(struct uart_port *port)
 				tty_insert_flip_char(tty, c, TTY_NORMAL);
 		} else {
 			for (i = 0; i < count; i++) {
+<<<<<<< HEAD
 				char c = serial_port_in(port, SCxRDR);
 
 				status = serial_port_in(port, SCxSR);
+=======
+				char c = sci_in(port, SCxRDR);
+				status = sci_in(port, SCxSR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_CPU_SH3)
 				/* Skip "chars" during break */
 				if (sci_port->break_flag) {
@@ -656,11 +988,17 @@ static void sci_receive_chars(struct uart_port *port)
 				/* Store data and status */
 				if (status & SCxSR_FER(port)) {
 					flag = TTY_FRAME;
+<<<<<<< HEAD
 					port->icount.frame++;
 					dev_notice(port->dev, "frame error\n");
 				} else if (status & SCxSR_PER(port)) {
 					flag = TTY_PARITY;
 					port->icount.parity++;
+=======
+					dev_notice(port->dev, "frame error\n");
+				} else if (status & SCxSR_PER(port)) {
+					flag = TTY_PARITY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					dev_notice(port->dev, "parity error\n");
 				} else
 					flag = TTY_NORMAL;
@@ -669,8 +1007,13 @@ static void sci_receive_chars(struct uart_port *port)
 			}
 		}
 
+<<<<<<< HEAD
 		serial_port_in(port, SCxSR); /* dummy read */
 		serial_port_out(port, SCxSR, SCxSR_RDxF_CLEAR(port));
+=======
+		sci_in(port, SCxSR); /* dummy read */
+		sci_out(port, SCxSR, SCxSR_RDxF_CLEAR(port));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		copied += count;
 		port->icount.rx += count;
@@ -680,8 +1023,13 @@ static void sci_receive_chars(struct uart_port *port)
 		/* Tell the rest of the system the news. New characters! */
 		tty_flip_buffer_push(tty);
 	} else {
+<<<<<<< HEAD
 		serial_port_in(port, SCxSR); /* dummy read */
 		serial_port_out(port, SCxSR, SCxSR_RDxF_CLEAR(port));
+=======
+		sci_in(port, SCxSR); /* dummy read */
+		sci_out(port, SCxSR, SCxSR_RDxF_CLEAR(port));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -705,7 +1053,12 @@ static void sci_break_timer(unsigned long data)
 {
 	struct sci_port *port = (struct sci_port *)data;
 
+<<<<<<< HEAD
 	sci_port_enable(port);
+=======
+	if (port->enable)
+		port->enable(&port->port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (sci_rxd_in(&port->port) == 0) {
 		port->break_flag = 1;
@@ -717,12 +1070,18 @@ static void sci_break_timer(unsigned long data)
 	} else
 		port->break_flag = 0;
 
+<<<<<<< HEAD
 	sci_port_disable(port);
+=======
+	if (port->disable)
+		port->disable(&port->port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int sci_handle_errors(struct uart_port *port)
 {
 	int copied = 0;
+<<<<<<< HEAD
 	unsigned short status = serial_port_in(port, SCxSR);
 	struct tty_struct *tty = port->state->port.tty;
 	struct sci_port *s = to_sci_port(port);
@@ -740,6 +1099,17 @@ static int sci_handle_errors(struct uart_port *port)
 
 			dev_notice(port->dev, "overrun error");
 		}
+=======
+	unsigned short status = sci_in(port, SCxSR);
+	struct tty_struct *tty = port->state->port.tty;
+
+	if (status & SCxSR_ORER(port)) {
+		/* overrun error */
+		if (tty_insert_flip_char(tty, 0, TTY_OVERRUN))
+			copied++;
+
+		dev_notice(port->dev, "overrun error");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (status & SCxSR_FER(port)) {
@@ -748,8 +1118,11 @@ static int sci_handle_errors(struct uart_port *port)
 			struct sci_port *sci_port = to_sci_port(port);
 
 			if (!sci_port->break_flag) {
+<<<<<<< HEAD
 				port->icount.brk++;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				sci_port->break_flag = 1;
 				sci_schedule_break_timer(sci_port);
 
@@ -765,8 +1138,11 @@ static int sci_handle_errors(struct uart_port *port)
 
 		} else {
 			/* frame error */
+<<<<<<< HEAD
 			port->icount.frame++;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (tty_insert_flip_char(tty, 0, TTY_FRAME))
 				copied++;
 
@@ -776,8 +1152,11 @@ static int sci_handle_errors(struct uart_port *port)
 
 	if (status & SCxSR_PER(port)) {
 		/* parity error */
+<<<<<<< HEAD
 		port->icount.parity++;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (tty_insert_flip_char(tty, 0, TTY_PARITY))
 			copied++;
 
@@ -793,6 +1172,7 @@ static int sci_handle_errors(struct uart_port *port)
 static int sci_handle_fifo_overrun(struct uart_port *port)
 {
 	struct tty_struct *tty = port->state->port.tty;
+<<<<<<< HEAD
 	struct sci_port *s = to_sci_port(port);
 	struct plat_sci_reg *reg;
 	int copied = 0;
@@ -805,6 +1185,15 @@ static int sci_handle_fifo_overrun(struct uart_port *port)
 		serial_port_out(port, SCLSR, 0);
 
 		port->icount.overrun++;
+=======
+	int copied = 0;
+
+	if (port->type != PORT_SCIF)
+		return 0;
+
+	if ((sci_in(port, SCLSR) & SCIF_ORER) != 0) {
+		sci_out(port, SCLSR, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		tty_insert_flip_char(tty, 0, TTY_OVERRUN);
 		tty_flip_buffer_push(tty);
@@ -819,7 +1208,11 @@ static int sci_handle_fifo_overrun(struct uart_port *port)
 static int sci_handle_breaks(struct uart_port *port)
 {
 	int copied = 0;
+<<<<<<< HEAD
 	unsigned short status = serial_port_in(port, SCxSR);
+=======
+	unsigned short status = sci_in(port, SCxSR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct tty_struct *tty = port->state->port.tty;
 	struct sci_port *s = to_sci_port(port);
 
@@ -831,9 +1224,12 @@ static int sci_handle_breaks(struct uart_port *port)
 		/* Debounce break */
 		s->break_flag = 1;
 #endif
+<<<<<<< HEAD
 
 		port->icount.brk++;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Notify of BREAK */
 		if (tty_insert_flip_char(tty, 0, TTY_BREAK))
 			copied++;
@@ -856,8 +1252,13 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
 	struct sci_port *s = to_sci_port(port);
 
 	if (s->chan_rx) {
+<<<<<<< HEAD
 		u16 scr = serial_port_in(port, SCSCR);
 		u16 ssr = serial_port_in(port, SCxSR);
+=======
+		u16 scr = sci_in(port, SCSCR);
+		u16 ssr = sci_in(port, SCxSR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Disable future Rx interrupts */
 		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
@@ -866,9 +1267,15 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
 		} else {
 			scr &= ~SCSCR_RIE;
 		}
+<<<<<<< HEAD
 		serial_port_out(port, SCSCR, scr);
 		/* Clear current interrupt */
 		serial_port_out(port, SCxSR, ssr & ~(1 | SCxSR_RDxF(port)));
+=======
+		sci_out(port, SCSCR, scr);
+		/* Clear current interrupt */
+		sci_out(port, SCxSR, ssr & ~(1 | SCxSR_RDxF(port)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_dbg(port->dev, "Rx IRQ %lu: setup t-out in %u jiffies\n",
 			jiffies, s->rx_timeout);
 		mod_timer(&s->rx_timer, jiffies + s->rx_timeout);
@@ -906,15 +1313,24 @@ static irqreturn_t sci_er_interrupt(int irq, void *ptr)
 	if (port->type == PORT_SCI) {
 		if (sci_handle_errors(port)) {
 			/* discard character in rx buffer */
+<<<<<<< HEAD
 			serial_port_in(port, SCxSR);
 			serial_port_out(port, SCxSR, SCxSR_RDxF_CLEAR(port));
+=======
+			sci_in(port, SCxSR);
+			sci_out(port, SCxSR, SCxSR_RDxF_CLEAR(port));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		sci_handle_fifo_overrun(port);
 		sci_rx_interrupt(irq, ptr);
 	}
 
+<<<<<<< HEAD
 	serial_port_out(port, SCxSR, SCxSR_ERROR_CLEAR(port));
+=======
+	sci_out(port, SCxSR, SCxSR_ERROR_CLEAR(port));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Kick the transmission */
 	sci_tx_interrupt(irq, ptr);
@@ -928,7 +1344,11 @@ static irqreturn_t sci_br_interrupt(int irq, void *ptr)
 
 	/* Handle BREAKs */
 	sci_handle_breaks(port);
+<<<<<<< HEAD
 	serial_port_out(port, SCxSR, SCxSR_BREAK_CLEAR(port));
+=======
+	sci_out(port, SCxSR, SCxSR_BREAK_CLEAR(port));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return IRQ_HANDLED;
 }
@@ -952,8 +1372,13 @@ static irqreturn_t sci_mpxed_interrupt(int irq, void *ptr)
 	struct sci_port *s = to_sci_port(port);
 	irqreturn_t ret = IRQ_NONE;
 
+<<<<<<< HEAD
 	ssr_status = serial_port_in(port, SCxSR);
 	scr_status = serial_port_in(port, SCSCR);
+=======
+	ssr_status = sci_in(port, SCxSR);
+	scr_status = sci_in(port, SCSCR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err_enabled = scr_status & port_rx_irq_mask(port);
 
 	/* Tx Interrupt */
@@ -1004,6 +1429,7 @@ static int sci_notifier(struct notifier_block *self,
 	return NOTIFY_OK;
 }
 
+<<<<<<< HEAD
 static struct sci_irq_desc {
 	const char	*desc;
 	irq_handler_t	handler;
@@ -1150,10 +1576,81 @@ static void __devinit sci_init_gpios(struct sci_port *port)
 			 * no point in keeping the verbose string around.
 			 */
 			kfree(port->gpiostr[i]);
+=======
+static void sci_clk_enable(struct uart_port *port)
+{
+	struct sci_port *sci_port = to_sci_port(port);
+
+	pm_runtime_get_sync(port->dev);
+
+	clk_enable(sci_port->iclk);
+	sci_port->port.uartclk = clk_get_rate(sci_port->iclk);
+	clk_enable(sci_port->fclk);
+}
+
+static void sci_clk_disable(struct uart_port *port)
+{
+	struct sci_port *sci_port = to_sci_port(port);
+
+	clk_disable(sci_port->fclk);
+	clk_disable(sci_port->iclk);
+
+	pm_runtime_put_sync(port->dev);
+}
+
+static int sci_request_irq(struct sci_port *port)
+{
+	int i;
+	irqreturn_t (*handlers[4])(int irq, void *ptr) = {
+		sci_er_interrupt, sci_rx_interrupt, sci_tx_interrupt,
+		sci_br_interrupt,
+	};
+	const char *desc[] = { "SCI Receive Error", "SCI Receive Data Full",
+			       "SCI Transmit Data Empty", "SCI Break" };
+
+	if (port->cfg->irqs[0] == port->cfg->irqs[1]) {
+		if (unlikely(!port->cfg->irqs[0]))
+			return -ENODEV;
+
+		if (request_irq(port->cfg->irqs[0], sci_mpxed_interrupt,
+				IRQF_DISABLED, "sci", port)) {
+			dev_err(port->port.dev, "Can't allocate IRQ\n");
+			return -ENODEV;
+		}
+	} else {
+		for (i = 0; i < ARRAY_SIZE(handlers); i++) {
+			if (unlikely(!port->cfg->irqs[i]))
+				continue;
+
+			if (request_irq(port->cfg->irqs[i], handlers[i],
+					IRQF_DISABLED, desc[i], port)) {
+				dev_err(port->port.dev, "Can't allocate IRQ\n");
+				return -ENODEV;
+			}
+		}
+	}
+
+	return 0;
+}
+
+static void sci_free_irq(struct sci_port *port)
+{
+	int i;
+
+	if (port->cfg->irqs[0] == port->cfg->irqs[1])
+		free_irq(port->cfg->irqs[0], port);
+	else {
+		for (i = 0; i < ARRAY_SIZE(port->cfg->irqs); i++) {
+			if (!port->cfg->irqs[i])
+				continue;
+
+			free_irq(port->cfg->irqs[i], port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }
 
+<<<<<<< HEAD
 static void sci_free_gpios(struct sci_port *port)
 {
 	int i;
@@ -1169,10 +1666,17 @@ static unsigned int sci_tx_empty(struct uart_port *port)
 {
 	unsigned short status = serial_port_in(port, SCxSR);
 	unsigned short in_tx_fifo = sci_txfill(port);
+=======
+static unsigned int sci_tx_empty(struct uart_port *port)
+{
+	unsigned short status = sci_in(port, SCxSR);
+	unsigned short in_tx_fifo = scif_txfill(port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return (status & SCxSR_TEND(port)) && !in_tx_fifo ? TIOCSER_TEMT : 0;
 }
 
+<<<<<<< HEAD
 /*
  * Modem control is a bit of a mixed bag for SCI(F) ports. Generally
  * CTS/RTS is supported in hardware by at least one port and controlled
@@ -1197,15 +1701,29 @@ static void sci_set_mctrl(struct uart_port *port, unsigned int mctrl)
 		if (reg->size)
 			serial_port_out(port, SCFCR, serial_port_in(port, SCFCR) | 1);
 	}
+=======
+static void sci_set_mctrl(struct uart_port *port, unsigned int mctrl)
+{
+	/* This routine is used for seting signals of: DTR, DCD, CTS/RTS */
+	/* We use SCIF's hardware for CTS/RTS, so don't need any for that. */
+	/* If you have signals for DTR and DCD, please implement here. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static unsigned int sci_get_mctrl(struct uart_port *port)
 {
+<<<<<<< HEAD
 	/*
 	 * CTS/RTS is handled in hardware when supported, while nothing
 	 * else is wired up. Keep it simple and simply assert DSR/CAR.
 	 */
 	return TIOCM_DSR | TIOCM_CAR;
+=======
+	/* This routine is used for getting signals of: DTR, DCD, DSR, RI,
+	   and CTS/RTS */
+
+	return TIOCM_DTR | TIOCM_RTS | TIOCM_DSR;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_SERIAL_SH_SCI_DMA
@@ -1237,8 +1755,13 @@ static void sci_dma_tx_complete(void *arg)
 	} else {
 		s->cookie_tx = -EINVAL;
 		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
+<<<<<<< HEAD
 			u16 ctrl = serial_port_in(port, SCSCR);
 			serial_port_out(port, SCSCR, ctrl & ~SCSCR_TIE);
+=======
+			u16 ctrl = sci_in(port, SCSCR);
+			sci_out(port, SCSCR, ctrl & ~SCSCR_TIE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -1338,8 +1861,13 @@ static void sci_submit_rx(struct sci_port *s)
 		struct scatterlist *sg = &s->sg_rx[i];
 		struct dma_async_tx_descriptor *desc;
 
+<<<<<<< HEAD
 		desc = dmaengine_prep_slave_sg(chan,
 			sg, 1, DMA_DEV_TO_MEM, DMA_PREP_INTERRUPT);
+=======
+		desc = chan->device->device_prep_slave_sg(chan,
+			sg, 1, DMA_FROM_DEVICE, DMA_PREP_INTERRUPT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (desc) {
 			s->desc_rx[i] = desc;
@@ -1453,8 +1981,13 @@ static void work_fn_tx(struct work_struct *work)
 
 	BUG_ON(!sg_dma_len(sg));
 
+<<<<<<< HEAD
 	desc = dmaengine_prep_slave_sg(chan,
 			sg, s->sg_len_tx, DMA_MEM_TO_DEV,
+=======
+	desc = chan->device->device_prep_slave_sg(chan,
+			sg, s->sg_len_tx, DMA_TO_DEVICE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
 	if (!desc) {
 		/* switch to PIO */
@@ -1491,13 +2024,21 @@ static void sci_start_tx(struct uart_port *port)
 
 #ifdef CONFIG_SERIAL_SH_SCI_DMA
 	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
+<<<<<<< HEAD
 		u16 new, scr = serial_port_in(port, SCSCR);
+=======
+		u16 new, scr = sci_in(port, SCSCR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (s->chan_tx)
 			new = scr | 0x8000;
 		else
 			new = scr & ~0x8000;
 		if (new != scr)
+<<<<<<< HEAD
 			serial_port_out(port, SCSCR, new);
+=======
+			sci_out(port, SCSCR, new);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (s->chan_tx && !uart_circ_empty(&s->port.state->xmit) &&
@@ -1509,8 +2050,13 @@ static void sci_start_tx(struct uart_port *port)
 
 	if (!s->chan_tx || port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
 		/* Set TIE (Transmit Interrupt Enable) bit in SCSCR */
+<<<<<<< HEAD
 		ctrl = serial_port_in(port, SCSCR);
 		serial_port_out(port, SCSCR, ctrl | SCSCR_TIE);
+=======
+		ctrl = sci_in(port, SCSCR);
+		sci_out(port, SCSCR, ctrl | SCSCR_TIE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1519,55 +2065,87 @@ static void sci_stop_tx(struct uart_port *port)
 	unsigned short ctrl;
 
 	/* Clear TIE (Transmit Interrupt Enable) bit in SCSCR */
+<<<<<<< HEAD
 	ctrl = serial_port_in(port, SCSCR);
+=======
+	ctrl = sci_in(port, SCSCR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
 		ctrl &= ~0x8000;
 
 	ctrl &= ~SCSCR_TIE;
 
+<<<<<<< HEAD
 	serial_port_out(port, SCSCR, ctrl);
+=======
+	sci_out(port, SCSCR, ctrl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void sci_start_rx(struct uart_port *port)
 {
 	unsigned short ctrl;
 
+<<<<<<< HEAD
 	ctrl = serial_port_in(port, SCSCR) | port_rx_irq_mask(port);
+=======
+	ctrl = sci_in(port, SCSCR) | port_rx_irq_mask(port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
 		ctrl &= ~0x4000;
 
+<<<<<<< HEAD
 	serial_port_out(port, SCSCR, ctrl);
+=======
+	sci_out(port, SCSCR, ctrl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void sci_stop_rx(struct uart_port *port)
 {
 	unsigned short ctrl;
 
+<<<<<<< HEAD
 	ctrl = serial_port_in(port, SCSCR);
+=======
+	ctrl = sci_in(port, SCSCR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
 		ctrl &= ~0x4000;
 
 	ctrl &= ~port_rx_irq_mask(port);
 
+<<<<<<< HEAD
 	serial_port_out(port, SCSCR, ctrl);
+=======
+	sci_out(port, SCSCR, ctrl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void sci_enable_ms(struct uart_port *port)
 {
+<<<<<<< HEAD
 	/*
 	 * Not supported by hardware, always a nop.
 	 */
+=======
+	/* Nothing here yet .. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void sci_break_ctl(struct uart_port *port, int break_state)
 {
+<<<<<<< HEAD
 	/*
 	 * Not supported by hardware. Most parts couple break and rx
 	 * interrupts together, with break detection always enabled.
 	 */
+=======
+	/* Nothing here yet .. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_SERIAL_SH_SCI_DMA
@@ -1578,21 +2156,38 @@ static bool filter(struct dma_chan *chan, void *slave)
 	dev_dbg(chan->device->dev, "%s: slave ID %d\n", __func__,
 		param->slave_id);
 
+<<<<<<< HEAD
 	chan->private = param;
 	return true;
+=======
+	if (param->dma_dev == chan->device->dev) {
+		chan->private = param;
+		return true;
+	} else {
+		return false;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void rx_timer_fn(unsigned long arg)
 {
 	struct sci_port *s = (struct sci_port *)arg;
 	struct uart_port *port = &s->port;
+<<<<<<< HEAD
 	u16 scr = serial_port_in(port, SCSCR);
+=======
+	u16 scr = sci_in(port, SCSCR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
 		scr &= ~0x4000;
 		enable_irq(s->cfg->irqs[1]);
 	}
+<<<<<<< HEAD
 	serial_port_out(port, SCSCR, scr | SCSCR_RIE);
+=======
+	sci_out(port, SCSCR, scr | SCSCR_RIE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_dbg(port->dev, "DMA Rx timed out\n");
 	schedule_work(&s->work_rx);
 }
@@ -1605,10 +2200,17 @@ static void sci_request_dma(struct uart_port *port)
 	dma_cap_mask_t mask;
 	int nent;
 
+<<<<<<< HEAD
 	dev_dbg(port->dev, "%s: port %d\n", __func__,
 		port->line);
 
 	if (s->cfg->dma_slave_tx <= 0 || s->cfg->dma_slave_rx <= 0)
+=======
+	dev_dbg(port->dev, "%s: port %d DMA %p\n", __func__,
+		port->line, s->cfg->dma_dev);
+
+	if (!s->cfg->dma_dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	dma_cap_zero(mask);
@@ -1618,6 +2220,10 @@ static void sci_request_dma(struct uart_port *port)
 
 	/* Slave ID, e.g., SHDMA_SLAVE_SCIF0_TX */
 	param->slave_id = s->cfg->dma_slave_tx;
+<<<<<<< HEAD
+=======
+	param->dma_dev = s->cfg->dma_dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	s->cookie_tx = -EINVAL;
 	chan = dma_request_channel(mask, filter, param);
@@ -1646,6 +2252,10 @@ static void sci_request_dma(struct uart_port *port)
 
 	/* Slave ID, e.g., SHDMA_SLAVE_SCIF0_RX */
 	param->slave_id = s->cfg->dma_slave_rx;
+<<<<<<< HEAD
+=======
+	param->dma_dev = s->cfg->dma_dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	chan = dma_request_channel(mask, filter, param);
 	dev_dbg(port->dev, "%s: RX: got channel %p\n", __func__, chan);
@@ -1690,6 +2300,12 @@ static void sci_free_dma(struct uart_port *port)
 {
 	struct sci_port *s = to_sci_port(port);
 
+<<<<<<< HEAD
+=======
+	if (!s->cfg->dma_dev)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (s->chan_tx)
 		sci_tx_dma_release(s, false);
 	if (s->chan_rx)
@@ -1712,9 +2328,14 @@ static int sci_startup(struct uart_port *port)
 
 	dev_dbg(port->dev, "%s(%d)\n", __func__, port->line);
 
+<<<<<<< HEAD
 	pm_runtime_put_noidle(port->dev);
 
 	sci_port_enable(s);
+=======
+	if (s->enable)
+		s->enable(port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = sci_request_irq(s);
 	if (unlikely(ret < 0))
@@ -1740,9 +2361,14 @@ static void sci_shutdown(struct uart_port *port)
 	sci_free_dma(port);
 	sci_free_irq(s);
 
+<<<<<<< HEAD
 	sci_port_disable(s);
 
 	pm_runtime_get_noresume(port->dev);
+=======
+	if (s->disable)
+		s->disable(port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static unsigned int sci_scbrr_calc(unsigned int algo_id, unsigned int bps,
@@ -1767,6 +2393,7 @@ static unsigned int sci_scbrr_calc(unsigned int algo_id, unsigned int bps,
 	return ((freq + 16 * bps) / (32 * bps) - 1);
 }
 
+<<<<<<< HEAD
 static void sci_reset(struct uart_port *port)
 {
 	struct plat_sci_reg *reg;
@@ -1783,13 +2410,21 @@ static void sci_reset(struct uart_port *port)
 		serial_port_out(port, SCFCR, SCFCR_RFRST | SCFCR_TFRST);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
 			    struct ktermios *old)
 {
 	struct sci_port *s = to_sci_port(port);
+<<<<<<< HEAD
 	struct plat_sci_reg *reg;
 	unsigned int baud, smr_val, max_baud;
 	int t = -1;
+=======
+	unsigned int status, baud, smr_val, max_baud;
+	int t = -1;
+	u16 scfcr = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * earlyprintk comes here early on with port->uartclk set to zero.
@@ -1805,11 +2440,27 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
 	if (likely(baud && port->uartclk))
 		t = sci_scbrr_calc(s->cfg->scbrr_algo_id, baud, port->uartclk);
 
+<<<<<<< HEAD
 	sci_port_enable(s);
 
 	sci_reset(port);
 
 	smr_val = serial_port_in(port, SCSMR) & 3;
+=======
+	if (s->enable)
+		s->enable(port);
+
+	do {
+		status = sci_in(port, SCxSR);
+	} while (!(status & SCxSR_TEND(port)));
+
+	sci_out(port, SCSCR, 0x00);	/* TE=0, RE=0, CKE1=0 */
+
+	if (port->type != PORT_SCI)
+		sci_out(port, SCFCR, scfcr | SCFCR_RFRST | SCFCR_TFRST);
+
+	smr_val = sci_in(port, SCSMR) & 3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((termios->c_cflag & CSIZE) == CS7)
 		smr_val |= 0x40;
@@ -1822,23 +2473,37 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
 
 	uart_update_timeout(port, termios->c_cflag, baud);
 
+<<<<<<< HEAD
 	serial_port_out(port, SCSMR, smr_val);
+=======
+	sci_out(port, SCSMR, smr_val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_dbg(port->dev, "%s: SMR %x, t %x, SCSCR %x\n", __func__, smr_val, t,
 		s->cfg->scscr);
 
 	if (t > 0) {
 		if (t >= 256) {
+<<<<<<< HEAD
 			serial_port_out(port, SCSMR, (serial_port_in(port, SCSMR) & ~3) | 1);
 			t >>= 2;
 		} else
 			serial_port_out(port, SCSMR, serial_port_in(port, SCSMR) & ~3);
 
 		serial_port_out(port, SCBRR, t);
+=======
+			sci_out(port, SCSMR, (sci_in(port, SCSMR) & ~3) | 1);
+			t >>= 2;
+		} else
+			sci_out(port, SCSMR, sci_in(port, SCSMR) & ~3);
+
+		sci_out(port, SCBRR, t);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		udelay((1000000+(baud-1)) / baud); /* Wait one bit interval */
 	}
 
 	sci_init_pins(port, termios->c_cflag);
+<<<<<<< HEAD
 
 	reg = sci_getreg(port, SCFCR);
 	if (reg->size) {
@@ -1862,6 +2527,11 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
 	}
 
 	serial_port_out(port, SCSCR, s->cfg->scscr);
+=======
+	sci_out(port, SCFCR, scfcr | ((termios->c_cflag & CRTSCTS) ? SCFCR_MCE : 0));
+
+	sci_out(port, SCSCR, s->cfg->scscr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_SERIAL_SH_SCI_DMA
 	/*
@@ -1888,7 +2558,12 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
 	if ((termios->c_cflag & CREAD) != 0)
 		sci_start_rx(port);
 
+<<<<<<< HEAD
 	sci_port_disable(s);
+=======
+	if (s->disable)
+		s->disable(port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const char *sci_type(struct uart_port *port)
@@ -2029,9 +2704,12 @@ static int __devinit sci_init_single(struct platform_device *dev,
 				     struct plat_sci_port *p)
 {
 	struct uart_port *port = &sci_port->port;
+<<<<<<< HEAD
 	int ret;
 
 	sci_port->cfg	= p;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	port->ops	= &sci_uart_ops;
 	port->iotype	= UPIO_MEM;
@@ -2052,12 +2730,15 @@ static int __devinit sci_init_single(struct platform_device *dev,
 		break;
 	}
 
+<<<<<<< HEAD
 	if (p->regtype == SCIx_PROBE_REGTYPE) {
 		ret = sci_probe_regmap(p);
 		if (unlikely(ret))
 			return ret;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dev) {
 		sci_port->iclk = clk_get(&dev->dev, "sci_ick");
 		if (IS_ERR(sci_port->iclk)) {
@@ -2076,12 +2757,19 @@ static int __devinit sci_init_single(struct platform_device *dev,
 		if (IS_ERR(sci_port->fclk))
 			sci_port->fclk = NULL;
 
+<<<<<<< HEAD
 		port->dev = &dev->dev;
 
 		sci_init_gpios(sci_port);
 
 		pm_runtime_irq_safe(&dev->dev);
 		pm_runtime_get_noresume(&dev->dev);
+=======
+		sci_port->enable = sci_clk_enable;
+		sci_port->disable = sci_clk_disable;
+		port->dev = &dev->dev;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pm_runtime_enable(&dev->dev);
 	}
 
@@ -2089,6 +2777,7 @@ static int __devinit sci_init_single(struct platform_device *dev,
 	sci_port->break_timer.function = sci_break_timer;
 	init_timer(&sci_port->break_timer);
 
+<<<<<<< HEAD
 	/*
 	 * Establish some sensible defaults for the error detection.
 	 */
@@ -2114,20 +2803,30 @@ static int __devinit sci_init_single(struct platform_device *dev,
 		 */
 		p->error_mask |= (1 << p->overrun_bit);
 	}
+=======
+	sci_port->cfg		= p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	port->mapbase		= p->mapbase;
 	port->type		= p->type;
 	port->flags		= p->flags;
+<<<<<<< HEAD
 	port->regshift		= p->regshift;
 
 	/*
 	 * The UART port needs an IRQ value, so we peg this to the RX IRQ
+=======
+
+	/*
+	 * The UART port needs an IRQ value, so we peg this to the TX IRQ
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * for the multi-IRQ ports, which is where we are primarily
 	 * concerned with the shutdown path synchronization.
 	 *
 	 * For the muxed case there's nothing more to do.
 	 */
 	port->irq		= p->irqs[SCIx_RXI_IRQ];
+<<<<<<< HEAD
 	port->irqflags		= 0;
 
 	port->serial_in		= sci_serial_in;
@@ -2136,6 +2835,12 @@ static int __devinit sci_init_single(struct platform_device *dev,
 	if (p->dma_slave_tx > 0 && p->dma_slave_rx > 0)
 		dev_dbg(port->dev, "DMA tx %d, rx %d\n",
 			p->dma_slave_tx, p->dma_slave_rx);
+=======
+
+	if (p->dma_dev)
+		dev_dbg(port->dev, "DMA device %p, tx %d, rx %d\n",
+			p->dma_dev, p->dma_slave_tx, p->dma_slave_rx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -2157,16 +2862,29 @@ static void serial_console_write(struct console *co, const char *s,
 	struct uart_port *port = &sci_port->port;
 	unsigned short bits;
 
+<<<<<<< HEAD
 	sci_port_enable(sci_port);
+=======
+	if (sci_port->enable)
+		sci_port->enable(port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	uart_console_write(port, s, count, serial_console_putchar);
 
 	/* wait until fifo is empty and last bit has been transmitted */
 	bits = SCxSR_TDxE(port) | SCxSR_TEND(port);
+<<<<<<< HEAD
 	while ((serial_port_in(port, SCxSR) & bits) != bits)
 		cpu_relax();
 
 	sci_port_disable(sci_port);
+=======
+	while ((sci_in(port, SCxSR) & bits) != bits)
+		cpu_relax();
+
+	if (sci_port->disable)
+		sci_port->disable(port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __devinit serial_console_setup(struct console *co, char *options)
@@ -2198,14 +2916,30 @@ static int __devinit serial_console_setup(struct console *co, char *options)
 	if (unlikely(ret != 0))
 		return ret;
 
+<<<<<<< HEAD
 	sci_port_enable(sci_port);
+=======
+	if (sci_port->enable)
+		sci_port->enable(port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (options)
 		uart_parse_options(options, &baud, &parity, &bits, &flow);
 
+<<<<<<< HEAD
 	sci_port_disable(sci_port);
 
 	return uart_set_options(port, co, baud, parity, bits, flow);
+=======
+	ret = uart_set_options(port, co, baud, parity, bits, flow);
+#if defined(__H8300H__) || defined(__H8300S__)
+	/* disable rx interrupt */
+	if (ret == 0)
+		sci_stop_rx(port);
+#endif
+	/* TODO: disable clock */
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct console serial_console = {
@@ -2247,6 +2981,7 @@ static int __devinit sci_probe_earlyprintk(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #define uart_console(port)	((port)->cons->index == (port)->line)
 
 static int sci_runtime_suspend(struct device *dev)
@@ -2287,6 +3022,8 @@ static int sci_runtime_resume(struct device *dev)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SCI_CONSOLE	(&serial_console)
 
 #else
@@ -2296,8 +3033,11 @@ static inline int __devinit sci_probe_earlyprintk(struct platform_device *pdev)
 }
 
 #define SCI_CONSOLE	NULL
+<<<<<<< HEAD
 #define sci_runtime_suspend	NULL
 #define sci_runtime_resume	NULL
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* CONFIG_SERIAL_SH_SCI_CONSOLE */
 
@@ -2321,8 +3061,11 @@ static int sci_remove(struct platform_device *dev)
 	cpufreq_unregister_notifier(&port->freq_transition,
 				    CPUFREQ_TRANSITION_NOTIFIER);
 
+<<<<<<< HEAD
 	sci_free_gpios(port);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uart_remove_one_port(&sci_uart_driver, &port->port);
 
 	clk_put(port->iclk);
@@ -2415,8 +3158,11 @@ static int sci_resume(struct device *dev)
 }
 
 static const struct dev_pm_ops sci_dev_pm_ops = {
+<<<<<<< HEAD
 	.runtime_suspend = sci_runtime_suspend,
 	.runtime_resume = sci_runtime_resume,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.suspend	= sci_suspend,
 	.resume		= sci_resume,
 };
@@ -2462,5 +3208,8 @@ module_exit(sci_exit);
 
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:sh-sci");
+<<<<<<< HEAD
 MODULE_AUTHOR("Paul Mundt");
 MODULE_DESCRIPTION("SuperH SCI(F) serial driver");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

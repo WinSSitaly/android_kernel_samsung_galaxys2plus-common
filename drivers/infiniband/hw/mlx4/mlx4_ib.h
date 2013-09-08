@@ -56,6 +56,7 @@ struct mlx4_ib_pd {
 	u32			pdn;
 };
 
+<<<<<<< HEAD
 struct mlx4_ib_xrcd {
 	struct ib_xrcd		ibxrcd;
 	u32			xrcdn;
@@ -63,6 +64,8 @@ struct mlx4_ib_xrcd {
 	struct ib_cq	       *cq;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct mlx4_ib_cq_buf {
 	struct mlx4_buf		buf;
 	struct mlx4_mtt		mtt;
@@ -145,7 +148,10 @@ struct mlx4_ib_qp {
 	struct mlx4_mtt		mtt;
 	int			buf_size;
 	struct mutex		mutex;
+<<<<<<< HEAD
 	u16			xrcdn;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32			flags;
 	u8			port;
 	u8			alt_port;
@@ -201,7 +207,10 @@ struct mlx4_ib_dev {
 	struct mutex		cap_mask_mutex;
 	bool			ib_active;
 	struct mlx4_ib_iboe	iboe;
+<<<<<<< HEAD
 	int			counters[MLX4_MAX_PORTS];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline struct mlx4_ib_dev *to_mdev(struct ib_device *ibdev)
@@ -219,11 +228,14 @@ static inline struct mlx4_ib_pd *to_mpd(struct ib_pd *ibpd)
 	return container_of(ibpd, struct mlx4_ib_pd, ibpd);
 }
 
+<<<<<<< HEAD
 static inline struct mlx4_ib_xrcd *to_mxrcd(struct ib_xrcd *ibxrcd)
 {
 	return container_of(ibxrcd, struct mlx4_ib_xrcd, ibxrcd);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline struct mlx4_ib_cq *to_mcq(struct ib_cq *ibcq)
 {
 	return container_of(ibcq, struct mlx4_ib_cq, ibcq);

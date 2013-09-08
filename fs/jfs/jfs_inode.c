@@ -157,7 +157,11 @@ fail_drop:
 	dquot_drop(inode);
 	inode->i_flags |= S_NOQUOTA;
 fail_unlock:
+<<<<<<< HEAD
 	clear_nlink(inode);
+=======
+	inode->i_nlink = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unlock_new_inode(inode);
 fail_put:
 	iput(inode);

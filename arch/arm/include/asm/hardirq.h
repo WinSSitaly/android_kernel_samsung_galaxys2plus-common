@@ -5,10 +5,20 @@
 #include <linux/threads.h>
 #include <asm/irq.h>
 
+<<<<<<< HEAD
 #define NR_IPI	5
 
 typedef struct {
 	unsigned int __softirq_pending;
+=======
+#define NR_IPI	6
+
+typedef struct {
+	unsigned int __softirq_pending;
+#ifdef CONFIG_LOCAL_TIMERS
+	unsigned int local_timer_irqs;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SMP
 	unsigned int ipi_irqs[NR_IPI];
 #endif
@@ -27,6 +37,26 @@ u64 smp_irq_stat_cpu(unsigned int cpu);
 
 #define arch_irq_stat_cpu	smp_irq_stat_cpu
 
+<<<<<<< HEAD
+=======
+#if NR_IRQS > 512
+#define HARDIRQ_BITS	10
+#elif NR_IRQS > 256
+#define HARDIRQ_BITS	9
+#else
+#define HARDIRQ_BITS	8
+#endif
+
+/*
+ * The hardirq mask has to be large enough to have space
+ * for potentially all IRQ sources in the system nesting
+ * on a single CPU:
+ */
+#if (1 << HARDIRQ_BITS) < NR_IRQS
+# error HARDIRQ_BITS is too low!
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define __ARCH_IRQ_EXIT_IRQS_DISABLED	1
 
 #endif /* __ASM_HARDIRQ_H */

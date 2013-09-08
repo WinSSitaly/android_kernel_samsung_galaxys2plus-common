@@ -666,7 +666,10 @@ static void sctp_cmd_transport_on(sctp_cmd_seq_t *cmds,
 				  struct sctp_chunk *chunk)
 {
 	sctp_sender_hb_info_t *hbinfo;
+<<<<<<< HEAD
 	int was_unconfirmed = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* 8.3 Upon the receipt of the HEARTBEAT ACK, the sender of the
 	 * HEARTBEAT should clear the error counter of the destination
@@ -693,11 +696,17 @@ static void sctp_cmd_transport_on(sctp_cmd_seq_t *cmds,
 	/* Mark the destination transport address as active if it is not so
 	 * marked.
 	 */
+<<<<<<< HEAD
 	if ((t->state == SCTP_INACTIVE) || (t->state == SCTP_UNCONFIRMED)) {
 		was_unconfirmed = 1;
 		sctp_assoc_control_transport(asoc, t, SCTP_TRANSPORT_UP,
 					     SCTP_HEARTBEAT_SUCCESS);
 	}
+=======
+	if ((t->state == SCTP_INACTIVE) || (t->state == SCTP_UNCONFIRMED))
+		sctp_assoc_control_transport(asoc, t, SCTP_TRANSPORT_UP,
+					     SCTP_HEARTBEAT_SUCCESS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* The receiver of the HEARTBEAT ACK should also perform an
 	 * RTT measurement for that destination transport address
@@ -715,9 +724,12 @@ static void sctp_cmd_transport_on(sctp_cmd_seq_t *cmds,
 	/* Update the heartbeat timer.  */
 	if (!mod_timer(&t->hb_timer, sctp_transport_timeout(t)))
 		sctp_transport_hold(t);
+<<<<<<< HEAD
 
 	if (was_unconfirmed && asoc->peer.transport_count == 1)
 		sctp_transport_immediate_rtx(t);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -1216,7 +1228,11 @@ static int sctp_cmd_interpreter(sctp_event_t event_type,
 	int local_cork = 0;
 
 	if (SCTP_EVENT_T_TIMEOUT != event_type)
+<<<<<<< HEAD
 		chunk = event_arg;
+=======
+		chunk = (struct sctp_chunk *) event_arg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Note:  This whole file is a huge candidate for rework.
 	 * For example, each command could either have its own handler, so
@@ -1695,11 +1711,14 @@ static int sctp_cmd_interpreter(sctp_event_t event_type,
 		case SCTP_CMD_PURGE_ASCONF_QUEUE:
 			sctp_asconf_queue_teardown(asoc);
 			break;
+<<<<<<< HEAD
 
 		case SCTP_CMD_SET_ASOC:
 			asoc = cmd->obj.asoc;
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			pr_warn("Impossible command: %u, %p\n",
 				cmd->verb, cmd->obj.ptr);

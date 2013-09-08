@@ -26,8 +26,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "stv06xx_st6422.h"
 
 /* controls */
@@ -138,7 +141,11 @@ static int st6422_probe(struct sd *sd)
 	if (sd->bridge != BRIDGE_ST6422)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	pr_info("st6422 sensor detected\n");
+=======
+	info("st6422 sensor detected");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sensor_settings = kmalloc(sizeof *sensor_settings, GFP_KERNEL);
 	if (!sensor_settings)

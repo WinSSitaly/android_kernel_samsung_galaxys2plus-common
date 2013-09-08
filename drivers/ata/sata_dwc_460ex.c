@@ -766,6 +766,7 @@ static int dma_dwc_xfer_setup(struct scatterlist *sg, int num_elems,
 static void dma_dwc_exit(struct sata_dwc_device *hsdev)
 {
 	dev_dbg(host_pvt.dwc_dev, "%s:\n", __func__);
+<<<<<<< HEAD
 	if (host_pvt.sata_dma_regs) {
 		iounmap(host_pvt.sata_dma_regs);
 		host_pvt.sata_dma_regs = NULL;
@@ -775,6 +776,13 @@ static void dma_dwc_exit(struct sata_dwc_device *hsdev)
 		free_irq(hsdev->irq_dma, hsdev);
 		hsdev->irq_dma = 0;
 	}
+=======
+	if (host_pvt.sata_dma_regs)
+		iounmap(host_pvt.sata_dma_regs);
+
+	if (hsdev->irq_dma)
+		free_irq(hsdev->irq_dma, hsdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1329,7 +1337,11 @@ static int sata_dwc_port_start(struct ata_port *ap)
 			dev_err(ap->dev, "%s: dma_alloc_coherent failed\n",
 				 __func__);
 			err = -ENOMEM;
+<<<<<<< HEAD
 			goto CLEANUP_ALLOC;
+=======
+			goto CLEANUP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -1349,6 +1361,7 @@ static int sata_dwc_port_start(struct ata_port *ap)
 	/* Clear any error bits before libata starts issuing commands */
 	clear_serror();
 	ap->private_data = hsdevp;
+<<<<<<< HEAD
 	dev_dbg(ap->dev, "%s: done\n", __func__);
 	return 0;
 
@@ -1356,6 +1369,17 @@ CLEANUP_ALLOC:
 	kfree(hsdevp);
 CLEANUP:
 	dev_dbg(ap->dev, "%s: fail. ap->id = %d\n", __func__, ap->print_id);
+=======
+
+CLEANUP:
+	if (err) {
+		sata_dwc_port_stop(ap);
+		dev_dbg(ap->dev, "%s: fail\n", __func__);
+	} else {
+		dev_dbg(ap->dev, "%s: done\n", __func__);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -1640,12 +1664,22 @@ static int sata_dwc_probe(struct platform_device *ofdev)
 	const struct ata_port_info *ppi[] = { &pi, NULL };
 
 	/* Allocate DWC SATA device */
+<<<<<<< HEAD
 	hsdev = kzalloc(sizeof(*hsdev), GFP_KERNEL);
 	if (hsdev == NULL) {
 		dev_err(&ofdev->dev, "kmalloc failed for hsdev\n");
 		err = -ENOMEM;
 		goto error;
 	}
+=======
+	hsdev = kmalloc(sizeof(*hsdev), GFP_KERNEL);
+	if (hsdev == NULL) {
+		dev_err(&ofdev->dev, "kmalloc failed for hsdev\n");
+		err = -ENOMEM;
+		goto error_out;
+	}
+	memset(hsdev, 0, sizeof(*hsdev));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Ioremap SATA registers */
 	base = of_iomap(ofdev->dev.of_node, 0);
@@ -1653,7 +1687,11 @@ static int sata_dwc_probe(struct platform_device *ofdev)
 		dev_err(&ofdev->dev, "ioremap failed for SATA register"
 			" address\n");
 		err = -ENODEV;
+<<<<<<< HEAD
 		goto error_kmalloc;
+=======
+		goto error_out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	hsdev->reg_base = base;
 	dev_dbg(&ofdev->dev, "ioremap done for SATA register address\n");
@@ -1666,7 +1704,11 @@ static int sata_dwc_probe(struct platform_device *ofdev)
 	if (!host) {
 		dev_err(&ofdev->dev, "ata_host_alloc_pinfo failed\n");
 		err = -ENOMEM;
+<<<<<<< HEAD
 		goto error_iomap;
+=======
+		goto error_out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	host->private_data = hsdev;
@@ -1734,11 +1776,16 @@ error_out:
 	/* Free SATA DMA resources */
 	dma_dwc_exit(hsdev);
 
+<<<<<<< HEAD
 error_iomap:
 	iounmap(base);
 error_kmalloc:
 	kfree(hsdev);
 error:
+=======
+	if (base)
+		iounmap(base);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -1777,7 +1824,22 @@ static struct platform_driver sata_dwc_driver = {
 	.remove = sata_dwc_remove,
 };
 
+<<<<<<< HEAD
 module_platform_driver(sata_dwc_driver);
+=======
+static int __init sata_dwc_init(void)
+{
+	return platform_driver_register(&sata_dwc_driver);
+}
+
+static void __exit sata_dwc_exit(void)
+{
+	platform_driver_unregister(&sata_dwc_driver);
+}
+
+module_init(sata_dwc_init);
+module_exit(sata_dwc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Mark Miesfeld <mmiesfeld@amcc.com>");

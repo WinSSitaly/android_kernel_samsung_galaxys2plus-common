@@ -199,6 +199,7 @@ struct p54_common {
 	u8 tx_diversity_mask;
 	unsigned int output_power;
 	struct p54_rssi_db_entry *cur_rssi;
+<<<<<<< HEAD
 	struct ieee80211_channel *curchan;
 	struct survey_info *survey;
 	unsigned int chan_num;
@@ -215,6 +216,8 @@ struct p54_common {
 		u64 rssi;
 	} survey_raw;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int noise;
 	/* calibration, output power limit and rssi<->dBm conversation data */
 	struct pda_iq_autocal_entry *iq_autocal;
@@ -236,8 +239,11 @@ struct p54_common {
 	u32 basic_rate_mask;
 	u16 aid;
 	u8 coverage_class;
+<<<<<<< HEAD
 	bool phy_idle;
 	bool phy_ps;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool powersave_override;
 	__le32 beacon_req_id;
 	struct completion beacon_comp;

@@ -309,7 +309,11 @@ void ceph_reservation_status(struct ceph_fs_client *fsc,
 /*
  * Find ceph_cap for given mds, if any.
  *
+<<<<<<< HEAD
  * Called with i_ceph_lock held.
+=======
+ * Called with i_lock held.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static struct ceph_cap *__get_cap_for_mds(struct ceph_inode_info *ci, int mds)
 {
@@ -332,9 +336,15 @@ struct ceph_cap *ceph_get_cap_for_mds(struct ceph_inode_info *ci, int mds)
 {
 	struct ceph_cap *cap;
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
 	cap = __get_cap_for_mds(ci, mds);
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_lock(&ci->vfs_inode.i_lock);
+	cap = __get_cap_for_mds(ci, mds);
+	spin_unlock(&ci->vfs_inode.i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return cap;
 }
 
@@ -361,16 +371,27 @@ static int __ceph_get_cap_mds(struct ceph_inode_info *ci)
 
 int ceph_get_cap_mds(struct inode *inode)
 {
+<<<<<<< HEAD
 	struct ceph_inode_info *ci = ceph_inode(inode);
 	int mds;
 	spin_lock(&ci->i_ceph_lock);
 	mds = __ceph_get_cap_mds(ceph_inode(inode));
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	int mds;
+	spin_lock(&inode->i_lock);
+	mds = __ceph_get_cap_mds(ceph_inode(inode));
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return mds;
 }
 
 /*
+<<<<<<< HEAD
  * Called under i_ceph_lock.
+=======
+ * Called under i_lock.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void __insert_cap_node(struct ceph_inode_info *ci,
 			      struct ceph_cap *new)
@@ -416,7 +437,11 @@ static void __cap_set_timeouts(struct ceph_mds_client *mdsc,
  *
  * If I_FLUSH is set, leave the inode at the front of the list.
  *
+<<<<<<< HEAD
  * Caller holds i_ceph_lock
+=======
+ * Caller holds i_lock
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *    -> we take mdsc->cap_delay_lock
  */
 static void __cap_delay_requeue(struct ceph_mds_client *mdsc,
@@ -458,7 +483,11 @@ static void __cap_delay_requeue_front(struct ceph_mds_client *mdsc,
 /*
  * Cancel delayed work on cap.
  *
+<<<<<<< HEAD
  * Caller must hold i_ceph_lock.
+=======
+ * Caller must hold i_lock.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void __cap_delay_cancel(struct ceph_mds_client *mdsc,
 			       struct ceph_inode_info *ci)
@@ -488,15 +517,26 @@ static void __check_cap_issue(struct ceph_inode_info *ci, struct ceph_cap *cap,
 		ci->i_rdcache_gen++;
 
 	/*
+<<<<<<< HEAD
 	 * if we are newly issued FILE_SHARED, clear D_COMPLETE; we
+=======
+	 * if we are newly issued FILE_SHARED, clear I_COMPLETE; we
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * don't know what happened to this directory while we didn't
 	 * have the cap.
 	 */
 	if ((issued & CEPH_CAP_FILE_SHARED) &&
 	    (had & CEPH_CAP_FILE_SHARED) == 0) {
 		ci->i_shared_gen++;
+<<<<<<< HEAD
 		if (S_ISDIR(ci->vfs_inode.i_mode))
 			ceph_dir_clear_complete(&ci->vfs_inode);
+=======
+		if (S_ISDIR(ci->vfs_inode.i_mode)) {
+			dout(" marking %p NOT complete\n", &ci->vfs_inode);
+			ci->i_ceph_flags &= ~CEPH_I_COMPLETE;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -533,14 +573,22 @@ int ceph_add_cap(struct inode *inode,
 		wanted |= ceph_caps_for_mode(fmode);
 
 retry:
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cap = __get_cap_for_mds(ci, mds);
 	if (!cap) {
 		if (new_cap) {
 			cap = new_cap;
 			new_cap = NULL;
 		} else {
+<<<<<<< HEAD
 			spin_unlock(&ci->i_ceph_lock);
+=======
+			spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			new_cap = get_cap(mdsc, caps_reservation);
 			if (new_cap == NULL)
 				return -ENOMEM;
@@ -626,7 +674,11 @@ retry:
 
 	if (fmode >= 0)
 		__ceph_get_fmode(ci, fmode);
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wake_up_all(&ci->i_cap_wq);
 	return 0;
 }
@@ -641,10 +693,17 @@ static int __cap_is_valid(struct ceph_cap *cap)
 	unsigned long ttl;
 	u32 gen;
 
+<<<<<<< HEAD
 	spin_lock(&cap->session->s_gen_ttl_lock);
 	gen = cap->session->s_cap_gen;
 	ttl = cap->session->s_cap_ttl;
 	spin_unlock(&cap->session->s_gen_ttl_lock);
+=======
+	spin_lock(&cap->session->s_cap_lock);
+	gen = cap->session->s_cap_gen;
+	ttl = cap->session->s_cap_ttl;
+	spin_unlock(&cap->session->s_cap_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (cap->cap_gen < gen || time_after_eq(jiffies, ttl)) {
 		dout("__cap_is_valid %p cap %p issued %s "
@@ -793,7 +852,11 @@ int ceph_caps_revoking(struct ceph_inode_info *ci, int mask)
 	struct rb_node *p;
 	int ret = 0;
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (p = rb_first(&ci->i_caps); p; p = rb_next(p)) {
 		cap = rb_entry(p, struct ceph_cap, ci_node);
 		if (__cap_is_valid(cap) &&
@@ -802,7 +865,11 @@ int ceph_caps_revoking(struct ceph_inode_info *ci, int mask)
 			break;
 		}
 	}
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dout("ceph_caps_revoking %p %s = %d\n", inode,
 	     ceph_cap_string(mask), ret);
 	return ret;
@@ -856,7 +923,11 @@ int __ceph_caps_mds_wanted(struct ceph_inode_info *ci)
 }
 
 /*
+<<<<<<< HEAD
  * called under i_ceph_lock
+=======
+ * called under i_lock
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int __ceph_is_any_caps(struct ceph_inode_info *ci)
 {
@@ -866,7 +937,11 @@ static int __ceph_is_any_caps(struct ceph_inode_info *ci)
 /*
  * Remove a cap.  Take steps to deal with a racing iterate_session_caps.
  *
+<<<<<<< HEAD
  * caller should hold i_ceph_lock.
+=======
+ * caller should hold i_lock.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * caller will not hold session s_mutex if called from destroy_inode.
  */
 void __ceph_remove_cap(struct ceph_cap *cap)
@@ -928,7 +1003,11 @@ static int send_cap_msg(struct ceph_mds_session *session,
 			u64 size, u64 max_size,
 			struct timespec *mtime, struct timespec *atime,
 			u64 time_warp_seq,
+<<<<<<< HEAD
 			uid_t uid, gid_t gid, umode_t mode,
+=======
+			uid_t uid, gid_t gid, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			u64 xattr_version,
 			struct ceph_buffer *xattrs_buf,
 			u64 follows)
@@ -944,7 +1023,11 @@ static int send_cap_msg(struct ceph_mds_session *session,
 	     seq, issue_seq, mseq, follows, size, max_size,
 	     xattr_version, xattrs_buf ? (int)xattrs_buf->vec.iov_len : 0);
 
+<<<<<<< HEAD
 	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, sizeof(*fc), GFP_NOFS, false);
+=======
+	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, sizeof(*fc), GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!msg)
 		return -ENOMEM;
 
@@ -1029,7 +1112,11 @@ static void __queue_cap_release(struct ceph_mds_session *session,
 
 /*
  * Queue cap releases when an inode is dropped from our cache.  Since
+<<<<<<< HEAD
  * inode is about to be destroyed, there is no need for i_ceph_lock.
+=======
+ * inode is about to be destroyed, there is no need for i_lock.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void ceph_queue_caps_release(struct inode *inode)
 {
@@ -1050,7 +1137,11 @@ void ceph_queue_caps_release(struct inode *inode)
 
 /*
  * Send a cap msg on the given inode.  Update our caps state, then
+<<<<<<< HEAD
  * drop i_ceph_lock and send the message.
+=======
+ * drop i_lock and send the message.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Make note of max_size reported/requested from mds, revoked caps
  * that have now been implemented.
@@ -1062,13 +1153,21 @@ void ceph_queue_caps_release(struct inode *inode)
  * Return non-zero if delayed release, or we experienced an error
  * such that the caller should requeue + retry later.
  *
+<<<<<<< HEAD
  * called with i_ceph_lock, then drops it.
+=======
+ * called with i_lock, then drops it.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * caller should hold snap_rwsem (read), s_mutex.
  */
 static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
 		      int op, int used, int want, int retain, int flushing,
 		      unsigned *pflush_tid)
+<<<<<<< HEAD
 	__releases(cap->ci->i_ceph_lock)
+=======
+	__releases(cap->ci->vfs_inode->i_lock)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ceph_inode_info *ci = cap->ci;
 	struct inode *inode = &ci->vfs_inode;
@@ -1078,7 +1177,11 @@ static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
 	u64 size, max_size;
 	struct timespec mtime, atime;
 	int wake = 0;
+<<<<<<< HEAD
 	umode_t mode;
+=======
+	mode_t mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uid_t uid;
 	gid_t gid;
 	struct ceph_mds_session *session;
@@ -1171,7 +1274,11 @@ static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
 		xattr_version = ci->i_xattrs.version;
 	}
 
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = send_cap_msg(session, ceph_vino(inode).ino, cap_id,
 		op, keep, want, flushing, seq, flush_tid, issue_seq, mseq,
@@ -1199,13 +1306,22 @@ static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
  * Unless @again is true, skip cap_snaps that were already sent to
  * the MDS (i.e., during this session).
  *
+<<<<<<< HEAD
  * Called under i_ceph_lock.  Takes s_mutex as needed.
+=======
+ * Called under i_lock.  Takes s_mutex as needed.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void __ceph_flush_snaps(struct ceph_inode_info *ci,
 			struct ceph_mds_session **psession,
 			int again)
+<<<<<<< HEAD
 		__releases(ci->i_ceph_lock)
 		__acquires(ci->i_ceph_lock)
+=======
+		__releases(ci->vfs_inode->i_lock)
+		__acquires(ci->vfs_inode->i_lock)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inode *inode = &ci->vfs_inode;
 	int mds;
@@ -1262,7 +1378,11 @@ retry:
 			session = NULL;
 		}
 		if (!session) {
+<<<<<<< HEAD
 			spin_unlock(&ci->i_ceph_lock);
+=======
+			spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mutex_lock(&mdsc->mutex);
 			session = __ceph_lookup_mds_session(mdsc, mds);
 			mutex_unlock(&mdsc->mutex);
@@ -1276,7 +1396,11 @@ retry:
 			 * deletion or migration.  retry, and we'll
 			 * get a better @mds value next time.
 			 */
+<<<<<<< HEAD
 			spin_lock(&ci->i_ceph_lock);
+=======
+			spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto retry;
 		}
 
@@ -1286,7 +1410,11 @@ retry:
 			list_del_init(&capsnap->flushing_item);
 		list_add_tail(&capsnap->flushing_item,
 			      &session->s_cap_snaps_flushing);
+<<<<<<< HEAD
 		spin_unlock(&ci->i_ceph_lock);
+=======
+		spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		dout("flush_snaps %p cap_snap %p follows %lld tid %llu\n",
 		     inode, capsnap, capsnap->follows, capsnap->flush_tid);
@@ -1303,7 +1431,11 @@ retry:
 		next_follows = capsnap->follows + 1;
 		ceph_put_cap_snap(capsnap);
 
+<<<<<<< HEAD
 		spin_lock(&ci->i_ceph_lock);
+=======
+		spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto retry;
 	}
 
@@ -1323,9 +1455,17 @@ out:
 
 static void ceph_flush_snaps(struct ceph_inode_info *ci)
 {
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
 	__ceph_flush_snaps(ci, NULL, 0);
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	struct inode *inode = &ci->vfs_inode;
+
+	spin_lock(&inode->i_lock);
+	__ceph_flush_snaps(ci, NULL, 0);
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1349,6 +1489,7 @@ int __ceph_mark_dirty_caps(struct ceph_inode_info *ci, int mask)
 		if (!ci->i_head_snapc)
 			ci->i_head_snapc = ceph_get_snap_context(
 				ci->i_snap_realm->cached_context);
+<<<<<<< HEAD
 		dout(" inode %p now dirty snapc %p auth cap %p\n",
 		     &ci->vfs_inode, ci->i_head_snapc, ci->i_auth_cap);
 		BUG_ON(!list_empty(&ci->i_dirty_item));
@@ -1358,6 +1499,13 @@ int __ceph_mark_dirty_caps(struct ceph_inode_info *ci, int mask)
 		else
 			list_add(&ci->i_dirty_item,
 				 &mdsc->cap_dirty_migrating);
+=======
+		dout(" inode %p now dirty snapc %p\n", &ci->vfs_inode,
+			ci->i_head_snapc);
+		BUG_ON(!list_empty(&ci->i_dirty_item));
+		spin_lock(&mdsc->cap_dirty_lock);
+		list_add(&ci->i_dirty_item, &mdsc->cap_dirty);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock(&mdsc->cap_dirty_lock);
 		if (ci->i_flushing_caps == 0) {
 			ihold(inode);
@@ -1376,7 +1524,11 @@ int __ceph_mark_dirty_caps(struct ceph_inode_info *ci, int mask)
  * Add dirty inode to the flushing list.  Assigned a seq number so we
  * can wait for caps to flush without starving.
  *
+<<<<<<< HEAD
  * Called under i_ceph_lock.
+=======
+ * Called under i_lock.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int __mark_caps_flushing(struct inode *inode,
 				 struct ceph_mds_session *session)
@@ -1424,9 +1576,15 @@ static int try_nonblocking_invalidate(struct inode *inode)
 	struct ceph_inode_info *ci = ceph_inode(inode);
 	u32 invalidating_gen = ci->i_rdcache_gen;
 
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
 	invalidate_mapping_pages(&inode->i_data, 0, -1);
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+	invalidate_mapping_pages(&inode->i_data, 0, -1);
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (inode->i_data.nrpages == 0 &&
 	    invalidating_gen == ci->i_rdcache_gen) {
@@ -1473,7 +1631,11 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
 	if (mdsc->stopping)
 		is_delayed = 1;
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ci->i_ceph_flags & CEPH_I_FLUSH)
 		flags |= CHECK_CAPS_FLUSH;
@@ -1483,7 +1645,11 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
 		__ceph_flush_snaps(ci, &session, 0);
 	goto retry_locked;
 retry:
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 retry_locked:
 	file_wanted = __ceph_caps_file_wanted(ci);
 	used = __ceph_caps_used(ci);
@@ -1637,7 +1803,11 @@ ack:
 			if (mutex_trylock(&session->s_mutex) == 0) {
 				dout("inverting session/ino locks on %p\n",
 				     session);
+<<<<<<< HEAD
 				spin_unlock(&ci->i_ceph_lock);
+=======
+				spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				if (took_snap_rwsem) {
 					up_read(&mdsc->snap_rwsem);
 					took_snap_rwsem = 0;
@@ -1651,7 +1821,11 @@ ack:
 			if (down_read_trylock(&mdsc->snap_rwsem) == 0) {
 				dout("inverting snap/in locks on %p\n",
 				     inode);
+<<<<<<< HEAD
 				spin_unlock(&ci->i_ceph_lock);
+=======
+				spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				down_read(&mdsc->snap_rwsem);
 				took_snap_rwsem = 1;
 				goto retry;
@@ -1667,10 +1841,17 @@ ack:
 		mds = cap->mds;  /* remember mds, so we don't repeat */
 		sent++;
 
+<<<<<<< HEAD
 		/* __send_cap drops i_ceph_lock */
 		delayed += __send_cap(mdsc, cap, CEPH_CAP_OP_UPDATE, used, want,
 				      retain, flushing, NULL);
 		goto retry; /* retake i_ceph_lock and restart our cap scan. */
+=======
+		/* __send_cap drops i_lock */
+		delayed += __send_cap(mdsc, cap, CEPH_CAP_OP_UPDATE, used, want,
+				      retain, flushing, NULL);
+		goto retry; /* retake i_lock and restart our cap scan. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -1684,7 +1865,11 @@ ack:
 	else if (!is_delayed || force_requeue)
 		__cap_delay_requeue(mdsc, ci);
 
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (queue_invalidate)
 		ceph_queue_invalidate(inode);
@@ -1707,7 +1892,11 @@ static int try_flush_caps(struct inode *inode, struct ceph_mds_session *session,
 	int flushing = 0;
 
 retry:
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ci->i_ceph_flags & CEPH_I_NOFLUSH) {
 		dout("try_flush_caps skipping %p I_NOFLUSH set\n", inode);
 		goto out;
@@ -1719,7 +1908,11 @@ retry:
 		int delayed;
 
 		if (!session) {
+<<<<<<< HEAD
 			spin_unlock(&ci->i_ceph_lock);
+=======
+			spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			session = cap->session;
 			mutex_lock(&session->s_mutex);
 			goto retry;
@@ -1730,18 +1923,30 @@ retry:
 
 		flushing = __mark_caps_flushing(inode, session);
 
+<<<<<<< HEAD
 		/* __send_cap drops i_ceph_lock */
+=======
+		/* __send_cap drops i_lock */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		delayed = __send_cap(mdsc, cap, CEPH_CAP_OP_FLUSH, used, want,
 				     cap->issued | cap->implemented, flushing,
 				     flush_tid);
 		if (!delayed)
 			goto out_unlocked;
 
+<<<<<<< HEAD
 		spin_lock(&ci->i_ceph_lock);
 		__cap_delay_requeue(mdsc, ci);
 	}
 out:
 	spin_unlock(&ci->i_ceph_lock);
+=======
+		spin_lock(&inode->i_lock);
+		__cap_delay_requeue(mdsc, ci);
+	}
+out:
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_unlocked:
 	if (session && unlock_session)
 		mutex_unlock(&session->s_mutex);
@@ -1756,7 +1961,11 @@ static int caps_are_flushed(struct inode *inode, unsigned tid)
 	struct ceph_inode_info *ci = ceph_inode(inode);
 	int i, ret = 1;
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < CEPH_CAP_BITS; i++)
 		if ((ci->i_flushing_caps & (1 << i)) &&
 		    ci->i_cap_flush_tid[i] <= tid) {
@@ -1764,7 +1973,11 @@ static int caps_are_flushed(struct inode *inode, unsigned tid)
 			ret = 0;
 			break;
 		}
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1812,7 +2025,11 @@ out:
 	spin_unlock(&ci->i_unsafe_lock);
 }
 
+<<<<<<< HEAD
 int ceph_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+=======
+int ceph_fsync(struct file *file, int datasync)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inode *inode = file->f_mapping->host;
 	struct ceph_inode_info *ci = ceph_inode(inode);
@@ -1823,10 +2040,16 @@ int ceph_fsync(struct file *file, loff_t start, loff_t end, int datasync)
 	dout("fsync %p%s\n", inode, datasync ? " datasync" : "");
 	sync_write_wait(inode);
 
+<<<<<<< HEAD
 	ret = filemap_write_and_wait_range(inode->i_mapping, start, end);
 	if (ret < 0)
 		return ret;
 	mutex_lock(&inode->i_mutex);
+=======
+	ret = filemap_write_and_wait(inode->i_mapping);
+	if (ret < 0)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dirty = try_flush_caps(inode, NULL, &flush_tid);
 	dout("fsync dirty caps are %s\n", ceph_cap_string(dirty));
@@ -1843,7 +2066,10 @@ int ceph_fsync(struct file *file, loff_t start, loff_t end, int datasync)
 	}
 
 	dout("fsync %p%s done\n", inode, datasync ? " datasync" : "");
+<<<<<<< HEAD
 	mutex_unlock(&inode->i_mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1871,10 +2097,17 @@ int ceph_write_inode(struct inode *inode, struct writeback_control *wbc)
 		struct ceph_mds_client *mdsc =
 			ceph_sb_to_client(inode->i_sb)->mdsc;
 
+<<<<<<< HEAD
 		spin_lock(&ci->i_ceph_lock);
 		if (__ceph_caps_dirty(ci))
 			__cap_delay_requeue_front(mdsc, ci);
 		spin_unlock(&ci->i_ceph_lock);
+=======
+		spin_lock(&inode->i_lock);
+		if (__ceph_caps_dirty(ci))
+			__cap_delay_requeue_front(mdsc, ci);
+		spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return err;
 }
@@ -1897,7 +2130,11 @@ static void kick_flushing_capsnaps(struct ceph_mds_client *mdsc,
 		struct inode *inode = &ci->vfs_inode;
 		struct ceph_cap *cap;
 
+<<<<<<< HEAD
 		spin_lock(&ci->i_ceph_lock);
+=======
+		spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cap = ci->i_auth_cap;
 		if (cap && cap->session == session) {
 			dout("kick_flushing_caps %p cap %p capsnap %p\n", inode,
@@ -1907,7 +2144,11 @@ static void kick_flushing_capsnaps(struct ceph_mds_client *mdsc,
 			pr_err("%p auth cap %p not mds%d ???\n", inode,
 			       cap, session->s_mds);
 		}
+<<<<<<< HEAD
 		spin_unlock(&ci->i_ceph_lock);
+=======
+		spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1924,7 +2165,11 @@ void ceph_kick_flushing_caps(struct ceph_mds_client *mdsc,
 		struct ceph_cap *cap;
 		int delayed = 0;
 
+<<<<<<< HEAD
 		spin_lock(&ci->i_ceph_lock);
+=======
+		spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cap = ci->i_auth_cap;
 		if (cap && cap->session == session) {
 			dout("kick_flushing_caps %p cap %p %s\n", inode,
@@ -1935,14 +2180,24 @@ void ceph_kick_flushing_caps(struct ceph_mds_client *mdsc,
 					     cap->issued | cap->implemented,
 					     ci->i_flushing_caps, NULL);
 			if (delayed) {
+<<<<<<< HEAD
 				spin_lock(&ci->i_ceph_lock);
 				__cap_delay_requeue(mdsc, ci);
 				spin_unlock(&ci->i_ceph_lock);
+=======
+				spin_lock(&inode->i_lock);
+				__cap_delay_requeue(mdsc, ci);
+				spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		} else {
 			pr_err("%p auth cap %p not mds%d ???\n", inode,
 			       cap, session->s_mds);
+<<<<<<< HEAD
 			spin_unlock(&ci->i_ceph_lock);
+=======
+			spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }
@@ -1955,7 +2210,11 @@ static void kick_flushing_inode_caps(struct ceph_mds_client *mdsc,
 	struct ceph_cap *cap;
 	int delayed = 0;
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cap = ci->i_auth_cap;
 	dout("kick_flushing_inode_caps %p flushing %s flush_seq %lld\n", inode,
 	     ceph_cap_string(ci->i_flushing_caps), ci->i_cap_flush_seq);
@@ -1967,12 +2226,21 @@ static void kick_flushing_inode_caps(struct ceph_mds_client *mdsc,
 				     cap->issued | cap->implemented,
 				     ci->i_flushing_caps, NULL);
 		if (delayed) {
+<<<<<<< HEAD
 			spin_lock(&ci->i_ceph_lock);
 			__cap_delay_requeue(mdsc, ci);
 			spin_unlock(&ci->i_ceph_lock);
 		}
 	} else {
 		spin_unlock(&ci->i_ceph_lock);
+=======
+			spin_lock(&inode->i_lock);
+			__cap_delay_requeue(mdsc, ci);
+			spin_unlock(&inode->i_lock);
+		}
+	} else {
+		spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1981,7 +2249,11 @@ static void kick_flushing_inode_caps(struct ceph_mds_client *mdsc,
  * Take references to capabilities we hold, so that we don't release
  * them to the MDS prematurely.
  *
+<<<<<<< HEAD
  * Protected by i_ceph_lock.
+=======
+ * Protected by i_lock.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void __take_cap_refs(struct ceph_inode_info *ci, int got)
 {
@@ -2019,7 +2291,11 @@ static int try_get_cap_refs(struct ceph_inode_info *ci, int need, int want,
 
 	dout("get_cap_refs %p need %s want %s\n", inode,
 	     ceph_cap_string(need), ceph_cap_string(want));
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* make sure file is actually open */
 	file_wanted = __ceph_caps_file_wanted(ci);
@@ -2080,7 +2356,11 @@ static int try_get_cap_refs(struct ceph_inode_info *ci, int need, int want,
 		     ceph_cap_string(have), ceph_cap_string(need));
 	}
 out:
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dout("get_cap_refs %p ret %d got %s\n", inode,
 	     ret, ceph_cap_string(*got));
 	return ret;
@@ -2097,7 +2377,11 @@ static void check_max_size(struct inode *inode, loff_t endoff)
 	int check = 0;
 
 	/* do we need to explicitly request a larger max_size? */
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((endoff >= ci->i_max_size ||
 	     endoff > (inode->i_size << 1)) &&
 	    endoff > ci->i_wanted_max_size) {
@@ -2106,7 +2390,11 @@ static void check_max_size(struct inode *inode, loff_t endoff)
 		ci->i_wanted_max_size = endoff;
 		check = 1;
 	}
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (check)
 		ceph_check_caps(ci, CHECK_CAPS_AUTHONLY, NULL);
 }
@@ -2143,9 +2431,15 @@ retry:
  */
 void ceph_get_cap_refs(struct ceph_inode_info *ci, int caps)
 {
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
 	__take_cap_refs(ci, caps);
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_lock(&ci->vfs_inode.i_lock);
+	__take_cap_refs(ci, caps);
+	spin_unlock(&ci->vfs_inode.i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2163,7 +2457,11 @@ void ceph_put_cap_refs(struct ceph_inode_info *ci, int had)
 	int last = 0, put = 0, flushsnaps = 0, wake = 0;
 	struct ceph_cap_snap *capsnap;
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (had & CEPH_CAP_PIN)
 		--ci->i_pin_ref;
 	if (had & CEPH_CAP_FILE_RD)
@@ -2196,7 +2494,11 @@ void ceph_put_cap_refs(struct ceph_inode_info *ci, int had)
 				}
 			}
 		}
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dout("put_cap_refs %p had %s%s%s\n", inode, ceph_cap_string(had),
 	     last ? " last" : "", put ? " put" : "");
@@ -2228,7 +2530,11 @@ void ceph_put_wrbuffer_cap_refs(struct ceph_inode_info *ci, int nr,
 	int found = 0;
 	struct ceph_cap_snap *capsnap = NULL;
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ci->i_wrbuffer_ref -= nr;
 	last = !ci->i_wrbuffer_ref;
 
@@ -2277,7 +2583,11 @@ void ceph_put_wrbuffer_cap_refs(struct ceph_inode_info *ci, int nr,
 		}
 	}
 
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (last) {
 		ceph_check_caps(ci, CHECK_CAPS_AUTHONLY, NULL);
@@ -2294,7 +2604,11 @@ void ceph_put_wrbuffer_cap_refs(struct ceph_inode_info *ci, int nr,
  * Handle a cap GRANT message from the MDS.  (Note that a GRANT may
  * actually be a revocation if it specifies a smaller cap set.)
  *
+<<<<<<< HEAD
  * caller holds s_mutex and i_ceph_lock, we drop both.
+=======
+ * caller holds s_mutex and i_lock, we drop both.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * return value:
  *  0 - ok
@@ -2305,7 +2619,11 @@ static void handle_cap_grant(struct inode *inode, struct ceph_mds_caps *grant,
 			     struct ceph_mds_session *session,
 			     struct ceph_cap *cap,
 			     struct ceph_buffer *xattr_buf)
+<<<<<<< HEAD
 		__releases(ci->i_ceph_lock)
+=======
+		__releases(inode->i_lock)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ceph_inode_info *ci = ceph_inode(inode);
 	int mds = session->s_mds;
@@ -2364,7 +2682,11 @@ static void handle_cap_grant(struct inode *inode, struct ceph_mds_caps *grant,
 	}
 
 	if ((issued & CEPH_CAP_LINK_EXCL) == 0)
+<<<<<<< HEAD
 		set_nlink(inode, le32_to_cpu(grant->nlink));
+=======
+		inode->i_nlink = le32_to_cpu(grant->nlink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((issued & CEPH_CAP_XATTR_EXCL) == 0 && grant->xattr_len) {
 		int len = le32_to_cpu(grant->xattr_len);
@@ -2392,7 +2714,11 @@ static void handle_cap_grant(struct inode *inode, struct ceph_mds_caps *grant,
 			    &atime);
 
 	/* max size increase? */
+<<<<<<< HEAD
 	if (ci->i_auth_cap == cap && max_size != ci->i_max_size) {
+=======
+	if (max_size != ci->i_max_size) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dout("max_size %lld -> %llu\n", ci->i_max_size, max_size);
 		ci->i_max_size = max_size;
 		if (max_size >= ci->i_wanted_max_size) {
@@ -2456,7 +2782,11 @@ static void handle_cap_grant(struct inode *inode, struct ceph_mds_caps *grant,
 	}
 	BUG_ON(cap->issued & ~cap->implemented);
 
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (writeback)
 		/*
 		 * queue inode for writeback: we can't actually call
@@ -2486,7 +2816,11 @@ static void handle_cap_flush_ack(struct inode *inode, u64 flush_tid,
 				 struct ceph_mds_caps *m,
 				 struct ceph_mds_session *session,
 				 struct ceph_cap *cap)
+<<<<<<< HEAD
 	__releases(ci->i_ceph_lock)
+=======
+	__releases(inode->i_lock)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ceph_inode_info *ci = ceph_inode(inode);
 	struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
@@ -2542,7 +2876,11 @@ static void handle_cap_flush_ack(struct inode *inode, u64 flush_tid,
 	wake_up_all(&ci->i_cap_wq);
 
 out:
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (drop)
 		iput(inode);
 }
@@ -2565,7 +2903,11 @@ static void handle_cap_flushsnap_ack(struct inode *inode, u64 flush_tid,
 	dout("handle_cap_flushsnap_ack inode %p ci %p mds%d follows %lld\n",
 	     inode, ci, session->s_mds, follows);
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(capsnap, &ci->i_cap_snaps, ci_item) {
 		if (capsnap->follows == follows) {
 			if (capsnap->flush_tid != flush_tid) {
@@ -2588,7 +2930,11 @@ static void handle_cap_flushsnap_ack(struct inode *inode, u64 flush_tid,
 			     capsnap, capsnap->follows);
 		}
 	}
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (drop)
 		iput(inode);
 }
@@ -2601,7 +2947,11 @@ static void handle_cap_flushsnap_ack(struct inode *inode, u64 flush_tid,
 static void handle_cap_trunc(struct inode *inode,
 			     struct ceph_mds_caps *trunc,
 			     struct ceph_mds_session *session)
+<<<<<<< HEAD
 	__releases(ci->i_ceph_lock)
+=======
+	__releases(inode->i_lock)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ceph_inode_info *ci = ceph_inode(inode);
 	int mds = session->s_mds;
@@ -2620,7 +2970,11 @@ static void handle_cap_trunc(struct inode *inode,
 	     inode, mds, seq, truncate_size, truncate_seq);
 	queue_trunc = ceph_fill_file_size(inode, issued,
 					  truncate_seq, truncate_size, size);
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (queue_trunc)
 		ceph_queue_vmtruncate(inode);
@@ -2649,7 +3003,11 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
 	dout("handle_cap_export inode %p ci %p mds%d mseq %d\n",
 	     inode, ci, mds, mseq);
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* make sure we haven't seen a higher mseq */
 	for (p = rb_first(&ci->i_caps); p; p = rb_next(p)) {
@@ -2693,7 +3051,11 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
 	}
 	/* else, we already released it */
 
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2748,10 +3110,16 @@ static void handle_cap_import(struct ceph_mds_client *mdsc,
 	up_read(&mdsc->snap_rwsem);
 
 	/* make sure we re-request max_size, if necessary */
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
 	ci->i_wanted_max_size = 0;  /* reset */
 	ci->i_requested_max_size = 0;
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+	ci->i_requested_max_size = 0;
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2766,7 +3134,10 @@ void ceph_handle_caps(struct ceph_mds_session *session,
 	struct ceph_mds_client *mdsc = session->s_mdsc;
 	struct super_block *sb = mdsc->fsc->sb;
 	struct inode *inode;
+<<<<<<< HEAD
 	struct ceph_inode_info *ci;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ceph_cap *cap;
 	struct ceph_mds_caps *h;
 	int mds = session->s_mds;
@@ -2820,7 +3191,10 @@ void ceph_handle_caps(struct ceph_mds_session *session,
 
 	/* lookup ino */
 	inode = ceph_find_inode(sb, vino);
+<<<<<<< HEAD
 	ci = ceph_inode(inode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dout(" op %s ino %llx.%llx inode %p\n", ceph_cap_op_name(op), vino.ino,
 	     vino.snap, inode);
 	if (!inode) {
@@ -2845,14 +3219,24 @@ void ceph_handle_caps(struct ceph_mds_session *session,
 	case CEPH_CAP_OP_IMPORT:
 		handle_cap_import(mdsc, inode, h, session,
 				  snaptrace, snaptrace_len);
+<<<<<<< HEAD
 	}
 
 	/* the rest require a cap */
 	spin_lock(&ci->i_ceph_lock);
+=======
+		ceph_check_caps(ceph_inode(inode), 0, session);
+		goto done_unlocked;
+	}
+
+	/* the rest require a cap */
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cap = __get_cap_for_mds(ceph_inode(inode), mds);
 	if (!cap) {
 		dout(" no cap on %p ino %llx.%llx from mds%d\n",
 		     inode, ceph_ino(inode), ceph_snap(inode), mds);
+<<<<<<< HEAD
 		spin_unlock(&ci->i_ceph_lock);
 		goto flush_cap_releases;
 	}
@@ -2862,6 +3246,16 @@ void ceph_handle_caps(struct ceph_mds_session *session,
 	case CEPH_CAP_OP_REVOKE:
 	case CEPH_CAP_OP_GRANT:
 	case CEPH_CAP_OP_IMPORT:
+=======
+		spin_unlock(&inode->i_lock);
+		goto flush_cap_releases;
+	}
+
+	/* note that each of these drops i_lock for us */
+	switch (op) {
+	case CEPH_CAP_OP_REVOKE:
+	case CEPH_CAP_OP_GRANT:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		handle_cap_grant(inode, h, session, cap, msg->middle);
 		goto done_unlocked;
 
@@ -2874,7 +3268,11 @@ void ceph_handle_caps(struct ceph_mds_session *session,
 		break;
 
 	default:
+<<<<<<< HEAD
 		spin_unlock(&ci->i_ceph_lock);
+=======
+		spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_err("ceph_handle_caps: unknown cap op %d %s\n", op,
 		       ceph_cap_op_name(op));
 	}
@@ -2967,13 +3365,21 @@ void ceph_put_fmode(struct ceph_inode_info *ci, int fmode)
 	struct inode *inode = &ci->vfs_inode;
 	int last = 0;
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dout("put_fmode %p fmode %d %d -> %d\n", inode, fmode,
 	     ci->i_nr_by_mode[fmode], ci->i_nr_by_mode[fmode]-1);
 	BUG_ON(ci->i_nr_by_mode[fmode] == 0);
 	if (--ci->i_nr_by_mode[fmode] == 0)
 		last++;
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (last && ci->i_vino.snap == CEPH_NOSNAP)
 		ceph_check_caps(ci, 0, NULL);
@@ -2996,7 +3402,11 @@ int ceph_encode_inode_release(void **p, struct inode *inode,
 	int used, dirty;
 	int ret = 0;
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	used = __ceph_caps_used(ci);
 	dirty = __ceph_caps_dirty(ci);
 
@@ -3051,7 +3461,11 @@ int ceph_encode_inode_release(void **p, struct inode *inode,
 			     inode, cap, ceph_cap_string(cap->issued));
 		}
 	}
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -3066,7 +3480,11 @@ int ceph_encode_dentry_release(void **p, struct dentry *dentry,
 
 	/*
 	 * force an record for the directory caps if we have a dentry lease.
+<<<<<<< HEAD
 	 * this is racy (can't take i_ceph_lock and d_lock together), but it
+=======
+	 * this is racy (can't take i_lock and d_lock together), but it
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * doesn't have to be perfect; the mds will revoke anything we don't
 	 * release.
 	 */

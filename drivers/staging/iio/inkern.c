@@ -7,7 +7,11 @@
  * the Free Software Foundation.
  */
 #include <linux/err.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+//#include <linux/export.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/mutex.h>
 

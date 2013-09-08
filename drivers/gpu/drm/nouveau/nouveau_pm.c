@@ -26,7 +26,10 @@
 
 #include "nouveau_drv.h"
 #include "nouveau_pm.h"
+<<<<<<< HEAD
 #include "nouveau_gpio.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_ACPI
 #include <linux/acpi.h>
@@ -36,6 +39,7 @@
 #include <linux/hwmon-sysfs.h>
 
 static int
+<<<<<<< HEAD
 nouveau_pwmfan_get(struct drm_device *dev)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
@@ -128,6 +132,24 @@ nouveau_pm_perflvl_aux(struct drm_device *dev, struct nouveau_pm_level *perflvl,
 		}
 	}
 
+=======
+nouveau_pm_clock_set(struct drm_device *dev, struct nouveau_pm_level *perflvl,
+		     u8 id, u32 khz)
+{
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	struct nouveau_pm_engine *pm = &dev_priv->engine.pm;
+	void *pre_state;
+
+	if (khz == 0)
+		return 0;
+
+	pre_state = pm->clock_pre(dev, perflvl, id, khz);
+	if (IS_ERR(pre_state))
+		return PTR_ERR(pre_state);
+
+	if (pre_state)
+		pm->clock_set(dev, pre_state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -136,12 +158,16 @@ nouveau_pm_perflvl_set(struct drm_device *dev, struct nouveau_pm_level *perflvl)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct nouveau_pm_engine *pm = &dev_priv->engine.pm;
+<<<<<<< HEAD
 	void *state;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	if (perflvl == pm->cur)
 		return 0;
 
+<<<<<<< HEAD
 	ret = nouveau_pm_perflvl_aux(dev, perflvl, pm->cur, perflvl);
 	if (ret)
 		return ret;
@@ -220,6 +246,23 @@ profile_find(struct drm_device *dev, const char *string)
 	}
 
 	return NULL;
+=======
+	if (pm->voltage.supported && pm->voltage_set && perflvl->voltage) {
+		ret = pm->voltage_set(dev, perflvl->voltage);
+		if (ret) {
+			NV_ERROR(dev, "voltage_set %d failed: %d\n",
+				 perflvl->voltage, ret);
+		}
+	}
+
+	nouveau_pm_clock_set(dev, perflvl, PLL_CORE, perflvl->core);
+	nouveau_pm_clock_set(dev, perflvl, PLL_SHADER, perflvl->shader);
+	nouveau_pm_clock_set(dev, perflvl, PLL_MEMORY, perflvl->memory);
+	nouveau_pm_clock_set(dev, perflvl, PLL_UNK05, perflvl->unk05);
+
+	pm->cur = perflvl;
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -227,13 +270,18 @@ nouveau_pm_profile_set(struct drm_device *dev, const char *profile)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct nouveau_pm_engine *pm = &dev_priv->engine.pm;
+<<<<<<< HEAD
 	struct nouveau_pm_profile *ac = NULL, *dc = NULL;
 	char string[16], *cur = string, *ptr;
+=======
+	struct nouveau_pm_level *perflvl = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* safety precaution, for now */
 	if (nouveau_perflvl_wr != 7777)
 		return -EPERM;
 
+<<<<<<< HEAD
 	strncpy(string, profile, sizeof(string));
 	string[sizeof(string) - 1] = 0;
 	if ((ptr = strchr(string, '\n')))
@@ -275,6 +323,31 @@ const struct nouveau_pm_profile_func nouveau_pm_static_profile_func = {
 	.fini = nouveau_pm_static_dummy,
 	.select = nouveau_pm_static_select,
 };
+=======
+	if (!pm->clock_set)
+		return -EINVAL;
+
+	if (!strncmp(profile, "boot", 4))
+		perflvl = &pm->boot;
+	else {
+		int pl = simple_strtol(profile, NULL, 10);
+		int i;
+
+		for (i = 0; i < pm->nr_perflvl; i++) {
+			if (pm->perflvl[i].id == pl) {
+				perflvl = &pm->perflvl[i];
+				break;
+			}
+		}
+
+		if (!perflvl)
+			return -EINVAL;
+	}
+
+	NV_INFO(dev, "setting performance level: %s\n", profile);
+	return nouveau_pm_perflvl_set(dev, perflvl);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int
 nouveau_pm_perflvl_get(struct drm_device *dev, struct nouveau_pm_level *perflvl)
@@ -283,6 +356,7 @@ nouveau_pm_perflvl_get(struct drm_device *dev, struct nouveau_pm_level *perflvl)
 	struct nouveau_pm_engine *pm = &dev_priv->engine.pm;
 	int ret;
 
+<<<<<<< HEAD
 	memset(perflvl, 0, sizeof(*perflvl));
 
 	if (pm->clocks_get) {
@@ -304,13 +378,46 @@ nouveau_pm_perflvl_get(struct drm_device *dev, struct nouveau_pm_level *perflvl)
 		perflvl->fanspeed = ret;
 
 	nouveau_mem_timing_read(dev, &perflvl->timing);
+=======
+	if (!pm->clock_get)
+		return -EINVAL;
+
+	memset(perflvl, 0, sizeof(*perflvl));
+
+	ret = pm->clock_get(dev, PLL_CORE);
+	if (ret > 0)
+		perflvl->core = ret;
+
+	ret = pm->clock_get(dev, PLL_MEMORY);
+	if (ret > 0)
+		perflvl->memory = ret;
+
+	ret = pm->clock_get(dev, PLL_SHADER);
+	if (ret > 0)
+		perflvl->shader = ret;
+
+	ret = pm->clock_get(dev, PLL_UNK05);
+	if (ret > 0)
+		perflvl->unk05 = ret;
+
+	if (pm->voltage.supported && pm->voltage_get) {
+		ret = pm->voltage_get(dev);
+		if (ret > 0)
+			perflvl->voltage = ret;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static void
 nouveau_pm_perflvl_info(struct nouveau_pm_level *perflvl, char *ptr, int len)
 {
+<<<<<<< HEAD
 	char c[16], s[16], v[32], f[16], m[16];
+=======
+	char c[16], s[16], v[16], f[16], t[16];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	c[0] = '\0';
 	if (perflvl->core)
@@ -320,6 +427,7 @@ nouveau_pm_perflvl_info(struct nouveau_pm_level *perflvl, char *ptr, int len)
 	if (perflvl->shader)
 		snprintf(s, sizeof(s), " shader %dMHz", perflvl->shader / 1000);
 
+<<<<<<< HEAD
 	m[0] = '\0';
 	if (perflvl->memory)
 		snprintf(m, sizeof(m), " memory %dMHz", perflvl->memory / 1000);
@@ -333,24 +441,46 @@ nouveau_pm_perflvl_info(struct nouveau_pm_level *perflvl, char *ptr, int len)
 		snprintf(v, sizeof(v), " voltage %dmV",
 			 perflvl->volt_min / 1000);
 	}
+=======
+	v[0] = '\0';
+	if (perflvl->voltage)
+		snprintf(v, sizeof(v), " voltage %dmV", perflvl->voltage * 10);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	f[0] = '\0';
 	if (perflvl->fanspeed)
 		snprintf(f, sizeof(f), " fanspeed %d%%", perflvl->fanspeed);
 
+<<<<<<< HEAD
 	snprintf(ptr, len, "%s%s%s%s%s\n", c, s, m, v, f);
+=======
+	t[0] = '\0';
+	if (perflvl->timing)
+		snprintf(t, sizeof(t), " timing %d", perflvl->timing->id);
+
+	snprintf(ptr, len, "memory %dMHz%s%s%s%s%s\n", perflvl->memory / 1000,
+		 c, s, v, f, t);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t
 nouveau_pm_get_perflvl_info(struct device *d,
 			    struct device_attribute *a, char *buf)
 {
+<<<<<<< HEAD
 	struct nouveau_pm_level *perflvl =
 		container_of(a, struct nouveau_pm_level, dev_attr);
 	char *ptr = buf;
 	int len = PAGE_SIZE;
 
 	snprintf(ptr, len, "%d:", perflvl->id);
+=======
+	struct nouveau_pm_level *perflvl = (struct nouveau_pm_level *)a;
+	char *ptr = buf;
+	int len = PAGE_SIZE;
+
+	snprintf(ptr, len, "%d: ", perflvl->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ptr += strlen(buf);
 	len -= strlen(buf);
 
@@ -368,8 +498,17 @@ nouveau_pm_get_perflvl(struct device *d, struct device_attribute *a, char *buf)
 	int len = PAGE_SIZE, ret;
 	char *ptr = buf;
 
+<<<<<<< HEAD
 	snprintf(ptr, len, "profile: %s, %s\nc:",
 		 pm->profile_ac->name, pm->profile_dc->name);
+=======
+	if (!pm->cur)
+		snprintf(ptr, len, "setting: boot\n");
+	else if (pm->cur == &pm->boot)
+		snprintf(ptr, len, "setting: boot\nc: ");
+	else
+		snprintf(ptr, len, "setting: static %d\nc: ", pm->cur->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ptr += strlen(buf);
 	len -= strlen(buf);
 
@@ -448,7 +587,11 @@ nouveau_sysfs_fini(struct drm_device *dev)
 	}
 }
 
+<<<<<<< HEAD
 #if defined(CONFIG_HWMON) || (defined(MODULE) && defined(CONFIG_HWMON_MODULE))
+=======
+#ifdef CONFIG_HWMON
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t
 nouveau_hwmon_show_temp(struct device *d, struct device_attribute *a, char *buf)
 {
@@ -481,7 +624,11 @@ nouveau_hwmon_set_max_temp(struct device *d, struct device_attribute *a,
 	struct nouveau_pm_threshold_temp *temp = &pm->threshold_temp;
 	long value;
 
+<<<<<<< HEAD
 	if (kstrtol(buf, 10, &value) == -EINVAL)
+=======
+	if (strict_strtol(buf, 10, &value) == -EINVAL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return count;
 
 	temp->down_clock = value/1000;
@@ -516,7 +663,11 @@ nouveau_hwmon_set_critical_temp(struct device *d, struct device_attribute *a,
 	struct nouveau_pm_threshold_temp *temp = &pm->threshold_temp;
 	long value;
 
+<<<<<<< HEAD
 	if (kstrtol(buf, 10, &value) == -EINVAL)
+=======
+	if (strict_strtol(buf, 10, &value) == -EINVAL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return count;
 
 	temp->critical = value/1000;
@@ -548,6 +699,7 @@ static SENSOR_DEVICE_ATTR(update_rate, S_IRUGO,
 						nouveau_hwmon_show_update_rate,
 						NULL, 0);
 
+<<<<<<< HEAD
 static ssize_t
 nouveau_hwmon_show_fan0_input(struct device *d, struct device_attribute *attr,
 			      char *buf)
@@ -714,6 +866,8 @@ static SENSOR_DEVICE_ATTR(pwm0_max, S_IRUGO | S_IWUSR,
 			  nouveau_hwmon_get_pwm0_max,
 			  nouveau_hwmon_set_pwm0_max, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct attribute *hwmon_attributes[] = {
 	&sensor_dev_attr_temp1_input.dev_attr.attr,
 	&sensor_dev_attr_temp1_max.dev_attr.attr,
@@ -722,6 +876,7 @@ static struct attribute *hwmon_attributes[] = {
 	&sensor_dev_attr_update_rate.dev_attr.attr,
 	NULL
 };
+<<<<<<< HEAD
 static struct attribute *hwmon_fan_rpm_attributes[] = {
 	&sensor_dev_attr_fan0_input.dev_attr.attr,
 	NULL
@@ -732,26 +887,39 @@ static struct attribute *hwmon_pwm_fan_attributes[] = {
 	&sensor_dev_attr_pwm0_max.dev_attr.attr,
 	NULL
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const struct attribute_group hwmon_attrgroup = {
 	.attrs = hwmon_attributes,
 };
+<<<<<<< HEAD
 static const struct attribute_group hwmon_fan_rpm_attrgroup = {
 	.attrs = hwmon_fan_rpm_attributes,
 };
 static const struct attribute_group hwmon_pwm_fan_attrgroup = {
 	.attrs = hwmon_pwm_fan_attributes,
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 static int
 nouveau_hwmon_init(struct drm_device *dev)
 {
+<<<<<<< HEAD
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct nouveau_pm_engine *pm = &dev_priv->engine.pm;
 #if defined(CONFIG_HWMON) || (defined(MODULE) && defined(CONFIG_HWMON_MODULE))
 	struct device *hwmon_dev;
 	int ret = 0;
+=======
+#ifdef CONFIG_HWMON
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	struct nouveau_pm_engine *pm = &dev_priv->engine.pm;
+	struct device *hwmon_dev;
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!pm->temp_get)
 		return -ENODEV;
@@ -764,6 +932,7 @@ nouveau_hwmon_init(struct drm_device *dev)
 		return ret;
 	}
 	dev_set_drvdata(hwmon_dev, dev);
+<<<<<<< HEAD
 
 	/* default sysfs entries */
 	ret = sysfs_create_group(&dev->pdev->dev.kobj, &hwmon_attrgroup);
@@ -804,22 +973,42 @@ error:
 	pm->hwmon = NULL;
 	return 0;
 #endif
+=======
+	ret = sysfs_create_group(&dev->pdev->dev.kobj, &hwmon_attrgroup);
+	if (ret) {
+		NV_ERROR(dev,
+			"Unable to create hwmon sysfs file: %d\n", ret);
+		hwmon_device_unregister(hwmon_dev);
+		return ret;
+	}
+
+	pm->hwmon = hwmon_dev;
+#endif
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
 nouveau_hwmon_fini(struct drm_device *dev)
 {
+<<<<<<< HEAD
 #if defined(CONFIG_HWMON) || (defined(MODULE) && defined(CONFIG_HWMON_MODULE))
+=======
+#ifdef CONFIG_HWMON
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct nouveau_pm_engine *pm = &dev_priv->engine.pm;
 
 	if (pm->hwmon) {
 		sysfs_remove_group(&dev->pdev->dev.kobj, &hwmon_attrgroup);
+<<<<<<< HEAD
 		sysfs_remove_group(&dev->pdev->dev.kobj,
 				   &hwmon_pwm_fan_attrgroup);
 		sysfs_remove_group(&dev->pdev->dev.kobj,
 				   &hwmon_fan_rpm_attrgroup);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hwmon_device_unregister(pm->hwmon);
 	}
 #endif
@@ -838,7 +1027,10 @@ nouveau_pm_acpi_event(struct notifier_block *nb, unsigned long val, void *data)
 		bool ac = power_supply_is_system_supplied();
 
 		NV_DEBUG(dev, "power supply changed: %s\n", ac ? "AC" : "DC");
+<<<<<<< HEAD
 		nouveau_pm_trigger(dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return NOTIFY_OK;
@@ -853,6 +1045,7 @@ nouveau_pm_init(struct drm_device *dev)
 	char info[256];
 	int ret, i;
 
+<<<<<<< HEAD
 	/* parse aux tables from vbios */
 	nouveau_volt_init(dev);
 	nouveau_temp_init(dev);
@@ -895,6 +1088,37 @@ nouveau_pm_init(struct drm_device *dev)
 
 	/* determine the current fan speed */
 	pm->fan.percent = nouveau_pwmfan_get(dev);
+=======
+	nouveau_mem_timing_init(dev);
+	nouveau_volt_init(dev);
+	nouveau_perf_init(dev);
+	nouveau_temp_init(dev);
+
+	NV_INFO(dev, "%d available performance level(s)\n", pm->nr_perflvl);
+	for (i = 0; i < pm->nr_perflvl; i++) {
+		nouveau_pm_perflvl_info(&pm->perflvl[i], info, sizeof(info));
+		NV_INFO(dev, "%d: %s", pm->perflvl[i].id, info);
+	}
+
+	/* determine current ("boot") performance level */
+	ret = nouveau_pm_perflvl_get(dev, &pm->boot);
+	if (ret == 0) {
+		strncpy(pm->boot.name, "boot", 4);
+		pm->cur = &pm->boot;
+
+		nouveau_pm_perflvl_info(&pm->boot, info, sizeof(info));
+		NV_INFO(dev, "c: %s", info);
+	}
+
+	/* switch performance levels now if requested */
+	if (nouveau_perflvl != NULL) {
+		ret = nouveau_pm_profile_set(dev, nouveau_perflvl);
+		if (ret) {
+			NV_ERROR(dev, "error setting perflvl \"%s\": %d\n",
+				 nouveau_perflvl, ret);
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nouveau_sysfs_init(dev);
 	nouveau_hwmon_init(dev);
@@ -911,12 +1135,15 @@ nouveau_pm_fini(struct drm_device *dev)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct nouveau_pm_engine *pm = &dev_priv->engine.pm;
+<<<<<<< HEAD
 	struct nouveau_pm_profile *profile, *tmp;
 
 	list_for_each_entry_safe(profile, tmp, &pm->profiles, head) {
 		list_del(&profile->head);
 		profile->func->destroy(profile);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (pm->cur != &pm->boot)
 		nouveau_pm_perflvl_set(dev, &pm->boot);
@@ -924,6 +1151,10 @@ nouveau_pm_fini(struct drm_device *dev)
 	nouveau_temp_fini(dev);
 	nouveau_perf_fini(dev);
 	nouveau_volt_fini(dev);
+<<<<<<< HEAD
+=======
+	nouveau_mem_timing_fini(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if defined(CONFIG_ACPI) && defined(CONFIG_POWER_SUPPLY)
 	unregister_acpi_notifier(&pm->acpi_nb);
@@ -945,5 +1176,8 @@ nouveau_pm_resume(struct drm_device *dev)
 	perflvl = pm->cur;
 	pm->cur = &pm->boot;
 	nouveau_pm_perflvl_set(dev, perflvl);
+<<<<<<< HEAD
 	nouveau_pwmfan_set(dev, pm->fan.percent);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

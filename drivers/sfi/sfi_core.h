@@ -55,9 +55,12 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
+<<<<<<< HEAD
 
 #include <linux/sysfs.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct sfi_table_key{
 	char	*sig;
 	char	*oem_id;

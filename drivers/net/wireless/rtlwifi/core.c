@@ -1,6 +1,10 @@
 /******************************************************************************
  *
+<<<<<<< HEAD
  * Copyright(c) 2009-2012  Realtek Corporation.
+=======
+ * Copyright(c) 2009-2010  Realtek Corporation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
@@ -31,6 +35,7 @@
 #include "core.h"
 #include "cam.h"
 #include "base.h"
+<<<<<<< HEAD
 #include "pci.h"
 #include "ps.h"
 
@@ -75,6 +80,10 @@ void rtl_fw_cb(const struct firmware *firmware, void *context)
 }
 EXPORT_SYMBOL(rtl_fw_cb);
 
+=======
+#include "ps.h"
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*mutex for start & stop is must here. */
 static int rtl_op_start(struct ieee80211_hw *hw)
 {
@@ -154,11 +163,17 @@ static int rtl_op_add_interface(struct ieee80211_hw *hw,
 	struct rtl_mac *mac = rtl_mac(rtl_priv(hw));
 	int err = 0;
 
+<<<<<<< HEAD
 	vif->driver_flags |= IEEE80211_VIF_BEACON_FILTER;
 
 	if (mac->vif) {
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_WARNING,
 			 "vif has been set!! mac->vif = 0x%p\n", mac->vif);
+=======
+	if (mac->vif) {
+		RT_TRACE(rtlpriv, COMP_ERR, DBG_WARNING,
+			 ("vif has been set!! mac->vif = 0x%p\n", mac->vif));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EOPNOTSUPP;
 	}
 
@@ -169,7 +184,11 @@ static int rtl_op_add_interface(struct ieee80211_hw *hw,
 	case NL80211_IFTYPE_STATION:
 		if (mac->beacon_enabled == 1) {
 			RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
+<<<<<<< HEAD
 				 "NL80211_IFTYPE_STATION\n");
+=======
+				 ("NL80211_IFTYPE_STATION\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mac->beacon_enabled = 0;
 			rtlpriv->cfg->ops->update_interrupt_mask(hw, 0,
 					rtlpriv->cfg->maps
@@ -178,7 +197,11 @@ static int rtl_op_add_interface(struct ieee80211_hw *hw,
 		break;
 	case NL80211_IFTYPE_ADHOC:
 		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
+<<<<<<< HEAD
 			 "NL80211_IFTYPE_ADHOC\n");
+=======
+			 ("NL80211_IFTYPE_ADHOC\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		mac->link_state = MAC80211_LINKED;
 		rtlpriv->cfg->ops->set_bcn_reg(hw);
@@ -192,7 +215,11 @@ static int rtl_op_add_interface(struct ieee80211_hw *hw,
 		break;
 	case NL80211_IFTYPE_AP:
 		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
+<<<<<<< HEAD
 			 "NL80211_IFTYPE_AP\n");
+=======
+			 ("NL80211_IFTYPE_AP\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		mac->link_state = MAC80211_LINKED;
 		rtlpriv->cfg->ops->set_bcn_reg(hw);
@@ -205,7 +232,11 @@ static int rtl_op_add_interface(struct ieee80211_hw *hw,
 		break;
 	default:
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+<<<<<<< HEAD
 			 "operation mode %d is not supported!\n", vif->type);
+=======
+			 ("operation mode %d is not support!\n", vif->type));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = -EOPNOTSUPP;
 		goto out;
 	}
@@ -265,7 +296,11 @@ static int rtl_op_config(struct ieee80211_hw *hw, u32 changed)
 	mutex_lock(&rtlpriv->locks.conf_mutex);
 	if (changed & IEEE80211_CONF_CHANGE_LISTEN_INTERVAL) {	/*BIT(2)*/
 		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
+<<<<<<< HEAD
 			 "IEEE80211_CONF_CHANGE_LISTEN_INTERVAL\n");
+=======
+			 ("IEEE80211_CONF_CHANGE_LISTEN_INTERVAL\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*For IPS */
@@ -308,8 +343,13 @@ static int rtl_op_config(struct ieee80211_hw *hw, u32 changed)
 
 	if (changed & IEEE80211_CONF_CHANGE_RETRY_LIMITS) {
 		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
+<<<<<<< HEAD
 			 "IEEE80211_CONF_CHANGE_RETRY_LIMITS %x\n",
 			 hw->conf.long_frame_max_tx_count);
+=======
+			 ("IEEE80211_CONF_CHANGE_RETRY_LIMITS %x\n",
+			  hw->conf.long_frame_max_tx_count));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mac->retry_long = hw->conf.long_frame_max_tx_count;
 		mac->retry_short = hw->conf.long_frame_max_tx_count;
 		rtlpriv->cfg->ops->set_hw_reg(hw, HW_VAR_RETRY_LIMIT,
@@ -364,7 +404,11 @@ static int rtl_op_config(struct ieee80211_hw *hw, u32 changed)
 		default:
 			mac->bw_40 = false;
 			RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+<<<<<<< HEAD
 				 "switch case not processed\n");
+=======
+					("switch case not processed\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 
@@ -379,8 +423,13 @@ static int rtl_op_config(struct ieee80211_hw *hw, u32 changed)
 		 * before going offchannel, or dis-association or delete BA will
 		 * happen by AP
 		 */
+<<<<<<< HEAD
 		if (rtlpriv->mac80211.offchan_delay) {
 			rtlpriv->mac80211.offchan_delay = false;
+=======
+		if (rtlpriv->mac80211.offchan_deley) {
+			rtlpriv->mac80211.offchan_deley = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mdelay(50);
 		}
 		rtlphy->current_channel = wide_chan;
@@ -413,12 +462,20 @@ static void rtl_op_configure_filter(struct ieee80211_hw *hw,
 			mac->rx_conf |= rtlpriv->cfg->maps[MAC_RCR_AM] |
 			    rtlpriv->cfg->maps[MAC_RCR_AB];
 			RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
+<<<<<<< HEAD
 				 "Enable receive multicast frame\n");
+=======
+				 ("Enable receive multicast frame.\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			mac->rx_conf &= ~(rtlpriv->cfg->maps[MAC_RCR_AM] |
 					  rtlpriv->cfg->maps[MAC_RCR_AB]);
 			RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
+<<<<<<< HEAD
 				 "Disable receive multicast frame\n");
+=======
+				 ("Disable receive multicast frame.\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -426,11 +483,19 @@ static void rtl_op_configure_filter(struct ieee80211_hw *hw,
 		if (*new_flags & FIF_FCSFAIL) {
 			mac->rx_conf |= rtlpriv->cfg->maps[MAC_RCR_ACRC32];
 			RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
+<<<<<<< HEAD
 				 "Enable receive FCS error frame\n");
 		} else {
 			mac->rx_conf &= ~rtlpriv->cfg->maps[MAC_RCR_ACRC32];
 			RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
 				 "Disable receive FCS error frame\n");
+=======
+				 ("Enable receive FCS error frame.\n"));
+		} else {
+			mac->rx_conf &= ~rtlpriv->cfg->maps[MAC_RCR_ACRC32];
+			RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
+				 ("Disable receive FCS error frame.\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -453,11 +518,19 @@ static void rtl_op_configure_filter(struct ieee80211_hw *hw,
 			mac->rx_conf |= rtlpriv->cfg->maps[MAC_RCR_ACF];
 
 			RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
+<<<<<<< HEAD
 				 "Enable receive control frame\n");
 		} else {
 			mac->rx_conf &= ~rtlpriv->cfg->maps[MAC_RCR_ACF];
 			RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
 				 "Disable receive control frame\n");
+=======
+				 ("Enable receive control frame.\n"));
+		} else {
+			mac->rx_conf &= ~rtlpriv->cfg->maps[MAC_RCR_ACF];
+			RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
+				 ("Disable receive control frame.\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -465,11 +538,19 @@ static void rtl_op_configure_filter(struct ieee80211_hw *hw,
 		if (*new_flags & FIF_OTHER_BSS) {
 			mac->rx_conf |= rtlpriv->cfg->maps[MAC_RCR_AAP];
 			RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
+<<<<<<< HEAD
 				 "Enable receive other BSS's frame\n");
 		} else {
 			mac->rx_conf &= ~rtlpriv->cfg->maps[MAC_RCR_AAP];
 			RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
 				 "Disable receive other BSS's frame\n");
+=======
+				 ("Enable receive other BSS's frame.\n"));
+		} else {
+			mac->rx_conf &= ~rtlpriv->cfg->maps[MAC_RCR_AAP];
+			RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
+				 ("Disable receive other BSS's frame.\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }
@@ -487,11 +568,19 @@ static int rtl_op_sta_add(struct ieee80211_hw *hw,
 			sta_entry->wireless_mode = WIRELESS_MODE_G;
 			if (sta->supp_rates[0] <= 0xf)
 				sta_entry->wireless_mode = WIRELESS_MODE_B;
+<<<<<<< HEAD
 			if (sta->ht_cap.ht_supported)
 				sta_entry->wireless_mode = WIRELESS_MODE_N_24G;
 		} else if (rtlhal->current_bandtype == BAND_ON_5G) {
 			sta_entry->wireless_mode = WIRELESS_MODE_A;
 			if (sta->ht_cap.ht_supported)
+=======
+			if (sta->ht_cap.ht_supported == true)
+				sta_entry->wireless_mode = WIRELESS_MODE_N_24G;
+		} else if (rtlhal->current_bandtype == BAND_ON_5G) {
+			sta_entry->wireless_mode = WIRELESS_MODE_A;
+			if (sta->ht_cap.ht_supported == true)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				sta_entry->wireless_mode = WIRELESS_MODE_N_24G;
 		}
 
@@ -500,7 +589,11 @@ static int rtl_op_sta_add(struct ieee80211_hw *hw,
 			sta_entry->wireless_mode = WIRELESS_MODE_G;
 
 		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_DMESG,
+<<<<<<< HEAD
 			 "Add sta addr is %pM\n", sta->addr);
+=======
+			("Add sta addr is "MAC_FMT"\n", MAC_ARG(sta->addr)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rtlpriv->cfg->ops->update_rate_tbl(hw, sta, 0);
 	}
 	return 0;
@@ -513,7 +606,11 @@ static int rtl_op_sta_remove(struct ieee80211_hw *hw,
 	struct rtl_sta_info *sta_entry;
 	if (sta) {
 		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_DMESG,
+<<<<<<< HEAD
 			 "Remove sta addr is %pM\n", sta->addr);
+=======
+			("Remove sta addr is "MAC_FMT"\n", MAC_ARG(sta->addr)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sta_entry = (struct rtl_sta_info *) sta->drv_priv;
 		sta_entry->wireless_mode = 0;
 		sta_entry->ratr_index = 0;
@@ -548,8 +645,12 @@ static int _rtl_get_hal_qnum(u16 queue)
  *for mac80211 VO=0, VI=1, BE=2, BK=3
  *for rtl819x  BE=0, BK=1, VI=2, VO=3
  */
+<<<<<<< HEAD
 static int rtl_op_conf_tx(struct ieee80211_hw *hw,
 		   struct ieee80211_vif *vif, u16 queue,
+=======
+static int rtl_op_conf_tx(struct ieee80211_hw *hw, u16 queue,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   const struct ieee80211_tx_queue_params *param)
 {
 	struct rtl_priv *rtlpriv = rtl_priv(hw);
@@ -558,7 +659,11 @@ static int rtl_op_conf_tx(struct ieee80211_hw *hw,
 
 	if (queue >= AC_MAX) {
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_WARNING,
+<<<<<<< HEAD
 			 "queue number %d is incorrect!\n", queue);
+=======
+			 ("queue number %d is incorrect!\n", queue));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -591,7 +696,11 @@ static void rtl_op_bss_info_changed(struct ieee80211_hw *hw,
 		     bss_conf->enable_beacon)) {
 			if (mac->beacon_enabled == 0) {
 				RT_TRACE(rtlpriv, COMP_MAC80211, DBG_DMESG,
+<<<<<<< HEAD
 					 "BSS_CHANGED_BEACON_ENABLED\n");
+=======
+					 ("BSS_CHANGED_BEACON_ENABLED\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				/*start hw beacon interrupt. */
 				/*rtlpriv->cfg->ops->set_bcn_reg(hw); */
@@ -609,7 +718,11 @@ static void rtl_op_bss_info_changed(struct ieee80211_hw *hw,
 			!bss_conf->enable_beacon)) {
 			if (mac->beacon_enabled == 1) {
 				RT_TRACE(rtlpriv, COMP_MAC80211, DBG_DMESG,
+<<<<<<< HEAD
 					 "ADHOC DISABLE BEACON\n");
+=======
+					 ("ADHOC DISABLE BEACON\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				mac->beacon_enabled = 0;
 				rtlpriv->cfg->ops->update_interrupt_mask(hw, 0,
@@ -619,7 +732,11 @@ static void rtl_op_bss_info_changed(struct ieee80211_hw *hw,
 		}
 		if (changed & BSS_CHANGED_BEACON_INT) {
 			RT_TRACE(rtlpriv, COMP_BEACON, DBG_TRACE,
+<<<<<<< HEAD
 				 "BSS_CHANGED_BEACON_INT\n");
+=======
+				 ("BSS_CHANGED_BEACON_INT\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mac->beacon_interval = bss_conf->beacon_int;
 			rtlpriv->cfg->ops->set_bcn_intv(hw);
 		}
@@ -648,7 +765,11 @@ static void rtl_op_bss_info_changed(struct ieee80211_hw *hw,
 			if (mac->opmode == NL80211_IFTYPE_STATION && sta)
 				rtlpriv->cfg->ops->update_rate_tbl(hw, sta, 0);
 			RT_TRACE(rtlpriv, COMP_MAC80211, DBG_DMESG,
+<<<<<<< HEAD
 				 "BSS_CHANGED_ASSOC\n");
+=======
+				 ("BSS_CHANGED_ASSOC\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			if (mac->link_state == MAC80211_LINKED)
 				rtl_lps_leave(hw);
@@ -663,20 +784,33 @@ static void rtl_op_bss_info_changed(struct ieee80211_hw *hw,
 			mac->vendor = PEER_UNKNOWN;
 
 			RT_TRACE(rtlpriv, COMP_MAC80211, DBG_DMESG,
+<<<<<<< HEAD
 				 "BSS_CHANGED_UN_ASSOC\n");
+=======
+				 ("BSS_CHANGED_UN_ASSOC\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
 	if (changed & BSS_CHANGED_ERP_CTS_PROT) {
 		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_TRACE,
+<<<<<<< HEAD
 			 "BSS_CHANGED_ERP_CTS_PROT\n");
+=======
+			 ("BSS_CHANGED_ERP_CTS_PROT\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mac->use_cts_protect = bss_conf->use_cts_prot;
 	}
 
 	if (changed & BSS_CHANGED_ERP_PREAMBLE) {
 		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD,
+<<<<<<< HEAD
 			 "BSS_CHANGED_ERP_PREAMBLE use short preamble:%x\n",
 			 bss_conf->use_short_preamble);
+=======
+			 ("BSS_CHANGED_ERP_PREAMBLE use short preamble:%x\n",
+			  bss_conf->use_short_preamble));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		mac->short_preamble = bss_conf->use_short_preamble;
 		rtlpriv->cfg->ops->set_hw_reg(hw, HW_VAR_ACK_PREAMBLE,
@@ -685,7 +819,11 @@ static void rtl_op_bss_info_changed(struct ieee80211_hw *hw,
 
 	if (changed & BSS_CHANGED_ERP_SLOT) {
 		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_TRACE,
+<<<<<<< HEAD
 			 "BSS_CHANGED_ERP_SLOT\n");
+=======
+			 ("BSS_CHANGED_ERP_SLOT\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (bss_conf->use_short_slot)
 			mac->slot_time = RTL_SLOT_TIME_9;
@@ -697,9 +835,16 @@ static void rtl_op_bss_info_changed(struct ieee80211_hw *hw,
 	}
 
 	if (changed & BSS_CHANGED_HT) {
+<<<<<<< HEAD
 		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_TRACE, "BSS_CHANGED_HT\n");
 		rcu_read_lock();
 		sta = get_sta(hw, vif, bss_conf->bssid);
+=======
+		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_TRACE,
+			 ("BSS_CHANGED_HT\n"));
+		rcu_read_lock();
+		sta = get_sta(hw, vif, (u8 *)bss_conf->bssid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (sta) {
 			if (sta->ht_cap.ampdu_density >
 			    mac->current_ampdu_density)
@@ -726,15 +871,24 @@ static void rtl_op_bss_info_changed(struct ieee80211_hw *hw,
 		rtlpriv->cfg->ops->set_hw_reg(hw, HW_VAR_BSSID,
 					      (u8 *) bss_conf->bssid);
 
+<<<<<<< HEAD
 		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_DMESG, "%pM\n",
 			 bss_conf->bssid);
+=======
+		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_DMESG,
+			 (MAC_FMT "\n", MAC_ARG(bss_conf->bssid)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		mac->vendor = PEER_UNKNOWN;
 		memcpy(mac->bssid, bss_conf->bssid, 6);
 		rtlpriv->cfg->ops->set_network_type(hw, vif->type);
 
 		rcu_read_lock();
+<<<<<<< HEAD
 		sta = get_sta(hw, vif, bss_conf->bssid);
+=======
+		sta = get_sta(hw, vif, (u8 *)bss_conf->bssid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!sta) {
 			rcu_read_unlock();
 			goto out;
@@ -819,7 +973,11 @@ out:
 	mutex_unlock(&rtlpriv->locks.conf_mutex);
 }
 
+<<<<<<< HEAD
 static u64 rtl_op_get_tsf(struct ieee80211_hw *hw, struct ieee80211_vif *vif)
+=======
+static u64 rtl_op_get_tsf(struct ieee80211_hw *hw)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct rtl_priv *rtlpriv = rtl_priv(hw);
 	u64 tsf;
@@ -828,8 +986,12 @@ static u64 rtl_op_get_tsf(struct ieee80211_hw *hw, struct ieee80211_vif *vif)
 	return tsf;
 }
 
+<<<<<<< HEAD
 static void rtl_op_set_tsf(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
 			   u64 tsf)
+=======
+static void rtl_op_set_tsf(struct ieee80211_hw *hw, u64 tsf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct rtl_priv *rtlpriv = rtl_priv(hw);
 	struct rtl_mac *mac = rtl_mac(rtl_priv(hw));
@@ -839,8 +1001,12 @@ static void rtl_op_set_tsf(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
 	rtlpriv->cfg->ops->set_hw_reg(hw, HW_VAR_CORRECT_TSF, (u8 *) (&bibss));
 }
 
+<<<<<<< HEAD
 static void rtl_op_reset_tsf(struct ieee80211_hw *hw,
 			     struct ieee80211_vif *vif)
+=======
+static void rtl_op_reset_tsf(struct ieee80211_hw *hw)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct rtl_priv *rtlpriv = rtl_priv(hw);
 	u8 tmp = 0;
@@ -874,21 +1040,34 @@ static int rtl_op_ampdu_action(struct ieee80211_hw *hw,
 	switch (action) {
 	case IEEE80211_AMPDU_TX_START:
 		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_TRACE,
+<<<<<<< HEAD
 			 "IEEE80211_AMPDU_TX_START: TID:%d\n", tid);
+=======
+			 ("IEEE80211_AMPDU_TX_START: TID:%d\n", tid));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return rtl_tx_agg_start(hw, sta, tid, ssn);
 		break;
 	case IEEE80211_AMPDU_TX_STOP:
 		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_TRACE,
+<<<<<<< HEAD
 			 "IEEE80211_AMPDU_TX_STOP: TID:%d\n", tid);
+=======
+			 ("IEEE80211_AMPDU_TX_STOP: TID:%d\n", tid));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return rtl_tx_agg_stop(hw, sta, tid);
 		break;
 	case IEEE80211_AMPDU_TX_OPERATIONAL:
 		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_TRACE,
+<<<<<<< HEAD
 			 "IEEE80211_AMPDU_TX_OPERATIONAL:TID:%d\n", tid);
+=======
+			 ("IEEE80211_AMPDU_TX_OPERATIONAL:TID:%d\n", tid));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rtl_tx_agg_oper(hw, sta, tid);
 		break;
 	case IEEE80211_AMPDU_RX_START:
 		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_TRACE,
+<<<<<<< HEAD
 			 "IEEE80211_AMPDU_RX_START:TID:%d\n", tid);
 		break;
 	case IEEE80211_AMPDU_RX_STOP:
@@ -898,6 +1077,17 @@ static int rtl_op_ampdu_action(struct ieee80211_hw *hw,
 	default:
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
 			 "IEEE80211_AMPDU_ERR!!!!:\n");
+=======
+			 ("IEEE80211_AMPDU_RX_START:TID:%d\n", tid));
+		break;
+	case IEEE80211_AMPDU_RX_STOP:
+		RT_TRACE(rtlpriv, COMP_MAC80211, DBG_TRACE,
+			 ("IEEE80211_AMPDU_RX_STOP:TID:%d\n", tid));
+		break;
+	default:
+		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+			 ("IEEE80211_AMPDU_ERR!!!!:\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EOPNOTSUPP;
 	}
 	return 0;
@@ -910,7 +1100,11 @@ static void rtl_op_sw_scan_start(struct ieee80211_hw *hw)
 
 	mac->act_scanning = true;
 
+<<<<<<< HEAD
 	RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD, "\n");
+=======
+	RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD, ("\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mac->link_state == MAC80211_LINKED) {
 		rtl_lps_leave(hw);
@@ -931,7 +1125,11 @@ static void rtl_op_sw_scan_complete(struct ieee80211_hw *hw)
 	struct rtl_priv *rtlpriv = rtl_priv(hw);
 	struct rtl_mac *mac = rtl_mac(rtl_priv(hw));
 
+<<<<<<< HEAD
 	RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD, "\n");
+=======
+	RT_TRACE(rtlpriv, COMP_MAC80211, DBG_LOUD, ("\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mac->act_scanning = false;
 	/* Dual mac */
 	rtlpriv->rtlhal.load_imrandiqk_setting_for2g = false;
@@ -964,6 +1162,7 @@ static int rtl_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 
 	if (rtlpriv->cfg->mod_params->sw_crypto || rtlpriv->sec.use_sw_sec) {
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_WARNING,
+<<<<<<< HEAD
 			 "not open hw encryption\n");
 		return -ENOSPC;	/*User disabled HW-crypto */
 	}
@@ -971,6 +1170,15 @@ static int rtl_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 		 "%s hardware based encryption for keyidx: %d, mac: %pM\n",
 		 cmd == SET_KEY ? "Using" : "Disabling", key->keyidx,
 		 sta ? sta->addr : bcast_addr);
+=======
+			 ("not open hw encryption\n"));
+		return -ENOSPC;	/*User disabled HW-crypto */
+	}
+	RT_TRACE(rtlpriv, COMP_SEC, DBG_DMESG,
+		 ("%s hardware based encryption for keyidx: %d, mac: %pM\n",
+		  cmd == SET_KEY ? "Using" : "Disabling", key->keyidx,
+		  sta ? sta->addr : bcast_addr));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtlpriv->sec.being_setkey = true;
 	rtl_ips_nic_on(hw);
 	mutex_lock(&rtlpriv->locks.conf_mutex);
@@ -979,14 +1187,23 @@ static int rtl_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 	switch (key->cipher) {
 	case WLAN_CIPHER_SUITE_WEP40:
 		key_type = WEP40_ENCRYPTION;
+<<<<<<< HEAD
 		RT_TRACE(rtlpriv, COMP_SEC, DBG_DMESG, "alg:WEP40\n");
 		break;
 	case WLAN_CIPHER_SUITE_WEP104:
 		RT_TRACE(rtlpriv, COMP_SEC, DBG_DMESG, "alg:WEP104\n");
+=======
+		RT_TRACE(rtlpriv, COMP_SEC, DBG_DMESG, ("alg:WEP40\n"));
+		break;
+	case WLAN_CIPHER_SUITE_WEP104:
+		RT_TRACE(rtlpriv, COMP_SEC, DBG_DMESG,
+			 ("alg:WEP104\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		key_type = WEP104_ENCRYPTION;
 		break;
 	case WLAN_CIPHER_SUITE_TKIP:
 		key_type = TKIP_ENCRYPTION;
+<<<<<<< HEAD
 		RT_TRACE(rtlpriv, COMP_SEC, DBG_DMESG, "alg:TKIP\n");
 		break;
 	case WLAN_CIPHER_SUITE_CCMP:
@@ -996,6 +1213,17 @@ static int rtl_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 	default:
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG, "alg_err:%x!!!!\n",
 			 key->cipher);
+=======
+		RT_TRACE(rtlpriv, COMP_SEC, DBG_DMESG, ("alg:TKIP\n"));
+		break;
+	case WLAN_CIPHER_SUITE_CCMP:
+		key_type = AESCCMP_ENCRYPTION;
+		RT_TRACE(rtlpriv, COMP_SEC, DBG_DMESG, ("alg:CCMP\n"));
+		break;
+	default:
+		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+			 ("alg_err:%x!!!!:\n", key->cipher));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_unlock;
 	}
 	if (key_type == WEP40_ENCRYPTION ||
@@ -1037,8 +1265,13 @@ static int rtl_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 				wep_only = true;
 			rtlpriv->sec.pairwise_enc_algorithm = key_type;
 			RT_TRACE(rtlpriv, COMP_SEC, DBG_DMESG,
+<<<<<<< HEAD
 				 "set enable_hw_sec, key_type:%x(OPEN:0 WEP40:1 TKIP:2 AES:4 WEP104:5)\n",
 				 key_type);
+=======
+				("set enable_hw_sec, key_type:%x(OPEN:0 WEP40:1"
+				" TKIP:2 AES:4 WEP104:5)\n", key_type));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rtlpriv->cfg->ops->enable_hw_sec(hw);
 		}
 	}
@@ -1047,7 +1280,11 @@ static int rtl_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 	case SET_KEY:
 		if (wep_only) {
 			RT_TRACE(rtlpriv, COMP_SEC, DBG_DMESG,
+<<<<<<< HEAD
 				 "set WEP(group/pairwise) key\n");
+=======
+				 ("set WEP(group/pairwise) key\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Pairwise key with an assigned MAC address. */
 			rtlpriv->sec.pairwise_enc_algorithm = key_type;
 			rtlpriv->sec.group_enc_algorithm = key_type;
@@ -1058,7 +1295,11 @@ static int rtl_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 			memcpy(mac_addr, zero_addr, ETH_ALEN);
 		} else if (group_key) {	/* group key */
 			RT_TRACE(rtlpriv, COMP_SEC, DBG_DMESG,
+<<<<<<< HEAD
 				 "set group key\n");
+=======
+				 ("set group key\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* group key */
 			rtlpriv->sec.group_enc_algorithm = key_type;
 			/*set local buf about group key. */
@@ -1068,10 +1309,17 @@ static int rtl_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 			memcpy(mac_addr, bcast_addr, ETH_ALEN);
 		} else {	/* pairwise key */
 			RT_TRACE(rtlpriv, COMP_SEC, DBG_DMESG,
+<<<<<<< HEAD
 				 "set pairwise key\n");
 			if (!sta) {
 				RT_ASSERT(false,
 					  "pairwise key without mac_addr\n");
+=======
+				 ("set pairwise key\n"));
+			if (!sta) {
+				RT_ASSERT(false, ("pairwise key withnot"
+						  "mac_addr\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				err = -EOPNOTSUPP;
 				goto out_unlock;
@@ -1098,7 +1346,11 @@ static int rtl_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 		break;
 	case DISABLE_KEY:
 		RT_TRACE(rtlpriv, COMP_SEC, DBG_DMESG,
+<<<<<<< HEAD
 			 "disable key delete one entry\n");
+=======
+			 ("disable key delete one entry\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*set local buf about wep key. */
 		if (mac->opmode == NL80211_IFTYPE_AP) {
 			if (sta)
@@ -1119,7 +1371,11 @@ static int rtl_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 		break;
 	default:
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+<<<<<<< HEAD
 			 "cmd_err:%x!!!!\n", cmd);
+=======
+			 ("cmd_err:%x!!!!:\n", cmd));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 out_unlock:
 	mutex_unlock(&rtlpriv->locks.conf_mutex);
@@ -1148,8 +1404,13 @@ static void rtl_op_rfkill_poll(struct ieee80211_hw *hw)
 			rtlpriv->rfkill.rfkill_state = radio_state;
 
 			RT_TRACE(rtlpriv, COMP_RF, DBG_DMESG,
+<<<<<<< HEAD
 				 "wireless radio switch turned %s\n",
 				 radio_state ? "on" : "off");
+=======
+				 (KERN_INFO "wireless radio switch turned %s\n",
+				  radio_state ? "on" : "off"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			blocked = (rtlpriv->rfkill.rfkill_state == 1) ? 0 : 1;
 			wiphy_rfkill_set_hw_state(hw->wiphy, blocked);

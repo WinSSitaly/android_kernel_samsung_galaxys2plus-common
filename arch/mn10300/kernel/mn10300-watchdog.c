@@ -18,7 +18,12 @@
 #include <linux/kernel_stat.h>
 #include <linux/nmi.h>
 #include <asm/processor.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/intctl-regs.h>
 #include <asm/rtc-regs.h>
 #include <asm/div64.h>

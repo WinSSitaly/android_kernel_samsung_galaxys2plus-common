@@ -23,7 +23,11 @@
 #define SCSI_NETLINK_H
 
 #include <linux/netlink.h>
+<<<<<<< HEAD
 #include <linux/types.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * This file intended to be included by both kernel and user space

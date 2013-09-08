@@ -33,10 +33,15 @@ extern __wsum csum_partial_copy(const void *src, void *dst, int len, __wsum sum)
 extern __wsum csum_partial_copy_from_user(const void __user *src, void *dst,
 					int len, __wsum sum, int *csum_err);
 
+<<<<<<< HEAD
 #ifndef csum_partial_copy_nocheck
 #define csum_partial_copy_nocheck(src, dst, len, sum)	\
 	csum_partial_copy((src), (dst), (len), (sum))
 #endif
+=======
+#define csum_partial_copy_nocheck(src, dst, len, sum)	\
+	csum_partial_copy((src), (dst), (len), (sum))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * This is a version of ip_compute_csum() optimized for IP headers,
@@ -65,14 +70,20 @@ csum_tcpudp_nofold(__be32 saddr, __be32 daddr, unsigned short len,
 		unsigned short proto, __wsum sum);
 #endif
 
+<<<<<<< HEAD
 #ifndef csum_tcpudp_magic
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline __sum16
 csum_tcpudp_magic(__be32 saddr, __be32 daddr, unsigned short len,
 		  unsigned short proto, __wsum sum)
 {
 	return csum_fold(csum_tcpudp_nofold(saddr, daddr, len, proto, sum));
 }
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * this routine is used for miscellaneous IP-like checksums, mainly

@@ -26,8 +26,13 @@ struct extent_map {
 	unsigned long flags;
 	struct block_device *bdev;
 	atomic_t refs;
+<<<<<<< HEAD
 	unsigned int in_tree;
 	unsigned int compress_type;
+=======
+	unsigned int in_tree:1;
+	unsigned int compress_type:4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct extent_map_tree {

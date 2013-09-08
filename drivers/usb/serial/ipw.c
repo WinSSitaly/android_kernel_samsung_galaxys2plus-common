@@ -47,7 +47,10 @@
 #include <linux/usb.h>
 #include <linux/usb/serial.h>
 #include <linux/uaccess.h>
+<<<<<<< HEAD
 #include "usb-wwan.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Version Information
@@ -144,9 +147,16 @@ static struct usb_driver usb_ipw_driver = {
 	.probe =	usb_serial_probe,
 	.disconnect =	usb_serial_disconnect,
 	.id_table =	usb_ipw_ids,
+<<<<<<< HEAD
 };
 
 static bool debug;
+=======
+	.no_dynamic_id = 	1,
+};
+
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int ipw_open(struct tty_struct *tty, struct usb_serial_port *port)
 {
@@ -185,7 +195,11 @@ static int ipw_open(struct tty_struct *tty, struct usb_serial_port *port)
 
 	/*--2: Start reading from the device */
 	dbg("%s: setting up bulk read callback", __func__);
+<<<<<<< HEAD
 	usb_wwan_open(tty, port);
+=======
+	usb_serial_generic_open(tty, port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*--3: Tell the modem to open the floodgates on the rx bulk channel */
 	dbg("%s:asking modem for RxRead (RXBULK_ON)", __func__);
@@ -219,6 +233,7 @@ static int ipw_open(struct tty_struct *tty, struct usb_serial_port *port)
 	return 0;
 }
 
+<<<<<<< HEAD
 /* fake probe - only to allocate data structures */
 static int ipw_probe(struct usb_serial *serial, const struct usb_device_id *id)
 {
@@ -242,6 +257,8 @@ static void ipw_release(struct usb_serial *serial)
 	kfree(data);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ipw_dtr_rts(struct usb_serial_port *port, int on)
 {
 	struct usb_device *dev = port->serial->dev;
@@ -308,7 +325,11 @@ static void ipw_close(struct usb_serial_port *port)
 		dev_err(&port->dev,
 			"Disabling bulk RxRead failed (error = %d)\n", result);
 
+<<<<<<< HEAD
 	usb_wwan_close(port);
+=======
+	usb_serial_generic_close(port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct usb_serial_driver ipw_device = {
@@ -317,6 +338,7 @@ static struct usb_serial_driver ipw_device = {
 		.name =		"ipw",
 	},
 	.description =		"IPWireless converter",
+<<<<<<< HEAD
 	.id_table =		usb_ipw_ids,
 	.num_ports =		1,
 	.disconnect =		usb_wwan_disconnect,
@@ -334,6 +356,43 @@ static struct usb_serial_driver * const serial_drivers[] = {
 };
 
 module_usb_serial_driver(usb_ipw_driver, serial_drivers);
+=======
+	.usb_driver =		&usb_ipw_driver,
+	.id_table =		usb_ipw_ids,
+	.num_ports =		1,
+	.open =			ipw_open,
+	.close =		ipw_close,
+	.dtr_rts =		ipw_dtr_rts,
+};
+
+
+
+static int __init usb_ipw_init(void)
+{
+	int retval;
+
+	retval = usb_serial_register(&ipw_device);
+	if (retval)
+		return retval;
+	retval = usb_register(&usb_ipw_driver);
+	if (retval) {
+		usb_serial_deregister(&ipw_device);
+		return retval;
+	}
+	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_VERSION ":"
+	       DRIVER_DESC "\n");
+	return 0;
+}
+
+static void __exit usb_ipw_exit(void)
+{
+	usb_deregister(&usb_ipw_driver);
+	usb_serial_deregister(&ipw_device);
+}
+
+module_init(usb_ipw_init);
+module_exit(usb_ipw_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Module information */
 MODULE_AUTHOR(DRIVER_AUTHOR);

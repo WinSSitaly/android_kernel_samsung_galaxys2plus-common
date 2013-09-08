@@ -17,7 +17,10 @@
 #include <linux/clk.h>
 #include <linux/platform_device.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/clock.h>
 #include <mach/cdce949.h>

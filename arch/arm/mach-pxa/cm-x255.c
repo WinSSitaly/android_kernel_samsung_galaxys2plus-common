@@ -11,6 +11,10 @@
 
 #include <linux/platform_device.h>
 #include <linux/irq.h>
+<<<<<<< HEAD
+=======
+#include <linux/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mtd/partitions.h>
 #include <linux/mtd/physmap.h>
 #include <linux/mtd/nand-gpio.h>

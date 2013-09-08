@@ -24,7 +24,10 @@
 #include <linux/slab.h>
 #include <linux/types.h>
 #include <linux/videodev2.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <media/v4l2-ctrls.h>
 #include <media/v4l2-device.h>
@@ -76,7 +79,24 @@ static int subdev_open(struct file *file)
 		return ret;
 	}
 
+<<<<<<< HEAD
 	v4l2_fh_init(&subdev_fh->vfh, vdev);
+=======
+	ret = v4l2_fh_init(&subdev_fh->vfh, vdev);
+	if (ret)
+		goto err;
+
+	if (sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) {
+		ret = v4l2_event_init(&subdev_fh->vfh);
+		if (ret)
+			goto err;
+
+		ret = v4l2_event_alloc(&subdev_fh->vfh, sd->nevents);
+		if (ret)
+			goto err;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	v4l2_fh_add(&subdev_fh->vfh);
 	file->private_data = &subdev_fh->vfh;
 #if defined(CONFIG_MEDIA_CONTROLLER)
@@ -143,6 +163,7 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
 
 	switch (cmd) {
 	case VIDIOC_QUERYCTRL:
+<<<<<<< HEAD
 		return v4l2_queryctrl(vfh->ctrl_handler, arg);
 
 	case VIDIOC_QUERYMENU:
@@ -162,6 +183,27 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
 
 	case VIDIOC_TRY_EXT_CTRLS:
 		return v4l2_try_ext_ctrls(vfh->ctrl_handler, arg);
+=======
+		return v4l2_queryctrl(sd->ctrl_handler, arg);
+
+	case VIDIOC_QUERYMENU:
+		return v4l2_querymenu(sd->ctrl_handler, arg);
+
+	case VIDIOC_G_CTRL:
+		return v4l2_g_ctrl(sd->ctrl_handler, arg);
+
+	case VIDIOC_S_CTRL:
+		return v4l2_s_ctrl(sd->ctrl_handler, arg);
+
+	case VIDIOC_G_EXT_CTRLS:
+		return v4l2_g_ext_ctrls(sd->ctrl_handler, arg);
+
+	case VIDIOC_S_EXT_CTRLS:
+		return v4l2_s_ext_ctrls(sd->ctrl_handler, arg);
+
+	case VIDIOC_TRY_EXT_CTRLS:
+		return v4l2_try_ext_ctrls(sd->ctrl_handler, arg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	case VIDIOC_DQEVENT:
 		if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
@@ -174,6 +216,7 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
 
 	case VIDIOC_UNSUBSCRIBE_EVENT:
 		return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
+<<<<<<< HEAD
 
 #ifdef CONFIG_VIDEO_ADV_DEBUG
 	case VIDIOC_DBG_G_REGISTER:
@@ -205,6 +248,8 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
 		return ret;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_VIDEO_V4L2_SUBDEV_API)
 	case VIDIOC_SUBDEV_G_FMT: {
 		struct v4l2_subdev_format *format = arg;
@@ -316,7 +361,11 @@ static unsigned int subdev_poll(struct file *file, poll_table *wait)
 	if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
 		return POLLERR;
 
+<<<<<<< HEAD
 	poll_wait(file, &fh->wait, wait);
+=======
+	poll_wait(file, &fh->events->wait, wait);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (v4l2_event_pending(fh))
 		return POLLPRI;

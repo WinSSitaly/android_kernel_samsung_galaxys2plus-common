@@ -34,7 +34,10 @@
 #include <linux/seq_file.h>
 #include <linux/slab.h>
 #include <linux/proc_fs.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "rds.h"
 
@@ -104,7 +107,11 @@ EXPORT_SYMBOL_GPL(rds_info_deregister_func);
 void rds_info_iter_unmap(struct rds_info_iterator *iter)
 {
 	if (iter->addr) {
+<<<<<<< HEAD
 		kunmap_atomic(iter->addr);
+=======
+		kunmap_atomic(iter->addr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iter->addr = NULL;
 	}
 }
@@ -119,7 +126,11 @@ void rds_info_copy(struct rds_info_iterator *iter, void *data,
 
 	while (bytes) {
 		if (!iter->addr)
+<<<<<<< HEAD
 			iter->addr = kmap_atomic(*iter->pages);
+=======
+			iter->addr = kmap_atomic(*iter->pages, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		this = min(bytes, PAGE_SIZE - iter->offset);
 
@@ -134,7 +145,11 @@ void rds_info_copy(struct rds_info_iterator *iter, void *data,
 		iter->offset += this;
 
 		if (iter->offset == PAGE_SIZE) {
+<<<<<<< HEAD
 			kunmap_atomic(iter->addr);
+=======
+			kunmap_atomic(iter->addr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			iter->addr = NULL;
 			iter->offset = 0;
 			iter->pages++;

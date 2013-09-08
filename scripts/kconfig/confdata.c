@@ -7,13 +7,20 @@
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
+<<<<<<< HEAD
 #include <stdarg.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
 
+<<<<<<< HEAD
+=======
+#define LKC_DIRECT_LINK
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "lkc.h"
 
 static void conf_warning(const char *fmt, ...)
@@ -128,7 +135,10 @@ static int conf_set_sym_val(struct symbol *sym, int def, int def_flags, char *p)
 			sym->flags |= def_flags;
 			break;
 		}
+<<<<<<< HEAD
 		/* fall through */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case S_BOOLEAN:
 		if (p[0] == 'y') {
 			sym->def[def].tri = yes;
@@ -141,7 +151,11 @@ static int conf_set_sym_val(struct symbol *sym, int def, int def_flags, char *p)
 			break;
 		}
 		conf_warning("symbol value '%s' invalid for %s", p, sym->name);
+<<<<<<< HEAD
 		return 1;
+=======
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case S_OTHER:
 		if (*p != '"') {
 			for (p2 = p; *p2 && !isspace(*p2); p2++)
@@ -149,7 +163,10 @@ static int conf_set_sym_val(struct symbol *sym, int def, int def_flags, char *p)
 			sym->type = S_STRING;
 			goto done;
 		}
+<<<<<<< HEAD
 		/* fall through */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case S_STRING:
 		if (*p++ != '"')
 			break;
@@ -164,7 +181,10 @@ static int conf_set_sym_val(struct symbol *sym, int def, int def_flags, char *p)
 			conf_warning("invalid string found");
 			return 1;
 		}
+<<<<<<< HEAD
 		/* fall through */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case S_INT:
 	case S_HEX:
 	done:
@@ -240,7 +260,10 @@ load:
 		case S_STRING:
 			if (sym->def[def].val)
 				free(sym->def[def].val);
+<<<<<<< HEAD
 			/* fall through */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			sym->def[def].val = NULL;
 			sym->def[def].tri = no;
@@ -344,8 +367,15 @@ setsym:
 
 int conf_read(const char *name)
 {
+<<<<<<< HEAD
 	struct symbol *sym;
 	int i;
+=======
+	struct symbol *sym, *choice_sym;
+	struct property *prop;
+	struct expr *e;
+	int i, flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sym_set_change_count(0);
 
@@ -355,7 +385,11 @@ int conf_read(const char *name)
 	for_all_symbols(i, sym) {
 		sym_calc_value(sym);
 		if (sym_is_choice(sym) || (sym->flags & SYMBOL_AUTO))
+<<<<<<< HEAD
 			continue;
+=======
+			goto sym_ok;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (sym_has_value(sym) && (sym->flags & SYMBOL_WRITE)) {
 			/* check that calculated value agrees with saved value */
 			switch (sym->type) {
@@ -364,18 +398,43 @@ int conf_read(const char *name)
 				if (sym->def[S_DEF_USER].tri != sym_get_tristate_value(sym))
 					break;
 				if (!sym_is_choice(sym))
+<<<<<<< HEAD
 					continue;
 				/* fall through */
 			default:
 				if (!strcmp(sym->curr.val, sym->def[S_DEF_USER].val))
 					continue;
+=======
+					goto sym_ok;
+			default:
+				if (!strcmp(sym->curr.val, sym->def[S_DEF_USER].val))
+					goto sym_ok;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 			}
 		} else if (!sym_has_value(sym) && !(sym->flags & SYMBOL_WRITE))
 			/* no previous value and not saved */
+<<<<<<< HEAD
 			continue;
 		conf_unsaved++;
 		/* maybe print value in verbose mode... */
+=======
+			goto sym_ok;
+		conf_unsaved++;
+		/* maybe print value in verbose mode... */
+	sym_ok:
+		if (!sym_is_choice(sym))
+			continue;
+		/* The choice symbol only has a set value (and thus is not new)
+		 * if all its visible childs have values.
+		 */
+		prop = sym_get_choice_prop(sym);
+		flags = sym->flags;
+		expr_list_for_each_sym(prop->expr, e, choice_sym)
+			if (choice_sym->visible != no)
+				flags &= choice_sym->flags;
+		sym->flags &= flags | ~SYMBOL_DEF_USER;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	for_all_symbols(i, sym) {
@@ -408,6 +467,7 @@ int conf_read(const char *name)
 	return 0;
 }
 
+<<<<<<< HEAD
 /*
  * Kconfig configuration printer
  *
@@ -593,6 +653,66 @@ conf_write_heading(FILE *fp, struct conf_printer *printer, void *printer_arg)
 	printer->print_comment(fp, buf, printer_arg);
 }
 
+=======
+/* Write a S_STRING */
+static void conf_write_string(bool headerfile, const char *name,
+                              const char *str, FILE *out)
+{
+	int l;
+	if (headerfile)
+		fprintf(out, "#define %s%s \"", CONFIG_, name);
+	else
+		fprintf(out, "%s%s=\"", CONFIG_, name);
+
+	while (1) {
+		l = strcspn(str, "\"\\");
+		if (l) {
+			xfwrite(str, l, 1, out);
+			str += l;
+		}
+		if (!*str)
+			break;
+		fprintf(out, "\\%c", *str++);
+	}
+	fputs("\"\n", out);
+}
+
+static void conf_write_symbol(struct symbol *sym, FILE *out, bool write_no)
+{
+	const char *str;
+
+	switch (sym->type) {
+	case S_BOOLEAN:
+	case S_TRISTATE:
+		switch (sym_get_tristate_value(sym)) {
+		case no:
+			if (write_no)
+				fprintf(out, "# %s%s is not set\n",
+				    CONFIG_, sym->name);
+			break;
+		case mod:
+			fprintf(out, "%s%s=m\n", CONFIG_, sym->name);
+			break;
+		case yes:
+			fprintf(out, "%s%s=y\n", CONFIG_, sym->name);
+			break;
+		}
+		break;
+	case S_STRING:
+		conf_write_string(false, sym->name, sym_get_string_value(sym), out);
+		break;
+	case S_HEX:
+	case S_INT:
+		str = sym_get_string_value(sym);
+		fprintf(out, "%s%s=%s\n", CONFIG_, sym->name, str);
+		break;
+	case S_OTHER:
+	case S_UNKNOWN:
+		break;
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Write out a minimal config.
  * All values that has default values are skipped as this is redundant.
@@ -649,7 +769,11 @@ int conf_write_defconfig(const char *filename)
 						goto next_menu;
 				}
 			}
+<<<<<<< HEAD
 			conf_write_symbol(out, sym, &kconfig_printer_cb, NULL);
+=======
+			conf_write_symbol(sym, out, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 next_menu:
 		if (menu->list != NULL) {
@@ -714,7 +838,15 @@ int conf_write(const char *name)
 	if (!out)
 		return 1;
 
+<<<<<<< HEAD
 	conf_write_heading(out, &kconfig_printer_cb, NULL);
+=======
+	fprintf(out, _("#\n"
+		       "# Automatically generated make config: don't edit\n"
+		       "# %s\n"
+		       "#\n"),
+		     rootmenu.prompt->text);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!conf_get_changed())
 		sym_clear_all_valid();
@@ -735,8 +867,13 @@ int conf_write(const char *name)
 			if (!(sym->flags & SYMBOL_WRITE))
 				goto next;
 			sym->flags &= ~SYMBOL_WRITE;
+<<<<<<< HEAD
 
 			conf_write_symbol(out, sym, &kconfig_printer_cb, NULL);
+=======
+			/* Write config symbol to file */
+			conf_write_symbol(sym, out, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 next:
@@ -885,6 +1022,10 @@ out:
 int conf_write_autoconf(void)
 {
 	struct symbol *sym;
+<<<<<<< HEAD
+=======
+	const char *str;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const char *name;
 	FILE *out, *tristate, *out_h;
 	int i;
@@ -913,23 +1054,85 @@ int conf_write_autoconf(void)
 		return 1;
 	}
 
+<<<<<<< HEAD
 	conf_write_heading(out, &kconfig_printer_cb, NULL);
 
 	conf_write_heading(tristate, &tristate_printer_cb, NULL);
 
 	conf_write_heading(out_h, &header_printer_cb, NULL);
+=======
+	fprintf(out, "#\n"
+		     "# Automatically generated make config: don't edit\n"
+		     "# %s\n"
+		     "#\n",
+		     rootmenu.prompt->text);
+	fprintf(tristate, "#\n"
+			  "# Automatically generated - do not edit\n"
+			  "\n");
+	fprintf(out_h, "/*\n"
+		       " * Automatically generated C config: don't edit\n"
+		       " * %s\n"
+		       " */\n",
+		       rootmenu.prompt->text);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for_all_symbols(i, sym) {
 		sym_calc_value(sym);
 		if (!(sym->flags & SYMBOL_WRITE) || !sym->name)
 			continue;
 
+<<<<<<< HEAD
 		/* write symbol to auto.conf, tristate and header files */
 		conf_write_symbol(out, sym, &kconfig_printer_cb, (void *)1);
 
 		conf_write_symbol(tristate, sym, &tristate_printer_cb, (void *)1);
 
 		conf_write_symbol(out_h, sym, &header_printer_cb, NULL);
+=======
+		/* write symbol to config file */
+		conf_write_symbol(sym, out, false);
+
+		/* update autoconf and tristate files */
+		switch (sym->type) {
+		case S_BOOLEAN:
+		case S_TRISTATE:
+			switch (sym_get_tristate_value(sym)) {
+			case no:
+				break;
+			case mod:
+				fprintf(tristate, "%s%s=M\n",
+				    CONFIG_, sym->name);
+				fprintf(out_h, "#define %s%s_MODULE 1\n",
+				    CONFIG_, sym->name);
+				break;
+			case yes:
+				if (sym->type == S_TRISTATE)
+					fprintf(tristate,"%s%s=Y\n",
+					    CONFIG_, sym->name);
+				fprintf(out_h, "#define %s%s 1\n",
+				    CONFIG_, sym->name);
+				break;
+			}
+			break;
+		case S_STRING:
+			conf_write_string(true, sym->name, sym_get_string_value(sym), out_h);
+			break;
+		case S_HEX:
+			str = sym_get_string_value(sym);
+			if (str[0] != '0' || (str[1] != 'x' && str[1] != 'X')) {
+				fprintf(out_h, "#define %s%s 0x%s\n",
+				    CONFIG_, sym->name, str);
+				break;
+			}
+		case S_INT:
+			str = sym_get_string_value(sym);
+			fprintf(out_h, "#define %s%s %s\n",
+			    CONFIG_, sym->name, str);
+			break;
+		default:
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	fclose(out);
 	fclose(tristate);

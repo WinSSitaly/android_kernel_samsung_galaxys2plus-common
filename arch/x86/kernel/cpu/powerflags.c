@@ -16,6 +16,10 @@ const char *const x86_power_flags[32] = {
 	"100mhzsteps",
 	"hwpstate",
 	"",	/* tsc invariant mapped to constant_tsc */
+<<<<<<< HEAD
 	"cpb",  /* core performance boost */
 	"eff_freq_ro", /* Readonly aperf/mperf */
+=======
+		/* nothing */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };

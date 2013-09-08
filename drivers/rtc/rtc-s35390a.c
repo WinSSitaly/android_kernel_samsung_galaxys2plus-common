@@ -304,8 +304,26 @@ static struct i2c_driver s35390a_driver = {
 	.id_table	= s35390a_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(s35390a_driver);
+=======
+static int __init s35390a_rtc_init(void)
+{
+	return i2c_add_driver(&s35390a_driver);
+}
+
+static void __exit s35390a_rtc_exit(void)
+{
+	i2c_del_driver(&s35390a_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Byron Bradley <byron.bbradley@gmail.com>");
 MODULE_DESCRIPTION("S35390A RTC driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(s35390a_rtc_init);
+module_exit(s35390a_rtc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

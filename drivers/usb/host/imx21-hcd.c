@@ -473,7 +473,11 @@ static void free_epdmem(struct imx21 *imx21, struct usb_host_endpoint *ep)
 /* End handling 				*/
 /* ===========================================	*/
 
+<<<<<<< HEAD
 /* Endpoint now idle - release its ETD(s) or assign to queued request */
+=======
+/* Endpoint now idle - release it's ETD(s) or asssign to queued request */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ep_idle(struct imx21 *imx21, struct ep_priv *ep_priv)
 {
 	int i;
@@ -1891,7 +1895,11 @@ static int imx21_probe(struct platform_device *pdev)
 	dev_info(imx21->dev, "Hardware HC revision: 0x%02X\n",
 		(readl(imx21->regs + USBOTG_HWMODE) >> 16) & 0xFF);
 
+<<<<<<< HEAD
 	ret = usb_add_hcd(hcd, irq, 0);
+=======
+	ret = usb_add_hcd(hcd, irq, IRQF_DISABLED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret != 0) {
 		dev_err(imx21->dev, "usb_add_hcd() returned %d\n", ret);
 		goto failed_add_hcd;
@@ -1924,7 +1932,22 @@ static struct platform_driver imx21_hcd_driver = {
 	.resume = NULL,
 };
 
+<<<<<<< HEAD
 module_platform_driver(imx21_hcd_driver);
+=======
+static int __init imx21_hcd_init(void)
+{
+	return platform_driver_register(&imx21_hcd_driver);
+}
+
+static void __exit imx21_hcd_cleanup(void)
+{
+	platform_driver_unregister(&imx21_hcd_driver);
+}
+
+module_init(imx21_hcd_init);
+module_exit(imx21_hcd_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("i.MX21 USB Host controller");
 MODULE_AUTHOR("Martin Fuzzey");

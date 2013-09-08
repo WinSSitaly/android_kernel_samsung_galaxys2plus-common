@@ -1,6 +1,9 @@
 /*
 *  Copyright (c) 2004 The Regents of the University of Michigan.
+<<<<<<< HEAD
 *  Copyright (c) 2012 Jeff Layton <jlayton@redhat.com>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 *  All rights reserved.
 *
 *  Andy Adamson <andros@citi.umich.edu>
@@ -37,16 +40,20 @@
 #include <linux/namei.h>
 #include <linux/crypto.h>
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <linux/fs.h>
 #include <linux/module.h>
 #include <net/net_namespace.h>
 #include <linux/sunrpc/rpc_pipe_fs.h>
 #include <linux/sunrpc/clnt.h>
 #include <linux/nfsd/cld.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "nfsd.h"
 #include "state.h"
 #include "vfs.h"
+<<<<<<< HEAD
 #include "netns.h"
 
 #define NFSDDBG_FACILITY                NFSDDBG_PROC
@@ -65,6 +72,13 @@ struct nfsd4_client_tracking_ops {
 static struct file *rec_file;
 static char user_recovery_dirname[PATH_MAX] = "/var/lib/nfs/v4recovery";
 static struct nfsd4_client_tracking_ops *client_tracking_ops;
+=======
+
+#define NFSDDBG_FACILITY                NFSDDBG_PROC
+
+/* Globals */
+static struct file *rec_file;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int
 nfs4_save_creds(const struct cred **original_creds)
@@ -136,7 +150,11 @@ out_no_tfm:
 	return status;
 }
 
+<<<<<<< HEAD
 static void
+=======
+int
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 nfsd4_create_clid_dir(struct nfs4_client *clp)
 {
 	const struct cred *original_cred;
@@ -146,6 +164,7 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
 
 	dprintk("NFSD: nfsd4_create_clid_dir for \"%s\"\n", dname);
 
+<<<<<<< HEAD
 	if (test_and_set_bit(NFSD4_CLIENT_STABLE, &clp->cl_flags))
 		return;
 	if (!rec_file)
@@ -153,6 +172,14 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
 	status = nfs4_save_creds(&original_cred);
 	if (status < 0)
 		return;
+=======
+	if (!rec_file || clp->cl_firststate)
+		return 0;
+
+	status = nfs4_save_creds(&original_cred);
+	if (status < 0)
+		return status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dir = rec_file->f_path.dentry;
 	/* lock the parent */
@@ -163,6 +190,7 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
 		status = PTR_ERR(dentry);
 		goto out_unlock;
 	}
+<<<<<<< HEAD
 	if (dentry->d_inode)
 		/*
 		 * In the 4.1 case, where we're called from
@@ -178,10 +206,23 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
 		goto out_put;
 	status = vfs_mkdir(dir->d_inode, dentry, S_IRWXU);
 	mnt_drop_write_file(rec_file);
+=======
+	status = -EEXIST;
+	if (dentry->d_inode) {
+		dprintk("NFSD: nfsd4_create_clid_dir: DIRECTORY EXISTS\n");
+		goto out_put;
+	}
+	status = mnt_want_write(rec_file->f_path.mnt);
+	if (status)
+		goto out_put;
+	status = vfs_mkdir(dir->d_inode, dentry, S_IRWXU);
+	mnt_drop_write(rec_file->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_put:
 	dput(dentry);
 out_unlock:
 	mutex_unlock(&dir->d_inode->i_mutex);
+<<<<<<< HEAD
 	if (status == 0)
 		vfs_fsync(rec_file, 0);
 	else
@@ -190,6 +231,15 @@ out_unlock:
 				" and is writeable", status,
 				user_recovery_dirname);
 	nfs4_reset_creds(original_cred);
+=======
+	if (status == 0) {
+		clp->cl_firststate = 1;
+		vfs_fsync(rec_file, 0);
+	}
+	nfs4_reset_creds(original_cred);
+	dprintk("NFSD: nfsd4_create_clid_dir returns %d\n", status);
+	return status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 typedef int (recdir_func)(struct dentry *, struct dentry *);
@@ -218,6 +268,7 @@ nfsd4_build_namelist(void *arg, const char *name, int namlen,
 }
 
 static int
+<<<<<<< HEAD
 nfsd4_list_rec_dir(recdir_func *f)
 {
 	const struct cred *original_cred;
@@ -225,10 +276,25 @@ nfsd4_list_rec_dir(recdir_func *f)
 	LIST_HEAD(names);
 	int status;
 
+=======
+nfsd4_list_rec_dir(struct dentry *dir, recdir_func *f)
+{
+	const struct cred *original_cred;
+	struct file *filp;
+	LIST_HEAD(names);
+	struct name_list *entry;
+	struct dentry *dentry;
+	int status;
+
+	if (!rec_file)
+		return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = nfs4_save_creds(&original_cred);
 	if (status < 0)
 		return status;
 
+<<<<<<< HEAD
 	status = vfs_llseek(rec_file, 0, SEEK_SET);
 	if (status < 0) {
 		nfs4_reset_creds(original_cred);
@@ -250,10 +316,41 @@ nfsd4_list_rec_dir(recdir_func *f)
 			status = f(dir, dentry);
 			dput(dentry);
 		}
+=======
+	filp = dentry_open(dget(dir), mntget(rec_file->f_path.mnt), O_RDONLY,
+			   current_cred());
+	status = PTR_ERR(filp);
+	if (IS_ERR(filp))
+		goto out;
+	status = vfs_readdir(filp, nfsd4_build_namelist, &names);
+	fput(filp);
+	mutex_lock_nested(&dir->d_inode->i_mutex, I_MUTEX_PARENT);
+	while (!list_empty(&names)) {
+		entry = list_entry(names.next, struct name_list, list);
+
+		dentry = lookup_one_len(entry->name, dir, HEXDIR_LEN-1);
+		if (IS_ERR(dentry)) {
+			status = PTR_ERR(dentry);
+			break;
+		}
+		status = f(dir, dentry);
+		dput(dentry);
+		if (status)
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_del(&entry->list);
 		kfree(entry);
 	}
 	mutex_unlock(&dir->d_inode->i_mutex);
+<<<<<<< HEAD
+=======
+out:
+	while (!list_empty(&names)) {
+		entry = list_entry(names.next, struct name_list, list);
+		list_del(&entry->list);
+		kfree(entry);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nfs4_reset_creds(original_cred);
 	return status;
 }
@@ -284,12 +381,17 @@ out_unlock:
 	return status;
 }
 
+<<<<<<< HEAD
 static void
+=======
+void
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 nfsd4_remove_clid_dir(struct nfs4_client *clp)
 {
 	const struct cred *original_cred;
 	int status;
 
+<<<<<<< HEAD
 	if (!rec_file || !test_bit(NFSD4_CLIENT_STABLE, &clp->cl_flags))
 		return;
 
@@ -297,6 +399,15 @@ nfsd4_remove_clid_dir(struct nfs4_client *clp)
 	if (status)
 		goto out;
 	clear_bit(NFSD4_CLIENT_STABLE, &clp->cl_flags);
+=======
+	if (!rec_file || !clp->cl_firststate)
+		return;
+
+	status = mnt_want_write(rec_file->f_path.mnt);
+	if (status)
+		goto out;
+	clp->cl_firststate = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	status = nfs4_save_creds(&original_cred);
 	if (status < 0)
@@ -306,11 +417,19 @@ nfsd4_remove_clid_dir(struct nfs4_client *clp)
 	nfs4_reset_creds(original_cred);
 	if (status == 0)
 		vfs_fsync(rec_file, 0);
+<<<<<<< HEAD
 	mnt_drop_write_file(rec_file);
+=======
+	mnt_drop_write(rec_file->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	if (status)
 		printk("NFSD: Failed to remove expired client state directory"
 				" %.*s\n", HEXDIR_LEN, clp->cl_recdir);
+<<<<<<< HEAD
+=======
+	return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -329,13 +448,19 @@ purge_old(struct dentry *parent, struct dentry *child)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void
 nfsd4_recdir_purge_old(struct net *net, time_t boot_time)
 {
+=======
+void
+nfsd4_recdir_purge_old(void) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int status;
 
 	if (!rec_file)
 		return;
+<<<<<<< HEAD
 	status = mnt_want_write_file(rec_file);
 	if (status)
 		goto out;
@@ -343,6 +468,15 @@ nfsd4_recdir_purge_old(struct net *net, time_t boot_time)
 	if (status == 0)
 		vfs_fsync(rec_file, 0);
 	mnt_drop_write_file(rec_file);
+=======
+	status = mnt_want_write(rec_file->f_path.mnt);
+	if (status)
+		goto out;
+	status = nfsd4_list_rec_dir(rec_file->f_path.dentry, purge_old);
+	if (status == 0)
+		vfs_fsync(rec_file, 0);
+	mnt_drop_write(rec_file->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	if (status)
 		printk("nfsd4: failed to purge old clients from recovery"
@@ -362,14 +496,22 @@ load_recdir(struct dentry *parent, struct dentry *child)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int
+=======
+int
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 nfsd4_recdir_load(void) {
 	int status;
 
 	if (!rec_file)
 		return 0;
 
+<<<<<<< HEAD
 	status = nfsd4_list_rec_dir(load_recdir);
+=======
+	status = nfsd4_list_rec_dir(rec_file->f_path.dentry, load_recdir);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (status)
 		printk("nfsd4: failed loading clients from recovery"
 			" directory %s\n", rec_file->f_path.dentry->d_name.name);
@@ -380,14 +522,23 @@ nfsd4_recdir_load(void) {
  * Hold reference to the recovery directory.
  */
 
+<<<<<<< HEAD
 static int
 nfsd4_init_recdir(void)
+=======
+void
+nfsd4_init_recdir(char *rec_dirname)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const struct cred *original_cred;
 	int status;
 
 	printk("NFSD: Using %s as the NFSv4 state recovery directory\n",
+<<<<<<< HEAD
 			user_recovery_dirname);
+=======
+			rec_dirname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BUG_ON(rec_file);
 
@@ -396,6 +547,7 @@ nfsd4_init_recdir(void)
 		printk("NFSD: Unable to change credentials to find recovery"
 		       " directory: error %d\n",
 		       status);
+<<<<<<< HEAD
 		return status;
 	}
 
@@ -404,10 +556,20 @@ nfsd4_init_recdir(void)
 		printk("NFSD: unable to find recovery directory %s\n",
 				user_recovery_dirname);
 		status = PTR_ERR(rec_file);
+=======
+		return;
+	}
+
+	rec_file = filp_open(rec_dirname, O_RDONLY | O_DIRECTORY, 0);
+	if (IS_ERR(rec_file)) {
+		printk("NFSD: unable to find recovery directory %s\n",
+				rec_dirname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rec_file = NULL;
 	}
 
 	nfs4_reset_creds(original_cred);
+<<<<<<< HEAD
 	return status;
 }
 
@@ -434,6 +596,11 @@ nfsd4_load_reboot_recovery_data(struct net *net)
 }
 
 static void
+=======
+}
+
+void
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 nfsd4_shutdown_recdir(void)
 {
 	if (!rec_file)
@@ -441,6 +608,7 @@ nfsd4_shutdown_recdir(void)
 	fput(rec_file);
 	rec_file = NULL;
 }
+<<<<<<< HEAD
 
 static void
 nfsd4_legacy_tracking_exit(struct net *net)
@@ -1044,3 +1212,5 @@ unregister_cld_notifier(void)
 {
 	rpc_pipefs_notifier_unregister(&nfsd4_cld_block);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

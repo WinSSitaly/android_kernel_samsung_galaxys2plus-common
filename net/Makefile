@@ -68,5 +68,9 @@ obj-$(CONFIG_WIMAX)		+= wimax/
 obj-$(CONFIG_DNS_RESOLVER)	+= dns_resolver/
 obj-$(CONFIG_CEPH_LIB)		+= ceph/
 obj-$(CONFIG_BATMAN_ADV)	+= batman-adv/
+<<<<<<< HEAD
 obj-$(CONFIG_NFC)		+= nfc/
 obj-$(CONFIG_OPENVSWITCH)	+= openvswitch/
+=======
+obj-$(CONFIG_NET_ACTIVITY_STATS)		+= activity_stats.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

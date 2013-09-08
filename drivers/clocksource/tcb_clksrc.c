@@ -19,8 +19,11 @@
  *   - Two channels combine to create a free-running 32 bit counter
  *     with a base rate of 5+ MHz, packaged as a clocksource (with
  *     resolution better than 200 nsec).
+<<<<<<< HEAD
  *   - Some chips support 32 bit counter. A single channel is used for
  *     this 32 bit free-running counter. the second channel is not used.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *   - The third channel may be used to provide a 16-bit clockevent
  *     source, used in either periodic or oneshot mode.  This runs
@@ -56,16 +59,23 @@ static cycle_t tc_get_cycles(struct clocksource *cs)
 	return (upper << 16) | lower;
 }
 
+<<<<<<< HEAD
 static cycle_t tc_get_cycles32(struct clocksource *cs)
 {
 	return __raw_readl(tcaddr + ATMEL_TC_REG(0, CV));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct clocksource clksrc = {
 	.name           = "tcb_clksrc",
 	.rating         = 200,
 	.read           = tc_get_cycles,
 	.mask           = CLOCKSOURCE_MASK(32),
+<<<<<<< HEAD
+=======
+	.shift          = 18,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
 };
 
@@ -216,6 +226,7 @@ static void __init setup_clkevents(struct atmel_tc *tc, int clk32k_divisor_idx)
 
 #endif
 
+<<<<<<< HEAD
 static void __init tcb_setup_dual_chan(struct atmel_tc *tc, int mck_divisor_idx)
 {
 	/* channel 0:  waveform mode, input mclk/8, clock TIOA0 on overflow */
@@ -258,6 +269,8 @@ static void __init tcb_setup_single_chan(struct atmel_tc *tc, int mck_divisor_id
 	__raw_writel(ATMEL_TC_SYNC, tcaddr + ATMEL_TC_BCR);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init tcb_clksrc_init(void)
 {
 	static char bootinfo[] __initdata
@@ -304,11 +317,16 @@ static int __init tcb_clksrc_init(void)
 		best_divisor_idx = i;
 	}
 
+<<<<<<< HEAD
+=======
+	clksrc.mult = clocksource_hz2mult(divided_rate, clksrc.shift);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	printk(bootinfo, clksrc.name, CONFIG_ATMEL_TCB_CLKSRC_BLOCK,
 			divided_rate / 1000000,
 			((divided_rate + 500000) % 1000000) / 1000);
 
+<<<<<<< HEAD
 	if (tc->tcb_config && tc->tcb_config->counter_width == 32) {
 		/* use apropriate function to read 32 bit counter */
 		clksrc.read = tc_get_cycles32;
@@ -325,6 +343,39 @@ static int __init tcb_clksrc_init(void)
 
 	/* and away we go! */
 	clocksource_register_hz(&clksrc, divided_rate);
+=======
+	/* tclib will give us three clocks no matter what the
+	 * underlying platform supports.
+	 */
+	clk_enable(tc->clk[1]);
+
+	/* channel 0:  waveform mode, input mclk/8, clock TIOA0 on overflow */
+	__raw_writel(best_divisor_idx			/* likely divide-by-8 */
+			| ATMEL_TC_WAVE
+			| ATMEL_TC_WAVESEL_UP		/* free-run */
+			| ATMEL_TC_ACPA_SET		/* TIOA0 rises at 0 */
+			| ATMEL_TC_ACPC_CLEAR,		/* (duty cycle 50%) */
+			tcaddr + ATMEL_TC_REG(0, CMR));
+	__raw_writel(0x0000, tcaddr + ATMEL_TC_REG(0, RA));
+	__raw_writel(0x8000, tcaddr + ATMEL_TC_REG(0, RC));
+	__raw_writel(0xff, tcaddr + ATMEL_TC_REG(0, IDR));	/* no irqs */
+	__raw_writel(ATMEL_TC_CLKEN, tcaddr + ATMEL_TC_REG(0, CCR));
+
+	/* channel 1:  waveform mode, input TIOA0 */
+	__raw_writel(ATMEL_TC_XC1			/* input: TIOA0 */
+			| ATMEL_TC_WAVE
+			| ATMEL_TC_WAVESEL_UP,		/* free-run */
+			tcaddr + ATMEL_TC_REG(1, CMR));
+	__raw_writel(0xff, tcaddr + ATMEL_TC_REG(1, IDR));	/* no irqs */
+	__raw_writel(ATMEL_TC_CLKEN, tcaddr + ATMEL_TC_REG(1, CCR));
+
+	/* chain channel 0 to channel 1, then reset all the timers */
+	__raw_writel(ATMEL_TC_TC1XC1S_TIOA0, tcaddr + ATMEL_TC_BMR);
+	__raw_writel(ATMEL_TC_SYNC, tcaddr + ATMEL_TC_BCR);
+
+	/* and away we go! */
+	clocksource_register(&clksrc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* channel 2:  periodic and oneshot timer support */
 	setup_clkevents(tc, clk32k_divisor_idx);

@@ -18,8 +18,11 @@
 #include <asm/uaccess.h>
 #include "internal.h"
 
+<<<<<<< HEAD
 static int logon_vet_description(const char *desc);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * user defined keys take an arbitrary string as the description and an
  * arbitrary blob of data as the payload
@@ -38,6 +41,7 @@ struct key_type key_type_user = {
 EXPORT_SYMBOL_GPL(key_type_user);
 
 /*
+<<<<<<< HEAD
  * This key type is essentially the same as key_type_user, but it does
  * not define a .read op. This is suitable for storing username and
  * password pairs in the keyring that you do not want to be readable
@@ -56,6 +60,8 @@ struct key_type key_type_logon = {
 EXPORT_SYMBOL_GPL(key_type_logon);
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * instantiate a user defined key
  */
 int user_instantiate(struct key *key, const void *data, size_t datalen)
@@ -79,7 +85,11 @@ int user_instantiate(struct key *key, const void *data, size_t datalen)
 	/* attach the data */
 	upayload->datalen = datalen;
 	memcpy(upayload->data, data, datalen);
+<<<<<<< HEAD
 	rcu_assign_keypointer(key, upayload);
+=======
+	rcu_assign_pointer(key->payload.data, upayload);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = 0;
 
 error:
@@ -118,7 +128,11 @@ int user_update(struct key *key, const void *data, size_t datalen)
 	if (ret == 0) {
 		/* attach the new data, displacing the old */
 		zap = key->payload.data;
+<<<<<<< HEAD
 		rcu_assign_keypointer(key, upayload);
+=======
+		rcu_assign_pointer(key->payload.data, upayload);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		key->expiry = 0;
 	}
 
@@ -153,7 +167,11 @@ void user_revoke(struct key *key)
 	key_payload_reserve(key, 0);
 
 	if (upayload) {
+<<<<<<< HEAD
 		rcu_assign_keypointer(key, NULL);
+=======
+		rcu_assign_pointer(key->payload.data, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree_rcu(upayload, rcu);
 	}
 }
@@ -209,6 +227,7 @@ long user_read(const struct key *key, char __user *buffer, size_t buflen)
 }
 
 EXPORT_SYMBOL_GPL(user_read);
+<<<<<<< HEAD
 
 /* Vet the description for a "logon" key */
 static int logon_vet_description(const char *desc)
@@ -226,3 +245,5 @@ static int logon_vet_description(const char *desc)
 
 	return 0;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

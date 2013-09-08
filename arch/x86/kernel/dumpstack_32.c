@@ -87,7 +87,11 @@ void show_registers(struct pt_regs *regs)
 	int i;
 
 	print_modules();
+<<<<<<< HEAD
 	__show_regs(regs, !user_mode_vm(regs));
+=======
+	__show_regs(regs, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	printk(KERN_EMERG "Process %.*s (pid: %d, ti=%p task=%p task.ti=%p)\n",
 		TASK_COMM_LEN, current->comm, task_pid_nr(current),
@@ -116,6 +120,7 @@ void show_registers(struct pt_regs *regs)
 		for (i = 0; i < code_len; i++, ip++) {
 			if (ip < (u8 *)PAGE_OFFSET ||
 					probe_kernel_address(ip, c)) {
+<<<<<<< HEAD
 				printk(KERN_CONT " Bad EIP value.");
 				break;
 			}
@@ -126,6 +131,18 @@ void show_registers(struct pt_regs *regs)
 		}
 	}
 	printk(KERN_CONT "\n");
+=======
+				printk(" Bad EIP value.");
+				break;
+			}
+			if (ip == (u8 *)regs->ip)
+				printk("<%02x> ", c);
+			else
+				printk("%02x ", c);
+		}
+	}
+	printk("\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int is_valid_bugaddr(unsigned long ip)

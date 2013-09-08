@@ -7,7 +7,11 @@
  * License version 2.  This program is licensed "as is" without any
  * warranty of any kind, whether express or implied.
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
@@ -21,6 +25,10 @@
 #include <linux/serial_reg.h>
 #include <linux/ata_platform.h>
 #include <asm/mach-types.h>
+<<<<<<< HEAD
+=======
+#include <asm/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach/arch.h>
 #include <asm/mach/pci.h>
 #include <mach/orion5x.h>
@@ -118,8 +126,12 @@ static struct platform_device kurobox_pro_nor_flash = {
  * PCI
  ****************************************************************************/
 
+<<<<<<< HEAD
 static int __init kurobox_pro_pci_map_irq(const struct pci_dev *dev, u8 slot,
 	u8 pin)
+=======
+static int __init kurobox_pro_pci_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int irq;
 
@@ -379,27 +391,41 @@ static void __init kurobox_pro_init(void)
 #ifdef CONFIG_MACH_KUROBOX_PRO
 MACHINE_START(KUROBOX_PRO, "Buffalo/Revogear Kurobox Pro")
 	/* Maintainer: Ronen Shitrit <rshitrit@marvell.com> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= 0x00000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= kurobox_pro_init,
 	.map_io		= orion5x_map_io,
 	.init_early	= orion5x_init_early,
 	.init_irq	= orion5x_init_irq,
 	.timer		= &orion5x_timer,
 	.fixup		= tag_fixup_mem32,
+<<<<<<< HEAD
 	.restart	= orion5x_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 
 #ifdef CONFIG_MACH_LINKSTATION_PRO
 MACHINE_START(LINKSTATION_PRO, "Buffalo Linkstation Pro/Live")
 	/* Maintainer: Byron Bradley <byron.bbradley@gmail.com> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= 0x00000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= kurobox_pro_init,
 	.map_io		= orion5x_map_io,
 	.init_early	= orion5x_init_early,
 	.init_irq	= orion5x_init_irq,
 	.timer		= &orion5x_timer,
 	.fixup		= tag_fixup_mem32,
+<<<<<<< HEAD
 	.restart	= orion5x_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif

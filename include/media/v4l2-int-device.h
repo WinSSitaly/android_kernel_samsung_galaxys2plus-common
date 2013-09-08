@@ -25,6 +25,10 @@
 #ifndef V4L2_INT_DEVICE_H
 #define V4L2_INT_DEVICE_H
 
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/v4l2-common.h>
 
 #define V4L2NAMESIZE 32
@@ -40,8 +44,11 @@ enum v4l2_int_type {
 	v4l2_int_type_slave
 };
 
+<<<<<<< HEAD
 struct module;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct v4l2_int_device;
 
 struct v4l2_int_master {

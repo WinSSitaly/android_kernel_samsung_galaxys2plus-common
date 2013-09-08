@@ -749,7 +749,11 @@ set_offset (struct fb_var_screeninfo *var, struct fb_info *info)
 {
 	struct imstt_par *par = info->par;
 	__u32 off = var->yoffset * (info->fix.line_length >> 3)
+<<<<<<< HEAD
 		    + ((var->xoffset * (info->var.bits_per_pixel >> 3)) >> 3);
+=======
+		    + ((var->xoffset * (var->bits_per_pixel >> 3)) >> 3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	write_reg_le32(par->dc_regs, SSR, off);
 }
 

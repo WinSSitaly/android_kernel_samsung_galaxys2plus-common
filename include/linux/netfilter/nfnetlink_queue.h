@@ -8,7 +8,10 @@ enum nfqnl_msg_types {
 	NFQNL_MSG_PACKET,		/* packet from kernel to userspace */
 	NFQNL_MSG_VERDICT,		/* verdict from userspace to kernel */
 	NFQNL_MSG_CONFIG,		/* connect to a particular queue */
+<<<<<<< HEAD
 	NFQNL_MSG_VERDICT_BATCH,	/* batchv from userspace to kernel */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	NFQNL_MSG_MAX
 };

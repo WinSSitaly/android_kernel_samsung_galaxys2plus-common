@@ -39,6 +39,7 @@
 	.idProduct = prod, \
 	.bInterfaceClass = USB_CLASS_VENDOR_SPEC
 
+<<<<<<< HEAD
 /* FTDI devices */
 {
 	USB_DEVICE(0x0403, 0xb8d8),
@@ -50,6 +51,8 @@
 	}
 },
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Creative/Toshiba Multimedia Center SB-0500 */
 {
 	USB_DEVICE(0x041e, 0x3048),
@@ -157,6 +160,7 @@
 	.bInterfaceSubClass = USB_SUBCLASS_AUDIOCONTROL
 },
 {
+<<<<<<< HEAD
 	.match_flags = USB_DEVICE_ID_MATCH_DEVICE |
 		       USB_DEVICE_ID_MATCH_INT_CLASS |
 		       USB_DEVICE_ID_MATCH_INT_SUBCLASS,
@@ -164,6 +168,9 @@
 	.idProduct = 0x0990,
 	.bInterfaceClass = USB_CLASS_AUDIO,
 	.bInterfaceSubClass = USB_SUBCLASS_AUDIOCONTROL,
+=======
+	USB_DEVICE(0x046d, 0x0990),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.driver_info = (unsigned long) & (const struct snd_usb_audio_quirk) {
 		.vendor_name = "Logitech, Inc.",
 		.product_name = "QuickCam Pro 9000",
@@ -275,6 +282,7 @@ YAMAHA_DEVICE(0x105a, NULL),
 YAMAHA_DEVICE(0x105b, NULL),
 YAMAHA_DEVICE(0x105c, NULL),
 YAMAHA_DEVICE(0x105d, NULL),
+<<<<<<< HEAD
 {
 	USB_DEVICE(0x0499, 0x1503),
 	.driver_info = (unsigned long) & (const struct snd_usb_audio_quirk) {
@@ -301,6 +309,8 @@ YAMAHA_DEVICE(0x105d, NULL),
 		}
 	}
 },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 YAMAHA_DEVICE(0x2000, "DGP-7"),
 YAMAHA_DEVICE(0x2001, "DGP-5"),
 YAMAHA_DEVICE(0x2002, NULL),
@@ -1624,6 +1634,7 @@ YAMAHA_DEVICE(0x7010, "UB99"),
 	}
 },
 {
+<<<<<<< HEAD
 	/* Edirol UM-3G */
 	USB_DEVICE_VENDOR_SPEC(0x0582, 0x0108),
 	.driver_info = (unsigned long) & (const struct snd_usb_audio_quirk) {
@@ -1636,6 +1647,8 @@ YAMAHA_DEVICE(0x7010, "UB99"),
 	}
 },
 {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Boss JS-8 Jam Station  */
 	USB_DEVICE(0x0582, 0x0109),
 	.driver_info = (unsigned long) & (const struct snd_usb_audio_quirk) {
@@ -1668,7 +1681,11 @@ YAMAHA_DEVICE(0x7010, "UB99"),
 	.driver_info = (unsigned long) & (const struct snd_usb_audio_quirk) {
 		/* .vendor_name = "Roland", */
 		/* .product_name = "A-PRO", */
+<<<<<<< HEAD
 		.ifnum = 0,
+=======
+		.ifnum = 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.type = QUIRK_MIDI_FIXED_ENDPOINT,
 		.data = & (const struct snd_usb_midi_endpoint_info) {
 			.out_cables = 0x0003,
@@ -1677,6 +1694,7 @@ YAMAHA_DEVICE(0x7010, "UB99"),
 	}
 },
 {
+<<<<<<< HEAD
 	/* Roland GAIA SH-01 */
 	USB_DEVICE(0x0582, 0x0111),
 	.driver_info = (unsigned long) &(const struct snd_usb_audio_quirk) {
@@ -1708,6 +1726,8 @@ YAMAHA_DEVICE(0x7010, "UB99"),
 	}
 },
 {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	USB_DEVICE(0x0582, 0x0113),
 	.driver_info = (unsigned long) & (const struct snd_usb_audio_quirk) {
 		/* .vendor_name = "BOSS", */
@@ -1763,6 +1783,7 @@ YAMAHA_DEVICE(0x7010, "UB99"),
 		}
 	}
 },
+<<<<<<< HEAD
 {
 	/* Added support for Roland UM-ONE which differs from UM-1 */
 	USB_DEVICE(0x0582, 0x012a),
@@ -1841,6 +1862,8 @@ YAMAHA_DEVICE(0x7010, "UB99"),
 		}
 	}
 },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Guillemot devices */
 {
@@ -2380,6 +2403,7 @@ YAMAHA_DEVICE(0x7010, "UB99"),
 	}
 },
 
+<<<<<<< HEAD
 {
 	USB_DEVICE_VENDOR_SPEC(0x0944, 0x0201),
 	.driver_info = (unsigned long) & (const struct snd_usb_audio_quirk) {
@@ -2390,6 +2414,8 @@ YAMAHA_DEVICE(0x7010, "UB99"),
 	}
 },
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* AKAI devices */
 {
 	USB_DEVICE(0x09e8, 0x0062),
@@ -2561,12 +2587,15 @@ YAMAHA_DEVICE(0x7010, "UB99"),
 	.idProduct = 0x1020,
 },
 
+<<<<<<< HEAD
 /* KeithMcMillen Stringport */
 {
 	USB_DEVICE(0x1f38, 0x0001),
 	.bInterfaceClass = USB_CLASS_AUDIO,
 },
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Miditech devices */
 {
 	USB_DEVICE(0x4752, 0x0011),
@@ -2761,6 +2790,7 @@ YAMAHA_DEVICE(0x7010, "UB99"),
 	}
 },
 
+<<<<<<< HEAD
 /* Microsoft XboxLive Headset/Xbox Communicator */
 {
 	USB_DEVICE(0x045e, 0x0283),
@@ -2814,6 +2844,8 @@ YAMAHA_DEVICE(0x7010, "UB99"),
 	}
 },
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * Some USB MIDI devices don't have an audio control interface,

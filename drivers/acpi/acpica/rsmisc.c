@@ -5,7 +5,11 @@
  ******************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -83,10 +87,13 @@ acpi_rs_convert_aml_to_resource(struct acpi_resource *resource,
 
 	ACPI_FUNCTION_TRACE(rs_convert_aml_to_resource);
 
+<<<<<<< HEAD
 	if (!info) {
 		return_ACPI_STATUS(AE_BAD_PARAMETER);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (((acpi_size) resource) & 0x3) {
 
 		/* Each internal resource struct is expected to be 32-bit aligned */
@@ -105,6 +112,10 @@ acpi_rs_convert_aml_to_resource(struct acpi_resource *resource,
 	 * table length (# of table entries)
 	 */
 	count = INIT_TABLE_LENGTH(info);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (count) {
 		/*
 		 * Source is the external AML byte stream buffer,
@@ -148,6 +159,7 @@ acpi_rs_convert_aml_to_resource(struct acpi_resource *resource,
 			    ((ACPI_GET8(source) >> info->value) & 0x03);
 			break;
 
+<<<<<<< HEAD
 		case ACPI_RSC_3BITFLAG:
 			/*
 			 * Mask and shift the flag bits
@@ -156,6 +168,8 @@ acpi_rs_convert_aml_to_resource(struct acpi_resource *resource,
 			    ((ACPI_GET8(source) >> info->value) & 0x07);
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case ACPI_RSC_COUNT:
 
 			item_count = ACPI_GET8(source);
@@ -174,6 +188,7 @@ acpi_rs_convert_aml_to_resource(struct acpi_resource *resource,
 			    (info->value * (item_count - 1));
 			break;
 
+<<<<<<< HEAD
 		case ACPI_RSC_COUNT_GPIO_PIN:
 
 			target = ACPI_ADD_PTR(void, aml, info->value);
@@ -237,6 +252,8 @@ acpi_rs_convert_aml_to_resource(struct acpi_resource *resource,
 			ACPI_SET16(destination) = item_count;
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case ACPI_RSC_LENGTH:
 
 			resource->length = resource->length + info->value;
@@ -257,6 +274,7 @@ acpi_rs_convert_aml_to_resource(struct acpi_resource *resource,
 					  info->opcode);
 			break;
 
+<<<<<<< HEAD
 		case ACPI_RSC_MOVE_GPIO_PIN:
 
 			/* Generate and set the PIN data pointer */
@@ -323,6 +341,8 @@ acpi_rs_convert_aml_to_resource(struct acpi_resource *resource,
 					  info->opcode);
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case ACPI_RSC_SET8:
 
 			ACPI_MEMSET(destination, info->aml_offset, info->value);
@@ -359,6 +379,7 @@ acpi_rs_convert_aml_to_resource(struct acpi_resource *resource,
 			 * Optional resource_source (Index and String). This is the more
 			 * complicated case used by the Interrupt() macro
 			 */
+<<<<<<< HEAD
 			target = ACPI_ADD_PTR(char, resource,
 					      info->aml_offset +
 					      (item_count * 4));
@@ -371,6 +392,15 @@ acpi_rs_convert_aml_to_resource(struct acpi_resource *resource,
 							 info->value),
 							destination, aml,
 							target);
+=======
+			target =
+			    ACPI_ADD_PTR(char, resource,
+					 info->aml_offset + (item_count * 4));
+
+			resource->length +=
+			    acpi_rs_get_resource_source(aml_resource_length,
+							(acpi_rs_length) (((item_count - 1) * sizeof(u32)) + info->value), destination, aml, target);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case ACPI_RSC_BITMASK:
@@ -472,7 +502,10 @@ acpi_rs_convert_resource_to_aml(struct acpi_resource *resource,
 {
 	void *source = NULL;
 	void *destination;
+<<<<<<< HEAD
 	char *target;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acpi_rsdesc_size aml_length = 0;
 	u8 count;
 	u16 temp16 = 0;
@@ -480,10 +513,13 @@ acpi_rs_convert_resource_to_aml(struct acpi_resource *resource,
 
 	ACPI_FUNCTION_TRACE(rs_convert_resource_to_aml);
 
+<<<<<<< HEAD
 	if (!info) {
 		return_ACPI_STATUS(AE_BAD_PARAMETER);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * First table entry must be ACPI_RSC_INITxxx and must contain the
 	 * table length (# of table entries)
@@ -533,6 +569,7 @@ acpi_rs_convert_resource_to_aml(struct acpi_resource *resource,
 			    ((ACPI_GET8(source) & 0x03) << info->value);
 			break;
 
+<<<<<<< HEAD
 		case ACPI_RSC_3BITFLAG:
 			/*
 			 * Mask and shift the flag bits
@@ -541,6 +578,8 @@ acpi_rs_convert_resource_to_aml(struct acpi_resource *resource,
 			    ((ACPI_GET8(source) & 0x07) << info->value);
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case ACPI_RSC_COUNT:
 
 			item_count = ACPI_GET8(source);
@@ -558,6 +597,7 @@ acpi_rs_convert_resource_to_aml(struct acpi_resource *resource,
 			acpi_rs_set_resource_length(aml_length, aml);
 			break;
 
+<<<<<<< HEAD
 		case ACPI_RSC_COUNT_GPIO_PIN:
 
 			item_count = ACPI_GET16(source);
@@ -615,6 +655,8 @@ acpi_rs_convert_resource_to_aml(struct acpi_resource *resource,
 			acpi_rs_set_resource_length(aml_length, aml);
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case ACPI_RSC_LENGTH:
 
 			acpi_rs_set_resource_length(info->value, aml);
@@ -632,6 +674,7 @@ acpi_rs_convert_resource_to_aml(struct acpi_resource *resource,
 					  info->opcode);
 			break;
 
+<<<<<<< HEAD
 		case ACPI_RSC_MOVE_GPIO_PIN:
 
 			destination = (char *)ACPI_ADD_PTR(void, aml,
@@ -674,6 +717,8 @@ acpi_rs_convert_resource_to_aml(struct acpi_resource *resource,
 					  info->opcode);
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case ACPI_RSC_ADDRESS:
 
 			/* Set the Resource Type, General Flags, and Type-Specific Flags */

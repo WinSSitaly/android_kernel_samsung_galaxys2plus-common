@@ -43,10 +43,16 @@
 #include <asm/mach/map.h>
 
 #include <plat/board.h>
+<<<<<<< HEAD
 #include "common.h"
 #include <video/omapdss.h>
 #include <video/omap-panel-generic-dpi.h>
 #include <video/omap-panel-dvi.h>
+=======
+#include <plat/common.h>
+#include <video/omapdss.h>
+#include <video/omap-panel-generic-dpi.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/gpmc.h>
 #include <mach/hardware.h>
 #include <plat/nand.h>
@@ -75,16 +81,26 @@
 	defined(CONFIG_TOUCHSCREEN_ADS7846_MODULE)
 
 /* fixed regulator for ads7846 */
+<<<<<<< HEAD
 static struct regulator_consumer_supply ads7846_supply[] = {
 	REGULATOR_SUPPLY("vcc", "spi1.0"),
 };
+=======
+static struct regulator_consumer_supply ads7846_supply =
+	REGULATOR_SUPPLY("vcc", "spi1.0");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct regulator_init_data vads7846_regulator = {
 	.constraints = {
 		.valid_ops_mask		= REGULATOR_CHANGE_STATUS,
 	},
+<<<<<<< HEAD
 	.num_consumer_supplies	= ARRAY_SIZE(ads7846_supply),
 	.consumer_supplies	= ads7846_supply,
+=======
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &ads7846_supply,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct fixed_voltage_config vads7846 = {
@@ -183,16 +199,27 @@ static void overo_panel_disable_dvi(struct omap_dss_device *dssdev)
 	dvi_enabled = 0;
 }
 
+<<<<<<< HEAD
 static struct panel_dvi_platform_data dvi_panel = {
 	.platform_enable	= overo_panel_enable_dvi,
 	.platform_disable	= overo_panel_disable_dvi,
 	.i2c_bus_num		= 3,
+=======
+static struct panel_generic_dpi_data dvi_panel = {
+	.name			= "generic",
+	.platform_enable	= overo_panel_enable_dvi,
+	.platform_disable	= overo_panel_disable_dvi,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct omap_dss_device overo_dvi_device = {
 	.name			= "dvi",
 	.type			= OMAP_DISPLAY_TYPE_DPI,
+<<<<<<< HEAD
 	.driver_name		= "dvi",
+=======
+	.driver_name		= "generic_dpi_panel",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.data			= &dvi_panel,
 	.phy.dpi.data_lines	= 24,
 };
@@ -266,6 +293,17 @@ static struct omap_dss_board_info overo_dss_data = {
 	.default_device	= &overo_dvi_device,
 };
 
+<<<<<<< HEAD
+=======
+static struct regulator_consumer_supply overo_vdda_dac_supply =
+	REGULATOR_SUPPLY("vdda_dac", "omapdss_venc");
+
+static struct regulator_consumer_supply overo_vdds_dsi_supply[] = {
+	REGULATOR_SUPPLY("vdds_dsi", "omapdss"),
+	REGULATOR_SUPPLY("vdds_dsi", "omapdss_dsi1"),
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct mtd_partition overo_nand_partitions[] = {
 	{
 		.name           = "xloader",
@@ -313,8 +351,13 @@ static struct omap2_hsmmc_info mmc[] = {
 	{}	/* Terminator */
 };
 
+<<<<<<< HEAD
 static struct regulator_consumer_supply overo_vmmc1_supply[] = {
 	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.0"),
+=======
+static struct regulator_consumer_supply overo_vmmc1_supply = {
+	.supply			= "vmmc",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #if defined(CONFIG_LEDS_GPIO) || defined(CONFIG_LEDS_GPIO_MODULE)
@@ -407,6 +450,13 @@ static inline void __init overo_init_keys(void) { return; }
 static int overo_twl_gpio_setup(struct device *dev,
 		unsigned gpio, unsigned ngpio)
 {
+<<<<<<< HEAD
+=======
+	omap2_hsmmc_init(mmc);
+
+	overo_vmmc1_supply.dev = mmc[0].dev;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_LEDS_GPIO) || defined(CONFIG_LEDS_GPIO_MODULE)
 	/* TWL4030_GPIO_MAX + 1 == ledB, PMU_STAT (out, active low LED) */
 	gpio_leds[2].gpio = gpio + TWL4030_GPIO_MAX + 1;
@@ -423,6 +473,13 @@ static struct twl4030_gpio_platform_data overo_gpio_data = {
 	.setup		= overo_twl_gpio_setup,
 };
 
+<<<<<<< HEAD
+=======
+static struct twl4030_usb_data overo_usb_data = {
+	.usb_mode	= T2_USB_MODE_ULPI,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct regulator_init_data overo_vmmc1 = {
 	.constraints = {
 		.min_uV			= 1850000,
@@ -433,6 +490,7 @@ static struct regulator_init_data overo_vmmc1 = {
 					| REGULATOR_CHANGE_MODE
 					| REGULATOR_CHANGE_STATUS,
 	},
+<<<<<<< HEAD
 	.num_consumer_supplies	= ARRAY_SIZE(overo_vmmc1_supply),
 	.consumer_supplies	= overo_vmmc1_supply,
 };
@@ -440,16 +498,70 @@ static struct regulator_init_data overo_vmmc1 = {
 static struct twl4030_platform_data overo_twldata = {
 	.gpio		= &overo_gpio_data,
 	.vmmc1		= &overo_vmmc1,
+=======
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &overo_vmmc1_supply,
+};
+
+/* VDAC for DSS driving S-Video (8 mA unloaded, max 65 mA) */
+static struct regulator_init_data overo_vdac = {
+	.constraints = {
+		.min_uV			= 1800000,
+		.max_uV			= 1800000,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask		= REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &overo_vdda_dac_supply,
+};
+
+/* VPLL2 for digital video outputs */
+static struct regulator_init_data overo_vpll2 = {
+	.constraints = {
+		.name			= "VDVI",
+		.min_uV			= 1800000,
+		.max_uV			= 1800000,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask		= REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies	= ARRAY_SIZE(overo_vdds_dsi_supply),
+	.consumer_supplies	= overo_vdds_dsi_supply,
+};
+
+static struct twl4030_codec_audio_data overo_audio_data;
+
+static struct twl4030_codec_data overo_codec_data = {
+	.audio_mclk = 26000000,
+	.audio = &overo_audio_data,
+};
+
+static struct twl4030_platform_data overo_twldata = {
+	.irq_base	= TWL4030_IRQ_BASE,
+	.irq_end	= TWL4030_IRQ_END,
+	.gpio		= &overo_gpio_data,
+	.usb		= &overo_usb_data,
+	.codec		= &overo_codec_data,
+	.vmmc1		= &overo_vmmc1,
+	.vdac		= &overo_vdac,
+	.vpll2		= &overo_vpll2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init overo_i2c_init(void)
 {
+<<<<<<< HEAD
 	omap3_pmic_get_config(&overo_twldata,
 			TWL_COMMON_PDATA_USB | TWL_COMMON_PDATA_AUDIO,
 			TWL_COMMON_REGULATOR_VDAC | TWL_COMMON_REGULATOR_VPLL2);
 
 	overo_twldata.vpll2->constraints.name = "VDVI";
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap3_pmic_init("tps65950", &overo_twldata);
 	/* i2c2 pins are used for gpio */
 	omap_register_i2c_bus(3, 400, NULL, 0);
@@ -477,6 +589,16 @@ static int __init overo_spi_init(void)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void __init overo_init_early(void)
+{
+	omap2_init_common_infrastructure();
+	omap2_init_common_devices(mt46h32m32lf6_sdrc_params,
+				  mt46h32m32lf6_sdrc_params);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct usbhs_omap_board_data usbhs_bdata __initconst = {
 	.port_mode[0] = OMAP_USBHS_PORT_MODE_UNUSED,
 	.port_mode[1] = OMAP_EHCI_PORT_MODE_PHY,
@@ -498,6 +620,7 @@ static struct gpio overo_bt_gpios[] __initdata = {
 	{ OVERO_GPIO_BT_NRESET, GPIOF_OUT_INIT_HIGH,	"lcd bl enable" },
 };
 
+<<<<<<< HEAD
 static struct regulator_consumer_supply dummy_supplies[] = {
 	REGULATOR_SUPPLY("vddvario", "smsc911x.0"),
 	REGULATOR_SUPPLY("vdd33a", "smsc911x.0"),
@@ -505,10 +628,13 @@ static struct regulator_consumer_supply dummy_supplies[] = {
 	REGULATOR_SUPPLY("vdd33a", "smsc911x.1"),
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init overo_init(void)
 {
 	int ret;
 
+<<<<<<< HEAD
 	regulator_register_fixed(0, dummy_supplies, ARRAY_SIZE(dummy_supplies));
 	omap3_mux_init(board_mux, OMAP_PACKAGE_CBB);
 	omap_hsmmc_init(mmc);
@@ -517,11 +643,21 @@ static void __init overo_init(void)
 	omap_serial_init();
 	omap_sdrc_init(mt46h32m32lf6_sdrc_params,
 				  mt46h32m32lf6_sdrc_params);
+=======
+	omap3_mux_init(board_mux, OMAP_PACKAGE_CBB);
+	overo_i2c_init();
+	omap_display_init(&overo_dss_data);
+	omap_serial_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap_nand_flash_init(0, overo_nand_partitions,
 			     ARRAY_SIZE(overo_nand_partitions));
 	usb_musb_init(NULL);
 	usbhs_init(&usbhs_bdata);
 	overo_spi_init();
+<<<<<<< HEAD
+=======
+	overo_ads7846_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	overo_init_smsc911x();
 	overo_display_init();
 	overo_init_led();
@@ -564,6 +700,7 @@ static void __init overo_init(void)
 }
 
 MACHINE_START(OVERO, "Gumstix Overo")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.reserve	= omap_reserve,
 	.map_io		= omap3_map_io,
@@ -573,4 +710,13 @@ MACHINE_START(OVERO, "Gumstix Overo")
 	.init_machine	= overo_init,
 	.timer		= &omap3_timer,
 	.restart	= omap_prcm_restart,
+=======
+	.boot_params	= 0x80000100,
+	.reserve	= omap_reserve,
+	.map_io		= omap3_map_io,
+	.init_early	= overo_init_early,
+	.init_irq	= omap_init_irq,
+	.init_machine	= overo_init,
+	.timer		= &omap_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

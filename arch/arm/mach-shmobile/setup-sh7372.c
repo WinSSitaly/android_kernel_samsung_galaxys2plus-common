@@ -30,6 +30,7 @@
 #include <linux/sh_dma.h>
 #include <linux/sh_intc.h>
 #include <linux/sh_timer.h>
+<<<<<<< HEAD
 #include <linux/pm_domain.h>
 #include <linux/dma-mapping.h>
 #include <mach/hardware.h>
@@ -63,6 +64,12 @@ void __init sh7372_map_io(void)
 	 */
 	init_consistent_dma_size(12 << 20);
 }
+=======
+#include <mach/hardware.h>
+#include <mach/sh7372.h>
+#include <asm/mach-types.h>
+#include <asm/mach/arch.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* SCIFA0 */
 static struct plat_sci_port scif0_platform_data = {
@@ -198,14 +205,22 @@ static struct platform_device scif6_device = {
 };
 
 /* CMT */
+<<<<<<< HEAD
 static struct sh_timer_config cmt2_platform_data = {
 	.name = "CMT2",
 	.channel_offset = 0x40,
 	.timer_bit = 5,
+=======
+static struct sh_timer_config cmt10_platform_data = {
+	.name = "CMT10",
+	.channel_offset = 0x10,
+	.timer_bit = 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.clockevent_rating = 125,
 	.clocksource_rating = 125,
 };
 
+<<<<<<< HEAD
 static struct resource cmt2_resources[] = {
 	[0] = {
 		.name	= "CMT2",
@@ -215,10 +230,22 @@ static struct resource cmt2_resources[] = {
 	},
 	[1] = {
 		.start	= evt2irq(0x0b80), /* CMT2 */
+=======
+static struct resource cmt10_resources[] = {
+	[0] = {
+		.name	= "CMT10",
+		.start	= 0xe6138010,
+		.end	= 0xe613801b,
+		.flags	= IORESOURCE_MEM,
+	},
+	[1] = {
+		.start	= evt2irq(0x0b00), /* CMT1_CMT10 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_IRQ,
 	},
 };
 
+<<<<<<< HEAD
 static struct platform_device cmt2_device = {
 	.name		= "sh_cmt",
 	.id		= 2,
@@ -227,6 +254,16 @@ static struct platform_device cmt2_device = {
 	},
 	.resource	= cmt2_resources,
 	.num_resources	= ARRAY_SIZE(cmt2_resources),
+=======
+static struct platform_device cmt10_device = {
+	.name		= "sh_cmt",
+	.id		= 10,
+	.dev = {
+		.platform_data	= &cmt10_platform_data,
+	},
+	.resource	= cmt10_resources,
+	.num_resources	= ARRAY_SIZE(cmt10_resources),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* TMU */
@@ -473,39 +510,60 @@ static const struct sh_dmae_slave_config sh7372_dmae_slaves[] = {
 	},
 };
 
+<<<<<<< HEAD
 #define SH7372_CHCLR 0x220
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct sh_dmae_channel sh7372_dmae_channels[] = {
 	{
 		.offset = 0,
 		.dmars = 0,
 		.dmars_bit = 0,
+<<<<<<< HEAD
 		.chclr_offset = SH7372_CHCLR + 0,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}, {
 		.offset = 0x10,
 		.dmars = 0,
 		.dmars_bit = 8,
+<<<<<<< HEAD
 		.chclr_offset = SH7372_CHCLR + 0x10,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}, {
 		.offset = 0x20,
 		.dmars = 4,
 		.dmars_bit = 0,
+<<<<<<< HEAD
 		.chclr_offset = SH7372_CHCLR + 0x20,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}, {
 		.offset = 0x30,
 		.dmars = 4,
 		.dmars_bit = 8,
+<<<<<<< HEAD
 		.chclr_offset = SH7372_CHCLR + 0x30,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}, {
 		.offset = 0x50,
 		.dmars = 8,
 		.dmars_bit = 0,
+<<<<<<< HEAD
 		.chclr_offset = SH7372_CHCLR + 0x50,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}, {
 		.offset = 0x60,
 		.dmars = 8,
 		.dmars_bit = 8,
+<<<<<<< HEAD
 		.chclr_offset = SH7372_CHCLR + 0x60,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 };
 
@@ -523,7 +581,10 @@ static struct sh_dmae_pdata dma_platform_data = {
 	.ts_shift	= ts_shift,
 	.ts_shift_num	= ARRAY_SIZE(ts_shift),
 	.dmaor_init	= DMAOR_DME,
+<<<<<<< HEAD
 	.chclr_present	= 1,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Resource order important! */
@@ -531,7 +592,11 @@ static struct resource sh7372_dmae0_resources[] = {
 	{
 		/* Channel registers and DMAOR */
 		.start	= 0xfe008020,
+<<<<<<< HEAD
 		.end	= 0xfe00828f,
+=======
+		.end	= 0xfe00808f,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_MEM,
 	},
 	{
@@ -541,7 +606,11 @@ static struct resource sh7372_dmae0_resources[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 	{
+<<<<<<< HEAD
 		.name	= "error_irq",
+=======
+		/* DMA error IRQ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.start	= evt2irq(0x20c0),
 		.end	= evt2irq(0x20c0),
 		.flags	= IORESOURCE_IRQ,
@@ -559,7 +628,11 @@ static struct resource sh7372_dmae1_resources[] = {
 	{
 		/* Channel registers and DMAOR */
 		.start	= 0xfe018020,
+<<<<<<< HEAD
 		.end	= 0xfe01828f,
+=======
+		.end	= 0xfe01808f,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_MEM,
 	},
 	{
@@ -569,7 +642,11 @@ static struct resource sh7372_dmae1_resources[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 	{
+<<<<<<< HEAD
 		.name	= "error_irq",
+=======
+		/* DMA error IRQ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.start	= evt2irq(0x21c0),
 		.end	= evt2irq(0x21c0),
 		.flags	= IORESOURCE_IRQ,
@@ -587,7 +664,11 @@ static struct resource sh7372_dmae2_resources[] = {
 	{
 		/* Channel registers and DMAOR */
 		.start	= 0xfe028020,
+<<<<<<< HEAD
 		.end	= 0xfe02828f,
+=======
+		.end	= 0xfe02808f,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_MEM,
 	},
 	{
@@ -597,7 +678,11 @@ static struct resource sh7372_dmae2_resources[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 	{
+<<<<<<< HEAD
 		.name	= "error_irq",
+=======
+		/* DMA error IRQ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.start	= evt2irq(0x22c0),
 		.end	= evt2irq(0x22c0),
 		.flags	= IORESOURCE_IRQ,
@@ -640,6 +725,7 @@ static struct platform_device dma2_device = {
 	},
 };
 
+<<<<<<< HEAD
 /*
  * USB-DMAC
  */
@@ -786,6 +872,8 @@ static struct platform_device usb_dma1_device = {
 	},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* VPU */
 static struct uio_info vpu_platform_data = {
 	.name = "VPU5HG",
@@ -1002,7 +1090,11 @@ static struct platform_device *sh7372_early_devices[] __initdata = {
 	&scif4_device,
 	&scif5_device,
 	&scif6_device,
+<<<<<<< HEAD
 	&cmt2_device,
+=======
+	&cmt10_device,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&tmu00_device,
 	&tmu01_device,
 };
@@ -1013,8 +1105,11 @@ static struct platform_device *sh7372_late_devices[] __initdata = {
 	&dma0_device,
 	&dma1_device,
 	&dma2_device,
+<<<<<<< HEAD
 	&usb_dma0_device,
 	&usb_dma1_device,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&vpu_device,
 	&veu0_device,
 	&veu1_device,
@@ -1027,6 +1122,7 @@ static struct platform_device *sh7372_late_devices[] __initdata = {
 
 void __init sh7372_add_standard_devices(void)
 {
+<<<<<<< HEAD
 	sh7372_init_pm_domain(&sh7372_a4lc);
 	sh7372_init_pm_domain(&sh7372_a4mp);
 	sh7372_init_pm_domain(&sh7372_d4);
@@ -1043,11 +1139,14 @@ void __init sh7372_add_standard_devices(void)
 	sh7372_pm_add_subdomain(&sh7372_a4s, &sh7372_a3sg);
 	sh7372_pm_add_subdomain(&sh7372_a4s, &sh7372_a3sp);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_add_devices(sh7372_early_devices,
 			    ARRAY_SIZE(sh7372_early_devices));
 
 	platform_add_devices(sh7372_late_devices,
 			    ARRAY_SIZE(sh7372_late_devices));
+<<<<<<< HEAD
 
 	sh7372_add_device_to_domain(&sh7372_a3rv, &vpu_device);
 	sh7372_add_device_to_domain(&sh7372_a4mp, &spu0_device);
@@ -1079,16 +1178,21 @@ static void __init sh7372_earlytimer_init(void)
 {
 	sh7372_clock_init();
 	shmobile_earlytimer_init();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __init sh7372_add_early_devices(void)
 {
 	early_platform_add_devices(sh7372_early_devices,
 				   ARRAY_SIZE(sh7372_early_devices));
+<<<<<<< HEAD
 
 	/* setup early console here as well */
 	shmobile_setup_console();
 
 	/* override timer setup with soc-specific code */
 	shmobile_timer.init = sh7372_earlytimer_init;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

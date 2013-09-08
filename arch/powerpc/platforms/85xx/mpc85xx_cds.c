@@ -3,7 +3,11 @@
  *
  * Maintained by Kumar Gala (see MAINTAINERS for contact information)
  *
+<<<<<<< HEAD
  * Copyright 2005, 2011-2012 Freescale Semiconductor Inc.
+=======
+ * Copyright 2005 Freescale Semiconductor Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute  it and/or modify it
  * under  the terms of  the GNU General  Public License as published by the
@@ -23,13 +27,24 @@
 #include <linux/delay.h>
 #include <linux/seq_file.h>
 #include <linux/initrd.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/interrupt.h>
 #include <linux/fsl_devices.h>
 #include <linux/of_platform.h>
 
+<<<<<<< HEAD
 #include <asm/pgtable.h>
 #include <asm/page.h>
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <asm/pgtable.h>
+#include <asm/page.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/time.h>
 #include <asm/io.h>
 #include <asm/machdep.h>
@@ -45,6 +60,7 @@
 #include <sysdev/fsl_soc.h>
 #include <sysdev/fsl_pci.h>
 
+<<<<<<< HEAD
 #include "mpc85xx.h"
 
 /*
@@ -65,6 +81,19 @@ struct cadmus_reg {
 };
 
 static struct cadmus_reg *cadmus;
+=======
+/* CADMUS info */
+/* xxx - galak, move into device tree */
+#define CADMUS_BASE (0xf8004000)
+#define CADMUS_SIZE (256)
+#define CM_VER	(0)
+#define CM_CSR	(1)
+#define CM_RST	(2)
+
+
+static int cds_pci_slot = 2;
+static volatile u8 *cadmus;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_PCI
 
@@ -164,6 +193,7 @@ DECLARE_PCI_FIXUP_EARLY(0x1957, 0x3fff, skip_fake_bridge);
 DECLARE_PCI_FIXUP_EARLY(0x3fff, 0x1957, skip_fake_bridge);
 DECLARE_PCI_FIXUP_EARLY(0xff3f, 0x5719, skip_fake_bridge);
 
+<<<<<<< HEAD
 #define PCI_DEVICE_ID_IDT_TSI310	0x01a7
 
 /*
@@ -191,6 +221,8 @@ void mpc85xx_cds_fixup_bus(struct pci_bus *bus)
 	fsl_pcibios_fixup_bus(bus);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PPC_I8259
 static void mpc85xx_8259_cascade_handler(unsigned int irq,
 					 struct irq_desc *desc)
@@ -212,7 +244,11 @@ static irqreturn_t mpc85xx_8259_cascade_action(int irq, void *dev_id)
 
 static struct irqaction mpc85xxcds_8259_irqaction = {
 	.handler = mpc85xx_8259_cascade_action,
+<<<<<<< HEAD
 	.flags = IRQF_SHARED | IRQF_NO_THREAD,
+=======
+	.flags = IRQF_SHARED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name = "8259 cascade",
 };
 #endif /* PPC_I8259 */
@@ -221,9 +257,36 @@ static struct irqaction mpc85xxcds_8259_irqaction = {
 static void __init mpc85xx_cds_pic_init(void)
 {
 	struct mpic *mpic;
+<<<<<<< HEAD
 	mpic = mpic_alloc(NULL, 0, MPIC_BIG_ENDIAN,
 			0, 256, " OpenPIC  ");
 	BUG_ON(mpic == NULL);
+=======
+	struct resource r;
+	struct device_node *np = NULL;
+
+	np = of_find_node_by_type(np, "open-pic");
+
+	if (np == NULL) {
+		printk(KERN_ERR "Could not find open-pic node\n");
+		return;
+	}
+
+	if (of_address_to_resource(np, 0, &r)) {
+		printk(KERN_ERR "Failed to map mpic register space\n");
+		of_node_put(np);
+		return;
+	}
+
+	mpic = mpic_alloc(np, r.start,
+			MPIC_PRIMARY | MPIC_WANTS_RESET | MPIC_BIG_ENDIAN,
+			0, 256, " OpenPIC  ");
+	BUG_ON(mpic == NULL);
+
+	/* Return the mpic node */
+	of_node_put(np);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mpic_init(mpic);
 }
 
@@ -281,12 +344,19 @@ machine_device_initcall(mpc85xx_cds, mpc85xx_cds_8259_attach);
  */
 static void __init mpc85xx_cds_setup_arch(void)
 {
+<<<<<<< HEAD
 	struct device_node *np;
 	int cds_pci_slot;
+=======
+#ifdef CONFIG_PCI
+	struct device_node *np;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ppc_md.progress)
 		ppc_md.progress("mpc85xx_cds_setup_arch()", 0);
 
+<<<<<<< HEAD
 	np = of_find_compatible_node(NULL, NULL, "fsl,mpc8548cds-fpga");
 	if (!np) {
 		pr_err("Could not find FPGA node.\n");
@@ -305,6 +375,15 @@ static void __init mpc85xx_cds_setup_arch(void)
 		cds_pci_slot = ((in_8(&cadmus->cm_csr) >> 6) & 0x3) + 1;
 		snprintf(buf, 40, "CDS Version = 0x%x in slot %d\n",
 				in_8(&cadmus->cm_ver), cds_pci_slot);
+=======
+	cadmus = ioremap(CADMUS_BASE, CADMUS_SIZE);
+	cds_pci_slot = ((cadmus[CM_CSR] >> 6) & 0x3) + 1;
+
+	if (ppc_md.progress) {
+		char buf[40];
+		snprintf(buf, 40, "CDS Version = 0x%x in slot %d\n",
+				cadmus[CM_VER], cds_pci_slot);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ppc_md.progress(buf, 0);
 	}
 
@@ -334,8 +413,12 @@ static void mpc85xx_cds_show_cpuinfo(struct seq_file *m)
 	svid = mfspr(SPRN_SVR);
 
 	seq_printf(m, "Vendor\t\t: Freescale Semiconductor\n");
+<<<<<<< HEAD
 	seq_printf(m, "Machine\t\t: MPC85xx CDS (0x%x)\n",
 			in_8(&cadmus->cm_ver));
+=======
+	seq_printf(m, "Machine\t\t: MPC85xx CDS (0x%x)\n", cadmus[CM_VER]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	seq_printf(m, "PVR\t\t: 0x%x\n", pvid);
 	seq_printf(m, "SVR\t\t: 0x%x\n", svid);
 
@@ -355,7 +438,23 @@ static int __init mpc85xx_cds_probe(void)
         return of_flat_dt_is_compatible(root, "MPC85xxCDS");
 }
 
+<<<<<<< HEAD
 machine_device_initcall(mpc85xx_cds, mpc85xx_common_publish_devices);
+=======
+static struct of_device_id __initdata of_bus_ids[] = {
+	{ .type = "soc", },
+	{ .compatible = "soc", },
+	{ .compatible = "simple-bus", },
+	{ .compatible = "gianfar", },
+	{},
+};
+
+static int __init declare_of_platform_devices(void)
+{
+	return of_platform_bus_probe(NULL, of_bus_ids, NULL);
+}
+machine_device_initcall(mpc85xx_cds, declare_of_platform_devices);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 define_machine(mpc85xx_cds) {
 	.name		= "MPC85xx CDS",
@@ -366,7 +465,11 @@ define_machine(mpc85xx_cds) {
 	.get_irq	= mpic_get_irq,
 #ifdef CONFIG_PCI
 	.restart	= mpc85xx_cds_restart,
+<<<<<<< HEAD
 	.pcibios_fixup_bus	= mpc85xx_cds_fixup_bus,
+=======
+	.pcibios_fixup_bus	= fsl_pcibios_fixup_bus,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 	.restart	= fsl_rstcr_restart,
 #endif

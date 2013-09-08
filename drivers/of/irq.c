@@ -19,12 +19,23 @@
  */
 
 #include <linux/errno.h>
+<<<<<<< HEAD
 #include <linux/list.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/of.h>
 #include <linux/of_irq.h>
 #include <linux/string.h>
+<<<<<<< HEAD
 #include <linux/slab.h>
+=======
+
+/* For archs that don't support NO_IRQ (such as x86), provide a dummy value */
+#ifndef NO_IRQ
+#define NO_IRQ 0
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * irq_of_parse_and_map - Parse and map an interrupt into linux virq space
@@ -39,7 +50,11 @@ unsigned int irq_of_parse_and_map(struct device_node *dev, int index)
 	struct of_irq oirq;
 
 	if (of_irq_map_one(dev, index, &oirq))
+<<<<<<< HEAD
 		return 0;
+=======
+		return NO_IRQ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return irq_create_of_mapping(oirq.controller, oirq.specifier,
 				     oirq.size);
@@ -340,6 +355,7 @@ int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
 
 	/* Only dereference the resource if both the
 	 * resource and the irq are valid. */
+<<<<<<< HEAD
 	if (r && irq) {
 		const char *name = NULL;
 
@@ -353,6 +369,12 @@ int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
 		r->start = r->end = irq;
 		r->flags = IORESOURCE_IRQ;
 		r->name = name ? name : dev->full_name;
+=======
+	if (r && irq != NO_IRQ) {
+		r->start = r->end = irq;
+		r->flags = IORESOURCE_IRQ;
+		r->name = dev->full_name;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return irq;
@@ -367,7 +389,11 @@ int of_irq_count(struct device_node *dev)
 {
 	int nr = 0;
 
+<<<<<<< HEAD
 	while (of_irq_to_resource(dev, nr, NULL))
+=======
+	while (of_irq_to_resource(dev, nr, NULL) != NO_IRQ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nr++;
 
 	return nr;
@@ -387,11 +413,16 @@ int of_irq_to_resource_table(struct device_node *dev, struct resource *res,
 	int i;
 
 	for (i = 0; i < nr_irqs; i++, res++)
+<<<<<<< HEAD
 		if (!of_irq_to_resource(dev, i, res))
+=======
+		if (of_irq_to_resource(dev, i, res) == NO_IRQ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 	return i;
 }
+<<<<<<< HEAD
 
 struct intc_desc {
 	struct list_head	list;
@@ -499,3 +530,5 @@ err:
 		kfree(desc);
 	}
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

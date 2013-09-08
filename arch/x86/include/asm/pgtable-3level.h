@@ -31,6 +31,7 @@ static inline void native_set_pte(pte_t *ptep, pte_t pte)
 	ptep->pte_low = pte.pte_low;
 }
 
+<<<<<<< HEAD
 #define pmd_read_atomic pmd_read_atomic
 /*
  * pte_offset_map_lock on 32bit PAE kernels was reading the pmd_t with
@@ -85,6 +86,8 @@ static inline pmd_t pmd_read_atomic(pmd_t *pmdp)
 	return (pmd_t) { ret };
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void native_set_pte_atomic(pte_t *ptep, pte_t pte)
 {
 	set_64bit((unsigned long long *)(ptep), native_pte_val(pte));

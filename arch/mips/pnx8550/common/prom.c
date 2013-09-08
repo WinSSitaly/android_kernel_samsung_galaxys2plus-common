@@ -30,7 +30,11 @@ typedef struct
 }t_env_var;
 
 
+<<<<<<< HEAD
 char * __init prom_getcmdline(void)
+=======
+char * prom_getcmdline(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return &(arcs_cmdline[0]);
 }

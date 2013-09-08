@@ -2,8 +2,12 @@
 #define __ARCH_M68K_ATOMIC__
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/irqflags.h>
 #include <asm/cmpxchg.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Atomic operations that C can't guarantee us.  Useful for
@@ -56,6 +60,7 @@ static inline int atomic_dec_and_test(atomic_t *v)
 	return c != 0;
 }
 
+<<<<<<< HEAD
 static inline int atomic_dec_and_test_lt(atomic_t *v)
 {
 	char c;
@@ -66,6 +71,8 @@ static inline int atomic_dec_and_test_lt(atomic_t *v)
 	return c != 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int atomic_inc_and_test(atomic_t *v)
 {
 	char c;
@@ -180,21 +187,36 @@ static inline int atomic_add_negative(int i, atomic_t *v)
 	char c;
 	__asm__ __volatile__("addl %2,%1; smi %0"
 			     : "=d" (c), "+m" (*v)
+<<<<<<< HEAD
 			     : ASM_DI (i));
+=======
+			     : "id" (i));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return c != 0;
 }
 
 static inline void atomic_clear_mask(unsigned long mask, unsigned long *v)
 {
+<<<<<<< HEAD
 	__asm__ __volatile__("andl %1,%0" : "+m" (*v) : ASM_DI (~(mask)));
+=======
+	__asm__ __volatile__("andl %1,%0" : "+m" (*v) : "id" (~(mask)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void atomic_set_mask(unsigned long mask, unsigned long *v)
 {
+<<<<<<< HEAD
 	__asm__ __volatile__("orl %1,%0" : "+m" (*v) : ASM_DI (mask));
 }
 
 static __inline__ int __atomic_add_unless(atomic_t *v, int a, int u)
+=======
+	__asm__ __volatile__("orl %1,%0" : "+m" (*v) : "id" (mask));
+}
+
+static __inline__ int atomic_add_unless(atomic_t *v, int a, int u)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int c, old;
 	c = atomic_read(v);
@@ -206,9 +228,16 @@ static __inline__ int __atomic_add_unless(atomic_t *v, int a, int u)
 			break;
 		c = old;
 	}
+<<<<<<< HEAD
 	return c;
 }
 
+=======
+	return c != (u);
+}
+
+#define atomic_inc_not_zero(v) atomic_add_unless((v), 1, 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Atomic operations are already serializing */
 #define smp_mb__before_atomic_dec()	barrier()
@@ -216,4 +245,9 @@ static __inline__ int __atomic_add_unless(atomic_t *v, int a, int u)
 #define smp_mb__before_atomic_inc()	barrier()
 #define smp_mb__after_atomic_inc()	barrier()
 
+<<<<<<< HEAD
+=======
+#include <asm-generic/atomic-long.h>
+#include <asm-generic/atomic64.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ARCH_M68K_ATOMIC __ */

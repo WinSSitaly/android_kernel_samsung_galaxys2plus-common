@@ -59,10 +59,17 @@ typedef struct user_m68kfp_struct elf_fpregset_t;
    is actually used on ASV.  */
 #define ELF_PLAT_INIT(_r, load_addr)	_r->a1 = 0
 
+<<<<<<< HEAD
 #if defined(CONFIG_SUN3) || defined(CONFIG_COLDFIRE)
 #define ELF_EXEC_PAGESIZE	8192
 #else
 #define ELF_EXEC_PAGESIZE	4096
+=======
+#ifndef CONFIG_SUN3
+#define ELF_EXEC_PAGESIZE	4096
+#else
+#define ELF_EXEC_PAGESIZE	8192
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /* This is the location that an ET_DYN program is loaded if exec'ed.  Typical

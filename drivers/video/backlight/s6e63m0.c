@@ -30,7 +30,10 @@
 #include <linux/kernel.h>
 #include <linux/lcd.h>
 #include <linux/backlight.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "s6e63m0_gamma.h"
 
@@ -690,7 +693,11 @@ static ssize_t s6e63m0_sysfs_store_gamma_mode(struct device *dev,
 	struct backlight_device *bd = NULL;
 	int brightness, rc;
 
+<<<<<<< HEAD
 	rc = kstrtouint(buf, 0, &lcd->gamma_mode);
+=======
+	rc = strict_strtoul(buf, 0, (unsigned long *)&lcd->gamma_mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc < 0)
 		return rc;
 
@@ -739,7 +746,10 @@ static int __devinit s6e63m0_probe(struct spi_device *spi)
 	struct s6e63m0 *lcd = NULL;
 	struct lcd_device *ld = NULL;
 	struct backlight_device *bd = NULL;
+<<<<<<< HEAD
 	struct backlight_properties props;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lcd = kzalloc(sizeof(struct s6e63m0), GFP_KERNEL);
 	if (!lcd)
@@ -771,18 +781,29 @@ static int __devinit s6e63m0_probe(struct spi_device *spi)
 
 	lcd->ld = ld;
 
+<<<<<<< HEAD
 	memset(&props, 0, sizeof(struct backlight_properties));
 	props.type = BACKLIGHT_RAW;
 	props.max_brightness = MAX_BRIGHTNESS;
 
 	bd = backlight_device_register("s6e63m0bl-bl", &spi->dev, lcd,
 		&s6e63m0_backlight_ops, &props);
+=======
+	bd = backlight_device_register("s6e63m0bl-bl", &spi->dev, lcd,
+		&s6e63m0_backlight_ops, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(bd)) {
 		ret =  PTR_ERR(bd);
 		goto out_lcd_unregister;
 	}
 
+<<<<<<< HEAD
 	bd->props.brightness = MAX_BRIGHTNESS;
+=======
+	bd->props.max_brightness = MAX_BRIGHTNESS;
+	bd->props.brightness = MAX_BRIGHTNESS;
+	bd->props.type = BACKLIGHT_RAW;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lcd->bd = bd;
 
 	/*
@@ -844,7 +865,11 @@ static int __devexit s6e63m0_remove(struct spi_device *spi)
 }
 
 #if defined(CONFIG_PM)
+<<<<<<< HEAD
 static unsigned int before_power;
+=======
+unsigned int before_power;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int s6e63m0_suspend(struct spi_device *spi, pm_message_t mesg)
 {
@@ -909,7 +934,22 @@ static struct spi_driver s6e63m0_driver = {
 	.resume		= s6e63m0_resume,
 };
 
+<<<<<<< HEAD
 module_spi_driver(s6e63m0_driver);
+=======
+static int __init s6e63m0_init(void)
+{
+	return spi_register_driver(&s6e63m0_driver);
+}
+
+static void __exit s6e63m0_exit(void)
+{
+	spi_unregister_driver(&s6e63m0_driver);
+}
+
+module_init(s6e63m0_init);
+module_exit(s6e63m0_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("InKi Dae <inki.dae@samsung.com>");
 MODULE_DESCRIPTION("S6E63M0 LCD Driver");

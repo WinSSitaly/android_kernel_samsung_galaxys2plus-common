@@ -17,7 +17,10 @@
 
 #include <linux/spi/spi.h>
 #include <linux/spi/ds1305.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /*
@@ -814,7 +817,21 @@ static struct spi_driver ds1305_driver = {
 	/* REVISIT add suspend/resume */
 };
 
+<<<<<<< HEAD
 module_spi_driver(ds1305_driver);
+=======
+static int __init ds1305_init(void)
+{
+	return spi_register_driver(&ds1305_driver);
+}
+module_init(ds1305_init);
+
+static void __exit ds1305_exit(void)
+{
+	spi_unregister_driver(&ds1305_driver);
+}
+module_exit(ds1305_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("RTC driver for DS1305 and DS1306 chips");
 MODULE_LICENSE("GPL");

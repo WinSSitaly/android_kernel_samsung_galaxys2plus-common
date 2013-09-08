@@ -34,6 +34,7 @@ irqreturn_t vmw_irq_handler(DRM_IRQ_ARGS)
 {
 	struct drm_device *dev = (struct drm_device *)arg;
 	struct vmw_private *dev_priv = vmw_priv(dev);
+<<<<<<< HEAD
 	uint32_t status, masked_status;
 
 	spin_lock(&dev_priv->irq_lock);
@@ -61,6 +62,28 @@ irqreturn_t vmw_irq_handler(DRM_IRQ_ARGS)
 }
 
 static bool vmw_fifo_idle(struct vmw_private *dev_priv, uint32_t seqno)
+=======
+	uint32_t status;
+
+	spin_lock(&dev_priv->irq_lock);
+	status = inl(dev_priv->io_start + VMWGFX_IRQSTATUS_PORT);
+	spin_unlock(&dev_priv->irq_lock);
+
+	if (status & SVGA_IRQFLAG_ANY_FENCE)
+		wake_up_all(&dev_priv->fence_queue);
+	if (status & SVGA_IRQFLAG_FIFO_PROGRESS)
+		wake_up_all(&dev_priv->fifo_queue);
+
+	if (likely(status)) {
+		outl(status, dev_priv->io_start + VMWGFX_IRQSTATUS_PORT);
+		return IRQ_HANDLED;
+	}
+
+	return IRQ_NONE;
+}
+
+static bool vmw_fifo_idle(struct vmw_private *dev_priv, uint32_t sequence)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	uint32_t busy;
 
@@ -71,6 +94,7 @@ static bool vmw_fifo_idle(struct vmw_private *dev_priv, uint32_t seqno)
 	return (busy == 0);
 }
 
+<<<<<<< HEAD
 void vmw_update_seqno(struct vmw_private *dev_priv,
 			 struct vmw_fifo_state *fifo_state)
 {
@@ -86,10 +110,28 @@ void vmw_update_seqno(struct vmw_private *dev_priv,
 
 bool vmw_seqno_passed(struct vmw_private *dev_priv,
 			 uint32_t seqno)
+=======
+void vmw_update_sequence(struct vmw_private *dev_priv,
+			 struct vmw_fifo_state *fifo_state)
+{
+	__le32 __iomem *fifo_mem = dev_priv->mmio_virt;
+
+	uint32_t sequence = ioread32(fifo_mem + SVGA_FIFO_FENCE);
+
+	if (dev_priv->last_read_sequence != sequence) {
+		dev_priv->last_read_sequence = sequence;
+		vmw_fence_pull(&fifo_state->fence_queue, sequence);
+	}
+}
+
+bool vmw_fence_signaled(struct vmw_private *dev_priv,
+			uint32_t sequence)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct vmw_fifo_state *fifo_state;
 	bool ret;
 
+<<<<<<< HEAD
 	if (likely(dev_priv->last_read_seqno - seqno < VMW_FENCE_WRAP))
 		return true;
 
@@ -108,6 +150,26 @@ bool vmw_seqno_passed(struct vmw_private *dev_priv,
 	 */
 
 	ret = ((atomic_read(&dev_priv->marker_seq) - seqno)
+=======
+	if (likely(dev_priv->last_read_sequence - sequence < VMW_FENCE_WRAP))
+		return true;
+
+	fifo_state = &dev_priv->fifo;
+	vmw_update_sequence(dev_priv, fifo_state);
+	if (likely(dev_priv->last_read_sequence - sequence < VMW_FENCE_WRAP))
+		return true;
+
+	if (!(fifo_state->capabilities & SVGA_FIFO_CAP_FENCE) &&
+	    vmw_fifo_idle(dev_priv, sequence))
+		return true;
+
+	/**
+	 * Then check if the sequence is higher than what we've actually
+	 * emitted. Then the fence is stale and signaled.
+	 */
+
+	ret = ((atomic_read(&dev_priv->fence_seq) - sequence)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       > VMW_FENCE_WRAP);
 
 	return ret;
@@ -116,7 +178,11 @@ bool vmw_seqno_passed(struct vmw_private *dev_priv,
 int vmw_fallback_wait(struct vmw_private *dev_priv,
 		      bool lazy,
 		      bool fifo_idle,
+<<<<<<< HEAD
 		      uint32_t seqno,
+=======
+		      uint32_t sequence,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      bool interruptible,
 		      unsigned long timeout)
 {
@@ -130,7 +196,11 @@ int vmw_fallback_wait(struct vmw_private *dev_priv,
 	DEFINE_WAIT(__wait);
 
 	wait_condition = (fifo_idle) ? &vmw_fifo_idle :
+<<<<<<< HEAD
 		&vmw_seqno_passed;
+=======
+		&vmw_fence_signaled;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/**
 	 * Block command submission while waiting for idle.
@@ -138,14 +208,22 @@ int vmw_fallback_wait(struct vmw_private *dev_priv,
 
 	if (fifo_idle)
 		down_read(&fifo_state->rwsem);
+<<<<<<< HEAD
 	signal_seq = atomic_read(&dev_priv->marker_seq);
+=======
+	signal_seq = atomic_read(&dev_priv->fence_seq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = 0;
 
 	for (;;) {
 		prepare_to_wait(&dev_priv->fence_queue, &__wait,
 				(interruptible) ?
 				TASK_INTERRUPTIBLE : TASK_UNINTERRUPTIBLE);
+<<<<<<< HEAD
 		if (wait_condition(dev_priv, seqno))
+=======
+		if (wait_condition(dev_priv, sequence))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		if (time_after_eq(jiffies, end_jiffies)) {
 			DRM_ERROR("SVGA device lockup.\n");
@@ -182,6 +260,7 @@ int vmw_fallback_wait(struct vmw_private *dev_priv,
 	return ret;
 }
 
+<<<<<<< HEAD
 void vmw_seqno_waiter_add(struct vmw_private *dev_priv)
 {
 	mutex_lock(&dev_priv->hw_mutex);
@@ -254,11 +333,26 @@ int vmw_wait_seqno(struct vmw_private *dev_priv,
 		return 0;
 
 	if (likely(vmw_seqno_passed(dev_priv, seqno)))
+=======
+int vmw_wait_fence(struct vmw_private *dev_priv,
+		   bool lazy, uint32_t sequence,
+		   bool interruptible, unsigned long timeout)
+{
+	long ret;
+	unsigned long irq_flags;
+	struct vmw_fifo_state *fifo = &dev_priv->fifo;
+
+	if (likely(dev_priv->last_read_sequence - sequence < VMW_FENCE_WRAP))
+		return 0;
+
+	if (likely(vmw_fence_signaled(dev_priv, sequence)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	vmw_fifo_ping_host(dev_priv, SVGA_SYNC_GENERIC);
 
 	if (!(fifo->capabilities & SVGA_FIFO_CAP_FENCE))
+<<<<<<< HEAD
 		return vmw_fallback_wait(dev_priv, lazy, true, seqno,
 					 interruptible, timeout);
 
@@ -267,25 +361,68 @@ int vmw_wait_seqno(struct vmw_private *dev_priv,
 					 interruptible, timeout);
 
 	vmw_seqno_waiter_add(dev_priv);
+=======
+		return vmw_fallback_wait(dev_priv, lazy, true, sequence,
+					 interruptible, timeout);
+
+	if (!(dev_priv->capabilities & SVGA_CAP_IRQMASK))
+		return vmw_fallback_wait(dev_priv, lazy, false, sequence,
+					 interruptible, timeout);
+
+	mutex_lock(&dev_priv->hw_mutex);
+	if (atomic_add_return(1, &dev_priv->fence_queue_waiters) > 0) {
+		spin_lock_irqsave(&dev_priv->irq_lock, irq_flags);
+		outl(SVGA_IRQFLAG_ANY_FENCE,
+		     dev_priv->io_start + VMWGFX_IRQSTATUS_PORT);
+		vmw_write(dev_priv, SVGA_REG_IRQMASK,
+			  vmw_read(dev_priv, SVGA_REG_IRQMASK) |
+			  SVGA_IRQFLAG_ANY_FENCE);
+		spin_unlock_irqrestore(&dev_priv->irq_lock, irq_flags);
+	}
+	mutex_unlock(&dev_priv->hw_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (interruptible)
 		ret = wait_event_interruptible_timeout
 		    (dev_priv->fence_queue,
+<<<<<<< HEAD
 		     vmw_seqno_passed(dev_priv, seqno),
+=======
+		     vmw_fence_signaled(dev_priv, sequence),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     timeout);
 	else
 		ret = wait_event_timeout
 		    (dev_priv->fence_queue,
+<<<<<<< HEAD
 		     vmw_seqno_passed(dev_priv, seqno),
 		     timeout);
 
 	vmw_seqno_waiter_remove(dev_priv);
 
+=======
+		     vmw_fence_signaled(dev_priv, sequence),
+		     timeout);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(ret == 0))
 		ret = -EBUSY;
 	else if (likely(ret > 0))
 		ret = 0;
 
+<<<<<<< HEAD
+=======
+	mutex_lock(&dev_priv->hw_mutex);
+	if (atomic_dec_and_test(&dev_priv->fence_queue_waiters)) {
+		spin_lock_irqsave(&dev_priv->irq_lock, irq_flags);
+		vmw_write(dev_priv, SVGA_REG_IRQMASK,
+			  vmw_read(dev_priv, SVGA_REG_IRQMASK) &
+			  ~SVGA_IRQFLAG_ANY_FENCE);
+		spin_unlock_irqrestore(&dev_priv->irq_lock, irq_flags);
+	}
+	mutex_unlock(&dev_priv->hw_mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -322,3 +459,28 @@ void vmw_irq_uninstall(struct drm_device *dev)
 	status = inl(dev_priv->io_start + VMWGFX_IRQSTATUS_PORT);
 	outl(status, dev_priv->io_start + VMWGFX_IRQSTATUS_PORT);
 }
+<<<<<<< HEAD
+=======
+
+#define VMW_FENCE_WAIT_TIMEOUT 3*HZ;
+
+int vmw_fence_wait_ioctl(struct drm_device *dev, void *data,
+			 struct drm_file *file_priv)
+{
+	struct drm_vmw_fence_wait_arg *arg =
+	    (struct drm_vmw_fence_wait_arg *)data;
+	unsigned long timeout;
+
+	if (!arg->cookie_valid) {
+		arg->cookie_valid = 1;
+		arg->kernel_cookie = jiffies + VMW_FENCE_WAIT_TIMEOUT;
+	}
+
+	timeout = jiffies;
+	if (time_after_eq(timeout, (unsigned long)arg->kernel_cookie))
+		return -EBUSY;
+
+	timeout = (unsigned long)arg->kernel_cookie - timeout;
+	return vmw_wait_fence(vmw_priv(dev), true, arg->sequence, true, timeout);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

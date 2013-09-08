@@ -46,8 +46,34 @@ static int afeb9260_hw_params(struct snd_pcm_substream *substream,
 {
 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+<<<<<<< HEAD
 	int err;
 
+=======
+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+	int err;
+
+	/* Set codec DAI configuration */
+	err = snd_soc_dai_set_fmt(codec_dai,
+				  SND_SOC_DAIFMT_I2S|
+				  SND_SOC_DAIFMT_NB_IF |
+				  SND_SOC_DAIFMT_CBM_CFM);
+	if (err < 0) {
+		printk(KERN_ERR "can't set codec DAI configuration\n");
+		return err;
+	}
+
+	/* Set cpu DAI configuration */
+	err = snd_soc_dai_set_fmt(cpu_dai,
+				  SND_SOC_DAIFMT_I2S |
+				  SND_SOC_DAIFMT_NB_IF |
+				  SND_SOC_DAIFMT_CBM_CFM);
+	if (err < 0) {
+		printk(KERN_ERR "can't set cpu DAI configuration\n");
+		return err;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Set the codec system clock for DAC and ADC */
 	err =
 	    snd_soc_dai_set_sysclk(codec_dai, 0, CODEC_CLOCK, SND_SOC_CLOCK_IN);
@@ -70,7 +96,11 @@ static const struct snd_soc_dapm_widget tlv320aic23_dapm_widgets[] = {
 	SND_SOC_DAPM_MIC("Mic Jack", NULL),
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dapm_route afeb9260_audio_map[] = {
+=======
+static const struct snd_soc_dapm_route audio_map[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{"Headphone Jack", NULL, "LHPOUT"},
 	{"Headphone Jack", NULL, "RHPOUT"},
 
@@ -85,10 +115,25 @@ static int afeb9260_tlv320aic23_init(struct snd_soc_pcm_runtime *rtd)
 	struct snd_soc_codec *codec = rtd->codec;
 	struct snd_soc_dapm_context *dapm = &codec->dapm;
 
+<<<<<<< HEAD
+=======
+	/* Add afeb9260 specific widgets */
+	snd_soc_dapm_new_controls(dapm, tlv320aic23_dapm_widgets,
+				  ARRAY_SIZE(tlv320aic23_dapm_widgets));
+
+	/* Set up afeb9260 specific audio path audio_map */
+	snd_soc_dapm_add_routes(dapm, audio_map, ARRAY_SIZE(audio_map));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_soc_dapm_enable_pin(dapm, "Headphone Jack");
 	snd_soc_dapm_enable_pin(dapm, "Line In");
 	snd_soc_dapm_enable_pin(dapm, "Mic Jack");
 
+<<<<<<< HEAD
+=======
+	snd_soc_dapm_sync(dapm);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -101,14 +146,18 @@ static struct snd_soc_dai_link afeb9260_dai = {
 	.platform_name = "atmel_pcm-audio",
 	.codec_name = "tlv320aic23-codec.0-001a",
 	.init = afeb9260_tlv320aic23_init,
+<<<<<<< HEAD
 	.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_IF |
 		   SND_SOC_DAIFMT_CBM_CFM,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ops = &afeb9260_ops,
 };
 
 /* Audio machine driver */
 static struct snd_soc_card snd_soc_machine_afeb9260 = {
 	.name = "AFEB9260",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
 	.dai_link = &afeb9260_dai,
 	.num_links = 1,
@@ -117,6 +166,10 @@ static struct snd_soc_card snd_soc_machine_afeb9260 = {
 	.num_dapm_widgets = ARRAY_SIZE(tlv320aic23_dapm_widgets),
 	.dapm_routes = afeb9260_audio_map,
 	.num_dapm_routes = ARRAY_SIZE(afeb9260_audio_map),
+=======
+	.dai_link = &afeb9260_dai,
+	.num_links = 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device *afeb9260_snd_device;

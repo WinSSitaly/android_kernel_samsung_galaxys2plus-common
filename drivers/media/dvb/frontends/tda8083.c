@@ -315,6 +315,7 @@ static int tda8083_read_ucblocks(struct dvb_frontend* fe, u32* ucblocks)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int tda8083_set_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
@@ -322,12 +323,25 @@ static int tda8083_set_frontend(struct dvb_frontend *fe)
 
 	if (fe->ops.tuner_ops.set_params) {
 		fe->ops.tuner_ops.set_params(fe);
+=======
+static int tda8083_set_frontend(struct dvb_frontend* fe, struct dvb_frontend_parameters *p)
+{
+	struct tda8083_state* state = fe->demodulator_priv;
+
+	if (fe->ops.tuner_ops.set_params) {
+		fe->ops.tuner_ops.set_params(fe, p);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (fe->ops.i2c_gate_ctrl) fe->ops.i2c_gate_ctrl(fe, 0);
 	}
 
 	tda8083_set_inversion (state, p->inversion);
+<<<<<<< HEAD
 	tda8083_set_fec(state, p->fec_inner);
 	tda8083_set_symbolrate(state, p->symbol_rate);
+=======
+	tda8083_set_fec (state, p->u.qpsk.fec_inner);
+	tda8083_set_symbolrate (state, p->u.qpsk.symbol_rate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tda8083_writereg (state, 0x00, 0x3c);
 	tda8083_writereg (state, 0x00, 0x04);
@@ -335,17 +349,27 @@ static int tda8083_set_frontend(struct dvb_frontend *fe)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int tda8083_get_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int tda8083_get_frontend(struct dvb_frontend* fe, struct dvb_frontend_parameters *p)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct tda8083_state* state = fe->demodulator_priv;
 
 	/*  FIXME: get symbolrate & frequency offset...*/
 	/*p->frequency = ???;*/
 	p->inversion = (tda8083_readreg (state, 0x0e) & 0x80) ?
 			INVERSION_ON : INVERSION_OFF;
+<<<<<<< HEAD
 	p->fec_inner = tda8083_get_fec(state);
 	/*p->symbol_rate = tda8083_get_symbolrate (state);*/
+=======
+	p->u.qpsk.fec_inner = tda8083_get_fec (state);
+	/*p->u.qpsk.symbol_rate = tda8083_get_symbolrate (state);*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -440,9 +464,16 @@ error:
 }
 
 static struct dvb_frontend_ops tda8083_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_DVBS },
 	.info = {
 		.name			= "Philips TDA8083 DVB-S",
+=======
+
+	.info = {
+		.name			= "Philips TDA8083 DVB-S",
+		.type			= FE_QPSK,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min		= 920000,     /* TDA8060 */
 		.frequency_max		= 2200000,    /* TDA8060 */
 		.frequency_stepsize	= 125,   /* kHz for QPSK frontends */

@@ -227,8 +227,11 @@ static ssize_t zfcp_sysfs_port_rescan_store(struct device *dev,
 static ZFCP_DEV_ATTR(adapter, port_rescan, S_IWUSR, NULL,
 		     zfcp_sysfs_port_rescan_store);
 
+<<<<<<< HEAD
 DEFINE_MUTEX(zfcp_sysfs_port_units_mutex);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t zfcp_sysfs_port_remove_store(struct device *dev,
 					    struct device_attribute *attr,
 					    const char *buf, size_t count)
@@ -251,6 +254,7 @@ static ssize_t zfcp_sysfs_port_remove_store(struct device *dev,
 	else
 		retval = 0;
 
+<<<<<<< HEAD
 	mutex_lock(&zfcp_sysfs_port_units_mutex);
 	if (atomic_read(&port->units) > 0) {
 		retval = -EBUSY;
@@ -261,6 +265,8 @@ static ssize_t zfcp_sysfs_port_remove_store(struct device *dev,
 	atomic_set(&port->units, -1);
 	mutex_unlock(&zfcp_sysfs_port_units_mutex);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	write_lock_irq(&adapter->port_list_lock);
 	list_del(&port->list);
 	write_unlock_irq(&adapter->port_list_lock);
@@ -301,14 +307,22 @@ static ssize_t zfcp_sysfs_unit_add_store(struct device *dev,
 {
 	struct zfcp_port *port = container_of(dev, struct zfcp_port, dev);
 	u64 fcp_lun;
+<<<<<<< HEAD
 	int retval;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (strict_strtoull(buf, 0, (unsigned long long *) &fcp_lun))
 		return -EINVAL;
 
+<<<<<<< HEAD
 	retval = zfcp_unit_add(port, fcp_lun);
 	if (retval)
 		return retval;
+=======
+	if (zfcp_unit_add(port, fcp_lun))
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return count;
 }

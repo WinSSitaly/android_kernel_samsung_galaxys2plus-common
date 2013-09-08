@@ -42,7 +42,10 @@
 #include <linux/delay.h>
 #include <linux/clk.h>
 #include <linux/cpufreq.h>
+<<<<<<< HEAD
 #include <linux/of.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/irq.h>
 
@@ -50,7 +53,10 @@
 #include <mach/map.h>
 
 #include <plat/regs-serial.h>
+<<<<<<< HEAD
 #include <plat/clock.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "samsung.h"
 
@@ -85,6 +91,7 @@ static int s3c24xx_serial_txempty_nofifo(struct uart_port *port)
 	return (rd_regl(port, S3C2410_UTRSTAT) & S3C2410_UTRSTAT_TXE);
 }
 
+<<<<<<< HEAD
 /*
  * s3c64xx and later SoC's include the interrupt mask and status registers in
  * the controller itself, unlike the s3c24xx SoC's which have these registers
@@ -95,6 +102,8 @@ static int s3c24xx_serial_has_interrupt_mask(struct uart_port *port)
 	return to_ourport(port)->info->type == PORT_S3C6400;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void s3c24xx_serial_rx_enable(struct uart_port *port)
 {
 	unsigned long flags;
@@ -138,11 +147,15 @@ static void s3c24xx_serial_stop_tx(struct uart_port *port)
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
 
 	if (tx_enabled(port)) {
+<<<<<<< HEAD
 		if (s3c24xx_serial_has_interrupt_mask(port))
 			__set_bit(S3C64XX_UINTM_TXD,
 				portaddrl(port, S3C64XX_UINTM));
 		else
 			disable_irq_nosync(ourport->tx_irq);
+=======
+		disable_irq_nosync(ourport->tx_irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tx_enabled(port) = 0;
 		if (port->flags & UPF_CONS_FLOW)
 			s3c24xx_serial_rx_enable(port);
@@ -157,26 +170,38 @@ static void s3c24xx_serial_start_tx(struct uart_port *port)
 		if (port->flags & UPF_CONS_FLOW)
 			s3c24xx_serial_rx_disable(port);
 
+<<<<<<< HEAD
 		if (s3c24xx_serial_has_interrupt_mask(port))
 			__clear_bit(S3C64XX_UINTM_TXD,
 				portaddrl(port, S3C64XX_UINTM));
 		else
 			enable_irq(ourport->tx_irq);
+=======
+		enable_irq(ourport->tx_irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tx_enabled(port) = 1;
 	}
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void s3c24xx_serial_stop_rx(struct uart_port *port)
 {
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
 
 	if (rx_enabled(port)) {
 		dbg("s3c24xx_serial_stop_rx: port=%p\n", port);
+<<<<<<< HEAD
 		if (s3c24xx_serial_has_interrupt_mask(port))
 			__set_bit(S3C64XX_UINTM_RXD,
 				portaddrl(port, S3C64XX_UINTM));
 		else
 			disable_irq_nosync(ourport->rx_irq);
+=======
+		disable_irq_nosync(ourport->rx_irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rx_enabled(port) = 0;
 	}
 }
@@ -192,6 +217,7 @@ static inline struct s3c24xx_uart_info *s3c24xx_port_to_info(struct uart_port *p
 
 static inline struct s3c2410_uartcfg *s3c24xx_port_to_cfg(struct uart_port *port)
 {
+<<<<<<< HEAD
 	struct s3c24xx_uart_port *ourport;
 
 	if (port->dev == NULL)
@@ -199,6 +225,12 @@ static inline struct s3c2410_uartcfg *s3c24xx_port_to_cfg(struct uart_port *port
 
 	ourport = container_of(port, struct s3c24xx_uart_port, port);
 	return ourport->cfg;
+=======
+	if (port->dev == NULL)
+		return NULL;
+
+	return (struct s3c2410_uartcfg *)port->dev->platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int s3c24xx_serial_rx_fifocnt(struct s3c24xx_uart_port *ourport,
@@ -207,7 +239,11 @@ static int s3c24xx_serial_rx_fifocnt(struct s3c24xx_uart_port *ourport,
 	struct s3c24xx_uart_info *info = ourport->info;
 
 	if (ufstat & info->rx_fifofull)
+<<<<<<< HEAD
 		return ourport->port.fifosize;
+=======
+		return info->fifosize;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return (ufstat & info->rx_fifomask) >> info->rx_fifoshift;
 }
@@ -346,6 +382,7 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
 /* interrupt handler for s3c64xx and later SoC's.*/
 static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
 {
@@ -368,6 +405,8 @@ static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned int s3c24xx_serial_tx_empty(struct uart_port *port)
 {
 	struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
@@ -425,13 +464,18 @@ static void s3c24xx_serial_shutdown(struct uart_port *port)
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
 
 	if (ourport->tx_claimed) {
+<<<<<<< HEAD
 		if (!s3c24xx_serial_has_interrupt_mask(port))
 			free_irq(ourport->tx_irq, ourport);
+=======
+		free_irq(ourport->tx_irq, ourport);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tx_enabled(port) = 0;
 		ourport->tx_claimed = 0;
 	}
 
 	if (ourport->rx_claimed) {
+<<<<<<< HEAD
 		if (!s3c24xx_serial_has_interrupt_mask(port))
 			free_irq(ourport->rx_irq, ourport);
 		ourport->rx_claimed = 0;
@@ -445,6 +489,15 @@ static void s3c24xx_serial_shutdown(struct uart_port *port)
 	}
 }
 
+=======
+		free_irq(ourport->rx_irq, ourport);
+		ourport->rx_claimed = 0;
+		rx_enabled(port) = 0;
+	}
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int s3c24xx_serial_startup(struct uart_port *port)
 {
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
@@ -491,6 +544,7 @@ static int s3c24xx_serial_startup(struct uart_port *port)
 	return ret;
 }
 
+<<<<<<< HEAD
 static int s3c64xx_serial_startup(struct uart_port *port)
 {
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
@@ -518,6 +572,8 @@ static int s3c64xx_serial_startup(struct uart_port *port)
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* power power management control */
 
 static void s3c24xx_serial_pm(struct uart_port *port, unsigned int level,
@@ -560,6 +616,7 @@ static void s3c24xx_serial_pm(struct uart_port *port, unsigned int level,
  *
 */
 
+<<<<<<< HEAD
 #define MAX_CLK_NAME_LENGTH 15
 
 static inline int s3c24xx_serial_getsource(struct uart_port *port)
@@ -652,6 +709,156 @@ static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
 	}
 
 	return best_quot;
+=======
+
+#define MAX_CLKS (8)
+
+static struct s3c24xx_uart_clksrc tmp_clksrc = {
+	.name		= "pclk",
+	.min_baud	= 0,
+	.max_baud	= 0,
+	.divisor	= 1,
+};
+
+static inline int
+s3c24xx_serial_getsource(struct uart_port *port, struct s3c24xx_uart_clksrc *c)
+{
+	struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
+
+	return (info->get_clksrc)(port, c);
+}
+
+static inline int
+s3c24xx_serial_setsource(struct uart_port *port, struct s3c24xx_uart_clksrc *c)
+{
+	struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
+
+	return (info->set_clksrc)(port, c);
+}
+
+struct baud_calc {
+	struct s3c24xx_uart_clksrc	*clksrc;
+	unsigned int			 calc;
+	unsigned int			 divslot;
+	unsigned int			 quot;
+	struct clk			*src;
+};
+
+static int s3c24xx_serial_calcbaud(struct baud_calc *calc,
+				   struct uart_port *port,
+				   struct s3c24xx_uart_clksrc *clksrc,
+				   unsigned int baud)
+{
+	struct s3c24xx_uart_port *ourport = to_ourport(port);
+	unsigned long rate;
+
+	calc->src = clk_get(port->dev, clksrc->name);
+	if (calc->src == NULL || IS_ERR(calc->src))
+		return 0;
+
+	rate = clk_get_rate(calc->src);
+	rate /= clksrc->divisor;
+
+	calc->clksrc = clksrc;
+
+	if (ourport->info->has_divslot) {
+		unsigned long div = rate / baud;
+
+		/* The UDIVSLOT register on the newer UARTs allows us to
+		 * get a divisor adjustment of 1/16th on the baud clock.
+		 *
+		 * We don't keep the UDIVSLOT value (the 16ths we calculated
+		 * by not multiplying the baud by 16) as it is easy enough
+		 * to recalculate.
+		 */
+
+		calc->quot = div / 16;
+		calc->calc = rate / div;
+	} else {
+		calc->quot = (rate + (8 * baud)) / (16 * baud);
+		calc->calc = (rate / (calc->quot * 16));
+	}
+
+	calc->quot--;
+	return 1;
+}
+
+static unsigned int s3c24xx_serial_getclk(struct uart_port *port,
+					  struct s3c24xx_uart_clksrc **clksrc,
+					  struct clk **clk,
+					  unsigned int baud)
+{
+	struct s3c2410_uartcfg *cfg = s3c24xx_port_to_cfg(port);
+	struct s3c24xx_uart_clksrc *clkp;
+	struct baud_calc res[MAX_CLKS];
+	struct baud_calc *resptr, *best, *sptr;
+	int i;
+
+	clkp = cfg->clocks;
+	best = NULL;
+
+	if (cfg->clocks_size < 2) {
+		if (cfg->clocks_size == 0)
+			clkp = &tmp_clksrc;
+
+		/* check to see if we're sourcing fclk, and if so we're
+		 * going to have to update the clock source
+		 */
+
+		if (strcmp(clkp->name, "fclk") == 0) {
+			struct s3c24xx_uart_clksrc src;
+
+			s3c24xx_serial_getsource(port, &src);
+
+			/* check that the port already using fclk, and if
+			 * not, then re-select fclk
+			 */
+
+			if (strcmp(src.name, clkp->name) == 0) {
+				s3c24xx_serial_setsource(port, clkp);
+				s3c24xx_serial_getsource(port, &src);
+			}
+
+			clkp->divisor = src.divisor;
+		}
+
+		s3c24xx_serial_calcbaud(res, port, clkp, baud);
+		best = res;
+		resptr = best + 1;
+	} else {
+		resptr = res;
+
+		for (i = 0; i < cfg->clocks_size; i++, clkp++) {
+			if (s3c24xx_serial_calcbaud(resptr, port, clkp, baud))
+				resptr++;
+		}
+	}
+
+	/* ok, we now need to select the best clock we found */
+
+	if (!best) {
+		unsigned int deviation = (1<<30)|((1<<30)-1);
+		int calc_deviation;
+
+		for (sptr = res; sptr < resptr; sptr++) {
+			calc_deviation = baud - sptr->calc;
+			if (calc_deviation < 0)
+				calc_deviation = -calc_deviation;
+
+			if (calc_deviation < deviation) {
+				best = sptr;
+				deviation = calc_deviation;
+			}
+		}
+	}
+
+	/* store results to pass back */
+
+	*clksrc = best->clksrc;
+	*clk    = best->src;
+
+	return best->quot;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* udivslot_table[]
@@ -684,9 +891,16 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
 {
 	struct s3c2410_uartcfg *cfg = s3c24xx_port_to_cfg(port);
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
+<<<<<<< HEAD
 	struct clk *clk = NULL;
 	unsigned long flags;
 	unsigned int baud, quot, clk_sel = 0;
+=======
+	struct s3c24xx_uart_clksrc *clksrc = NULL;
+	struct clk *clk = NULL;
+	unsigned long flags;
+	unsigned int baud, quot;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int ulcon;
 	unsigned int umcon;
 	unsigned int udivslot = 0;
@@ -702,6 +916,7 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
 	 */
 
 	baud = uart_get_baud_rate(port, termios, old, 0, 115200*8);
+<<<<<<< HEAD
 	quot = s3c24xx_serial_getclk(ourport, baud, &clk, &clk_sel);
 	if (baud == 38400 && (port->flags & UPF_SPD_MASK) == UPF_SPD_CUST)
 		quot = port->custom_divisor;
@@ -712,6 +927,19 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
 
 	if (ourport->baudclk != clk) {
 		s3c24xx_serial_setsource(port, clk_sel);
+=======
+
+	if (baud == 38400 && (port->flags & UPF_SPD_MASK) == UPF_SPD_CUST)
+		quot = port->custom_divisor;
+	else
+		quot = s3c24xx_serial_getclk(port, &clksrc, &clk, baud);
+
+	/* check to see if we need  to change clock source */
+
+	if (ourport->clksrc != clksrc || ourport->baudclk != clk) {
+		dbg("selecting clock %p\n", clk);
+		s3c24xx_serial_setsource(port, clksrc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (ourport->baudclk != NULL && !IS_ERR(ourport->baudclk)) {
 			clk_disable(ourport->baudclk);
@@ -720,6 +948,10 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
 
 		clk_enable(clk);
 
+<<<<<<< HEAD
+=======
+		ourport->clksrc = clksrc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ourport->baudclk = clk;
 		ourport->baudclk_rate = clk ? clk_get_rate(clk) : 0;
 	}
@@ -902,6 +1134,10 @@ static struct uart_ops s3c24xx_serial_ops = {
 	.verify_port	= s3c24xx_serial_verify_port,
 };
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct uart_driver s3c24xx_uart_drv = {
 	.owner		= THIS_MODULE,
 	.driver_name	= "s3c2410_serial",
@@ -917,6 +1153,10 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
 		.port = {
 			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[0].port.lock),
 			.iotype		= UPIO_MEM,
+<<<<<<< HEAD
+=======
+			.irq		= IRQ_S3CUART_RX0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.uartclk	= 0,
 			.fifosize	= 16,
 			.ops		= &s3c24xx_serial_ops,
@@ -928,6 +1168,10 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
 		.port = {
 			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[1].port.lock),
 			.iotype		= UPIO_MEM,
+<<<<<<< HEAD
+=======
+			.irq		= IRQ_S3CUART_RX1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.uartclk	= 0,
 			.fifosize	= 16,
 			.ops		= &s3c24xx_serial_ops,
@@ -941,6 +1185,10 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
 		.port = {
 			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[2].port.lock),
 			.iotype		= UPIO_MEM,
+<<<<<<< HEAD
+=======
+			.irq		= IRQ_S3CUART_RX2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.uartclk	= 0,
 			.fifosize	= 16,
 			.ops		= &s3c24xx_serial_ops,
@@ -954,6 +1202,10 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
 		.port = {
 			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[3].port.lock),
 			.iotype		= UPIO_MEM,
+<<<<<<< HEAD
+=======
+			.irq		= IRQ_S3CUART_RX3,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.uartclk	= 0,
 			.fifosize	= 16,
 			.ops		= &s3c24xx_serial_ops,
@@ -966,6 +1218,7 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
 
 /* s3c24xx_serial_resetport
  *
+<<<<<<< HEAD
  * reset the fifos and other the settings.
 */
 
@@ -990,6 +1243,18 @@ static void s3c24xx_serial_resetport(struct uart_port *port,
 
 	/* some delay is required after fifo reset */
 	udelay(1);
+=======
+ * wrapper to call the specific reset for this port (reset the fifos
+ * and the settings)
+*/
+
+static inline int s3c24xx_serial_resetport(struct uart_port *port,
+					   struct s3c2410_uartcfg *cfg)
+{
+	struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
+
+	return (info->reset_port)(port, cfg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -1081,10 +1346,18 @@ static inline void s3c24xx_serial_cpufreq_deregister(struct s3c24xx_uart_port *p
  */
 
 static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
+<<<<<<< HEAD
 				    struct platform_device *platdev)
 {
 	struct uart_port *port = &ourport->port;
 	struct s3c2410_uartcfg *cfg = ourport->cfg;
+=======
+				    struct s3c24xx_uart_info *info,
+				    struct platform_device *platdev)
+{
+	struct uart_port *port = &ourport->port;
+	struct s3c2410_uartcfg *cfg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct resource *res;
 	int ret;
 
@@ -1093,6 +1366,7 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
 	if (platdev == NULL)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	if (port->mapbase != 0)
 		return 0;
 
@@ -1102,6 +1376,27 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
 	/* Startup sequence is different for s3c64xx and higher SoC's */
 	if (s3c24xx_serial_has_interrupt_mask(port))
 		s3c24xx_serial_ops.startup = s3c64xx_serial_startup;
+=======
+	cfg = s3c24xx_dev_to_cfg(&platdev->dev);
+
+	if (port->mapbase != 0)
+		return 0;
+
+	if (cfg->hwport > CONFIG_SERIAL_SAMSUNG_UARTS) {
+		printk(KERN_ERR "%s: port %d bigger than %d\n", __func__,
+		       cfg->hwport, CONFIG_SERIAL_SAMSUNG_UARTS);
+		return -ERANGE;
+	}
+
+	/* setup info for port */
+	port->dev	= &platdev->dev;
+	ourport->info	= info;
+
+	/* copy the info in from provided structure */
+	ourport->port.fifosize = info->fifosize;
+
+	dbg("s3c24xx_serial_init_port: %p (hw %d)...\n", port, cfg->hwport);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	port->uartclk = 1;
 
@@ -1137,6 +1432,7 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
 
 	ourport->clk	= clk_get(&platdev->dev, "uart");
 
+<<<<<<< HEAD
 	/* Keep all interrupts masked and cleared */
 	if (s3c24xx_serial_has_interrupt_mask(port)) {
 		wr_regl(port, S3C64XX_UINTM, 0xf);
@@ -1144,6 +1440,8 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
 		wr_regl(port, S3C64XX_UINTSP, 0xf);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dbg("port: map=%08x, mem=%08x, irq=%d (%d,%d), clock=%ld\n",
 	    port->mapbase, port->membase, port->irq,
 	    ourport->rx_irq, ourport->tx_irq, port->uartclk);
@@ -1160,11 +1458,16 @@ static ssize_t s3c24xx_serial_show_clksrc(struct device *dev,
 	struct uart_port *port = s3c24xx_dev_to_port(dev);
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
 
+<<<<<<< HEAD
 	return snprintf(buf, PAGE_SIZE, "* %s\n", ourport->baudclk->name);
+=======
+	return snprintf(buf, PAGE_SIZE, "* %s\n", ourport->clksrc->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static DEVICE_ATTR(clock_source, S_IRUGO, s3c24xx_serial_show_clksrc, NULL);
 
+<<<<<<< HEAD
 
 /* Device driver serial port probe */
 
@@ -1186,10 +1489,19 @@ static inline struct s3c24xx_serial_drv_data *s3c24xx_get_driver_data(
 }
 
 static int s3c24xx_serial_probe(struct platform_device *pdev)
+=======
+/* Device driver serial port probe */
+
+static int probe_index;
+
+int s3c24xx_serial_probe(struct platform_device *dev,
+			 struct s3c24xx_uart_info *info)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct s3c24xx_uart_port *ourport;
 	int ret;
 
+<<<<<<< HEAD
 	dbg("s3c24xx_serial_probe(%p) %d\n", pdev, probe_index);
 
 	ourport = &s3c24xx_serial_ports[probe_index];
@@ -1209,16 +1521,26 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
 		ourport->info->fifosize :
 		ourport->drv_data->fifosize[probe_index];
 
+=======
+	dbg("s3c24xx_serial_probe(%p, %p) %d\n", dev, info, probe_index);
+
+	ourport = &s3c24xx_serial_ports[probe_index];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	probe_index++;
 
 	dbg("%s: initialising port %p...\n", __func__, ourport);
 
+<<<<<<< HEAD
 	ret = s3c24xx_serial_init_port(ourport, pdev);
+=======
+	ret = s3c24xx_serial_init_port(ourport, info, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		goto probe_err;
 
 	dbg("%s: adding port\n", __func__);
 	uart_add_one_port(&s3c24xx_uart_drv, &ourport->port);
+<<<<<<< HEAD
 	platform_set_drvdata(pdev, &ourport->port);
 
 	ret = device_create_file(&pdev->dev, &dev_attr_clock_source);
@@ -1228,6 +1550,17 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
 	ret = s3c24xx_serial_cpufreq_register(ourport);
 	if (ret < 0)
 		dev_err(&pdev->dev, "failed to add cpufreq notifier\n");
+=======
+	platform_set_drvdata(dev, &ourport->port);
+
+	ret = device_create_file(&dev->dev, &dev_attr_clock_source);
+	if (ret < 0)
+		printk(KERN_ERR "%s: failed to add clksrc attr.\n", __func__);
+
+	ret = s3c24xx_serial_cpufreq_register(ourport);
+	if (ret < 0)
+		dev_err(&dev->dev, "failed to add cpufreq notifier\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
@@ -1235,7 +1568,13 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
 	return ret;
 }
 
+<<<<<<< HEAD
 static int __devexit s3c24xx_serial_remove(struct platform_device *dev)
+=======
+EXPORT_SYMBOL_GPL(s3c24xx_serial_probe);
+
+int __devexit s3c24xx_serial_remove(struct platform_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct uart_port *port = s3c24xx_dev_to_port(&dev->dev);
 
@@ -1248,11 +1587,23 @@ static int __devexit s3c24xx_serial_remove(struct platform_device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 /* UART power management code */
 #ifdef CONFIG_PM_SLEEP
 static int s3c24xx_serial_suspend(struct device *dev)
 {
 	struct uart_port *port = s3c24xx_dev_to_port(dev);
+=======
+EXPORT_SYMBOL_GPL(s3c24xx_serial_remove);
+
+/* UART power management code */
+
+#ifdef CONFIG_PM
+
+static int s3c24xx_serial_suspend(struct platform_device *dev, pm_message_t state)
+{
+	struct uart_port *port = s3c24xx_dev_to_port(&dev->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (port)
 		uart_suspend_port(&s3c24xx_uart_drv, port);
@@ -1260,9 +1611,15 @@ static int s3c24xx_serial_suspend(struct device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int s3c24xx_serial_resume(struct device *dev)
 {
 	struct uart_port *port = s3c24xx_dev_to_port(dev);
+=======
+static int s3c24xx_serial_resume(struct platform_device *dev)
+{
+	struct uart_port *port = s3c24xx_dev_to_port(&dev->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
 
 	if (port) {
@@ -1275,6 +1632,7 @@ static int s3c24xx_serial_resume(struct device *dev)
 
 	return 0;
 }
+<<<<<<< HEAD
 
 static const struct dev_pm_ops s3c24xx_serial_pm_ops = {
 	.suspend = s3c24xx_serial_suspend,
@@ -1286,6 +1644,47 @@ static const struct dev_pm_ops s3c24xx_serial_pm_ops = {
 
 #define SERIAL_SAMSUNG_PM_OPS	NULL
 #endif /* CONFIG_PM_SLEEP */
+=======
+#endif
+
+int s3c24xx_serial_init(struct platform_driver *drv,
+			struct s3c24xx_uart_info *info)
+{
+	dbg("s3c24xx_serial_init(%p,%p)\n", drv, info);
+
+#ifdef CONFIG_PM
+	drv->suspend = s3c24xx_serial_suspend;
+	drv->resume = s3c24xx_serial_resume;
+#endif
+
+	return platform_driver_register(drv);
+}
+
+EXPORT_SYMBOL_GPL(s3c24xx_serial_init);
+
+/* module initialisation code */
+
+static int __init s3c24xx_serial_modinit(void)
+{
+	int ret;
+
+	ret = uart_register_driver(&s3c24xx_uart_drv);
+	if (ret < 0) {
+		printk(KERN_ERR "failed to register UART driver\n");
+		return -1;
+	}
+
+	return 0;
+}
+
+static void __exit s3c24xx_serial_modexit(void)
+{
+	uart_unregister_driver(&s3c24xx_uart_drv);
+}
+
+module_init(s3c24xx_serial_modinit);
+module_exit(s3c24xx_serial_modexit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Console code */
 
@@ -1332,13 +1731,20 @@ static void __init
 s3c24xx_serial_get_options(struct uart_port *port, int *baud,
 			   int *parity, int *bits)
 {
+<<<<<<< HEAD
+=======
+	struct s3c24xx_uart_clksrc clksrc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct clk *clk;
 	unsigned int ulcon;
 	unsigned int ucon;
 	unsigned int ubrdiv;
 	unsigned long rate;
+<<<<<<< HEAD
 	unsigned int clk_sel;
 	char clk_name[MAX_CLK_NAME_LENGTH];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ulcon  = rd_regl(port, S3C2410_ULCON);
 	ucon   = rd_regl(port, S3C2410_UCON);
@@ -1383,6 +1789,7 @@ s3c24xx_serial_get_options(struct uart_port *port, int *baud,
 
 		/* now calculate the baud rate */
 
+<<<<<<< HEAD
 		clk_sel = s3c24xx_serial_getsource(port);
 		sprintf(clk_name, "clk_uart_baud%d", clk_sel);
 
@@ -1392,12 +1799,49 @@ s3c24xx_serial_get_options(struct uart_port *port, int *baud,
 		else
 			rate = 1;
 
+=======
+		s3c24xx_serial_getsource(port, &clksrc);
+
+		clk = clk_get(port->dev, clksrc.name);
+		if (!IS_ERR(clk) && clk != NULL)
+			rate = clk_get_rate(clk) / clksrc.divisor;
+		else
+			rate = 1;
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*baud = rate / (16 * (ubrdiv + 1));
 		dbg("calculated baud %d\n", *baud);
 	}
 
 }
 
+<<<<<<< HEAD
+=======
+/* s3c24xx_serial_init_ports
+ *
+ * initialise the serial ports from the machine provided initialisation
+ * data.
+*/
+
+static int s3c24xx_serial_init_ports(struct s3c24xx_uart_info **info)
+{
+	struct s3c24xx_uart_port *ptr = s3c24xx_serial_ports;
+	struct platform_device **platdev_ptr;
+	int i;
+
+	dbg("s3c24xx_serial_init_ports: initialising ports...\n");
+
+	platdev_ptr = s3c24xx_uart_devs;
+
+	for (i = 0; i < CONFIG_SERIAL_SAMSUNG_UARTS; i++, ptr++, platdev_ptr++) {
+		s3c24xx_serial_init_port(ptr, info[i], *platdev_ptr);
+	}
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init
 s3c24xx_serial_console_setup(struct console *co, char *options)
 {
@@ -1419,8 +1863,15 @@ s3c24xx_serial_console_setup(struct console *co, char *options)
 
 	/* is the port configured? */
 
+<<<<<<< HEAD
 	if (port->mapbase == 0x0)
 		return -ENODEV;
+=======
+	if (port->mapbase == 0x0) {
+		co->index = 0;
+		port = &s3c24xx_serial_ports[co->index].port;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cons_uart = port;
 
@@ -1441,12 +1892,21 @@ s3c24xx_serial_console_setup(struct console *co, char *options)
 	return uart_set_options(port, co, baud, parity, bits, flow);
 }
 
+<<<<<<< HEAD
+=======
+/* s3c24xx_serial_initconsole
+ *
+ * initialise the console from one of the uart drivers
+*/
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct console s3c24xx_serial_console = {
 	.name		= S3C24XX_SERIAL_NAME,
 	.device		= uart_console_device,
 	.flags		= CON_PRINTBUFFER,
 	.index		= -1,
 	.write		= s3c24xx_serial_console_write,
+<<<<<<< HEAD
 	.setup		= s3c24xx_serial_console_setup,
 	.data		= &s3c24xx_uart_drv,
 };
@@ -1695,6 +2155,38 @@ module_init(s3c24xx_serial_modinit);
 module_exit(s3c24xx_serial_modexit);
 
 MODULE_ALIAS("platform:samsung-uart");
+=======
+	.setup		= s3c24xx_serial_console_setup
+};
+
+int s3c24xx_serial_initconsole(struct platform_driver *drv,
+			       struct s3c24xx_uart_info **info)
+
+{
+	struct platform_device *dev = s3c24xx_uart_devs[0];
+
+	dbg("s3c24xx_serial_initconsole\n");
+
+	/* select driver based on the cpu */
+
+	if (dev == NULL) {
+		printk(KERN_ERR "s3c24xx: no devices for console init\n");
+		return 0;
+	}
+
+	if (strcmp(dev->name, drv->driver.name) != 0)
+		return 0;
+
+	s3c24xx_serial_console.data = &s3c24xx_uart_drv;
+	s3c24xx_serial_init_ports(info);
+
+	register_console(&s3c24xx_serial_console);
+	return 0;
+}
+
+#endif /* CONFIG_SERIAL_SAMSUNG_CONSOLE */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("Samsung SoC Serial port driver");
 MODULE_AUTHOR("Ben Dooks <ben@simtec.co.uk>");
 MODULE_LICENSE("GPL v2");

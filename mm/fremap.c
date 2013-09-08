@@ -13,6 +13,10 @@
 #include <linux/pagemap.h>
 #include <linux/swapops.h>
 #include <linux/rmap.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/syscalls.h>
 #include <linux/mmu_notifier.h>
 

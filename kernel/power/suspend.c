@@ -21,15 +21,26 @@
 #include <linux/list.h>
 #include <linux/mm.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/suspend.h>
 #include <linux/syscore_ops.h>
 #include <linux/ftrace.h>
+=======
+#include <linux/suspend.h>
+#include <linux/syscore_ops.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <trace/events/power.h>
 
 #include "power.h"
 
 const char *const pm_states[PM_SUSPEND_MAX] = {
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_EARLYSUSPEND
+	[PM_SUSPEND_ON]		= "on",
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[PM_SUSPEND_STANDBY]	= "standby",
 	[PM_SUSPEND_MEM]	= "mem",
 };
@@ -37,6 +48,7 @@ const char *const pm_states[PM_SUSPEND_MAX] = {
 static const struct platform_suspend_ops *suspend_ops;
 
 /**
+<<<<<<< HEAD
  * suspend_set_ops - Set the global suspend method table.
  * @ops: Suspend operations to use.
  */
@@ -47,6 +59,17 @@ void suspend_set_ops(const struct platform_suspend_ops *ops)
 	unlock_system_sleep();
 }
 EXPORT_SYMBOL_GPL(suspend_set_ops);
+=======
+ *	suspend_set_ops - Set the global suspend method table.
+ *	@ops:	Pointer to ops structure.
+ */
+void suspend_set_ops(const struct platform_suspend_ops *ops)
+{
+	mutex_lock(&pm_mutex);
+	suspend_ops = ops;
+	mutex_unlock(&pm_mutex);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 bool valid_state(suspend_state_t state)
 {
@@ -58,17 +81,28 @@ bool valid_state(suspend_state_t state)
 }
 
 /**
+<<<<<<< HEAD
  * suspend_valid_only_mem - Generic memory-only valid callback.
  *
  * Platform drivers that implement mem suspend only and only need to check for
  * that in their .valid() callback can use this instead of rolling their own
  * .valid() callback.
+=======
+ * suspend_valid_only_mem - generic memory-only valid callback
+ *
+ * Platform drivers that implement mem suspend only and only need
+ * to check for that in their .valid callback can use this instead
+ * of rolling their own .valid callback.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int suspend_valid_only_mem(suspend_state_t state)
 {
 	return state == PM_SUSPEND_MEM;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(suspend_valid_only_mem);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int suspend_test(int level)
 {
@@ -83,11 +117,18 @@ static int suspend_test(int level)
 }
 
 /**
+<<<<<<< HEAD
  * suspend_prepare - Prepare for entering system sleep state.
  *
  * Common code run for every system sleep state that can be entered (except for
  * hibernation).  Run suspend notifiers, allocate the "suspend" console and
  * freeze processes.
+=======
+ *	suspend_prepare - Do prep work before entering low-power state.
+ *
+ *	This is common code that is called for each state that we're entering.
+ *	Run suspend notifiers, allocate a console and stop all processes.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int suspend_prepare(void)
 {
@@ -102,12 +143,24 @@ static int suspend_prepare(void)
 	if (error)
 		goto Finish;
 
+<<<<<<< HEAD
+=======
+	error = usermodehelper_disable();
+	if (error)
+		goto Finish;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	error = suspend_freeze_processes();
 	if (!error)
 		return 0;
 
+<<<<<<< HEAD
 	suspend_stats.failed_freeze++;
 	dpm_save_failed_step(SUSPEND_FREEZE);
+=======
+	suspend_thaw_processes();
+	usermodehelper_enable();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  Finish:
 	pm_notifier_call_chain(PM_POST_SUSPEND);
 	pm_restore_console();
@@ -127,6 +180,7 @@ void __attribute__ ((weak)) arch_suspend_enable_irqs(void)
 }
 
 /**
+<<<<<<< HEAD
  * suspend_enter - Make the system enter the given sleep state.
  * @state: System sleep state to enter.
  * @wakeup: Returns information that the sleep state should not be re-entered.
@@ -134,6 +188,14 @@ void __attribute__ ((weak)) arch_suspend_enable_irqs(void)
  * This function should be called after devices have been suspended.
  */
 static int suspend_enter(suspend_state_t state, bool *wakeup)
+=======
+ *	suspend_enter - enter the desired system sleep state.
+ *	@state:		state to enter
+ *
+ *	This function should be called after devices have been suspended.
+ */
+static int suspend_enter(suspend_state_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int error;
 
@@ -143,7 +205,11 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
 			goto Platform_finish;
 	}
 
+<<<<<<< HEAD
 	error = dpm_suspend_end(PMSG_SUSPEND);
+=======
+	error = dpm_suspend_noirq(PMSG_SUSPEND);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error) {
 		printk(KERN_ERR "PM: Some devices failed to power down\n");
 		goto Platform_finish;
@@ -167,8 +233,12 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
 
 	error = syscore_suspend();
 	if (!error) {
+<<<<<<< HEAD
 		*wakeup = pm_wakeup_pending();
 		if (!(suspend_test(TEST_CORE) || *wakeup)) {
+=======
+		if (!(suspend_test(TEST_CORE) || pm_wakeup_pending())) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			error = suspend_ops->enter(state);
 			events_check_enabled = false;
 		}
@@ -185,7 +255,11 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
 	if (suspend_ops->wake)
 		suspend_ops->wake();
 
+<<<<<<< HEAD
 	dpm_resume_start(PMSG_RESUME);
+=======
+	dpm_resume_noirq(PMSG_RESUME);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
  Platform_finish:
 	if (suspend_ops->finish)
@@ -195,13 +269,22 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
 }
 
 /**
+<<<<<<< HEAD
  * suspend_devices_and_enter - Suspend devices and enter system sleep state.
  * @state: System sleep state to enter.
+=======
+ *	suspend_devices_and_enter - suspend devices and enter the desired system
+ *				    sleep state.
+ *	@state:		  state to enter
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int suspend_devices_and_enter(suspend_state_t state)
 {
 	int error;
+<<<<<<< HEAD
 	bool wakeup = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!suspend_ops)
 		return -ENOSYS;
@@ -213,7 +296,10 @@ int suspend_devices_and_enter(suspend_state_t state)
 			goto Close;
 	}
 	suspend_console();
+<<<<<<< HEAD
 	ftrace_stop();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	suspend_test_start();
 	error = dpm_suspend_start(PMSG_SUSPEND);
 	if (error) {
@@ -224,16 +310,23 @@ int suspend_devices_and_enter(suspend_state_t state)
 	if (suspend_test(TEST_DEVICES))
 		goto Recover_platform;
 
+<<<<<<< HEAD
 	do {
 		error = suspend_enter(state, &wakeup);
 	} while (!error && !wakeup
 		&& suspend_ops->suspend_again && suspend_ops->suspend_again());
+=======
+	error = suspend_enter(state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
  Resume_devices:
 	suspend_test_start();
 	dpm_resume_end(PMSG_RESUME);
 	suspend_test_finish("resume devices");
+<<<<<<< HEAD
 	ftrace_start();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	resume_console();
  Close:
 	if (suspend_ops->end)
@@ -248,19 +341,31 @@ int suspend_devices_and_enter(suspend_state_t state)
 }
 
 /**
+<<<<<<< HEAD
  * suspend_finish - Clean up before finishing the suspend sequence.
  *
  * Call platform code to clean up, restart processes, and free the console that
  * we've allocated. This routine is not called for hibernation.
+=======
+ *	suspend_finish - Do final work before exiting suspend sequence.
+ *
+ *	Call platform code to clean up, restart processes, and free the
+ *	console that we've allocated. This is not called for suspend-to-disk.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void suspend_finish(void)
 {
 	suspend_thaw_processes();
+<<<<<<< HEAD
+=======
+	usermodehelper_enable();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pm_notifier_call_chain(PM_POST_SUSPEND);
 	pm_restore_console();
 }
 
 /**
+<<<<<<< HEAD
  * enter_state - Do common work needed to enter system sleep state.
  * @state: System sleep state to enter.
  *
@@ -269,6 +374,18 @@ static void suspend_finish(void)
  * system enter the given sleep state and clean up after wakeup.
  */
 static int enter_state(suspend_state_t state)
+=======
+ *	enter_state - Do common work of entering low-power state.
+ *	@state:		pm_state structure for state we're entering.
+ *
+ *	Make sure we're the only ones trying to enter a sleep state. Fail
+ *	if someone has beat us to it, since we don't want anything weird to
+ *	happen when we wake up.
+ *	Then, do the setup for suspend, enter the state, and cleaup (after
+ *	we've woken up).
+ */
+int enter_state(suspend_state_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int error;
 
@@ -304,6 +421,7 @@ static int enter_state(suspend_state_t state)
 }
 
 /**
+<<<<<<< HEAD
  * pm_suspend - Externally visible function for suspending the system.
  * @state: System sleep state to enter.
  *
@@ -325,5 +443,18 @@ int pm_suspend(suspend_state_t state)
 		suspend_stats.success++;
 	}
 	return error;
+=======
+ *	pm_suspend - Externally visible function for suspending system.
+ *	@state:		Enumerated value of state to enter.
+ *
+ *	Determine whether or not value is within range, get state
+ *	structure, and enter (above).
+ */
+int pm_suspend(suspend_state_t state)
+{
+	if (state > PM_SUSPEND_ON && state < PM_SUSPEND_MAX)
+		return enter_state(state);
+	return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(pm_suspend);

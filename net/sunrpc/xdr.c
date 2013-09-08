@@ -122,11 +122,19 @@ xdr_terminate_string(struct xdr_buf *buf, const u32 len)
 {
 	char *kaddr;
 
+<<<<<<< HEAD
 	kaddr = kmap_atomic(buf->pages[0]);
 	kaddr[buf->page_base + len] = '\0';
 	kunmap_atomic(kaddr);
 }
 EXPORT_SYMBOL_GPL(xdr_terminate_string);
+=======
+	kaddr = kmap_atomic(buf->pages[0], KM_USER0);
+	kaddr[buf->page_base + len] = '\0';
+	kunmap_atomic(kaddr, KM_USER0);
+}
+EXPORT_SYMBOL(xdr_terminate_string);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void
 xdr_encode_pages(struct xdr_buf *xdr, struct page **pages, unsigned int base,
@@ -232,6 +240,7 @@ _shift_data_right_pages(struct page **pages, size_t pgto_base,
 		pgto_base -= copy;
 		pgfrom_base -= copy;
 
+<<<<<<< HEAD
 		vto = kmap_atomic(*pgto);
 		if (*pgto != *pgfrom) {
 			vfrom = kmap_atomic(*pgfrom);
@@ -241,6 +250,14 @@ _shift_data_right_pages(struct page **pages, size_t pgto_base,
 			memmove(vto + pgto_base, vto + pgfrom_base, copy);
 		flush_dcache_page(*pgto);
 		kunmap_atomic(vto);
+=======
+		vto = kmap_atomic(*pgto, KM_USER0);
+		vfrom = kmap_atomic(*pgfrom, KM_USER1);
+		memmove(vto + pgto_base, vfrom + pgfrom_base, copy);
+		flush_dcache_page(*pgto);
+		kunmap_atomic(vfrom, KM_USER1);
+		kunmap_atomic(vto, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	} while ((len -= copy) != 0);
 }
@@ -270,9 +287,15 @@ _copy_to_pages(struct page **pages, size_t pgbase, const char *p, size_t len)
 		if (copy > len)
 			copy = len;
 
+<<<<<<< HEAD
 		vto = kmap_atomic(*pgto);
 		memcpy(vto + pgbase, p, copy);
 		kunmap_atomic(vto);
+=======
+		vto = kmap_atomic(*pgto, KM_USER0);
+		memcpy(vto + pgbase, p, copy);
+		kunmap_atomic(vto, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		len -= copy;
 		if (len == 0)
@@ -299,7 +322,11 @@ _copy_to_pages(struct page **pages, size_t pgbase, const char *p, size_t len)
  * Copies data into an arbitrary memory location from an array of pages
  * The copy is assumed to be non-overlapping.
  */
+<<<<<<< HEAD
 void
+=======
+static void
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 _copy_from_pages(char *p, struct page **pages, size_t pgbase, size_t len)
 {
 	struct page **pgfrom;
@@ -314,9 +341,15 @@ _copy_from_pages(char *p, struct page **pages, size_t pgbase, size_t len)
 		if (copy > len)
 			copy = len;
 
+<<<<<<< HEAD
 		vfrom = kmap_atomic(*pgfrom);
 		memcpy(p, vfrom + pgbase, copy);
 		kunmap_atomic(vfrom);
+=======
+		vfrom = kmap_atomic(*pgfrom, KM_USER0);
+		memcpy(p, vfrom + pgbase, copy);
+		kunmap_atomic(vfrom, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		pgbase += copy;
 		if (pgbase == PAGE_CACHE_SIZE) {
@@ -327,7 +360,10 @@ _copy_from_pages(char *p, struct page **pages, size_t pgbase, size_t len)
 
 	} while ((len -= copy) != 0);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(_copy_from_pages);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * xdr_shrink_bufhead

@@ -33,6 +33,7 @@
 #define GIC_DIST_SOFTINT		0xf00
 
 #ifndef __ASSEMBLY__
+<<<<<<< HEAD
 #include <linux/irqdomain.h>
 struct device_node;
 
@@ -52,6 +53,16 @@ static inline void gic_init(unsigned int nr, int start,
 	gic_init_bases(nr, start, dist, cpu, 0, NULL);
 }
 
+=======
+extern void __iomem *gic_cpu_base_addr;
+extern struct irq_chip gic_arch_extn;
+
+void gic_init(unsigned int, unsigned int, void __iomem *, void __iomem *);
+void gic_secondary_init(unsigned int);
+void gic_cascade_irq(unsigned int gic_nr, unsigned int irq);
+void gic_raise_softirq(const struct cpumask *mask, unsigned int irq);
+void gic_enable_ppi(unsigned int);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #endif

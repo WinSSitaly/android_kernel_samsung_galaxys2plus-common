@@ -36,7 +36,11 @@
 #include <linux/init.h>
 #include <linux/slab.h>
 #include <linux/stddef.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/moduleloader.h>
 #include <linux/kallsyms.h>
 #include <linux/freezer.h>
@@ -78,10 +82,17 @@ static bool kprobes_all_disarmed;
 static DEFINE_MUTEX(kprobe_mutex);
 static DEFINE_PER_CPU(struct kprobe *, kprobe_instance) = NULL;
 static struct {
+<<<<<<< HEAD
 	raw_spinlock_t lock ____cacheline_aligned_in_smp;
 } kretprobe_table_locks[KPROBE_TABLE_SIZE];
 
 static raw_spinlock_t *kretprobe_table_lock_ptr(unsigned long hash)
+=======
+	spinlock_t lock ____cacheline_aligned_in_smp;
+} kretprobe_table_locks[KPROBE_TABLE_SIZE];
+
+static spinlock_t *kretprobe_table_lock_ptr(unsigned long hash)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return &(kretprobe_table_locks[hash].lock);
 }
@@ -1013,9 +1024,15 @@ void __kprobes recycle_rp_inst(struct kretprobe_instance *ri,
 	hlist_del(&ri->hlist);
 	INIT_HLIST_NODE(&ri->hlist);
 	if (likely(rp)) {
+<<<<<<< HEAD
 		raw_spin_lock(&rp->lock);
 		hlist_add_head(&ri->hlist, &rp->free_instances);
 		raw_spin_unlock(&rp->lock);
+=======
+		spin_lock(&rp->lock);
+		hlist_add_head(&ri->hlist, &rp->free_instances);
+		spin_unlock(&rp->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		/* Unregistering */
 		hlist_add_head(&ri->hlist, head);
@@ -1026,19 +1043,32 @@ void __kprobes kretprobe_hash_lock(struct task_struct *tsk,
 __acquires(hlist_lock)
 {
 	unsigned long hash = hash_ptr(tsk, KPROBE_HASH_BITS);
+<<<<<<< HEAD
 	raw_spinlock_t *hlist_lock;
 
 	*head = &kretprobe_inst_table[hash];
 	hlist_lock = kretprobe_table_lock_ptr(hash);
 	raw_spin_lock_irqsave(hlist_lock, *flags);
+=======
+	spinlock_t *hlist_lock;
+
+	*head = &kretprobe_inst_table[hash];
+	hlist_lock = kretprobe_table_lock_ptr(hash);
+	spin_lock_irqsave(hlist_lock, *flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __kprobes kretprobe_table_lock(unsigned long hash,
 	unsigned long *flags)
 __acquires(hlist_lock)
 {
+<<<<<<< HEAD
 	raw_spinlock_t *hlist_lock = kretprobe_table_lock_ptr(hash);
 	raw_spin_lock_irqsave(hlist_lock, *flags);
+=======
+	spinlock_t *hlist_lock = kretprobe_table_lock_ptr(hash);
+	spin_lock_irqsave(hlist_lock, *flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __kprobes kretprobe_hash_unlock(struct task_struct *tsk,
@@ -1046,18 +1076,30 @@ void __kprobes kretprobe_hash_unlock(struct task_struct *tsk,
 __releases(hlist_lock)
 {
 	unsigned long hash = hash_ptr(tsk, KPROBE_HASH_BITS);
+<<<<<<< HEAD
 	raw_spinlock_t *hlist_lock;
 
 	hlist_lock = kretprobe_table_lock_ptr(hash);
 	raw_spin_unlock_irqrestore(hlist_lock, *flags);
+=======
+	spinlock_t *hlist_lock;
+
+	hlist_lock = kretprobe_table_lock_ptr(hash);
+	spin_unlock_irqrestore(hlist_lock, *flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __kprobes kretprobe_table_unlock(unsigned long hash,
        unsigned long *flags)
 __releases(hlist_lock)
 {
+<<<<<<< HEAD
 	raw_spinlock_t *hlist_lock = kretprobe_table_lock_ptr(hash);
 	raw_spin_unlock_irqrestore(hlist_lock, *flags);
+=======
+	spinlock_t *hlist_lock = kretprobe_table_lock_ptr(hash);
+	spin_unlock_irqrestore(hlist_lock, *flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1255,12 +1297,16 @@ static int __kprobes in_kprobes_functions(unsigned long addr)
 /*
  * If we have a symbol_name argument, look it up and add the offset field
  * to it. This way, we can specify a relative address to a symbol.
+<<<<<<< HEAD
  * This returns encoded errors if it fails to look up symbol or invalid
  * combination of parameters.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static kprobe_opcode_t __kprobes *kprobe_addr(struct kprobe *p)
 {
 	kprobe_opcode_t *addr = p->addr;
+<<<<<<< HEAD
 
 	if ((p->symbol_name && p->addr) ||
 	    (!p->symbol_name && !p->addr))
@@ -1278,6 +1324,17 @@ static kprobe_opcode_t __kprobes *kprobe_addr(struct kprobe *p)
 
 invalid:
 	return ERR_PTR(-EINVAL);
+=======
+	if (p->symbol_name) {
+		if (addr)
+			return NULL;
+		kprobe_lookup_name(p->symbol_name, addr);
+	}
+
+	if (!addr)
+		return NULL;
+	return (kprobe_opcode_t *)(((char *)addr) + p->offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Check passed kprobe is valid and return kprobe in kprobe_table. */
@@ -1321,8 +1378,13 @@ int __kprobes register_kprobe(struct kprobe *p)
 	kprobe_opcode_t *addr;
 
 	addr = kprobe_addr(p);
+<<<<<<< HEAD
 	if (IS_ERR(addr))
 		return PTR_ERR(addr);
+=======
+	if (!addr)
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	p->addr = addr;
 
 	ret = check_kprobe_rereg(p);
@@ -1334,10 +1396,15 @@ int __kprobes register_kprobe(struct kprobe *p)
 	if (!kernel_text_address((unsigned long) p->addr) ||
 	    in_kprobes_functions((unsigned long) p->addr) ||
 	    ftrace_text_reserved(p->addr, p->addr) ||
+<<<<<<< HEAD
 	    jump_label_text_reserved(p->addr, p->addr)) {
 		ret = -EINVAL;
 		goto cannot_probe;
 	}
+=======
+	    jump_label_text_reserved(p->addr, p->addr))
+		goto fail_with_jump_label;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* User can pass only KPROBE_FLAG_DISABLED to register_kprobe */
 	p->flags &= KPROBE_FLAG_DISABLED;
@@ -1347,14 +1414,21 @@ int __kprobes register_kprobe(struct kprobe *p)
 	 */
 	probed_mod = __module_text_address((unsigned long) p->addr);
 	if (probed_mod) {
+<<<<<<< HEAD
 		/* Return -ENOENT if fail. */
 		ret = -ENOENT;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * We must hold a refcount of the probed module while updating
 		 * its code to prohibit unexpected unloading.
 		 */
 		if (unlikely(!try_module_get(probed_mod)))
+<<<<<<< HEAD
 			goto cannot_probe;
+=======
+			goto fail_with_jump_label;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * If the module freed .init.text, we couldn't insert
@@ -1363,9 +1437,14 @@ int __kprobes register_kprobe(struct kprobe *p)
 		if (within_module_init((unsigned long)p->addr, probed_mod) &&
 		    probed_mod->state != MODULE_STATE_COMING) {
 			module_put(probed_mod);
+<<<<<<< HEAD
 			goto cannot_probe;
 		}
 		/* ret will be updated by following code */
+=======
+			goto fail_with_jump_label;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	preempt_enable();
 	jump_label_unlock();
@@ -1411,10 +1490,17 @@ out:
 
 	return ret;
 
+<<<<<<< HEAD
 cannot_probe:
 	preempt_enable();
 	jump_label_unlock();
 	return ret;
+=======
+fail_with_jump_label:
+	preempt_enable();
+	jump_label_unlock();
+	return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(register_kprobe);
 
@@ -1665,20 +1751,34 @@ static int __kprobes pre_handler_kretprobe(struct kprobe *p,
 
 	/*TODO: consider to only swap the RA after the last pre_handler fired */
 	hash = hash_ptr(current, KPROBE_HASH_BITS);
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&rp->lock, flags);
+=======
+	spin_lock_irqsave(&rp->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!hlist_empty(&rp->free_instances)) {
 		ri = hlist_entry(rp->free_instances.first,
 				struct kretprobe_instance, hlist);
 		hlist_del(&ri->hlist);
+<<<<<<< HEAD
 		raw_spin_unlock_irqrestore(&rp->lock, flags);
+=======
+		spin_unlock_irqrestore(&rp->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ri->rp = rp;
 		ri->task = current;
 
 		if (rp->entry_handler && rp->entry_handler(ri, regs)) {
+<<<<<<< HEAD
 			raw_spin_lock_irqsave(&rp->lock, flags);
 			hlist_add_head(&ri->hlist, &rp->free_instances);
 			raw_spin_unlock_irqrestore(&rp->lock, flags);
+=======
+			spin_lock_irqsave(&rp->lock, flags);
+			hlist_add_head(&ri->hlist, &rp->free_instances);
+			spin_unlock_irqrestore(&rp->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 0;
 		}
 
@@ -1691,7 +1791,11 @@ static int __kprobes pre_handler_kretprobe(struct kprobe *p,
 		kretprobe_table_unlock(hash, &flags);
 	} else {
 		rp->nmissed++;
+<<<<<<< HEAD
 		raw_spin_unlock_irqrestore(&rp->lock, flags);
+=======
+		spin_unlock_irqrestore(&rp->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }
@@ -1705,8 +1809,13 @@ int __kprobes register_kretprobe(struct kretprobe *rp)
 
 	if (kretprobe_blacklist_size) {
 		addr = kprobe_addr(&rp->kp);
+<<<<<<< HEAD
 		if (IS_ERR(addr))
 			return PTR_ERR(addr);
+=======
+		if (!addr)
+			return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		for (i = 0; kretprobe_blacklist[i].name != NULL; i++) {
 			if (kretprobe_blacklist[i].addr == addr)
@@ -1727,7 +1836,11 @@ int __kprobes register_kretprobe(struct kretprobe *rp)
 		rp->maxactive = num_possible_cpus();
 #endif
 	}
+<<<<<<< HEAD
 	raw_spin_lock_init(&rp->lock);
+=======
+	spin_lock_init(&rp->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_HLIST_HEAD(&rp->free_instances);
 	for (i = 0; i < rp->maxactive; i++) {
 		inst = kmalloc(sizeof(struct kretprobe_instance) +
@@ -1965,7 +2078,11 @@ static int __init init_kprobes(void)
 	for (i = 0; i < KPROBE_TABLE_SIZE; i++) {
 		INIT_HLIST_HEAD(&kprobe_table[i]);
 		INIT_HLIST_HEAD(&kretprobe_inst_table[i]);
+<<<<<<< HEAD
 		raw_spin_lock_init(&(kretprobe_table_locks[i].lock));
+=======
+		spin_lock_init(&(kretprobe_table_locks[i].lock));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -2204,7 +2321,11 @@ static ssize_t write_enabled_file_bool(struct file *file,
 	       const char __user *user_buf, size_t count, loff_t *ppos)
 {
 	char buf[32];
+<<<<<<< HEAD
 	size_t buf_size;
+=======
+	int buf_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	buf_size = min(count, (sizeof(buf)-1));
 	if (copy_from_user(buf, user_buf, buf_size))

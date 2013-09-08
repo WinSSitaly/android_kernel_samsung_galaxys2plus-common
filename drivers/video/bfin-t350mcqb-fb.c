@@ -4,7 +4,11 @@
  * Author:       Michael Hennerich <hennerich@blackfin.uclinux.org>
  *
  * Created:
+<<<<<<< HEAD
  * Description:  Blackfin LCD Framebuffer driver
+=======
+ * Description:  Blackfin LCD Framebufer driver
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *
  * Modified:
@@ -529,7 +533,11 @@ static int __devinit bfin_t350mcqb_probe(struct platform_device *pdev)
 		goto out7;
 	}
 
+<<<<<<< HEAD
 	ret = request_irq(info->irq, bfin_t350mcqb_irq_error, 0,
+=======
+	ret = request_irq(info->irq, bfin_t350mcqb_irq_error, IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"PPI ERROR", info);
 	if (ret < 0) {
 		printk(KERN_ERR DRIVER_NAME

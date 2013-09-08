@@ -20,7 +20,10 @@
 #define SIOC_QETH_ARP_FLUSH_CACHE       (SIOCDEVPRIVATE + 4)
 #define SIOC_QETH_ADP_SET_SNMP_CONTROL  (SIOCDEVPRIVATE + 5)
 #define SIOC_QETH_GET_CARD_TYPE         (SIOCDEVPRIVATE + 6)
+<<<<<<< HEAD
 #define SIOC_QETH_QUERY_OAT		(SIOCDEVPRIVATE + 7)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct qeth_arp_cache_entry {
 	__u8  macaddr[6];
@@ -108,10 +111,13 @@ struct qeth_arp_query_user_data {
 	char *entries;
 } __attribute__((packed));
 
+<<<<<<< HEAD
 struct qeth_query_oat_data {
 	__u32 command;
 	__u32 buffer_len;
 	__u32 response_len;
 	__u64 ptr;
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ASM_S390_QETH_IOCTL_H__ */

@@ -201,7 +201,13 @@ static void zc_remove(struct hid_device *hdev)
 	struct zc_device *zc = hid_get_drvdata(hdev);
 
 	hid_hw_stop(hdev);
+<<<<<<< HEAD
 	kfree(zc);
+=======
+
+	if (NULL != zc)
+		kfree(zc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct hid_device_id zc_devices[] = {

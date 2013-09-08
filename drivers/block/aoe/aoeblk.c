@@ -15,7 +15,10 @@
 #include <linux/genhd.h>
 #include <linux/netdevice.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "aoe.h"
 
 static DEFINE_MUTEX(aoeblk_mutex);
@@ -160,7 +163,11 @@ aoeblk_release(struct gendisk *disk, fmode_t mode)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void
+=======
+static int
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 aoeblk_make_request(struct request_queue *q, struct bio *bio)
 {
 	struct sk_buff_head queue;
@@ -173,25 +180,41 @@ aoeblk_make_request(struct request_queue *q, struct bio *bio)
 	if (bio == NULL) {
 		printk(KERN_ERR "aoe: bio is NULL\n");
 		BUG();
+<<<<<<< HEAD
 		return;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	d = bio->bi_bdev->bd_disk->private_data;
 	if (d == NULL) {
 		printk(KERN_ERR "aoe: bd_disk->private_data is NULL\n");
 		BUG();
 		bio_endio(bio, -ENXIO);
+<<<<<<< HEAD
 		return;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (bio->bi_io_vec == NULL) {
 		printk(KERN_ERR "aoe: bi_io_vec is NULL\n");
 		BUG();
 		bio_endio(bio, -ENXIO);
+<<<<<<< HEAD
 		return;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	buf = mempool_alloc(d->bufpool, GFP_NOIO);
 	if (buf == NULL) {
 		printk(KERN_INFO "aoe: buf allocation failure\n");
 		bio_endio(bio, -ENOMEM);
+<<<<<<< HEAD
 		return;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	memset(buf, 0, sizeof(*buf));
 	INIT_LIST_HEAD(&buf->bufs);
@@ -212,7 +235,11 @@ aoeblk_make_request(struct request_queue *q, struct bio *bio)
 		spin_unlock_irqrestore(&d->lock, flags);
 		mempool_free(buf, d->bufpool);
 		bio_endio(bio, -ENXIO);
+<<<<<<< HEAD
 		return;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	list_add_tail(&buf->bufs, &d->bufq);
@@ -223,6 +250,11 @@ aoeblk_make_request(struct request_queue *q, struct bio *bio)
 
 	spin_unlock_irqrestore(&d->lock, flags);
 	aoenet_xmit(&queue);
+<<<<<<< HEAD
+=======
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -276,6 +308,11 @@ aoeblk_gdalloc(void *vp)
 		goto err_mempool;
 	blk_queue_make_request(d->blkq, aoeblk_make_request);
 	d->blkq->backing_dev_info.name = "aoe";
+<<<<<<< HEAD
+=======
+	if (bdi_init(&d->blkq->backing_dev_info))
+		goto err_blkq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&d->lock, flags);
 	gd->major = AOE_MAJOR;
 	gd->first_minor = d->sysminor * AOE_PARTITIONS;
@@ -296,6 +333,12 @@ aoeblk_gdalloc(void *vp)
 	aoedisk_add_sysfs(d);
 	return;
 
+<<<<<<< HEAD
+=======
+err_blkq:
+	blk_cleanup_queue(d->blkq);
+	d->blkq = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_mempool:
 	mempool_destroy(d->bufpool);
 err_disk:

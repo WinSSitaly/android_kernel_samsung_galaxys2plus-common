@@ -20,7 +20,10 @@
 #include <linux/slab.h>
 #include <linux/firmware.h>
 #include <linux/etherdevice.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <net/mac80211.h>
 
@@ -386,7 +389,10 @@ int p54_setup_mac(struct p54_common *priv)
 		setup->v2.osc_start_delay = cpu_to_le16(65535);
 	}
 	p54_tx(priv, skb);
+<<<<<<< HEAD
 	priv->phy_idle = mode == P54_FILTER_TYPE_HIBERNATE;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -628,7 +634,10 @@ int p54_set_ps(struct p54_common *priv)
 	psm->exclude[0] = WLAN_EID_TIM;
 
 	p54_tx(priv, skb);
+<<<<<<< HEAD
 	priv->phy_ps = mode != P54_PSM_CAM;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

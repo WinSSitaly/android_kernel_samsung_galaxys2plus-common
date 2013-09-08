@@ -48,6 +48,7 @@ struct rnd_state {
 
 #ifdef __KERNEL__
 
+<<<<<<< HEAD
 extern void add_device_randomness(const void *, unsigned int);
 extern void add_input_randomness(unsigned int type, unsigned int code,
 				 unsigned int value);
@@ -55,6 +56,15 @@ extern void add_interrupt_randomness(int irq, int irq_flags);
 
 extern void get_random_bytes(void *buf, int nbytes);
 extern void get_random_bytes_arch(void *buf, int nbytes);
+=======
+extern void rand_initialize_irq(int irq);
+
+extern void add_input_randomness(unsigned int type, unsigned int code,
+				 unsigned int value);
+extern void add_interrupt_randomness(int irq);
+
+extern void get_random_bytes(void *buf, int nbytes);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void generate_random_uuid(unsigned char uuid_out[16]);
 
 #ifndef MODULE
@@ -91,6 +101,7 @@ static inline void prandom32_seed(struct rnd_state *state, u64 seed)
 	state->s3 = __seed(i, 15);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_ARCH_RANDOM
 # include <asm/archrandom.h>
 #else
@@ -104,6 +115,8 @@ static inline int arch_get_random_int(unsigned int *v)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __KERNEL___ */
 
 #endif /* _LINUX_RANDOM_H */

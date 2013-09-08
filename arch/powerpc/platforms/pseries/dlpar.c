@@ -266,11 +266,20 @@ int dlpar_attach_node(struct device_node *dn)
 	if (!dn->parent)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	rc = pSeries_reconfig_notify(PSERIES_RECONFIG_ADD, dn);
 	if (rc) {
 		printk(KERN_ERR "Failed to add device node %s\n",
 		       dn->full_name);
 		return rc;
+=======
+	rc = blocking_notifier_call_chain(&pSeries_reconfig_chain,
+					  PSERIES_RECONFIG_ADD, dn);
+	if (rc == NOTIFY_BAD) {
+		printk(KERN_ERR "Failed to add device node %s\n",
+		       dn->full_name);
+		return -ENOMEM; /* For now, safe to assume kmalloc failure */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	of_attach_node(dn);
@@ -300,7 +309,12 @@ int dlpar_detach_node(struct device_node *dn)
 		remove_proc_entry(dn->pde->name, parent->pde);
 #endif
 
+<<<<<<< HEAD
 	pSeries_reconfig_notify(PSERIES_RECONFIG_REMOVE, dn);
+=======
+	blocking_notifier_call_chain(&pSeries_reconfig_chain,
+			    PSERIES_RECONFIG_REMOVE, dn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	of_detach_node(dn);
 	of_node_put(dn); /* Must decrement the refcount */
 

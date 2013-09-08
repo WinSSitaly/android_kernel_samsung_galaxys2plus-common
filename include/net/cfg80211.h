@@ -13,7 +13,10 @@
 #include <linux/netdevice.h>
 #include <linux/debugfs.h>
 #include <linux/list.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/netlink.h>
 #include <linux/skbuff.h>
 #include <linux/nl80211.h>
@@ -21,6 +24,14 @@
 #include <linux/ieee80211.h>
 #include <net/regulatory.h>
 
+<<<<<<< HEAD
+=======
+/* remove once we remove the wext stuff */
+#include <net/iw_handler.h>
+#include <linux/wireless.h>
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * DOC: Introduction
  *
@@ -121,7 +132,10 @@ enum ieee80211_channel_flags {
  * @band: band this channel belongs to.
  * @max_antenna_gain: maximum antenna gain in dBi
  * @max_power: maximum transmission power (in dBm)
+<<<<<<< HEAD
  * @max_reg_power: maximum regulatory transmission power (in dBm)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @beacon_found: helper to regulatory code to indicate when a beacon
  *	has been found on this channel. Use regulatory_hint_found_beacon()
  *	to enable this, this is useful only on 5 GHz band.
@@ -135,7 +149,10 @@ struct ieee80211_channel {
 	u32 flags;
 	int max_antenna_gain;
 	int max_power;
+<<<<<<< HEAD
 	int max_reg_power;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool beacon_found;
 	u32 orig_flags;
 	int orig_mag, orig_mpwr;
@@ -337,6 +354,7 @@ struct survey_info {
 };
 
 /**
+<<<<<<< HEAD
  * struct cfg80211_crypto_settings - Crypto settings
  * @wpa_versions: indicates which, if any, WPA versions are enabled
  *	(from enum nl80211_wpa_versions)
@@ -368,10 +386,17 @@ struct cfg80211_crypto_settings {
 
 /**
  * struct cfg80211_beacon_data - beacon data
+=======
+ * struct beacon_parameters - beacon parameters
+ *
+ * Used to configure the beacon for an interface.
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @head: head portion of beacon (before TIM IE)
  *     or %NULL if not changed
  * @tail: tail portion of beacon (after TIM IE)
  *     or %NULL if not changed
+<<<<<<< HEAD
  * @head_len: length of @head
  * @tail_len: length of @tail
  * @beacon_ies: extra information element(s) to add into Beacon frames or %NULL
@@ -427,6 +452,17 @@ struct cfg80211_ap_settings {
 	bool privacy;
 	enum nl80211_auth_type auth_type;
 	int inactivity_timeout;
+=======
+ * @interval: beacon interval or zero if not changed
+ * @dtim_period: DTIM period or zero if not changed
+ * @head_len: length of @head
+ * @tail_len: length of @tail
+ */
+struct beacon_parameters {
+	u8 *head, *tail;
+	int interval, dtim_period;
+	int head_len, tail_len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -443,6 +479,7 @@ enum plink_actions {
 };
 
 /**
+<<<<<<< HEAD
  * enum station_parameters_apply_mask - station parameter values to apply
  * @STATION_PARAM_APPLY_UAPSD: apply new uAPSD parameters (uapsd_queues, max_sp)
  *
@@ -454,6 +491,8 @@ enum station_parameters_apply_mask {
 };
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * struct station_parameters - station parameters
  *
  * Used to change and create a new station.
@@ -471,6 +510,7 @@ enum station_parameters_apply_mask {
  * @plink_action: plink action to take
  * @plink_state: set the peer link state for a station
  * @ht_capa: HT capabilities of station
+<<<<<<< HEAD
  * @uapsd_queues: bitmap of queues configured for uapsd. same format
  *	as the AC bitmap in the QoS info field
  * @max_sp: max Service Period. same format as the MAX_SP in the
@@ -478,20 +518,28 @@ enum station_parameters_apply_mask {
  * @sta_modify_mask: bitmap indicating which parameters changed
  *	(for those that don't have a natural "no change" value),
  *	see &enum station_parameters_apply_mask
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct station_parameters {
 	u8 *supported_rates;
 	struct net_device *vlan;
 	u32 sta_flags_mask, sta_flags_set;
+<<<<<<< HEAD
 	u32 sta_modify_mask;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int listen_interval;
 	u16 aid;
 	u8 supported_rates_len;
 	u8 plink_action;
 	u8 plink_state;
 	struct ieee80211_ht_cap *ht_capa;
+<<<<<<< HEAD
 	u8 uapsd_queues;
 	u8 max_sp;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -519,8 +567,11 @@ struct station_parameters {
  * @STATION_INFO_BSS_PARAM: @bss_param filled
  * @STATION_INFO_CONNECTED_TIME: @connected_time filled
  * @STATION_INFO_ASSOC_REQ_IES: @assoc_req_ies filled
+<<<<<<< HEAD
  * @STATION_INFO_STA_FLAGS: @sta_flags filled
  * @STATION_INFO_BEACON_LOSS_COUNT: @beacon_loss_count filled
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 enum station_info_flags {
 	STATION_INFO_INACTIVE_TIME	= 1<<0,
@@ -540,9 +591,13 @@ enum station_info_flags {
 	STATION_INFO_RX_BITRATE		= 1<<14,
 	STATION_INFO_BSS_PARAM          = 1<<15,
 	STATION_INFO_CONNECTED_TIME	= 1<<16,
+<<<<<<< HEAD
 	STATION_INFO_ASSOC_REQ_IES	= 1<<17,
 	STATION_INFO_STA_FLAGS		= 1<<18,
 	STATION_INFO_BEACON_LOSS_COUNT	= 1<<19
+=======
+	STATION_INFO_ASSOC_REQ_IES	= 1<<17
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -620,10 +675,15 @@ struct sta_bss_parameters {
  * @llid: mesh local link id
  * @plid: mesh peer link id
  * @plink_state: mesh peer link state
+<<<<<<< HEAD
  * @signal: the signal strength, type depends on the wiphy's signal_type
 	NOTE: For CFG80211_SIGNAL_TYPE_MBM, value is expressed in _dBm_.
  * @signal_avg: avg signal strength, type depends on the wiphy's signal_type
 	NOTE: For CFG80211_SIGNAL_TYPE_MBM, value is expressed in _dBm_.
+=======
+ * @signal: signal strength of last received packet in dBm
+ * @signal_avg: signal strength average in dBm
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @txrate: current unicast bitrate from this station
  * @rxrate: current unicast bitrate to this station
  * @rx_packets: packets received from this station
@@ -641,8 +701,11 @@ struct sta_bss_parameters {
  *	user space MLME/SME implementation. The information is provided for
  *	the cfg80211_new_sta() calls to notify user space of the IEs.
  * @assoc_req_ies_len: Length of assoc_req_ies buffer in octets.
+<<<<<<< HEAD
  * @sta_flags: station flags mask & values
  * @beacon_loss_count: Number of times beacon loss event has triggered.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct station_info {
 	u32 filled;
@@ -663,6 +726,7 @@ struct station_info {
 	u32 tx_failed;
 	u32 rx_dropped_misc;
 	struct sta_bss_parameters bss_param;
+<<<<<<< HEAD
 	struct nl80211_sta_flag_update sta_flags;
 
 	int generation;
@@ -676,6 +740,18 @@ struct station_info {
 	 * Note: Add a new enum station_info_flags value for each new field and
 	 * use it to check which fields are initialized.
 	 */
+=======
+
+	int generation;
+	 
+ 	const u8 *assoc_req_ies; 
+   	size_t assoc_req_ies_len; 
+    
+   	/* 
+  	 * Note: Add a new enum station_info_flags value for each new field and 
+   	 * use it to check which fields are initialized. 
+   	 */ 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -804,6 +880,7 @@ struct mesh_config {
 	u16 min_discovery_timeout;
 	u32 dot11MeshHWMPactivePathTimeout;
 	u16 dot11MeshHWMPpreqMinInterval;
+<<<<<<< HEAD
 	u16 dot11MeshHWMPperrMinInterval;
 	u16 dot11MeshHWMPnetDiameterTraversalTime;
 	u8  dot11MeshHWMPRootMode;
@@ -815,6 +892,10 @@ struct mesh_config {
 	bool  dot11MeshGateAnnouncementProtocol;
 	bool dot11MeshForwarding;
 	s32 rssi_threshold;
+=======
+	u16 dot11MeshHWMPnetDiameterTraversalTime;
+	u8  dot11MeshHWMPRootMode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -827,7 +908,10 @@ struct mesh_config {
  * @ie_len: length of vendor information elements
  * @is_authenticated: this mesh requires authentication
  * @is_secure: this mesh uses security
+<<<<<<< HEAD
  * @mcast_rate: multicat rate for Mesh Node [6Mbps is the default for 802.11a]
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * These parameters are fixed when the mesh is created.
  */
@@ -840,7 +924,10 @@ struct mesh_setup {
 	u8 ie_len;
 	bool is_authenticated;
 	bool is_secure;
+<<<<<<< HEAD
 	int mcast_rate[IEEE80211_NUM_BANDS];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -906,11 +993,17 @@ struct cfg80211_ssid {
  * @n_channels: total number of channels to scan
  * @ie: optional information element(s) to add into Probe Request or %NULL
  * @ie_len: length of ie in octets
+<<<<<<< HEAD
  * @rates: bitmap of rates to advertise for each band
  * @wiphy: the wiphy this was for
  * @dev: the interface
  * @aborted: (internal) scan request was notified as aborted
  * @no_cck: used to send probe requests at non CCK rate in 2GHz band
+=======
+ * @wiphy: the wiphy this was for
+ * @dev: the interface
+ * @aborted: (internal) scan request was notified as aborted
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct cfg80211_scan_request {
 	struct cfg80211_ssid *ssids;
@@ -919,13 +1012,19 @@ struct cfg80211_scan_request {
 	const u8 *ie;
 	size_t ie_len;
 
+<<<<<<< HEAD
 	u32 rates[IEEE80211_NUM_BANDS];
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* internal */
 	struct wiphy *wiphy;
 	struct net_device *dev;
 	bool aborted;
+<<<<<<< HEAD
 	bool no_cck;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* keep last */
 	struct ieee80211_channel *channels[0];
@@ -1043,6 +1142,39 @@ const u8 *ieee80211_bss_get_ie(struct cfg80211_bss *bss, u8 ie);
 
 
 /**
+<<<<<<< HEAD
+=======
+ * struct cfg80211_crypto_settings - Crypto settings
+ * @wpa_versions: indicates which, if any, WPA versions are enabled
+ *	(from enum nl80211_wpa_versions)
+ * @cipher_group: group key cipher suite (or 0 if unset)
+ * @n_ciphers_pairwise: number of AP supported unicast ciphers
+ * @ciphers_pairwise: unicast key cipher suites
+ * @n_akm_suites: number of AKM suites
+ * @akm_suites: AKM suites
+ * @control_port: Whether user space controls IEEE 802.1X port, i.e.,
+ *	sets/clears %NL80211_STA_FLAG_AUTHORIZED. If true, the driver is
+ *	required to assume that the port is unauthorized until authorized by
+ *	user space. Otherwise, port is marked authorized by default.
+ * @control_port_ethertype: the control port protocol that should be
+ *	allowed through even on unauthorized ports
+ * @control_port_no_encrypt: TRUE to prevent encryption of control port
+ *	protocol frames.
+ */
+struct cfg80211_crypto_settings {
+	u32 wpa_versions;
+	u32 cipher_group;
+	int n_ciphers_pairwise;
+	u32 ciphers_pairwise[NL80211_MAX_NR_CIPHER_SUITES];
+	int n_akm_suites;
+	u32 akm_suites[NL80211_MAX_NR_AKM_SUITES];
+	bool control_port;
+	__be16 control_port_ethertype;
+	bool control_port_no_encrypt;
+};
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * struct cfg80211_auth_request - Authentication request data
  *
  * This structure provides information needed to complete IEEE 802.11
@@ -1055,6 +1187,13 @@ const u8 *ieee80211_bss_get_ie(struct cfg80211_bss *bss, u8 ie);
  * @key_len: length of WEP key for shared key authentication
  * @key_idx: index of WEP key for shared key authentication
  * @key: WEP key for shared key authentication
+<<<<<<< HEAD
+=======
+ * @local_state_change: This is a request for a local state only, i.e., no
+ *	Authentication frame is to be transmitted and authentication state is
+ *	to be changed without having to wait for a response from the peer STA
+ *	(AP).
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct cfg80211_auth_request {
 	struct cfg80211_bss *bss;
@@ -1063,6 +1202,7 @@ struct cfg80211_auth_request {
 	enum nl80211_auth_type auth_type;
 	const u8 *key;
 	u8 key_len, key_idx;
+<<<<<<< HEAD
 };
 
 /**
@@ -1072,6 +1212,9 @@ struct cfg80211_auth_request {
  */
 enum cfg80211_assoc_req_flags {
 	ASSOC_REQ_DISABLE_HT		= BIT(0),
+=======
+	bool local_state_change;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -1079,20 +1222,27 @@ enum cfg80211_assoc_req_flags {
  *
  * This structure provides information needed to complete IEEE 802.11
  * (re)association.
+<<<<<<< HEAD
  * @bss: The BSS to associate with. If the call is successful the driver
  *	is given a reference that it must release, normally via a call to
  *	cfg80211_send_rx_assoc(), or, if association timed out, with a
  *	call to cfg80211_put_bss() (in addition to calling
  *	cfg80211_send_assoc_timeout())
+=======
+ * @bss: The BSS to associate with.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ie: Extra IEs to add to (Re)Association Request frame or %NULL
  * @ie_len: Length of ie buffer in octets
  * @use_mfp: Use management frame protection (IEEE 802.11w) in this association
  * @crypto: crypto settings
  * @prev_bssid: previous BSSID, if not %NULL use reassociate frame
+<<<<<<< HEAD
  * @flags:  See &enum cfg80211_assoc_req_flags
  * @ht_capa:  HT Capabilities over-rides.  Values set in ht_capa_mask
  *   will be used in ht_capa.  Un-supported values will be ignored.
  * @ht_capa_mask:  The bits of ht_capa which are to be used.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct cfg80211_assoc_request {
 	struct cfg80211_bss *bss;
@@ -1100,9 +1250,12 @@ struct cfg80211_assoc_request {
 	size_t ie_len;
 	struct cfg80211_crypto_settings crypto;
 	bool use_mfp;
+<<<<<<< HEAD
 	u32 flags;
 	struct ieee80211_ht_cap ht_capa;
 	struct ieee80211_ht_cap ht_capa_mask;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -1111,6 +1264,7 @@ struct cfg80211_assoc_request {
  * This structure provides information needed to complete IEEE 802.11
  * deauthentication.
  *
+<<<<<<< HEAD
  * @bssid: the BSSID of the BSS to deauthenticate from
  * @ie: Extra IEs to add to Deauthentication frame or %NULL
  * @ie_len: Length of ie buffer in octets
@@ -1121,6 +1275,21 @@ struct cfg80211_deauth_request {
 	const u8 *ie;
 	size_t ie_len;
 	u16 reason_code;
+=======
+ * @bss: the BSS to deauthenticate from
+ * @ie: Extra IEs to add to Deauthentication frame or %NULL
+ * @ie_len: Length of ie buffer in octets
+ * @reason_code: The reason code for the deauthentication
+ * @local_state_change: This is a request for a local state only, i.e., no
+ *	Deauthentication frame is to be transmitted.
+ */
+struct cfg80211_deauth_request {
+	struct cfg80211_bss *bss;
+	const u8 *ie;
+	size_t ie_len;
+	u16 reason_code;
+	bool local_state_change;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -1155,7 +1324,10 @@ struct cfg80211_disassoc_request {
  * @bssid: Fixed BSSID requested, maybe be %NULL, if set do not
  *	search for IBSSs with a different BSSID.
  * @channel: The channel to use if no IBSS can be found to join.
+<<<<<<< HEAD
  * @channel_type: channel type (HT mode)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @channel_fixed: The channel should be fixed -- do not search for
  *	IBSSs to join on other channels.
  * @ie: information element(s) to include in the beacon
@@ -1163,10 +1335,13 @@ struct cfg80211_disassoc_request {
  * @beacon_interval: beacon interval to use
  * @privacy: this is a protected network, keys will be configured
  *	after joining
+<<<<<<< HEAD
  * @control_port: whether user space controls IEEE 802.1X port, i.e.,
  *	sets/clears %NL80211_STA_FLAG_AUTHORIZED. If true, the driver is
  *	required to assume that the port is unauthorized until authorized by
  *	user space. Otherwise, port is marked authorized by default.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @basic_rates: bitmap of basic rates to use when creating the IBSS
  * @mcast_rate: per-band multicast rate index + 1 (0: disabled)
  */
@@ -1174,14 +1349,20 @@ struct cfg80211_ibss_params {
 	u8 *ssid;
 	u8 *bssid;
 	struct ieee80211_channel *channel;
+<<<<<<< HEAD
 	enum nl80211_channel_type channel_type;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 *ie;
 	u8 ssid_len, ie_len;
 	u16 beacon_interval;
 	u32 basic_rates;
 	bool channel_fixed;
 	bool privacy;
+<<<<<<< HEAD
 	bool control_port;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int mcast_rate[IEEE80211_NUM_BANDS];
 };
 
@@ -1205,12 +1386,15 @@ struct cfg80211_ibss_params {
  * @key_len: length of WEP key for shared key authentication
  * @key_idx: index of WEP key for shared key authentication
  * @key: WEP key for shared key authentication
+<<<<<<< HEAD
  * @flags:  See &enum cfg80211_assoc_req_flags
  * @bg_scan_period:  Background scan period in seconds
  *   or -1 to indicate that default value is to be used.
  * @ht_capa:  HT Capabilities over-rides.  Values set in ht_capa_mask
  *   will be used in ht_capa.  Un-supported values will be ignored.
  * @ht_capa_mask:  The bits of ht_capa which are to be used.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct cfg80211_connect_params {
 	struct ieee80211_channel *channel;
@@ -1224,10 +1408,13 @@ struct cfg80211_connect_params {
 	struct cfg80211_crypto_settings crypto;
 	const u8 *key;
 	u8 key_len, key_idx;
+<<<<<<< HEAD
 	u32 flags;
 	int bg_scan_period;
 	struct ieee80211_ht_cap ht_capa;
 	struct ieee80211_ht_cap ht_capa_mask;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -1252,7 +1439,12 @@ enum wiphy_params_flags {
 struct cfg80211_bitrate_mask {
 	struct {
 		u32 legacy;
+<<<<<<< HEAD
 		u8 mcs[IEEE80211_HT_MCS_MASK_LEN];
+=======
+		/* TODO: add support for masking MCS rates; e.g.: */
+		/* u8 mcs[IEEE80211_HT_MCS_MASK_LEN]; */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} control[IEEE80211_NUM_BANDS];
 };
 /**
@@ -1294,6 +1486,7 @@ struct cfg80211_wowlan_trig_pkt_pattern {
  * @magic_pkt: wake up on receiving magic packet
  * @patterns: wake up on receiving packet matching a pattern
  * @n_patterns: number of patterns
+<<<<<<< HEAD
  * @gtk_rekey_failure: wake up on GTK rekey failure
  * @eap_identity_req: wake up on EAP identity request packet
  * @four_way_handshake: wake up on 4-way handshake
@@ -1303,11 +1496,17 @@ struct cfg80211_wowlan {
 	bool any, disconnect, magic_pkt, gtk_rekey_failure,
 	     eap_identity_req, four_way_handshake,
 	     rfkill_release;
+=======
+ */
+struct cfg80211_wowlan {
+	bool any, disconnect, magic_pkt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct cfg80211_wowlan_trig_pkt_pattern *patterns;
 	int n_patterns;
 };
 
 /**
+<<<<<<< HEAD
  * struct cfg80211_gtk_rekey_data - rekey data
  * @kek: key encryption key
  * @kck: key confirmation key
@@ -1320,6 +1519,8 @@ struct cfg80211_gtk_rekey_data {
 };
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * struct cfg80211_ops - backend description for wireless configuration
  *
  * This struct is registered by fullmac card drivers and/or wireless stacks
@@ -1363,6 +1564,7 @@ struct cfg80211_gtk_rekey_data {
  *
  * @set_default_mgmt_key: set the default management frame key on an interface
  *
+<<<<<<< HEAD
  * @set_rekey_data: give the data necessary for GTK rekeying to the driver
  *
  * @start_ap: Start acting in AP mode defined by the parameters.
@@ -1378,6 +1580,18 @@ struct cfg80211_gtk_rekey_data {
  *	them, also against the existing state! Also, supported_rates changes are
  *	not checked in station mode -- drivers need to reject (or ignore) them
  *	for anything but TDLS peers.
+=======
+ * @add_beacon: Add a beacon with given parameters, @head, @interval
+ *	and @dtim_period will be valid, @tail is optional.
+ * @set_beacon: Change the beacon parameters for an access point mode
+ *	interface. This should reject the call when no beacon has been
+ *	configured.
+ * @del_beacon: Remove beacon configuration and stop sending the beacon.
+ *
+ * @add_station: Add a new station.
+ * @del_station: Remove a station; @mac may be NULL to remove all stations.
+ * @change_station: Modify a given station.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @get_station: get station information for the station identified by @mac
  * @dump_station: dump station callback -- resume dump at index @idx
  *
@@ -1404,9 +1618,12 @@ struct cfg80211_gtk_rekey_data {
  *	doesn't verify much. Note, however, that the passed netdev may be
  *	%NULL as well if the user requested changing the channel for the
  *	device itself, or for a monitor interface.
+<<<<<<< HEAD
  * @get_channel: Get the current operating channel, should return %NULL if
  *	there's no single defined operating channel if for example the
  *	device implements channel hopping for multi-channel virtual interfaces.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * @scan: Request to do a scan. If returning zero, the scan request is given
  *	the driver, and will be valid until passed to cfg80211_scan_done().
@@ -1434,8 +1651,12 @@ struct cfg80211_gtk_rekey_data {
  *	have changed. The actual parameter values are available in
  *	struct wiphy. If returning an error, no value should be changed.
  *
+<<<<<<< HEAD
  * @set_tx_power: set the transmit power according to the parameters,
  *	the power passed is in mBm, to get dBm use MBM_TO_DBM().
+=======
+ * @set_tx_power: set the transmit power according to the parameters
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @get_tx_power: store the current TX power into the dbm variable;
  *	return 0 if successful
  *
@@ -1459,12 +1680,15 @@ struct cfg80211_gtk_rekey_data {
  *	frame on another channel
  *
  * @testmode_cmd: run a test mode command
+<<<<<<< HEAD
  * @testmode_dump: Implement a test mode dump. The cb->args[2] and up may be
  *	used by the function, but 0 and 1 must not be touched. Additionally,
  *	return error codes other than -ENOBUFS and -ENOENT will terminate the
  *	dump and return to userspace with an error, so be careful. If any data
  *	was passed in from userspace then the data/len arguments will be present
  *	and point to the data contained in %NL80211_ATTR_TESTDATA.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * @set_bitrate_mask: set the bitrate mask configuration
  *
@@ -1495,6 +1719,7 @@ struct cfg80211_gtk_rekey_data {
  * @set_ringparam: Set tx and rx ring sizes.
  *
  * @get_ringparam: Get tx and rx ring current and maximum sizes.
+<<<<<<< HEAD
  *
  * @tdls_mgmt: Transmit a TDLS management frame.
  * @tdls_oper: Perform a high-level TDLS operation (e.g. TDLS link setup).
@@ -1503,6 +1728,8 @@ struct cfg80211_gtk_rekey_data {
  *	later passes to cfg80211_probe_status().
  *
  * @set_noack_map: Set the NoAck Map for the TIDs.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct cfg80211_ops {
 	int	(*suspend)(struct wiphy *wiphy, struct cfg80211_wowlan *wow);
@@ -1535,11 +1762,19 @@ struct cfg80211_ops {
 					struct net_device *netdev,
 					u8 key_index);
 
+<<<<<<< HEAD
 	int	(*start_ap)(struct wiphy *wiphy, struct net_device *dev,
 			    struct cfg80211_ap_settings *settings);
 	int	(*change_beacon)(struct wiphy *wiphy, struct net_device *dev,
 				 struct cfg80211_beacon_data *info);
 	int	(*stop_ap)(struct wiphy *wiphy, struct net_device *dev);
+=======
+	int	(*add_beacon)(struct wiphy *wiphy, struct net_device *dev,
+			      struct beacon_parameters *info);
+	int	(*set_beacon)(struct wiphy *wiphy, struct net_device *dev,
+			      struct beacon_parameters *info);
+	int	(*del_beacon)(struct wiphy *wiphy, struct net_device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 	int	(*add_station)(struct wiphy *wiphy, struct net_device *dev,
@@ -1579,7 +1814,11 @@ struct cfg80211_ops {
 	int	(*change_bss)(struct wiphy *wiphy, struct net_device *dev,
 			      struct bss_parameters *params);
 
+<<<<<<< HEAD
 	int	(*set_txq_params)(struct wiphy *wiphy, struct net_device *dev,
+=======
+	int	(*set_txq_params)(struct wiphy *wiphy,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  struct ieee80211_txq_params *params);
 
 	int	(*set_channel)(struct wiphy *wiphy, struct net_device *dev,
@@ -1594,9 +1833,17 @@ struct cfg80211_ops {
 	int	(*assoc)(struct wiphy *wiphy, struct net_device *dev,
 			 struct cfg80211_assoc_request *req);
 	int	(*deauth)(struct wiphy *wiphy, struct net_device *dev,
+<<<<<<< HEAD
 			  struct cfg80211_deauth_request *req);
 	int	(*disassoc)(struct wiphy *wiphy, struct net_device *dev,
 			    struct cfg80211_disassoc_request *req);
+=======
+			  struct cfg80211_deauth_request *req,
+			  void *cookie);
+	int	(*disassoc)(struct wiphy *wiphy, struct net_device *dev,
+			    struct cfg80211_disassoc_request *req,
+			    void *cookie);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int	(*connect)(struct wiphy *wiphy, struct net_device *dev,
 			   struct cfg80211_connect_params *sme);
@@ -1620,9 +1867,12 @@ struct cfg80211_ops {
 
 #ifdef CONFIG_NL80211_TESTMODE
 	int	(*testmode_cmd)(struct wiphy *wiphy, void *data, int len);
+<<<<<<< HEAD
 	int	(*testmode_dump)(struct wiphy *wiphy, struct sk_buff *skb,
 				 struct netlink_callback *cb,
 				 void *data, int len);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	int	(*set_bitrate_mask)(struct wiphy *wiphy,
@@ -1653,8 +1903,12 @@ struct cfg80211_ops {
 			  struct ieee80211_channel *chan, bool offchan,
 			  enum nl80211_channel_type channel_type,
 			  bool channel_type_valid, unsigned int wait,
+<<<<<<< HEAD
 			  const u8 *buf, size_t len, bool no_cck,
 			  bool dont_wait_for_ack, u64 *cookie);
+=======
+			  const u8 *buf, size_t len, u64 *cookie);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int	(*mgmt_tx_cancel_wait)(struct wiphy *wiphy,
 				       struct net_device *dev,
 				       u64 cookie);
@@ -1681,6 +1935,7 @@ struct cfg80211_ops {
 				struct net_device *dev,
 				struct cfg80211_sched_scan_request *request);
 	int	(*sched_scan_stop)(struct wiphy *wiphy, struct net_device *dev);
+<<<<<<< HEAD
 
 	int	(*set_rekey_data)(struct wiphy *wiphy, struct net_device *dev,
 				  struct cfg80211_gtk_rekey_data *data);
@@ -1699,6 +1954,8 @@ struct cfg80211_ops {
 				  u16 noack_map);
 
 	struct ieee80211_channel *(*get_channel)(struct wiphy *wiphy);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -1723,9 +1980,13 @@ struct cfg80211_ops {
  *	regulatory domain no user regulatory domain can enable these channels
  *	at a later time. This can be used for devices which do not have
  *	calibration information guaranteed for frequencies or settings
+<<<<<<< HEAD
  *	outside of its regulatory domain. If used in combination with
  *	WIPHY_FLAG_CUSTOM_REGULATORY the inspected country IE power settings
  *	will be followed.
+=======
+ *	outside of its regulatory domain.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @WIPHY_FLAG_DISABLE_BEACON_HINTS: enable this if your driver needs to ensure
  *	that passive scan flags and beaconing flags may not be lifted by
  *	cfg80211 due to regulatory beacon hints. For more information on beacon
@@ -1884,6 +2145,7 @@ struct ieee80211_txrx_stypes {
  * @WIPHY_WOWLAN_MAGIC_PKT: supports wakeup on magic packet
  *	(see nl80211.h)
  * @WIPHY_WOWLAN_DISCONNECT: supports wakeup on disconnect
+<<<<<<< HEAD
  * @WIPHY_WOWLAN_SUPPORTS_GTK_REKEY: supports GTK rekeying while asleep
  * @WIPHY_WOWLAN_GTK_REKEY_FAILURE: supports wakeup on GTK rekey failure
  * @WIPHY_WOWLAN_EAP_IDENTITY_REQ: supports wakeup on EAP identity request
@@ -1899,6 +2161,13 @@ enum wiphy_wowlan_support_flags {
 	WIPHY_WOWLAN_EAP_IDENTITY_REQ	= BIT(5),
 	WIPHY_WOWLAN_4WAY_HANDSHAKE	= BIT(6),
 	WIPHY_WOWLAN_RFKILL_RELEASE	= BIT(7),
+=======
+ */
+enum wiphy_wowlan_support_flags {
+	WIPHY_WOWLAN_ANY	= BIT(0),
+	WIPHY_WOWLAN_MAGIC_PKT	= BIT(1),
+	WIPHY_WOWLAN_DISCONNECT	= BIT(2),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -1946,12 +2215,18 @@ struct wiphy_wowlan_support {
  *	by default for perm_addr. In this case, the mask should be set to
  *	all-zeroes. In this case it is assumed that the device can handle
  *	the same number of arbitrary MAC addresses.
+<<<<<<< HEAD
  * @registered: protects ->resume and ->suspend sysfs callbacks against
  *	unregister hardware
  * @debugfsdir: debugfs directory used for this wiphy, will be renamed
  *	automatically on wiphy renames
  * @dev: (virtual) struct device for this wiphy
  * @registered: helps synchronize suspend/resume with wiphy unregister
+=======
+ * @debugfsdir: debugfs directory used for this wiphy, will be renamed
+ *	automatically on wiphy renames
+ * @dev: (virtual) struct device for this wiphy
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @wext: wireless extension handlers
  * @priv: driver private data (sized according to wiphy_new() parameter)
  * @interface_modes: bitmask of interfaces types valid for this wiphy,
@@ -1962,7 +2237,10 @@ struct wiphy_wowlan_support {
  * @software_iftypes: bitmask of software interface types, these are not
  *	subject to any restrictions since they are purely managed in SW.
  * @flags: wiphy flags, see &enum wiphy_flags
+<<<<<<< HEAD
  * @features: features advertised to nl80211, see &enum nl80211_feature_flags.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @bss_priv_size: each BSS struct has private data allocated with it,
  *	this variable determines its size
  * @max_scan_ssids: maximum number of SSIDs the device can scan for in
@@ -1997,19 +2275,25 @@ struct wiphy_wowlan_support {
  *	configured as RX antennas. Antenna configuration commands will be
  *	rejected unless this or @available_antennas_tx is set.
  *
+<<<<<<< HEAD
  * @probe_resp_offload:
  *	 Bitmap of supported protocols for probe response offloading.
  *	 See &enum nl80211_probe_resp_offload_support_attr. Only valid
  *	 when the wiphy flag @WIPHY_FLAG_AP_PROBE_RESP_OFFLOAD is set.
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @max_remain_on_channel_duration: Maximum time a remain-on-channel operation
  *	may request, if implemented.
  *
  * @wowlan: WoWLAN support information
  *
  * @ap_sme_capa: AP SME capabilities, flags from &enum nl80211_ap_sme_features.
+<<<<<<< HEAD
  * @ht_capa_mod_mask:  Specify what ht_cap values can be over-ridden.
  *	If null, then none can be over-ridden.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct wiphy {
 	/* assign these fields before you register the wiphy */
@@ -2031,7 +2315,11 @@ struct wiphy {
 	/* Supported interface modes, OR together BIT(NL80211_IFTYPE_...) */
 	u16 interface_modes;
 
+<<<<<<< HEAD
 	u32 flags, features;
+=======
+	u32 flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	u32 ap_sme_capa;
 
@@ -2065,6 +2353,7 @@ struct wiphy {
 	u32 available_antennas_tx;
 	u32 available_antennas_rx;
 
+<<<<<<< HEAD
 	/*
 	 * Bitmap of supported protocols for probe response offloading
 	 * see &enum nl80211_probe_resp_offload_support_attr. Only valid
@@ -2072,6 +2361,8 @@ struct wiphy {
 	 */
 	u32 probe_resp_offload;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* If multiple wiphys are registered and you're handed e.g.
 	 * a regular netdev with assigned ieee80211_ptr, you won't
 	 * know whether it points to a wiphy your driver has registered
@@ -2093,6 +2384,7 @@ struct wiphy {
 	 * you need use set_wiphy_dev() (see below) */
 	struct device dev;
 
+<<<<<<< HEAD
 	/* protects ->resume, ->suspend sysfs callbacks against unregister hw */
 	bool registered;
 
@@ -2101,6 +2393,11 @@ struct wiphy {
 
 	const struct ieee80211_ht_cap *ht_capa_mod_mask;
 
+=======
+	/* dir in debugfs: ieee80211/<wiphyname> */
+	struct dentry *debugfsdir;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_NET_NS
 	/* the network namespace this phy lives in currently */
 	struct net *_net;
@@ -2222,6 +2519,11 @@ struct cfg80211_conn;
 struct cfg80211_internal_bss;
 struct cfg80211_cached_keys;
 
+<<<<<<< HEAD
+=======
+#define MAX_AUTH_BSSES		4
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct wireless_dev - wireless per-netdev state
  *
@@ -2285,6 +2587,11 @@ struct wireless_dev {
 	struct list_head event_list;
 	spinlock_t event_lock;
 
+<<<<<<< HEAD
+=======
+	struct cfg80211_internal_bss *authtry_bsses[MAX_AUTH_BSSES];
+	struct cfg80211_internal_bss *auth_bsses[MAX_AUTH_BSSES];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct cfg80211_internal_bss *current_bss; /* associated / joined */
 	struct ieee80211_channel *channel;
 
@@ -2480,6 +2787,7 @@ unsigned int ieee80211_get_hdrlen_from_skb(const struct sk_buff *skb);
 unsigned int __attribute_const__ ieee80211_hdrlen(__le16 fc);
 
 /**
+<<<<<<< HEAD
  * ieee80211_get_mesh_hdrlen - get mesh extension header length
  * @meshhdr: the mesh extension header, only the flags field
  *	(first byte) will be accessed
@@ -2489,6 +2797,8 @@ unsigned int __attribute_const__ ieee80211_hdrlen(__le16 fc);
 unsigned int ieee80211_get_mesh_hdrlen(struct ieee80211s_hdr *meshhdr);
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * DOC: Data path helpers
  *
  * In addition to generic utilities, cfg80211 also offers
@@ -2559,6 +2869,7 @@ unsigned int cfg80211_classify8021d(struct sk_buff *skb);
 const u8 *cfg80211_find_ie(u8 eid, const u8 *ies, int len);
 
 /**
+<<<<<<< HEAD
  * cfg80211_find_vendor_ie - find vendor specific information element in data
  *
  * @oui: vendor OUI
@@ -2577,6 +2888,8 @@ const u8 *cfg80211_find_vendor_ie(unsigned int oui, u8 oui_type,
 				  const u8 *ies, int len);
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * DOC: Regulatory enforcement infrastructure
  *
  * TODO
@@ -2651,6 +2964,116 @@ extern int freq_reg_info(struct wiphy *wiphy,
 			 const struct ieee80211_reg_rule **reg_rule);
 
 /*
+<<<<<<< HEAD
+=======
+ * Temporary wext handlers & helper functions
+ *
+ * In the future cfg80211 will simply assign the entire wext handler
+ * structure to netdevs it manages, but we're not there yet.
+ */
+int cfg80211_wext_giwname(struct net_device *dev,
+			  struct iw_request_info *info,
+			  char *name, char *extra);
+int cfg80211_wext_siwmode(struct net_device *dev, struct iw_request_info *info,
+			  u32 *mode, char *extra);
+int cfg80211_wext_giwmode(struct net_device *dev, struct iw_request_info *info,
+			  u32 *mode, char *extra);
+int cfg80211_wext_siwscan(struct net_device *dev,
+			  struct iw_request_info *info,
+			  union iwreq_data *wrqu, char *extra);
+int cfg80211_wext_giwscan(struct net_device *dev,
+			  struct iw_request_info *info,
+			  struct iw_point *data, char *extra);
+int cfg80211_wext_siwmlme(struct net_device *dev,
+			  struct iw_request_info *info,
+			  struct iw_point *data, char *extra);
+int cfg80211_wext_giwrange(struct net_device *dev,
+			   struct iw_request_info *info,
+			   struct iw_point *data, char *extra);
+int cfg80211_wext_siwgenie(struct net_device *dev,
+			   struct iw_request_info *info,
+			   struct iw_point *data, char *extra);
+int cfg80211_wext_siwauth(struct net_device *dev,
+			  struct iw_request_info *info,
+			  struct iw_param *data, char *extra);
+int cfg80211_wext_giwauth(struct net_device *dev,
+			  struct iw_request_info *info,
+			  struct iw_param *data, char *extra);
+
+int cfg80211_wext_siwfreq(struct net_device *dev,
+			  struct iw_request_info *info,
+			  struct iw_freq *freq, char *extra);
+int cfg80211_wext_giwfreq(struct net_device *dev,
+			  struct iw_request_info *info,
+			  struct iw_freq *freq, char *extra);
+int cfg80211_wext_siwessid(struct net_device *dev,
+			   struct iw_request_info *info,
+			   struct iw_point *data, char *ssid);
+int cfg80211_wext_giwessid(struct net_device *dev,
+			   struct iw_request_info *info,
+			   struct iw_point *data, char *ssid);
+int cfg80211_wext_siwrate(struct net_device *dev,
+			  struct iw_request_info *info,
+			  struct iw_param *rate, char *extra);
+int cfg80211_wext_giwrate(struct net_device *dev,
+			  struct iw_request_info *info,
+			  struct iw_param *rate, char *extra);
+
+int cfg80211_wext_siwrts(struct net_device *dev,
+			 struct iw_request_info *info,
+			 struct iw_param *rts, char *extra);
+int cfg80211_wext_giwrts(struct net_device *dev,
+			 struct iw_request_info *info,
+			 struct iw_param *rts, char *extra);
+int cfg80211_wext_siwfrag(struct net_device *dev,
+			  struct iw_request_info *info,
+			  struct iw_param *frag, char *extra);
+int cfg80211_wext_giwfrag(struct net_device *dev,
+			  struct iw_request_info *info,
+			  struct iw_param *frag, char *extra);
+int cfg80211_wext_siwretry(struct net_device *dev,
+			   struct iw_request_info *info,
+			   struct iw_param *retry, char *extra);
+int cfg80211_wext_giwretry(struct net_device *dev,
+			   struct iw_request_info *info,
+			   struct iw_param *retry, char *extra);
+int cfg80211_wext_siwencodeext(struct net_device *dev,
+			       struct iw_request_info *info,
+			       struct iw_point *erq, char *extra);
+int cfg80211_wext_siwencode(struct net_device *dev,
+			    struct iw_request_info *info,
+			    struct iw_point *erq, char *keybuf);
+int cfg80211_wext_giwencode(struct net_device *dev,
+			    struct iw_request_info *info,
+			    struct iw_point *erq, char *keybuf);
+int cfg80211_wext_siwtxpower(struct net_device *dev,
+			     struct iw_request_info *info,
+			     union iwreq_data *data, char *keybuf);
+int cfg80211_wext_giwtxpower(struct net_device *dev,
+			     struct iw_request_info *info,
+			     union iwreq_data *data, char *keybuf);
+struct iw_statistics *cfg80211_wireless_stats(struct net_device *dev);
+
+int cfg80211_wext_siwpower(struct net_device *dev,
+			   struct iw_request_info *info,
+			   struct iw_param *wrq, char *extra);
+int cfg80211_wext_giwpower(struct net_device *dev,
+			   struct iw_request_info *info,
+			   struct iw_param *wrq, char *extra);
+
+int cfg80211_wext_siwap(struct net_device *dev,
+			struct iw_request_info *info,
+			struct sockaddr *ap_addr, char *extra);
+int cfg80211_wext_giwap(struct net_device *dev,
+			struct iw_request_info *info,
+			struct sockaddr *ap_addr, char *extra);
+
+int cfg80211_wext_siwpmksa(struct net_device *dev,
+			   struct iw_request_info *info,
+			   struct iw_point *data, char *extra);
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * callbacks for asynchronous cfg80211 methods, notification
  * functions and BSS handling helpers
  */
@@ -2694,10 +3117,15 @@ void cfg80211_sched_scan_stopped(struct wiphy *wiphy);
  *
  * This informs cfg80211 that BSS information was found and
  * the BSS should be updated/added.
+<<<<<<< HEAD
  *
  * NOTE: Returns a referenced struct, must be released with cfg80211_put_bss()!
  */
 struct cfg80211_bss * __must_check
+=======
+ */
+struct cfg80211_bss*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 cfg80211_inform_bss_frame(struct wiphy *wiphy,
 			  struct ieee80211_channel *channel,
 			  struct ieee80211_mgmt *mgmt, size_t len,
@@ -2709,7 +3137,11 @@ cfg80211_inform_bss_frame(struct wiphy *wiphy,
  * @wiphy: the wiphy reporting the BSS
  * @channel: The channel the frame was received on
  * @bssid: the BSSID of the BSS
+<<<<<<< HEAD
  * @tsf: the TSF sent by the peer in the beacon/probe response (or 0)
+=======
+ * @timestamp: the TSF timestamp sent by the peer
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @capability: the capability field sent by the peer
  * @beacon_interval: the beacon interval announced by the peer
  * @ie: additional IEs sent by the peer
@@ -2719,6 +3151,7 @@ cfg80211_inform_bss_frame(struct wiphy *wiphy,
  *
  * This informs cfg80211 that BSS information was found and
  * the BSS should be updated/added.
+<<<<<<< HEAD
  *
  * NOTE: Returns a referenced struct, must be released with cfg80211_put_bss()!
  */
@@ -2727,6 +3160,15 @@ cfg80211_inform_bss(struct wiphy *wiphy,
 		    struct ieee80211_channel *channel,
 		    const u8 *bssid, u64 tsf, u16 capability,
 		    u16 beacon_interval, const u8 *ie, size_t ielen,
+=======
+ */
+struct cfg80211_bss*
+cfg80211_inform_bss(struct wiphy *wiphy,
+		    struct ieee80211_channel *channel,
+		    const u8 *bssid,
+		    u64 timestamp, u16 capability, u16 beacon_interval,
+		    const u8 *ie, size_t ielen,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    s32 signal, gfp_t gfp);
 
 struct cfg80211_bss *cfg80211_get_bss(struct wiphy *wiphy,
@@ -2747,6 +3189,7 @@ struct cfg80211_bss *cfg80211_get_mesh(struct wiphy *wiphy,
 				       struct ieee80211_channel *channel,
 				       const u8 *meshid, size_t meshidlen,
 				       const u8 *meshcfg);
+<<<<<<< HEAD
 /**
  * cfg80211_ref_bss - reference BSS struct
  * @bss: the BSS struct to reference
@@ -2761,6 +3204,8 @@ void cfg80211_ref_bss(struct cfg80211_bss *bss);
  *
  * Decrements the refcount of the given BSS struct.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void cfg80211_put_bss(struct cfg80211_bss *bss);
 
 /**
@@ -2798,10 +3243,27 @@ void cfg80211_send_rx_auth(struct net_device *dev, const u8 *buf, size_t len);
 void cfg80211_send_auth_timeout(struct net_device *dev, const u8 *addr);
 
 /**
+<<<<<<< HEAD
  * cfg80211_send_rx_assoc - notification of processed association
  * @dev: network device
  * @bss: the BSS struct association was requested for, the struct reference
  *	is owned by cfg80211 after this call
+=======
+ * __cfg80211_auth_canceled - notify cfg80211 that authentication was canceled
+ * @dev: network device
+ * @addr: The MAC address of the device with which the authentication timed out
+ *
+ * When a pending authentication had no action yet, the driver may decide
+ * to not send a deauth frame, but in that case must calls this function
+ * to tell cfg80211 about this decision. It is only valid to call this
+ * function within the deauth() callback.
+ */
+void __cfg80211_auth_canceled(struct net_device *dev, const u8 *addr);
+
+/**
+ * cfg80211_send_rx_assoc - notification of processed association
+ * @dev: network device
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @buf: (re)association response frame (header + body)
  * @len: length of the frame data
  *
@@ -2810,8 +3272,12 @@ void cfg80211_send_auth_timeout(struct net_device *dev, const u8 *addr);
  * function or cfg80211_send_assoc_timeout() to indicate the result of
  * cfg80211_ops::assoc() call. This function may sleep.
  */
+<<<<<<< HEAD
 void cfg80211_send_rx_assoc(struct net_device *dev, struct cfg80211_bss *bss,
 			    const u8 *buf, size_t len);
+=======
+void cfg80211_send_rx_assoc(struct net_device *dev, const u8 *buf, size_t len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * cfg80211_send_assoc_timeout - notification of timed out association
@@ -3059,10 +3525,15 @@ struct sk_buff *cfg80211_testmode_alloc_event_skb(struct wiphy *wiphy,
 void cfg80211_testmode_event(struct sk_buff *skb, gfp_t gfp);
 
 #define CFG80211_TESTMODE_CMD(cmd)	.testmode_cmd = (cmd),
+<<<<<<< HEAD
 #define CFG80211_TESTMODE_DUMP(cmd)	.testmode_dump = (cmd),
 #else
 #define CFG80211_TESTMODE_CMD(cmd)
 #define CFG80211_TESTMODE_DUMP(cmd)
+=======
+#else
+#define CFG80211_TESTMODE_CMD(cmd)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /**
@@ -3203,7 +3674,10 @@ void cfg80211_del_sta(struct net_device *dev, const u8 *mac_addr, gfp_t gfp);
  * cfg80211_rx_mgmt - notification of received, unprocessed management frame
  * @dev: network device
  * @freq: Frequency on which the frame was received in MHz
+<<<<<<< HEAD
  * @sig_dbm: signal strength in mBm, or 0 if unknown
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @buf: Management frame (header + body)
  * @len: length of the frame data
  * @gfp: context flags
@@ -3216,8 +3690,13 @@ void cfg80211_del_sta(struct net_device *dev, const u8 *mac_addr, gfp_t gfp);
  * This function is called whenever an Action frame is received for a station
  * mode interface, but is not processed in kernel.
  */
+<<<<<<< HEAD
 bool cfg80211_rx_mgmt(struct net_device *dev, int freq, int sig_dbm,
 		      const u8 *buf, size_t len, gfp_t gfp);
+=======
+bool cfg80211_rx_mgmt(struct net_device *dev, int freq, const u8 *buf,
+		      size_t len, gfp_t gfp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * cfg80211_mgmt_tx_status - notification of TX status for management frame
@@ -3261,6 +3740,7 @@ void cfg80211_cqm_rssi_notify(struct net_device *dev,
 void cfg80211_cqm_pktloss_notify(struct net_device *dev,
 				 const u8 *peer, u32 num_packets, gfp_t gfp);
 
+<<<<<<< HEAD
 /**
  * cfg80211_gtk_rekey_notify - notify userspace about driver rekeying
  * @dev: network device
@@ -3359,6 +3839,8 @@ int cfg80211_can_beacon_sec_chan(struct wiphy *wiphy,
  */
 u16 cfg80211_calculate_bitrate(struct rate_info *rate);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Logging, debugging and troubleshooting/diagnostic helpers. */
 
 /* wiphy_printk helpers, similar to dev_printk */

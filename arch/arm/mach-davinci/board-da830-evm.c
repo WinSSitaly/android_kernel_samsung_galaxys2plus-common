@@ -377,7 +377,11 @@ static struct davinci_nand_pdata da830_evm_nand_pdata = {
 	.nr_parts	= ARRAY_SIZE(da830_evm_nand_partitions),
 	.ecc_mode	= NAND_ECC_HW,
 	.ecc_bits	= 4,
+<<<<<<< HEAD
 	.bbt_options	= NAND_BBT_USE_FLASH,
+=======
+	.options	= NAND_USE_FLASH_BBT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bbt_td		= &da830_evm_nand_bbt_main_descr,
 	.bbt_md		= &da830_evm_nand_bbt_mirror_descr,
 	.timing         = &da830_evm_nandflash_timing,
@@ -676,11 +680,18 @@ static void __init da830_evm_map_io(void)
 }
 
 MACHINE_START(DAVINCI_DA830_EVM, "DaVinci DA830/OMAP-L137/AM17x EVM")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= (DA8XX_DDR_BASE + 0x100),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io		= da830_evm_map_io,
 	.init_irq	= cp_intc_init,
 	.timer		= &davinci_timer,
 	.init_machine	= da830_evm_init,
+<<<<<<< HEAD
 	.dma_zone_size	= SZ_128M,
 	.restart	= da8xx_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

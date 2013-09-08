@@ -8,9 +8,13 @@
 #ifndef __LINUX_MFD_STMPE_H
 #define __LINUX_MFD_STMPE_H
 
+<<<<<<< HEAD
 #include <linux/mutex.h>
 
 struct device;
+=======
+#include <linux/device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum stmpe_block {
 	STMPE_BLOCK_GPIO	= 1 << 0,
@@ -22,13 +26,19 @@ enum stmpe_block {
 };
 
 enum stmpe_partnum {
+<<<<<<< HEAD
 	STMPE610,
 	STMPE801,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	STMPE811,
 	STMPE1601,
 	STMPE2401,
 	STMPE2403,
+<<<<<<< HEAD
 	STMPE_NBR_PARTS
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -55,13 +65,17 @@ enum {
 
 
 struct stmpe_variant_info;
+<<<<<<< HEAD
 struct stmpe_client_info;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * struct stmpe - STMPE MFD structure
  * @lock: lock protecting I/O operations
  * @irq_lock: IRQ bus lock
  * @dev: device, mostly for dev_dbg()
+<<<<<<< HEAD
  * @client: client - i2c or spi
  * @ci: client specific information
  * @partnum: part number
@@ -69,6 +83,12 @@ struct stmpe_client_info;
  * @regs: list of addresses of registers which are at different addresses on
  *	  different variants.  Indexed by one of STMPE_IDX_*.
  * @irq: irq number for stmpe
+=======
+ * @i2c: i2c client
+ * @variant: the detected STMPE model number
+ * @regs: list of addresses of registers which are at different addresses on
+ *	  different variants.  Indexed by one of STMPE_IDX_*.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @irq_base: starting IRQ number for internal IRQs
  * @num_gpios: number of gpios, differs for variants
  * @ier: cache of IER registers for bus_lock
@@ -79,13 +99,20 @@ struct stmpe {
 	struct mutex lock;
 	struct mutex irq_lock;
 	struct device *dev;
+<<<<<<< HEAD
 	void *client;
 	struct stmpe_client_info *ci;
+=======
+	struct i2c_client *i2c;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	enum stmpe_partnum partnum;
 	struct stmpe_variant_info *variant;
 	const u8 *regs;
 
+<<<<<<< HEAD
 	int irq;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int irq_base;
 	int num_gpios;
 	u8 ier[2];
@@ -132,8 +159,11 @@ struct stmpe_keypad_platform_data {
  * @norequest_mask: bitmask specifying which GPIOs should _not_ be
  *		    requestable due to different usage (e.g. touch, keypad)
  *		    STMPE_GPIO_NOREQ_* macros can be used here.
+<<<<<<< HEAD
  * @setup: board specific setup callback.
  * @remove: board specific remove callback
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct stmpe_gpio_platform_data {
 	int gpio_base;
@@ -193,9 +223,12 @@ struct stmpe_ts_platform_data {
  * @autosleep_timeout: inactivity timeout in milliseconds for autosleep
  * @irq_base: base IRQ number.  %STMPE_NR_IRQS irqs will be used, or
  *	      %STMPE_NR_INTERNAL_IRQS if the GPIO driver is not used.
+<<<<<<< HEAD
  * @irq_over_gpio: true if gpio is used to get irq
  * @irq_gpio: gpio number over which irq will be requested (significant only if
  *	      irq_over_gpio is true)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @gpio: GPIO-specific platform data
  * @keypad: keypad-specific platform data
  * @ts: touchscreen-specific platform data
@@ -207,8 +240,11 @@ struct stmpe_platform_data {
 	unsigned int irq_trigger;
 	bool irq_invert_polarity;
 	bool autosleep;
+<<<<<<< HEAD
 	bool irq_over_gpio;
 	int irq_gpio;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int autosleep_timeout;
 
 	struct stmpe_gpio_platform_data *gpio;

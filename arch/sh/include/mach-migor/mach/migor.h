@@ -9,7 +9,11 @@
 
 #include <video/sh_mobile_lcdc.h>
 
+<<<<<<< HEAD
 int migor_lcd_qvga_setup(void *sys_ops_handle,
+=======
+int migor_lcd_qvga_setup(void *board_data, void *sys_ops_handle,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 struct sh_mobile_lcdc_sys_bus_ops *sys_ops);
 
 #endif /* __ASM_SH_MIGOR_H */

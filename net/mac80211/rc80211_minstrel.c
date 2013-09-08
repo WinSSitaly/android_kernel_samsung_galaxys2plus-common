@@ -334,8 +334,13 @@ minstrel_get_rate(void *priv, struct ieee80211_sta *sta,
 
 
 static void
+<<<<<<< HEAD
 calc_rate_durations(struct ieee80211_local *local, struct minstrel_rate *d,
 		    struct ieee80211_rate *rate)
+=======
+calc_rate_durations(struct minstrel_sta_info *mi, struct ieee80211_local *local,
+                    struct minstrel_rate *d, struct ieee80211_rate *rate)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int erp = !!(rate->flags & IEEE80211_RATE_ERP_G);
 
@@ -402,7 +407,12 @@ minstrel_rate_init(void *priv, struct ieee80211_supported_band *sband,
 
 		mr->rix = i;
 		mr->bitrate = sband->bitrates[i].bitrate / 5;
+<<<<<<< HEAD
 		calc_rate_durations(local, mr, &sband->bitrates[i]);
+=======
+		calc_rate_durations(mi, local, mr,
+				&sband->bitrates[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* calculate maximum number of retransmissions before
 		 * fallback (based on maximum segment size) */
@@ -531,21 +541,27 @@ minstrel_alloc(struct ieee80211_hw *hw, struct dentry *debugfsdir)
 	mp->hw = hw;
 	mp->update_interval = 100;
 
+<<<<<<< HEAD
 #ifdef CONFIG_MAC80211_DEBUGFS
 	mp->fixed_rate_idx = (u32) -1;
 	mp->dbg_fixed_rate = debugfs_create_u32("fixed_rate_idx",
 			S_IRUGO | S_IWUGO, debugfsdir, &mp->fixed_rate_idx);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return mp;
 }
 
 static void
 minstrel_free(void *priv)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_MAC80211_DEBUGFS
 	debugfs_remove(((struct minstrel_priv *)priv)->dbg_fixed_rate);
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(priv);
 }
 

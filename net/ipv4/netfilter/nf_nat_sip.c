@@ -148,7 +148,11 @@ static unsigned int ip_nat_sip(struct sk_buff *skb, unsigned int dataoff,
 	if (ct_sip_parse_header_uri(ct, *dptr, NULL, *datalen,
 				    hdr, NULL, &matchoff, &matchlen,
 				    &addr, &port) > 0) {
+<<<<<<< HEAD
 		unsigned int olen, matchend, poff, plen, buflen, n;
+=======
+		unsigned int matchend, poff, plen, buflen, n;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		char buffer[sizeof("nnn.nnn.nnn.nnn:nnnnn")];
 
 		/* We're only interested in headers related to this
@@ -163,12 +167,19 @@ static unsigned int ip_nat_sip(struct sk_buff *skb, unsigned int dataoff,
 				goto next;
 		}
 
+<<<<<<< HEAD
 		olen = *datalen;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!map_addr(skb, dataoff, dptr, datalen, matchoff, matchlen,
 			      &addr, port))
 			return NF_DROP;
 
+<<<<<<< HEAD
 		matchend = matchoff + matchlen + *datalen - olen;
+=======
+		matchend = matchoff + matchlen;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* The maddr= parameter (RFC 2361) specifies where to send
 		 * the reply. */
@@ -250,25 +261,43 @@ static void ip_nat_sip_seq_adjust(struct sk_buff *skb, s16 off)
 static void ip_nat_sip_expected(struct nf_conn *ct,
 				struct nf_conntrack_expect *exp)
 {
+<<<<<<< HEAD
 	struct nf_nat_ipv4_range range;
+=======
+	struct nf_nat_range range;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* This must be a fresh one. */
 	BUG_ON(ct->status & IPS_NAT_DONE_MASK);
 
 	/* For DST manip, map port here to where it's expected. */
+<<<<<<< HEAD
 	range.flags = (NF_NAT_RANGE_MAP_IPS | NF_NAT_RANGE_PROTO_SPECIFIED);
 	range.min = range.max = exp->saved_proto;
 	range.min_ip = range.max_ip = exp->saved_ip;
 	nf_nat_setup_info(ct, &range, NF_NAT_MANIP_DST);
+=======
+	range.flags = (IP_NAT_RANGE_MAP_IPS | IP_NAT_RANGE_PROTO_SPECIFIED);
+	range.min = range.max = exp->saved_proto;
+	range.min_ip = range.max_ip = exp->saved_ip;
+	nf_nat_setup_info(ct, &range, IP_NAT_MANIP_DST);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Change src to where master sends to, but only if the connection
 	 * actually came from the same source. */
 	if (ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple.src.u3.ip ==
 	    ct->master->tuplehash[exp->dir].tuple.src.u3.ip) {
+<<<<<<< HEAD
 		range.flags = NF_NAT_RANGE_MAP_IPS;
 		range.min_ip = range.max_ip
 			= ct->master->tuplehash[!exp->dir].tuple.dst.u3.ip;
 		nf_nat_setup_info(ct, &range, NF_NAT_MANIP_SRC);
+=======
+		range.flags = IP_NAT_RANGE_MAP_IPS;
+		range.min_ip = range.max_ip
+			= ct->master->tuplehash[!exp->dir].tuple.dst.u3.ip;
+		nf_nat_setup_info(ct, &range, IP_NAT_MANIP_SRC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -502,10 +531,14 @@ static unsigned int ip_nat_sdp_media(struct sk_buff *skb, unsigned int dataoff,
 		ret = nf_ct_expect_related(rtcp_exp);
 		if (ret == 0)
 			break;
+<<<<<<< HEAD
 		else if (ret == -EBUSY) {
 			nf_ct_unexpect_related(rtp_exp);
 			continue;
 		} else if (ret < 0) {
+=======
+		else if (ret != -EBUSY) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			nf_ct_unexpect_related(rtp_exp);
 			port = 0;
 			break;
@@ -530,6 +563,7 @@ err1:
 	return NF_DROP;
 }
 
+<<<<<<< HEAD
 static struct nf_ct_helper_expectfn sip_nat = {
         .name           = "sip",
         .expectfn       = ip_nat_sip_expected,
@@ -545,6 +579,17 @@ static void __exit nf_nat_sip_fini(void)
 	RCU_INIT_POINTER(nf_nat_sdp_session_hook, NULL);
 	RCU_INIT_POINTER(nf_nat_sdp_media_hook, NULL);
 	nf_ct_helper_expectfn_unregister(&sip_nat);
+=======
+static void __exit nf_nat_sip_fini(void)
+{
+	rcu_assign_pointer(nf_nat_sip_hook, NULL);
+	rcu_assign_pointer(nf_nat_sip_seq_adjust_hook, NULL);
+	rcu_assign_pointer(nf_nat_sip_expect_hook, NULL);
+	rcu_assign_pointer(nf_nat_sdp_addr_hook, NULL);
+	rcu_assign_pointer(nf_nat_sdp_port_hook, NULL);
+	rcu_assign_pointer(nf_nat_sdp_session_hook, NULL);
+	rcu_assign_pointer(nf_nat_sdp_media_hook, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	synchronize_rcu();
 }
 
@@ -557,6 +602,7 @@ static int __init nf_nat_sip_init(void)
 	BUG_ON(nf_nat_sdp_port_hook != NULL);
 	BUG_ON(nf_nat_sdp_session_hook != NULL);
 	BUG_ON(nf_nat_sdp_media_hook != NULL);
+<<<<<<< HEAD
 	RCU_INIT_POINTER(nf_nat_sip_hook, ip_nat_sip);
 	RCU_INIT_POINTER(nf_nat_sip_seq_adjust_hook, ip_nat_sip_seq_adjust);
 	RCU_INIT_POINTER(nf_nat_sip_expect_hook, ip_nat_sip_expect);
@@ -565,6 +611,15 @@ static int __init nf_nat_sip_init(void)
 	RCU_INIT_POINTER(nf_nat_sdp_session_hook, ip_nat_sdp_session);
 	RCU_INIT_POINTER(nf_nat_sdp_media_hook, ip_nat_sdp_media);
 	nf_ct_helper_expectfn_register(&sip_nat);
+=======
+	rcu_assign_pointer(nf_nat_sip_hook, ip_nat_sip);
+	rcu_assign_pointer(nf_nat_sip_seq_adjust_hook, ip_nat_sip_seq_adjust);
+	rcu_assign_pointer(nf_nat_sip_expect_hook, ip_nat_sip_expect);
+	rcu_assign_pointer(nf_nat_sdp_addr_hook, ip_nat_sdp_addr);
+	rcu_assign_pointer(nf_nat_sdp_port_hook, ip_nat_sdp_port);
+	rcu_assign_pointer(nf_nat_sdp_session_hook, ip_nat_sdp_session);
+	rcu_assign_pointer(nf_nat_sdp_media_hook, ip_nat_sdp_media);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

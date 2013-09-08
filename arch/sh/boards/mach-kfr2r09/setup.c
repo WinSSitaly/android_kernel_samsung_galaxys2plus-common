@@ -22,7 +22,10 @@
 #include <linux/input/sh_keysc.h>
 #include <linux/i2c.h>
 #include <linux/usb/r8a66597.h>
+<<<<<<< HEAD
 #include <linux/videodev2.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/rj54n1cb0c.h>
 #include <media/soc_camera.h>
 #include <media/sh_mobile_ceu.h>
@@ -123,9 +126,18 @@ static struct platform_device kfr2r09_sh_keysc_device = {
 	.dev	= {
 		.platform_data	= &kfr2r09_sh_keysc_info,
 	},
+<<<<<<< HEAD
 };
 
 static const struct fb_videomode kfr2r09_lcdc_modes[] = {
+=======
+	.archdata = {
+		.hwblk_id = HWBLK_KEYSC,
+	},
+};
+
+const static struct fb_videomode kfr2r09_lcdc_modes[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.name = "TX07D34VM0AAA",
 		.xres = 240,
@@ -144,6 +156,7 @@ static struct sh_mobile_lcdc_info kfr2r09_sh_lcdc_info = {
 	.clock_source = LCDC_CLK_BUS,
 	.ch[0] = {
 		.chan = LCDC_CHAN_MAINLCD,
+<<<<<<< HEAD
 		.fourcc = V4L2_PIX_FMT_RGB565,
 		.interface_type = SYS18,
 		.clock_divider = 6,
@@ -153,6 +166,19 @@ static struct sh_mobile_lcdc_info kfr2r09_sh_lcdc_info = {
 		.panel_cfg = {
 			.width = 35,
 			.height = 58,
+=======
+		.bpp = 16,
+		.interface_type = SYS18,
+		.clock_divider = 6,
+		.flags = LCDC_FLAGS_DWPOL,
+		.lcd_cfg = kfr2r09_lcdc_modes,
+		.num_cfg = ARRAY_SIZE(kfr2r09_lcdc_modes),
+		.lcd_size_cfg = {
+			.width = 35,
+			.height = 58,
+		},
+		.board_cfg = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.setup_sys = kfr2r09_lcd_setup,
 			.start_transfer = kfr2r09_lcd_start,
 			.display_on = kfr2r09_lcd_on,
@@ -187,6 +213,12 @@ static struct platform_device kfr2r09_sh_lcdc_device = {
 	.dev	= {
 		.platform_data	= &kfr2r09_sh_lcdc_info,
 	},
+<<<<<<< HEAD
+=======
+	.archdata = {
+		.hwblk_id = HWBLK_LCDC,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct r8a66597_platdata kfr2r09_usb0_gadget_data = {
@@ -247,6 +279,12 @@ static struct platform_device kfr2r09_ceu_device = {
 	.dev	= {
 		.platform_data	= &sh_mobile_ceu_info,
 	},
+<<<<<<< HEAD
+=======
+	.archdata = {
+		.hwblk_id = HWBLK_CEU0,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct i2c_board_info kfr2r09_i2c_camera = {
@@ -367,6 +405,12 @@ static struct platform_device kfr2r09_sh_sdhi0_device = {
 	.dev = {
 		.platform_data	= &sh7724_sdhi0_data,
 	},
+<<<<<<< HEAD
+=======
+	.archdata = {
+		.hwblk_id = HWBLK_SDHI0,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device *kfr2r09_devices[] __initdata = {

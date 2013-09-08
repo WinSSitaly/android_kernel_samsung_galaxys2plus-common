@@ -15,9 +15,19 @@
 #define __ASM_ARCH_HARDWARE_H
 
 /* PCI IO info */
+<<<<<<< HEAD
 
 #include "ixp23xx.h"
 
+=======
+#define PCIBIOS_MIN_IO		0x00000000
+#define PCIBIOS_MIN_MEM		0xe0000000
+
+#include "ixp23xx.h"
+
+#define pcibios_assign_all_busses()	0
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Platform helper functions
  */

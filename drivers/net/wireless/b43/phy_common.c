@@ -5,7 +5,11 @@
 
   Copyright (c) 2005 Martin Langer <martin-langer@gmx.de>,
   Copyright (c) 2005-2007 Stefano Brivio <stefano.brivio@polimi.it>
+<<<<<<< HEAD
   Copyright (c) 2005-2008 Michael Buesch <m@bues.ch>
+=======
+  Copyright (c) 2005-2008 Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   Copyright (c) 2005, 2006 Danny van Dyk <kugelfang@gentoo.org>
   Copyright (c) 2005, 2006 Andreas Jaggi <andreas.jaggi@waterwave.ch>
 
@@ -31,8 +35,11 @@
 #include "phy_a.h"
 #include "phy_n.h"
 #include "phy_lp.h"
+<<<<<<< HEAD
 #include "phy_ht.h"
 #include "phy_lcn.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "b43.h"
 #include "main.h"
 
@@ -61,6 +68,7 @@ int b43_phy_allocate(struct b43_wldev *dev)
 		phy->ops = &b43_phyops_lp;
 #endif
 		break;
+<<<<<<< HEAD
 	case B43_PHYTYPE_HT:
 #ifdef CONFIG_B43_PHY_HT
 		phy->ops = &b43_phyops_ht;
@@ -71,6 +79,8 @@ int b43_phy_allocate(struct b43_wldev *dev)
 		phy->ops = &b43_phyops_lcn;
 #endif
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (B43_WARN_ON(!phy->ops))
 		return -ENODEV;
@@ -145,7 +155,11 @@ void b43_radio_lock(struct b43_wldev *dev)
 
 #if B43_DEBUG
 	B43_WARN_ON(dev->phy.radio_locked);
+<<<<<<< HEAD
 	dev->phy.radio_locked = true;
+=======
+	dev->phy.radio_locked = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	macctl = b43_read32(dev, B43_MMIO_MACCTL);
@@ -163,7 +177,11 @@ void b43_radio_unlock(struct b43_wldev *dev)
 
 #if B43_DEBUG
 	B43_WARN_ON(!dev->phy.radio_locked);
+<<<<<<< HEAD
 	dev->phy.radio_locked = false;
+=======
+	dev->phy.radio_locked = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	/* Commit any write */
@@ -178,9 +196,15 @@ void b43_phy_lock(struct b43_wldev *dev)
 {
 #if B43_DEBUG
 	B43_WARN_ON(dev->phy.phy_locked);
+<<<<<<< HEAD
 	dev->phy.phy_locked = true;
 #endif
 	B43_WARN_ON(dev->dev->core_rev < 3);
+=======
+	dev->phy.phy_locked = 1;
+#endif
+	B43_WARN_ON(dev->sdev->id.revision < 3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!b43_is_mode(dev->wl, NL80211_IFTYPE_AP))
 		b43_power_saving_ctl_bits(dev, B43_PS_AWAKE);
@@ -190,9 +214,15 @@ void b43_phy_unlock(struct b43_wldev *dev)
 {
 #if B43_DEBUG
 	B43_WARN_ON(!dev->phy.phy_locked);
+<<<<<<< HEAD
 	dev->phy.phy_locked = false;
 #endif
 	B43_WARN_ON(dev->dev->core_rev < 3);
+=======
+	dev->phy.phy_locked = 0;
+#endif
+	B43_WARN_ON(dev->sdev->id.revision < 3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!b43_is_mode(dev->wl, NL80211_IFTYPE_AP))
 		b43_power_saving_ctl_bits(dev, 0);
@@ -380,8 +410,13 @@ void b43_phy_txpower_check(struct b43_wldev *dev, unsigned int flags)
 	/* The next check will be needed in two seconds, or later. */
 	phy->next_txpwr_check_time = round_jiffies(now + (HZ * 2));
 
+<<<<<<< HEAD
 	if ((dev->dev->board_vendor == SSB_BOARDVENDOR_BCM) &&
 	    (dev->dev->board_type == SSB_BOARD_BU4306))
+=======
+	if ((dev->sdev->bus->boardinfo.vendor == SSB_BOARDVENDOR_BCM) &&
+	    (dev->sdev->bus->boardinfo.type == SSB_BOARD_BU4306))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return; /* No software txpower adjustment needed */
 
 	result = phy->ops->recalc_txpower(dev, !!(flags & B43_TXPWR_IGNORE_TSSI));
@@ -448,6 +483,7 @@ bool b43_channel_type_is_40mhz(enum nl80211_channel_type channel_type)
 		channel_type == NL80211_CHAN_HT40PLUS);
 }
 
+<<<<<<< HEAD
 /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/BmacPhyClkFgc */
 void b43_phy_force_clock(struct b43_wldev *dev, bool force)
 {
@@ -480,6 +516,8 @@ void b43_phy_force_clock(struct b43_wldev *dev, bool force)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* http://bcm-v4.sipsolutions.net/802.11/PHY/Cordic */
 struct b43_c32 b43_cordic(int theta)
 {

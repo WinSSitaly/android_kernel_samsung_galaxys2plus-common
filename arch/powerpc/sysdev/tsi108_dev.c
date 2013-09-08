@@ -16,13 +16,22 @@
 #include <linux/major.h>
 #include <linux/delay.h>
 #include <linux/irq.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/device.h>
 #include <linux/platform_device.h>
 #include <linux/of_net.h>
 #include <asm/tsi108.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/irq.h>
 #include <asm/prom.h>

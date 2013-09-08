@@ -456,7 +456,12 @@ sched_find_first_bit(const unsigned long b[2])
 
 #include <asm-generic/bitops/le.h>
 
+<<<<<<< HEAD
 #include <asm-generic/bitops/ext2-atomic-setbit.h>
+=======
+#define ext2_set_bit_atomic(l,n,a)   test_and_set_bit(n,a)
+#define ext2_clear_bit_atomic(l,n,a) test_and_clear_bit(n,a)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __KERNEL__ */
 

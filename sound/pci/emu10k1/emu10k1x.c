@@ -34,7 +34,11 @@
 #include <linux/pci.h>
 #include <linux/dma-mapping.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/initval.h>
 #include <sound/pcm.h>
@@ -50,7 +54,11 @@ MODULE_SUPPORTED_DEVICE("{{Dell Creative Labs,SB Live!}");
 // module parameters (see "Module Parameters")
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_array(index, int, NULL, 0444);
 MODULE_PARM_DESC(index, "Index value for the EMU10K1X soundcard.");
@@ -925,7 +933,11 @@ static int __devinit snd_emu10k1x_create(struct snd_card *card,
 	}
 
 	if (request_irq(pci->irq, snd_emu10k1x_interrupt,
+<<<<<<< HEAD
 			IRQF_SHARED, KBUILD_MODNAME, chip)) {
+=======
+			IRQF_SHARED, "EMU10K1X", chip)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printk(KERN_ERR "emu10k1x: cannot grab irq %d\n", pci->irq);
 		snd_emu10k1x_free(chip);
 		return -EBUSY;
@@ -1613,7 +1625,11 @@ MODULE_DEVICE_TABLE(pci, snd_emu10k1x_ids);
 
 // pci_driver definition
 static struct pci_driver driver = {
+<<<<<<< HEAD
 	.name = KBUILD_MODNAME,
+=======
+	.name = "EMU10K1X",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table = snd_emu10k1x_ids,
 	.probe = snd_emu10k1x_probe,
 	.remove = __devexit_p(snd_emu10k1x_remove),

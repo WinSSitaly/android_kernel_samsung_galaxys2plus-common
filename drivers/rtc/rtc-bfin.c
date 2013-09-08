@@ -456,7 +456,22 @@ static struct platform_driver bfin_rtc_driver = {
 	.resume		= bfin_rtc_resume,
 };
 
+<<<<<<< HEAD
 module_platform_driver(bfin_rtc_driver);
+=======
+static int __init bfin_rtc_init(void)
+{
+	return platform_driver_register(&bfin_rtc_driver);
+}
+
+static void __exit bfin_rtc_exit(void)
+{
+	platform_driver_unregister(&bfin_rtc_driver);
+}
+
+module_init(bfin_rtc_init);
+module_exit(bfin_rtc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Blackfin On-Chip Real Time Clock Driver");
 MODULE_AUTHOR("Mike Frysinger <vapier@gentoo.org>");

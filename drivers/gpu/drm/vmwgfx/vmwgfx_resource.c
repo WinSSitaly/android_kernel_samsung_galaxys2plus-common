@@ -31,6 +31,13 @@
 #include "ttm/ttm_placement.h"
 #include "drmP.h"
 
+<<<<<<< HEAD
+=======
+#define VMW_RES_CONTEXT ttm_driver_type0
+#define VMW_RES_SURFACE ttm_driver_type1
+#define VMW_RES_STREAM ttm_driver_type2
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct vmw_user_context {
 	struct ttm_base_object base;
 	struct vmw_resource res;
@@ -39,7 +46,10 @@ struct vmw_user_context {
 struct vmw_user_surface {
 	struct ttm_base_object base;
 	struct vmw_surface srf;
+<<<<<<< HEAD
 	uint32_t size;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct vmw_user_dma_buffer {
@@ -62,6 +72,7 @@ struct vmw_user_stream {
 	struct vmw_stream stream;
 };
 
+<<<<<<< HEAD
 struct vmw_surface_offset {
 	uint32_t face;
 	uint32_t mip;
@@ -73,6 +84,8 @@ static uint64_t vmw_user_context_size;
 static uint64_t vmw_user_surface_size;
 static uint64_t vmw_user_stream_size;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline struct vmw_dma_buffer *
 vmw_dma_buffer(struct ttm_buffer_object *bo)
 {
@@ -92,6 +105,7 @@ struct vmw_resource *vmw_resource_reference(struct vmw_resource *res)
 	return res;
 }
 
+<<<<<<< HEAD
 
 /**
  * vmw_resource_release_id - release a resource id to the id manager.
@@ -111,17 +125,24 @@ static void vmw_resource_release_id(struct vmw_resource *res)
 	write_unlock(&dev_priv->resource_lock);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void vmw_resource_release(struct kref *kref)
 {
 	struct vmw_resource *res =
 	    container_of(kref, struct vmw_resource, kref);
 	struct vmw_private *dev_priv = res->dev_priv;
+<<<<<<< HEAD
 	int id = res->id;
 	struct idr *idr = res->idr;
 
 	res->avail = false;
 	if (res->remove_from_lists != NULL)
 		res->remove_from_lists(res);
+=======
+
+	idr_remove(res->idr, res->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	write_unlock(&dev_priv->resource_lock);
 
 	if (likely(res->hw_destroy != NULL))
@@ -133,9 +154,12 @@ static void vmw_resource_release(struct kref *kref)
 		kfree(res);
 
 	write_lock(&dev_priv->resource_lock);
+<<<<<<< HEAD
 
 	if (id != -1)
 		idr_remove(idr, id);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void vmw_resource_unreference(struct vmw_resource **p_res)
@@ -149,6 +173,7 @@ void vmw_resource_unreference(struct vmw_resource **p_res)
 	write_unlock(&dev_priv->resource_lock);
 }
 
+<<<<<<< HEAD
 
 /**
  * vmw_resource_alloc_id - release a resource id to the id manager.
@@ -172,6 +197,30 @@ static int vmw_resource_alloc_id(struct vmw_private *dev_priv,
 
 		write_lock(&dev_priv->resource_lock);
 		ret = idr_get_new_above(res->idr, res, 1, &res->id);
+=======
+static int vmw_resource_init(struct vmw_private *dev_priv,
+			     struct vmw_resource *res,
+			     struct idr *idr,
+			     enum ttm_object_type obj_type,
+			     void (*res_free) (struct vmw_resource *res))
+{
+	int ret;
+
+	kref_init(&res->kref);
+	res->hw_destroy = NULL;
+	res->res_free = res_free;
+	res->res_type = obj_type;
+	res->idr = idr;
+	res->avail = false;
+	res->dev_priv = dev_priv;
+
+	do {
+		if (unlikely(idr_pre_get(idr, GFP_KERNEL) == 0))
+			return -ENOMEM;
+
+		write_lock(&dev_priv->resource_lock);
+		ret = idr_get_new_above(idr, res, 1, &res->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		write_unlock(&dev_priv->resource_lock);
 
 	} while (ret == -EAGAIN);
@@ -179,6 +228,7 @@ static int vmw_resource_alloc_id(struct vmw_private *dev_priv,
 	return ret;
 }
 
+<<<<<<< HEAD
 
 static int vmw_resource_init(struct vmw_private *dev_priv,
 			     struct vmw_resource *res,
@@ -206,6 +256,8 @@ static int vmw_resource_init(struct vmw_private *dev_priv,
 		return vmw_resource_alloc_id(dev_priv, res);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * vmw_resource_activate
  *
@@ -260,12 +312,17 @@ static void vmw_hw_context_destroy(struct vmw_resource *res)
 	struct {
 		SVGA3dCmdHeader header;
 		SVGA3dCmdDestroyContext body;
+<<<<<<< HEAD
 	} *cmd;
 
 
 	vmw_execbuf_release_pinned_bo(dev_priv, true, res->id);
 
 	cmd = vmw_fifo_reserve(dev_priv, sizeof(*cmd));
+=======
+	} *cmd = vmw_fifo_reserve(dev_priv, sizeof(*cmd));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(cmd == NULL)) {
 		DRM_ERROR("Failed reserving FIFO space for surface "
 			  "destruction.\n");
@@ -277,7 +334,11 @@ static void vmw_hw_context_destroy(struct vmw_resource *res)
 	cmd->body.cid = cpu_to_le32(res->id);
 
 	vmw_fifo_commit(dev_priv, sizeof(*cmd));
+<<<<<<< HEAD
 	vmw_3d_resource_dec(dev_priv, false);
+=======
+	vmw_3d_resource_dec(dev_priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int vmw_context_init(struct vmw_private *dev_priv,
@@ -292,6 +353,7 @@ static int vmw_context_init(struct vmw_private *dev_priv,
 	} *cmd;
 
 	ret = vmw_resource_init(dev_priv, res, &dev_priv->context_idr,
+<<<<<<< HEAD
 				VMW_RES_CONTEXT, false, res_free, NULL);
 
 	if (unlikely(ret != 0)) {
@@ -303,6 +365,16 @@ static int vmw_context_init(struct vmw_private *dev_priv,
 		DRM_ERROR("Out of hw context ids.\n");
 		vmw_resource_unreference(&res);
 		return -ENOMEM;
+=======
+				VMW_RES_CONTEXT, res_free);
+
+	if (unlikely(ret != 0)) {
+		if (res_free == NULL)
+			kfree(res);
+		else
+			res_free(res);
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	cmd = vmw_fifo_reserve(dev_priv, sizeof(*cmd));
@@ -317,6 +389,7 @@ static int vmw_context_init(struct vmw_private *dev_priv,
 	cmd->body.cid = cpu_to_le32(res->id);
 
 	vmw_fifo_commit(dev_priv, sizeof(*cmd));
+<<<<<<< HEAD
 	(void) vmw_3d_resource_inc(dev_priv, false);
 	vmw_resource_activate(res, vmw_hw_context_destroy);
 	return 0;
@@ -327,6 +400,11 @@ out_early:
 	else
 		res_free(res);
 	return ret;
+=======
+	(void) vmw_3d_resource_inc(dev_priv);
+	vmw_resource_activate(res, vmw_hw_context_destroy);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct vmw_resource *vmw_context_alloc(struct vmw_private *dev_priv)
@@ -349,11 +427,16 @@ static void vmw_user_context_free(struct vmw_resource *res)
 {
 	struct vmw_user_context *ctx =
 	    container_of(res, struct vmw_user_context, res);
+<<<<<<< HEAD
 	struct vmw_private *dev_priv = res->dev_priv;
 
 	kfree(ctx);
 	ttm_mem_global_free(vmw_mem_glob(dev_priv),
 			    vmw_user_context_size);
+=======
+
+	kfree(ctx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -407,11 +490,16 @@ int vmw_context_define_ioctl(struct drm_device *dev, void *data,
 			     struct drm_file *file_priv)
 {
 	struct vmw_private *dev_priv = vmw_priv(dev);
+<<<<<<< HEAD
 	struct vmw_user_context *ctx;
+=======
+	struct vmw_user_context *ctx = kmalloc(sizeof(*ctx), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct vmw_resource *res;
 	struct vmw_resource *tmp;
 	struct drm_vmw_context_arg *arg = (struct drm_vmw_context_arg *)data;
 	struct ttm_object_file *tfile = vmw_fpriv(file_priv)->tfile;
+<<<<<<< HEAD
 	struct vmw_master *vmaster = vmw_master(file_priv->master);
 	int ret;
 
@@ -445,11 +533,18 @@ int vmw_context_define_ioctl(struct drm_device *dev, void *data,
 		ret = -ENOMEM;
 		goto out_unlock;
 	}
+=======
+	int ret;
+
+	if (unlikely(ctx == NULL))
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	res = &ctx->res;
 	ctx->base.shareable = false;
 	ctx->base.tfile = NULL;
 
+<<<<<<< HEAD
 	/*
 	 * From here on, the destructor takes over resource freeing.
 	 */
@@ -457,6 +552,11 @@ int vmw_context_define_ioctl(struct drm_device *dev, void *data,
 	ret = vmw_context_init(dev_priv, res, vmw_user_context_free);
 	if (unlikely(ret != 0))
 		goto out_unlock;
+=======
+	ret = vmw_context_init(dev_priv, res, vmw_user_context_free);
+	if (unlikely(ret != 0))
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tmp = vmw_resource_reference(&ctx->res);
 	ret = ttm_base_object_init(tfile, &ctx->base, false, VMW_RES_CONTEXT,
@@ -470,16 +570,23 @@ int vmw_context_define_ioctl(struct drm_device *dev, void *data,
 	arg->cid = res->id;
 out_err:
 	vmw_resource_unreference(&res);
+<<<<<<< HEAD
 out_unlock:
 	ttm_read_unlock(&vmaster->lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 
 }
 
 int vmw_context_check(struct vmw_private *dev_priv,
 		      struct ttm_object_file *tfile,
+<<<<<<< HEAD
 		      int id,
 		      struct vmw_resource **p_res)
+=======
+		      int id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct vmw_resource *res;
 	int ret = 0;
@@ -491,8 +598,11 @@ int vmw_context_check(struct vmw_private *dev_priv,
 			container_of(res, struct vmw_user_context, res);
 		if (ctx->base.tfile != tfile && !ctx->base.shareable)
 			ret = -EPERM;
+<<<<<<< HEAD
 		if (p_res)
 			*p_res = vmw_resource_reference(res);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		ret = -EINVAL;
 	read_unlock(&dev_priv->resource_lock);
@@ -500,6 +610,7 @@ int vmw_context_check(struct vmw_private *dev_priv,
 	return ret;
 }
 
+<<<<<<< HEAD
 struct vmw_bpp {
 	uint8_t bpp;
 	uint8_t s_bpp;
@@ -571,11 +682,14 @@ static const struct vmw_bpp vmw_sf_bpp[] = {
 	[SVGA3D_Z_D24S8_INT] = {32,  32}
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * Surface management.
  */
 
+<<<<<<< HEAD
 struct vmw_surface_dma {
 	SVGA3dCmdHeader header;
 	SVGA3dCmdSurfaceDMA body;
@@ -748,10 +862,13 @@ static void vmw_surface_dma_encode(struct vmw_surface *srf,
 };
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void vmw_hw_surface_destroy(struct vmw_resource *res)
 {
 
 	struct vmw_private *dev_priv = res->dev_priv;
+<<<<<<< HEAD
 	struct vmw_surface *srf;
 	void *cmd;
 
@@ -780,20 +897,43 @@ static void vmw_hw_surface_destroy(struct vmw_resource *res)
 
 	}
 	vmw_3d_resource_dec(dev_priv, false);
+=======
+	struct {
+		SVGA3dCmdHeader header;
+		SVGA3dCmdDestroySurface body;
+	} *cmd = vmw_fifo_reserve(dev_priv, sizeof(*cmd));
+
+	if (unlikely(cmd == NULL)) {
+		DRM_ERROR("Failed reserving FIFO space for surface "
+			  "destruction.\n");
+		return;
+	}
+
+	cmd->header.id = cpu_to_le32(SVGA_3D_CMD_SURFACE_DESTROY);
+	cmd->header.size = cpu_to_le32(sizeof(cmd->body));
+	cmd->body.sid = cpu_to_le32(res->id);
+
+	vmw_fifo_commit(dev_priv, sizeof(*cmd));
+	vmw_3d_resource_dec(dev_priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void vmw_surface_res_free(struct vmw_resource *res)
 {
 	struct vmw_surface *srf = container_of(res, struct vmw_surface, res);
 
+<<<<<<< HEAD
 	if (srf->backup)
 		ttm_bo_unref(&srf->backup);
 	kfree(srf->offsets);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(srf->sizes);
 	kfree(srf->snooper.image);
 	kfree(srf);
 }
 
+<<<<<<< HEAD
 
 /**
  * vmw_surface_do_validate - make a surface available to the device.
@@ -1132,6 +1272,67 @@ int vmw_surface_init(struct vmw_private *dev_priv,
 	(void) vmw_3d_resource_inc(dev_priv, false);
 	vmw_resource_activate(res, vmw_hw_surface_destroy);
 	return ret;
+=======
+int vmw_surface_init(struct vmw_private *dev_priv,
+		     struct vmw_surface *srf,
+		     void (*res_free) (struct vmw_resource *res))
+{
+	int ret;
+	struct {
+		SVGA3dCmdHeader header;
+		SVGA3dCmdDefineSurface body;
+	} *cmd;
+	SVGA3dSize *cmd_size;
+	struct vmw_resource *res = &srf->res;
+	struct drm_vmw_size *src_size;
+	size_t submit_size;
+	uint32_t cmd_len;
+	int i;
+
+	BUG_ON(res_free == NULL);
+	ret = vmw_resource_init(dev_priv, res, &dev_priv->surface_idr,
+				VMW_RES_SURFACE, res_free);
+
+	if (unlikely(ret != 0)) {
+		res_free(res);
+		return ret;
+	}
+
+	submit_size = sizeof(*cmd) + srf->num_sizes * sizeof(SVGA3dSize);
+	cmd_len = sizeof(cmd->body) + srf->num_sizes * sizeof(SVGA3dSize);
+
+	cmd = vmw_fifo_reserve(dev_priv, submit_size);
+	if (unlikely(cmd == NULL)) {
+		DRM_ERROR("Fifo reserve failed for create surface.\n");
+		vmw_resource_unreference(&res);
+		return -ENOMEM;
+	}
+
+	cmd->header.id = cpu_to_le32(SVGA_3D_CMD_SURFACE_DEFINE);
+	cmd->header.size = cpu_to_le32(cmd_len);
+	cmd->body.sid = cpu_to_le32(res->id);
+	cmd->body.surfaceFlags = cpu_to_le32(srf->flags);
+	cmd->body.format = cpu_to_le32(srf->format);
+	for (i = 0; i < DRM_VMW_MAX_SURFACE_FACES; ++i) {
+		cmd->body.face[i].numMipLevels =
+		    cpu_to_le32(srf->mip_levels[i]);
+	}
+
+	cmd += 1;
+	cmd_size = (SVGA3dSize *) cmd;
+	src_size = srf->sizes;
+
+	for (i = 0; i < srf->num_sizes; ++i, cmd_size++, src_size++) {
+		cmd_size->width = cpu_to_le32(src_size->width);
+		cmd_size->height = cpu_to_le32(src_size->height);
+		cmd_size->depth = cpu_to_le32(src_size->depth);
+	}
+
+	vmw_fifo_commit(dev_priv, submit_size);
+	(void) vmw_3d_resource_inc(dev_priv);
+	vmw_resource_activate(res, vmw_hw_surface_destroy);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void vmw_user_surface_free(struct vmw_resource *res)
@@ -1139,6 +1340,7 @@ static void vmw_user_surface_free(struct vmw_resource *res)
 	struct vmw_surface *srf = container_of(res, struct vmw_surface, res);
 	struct vmw_user_surface *user_srf =
 	    container_of(srf, struct vmw_user_surface, srf);
+<<<<<<< HEAD
 	struct vmw_private *dev_priv = srf->res.dev_priv;
 	uint32_t size = user_srf->size;
 
@@ -1214,6 +1416,14 @@ int vmw_user_lookup_handle(struct vmw_private *dev_priv,
 }
 
 
+=======
+
+	kfree(srf->sizes);
+	kfree(srf->snooper.image);
+	kfree(user_srf);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int vmw_user_surface_lookup_handle(struct vmw_private *dev_priv,
 				   struct ttm_object_file *tfile,
 				   uint32_t handle, struct vmw_surface **out)
@@ -1278,7 +1488,12 @@ int vmw_surface_define_ioctl(struct drm_device *dev, void *data,
 			     struct drm_file *file_priv)
 {
 	struct vmw_private *dev_priv = vmw_priv(dev);
+<<<<<<< HEAD
 	struct vmw_user_surface *user_srf;
+=======
+	struct vmw_user_surface *user_srf =
+	    kmalloc(sizeof(*user_srf), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct vmw_surface *srf;
 	struct vmw_resource *res;
 	struct vmw_resource *tmp;
@@ -1289,6 +1504,7 @@ int vmw_surface_define_ioctl(struct drm_device *dev, void *data,
 	struct ttm_object_file *tfile = vmw_fpriv(file_priv)->tfile;
 	struct drm_vmw_size __user *user_sizes;
 	int ret;
+<<<<<<< HEAD
 	int i, j;
 	uint32_t cur_bo_offset;
 	struct drm_vmw_size *cur_size;
@@ -1334,6 +1550,12 @@ int vmw_surface_define_ioctl(struct drm_device *dev, void *data,
 		ret = -ENOMEM;
 		goto out_no_user_srf;
 	}
+=======
+	int i;
+
+	if (unlikely(user_srf == NULL))
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	srf = &user_srf->srf;
 	res = &srf->res;
@@ -1341,6 +1563,7 @@ int vmw_surface_define_ioctl(struct drm_device *dev, void *data,
 	srf->flags = req->flags;
 	srf->format = req->format;
 	srf->scanout = req->scanout;
+<<<<<<< HEAD
 	srf->backup = NULL;
 
 	memcpy(srf->mip_levels, req->mip_levels, sizeof(srf->mip_levels));
@@ -1357,6 +1580,23 @@ int vmw_surface_define_ioctl(struct drm_device *dev, void *data,
 	if (unlikely(srf->sizes == NULL)) {
 		ret = -ENOMEM;
 		goto out_no_offsets;
+=======
+	memcpy(srf->mip_levels, req->mip_levels, sizeof(srf->mip_levels));
+	srf->num_sizes = 0;
+	for (i = 0; i < DRM_VMW_MAX_SURFACE_FACES; ++i)
+		srf->num_sizes += srf->mip_levels[i];
+
+	if (srf->num_sizes > DRM_VMW_MAX_SURFACE_FACES *
+	    DRM_VMW_MAX_MIP_LEVELS) {
+		ret = -EINVAL;
+		goto out_err0;
+	}
+
+	srf->sizes = kmalloc(srf->num_sizes * sizeof(*srf->sizes), GFP_KERNEL);
+	if (unlikely(srf->sizes == NULL)) {
+		ret = -ENOMEM;
+		goto out_err0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	user_sizes = (struct drm_vmw_size __user *)(unsigned long)
@@ -1366,6 +1606,7 @@ int vmw_surface_define_ioctl(struct drm_device *dev, void *data,
 			     srf->num_sizes * sizeof(*srf->sizes));
 	if (unlikely(ret != 0)) {
 		ret = -EFAULT;
+<<<<<<< HEAD
 		goto out_no_copy;
 	}
 
@@ -1392,18 +1633,34 @@ int vmw_surface_define_ioctl(struct drm_device *dev, void *data,
 	}
 	srf->backup_size = cur_bo_offset;
 
+=======
+		goto out_err1;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (srf->scanout &&
 	    srf->num_sizes == 1 &&
 	    srf->sizes[0].width == 64 &&
 	    srf->sizes[0].height == 64 &&
 	    srf->format == SVGA3D_A8R8G8B8) {
 
+<<<<<<< HEAD
 		/* allocate image area and clear it */
 		srf->snooper.image = kzalloc(64 * 64 * 4, GFP_KERNEL);
 		if (!srf->snooper.image) {
 			DRM_ERROR("Failed to allocate cursor_image\n");
 			ret = -ENOMEM;
 			goto out_no_copy;
+=======
+		srf->snooper.image = kmalloc(64 * 64 * 4, GFP_KERNEL);
+		/* clear the image */
+		if (srf->snooper.image) {
+			memset(srf->snooper.image, 0x00, 64 * 64 * 4);
+		} else {
+			DRM_ERROR("Failed to allocate cursor_image\n");
+			ret = -ENOMEM;
+			goto out_err1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		srf->snooper.image = NULL;
@@ -1420,7 +1677,11 @@ int vmw_surface_define_ioctl(struct drm_device *dev, void *data,
 
 	ret = vmw_surface_init(dev_priv, srf, vmw_user_surface_free);
 	if (unlikely(ret != 0))
+<<<<<<< HEAD
 		goto out_unlock;
+=======
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tmp = vmw_resource_reference(&srf->res);
 	ret = ttm_base_object_init(tfile, &user_srf->base,
@@ -1430,7 +1691,11 @@ int vmw_surface_define_ioctl(struct drm_device *dev, void *data,
 	if (unlikely(ret != 0)) {
 		vmw_resource_unreference(&tmp);
 		vmw_resource_unreference(&res);
+<<<<<<< HEAD
 		goto out_unlock;
+=======
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	rep->sid = user_srf->base.hash.key;
@@ -1438,6 +1703,7 @@ int vmw_surface_define_ioctl(struct drm_device *dev, void *data,
 		DRM_ERROR("Created bad Surface ID.\n");
 
 	vmw_resource_unreference(&res);
+<<<<<<< HEAD
 
 	ttm_read_unlock(&vmaster->lock);
 	return 0;
@@ -1451,6 +1717,13 @@ out_no_user_srf:
 	ttm_mem_global_free(vmw_mem_glob(dev_priv), size);
 out_unlock:
 	ttm_read_unlock(&vmaster->lock);
+=======
+	return 0;
+out_err1:
+	kfree(srf->sizes);
+out_err0:
+	kfree(user_srf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1540,10 +1813,36 @@ out_bad_surface:
 /**
  * Buffer management.
  */
+<<<<<<< HEAD
 void vmw_dmabuf_bo_free(struct ttm_buffer_object *bo)
 {
 	struct vmw_dma_buffer *vmw_bo = vmw_dma_buffer(bo);
 
+=======
+
+static size_t vmw_dmabuf_acc_size(struct ttm_bo_global *glob,
+				  unsigned long num_pages)
+{
+	static size_t bo_user_size = ~0;
+
+	size_t page_array_size =
+	    (num_pages * sizeof(void *) + PAGE_SIZE - 1) & PAGE_MASK;
+
+	if (unlikely(bo_user_size == ~0)) {
+		bo_user_size = glob->ttm_bo_extra_size +
+		    ttm_round_pot(sizeof(struct vmw_dma_buffer));
+	}
+
+	return bo_user_size + page_array_size;
+}
+
+void vmw_dmabuf_bo_free(struct ttm_buffer_object *bo)
+{
+	struct vmw_dma_buffer *vmw_bo = vmw_dma_buffer(bo);
+	struct ttm_bo_global *glob = bo->glob;
+
+	ttm_mem_global_free(glob->mem_glob, bo->acc_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(vmw_bo);
 }
 
@@ -1554,12 +1853,31 @@ int vmw_dmabuf_init(struct vmw_private *dev_priv,
 		    void (*bo_free) (struct ttm_buffer_object *bo))
 {
 	struct ttm_bo_device *bdev = &dev_priv->bdev;
+<<<<<<< HEAD
+=======
+	struct ttm_mem_global *mem_glob = bdev->glob->mem_glob;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	size_t acc_size;
 	int ret;
 
 	BUG_ON(!bo_free);
 
+<<<<<<< HEAD
 	acc_size = ttm_bo_acc_size(bdev, size, sizeof(struct vmw_dma_buffer));
+=======
+	acc_size =
+	    vmw_dmabuf_acc_size(bdev->glob,
+				(size + PAGE_SIZE - 1) >> PAGE_SHIFT);
+
+	ret = ttm_mem_global_alloc(mem_glob, acc_size, false, false);
+	if (unlikely(ret != 0)) {
+		/* we must free the bo here as
+		 * ttm_buffer_object_init does so as well */
+		bo_free(&vmw_bo->base);
+		return ret;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(vmw_bo, 0, sizeof(*vmw_bo));
 
 	INIT_LIST_HEAD(&vmw_bo->validate_list);
@@ -1574,7 +1892,13 @@ int vmw_dmabuf_init(struct vmw_private *dev_priv,
 static void vmw_user_dmabuf_destroy(struct ttm_buffer_object *bo)
 {
 	struct vmw_user_dma_buffer *vmw_user_bo = vmw_user_dma_buffer(bo);
+<<<<<<< HEAD
 
+=======
+	struct ttm_bo_global *glob = bo->glob;
+
+	ttm_mem_global_free(glob->mem_glob, bo->acc_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(vmw_user_bo);
 }
 
@@ -1731,7 +2055,11 @@ static int vmw_stream_init(struct vmw_private *dev_priv,
 	int ret;
 
 	ret = vmw_resource_init(dev_priv, res, &dev_priv->stream_idr,
+<<<<<<< HEAD
 				VMW_RES_STREAM, false, res_free, NULL);
+=======
+				VMW_RES_STREAM, res_free);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (unlikely(ret != 0)) {
 		if (res_free == NULL)
@@ -1761,11 +2089,16 @@ static void vmw_user_stream_free(struct vmw_resource *res)
 {
 	struct vmw_user_stream *stream =
 	    container_of(res, struct vmw_user_stream, stream.res);
+<<<<<<< HEAD
 	struct vmw_private *dev_priv = res->dev_priv;
 
 	kfree(stream);
 	ttm_mem_global_free(vmw_mem_glob(dev_priv),
 			    vmw_user_stream_size);
+=======
+
+	kfree(stream);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1819,11 +2152,16 @@ int vmw_stream_claim_ioctl(struct drm_device *dev, void *data,
 			   struct drm_file *file_priv)
 {
 	struct vmw_private *dev_priv = vmw_priv(dev);
+<<<<<<< HEAD
 	struct vmw_user_stream *stream;
+=======
+	struct vmw_user_stream *stream = kmalloc(sizeof(*stream), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct vmw_resource *res;
 	struct vmw_resource *tmp;
 	struct drm_vmw_stream_arg *arg = (struct drm_vmw_stream_arg *)data;
 	struct ttm_object_file *tfile = vmw_fpriv(file_priv)->tfile;
+<<<<<<< HEAD
 	struct vmw_master *vmaster = vmw_master(file_priv->master);
 	int ret;
 
@@ -1857,11 +2195,18 @@ int vmw_stream_claim_ioctl(struct drm_device *dev, void *data,
 		ret = -ENOMEM;
 		goto out_unlock;
 	}
+=======
+	int ret;
+
+	if (unlikely(stream == NULL))
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	res = &stream->stream.res;
 	stream->base.shareable = false;
 	stream->base.tfile = NULL;
 
+<<<<<<< HEAD
 	/*
 	 * From here on, the destructor takes over resource freeing.
 	 */
@@ -1869,6 +2214,11 @@ int vmw_stream_claim_ioctl(struct drm_device *dev, void *data,
 	ret = vmw_stream_init(dev_priv, &stream->stream, vmw_user_stream_free);
 	if (unlikely(ret != 0))
 		goto out_unlock;
+=======
+	ret = vmw_stream_init(dev_priv, &stream->stream, vmw_user_stream_free);
+	if (unlikely(ret != 0))
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tmp = vmw_resource_reference(res);
 	ret = ttm_base_object_init(tfile, &stream->base, false, VMW_RES_STREAM,
@@ -1882,8 +2232,11 @@ int vmw_stream_claim_ioctl(struct drm_device *dev, void *data,
 	arg->stream_id = res->id;
 out_err:
 	vmw_resource_unreference(&res);
+<<<<<<< HEAD
 out_unlock:
 	ttm_read_unlock(&vmaster->lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1917,6 +2270,7 @@ err_ref:
 	vmw_resource_unreference(&res);
 	return ret;
 }
+<<<<<<< HEAD
 
 
 int vmw_dumb_create(struct drm_file *file_priv,
@@ -1990,3 +2344,5 @@ int vmw_dumb_destroy(struct drm_file *file_priv,
 	return ttm_ref_object_base_unref(vmw_fpriv(file_priv)->tfile,
 					 handle, TTM_REF_USAGE);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

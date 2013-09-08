@@ -23,7 +23,17 @@
 #ifndef TPA6130A2_PLAT_H
 #define TPA6130A2_PLAT_H
 
+<<<<<<< HEAD
 struct tpa6130a2_platform_data {
+=======
+enum tpa_model {
+	TPA6130A2,
+	TPA6140A2,
+};
+
+struct tpa6130a2_platform_data {
+	enum tpa_model id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int power_gpio;
 };
 

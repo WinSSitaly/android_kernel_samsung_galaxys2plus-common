@@ -1,7 +1,13 @@
 /*
  * security/tomoyo/common.c
  *
+<<<<<<< HEAD
  * Copyright (C) 2005-2011  NTT DATA CORPORATION
+=======
+ * Common functions for TOMOYO.
+ *
+ * Copyright (C) 2005-2010  NTT DATA CORPORATION
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/uaccess.h>
@@ -9,6 +15,7 @@
 #include <linux/security.h>
 #include "common.h"
 
+<<<<<<< HEAD
 /* String table for operation mode. */
 const char * const tomoyo_mode[TOMOYO_CONFIG_MAX_MODE] = {
 	[TOMOYO_CONFIG_DISABLED]   = "disabled",
@@ -166,6 +173,56 @@ static const char * const tomoyo_category_keywords
 	[TOMOYO_MAC_CATEGORY_FILE]    = "file",
 	[TOMOYO_MAC_CATEGORY_NETWORK] = "network",
 	[TOMOYO_MAC_CATEGORY_MISC]    = "misc",
+=======
+static struct tomoyo_profile tomoyo_default_profile = {
+	.learning = &tomoyo_default_profile.preference,
+	.permissive = &tomoyo_default_profile.preference,
+	.enforcing = &tomoyo_default_profile.preference,
+	.preference.enforcing_verbose = true,
+	.preference.learning_max_entry = 2048,
+	.preference.learning_verbose = false,
+	.preference.permissive_verbose = true
+};
+
+/* Profile version. Currently only 20090903 is defined. */
+static unsigned int tomoyo_profile_version;
+
+/* Profile table. Memory is allocated as needed. */
+static struct tomoyo_profile *tomoyo_profile_ptr[TOMOYO_MAX_PROFILES];
+
+/* String table for functionality that takes 4 modes. */
+static const char *tomoyo_mode[4] = {
+	"disabled", "learning", "permissive", "enforcing"
+};
+
+/* String table for /sys/kernel/security/tomoyo/profile */
+static const char *tomoyo_mac_keywords[TOMOYO_MAX_MAC_INDEX
+				       + TOMOYO_MAX_MAC_CATEGORY_INDEX] = {
+	[TOMOYO_MAC_FILE_EXECUTE]    = "file::execute",
+	[TOMOYO_MAC_FILE_OPEN]       = "file::open",
+	[TOMOYO_MAC_FILE_CREATE]     = "file::create",
+	[TOMOYO_MAC_FILE_UNLINK]     = "file::unlink",
+	[TOMOYO_MAC_FILE_MKDIR]      = "file::mkdir",
+	[TOMOYO_MAC_FILE_RMDIR]      = "file::rmdir",
+	[TOMOYO_MAC_FILE_MKFIFO]     = "file::mkfifo",
+	[TOMOYO_MAC_FILE_MKSOCK]     = "file::mksock",
+	[TOMOYO_MAC_FILE_TRUNCATE]   = "file::truncate",
+	[TOMOYO_MAC_FILE_SYMLINK]    = "file::symlink",
+	[TOMOYO_MAC_FILE_REWRITE]    = "file::rewrite",
+	[TOMOYO_MAC_FILE_MKBLOCK]    = "file::mkblock",
+	[TOMOYO_MAC_FILE_MKCHAR]     = "file::mkchar",
+	[TOMOYO_MAC_FILE_LINK]       = "file::link",
+	[TOMOYO_MAC_FILE_RENAME]     = "file::rename",
+	[TOMOYO_MAC_FILE_CHMOD]      = "file::chmod",
+	[TOMOYO_MAC_FILE_CHOWN]      = "file::chown",
+	[TOMOYO_MAC_FILE_CHGRP]      = "file::chgrp",
+	[TOMOYO_MAC_FILE_IOCTL]      = "file::ioctl",
+	[TOMOYO_MAC_FILE_CHROOT]     = "file::chroot",
+	[TOMOYO_MAC_FILE_MOUNT]      = "file::mount",
+	[TOMOYO_MAC_FILE_UMOUNT]     = "file::umount",
+	[TOMOYO_MAC_FILE_PIVOT_ROOT] = "file::pivot_root",
+	[TOMOYO_MAX_MAC_INDEX + TOMOYO_MAC_CATEGORY_FILE] = "file",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Permit policy management by non-root user? */
@@ -178,11 +235,16 @@ static bool tomoyo_manage_by_non_root;
  *
  * @value: Bool value.
  */
+<<<<<<< HEAD
 const char *tomoyo_yesno(const unsigned int value)
+=======
+static const char *tomoyo_yesno(const unsigned int value)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return value ? "yes" : "no";
 }
 
+<<<<<<< HEAD
 /**
  * tomoyo_addprintf - strncat()-like-snprintf().
  *
@@ -192,6 +254,8 @@ const char *tomoyo_yesno(const unsigned int value)
  *
  * Returns nothing.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void tomoyo_addprintf(char *buffer, int len, const char *fmt, ...)
 {
 	va_list args;
@@ -212,7 +276,11 @@ static bool tomoyo_flush(struct tomoyo_io_buffer *head)
 {
 	while (head->r.w_pos) {
 		const char *w = head->r.w[0];
+<<<<<<< HEAD
 		size_t len = strlen(w);
+=======
+		int len = strlen(w);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (len) {
 			if (len > head->read_user_buf_avail)
 				len = head->read_user_buf_avail;
@@ -227,7 +295,11 @@ static bool tomoyo_flush(struct tomoyo_io_buffer *head)
 		head->r.w[0] = w;
 		if (*w)
 			return false;
+<<<<<<< HEAD
 		/* Add '\0' for audit logs and query. */
+=======
+		/* Add '\0' for query. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (head->poll) {
 			if (!head->read_user_buf_avail ||
 			    copy_to_user(head->read_user_buf, "", 1))
@@ -262,21 +334,32 @@ static void tomoyo_set_string(struct tomoyo_io_buffer *head, const char *string)
 		WARN_ON(1);
 }
 
+<<<<<<< HEAD
 static void tomoyo_io_printf(struct tomoyo_io_buffer *head, const char *fmt,
 			     ...) __printf(2, 3);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * tomoyo_io_printf - printf() to "struct tomoyo_io_buffer" structure.
  *
  * @head: Pointer to "struct tomoyo_io_buffer".
  * @fmt:  The printf()'s format string, followed by parameters.
  */
+<<<<<<< HEAD
 static void tomoyo_io_printf(struct tomoyo_io_buffer *head, const char *fmt,
 			     ...)
 {
 	va_list args;
 	size_t len;
 	size_t pos = head->r.avail;
+=======
+void tomoyo_io_printf(struct tomoyo_io_buffer *head, const char *fmt, ...)
+{
+	va_list args;
+	int len;
+	int pos = head->r.avail;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int size = head->readbuf_size - pos;
 	if (size <= 0)
 		return;
@@ -291,6 +374,7 @@ static void tomoyo_io_printf(struct tomoyo_io_buffer *head, const char *fmt,
 	tomoyo_set_string(head, head->read_buf + pos);
 }
 
+<<<<<<< HEAD
 /**
  * tomoyo_set_space - Put a space to "struct tomoyo_io_buffer" structure.
  *
@@ -298,11 +382,14 @@ static void tomoyo_io_printf(struct tomoyo_io_buffer *head, const char *fmt,
  *
  * Returns nothing.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void tomoyo_set_space(struct tomoyo_io_buffer *head)
 {
 	tomoyo_set_string(head, " ");
 }
 
+<<<<<<< HEAD
 /**
  * tomoyo_set_lf - Put a line feed to "struct tomoyo_io_buffer" structure.
  *
@@ -310,6 +397,8 @@ static void tomoyo_set_space(struct tomoyo_io_buffer *head)
  *
  * Returns nothing.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static bool tomoyo_set_lf(struct tomoyo_io_buffer *head)
 {
 	tomoyo_set_string(head, "\n");
@@ -317,6 +406,7 @@ static bool tomoyo_set_lf(struct tomoyo_io_buffer *head)
 }
 
 /**
+<<<<<<< HEAD
  * tomoyo_set_slash - Put a shash to "struct tomoyo_io_buffer" structure.
  *
  * @head: Pointer to "struct tomoyo_io_buffer".
@@ -373,6 +463,8 @@ static void tomoyo_print_namespace(struct tomoyo_io_buffer *head)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * tomoyo_print_name_union - Print a tomoyo_name_union.
  *
  * @head: Pointer to "struct tomoyo_io_buffer".
@@ -382,6 +474,7 @@ static void tomoyo_print_name_union(struct tomoyo_io_buffer *head,
 				    const struct tomoyo_name_union *ptr)
 {
 	tomoyo_set_space(head);
+<<<<<<< HEAD
 	if (ptr->group) {
 		tomoyo_set_string(head, "@");
 		tomoyo_set_string(head, ptr->group->group_name->name);
@@ -408,10 +501,18 @@ static void tomoyo_print_name_union_quoted(struct tomoyo_io_buffer *head,
 		tomoyo_set_string(head, "\"");
 		tomoyo_set_string(head, ptr->filename->name);
 		tomoyo_set_string(head, "\"");
+=======
+	if (ptr->is_group) {
+		tomoyo_set_string(head, "@");
+		tomoyo_set_string(head, ptr->group->group_name->name);
+	} else {
+		tomoyo_set_string(head, ptr->filename->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
 /**
+<<<<<<< HEAD
  * tomoyo_print_number_union_nospace - Print a tomoyo_number_union without a space.
  *
  * @head: Pointer to "struct tomoyo_io_buffer".
@@ -423,14 +524,31 @@ static void tomoyo_print_number_union_nospace
 (struct tomoyo_io_buffer *head, const struct tomoyo_number_union *ptr)
 {
 	if (ptr->group) {
+=======
+ * tomoyo_print_number_union - Print a tomoyo_number_union.
+ *
+ * @head:       Pointer to "struct tomoyo_io_buffer".
+ * @ptr:        Pointer to "struct tomoyo_number_union".
+ */
+static void tomoyo_print_number_union(struct tomoyo_io_buffer *head,
+				      const struct tomoyo_number_union *ptr)
+{
+	tomoyo_set_space(head);
+	if (ptr->is_group) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tomoyo_set_string(head, "@");
 		tomoyo_set_string(head, ptr->group->group_name->name);
 	} else {
 		int i;
 		unsigned long min = ptr->values[0];
 		const unsigned long max = ptr->values[1];
+<<<<<<< HEAD
 		u8 min_type = ptr->value_type[0];
 		const u8 max_type = ptr->value_type[1];
+=======
+		u8 min_type = ptr->min_type;
+		const u8 max_type = ptr->max_type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		char buffer[128];
 		buffer[0] = '\0';
 		for (i = 0; i < 2; i++) {
@@ -444,8 +562,13 @@ static void tomoyo_print_number_union_nospace
 						 "0%lo", min);
 				break;
 			default:
+<<<<<<< HEAD
 				tomoyo_addprintf(buffer, sizeof(buffer), "%lu",
 						 min);
+=======
+				tomoyo_addprintf(buffer, sizeof(buffer),
+						 "%lu", min);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 			}
 			if (min == max && min_type == max_type)
@@ -459,6 +582,7 @@ static void tomoyo_print_number_union_nospace
 }
 
 /**
+<<<<<<< HEAD
  * tomoyo_print_number_union - Print a tomoyo_number_union.
  *
  * @head: Pointer to "struct tomoyo_io_buffer".
@@ -477,23 +601,36 @@ static void tomoyo_print_number_union(struct tomoyo_io_buffer *head,
  * tomoyo_assign_profile - Create a new profile.
  *
  * @ns:      Pointer to "struct tomoyo_policy_namespace".
+=======
+ * tomoyo_assign_profile - Create a new profile.
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @profile: Profile number to create.
  *
  * Returns pointer to "struct tomoyo_profile" on success, NULL otherwise.
  */
+<<<<<<< HEAD
 static struct tomoyo_profile *tomoyo_assign_profile
 (struct tomoyo_policy_namespace *ns, const unsigned int profile)
+=======
+static struct tomoyo_profile *tomoyo_assign_profile(const unsigned int profile)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tomoyo_profile *ptr;
 	struct tomoyo_profile *entry;
 	if (profile >= TOMOYO_MAX_PROFILES)
 		return NULL;
+<<<<<<< HEAD
 	ptr = ns->profile_ptr[profile];
+=======
+	ptr = tomoyo_profile_ptr[profile];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ptr)
 		return ptr;
 	entry = kzalloc(sizeof(*entry), GFP_NOFS);
 	if (mutex_lock_interruptible(&tomoyo_policy_lock))
 		goto out;
+<<<<<<< HEAD
 	ptr = ns->profile_ptr[profile];
 	if (!ptr && tomoyo_memory_ok(entry)) {
 		ptr = entry;
@@ -508,6 +645,19 @@ static struct tomoyo_profile *tomoyo_assign_profile
 			CONFIG_SECURITY_TOMOYO_MAX_ACCEPT_ENTRY;
 		mb(); /* Avoid out-of-order execution. */
 		ns->profile_ptr[profile] = ptr;
+=======
+	ptr = tomoyo_profile_ptr[profile];
+	if (!ptr && tomoyo_memory_ok(entry)) {
+		ptr = entry;
+		ptr->learning = &tomoyo_default_profile.preference;
+		ptr->permissive = &tomoyo_default_profile.preference;
+		ptr->enforcing = &tomoyo_default_profile.preference;
+		ptr->default_config = TOMOYO_CONFIG_DISABLED;
+		memset(ptr->config, TOMOYO_CONFIG_USE_DEFAULT,
+		       sizeof(ptr->config));
+		mb(); /* Avoid out-of-order execution. */
+		tomoyo_profile_ptr[profile] = ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		entry = NULL;
 	}
 	mutex_unlock(&tomoyo_policy_lock);
@@ -519,11 +669,15 @@ static struct tomoyo_profile *tomoyo_assign_profile
 /**
  * tomoyo_profile - Find a profile.
  *
+<<<<<<< HEAD
  * @ns:      Pointer to "struct tomoyo_policy_namespace".
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @profile: Profile number to find.
  *
  * Returns pointer to "struct tomoyo_profile".
  */
+<<<<<<< HEAD
 struct tomoyo_profile *tomoyo_profile(const struct tomoyo_policy_namespace *ns,
 				      const u8 profile)
 {
@@ -542,6 +696,17 @@ struct tomoyo_profile *tomoyo_profile(const struct tomoyo_policy_namespace *ns,
  *
  * Returns 1 if "@find=yes" was found, 0 if "@find=no" was found, -1 otherwise.
  */
+=======
+struct tomoyo_profile *tomoyo_profile(const u8 profile)
+{
+	struct tomoyo_profile *ptr = tomoyo_profile_ptr[profile];
+	if (!tomoyo_policy_loaded)
+		return &tomoyo_default_profile;
+	BUG_ON(!ptr);
+	return ptr;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static s8 tomoyo_find_yesno(const char *string, const char *find)
 {
 	const char *cp = strstr(string, find);
@@ -555,6 +720,7 @@ static s8 tomoyo_find_yesno(const char *string, const char *find)
 	return -1;
 }
 
+<<<<<<< HEAD
 /**
  * tomoyo_set_uint - Set value for specified preference.
  *
@@ -564,6 +730,20 @@ static s8 tomoyo_find_yesno(const char *string, const char *find)
  *
  * Returns nothing.
  */
+=======
+static void tomoyo_set_bool(bool *b, const char *string, const char *find)
+{
+	switch (tomoyo_find_yesno(string, find)) {
+	case 1:
+		*b = true;
+		break;
+	case 0:
+		*b = false;
+		break;
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void tomoyo_set_uint(unsigned int *i, const char *string,
 			    const char *find)
 {
@@ -572,6 +752,7 @@ static void tomoyo_set_uint(unsigned int *i, const char *string,
 		sscanf(cp + strlen(find), "=%u", i);
 }
 
+<<<<<<< HEAD
 /**
  * tomoyo_set_mode - Set mode for specified profile.
  *
@@ -582,6 +763,53 @@ static void tomoyo_set_uint(unsigned int *i, const char *string,
  * Returns 0 on success, negative value otherwise.
  */
 static int tomoyo_set_mode(char *name, const char *value,
+=======
+static void tomoyo_set_pref(const char *name, const char *value,
+			    const bool use_default,
+			    struct tomoyo_profile *profile)
+{
+	struct tomoyo_preference **pref;
+	bool *verbose;
+	if (!strcmp(name, "enforcing")) {
+		if (use_default) {
+			pref = &profile->enforcing;
+			goto set_default;
+		}
+		profile->enforcing = &profile->preference;
+		verbose = &profile->preference.enforcing_verbose;
+		goto set_verbose;
+	}
+	if (!strcmp(name, "permissive")) {
+		if (use_default) {
+			pref = &profile->permissive;
+			goto set_default;
+		}
+		profile->permissive = &profile->preference;
+		verbose = &profile->preference.permissive_verbose;
+		goto set_verbose;
+	}
+	if (!strcmp(name, "learning")) {
+		if (use_default) {
+			pref = &profile->learning;
+			goto set_default;
+		}
+		profile->learning = &profile->preference;
+		tomoyo_set_uint(&profile->preference.learning_max_entry, value,
+			     "max_entry");
+		verbose = &profile->preference.learning_verbose;
+		goto set_verbose;
+	}
+	return;
+ set_default:
+	*pref = &tomoyo_default_profile.preference;
+	return;
+ set_verbose:
+	tomoyo_set_bool(verbose, value, "verbose");
+}
+
+static int tomoyo_set_mode(char *name, const char *value,
+			   const bool use_default,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   struct tomoyo_profile *profile)
 {
 	u8 i;
@@ -593,6 +821,7 @@ static int tomoyo_set_mode(char *name, const char *value,
 		config = 0;
 		for (i = 0; i < TOMOYO_MAX_MAC_INDEX
 			     + TOMOYO_MAX_MAC_CATEGORY_INDEX; i++) {
+<<<<<<< HEAD
 			int len = 0;
 			if (i < TOMOYO_MAX_MAC_INDEX) {
 				const u8 c = tomoyo_index2category[i];
@@ -604,6 +833,9 @@ static int tomoyo_set_mode(char *name, const char *value,
 					continue;
 			}
 			if (strcmp(name + len, tomoyo_mac_keywords[i]))
+=======
+			if (strcmp(name, tomoyo_mac_keywords[i]))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				continue;
 			config = profile->config[i];
 			break;
@@ -613,7 +845,11 @@ static int tomoyo_set_mode(char *name, const char *value,
 	} else {
 		return -EINVAL;
 	}
+<<<<<<< HEAD
 	if (strstr(value, "use_default")) {
+=======
+	if (use_default) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		config = TOMOYO_CONFIG_USE_DEFAULT;
 	} else {
 		u8 mode;
@@ -624,6 +860,7 @@ static int tomoyo_set_mode(char *name, const char *value,
 				 * 'config' from 'TOMOYO_CONFIG_USE_DEAFULT'.
 				 */
 				config = (config & ~7) | mode;
+<<<<<<< HEAD
 		if (config != TOMOYO_CONFIG_USE_DEFAULT) {
 			switch (tomoyo_find_yesno(value, "grant_log")) {
 			case 1:
@@ -642,6 +879,8 @@ static int tomoyo_set_mode(char *name, const char *value,
 				break;
 			}
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (i < TOMOYO_MAX_MAC_INDEX + TOMOYO_MAX_MAC_CATEGORY_INDEX)
 		profile->config[i] = config;
@@ -661,6 +900,7 @@ static int tomoyo_write_profile(struct tomoyo_io_buffer *head)
 {
 	char *data = head->write_buf;
 	unsigned int i;
+<<<<<<< HEAD
 	char *cp;
 	struct tomoyo_profile *profile;
 	if (sscanf(data, "PROFILE_VERSION=%u", &head->w.ns->profile_version)
@@ -673,10 +913,39 @@ static int tomoyo_write_profile(struct tomoyo_io_buffer *head)
 	profile = tomoyo_assign_profile(head->w.ns, i);
 	if (!profile)
 		return -EINVAL;
+=======
+	bool use_default = false;
+	char *cp;
+	struct tomoyo_profile *profile;
+	if (sscanf(data, "PROFILE_VERSION=%u", &tomoyo_profile_version) == 1)
+		return 0;
+	i = simple_strtoul(data, &cp, 10);
+	if (data == cp) {
+		profile = &tomoyo_default_profile;
+	} else {
+		if (*cp != '-')
+			return -EINVAL;
+		data = cp + 1;
+		profile = tomoyo_assign_profile(i);
+		if (!profile)
+			return -EINVAL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cp = strchr(data, '=');
 	if (!cp)
 		return -EINVAL;
 	*cp++ = '\0';
+<<<<<<< HEAD
+=======
+	if (profile != &tomoyo_default_profile)
+		use_default = strstr(cp, "use_default") != NULL;
+	if (tomoyo_str_starts(&data, "PREFERENCE::")) {
+		tomoyo_set_pref(data, cp, use_default, profile);
+		return 0;
+	}
+	if (profile == &tomoyo_default_profile)
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!strcmp(data, "COMMENT")) {
 		static DEFINE_SPINLOCK(lock);
 		const struct tomoyo_path_info *new_comment
@@ -691,6 +960,7 @@ static int tomoyo_write_profile(struct tomoyo_io_buffer *head)
 		tomoyo_put_name(old_comment);
 		return 0;
 	}
+<<<<<<< HEAD
 	if (!strcmp(data, "PREFERENCE")) {
 		for (i = 0; i < TOMOYO_MAX_PREF; i++)
 			tomoyo_set_uint(&profile->pref[i], cp,
@@ -716,18 +986,71 @@ static void tomoyo_print_config(struct tomoyo_io_buffer *head, const u8 config)
 			 tomoyo_mode[config & 3],
 			 tomoyo_yesno(config & TOMOYO_CONFIG_WANT_GRANT_LOG),
 			 tomoyo_yesno(config & TOMOYO_CONFIG_WANT_REJECT_LOG));
+=======
+	return tomoyo_set_mode(data, cp, use_default, profile);
+}
+
+static void tomoyo_print_preference(struct tomoyo_io_buffer *head,
+				    const int idx)
+{
+	struct tomoyo_preference *pref = &tomoyo_default_profile.preference;
+	const struct tomoyo_profile *profile = idx >= 0 ?
+		tomoyo_profile_ptr[idx] : NULL;
+	char buffer[16] = "";
+	if (profile) {
+		buffer[sizeof(buffer) - 1] = '\0';
+		snprintf(buffer, sizeof(buffer) - 1, "%u-", idx);
+	}
+	if (profile) {
+		pref = profile->learning;
+		if (pref == &tomoyo_default_profile.preference)
+			goto skip1;
+	}
+	tomoyo_io_printf(head, "%sPREFERENCE::%s={ "
+			 "verbose=%s max_entry=%u }\n",
+			 buffer, "learning",
+			 tomoyo_yesno(pref->learning_verbose),
+			 pref->learning_max_entry);
+ skip1:
+	if (profile) {
+		pref = profile->permissive;
+		if (pref == &tomoyo_default_profile.preference)
+			goto skip2;
+	}
+	tomoyo_io_printf(head, "%sPREFERENCE::%s={ verbose=%s }\n",
+			 buffer, "permissive",
+			 tomoyo_yesno(pref->permissive_verbose));
+ skip2:
+	if (profile) {
+		pref = profile->enforcing;
+		if (pref == &tomoyo_default_profile.preference)
+			return;
+	}
+	tomoyo_io_printf(head, "%sPREFERENCE::%s={ verbose=%s }\n",
+			 buffer, "enforcing",
+			 tomoyo_yesno(pref->enforcing_verbose));
+}
+
+static void tomoyo_print_config(struct tomoyo_io_buffer *head, const u8 config)
+{
+	tomoyo_io_printf(head, "={ mode=%s }\n", tomoyo_mode[config & 3]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
  * tomoyo_read_profile - Read profile table.
  *
  * @head: Pointer to "struct tomoyo_io_buffer".
+<<<<<<< HEAD
  *
  * Returns nothing.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void tomoyo_read_profile(struct tomoyo_io_buffer *head)
 {
 	u8 index;
+<<<<<<< HEAD
 	struct tomoyo_policy_namespace *ns =
 		container_of(head->r.ns, typeof(*ns), namespace_list);
 	const struct tomoyo_profile *profile;
@@ -741,21 +1064,39 @@ static void tomoyo_read_profile(struct tomoyo_io_buffer *head)
 		tomoyo_print_namespace(head);
 		tomoyo_io_printf(head, "PROFILE_VERSION=%u\n",
 				 ns->profile_version);
+=======
+	const struct tomoyo_profile *profile;
+ next:
+	index = head->r.index;
+	profile = tomoyo_profile_ptr[index];
+	switch (head->r.step) {
+	case 0:
+		tomoyo_io_printf(head, "PROFILE_VERSION=%s\n", "20090903");
+		tomoyo_print_preference(head, -1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		head->r.step++;
 		break;
 	case 1:
 		for ( ; head->r.index < TOMOYO_MAX_PROFILES;
 		      head->r.index++)
+<<<<<<< HEAD
 			if (ns->profile_ptr[head->r.index])
 				break;
 		if (head->r.index == TOMOYO_MAX_PROFILES) {
 			head->r.eof = true;
 			return;
 		}
+=======
+			if (tomoyo_profile_ptr[head->r.index])
+				break;
+		if (head->r.index == TOMOYO_MAX_PROFILES)
+			return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		head->r.step++;
 		break;
 	case 2:
 		{
+<<<<<<< HEAD
 			u8 i;
 			const struct tomoyo_path_info *comment =
 				profile->comment;
@@ -770,12 +1111,22 @@ static void tomoyo_read_profile(struct tomoyo_io_buffer *head)
 						 tomoyo_pref_keywords[i],
 						 profile->pref[i]);
 			tomoyo_set_string(head, "}\n");
+=======
+			const struct tomoyo_path_info *comment =
+				profile->comment;
+			tomoyo_io_printf(head, "%u-COMMENT=", index);
+			tomoyo_set_string(head, comment ? comment->name : "");
+			tomoyo_set_lf(head);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			head->r.step++;
 		}
 		break;
 	case 3:
 		{
+<<<<<<< HEAD
 			tomoyo_print_namespace(head);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			tomoyo_io_printf(head, "%u-%s", index, "CONFIG");
 			tomoyo_print_config(head, profile->default_config);
 			head->r.bit = 0;
@@ -789,6 +1140,7 @@ static void tomoyo_read_profile(struct tomoyo_io_buffer *head)
 			const u8 config = profile->config[i];
 			if (config == TOMOYO_CONFIG_USE_DEFAULT)
 				continue;
+<<<<<<< HEAD
 			tomoyo_print_namespace(head);
 			if (i < TOMOYO_MAX_MAC_INDEX)
 				tomoyo_io_printf(head, "%u-CONFIG::%s::%s",
@@ -799,12 +1151,20 @@ static void tomoyo_read_profile(struct tomoyo_io_buffer *head)
 			else
 				tomoyo_io_printf(head, "%u-CONFIG::%s", index,
 						 tomoyo_mac_keywords[i]);
+=======
+			tomoyo_io_printf(head, "%u-%s%s", index, "CONFIG::",
+					 tomoyo_mac_keywords[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			tomoyo_print_config(head, config);
 			head->r.bit++;
 			break;
 		}
 		if (head->r.bit == TOMOYO_MAX_MAC_INDEX
 		    + TOMOYO_MAX_MAC_CATEGORY_INDEX) {
+<<<<<<< HEAD
+=======
+			tomoyo_print_preference(head, index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			head->r.index++;
 			head->r.step = 1;
 		}
@@ -814,6 +1174,7 @@ static void tomoyo_read_profile(struct tomoyo_io_buffer *head)
 		goto next;
 }
 
+<<<<<<< HEAD
 /**
  * tomoyo_same_manager - Check for duplicated "struct tomoyo_manager" entry.
  *
@@ -822,6 +1183,8 @@ static void tomoyo_read_profile(struct tomoyo_io_buffer *head)
  *
  * Returns true if @a == @b, false otherwise.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static bool tomoyo_same_manager(const struct tomoyo_acl_head *a,
 				const struct tomoyo_acl_head *b)
 {
@@ -843,6 +1206,7 @@ static int tomoyo_update_manager_entry(const char *manager,
 				       const bool is_delete)
 {
 	struct tomoyo_manager e = { };
+<<<<<<< HEAD
 	struct tomoyo_acl_param param = {
 		/* .ns = &tomoyo_kernel_namespace, */
 		.is_delete = is_delete,
@@ -850,6 +1214,10 @@ static int tomoyo_update_manager_entry(const char *manager,
 		policy_list[TOMOYO_ID_MANAGER],
 	};
 	int error = is_delete ? -ENOENT : -ENOMEM;
+=======
+	int error;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (tomoyo_domain_def(manager)) {
 		if (!tomoyo_correct_domain(manager))
 			return -EINVAL;
@@ -859,11 +1227,20 @@ static int tomoyo_update_manager_entry(const char *manager,
 			return -EINVAL;
 	}
 	e.manager = tomoyo_get_name(manager);
+<<<<<<< HEAD
 	if (e.manager) {
 		error = tomoyo_update_policy(&e.head, sizeof(e), &param,
 					     tomoyo_same_manager);
 		tomoyo_put_name(e.manager);
 	}
+=======
+	if (!e.manager)
+		return -ENOMEM;
+	error = tomoyo_update_policy(&e.head, sizeof(e), is_delete,
+				     &tomoyo_policy_list[TOMOYO_ID_MANAGER],
+				     tomoyo_same_manager);
+	tomoyo_put_name(e.manager);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error;
 }
 
@@ -879,12 +1256,22 @@ static int tomoyo_update_manager_entry(const char *manager,
 static int tomoyo_write_manager(struct tomoyo_io_buffer *head)
 {
 	char *data = head->write_buf;
+<<<<<<< HEAD
 
 	if (!strcmp(data, "manage_by_non_root")) {
 		tomoyo_manage_by_non_root = !head->w.is_delete;
 		return 0;
 	}
 	return tomoyo_update_manager_entry(data, head->w.is_delete);
+=======
+	bool is_delete = tomoyo_str_starts(&data, TOMOYO_KEYWORD_DELETE);
+
+	if (!strcmp(data, "manage_by_non_root")) {
+		tomoyo_manage_by_non_root = !is_delete;
+		return 0;
+	}
+	return tomoyo_update_manager_entry(data, is_delete);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -898,8 +1285,13 @@ static void tomoyo_read_manager(struct tomoyo_io_buffer *head)
 {
 	if (head->r.eof)
 		return;
+<<<<<<< HEAD
 	list_for_each_cookie(head->r.acl, &tomoyo_kernel_namespace.
 			     policy_list[TOMOYO_ID_MANAGER]) {
+=======
+	list_for_each_cookie(head->r.acl,
+			     &tomoyo_policy_list[TOMOYO_ID_MANAGER]) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct tomoyo_manager *ptr =
 			list_entry(head->r.acl, typeof(*ptr), head.list);
 		if (ptr->head.is_deleted)
@@ -932,8 +1324,13 @@ static bool tomoyo_manager(void)
 		return true;
 	if (!tomoyo_manage_by_non_root && (task->cred->uid || task->cred->euid))
 		return false;
+<<<<<<< HEAD
 	list_for_each_entry_rcu(ptr, &tomoyo_kernel_namespace.
 				policy_list[TOMOYO_ID_MANAGER], head.list) {
+=======
+	list_for_each_entry_rcu(ptr, &tomoyo_policy_list[TOMOYO_ID_MANAGER],
+				head.list) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!ptr->head.is_deleted && ptr->is_domain
 		    && !tomoyo_pathcmp(domainname, ptr->manager)) {
 			found = true;
@@ -945,8 +1342,13 @@ static bool tomoyo_manager(void)
 	exe = tomoyo_get_exe();
 	if (!exe)
 		return false;
+<<<<<<< HEAD
 	list_for_each_entry_rcu(ptr, &tomoyo_kernel_namespace.
 				policy_list[TOMOYO_ID_MANAGER], head.list) {
+=======
+	list_for_each_entry_rcu(ptr, &tomoyo_policy_list[TOMOYO_ID_MANAGER],
+				head.list) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!ptr->head.is_deleted && !ptr->is_domain
 		    && !strcmp(exe, ptr->manager->name)) {
 			found = true;
@@ -966,11 +1368,16 @@ static bool tomoyo_manager(void)
 	return found;
 }
 
+<<<<<<< HEAD
 static struct tomoyo_domain_info *tomoyo_find_domain_by_qid
 (unsigned int serial);
 
 /**
  * tomoyo_select_domain - Parse select command.
+=======
+/**
+ * tomoyo_select_one - Parse select command.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * @head: Pointer to "struct tomoyo_io_buffer".
  * @data: String to parse.
@@ -979,34 +1386,60 @@ static struct tomoyo_domain_info *tomoyo_find_domain_by_qid
  *
  * Caller holds tomoyo_read_lock().
  */
+<<<<<<< HEAD
 static bool tomoyo_select_domain(struct tomoyo_io_buffer *head,
 				 const char *data)
+=======
+static bool tomoyo_select_one(struct tomoyo_io_buffer *head, const char *data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int pid;
 	struct tomoyo_domain_info *domain = NULL;
 	bool global_pid = false;
+<<<<<<< HEAD
 	if (strncmp(data, "select ", 7))
 		return false;
 	data += 7;
+=======
+
+	if (!strcmp(data, "allow_execute")) {
+		head->r.print_execute_only = true;
+		return true;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (sscanf(data, "pid=%u", &pid) == 1 ||
 	    (global_pid = true, sscanf(data, "global-pid=%u", &pid) == 1)) {
 		struct task_struct *p;
 		rcu_read_lock();
+<<<<<<< HEAD
+=======
+		read_lock(&tasklist_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (global_pid)
 			p = find_task_by_pid_ns(pid, &init_pid_ns);
 		else
 			p = find_task_by_vpid(pid);
 		if (p)
 			domain = tomoyo_real_domain(p);
+<<<<<<< HEAD
+=======
+		read_unlock(&tasklist_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rcu_read_unlock();
 	} else if (!strncmp(data, "domain=", 7)) {
 		if (tomoyo_domain_def(data + 7))
 			domain = tomoyo_find_domain(data + 7);
+<<<<<<< HEAD
 	} else if (sscanf(data, "Q=%u", &pid) == 1) {
 		domain = tomoyo_find_domain_by_qid(pid);
 	} else
 		return false;
 	head->w.domain = domain;
+=======
+	} else
+		return false;
+	head->write_var1 = domain;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Accessing read_buf is safe because head->io_sem is held. */
 	if (!head->read_buf)
 		return true; /* Do nothing if open(O_WRONLY). */
@@ -1023,6 +1456,7 @@ static bool tomoyo_select_domain(struct tomoyo_io_buffer *head,
 }
 
 /**
+<<<<<<< HEAD
  * tomoyo_same_task_acl - Check for duplicated "struct tomoyo_task_acl" entry.
  *
  * @a: Pointer to "struct tomoyo_acl_info".
@@ -1065,11 +1499,17 @@ static int tomoyo_write_task(struct tomoyo_acl_param *param)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * tomoyo_delete_domain - Delete a domain.
  *
  * @domainname: The name of domain.
  *
+<<<<<<< HEAD
  * Returns 0 on success, negative value otherwise.
+=======
+ * Returns 0.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Caller holds tomoyo_read_lock().
  */
@@ -1081,7 +1521,11 @@ static int tomoyo_delete_domain(char *domainname)
 	name.name = domainname;
 	tomoyo_fill_path_info(&name);
 	if (mutex_lock_interruptible(&tomoyo_policy_lock))
+<<<<<<< HEAD
 		return -EINTR;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Is there an active domain? */
 	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list) {
 		/* Never delete tomoyo_kernel_domain */
@@ -1100,15 +1544,20 @@ static int tomoyo_delete_domain(char *domainname)
 /**
  * tomoyo_write_domain2 - Write domain policy.
  *
+<<<<<<< HEAD
  * @ns:        Pointer to "struct tomoyo_policy_namespace".
  * @list:      Pointer to "struct list_head".
  * @data:      Policy to be interpreted.
  * @is_delete: True if it is a delete request.
+=======
+ * @head: Pointer to "struct tomoyo_io_buffer".
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Returns 0 on success, negative value otherwise.
  *
  * Caller holds tomoyo_read_lock().
  */
+<<<<<<< HEAD
 static int tomoyo_write_domain2(struct tomoyo_policy_namespace *ns,
 				struct list_head *list, char *data,
 				const bool is_delete)
@@ -1146,6 +1595,16 @@ const char * const tomoyo_dif[TOMOYO_MAX_DOMAIN_INFO_FLAGS] = {
 	[TOMOYO_DIF_TRANSITION_FAILED] = "transition_failed\n",
 };
 
+=======
+static int tomoyo_write_domain2(char *data, struct tomoyo_domain_info *domain,
+				const bool is_delete)
+{
+	if (tomoyo_str_starts(&data, TOMOYO_KEYWORD_ALLOW_MOUNT))
+		return tomoyo_write_mount(data, domain, is_delete);
+	return tomoyo_write_file(data, domain, is_delete);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * tomoyo_write_domain - Write domain policy.
  *
@@ -1158,6 +1617,7 @@ const char * const tomoyo_dif[TOMOYO_MAX_DOMAIN_INFO_FLAGS] = {
 static int tomoyo_write_domain(struct tomoyo_io_buffer *head)
 {
 	char *data = head->write_buf;
+<<<<<<< HEAD
 	struct tomoyo_policy_namespace *ns;
 	struct tomoyo_domain_info *domain = head->w.domain;
 	const bool is_delete = head->w.is_delete;
@@ -1359,6 +1819,71 @@ static void tomoyo_set_group(struct tomoyo_io_buffer *head,
 				 head->r.acl_group_index);
 	}
 	tomoyo_set_string(head, category);
+=======
+	struct tomoyo_domain_info *domain = head->write_var1;
+	bool is_delete = false;
+	bool is_select = false;
+	unsigned int profile;
+
+	if (tomoyo_str_starts(&data, TOMOYO_KEYWORD_DELETE))
+		is_delete = true;
+	else if (tomoyo_str_starts(&data, TOMOYO_KEYWORD_SELECT))
+		is_select = true;
+	if (is_select && tomoyo_select_one(head, data))
+		return 0;
+	/* Don't allow updating policies by non manager programs. */
+	if (!tomoyo_manager())
+		return -EPERM;
+	if (tomoyo_domain_def(data)) {
+		domain = NULL;
+		if (is_delete)
+			tomoyo_delete_domain(data);
+		else if (is_select)
+			domain = tomoyo_find_domain(data);
+		else
+			domain = tomoyo_assign_domain(data, 0);
+		head->write_var1 = domain;
+		return 0;
+	}
+	if (!domain)
+		return -EINVAL;
+
+	if (sscanf(data, TOMOYO_KEYWORD_USE_PROFILE "%u", &profile) == 1
+	    && profile < TOMOYO_MAX_PROFILES) {
+		if (tomoyo_profile_ptr[profile] || !tomoyo_policy_loaded)
+			domain->profile = (u8) profile;
+		return 0;
+	}
+	if (!strcmp(data, TOMOYO_KEYWORD_IGNORE_GLOBAL_ALLOW_READ)) {
+		domain->ignore_global_allow_read = !is_delete;
+		return 0;
+	}
+	if (!strcmp(data, TOMOYO_KEYWORD_QUOTA_EXCEEDED)) {
+		domain->quota_warned = !is_delete;
+		return 0;
+	}
+	if (!strcmp(data, TOMOYO_KEYWORD_TRANSITION_FAILED)) {
+		domain->transition_failed = !is_delete;
+		return 0;
+	}
+	return tomoyo_write_domain2(data, domain, is_delete);
+}
+
+/**
+ * tomoyo_fns - Find next set bit.
+ *
+ * @perm: 8 bits value.
+ * @bit:  First bit to find.
+ *
+ * Returns next on-bit on success, 8 otherwise.
+ */
+static u8 tomoyo_fns(const u8 perm, u8 bit)
+{
+	for ( ; bit < 8; bit++)
+		if (perm & (1 << bit))
+			break;
+	return bit;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1373,6 +1898,7 @@ static bool tomoyo_print_entry(struct tomoyo_io_buffer *head,
 			       struct tomoyo_acl_info *acl)
 {
 	const u8 acl_type = acl->type;
+<<<<<<< HEAD
 	bool first = true;
 	u8 bit;
 
@@ -1380,12 +1906,21 @@ static bool tomoyo_print_entry(struct tomoyo_io_buffer *head,
 		goto print_cond_part;
 	if (acl->is_deleted)
 		return true;
+=======
+	u8 bit;
+
+	if (acl->is_deleted)
+		return true;
+ next:
+	bit = head->r.bit;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!tomoyo_flush(head))
 		return false;
 	else if (acl_type == TOMOYO_TYPE_PATH_ACL) {
 		struct tomoyo_path_acl *ptr =
 			container_of(acl, typeof(*ptr), head);
 		const u16 perm = ptr->perm;
+<<<<<<< HEAD
 		for (bit = 0; bit < TOMOYO_MAX_PATH_OPERATION; bit++) {
 			if (!(perm & (1 << bit)))
 				continue;
@@ -1410,10 +1945,31 @@ static bool tomoyo_print_entry(struct tomoyo_io_buffer *head,
 		tomoyo_set_string(head, "manual_domain_transition ");
 		tomoyo_set_string(head, ptr->domainname->name);
 	} else if (head->r.print_transition_related_only) {
+=======
+		for ( ; bit < TOMOYO_MAX_PATH_OPERATION; bit++) {
+			if (!(perm & (1 << bit)))
+				continue;
+			if (head->r.print_execute_only &&
+			    bit != TOMOYO_TYPE_EXECUTE)
+				continue;
+			/* Print "read/write" instead of "read" and "write". */
+			if ((bit == TOMOYO_TYPE_READ ||
+			     bit == TOMOYO_TYPE_WRITE)
+			    && (perm & (1 << TOMOYO_TYPE_READ_WRITE)))
+				continue;
+			break;
+		}
+		if (bit >= TOMOYO_MAX_PATH_OPERATION)
+			goto done;
+		tomoyo_io_printf(head, "allow_%s", tomoyo_path_keyword[bit]);
+		tomoyo_print_name_union(head, &ptr->name);
+	} else if (head->r.print_execute_only) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return true;
 	} else if (acl_type == TOMOYO_TYPE_PATH2_ACL) {
 		struct tomoyo_path2_acl *ptr =
 			container_of(acl, typeof(*ptr), head);
+<<<<<<< HEAD
 		const u8 perm = ptr->perm;
 		for (bit = 0; bit < TOMOYO_MAX_PATH2_OPERATION; bit++) {
 			if (!(perm & (1 << bit)))
@@ -1429,11 +1985,18 @@ static bool tomoyo_print_entry(struct tomoyo_io_buffer *head,
 		}
 		if (first)
 			return true;
+=======
+		bit = tomoyo_fns(ptr->perm, bit);
+		if (bit >= TOMOYO_MAX_PATH2_OPERATION)
+			goto done;
+		tomoyo_io_printf(head, "allow_%s", tomoyo_path2_keyword[bit]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tomoyo_print_name_union(head, &ptr->name1);
 		tomoyo_print_name_union(head, &ptr->name2);
 	} else if (acl_type == TOMOYO_TYPE_PATH_NUMBER_ACL) {
 		struct tomoyo_path_number_acl *ptr =
 			container_of(acl, typeof(*ptr), head);
+<<<<<<< HEAD
 		const u8 perm = ptr->perm;
 		for (bit = 0; bit < TOMOYO_MAX_PATH_NUMBER_OPERATION; bit++) {
 			if (!(perm & (1 << bit)))
@@ -1449,11 +2012,19 @@ static bool tomoyo_print_entry(struct tomoyo_io_buffer *head,
 		}
 		if (first)
 			return true;
+=======
+		bit = tomoyo_fns(ptr->perm, bit);
+		if (bit >= TOMOYO_MAX_PATH_NUMBER_OPERATION)
+			goto done;
+		tomoyo_io_printf(head, "allow_%s",
+				 tomoyo_path_number_keyword[bit]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tomoyo_print_name_union(head, &ptr->name);
 		tomoyo_print_number_union(head, &ptr->number);
 	} else if (acl_type == TOMOYO_TYPE_MKDEV_ACL) {
 		struct tomoyo_mkdev_acl *ptr =
 			container_of(acl, typeof(*ptr), head);
+<<<<<<< HEAD
 		const u8 perm = ptr->perm;
 		for (bit = 0; bit < TOMOYO_MAX_MKDEV_OPERATION; bit++) {
 			if (!(perm & (1 << bit)))
@@ -1469,10 +2040,17 @@ static bool tomoyo_print_entry(struct tomoyo_io_buffer *head,
 		}
 		if (first)
 			return true;
+=======
+		bit = tomoyo_fns(ptr->perm, bit);
+		if (bit >= TOMOYO_MAX_MKDEV_OPERATION)
+			goto done;
+		tomoyo_io_printf(head, "allow_%s", tomoyo_mkdev_keyword[bit]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tomoyo_print_name_union(head, &ptr->name);
 		tomoyo_print_number_union(head, &ptr->mode);
 		tomoyo_print_number_union(head, &ptr->major);
 		tomoyo_print_number_union(head, &ptr->minor);
+<<<<<<< HEAD
 	} else if (acl_type == TOMOYO_TYPE_INET_ACL) {
 		struct tomoyo_inet_acl *ptr =
 			container_of(acl, typeof(*ptr), head);
@@ -1531,10 +2109,17 @@ static bool tomoyo_print_entry(struct tomoyo_io_buffer *head,
 		struct tomoyo_mount_acl *ptr =
 			container_of(acl, typeof(*ptr), head);
 		tomoyo_set_group(head, "file mount");
+=======
+	} else if (acl_type == TOMOYO_TYPE_MOUNT_ACL) {
+		struct tomoyo_mount_acl *ptr =
+			container_of(acl, typeof(*ptr), head);
+		tomoyo_io_printf(head, "allow_mount");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tomoyo_print_name_union(head, &ptr->dev_name);
 		tomoyo_print_name_union(head, &ptr->dir_name);
 		tomoyo_print_name_union(head, &ptr->fs_type);
 		tomoyo_print_number_union(head, &ptr->flags);
+<<<<<<< HEAD
 	} else if (acl_type == TOMOYO_TYPE_ENV_ACL) {
 		struct tomoyo_env_acl *ptr =
 			container_of(acl, typeof(*ptr), head);
@@ -1554,23 +2139,43 @@ print_cond_part:
 	} else {
 		tomoyo_set_lf(head);
 	}
+=======
+	}
+	head->r.bit = bit + 1;
+	tomoyo_io_printf(head, "\n");
+	if (acl_type != TOMOYO_TYPE_MOUNT_ACL)
+		goto next;
+ done:
+	head->r.bit = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return true;
 }
 
 /**
  * tomoyo_read_domain2 - Read domain policy.
  *
+<<<<<<< HEAD
  * @head: Pointer to "struct tomoyo_io_buffer".
  * @list: Pointer to "struct list_head".
+=======
+ * @head:   Pointer to "struct tomoyo_io_buffer".
+ * @domain: Pointer to "struct tomoyo_domain_info".
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Caller holds tomoyo_read_lock().
  *
  * Returns true on success, false otherwise.
  */
 static bool tomoyo_read_domain2(struct tomoyo_io_buffer *head,
+<<<<<<< HEAD
 				struct list_head *list)
 {
 	list_for_each_cookie(head->r.acl, list) {
+=======
+				struct tomoyo_domain_info *domain)
+{
+	list_for_each_cookie(head->r.acl, &domain->acl_info_list) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct tomoyo_acl_info *ptr =
 			list_entry(head->r.acl, typeof(*ptr), list);
 		if (!tomoyo_print_entry(head, ptr))
@@ -1595,7 +2200,10 @@ static void tomoyo_read_domain(struct tomoyo_io_buffer *head)
 		struct tomoyo_domain_info *domain =
 			list_entry(head->r.domain, typeof(*domain), list);
 		switch (head->r.step) {
+<<<<<<< HEAD
 			u8 i;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case 0:
 			if (domain->is_deleted &&
 			    !head->r.print_this_domain_only)
@@ -1603,6 +2211,7 @@ static void tomoyo_read_domain(struct tomoyo_io_buffer *head)
 			/* Print domainname and flags. */
 			tomoyo_set_string(head, domain->domainname->name);
 			tomoyo_set_lf(head);
+<<<<<<< HEAD
 			tomoyo_io_printf(head, "use_profile %u\n",
 					 domain->profile);
 			tomoyo_io_printf(head, "use_group %u\n",
@@ -1610,11 +2219,28 @@ static void tomoyo_read_domain(struct tomoyo_io_buffer *head)
 			for (i = 0; i < TOMOYO_MAX_DOMAIN_INFO_FLAGS; i++)
 				if (domain->flags[i])
 					tomoyo_set_string(head, tomoyo_dif[i]);
+=======
+			tomoyo_io_printf(head,
+					 TOMOYO_KEYWORD_USE_PROFILE "%u\n",
+					 domain->profile);
+			if (domain->quota_warned)
+				tomoyo_set_string(head, "quota_exceeded\n");
+			if (domain->transition_failed)
+				tomoyo_set_string(head, "transition_failed\n");
+			if (domain->ignore_global_allow_read)
+				tomoyo_set_string(head,
+				       TOMOYO_KEYWORD_IGNORE_GLOBAL_ALLOW_READ
+						  "\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			head->r.step++;
 			tomoyo_set_lf(head);
 			/* fall through */
 		case 1:
+<<<<<<< HEAD
 			if (!tomoyo_read_domain2(head, &domain->acl_info_list))
+=======
+			if (!tomoyo_read_domain2(head, domain))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return;
 			head->r.step++;
 			if (!tomoyo_set_lf(head))
@@ -1631,6 +2257,76 @@ static void tomoyo_read_domain(struct tomoyo_io_buffer *head)
 }
 
 /**
+<<<<<<< HEAD
+=======
+ * tomoyo_write_domain_profile - Assign profile for specified domain.
+ *
+ * @head: Pointer to "struct tomoyo_io_buffer".
+ *
+ * Returns 0 on success, -EINVAL otherwise.
+ *
+ * This is equivalent to doing
+ *
+ *     ( echo "select " $domainname; echo "use_profile " $profile ) |
+ *     /usr/sbin/tomoyo-loadpolicy -d
+ *
+ * Caller holds tomoyo_read_lock().
+ */
+static int tomoyo_write_domain_profile(struct tomoyo_io_buffer *head)
+{
+	char *data = head->write_buf;
+	char *cp = strchr(data, ' ');
+	struct tomoyo_domain_info *domain;
+	unsigned long profile;
+
+	if (!cp)
+		return -EINVAL;
+	*cp = '\0';
+	domain = tomoyo_find_domain(cp + 1);
+	if (strict_strtoul(data, 10, &profile))
+		return -EINVAL;
+	if (domain && profile < TOMOYO_MAX_PROFILES
+	    && (tomoyo_profile_ptr[profile] || !tomoyo_policy_loaded))
+		domain->profile = (u8) profile;
+	return 0;
+}
+
+/**
+ * tomoyo_read_domain_profile - Read only domainname and profile.
+ *
+ * @head: Pointer to "struct tomoyo_io_buffer".
+ *
+ * Returns list of profile number and domainname pairs.
+ *
+ * This is equivalent to doing
+ *
+ *     grep -A 1 '^<kernel>' /sys/kernel/security/tomoyo/domain_policy |
+ *     awk ' { if ( domainname == "" ) { if ( $1 == "<kernel>" )
+ *     domainname = $0; } else if ( $1 == "use_profile" ) {
+ *     print $2 " " domainname; domainname = ""; } } ; '
+ *
+ * Caller holds tomoyo_read_lock().
+ */
+static void tomoyo_read_domain_profile(struct tomoyo_io_buffer *head)
+{
+	if (head->r.eof)
+		return;
+	list_for_each_cookie(head->r.domain, &tomoyo_domain_list) {
+		struct tomoyo_domain_info *domain =
+			list_entry(head->r.domain, typeof(*domain), list);
+		if (domain->is_deleted)
+			continue;
+		if (!tomoyo_flush(head))
+			return;
+		tomoyo_io_printf(head, "%u ", domain->profile);
+		tomoyo_set_string(head, domain->domainname->name);
+		tomoyo_set_lf(head);
+	}
+	head->r.eof = true;
+}
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * tomoyo_write_pid: Specify PID to obtain domainname.
  *
  * @head: Pointer to "struct tomoyo_io_buffer".
@@ -1673,12 +2369,20 @@ static void tomoyo_read_pid(struct tomoyo_io_buffer *head)
 		global_pid = true;
 	pid = (unsigned int) simple_strtoul(buf, NULL, 10);
 	rcu_read_lock();
+<<<<<<< HEAD
+=======
+	read_lock(&tasklist_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (global_pid)
 		p = find_task_by_pid_ns(pid, &init_pid_ns);
 	else
 		p = find_task_by_vpid(pid);
 	if (p)
 		domain = tomoyo_real_domain(p);
+<<<<<<< HEAD
+=======
+	read_unlock(&tasklist_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rcu_read_unlock();
 	if (!domain)
 		return;
@@ -1686,6 +2390,7 @@ static void tomoyo_read_pid(struct tomoyo_io_buffer *head)
 	tomoyo_set_string(head, domain->domainname->name);
 }
 
+<<<<<<< HEAD
 /* String table for domain transition control keywords. */
 static const char *tomoyo_transition_type[TOMOYO_MAX_TRANSITION_TYPE] = {
 	[TOMOYO_TRANSITION_CONTROL_NO_RESET]      = "no_reset_domain ",
@@ -1701,6 +2406,20 @@ static const char *tomoyo_group_name[TOMOYO_MAX_GROUP] = {
 	[TOMOYO_PATH_GROUP]    = "path_group ",
 	[TOMOYO_NUMBER_GROUP]  = "number_group ",
 	[TOMOYO_ADDRESS_GROUP] = "address_group ",
+=======
+static const char *tomoyo_transition_type[TOMOYO_MAX_TRANSITION_TYPE] = {
+	[TOMOYO_TRANSITION_CONTROL_NO_INITIALIZE]
+	= TOMOYO_KEYWORD_NO_INITIALIZE_DOMAIN,
+	[TOMOYO_TRANSITION_CONTROL_INITIALIZE]
+	= TOMOYO_KEYWORD_INITIALIZE_DOMAIN,
+	[TOMOYO_TRANSITION_CONTROL_NO_KEEP] = TOMOYO_KEYWORD_NO_KEEP_DOMAIN,
+	[TOMOYO_TRANSITION_CONTROL_KEEP] = TOMOYO_KEYWORD_KEEP_DOMAIN
+};
+
+static const char *tomoyo_group_name[TOMOYO_MAX_GROUP] = {
+	[TOMOYO_PATH_GROUP] = TOMOYO_KEYWORD_PATH_GROUP,
+	[TOMOYO_NUMBER_GROUP] = TOMOYO_KEYWORD_NUMBER_GROUP
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -1714,6 +2433,7 @@ static const char *tomoyo_group_name[TOMOYO_MAX_GROUP] = {
  */
 static int tomoyo_write_exception(struct tomoyo_io_buffer *head)
 {
+<<<<<<< HEAD
 	const bool is_delete = head->w.is_delete;
 	struct tomoyo_acl_param param = {
 		.ns = head->w.ns,
@@ -1738,11 +2458,40 @@ static int tomoyo_write_exception(struct tomoyo_io_buffer *head)
 				(head->w.ns, &head->w.ns->acl_group[group],
 				 data, is_delete);
 	}
+=======
+	char *data = head->write_buf;
+	bool is_delete = tomoyo_str_starts(&data, TOMOYO_KEYWORD_DELETE);
+	u8 i;
+	static const struct {
+		const char *keyword;
+		int (*write) (char *, const bool);
+	} tomoyo_callback[4] = {
+		{ TOMOYO_KEYWORD_AGGREGATOR, tomoyo_write_aggregator },
+		{ TOMOYO_KEYWORD_FILE_PATTERN, tomoyo_write_pattern },
+		{ TOMOYO_KEYWORD_DENY_REWRITE, tomoyo_write_no_rewrite },
+		{ TOMOYO_KEYWORD_ALLOW_READ, tomoyo_write_globally_readable },
+	};
+
+	for (i = 0; i < TOMOYO_MAX_TRANSITION_TYPE; i++)
+		if (tomoyo_str_starts(&data, tomoyo_transition_type[i]))
+			return tomoyo_write_transition_control(data, is_delete,
+							       i);
+	for (i = 0; i < 4; i++)
+		if (tomoyo_str_starts(&data, tomoyo_callback[i].keyword))
+			return tomoyo_callback[i].write(data, is_delete);
+	for (i = 0; i < TOMOYO_MAX_GROUP; i++)
+		if (tomoyo_str_starts(&data, tomoyo_group_name[i]))
+			return tomoyo_write_group(data, is_delete, i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -EINVAL;
 }
 
 /**
+<<<<<<< HEAD
  * tomoyo_read_group - Read "struct tomoyo_path_group"/"struct tomoyo_number_group"/"struct tomoyo_address_group" list.
+=======
+ * tomoyo_read_group - Read "struct tomoyo_path_group"/"struct tomoyo_number_group" list.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * @head: Pointer to "struct tomoyo_io_buffer".
  * @idx:  Index number.
@@ -1753,12 +2502,18 @@ static int tomoyo_write_exception(struct tomoyo_io_buffer *head)
  */
 static bool tomoyo_read_group(struct tomoyo_io_buffer *head, const int idx)
 {
+<<<<<<< HEAD
 	struct tomoyo_policy_namespace *ns =
 		container_of(head->r.ns, typeof(*ns), namespace_list);
 	struct list_head *list = &ns->group_list[idx];
 	list_for_each_cookie(head->r.group, list) {
 		struct tomoyo_group *group =
 			list_entry(head->r.group, typeof(*group), head.list);
+=======
+	list_for_each_cookie(head->r.group, &tomoyo_group_list[idx]) {
+		struct tomoyo_group *group =
+			list_entry(head->r.group, typeof(*group), list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_for_each_cookie(head->r.acl, &group->member_list) {
 			struct tomoyo_acl_head *ptr =
 				list_entry(head->r.acl, typeof(*ptr), list);
@@ -1766,7 +2521,10 @@ static bool tomoyo_read_group(struct tomoyo_io_buffer *head, const int idx)
 				continue;
 			if (!tomoyo_flush(head))
 				return false;
+<<<<<<< HEAD
 			tomoyo_print_namespace(head);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			tomoyo_set_string(head, tomoyo_group_name[idx]);
 			tomoyo_set_string(head, group->group_name->name);
 			if (idx == TOMOYO_PATH_GROUP) {
@@ -1779,6 +2537,7 @@ static bool tomoyo_read_group(struct tomoyo_io_buffer *head, const int idx)
 							  (ptr,
 						   struct tomoyo_number_group,
 							   head)->number);
+<<<<<<< HEAD
 			} else if (idx == TOMOYO_ADDRESS_GROUP) {
 				char buffer[128];
 
@@ -1788,6 +2547,8 @@ static bool tomoyo_read_group(struct tomoyo_io_buffer *head, const int idx)
 				tomoyo_print_ip(buffer, sizeof(buffer),
 						&member->address);
 				tomoyo_io_printf(head, " %s", buffer);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			tomoyo_set_lf(head);
 		}
@@ -1809,10 +2570,14 @@ static bool tomoyo_read_group(struct tomoyo_io_buffer *head, const int idx)
  */
 static bool tomoyo_read_policy(struct tomoyo_io_buffer *head, const int idx)
 {
+<<<<<<< HEAD
 	struct tomoyo_policy_namespace *ns =
 		container_of(head->r.ns, typeof(*ns), namespace_list);
 	struct list_head *list = &ns->policy_list[idx];
 	list_for_each_cookie(head->r.acl, list) {
+=======
+	list_for_each_cookie(head->r.acl, &tomoyo_policy_list[idx]) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct tomoyo_acl_head *acl =
 			container_of(head->r.acl, typeof(*acl), list);
 		if (acl->is_deleted)
@@ -1824,6 +2589,7 @@ static bool tomoyo_read_policy(struct tomoyo_io_buffer *head, const int idx)
 			{
 				struct tomoyo_transition_control *ptr =
 					container_of(acl, typeof(*ptr), head);
+<<<<<<< HEAD
 				tomoyo_print_namespace(head);
 				tomoyo_set_string(head, tomoyo_transition_type
 						  [ptr->type]);
@@ -1833,14 +2599,42 @@ static bool tomoyo_read_policy(struct tomoyo_io_buffer *head, const int idx)
 				tomoyo_set_string(head, ptr->domainname ?
 						  ptr->domainname->name :
 						  "any");
+=======
+				tomoyo_set_string(head,
+						  tomoyo_transition_type
+						  [ptr->type]);
+				if (ptr->program)
+					tomoyo_set_string(head,
+							  ptr->program->name);
+				if (ptr->program && ptr->domainname)
+					tomoyo_set_string(head, " from ");
+				if (ptr->domainname)
+					tomoyo_set_string(head,
+							  ptr->domainname->
+							  name);
+			}
+			break;
+		case TOMOYO_ID_GLOBALLY_READABLE:
+			{
+				struct tomoyo_readable_file *ptr =
+					container_of(acl, typeof(*ptr), head);
+				tomoyo_set_string(head,
+						  TOMOYO_KEYWORD_ALLOW_READ);
+				tomoyo_set_string(head, ptr->filename->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			break;
 		case TOMOYO_ID_AGGREGATOR:
 			{
 				struct tomoyo_aggregator *ptr =
 					container_of(acl, typeof(*ptr), head);
+<<<<<<< HEAD
 				tomoyo_print_namespace(head);
 				tomoyo_set_string(head, "aggregator ");
+=======
+				tomoyo_set_string(head,
+						  TOMOYO_KEYWORD_AGGREGATOR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				tomoyo_set_string(head,
 						  ptr->original_name->name);
 				tomoyo_set_space(head);
@@ -1848,6 +2642,27 @@ static bool tomoyo_read_policy(struct tomoyo_io_buffer *head, const int idx)
 					       ptr->aggregated_name->name);
 			}
 			break;
+<<<<<<< HEAD
+=======
+		case TOMOYO_ID_PATTERN:
+			{
+				struct tomoyo_no_pattern *ptr =
+					container_of(acl, typeof(*ptr), head);
+				tomoyo_set_string(head,
+						  TOMOYO_KEYWORD_FILE_PATTERN);
+				tomoyo_set_string(head, ptr->pattern->name);
+			}
+			break;
+		case TOMOYO_ID_NO_REWRITE:
+			{
+				struct tomoyo_no_rewrite *ptr =
+					container_of(acl, typeof(*ptr), head);
+				tomoyo_set_string(head,
+						  TOMOYO_KEYWORD_DENY_REWRITE);
+				tomoyo_set_string(head, ptr->pattern->name);
+			}
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			continue;
 		}
@@ -1866,8 +2681,11 @@ static bool tomoyo_read_policy(struct tomoyo_io_buffer *head, const int idx)
  */
 static void tomoyo_read_exception(struct tomoyo_io_buffer *head)
 {
+<<<<<<< HEAD
 	struct tomoyo_policy_namespace *ns =
 		container_of(head->r.ns, typeof(*ns), namespace_list);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (head->r.eof)
 		return;
 	while (head->r.step < TOMOYO_MAX_POLICY &&
@@ -1880,6 +2698,7 @@ static void tomoyo_read_exception(struct tomoyo_io_buffer *head)
 		head->r.step++;
 	if (head->r.step < TOMOYO_MAX_POLICY + TOMOYO_MAX_GROUP)
 		return;
+<<<<<<< HEAD
 	while (head->r.step < TOMOYO_MAX_POLICY + TOMOYO_MAX_GROUP
 	       + TOMOYO_MAX_ACL_GROUPS) {
 		head->r.acl_group_index = head->r.step - TOMOYO_MAX_POLICY
@@ -1896,10 +2715,88 @@ static void tomoyo_read_exception(struct tomoyo_io_buffer *head)
 static DECLARE_WAIT_QUEUE_HEAD(tomoyo_query_wait);
 /* Wait queue for userspace -> kernel notification. */
 static DECLARE_WAIT_QUEUE_HEAD(tomoyo_answer_wait);
+=======
+	head->r.eof = true;
+}
+
+/**
+ * tomoyo_print_header - Get header line of audit log.
+ *
+ * @r: Pointer to "struct tomoyo_request_info".
+ *
+ * Returns string representation.
+ *
+ * This function uses kmalloc(), so caller must kfree() if this function
+ * didn't return NULL.
+ */
+static char *tomoyo_print_header(struct tomoyo_request_info *r)
+{
+	struct timeval tv;
+	const pid_t gpid = task_pid_nr(current);
+	static const int tomoyo_buffer_len = 4096;
+	char *buffer = kmalloc(tomoyo_buffer_len, GFP_NOFS);
+	pid_t ppid;
+	if (!buffer)
+		return NULL;
+	do_gettimeofday(&tv);
+	rcu_read_lock();
+	ppid = task_tgid_vnr(current->real_parent);
+	rcu_read_unlock();
+	snprintf(buffer, tomoyo_buffer_len - 1,
+		 "#timestamp=%lu profile=%u mode=%s (global-pid=%u)"
+		 " task={ pid=%u ppid=%u uid=%u gid=%u euid=%u"
+		 " egid=%u suid=%u sgid=%u fsuid=%u fsgid=%u }",
+		 tv.tv_sec, r->profile, tomoyo_mode[r->mode], gpid,
+		 task_tgid_vnr(current), ppid,
+		 current_uid(), current_gid(), current_euid(),
+		 current_egid(), current_suid(), current_sgid(),
+		 current_fsuid(), current_fsgid());
+	return buffer;
+}
+
+/**
+ * tomoyo_init_audit_log - Allocate buffer for audit logs.
+ *
+ * @len: Required size.
+ * @r:   Pointer to "struct tomoyo_request_info".
+ *
+ * Returns pointer to allocated memory.
+ *
+ * The @len is updated to add the header lines' size on success.
+ *
+ * This function uses kzalloc(), so caller must kfree() if this function
+ * didn't return NULL.
+ */
+static char *tomoyo_init_audit_log(int *len, struct tomoyo_request_info *r)
+{
+	char *buf = NULL;
+	const char *header;
+	const char *domainname;
+	if (!r->domain)
+		r->domain = tomoyo_domain();
+	domainname = r->domain->domainname->name;
+	header = tomoyo_print_header(r);
+	if (!header)
+		return NULL;
+	*len += strlen(domainname) + strlen(header) + 10;
+	buf = kzalloc(*len, GFP_NOFS);
+	if (buf)
+		snprintf(buf, (*len) - 1, "%s\n%s\n", header, domainname);
+	kfree(header);
+	return buf;
+}
+
+/* Wait queue for tomoyo_query_list. */
+static DECLARE_WAIT_QUEUE_HEAD(tomoyo_query_wait);
+
+/* Lock for manipulating tomoyo_query_list. */
+static DEFINE_SPINLOCK(tomoyo_query_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Structure for query. */
 struct tomoyo_query {
 	struct list_head list;
+<<<<<<< HEAD
 	struct tomoyo_domain_info *domain;
 	char *query;
 	size_t query_len;
@@ -1907,14 +2804,24 @@ struct tomoyo_query {
 	u8 timer;
 	u8 answer;
 	u8 retry;
+=======
+	char *query;
+	int query_len;
+	unsigned int serial;
+	int timer;
+	int answer;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* The list for "struct tomoyo_query". */
 static LIST_HEAD(tomoyo_query_list);
 
+<<<<<<< HEAD
 /* Lock for manipulating tomoyo_query_list. */
 static DEFINE_SPINLOCK(tomoyo_query_list_lock);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Number of "struct file" referring /sys/kernel/security/tomoyo/query
  * interface.
@@ -1922,6 +2829,7 @@ static DEFINE_SPINLOCK(tomoyo_query_list_lock);
 static atomic_t tomoyo_query_observers = ATOMIC_INIT(0);
 
 /**
+<<<<<<< HEAD
  * tomoyo_truncate - Truncate a line.
  *
  * @str: String to truncate.
@@ -1998,6 +2906,12 @@ static void tomoyo_add_entry(struct tomoyo_domain_info *domain, char *header)
  *
  * @r:   Pointer to "struct tomoyo_request_info".
  * @fmt: The printf()'s format string, followed by parameters.
+=======
+ * tomoyo_supervisor - Ask for the supervisor's decision.
+ *
+ * @r:       Pointer to "struct tomoyo_request_info".
+ * @fmt:     The printf()'s format string, followed by parameters.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Returns 0 if the supervisor decided to permit the access request which
  * violated the policy in enforcing mode, TOMOYO_RETRY_REQUEST if the
@@ -2007,6 +2921,7 @@ static void tomoyo_add_entry(struct tomoyo_domain_info *domain, char *header)
 int tomoyo_supervisor(struct tomoyo_request_info *r, const char *fmt, ...)
 {
 	va_list args;
+<<<<<<< HEAD
 	int error;
 	int len;
 	static unsigned int tomoyo_serial;
@@ -2062,10 +2977,65 @@ int tomoyo_supervisor(struct tomoyo_request_info *r, const char *fmt, ...)
 		entry.retry = r->retry;
 		tomoyo_memory_used[TOMOYO_MEMORY_QUERY] += len;
 		list_add_tail(&entry.list, &tomoyo_query_list);
+=======
+	int error = -EPERM;
+	int pos;
+	int len;
+	static unsigned int tomoyo_serial;
+	struct tomoyo_query *entry = NULL;
+	bool quota_exceeded = false;
+	char *header;
+	switch (r->mode) {
+		char *buffer;
+	case TOMOYO_CONFIG_LEARNING:
+		if (!tomoyo_domain_quota_is_ok(r))
+			return 0;
+		va_start(args, fmt);
+		len = vsnprintf((char *) &pos, sizeof(pos) - 1, fmt, args) + 4;
+		va_end(args);
+		buffer = kmalloc(len, GFP_NOFS);
+		if (!buffer)
+			return 0;
+		va_start(args, fmt);
+		vsnprintf(buffer, len - 1, fmt, args);
+		va_end(args);
+		tomoyo_normalize_line(buffer);
+		tomoyo_write_domain2(buffer, r->domain, false);
+		kfree(buffer);
+		/* fall through */
+	case TOMOYO_CONFIG_PERMISSIVE:
+		return 0;
+	}
+	if (!r->domain)
+		r->domain = tomoyo_domain();
+	if (!atomic_read(&tomoyo_query_observers))
+		return -EPERM;
+	va_start(args, fmt);
+	len = vsnprintf((char *) &pos, sizeof(pos) - 1, fmt, args) + 32;
+	va_end(args);
+	header = tomoyo_init_audit_log(&len, r);
+	if (!header)
+		goto out;
+	entry = kzalloc(sizeof(*entry), GFP_NOFS);
+	if (!entry)
+		goto out;
+	entry->query = kzalloc(len, GFP_NOFS);
+	if (!entry->query)
+		goto out;
+	len = ksize(entry->query);
+	spin_lock(&tomoyo_query_list_lock);
+	if (tomoyo_quota_for_query && tomoyo_query_memory_size + len +
+	    sizeof(*entry) >= tomoyo_quota_for_query) {
+		quota_exceeded = true;
+	} else {
+		tomoyo_query_memory_size += len + sizeof(*entry);
+		entry->serial = tomoyo_serial++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	spin_unlock(&tomoyo_query_list_lock);
 	if (quota_exceeded)
 		goto out;
+<<<<<<< HEAD
 	/* Give 10 seconds for supervisor's opinion. */
 	while (entry.timer < 10) {
 		wake_up_all(&tomoyo_query_wait);
@@ -2081,6 +3051,34 @@ int tomoyo_supervisor(struct tomoyo_request_info *r, const char *fmt, ...)
 	tomoyo_memory_used[TOMOYO_MEMORY_QUERY] -= len;
 	spin_unlock(&tomoyo_query_list_lock);
 	switch (entry.answer) {
+=======
+	pos = snprintf(entry->query, len - 1, "Q%u-%hu\n%s",
+		       entry->serial, r->retry, header);
+	kfree(header);
+	header = NULL;
+	va_start(args, fmt);
+	vsnprintf(entry->query + pos, len - 1 - pos, fmt, args);
+	entry->query_len = strlen(entry->query) + 1;
+	va_end(args);
+	spin_lock(&tomoyo_query_list_lock);
+	list_add_tail(&entry->list, &tomoyo_query_list);
+	spin_unlock(&tomoyo_query_list_lock);
+	/* Give 10 seconds for supervisor's opinion. */
+	for (entry->timer = 0;
+	     atomic_read(&tomoyo_query_observers) && entry->timer < 100;
+	     entry->timer++) {
+		wake_up(&tomoyo_query_wait);
+		set_current_state(TASK_INTERRUPTIBLE);
+		schedule_timeout(HZ / 10);
+		if (entry->answer)
+			break;
+	}
+	spin_lock(&tomoyo_query_list_lock);
+	list_del(&entry->list);
+	tomoyo_query_memory_size -= len + sizeof(*entry);
+	spin_unlock(&tomoyo_query_list_lock);
+	switch (entry->answer) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case 3: /* Asked to retry by administrator. */
 		error = TOMOYO_RETRY_REQUEST;
 		r->retry++;
@@ -2089,16 +3087,32 @@ int tomoyo_supervisor(struct tomoyo_request_info *r, const char *fmt, ...)
 		/* Granted by administrator. */
 		error = 0;
 		break;
+<<<<<<< HEAD
 	default:
 		/* Timed out or rejected by administrator. */
 		break;
 	}
 out:
 	kfree(entry.query);
+=======
+	case 0:
+		/* Timed out. */
+		break;
+	default:
+		/* Rejected by administrator. */
+		break;
+	}
+ out:
+	if (entry)
+		kfree(entry->query);
+	kfree(entry);
+	kfree(header);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error;
 }
 
 /**
+<<<<<<< HEAD
  * tomoyo_find_domain_by_qid - Get domain by query id.
  *
  * @serial: Query ID assigned by tomoyo_supervisor().
@@ -2122,6 +3136,8 @@ static struct tomoyo_domain_info *tomoyo_find_domain_by_qid
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * tomoyo_poll_query - poll() for /sys/kernel/security/tomoyo/query.
  *
  * @file: Pointer to "struct file".
@@ -2131,6 +3147,7 @@ static struct tomoyo_domain_info *tomoyo_find_domain_by_qid
  *
  * Waits for access requests which violated policy in enforcing mode.
  */
+<<<<<<< HEAD
 static unsigned int tomoyo_poll_query(struct file *file, poll_table *wait)
 {
 	if (!list_empty(&tomoyo_query_list))
@@ -2138,6 +3155,30 @@ static unsigned int tomoyo_poll_query(struct file *file, poll_table *wait)
 	poll_wait(file, &tomoyo_query_wait, wait);
 	if (!list_empty(&tomoyo_query_list))
 		return POLLIN | POLLRDNORM;
+=======
+static int tomoyo_poll_query(struct file *file, poll_table *wait)
+{
+	struct list_head *tmp;
+	bool found = false;
+	u8 i;
+	for (i = 0; i < 2; i++) {
+		spin_lock(&tomoyo_query_list_lock);
+		list_for_each(tmp, &tomoyo_query_list) {
+			struct tomoyo_query *ptr =
+				list_entry(tmp, typeof(*ptr), list);
+			if (ptr->answer)
+				continue;
+			found = true;
+			break;
+		}
+		spin_unlock(&tomoyo_query_list_lock);
+		if (found)
+			return POLLIN | POLLRDNORM;
+		if (i)
+			break;
+		poll_wait(file, &tomoyo_query_wait, wait);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -2149,8 +3190,13 @@ static unsigned int tomoyo_poll_query(struct file *file, poll_table *wait)
 static void tomoyo_read_query(struct tomoyo_io_buffer *head)
 {
 	struct list_head *tmp;
+<<<<<<< HEAD
 	unsigned int pos = 0;
 	size_t len = 0;
+=======
+	int pos = 0;
+	int len = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *buf;
 	if (head->r.w_pos)
 		return;
@@ -2161,6 +3207,11 @@ static void tomoyo_read_query(struct tomoyo_io_buffer *head)
 	spin_lock(&tomoyo_query_list_lock);
 	list_for_each(tmp, &tomoyo_query_list) {
 		struct tomoyo_query *ptr = list_entry(tmp, typeof(*ptr), list);
+<<<<<<< HEAD
+=======
+		if (ptr->answer)
+			continue;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (pos++ != head->r.query_index)
 			continue;
 		len = ptr->query_len;
@@ -2171,13 +3222,22 @@ static void tomoyo_read_query(struct tomoyo_io_buffer *head)
 		head->r.query_index = 0;
 		return;
 	}
+<<<<<<< HEAD
 	buf = kzalloc(len + 32, GFP_NOFS);
+=======
+	buf = kzalloc(len, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!buf)
 		return;
 	pos = 0;
 	spin_lock(&tomoyo_query_list_lock);
 	list_for_each(tmp, &tomoyo_query_list) {
 		struct tomoyo_query *ptr = list_entry(tmp, typeof(*ptr), list);
+<<<<<<< HEAD
+=======
+		if (ptr->answer)
+			continue;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (pos++ != head->r.query_index)
 			continue;
 		/*
@@ -2185,8 +3245,12 @@ static void tomoyo_read_query(struct tomoyo_io_buffer *head)
 		 * can change, but I don't care.
 		 */
 		if (len == ptr->query_len)
+<<<<<<< HEAD
 			snprintf(buf, len + 31, "Q%u-%hu\n%s", ptr->serial,
 				 ptr->retry, ptr->query);
+=======
+			memmove(buf, ptr->query, len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 	spin_unlock(&tomoyo_query_list_lock);
@@ -2225,10 +3289,15 @@ static int tomoyo_write_answer(struct tomoyo_io_buffer *head)
 		struct tomoyo_query *ptr = list_entry(tmp, typeof(*ptr), list);
 		if (ptr->serial != serial)
 			continue;
+<<<<<<< HEAD
 		ptr->answer = answer;
 		/* Remove from tomoyo_query_list. */
 		if (ptr->answer)
 			list_del_init(&ptr->list);
+=======
+		if (!ptr->answer)
+			ptr->answer = answer;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 	spin_unlock(&tomoyo_query_list_lock);
@@ -2245,11 +3314,16 @@ static int tomoyo_write_answer(struct tomoyo_io_buffer *head)
 static void tomoyo_read_version(struct tomoyo_io_buffer *head)
 {
 	if (!head->r.eof) {
+<<<<<<< HEAD
 		tomoyo_io_printf(head, "2.5.0");
+=======
+		tomoyo_io_printf(head, "2.3.0");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		head->r.eof = true;
 	}
 }
 
+<<<<<<< HEAD
 /* String table for /sys/kernel/security/tomoyo/stat interface. */
 static const char * const tomoyo_policy_headers[TOMOYO_MAX_POLICY_STAT] = {
 	[TOMOYO_STAT_POLICY_UPDATES]    = "update:",
@@ -2346,6 +3420,26 @@ static int tomoyo_write_stat(struct tomoyo_io_buffer *head)
 			if (tomoyo_str_starts(&data, tomoyo_memory_headers[i]))
 				sscanf(data, "%u", &tomoyo_memory_quota[i]);
 	return 0;
+=======
+/**
+ * tomoyo_read_self_domain - Get the current process's domainname.
+ *
+ * @head: Pointer to "struct tomoyo_io_buffer".
+ *
+ * Returns the current process's domainname.
+ */
+static void tomoyo_read_self_domain(struct tomoyo_io_buffer *head)
+{
+	if (!head->r.eof) {
+		/*
+		 * tomoyo_domain()->domainname != NULL
+		 * because every process belongs to a domain and
+		 * the domain's name cannot be NULL.
+		 */
+		tomoyo_io_printf(head, "%s", tomoyo_domain()->domainname->name);
+		head->r.eof = true;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -2354,7 +3448,13 @@ static int tomoyo_write_stat(struct tomoyo_io_buffer *head)
  * @type: Type of interface.
  * @file: Pointer to "struct file".
  *
+<<<<<<< HEAD
  * Returns 0 on success, negative value otherwise.
+=======
+ * Associates policy handler and returns 0 on success, -ENOMEM otherwise.
+ *
+ * Caller acquires tomoyo_read_lock().
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int tomoyo_open_control(const u8 type, struct file *file)
 {
@@ -2375,10 +3475,21 @@ int tomoyo_open_control(const u8 type, struct file *file)
 		head->write = tomoyo_write_exception;
 		head->read = tomoyo_read_exception;
 		break;
+<<<<<<< HEAD
 	case TOMOYO_AUDIT:
 		/* /sys/kernel/security/tomoyo/audit */
 		head->poll = tomoyo_poll_log;
 		head->read = tomoyo_read_log;
+=======
+	case TOMOYO_SELFDOMAIN:
+		/* /sys/kernel/security/tomoyo/self_domain */
+		head->read = tomoyo_read_self_domain;
+		break;
+	case TOMOYO_DOMAIN_STATUS:
+		/* /sys/kernel/security/tomoyo/.domain_status */
+		head->write = tomoyo_write_domain_profile;
+		head->read = tomoyo_read_domain_profile;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case TOMOYO_PROCESS_STATUS:
 		/* /sys/kernel/security/tomoyo/.process_status */
@@ -2390,11 +3501,19 @@ int tomoyo_open_control(const u8 type, struct file *file)
 		head->read = tomoyo_read_version;
 		head->readbuf_size = 128;
 		break;
+<<<<<<< HEAD
 	case TOMOYO_STAT:
 		/* /sys/kernel/security/tomoyo/stat */
 		head->write = tomoyo_write_stat;
 		head->read = tomoyo_read_stat;
 		head->readbuf_size = 1024;
+=======
+	case TOMOYO_MEMINFO:
+		/* /sys/kernel/security/tomoyo/meminfo */
+		head->write = tomoyo_write_memory_quota;
+		head->read = tomoyo_read_memory_counter;
+		head->readbuf_size = 512;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case TOMOYO_PROFILE:
 		/* /sys/kernel/security/tomoyo/profile */
@@ -2444,16 +3563,36 @@ int tomoyo_open_control(const u8 type, struct file *file)
 			return -ENOMEM;
 		}
 	}
+<<<<<<< HEAD
+=======
+	if (type != TOMOYO_QUERY)
+		head->reader_idx = tomoyo_read_lock();
+	file->private_data = head;
+	/*
+	 * Call the handler now if the file is
+	 * /sys/kernel/security/tomoyo/self_domain
+	 * so that the user can use
+	 * cat < /sys/kernel/security/tomoyo/self_domain"
+	 * to know the current process's domainname.
+	 */
+	if (type == TOMOYO_SELFDOMAIN)
+		tomoyo_read_control(file, NULL, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * If the file is /sys/kernel/security/tomoyo/query , increment the
 	 * observer counter.
 	 * The obserber counter is used by tomoyo_supervisor() to see if
 	 * there is some process monitoring /sys/kernel/security/tomoyo/query.
 	 */
+<<<<<<< HEAD
 	if (type == TOMOYO_QUERY)
 		atomic_inc(&tomoyo_query_observers);
 	file->private_data = head;
 	tomoyo_notify_gc(head, true);
+=======
+	else if (type == TOMOYO_QUERY)
+		atomic_inc(&tomoyo_query_observers);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -2461,6 +3600,7 @@ int tomoyo_open_control(const u8 type, struct file *file)
  * tomoyo_poll_control - poll() for /sys/kernel/security/tomoyo/ interface.
  *
  * @file: Pointer to "struct file".
+<<<<<<< HEAD
  * @wait: Pointer to "poll_table". Maybe NULL.
  *
  * Returns POLLIN | POLLRDNORM | POLLOUT | POLLWRNORM if ready to read/write,
@@ -2511,22 +3651,50 @@ static inline bool tomoyo_has_more_namespace(struct tomoyo_io_buffer *head)
 	return (head->type == TOMOYO_EXCEPTIONPOLICY ||
 		head->type == TOMOYO_PROFILE) && head->r.eof &&
 		head->r.ns->next != &tomoyo_namespace_list;
+=======
+ * @wait: Pointer to "poll_table".
+ *
+ * Waits for read readiness.
+ * /sys/kernel/security/tomoyo/query is handled by /usr/sbin/tomoyo-queryd .
+ */
+int tomoyo_poll_control(struct file *file, poll_table *wait)
+{
+	struct tomoyo_io_buffer *head = file->private_data;
+	if (!head->poll)
+		return -ENOSYS;
+	return head->poll(file, wait);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
  * tomoyo_read_control - read() for /sys/kernel/security/tomoyo/ interface.
  *
+<<<<<<< HEAD
  * @head:       Pointer to "struct tomoyo_io_buffer".
+=======
+ * @file:       Pointer to "struct file".
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @buffer:     Poiner to buffer to write to.
  * @buffer_len: Size of @buffer.
  *
  * Returns bytes read on success, negative value otherwise.
+<<<<<<< HEAD
  */
 ssize_t tomoyo_read_control(struct tomoyo_io_buffer *head, char __user *buffer,
 			    const int buffer_len)
 {
 	int len;
 	int idx;
+=======
+ *
+ * Caller holds tomoyo_read_lock().
+ */
+int tomoyo_read_control(struct file *file, char __user *buffer,
+			const int buffer_len)
+{
+	int len;
+	struct tomoyo_io_buffer *head = file->private_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!head->read)
 		return -ENOSYS;
@@ -2534,6 +3702,7 @@ ssize_t tomoyo_read_control(struct tomoyo_io_buffer *head, char __user *buffer,
 		return -EINTR;
 	head->read_user_buf = buffer;
 	head->read_user_buf_avail = buffer_len;
+<<<<<<< HEAD
 	idx = tomoyo_read_lock();
 	if (tomoyo_flush(head))
 		/* Call the policy handler. */
@@ -2543,12 +3712,19 @@ ssize_t tomoyo_read_control(struct tomoyo_io_buffer *head, char __user *buffer,
 		} while (tomoyo_flush(head) &&
 			 tomoyo_has_more_namespace(head));
 	tomoyo_read_unlock(idx);
+=======
+	if (tomoyo_flush(head))
+		/* Call the policy handler. */
+		head->read(head);
+	tomoyo_flush(head);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	len = head->read_user_buf - buffer;
 	mutex_unlock(&head->io_sem);
 	return len;
 }
 
 /**
+<<<<<<< HEAD
  * tomoyo_parse_policy - Parse a policy line.
  *
  * @head: Poiter to "struct tomoyo_io_buffer".
@@ -2589,10 +3765,16 @@ static int tomoyo_parse_policy(struct tomoyo_io_buffer *head, char *line)
  * tomoyo_write_control - write() for /sys/kernel/security/tomoyo/ interface.
  *
  * @head:       Pointer to "struct tomoyo_io_buffer".
+=======
+ * tomoyo_write_control - write() for /sys/kernel/security/tomoyo/ interface.
+ *
+ * @file:       Pointer to "struct file".
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @buffer:     Pointer to buffer to read from.
  * @buffer_len: Size of @buffer.
  *
  * Returns @buffer_len on success, negative value otherwise.
+<<<<<<< HEAD
  */
 ssize_t tomoyo_write_control(struct tomoyo_io_buffer *head,
 			     const char __user *buffer, const int buffer_len)
@@ -2601,10 +3783,24 @@ ssize_t tomoyo_write_control(struct tomoyo_io_buffer *head,
 	size_t avail_len = buffer_len;
 	char *cp0 = head->write_buf;
 	int idx;
+=======
+ *
+ * Caller holds tomoyo_read_lock().
+ */
+int tomoyo_write_control(struct file *file, const char __user *buffer,
+			 const int buffer_len)
+{
+	struct tomoyo_io_buffer *head = file->private_data;
+	int error = buffer_len;
+	int avail_len = buffer_len;
+	char *cp0 = head->write_buf;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!head->write)
 		return -ENOSYS;
 	if (!access_ok(VERIFY_READ, buffer, buffer_len))
 		return -EFAULT;
+<<<<<<< HEAD
 	if (mutex_lock_interruptible(&head->io_sem))
 		return -EINTR;
 	head->read_user_buf_avail = 0;
@@ -2626,11 +3822,27 @@ ssize_t tomoyo_write_control(struct tomoyo_io_buffer *head,
 			head->writebuf_size = len;
 		}
 		if (get_user(c, buffer)) {
+=======
+	/* Don't allow updating policies by non manager programs. */
+	if (head->write != tomoyo_write_pid &&
+	    head->write != tomoyo_write_domain && !tomoyo_manager())
+		return -EPERM;
+	if (mutex_lock_interruptible(&head->io_sem))
+		return -EINTR;
+	/* Read a line and dispatch it to the policy handler. */
+	while (avail_len > 0) {
+		char c;
+		if (head->write_avail >= head->writebuf_size - 1) {
+			error = -ENOMEM;
+			break;
+		} else if (get_user(c, buffer)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			error = -EFAULT;
 			break;
 		}
 		buffer++;
 		avail_len--;
+<<<<<<< HEAD
 		cp0[head->w.avail++] = c;
 		if (c != '\n')
 			continue;
@@ -2685,6 +3897,16 @@ ssize_t tomoyo_write_control(struct tomoyo_io_buffer *head,
 	}
 out:
 	tomoyo_read_unlock(idx);
+=======
+		cp0[head->write_avail++] = c;
+		if (c != '\n')
+			continue;
+		cp0[head->write_avail - 1] = '\0';
+		head->write_avail = 0;
+		tomoyo_normalize_line(cp0);
+		head->write(head);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&head->io_sem);
 	return error;
 }
@@ -2692,20 +3914,51 @@ out:
 /**
  * tomoyo_close_control - close() for /sys/kernel/security/tomoyo/ interface.
  *
+<<<<<<< HEAD
  * @head: Pointer to "struct tomoyo_io_buffer".
  *
  * Returns 0.
  */
 int tomoyo_close_control(struct tomoyo_io_buffer *head)
 {
+=======
+ * @file: Pointer to "struct file".
+ *
+ * Releases memory and returns 0.
+ *
+ * Caller looses tomoyo_read_lock().
+ */
+int tomoyo_close_control(struct file *file)
+{
+	struct tomoyo_io_buffer *head = file->private_data;
+	const bool is_write = !!head->write_buf;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * If the file is /sys/kernel/security/tomoyo/query , decrement the
 	 * observer counter.
 	 */
+<<<<<<< HEAD
 	if (head->type == TOMOYO_QUERY &&
 	    atomic_dec_and_test(&tomoyo_query_observers))
 		wake_up_all(&tomoyo_answer_wait);
 	tomoyo_notify_gc(head, false);
+=======
+	if (head->type == TOMOYO_QUERY)
+		atomic_dec(&tomoyo_query_observers);
+	else
+		tomoyo_read_unlock(head->reader_idx);
+	/* Release memory used for policy I/O. */
+	kfree(head->read_buf);
+	head->read_buf = NULL;
+	kfree(head->write_buf);
+	head->write_buf = NULL;
+	kfree(head);
+	head = NULL;
+	file->private_data = NULL;
+	if (is_write)
+		tomoyo_run_gc();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -2717,6 +3970,7 @@ void tomoyo_check_profile(void)
 	struct tomoyo_domain_info *domain;
 	const int idx = tomoyo_read_lock();
 	tomoyo_policy_loaded = true;
+<<<<<<< HEAD
 	printk(KERN_INFO "TOMOYO: 2.5.0\n");
 	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list) {
 		const u8 profile = domain->profile;
@@ -2803,4 +4057,29 @@ void __init tomoyo_load_builtin_policy(void)
 #ifdef CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER
 	tomoyo_check_profile();
 #endif
+=======
+	/* Check all profiles currently assigned to domains are defined. */
+	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list) {
+		const u8 profile = domain->profile;
+		if (tomoyo_profile_ptr[profile])
+			continue;
+		printk(KERN_ERR "You need to define profile %u before using it.\n",
+		       profile);
+		printk(KERN_ERR "Please see http://tomoyo.sourceforge.jp/2.3/ "
+		       "for more information.\n");
+		panic("Profile %u (used by '%s') not defined.\n",
+		      profile, domain->domainname->name);
+	}
+	tomoyo_read_unlock(idx);
+	if (tomoyo_profile_version != 20090903) {
+		printk(KERN_ERR "You need to install userland programs for "
+		       "TOMOYO 2.3 and initialize policy configuration.\n");
+		printk(KERN_ERR "Please see http://tomoyo.sourceforge.jp/2.3/ "
+		       "for more information.\n");
+		panic("Profile version %u is not supported.\n",
+		      tomoyo_profile_version);
+	}
+	printk(KERN_INFO "TOMOYO: 2.3.0\n");
+	printk(KERN_INFO "Mandatory Access Control activated.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

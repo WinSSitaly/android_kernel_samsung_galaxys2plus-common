@@ -464,6 +464,11 @@ static int wl1251_boot_upload_nvs(struct wl1251 *wl)
 		val = (nvs_ptr[0] | (nvs_ptr[1] << 8)
 		       | (nvs_ptr[2] << 16) | (nvs_ptr[3] << 24));
 
+<<<<<<< HEAD
+=======
+		val = cpu_to_le32(val);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wl1251_debug(DEBUG_BOOT,
 			     "nvs write table 0x%x: 0x%x",
 			     nvs_start, val);

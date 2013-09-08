@@ -104,6 +104,7 @@ static ssize_t store_mirror(struct device *dev,
 {
 	struct fb_info *fbi = dev_get_drvdata(dev);
 	struct omapfb_info *ofbi = FB2OFB(fbi);
+<<<<<<< HEAD
 	bool mirror;
 	int r;
 	struct fb_var_screeninfo new_var;
@@ -112,6 +113,18 @@ static ssize_t store_mirror(struct device *dev,
 	if (r)
 		return r;
 
+=======
+	int mirror;
+	int r;
+	struct fb_var_screeninfo new_var;
+
+	r = kstrtoint(buf, 0, &mirror);
+	if (r)
+		return r;
+
+	mirror = !!mirror;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!lock_fb_info(fbi))
 		return -ENODEV;
 
@@ -473,9 +486,13 @@ static ssize_t store_size(struct device *dev, struct device_attribute *attr,
 			continue;
 
 		for (j = 0; j < ofbi2->num_overlays; j++) {
+<<<<<<< HEAD
 			struct omap_overlay *ovl;
 			ovl = ofbi2->overlays[j];
 			if (ovl->is_enabled(ovl)) {
+=======
+			if (ofbi2->overlays[j]->info.enabled) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				r = -EBUSY;
 				goto out;
 			}
@@ -518,6 +535,7 @@ static ssize_t show_virt(struct device *dev,
 	return snprintf(buf, PAGE_SIZE, "%p\n", ofbi->region->vaddr);
 }
 
+<<<<<<< HEAD
 static ssize_t show_upd_mode(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -551,6 +569,8 @@ static ssize_t store_upd_mode(struct device *dev, struct device_attribute *attr,
 	return count;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct device_attribute omapfb_attrs[] = {
 	__ATTR(rotate_type, S_IRUGO | S_IWUSR, show_rotate_type,
 			store_rotate_type),
@@ -561,7 +581,10 @@ static struct device_attribute omapfb_attrs[] = {
 			store_overlays_rotate),
 	__ATTR(phys_addr, S_IRUGO, show_phys, NULL),
 	__ATTR(virt_addr, S_IRUGO, show_virt, NULL),
+<<<<<<< HEAD
 	__ATTR(update_mode, S_IRUGO | S_IWUSR, show_upd_mode, store_upd_mode),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int omapfb_create_sysfs(struct omapfb2_device *fbdev)

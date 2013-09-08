@@ -14,6 +14,11 @@
 #include <mach/coh901318.h>
 #include <mach/dma_channels.h>
 
+<<<<<<< HEAD
+=======
+#include "padmux.h"
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The following is for the actual devices on the SSP/SPI bus
  */
@@ -38,8 +43,13 @@ struct pl022_config_chip dummy_chip_info = {
 	.hierarchy = SSP_MASTER,
 	/* 0 = drive TX even as slave, 1 = do not drive TX as slave */
 	.slave_tx_disable = 0,
+<<<<<<< HEAD
 	.rx_lev_trig = SSP_RX_4_OR_MORE_ELEM,
 	.tx_lev_trig = SSP_TX_4_OR_MORE_EMPTY_LOC,
+=======
+	.rx_lev_trig = SSP_RX_1_OR_MORE_ELEM,
+	.tx_lev_trig = SSP_TX_1_OR_MORE_EMPTY_LOC,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ctrl_len = SSP_BITS_12,
 	.wait_state = SSP_MWIRE_WAIT_ZERO,
 	.duplex = SSP_MICROWIRE_CHANNEL_FULL_DUPLEX,
@@ -93,7 +103,29 @@ static struct pl022_ssp_controller ssp_platform_data = {
 
 void __init u300_spi_init(struct amba_device *adev)
 {
+<<<<<<< HEAD
 	adev->dev.platform_data = &ssp_platform_data;
+=======
+	struct pmx *pmx;
+
+	adev->dev.platform_data = &ssp_platform_data;
+	/*
+	 * Setup padmuxing for SPI. Since this must always be
+	 * compiled into the kernel, pmx is never released.
+	 */
+	pmx = pmx_get(&adev->dev, U300_APP_PMX_SPI_SETTING);
+
+	if (IS_ERR(pmx))
+		dev_warn(&adev->dev, "Could not get padmux handle\n");
+	else {
+		int ret;
+
+		ret = pmx_activate(&adev->dev, pmx);
+		if (IS_ERR_VALUE(ret))
+			dev_warn(&adev->dev, "Could not activate padmuxing\n");
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __init u300_spi_register_board_devices(void)

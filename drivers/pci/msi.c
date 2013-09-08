@@ -11,7 +11,10 @@
 #include <linux/irq.h>
 #include <linux/interrupt.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ioport.h>
 #include <linux/pci.h>
 #include <linux/proc_fs.h>
@@ -86,6 +89,7 @@ void default_teardown_msi_irqs(struct pci_dev *dev)
 }
 #endif
 
+<<<<<<< HEAD
 #ifndef arch_restore_msi_irqs
 # define arch_restore_msi_irqs default_restore_msi_irqs
 # define HAVE_DEFAULT_MSI_RESTORE_IRQS
@@ -111,6 +115,8 @@ void default_restore_msi_irqs(struct pci_dev *dev, int irq)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void msi_set_enable(struct pci_dev *dev, int pos, int enable)
 {
 	u16 control;
@@ -348,6 +354,7 @@ static void free_msi_irqs(struct pci_dev *dev)
 			if (list_is_last(&entry->list, &dev->msi_list))
 				iounmap(entry->mask_base);
 		}
+<<<<<<< HEAD
 
 		/*
 		 * Its possible that we get into this path
@@ -360,6 +367,8 @@ static void free_msi_irqs(struct pci_dev *dev)
 			kobject_put(&entry->kobj);
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_del(&entry->list);
 		kfree(entry);
 	}
@@ -397,7 +406,11 @@ static void __pci_restore_msi_state(struct pci_dev *dev)
 
 	pci_intx_for_msi(dev, 0);
 	msi_set_enable(dev, pos, 0);
+<<<<<<< HEAD
 	arch_restore_msi_irqs(dev, dev->irq);
+=======
+	write_msi_msg(dev->irq, &entry->msg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pci_read_config_word(dev, pos + PCI_MSI_FLAGS, &control);
 	msi_mask_irq(entry, msi_capable_mask(control), entry->masked);
@@ -425,7 +438,11 @@ static void __pci_restore_msix_state(struct pci_dev *dev)
 	pci_write_config_word(dev, pos + PCI_MSIX_FLAGS, control);
 
 	list_for_each_entry(entry, &dev->msi_list, list) {
+<<<<<<< HEAD
 		arch_restore_msi_irqs(dev, entry->irq);
+=======
+		write_msi_msg(entry->irq, &entry->msg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		msix_mask_irq(entry, entry->masked);
 	}
 
@@ -440,6 +457,7 @@ void pci_restore_msi_state(struct pci_dev *dev)
 }
 EXPORT_SYMBOL_GPL(pci_restore_msi_state);
 
+<<<<<<< HEAD
 
 #define to_msi_attr(obj) container_of(obj, struct msi_attribute, attr)
 #define to_msi_desc(obj) container_of(obj, struct msi_desc, kobj)
@@ -532,6 +550,8 @@ out_unroll:
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * msi_capability_init - configure device's MSI capability structure
  * @dev: pointer to the pci_dev data structure of MSI device function
@@ -583,6 +603,7 @@ static int msi_capability_init(struct pci_dev *dev, int nvec)
 		return ret;
 	}
 
+<<<<<<< HEAD
 	ret = populate_msi_sysfs(dev);
 	if (ret) {
 		msi_mask_irq(entry, mask, ~mask);
@@ -590,6 +611,8 @@ static int msi_capability_init(struct pci_dev *dev, int nvec)
 		return ret;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Set MSI enabled bits	 */
 	pci_intx_for_msi(dev, 0);
 	msi_set_enable(dev, pos, 1);
@@ -710,12 +733,15 @@ static int msix_capability_init(struct pci_dev *dev,
 
 	msix_program_entries(dev, entries);
 
+<<<<<<< HEAD
 	ret = populate_msi_sysfs(dev);
 	if (ret) {
 		ret = 0;
 		goto error;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Set MSI-X enabled bits and unmask the function */
 	pci_intx_for_msi(dev, 0);
 	dev->msix_enabled = 1;
@@ -874,8 +900,11 @@ void pci_disable_msi(struct pci_dev *dev)
 
 	pci_msi_shutdown(dev);
 	free_msi_irqs(dev);
+<<<<<<< HEAD
 	kset_unregister(dev->msi_kset);
 	dev->msi_kset = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(pci_disable_msi);
 
@@ -974,8 +1003,11 @@ void pci_disable_msix(struct pci_dev *dev)
 
 	pci_msix_shutdown(dev);
 	free_msi_irqs(dev);
+<<<<<<< HEAD
 	kset_unregister(dev->msi_kset);
 	dev->msi_kset = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(pci_disable_msix);
 

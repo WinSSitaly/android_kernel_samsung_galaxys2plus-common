@@ -18,6 +18,7 @@ static ssize_t speakup_file_write(struct file *fp, const char *buffer,
 {
 	size_t count = nbytes;
 	const char *ptr = buffer;
+<<<<<<< HEAD
 	size_t bytes;
 	unsigned long flags;
 	u_char buf[256];
@@ -26,6 +27,15 @@ static ssize_t speakup_file_write(struct file *fp, const char *buffer,
 		return -ENODEV;
 	while (count > 0) {
 		bytes = min(count, sizeof(buf));
+=======
+	int bytes;
+	unsigned long flags;
+	u_char buf[256];
+	if (synth == NULL)
+		return -ENODEV;
+	while (count > 0) {
+		bytes = min_t(size_t, count, sizeof(buf));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (copy_from_user(buf, ptr, bytes))
 			return -EFAULT;
 		count -= bytes;

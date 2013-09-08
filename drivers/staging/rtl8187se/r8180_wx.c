@@ -23,12 +23,17 @@
 
 #include "ieee80211/dot11d.h"
 
+<<<<<<< HEAD
+=======
+/* #define RATE_COUNT 4 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u32 rtl8180_rates[] = {1000000, 2000000, 5500000, 11000000,
 	6000000, 9000000, 12000000, 18000000, 24000000, 36000000, 48000000, 54000000};
 
 #define RATE_COUNT ARRAY_SIZE(rtl8180_rates)
 
 static CHANNEL_LIST DefaultChannelPlan[] = {
+<<<<<<< HEAD
 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 36, 40, 44, 48, 52, 56, 60, 64}, 19},		/* FCC */
 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}, 11},						/* IC */
 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 36, 40, 44, 48, 52, 56, 60, 64}, 21},	/* ETSI	*/
@@ -39,6 +44,19 @@ static CHANNEL_LIST DefaultChannelPlan[] = {
 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 36, 40, 44, 48, 52, 56, 60, 64}, 21},	/* Israel */
 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 34, 38, 42, 46}, 17},			/* For 11a , TELEC */
 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, 14}					/* For Global Domain. 1-11:active scan, 12-14 passive scan.*/	/* +YJ, 080626 */
+=======
+/*	{{1,2,3,4,5,6,7,8,9,10,11,12,13,14},14},	*/	/*Default channel plan	*/
+	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 36, 40, 44, 48, 52, 56, 60, 64}, 19},			/*FCC							*/
+	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}, 11},											/*IC							*/
+	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 36, 40, 44, 48, 52, 56, 60, 64}, 21},	/*ETSI							*/
+	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 36, 40, 44, 48, 52, 56, 60, 64}, 21},	/*Spain. Change to ETSI.		*/
+	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 36, 40, 44, 48, 52, 56, 60, 64}, 21},	/*France. Change to ETSI.		*/
+	{{14, 36, 40, 44, 48, 52, 56, 60, 64}, 9},											/*MKK							*/
+	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 36, 40, 44, 48, 52, 56, 60, 64}, 22},/*MKK1						*/
+	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 36, 40, 44, 48, 52, 56, 60, 64}, 21},	/*Israel.						*/
+	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 34, 38, 42, 46}, 17},					/*For 11a , TELEC				*/
+	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, 14}								/*For Global Domain. 1-11:active scan, 12-14 passive scan.*/	/* +YJ, 080626 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 static int r8180_wx_get_freq(struct net_device *dev,
 			     struct iw_request_info *a,
@@ -61,7 +79,18 @@ int r8180_wx_set_key(struct net_device *dev, struct iw_request_info *info,
 
 	if (erq->flags & IW_ENCODE_DISABLED)
 
+<<<<<<< HEAD
 	if (erq->length > 0) {
+=======
+/*	i = erq->flags & IW_ENCODE_INDEX;
+	if (i < 1 || i > 4)
+*/
+
+	if (erq->length > 0) {
+
+		/*int len = erq->length <= 5 ? 5 : 13;	*/
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u32* tkey = (u32*) key;
 		priv->key0[0] = tkey[0];
 		priv->key0[1] = tkey[1];
@@ -183,18 +212,28 @@ static int r8180_wx_set_mode(struct net_device *dev, struct iw_request_info *a,
 		return 0;
 
 	down(&priv->wx_sem);
+<<<<<<< HEAD
+=======
+/*	printk("set mode ENABLE_IPS\n");	*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (priv->bInactivePs)	{
 		if (wrqu->mode == IW_MODE_ADHOC)
 			IPSLeave(dev);
 	}
 	ret = ieee80211_wx_set_mode(priv->ieee80211, a, wrqu, b);
 
+<<<<<<< HEAD
+=======
+/*	rtl8180_commit(dev);	*/
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	up(&priv->wx_sem);
 	return ret;
 }
 
 /* YJ,add,080819,for hidden ap */
 struct  iw_range_with_scan_capa	{
+<<<<<<< HEAD
 		/* Informative stuff (to choose between different interface) */
 
 		__u32		throughput; /* To give an idea... */
@@ -209,6 +248,20 @@ struct  iw_range_with_scan_capa	{
 		/* NWID (or domain id)	*/
 		__u32           min_nwid; /* Minimal NWID we are able to set */
 		__u32			max_nwid; /* Maximal NWID we are able to set */
+=======
+		/* Informative stuff (to choose between different interface)	*/
+		__u32		throughput;		/* To give an idea...				*/
+		/* In theory this value should be the maximum benchmarked
+		* TCP/IP throughput, because with most of these devices the
+		* bit rate is meaningless (overhead an co) to estimate how
+		* fast the connection will go and pick the fastest one.
+		* I suggest people to play with Netperf or any benchmark...
+		*/
+
+		/* NWID (or domain id)	*/
+		__u32           min_nwid;       /* Minimal NWID we are able to set */
+		__u32			max_nwid;		/* Maximal NWID we are able to set */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Old Frequency (backward compat - moved lower ) */
 		__u16			old_num_channels;
@@ -228,6 +281,10 @@ static int rtl8180_wx_get_range(struct net_device *dev,
 	struct r8180_priv *priv = ieee80211_priv(dev);
 	u16 val;
 	int i;
+<<<<<<< HEAD
+=======
+	/*struct iw_range_with_scan_capa* tmp = (struct iw_range_with_scan_capa*)range; */ /*YJ,add,080819,for hidden ap */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wrqu->data.length = sizeof(*range);
 	memset(range, 0, sizeof(*range));
@@ -280,6 +337,17 @@ static int rtl8180_wx_get_range(struct net_device *dev,
 	range->we_version_compiled = WIRELESS_EXT;
 	range->we_version_source = 16;
 
+<<<<<<< HEAD
+=======
+/*	range->retry_capa;	*/	/* What retry options are supported */
+/*	range->retry_flags;	*/	/* How to decode max/min retry limit */
+/*	range->r_time_flags;*/	/* How to decode max/min retry life */
+/*	range->min_retry;	*/	/* Minimal number of retries */
+/*	range->max_retry;	*/	/* Maximal number of retries */
+/*	range->min_r_time;	*/	/* Minimal retry lifetime */
+/*	range->max_r_time;	*/	/* Maximal retry lifetime */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		range->num_channels = 14;
 
 	for (i = 0, val = 0; i < 14; i++) {
@@ -291,8 +359,13 @@ static int rtl8180_wx_get_range(struct net_device *dev,
 			range->freq[val].e = 1;
 			val++;
 		} else {
+<<<<<<< HEAD
 			/* FIXME: do we need to set anything for channels */
 			/* we don't use ? */
+=======
+			/* FIXME: do we need to set anything for channels	*/
+			/* we don't use ?	*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (val == IW_MAX_FREQUENCIES)
@@ -303,6 +376,11 @@ static int rtl8180_wx_get_range(struct net_device *dev,
 	range->enc_capa = IW_ENC_CAPA_WPA | IW_ENC_CAPA_WPA2 |
 						IW_ENC_CAPA_CIPHER_TKIP | IW_ENC_CAPA_CIPHER_CCMP;
 
+<<<<<<< HEAD
+=======
+	/*tmp->scan_capa = 0x01;	*/	/*YJ,add,080819,for hidden ap	*/
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -318,6 +396,7 @@ static int r8180_wx_set_scan(struct net_device *dev, struct iw_request_info *a,
 	if (priv->ieee80211->bHwRadioOff)
 		return 0;
 
+<<<<<<< HEAD
 	if (wrqu->data.flags & IW_SCAN_THIS_ESSID)	{
 		struct iw_scan_req* req = (struct iw_scan_req*)b;
 		if (req->essid_len)		{
@@ -335,12 +414,56 @@ static int r8180_wx_set_scan(struct net_device *dev, struct iw_request_info *a,
 			ret = 0;
 		}	else	{
 			/* prevent scan in BusyTraffic */
+=======
+/*YJ,add,080819, for hidden ap	*/
+	/*printk("==*&*&*&==>%s in\n", __func__);	*/
+	/*printk("=*&*&*&*===>flag:%x, %x\n", wrqu->data.flags, IW_SCAN_THIS_ESSID);	*/
+	if (wrqu->data.flags & IW_SCAN_THIS_ESSID)	{
+		struct iw_scan_req* req = (struct iw_scan_req*)b;
+		if (req->essid_len)		{
+			/*printk("==**&*&*&**===>scan set ssid:%s\n", req->essid); */
+			ieee->current_network.ssid_len = req->essid_len;
+			memcpy(ieee->current_network.ssid, req->essid, req->essid_len);
+			/*printk("=====>network ssid:%s\n", ieee->current_network.ssid); */
+		}
+	}
+/*YJ,add,080819, for hidden ap, end */
+
+	down(&priv->wx_sem);
+	if (priv->up)	{
+/*		printk("set scan ENABLE_IPS\n");	*/
+		priv->ieee80211->actscanning = true;
+		if (priv->bInactivePs && (priv->ieee80211->state != IEEE80211_LINKED))	{
+			IPSLeave(dev);
+			/*down(&priv->ieee80211->wx_sem);	*/
+/*
+			if (priv->ieee80211->iw_mode == IW_MODE_MONITOR || !(priv->ieee80211->proto_started)){
+				ret = -1;
+				up(&priv->ieee80211->wx_sem);
+				up(&priv->wx_sem);
+				return ret;
+			}
+*/
+	/*	queue_work(priv->ieee80211->wq, &priv->ieee80211->wx_sync_scan_wq); */
+		/* printk("start scan============================>\n"); */
+		ieee80211_softmac_ips_scan_syncro(priv->ieee80211);
+/* ieee80211_rtl_start_scan(priv->ieee80211); */
+		/* intentionally forget to up sem */
+/*			up(&priv->ieee80211->wx_sem); */
+			ret = 0;
+		}	else	{
+			/* YJ,add,080828, prevent scan in BusyTraffic */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* FIXME: Need to consider last scan time */
 			if ((priv->link_detect.bBusyTraffic) && (true))	{
 				ret = 0;
 				printk("Now traffic is busy, please try later!\n");
 			}	else
+<<<<<<< HEAD
 				/* prevent scan in BusyTraffic,end */
+=======
+				/* YJ,add,080828, prevent scan in BusyTraffic,end */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ret = ieee80211_wx_set_scan(priv->ieee80211, a, wrqu, b);
 		}
 	}	else
@@ -382,8 +505,15 @@ static int r8180_wx_set_essid(struct net_device *dev,
 		return 0;
 
 	down(&priv->wx_sem);
+<<<<<<< HEAD
 	if (priv->bInactivePs)
 		IPSLeave(dev);
+=======
+	/* printk("set essid ENABLE_IPS\n"); */
+	if (priv->bInactivePs)
+		IPSLeave(dev);
+/*	printk("haha:set essid %s essid_len = %d essid_flgs = %d\n",b,  wrqu->essid.length, wrqu->essid.flags);	*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = ieee80211_wx_set_essid(priv->ieee80211, a, wrqu, b);
 
@@ -553,6 +683,31 @@ static int r8180_wx_set_scan_type(struct net_device *dev, struct iw_request_info
 	return 1;
 }
 
+<<<<<<< HEAD
+=======
+
+/* added by christian */
+/*
+static int r8180_wx_set_monitor_type(struct net_device *dev, struct iw_request_info *aa, union
+	iwreq_data *wrqu, char *p){
+
+	struct r8180_priv *priv = ieee80211_priv(dev);
+	int *parms=(int*)p;
+	int mode=parms[0];
+
+	if(priv->ieee80211->iw_mode != IW_MODE_MONITOR) return -1;
+	priv->prism_hdr = mode;
+	if(!mode)dev->type=ARPHRD_IEEE80211;
+	else dev->type=ARPHRD_IEEE80211_PRISM;
+	DMESG("using %s RX encap", mode ? "AVS":"80211");
+	return 0;
+
+}
+*/
+/*of         r8180_wx_set_monitor_type */
+/* end added christian */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int r8180_wx_set_retry(struct net_device *dev,
 				struct iw_request_info *info,
 				union iwreq_data *wrqu, char *extra)
@@ -595,6 +750,17 @@ static int r8180_wx_set_retry(struct net_device *dev,
 	 */
 
 	rtl8180_commit(dev);
+<<<<<<< HEAD
+=======
+	/*
+	if(priv->up){
+		rtl8180_rtx_disable(dev);
+		rtl8180_rx_enable(dev);
+		rtl8180_tx_enable(dev);
+
+	}
+	*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 exit:
 	up(&priv->wx_sem);
 
@@ -621,6 +787,11 @@ static int r8180_wx_get_retry(struct net_device *dev,
 		wrqu->retry.flags = IW_RETRY_LIMIT & IW_RETRY_MIN;
 		wrqu->retry.value = priv->retry_data;
 	}
+<<<<<<< HEAD
+=======
+	/* DMESG("returning %d",wrqu->retry.value); */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -650,6 +821,10 @@ static int r8180_wx_set_sens(struct net_device *dev,
 		return 0;
 
 	down(&priv->wx_sem);
+<<<<<<< HEAD
+=======
+	/* DMESG("attempt to set sensivity to %ddb",wrqu->sens.value); */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (priv->rf_set_sens == NULL) {
 		err = -1; /* we have not this support for this radio */
 		goto exit;
@@ -770,6 +945,61 @@ static int dummy(struct net_device *dev, struct iw_request_info *a,
 	return -1;
 }
 
+<<<<<<< HEAD
+=======
+/*
+static int r8180_wx_get_psmode(struct net_device *dev,
+			       struct iw_request_info *info,
+			       union iwreq_data *wrqu, char *extra)
+{
+	struct r8180_priv *priv = ieee80211_priv(dev);
+	struct ieee80211_device *ieee;
+	int ret = 0;
+
+
+
+	down(&priv->wx_sem);
+
+	if(priv) {
+		ieee = priv->ieee80211;
+		if(ieee->ps == IEEE80211_PS_DISABLED) {
+			*((unsigned int *)extra) = IEEE80211_PS_DISABLED;
+			goto exit;
+		}
+		*((unsigned int *)extra) = IW_POWER_TIMEOUT;
+	if (ieee->ps & IEEE80211_PS_MBCAST)
+			*((unsigned int *)extra) |= IW_POWER_ALL_R;
+		else
+			*((unsigned int *)extra) |= IW_POWER_UNICAST_R;
+	} else
+		ret = -1;
+exit:
+	up(&priv->wx_sem);
+
+	return ret;
+}
+static int r8180_wx_set_psmode(struct net_device *dev,
+			       struct iw_request_info *info,
+			       union iwreq_data *wrqu, char *extra)
+{
+	struct r8180_priv *priv = ieee80211_priv(dev);
+	//struct ieee80211_device *ieee;
+	int ret = 0;
+
+
+
+	down(&priv->wx_sem);
+
+	ret = ieee80211_wx_set_power(priv->ieee80211, info, wrqu, extra);
+
+	up(&priv->wx_sem);
+
+	return ret;
+
+}
+*/
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int r8180_wx_get_iwmode(struct net_device *dev,
 			       struct iw_request_info *info,
 			       union iwreq_data *wrqu, char *extra)
@@ -835,6 +1065,10 @@ static int r8180_wx_set_iwmode(struct net_device *dev,
 	} else {
 		ieee->mode = mode;
 		ieee->modulation = modulation;
+<<<<<<< HEAD
+=======
+/*		ieee80211_start_protocol(ieee); */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	up(&priv->wx_sem);
@@ -886,6 +1120,10 @@ static int r8180_wx_get_siglevel(struct net_device *dev,
 			       union iwreq_data *wrqu, char *extra)
 {
 	struct r8180_priv *priv = ieee80211_priv(dev);
+<<<<<<< HEAD
+=======
+	/* struct ieee80211_network *network = &(priv->ieee80211->current_network); */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 
@@ -905,6 +1143,10 @@ static int r8180_wx_get_sigqual(struct net_device *dev,
 			       union iwreq_data *wrqu, char *extra)
 {
 	struct r8180_priv *priv = ieee80211_priv(dev);
+<<<<<<< HEAD
+=======
+	/* struct ieee80211_network *network = &(priv->ieee80211->current_network); */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 
@@ -1018,6 +1260,10 @@ static int r8180_wx_set_channelplan(struct net_device *dev,
 			     union iwreq_data *wrqu, char *extra)
 {
 	struct r8180_priv *priv = ieee80211_priv(dev);
+<<<<<<< HEAD
+=======
+	/* struct ieee80211_device *ieee = netdev_priv(dev); */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int *val = (int *)extra;
 	int i;
 	printk("-----in fun %s\n", __func__);
@@ -1090,6 +1336,10 @@ static int r8180_wx_set_enc_ext(struct net_device *dev,
 {
 
 	struct r8180_priv *priv = ieee80211_priv(dev);
+<<<<<<< HEAD
+=======
+	/* printk("===>%s()\n", __func__); */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int ret = 0;
 
@@ -1106,6 +1356,10 @@ static int r8180_wx_set_auth(struct net_device *dev,
 			     struct iw_request_info *info,
 			     union iwreq_data *wrqu, char *extra)
 {
+<<<<<<< HEAD
+=======
+	/* printk("====>%s()\n", __func__); */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct r8180_priv *priv = ieee80211_priv(dev);
 	int ret = 0;
 
@@ -1122,6 +1376,11 @@ static int r8180_wx_set_mlme(struct net_device *dev,
 										struct iw_request_info *info,
 										union iwreq_data *wrqu, char *extra)
 {
+<<<<<<< HEAD
+=======
+	/* printk("====>%s()\n", __func__); */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 	struct r8180_priv *priv = ieee80211_priv(dev);
 
@@ -1141,6 +1400,10 @@ static int r8180_wx_set_gen_ie(struct net_device *dev,
 			       struct iw_request_info *info,
 			       union iwreq_data *wrqu, char *extra)
 {
+<<<<<<< HEAD
+=======
+/*	printk("====>%s(), len:%d\n", __func__, data->length); */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 		struct r8180_priv *priv = ieee80211_priv(dev);
 
@@ -1153,21 +1416,33 @@ static int r8180_wx_set_gen_ie(struct net_device *dev,
 		ret = ieee80211_wx_set_gen_ie(priv->ieee80211, extra, wrqu->data.length);
 #endif
 		up(&priv->wx_sem);
+<<<<<<< HEAD
+=======
+	/* printk("<======%s(), ret:%d\n", __func__, ret); */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 
 
 }
 static iw_handler r8180_wx_handlers[] =	{
+<<<<<<< HEAD
 		NULL,					/* SIOCSIWCOMMIT */
 		r8180_wx_get_name,			/* SIOCGIWNAME */
 		dummy,					/* SIOCSIWNWID */
 		dummy,					/* SIOCGIWNWID */
+=======
+		NULL,						/* SIOCSIWCOMMIT */
+		r8180_wx_get_name,			/* SIOCGIWNAME */
+		dummy,						/* SIOCSIWNWID */
+		dummy,						/* SIOCGIWNWID */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r8180_wx_set_freq,			/* SIOCSIWFREQ */
 		r8180_wx_get_freq,			/* SIOCGIWFREQ */
 		r8180_wx_set_mode,			/* SIOCSIWMODE */
 		r8180_wx_get_mode,			/* SIOCGIWMODE */
 		r8180_wx_set_sens,			/* SIOCSIWSENS */
 		r8180_wx_get_sens,			/* SIOCGIWSENS */
+<<<<<<< HEAD
 		NULL,					/* SIOCSIWRANGE */
 		rtl8180_wx_get_range,			/* SIOCGIWRANGE */
 		NULL,					/* SIOCSIWPRIV */
@@ -1182,28 +1457,57 @@ static iw_handler r8180_wx_handlers[] =	{
 		r8180_wx_get_wap,			/* SIOCGIWAP */
 		r8180_wx_set_mlme,			/* SIOCSIWMLME*/
 		dummy,					/* SIOCGIWAPLIST -- depricated */
+=======
+		NULL,						/* SIOCSIWRANGE */
+		rtl8180_wx_get_range,		/* SIOCGIWRANGE */
+		NULL,						/* SIOCSIWPRIV */
+		NULL,						/* SIOCGIWPRIV */
+		NULL,						/* SIOCSIWSTATS */
+		NULL,						/* SIOCGIWSTATS */
+		dummy,						/* SIOCSIWSPY */
+		dummy,						/* SIOCGIWSPY */
+		NULL,						/* SIOCGIWTHRSPY */
+		NULL,						/* SIOCWIWTHRSPY */
+		r8180_wx_set_wap,			/* SIOCSIWAP */
+		r8180_wx_get_wap,			/* SIOCGIWAP */
+		r8180_wx_set_mlme,			/* SIOCSIWMLME*/
+		dummy,						/* SIOCGIWAPLIST -- depricated */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r8180_wx_set_scan,			/* SIOCSIWSCAN */
 		r8180_wx_get_scan,			/* SIOCGIWSCAN */
 		r8180_wx_set_essid,			/* SIOCSIWESSID */
 		r8180_wx_get_essid,			/* SIOCGIWESSID */
+<<<<<<< HEAD
 		dummy,					/* SIOCSIWNICKN */
 		dummy,					/* SIOCGIWNICKN */
 		NULL,					/* -- hole -- */
 		NULL,					/* -- hole -- */
+=======
+		dummy,						/* SIOCSIWNICKN */
+		dummy,						/* SIOCGIWNICKN */
+		NULL,						/* -- hole -- */
+		NULL,						/* -- hole -- */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r8180_wx_set_rate,			/* SIOCSIWRATE */
 		r8180_wx_get_rate,			/* SIOCGIWRATE */
 		r8180_wx_set_rts,			/* SIOCSIWRTS */
 		r8180_wx_get_rts,			/* SIOCGIWRTS */
 		r8180_wx_set_frag,			/* SIOCSIWFRAG */
 		r8180_wx_get_frag,			/* SIOCGIWFRAG */
+<<<<<<< HEAD
 		dummy,					/* SIOCSIWTXPOW */
 		dummy,					/* SIOCGIWTXPOW */
+=======
+		dummy,						/* SIOCSIWTXPOW */
+		dummy,						/* SIOCGIWTXPOW */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r8180_wx_set_retry,			/* SIOCSIWRETRY */
 		r8180_wx_get_retry,			/* SIOCGIWRETRY */
 		r8180_wx_set_enc,			/* SIOCSIWENCODE */
 		r8180_wx_get_enc,			/* SIOCGIWENCODE */
 		r8180_wx_set_power,			/* SIOCSIWPOWER */
 		r8180_wx_get_power,			/* SIOCGIWPOWER */
+<<<<<<< HEAD
 		NULL,					/*---hole---*/
 		NULL,					/*---hole---*/
 		r8180_wx_set_gen_ie,			/* SIOCSIWGENIE */
@@ -1214,6 +1518,18 @@ static iw_handler r8180_wx_handlers[] =	{
 		NULL,					/* SIOCSIWENCODEEXT */
 		NULL,					/* SIOCSIWPMKSA */
 		NULL,					/*---hole---*/
+=======
+		NULL,						/*---hole---*/
+		NULL,						/*---hole---*/
+		r8180_wx_set_gen_ie,		/* SIOCSIWGENIE */
+		NULL,						/* SIOCSIWGENIE */
+		r8180_wx_set_auth,			/* SIOCSIWAUTH */
+		NULL,						/* SIOCSIWAUTH */
+		r8180_wx_set_enc_ext,		/* SIOCSIWENCODEEXT */
+		NULL,						/* SIOCSIWENCODEEXT */
+		NULL,						/* SIOCSIWPMKSA */
+		NULL,						/*---hole---*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -1234,6 +1550,17 @@ static const struct iw_priv_args r8180_private_args[] = {
 		0, 0, "dummy"
 
 	},
+<<<<<<< HEAD
+=======
+	/* added by christian */
+	/*
+	{
+		SIOCIWFIRSTPRIV + 0x2,
+		IW_PRIV_TYPE_INT | IW_PRIV_SIZE_FIXED | 1, 0, "prismhdr"
+	},
+	*/
+	/* end added by christian */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		SIOCIWFIRSTPRIV + 0x4,
 		IW_PRIV_TYPE_INT | IW_PRIV_SIZE_FIXED | 1, 0, "activescan"
@@ -1252,6 +1579,21 @@ static const struct iw_priv_args r8180_private_args[] = {
 		0, 0, "dummy"
 
 	},
+<<<<<<< HEAD
+=======
+/*
+	{
+		SIOCIWFIRSTPRIV + 0x5,
+		0, IW_PRIV_TYPE_INT | IW_PRIV_SIZE_FIXED | 1, "getpsmode"
+	},
+	{
+		SIOCIWFIRSTPRIV + 0x6,
+		IW_PRIV_SIZE_FIXED, 0, "setpsmode"
+	},
+*/
+/* set/get mode have been realized in public handlers */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		SIOCIWFIRSTPRIV + 0x8,
 		IW_PRIV_TYPE_INT | IW_PRIV_SIZE_FIXED | 1, 0, "setiwmode"
@@ -1322,7 +1664,11 @@ static const struct iw_priv_args r8180_private_args[] = {
 
 
 static iw_handler r8180_private_handler[] = {
+<<<<<<< HEAD
 	r8180_wx_set_crcmon, /*SIOCIWSECONDPRIV*/
+=======
+	r8180_wx_set_crcmon,   /*SIOCIWSECONDPRIV*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dummy,
 	r8180_wx_set_beaconinterval,
 	dummy,
@@ -1354,6 +1700,7 @@ static inline int is_same_network(struct ieee80211_network *src,
 									struct ieee80211_network *dst,
 				  struct ieee80211_device *ieee)
 {
+<<<<<<< HEAD
 		/* A network is only a duplicate if the channel, BSSID, ESSID
 		 * and the capability field (in particular IBSS and BSS) all match.
 		 * We treat all <hidden> with the same BSSID and channel
@@ -1363,6 +1710,18 @@ static inline int is_same_network(struct ieee80211_network *src,
 			(src->channel == dst->channel) &&
 			!memcmp(src->bssid, dst->bssid, ETH_ALEN) &&
 			(!memcmp(src->ssid, dst->ssid, src->ssid_len) || (ieee->iw_mode == IW_MODE_INFRA)) &&  /* YJ,mod, 080819,for hidden ap */
+=======
+		/*		A network is only a duplicate if the channel, BSSID, ESSID
+		* and the capability field (in particular IBSS and BSS) all match.
+		* We treat all <hidden> with the same BSSID and channel
+		* as one network		*/
+		return (((src->ssid_len == dst->ssid_len) || (ieee->iw_mode == IW_MODE_INFRA)) &&	/* YJ,mod, 080819,for hidden ap	*/
+			/* ((src->ssid_len == dst->ssid_len) && */
+			(src->channel == dst->channel) &&
+			!memcmp(src->bssid, dst->bssid, ETH_ALEN) &&
+			(!memcmp(src->ssid, dst->ssid, src->ssid_len) || (ieee->iw_mode == IW_MODE_INFRA)) &&  /* YJ,mod, 080819,for hidden ap */
+			/*!memcmp(src->ssid, dst->ssid, src->ssid_len) && */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			((src->capability & WLAN_CAPABILITY_IBSS) ==
 			(dst->capability & WLAN_CAPABILITY_IBSS)) &&
 			((src->capability & WLAN_CAPABILITY_BSS) ==
@@ -1375,9 +1734,17 @@ static struct iw_statistics *r8180_get_wireless_stats(struct net_device *dev)
 	struct r8180_priv *priv = ieee80211_priv(dev);
 	struct ieee80211_device* ieee = priv->ieee80211;
 	struct iw_statistics* wstats = &priv->wstats;
+<<<<<<< HEAD
 	int tmp_level = 0;
 	int tmp_qual = 0;
 	int tmp_noise = 0;
+=======
+	/* struct ieee80211_network* target = NULL; */
+	int tmp_level = 0;
+	int tmp_qual = 0;
+	int tmp_noise = 0;
+	/* unsigned long flag; */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ieee->state < IEEE80211_LINKED)	{
 		wstats->qual.qual = 0;
@@ -1390,7 +1757,13 @@ static struct iw_statistics *r8180_get_wireless_stats(struct net_device *dev)
 	tmp_level = (&ieee->current_network)->stats.signal;
 	tmp_qual = (&ieee->current_network)->stats.signalstrength;
 	tmp_noise = (&ieee->current_network)->stats.noise;
+<<<<<<< HEAD
 
+=======
+	/* printk("level:%d, qual:%d, noise:%d\n", tmp_level, tmp_qual, tmp_noise); */
+
+/*	printk("level:%d\n", tmp_level);	*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wstats->qual.level = tmp_level;
 	wstats->qual.qual = tmp_qual;
 	wstats->qual.noise = tmp_noise;

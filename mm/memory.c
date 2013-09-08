@@ -47,7 +47,11 @@
 #include <linux/pagemap.h>
 #include <linux/ksm.h>
 #include <linux/rmap.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/delayacct.h>
 #include <linux/init.h>
 #include <linux/writeback.h>
@@ -125,17 +129,30 @@ core_initcall(init_zero_pfn);
 
 #if defined(SPLIT_RSS_COUNTING)
 
+<<<<<<< HEAD
 void sync_mm_rss(struct mm_struct *mm)
+=======
+static void __sync_task_rss_stat(struct task_struct *task, struct mm_struct *mm)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 
 	for (i = 0; i < NR_MM_COUNTERS; i++) {
+<<<<<<< HEAD
 		if (current->rss_stat.count[i]) {
 			add_mm_counter(mm, i, current->rss_stat.count[i]);
 			current->rss_stat.count[i] = 0;
 		}
 	}
 	current->rss_stat.events = 0;
+=======
+		if (task->rss_stat.count[i]) {
+			add_mm_counter(mm, i, task->rss_stat.count[i]);
+			task->rss_stat.count[i] = 0;
+		}
+	}
+	task->rss_stat.events = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void add_mm_counter_fast(struct mm_struct *mm, int member, int val)
@@ -157,7 +174,34 @@ static void check_sync_rss_stat(struct task_struct *task)
 	if (unlikely(task != current))
 		return;
 	if (unlikely(task->rss_stat.events++ > TASK_RSS_EVENTS_THRESH))
+<<<<<<< HEAD
 		sync_mm_rss(task->mm);
+=======
+		__sync_task_rss_stat(task, task->mm);
+}
+
+unsigned long get_mm_counter(struct mm_struct *mm, int member)
+{
+	long val = 0;
+
+	/*
+	 * Don't use task->mm here...for avoiding to use task_get_mm()..
+	 * The caller must guarantee task->mm is not invalid.
+	 */
+	val = atomic_long_read(&mm->rss_stat.count[member]);
+	/*
+	 * counter is updated in asynchronous manner and may go to minus.
+	 * But it's never be expected number for users.
+	 */
+	if (val < 0)
+		return 0;
+	return (unsigned long)val;
+}
+
+void sync_mm_rss(struct task_struct *task, struct mm_struct *mm)
+{
+	__sync_task_rss_stat(task, mm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #else /* SPLIT_RSS_COUNTING */
 
@@ -182,14 +226,20 @@ static int tlb_next_batch(struct mmu_gather *tlb)
 		return 1;
 	}
 
+<<<<<<< HEAD
 	if (tlb->batch_count == MAX_GATHER_BATCH_COUNT)
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	batch = (void *)__get_free_pages(GFP_NOWAIT | __GFP_NOWARN, 0);
 	if (!batch)
 		return 0;
 
+<<<<<<< HEAD
 	tlb->batch_count++;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	batch->next = NULL;
 	batch->nr   = 0;
 	batch->max  = MAX_GATHER_BATCH;
@@ -216,7 +266,10 @@ void tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm, bool fullmm)
 	tlb->local.nr   = 0;
 	tlb->local.max  = ARRAY_SIZE(tlb->__pages);
 	tlb->active     = &tlb->local;
+<<<<<<< HEAD
 	tlb->batch_count = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_HAVE_RCU_TABLE_FREE
 	tlb->batch = NULL;
@@ -275,7 +328,11 @@ int __tlb_remove_page(struct mmu_gather *tlb, struct page *page)
 {
 	struct mmu_gather_batch *batch;
 
+<<<<<<< HEAD
 	VM_BUG_ON(!tlb->need_flush);
+=======
+	tlb->need_flush = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (tlb_fast_mode(tlb)) {
 		free_page_and_swap_cache(page);
@@ -643,7 +700,11 @@ static inline void add_mm_rss_vec(struct mm_struct *mm, int *rss)
 	int i;
 
 	if (current->mm == mm)
+<<<<<<< HEAD
 		sync_mm_rss(mm);
+=======
+		sync_mm_rss(current, mm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < NR_MM_COUNTERS; i++)
 		if (rss[i])
 			add_mm_counter(mm, i, rss[i]);
@@ -860,6 +921,7 @@ copy_one_pte(struct mm_struct *dst_mm, struct mm_struct *src_mm,
 			}
 			if (likely(!non_swap_entry(entry)))
 				rss[MM_SWAPENTS]++;
+<<<<<<< HEAD
 			else if (is_migration_entry(entry)) {
 				page = migration_entry_to_page(entry);
 
@@ -878,6 +940,17 @@ copy_one_pte(struct mm_struct *dst_mm, struct mm_struct *src_mm,
 					pte = swp_entry_to_pte(entry);
 					set_pte_at(src_mm, addr, src_pte, pte);
 				}
+=======
+			else if (is_write_migration_entry(entry) &&
+					is_cow_mapping(vm_flags)) {
+				/*
+				 * COW mappings require pages in both parent
+				 * and child to be set to read.
+				 */
+				make_migration_entry_read(&entry);
+				pte = swp_entry_to_pte(entry);
+				set_pte_at(src_mm, addr, src_pte, pte);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 		goto out_set_pte;
@@ -1182,6 +1255,7 @@ again:
 
 			if (!non_swap_entry(entry))
 				rss[MM_SWAPENTS]--;
+<<<<<<< HEAD
 			else if (is_migration_entry(entry)) {
 				struct page *page;
 
@@ -1192,6 +1266,8 @@ again:
 				else
 					rss[MM_FILEPAGES]--;
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (unlikely(!free_swap_and_cache(entry)))
 				print_bad_pte(vma, addr, ptent, NULL);
 		}
@@ -1232,7 +1308,11 @@ static inline unsigned long zap_pmd_range(struct mmu_gather *tlb,
 			if (next - addr != HPAGE_PMD_SIZE) {
 				VM_BUG_ON(!rwsem_is_locked(&tlb->mm->mmap_sem));
 				split_huge_page_pmd(vma->vm_mm, pmd);
+<<<<<<< HEAD
 			} else if (zap_huge_pmd(tlb, vma, pmd, addr))
+=======
+			} else if (zap_huge_pmd(tlb, vma, pmd))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto next;
 			/* fall through */
 		}
@@ -1272,10 +1352,17 @@ static inline unsigned long zap_pud_range(struct mmu_gather *tlb,
 	return addr;
 }
 
+<<<<<<< HEAD
 static void unmap_page_range(struct mmu_gather *tlb,
 			     struct vm_area_struct *vma,
 			     unsigned long addr, unsigned long end,
 			     struct zap_details *details)
+=======
+static unsigned long unmap_page_range(struct mmu_gather *tlb,
+				struct vm_area_struct *vma,
+				unsigned long addr, unsigned long end,
+				struct zap_details *details)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	pgd_t *pgd;
 	unsigned long next;
@@ -1295,6 +1382,7 @@ static void unmap_page_range(struct mmu_gather *tlb,
 	} while (pgd++, addr = next, addr != end);
 	tlb_end_vma(tlb, vma);
 	mem_cgroup_uncharge_end();
+<<<<<<< HEAD
 }
 
 
@@ -1338,6 +1426,19 @@ static void unmap_single_vma(struct mmu_gather *tlb,
 	}
 }
 
+=======
+
+	return addr;
+}
+
+#ifdef CONFIG_PREEMPT
+# define ZAP_BLOCK_SIZE	(8 * PAGE_SIZE)
+#else
+/* No preempt: go for improved straight-line efficiency */
+# define ZAP_BLOCK_SIZE	(1024 * PAGE_SIZE)
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * unmap_vmas - unmap a range of memory covered by a list of vma's
  * @tlb: address of the caller's struct mmu_gather
@@ -1347,8 +1448,19 @@ static void unmap_single_vma(struct mmu_gather *tlb,
  * @nr_accounted: Place number of unmapped pages in vm-accountable vma's here
  * @details: details of nonlinear truncation or shared cache invalidation
  *
+<<<<<<< HEAD
  * Unmap all pages in the vma list.
  *
+=======
+ * Returns the end address of the unmapping (restart addr if interrupted).
+ *
+ * Unmap all pages in the vma list.
+ *
+ * We aim to not hold locks for too long (for scheduling latency reasons).
+ * So zap pages in ZAP_BLOCK_SIZE bytecounts.  This means we need to
+ * return the ending mmu_gather to the caller.
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Only addresses between `start' and `end' will be unmapped.
  *
  * The VMA list must be sorted in ascending virtual address order.
@@ -1358,11 +1470,16 @@ static void unmap_single_vma(struct mmu_gather *tlb,
  * ensure that any thus-far unmapped pages are flushed before unmap_vmas()
  * drops the lock and schedules.
  */
+<<<<<<< HEAD
 void unmap_vmas(struct mmu_gather *tlb,
+=======
+unsigned long unmap_vmas(struct mmu_gather *tlb,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct vm_area_struct *vma, unsigned long start_addr,
 		unsigned long end_addr, unsigned long *nr_accounted,
 		struct zap_details *details)
 {
+<<<<<<< HEAD
 	struct mm_struct *mm = vma->vm_mm;
 
 	mmu_notifier_invalidate_range_start(mm, start_addr, end_addr);
@@ -1398,14 +1515,69 @@ void zap_page_range(struct vm_area_struct *vma, unsigned long address,
 
 /**
  * zap_page_range_single - remove user pages in a given range
+=======
+	unsigned long start = start_addr;
+	struct mm_struct *mm = vma->vm_mm;
+
+	mmu_notifier_invalidate_range_start(mm, start_addr, end_addr);
+	for ( ; vma && vma->vm_start < end_addr; vma = vma->vm_next) {
+		unsigned long end;
+
+		start = max(vma->vm_start, start_addr);
+		if (start >= vma->vm_end)
+			continue;
+		end = min(vma->vm_end, end_addr);
+		if (end <= vma->vm_start)
+			continue;
+
+		if (vma->vm_flags & VM_ACCOUNT)
+			*nr_accounted += (end - start) >> PAGE_SHIFT;
+
+		if (unlikely(is_pfn_mapping(vma)))
+			untrack_pfn_vma(vma, 0, 0);
+
+		while (start != end) {
+			if (unlikely(is_vm_hugetlb_page(vma))) {
+				/*
+				 * It is undesirable to test vma->vm_file as it
+				 * should be non-null for valid hugetlb area.
+				 * However, vm_file will be NULL in the error
+				 * cleanup path of do_mmap_pgoff. When
+				 * hugetlbfs ->mmap method fails,
+				 * do_mmap_pgoff() nullifies vma->vm_file
+				 * before calling this function to clean up.
+				 * Since no pte has actually been setup, it is
+				 * safe to do nothing in this case.
+				 */
+				if (vma->vm_file)
+					unmap_hugepage_range(vma, start, end, NULL);
+
+				start = end;
+			} else
+				start = unmap_page_range(tlb, vma, start, end, details);
+		}
+	}
+
+	mmu_notifier_invalidate_range_end(mm, start_addr, end_addr);
+	return start;	/* which is now the end (or restart) address */
+}
+
+/**
+ * zap_page_range - remove user pages in a given range
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @vma: vm_area_struct holding the applicable pages
  * @address: starting address of pages to zap
  * @size: number of bytes to zap
  * @details: details of nonlinear truncation or shared cache invalidation
+<<<<<<< HEAD
  *
  * The range must fit into one VMA.
  */
 static void zap_page_range_single(struct vm_area_struct *vma, unsigned long address,
+=======
+ */
+unsigned long zap_page_range(struct vm_area_struct *vma, unsigned long address,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned long size, struct zap_details *details)
 {
 	struct mm_struct *mm = vma->vm_mm;
@@ -1416,10 +1588,16 @@ static void zap_page_range_single(struct vm_area_struct *vma, unsigned long addr
 	lru_add_drain();
 	tlb_gather_mmu(&tlb, mm, 0);
 	update_hiwater_rss(mm);
+<<<<<<< HEAD
 	mmu_notifier_invalidate_range_start(mm, address, end);
 	unmap_single_vma(&tlb, vma, address, end, &nr_accounted, details);
 	mmu_notifier_invalidate_range_end(mm, address, end);
 	tlb_finish_mmu(&tlb, address, end);
+=======
+	end = unmap_vmas(&tlb, vma, address, end, &nr_accounted, details);
+	tlb_finish_mmu(&tlb, address, end);
+	return end;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1440,7 +1618,11 @@ int zap_vma_ptes(struct vm_area_struct *vma, unsigned long address,
 	if (address < vma->vm_start || address + size > vma->vm_end ||
 	    		!(vma->vm_flags & VM_PFNMAP))
 		return -1;
+<<<<<<< HEAD
 	zap_page_range_single(vma, address, size, NULL);
+=======
+	zap_page_range(vma, address, size, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL_GPL(zap_vma_ptes);
@@ -2329,6 +2511,7 @@ int remap_pfn_range(struct vm_area_struct *vma, unsigned long addr,
 }
 EXPORT_SYMBOL(remap_pfn_range);
 
+<<<<<<< HEAD
 /**
  * vm_iomap_memory - remap memory to userspace
  * @vma: user vma to map to
@@ -2376,6 +2559,8 @@ int vm_iomap_memory(struct vm_area_struct *vma, phys_addr_t start, unsigned long
 }
 EXPORT_SYMBOL(vm_iomap_memory);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int apply_to_pte_range(struct mm_struct *mm, pmd_t *pmd,
 				     unsigned long addr, unsigned long end,
 				     pte_fn_t fn, void *data)
@@ -2511,7 +2696,11 @@ static inline void cow_user_page(struct page *dst, struct page *src, unsigned lo
 	 * fails, we just zero-fill it. Live with it.
 	 */
 	if (unlikely(!src)) {
+<<<<<<< HEAD
 		void *kaddr = kmap_atomic(dst);
+=======
+		void *kaddr = kmap_atomic(dst, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		void __user *uaddr = (void __user *)(va & PAGE_MASK);
 
 		/*
@@ -2522,7 +2711,11 @@ static inline void cow_user_page(struct page *dst, struct page *src, unsigned lo
 		 */
 		if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE))
 			clear_page(kaddr);
+<<<<<<< HEAD
 		kunmap_atomic(kaddr);
+=======
+		kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		flush_dcache_page(dst);
 	} else
 		copy_user_highpage(dst, src, va, vma);
@@ -2834,7 +3027,11 @@ static void unmap_mapping_range_vma(struct vm_area_struct *vma,
 		unsigned long start_addr, unsigned long end_addr,
 		struct zap_details *details)
 {
+<<<<<<< HEAD
 	zap_page_range_single(vma, start_addr, end_addr - start_addr, details);
+=======
+	zap_page_range(vma, start_addr, end_addr - start_addr, details);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void unmap_mapping_range_tree(struct prio_tree_root *root,
@@ -3232,14 +3429,21 @@ static int __do_fault(struct mm_struct *mm, struct vm_area_struct *vma,
 	pte_t *page_table;
 	spinlock_t *ptl;
 	struct page *page;
+<<<<<<< HEAD
 	struct page *cow_page;
 	pte_t entry;
 	int anon = 0;
+=======
+	pte_t entry;
+	int anon = 0;
+	int charged = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct page *dirty_page = NULL;
 	struct vm_fault vmf;
 	int ret;
 	int page_mkwrite = 0;
 
+<<<<<<< HEAD
 	/*
 	 * If we do COW later, allocate page befor taking lock_page()
 	 * on the file cache page. This will reduce lock holding time.
@@ -3260,6 +3464,8 @@ static int __do_fault(struct mm_struct *mm, struct vm_area_struct *vma,
 	} else
 		cow_page = NULL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vmf.virtual_address = (void __user *)(address & PAGE_MASK);
 	vmf.pgoff = pgoff;
 	vmf.flags = flags;
@@ -3268,13 +3474,21 @@ static int __do_fault(struct mm_struct *mm, struct vm_area_struct *vma,
 	ret = vma->vm_ops->fault(vma, &vmf);
 	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE |
 			    VM_FAULT_RETRY)))
+<<<<<<< HEAD
 		goto uncharge_out;
+=======
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (unlikely(PageHWPoison(vmf.page))) {
 		if (ret & VM_FAULT_LOCKED)
 			unlock_page(vmf.page);
+<<<<<<< HEAD
 		ret = VM_FAULT_HWPOISON;
 		goto uncharge_out;
+=======
+		return VM_FAULT_HWPOISON;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -3292,8 +3506,28 @@ static int __do_fault(struct mm_struct *mm, struct vm_area_struct *vma,
 	page = vmf.page;
 	if (flags & FAULT_FLAG_WRITE) {
 		if (!(vma->vm_flags & VM_SHARED)) {
+<<<<<<< HEAD
 			page = cow_page;
 			anon = 1;
+=======
+			anon = 1;
+			if (unlikely(anon_vma_prepare(vma))) {
+				ret = VM_FAULT_OOM;
+				goto out;
+			}
+			page = alloc_page_vma(GFP_HIGHUSER_MOVABLE,
+						vma, address);
+			if (!page) {
+				ret = VM_FAULT_OOM;
+				goto out;
+			}
+			if (mem_cgroup_newpage_charge(page, mm, GFP_KERNEL)) {
+				ret = VM_FAULT_OOM;
+				page_cache_release(page);
+				goto out;
+			}
+			charged = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			copy_user_highpage(page, vmf.page, address, vma);
 			__SetPageUptodate(page);
 		} else {
@@ -3362,8 +3596,13 @@ static int __do_fault(struct mm_struct *mm, struct vm_area_struct *vma,
 		/* no need to invalidate: a not-present page won't be cached */
 		update_mmu_cache(vma, address, page_table);
 	} else {
+<<<<<<< HEAD
 		if (cow_page)
 			mem_cgroup_uncharge_page(cow_page);
+=======
+		if (charged)
+			mem_cgroup_uncharge_page(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (anon)
 			page_cache_release(page);
 		else
@@ -3372,6 +3611,10 @@ static int __do_fault(struct mm_struct *mm, struct vm_area_struct *vma,
 
 	pte_unmap_unlock(page_table, ptl);
 
+<<<<<<< HEAD
+=======
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dirty_page) {
 		struct address_space *mapping = page->mapping;
 
@@ -3401,6 +3644,7 @@ static int __do_fault(struct mm_struct *mm, struct vm_area_struct *vma,
 unwritable_page:
 	page_cache_release(page);
 	return ret;
+<<<<<<< HEAD
 uncharge_out:
 	/* fs's fault handler get error */
 	if (cow_page) {
@@ -3408,6 +3652,8 @@ uncharge_out:
 		page_cache_release(cow_page);
 	}
 	return ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int do_linear_fault(struct mm_struct *mm, struct vm_area_struct *vma,
@@ -3541,7 +3787,10 @@ int handle_mm_fault(struct mm_struct *mm, struct vm_area_struct *vma,
 	if (unlikely(is_vm_hugetlb_page(vma)))
 		return hugetlb_fault(mm, vma, address, flags);
 
+<<<<<<< HEAD
 retry:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pgd = pgd_offset(mm, address);
 	pud = pud_alloc(mm, pgd, address);
 	if (!pud)
@@ -3555,12 +3804,16 @@ retry:
 							  pmd, flags);
 	} else {
 		pmd_t orig_pmd = *pmd;
+<<<<<<< HEAD
 		int ret;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		barrier();
 		if (pmd_trans_huge(orig_pmd)) {
 			if (flags & FAULT_FLAG_WRITE &&
 			    !pmd_write(orig_pmd) &&
+<<<<<<< HEAD
 			    !pmd_trans_splitting(orig_pmd)) {
 				ret = do_huge_pmd_wp_page(mm, vma, address, pmd,
 							  orig_pmd);
@@ -3573,6 +3826,11 @@ retry:
 					goto retry;
 				return ret;
 			}
+=======
+			    !pmd_trans_splitting(orig_pmd))
+				return do_huge_pmd_wp_page(mm, vma, address,
+							   pmd, orig_pmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 0;
 		}
 	}
@@ -3687,7 +3945,17 @@ static int __init gate_vma_init(void)
 	gate_vma.vm_end = FIXADDR_USER_END;
 	gate_vma.vm_flags = VM_READ | VM_MAYREAD | VM_EXEC | VM_MAYEXEC;
 	gate_vma.vm_page_prot = __P101;
+<<<<<<< HEAD
 
+=======
+	/*
+	 * Make sure the vDSO gets into every core dump.
+	 * Dumping its contents makes post-mortem fully interpretable later
+	 * without matching up the same kernel and hardware config to see
+	 * what PC values meant.
+	 */
+	gate_vma.vm_flags |= VM_ALWAYSDUMP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 __initcall(gate_vma_init);

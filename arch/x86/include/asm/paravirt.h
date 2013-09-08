@@ -10,7 +10,10 @@
 #include <asm/paravirt_types.h>
 
 #ifndef __ASSEMBLY__
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/types.h>
 #include <linux/cpumask.h>
 
@@ -231,6 +234,7 @@ static inline unsigned long long paravirt_sched_clock(void)
 	return PVOP_CALL0(unsigned long long, pv_time_ops.sched_clock);
 }
 
+<<<<<<< HEAD
 struct static_key;
 extern struct static_key paravirt_steal_enabled;
 extern struct static_key paravirt_steal_rq_enabled;
@@ -240,6 +244,8 @@ static inline u64 paravirt_steal_clock(int cpu)
 	return PVOP_CALL1(u64, pv_time_ops.steal_clock, cpu);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline unsigned long long paravirt_read_pmc(int counter)
 {
 	return PVOP_CALL1(u64, pv_cpu_ops.read_pmc, counter);
@@ -741,10 +747,14 @@ static inline void arch_leave_lazy_mmu_mode(void)
 	PVOP_VCALL0(pv_mmu_ops.lazy_mode.leave);
 }
 
+<<<<<<< HEAD
 static inline void arch_flush_lazy_mmu_mode(void)
 {
 	PVOP_VCALL0(pv_mmu_ops.lazy_mode.flush);
 }
+=======
+void arch_flush_lazy_mmu_mode(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void __set_fixmap(unsigned /* enum fixed_addresses */ idx,
 				phys_addr_t phys, pgprot_t flags)

@@ -23,7 +23,10 @@ struct udf_inode_info {
 	__u64			i_lenExtents;
 	__u32			i_next_alloc_block;
 	__u32			i_next_alloc_goal;
+<<<<<<< HEAD
 	__u32			i_checkpoint;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned		i_alloc_type : 3;
 	unsigned		i_efe : 1;	/* extendedFileEntry */
 	unsigned		i_use : 1;	/* unallocSpaceEntry */

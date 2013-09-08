@@ -14,8 +14,11 @@
 #include <linux/platform_device.h>
 #include <linux/dma-mapping.h>
 #include <linux/serial_8250.h>
+<<<<<<< HEAD
 #include <linux/ahci_platform.h>
 #include <linux/clk.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/cputype.h>
 #include <mach/common.h>
@@ -35,7 +38,10 @@
 #define DA8XX_SPI0_BASE			0x01c41000
 #define DA830_SPI1_BASE			0x01e12000
 #define DA8XX_LCD_CNTRL_BASE		0x01e13000
+<<<<<<< HEAD
 #define DA850_SATA_BASE			0x01e18000
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DA850_MMCSD1_BASE		0x01e1b000
 #define DA8XX_EMAC_CPPI_PORT_BASE	0x01e20000
 #define DA8XX_EMAC_CPGMACSS_BASE	0x01e22000
@@ -136,7 +142,10 @@ static struct edma_soc_info da830_edma_cc0_info = {
 	.n_cc			= 1,
 	.queue_tc_mapping	= da8xx_queue_tc_mapping,
 	.queue_priority_mapping	= da8xx_queue_priority_mapping,
+<<<<<<< HEAD
 	.default_queue		= EVENTQ_1,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct edma_soc_info *da830_edma_info[EDMA_MAX_CC] = {
@@ -152,7 +161,10 @@ static struct edma_soc_info da850_edma_cc_info[] = {
 		.n_cc			= 1,
 		.queue_tc_mapping	= da8xx_queue_tc_mapping,
 		.queue_priority_mapping	= da8xx_queue_priority_mapping,
+<<<<<<< HEAD
 		.default_queue		= EVENTQ_1,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.n_channel		= 32,
@@ -162,7 +174,10 @@ static struct edma_soc_info da850_edma_cc_info[] = {
 		.n_cc			= 1,
 		.queue_tc_mapping	= da850_queue_tc_mapping,
 		.queue_priority_mapping	= da850_queue_priority_mapping,
+<<<<<<< HEAD
 		.default_queue		= EVENTQ_0,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 
@@ -363,11 +378,14 @@ struct platform_device da8xx_wdt_device = {
 	.resource	= da8xx_watchdog_resources,
 };
 
+<<<<<<< HEAD
 void da8xx_restart(char mode, const char *cmd)
 {
 	davinci_watchdog_reset(&da8xx_wdt_device);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int __init da8xx_register_watchdog(void)
 {
 	return platform_device_register(&da8xx_wdt_device);
@@ -853,6 +871,7 @@ int __init da8xx_register_spi(int instance, struct spi_board_info *info,
 
 	return platform_device_register(&da8xx_spi_device[instance]);
 }
+<<<<<<< HEAD
 
 #ifdef CONFIG_ARCH_DAVINCI_DA850
 
@@ -976,3 +995,5 @@ int __init da850_register_sata(unsigned long refclkpn)
 	return platform_device_register(&da850_sata_device);
 }
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

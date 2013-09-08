@@ -12,6 +12,10 @@
 #include <linux/interrupt.h>
 #include <linux/of_platform.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mpic.h>
 #include <asm/i8259.h>
 
@@ -30,15 +34,37 @@ static void mpc86xx_8259_cascade(unsigned int irq, struct irq_desc *desc)
 
 void __init mpc86xx_init_irq(void)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_PPC_I8259
 	struct device_node *np;
+=======
+	struct mpic *mpic;
+	struct device_node *np;
+	struct resource res;
+#ifdef CONFIG_PPC_I8259
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct device_node *cascade_node = NULL;
 	int cascade_irq;
 #endif
 
+<<<<<<< HEAD
 	struct mpic *mpic = mpic_alloc(NULL, 0, MPIC_BIG_ENDIAN |
 			MPIC_SINGLE_DEST_CPU,
 			0, 256, " MPIC     ");
+=======
+	/* Determine PIC address. */
+	np = of_find_node_by_type(NULL, "open-pic");
+	if (np == NULL)
+		return;
+	of_address_to_resource(np, 0, &res);
+
+	mpic = mpic_alloc(np, res.start,
+			MPIC_PRIMARY | MPIC_WANTS_RESET |
+			MPIC_BIG_ENDIAN | MPIC_BROKEN_FRR_NIRQS |
+			MPIC_SINGLE_DEST_CPU,
+			0, 256, " MPIC     ");
+	of_node_put(np);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BUG_ON(mpic == NULL);
 
 	mpic_init(mpic);

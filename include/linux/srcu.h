@@ -28,7 +28,10 @@
 #define _LINUX_SRCU_H
 
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/rcupdate.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct srcu_struct_array {
 	int c[2];
@@ -61,10 +64,24 @@ int __init_srcu_struct(struct srcu_struct *sp, const char *name,
 	__init_srcu_struct((sp), #sp, &__srcu_key); \
 })
 
+<<<<<<< HEAD
+=======
+# define srcu_read_acquire(sp) \
+		lock_acquire(&(sp)->dep_map, 0, 0, 2, 1, NULL, _THIS_IP_)
+# define srcu_read_release(sp) \
+		lock_release(&(sp)->dep_map, 1, _THIS_IP_)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
 
 int init_srcu_struct(struct srcu_struct *sp);
 
+<<<<<<< HEAD
+=======
+# define srcu_read_acquire(sp)  do { } while (0)
+# define srcu_read_release(sp)  do { } while (0)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* #else #ifdef CONFIG_DEBUG_LOCK_ALLOC */
 
 void cleanup_srcu_struct(struct srcu_struct *sp);
@@ -83,6 +100,7 @@ long srcu_batches_completed(struct srcu_struct *sp);
  * read-side critical section.  In absence of CONFIG_DEBUG_LOCK_ALLOC,
  * this assumes we are in an SRCU read-side critical section unless it can
  * prove otherwise.
+<<<<<<< HEAD
  *
  * Checks debug_lockdep_rcu_enabled() to prevent false positives during boot
  * and while lockdep is disabled.
@@ -112,6 +130,14 @@ static inline int srcu_read_lock_held(struct srcu_struct *sp)
 	if (!rcu_lockdep_current_cpu_online())
 		return 0;
 	return lock_is_held(&sp->dep_map);
+=======
+ */
+static inline int srcu_read_lock_held(struct srcu_struct *sp)
+{
+	if (debug_locks)
+		return lock_is_held(&sp->dep_map);
+	return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #else /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
@@ -161,19 +187,26 @@ static inline int srcu_read_lock_held(struct srcu_struct *sp)
  * one way to indirectly wait on an SRCU grace period is to acquire
  * a mutex that is held elsewhere while calling synchronize_srcu() or
  * synchronize_srcu_expedited().
+<<<<<<< HEAD
  *
  * Note that srcu_read_lock() and the matching srcu_read_unlock() must
  * occur in the same context, for example, it is illegal to invoke
  * srcu_read_unlock() in an irq handler if the matching srcu_read_lock()
  * was invoked in process context.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static inline int srcu_read_lock(struct srcu_struct *sp) __acquires(sp)
 {
 	int retval = __srcu_read_lock(sp);
 
+<<<<<<< HEAD
 	rcu_lock_acquire(&(sp)->dep_map);
 	rcu_lockdep_assert(!rcu_is_cpu_idle(),
 			   "srcu_read_lock() used illegally while idle");
+=======
+	srcu_read_acquire(sp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return retval;
 }
 
@@ -187,6 +220,7 @@ static inline int srcu_read_lock(struct srcu_struct *sp) __acquires(sp)
 static inline void srcu_read_unlock(struct srcu_struct *sp, int idx)
 	__releases(sp)
 {
+<<<<<<< HEAD
 	rcu_lockdep_assert(!rcu_is_cpu_idle(),
 			   "srcu_read_unlock() used illegally while idle");
 	rcu_lock_release(&(sp)->dep_map);
@@ -234,6 +268,10 @@ static inline void srcu_read_unlock_raw(struct srcu_struct *sp, int idx)
 	local_irq_save(flags);
 	__srcu_read_unlock(sp, idx);
 	local_irq_restore(flags);
+=======
+	srcu_read_release(sp);
+	__srcu_read_unlock(sp, idx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #endif

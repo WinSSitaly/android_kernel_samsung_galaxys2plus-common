@@ -21,7 +21,11 @@
 #include <asm/vac-ops.h>
 #include <asm/oplib.h>
 #include <asm/btfixup.h>
+<<<<<<< HEAD
 #include <asm/cpu_type.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 struct vm_area_struct;

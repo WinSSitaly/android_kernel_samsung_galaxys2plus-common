@@ -13,7 +13,13 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/un.h>
+<<<<<<< HEAD
 #include "os.h"
+=======
+#include "kern_constants.h"
+#include "os.h"
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void copy_stat(struct uml_stat *dst, const struct stat64 *src)
 {

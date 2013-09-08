@@ -24,7 +24,10 @@
 #include <linux/i2c/pca953x.h>
 #include <linux/can/platform/ti_hecc.h>
 #include <linux/davinci_emac.h>
+<<<<<<< HEAD
 #include <linux/mmc/host.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/hardware.h>
 #include <mach/am35xx.h>
@@ -33,6 +36,7 @@
 #include <asm/mach/map.h>
 
 #include <plat/board.h>
+<<<<<<< HEAD
 #include "common.h"
 #include <plat/usb.h>
 #include <video/omapdss.h>
@@ -43,6 +47,129 @@
 #include "mux.h"
 #include "control.h"
 #include "hsmmc.h"
+=======
+#include <plat/common.h>
+#include <plat/usb.h>
+#include <video/omapdss.h>
+#include <video/omap-panel-generic-dpi.h>
+
+#include "mux.h"
+#include "control.h"
+
+#define AM35XX_EVM_MDIO_FREQUENCY	(1000000)
+
+static struct mdio_platform_data am3517_evm_mdio_pdata = {
+	.bus_freq	= AM35XX_EVM_MDIO_FREQUENCY,
+};
+
+static struct resource am3517_mdio_resources[] = {
+	{
+		.start  = AM35XX_IPSS_EMAC_BASE + AM35XX_EMAC_MDIO_OFFSET,
+		.end    = AM35XX_IPSS_EMAC_BASE + AM35XX_EMAC_MDIO_OFFSET +
+			  SZ_4K - 1,
+		.flags  = IORESOURCE_MEM,
+	},
+};
+
+static struct platform_device am3517_mdio_device = {
+	.name		= "davinci_mdio",
+	.id		= 0,
+	.num_resources	= ARRAY_SIZE(am3517_mdio_resources),
+	.resource	= am3517_mdio_resources,
+	.dev.platform_data = &am3517_evm_mdio_pdata,
+};
+
+static struct emac_platform_data am3517_evm_emac_pdata = {
+	.rmii_en	= 1,
+};
+
+static struct resource am3517_emac_resources[] = {
+	{
+		.start  = AM35XX_IPSS_EMAC_BASE,
+		.end    = AM35XX_IPSS_EMAC_BASE + 0x2FFFF,
+		.flags  = IORESOURCE_MEM,
+	},
+	{
+		.start  = INT_35XX_EMAC_C0_RXTHRESH_IRQ,
+		.end    = INT_35XX_EMAC_C0_RXTHRESH_IRQ,
+		.flags  = IORESOURCE_IRQ,
+	},
+	{
+		.start  = INT_35XX_EMAC_C0_RX_PULSE_IRQ,
+		.end    = INT_35XX_EMAC_C0_RX_PULSE_IRQ,
+		.flags  = IORESOURCE_IRQ,
+	},
+	{
+		.start  = INT_35XX_EMAC_C0_TX_PULSE_IRQ,
+		.end    = INT_35XX_EMAC_C0_TX_PULSE_IRQ,
+		.flags  = IORESOURCE_IRQ,
+	},
+	{
+		.start  = INT_35XX_EMAC_C0_MISC_PULSE_IRQ,
+		.end    = INT_35XX_EMAC_C0_MISC_PULSE_IRQ,
+		.flags  = IORESOURCE_IRQ,
+	},
+};
+
+static struct platform_device am3517_emac_device = {
+	.name		= "davinci_emac",
+	.id		= -1,
+	.num_resources	= ARRAY_SIZE(am3517_emac_resources),
+	.resource	= am3517_emac_resources,
+};
+
+static void am3517_enable_ethernet_int(void)
+{
+	u32 regval;
+
+	regval = omap_ctrl_readl(AM35XX_CONTROL_LVL_INTR_CLEAR);
+	regval = (regval | AM35XX_CPGMAC_C0_RX_PULSE_CLR |
+		AM35XX_CPGMAC_C0_TX_PULSE_CLR |
+		AM35XX_CPGMAC_C0_MISC_PULSE_CLR |
+		AM35XX_CPGMAC_C0_RX_THRESH_CLR);
+	omap_ctrl_writel(regval, AM35XX_CONTROL_LVL_INTR_CLEAR);
+	regval = omap_ctrl_readl(AM35XX_CONTROL_LVL_INTR_CLEAR);
+}
+
+static void am3517_disable_ethernet_int(void)
+{
+	u32 regval;
+
+	regval = omap_ctrl_readl(AM35XX_CONTROL_LVL_INTR_CLEAR);
+	regval = (regval | AM35XX_CPGMAC_C0_RX_PULSE_CLR |
+		AM35XX_CPGMAC_C0_TX_PULSE_CLR);
+	omap_ctrl_writel(regval, AM35XX_CONTROL_LVL_INTR_CLEAR);
+	regval = omap_ctrl_readl(AM35XX_CONTROL_LVL_INTR_CLEAR);
+}
+
+static void am3517_evm_ethernet_init(struct emac_platform_data *pdata)
+{
+	unsigned int regval;
+
+	pdata->ctrl_reg_offset		= AM35XX_EMAC_CNTRL_OFFSET;
+	pdata->ctrl_mod_reg_offset	= AM35XX_EMAC_CNTRL_MOD_OFFSET;
+	pdata->ctrl_ram_offset		= AM35XX_EMAC_CNTRL_RAM_OFFSET;
+	pdata->ctrl_ram_size		= AM35XX_EMAC_CNTRL_RAM_SIZE;
+	pdata->version			= EMAC_VERSION_2;
+	pdata->hw_ram_addr		= AM35XX_EMAC_HW_RAM_ADDR;
+	pdata->interrupt_enable		= am3517_enable_ethernet_int;
+	pdata->interrupt_disable	= am3517_disable_ethernet_int;
+	am3517_emac_device.dev.platform_data	= pdata;
+	platform_device_register(&am3517_emac_device);
+	platform_device_register(&am3517_mdio_device);
+	clk_add_alias(NULL, dev_name(&am3517_mdio_device.dev),
+		      NULL, &am3517_emac_device.dev);
+
+	regval = omap_ctrl_readl(AM35XX_CONTROL_IP_SW_RESET);
+	regval = regval & (~(AM35XX_CPGMACSS_SW_RST));
+	omap_ctrl_writel(regval, AM35XX_CONTROL_IP_SW_RESET);
+	regval = omap_ctrl_readl(AM35XX_CONTROL_IP_SW_RESET);
+
+	return ;
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define LCD_PANEL_PWR		176
 #define LCD_PANEL_BKLIGHT_PWR	182
@@ -223,7 +350,12 @@ static void am3517_evm_panel_disable_dvi(struct omap_dss_device *dssdev)
 	dvi_enabled = 0;
 }
 
+<<<<<<< HEAD
 static struct panel_dvi_platform_data dvi_panel = {
+=======
+static struct panel_generic_dpi_data dvi_panel = {
+	.name			= "generic",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.platform_enable	= am3517_evm_panel_enable_dvi,
 	.platform_disable	= am3517_evm_panel_disable_dvi,
 };
@@ -231,7 +363,11 @@ static struct panel_dvi_platform_data dvi_panel = {
 static struct omap_dss_device am3517_evm_dvi_device = {
 	.type			= OMAP_DISPLAY_TYPE_DPI,
 	.name			= "dvi",
+<<<<<<< HEAD
 	.driver_name		= "dvi",
+=======
+	.driver_name		= "generic_dpi_panel",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.data			= &dvi_panel,
 	.phy.dpi.data_lines	= 24,
 };
@@ -251,6 +387,14 @@ static struct omap_dss_board_info am3517_evm_dss_data = {
 /*
  * Board initialization
  */
+<<<<<<< HEAD
+=======
+static void __init am3517_evm_init_early(void)
+{
+	omap2_init_common_infrastructure();
+	omap2_init_common_devices(NULL, NULL);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct omap_musb_board_data musb_board_data = {
 	.interface_type         = MUSB_INTERFACE_ULPI,
@@ -344,6 +488,7 @@ static void am3517_evm_hecc_init(struct ti_hecc_platform_data *pdata)
 static struct omap_board_config_kernel am3517_evm_config[] __initdata = {
 };
 
+<<<<<<< HEAD
 static struct omap2_hsmmc_info mmc[] = {
 	{
 		.mmc		= 1,
@@ -361,6 +506,8 @@ static struct omap2_hsmmc_info mmc[] = {
 };
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init am3517_evm_init(void)
 {
 	omap_board_config = am3517_evm_config;
@@ -370,7 +517,10 @@ static void __init am3517_evm_init(void)
 	am3517_evm_i2c_init();
 	omap_display_init(&am3517_evm_dss_data);
 	omap_serial_init();
+<<<<<<< HEAD
 	omap_sdrc_init(NULL, NULL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Configure GPIO for EHCI port */
 	omap_mux_init_gpio(57, OMAP_PIN_OUTPUT);
@@ -385,6 +535,7 @@ static void __init am3517_evm_init(void)
 	i2c_register_board_info(1, am3517evm_i2c1_boardinfo,
 				ARRAY_SIZE(am3517evm_i2c1_boardinfo));
 	/*Ethernet*/
+<<<<<<< HEAD
 	am35xx_emac_init(AM35XX_DEFAULT_MDIO_FREQUENCY, 1);
 
 	/* MUSB */
@@ -404,4 +555,20 @@ MACHINE_START(OMAP3517EVM, "OMAP3517/AM3517 EVM")
 	.init_machine	= am3517_evm_init,
 	.timer		= &omap3_timer,
 	.restart	= omap_prcm_restart,
+=======
+	am3517_evm_ethernet_init(&am3517_evm_emac_pdata);
+
+	/* MUSB */
+	am3517_evm_musb_init();
+}
+
+MACHINE_START(OMAP3517EVM, "OMAP3517/AM3517 EVM")
+	.boot_params	= 0x80000100,
+	.reserve	= omap_reserve,
+	.map_io		= omap3_map_io,
+	.init_early	= am3517_evm_init_early,
+	.init_irq	= omap_init_irq,
+	.init_machine	= am3517_evm_init,
+	.timer		= &omap_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

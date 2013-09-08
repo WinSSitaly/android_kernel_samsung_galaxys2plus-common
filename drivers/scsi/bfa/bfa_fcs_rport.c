@@ -20,7 +20,10 @@
  */
 
 #include "bfad_drv.h"
+<<<<<<< HEAD
 #include "bfad_im.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "bfa_fcs.h"
 #include "bfa_fcbuild.h"
 
@@ -263,7 +266,10 @@ bfa_fcs_rport_sm_plogiacc_sending(struct bfa_fcs_rport_s *rport,
 		break;
 
 	case RPSM_EVENT_PLOGI_RCVD:
+<<<<<<< HEAD
 	case RPSM_EVENT_PLOGI_COMP:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case RPSM_EVENT_SCN:
 		/*
 		 * Ignore, SCN is possibly online notification.
@@ -472,7 +478,10 @@ bfa_fcs_rport_sm_hal_online(struct bfa_fcs_rport_s *rport,
 		break;
 
 	case RPSM_EVENT_PRLO_RCVD:
+<<<<<<< HEAD
 	case RPSM_EVENT_PLOGI_COMP:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case RPSM_EVENT_LOGO_RCVD:
@@ -487,9 +496,15 @@ bfa_fcs_rport_sm_hal_online(struct bfa_fcs_rport_s *rport,
 		break;
 
 	case RPSM_EVENT_PLOGI_RCVD:
+<<<<<<< HEAD
 		rport->plogi_pending = BFA_TRUE;
 		bfa_sm_set_state(rport, bfa_fcs_rport_sm_hcb_offline);
 		bfa_sm_send_event(rport->bfa_rport, BFA_RPORT_SM_OFFLINE);
+=======
+		bfa_sm_set_state(rport, bfa_fcs_rport_sm_plogiacc_sending);
+		bfa_sm_send_event(rport->bfa_rport, BFA_RPORT_SM_OFFLINE);
+		bfa_fcs_rport_send_plogiacc(rport, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case RPSM_EVENT_DELETE:
@@ -894,6 +909,7 @@ bfa_fcs_rport_sm_hcb_offline(struct bfa_fcs_rport_s *rport,
 
 	switch (event) {
 	case RPSM_EVENT_HCB_OFFLINE:
+<<<<<<< HEAD
 		if (bfa_fcs_lport_is_online(rport->port) &&
 		    (rport->plogi_pending)) {
 			rport->plogi_pending = BFA_FALSE;
@@ -906,6 +922,8 @@ bfa_fcs_rport_sm_hcb_offline(struct bfa_fcs_rport_s *rport,
 		 * !! fall through !!
 		 */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case RPSM_EVENT_ADDRESS_CHANGE:
 		if (bfa_fcs_lport_is_online(rport->port)) {
 			if (bfa_fcs_fabric_is_switched(rport->port->fabric)) {
@@ -936,8 +954,11 @@ bfa_fcs_rport_sm_hcb_offline(struct bfa_fcs_rport_s *rport,
 	case RPSM_EVENT_SCN:
 	case RPSM_EVENT_LOGO_RCVD:
 	case RPSM_EVENT_PRLO_RCVD:
+<<<<<<< HEAD
 	case RPSM_EVENT_PLOGI_RCVD:
 	case RPSM_EVENT_LOGO_IMP:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Ignore, already offline.
 		 */
@@ -974,6 +995,7 @@ bfa_fcs_rport_sm_hcb_logorcv(struct bfa_fcs_rport_s *rport,
 		 */
 		if (bfa_fcs_lport_is_online(rport->port) &&
 			(!BFA_FCS_PID_IS_WKA(rport->pid))) {
+<<<<<<< HEAD
 			if (bfa_fcs_fabric_is_switched(rport->port->fabric)) {
 				bfa_sm_set_state(rport,
 					bfa_fcs_rport_sm_nsdisc_sending);
@@ -986,6 +1008,12 @@ bfa_fcs_rport_sm_hcb_logorcv(struct bfa_fcs_rport_s *rport,
 				rport->plogi_retries = 0;
 				bfa_fcs_rport_send_plogi(rport, NULL);
 			}
+=======
+			bfa_sm_set_state(rport,
+				bfa_fcs_rport_sm_nsdisc_sending);
+			rport->ns_retries = 0;
+			bfa_fcs_rport_send_nsdisc(rport, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			/*
 			 * if it is not a well known address, reset the
@@ -1381,8 +1409,12 @@ bfa_fcs_rport_send_plogi(void *rport_cbarg, struct bfa_fcxp_s *fcxp_alloced)
 	len = fc_plogi_build(&fchs, bfa_fcxp_get_reqbuf(fcxp), rport->pid,
 				bfa_fcs_lport_get_fcid(port), 0,
 				port->port_cfg.pwwn, port->port_cfg.nwwn,
+<<<<<<< HEAD
 				bfa_fcport_get_maxfrsize(port->fcs->bfa),
 				bfa_fcport_get_rx_bbcredit(port->fcs->bfa));
+=======
+				bfa_fcport_get_maxfrsize(port->fcs->bfa));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bfa_fcxp_send(fcxp, NULL, port->fabric->vf_id, port->lp_tag, BFA_FALSE,
 			FC_CLASS_3, len, &fchs, bfa_fcs_rport_plogi_response,
@@ -1502,8 +1534,12 @@ bfa_fcs_rport_send_plogiacc(void *rport_cbarg, struct bfa_fcxp_s *fcxp_alloced)
 				 rport->pid, bfa_fcs_lport_get_fcid(port),
 				 rport->reply_oxid, port->port_cfg.pwwn,
 				 port->port_cfg.nwwn,
+<<<<<<< HEAD
 				 bfa_fcport_get_maxfrsize(port->fcs->bfa),
 				 bfa_fcport_get_rx_bbcredit(port->fcs->bfa));
+=======
+				 bfa_fcport_get_maxfrsize(port->fcs->bfa));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bfa_fcxp_send(fcxp, NULL, port->fabric->vf_id, port->lp_tag, BFA_FALSE,
 			FC_CLASS_3, len, &fchs, NULL, NULL, FC_MAX_PDUSZ, 0);
@@ -2042,6 +2078,7 @@ bfa_fcs_rport_free(struct bfa_fcs_rport_s *rport)
 }
 
 static void
+<<<<<<< HEAD
 bfa_fcs_rport_aen_post(struct bfa_fcs_rport_s *rport,
 			enum bfa_rport_aen_event event,
 			struct bfa_rport_aen_data_s *data)
@@ -2071,6 +2108,8 @@ bfa_fcs_rport_aen_post(struct bfa_fcs_rport_s *rport,
 }
 
 static void
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bfa_fcs_rport_online_action(struct bfa_fcs_rport_s *rport)
 {
 	struct bfa_fcs_lport_s *port = rport->port;
@@ -2080,11 +2119,14 @@ bfa_fcs_rport_online_action(struct bfa_fcs_rport_s *rport)
 
 	rport->stats.onlines++;
 
+<<<<<<< HEAD
 	if ((!rport->pid) || (!rport->pwwn)) {
 		bfa_trc(rport->fcs, rport->pid);
 		bfa_sm_fault(rport->fcs, rport->pid);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (bfa_fcs_lport_is_initiator(port)) {
 		bfa_fcs_itnim_rport_online(rport->itnim);
 		if (!BFA_FCS_PID_IS_WKA(rport->pid))
@@ -2093,12 +2135,19 @@ bfa_fcs_rport_online_action(struct bfa_fcs_rport_s *rport)
 
 	wwn2str(lpwwn_buf, bfa_fcs_lport_get_pwwn(port));
 	wwn2str(rpwwn_buf, rport->pwwn);
+<<<<<<< HEAD
 	if (!BFA_FCS_PID_IS_WKA(rport->pid)) {
 		BFA_LOG(KERN_INFO, bfad, bfa_log_level,
 		"Remote port (WWN = %s) online for logical port (WWN = %s)\n",
 		rpwwn_buf, lpwwn_buf);
 		bfa_fcs_rport_aen_post(rport, BFA_RPORT_AEN_ONLINE, NULL);
 	}
+=======
+	if (!BFA_FCS_PID_IS_WKA(rport->pid))
+		BFA_LOG(KERN_INFO, bfad, bfa_log_level,
+		"Remote port (WWN = %s) online for logical port (WWN = %s)\n",
+		rpwwn_buf, lpwwn_buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -2110,26 +2159,40 @@ bfa_fcs_rport_offline_action(struct bfa_fcs_rport_s *rport)
 	char	rpwwn_buf[BFA_STRING_32];
 
 	rport->stats.offlines++;
+<<<<<<< HEAD
 	rport->plogi_pending = BFA_FALSE;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wwn2str(lpwwn_buf, bfa_fcs_lport_get_pwwn(port));
 	wwn2str(rpwwn_buf, rport->pwwn);
 	if (!BFA_FCS_PID_IS_WKA(rport->pid)) {
+<<<<<<< HEAD
 		if (bfa_fcs_lport_is_online(rport->port) == BFA_TRUE) {
+=======
+		if (bfa_fcs_lport_is_online(rport->port) == BFA_TRUE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			BFA_LOG(KERN_ERR, bfad, bfa_log_level,
 				"Remote port (WWN = %s) connectivity lost for "
 				"logical port (WWN = %s)\n",
 				rpwwn_buf, lpwwn_buf);
+<<<<<<< HEAD
 			bfa_fcs_rport_aen_post(rport,
 				BFA_RPORT_AEN_DISCONNECT, NULL);
 		} else {
+=======
+		else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			BFA_LOG(KERN_INFO, bfad, bfa_log_level,
 				"Remote port (WWN = %s) offlined by "
 				"logical port (WWN = %s)\n",
 				rpwwn_buf, lpwwn_buf);
+<<<<<<< HEAD
 			bfa_fcs_rport_aen_post(rport,
 				BFA_RPORT_AEN_OFFLINE, NULL);
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (bfa_fcs_lport_is_initiator(port)) {
@@ -2169,10 +2232,14 @@ bfa_fcs_rport_update(struct bfa_fcs_rport_s *rport, struct fc_logi_s *plogi)
 	 * - MAX receive frame size
 	 */
 	rport->cisc = plogi->csp.cisc;
+<<<<<<< HEAD
 	if (be16_to_cpu(plogi->class3.rxsz) < be16_to_cpu(plogi->csp.rxsz))
 		rport->maxfrsize = be16_to_cpu(plogi->class3.rxsz);
 	else
 		rport->maxfrsize = be16_to_cpu(plogi->csp.rxsz);
+=======
+	rport->maxfrsize = be16_to_cpu(plogi->class3.rxsz);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bfa_trc(port->fcs, be16_to_cpu(plogi->csp.bbcred));
 	bfa_trc(port->fcs, port->fabric->bb_credit);
@@ -2192,7 +2259,11 @@ bfa_fcs_rport_update(struct bfa_fcs_rport_s *rport, struct fc_logi_s *plogi)
 
 		port->fabric->bb_credit = be16_to_cpu(plogi->csp.bbcred);
 		bfa_fcport_set_tx_bbcredit(port->fcs->bfa,
+<<<<<<< HEAD
 					  port->fabric->bb_credit, 0);
+=======
+					  port->fabric->bb_credit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 }
@@ -2305,6 +2376,25 @@ bfa_fcs_rport_plogi_create(struct bfa_fcs_lport_s *port, struct fchs_s *fchs,
 	bfa_sm_send_event(rport, RPSM_EVENT_PLOGI_RCVD);
 }
 
+<<<<<<< HEAD
+=======
+static int
+wwn_compare(wwn_t wwn1, wwn_t wwn2)
+{
+	u8		*b1 = (u8 *) &wwn1;
+	u8		*b2 = (u8 *) &wwn2;
+	int		i;
+
+	for (i = 0; i < sizeof(wwn_t); i++) {
+		if (b1[i] < b2[i])
+			return -1;
+		if (b1[i] > b2[i])
+			return 1;
+	}
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *	Called by bport/vport to handle PLOGI received from an existing
  *	 remote port.
@@ -2322,8 +2412,24 @@ bfa_fcs_rport_plogi(struct bfa_fcs_rport_s *rport, struct fchs_s *rx_fchs,
 	rport->reply_oxid = rx_fchs->ox_id;
 	bfa_trc(rport->fcs, rport->reply_oxid);
 
+<<<<<<< HEAD
 	rport->pid = rx_fchs->s_id;
 	bfa_trc(rport->fcs, rport->pid);
+=======
+	/*
+	 * In Switched fabric topology,
+	 * PLOGI to each other. If our pwwn is smaller, ignore it,
+	 * if it is not a well known address.
+	 * If the link topology is N2N,
+	 * this Plogi should be accepted.
+	 */
+	if ((wwn_compare(rport->port->port_cfg.pwwn, rport->pwwn) == -1) &&
+		(bfa_fcs_fabric_is_switched(rport->port->fabric)) &&
+		(!BFA_FCS_PID_IS_WKA(rport->pid))) {
+		bfa_trc(rport->fcs, rport->pid);
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rport->stats.plogi_rcvd++;
 	bfa_sm_send_event(rport, RPSM_EVENT_PLOGI_RCVD);
@@ -2406,11 +2512,16 @@ bfa_cb_rport_qos_scn_flowid(void *cbarg,
 		struct bfa_rport_qos_attr_s new_qos_attr)
 {
 	struct bfa_fcs_rport_s *rport = (struct bfa_fcs_rport_s *) cbarg;
+<<<<<<< HEAD
 	struct bfa_rport_aen_data_s aen_data;
 
 	bfa_trc(rport->fcs, rport->pwwn);
 	aen_data.priv.qos = new_qos_attr;
 	bfa_fcs_rport_aen_post(rport, BFA_RPORT_AEN_QOS_FLOWID, &aen_data);
+=======
+
+	bfa_trc(rport->fcs, rport->pwwn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2433,11 +2544,16 @@ bfa_cb_rport_qos_scn_prio(void *cbarg,
 		struct bfa_rport_qos_attr_s new_qos_attr)
 {
 	struct bfa_fcs_rport_s *rport = (struct bfa_fcs_rport_s *) cbarg;
+<<<<<<< HEAD
 	struct bfa_rport_aen_data_s aen_data;
 
 	bfa_trc(rport->fcs, rport->pwwn);
 	aen_data.priv.qos = new_qos_attr;
 	bfa_fcs_rport_aen_post(rport, BFA_RPORT_AEN_QOS_PRIO, &aen_data);
+=======
+
+	bfa_trc(rport->fcs, rport->pwwn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2582,6 +2698,7 @@ bfa_fcs_rport_prlo(struct bfa_fcs_rport_s *rport, __be16 ox_id)
 	bfa_sm_send_event(rport, RPSM_EVENT_PRLO_RCVD);
 }
 
+<<<<<<< HEAD
 void
 bfa_fcs_rport_get_attr(struct bfa_fcs_rport_s *rport,
 		struct bfa_rport_attr_s *rport_attr)
@@ -2621,6 +2738,9 @@ bfa_fcs_rport_get_attr(struct bfa_fcs_rport_s *rport,
 			rport_attr->trl_enforced = BFA_TRUE;
 	}
 }
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Remote port implementation.

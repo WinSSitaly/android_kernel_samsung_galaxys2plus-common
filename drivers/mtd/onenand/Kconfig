@@ -1,7 +1,10 @@
 menuconfig MTD_ONENAND
 	tristate "OneNAND Device Support"
 	depends on MTD
+<<<<<<< HEAD
 	depends on HAS_IOMEM
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  This enables support for accessing all type of OneNAND flash
 	  devices. For further information see

@@ -94,9 +94,15 @@
 #include <linux/delay.h>
 #include <linux/seq_file.h>
 #include <linux/serial.h>
+<<<<<<< HEAD
 #include <linux/ratelimit.h>
 
 #include <linux/uaccess.h>
+=======
+
+#include <linux/uaccess.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/kbd_kern.h>
 #include <linux/vt_kern.h>
@@ -789,24 +795,35 @@ static void session_clear_tty(struct pid *session)
 void disassociate_ctty(int on_exit)
 {
 	struct tty_struct *tty;
+<<<<<<< HEAD
+=======
+	struct pid *tty_pgrp = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!current->signal->leader)
 		return;
 
 	tty = get_current_tty();
 	if (tty) {
+<<<<<<< HEAD
 		struct pid *tty_pgrp = get_pid(tty->pgrp);
+=======
+		tty_pgrp = get_pid(tty->pgrp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (on_exit) {
 			if (tty->driver->type != TTY_DRIVER_TYPE_PTY)
 				tty_vhangup(tty);
 		}
 		tty_kref_put(tty);
+<<<<<<< HEAD
 		if (tty_pgrp) {
 			kill_pgrp(tty_pgrp, SIGHUP, on_exit);
 			if (!on_exit)
 				kill_pgrp(tty_pgrp, SIGCONT, on_exit);
 			put_pid(tty_pgrp);
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (on_exit) {
 		struct pid *old_pgrp;
 		spin_lock_irq(&current->sighand->siglock);
@@ -820,6 +837,15 @@ void disassociate_ctty(int on_exit)
 		}
 		return;
 	}
+<<<<<<< HEAD
+=======
+	if (tty_pgrp) {
+		kill_pgrp(tty_pgrp, SIGHUP, on_exit);
+		if (!on_exit)
+			kill_pgrp(tty_pgrp, SIGCONT, on_exit);
+		put_pid(tty_pgrp);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irq(&current->sighand->siglock);
 	put_pid(current->signal->tty_old_pgrp);
@@ -938,6 +964,7 @@ void start_tty(struct tty_struct *tty)
 
 EXPORT_SYMBOL(start_tty);
 
+<<<<<<< HEAD
 /* We limit tty time update visibility to every 8 seconds or so. */
 static void tty_update_time(struct timespec *time)
 {
@@ -946,6 +973,8 @@ static void tty_update_time(struct timespec *time)
 		time->tv_sec = sec;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  *	tty_read	-	read method for tty device files
  *	@file: pointer to tty file
@@ -982,10 +1011,15 @@ static ssize_t tty_read(struct file *file, char __user *buf, size_t count,
 	else
 		i = -EIO;
 	tty_ldisc_deref(ld);
+<<<<<<< HEAD
 
 	if (i > 0)
 		tty_update_time(&inode->i_atime);
 
+=======
+	if (i > 0)
+		inode->i_atime = current_fs_time(inode->i_sb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return i;
 }
 
@@ -1088,7 +1122,11 @@ static inline ssize_t do_tty_write(
 	}
 	if (written) {
 		struct inode *inode = file->f_path.dentry->d_inode;
+<<<<<<< HEAD
 		tty_update_time(&inode->i_mtime);
+=======
+		inode->i_mtime = current_fs_time(inode->i_sb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = written;
 	}
 out:
@@ -1239,10 +1277,20 @@ static void tty_line_name(struct tty_driver *driver, int index, char *p)
 static struct tty_struct *tty_driver_lookup_tty(struct tty_driver *driver,
 		struct inode *inode, int idx)
 {
+<<<<<<< HEAD
 	if (driver->ops->lookup)
 		return driver->ops->lookup(driver, inode, idx);
 
 	return driver->ttys[idx];
+=======
+	struct tty_struct *tty;
+
+	if (driver->ops->lookup)
+		return driver->ops->lookup(driver, inode, idx);
+
+	tty = driver->ttys[idx];
+	return tty;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1277,6 +1325,7 @@ int tty_init_termios(struct tty_struct *tty)
 }
 EXPORT_SYMBOL_GPL(tty_init_termios);
 
+<<<<<<< HEAD
 int tty_standard_install(struct tty_driver *driver, struct tty_struct *tty)
 {
 	int ret = tty_init_termios(tty);
@@ -1290,6 +1339,8 @@ int tty_standard_install(struct tty_driver *driver, struct tty_struct *tty)
 }
 EXPORT_SYMBOL_GPL(tty_standard_install);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  *	tty_driver_install_tty() - install a tty entry in the driver
  *	@driver: the driver for the tty
@@ -1305,8 +1356,26 @@ EXPORT_SYMBOL_GPL(tty_standard_install);
 static int tty_driver_install_tty(struct tty_driver *driver,
 						struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	return driver->ops->install ? driver->ops->install(driver, tty) :
 		tty_standard_install(driver, tty);
+=======
+	int idx = tty->index;
+	int ret;
+
+	if (driver->ops->install) {
+		ret = driver->ops->install(driver, tty);
+		return ret;
+	}
+
+	if (tty_init_termios(tty) == 0) {
+		tty_driver_kref_get(driver);
+		tty->count++;
+		driver->ttys[idx] = tty;
+		return 0;
+	}
+	return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1357,6 +1426,10 @@ static int tty_reopen(struct tty_struct *tty)
 		tty->link->count++;
 	}
 	tty->count++;
+<<<<<<< HEAD
+=======
+	tty->driver = driver; /* N.B. why do this every time?? */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&tty->ldisc_mutex);
 	WARN_ON(!test_bit(TTY_LDISC, &tty->flags));
@@ -1370,6 +1443,10 @@ static int tty_reopen(struct tty_struct *tty)
  *	@driver: tty driver we are opening a device on
  *	@idx: device index
  *	@ret_tty: returned tty structure
+<<<<<<< HEAD
+=======
+ *	@first_ok: ok to open a new device (used by ptmx)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *	Prepare a tty device. This may not be a "new" clean device but
  *	could also be an active device. The pty drivers require special
@@ -1389,11 +1466,25 @@ static int tty_reopen(struct tty_struct *tty)
  * relaxed for the (most common) case of reopening a tty.
  */
 
+<<<<<<< HEAD
 struct tty_struct *tty_init_dev(struct tty_driver *driver, int idx)
+=======
+struct tty_struct *tty_init_dev(struct tty_driver *driver, int idx,
+								int first_ok)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tty_struct *tty;
 	int retval;
 
+<<<<<<< HEAD
+=======
+	/* Check if pty master is being opened multiple times */
+	if (driver->subtype == PTY_TYPE_MASTER &&
+		(driver->flags & TTY_DRIVER_DEVPTS_MEM) && !first_ok) {
+		return ERR_PTR(-EIO);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * First time open is complex, especially for PTY devices.
 	 * This code guarantees that either everything succeeds and the
@@ -1435,7 +1526,12 @@ err_module_put:
 
 	/* call the tty release_tty routine to clean out this slot */
 err_release_tty:
+<<<<<<< HEAD
 	printk_ratelimited(KERN_INFO "tty_init_dev: ldisc open failed, "
+=======
+	if (printk_ratelimit())
+		printk(KERN_INFO "tty_init_dev: ldisc open failed, "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 "clearing slot %d\n", idx);
 	release_tty(tty, idx);
 	return ERR_PTR(retval);
@@ -1554,6 +1650,7 @@ static void release_tty(struct tty_struct *tty, int idx)
 }
 
 /**
+<<<<<<< HEAD
  *	tty_release_checks - check a tty before real release
  *	@tty: tty to check
  *	@o_tty: link of @tty (if any)
@@ -1607,6 +1704,8 @@ static int tty_release_checks(struct tty_struct *tty, struct tty_struct *o_tty,
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	tty_release		-	vfs callback for close
  *	@inode: inode of tty
  *	@filp: file pointer for handle to tty
@@ -1634,11 +1733,19 @@ int tty_release(struct inode *inode, struct file *filp)
 	int	idx;
 	char	buf[64];
 
+<<<<<<< HEAD
 	if (tty_paranoia_check(tty, inode, __func__))
 		return 0;
 
 	tty_lock();
 	check_tty_count(tty, __func__);
+=======
+	if (tty_paranoia_check(tty, inode, "tty_release_dev"))
+		return 0;
+
+	tty_lock();
+	check_tty_count(tty, "tty_release_dev");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	__tty_fasync(-1, filp, 0);
 
@@ -1648,6 +1755,7 @@ int tty_release(struct inode *inode, struct file *filp)
 	devpts = (tty->driver->flags & TTY_DRIVER_DEVPTS_MEM) != 0;
 	o_tty = tty->link;
 
+<<<<<<< HEAD
 	if (tty_release_checks(tty, o_tty, idx)) {
 		tty_unlock();
 		return 0;
@@ -1658,6 +1766,61 @@ int tty_release(struct inode *inode, struct file *filp)
 			tty_name(tty, buf), tty->count);
 #endif
 
+=======
+#ifdef TTY_PARANOIA_CHECK
+	if (idx < 0 || idx >= tty->driver->num) {
+		printk(KERN_DEBUG "tty_release_dev: bad idx when trying to "
+				  "free (%s)\n", tty->name);
+		tty_unlock();
+		return 0;
+	}
+	if (!devpts) {
+		if (tty != tty->driver->ttys[idx]) {
+			tty_unlock();
+			printk(KERN_DEBUG "tty_release_dev: driver.table[%d] not tty "
+			       "for (%s)\n", idx, tty->name);
+			return 0;
+		}
+		if (tty->termios != tty->driver->termios[idx]) {
+			tty_unlock();
+			printk(KERN_DEBUG "tty_release_dev: driver.termios[%d] not termios "
+			       "for (%s)\n",
+			       idx, tty->name);
+			return 0;
+		}
+	}
+#endif
+
+#ifdef TTY_DEBUG_HANGUP
+	printk(KERN_DEBUG "tty_release_dev of %s (tty count=%d)...",
+	       tty_name(tty, buf), tty->count);
+#endif
+
+#ifdef TTY_PARANOIA_CHECK
+	if (tty->driver->other &&
+	     !(tty->driver->flags & TTY_DRIVER_DEVPTS_MEM)) {
+		if (o_tty != tty->driver->other->ttys[idx]) {
+			tty_unlock();
+			printk(KERN_DEBUG "tty_release_dev: other->table[%d] "
+					  "not o_tty for (%s)\n",
+			       idx, tty->name);
+			return 0 ;
+		}
+		if (o_tty->termios != tty->driver->other->termios[idx]) {
+			tty_unlock();
+			printk(KERN_DEBUG "tty_release_dev: other->termios[%d] "
+					  "not o_termios for (%s)\n",
+			       idx, tty->name);
+			return 0;
+		}
+		if (o_tty->link != tty) {
+			tty_unlock();
+			printk(KERN_DEBUG "tty_release_dev: bad pty pointers\n");
+			return 0;
+		}
+	}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (tty->ops->close)
 		tty->ops->close(tty, filp);
 
@@ -1713,8 +1876,13 @@ int tty_release(struct inode *inode, struct file *filp)
 		if (!do_sleep)
 			break;
 
+<<<<<<< HEAD
 		printk(KERN_WARNING "%s: %s: read/write wait queue active!\n",
 				__func__, tty_name(tty, buf));
+=======
+		printk(KERN_WARNING "tty_release_dev: %s: read/write wait queue "
+				    "active!\n", tty_name(tty, buf));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tty_unlock();
 		mutex_unlock(&tty_mutex);
 		schedule();
@@ -1727,14 +1895,25 @@ int tty_release(struct inode *inode, struct file *filp)
 	 */
 	if (pty_master) {
 		if (--o_tty->count < 0) {
+<<<<<<< HEAD
 			printk(KERN_WARNING "%s: bad pty slave count (%d) for %s\n",
 				__func__, o_tty->count, tty_name(o_tty, buf));
+=======
+			printk(KERN_WARNING "tty_release_dev: bad pty slave count "
+					    "(%d) for %s\n",
+			       o_tty->count, tty_name(o_tty, buf));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			o_tty->count = 0;
 		}
 	}
 	if (--tty->count < 0) {
+<<<<<<< HEAD
 		printk(KERN_WARNING "%s: bad tty->count (%d) for %s\n",
 				__func__, tty->count, tty_name(tty, buf));
+=======
+		printk(KERN_WARNING "tty_release_dev: bad tty->count (%d) for %s\n",
+		       tty->count, tty_name(tty, buf));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tty->count = 0;
 	}
 
@@ -1783,7 +1962,11 @@ int tty_release(struct inode *inode, struct file *filp)
 	}
 
 #ifdef TTY_DEBUG_HANGUP
+<<<<<<< HEAD
 	printk(KERN_DEBUG "%s: freeing tty structure...\n", __func__);
+=======
+	printk(KERN_DEBUG "freeing tty structure...");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	/*
 	 * Ask the line discipline code to release its structures
@@ -1803,6 +1986,7 @@ int tty_release(struct inode *inode, struct file *filp)
 }
 
 /**
+<<<<<<< HEAD
  *	tty_open_current_tty - get tty of current task for open
  *	@device: device number
  *	@filp: file pointer to tty
@@ -1880,6 +2064,8 @@ static struct tty_driver *tty_lookup_driver(dev_t device, struct file *filp,
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	tty_open		-	open a tty device
  *	@inode: inode of device file
  *	@filp: file pointer to tty
@@ -1895,16 +2081,26 @@ static struct tty_driver *tty_lookup_driver(dev_t device, struct file *filp,
  *	The termios state of a pty is reset on first open so that
  *	settings don't persist across reuse.
  *
+<<<<<<< HEAD
  *	Locking: tty_mutex protects tty, tty_lookup_driver and tty_init_dev.
+=======
+ *	Locking: tty_mutex protects tty, get_tty_driver and tty_init_dev work.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *		 tty->count should protect the rest.
  *		 ->siglock protects ->signal/->sighand
  */
 
 static int tty_open(struct inode *inode, struct file *filp)
 {
+<<<<<<< HEAD
 	struct tty_struct *tty;
 	int noctty, retval;
 	struct tty_driver *driver = NULL;
+=======
+	struct tty_struct *tty = NULL;
+	int noctty, retval;
+	struct tty_driver *driver;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int index;
 	dev_t device = inode->i_rdev;
 	unsigned saved_flags = filp->f_flags;
@@ -1923,6 +2119,7 @@ retry_open:
 	mutex_lock(&tty_mutex);
 	tty_lock();
 
+<<<<<<< HEAD
 	tty = tty_open_current_tty(device, filp);
 	if (IS_ERR(tty)) {
 		retval = PTR_ERR(tty);
@@ -1939,6 +2136,68 @@ retry_open:
 		if (IS_ERR(tty)) {
 			retval = PTR_ERR(tty);
 			goto err_unlock;
+=======
+	if (device == MKDEV(TTYAUX_MAJOR, 0)) {
+		tty = get_current_tty();
+		if (!tty) {
+			tty_unlock();
+			mutex_unlock(&tty_mutex);
+			tty_free_file(filp);
+			return -ENXIO;
+		}
+		driver = tty_driver_kref_get(tty->driver);
+		index = tty->index;
+		filp->f_flags |= O_NONBLOCK; /* Don't let /dev/tty block */
+		/* noctty = 1; */
+		/* FIXME: Should we take a driver reference ? */
+		tty_kref_put(tty);
+		goto got_driver;
+	}
+#ifdef CONFIG_VT
+	if (device == MKDEV(TTY_MAJOR, 0)) {
+		extern struct tty_driver *console_driver;
+		driver = tty_driver_kref_get(console_driver);
+		index = fg_console;
+		noctty = 1;
+		goto got_driver;
+	}
+#endif
+	if (device == MKDEV(TTYAUX_MAJOR, 1)) {
+		struct tty_driver *console_driver = console_device(&index);
+		if (console_driver) {
+			driver = tty_driver_kref_get(console_driver);
+			if (driver) {
+				/* Don't let /dev/console block */
+				filp->f_flags |= O_NONBLOCK;
+				noctty = 1;
+				goto got_driver;
+			}
+		}
+		tty_unlock();
+		mutex_unlock(&tty_mutex);
+		tty_free_file(filp);
+		return -ENODEV;
+	}
+
+	driver = get_tty_driver(device, &index);
+	if (!driver) {
+		tty_unlock();
+		mutex_unlock(&tty_mutex);
+		tty_free_file(filp);
+		return -ENODEV;
+	}
+got_driver:
+	if (!tty) {
+		/* check whether we're reopening an existing tty */
+		tty = tty_driver_lookup_tty(driver, inode, index);
+
+		if (IS_ERR(tty)) {
+			tty_unlock();
+			mutex_unlock(&tty_mutex);
+			tty_driver_kref_put(driver);
+			tty_free_file(filp);
+			return PTR_ERR(tty);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -1947,6 +2206,7 @@ retry_open:
 		if (retval)
 			tty = ERR_PTR(retval);
 	} else
+<<<<<<< HEAD
 		tty = tty_init_dev(driver, index);
 
 	mutex_unlock(&tty_mutex);
@@ -1956,16 +2216,34 @@ retry_open:
 		tty_unlock();
 		retval = PTR_ERR(tty);
 		goto err_file;
+=======
+		tty = tty_init_dev(driver, index, 0);
+
+	mutex_unlock(&tty_mutex);
+	tty_driver_kref_put(driver);
+	if (IS_ERR(tty)) {
+		tty_unlock();
+		tty_free_file(filp);
+		return PTR_ERR(tty);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	tty_add_file(tty, filp);
 
+<<<<<<< HEAD
 	check_tty_count(tty, __func__);
+=======
+	check_tty_count(tty, "tty_open");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (tty->driver->type == TTY_DRIVER_TYPE_PTY &&
 	    tty->driver->subtype == PTY_TYPE_MASTER)
 		noctty = 1;
 #ifdef TTY_DEBUG_HANGUP
+<<<<<<< HEAD
 	printk(KERN_DEBUG "%s: opening %s...\n", __func__, tty->name);
+=======
+	printk(KERN_DEBUG "opening %s...", tty->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	if (tty->ops->open)
 		retval = tty->ops->open(tty, filp);
@@ -1979,8 +2257,13 @@ retry_open:
 
 	if (retval) {
 #ifdef TTY_DEBUG_HANGUP
+<<<<<<< HEAD
 		printk(KERN_DEBUG "%s: error %d in opening %s...\n", __func__,
 				retval, tty->name);
+=======
+		printk(KERN_DEBUG "error %d in opening %s...", retval,
+		       tty->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 		tty_unlock(); /* need to call tty_release without BTM */
 		tty_release(inode, filp);
@@ -2015,6 +2298,7 @@ retry_open:
 	tty_unlock();
 	mutex_unlock(&tty_mutex);
 	return 0;
+<<<<<<< HEAD
 err_unlock:
 	tty_unlock();
 	mutex_unlock(&tty_mutex);
@@ -2024,6 +2308,8 @@ err_unlock:
 err_file:
 	tty_free_file(filp);
 	return retval;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -2788,8 +3074,11 @@ static long tty_compat_ioctl(struct file *file, unsigned int cmd,
 	ld = tty_ldisc_ref_wait(tty);
 	if (ld->ops->compat_ioctl)
 		retval = ld->ops->compat_ioctl(tty, file, cmd, arg);
+<<<<<<< HEAD
 	else
 		retval = n_tty_compat_ioctl_helper(tty, file, cmd, arg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tty_ldisc_deref(ld);
 
 	return retval;
@@ -2938,6 +3227,10 @@ void initialize_tty_struct(struct tty_struct *tty,
 	tty->session = NULL;
 	tty->pgrp = NULL;
 	tty->overrun_time = jiffies;
+<<<<<<< HEAD
+=======
+	tty->buf.head = tty->buf.tail = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tty_buffer_init(tty);
 	mutex_init(&tty->termios_mutex);
 	mutex_init(&tty->ldisc_mutex);
@@ -3054,7 +3347,11 @@ void tty_unregister_device(struct tty_driver *driver, unsigned index)
 }
 EXPORT_SYMBOL(tty_unregister_device);
 
+<<<<<<< HEAD
 struct tty_driver *__alloc_tty_driver(int lines, struct module *owner)
+=======
+struct tty_driver *alloc_tty_driver(int lines)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tty_driver *driver;
 
@@ -3063,12 +3360,19 @@ struct tty_driver *__alloc_tty_driver(int lines, struct module *owner)
 		kref_init(&driver->kref);
 		driver->magic = TTY_DRIVER_MAGIC;
 		driver->num = lines;
+<<<<<<< HEAD
 		driver->owner = owner;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* later we'll move allocation of tables here */
 	}
 	return driver;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(__alloc_tty_driver);
+=======
+EXPORT_SYMBOL(alloc_tty_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void destruct_tty_driver(struct kref *kref)
 {
@@ -3315,7 +3619,11 @@ void __init console_init(void)
 	}
 }
 
+<<<<<<< HEAD
 static char *tty_devnode(struct device *dev, umode_t *mode)
+=======
+static char *tty_devnode(struct device *dev, mode_t *mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (!mode)
 		return NULL;

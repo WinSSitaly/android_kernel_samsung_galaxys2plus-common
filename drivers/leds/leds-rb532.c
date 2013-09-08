@@ -57,9 +57,29 @@ static struct platform_driver rb532_led_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(rb532_led_driver);
+=======
+static int __init rb532_led_init(void)
+{
+	return platform_driver_register(&rb532_led_driver);
+}
+
+static void __exit rb532_led_exit(void)
+{
+	platform_driver_unregister(&rb532_led_driver);
+}
+
+module_init(rb532_led_init);
+module_exit(rb532_led_exit);
+
+MODULE_ALIAS("platform:rb532-led");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("User LED support for Routerboard532");
 MODULE_AUTHOR("Phil Sutter <n0-1@freewrt.org>");
+<<<<<<< HEAD
 MODULE_ALIAS("platform:rb532-led");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

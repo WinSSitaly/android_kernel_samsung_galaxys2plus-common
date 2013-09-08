@@ -11,7 +11,10 @@
 #include <linux/kernel.h>
 #include <linux/rtnetlink.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "rate.h"
 #include "ieee80211_i.h"
 #include "debugfs.h"
@@ -145,7 +148,11 @@ static ssize_t rcname_read(struct file *file, char __user *userbuf,
 
 static const struct file_operations rcname_ops = {
 	.read = rcname_read,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = mac80211_open_file_generic,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek = default_llseek,
 };
 #endif
@@ -159,6 +166,10 @@ static struct rate_control_ref *rate_control_alloc(const char *name,
 	ref = kmalloc(sizeof(struct rate_control_ref), GFP_KERNEL);
 	if (!ref)
 		goto fail_ref;
+<<<<<<< HEAD
+=======
+	kref_init(&ref->kref);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ref->local = local;
 	ref->ops = ieee80211_rate_control_ops_get(name);
 	if (!ref->ops)
@@ -183,8 +194,16 @@ fail_ref:
 	return NULL;
 }
 
+<<<<<<< HEAD
 static void rate_control_free(struct rate_control_ref *ctrl_ref)
 {
+=======
+static void rate_control_release(struct kref *kref)
+{
+	struct rate_control_ref *ctrl_ref;
+
+	ctrl_ref = container_of(kref, struct rate_control_ref, kref);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ctrl_ref->ops->free(ctrl_ref->priv);
 
 #ifdef CONFIG_MAC80211_DEBUGFS
@@ -196,7 +215,11 @@ static void rate_control_free(struct rate_control_ref *ctrl_ref)
 	kfree(ctrl_ref);
 }
 
+<<<<<<< HEAD
 static bool rc_no_data_or_no_ack_use_min(struct ieee80211_tx_rate_control *txrc)
+=======
+static bool rc_no_data_or_no_ack(struct ieee80211_tx_rate_control *txrc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sk_buff *skb = txrc->skb;
 	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *) skb->data;
@@ -205,9 +228,13 @@ static bool rc_no_data_or_no_ack_use_min(struct ieee80211_tx_rate_control *txrc)
 
 	fc = hdr->frame_control;
 
+<<<<<<< HEAD
 	return (info->flags & (IEEE80211_TX_CTL_NO_ACK |
 			       IEEE80211_TX_CTL_USE_MINRATE)) ||
 		!ieee80211_is_data(fc);
+=======
+	return (info->flags & IEEE80211_TX_CTL_NO_ACK) || !ieee80211_is_data(fc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void rc_send_low_broadcast(s8 *idx, u32 basic_rates,
@@ -232,6 +259,7 @@ static void rc_send_low_broadcast(s8 *idx, u32 basic_rates,
 	/* could not find a basic rate; use original selection */
 }
 
+<<<<<<< HEAD
 static inline s8
 rate_lowest_non_cck_index(struct ieee80211_supported_band *sband,
 			  struct ieee80211_sta *sta)
@@ -253,6 +281,8 @@ rate_lowest_non_cck_index(struct ieee80211_supported_band *sband,
 }
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bool rate_control_send_low(struct ieee80211_sta *sta,
 			   void *priv_sta,
 			   struct ieee80211_tx_rate_control *txrc)
@@ -261,6 +291,7 @@ bool rate_control_send_low(struct ieee80211_sta *sta,
 	struct ieee80211_supported_band *sband = txrc->sband;
 	int mcast_rate;
 
+<<<<<<< HEAD
 	if (!sta || !priv_sta || rc_no_data_or_no_ack_use_min(txrc)) {
 		if ((sband->band != IEEE80211_BAND_2GHZ) ||
 		    !(info->flags & IEEE80211_TX_CTL_NO_CCK_RATE))
@@ -269,6 +300,10 @@ bool rate_control_send_low(struct ieee80211_sta *sta,
 		else
 			info->control.rates[0].idx =
 				rate_lowest_non_cck_index(txrc->sband, sta);
+=======
+	if (!sta || !priv_sta || rc_no_data_or_no_ack(txrc)) {
+		info->control.rates[0].idx = rate_lowest_index(txrc->sband, sta);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		info->control.rates[0].count =
 			(info->flags & IEEE80211_TX_CTL_NO_ACK) ?
 			1 : txrc->hw->max_rate_tries;
@@ -289,8 +324,13 @@ bool rate_control_send_low(struct ieee80211_sta *sta,
 }
 EXPORT_SYMBOL(rate_control_send_low);
 
+<<<<<<< HEAD
 static bool rate_idx_match_legacy_mask(struct ieee80211_tx_rate *rate,
 				       int n_bitrates, u32 mask)
+=======
+static void rate_idx_match_mask(struct ieee80211_tx_rate *rate,
+				int n_bitrates, u32 mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int j;
 
@@ -299,7 +339,11 @@ static bool rate_idx_match_legacy_mask(struct ieee80211_tx_rate *rate,
 		if (mask & (1 << j)) {
 			/* Okay, found a suitable rate. Use it. */
 			rate->idx = j;
+<<<<<<< HEAD
 			return true;
+=======
+			return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -308,6 +352,7 @@ static bool rate_idx_match_legacy_mask(struct ieee80211_tx_rate *rate,
 		if (mask & (1 << j)) {
 			/* Okay, found a suitable rate. Use it. */
 			rate->idx = j;
+<<<<<<< HEAD
 			return true;
 		}
 	}
@@ -414,6 +459,8 @@ static void rate_idx_match_mask(struct ieee80211_tx_rate *rate,
 
 		if (rate_idx_match_mcs_mask(&alt_rate, mcs_mask)) {
 			*rate = alt_rate;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 		}
 	}
@@ -437,9 +484,14 @@ void rate_control_get_rate(struct ieee80211_sub_if_data *sdata,
 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(txrc->skb);
 	int i;
 	u32 mask;
+<<<<<<< HEAD
 	u8 mcs_mask[IEEE80211_HT_MCS_MASK_LEN];
 
 	if (sta && test_sta_flag(sta, WLAN_STA_RATE_CONTROL)) {
+=======
+
+	if (sta) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ista = &sta->sta;
 		priv_sta = sta->rate_ctrl_priv;
 	}
@@ -461,14 +513,20 @@ void rate_control_get_rate(struct ieee80211_sub_if_data *sdata,
 	 * the common case.
 	 */
 	mask = sdata->rc_rateidx_mask[info->band];
+<<<<<<< HEAD
 	memcpy(mcs_mask, sdata->rc_rateidx_mcs_mask[info->band],
 	       sizeof(mcs_mask));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (mask != (1 << txrc->sband->n_bitrates) - 1) {
 		if (sta) {
 			/* Filter out rates that the STA does not support */
 			mask &= sta->sta.supp_rates[info->band];
+<<<<<<< HEAD
 			for (i = 0; i < sizeof(mcs_mask); i++)
 				mcs_mask[i] &= sta->sta.ht_cap.mcs.rx_mask[i];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		/*
 		 * Make sure the rate index selected for each TX rate is
@@ -479,18 +537,44 @@ void rate_control_get_rate(struct ieee80211_sub_if_data *sdata,
 			/* Skip invalid rates */
 			if (info->control.rates[i].idx < 0)
 				break;
+<<<<<<< HEAD
 			rate_idx_match_mask(&info->control.rates[i], txrc,
 					    mask, mcs_mask);
+=======
+			/* Rate masking supports only legacy rates for now */
+			if (info->control.rates[i].flags & IEEE80211_TX_RC_MCS)
+				continue;
+			rate_idx_match_mask(&info->control.rates[i],
+					    txrc->sband->n_bitrates, mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
 	BUG_ON(info->control.rates[0].idx < 0);
 }
 
+<<<<<<< HEAD
 int ieee80211_init_rate_ctrl_alg(struct ieee80211_local *local,
 				 const char *name)
 {
 	struct rate_control_ref *ref;
+=======
+struct rate_control_ref *rate_control_get(struct rate_control_ref *ref)
+{
+	kref_get(&ref->kref);
+	return ref;
+}
+
+void rate_control_put(struct rate_control_ref *ref)
+{
+	kref_put(&ref->kref, rate_control_release);
+}
+
+int ieee80211_init_rate_ctrl_alg(struct ieee80211_local *local,
+				 const char *name)
+{
+	struct rate_control_ref *ref, *old;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ASSERT_RTNL();
 
@@ -510,8 +594,17 @@ int ieee80211_init_rate_ctrl_alg(struct ieee80211_local *local,
 		return -ENOENT;
 	}
 
+<<<<<<< HEAD
 	WARN_ON(local->rate_ctrl);
 	local->rate_ctrl = ref;
+=======
+	old = local->rate_ctrl;
+	local->rate_ctrl = ref;
+	if (old) {
+		rate_control_put(old);
+		sta_info_flush(local, NULL);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wiphy_debug(local->hw.wiphy, "Selected rate control algorithm '%s'\n",
 		    ref->ops->name);
@@ -529,6 +622,10 @@ void rate_control_deinitialize(struct ieee80211_local *local)
 		return;
 
 	local->rate_ctrl = NULL;
+<<<<<<< HEAD
 	rate_control_free(ref);
+=======
+	rate_control_put(ref);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 

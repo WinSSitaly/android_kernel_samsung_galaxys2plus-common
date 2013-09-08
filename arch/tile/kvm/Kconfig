@@ -33,5 +33,9 @@ config KVM
 	  If unsure, say N.
 
 source drivers/vhost/Kconfig
+<<<<<<< HEAD
+=======
+source drivers/virtio/Kconfig
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 endif # VIRTUALIZATION

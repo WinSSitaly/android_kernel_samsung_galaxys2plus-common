@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 #include <dirent.h>
 #include <errno.h>
+=======
+#define _GNU_SOURCE
+#include <ctype.h>
+#include <dirent.h>
+#include <errno.h>
+#include <libgen.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -10,7 +18,10 @@
 #include <unistd.h>
 #include <inttypes.h>
 #include "build-id.h"
+<<<<<<< HEAD
 #include "util.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "debug.h"
 #include "symbol.h"
 #include "strlist.h"
@@ -22,7 +33,11 @@
 #include <sys/utsname.h>
 
 #ifndef KSYM_NAME_LEN
+<<<<<<< HEAD
 #define KSYM_NAME_LEN 256
+=======
+#define KSYM_NAME_LEN 128
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifndef NT_GNU_BUILD_ID
@@ -44,14 +59,20 @@ struct symbol_conf symbol_conf = {
 	.exclude_other	  = true,
 	.use_modules	  = true,
 	.try_vmlinux_path = true,
+<<<<<<< HEAD
 	.annotate_src	  = true,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.symfs            = "",
 };
 
 int dso__name_len(const struct dso *dso)
 {
+<<<<<<< HEAD
 	if (!dso)
 		return strlen("[unknown]");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (verbose)
 		return dso->long_name_len;
 
@@ -75,18 +96,26 @@ static void dso__set_sorted_by_name(struct dso *dso, enum map_type type)
 
 bool symbol_type__is_a(char symbol_type, enum map_type map_type)
 {
+<<<<<<< HEAD
 	symbol_type = toupper(symbol_type);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (map_type) {
 	case MAP__FUNCTION:
 		return symbol_type == 'T' || symbol_type == 'W';
 	case MAP__VARIABLE:
+<<<<<<< HEAD
 		return symbol_type == 'D';
+=======
+		return symbol_type == 'D' || symbol_type == 'd';
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return false;
 	}
 }
 
+<<<<<<< HEAD
 static int prefix_underscores_count(const char *str)
 {
 	const char *tail = str;
@@ -173,6 +202,8 @@ again:
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void symbols__fixup_end(struct rb_root *symbols)
 {
 	struct rb_node *nd, *prevnd = rb_first(symbols);
@@ -264,6 +295,7 @@ static size_t symbol__fprintf(struct symbol *sym, FILE *fp)
 		       sym->name);
 }
 
+<<<<<<< HEAD
 size_t symbol__fprintf_symname_offs(const struct symbol *sym,
 				    const struct addr_location *al, FILE *fp)
 {
@@ -286,6 +318,8 @@ size_t symbol__fprintf_symname(const struct symbol *sym, FILE *fp)
 	return symbol__fprintf_symname_offs(sym, NULL, fp);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void dso__set_long_name(struct dso *dso, char *name)
 {
 	if (name == NULL)
@@ -549,11 +583,24 @@ int kallsyms__parse(const char *filename, void *arg,
 	char *line = NULL;
 	size_t n;
 	int err = -1;
+<<<<<<< HEAD
+=======
+	u64 prev_start = 0;
+	char prev_symbol_type = 0;
+	char *prev_symbol_name;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	FILE *file = fopen(filename, "r");
 
 	if (file == NULL)
 		goto out_failure;
 
+<<<<<<< HEAD
+=======
+	prev_symbol_name = malloc(KSYM_NAME_LEN);
+	if (prev_symbol_name == NULL)
+		goto out_close;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = 0;
 
 	while (!feof(file)) {
@@ -574,7 +621,11 @@ int kallsyms__parse(const char *filename, void *arg,
 		if (len + 2 >= line_len)
 			continue;
 
+<<<<<<< HEAD
 		symbol_type = line[len];
+=======
+		symbol_type = toupper(line[len]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		len += 2;
 		symbol_name = line + len;
 		len = line_len - len;
@@ -584,6 +635,7 @@ int kallsyms__parse(const char *filename, void *arg,
 			break;
 		}
 
+<<<<<<< HEAD
 		/*
 		 * module symbols are not sorted so we add all
 		 * symbols with zero length and rely on
@@ -596,6 +648,26 @@ int kallsyms__parse(const char *filename, void *arg,
 	}
 
 	free(line);
+=======
+		if (prev_symbol_type) {
+			u64 end = start;
+			if (end != prev_start)
+				--end;
+			err = process_symbol(arg, prev_symbol_name,
+					     prev_symbol_type, prev_start, end);
+			if (err)
+				break;
+		}
+
+		memcpy(prev_symbol_name, symbol_name, len + 1);
+		prev_symbol_type = symbol_type;
+		prev_start = start;
+	}
+
+	free(prev_symbol_name);
+	free(line);
+out_close:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fclose(file);
 	return err;
 
@@ -801,9 +873,12 @@ int dso__load_kallsyms(struct dso *dso, const char *filename,
 	if (dso__load_all_kallsyms(dso, filename, map) < 0)
 		return -1;
 
+<<<<<<< HEAD
 	symbols__fixup_duplicate(&dso->symbols[map->type]);
 	symbols__fixup_end(&dso->symbols[map->type]);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dso->kernel == DSO_TYPE_GUEST_KERNEL)
 		dso->symtab_type = SYMTAB__GUEST_KALLSYMS;
 	else
@@ -977,9 +1052,14 @@ static Elf_Scn *elf_section_by_name(Elf *elf, GElf_Ehdr *ep,
  * And always look at the original dso, not at debuginfo packages, that
  * have the PLT data stripped out (shdr_rel_plt.sh_type == SHT_NOBITS).
  */
+<<<<<<< HEAD
 static int
 dso__synthesize_plt_symbols(struct dso *dso, char *name, struct map *map,
 			    symbol_filter_t filter)
+=======
+static int dso__synthesize_plt_symbols(struct  dso *dso, struct map *map,
+				       symbol_filter_t filter)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	uint32_t nr_rel_entries, idx;
 	GElf_Sym sym;
@@ -994,7 +1074,14 @@ dso__synthesize_plt_symbols(struct dso *dso, char *name, struct map *map,
 	char sympltname[1024];
 	Elf *elf;
 	int nr = 0, symidx, fd, err = 0;
+<<<<<<< HEAD
 
+=======
+	char name[PATH_MAX];
+
+	snprintf(name, sizeof(name), "%s%s",
+		 symbol_conf.symfs, dso->long_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fd = open(name, O_RDONLY);
 	if (fd < 0)
 		goto out;
@@ -1191,7 +1278,12 @@ static int dso__load_sym(struct dso *dso, struct map *map, const char *name,
 	if (dso->has_build_id) {
 		u8 build_id[BUILD_ID_SIZE];
 
+<<<<<<< HEAD
 		if (elf_read_build_id(elf, build_id, BUILD_ID_SIZE) < 0)
+=======
+		if (elf_read_build_id(elf, build_id,
+				      BUILD_ID_SIZE) != BUILD_ID_SIZE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out_elf_end;
 
 		if (!dso__build_id_equal(dso, build_id))
@@ -1376,7 +1468,10 @@ new_symbol:
 	 * For misannotated, zeroed, ASM function sizes.
 	 */
 	if (nr > 0) {
+<<<<<<< HEAD
 		symbols__fixup_duplicate(&dso->symbols[map->type]);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		symbols__fixup_end(&dso->symbols[map->type]);
 		if (kmap) {
 			/*
@@ -1463,8 +1558,13 @@ static int elf_read_build_id(Elf *elf, void *bf, size_t size)
 	ptr = data->d_buf;
 	while (ptr < (data->d_buf + data->d_size)) {
 		GElf_Nhdr *nhdr = ptr;
+<<<<<<< HEAD
 		size_t namesz = NOTE_ALIGN(nhdr->n_namesz),
 		       descsz = NOTE_ALIGN(nhdr->n_descsz);
+=======
+		int namesz = NOTE_ALIGN(nhdr->n_namesz),
+		    descsz = NOTE_ALIGN(nhdr->n_descsz);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		const char *name;
 
 		ptr += sizeof(*nhdr);
@@ -1473,10 +1573,15 @@ static int elf_read_build_id(Elf *elf, void *bf, size_t size)
 		if (nhdr->n_type == NT_GNU_BUILD_ID &&
 		    nhdr->n_namesz == sizeof("GNU")) {
 			if (memcmp(name, "GNU", sizeof("GNU")) == 0) {
+<<<<<<< HEAD
 				size_t sz = min(size, descsz);
 				memcpy(bf, ptr, sz);
 				memset(bf + sz, 0, size - sz);
 				err = descsz;
+=======
+				memcpy(bf, ptr, BUILD_ID_SIZE);
+				err = BUILD_ID_SIZE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 			}
 		}
@@ -1528,7 +1633,11 @@ int sysfs__read_build_id(const char *filename, void *build_id, size_t size)
 	while (1) {
 		char bf[BUFSIZ];
 		GElf_Nhdr nhdr;
+<<<<<<< HEAD
 		size_t namesz, descsz;
+=======
+		int namesz, descsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (read(fd, &nhdr, sizeof(nhdr)) != sizeof(nhdr))
 			break;
@@ -1537,6 +1646,7 @@ int sysfs__read_build_id(const char *filename, void *build_id, size_t size)
 		descsz = NOTE_ALIGN(nhdr.n_descsz);
 		if (nhdr.n_type == NT_GNU_BUILD_ID &&
 		    nhdr.n_namesz == sizeof("GNU")) {
+<<<<<<< HEAD
 			if (read(fd, bf, namesz) != (ssize_t)namesz)
 				break;
 			if (memcmp(bf, "GNU", sizeof("GNU")) == 0) {
@@ -1547,6 +1657,17 @@ int sysfs__read_build_id(const char *filename, void *build_id, size_t size)
 					break;
 				}
 			} else if (read(fd, bf, descsz) != (ssize_t)descsz)
+=======
+			if (read(fd, bf, namesz) != namesz)
+				break;
+			if (memcmp(bf, "GNU", sizeof("GNU")) == 0) {
+				if (read(fd, build_id,
+				    BUILD_ID_SIZE) == BUILD_ID_SIZE) {
+					err = 0;
+					break;
+				}
+			} else if (read(fd, bf, descsz) != descsz)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 		} else {
 			int n = namesz + descsz;
@@ -1608,6 +1729,7 @@ int dso__load(struct dso *dso, struct map *map, symbol_filter_t filter)
 	dso->adjust_symbols = 0;
 
 	if (strncmp(dso->name, "/tmp/perf-", 10) == 0) {
+<<<<<<< HEAD
 		struct stat st;
 
 		if (lstat(dso->name, &st) < 0)
@@ -1619,6 +1741,8 @@ int dso__load(struct dso *dso, struct map *map, symbol_filter_t filter)
 			return -1;
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = dso__load_perf_map(dso, map, filter);
 		dso->symtab_type = ret > 0 ? SYMTAB__JAVA_JIT :
 					      SYMTAB__NOT_FOUND;
@@ -1701,9 +1825,14 @@ restart:
 			continue;
 
 		if (ret > 0) {
+<<<<<<< HEAD
 			int nr_plt;
 
 			nr_plt = dso__synthesize_plt_symbols(dso, name, map, filter);
+=======
+			int nr_plt = dso__synthesize_plt_symbols(dso, map,
+								 filter);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (nr_plt > 0)
 				ret += nr_plt;
 			break;
@@ -1778,7 +1907,11 @@ static int map_groups__set_modules_path_dir(struct map_groups *mg,
 		struct stat st;
 
 		/*sshfs might return bad dent->d_type, so we have to stat*/
+<<<<<<< HEAD
 		snprintf(path, sizeof(path), "%s/%s", dir_name, dent->d_name);
+=======
+		sprintf(path, "%s/%s", dir_name, dent->d_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (stat(path, &st))
 			continue;
 
@@ -1787,6 +1920,11 @@ static int map_groups__set_modules_path_dir(struct map_groups *mg,
 			    !strcmp(dent->d_name, ".."))
 				continue;
 
+<<<<<<< HEAD
+=======
+			snprintf(path, sizeof(path), "%s/%s",
+				 dir_name, dent->d_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = map_groups__set_modules_path_dir(mg, path);
 			if (ret < 0)
 				goto out;
@@ -1807,6 +1945,12 @@ static int map_groups__set_modules_path_dir(struct map_groups *mg,
 			if (map == NULL)
 				continue;
 
+<<<<<<< HEAD
+=======
+			snprintf(path, sizeof(path), "%s/%s",
+				 dir_name, dent->d_name);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			long_name = strdup(path);
 			if (long_name == NULL) {
 				ret = -1;
@@ -2281,6 +2425,7 @@ size_t machines__fprintf_dsos_buildid(struct rb_root *machines,
 	return ret;
 }
 
+<<<<<<< HEAD
 static struct dso*
 dso__kernel_findnew(struct machine *machine, const char *name,
 		    const char *short_name, int dso_type)
@@ -2297,6 +2442,29 @@ dso__kernel_findnew(struct machine *machine, const char *name,
 	if (dso != NULL) {
 		dso__set_short_name(dso, short_name);
 		dso->kernel = dso_type;
+=======
+struct dso *dso__new_kernel(const char *name)
+{
+	struct dso *dso = dso__new(name ?: "[kernel.kallsyms]");
+
+	if (dso != NULL) {
+		dso__set_short_name(dso, "[kernel]");
+		dso->kernel = DSO_TYPE_KERNEL;
+	}
+
+	return dso;
+}
+
+static struct dso *dso__new_guest_kernel(struct machine *machine,
+					const char *name)
+{
+	char bf[PATH_MAX];
+	struct dso *dso = dso__new(name ?: machine__mmap_name(machine, bf,
+							      sizeof(bf)));
+	if (dso != NULL) {
+		dso__set_short_name(dso, "[guest.kernel]");
+		dso->kernel = DSO_TYPE_GUEST_KERNEL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return dso;
@@ -2314,13 +2482,18 @@ void dso__read_running_kernel_build_id(struct dso *dso, struct machine *machine)
 		dso->has_build_id = true;
 }
 
+<<<<<<< HEAD
 static struct dso *machine__get_kernel(struct machine *machine)
+=======
+static struct dso *machine__create_kernel(struct machine *machine)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const char *vmlinux_name = NULL;
 	struct dso *kernel;
 
 	if (machine__is_host(machine)) {
 		vmlinux_name = symbol_conf.vmlinux_name;
+<<<<<<< HEAD
 		if (!vmlinux_name)
 			vmlinux_name = "[kernel.kallsyms]";
 
@@ -2344,6 +2517,19 @@ static struct dso *machine__get_kernel(struct machine *machine)
 	if (kernel != NULL && (!kernel->has_build_id))
 		dso__read_running_kernel_build_id(kernel, machine);
 
+=======
+		kernel = dso__new_kernel(vmlinux_name);
+	} else {
+		if (machine__is_default_guest(machine))
+			vmlinux_name = symbol_conf.default_guest_vmlinux_name;
+		kernel = dso__new_guest_kernel(machine, vmlinux_name);
+	}
+
+	if (kernel != NULL) {
+		dso__read_running_kernel_build_id(kernel, machine);
+		dsos__add(&machine->kernel_dsos, kernel);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return kernel;
 }
 
@@ -2447,7 +2633,11 @@ void machine__destroy_kernel_maps(struct machine *machine)
 
 int machine__create_kernel_maps(struct machine *machine)
 {
+<<<<<<< HEAD
 	struct dso *kernel = machine__get_kernel(machine);
+=======
+	struct dso *kernel = machine__create_kernel(machine);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (kernel == NULL ||
 	    __machine__create_kernel_maps(machine, kernel) < 0)
@@ -2625,10 +2815,17 @@ int symbol__init(void)
 	symbol_conf.initialized = true;
 	return 0;
 
+<<<<<<< HEAD
 out_free_comm_list:
 	strlist__delete(symbol_conf.comm_list);
 out_free_dso_list:
 	strlist__delete(symbol_conf.dso_list);
+=======
+out_free_dso_list:
+	strlist__delete(symbol_conf.dso_list);
+out_free_comm_list:
+	strlist__delete(symbol_conf.comm_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -1;
 }
 

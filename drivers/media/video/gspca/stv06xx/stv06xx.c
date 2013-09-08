@@ -27,8 +27,11 @@
  * P/N 861040-0000: Sensor ST VV6410       ASIC STV0610   - QuickCam Web
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/input.h>
 #include "stv06xx_sensor.h"
 
@@ -36,8 +39,13 @@ MODULE_AUTHOR("Erik Andrén");
 MODULE_DESCRIPTION("STV06XX USB Camera Driver");
 MODULE_LICENSE("GPL");
 
+<<<<<<< HEAD
 static bool dump_bridge;
 static bool dump_sensor;
+=======
+static int dump_bridge;
+static int dump_sensor;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int stv06xx_write_bridge(struct sd *sd, u16 address, u16 i2c_data)
 {
@@ -191,7 +199,11 @@ int stv06xx_read_sensor(struct sd *sd, const u8 address, u16 *value)
 			      0x04, 0x40, 0x1400, 0, buf, I2C_BUFFER_LENGTH,
 			      STV06XX_URB_MSG_TIMEOUT);
 	if (err < 0) {
+<<<<<<< HEAD
 		pr_err("I2C: Read error writing address: %d\n", err);
+=======
+		err("I2C: Read error writing address: %d", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 	}
 
@@ -215,6 +227,7 @@ static void stv06xx_dump_bridge(struct sd *sd)
 	int i;
 	u8 data, buf;
 
+<<<<<<< HEAD
 	pr_info("Dumping all stv06xx bridge registers\n");
 	for (i = 0x1400; i < 0x160f; i++) {
 		stv06xx_read_bridge(sd, i, &data);
@@ -223,6 +236,16 @@ static void stv06xx_dump_bridge(struct sd *sd)
 	}
 
 	pr_info("Testing stv06xx bridge registers for writability\n");
+=======
+	info("Dumping all stv06xx bridge registers");
+	for (i = 0x1400; i < 0x160f; i++) {
+		stv06xx_read_bridge(sd, i, &data);
+
+		info("Read 0x%x from address 0x%x", data, i);
+	}
+
+	info("Testing stv06xx bridge registers for writability");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0x1400; i < 0x160f; i++) {
 		stv06xx_read_bridge(sd, i, &data);
 		buf = data;
@@ -230,12 +253,21 @@ static void stv06xx_dump_bridge(struct sd *sd)
 		stv06xx_write_bridge(sd, i, 0xff);
 		stv06xx_read_bridge(sd, i, &data);
 		if (data == 0xff)
+<<<<<<< HEAD
 			pr_info("Register 0x%x is read/write\n", i);
 		else if (data != buf)
 			pr_info("Register 0x%x is read/write, but only partially\n",
 				i);
 		else
 			pr_info("Register 0x%x is read-only\n", i);
+=======
+			info("Register 0x%x is read/write", i);
+		else if (data != buf)
+			info("Register 0x%x is read/write,"
+			     " but only partially", i);
+		else
+			info("Register 0x%x is read-only", i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		stv06xx_write_bridge(sd, i, buf);
 	}
@@ -304,7 +336,11 @@ static int stv06xx_isoc_init(struct gspca_dev *gspca_dev)
 	struct sd *sd = (struct sd *) gspca_dev;
 
 	/* Start isoc bandwidth "negotiation" at max isoc bandwidth */
+<<<<<<< HEAD
 	alt = &gspca_dev->dev->actconfig->intf_cache[0]->altsetting[1];
+=======
+	alt = &gspca_dev->dev->config->intf_cache[0]->altsetting[1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	alt->endpoint[0].desc.wMaxPacketSize =
 		cpu_to_le16(sd->sensor->max_packet_size[gspca_dev->curr_mode]);
 
@@ -317,7 +353,11 @@ static int stv06xx_isoc_nego(struct gspca_dev *gspca_dev)
 	struct usb_host_interface *alt;
 	struct sd *sd = (struct sd *) gspca_dev;
 
+<<<<<<< HEAD
 	alt = &gspca_dev->dev->actconfig->intf_cache[0]->altsetting[1];
+=======
+	alt = &gspca_dev->dev->config->intf_cache[0]->altsetting[1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	packet_size = le16_to_cpu(alt->endpoint[0].desc.wMaxPacketSize);
 	min_packet_size = sd->sensor->min_packet_size[gspca_dev->curr_mode];
 	if (packet_size <= min_packet_size)
@@ -612,7 +652,22 @@ static struct usb_driver sd_driver = {
 #endif
 };
 
+<<<<<<< HEAD
 module_usb_driver(sd_driver);
+=======
+/* -- module insert / remove -- */
+static int __init sd_mod_init(void)
+{
+	return usb_register(&sd_driver);
+}
+static void __exit sd_mod_exit(void)
+{
+	usb_deregister(&sd_driver);
+}
+
+module_init(sd_mod_init);
+module_exit(sd_mod_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(dump_bridge, bool, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(dump_bridge, "Dumps all usb bridge registers at startup");

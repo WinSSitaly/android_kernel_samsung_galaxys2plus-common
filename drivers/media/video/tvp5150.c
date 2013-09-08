@@ -9,7 +9,10 @@
 #include <linux/slab.h>
 #include <linux/videodev2.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/v4l2-device.h>
 #include <media/tvp5150.h>
 #include <media/v4l2-chip-ident.h>
@@ -17,6 +20,7 @@
 
 #include "tvp5150_reg.h"
 
+<<<<<<< HEAD
 #define TVP5150_H_MAX		720
 #define TVP5150_V_MAX_525_60	480
 #define TVP5150_V_MAX_OTHERS	576
@@ -24,6 +28,8 @@
 #define TVP5150_MAX_CROP_TOP	127
 #define TVP5150_CROP_SHIFT	2
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("Texas Instruments TVP5150A video decoder driver");
 MODULE_AUTHOR("Mauro Carvalho Chehab");
 MODULE_LICENSE("GPL");
@@ -36,7 +42,10 @@ MODULE_PARM_DESC(debug, "Debug level (0-2)");
 struct tvp5150 {
 	struct v4l2_subdev sd;
 	struct v4l2_ctrl_handler hdl;
+<<<<<<< HEAD
 	struct v4l2_rect rect;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	v4l2_std_id norm;	/* Current set standard */
 	u32 input;
@@ -711,6 +720,7 @@ static int tvp5150_set_std(struct v4l2_subdev *sd, v4l2_std_id std)
 	/* First tests should be against specific std */
 
 	if (std == V4L2_STD_ALL) {
+<<<<<<< HEAD
 		fmt = VIDEO_STD_AUTO_SWITCH_BIT;	/* Autodetect mode */
 	} else if (std & V4L2_STD_NTSC_443) {
 		fmt = VIDEO_STD_NTSC_4_43_BIT;
@@ -726,6 +736,23 @@ static int tvp5150_set_std(struct v4l2_subdev *sd, v4l2_std_id std)
 			fmt = VIDEO_STD_PAL_BDGHIN_BIT;
 		else if (std & V4L2_STD_SECAM)
 			fmt = VIDEO_STD_SECAM_BIT;
+=======
+		fmt = 0;	/* Autodetect mode */
+	} else if (std & V4L2_STD_NTSC_443) {
+		fmt = 0xa;
+	} else if (std & V4L2_STD_PAL_M) {
+		fmt = 0x6;
+	} else if (std & (V4L2_STD_PAL_N | V4L2_STD_PAL_Nc)) {
+		fmt = 0x8;
+	} else {
+		/* Then, test against generic ones */
+		if (std & V4L2_STD_NTSC)
+			fmt = 0x2;
+		else if (std & V4L2_STD_PAL)
+			fmt = 0x4;
+		else if (std & V4L2_STD_SECAM)
+			fmt = 0xc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	v4l2_dbg(1, debug, sd, "Set video std register to %d.\n", fmt);
@@ -740,6 +767,7 @@ static int tvp5150_s_std(struct v4l2_subdev *sd, v4l2_std_id std)
 	if (decoder->norm == std)
 		return 0;
 
+<<<<<<< HEAD
 	/* Change cropping height limits */
 	if (std & V4L2_STD_525_60)
 		decoder->rect.height = TVP5150_V_MAX_525_60;
@@ -747,6 +775,8 @@ static int tvp5150_s_std(struct v4l2_subdev *sd, v4l2_std_id std)
 		decoder->rect.height = TVP5150_V_MAX_OTHERS;
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return tvp5150_set_std(sd, std);
 }
 
@@ -794,6 +824,7 @@ static int tvp5150_s_ctrl(struct v4l2_ctrl *ctrl)
 	return -EINVAL;
 }
 
+<<<<<<< HEAD
 static v4l2_std_id tvp5150_read_std(struct v4l2_subdev *sd)
 {
 	int val = tvp5150_read(sd, TVP5150_STATUS_REG_5);
@@ -948,6 +979,8 @@ static int tvp5150_cropcap(struct v4l2_subdev *sd, struct v4l2_cropcap *a)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /****************************************************************************
 			I2C Command
  ****************************************************************************/
@@ -1100,6 +1133,7 @@ static const struct v4l2_subdev_tuner_ops tvp5150_tuner_ops = {
 
 static const struct v4l2_subdev_video_ops tvp5150_video_ops = {
 	.s_routing = tvp5150_s_routing,
+<<<<<<< HEAD
 	.enum_mbus_fmt = tvp5150_enum_mbus_fmt,
 	.s_mbus_fmt = tvp5150_mbus_fmt,
 	.try_mbus_fmt = tvp5150_mbus_fmt,
@@ -1107,6 +1141,8 @@ static const struct v4l2_subdev_video_ops tvp5150_video_ops = {
 	.s_crop = tvp5150_s_crop,
 	.g_crop = tvp5150_g_crop,
 	.cropcap = tvp5150_cropcap,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct v4l2_subdev_vbi_ops tvp5150_vbi_ops = {
@@ -1192,6 +1228,7 @@ static int tvp5150_probe(struct i2c_client *c,
 	}
 	v4l2_ctrl_handler_setup(&core->hdl);
 
+<<<<<<< HEAD
 	/* Default is no cropping */
 	core->rect.top = 0;
 	if (tvp5150_read_std(sd) & V4L2_STD_525_60)
@@ -1201,6 +1238,8 @@ static int tvp5150_probe(struct i2c_client *c,
 	core->rect.left = 0;
 	core->rect.width = TVP5150_H_MAX;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (debug > 1)
 		tvp5150_log_status(sd);
 	return 0;
@@ -1239,4 +1278,19 @@ static struct i2c_driver tvp5150_driver = {
 	.id_table	= tvp5150_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(tvp5150_driver);
+=======
+static __init int init_tvp5150(void)
+{
+	return i2c_add_driver(&tvp5150_driver);
+}
+
+static __exit void exit_tvp5150(void)
+{
+	i2c_del_driver(&tvp5150_driver);
+}
+
+module_init(init_tvp5150);
+module_exit(exit_tvp5150);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

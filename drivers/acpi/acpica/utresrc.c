@@ -5,7 +5,11 @@
  ******************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,7 +47,11 @@
 
 #include <acpi/acpi.h>
 #include "accommon.h"
+<<<<<<< HEAD
 #include "acresrc.h"
+=======
+#include "amlresrc.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define _COMPONENT          ACPI_UTILITIES
 ACPI_MODULE_NAME("utresrc")
@@ -154,6 +162,7 @@ const char *acpi_gbl_typ_decode[] = {
 	"TypeF"
 };
 
+<<<<<<< HEAD
 const char *acpi_gbl_ppc_decode[] = {
 	"PullDefault",
 	"PullUp",
@@ -286,6 +295,8 @@ const char *acpi_gbl_pt_decode[] = {
 	"/* UNKNOWN parity keyword */"
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /*
@@ -305,7 +316,11 @@ const u8 acpi_gbl_resource_aml_sizes[] = {
 	ACPI_AML_SIZE_SMALL(struct aml_resource_end_dependent),
 	ACPI_AML_SIZE_SMALL(struct aml_resource_io),
 	ACPI_AML_SIZE_SMALL(struct aml_resource_fixed_io),
+<<<<<<< HEAD
 	ACPI_AML_SIZE_SMALL(struct aml_resource_fixed_dma),
+=======
+	0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	0,
 	0,
 	0,
@@ -325,6 +340,7 @@ const u8 acpi_gbl_resource_aml_sizes[] = {
 	ACPI_AML_SIZE_LARGE(struct aml_resource_address16),
 	ACPI_AML_SIZE_LARGE(struct aml_resource_extended_irq),
 	ACPI_AML_SIZE_LARGE(struct aml_resource_address64),
+<<<<<<< HEAD
 	ACPI_AML_SIZE_LARGE(struct aml_resource_extended_address64),
 	ACPI_AML_SIZE_LARGE(struct aml_resource_gpio),
 	0,
@@ -336,6 +352,9 @@ const u8 acpi_gbl_resource_aml_serial_bus_sizes[] = {
 	ACPI_AML_SIZE_LARGE(struct aml_resource_i2c_serialbus),
 	ACPI_AML_SIZE_LARGE(struct aml_resource_spi_serialbus),
 	ACPI_AML_SIZE_LARGE(struct aml_resource_uart_serialbus),
+=======
+	ACPI_AML_SIZE_LARGE(struct aml_resource_extended_address64)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -351,6 +370,7 @@ static const u8 acpi_gbl_resource_types[] = {
 	0,
 	0,
 	0,
+<<<<<<< HEAD
 	ACPI_SMALL_VARIABLE_LENGTH,	/* 04 IRQ */
 	ACPI_FIXED_LENGTH,	/* 05 DMA */
 	ACPI_SMALL_VARIABLE_LENGTH,	/* 06 start_dependent_functions */
@@ -363,10 +383,25 @@ static const u8 acpi_gbl_resource_types[] = {
 	0,
 	ACPI_VARIABLE_LENGTH,	/* 0_e vendor_short */
 	ACPI_FIXED_LENGTH,	/* 0_f end_tag */
+=======
+	ACPI_SMALL_VARIABLE_LENGTH,
+	ACPI_FIXED_LENGTH,
+	ACPI_SMALL_VARIABLE_LENGTH,
+	ACPI_FIXED_LENGTH,
+	ACPI_FIXED_LENGTH,
+	ACPI_FIXED_LENGTH,
+	0,
+	0,
+	0,
+	0,
+	ACPI_VARIABLE_LENGTH,
+	ACPI_FIXED_LENGTH,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Large descriptors */
 
 	0,
+<<<<<<< HEAD
 	ACPI_FIXED_LENGTH,	/* 01 Memory24 */
 	ACPI_FIXED_LENGTH,	/* 02 generic_register */
 	0,
@@ -394,6 +429,21 @@ static const u8 acpi_gbl_resource_types[] = {
 #define ACPI_RESOURCE_ERROR(plist)  ACPI_ERROR(plist)
 #endif
 
+=======
+	ACPI_FIXED_LENGTH,
+	ACPI_FIXED_LENGTH,
+	0,
+	ACPI_VARIABLE_LENGTH,
+	ACPI_FIXED_LENGTH,
+	ACPI_FIXED_LENGTH,
+	ACPI_VARIABLE_LENGTH,
+	ACPI_VARIABLE_LENGTH,
+	ACPI_VARIABLE_LENGTH,
+	ACPI_VARIABLE_LENGTH,
+	ACPI_FIXED_LENGTH
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*******************************************************************************
  *
  * FUNCTION:    acpi_ut_walk_aml_resources
@@ -421,7 +471,10 @@ acpi_ut_walk_aml_resources(u8 * aml,
 	u8 resource_index;
 	u32 length;
 	u32 offset = 0;
+<<<<<<< HEAD
 	u8 end_tag[2] = { 0x79, 0x00 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ACPI_FUNCTION_TRACE(ut_walk_aml_resources);
 
@@ -443,10 +496,13 @@ acpi_ut_walk_aml_resources(u8 * aml,
 
 		status = acpi_ut_validate_resource(aml, &resource_index);
 		if (ACPI_FAILURE(status)) {
+<<<<<<< HEAD
 			/*
 			 * Exit on failure. Cannot continue because the descriptor length
 			 * may be bogus also.
 			 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return_ACPI_STATUS(status);
 		}
 
@@ -461,7 +517,11 @@ acpi_ut_walk_aml_resources(u8 * aml,
 			    user_function(aml, length, offset, resource_index,
 					  context);
 			if (ACPI_FAILURE(status)) {
+<<<<<<< HEAD
 				return_ACPI_STATUS(status);
+=======
+				return (status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
@@ -494,6 +554,7 @@ acpi_ut_walk_aml_resources(u8 * aml,
 
 	/* Did not find an end_tag descriptor */
 
+<<<<<<< HEAD
 	if (user_function) {
 
 		/* Insert an end_tag anyway. acpi_rs_get_list_length always leaves room */
@@ -507,6 +568,9 @@ acpi_ut_walk_aml_resources(u8 * aml,
 	}
 
 	return_ACPI_STATUS(AE_AML_NO_RESOURCE_END_TAG);
+=======
+	return (AE_AML_NO_RESOURCE_END_TAG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*******************************************************************************
@@ -527,7 +591,10 @@ acpi_ut_walk_aml_resources(u8 * aml,
 
 acpi_status acpi_ut_validate_resource(void *aml, u8 * return_index)
 {
+<<<<<<< HEAD
 	union aml_resource *aml_resource;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 resource_type;
 	u8 resource_index;
 	acpi_rs_length resource_length;
@@ -549,7 +616,11 @@ acpi_status acpi_ut_validate_resource(void *aml, u8 * return_index)
 		/* Verify the large resource type (name) against the max */
 
 		if (resource_type > ACPI_RESOURCE_NAME_LARGE_MAX) {
+<<<<<<< HEAD
 			goto invalid_resource;
+=======
+			return (AE_AML_INVALID_RESOURCE_TYPE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/*
@@ -566,6 +637,7 @@ acpi_status acpi_ut_validate_resource(void *aml, u8 * return_index)
 		    ((resource_type & ACPI_RESOURCE_NAME_SMALL_MASK) >> 3);
 	}
 
+<<<<<<< HEAD
 	/*
 	 * Check validity of the resource type, via acpi_gbl_resource_types. Zero
 	 * indicates an invalid resource.
@@ -577,6 +649,17 @@ acpi_status acpi_ut_validate_resource(void *aml, u8 * return_index)
 	/*
 	 * Validate the resource_length field. This ensures that the length
 	 * is at least reasonable, and guarantees that it is non-zero.
+=======
+	/* Check validity of the resource type, zero indicates name is invalid */
+
+	if (!acpi_gbl_resource_types[resource_index]) {
+		return (AE_AML_INVALID_RESOURCE_TYPE);
+	}
+
+	/*
+	 * 2) Validate the resource_length field. This ensures that the length
+	 *    is at least reasonable, and guarantees that it is non-zero.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	resource_length = acpi_ut_get_resource_length(aml);
 	minimum_resource_length = acpi_gbl_resource_aml_sizes[resource_index];
@@ -589,7 +672,11 @@ acpi_status acpi_ut_validate_resource(void *aml, u8 * return_index)
 		/* Fixed length resource, length must match exactly */
 
 		if (resource_length != minimum_resource_length) {
+<<<<<<< HEAD
 			goto bad_resource_length;
+=======
+			return (AE_AML_BAD_RESOURCE_LENGTH);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		break;
 
@@ -598,7 +685,11 @@ acpi_status acpi_ut_validate_resource(void *aml, u8 * return_index)
 		/* Variable length resource, length must be at least the minimum */
 
 		if (resource_length < minimum_resource_length) {
+<<<<<<< HEAD
 			goto bad_resource_length;
+=======
+			return (AE_AML_BAD_RESOURCE_LENGTH);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		break;
 
@@ -608,7 +699,11 @@ acpi_status acpi_ut_validate_resource(void *aml, u8 * return_index)
 
 		if ((resource_length > minimum_resource_length) ||
 		    (resource_length < (minimum_resource_length - 1))) {
+<<<<<<< HEAD
 			goto bad_resource_length;
+=======
+			return (AE_AML_BAD_RESOURCE_LENGTH);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		break;
 
@@ -616,6 +711,7 @@ acpi_status acpi_ut_validate_resource(void *aml, u8 * return_index)
 
 		/* Shouldn't happen (because of validation earlier), but be sure */
 
+<<<<<<< HEAD
 		goto invalid_resource;
 	}
 
@@ -633,6 +729,9 @@ acpi_status acpi_ut_validate_resource(void *aml, u8 * return_index)
 					     type));
 			return (AE_AML_INVALID_RESOURCE_TYPE);
 		}
+=======
+		return (AE_AML_INVALID_RESOURCE_TYPE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Optionally return the resource table index */
@@ -642,6 +741,7 @@ acpi_status acpi_ut_validate_resource(void *aml, u8 * return_index)
 	}
 
 	return (AE_OK);
+<<<<<<< HEAD
 
       invalid_resource:
 
@@ -658,6 +758,8 @@ acpi_status acpi_ut_validate_resource(void *aml, u8 * return_index)
 			     resource_type, resource_length,
 			     minimum_resource_length));
 	return (AE_AML_BAD_RESOURCE_LENGTH);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*******************************************************************************

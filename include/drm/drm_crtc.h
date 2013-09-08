@@ -29,9 +29,14 @@
 #include <linux/spinlock.h>
 #include <linux/types.h>
 #include <linux/idr.h>
+<<<<<<< HEAD
 #include <linux/fb.h>
 
 #include <drm/drm_fourcc.h>
+=======
+
+#include <linux/fb.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct drm_device;
 struct drm_mode_set;
@@ -45,7 +50,10 @@ struct drm_framebuffer;
 #define DRM_MODE_OBJECT_PROPERTY 0xb0b0b0b0
 #define DRM_MODE_OBJECT_FB 0xfbfbfbfb
 #define DRM_MODE_OBJECT_BLOB 0xbbbbbbbb
+<<<<<<< HEAD
 #define DRM_MODE_OBJECT_PLANE 0xeeeeeeee
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct drm_mode_object {
 	uint32_t id;
@@ -120,8 +128,14 @@ struct drm_display_mode {
 
 	char name[DRM_DISPLAY_MODE_LEN];
 
+<<<<<<< HEAD
 	enum drm_mode_status status;
 	unsigned int type;
+=======
+	int connector_count;
+	enum drm_mode_status status;
+	int type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Proposed mode values */
 	int clock;		/* in kHz */
@@ -206,8 +220,11 @@ struct drm_display_info {
 	enum subpixel_order subpixel_order;
 	u32 color_formats;
 
+<<<<<<< HEAD
 	u8 cea_rev;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *raw_edid; /* if any */
 };
 
@@ -239,15 +256,22 @@ struct drm_framebuffer {
 	struct list_head head;
 	struct drm_mode_object base;
 	const struct drm_framebuffer_funcs *funcs;
+<<<<<<< HEAD
 	unsigned int pitches[4];
 	unsigned int offsets[4];
+=======
+	unsigned int pitch;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int width;
 	unsigned int height;
 	/* depth can be 15 or 16 */
 	unsigned int depth;
 	int bits_per_pixel;
 	int flags;
+<<<<<<< HEAD
 	uint32_t pixel_format; /* fourcc format */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head filp_head;
 	/* if you are using the helper */
 	void *helper_private;
@@ -257,7 +281,11 @@ struct drm_property_blob {
 	struct drm_mode_object base;
 	struct list_head head;
 	unsigned int length;
+<<<<<<< HEAD
 	unsigned char data[];
+=======
+	void *data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct drm_property_enum {
@@ -281,7 +309,10 @@ struct drm_crtc;
 struct drm_connector;
 struct drm_encoder;
 struct drm_pending_vblank_event;
+<<<<<<< HEAD
 struct drm_plane;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * drm_crtc_funcs - control CRTCs for a given device
@@ -345,6 +376,7 @@ struct drm_crtc_funcs {
 
 /**
  * drm_crtc - central CRTC control structure
+<<<<<<< HEAD
  * @dev: parent DRM device
  * @head: list management
  * @base: base KMS object for ID tracking etc.
@@ -360,6 +392,12 @@ struct drm_crtc_funcs {
  * @framedur_ns: precise line timing
  * @pixeldur_ns: precise pixel timing
  * @helper_private: mid-layer private data
+=======
+ * @enabled: is this CRTC enabled?
+ * @x: x position on screen
+ * @y: y position on screen
+ * @funcs: CRTC control functions
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Each CRTC may have one or more connectors associated with it.  This structure
  * allows the CRTC to be controlled.
@@ -438,6 +476,7 @@ struct drm_connector_funcs {
 	void (*force)(struct drm_connector *connector);
 };
 
+<<<<<<< HEAD
 /**
  * drm_encoder_funcs - encoder controls
  * @reset: reset state (e.g. at init or resume time)
@@ -445,6 +484,8 @@ struct drm_connector_funcs {
  *
  * Encoders sit between CRTCs and connectors.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct drm_encoder_funcs {
 	void (*reset)(struct drm_encoder *encoder);
 	void (*destroy)(struct drm_encoder *encoder);
@@ -453,6 +494,7 @@ struct drm_encoder_funcs {
 #define DRM_CONNECTOR_MAX_UMODES 16
 #define DRM_CONNECTOR_MAX_PROPERTY 16
 #define DRM_CONNECTOR_LEN 32
+<<<<<<< HEAD
 #define DRM_CONNECTOR_MAX_ENCODER 3
 
 /**
@@ -469,6 +511,12 @@ struct drm_encoder_funcs {
  *
  * CRTCs drive pixels to encoders, which convert them into signals
  * appropriate for a given connector or set of connectors.
+=======
+#define DRM_CONNECTOR_MAX_ENCODER 2
+
+/**
+ * drm_encoder - central DRM encoder structure
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct drm_encoder {
 	struct drm_device *dev;
@@ -500,6 +548,7 @@ enum drm_connector_force {
 /* DACs should rarely do this without a lot of testing */
 #define DRM_CONNECTOR_POLL_DISCONNECT (1 << 2)
 
+<<<<<<< HEAD
 #define MAX_ELD_BYTES	128
 
 /**
@@ -535,6 +584,18 @@ enum drm_connector_force {
  * @video_latency: video latency info from ELD, if found
  * @audio_latency: audio latency info from ELD, if found
  * @null_edid_counter: track sinks that give us all zeros for the EDID
+=======
+/**
+ * drm_connector - central DRM connector control structure
+ * @crtc: CRTC this connector is currently connected to, NULL if none
+ * @interlace_allowed: can this connector handle interlaced modes?
+ * @doublescan_allowed: can this connector handle doublescan?
+ * @available_modes: modes available on this connector (from get_modes() + user)
+ * @initial_x: initial x position for this connector
+ * @initial_y: initial y position for this connector
+ * @status: connector connected?
+ * @funcs: connector control functions
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Each connector may be connected to one or more CRTCs, or may be clonable by
  * another connector if they can share a CRTC.  Each connector also has a specific
@@ -555,6 +616,10 @@ struct drm_connector {
 	bool doublescan_allowed;
 	struct list_head modes; /* list of modes on this connector */
 
+<<<<<<< HEAD
+=======
+	int initial_x, initial_y;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	enum drm_connector_status status;
 
 	/* these are modes added by probing with DDC or the BIOS */
@@ -578,6 +643,7 @@ struct drm_connector {
 	/* forced on connector */
 	enum drm_connector_force force;
 	uint32_t encoder_ids[DRM_CONNECTOR_MAX_ENCODER];
+<<<<<<< HEAD
 	struct drm_encoder *encoder; /* currently active encoder */
 
 	/* EDID bits */
@@ -587,10 +653,16 @@ struct drm_connector {
 	bool latency_present[2];
 	int video_latency[2];	/* [0]: progressive, [1]: interlaced */
 	int audio_latency[2];
+=======
+	uint32_t force_encoder_id;
+	struct drm_encoder *encoder; /* currently active encoder */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int null_edid_counter; /* needed to workaround some HW bugs where we get all 0s */
 };
 
 /**
+<<<<<<< HEAD
  * drm_plane_funcs - driver plane control functions
  * @update_plane: update the plane configuration
  * @disable_plane: shut down the plane
@@ -656,6 +728,9 @@ struct drm_plane {
  * @y: position of this CRTC relative to @fb
  * @connectors: array of connectors to drive with this CRTC if possible
  * @num_connectors: size of @connectors array
+=======
+ * struct drm_mode_set
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Represents a single crtc the connectors that it drives with what mode
  * and from which framebuffer it scans out from.
@@ -677,6 +752,7 @@ struct drm_mode_set {
 };
 
 /**
+<<<<<<< HEAD
  * struct drm_mode_config_funcs - basic driver provided mode setting functions
  * @fb_create: create a new framebuffer object
  * @output_poll_changed: function to handle output configuration changes
@@ -704,6 +780,15 @@ struct drm_mode_config_funcs {
  * running simultaneously on different heads, each with their own mode
  * configuration and freedom of mode setting).
  */
+=======
+ * struct drm_mode_config_funcs - configure CRTCs for a given screen layout
+ */
+struct drm_mode_config_funcs {
+	struct drm_framebuffer *(*fb_create)(struct drm_device *dev, struct drm_file *file_priv, struct drm_mode_fb_cmd *mode_cmd);
+	void (*output_poll_changed)(struct drm_device *dev);
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct drm_mode_group {
 	uint32_t num_crtcs;
 	uint32_t num_encoders;
@@ -715,6 +800,7 @@ struct drm_mode_group {
 
 /**
  * drm_mode_config - Mode configuration control structure
+<<<<<<< HEAD
  * @mutex: mutex protecting KMS related lists and structures
  * @idr_mutex: mutex for KMS ID allocation and management
  * @crtc_idr: main KMS ID tracking object
@@ -739,6 +825,9 @@ struct drm_mode_group {
  * Core mode resource tracking structure.  All CRTC, encoders, and connectors
  * enumerated by the driver are added here, as are global properties.  Some
  * global restrictions are also here, e.g. dimension restrictions.
+=======
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct drm_mode_config {
 	struct mutex mutex; /* protects configuration (mode lists etc.) */
@@ -751,8 +840,11 @@ struct drm_mode_config {
 	struct list_head connector_list;
 	int num_encoder;
 	struct list_head encoder_list;
+<<<<<<< HEAD
 	int num_plane;
 	struct list_head plane_list;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int num_crtc;
 	struct list_head crtc_list;
@@ -796,9 +888,12 @@ struct drm_mode_config {
 	struct drm_property *scaling_mode_property;
 	struct drm_property *dithering_mode_property;
 	struct drm_property *dirty_info_property;
+<<<<<<< HEAD
 
 	/* dumb ioctl parameters */
 	uint32_t preferred_depth, prefer_shadow;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define obj_to_crtc(x) container_of(x, struct drm_crtc, base)
@@ -808,6 +903,7 @@ struct drm_mode_config {
 #define obj_to_fb(x) container_of(x, struct drm_framebuffer, base)
 #define obj_to_property(x) container_of(x, struct drm_property, base)
 #define obj_to_blob(x) container_of(x, struct drm_property_blob, base)
+<<<<<<< HEAD
 #define obj_to_plane(x) container_of(x, struct drm_plane, base)
 
 struct drm_prop_enum_list {
@@ -841,6 +937,26 @@ extern int drm_plane_init(struct drm_device *dev,
 			  const uint32_t *formats, uint32_t format_count,
 			  bool priv);
 extern void drm_plane_cleanup(struct drm_plane *plane);
+=======
+
+
+extern void drm_crtc_init(struct drm_device *dev,
+			  struct drm_crtc *crtc,
+			  const struct drm_crtc_funcs *funcs);
+extern void drm_crtc_cleanup(struct drm_crtc *crtc);
+
+extern void drm_connector_init(struct drm_device *dev,
+			    struct drm_connector *connector,
+			    const struct drm_connector_funcs *funcs,
+			    int connector_type);
+
+extern void drm_connector_cleanup(struct drm_connector *connector);
+
+extern void drm_encoder_init(struct drm_device *dev,
+			     struct drm_encoder *encoder,
+			     const struct drm_encoder_funcs *funcs,
+			     int encoder_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void drm_encoder_cleanup(struct drm_encoder *encoder);
 
@@ -857,7 +973,10 @@ extern struct edid *drm_get_edid(struct drm_connector *connector,
 extern int drm_add_edid_modes(struct drm_connector *connector, struct edid *edid);
 extern void drm_mode_probed_add(struct drm_connector *connector, struct drm_display_mode *mode);
 extern void drm_mode_remove(struct drm_connector *connector, struct drm_display_mode *mode);
+<<<<<<< HEAD
 extern void drm_mode_copy(struct drm_display_mode *dst, const struct drm_display_mode *src);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct drm_display_mode *drm_mode_duplicate(struct drm_device *dev,
 						   const struct drm_display_mode *mode);
 extern void drm_mode_debug_printmodeline(struct drm_display_mode *mode);
@@ -872,7 +991,11 @@ extern int drm_mode_height(struct drm_display_mode *mode);
 /* for us by fb module */
 extern int drm_mode_attachmode_crtc(struct drm_device *dev,
 				    struct drm_crtc *crtc,
+<<<<<<< HEAD
 				    const struct drm_display_mode *mode);
+=======
+				    struct drm_display_mode *mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int drm_mode_detachmode_crtc(struct drm_device *dev, struct drm_display_mode *mode);
 
 extern struct drm_display_mode *drm_mode_create(struct drm_device *dev);
@@ -914,6 +1037,7 @@ extern int drm_connector_attach_property(struct drm_connector *connector,
 				      struct drm_property *property, uint64_t init_val);
 extern struct drm_property *drm_property_create(struct drm_device *dev, int flags,
 						const char *name, int num_values);
+<<<<<<< HEAD
 extern struct drm_property *drm_property_create_enum(struct drm_device *dev, int flags,
 					 const char *name,
 					 const struct drm_prop_enum_list *props,
@@ -921,6 +1045,8 @@ extern struct drm_property *drm_property_create_enum(struct drm_device *dev, int
 struct drm_property *drm_property_create_range(struct drm_device *dev, int flags,
 					 const char *name,
 					 uint64_t min, uint64_t max);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void drm_property_destroy(struct drm_device *dev, struct drm_property *property);
 extern int drm_property_add_enum(struct drm_property *property, int index,
 				 uint64_t value, const char *name);
@@ -936,32 +1062,46 @@ extern int drm_mode_connector_attach_encoder(struct drm_connector *connector,
 					     struct drm_encoder *encoder);
 extern void drm_mode_connector_detach_encoder(struct drm_connector *connector,
 					   struct drm_encoder *encoder);
+<<<<<<< HEAD
 extern int drm_mode_crtc_set_gamma_size(struct drm_crtc *crtc,
+=======
+extern bool drm_mode_crtc_set_gamma_size(struct drm_crtc *crtc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					 int gamma_size);
 extern struct drm_mode_object *drm_mode_object_find(struct drm_device *dev,
 		uint32_t id, uint32_t type);
 /* IOCTLs */
 extern int drm_mode_getresources(struct drm_device *dev,
 				 void *data, struct drm_file *file_priv);
+<<<<<<< HEAD
 extern int drm_mode_getplane_res(struct drm_device *dev, void *data,
 				   struct drm_file *file_priv);
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int drm_mode_getcrtc(struct drm_device *dev,
 			    void *data, struct drm_file *file_priv);
 extern int drm_mode_getconnector(struct drm_device *dev,
 			      void *data, struct drm_file *file_priv);
 extern int drm_mode_setcrtc(struct drm_device *dev,
 			    void *data, struct drm_file *file_priv);
+<<<<<<< HEAD
 extern int drm_mode_getplane(struct drm_device *dev,
 			       void *data, struct drm_file *file_priv);
 extern int drm_mode_setplane(struct drm_device *dev,
 			       void *data, struct drm_file *file_priv);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int drm_mode_cursor_ioctl(struct drm_device *dev,
 				void *data, struct drm_file *file_priv);
 extern int drm_mode_addfb(struct drm_device *dev,
 			  void *data, struct drm_file *file_priv);
+<<<<<<< HEAD
 extern int drm_mode_addfb2(struct drm_device *dev,
 			   void *data, struct drm_file *file_priv);
 extern uint32_t drm_mode_legacy_fb_format(uint32_t bpp, uint32_t depth);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int drm_mode_rmfb(struct drm_device *dev,
 			 void *data, struct drm_file *file_priv);
 extern int drm_mode_getfb(struct drm_device *dev,
@@ -1012,7 +1152,10 @@ extern int drm_add_modes_noedid(struct drm_connector *connector,
 				int hdisplay, int vdisplay);
 
 extern int drm_edid_header_is_valid(const u8 *raw_edid);
+<<<<<<< HEAD
 extern bool drm_edid_block_valid(u8 *raw_edid);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern bool drm_edid_is_valid(struct edid *edid);
 struct drm_display_mode *drm_mode_find_dmt(struct drm_device *dev,
 					   int hsize, int vsize, int fresh);
@@ -1023,7 +1166,10 @@ extern int drm_mode_mmap_dumb_ioctl(struct drm_device *dev,
 				    void *data, struct drm_file *file_priv);
 extern int drm_mode_destroy_dumb_ioctl(struct drm_device *dev,
 				      void *data, struct drm_file *file_priv);
+<<<<<<< HEAD
 
 extern void drm_fb_get_bpp_depth(uint32_t format, unsigned int *depth,
 				 int *bpp);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __DRM_CRTC_H__ */

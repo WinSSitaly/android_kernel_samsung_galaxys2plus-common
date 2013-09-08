@@ -296,6 +296,7 @@ static int das800_probe(struct comedi_device *dev)
 	switch (id_bits) {
 	case 0x0:
 		if (board == das800) {
+<<<<<<< HEAD
 			dev_dbg(dev->hw_dev, "Board model: DAS-800\n");
 			return board;
 		}
@@ -304,10 +305,21 @@ static int das800_probe(struct comedi_device *dev)
 			return board;
 		}
 		dev_dbg(dev->hw_dev, "Board model (probed): DAS-800\n");
+=======
+			printk(" Board model: DAS-800\n");
+			return board;
+		}
+		if (board == ciodas800) {
+			printk(" Board model: CIO-DAS800\n");
+			return board;
+		}
+		printk(" Board model (probed): DAS-800\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return das800;
 		break;
 	case 0x2:
 		if (board == das801) {
+<<<<<<< HEAD
 			dev_dbg(dev->hw_dev, "Board model: DAS-801\n");
 			return board;
 		}
@@ -316,10 +328,21 @@ static int das800_probe(struct comedi_device *dev)
 			return board;
 		}
 		dev_dbg(dev->hw_dev, "Board model (probed): DAS-801\n");
+=======
+			printk(" Board model: DAS-801\n");
+			return board;
+		}
+		if (board == ciodas801) {
+			printk(" Board model: CIO-DAS801\n");
+			return board;
+		}
+		printk(" Board model (probed): DAS-801\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return das801;
 		break;
 	case 0x3:
 		if (board == das802) {
+<<<<<<< HEAD
 			dev_dbg(dev->hw_dev, "Board model: DAS-802\n");
 			return board;
 		}
@@ -337,6 +360,25 @@ static int das800_probe(struct comedi_device *dev)
 	default:
 		dev_dbg(dev->hw_dev, "Board model: probe returned 0x%x (unknown)\n",
 			id_bits);
+=======
+			printk(" Board model: DAS-802\n");
+			return board;
+		}
+		if (board == ciodas802) {
+			printk(" Board model: CIO-DAS802\n");
+			return board;
+		}
+		if (board == ciodas80216) {
+			printk(" Board model: CIO-DAS802/16\n");
+			return board;
+		}
+		printk(" Board model (probed): DAS-802\n");
+		return das802;
+		break;
+	default:
+		printk(" Board model: probe returned 0x%x (unknown)\n",
+		       id_bits);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return board;
 		break;
 	}
@@ -466,43 +508,70 @@ static int das800_attach(struct comedi_device *dev, struct comedi_devconfig *it)
 	unsigned long irq_flags;
 	int board;
 
+<<<<<<< HEAD
 	dev_info(dev->hw_dev, "comedi%d: das800: io 0x%lx\n", dev->minor,
 		 iobase);
 	if (irq)
 		dev_dbg(dev->hw_dev, "irq %u\n", irq);
+=======
+	printk("comedi%d: das800: io 0x%lx", dev->minor, iobase);
+	if (irq)
+		printk(", irq %u", irq);
+	printk("\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* allocate and initialize dev->private */
 	if (alloc_private(dev, sizeof(struct das800_private)) < 0)
 		return -ENOMEM;
 
 	if (iobase == 0) {
+<<<<<<< HEAD
 		dev_err(dev->hw_dev, "io base address required for das800\n");
+=======
+		printk("io base address required for das800\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
 	/* check if io addresses are available */
 	if (!request_region(iobase, DAS800_SIZE, "das800")) {
+<<<<<<< HEAD
 		dev_err(dev->hw_dev, "I/O port conflict\n");
+=======
+		printk("I/O port conflict\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	}
 	dev->iobase = iobase;
 
 	board = das800_probe(dev);
 	if (board < 0) {
+<<<<<<< HEAD
 		dev_dbg(dev->hw_dev, "unable to determine board type\n");
+=======
+		printk("unable to determine board type\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 	dev->board_ptr = das800_boards + board;
 
 	/* grab our IRQ */
 	if (irq == 1 || irq > 7) {
+<<<<<<< HEAD
 		dev_err(dev->hw_dev, "irq out of range\n");
+=======
+		printk("irq out of range\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 	if (irq) {
 		if (request_irq(irq, das800_interrupt, 0, "das800", dev)) {
+<<<<<<< HEAD
 			dev_err(dev->hw_dev, "unable to allocate irq %u\n",
 				irq);
+=======
+			printk("unable to allocate irq %u\n", irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EINVAL;
 		}
 	}
@@ -558,7 +627,11 @@ static int das800_attach(struct comedi_device *dev, struct comedi_devconfig *it)
 
 static int das800_detach(struct comedi_device *dev)
 {
+<<<<<<< HEAD
 	dev_info(dev->hw_dev, "comedi%d: das800: remove\n", dev->minor);
+=======
+	printk("comedi%d: das800: remove\n", dev->minor);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* only free stuff if it has been allocated by _attach */
 	if (dev->iobase)

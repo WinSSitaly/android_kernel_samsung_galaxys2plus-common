@@ -27,7 +27,10 @@
 #include <linux/msi.h>
 #include <linux/of_platform.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/prom.h>
 #include <asm/hw_irq.h>
 #include <asm/ppc-pci.h>

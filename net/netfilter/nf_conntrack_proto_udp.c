@@ -25,6 +25,7 @@
 #include <net/netfilter/ipv4/nf_conntrack_ipv4.h>
 #include <net/netfilter/ipv6/nf_conntrack_ipv6.h>
 
+<<<<<<< HEAD
 enum udp_conntrack {
 	UDP_CT_UNREPLIED,
 	UDP_CT_REPLIED,
@@ -35,6 +36,10 @@ static unsigned int udp_timeouts[UDP_CT_MAX] = {
 	[UDP_CT_UNREPLIED]	= 30*HZ,
 	[UDP_CT_REPLIED]	= 180*HZ,
 };
+=======
+static unsigned int nf_ct_udp_timeout __read_mostly = 30*HZ;
+static unsigned int nf_ct_udp_timeout_stream __read_mostly = 180*HZ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static bool udp_pkt_to_tuple(const struct sk_buff *skb,
 			     unsigned int dataoff,
@@ -71,23 +76,31 @@ static int udp_print_tuple(struct seq_file *s,
 			  ntohs(tuple->dst.u.udp.port));
 }
 
+<<<<<<< HEAD
 static unsigned int *udp_get_timeouts(struct net *net)
 {
 	return udp_timeouts;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Returns verdict for packet, and may modify conntracktype */
 static int udp_packet(struct nf_conn *ct,
 		      const struct sk_buff *skb,
 		      unsigned int dataoff,
 		      enum ip_conntrack_info ctinfo,
 		      u_int8_t pf,
+<<<<<<< HEAD
 		      unsigned int hooknum,
 		      unsigned int *timeouts)
+=======
+		      unsigned int hooknum)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* If we've seen traffic both ways, this is some kind of UDP
 	   stream.  Extend timeout. */
 	if (test_bit(IPS_SEEN_REPLY_BIT, &ct->status)) {
+<<<<<<< HEAD
 		nf_ct_refresh_acct(ct, ctinfo, skb,
 				   timeouts[UDP_CT_REPLIED]);
 		/* Also, more likely to be important, and not a probe */
@@ -97,12 +110,25 @@ static int udp_packet(struct nf_conn *ct,
 		nf_ct_refresh_acct(ct, ctinfo, skb,
 				   timeouts[UDP_CT_UNREPLIED]);
 	}
+=======
+		nf_ct_refresh_acct(ct, ctinfo, skb, nf_ct_udp_timeout_stream);
+		/* Also, more likely to be important, and not a probe */
+		if (!test_and_set_bit(IPS_ASSURED_BIT, &ct->status))
+			nf_conntrack_event_cache(IPCT_ASSURED, ct);
+	} else
+		nf_ct_refresh_acct(ct, ctinfo, skb, nf_ct_udp_timeout);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NF_ACCEPT;
 }
 
 /* Called when a new connection for this protocol found. */
 static bool udp_new(struct nf_conn *ct, const struct sk_buff *skb,
+<<<<<<< HEAD
 		    unsigned int dataoff, unsigned int *timeouts)
+=======
+		    unsigned int dataoff)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return true;
 }
@@ -152,6 +178,7 @@ static int udp_error(struct net *net, struct nf_conn *tmpl, struct sk_buff *skb,
 	return NF_ACCEPT;
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
 
 #include <linux/netfilter/nfnetlink.h>
@@ -198,20 +225,30 @@ udp_timeout_nla_policy[CTA_TIMEOUT_UDP_MAX+1] = {
 };
 #endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SYSCTL
 static unsigned int udp_sysctl_table_users;
 static struct ctl_table_header *udp_sysctl_header;
 static struct ctl_table udp_sysctl_table[] = {
 	{
 		.procname	= "nf_conntrack_udp_timeout",
+<<<<<<< HEAD
 		.data		= &udp_timeouts[UDP_CT_UNREPLIED],
+=======
+		.data		= &nf_ct_udp_timeout,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.maxlen		= sizeof(unsigned int),
 		.mode		= 0644,
 		.proc_handler	= proc_dointvec_jiffies,
 	},
 	{
 		.procname	= "nf_conntrack_udp_timeout_stream",
+<<<<<<< HEAD
 		.data		= &udp_timeouts[UDP_CT_REPLIED],
+=======
+		.data		= &nf_ct_udp_timeout_stream,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.maxlen		= sizeof(unsigned int),
 		.mode		= 0644,
 		.proc_handler	= proc_dointvec_jiffies,
@@ -222,14 +259,22 @@ static struct ctl_table udp_sysctl_table[] = {
 static struct ctl_table udp_compat_sysctl_table[] = {
 	{
 		.procname	= "ip_conntrack_udp_timeout",
+<<<<<<< HEAD
 		.data		= &udp_timeouts[UDP_CT_UNREPLIED],
+=======
+		.data		= &nf_ct_udp_timeout,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.maxlen		= sizeof(unsigned int),
 		.mode		= 0644,
 		.proc_handler	= proc_dointvec_jiffies,
 	},
 	{
 		.procname	= "ip_conntrack_udp_timeout_stream",
+<<<<<<< HEAD
 		.data		= &udp_timeouts[UDP_CT_REPLIED],
+=======
+		.data		= &nf_ct_udp_timeout_stream,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.maxlen		= sizeof(unsigned int),
 		.mode		= 0644,
 		.proc_handler	= proc_dointvec_jiffies,
@@ -248,15 +293,22 @@ struct nf_conntrack_l4proto nf_conntrack_l4proto_udp4 __read_mostly =
 	.invert_tuple		= udp_invert_tuple,
 	.print_tuple		= udp_print_tuple,
 	.packet			= udp_packet,
+<<<<<<< HEAD
 	.get_timeouts		= udp_get_timeouts,
 	.new			= udp_new,
 	.error			= udp_error,
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK)
+=======
+	.new			= udp_new,
+	.error			= udp_error,
+#if defined(CONFIG_NF_CT_NETLINK) || defined(CONFIG_NF_CT_NETLINK_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.tuple_to_nlattr	= nf_ct_port_tuple_to_nlattr,
 	.nlattr_to_tuple	= nf_ct_port_nlattr_to_tuple,
 	.nlattr_tuple_size	= nf_ct_port_nlattr_tuple_size,
 	.nla_policy		= nf_ct_port_nla_policy,
 #endif
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
 	.ctnl_timeout		= {
 		.nlattr_to_obj	= udp_timeout_nlattr_to_obj,
@@ -266,6 +318,8 @@ struct nf_conntrack_l4proto nf_conntrack_l4proto_udp4 __read_mostly =
 		.nla_policy	= udp_timeout_nla_policy,
 	},
 #endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SYSCTL
 	.ctl_table_users	= &udp_sysctl_table_users,
 	.ctl_table_header	= &udp_sysctl_header,
@@ -286,15 +340,22 @@ struct nf_conntrack_l4proto nf_conntrack_l4proto_udp6 __read_mostly =
 	.invert_tuple		= udp_invert_tuple,
 	.print_tuple		= udp_print_tuple,
 	.packet			= udp_packet,
+<<<<<<< HEAD
 	.get_timeouts		= udp_get_timeouts,
 	.new			= udp_new,
 	.error			= udp_error,
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK)
+=======
+	.new			= udp_new,
+	.error			= udp_error,
+#if defined(CONFIG_NF_CT_NETLINK) || defined(CONFIG_NF_CT_NETLINK_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.tuple_to_nlattr	= nf_ct_port_tuple_to_nlattr,
 	.nlattr_to_tuple	= nf_ct_port_nlattr_to_tuple,
 	.nlattr_tuple_size	= nf_ct_port_nlattr_tuple_size,
 	.nla_policy		= nf_ct_port_nla_policy,
 #endif
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
 	.ctnl_timeout		= {
 		.nlattr_to_obj	= udp_timeout_nlattr_to_obj,
@@ -304,6 +365,8 @@ struct nf_conntrack_l4proto nf_conntrack_l4proto_udp6 __read_mostly =
 		.nla_policy	= udp_timeout_nla_policy,
 	},
 #endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SYSCTL
 	.ctl_table_users	= &udp_sysctl_table_users,
 	.ctl_table_header	= &udp_sysctl_header,

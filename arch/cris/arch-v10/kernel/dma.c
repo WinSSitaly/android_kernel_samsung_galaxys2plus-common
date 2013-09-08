@@ -8,7 +8,10 @@
 
 #include <asm/dma.h>
 #include <arch/svinto.h>
+<<<<<<< HEAD
 #include <arch/system.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Macro to access ETRAX 100 registers */
 #define SETS(var, reg, field, val) var = (var & ~IO_MASK_(reg##_, field##_)) | \

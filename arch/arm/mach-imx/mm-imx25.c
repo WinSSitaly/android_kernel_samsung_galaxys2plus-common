@@ -24,10 +24,17 @@
 #include <asm/mach/map.h>
 
 #include <mach/common.h>
+<<<<<<< HEAD
 #include <mach/devices-common.h>
 #include <mach/hardware.h>
 #include <mach/mx25.h>
 #include <mach/iomux-v3.h>
+=======
+#include <mach/hardware.h>
+#include <mach/mx25.h>
+#include <mach/iomux-v3.h>
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/irqs.h>
 
 /*
@@ -57,6 +64,7 @@ void __init imx25_init_early(void)
 	mxc_arch_reset_init(MX25_IO_ADDRESS(MX25_WDOG_BASE_ADDR));
 }
 
+<<<<<<< HEAD
 void __init mx25_init_irq(void)
 {
 	mxc_init_irq(MX25_IO_ADDRESS(MX25_AVIC_BASE_ADDR));
@@ -101,3 +109,18 @@ void __init imx25_soc_init(void)
 	platform_device_register_simple("imx31-audmux", 0, imx25_audmux_res,
 					ARRAY_SIZE(imx25_audmux_res));
 }
+=======
+static struct mxc_gpio_port imx25_gpio_ports[] = {
+	DEFINE_IMX_GPIO_PORT_IRQ(MX25, 0, 1, MX25_INT_GPIO1),
+	DEFINE_IMX_GPIO_PORT_IRQ(MX25, 1, 2, MX25_INT_GPIO2),
+	DEFINE_IMX_GPIO_PORT_IRQ(MX25, 2, 3, MX25_INT_GPIO3),
+	DEFINE_IMX_GPIO_PORT_IRQ(MX25, 3, 4, MX25_INT_GPIO4),
+};
+
+void __init mx25_init_irq(void)
+{
+	mxc_init_irq(MX25_IO_ADDRESS(MX25_AVIC_BASE_ADDR));
+	mxc_gpio_init(imx25_gpio_ports,	ARRAY_SIZE(imx25_gpio_ports));
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

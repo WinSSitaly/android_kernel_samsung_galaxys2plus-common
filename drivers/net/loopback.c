@@ -41,6 +41,10 @@
 #include <linux/in.h>
 #include <linux/init.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <asm/io.h>
 
@@ -77,11 +81,14 @@ static netdev_tx_t loopback_xmit(struct sk_buff *skb,
 
 	skb_orphan(skb);
 
+<<<<<<< HEAD
 	/* Before queueing this packet to netif_rx(),
 	 * make sure dst is refcounted.
 	 */
 	skb_dst_force(skb);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skb->protocol = eth_type_trans(skb, dev);
 
 	/* it's OK to use per_cpu_ptr() because BHs are off */
@@ -173,7 +180,11 @@ static void loopback_setup(struct net_device *dev)
 	dev->features 		= NETIF_F_SG | NETIF_F_FRAGLIST
 		| NETIF_F_ALL_TSO
 		| NETIF_F_UFO
+<<<<<<< HEAD
 		| NETIF_F_HW_CSUM
+=======
+		| NETIF_F_NO_CSUM
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		| NETIF_F_RXCSUM
 		| NETIF_F_HIGHDMA
 		| NETIF_F_LLTX

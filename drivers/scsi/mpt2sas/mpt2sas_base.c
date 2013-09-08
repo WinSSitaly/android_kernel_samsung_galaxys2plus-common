@@ -42,6 +42,10 @@
  * USA.
  */
 
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/errno.h>
@@ -57,7 +61,10 @@
 #include <linux/sort.h>
 #include <linux/io.h>
 #include <linux/time.h>
+<<<<<<< HEAD
 #include <linux/kthread.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/aer.h>
 
 #include "mpt2sas_base.h"
@@ -84,9 +91,27 @@ static int missing_delay[2] = {-1, -1};
 module_param_array(missing_delay, int, NULL, 0);
 MODULE_PARM_DESC(missing_delay, " device missing delay , io missing delay");
 
+<<<<<<< HEAD
 static int mpt2sas_fwfault_debug;
 MODULE_PARM_DESC(mpt2sas_fwfault_debug, " enable detection of firmware fault "
 	"and halt firmware - (default=0)");
+=======
+/* diag_buffer_enable is bitwise
+ * bit 0 set = TRACE
+ * bit 1 set = SNAPSHOT
+ * bit 2 set = EXTENDED
+ *
+ * Either bit can be set, or both
+ */
+static int diag_buffer_enable;
+module_param(diag_buffer_enable, int, 0);
+MODULE_PARM_DESC(diag_buffer_enable, " post diag buffers "
+    "(TRACE=1/SNAPSHOT=2/EXTENDED=4/default=0)");
+
+static int mpt2sas_fwfault_debug;
+MODULE_PARM_DESC(mpt2sas_fwfault_debug, " enable detection of firmware fault "
+    "and halt firmware - (default=0)");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int disable_discovery = -1;
 module_param(disable_discovery, int, 0);
@@ -110,11 +135,15 @@ _scsih_set_fwfault_debug(const char *val, struct kernel_param *kp)
 		ioc->fwfault_debug = mpt2sas_fwfault_debug;
 	return 0;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_call(mpt2sas_fwfault_debug, _scsih_set_fwfault_debug,
     param_get_int, &mpt2sas_fwfault_debug, 0644);
 
 /**
+<<<<<<< HEAD
  *  mpt2sas_remove_dead_ioc_func - kthread context to remove dead ioc
  * @arg: input argument, used to derive ioc
  *
@@ -138,6 +167,8 @@ static int mpt2sas_remove_dead_ioc_func(void *arg)
 
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * _base_fault_reset_work - workq handling ioc fault conditions
  * @work: input argument, used to derive ioc
  * Context: sleep.
@@ -152,7 +183,10 @@ _base_fault_reset_work(struct work_struct *work)
 	unsigned long	 flags;
 	u32 doorbell;
 	int rc;
+<<<<<<< HEAD
 	struct task_struct *p;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&ioc->ioc_reset_in_progress_lock, flags);
 	if (ioc->shost_recovery)
@@ -160,6 +194,7 @@ _base_fault_reset_work(struct work_struct *work)
 	spin_unlock_irqrestore(&ioc->ioc_reset_in_progress_lock, flags);
 
 	doorbell = mpt2sas_base_get_iocstate(ioc, 0);
+<<<<<<< HEAD
 	if ((doorbell & MPI2_IOC_STATE_MASK) == MPI2_IOC_STATE_MASK) {
 		printk(MPT2SAS_INFO_FMT "%s : SAS host is non-operational !!!!\n",
 			ioc->name, __func__);
@@ -193,6 +228,8 @@ _base_fault_reset_work(struct work_struct *work)
 		return; /* don't rearm timer */
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((doorbell & MPI2_IOC_STATE_MASK) == MPI2_IOC_STATE_FAULT) {
 		rc = mpt2sas_base_hard_reset_handler(ioc, CAN_SLEEP,
 		    FORCE_BIG_HAMMER);
@@ -657,7 +694,11 @@ _base_sas_log_info(struct MPT2SAS_ADAPTER *ioc , u32 log_info)
 		return;
 
 	/* eat the loginfos associated with task aborts */
+<<<<<<< HEAD
 	if (ioc->ignore_loginfos && (log_info == 0x30050000 || log_info ==
+=======
+	if (ioc->ignore_loginfos && (log_info == 30050000 || log_info ==
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    0x31140000 || log_info == 0x31130000))
 		return;
 
@@ -740,7 +781,10 @@ mpt2sas_base_done(struct MPT2SAS_ADAPTER *ioc, u16 smid, u8 msix_index,
 		memcpy(ioc->base_cmds.reply, mpi_reply, mpi_reply->MsgLength*4);
 	}
 	ioc->base_cmds.status &= ~MPT2_CMD_PENDING;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	complete(&ioc->base_cmds.done);
 	return 1;
 }
@@ -883,21 +927,30 @@ union reply_descriptor {
 static irqreturn_t
 _base_interrupt(int irq, void *bus_id)
 {
+<<<<<<< HEAD
 	struct adapter_reply_queue *reply_q = bus_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	union reply_descriptor rd;
 	u32 completed_cmds;
 	u8 request_desript_type;
 	u16 smid;
 	u8 cb_idx;
 	u32 reply;
+<<<<<<< HEAD
 	u8 msix_index = reply_q->msix_index;
 	struct MPT2SAS_ADAPTER *ioc = reply_q->ioc;
+=======
+	u8 msix_index;
+	struct MPT2SAS_ADAPTER *ioc = bus_id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	Mpi2ReplyDescriptorsUnion_t *rpf;
 	u8 rc;
 
 	if (ioc->mask_interrupts)
 		return IRQ_NONE;
 
+<<<<<<< HEAD
 	if (!atomic_add_unless(&reply_q->busy, 1, 1))
 		return IRQ_NONE;
 
@@ -908,6 +961,13 @@ _base_interrupt(int irq, void *bus_id)
 		atomic_dec(&reply_q->busy);
 		return IRQ_NONE;
 	}
+=======
+	rpf = &ioc->reply_post_free[ioc->reply_post_host_index];
+	request_desript_type = rpf->Default.ReplyFlags
+	     & MPI2_RPY_DESCRIPT_FLAGS_TYPE_MASK;
+	if (request_desript_type == MPI2_RPY_DESCRIPT_FLAGS_UNUSED)
+		return IRQ_NONE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	completed_cmds = 0;
 	cb_idx = 0xFF;
@@ -916,7 +976,13 @@ _base_interrupt(int irq, void *bus_id)
 		if (rd.u.low == UINT_MAX || rd.u.high == UINT_MAX)
 			goto out;
 		reply = 0;
+<<<<<<< HEAD
 		smid = le16_to_cpu(rpf->Default.DescriptorTypeDependent1);
+=======
+		cb_idx = 0xFF;
+		smid = le16_to_cpu(rpf->Default.DescriptorTypeDependent1);
+		msix_index = rpf->Default.MSIxIndex;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (request_desript_type ==
 		    MPI2_RPY_DESCRIPT_FLAGS_ADDRESS_REPLY) {
 			reply = le32_to_cpu
@@ -960,6 +1026,7 @@ _base_interrupt(int irq, void *bus_id)
  next:
 
 		rpf->Words = cpu_to_le64(ULLONG_MAX);
+<<<<<<< HEAD
 		reply_q->reply_post_host_index =
 		    (reply_q->reply_post_host_index ==
 		    (ioc->reply_post_queue_depth - 1)) ? 0 :
@@ -972,12 +1039,26 @@ _base_interrupt(int irq, void *bus_id)
 			goto out;
 		if (!reply_q->reply_post_host_index)
 			rpf = reply_q->reply_post_free;
+=======
+		ioc->reply_post_host_index = (ioc->reply_post_host_index ==
+		    (ioc->reply_post_queue_depth - 1)) ? 0 :
+		    ioc->reply_post_host_index + 1;
+		request_desript_type =
+		    ioc->reply_post_free[ioc->reply_post_host_index].Default.
+		    ReplyFlags & MPI2_RPY_DESCRIPT_FLAGS_TYPE_MASK;
+		completed_cmds++;
+		if (request_desript_type == MPI2_RPY_DESCRIPT_FLAGS_UNUSED)
+			goto out;
+		if (!ioc->reply_post_host_index)
+			rpf = ioc->reply_post_free;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		else
 			rpf++;
 	} while (1);
 
  out:
 
+<<<<<<< HEAD
 	if (!completed_cmds) {
 		atomic_dec(&reply_q->busy);
 		return IRQ_NONE;
@@ -992,10 +1073,18 @@ _base_interrupt(int irq, void *bus_id)
 	writel(reply_q->reply_post_host_index | (msix_index <<
 	    MPI2_RPHI_MSIX_INDEX_SHIFT), &ioc->chip->ReplyPostHostIndex);
 	atomic_dec(&reply_q->busy);
+=======
+	if (!completed_cmds)
+		return IRQ_NONE;
+
+	wmb();
+	writel(ioc->reply_post_host_index, &ioc->chip->ReplyPostHostIndex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return IRQ_HANDLED;
 }
 
 /**
+<<<<<<< HEAD
  * _base_is_controller_msix_enabled - is controller support muli-reply queues
  * @ioc: per adapter object
  *
@@ -1040,6 +1129,8 @@ mpt2sas_base_flush_reply_queues(struct MPT2SAS_ADAPTER *ioc)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * mpt2sas_base_release_callback_handler - clear interrupt callback handler
  * @cb_idx: callback index
  *
@@ -1202,6 +1293,7 @@ _base_check_enable_msix(struct MPT2SAS_ADAPTER *ioc)
 	u16 message_control;
 
 
+<<<<<<< HEAD
 	/* Check whether controller SAS2008 B0 controller,
 	   if it is SAS2008 B0 controller use IO-APIC instead of MSIX */
 	if (ioc->pdev->device == MPI2_MFGPAGE_DEVID_SAS2008 &&
@@ -1209,6 +1301,8 @@ _base_check_enable_msix(struct MPT2SAS_ADAPTER *ioc)
 		return -EINVAL;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	base = pci_find_capability(ioc->pdev, PCI_CAP_ID_MSIX);
 	if (!base) {
 		dfailprintk(ioc, printk(MPT2SAS_INFO_FMT "msix not "
@@ -1217,6 +1311,7 @@ _base_check_enable_msix(struct MPT2SAS_ADAPTER *ioc)
 	}
 
 	/* get msix vector count */
+<<<<<<< HEAD
 	/* NUMA_IO not supported for older controllers */
 	if (ioc->pdev->device == MPI2_MFGPAGE_DEVID_SAS2004 ||
 	    ioc->pdev->device == MPI2_MFGPAGE_DEVID_SAS2008 ||
@@ -1233,10 +1328,18 @@ _base_check_enable_msix(struct MPT2SAS_ADAPTER *ioc)
 	dinitprintk(ioc, printk(MPT2SAS_INFO_FMT "msix is supported, "
 	    "vector_count(%d)\n", ioc->name, ioc->msix_vector_count));
 
+=======
+	pci_read_config_word(ioc->pdev, base + 2, &message_control);
+	ioc->msix_vector_count = (message_control & 0x3FF) + 1;
+
+	dinitprintk(ioc, printk(MPT2SAS_INFO_FMT "msix is supported, "
+	    "vector_count(%d)\n", ioc->name, ioc->msix_vector_count));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 /**
+<<<<<<< HEAD
  * _base_free_irq - free irq
  * @ioc: per adapter object
  *
@@ -1364,6 +1467,8 @@ _base_assign_reply_queues(struct MPT2SAS_ADAPTER *ioc)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * _base_disable_msix - disables msix
  * @ioc: per adapter object
  *
@@ -1385,6 +1490,7 @@ _base_disable_msix(struct MPT2SAS_ADAPTER *ioc)
 static int
 _base_enable_msix(struct MPT2SAS_ADAPTER *ioc)
 {
+<<<<<<< HEAD
 	struct msix_entry *entries, *a;
 	int r;
 	int i;
@@ -1392,6 +1498,12 @@ _base_enable_msix(struct MPT2SAS_ADAPTER *ioc)
 
 	INIT_LIST_HEAD(&ioc->reply_queue_list);
 
+=======
+	struct msix_entry entries;
+	int r;
+	u8 try_msix = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (msix_disable == -1 || msix_disable == 0)
 		try_msix = 1;
 
@@ -1401,6 +1513,7 @@ _base_enable_msix(struct MPT2SAS_ADAPTER *ioc)
 	if (_base_check_enable_msix(ioc) != 0)
 		goto try_ioapic;
 
+<<<<<<< HEAD
 	ioc->reply_queue_count = min_t(int, ioc->cpu_count,
 	    ioc->msix_vector_count);
 
@@ -1436,13 +1549,50 @@ _base_enable_msix(struct MPT2SAS_ADAPTER *ioc)
 	}
 
 	kfree(entries);
+=======
+	memset(&entries, 0, sizeof(struct msix_entry));
+	r = pci_enable_msix(ioc->pdev, &entries, 1);
+	if (r) {
+		dfailprintk(ioc, printk(MPT2SAS_INFO_FMT "pci_enable_msix "
+		    "failed (r=%d) !!!\n", ioc->name, r));
+		goto try_ioapic;
+	}
+
+	r = request_irq(entries.vector, _base_interrupt, IRQF_SHARED,
+	    ioc->name, ioc);
+	if (r) {
+		dfailprintk(ioc, printk(MPT2SAS_INFO_FMT "unable to allocate "
+		    "interrupt %d !!!\n", ioc->name, entries.vector));
+		pci_disable_msix(ioc->pdev);
+		goto try_ioapic;
+	}
+
+	ioc->pci_irq = entries.vector;
+	ioc->msix_enable = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 /* failback to io_apic interrupt routing */
  try_ioapic:
 
+<<<<<<< HEAD
 	r = _base_request_irq(ioc, 0, ioc->pdev->irq);
 
+=======
+	r = request_irq(ioc->pdev->irq, _base_interrupt, IRQF_SHARED,
+	    ioc->name, ioc);
+	if (r) {
+		printk(MPT2SAS_ERR_FMT "unable to allocate interrupt %d!\n",
+		    ioc->name, ioc->pdev->irq);
+		r = -EBUSY;
+		goto out_fail;
+	}
+
+	ioc->pci_irq = ioc->pdev->irq;
+	return 0;
+
+ out_fail:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return r;
 }
 
@@ -1461,7 +1611,10 @@ mpt2sas_base_map_resources(struct MPT2SAS_ADAPTER *ioc)
 	int i, r = 0;
 	u64 pio_chip = 0;
 	u64 chip_phys = 0;
+<<<<<<< HEAD
 	struct adapter_reply_queue *reply_q;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dinitprintk(ioc, printk(MPT2SAS_INFO_FMT "%s\n",
 	    ioc->name, __func__));
@@ -1524,11 +1677,17 @@ mpt2sas_base_map_resources(struct MPT2SAS_ADAPTER *ioc)
 	if (r)
 		goto out_fail;
 
+<<<<<<< HEAD
 	list_for_each_entry(reply_q, &ioc->reply_queue_list, list)
 		printk(MPT2SAS_INFO_FMT "%s: IRQ %d\n",
 		    reply_q->name,  ((ioc->msix_enable) ? "PCI-MSI-X enabled" :
 		    "IO-APIC enabled"), reply_q->vector);
 
+=======
+	printk(MPT2SAS_INFO_FMT "%s: IRQ %d\n",
+	    ioc->name,  ((ioc->msix_enable) ? "PCI-MSI-X enabled" :
+	    "IO-APIC enabled"), ioc->pci_irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk(MPT2SAS_INFO_FMT "iomem(0x%016llx), mapped(0x%p), size(%d)\n",
 	    ioc->name, (unsigned long long)chip_phys, ioc->chip, memap_sz);
 	printk(MPT2SAS_INFO_FMT "ioport(0x%016llx), size(%d)\n",
@@ -1543,6 +1702,10 @@ mpt2sas_base_map_resources(struct MPT2SAS_ADAPTER *ioc)
 	if (ioc->chip_phys)
 		iounmap(ioc->chip);
 	ioc->chip_phys = 0;
+<<<<<<< HEAD
+=======
+	ioc->pci_irq = -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pci_release_selected_regions(ioc->pdev, ioc->bars);
 	pci_disable_pcie_error_reporting(pdev);
 	pci_disable_device(pdev);
@@ -1789,12 +1952,15 @@ static inline void _base_writeq(__u64 b, volatile void __iomem *addr,
 }
 #endif
 
+<<<<<<< HEAD
 static inline u8
 _base_get_msix_index(struct MPT2SAS_ADAPTER *ioc)
 {
 	return ioc->cpu_msix_table[raw_smp_processor_id()];
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * mpt2sas_base_put_smid_scsi_io - send SCSI_IO request to firmware
  * @ioc: per adapter object
@@ -1811,7 +1977,11 @@ mpt2sas_base_put_smid_scsi_io(struct MPT2SAS_ADAPTER *ioc, u16 smid, u16 handle)
 
 
 	descriptor.SCSIIO.RequestFlags = MPI2_REQ_DESCRIPT_FLAGS_SCSI_IO;
+<<<<<<< HEAD
 	descriptor.SCSIIO.MSIxIndex =  _base_get_msix_index(ioc);
+=======
+	descriptor.SCSIIO.MSIxIndex = 0; /* TODO */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	descriptor.SCSIIO.SMID = cpu_to_le16(smid);
 	descriptor.SCSIIO.DevHandle = cpu_to_le16(handle);
 	descriptor.SCSIIO.LMID = 0;
@@ -1835,7 +2005,11 @@ mpt2sas_base_put_smid_hi_priority(struct MPT2SAS_ADAPTER *ioc, u16 smid)
 
 	descriptor.HighPriority.RequestFlags =
 	    MPI2_REQ_DESCRIPT_FLAGS_HIGH_PRIORITY;
+<<<<<<< HEAD
 	descriptor.HighPriority.MSIxIndex =  0;
+=======
+	descriptor.HighPriority.MSIxIndex = 0; /* TODO */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	descriptor.HighPriority.SMID = cpu_to_le16(smid);
 	descriptor.HighPriority.LMID = 0;
 	descriptor.HighPriority.Reserved1 = 0;
@@ -1857,7 +2031,11 @@ mpt2sas_base_put_smid_default(struct MPT2SAS_ADAPTER *ioc, u16 smid)
 	u64 *request = (u64 *)&descriptor;
 
 	descriptor.Default.RequestFlags = MPI2_REQ_DESCRIPT_FLAGS_DEFAULT_TYPE;
+<<<<<<< HEAD
 	descriptor.Default.MSIxIndex =  _base_get_msix_index(ioc);
+=======
+	descriptor.Default.MSIxIndex = 0; /* TODO */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	descriptor.Default.SMID = cpu_to_le16(smid);
 	descriptor.Default.LMID = 0;
 	descriptor.Default.DescriptorTypeDependent = 0;
@@ -1882,7 +2060,11 @@ mpt2sas_base_put_smid_target_assist(struct MPT2SAS_ADAPTER *ioc, u16 smid,
 
 	descriptor.SCSITarget.RequestFlags =
 	    MPI2_REQ_DESCRIPT_FLAGS_SCSI_TARGET;
+<<<<<<< HEAD
 	descriptor.SCSITarget.MSIxIndex =  _base_get_msix_index(ioc);
+=======
+	descriptor.SCSITarget.MSIxIndex = 0; /* TODO */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	descriptor.SCSITarget.SMID = cpu_to_le16(smid);
 	descriptor.SCSITarget.LMID = 0;
 	descriptor.SCSITarget.IoIndex = cpu_to_le16(io_index);
@@ -1971,10 +2153,13 @@ _base_display_intel_branding(struct MPT2SAS_ADAPTER *ioc)
 			printk(MPT2SAS_INFO_FMT "%s\n", ioc->name,
 			    MPT2SAS_INTEL_RMS2LL040_BRANDING);
 			break;
+<<<<<<< HEAD
 		case MPT2SAS_INTEL_RAMSDALE_SSDID:
 			printk(MPT2SAS_INFO_FMT "%s\n", ioc->name,
 			    MPT2SAS_INTEL_RAMSDALE_BRANDING);
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			break;
 		}
@@ -1984,6 +2169,7 @@ _base_display_intel_branding(struct MPT2SAS_ADAPTER *ioc)
 			printk(MPT2SAS_INFO_FMT "%s\n", ioc->name,
 			    MPT2SAS_INTEL_RS25GB008_BRANDING);
 			break;
+<<<<<<< HEAD
 		case MPT2SAS_INTEL_RMS25JB080_SSDID:
 			printk(MPT2SAS_INFO_FMT "%s\n", ioc->name,
 			    MPT2SAS_INTEL_RMS25JB080_BRANDING);
@@ -2000,6 +2186,8 @@ _base_display_intel_branding(struct MPT2SAS_ADAPTER *ioc)
 			printk(MPT2SAS_INFO_FMT "%s\n", ioc->name,
 			    MPT2SAS_INTEL_RMS25KB040_BRANDING);
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			break;
 		}
@@ -2067,10 +2255,18 @@ _base_display_ioc_capabilities(struct MPT2SAS_ADAPTER *ioc)
 {
 	int i = 0;
 	char desc[16];
+<<<<<<< HEAD
+=======
+	u8 revision;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 iounit_pg1_flags;
 	u32 bios_version;
 
 	bios_version = le32_to_cpu(ioc->bios_pg3.BiosVersion);
+<<<<<<< HEAD
+=======
+	pci_read_config_byte(ioc->pdev, PCI_CLASS_REVISION, &revision);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	strncpy(desc, ioc->manu_pg0.ChipName, 16);
 	printk(MPT2SAS_INFO_FMT "%s: FWVersion(%02d.%02d.%02d.%02d), "
 	   "ChipRevision(0x%02x), BiosVersion(%02d.%02d.%02d.%02d)\n",
@@ -2079,7 +2275,11 @@ _base_display_ioc_capabilities(struct MPT2SAS_ADAPTER *ioc)
 	   (ioc->facts.FWVersion.Word & 0x00FF0000) >> 16,
 	   (ioc->facts.FWVersion.Word & 0x0000FF00) >> 8,
 	   ioc->facts.FWVersion.Word & 0x000000FF,
+<<<<<<< HEAD
 	   ioc->pdev->revision,
+=======
+	   revision,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	   (bios_version & 0xFF000000) >> 24,
 	   (bios_version & 0x00FF0000) >> 16,
 	   (bios_version & 0x0000FF00) >> 8,
@@ -2403,7 +2603,11 @@ _base_allocate_memory_pools(struct MPT2SAS_ADAPTER *ioc,  int sleep_flag)
 	struct mpt2sas_facts *facts;
 	u16 max_sge_elements;
 	u16 chains_needed_per_io;
+<<<<<<< HEAD
 	u32 sz, total_sz, reply_post_free_sz;
+=======
+	u32 sz, total_sz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 retry_sz;
 	u16 max_request_credit;
 	int i;
@@ -2424,6 +2628,7 @@ _base_allocate_memory_pools(struct MPT2SAS_ADAPTER *ioc,  int sleep_flag)
 	}
 
 	/* command line tunables  for max controller queue depth */
+<<<<<<< HEAD
 	if (max_queue_depth != -1 && max_queue_depth != 0) {
 		max_request_credit = min_t(u16, max_queue_depth +
 			ioc->hi_priority_depth + ioc->internal_depth,
@@ -2431,6 +2636,12 @@ _base_allocate_memory_pools(struct MPT2SAS_ADAPTER *ioc,  int sleep_flag)
 		if (max_request_credit > MAX_HBA_QUEUE_DEPTH)
 			max_request_credit =  MAX_HBA_QUEUE_DEPTH;
 	} else
+=======
+	if (max_queue_depth != -1)
+		max_request_credit = (max_queue_depth < facts->RequestCredit)
+		    ? max_queue_depth : facts->RequestCredit;
+	else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		max_request_credit = min_t(u16, facts->RequestCredit,
 		    MAX_HBA_QUEUE_DEPTH);
 
@@ -2505,7 +2716,11 @@ _base_allocate_memory_pools(struct MPT2SAS_ADAPTER *ioc,  int sleep_flag)
 	/* set the scsi host can_queue depth
 	 * with some internal commands that could be outstanding
 	 */
+<<<<<<< HEAD
 	ioc->shost->can_queue = ioc->scsiio_depth;
+=======
+	ioc->shost->can_queue = ioc->scsiio_depth - (2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dinitprintk(ioc, printk(MPT2SAS_INFO_FMT "scsi host: "
 	    "can_queue depth (%d)\n", ioc->name, ioc->shost->can_queue));
 
@@ -2583,11 +2798,14 @@ _base_allocate_memory_pools(struct MPT2SAS_ADAPTER *ioc,  int sleep_flag)
 
 	ioc->chain_lookup = (struct chain_tracker *)__get_free_pages(
 	    GFP_KERNEL, ioc->chain_pages);
+<<<<<<< HEAD
 	if (!ioc->chain_lookup) {
 		printk(MPT2SAS_ERR_FMT "chain_lookup: get_free_pages failed, "
 		    "sz(%d)\n", ioc->name, (int)sz);
 		goto out;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ioc->chain_dma_pool = pci_pool_create("chain pool", ioc->pdev,
 	    ioc->request_sz, 16, 0);
 	if (!ioc->chain_dma_pool) {
@@ -2711,12 +2929,16 @@ chain_done:
 	total_sz += sz;
 
 	/* reply post queue, 16 byte align */
+<<<<<<< HEAD
 	reply_post_free_sz = ioc->reply_post_queue_depth *
 	    sizeof(Mpi2DefaultReplyDescriptor_t);
 	if (_base_is_controller_msix_enabled(ioc))
 		sz = reply_post_free_sz * ioc->reply_queue_count;
 	else
 		sz = reply_post_free_sz;
+=======
+	sz = ioc->reply_post_queue_depth * sizeof(Mpi2DefaultReplyDescriptor_t);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ioc->reply_post_free_dma_pool = pci_pool_create("reply_post_free pool",
 	    ioc->pdev, sz, 16, 0);
 	if (!ioc->reply_post_free_dma_pool) {
@@ -3186,8 +3408,13 @@ mpt2sas_base_sas_iounit_control(struct MPT2SAS_ADAPTER *ioc,
 	if (mpi_request->Operation == MPI2_SAS_OP_PHY_HARD_RESET ||
 	    mpi_request->Operation == MPI2_SAS_OP_PHY_LINK_RESET)
 		ioc->ioc_link_reset_in_progress = 1;
+<<<<<<< HEAD
 	init_completion(&ioc->base_cmds.done);
 	mpt2sas_base_put_smid_default(ioc, smid);
+=======
+	mpt2sas_base_put_smid_default(ioc, smid);
+	init_completion(&ioc->base_cmds.done);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	timeleft = wait_for_completion_timeout(&ioc->base_cmds.done,
 	    msecs_to_jiffies(10000));
 	if ((mpi_request->Operation == MPI2_SAS_OP_PHY_HARD_RESET ||
@@ -3288,8 +3515,13 @@ mpt2sas_base_scsi_enclosure_processor(struct MPT2SAS_ADAPTER *ioc,
 	request = mpt2sas_base_get_msg_frame(ioc, smid);
 	ioc->base_cmds.smid = smid;
 	memcpy(request, mpi_request, sizeof(Mpi2SepReply_t));
+<<<<<<< HEAD
 	init_completion(&ioc->base_cmds.done);
 	mpt2sas_base_put_smid_default(ioc, smid);
+=======
+	mpt2sas_base_put_smid_default(ioc, smid);
+	init_completion(&ioc->base_cmds.done);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	timeleft = wait_for_completion_timeout(&ioc->base_cmds.done,
 	    msecs_to_jiffies(10000));
 	if (!(ioc->base_cmds.status & MPT2_CMD_COMPLETE)) {
@@ -3353,7 +3585,11 @@ _base_get_port_facts(struct MPT2SAS_ADAPTER *ioc, int port, int sleep_flag)
 	}
 
 	pfacts = &ioc->pfacts[port];
+<<<<<<< HEAD
 	memset(pfacts, 0, sizeof(struct mpt2sas_port_facts));
+=======
+	memset(pfacts, 0, sizeof(Mpi2PortFactsReply_t));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pfacts->PortNumber = mpi_reply.PortNumber;
 	pfacts->VP_ID = mpi_reply.VP_ID;
 	pfacts->VF_ID = mpi_reply.VF_ID;
@@ -3395,7 +3631,11 @@ _base_get_ioc_facts(struct MPT2SAS_ADAPTER *ioc, int sleep_flag)
 	}
 
 	facts = &ioc->facts;
+<<<<<<< HEAD
 	memset(facts, 0, sizeof(struct mpt2sas_facts));
+=======
+	memset(facts, 0, sizeof(Mpi2IOCFactsReply_t));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	facts->MsgVersion = le16_to_cpu(mpi_reply.MsgVersion);
 	facts->HeaderVersion = le16_to_cpu(mpi_reply.HeaderVersion);
 	facts->VP_ID = mpi_reply.VP_ID;
@@ -3404,7 +3644,10 @@ _base_get_ioc_facts(struct MPT2SAS_ADAPTER *ioc, int sleep_flag)
 	facts->MaxChainDepth = mpi_reply.MaxChainDepth;
 	facts->WhoInit = mpi_reply.WhoInit;
 	facts->NumberOfPorts = mpi_reply.NumberOfPorts;
+<<<<<<< HEAD
 	facts->MaxMSIxVectors = mpi_reply.MaxMSIxVectors;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	facts->RequestCredit = le16_to_cpu(mpi_reply.RequestCredit);
 	facts->MaxReplyDescriptorPostQueueDepth =
 	    le16_to_cpu(mpi_reply.MaxReplyDescriptorPostQueueDepth);
@@ -3462,8 +3705,12 @@ _base_send_ioc_init(struct MPT2SAS_ADAPTER *ioc, int sleep_flag)
 	mpi_request.MsgVersion = cpu_to_le16(MPI2_VERSION);
 	mpi_request.HeaderVersion = cpu_to_le16(MPI2_HEADER_VERSION);
 
+<<<<<<< HEAD
 	if (_base_is_controller_msix_enabled(ioc))
 		mpi_request.HostMSIxVectors = ioc->reply_queue_count;
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mpi_request.SystemRequestFrameSize = cpu_to_le16(ioc->request_sz/4);
 	mpi_request.ReplyDescriptorPostQueueDepth =
 	    cpu_to_le16(ioc->reply_post_queue_depth);
@@ -3522,6 +3769,7 @@ _base_send_ioc_init(struct MPT2SAS_ADAPTER *ioc, int sleep_flag)
 }
 
 /**
+<<<<<<< HEAD
  * mpt2sas_port_enable_done - command completion routine for port enable
  * @ioc: per adapter object
  * @smid: system request message index
@@ -3574,6 +3822,8 @@ mpt2sas_port_enable_done(struct MPT2SAS_ADAPTER *ioc, u16 smid, u8 msix_index,
 
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * _base_send_port_enable - send port_enable(discovery stuff) to firmware
  * @ioc: per adapter object
  * @sleep_flag: CAN_SLEEP or NO_SLEEP
@@ -3584,6 +3834,7 @@ static int
 _base_send_port_enable(struct MPT2SAS_ADAPTER *ioc, int sleep_flag)
 {
 	Mpi2PortEnableRequest_t *mpi_request;
+<<<<<<< HEAD
 	Mpi2PortEnableReply_t *mpi_reply;
 	unsigned long timeleft;
 	int r = 0;
@@ -3593,18 +3844,33 @@ _base_send_port_enable(struct MPT2SAS_ADAPTER *ioc, int sleep_flag)
 	printk(MPT2SAS_INFO_FMT "sending port enable !!\n", ioc->name);
 
 	if (ioc->port_enable_cmds.status & MPT2_CMD_PENDING) {
+=======
+	u32 ioc_state;
+	unsigned long timeleft;
+	int r = 0;
+	u16 smid;
+
+	printk(MPT2SAS_INFO_FMT "sending port enable !!\n", ioc->name);
+
+	if (ioc->base_cmds.status & MPT2_CMD_PENDING) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(MPT2SAS_ERR_FMT "%s: internal command already in use\n",
 		    ioc->name, __func__);
 		return -EAGAIN;
 	}
 
+<<<<<<< HEAD
 	smid = mpt2sas_base_get_smid(ioc, ioc->port_enable_cb_idx);
+=======
+	smid = mpt2sas_base_get_smid(ioc, ioc->base_cb_idx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!smid) {
 		printk(MPT2SAS_ERR_FMT "%s: failed obtaining a smid\n",
 		    ioc->name, __func__);
 		return -EAGAIN;
 	}
 
+<<<<<<< HEAD
 	ioc->port_enable_cmds.status = MPT2_CMD_PENDING;
 	mpi_request = mpt2sas_base_get_msg_frame(ioc, smid);
 	ioc->port_enable_cmds.smid = smid;
@@ -3616,15 +3882,35 @@ _base_send_port_enable(struct MPT2SAS_ADAPTER *ioc, int sleep_flag)
 	timeleft = wait_for_completion_timeout(&ioc->port_enable_cmds.done,
 	    300*HZ);
 	if (!(ioc->port_enable_cmds.status & MPT2_CMD_COMPLETE)) {
+=======
+	ioc->base_cmds.status = MPT2_CMD_PENDING;
+	mpi_request = mpt2sas_base_get_msg_frame(ioc, smid);
+	ioc->base_cmds.smid = smid;
+	memset(mpi_request, 0, sizeof(Mpi2PortEnableRequest_t));
+	mpi_request->Function = MPI2_FUNCTION_PORT_ENABLE;
+	mpi_request->VF_ID = 0; /* TODO */
+	mpi_request->VP_ID = 0;
+
+	mpt2sas_base_put_smid_default(ioc, smid);
+	init_completion(&ioc->base_cmds.done);
+	timeleft = wait_for_completion_timeout(&ioc->base_cmds.done,
+	    300*HZ);
+	if (!(ioc->base_cmds.status & MPT2_CMD_COMPLETE)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(MPT2SAS_ERR_FMT "%s: timeout\n",
 		    ioc->name, __func__);
 		_debug_dump_mf(mpi_request,
 		    sizeof(Mpi2PortEnableRequest_t)/4);
+<<<<<<< HEAD
 		if (ioc->port_enable_cmds.status & MPT2_CMD_RESET)
+=======
+		if (ioc->base_cmds.status & MPT2_CMD_RESET)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			r = -EFAULT;
 		else
 			r = -ETIME;
 		goto out;
+<<<<<<< HEAD
 	}
 	mpi_reply = ioc->port_enable_cmds.reply;
 
@@ -3639,10 +3925,28 @@ _base_send_port_enable(struct MPT2SAS_ADAPTER *ioc, int sleep_flag)
 	ioc->port_enable_cmds.status = MPT2_CMD_NOT_USED;
 	printk(MPT2SAS_INFO_FMT "port enable: %s\n", ioc->name, ((r == 0) ?
 	    "SUCCESS" : "FAILED"));
+=======
+	} else
+		dinitprintk(ioc, printk(MPT2SAS_INFO_FMT "%s: complete\n",
+		    ioc->name, __func__));
+
+	ioc_state = _base_wait_on_iocstate(ioc, MPI2_IOC_STATE_OPERATIONAL,
+	    60, sleep_flag);
+	if (ioc_state) {
+		printk(MPT2SAS_ERR_FMT "%s: failed going to operational state "
+		    " (ioc_state=0x%x)\n", ioc->name, __func__, ioc_state);
+		r = -EFAULT;
+	}
+ out:
+	ioc->base_cmds.status = MPT2_CMD_NOT_USED;
+	printk(MPT2SAS_INFO_FMT "port enable: %s\n",
+	    ioc->name, ((r == 0) ? "SUCCESS" : "FAILED"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return r;
 }
 
 /**
+<<<<<<< HEAD
  * mpt2sas_port_enable - initiate firmware discovery (don't wait for reply)
  * @ioc: per adapter object
  *
@@ -3729,6 +4033,8 @@ _base_determine_wait_on_discovery(struct MPT2SAS_ADAPTER *ioc)
 
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * _base_unmask_events - turn on notification for this event
  * @ioc: per adapter object
  * @event: firmware event
@@ -3796,8 +4102,13 @@ _base_event_notification(struct MPT2SAS_ADAPTER *ioc, int sleep_flag)
 	for (i = 0; i < MPI2_EVENT_NOTIFY_EVENTMASK_WORDS; i++)
 		mpi_request->EventMasks[i] =
 		    cpu_to_le32(ioc->event_masks[i]);
+<<<<<<< HEAD
 	init_completion(&ioc->base_cmds.done);
 	mpt2sas_base_put_smid_default(ioc, smid);
+=======
+	mpt2sas_base_put_smid_default(ioc, smid);
+	init_completion(&ioc->base_cmds.done);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	timeleft = wait_for_completion_timeout(&ioc->base_cmds.done, 30*HZ);
 	if (!(ioc->base_cmds.status & MPT2_CMD_COMPLETE)) {
 		printk(MPT2SAS_ERR_FMT "%s: timeout\n",
@@ -4043,9 +4354,12 @@ _base_make_ioc_operational(struct MPT2SAS_ADAPTER *ioc, int sleep_flag)
 	u16 smid;
 	struct _tr_list *delayed_tr, *delayed_tr_next;
 	u8 hide_flag;
+<<<<<<< HEAD
 	struct adapter_reply_queue *reply_q;
 	long reply_post_free;
 	u32 reply_post_free_sz;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dinitprintk(ioc, printk(MPT2SAS_INFO_FMT "%s\n", ioc->name,
 	    __func__));
@@ -4111,6 +4425,7 @@ _base_make_ioc_operational(struct MPT2SAS_ADAPTER *ioc, int sleep_flag)
 	    ioc->reply_sz)
 		ioc->reply_free[i] = cpu_to_le32(reply_address);
 
+<<<<<<< HEAD
 	/* initialize reply queues */
 	if (ioc->is_driver_loading)
 		_base_assign_reply_queues(ioc);
@@ -4131,11 +4446,17 @@ _base_make_ioc_operational(struct MPT2SAS_ADAPTER *ioc, int sleep_flag)
 		reply_post_free += reply_post_free_sz;
 	}
  skip_init_reply_post_free_queue:
+=======
+	/* initialize Reply Post Free Queue */
+	for (i = 0; i < ioc->reply_post_queue_depth; i++)
+		ioc->reply_post_free[i].Words = cpu_to_le64(ULLONG_MAX);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	r = _base_send_ioc_init(ioc, sleep_flag);
 	if (r)
 		return r;
 
+<<<<<<< HEAD
 	/* initialize reply free host index */
 	ioc->reply_free_host_index = ioc->reply_free_queue_depth - 1;
 	writel(ioc->reply_free_host_index, &ioc->chip->ReplyFreeHostIndex);
@@ -4152,6 +4473,15 @@ _base_make_ioc_operational(struct MPT2SAS_ADAPTER *ioc, int sleep_flag)
 
 	_base_unmask_interrupts(ioc);
 
+=======
+	/* initialize the index's */
+	ioc->reply_free_host_index = ioc->reply_free_queue_depth - 1;
+	ioc->reply_post_host_index = 0;
+	writel(ioc->reply_free_host_index, &ioc->chip->ReplyFreeHostIndex);
+	writel(0, &ioc->chip->ReplyPostHostIndex);
+
+	_base_unmask_interrupts(ioc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = _base_event_notification(ioc, sleep_flag);
 	if (r)
 		return r;
@@ -4159,19 +4489,36 @@ _base_make_ioc_operational(struct MPT2SAS_ADAPTER *ioc, int sleep_flag)
 	if (sleep_flag == CAN_SLEEP)
 		_base_static_config_pages(ioc);
 
+<<<<<<< HEAD
 
 	if (ioc->is_driver_loading) {
 		if (ioc->is_warpdrive && ioc->manu_pg10.OEMIdentifier
 		    == 0x80) {
+=======
+	if (ioc->wait_for_port_enable_to_complete && ioc->is_warpdrive) {
+		if (ioc->manu_pg10.OEMIdentifier  == 0x80) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			hide_flag = (u8) (ioc->manu_pg10.OEMSpecificFlags0 &
 			    MFG_PAGE10_HIDE_SSDS_MASK);
 			if (hide_flag != MFG_PAGE10_HIDE_SSDS_MASK)
 				ioc->mfg_pg10_hide_flag = hide_flag;
 		}
+<<<<<<< HEAD
 		ioc->wait_for_discovery_to_complete =
 		    _base_determine_wait_on_discovery(ioc);
 		return r; /* scan_start and scan_finished support */
 	}
+=======
+	}
+
+	if (ioc->wait_for_port_enable_to_complete) {
+		if (diag_buffer_enable != 0)
+			mpt2sas_enable_diag_buffer(ioc, diag_buffer_enable);
+		if (disable_discovery > 0)
+			return r;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = _base_send_port_enable(ioc, sleep_flag);
 	if (r)
 		return r;
@@ -4197,10 +4544,21 @@ mpt2sas_base_free_resources(struct MPT2SAS_ADAPTER *ioc)
 	ioc->shost_recovery = 1;
 	_base_make_ioc_ready(ioc, CAN_SLEEP, SOFT_RESET);
 	ioc->shost_recovery = 0;
+<<<<<<< HEAD
 	_base_free_irq(ioc);
 	_base_disable_msix(ioc);
 	if (ioc->chip_phys)
 		iounmap(ioc->chip);
+=======
+	if (ioc->pci_irq) {
+		synchronize_irq(pdev->irq);
+		free_irq(ioc->pci_irq, ioc);
+	}
+	_base_disable_msix(ioc);
+	if (ioc->chip_phys)
+		iounmap(ioc->chip);
+	ioc->pci_irq = -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ioc->chip_phys = 0;
 	pci_release_selected_regions(ioc->pdev, ioc->bars);
 	pci_disable_pcie_error_reporting(pdev);
@@ -4218,11 +4576,15 @@ int
 mpt2sas_base_attach(struct MPT2SAS_ADAPTER *ioc)
 {
 	int r, i;
+<<<<<<< HEAD
 	int cpu_id, last_cpu_id = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dinitprintk(ioc, printk(MPT2SAS_INFO_FMT "%s\n", ioc->name,
 	    __func__));
 
+<<<<<<< HEAD
 	/* setup cpu_msix_table */
 	ioc->cpu_count = num_online_cpus();
 	for_each_online_cpu(cpu_id)
@@ -4261,6 +4623,11 @@ mpt2sas_base_attach(struct MPT2SAS_ADAPTER *ioc)
 			((u8 *)&ioc->chip->Doorbell + (0x4000 + ((i - 1)
 			* 4)));
 	}
+=======
+	r = mpt2sas_base_map_resources(ioc);
+	if (r)
+		return r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pci_set_drvdata(ioc->pdev, ioc->shost);
 	r = _base_get_ioc_facts(ioc, CAN_SLEEP);
@@ -4272,7 +4639,11 @@ mpt2sas_base_attach(struct MPT2SAS_ADAPTER *ioc)
 		goto out_free_resources;
 
 	ioc->pfacts = kcalloc(ioc->facts.NumberOfPorts,
+<<<<<<< HEAD
 	    sizeof(struct mpt2sas_port_facts), GFP_KERNEL);
+=======
+	    sizeof(Mpi2PortFactsReply_t), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ioc->pfacts) {
 		r = -ENOMEM;
 		goto out_free_resources;
@@ -4308,10 +4679,13 @@ mpt2sas_base_attach(struct MPT2SAS_ADAPTER *ioc)
 	ioc->base_cmds.reply = kzalloc(ioc->reply_sz, GFP_KERNEL);
 	ioc->base_cmds.status = MPT2_CMD_NOT_USED;
 
+<<<<<<< HEAD
 	/* port_enable command bits */
 	ioc->port_enable_cmds.reply = kzalloc(ioc->reply_sz, GFP_KERNEL);
 	ioc->port_enable_cmds.status = MPT2_CMD_NOT_USED;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* transport internal command bits */
 	ioc->transport_cmds.reply = kzalloc(ioc->reply_sz, GFP_KERNEL);
 	ioc->transport_cmds.status = MPT2_CMD_NOT_USED;
@@ -4353,6 +4727,11 @@ mpt2sas_base_attach(struct MPT2SAS_ADAPTER *ioc)
 		goto out_free_resources;
 	}
 
+<<<<<<< HEAD
+=======
+	init_completion(&ioc->shost_recovery_done);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < MPI2_EVENT_NOTIFY_EVENTMASK_WORDS; i++)
 		ioc->event_masks[i] = -1;
 
@@ -4375,6 +4754,10 @@ mpt2sas_base_attach(struct MPT2SAS_ADAPTER *ioc)
 		_base_update_missing_delay(ioc, missing_delay[0],
 		    missing_delay[1]);
 
+<<<<<<< HEAD
+=======
+	mpt2sas_base_start_watchdog(ioc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
  out_free_resources:
@@ -4383,16 +4766,22 @@ mpt2sas_base_attach(struct MPT2SAS_ADAPTER *ioc)
 	mpt2sas_base_free_resources(ioc);
 	_base_release_memory_pools(ioc);
 	pci_set_drvdata(ioc->pdev, NULL);
+<<<<<<< HEAD
 	kfree(ioc->cpu_msix_table);
 	if (ioc->is_warpdrive)
 		kfree(ioc->reply_post_host_index);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(ioc->pd_handles);
 	kfree(ioc->tm_cmds.reply);
 	kfree(ioc->transport_cmds.reply);
 	kfree(ioc->scsih_cmds.reply);
 	kfree(ioc->config_cmds.reply);
 	kfree(ioc->base_cmds.reply);
+<<<<<<< HEAD
 	kfree(ioc->port_enable_cmds.reply);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(ioc->ctl_cmds.reply);
 	kfree(ioc->ctl_cmds.sense);
 	kfree(ioc->pfacts);
@@ -4424,15 +4813,21 @@ mpt2sas_base_detach(struct MPT2SAS_ADAPTER *ioc)
 	mpt2sas_base_free_resources(ioc);
 	_base_release_memory_pools(ioc);
 	pci_set_drvdata(ioc->pdev, NULL);
+<<<<<<< HEAD
 	kfree(ioc->cpu_msix_table);
 	if (ioc->is_warpdrive)
 		kfree(ioc->reply_post_host_index);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(ioc->pd_handles);
 	kfree(ioc->pfacts);
 	kfree(ioc->ctl_cmds.reply);
 	kfree(ioc->ctl_cmds.sense);
 	kfree(ioc->base_cmds.reply);
+<<<<<<< HEAD
 	kfree(ioc->port_enable_cmds.reply);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(ioc->tm_cmds.reply);
 	kfree(ioc->transport_cmds.reply);
 	kfree(ioc->scsih_cmds.reply);
@@ -4474,6 +4869,7 @@ _base_reset_handler(struct MPT2SAS_ADAPTER *ioc, int reset_phase)
 			mpt2sas_base_free_smid(ioc, ioc->base_cmds.smid);
 			complete(&ioc->base_cmds.done);
 		}
+<<<<<<< HEAD
 		if (ioc->port_enable_cmds.status & MPT2_CMD_PENDING) {
 			ioc->port_enable_failed = 1;
 			ioc->port_enable_cmds.status |= MPT2_CMD_RESET;
@@ -4488,6 +4884,8 @@ _base_reset_handler(struct MPT2SAS_ADAPTER *ioc, int reset_phase)
 				complete(&ioc->port_enable_cmds.done);
 
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ioc->config_cmds.status & MPT2_CMD_PENDING) {
 			ioc->config_cmds.status |= MPT2_CMD_RESET;
 			mpt2sas_base_free_smid(ioc, ioc->config_cmds.smid);
@@ -4553,6 +4951,10 @@ mpt2sas_base_hard_reset_handler(struct MPT2SAS_ADAPTER *ioc, int sleep_flag,
 {
 	int r;
 	unsigned long flags;
+<<<<<<< HEAD
+=======
+	u8 pe_complete = ioc->wait_for_port_enable_to_complete;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dtmprintk(ioc, printk(MPT2SAS_INFO_FMT "%s: enter\n", ioc->name,
 	    __func__));
@@ -4561,7 +4963,11 @@ mpt2sas_base_hard_reset_handler(struct MPT2SAS_ADAPTER *ioc, int sleep_flag,
 		printk(MPT2SAS_ERR_FMT "%s: pci error recovery reset\n",
 		    ioc->name, __func__);
 		r = 0;
+<<<<<<< HEAD
 		goto out_unlocked;
+=======
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (mpt2sas_fwfault_debug)
@@ -4599,8 +5005,12 @@ mpt2sas_base_hard_reset_handler(struct MPT2SAS_ADAPTER *ioc, int sleep_flag,
 	/* If this hard reset is called while port enable is active, then
 	 * there is no reason to call make_ioc_operational
 	 */
+<<<<<<< HEAD
 	if (ioc->is_driver_loading && ioc->port_enable_failed) {
 		ioc->remove_host = 1;
+=======
+	if (pe_complete) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r = -EFAULT;
 		goto out;
 	}
@@ -4614,10 +5024,17 @@ mpt2sas_base_hard_reset_handler(struct MPT2SAS_ADAPTER *ioc, int sleep_flag,
 	spin_lock_irqsave(&ioc->ioc_reset_in_progress_lock, flags);
 	ioc->ioc_reset_in_progress_status = r;
 	ioc->shost_recovery = 0;
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&ioc->ioc_reset_in_progress_lock, flags);
 	mutex_unlock(&ioc->reset_in_progress_mutex);
 
  out_unlocked:
+=======
+	complete(&ioc->shost_recovery_done);
+	spin_unlock_irqrestore(&ioc->ioc_reset_in_progress_lock, flags);
+	mutex_unlock(&ioc->reset_in_progress_mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dtmprintk(ioc, printk(MPT2SAS_INFO_FMT "%s: exit\n", ioc->name,
 	    __func__));
 	return r;

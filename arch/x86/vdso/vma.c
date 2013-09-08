@@ -14,13 +14,17 @@
 #include <asm/vgtod.h>
 #include <asm/proto.h>
 #include <asm/vdso.h>
+<<<<<<< HEAD
 #include <asm/page.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unsigned int __read_mostly vdso_enabled = 1;
 
 extern char vdso_start[], vdso_end[];
 extern unsigned short vdso_sync_cpuid;
 
+<<<<<<< HEAD
 extern struct page *vdso_pages[];
 static unsigned vdso_size;
 
@@ -93,10 +97,17 @@ found:
 }
 
 static int __init init_vdso(void)
+=======
+static struct page **vdso_pages;
+static unsigned vdso_size;
+
+static int __init init_vdso_vars(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int npages = (vdso_end - vdso_start + PAGE_SIZE - 1) / PAGE_SIZE;
 	int i;
 
+<<<<<<< HEAD
 	patch_vdso64(vdso_start, vdso_end - vdso_start);
 
 	vdso_size = npages << PAGE_SHIFT;
@@ -114,6 +125,29 @@ static int __init init_vdso(void)
 	return 0;
 }
 subsys_initcall(init_vdso);
+=======
+	vdso_size = npages << PAGE_SHIFT;
+	vdso_pages = kmalloc(sizeof(struct page *) * npages, GFP_KERNEL);
+	if (!vdso_pages)
+		goto oom;
+	for (i = 0; i < npages; i++) {
+		struct page *p;
+		p = alloc_page(GFP_KERNEL);
+		if (!p)
+			goto oom;
+		vdso_pages[i] = p;
+		copy_page(page_address(p), vdso_start + i*PAGE_SIZE);
+	}
+
+	return 0;
+
+ oom:
+	printk("Cannot allocate vdso\n");
+	vdso_enabled = 0;
+	return -ENOMEM;
+}
+subsys_initcall(init_vdso_vars);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct linux_binprm;
 
@@ -134,6 +168,7 @@ static unsigned long vdso_addr(unsigned long start, unsigned len)
 	addr = start + (offset << PAGE_SHIFT);
 	if (addr >= end)
 		addr = end;
+<<<<<<< HEAD
 
 	/*
 	 * page-align it here so that get_unmapped_area doesn't
@@ -143,15 +178,21 @@ static unsigned long vdso_addr(unsigned long start, unsigned len)
 	addr = PAGE_ALIGN(addr);
 	addr = align_addr(addr, NULL, ALIGN_VDSO);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return addr;
 }
 
 /* Setup a VMA at program startup for the vsyscall page.
    Not called for compat tasks */
+<<<<<<< HEAD
 static int setup_additional_pages(struct linux_binprm *bprm,
 				  int uses_interp,
 				  struct page **pages,
 				  unsigned size)
+=======
+int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct mm_struct *mm = current->mm;
 	unsigned long addr;
@@ -161,8 +202,13 @@ static int setup_additional_pages(struct linux_binprm *bprm,
 		return 0;
 
 	down_write(&mm->mmap_sem);
+<<<<<<< HEAD
 	addr = vdso_addr(mm->start_stack, size);
 	addr = get_unmapped_area(NULL, addr, size, 0, 0);
+=======
+	addr = vdso_addr(mm->start_stack, vdso_size);
+	addr = get_unmapped_area(NULL, addr, vdso_size, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR_VALUE(addr)) {
 		ret = addr;
 		goto up_fail;
@@ -170,10 +216,18 @@ static int setup_additional_pages(struct linux_binprm *bprm,
 
 	current->mm->context.vdso = (void *)addr;
 
+<<<<<<< HEAD
 	ret = install_special_mapping(mm, addr, size,
 				      VM_READ|VM_EXEC|
 				      VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
 				      pages);
+=======
+	ret = install_special_mapping(mm, addr, vdso_size,
+				      VM_READ|VM_EXEC|
+				      VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC|
+				      VM_ALWAYSDUMP,
+				      vdso_pages);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret) {
 		current->mm->context.vdso = NULL;
 		goto up_fail;
@@ -184,6 +238,7 @@ up_fail:
 	return ret;
 }
 
+<<<<<<< HEAD
 int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
 {
 	return setup_additional_pages(bprm, uses_interp, vdso_pages,
@@ -198,6 +253,8 @@ int x32_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __init int vdso_setup(char *s)
 {
 	vdso_enabled = simple_strtoul(s, NULL, 0);

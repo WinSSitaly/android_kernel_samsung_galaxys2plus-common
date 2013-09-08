@@ -382,7 +382,11 @@ static void ircomm_tty_discovery_indication(discinfo_t *discovery,
 	info.daddr = discovery->daddr;
 	info.saddr = discovery->saddr;
 
+<<<<<<< HEAD
 	self = priv;
+=======
+	self = (struct ircomm_tty_cb *) priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ircomm_tty_do_event(self, IRCOMM_TTY_DISCOVERY_INDICATION,
 			    NULL, &info);
 }

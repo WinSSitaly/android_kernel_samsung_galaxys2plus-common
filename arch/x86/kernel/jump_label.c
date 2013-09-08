@@ -24,9 +24,14 @@ union jump_code_union {
 	} __attribute__((packed));
 };
 
+<<<<<<< HEAD
 static void __jump_label_transform(struct jump_entry *entry,
 				   enum jump_label_type type,
 				   void *(*poker)(void *, const void *, size_t))
+=======
+void arch_jump_label_transform(struct jump_entry *entry,
+			       enum jump_label_type type)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	union jump_code_union code;
 
@@ -36,6 +41,7 @@ static void __jump_label_transform(struct jump_entry *entry,
 				(entry->code + JUMP_LABEL_NOP_SIZE);
 	} else
 		memcpy(&code, ideal_nops[NOP_ATOMIC5], JUMP_LABEL_NOP_SIZE);
+<<<<<<< HEAD
 
 	(*poker)((void *)entry->code, &code, JUMP_LABEL_NOP_SIZE);
 }
@@ -46,14 +52,26 @@ void arch_jump_label_transform(struct jump_entry *entry,
 	get_online_cpus();
 	mutex_lock(&text_mutex);
 	__jump_label_transform(entry, type, text_poke_smp);
+=======
+	get_online_cpus();
+	mutex_lock(&text_mutex);
+	text_poke_smp((void *)entry->code, &code, JUMP_LABEL_NOP_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&text_mutex);
 	put_online_cpus();
 }
 
+<<<<<<< HEAD
 __init_or_module void arch_jump_label_transform_static(struct jump_entry *entry,
 				      enum jump_label_type type)
 {
 	__jump_label_transform(entry, type, text_poke_early);
+=======
+void arch_jump_label_text_poke_early(jump_label_t addr)
+{
+	text_poke_early((void *)addr, ideal_nops[NOP_ATOMIC5],
+			JUMP_LABEL_NOP_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #endif

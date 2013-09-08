@@ -20,7 +20,10 @@
 
 #include <linux/cdrom.h>
 #include <linux/highmem.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 
 #include <scsi/scsi.h>

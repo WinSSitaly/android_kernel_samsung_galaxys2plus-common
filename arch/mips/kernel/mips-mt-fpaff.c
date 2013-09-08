@@ -173,7 +173,11 @@ asmlinkage long mipsmt_sys_sched_getaffinity(pid_t pid, unsigned int len,
 	if (retval)
 		goto out_unlock;
 
+<<<<<<< HEAD
 	cpumask_and(&mask, &p->thread.user_cpus_allowed, cpu_possible_mask);
+=======
+	cpus_and(mask, p->thread.user_cpus_allowed, cpu_possible_map);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out_unlock:
 	read_unlock(&tasklist_lock);

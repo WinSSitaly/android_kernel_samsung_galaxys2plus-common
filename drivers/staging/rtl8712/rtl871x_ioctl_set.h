@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2010 Realtek Corporation. All rights reserved.
@@ -23,6 +24,8 @@
  * Larry Finger <Larry.Finger@lwfinger.net>
  *
  ******************************************************************************/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __IOCTL_SET_H
 #define __IOCTL_SET_H
 
@@ -47,7 +50,11 @@ u8 r8712_set_802_11_disassociate(struct _adapter *padapter);
 
 u8 r8712_set_802_11_bssid_list_scan(struct _adapter *padapter);
 
+<<<<<<< HEAD
 void r8712_set_802_11_infrastructure_mode(struct _adapter *padapter,
+=======
+u8 r8712_set_802_11_infrastructure_mode(struct _adapter *padapter,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			enum NDIS_802_11_NETWORK_INFRASTRUCTURE networktype);
 
 void r8712_set_802_11_ssid(struct _adapter *padapter,

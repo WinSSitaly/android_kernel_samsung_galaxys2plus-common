@@ -630,6 +630,13 @@ struct amb_dev {
   u32              iobase;
   u32 *            membase;
 
+<<<<<<< HEAD
+=======
+#ifdef FILL_RX_POOLS_IN_BH
+  struct work_struct bh;
+#endif
+  
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   amb_cq           cq;
   amb_txq          txq;
   amb_rxq          rxq[NUM_RX_POOLS];

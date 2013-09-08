@@ -36,7 +36,10 @@
 #include "nouveau_drm.h"
 #include "nouveau_fbcon.h"
 #include "nouveau_ramht.h"
+<<<<<<< HEAD
 #include "nouveau_gpio.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "nouveau_pm.h"
 #include "nv50_display.h"
 
@@ -47,7 +50,10 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct nouveau_engine *engine = &dev_priv->engine;
+<<<<<<< HEAD
 	u32 pclass = dev->pdev->class >> 8;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (dev_priv->chipset & 0xf0) {
 	case 0x00:
@@ -82,6 +88,7 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		engine->display.early_init	= nv04_display_early_init;
 		engine->display.late_takedown	= nv04_display_late_takedown;
 		engine->display.create		= nv04_display_create;
+<<<<<<< HEAD
 		engine->display.destroy		= nv04_display_destroy;
 		engine->display.init		= nv04_display_init;
 		engine->display.fini		= nv04_display_fini;
@@ -90,6 +97,19 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		engine->pm.clocks_set		= nv04_pm_clocks_set;
 		engine->vram.init		= nv04_fb_vram_init;
 		engine->vram.takedown		= nouveau_stub_takedown;
+=======
+		engine->display.init		= nv04_display_init;
+		engine->display.destroy		= nv04_display_destroy;
+		engine->gpio.init		= nouveau_stub_init;
+		engine->gpio.takedown		= nouveau_stub_takedown;
+		engine->gpio.get		= NULL;
+		engine->gpio.set		= NULL;
+		engine->gpio.irq_enable		= NULL;
+		engine->pm.clock_get		= nv04_pm_clock_get;
+		engine->pm.clock_pre		= nv04_pm_clock_pre;
+		engine->pm.clock_set		= nv04_pm_clock_set;
+		engine->vram.init		= nouveau_mem_detect;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		engine->vram.flags_valid	= nouveau_mem_flags_valid;
 		break;
 	case 0x10:
@@ -127,6 +147,7 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		engine->display.early_init	= nv04_display_early_init;
 		engine->display.late_takedown	= nv04_display_late_takedown;
 		engine->display.create		= nv04_display_create;
+<<<<<<< HEAD
 		engine->display.destroy		= nv04_display_destroy;
 		engine->display.init		= nv04_display_init;
 		engine->display.fini		= nv04_display_fini;
@@ -141,6 +162,19 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		else
 			engine->vram.init	= nv10_fb_vram_init;
 		engine->vram.takedown		= nouveau_stub_takedown;
+=======
+		engine->display.init		= nv04_display_init;
+		engine->display.destroy		= nv04_display_destroy;
+		engine->gpio.init		= nouveau_stub_init;
+		engine->gpio.takedown		= nouveau_stub_takedown;
+		engine->gpio.get		= nv10_gpio_get;
+		engine->gpio.set		= nv10_gpio_set;
+		engine->gpio.irq_enable		= NULL;
+		engine->pm.clock_get		= nv04_pm_clock_get;
+		engine->pm.clock_pre		= nv04_pm_clock_pre;
+		engine->pm.clock_set		= nv04_pm_clock_set;
+		engine->vram.init		= nouveau_mem_detect;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		engine->vram.flags_valid	= nouveau_mem_flags_valid;
 		break;
 	case 0x20:
@@ -158,11 +192,19 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		engine->timer.init		= nv04_timer_init;
 		engine->timer.read		= nv04_timer_read;
 		engine->timer.takedown		= nv04_timer_takedown;
+<<<<<<< HEAD
 		engine->fb.init			= nv20_fb_init;
 		engine->fb.takedown		= nv20_fb_takedown;
 		engine->fb.init_tile_region	= nv20_fb_init_tile_region;
 		engine->fb.set_tile_region	= nv20_fb_set_tile_region;
 		engine->fb.free_tile_region	= nv20_fb_free_tile_region;
+=======
+		engine->fb.init			= nv10_fb_init;
+		engine->fb.takedown		= nv10_fb_takedown;
+		engine->fb.init_tile_region	= nv10_fb_init_tile_region;
+		engine->fb.set_tile_region	= nv10_fb_set_tile_region;
+		engine->fb.free_tile_region	= nv10_fb_free_tile_region;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		engine->fifo.channels		= 32;
 		engine->fifo.init		= nv10_fifo_init;
 		engine->fifo.takedown		= nv04_fifo_fini;
@@ -178,6 +220,7 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		engine->display.early_init	= nv04_display_early_init;
 		engine->display.late_takedown	= nv04_display_late_takedown;
 		engine->display.create		= nv04_display_create;
+<<<<<<< HEAD
 		engine->display.destroy		= nv04_display_destroy;
 		engine->display.init		= nv04_display_init;
 		engine->display.fini		= nv04_display_fini;
@@ -188,6 +231,19 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		engine->pm.clocks_set		= nv04_pm_clocks_set;
 		engine->vram.init		= nv20_fb_vram_init;
 		engine->vram.takedown		= nouveau_stub_takedown;
+=======
+		engine->display.init		= nv04_display_init;
+		engine->display.destroy		= nv04_display_destroy;
+		engine->gpio.init		= nouveau_stub_init;
+		engine->gpio.takedown		= nouveau_stub_takedown;
+		engine->gpio.get		= nv10_gpio_get;
+		engine->gpio.set		= nv10_gpio_set;
+		engine->gpio.irq_enable		= NULL;
+		engine->pm.clock_get		= nv04_pm_clock_get;
+		engine->pm.clock_pre		= nv04_pm_clock_pre;
+		engine->pm.clock_set		= nv04_pm_clock_set;
+		engine->vram.init		= nouveau_mem_detect;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		engine->vram.flags_valid	= nouveau_mem_flags_valid;
 		break;
 	case 0x30:
@@ -225,6 +281,7 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		engine->display.early_init	= nv04_display_early_init;
 		engine->display.late_takedown	= nv04_display_late_takedown;
 		engine->display.create		= nv04_display_create;
+<<<<<<< HEAD
 		engine->display.destroy		= nv04_display_destroy;
 		engine->display.init		= nv04_display_init;
 		engine->display.fini		= nv04_display_fini;
@@ -237,6 +294,21 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		engine->pm.voltage_set		= nouveau_voltage_gpio_set;
 		engine->vram.init		= nv20_fb_vram_init;
 		engine->vram.takedown		= nouveau_stub_takedown;
+=======
+		engine->display.init		= nv04_display_init;
+		engine->display.destroy		= nv04_display_destroy;
+		engine->gpio.init		= nouveau_stub_init;
+		engine->gpio.takedown		= nouveau_stub_takedown;
+		engine->gpio.get		= nv10_gpio_get;
+		engine->gpio.set		= nv10_gpio_set;
+		engine->gpio.irq_enable		= NULL;
+		engine->pm.clock_get		= nv04_pm_clock_get;
+		engine->pm.clock_pre		= nv04_pm_clock_pre;
+		engine->pm.clock_set		= nv04_pm_clock_set;
+		engine->pm.voltage_get		= nouveau_voltage_gpio_get;
+		engine->pm.voltage_set		= nouveau_voltage_gpio_set;
+		engine->vram.init		= nouveau_mem_detect;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		engine->vram.flags_valid	= nouveau_mem_flags_valid;
 		break;
 	case 0x40:
@@ -275,6 +347,7 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		engine->display.early_init	= nv04_display_early_init;
 		engine->display.late_takedown	= nv04_display_late_takedown;
 		engine->display.create		= nv04_display_create;
+<<<<<<< HEAD
 		engine->display.destroy		= nv04_display_destroy;
 		engine->display.init		= nv04_display_init;
 		engine->display.fini		= nv04_display_fini;
@@ -293,12 +366,32 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		engine->pm.pwm_set		= nv40_pm_pwm_set;
 		engine->vram.init		= nv40_fb_vram_init;
 		engine->vram.takedown		= nouveau_stub_takedown;
+=======
+		engine->display.init		= nv04_display_init;
+		engine->display.destroy		= nv04_display_destroy;
+		engine->gpio.init		= nouveau_stub_init;
+		engine->gpio.takedown		= nouveau_stub_takedown;
+		engine->gpio.get		= nv10_gpio_get;
+		engine->gpio.set		= nv10_gpio_set;
+		engine->gpio.irq_enable		= NULL;
+		engine->pm.clock_get		= nv04_pm_clock_get;
+		engine->pm.clock_pre		= nv04_pm_clock_pre;
+		engine->pm.clock_set		= nv04_pm_clock_set;
+		engine->pm.voltage_get		= nouveau_voltage_gpio_get;
+		engine->pm.voltage_set		= nouveau_voltage_gpio_set;
+		engine->pm.temp_get		= nv40_temp_get;
+		engine->vram.init		= nouveau_mem_detect;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		engine->vram.flags_valid	= nouveau_mem_flags_valid;
 		break;
 	case 0x50:
 	case 0x80: /* gotta love NVIDIA's consistency.. */
 	case 0x90:
+<<<<<<< HEAD
 	case 0xa0:
+=======
+	case 0xA0:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		engine->instmem.init		= nv50_instmem_init;
 		engine->instmem.takedown	= nv50_instmem_takedown;
 		engine->instmem.suspend		= nv50_instmem_suspend;
@@ -333,6 +426,7 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		engine->display.early_init	= nv50_display_early_init;
 		engine->display.late_takedown	= nv50_display_late_takedown;
 		engine->display.create		= nv50_display_create;
+<<<<<<< HEAD
 		engine->display.destroy		= nv50_display_destroy;
 		engine->display.init		= nv50_display_init;
 		engine->display.fini		= nv50_display_fini;
@@ -340,6 +434,16 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		engine->gpio.fini		= nv50_gpio_fini;
 		engine->gpio.drive		= nv50_gpio_drive;
 		engine->gpio.sense		= nv50_gpio_sense;
+=======
+		engine->display.init		= nv50_display_init;
+		engine->display.destroy		= nv50_display_destroy;
+		engine->gpio.init		= nv50_gpio_init;
+		engine->gpio.takedown		= nv50_gpio_fini;
+		engine->gpio.get		= nv50_gpio_get;
+		engine->gpio.set		= nv50_gpio_set;
+		engine->gpio.irq_register	= nv50_gpio_irq_register;
+		engine->gpio.irq_unregister	= nv50_gpio_irq_unregister;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		engine->gpio.irq_enable		= nv50_gpio_irq_enable;
 		switch (dev_priv->chipset) {
 		case 0x84:
@@ -352,6 +456,7 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		case 0xaa:
 		case 0xac:
 		case 0x50:
+<<<<<<< HEAD
 			engine->pm.clocks_get	= nv50_pm_clocks_get;
 			engine->pm.clocks_pre	= nv50_pm_clocks_pre;
 			engine->pm.clocks_set	= nv50_pm_clocks_set;
@@ -360,6 +465,16 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 			engine->pm.clocks_get	= nva3_pm_clocks_get;
 			engine->pm.clocks_pre	= nva3_pm_clocks_pre;
 			engine->pm.clocks_set	= nva3_pm_clocks_set;
+=======
+			engine->pm.clock_get	= nv50_pm_clock_get;
+			engine->pm.clock_pre	= nv50_pm_clock_pre;
+			engine->pm.clock_set	= nv50_pm_clock_set;
+			break;
+		default:
+			engine->pm.clock_get	= nva3_pm_clock_get;
+			engine->pm.clock_pre	= nva3_pm_clock_pre;
+			engine->pm.clock_set	= nva3_pm_clock_set;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 		engine->pm.voltage_get		= nouveau_voltage_gpio_get;
@@ -368,15 +483,23 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 			engine->pm.temp_get	= nv84_temp_get;
 		else
 			engine->pm.temp_get	= nv40_temp_get;
+<<<<<<< HEAD
 		engine->pm.pwm_get		= nv50_pm_pwm_get;
 		engine->pm.pwm_set		= nv50_pm_pwm_set;
 		engine->vram.init		= nv50_vram_init;
 		engine->vram.takedown		= nv50_vram_fini;
+=======
+		engine->vram.init		= nv50_vram_init;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		engine->vram.get		= nv50_vram_new;
 		engine->vram.put		= nv50_vram_del;
 		engine->vram.flags_valid	= nv50_vram_flags_valid;
 		break;
+<<<<<<< HEAD
 	case 0xc0:
+=======
+	case 0xC0:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		engine->instmem.init		= nvc0_instmem_init;
 		engine->instmem.takedown	= nvc0_instmem_takedown;
 		engine->instmem.suspend		= nvc0_instmem_suspend;
@@ -407,6 +530,7 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		engine->display.early_init	= nv50_display_early_init;
 		engine->display.late_takedown	= nv50_display_late_takedown;
 		engine->display.create		= nv50_display_create;
+<<<<<<< HEAD
 		engine->display.destroy		= nv50_display_destroy;
 		engine->display.init		= nv50_display_init;
 		engine->display.fini		= nv50_display_fini;
@@ -517,6 +641,18 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		engine->gpio.irq_enable		= nv50_gpio_irq_enable;
 		engine->vram.init		= nvc0_vram_init;
 		engine->vram.takedown		= nv50_vram_fini;
+=======
+		engine->display.init		= nv50_display_init;
+		engine->display.destroy		= nv50_display_destroy;
+		engine->gpio.init		= nv50_gpio_init;
+		engine->gpio.takedown		= nouveau_stub_takedown;
+		engine->gpio.get		= nv50_gpio_get;
+		engine->gpio.set		= nv50_gpio_set;
+		engine->gpio.irq_register	= nv50_gpio_irq_register;
+		engine->gpio.irq_unregister	= nv50_gpio_irq_unregister;
+		engine->gpio.irq_enable		= nv50_gpio_irq_enable;
+		engine->vram.init		= nvc0_vram_init;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		engine->vram.get		= nvc0_vram_new;
 		engine->vram.put		= nv50_vram_del;
 		engine->vram.flags_valid	= nvc0_vram_flags_valid;
@@ -526,6 +662,7 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		return 1;
 	}
 
+<<<<<<< HEAD
 	/* headless mode */
 	if (nouveau_modeset == 2 ||
 	    (nouveau_modeset < 0 && pclass != PCI_CLASS_DISPLAY_VGA)) {
@@ -536,6 +673,8 @@ static int nouveau_init_engine_ptrs(struct drm_device *dev)
 		engine->display.destroy = nouveau_stub_takedown;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -557,6 +696,24 @@ nouveau_vga_set_decode(void *priv, bool state)
 		return VGA_RSRC_NORMAL_IO | VGA_RSRC_NORMAL_MEM;
 }
 
+<<<<<<< HEAD
+=======
+static int
+nouveau_card_init_channel(struct drm_device *dev)
+{
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	int ret;
+
+	ret = nouveau_channel_alloc(dev, &dev_priv->channel,
+				    (struct drm_file *)-2, NvDmaFB, NvDmaTT);
+	if (ret)
+		return ret;
+
+	mutex_unlock(&dev_priv->channel->mutex);
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void nouveau_switcheroo_set_state(struct pci_dev *pdev,
 					 enum vga_switcheroo_state state)
 {
@@ -572,7 +729,10 @@ static void nouveau_switcheroo_set_state(struct pci_dev *pdev,
 		printk(KERN_ERR "VGA switcheroo: switched nouveau off\n");
 		dev->switch_power_state = DRM_SWITCH_POWER_CHANGING;
 		drm_kms_helper_poll_disable(dev);
+<<<<<<< HEAD
 		nouveau_switcheroo_optimus_dsm();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nouveau_pci_suspend(pdev, pmm);
 		dev->switch_power_state = DRM_SWITCH_POWER_OFF;
 	}
@@ -595,6 +755,7 @@ static bool nouveau_switcheroo_can_switch(struct pci_dev *pdev)
 	return can_switch;
 }
 
+<<<<<<< HEAD
 static void
 nouveau_card_channel_fini(struct drm_device *dev)
 {
@@ -664,6 +825,8 @@ error:
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int
 nouveau_card_init(struct drm_device *dev)
 {
@@ -696,6 +859,7 @@ nouveau_card_init(struct drm_device *dev)
 	if (ret)
 		goto out_display_early;
 
+<<<<<<< HEAD
 	/* workaround an odd issue on nvc1 by disabling the device's
 	 * nosnoop capability.  hopefully won't cause issues until a
 	 * better fix is found - assuming there is one...
@@ -745,6 +909,47 @@ nouveau_card_init(struct drm_device *dev)
 		goto out_ttmvram;
 
 	if (!dev_priv->noaccel) {
+=======
+	nouveau_pm_init(dev);
+
+	ret = nouveau_mem_vram_init(dev);
+	if (ret)
+		goto out_bios;
+
+	ret = nouveau_gpuobj_init(dev);
+	if (ret)
+		goto out_vram;
+
+	ret = engine->instmem.init(dev);
+	if (ret)
+		goto out_gpuobj;
+
+	ret = nouveau_mem_gart_init(dev);
+	if (ret)
+		goto out_instmem;
+
+	/* PMC */
+	ret = engine->mc.init(dev);
+	if (ret)
+		goto out_gart;
+
+	/* PGPIO */
+	ret = engine->gpio.init(dev);
+	if (ret)
+		goto out_mc;
+
+	/* PTIMER */
+	ret = engine->timer.init(dev);
+	if (ret)
+		goto out_gpio;
+
+	/* PFB */
+	ret = engine->fb.init(dev);
+	if (ret)
+		goto out_timer;
+
+	if (!nouveau_noaccel) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		switch (dev_priv->card_type) {
 		case NV_04:
 			nv04_graph_create(dev);
@@ -763,7 +968,10 @@ nouveau_card_init(struct drm_device *dev)
 			nv50_graph_create(dev);
 			break;
 		case NV_C0:
+<<<<<<< HEAD
 		case NV_D0:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			nvc0_graph_create(dev);
 			break;
 		default:
@@ -779,11 +987,14 @@ nouveau_card_init(struct drm_device *dev)
 		case 0xa0:
 			nv84_crypt_create(dev);
 			break;
+<<<<<<< HEAD
 		case 0x98:
 		case 0xaa:
 		case 0xac:
 			nv98_crypt_create(dev);
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		switch (dev_priv->card_type) {
@@ -805,6 +1016,7 @@ nouveau_card_init(struct drm_device *dev)
 			break;
 		}
 
+<<<<<<< HEAD
 		if (dev_priv->chipset >= 0xa3 || dev_priv->chipset == 0x98) {
 			nv84_bsp_create(dev);
 			nv84_vp_create(dev);
@@ -824,6 +1036,14 @@ nouveau_card_init(struct drm_device *dev)
 		    dev_priv->chipset == 0x36) {
 			nv31_mpeg_create(dev);
 		}
+=======
+		if (dev_priv->card_type == NV_40)
+			nv40_mpeg_create(dev);
+		else
+		if (dev_priv->card_type == NV_50 &&
+		    (dev_priv->chipset < 0x98 || dev_priv->chipset == 0xa0))
+			nv50_mpeg_create(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		for (e = 0; e < NVOBJ_ENGINE_NR; e++) {
 			if (dev_priv->eng[e]) {
@@ -839,6 +1059,7 @@ nouveau_card_init(struct drm_device *dev)
 			goto out_engine;
 	}
 
+<<<<<<< HEAD
 	ret = nouveau_irq_init(dev);
 	if (ret)
 		goto out_fifo;
@@ -895,10 +1116,70 @@ out_engine:
 	nouveau_mem_gart_fini(dev);
 out_ttmvram:
 	nouveau_mem_vram_fini(dev);
+=======
+	ret = engine->display.create(dev);
+	if (ret)
+		goto out_fifo;
+
+	ret = drm_vblank_init(dev, nv_two_heads(dev) ? 2 : 1);
+	if (ret)
+		goto out_vblank;
+
+	ret = nouveau_irq_init(dev);
+	if (ret)
+		goto out_vblank;
+
+	/* what about PVIDEO/PCRTC/PRAMDAC etc? */
+
+	if (dev_priv->eng[NVOBJ_ENGINE_GR]) {
+		ret = nouveau_fence_init(dev);
+		if (ret)
+			goto out_irq;
+
+		ret = nouveau_card_init_channel(dev);
+		if (ret)
+			goto out_fence;
+	}
+
+	nouveau_fbcon_init(dev);
+	drm_kms_helper_poll_init(dev);
+	return 0;
+
+out_fence:
+	nouveau_fence_fini(dev);
+out_irq:
+	nouveau_irq_fini(dev);
+out_vblank:
+	drm_vblank_cleanup(dev);
+	engine->display.destroy(dev);
+out_fifo:
+	if (!nouveau_noaccel)
+		engine->fifo.takedown(dev);
+out_engine:
+	if (!nouveau_noaccel) {
+		for (e = e - 1; e >= 0; e--) {
+			if (!dev_priv->eng[e])
+				continue;
+			dev_priv->eng[e]->fini(dev, e);
+			dev_priv->eng[e]->destroy(dev,e );
+		}
+	}
+
+	engine->fb.takedown(dev);
+out_timer:
+	engine->timer.takedown(dev);
+out_gpio:
+	engine->gpio.takedown(dev);
+out_mc:
+	engine->mc.takedown(dev);
+out_gart:
+	nouveau_mem_gart_fini(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_instmem:
 	engine->instmem.takedown(dev);
 out_gpuobj:
 	nouveau_gpuobj_takedown(dev);
+<<<<<<< HEAD
 out_gpio:
 	nouveau_gpio_destroy(dev);
 out_vram:
@@ -910,6 +1191,12 @@ out_timer:
 out_mc:
 	engine->mc.takedown(dev);
 out_bios:
+=======
+out_vram:
+	nouveau_mem_vram_fini(dev);
+out_bios:
+	nouveau_pm_fini(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nouveau_bios_takedown(dev);
 out_display_early:
 	engine->display.late_takedown(dev);
@@ -924,6 +1211,7 @@ static void nouveau_card_takedown(struct drm_device *dev)
 	struct nouveau_engine *engine = &dev_priv->engine;
 	int e;
 
+<<<<<<< HEAD
 	if (dev->mode_config.num_crtc) {
 		nouveau_fbcon_fini(dev);
 		nouveau_display_fini(dev);
@@ -940,10 +1228,30 @@ static void nouveau_card_takedown(struct drm_device *dev)
 		for (e = NVOBJ_ENGINE_NR - 1; e >= 0; e--) {
 			if (dev_priv->eng[e]) {
 				dev_priv->eng[e]->fini(dev, e, false);
+=======
+	if (dev_priv->channel) {
+		nouveau_fence_fini(dev);
+		nouveau_channel_put_unlocked(&dev_priv->channel);
+	}
+
+	if (!nouveau_noaccel) {
+		engine->fifo.takedown(dev);
+		for (e = NVOBJ_ENGINE_NR - 1; e >= 0; e--) {
+			if (dev_priv->eng[e]) {
+				dev_priv->eng[e]->fini(dev, e);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				dev_priv->eng[e]->destroy(dev,e );
 			}
 		}
 	}
+<<<<<<< HEAD
+=======
+	engine->fb.takedown(dev);
+	engine->timer.takedown(dev);
+	engine->gpio.takedown(dev);
+	engine->mc.takedown(dev);
+	engine->display.late_takedown(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dev_priv->vga_ram) {
 		nouveau_bo_unpin(dev_priv->vga_ram);
@@ -955,6 +1263,7 @@ static void nouveau_card_takedown(struct drm_device *dev)
 	ttm_bo_clean_mm(&dev_priv->ttm.bdev, TTM_PL_TT);
 	mutex_unlock(&dev->struct_mutex);
 	nouveau_mem_gart_fini(dev);
+<<<<<<< HEAD
 	nouveau_mem_vram_fini(dev);
 
 	engine->instmem.takedown(dev);
@@ -970,10 +1279,23 @@ static void nouveau_card_takedown(struct drm_device *dev)
 	engine->display.late_takedown(dev);
 
 	nouveau_irq_fini(dev);
+=======
+
+	engine->instmem.takedown(dev);
+	nouveau_gpuobj_takedown(dev);
+	nouveau_mem_vram_fini(dev);
+
+	nouveau_irq_fini(dev);
+	drm_vblank_cleanup(dev);
+
+	nouveau_pm_fini(dev);
+	nouveau_bios_takedown(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	vga_client_register(dev->pdev, NULL, NULL, NULL);
 }
 
+<<<<<<< HEAD
 int
 nouveau_open(struct drm_device *dev, struct drm_file *file_priv)
 {
@@ -1009,6 +1331,8 @@ nouveau_open(struct drm_device *dev, struct drm_file *file_priv)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* here a client dies, release the stuff that was allocated for its
  * file_priv */
 void nouveau_preclose(struct drm_device *dev, struct drm_file *file_priv)
@@ -1016,6 +1340,7 @@ void nouveau_preclose(struct drm_device *dev, struct drm_file *file_priv)
 	nouveau_channel_cleanup(dev, file_priv);
 }
 
+<<<<<<< HEAD
 void
 nouveau_postclose(struct drm_device *dev, struct drm_file *file_priv)
 {
@@ -1024,6 +1349,8 @@ nouveau_postclose(struct drm_device *dev, struct drm_file *file_priv)
 	kfree(fpriv);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* first module load, setup the mmio/fb mapping */
 /* KMS: we need mmio at load time, not when the first drm client opens. */
 int nouveau_firstopen(struct drm_device *dev)
@@ -1099,8 +1426,13 @@ static int nouveau_remove_conflicting_drivers(struct drm_device *dev)
 int nouveau_load(struct drm_device *dev, unsigned long flags)
 {
 	struct drm_nouveau_private *dev_priv;
+<<<<<<< HEAD
 	unsigned long long offset, length;
 	uint32_t reg0 = ~0, strap;
+=======
+	uint32_t reg0;
+	resource_size_t mmio_start_offs;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	dev_priv = kzalloc(sizeof(*dev_priv), GFP_KERNEL);
@@ -1111,13 +1443,17 @@ int nouveau_load(struct drm_device *dev, unsigned long flags)
 	dev->dev_private = dev_priv;
 	dev_priv->dev = dev;
 
+<<<<<<< HEAD
 	pci_set_master(dev->pdev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_priv->flags = flags & NOUVEAU_FLAGS;
 
 	NV_DEBUG(dev, "vendor: 0x%X device: 0x%X class: 0x%X\n",
 		 dev->pci_vendor, dev->pci_device, dev->pdev->class);
 
+<<<<<<< HEAD
 	/* first up, map the start of mmio and determine the chipset */
 	dev_priv->mmio = ioremap(pci_resource_start(dev->pdev, 0), PAGE_SIZE);
 	if (dev_priv->mmio) {
@@ -1188,12 +1524,23 @@ int nouveau_load(struct drm_device *dev, unsigned long flags)
 		length = min(length, (unsigned long long)0x00800000);
 
 	dev_priv->mmio = ioremap(offset, length);
+=======
+	/* resource 0 is mmio regs */
+	/* resource 1 is linear FB */
+	/* resource 2 is RAMIN (mmio regs + 0x1000000) */
+	/* resource 6 is bios */
+
+	/* map the mmio regs */
+	mmio_start_offs = pci_resource_start(dev->pdev, 0);
+	dev_priv->mmio = ioremap(mmio_start_offs, 0x00800000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!dev_priv->mmio) {
 		NV_ERROR(dev, "Unable to initialize the mmio mapping. "
 			 "Please report your setup to " DRIVER_EMAIL "\n");
 		ret = -EINVAL;
 		goto err_priv;
 	}
+<<<<<<< HEAD
 	NV_DEBUG(dev, "regs mapped ok at 0x%llx\n", offset);
 
 	/* determine frequency of timing crystal */
@@ -1231,6 +1578,66 @@ int nouveau_load(struct drm_device *dev, unsigned long flags)
 		}
 	}
 
+=======
+	NV_DEBUG(dev, "regs mapped ok at 0x%llx\n",
+					(unsigned long long)mmio_start_offs);
+
+#ifdef __BIG_ENDIAN
+	/* Put the card in BE mode if it's not */
+	if (nv_rd32(dev, NV03_PMC_BOOT_1) != 0x01000001)
+		nv_wr32(dev, NV03_PMC_BOOT_1, 0x01000001);
+
+	DRM_MEMORYBARRIER();
+#endif
+
+	/* Time to determine the card architecture */
+	reg0 = nv_rd32(dev, NV03_PMC_BOOT_0);
+	dev_priv->stepping = 0; /* XXX: add stepping for pre-NV10? */
+
+	/* We're dealing with >=NV10 */
+	if ((reg0 & 0x0f000000) > 0) {
+		/* Bit 27-20 contain the architecture in hex */
+		dev_priv->chipset = (reg0 & 0xff00000) >> 20;
+		dev_priv->stepping = (reg0 & 0xff);
+	/* NV04 or NV05 */
+	} else if ((reg0 & 0xff00fff0) == 0x20004000) {
+		if (reg0 & 0x00f00000)
+			dev_priv->chipset = 0x05;
+		else
+			dev_priv->chipset = 0x04;
+	} else
+		dev_priv->chipset = 0xff;
+
+	switch (dev_priv->chipset & 0xf0) {
+	case 0x00:
+	case 0x10:
+	case 0x20:
+	case 0x30:
+		dev_priv->card_type = dev_priv->chipset & 0xf0;
+		break;
+	case 0x40:
+	case 0x60:
+		dev_priv->card_type = NV_40;
+		break;
+	case 0x50:
+	case 0x80:
+	case 0x90:
+	case 0xa0:
+		dev_priv->card_type = NV_50;
+		break;
+	case 0xc0:
+		dev_priv->card_type = NV_C0;
+		break;
+	default:
+		NV_INFO(dev, "Unsupported chipset 0x%08x\n", reg0);
+		ret = -EINVAL;
+		goto err_mmio;
+	}
+
+	NV_INFO(dev, "Detected an NV%2x generation card (0x%08x)\n",
+		dev_priv->card_type, reg0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = nouveau_remove_conflicting_drivers(dev);
 	if (ret)
 		goto err_mmio;
@@ -1246,13 +1653,21 @@ int nouveau_load(struct drm_device *dev, unsigned long flags)
 			ioremap(pci_resource_start(dev->pdev, ramin_bar),
 				dev_priv->ramin_size);
 		if (!dev_priv->ramin) {
+<<<<<<< HEAD
 			NV_ERROR(dev, "Failed to map PRAMIN BAR\n");
+=======
+			NV_ERROR(dev, "Failed to PRAMIN BAR");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = -ENOMEM;
 			goto err_mmio;
 		}
 	} else {
 		dev_priv->ramin_size = 1 * 1024 * 1024;
+<<<<<<< HEAD
 		dev_priv->ramin = ioremap(offset + NV_RAMIN,
+=======
+		dev_priv->ramin = ioremap(mmio_start_offs + NV_RAMIN,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					  dev_priv->ramin_size);
 		if (!dev_priv->ramin) {
 			NV_ERROR(dev, "Failed to map BAR0 PRAMIN.\n");
@@ -1295,7 +1710,15 @@ void nouveau_lastclose(struct drm_device *dev)
 int nouveau_unload(struct drm_device *dev)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
+<<<<<<< HEAD
 
+=======
+	struct nouveau_engine *engine = &dev_priv->engine;
+
+	drm_kms_helper_poll_fini(dev);
+	nouveau_fbcon_fini(dev);
+	engine->display.destroy(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nouveau_card_takedown(dev);
 
 	iounmap(dev_priv->mmio);
@@ -1325,7 +1748,11 @@ int nouveau_ioctl_getparam(struct drm_device *dev, void *data,
 	case NOUVEAU_GETPARAM_BUS_TYPE:
 		if (drm_pci_device_is_agp(dev))
 			getparam->value = NV_AGP;
+<<<<<<< HEAD
 		else if (pci_is_pcie(dev->pdev))
+=======
+		else if (drm_pci_device_is_pcie(dev))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			getparam->value = NV_PCIE;
 		else
 			getparam->value = NV_PCI;
@@ -1414,6 +1841,7 @@ nouveau_wait_ne(struct drm_device *dev, uint64_t timeout,
 	return false;
 }
 
+<<<<<<< HEAD
 /* Wait until cond(data) == true, up until timeout has hit */
 bool
 nouveau_wait_cb(struct drm_device *dev, u64 timeout,
@@ -1431,6 +1859,8 @@ nouveau_wait_cb(struct drm_device *dev, u64 timeout,
 	return false;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Waits for PGRAPH to go completely idle */
 bool nouveau_wait_for_idle(struct drm_device *dev)
 {

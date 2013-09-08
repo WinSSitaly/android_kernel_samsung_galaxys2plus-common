@@ -168,7 +168,10 @@ module_exit(pvr_exit);
 MODULE_AUTHOR(DRIVER_AUTHOR);
 MODULE_DESCRIPTION(DRIVER_DESC);
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_VERSION("0.9.1");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /*

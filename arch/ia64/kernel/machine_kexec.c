@@ -27,11 +27,19 @@
 #include <asm/sal.h>
 #include <asm/mca.h>
 
+<<<<<<< HEAD
 typedef void (*relocate_new_kernel_t)(
 					unsigned long indirection_page,
 					unsigned long start_address,
 					struct ia64_boot_param *boot_param,
 					unsigned long pal_addr) __noreturn;
+=======
+typedef NORET_TYPE void (*relocate_new_kernel_t)(
+					unsigned long indirection_page,
+					unsigned long start_address,
+					struct ia64_boot_param *boot_param,
+					unsigned long pal_addr) ATTRIB_NORET;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct kimage *ia64_kimage;
 
@@ -157,7 +165,11 @@ void arch_crash_save_vmcoreinfo(void)
 #endif
 #ifdef CONFIG_PGTABLE_3
 	VMCOREINFO_CONFIG(PGTABLE_3);
+<<<<<<< HEAD
 #elif defined(CONFIG_PGTABLE_4)
+=======
+#elif  CONFIG_PGTABLE_4
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	VMCOREINFO_CONFIG(PGTABLE_4);
 #endif
 }

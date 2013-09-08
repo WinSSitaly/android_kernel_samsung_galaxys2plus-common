@@ -7,7 +7,11 @@
  */
 
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <linux/gpio.h>
 #include <linux/ioport.h>

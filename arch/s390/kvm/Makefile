@@ -10,5 +10,9 @@ common-objs = $(addprefix ../../../virt/kvm/, kvm_main.o)
 
 ccflags-y := -Ivirt/kvm -Iarch/s390/kvm
 
+<<<<<<< HEAD
 kvm-objs := $(common-objs) kvm-s390.o intercept.o interrupt.o priv.o sigp.o diag.o
+=======
+kvm-objs := $(common-objs) kvm-s390.o sie64a.o intercept.o interrupt.o priv.o sigp.o diag.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_KVM) += kvm.o

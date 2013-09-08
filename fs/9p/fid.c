@@ -45,8 +45,13 @@ int v9fs_fid_add(struct dentry *dentry, struct p9_fid *fid)
 {
 	struct v9fs_dentry *dent;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, "fid %d dentry %s\n",
 		 fid->fid, dentry->d_name.name);
+=======
+	P9_DPRINTK(P9_DEBUG_VFS, "fid %d dentry %s\n",
+					fid->fid, dentry->d_name.name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dent = dentry->d_fsdata;
 	if (!dent) {
@@ -79,8 +84,13 @@ static struct p9_fid *v9fs_fid_find(struct dentry *dentry, u32 uid, int any)
 	struct v9fs_dentry *dent;
 	struct p9_fid *fid, *ret;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, " dentry: %s (%p) uid %d any %d\n",
 		 dentry->d_name.name, dentry, uid, any);
+=======
+	P9_DPRINTK(P9_DEBUG_VFS, " dentry: %s (%p) uid %d any %d\n",
+		dentry->d_name.name, dentry, uid, any);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dent = (struct v9fs_dentry *) dentry->d_fsdata;
 	ret = NULL;
 	if (dent) {

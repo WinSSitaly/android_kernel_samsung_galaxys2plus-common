@@ -112,7 +112,11 @@ struct sci_user_parameters {
 	 * This field specifies the maximum number of direct attached devices
 	 * that can have power supplied to them simultaneously.
 	 */
+<<<<<<< HEAD
 	u8 max_concurr_spinup;
+=======
+	u8 max_number_concurrent_device_spin_up;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/**
 	 * This field specifies the number of seconds to allow a phy to consume
@@ -152,7 +156,11 @@ struct sci_user_parameters {
 #define MAX_CONCURRENT_DEVICE_SPIN_UP_COUNT 4
 
 struct sci_oem_params;
+<<<<<<< HEAD
 int sci_oem_parameters_validate(struct sci_oem_params *oem, u8 version);
+=======
+int sci_oem_parameters_validate(struct sci_oem_params *oem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct isci_orom;
 struct isci_orom *isci_request_oprom(struct pci_dev *pdev);
@@ -191,11 +199,14 @@ struct isci_oem_hdr {
 			0x1a, 0x04, 0xc6)
 #define ISCI_EFI_VAR_NAME	"RstScuO"
 
+<<<<<<< HEAD
 #define ISCI_ROM_VER_1_0	0x10
 #define ISCI_ROM_VER_1_1	0x11
 #define ISCI_ROM_VER_1_3	0x13
 #define ISCI_ROM_VER_LATEST	ISCI_ROM_VER_1_3
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Allowed PORT configuration modes APC Automatic PORT configuration mode is
  * defined by the OEM configuration parameters providing no PHY_MASK parameters
  * for any PORT. i.e. There are no phys assigned to any of the ports at start.
@@ -224,6 +235,7 @@ struct sci_bios_oem_param_block_hdr {
 struct sci_oem_params {
 	struct {
 		uint8_t mode_type;
+<<<<<<< HEAD
 		uint8_t max_concurr_spin_up;
 		/*
 		 * This bitfield indicates the OEM's desired default Tx
@@ -305,6 +317,11 @@ struct sci_oem_params {
 		 *    phy0 - short
 		 */
 		uint8_t cable_selection_mask;
+=======
+		uint8_t max_concurrent_dev_spin_up;
+		uint8_t do_enable_ssc;
+		uint8_t reserved;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} controller;
 
 	struct {

@@ -63,7 +63,14 @@ static int restore_sigframe(struct pt_regs *regs, struct sigframe __user *sf)
 	err = __copy_from_user(&set, &sf->uc.uc_sigmask, sizeof(set));
 	if (err == 0) {
 		sigdelsetmask(&set, ~_BLOCKABLE);
+<<<<<<< HEAD
 		set_current_blocked(&set);
+=======
+		spin_lock_irq(&current->sighand->siglock);
+		current->blocked = set;
+		recalc_sigpending();
+		spin_unlock_irq(&current->sighand->siglock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	err |= __get_user(regs->UCreg_00, &sf->uc.uc_mcontext.regs.UCreg_00);
@@ -318,7 +325,10 @@ static int handle_signal(unsigned long sig, struct k_sigaction *ka,
 {
 	struct thread_info *thread = current_thread_info();
 	struct task_struct *tsk = current;
+<<<<<<< HEAD
 	sigset_t blocked;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int usig = sig;
 	int ret;
 
@@ -370,10 +380,20 @@ static int handle_signal(unsigned long sig, struct k_sigaction *ka,
 	/*
 	 * Block the signal if we were successful.
 	 */
+<<<<<<< HEAD
 	sigorsets(&blocked, &tsk->blocked, &ka->sa.sa_mask);
 	if (!(ka->sa.sa_flags & SA_NODEFER))
 		sigaddset(&blocked, sig);
 	set_current_blocked(&blocked);
+=======
+	spin_lock_irq(&tsk->sighand->siglock);
+	sigorsets(&tsk->blocked, &tsk->blocked,
+		  &ka->sa.sa_mask);
+	if (!(ka->sa.sa_flags & SA_NODEFER))
+		sigaddset(&tsk->blocked, sig);
+	recalc_sigpending();
+	spin_unlock_irq(&tsk->sighand->siglock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

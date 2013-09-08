@@ -11,7 +11,11 @@
  */
 
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/sched.h>
 #include <linux/fs.h>
@@ -28,7 +32,10 @@
 #include <linux/freezer.h>
 #include <linux/pid_namespace.h>
 #include <linux/nsproxy.h>
+<<<<<<< HEAD
 #include <linux/user_namespace.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define CREATE_TRACE_POINTS
 #include <trace/events/signal.h>
 
@@ -36,7 +43,10 @@
 #include <asm/uaccess.h>
 #include <asm/unistd.h>
 #include <asm/siginfo.h>
+<<<<<<< HEAD
 #include <asm/cacheflush.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "audit.h"	/* audit_signal_info() */
 
 /*
@@ -59,20 +69,33 @@ static int sig_handler_ignored(void __user *handler, int sig)
 		(handler == SIG_DFL && sig_kernel_ignore(sig));
 }
 
+<<<<<<< HEAD
 static int sig_task_ignored(struct task_struct *t, int sig, bool force)
+=======
+static int sig_task_ignored(struct task_struct *t, int sig,
+		int from_ancestor_ns)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	void __user *handler;
 
 	handler = sig_handler(t, sig);
 
 	if (unlikely(t->signal->flags & SIGNAL_UNKILLABLE) &&
+<<<<<<< HEAD
 			handler == SIG_DFL && !force)
+=======
+			handler == SIG_DFL && !from_ancestor_ns)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 
 	return sig_handler_ignored(handler, sig);
 }
 
+<<<<<<< HEAD
 static int sig_ignored(struct task_struct *t, int sig, bool force)
+=======
+static int sig_ignored(struct task_struct *t, int sig, int from_ancestor_ns)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * Blocked signals are never ignored, since the
@@ -82,13 +105,21 @@ static int sig_ignored(struct task_struct *t, int sig, bool force)
 	if (sigismember(&t->blocked, sig) || sigismember(&t->real_blocked, sig))
 		return 0;
 
+<<<<<<< HEAD
 	if (!sig_task_ignored(t, sig, force))
+=======
+	if (!sig_task_ignored(t, sig, from_ancestor_ns))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	/*
 	 * Tracers may want to know about even ignored signals.
 	 */
+<<<<<<< HEAD
 	return !t->ptrace;
+=======
+	return !tracehook_consider_ignored_signal(t, sig);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -125,7 +156,11 @@ static inline int has_pending_signals(sigset_t *signal, sigset_t *blocked)
 
 static int recalc_sigpending_tsk(struct task_struct *t)
 {
+<<<<<<< HEAD
 	if ((t->jobctl & JOBCTL_PENDING_MASK) ||
+=======
+	if ((t->group_stop & GROUP_STOP_PENDING) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    PENDING(&t->pending, &t->blocked) ||
 	    PENDING(&t->signal->shared_pending, &t->blocked)) {
 		set_tsk_thread_flag(t, TIF_SIGPENDING);
@@ -151,7 +186,13 @@ void recalc_sigpending_and_wake(struct task_struct *t)
 
 void recalc_sigpending(void)
 {
+<<<<<<< HEAD
 	if (!recalc_sigpending_tsk(current) && !freezing(current))
+=======
+	if (unlikely(tracehook_force_sigpending()))
+		set_thread_flag(TIF_SIGPENDING);
+	else if (!recalc_sigpending_tsk(current) && !freezing(current))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		clear_thread_flag(TIF_SIGPENDING);
 
 }
@@ -223,6 +264,7 @@ static inline void print_dropped_signal(int sig)
 }
 
 /**
+<<<<<<< HEAD
  * task_set_jobctl_pending - set jobctl pending bits
  * @task: target task
  * @mask: pending bits to set
@@ -272,10 +314,29 @@ void task_clear_jobctl_trapping(struct task_struct *task)
 	if (unlikely(task->jobctl & JOBCTL_TRAPPING)) {
 		task->jobctl &= ~JOBCTL_TRAPPING;
 		wake_up_bit(&task->jobctl, JOBCTL_TRAPPING_BIT);
+=======
+ * task_clear_group_stop_trapping - clear group stop trapping bit
+ * @task: target task
+ *
+ * If GROUP_STOP_TRAPPING is set, a ptracer is waiting for us.  Clear it
+ * and wake up the ptracer.  Note that we don't need any further locking.
+ * @task->siglock guarantees that @task->parent points to the ptracer.
+ *
+ * CONTEXT:
+ * Must be called with @task->sighand->siglock held.
+ */
+static void task_clear_group_stop_trapping(struct task_struct *task)
+{
+	if (unlikely(task->group_stop & GROUP_STOP_TRAPPING)) {
+		task->group_stop &= ~GROUP_STOP_TRAPPING;
+		__wake_up_sync_key(&task->parent->signal->wait_chldexit,
+				   TASK_UNINTERRUPTIBLE, 1, task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
 /**
+<<<<<<< HEAD
  * task_clear_jobctl_pending - clear jobctl pending bits
  * @task: target task
  * @mask: pending bits to clear
@@ -286,10 +347,17 @@ void task_clear_jobctl_trapping(struct task_struct *task)
  *
  * If clearing of @mask leaves no stop or trap pending, this function calls
  * task_clear_jobctl_trapping().
+=======
+ * task_clear_group_stop_pending - clear pending group stop
+ * @task: target task
+ *
+ * Clear group stop states for @task.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * CONTEXT:
  * Must be called with @task->sighand->siglock held.
  */
+<<<<<<< HEAD
 void task_clear_jobctl_pending(struct task_struct *task, unsigned int mask)
 {
 	BUG_ON(mask & ~JOBCTL_PENDING_MASK);
@@ -301,15 +369,27 @@ void task_clear_jobctl_pending(struct task_struct *task, unsigned int mask)
 
 	if (!(task->jobctl & JOBCTL_PENDING_MASK))
 		task_clear_jobctl_trapping(task);
+=======
+void task_clear_group_stop_pending(struct task_struct *task)
+{
+	task->group_stop &= ~(GROUP_STOP_PENDING | GROUP_STOP_CONSUME |
+			      GROUP_STOP_DEQUEUED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
  * task_participate_group_stop - participate in a group stop
  * @task: task participating in a group stop
  *
+<<<<<<< HEAD
  * @task has %JOBCTL_STOP_PENDING set and is participating in a group stop.
  * Group stop states are cleared and the group stop count is consumed if
  * %JOBCTL_STOP_CONSUME was set.  If the consumption completes the group
+=======
+ * @task has GROUP_STOP_PENDING set and is participating in a group stop.
+ * Group stop states are cleared and the group stop count is consumed if
+ * %GROUP_STOP_CONSUME was set.  If the consumption completes the group
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * stop, the appropriate %SIGNAL_* flags are set.
  *
  * CONTEXT:
@@ -322,11 +402,19 @@ void task_clear_jobctl_pending(struct task_struct *task, unsigned int mask)
 static bool task_participate_group_stop(struct task_struct *task)
 {
 	struct signal_struct *sig = task->signal;
+<<<<<<< HEAD
 	bool consume = task->jobctl & JOBCTL_STOP_CONSUME;
 
 	WARN_ON_ONCE(!(task->jobctl & JOBCTL_STOP_PENDING));
 
 	task_clear_jobctl_pending(task, JOBCTL_STOP_PENDING);
+=======
+	bool consume = task->group_stop & GROUP_STOP_CONSUME;
+
+	WARN_ON_ONCE(!(task->group_stop & GROUP_STOP_PENDING));
+
+	task_clear_group_stop_pending(task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!consume)
 		return false;
@@ -482,7 +570,11 @@ flush_signal_handlers(struct task_struct *t, int force_default)
 		if (force_default || ka->sa.sa_handler != SIG_IGN)
 			ka->sa.sa_handler = SIG_DFL;
 		ka->sa.sa_flags = 0;
+<<<<<<< HEAD
 #ifdef __ARCH_HAS_SA_RESTORER
+=======
+#ifdef SA_RESTORER
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ka->sa.sa_restorer = NULL;
 #endif
 		sigemptyset(&ka->sa.sa_mask);
@@ -497,8 +589,12 @@ int unhandled_signal(struct task_struct *tsk, int sig)
 		return 1;
 	if (handler != SIG_IGN && handler != SIG_DFL)
 		return 0;
+<<<<<<< HEAD
 	/* if ptraced, let the tracer determine */
 	return !tsk->ptrace;
+=======
+	return !tracehook_consider_fatal_signal(tsk, sig);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -653,7 +749,11 @@ int dequeue_signal(struct task_struct *tsk, sigset_t *mask, siginfo_t *info)
 		 * is to alert stop-signal processing code when another
 		 * processor has come along and cleared the flag.
 		 */
+<<<<<<< HEAD
 		current->jobctl |= JOBCTL_STOP_DEQUEUED;
+=======
+		current->group_stop |= GROUP_STOP_DEQUEUED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if ((info->si_code & __SI_MASK) == __SI_TIMER && info->si_sys_private) {
 		/*
@@ -680,17 +780,35 @@ int dequeue_signal(struct task_struct *tsk, sigset_t *mask, siginfo_t *info)
  * No need to set need_resched since signal event passing
  * goes through ->blocked
  */
+<<<<<<< HEAD
 void signal_wake_up_state(struct task_struct *t, unsigned int state)
 {
 	set_tsk_thread_flag(t, TIF_SIGPENDING);
 	/*
 	 * TASK_WAKEKILL also means wake it up in the stopped/traced/killable
+=======
+void signal_wake_up(struct task_struct *t, int resume)
+{
+	unsigned int mask;
+
+	set_tsk_thread_flag(t, TIF_SIGPENDING);
+
+	/*
+	 * For SIGKILL, we want to wake it up in the stopped/traced/killable
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * case. We don't check t->state here because there is a race with it
 	 * executing another processor and just now entering stopped state.
 	 * By using wake_up_state, we ensure the process will wake up and
 	 * handle its death signal.
 	 */
+<<<<<<< HEAD
 	if (!wake_up_state(t, state | TASK_INTERRUPTIBLE))
+=======
+	mask = TASK_INTERRUPTIBLE;
+	if (resume)
+		mask |= TASK_WAKEKILL;
+	if (!wake_up_state(t, mask))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kick_process(t);
 }
 
@@ -816,6 +934,7 @@ static int check_kill_permission(int sig, struct siginfo *info,
 	return security_task_kill(t, info, sig, 0);
 }
 
+<<<<<<< HEAD
 /**
  * ptrace_trap_notify - schedule trap to notify ptracer
  * @t: tracee wanting to notify tracer
@@ -842,6 +961,8 @@ static void ptrace_trap_notify(struct task_struct *t)
 	ptrace_signal_wake_up(t, t->jobctl & JOBCTL_LISTENING);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Handle magic process-wide effects of stop/continue signals. Unlike
  * the signal actions, these happen immediately at signal-generation
@@ -852,7 +973,11 @@ static void ptrace_trap_notify(struct task_struct *t)
  * Returns true if the signal should be actually delivered, otherwise
  * it should be dropped.
  */
+<<<<<<< HEAD
 static int prepare_signal(int sig, struct task_struct *p, bool force)
+=======
+static int prepare_signal(int sig, struct task_struct *p, int from_ancestor_ns)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct signal_struct *signal = p->signal;
 	struct task_struct *t;
@@ -878,12 +1003,18 @@ static int prepare_signal(int sig, struct task_struct *p, bool force)
 		rm_from_queue(SIG_KERNEL_STOP_MASK, &signal->shared_pending);
 		t = p;
 		do {
+<<<<<<< HEAD
 			task_clear_jobctl_pending(t, JOBCTL_STOP_PENDING);
 			rm_from_queue(SIG_KERNEL_STOP_MASK, &t->pending);
 			if (likely(!(t->ptrace & PT_SEIZED)))
 				wake_up_state(t, __TASK_STOPPED);
 			else
 				ptrace_trap_notify(t);
+=======
+			task_clear_group_stop_pending(t);
+			rm_from_queue(SIG_KERNEL_STOP_MASK, &t->pending);
+			wake_up_state(t, __TASK_STOPPED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} while_each_thread(p, t);
 
 		/*
@@ -912,7 +1043,11 @@ static int prepare_signal(int sig, struct task_struct *p, bool force)
 		}
 	}
 
+<<<<<<< HEAD
 	return !sig_ignored(p, sig, force);
+=======
+	return !sig_ignored(p, sig, from_ancestor_ns);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -980,7 +1115,12 @@ static void complete_signal(int sig, struct task_struct *p, int group)
 	if (sig_fatal(p, sig) &&
 	    !(signal->flags & (SIGNAL_UNKILLABLE | SIGNAL_GROUP_EXIT)) &&
 	    !sigismember(&t->real_blocked, sig) &&
+<<<<<<< HEAD
 	    (sig == SIGKILL || !t->ptrace)) {
+=======
+	    (sig == SIGKILL ||
+	     !tracehook_consider_fatal_signal(t, sig))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * This signal will be fatal to the whole group.
 		 */
@@ -996,7 +1136,11 @@ static void complete_signal(int sig, struct task_struct *p, int group)
 			signal->group_stop_count = 0;
 			t = p;
 			do {
+<<<<<<< HEAD
 				task_clear_jobctl_pending(t, JOBCTL_PENDING_MASK);
+=======
+				task_clear_group_stop_pending(t);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				sigaddset(&t->pending.signal, SIGKILL);
 				signal_wake_up(t, 1);
 			} while_each_thread(p, t);
@@ -1017,6 +1161,7 @@ static inline int legacy_queue(struct sigpending *signals, int sig)
 	return (sig < SIGRTMIN) && sigismember(&signals->signal, sig);
 }
 
+<<<<<<< HEAD
 /*
  * map the uid in struct cred into user namespace *ns
  */
@@ -1045,12 +1190,15 @@ static inline void userns_fixup_signal_uid(struct siginfo *info, struct task_str
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __send_signal(int sig, struct siginfo *info, struct task_struct *t,
 			int group, int from_ancestor_ns)
 {
 	struct sigpending *pending;
 	struct sigqueue *q;
 	int override_rlimit;
+<<<<<<< HEAD
 	int ret = 0, result;
 
 	assert_spin_locked(&t->sighand->siglock);
@@ -1059,6 +1207,15 @@ static int __send_signal(int sig, struct siginfo *info, struct task_struct *t,
 	if (!prepare_signal(sig, t,
 			from_ancestor_ns || (info == SEND_SIG_FORCED)))
 		goto ret;
+=======
+
+	trace_signal_generate(sig, info, t);
+
+	assert_spin_locked(&t->sighand->siglock);
+
+	if (!prepare_signal(sig, t, from_ancestor_ns))
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pending = group ? &t->signal->shared_pending : &t->pending;
 	/*
@@ -1066,11 +1223,16 @@ static int __send_signal(int sig, struct siginfo *info, struct task_struct *t,
 	 * exactly one non-rt signal, so that we can get more
 	 * detailed information about the cause of the signal.
 	 */
+<<<<<<< HEAD
 	result = TRACE_SIGNAL_ALREADY_PENDING;
 	if (legacy_queue(pending, sig))
 		goto ret;
 
 	result = TRACE_SIGNAL_DELIVERED;
+=======
+	if (legacy_queue(pending, sig))
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * fast-pathed signals for kernel-internal things like SIGSTOP
 	 * or SIGKILL.
@@ -1118,9 +1280,12 @@ static int __send_signal(int sig, struct siginfo *info, struct task_struct *t,
 				q->info.si_pid = 0;
 			break;
 		}
+<<<<<<< HEAD
 
 		userns_fixup_signal_uid(&q->info, t);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (!is_si_special(info)) {
 		if (sig >= SIGRTMIN && info->si_code != SI_USER) {
 			/*
@@ -1128,15 +1293,24 @@ static int __send_signal(int sig, struct siginfo *info, struct task_struct *t,
 			 * signal was rt and sent by user using something
 			 * other than kill().
 			 */
+<<<<<<< HEAD
 			result = TRACE_SIGNAL_OVERFLOW_FAIL;
 			ret = -EAGAIN;
 			goto ret;
+=======
+			trace_signal_overflow_fail(sig, group, info);
+			return -EAGAIN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			/*
 			 * This is a silent loss of information.  We still
 			 * send the signal, but the *info bits are lost.
 			 */
+<<<<<<< HEAD
 			result = TRACE_SIGNAL_LOSE_INFO;
+=======
+			trace_signal_lose_info(sig, group, info);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -1144,9 +1318,13 @@ out_set:
 	signalfd_notify(t, sig);
 	sigaddset(&pending->signal, sig);
 	complete_signal(sig, t, group);
+<<<<<<< HEAD
 ret:
 	trace_signal_generate(sig, info, t, group, result);
 	return ret;
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int send_signal(int sig, struct siginfo *info, struct task_struct *t,
@@ -1269,7 +1447,11 @@ int zap_other_threads(struct task_struct *p)
 	p->signal->group_stop_count = 0;
 
 	while_each_thread(p, t) {
+<<<<<<< HEAD
 		task_clear_jobctl_pending(t, JOBCTL_PENDING_MASK);
+=======
+		task_clear_group_stop_pending(t);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		count++;
 
 		/* Don't bother with already dead threads */
@@ -1380,6 +1562,7 @@ int kill_proc_info(int sig, struct siginfo *info, pid_t pid)
 	return error;
 }
 
+<<<<<<< HEAD
 static int kill_as_cred_perm(const struct cred *cred,
 			     struct task_struct *target)
 {
@@ -1398,6 +1581,15 @@ int kill_pid_info_as_cred(int sig, struct siginfo *info, struct pid *pid,
 {
 	int ret = -EINVAL;
 	struct task_struct *p;
+=======
+/* like kill_pid_info(), but doesn't use uid/euid of "current" */
+int kill_pid_info_as_uid(int sig, struct siginfo *info, struct pid *pid,
+		      uid_t uid, uid_t euid, u32 secid)
+{
+	int ret = -EINVAL;
+	struct task_struct *p;
+	const struct cred *pcred;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	if (!valid_signal(sig))
@@ -1409,7 +1601,14 @@ int kill_pid_info_as_cred(int sig, struct siginfo *info, struct pid *pid,
 		ret = -ESRCH;
 		goto out_unlock;
 	}
+<<<<<<< HEAD
 	if (si_fromuser(info) && !kill_as_cred_perm(cred, p)) {
+=======
+	pcred = __task_cred(p);
+	if (si_fromuser(info) &&
+	    euid != pcred->suid && euid != pcred->uid &&
+	    uid  != pcred->suid && uid  != pcred->uid) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EPERM;
 		goto out_unlock;
 	}
@@ -1428,7 +1627,11 @@ out_unlock:
 	rcu_read_unlock();
 	return ret;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(kill_pid_info_as_cred);
+=======
+EXPORT_SYMBOL_GPL(kill_pid_info_as_uid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * kill_something_info() interprets pid in interesting ways just like kill(2).
@@ -1589,7 +1792,11 @@ int send_sigqueue(struct sigqueue *q, struct task_struct *t, int group)
 	int sig = q->info.si_signo;
 	struct sigpending *pending;
 	unsigned long flags;
+<<<<<<< HEAD
 	int ret, result;
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BUG_ON(!(q->flags & SIGQUEUE_PREALLOC));
 
@@ -1598,8 +1805,12 @@ int send_sigqueue(struct sigqueue *q, struct task_struct *t, int group)
 		goto ret;
 
 	ret = 1; /* the signal is ignored */
+<<<<<<< HEAD
 	result = TRACE_SIGNAL_IGNORED;
 	if (!prepare_signal(sig, t, false))
+=======
+	if (!prepare_signal(sig, t, 0))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	ret = 0;
@@ -1610,7 +1821,10 @@ int send_sigqueue(struct sigqueue *q, struct task_struct *t, int group)
 		 */
 		BUG_ON(q->info.si_code != SI_TIMER);
 		q->info.si_overrun++;
+<<<<<<< HEAD
 		result = TRACE_SIGNAL_ALREADY_PENDING;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 	q->info.si_overrun = 0;
@@ -1620,9 +1834,13 @@ int send_sigqueue(struct sigqueue *q, struct task_struct *t, int group)
 	list_add_tail(&q->list, &pending->list);
 	sigaddset(&pending->signal, sig);
 	complete_signal(sig, t, group);
+<<<<<<< HEAD
 	result = TRACE_SIGNAL_DELIVERED;
 out:
 	trace_signal_generate(sig, &q->info, t, group, result);
+=======
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unlock_task_sighand(t, &flags);
 ret:
 	return ret;
@@ -1632,21 +1850,33 @@ ret:
  * Let a parent know about the death of a child.
  * For a stopped/continued status change, use do_notify_parent_cldstop instead.
  *
+<<<<<<< HEAD
  * Returns true if our parent ignored us and so we've switched to
  * self-reaping.
  */
 bool do_notify_parent(struct task_struct *tsk, int sig)
+=======
+ * Returns -1 if our parent ignored us and so we've switched to
+ * self-reaping, or else @sig.
+ */
+int do_notify_parent(struct task_struct *tsk, int sig)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct siginfo info;
 	unsigned long flags;
 	struct sighand_struct *psig;
+<<<<<<< HEAD
 	bool autoreap = false;
+=======
+	int ret = sig;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BUG_ON(sig == -1);
 
  	/* do_notify_parent_cldstop should have been called instead.  */
  	BUG_ON(task_is_stopped_or_traced(tsk));
 
+<<<<<<< HEAD
 	BUG_ON(!tsk->ptrace &&
 	       (tsk->group_leader != tsk || !thread_group_empty(tsk)));
 
@@ -1659,6 +1889,11 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
 			sig = SIGCHLD;
 	}
 
+=======
+	BUG_ON(!task_ptrace(tsk) &&
+	       (tsk->group_leader != tsk || !thread_group_empty(tsk)));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info.si_signo = sig;
 	info.si_errno = 0;
 	/*
@@ -1675,12 +1910,22 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
 	 */
 	rcu_read_lock();
 	info.si_pid = task_pid_nr_ns(tsk, tsk->parent->nsproxy->pid_ns);
+<<<<<<< HEAD
 	info.si_uid = map_cred_ns(__task_cred(tsk),
 			task_cred_xxx(tsk->parent, user_ns));
 	rcu_read_unlock();
 
 	info.si_utime = cputime_to_clock_t(tsk->utime + tsk->signal->utime);
 	info.si_stime = cputime_to_clock_t(tsk->stime + tsk->signal->stime);
+=======
+	info.si_uid = __task_cred(tsk)->uid;
+	rcu_read_unlock();
+
+	info.si_utime = cputime_to_clock_t(cputime_add(tsk->utime,
+				tsk->signal->utime));
+	info.si_stime = cputime_to_clock_t(cputime_add(tsk->stime,
+				tsk->signal->stime));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	info.si_status = tsk->exit_code & 0x7f;
 	if (tsk->exit_code & 0x80)
@@ -1694,7 +1939,11 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
 
 	psig = tsk->parent->sighand;
 	spin_lock_irqsave(&psig->siglock, flags);
+<<<<<<< HEAD
 	if (!tsk->ptrace && sig == SIGCHLD &&
+=======
+	if (!task_ptrace(tsk) && sig == SIGCHLD &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    (psig->action[SIGCHLD-1].sa.sa_handler == SIG_IGN ||
 	     (psig->action[SIGCHLD-1].sa.sa_flags & SA_NOCLDWAIT))) {
 		/*
@@ -1712,16 +1961,28 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
 		 * is implementation-defined: we do (if you don't want
 		 * it, just use SIG_IGN instead).
 		 */
+<<<<<<< HEAD
 		autoreap = true;
 		if (psig->action[SIGCHLD-1].sa.sa_handler == SIG_IGN)
 			sig = 0;
 	}
 	if (valid_signal(sig) && sig)
+=======
+		ret = tsk->exit_signal = -1;
+		if (psig->action[SIGCHLD-1].sa.sa_handler == SIG_IGN)
+			sig = -1;
+	}
+	if (valid_signal(sig) && sig > 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__group_send_sig_info(sig, &info, tsk->parent);
 	__wake_up_parent(tsk, tsk->parent);
 	spin_unlock_irqrestore(&psig->siglock, flags);
 
+<<<<<<< HEAD
 	return autoreap;
+=======
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1759,8 +2020,12 @@ static void do_notify_parent_cldstop(struct task_struct *tsk,
 	 */
 	rcu_read_lock();
 	info.si_pid = task_pid_nr_ns(tsk, parent->nsproxy->pid_ns);
+<<<<<<< HEAD
 	info.si_uid = map_cred_ns(__task_cred(tsk),
 			task_cred_xxx(parent, user_ns));
+=======
+	info.si_uid = __task_cred(tsk)->uid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rcu_read_unlock();
 
 	info.si_utime = cputime_to_clock_t(tsk->utime);
@@ -1795,7 +2060,11 @@ static void do_notify_parent_cldstop(struct task_struct *tsk,
 
 static inline int may_ptrace_stop(void)
 {
+<<<<<<< HEAD
 	if (!likely(current->ptrace))
+=======
+	if (!likely(task_ptrace(current)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	/*
 	 * Are we in the middle of do_coredump?
@@ -1805,10 +2074,13 @@ static inline int may_ptrace_stop(void)
 	 * If SIGKILL was already sent before the caller unlocked
 	 * ->siglock we must see ->core_state != NULL. Otherwise it
 	 * is safe to enter schedule().
+<<<<<<< HEAD
 	 *
 	 * This is almost outdated, a task with the pending SIGKILL can't
 	 * block in TASK_TRACED. But PTRACE_EVENT_EXIT can be reported
 	 * after SIGKILL was already dequeued.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	if (unlikely(current->mm->core_state) &&
 	    unlikely(current->mm == current->parent->mm))
@@ -1828,6 +2100,18 @@ static int sigkill_pending(struct task_struct *tsk)
 }
 
 /*
+<<<<<<< HEAD
+=======
+ * Test whether the target task of the usual cldstop notification - the
+ * real_parent of @child - is in the same group as the ptracer.
+ */
+static bool real_parent_is_ptracer(struct task_struct *child)
+{
+	return same_thread_group(child->parent, child->real_parent);
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This must be called with current->sighand->siglock held.
  *
  * This should be the path for all ptrace stops.
@@ -1864,6 +2148,7 @@ static void ptrace_stop(int exit_code, int why, int clear_code, siginfo_t *info)
 	}
 
 	/*
+<<<<<<< HEAD
 	 * We're committing to trapping.  TRACED should be visible before
 	 * TRAPPING is cleared; otherwise, the tracer might fail do_wait().
 	 * Also, transition to TRACED and updates to ->jobctl should be
@@ -1871,11 +2156,22 @@ static void ptrace_stop(int exit_code, int why, int clear_code, siginfo_t *info)
 	 * hook as siglock is released and regrabbed across it.
 	 */
 	set_current_state(TASK_TRACED);
+=======
+	 * If @why is CLD_STOPPED, we're trapping to participate in a group
+	 * stop.  Do the bookkeeping.  Note that if SIGCONT was delievered
+	 * while siglock was released for the arch hook, PENDING could be
+	 * clear now.  We act as if SIGCONT is received after TASK_TRACED
+	 * is entered - ignore it.
+	 */
+	if (why == CLD_STOPPED && (current->group_stop & GROUP_STOP_PENDING))
+		gstop_done = task_participate_group_stop(current);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	current->last_siginfo = info;
 	current->exit_code = exit_code;
 
 	/*
+<<<<<<< HEAD
 	 * If @why is CLD_STOPPED, we're trapping to participate in a group
 	 * stop.  Do the bookkeeping.  Note that if SIGCONT was delievered
 	 * across siglock relocks since INTERRUPT was scheduled, PENDING
@@ -1892,6 +2188,20 @@ static void ptrace_stop(int exit_code, int why, int clear_code, siginfo_t *info)
 
 	/* entering a trap, clear TRAPPING */
 	task_clear_jobctl_trapping(current);
+=======
+	 * TRACED should be visible before TRAPPING is cleared; otherwise,
+	 * the tracer might fail do_wait().
+	 */
+	set_current_state(TASK_TRACED);
+
+	/*
+	 * We're committing to trapping.  Clearing GROUP_STOP_TRAPPING and
+	 * transition to TASK_TRACED should be atomic with respect to
+	 * siglock.  This hsould be done after the arch hook as siglock is
+	 * released and regrabbed across it.
+	 */
+	task_clear_group_stop_trapping(current);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_irq(&current->sighand->siglock);
 	read_lock(&tasklist_lock);
@@ -1907,7 +2217,11 @@ static void ptrace_stop(int exit_code, int why, int clear_code, siginfo_t *info)
 		 * separately unless they're gonna be duplicates.
 		 */
 		do_notify_parent_cldstop(current, true, why);
+<<<<<<< HEAD
 		if (gstop_done && ptrace_reparented(current))
+=======
+		if (gstop_done && !real_parent_is_ptracer(current))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			do_notify_parent_cldstop(current, false, why);
 
 		/*
@@ -1927,14 +2241,23 @@ static void ptrace_stop(int exit_code, int why, int clear_code, siginfo_t *info)
 		 *
 		 * If @gstop_done, the ptracer went away between group stop
 		 * completion and here.  During detach, it would have set
+<<<<<<< HEAD
 		 * JOBCTL_STOP_PENDING on us and we'll re-enter
 		 * TASK_STOPPED in do_signal_stop() on return, so notifying
 		 * the real parent of the group stop completion is enough.
+=======
+		 * GROUP_STOP_PENDING on us and we'll re-enter TASK_STOPPED
+		 * in do_signal_stop() on return, so notifying the real
+		 * parent of the group stop completion is enough.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 */
 		if (gstop_done)
 			do_notify_parent_cldstop(current, false, why);
 
+<<<<<<< HEAD
 		/* tasklist protects us from ptrace_freeze_traced() */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__set_current_state(TASK_RUNNING);
 		if (clear_code)
 			current->exit_code = 0;
@@ -1956,9 +2279,12 @@ static void ptrace_stop(int exit_code, int why, int clear_code, siginfo_t *info)
 	spin_lock_irq(&current->sighand->siglock);
 	current->last_siginfo = NULL;
 
+<<<<<<< HEAD
 	/* LISTENING can be set only during STOP traps, clear it */
 	current->jobctl &= ~JOBCTL_LISTENING;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Queued signals ignored us while we were stopped for tracing.
 	 * So check for any that we should take before resuming user mode.
@@ -1967,17 +2293,29 @@ static void ptrace_stop(int exit_code, int why, int clear_code, siginfo_t *info)
 	recalc_sigpending_tsk(current);
 }
 
+<<<<<<< HEAD
 static void ptrace_do_notify(int signr, int exit_code, int why)
 {
 	siginfo_t info;
 
 	memset(&info, 0, sizeof info);
 	info.si_signo = signr;
+=======
+void ptrace_notify(int exit_code)
+{
+	siginfo_t info;
+
+	BUG_ON((exit_code & (0x7f | ~0xffff)) != SIGTRAP);
+
+	memset(&info, 0, sizeof info);
+	info.si_signo = SIGTRAP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info.si_code = exit_code;
 	info.si_pid = task_pid_vnr(current);
 	info.si_uid = current_uid();
 
 	/* Let the debugger run.  */
+<<<<<<< HEAD
 	ptrace_stop(exit_code, why, 1, &info);
 }
 
@@ -2027,6 +2365,33 @@ static bool do_signal_stop(int signr)
 		if (!likely(current->jobctl & JOBCTL_STOP_DEQUEUED) ||
 		    unlikely(signal_group_exit(sig)))
 			return false;
+=======
+	spin_lock_irq(&current->sighand->siglock);
+	ptrace_stop(exit_code, CLD_TRAPPED, 1, &info);
+	spin_unlock_irq(&current->sighand->siglock);
+}
+
+/*
+ * This performs the stopping for SIGSTOP and other stop signals.
+ * We have to stop all threads in the thread group.
+ * Returns non-zero if we've actually stopped and released the siglock.
+ * Returns zero if we didn't stop and still hold the siglock.
+ */
+static int do_signal_stop(int signr)
+{
+	struct signal_struct *sig = current->signal;
+
+	if (!(current->group_stop & GROUP_STOP_PENDING)) {
+		unsigned int gstop = GROUP_STOP_PENDING | GROUP_STOP_CONSUME;
+		struct task_struct *t;
+
+		/* signr will be recorded in task->group_stop for retries */
+		WARN_ON_ONCE(signr & ~GROUP_STOP_SIGMASK);
+
+		if (!likely(current->group_stop & GROUP_STOP_DEQUEUED) ||
+		    unlikely(signal_group_exit(sig)))
+			return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * There is no group stop already in progress.  We must
 		 * initiate one now.
@@ -2049,11 +2414,17 @@ static bool do_signal_stop(int signr)
 		if (!(sig->flags & SIGNAL_STOP_STOPPED))
 			sig->group_exit_code = signr;
 
+<<<<<<< HEAD
 		sig->group_stop_count = 0;
 
 		if (task_set_jobctl_pending(current, signr | gstop))
 			sig->group_stop_count++;
 
+=======
+		current->group_stop &= ~GROUP_STOP_SIGMASK;
+		current->group_stop |= signr | gstop;
+		sig->group_stop_count = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (t = next_thread(current); t != current;
 		     t = next_thread(t)) {
 			/*
@@ -2061,6 +2432,7 @@ static bool do_signal_stop(int signr)
 			 * stop is always done with the siglock held,
 			 * so this check has no races.
 			 */
+<<<<<<< HEAD
 			if (!task_is_stopped(t) &&
 			    task_set_jobctl_pending(t, signr | gstop)) {
 				sig->group_stop_count++;
@@ -2073,6 +2445,18 @@ static bool do_signal_stop(int signr)
 	}
 
 	if (likely(!current->ptrace)) {
+=======
+			if (!(t->flags & PF_EXITING) && !task_is_stopped(t)) {
+				t->group_stop &= ~GROUP_STOP_SIGMASK;
+				t->group_stop |= signr | gstop;
+				sig->group_stop_count++;
+				signal_wake_up(t, 0);
+			}
+		}
+	}
+retry:
+	if (likely(!task_ptrace(current))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int notify = 0;
 
 		/*
@@ -2103,6 +2487,7 @@ static bool do_signal_stop(int signr)
 
 		/* Now we don't run again until woken by SIGCONT or SIGKILL */
 		schedule();
+<<<<<<< HEAD
 		return true;
 	} else {
 		/*
@@ -2146,11 +2531,40 @@ static void do_jobctl_trap(void)
 		ptrace_stop(signr, CLD_STOPPED, 0, NULL);
 		current->exit_code = 0;
 	}
+=======
+
+		spin_lock_irq(&current->sighand->siglock);
+	} else {
+		ptrace_stop(current->group_stop & GROUP_STOP_SIGMASK,
+			    CLD_STOPPED, 0, NULL);
+		current->exit_code = 0;
+	}
+
+	/*
+	 * GROUP_STOP_PENDING could be set if another group stop has
+	 * started since being woken up or ptrace wants us to transit
+	 * between TASK_STOPPED and TRACED.  Retry group stop.
+	 */
+	if (current->group_stop & GROUP_STOP_PENDING) {
+		WARN_ON_ONCE(!(current->group_stop & GROUP_STOP_SIGMASK));
+		goto retry;
+	}
+
+	/* PTRACE_ATTACH might have raced with task killing, clear trapping */
+	task_clear_group_stop_trapping(current);
+
+	spin_unlock_irq(&current->sighand->siglock);
+
+	tracehook_finish_jctl();
+
+	return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ptrace_signal(int signr, siginfo_t *info,
 			 struct pt_regs *regs, void *cookie)
 {
+<<<<<<< HEAD
 	ptrace_signal_deliver(regs, cookie);
 	/*
 	 * We do not check sig_kernel_stop(signr) but set this marker
@@ -2162,6 +2576,14 @@ static int ptrace_signal(int signr, siginfo_t *info,
 	 * comment in dequeue_signal().
 	 */
 	current->jobctl |= JOBCTL_STOP_DEQUEUED;
+=======
+	if (!task_ptrace(current))
+		return signr;
+
+	ptrace_signal_deliver(regs, cookie);
+
+	/* Let the debugger run.  */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ptrace_stop(signr, CLD_TRAPPED, 0, info);
 
 	/* We're back.  Did the debugger cancel the sig?  */
@@ -2181,11 +2603,16 @@ static int ptrace_signal(int signr, siginfo_t *info,
 		info->si_signo = signr;
 		info->si_errno = 0;
 		info->si_code = SI_USER;
+<<<<<<< HEAD
 		rcu_read_lock();
 		info->si_pid = task_pid_vnr(current->parent);
 		info->si_uid = map_cred_ns(__task_cred(current->parent),
 				current_user_ns());
 		rcu_read_unlock();
+=======
+		info->si_pid = task_pid_vnr(current->parent);
+		info->si_uid = task_uid(current->parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* If the (new) signal is now blocked, requeue it.  */
@@ -2220,6 +2647,10 @@ relock:
 	 * the CLD_ si_code into SIGNAL_CLD_MASK bits.
 	 */
 	if (unlikely(signal->flags & SIGNAL_CLD_MASK)) {
+<<<<<<< HEAD
+=======
+		struct task_struct *leader;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int why;
 
 		if (signal->flags & SIGNAL_CLD_CONTINUED)
@@ -2240,11 +2671,21 @@ relock:
 		 * a duplicate.
 		 */
 		read_lock(&tasklist_lock);
+<<<<<<< HEAD
 		do_notify_parent_cldstop(current, false, why);
 
 		if (ptrace_reparented(current->group_leader))
 			do_notify_parent_cldstop(current->group_leader,
 						true, why);
+=======
+
+		do_notify_parent_cldstop(current, false, why);
+
+		leader = current->group_leader;
+		if (task_ptrace(leader) && !real_parent_is_ptracer(leader))
+			do_notify_parent_cldstop(leader, true, why);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		read_unlock(&tasklist_lock);
 
 		goto relock;
@@ -2252,6 +2693,7 @@ relock:
 
 	for (;;) {
 		struct k_sigaction *ka;
+<<<<<<< HEAD
 
 		if (unlikely(current->jobctl & JOBCTL_STOP_PENDING) &&
 		    do_signal_stop(0))
@@ -2277,6 +2719,39 @@ relock:
 
 		ka = &sighand->action[signr-1];
 
+=======
+		/*
+		 * Tracing can induce an artificial signal and choose sigaction.
+		 * The return value in @signr determines the default action,
+		 * but @info->si_signo is the signal number we will report.
+		 */
+		signr = tracehook_get_signal(current, regs, info, return_ka);
+		if (unlikely(signr < 0))
+			goto relock;
+		if (unlikely(signr != 0))
+			ka = return_ka;
+		else {
+			if (unlikely(current->group_stop &
+				     GROUP_STOP_PENDING) && do_signal_stop(0))
+				goto relock;
+
+			signr = dequeue_signal(current, &current->blocked,
+					       info);
+
+			if (!signr)
+				break; /* will return 0 */
+
+			if (signr != SIGKILL) {
+				signr = ptrace_signal(signr, info,
+						      regs, cookie);
+				if (!signr)
+					continue;
+			}
+
+			ka = &sighand->action[signr-1];
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Trace actually delivered signals. */
 		trace_signal_deliver(signr, info, ka);
 
@@ -2377,6 +2852,7 @@ relock:
 	return signr;
 }
 
+<<<<<<< HEAD
 /**
  * block_sigmask - add @ka's signal mask to current->blocked
  * @ka: action for @signr
@@ -2398,6 +2874,8 @@ void block_sigmask(struct k_sigaction *ka, int signr)
 	set_current_blocked(&blocked);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * It could be that complete_signal() picked us to notify about the
  * group-wide signal. Other threads should be notified now to take
@@ -2463,7 +2941,11 @@ void exit_signals(struct task_struct *tsk)
 	signotset(&unblocked);
 	retarget_shared_pending(tsk, &unblocked);
 
+<<<<<<< HEAD
 	if (unlikely(tsk->jobctl & JOBCTL_STOP_PENDING) &&
+=======
+	if (unlikely(tsk->group_stop & GROUP_STOP_PENDING) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    task_participate_group_stop(tsk))
 		group_stop = CLD_STOPPED;
 out:
@@ -2867,7 +3349,11 @@ do_send_specific(pid_t tgid, pid_t pid, int sig, struct siginfo *info)
 
 static int do_tkill(pid_t tgid, pid_t pid, int sig)
 {
+<<<<<<< HEAD
 	struct siginfo info = {};
+=======
+	struct siginfo info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	info.si_signo = sig;
 	info.si_errno = 0;
@@ -3196,11 +3682,23 @@ SYSCALL_DEFINE0(sgetmask)
 
 SYSCALL_DEFINE1(ssetmask, int, newmask)
 {
+<<<<<<< HEAD
 	int old = current->blocked.sig[0];
 	sigset_t newset;
 
 	siginitset(&newset, newmask & ~(sigmask(SIGKILL) | sigmask(SIGSTOP)));
 	set_current_blocked(&newset);
+=======
+	int old;
+
+	spin_lock_irq(&current->sighand->siglock);
+	old = current->blocked.sig[0];
+
+	siginitset(&current->blocked, newmask & ~(sigmask(SIGKILL)|
+						  sigmask(SIGSTOP)));
+	recalc_sigpending();
+	spin_unlock_irq(&current->sighand->siglock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return old;
 }
@@ -3257,8 +3755,16 @@ SYSCALL_DEFINE2(rt_sigsuspend, sigset_t __user *, unewset, size_t, sigsetsize)
 		return -EFAULT;
 	sigdelsetmask(&newset, sigmask(SIGKILL)|sigmask(SIGSTOP));
 
+<<<<<<< HEAD
 	current->saved_sigmask = current->blocked;
 	set_current_blocked(&newset);
+=======
+	spin_lock_irq(&current->sighand->siglock);
+	current->saved_sigmask = current->blocked;
+	current->blocked = newset;
+	recalc_sigpending();
+	spin_unlock_irq(&current->sighand->siglock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	current->state = TASK_INTERRUPTIBLE;
 	schedule();

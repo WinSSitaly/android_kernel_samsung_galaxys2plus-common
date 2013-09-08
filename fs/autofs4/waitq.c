@@ -56,27 +56,42 @@ void autofs4_catatonic_mode(struct autofs_sb_info *sbi)
 	mutex_unlock(&sbi->wq_mutex);
 }
 
+<<<<<<< HEAD
 static int autofs4_write(struct autofs_sb_info *sbi,
 			 struct file *file, const void *addr, int bytes)
+=======
+static int autofs4_write(struct file *file, const void *addr, int bytes)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long sigpipe, flags;
 	mm_segment_t fs;
 	const char *data = (const char *)addr;
 	ssize_t wr = 0;
 
+<<<<<<< HEAD
+=======
+	/** WARNING: this is not safe for writing more than PIPE_BUF bytes! **/
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sigpipe = sigismember(&current->pending.signal, SIGPIPE);
 
 	/* Save pointer to user space and point back to kernel space */
 	fs = get_fs();
 	set_fs(KERNEL_DS);
 
+<<<<<<< HEAD
 	mutex_lock(&sbi->pipe_mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (bytes &&
 	       (wr = file->f_op->write(file,data,bytes,&file->f_pos)) > 0) {
 		data += wr;
 		bytes -= wr;
 	}
+<<<<<<< HEAD
 	mutex_unlock(&sbi->pipe_mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	set_fs(fs);
 
@@ -91,7 +106,11 @@ static int autofs4_write(struct autofs_sb_info *sbi,
 
 	return (bytes > 0);
 }
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void autofs4_notify_daemon(struct autofs_sb_info *sbi,
 				 struct autofs_wait_queue *wq,
 				 int type)
@@ -105,12 +124,17 @@ static void autofs4_notify_daemon(struct autofs_sb_info *sbi,
 	size_t pktsz;
 
 	DPRINTK("wait id = 0x%08lx, name = %.*s, type=%d",
+<<<<<<< HEAD
 		(unsigned long) wq->wait_queue_token, wq->name.len, wq->name.name, type);
+=======
+		wq->wait_queue_token, wq->name.len, wq->name.name, type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memset(&pkt,0,sizeof pkt); /* For security reasons */
 
 	pkt.hdr.proto_version = sbi->version;
 	pkt.hdr.type = type;
+<<<<<<< HEAD
 	mutex_lock(&sbi->wq_mutex);
 
 	/* Check if we have become catatonic */
@@ -118,6 +142,8 @@ static void autofs4_notify_daemon(struct autofs_sb_info *sbi,
 		mutex_unlock(&sbi->wq_mutex);
 		return;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (type) {
 	/* Kernel protocol v4 missing and expire packets */
 	case autofs_ptype_missing:
@@ -171,6 +197,7 @@ static void autofs4_notify_daemon(struct autofs_sb_info *sbi,
 	}
 	default:
 		printk("autofs4_notify_daemon: bad type %d!\n", type);
+<<<<<<< HEAD
 		mutex_unlock(&sbi->wq_mutex);
 		return;
 	}
@@ -183,6 +210,24 @@ static void autofs4_notify_daemon(struct autofs_sb_info *sbi,
 	if (autofs4_write(sbi, pipe, &pkt, pktsz))
 		autofs4_catatonic_mode(sbi);
 	fput(pipe);
+=======
+		return;
+	}
+
+	/* Check if we have become catatonic */
+	mutex_lock(&sbi->wq_mutex);
+	if (!sbi->catatonic) {
+		pipe = sbi->pipe;
+		get_file(pipe);
+	}
+	mutex_unlock(&sbi->wq_mutex);
+
+	if (pipe) {
+		if (autofs4_write(pipe, &pkt, pktsz))
+			autofs4_catatonic_mode(sbi);
+		fput(pipe);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int autofs4_getpath(struct autofs_sb_info *sbi,
@@ -261,9 +306,12 @@ static int validate_request(struct autofs_wait_queue **wait,
 	struct autofs_wait_queue *wq;
 	struct autofs_info *ino;
 
+<<<<<<< HEAD
 	if (sbi->catatonic)
 		return -ENOENT;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Wait in progress, continue; */
 	wq = autofs4_find_wait(sbi, qstr);
 	if (wq) {
@@ -296,9 +344,12 @@ static int validate_request(struct autofs_wait_queue **wait,
 			if (mutex_lock_interruptible(&sbi->wq_mutex))
 				return -EINTR;
 
+<<<<<<< HEAD
 			if (sbi->catatonic)
 				return -ENOENT;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			wq = autofs4_find_wait(sbi, qstr);
 			if (wq) {
 				*wait = wq;
@@ -399,7 +450,11 @@ int autofs4_wait(struct autofs_sb_info *sbi, struct dentry *dentry,
 
 	ret = validate_request(&wq, sbi, &qstr, dentry, notify);
 	if (ret <= 0) {
+<<<<<<< HEAD
 		if (ret != -EINTR)
+=======
+		if (ret == 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mutex_unlock(&sbi->wq_mutex);
 		kfree(qstr.name);
 		return ret;

@@ -7,8 +7,15 @@
 #include <fcntl.h>
 #include <termios.h>
 #include "chan_user.h"
+<<<<<<< HEAD
 #include "os.h"
 #include "um_malloc.h"
+=======
+#include "kern_constants.h"
+#include "os.h"
+#include "um_malloc.h"
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct tty_chan {
 	char *dev;

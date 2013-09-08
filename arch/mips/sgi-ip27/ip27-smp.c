@@ -76,7 +76,11 @@ static int do_cpumask(cnodeid_t cnode, nasid_t nasid, int highest)
 			/* Only let it join in if it's marked enabled */
 			if ((acpu->cpu_info.flags & KLINFO_ENABLE) &&
 			    (tot_cpus_found != NR_CPUS)) {
+<<<<<<< HEAD
 				set_cpu_possible(cpuid, true);
+=======
+				cpu_set(cpuid, cpu_possible_map);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				alloc_cpupda(cpuid, tot_cpus_found);
 				cpus_found++;
 				tot_cpus_found++;

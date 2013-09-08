@@ -79,7 +79,10 @@ static int rionet_capable = 1;
  * on system trade-offs.
  */
 static struct rio_dev **rionet_active;
+<<<<<<< HEAD
 static int nact;	/* total number of active rionet peers */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define is_rionet_capable(src_ops, dst_ops)			\
 			((src_ops & RIO_SRC_OPS_DATA_MSG) &&	\
@@ -176,7 +179,10 @@ static int rionet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 	struct ethhdr *eth = (struct ethhdr *)skb->data;
 	u16 destid;
 	unsigned long flags;
+<<<<<<< HEAD
 	int add_num = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	local_irq_save(flags);
 	if (!spin_trylock(&rnet->tx_lock)) {
@@ -184,10 +190,14 @@ static int rionet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 		return NETDEV_TX_LOCKED;
 	}
 
+<<<<<<< HEAD
 	if (is_multicast_ether_addr(eth->h_dest))
 		add_num = nact;
 
 	if ((rnet->tx_cnt + add_num) > RIONET_TX_RING_SIZE) {
+=======
+	if ((rnet->tx_cnt + 1) > RIONET_TX_RING_SIZE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		netif_stop_queue(ndev);
 		spin_unlock_irqrestore(&rnet->tx_lock, flags);
 		printk(KERN_ERR "%s: BUG! Tx Ring full when queue awake!\n",
@@ -195,6 +205,7 @@ static int rionet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 		return NETDEV_TX_BUSY;
 	}
 
+<<<<<<< HEAD
 	if (is_multicast_ether_addr(eth->h_dest)) {
 		int count = 0;
 		for (i = 0; i < RIO_MAX_ROUTE_ENTRIES(rnet->mport->sys_size);
@@ -206,6 +217,14 @@ static int rionet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 					atomic_inc(&skb->users);
 				count++;
 			}
+=======
+	if (eth->h_dest[0] & 0x01) {
+		for (i = 0; i < RIO_MAX_ROUTE_ENTRIES(rnet->mport->sys_size);
+				i++)
+			if (rionet_active[i])
+				rionet_queue_tx_msg(skb, ndev,
+						    rionet_active[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (RIONET_MAC_MATCH(eth->h_dest)) {
 		destid = RIONET_GET_DESTID(eth->h_dest);
 		if (rionet_active[destid])
@@ -230,17 +249,25 @@ static void rionet_dbell_event(struct rio_mport *mport, void *dev_id, u16 sid, u
 	if (info == RIONET_DOORBELL_JOIN) {
 		if (!rionet_active[sid]) {
 			list_for_each_entry(peer, &rionet_peers, node) {
+<<<<<<< HEAD
 				if (peer->rdev->destid == sid) {
 					rionet_active[sid] = peer->rdev;
 					nact++;
 				}
+=======
+				if (peer->rdev->destid == sid)
+					rionet_active[sid] = peer->rdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			rio_mport_send_doorbell(mport, sid,
 						RIONET_DOORBELL_JOIN);
 		}
 	} else if (info == RIONET_DOORBELL_LEAVE) {
 		rionet_active[sid] = NULL;
+<<<<<<< HEAD
 		nact--;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		if (netif_msg_intr(rnet))
 			printk(KERN_WARNING "%s: unhandled doorbell\n",
@@ -388,8 +415,13 @@ static void rionet_remove(struct rio_dev *rdev)
 	struct net_device *ndev = rio_get_drvdata(rdev);
 	struct rionet_peer *peer, *tmp;
 
+<<<<<<< HEAD
 	free_pages((unsigned long)rionet_active, get_order(sizeof(void *) *
 			RIO_MAX_ROUTE_ENTRIES(rdev->net->hport->sys_size)));
+=======
+	free_pages((unsigned long)rionet_active, rdev->net->hport->sys_size ?
+					__fls(sizeof(void *)) + 4 : 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unregister_netdev(ndev);
 	free_netdev(ndev);
 
@@ -445,16 +477,27 @@ static int rionet_setup_netdev(struct rio_mport *mport, struct net_device *ndev)
 	int rc = 0;
 	struct rionet_private *rnet;
 	u16 device_id;
+<<<<<<< HEAD
 	const size_t rionet_active_bytes = sizeof(void *) *
 				RIO_MAX_ROUTE_ENTRIES(mport->sys_size);
 
 	rionet_active = (struct rio_dev **)__get_free_pages(GFP_KERNEL,
 			get_order(rionet_active_bytes));
+=======
+
+	rionet_active = (struct rio_dev **)__get_free_pages(GFP_KERNEL,
+			mport->sys_size ? __fls(sizeof(void *)) + 4 : 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!rionet_active) {
 		rc = -ENOMEM;
 		goto out;
 	}
+<<<<<<< HEAD
 	memset((void *)rionet_active, 0, rionet_active_bytes);
+=======
+	memset((void *)rionet_active, 0, sizeof(void *) *
+				RIO_MAX_ROUTE_ENTRIES(mport->sys_size));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Set up private area */
 	rnet = netdev_priv(ndev);
@@ -511,6 +554,11 @@ static int rionet_probe(struct rio_dev *rdev, const struct rio_device_id *id)
 	/* Allocate our net_device structure */
 	ndev = alloc_etherdev(sizeof(struct rionet_private));
 	if (ndev == NULL) {
+<<<<<<< HEAD
+=======
+		printk(KERN_INFO "%s: could not allocate ethernet device.\n",
+		       DRV_NAME);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -ENOMEM;
 		goto out;
 	}
@@ -536,7 +584,10 @@ static int rionet_probe(struct rio_dev *rdev, const struct rio_device_id *id)
 
 		rc = rionet_setup_netdev(rdev->net->hport, ndev);
 		rionet_check = 1;
+<<<<<<< HEAD
 		nact = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*

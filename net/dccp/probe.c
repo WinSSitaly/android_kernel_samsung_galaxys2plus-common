@@ -152,6 +152,7 @@ static const struct file_operations dccpprobe_fops = {
 	.llseek  = noop_llseek,
 };
 
+<<<<<<< HEAD
 static __init int setup_jprobe(void)
 {
 	int ret = register_jprobe(&dccp_send_probe);
@@ -163,6 +164,8 @@ static __init int setup_jprobe(void)
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __init int dccpprobe_init(void)
 {
 	int ret = -ENOMEM;
@@ -174,7 +177,12 @@ static __init int dccpprobe_init(void)
 	if (!proc_net_fops_create(&init_net, procname, S_IRUSR, &dccpprobe_fops))
 		goto err0;
 
+<<<<<<< HEAD
 	ret = setup_jprobe();
+=======
+	try_then_request_module((ret = register_jprobe(&dccp_send_probe)) == 0,
+				"dccp");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto err1;
 

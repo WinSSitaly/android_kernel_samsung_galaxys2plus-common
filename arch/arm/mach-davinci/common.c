@@ -12,7 +12,10 @@
 #include <linux/io.h>
 #include <linux/etherdevice.h>
 #include <linux/davinci_emac.h>
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/tlb.h>
 #include <asm/mach/map.h>
@@ -87,8 +90,11 @@ void __init davinci_common_init(struct davinci_soc_info *soc_info)
 		iotable_init(davinci_soc_info.io_desc,
 				davinci_soc_info.io_desc_num);
 
+<<<<<<< HEAD
 	init_consistent_dma_size(14 << 20);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Normally devicemaps_init() would flush caches and tlb after
 	 * mdesc->map_io(), but we must also do it here because of the CPU
@@ -97,6 +103,12 @@ void __init davinci_common_init(struct davinci_soc_info *soc_info)
 	local_flush_tlb_all();
 	flush_cache_all();
 
+<<<<<<< HEAD
+=======
+	if (!davinci_soc_info.reset)
+		davinci_soc_info.reset = davinci_watchdog_reset;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * We want to check CPU revision early for cpu_is_xxxx() macros.
 	 * IO space mapping must be initialized before we can do that.

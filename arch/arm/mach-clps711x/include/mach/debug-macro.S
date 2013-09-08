@@ -14,7 +14,11 @@
 #include <mach/hardware.h>
 #include <asm/hardware/clps7111.h>
 
+<<<<<<< HEAD
 		.macro	addruart, rp, rv, tmp
+=======
+		.macro	addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef CONFIG_DEBUG_CLPS711X_UART2
 		mov	\rp, #0x0000	@ UART1
 #else

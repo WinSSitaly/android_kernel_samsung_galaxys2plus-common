@@ -57,8 +57,12 @@ relocate_new_kernel:
 	mov r0,#0
 	ldr r1,kexec_mach_type
 	ldr r2,kexec_boot_atags
+<<<<<<< HEAD
  ARM(	mov pc, lr	)
  THUMB(	bx lr		)
+=======
+	bx lr
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.align
 

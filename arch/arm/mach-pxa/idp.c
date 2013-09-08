@@ -75,8 +75,13 @@ static struct resource smc91x_resources[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 	[1] = {
+<<<<<<< HEAD
 		.start	= PXA_GPIO_TO_IRQ(4),
 		.end	= PXA_GPIO_TO_IRQ(4),
+=======
+		.start	= IRQ_GPIO(4),
+		.end	= IRQ_GPIO(4),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHEDGE,
 	}
 };
@@ -195,10 +200,16 @@ static void __init idp_map_io(void)
 MACHINE_START(PXA_IDP, "Vibren PXA255 IDP")
 	/* Maintainer: Vibren Technologies */
 	.map_io		= idp_map_io,
+<<<<<<< HEAD
 	.nr_irqs	= PXA_NR_IRQS,
 	.init_irq	= pxa25x_init_irq,
 	.handle_irq	= pxa25x_handle_irq,
 	.timer		= &pxa_timer,
 	.init_machine	= idp_init,
 	.restart	= pxa_restart,
+=======
+	.init_irq	= pxa25x_init_irq,
+	.timer		= &pxa_timer,
+	.init_machine	= idp_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

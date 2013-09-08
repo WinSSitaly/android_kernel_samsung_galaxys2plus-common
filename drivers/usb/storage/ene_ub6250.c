@@ -42,7 +42,11 @@ MODULE_LICENSE("GPL");
 { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
 	.driver_info = (flags)|(USB_US_TYPE_STOR<<24) }
 
+<<<<<<< HEAD
 static struct usb_device_id ene_ub6250_usb_ids[] = {
+=======
+struct usb_device_id ene_ub6250_usb_ids[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #	include "unusual_ene_ub6250.h"
 	{ }		/* Terminating entry */
 };
@@ -100,6 +104,7 @@ static struct us_unusual_dev ene_ub6250_unusual_dev_list[] = {
 #define FDIR_WRITE         0
 #define FDIR_READ          1
 
+<<<<<<< HEAD
 /* For MS Card */
 
 /* Status Register 1 */
@@ -235,6 +240,8 @@ static struct us_unusual_dev ene_ub6250_unusual_dev_list[] = {
 #define ms_lib_clear_pagemap(pdx) memset((pdx)->MS_Lib.pagemap, 0, sizeof((pdx)->MS_Lib.pagemap))
 #define memstick_logaddr(logadr1, logadr0) ((((u16)(logadr1)) << 8) | (logadr0))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct SD_STATUS {
 	u8    Insert:1;
@@ -267,6 +274,7 @@ struct SM_STATUS {
 	u8    IsMS:1;
 };
 
+<<<<<<< HEAD
 struct ms_bootblock_cis {
 	u8 bCistplDEVICE[6];    /* 0 */
 	u8 bCistplDEVICE0C[6];  /* 6 */
@@ -425,6 +433,8 @@ struct ms_lib_ctrl {
 	unsigned char copybuf[512];
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* SD Block Length */
 /* 2^9 = 512 Bytes, The HW maximum read/write data length */
@@ -455,7 +465,11 @@ struct ene_ub6250_info {
 	/*----- MS Control Data ---------------- */
 	bool		MS_SWWP;
 	u32		MSP_TotalBlock;
+<<<<<<< HEAD
 	struct ms_lib_ctrl MS_Lib;
+=======
+	/*MS_LibControl       MS_Lib;*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool		MS_IsRWPage;
 	u16		MS_Model;
 
@@ -473,7 +487,10 @@ struct ene_ub6250_info {
 };
 
 static int ene_sd_init(struct us_data *us);
+<<<<<<< HEAD
 static int ene_ms_init(struct us_data *us);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ene_load_bincode(struct us_data *us, unsigned char flag);
 
 static void ene_ub6250_info_destructor(void *extra)
@@ -534,6 +551,7 @@ static int ene_send_scsi_cmd(struct us_data *us, u8 fDir, void *buf, int use_sg)
 
 	if (result == USB_STOR_XFER_STALLED) {
 		/* get the status again */
+<<<<<<< HEAD
 		US_DEBUGP("Attempting to get CSW (2nd try)...\n");
 		result = usb_stor_bulk_transfer_buf(us, us->recv_bulk_pipe,
 						bcs, US_BULK_CS_WRAP_LEN, NULL);
@@ -1435,26 +1453,75 @@ static int ms_scsi_test_unit_ready(struct us_data *us, struct scsi_cmnd *srb)
 		return USB_STOR_TRANSPORT_GOOD;
 	} else {
 		ene_ms_init(us);
+=======
+		US_DEBUGP("Attempting to get CSW (2nd try)...\n");
+		result = usb_stor_bulk_transfer_buf(us, us->recv_bulk_pipe,
+						bcs, US_BULK_CS_WRAP_LEN, NULL);
+	}
+
+	if (result != USB_STOR_XFER_GOOD)
+		return USB_STOR_TRANSPORT_ERROR;
+
+	/* check bulk status */
+	residue = le32_to_cpu(bcs->Residue);
+
+	/* try to compute the actual residue, based on how much data
+	 * was really transferred and what the device tells us */
+	if (residue && !(us->fflags & US_FL_IGNORE_RESIDUE)) {
+		residue = min(residue, transfer_length);
+		if (us->srb != NULL)
+			scsi_set_resid(us->srb, max(scsi_get_resid(us->srb),
+								(int)residue));
+	}
+
+	if (bcs->Status != US_BULK_STAT_OK)
+		return USB_STOR_TRANSPORT_ERROR;
+
+	return USB_STOR_TRANSPORT_GOOD;
+}
+
+static int sd_scsi_test_unit_ready(struct us_data *us, struct scsi_cmnd *srb)
+{
+	struct ene_ub6250_info *info = (struct ene_ub6250_info *) us->extra;
+
+	if (info->SD_Status.Insert && info->SD_Status.Ready)
+		return USB_STOR_TRANSPORT_GOOD;
+	else {
+		ene_sd_init(us);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return USB_STOR_TRANSPORT_GOOD;
 	}
 
 	return USB_STOR_TRANSPORT_GOOD;
 }
 
+<<<<<<< HEAD
 static int ms_scsi_inquiry(struct us_data *us, struct scsi_cmnd *srb)
 {
 	/* pr_info("MS_SCSI_Inquiry\n"); */
+=======
+static int sd_scsi_inquiry(struct us_data *us, struct scsi_cmnd *srb)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char data_ptr[36] = {
 		0x00, 0x80, 0x02, 0x00, 0x1F, 0x00, 0x00, 0x00, 0x55,
 		0x53, 0x42, 0x32, 0x2E, 0x30, 0x20, 0x20, 0x43, 0x61,
 		0x72, 0x64, 0x52, 0x65, 0x61, 0x64, 0x65, 0x72, 0x20,
+<<<<<<< HEAD
 		0x20, 0x20, 0x20, 0x20, 0x20, 0x30, 0x31, 0x30, 0x30};
+=======
+		0x20, 0x20, 0x20, 0x20, 0x20, 0x30, 0x31, 0x30, 0x30 };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	usb_stor_set_xfer_buf(data_ptr, 36, srb);
 	return USB_STOR_TRANSPORT_GOOD;
 }
 
+<<<<<<< HEAD
 static int ms_scsi_mode_sense(struct us_data *us, struct scsi_cmnd *srb)
+=======
+static int sd_scsi_mode_sense(struct us_data *us, struct scsi_cmnd *srb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ene_ub6250_info *info = (struct ene_ub6250_info *) us->extra;
 	unsigned char mediaNoWP[12] = {
@@ -1464,15 +1531,27 @@ static int ms_scsi_mode_sense(struct us_data *us, struct scsi_cmnd *srb)
 		0x0b, 0x00, 0x80, 0x08, 0x00, 0x00,
 		0x71, 0xc0, 0x00, 0x00, 0x02, 0x00 };
 
+<<<<<<< HEAD
 	if (info->MS_Status.WtP)
+=======
+	if (info->SD_Status.WtP)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		usb_stor_set_xfer_buf(mediaWP, 12, srb);
 	else
 		usb_stor_set_xfer_buf(mediaNoWP, 12, srb);
 
+<<<<<<< HEAD
 	return USB_STOR_TRANSPORT_GOOD;
 }
 
 static int ms_scsi_read_capacity(struct us_data *us, struct scsi_cmnd *srb)
+=======
+
+	return USB_STOR_TRANSPORT_GOOD;
+}
+
+static int sd_scsi_read_capacity(struct us_data *us, struct scsi_cmnd *srb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32   bl_num;
 	u16    bl_len;
@@ -1481,6 +1560,7 @@ static int ms_scsi_read_capacity(struct us_data *us, struct scsi_cmnd *srb)
 	struct scatterlist *sg = NULL;
 	struct ene_ub6250_info *info = (struct ene_ub6250_info *) us->extra;
 
+<<<<<<< HEAD
 	US_DEBUGP("ms_scsi_read_capacity\n");
 	bl_len = 0x200;
 	if (info->MS_Status.IsMSPro)
@@ -1488,6 +1568,20 @@ static int ms_scsi_read_capacity(struct us_data *us, struct scsi_cmnd *srb)
 	else
 		bl_num = info->MS_Lib.NumberOfLogBlock * info->MS_Lib.blockSize * 2 - 1;
 
+=======
+	US_DEBUGP("sd_scsi_read_capacity\n");
+	if (info->SD_Status.HiCapacity) {
+		bl_len = 0x200;
+		if (info->SD_Status.IsMMC)
+			bl_num = info->HC_C_SIZE-1;
+		else
+			bl_num = (info->HC_C_SIZE + 1) * 1024 - 1;
+	} else {
+		bl_len = 1<<(info->SD_READ_BL_LEN);
+		bl_num = info->SD_Block_Mult * (info->SD_C_SIZE + 1)
+				* (1 << (info->SD_C_SIZE_MULT + 2)) - 1;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info->bl_num = bl_num;
 	US_DEBUGP("bl_len = %x\n", bl_len);
 	US_DEBUGP("bl_num = %x\n", bl_num);
@@ -1507,6 +1601,7 @@ static int ms_scsi_read_capacity(struct us_data *us, struct scsi_cmnd *srb)
 	return USB_STOR_TRANSPORT_GOOD;
 }
 
+<<<<<<< HEAD
 static void ms_lib_phy_to_log_range(u16 PhyBlock, u16 *LogStart, u16 *LogEnde)
 {
 	PhyBlock /= MS_PHYSICAL_BLOCKS_PER_SEGMENT;
@@ -1625,6 +1720,9 @@ static int ms_lib_scan_logicalblocknumber(struct us_data *us, u16 btBlk1st)
 
 
 static int ms_scsi_read(struct us_data *us, struct scsi_cmnd *srb)
+=======
+static int sd_scsi_read(struct us_data *us, struct scsi_cmnd *srb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int result;
 	unsigned char *cdb = srb->cmnd;
@@ -1632,13 +1730,20 @@ static int ms_scsi_read(struct us_data *us, struct scsi_cmnd *srb)
 	struct ene_ub6250_info *info = (struct ene_ub6250_info *) us->extra;
 
 	u32 bn = ((cdb[2] << 24) & 0xff000000) | ((cdb[3] << 16) & 0x00ff0000) |
+<<<<<<< HEAD
 		((cdb[4] << 8) & 0x0000ff00) | ((cdb[5] << 0) & 0x000000ff);
 	u16 blen = ((cdb[7] << 8) & 0xff00) | ((cdb[8] << 0) & 0x00ff);
+=======
+		 ((cdb[4] << 8) & 0x0000ff00) | ((cdb[5] << 0) & 0x000000ff);
+	u16 blen = ((cdb[7] << 8) & 0xff00) | ((cdb[8] << 0) & 0x00ff);
+	u32 bnByte = bn * 0x200;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 blenByte = blen * 0x200;
 
 	if (bn > info->bl_num)
 		return USB_STOR_TRANSPORT_ERROR;
 
+<<<<<<< HEAD
 	if (info->MS_Status.IsMSPro) {
 		result = ene_load_bincode(us, MSP_RW_PATTERN);
 		if (result != USB_STOR_XFER_GOOD) {
@@ -1735,11 +1840,49 @@ static int ms_scsi_write(struct us_data *us, struct scsi_cmnd *srb)
 			((cdb[4] << 8) & 0x0000ff00) |
 			((cdb[5] << 0) & 0x000000ff);
 	u16 blen = ((cdb[7] << 8) & 0xff00) | ((cdb[8] << 0) & 0x00ff);
+=======
+	result = ene_load_bincode(us, SD_RW_PATTERN);
+	if (result != USB_STOR_XFER_GOOD) {
+		US_DEBUGP("Load SD RW pattern Fail !!\n");
+		return USB_STOR_TRANSPORT_ERROR;
+	}
+
+	if (info->SD_Status.HiCapacity)
+		bnByte = bn;
+
+	/* set up the command wrapper */
+	memset(bcb, 0, sizeof(struct bulk_cb_wrap));
+	bcb->Signature = cpu_to_le32(US_BULK_CB_SIGN);
+	bcb->DataTransferLength = blenByte;
+	bcb->Flags  = 0x80;
+	bcb->CDB[0] = 0xF1;
+	bcb->CDB[5] = (unsigned char)(bnByte);
+	bcb->CDB[4] = (unsigned char)(bnByte>>8);
+	bcb->CDB[3] = (unsigned char)(bnByte>>16);
+	bcb->CDB[2] = (unsigned char)(bnByte>>24);
+
+	result = ene_send_scsi_cmd(us, FDIR_READ, scsi_sglist(srb), 1);
+	return result;
+}
+
+static int sd_scsi_write(struct us_data *us, struct scsi_cmnd *srb)
+{
+	int result;
+	unsigned char *cdb = srb->cmnd;
+	struct bulk_cb_wrap *bcb = (struct bulk_cb_wrap *) us->iobuf;
+	struct ene_ub6250_info *info = (struct ene_ub6250_info *) us->extra;
+
+	u32 bn = ((cdb[2] << 24) & 0xff000000) | ((cdb[3] << 16) & 0x00ff0000) |
+		 ((cdb[4] << 8) & 0x0000ff00) | ((cdb[5] << 0) & 0x000000ff);
+	u16 blen = ((cdb[7] << 8) & 0xff00) | ((cdb[8] << 0) & 0x00ff);
+	u32 bnByte = bn * 0x200;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 blenByte = blen * 0x200;
 
 	if (bn > info->bl_num)
 		return USB_STOR_TRANSPORT_ERROR;
 
+<<<<<<< HEAD
 	if (info->MS_Status.IsMSPro) {
 		result = ene_load_bincode(us, MSP_RW_PATTERN);
 		if (result != USB_STOR_XFER_GOOD) {
@@ -1819,6 +1962,32 @@ exit:
  * ENE MS Card
  */
 
+=======
+	result = ene_load_bincode(us, SD_RW_PATTERN);
+	if (result != USB_STOR_XFER_GOOD) {
+		US_DEBUGP("Load SD RW pattern Fail !!\n");
+		return USB_STOR_TRANSPORT_ERROR;
+	}
+
+	if (info->SD_Status.HiCapacity)
+		bnByte = bn;
+
+	/* set up the command wrapper */
+	memset(bcb, 0, sizeof(struct bulk_cb_wrap));
+	bcb->Signature = cpu_to_le32(US_BULK_CB_SIGN);
+	bcb->DataTransferLength = blenByte;
+	bcb->Flags  = 0x00;
+	bcb->CDB[0] = 0xF0;
+	bcb->CDB[5] = (unsigned char)(bnByte);
+	bcb->CDB[4] = (unsigned char)(bnByte>>8);
+	bcb->CDB[3] = (unsigned char)(bnByte>>16);
+	bcb->CDB[2] = (unsigned char)(bnByte>>24);
+
+	result = ene_send_scsi_cmd(us, FDIR_WRITE, scsi_sglist(srb), 1);
+	return result;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ene_get_card_type(struct us_data *us, u16 index, void *buf)
 {
 	struct bulk_cb_wrap *bcb = (struct bulk_cb_wrap *) us->iobuf;
@@ -1827,7 +1996,11 @@ static int ene_get_card_type(struct us_data *us, u16 index, void *buf)
 	memset(bcb, 0, sizeof(struct bulk_cb_wrap));
 	bcb->Signature = cpu_to_le32(US_BULK_CB_SIGN);
 	bcb->DataTransferLength	= 0x01;
+<<<<<<< HEAD
 	bcb->Flags			= US_BULK_FLAG_IN;
+=======
+	bcb->Flags			= 0x80;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bcb->CDB[0]			= 0xED;
 	bcb->CDB[2]			= (unsigned char)(index>>8);
 	bcb->CDB[3]			= (unsigned char)index;
@@ -1893,6 +2066,7 @@ static int ene_load_bincode(struct us_data *us, unsigned char flag)
 		US_DEBUGP("SD_RDWR_PATTERN\n");
 		fw_name = "ene-ub6250/sd_rdwr.bin";
 		break;
+<<<<<<< HEAD
 	/* For MS */
 	case MS_INIT_PATTERN:
 		US_DEBUGP("MS_INIT_PATTERN\n");
@@ -1906,6 +2080,8 @@ static int ene_load_bincode(struct us_data *us, unsigned char flag)
 		US_DEBUGP("MS_RW_PATTERN\n");
 		fw_name = "ene-ub6250/ms_rdwr.bin";
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		US_DEBUGP("----------- Unknown PATTERN ----------\n");
 		goto nofw;
@@ -1941,6 +2117,7 @@ nofw:
 	return result;
 }
 
+<<<<<<< HEAD
 static int ms_card_init(struct us_data *us)
 {
 	u32 result;
@@ -2117,6 +2294,8 @@ static int ene_ms_init(struct us_data *us)
 	return USB_STOR_TRANSPORT_GOOD;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ene_sd_init(struct us_data *us)
 {
 	int result;
@@ -2134,7 +2313,11 @@ static int ene_sd_init(struct us_data *us)
 
 	memset(bcb, 0, sizeof(struct bulk_cb_wrap));
 	bcb->Signature = cpu_to_le32(US_BULK_CB_SIGN);
+<<<<<<< HEAD
 	bcb->Flags = US_BULK_FLAG_IN;
+=======
+	bcb->Flags = 0x80;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bcb->CDB[0] = 0xF2;
 
 	result = ene_send_scsi_cmd(us, FDIR_READ, NULL, 0);
@@ -2153,7 +2336,11 @@ static int ene_sd_init(struct us_data *us)
 	memset(bcb, 0, sizeof(struct bulk_cb_wrap));
 	bcb->Signature = cpu_to_le32(US_BULK_CB_SIGN);
 	bcb->DataTransferLength = 0x200;
+<<<<<<< HEAD
 	bcb->Flags              = US_BULK_FLAG_IN;
+=======
+	bcb->Flags              = 0x80;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bcb->CDB[0]             = 0xF1;
 
 	result = ene_send_scsi_cmd(us, FDIR_READ, &buf, 0);
@@ -2196,6 +2383,7 @@ static int ene_init(struct us_data *us)
 				return USB_STOR_TRANSPORT_ERROR;
 		}
 	}
+<<<<<<< HEAD
 	if (misc_reg03 & 0x02) {
 		if (!info->MS_Status.Ready) {
 			result = ene_ms_init(us);
@@ -2203,6 +2391,9 @@ static int ene_init(struct us_data *us)
 				return USB_STOR_TRANSPORT_ERROR;
 		}
 	}
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return result;
 }
 
@@ -2245,6 +2436,7 @@ static int sd_scsi_irp(struct us_data *us, struct scsi_cmnd *srb)
 	return result;
 }
 
+<<<<<<< HEAD
 /*
  * ms_scsi_irp()
  */
@@ -2280,6 +2472,8 @@ static int ms_scsi_irp(struct us_data *us, struct scsi_cmnd *srb)
 	return result;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ene_transport(struct scsi_cmnd *srb, struct us_data *us)
 {
 	int result = 0;
@@ -2287,6 +2481,7 @@ static int ene_transport(struct scsi_cmnd *srb, struct us_data *us)
 
 	/*US_DEBUG(usb_stor_show_command(srb)); */
 	scsi_set_resid(srb, 0);
+<<<<<<< HEAD
 	if (unlikely(!(info->SD_Status.Ready || info->MS_Status.Ready))) {
 		result = ene_init(us);
 	} else {
@@ -2296,6 +2491,13 @@ static int ene_transport(struct scsi_cmnd *srb, struct us_data *us)
 		if (info->MS_Status.Ready)
 			result = ms_scsi_irp(us, srb);
 	}
+=======
+	if (unlikely(!info->SD_Status.Ready))
+		result = ene_init(us);
+	else
+		result = sd_scsi_irp(us, srb);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -2336,8 +2538,15 @@ static int ene_ub6250_probe(struct usb_interface *intf,
 	}
 
 	if (!(misc_reg03 & 0x01)) {
+<<<<<<< HEAD
 		pr_info("ums_eneub6250: The driver only supports SD/MS card. "
 			"To use SM card, please build driver/staging/keucr\n");
+=======
+		result = -ENODEV;
+		printk(KERN_NOTICE "ums_eneub6250: The driver only supports SD card. "
+		       "To use SM/MS card, please build driver/staging/keucr\n");
+		usb_stor_disconnect(intf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return result;
@@ -2407,7 +2616,24 @@ static struct usb_driver ene_ub6250_driver = {
 	.post_reset =	usb_stor_post_reset,
 	.id_table =	ene_ub6250_usb_ids,
 	.soft_unbind =	1,
+<<<<<<< HEAD
 	.no_dynamic_id = 1,
 };
 
 module_usb_driver(ene_ub6250_driver);
+=======
+};
+
+static int __init ene_ub6250_init(void)
+{
+	return usb_register(&ene_ub6250_driver);
+}
+
+static void __exit ene_ub6250_exit(void)
+{
+	usb_deregister(&ene_ub6250_driver);
+}
+
+module_init(ene_ub6250_init);
+module_exit(ene_ub6250_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

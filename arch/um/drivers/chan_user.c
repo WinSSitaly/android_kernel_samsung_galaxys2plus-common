@@ -11,8 +11,15 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 #include "chan_user.h"
+<<<<<<< HEAD
 #include "os.h"
 #include "um_malloc.h"
+=======
+#include "kern_constants.h"
+#include "os.h"
+#include "um_malloc.h"
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void generic_close(int fd, void *unused)
 {
@@ -281,12 +288,16 @@ void register_winch(int fd, struct tty_struct *tty)
 		return;
 
 	pid = tcgetpgrp(fd);
+<<<<<<< HEAD
 	if (is_skas_winch(pid, fd, tty)) {
 		register_winch_irq(-1, fd, -1, tty, 0);
 		return;
 	}
 
 	if (pid == -1) {
+=======
+	if (!is_skas_winch(pid, fd, tty) && (pid == -1)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		thread = winch_tramp(fd, tty, &thread_fd, &stack);
 		if (thread < 0)
 			return;

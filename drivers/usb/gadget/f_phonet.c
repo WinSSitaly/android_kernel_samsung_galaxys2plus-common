@@ -8,9 +8,24 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * version 2 as published by the Free Software Foundation.
+<<<<<<< HEAD
  */
 
 #include <linux/mm.h>
+=======
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/kernel.h>
 #include <linux/device.h>
@@ -298,10 +313,18 @@ static void pn_net_setup(struct net_device *dev)
 static int
 pn_rx_submit(struct f_phonet *fp, struct usb_request *req, gfp_t gfp_flags)
 {
+<<<<<<< HEAD
 	struct page *page;
 	int err;
 
 	page = alloc_page(gfp_flags);
+=======
+	struct net_device *dev = fp->dev;
+	struct page *page;
+	int err;
+
+	page = __netdev_alloc_page(dev, gfp_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!page)
 		return -ENOMEM;
 
@@ -311,7 +334,11 @@ pn_rx_submit(struct f_phonet *fp, struct usb_request *req, gfp_t gfp_flags)
 
 	err = usb_ep_queue(fp->out_ep, req, gfp_flags);
 	if (unlikely(err))
+<<<<<<< HEAD
 		put_page(page);
+=======
+		netdev_free_page(dev, page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -345,7 +372,11 @@ static void pn_rx_complete(struct usb_ep *ep, struct usb_request *req)
 		}
 
 		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, page,
+<<<<<<< HEAD
 				skb->len <= 1, req->actual, PAGE_SIZE);
+=======
+				skb->len == 0, req->actual);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		page = NULL;
 
 		if (req->actual < req->length) { /* Last fragment */
@@ -373,9 +404,15 @@ static void pn_rx_complete(struct usb_ep *ep, struct usb_request *req)
 	}
 
 	if (page)
+<<<<<<< HEAD
 		put_page(page);
 	if (req)
 		pn_rx_submit(fp, req, GFP_ATOMIC | __GFP_COLD);
+=======
+		netdev_free_page(dev, page);
+	if (req)
+		pn_rx_submit(fp, req, GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*-------------------------------------------------------------------------*/
@@ -417,6 +454,7 @@ static int pn_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
 		spin_lock(&port->lock);
 		__pn_reset(f);
 		if (alt == 1) {
+<<<<<<< HEAD
 			int i;
 
 			if (config_ep_by_speed(gadget, f, fp->in_ep) ||
@@ -428,6 +466,19 @@ static int pn_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
 			}
 			usb_ep_enable(fp->out_ep);
 			usb_ep_enable(fp->in_ep);
+=======
+			struct usb_endpoint_descriptor *out, *in;
+			int i;
+
+			out = ep_choose(gadget,
+					&pn_hs_sink_desc,
+					&pn_fs_sink_desc);
+			in = ep_choose(gadget,
+					&pn_hs_source_desc,
+					&pn_fs_source_desc);
+			usb_ep_enable(fp->out_ep, out);
+			usb_ep_enable(fp->in_ep, in);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			port->usb = fp;
 			fp->out_ep->driver_data = fp;
@@ -435,7 +486,11 @@ static int pn_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
 
 			netif_carrier_on(dev);
 			for (i = 0; i < phonet_rxq_size; i++)
+<<<<<<< HEAD
 				pn_rx_submit(fp, fp->out_reqv[i], GFP_ATOMIC | __GFP_COLD);
+=======
+				pn_rx_submit(fp, fp->out_reqv[i], GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		spin_unlock(&port->lock);
 		return 0;
@@ -531,7 +586,11 @@ int pn_bind(struct usb_configuration *c, struct usb_function *f)
 
 		req = usb_ep_alloc_request(fp->out_ep, GFP_KERNEL);
 		if (!req)
+<<<<<<< HEAD
 			goto err_req;
+=======
+			goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		req->complete = pn_rx_complete;
 		fp->out_reqv[i] = req;
@@ -540,18 +599,26 @@ int pn_bind(struct usb_configuration *c, struct usb_function *f)
 	/* Outgoing USB requests */
 	fp->in_req = usb_ep_alloc_request(fp->in_ep, GFP_KERNEL);
 	if (!fp->in_req)
+<<<<<<< HEAD
 		goto err_req;
+=======
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	INFO(cdev, "USB CDC Phonet function\n");
 	INFO(cdev, "using %s, OUT %s, IN %s\n", cdev->gadget->name,
 		fp->out_ep->name, fp->in_ep->name);
 	return 0;
 
+<<<<<<< HEAD
 err_req:
 	for (i = 0; i < phonet_rxq_size && fp->out_reqv[i]; i++)
 		usb_ep_free_request(fp->out_ep, fp->out_reqv[i]);
 err:
 
+=======
+err:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (fp->out_ep)
 		fp->out_ep->driver_data = NULL;
 	if (fp->in_ep)

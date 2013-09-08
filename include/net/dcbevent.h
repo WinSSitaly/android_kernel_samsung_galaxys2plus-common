@@ -24,6 +24,7 @@ enum dcbevent_notif_type {
 	DCB_APP_EVENT = 1,
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_DCB
 extern int register_dcbevent_notifier(struct notifier_block *nb);
 extern int unregister_dcbevent_notifier(struct notifier_block *nb);
@@ -45,5 +46,10 @@ static inline int call_dcbevent_notifiers(unsigned long val, void *v)
 	return 0;
 }
 #endif /* CONFIG_DCB */
+=======
+extern int register_dcbevent_notifier(struct notifier_block *nb);
+extern int unregister_dcbevent_notifier(struct notifier_block *nb);
+extern int call_dcbevent_notifiers(unsigned long val, void *v);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

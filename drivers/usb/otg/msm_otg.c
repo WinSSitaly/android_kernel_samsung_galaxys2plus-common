@@ -69,9 +69,15 @@ static int msm_hsusb_init_vddcx(struct msm_otg *motg, int init)
 	int ret = 0;
 
 	if (init) {
+<<<<<<< HEAD
 		hsusb_vddcx = regulator_get(motg->phy.dev, "HSUSB_VDDCX");
 		if (IS_ERR(hsusb_vddcx)) {
 			dev_err(motg->phy.dev, "unable to get hsusb vddcx\n");
+=======
+		hsusb_vddcx = regulator_get(motg->otg.dev, "HSUSB_VDDCX");
+		if (IS_ERR(hsusb_vddcx)) {
+			dev_err(motg->otg.dev, "unable to get hsusb vddcx\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return PTR_ERR(hsusb_vddcx);
 		}
 
@@ -79,7 +85,11 @@ static int msm_hsusb_init_vddcx(struct msm_otg *motg, int init)
 				USB_PHY_VDD_DIG_VOL_MIN,
 				USB_PHY_VDD_DIG_VOL_MAX);
 		if (ret) {
+<<<<<<< HEAD
 			dev_err(motg->phy.dev, "unable to set the voltage "
+=======
+			dev_err(motg->otg.dev, "unable to set the voltage "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"for hsusb vddcx\n");
 			regulator_put(hsusb_vddcx);
 			return ret;
@@ -87,18 +97,30 @@ static int msm_hsusb_init_vddcx(struct msm_otg *motg, int init)
 
 		ret = regulator_enable(hsusb_vddcx);
 		if (ret) {
+<<<<<<< HEAD
 			dev_err(motg->phy.dev, "unable to enable hsusb vddcx\n");
+=======
+			dev_err(motg->otg.dev, "unable to enable hsusb vddcx\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			regulator_put(hsusb_vddcx);
 		}
 	} else {
 		ret = regulator_set_voltage(hsusb_vddcx, 0,
 			USB_PHY_VDD_DIG_VOL_MAX);
 		if (ret)
+<<<<<<< HEAD
 			dev_err(motg->phy.dev, "unable to set the voltage "
 					"for hsusb vddcx\n");
 		ret = regulator_disable(hsusb_vddcx);
 		if (ret)
 			dev_err(motg->phy.dev, "unable to disable hsusb vddcx\n");
+=======
+			dev_err(motg->otg.dev, "unable to set the voltage "
+					"for hsusb vddcx\n");
+		ret = regulator_disable(hsusb_vddcx);
+		if (ret)
+			dev_err(motg->otg.dev, "unable to disable hsusb vddcx\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		regulator_put(hsusb_vddcx);
 	}
@@ -111,40 +133,67 @@ static int msm_hsusb_ldo_init(struct msm_otg *motg, int init)
 	int rc = 0;
 
 	if (init) {
+<<<<<<< HEAD
 		hsusb_3p3 = regulator_get(motg->phy.dev, "HSUSB_3p3");
 		if (IS_ERR(hsusb_3p3)) {
 			dev_err(motg->phy.dev, "unable to get hsusb 3p3\n");
+=======
+		hsusb_3p3 = regulator_get(motg->otg.dev, "HSUSB_3p3");
+		if (IS_ERR(hsusb_3p3)) {
+			dev_err(motg->otg.dev, "unable to get hsusb 3p3\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return PTR_ERR(hsusb_3p3);
 		}
 
 		rc = regulator_set_voltage(hsusb_3p3, USB_PHY_3P3_VOL_MIN,
 				USB_PHY_3P3_VOL_MAX);
 		if (rc) {
+<<<<<<< HEAD
 			dev_err(motg->phy.dev, "unable to set voltage level "
+=======
+			dev_err(motg->otg.dev, "unable to set voltage level "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"for hsusb 3p3\n");
 			goto put_3p3;
 		}
 		rc = regulator_enable(hsusb_3p3);
 		if (rc) {
+<<<<<<< HEAD
 			dev_err(motg->phy.dev, "unable to enable the hsusb 3p3\n");
 			goto put_3p3;
 		}
 		hsusb_1p8 = regulator_get(motg->phy.dev, "HSUSB_1p8");
 		if (IS_ERR(hsusb_1p8)) {
 			dev_err(motg->phy.dev, "unable to get hsusb 1p8\n");
+=======
+			dev_err(motg->otg.dev, "unable to enable the hsusb 3p3\n");
+			goto put_3p3;
+		}
+		hsusb_1p8 = regulator_get(motg->otg.dev, "HSUSB_1p8");
+		if (IS_ERR(hsusb_1p8)) {
+			dev_err(motg->otg.dev, "unable to get hsusb 1p8\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rc = PTR_ERR(hsusb_1p8);
 			goto disable_3p3;
 		}
 		rc = regulator_set_voltage(hsusb_1p8, USB_PHY_1P8_VOL_MIN,
 				USB_PHY_1P8_VOL_MAX);
 		if (rc) {
+<<<<<<< HEAD
 			dev_err(motg->phy.dev, "unable to set voltage level "
+=======
+			dev_err(motg->otg.dev, "unable to set voltage level "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"for hsusb 1p8\n");
 			goto put_1p8;
 		}
 		rc = regulator_enable(hsusb_1p8);
 		if (rc) {
+<<<<<<< HEAD
 			dev_err(motg->phy.dev, "unable to enable the hsusb 1p8\n");
+=======
+			dev_err(motg->otg.dev, "unable to enable the hsusb 1p8\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto put_1p8;
 		}
 
@@ -235,9 +284,15 @@ static int msm_hsusb_ldo_set_mode(int on)
 	return ret < 0 ? ret : 0;
 }
 
+<<<<<<< HEAD
 static int ulpi_read(struct usb_phy *phy, u32 reg)
 {
 	struct msm_otg *motg = container_of(phy, struct msm_otg, phy);
+=======
+static int ulpi_read(struct otg_transceiver *otg, u32 reg)
+{
+	struct msm_otg *motg = container_of(otg, struct msm_otg, otg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int cnt = 0;
 
 	/* initiate read operation */
@@ -253,16 +308,26 @@ static int ulpi_read(struct usb_phy *phy, u32 reg)
 	}
 
 	if (cnt >= ULPI_IO_TIMEOUT_USEC) {
+<<<<<<< HEAD
 		dev_err(phy->dev, "ulpi_read: timeout %08x\n",
+=======
+		dev_err(otg->dev, "ulpi_read: timeout %08x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			readl(USB_ULPI_VIEWPORT));
 		return -ETIMEDOUT;
 	}
 	return ULPI_DATA_READ(readl(USB_ULPI_VIEWPORT));
 }
 
+<<<<<<< HEAD
 static int ulpi_write(struct usb_phy *phy, u32 val, u32 reg)
 {
 	struct msm_otg *motg = container_of(phy, struct msm_otg, phy);
+=======
+static int ulpi_write(struct otg_transceiver *otg, u32 val, u32 reg)
+{
+	struct msm_otg *motg = container_of(otg, struct msm_otg, otg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int cnt = 0;
 
 	/* initiate write operation */
@@ -279,13 +344,21 @@ static int ulpi_write(struct usb_phy *phy, u32 val, u32 reg)
 	}
 
 	if (cnt >= ULPI_IO_TIMEOUT_USEC) {
+<<<<<<< HEAD
 		dev_err(phy->dev, "ulpi_write: timeout\n");
+=======
+		dev_err(otg->dev, "ulpi_write: timeout\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ETIMEDOUT;
 	}
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct usb_phy_io_ops msm_otg_io_ops = {
+=======
+static struct otg_io_access_ops msm_otg_io_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.read = ulpi_read,
 	.write = ulpi_write,
 };
@@ -299,9 +372,15 @@ static void ulpi_init(struct msm_otg *motg)
 		return;
 
 	while (seq[0] >= 0) {
+<<<<<<< HEAD
 		dev_vdbg(motg->phy.dev, "ulpi: write 0x%02x to 0x%02x\n",
 				seq[0], seq[1]);
 		ulpi_write(&motg->phy, seq[0], seq[1]);
+=======
+		dev_vdbg(motg->otg.dev, "ulpi: write 0x%02x to 0x%02x\n",
+				seq[0], seq[1]);
+		ulpi_write(&motg->otg, seq[0], seq[1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		seq += 2;
 	}
 }
@@ -313,11 +392,19 @@ static int msm_otg_link_clk_reset(struct msm_otg *motg, bool assert)
 	if (assert) {
 		ret = clk_reset(motg->clk, CLK_RESET_ASSERT);
 		if (ret)
+<<<<<<< HEAD
 			dev_err(motg->phy.dev, "usb hs_clk assert failed\n");
 	} else {
 		ret = clk_reset(motg->clk, CLK_RESET_DEASSERT);
 		if (ret)
 			dev_err(motg->phy.dev, "usb hs_clk deassert failed\n");
+=======
+			dev_err(motg->otg.dev, "usb hs_clk assert failed\n");
+	} else {
+		ret = clk_reset(motg->clk, CLK_RESET_DEASSERT);
+		if (ret)
+			dev_err(motg->otg.dev, "usb hs_clk deassert failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return ret;
 }
@@ -328,13 +415,21 @@ static int msm_otg_phy_clk_reset(struct msm_otg *motg)
 
 	ret = clk_reset(motg->phy_reset_clk, CLK_RESET_ASSERT);
 	if (ret) {
+<<<<<<< HEAD
 		dev_err(motg->phy.dev, "usb phy clk assert failed\n");
+=======
+		dev_err(motg->otg.dev, "usb phy clk assert failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 	usleep_range(10000, 12000);
 	ret = clk_reset(motg->phy_reset_clk, CLK_RESET_DEASSERT);
 	if (ret)
+<<<<<<< HEAD
 		dev_err(motg->phy.dev, "usb phy clk deassert failed\n");
+=======
+		dev_err(motg->otg.dev, "usb phy clk deassert failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -358,7 +453,11 @@ static int msm_otg_phy_reset(struct msm_otg *motg)
 	writel(val | PORTSC_PTS_ULPI, USB_PORTSC);
 
 	for (retries = 3; retries > 0; retries--) {
+<<<<<<< HEAD
 		ret = ulpi_write(&motg->phy, ULPI_FUNC_CTRL_SUSPENDM,
+=======
+		ret = ulpi_write(&motg->otg, ULPI_FUNC_CTRL_SUSPENDM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ULPI_CLR(ULPI_FUNC_CTRL));
 		if (!ret)
 			break;
@@ -375,7 +474,11 @@ static int msm_otg_phy_reset(struct msm_otg *motg)
 		return ret;
 
 	for (retries = 3; retries > 0; retries--) {
+<<<<<<< HEAD
 		ret = ulpi_read(&motg->phy, ULPI_DEBUG);
+=======
+		ret = ulpi_read(&motg->otg, ULPI_DEBUG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret != -ETIMEDOUT)
 			break;
 		ret = msm_otg_phy_clk_reset(motg);
@@ -385,14 +488,24 @@ static int msm_otg_phy_reset(struct msm_otg *motg)
 	if (!retries)
 		return -ETIMEDOUT;
 
+<<<<<<< HEAD
 	dev_info(motg->phy.dev, "phy_reset: success\n");
+=======
+	dev_info(motg->otg.dev, "phy_reset: success\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 #define LINK_RESET_TIMEOUT_USEC		(250 * 1000)
+<<<<<<< HEAD
 static int msm_otg_reset(struct usb_phy *phy)
 {
 	struct msm_otg *motg = container_of(phy, struct msm_otg, phy);
+=======
+static int msm_otg_reset(struct otg_transceiver *otg)
+{
+	struct msm_otg *motg = container_of(otg, struct msm_otg, otg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct msm_otg_platform_data *pdata = motg->pdata;
 	int cnt = 0;
 	int ret;
@@ -401,7 +514,11 @@ static int msm_otg_reset(struct usb_phy *phy)
 
 	ret = msm_otg_phy_reset(motg);
 	if (ret) {
+<<<<<<< HEAD
 		dev_err(phy->dev, "phy_reset failed\n");
+=======
+		dev_err(otg->dev, "phy_reset failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 
@@ -435,8 +552,13 @@ static int msm_otg_reset(struct usb_phy *phy)
 			val |= OTGSC_BSVIE;
 		}
 		writel(val, USB_OTGSC);
+<<<<<<< HEAD
 		ulpi_write(phy, ulpi_val, ULPI_USB_INT_EN_RISE);
 		ulpi_write(phy, ulpi_val, ULPI_USB_INT_EN_FALL);
+=======
+		ulpi_write(otg, ulpi_val, ULPI_USB_INT_EN_RISE);
+		ulpi_write(otg, ulpi_val, ULPI_USB_INT_EN_FALL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -448,8 +570,13 @@ static int msm_otg_reset(struct usb_phy *phy)
 #ifdef CONFIG_PM_SLEEP
 static int msm_otg_suspend(struct msm_otg *motg)
 {
+<<<<<<< HEAD
 	struct usb_phy *phy = &motg->phy;
 	struct usb_bus *bus = phy->otg->host;
+=======
+	struct otg_transceiver *otg = &motg->otg;
+	struct usb_bus *bus = otg->host;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct msm_otg_platform_data *pdata = motg->pdata;
 	int cnt = 0;
 
@@ -475,10 +602,17 @@ static int msm_otg_suspend(struct msm_otg *motg)
 	 */
 
 	if (motg->pdata->phy_type == CI_45NM_INTEGRATED_PHY) {
+<<<<<<< HEAD
 		ulpi_read(phy, 0x14);
 		if (pdata->otg_control == OTG_PHY_CONTROL)
 			ulpi_write(phy, 0x01, 0x30);
 		ulpi_write(phy, 0x08, 0x09);
+=======
+		ulpi_read(otg, 0x14);
+		if (pdata->otg_control == OTG_PHY_CONTROL)
+			ulpi_write(otg, 0x01, 0x30);
+		ulpi_write(otg, 0x08, 0x09);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -495,8 +629,13 @@ static int msm_otg_suspend(struct msm_otg *motg)
 	}
 
 	if (cnt >= PHY_SUSPEND_TIMEOUT_USEC) {
+<<<<<<< HEAD
 		dev_err(phy->dev, "Unable to suspend PHY\n");
 		msm_otg_reset(phy);
+=======
+		dev_err(otg->dev, "Unable to suspend PHY\n");
+		msm_otg_reset(otg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		enable_irq(motg->irq);
 		return -ETIMEDOUT;
 	}
@@ -528,7 +667,11 @@ static int msm_otg_suspend(struct msm_otg *motg)
 		msm_hsusb_config_vddcx(0);
 	}
 
+<<<<<<< HEAD
 	if (device_may_wakeup(phy->dev))
+=======
+	if (device_may_wakeup(otg->dev))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		enable_irq_wake(motg->irq);
 	if (bus)
 		clear_bit(HCD_FLAG_HW_ACCESSIBLE, &(bus_to_hcd(bus))->flags);
@@ -536,15 +679,24 @@ static int msm_otg_suspend(struct msm_otg *motg)
 	atomic_set(&motg->in_lpm, 1);
 	enable_irq(motg->irq);
 
+<<<<<<< HEAD
 	dev_info(phy->dev, "USB in low power mode\n");
+=======
+	dev_info(otg->dev, "USB in low power mode\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 static int msm_otg_resume(struct msm_otg *motg)
 {
+<<<<<<< HEAD
 	struct usb_phy *phy = &motg->phy;
 	struct usb_bus *bus = phy->otg->host;
+=======
+	struct otg_transceiver *otg = &motg->otg;
+	struct usb_bus *bus = otg->host;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int cnt = 0;
 	unsigned temp;
 
@@ -592,6 +744,7 @@ static int msm_otg_resume(struct msm_otg *motg)
 		 * PHY. USB state can not be restored. Re-insertion
 		 * of USB cable is the only way to get USB working.
 		 */
+<<<<<<< HEAD
 		dev_err(phy->dev, "Unable to resume USB."
 				"Re-plugin the cable\n");
 		msm_otg_reset(phy);
@@ -599,6 +752,15 @@ static int msm_otg_resume(struct msm_otg *motg)
 
 skip_phy_resume:
 	if (device_may_wakeup(phy->dev))
+=======
+		dev_err(otg->dev, "Unable to resume USB."
+				"Re-plugin the cable\n");
+		msm_otg_reset(otg);
+	}
+
+skip_phy_resume:
+	if (device_may_wakeup(otg->dev))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		disable_irq_wake(motg->irq);
 	if (bus)
 		set_bit(HCD_FLAG_HW_ACCESSIBLE, &(bus_to_hcd(bus))->flags);
@@ -607,11 +769,19 @@ skip_phy_resume:
 
 	if (motg->async_int) {
 		motg->async_int = 0;
+<<<<<<< HEAD
 		pm_runtime_put(phy->dev);
 		enable_irq(motg->irq);
 	}
 
 	dev_info(phy->dev, "USB exited from low power mode\n");
+=======
+		pm_runtime_put(otg->dev);
+		enable_irq(motg->irq);
+	}
+
+	dev_info(otg->dev, "USB exited from low power mode\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -623,6 +793,7 @@ static void msm_otg_notify_charger(struct msm_otg *motg, unsigned mA)
 		return;
 
 	/* TODO: Notify PMIC about available current */
+<<<<<<< HEAD
 	dev_info(motg->phy.dev, "Avail curr from USB = %u\n", mA);
 	motg->cur_power = mA;
 }
@@ -630,6 +801,15 @@ static void msm_otg_notify_charger(struct msm_otg *motg, unsigned mA)
 static int msm_otg_set_power(struct usb_phy *phy, unsigned mA)
 {
 	struct msm_otg *motg = container_of(phy, struct msm_otg, phy);
+=======
+	dev_info(motg->otg.dev, "Avail curr from USB = %u\n", mA);
+	motg->cur_power = mA;
+}
+
+static int msm_otg_set_power(struct otg_transceiver *otg, unsigned mA)
+{
+	struct msm_otg *motg = container_of(otg, struct msm_otg, otg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Gadget driver uses set_power method to notify about the
@@ -644,6 +824,7 @@ static int msm_otg_set_power(struct usb_phy *phy, unsigned mA)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void msm_otg_start_host(struct usb_phy *phy, int on)
 {
 	struct msm_otg *motg = container_of(phy, struct msm_otg, phy);
@@ -657,6 +838,21 @@ static void msm_otg_start_host(struct usb_phy *phy, int on)
 
 	if (on) {
 		dev_dbg(phy->dev, "host on\n");
+=======
+static void msm_otg_start_host(struct otg_transceiver *otg, int on)
+{
+	struct msm_otg *motg = container_of(otg, struct msm_otg, otg);
+	struct msm_otg_platform_data *pdata = motg->pdata;
+	struct usb_hcd *hcd;
+
+	if (!otg->host)
+		return;
+
+	hcd = bus_to_hcd(otg->host);
+
+	if (on) {
+		dev_dbg(otg->dev, "host on\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (pdata->vbus_power)
 			pdata->vbus_power(1);
@@ -671,7 +867,11 @@ static void msm_otg_start_host(struct usb_phy *phy, int on)
 		usb_add_hcd(hcd, hcd->irq, IRQF_SHARED);
 #endif
 	} else {
+<<<<<<< HEAD
 		dev_dbg(phy->dev, "host off\n");
+=======
+		dev_dbg(otg->dev, "host off\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_USB
 		usb_remove_hcd(hcd);
@@ -683,9 +883,15 @@ static void msm_otg_start_host(struct usb_phy *phy, int on)
 	}
 }
 
+<<<<<<< HEAD
 static int msm_otg_set_host(struct usb_otg *otg, struct usb_bus *host)
 {
 	struct msm_otg *motg = container_of(otg->phy, struct msm_otg, phy);
+=======
+static int msm_otg_set_host(struct otg_transceiver *otg, struct usb_bus *host)
+{
+	struct msm_otg *motg = container_of(otg, struct msm_otg, otg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct usb_hcd *hcd;
 
 	/*
@@ -693,16 +899,28 @@ static int msm_otg_set_host(struct usb_otg *otg, struct usb_bus *host)
 	 * only peripheral configuration.
 	 */
 	if (motg->pdata->mode == USB_PERIPHERAL) {
+<<<<<<< HEAD
 		dev_info(otg->phy->dev, "Host mode is not supported\n");
+=======
+		dev_info(otg->dev, "Host mode is not supported\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
 	if (!host) {
+<<<<<<< HEAD
 		if (otg->phy->state == OTG_STATE_A_HOST) {
 			pm_runtime_get_sync(otg->phy->dev);
 			msm_otg_start_host(otg->phy, 0);
 			otg->host = NULL;
 			otg->phy->state = OTG_STATE_UNDEFINED;
+=======
+		if (otg->state == OTG_STATE_A_HOST) {
+			pm_runtime_get_sync(otg->dev);
+			msm_otg_start_host(otg, 0);
+			otg->host = NULL;
+			otg->state = OTG_STATE_UNDEFINED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			schedule_work(&motg->sm_work);
 		} else {
 			otg->host = NULL;
@@ -715,20 +933,29 @@ static int msm_otg_set_host(struct usb_otg *otg, struct usb_bus *host)
 	hcd->power_budget = motg->pdata->power_budget;
 
 	otg->host = host;
+<<<<<<< HEAD
 	dev_dbg(otg->phy->dev, "host driver registered w/ tranceiver\n");
+=======
+	dev_dbg(otg->dev, "host driver registered w/ tranceiver\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Kick the state machine work, if peripheral is not supported
 	 * or peripheral is already registered with us.
 	 */
 	if (motg->pdata->mode == USB_HOST || otg->gadget) {
+<<<<<<< HEAD
 		pm_runtime_get_sync(otg->phy->dev);
+=======
+		pm_runtime_get_sync(otg->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		schedule_work(&motg->sm_work);
 	}
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static void msm_otg_start_peripheral(struct usb_phy *phy, int on)
 {
 	struct msm_otg *motg = container_of(phy, struct msm_otg, phy);
@@ -739,6 +966,18 @@ static void msm_otg_start_peripheral(struct usb_phy *phy, int on)
 
 	if (on) {
 		dev_dbg(phy->dev, "gadget on\n");
+=======
+static void msm_otg_start_peripheral(struct otg_transceiver *otg, int on)
+{
+	struct msm_otg *motg = container_of(otg, struct msm_otg, otg);
+	struct msm_otg_platform_data *pdata = motg->pdata;
+
+	if (!otg->gadget)
+		return;
+
+	if (on) {
+		dev_dbg(otg->dev, "gadget on\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Some boards have a switch cotrolled by gpio
 		 * to enable/disable internal HUB. Disable internal
@@ -746,36 +985,62 @@ static void msm_otg_start_peripheral(struct usb_phy *phy, int on)
 		 */
 		if (pdata->setup_gpio)
 			pdata->setup_gpio(OTG_STATE_B_PERIPHERAL);
+<<<<<<< HEAD
 		usb_gadget_vbus_connect(phy->otg->gadget);
 	} else {
 		dev_dbg(phy->dev, "gadget off\n");
 		usb_gadget_vbus_disconnect(phy->otg->gadget);
+=======
+		usb_gadget_vbus_connect(otg->gadget);
+	} else {
+		dev_dbg(otg->dev, "gadget off\n");
+		usb_gadget_vbus_disconnect(otg->gadget);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (pdata->setup_gpio)
 			pdata->setup_gpio(OTG_STATE_UNDEFINED);
 	}
 
 }
 
+<<<<<<< HEAD
 static int msm_otg_set_peripheral(struct usb_otg *otg,
 					struct usb_gadget *gadget)
 {
 	struct msm_otg *motg = container_of(otg->phy, struct msm_otg, phy);
+=======
+static int msm_otg_set_peripheral(struct otg_transceiver *otg,
+			struct usb_gadget *gadget)
+{
+	struct msm_otg *motg = container_of(otg, struct msm_otg, otg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Fail peripheral registration if this board can support
 	 * only host configuration.
 	 */
 	if (motg->pdata->mode == USB_HOST) {
+<<<<<<< HEAD
 		dev_info(otg->phy->dev, "Peripheral mode is not supported\n");
+=======
+		dev_info(otg->dev, "Peripheral mode is not supported\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
 	if (!gadget) {
+<<<<<<< HEAD
 		if (otg->phy->state == OTG_STATE_B_PERIPHERAL) {
 			pm_runtime_get_sync(otg->phy->dev);
 			msm_otg_start_peripheral(otg->phy, 0);
 			otg->gadget = NULL;
 			otg->phy->state = OTG_STATE_UNDEFINED;
+=======
+		if (otg->state == OTG_STATE_B_PERIPHERAL) {
+			pm_runtime_get_sync(otg->dev);
+			msm_otg_start_peripheral(otg, 0);
+			otg->gadget = NULL;
+			otg->state = OTG_STATE_UNDEFINED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			schedule_work(&motg->sm_work);
 		} else {
 			otg->gadget = NULL;
@@ -784,14 +1049,22 @@ static int msm_otg_set_peripheral(struct usb_otg *otg,
 		return 0;
 	}
 	otg->gadget = gadget;
+<<<<<<< HEAD
 	dev_dbg(otg->phy->dev, "peripheral driver registered w/ tranceiver\n");
+=======
+	dev_dbg(otg->dev, "peripheral driver registered w/ tranceiver\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Kick the state machine work, if host is not supported
 	 * or host is already registered with us.
 	 */
 	if (motg->pdata->mode == USB_PERIPHERAL || otg->host) {
+<<<<<<< HEAD
 		pm_runtime_get_sync(otg->phy->dev);
+=======
+		pm_runtime_get_sync(otg->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		schedule_work(&motg->sm_work);
 	}
 
@@ -800,17 +1073,29 @@ static int msm_otg_set_peripheral(struct usb_otg *otg,
 
 static bool msm_chg_check_secondary_det(struct msm_otg *motg)
 {
+<<<<<<< HEAD
 	struct usb_phy *phy = &motg->phy;
+=======
+	struct otg_transceiver *otg = &motg->otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 chg_det;
 	bool ret = false;
 
 	switch (motg->pdata->phy_type) {
 	case CI_45NM_INTEGRATED_PHY:
+<<<<<<< HEAD
 		chg_det = ulpi_read(phy, 0x34);
 		ret = chg_det & (1 << 4);
 		break;
 	case SNPS_28NM_INTEGRATED_PHY:
 		chg_det = ulpi_read(phy, 0x87);
+=======
+		chg_det = ulpi_read(otg, 0x34);
+		ret = chg_det & (1 << 4);
+		break;
+	case SNPS_28NM_INTEGRATED_PHY:
+		chg_det = ulpi_read(otg, 0x87);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = chg_det & 1;
 		break;
 	default:
@@ -821,11 +1106,16 @@ static bool msm_chg_check_secondary_det(struct msm_otg *motg)
 
 static void msm_chg_enable_secondary_det(struct msm_otg *motg)
 {
+<<<<<<< HEAD
 	struct usb_phy *phy = &motg->phy;
+=======
+	struct otg_transceiver *otg = &motg->otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 chg_det;
 
 	switch (motg->pdata->phy_type) {
 	case CI_45NM_INTEGRATED_PHY:
+<<<<<<< HEAD
 		chg_det = ulpi_read(phy, 0x34);
 		/* Turn off charger block */
 		chg_det |= ~(1 << 1);
@@ -844,15 +1134,41 @@ static void msm_chg_enable_secondary_det(struct msm_otg *motg)
 		/* enable chg detection */
 		chg_det &= ~(1 << 0);
 		ulpi_write(phy, chg_det, 0x34);
+=======
+		chg_det = ulpi_read(otg, 0x34);
+		/* Turn off charger block */
+		chg_det |= ~(1 << 1);
+		ulpi_write(otg, chg_det, 0x34);
+		udelay(20);
+		/* control chg block via ULPI */
+		chg_det &= ~(1 << 3);
+		ulpi_write(otg, chg_det, 0x34);
+		/* put it in host mode for enabling D- source */
+		chg_det &= ~(1 << 2);
+		ulpi_write(otg, chg_det, 0x34);
+		/* Turn on chg detect block */
+		chg_det &= ~(1 << 1);
+		ulpi_write(otg, chg_det, 0x34);
+		udelay(20);
+		/* enable chg detection */
+		chg_det &= ~(1 << 0);
+		ulpi_write(otg, chg_det, 0x34);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case SNPS_28NM_INTEGRATED_PHY:
 		/*
 		 * Configure DM as current source, DP as current sink
 		 * and enable battery charging comparators.
 		 */
+<<<<<<< HEAD
 		ulpi_write(phy, 0x8, 0x85);
 		ulpi_write(phy, 0x2, 0x85);
 		ulpi_write(phy, 0x1, 0x85);
+=======
+		ulpi_write(otg, 0x8, 0x85);
+		ulpi_write(otg, 0x2, 0x85);
+		ulpi_write(otg, 0x1, 0x85);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		break;
@@ -861,17 +1177,29 @@ static void msm_chg_enable_secondary_det(struct msm_otg *motg)
 
 static bool msm_chg_check_primary_det(struct msm_otg *motg)
 {
+<<<<<<< HEAD
 	struct usb_phy *phy = &motg->phy;
+=======
+	struct otg_transceiver *otg = &motg->otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 chg_det;
 	bool ret = false;
 
 	switch (motg->pdata->phy_type) {
 	case CI_45NM_INTEGRATED_PHY:
+<<<<<<< HEAD
 		chg_det = ulpi_read(phy, 0x34);
 		ret = chg_det & (1 << 4);
 		break;
 	case SNPS_28NM_INTEGRATED_PHY:
 		chg_det = ulpi_read(phy, 0x87);
+=======
+		chg_det = ulpi_read(otg, 0x34);
+		ret = chg_det & (1 << 4);
+		break;
+	case SNPS_28NM_INTEGRATED_PHY:
+		chg_det = ulpi_read(otg, 0x87);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = chg_det & 1;
 		break;
 	default:
@@ -882,23 +1210,39 @@ static bool msm_chg_check_primary_det(struct msm_otg *motg)
 
 static void msm_chg_enable_primary_det(struct msm_otg *motg)
 {
+<<<<<<< HEAD
 	struct usb_phy *phy = &motg->phy;
+=======
+	struct otg_transceiver *otg = &motg->otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 chg_det;
 
 	switch (motg->pdata->phy_type) {
 	case CI_45NM_INTEGRATED_PHY:
+<<<<<<< HEAD
 		chg_det = ulpi_read(phy, 0x34);
 		/* enable chg detection */
 		chg_det &= ~(1 << 0);
 		ulpi_write(phy, chg_det, 0x34);
+=======
+		chg_det = ulpi_read(otg, 0x34);
+		/* enable chg detection */
+		chg_det &= ~(1 << 0);
+		ulpi_write(otg, chg_det, 0x34);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case SNPS_28NM_INTEGRATED_PHY:
 		/*
 		 * Configure DP as current source, DM as current sink
 		 * and enable battery charging comparators.
 		 */
+<<<<<<< HEAD
 		ulpi_write(phy, 0x2, 0x85);
 		ulpi_write(phy, 0x1, 0x85);
+=======
+		ulpi_write(otg, 0x2, 0x85);
+		ulpi_write(otg, 0x1, 0x85);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		break;
@@ -907,17 +1251,29 @@ static void msm_chg_enable_primary_det(struct msm_otg *motg)
 
 static bool msm_chg_check_dcd(struct msm_otg *motg)
 {
+<<<<<<< HEAD
 	struct usb_phy *phy = &motg->phy;
+=======
+	struct otg_transceiver *otg = &motg->otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 line_state;
 	bool ret = false;
 
 	switch (motg->pdata->phy_type) {
 	case CI_45NM_INTEGRATED_PHY:
+<<<<<<< HEAD
 		line_state = ulpi_read(phy, 0x15);
 		ret = !(line_state & 1);
 		break;
 	case SNPS_28NM_INTEGRATED_PHY:
 		line_state = ulpi_read(phy, 0x87);
+=======
+		line_state = ulpi_read(otg, 0x15);
+		ret = !(line_state & 1);
+		break;
+	case SNPS_28NM_INTEGRATED_PHY:
+		line_state = ulpi_read(otg, 0x87);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = line_state & 2;
 		break;
 	default:
@@ -928,17 +1284,30 @@ static bool msm_chg_check_dcd(struct msm_otg *motg)
 
 static void msm_chg_disable_dcd(struct msm_otg *motg)
 {
+<<<<<<< HEAD
 	struct usb_phy *phy = &motg->phy;
+=======
+	struct otg_transceiver *otg = &motg->otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 chg_det;
 
 	switch (motg->pdata->phy_type) {
 	case CI_45NM_INTEGRATED_PHY:
+<<<<<<< HEAD
 		chg_det = ulpi_read(phy, 0x34);
 		chg_det &= ~(1 << 5);
 		ulpi_write(phy, chg_det, 0x34);
 		break;
 	case SNPS_28NM_INTEGRATED_PHY:
 		ulpi_write(phy, 0x10, 0x86);
+=======
+		chg_det = ulpi_read(otg, 0x34);
+		chg_det &= ~(1 << 5);
+		ulpi_write(otg, chg_det, 0x34);
+		break;
+	case SNPS_28NM_INTEGRATED_PHY:
+		ulpi_write(otg, 0x10, 0x86);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		break;
@@ -947,11 +1316,16 @@ static void msm_chg_disable_dcd(struct msm_otg *motg)
 
 static void msm_chg_enable_dcd(struct msm_otg *motg)
 {
+<<<<<<< HEAD
 	struct usb_phy *phy = &motg->phy;
+=======
+	struct otg_transceiver *otg = &motg->otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 chg_det;
 
 	switch (motg->pdata->phy_type) {
 	case CI_45NM_INTEGRATED_PHY:
+<<<<<<< HEAD
 		chg_det = ulpi_read(phy, 0x34);
 		/* Turn on D+ current source */
 		chg_det |= (1 << 5);
@@ -960,6 +1334,16 @@ static void msm_chg_enable_dcd(struct msm_otg *motg)
 	case SNPS_28NM_INTEGRATED_PHY:
 		/* Data contact detection enable */
 		ulpi_write(phy, 0x10, 0x85);
+=======
+		chg_det = ulpi_read(otg, 0x34);
+		/* Turn on D+ current source */
+		chg_det |= (1 << 5);
+		ulpi_write(otg, chg_det, 0x34);
+		break;
+	case SNPS_28NM_INTEGRATED_PHY:
+		/* Data contact detection enable */
+		ulpi_write(otg, 0x10, 0x85);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		break;
@@ -968,6 +1352,7 @@ static void msm_chg_enable_dcd(struct msm_otg *motg)
 
 static void msm_chg_block_on(struct msm_otg *motg)
 {
+<<<<<<< HEAD
 	struct usb_phy *phy = &motg->phy;
 	u32 func_ctrl, chg_det;
 
@@ -986,14 +1371,41 @@ static void msm_chg_block_on(struct msm_otg *motg)
 		/* Turn on chg detect block */
 		chg_det &= ~(1 << 1);
 		ulpi_write(phy, chg_det, 0x34);
+=======
+	struct otg_transceiver *otg = &motg->otg;
+	u32 func_ctrl, chg_det;
+
+	/* put the controller in non-driving mode */
+	func_ctrl = ulpi_read(otg, ULPI_FUNC_CTRL);
+	func_ctrl &= ~ULPI_FUNC_CTRL_OPMODE_MASK;
+	func_ctrl |= ULPI_FUNC_CTRL_OPMODE_NONDRIVING;
+	ulpi_write(otg, func_ctrl, ULPI_FUNC_CTRL);
+
+	switch (motg->pdata->phy_type) {
+	case CI_45NM_INTEGRATED_PHY:
+		chg_det = ulpi_read(otg, 0x34);
+		/* control chg block via ULPI */
+		chg_det &= ~(1 << 3);
+		ulpi_write(otg, chg_det, 0x34);
+		/* Turn on chg detect block */
+		chg_det &= ~(1 << 1);
+		ulpi_write(otg, chg_det, 0x34);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		udelay(20);
 		break;
 	case SNPS_28NM_INTEGRATED_PHY:
 		/* Clear charger detecting control bits */
+<<<<<<< HEAD
 		ulpi_write(phy, 0x3F, 0x86);
 		/* Clear alt interrupt latch and enable bits */
 		ulpi_write(phy, 0x1F, 0x92);
 		ulpi_write(phy, 0x1F, 0x95);
+=======
+		ulpi_write(otg, 0x3F, 0x86);
+		/* Clear alt interrupt latch and enable bits */
+		ulpi_write(otg, 0x1F, 0x92);
+		ulpi_write(otg, 0x1F, 0x95);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		udelay(100);
 		break;
 	default:
@@ -1003,11 +1415,16 @@ static void msm_chg_block_on(struct msm_otg *motg)
 
 static void msm_chg_block_off(struct msm_otg *motg)
 {
+<<<<<<< HEAD
 	struct usb_phy *phy = &motg->phy;
+=======
+	struct otg_transceiver *otg = &motg->otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 func_ctrl, chg_det;
 
 	switch (motg->pdata->phy_type) {
 	case CI_45NM_INTEGRATED_PHY:
+<<<<<<< HEAD
 		chg_det = ulpi_read(phy, 0x34);
 		/* Turn off charger block */
 		chg_det |= ~(1 << 1);
@@ -1019,16 +1436,36 @@ static void msm_chg_block_off(struct msm_otg *motg)
 		/* Clear alt interrupt latch and enable bits */
 		ulpi_write(phy, 0x1F, 0x92);
 		ulpi_write(phy, 0x1F, 0x95);
+=======
+		chg_det = ulpi_read(otg, 0x34);
+		/* Turn off charger block */
+		chg_det |= ~(1 << 1);
+		ulpi_write(otg, chg_det, 0x34);
+		break;
+	case SNPS_28NM_INTEGRATED_PHY:
+		/* Clear charger detecting control bits */
+		ulpi_write(otg, 0x3F, 0x86);
+		/* Clear alt interrupt latch and enable bits */
+		ulpi_write(otg, 0x1F, 0x92);
+		ulpi_write(otg, 0x1F, 0x95);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		break;
 	}
 
 	/* put the controller in normal mode */
+<<<<<<< HEAD
 	func_ctrl = ulpi_read(phy, ULPI_FUNC_CTRL);
 	func_ctrl &= ~ULPI_FUNC_CTRL_OPMODE_MASK;
 	func_ctrl |= ULPI_FUNC_CTRL_OPMODE_NORMAL;
 	ulpi_write(phy, func_ctrl, ULPI_FUNC_CTRL);
+=======
+	func_ctrl = ulpi_read(otg, ULPI_FUNC_CTRL);
+	func_ctrl &= ~ULPI_FUNC_CTRL_OPMODE_MASK;
+	func_ctrl |= ULPI_FUNC_CTRL_OPMODE_NORMAL;
+	ulpi_write(otg, func_ctrl, ULPI_FUNC_CTRL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #define MSM_CHG_DCD_POLL_TIME		(100 * HZ/1000) /* 100 msec */
@@ -1038,6 +1475,7 @@ static void msm_chg_block_off(struct msm_otg *motg)
 static void msm_chg_detect_work(struct work_struct *w)
 {
 	struct msm_otg *motg = container_of(w, struct msm_otg, chg_work.work);
+<<<<<<< HEAD
 	struct usb_phy *phy = &motg->phy;
 	bool is_dcd, tmout, vout;
 	unsigned long delay;
@@ -1046,6 +1484,16 @@ static void msm_chg_detect_work(struct work_struct *w)
 	switch (motg->chg_state) {
 	case USB_CHG_STATE_UNDEFINED:
 		pm_runtime_get_sync(phy->dev);
+=======
+	struct otg_transceiver *otg = &motg->otg;
+	bool is_dcd, tmout, vout;
+	unsigned long delay;
+
+	dev_dbg(otg->dev, "chg detection work\n");
+	switch (motg->chg_state) {
+	case USB_CHG_STATE_UNDEFINED:
+		pm_runtime_get_sync(otg->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		msm_chg_block_on(motg);
 		msm_chg_enable_dcd(motg);
 		motg->chg_state = USB_CHG_STATE_WAIT_FOR_DCD;
@@ -1088,7 +1536,11 @@ static void msm_chg_detect_work(struct work_struct *w)
 		motg->chg_state = USB_CHG_STATE_DETECTED;
 	case USB_CHG_STATE_DETECTED:
 		msm_chg_block_off(motg);
+<<<<<<< HEAD
 		dev_dbg(phy->dev, "charger = %d\n", motg->chg_type);
+=======
+		dev_dbg(otg->dev, "charger = %d\n", motg->chg_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		schedule_work(&motg->sm_work);
 		return;
 	default:
@@ -1152,6 +1604,7 @@ static void msm_otg_init_sm(struct msm_otg *motg)
 static void msm_otg_sm_work(struct work_struct *w)
 {
 	struct msm_otg *motg = container_of(w, struct msm_otg, sm_work);
+<<<<<<< HEAD
 	struct usb_otg *otg = motg->phy.otg;
 
 	switch (otg->phy->state) {
@@ -1168,6 +1621,24 @@ static void msm_otg_sm_work(struct work_struct *w)
 			writel(readl(USB_OTGSC) & ~OTGSC_BSVIE, USB_OTGSC);
 			msm_otg_start_host(otg->phy, 1);
 			otg->phy->state = OTG_STATE_A_HOST;
+=======
+	struct otg_transceiver *otg = &motg->otg;
+
+	switch (otg->state) {
+	case OTG_STATE_UNDEFINED:
+		dev_dbg(otg->dev, "OTG_STATE_UNDEFINED state\n");
+		msm_otg_reset(otg);
+		msm_otg_init_sm(motg);
+		otg->state = OTG_STATE_B_IDLE;
+		/* FALL THROUGH */
+	case OTG_STATE_B_IDLE:
+		dev_dbg(otg->dev, "OTG_STATE_B_IDLE state\n");
+		if (!test_bit(ID, &motg->inputs) && otg->host) {
+			/* disable BSV bit */
+			writel(readl(USB_OTGSC) & ~OTGSC_BSVIE, USB_OTGSC);
+			msm_otg_start_host(otg, 1);
+			otg->state = OTG_STATE_A_HOST;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else if (test_bit(B_SESS_VLD, &motg->inputs)) {
 			switch (motg->chg_state) {
 			case USB_CHG_STATE_UNDEFINED:
@@ -1182,6 +1653,7 @@ static void msm_otg_sm_work(struct work_struct *w)
 				case USB_CDP_CHARGER:
 					msm_otg_notify_charger(motg,
 							IDEV_CHG_MAX);
+<<<<<<< HEAD
 					msm_otg_start_peripheral(otg->phy, 1);
 					otg->phy->state
 						= OTG_STATE_B_PERIPHERAL;
@@ -1191,6 +1663,15 @@ static void msm_otg_sm_work(struct work_struct *w)
 					msm_otg_start_peripheral(otg->phy, 1);
 					otg->phy->state
 						= OTG_STATE_B_PERIPHERAL;
+=======
+					msm_otg_start_peripheral(otg, 1);
+					otg->state = OTG_STATE_B_PERIPHERAL;
+					break;
+				case USB_SDP_CHARGER:
+					msm_otg_notify_charger(motg, IUNIT);
+					msm_otg_start_peripheral(otg, 1);
+					otg->state = OTG_STATE_B_PERIPHERAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					break;
 				default:
 					break;
@@ -1206,13 +1687,19 @@ static void msm_otg_sm_work(struct work_struct *w)
 			 * is incremented in charger detection work.
 			 */
 			if (cancel_delayed_work_sync(&motg->chg_work)) {
+<<<<<<< HEAD
 				pm_runtime_put_sync(otg->phy->dev);
 				msm_otg_reset(otg->phy);
+=======
+				pm_runtime_put_sync(otg->dev);
+				msm_otg_reset(otg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			msm_otg_notify_charger(motg, 0);
 			motg->chg_state = USB_CHG_STATE_UNDEFINED;
 			motg->chg_type = USB_INVALID_CHARGER;
 		}
+<<<<<<< HEAD
 		pm_runtime_put_sync(otg->phy->dev);
 		break;
 	case OTG_STATE_B_PERIPHERAL:
@@ -1225,15 +1712,37 @@ static void msm_otg_sm_work(struct work_struct *w)
 			motg->chg_type = USB_INVALID_CHARGER;
 			otg->phy->state = OTG_STATE_B_IDLE;
 			msm_otg_reset(otg->phy);
+=======
+		pm_runtime_put_sync(otg->dev);
+		break;
+	case OTG_STATE_B_PERIPHERAL:
+		dev_dbg(otg->dev, "OTG_STATE_B_PERIPHERAL state\n");
+		if (!test_bit(B_SESS_VLD, &motg->inputs) ||
+				!test_bit(ID, &motg->inputs)) {
+			msm_otg_notify_charger(motg, 0);
+			msm_otg_start_peripheral(otg, 0);
+			motg->chg_state = USB_CHG_STATE_UNDEFINED;
+			motg->chg_type = USB_INVALID_CHARGER;
+			otg->state = OTG_STATE_B_IDLE;
+			msm_otg_reset(otg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			schedule_work(w);
 		}
 		break;
 	case OTG_STATE_A_HOST:
+<<<<<<< HEAD
 		dev_dbg(otg->phy->dev, "OTG_STATE_A_HOST state\n");
 		if (test_bit(ID, &motg->inputs)) {
 			msm_otg_start_host(otg->phy, 0);
 			otg->phy->state = OTG_STATE_B_IDLE;
 			msm_otg_reset(otg->phy);
+=======
+		dev_dbg(otg->dev, "OTG_STATE_A_HOST state\n");
+		if (test_bit(ID, &motg->inputs)) {
+			msm_otg_start_host(otg, 0);
+			otg->state = OTG_STATE_B_IDLE;
+			msm_otg_reset(otg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			schedule_work(w);
 		}
 		break;
@@ -1245,13 +1754,21 @@ static void msm_otg_sm_work(struct work_struct *w)
 static irqreturn_t msm_otg_irq(int irq, void *data)
 {
 	struct msm_otg *motg = data;
+<<<<<<< HEAD
 	struct usb_phy *phy = &motg->phy;
+=======
+	struct otg_transceiver *otg = &motg->otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 otgsc = 0;
 
 	if (atomic_read(&motg->in_lpm)) {
 		disable_irq_nosync(irq);
 		motg->async_int = 1;
+<<<<<<< HEAD
 		pm_runtime_get(phy->dev);
+=======
+		pm_runtime_get(otg->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return IRQ_HANDLED;
 	}
 
@@ -1264,15 +1781,25 @@ static irqreturn_t msm_otg_irq(int irq, void *data)
 			set_bit(ID, &motg->inputs);
 		else
 			clear_bit(ID, &motg->inputs);
+<<<<<<< HEAD
 		dev_dbg(phy->dev, "ID set/clear\n");
 		pm_runtime_get_noresume(phy->dev);
+=======
+		dev_dbg(otg->dev, "ID set/clear\n");
+		pm_runtime_get_noresume(otg->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if ((otgsc & OTGSC_BSVIS) && (otgsc & OTGSC_BSVIE)) {
 		if (otgsc & OTGSC_BSV)
 			set_bit(B_SESS_VLD, &motg->inputs);
 		else
 			clear_bit(B_SESS_VLD, &motg->inputs);
+<<<<<<< HEAD
 		dev_dbg(phy->dev, "BSV set/clear\n");
 		pm_runtime_get_noresume(phy->dev);
+=======
+		dev_dbg(otg->dev, "BSV set/clear\n");
+		pm_runtime_get_noresume(otg->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	writel(otgsc, USB_OTGSC);
@@ -1283,9 +1810,15 @@ static irqreturn_t msm_otg_irq(int irq, void *data)
 static int msm_otg_mode_show(struct seq_file *s, void *unused)
 {
 	struct msm_otg *motg = s->private;
+<<<<<<< HEAD
 	struct usb_otg *otg = motg->phy.otg;
 
 	switch (otg->phy->state) {
+=======
+	struct otg_transceiver *otg = &motg->otg;
+
+	switch (otg->state) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case OTG_STATE_A_HOST:
 		seq_printf(s, "host\n");
 		break;
@@ -1311,7 +1844,11 @@ static ssize_t msm_otg_mode_write(struct file *file, const char __user *ubuf,
 	struct seq_file *s = file->private_data;
 	struct msm_otg *motg = s->private;
 	char buf[16];
+<<<<<<< HEAD
 	struct usb_otg *otg = motg->phy.otg;
+=======
+	struct otg_transceiver *otg = &motg->otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int status = count;
 	enum usb_mode_type req_mode;
 
@@ -1335,7 +1872,11 @@ static ssize_t msm_otg_mode_write(struct file *file, const char __user *ubuf,
 
 	switch (req_mode) {
 	case USB_NONE:
+<<<<<<< HEAD
 		switch (otg->phy->state) {
+=======
+		switch (otg->state) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case OTG_STATE_A_HOST:
 		case OTG_STATE_B_PERIPHERAL:
 			set_bit(ID, &motg->inputs);
@@ -1346,7 +1887,11 @@ static ssize_t msm_otg_mode_write(struct file *file, const char __user *ubuf,
 		}
 		break;
 	case USB_PERIPHERAL:
+<<<<<<< HEAD
 		switch (otg->phy->state) {
+=======
+		switch (otg->state) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case OTG_STATE_B_IDLE:
 		case OTG_STATE_A_HOST:
 			set_bit(ID, &motg->inputs);
@@ -1357,7 +1902,11 @@ static ssize_t msm_otg_mode_write(struct file *file, const char __user *ubuf,
 		}
 		break;
 	case USB_HOST:
+<<<<<<< HEAD
 		switch (otg->phy->state) {
+=======
+		switch (otg->state) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case OTG_STATE_B_IDLE:
 		case OTG_STATE_B_PERIPHERAL:
 			clear_bit(ID, &motg->inputs);
@@ -1370,7 +1919,11 @@ static ssize_t msm_otg_mode_write(struct file *file, const char __user *ubuf,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(otg->phy->dev);
+=======
+	pm_runtime_get_sync(otg->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	schedule_work(&motg->sm_work);
 out:
 	return status;
@@ -1416,7 +1969,11 @@ static int __init msm_otg_probe(struct platform_device *pdev)
 	int ret = 0;
 	struct resource *res;
 	struct msm_otg *motg;
+<<<<<<< HEAD
 	struct usb_phy *phy;
+=======
+	struct otg_transceiver *otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_info(&pdev->dev, "msm_otg probe\n");
 	if (!pdev->dev.platform_data) {
@@ -1430,6 +1987,7 @@ static int __init msm_otg_probe(struct platform_device *pdev)
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	motg->phy.otg = kzalloc(sizeof(struct usb_otg), GFP_KERNEL);
 	if (!motg->phy.otg) {
 		dev_err(&pdev->dev, "unable to allocate msm_otg\n");
@@ -1439,6 +1997,11 @@ static int __init msm_otg_probe(struct platform_device *pdev)
 	motg->pdata = pdev->dev.platform_data;
 	phy = &motg->phy;
 	phy->dev = &pdev->dev;
+=======
+	motg->pdata = pdev->dev.platform_data;
+	otg = &motg->otg;
+	otg->dev = &pdev->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	motg->phy_reset_clk = clk_get(&pdev->dev, "usb_phy_clk");
 	if (IS_ERR(motg->phy_reset_clk)) {
@@ -1546,6 +2109,7 @@ static int __init msm_otg_probe(struct platform_device *pdev)
 		goto disable_clks;
 	}
 
+<<<<<<< HEAD
 	phy->init = msm_otg_reset;
 	phy->set_power = msm_otg_set_power;
 
@@ -1558,6 +2122,18 @@ static int __init msm_otg_probe(struct platform_device *pdev)
 	ret = usb_set_transceiver(&motg->phy);
 	if (ret) {
 		dev_err(&pdev->dev, "usb_set_transceiver failed\n");
+=======
+	otg->init = msm_otg_reset;
+	otg->set_host = msm_otg_set_host;
+	otg->set_peripheral = msm_otg_set_peripheral;
+	otg->set_power = msm_otg_set_power;
+
+	otg->io_ops = &msm_otg_io_ops;
+
+	ret = otg_set_transceiver(&motg->otg);
+	if (ret) {
+		dev_err(&pdev->dev, "otg_set_transceiver failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto free_irq;
 	}
 
@@ -1601,7 +2177,10 @@ put_clk:
 put_phy_reset_clk:
 	clk_put(motg->phy_reset_clk);
 free_motg:
+<<<<<<< HEAD
 	kfree(motg->phy.otg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(motg);
 	return ret;
 }
@@ -1609,10 +2188,17 @@ free_motg:
 static int __devexit msm_otg_remove(struct platform_device *pdev)
 {
 	struct msm_otg *motg = platform_get_drvdata(pdev);
+<<<<<<< HEAD
 	struct usb_phy *phy = &motg->phy;
 	int cnt = 0;
 
 	if (phy->otg->host || phy->otg->gadget)
+=======
+	struct otg_transceiver *otg = &motg->otg;
+	int cnt = 0;
+
+	if (otg->host || otg->gadget)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EBUSY;
 
 	msm_otg_debugfs_cleanup();
@@ -1624,14 +2210,23 @@ static int __devexit msm_otg_remove(struct platform_device *pdev)
 	device_init_wakeup(&pdev->dev, 0);
 	pm_runtime_disable(&pdev->dev);
 
+<<<<<<< HEAD
 	usb_set_transceiver(NULL);
+=======
+	otg_set_transceiver(NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	free_irq(motg->irq, motg);
 
 	/*
 	 * Put PHY in low power mode.
 	 */
+<<<<<<< HEAD
 	ulpi_read(phy, 0x14);
 	ulpi_write(phy, 0x08, 0x09);
+=======
+	ulpi_read(otg, 0x14);
+	ulpi_write(otg, 0x08, 0x09);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	writel(readl(USB_PORTSC) | PORTSC_PHCD, USB_PORTSC);
 	while (cnt < PHY_SUSPEND_TIMEOUT_USEC) {
@@ -1641,7 +2236,11 @@ static int __devexit msm_otg_remove(struct platform_device *pdev)
 		cnt++;
 	}
 	if (cnt >= PHY_SUSPEND_TIMEOUT_USEC)
+<<<<<<< HEAD
 		dev_err(phy->dev, "Unable to suspend PHY\n");
+=======
+		dev_err(otg->dev, "Unable to suspend PHY\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	clk_disable(motg->pclk);
 	clk_disable(motg->clk);
@@ -1662,7 +2261,10 @@ static int __devexit msm_otg_remove(struct platform_device *pdev)
 	if (motg->core_clk)
 		clk_put(motg->core_clk);
 
+<<<<<<< HEAD
 	kfree(motg->phy.otg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(motg);
 
 	return 0;
@@ -1672,7 +2274,11 @@ static int __devexit msm_otg_remove(struct platform_device *pdev)
 static int msm_otg_runtime_idle(struct device *dev)
 {
 	struct msm_otg *motg = dev_get_drvdata(dev);
+<<<<<<< HEAD
 	struct usb_otg *otg = motg->phy.otg;
+=======
+	struct otg_transceiver *otg = &motg->otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_dbg(dev, "OTG runtime idle\n");
 
@@ -1682,7 +2288,11 @@ static int msm_otg_runtime_idle(struct device *dev)
 	 * This 1 sec delay also prevents entering into LPM immediately
 	 * after asynchronous interrupt.
 	 */
+<<<<<<< HEAD
 	if (otg->phy->state != OTG_STATE_UNDEFINED)
+=======
+	if (otg->state != OTG_STATE_UNDEFINED)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pm_schedule_suspend(dev, 1000);
 
 	return -EAGAIN;

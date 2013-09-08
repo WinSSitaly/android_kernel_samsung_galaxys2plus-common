@@ -18,7 +18,11 @@
 #include <linux/delay.h>
 #include <linux/pm.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/of_device.h>
+=======
+#include <linux/platform_device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/spi/spi.h>
 #include <linux/slab.h>
 #include <sound/core.h>
@@ -30,11 +34,14 @@
 
 #include "wm8776.h"
 
+<<<<<<< HEAD
 enum wm8776_chip_type {
 	WM8775 = 1,
 	WM8776,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* codec private data */
 struct wm8776_priv {
 	enum snd_soc_control_type control_type;
@@ -220,6 +227,11 @@ static int wm8776_hw_params(struct snd_pcm_substream *substream,
 	int ratio_shift, master;
 	int i;
 
+<<<<<<< HEAD
+=======
+	iface = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (dai->driver->id) {
 	case WM8776_DAI_DAC:
 		iface_reg = WM8776_DACIFCTRL;
@@ -235,6 +247,7 @@ static int wm8776_hw_params(struct snd_pcm_substream *substream,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	/* Set word length */
 	switch (snd_pcm_format_width(params_format(params))) {
 	case 16:
@@ -253,6 +266,22 @@ static int wm8776_hw_params(struct snd_pcm_substream *substream,
 		dev_err(codec->dev, "Unsupported sample size: %i\n",
 			snd_pcm_format_width(params_format(params)));
 		return -EINVAL;
+=======
+
+	/* Set word length */
+	switch (params_format(params)) {
+	case SNDRV_PCM_FORMAT_S16_LE:
+		break;
+	case SNDRV_PCM_FORMAT_S20_3LE:
+		iface |= 0x10;
+		break;
+	case SNDRV_PCM_FORMAT_S24_LE:
+		iface |= 0x20;
+		break;
+	case SNDRV_PCM_FORMAT_S32_LE:
+		iface |= 0x30;
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Only need to set MCLK/LRCLK ratio if we're master */
@@ -313,8 +342,11 @@ static int wm8776_set_bias_level(struct snd_soc_codec *codec,
 		break;
 	case SND_SOC_BIAS_STANDBY:
 		if (codec->dapm.bias_level == SND_SOC_BIAS_OFF) {
+<<<<<<< HEAD
 			snd_soc_cache_sync(codec);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Disable the global powerdown; DAPM does the rest */
 			snd_soc_update_bits(codec, WM8776_PWRDOWN, 1, 0);
 		}
@@ -329,17 +361,33 @@ static int wm8776_set_bias_level(struct snd_soc_codec *codec,
 	return 0;
 }
 
+<<<<<<< HEAD
 #define WM8776_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE |\
 			SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
 
 static const struct snd_soc_dai_ops wm8776_dac_ops = {
+=======
+#define WM8776_RATES (SNDRV_PCM_RATE_32000 | SNDRV_PCM_RATE_44100 |\
+		      SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_88200 |\
+		      SNDRV_PCM_RATE_96000)
+
+
+#define WM8776_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE |\
+			SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
+
+static struct snd_soc_dai_ops wm8776_dac_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.digital_mute	= wm8776_mute,
 	.hw_params      = wm8776_hw_params,
 	.set_fmt        = wm8776_set_fmt,
 	.set_sysclk     = wm8776_set_sysclk,
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops wm8776_adc_ops = {
+=======
+static struct snd_soc_dai_ops wm8776_adc_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params      = wm8776_hw_params,
 	.set_fmt        = wm8776_set_fmt,
 	.set_sysclk     = wm8776_set_sysclk,
@@ -353,9 +401,13 @@ static struct snd_soc_dai_driver wm8776_dai[] = {
 			.stream_name = "Playback",
 			.channels_min = 2,
 			.channels_max = 2,
+<<<<<<< HEAD
 			.rates = SNDRV_PCM_RATE_CONTINUOUS,
 			.rate_min = 32000,
 			.rate_max = 192000,
+=======
+			.rates = WM8776_RATES,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.formats = WM8776_FORMATS,
 		},
 		.ops = &wm8776_dac_ops,
@@ -367,9 +419,13 @@ static struct snd_soc_dai_driver wm8776_dai[] = {
 			.stream_name = "Capture",
 			.channels_min = 2,
 			.channels_max = 2,
+<<<<<<< HEAD
 			.rates = SNDRV_PCM_RATE_CONTINUOUS,
 			.rate_min = 32000,
 			.rate_max = 96000,
+=======
+			.rates = WM8776_RATES,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.formats = WM8776_FORMATS,
 		},
 		.ops = &wm8776_adc_ops,
@@ -377,7 +433,11 @@ static struct snd_soc_dai_driver wm8776_dai[] = {
 };
 
 #ifdef CONFIG_PM
+<<<<<<< HEAD
 static int wm8776_suspend(struct snd_soc_codec *codec)
+=======
+static int wm8776_suspend(struct snd_soc_codec *codec, pm_message_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	wm8776_set_bias_level(codec, SND_SOC_BIAS_OFF);
 
@@ -386,7 +446,25 @@ static int wm8776_suspend(struct snd_soc_codec *codec)
 
 static int wm8776_resume(struct snd_soc_codec *codec)
 {
+<<<<<<< HEAD
 	wm8776_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
+=======
+	int i;
+	u8 data[2];
+	u16 *cache = codec->reg_cache;
+
+	/* Sync reg_cache with the hardware */
+	for (i = 0; i < ARRAY_SIZE(wm8776_reg); i++) {
+		if (cache[i] == wm8776_reg[i])
+			continue;
+		data[0] = (i << 1) | ((cache[i] >> 8) & 0x0001);
+		data[1] = cache[i] & 0x00ff;
+		codec->hw_write(codec->control_data, data, 2);
+	}
+
+	wm8776_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 #else
@@ -397,6 +475,10 @@ static int wm8776_resume(struct snd_soc_codec *codec)
 static int wm8776_probe(struct snd_soc_codec *codec)
 {
 	struct wm8776_priv *wm8776 = snd_soc_codec_get_drvdata(codec);
+<<<<<<< HEAD
+=======
+	struct snd_soc_dapm_context *dapm = &codec->dapm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	ret = snd_soc_codec_set_cache_io(codec, 7, 9, wm8776->control_type);
@@ -418,6 +500,15 @@ static int wm8776_probe(struct snd_soc_codec *codec)
 	snd_soc_update_bits(codec, WM8776_HPRVOL, 0x100, 0x100);
 	snd_soc_update_bits(codec, WM8776_DACRVOL, 0x100, 0x100);
 
+<<<<<<< HEAD
+=======
+	snd_soc_add_controls(codec, wm8776_snd_controls,
+			     ARRAY_SIZE(wm8776_snd_controls));
+	snd_soc_dapm_new_controls(dapm, wm8776_dapm_widgets,
+				  ARRAY_SIZE(wm8776_dapm_widgets));
+	snd_soc_dapm_add_routes(dapm, routes, ARRAY_SIZE(routes));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -437,6 +528,7 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8776 = {
 	.reg_cache_size = ARRAY_SIZE(wm8776_reg),
 	.reg_word_size = sizeof(u16),
 	.reg_cache_default = wm8776_reg,
+<<<<<<< HEAD
 
 	.controls = wm8776_snd_controls,
 	.num_controls = ARRAY_SIZE(wm8776_snd_controls),
@@ -452,14 +544,22 @@ static const struct of_device_id wm8776_of_match[] = {
 };
 MODULE_DEVICE_TABLE(of, wm8776_of_match);
 
+=======
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_SPI_MASTER)
 static int __devinit wm8776_spi_probe(struct spi_device *spi)
 {
 	struct wm8776_priv *wm8776;
 	int ret;
 
+<<<<<<< HEAD
 	wm8776 = devm_kzalloc(&spi->dev, sizeof(struct wm8776_priv),
 			      GFP_KERNEL);
+=======
+	wm8776 = kzalloc(sizeof(struct wm8776_priv), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (wm8776 == NULL)
 		return -ENOMEM;
 
@@ -468,21 +568,35 @@ static int __devinit wm8776_spi_probe(struct spi_device *spi)
 
 	ret = snd_soc_register_codec(&spi->dev,
 			&soc_codec_dev_wm8776, wm8776_dai, ARRAY_SIZE(wm8776_dai));
+<<<<<<< HEAD
 
+=======
+	if (ret < 0)
+		kfree(wm8776);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devexit wm8776_spi_remove(struct spi_device *spi)
 {
 	snd_soc_unregister_codec(&spi->dev);
+<<<<<<< HEAD
+=======
+	kfree(spi_get_drvdata(spi));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static struct spi_driver wm8776_spi_driver = {
 	.driver = {
+<<<<<<< HEAD
 		.name	= "wm8776",
 		.owner	= THIS_MODULE,
 		.of_match_table = wm8776_of_match,
+=======
+		.name	= "wm8776-codec",
+		.owner	= THIS_MODULE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe		= wm8776_spi_probe,
 	.remove		= __devexit_p(wm8776_spi_remove),
@@ -496,8 +610,12 @@ static __devinit int wm8776_i2c_probe(struct i2c_client *i2c,
 	struct wm8776_priv *wm8776;
 	int ret;
 
+<<<<<<< HEAD
 	wm8776 = devm_kzalloc(&i2c->dev, sizeof(struct wm8776_priv),
 			      GFP_KERNEL);
+=======
+	wm8776 = kzalloc(sizeof(struct wm8776_priv), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (wm8776 == NULL)
 		return -ENOMEM;
 
@@ -506,28 +624,46 @@ static __devinit int wm8776_i2c_probe(struct i2c_client *i2c,
 
 	ret =  snd_soc_register_codec(&i2c->dev,
 			&soc_codec_dev_wm8776, wm8776_dai, ARRAY_SIZE(wm8776_dai));
+<<<<<<< HEAD
 
+=======
+	if (ret < 0)
+		kfree(wm8776);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static __devexit int wm8776_i2c_remove(struct i2c_client *client)
 {
 	snd_soc_unregister_codec(&client->dev);
+<<<<<<< HEAD
+=======
+	kfree(i2c_get_clientdata(client));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static const struct i2c_device_id wm8776_i2c_id[] = {
+<<<<<<< HEAD
 	{ "wm8775", WM8775 },
 	{ "wm8776", WM8776 },
+=======
+	{ "wm8776", 0 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ }
 };
 MODULE_DEVICE_TABLE(i2c, wm8776_i2c_id);
 
 static struct i2c_driver wm8776_i2c_driver = {
 	.driver = {
+<<<<<<< HEAD
 		.name = "wm8776",
 		.owner = THIS_MODULE,
 		.of_match_table = wm8776_of_match,
+=======
+		.name = "wm8776-codec",
+		.owner = THIS_MODULE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe =    wm8776_i2c_probe,
 	.remove =   __devexit_p(wm8776_i2c_remove),

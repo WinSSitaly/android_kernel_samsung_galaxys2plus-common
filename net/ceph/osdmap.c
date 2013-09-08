@@ -283,8 +283,12 @@ static struct crush_map *crush_decode(void *pbyval, void *end)
 		ceph_decode_32_safe(p, end, yes, bad);
 #if BITS_PER_LONG == 32
 		err = -EINVAL;
+<<<<<<< HEAD
 		if (yes > (ULONG_MAX - sizeof(*r))
 			  / sizeof(struct crush_rule_step))
+=======
+		if (yes > ULONG_MAX / sizeof(struct crush_rule_step))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto bad;
 #endif
 		r = c->rules[i] = kmalloc(sizeof(*r) +
@@ -340,7 +344,10 @@ static int __insert_pg_mapping(struct ceph_pg_mapping *new,
 	struct ceph_pg_mapping *pg = NULL;
 	int c;
 
+<<<<<<< HEAD
 	dout("__insert_pg_mapping %llx %p\n", *(u64 *)&new->pgid, new);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (*p) {
 		parent = *p;
 		pg = rb_entry(parent, struct ceph_pg_mapping, node);
@@ -368,6 +375,7 @@ static struct ceph_pg_mapping *__lookup_pg_mapping(struct rb_root *root,
 	while (n) {
 		pg = rb_entry(n, struct ceph_pg_mapping, node);
 		c = pgid_cmp(pgid, pg->pgid);
+<<<<<<< HEAD
 		if (c < 0) {
 			n = n->rb_left;
 		} else if (c > 0) {
@@ -377,10 +385,19 @@ static struct ceph_pg_mapping *__lookup_pg_mapping(struct rb_root *root,
 			     *(u64 *)&pgid, pg);
 			return pg;
 		}
+=======
+		if (c < 0)
+			n = n->rb_left;
+		else if (c > 0)
+			n = n->rb_right;
+		else
+			return pg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return NULL;
 }
 
+<<<<<<< HEAD
 static int __remove_pg_mapping(struct rb_root *root, struct ceph_pg pgid)
 {
 	struct ceph_pg_mapping *pg = __lookup_pg_mapping(root, pgid);
@@ -395,6 +412,8 @@ static int __remove_pg_mapping(struct rb_root *root, struct ceph_pg pgid)
 	return -ENOENT;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * rbtree of pg pool info
  */
@@ -495,6 +514,7 @@ static int __decode_pool_names(void **p, void *end, struct ceph_osdmap *map)
 		ceph_decode_32_safe(p, end, pool, bad);
 		ceph_decode_32_safe(p, end, len, bad);
 		dout("  pool %d len %d\n", pool, len);
+<<<<<<< HEAD
 		ceph_decode_need(p, end, len, bad);
 		pi = __lookup_pg_pool(&map->pg_pools, pool);
 		if (pi) {
@@ -505,6 +525,17 @@ static int __decode_pool_names(void **p, void *end, struct ceph_osdmap *map)
 			kfree(pi->name);
 			pi->name = name;
 			dout("  name is %s\n", pi->name);
+=======
+		pi = __lookup_pg_pool(&map->pg_pools, pool);
+		if (pi) {
+			kfree(pi->name);
+			pi->name = kmalloc(len + 1, GFP_NOFS);
+			if (pi->name) {
+				memcpy(pi->name, *p, len);
+				pi->name[len] = '\0';
+				dout("  name is %s\n", pi->name);
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		*p += len;
 	}
@@ -613,12 +644,18 @@ struct ceph_osdmap *osdmap_decode(void **p, void *end)
 	ceph_decode_32_safe(p, end, max, bad);
 	while (max--) {
 		ceph_decode_need(p, end, 4 + 1 + sizeof(pi->v), bad);
+<<<<<<< HEAD
 		err = -ENOMEM;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pi = kzalloc(sizeof(*pi), GFP_NOFS);
 		if (!pi)
 			goto bad;
 		pi->id = ceph_decode_32(p);
+<<<<<<< HEAD
 		err = -EINVAL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ev = ceph_decode_8(p); /* encoding version */
 		if (ev > CEPH_PG_POOL_VERSION) {
 			pr_warning("got unknown v %d > %d of ceph_pg_pool\n",
@@ -634,6 +671,7 @@ struct ceph_osdmap *osdmap_decode(void **p, void *end)
 		__insert_pg_pool(&map->pg_pools, pi);
 	}
 
+<<<<<<< HEAD
 	if (version >= 5) {
 		err = __decode_pool_names(p, end, map);
 		if (err < 0) {
@@ -641,6 +679,10 @@ struct ceph_osdmap *osdmap_decode(void **p, void *end)
 			goto bad;
 		}
 	}
+=======
+	if (version >= 5 && __decode_pool_names(p, end, map) < 0)
+		goto bad;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ceph_decode_32_safe(p, end, map->pool_max, bad);
 
@@ -681,9 +723,12 @@ struct ceph_osdmap *osdmap_decode(void **p, void *end)
 		ceph_decode_need(p, end, sizeof(u32) + sizeof(u64), bad);
 		ceph_decode_copy(p, &pgid, sizeof(pgid));
 		n = ceph_decode_32(p);
+<<<<<<< HEAD
 		err = -EINVAL;
 		if (n > (UINT_MAX - sizeof(*pg)) / sizeof(u32))
 			goto bad;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ceph_decode_need(p, end, n * sizeof(u32), bad);
 		err = -ENOMEM;
 		pg = kmalloc(sizeof(*pg) + n*sizeof(u32), GFP_NOFS);
@@ -720,7 +765,11 @@ struct ceph_osdmap *osdmap_decode(void **p, void *end)
 	return map;
 
 bad:
+<<<<<<< HEAD
 	dout("osdmap_decode fail err %d\n", err);
+=======
+	dout("osdmap_decode fail\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ceph_osdmap_destroy(map);
 	return ERR_PTR(err);
 }
@@ -741,6 +790,10 @@ struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end,
 	void *start = *p;
 	int err = -EINVAL;
 	u16 version;
+<<<<<<< HEAD
+=======
+	struct rb_node *rbp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ceph_decode_16_safe(p, end, version, bad);
 	if (version > CEPH_OSDMAP_INC_VERSION) {
@@ -814,7 +867,10 @@ struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end,
 		if (ev > CEPH_PG_POOL_VERSION) {
 			pr_warning("got unknown v %d > %d of ceph_pg_pool\n",
 				   ev, CEPH_PG_POOL_VERSION);
+<<<<<<< HEAD
 			err = -EINVAL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto bad;
 		}
 		pi = __lookup_pg_pool(&map->pg_pools, pool);
@@ -831,11 +887,16 @@ struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end,
 		if (err < 0)
 			goto bad;
 	}
+<<<<<<< HEAD
 	if (version >= 5) {
 		err = __decode_pool_names(p, end, map);
 		if (err < 0)
 			goto bad;
 	}
+=======
+	if (version >= 5 && __decode_pool_names(p, end, map) < 0)
+		goto bad;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* old_pool */
 	ceph_decode_32_safe(p, end, len, bad);
@@ -894,6 +955,10 @@ struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end,
 	}
 
 	/* new_pg_temp */
+<<<<<<< HEAD
+=======
+	rbp = rb_first(&map->pg_temp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ceph_decode_32_safe(p, end, len, bad);
 	while (len--) {
 		struct ceph_pg_mapping *pg;
@@ -904,6 +969,7 @@ struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end,
 		ceph_decode_copy(p, &pgid, sizeof(pgid));
 		pglen = ceph_decode_32(p);
 
+<<<<<<< HEAD
 		if (pglen) {
 			ceph_decode_need(p, end, pglen*sizeof(u32), bad);
 
@@ -918,6 +984,28 @@ struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end,
 			pg = kmalloc(sizeof(*pg) + sizeof(u32)*pglen, GFP_NOFS);
 			if (!pg)
 				goto bad;
+=======
+		/* remove any? */
+		while (rbp && pgid_cmp(rb_entry(rbp, struct ceph_pg_mapping,
+						node)->pgid, pgid) <= 0) {
+			struct ceph_pg_mapping *cur =
+				rb_entry(rbp, struct ceph_pg_mapping, node);
+
+			rbp = rb_next(rbp);
+			dout(" removed pg_temp %llx\n", *(u64 *)&cur->pgid);
+			rb_erase(&cur->node, &map->pg_temp);
+			kfree(cur);
+		}
+
+		if (pglen) {
+			/* insert */
+			ceph_decode_need(p, end, pglen*sizeof(u32), bad);
+			pg = kmalloc(sizeof(*pg) + sizeof(u32)*pglen, GFP_NOFS);
+			if (!pg) {
+				err = -ENOMEM;
+				goto bad;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pg->pgid = pgid;
 			pg->len = pglen;
 			for (j = 0; j < pglen; j++)
@@ -929,11 +1017,25 @@ struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end,
 			}
 			dout(" added pg_temp %llx len %d\n", *(u64 *)&pgid,
 			     pglen);
+<<<<<<< HEAD
 		} else {
 			/* remove */
 			__remove_pg_mapping(&map->pg_temp, pgid);
 		}
 	}
+=======
+		}
+	}
+	while (rbp) {
+		struct ceph_pg_mapping *cur =
+			rb_entry(rbp, struct ceph_pg_mapping, node);
+
+		rbp = rb_next(rbp);
+		dout(" removed pg_temp %llx\n", *(u64 *)&cur->pgid);
+		rb_erase(&cur->node, &map->pg_temp);
+		kfree(cur);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* ignore the rest */
 	*p = end;
@@ -961,7 +1063,11 @@ bad:
  * for now, we write only a single su, until we can
  * pass a stride back to the caller.
  */
+<<<<<<< HEAD
 int ceph_calc_file_object_mapping(struct ceph_file_layout *layout,
+=======
+void ceph_calc_file_object_mapping(struct ceph_file_layout *layout,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   u64 off, u64 *plen,
 				   u64 *ono,
 				   u64 *oxoff, u64 *oxlen)
@@ -975,6 +1081,7 @@ int ceph_calc_file_object_mapping(struct ceph_file_layout *layout,
 
 	dout("mapping %llu~%llu  osize %u fl_su %u\n", off, *plen,
 	     osize, su);
+<<<<<<< HEAD
 	if (su == 0 || sc == 0)
 		goto invalid;
 	su_per_object = osize / su;
@@ -986,6 +1093,13 @@ int ceph_calc_file_object_mapping(struct ceph_file_layout *layout,
 	if ((su & ~PAGE_MASK) != 0)
 		goto invalid;
 
+=======
+	su_per_object = osize / su;
+	dout("osize %u / su %u = su_per_object %u\n", osize, su,
+	     su_per_object);
+
+	BUG_ON((su & ~PAGE_MASK) != 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* bl = *off / su; */
 	t = off;
 	do_div(t, su);
@@ -1013,6 +1127,7 @@ int ceph_calc_file_object_mapping(struct ceph_file_layout *layout,
 	*plen = *oxlen;
 
 	dout(" obj extent %llu~%llu\n", *oxoff, *oxlen);
+<<<<<<< HEAD
 	return 0;
 
 invalid:
@@ -1021,6 +1136,8 @@ invalid:
 	*oxoff = 0;
 	*oxlen = 0;
 	return -EINVAL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(ceph_calc_file_object_mapping);
 
@@ -1080,6 +1197,7 @@ static int *calc_pg_raw(struct ceph_osdmap *osdmap, struct ceph_pg pgid,
 	struct ceph_pg_mapping *pg;
 	struct ceph_pg_pool_info *pool;
 	int ruleno;
+<<<<<<< HEAD
 	unsigned poolid, ps, pps, t;
 	int preferred;
 
@@ -1099,6 +1217,12 @@ static int *calc_pg_raw(struct ceph_osdmap *osdmap, struct ceph_pg pgid,
 		t = ceph_stable_mod(ps, le32_to_cpu(pool->v.pg_num),
 				    pool->pgp_num_mask);
 	pgid.ps = cpu_to_le16(t);
+=======
+	unsigned poolid, ps, pps;
+	int preferred;
+
+	/* pg_temp? */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pg = __lookup_pg_mapping(&osdmap->pg_temp, pgid);
 	if (pg) {
 		*num = pg->len;
@@ -1106,6 +1230,21 @@ static int *calc_pg_raw(struct ceph_osdmap *osdmap, struct ceph_pg pgid,
 	}
 
 	/* crush */
+<<<<<<< HEAD
+=======
+	poolid = le32_to_cpu(pgid.pool);
+	ps = le16_to_cpu(pgid.ps);
+	preferred = (s16)le16_to_cpu(pgid.preferred);
+
+	/* don't forcefeed bad device ids to crush */
+	if (preferred >= osdmap->max_osd ||
+	    preferred >= osdmap->crush->max_devices)
+		preferred = -1;
+
+	pool = __lookup_pg_pool(&osdmap->pg_pools, poolid);
+	if (!pool)
+		return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ruleno = crush_find_rule(osdmap->crush, pool->v.crush_ruleset,
 				 pool->v.type, pool->v.size);
 	if (ruleno < 0) {
@@ -1115,11 +1254,14 @@ static int *calc_pg_raw(struct ceph_osdmap *osdmap, struct ceph_pg pgid,
 		return NULL;
 	}
 
+<<<<<<< HEAD
 	/* don't forcefeed bad device ids to crush */
 	if (preferred >= osdmap->max_osd ||
 	    preferred >= osdmap->crush->max_devices)
 		preferred = -1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (preferred >= 0)
 		pps = ceph_stable_mod(ps,
 				      le32_to_cpu(pool->v.lpgp_num),

@@ -13,8 +13,11 @@
 
 #include <linux/smp.h>
 
+<<<<<<< HEAD
 extern int spin_retry;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int
 _raw_compare_and_swap(volatile unsigned int *lock,
 		      unsigned int old, unsigned int new)

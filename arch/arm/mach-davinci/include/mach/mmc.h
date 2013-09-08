@@ -12,9 +12,12 @@ struct davinci_mmc_config {
 	/* get_cd()/get_wp() may sleep */
 	int	(*get_cd)(int module);
 	int	(*get_ro)(int module);
+<<<<<<< HEAD
 
 	void	(*set_power)(int module, bool on);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* wires == 0 is equivalent to wires == 4 (4-bit parallel) */
 	u8	wires;
 

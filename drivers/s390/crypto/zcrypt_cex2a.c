@@ -30,7 +30,11 @@
 #include <linux/slab.h>
 #include <linux/init.h>
 #include <linux/err.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 
 #include "ap_bus.h"
@@ -63,11 +67,19 @@ static struct ap_device_id zcrypt_cex2a_ids[] = {
 	{ /* end of list */ },
 };
 
+<<<<<<< HEAD
+=======
+#ifndef CONFIG_ZCRYPT_MONOLITHIC
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DEVICE_TABLE(ap, zcrypt_cex2a_ids);
 MODULE_AUTHOR("IBM Corporation");
 MODULE_DESCRIPTION("CEX2A Cryptographic Coprocessor device driver, "
 		   "Copyright 2001, 2006 IBM Corporation");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int zcrypt_cex2a_probe(struct ap_device *ap_dev);
 static void zcrypt_cex2a_remove(struct ap_device *ap_dev);
@@ -494,5 +506,12 @@ void __exit zcrypt_cex2a_exit(void)
 	ap_driver_unregister(&zcrypt_cex2a_driver);
 }
 
+<<<<<<< HEAD
 module_init(zcrypt_cex2a_init);
 module_exit(zcrypt_cex2a_exit);
+=======
+#ifndef CONFIG_ZCRYPT_MONOLITHIC
+module_init(zcrypt_cex2a_init);
+module_exit(zcrypt_cex2a_exit);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

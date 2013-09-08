@@ -21,6 +21,10 @@
 #include <linux/of_platform.h>
 #include <linux/memblock.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/time.h>
 #include <asm/machdep.h>
 #include <asm/pci-bridge.h>
@@ -160,7 +164,11 @@ mpc86xx_time_init(void)
 
 static __initdata struct of_device_id of_bus_ids[] = {
 	{ .compatible = "simple-bus", },
+<<<<<<< HEAD
 	{ .compatible = "fsl,srio", },
+=======
+	{ .compatible = "fsl,rapidio-delta", },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ .compatible = "gianfar", },
 	{},
 };

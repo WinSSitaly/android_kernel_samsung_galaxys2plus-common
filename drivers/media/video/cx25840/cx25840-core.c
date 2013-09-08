@@ -18,9 +18,12 @@
  * CX2388[578] IRQ handling, IO Pin mux configuration and other small fixes are
  * Copyright (C) 2010 Andy Walls <awalls@md.metrocast.net>
  *
+<<<<<<< HEAD
  * CX23888 DIF support for the HVR1850
  * Copyright (C) 2011 Steven Toth <stoth@kernellabs.com>
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -43,7 +46,10 @@
 #include <linux/videodev2.h>
 #include <linux/i2c.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/math64.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/v4l2-common.h>
 #include <media/v4l2-chip-ident.h>
 #include <media/cx25840.h>
@@ -84,7 +90,10 @@ MODULE_PARM_DESC(debug, "Debugging messages [0=Off (default) 1=On]");
 
 
 /* ----------------------------------------------------------------------- */
+<<<<<<< HEAD
 static void cx23885_std_setup(struct i2c_client *client);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int cx25840_write(struct i2c_client *client, u16 addr, u8 value)
 {
@@ -503,6 +512,7 @@ static void cx23885_initialize(struct i2c_client *client)
 		 * 50.0 MHz * (0xb + 0xe8ba26/0x2000000)/4 = 5 * 28.636363 MHz
 		 * 572.73 MHz before post divide
 		 */
+<<<<<<< HEAD
 		/* HVR1850 or 50MHz xtal */
 		cx25840_write(client, 0x2, 0x71);
 		cx25840_write4(client, 0x11c, 0x01d1744c);
@@ -510,6 +520,10 @@ static void cx23885_initialize(struct i2c_client *client)
 		cx25840_write4(client, 0x404, 0x0010253e);
 		cx25840_write4(client, 0x42c, 0x42600000);
 		cx25840_write4(client, 0x44c, 0x161f1000);
+=======
+		cx25840_write4(client, 0x11c, 0x00e8ba26);
+		cx25840_write4(client, 0x118, 0x0000040b);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case V4L2_IDENT_CX23887_AV:
 		/*
@@ -543,6 +557,7 @@ static void cx23885_initialize(struct i2c_client *client)
 	 * 28.636363 MHz * (0xf + 0x02be2c9/0x2000000)/4 = 8 * 13.5 MHz
 	 * 432.0 MHz before post divide
 	 */
+<<<<<<< HEAD
 
 	/* HVR1850 */
 	switch (state->id) {
@@ -555,6 +570,10 @@ static void cx23885_initialize(struct i2c_client *client)
 		cx25840_write4(client, 0x10c, 0x002be2c9);
 		cx25840_write4(client, 0x108, 0x0000040f);
 	}
+=======
+	cx25840_write4(client, 0x10c, 0x002be2c9);
+	cx25840_write4(client, 0x108, 0x0000040f);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Luma */
 	cx25840_write4(client, 0x414, 0x00107d12);
@@ -576,9 +595,14 @@ static void cx23885_initialize(struct i2c_client *client)
 		 * 368.64 MHz before post divide
 		 * 122.88 MHz / 0xa = 12.288 MHz
 		 */
+<<<<<<< HEAD
 		/* HVR1850  or 50MHz xtal */
 		cx25840_write4(client, 0x114, 0x017dbf48);
 		cx25840_write4(client, 0x110, 0x000a030e);
+=======
+		cx25840_write4(client, 0x114, 0x00bedfa4);
+		cx25840_write4(client, 0x110, 0x000a0307);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case V4L2_IDENT_CX23887_AV:
 		/*
@@ -638,10 +662,14 @@ static void cx23885_initialize(struct i2c_client *client)
 	finish_wait(&state->fw_wait, &wait);
 	destroy_workqueue(q);
 
+<<<<<<< HEAD
 	/* Call the cx23885 specific std setup func, we no longer rely on
 	 * the generic cx24840 func.
 	 */
 	cx23885_std_setup(client);
+=======
+	cx25840_std_setup(client);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* (re)set input */
 	set_input(client, state->vid_input, state->aud_input);
@@ -655,6 +683,7 @@ static void cx23885_initialize(struct i2c_client *client)
 	/* Disable and clear audio interrupts - we don't use them */
 	cx25840_write(client, CX25840_AUD_INT_CTRL_REG, 0xff);
 	cx25840_write(client, CX25840_AUD_INT_STAT_REG, 0xff);
+<<<<<<< HEAD
 
 	/* CC raw enable */
 	/*  - VIP 1.1 control codes - 10bit, blue field enable.
@@ -686,6 +715,8 @@ static void cx23885_initialize(struct i2c_client *client)
 
 	/* AFE_DIAG_CTRL3 - Inverted Polarity for Audio and Video */
 	cx25840_write4(client, 0x13c, 0x00310000);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* ----------------------------------------------------------------------- */
@@ -757,6 +788,7 @@ static void cx231xx_initialize(struct i2c_client *client)
 
 	/* start microcontroller */
 	cx25840_and_or(client, 0x803, ~0x10, 0x10);
+<<<<<<< HEAD
 
 	/* CC raw enable */
 	cx25840_write(client, 0x404, 0x0b);
@@ -764,6 +796,8 @@ static void cx231xx_initialize(struct i2c_client *client)
 	/* CC on */
 	cx25840_write(client, 0x42f, 0x66);
 	cx25840_write4(client, 0x474, 0x1e1e601a);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* ----------------------------------------------------------------------- */
@@ -1000,6 +1034,7 @@ static int set_input(struct i2c_client *client, enum cx25840_video_input vid_inp
 			   vid_input <= CX25840_COMPOSITE8);
 	u8 is_component = (vid_input & CX25840_COMPONENT_ON) ==
 			CX25840_COMPONENT_ON;
+<<<<<<< HEAD
 	u8 is_dif = (vid_input & CX25840_DIF_ON) ==
 			CX25840_DIF_ON;
 	u8 is_svideo = (vid_input & CX25840_SVIDEO_ON) ==
@@ -1008,6 +1043,11 @@ static int set_input(struct i2c_client *client, enum cx25840_video_input vid_inp
 	int chroma = vid_input & 0xf00;
 	u8 reg;
 	u32 val;
+=======
+	int luma = vid_input & 0xf0;
+	int chroma = vid_input & 0xf00;
+	u8 reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	v4l_dbg(1, cx25840_debug, client,
 		"decoder set video input %d, audio input %d\n",
@@ -1072,6 +1112,7 @@ static int set_input(struct i2c_client *client, enum cx25840_video_input vid_inp
 	else
 		cx25840_and_or(client, 0x401, ~0x6, is_composite ? 0 : 0x02);
 
+<<<<<<< HEAD
 	if (is_cx2388x(state)) {
 
 		/* Enable or disable the DIF for tuner use */
@@ -1132,6 +1173,8 @@ static int set_input(struct i2c_client *client, enum cx25840_video_input vid_inp
 		cx25840_write4(client, 0x398, 0);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!is_cx2388x(state) && !is_cx231xx(state)) {
 		/* Set CH_SEL_ADC2 to 1 if input comes from CH3 */
 		cx25840_and_or(client, 0x102, ~0x2, (reg & 0x80) == 0 ? 2 : 0);
@@ -1156,6 +1199,7 @@ static int set_input(struct i2c_client *client, enum cx25840_video_input vid_inp
 				cx25840_and_or(client, 0x102, ~0x2, 0);
 			}
 		}
+<<<<<<< HEAD
 
 		/* cx23885 / SVIDEO */
 		if (is_cx2388x(state) && is_svideo) {
@@ -1183,6 +1227,8 @@ static int set_input(struct i2c_client *client, enum cx25840_video_input vid_inp
 			cx25840_write4(client, AFE_CTRL, val);
 		} else
 			cx25840_and_or(client, 0x102, ~0x2, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	state->vid_input = vid_input;
@@ -1221,6 +1267,7 @@ static int set_input(struct i2c_client *client, enum cx25840_video_input vid_inp
 		cx25840_write(client, 0x919, 0x01);
 	}
 
+<<<<<<< HEAD
 	if (is_cx2388x(state) && ((aud_input == CX25840_AUDIO7) ||
 		(aud_input == CX25840_AUDIO6))) {
 		/* Configure audio from LR1 or LR2 input */
@@ -1250,6 +1297,8 @@ static int set_input(struct i2c_client *client, enum cx25840_video_input vid_inp
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1298,10 +1347,14 @@ static int set_v4lstd(struct i2c_client *client)
 	}
 	cx25840_and_or(client, 0x400, ~0xf, fmt);
 	cx25840_and_or(client, 0x403, ~0x3, pal_m);
+<<<<<<< HEAD
 	if (is_cx2388x(state))
 		cx23885_std_setup(client);
 	else
 		cx25840_std_setup(client);
+=======
+	cx25840_std_setup(client);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!is_cx2583x(state))
 		input_change(client);
 	return 0;
@@ -1706,6 +1759,7 @@ static int cx25840_s_stream(struct v4l2_subdev *sd, int enable)
 	return 0;
 }
 
+<<<<<<< HEAD
 /* Query the current detected video format */
 static int cx25840_g_std(struct v4l2_subdev *sd, v4l2_std_id *std)
 {
@@ -1756,6 +1810,8 @@ static int cx25840_g_input_status(struct v4l2_subdev *sd, u32 *status)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int cx25840_s_std(struct v4l2_subdev *sd, v4l2_std_id std)
 {
 	struct cx25840_state *state = to_state(sd);
@@ -1782,9 +1838,12 @@ static int cx25840_s_video_routing(struct v4l2_subdev *sd,
 	struct cx25840_state *state = to_state(sd);
 	struct i2c_client *client = v4l2_get_subdevdata(sd);
 
+<<<<<<< HEAD
 	if (is_cx2388x(state))
 		cx23885_std_setup(client);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return set_input(client, input, state->aud_input);
 }
 
@@ -1794,8 +1853,11 @@ static int cx25840_s_audio_routing(struct v4l2_subdev *sd,
 	struct cx25840_state *state = to_state(sd);
 	struct i2c_client *client = v4l2_get_subdevdata(sd);
 
+<<<<<<< HEAD
 	if (is_cx2388x(state))
 		cx23885_std_setup(client);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return set_input(client, state->vid_input, input);
 }
 
@@ -2008,6 +2070,7 @@ static int cx25840_irq_handler(struct v4l2_subdev *sd, u32 status,
 
 /* ----------------------------------------------------------------------- */
 
+<<<<<<< HEAD
 #define DIF_PLL_FREQ_WORD	(0x300)
 #define DIF_BPF_COEFF01		(0x348)
 #define DIF_BPF_COEFF23		(0x34c)
@@ -5009,6 +5072,8 @@ static void cx23885_std_setup(struct i2c_client *client)
 
 /* ----------------------------------------------------------------------- */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct v4l2_ctrl_ops cx25840_ctrl_ops = {
 	.s_ctrl = cx25840_s_ctrl,
 };
@@ -5024,7 +5089,10 @@ static const struct v4l2_subdev_core_ops cx25840_core_ops = {
 	.queryctrl = v4l2_subdev_queryctrl,
 	.querymenu = v4l2_subdev_querymenu,
 	.s_std = cx25840_s_std,
+<<<<<<< HEAD
 	.g_std = cx25840_g_std,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.reset = cx25840_reset,
 	.load_fw = cx25840_load_fw,
 	.s_io_pin_config = common_s_io_pin_config,
@@ -5052,7 +5120,10 @@ static const struct v4l2_subdev_video_ops cx25840_video_ops = {
 	.s_routing = cx25840_s_video_routing,
 	.s_mbus_fmt = cx25840_s_mbus_fmt,
 	.s_stream = cx25840_s_stream,
+<<<<<<< HEAD
 	.g_input_status = cx25840_g_input_status,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct v4l2_subdev_vbi_ops cx25840_vbi_ops = {
@@ -5301,4 +5372,19 @@ static struct i2c_driver cx25840_driver = {
 	.id_table	= cx25840_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(cx25840_driver);
+=======
+static __init int init_cx25840(void)
+{
+	return i2c_add_driver(&cx25840_driver);
+}
+
+static __exit void exit_cx25840(void)
+{
+	i2c_del_driver(&cx25840_driver);
+}
+
+module_init(init_cx25840);
+module_exit(exit_cx25840);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

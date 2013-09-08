@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <asm/page_types.h>
 #include <linux/linkage.h>
 #include <linux/init.h>
@@ -20,3 +21,15 @@ vdso_end:
 vdso_pages:
 	.zero (vdso_end - vdso_start + PAGE_SIZE - 1) / PAGE_SIZE * 8
 	.size vdso_pages, .-vdso_pages
+=======
+#include <linux/init.h>
+
+__INITDATA
+
+	.globl vdso_start, vdso_end
+vdso_start:
+	.incbin "arch/x86/vdso/vdso.so"
+vdso_end:
+
+__FINIT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

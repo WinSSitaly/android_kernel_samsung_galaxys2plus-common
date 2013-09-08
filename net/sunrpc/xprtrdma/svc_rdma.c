@@ -47,7 +47,10 @@
 #include <linux/sunrpc/clnt.h>
 #include <linux/sunrpc/sched.h>
 #include <linux/sunrpc/svc_rdma.h>
+<<<<<<< HEAD
 #include "xprt_rdma.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define RPCDBG_FACILITY	RPCDBG_SVCXPRT
 

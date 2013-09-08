@@ -46,6 +46,10 @@
 #include <linux/slab.h>
 #include <linux/tcp.h>
 #include <linux/types.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/wireless.h>
 #include <linux/etherdevice.h>
 #include <asm/uaccess.h>

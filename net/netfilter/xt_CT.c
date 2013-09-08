@@ -5,7 +5,11 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/gfp.h>
 #include <linux/skbuff.h>
@@ -14,6 +18,7 @@
 #include <linux/netfilter/x_tables.h>
 #include <linux/netfilter/xt_CT.h>
 #include <net/netfilter/nf_conntrack.h>
+<<<<<<< HEAD
 #include <net/netfilter/nf_conntrack_l4proto.h>
 #include <net/netfilter/nf_conntrack_helper.h>
 #include <net/netfilter/nf_conntrack_ecache.h>
@@ -23,6 +28,14 @@
 
 static unsigned int xt_ct_target_v0(struct sk_buff *skb,
 				    const struct xt_action_param *par)
+=======
+#include <net/netfilter/nf_conntrack_helper.h>
+#include <net/netfilter/nf_conntrack_ecache.h>
+#include <net/netfilter/nf_conntrack_zones.h>
+
+static unsigned int xt_ct_target(struct sk_buff *skb,
+				 const struct xt_action_param *par)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const struct xt_ct_target_info *info = par->targinfo;
 	struct nf_conn *ct = info->ct;
@@ -38,6 +51,7 @@ static unsigned int xt_ct_target_v0(struct sk_buff *skb,
 	return XT_CONTINUE;
 }
 
+<<<<<<< HEAD
 static unsigned int xt_ct_target_v1(struct sk_buff *skb,
 				    const struct xt_action_param *par)
 {
@@ -55,6 +69,8 @@ static unsigned int xt_ct_target_v1(struct sk_buff *skb,
 	return XT_CONTINUE;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u8 xt_ct_find_proto(const struct xt_tgchk_param *par)
 {
 	if (par->family == NFPROTO_IPV4) {
@@ -73,7 +89,11 @@ static u8 xt_ct_find_proto(const struct xt_tgchk_param *par)
 		return 0;
 }
 
+<<<<<<< HEAD
 static int xt_ct_tg_check_v0(const struct xt_tgchk_param *par)
+=======
+static int xt_ct_tg_check(const struct xt_tgchk_param *par)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct xt_ct_target_info *info = par->targinfo;
 	struct nf_conntrack_tuple t;
@@ -115,6 +135,7 @@ static int xt_ct_tg_check_v0(const struct xt_tgchk_param *par)
 	if (info->helper[0]) {
 		ret = -ENOENT;
 		proto = xt_ct_find_proto(par);
+<<<<<<< HEAD
 		if (!proto) {
 			pr_info("You must specify a L4 protocol, "
 				"and not use inversions on it.\n");
@@ -210,6 +231,10 @@ static int xt_ct_tg_check_v1(const struct xt_tgchk_param *par)
 				"and not use inversions on it.\n");
 			goto err3;
 		}
+=======
+		if (!proto)
+			goto err3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ret = -ENOMEM;
 		help = nf_ct_helper_ext_add(ct, GFP_KERNEL);
@@ -220,6 +245,7 @@ static int xt_ct_tg_check_v1(const struct xt_tgchk_param *par)
 		help->helper = nf_conntrack_helper_try_module_get(info->helper,
 								  par->family,
 								  proto);
+<<<<<<< HEAD
 		if (help->helper == NULL) {
 			pr_info("No such helper \"%s\"\n", info->helper);
 			goto err3;
@@ -286,6 +312,11 @@ static int xt_ct_tg_check_v1(const struct xt_tgchk_param *par)
 		rcu_read_unlock();
 	}
 #endif
+=======
+		if (help->helper == NULL)
+			goto err3;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	__set_bit(IPS_TEMPLATE_BIT, &ct->status);
 	__set_bit(IPS_CONFIRMED_BIT, &ct->status);
@@ -293,12 +324,15 @@ out:
 	info->ct = ct;
 	return 0;
 
+<<<<<<< HEAD
 #ifdef CONFIG_NF_CONNTRACK_TIMEOUT
 err5:
 	__xt_ct_tg_timeout_put(timeout);
 err4:
 	rcu_read_unlock();
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err3:
 	nf_conntrack_free(ct);
 err2:
@@ -307,7 +341,11 @@ err1:
 	return ret;
 }
 
+<<<<<<< HEAD
 static void xt_ct_tg_destroy_v0(const struct xt_tgdtor_param *par)
+=======
+static void xt_ct_tg_destroy(const struct xt_tgdtor_param *par)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct xt_ct_target_info *info = par->targinfo;
 	struct nf_conn *ct = info->ct;
@@ -323,6 +361,7 @@ static void xt_ct_tg_destroy_v0(const struct xt_tgdtor_param *par)
 	nf_ct_put(info->ct);
 }
 
+<<<<<<< HEAD
 static void xt_ct_tg_destroy_v1(const struct xt_tgdtor_param *par)
 {
 	struct xt_ct_target_info_v1 *info = par->targinfo;
@@ -376,16 +415,35 @@ static struct xt_target xt_ct_tg_reg[] __read_mostly = {
 		.table		= "raw",
 		.me		= THIS_MODULE,
 	},
+=======
+static struct xt_target xt_ct_tg __read_mostly = {
+	.name		= "CT",
+	.family		= NFPROTO_UNSPEC,
+	.targetsize	= sizeof(struct xt_ct_target_info),
+	.checkentry	= xt_ct_tg_check,
+	.destroy	= xt_ct_tg_destroy,
+	.target		= xt_ct_target,
+	.table		= "raw",
+	.me		= THIS_MODULE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init xt_ct_tg_init(void)
 {
+<<<<<<< HEAD
 	return xt_register_targets(xt_ct_tg_reg, ARRAY_SIZE(xt_ct_tg_reg));
+=======
+	return xt_register_target(&xt_ct_tg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit xt_ct_tg_exit(void)
 {
+<<<<<<< HEAD
 	xt_unregister_targets(xt_ct_tg_reg, ARRAY_SIZE(xt_ct_tg_reg));
+=======
+	xt_unregister_target(&xt_ct_tg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(xt_ct_tg_init);

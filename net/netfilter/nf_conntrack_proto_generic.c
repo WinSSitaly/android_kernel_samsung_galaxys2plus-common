@@ -40,6 +40,7 @@ static int generic_print_tuple(struct seq_file *s,
 	return 0;
 }
 
+<<<<<<< HEAD
 static unsigned int *generic_get_timeouts(struct net *net)
 {
 	return &nf_ct_generic_timeout;
@@ -55,16 +56,33 @@ static int generic_packet(struct nf_conn *ct,
 			  unsigned int *timeout)
 {
 	nf_ct_refresh_acct(ct, ctinfo, skb, *timeout);
+=======
+/* Returns verdict for packet, or -1 for invalid. */
+static int packet(struct nf_conn *ct,
+		  const struct sk_buff *skb,
+		  unsigned int dataoff,
+		  enum ip_conntrack_info ctinfo,
+		  u_int8_t pf,
+		  unsigned int hooknum)
+{
+	nf_ct_refresh_acct(ct, ctinfo, skb, nf_ct_generic_timeout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NF_ACCEPT;
 }
 
 /* Called when a new connection for this protocol found. */
+<<<<<<< HEAD
 static bool generic_new(struct nf_conn *ct, const struct sk_buff *skb,
 			unsigned int dataoff, unsigned int *timeouts)
+=======
+static bool new(struct nf_conn *ct, const struct sk_buff *skb,
+		unsigned int dataoff)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return true;
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
 
 #include <linux/netfilter/nfnetlink.h>
@@ -104,6 +122,8 @@ generic_timeout_nla_policy[CTA_TIMEOUT_GENERIC_MAX+1] = {
 };
 #endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SYSCTL
 static struct ctl_table_header *generic_sysctl_header;
 static struct ctl_table generic_sysctl_table[] = {
@@ -138,6 +158,7 @@ struct nf_conntrack_l4proto nf_conntrack_l4proto_generic __read_mostly =
 	.pkt_to_tuple		= generic_pkt_to_tuple,
 	.invert_tuple		= generic_invert_tuple,
 	.print_tuple		= generic_print_tuple,
+<<<<<<< HEAD
 	.packet			= generic_packet,
 	.get_timeouts		= generic_get_timeouts,
 	.new			= generic_new,
@@ -150,6 +171,10 @@ struct nf_conntrack_l4proto nf_conntrack_l4proto_generic __read_mostly =
 		.nla_policy	= generic_timeout_nla_policy,
 	},
 #endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
+=======
+	.packet			= packet,
+	.new			= new,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SYSCTL
 	.ctl_table_header	= &generic_sysctl_header,
 	.ctl_table		= generic_sysctl_table,

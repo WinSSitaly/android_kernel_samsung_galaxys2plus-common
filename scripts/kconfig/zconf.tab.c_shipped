@@ -1,9 +1,19 @@
+<<<<<<< HEAD
 /* A Bison parser, made by GNU Bison 2.4.3.  */
 
 /* Skeleton implementation for Bison's Yacc-like parsers in C
    
       Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
    2009, 2010 Free Software Foundation, Inc.
+=======
+
+/* A Bison parser, made by GNU Bison 2.4.1.  */
+
+/* Skeleton implementation for Bison's Yacc-like parsers in C
+   
+      Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
+   Free Software Foundation, Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,7 +55,11 @@
 #define YYBISON 1
 
 /* Bison version.  */
+<<<<<<< HEAD
 #define YYBISON_VERSION "2.4.3"
+=======
+#define YYBISON_VERSION "2.4.1"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -87,6 +101,10 @@
 #include <string.h>
 #include <stdbool.h>
 
+<<<<<<< HEAD
+=======
+#define LKC_DIRECT_LINK
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "lkc.h"
 
 #define printd(mask, fmt...) if (cdebug & (mask)) printf(fmt)
@@ -100,18 +118,33 @@ extern int zconflex(void);
 static void zconfprint(const char *err, ...);
 static void zconf_error(const char *err, ...);
 static void zconferror(const char *err);
+<<<<<<< HEAD
 static bool zconf_endtoken(const struct kconf_id *id, int starttoken, int endtoken);
+=======
+static bool zconf_endtoken(struct kconf_id *id, int starttoken, int endtoken);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct symbol *symbol_hash[SYMBOL_HASHSIZE];
 
 static struct menu *current_menu, *current_entry;
 
+<<<<<<< HEAD
+=======
+#define YYDEBUG 0
+#if YYDEBUG
+#define YYERROR_VERBOSE
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
+<<<<<<< HEAD
 # define YYDEBUG 1
+=======
+# define YYDEBUG 0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /* Enabling verbose error messages.  */
@@ -182,7 +215,11 @@ typedef union YYSTYPE
 	struct symbol *symbol;
 	struct expr *expr;
 	struct menu *menu;
+<<<<<<< HEAD
 	const struct kconf_id *id;
+=======
+	struct kconf_id *id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 
@@ -249,7 +286,11 @@ typedef short int yytype_int16;
 #define YYSIZE_MAXIMUM ((YYSIZE_T) -1)
 
 #ifndef YY_
+<<<<<<< HEAD
 # if defined YYENABLE_NLS && YYENABLE_NLS
+=======
+# if YYENABLE_NLS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #  if ENABLE_NLS
 #   include <libintl.h> /* INFRINGES ON USER NAME SPACE */
 #   define YY_(msgid) dgettext ("bison-runtime", msgid)
@@ -529,6 +570,7 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
+<<<<<<< HEAD
        0,   104,   104,   104,   106,   106,   108,   110,   111,   112,
      113,   114,   115,   119,   123,   123,   123,   123,   123,   123,
      123,   123,   127,   128,   129,   130,   131,   132,   136,   137,
@@ -541,6 +583,20 @@ static const yytype_uint16 yyrline[] =
      420,   421,   424,   432,   434,   435,   438,   445,   447,   452,
      453,   456,   457,   458,   462,   463,   466,   467,   470,   471,
      472,   473,   474,   475,   476,   479,   480,   483,   484
+=======
+       0,   108,   108,   108,   110,   110,   112,   114,   115,   116,
+     117,   118,   119,   123,   127,   127,   127,   127,   127,   127,
+     127,   127,   131,   132,   133,   134,   135,   136,   140,   141,
+     147,   155,   161,   169,   179,   181,   182,   183,   184,   185,
+     186,   189,   197,   203,   213,   219,   225,   228,   230,   241,
+     242,   247,   256,   261,   269,   272,   274,   275,   276,   277,
+     278,   281,   287,   298,   304,   314,   316,   321,   329,   337,
+     340,   342,   343,   344,   349,   356,   363,   368,   376,   379,
+     381,   382,   383,   386,   394,   401,   408,   414,   421,   423,
+     424,   425,   428,   436,   438,   439,   442,   449,   451,   456,
+     457,   460,   461,   462,   466,   467,   470,   471,   474,   475,
+     476,   477,   478,   479,   480,   483,   484,   487,   488
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #endif
 
@@ -800,6 +856,7 @@ static const yytype_uint8 yystos[] =
 
 /* Like YYERROR except do call yyerror.  This remains here temporarily
    to ease the transition to the new meaning of YYERROR, for GCC.
+<<<<<<< HEAD
    Once GCC version 2 has supplanted version 1, this can go.  However,
    YYFAIL appears to be in use.  Nevertheless, it is formally deprecated
    in Bison 2.4.2's NEWS entry, where a plan to phase it out is
@@ -812,6 +869,11 @@ static const yytype_uint8 yystos[] =
      some users do, and we want to make it easy for users to remove
      YYFAIL uses, which will produce warnings from Bison 2.5.  */
 #endif
+=======
+   Once GCC version 2 has supplanted version 1, this can go.  */
+
+#define YYFAIL		goto yyerrlab
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define YYRECOVERING()  (!!yyerrstatus)
 
@@ -868,7 +930,11 @@ while (YYID (0))
    we won't break user code: when these are the locations we know.  */
 
 #ifndef YY_LOCATION_PRINT
+<<<<<<< HEAD
 # if defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL
+=======
+# if YYLTYPE_IS_TRIVIAL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #  define YY_LOCATION_PRINT(File, Loc)			\
      fprintf (File, "%d.%d-%d.%d",			\
 	      (Loc).first_line, (Loc).first_column,	\
@@ -1756,7 +1822,11 @@ yyreduce:
   case 48:
 
     {
+<<<<<<< HEAD
 	const struct kconf_id *id = kconf_id_lookup((yyvsp[(2) - (3)].string), strlen((yyvsp[(2) - (3)].string)));
+=======
+	struct kconf_id *id = kconf_id_lookup((yyvsp[(2) - (3)].string), strlen((yyvsp[(2) - (3)].string)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (id && id->flags & TF_OPTION)
 		menu_add_option(id->token, (yyvsp[(3) - (3)].string));
 	else
@@ -2261,8 +2331,15 @@ void conf_parse(const char *name)
 	modules_sym->flags |= SYMBOL_AUTO;
 	rootmenu.prompt = menu_add_prompt(P_MENU, "Linux Kernel Configuration", NULL);
 
+<<<<<<< HEAD
 	if (getenv("ZCONF_DEBUG"))
 		zconfdebug = 1;
+=======
+#if YYDEBUG
+	if (getenv("ZCONF_DEBUG"))
+		zconfdebug = 1;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	zconfparse();
 	if (zconfnerrs)
 		exit(1);
@@ -2301,7 +2378,11 @@ static const char *zconf_tokenname(int token)
 	return "<token>";
 }
 
+<<<<<<< HEAD
 static bool zconf_endtoken(const struct kconf_id *id, int starttoken, int endtoken)
+=======
+static bool zconf_endtoken(struct kconf_id *id, int starttoken, int endtoken)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (id->token != endtoken) {
 		zconf_error("unexpected '%s' within %s block",
@@ -2346,7 +2427,13 @@ static void zconf_error(const char *err, ...)
 
 static void zconferror(const char *err)
 {
+<<<<<<< HEAD
 	fprintf(stderr, "%s:%d: %s\n", zconf_curname(), zconf_lineno() + 1, err);
+=======
+#if YYDEBUG
+	fprintf(stderr, "%s:%d: %s\n", zconf_curname(), zconf_lineno() + 1, err);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void print_quoted_string(FILE *out, const char *str)
@@ -2495,7 +2582,11 @@ void zconfdump(FILE *out)
 	}
 }
 
+<<<<<<< HEAD
 #include "zconf.lex.c"
+=======
+#include "lex.zconf.c"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "util.c"
 #include "confdata.c"
 #include "expr.c"

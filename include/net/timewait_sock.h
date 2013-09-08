@@ -12,7 +12,10 @@
 #define _TIMEWAIT_SOCK_H
 
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/sock.h>
 
 struct timewait_sock_ops {

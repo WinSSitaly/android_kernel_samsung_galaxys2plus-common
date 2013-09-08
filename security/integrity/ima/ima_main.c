@@ -22,7 +22,10 @@
 #include <linux/mount.h>
 #include <linux/mman.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/ima.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "ima.h"
 
@@ -83,11 +86,19 @@ out:
 				  "open_writers");
 }
 
+<<<<<<< HEAD
 static void ima_check_last_writer(struct integrity_iint_cache *iint,
 				  struct inode *inode,
 				  struct file *file)
 {
 	fmode_t mode = file->f_mode;
+=======
+static void ima_check_last_writer(struct ima_iint_cache *iint,
+				  struct inode *inode,
+				  struct file *file)
+{
+	mode_t mode = file->f_mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&iint->mutex);
 	if (mode & FMODE_WRITE &&
@@ -106,12 +117,20 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
 void ima_file_free(struct file *file)
 {
 	struct inode *inode = file->f_dentry->d_inode;
+<<<<<<< HEAD
 	struct integrity_iint_cache *iint;
+=======
+	struct ima_iint_cache *iint;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!iint_initialized || !S_ISREG(inode->i_mode))
 		return;
 
+<<<<<<< HEAD
 	iint = integrity_iint_find(inode);
+=======
+	iint = ima_iint_find(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!iint)
 		return;
 
@@ -122,7 +141,11 @@ static int process_measurement(struct file *file, const unsigned char *filename,
 			       int mask, int function)
 {
 	struct inode *inode = file->f_dentry->d_inode;
+<<<<<<< HEAD
 	struct integrity_iint_cache *iint;
+=======
+	struct ima_iint_cache *iint;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rc = 0;
 
 	if (!ima_initialized || !S_ISREG(inode->i_mode))
@@ -132,9 +155,15 @@ static int process_measurement(struct file *file, const unsigned char *filename,
 	if (rc != 0)
 		return rc;
 retry:
+<<<<<<< HEAD
 	iint = integrity_iint_find(inode);
 	if (!iint) {
 		rc = integrity_inode_alloc(inode);
+=======
+	iint = ima_iint_find(inode);
+	if (!iint) {
+		rc = ima_inode_alloc(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!rc || rc == -EEXIST)
 			goto retry;
 		return rc;

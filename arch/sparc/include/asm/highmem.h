@@ -70,7 +70,11 @@ static inline void kunmap(struct page *page)
 	kunmap_high(page);
 }
 
+<<<<<<< HEAD
 extern void *kmap_atomic(struct page *page);
+=======
+extern void *__kmap_atomic(struct page *page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void __kunmap_atomic(void *kvaddr);
 extern struct page *kmap_atomic_to_page(void *vaddr);
 

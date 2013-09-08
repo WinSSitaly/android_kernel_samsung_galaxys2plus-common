@@ -17,11 +17,18 @@
 #include <linux/errno.h>
 #include <linux/string.h>
 #include <linux/serial_core.h>
+<<<<<<< HEAD
 #include <linux/sunserialcore.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 
 #include <asm/prom.h>
 
+<<<<<<< HEAD
+=======
+#include "suncore.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int sunserial_current_minor = 64;
 

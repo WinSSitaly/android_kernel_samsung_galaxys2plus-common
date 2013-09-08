@@ -4,11 +4,18 @@
  * Copyright (c) 2007 The University of Aberdeen, Scotland, UK
  * Copyright (c) 2007 Arnaldo Carvalho de Melo <acme@redhat.com>
  */
+<<<<<<< HEAD
 #include <linux/moduleparam.h>
 #include "tfrc.h"
 
 #ifdef CONFIG_IP_DCCP_TFRC_DEBUG
 bool tfrc_debug;
+=======
+#include "tfrc.h"
+
+#ifdef CONFIG_IP_DCCP_TFRC_DEBUG
+int tfrc_debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(tfrc_debug, bool, 0644);
 MODULE_PARM_DESC(tfrc_debug, "Enable TFRC debug messages");
 #endif

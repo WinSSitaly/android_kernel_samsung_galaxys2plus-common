@@ -159,7 +159,11 @@ int squashfs_read_inode(struct inode *inode, long long ino)
 			frag_offset = 0;
 		}
 
+<<<<<<< HEAD
 		set_nlink(inode, 1);
+=======
+		inode->i_nlink = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		inode->i_size = le32_to_cpu(sqsh_ino->file_size);
 		inode->i_fop = &generic_ro_fops;
 		inode->i_mode |= S_IFREG;
@@ -203,13 +207,22 @@ int squashfs_read_inode(struct inode *inode, long long ino)
 		}
 
 		xattr_id = le32_to_cpu(sqsh_ino->xattr);
+<<<<<<< HEAD
 		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
+=======
+		inode->i_nlink = le32_to_cpu(sqsh_ino->nlink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		inode->i_size = le64_to_cpu(sqsh_ino->file_size);
 		inode->i_op = &squashfs_inode_ops;
 		inode->i_fop = &generic_ro_fops;
 		inode->i_mode |= S_IFREG;
+<<<<<<< HEAD
 		inode->i_blocks = (inode->i_size -
 				le64_to_cpu(sqsh_ino->sparse) + 511) >> 9;
+=======
+		inode->i_blocks = ((inode->i_size -
+				le64_to_cpu(sqsh_ino->sparse) - 1) >> 9) + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		squashfs_i(inode)->fragment_block = frag_blk;
 		squashfs_i(inode)->fragment_size = frag_size;
@@ -232,7 +245,11 @@ int squashfs_read_inode(struct inode *inode, long long ino)
 		if (err < 0)
 			goto failed_read;
 
+<<<<<<< HEAD
 		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
+=======
+		inode->i_nlink = le32_to_cpu(sqsh_ino->nlink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		inode->i_size = le16_to_cpu(sqsh_ino->file_size);
 		inode->i_op = &squashfs_dir_inode_ops;
 		inode->i_fop = &squashfs_dir_ops;
@@ -257,7 +274,11 @@ int squashfs_read_inode(struct inode *inode, long long ino)
 			goto failed_read;
 
 		xattr_id = le32_to_cpu(sqsh_ino->xattr);
+<<<<<<< HEAD
 		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
+=======
+		inode->i_nlink = le32_to_cpu(sqsh_ino->nlink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		inode->i_size = le32_to_cpu(sqsh_ino->file_size);
 		inode->i_op = &squashfs_dir_inode_ops;
 		inode->i_fop = &squashfs_dir_ops;
@@ -284,7 +305,11 @@ int squashfs_read_inode(struct inode *inode, long long ino)
 		if (err < 0)
 			goto failed_read;
 
+<<<<<<< HEAD
 		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
+=======
+		inode->i_nlink = le32_to_cpu(sqsh_ino->nlink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		inode->i_size = le32_to_cpu(sqsh_ino->symlink_size);
 		inode->i_op = &squashfs_symlink_inode_ops;
 		inode->i_data.a_ops = &squashfs_symlink_aops;
@@ -325,7 +350,11 @@ int squashfs_read_inode(struct inode *inode, long long ino)
 			inode->i_mode |= S_IFCHR;
 		else
 			inode->i_mode |= S_IFBLK;
+<<<<<<< HEAD
 		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
+=======
+		inode->i_nlink = le32_to_cpu(sqsh_ino->nlink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rdev = le32_to_cpu(sqsh_ino->rdev);
 		init_special_inode(inode, inode->i_mode, new_decode_dev(rdev));
 
@@ -349,7 +378,11 @@ int squashfs_read_inode(struct inode *inode, long long ino)
 			inode->i_mode |= S_IFBLK;
 		xattr_id = le32_to_cpu(sqsh_ino->xattr);
 		inode->i_op = &squashfs_inode_ops;
+<<<<<<< HEAD
 		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
+=======
+		inode->i_nlink = le32_to_cpu(sqsh_ino->nlink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rdev = le32_to_cpu(sqsh_ino->rdev);
 		init_special_inode(inode, inode->i_mode, new_decode_dev(rdev));
 
@@ -370,7 +403,11 @@ int squashfs_read_inode(struct inode *inode, long long ino)
 			inode->i_mode |= S_IFIFO;
 		else
 			inode->i_mode |= S_IFSOCK;
+<<<<<<< HEAD
 		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
+=======
+		inode->i_nlink = le32_to_cpu(sqsh_ino->nlink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		init_special_inode(inode, inode->i_mode, 0);
 		break;
 	}
@@ -389,7 +426,11 @@ int squashfs_read_inode(struct inode *inode, long long ino)
 			inode->i_mode |= S_IFSOCK;
 		xattr_id = le32_to_cpu(sqsh_ino->xattr);
 		inode->i_op = &squashfs_inode_ops;
+<<<<<<< HEAD
 		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
+=======
+		inode->i_nlink = le32_to_cpu(sqsh_ino->nlink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		init_special_inode(inode, inode->i_mode, 0);
 		break;
 	}

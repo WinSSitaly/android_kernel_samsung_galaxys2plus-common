@@ -1,8 +1,13 @@
 #ifndef __ALPHA_LCA__H__
 #define __ALPHA_LCA__H__
 
+<<<<<<< HEAD
 #include <asm/compiler.h>
 #include <asm/mce.h>
+=======
+#include <asm/system.h>
+#include <asm/compiler.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Low Cost Alpha (LCA) definitions (these apply to 21066 and 21068,

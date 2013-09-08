@@ -6,15 +6,25 @@
 #ifndef __UM_UACCESS_H
 #define __UM_UACCESS_H
 
+<<<<<<< HEAD
+=======
+#include <asm/errno.h>
+#include <asm/processor.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* thread_info has a mm_segment_t in it, so put the definition up here */
 typedef struct {
 	unsigned long seg;
 } mm_segment_t;
 
+<<<<<<< HEAD
 #include <linux/thread_info.h>
 #include <linux/errno.h>
 #include <asm/processor.h>
 #include <asm/elf.h>
+=======
+#include "linux/thread_info.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define VERIFY_READ 0
 #define VERIFY_WRITE 1
@@ -38,6 +48,7 @@ typedef struct {
 
 #define segment_eq(a, b) ((a).seg == (b).seg)
 
+<<<<<<< HEAD
 #define __under_task_size(addr, size) \
 	(((unsigned long) (addr) < TASK_SIZE) && \
 	 (((unsigned long) (addr) + (size)) < TASK_SIZE))
@@ -118,6 +129,9 @@ extern int clear_user(void __user *mem, int len);
  * If the string is too long, returns a value greater than @n.
  */
 extern int strnlen_user(const void __user *str, int len);
+=======
+#include "um_uaccess.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define __copy_from_user(to, from, n) copy_from_user(to, from, n)
 

@@ -94,11 +94,26 @@ static int c2_query_port(struct ib_device *ibdev,
 	props->pkey_tbl_len = 1;
 	props->qkey_viol_cntr = 0;
 	props->active_width = 1;
+<<<<<<< HEAD
 	props->active_speed = IB_SPEED_SDR;
+=======
+	props->active_speed = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int c2_modify_port(struct ib_device *ibdev,
+			  u8 port, int port_modify_mask,
+			  struct ib_port_modify *props)
+{
+	pr_debug("%s:%u\n", __func__, __LINE__);
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int c2_query_pkey(struct ib_device *ibdev,
 			 u8 port, u16 index, u16 * pkey)
 {
@@ -753,7 +768,14 @@ static struct net_device *c2_pseudo_netdev_init(struct c2_dev *c2dev)
 	memcpy_fromio(netdev->dev_addr, c2dev->kva + C2_REGS_RDMA_ENADDR, 6);
 
 	/* Print out the MAC address */
+<<<<<<< HEAD
 	pr_debug("%s: MAC %pM\n", netdev->name, netdev->dev_addr);
+=======
+	pr_debug("%s: MAC %02X:%02X:%02X:%02X:%02X:%02X\n",
+		netdev->name,
+		netdev->dev_addr[0], netdev->dev_addr[1], netdev->dev_addr[2],
+		netdev->dev_addr[3], netdev->dev_addr[4], netdev->dev_addr[5]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if 0
 	/* Disable network packets */
@@ -806,6 +828,10 @@ int c2_register_device(struct c2_dev *dev)
 	dev->ibdev.dma_device = &dev->pcidev->dev;
 	dev->ibdev.query_device = c2_query_device;
 	dev->ibdev.query_port = c2_query_port;
+<<<<<<< HEAD
+=======
+	dev->ibdev.modify_port = c2_modify_port;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->ibdev.query_pkey = c2_query_pkey;
 	dev->ibdev.query_gid = c2_query_gid;
 	dev->ibdev.alloc_ucontext = c2_alloc_ucontext;

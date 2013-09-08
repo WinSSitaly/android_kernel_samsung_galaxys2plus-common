@@ -72,6 +72,11 @@ concat_read(struct mtd_info *mtd, loff_t from, size_t len,
 	int ret = 0, err;
 	int i;
 
+<<<<<<< HEAD
+=======
+	*retlen = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < concat->num_subdev; i++) {
 		struct mtd_info *subdev = concat->subdev[i];
 		size_t size, retsize;
@@ -89,6 +94,7 @@ concat_read(struct mtd_info *mtd, loff_t from, size_t len,
 			/* Entire transaction goes into this subdev */
 			size = len;
 
+<<<<<<< HEAD
 		err = mtd_read(subdev, from, size, &retsize, buf);
 
 		/* Save information about bitflips! */
@@ -97,6 +103,16 @@ concat_read(struct mtd_info *mtd, loff_t from, size_t len,
 				mtd->ecc_stats.failed++;
 				ret = err;
 			} else if (mtd_is_bitflip(err)) {
+=======
+		err = subdev->read(subdev, from, size, &retsize, buf);
+
+		/* Save information about bitflips! */
+		if (unlikely(err)) {
+			if (err == -EBADMSG) {
+				mtd->ecc_stats.failed++;
+				ret = err;
+			} else if (err == -EUCLEAN) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				mtd->ecc_stats.corrected++;
 				/* Do not overwrite -EBADMSG !! */
 				if (!ret)
@@ -124,6 +140,14 @@ concat_write(struct mtd_info *mtd, loff_t to, size_t len,
 	int err = -EINVAL;
 	int i;
 
+<<<<<<< HEAD
+=======
+	if (!(mtd->flags & MTD_WRITEABLE))
+		return -EROFS;
+
+	*retlen = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < concat->num_subdev; i++) {
 		struct mtd_info *subdev = concat->subdev[i];
 		size_t size, retsize;
@@ -138,7 +162,15 @@ concat_write(struct mtd_info *mtd, loff_t to, size_t len,
 		else
 			size = len;
 
+<<<<<<< HEAD
 		err = mtd_write(subdev, to, size, &retsize, buf);
+=======
+		if (!(subdev->flags & MTD_WRITEABLE))
+			err = -EROFS;
+		else
+			err = subdev->write(subdev, to, size, &retsize, buf);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err)
 			break;
 
@@ -165,10 +197,25 @@ concat_writev(struct mtd_info *mtd, const struct kvec *vecs,
 	int i;
 	int err = -EINVAL;
 
+<<<<<<< HEAD
+=======
+	if (!(mtd->flags & MTD_WRITEABLE))
+		return -EROFS;
+
+	*retlen = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Calculate total length of data */
 	for (i = 0; i < count; i++)
 		total_len += vecs[i].iov_len;
 
+<<<<<<< HEAD
+=======
+	/* Do not allow write past end of device */
+	if ((to + total_len) > mtd->size)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Check alignment */
 	if (mtd->writesize > 1) {
 		uint64_t __to = to;
@@ -204,8 +251,16 @@ concat_writev(struct mtd_info *mtd, const struct kvec *vecs,
 		old_iov_len = vecs_copy[entry_high].iov_len;
 		vecs_copy[entry_high].iov_len = size;
 
+<<<<<<< HEAD
 		err = mtd_writev(subdev, &vecs_copy[entry_low],
 				 entry_high - entry_low + 1, to, &retsize);
+=======
+		if (!(subdev->flags & MTD_WRITEABLE))
+			err = -EROFS;
+		else
+			err = subdev->writev(subdev, &vecs_copy[entry_low],
+				entry_high - entry_low + 1, to, &retsize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		vecs_copy[entry_high].iov_len = old_iov_len - size;
 		vecs_copy[entry_high].iov_base += size;
@@ -250,16 +305,27 @@ concat_read_oob(struct mtd_info *mtd, loff_t from, struct mtd_oob_ops *ops)
 		if (from + devops.len > subdev->size)
 			devops.len = subdev->size - from;
 
+<<<<<<< HEAD
 		err = mtd_read_oob(subdev, from, &devops);
+=======
+		err = subdev->read_oob(subdev, from, &devops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ops->retlen += devops.retlen;
 		ops->oobretlen += devops.oobretlen;
 
 		/* Save information about bitflips! */
 		if (unlikely(err)) {
+<<<<<<< HEAD
 			if (mtd_is_eccerr(err)) {
 				mtd->ecc_stats.failed++;
 				ret = err;
 			} else if (mtd_is_bitflip(err)) {
+=======
+			if (err == -EBADMSG) {
+				mtd->ecc_stats.failed++;
+				ret = err;
+			} else if (err == -EUCLEAN) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				mtd->ecc_stats.corrected++;
 				/* Do not overwrite -EBADMSG !! */
 				if (!ret)
@@ -310,7 +376,11 @@ concat_write_oob(struct mtd_info *mtd, loff_t to, struct mtd_oob_ops *ops)
 		if (to + devops.len > subdev->size)
 			devops.len = subdev->size - to;
 
+<<<<<<< HEAD
 		err = mtd_write_oob(subdev, to, &devops);
+=======
+		err = subdev->write_oob(subdev, to, &devops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ops->retlen += devops.oobretlen;
 		if (err)
 			return err;
@@ -356,7 +426,11 @@ static int concat_dev_erase(struct mtd_info *mtd, struct erase_info *erase)
 	 * FIXME: Allow INTERRUPTIBLE. Which means
 	 * not having the wait_queue head on the stack.
 	 */
+<<<<<<< HEAD
 	err = mtd_erase(mtd, erase);
+=======
+	err = mtd->erase(mtd, erase);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!err) {
 		set_current_state(TASK_UNINTERRUPTIBLE);
 		add_wait_queue(&waitq, &wait);
@@ -379,6 +453,18 @@ static int concat_erase(struct mtd_info *mtd, struct erase_info *instr)
 	uint64_t length, offset = 0;
 	struct erase_info *erase;
 
+<<<<<<< HEAD
+=======
+	if (!(mtd->flags & MTD_WRITEABLE))
+		return -EROFS;
+
+	if (instr->addr > concat->mtd.size)
+		return -EINVAL;
+
+	if (instr->len + instr->addr > concat->mtd.size)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Check for proper erase block alignment of the to-be-erased area.
 	 * It is easier to do this based on the super device's erase
@@ -426,6 +512,11 @@ static int concat_erase(struct mtd_info *mtd, struct erase_info *instr)
 			return -EINVAL;
 	}
 
+<<<<<<< HEAD
+=======
+	instr->fail_addr = MTD_FAIL_ADDR_UNKNOWN;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* make a local copy of instr to avoid modifying the caller's struct */
 	erase = kmalloc(sizeof (struct erase_info), GFP_KERNEL);
 
@@ -464,6 +555,13 @@ static int concat_erase(struct mtd_info *mtd, struct erase_info *instr)
 		else
 			erase->len = length;
 
+<<<<<<< HEAD
+=======
+		if (!(subdev->flags & MTD_WRITEABLE)) {
+			err = -EROFS;
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		length -= erase->len;
 		if ((err = concat_dev_erase(subdev, erase))) {
 			/* sanity check: should never happen since
@@ -499,6 +597,12 @@ static int concat_lock(struct mtd_info *mtd, loff_t ofs, uint64_t len)
 	struct mtd_concat *concat = CONCAT(mtd);
 	int i, err = -EINVAL;
 
+<<<<<<< HEAD
+=======
+	if ((len + ofs) > mtd->size)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < concat->num_subdev; i++) {
 		struct mtd_info *subdev = concat->subdev[i];
 		uint64_t size;
@@ -513,9 +617,18 @@ static int concat_lock(struct mtd_info *mtd, loff_t ofs, uint64_t len)
 		else
 			size = len;
 
+<<<<<<< HEAD
 		err = mtd_lock(subdev, ofs, size);
 		if (err)
 			break;
+=======
+		if (subdev->lock) {
+			err = subdev->lock(subdev, ofs, size);
+			if (err)
+				break;
+		} else
+			err = -EOPNOTSUPP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		len -= size;
 		if (len == 0)
@@ -533,6 +646,12 @@ static int concat_unlock(struct mtd_info *mtd, loff_t ofs, uint64_t len)
 	struct mtd_concat *concat = CONCAT(mtd);
 	int i, err = 0;
 
+<<<<<<< HEAD
+=======
+	if ((len + ofs) > mtd->size)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < concat->num_subdev; i++) {
 		struct mtd_info *subdev = concat->subdev[i];
 		uint64_t size;
@@ -547,9 +666,18 @@ static int concat_unlock(struct mtd_info *mtd, loff_t ofs, uint64_t len)
 		else
 			size = len;
 
+<<<<<<< HEAD
 		err = mtd_unlock(subdev, ofs, size);
 		if (err)
 			break;
+=======
+		if (subdev->unlock) {
+			err = subdev->unlock(subdev, ofs, size);
+			if (err)
+				break;
+		} else
+			err = -EOPNOTSUPP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		len -= size;
 		if (len == 0)
@@ -569,7 +697,11 @@ static void concat_sync(struct mtd_info *mtd)
 
 	for (i = 0; i < concat->num_subdev; i++) {
 		struct mtd_info *subdev = concat->subdev[i];
+<<<<<<< HEAD
 		mtd_sync(subdev);
+=======
+		subdev->sync(subdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -580,7 +712,11 @@ static int concat_suspend(struct mtd_info *mtd)
 
 	for (i = 0; i < concat->num_subdev; i++) {
 		struct mtd_info *subdev = concat->subdev[i];
+<<<<<<< HEAD
 		if ((rc = mtd_suspend(subdev)) < 0)
+=======
+		if ((rc = subdev->suspend(subdev)) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return rc;
 	}
 	return rc;
@@ -593,7 +729,11 @@ static void concat_resume(struct mtd_info *mtd)
 
 	for (i = 0; i < concat->num_subdev; i++) {
 		struct mtd_info *subdev = concat->subdev[i];
+<<<<<<< HEAD
 		mtd_resume(subdev);
+=======
+		subdev->resume(subdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -602,9 +742,18 @@ static int concat_block_isbad(struct mtd_info *mtd, loff_t ofs)
 	struct mtd_concat *concat = CONCAT(mtd);
 	int i, res = 0;
 
+<<<<<<< HEAD
 	if (!mtd_can_have_bb(concat->subdev[0]))
 		return res;
 
+=======
+	if (!concat->subdev[0]->block_isbad)
+		return res;
+
+	if (ofs > mtd->size)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < concat->num_subdev; i++) {
 		struct mtd_info *subdev = concat->subdev[i];
 
@@ -613,7 +762,11 @@ static int concat_block_isbad(struct mtd_info *mtd, loff_t ofs)
 			continue;
 		}
 
+<<<<<<< HEAD
 		res = mtd_block_isbad(subdev, ofs);
+=======
+		res = subdev->block_isbad(subdev, ofs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -625,6 +778,15 @@ static int concat_block_markbad(struct mtd_info *mtd, loff_t ofs)
 	struct mtd_concat *concat = CONCAT(mtd);
 	int i, err = -EINVAL;
 
+<<<<<<< HEAD
+=======
+	if (!concat->subdev[0]->block_markbad)
+		return 0;
+
+	if (ofs > mtd->size)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < concat->num_subdev; i++) {
 		struct mtd_info *subdev = concat->subdev[i];
 
@@ -633,7 +795,11 @@ static int concat_block_markbad(struct mtd_info *mtd, loff_t ofs)
 			continue;
 		}
 
+<<<<<<< HEAD
 		err = mtd_block_markbad(subdev, ofs);
+=======
+		err = subdev->block_markbad(subdev, ofs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!err)
 			mtd->ecc_stats.badblocks++;
 		break;
@@ -662,7 +828,19 @@ static unsigned long concat_get_unmapped_area(struct mtd_info *mtd,
 			continue;
 		}
 
+<<<<<<< HEAD
 		return mtd_get_unmapped_area(subdev, len, offset, flags);
+=======
+		/* we've found the subdev over which the mapping will reside */
+		if (offset + len > subdev->size)
+			return (unsigned long) -EINVAL;
+
+		if (subdev->get_unmapped_area)
+			return subdev->get_unmapped_area(subdev, len, offset,
+							 flags);
+
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return (unsigned long) -ENOSYS;
@@ -703,7 +881,11 @@ struct mtd_info *mtd_concat_create(struct mtd_info *subdev[],	/* subdevices to c
 
 	/*
 	 * Set up the new "super" device's MTD object structure, check for
+<<<<<<< HEAD
 	 * incompatibilities between the subdevices.
+=======
+	 * incompatibilites between the subdevices.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	concat->mtd.type = subdev[0]->type;
 	concat->mtd.flags = subdev[0]->flags;
@@ -719,6 +901,7 @@ struct mtd_info *mtd_concat_create(struct mtd_info *subdev[],	/* subdevices to c
 	concat->mtd.subpage_sft = subdev[0]->subpage_sft;
 	concat->mtd.oobsize = subdev[0]->oobsize;
 	concat->mtd.oobavail = subdev[0]->oobavail;
+<<<<<<< HEAD
 	if (subdev[0]->_writev)
 		concat->mtd._writev = concat_writev;
 	if (subdev[0]->_read_oob)
@@ -729,6 +912,18 @@ struct mtd_info *mtd_concat_create(struct mtd_info *subdev[],	/* subdevices to c
 		concat->mtd._block_isbad = concat_block_isbad;
 	if (subdev[0]->_block_markbad)
 		concat->mtd._block_markbad = concat_block_markbad;
+=======
+	if (subdev[0]->writev)
+		concat->mtd.writev = concat_writev;
+	if (subdev[0]->read_oob)
+		concat->mtd.read_oob = concat_read_oob;
+	if (subdev[0]->write_oob)
+		concat->mtd.write_oob = concat_write_oob;
+	if (subdev[0]->block_isbad)
+		concat->mtd.block_isbad = concat_block_isbad;
+	if (subdev[0]->block_markbad)
+		concat->mtd.block_markbad = concat_block_markbad;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	concat->mtd.ecc_stats.badblocks = subdev[0]->ecc_stats.badblocks;
 
@@ -775,8 +970,13 @@ struct mtd_info *mtd_concat_create(struct mtd_info *subdev[],	/* subdevices to c
 		if (concat->mtd.writesize   !=  subdev[i]->writesize ||
 		    concat->mtd.subpage_sft != subdev[i]->subpage_sft ||
 		    concat->mtd.oobsize    !=  subdev[i]->oobsize ||
+<<<<<<< HEAD
 		    !concat->mtd._read_oob  != !subdev[i]->_read_oob ||
 		    !concat->mtd._write_oob != !subdev[i]->_write_oob) {
+=======
+		    !concat->mtd.read_oob  != !subdev[i]->read_oob ||
+		    !concat->mtd.write_oob != !subdev[i]->write_oob) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			kfree(concat);
 			printk("Incompatible OOB or ECC data on \"%s\"\n",
 			       subdev[i]->name);
@@ -791,6 +991,7 @@ struct mtd_info *mtd_concat_create(struct mtd_info *subdev[],	/* subdevices to c
 	concat->num_subdev = num_devs;
 	concat->mtd.name = name;
 
+<<<<<<< HEAD
 	concat->mtd._erase = concat_erase;
 	concat->mtd._read = concat_read;
 	concat->mtd._write = concat_write;
@@ -800,6 +1001,17 @@ struct mtd_info *mtd_concat_create(struct mtd_info *subdev[],	/* subdevices to c
 	concat->mtd._suspend = concat_suspend;
 	concat->mtd._resume = concat_resume;
 	concat->mtd._get_unmapped_area = concat_get_unmapped_area;
+=======
+	concat->mtd.erase = concat_erase;
+	concat->mtd.read = concat_read;
+	concat->mtd.write = concat_write;
+	concat->mtd.sync = concat_sync;
+	concat->mtd.lock = concat_lock;
+	concat->mtd.unlock = concat_unlock;
+	concat->mtd.suspend = concat_suspend;
+	concat->mtd.resume = concat_resume;
+	concat->mtd.get_unmapped_area = concat_get_unmapped_area;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Combine the erase block size info of the subdevices:

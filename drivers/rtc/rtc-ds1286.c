@@ -343,7 +343,11 @@ static int __devinit ds1286_probe(struct platform_device *pdev)
 	if (!priv)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	priv->size = resource_size(res);
+=======
+	priv->size = res->end - res->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!request_mem_region(res->start, priv->size, pdev->name)) {
 		ret = -EBUSY;
 		goto out;
@@ -396,10 +400,28 @@ static struct platform_driver ds1286_platform_driver = {
 	.remove		= __devexit_p(ds1286_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(ds1286_platform_driver);
+=======
+static int __init ds1286_init(void)
+{
+	return platform_driver_register(&ds1286_platform_driver);
+}
+
+static void __exit ds1286_exit(void)
+{
+	platform_driver_unregister(&ds1286_platform_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Thomas Bogendoerfer <tsbogend@alpha.franken.de>");
 MODULE_DESCRIPTION("DS1286 RTC driver");
 MODULE_LICENSE("GPL");
 MODULE_VERSION(DRV_VERSION);
 MODULE_ALIAS("platform:rtc-ds1286");
+<<<<<<< HEAD
+=======
+
+module_init(ds1286_init);
+module_exit(ds1286_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

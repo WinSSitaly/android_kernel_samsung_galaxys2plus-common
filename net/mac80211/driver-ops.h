@@ -5,6 +5,7 @@
 #include "ieee80211_i.h"
 #include "driver-trace.h"
 
+<<<<<<< HEAD
 static inline void check_sdata_in_driver(struct ieee80211_sub_if_data *sdata)
 {
 	WARN_ON(!(sdata->flags & IEEE80211_SDATA_IN_DRIVER));
@@ -20,11 +21,14 @@ get_bss_sdata(struct ieee80211_sub_if_data *sdata)
 	return sdata;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void drv_tx(struct ieee80211_local *local, struct sk_buff *skb)
 {
 	local->ops->tx(&local->hw, skb);
 }
 
+<<<<<<< HEAD
 static inline void drv_tx_frags(struct ieee80211_local *local,
 				struct ieee80211_vif *vif,
 				struct ieee80211_sta *sta,
@@ -33,6 +37,8 @@ static inline void drv_tx_frags(struct ieee80211_local *local,
 	local->ops->tx_frags(&local->hw, vif, sta, skbs);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int drv_start(struct ieee80211_local *local)
 {
 	int ret;
@@ -92,12 +98,17 @@ static inline int drv_resume(struct ieee80211_local *local)
 #endif
 
 static inline int drv_add_interface(struct ieee80211_local *local,
+<<<<<<< HEAD
 				    struct ieee80211_sub_if_data *sdata)
+=======
+				    struct ieee80211_vif *vif)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 
 	might_sleep();
 
+<<<<<<< HEAD
 	if (WARN_ON(sdata->vif.type == NL80211_IFTYPE_AP_VLAN ||
 		    sdata->vif.type == NL80211_IFTYPE_MONITOR))
 		return -EINVAL;
@@ -109,6 +120,11 @@ static inline int drv_add_interface(struct ieee80211_local *local,
 	if (ret == 0)
 		sdata->flags |= IEEE80211_SDATA_IN_DRIVER;
 
+=======
+	trace_drv_add_interface(local, vif_to_sdata(vif));
+	ret = local->ops->add_interface(&local->hw, vif);
+	trace_drv_return_int(local, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -120,8 +136,11 @@ static inline int drv_change_interface(struct ieee80211_local *local,
 
 	might_sleep();
 
+<<<<<<< HEAD
 	check_sdata_in_driver(sdata);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_drv_change_interface(local, sdata, type, p2p);
 	ret = local->ops->change_interface(&local->hw, &sdata->vif, type, p2p);
 	trace_drv_return_int(local, ret);
@@ -129,6 +148,7 @@ static inline int drv_change_interface(struct ieee80211_local *local,
 }
 
 static inline void drv_remove_interface(struct ieee80211_local *local,
+<<<<<<< HEAD
 					struct ieee80211_sub_if_data *sdata)
 {
 	might_sleep();
@@ -138,6 +158,14 @@ static inline void drv_remove_interface(struct ieee80211_local *local,
 	trace_drv_remove_interface(local, sdata);
 	local->ops->remove_interface(&local->hw, &sdata->vif);
 	sdata->flags &= ~IEEE80211_SDATA_IN_DRIVER;
+=======
+					struct ieee80211_vif *vif)
+{
+	might_sleep();
+
+	trace_drv_remove_interface(local, vif_to_sdata(vif));
+	local->ops->remove_interface(&local->hw, vif);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_drv_return_void(local);
 }
 
@@ -160,8 +188,11 @@ static inline void drv_bss_info_changed(struct ieee80211_local *local,
 {
 	might_sleep();
 
+<<<<<<< HEAD
 	check_sdata_in_driver(sdata);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_drv_bss_info_changed(local, sdata, info, changed);
 	if (local->ops->bss_info_changed)
 		local->ops->bss_info_changed(&local->hw, &sdata->vif, info, changed);
@@ -218,9 +249,12 @@ static inline int drv_set_key(struct ieee80211_local *local,
 
 	might_sleep();
 
+<<<<<<< HEAD
 	sdata = get_bss_sdata(sdata);
 	check_sdata_in_driver(sdata);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_drv_set_key(local, cmd, sdata, sta, key);
 	ret = local->ops->set_key(&local->hw, cmd, &sdata->vif, sta, key);
 	trace_drv_return_int(local, ret);
@@ -238,9 +272,12 @@ static inline void drv_update_tkip_key(struct ieee80211_local *local,
 	if (sta)
 		ista = &sta->sta;
 
+<<<<<<< HEAD
 	sdata = get_bss_sdata(sdata);
 	check_sdata_in_driver(sdata);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_drv_update_tkip_key(local, sdata, conf, ista, iv32);
 	if (local->ops->update_tkip_key)
 		local->ops->update_tkip_key(&local->hw, &sdata->vif, conf,
@@ -256,14 +293,18 @@ static inline int drv_hw_scan(struct ieee80211_local *local,
 
 	might_sleep();
 
+<<<<<<< HEAD
 	check_sdata_in_driver(sdata);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_drv_hw_scan(local, sdata);
 	ret = local->ops->hw_scan(&local->hw, &sdata->vif, req);
 	trace_drv_return_int(local, ret);
 	return ret;
 }
 
+<<<<<<< HEAD
 static inline void drv_cancel_hw_scan(struct ieee80211_local *local,
 				      struct ieee80211_sub_if_data *sdata)
 {
@@ -276,6 +317,8 @@ static inline void drv_cancel_hw_scan(struct ieee80211_local *local,
 	trace_drv_return_void(local);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int
 drv_sched_scan_start(struct ieee80211_local *local,
 		     struct ieee80211_sub_if_data *sdata,
@@ -286,8 +329,11 @@ drv_sched_scan_start(struct ieee80211_local *local,
 
 	might_sleep();
 
+<<<<<<< HEAD
 	check_sdata_in_driver(sdata);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_drv_sched_scan_start(local, sdata);
 	ret = local->ops->sched_scan_start(&local->hw, &sdata->vif,
 					      req, ies);
@@ -300,8 +346,11 @@ static inline void drv_sched_scan_stop(struct ieee80211_local *local,
 {
 	might_sleep();
 
+<<<<<<< HEAD
 	check_sdata_in_driver(sdata);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_drv_sched_scan_stop(local, sdata);
 	local->ops->sched_scan_stop(&local->hw, &sdata->vif);
 	trace_drv_return_void(local);
@@ -398,9 +447,12 @@ static inline void drv_sta_notify(struct ieee80211_local *local,
 				  enum sta_notify_cmd cmd,
 				  struct ieee80211_sta *sta)
 {
+<<<<<<< HEAD
 	sdata = get_bss_sdata(sdata);
 	check_sdata_in_driver(sdata);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_drv_sta_notify(local, sdata, cmd, sta);
 	if (local->ops->sta_notify)
 		local->ops->sta_notify(&local->hw, &sdata->vif, cmd, sta);
@@ -415,9 +467,12 @@ static inline int drv_sta_add(struct ieee80211_local *local,
 
 	might_sleep();
 
+<<<<<<< HEAD
 	sdata = get_bss_sdata(sdata);
 	check_sdata_in_driver(sdata);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_drv_sta_add(local, sdata, sta);
 	if (local->ops->sta_add)
 		ret = local->ops->sta_add(&local->hw, &sdata->vif, sta);
@@ -433,9 +488,12 @@ static inline void drv_sta_remove(struct ieee80211_local *local,
 {
 	might_sleep();
 
+<<<<<<< HEAD
 	sdata = get_bss_sdata(sdata);
 	check_sdata_in_driver(sdata);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_drv_sta_remove(local, sdata, sta);
 	if (local->ops->sta_remove)
 		local->ops->sta_remove(&local->hw, &sdata->vif, sta);
@@ -443,6 +501,7 @@ static inline void drv_sta_remove(struct ieee80211_local *local,
 	trace_drv_return_void(local);
 }
 
+<<<<<<< HEAD
 static inline __must_check
 int drv_sta_state(struct ieee80211_local *local,
 		  struct ieee80211_sub_if_data *sdata,
@@ -476,38 +535,58 @@ int drv_sta_state(struct ieee80211_local *local,
 
 static inline int drv_conf_tx(struct ieee80211_local *local,
 			      struct ieee80211_sub_if_data *sdata, u16 queue,
+=======
+static inline int drv_conf_tx(struct ieee80211_local *local, u16 queue,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      const struct ieee80211_tx_queue_params *params)
 {
 	int ret = -EOPNOTSUPP;
 
 	might_sleep();
 
+<<<<<<< HEAD
 	check_sdata_in_driver(sdata);
 
 	trace_drv_conf_tx(local, sdata, queue, params);
 	if (local->ops->conf_tx)
 		ret = local->ops->conf_tx(&local->hw, &sdata->vif,
 					  queue, params);
+=======
+	trace_drv_conf_tx(local, queue, params);
+	if (local->ops->conf_tx)
+		ret = local->ops->conf_tx(&local->hw, queue, params);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_drv_return_int(local, ret);
 	return ret;
 }
 
+<<<<<<< HEAD
 static inline u64 drv_get_tsf(struct ieee80211_local *local,
 			      struct ieee80211_sub_if_data *sdata)
+=======
+static inline u64 drv_get_tsf(struct ieee80211_local *local)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u64 ret = -1ULL;
 
 	might_sleep();
 
+<<<<<<< HEAD
 	check_sdata_in_driver(sdata);
 
 	trace_drv_get_tsf(local, sdata);
 	if (local->ops->get_tsf)
 		ret = local->ops->get_tsf(&local->hw, &sdata->vif);
+=======
+	trace_drv_get_tsf(local);
+	if (local->ops->get_tsf)
+		ret = local->ops->get_tsf(&local->hw);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_drv_return_u64(local, ret);
 	return ret;
 }
 
+<<<<<<< HEAD
 static inline void drv_set_tsf(struct ieee80211_local *local,
 			       struct ieee80211_sub_if_data *sdata,
 			       u64 tsf)
@@ -532,6 +611,25 @@ static inline void drv_reset_tsf(struct ieee80211_local *local,
 	trace_drv_reset_tsf(local, sdata);
 	if (local->ops->reset_tsf)
 		local->ops->reset_tsf(&local->hw, &sdata->vif);
+=======
+static inline void drv_set_tsf(struct ieee80211_local *local, u64 tsf)
+{
+	might_sleep();
+
+	trace_drv_set_tsf(local, tsf);
+	if (local->ops->set_tsf)
+		local->ops->set_tsf(&local->hw, tsf);
+	trace_drv_return_void(local);
+}
+
+static inline void drv_reset_tsf(struct ieee80211_local *local)
+{
+	might_sleep();
+
+	trace_drv_reset_tsf(local);
+	if (local->ops->reset_tsf)
+		local->ops->reset_tsf(&local->hw);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_drv_return_void(local);
 }
 
@@ -558,9 +656,12 @@ static inline int drv_ampdu_action(struct ieee80211_local *local,
 
 	might_sleep();
 
+<<<<<<< HEAD
 	sdata = get_bss_sdata(sdata);
 	check_sdata_in_driver(sdata);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_drv_ampdu_action(local, sdata, action, sta, tid, ssn, buf_size);
 
 	if (local->ops->ampdu_action)
@@ -668,6 +769,40 @@ static inline int drv_cancel_remain_on_channel(struct ieee80211_local *local)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+static inline int drv_offchannel_tx(struct ieee80211_local *local,
+				    struct sk_buff *skb,
+				    struct ieee80211_channel *chan,
+				    enum nl80211_channel_type channel_type,
+				    unsigned int wait)
+{
+	int ret;
+
+	might_sleep();
+
+	trace_drv_offchannel_tx(local, skb, chan, channel_type, wait);
+	ret = local->ops->offchannel_tx(&local->hw, skb, chan,
+					channel_type, wait);
+	trace_drv_return_int(local, ret);
+
+	return ret;
+}
+
+static inline int drv_offchannel_tx_cancel_wait(struct ieee80211_local *local)
+{
+	int ret;
+
+	might_sleep();
+
+	trace_drv_offchannel_tx_cancel_wait(local);
+	ret = local->ops->offchannel_tx_cancel_wait(&local->hw);
+	trace_drv_return_int(local, ret);
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int drv_set_ringparam(struct ieee80211_local *local,
 				    u32 tx, u32 rx)
 {
@@ -716,8 +851,11 @@ static inline int drv_set_bitrate_mask(struct ieee80211_local *local,
 
 	might_sleep();
 
+<<<<<<< HEAD
 	check_sdata_in_driver(sdata);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_drv_set_bitrate_mask(local, sdata, mask);
 	if (local->ops->set_bitrate_mask)
 		ret = local->ops->set_bitrate_mask(&local->hw,
@@ -727,6 +865,7 @@ static inline int drv_set_bitrate_mask(struct ieee80211_local *local,
 	return ret;
 }
 
+<<<<<<< HEAD
 static inline void drv_set_rekey_data(struct ieee80211_local *local,
 				      struct ieee80211_sub_if_data *sdata,
 				      struct cfg80211_gtk_rekey_data *data)
@@ -777,4 +916,6 @@ drv_allow_buffered_frames(struct ieee80211_local *local,
 						  more_data);
 	trace_drv_return_void(local);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __MAC80211_DRIVER_OPS */

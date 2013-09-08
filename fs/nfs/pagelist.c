@@ -13,13 +13,19 @@
 #include <linux/file.h>
 #include <linux/sched.h>
 #include <linux/sunrpc/clnt.h>
+<<<<<<< HEAD
 #include <linux/nfs.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/nfs3.h>
 #include <linux/nfs4.h>
 #include <linux/nfs_page.h>
 #include <linux/nfs_fs.h>
 #include <linux/nfs_mount.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "internal.h"
 #include "pnfs.h"
@@ -43,7 +49,11 @@ nfs_page_free(struct nfs_page *p)
 
 /**
  * nfs_create_request - Create an NFS read/write request.
+<<<<<<< HEAD
  * @ctx: open context to use
+=======
+ * @file: file descriptor to use
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @inode: inode to which the request is attached
  * @page: page to write
  * @offset: starting offset within the page for the write
@@ -107,6 +117,39 @@ void nfs_unlock_request(struct nfs_page *req)
 	nfs_release_request(req);
 }
 
+<<<<<<< HEAD
+=======
+/**
+ * nfs_set_page_tag_locked - Tag a request as locked
+ * @req:
+ */
+int nfs_set_page_tag_locked(struct nfs_page *req)
+{
+	if (!nfs_lock_request_dontget(req))
+		return 0;
+	if (test_bit(PG_MAPPED, &req->wb_flags))
+		radix_tree_tag_set(&NFS_I(req->wb_context->path.dentry->d_inode)->nfs_page_tree, req->wb_index, NFS_PAGE_TAG_LOCKED);
+	return 1;
+}
+
+/**
+ * nfs_clear_page_tag_locked - Clear request tag and wake up sleepers
+ */
+void nfs_clear_page_tag_locked(struct nfs_page *req)
+{
+	if (test_bit(PG_MAPPED, &req->wb_flags)) {
+		struct inode *inode = req->wb_context->path.dentry->d_inode;
+		struct nfs_inode *nfsi = NFS_I(inode);
+
+		spin_lock(&inode->i_lock);
+		radix_tree_tag_clear(&nfsi->nfs_page_tree, req->wb_index, NFS_PAGE_TAG_LOCKED);
+		nfs_unlock_request(req);
+		spin_unlock(&inode->i_lock);
+	} else
+		nfs_unlock_request(req);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * nfs_clear_request - Free up all resources allocated to the request
  * @req:
@@ -202,7 +245,11 @@ EXPORT_SYMBOL_GPL(nfs_generic_pg_test);
  */
 void nfs_pageio_init(struct nfs_pageio_descriptor *desc,
 		     struct inode *inode,
+<<<<<<< HEAD
 		     const struct nfs_pageio_ops *pg_ops,
+=======
+		     int (*doio)(struct nfs_pageio_descriptor *),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     size_t bsize,
 		     int io_flags)
 {
@@ -212,12 +259,22 @@ void nfs_pageio_init(struct nfs_pageio_descriptor *desc,
 	desc->pg_bsize = bsize;
 	desc->pg_base = 0;
 	desc->pg_moreio = 0;
+<<<<<<< HEAD
 	desc->pg_recoalesce = 0;
 	desc->pg_inode = inode;
 	desc->pg_ops = pg_ops;
 	desc->pg_ioflags = io_flags;
 	desc->pg_error = 0;
 	desc->pg_lseg = NULL;
+=======
+	desc->pg_inode = inode;
+	desc->pg_doio = doio;
+	desc->pg_ioflags = io_flags;
+	desc->pg_error = 0;
+	desc->pg_lseg = NULL;
+	desc->pg_test = nfs_generic_pg_test;
+	pnfs_pageio_init(desc, inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -247,7 +304,11 @@ static bool nfs_can_coalesce_requests(struct nfs_page *prev,
 		return false;
 	if (prev->wb_pgbase + prev->wb_bytes != PAGE_CACHE_SIZE)
 		return false;
+<<<<<<< HEAD
 	return pgio->pg_ops->pg_test(pgio, prev, req);
+=======
+	return pgio->pg_test(pgio, prev, req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -268,8 +329,11 @@ static int nfs_pageio_do_add_request(struct nfs_pageio_descriptor *desc,
 		if (!nfs_can_coalesce_requests(prev, req, desc))
 			return 0;
 	} else {
+<<<<<<< HEAD
 		if (desc->pg_ops->pg_init)
 			desc->pg_ops->pg_init(desc, req);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		desc->pg_base = req->wb_pgbase;
 	}
 	nfs_list_remove_request(req);
@@ -284,7 +348,11 @@ static int nfs_pageio_do_add_request(struct nfs_pageio_descriptor *desc,
 static void nfs_pageio_doio(struct nfs_pageio_descriptor *desc)
 {
 	if (!list_empty(&desc->pg_list)) {
+<<<<<<< HEAD
 		int error = desc->pg_ops->pg_doio(desc);
+=======
+		int error = desc->pg_doio(desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (error < 0)
 			desc->pg_error = error;
 		else
@@ -304,7 +372,11 @@ static void nfs_pageio_doio(struct nfs_pageio_descriptor *desc)
  * Returns true if the request 'req' was successfully coalesced into the
  * existing list of pages 'desc'.
  */
+<<<<<<< HEAD
 static int __nfs_pageio_add_request(struct nfs_pageio_descriptor *desc,
+=======
+int nfs_pageio_add_request(struct nfs_pageio_descriptor *desc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   struct nfs_page *req)
 {
 	while (!nfs_pageio_do_add_request(desc, req)) {
@@ -313,12 +385,16 @@ static int __nfs_pageio_add_request(struct nfs_pageio_descriptor *desc,
 		if (desc->pg_error < 0)
 			return 0;
 		desc->pg_moreio = 0;
+<<<<<<< HEAD
 		if (desc->pg_recoalesce)
 			return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 1;
 }
 
+<<<<<<< HEAD
 static int nfs_do_recoalesce(struct nfs_pageio_descriptor *desc)
 {
 	LIST_HEAD(head);
@@ -361,12 +437,15 @@ int nfs_pageio_add_request(struct nfs_pageio_descriptor *desc,
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * nfs_pageio_complete - Complete I/O on an nfs_pageio_descriptor
  * @desc: pointer to io descriptor
  */
 void nfs_pageio_complete(struct nfs_pageio_descriptor *desc)
 {
+<<<<<<< HEAD
 	for (;;) {
 		nfs_pageio_doio(desc);
 		if (!desc->pg_recoalesce)
@@ -374,6 +453,9 @@ void nfs_pageio_complete(struct nfs_pageio_descriptor *desc)
 		if (!nfs_do_recoalesce(desc))
 			break;
 	}
+=======
+	nfs_pageio_doio(desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -392,8 +474,74 @@ void nfs_pageio_cond_complete(struct nfs_pageio_descriptor *desc, pgoff_t index)
 	if (!list_empty(&desc->pg_list)) {
 		struct nfs_page *prev = nfs_list_entry(desc->pg_list.prev);
 		if (index != prev->wb_index + 1)
+<<<<<<< HEAD
 			nfs_pageio_complete(desc);
 	}
+=======
+			nfs_pageio_doio(desc);
+	}
+}
+
+#define NFS_SCAN_MAXENTRIES 16
+/**
+ * nfs_scan_list - Scan a list for matching requests
+ * @nfsi: NFS inode
+ * @dst: Destination list
+ * @idx_start: lower bound of page->index to scan
+ * @npages: idx_start + npages sets the upper bound to scan.
+ * @tag: tag to scan for
+ *
+ * Moves elements from one of the inode request lists.
+ * If the number of requests is set to 0, the entire address_space
+ * starting at index idx_start, is scanned.
+ * The requests are *not* checked to ensure that they form a contiguous set.
+ * You must be holding the inode's i_lock when calling this function
+ */
+int nfs_scan_list(struct nfs_inode *nfsi,
+		struct list_head *dst, pgoff_t idx_start,
+		unsigned int npages, int tag)
+{
+	struct nfs_page *pgvec[NFS_SCAN_MAXENTRIES];
+	struct nfs_page *req;
+	pgoff_t idx_end;
+	int found, i;
+	int res;
+	struct list_head *list;
+
+	res = 0;
+	if (npages == 0)
+		idx_end = ~0;
+	else
+		idx_end = idx_start + npages - 1;
+
+	for (;;) {
+		found = radix_tree_gang_lookup_tag(&nfsi->nfs_page_tree,
+				(void **)&pgvec[0], idx_start,
+				NFS_SCAN_MAXENTRIES, tag);
+		if (found <= 0)
+			break;
+		for (i = 0; i < found; i++) {
+			req = pgvec[i];
+			if (req->wb_index > idx_end)
+				goto out;
+			idx_start = req->wb_index + 1;
+			if (nfs_set_page_tag_locked(req)) {
+				kref_get(&req->wb_kref);
+				radix_tree_tag_clear(&nfsi->nfs_page_tree,
+						req->wb_index, tag);
+				list = pnfs_choose_commit_list(req, dst);
+				nfs_list_add_request(req, list);
+				res++;
+				if (res == INT_MAX)
+					goto out;
+			}
+		}
+		/* for latency reduction */
+		cond_resched_lock(&nfsi->vfs_inode.i_lock);
+	}
+out:
+	return res;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int __init nfs_init_nfspagecache(void)

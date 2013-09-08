@@ -134,6 +134,7 @@ struct pci_controller * __init pcibios_alloc_controller(void)
 	return pci_ctrl;
 }
 
+<<<<<<< HEAD
 static void __init pci_controller_apertures(struct pci_controller *pci_ctrl,
 					    struct list_head *resources)
 {
@@ -174,6 +175,11 @@ static int __init pcibios_init(void)
 {
 	struct pci_controller *pci_ctrl;
 	struct list_head resources;
+=======
+static int __init pcibios_init(void)
+{
+	struct pci_controller *pci_ctrl;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pci_bus *bus;
 	int next_busno = 0, i;
 
@@ -182,10 +188,26 @@ static int __init pcibios_init(void)
 	/* Scan all of the recorded PCI controllers.  */
 	for (pci_ctrl = pci_ctrl_head; pci_ctrl; pci_ctrl = pci_ctrl->next) {
 		pci_ctrl->last_busno = 0xff;
+<<<<<<< HEAD
 		INIT_LIST_HEAD(&resources);
 		pci_controller_apertures(pci_ctrl, &resources);
 		bus = pci_scan_root_bus(NULL, pci_ctrl->first_busno,
 					pci_ctrl->ops, pci_ctrl, &resources);
+=======
+		bus = pci_scan_bus(pci_ctrl->first_busno, pci_ctrl->ops,
+				   pci_ctrl);
+		if (pci_ctrl->io_resource.flags) {
+			unsigned long offs;
+
+			offs = (unsigned long)pci_ctrl->io_space.base;
+			pci_ctrl->io_resource.start += offs;
+			pci_ctrl->io_resource.end += offs;
+			bus->resource[0] = &pci_ctrl->io_resource;
+		}
+		for (i = 0; i < 3; ++i)
+			if (pci_ctrl->mem_resources[i].flags)
+				bus->resource[i+1] =&pci_ctrl->mem_resources[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pci_ctrl->bus = bus;
 		pci_ctrl->last_busno = bus->subordinate;
 		if (next_busno <= pci_ctrl->last_busno)
@@ -200,9 +222,59 @@ subsys_initcall(pcibios_init);
 
 void __init pcibios_fixup_bus(struct pci_bus *bus)
 {
+<<<<<<< HEAD
 	if (bus->parent) {
 		/* This is a subordinate bridge */
 		pci_read_bridge_bases(bus);
+=======
+	struct pci_controller *pci_ctrl = bus->sysdata;
+	struct resource *res;
+	unsigned long io_offset;
+	int i;
+
+	io_offset = (unsigned long)pci_ctrl->io_space.base;
+	if (bus->parent == NULL) {
+		/* this is a host bridge - fill in its resources */
+		pci_ctrl->bus = bus;
+
+		bus->resource[0] = res = &pci_ctrl->io_resource;
+		if (!res->flags) {
+			if (io_offset)
+				printk (KERN_ERR "I/O resource not set for host"
+					" bridge %d\n", pci_ctrl->index);
+			res->start = 0;
+			res->end = IO_SPACE_LIMIT;
+			res->flags = IORESOURCE_IO;
+		}
+		res->start += io_offset;
+		res->end += io_offset;
+
+		for (i = 0; i < 3; i++) {
+			res = &pci_ctrl->mem_resources[i];
+			if (!res->flags) {
+				if (i > 0)
+					continue;
+				printk(KERN_ERR "Memory resource not set for "
+				       "host bridge %d\n", pci_ctrl->index);
+				res->start = 0;
+				res->end = ~0U;
+				res->flags = IORESOURCE_MEM;
+			}
+			bus->resource[i+1] = res;
+		}
+	} else {
+		/* This is a subordinate bridge */
+		pci_read_bridge_bases(bus);
+
+		for (i = 0; i < 4; i++) {
+			if ((res = bus->resource[i]) == NULL || !res->flags)
+				continue;
+			if (io_offset && (res->flags & IORESOURCE_IO)) {
+				res->start += io_offset;
+				res->end += io_offset;
+			}
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -211,11 +283,14 @@ char __init *pcibios_setup(char *str)
 	return str;
 }
 
+<<<<<<< HEAD
 void pcibios_set_master(struct pci_dev *dev)
 {
 	/* No special bus mastering setup handling */
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* the next one is stolen from the alpha port... */
 
 void __init

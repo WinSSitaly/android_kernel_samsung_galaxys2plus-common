@@ -25,16 +25,23 @@
 #include <linux/types.h>
 #include <linux/pci.h>
 #include <linux/ssb/ssb.h>
+<<<<<<< HEAD
 #include <linux/bcma/bcma.h>
 #include <bcm47xx.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int __init pcibios_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
 {
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_BCM47XX_SSB
 static int bcm47xx_pcibios_plat_dev_init_ssb(struct pci_dev *dev)
+=======
+int pcibios_plat_dev_init(struct pci_dev *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int res;
 	u8 slot, pin;
@@ -60,6 +67,7 @@ static int bcm47xx_pcibios_plat_dev_init_ssb(struct pci_dev *dev)
 	dev->irq = res;
 	return 0;
 }
+<<<<<<< HEAD
 #endif
 
 #ifdef CONFIG_BCM47XX_BCMA
@@ -102,3 +110,5 @@ int pcibios_plat_dev_init(struct pci_dev *dev)
 #endif
 		return 0;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

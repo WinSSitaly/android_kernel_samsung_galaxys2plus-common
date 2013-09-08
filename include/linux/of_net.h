@@ -9,7 +9,10 @@
 
 #ifdef CONFIG_OF_NET
 #include <linux/of.h>
+<<<<<<< HEAD
 extern const int of_get_phy_mode(struct device_node *np);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern const void *of_get_mac_address(struct device_node *np);
 #endif
 

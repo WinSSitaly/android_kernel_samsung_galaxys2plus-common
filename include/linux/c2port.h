@@ -9,12 +9,19 @@
  * the Free Software Foundation
  */
 
+<<<<<<< HEAD
+=======
+#include <linux/device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kmemcheck.h>
 
 #define C2PORT_NAME_LEN			32
 
+<<<<<<< HEAD
 struct device;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * C2 port basic structs
  */

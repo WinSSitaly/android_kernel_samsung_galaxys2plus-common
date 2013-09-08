@@ -38,6 +38,10 @@ struct plat_serial8250_port {
 	int		(*handle_irq)(struct uart_port *);
 	void		(*pm)(struct uart_port *, unsigned int state,
 			      unsigned old);
+<<<<<<< HEAD
+=======
+	const unsigned char * clk_name;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -66,9 +70,14 @@ enum {
  * dependent on the 8250 driver.
  */
 struct uart_port;
+<<<<<<< HEAD
 struct uart_8250_port;
 
 int serial8250_register_port(struct uart_port *);
+=======
+
+int serial8250_register_port(struct uart_port *, const unsigned char * clk_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void serial8250_unregister_port(int line);
 void serial8250_suspend_port(int line);
 void serial8250_resume_port(int line);
@@ -82,11 +91,15 @@ extern void serial8250_do_set_termios(struct uart_port *port,
 		struct ktermios *termios, struct ktermios *old);
 extern void serial8250_do_pm(struct uart_port *port, unsigned int state,
 			     unsigned int oldstate);
+<<<<<<< HEAD
 extern int fsl8250_handle_irq(struct uart_port *port);
 int serial8250_handle_irq(struct uart_port *port, unsigned int iir);
 unsigned char serial8250_rx_chars(struct uart_8250_port *up, unsigned char lsr);
 void serial8250_tx_chars(struct uart_8250_port *up);
 unsigned int serial8250_modem_status(struct uart_8250_port *up);
+=======
+int serial8250_handle_irq(struct uart_port *port, unsigned int iir);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void serial8250_set_isa_configurator(void (*v)
 					(int port, struct uart_port *up,

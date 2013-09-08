@@ -7,7 +7,11 @@
  * state machine code inspired by code from Tim Ruetz
  *
  * A generic driver for rotary encoders connected to GPIO lines.
+<<<<<<< HEAD
  * See file:Documentation/input/rotary-encoder.txt for more information
+=======
+ * See file:Documentation/input/rotary_encoder.txt for more information
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -284,7 +288,23 @@ static struct platform_driver rotary_encoder_driver = {
 		.owner	= THIS_MODULE,
 	}
 };
+<<<<<<< HEAD
 module_platform_driver(rotary_encoder_driver);
+=======
+
+static int __init rotary_encoder_init(void)
+{
+	return platform_driver_register(&rotary_encoder_driver);
+}
+
+static void __exit rotary_encoder_exit(void)
+{
+	platform_driver_unregister(&rotary_encoder_driver);
+}
+
+module_init(rotary_encoder_init);
+module_exit(rotary_encoder_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_ALIAS("platform:" DRV_NAME);
 MODULE_DESCRIPTION("GPIO rotary encoder driver");

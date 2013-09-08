@@ -102,7 +102,11 @@ static int mdsc_show(struct seq_file *s, void *p)
 				path = NULL;
 			spin_lock(&req->r_old_dentry->d_lock);
 			seq_printf(s, " #%llx/%.*s (%s)",
+<<<<<<< HEAD
 			   ceph_ino(req->r_old_dentry_dir),
+=======
+			   ceph_ino(req->r_old_dentry->d_parent->d_inode),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   req->r_old_dentry->d_name.len,
 				   req->r_old_dentry->d_name.name,
 				   path ? path : "");
@@ -201,7 +205,10 @@ int ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
 	int err = -ENOMEM;
 
 	dout("ceph_fs_debugfs_init\n");
+<<<<<<< HEAD
 	BUG_ON(!fsc->client->debugfs_dir);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fsc->debugfs_congestion_kb =
 		debugfs_create_file("writeback_congestion_kb",
 				    0600,

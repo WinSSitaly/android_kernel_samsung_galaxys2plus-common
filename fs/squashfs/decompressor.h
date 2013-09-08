@@ -56,8 +56,11 @@ extern const struct squashfs_decompressor squashfs_xz_comp_ops;
 extern const struct squashfs_decompressor squashfs_lzo_comp_ops;
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_SQUASHFS_ZLIB
 extern const struct squashfs_decompressor squashfs_zlib_comp_ops;
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

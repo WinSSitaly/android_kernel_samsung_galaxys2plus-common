@@ -475,7 +475,11 @@ static void cm109_toggle_buzzer_sync(struct cm109_dev *dev, int on)
 				le16_to_cpu(dev->ctl_req->wIndex),
 				dev->ctl_data,
 				USB_PKT_LEN, USB_CTRL_SET_TIMEOUT);
+<<<<<<< HEAD
 	if (error < 0 && error != -EINTR)
+=======
+	if (error && error != EINTR)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err("%s: usb_control_msg() failed %d", __func__, error);
 }
 

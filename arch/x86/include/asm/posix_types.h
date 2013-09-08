@@ -7,8 +7,11 @@
 #else
 # ifdef __i386__
 #  include "posix_types_32.h"
+<<<<<<< HEAD
 # elif defined(__ILP32__)
 #  include "posix_types_x32.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # else
 #  include "posix_types_64.h"
 # endif

@@ -22,8 +22,11 @@ config KVM
 	depends on HAVE_KVM
 	# for device assignment:
 	depends on PCI
+<<<<<<< HEAD
 	# for TASKSTATS/TASK_DELAY_ACCT:
 	depends on NET
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select PREEMPT_NOTIFIERS
 	select MMU_NOTIFIER
 	select ANON_INODES
@@ -33,9 +36,12 @@ config KVM
 	select KVM_ASYNC_PF
 	select USER_RETURN_NOTIFIER
 	select KVM_MMIO
+<<<<<<< HEAD
 	select TASKSTATS
 	select TASK_DELAY_ACCT
 	select PERF_EVENTS
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	---help---
 	  Support hosting fully virtualized guest machines using hardware
 	  virtualization extensions.  You will need a fairly recent
@@ -53,8 +59,11 @@ config KVM
 config KVM_INTEL
 	tristate "KVM for Intel processors support"
 	depends on KVM
+<<<<<<< HEAD
 	# for perf_guest_get_msrs():
 	depends on CPU_SUP_INTEL
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	---help---
 	  Provides support for KVM on Intel processors equipped with the VT
 	  extensions.
@@ -83,5 +92,9 @@ config KVM_MMU_AUDIT
 # the virtualization menu.
 source drivers/vhost/Kconfig
 source drivers/lguest/Kconfig
+<<<<<<< HEAD
+=======
+source drivers/virtio/Kconfig
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 endif # VIRTUALIZATION

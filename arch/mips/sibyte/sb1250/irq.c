@@ -26,6 +26,10 @@
 
 #include <asm/errno.h>
 #include <asm/signal.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/time.h>
 #include <asm/io.h>
 
@@ -122,6 +126,7 @@ static int sb1250_set_affinity(struct irq_data *d, const struct cpumask *mask,
 }
 #endif
 
+<<<<<<< HEAD
 static void disable_sb1250_irq(struct irq_data *d)
 {
 	unsigned int irq = d->irq;
@@ -129,6 +134,8 @@ static void disable_sb1250_irq(struct irq_data *d)
 	sb1250_mask_irq(sb1250_irq_owner[irq], irq);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void enable_sb1250_irq(struct irq_data *d)
 {
 	unsigned int irq = d->irq;
@@ -186,7 +193,10 @@ static struct irq_chip sb1250_irq_type = {
 	.name = "SB1250-IMR",
 	.irq_mask_ack = ack_sb1250_irq,
 	.irq_unmask = enable_sb1250_irq,
+<<<<<<< HEAD
 	.irq_mask = disable_sb1250_irq,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SMP
 	.irq_set_affinity = sb1250_set_affinity
 #endif

@@ -13,7 +13,10 @@
 #include <linux/udp.h>
 
 #include <linux/netfilter.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/netfilter/nf_nat.h>
 #include <net/netfilter/nf_nat_protocol.h>
 
@@ -21,7 +24,11 @@ static u_int16_t udplite_port_rover;
 
 static void
 udplite_unique_tuple(struct nf_conntrack_tuple *tuple,
+<<<<<<< HEAD
 		     const struct nf_nat_ipv4_range *range,
+=======
+		     const struct nf_nat_range *range,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     enum nf_nat_manip_type maniptype,
 		     const struct nf_conn *ct)
 {
@@ -47,7 +54,11 @@ udplite_manip_pkt(struct sk_buff *skb,
 	iph = (struct iphdr *)(skb->data + iphdroff);
 	hdr = (struct udphdr *)(skb->data + hdroff);
 
+<<<<<<< HEAD
 	if (maniptype == NF_NAT_MANIP_SRC) {
+=======
+	if (maniptype == IP_NAT_MANIP_SRC) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Get rid of src ip and src pt */
 		oldip = iph->saddr;
 		newip = tuple->src.u3.ip;
@@ -72,10 +83,18 @@ udplite_manip_pkt(struct sk_buff *skb,
 
 static const struct nf_nat_protocol nf_nat_protocol_udplite = {
 	.protonum		= IPPROTO_UDPLITE,
+<<<<<<< HEAD
+=======
+	.me			= THIS_MODULE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.manip_pkt		= udplite_manip_pkt,
 	.in_range		= nf_nat_proto_in_range,
 	.unique_tuple		= udplite_unique_tuple,
 #if defined(CONFIG_NF_CT_NETLINK) || defined(CONFIG_NF_CT_NETLINK_MODULE)
+<<<<<<< HEAD
+=======
+	.range_to_nlattr	= nf_nat_proto_range_to_nlattr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.nlattr_to_range	= nf_nat_proto_nlattr_to_range,
 #endif
 };

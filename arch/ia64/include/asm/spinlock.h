@@ -13,8 +13,14 @@
 #include <linux/kernel.h>
 #include <linux/bitops.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
 #include <asm/intrinsics.h>
+=======
+#include <asm/atomic.h>
+#include <asm/intrinsics.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define arch_spin_lock_init(x)			((x)->lock = 0)
 

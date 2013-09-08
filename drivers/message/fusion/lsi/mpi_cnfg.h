@@ -583,7 +583,10 @@ typedef struct _MSG_CONFIG_REPLY
 #define MPI_MANUFACTPAGE_DEVID_SAS1066E             (0x005A)
 #define MPI_MANUFACTPAGE_DEVID_SAS1068              (0x0054)
 #define MPI_MANUFACTPAGE_DEVID_SAS1068E             (0x0058)
+<<<<<<< HEAD
 #define MPI_MANUFACTPAGE_DEVID_SAS1068_820XELP      (0x0059)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MPI_MANUFACTPAGE_DEVID_SAS1078              (0x0062)
 
 

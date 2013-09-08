@@ -394,6 +394,12 @@ static struct of_device_id ocores_i2c_match[] = {
 };
 MODULE_DEVICE_TABLE(of, ocores_i2c_match);
 
+<<<<<<< HEAD
+=======
+/* work with hotplug and coldplug */
+MODULE_ALIAS("platform:ocores-i2c");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver ocores_i2c_driver = {
 	.probe   = ocores_i2c_probe,
 	.remove  = __devexit_p(ocores_i2c_remove),
@@ -406,9 +412,27 @@ static struct platform_driver ocores_i2c_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(ocores_i2c_driver);
+=======
+static int __init ocores_i2c_init(void)
+{
+	return platform_driver_register(&ocores_i2c_driver);
+}
+
+static void __exit ocores_i2c_exit(void)
+{
+	platform_driver_unregister(&ocores_i2c_driver);
+}
+
+module_init(ocores_i2c_init);
+module_exit(ocores_i2c_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Peter Korsgaard <jacmet@sunsite.dk>");
 MODULE_DESCRIPTION("OpenCores I2C bus driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_ALIAS("platform:ocores-i2c");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

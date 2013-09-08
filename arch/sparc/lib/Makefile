@@ -40,7 +40,11 @@ lib-$(CONFIG_SPARC64) += copy_in_user.o user_fixup.o memmove.o
 lib-$(CONFIG_SPARC64) += mcount.o ipcsum.o xor.o hweight.o ffs.o
 
 obj-y                 += iomap.o
+<<<<<<< HEAD
 obj-$(CONFIG_SPARC32) += atomic32.o ucmpdi2.o
+=======
+obj-$(CONFIG_SPARC32) += atomic32.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-y                 += ksyms.o
 obj-$(CONFIG_SPARC64) += PeeCeeI.o
 obj-y                 += usercopy.o

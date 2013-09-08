@@ -1,19 +1,30 @@
 /// The various basic memory allocation functions don't return ERR_PTR
 ///
 // Confidence: High
+<<<<<<< HEAD
 // Copyright: (C) 2010-2012 Nicolas Palix.  GPLv2.
 // Copyright: (C) 2010-2012 Julia Lawall, INRIA/LIP6.  GPLv2.
 // Copyright: (C) 2010-2012 Gilles Muller, INRIA/LiP6.  GPLv2.
+=======
+// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
+// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
+// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 // URL: http://coccinelle.lip6.fr/
 // Comments:
 // Options: -no_includes -include_headers
 
 virtual patch
+<<<<<<< HEAD
 virtual context
 virtual org
 virtual report
 
 @depends on patch@
+=======
+
+@@
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 expression x,E;
 @@
 
@@ -21,6 +32,7 @@ x = \(kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|kmem_cache_zalloc\|kmem_cache
 ... when != x = E
 - IS_ERR(x)
 + !x
+<<<<<<< HEAD
 
 @r depends on !patch exists@
 expression x,E;
@@ -46,3 +58,5 @@ p2 << r.p2;
 
 msg = "ERROR: allocation function on line %s returns NULL not ERR_PTR on failure" % (p1[0].line)
 coccilib.report.print_report(p2[0], msg)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -19,7 +19,10 @@
 
 #include <asm/mach-types.h>
 #include <asm/setup.h>
+<<<<<<< HEAD
 #include <asm/page.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach/arch.h>
 #include <asm/mach/flash.h>
@@ -28,7 +31,10 @@
 
 #include <mach/hardware.h>
 #include <mach/nanoengine.h>
+<<<<<<< HEAD
 #include <mach/irqs.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "generic.h"
 
@@ -59,8 +65,20 @@ static struct flash_platform_data nanoengine_flash_data = {
 };
 
 static struct resource nanoengine_flash_resources[] = {
+<<<<<<< HEAD
 	DEFINE_RES_MEM(SA1100_CS0_PHYS, SZ_32M),
 	DEFINE_RES_MEM(SA1100_CS1_PHYS, SZ_32M),
+=======
+	{
+		.start	= SA1100_CS0_PHYS,
+		.end	= SA1100_CS0_PHYS + SZ_32M - 1,
+		.flags	= IORESOURCE_MEM,
+	}, {
+		.start	= SA1100_CS1_PHYS,
+		.end	= SA1100_CS1_PHYS + SZ_32M - 1,
+		.flags	= IORESOURCE_MEM,
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct map_desc nanoengine_io_desc[] __initdata = {
@@ -106,6 +124,7 @@ static void __init nanoengine_init(void)
 }
 
 MACHINE_START(NANOENGINE, "BSE nanoEngine")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= nanoengine_map_io,
 	.nr_irqs	= SA1100_NR_IRQS,
@@ -113,4 +132,11 @@ MACHINE_START(NANOENGINE, "BSE nanoEngine")
 	.timer		= &sa1100_timer,
 	.init_machine	= nanoengine_init,
 	.restart	= sa11x0_restart,
+=======
+	.boot_params	= 0xc0000000,
+	.map_io		= nanoengine_map_io,
+	.init_irq	= sa1100_init_irq,
+	.timer		= &sa1100_timer,
+	.init_machine	= nanoengine_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

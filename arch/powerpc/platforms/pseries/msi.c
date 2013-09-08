@@ -217,7 +217,11 @@ static struct device_node *find_pe_dn(struct pci_dev *dev, int *total)
 	if (!dn)
 		return NULL;
 
+<<<<<<< HEAD
 	dn = eeh_find_device_pe(dn);
+=======
+	dn = find_device_pe(dn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!dn)
 		return NULL;
 

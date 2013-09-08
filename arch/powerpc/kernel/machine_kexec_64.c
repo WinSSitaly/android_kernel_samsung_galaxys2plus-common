@@ -74,7 +74,12 @@ int default_machine_kexec_prepare(struct kimage *image)
 	}
 
 	/* We also should not overwrite the tce tables */
+<<<<<<< HEAD
 	for_each_node_by_type(node, "pci") {
+=======
+	for (node = of_find_node_by_type(NULL, "pci"); node != NULL;
+			node = of_find_node_by_type(node, "pci")) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		basep = of_get_property(node, "linux,tce-base", NULL);
 		sizep = of_get_property(node, "linux,tce-size", NULL);
 		if (basep == NULL || sizep == NULL)
@@ -162,8 +167,11 @@ static int kexec_all_irq_disabled = 0;
 static void kexec_smp_down(void *arg)
 {
 	local_irq_disable();
+<<<<<<< HEAD
 	hard_irq_disable();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mb(); /* make sure our irqs are disabled before we say they are */
 	get_paca()->kexec_state = KEXEC_STATE_IRQS_OFF;
 	while(kexec_all_irq_disabled == 0)
@@ -246,8 +254,11 @@ static void kexec_prepare_cpus(void)
 	wake_offline_cpus();
 	smp_call_function(kexec_smp_down, NULL, /* wait */0);
 	local_irq_disable();
+<<<<<<< HEAD
 	hard_irq_disable();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mb(); /* make sure IRQs are disabled before we say they are */
 	get_paca()->kexec_state = KEXEC_STATE_IRQS_OFF;
 
@@ -285,7 +296,10 @@ static void kexec_prepare_cpus(void)
 	if (ppc_md.kexec_cpu_down)
 		ppc_md.kexec_cpu_down(0, 0);
 	local_irq_disable();
+<<<<<<< HEAD
 	hard_irq_disable();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #endif /* SMP */
@@ -312,9 +326,15 @@ static union thread_union kexec_stack __init_task_data =
 struct paca_struct kexec_paca;
 
 /* Our assembly helper, in kexec_stub.S */
+<<<<<<< HEAD
 extern void kexec_sequence(void *newstack, unsigned long start,
 			   void *image, void *control,
 			   void (*clear_all)(void)) __noreturn;
+=======
+extern NORET_TYPE void kexec_sequence(void *newstack, unsigned long start,
+					void *image, void *control,
+					void (*clear_all)(void)) ATTRIB_NORET;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* too late to fail here */
 void default_machine_kexec(struct kimage *image)

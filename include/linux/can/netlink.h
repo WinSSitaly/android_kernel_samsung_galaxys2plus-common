@@ -5,6 +5,11 @@
  *
  * Copyright (c) 2009 Wolfgang Grandegger <wg@grandegger.com>
  *
+<<<<<<< HEAD
+=======
+ * Send feedback to <socketcan-users@lists.berlios.de>
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #ifndef CAN_NETLINK_H

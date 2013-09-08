@@ -2,7 +2,10 @@
 #define _XT_CONNLIMIT_H
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/netfilter.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct xt_connlimit_data;
 

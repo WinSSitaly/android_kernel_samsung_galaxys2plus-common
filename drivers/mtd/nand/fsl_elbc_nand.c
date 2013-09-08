@@ -75,6 +75,10 @@ struct fsl_elbc_fcm_ctrl {
 	unsigned int use_mdr;    /* Non zero if the MDR is to be set      */
 	unsigned int oob;        /* Non zero if operating on OOB data     */
 	unsigned int counter;	 /* counter for the initializations	  */
+<<<<<<< HEAD
+=======
+	char *oob_poi;           /* Place to write ECC after read back    */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* These map to the positions used by the FCM hardware ECC generator */
@@ -166,22 +170,32 @@ static void set_addr(struct mtd_info *mtd, int column, int page_addr, int oob)
 
 	elbc_fcm_ctrl->page = page_addr;
 
+<<<<<<< HEAD
 	if (priv->page_size) {
 		/*
 		 * large page size chip : FPAR[PI] save the lowest 6 bits,
 		 *                        FBAR[BLK] save the other bits.
 		 */
 		out_be32(&lbc->fbar, page_addr >> 6);
+=======
+	out_be32(&lbc->fbar,
+	         page_addr >> (chip->phys_erase_shift - chip->page_shift));
+
+	if (priv->page_size) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		out_be32(&lbc->fpar,
 		         ((page_addr << FPAR_LP_PI_SHIFT) & FPAR_LP_PI) |
 		         (oob ? FPAR_LP_MS : 0) | column);
 		buf_num = (page_addr & 1) << 2;
 	} else {
+<<<<<<< HEAD
 		/*
 		 * small page size chip : FPAR[PI] save the lowest 5 bits,
 		 *                        FBAR[BLK] save the other bits.
 		 */
 		out_be32(&lbc->fbar, page_addr >> 5);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		out_be32(&lbc->fpar,
 		         ((page_addr << FPAR_SP_PI_SHIFT) & FPAR_SP_PI) |
 		         (oob ? FPAR_SP_MS : 0) | column);
@@ -250,6 +264,7 @@ static int fsl_elbc_run_command(struct mtd_info *mtd)
 		return -EIO;
 	}
 
+<<<<<<< HEAD
 	if (chip->ecc.mode != NAND_ECC_HW)
 		return 0;
 
@@ -269,6 +284,8 @@ static int fsl_elbc_run_command(struct mtd_info *mtd)
 			mtd->ecc_stats.corrected++;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -356,13 +373,20 @@ static void fsl_elbc_cmdfunc(struct mtd_info *mtd, unsigned int command,
 		fsl_elbc_run_command(mtd);
 		return;
 
+<<<<<<< HEAD
 	case NAND_CMD_READID:
 	case NAND_CMD_PARAM:
 		dev_vdbg(priv->dev, "fsl_elbc_cmdfunc: NAND_CMD %x\n", command);
+=======
+	/* READID must read all 5 possible bytes while CEB is active */
+	case NAND_CMD_READID:
+		dev_vdbg(priv->dev, "fsl_elbc_cmdfunc: NAND_CMD_READID.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		out_be32(&lbc->fir, (FIR_OP_CM0 << FIR_OP0_SHIFT) |
 		                    (FIR_OP_UA  << FIR_OP1_SHIFT) |
 		                    (FIR_OP_RBW << FIR_OP2_SHIFT));
+<<<<<<< HEAD
 		out_be32(&lbc->fcr, command << FCR_CMD0_SHIFT);
 		/*
 		 * although currently it's 8 bytes for READID, we always read
@@ -372,6 +396,15 @@ static void fsl_elbc_cmdfunc(struct mtd_info *mtd, unsigned int command,
 		elbc_fcm_ctrl->read_bytes = 256;
 		elbc_fcm_ctrl->use_mdr = 1;
 		elbc_fcm_ctrl->mdr = column;
+=======
+		out_be32(&lbc->fcr, NAND_CMD_READID << FCR_CMD0_SHIFT);
+		/* nand_get_flash_type() reads 8 bytes of entire ID string */
+		out_be32(&lbc->fbcr, 8);
+		elbc_fcm_ctrl->read_bytes = 8;
+		elbc_fcm_ctrl->use_mdr = 1;
+		elbc_fcm_ctrl->mdr = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_addr(mtd, 0, 0, 0);
 		fsl_elbc_run_command(mtd);
 		return;
@@ -416,6 +449,7 @@ static void fsl_elbc_cmdfunc(struct mtd_info *mtd, unsigned int command,
 		         page_addr, column);
 
 		elbc_fcm_ctrl->column = column;
+<<<<<<< HEAD
 		elbc_fcm_ctrl->use_mdr = 1;
 
 		if (column >= mtd->writesize) {
@@ -427,6 +461,11 @@ static void fsl_elbc_cmdfunc(struct mtd_info *mtd, unsigned int command,
 			elbc_fcm_ctrl->oob = 0;
 		}
 
+=======
+		elbc_fcm_ctrl->oob = 0;
+		elbc_fcm_ctrl->use_mdr = 1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fcr = (NAND_CMD_STATUS   << FCR_CMD1_SHIFT) |
 		      (NAND_CMD_SEQIN    << FCR_CMD2_SHIFT) |
 		      (NAND_CMD_PAGEPROG << FCR_CMD3_SHIFT);
@@ -451,12 +490,25 @@ static void fsl_elbc_cmdfunc(struct mtd_info *mtd, unsigned int command,
 			         (FIR_OP_CW1 << FIR_OP6_SHIFT) |
 			         (FIR_OP_RS  << FIR_OP7_SHIFT));
 
+<<<<<<< HEAD
 			if (elbc_fcm_ctrl->oob)
 				/* OOB area --> READOOB */
 				fcr |= NAND_CMD_READOOB << FCR_CMD0_SHIFT;
 			else
 				/* First 256 bytes --> READ0 */
 				fcr |= NAND_CMD_READ0 << FCR_CMD0_SHIFT;
+=======
+			if (column >= mtd->writesize) {
+				/* OOB area --> READOOB */
+				column -= mtd->writesize;
+				fcr |= NAND_CMD_READOOB << FCR_CMD0_SHIFT;
+				elbc_fcm_ctrl->oob = 1;
+			} else {
+				WARN_ON(column != 0);
+				/* First 256 bytes --> READ0 */
+				fcr |= NAND_CMD_READ0 << FCR_CMD0_SHIFT;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		out_be32(&lbc->fcr, fcr);
@@ -466,6 +518,10 @@ static void fsl_elbc_cmdfunc(struct mtd_info *mtd, unsigned int command,
 
 	/* PAGEPROG reuses all of the setup from SEQIN and adds the length */
 	case NAND_CMD_PAGEPROG: {
+<<<<<<< HEAD
+=======
+		int full_page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_vdbg(priv->dev,
 		         "fsl_elbc_cmdfunc: NAND_CMD_PAGEPROG "
 			 "writing %d bytes.\n", elbc_fcm_ctrl->index);
@@ -475,6 +531,7 @@ static void fsl_elbc_cmdfunc(struct mtd_info *mtd, unsigned int command,
 		 * write so the HW generates the ECC.
 		 */
 		if (elbc_fcm_ctrl->oob || elbc_fcm_ctrl->column != 0 ||
+<<<<<<< HEAD
 		    elbc_fcm_ctrl->index != mtd->writesize + mtd->oobsize)
 			out_be32(&lbc->fbcr,
 				elbc_fcm_ctrl->index - elbc_fcm_ctrl->column);
@@ -482,6 +539,36 @@ static void fsl_elbc_cmdfunc(struct mtd_info *mtd, unsigned int command,
 			out_be32(&lbc->fbcr, 0);
 
 		fsl_elbc_run_command(mtd);
+=======
+		    elbc_fcm_ctrl->index != mtd->writesize + mtd->oobsize) {
+			out_be32(&lbc->fbcr, elbc_fcm_ctrl->index);
+			full_page = 0;
+		} else {
+			out_be32(&lbc->fbcr, 0);
+			full_page = 1;
+		}
+
+		fsl_elbc_run_command(mtd);
+
+		/* Read back the page in order to fill in the ECC for the
+		 * caller.  Is this really needed?
+		 */
+		if (full_page && elbc_fcm_ctrl->oob_poi) {
+			out_be32(&lbc->fbcr, 3);
+			set_addr(mtd, 6, page_addr, 1);
+
+			elbc_fcm_ctrl->read_bytes = mtd->writesize + 9;
+
+			fsl_elbc_do_read(chip, 1);
+			fsl_elbc_run_command(mtd);
+
+			memcpy_fromio(elbc_fcm_ctrl->oob_poi + 6,
+				&elbc_fcm_ctrl->addr[elbc_fcm_ctrl->index], 3);
+			elbc_fcm_ctrl->index += 3;
+		}
+
+		elbc_fcm_ctrl->oob_poi = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -673,7 +760,13 @@ static int fsl_elbc_chip_init_tail(struct mtd_info *mtd)
 	if (chip->pagemask & 0xff000000)
 		al++;
 
+<<<<<<< HEAD
 	priv->fmr |= al << FMR_AL_SHIFT;
+=======
+	/* add to ECCM mode set in fsl_elbc_init */
+	priv->fmr |= (12 << FMR_CWTO_SHIFT) |  /* Timeout > 12 ms */
+	             (al << FMR_AL_SHIFT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_dbg(priv->dev, "fsl_elbc_init: nand->numchips = %d\n",
 	        chip->numchips);
@@ -759,8 +852,18 @@ static void fsl_elbc_write_page(struct mtd_info *mtd,
                                 struct nand_chip *chip,
                                 const uint8_t *buf)
 {
+<<<<<<< HEAD
 	fsl_elbc_write_buf(mtd, buf, mtd->writesize);
 	fsl_elbc_write_buf(mtd, chip->oob_poi, mtd->oobsize);
+=======
+	struct fsl_elbc_mtd *priv = chip->priv;
+	struct fsl_elbc_fcm_ctrl *elbc_fcm_ctrl = priv->ctrl->nand;
+
+	fsl_elbc_write_buf(mtd, buf, mtd->writesize);
+	fsl_elbc_write_buf(mtd, chip->oob_poi, mtd->oobsize);
+
+	elbc_fcm_ctrl->oob_poi = chip->oob_poi;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int fsl_elbc_chip_init(struct fsl_elbc_mtd *priv)
@@ -776,10 +879,15 @@ static int fsl_elbc_chip_init(struct fsl_elbc_mtd *priv)
 	priv->mtd.priv = chip;
 	priv->mtd.owner = THIS_MODULE;
 
+<<<<<<< HEAD
 	/* set timeout to maximum */
 	priv->fmr = 15 << FMR_CWTO_SHIFT;
 	if (in_be32(&lbc->bank[priv->bank].or) & OR_FCM_PGS)
 		priv->fmr |= FMR_ECCM;
+=======
+	/* Set the ECCM according to the settings in bootloader.*/
+	priv->fmr = in_be32(&lbc->fmr) & FMR_ECCM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* fill in nand_chip structure */
 	/* set up function call table */
@@ -795,8 +903,13 @@ static int fsl_elbc_chip_init(struct fsl_elbc_mtd *priv)
 	chip->bbt_md = &bbt_mirror_descr;
 
 	/* set up nand options */
+<<<<<<< HEAD
 	chip->options = NAND_NO_READRDY | NAND_NO_AUTOINCR;
 	chip->bbt_options = NAND_BBT_USE_FLASH;
+=======
+	chip->options = NAND_NO_READRDY | NAND_NO_AUTOINCR |
+			NAND_USE_FLASH_BBT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	chip->controller = &elbc_fcm_ctrl->controller;
 	chip->priv = priv;
@@ -813,12 +926,15 @@ static int fsl_elbc_chip_init(struct fsl_elbc_mtd *priv)
 				&fsl_elbc_oob_sp_eccm1 : &fsl_elbc_oob_sp_eccm0;
 		chip->ecc.size = 512;
 		chip->ecc.bytes = 3;
+<<<<<<< HEAD
 		chip->ecc.strength = 1;
 		/*
 		 * FIXME: can hardware ecc correct 4 bitflips if page size is
 		 * 2k?  Then does hardware report number of corrections for this
 		 * case?  If so, ecc_stats reporting needs to be fixed as well.
 		 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		/* otherwise fall back to default software ECC */
 		chip->ecc.mode = NAND_ECC_SOFT;
@@ -839,6 +955,10 @@ static int fsl_elbc_chip_remove(struct fsl_elbc_mtd *priv)
 
 	elbc_fcm_ctrl->chips[priv->bank] = NULL;
 	kfree(priv);
+<<<<<<< HEAD
+=======
+	kfree(elbc_fcm_ctrl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -851,14 +971,23 @@ static int __devinit fsl_elbc_nand_probe(struct platform_device *pdev)
 	struct resource res;
 	struct fsl_elbc_fcm_ctrl *elbc_fcm_ctrl;
 	static const char *part_probe_types[]
+<<<<<<< HEAD
 		= { "cmdlinepart", "RedBoot", "ofpart", NULL };
+=======
+		= { "cmdlinepart", "RedBoot", NULL };
+	struct mtd_partition *parts;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 	int bank;
 	struct device *dev;
 	struct device_node *node = pdev->dev.of_node;
+<<<<<<< HEAD
 	struct mtd_part_parser_data ppdata;
 
 	ppdata.of_node = pdev->dev.of_node;
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!fsl_lbc_ctrl_dev || !fsl_lbc_ctrl_dev->regs)
 		return -ENODEV;
 	lbc = fsl_lbc_ctrl_dev->regs;
@@ -944,8 +1073,22 @@ static int __devinit fsl_elbc_nand_probe(struct platform_device *pdev)
 
 	/* First look for RedBoot table or partitions on the command
 	 * line, these take precedence over device tree information */
+<<<<<<< HEAD
 	mtd_device_parse_register(&priv->mtd, part_probe_types, &ppdata,
 				  NULL, 0);
+=======
+	ret = parse_mtd_partitions(&priv->mtd, part_probe_types, &parts, 0);
+	if (ret < 0)
+		goto err;
+
+	if (ret == 0) {
+		ret = of_mtd_parse_partitions(priv->dev, node, &parts);
+		if (ret < 0)
+			goto err;
+	}
+
+	mtd_device_register(&priv->mtd, parts, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	printk(KERN_INFO "eLBC NAND device at 0x%llx, bank %d\n",
 	       (unsigned long long)res.start, priv->bank);
@@ -991,7 +1134,22 @@ static struct platform_driver fsl_elbc_nand_driver = {
 	.remove = fsl_elbc_nand_remove,
 };
 
+<<<<<<< HEAD
 module_platform_driver(fsl_elbc_nand_driver);
+=======
+static int __init fsl_elbc_nand_init(void)
+{
+	return platform_driver_register(&fsl_elbc_nand_driver);
+}
+
+static void __exit fsl_elbc_nand_exit(void)
+{
+	platform_driver_unregister(&fsl_elbc_nand_driver);
+}
+
+module_init(fsl_elbc_nand_init);
+module_exit(fsl_elbc_nand_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Freescale");

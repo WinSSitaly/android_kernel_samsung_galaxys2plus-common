@@ -13,8 +13,11 @@
 *****************************************************************************/
 
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
 #include <asm/page.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach/map.h>
 
 #include <mach/hardware.h>
@@ -55,6 +58,9 @@ void __init bcmring_map_io(void)
 {
 
 	iotable_init(bcmring_io_desc, ARRAY_SIZE(bcmring_io_desc));
+<<<<<<< HEAD
 	/* Maximum DMA memory allowed is 14M */
 	init_consistent_dma_size(14 << 20);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

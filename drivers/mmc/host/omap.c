@@ -2,7 +2,11 @@
  *  linux/drivers/mmc/host/omap.c
  *
  *  Copyright (C) 2004 Nokia Corporation
+<<<<<<< HEAD
  *  Written by Tuukka Tikkanen and Juha YrjÃ¶lÃ¤<juha.yrjola@nokia.com>
+=======
+ *  Written by Tuukka Tikkanen and Juha Yrjölä<juha.yrjola@nokia.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  Misc hacks here and there by Tony Lindgren <tony@atomide.com>
  *  Other hacks (DMA, SD, etc) by David Brownell
  *
@@ -33,7 +37,11 @@
 
 #include <plat/board.h>
 #include <plat/mmc.h>
+<<<<<<< HEAD
 #include <asm/gpio.h>
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/dma.h>
 #include <plat/mux.h>
 #include <plat/fpga.h>
@@ -1634,4 +1642,8 @@ module_exit(mmc_omap_exit);
 MODULE_DESCRIPTION("OMAP Multimedia Card driver");
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:" DRIVER_NAME);
+<<<<<<< HEAD
 MODULE_AUTHOR("Juha YrjÃ¶lÃ¤");
+=======
+MODULE_AUTHOR("Juha Yrjölä");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

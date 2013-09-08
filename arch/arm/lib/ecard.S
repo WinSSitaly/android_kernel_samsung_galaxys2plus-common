@@ -12,6 +12,10 @@
  */
 #include <linux/linkage.h>
 #include <asm/assembler.h>
+<<<<<<< HEAD
+=======
+#include <mach/hardware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define CPSR2SPSR(rt) \
 		mrs	rt, cpsr; \

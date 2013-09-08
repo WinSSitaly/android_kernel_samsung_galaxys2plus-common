@@ -154,7 +154,21 @@ static struct usb_driver plusb_driver = {
 	.resume =	usbnet_resume,
 };
 
+<<<<<<< HEAD
 module_usb_driver(plusb_driver);
+=======
+static int __init plusb_init(void)
+{
+	return usb_register(&plusb_driver);
+}
+module_init(plusb_init);
+
+static void __exit plusb_exit(void)
+{
+	usb_deregister(&plusb_driver);
+}
+module_exit(plusb_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("David Brownell");
 MODULE_DESCRIPTION("Prolific PL-2301/2302/25A1 USB Host to Host Link Driver");

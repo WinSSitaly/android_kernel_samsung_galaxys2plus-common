@@ -18,7 +18,11 @@
 #include <asm/bootinfo.h>
 #include <asm/mmu_context.h>
 #include <asm/pgtable.h>
+<<<<<<< HEAD
 #include <asm/tlbmisc.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void build_tlb_refill_handler(void);
 
@@ -120,6 +124,7 @@ void local_flush_tlb_range(struct vm_area_struct *vma, unsigned long start,
 
 	if (cpu_context(cpu, mm) != 0) {
 		unsigned long size, flags;
+<<<<<<< HEAD
 		int huge = is_vm_hugetlb_page(vma);
 
 		ENTER_CRITICAL(flags);
@@ -132,18 +137,34 @@ void local_flush_tlb_range(struct vm_area_struct *vma, unsigned long start,
 			end = round_up(end, PAGE_SIZE << 1);
 			size = (end - start) >> (PAGE_SHIFT + 1);
 		}
+=======
+
+		ENTER_CRITICAL(flags);
+		size = (end - start + (PAGE_SIZE - 1)) >> PAGE_SHIFT;
+		size = (size + 1) >> 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (size <= current_cpu_data.tlbsize/2) {
 			int oldpid = read_c0_entryhi();
 			int newpid = cpu_asid(cpu, mm);
 
+<<<<<<< HEAD
+=======
+			start &= (PAGE_MASK << 1);
+			end += ((PAGE_SIZE << 1) - 1);
+			end &= (PAGE_MASK << 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			while (start < end) {
 				int idx;
 
 				write_c0_entryhi(start | newpid);
+<<<<<<< HEAD
 				if (huge)
 					start += HPAGE_SIZE;
 				else
 					start += (PAGE_SIZE << 1);
+=======
+				start += (PAGE_SIZE << 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				mtc0_tlbw_hazard();
 				tlb_probe();
 				tlb_probe_hazard();
@@ -345,8 +366,13 @@ void __update_tlb(struct vm_area_struct * vma, unsigned long address, pte_t pte)
 	EXIT_CRITICAL(flags);
 }
 
+<<<<<<< HEAD
 void add_wired_entry(unsigned long entrylo0, unsigned long entrylo1,
 		     unsigned long entryhi, unsigned long pagemask)
+=======
+void __init add_wired_entry(unsigned long entrylo0, unsigned long entrylo1,
+	unsigned long entryhi, unsigned long pagemask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags;
 	unsigned long wired;
@@ -376,6 +402,54 @@ void add_wired_entry(unsigned long entrylo0, unsigned long entrylo1,
 	EXIT_CRITICAL(flags);
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * Used for loading TLB entries before trap_init() has started, when we
+ * don't actually want to add a wired entry which remains throughout the
+ * lifetime of the system
+ */
+
+static int temp_tlb_entry __cpuinitdata;
+
+__init int add_temporary_entry(unsigned long entrylo0, unsigned long entrylo1,
+			       unsigned long entryhi, unsigned long pagemask)
+{
+	int ret = 0;
+	unsigned long flags;
+	unsigned long wired;
+	unsigned long old_pagemask;
+	unsigned long old_ctx;
+
+	ENTER_CRITICAL(flags);
+	/* Save old context and create impossible VPN2 value */
+	old_ctx = read_c0_entryhi();
+	old_pagemask = read_c0_pagemask();
+	wired = read_c0_wired();
+	if (--temp_tlb_entry < wired) {
+		printk(KERN_WARNING
+		       "No TLB space left for add_temporary_entry\n");
+		ret = -ENOSPC;
+		goto out;
+	}
+
+	write_c0_index(temp_tlb_entry);
+	write_c0_pagemask(pagemask);
+	write_c0_entryhi(entryhi);
+	write_c0_entrylo0(entrylo0);
+	write_c0_entrylo1(entrylo1);
+	mtc0_tlbw_hazard();
+	tlb_write_indexed();
+	tlbw_use_hazard();
+
+	write_c0_entryhi(old_ctx);
+	write_c0_pagemask(old_pagemask);
+out:
+	EXIT_CRITICAL(flags);
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __cpuinitdata ntlb;
 static int __init set_ntlb(char *str)
 {
@@ -413,6 +487,11 @@ void __cpuinit tlb_init(void)
 		write_c0_pagegrain(pg);
 	}
 
+<<<<<<< HEAD
+=======
+	temp_tlb_entry = current_cpu_data.tlbsize - 1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         /* From this point on the ARC firmware is dead.  */
 	local_flush_tlb_all();
 

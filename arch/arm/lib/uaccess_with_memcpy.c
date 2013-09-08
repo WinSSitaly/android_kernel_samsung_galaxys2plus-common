@@ -17,7 +17,10 @@
 #include <linux/sched.h>
 #include <linux/hardirq.h> /* for in_atomic() */
 #include <linux/gfp.h>
+<<<<<<< HEAD
 #include <linux/highmem.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/current.h>
 #include <asm/page.h>
 

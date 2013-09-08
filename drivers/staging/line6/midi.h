@@ -57,12 +57,20 @@ struct snd_line6_midi {
 	/**
 		 Bit mask for output MIDI channels.
 	*/
+<<<<<<< HEAD
 	unsigned short midi_mask_transmit;
+=======
+	int midi_mask_transmit;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/**
 		 Bit mask for input MIDI channels.
 	*/
+<<<<<<< HEAD
 	unsigned short midi_mask_receive;
+=======
+	int midi_mask_receive;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/**
 		 Buffer for incoming MIDI stream.

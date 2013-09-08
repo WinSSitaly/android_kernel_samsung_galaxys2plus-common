@@ -3,7 +3,10 @@
 #include <linux/ipv6.h>
 #include <linux/netfilter.h>
 #include <linux/netfilter_ipv6.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/dst.h>
 #include <net/ipv6.h>
 #include <net/ip6_route.h>
@@ -101,6 +104,7 @@ static int nf_ip6_route(struct net *net, struct dst_entry **dst,
 		.pinet6 = (struct ipv6_pinfo *) &fake_pinfo,
 	};
 	const void *sk = strict ? &fake_sk : NULL;
+<<<<<<< HEAD
 	struct dst_entry *result;
 	int err;
 
@@ -111,6 +115,11 @@ static int nf_ip6_route(struct net *net, struct dst_entry **dst,
 	else
 		*dst = result;
 	return err;
+=======
+
+	*dst = ip6_route_output(net, sk, &fl->u.ip6);
+	return (*dst)->error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 __sum16 nf_ip6_checksum(struct sk_buff *skb, unsigned int hook,

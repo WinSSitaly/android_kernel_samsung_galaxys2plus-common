@@ -43,10 +43,13 @@ u16 hfs_brec_keylen(struct hfs_bnode *node, u16 rec)
 			node->tree->node_size - (rec + 1) * 2);
 		if (!recoff)
 			return 0;
+<<<<<<< HEAD
 		if (recoff > node->tree->node_size - 2) {
 			printk(KERN_ERR "hfs: recoff %d too large\n", recoff);
 			return 0;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		retval = hfs_bnode_read_u16(node, recoff) + 2;
 		if (retval > node->tree->max_key_len + 2) {

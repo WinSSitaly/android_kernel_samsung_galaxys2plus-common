@@ -56,6 +56,10 @@ struct pt_regs {
 #define instruction_pointer(regs)	((regs)->iaoq[0] & ~3)
 #define user_stack_pointer(regs)	((regs)->gr[30])
 unsigned long profile_pc(struct pt_regs *);
+<<<<<<< HEAD
+=======
+extern void show_regs(struct pt_regs *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 #endif /* __KERNEL__ */

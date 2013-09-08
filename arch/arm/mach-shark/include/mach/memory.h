@@ -17,6 +17,11 @@
  */
 #define PLAT_PHYS_OFFSET     UL(0x08000000)
 
+<<<<<<< HEAD
+=======
+#define ARM_DMA_ZONE_SIZE	SZ_4M
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Cache flushing area
  */

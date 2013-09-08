@@ -415,7 +415,11 @@ static const struct i2c_algorithm smbus_algorithm = {
 };
 
 
+<<<<<<< HEAD
 static DEFINE_PCI_DEVICE_TABLE(amd8111_ids) = {
+=======
+static const struct pci_device_id amd8111_ids[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_8111_SMBUS2) },
 	{ 0, }
 };

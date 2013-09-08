@@ -29,6 +29,10 @@
 #include <linux/spinlock.h>
 #include <asm/processor.h>
 #include <asm/fixmap.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct mm_struct;
 struct vm_area_struct;

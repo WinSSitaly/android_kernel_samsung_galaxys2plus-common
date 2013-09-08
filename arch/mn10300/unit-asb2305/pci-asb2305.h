@@ -31,6 +31,11 @@ extern unsigned int pci_probe;
 
 /* pci-asb2305.c */
 
+<<<<<<< HEAD
+=======
+extern unsigned int pcibios_max_latency;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void pcibios_resource_survey(void);
 
 /* pci.c */

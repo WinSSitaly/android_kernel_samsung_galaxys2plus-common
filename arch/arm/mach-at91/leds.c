@@ -9,13 +9,20 @@
  * 2 of the License, or (at your option) any later version.
 */
 
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
 
 #include <mach/board.h>
+<<<<<<< HEAD
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /* ------------------------------------------------------------------------- */

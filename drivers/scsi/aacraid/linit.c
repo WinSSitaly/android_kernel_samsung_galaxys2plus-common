@@ -56,7 +56,11 @@
 
 #include "aacraid.h"
 
+<<<<<<< HEAD
 #define AAC_DRIVER_VERSION		"1.2-0"
+=======
+#define AAC_DRIVER_VERSION		"1.1-7"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef AAC_DRIVER_BRANCH
 #define AAC_DRIVER_BRANCH		""
 #endif
@@ -162,10 +166,14 @@ static const struct pci_device_id aac_pci_tbl[] __devinitdata = {
 	{ 0x9005, 0x0285, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 59 }, /* Adaptec Catch All */
 	{ 0x9005, 0x0286, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 60 }, /* Adaptec Rocket Catch All */
 	{ 0x9005, 0x0288, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 61 }, /* Adaptec NEMER/ARK Catch All */
+<<<<<<< HEAD
 	{ 0x9005, 0x028b, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 62 }, /* Adaptec PMC Series 6 (Tupelo) */
 	{ 0x9005, 0x028c, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 63 }, /* Adaptec PMC Series 7 (Denali) */
 	{ 0x9005, 0x028d, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 64 }, /* Adaptec PMC Series 8 */
 	{ 0x9005, 0x028f, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 65 }, /* Adaptec PMC Series 9 */
+=======
+	{ 0x9005, 0x028b, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 62 }, /* Adaptec PMC Catch All */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0,}
 };
 MODULE_DEVICE_TABLE(pci, aac_pci_tbl);
@@ -241,10 +249,14 @@ static struct aac_driver_ident aac_drivers[] = {
 	{ aac_rx_init, "aacraid",  "ADAPTEC ", "RAID            ", 2 }, /* Adaptec Catch All */
 	{ aac_rkt_init, "aacraid", "ADAPTEC ", "RAID            ", 2 }, /* Adaptec Rocket Catch All */
 	{ aac_nark_init, "aacraid", "ADAPTEC ", "RAID           ", 2 }, /* Adaptec NEMER/ARK Catch All */
+<<<<<<< HEAD
 	{ aac_src_init, "aacraid", "ADAPTEC ", "RAID            ", 2 }, /* Adaptec PMC Series 6 (Tupelo) */
 	{ aac_srcv_init, "aacraid", "ADAPTEC ", "RAID            ", 2 }, /* Adaptec PMC Series 7 (Denali) */
 	{ aac_srcv_init, "aacraid", "ADAPTEC ", "RAID            ", 2 }, /* Adaptec PMC Series 8 */
 	{ aac_srcv_init, "aacraid", "ADAPTEC ", "RAID            ", 2 } /* Adaptec PMC Series 9 */
+=======
+	{ aac_src_init, "aacraid", "ADAPTEC ", "RAID            ", 2 } /* Adaptec PMC Catch All */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -901,17 +913,28 @@ static ssize_t aac_show_serial_number(struct device *device,
 	int len = 0;
 
 	if (le32_to_cpu(dev->adapter_info.serial[0]) != 0xBAD0)
+<<<<<<< HEAD
 		len = snprintf(buf, 16, "%06X\n",
+=======
+		len = snprintf(buf, PAGE_SIZE, "%06X\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  le32_to_cpu(dev->adapter_info.serial[0]));
 	if (len &&
 	  !memcmp(&dev->supplement_adapter_info.MfgPcbaSerialNo[
 	    sizeof(dev->supplement_adapter_info.MfgPcbaSerialNo)-len],
 	  buf, len-1))
+<<<<<<< HEAD
 		len = snprintf(buf, 16, "%.*s\n",
 		  (int)sizeof(dev->supplement_adapter_info.MfgPcbaSerialNo),
 		  dev->supplement_adapter_info.MfgPcbaSerialNo);
 
 	return min(len, 16);
+=======
+		len = snprintf(buf, PAGE_SIZE, "%.*s\n",
+		  (int)sizeof(dev->supplement_adapter_info.MfgPcbaSerialNo),
+		  dev->supplement_adapter_info.MfgPcbaSerialNo);
+	return len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t aac_show_max_channel(struct device *device,
@@ -1108,7 +1131,10 @@ static int __devinit aac_probe_one(struct pci_dev *pdev,
 	int error = -ENODEV;
 	int unique_id = 0;
 	u64 dmamask;
+<<<<<<< HEAD
 	extern int aac_sync_mode;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_for_each_entry(aac, &aac_devices, entry) {
 		if (aac->id > unique_id)
@@ -1169,6 +1195,7 @@ static int __devinit aac_probe_one(struct pci_dev *pdev,
 	if ((*aac_drivers[index].init)(aac))
 		goto out_unmap;
 
+<<<<<<< HEAD
 	if (aac->sync_mode) {
 		if (aac_sync_mode)
 			printk(KERN_INFO "%s%d: Sync. mode enforced "
@@ -1184,6 +1211,8 @@ static int __devinit aac_probe_one(struct pci_dev *pdev,
 				aac->id);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 *	Start any kernel threads needed
 	 */

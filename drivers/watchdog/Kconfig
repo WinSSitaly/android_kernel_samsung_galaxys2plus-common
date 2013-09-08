@@ -28,6 +28,7 @@ menuconfig WATCHDOG
 
 if WATCHDOG
 
+<<<<<<< HEAD
 config WATCHDOG_CORE
 	bool "WatchDog Timer Driver Core"
 	---help---
@@ -36,6 +37,8 @@ config WATCHDOG_CORE
 	  and gives them the /dev/watchdog interface (and later also the
 	  sysfs interface).
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config WATCHDOG_NOWAYOUT
 	bool "Disable watchdog shutdown on close"
 	help
@@ -55,7 +58,10 @@ comment "Watchdog Device Drivers"
 
 config SOFT_WATCHDOG
 	tristate "Software watchdog"
+<<<<<<< HEAD
 	select WATCHDOG_CORE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  A software monitoring watchdog. This will fail to reboot your system
 	  from some situations that the hardware watchdog will recover
@@ -67,7 +73,10 @@ config SOFT_WATCHDOG
 config WM831X_WATCHDOG
 	tristate "WM831x watchdog"
 	depends on MFD_WM831X
+<<<<<<< HEAD
 	select WATCHDOG_CORE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Support for the watchdog in the WM831x AudioPlus PMICs.  When
 	  the watchdog triggers the system will be reset.
@@ -75,7 +84,10 @@ config WM831X_WATCHDOG
 config WM8350_WATCHDOG
 	tristate "WM8350 watchdog"
 	depends on MFD_WM8350
+<<<<<<< HEAD
 	select WATCHDOG_CORE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Support for the watchdog in the WM8350 AudioPlus PMIC.  When
 	  the watchdog triggers the system will be reset.
@@ -172,8 +184,12 @@ config HAVE_S3C2410_WATCHDOG
 
 config S3C2410_WATCHDOG
 	tristate "S3C2410 Watchdog"
+<<<<<<< HEAD
 	depends on HAVE_S3C2410_WATCHDOG
 	select WATCHDOG_CORE
+=======
+	depends on ARCH_S3C2410 || HAVE_S3C2410_WATCHDOG
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Watchdog timer block in the Samsung SoCs. This will reboot
 	  the system when the timer expires with the watchdog enabled.
@@ -198,6 +214,7 @@ config SA1100_WATCHDOG
 	  To compile this driver as a module, choose M here: the
 	  module will be called sa1100_wdt.
 
+<<<<<<< HEAD
 config DW_WATCHDOG
 	tristate "Synopsys DesignWare watchdog"
 	depends on ARM && HAVE_CLK
@@ -207,6 +224,8 @@ config DW_WATCHDOG
 	  To compile this driver as a module, choose M here: the
 	  module will be called dw_wdt.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config MPCORE_WATCHDOG
 	tristate "MPcore watchdog"
 	depends on HAVE_ARM_TWD
@@ -219,7 +238,10 @@ config MPCORE_WATCHDOG
 config EP93XX_WATCHDOG
 	tristate "EP93xx Watchdog"
 	depends on ARCH_EP93XX
+<<<<<<< HEAD
 	select WATCHDOG_CORE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Say Y here if to include support for the watchdog timer
 	  embedded in the Cirrus Logic EP93xx family of devices.
@@ -237,7 +259,10 @@ config OMAP_WATCHDOG
 config PNX4008_WATCHDOG
 	tristate "PNX4008 and LPC32XX Watchdog"
 	depends on ARCH_PNX4008 || ARCH_LPC32XX
+<<<<<<< HEAD
 	select WATCHDOG_CORE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Say Y here if to include support for the watchdog timer
 	  in the PNX4008 or LPC32XX processor.
@@ -287,7 +312,10 @@ config COH901327_WATCHDOG
 	bool "ST-Ericsson COH 901 327 watchdog"
 	depends on ARCH_U300
 	default y if MACH_U300
+<<<<<<< HEAD
 	select WATCHDOG_CORE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Say Y here to include Watchdog timer support for the
 	  watchdog embedded into the ST-Ericsson U300 series platforms.
@@ -319,6 +347,16 @@ config NUC900_WATCHDOG
 	  To compile this driver as a module, choose M here: the
 	  module will be called nuc900_wdt.
 
+<<<<<<< HEAD
+=======
+config ADX_WATCHDOG
+	tristate "Avionic Design Xanthos watchdog"
+	depends on ARCH_PXA_ADX
+	help
+	  Say Y here if you want support for the watchdog timer on Avionic
+	  Design Xanthos boards.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TS72XX_WATCHDOG
 	tristate "TS-72XX SBC Watchdog"
 	depends on MACH_TS72XX
@@ -333,13 +371,20 @@ config TS72XX_WATCHDOG
 config MAX63XX_WATCHDOG
 	tristate "Max63xx watchdog"
 	depends on ARM && HAS_IOMEM
+<<<<<<< HEAD
 	select WATCHDOG_CORE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Support for memory mapped max63{69,70,71,72,73,74} watchdog timer.
 
 config IMX2_WDT
 	tristate "IMX2+ Watchdog"
+<<<<<<< HEAD
 	depends on IMX_HAVE_PLATFORM_IMX2_WDT
+=======
+	depends on ARCH_MX2 || ARCH_MX25 || ARCH_MX3 || ARCH_MX5
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  This is the driver for the hardware watchdog
 	  on the Freescale IMX2 and later processors.
@@ -349,6 +394,33 @@ config IMX2_WDT
 	  To compile this driver as a module, choose M here: the
 	  module will be called imx2_wdt.
 
+<<<<<<< HEAD
+=======
+config KONA_WATCHDOG
+	tristate "KONA Watchdog"
+	depends on ARCH_KONA
+	help
+	  Say Y here if to include support for the watchdog timer
+	  in the KONA architecture.
+	  This driver can be built as a module by choosing M. The module
+	  will be called island_wdt.
+
+	  Say N if you are unsure.
+
+
+config BCM59055_WATCHDOG
+	tristate "BCM59055 Watchdog"
+	depends on MFD_BCM_PMU590XX
+	help
+	  Say Y here if to include support for the watchdog timer
+	  in BCM59055 PMU.
+
+config WD_TAPPER
+	tristate "Watchdog Petter Enable"
+	help
+	  Say Y here if to enable the WD petter for BCMPMU
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # AVR32 Architecture
 
 config AT32AP700X_WDT
@@ -727,7 +799,11 @@ config SBC8360_WDT
 
 config SBC7240_WDT
 	tristate "SBC Nano 7240 Watchdog Timer"
+<<<<<<< HEAD
 	depends on X86_32 && !UML
+=======
+	depends on X86_32
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	---help---
 	  This is the driver for the hardware watchdog found on the IEI
 	  single board computers EPIC Nano 7240 (and likely others). This
@@ -778,6 +854,7 @@ config SMSC37B787_WDT
 
 	  Most people will say N.
 
+<<<<<<< HEAD
 config VIA_WDT
 	tristate "VIA Watchdog Timer"
 	depends on X86
@@ -791,6 +868,8 @@ config VIA_WDT
 
 	Most people will say N.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config W83627HF_WDT
 	tristate "W83627HF/W83627DHG Watchdog Timer"
 	depends on X86
@@ -910,6 +989,7 @@ config M54xx_WATCHDOG
 	  To compile this driver as a module, choose M here: the
 	  module will be called m54xx_wdt.
 
+<<<<<<< HEAD
 # MicroBlaze Architecture
 
 config XILINX_WATCHDOG
@@ -924,6 +1004,8 @@ config XILINX_WATCHDOG
 	  To compile this driver as a module, choose M here: the
 	  module will be called of_xilinx_wdt.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # MIPS Architecture
 
 config ATH79_WDT
@@ -961,7 +1043,10 @@ config INDYDOG
 config JZ4740_WDT
 	tristate "Ingenic jz4740 SoC hardware watchdog"
 	depends on MACH_JZ4740
+<<<<<<< HEAD
 	select WATCHDOG_CORE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Hardware driver for the built-in watchdog timer on Ingenic jz4740 SoCs.
 
@@ -1003,7 +1088,10 @@ config AR7_WDT
 config TXX9_WDT
 	tristate "Toshiba TXx9 Watchdog Timer"
 	depends on CPU_TX39XX || CPU_TX49XX
+<<<<<<< HEAD
 	select WATCHDOG_CORE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Hardware driver for the built-in watchdog timer on TXx9 MIPS SoCs.
 
@@ -1047,7 +1135,11 @@ config LANTIQ_WDT
 
 config GEF_WDT
 	tristate "GE Watchdog Timer"
+<<<<<<< HEAD
 	depends on GE_FPGA
+=======
+	depends on GEF_SBC610 || GEF_SBC310 || GEF_PPC9A
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	---help---
 	  Watchdog timer found in a number of GE single board computers.
 
@@ -1106,7 +1198,11 @@ config BOOKE_WDT_DEFAULT_TIMEOUT
 	  For Freescale Book-E processors, this is a number between 0 and 63.
 	  For other Book-E processors, this is a number between 0 and 3.
 
+<<<<<<< HEAD
 	  The value can be overridden by the wdt_period command-line parameter.
+=======
+	  The value can be overidden by the wdt_period command-line parameter.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # PPC64 Architecture
 
@@ -1190,10 +1286,13 @@ config XEN_WDT
 	  by Xen 4.0 and newer.  The watchdog timeout period is normally one
 	  minute but can be changed with a boot-time parameter.
 
+<<<<<<< HEAD
 config UML_WATCHDOG
 	tristate "UML watchdog"
 	depends on UML
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #
 # ISA-based Watchdog Cards
 #

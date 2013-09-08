@@ -35,7 +35,11 @@ MODULE_LICENSE("GPL");
 
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE;
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_array(index, int, NULL, 0444);
 MODULE_PARM_DESC(index, "Index value for " CRD_NAME " soundcard.");
@@ -585,7 +589,12 @@ static int __devinit snd_galaxy_probe(struct device *dev, unsigned int n)
 
 	if (mpu_port[n] >= 0) {
 		err = snd_mpu401_uart_new(card, 0, MPU401_HW_MPU401,
+<<<<<<< HEAD
 					  mpu_port[n], 0, mpu_irq[n], NULL);
+=======
+					  mpu_port[n], 0, mpu_irq[n],
+					  IRQF_DISABLED, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err < 0)
 			goto error;
 	}

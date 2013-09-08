@@ -43,7 +43,10 @@
 #include <linux/spinlock.h>
 #include <linux/delay.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/initval.h>
 #include <sound/rawmidi.h>
@@ -55,7 +58,11 @@
 
 static int index[SNDRV_CARDS]  = SNDRV_DEFAULT_IDX;
 static char *id[SNDRV_CARDS]   = SNDRV_DEFAULT_STR;
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct platform_device *platform_devices[SNDRV_CARDS]; 
 static int device_count;

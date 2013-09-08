@@ -17,10 +17,17 @@
 #ifndef _LINUX_CRYPTO_H
 #define _LINUX_CRYPTO_H
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
 #include <linux/kernel.h>
 #include <linux/list.h>
 #include <linux/bug.h>
+=======
+#include <asm/atomic.h>
+#include <linux/module.h>
+#include <linux/kernel.h>
+#include <linux/list.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/string.h>
 #include <linux/uaccess.h>
@@ -72,6 +79,7 @@
 #define CRYPTO_ALG_TESTED		0x00000400
 
 /*
+<<<<<<< HEAD
  * Set if the algorithm is an instance that is build from templates.
  */
 #define CRYPTO_ALG_INSTANCE		0x00000800
@@ -82,6 +90,8 @@
 #define CRYPTO_ALG_KERN_DRIVER_ONLY	0x00001000
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Transform masks and values (for crt_flags).
  */
 #define CRYPTO_TFM_REQ_MASK		0x000fff00
@@ -315,8 +325,11 @@ struct crypto_alg {
  */
 int crypto_register_alg(struct crypto_alg *alg);
 int crypto_unregister_alg(struct crypto_alg *alg);
+<<<<<<< HEAD
 int crypto_register_algs(struct crypto_alg *algs, int count);
 int crypto_unregister_algs(struct crypto_alg *algs, int count);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Algorithm query interface.
@@ -517,6 +530,14 @@ static inline int crypto_tfm_alg_priority(struct crypto_tfm *tfm)
 	return tfm->__crt_alg->cra_priority;
 }
 
+<<<<<<< HEAD
+=======
+static inline const char *crypto_tfm_alg_modname(struct crypto_tfm *tfm)
+{
+	return module_name(tfm->__crt_alg->cra_module);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline u32 crypto_tfm_alg_type(struct crypto_tfm *tfm)
 {
 	return tfm->__crt_alg->cra_flags & CRYPTO_ALG_TYPE_MASK;

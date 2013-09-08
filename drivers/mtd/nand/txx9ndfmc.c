@@ -74,6 +74,10 @@ struct txx9ndfmc_drvdata {
 	unsigned char hold;	/* in gbusclock */
 	unsigned char spw;	/* in gbusclock */
 	struct nand_hw_control hw_control;
+<<<<<<< HEAD
+=======
+	struct mtd_partition *parts[MAX_TXX9NDFMC_DEV];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device *mtd_to_platdev(struct mtd_info *mtd)
@@ -286,6 +290,10 @@ static int txx9ndfmc_nand_scan(struct mtd_info *mtd)
 static int __init txx9ndfmc_probe(struct platform_device *dev)
 {
 	struct txx9ndfmc_platform_data *plat = dev->dev.platform_data;
+<<<<<<< HEAD
+=======
+	static const char *probes[] = { "cmdlinepart", NULL };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int hold, spw;
 	int i;
 	struct txx9ndfmc_drvdata *drvdata;
@@ -298,7 +306,15 @@ static int __init txx9ndfmc_probe(struct platform_device *dev)
 	drvdata = devm_kzalloc(&dev->dev, sizeof(*drvdata), GFP_KERNEL);
 	if (!drvdata)
 		return -ENOMEM;
+<<<<<<< HEAD
 	drvdata->base = devm_request_and_ioremap(&dev->dev, res);
+=======
+	if (!devm_request_mem_region(&dev->dev, res->start,
+				     resource_size(res), dev_name(&dev->dev)))
+		return -EBUSY;
+	drvdata->base = devm_ioremap(&dev->dev, res->start,
+				     resource_size(res));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!drvdata->base)
 		return -EBUSY;
 
@@ -327,6 +343,10 @@ static int __init txx9ndfmc_probe(struct platform_device *dev)
 		struct txx9ndfmc_priv *txx9_priv;
 		struct nand_chip *chip;
 		struct mtd_info *mtd;
+<<<<<<< HEAD
+=======
+		int nr_parts;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (!(plat->ch_mask & (1 << i)))
 			continue;
@@ -356,7 +376,10 @@ static int __init txx9ndfmc_probe(struct platform_device *dev)
 		/* txx9ndfmc_nand_scan will overwrite ecc.size and ecc.bytes */
 		chip->ecc.size = 256;
 		chip->ecc.bytes = 3;
+<<<<<<< HEAD
 		chip->ecc.strength = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		chip->chip_delay = 100;
 		chip->controller = &drvdata->hw_control;
 
@@ -387,7 +410,13 @@ static int __init txx9ndfmc_probe(struct platform_device *dev)
 		}
 		mtd->name = txx9_priv->mtdname;
 
+<<<<<<< HEAD
 		mtd_device_parse_register(mtd, NULL, NULL, NULL, 0);
+=======
+		nr_parts = parse_mtd_partitions(mtd, probes,
+						&drvdata->parts[i], 0);
+		mtd_device_register(mtd, drvdata->parts[i], nr_parts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		drvdata->mtds[i] = mtd;
 	}
 
@@ -413,6 +442,10 @@ static int __exit txx9ndfmc_remove(struct platform_device *dev)
 		txx9_priv = chip->priv;
 
 		nand_release(mtd);
+<<<<<<< HEAD
+=======
+		kfree(drvdata->parts[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(txx9_priv->mtdname);
 		kfree(txx9_priv);
 	}

@@ -28,6 +28,11 @@
 # define __IA64_UL(x)		((unsigned long)(x))
 # define __IA64_UL_CONST(x)	x##UL
 
+<<<<<<< HEAD
+=======
+typedef unsigned int umode_t;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * These aren't exported outside the kernel to avoid name space clashes
  */

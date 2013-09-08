@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2006-2012 B.A.T.M.A.N. contributors:
+=======
+ * Copyright (C) 2006-2011 B.A.T.M.A.N. contributors:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Simon Wunderlich, Marek Lindner
  *
@@ -26,8 +30,13 @@
 
 /* returns true if the corresponding bit in the given seq_bits indicates true
  * and curr_seqno is within range of last_seqno */
+<<<<<<< HEAD
 int get_bit_status(const unsigned long *seq_bits, uint32_t last_seqno,
 		   uint32_t curr_seqno);
+=======
+uint8_t get_bit_status(unsigned long *seq_bits, uint32_t last_seqno,
+					   uint32_t curr_seqno);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* turn corresponding bit on, so we can remember that we got the packet */
 void bit_mark(unsigned long *seq_bits, int32_t n);
@@ -35,10 +44,18 @@ void bit_mark(unsigned long *seq_bits, int32_t n);
 
 /* receive and process one packet, returns 1 if received seq_num is considered
  * new, 0 if old  */
+<<<<<<< HEAD
 int bit_get_packet(void *priv, unsigned long *seq_bits,
 		   int32_t seq_num_diff, int set_mark);
 
 /* count the hamming weight, how many good packets did we receive? */
 int bit_packet_count(const unsigned long *seq_bits);
+=======
+char bit_get_packet(void *priv, unsigned long *seq_bits,
+		    int32_t seq_num_diff, int8_t set_mark);
+
+/* count the hamming weight, how many good packets did we receive? */
+int  bit_packet_count(unsigned long *seq_bits);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* _NET_BATMAN_ADV_BITARRAY_H_ */

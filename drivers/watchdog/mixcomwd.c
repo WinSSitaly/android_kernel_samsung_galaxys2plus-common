@@ -39,10 +39,16 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
 #define VERSION "0.6"
 #define WATCHDOG_NAME "mixcomwd"
+=======
+#define VERSION "0.6"
+#define WATCHDOG_NAME "mixcomwd"
+#define PFX WATCHDOG_NAME ": "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/module.h>
 #include <linux/moduleparam.h>
@@ -108,8 +114,13 @@ static int mixcomwd_timer_alive;
 static DEFINE_TIMER(mixcomwd_timer, mixcomwd_timerfun, 0, 0);
 static char expect_close;
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 module_param(nowayout, bool, 0);
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout,
 		"Watchdog cannot be stopped once started (default="
 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
@@ -157,13 +168,23 @@ static int mixcomwd_release(struct inode *inode, struct file *file)
 {
 	if (expect_close == 42) {
 		if (mixcomwd_timer_alive) {
+<<<<<<< HEAD
 			pr_err("release called while internal timer alive\n");
+=======
+			printk(KERN_ERR PFX
+				"release called while internal timer alive");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EBUSY;
 		}
 		mixcomwd_timer_alive = 1;
 		mod_timer(&mixcomwd_timer, jiffies + 5 * HZ);
 	} else
+<<<<<<< HEAD
 		pr_crit("WDT device closed unexpectedly.  WDT will not stop!\n");
+=======
+		printk(KERN_CRIT PFX
+		    "WDT device closed unexpectedly.  WDT will not stop!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	clear_bit(0, &mixcomwd_opened);
 	expect_close = 0;
@@ -273,12 +294,18 @@ static int __init mixcomwd_init(void)
 	}
 
 	if (!found) {
+<<<<<<< HEAD
 		pr_err("No card detected, or port not available\n");
+=======
+		printk(KERN_ERR PFX
+			"No card detected, or port not available.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
 	ret = misc_register(&mixcomwd_miscdev);
 	if (ret) {
+<<<<<<< HEAD
 		pr_err("cannot register miscdev on minor=%d (err=%d)\n",
 		       WATCHDOG_MINOR, ret);
 		goto error_misc_register_watchdog;
@@ -286,6 +313,17 @@ static int __init mixcomwd_init(void)
 
 	pr_info("MixCOM watchdog driver v%s, watchdog port at 0x%3x\n",
 		VERSION, watchdog_port);
+=======
+		printk(KERN_ERR PFX
+			"cannot register miscdev on minor=%d (err=%d)\n",
+					WATCHDOG_MINOR, ret);
+		goto error_misc_register_watchdog;
+	}
+
+	printk(KERN_INFO
+		"MixCOM watchdog driver v%s, watchdog port at 0x%3x\n",
+					VERSION, watchdog_port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
@@ -299,7 +337,12 @@ static void __exit mixcomwd_exit(void)
 {
 	if (!nowayout) {
 		if (mixcomwd_timer_alive) {
+<<<<<<< HEAD
 			pr_warn("I quit now, hardware will probably reboot!\n");
+=======
+			printk(KERN_WARNING PFX "I quit now, hardware will"
+			       " probably reboot!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			del_timer_sync(&mixcomwd_timer);
 			mixcomwd_timer_alive = 0;
 		}

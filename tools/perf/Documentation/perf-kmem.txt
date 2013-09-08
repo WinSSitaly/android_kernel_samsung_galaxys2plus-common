@@ -23,7 +23,11 @@ OPTIONS
 -------
 -i <file>::
 --input=<file>::
+<<<<<<< HEAD
 	Select the input file (default: perf.data unless stdin is a fifo)
+=======
+	Select the input file (default: perf.data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 --caller::
 	Show per-callsite statistics

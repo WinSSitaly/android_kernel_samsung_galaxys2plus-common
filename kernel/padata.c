@@ -1,8 +1,11 @@
 /*
  * padata.c - generic interface to process data streams in parallel
  *
+<<<<<<< HEAD
  * See Documentation/padata.txt for an api documentation.
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (C) 2008, 2009 secunet Security Networks AG
  * Copyright (C) 2008, 2009 Steffen Klassert <steffen.klassert@secunet.com>
  *
@@ -20,7 +23,11 @@
  * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/cpumask.h>
 #include <linux/err.h>
 #include <linux/cpu.h>
@@ -31,6 +38,10 @@
 #include <linux/sysfs.h>
 #include <linux/rcupdate.h>
 
+<<<<<<< HEAD
+=======
+#define MAX_SEQ_NR (INT_MAX - NR_CPUS)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MAX_OBJ_NUM 1000
 
 static int padata_index_to_cpu(struct parallel_data *pd, int cpu_index)
@@ -44,19 +55,32 @@ static int padata_index_to_cpu(struct parallel_data *pd, int cpu_index)
 	return target_cpu;
 }
 
+<<<<<<< HEAD
 static int padata_cpu_hash(struct parallel_data *pd)
 {
 	int cpu_index;
+=======
+static int padata_cpu_hash(struct padata_priv *padata)
+{
+	int cpu_index;
+	struct parallel_data *pd;
+
+	pd =  padata->pd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Hash the sequence numbers to the cpus by taking
 	 * seq_nr mod. number of cpus in use.
 	 */
+<<<<<<< HEAD
 
 	spin_lock(&pd->seq_lock);
 	cpu_index =  pd->seq_nr % cpumask_weight(pd->cpumask.pcpu);
 	pd->seq_nr++;
 	spin_unlock(&pd->seq_lock);
+=======
+	cpu_index =  padata->seq_nr % cpumask_weight(pd->cpumask.pcpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return padata_index_to_cpu(pd, cpu_index);
 }
@@ -134,7 +158,16 @@ int padata_do_parallel(struct padata_instance *pinst,
 	padata->pd = pd;
 	padata->cb_cpu = cb_cpu;
 
+<<<<<<< HEAD
 	target_cpu = padata_cpu_hash(pd);
+=======
+	if (unlikely(atomic_read(&pd->seq_nr) == pd->max_seq_nr))
+		atomic_set(&pd->seq_nr, -1);
+
+	padata->seq_nr = atomic_inc_return(&pd->seq_nr);
+
+	target_cpu = padata_cpu_hash(padata);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	queue = per_cpu_ptr(pd->pqueue, target_cpu);
 
 	spin_lock(&queue->parallel.lock);
@@ -170,7 +203,11 @@ EXPORT_SYMBOL(padata_do_parallel);
 static struct padata_priv *padata_get_next(struct parallel_data *pd)
 {
 	int cpu, num_cpus;
+<<<<<<< HEAD
 	unsigned int next_nr, next_index;
+=======
+	int next_nr, next_index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct padata_parallel_queue *queue, *next_queue;
 	struct padata_priv *padata;
 	struct padata_list *reorder;
@@ -186,6 +223,17 @@ static struct padata_priv *padata_get_next(struct parallel_data *pd)
 	cpu = padata_index_to_cpu(pd, next_index);
 	next_queue = per_cpu_ptr(pd->pqueue, cpu);
 
+<<<<<<< HEAD
+=======
+	if (unlikely(next_nr > pd->max_seq_nr)) {
+		next_nr = next_nr - pd->max_seq_nr - 1;
+		next_index = next_nr % num_cpus;
+		cpu = padata_index_to_cpu(pd, next_index);
+		next_queue = per_cpu_ptr(pd->pqueue, cpu);
+		pd->processed = 0;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	padata = NULL;
 
 	reorder = &next_queue->reorder;
@@ -194,6 +242,11 @@ static struct padata_priv *padata_get_next(struct parallel_data *pd)
 		padata = list_entry(reorder->list.next,
 				    struct padata_priv, list);
 
+<<<<<<< HEAD
+=======
+		BUG_ON(next_nr != padata->seq_nr);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_lock(&reorder->lock);
 		list_del_init(&padata->list);
 		atomic_dec(&pd->reorder_objects);
@@ -217,7 +270,10 @@ out:
 
 static void padata_reorder(struct parallel_data *pd)
 {
+<<<<<<< HEAD
 	int cb_cpu;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct padata_priv *padata;
 	struct padata_serial_queue *squeue;
 	struct padata_instance *pinst = pd->pinst;
@@ -258,14 +314,22 @@ static void padata_reorder(struct parallel_data *pd)
 			return;
 		}
 
+<<<<<<< HEAD
 		cb_cpu = padata->cb_cpu;
 		squeue = per_cpu_ptr(pd->squeue, cb_cpu);
+=======
+		squeue = per_cpu_ptr(pd->squeue, padata->cb_cpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		spin_lock(&squeue->serial.lock);
 		list_add_tail(&padata->list, &squeue->serial.list);
 		spin_unlock(&squeue->serial.lock);
 
+<<<<<<< HEAD
 		queue_work_on(cb_cpu, pinst->wq, &squeue->work);
+=======
+		queue_work_on(padata->cb_cpu, pinst->wq, &squeue->work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	spin_unlock_bh(&pd->lock);
@@ -356,13 +420,21 @@ static int padata_setup_cpumasks(struct parallel_data *pd,
 	if (!alloc_cpumask_var(&pd->cpumask.pcpu, GFP_KERNEL))
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	cpumask_and(pd->cpumask.pcpu, pcpumask, cpu_online_mask);
+=======
+	cpumask_and(pd->cpumask.pcpu, pcpumask, cpu_active_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!alloc_cpumask_var(&pd->cpumask.cbcpu, GFP_KERNEL)) {
 		free_cpumask_var(pd->cpumask.cbcpu);
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	cpumask_and(pd->cpumask.cbcpu, cbcpumask, cpu_online_mask);
+=======
+	cpumask_and(pd->cpumask.cbcpu, cbcpumask, cpu_active_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -389,7 +461,11 @@ static void padata_init_squeues(struct parallel_data *pd)
 /* Initialize all percpu queues used by parallel workers */
 static void padata_init_pqueues(struct parallel_data *pd)
 {
+<<<<<<< HEAD
 	int cpu_index, cpu;
+=======
+	int cpu_index, num_cpus, cpu;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct padata_parallel_queue *pqueue;
 
 	cpu_index = 0;
@@ -404,6 +480,12 @@ static void padata_init_pqueues(struct parallel_data *pd)
 		INIT_WORK(&pqueue->work, padata_parallel_worker);
 		atomic_set(&pqueue->num_obj, 0);
 	}
+<<<<<<< HEAD
+=======
+
+	num_cpus = cpumask_weight(pd->cpumask.pcpu);
+	pd->max_seq_nr = num_cpus ? (MAX_SEQ_NR / num_cpus) * num_cpus - 1 : 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Allocate and initialize the internal cpumask dependend resources. */
@@ -430,7 +512,11 @@ static struct parallel_data *padata_alloc_pd(struct padata_instance *pinst,
 	padata_init_pqueues(pd);
 	padata_init_squeues(pd);
 	setup_timer(&pd->timer, padata_reorder_timer, (unsigned long)pd);
+<<<<<<< HEAD
 	pd->seq_nr = 0;
+=======
+	atomic_set(&pd->seq_nr, -1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atomic_set(&pd->reorder_objects, 0);
 	atomic_set(&pd->refcnt, 0);
 	pd->pinst = pinst;
@@ -566,7 +652,11 @@ EXPORT_SYMBOL(padata_unregister_cpumask_notifier);
 static bool padata_validate_cpumask(struct padata_instance *pinst,
 				    const struct cpumask *cpumask)
 {
+<<<<<<< HEAD
 	if (!cpumask_intersects(cpumask, cpu_online_mask)) {
+=======
+	if (!cpumask_intersects(cpumask, cpu_active_mask)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pinst->flags |= PADATA_INVALID;
 		return false;
 	}
@@ -680,7 +770,11 @@ static int __padata_add_cpu(struct padata_instance *pinst, int cpu)
 {
 	struct parallel_data *pd;
 
+<<<<<<< HEAD
 	if (cpumask_test_cpu(cpu, cpu_online_mask)) {
+=======
+	if (cpumask_test_cpu(cpu, cpu_active_mask)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pd = padata_alloc_pd(pinst, pinst->cpumask.pcpu,
 				     pinst->cpumask.cbcpu);
 		if (!pd)
@@ -748,9 +842,12 @@ static int __padata_remove_cpu(struct padata_instance *pinst, int cpu)
 			return -ENOMEM;
 
 		padata_replace(pinst, pd);
+<<<<<<< HEAD
 
 		cpumask_clear_cpu(cpu, pd->cpumask.cbcpu);
 		cpumask_clear_cpu(cpu, pd->cpumask.pcpu);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;

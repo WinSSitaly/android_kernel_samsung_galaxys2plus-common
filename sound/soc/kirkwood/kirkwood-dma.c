@@ -55,7 +55,11 @@ static struct snd_pcm_hardware kirkwood_dma_snd_hw = {
 	.fifo_size		= 0,
 };
 
+<<<<<<< HEAD
 static u64 kirkwood_dma_dmamask = DMA_BIT_MASK(32);
+=======
+static u64 kirkwood_dma_dmamask = 0xFFFFFFFFUL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static irqreturn_t kirkwood_dma_irq(int irq, void *dev_id)
 {
@@ -94,10 +98,16 @@ static irqreturn_t kirkwood_dma_irq(int irq, void *dev_id)
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
 static void
 kirkwood_dma_conf_mbus_windows(void __iomem *base, int win,
 			       unsigned long dma,
 			       const struct mbus_dram_target_info *dram)
+=======
+static void kirkwood_dma_conf_mbus_windows(void __iomem *base, int win,
+					unsigned long dma,
+					struct mbus_dram_target_info *dram)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 
@@ -107,7 +117,11 @@ kirkwood_dma_conf_mbus_windows(void __iomem *base, int win,
 
 	/* try to find matching cs for current dma address */
 	for (i = 0; i < dram->num_cs; i++) {
+<<<<<<< HEAD
 		const struct mbus_dram_window *cs = dram->cs + i;
+=======
+		struct mbus_dram_window *cs = dram->cs + i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if ((cs->base & 0xffff0000) < (dma & 0xffff0000)) {
 			writel(cs->base & 0xffff0000,
 				base + KIRKWOOD_AUDIO_WIN_BASE_REG(win));
@@ -128,7 +142,10 @@ static int kirkwood_dma_open(struct snd_pcm_substream *substream)
 	struct snd_soc_dai *cpu_dai = soc_runtime->cpu_dai;
 	struct kirkwood_dma_data *priv;
 	struct kirkwood_dma_priv *prdata = snd_soc_platform_get_drvdata(platform);
+<<<<<<< HEAD
 	const struct mbus_dram_target_info *dram;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long addr;
 
 	priv = snd_soc_dai_get_dma_data(cpu_dai, substream);
@@ -177,16 +194,27 @@ static int kirkwood_dma_open(struct snd_pcm_substream *substream)
 		writel((unsigned long)-1, priv->io + KIRKWOOD_ERR_MASK);
 	}
 
+<<<<<<< HEAD
 	dram = mv_mbus_dram_info();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	addr = virt_to_phys(substream->dma_buffer.area);
 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
 		prdata->play_stream = substream;
 		kirkwood_dma_conf_mbus_windows(priv->io,
+<<<<<<< HEAD
 			KIRKWOOD_PLAYBACK_WIN, addr, dram);
 	} else {
 		prdata->rec_stream = substream;
 		kirkwood_dma_conf_mbus_windows(priv->io,
 			KIRKWOOD_RECORD_WIN, addr, dram);
+=======
+			KIRKWOOD_PLAYBACK_WIN, addr, priv->dram);
+	} else {
+		prdata->rec_stream = substream;
+		kirkwood_dma_conf_mbus_windows(priv->io,
+			KIRKWOOD_RECORD_WIN, addr, priv->dram);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -315,25 +343,41 @@ static int kirkwood_dma_preallocate_dma_buffer(struct snd_pcm *pcm,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int kirkwood_dma_new(struct snd_soc_pcm_runtime *rtd)
 {
 	struct snd_card *card = rtd->card->snd_card;
 	struct snd_pcm *pcm = rtd->pcm;
+=======
+static int kirkwood_dma_new(struct snd_card *card,
+		struct snd_soc_dai *dai, struct snd_pcm *pcm)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	if (!card->dev->dma_mask)
 		card->dev->dma_mask = &kirkwood_dma_dmamask;
 	if (!card->dev->coherent_dma_mask)
+<<<<<<< HEAD
 		card->dev->coherent_dma_mask = DMA_BIT_MASK(32);
 
 	if (pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream) {
+=======
+		card->dev->coherent_dma_mask = 0xffffffff;
+
+	if (dai->driver->playback.channels_min) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = kirkwood_dma_preallocate_dma_buffer(pcm,
 				SNDRV_PCM_STREAM_PLAYBACK);
 		if (ret)
 			return ret;
 	}
 
+<<<<<<< HEAD
 	if (pcm->streams[SNDRV_PCM_STREAM_CAPTURE].substream) {
+=======
+	if (dai->driver->capture.channels_min) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = kirkwood_dma_preallocate_dma_buffer(pcm,
 				SNDRV_PCM_STREAM_CAPTURE);
 		if (ret)
@@ -390,7 +434,21 @@ static struct platform_driver kirkwood_pcm_driver = {
 	.remove = __devexit_p(kirkwood_soc_platform_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(kirkwood_pcm_driver);
+=======
+static int __init kirkwood_pcm_init(void)
+{
+	return platform_driver_register(&kirkwood_pcm_driver);
+}
+module_init(kirkwood_pcm_init);
+
+static void __exit kirkwood_pcm_exit(void)
+{
+	platform_driver_unregister(&kirkwood_pcm_driver);
+}
+module_exit(kirkwood_pcm_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Arnaud Patard <arnaud.patard@rtp-net.org>");
 MODULE_DESCRIPTION("Marvell Kirkwood Audio DMA module");

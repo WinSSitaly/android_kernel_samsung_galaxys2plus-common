@@ -510,7 +510,11 @@ static int __devinit imx_keypad_probe(struct platform_device *pdev)
 	/* Ensure that the keypad will stay dormant until opened */
 	imx_keypad_inhibit(keypad);
 
+<<<<<<< HEAD
 	error = request_irq(irq, imx_keypad_irq_handler, 0,
+=======
+	error = request_irq(irq, imx_keypad_irq_handler, IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    pdev->name, keypad);
 	if (error) {
 		dev_err(&pdev->dev, "failed to request IRQ\n");
@@ -567,6 +571,7 @@ static int __devexit imx_keypad_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM_SLEEP
 static int imx_kbd_suspend(struct device *dev)
 {
@@ -610,16 +615,37 @@ static int imx_kbd_resume(struct device *dev)
 
 static SIMPLE_DEV_PM_OPS(imx_kbd_pm_ops, imx_kbd_suspend, imx_kbd_resume);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver imx_keypad_driver = {
 	.driver		= {
 		.name	= "imx-keypad",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.pm	= &imx_kbd_pm_ops,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe		= imx_keypad_probe,
 	.remove		= __devexit_p(imx_keypad_remove),
 };
+<<<<<<< HEAD
 module_platform_driver(imx_keypad_driver);
+=======
+
+static int __init imx_keypad_init(void)
+{
+	return platform_driver_register(&imx_keypad_driver);
+}
+
+static void __exit imx_keypad_exit(void)
+{
+	platform_driver_unregister(&imx_keypad_driver);
+}
+
+module_init(imx_keypad_init);
+module_exit(imx_keypad_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Alberto Panizzo <maramaopercheseimorto@gmail.com>");
 MODULE_DESCRIPTION("IMX Keypad Port Driver");

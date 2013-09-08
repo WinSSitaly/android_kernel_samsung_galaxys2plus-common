@@ -8,7 +8,10 @@
 #include <linux/list.h>
 #include <linux/slab.h>
 #include <linux/err.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mfd/abx500.h>
 
 static LIST_HEAD(abx500_list);

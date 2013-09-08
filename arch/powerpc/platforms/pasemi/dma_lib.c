@@ -19,11 +19,18 @@
 
 #include <linux/kernel.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/pci.h>
 #include <linux/slab.h>
 #include <linux/of.h>
 #include <linux/sched.h>
+=======
+#include <linux/module.h>
+#include <linux/pci.h>
+#include <linux/slab.h>
+#include <linux/of.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/pasemi_dma.h>
 
@@ -577,7 +584,11 @@ int pasemi_dma_init(void)
 		res.start = 0xfd800000;
 		res.end = res.start + 0x1000;
 	}
+<<<<<<< HEAD
 	dma_status = __ioremap(res.start, resource_size(&res), 0);
+=======
+	dma_status = __ioremap(res.start, res.end-res.start, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pci_dev_put(iob_pdev);
 
 	for (i = 0; i < MAX_TXCH; i++)

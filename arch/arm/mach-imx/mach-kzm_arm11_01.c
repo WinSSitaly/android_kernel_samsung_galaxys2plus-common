@@ -24,8 +24,11 @@
 #include <linux/serial_8250.h>
 #include <linux/smsc911x.h>
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/regulator/machine.h>
 #include <linux/regulator/fixed.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/irq.h>
 #include <asm/mach-types.h>
@@ -38,7 +41,10 @@
 
 #include <mach/clock.h>
 #include <mach/common.h>
+<<<<<<< HEAD
 #include <mach/hardware.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/iomux-mx3.h>
 
 #include "devices-imx31.h"
@@ -168,11 +174,14 @@ static struct platform_device kzm_smsc9118_device = {
 			  },
 };
 
+<<<<<<< HEAD
 static struct regulator_consumer_supply dummy_supplies[] = {
 	REGULATOR_SUPPLY("vdd33a", "smsc911x"),
 	REGULATOR_SUPPLY("vddvario", "smsc911x"),
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init kzm_init_smsc9118(void)
 {
 	/*
@@ -182,8 +191,11 @@ static int __init kzm_init_smsc9118(void)
 	gpio_request(IOMUX_TO_GPIO(MX31_PIN_GPIO1_2), "smsc9118-int");
 	gpio_direction_input(IOMUX_TO_GPIO(MX31_PIN_GPIO1_2));
 
+<<<<<<< HEAD
 	regulator_register_fixed(0, dummy_supplies, ARRAY_SIZE(dummy_supplies));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return platform_device_register(&kzm_smsc9118_device);
 }
 #else
@@ -233,8 +245,11 @@ static int kzm_pins[] __initdata = {
  */
 static void __init kzm_board_init(void)
 {
+<<<<<<< HEAD
 	imx31_soc_init();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mxc_iomux_setup_multiple_pins(kzm_pins,
 				      ARRAY_SIZE(kzm_pins), "kzm");
 	kzm_init_ext_uart();
@@ -281,6 +296,7 @@ static struct sys_timer kzm_timer = {
 };
 
 MACHINE_START(KZM_ARM11_01, "Kyoto Microcomputer Co., Ltd. KZM-ARM11-01")
+<<<<<<< HEAD
 	.atag_offset = 0x100,
 	.map_io = kzm_map_io,
 	.init_early = imx31_init_early,
@@ -289,4 +305,12 @@ MACHINE_START(KZM_ARM11_01, "Kyoto Microcomputer Co., Ltd. KZM-ARM11-01")
 	.timer = &kzm_timer,
 	.init_machine = kzm_board_init,
 	.restart	= mxc_restart,
+=======
+	.boot_params = MX3x_PHYS_OFFSET + 0x100,
+	.map_io = kzm_map_io,
+	.init_early = imx31_init_early,
+	.init_irq = mx31_init_irq,
+	.timer = &kzm_timer,
+	.init_machine = kzm_board_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

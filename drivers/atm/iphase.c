@@ -53,11 +53,19 @@
 #include <linux/delay.h>  
 #include <linux/uio.h>  
 #include <linux/init.h>  
+<<<<<<< HEAD
 #include <linux/interrupt.h>
 #include <linux/wait.h>
 #include <linux/slab.h>
 #include <asm/io.h>  
 #include <linux/atomic.h>
+=======
+#include <linux/wait.h>
+#include <linux/slab.h>
+#include <asm/system.h>  
+#include <asm/io.h>  
+#include <asm/atomic.h>  
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>  
 #include <asm/string.h>  
 #include <asm/byteorder.h>  
@@ -817,6 +825,7 @@ static void ia_hw_type(IADEV *iadev) {
 
 }
 
+<<<<<<< HEAD
 static u32 ia_phy_read32(struct iadev_priv *ia, unsigned int reg)
 {
 	return readl(ia->phy + (reg >> 2));
@@ -963,6 +972,129 @@ static void ia_suni_pm7345_init(struct iadev_priv *iadev)
 	ia_phy_write32(iadev, SUNI_CONFIG, ia_phy_read32(iadev, SUNI_CONFIG) &
 		~(SUNI_PM7345_LLB | SUNI_PM7345_CLB |
 		  SUNI_PM7345_DLB | SUNI_PM7345_PLB));
+=======
+static void IaFrontEndIntr(IADEV *iadev) {
+  volatile IA_SUNI *suni;
+  volatile ia_mb25_t *mb25;
+  volatile suni_pm7345_t *suni_pm7345;
+
+  if(iadev->phy_type & FE_25MBIT_PHY) {
+     mb25 = (ia_mb25_t*)iadev->phy;
+     iadev->carrier_detect =  Boolean(mb25->mb25_intr_status & MB25_IS_GSB);
+  } else if (iadev->phy_type & FE_DS3_PHY) {
+     suni_pm7345 = (suni_pm7345_t *)iadev->phy;
+     /* clear FRMR interrupts */
+     (void) suni_pm7345->suni_ds3_frm_intr_stat; 
+     iadev->carrier_detect =  
+           Boolean(!(suni_pm7345->suni_ds3_frm_stat & SUNI_DS3_LOSV));
+  } else if (iadev->phy_type & FE_E3_PHY ) {
+     suni_pm7345 = (suni_pm7345_t *)iadev->phy;
+     (void) suni_pm7345->suni_e3_frm_maint_intr_ind;
+     iadev->carrier_detect =
+           Boolean(!(suni_pm7345->suni_e3_frm_fram_intr_ind_stat&SUNI_E3_LOS));
+  }
+  else { 
+     suni = (IA_SUNI *)iadev->phy;
+     (void) suni->suni_rsop_status;
+     iadev->carrier_detect = Boolean(!(suni->suni_rsop_status & SUNI_LOSV));
+  }
+  if (iadev->carrier_detect)
+    printk("IA: SUNI carrier detected\n");
+  else
+    printk("IA: SUNI carrier lost signal\n"); 
+  return;
+}
+
+static void ia_mb25_init (IADEV *iadev)
+{
+   volatile ia_mb25_t  *mb25 = (ia_mb25_t*)iadev->phy;
+#if 0
+   mb25->mb25_master_ctrl = MB25_MC_DRIC | MB25_MC_DREC | MB25_MC_ENABLED;
+#endif
+   mb25->mb25_master_ctrl = MB25_MC_DRIC | MB25_MC_DREC;
+   mb25->mb25_diag_control = 0;
+   /*
+    * Initialize carrier detect state
+    */
+   iadev->carrier_detect =  Boolean(mb25->mb25_intr_status & MB25_IS_GSB);
+   return;
+}                   
+
+static void ia_suni_pm7345_init (IADEV *iadev)
+{
+   volatile suni_pm7345_t *suni_pm7345 = (suni_pm7345_t *)iadev->phy;
+   if (iadev->phy_type & FE_DS3_PHY)
+   {
+      iadev->carrier_detect = 
+          Boolean(!(suni_pm7345->suni_ds3_frm_stat & SUNI_DS3_LOSV)); 
+      suni_pm7345->suni_ds3_frm_intr_enbl = 0x17;
+      suni_pm7345->suni_ds3_frm_cfg = 1;
+      suni_pm7345->suni_ds3_tran_cfg = 1;
+      suni_pm7345->suni_config = 0;
+      suni_pm7345->suni_splr_cfg = 0;
+      suni_pm7345->suni_splt_cfg = 0;
+   }
+   else 
+   {
+      iadev->carrier_detect = 
+          Boolean(!(suni_pm7345->suni_e3_frm_fram_intr_ind_stat & SUNI_E3_LOS));
+      suni_pm7345->suni_e3_frm_fram_options = 0x4;
+      suni_pm7345->suni_e3_frm_maint_options = 0x20;
+      suni_pm7345->suni_e3_frm_fram_intr_enbl = 0x1d;
+      suni_pm7345->suni_e3_frm_maint_intr_enbl = 0x30;
+      suni_pm7345->suni_e3_tran_stat_diag_options = 0x0;
+      suni_pm7345->suni_e3_tran_fram_options = 0x1;
+      suni_pm7345->suni_config = SUNI_PM7345_E3ENBL;
+      suni_pm7345->suni_splr_cfg = 0x41;
+      suni_pm7345->suni_splt_cfg = 0x41;
+   } 
+   /*
+    * Enable RSOP loss of signal interrupt.
+    */
+   suni_pm7345->suni_intr_enbl = 0x28;
+ 
+   /*
+    * Clear error counters
+    */
+   suni_pm7345->suni_id_reset = 0;
+
+   /*
+    * Clear "PMCTST" in master test register.
+    */
+   suni_pm7345->suni_master_test = 0;
+
+   suni_pm7345->suni_rxcp_ctrl = 0x2c;
+   suni_pm7345->suni_rxcp_fctrl = 0x81;
+ 
+   suni_pm7345->suni_rxcp_idle_pat_h1 =
+   	suni_pm7345->suni_rxcp_idle_pat_h2 =
+   	suni_pm7345->suni_rxcp_idle_pat_h3 = 0;
+   suni_pm7345->suni_rxcp_idle_pat_h4 = 1;
+ 
+   suni_pm7345->suni_rxcp_idle_mask_h1 = 0xff;
+   suni_pm7345->suni_rxcp_idle_mask_h2 = 0xff;
+   suni_pm7345->suni_rxcp_idle_mask_h3 = 0xff;
+   suni_pm7345->suni_rxcp_idle_mask_h4 = 0xfe;
+ 
+   suni_pm7345->suni_rxcp_cell_pat_h1 =
+   	suni_pm7345->suni_rxcp_cell_pat_h2 =
+   	suni_pm7345->suni_rxcp_cell_pat_h3 = 0;
+   suni_pm7345->suni_rxcp_cell_pat_h4 = 1;
+ 
+   suni_pm7345->suni_rxcp_cell_mask_h1 =
+   	suni_pm7345->suni_rxcp_cell_mask_h2 =
+   	suni_pm7345->suni_rxcp_cell_mask_h3 =
+   	suni_pm7345->suni_rxcp_cell_mask_h4 = 0xff;
+ 
+   suni_pm7345->suni_txcp_ctrl = 0xa4;
+   suni_pm7345->suni_txcp_intr_en_sts = 0x10;
+   suni_pm7345->suni_txcp_idle_pat_h5 = 0x55;
+ 
+   suni_pm7345->suni_config &= ~(SUNI_PM7345_LLB |
+                                 SUNI_PM7345_CLB |
+                                 SUNI_PM7345_DLB |
+                                  SUNI_PM7345_PLB);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef __SNMP__
    suni_pm7345->suni_rxcp_intr_en_sts |= SUNI_OOCDE;
 #endif /* __SNMP__ */
@@ -1319,8 +1451,13 @@ static void rx_dle_intr(struct atm_dev *dev)
           if (ia_vcc == NULL)
           {
              atomic_inc(&vcc->stats->rx_err);
+<<<<<<< HEAD
              atm_return(vcc, skb->truesize);
              dev_kfree_skb_any(skb);
+=======
+             dev_kfree_skb_any(skb);
+             atm_return(vcc, atm_guess_pdu2truesize(len));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
              goto INCR_DLE;
            }
           // get real pkt length  pwang_test
@@ -1333,8 +1470,13 @@ static void rx_dle_intr(struct atm_dev *dev)
              atomic_inc(&vcc->stats->rx_err);
              IF_ERR(printk("rx_dle_intr: Bad  AAL5 trailer %d (skb len %d)", 
                                                             length, skb->len);)
+<<<<<<< HEAD
              atm_return(vcc, skb->truesize);
              dev_kfree_skb_any(skb);
+=======
+             dev_kfree_skb_any(skb);
+             atm_return(vcc, atm_guess_pdu2truesize(len));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
              goto INCR_DLE;
           }
           skb_trim(skb, length);
@@ -1449,10 +1591,17 @@ static int rx_init(struct atm_dev *dev)
 	       iadev->dma + IPHASE5575_RX_LIST_ADDR);  
 	IF_INIT(printk("Tx Dle list addr: 0x%p value: 0x%0x\n",
                       iadev->dma+IPHASE5575_TX_LIST_ADDR,
+<<<<<<< HEAD
                       readl(iadev->dma + IPHASE5575_TX_LIST_ADDR));
 	printk("Rx Dle list addr: 0x%p value: 0x%0x\n",
                       iadev->dma+IPHASE5575_RX_LIST_ADDR,
                       readl(iadev->dma + IPHASE5575_RX_LIST_ADDR));)
+=======
+                      *(u32*)(iadev->dma+IPHASE5575_TX_LIST_ADDR));  
+	printk("Rx Dle list addr: 0x%p value: 0x%0x\n",
+                      iadev->dma+IPHASE5575_RX_LIST_ADDR,
+                      *(u32*)(iadev->dma+IPHASE5575_RX_LIST_ADDR));)  
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   
 	writew(0xffff, iadev->reass_reg+REASS_MASK_REG);  
 	writew(0, iadev->reass_reg+MODE_REG);  
@@ -2232,7 +2381,11 @@ static irqreturn_t ia_int(int irq, void *dev_id)
 	if (status & STAT_DLERINT)  
 	{  
 	   /* Clear this bit by writing a 1 to it. */  
+<<<<<<< HEAD
 	   writel(STAT_DLERINT, iadev->reg + IPHASE5575_BUS_STATUS_REG);
+=======
+	   *(u_int *)(iadev->reg+IPHASE5575_BUS_STATUS_REG) = STAT_DLERINT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	   rx_dle_intr(dev);  
 	}  
 	if (status & STAT_SEGINT)  
@@ -2243,13 +2396,21 @@ static irqreturn_t ia_int(int irq, void *dev_id)
 	}  
 	if (status & STAT_DLETINT)  
 	{  
+<<<<<<< HEAD
 	   writel(STAT_DLETINT, iadev->reg + IPHASE5575_BUS_STATUS_REG);
+=======
+	   *(u_int *)(iadev->reg+IPHASE5575_BUS_STATUS_REG) = STAT_DLETINT;  
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	   tx_dle_intr(dev);  
 	}  
 	if (status & (STAT_FEINT | STAT_ERRINT | STAT_MARKINT))  
 	{  
            if (status & STAT_FEINT) 
+<<<<<<< HEAD
                ia_frontend_intr(iadev);
+=======
+               IaFrontEndIntr(iadev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}  
    }
    return IRQ_RETVAL(handled);
@@ -2580,7 +2741,11 @@ static int __devinit ia_start(struct atm_dev *dev)
 				goto err_free_rx;
 		}
 		/* Get iadev->carrier_detect status */
+<<<<<<< HEAD
 		ia_frontend_intr(iadev);
+=======
+		IaFrontEndIntr(iadev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 
@@ -2851,7 +3016,11 @@ static int ia_ioctl(struct atm_dev *dev, unsigned int cmd, void __user *arg)
 
          case 0xb:
 	    if (!capable(CAP_NET_ADMIN)) return -EPERM;
+<<<<<<< HEAD
             ia_frontend_intr(iadev);
+=======
+            IaFrontEndIntr(iadev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
             break;
          case 0xa:
 	    if (!capable(CAP_NET_ADMIN)) return -EPERM;

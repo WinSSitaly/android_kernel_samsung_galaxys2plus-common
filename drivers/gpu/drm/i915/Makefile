@@ -3,7 +3,11 @@
 # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
 
 ccflags-y := -Iinclude/drm
+<<<<<<< HEAD
 i915-y := i915_drv.o i915_dma.o i915_irq.o \
+=======
+i915-y := i915_drv.o i915_dma.o i915_irq.o i915_mem.o \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	  i915_debugfs.o \
           i915_suspend.o \
 	  i915_gem.o \
@@ -28,7 +32,10 @@ i915-y := i915_drv.o i915_dma.o i915_irq.o \
 	  intel_dvo.o \
 	  intel_ringbuffer.o \
 	  intel_overlay.o \
+<<<<<<< HEAD
 	  intel_sprite.o \
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	  intel_opregion.o \
 	  dvo_ch7xxx.o \
 	  dvo_ch7017.o \

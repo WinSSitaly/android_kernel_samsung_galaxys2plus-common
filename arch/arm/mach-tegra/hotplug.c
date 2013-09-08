@@ -13,7 +13,10 @@
 #include <linux/smp.h>
 
 #include <asm/cacheflush.h>
+<<<<<<< HEAD
 #include <asm/cp15.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void cpu_enter_lowpower(void)
 {

@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2007-2012 B.A.T.M.A.N. contributors:
+=======
+ * Copyright (C) 2007-2011 B.A.T.M.A.N. contributors:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Marek Lindner, Simon Wunderlich
  *
@@ -24,6 +28,7 @@
 
 #define ETH_P_BATMAN  0x4305	/* unofficial/not registered Ethertype */
 
+<<<<<<< HEAD
 enum bat_packettype {
 	BAT_OGM		 = 0x01,
 	BAT_ICMP	 = 0x02,
@@ -114,11 +119,65 @@ struct batman_ogm_packet {
 struct icmp_packet {
 	struct batman_header header;
 	uint8_t  msg_type; /* see ICMP message types above */
+=======
+#define BAT_PACKET       0x01
+#define BAT_ICMP         0x02
+#define BAT_UNICAST      0x03
+#define BAT_BCAST        0x04
+#define BAT_VIS          0x05
+#define BAT_UNICAST_FRAG 0x06
+
+/* this file is included by batctl which needs these defines */
+#define COMPAT_VERSION 12
+#define DIRECTLINK 0x40
+#define VIS_SERVER 0x20
+#define PRIMARIES_FIRST_HOP 0x10
+
+/* ICMP message types */
+#define ECHO_REPLY 0
+#define DESTINATION_UNREACHABLE 3
+#define ECHO_REQUEST 8
+#define TTL_EXCEEDED 11
+#define PARAMETER_PROBLEM 12
+
+/* vis defines */
+#define VIS_TYPE_SERVER_SYNC		0
+#define VIS_TYPE_CLIENT_UPDATE		1
+
+/* fragmentation defines */
+#define UNI_FRAG_HEAD 0x01
+#define UNI_FRAG_LARGETAIL 0x02
+
+struct batman_packet {
+	uint8_t  packet_type;
+	uint8_t  version;  /* batman version field */
+	uint8_t  flags;    /* 0x40: DIRECTLINK flag, 0x20 VIS_SERVER flag... */
+	uint8_t  tq;
+	uint32_t seqno;
+	uint8_t  orig[6];
+	uint8_t  prev_sender[6];
+	uint8_t  ttl;
+	uint8_t  num_tt;
+	uint8_t  gw_flags;  /* flags related to gateway class */
+	uint8_t  align;
+} __packed;
+
+#define BAT_PACKET_LEN sizeof(struct batman_packet)
+
+struct icmp_packet {
+	uint8_t  packet_type;
+	uint8_t  version;  /* batman version field */
+	uint8_t  msg_type; /* see ICMP message types above */
+	uint8_t  ttl;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint8_t  dst[6];
 	uint8_t  orig[6];
 	uint16_t seqno;
 	uint8_t  uid;
+<<<<<<< HEAD
 	uint8_t  reserved;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } __packed;
 
 #define BAT_RR_LEN 16
@@ -126,8 +185,15 @@ struct icmp_packet {
 /* icmp_packet_rr must start with all fields from imcp_packet
  * as this is assumed by code that handles ICMP packets */
 struct icmp_packet_rr {
+<<<<<<< HEAD
 	struct batman_header header;
 	uint8_t  msg_type; /* see ICMP message types above */
+=======
+	uint8_t  packet_type;
+	uint8_t  version;  /* batman version field */
+	uint8_t  msg_type; /* see ICMP message types above */
+	uint8_t  ttl;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint8_t  dst[6];
 	uint8_t  orig[6];
 	uint16_t seqno;
@@ -137,6 +203,7 @@ struct icmp_packet_rr {
 } __packed;
 
 struct unicast_packet {
+<<<<<<< HEAD
 	struct batman_header header;
 	uint8_t  ttvn; /* destination translation table version number */
 	uint8_t  dest[6];
@@ -148,11 +215,26 @@ struct unicast_frag_packet {
 	uint8_t  dest[6];
 	uint8_t  flags;
 	uint8_t  align;
+=======
+	uint8_t  packet_type;
+	uint8_t  version;  /* batman version field */
+	uint8_t  dest[6];
+	uint8_t  ttl;
+} __packed;
+
+struct unicast_frag_packet {
+	uint8_t  packet_type;
+	uint8_t  version;  /* batman version field */
+	uint8_t  dest[6];
+	uint8_t  ttl;
+	uint8_t  flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint8_t  orig[6];
 	uint16_t seqno;
 } __packed;
 
 struct bcast_packet {
+<<<<<<< HEAD
 	struct batman_header header;
 	uint8_t  reserved;
 	uint32_t seqno;
@@ -165,11 +247,28 @@ struct vis_packet {
 	uint32_t seqno;		 /* sequence number */
 	uint8_t  entries;	 /* number of entries behind this struct */
 	uint8_t  reserved;
+=======
+	uint8_t  packet_type;
+	uint8_t  version;  /* batman version field */
+	uint8_t  orig[6];
+	uint8_t  ttl;
+	uint32_t seqno;
+} __packed;
+
+struct vis_packet {
+	uint8_t  packet_type;
+	uint8_t  version;        /* batman version field */
+	uint8_t  vis_type;	 /* which type of vis-participant sent this? */
+	uint8_t  entries;	 /* number of entries behind this struct */
+	uint32_t seqno;		 /* sequence number */
+	uint8_t  ttl;		 /* TTL */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint8_t  vis_orig[6];	 /* originator that announces its neighbors */
 	uint8_t  target_orig[6]; /* who should receive this packet */
 	uint8_t  sender_orig[6]; /* who sent or rebroadcasted this packet */
 } __packed;
 
+<<<<<<< HEAD
 struct tt_query_packet {
 	struct batman_header header;
 	/* the flag field is a combination of:
@@ -204,4 +303,6 @@ struct tt_change {
 	uint8_t addr[ETH_ALEN];
 } __packed;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _NET_BATMAN_ADV_PACKET_H_ */

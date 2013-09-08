@@ -20,6 +20,7 @@
 #ifndef __ASM_KVM_BOOK3S_64_H__
 #define __ASM_KVM_BOOK3S_64_H__
 
+<<<<<<< HEAD
 #ifdef CONFIG_KVM_BOOK3S_PR
 static inline struct kvmppc_book3s_shadow_vcpu *svcpu_get(struct kvm_vcpu *vcpu)
 {
@@ -240,4 +241,11 @@ static inline bool slot_is_aligned(struct kvm_memory_slot *memslot,
 	return !(memslot->base_gfn & mask) && !(memslot->npages & mask);
 }
 
+=======
+static inline struct kvmppc_book3s_shadow_vcpu *to_svcpu(struct kvm_vcpu *vcpu)
+{
+	return &get_paca()->shadow_vcpu;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ASM_KVM_BOOK3S_64_H__ */

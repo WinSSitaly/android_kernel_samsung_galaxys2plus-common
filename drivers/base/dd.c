@@ -28,6 +28,7 @@
 #include "base.h"
 #include "power/power.h"
 
+<<<<<<< HEAD
 /*
  * Deferred Probe infrastructure.
  *
@@ -165,6 +166,8 @@ static int deferred_probe_initcall(void)
 	return 0;
 }
 late_initcall(deferred_probe_initcall);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void driver_bound(struct device *dev)
 {
@@ -179,6 +182,7 @@ static void driver_bound(struct device *dev)
 
 	klist_add_tail(&dev->p->knode_driver, &dev->driver->p->klist_devices);
 
+<<<<<<< HEAD
 	/*
 	 * Make sure the device is no longer in one of the deferred lists and
 	 * kick off retrying all pending devices
@@ -186,6 +190,8 @@ static void driver_bound(struct device *dev)
 	driver_deferred_probe_del(dev);
 	driver_deferred_probe_trigger();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dev->bus)
 		blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
 					     BUS_NOTIFY_BOUND_DRIVER, dev);
@@ -286,18 +292,25 @@ probe_failed:
 	driver_sysfs_remove(dev);
 	dev->driver = NULL;
 
+<<<<<<< HEAD
 	if (ret == -EPROBE_DEFER) {
 		/* Driver requested deferred probing */
 		dev_info(dev, "Driver %s requests probe deferral\n", drv->name);
 		driver_deferred_probe_add(dev);
 	} else if (ret != -ENODEV && ret != -ENXIO) {
+=======
+	if (ret != -ENODEV && ret != -ENXIO) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* driver matched but the probe failed */
 		printk(KERN_WARNING
 		       "%s: probe of %s failed with error %d\n",
 		       drv->name, dev_name(dev), ret);
+<<<<<<< HEAD
 	} else {
 		pr_debug("%s: probe of %s rejects match %d\n",
 		       drv->name, dev_name(dev), ret);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	/*
 	 * Ignore errors returned by ->probe so that the next driver can try

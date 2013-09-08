@@ -15,6 +15,7 @@
 #include <linux/platform_device.h>
 #include <linux/dma-mapping.h>
 #include <linux/serial_8250.h>
+<<<<<<< HEAD
 #include <linux/mv643xx_i2c.h>
 #include <linux/ata_platform.h>
 #include <linux/delay.h>
@@ -22,6 +23,14 @@
 #include <asm/page.h>
 #include <asm/setup.h>
 #include <asm/system_misc.h>
+=======
+#include <linux/mbus.h>
+#include <linux/mv643xx_i2c.h>
+#include <linux/ata_platform.h>
+#include <net/dsa.h>
+#include <asm/page.h>
+#include <asm/setup.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/timex.h>
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
@@ -33,7 +42,10 @@
 #include <plat/ehci-orion.h>
 #include <plat/time.h>
 #include <plat/common.h>
+<<<<<<< HEAD
 #include <plat/addr-map.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "common.h"
 
 /*****************************************************************************
@@ -74,7 +86,12 @@ void __init orion5x_map_io(void)
  ****************************************************************************/
 void __init orion5x_ehci0_init(void)
 {
+<<<<<<< HEAD
 	orion_ehci_init(ORION5X_USB0_PHYS_BASE, IRQ_ORION5X_USB0_CTRL,
+=======
+	orion_ehci_init(&orion5x_mbus_dram_info,
+			ORION5X_USB0_PHYS_BASE, IRQ_ORION5X_USB0_CTRL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			EHCI_PHY_ORION);
 }
 
@@ -84,7 +101,12 @@ void __init orion5x_ehci0_init(void)
  ****************************************************************************/
 void __init orion5x_ehci1_init(void)
 {
+<<<<<<< HEAD
 	orion_ehci_1_init(ORION5X_USB1_PHYS_BASE, IRQ_ORION5X_USB1_CTRL);
+=======
+	orion_ehci_1_init(&orion5x_mbus_dram_info,
+			  ORION5X_USB1_PHYS_BASE, IRQ_ORION5X_USB1_CTRL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -93,7 +115,11 @@ void __init orion5x_ehci1_init(void)
  ****************************************************************************/
 void __init orion5x_eth_init(struct mv643xx_eth_platform_data *eth_data)
 {
+<<<<<<< HEAD
 	orion_ge00_init(eth_data,
+=======
+	orion_ge00_init(eth_data, &orion5x_mbus_dram_info,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ORION5X_ETH_PHYS_BASE, IRQ_ORION5X_ETH_SUM,
 			IRQ_ORION5X_ETH_ERR, orion5x_tclk);
 }
@@ -123,7 +149,12 @@ void __init orion5x_i2c_init(void)
  ****************************************************************************/
 void __init orion5x_sata_init(struct mv_sata_platform_data *sata_data)
 {
+<<<<<<< HEAD
 	orion_sata_init(sata_data, ORION5X_SATA_PHYS_BASE, IRQ_ORION5X_SATA);
+=======
+	orion_sata_init(sata_data, &orion5x_mbus_dram_info,
+			ORION5X_SATA_PHYS_BASE, IRQ_ORION5X_SATA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -159,7 +190,12 @@ void __init orion5x_uart1_init(void)
  ****************************************************************************/
 void __init orion5x_xor_init(void)
 {
+<<<<<<< HEAD
 	orion_xor0_init(ORION5X_XOR_PHYS_BASE,
+=======
+	orion_xor0_init(&orion5x_mbus_dram_info,
+			ORION5X_XOR_PHYS_BASE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ORION5X_XOR_PHYS_BASE + 0x200,
 			IRQ_ORION5X_XOR0, IRQ_ORION5X_XOR1);
 }
@@ -169,7 +205,16 @@ void __init orion5x_xor_init(void)
  ****************************************************************************/
 static void __init orion5x_crypto_init(void)
 {
+<<<<<<< HEAD
 	orion5x_setup_sram_win();
+=======
+	int ret;
+
+	ret = orion5x_setup_sram_win();
+	if (ret)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	orion_crypto_init(ORION5X_CRYPTO_PHYS_BASE, ORION5X_SRAM_PHYS_BASE,
 			  SZ_8K, IRQ_ORION5X_CESA);
 }
@@ -299,6 +344,7 @@ void __init orion5x_init(void)
 	orion5x_wdt_init();
 }
 
+<<<<<<< HEAD
 void orion5x_restart(char mode, const char *cmd)
 {
 	/*
@@ -310,12 +356,19 @@ void orion5x_restart(char mode, const char *cmd)
 	orion5x_clrbits(CPU_SOFT_RESET, 1);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Many orion-based systems have buggy bootloader implementations.
  * This is a common fixup for bogus memory tags.
  */
+<<<<<<< HEAD
 void __init tag_fixup_mem32(struct tag *t, char **from,
 			    struct meminfo *meminfo)
+=======
+void __init tag_fixup_mem32(struct machine_desc *mdesc, struct tag *t,
+			    char **from, struct meminfo *meminfo)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	for (; t->hdr.size; t = tag_next(t))
 		if (t->hdr.tag == ATAG_MEM &&

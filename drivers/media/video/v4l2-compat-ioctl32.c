@@ -14,11 +14,20 @@
  */
 
 #include <linux/compat.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/videodev2.h>
 #include <media/v4l2-dev.h>
 #include <media/v4l2-ioctl.h>
 
+=======
+#include <linux/videodev2.h>
+#include <linux/module.h>
+#include <media/v4l2-ioctl.h>
+
+#ifdef CONFIG_COMPAT
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static long native_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 	long ret = -ENOIOCTLCMD;
@@ -158,6 +167,7 @@ struct v4l2_format32 {
 	} fmt;
 };
 
+<<<<<<< HEAD
 /**
  * struct v4l2_create_buffers32 - VIDIOC_CREATE_BUFS32 argument
  * @index:	on return, index of the first created buffer
@@ -177,6 +187,13 @@ struct v4l2_create_buffers32 {
 
 static int __get_v4l2_format32(struct v4l2_format *kp, struct v4l2_format32 __user *up)
 {
+=======
+static int get_v4l2_format32(struct v4l2_format *kp, struct v4l2_format32 __user *up)
+{
+	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_format32)) ||
+			get_user(kp->type, &up->type))
+			return -EFAULT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (kp->type) {
 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
@@ -205,6 +222,7 @@ static int __get_v4l2_format32(struct v4l2_format *kp, struct v4l2_format32 __us
 	}
 }
 
+<<<<<<< HEAD
 static int get_v4l2_format32(struct v4l2_format *kp, struct v4l2_format32 __user *up)
 {
 	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_format32)) ||
@@ -223,6 +241,13 @@ static int get_v4l2_create32(struct v4l2_create_buffers *kp, struct v4l2_create_
 
 static int __put_v4l2_format32(struct v4l2_format *kp, struct v4l2_format32 __user *up)
 {
+=======
+static int put_v4l2_format32(struct v4l2_format *kp, struct v4l2_format32 __user *up)
+{
+	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_format32)) ||
+		put_user(kp->type, &up->type))
+		return -EFAULT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (kp->type) {
 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
@@ -251,6 +276,7 @@ static int __put_v4l2_format32(struct v4l2_format *kp, struct v4l2_format32 __us
 	}
 }
 
+<<<<<<< HEAD
 static int put_v4l2_format32(struct v4l2_format *kp, struct v4l2_format32 __user *up)
 {
 	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_format32)) ||
@@ -267,6 +293,8 @@ static int put_v4l2_create32(struct v4l2_create_buffers *kp, struct v4l2_create_
 	return __put_v4l2_format32(&kp->format, &up->format);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct v4l2_standard32 {
 	__u32		     index;
 	__u32		     id[2]; /* __u64 would get the alignment wrong */
@@ -704,6 +732,7 @@ static int put_v4l2_ext_controls32(struct v4l2_ext_controls *kp, struct v4l2_ext
 	return 0;
 }
 
+<<<<<<< HEAD
 struct v4l2_event32 {
 	__u32				type;
 	union {
@@ -730,6 +759,8 @@ static int put_v4l2_event32(struct v4l2_event *kp, struct v4l2_event32 __user *u
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define VIDIOC_G_FMT32		_IOWR('V',  4, struct v4l2_format32)
 #define VIDIOC_S_FMT32		_IOWR('V',  5, struct v4l2_format32)
 #define VIDIOC_QUERYBUF32	_IOWR('V',  9, struct v4l2_buffer32)
@@ -743,9 +774,12 @@ static int put_v4l2_event32(struct v4l2_event *kp, struct v4l2_event32 __user *u
 #define VIDIOC_G_EXT_CTRLS32    _IOWR('V', 71, struct v4l2_ext_controls32)
 #define VIDIOC_S_EXT_CTRLS32    _IOWR('V', 72, struct v4l2_ext_controls32)
 #define VIDIOC_TRY_EXT_CTRLS32  _IOWR('V', 73, struct v4l2_ext_controls32)
+<<<<<<< HEAD
 #define	VIDIOC_DQEVENT32	_IOR ('V', 89, struct v4l2_event32)
 #define VIDIOC_CREATE_BUFS32	_IOWR('V', 92, struct v4l2_create_buffers32)
 #define VIDIOC_PREPARE_BUF32	_IOWR('V', 93, struct v4l2_buffer32)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define VIDIOC_OVERLAY32	_IOW ('V', 14, s32)
 #define VIDIOC_STREAMON32	_IOW ('V', 18, s32)
@@ -764,8 +798,11 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
 		struct v4l2_input v2i;
 		struct v4l2_standard v2s;
 		struct v4l2_ext_controls v2ecs;
+<<<<<<< HEAD
 		struct v4l2_event v2ev;
 		struct v4l2_create_buffers v2crt;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned long vx;
 		int vi;
 	} karg;
@@ -788,7 +825,10 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
 	case VIDIOC_G_EXT_CTRLS32: cmd = VIDIOC_G_EXT_CTRLS; break;
 	case VIDIOC_S_EXT_CTRLS32: cmd = VIDIOC_S_EXT_CTRLS; break;
 	case VIDIOC_TRY_EXT_CTRLS32: cmd = VIDIOC_TRY_EXT_CTRLS; break;
+<<<<<<< HEAD
 	case VIDIOC_DQEVENT32: cmd = VIDIOC_DQEVENT; break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case VIDIOC_OVERLAY32: cmd = VIDIOC_OVERLAY; break;
 	case VIDIOC_STREAMON32: cmd = VIDIOC_STREAMON; break;
 	case VIDIOC_STREAMOFF32: cmd = VIDIOC_STREAMOFF; break;
@@ -796,8 +836,11 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
 	case VIDIOC_S_INPUT32: cmd = VIDIOC_S_INPUT; break;
 	case VIDIOC_G_OUTPUT32: cmd = VIDIOC_G_OUTPUT; break;
 	case VIDIOC_S_OUTPUT32: cmd = VIDIOC_S_OUTPUT; break;
+<<<<<<< HEAD
 	case VIDIOC_CREATE_BUFS32: cmd = VIDIOC_CREATE_BUFS; break;
 	case VIDIOC_PREPARE_BUF32: cmd = VIDIOC_PREPARE_BUF; break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	switch (cmd) {
@@ -822,12 +865,15 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
 		compatible_arg = 0;
 		break;
 
+<<<<<<< HEAD
 	case VIDIOC_CREATE_BUFS:
 		err = get_v4l2_create32(&karg.v2crt, up);
 		compatible_arg = 0;
 		break;
 
 	case VIDIOC_PREPARE_BUF:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case VIDIOC_QUERYBUF:
 	case VIDIOC_QBUF:
 	case VIDIOC_DQBUF:
@@ -860,9 +906,12 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
 		err = get_v4l2_ext_controls32(&karg.v2ecs, up);
 		compatible_arg = 0;
 		break;
+<<<<<<< HEAD
 	case VIDIOC_DQEVENT:
 		compatible_arg = 0;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (err)
 		return err;
@@ -903,20 +952,26 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
 		err = put_v4l2_framebuffer32(&karg.v2fb, up);
 		break;
 
+<<<<<<< HEAD
 	case VIDIOC_DQEVENT:
 		err = put_v4l2_event32(&karg.v2ev, up);
 		break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case VIDIOC_G_FMT:
 	case VIDIOC_S_FMT:
 	case VIDIOC_TRY_FMT:
 		err = put_v4l2_format32(&karg.v2f, up);
 		break;
 
+<<<<<<< HEAD
 	case VIDIOC_CREATE_BUFS:
 		err = put_v4l2_create32(&karg.v2crt, up);
 		break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case VIDIOC_QUERYBUF:
 	case VIDIOC_QBUF:
 	case VIDIOC_DQBUF:
@@ -936,7 +991,10 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
 
 long v4l2_compat_ioctl32(struct file *file, unsigned int cmd, unsigned long arg)
 {
+<<<<<<< HEAD
 	struct video_device *vdev = video_devdata(file);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	long ret = -ENOIOCTLCMD;
 
 	if (!file->f_op->unlocked_ioctl)
@@ -985,8 +1043,11 @@ long v4l2_compat_ioctl32(struct file *file, unsigned int cmd, unsigned long arg)
 	case VIDIOC_CROPCAP:
 	case VIDIOC_G_CROP:
 	case VIDIOC_S_CROP:
+<<<<<<< HEAD
 	case VIDIOC_G_SELECTION:
 	case VIDIOC_S_SELECTION:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case VIDIOC_G_JPEGCOMP:
 	case VIDIOC_S_JPEGCOMP:
 	case VIDIOC_QUERYSTD:
@@ -1005,8 +1066,11 @@ long v4l2_compat_ioctl32(struct file *file, unsigned int cmd, unsigned long arg)
 	case VIDIOC_G_ENC_INDEX:
 	case VIDIOC_ENCODER_CMD:
 	case VIDIOC_TRY_ENCODER_CMD:
+<<<<<<< HEAD
 	case VIDIOC_DECODER_CMD:
 	case VIDIOC_TRY_DECODER_CMD:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case VIDIOC_DBG_S_REGISTER:
 	case VIDIOC_DBG_G_REGISTER:
 	case VIDIOC_DBG_G_CHIP_IDENT:
@@ -1018,15 +1082,21 @@ long v4l2_compat_ioctl32(struct file *file, unsigned int cmd, unsigned long arg)
 	case VIDIOC_S_DV_TIMINGS:
 	case VIDIOC_G_DV_TIMINGS:
 	case VIDIOC_DQEVENT:
+<<<<<<< HEAD
 	case VIDIOC_DQEVENT32:
 	case VIDIOC_SUBSCRIBE_EVENT:
 	case VIDIOC_UNSUBSCRIBE_EVENT:
 	case VIDIOC_CREATE_BUFS32:
 	case VIDIOC_PREPARE_BUF32:
+=======
+	case VIDIOC_SUBSCRIBE_EVENT:
+	case VIDIOC_UNSUBSCRIBE_EVENT:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = do_video_ioctl(file, cmd, arg);
 		break;
 
 	default:
+<<<<<<< HEAD
 		if (vdev->fops->compat_ioctl32)
 			ret = vdev->fops->compat_ioctl32(file, cmd, arg);
 
@@ -1035,8 +1105,19 @@ long v4l2_compat_ioctl32(struct file *file, unsigned int cmd, unsigned long arg)
 				"unknown ioctl '%c', dir=%d, #%d (0x%08x)\n",
 				_IOC_TYPE(cmd), _IOC_DIR(cmd), _IOC_NR(cmd),
 				cmd);
+=======
+		printk(KERN_WARNING "compat_ioctl32: "
+			"unknown ioctl '%c', dir=%d, #%d (0x%08x)\n",
+			_IOC_TYPE(cmd), _IOC_DIR(cmd), _IOC_NR(cmd), cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 	return ret;
 }
 EXPORT_SYMBOL_GPL(v4l2_compat_ioctl32);
+<<<<<<< HEAD
+=======
+#endif
+
+MODULE_LICENSE("GPL");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -19,8 +19,11 @@
 #define _EHCI_FSL_H
 
 /* offsets for the non-ehci registers in the FSL SOC USB controller */
+<<<<<<< HEAD
 #define FSL_SOC_USB_SBUSCFG	0x90
 #define SBUSCFG_INCR8		0x02	/* INCR8, specified */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define FSL_SOC_USB_ULPIVP	0x170
 #define FSL_SOC_USB_PORTSC1	0x184
 #define PORT_PTS_MSK		(3<<30)
@@ -48,6 +51,9 @@
 #define FSL_SOC_USB_SICTRL	0x410	/* NOTE: big-endian */
 #define FSL_SOC_USB_CTRL	0x500	/* NOTE: big-endian */
 #define CTRL_UTMI_PHY_EN	(1<<9)
+<<<<<<< HEAD
 #define CTRL_PHY_CLK_VALID	(1 << 17)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SNOOP_SIZE_2GB		0x1e
 #endif				/* _EHCI_FSL_H */

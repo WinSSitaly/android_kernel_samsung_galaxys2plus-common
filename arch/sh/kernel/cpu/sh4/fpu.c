@@ -15,8 +15,13 @@
 #include <linux/io.h>
 #include <cpu/fpu.h>
 #include <asm/processor.h>
+<<<<<<< HEAD
 #include <asm/fpu.h>
 #include <asm/traps.h>
+=======
+#include <asm/system.h>
+#include <asm/fpu.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* The PR (precision) bit in the FP Status Register must be clear when
  * an frchg instruction is executed, otherwise the instruction is undefined.

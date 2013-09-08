@@ -53,7 +53,10 @@
 #include <mach/pxa27x-udc.h>
 #include <mach/camera.h>
 #include <mach/audio.h>
+<<<<<<< HEAD
 #include <mach/smemc.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/soc_camera.h>
 
 #include <mach/mioa701.h>
@@ -178,6 +181,53 @@ static unsigned long mioa701_pin_config[] = {
 	MFP_CFG_OUT(GPIO116, AF0, DRIVE_HIGH),
 };
 
+<<<<<<< HEAD
+=======
+#define MIO_GPIO_IN(num, _desc) \
+	{ .gpio = (num), .dir = 0, .desc = (_desc) }
+#define MIO_GPIO_OUT(num, _init, _desc) \
+	{ .gpio = (num), .dir = 1, .init = (_init), .desc = (_desc) }
+struct gpio_ress {
+	unsigned gpio : 8;
+	unsigned dir : 1;
+	unsigned init : 1;
+	char *desc;
+};
+
+static int mio_gpio_request(struct gpio_ress *gpios, int size)
+{
+	int i, rc = 0;
+	int gpio;
+	int dir;
+
+	for (i = 0; (!rc) && (i < size); i++) {
+		gpio = gpios[i].gpio;
+		dir = gpios[i].dir;
+		rc = gpio_request(gpio, gpios[i].desc);
+		if (rc) {
+			printk(KERN_ERR "Error requesting GPIO %d(%s) : %d\n",
+			       gpio, gpios[i].desc, rc);
+			continue;
+		}
+		if (dir)
+			gpio_direction_output(gpio, gpios[i].init);
+		else
+			gpio_direction_input(gpio);
+	}
+	while ((rc) && (--i >= 0))
+		gpio_free(gpios[i].gpio);
+	return rc;
+}
+
+static void mio_gpio_free(struct gpio_ress *gpios, int size)
+{
+	int i;
+
+	for (i = 0; i < size; i++)
+		gpio_free(gpios[i].gpio);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* LCD Screen and Backlight */
 static struct platform_pwm_backlight_data mioa701_backlight_data = {
 	.pwm_id		= 0,
@@ -303,16 +353,26 @@ irqreturn_t gsm_on_irq(int irq, void *p)
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
 static struct gpio gsm_gpios[] = {
 	{ GPIO25_GSM_MOD_ON_STATE, GPIOF_IN, "GSM state" },
 	{ GPIO113_GSM_EVENT, GPIOF_IN, "GSM event" },
+=======
+struct gpio_ress gsm_gpios[] = {
+	MIO_GPIO_IN(GPIO25_GSM_MOD_ON_STATE, "GSM state"),
+	MIO_GPIO_IN(GPIO113_GSM_EVENT, "GSM event"),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init gsm_init(void)
 {
 	int rc;
 
+<<<<<<< HEAD
 	rc = gpio_request_array(ARRAY_AND_SIZE(gsm_gpios));
+=======
+	rc = mio_gpio_request(ARRAY_AND_SIZE(gsm_gpios));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc)
 		goto err_gpio;
 	rc = request_irq(gpio_to_irq(GPIO25_GSM_MOD_ON_STATE), gsm_on_irq,
@@ -326,7 +386,11 @@ static int __init gsm_init(void)
 
 err_irq:
 	printk(KERN_ERR "Mioa701: Can't request GSM_ON irq\n");
+<<<<<<< HEAD
 	gpio_free_array(ARRAY_AND_SIZE(gsm_gpios));
+=======
+	mio_gpio_free(ARRAY_AND_SIZE(gsm_gpios));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_gpio:
 	printk(KERN_ERR "Mioa701: gsm not available\n");
 	return rc;
@@ -335,7 +399,11 @@ err_gpio:
 static void gsm_exit(void)
 {
 	free_irq(gpio_to_irq(GPIO25_GSM_MOD_ON_STATE), NULL);
+<<<<<<< HEAD
 	gpio_free_array(ARRAY_AND_SIZE(gsm_gpios));
+=======
+	mio_gpio_free(ARRAY_AND_SIZE(gsm_gpios));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -391,6 +459,7 @@ static struct pxamci_platform_data mioa701_mci_info = {
 };
 
 /* FlashRAM */
+<<<<<<< HEAD
 static struct resource docg3_resource = {
 	.start = PXA_CS0_PHYS,
 	.end   = PXA_CS0_PHYS + SZ_8K - 1,
@@ -404,6 +473,26 @@ static struct platform_device docg3 = {
 	.num_resources = 1,
 	.dev = {
 		.platform_data = NULL,
+=======
+static struct resource strataflash_resource = {
+	.start = PXA_CS0_PHYS,
+	.end   = PXA_CS0_PHYS + SZ_64M - 1,
+	.flags = IORESOURCE_MEM,
+};
+
+static struct physmap_flash_data strataflash_data = {
+	.width = 2,
+	/* .set_vpp = mioa701_set_vpp, */
+};
+
+static struct platform_device strataflash = {
+	.name	       = "physmap-flash",
+	.id	       = -1,
+	.resource      = &strataflash_resource,
+	.num_resources = 1,
+	.dev = {
+		.platform_data = &strataflash_data,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 
@@ -537,15 +626,25 @@ static struct pda_power_pdata power_pdata = {
 static struct resource power_resources[] = {
 	[0] = {
 		.name	= "ac",
+<<<<<<< HEAD
 		.start	= PXA_GPIO_TO_IRQ(GPIO96_AC_DETECT),
 		.end	= PXA_GPIO_TO_IRQ(GPIO96_AC_DETECT),
+=======
+		.start	= gpio_to_irq(GPIO96_AC_DETECT),
+		.end	= gpio_to_irq(GPIO96_AC_DETECT),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHEDGE |
 		IORESOURCE_IRQ_LOWEDGE,
 	},
 	[1] = {
 		.name	= "usb",
+<<<<<<< HEAD
 		.start	= PXA_GPIO_TO_IRQ(GPIO13_nUSB_DETECT),
 		.end	= PXA_GPIO_TO_IRQ(GPIO13_nUSB_DETECT),
+=======
+		.start	= gpio_to_irq(GPIO13_nUSB_DETECT),
+		.end	= gpio_to_irq(GPIO13_nUSB_DETECT),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHEDGE |
 		IORESOURCE_IRQ_LOWEDGE,
 	},
@@ -681,7 +780,11 @@ static struct platform_device *devices[] __initdata = {
 	&pxa2xx_pcm,
 	&mioa701_sound,
 	&power_dev,
+<<<<<<< HEAD
 	&docg3,
+=======
+	&strataflash,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&gpio_vbus,
 	&mioa701_camera,
 	&mioa701_board,
@@ -692,12 +795,17 @@ static void mioa701_machine_exit(void);
 static void mioa701_poweroff(void)
 {
 	mioa701_machine_exit();
+<<<<<<< HEAD
 	pxa_restart('s', NULL);
+=======
+	arm_machine_restart('s', NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void mioa701_restart(char c, const char *cmd)
 {
 	mioa701_machine_exit();
+<<<<<<< HEAD
 	pxa_restart('s', cmd);
 }
 
@@ -705,17 +813,30 @@ static struct gpio global_gpios[] = {
 	{ GPIO9_CHARGE_EN, GPIOF_OUT_INIT_HIGH, "Charger enable" },
 	{ GPIO18_POWEROFF, GPIOF_OUT_INIT_LOW, "Power Off" },
 	{ GPIO87_LCD_POWER, GPIOF_OUT_INIT_LOW, "LCD Power" },
+=======
+	arm_machine_restart('s', cmd);
+}
+
+static struct gpio_ress global_gpios[] = {
+	MIO_GPIO_OUT(GPIO9_CHARGE_EN, 1, "Charger enable"),
+	MIO_GPIO_OUT(GPIO18_POWEROFF, 0, "Power Off"),
+	MIO_GPIO_OUT(GPIO87_LCD_POWER, 0, "LCD Power"),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void __init mioa701_machine_init(void)
 {
+<<<<<<< HEAD
 	int rc;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	PSLR  = 0xff100000; /* SYSDEL=125ms, PWRDEL=125ms, PSLR_SL_ROD=1 */
 	PCFR = PCFR_DC_EN | PCFR_GPR_EN | PCFR_OPDE;
 	RTTR = 32768 - 1; /* Reset crazy WinCE value */
 	UP2OCR = UP2OCR_HXOE;
 
+<<<<<<< HEAD
 	/*
 	 * Set up the flash memory : DiskOnChip G3 on first static memory bank
 	 */
@@ -725,13 +846,19 @@ static void __init mioa701_machine_init(void)
 	__raw_writel(0x0001c391, MCIO0);
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pxa2xx_mfp_config(ARRAY_AND_SIZE(mioa701_pin_config));
 	pxa_set_ffuart_info(NULL);
 	pxa_set_btuart_info(NULL);
 	pxa_set_stuart_info(NULL);
+<<<<<<< HEAD
 	rc = gpio_request_array(ARRAY_AND_SIZE(global_gpios));
 	if (rc)
 		pr_err("MioA701: Failed to request GPIOs: %d", rc);
+=======
+	mio_gpio_request(ARRAY_AND_SIZE(global_gpios));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bootstrap_init();
 	pxa_set_fb_info(NULL, &mioa701_pxafb_info);
 	pxa_set_mci_info(&mioa701_mci_info);
@@ -739,6 +866,10 @@ static void __init mioa701_machine_init(void)
 	pxa_set_udc_info(&mioa701_udc_info);
 	pxa_set_ac97_info(&mioa701_ac97_info);
 	pm_power_off = mioa701_poweroff;
+<<<<<<< HEAD
+=======
+	arm_pm_restart = mioa701_restart;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_add_devices(devices, ARRAY_SIZE(devices));
 	gsm_init();
 
@@ -755,6 +886,7 @@ static void mioa701_machine_exit(void)
 }
 
 MACHINE_START(MIOA701, "MIO A701")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.restart_mode	= 's',
 	.map_io		= &pxa27x_map_io,
@@ -764,4 +896,11 @@ MACHINE_START(MIOA701, "MIO A701")
 	.init_machine	= mioa701_machine_init,
 	.timer		= &pxa_timer,
 	.restart	= mioa701_restart,
+=======
+	.boot_params	= 0xa0000100,
+	.map_io		= &pxa27x_map_io,
+	.init_irq	= &pxa27x_init_irq,
+	.init_machine	= mioa701_machine_init,
+	.timer		= &pxa_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

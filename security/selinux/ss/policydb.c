@@ -13,7 +13,11 @@
  *
  *	Added conditional policy language extensions
  *
+<<<<<<< HEAD
  * Updated: Hewlett-Packard <paul@paul-moore.com>
+=======
+ * Updated: Hewlett-Packard <paul.moore@hp.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *      Added support for the policy capability bitmap
  *
@@ -1743,6 +1747,11 @@ static int policydb_bounds_sanity_check(struct policydb *p)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+extern int ss_initialized;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u16 string_to_security_class(struct policydb *p, const char *name)
 {
 	struct class_datum *cladatum;

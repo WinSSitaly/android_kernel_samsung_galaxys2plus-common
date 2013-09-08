@@ -22,6 +22,10 @@
 #include <linux/list.h>
 #include <linux/stddef.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/current.h>
 
 typedef struct __wait_queue wait_queue_t;
@@ -76,13 +80,21 @@ struct task_struct;
 #define __WAIT_BIT_KEY_INITIALIZER(word, bit)				\
 	{ .flags = word, .bit_nr = bit, }
 
+<<<<<<< HEAD
 extern void __init_waitqueue_head(wait_queue_head_t *q, const char *name, struct lock_class_key *);
+=======
+extern void __init_waitqueue_head(wait_queue_head_t *q, struct lock_class_key *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define init_waitqueue_head(q)				\
 	do {						\
 		static struct lock_class_key __key;	\
 							\
+<<<<<<< HEAD
 		__init_waitqueue_head((q), #q, &__key);	\
+=======
+		__init_waitqueue_head((q), &__key);	\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} while (0)
 
 #ifdef CONFIG_LOCKDEP
@@ -156,7 +168,11 @@ void __wake_up(wait_queue_head_t *q, unsigned int mode, int nr, void *key);
 void __wake_up_locked_key(wait_queue_head_t *q, unsigned int mode, void *key);
 void __wake_up_sync_key(wait_queue_head_t *q, unsigned int mode, int nr,
 			void *key);
+<<<<<<< HEAD
 void __wake_up_locked(wait_queue_head_t *q, unsigned int mode, int nr);
+=======
+void __wake_up_locked(wait_queue_head_t *q, unsigned int mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __wake_up_sync(wait_queue_head_t *q, unsigned int mode, int nr);
 void __wake_up_bit(wait_queue_head_t *, void *, int);
 int __wait_on_bit(wait_queue_head_t *, struct wait_bit_queue *, int (*)(void *), unsigned);
@@ -169,8 +185,12 @@ wait_queue_head_t *bit_waitqueue(void *, int);
 #define wake_up(x)			__wake_up(x, TASK_NORMAL, 1, NULL)
 #define wake_up_nr(x, nr)		__wake_up(x, TASK_NORMAL, nr, NULL)
 #define wake_up_all(x)			__wake_up(x, TASK_NORMAL, 0, NULL)
+<<<<<<< HEAD
 #define wake_up_locked(x)		__wake_up_locked((x), TASK_NORMAL, 1)
 #define wake_up_all_locked(x)		__wake_up_locked((x), TASK_NORMAL, 0)
+=======
+#define wake_up_locked(x)		__wake_up_locked((x), TASK_NORMAL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define wake_up_interruptible(x)	__wake_up(x, TASK_INTERRUPTIBLE, 1, NULL)
 #define wake_up_interruptible_nr(x, nr)	__wake_up(x, TASK_INTERRUPTIBLE, nr, NULL)
@@ -233,8 +253,11 @@ do {									\
 		if (!ret)						\
 			break;						\
 	}								\
+<<<<<<< HEAD
 	if (!ret && (condition))					\
 		ret = 1;						\
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	finish_wait(&wq, &__wait);					\
 } while (0)
 
@@ -251,9 +274,14 @@ do {									\
  * wake_up() has to be called after changing any variable that could
  * change the result of the wait condition.
  *
+<<<<<<< HEAD
  * The function returns 0 if the @timeout elapsed, or the remaining
  * jiffies (at least 1) if the @condition evaluated to %true before
  * the @timeout elapsed.
+=======
+ * The function returns 0 if the @timeout elapsed, and the remaining
+ * jiffies if the condition evaluated to true before the timeout elapsed.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 #define wait_event_timeout(wq, condition, timeout)			\
 ({									\
@@ -321,8 +349,11 @@ do {									\
 		ret = -ERESTARTSYS;					\
 		break;							\
 	}								\
+<<<<<<< HEAD
 	if (!ret && (condition))					\
 		ret = 1;						\
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	finish_wait(&wq, &__wait);					\
 } while (0)
 
@@ -339,10 +370,16 @@ do {									\
  * wake_up() has to be called after changing any variable that could
  * change the result of the wait condition.
  *
+<<<<<<< HEAD
  * Returns:
  * 0 if the @timeout elapsed, -%ERESTARTSYS if it was interrupted by
  * a signal, or the remaining jiffies (at least 1) if the @condition
  * evaluated to %true before the @timeout elapsed.
+=======
+ * The function returns 0 if the @timeout elapsed, -ERESTARTSYS if it
+ * was interrupted by a signal, and the remaining jiffies otherwise
+ * if the condition evaluated to true before the timeout elapsed.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 #define wait_event_interruptible_timeout(wq, condition, timeout)	\
 ({									\
@@ -530,6 +567,7 @@ do {									\
 	 ? 0 : __wait_event_interruptible_locked(wq, condition, 1, 1))
 
 
+<<<<<<< HEAD
 #define __wait_event_interruptible_lock_irq_timeout(wq, condition,	\
 						    lock, ret)		\
 do {									\
@@ -587,6 +625,8 @@ do {									\
 	__ret;								\
 })
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define __wait_event_killable(wq, condition, ret)			\
 do {									\

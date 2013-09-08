@@ -30,7 +30,11 @@
  */
 
 struct tc_stats {
+<<<<<<< HEAD
 	__u64	bytes;			/* Number of enqueued bytes */
+=======
+	__u64	bytes;			/* NUmber of enqueues bytes */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__u32	packets;		/* Number of enqueued packets	*/
 	__u32	drops;			/* Packets dropped because of lack of resources */
 	__u32	overlimits;		/* Number of throttle events when this
@@ -127,6 +131,7 @@ struct tc_multiq_qopt {
 	__u16	max_bands;		/* Maximum number of queues */
 };
 
+<<<<<<< HEAD
 /* PLUG section */
 
 #define TCQ_PLUG_BUFFER                0
@@ -148,6 +153,8 @@ struct tc_plug_qopt {
 	__u32           limit;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* TBF section */
 
 struct tc_tbf_qopt {
@@ -183,6 +190,7 @@ struct tc_sfq_qopt {
 	unsigned	flows;		/* Maximal number of flows  */
 };
 
+<<<<<<< HEAD
 struct tc_sfqred_stats {
 	__u32           prob_drop;      /* Early drops, below max threshold */
 	__u32           forced_drop;	/* Early drops, after max threshold */
@@ -210,17 +218,34 @@ struct tc_sfq_qopt_v1 {
 };
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct tc_sfq_xstats {
 	__s32		allot;
 };
 
+<<<<<<< HEAD
+=======
+/*
+ *  NOTE: limit, divisor and flows are hardwired to code at the moment.
+ *
+ *	limit=flows=128, divisor=1024;
+ *
+ *	The only reason for this is efficiency, it is possible
+ *	to change these parameters in compile time.
+ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* RED section */
 
 enum {
 	TCA_RED_UNSPEC,
 	TCA_RED_PARMS,
 	TCA_RED_STAB,
+<<<<<<< HEAD
 	TCA_RED_MAX_P,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__TCA_RED_MAX,
 };
 
@@ -234,9 +259,14 @@ struct tc_red_qopt {
 	unsigned char   Plog;		/* log(P_max/(qth_max-qth_min))	*/
 	unsigned char   Scell_log;	/* cell size for idle damping */
 	unsigned char	flags;
+<<<<<<< HEAD
 #define TC_RED_ECN		1
 #define TC_RED_HARDDROP		2
 #define TC_RED_ADAPTATIVE	4
+=======
+#define TC_RED_ECN	1
+#define TC_RED_HARDDROP	2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct tc_red_xstats {
@@ -255,7 +285,10 @@ enum {
        TCA_GRED_PARMS,
        TCA_GRED_STAB,
        TCA_GRED_DPS,
+<<<<<<< HEAD
        TCA_GRED_MAX_P,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	   __TCA_GRED_MAX,
 };
 
@@ -295,7 +328,10 @@ enum {
 	TCA_CHOKE_UNSPEC,
 	TCA_CHOKE_PARMS,
 	TCA_CHOKE_STAB,
+<<<<<<< HEAD
 	TCA_CHOKE_MAX_P,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__TCA_CHOKE_MAX,
 };
 
@@ -340,7 +376,11 @@ struct tc_htb_glob {
 	__u32 debug;		/* debug flags */
 
 	/* stats */
+<<<<<<< HEAD
 	__u32 direct_pkts; /* count of non shaped packets */
+=======
+	__u32 direct_pkts; /* count of non shapped packets */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 enum {
 	TCA_HTB_UNSPEC,
@@ -508,7 +548,10 @@ enum {
 	TCA_NETEM_REORDER,
 	TCA_NETEM_CORRUPT,
 	TCA_NETEM_LOSS,
+<<<<<<< HEAD
 	TCA_NETEM_RATE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__TCA_NETEM_MAX,
 };
 
@@ -539,6 +582,7 @@ struct tc_netem_corrupt {
 	__u32	correlation;
 };
 
+<<<<<<< HEAD
 struct tc_netem_rate {
 	__u32	rate;	/* byte/s */
 	__s32	packet_overhead;
@@ -546,6 +590,8 @@ struct tc_netem_rate {
 	__s32	cell_overhead;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum {
 	NETEM_LOSS_UNSPEC,
 	NETEM_LOSS_GI,		/* General Intuitive - 4 state model */
@@ -554,7 +600,11 @@ enum {
 };
 #define NETEM_LOSS_MAX (__NETEM_LOSS_MAX - 1)
 
+<<<<<<< HEAD
 /* State transition probabilities for 4 state model */
+=======
+/* State transition probablities for 4 state model */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct tc_netem_gimodel {
 	__u32	p13;
 	__u32	p31;

@@ -17,7 +17,11 @@
 #include <linux/ioport.h>
 #include <linux/cpufreq.h>
 #include <linux/seq_file.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/delay.h>
 #include <linux/clk.h>
 #include <linux/err.h>

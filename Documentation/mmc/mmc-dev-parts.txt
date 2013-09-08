@@ -25,6 +25,7 @@ echo 0 > /sys/block/mmcblkXbootY/force_ro
 To re-enable read-only access:
 
 echo 1 > /sys/block/mmcblkXbootY/force_ro
+<<<<<<< HEAD
 
 The boot partitions can also be locked read only until the next power on,
 with:
@@ -38,3 +39,5 @@ feature has been disabled on the card, the file will be read-only.
 The boot partitions can also be locked permanently, but this feature is
 not accessible through sysfs in order to avoid accidental or malicious
 bricking.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

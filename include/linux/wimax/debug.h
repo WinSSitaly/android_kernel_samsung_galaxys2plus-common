@@ -154,9 +154,15 @@
 #define __debug__h__
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/slab.h>
 
 struct device;
+=======
+#include <linux/device.h>
+#include <linux/slab.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Backend stuff */
 

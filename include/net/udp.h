@@ -23,7 +23,10 @@
 #define _UDP_H
 
 #include <linux/list.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/inet_sock.h>
 #include <net/sock.h>
 #include <net/snmp.h>
@@ -42,7 +45,11 @@
 struct udp_skb_cb {
 	union {
 		struct inet_skb_parm	h4;
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct inet6_skb_parm	h6;
 #endif
 	} header;
@@ -181,7 +188,10 @@ extern int udp_get_port(struct sock *sk, unsigned short snum,
 extern void udp_err(struct sk_buff *, u32);
 extern int udp_sendmsg(struct kiocb *iocb, struct sock *sk,
 			    struct msghdr *msg, size_t len);
+<<<<<<< HEAD
 extern int udp_push_pending_frames(struct sock *sk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void udp_flush_pending_frames(struct sock *sk);
 extern int udp_rcv(struct sk_buff *skb);
 extern int udp_ioctl(struct sock *sk, int cmd, unsigned long arg);
@@ -196,6 +206,7 @@ extern int udp_lib_setsockopt(struct sock *sk, int level, int optname,
 extern struct sock *udp4_lib_lookup(struct net *net, __be32 saddr, __be16 sport,
 				    __be32 daddr, __be16 dport,
 				    int dif);
+<<<<<<< HEAD
 extern struct sock *__udp4_lib_lookup(struct net *net, __be32 saddr, __be16 sport,
 				    __be32 daddr, __be16 dport,
 				    int dif, struct udp_table *tbl);
@@ -205,6 +216,11 @@ extern struct sock *udp6_lib_lookup(struct net *net, const struct in6_addr *sadd
 extern struct sock *__udp6_lib_lookup(struct net *net, const struct in6_addr *saddr, __be16 sport,
 				    const struct in6_addr *daddr, __be16 dport,
 				    int dif, struct udp_table *tbl);
+=======
+extern struct sock *udp6_lib_lookup(struct net *net, const struct in6_addr *saddr, __be16 sport,
+				    const struct in6_addr *daddr, __be16 dport,
+				    int dif);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * 	SNMP statistics for UDP and UDP-Lite
@@ -225,7 +241,11 @@ extern struct sock *__udp6_lib_lookup(struct net *net, const struct in6_addr *sa
 	else	    SNMP_INC_STATS_USER((net)->mib.udp_stats_in6, field);      \
 } while(0)
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define UDPX_INC_STATS_BH(sk, field) \
 	do { \
 		if ((sk)->sk_family == AF_INET) \
@@ -238,6 +258,7 @@ extern struct sock *__udp6_lib_lookup(struct net *net, const struct in6_addr *sa
 #endif
 
 /* /proc */
+<<<<<<< HEAD
 int udp_seq_open(struct inode *inode, struct file *file);
 
 struct udp_seq_afinfo {
@@ -246,6 +267,14 @@ struct udp_seq_afinfo {
 	struct udp_table		*udp_table;
 	const struct file_operations	*seq_fops;
 	struct seq_operations		seq_ops;
+=======
+struct udp_seq_afinfo {
+	char			*name;
+	sa_family_t		family;
+	struct udp_table	*udp_table;
+	struct file_operations	seq_fops;
+	struct seq_operations	seq_ops;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct udp_iter_state {
@@ -266,6 +295,10 @@ extern void udp4_proc_exit(void);
 extern void udp_init(void);
 
 extern int udp4_ufo_send_check(struct sk_buff *skb);
+<<<<<<< HEAD
 extern struct sk_buff *udp4_ufo_fragment(struct sk_buff *skb,
 	netdev_features_t features);
+=======
+extern struct sk_buff *udp4_ufo_fragment(struct sk_buff *skb, u32 features);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* _UDP_H */

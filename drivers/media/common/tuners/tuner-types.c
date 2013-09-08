@@ -5,7 +5,10 @@
  */
 
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/tuner.h>
 #include <media/tuner-types.h>
 
@@ -1806,10 +1809,13 @@ struct tunertype tuners[] = {
 		.name   = "Xceive 5000 tuner",
 		/* see xc5000.c for details */
 	},
+<<<<<<< HEAD
 	[TUNER_XC4000] = { /* Xceive 4000 */
 		.name   = "Xceive 4000 tuner",
 		/* see xc4000.c for details */
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[TUNER_TCL_MF02GIP_5N] = { /* TCL tuner MF02GIP-5N-E */
 		.name   = "TCL tuner MF02GIP-5N-E",
 		.params = tuner_tcl_mf02gip_5n_params,
@@ -1868,10 +1874,13 @@ struct tunertype tuners[] = {
 		.params = tuner_tena_tnf_5337_params,
 		.count  = ARRAY_SIZE(tuner_tena_tnf_5337_params),
 	},
+<<<<<<< HEAD
 	[TUNER_XC5000C] = { /* Xceive 5000C */
 		.name   = "Xceive 5000C tuner",
 		/* see xc5000.c for details */
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 EXPORT_SYMBOL(tuners);
 

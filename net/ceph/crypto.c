@@ -15,9 +15,16 @@ int ceph_crypto_key_clone(struct ceph_crypto_key *dst,
 			  const struct ceph_crypto_key *src)
 {
 	memcpy(dst, src, sizeof(struct ceph_crypto_key));
+<<<<<<< HEAD
 	dst->key = kmemdup(src->key, src->len, GFP_NOFS);
 	if (!dst->key)
 		return -ENOMEM;
+=======
+	dst->key = kmalloc(src->len, GFP_NOFS);
+	if (!dst->key)
+		return -ENOMEM;
+	memcpy(dst->key, src->key, src->len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -443,7 +450,11 @@ int ceph_key_instantiate(struct key *key, const void *data, size_t datalen)
 		goto err;
 
 	/* TODO ceph_crypto_key_decode should really take const input */
+<<<<<<< HEAD
 	p = (void *)data;
+=======
+	p = (void*)data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = ceph_crypto_key_decode(ckey, &p, (char*)data+datalen);
 	if (ret < 0)
 		goto err_ckey;
@@ -466,7 +477,10 @@ void ceph_key_destroy(struct key *key) {
 	struct ceph_crypto_key *ckey = key->payload.data;
 
 	ceph_crypto_key_destroy(ckey);
+<<<<<<< HEAD
 	kfree(ckey);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct key_type key_type_ceph = {

@@ -57,17 +57,27 @@ struct sk_buff *ath_rxbuf_alloc(struct ath_common *common,
 }
 EXPORT_SYMBOL(ath_rxbuf_alloc);
 
+<<<<<<< HEAD
 void ath_printk(const char *level, const struct ath_common* common,
 		const char *fmt, ...)
 {
 	struct va_format vaf;
 	va_list args;
+=======
+int ath_printk(const char *level, struct ath_common *common,
+	       const char *fmt, ...)
+{
+	struct va_format vaf;
+	va_list args;
+	int rtn;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	va_start(args, fmt);
 
 	vaf.fmt = fmt;
 	vaf.va = &args;
 
+<<<<<<< HEAD
 	if (common && common->hw && common->hw->wiphy)
 		printk("%sath: %s: %pV",
 		       level, wiphy_name(common->hw->wiphy), &vaf);
@@ -75,5 +85,12 @@ void ath_printk(const char *level, const struct ath_common* common,
 		printk("%sath: %pV", level, &vaf);
 
 	va_end(args);
+=======
+	rtn = printk("%sath: %pV", level, &vaf);
+
+	va_end(args);
+
+	return rtn;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(ath_printk);

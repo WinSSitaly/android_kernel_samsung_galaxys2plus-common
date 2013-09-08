@@ -42,6 +42,10 @@
 #include <linux/slab.h>
 
 #include <asm/dma.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 
 #include "scsi.h"
@@ -101,7 +105,11 @@ static int setup_dmaspeed[MAXBOARDS] __initdata = { -1, -1, -1, -1 };
  */
 
 #if defined(MODULE)
+<<<<<<< HEAD
 static bool isapnp = 0;
+=======
+static int isapnp = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int aha1542[] = {0x330, 11, 4, -1};
 module_param_array(aha1542, int, NULL, 0);
 module_param(isapnp, bool, 0);

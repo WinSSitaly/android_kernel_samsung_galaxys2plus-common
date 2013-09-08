@@ -1,5 +1,9 @@
 #include <linux/bcd.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unsigned bcd2bin(unsigned char val)
 {

@@ -32,6 +32,10 @@
 #include <mach/hardware.h>
 #include <asm/mach-types.h>
 #include <asm/irq.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/tlbflush.h>
 #include <asm/pgtable.h>
 
@@ -87,7 +91,12 @@ MACHINE_START(ESPRESSO, "IP Fabrics Double Espresso")
 	.map_io		= ixp23xx_map_io,
 	.init_irq	= ixp23xx_init_irq,
 	.timer		= &ixp23xx_timer,
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.init_machine	= espresso_init,
 	.restart	= ixp23xx_restart,
+=======
+	.boot_params	= 0x00000100,
+	.init_machine	= espresso_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

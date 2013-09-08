@@ -30,7 +30,10 @@
 
 #include <linux/workqueue.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/wait.h>
 #include <linux/errno.h>
 #include <linux/kobject.h>
@@ -42,7 +45,11 @@
  * @do_shrink: The callback function.
  *
  * Arguments to the do_shrink functions are intended to be passed using
+<<<<<<< HEAD
  * inheritance. That is, the argument class derives from struct ttm_mem_shrink,
+=======
+ * inheritance. That is, the argument class derives from struct ttm_mem_srink,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * and can be accessed using container_of().
  */
 

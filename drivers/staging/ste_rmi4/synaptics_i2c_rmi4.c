@@ -30,7 +30,10 @@
 #include <linux/i2c.h>
 #include <linux/interrupt.h>
 #include <linux/regulator/consumer.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "synaptics_i2c_rmi4.h"
 
 /* TODO: for multiple device support will need a per-device mutex */
@@ -927,6 +930,7 @@ static int __devinit synaptics_rmi4_probe
 		goto err_input;
 	}
 
+<<<<<<< HEAD
 	rmi4_data->regulator = regulator_get(&client->dev, "vdd");
 	if (IS_ERR(rmi4_data->regulator)) {
 		dev_err(&client->dev, "%s:get regulator failed\n",
@@ -940,6 +944,19 @@ static int __devinit synaptics_rmi4_probe
 							__func__);
 		goto err_regulator_enable;
 	}
+=======
+	if (platformdata->regulator_en) {
+		rmi4_data->regulator = regulator_get(&client->dev, "vdd");
+		if (IS_ERR(rmi4_data->regulator)) {
+			dev_err(&client->dev, "%s:get regulator failed\n",
+								__func__);
+			retval = PTR_ERR(rmi4_data->regulator);
+			goto err_regulator;
+		}
+		regulator_enable(rmi4_data->regulator);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	init_waitqueue_head(&rmi4_data->wait);
 	/*
 	 * Copy i2c_client pointer into RTID's i2c_client pointer for
@@ -1014,10 +1031,18 @@ static int __devinit synaptics_rmi4_probe
 err_free_irq:
 	free_irq(platformdata->irq_number, rmi4_data);
 err_query_dev:
+<<<<<<< HEAD
 	regulator_disable(rmi4_data->regulator);
 err_regulator_enable:
 	regulator_put(rmi4_data->regulator);
 err_get_regulator:
+=======
+	if (platformdata->regulator_en) {
+		regulator_disable(rmi4_data->regulator);
+		regulator_put(rmi4_data->regulator);
+	}
+err_regulator:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	input_free_device(rmi4_data->input_dev);
 	rmi4_data->input_dev = NULL;
 err_input:
@@ -1041,8 +1066,15 @@ static int __devexit synaptics_rmi4_remove(struct i2c_client *client)
 	wake_up(&rmi4_data->wait);
 	free_irq(pdata->irq_number, rmi4_data);
 	input_unregister_device(rmi4_data->input_dev);
+<<<<<<< HEAD
 	regulator_disable(rmi4_data->regulator);
 	regulator_put(rmi4_data->regulator);
+=======
+	if (pdata->regulator_en) {
+		regulator_disable(rmi4_data->regulator);
+		regulator_put(rmi4_data->regulator);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(rmi4_data);
 
 	return 0;
@@ -1080,7 +1112,12 @@ static int synaptics_rmi4_suspend(struct device *dev)
 	if (retval < 0)
 		return retval;
 
+<<<<<<< HEAD
 	regulator_disable(rmi4_data->regulator);
+=======
+	if (pdata->regulator_en)
+		regulator_disable(rmi4_data->regulator);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1098,7 +1135,12 @@ static int synaptics_rmi4_resume(struct device *dev)
 	struct synaptics_rmi4_data *rmi4_data = dev_get_drvdata(dev);
 	const struct synaptics_rmi4_platform_data *pdata = rmi4_data->board;
 
+<<<<<<< HEAD
 	regulator_enable(rmi4_data->regulator);
+=======
+	if (pdata->regulator_en)
+		regulator_enable(rmi4_data->regulator);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	enable_irq(pdata->irq_number);
 	rmi4_data->touch_stopped = false;

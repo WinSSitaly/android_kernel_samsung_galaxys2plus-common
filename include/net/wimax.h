@@ -423,6 +423,10 @@ struct wimax_dev {
 	int (*op_reset)(struct wimax_dev *wimax_dev);
 
 	struct rfkill *rfkill;
+<<<<<<< HEAD
+=======
+	struct input_dev *rfkill_input;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned rf_hw;
 	unsigned rf_sw;
 	char name[32];

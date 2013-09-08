@@ -49,7 +49,11 @@
 
 int ibmphp_debug;
 
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(debug, bool, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC (debug, "Debugging mode enabled or not");
 MODULE_LICENSE ("GPL");
@@ -721,7 +725,11 @@ static void ibm_unconfigure_device(struct pci_func *func)
 	for (j = 0; j < 0x08; j++) {
 		temp = pci_get_bus_and_slot(func->busno, (func->device << 3) | j);
 		if (temp) {
+<<<<<<< HEAD
 			pci_stop_and_remove_bus_device(temp);
+=======
+			pci_remove_bus_device(temp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pci_dev_put(temp);
 		}
 	}

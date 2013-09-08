@@ -20,7 +20,11 @@
 
 
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <sound/core.h>
 #include "vxpocket.h"
@@ -39,7 +43,11 @@ MODULE_SUPPORTED_DEVICE("{{Digigram,VXPocket},{Digigram,VXPocket440}}");
 
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;	/* Index 0-MAX */
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;	/* ID for this card */
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;	/* Enable switches */
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;	/* Enable switches */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ibl[SNDRV_CARDS];
 
 module_param_array(index, int, NULL, 0444);
@@ -229,7 +237,11 @@ static int vxpocket_config(struct pcmcia_device *link)
 	if (ret)
 		goto failed;
 
+<<<<<<< HEAD
 	ret = pcmcia_request_irq(link, snd_vx_irq_handler);
+=======
+	ret = pcmcia_request_exclusive_irq(link, snd_vx_irq_handler);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto failed;
 

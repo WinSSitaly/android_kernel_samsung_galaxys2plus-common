@@ -21,7 +21,10 @@
 #define SCU_INVALIDATE		0x0c
 #define SCU_FPGA_REVISION	0x10
 
+<<<<<<< HEAD
 #ifdef CONFIG_SMP
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Get the number of CPU cores from the SCU configuration
  */
@@ -34,7 +37,11 @@ unsigned int __init scu_get_core_count(void __iomem *scu_base)
 /*
  * Enable the SCU
  */
+<<<<<<< HEAD
 void scu_enable(void __iomem *scu_base)
+=======
+void __init scu_enable(void __iomem *scu_base)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 scu_ctrl;
 
@@ -61,7 +68,10 @@ void scu_enable(void __iomem *scu_base)
 	 */
 	flush_cache_all();
 }
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Set the executing CPUs power mode as defined.  This will be in

@@ -72,9 +72,15 @@ static int pm860x_rtc_alarm_irq_enable(struct device *dev, unsigned int enabled)
 	struct pm860x_rtc_info *info = dev_get_drvdata(dev);
 
 	if (enabled)
+<<<<<<< HEAD
 		pm860x_set_bits(info->i2c, PM8607_RTC1, ALARM_EN, ALARM_EN);
 	else
 		pm860x_set_bits(info->i2c, PM8607_RTC1, ALARM_EN, 0);
+=======
+		pm860x_set_bits(info->i2c, PM8607_RTC1, ALARM, ALARM);
+	else
+		pm860x_set_bits(info->i2c, PM8607_RTC1, ALARM, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -376,9 +382,12 @@ static int __devinit pm860x_rtc_probe(struct platform_device *pdev)
 	INIT_DELAYED_WORK(&info->calib_work, calibrate_vrtc_work);
 	schedule_delayed_work(&info->calib_work, VRTC_CALIB_INTERVAL);
 #endif	/* VRTC_CALIBRATION */
+<<<<<<< HEAD
 
 	device_init_wakeup(&pdev->dev, 1);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 out_rtc:
 	free_irq(info->irq, info);
@@ -404,6 +413,7 @@ static int __devexit pm860x_rtc_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM_SLEEP
 static int pm860x_rtc_suspend(struct device *dev)
 {
@@ -427,17 +437,36 @@ static int pm860x_rtc_resume(struct device *dev)
 
 static SIMPLE_DEV_PM_OPS(pm860x_rtc_pm_ops, pm860x_rtc_suspend, pm860x_rtc_resume);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver pm860x_rtc_driver = {
 	.driver		= {
 		.name	= "88pm860x-rtc",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.pm	= &pm860x_rtc_pm_ops,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe		= pm860x_rtc_probe,
 	.remove		= __devexit_p(pm860x_rtc_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(pm860x_rtc_driver);
+=======
+static int __init pm860x_rtc_init(void)
+{
+	return platform_driver_register(&pm860x_rtc_driver);
+}
+module_init(pm860x_rtc_init);
+
+static void __exit pm860x_rtc_exit(void)
+{
+	platform_driver_unregister(&pm860x_rtc_driver);
+}
+module_exit(pm860x_rtc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Marvell 88PM860x RTC driver");
 MODULE_AUTHOR("Haojian Zhuang <haojian.zhuang@marvell.com>");

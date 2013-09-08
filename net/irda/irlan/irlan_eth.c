@@ -50,7 +50,11 @@ static const struct net_device_ops irlan_eth_netdev_ops = {
 	.ndo_open               = irlan_eth_open,
 	.ndo_stop               = irlan_eth_close,
 	.ndo_start_xmit    	= irlan_eth_xmit,
+<<<<<<< HEAD
 	.ndo_set_rx_mode	= irlan_eth_set_multicast_list,
+=======
+	.ndo_set_multicast_list = irlan_eth_set_multicast_list,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ndo_change_mtu		= eth_change_mtu,
 	.ndo_validate_addr	= eth_validate_addr,
 };
@@ -272,7 +276,11 @@ void irlan_eth_flow_indication(void *instance, void *sap, LOCAL_FLOW flow)
 	struct irlan_cb *self;
 	struct net_device *dev;
 
+<<<<<<< HEAD
 	self = instance;
+=======
+	self = (struct irlan_cb *) instance;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	IRDA_ASSERT(self != NULL, return;);
 	IRDA_ASSERT(self->magic == IRLAN_MAGIC, return;);

@@ -38,6 +38,10 @@ static const char version[] = "skisa.c: v1.03 09/12/2002 by Jochen Friedrich\n";
 #include <linux/trdevice.h>
 #include <linux/platform_device.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/irq.h>
 #include <asm/pci.h>

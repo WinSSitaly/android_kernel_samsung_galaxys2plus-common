@@ -17,7 +17,11 @@
 
 #include <asm/uaccess.h>
 #include <linux/time.h>
+<<<<<<< HEAD
 #include "reiserfs.h"
+=======
+#include <linux/reiserfs_fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/buffer_head.h>
 #include <linux/kernel.h>
 

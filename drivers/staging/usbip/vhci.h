@@ -6,11 +6,25 @@
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
+<<<<<<< HEAD
  */
 
 #ifndef __USBIP_VHCI_H
 #define __USBIP_VHCI_H
 
+=======
+ * This is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+ * USA.
+ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/device.h>
 #include <linux/list.h>
 #include <linux/spinlock.h>
@@ -99,7 +113,11 @@ struct vhci_hcd {
 };
 
 extern struct vhci_hcd *the_controller;
+<<<<<<< HEAD
 extern const struct attribute_group dev_attr_group;
+=======
+extern struct attribute_group dev_attr_group;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define hardware (&the_controller->pdev.dev)
 
 /* vhci_hcd.c */
@@ -132,5 +150,8 @@ static inline struct device *vhci_dev(struct vhci_hcd *vhci)
 {
 	return vhci_to_hcd(vhci)->self.controller;
 }
+<<<<<<< HEAD
 
 #endif /* __USBIP_VHCI_H */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

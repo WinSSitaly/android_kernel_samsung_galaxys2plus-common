@@ -34,11 +34,19 @@
 #include <linux/kthread.h>
 
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/types.h>
 
 #include <linux/nbd.h>
 
+<<<<<<< HEAD
 #define NBD_MAGIC 0x68797548
+=======
+#define LO_MAGIC 0x68797548
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef NDEBUG
 #define dprintk(flags, fmt...)
@@ -115,7 +123,11 @@ static void nbd_end_request(struct request *req)
 	spin_unlock_irqrestore(q->queue_lock, flags);
 }
 
+<<<<<<< HEAD
 static void sock_shutdown(struct nbd_device *nbd, int lock)
+=======
+static void sock_shutdown(struct nbd_device *lo, int lock)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Forcibly shutdown the socket causing all listeners
 	 * to error
@@ -124,6 +136,7 @@ static void sock_shutdown(struct nbd_device *nbd, int lock)
 	 * there should be a more generic interface rather than
 	 * calling socket ops directly here */
 	if (lock)
+<<<<<<< HEAD
 		mutex_lock(&nbd->tx_lock);
 	if (nbd->sock) {
 		dev_warn(disk_to_dev(nbd->disk), "shutting down socket\n");
@@ -132,6 +145,17 @@ static void sock_shutdown(struct nbd_device *nbd, int lock)
 	}
 	if (lock)
 		mutex_unlock(&nbd->tx_lock);
+=======
+		mutex_lock(&lo->tx_lock);
+	if (lo->sock) {
+		printk(KERN_WARNING "%s: shutting down socket\n",
+			lo->disk->disk_name);
+		kernel_sock_shutdown(lo->sock, SHUT_RDWR);
+		lo->sock = NULL;
+	}
+	if (lock)
+		mutex_unlock(&lo->tx_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void nbd_xmit_timeout(unsigned long arg)
@@ -146,19 +170,31 @@ static void nbd_xmit_timeout(unsigned long arg)
 /*
  *  Send or receive packet.
  */
+<<<<<<< HEAD
 static int sock_xmit(struct nbd_device *nbd, int send, void *buf, int size,
 		int msg_flags)
 {
 	struct socket *sock = nbd->sock;
+=======
+static int sock_xmit(struct nbd_device *lo, int send, void *buf, int size,
+		int msg_flags)
+{
+	struct socket *sock = lo->sock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int result;
 	struct msghdr msg;
 	struct kvec iov;
 	sigset_t blocked, oldset;
 
 	if (unlikely(!sock)) {
+<<<<<<< HEAD
 		dev_err(disk_to_dev(nbd->disk),
 			"Attempted %s on closed socket in sock_xmit\n",
 			(send ? "send" : "recv"));
+=======
+		printk(KERN_ERR "%s: Attempted %s on closed socket in sock_xmit\n",
+		       lo->disk->disk_name, (send ? "send" : "recv"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -180,6 +216,7 @@ static int sock_xmit(struct nbd_device *nbd, int send, void *buf, int size,
 		if (send) {
 			struct timer_list ti;
 
+<<<<<<< HEAD
 			if (nbd->xmit_timeout) {
 				init_timer(&ti);
 				ti.function = nbd_xmit_timeout;
@@ -189,6 +226,17 @@ static int sock_xmit(struct nbd_device *nbd, int send, void *buf, int size,
 			}
 			result = kernel_sendmsg(sock, &msg, &iov, 1, size);
 			if (nbd->xmit_timeout)
+=======
+			if (lo->xmit_timeout) {
+				init_timer(&ti);
+				ti.function = nbd_xmit_timeout;
+				ti.data = (unsigned long)current;
+				ti.expires = jiffies + lo->xmit_timeout;
+				add_timer(&ti);
+			}
+			result = kernel_sendmsg(sock, &msg, &iov, 1, size);
+			if (lo->xmit_timeout)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				del_timer_sync(&ti);
 		} else
 			result = kernel_recvmsg(sock, &msg, &iov, 1, size,
@@ -200,7 +248,11 @@ static int sock_xmit(struct nbd_device *nbd, int send, void *buf, int size,
 				task_pid_nr(current), current->comm,
 				dequeue_signal_lock(current, &current->blocked, &info));
 			result = -EINTR;
+<<<<<<< HEAD
 			sock_shutdown(nbd, !send);
+=======
+			sock_shutdown(lo, !send);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 
@@ -218,19 +270,31 @@ static int sock_xmit(struct nbd_device *nbd, int send, void *buf, int size,
 	return result;
 }
 
+<<<<<<< HEAD
 static inline int sock_send_bvec(struct nbd_device *nbd, struct bio_vec *bvec,
+=======
+static inline int sock_send_bvec(struct nbd_device *lo, struct bio_vec *bvec,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int flags)
 {
 	int result;
 	void *kaddr = kmap(bvec->bv_page);
+<<<<<<< HEAD
 	result = sock_xmit(nbd, 1, kaddr + bvec->bv_offset,
 			   bvec->bv_len, flags);
+=======
+	result = sock_xmit(lo, 1, kaddr + bvec->bv_offset, bvec->bv_len, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kunmap(bvec->bv_page);
 	return result;
 }
 
 /* always call with the tx_lock held */
+<<<<<<< HEAD
 static int nbd_send_req(struct nbd_device *nbd, struct request *req)
+=======
+static int nbd_send_req(struct nbd_device *lo, struct request *req)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int result, flags;
 	struct nbd_request request;
@@ -243,6 +307,7 @@ static int nbd_send_req(struct nbd_device *nbd, struct request *req)
 	memcpy(request.handle, &req, sizeof(req));
 
 	dprintk(DBG_TX, "%s: request %p: sending control (%s@%llu,%uB)\n",
+<<<<<<< HEAD
 			nbd->disk->disk_name, req,
 			nbdcmd_to_ascii(nbd_cmd(req)),
 			(unsigned long long)blk_rq_pos(req) << 9,
@@ -252,6 +317,17 @@ static int nbd_send_req(struct nbd_device *nbd, struct request *req)
 	if (result <= 0) {
 		dev_err(disk_to_dev(nbd->disk),
 			"Send control failed (result %d)\n", result);
+=======
+			lo->disk->disk_name, req,
+			nbdcmd_to_ascii(nbd_cmd(req)),
+			(unsigned long long)blk_rq_pos(req) << 9,
+			blk_rq_bytes(req));
+	result = sock_xmit(lo, 1, &request, sizeof(request),
+			(nbd_cmd(req) == NBD_CMD_WRITE) ? MSG_MORE : 0);
+	if (result <= 0) {
+		printk(KERN_ERR "%s: Send control failed (result %d)\n",
+				lo->disk->disk_name, result);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error_out;
 	}
 
@@ -267,12 +343,20 @@ static int nbd_send_req(struct nbd_device *nbd, struct request *req)
 			if (!rq_iter_last(req, iter))
 				flags = MSG_MORE;
 			dprintk(DBG_TX, "%s: request %p: sending %d bytes data\n",
+<<<<<<< HEAD
 					nbd->disk->disk_name, req, bvec->bv_len);
 			result = sock_send_bvec(nbd, bvec, flags);
 			if (result <= 0) {
 				dev_err(disk_to_dev(nbd->disk),
 					"Send data failed (result %d)\n",
 					result);
+=======
+					lo->disk->disk_name, req, bvec->bv_len);
+			result = sock_send_bvec(lo, bvec, flags);
+			if (result <= 0) {
+				printk(KERN_ERR "%s: Send data failed (result %d)\n",
+						lo->disk->disk_name, result);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto error_out;
 			}
 		}
@@ -283,12 +367,17 @@ error_out:
 	return -EIO;
 }
 
+<<<<<<< HEAD
 static struct request *nbd_find_request(struct nbd_device *nbd,
+=======
+static struct request *nbd_find_request(struct nbd_device *lo,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					struct request *xreq)
 {
 	struct request *req, *tmp;
 	int err;
 
+<<<<<<< HEAD
 	err = wait_event_interruptible(nbd->active_wq, nbd->active_req != xreq);
 	if (unlikely(err))
 		goto out;
@@ -302,6 +391,21 @@ static struct request *nbd_find_request(struct nbd_device *nbd,
 		return req;
 	}
 	spin_unlock(&nbd->queue_lock);
+=======
+	err = wait_event_interruptible(lo->active_wq, lo->active_req != xreq);
+	if (unlikely(err))
+		goto out;
+
+	spin_lock(&lo->queue_lock);
+	list_for_each_entry_safe(req, tmp, &lo->queue_head, queuelist) {
+		if (req != xreq)
+			continue;
+		list_del_init(&req->queuelist);
+		spin_unlock(&lo->queue_lock);
+		return req;
+	}
+	spin_unlock(&lo->queue_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = -ENOENT;
 
@@ -309,78 +413,135 @@ out:
 	return ERR_PTR(err);
 }
 
+<<<<<<< HEAD
 static inline int sock_recv_bvec(struct nbd_device *nbd, struct bio_vec *bvec)
 {
 	int result;
 	void *kaddr = kmap(bvec->bv_page);
 	result = sock_xmit(nbd, 0, kaddr + bvec->bv_offset, bvec->bv_len,
+=======
+static inline int sock_recv_bvec(struct nbd_device *lo, struct bio_vec *bvec)
+{
+	int result;
+	void *kaddr = kmap(bvec->bv_page);
+	result = sock_xmit(lo, 0, kaddr + bvec->bv_offset, bvec->bv_len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			MSG_WAITALL);
 	kunmap(bvec->bv_page);
 	return result;
 }
 
 /* NULL returned = something went wrong, inform userspace */
+<<<<<<< HEAD
 static struct request *nbd_read_stat(struct nbd_device *nbd)
+=======
+static struct request *nbd_read_stat(struct nbd_device *lo)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int result;
 	struct nbd_reply reply;
 	struct request *req;
 
 	reply.magic = 0;
+<<<<<<< HEAD
 	result = sock_xmit(nbd, 0, &reply, sizeof(reply), MSG_WAITALL);
 	if (result <= 0) {
 		dev_err(disk_to_dev(nbd->disk),
 			"Receive control failed (result %d)\n", result);
+=======
+	result = sock_xmit(lo, 0, &reply, sizeof(reply), MSG_WAITALL);
+	if (result <= 0) {
+		printk(KERN_ERR "%s: Receive control failed (result %d)\n",
+				lo->disk->disk_name, result);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto harderror;
 	}
 
 	if (ntohl(reply.magic) != NBD_REPLY_MAGIC) {
+<<<<<<< HEAD
 		dev_err(disk_to_dev(nbd->disk), "Wrong magic (0x%lx)\n",
+=======
+		printk(KERN_ERR "%s: Wrong magic (0x%lx)\n",
+				lo->disk->disk_name,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				(unsigned long)ntohl(reply.magic));
 		result = -EPROTO;
 		goto harderror;
 	}
 
+<<<<<<< HEAD
 	req = nbd_find_request(nbd, *(struct request **)reply.handle);
+=======
+	req = nbd_find_request(lo, *(struct request **)reply.handle);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(req)) {
 		result = PTR_ERR(req);
 		if (result != -ENOENT)
 			goto harderror;
 
+<<<<<<< HEAD
 		dev_err(disk_to_dev(nbd->disk), "Unexpected reply (%p)\n",
 			reply.handle);
+=======
+		printk(KERN_ERR "%s: Unexpected reply (%p)\n",
+				lo->disk->disk_name, reply.handle);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		result = -EBADR;
 		goto harderror;
 	}
 
 	if (ntohl(reply.error)) {
+<<<<<<< HEAD
 		dev_err(disk_to_dev(nbd->disk), "Other side returned error (%d)\n",
 			ntohl(reply.error));
+=======
+		printk(KERN_ERR "%s: Other side returned error (%d)\n",
+				lo->disk->disk_name, ntohl(reply.error));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		req->errors++;
 		return req;
 	}
 
 	dprintk(DBG_RX, "%s: request %p: got reply\n",
+<<<<<<< HEAD
 			nbd->disk->disk_name, req);
+=======
+			lo->disk->disk_name, req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (nbd_cmd(req) == NBD_CMD_READ) {
 		struct req_iterator iter;
 		struct bio_vec *bvec;
 
 		rq_for_each_segment(bvec, req, iter) {
+<<<<<<< HEAD
 			result = sock_recv_bvec(nbd, bvec);
 			if (result <= 0) {
 				dev_err(disk_to_dev(nbd->disk), "Receive data failed (result %d)\n",
 					result);
+=======
+			result = sock_recv_bvec(lo, bvec);
+			if (result <= 0) {
+				printk(KERN_ERR "%s: Receive data failed (result %d)\n",
+						lo->disk->disk_name, result);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				req->errors++;
 				return req;
 			}
 			dprintk(DBG_RX, "%s: request %p: got %d bytes data\n",
+<<<<<<< HEAD
 				nbd->disk->disk_name, req, bvec->bv_len);
+=======
+				lo->disk->disk_name, req, bvec->bv_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	return req;
 harderror:
+<<<<<<< HEAD
 	nbd->harderror = result;
+=======
+	lo->harderror = result;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NULL;
 }
 
@@ -398,11 +559,16 @@ static struct device_attribute pid_attr = {
 	.show = pid_show,
 };
 
+<<<<<<< HEAD
 static int nbd_do_it(struct nbd_device *nbd)
+=======
+static int nbd_do_it(struct nbd_device *lo)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct request *req;
 	int ret;
 
+<<<<<<< HEAD
 	BUG_ON(nbd->magic != NBD_MAGIC);
 
 	nbd->pid = task_pid_nr(current);
@@ -429,12 +595,41 @@ static void nbd_clear_que(struct nbd_device *nbd)
 
 	/*
 	 * Because we have set nbd->sock to NULL under the tx_lock, all
+=======
+	BUG_ON(lo->magic != LO_MAGIC);
+
+	lo->pid = current->pid;
+	ret = sysfs_create_file(&disk_to_dev(lo->disk)->kobj, &pid_attr.attr);
+	if (ret) {
+		printk(KERN_ERR "nbd: sysfs_create_file failed!");
+		lo->pid = 0;
+		return ret;
+	}
+
+	while ((req = nbd_read_stat(lo)) != NULL)
+		nbd_end_request(req);
+
+	sysfs_remove_file(&disk_to_dev(lo->disk)->kobj, &pid_attr.attr);
+	lo->pid = 0;
+	return 0;
+}
+
+static void nbd_clear_que(struct nbd_device *lo)
+{
+	struct request *req;
+
+	BUG_ON(lo->magic != LO_MAGIC);
+
+	/*
+	 * Because we have set lo->sock to NULL under the tx_lock, all
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * modifications to the list must have completed by now.  For
 	 * the same reason, the active_req must be NULL.
 	 *
 	 * As a consequence, we don't need to take the spin lock while
 	 * purging the list here.
 	 */
+<<<<<<< HEAD
 	BUG_ON(nbd->sock);
 	BUG_ON(nbd->active_req);
 
@@ -448,6 +643,13 @@ static void nbd_clear_que(struct nbd_device *nbd)
 
 	while (!list_empty(&nbd->waiting_queue)) {
 		req = list_entry(nbd->waiting_queue.next, struct request,
+=======
+	BUG_ON(lo->sock);
+	BUG_ON(lo->active_req);
+
+	while (!list_empty(&lo->queue_head)) {
+		req = list_entry(lo->queue_head.next, struct request,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 queuelist);
 		list_del_init(&req->queuelist);
 		req->errors++;
@@ -456,7 +658,11 @@ static void nbd_clear_que(struct nbd_device *nbd)
 }
 
 
+<<<<<<< HEAD
 static void nbd_handle_req(struct nbd_device *nbd, struct request *req)
+=======
+static void nbd_handle_req(struct nbd_device *lo, struct request *req)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (req->cmd_type != REQ_TYPE_FS)
 		goto error_out;
@@ -464,15 +670,22 @@ static void nbd_handle_req(struct nbd_device *nbd, struct request *req)
 	nbd_cmd(req) = NBD_CMD_READ;
 	if (rq_data_dir(req) == WRITE) {
 		nbd_cmd(req) = NBD_CMD_WRITE;
+<<<<<<< HEAD
 		if (nbd->flags & NBD_READ_ONLY) {
 			dev_err(disk_to_dev(nbd->disk),
 				"Write on read-only\n");
+=======
+		if (lo->flags & NBD_READ_ONLY) {
+			printk(KERN_ERR "%s: Write on read-only\n",
+					lo->disk->disk_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto error_out;
 		}
 	}
 
 	req->errors = 0;
 
+<<<<<<< HEAD
 	mutex_lock(&nbd->tx_lock);
 	if (unlikely(!nbd->sock)) {
 		mutex_unlock(&nbd->tx_lock);
@@ -496,6 +709,32 @@ static void nbd_handle_req(struct nbd_device *nbd, struct request *req)
 	nbd->active_req = NULL;
 	mutex_unlock(&nbd->tx_lock);
 	wake_up_all(&nbd->active_wq);
+=======
+	mutex_lock(&lo->tx_lock);
+	if (unlikely(!lo->sock)) {
+		mutex_unlock(&lo->tx_lock);
+		printk(KERN_ERR "%s: Attempted send on closed socket\n",
+		       lo->disk->disk_name);
+		goto error_out;
+	}
+
+	lo->active_req = req;
+
+	if (nbd_send_req(lo, req) != 0) {
+		printk(KERN_ERR "%s: Request send failed\n",
+				lo->disk->disk_name);
+		req->errors++;
+		nbd_end_request(req);
+	} else {
+		spin_lock(&lo->queue_lock);
+		list_add(&req->queuelist, &lo->queue_head);
+		spin_unlock(&lo->queue_lock);
+	}
+
+	lo->active_req = NULL;
+	mutex_unlock(&lo->tx_lock);
+	wake_up_all(&lo->active_wq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return;
 
@@ -506,6 +745,7 @@ error_out:
 
 static int nbd_thread(void *data)
 {
+<<<<<<< HEAD
 	struct nbd_device *nbd = data;
 	struct request *req;
 
@@ -528,6 +768,30 @@ static int nbd_thread(void *data)
 
 		/* handle request */
 		nbd_handle_req(nbd, req);
+=======
+	struct nbd_device *lo = data;
+	struct request *req;
+
+	set_user_nice(current, -20);
+	while (!kthread_should_stop() || !list_empty(&lo->waiting_queue)) {
+		/* wait for something to do */
+		wait_event_interruptible(lo->waiting_wq,
+					 kthread_should_stop() ||
+					 !list_empty(&lo->waiting_queue));
+
+		/* extract request */
+		if (list_empty(&lo->waiting_queue))
+			continue;
+
+		spin_lock_irq(&lo->queue_lock);
+		req = list_entry(lo->waiting_queue.next, struct request,
+				 queuelist);
+		list_del_init(&req->queuelist);
+		spin_unlock_irq(&lo->queue_lock);
+
+		/* handle request */
+		nbd_handle_req(lo, req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }
@@ -535,7 +799,11 @@ static int nbd_thread(void *data)
 /*
  * We always wait for result of write, for now. It would be nice to make it optional
  * in future
+<<<<<<< HEAD
  * if ((rq_data_dir(req) == WRITE) && (nbd->flags & NBD_WRITE_NOCHK))
+=======
+ * if ((rq_data_dir(req) == WRITE) && (lo->flags & NBD_WRITE_NOCHK))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *   { printk( "Warning: Ignoring result!\n"); nbd_end_request( req ); }
  */
 
@@ -544,13 +812,18 @@ static void do_nbd_request(struct request_queue *q)
 	struct request *req;
 	
 	while ((req = blk_fetch_request(q)) != NULL) {
+<<<<<<< HEAD
 		struct nbd_device *nbd;
+=======
+		struct nbd_device *lo;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		spin_unlock_irq(q->queue_lock);
 
 		dprintk(DBG_BLKDEV, "%s: request %p: dequeued (flags=%x)\n",
 				req->rq_disk->disk_name, req, req->cmd_type);
 
+<<<<<<< HEAD
 		nbd = req->rq_disk->private_data;
 
 		BUG_ON(nbd->magic != NBD_MAGIC);
@@ -558,17 +831,34 @@ static void do_nbd_request(struct request_queue *q)
 		if (unlikely(!nbd->sock)) {
 			dev_err(disk_to_dev(nbd->disk),
 				"Attempted send on closed socket\n");
+=======
+		lo = req->rq_disk->private_data;
+
+		BUG_ON(lo->magic != LO_MAGIC);
+
+		if (unlikely(!lo->sock)) {
+			printk(KERN_ERR "%s: Attempted send on closed socket\n",
+				lo->disk->disk_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			req->errors++;
 			nbd_end_request(req);
 			spin_lock_irq(q->queue_lock);
 			continue;
 		}
 
+<<<<<<< HEAD
 		spin_lock_irq(&nbd->queue_lock);
 		list_add_tail(&req->queuelist, &nbd->waiting_queue);
 		spin_unlock_irq(&nbd->queue_lock);
 
 		wake_up(&nbd->waiting_wq);
+=======
+		spin_lock_irq(&lo->queue_lock);
+		list_add_tail(&req->queuelist, &lo->waiting_queue);
+		spin_unlock_irq(&lo->queue_lock);
+
+		wake_up(&lo->waiting_wq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		spin_lock_irq(q->queue_lock);
 	}
@@ -576,33 +866,55 @@ static void do_nbd_request(struct request_queue *q)
 
 /* Must be called with tx_lock held */
 
+<<<<<<< HEAD
 static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
+=======
+static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *lo,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       unsigned int cmd, unsigned long arg)
 {
 	switch (cmd) {
 	case NBD_DISCONNECT: {
 		struct request sreq;
 
+<<<<<<< HEAD
 		dev_info(disk_to_dev(nbd->disk), "NBD_DISCONNECT\n");
+=======
+	        printk(KERN_INFO "%s: NBD_DISCONNECT\n", lo->disk->disk_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		blk_rq_init(NULL, &sreq);
 		sreq.cmd_type = REQ_TYPE_SPECIAL;
 		nbd_cmd(&sreq) = NBD_CMD_DISC;
+<<<<<<< HEAD
 		if (!nbd->sock)
 			return -EINVAL;
 		nbd_send_req(nbd, &sreq);
+=======
+		if (!lo->sock)
+			return -EINVAL;
+		nbd_send_req(lo, &sreq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
                 return 0;
 	}
  
 	case NBD_CLEAR_SOCK: {
 		struct file *file;
 
+<<<<<<< HEAD
 		nbd->sock = NULL;
 		file = nbd->file;
 		nbd->file = NULL;
 		nbd_clear_que(nbd);
 		BUG_ON(!list_empty(&nbd->queue_head));
 		BUG_ON(!list_empty(&nbd->waiting_queue));
+=======
+		lo->sock = NULL;
+		file = lo->file;
+		lo->file = NULL;
+		nbd_clear_que(lo);
+		BUG_ON(!list_empty(&lo->queue_head));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (file)
 			fput(file);
 		return 0;
@@ -610,14 +922,23 @@ static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
 
 	case NBD_SET_SOCK: {
 		struct file *file;
+<<<<<<< HEAD
 		if (nbd->file)
+=======
+		if (lo->file)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EBUSY;
 		file = fget(arg);
 		if (file) {
 			struct inode *inode = file->f_path.dentry->d_inode;
 			if (S_ISSOCK(inode->i_mode)) {
+<<<<<<< HEAD
 				nbd->file = file;
 				nbd->sock = SOCKET_I(inode);
+=======
+				lo->file = file;
+				lo->sock = SOCKET_I(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				if (max_part > 0)
 					bdev->bd_invalidated = 1;
 				return 0;
@@ -629,6 +950,7 @@ static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
 	}
 
 	case NBD_SET_BLKSIZE:
+<<<<<<< HEAD
 		nbd->blksize = arg;
 		nbd->bytesize &= ~(nbd->blksize-1);
 		bdev->bd_inode->i_size = nbd->bytesize;
@@ -652,6 +974,31 @@ static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
 		bdev->bd_inode->i_size = nbd->bytesize;
 		set_blocksize(bdev, nbd->blksize);
 		set_capacity(nbd->disk, nbd->bytesize >> 9);
+=======
+		lo->blksize = arg;
+		lo->bytesize &= ~(lo->blksize-1);
+		bdev->bd_inode->i_size = lo->bytesize;
+		set_blocksize(bdev, lo->blksize);
+		set_capacity(lo->disk, lo->bytesize >> 9);
+		return 0;
+
+	case NBD_SET_SIZE:
+		lo->bytesize = arg & ~(lo->blksize-1);
+		bdev->bd_inode->i_size = lo->bytesize;
+		set_blocksize(bdev, lo->blksize);
+		set_capacity(lo->disk, lo->bytesize >> 9);
+		return 0;
+
+	case NBD_SET_TIMEOUT:
+		lo->xmit_timeout = arg * HZ;
+		return 0;
+
+	case NBD_SET_SIZE_BLOCKS:
+		lo->bytesize = ((u64) arg) * lo->blksize;
+		bdev->bd_inode->i_size = lo->bytesize;
+		set_blocksize(bdev, lo->blksize);
+		set_capacity(lo->disk, lo->bytesize >> 9);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	case NBD_DO_IT: {
@@ -659,6 +1006,7 @@ static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
 		struct file *file;
 		int error;
 
+<<<<<<< HEAD
 		if (nbd->pid)
 			return -EBUSY;
 		if (!nbd->file)
@@ -692,6 +1040,40 @@ static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
 		if (max_part > 0)
 			ioctl_by_bdev(bdev, BLKRRPART, 0);
 		return nbd->harderror;
+=======
+		if (lo->pid)
+			return -EBUSY;
+		if (!lo->file)
+			return -EINVAL;
+
+		mutex_unlock(&lo->tx_lock);
+
+		thread = kthread_create(nbd_thread, lo, lo->disk->disk_name);
+		if (IS_ERR(thread)) {
+			mutex_lock(&lo->tx_lock);
+			return PTR_ERR(thread);
+		}
+		wake_up_process(thread);
+		error = nbd_do_it(lo);
+		kthread_stop(thread);
+
+		mutex_lock(&lo->tx_lock);
+		if (error)
+			return error;
+		sock_shutdown(lo, 0);
+		file = lo->file;
+		lo->file = NULL;
+		nbd_clear_que(lo);
+		printk(KERN_WARNING "%s: queue cleared\n", lo->disk->disk_name);
+		if (file)
+			fput(file);
+		lo->bytesize = 0;
+		bdev->bd_inode->i_size = 0;
+		set_capacity(lo->disk, 0);
+		if (max_part > 0)
+			ioctl_by_bdev(bdev, BLKRRPART, 0);
+		return lo->harderror;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	case NBD_CLEAR_QUE:
@@ -699,6 +1081,7 @@ static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
 		 * This is for compatibility only.  The queue is always cleared
 		 * by NBD_DO_IT or NBD_CLEAR_SOCK.
 		 */
+<<<<<<< HEAD
 		BUG_ON(!nbd->sock && !list_empty(&nbd->queue_head));
 		return 0;
 
@@ -707,6 +1090,16 @@ static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
 			"next = %p, prev = %p, head = %p\n",
 			nbd->queue_head.next, nbd->queue_head.prev,
 			&nbd->queue_head);
+=======
+		BUG_ON(!lo->sock && !list_empty(&lo->queue_head));
+		return 0;
+
+	case NBD_PRINT_DEBUG:
+		printk(KERN_INFO "%s: next = %p, prev = %p, head = %p\n",
+			bdev->bd_disk->disk_name,
+			lo->queue_head.next, lo->queue_head.prev,
+			&lo->queue_head);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 	return -ENOTTY;
@@ -715,12 +1108,17 @@ static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
 static int nbd_ioctl(struct block_device *bdev, fmode_t mode,
 		     unsigned int cmd, unsigned long arg)
 {
+<<<<<<< HEAD
 	struct nbd_device *nbd = bdev->bd_disk->private_data;
+=======
+	struct nbd_device *lo = bdev->bd_disk->private_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int error;
 
 	if (!capable(CAP_SYS_ADMIN))
 		return -EPERM;
 
+<<<<<<< HEAD
 	BUG_ON(nbd->magic != NBD_MAGIC);
 
 	/* Anyone capable of this syscall can do *real bad* things */
@@ -730,6 +1128,17 @@ static int nbd_ioctl(struct block_device *bdev, fmode_t mode,
 	mutex_lock(&nbd->tx_lock);
 	error = __nbd_ioctl(bdev, nbd, cmd, arg);
 	mutex_unlock(&nbd->tx_lock);
+=======
+	BUG_ON(lo->magic != LO_MAGIC);
+
+	/* Anyone capable of this syscall can do *real bad* things */
+	dprintk(DBG_IOCTL, "%s: nbd_ioctl cmd=%s(0x%x) arg=%lu\n",
+			lo->disk->disk_name, ioctl_cmd_to_ascii(cmd), cmd, arg);
+
+	mutex_lock(&lo->tx_lock);
+	error = __nbd_ioctl(bdev, lo, cmd, arg);
+	mutex_unlock(&lo->tx_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return error;
 }
@@ -754,7 +1163,11 @@ static int __init nbd_init(void)
 	BUILD_BUG_ON(sizeof(struct nbd_request) != 28);
 
 	if (max_part < 0) {
+<<<<<<< HEAD
 		printk(KERN_ERR "nbd: max_part must be >= 0\n");
+=======
+		printk(KERN_CRIT "nbd: max_part must be >= 0\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -815,7 +1228,11 @@ static int __init nbd_init(void)
 	for (i = 0; i < nbds_max; i++) {
 		struct gendisk *disk = nbd_dev[i].disk;
 		nbd_dev[i].file = NULL;
+<<<<<<< HEAD
 		nbd_dev[i].magic = NBD_MAGIC;
+=======
+		nbd_dev[i].magic = LO_MAGIC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nbd_dev[i].flags = 0;
 		INIT_LIST_HEAD(&nbd_dev[i].waiting_queue);
 		spin_lock_init(&nbd_dev[i].queue_lock);

@@ -17,5 +17,10 @@ obj-$(CONFIG_DVB_BUDGET_CI) += budget-ci.o
 obj-$(CONFIG_DVB_BUDGET_PATCH) += budget-patch.o
 obj-$(CONFIG_DVB_AV7110) += dvb-ttpci.o
 
+<<<<<<< HEAD
 ccflags-y += -Idrivers/media/dvb/dvb-core/ -Idrivers/media/dvb/frontends/
 ccflags-y += -Idrivers/media/common/tuners
+=======
+EXTRA_CFLAGS += -Idrivers/media/dvb/dvb-core/ -Idrivers/media/dvb/frontends/
+EXTRA_CFLAGS += -Idrivers/media/common/tuners
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

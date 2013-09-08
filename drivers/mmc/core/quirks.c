@@ -11,7 +11,10 @@
 
 #include <linux/types.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mmc/card.h>
 
 #ifndef SDIO_VENDOR_ID_TI
@@ -22,6 +25,7 @@
 #define SDIO_DEVICE_ID_TI_WL1271	0x4076
 #endif
 
+<<<<<<< HEAD
 #ifndef SDIO_VENDOR_ID_STE
 #define SDIO_VENDOR_ID_STE		0x0020
 #endif
@@ -30,6 +34,8 @@
 #define SDIO_DEVICE_ID_STE_CW1200	0x2280
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This hook just adds a quirk for all sdio devices
  */
@@ -55,9 +61,12 @@ static const struct mmc_fixup mmc_fixup_methods[] = {
 	SDIO_FIXUP(SDIO_VENDOR_ID_TI, SDIO_DEVICE_ID_TI_WL1271,
 		   add_quirk, MMC_QUIRK_DISABLE_CD),
 
+<<<<<<< HEAD
 	SDIO_FIXUP(SDIO_VENDOR_ID_STE, SDIO_DEVICE_ID_STE_CW1200,
 		   add_quirk, MMC_QUIRK_BROKEN_BYTE_MODE_512),
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	END_FIXUP
 };
 

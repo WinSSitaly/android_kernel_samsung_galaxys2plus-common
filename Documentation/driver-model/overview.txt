@@ -30,7 +30,11 @@ management, and hot plug. In particular, the model dictated by Intel and
 Microsoft (namely ACPI) ensures that almost every device on almost any bus
 on an x86-compatible system can work within this paradigm.  Of course,
 not every bus is able to support all such operations, although most
+<<<<<<< HEAD
 buses support most of those operations.
+=======
+buses support a most of those operations.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 Downstream Access
@@ -46,6 +50,7 @@ struct pci_dev now looks like this:
 struct pci_dev {
 	...
 
+<<<<<<< HEAD
 	struct device dev;     /* Generic device interface */
 	...
 };
@@ -57,11 +62,22 @@ Note also that that struct device dev is not necessarily defined at the
 front of the pci_dev structure.  This is to make people think about what
 they're doing when switching between the bus driver and the global driver,
 and to discourage meaningless and incorrect casts between the two.
+=======
+	struct device dev;
+};
+
+Note first that it is statically allocated. This means only one allocation on
+device discovery. Note also that it is at the _end_ of struct pci_dev. This is
+to make people think about what they're doing when switching between the bus
+driver and the global driver; and to prevent against mindless casts between
+the two.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 The PCI bus layer freely accesses the fields of struct device. It knows about
 the structure of struct pci_dev, and it should know the structure of struct
 device. Individual PCI device drivers that have been converted to the current
 driver model generally do not and should not touch the fields of struct device,
+<<<<<<< HEAD
 unless there is a compelling reason to do so.
 
 The above abstraction prevents unnecessary pain during transitional phases.
@@ -69,6 +85,14 @@ If it were not done this way, then when a field was renamed or removed, every
 downstream driver would break.  On the other hand, if only the bus layer
 (and not the device layer) accesses the struct device, it is only the bus
 layer that needs to change.
+=======
+unless there is a strong compelling reason to do so.
+
+This abstraction is prevention of unnecessary pain during transitional phases.
+If the name of the field changes or is removed, then every downstream driver
+will break. On the other hand, if only the bus layer (and not the device
+layer) accesses struct device, it is only that layer that needs to change.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 User Interface
@@ -77,6 +101,7 @@ User Interface
 By virtue of having a complete hierarchical view of all the devices in the
 system, exporting a complete hierarchical view to userspace becomes relatively
 easy. This has been accomplished by implementing a special purpose virtual
+<<<<<<< HEAD
 file system named sysfs.
 
 Almost all mainstream Linux distros mount this filesystem automatically; you
@@ -98,6 +123,17 @@ or something similar in the /lib/init/fstab file on Debian-based systems:
 none            /sys    sysfs    nodev,noexec,nosuid    0 0
 
 If sysfs is not automatically mounted, you can always do it manually with:
+=======
+file system named sysfs. It is hence possible for the user to mount the
+whole sysfs filesystem anywhere in userspace.
+
+This can be done permanently by providing the following entry into the
+/etc/fstab (under the provision that the mount point does exist, of course):
+
+none     	/sys	sysfs    defaults		0	0
+
+Or by hand on the command line:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # mount -t sysfs sysfs /sys
 

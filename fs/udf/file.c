@@ -39,12 +39,17 @@
 #include "udf_i.h"
 #include "udf_sb.h"
 
+<<<<<<< HEAD
 static void __udf_adinicb_readpage(struct page *page)
+=======
+static int udf_adinicb_readpage(struct file *file, struct page *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inode *inode = page->mapping->host;
 	char *kaddr;
 	struct udf_inode_info *iinfo = UDF_I(inode);
 
+<<<<<<< HEAD
 	kaddr = kmap(page);
 	memcpy(kaddr, iinfo->i_ext.i_data + iinfo->i_lenEAttr, inode->i_size);
 	memset(kaddr + inode->i_size, 0, PAGE_CACHE_SIZE - inode->i_size);
@@ -57,6 +62,16 @@ static int udf_adinicb_readpage(struct file *file, struct page *page)
 {
 	BUG_ON(!PageLocked(page));
 	__udf_adinicb_readpage(page);
+=======
+	BUG_ON(!PageLocked(page));
+
+	kaddr = kmap(page);
+	memset(kaddr, 0, PAGE_CACHE_SIZE);
+	memcpy(kaddr, iinfo->i_ext.i_data + iinfo->i_lenEAttr, inode->i_size);
+	flush_dcache_page(page);
+	SetPageUptodate(page);
+	kunmap(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unlock_page(page);
 
 	return 0;
@@ -81,6 +96,7 @@ static int udf_adinicb_writepage(struct page *page,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int udf_adinicb_write_begin(struct file *file,
 			struct address_space *mapping, loff_t pos,
 			unsigned len, unsigned flags, struct page **pagep,
@@ -100,6 +116,8 @@ static int udf_adinicb_write_begin(struct file *file,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int udf_adinicb_write_end(struct file *file,
 			struct address_space *mapping,
 			loff_t pos, unsigned len, unsigned copied,
@@ -110,10 +128,17 @@ static int udf_adinicb_write_end(struct file *file,
 	char *kaddr;
 	struct udf_inode_info *iinfo = UDF_I(inode);
 
+<<<<<<< HEAD
 	kaddr = kmap_atomic(page);
 	memcpy(iinfo->i_ext.i_data + iinfo->i_lenEAttr + offset,
 		kaddr + offset, copied);
 	kunmap_atomic(kaddr);
+=======
+	kaddr = kmap_atomic(page, KM_USER0);
+	memcpy(iinfo->i_ext.i_data + iinfo->i_lenEAttr + offset,
+		kaddr + offset, copied);
+	kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return simple_write_end(file, mapping, pos, len, copied, page, fsdata);
 }
@@ -121,8 +146,13 @@ static int udf_adinicb_write_end(struct file *file,
 const struct address_space_operations udf_adinicb_aops = {
 	.readpage	= udf_adinicb_readpage,
 	.writepage	= udf_adinicb_writepage,
+<<<<<<< HEAD
 	.write_begin	= udf_adinicb_write_begin,
 	.write_end	= udf_adinicb_write_end,
+=======
+	.write_begin = simple_write_begin,
+	.write_end = udf_adinicb_write_end,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static ssize_t udf_file_aio_write(struct kiocb *iocb, const struct iovec *iov,
@@ -173,7 +203,11 @@ long udf_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	long old_block, new_block;
 	int result = -EINVAL;
 
+<<<<<<< HEAD
 	if (inode_permission(inode, MAY_READ) != 0) {
+=======
+	if (file_permission(filp, MAY_READ) != 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		udf_debug("no permission to access inode %lu\n", inode->i_ino);
 		result = -EPERM;
 		goto out;

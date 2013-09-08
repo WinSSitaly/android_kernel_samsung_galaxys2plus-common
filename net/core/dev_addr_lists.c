@@ -13,7 +13,10 @@
 
 #include <linux/netdevice.h>
 #include <linux/rtnetlink.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/list.h>
 #include <linux/proc_fs.h>
 
@@ -57,7 +60,11 @@ static int __hw_addr_add_ex(struct netdev_hw_addr_list *list,
 	ha->type = addr_type;
 	ha->refcount = 1;
 	ha->global_use = global;
+<<<<<<< HEAD
 	ha->synced = 0;
+=======
+	ha->synced = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_add_tail_rcu(&ha->list, &list->list);
 	list->count++;
 	return 0;
@@ -155,7 +162,11 @@ int __hw_addr_sync(struct netdev_hw_addr_list *to_list,
 					    addr_len, ha->type);
 			if (err)
 				break;
+<<<<<<< HEAD
 			ha->synced++;
+=======
+			ha->synced = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ha->refcount++;
 		} else if (ha->refcount == 1) {
 			__hw_addr_del(to_list, ha->addr, addr_len, ha->type);
@@ -176,7 +187,11 @@ void __hw_addr_unsync(struct netdev_hw_addr_list *to_list,
 		if (ha->synced) {
 			__hw_addr_del(to_list, ha->addr,
 				      addr_len, ha->type);
+<<<<<<< HEAD
 			ha->synced--;
+=======
+			ha->synced = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			__hw_addr_del(from_list, ha->addr,
 				      addr_len, ha->type);
 		}
@@ -308,8 +323,12 @@ int dev_addr_del(struct net_device *dev, unsigned char *addr,
 	 */
 	ha = list_first_entry(&dev->dev_addrs.list,
 			      struct netdev_hw_addr, list);
+<<<<<<< HEAD
 	if (!memcmp(ha->addr, addr, dev->addr_len) &&
 	    ha->type == addr_type && ha->refcount == 1)
+=======
+	if (ha->addr == dev->dev_addr && ha->refcount == 1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOENT;
 
 	err = __hw_addr_del(&dev->dev_addrs, addr, dev->addr_len,
@@ -428,7 +447,11 @@ EXPORT_SYMBOL(dev_uc_del);
  *
  *	Add newly added addresses to the destination device and release
  *	addresses that have no users left. The source device must be
+<<<<<<< HEAD
  *	locked by netif_addr_lock_bh.
+=======
+ *	locked by netif_tx_lock_bh.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *	This function is intended to be called from the dev->set_rx_mode
  *	function of layered software devices.
@@ -440,11 +463,19 @@ int dev_uc_sync(struct net_device *to, struct net_device *from)
 	if (to->addr_len != from->addr_len)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	netif_addr_lock_nested(to);
 	err = __hw_addr_sync(&to->uc, &from->uc, to->addr_len);
 	if (!err)
 		__dev_set_rx_mode(to);
 	netif_addr_unlock(to);
+=======
+	netif_addr_lock_bh(to);
+	err = __hw_addr_sync(&to->uc, &from->uc, to->addr_len);
+	if (!err)
+		__dev_set_rx_mode(to);
+	netif_addr_unlock_bh(to);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 EXPORT_SYMBOL(dev_uc_sync);
@@ -464,7 +495,11 @@ void dev_uc_unsync(struct net_device *to, struct net_device *from)
 		return;
 
 	netif_addr_lock_bh(from);
+<<<<<<< HEAD
 	netif_addr_lock_nested(to);
+=======
+	netif_addr_lock(to);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__hw_addr_unsync(&to->uc, &from->uc, to->addr_len);
 	__dev_set_rx_mode(to);
 	netif_addr_unlock(to);
@@ -591,10 +626,17 @@ EXPORT_SYMBOL(dev_mc_del_global);
  *
  *	Add newly added addresses to the destination device and release
  *	addresses that have no users left. The source device must be
+<<<<<<< HEAD
  *	locked by netif_addr_lock_bh.
  *
  *	This function is intended to be called from the ndo_set_rx_mode
  *	function of layered software devices.
+=======
+ *	locked by netif_tx_lock_bh.
+ *
+ *	This function is intended to be called from the dev->set_multicast_list
+ *	or dev->set_rx_mode function of layered software devices.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int dev_mc_sync(struct net_device *to, struct net_device *from)
 {
@@ -603,11 +645,19 @@ int dev_mc_sync(struct net_device *to, struct net_device *from)
 	if (to->addr_len != from->addr_len)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	netif_addr_lock_nested(to);
 	err = __hw_addr_sync(&to->mc, &from->mc, to->addr_len);
 	if (!err)
 		__dev_set_rx_mode(to);
 	netif_addr_unlock(to);
+=======
+	netif_addr_lock_bh(to);
+	err = __hw_addr_sync(&to->mc, &from->mc, to->addr_len);
+	if (!err)
+		__dev_set_rx_mode(to);
+	netif_addr_unlock_bh(to);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 EXPORT_SYMBOL(dev_mc_sync);
@@ -627,7 +677,11 @@ void dev_mc_unsync(struct net_device *to, struct net_device *from)
 		return;
 
 	netif_addr_lock_bh(from);
+<<<<<<< HEAD
 	netif_addr_lock_nested(to);
+=======
+	netif_addr_lock(to);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__hw_addr_unsync(&to->mc, &from->mc, to->addr_len);
 	__dev_set_rx_mode(to);
 	netif_addr_unlock(to);

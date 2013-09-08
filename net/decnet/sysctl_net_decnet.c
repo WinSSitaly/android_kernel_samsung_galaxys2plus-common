@@ -68,6 +68,7 @@ static struct ctl_table_header *dn_table_header = NULL;
 static void strip_it(char *str)
 {
 	for(;;) {
+<<<<<<< HEAD
 		switch (*str) {
 		case ' ':
 		case '\n':
@@ -77,6 +78,16 @@ static void strip_it(char *str)
 			/* Fallthrough */
 		case 0:
 			return;
+=======
+		switch(*str) {
+			case ' ':
+			case '\n':
+			case '\r':
+			case ':':
+				*str = 0;
+			case 0:
+				return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		str++;
 	}

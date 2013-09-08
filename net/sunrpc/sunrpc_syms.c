@@ -25,12 +25,18 @@
 #include "netns.h"
 
 int sunrpc_net_id;
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(sunrpc_net_id);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static __net_init int sunrpc_init_net(struct net *net)
 {
 	int err;
+<<<<<<< HEAD
 	struct sunrpc_net *sn = net_generic(net, sunrpc_net_id);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = rpc_proc_init(net);
 	if (err)
@@ -40,6 +46,7 @@ static __net_init int sunrpc_init_net(struct net *net)
 	if (err)
 		goto err_ipmap;
 
+<<<<<<< HEAD
 	err = unix_gid_cache_create(net);
 	if (err)
 		goto err_unixgid;
@@ -52,6 +59,10 @@ static __net_init int sunrpc_init_net(struct net *net)
 
 err_unixgid:
 	ip_map_cache_destroy(net);
+=======
+	return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_ipmap:
 	rpc_proc_exit(net);
 err_proc:
@@ -60,7 +71,10 @@ err_proc:
 
 static __net_exit void sunrpc_exit_net(struct net *net)
 {
+<<<<<<< HEAD
 	unix_gid_cache_destroy(net);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ip_map_cache_destroy(net);
 	rpc_proc_exit(net);
 }
@@ -72,6 +86,7 @@ static struct pernet_operations sunrpc_net_ops = {
 	.size = sizeof(struct sunrpc_net),
 };
 
+<<<<<<< HEAD
 static int __init
 init_sunrpc(void)
 {
@@ -81,29 +96,62 @@ init_sunrpc(void)
 	err = rpcauth_init_module();
 	if (err)
 		goto out2;
+=======
+extern struct cache_detail unix_gid_cache;
+
+extern void cleanup_rpcb_clnt(void);
+
+static int __init
+init_sunrpc(void)
+{
+	int err = register_rpc_pipefs();
+	if (err)
+		goto out;
+	err = rpc_init_mempool();
+	if (err)
+		goto out2;
+	err = rpcauth_init_module();
+	if (err)
+		goto out3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cache_initialize();
 
 	err = register_pernet_subsys(&sunrpc_net_ops);
 	if (err)
+<<<<<<< HEAD
 		goto out3;
 
 	err = register_rpc_pipefs();
 	if (err)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out4;
 #ifdef RPC_DEBUG
 	rpc_register_sysctl();
 #endif
+<<<<<<< HEAD
+=======
+	cache_register(&unix_gid_cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	svc_init_xprt_sock();	/* svc sock transport */
 	init_socket_xprt();	/* clnt sock transport */
 	return 0;
 
 out4:
+<<<<<<< HEAD
 	unregister_pernet_subsys(&sunrpc_net_ops);
 out3:
 	rpcauth_remove_module();
 out2:
 	rpc_destroy_mempool();
+=======
+	rpcauth_remove_module();
+out3:
+	rpc_destroy_mempool();
+out2:
+	unregister_rpc_pipefs();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return err;
 }
@@ -111,11 +159,19 @@ out:
 static void __exit
 cleanup_sunrpc(void)
 {
+<<<<<<< HEAD
+=======
+	cleanup_rpcb_clnt();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rpcauth_remove_module();
 	cleanup_socket_xprt();
 	svc_cleanup_xprt_sock();
 	unregister_rpc_pipefs();
 	rpc_destroy_mempool();
+<<<<<<< HEAD
+=======
+	cache_unregister(&unix_gid_cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unregister_pernet_subsys(&sunrpc_net_ops);
 #ifdef RPC_DEBUG
 	rpc_unregister_sysctl();

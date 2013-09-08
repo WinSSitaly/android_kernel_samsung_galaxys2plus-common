@@ -26,7 +26,11 @@
 #include <linux/device.h>
 #include <linux/interrupt.h>
 #include <pcmcia/ss.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /*

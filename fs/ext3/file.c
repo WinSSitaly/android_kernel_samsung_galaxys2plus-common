@@ -18,8 +18,17 @@
  *	(jj@sunsite.ms.mff.cuni.cz)
  */
 
+<<<<<<< HEAD
 #include <linux/quotaops.h>
 #include "ext3.h"
+=======
+#include <linux/time.h>
+#include <linux/fs.h>
+#include <linux/jbd.h>
+#include <linux/quotaops.h>
+#include <linux/ext3_fs.h>
+#include <linux/ext3_jbd.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "xattr.h"
 #include "acl.h"
 
@@ -67,6 +76,10 @@ const struct file_operations ext3_file_operations = {
 };
 
 const struct inode_operations ext3_file_inode_operations = {
+<<<<<<< HEAD
+=======
+	.truncate	= ext3_truncate,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.setattr	= ext3_setattr,
 #ifdef CONFIG_EXT3_FS_XATTR
 	.setxattr	= generic_setxattr,
@@ -74,7 +87,11 @@ const struct inode_operations ext3_file_inode_operations = {
 	.listxattr	= ext3_listxattr,
 	.removexattr	= generic_removexattr,
 #endif
+<<<<<<< HEAD
 	.get_acl	= ext3_get_acl,
+=======
+	.check_acl	= ext3_check_acl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.fiemap		= ext3_fiemap,
 };
 

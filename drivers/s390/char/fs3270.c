@@ -11,11 +11,18 @@
 #include <linux/console.h>
 #include <linux/init.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/compat.h>
 #include <linux/module.h>
 #include <linux/list.h>
 #include <linux/slab.h>
 #include <linux/types.h>
+=======
+#include <linux/list.h>
+#include <linux/slab.h>
+#include <linux/types.h>
+#include <linux/compat.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/compat.h>
 #include <asm/ccwdev.h>

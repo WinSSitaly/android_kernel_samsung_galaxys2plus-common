@@ -76,7 +76,14 @@ struct mtd_info *do_map_probe(const char *name, struct map_info *map)
 	*/
 	module_put(drv->module);
 
+<<<<<<< HEAD
 	return ret;
+=======
+	if (ret)
+		return ret;
+
+	return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 /*
  * Destroy an MTD device which was created for a map device.

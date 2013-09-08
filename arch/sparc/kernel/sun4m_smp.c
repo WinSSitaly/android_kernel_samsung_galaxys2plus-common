@@ -10,7 +10,10 @@
 #include <linux/cpu.h>
 
 #include <asm/cacheflush.h>
+<<<<<<< HEAD
 #include <asm/switch_to.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/tlbflush.h>
 
 #include "irq.h"

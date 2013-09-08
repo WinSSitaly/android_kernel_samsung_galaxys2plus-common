@@ -17,8 +17,13 @@
 #include <linux/init.h>
 
 #include <asm/bootinfo.h>
+<<<<<<< HEAD
 #include <asm/wbflush.h>
 #include <asm/barrier.h>
+=======
+#include <asm/system.h>
+#include <asm/wbflush.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void wbflush_kn01(void);
 static void wbflush_kn210(void);

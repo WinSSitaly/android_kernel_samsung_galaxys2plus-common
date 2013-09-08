@@ -3,11 +3,28 @@
  *
  * Copyright (C) 2006-2007 Renesas Solutions Corp.
  *
+<<<<<<< HEAD
  * Author : Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+=======
+ * Author : Yoshihiro Shimoda <shimoda.yoshihiro@renesas.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; version 2 of the License.
+<<<<<<< HEAD
+=======
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #ifndef __M66592_UDC_H__
@@ -551,6 +568,7 @@ static inline void m66592_write(struct m66592 *m66592, u16 val,
 	iowrite16(val, m66592->reg + offset);
 }
 
+<<<<<<< HEAD
 static inline void m66592_mdfy(struct m66592 *m66592, u16 val, u16 pat,
 		unsigned long offset)
 {
@@ -571,6 +589,13 @@ static inline void m66592_write_fifo(struct m66592 *m66592,
 		void *buf, unsigned long len)
 {
 	void __iomem *fifoaddr = m66592->reg + ep->fifoaddr;
+=======
+static inline void m66592_write_fifo(struct m66592 *m66592,
+		unsigned long offset,
+		void *buf, unsigned long len)
+{
+	void __iomem *fifoaddr = m66592->reg + offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (m66592->pdata->on_chip) {
 		unsigned long count;
@@ -596,15 +621,37 @@ static inline void m66592_write_fifo(struct m66592 *m66592,
 		iowrite16_rep(fifoaddr, buf, len);
 		if (odd) {
 			unsigned char *p = buf + len*2;
+<<<<<<< HEAD
 			if (m66592->pdata->wr0_shorted_to_wr1)
 				m66592_bclr(m66592, M66592_MBW_16, ep->fifosel);
 			iowrite8(*p, fifoaddr);
 			if (m66592->pdata->wr0_shorted_to_wr1)
 				m66592_bset(m66592, M66592_MBW_16, ep->fifosel);
+=======
+			iowrite8(*p, fifoaddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }
 
+<<<<<<< HEAD
+=======
+static inline void m66592_mdfy(struct m66592 *m66592, u16 val, u16 pat,
+		unsigned long offset)
+{
+	u16 tmp;
+	tmp = m66592_read(m66592, offset);
+	tmp = tmp & (~pat);
+	tmp = tmp | val;
+	m66592_write(m66592, tmp, offset);
+}
+
+#define m66592_bclr(m66592, val, offset)	\
+			m66592_mdfy(m66592, 0, val, offset)
+#define m66592_bset(m66592, val, offset)	\
+			m66592_mdfy(m66592, val, 0, offset)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* ifndef __M66592_UDC_H__ */
 
 

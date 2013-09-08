@@ -149,7 +149,11 @@ static int msp_hwbutton_register(struct hwbutton_interrupt *hirq)
 		CIC_EXT_SET_ACTIVE_HI(cic_ext, hirq->eirq);
 	*CIC_EXT_CFG_REG = cic_ext;
 
+<<<<<<< HEAD
 	return request_irq(hirq->irq, hwbutton_handler, 0,
+=======
+	return request_irq(hirq->irq, hwbutton_handler, IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   hirq->name, hirq);
 }
 

@@ -5,7 +5,11 @@
 #include <linux/sched.h>
 
 #include <asm/processor.h>
+<<<<<<< HEAD
 #include <asm/special_insns.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_PARAVIRT
 #include <asm/paravirt.h>

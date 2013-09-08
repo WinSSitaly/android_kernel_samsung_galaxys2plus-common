@@ -12,6 +12,7 @@
 
 #ifdef CONFIG_KVM_MMIO
 
+<<<<<<< HEAD
 #include <linux/list.h>
 
 struct kvm_coalesced_mmio_dev {
@@ -19,6 +20,16 @@ struct kvm_coalesced_mmio_dev {
 	struct kvm_io_device dev;
 	struct kvm *kvm;
 	struct kvm_coalesced_mmio_zone zone;
+=======
+#define KVM_COALESCED_MMIO_ZONE_MAX 100
+
+struct kvm_coalesced_mmio_dev {
+	struct kvm_io_device dev;
+	struct kvm *kvm;
+	spinlock_t lock;
+	int nb_zones;
+	struct kvm_coalesced_mmio_zone zone[KVM_COALESCED_MMIO_ZONE_MAX];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int kvm_coalesced_mmio_init(struct kvm *kvm);

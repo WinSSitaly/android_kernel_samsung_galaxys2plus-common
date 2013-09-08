@@ -18,7 +18,11 @@
  */
 #include <linux/init.h>
 #include <linux/highmem.h>
+<<<<<<< HEAD
 #include <asm/cp15.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/cputype.h>
 #include <asm/cacheflush.h>
 

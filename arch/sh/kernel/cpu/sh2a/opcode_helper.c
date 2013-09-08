@@ -10,6 +10,10 @@
  * for more details.
  */
 #include <linux/kernel.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Instructions on SH are generally fixed at 16-bits, however, SH-2A

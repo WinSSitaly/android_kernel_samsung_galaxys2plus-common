@@ -110,6 +110,7 @@ void vt_event_post(unsigned int event, unsigned int old, unsigned int new)
 		wake_up_interruptible(&vt_event_waitqueue);
 }
 
+<<<<<<< HEAD
 /**
  *	vt_event_wait		-	wait for an event
  *	@vw: our event
@@ -120,6 +121,9 @@ void vt_event_post(unsigned int event, unsigned int old, unsigned int new)
  */
 
 static void vt_event_wait(struct vt_event_wait *vw)
+=======
+static void __vt_event_queue(struct vt_event_wait *vw)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags;
 	/* Prepare the event */
@@ -129,8 +133,23 @@ static void vt_event_wait(struct vt_event_wait *vw)
 	spin_lock_irqsave(&vt_event_lock, flags);
 	list_add(&vw->list, &vt_events);
 	spin_unlock_irqrestore(&vt_event_lock, flags);
+<<<<<<< HEAD
 	/* Wait for it to pass */
 	wait_event_interruptible(vt_event_waitqueue, vw->done);
+=======
+}
+
+static void __vt_event_wait(struct vt_event_wait *vw)
+{
+	/* Wait for it to pass */
+	wait_event_interruptible_tty(vt_event_waitqueue, vw->done);
+}
+
+static void __vt_event_dequeue(struct vt_event_wait *vw)
+{
+	unsigned long flags;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Dequeue it */
 	spin_lock_irqsave(&vt_event_lock, flags);
 	list_del(&vw->list);
@@ -138,6 +157,26 @@ static void vt_event_wait(struct vt_event_wait *vw)
 }
 
 /**
+<<<<<<< HEAD
+=======
+ *	vt_event_wait		-	wait for an event
+ *	@vw: our event
+ *
+ *	Waits for an event to occur which completes our vt_event_wait
+ *	structure. On return the structure has wv->done set to 1 for success
+ *	or 0 if some event such as a signal ended the wait.
+ */
+static void vt_event_wait(struct vt_event_wait *vw)
+{
+	__vt_event_queue(vw);
+	__vt_event_wait(vw);
+	__vt_event_dequeue(vw);
+}
+
+/**
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	vt_event_wait_ioctl	-	event ioctl handler
  *	@arg: argument to ioctl
  *
@@ -177,10 +216,21 @@ int vt_waitactive(int n)
 {
 	struct vt_event_wait vw;
 	do {
+<<<<<<< HEAD
 		if (n == fg_console + 1)
 			break;
 		vw.event.event = VT_EVENT_SWITCH;
 		vt_event_wait(&vw);
+=======
+		vw.event.event = VT_EVENT_SWITCH;
+		__vt_event_queue(&vw);
+		if (n == fg_console + 1) {
+			__vt_event_dequeue(&vw);
+			break;
+		}
+		__vt_event_wait(&vw);
+		__vt_event_dequeue(&vw);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (vw.done == 0)
 			return -EINTR;
 	} while (vw.event.newev != n);
@@ -195,7 +245,236 @@ int vt_waitactive(int n)
 #define GPLAST 0x3df
 #define GPNUM (GPLAST - GPFIRST + 1)
 
+<<<<<<< HEAD
 
+=======
+#define i (tmp.kb_index)
+#define s (tmp.kb_table)
+#define v (tmp.kb_value)
+static inline int
+do_kdsk_ioctl(int cmd, struct kbentry __user *user_kbe, int perm, struct kbd_struct *kbd)
+{
+	struct kbentry tmp;
+	ushort *key_map, val, ov;
+
+	if (copy_from_user(&tmp, user_kbe, sizeof(struct kbentry)))
+		return -EFAULT;
+
+	if (!capable(CAP_SYS_TTY_CONFIG))
+		perm = 0;
+
+	switch (cmd) {
+	case KDGKBENT:
+		key_map = key_maps[s];
+		if (key_map) {
+		    val = U(key_map[i]);
+		    if (kbd->kbdmode != VC_UNICODE && KTYP(val) >= NR_TYPES)
+			val = K_HOLE;
+		} else
+		    val = (i ? K_HOLE : K_NOSUCHMAP);
+		return put_user(val, &user_kbe->kb_value);
+	case KDSKBENT:
+		if (!perm)
+			return -EPERM;
+		if (!i && v == K_NOSUCHMAP) {
+			/* deallocate map */
+			key_map = key_maps[s];
+			if (s && key_map) {
+			    key_maps[s] = NULL;
+			    if (key_map[0] == U(K_ALLOCATED)) {
+					kfree(key_map);
+					keymap_count--;
+			    }
+			}
+			break;
+		}
+
+		if (KTYP(v) < NR_TYPES) {
+		    if (KVAL(v) > max_vals[KTYP(v)])
+				return -EINVAL;
+		} else
+		    if (kbd->kbdmode != VC_UNICODE)
+				return -EINVAL;
+
+		/* ++Geert: non-PC keyboards may generate keycode zero */
+#if !defined(__mc68000__) && !defined(__powerpc__)
+		/* assignment to entry 0 only tests validity of args */
+		if (!i)
+			break;
+#endif
+
+		if (!(key_map = key_maps[s])) {
+			int j;
+
+			if (keymap_count >= MAX_NR_OF_USER_KEYMAPS &&
+			    !capable(CAP_SYS_RESOURCE))
+				return -EPERM;
+
+			key_map = kmalloc(sizeof(plain_map),
+						     GFP_KERNEL);
+			if (!key_map)
+				return -ENOMEM;
+			key_maps[s] = key_map;
+			key_map[0] = U(K_ALLOCATED);
+			for (j = 1; j < NR_KEYS; j++)
+				key_map[j] = U(K_HOLE);
+			keymap_count++;
+		}
+		ov = U(key_map[i]);
+		if (v == ov)
+			break;	/* nothing to do */
+		/*
+		 * Attention Key.
+		 */
+		if (((ov == K_SAK) || (v == K_SAK)) && !capable(CAP_SYS_ADMIN))
+			return -EPERM;
+		key_map[i] = U(v);
+		if (!s && (KTYP(ov) == KT_SHIFT || KTYP(v) == KT_SHIFT))
+			compute_shiftstate();
+		break;
+	}
+	return 0;
+}
+#undef i
+#undef s
+#undef v
+
+static inline int 
+do_kbkeycode_ioctl(int cmd, struct kbkeycode __user *user_kbkc, int perm)
+{
+	struct kbkeycode tmp;
+	int kc = 0;
+
+	if (copy_from_user(&tmp, user_kbkc, sizeof(struct kbkeycode)))
+		return -EFAULT;
+	switch (cmd) {
+	case KDGETKEYCODE:
+		kc = getkeycode(tmp.scancode);
+		if (kc >= 0)
+			kc = put_user(kc, &user_kbkc->keycode);
+		break;
+	case KDSETKEYCODE:
+		if (!perm)
+			return -EPERM;
+		kc = setkeycode(tmp.scancode, tmp.keycode);
+		break;
+	}
+	return kc;
+}
+
+static inline int
+do_kdgkb_ioctl(int cmd, struct kbsentry __user *user_kdgkb, int perm)
+{
+	struct kbsentry *kbs;
+	char *p;
+	u_char *q;
+	u_char __user *up;
+	int sz;
+	int delta;
+	char *first_free, *fj, *fnw;
+	int i, j, k;
+	int ret;
+
+	if (!capable(CAP_SYS_TTY_CONFIG))
+		perm = 0;
+
+	kbs = kmalloc(sizeof(*kbs), GFP_KERNEL);
+	if (!kbs) {
+		ret = -ENOMEM;
+		goto reterr;
+	}
+
+	/* we mostly copy too much here (512bytes), but who cares ;) */
+	if (copy_from_user(kbs, user_kdgkb, sizeof(struct kbsentry))) {
+		ret = -EFAULT;
+		goto reterr;
+	}
+	kbs->kb_string[sizeof(kbs->kb_string)-1] = '\0';
+	i = kbs->kb_func;
+
+	switch (cmd) {
+	case KDGKBSENT:
+		sz = sizeof(kbs->kb_string) - 1; /* sz should have been
+						  a struct member */
+		up = user_kdgkb->kb_string;
+		p = func_table[i];
+		if(p)
+			for ( ; *p && sz; p++, sz--)
+				if (put_user(*p, up++)) {
+					ret = -EFAULT;
+					goto reterr;
+				}
+		if (put_user('\0', up)) {
+			ret = -EFAULT;
+			goto reterr;
+		}
+		kfree(kbs);
+		return ((p && *p) ? -EOVERFLOW : 0);
+	case KDSKBSENT:
+		if (!perm) {
+			ret = -EPERM;
+			goto reterr;
+		}
+
+		q = func_table[i];
+		first_free = funcbufptr + (funcbufsize - funcbufleft);
+		for (j = i+1; j < MAX_NR_FUNC && !func_table[j]; j++) 
+			;
+		if (j < MAX_NR_FUNC)
+			fj = func_table[j];
+		else
+			fj = first_free;
+
+		delta = (q ? -strlen(q) : 1) + strlen(kbs->kb_string);
+		if (delta <= funcbufleft) { 	/* it fits in current buf */
+		    if (j < MAX_NR_FUNC) {
+			memmove(fj + delta, fj, first_free - fj);
+			for (k = j; k < MAX_NR_FUNC; k++)
+			    if (func_table[k])
+				func_table[k] += delta;
+		    }
+		    if (!q)
+		      func_table[i] = fj;
+		    funcbufleft -= delta;
+		} else {			/* allocate a larger buffer */
+		    sz = 256;
+		    while (sz < funcbufsize - funcbufleft + delta)
+		      sz <<= 1;
+		    fnw = kmalloc(sz, GFP_KERNEL);
+		    if(!fnw) {
+		      ret = -ENOMEM;
+		      goto reterr;
+		    }
+
+		    if (!q)
+		      func_table[i] = fj;
+		    if (fj > funcbufptr)
+			memmove(fnw, funcbufptr, fj - funcbufptr);
+		    for (k = 0; k < j; k++)
+		      if (func_table[k])
+			func_table[k] = fnw + (func_table[k] - funcbufptr);
+
+		    if (first_free > fj) {
+			memmove(fnw + (fj - funcbufptr) + delta, fj, first_free - fj);
+			for (k = j; k < MAX_NR_FUNC; k++)
+			  if (func_table[k])
+			    func_table[k] = fnw + (func_table[k] - funcbufptr) + delta;
+		    }
+		    if (funcbufptr != func_buf)
+		      kfree(funcbufptr);
+		    funcbufptr = fnw;
+		    funcbufleft = funcbufleft - delta + sz - funcbufsize;
+		    funcbufsize = sz;
+		}
+		strcpy(func_table[i], kbs->kb_string);
+		break;
+	}
+	ret = 0;
+reterr:
+	kfree(kbs);
+	return ret;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int 
 do_fontx_ioctl(int cmd, struct consolefontdesc __user *user_cfd, int perm, struct console_font_op *op)
@@ -272,6 +551,10 @@ int vt_ioctl(struct tty_struct *tty,
 {
 	struct vc_data *vc = tty->driver_data;
 	struct console_font_op op;	/* used in multiple places here */
+<<<<<<< HEAD
+=======
+	struct kbd_struct * kbd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int console;
 	unsigned char ucval;
 	unsigned int uival;
@@ -281,6 +564,10 @@ int vt_ioctl(struct tty_struct *tty,
 
 	console = vc->vc_num;
 
+<<<<<<< HEAD
+=======
+	tty_lock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!vc_cons_allocated(console)) { 	/* impossible? */
 		ret = -ENOIOCTLCMD;
@@ -296,18 +583,30 @@ int vt_ioctl(struct tty_struct *tty,
 	if (current->signal->tty == tty || capable(CAP_SYS_TTY_CONFIG))
 		perm = 1;
  
+<<<<<<< HEAD
+=======
+	kbd = kbd_table + console;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (cmd) {
 	case TIOCLINUX:
 		ret = tioclinux(tty, arg);
 		break;
 	case KIOCSOUND:
 		if (!perm)
+<<<<<<< HEAD
 			return -EPERM;
+=======
+			goto eperm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * The use of PIT_TICK_RATE is historic, it used to be
 		 * the platform-dependent CLOCK_TICK_RATE between 2.6.12
 		 * and 2.6.36, which was a minor but unfortunate ABI
+<<<<<<< HEAD
 		 * change. kd_mksound is locked by the input layer.
+=======
+		 * change.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 */
 		if (arg)
 			arg = PIT_TICK_RATE / arg;
@@ -316,7 +615,11 @@ int vt_ioctl(struct tty_struct *tty,
 
 	case KDMKTONE:
 		if (!perm)
+<<<<<<< HEAD
 			return -EPERM;
+=======
+			goto eperm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		unsigned int ticks, count;
 		
@@ -334,11 +637,18 @@ int vt_ioctl(struct tty_struct *tty,
 
 	case KDGKBTYPE:
 		/*
+<<<<<<< HEAD
 		 * this is naïve.
 		 */
 		ucval = KB_101;
 		ret = put_user(ucval, (char __user *)arg);
 		break;
+=======
+		 * this is naive.
+		 */
+		ucval = KB_101;
+		goto setchar;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * These cannot be implemented on any machine that implements
@@ -352,8 +662,11 @@ int vt_ioctl(struct tty_struct *tty,
 		/*
 		 * KDADDIO and KDDELIO may be able to add ports beyond what
 		 * we reject here, but to be safe...
+<<<<<<< HEAD
 		 *
 		 * These are locked internally via sys_ioperm
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 */
 		if (arg < GPFIRST || arg > GPLAST) {
 			ret = -EINVAL;
@@ -376,7 +689,11 @@ int vt_ioctl(struct tty_struct *tty,
 		struct kbd_repeat kbrep;
 		
 		if (!capable(CAP_SYS_TTY_CONFIG))
+<<<<<<< HEAD
 			return -EPERM;
+=======
+			goto eperm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (copy_from_user(&kbrep, up, sizeof(struct kbd_repeat))) {
 			ret =  -EFAULT;
@@ -400,7 +717,11 @@ int vt_ioctl(struct tty_struct *tty,
 		 * need to restore their engine state. --BenH
 		 */
 		if (!perm)
+<<<<<<< HEAD
 			return -EPERM;
+=======
+			goto eperm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		switch (arg) {
 		case KD_GRAPHICS:
 			break;
@@ -413,7 +734,10 @@ int vt_ioctl(struct tty_struct *tty,
 			ret = -EINVAL;
 			goto out;
 		}
+<<<<<<< HEAD
 		/* FIXME: this needs the console lock extending */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (vc->vc_mode == (unsigned char) arg)
 			break;
 		vc->vc_mode = (unsigned char) arg;
@@ -445,6 +769,7 @@ int vt_ioctl(struct tty_struct *tty,
 
 	case KDSKBMODE:
 		if (!perm)
+<<<<<<< HEAD
 			return -EPERM;
 		ret = vt_do_kdskbmode(console, arg);
 		if (ret == 0)
@@ -455,16 +780,80 @@ int vt_ioctl(struct tty_struct *tty,
 		uival = vt_do_kdgkbmode(console);
 		ret = put_user(uival, (int __user *)arg);
 		break;
+=======
+			goto eperm;
+		switch(arg) {
+		  case K_RAW:
+			kbd->kbdmode = VC_RAW;
+			break;
+		  case K_MEDIUMRAW:
+			kbd->kbdmode = VC_MEDIUMRAW;
+			break;
+		  case K_XLATE:
+			kbd->kbdmode = VC_XLATE;
+			compute_shiftstate();
+			break;
+		  case K_UNICODE:
+			kbd->kbdmode = VC_UNICODE;
+			compute_shiftstate();
+			break;
+		  case K_OFF:
+			kbd->kbdmode = VC_OFF;
+			break;
+		  default:
+			ret = -EINVAL;
+			goto out;
+		}
+		tty_ldisc_flush(tty);
+		break;
+
+	case KDGKBMODE:
+		switch (kbd->kbdmode) {
+		case VC_RAW:
+			uival = K_RAW;
+			break;
+		case VC_MEDIUMRAW:
+			uival = K_MEDIUMRAW;
+			break;
+		case VC_UNICODE:
+			uival = K_UNICODE;
+			break;
+		case VC_OFF:
+			uival = K_OFF;
+			break;
+		default:
+			uival = K_XLATE;
+			break;
+		}
+		goto setint;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* this could be folded into KDSKBMODE, but for compatibility
 	   reasons it is not so easy to fold KDGKBMETA into KDGKBMODE */
 	case KDSKBMETA:
+<<<<<<< HEAD
 		ret = vt_do_kdskbmeta(console, arg);
 		break;
 
 	case KDGKBMETA:
 		/* FIXME: should review whether this is worth locking */
 		uival = vt_do_kdgkbmeta(console);
+=======
+		switch(arg) {
+		  case K_METABIT:
+			clr_vc_kbd_mode(kbd, VC_META);
+			break;
+		  case K_ESCPREFIX:
+			set_vc_kbd_mode(kbd, VC_META);
+			break;
+		  default:
+			ret = -EINVAL;
+		}
+		break;
+
+	case KDGKBMETA:
+		uival = (vc_kbd_mode(kbd, VC_META) ? K_ESCPREFIX : K_METABIT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	setint:
 		ret = put_user(uival, (int __user *)arg);
 		break;
@@ -473,16 +862,25 @@ int vt_ioctl(struct tty_struct *tty,
 	case KDSETKEYCODE:
 		if(!capable(CAP_SYS_TTY_CONFIG))
 			perm = 0;
+<<<<<<< HEAD
 		ret = vt_do_kbkeycode_ioctl(cmd, up, perm);
+=======
+		ret = do_kbkeycode_ioctl(cmd, up, perm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case KDGKBENT:
 	case KDSKBENT:
+<<<<<<< HEAD
 		ret = vt_do_kdsk_ioctl(cmd, up, perm, console);
+=======
+		ret = do_kdsk_ioctl(cmd, up, perm, kbd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case KDGKBSENT:
 	case KDSKBSENT:
+<<<<<<< HEAD
 		ret = vt_do_kdgkb_ioctl(cmd, up, perm);
 		break;
 
@@ -494,14 +892,132 @@ int vt_ioctl(struct tty_struct *tty,
 	case KDSKBDIACRUC:
 		ret = vt_do_diacrit(cmd, up, perm);
 		break;
+=======
+		ret = do_kdgkb_ioctl(cmd, up, perm);
+		break;
+
+	case KDGKBDIACR:
+	{
+		struct kbdiacrs __user *a = up;
+		struct kbdiacr diacr;
+		int i;
+
+		if (put_user(accent_table_size, &a->kb_cnt)) {
+			ret = -EFAULT;
+			break;
+		}
+		for (i = 0; i < accent_table_size; i++) {
+			diacr.diacr = conv_uni_to_8bit(accent_table[i].diacr);
+			diacr.base = conv_uni_to_8bit(accent_table[i].base);
+			diacr.result = conv_uni_to_8bit(accent_table[i].result);
+			if (copy_to_user(a->kbdiacr + i, &diacr, sizeof(struct kbdiacr))) {
+				ret = -EFAULT;
+				break;
+			}
+		}
+		break;
+	}
+	case KDGKBDIACRUC:
+	{
+		struct kbdiacrsuc __user *a = up;
+
+		if (put_user(accent_table_size, &a->kb_cnt))
+			ret = -EFAULT;
+		else if (copy_to_user(a->kbdiacruc, accent_table,
+				accent_table_size*sizeof(struct kbdiacruc)))
+			ret = -EFAULT;
+		break;
+	}
+
+	case KDSKBDIACR:
+	{
+		struct kbdiacrs __user *a = up;
+		struct kbdiacr diacr;
+		unsigned int ct;
+		int i;
+
+		if (!perm)
+			goto eperm;
+		if (get_user(ct,&a->kb_cnt)) {
+			ret = -EFAULT;
+			break;
+		}
+		if (ct >= MAX_DIACR) {
+			ret = -EINVAL;
+			break;
+		}
+		accent_table_size = ct;
+		for (i = 0; i < ct; i++) {
+			if (copy_from_user(&diacr, a->kbdiacr + i, sizeof(struct kbdiacr))) {
+				ret = -EFAULT;
+				break;
+			}
+			accent_table[i].diacr = conv_8bit_to_uni(diacr.diacr);
+			accent_table[i].base = conv_8bit_to_uni(diacr.base);
+			accent_table[i].result = conv_8bit_to_uni(diacr.result);
+		}
+		break;
+	}
+
+	case KDSKBDIACRUC:
+	{
+		struct kbdiacrsuc __user *a = up;
+		unsigned int ct;
+
+		if (!perm)
+			goto eperm;
+		if (get_user(ct,&a->kb_cnt)) {
+			ret = -EFAULT;
+			break;
+		}
+		if (ct >= MAX_DIACR) {
+			ret = -EINVAL;
+			break;
+		}
+		accent_table_size = ct;
+		if (copy_from_user(accent_table, a->kbdiacruc, ct*sizeof(struct kbdiacruc)))
+			ret = -EFAULT;
+		break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* the ioctls below read/set the flags usually shown in the leds */
 	/* don't use them - they will go away without warning */
 	case KDGKBLED:
+<<<<<<< HEAD
 	case KDSKBLED:
 	case KDGETLED:
 	case KDSETLED:
 		ret = vt_do_kdskled(console, cmd, arg, perm);
+=======
+		ucval = kbd->ledflagstate | (kbd->default_ledflagstate << 4);
+		goto setchar;
+
+	case KDSKBLED:
+		if (!perm)
+			goto eperm;
+		if (arg & ~0x77) {
+			ret = -EINVAL;
+			break;
+		}
+		kbd->ledflagstate = (arg & 7);
+		kbd->default_ledflagstate = ((arg >> 4) & 7);
+		set_leds();
+		break;
+
+	/* the ioctls below only set the lights, not the functions */
+	/* for those, see KDGKBLED and KDSKBLED above */
+	case KDGETLED:
+		ucval = getledstate();
+	setchar:
+		ret = put_user(ucval, (char __user *)arg);
+		break;
+
+	case KDSETLED:
+		if (!perm)
+			goto eperm;
+		setledstate(kbd, arg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	/*
@@ -514,7 +1030,11 @@ int vt_ioctl(struct tty_struct *tty,
 	case KDSIGACCEPT:
 	{
 		if (!perm || !capable(CAP_KILL))
+<<<<<<< HEAD
 			return -EPERM;
+=======
+			goto eperm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!valid_signal(arg) || arg < 1 || arg == SIGKILL)
 			ret = -EINVAL;
 		else {
@@ -532,7 +1052,11 @@ int vt_ioctl(struct tty_struct *tty,
 		struct vt_mode tmp;
 
 		if (!perm)
+<<<<<<< HEAD
 			return -EPERM;
+=======
+			goto eperm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (copy_from_user(&tmp, up, sizeof(struct vt_mode))) {
 			ret = -EFAULT;
 			goto out;
@@ -578,7 +1102,10 @@ int vt_ioctl(struct tty_struct *tty,
 		struct vt_stat __user *vtstat = up;
 		unsigned short state, mask;
 
+<<<<<<< HEAD
 		/* Review: FIXME: Console lock ? */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (put_user(fg_console + 1, &vtstat->v_active))
 			ret = -EFAULT;
 		else {
@@ -596,7 +1123,10 @@ int vt_ioctl(struct tty_struct *tty,
 	 * Returns the first available (non-opened) console.
 	 */
 	case VT_OPENQRY:
+<<<<<<< HEAD
 		/* FIXME: locking ? - but then this is a stupid API */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (i = 0; i < MAX_NR_CONSOLES; ++i)
 			if (! VT_IS_IN_USE(i))
 				break;
@@ -610,7 +1140,11 @@ int vt_ioctl(struct tty_struct *tty,
 	 */
 	case VT_ACTIVATE:
 		if (!perm)
+<<<<<<< HEAD
 			return -EPERM;
+=======
+			goto eperm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (arg == 0 || arg > MAX_NR_CONSOLES)
 			ret =  -ENXIO;
 		else {
@@ -629,7 +1163,11 @@ int vt_ioctl(struct tty_struct *tty,
 		struct vt_setactivate vsa;
 
 		if (!perm)
+<<<<<<< HEAD
 			return -EPERM;
+=======
+			goto eperm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (copy_from_user(&vsa, (struct vt_setactivate __user *)arg,
 					sizeof(struct vt_setactivate))) {
@@ -657,7 +1195,10 @@ int vt_ioctl(struct tty_struct *tty,
 			if (ret)
 				break;
 			/* Commence switch and lock */
+<<<<<<< HEAD
 			/* Review set_console locks */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			set_console(vsa.console);
 		}
 		break;
@@ -668,7 +1209,11 @@ int vt_ioctl(struct tty_struct *tty,
 	 */
 	case VT_WAITACTIVE:
 		if (!perm)
+<<<<<<< HEAD
 			return -EPERM;
+=======
+			goto eperm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (arg == 0 || arg > MAX_NR_CONSOLES)
 			ret = -ENXIO;
 		else
@@ -687,17 +1232,27 @@ int vt_ioctl(struct tty_struct *tty,
 	 */
 	case VT_RELDISP:
 		if (!perm)
+<<<<<<< HEAD
 			return -EPERM;
 
 		console_lock();
 		if (vc->vt_mode.mode != VT_PROCESS) {
 			console_unlock();
+=======
+			goto eperm;
+
+		if (vc->vt_mode.mode != VT_PROCESS) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = -EINVAL;
 			break;
 		}
 		/*
 		 * Switching-from response
 		 */
+<<<<<<< HEAD
+=======
+		console_lock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (vc->vt_newvt >= 0) {
 			if (arg == 0)
 				/*
@@ -774,7 +1329,11 @@ int vt_ioctl(struct tty_struct *tty,
 
 		ushort ll,cc;
 		if (!perm)
+<<<<<<< HEAD
 			return -EPERM;
+=======
+			goto eperm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (get_user(ll, &vtsizes->v_rows) ||
 		    get_user(cc, &vtsizes->v_cols))
 			ret = -EFAULT;
@@ -785,7 +1344,10 @@ int vt_ioctl(struct tty_struct *tty,
 
 				if (vc) {
 					vc->vc_resize_user = 1;
+<<<<<<< HEAD
 					/* FIXME: review v tty lock */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					vc_resize(vc_cons[i].d, cc, ll);
 				}
 			}
@@ -799,7 +1361,11 @@ int vt_ioctl(struct tty_struct *tty,
 		struct vt_consize __user *vtconsize = up;
 		ushort ll,cc,vlin,clin,vcol,ccol;
 		if (!perm)
+<<<<<<< HEAD
 			return -EPERM;
+=======
+			goto eperm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!access_ok(VERIFY_READ, vtconsize,
 				sizeof(struct vt_consize))) {
 			ret = -EFAULT;
@@ -855,7 +1421,11 @@ int vt_ioctl(struct tty_struct *tty,
 
 	case PIO_FONT: {
 		if (!perm)
+<<<<<<< HEAD
 			return -EPERM;
+=======
+			goto eperm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		op.op = KD_FONT_OP_SET;
 		op.flags = KD_FONT_FLAG_OLD | KD_FONT_FLAG_DONT_RECALC;	/* Compatibility */
 		op.width = 8;
@@ -896,7 +1466,11 @@ int vt_ioctl(struct tty_struct *tty,
 	case PIO_FONTRESET:
 	{
 		if (!perm)
+<<<<<<< HEAD
 			return -EPERM;
+=======
+			goto eperm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef BROKEN_GRAPHICS_PROGRAMS
 		/* With BROKEN_GRAPHICS_PROGRAMS defined, the default
@@ -922,7 +1496,11 @@ int vt_ioctl(struct tty_struct *tty,
 			break;
 		}
 		if (!perm && op.op != KD_FONT_OP_GET)
+<<<<<<< HEAD
 			return -EPERM;
+=======
+			goto eperm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = con_font_op(vc, &op);
 		if (ret)
 			break;
@@ -934,6 +1512,7 @@ int vt_ioctl(struct tty_struct *tty,
 	case PIO_SCRNMAP:
 		if (!perm)
 			ret = -EPERM;
+<<<<<<< HEAD
 		else {
 			tty_lock();
 			ret = con_set_trans_old(up);
@@ -945,11 +1524,20 @@ int vt_ioctl(struct tty_struct *tty,
 		tty_lock();
 		ret = con_get_trans_old(up);
 		tty_unlock();
+=======
+		else
+			ret = con_set_trans_old(up);
+		break;
+
+	case GIO_SCRNMAP:
+		ret = con_get_trans_old(up);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case PIO_UNISCRNMAP:
 		if (!perm)
 			ret = -EPERM;
+<<<<<<< HEAD
 		else {
 			tty_lock();
 			ret = con_set_trans_new(up);
@@ -961,11 +1549,20 @@ int vt_ioctl(struct tty_struct *tty,
 		tty_lock();
 		ret = con_get_trans_new(up);
 		tty_unlock();
+=======
+		else
+			ret = con_set_trans_new(up);
+		break;
+
+	case GIO_UNISCRNMAP:
+		ret = con_get_trans_new(up);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case PIO_UNIMAPCLR:
 	      { struct unimapinit ui;
 		if (!perm)
+<<<<<<< HEAD
 			return -EPERM;
 		ret = copy_from_user(&ui, up, sizeof(struct unimapinit));
 		if (ret)
@@ -975,24 +1572,44 @@ int vt_ioctl(struct tty_struct *tty,
 			con_clear_unimap(vc, &ui);
 			tty_unlock();
 		}
+=======
+			goto eperm;
+		ret = copy_from_user(&ui, up, sizeof(struct unimapinit));
+		if (ret)
+			ret = -EFAULT;
+		else
+			con_clear_unimap(vc, &ui);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	      }
 
 	case PIO_UNIMAP:
 	case GIO_UNIMAP:
+<<<<<<< HEAD
 		tty_lock();
 		ret = do_unimap_ioctl(cmd, up, perm, vc);
 		tty_unlock();
+=======
+		ret = do_unimap_ioctl(cmd, up, perm, vc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case VT_LOCKSWITCH:
 		if (!capable(CAP_SYS_TTY_CONFIG))
+<<<<<<< HEAD
 			return -EPERM;
+=======
+			goto eperm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		vt_dont_switch = 1;
 		break;
 	case VT_UNLOCKSWITCH:
 		if (!capable(CAP_SYS_TTY_CONFIG))
+<<<<<<< HEAD
 			return -EPERM;
+=======
+			goto eperm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		vt_dont_switch = 0;
 		break;
 	case VT_GETHIFONTMASK:
@@ -1006,13 +1623,25 @@ int vt_ioctl(struct tty_struct *tty,
 		ret = -ENOIOCTLCMD;
 	}
 out:
+<<<<<<< HEAD
 	return ret;
+=======
+	tty_unlock();
+	return ret;
+eperm:
+	ret = -EPERM;
+	goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void reset_vc(struct vc_data *vc)
 {
 	vc->vc_mode = KD_TEXT;
+<<<<<<< HEAD
 	vt_reset_unicode(vc->vc_num);
+=======
+	kbd_table[vc->vc_num].kbdmode = default_utf8 ? VC_UNICODE : VC_XLATE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vc->vt_mode.mode = VT_AUTO;
 	vc->vt_mode.waitv = 0;
 	vc->vt_mode.relsig = 0;
@@ -1035,7 +1664,10 @@ void vc_SAK(struct work_struct *work)
 	console_lock();
 	vc = vc_con->d;
 	if (vc) {
+<<<<<<< HEAD
 		/* FIXME: review tty ref counting */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tty = vc->port.tty;
 		/*
 		 * SAK should also work in all raw modes and reset
@@ -1168,6 +1800,11 @@ long vt_compat_ioctl(struct tty_struct *tty,
 
 	console = vc->vc_num;
 
+<<<<<<< HEAD
+=======
+	tty_lock();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!vc_cons_allocated(console)) { 	/* impossible? */
 		ret = -ENOIOCTLCMD;
 		goto out;
@@ -1196,9 +1833,13 @@ long vt_compat_ioctl(struct tty_struct *tty,
 
 	case PIO_UNIMAP:
 	case GIO_UNIMAP:
+<<<<<<< HEAD
 		tty_lock();
 		ret = compat_unimap_ioctl(cmd, up, perm, vc);
 		tty_unlock();
+=======
+		ret = compat_unimap_ioctl(cmd, up, perm, vc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	/*
@@ -1235,9 +1876,17 @@ long vt_compat_ioctl(struct tty_struct *tty,
 		goto fallback;
 	}
 out:
+<<<<<<< HEAD
 	return ret;
 
 fallback:
+=======
+	tty_unlock();
+	return ret;
+
+fallback:
+	tty_unlock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return vt_ioctl(tty, cmd, arg);
 }
 
@@ -1423,10 +2072,20 @@ int vt_move_to_console(unsigned int vt, int alloc)
 		return -EIO;
 	}
 	console_unlock();
+<<<<<<< HEAD
 	if (vt_waitactive(vt + 1)) {
 		pr_debug("Suspend: Can't switch VCs.");
 		return -EINTR;
 	}
+=======
+	tty_lock();
+	if (vt_waitactive(vt + 1)) {
+		pr_debug("Suspend: Can't switch VCs.");
+		tty_unlock();
+		return -EINTR;
+	}
+	tty_unlock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return prev;
 }
 

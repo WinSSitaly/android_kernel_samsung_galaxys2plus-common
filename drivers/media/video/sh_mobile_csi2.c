@@ -15,12 +15,18 @@
 #include <linux/pm_runtime.h>
 #include <linux/slab.h>
 #include <linux/videodev2.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 
 #include <media/sh_mobile_ceu.h>
 #include <media/sh_mobile_csi2.h>
 #include <media/soc_camera.h>
 #include <media/soc_mediabus.h>
+=======
+
+#include <media/sh_mobile_csi2.h>
+#include <media/soc_camera.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/v4l2-common.h>
 #include <media/v4l2-dev.h>
 #include <media/v4l2-device.h>
@@ -36,11 +42,21 @@
 struct sh_csi2 {
 	struct v4l2_subdev		subdev;
 	struct list_head		list;
+<<<<<<< HEAD
 	unsigned int			irq;
 	unsigned long			mipi_flags;
 	void __iomem			*base;
 	struct platform_device		*pdev;
 	struct sh_csi2_client_config	*client;
+=======
+	struct notifier_block		notifier;
+	unsigned int			irq;
+	void __iomem			*base;
+	struct platform_device		*pdev;
+	struct sh_csi2_client_config	*client;
+	unsigned long (*query_bus_param)(struct soc_camera_device *);
+	int (*set_bus_param)(struct soc_camera_device *, unsigned long);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int sh_csi2_try_fmt(struct v4l2_subdev *sd,
@@ -128,6 +144,7 @@ static int sh_csi2_s_fmt(struct v4l2_subdev *sd,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int sh_csi2_g_mbus_config(struct v4l2_subdev *sd,
 				 struct v4l2_mbus_config *cfg)
 {
@@ -156,6 +173,18 @@ static struct v4l2_subdev_video_ops sh_csi2_subdev_video_ops = {
 	.try_mbus_fmt	= sh_csi2_try_fmt,
 	.g_mbus_config	= sh_csi2_g_mbus_config,
 	.s_mbus_config	= sh_csi2_s_mbus_config,
+=======
+static struct v4l2_subdev_video_ops sh_csi2_subdev_video_ops = {
+	.s_mbus_fmt	= sh_csi2_s_fmt,
+	.try_mbus_fmt	= sh_csi2_try_fmt,
+};
+
+static struct v4l2_subdev_core_ops sh_csi2_subdev_core_ops;
+
+static struct v4l2_subdev_ops sh_csi2_subdev_ops = {
+	.core	= &sh_csi2_subdev_core_ops,
+	.video	= &sh_csi2_subdev_video_ops,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void sh_csi2_hwinit(struct sh_csi2 *priv)
@@ -170,6 +199,7 @@ static void sh_csi2_hwinit(struct sh_csi2 *priv)
 	udelay(5);
 	iowrite32(0x00000000, priv->base + SH_CSI2_SRST);
 
+<<<<<<< HEAD
 	switch (pdata->type) {
 	case SH_CSI2C:
 		if (priv->client->lanes == 1)
@@ -185,6 +215,13 @@ static void sh_csi2_hwinit(struct sh_csi2 *priv)
 		else
 			tmp |= (1 << priv->client->lanes) - 1;
 	}
+=======
+	if (priv->client->lanes & 3)
+		tmp |= priv->client->lanes & 3;
+	else
+		/* Default - both lanes */
+		tmp |= 3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (priv->client->phy == SH_CSI2_PHY_MAIN)
 		tmp |= 0x8000;
@@ -199,6 +236,7 @@ static void sh_csi2_hwinit(struct sh_csi2 *priv)
 	iowrite32(tmp, priv->base + SH_CSI2_CHKSUM);
 }
 
+<<<<<<< HEAD
 static int sh_csi2_client_connect(struct sh_csi2 *priv)
 {
 	struct sh_csi2_pdata *pdata = priv->pdev->dev.platform_data;
@@ -211,11 +249,40 @@ static int sh_csi2_client_connect(struct sh_csi2 *priv)
 
 	if (priv->client)
 		return -EBUSY;
+=======
+static int sh_csi2_set_bus_param(struct soc_camera_device *icd,
+				 unsigned long flags)
+{
+	return 0;
+}
+
+static unsigned long sh_csi2_query_bus_param(struct soc_camera_device *icd)
+{
+	struct soc_camera_link *icl = to_soc_camera_link(icd);
+	const unsigned long flags = SOCAM_PCLK_SAMPLE_RISING |
+		SOCAM_HSYNC_ACTIVE_HIGH | SOCAM_VSYNC_ACTIVE_HIGH |
+		SOCAM_MASTER | SOCAM_DATAWIDTH_8 | SOCAM_DATA_ACTIVE_HIGH;
+
+	return soc_camera_apply_sensor_flags(icl, flags);
+}
+
+static int sh_csi2_notify(struct notifier_block *nb,
+			  unsigned long action, void *data)
+{
+	struct device *dev = data;
+	struct soc_camera_device *icd = to_soc_camera_dev(dev);
+	struct v4l2_device *v4l2_dev = dev_get_drvdata(dev->parent);
+	struct sh_csi2 *priv =
+		container_of(nb, struct sh_csi2, notifier);
+	struct sh_csi2_pdata *pdata = priv->pdev->dev.platform_data;
+	int ret, i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < pdata->num_clients; i++)
 		if (&pdata->clients[i].pdev->dev == icd->pdev)
 			break;
 
+<<<<<<< HEAD
 	dev_dbg(dev, "%s(%p): found #%d\n", __func__, dev, i);
 
 	if (i == pdata->num_clients)
@@ -294,6 +361,52 @@ static struct v4l2_subdev_ops sh_csi2_subdev_ops = {
 	.video	= &sh_csi2_subdev_video_ops,
 };
 
+=======
+	dev_dbg(dev, "%s(%p): action = %lu, found #%d\n", __func__, dev, action, i);
+
+	if (i == pdata->num_clients)
+		return NOTIFY_DONE;
+
+	switch (action) {
+	case BUS_NOTIFY_BOUND_DRIVER:
+		snprintf(priv->subdev.name, V4L2_SUBDEV_NAME_SIZE, "%s%s",
+			 dev_name(v4l2_dev->dev), ".mipi-csi");
+		priv->subdev.grp_id = (long)icd;
+		ret = v4l2_device_register_subdev(v4l2_dev, &priv->subdev);
+		dev_dbg(dev, "%s(%p): ret(register_subdev) = %d\n", __func__, priv, ret);
+		if (ret < 0)
+			return NOTIFY_DONE;
+
+		priv->client = pdata->clients + i;
+
+		priv->set_bus_param		= icd->ops->set_bus_param;
+		priv->query_bus_param		= icd->ops->query_bus_param;
+		icd->ops->set_bus_param		= sh_csi2_set_bus_param;
+		icd->ops->query_bus_param	= sh_csi2_query_bus_param;
+
+		pm_runtime_get_sync(v4l2_get_subdevdata(&priv->subdev));
+
+		sh_csi2_hwinit(priv);
+		break;
+	case BUS_NOTIFY_UNBIND_DRIVER:
+		priv->client = NULL;
+
+		/* Driver is about to be unbound */
+		icd->ops->set_bus_param		= priv->set_bus_param;
+		icd->ops->query_bus_param	= priv->query_bus_param;
+		priv->set_bus_param		= NULL;
+		priv->query_bus_param		= NULL;
+
+		v4l2_device_unregister_subdev(&priv->subdev);
+
+		pm_runtime_put(v4l2_get_subdevdata(&priv->subdev));
+		break;
+	}
+
+	return NOTIFY_OK;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __devinit int sh_csi2_probe(struct platform_device *pdev)
 {
 	struct resource *res;
@@ -323,6 +436,17 @@ static __devinit int sh_csi2_probe(struct platform_device *pdev)
 		return -ENOMEM;
 
 	priv->irq = irq;
+<<<<<<< HEAD
+=======
+	priv->notifier.notifier_call = sh_csi2_notify;
+
+	/* We MUST attach after the MIPI sensor */
+	ret = bus_register_notifier(&soc_camera_bus_type, &priv->notifier);
+	if (ret < 0) {
+		dev_err(&pdev->dev, "CSI2 cannot register notifier\n");
+		goto ernotify;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!request_mem_region(res->start, resource_size(res), pdev->name)) {
 		dev_err(&pdev->dev, "CSI2 register region already claimed\n");
@@ -338,17 +462,24 @@ static __devinit int sh_csi2_probe(struct platform_device *pdev)
 	}
 
 	priv->pdev = pdev;
+<<<<<<< HEAD
 	platform_set_drvdata(pdev, priv);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	v4l2_subdev_init(&priv->subdev, &sh_csi2_subdev_ops);
 	v4l2_set_subdevdata(&priv->subdev, &pdev->dev);
 
+<<<<<<< HEAD
 	snprintf(priv->subdev.name, V4L2_SUBDEV_NAME_SIZE, "%s.mipi-csi",
 		 dev_name(pdata->v4l2_dev->dev));
 	ret = v4l2_device_register_subdev(pdata->v4l2_dev, &priv->subdev);
 	dev_dbg(&pdev->dev, "%s(%p): ret(register_subdev) = %d\n", __func__, priv, ret);
 	if (ret < 0)
 		goto esdreg;
+=======
+	platform_set_drvdata(pdev, priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pm_runtime_enable(&pdev->dev);
 
@@ -356,11 +487,19 @@ static __devinit int sh_csi2_probe(struct platform_device *pdev)
 
 	return 0;
 
+<<<<<<< HEAD
 esdreg:
 	iounmap(priv->base);
 eremap:
 	release_mem_region(res->start, resource_size(res));
 ereqreg:
+=======
+eremap:
+	release_mem_region(res->start, resource_size(res));
+ereqreg:
+	bus_unregister_notifier(&soc_camera_bus_type, &priv->notifier);
+ernotify:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(priv);
 
 	return ret;
@@ -371,7 +510,11 @@ static __devexit int sh_csi2_remove(struct platform_device *pdev)
 	struct sh_csi2 *priv = platform_get_drvdata(pdev);
 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 
+<<<<<<< HEAD
 	v4l2_device_unregister_subdev(&priv->subdev);
+=======
+	bus_unregister_notifier(&soc_camera_bus_type, &priv->notifier);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pm_runtime_disable(&pdev->dev);
 	iounmap(priv->base);
 	release_mem_region(res->start, resource_size(res));
@@ -382,15 +525,35 @@ static __devexit int sh_csi2_remove(struct platform_device *pdev)
 }
 
 static struct platform_driver __refdata sh_csi2_pdrv = {
+<<<<<<< HEAD
 	.remove	= __devexit_p(sh_csi2_remove),
 	.probe	= sh_csi2_probe,
 	.driver	= {
+=======
+	.remove  = __devexit_p(sh_csi2_remove),
+	.driver  = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.name	= "sh-mobile-csi2",
 		.owner	= THIS_MODULE,
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(sh_csi2_pdrv);
+=======
+static int __init sh_csi2_init(void)
+{
+	return platform_driver_probe(&sh_csi2_pdrv, sh_csi2_probe);
+}
+
+static void __exit sh_csi2_exit(void)
+{
+	platform_driver_unregister(&sh_csi2_pdrv);
+}
+
+module_init(sh_csi2_init);
+module_exit(sh_csi2_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("SH-Mobile MIPI CSI-2 driver");
 MODULE_AUTHOR("Guennadi Liakhovetski <g.liakhovetski@gmx.de>");

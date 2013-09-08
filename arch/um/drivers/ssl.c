@@ -12,14 +12,30 @@
 #include "linux/console.h"
 #include "asm/termbits.h"
 #include "asm/irq.h"
+<<<<<<< HEAD
 #include "ssl.h"
 #include "chan.h"
+=======
+#include "line.h"
+#include "ssl.h"
+#include "chan_kern.h"
+#include "kern.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "init.h"
 #include "irq_user.h"
 #include "mconsole_kern.h"
 
 static const int ssl_version = 1;
 
+<<<<<<< HEAD
+=======
+/* Referenced only by tty_driver below - presumably it's locked correctly
+ * by the tty driver.
+ */
+
+static struct tty_driver *ssl_driver;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NR_PORTS 64
 
 static void ssl_announce(char *dev_name, int dev)
@@ -65,9 +81,14 @@ static struct line_driver driver = {
 /* The array is initialized by line_init, at initcall time.  The
  * elements are locked individually as needed.
  */
+<<<<<<< HEAD
 static char *conf[NR_PORTS];
 static char *def_conf = CONFIG_SSL_CHAN;
 static struct line serial_lines[NR_PORTS];
+=======
+static struct line serial_lines[NR_PORTS] =
+	{ [0 ... NR_PORTS - 1] = LINE_INIT(CONFIG_SSL_CHAN, &driver) };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int ssl_config(char *str, char **error_out)
 {
@@ -151,14 +172,22 @@ static void ssl_console_write(struct console *c, const char *string,
 	unsigned long flags;
 
 	spin_lock_irqsave(&line->lock, flags);
+<<<<<<< HEAD
 	console_write_chan(line->chan_out, string, len);
+=======
+	console_write_chan(&line->chan_list, string, len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&line->lock, flags);
 }
 
 static struct tty_driver *ssl_console_device(struct console *c, int *index)
 {
 	*index = c->index;
+<<<<<<< HEAD
 	return driver.driver;
+=======
+	return ssl_driver;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ssl_console_setup(struct console *co, char *options)
@@ -181,6 +210,7 @@ static struct console ssl_cons = {
 static int ssl_init(void)
 {
 	char *new_title;
+<<<<<<< HEAD
 	int err;
 	int i;
 
@@ -191,11 +221,19 @@ static int ssl_init(void)
 				    ARRAY_SIZE(serial_lines));
 	if (err)
 		return err;
+=======
+
+	printk(KERN_INFO "Initializing software serial port version %d\n",
+	       ssl_version);
+	ssl_driver = register_lines(&driver, &ssl_ops, serial_lines,
+				    ARRAY_SIZE(serial_lines));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	new_title = add_xterm_umid(opts.xterm_title);
 	if (new_title != NULL)
 		opts.xterm_title = new_title;
 
+<<<<<<< HEAD
 	for (i = 0; i < NR_PORTS; i++) {
 		char *error;
 		char *s = conf[i];
@@ -205,6 +243,9 @@ static int ssl_init(void)
 			printk(KERN_ERR "setup_one_line failed for "
 			       "device %d : %s\n", i, error);
 	}
+=======
+	lines_init(serial_lines, ARRAY_SIZE(serial_lines), &opts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ssl_init_done = 1;
 	register_console(&ssl_cons);
@@ -222,7 +263,18 @@ __uml_exitcall(ssl_exit);
 
 static int ssl_chan_setup(char *str)
 {
+<<<<<<< HEAD
 	line_setup(conf, NR_PORTS, &def_conf, str, "serial line");
+=======
+	char *error;
+	int ret;
+
+	ret = line_setup(serial_lines, ARRAY_SIZE(serial_lines), str, &error);
+	if(ret < 0)
+		printk(KERN_ERR "Failed to set up serial line with "
+		       "configuration string \"%s\" : %s\n", str, error);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 

@@ -45,7 +45,11 @@
 #include "cifs_debug.h"
 #include "cifsfs.h"
 
+<<<<<<< HEAD
 #ifdef CONFIG_CIFS_NFSD_EXPORT
+=======
+#ifdef CIFS_NFSD_EXPORT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct dentry *cifs_get_parent(struct dentry *dentry)
 {
 	/* BB need to add code here eventually to enable export via NFSD */
@@ -63,5 +67,9 @@ const struct export_operations cifs_export_ops = {
 	.encode_fs =  */
 };
 
+<<<<<<< HEAD
 #endif /* CONFIG_CIFS_NFSD_EXPORT */
+=======
+#endif /* CIFS_NFSD_EXPORT */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 

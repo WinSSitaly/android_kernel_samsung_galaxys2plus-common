@@ -144,12 +144,20 @@ static struct clocksource pit_clk = {
 	.name	= "pit",
 	.rating	= 100,
 	.read	= pit_read_clk,
+<<<<<<< HEAD
+=======
+	.shift	= 20,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.mask	= CLOCKSOURCE_MASK(32),
 };
 
 /***************************************************************************/
 
+<<<<<<< HEAD
 void hw_timer_init(irq_handler_t handler)
+=======
+void hw_timer_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	cf_pit_clockevent.cpumask = cpumask_of(smp_processor_id());
 	cf_pit_clockevent.mult = div_sc(FREQ, NSEC_PER_SEC, 32);
@@ -161,7 +169,12 @@ void hw_timer_init(irq_handler_t handler)
 
 	setup_irq(MCFINT_VECBASE + MCFINT_PIT1, &pit_irq);
 
+<<<<<<< HEAD
 	clocksource_register_hz(&pit_clk, FREQ);
+=======
+	pit_clk.mult = clocksource_hz2mult(FREQ, pit_clk.shift);
+	clocksource_register(&pit_clk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /***************************************************************************/

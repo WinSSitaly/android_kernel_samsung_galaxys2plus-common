@@ -100,7 +100,12 @@ static int __devinit timeriomem_rng_probe(struct platform_device *pdev)
 
 	timeriomem_rng_data = pdev->dev.platform_data;
 
+<<<<<<< HEAD
 	timeriomem_rng_data->address = ioremap(res->start, resource_size(res));
+=======
+	timeriomem_rng_data->address = ioremap(res->start,
+						res->end - res->start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!timeriomem_rng_data->address)
 		return -EIO;
 
@@ -149,7 +154,22 @@ static struct platform_driver timeriomem_rng_driver = {
 	.remove		= __devexit_p(timeriomem_rng_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(timeriomem_rng_driver);
+=======
+static int __init timeriomem_rng_init(void)
+{
+	return platform_driver_register(&timeriomem_rng_driver);
+}
+
+static void __exit timeriomem_rng_exit(void)
+{
+	platform_driver_unregister(&timeriomem_rng_driver);
+}
+
+module_init(timeriomem_rng_init);
+module_exit(timeriomem_rng_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Alexander Clouter <alex@digriz.org.uk>");

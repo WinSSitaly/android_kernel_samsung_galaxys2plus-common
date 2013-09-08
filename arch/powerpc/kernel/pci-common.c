@@ -21,7 +21,10 @@
 #include <linux/string.h>
 #include <linux/init.h>
 #include <linux/bootmem.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/of_address.h>
 #include <linux/of_pci.h>
 #include <linux/mm.h>
@@ -38,6 +41,10 @@
 #include <asm/byteorder.h>
 #include <asm/machdep.h>
 #include <asm/ppc-pci.h>
+<<<<<<< HEAD
+=======
+#include <asm/firmware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/eeh.h>
 
 static DEFINE_SPINLOCK(hose_spinlock);
@@ -49,6 +56,12 @@ static int global_phb_number;		/* Global phb counter */
 /* ISA Memory physical address */
 resource_size_t isa_mem_base;
 
+<<<<<<< HEAD
+=======
+/* Default PCI flags is 0 on ppc32, modified at boot on ppc64 */
+unsigned int ppc_pci_flags = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct dma_map_ops *pci_dma_ops = &dma_direct_ops;
 
@@ -104,7 +117,11 @@ static resource_size_t pcibios_io_size(const struct pci_controller *hose)
 #ifdef CONFIG_PPC64
 	return hose->pci_io_size;
 #else
+<<<<<<< HEAD
 	return resource_size(&hose->io_resource);
+=======
+	return hose->io_resource.end - hose->io_resource.start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }
 
@@ -210,11 +227,32 @@ char __devinit *pcibios_setup(char *str)
  * If the interrupt is used, then gets the interrupt line from the
  * openfirmware and sets it in the pci_dev and pci_config line.
  */
+<<<<<<< HEAD
 static int pci_read_irq_line(struct pci_dev *pci_dev)
+=======
+int pci_read_irq_line(struct pci_dev *pci_dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct of_irq oirq;
 	unsigned int virq;
 
+<<<<<<< HEAD
+=======
+	/* The current device-tree that iSeries generates from the HV
+	 * PCI informations doesn't contain proper interrupt routing,
+	 * and all the fallback would do is print out crap, so we
+	 * don't attempt to resolve the interrupts here at all, some
+	 * iSeries specific fixup does it.
+	 *
+	 * In the long run, we will hopefully fix the generated device-tree
+	 * instead.
+	 */
+#ifdef CONFIG_PPC_ISERIES
+	if (firmware_has_feature(FW_FEATURE_ISERIES))
+		return -1;
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pr_debug("PCI: Try to map irq for %s...\n", pci_name(pci_dev));
 
 #ifdef DEBUG
@@ -265,6 +303,10 @@ static int pci_read_irq_line(struct pci_dev *pci_dev)
 
 	return 0;
 }
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL(pci_read_irq_line);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Platform support for /proc/bus/pci/X/Y mmap()s,
@@ -824,13 +866,76 @@ int pci_proc_domain(struct pci_bus *bus)
 {
 	struct pci_controller *hose = pci_bus_to_host(bus);
 
+<<<<<<< HEAD
 	if (!pci_has_flag(PCI_ENABLE_PROC_DOMAINS))
 		return 0;
 	if (pci_has_flag(PCI_COMPAT_DOMAIN_0))
+=======
+	if (!(ppc_pci_flags & PPC_PCI_ENABLE_PROC_DOMAINS))
+		return 0;
+	if (ppc_pci_flags & PPC_PCI_COMPAT_DOMAIN_0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return hose->global_number != 0;
 	return 1;
 }
 
+<<<<<<< HEAD
+=======
+void pcibios_resource_to_bus(struct pci_dev *dev, struct pci_bus_region *region,
+			     struct resource *res)
+{
+	resource_size_t offset = 0, mask = (resource_size_t)-1;
+	struct pci_controller *hose = pci_bus_to_host(dev->bus);
+
+	if (!hose)
+		return;
+	if (res->flags & IORESOURCE_IO) {
+		offset = (unsigned long)hose->io_base_virt - _IO_BASE;
+		mask = 0xffffffffu;
+	} else if (res->flags & IORESOURCE_MEM)
+		offset = hose->pci_mem_offset;
+
+	region->start = (res->start - offset) & mask;
+	region->end = (res->end - offset) & mask;
+}
+EXPORT_SYMBOL(pcibios_resource_to_bus);
+
+void pcibios_bus_to_resource(struct pci_dev *dev, struct resource *res,
+			     struct pci_bus_region *region)
+{
+	resource_size_t offset = 0, mask = (resource_size_t)-1;
+	struct pci_controller *hose = pci_bus_to_host(dev->bus);
+
+	if (!hose)
+		return;
+	if (res->flags & IORESOURCE_IO) {
+		offset = (unsigned long)hose->io_base_virt - _IO_BASE;
+		mask = 0xffffffffu;
+	} else if (res->flags & IORESOURCE_MEM)
+		offset = hose->pci_mem_offset;
+	res->start = (region->start + offset) & mask;
+	res->end = (region->end + offset) & mask;
+}
+EXPORT_SYMBOL(pcibios_bus_to_resource);
+
+/* Fixup a bus resource into a linux resource */
+static void __devinit fixup_resource(struct resource *res, struct pci_dev *dev)
+{
+	struct pci_controller *hose = pci_bus_to_host(dev->bus);
+	resource_size_t offset = 0, mask = (resource_size_t)-1;
+
+	if (res->flags & IORESOURCE_IO) {
+		offset = (unsigned long)hose->io_base_virt - _IO_BASE;
+		mask = 0xffffffffu;
+	} else if (res->flags & IORESOURCE_MEM)
+		offset = hose->pci_mem_offset;
+
+	res->start = (res->start + offset) & mask;
+	res->end = (res->end + offset) & mask;
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* This header fixup will do the resource fixup for all devices as they are
  * probed, but not for bridge ranges
  */
@@ -848,6 +953,7 @@ static void __devinit pcibios_fixup_resources(struct pci_dev *dev)
 		struct resource *res = dev->resource + i;
 		if (!res->flags)
 			continue;
+<<<<<<< HEAD
 
 		/* If we're going to re-assign everything, we mark all resources
 		 * as unset (and 0-base them). In addition, we mark BARs starting
@@ -864,17 +970,45 @@ static void __devinit pcibios_fixup_resources(struct pci_dev *dev)
 					 (unsigned long long)res->start,
 					 (unsigned long long)res->end,
 					 (unsigned int)res->flags);
+=======
+		/* On platforms that have PPC_PCI_PROBE_ONLY set, we don't
+		 * consider 0 as an unassigned BAR value. It's technically
+		 * a valid value, but linux doesn't like it... so when we can
+		 * re-assign things, we do so, but if we can't, we keep it
+		 * around and hope for the best...
+		 */
+		if (res->start == 0 && !(ppc_pci_flags & PPC_PCI_PROBE_ONLY)) {
+			pr_debug("PCI:%s Resource %d %016llx-%016llx [%x] is unassigned\n",
+				 pci_name(dev), i,
+				 (unsigned long long)res->start,
+				 (unsigned long long)res->end,
+				 (unsigned int)res->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			res->end -= res->start;
 			res->start = 0;
 			res->flags |= IORESOURCE_UNSET;
 			continue;
 		}
 
+<<<<<<< HEAD
 		pr_debug("PCI:%s Resource %d %016llx-%016llx [%x]\n",
+=======
+		pr_debug("PCI:%s Resource %d %016llx-%016llx [%x] fixup...\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 pci_name(dev), i,
 			 (unsigned long long)res->start,\
 			 (unsigned long long)res->end,
 			 (unsigned int)res->flags);
+<<<<<<< HEAD
+=======
+
+		fixup_resource(res, dev);
+
+		pr_debug("PCI:%s            %016llx-%016llx\n",
+			 pci_name(dev),
+			 (unsigned long long)res->start,
+			 (unsigned long long)res->end);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Call machine specific resource fixup */
@@ -898,7 +1032,11 @@ static int __devinit pcibios_uninitialized_bridge_resource(struct pci_bus *bus,
 	int i;
 
 	/* We don't do anything if PCI_PROBE_ONLY is set */
+<<<<<<< HEAD
 	if (pci_has_flag(PCI_PROBE_ONLY))
+=======
+	if (ppc_pci_flags & PPC_PCI_PROBE_ONLY)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	/* Job is a bit different between memory and IO */
@@ -966,6 +1104,7 @@ static void __devinit pcibios_fixup_bridge(struct pci_bus *bus)
 		if (i >= 3 && bus->self->transparent)
 			continue;
 
+<<<<<<< HEAD
 		/* If we are going to re-assign everything, mark the resource
 		 * as unset and move it down to 0
 		 */
@@ -977,17 +1116,35 @@ static void __devinit pcibios_fixup_bridge(struct pci_bus *bus)
 		}
 
 		pr_debug("PCI:%s Bus rsrc %d %016llx-%016llx [%x]\n",
+=======
+		pr_debug("PCI:%s Bus rsrc %d %016llx-%016llx [%x] fixup...\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 pci_name(dev), i,
 			 (unsigned long long)res->start,\
 			 (unsigned long long)res->end,
 			 (unsigned int)res->flags);
 
+<<<<<<< HEAD
+=======
+		/* Perform fixup */
+		fixup_resource(res, dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Try to detect uninitialized P2P bridge resources,
 		 * and clear them out so they get re-assigned later
 		 */
 		if (pcibios_uninitialized_bridge_resource(bus, res)) {
 			res->flags = 0;
 			pr_debug("PCI:%s            (unassigned)\n", pci_name(dev));
+<<<<<<< HEAD
+=======
+		} else {
+
+			pr_debug("PCI:%s            %016llx-%016llx\n",
+				 pci_name(dev),
+				 (unsigned long long)res->start,
+				 (unsigned long long)res->end);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }
@@ -1023,6 +1180,12 @@ void __devinit pcibios_setup_bus_devices(struct pci_bus *bus)
 		if (dev->is_added)
 			continue;
 
+<<<<<<< HEAD
+=======
+		/* Setup OF node pointer in the device */
+		dev->dev.of_node = pci_device_to_OF_node(dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Fixup NUMA node as it may not be setup yet by the generic
 		 * code and is needed by the DMA init
 		 */
@@ -1043,11 +1206,14 @@ void __devinit pcibios_setup_bus_devices(struct pci_bus *bus)
 	}
 }
 
+<<<<<<< HEAD
 void pcibios_set_master(struct pci_dev *dev)
 {
 	/* No special bus mastering setup handling */
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __devinit pcibios_fixup_bus(struct pci_bus *bus)
 {
 	/* When called from the generic PCI probe, read PCI<->PCI bridge
@@ -1074,7 +1240,11 @@ void __devinit pci_fixup_cardbus(struct pci_bus *bus)
 
 static int skip_isa_ioresource_align(struct pci_dev *dev)
 {
+<<<<<<< HEAD
 	if (pci_has_flag(PCI_CAN_SKIP_ISA_ALIGN) &&
+=======
+	if ((ppc_pci_flags & PPC_PCI_CAN_SKIP_ISA_ALIGN) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    !(dev->bus->bridge_ctl & PCI_BRIDGE_CTL_ISA))
 		return 1;
 	return 0;
@@ -1192,15 +1362,29 @@ void pcibios_allocate_bus_resources(struct pci_bus *bus)
 	pci_bus_for_each_resource(bus, res, i) {
 		if (!res || !res->flags || res->start > res->end || res->parent)
 			continue;
+<<<<<<< HEAD
 
 		/* If the resource was left unset at this point, we clear it */
 		if (res->flags & IORESOURCE_UNSET)
 			goto clear_resource;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (bus->parent == NULL)
 			pr = (res->flags & IORESOURCE_IO) ?
 				&ioport_resource : &iomem_resource;
 		else {
+<<<<<<< HEAD
+=======
+			/* Don't bother with non-root busses when
+			 * re-assigning all resources. We clear the
+			 * resource flags as if they were colliding
+			 * and as such ensure proper re-allocation
+			 * later.
+			 */
+			if (ppc_pci_flags & PPC_PCI_REASSIGN_ALL_RSRC)
+				goto clear_resource;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pr = pci_find_parent_resource(bus->self, res);
 			if (pr == res) {
 				/* this happens when the generic PCI
@@ -1231,9 +1415,15 @@ void pcibios_allocate_bus_resources(struct pci_bus *bus)
 			if (reparent_resources(pr, res) == 0)
 				continue;
 		}
+<<<<<<< HEAD
 		pr_warning("PCI: Cannot allocate resource region "
 			   "%d of PCI bridge %d, will remap\n", i, bus->number);
 	clear_resource:
+=======
+		printk(KERN_WARNING "PCI: Cannot allocate resource region "
+		       "%d of PCI bridge %d, will remap\n", i, bus->number);
+clear_resource:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		res->start = res->end = 0;
 		res->flags = 0;
 	}
@@ -1378,17 +1568,34 @@ void __init pcibios_resource_survey(void)
 {
 	struct pci_bus *b;
 
+<<<<<<< HEAD
 	/* Allocate and assign resources */
 	list_for_each_entry(b, &pci_root_buses, node)
 		pcibios_allocate_bus_resources(b);
 	pcibios_allocate_resources(0);
 	pcibios_allocate_resources(1);
+=======
+	/* Allocate and assign resources. If we re-assign everything, then
+	 * we skip the allocate phase
+	 */
+	list_for_each_entry(b, &pci_root_buses, node)
+		pcibios_allocate_bus_resources(b);
+
+	if (!(ppc_pci_flags & PPC_PCI_REASSIGN_ALL_RSRC)) {
+		pcibios_allocate_resources(0);
+		pcibios_allocate_resources(1);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Before we start assigning unassigned resource, we try to reserve
 	 * the low IO area and the VGA memory area if they intersect the
 	 * bus available resources to avoid allocating things on top of them
 	 */
+<<<<<<< HEAD
 	if (!pci_has_flag(PCI_PROBE_ONLY)) {
+=======
+	if (!(ppc_pci_flags & PPC_PCI_PROBE_ONLY)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_for_each_entry(b, &pci_root_buses, node)
 			pcibios_reserve_legacy_regions(b);
 	}
@@ -1396,7 +1603,11 @@ void __init pcibios_resource_survey(void)
 	/* Now, if the platform didn't decide to blindly trust the firmware,
 	 * we proceed to assigning things that were left unassigned
 	 */
+<<<<<<< HEAD
 	if (!pci_has_flag(PCI_PROBE_ONLY)) {
+=======
+	if (!(ppc_pci_flags & PPC_PCI_PROBE_ONLY)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_debug("PCI: Assigning unassigned resources...\n");
 		pci_assign_unassigned_resources();
 	}
@@ -1477,6 +1688,7 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
 	return pci_enable_resources(dev, mask);
 }
 
+<<<<<<< HEAD
 resource_size_t pcibios_io_space_offset(struct pci_controller *hose)
 {
 	return (unsigned long) hose->io_base_virt - _IO_BASE;
@@ -1484,11 +1696,20 @@ resource_size_t pcibios_io_space_offset(struct pci_controller *hose)
 
 static void __devinit pcibios_setup_phb_resources(struct pci_controller *hose, struct list_head *resources)
 {
+=======
+void __devinit pcibios_setup_phb_resources(struct pci_controller *hose)
+{
+	struct pci_bus *bus = hose->bus;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct resource *res;
 	int i;
 
 	/* Hookup PHB IO resource */
+<<<<<<< HEAD
 	res = &hose->io_resource;
+=======
+	bus->resource[0] = res = &hose->io_resource;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!res->flags) {
 		printk(KERN_WARNING "PCI: I/O resource not set for host"
@@ -1506,7 +1727,10 @@ static void __devinit pcibios_setup_phb_resources(struct pci_controller *hose, s
 		 (unsigned long long)res->start,
 		 (unsigned long long)res->end,
 		 (unsigned long)res->flags);
+<<<<<<< HEAD
 	pci_add_resource_offset(resources, res, pcibios_io_space_offset(hose));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Hookup PHB Memory resources */
 	for (i = 0; i < 3; ++i) {
@@ -1524,12 +1748,19 @@ static void __devinit pcibios_setup_phb_resources(struct pci_controller *hose, s
 			res->flags = IORESOURCE_MEM;
 #endif /* CONFIG_PPC32 */
 		}
+<<<<<<< HEAD
+=======
+		bus->resource[i+1] = res;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		pr_debug("PCI: PHB MEM resource %d = %016llx-%016llx [%lx]\n", i,
 			 (unsigned long long)res->start,
 			 (unsigned long long)res->end,
 			 (unsigned long)res->flags);
+<<<<<<< HEAD
 		pci_add_resource_offset(resources, res, hose->pci_mem_offset);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	pr_debug("PCI: PHB MEM offset     = %016llx\n",
@@ -1610,6 +1841,7 @@ int early_find_capability(struct pci_controller *hose, int bus, int devfn,
 	return pci_bus_find_capability(fake_pci_bus(hose, bus), devfn, cap);
 }
 
+<<<<<<< HEAD
 struct device_node *pcibios_get_phb_of_node(struct pci_bus *bus)
 {
 	struct pci_controller *hose = bus->sysdata;
@@ -1617,13 +1849,18 @@ struct device_node *pcibios_get_phb_of_node(struct pci_bus *bus)
 	return of_node_get(hose->dn);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * pci_scan_phb - Given a pci_controller, setup and scan the PCI bus
  * @hose: Pointer to the PCI host controller instance structure
  */
 void __devinit pcibios_scan_phb(struct pci_controller *hose)
 {
+<<<<<<< HEAD
 	LIST_HEAD(resources);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pci_bus *bus;
 	struct device_node *node = hose->dn;
 	int mode;
@@ -1631,6 +1868,7 @@ void __devinit pcibios_scan_phb(struct pci_controller *hose)
 	pr_debug("PCI: Scanning PHB %s\n",
 		 node ? node->full_name : "<NO NAME>");
 
+<<<<<<< HEAD
 	/* Get some IO space for the new PHB */
 	pcibios_setup_phb_io_space(hose);
 
@@ -1649,6 +1887,25 @@ void __devinit pcibios_scan_phb(struct pci_controller *hose)
 	bus->secondary = hose->first_busno;
 	hose->bus = bus;
 
+=======
+	/* Create an empty bus for the toplevel */
+	bus = pci_create_bus(hose->parent, hose->first_busno, hose->ops, hose);
+	if (bus == NULL) {
+		pr_err("Failed to create bus for PCI domain %04x\n",
+			hose->global_number);
+		return;
+	}
+	bus->dev.of_node = of_node_get(node);
+	bus->secondary = hose->first_busno;
+	hose->bus = bus;
+
+	/* Get some IO space for the new PHB */
+	pcibios_setup_phb_io_space(hose);
+
+	/* Wire up PHB bus resources */
+	pcibios_setup_phb_resources(hose);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Get probe mode and perform scan */
 	mode = PCI_PROBE_NORMAL;
 	if (node && ppc_md.pci_probe_mode)
@@ -1661,6 +1918,7 @@ void __devinit pcibios_scan_phb(struct pci_controller *hose)
 
 	if (mode == PCI_PROBE_NORMAL)
 		hose->last_busno = bus->subordinate = pci_scan_child_bus(bus);
+<<<<<<< HEAD
 
 	/* Platform gets a chance to do some global fixups before
 	 * we proceed to resource allocation
@@ -1700,3 +1958,6 @@ static void fixup_hide_host_resource_fsl(struct pci_dev *dev)
 }
 DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MOTOROLA, PCI_ANY_ID, fixup_hide_host_resource_fsl);
 DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_FREESCALE, PCI_ANY_ID, fixup_hide_host_resource_fsl);
+=======
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -3,7 +3,10 @@
  * Portions Copyright (C) 2001 Christoph Hellwig
  * Copyright (C) 2005 SGI, Christoph Lameter
  * Copyright (C) 2006 Nick Piggin
+<<<<<<< HEAD
  * Copyright (C) 2012 Konstantin Khlebnikov
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -23,7 +26,11 @@
 #include <linux/errno.h>
 #include <linux/init.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/radix-tree.h>
 #include <linux/percpu.h>
 #include <linux/slab.h>
@@ -49,14 +56,26 @@
 struct radix_tree_node {
 	unsigned int	height;		/* Height from the bottom */
 	unsigned int	count;
+<<<<<<< HEAD
 	union {
 		struct radix_tree_node *parent;	/* Used when ascending tree */
 		struct rcu_head	rcu_head;	/* Used when freeing node */
 	};
+=======
+	struct rcu_head	rcu_head;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void __rcu	*slots[RADIX_TREE_MAP_SIZE];
 	unsigned long	tags[RADIX_TREE_MAX_TAGS][RADIX_TREE_TAG_LONGS];
 };
 
+<<<<<<< HEAD
+=======
+struct radix_tree_path {
+	struct radix_tree_node *node;
+	int offset;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define RADIX_TREE_INDEX_BITS  (8 /* CHAR_BIT */ * sizeof(unsigned long))
 #define RADIX_TREE_MAX_PATH (DIV_ROUND_UP(RADIX_TREE_INDEX_BITS, \
 					  RADIX_TREE_MAP_SHIFT))
@@ -147,6 +166,7 @@ static inline int any_tag_set(struct radix_tree_node *node, unsigned int tag)
 	}
 	return 0;
 }
+<<<<<<< HEAD
 
 /**
  * radix_tree_find_next_bit - find the next set bit in a memory region
@@ -184,6 +204,8 @@ radix_tree_find_next_bit(const unsigned long *addr,
 	return size;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This assumes that the caller has performed appropriate preallocation, and
  * that the caller has pinned this thread of control to the current CPU.
@@ -292,7 +314,10 @@ static inline unsigned long radix_tree_maxindex(unsigned int height)
 static int radix_tree_extend(struct radix_tree_root *root, unsigned long index)
 {
 	struct radix_tree_node *node;
+<<<<<<< HEAD
 	struct radix_tree_node *slot;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int height;
 	int tag;
 
@@ -311,12 +336,19 @@ static int radix_tree_extend(struct radix_tree_root *root, unsigned long index)
 		if (!(node = radix_tree_node_alloc(root)))
 			return -ENOMEM;
 
+<<<<<<< HEAD
+=======
+		/* Increase the height.  */
+		node->slots[0] = indirect_to_ptr(root->rnode);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Propagate the aggregated tag info into the new root */
 		for (tag = 0; tag < RADIX_TREE_MAX_TAGS; tag++) {
 			if (root_tag_get(root, tag))
 				tag_set(node, tag, 0);
 		}
 
+<<<<<<< HEAD
 		/* Increase the height.  */
 		newheight = root->height+1;
 		node->height = newheight;
@@ -328,6 +360,11 @@ static int radix_tree_extend(struct radix_tree_root *root, unsigned long index)
 			slot->parent = node;
 		}
 		node->slots[0] = slot;
+=======
+		newheight = root->height+1;
+		node->height = newheight;
+		node->count = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		node = ptr_to_indirect(node);
 		rcu_assign_pointer(root->rnode, node);
 		root->height = newheight;
@@ -373,7 +410,10 @@ int radix_tree_insert(struct radix_tree_root *root,
 			if (!(slot = radix_tree_node_alloc(root)))
 				return -ENOMEM;
 			slot->height = height;
+<<<<<<< HEAD
 			slot->parent = node;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (node) {
 				rcu_assign_pointer(node->slots[offset], slot);
 				node->count++;
@@ -547,15 +587,26 @@ EXPORT_SYMBOL(radix_tree_tag_set);
 void *radix_tree_tag_clear(struct radix_tree_root *root,
 			unsigned long index, unsigned int tag)
 {
+<<<<<<< HEAD
 	struct radix_tree_node *node = NULL;
 	struct radix_tree_node *slot = NULL;
 	unsigned int height, shift;
 	int uninitialized_var(offset);
+=======
+	/*
+	 * The radix tree path needs to be one longer than the maximum path
+	 * since the "list" is null terminated.
+	 */
+	struct radix_tree_path path[RADIX_TREE_MAX_PATH + 1], *pathp = path;
+	struct radix_tree_node *slot = NULL;
+	unsigned int height, shift;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	height = root->height;
 	if (index > radix_tree_maxindex(height))
 		goto out;
 
+<<<<<<< HEAD
 	shift = height * RADIX_TREE_MAP_SHIFT;
 	slot = indirect_to_ptr(root->rnode);
 
@@ -567,11 +618,31 @@ void *radix_tree_tag_clear(struct radix_tree_root *root,
 		offset = (index >> shift) & RADIX_TREE_MAP_MASK;
 		node = slot;
 		slot = slot->slots[offset];
+=======
+	shift = (height - 1) * RADIX_TREE_MAP_SHIFT;
+	pathp->node = NULL;
+	slot = indirect_to_ptr(root->rnode);
+
+	while (height > 0) {
+		int offset;
+
+		if (slot == NULL)
+			goto out;
+
+		offset = (index >> shift) & RADIX_TREE_MAP_MASK;
+		pathp[1].offset = offset;
+		pathp[1].node = slot;
+		slot = slot->slots[offset];
+		pathp++;
+		shift -= RADIX_TREE_MAP_SHIFT;
+		height--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (slot == NULL)
 		goto out;
 
+<<<<<<< HEAD
 	while (node) {
 		if (!tag_get(node, tag, offset))
 			goto out;
@@ -582,6 +653,15 @@ void *radix_tree_tag_clear(struct radix_tree_root *root,
 		index >>= RADIX_TREE_MAP_SHIFT;
 		offset = index & RADIX_TREE_MAP_MASK;
 		node = node->parent;
+=======
+	while (pathp->node) {
+		if (!tag_get(pathp->node, tag, pathp->offset))
+			goto out;
+		tag_clear(pathp->node, tag, pathp->offset);
+		if (any_tag_set(pathp->node, tag))
+			goto out;
+		pathp--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* clear the root's tag bit */
@@ -613,6 +693,10 @@ int radix_tree_tag_get(struct radix_tree_root *root,
 {
 	unsigned int height, shift;
 	struct radix_tree_node *node;
+<<<<<<< HEAD
+=======
+	int saw_unset_tag = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* check the root's tag bit */
 	if (!root_tag_get(root, tag))
@@ -639,10 +723,22 @@ int radix_tree_tag_get(struct radix_tree_root *root,
 			return 0;
 
 		offset = (index >> shift) & RADIX_TREE_MAP_MASK;
+<<<<<<< HEAD
 		if (!tag_get(node, tag, offset))
 			return 0;
 		if (height == 1)
 			return 1;
+=======
+
+		/*
+		 * This is just a debug check.  Later, we can bale as soon as
+		 * we see an unset tag.
+		 */
+		if (!tag_get(node, tag, offset))
+			saw_unset_tag = 1;
+		if (height == 1)
+			return !!tag_get(node, tag, offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		node = rcu_dereference_raw(node->slots[offset]);
 		shift -= RADIX_TREE_MAP_SHIFT;
 		height--;
@@ -651,6 +747,7 @@ int radix_tree_tag_get(struct radix_tree_root *root,
 EXPORT_SYMBOL(radix_tree_tag_get);
 
 /**
+<<<<<<< HEAD
  * radix_tree_next_chunk - find next chunk of slots for iteration
  *
  * @root:	radix tree root
@@ -767,6 +864,8 @@ restart:
 EXPORT_SYMBOL(radix_tree_next_chunk);
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * radix_tree_range_tag_if_tagged - for each item in given range set given
  *				   tag if item has another tag set
  * @root:		radix tree root
@@ -799,7 +898,12 @@ unsigned long radix_tree_range_tag_if_tagged(struct radix_tree_root *root,
 		unsigned int iftag, unsigned int settag)
 {
 	unsigned int height = root->height;
+<<<<<<< HEAD
 	struct radix_tree_node *node = NULL;
+=======
+	struct radix_tree_path path[height];
+	struct radix_tree_path *pathp = path;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct radix_tree_node *slot;
 	unsigned int shift;
 	unsigned long tagged = 0;
@@ -823,8 +927,19 @@ unsigned long radix_tree_range_tag_if_tagged(struct radix_tree_root *root,
 	shift = (height - 1) * RADIX_TREE_MAP_SHIFT;
 	slot = indirect_to_ptr(root->rnode);
 
+<<<<<<< HEAD
 	for (;;) {
 		unsigned long upindex;
+=======
+	/*
+	 * we fill the path from (root->height - 2) to 0, leaving the index at
+	 * (root->height - 1) as a terminator. Zero the node in the terminator
+	 * so that we can use this to end walk loops back up the path.
+	 */
+	path[height - 1].node = NULL;
+
+	for (;;) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int offset;
 
 		offset = (index >> shift) & RADIX_TREE_MAP_MASK;
@@ -832,10 +947,19 @@ unsigned long radix_tree_range_tag_if_tagged(struct radix_tree_root *root,
 			goto next;
 		if (!tag_get(slot, iftag, offset))
 			goto next;
+<<<<<<< HEAD
 		if (shift) {
 			/* Go down one level */
 			shift -= RADIX_TREE_MAP_SHIFT;
 			node = slot;
+=======
+		if (height > 1) {
+			/* Go down one level */
+			height--;
+			shift -= RADIX_TREE_MAP_SHIFT;
+			path[height - 1].node = slot;
+			path[height - 1].offset = offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			slot = slot->slots[offset];
 			continue;
 		}
@@ -845,6 +969,7 @@ unsigned long radix_tree_range_tag_if_tagged(struct radix_tree_root *root,
 		tag_set(slot, settag, offset);
 
 		/* walk back up the path tagging interior nodes */
+<<<<<<< HEAD
 		upindex = index;
 		while (node) {
 			upindex >>= RADIX_TREE_MAP_SHIFT;
@@ -866,6 +991,17 @@ unsigned long radix_tree_range_tag_if_tagged(struct radix_tree_root *root,
 		 */
 		node = NULL;
 
+=======
+		pathp = &path[0];
+		while (pathp->node) {
+			/* stop if we find a node with the tag already set */
+			if (tag_get(pathp->node, settag, pathp->offset))
+				break;
+			tag_set(pathp->node, settag, pathp->offset);
+			pathp++;
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 next:
 		/* Go to next item at level determined by 'shift' */
 		index = ((index >> shift) + 1) << shift;
@@ -880,7 +1016,12 @@ next:
 			 * last_index is guaranteed to be in the tree, what
 			 * we do below cannot wander astray.
 			 */
+<<<<<<< HEAD
 			slot = slot->parent;
+=======
+			slot = path[height - 1].node;
+			height++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			shift += RADIX_TREE_MAP_SHIFT;
 		}
 	}
@@ -971,6 +1112,56 @@ unsigned long radix_tree_prev_hole(struct radix_tree_root *root,
 }
 EXPORT_SYMBOL(radix_tree_prev_hole);
 
+<<<<<<< HEAD
+=======
+static unsigned int
+__lookup(struct radix_tree_node *slot, void ***results, unsigned long index,
+	unsigned int max_items, unsigned long *next_index)
+{
+	unsigned int nr_found = 0;
+	unsigned int shift, height;
+	unsigned long i;
+
+	height = slot->height;
+	if (height == 0)
+		goto out;
+	shift = (height-1) * RADIX_TREE_MAP_SHIFT;
+
+	for ( ; height > 1; height--) {
+		i = (index >> shift) & RADIX_TREE_MAP_MASK;
+		for (;;) {
+			if (slot->slots[i] != NULL)
+				break;
+			index &= ~((1UL << shift) - 1);
+			index += 1UL << shift;
+			if (index == 0)
+				goto out;	/* 32-bit wraparound */
+			i++;
+			if (i == RADIX_TREE_MAP_SIZE)
+				goto out;
+		}
+
+		shift -= RADIX_TREE_MAP_SHIFT;
+		slot = rcu_dereference_raw(slot->slots[i]);
+		if (slot == NULL)
+			goto out;
+	}
+
+	/* Bottom level: grab some items */
+	for (i = index & RADIX_TREE_MAP_MASK; i < RADIX_TREE_MAP_SIZE; i++) {
+		index++;
+		if (slot->slots[i]) {
+			results[nr_found++] = &(slot->slots[i]);
+			if (nr_found == max_items)
+				goto out;
+		}
+	}
+out:
+	*next_index = index;
+	return nr_found;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  *	radix_tree_gang_lookup - perform multiple lookup on a radix tree
  *	@root:		radix tree root
@@ -994,6 +1185,7 @@ unsigned int
 radix_tree_gang_lookup(struct radix_tree_root *root, void **results,
 			unsigned long first_index, unsigned int max_items)
 {
+<<<<<<< HEAD
 	struct radix_tree_iter iter;
 	void **slot;
 	unsigned int ret = 0;
@@ -1007,6 +1199,50 @@ radix_tree_gang_lookup(struct radix_tree_root *root, void **results,
 			continue;
 		if (++ret == max_items)
 			break;
+=======
+	unsigned long max_index;
+	struct radix_tree_node *node;
+	unsigned long cur_index = first_index;
+	unsigned int ret;
+
+	node = rcu_dereference_raw(root->rnode);
+	if (!node)
+		return 0;
+
+	if (!radix_tree_is_indirect_ptr(node)) {
+		if (first_index > 0)
+			return 0;
+		results[0] = node;
+		return 1;
+	}
+	node = indirect_to_ptr(node);
+
+	max_index = radix_tree_maxindex(node->height);
+
+	ret = 0;
+	while (ret < max_items) {
+		unsigned int nr_found, slots_found, i;
+		unsigned long next_index;	/* Index of next search */
+
+		if (cur_index > max_index)
+			break;
+		slots_found = __lookup(node, (void ***)results + ret, cur_index,
+					max_items - ret, &next_index);
+		nr_found = 0;
+		for (i = 0; i < slots_found; i++) {
+			struct radix_tree_node *slot;
+			slot = *(((void ***)results)[ret + i]);
+			if (!slot)
+				continue;
+			results[ret + nr_found] =
+				indirect_to_ptr(rcu_dereference_raw(slot));
+			nr_found++;
+		}
+		ret += nr_found;
+		if (next_index == 0)
+			break;
+		cur_index = next_index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;
@@ -1017,7 +1253,10 @@ EXPORT_SYMBOL(radix_tree_gang_lookup);
  *	radix_tree_gang_lookup_slot - perform multiple slot lookup on radix tree
  *	@root:		radix tree root
  *	@results:	where the results of the lookup are placed
+<<<<<<< HEAD
  *	@indices:	where their indices should be placed (but usually NULL)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	@first_index:	start the lookup from this key
  *	@max_items:	place up to this many items at *results
  *
@@ -1032,6 +1271,7 @@ EXPORT_SYMBOL(radix_tree_gang_lookup);
  *	protection, radix_tree_deref_slot may fail requiring a retry.
  */
 unsigned int
+<<<<<<< HEAD
 radix_tree_gang_lookup_slot(struct radix_tree_root *root,
 			void ***results, unsigned long *indices,
 			unsigned long first_index, unsigned int max_items)
@@ -1049,12 +1289,117 @@ radix_tree_gang_lookup_slot(struct radix_tree_root *root,
 			indices[ret] = iter.index;
 		if (++ret == max_items)
 			break;
+=======
+radix_tree_gang_lookup_slot(struct radix_tree_root *root, void ***results,
+			unsigned long first_index, unsigned int max_items)
+{
+	unsigned long max_index;
+	struct radix_tree_node *node;
+	unsigned long cur_index = first_index;
+	unsigned int ret;
+
+	node = rcu_dereference_raw(root->rnode);
+	if (!node)
+		return 0;
+
+	if (!radix_tree_is_indirect_ptr(node)) {
+		if (first_index > 0)
+			return 0;
+		results[0] = (void **)&root->rnode;
+		return 1;
+	}
+	node = indirect_to_ptr(node);
+
+	max_index = radix_tree_maxindex(node->height);
+
+	ret = 0;
+	while (ret < max_items) {
+		unsigned int slots_found;
+		unsigned long next_index;	/* Index of next search */
+
+		if (cur_index > max_index)
+			break;
+		slots_found = __lookup(node, results + ret, cur_index,
+					max_items - ret, &next_index);
+		ret += slots_found;
+		if (next_index == 0)
+			break;
+		cur_index = next_index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;
 }
 EXPORT_SYMBOL(radix_tree_gang_lookup_slot);
 
+<<<<<<< HEAD
+=======
+/*
+ * FIXME: the two tag_get()s here should use find_next_bit() instead of
+ * open-coding the search.
+ */
+static unsigned int
+__lookup_tag(struct radix_tree_node *slot, void ***results, unsigned long index,
+	unsigned int max_items, unsigned long *next_index, unsigned int tag)
+{
+	unsigned int nr_found = 0;
+	unsigned int shift, height;
+
+	height = slot->height;
+	if (height == 0)
+		goto out;
+	shift = (height-1) * RADIX_TREE_MAP_SHIFT;
+
+	while (height > 0) {
+		unsigned long i = (index >> shift) & RADIX_TREE_MAP_MASK ;
+
+		for (;;) {
+			if (tag_get(slot, tag, i))
+				break;
+			index &= ~((1UL << shift) - 1);
+			index += 1UL << shift;
+			if (index == 0)
+				goto out;	/* 32-bit wraparound */
+			i++;
+			if (i == RADIX_TREE_MAP_SIZE)
+				goto out;
+		}
+		height--;
+		if (height == 0) {	/* Bottom level: grab some items */
+			unsigned long j = index & RADIX_TREE_MAP_MASK;
+
+			for ( ; j < RADIX_TREE_MAP_SIZE; j++) {
+				index++;
+				if (!tag_get(slot, tag, j))
+					continue;
+				/*
+				 * Even though the tag was found set, we need to
+				 * recheck that we have a non-NULL node, because
+				 * if this lookup is lockless, it may have been
+				 * subsequently deleted.
+				 *
+				 * Similar care must be taken in any place that
+				 * lookup ->slots[x] without a lock (ie. can't
+				 * rely on its value remaining the same).
+				 */
+				if (slot->slots[j]) {
+					results[nr_found++] = &(slot->slots[j]);
+					if (nr_found == max_items)
+						goto out;
+				}
+			}
+		}
+		shift -= RADIX_TREE_MAP_SHIFT;
+		slot = rcu_dereference_raw(slot->slots[i]);
+		if (slot == NULL)
+			break;
+	}
+out:
+	*next_index = index;
+	return nr_found;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  *	radix_tree_gang_lookup_tag - perform multiple lookup on a radix tree
  *	                             based on a tag
@@ -1073,6 +1418,7 @@ radix_tree_gang_lookup_tag(struct radix_tree_root *root, void **results,
 		unsigned long first_index, unsigned int max_items,
 		unsigned int tag)
 {
+<<<<<<< HEAD
 	struct radix_tree_iter iter;
 	void **slot;
 	unsigned int ret = 0;
@@ -1086,6 +1432,54 @@ radix_tree_gang_lookup_tag(struct radix_tree_root *root, void **results,
 			continue;
 		if (++ret == max_items)
 			break;
+=======
+	struct radix_tree_node *node;
+	unsigned long max_index;
+	unsigned long cur_index = first_index;
+	unsigned int ret;
+
+	/* check the root's tag bit */
+	if (!root_tag_get(root, tag))
+		return 0;
+
+	node = rcu_dereference_raw(root->rnode);
+	if (!node)
+		return 0;
+
+	if (!radix_tree_is_indirect_ptr(node)) {
+		if (first_index > 0)
+			return 0;
+		results[0] = node;
+		return 1;
+	}
+	node = indirect_to_ptr(node);
+
+	max_index = radix_tree_maxindex(node->height);
+
+	ret = 0;
+	while (ret < max_items) {
+		unsigned int nr_found, slots_found, i;
+		unsigned long next_index;	/* Index of next search */
+
+		if (cur_index > max_index)
+			break;
+		slots_found = __lookup_tag(node, (void ***)results + ret,
+				cur_index, max_items - ret, &next_index, tag);
+		nr_found = 0;
+		for (i = 0; i < slots_found; i++) {
+			struct radix_tree_node *slot;
+			slot = *(((void ***)results)[ret + i]);
+			if (!slot)
+				continue;
+			results[ret + nr_found] =
+				indirect_to_ptr(rcu_dereference_raw(slot));
+			nr_found++;
+		}
+		ret += nr_found;
+		if (next_index == 0)
+			break;
+		cur_index = next_index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;
@@ -1110,6 +1504,7 @@ radix_tree_gang_lookup_tag_slot(struct radix_tree_root *root, void ***results,
 		unsigned long first_index, unsigned int max_items,
 		unsigned int tag)
 {
+<<<<<<< HEAD
 	struct radix_tree_iter iter;
 	void **slot;
 	unsigned int ret = 0;
@@ -1219,6 +1614,50 @@ unsigned long radix_tree_locate_item(struct radix_tree_root *root, void *item)
 	return -1;
 }
 #endif /* CONFIG_SHMEM && CONFIG_SWAP */
+=======
+	struct radix_tree_node *node;
+	unsigned long max_index;
+	unsigned long cur_index = first_index;
+	unsigned int ret;
+
+	/* check the root's tag bit */
+	if (!root_tag_get(root, tag))
+		return 0;
+
+	node = rcu_dereference_raw(root->rnode);
+	if (!node)
+		return 0;
+
+	if (!radix_tree_is_indirect_ptr(node)) {
+		if (first_index > 0)
+			return 0;
+		results[0] = (void **)&root->rnode;
+		return 1;
+	}
+	node = indirect_to_ptr(node);
+
+	max_index = radix_tree_maxindex(node->height);
+
+	ret = 0;
+	while (ret < max_items) {
+		unsigned int slots_found;
+		unsigned long next_index;	/* Index of next search */
+
+		if (cur_index > max_index)
+			break;
+		slots_found = __lookup_tag(node, results + ret,
+				cur_index, max_items - ret, &next_index, tag);
+		ret += slots_found;
+		if (next_index == 0)
+			break;
+		cur_index = next_index;
+	}
+
+	return ret;
+}
+EXPORT_SYMBOL(radix_tree_gang_lookup_tag_slot);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  *	radix_tree_shrink    -    shrink height of a radix tree to minimal
@@ -1229,7 +1668,11 @@ static inline void radix_tree_shrink(struct radix_tree_root *root)
 	/* try to shrink tree height */
 	while (root->height > 0) {
 		struct radix_tree_node *to_free = root->rnode;
+<<<<<<< HEAD
 		struct radix_tree_node *slot;
+=======
+		void *newptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		BUG_ON(!radix_tree_is_indirect_ptr(to_free));
 		to_free = indirect_to_ptr(to_free);
@@ -1250,12 +1693,19 @@ static inline void radix_tree_shrink(struct radix_tree_root *root)
 		 * (to_free->slots[0]), it will be safe to dereference the new
 		 * one (root->rnode) as far as dependent read barriers go.
 		 */
+<<<<<<< HEAD
 		slot = to_free->slots[0];
 		if (root->height > 1) {
 			slot->parent = NULL;
 			slot = ptr_to_indirect(slot);
 		}
 		root->rnode = slot;
+=======
+		newptr = to_free->slots[0];
+		if (root->height > 1)
+			newptr = ptr_to_indirect(newptr);
+		root->rnode = newptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		root->height--;
 
 		/*
@@ -1295,12 +1745,24 @@ static inline void radix_tree_shrink(struct radix_tree_root *root)
  */
 void *radix_tree_delete(struct radix_tree_root *root, unsigned long index)
 {
+<<<<<<< HEAD
 	struct radix_tree_node *node = NULL;
+=======
+	/*
+	 * The radix tree path needs to be one longer than the maximum path
+	 * since the "list" is null terminated.
+	 */
+	struct radix_tree_path path[RADIX_TREE_MAX_PATH + 1], *pathp = path;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct radix_tree_node *slot = NULL;
 	struct radix_tree_node *to_free;
 	unsigned int height, shift;
 	int tag;
+<<<<<<< HEAD
 	int uninitialized_var(offset);
+=======
+	int offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	height = root->height;
 	if (index > radix_tree_maxindex(height))
@@ -1313,35 +1775,65 @@ void *radix_tree_delete(struct radix_tree_root *root, unsigned long index)
 		goto out;
 	}
 	slot = indirect_to_ptr(slot);
+<<<<<<< HEAD
 	shift = height * RADIX_TREE_MAP_SHIFT;
+=======
+
+	shift = (height - 1) * RADIX_TREE_MAP_SHIFT;
+	pathp->node = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	do {
 		if (slot == NULL)
 			goto out;
 
+<<<<<<< HEAD
 		shift -= RADIX_TREE_MAP_SHIFT;
 		offset = (index >> shift) & RADIX_TREE_MAP_MASK;
 		node = slot;
 		slot = slot->slots[offset];
 	} while (shift);
+=======
+		pathp++;
+		offset = (index >> shift) & RADIX_TREE_MAP_MASK;
+		pathp->offset = offset;
+		pathp->node = slot;
+		slot = slot->slots[offset];
+		shift -= RADIX_TREE_MAP_SHIFT;
+		height--;
+	} while (height > 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (slot == NULL)
 		goto out;
 
 	/*
+<<<<<<< HEAD
 	 * Clear all tags associated with the item to be deleted.
 	 * This way of doing it would be inefficient, but seldom is any set.
 	 */
 	for (tag = 0; tag < RADIX_TREE_MAX_TAGS; tag++) {
 		if (tag_get(node, tag, offset))
+=======
+	 * Clear all tags associated with the just-deleted item
+	 */
+	for (tag = 0; tag < RADIX_TREE_MAX_TAGS; tag++) {
+		if (tag_get(pathp->node, tag, pathp->offset))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			radix_tree_tag_clear(root, index, tag);
 	}
 
 	to_free = NULL;
 	/* Now free the nodes we do not need anymore */
+<<<<<<< HEAD
 	while (node) {
 		node->slots[offset] = NULL;
 		node->count--;
+=======
+	while (pathp->node) {
+		pathp->node->slots[pathp->offset] = NULL;
+		pathp->node->count--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Queue the node for deferred freeing after the
 		 * last reference to it disappears (set NULL, above).
@@ -1349,13 +1841,19 @@ void *radix_tree_delete(struct radix_tree_root *root, unsigned long index)
 		if (to_free)
 			radix_tree_node_free(to_free);
 
+<<<<<<< HEAD
 		if (node->count) {
 			if (node == indirect_to_ptr(root->rnode))
+=======
+		if (pathp->node->count) {
+			if (pathp->node == indirect_to_ptr(root->rnode))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				radix_tree_shrink(root);
 			goto out;
 		}
 
 		/* Node with zero slots in use so free it */
+<<<<<<< HEAD
 		to_free = node;
 
 		index >>= RADIX_TREE_MAP_SHIFT;
@@ -1363,6 +1861,12 @@ void *radix_tree_delete(struct radix_tree_root *root, unsigned long index)
 		node = node->parent;
 	}
 
+=======
+		to_free = pathp->node;
+		pathp--;
+
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	root_tag_clear_all(root);
 	root->height = 0;
 	root->rnode = NULL;

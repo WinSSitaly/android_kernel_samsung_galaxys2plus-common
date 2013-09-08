@@ -315,7 +315,11 @@ static int altera_uart_startup(struct uart_port *port)
 		return 0;
 	}
 
+<<<<<<< HEAD
 	ret = request_irq(port->irq, altera_uart_interrupt, 0,
+=======
+	ret = request_irq(port->irq, altera_uart_interrupt, IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			DRV_NAME, port);
 	if (ret) {
 		pr_err(DRV_NAME ": unable to attach Altera UART %d "
@@ -377,6 +381,7 @@ static int altera_uart_verify_port(struct uart_port *port,
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_CONSOLE_POLL
 static int altera_uart_poll_get_char(struct uart_port *port)
 {
@@ -397,6 +402,8 @@ static void altera_uart_poll_put_char(struct uart_port *port, unsigned char c)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *	Define the basic serial functions we support.
  */
@@ -417,16 +424,45 @@ static struct uart_ops altera_uart_ops = {
 	.release_port	= altera_uart_release_port,
 	.config_port	= altera_uart_config_port,
 	.verify_port	= altera_uart_verify_port,
+<<<<<<< HEAD
 #ifdef CONFIG_CONSOLE_POLL
 	.poll_get_char	= altera_uart_poll_get_char,
 	.poll_put_char	= altera_uart_poll_put_char,
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct altera_uart altera_uart_ports[CONFIG_SERIAL_ALTERA_UART_MAXPORTS];
 
 #if defined(CONFIG_SERIAL_ALTERA_UART_CONSOLE)
 
+<<<<<<< HEAD
+=======
+int __init early_altera_uart_setup(struct altera_uart_platform_uart *platp)
+{
+	struct uart_port *port;
+	int i;
+
+	for (i = 0; i < CONFIG_SERIAL_ALTERA_UART_MAXPORTS && platp[i].mapbase; i++) {
+		port = &altera_uart_ports[i].port;
+
+		port->line = i;
+		port->type = PORT_ALTERA_UART;
+		port->mapbase = platp[i].mapbase;
+		port->membase = ioremap(port->mapbase, ALTERA_UART_SIZE);
+		port->iotype = SERIAL_IO_MEM;
+		port->irq = platp[i].irq;
+		port->uartclk = platp[i].uartclk;
+		port->flags = UPF_BOOT_AUTOCONF;
+		port->ops = &altera_uart_ops;
+		port->private_data = platp;
+	}
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void altera_uart_console_putc(struct uart_port *port, const char c)
 {
 	while (!(altera_uart_readl(port, ALTERA_UART_STATUS_REG) &
@@ -617,6 +653,11 @@ static struct of_device_id altera_uart_match[] = {
 	{},
 };
 MODULE_DEVICE_TABLE(of, altera_uart_match);
+<<<<<<< HEAD
+=======
+#else
+#define altera_uart_match NULL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_OF */
 
 static struct platform_driver altera_uart_platform_driver = {
@@ -625,7 +666,11 @@ static struct platform_driver altera_uart_platform_driver = {
 	.driver	= {
 		.name		= DRV_NAME,
 		.owner		= THIS_MODULE,
+<<<<<<< HEAD
 		.of_match_table	= of_match_ptr(altera_uart_match),
+=======
+		.of_match_table	= altera_uart_match,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

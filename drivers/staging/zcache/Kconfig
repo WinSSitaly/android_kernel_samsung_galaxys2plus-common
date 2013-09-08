@@ -1,4 +1,5 @@
 config ZCACHE
+<<<<<<< HEAD
 	bool "Dynamic compression of swap pages and clean pagecache pages"
 	# X86 dependency is because zsmalloc uses non-portable pte/tlb
 	# functions
@@ -9,6 +10,17 @@ config ZCACHE
 	help
 	  Zcache doubles RAM efficiency while providing a significant
 	  performance boosts on many workloads.  Zcache uses
+=======
+	tristate "Dynamic compression of swap pages and clean pagecache pages"
+	depends on CLEANCACHE || FRONTSWAP
+	select XVMALLOC
+	select LZO_COMPRESS
+	select LZO_DECOMPRESS
+	default n
+	help
+	  Zcache doubles RAM efficiency while providing a significant
+	  performance boosts on many workloads.  Zcache uses lzo1x
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	  compression and an in-kernel implementation of transcendent
 	  memory to store clean page cache pages and swap in RAM,
 	  providing a noticeable reduction in disk I/O.

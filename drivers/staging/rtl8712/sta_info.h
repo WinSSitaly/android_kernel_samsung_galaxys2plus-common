@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2010 Realtek Corporation. All rights reserved.
@@ -23,6 +24,8 @@
  * Larry Finger <Larry.Finger@lwfinger.net>
  *
  ******************************************************************************/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __STA_INFO_H_
 #define __STA_INFO_H_
 
@@ -63,8 +66,13 @@ struct sta_info {
 	struct sta_recv_priv sta_recvpriv;
 	uint state;
 	uint aid;
+<<<<<<< HEAD
 	uint	mac_id;
 	uint	qos_option;
+=======
+	u8	mac_id;
+	u8	qos_option;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8	hwaddr[ETH_ALEN];
 	uint	ieee8021x_blocked;	/*0: allowed, 1:blocked */
 	uint	XPrivacy; /*aes, tkip...*/
@@ -90,6 +98,10 @@ struct sta_info {
 	 * curr_network(mlme_priv/security_priv/qos/ht) : AP CAP/INFO
 	 * sta_info: (AP & STA) CAP/INFO
 	 */
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_R8712_AP
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head asoc_list;
 	struct list_head auth_list;
 	unsigned int expire_to;
@@ -97,6 +109,10 @@ struct sta_info {
 	unsigned int authalg;
 	unsigned char chg_txt[128];
 	unsigned int tx_ra_bitmap;
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct	sta_priv {
@@ -109,11 +125,19 @@ struct	sta_priv {
 	struct  __queue sleep_q;
 	struct  __queue wakeup_q;
 	struct _adapter *padapter;
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_R8712_AP
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head asoc_list;
 	struct list_head auth_list;
 	unsigned int auth_to;  /* sec, time to expire in authenticating. */
 	unsigned int assoc_to; /* sec, time to expire before associating. */
 	unsigned int expire_to; /* sec , time to expire after associated. */
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline u32 wifi_mac_hash(u8 *mac)

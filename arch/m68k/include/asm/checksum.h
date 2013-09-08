@@ -3,10 +3,13 @@
 
 #include <linux/in6.h>
 
+<<<<<<< HEAD
 #ifdef CONFIG_GENERIC_CSUM
 #include <asm-generic/checksum.h>
 #else
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * computes the checksum of a memory block at buff, length len,
  * and adds in "sum" (32-bit)
@@ -38,6 +41,33 @@ extern __wsum csum_partial_copy_nocheck(const void *src,
 					      void *dst, int len,
 					      __wsum sum);
 
+<<<<<<< HEAD
+=======
+
+#ifdef CONFIG_COLDFIRE
+
+/*
+ *	The ColdFire cores don't support all the 68k instructions used
+ *	in the optimized checksum code below. So it reverts back to using
+ *	more standard C coded checksums. The fast checksum code is
+ *	significantly larger than the optimized version, so it is not
+ *	inlined here.
+ */
+__sum16 ip_fast_csum(const void *iph, unsigned int ihl);
+
+static inline __sum16 csum_fold(__wsum sum)
+{
+	unsigned int tmp = (__force u32)sum;
+
+	tmp = (tmp & 0xffff) + (tmp >> 16);
+	tmp = (tmp & 0xffff) + (tmp >> 16);
+
+	return (__force __sum16)~tmp;
+}
+
+#else
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *	This is a version of ip_fast_csum() optimized for IP headers,
  *	which always checksum on 4 octet boundaries.
@@ -77,6 +107,11 @@ static inline __sum16 csum_fold(__wsum sum)
 	return (__force __sum16)~sum;
 }
 
+<<<<<<< HEAD
+=======
+#endif /* CONFIG_COLDFIRE */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline __wsum
 csum_tcpudp_nofold(__be32 saddr, __be32 daddr, unsigned short len,
 		  unsigned short proto, __wsum sum)
@@ -145,5 +180,8 @@ csum_ipv6_magic(const struct in6_addr *saddr, const struct in6_addr *daddr,
 	return csum_fold(sum);
 }
 
+<<<<<<< HEAD
 #endif /* CONFIG_GENERIC_CSUM */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _M68K_CHECKSUM_H */

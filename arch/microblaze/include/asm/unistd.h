@@ -391,11 +391,16 @@
 #define __NR_clock_adjtime	373
 #define __NR_syncfs		374
 #define __NR_setns		375
+<<<<<<< HEAD
 #define __NR_sendmmsg		376
 #define __NR_process_vm_readv	377
 #define __NR_process_vm_writev	378
 
 #define __NR_syscalls		379
+=======
+
+#define __NR_syscalls		376
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef __KERNEL__
 #ifndef __ASSEMBLY__

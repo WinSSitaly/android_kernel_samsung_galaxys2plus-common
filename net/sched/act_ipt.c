@@ -8,7 +8,11 @@
  *		as published by the Free Software Foundation; either version
  *		2 of the License, or (at your option) any later version.
  *
+<<<<<<< HEAD
  * Copyright:	Jamal Hadi Salim (2002-13)
+=======
+ * Copyright:	Jamal Hadi Salim (2002-4)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/types.h>
@@ -195,7 +199,11 @@ static int tcf_ipt_cleanup(struct tc_action *a, int bind)
 	return tcf_ipt_release(ipt, bind);
 }
 
+<<<<<<< HEAD
 static int tcf_ipt(struct sk_buff *skb, const struct tc_action *a,
+=======
+static int tcf_ipt(struct sk_buff *skb, struct tc_action *a,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   struct tcf_result *res)
 {
 	int ret = 0, result = 0;
@@ -299,6 +307,7 @@ static struct tc_action_ops act_ipt_ops = {
 	.walk		=	tcf_generic_walker
 };
 
+<<<<<<< HEAD
 static struct tc_action_ops act_xt_ops = {
 	.kind		=	"xt",
 	.hinfo		=	&ipt_hash_info,
@@ -332,11 +341,23 @@ static int __init ipt_init_module(void)
 		return ret1;
 	else
 		return 0;
+=======
+MODULE_AUTHOR("Jamal Hadi Salim(2002-4)");
+MODULE_DESCRIPTION("Iptables target actions");
+MODULE_LICENSE("GPL");
+
+static int __init ipt_init_module(void)
+{
+	return tcf_register_action(&act_ipt_ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit ipt_cleanup_module(void)
 {
+<<<<<<< HEAD
 	tcf_unregister_action(&act_xt_ops);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tcf_unregister_action(&act_ipt_ops);
 }
 

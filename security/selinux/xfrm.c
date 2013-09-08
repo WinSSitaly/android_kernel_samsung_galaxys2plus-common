@@ -46,7 +46,11 @@
 #include <net/xfrm.h>
 #include <net/checksum.h>
 #include <net/udp.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "avc.h"
 #include "objsec.h"
@@ -310,7 +314,11 @@ int selinux_xfrm_policy_clone(struct xfrm_sec_ctx *old_ctx,
 
 	if (old_ctx) {
 		new_ctx = kmalloc(sizeof(*old_ctx) + old_ctx->ctx_len,
+<<<<<<< HEAD
 				  GFP_ATOMIC);
+=======
+				  GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!new_ctx)
 			return -ENOMEM;
 

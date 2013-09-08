@@ -203,7 +203,11 @@ static int __devinit w90p910_keypad_probe(struct platform_device *pdev)
 				   input_dev->keycode, input_dev->keybit);
 
 	error = request_irq(keypad->irq, w90p910_keypad_irq_handler,
+<<<<<<< HEAD
 			    0, pdev->name, keypad);
+=======
+			    IRQF_DISABLED, pdev->name, keypad);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error) {
 		dev_err(&pdev->dev, "failed to request IRQ\n");
 		goto failed_put_clk;
@@ -262,7 +266,23 @@ static struct platform_driver w90p910_keypad_driver = {
 		.owner	= THIS_MODULE,
 	},
 };
+<<<<<<< HEAD
 module_platform_driver(w90p910_keypad_driver);
+=======
+
+static int __init w90p910_keypad_init(void)
+{
+	return platform_driver_register(&w90p910_keypad_driver);
+}
+
+static void __exit w90p910_keypad_exit(void)
+{
+	platform_driver_unregister(&w90p910_keypad_driver);
+}
+
+module_init(w90p910_keypad_init);
+module_exit(w90p910_keypad_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Wan ZongShun <mcuos.com@gmail.com>");
 MODULE_DESCRIPTION("w90p910 keypad driver");

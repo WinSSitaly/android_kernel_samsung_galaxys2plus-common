@@ -80,11 +80,21 @@ static int try_one_irq(int irq, struct irq_desc *desc, bool force)
 
 	/*
 	 * All handlers must agree on IRQF_SHARED, so we test just the
+<<<<<<< HEAD
 	 * first.
 	 */
 	action = desc->action;
 	if (!action || !(action->flags & IRQF_SHARED) ||
 	    (action->flags & __IRQF_TIMER))
+=======
+	 * first. Check for action->next as well.
+	 */
+	action = desc->action;
+	if (!action || !(action->flags & IRQF_SHARED) ||
+	    (action->flags & __IRQF_TIMER) ||
+	    (action->handler(irq, action->dev_id) == IRQ_HANDLED) ||
+	    !action->next)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	/* Already running on another processor */
@@ -102,7 +112,10 @@ static int try_one_irq(int irq, struct irq_desc *desc, bool force)
 	do {
 		if (handle_irq_event(desc) == IRQ_HANDLED)
 			ret = IRQ_HANDLED;
+<<<<<<< HEAD
 		/* Make sure that there is still a valid action */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		action = desc->action;
 	} while ((desc->istate & IRQS_PENDING) && action);
 	desc->istate &= ~IRQS_POLL_INPROGRESS;
@@ -324,7 +337,11 @@ void note_interrupt(unsigned int irq, struct irq_desc *desc,
 	desc->irqs_unhandled = 0;
 }
 
+<<<<<<< HEAD
 bool noirqdebug __read_mostly;
+=======
+int noirqdebug __read_mostly;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int noirqdebug_setup(char *str)
 {

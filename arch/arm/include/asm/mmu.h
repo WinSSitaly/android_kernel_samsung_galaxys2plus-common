@@ -6,7 +6,11 @@
 typedef struct {
 #ifdef CONFIG_CPU_HAS_ASID
 	unsigned int id;
+<<<<<<< HEAD
 	raw_spinlock_t id_lock;
+=======
+	spinlock_t id_lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	unsigned int kvm_seq;
 } mm_context_t;
@@ -16,7 +20,11 @@ typedef struct {
 
 /* init_mm.context.id_lock should be initialized. */
 #define INIT_MM_CONTEXT(name)                                                 \
+<<<<<<< HEAD
 	.context.id_lock    = __RAW_SPIN_LOCK_UNLOCKED(name.context.id_lock),
+=======
+	.context.id_lock    = __SPIN_LOCK_UNLOCKED(name.context.id_lock),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 #define ASID(mm)	(0)
 #endif
@@ -34,6 +42,7 @@ typedef struct {
 
 #endif
 
+<<<<<<< HEAD
 /*
  * switch_mm() may do a full cache flush over the context switch,
  * so enable interrupts over the context switch to avoid high
@@ -41,4 +50,6 @@ typedef struct {
  */
 #define __ARCH_WANT_INTERRUPTS_ON_CTXSW
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

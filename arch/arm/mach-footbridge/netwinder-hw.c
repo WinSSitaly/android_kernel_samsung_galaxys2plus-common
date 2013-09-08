@@ -17,7 +17,10 @@
 #include <asm/leds.h>
 #include <asm/mach-types.h>
 #include <asm/setup.h>
+<<<<<<< HEAD
 #include <asm/system_misc.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach/arch.h>
 
@@ -69,7 +72,11 @@ static inline void wb977_ww(int reg, int val)
 /*
  * This is a lock for accessing ports GP1_IO_BASE and GP2_IO_BASE
  */
+<<<<<<< HEAD
 DEFINE_RAW_SPINLOCK(nw_gpio_lock);
+=======
+DEFINE_SPINLOCK(nw_gpio_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL(nw_gpio_lock);
 
 static unsigned int current_gpio_op;
@@ -328,9 +335,15 @@ static inline void wb977_init_gpio(void)
 	/*
 	 * Set Group1/Group2 outputs
 	 */
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&nw_gpio_lock, flags);
 	nw_gpio_modify_op(-1, GPIO_RED_LED | GPIO_FAN);
 	raw_spin_unlock_irqrestore(&nw_gpio_lock, flags);
+=======
+	spin_lock_irqsave(&nw_gpio_lock, flags);
+	nw_gpio_modify_op(-1, GPIO_RED_LED | GPIO_FAN);
+	spin_unlock_irqrestore(&nw_gpio_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -391,9 +404,15 @@ static void __init cpld_init(void)
 {
 	unsigned long flags;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&nw_gpio_lock, flags);
 	nw_cpld_modify(-1, CPLD_UNMUTE | CPLD_7111_DISABLE);
 	raw_spin_unlock_irqrestore(&nw_gpio_lock, flags);
+=======
+	spin_lock_irqsave(&nw_gpio_lock, flags);
+	nw_cpld_modify(-1, CPLD_UNMUTE | CPLD_7111_DISABLE);
+	spin_unlock_irqrestore(&nw_gpio_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static unsigned char rwa_unlock[] __initdata =
@@ -617,9 +636,15 @@ static int __init nw_hw_init(void)
 		cpld_init();
 		rwa010_init();
 
+<<<<<<< HEAD
 		raw_spin_lock_irqsave(&nw_gpio_lock, flags);
 		nw_gpio_modify_op(GPIO_RED_LED|GPIO_GREEN_LED, DEFAULT_LEDS);
 		raw_spin_unlock_irqrestore(&nw_gpio_lock, flags);
+=======
+		spin_lock_irqsave(&nw_gpio_lock, flags);
+		nw_gpio_modify_op(GPIO_RED_LED|GPIO_GREEN_LED, DEFAULT_LEDS);
+		spin_unlock_irqrestore(&nw_gpio_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }
@@ -632,7 +657,12 @@ __initcall(nw_hw_init);
  * the parameter page.
  */
 static void __init
+<<<<<<< HEAD
 fixup_netwinder(struct tag *tags, char **cmdline, struct meminfo *mi)
+=======
+fixup_netwinder(struct machine_desc *desc, struct tag *tags,
+		char **cmdline, struct meminfo *mi)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 #ifdef CONFIG_ISAPNP
 	extern int isapnp_disable;
@@ -646,6 +676,7 @@ fixup_netwinder(struct tag *tags, char **cmdline, struct meminfo *mi)
 #endif
 }
 
+<<<<<<< HEAD
 static void netwinder_restart(char mode, const char *cmd)
 {
 	if (mode == 's') {
@@ -675,6 +706,11 @@ static void netwinder_restart(char mode, const char *cmd)
 MACHINE_START(NETWINDER, "Rebel-NetWinder")
 	/* Maintainer: Russell King/Rebel.com */
 	.atag_offset	= 0x100,
+=======
+MACHINE_START(NETWINDER, "Rebel-NetWinder")
+	/* Maintainer: Russell King/Rebel.com */
+	.boot_params	= 0x00000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.video_start	= 0x000a0000,
 	.video_end	= 0x000bffff,
 	.reserve_lp0	= 1,
@@ -683,5 +719,8 @@ MACHINE_START(NETWINDER, "Rebel-NetWinder")
 	.map_io		= footbridge_map_io,
 	.init_irq	= footbridge_init_irq,
 	.timer		= &isa_timer,
+<<<<<<< HEAD
 	.restart	= netwinder_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

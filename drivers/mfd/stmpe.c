@@ -1,12 +1,16 @@
 /*
+<<<<<<< HEAD
  * ST Microelectronics MFD: stmpe's driver
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (C) ST-Ericsson SA 2010
  *
  * License Terms: GNU General Public License, version 2
  * Author: Rabin Vincent <rabin.vincent@stericsson.com> for ST-Ericsson
  */
 
+<<<<<<< HEAD
 #include <linux/gpio.h>
 #include <linux/export.h>
 #include <linux/kernel.h>
@@ -15,6 +19,16 @@
 #include <linux/pm.h>
 #include <linux/slab.h>
 #include <linux/mfd/core.h>
+=======
+#include <linux/kernel.h>
+#include <linux/module.h>
+#include <linux/interrupt.h>
+#include <linux/irq.h>
+#include <linux/slab.h>
+#include <linux/i2c.h>
+#include <linux/mfd/core.h>
+#include <linux/mfd/stmpe.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "stmpe.h"
 
 static int __stmpe_enable(struct stmpe *stmpe, unsigned int blocks)
@@ -31,9 +45,16 @@ static int __stmpe_reg_read(struct stmpe *stmpe, u8 reg)
 {
 	int ret;
 
+<<<<<<< HEAD
 	ret = stmpe->ci->read_byte(stmpe, reg);
 	if (ret < 0)
 		dev_err(stmpe->dev, "failed to read reg %#x: %d\n", reg, ret);
+=======
+	ret = i2c_smbus_read_byte_data(stmpe->i2c, reg);
+	if (ret < 0)
+		dev_err(stmpe->dev, "failed to read reg %#x: %d\n",
+			reg, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_vdbg(stmpe->dev, "rd: reg %#x => data %#x\n", reg, ret);
 
@@ -46,9 +67,16 @@ static int __stmpe_reg_write(struct stmpe *stmpe, u8 reg, u8 val)
 
 	dev_vdbg(stmpe->dev, "wr: reg %#x <= %#x\n", reg, val);
 
+<<<<<<< HEAD
 	ret = stmpe->ci->write_byte(stmpe, reg, val);
 	if (ret < 0)
 		dev_err(stmpe->dev, "failed to write reg %#x: %d\n", reg, ret);
+=======
+	ret = i2c_smbus_write_byte_data(stmpe->i2c, reg, val);
+	if (ret < 0)
+		dev_err(stmpe->dev, "failed to write reg %#x: %d\n",
+			reg, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -72,9 +100,16 @@ static int __stmpe_block_read(struct stmpe *stmpe, u8 reg, u8 length,
 {
 	int ret;
 
+<<<<<<< HEAD
 	ret = stmpe->ci->read_block(stmpe, reg, length, values);
 	if (ret < 0)
 		dev_err(stmpe->dev, "failed to read regs %#x: %d\n", reg, ret);
+=======
+	ret = i2c_smbus_read_i2c_block_data(stmpe->i2c, reg, length, values);
+	if (ret < 0)
+		dev_err(stmpe->dev, "failed to read regs %#x: %d\n",
+			reg, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_vdbg(stmpe->dev, "rd: reg %#x (%d) => ret %#x\n", reg, length, ret);
 	stmpe_dump_bytes("stmpe rd: ", values, length);
@@ -90,9 +125,17 @@ static int __stmpe_block_write(struct stmpe *stmpe, u8 reg, u8 length,
 	dev_vdbg(stmpe->dev, "wr: regs %#x (%d)\n", reg, length);
 	stmpe_dump_bytes("stmpe wr: ", values, length);
 
+<<<<<<< HEAD
 	ret = stmpe->ci->write_block(stmpe, reg, length, values);
 	if (ret < 0)
 		dev_err(stmpe->dev, "failed to write regs %#x: %d\n", reg, ret);
+=======
+	ret = i2c_smbus_write_i2c_block_data(stmpe->i2c, reg, length,
+					     values);
+	if (ret < 0)
+		dev_err(stmpe->dev, "failed to write regs %#x: %d\n",
+			reg, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -225,7 +268,11 @@ int stmpe_block_write(struct stmpe *stmpe, u8 reg, u8 length,
 EXPORT_SYMBOL_GPL(stmpe_block_write);
 
 /**
+<<<<<<< HEAD
  * stmpe_set_altfunc()- set the alternate function for STMPE pins
+=======
+ * stmpe_set_altfunc: set the alternate function for STMPE pins
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @stmpe:	Device to configure
  * @pins:	Bitmask of pins to affect
  * @block:	block to enable alternate functions for
@@ -242,6 +289,7 @@ int stmpe_set_altfunc(struct stmpe *stmpe, u32 pins, enum stmpe_block block)
 	u8 regaddr = stmpe->regs[STMPE_IDX_GPAFR_U_MSB];
 	int af_bits = variant->af_bits;
 	int numregs = DIV_ROUND_UP(stmpe->num_gpios * af_bits, 8);
+<<<<<<< HEAD
 	int mask = (1 << af_bits) - 1;
 	u8 regs[numregs];
 	int af, afperreg, ret;
@@ -250,6 +298,14 @@ int stmpe_set_altfunc(struct stmpe *stmpe, u32 pins, enum stmpe_block block)
 		return 0;
 
 	afperreg = 8 / af_bits;
+=======
+	int afperreg = 8 / af_bits;
+	int mask = (1 << af_bits) - 1;
+	u8 regs[numregs];
+	int af;
+	int ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&stmpe->lock);
 
 	ret = __stmpe_enable(stmpe, STMPE_BLOCK_GPIO);
@@ -298,11 +354,14 @@ static struct mfd_cell stmpe_gpio_cell = {
 	.num_resources	= ARRAY_SIZE(stmpe_gpio_resources),
 };
 
+<<<<<<< HEAD
 static struct mfd_cell stmpe_gpio_cell_noirq = {
 	.name		= "stmpe-gpio",
 	/* gpio cell resources consist of an irq only so no resources here */
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Keypad (1601, 2401, 2403)
  */
@@ -329,6 +388,7 @@ static struct mfd_cell stmpe_keypad_cell = {
 };
 
 /*
+<<<<<<< HEAD
  * STMPE801
  */
 static const u8 stmpe801_regs[] = {
@@ -392,6 +452,9 @@ static struct stmpe_variant_info stmpe801_noirq = {
 
 /*
  * Touchscreen (STMPE811 or STMPE610)
+=======
+ * Touchscreen (STMPE811)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 static struct resource stmpe_ts_resources[] = {
@@ -416,7 +479,11 @@ static struct mfd_cell stmpe_ts_cell = {
 };
 
 /*
+<<<<<<< HEAD
  * STMPE811 or STMPE610
+=======
+ * STMPE811
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 static const u8 stmpe811_regs[] = {
@@ -487,6 +554,7 @@ static struct stmpe_variant_info stmpe811 = {
 	.get_altfunc	= stmpe811_get_altfunc,
 };
 
+<<<<<<< HEAD
 /* Similar to 811, except number of gpios */
 static struct stmpe_variant_info stmpe610 = {
 	.name		= "stmpe610",
@@ -502,6 +570,8 @@ static struct stmpe_variant_info stmpe610 = {
 	.get_altfunc	= stmpe811_get_altfunc,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * STMPE1601
  */
@@ -735,15 +805,20 @@ static struct stmpe_variant_info stmpe2403 = {
 	.enable_autosleep	= stmpe1601_autosleep, /* same as stmpe1601 */
 };
 
+<<<<<<< HEAD
 static struct stmpe_variant_info *stmpe_variant_info[STMPE_NBR_PARTS] = {
 	[STMPE610]	= &stmpe610,
 	[STMPE801]	= &stmpe801,
+=======
+static struct stmpe_variant_info *stmpe_variant_info[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[STMPE811]	= &stmpe811,
 	[STMPE1601]	= &stmpe1601,
 	[STMPE2401]	= &stmpe2401,
 	[STMPE2403]	= &stmpe2403,
 };
 
+<<<<<<< HEAD
 /*
  * These devices can be connected in a 'no-irq' configuration - the irq pin
  * is not used and the device cannot interrupt the CPU. Here we only list
@@ -754,6 +829,8 @@ static struct stmpe_variant_info *stmpe_noirq_variant_info[STMPE_NBR_PARTS] = {
 	[STMPE801]	= &stmpe801_noirq,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static irqreturn_t stmpe_irq(int irq, void *data)
 {
 	struct stmpe *stmpe = data;
@@ -764,11 +841,14 @@ static irqreturn_t stmpe_irq(int irq, void *data)
 	int ret;
 	int i;
 
+<<<<<<< HEAD
 	if (variant->id_val == STMPE801_ID) {
 		handle_nested_irq(stmpe->irq_base);
 		return IRQ_HANDLED;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = stmpe_block_read(stmpe, israddr, num, isr);
 	if (ret < 0)
 		return IRQ_NONE;
@@ -855,17 +935,27 @@ static struct irq_chip stmpe_irq_chip = {
 
 static int __devinit stmpe_irq_init(struct stmpe *stmpe)
 {
+<<<<<<< HEAD
 	struct irq_chip *chip = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int num_irqs = stmpe->variant->num_irqs;
 	int base = stmpe->irq_base;
 	int irq;
 
+<<<<<<< HEAD
 	if (stmpe->variant->id_val != STMPE801_ID)
 		chip = &stmpe_irq_chip;
 
 	for (irq = base; irq < base + num_irqs; irq++) {
 		irq_set_chip_data(irq, stmpe);
 		irq_set_chip_and_handler(irq, chip, handle_edge_irq);
+=======
+	for (irq = base; irq < base + num_irqs; irq++) {
+		irq_set_chip_data(irq, stmpe);
+		irq_set_chip_and_handler(irq, &stmpe_irq_chip,
+					 handle_edge_irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		irq_set_nested_thread(irq, 1);
 #ifdef CONFIG_ARM
 		set_irq_flags(irq, IRQF_VALID);
@@ -897,7 +987,11 @@ static int __devinit stmpe_chip_init(struct stmpe *stmpe)
 	unsigned int irq_trigger = stmpe->pdata->irq_trigger;
 	int autosleep_timeout = stmpe->pdata->autosleep_timeout;
 	struct stmpe_variant_info *variant = stmpe->variant;
+<<<<<<< HEAD
 	u8 icr = 0;
+=======
+	u8 icr = STMPE_ICR_LSB_GIM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int id;
 	u8 data[2];
 	int ret;
@@ -920,6 +1014,7 @@ static int __devinit stmpe_chip_init(struct stmpe *stmpe)
 	if (ret)
 		return ret;
 
+<<<<<<< HEAD
 	if (stmpe->irq >= 0) {
 		if (id == STMPE801_ID)
 			icr = STMPE801_REG_SYS_CTRL_INT_EN;
@@ -948,6 +1043,18 @@ static int __devinit stmpe_chip_init(struct stmpe *stmpe)
 				icr ^= STMPE_ICR_LSB_HIGH;
 		}
 	}
+=======
+	if (irq_trigger == IRQF_TRIGGER_FALLING ||
+	    irq_trigger == IRQF_TRIGGER_RISING)
+		icr |= STMPE_ICR_LSB_EDGE;
+
+	if (irq_trigger == IRQF_TRIGGER_RISING ||
+	    irq_trigger == IRQF_TRIGGER_HIGH)
+		icr |= STMPE_ICR_LSB_HIGH;
+
+	if (stmpe->pdata->irq_invert_polarity)
+		icr ^= STMPE_ICR_LSB_HIGH;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (stmpe->pdata->autosleep) {
 		ret = stmpe_autosleep(stmpe, autosleep_timeout);
@@ -992,10 +1099,39 @@ static int __devinit stmpe_devices_init(struct stmpe *stmpe)
 	return ret;
 }
 
+<<<<<<< HEAD
 /* Called from client specific probe routines */
 int __devinit stmpe_probe(struct stmpe_client_info *ci, int partnum)
 {
 	struct stmpe_platform_data *pdata = dev_get_platdata(ci->dev);
+=======
+#ifdef CONFIG_PM
+static int stmpe_suspend(struct device *dev)
+{
+	struct i2c_client *i2c = to_i2c_client(dev);
+
+	if (device_may_wakeup(&i2c->dev))
+		enable_irq_wake(i2c->irq);
+
+	return 0;
+}
+
+static int stmpe_resume(struct device *dev)
+{
+	struct i2c_client *i2c = to_i2c_client(dev);
+
+	if (device_may_wakeup(&i2c->dev))
+		disable_irq_wake(i2c->irq);
+
+	return 0;
+}
+#endif
+
+static int __devinit stmpe_probe(struct i2c_client *i2c,
+				 const struct i2c_device_id *id)
+{
+	struct stmpe_platform_data *pdata = i2c->dev.platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct stmpe *stmpe;
 	int ret;
 
@@ -1009,6 +1145,7 @@ int __devinit stmpe_probe(struct stmpe_client_info *ci, int partnum)
 	mutex_init(&stmpe->irq_lock);
 	mutex_init(&stmpe->lock);
 
+<<<<<<< HEAD
 	stmpe->dev = ci->dev;
 	stmpe->client = ci->client;
 	stmpe->pdata = pdata;
@@ -1068,6 +1205,35 @@ int __devinit stmpe_probe(struct stmpe_client_info *ci, int partnum)
 					ret);
 			goto out_removeirq;
 		}
+=======
+	stmpe->dev = &i2c->dev;
+	stmpe->i2c = i2c;
+
+	stmpe->pdata = pdata;
+	stmpe->irq_base = pdata->irq_base;
+
+	stmpe->partnum = id->driver_data;
+	stmpe->variant = stmpe_variant_info[stmpe->partnum];
+	stmpe->regs = stmpe->variant->regs;
+	stmpe->num_gpios = stmpe->variant->num_gpios;
+
+	i2c_set_clientdata(i2c, stmpe);
+
+	ret = stmpe_chip_init(stmpe);
+	if (ret)
+		goto out_free;
+
+	ret = stmpe_irq_init(stmpe);
+	if (ret)
+		goto out_free;
+
+	ret = request_threaded_irq(stmpe->i2c->irq, NULL, stmpe_irq,
+				   pdata->irq_trigger | IRQF_ONESHOT,
+				   "stmpe", stmpe);
+	if (ret) {
+		dev_err(stmpe->dev, "failed to request IRQ: %d\n", ret);
+		goto out_removeirq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ret = stmpe_devices_init(stmpe);
@@ -1080,6 +1246,7 @@ int __devinit stmpe_probe(struct stmpe_client_info *ci, int partnum)
 
 out_removedevs:
 	mfd_remove_devices(stmpe->dev);
+<<<<<<< HEAD
 	if (stmpe->irq >= 0)
 		free_irq(stmpe->irq, stmpe);
 out_removeirq:
@@ -1088,11 +1255,17 @@ out_removeirq:
 free_gpio:
 	if (pdata->irq_over_gpio)
 		gpio_free(pdata->irq_gpio);
+=======
+	free_irq(stmpe->i2c->irq, stmpe);
+out_removeirq:
+	stmpe_irq_remove(stmpe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_free:
 	kfree(stmpe);
 	return ret;
 }
 
+<<<<<<< HEAD
 int stmpe_remove(struct stmpe *stmpe)
 {
 	mfd_remove_devices(stmpe->dev);
@@ -1104,12 +1277,23 @@ int stmpe_remove(struct stmpe *stmpe)
 
 	if (stmpe->pdata->irq_over_gpio)
 		gpio_free(stmpe->pdata->irq_gpio);
+=======
+static int __devexit stmpe_remove(struct i2c_client *client)
+{
+	struct stmpe *stmpe = i2c_get_clientdata(client);
+
+	mfd_remove_devices(stmpe->dev);
+
+	free_irq(stmpe->i2c->irq, stmpe);
+	stmpe_irq_remove(stmpe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kfree(stmpe);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 static int stmpe_suspend(struct device *dev)
 {
@@ -1136,3 +1320,47 @@ const struct dev_pm_ops stmpe_dev_pm_ops = {
 	.resume		= stmpe_resume,
 };
 #endif
+=======
+static const struct i2c_device_id stmpe_id[] = {
+	{ "stmpe811", STMPE811 },
+	{ "stmpe1601", STMPE1601 },
+	{ "stmpe2401", STMPE2401 },
+	{ "stmpe2403", STMPE2403 },
+	{ }
+};
+MODULE_DEVICE_TABLE(i2c, stmpe_id);
+
+#ifdef CONFIG_PM
+static const struct dev_pm_ops stmpe_dev_pm_ops = {
+	.suspend	= stmpe_suspend,
+	.resume		= stmpe_resume,
+};
+#endif
+
+static struct i2c_driver stmpe_driver = {
+	.driver.name	= "stmpe",
+	.driver.owner	= THIS_MODULE,
+#ifdef CONFIG_PM
+	.driver.pm	= &stmpe_dev_pm_ops,
+#endif
+	.probe		= stmpe_probe,
+	.remove		= __devexit_p(stmpe_remove),
+	.id_table	= stmpe_id,
+};
+
+static int __init stmpe_init(void)
+{
+	return i2c_add_driver(&stmpe_driver);
+}
+subsys_initcall(stmpe_init);
+
+static void __exit stmpe_exit(void)
+{
+	i2c_del_driver(&stmpe_driver);
+}
+module_exit(stmpe_exit);
+
+MODULE_LICENSE("GPL v2");
+MODULE_DESCRIPTION("STMPE MFD core driver");
+MODULE_AUTHOR("Rabin Vincent <rabin.vincent@stericsson.com>");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

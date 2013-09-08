@@ -31,12 +31,18 @@
 #include <linux/input/tps6507x-ts.h>
 #include <linux/spi/spi.h>
 #include <linux/spi/flash.h>
+<<<<<<< HEAD
 #include <linux/delay.h>
 #include <linux/wl12xx.h>
 
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 #include <asm/system_info.h>
+=======
+
+#include <asm/mach-types.h>
+#include <asm/mach/arch.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/cp_intc.h>
 #include <mach/da8xx.h>
@@ -45,16 +51,23 @@
 #include <mach/aemif.h>
 #include <mach/spi.h>
 
+<<<<<<< HEAD
 #define DA850_EVM_PHY_ID		"davinci_mdio-0:00"
+=======
+#define DA850_EVM_PHY_ID		"0:00"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DA850_LCD_PWR_PIN		GPIO_TO_PIN(2, 8)
 #define DA850_LCD_BL_PIN		GPIO_TO_PIN(2, 15)
 
 #define DA850_MMCSD_CD_PIN		GPIO_TO_PIN(4, 0)
 #define DA850_MMCSD_WP_PIN		GPIO_TO_PIN(4, 1)
 
+<<<<<<< HEAD
 #define DA850_WLAN_EN			GPIO_TO_PIN(6, 9)
 #define DA850_WLAN_IRQ			GPIO_TO_PIN(6, 10)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DA850_MII_MDIO_CLKEN_PIN	GPIO_TO_PIN(2, 6)
 
 static struct mtd_partition da850evm_spiflash_part[] = {
@@ -128,7 +141,11 @@ static void da850_evm_m25p80_notify_add(struct mtd_info *mtd)
 	size_t retlen;
 
 	if (!strcmp(mtd->name, "MAC-Address")) {
+<<<<<<< HEAD
 		mtd_read(mtd, 0, ETH_ALEN, &retlen, mac_addr);
+=======
+		mtd->read(mtd, 0, ETH_ALEN, &retlen, mac_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (retlen == ETH_ALEN)
 			pr_info("Read MAC addr from SPI Flash: %pM\n",
 				mac_addr);
@@ -257,7 +274,11 @@ static struct davinci_nand_pdata da850_evm_nandflash_data = {
 	.nr_parts	= ARRAY_SIZE(da850_evm_nandflash_partition),
 	.ecc_mode	= NAND_ECC_HW,
 	.ecc_bits	= 4,
+<<<<<<< HEAD
 	.bbt_options	= NAND_BBT_USE_FLASH,
+=======
+	.options	= NAND_USE_FLASH_BBT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.timing		= &da850_evm_nandflash_timing,
 };
 
@@ -1149,6 +1170,7 @@ static __init int da850_evm_init_cpufreq(void)
 static __init int da850_evm_init_cpufreq(void) { return 0; }
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_DA850_WL12XX
 
 static void wl12xx_set_power(int index, bool power_on)
@@ -1255,6 +1277,8 @@ static __init int da850_wl12xx_init(void)
 
 #define DA850EVM_SATA_REFCLKPN_RATE	(100 * 1000 * 1000)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __init void da850_evm_init(void)
 {
 	int ret;
@@ -1307,11 +1331,14 @@ static __init void da850_evm_init(void)
 		if (ret)
 			pr_warning("da850_evm_init: mmcsd0 registration failed:"
 					" %d\n", ret);
+<<<<<<< HEAD
 
 		ret = da850_wl12xx_init();
 		if (ret)
 			pr_warning("da850_evm_init: wl12xx initialization"
 				   " failed: %d\n", ret);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	davinci_serial_init(&da850_evm_uart_config);
@@ -1381,11 +1408,14 @@ static __init void da850_evm_init(void)
 		pr_warning("da850_evm_init: spi 1 registration failed: %d\n",
 				ret);
 
+<<<<<<< HEAD
 	ret = da850_register_sata(DA850EVM_SATA_REFCLKPN_RATE);
 	if (ret)
 		pr_warning("da850_evm_init: sata registration failed: %d\n",
 				ret);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	da850_evm_setup_mac_addr();
 }
 
@@ -1406,11 +1436,18 @@ static void __init da850_evm_map_io(void)
 }
 
 MACHINE_START(DAVINCI_DA850_EVM, "DaVinci DA850/OMAP-L138/AM18x EVM")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= (DA8XX_DDR_BASE + 0x100),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io		= da850_evm_map_io,
 	.init_irq	= cp_intc_init,
 	.timer		= &davinci_timer,
 	.init_machine	= da850_evm_init,
+<<<<<<< HEAD
 	.dma_zone_size	= SZ_128M,
 	.restart	= da8xx_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

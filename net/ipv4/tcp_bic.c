@@ -63,6 +63,10 @@ static inline void bictcp_reset(struct bictcp *ca)
 {
 	ca->cnt = 0;
 	ca->last_max_cwnd = 0;
+<<<<<<< HEAD
+=======
+	ca->loss_cwnd = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ca->last_cwnd = 0;
 	ca->last_time = 0;
 	ca->epoch_start = 0;
@@ -71,11 +75,15 @@ static inline void bictcp_reset(struct bictcp *ca)
 
 static void bictcp_init(struct sock *sk)
 {
+<<<<<<< HEAD
 	struct bictcp *ca = inet_csk_ca(sk);
 
 	bictcp_reset(ca);
 	ca->loss_cwnd = 0;
 
+=======
+	bictcp_reset(inet_csk_ca(sk));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (initial_ssthresh)
 		tcp_sk(sk)->snd_ssthresh = initial_ssthresh;
 }
@@ -130,7 +138,11 @@ static inline void bictcp_update(struct bictcp *ca, u32 cwnd)
 	}
 
 	/* if in slow start or link utilization is very low */
+<<<<<<< HEAD
 	if (ca->last_max_cwnd == 0) {
+=======
+	if (ca->loss_cwnd == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ca->cnt > 20) /* increase cwnd 5% per RTT */
 			ca->cnt = 20;
 	}
@@ -188,7 +200,11 @@ static u32 bictcp_undo_cwnd(struct sock *sk)
 {
 	const struct tcp_sock *tp = tcp_sk(sk);
 	const struct bictcp *ca = inet_csk_ca(sk);
+<<<<<<< HEAD
 	return max(tp->snd_cwnd, ca->loss_cwnd);
+=======
+	return max(tp->snd_cwnd, ca->last_max_cwnd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void bictcp_state(struct sock *sk, u8 new_state)

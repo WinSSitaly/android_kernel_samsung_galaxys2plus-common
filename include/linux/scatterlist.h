@@ -1,12 +1,19 @@
 #ifndef _LINUX_SCATTERLIST_H
 #define _LINUX_SCATTERLIST_H
 
+<<<<<<< HEAD
 #include <linux/string.h>
 #include <linux/bug.h>
 #include <linux/mm.h>
 
 #include <asm/types.h>
 #include <asm/scatterlist.h>
+=======
+#include <asm/types.h>
+#include <asm/scatterlist.h>
+#include <linux/mm.h>
+#include <linux/string.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 
 struct sg_table {

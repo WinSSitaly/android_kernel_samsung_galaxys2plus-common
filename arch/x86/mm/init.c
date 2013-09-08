@@ -3,7 +3,10 @@
 #include <linux/ioport.h>
 #include <linux/swap.h>
 #include <linux/memblock.h>
+<<<<<<< HEAD
 #include <linux/bootmem.h>	/* for max_low_pfn */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/cacheflush.h>
 #include <asm/e820.h>
@@ -12,10 +15,17 @@
 #include <asm/page_types.h>
 #include <asm/sections.h>
 #include <asm/setup.h>
+<<<<<<< HEAD
 #include <asm/tlbflush.h>
 #include <asm/tlb.h>
 #include <asm/proto.h>
 #include <asm/dma.h>		/* for MAX_DMA_PFN */
+=======
+#include <asm/system.h>
+#include <asm/tlbflush.h>
+#include <asm/tlb.h>
+#include <asm/proto.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unsigned long __initdata pgt_buf_start;
 unsigned long __meminitdata pgt_buf_end;
@@ -29,6 +39,7 @@ int direct_gbpages
 #endif
 ;
 
+<<<<<<< HEAD
 struct map_range {
 	unsigned long start;
 	unsigned long end;
@@ -79,6 +90,39 @@ static void __init find_early_table_space(struct map_range *mr, int nr_range)
 	tables += roundup(pmds * sizeof(pmd_t), PAGE_SIZE);
 	tables += roundup(ptes * sizeof(pte_t), PAGE_SIZE);
 	tables += (pgd_extra * PAGE_SIZE);
+=======
+static void __init find_early_table_space(unsigned long end, int use_pse,
+					  int use_gbpages)
+{
+	unsigned long puds, pmds, ptes, tables, start = 0, good_end = end;
+	phys_addr_t base;
+
+	puds = (end + PUD_SIZE - 1) >> PUD_SHIFT;
+	tables = roundup(puds * sizeof(pud_t), PAGE_SIZE);
+
+	if (use_gbpages) {
+		unsigned long extra;
+
+		extra = end - ((end>>PUD_SHIFT) << PUD_SHIFT);
+		pmds = (extra + PMD_SIZE - 1) >> PMD_SHIFT;
+	} else
+		pmds = (end + PMD_SIZE - 1) >> PMD_SHIFT;
+
+	tables += roundup(pmds * sizeof(pmd_t), PAGE_SIZE);
+
+	if (use_pse) {
+		unsigned long extra;
+
+		extra = end - ((end>>PMD_SHIFT) << PMD_SHIFT);
+#ifdef CONFIG_X86_32
+		extra += PMD_SIZE;
+#endif
+		ptes = (extra + PAGE_SIZE - 1) >> PAGE_SHIFT;
+	} else
+		ptes = (end + PAGE_SIZE - 1) >> PAGE_SHIFT;
+
+	tables += roundup(ptes * sizeof(pte_t), PAGE_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_X86_32
 	/* for fixmap */
@@ -87,23 +131,44 @@ static void __init find_early_table_space(struct map_range *mr, int nr_range)
 	good_end = max_pfn_mapped << PAGE_SHIFT;
 
 	base = memblock_find_in_range(start, good_end, tables, PAGE_SIZE);
+<<<<<<< HEAD
 	if (!base)
+=======
+	if (base == MEMBLOCK_ERROR)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		panic("Cannot find space for the kernel page tables");
 
 	pgt_buf_start = base >> PAGE_SHIFT;
 	pgt_buf_end = pgt_buf_start;
 	pgt_buf_top = pgt_buf_start + (tables >> PAGE_SHIFT);
 
+<<<<<<< HEAD
  	printk(KERN_DEBUG "kernel direct mapping tables up to %#lx @ [mem %#010lx-%#010lx]\n",
 		mr[nr_range - 1].end - 1, pgt_buf_start << PAGE_SHIFT,
  		(pgt_buf_top << PAGE_SHIFT) - 1);
+=======
+	printk(KERN_DEBUG "kernel direct mapping tables up to %lx @ %lx-%lx\n",
+		end, pgt_buf_start << PAGE_SHIFT, pgt_buf_top << PAGE_SHIFT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __init native_pagetable_reserve(u64 start, u64 end)
 {
+<<<<<<< HEAD
 	memblock_reserve(start, end - start);
 }
 
+=======
+	memblock_x86_reserve_range(start, end, "PGTABLE");
+}
+
+struct map_range {
+	unsigned long start;
+	unsigned long end;
+	unsigned page_size_mask;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_X86_32
 #define NR_RANGE_MR 3
 #else /* CONFIG_X86_64 */
@@ -275,7 +340,11 @@ unsigned long __init_refok init_memory_mapping(unsigned long start,
 	 * nodes are discovered.
 	 */
 	if (!after_bootmem)
+<<<<<<< HEAD
 		find_early_table_space(mr, nr_range);
+=======
+		find_early_table_space(end, use_pse, use_gbpages);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < nr_range; i++)
 		ret = kernel_physical_mapping_init(mr[i].start, mr[i].end,
@@ -294,8 +363,13 @@ unsigned long __init_refok init_memory_mapping(unsigned long start,
 	 * pgt_buf_end) and free the other ones (pgt_buf_end - pgt_buf_top)
 	 * so that they can be reused for other purposes.
 	 *
+<<<<<<< HEAD
 	 * On native it just means calling memblock_reserve, on Xen it also
 	 * means marking RW the pagetable pages that we allocated before
+=======
+	 * On native it just means calling memblock_x86_reserve_range, on Xen it
+	 * also means marking RW the pagetable pages that we allocated before
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * but that haven't been used.
 	 *
 	 * In fact on xen we mark RO the whole range pgt_buf_start -
@@ -407,6 +481,7 @@ void free_initrd_mem(unsigned long start, unsigned long end)
 	free_init_pages("initrd memory", start, PAGE_ALIGN(end));
 }
 #endif
+<<<<<<< HEAD
 
 void __init zone_sizes_init(void)
 {
@@ -428,3 +503,5 @@ void __init zone_sizes_init(void)
 	free_area_init_nodes(max_zone_pfns);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -20,6 +20,7 @@
 #include <linux/highmem.h>
 #include <linux/perf_event.h>
 
+<<<<<<< HEAD
 #include <asm/exception.h>
 #include <asm/pgtable.h>
 #include <asm/system_misc.h>
@@ -28,6 +29,35 @@
 
 #include "fault.h"
 
+=======
+#include <asm/system.h>
+#include <asm/pgtable.h>
+#include <asm/tlbflush.h>
+#if defined(CONFIG_CDEBUGGER)
+#include <mach/cdebugger.h>
+#endif
+
+#include "fault.h"
+
+#if defined(CONFIG_SEC_DEBUG)
+/* For saving Fault status */
+#include <mach/sec_debug.h>
+#endif
+
+/*
+ * Fault status register encodings.  We steal bit 31 for our own purposes.
+ */
+#define FSR_LNX_PF		(1 << 31)
+#define FSR_WRITE		(1 << 11)
+#define FSR_FS4			(1 << 10)
+#define FSR_FS3_0		(15)
+
+static inline int fsr_fs(unsigned int fsr)
+{
+	return (fsr & FSR_FS3_0) | (fsr & FSR_FS4) >> 6;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_MMU
 
 #ifdef CONFIG_KPROBES
@@ -83,7 +113,11 @@ void show_pte(struct mm_struct *mm, unsigned long addr)
 
 		pud = pud_offset(pgd, addr);
 		if (PTRS_PER_PUD != 1)
+<<<<<<< HEAD
 			printk(", *pud=%08llx", (long long)pud_val(*pud));
+=======
+			printk(", *pud=%08lx", pud_val(*pud));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (pud_none(*pud))
 			break;
@@ -111,10 +145,15 @@ void show_pte(struct mm_struct *mm, unsigned long addr)
 
 		pte = pte_offset_map(pmd, addr);
 		printk(", *pte=%08llx", (long long)pte_val(*pte));
+<<<<<<< HEAD
 #ifndef CONFIG_ARM_LPAE
 		printk(", *ppte=%08llx",
 		       (long long)pte_val(pte[PTE_HWTABLE_PTRS]));
 #endif
+=======
+		printk(", *ppte=%08llx",
+		       (long long)pte_val(pte[PTE_HWTABLE_PTRS]));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pte_unmap(pte);
 	} while(0);
 
@@ -138,6 +177,18 @@ __do_kernel_fault(struct mm_struct *mm, unsigned long addr, unsigned int fsr,
 	if (fixup_exception(regs))
 		return;
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_CDEBUGGER)
+	/* For saving Fault status . */
+	cdebugger_save_pte((void *)regs, (int)current);
+#endif
+
+#if defined(CONFIG_SEC_DEBUG)
+	/* For saving Fault status */
+	sec_debug_save_pte((void *)regs, (int)current);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * No handler, we'll have to terminate things with extreme prejudice.
 	 */
@@ -164,9 +215,19 @@ __do_user_fault(struct task_struct *tsk, unsigned long addr,
 {
 	struct siginfo si;
 
+<<<<<<< HEAD
 #ifdef CONFIG_DEBUG_USER
 	if (((user_debug & UDBG_SEGV) && (sig == SIGSEGV)) ||
 	    ((user_debug & UDBG_BUS)  && (sig == SIGBUS))) {
+=======
+#if defined(CONFIG_SEC_DEBUG)
+	/* For saving Fault status */
+	sec_debug_save_pte((void *)regs, (int)current);
+#endif
+
+#ifdef CONFIG_DEBUG_USER
+	if (user_debug & UDBG_SEGV) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_DEBUG "%s: unhandled page fault (%d) at 0x%08lx, code 0x%03x\n",
 		       tsk->comm, sig, addr, fsr);
 		show_pte(tsk->mm, addr);
@@ -222,7 +283,11 @@ static inline bool access_error(unsigned int fsr, struct vm_area_struct *vma)
 
 static int __kprobes
 __do_page_fault(struct mm_struct *mm, unsigned long addr, unsigned int fsr,
+<<<<<<< HEAD
 		unsigned int flags, struct task_struct *tsk)
+=======
+		struct task_struct *tsk)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct vm_area_struct *vma;
 	int fault;
@@ -244,12 +309,30 @@ good_area:
 		goto out;
 	}
 
+<<<<<<< HEAD
 	return handle_mm_fault(mm, vma, addr & PAGE_MASK, flags);
 
 check_stack:
 	/* Don't allow expansion below FIRST_USER_ADDRESS */
 	if (vma->vm_flags & VM_GROWSDOWN &&
 	    addr >= FIRST_USER_ADDRESS && !expand_stack(vma, addr))
+=======
+	/*
+	 * If for any reason at all we couldn't handle the fault, make
+	 * sure we exit gracefully rather than endlessly redo the fault.
+	 */
+	fault = handle_mm_fault(mm, vma, addr & PAGE_MASK, (fsr & FSR_WRITE) ? FAULT_FLAG_WRITE : 0);
+	if (unlikely(fault & VM_FAULT_ERROR))
+		return fault;
+	if (fault & VM_FAULT_MAJOR)
+		tsk->maj_flt++;
+	else
+		tsk->min_flt++;
+	return fault;
+
+check_stack:
+	if (vma->vm_flags & VM_GROWSDOWN && !expand_stack(vma, addr))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto good_area;
 out:
 	return fault;
@@ -261,9 +344,12 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
 	struct task_struct *tsk;
 	struct mm_struct *mm;
 	int fault, sig, code;
+<<<<<<< HEAD
 	int write = fsr & FSR_WRITE;
 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE |
 				(write ? FAULT_FLAG_WRITE : 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (notify_page_fault(regs, fsr))
 		return 0;
@@ -271,10 +357,13 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
 	tsk = current;
 	mm  = tsk->mm;
 
+<<<<<<< HEAD
 	/* Enable interrupts if they were enabled in the parent context. */
 	if (interrupts_enabled(regs))
 		local_irq_enable();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * If we're in an interrupt or have no user
 	 * context, we must not take the fault..
@@ -290,7 +379,10 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
 	if (!down_read_trylock(&mm->mmap_sem)) {
 		if (!user_mode(regs) && !search_exception_tables(regs->ARM_pc))
 			goto no_context;
+<<<<<<< HEAD
 retry:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		down_read(&mm->mmap_sem);
 	} else {
 		/*
@@ -306,6 +398,7 @@ retry:
 #endif
 	}
 
+<<<<<<< HEAD
 	fault = __do_page_fault(mm, addr, fsr, flags, tsk);
 
 	/* If we need to retry but a fatal signal is pending, handle the
@@ -342,6 +435,17 @@ retry:
 
 	up_read(&mm->mmap_sem);
 
+=======
+	fault = __do_page_fault(mm, addr, fsr, tsk);
+	up_read(&mm->mmap_sem);
+
+	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, 0, regs, addr);
+	if (fault & VM_FAULT_MAJOR)
+		perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS_MAJ, 1, 0, regs, addr);
+	else if (fault & VM_FAULT_MINOR)
+		perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS_MIN, 1, 0, regs, addr);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Handle the "normal" case first - VM_FAULT_MAJOR / VM_FAULT_MINOR
 	 */
@@ -454,12 +558,15 @@ do_translation_fault(unsigned long addr, unsigned int fsr,
 	pmd = pmd_offset(pud, addr);
 	pmd_k = pmd_offset(pud_k, addr);
 
+<<<<<<< HEAD
 #ifdef CONFIG_ARM_LPAE
 	/*
 	 * Only one hardware entry per PMD with LPAE.
 	 */
 	index = 0;
 #else
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * On ARM one Linux PGD entry contains two hardware entries (see page
 	 * tables layout in pgtable.h). We normally guarantee that we always
@@ -469,7 +576,10 @@ do_translation_fault(unsigned long addr, unsigned int fsr,
 	 * for the first of pair.
 	 */
 	index = (addr >> SECTION_SHIFT) & 1;
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pmd_none(pmd_k[index]))
 		goto bad_area;
 
@@ -509,11 +619,16 @@ do_bad(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
 	return 1;
 }
 
+<<<<<<< HEAD
 struct fsr_info {
+=======
+static struct fsr_info {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int	(*fn)(unsigned long addr, unsigned int fsr, struct pt_regs *regs);
 	int	sig;
 	int	code;
 	const char *name;
+<<<<<<< HEAD
 };
 
 /* FSR definition */
@@ -523,6 +638,52 @@ struct fsr_info {
 #include "fsr-2level.c"
 #endif
 
+=======
+} fsr_info[] = {
+	/*
+	 * The following are the standard ARMv3 and ARMv4 aborts.  ARMv5
+	 * defines these to be "precise" aborts.
+	 */
+	{ do_bad,		SIGSEGV, 0,		"vector exception"		   },
+	{ do_bad,		SIGBUS,	 BUS_ADRALN,	"alignment exception"		   },
+	{ do_bad,		SIGKILL, 0,		"terminal exception"		   },
+	{ do_bad,		SIGBUS,	 BUS_ADRALN,	"alignment exception"		   },
+	{ do_bad,		SIGBUS,	 0,		"external abort on linefetch"	   },
+	{ do_translation_fault,	SIGSEGV, SEGV_MAPERR,	"section translation fault"	   },
+	{ do_bad,		SIGBUS,	 0,		"external abort on linefetch"	   },
+	{ do_page_fault,	SIGSEGV, SEGV_MAPERR,	"page translation fault"	   },
+	{ do_bad,		SIGBUS,	 0,		"external abort on non-linefetch"  },
+	{ do_bad,		SIGSEGV, SEGV_ACCERR,	"section domain fault"		   },
+	{ do_bad,		SIGBUS,	 0,		"external abort on non-linefetch"  },
+	{ do_bad,		SIGSEGV, SEGV_ACCERR,	"page domain fault"		   },
+	{ do_bad,		SIGBUS,	 0,		"external abort on translation"	   },
+	{ do_sect_fault,	SIGSEGV, SEGV_ACCERR,	"section permission fault"	   },
+	{ do_bad,		SIGBUS,	 0,		"external abort on translation"	   },
+	{ do_page_fault,	SIGSEGV, SEGV_ACCERR,	"page permission fault"		   },
+	/*
+	 * The following are "imprecise" aborts, which are signalled by bit
+	 * 10 of the FSR, and may not be recoverable.  These are only
+	 * supported if the CPU abort handler supports bit 10.
+	 */
+	{ do_bad,		SIGBUS,  0,		"unknown 16"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 17"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 18"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 19"			   },
+	{ do_bad,		SIGBUS,  0,		"lock abort"			   }, /* xscale */
+	{ do_bad,		SIGBUS,  0,		"unknown 21"			   },
+	{ do_bad,		SIGBUS,  BUS_OBJERR,	"imprecise external abort"	   }, /* xscale */
+	{ do_bad,		SIGBUS,  0,		"unknown 23"			   },
+	{ do_bad,		SIGBUS,  0,		"dcache parity error"		   }, /* xscale */
+	{ do_bad,		SIGBUS,  0,		"unknown 25"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 26"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 27"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 28"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 29"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 30"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 31"			   }
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init
 hook_fault_code(int nr, int (*fn)(unsigned long, unsigned int, struct pt_regs *),
 		int sig, int code, const char *name)
@@ -558,6 +719,45 @@ do_DataAbort(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
 	arm_notify_die("", regs, &info, fsr, 0);
 }
 
+<<<<<<< HEAD
+=======
+
+static struct fsr_info ifsr_info[] = {
+	{ do_bad,		SIGBUS,  0,		"unknown 0"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 1"			   },
+	{ do_bad,		SIGBUS,  0,		"debug event"			   },
+	{ do_bad,		SIGSEGV, SEGV_ACCERR,	"section access flag fault"	   },
+	{ do_bad,		SIGBUS,  0,		"unknown 4"			   },
+	{ do_translation_fault,	SIGSEGV, SEGV_MAPERR,	"section translation fault"	   },
+	{ do_bad,		SIGSEGV, SEGV_ACCERR,	"page access flag fault"	   },
+	{ do_page_fault,	SIGSEGV, SEGV_MAPERR,	"page translation fault"	   },
+	{ do_bad,		SIGBUS,	 0,		"external abort on non-linefetch"  },
+	{ do_bad,		SIGSEGV, SEGV_ACCERR,	"section domain fault"		   },
+	{ do_bad,		SIGBUS,  0,		"unknown 10"			   },
+	{ do_bad,		SIGSEGV, SEGV_ACCERR,	"page domain fault"		   },
+	{ do_bad,		SIGBUS,	 0,		"external abort on translation"	   },
+	{ do_sect_fault,	SIGSEGV, SEGV_ACCERR,	"section permission fault"	   },
+	{ do_bad,		SIGBUS,	 0,		"external abort on translation"	   },
+	{ do_page_fault,	SIGSEGV, SEGV_ACCERR,	"page permission fault"		   },
+	{ do_bad,		SIGBUS,  0,		"unknown 16"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 17"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 18"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 19"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 20"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 21"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 22"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 23"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 24"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 25"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 26"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 27"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 28"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 29"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 30"			   },
+	{ do_bad,		SIGBUS,  0,		"unknown 31"			   },
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init
 hook_ifault_code(int nr, int (*fn)(unsigned long, unsigned int, struct pt_regs *),
 		 int sig, int code, const char *name)
@@ -590,7 +790,10 @@ do_PrefetchAbort(unsigned long addr, unsigned int ifsr, struct pt_regs *regs)
 	arm_notify_die("", regs, &info, ifsr, 0);
 }
 
+<<<<<<< HEAD
 #ifndef CONFIG_ARM_LPAE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init exceptions_init(void)
 {
 	if (cpu_architecture() >= CPU_ARCH_ARMv6) {
@@ -613,4 +816,7 @@ static int __init exceptions_init(void)
 }
 
 arch_initcall(exceptions_init);
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

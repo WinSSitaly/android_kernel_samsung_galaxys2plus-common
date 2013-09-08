@@ -411,6 +411,7 @@ static u32 esp6_get_mtu(struct xfrm_state *x, int mtu)
 	struct esp_data *esp = x->data;
 	u32 blksize = ALIGN(crypto_aead_blocksize(esp->aead), 4);
 	u32 align = max_t(u32, blksize, esp->padlen);
+<<<<<<< HEAD
 	unsigned int net_adj;
 
 	if (x->props.mode != XFRM_MODE_TUNNEL)
@@ -420,6 +421,21 @@ static u32 esp6_get_mtu(struct xfrm_state *x, int mtu)
 
 	return ((mtu - x->props.header_len - crypto_aead_authsize(esp->aead) -
 		 net_adj) & ~(align - 1)) + (net_adj - 2);
+=======
+	u32 rem;
+
+	mtu -= x->props.header_len + crypto_aead_authsize(esp->aead);
+	rem = mtu & (align - 1);
+	mtu &= ~(align - 1);
+
+	if (x->props.mode != XFRM_MODE_TUNNEL) {
+		u32 padsize = ((blksize - 1) & 7) + 1;
+		mtu -= blksize - padsize;
+		mtu += min_t(u32, blksize - padsize, rem);
+	}
+
+	return mtu - 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void esp6_err(struct sk_buff *skb, struct inet6_skb_parm *opt,

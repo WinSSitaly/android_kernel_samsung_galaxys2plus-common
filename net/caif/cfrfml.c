@@ -46,10 +46,20 @@ struct cflayer *cfrfml_create(u8 channel_id, struct dev_info *dev_info,
 					int mtu_size)
 {
 	int tmp;
+<<<<<<< HEAD
 	struct cfrfml *this = kzalloc(sizeof(struct cfrfml), GFP_ATOMIC);
 
 	if (!this)
 		return NULL;
+=======
+	struct cfrfml *this =
+		kzalloc(sizeof(struct cfrfml), GFP_ATOMIC);
+
+	if (!this) {
+		pr_warn("Out of memory\n");
+		return NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cfsrvl_init(&this->serv, channel_id, dev_info, false);
 	this->serv.release = cfrfml_release;
@@ -184,18 +194,25 @@ out:
 					rfml->serv.dev_info.id);
 	}
 	spin_unlock(&rfml->sync);
+<<<<<<< HEAD
 
 	if (unlikely(err == -EAGAIN))
 		/* It is not possible to recover after drop of a fragment */
 		err = -EIO;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
 
 static int cfrfml_transmit_segment(struct cfrfml *rfml, struct cfpkt *pkt)
 {
+<<<<<<< HEAD
 	caif_assert(cfpkt_getlen(pkt) < rfml->fragment_size + RFM_HEAD_SIZE);
+=======
+	caif_assert(cfpkt_getlen(pkt) < rfml->fragment_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Add info for MUX-layer to route the packet out. */
 	cfpkt_info(pkt)->channel_id = rfml->serv.layer.id;
@@ -223,7 +240,11 @@ static int cfrfml_transmit(struct cflayer *layr, struct cfpkt *pkt)
 	caif_assert(layr->dn->transmit != NULL);
 
 	if (!cfsrvl_ready(&rfml->serv, &err))
+<<<<<<< HEAD
 		goto out;
+=======
+		return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = -EPROTO;
 	if (cfpkt_getlen(pkt) <= RFM_HEAD_SIZE-1)
@@ -256,11 +277,16 @@ static int cfrfml_transmit(struct cflayer *layr, struct cfpkt *pkt)
 
 		err = cfrfml_transmit_segment(rfml, frontpkt);
 
+<<<<<<< HEAD
 		if (err != 0) {
 			frontpkt = NULL;
 			goto out;
 		}
 
+=======
+		if (err != 0)
+			goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		frontpkt = rearpkt;
 		rearpkt = NULL;
 
@@ -294,8 +320,24 @@ out:
 		if (rearpkt)
 			cfpkt_destroy(rearpkt);
 
+<<<<<<< HEAD
 		if (frontpkt)
 			cfpkt_destroy(frontpkt);
+=======
+		if (frontpkt && frontpkt != pkt) {
+
+			cfpkt_destroy(frontpkt);
+			/*
+			 * Socket layer will free the original packet,
+			 * but this packet may already be sent and
+			 * freed. So we have to return 0 in this case
+			 * to avoid socket layer to re-free this packet.
+			 * The return of shutdown indication will
+			 * cause connection to be invalidated anyhow.
+			 */
+			err = 0;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return err;

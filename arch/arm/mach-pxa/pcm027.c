@@ -258,6 +258,7 @@ static void __init pcm027_map_io(void)
 
 MACHINE_START(PCM027, "Phytec Messtechnik GmbH phyCORE-PXA270")
 	/* Maintainer: Pengutronix */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= pcm027_map_io,
 	.nr_irqs	= PCM027_NR_IRQS,
@@ -266,4 +267,12 @@ MACHINE_START(PCM027, "Phytec Messtechnik GmbH phyCORE-PXA270")
 	.timer		= &pxa_timer,
 	.init_machine	= pcm027_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params	= 0xa0000100,
+	.map_io		= pcm027_map_io,
+	.nr_irqs	= PCM027_NR_IRQS,
+	.init_irq	= pxa27x_init_irq,
+	.timer		= &pxa_timer,
+	.init_machine	= pcm027_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

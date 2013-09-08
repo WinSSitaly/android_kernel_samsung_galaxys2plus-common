@@ -4,7 +4,11 @@
  * Author : Stephen Smalley, <sds@epoch.ncsc.mil>
  */
 /*
+<<<<<<< HEAD
  * Updated: Hewlett-Packard <paul@paul-moore.com>
+=======
+ * Updated: Hewlett-Packard <paul.moore@hp.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *      Added support to import/export the NetLabel category bitmap
  *

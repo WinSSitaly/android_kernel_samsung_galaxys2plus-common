@@ -26,7 +26,10 @@
 
 #include <linux/personality.h>
 #include <linux/mm.h>
+<<<<<<< HEAD
 #include <linux/mman.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/random.h>
 #include <linux/compat.h>
@@ -100,11 +103,16 @@ void arch_pick_mmap_layout(struct mm_struct *mm)
 		mm->unmap_area = arch_unmap_area_topdown;
 	}
 }
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL_GPL(arch_pick_mmap_layout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #else
 
 int s390_mmap_check(unsigned long addr, unsigned long len)
 {
+<<<<<<< HEAD
 	int rc;
 
 	if (!is_compat_task() &&
@@ -114,6 +122,11 @@ int s390_mmap_check(unsigned long addr, unsigned long len)
 			return rc;
 		update_mm(current->mm, current);
 	}
+=======
+	if (!is_compat_task() &&
+	    len >= TASK_SIZE && TASK_SIZE < (1UL << 53))
+		return crst_table_upgrade(current->mm, 1UL << 53);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -133,7 +146,10 @@ s390_get_unmapped_area(struct file *filp, unsigned long addr,
 		rc = crst_table_upgrade(mm, 1UL << 53);
 		if (rc)
 			return (unsigned long) rc;
+<<<<<<< HEAD
 		update_mm(mm, current);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		area = arch_get_unmapped_area(filp, addr, len, pgoff, flags);
 	}
 	return area;
@@ -156,7 +172,10 @@ s390_get_unmapped_area_topdown(struct file *filp, const unsigned long addr,
 		rc = crst_table_upgrade(mm, 1UL << 53);
 		if (rc)
 			return (unsigned long) rc;
+<<<<<<< HEAD
 		update_mm(mm, current);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		area = arch_get_unmapped_area_topdown(filp, addr, len,
 						      pgoff, flags);
 	}
@@ -182,5 +201,9 @@ void arch_pick_mmap_layout(struct mm_struct *mm)
 		mm->unmap_area = arch_unmap_area_topdown;
 	}
 }
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL_GPL(arch_pick_mmap_layout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

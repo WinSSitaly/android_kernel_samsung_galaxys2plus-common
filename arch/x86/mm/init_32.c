@@ -35,6 +35,10 @@
 #include <asm/asm.h>
 #include <asm/bios_ebda.h>
 #include <asm/processor.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <asm/pgtable.h>
 #include <asm/dma.h>
@@ -426,6 +430,7 @@ static void __init add_one_highpage_init(struct page *page)
 void __init add_highpages_with_active_regions(int nid,
 			 unsigned long start_pfn, unsigned long end_pfn)
 {
+<<<<<<< HEAD
 	phys_addr_t start, end;
 	u64 i;
 
@@ -437,6 +442,25 @@ void __init add_highpages_with_active_regions(int nid,
 		for ( ; pfn < e_pfn; pfn++)
 			if (pfn_valid(pfn))
 				add_one_highpage_init(pfn_to_page(pfn));
+=======
+	struct range *range;
+	int nr_range;
+	int i;
+
+	nr_range = __get_free_all_memory_range(&range, nid, start_pfn, end_pfn);
+
+	for (i = 0; i < nr_range; i++) {
+		struct page *page;
+		int node_pfn;
+
+		for (node_pfn = range[i].start; node_pfn < range[i].end;
+		     node_pfn++) {
+			if (!pfn_valid(node_pfn))
+				continue;
+			page = pfn_to_page(node_pfn);
+			add_one_highpage_init(page);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 #else
@@ -643,11 +667,17 @@ void __init initmem_init(void)
 	highstart_pfn = highend_pfn = max_pfn;
 	if (max_pfn > max_low_pfn)
 		highstart_pfn = max_low_pfn;
+<<<<<<< HEAD
+=======
+	memblock_x86_register_active_regions(0, 0, highend_pfn);
+	sparse_memory_present_with_active_regions(0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk(KERN_NOTICE "%ldMB HIGHMEM available.\n",
 		pages_to_mb(highend_pfn - highstart_pfn));
 	num_physpages = highend_pfn;
 	high_memory = (void *) __va(highstart_pfn * PAGE_SIZE - 1) + 1;
 #else
+<<<<<<< HEAD
 	num_physpages = max_low_pfn;
 	high_memory = (void *) __va(max_low_pfn * PAGE_SIZE - 1) + 1;
 #endif
@@ -655,6 +685,13 @@ void __init initmem_init(void)
 	memblock_set_node(0, (phys_addr_t)ULLONG_MAX, 0);
 	sparse_memory_present_with_active_regions(0);
 
+=======
+	memblock_x86_register_active_regions(0, 0, max_low_pfn);
+	sparse_memory_present_with_active_regions(0);
+	num_physpages = max_low_pfn;
+	high_memory = (void *) __va(max_low_pfn * PAGE_SIZE - 1) + 1;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_FLATMEM
 	max_mapnr = num_physpages;
 #endif
@@ -667,6 +704,25 @@ void __init initmem_init(void)
 }
 #endif /* !CONFIG_NEED_MULTIPLE_NODES */
 
+<<<<<<< HEAD
+=======
+static void __init zone_sizes_init(void)
+{
+	unsigned long max_zone_pfns[MAX_NR_ZONES];
+	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
+#ifdef CONFIG_ZONE_DMA
+	max_zone_pfns[ZONE_DMA] =
+		virt_to_phys((char *)MAX_DMA_ADDRESS) >> PAGE_SHIFT;
+#endif
+	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
+#ifdef CONFIG_HIGHMEM
+	max_zone_pfns[ZONE_HIGHMEM] = highend_pfn;
+#endif
+
+	free_area_init_nodes(max_zone_pfns);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init setup_bootmem_allocator(void)
 {
 	printk(KERN_INFO "  mapped low ram: 0 - %08lx\n",
@@ -737,6 +793,7 @@ void __init mem_init(void)
 #ifdef CONFIG_FLATMEM
 	BUG_ON(!mem_map);
 #endif
+<<<<<<< HEAD
 	/*
 	 * With CONFIG_DEBUG_PAGEALLOC initialization of highmem pages has to
 	 * be done before free_all_bootmem(). Memblock use free low memory for
@@ -748,6 +805,8 @@ void __init mem_init(void)
 	 */
 	set_highmem_pages_init();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* this will put all low memory onto the freelists */
 	totalram_pages += free_all_bootmem();
 
@@ -759,6 +818,11 @@ void __init mem_init(void)
 		if (page_is_ram(tmp) && PageReserved(pfn_to_page(tmp)))
 			reservedpages++;
 
+<<<<<<< HEAD
+=======
+	set_highmem_pages_init();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	codesize =  (unsigned long) &_etext - (unsigned long) &_text;
 	datasize =  (unsigned long) &_edata - (unsigned long) &_etext;
 	initsize =  (unsigned long) &__init_end - (unsigned long) &__init_begin;

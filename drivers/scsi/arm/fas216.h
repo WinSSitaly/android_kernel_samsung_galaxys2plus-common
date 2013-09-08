@@ -12,6 +12,13 @@
 #ifndef FAS216_H
 #define FAS216_H
 
+<<<<<<< HEAD
+=======
+#ifndef NO_IRQ
+#define NO_IRQ 255
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <scsi/scsi_eh.h>
 
 #include "queue.h"

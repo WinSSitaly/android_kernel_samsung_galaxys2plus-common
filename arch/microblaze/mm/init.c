@@ -17,14 +17,20 @@
 #include <linux/pfn.h>
 #include <linux/slab.h>
 #include <linux/swap.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/page.h>
 #include <asm/mmu_context.h>
 #include <asm/pgalloc.h>
 #include <asm/sections.h>
 #include <asm/tlb.h>
+<<<<<<< HEAD
 #include <asm/fixmap.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Use for MMU and noMMU because of PCI generic code */
 int mem_init_done;
@@ -45,6 +51,7 @@ char *klimit = _end;
  */
 unsigned long memory_start;
 EXPORT_SYMBOL(memory_start);
+<<<<<<< HEAD
 unsigned long memory_size;
 EXPORT_SYMBOL(memory_size);
 unsigned long lowmem_size;
@@ -95,6 +102,11 @@ static unsigned long highmem_setup(void)
 	return reservedpages;
 }
 #endif /* CONFIG_HIGHMEM */
+=======
+unsigned long memory_end; /* due to mm/nommu.c */
+unsigned long memory_size;
+EXPORT_SYMBOL(memory_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * paging_init() sets up the page tables - in fact we've already done this.
@@ -102,6 +114,7 @@ static unsigned long highmem_setup(void)
 static void __init paging_init(void)
 {
 	unsigned long zones_size[MAX_NR_ZONES];
+<<<<<<< HEAD
 #ifdef CONFIG_MMU
 	int idx;
 
@@ -109,10 +122,13 @@ static void __init paging_init(void)
 	for (idx = 0; idx < __end_of_fixed_addresses; idx++)
 		clear_fixmap(idx);
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Clean every zones */
 	memset(zones_size, 0, sizeof(zones_size));
 
+<<<<<<< HEAD
 #ifdef CONFIG_HIGHMEM
 	highmem_init();
 
@@ -124,6 +140,15 @@ static void __init paging_init(void)
 
 	/* We don't have holes in memory map */
 	free_area_init_nodes(zones_size);
+=======
+	/*
+	 * old: we can DMA to/from any address.put all page into ZONE_DMA
+	 * We use only ZONE_NORMAL
+	 */
+	zones_size[ZONE_NORMAL] = max_mapnr;
+
+	free_area_init(zones_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __init setup_memory(void)
@@ -137,6 +162,7 @@ void __init setup_memory(void)
 	/* Find main memory where is the kernel */
 	for_each_memblock(memory, reg) {
 		memory_start = (u32)reg->base;
+<<<<<<< HEAD
 		lowmem_size = reg->size;
 		if ((memory_start <= (u32)_text) &&
 			((u32)_text <= (memory_start + lowmem_size - 1))) {
@@ -145,23 +171,47 @@ void __init setup_memory(void)
 			printk(KERN_INFO "%s: Main mem: 0x%x, "
 				"size 0x%08x\n", __func__, (u32) memory_start,
 					(u32) memory_size);
+=======
+		memory_end = (u32) reg->base + reg->size;
+		if ((memory_start <= (u32)_text) &&
+					((u32)_text <= memory_end)) {
+			memory_size = memory_end - memory_start;
+			PAGE_OFFSET = memory_start;
+			printk(KERN_INFO "%s: Main mem: 0x%x-0x%x, "
+				"size 0x%08x\n", __func__, (u32) memory_start,
+					(u32) memory_end, (u32) memory_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	}
 
+<<<<<<< HEAD
 	if (!memory_start || !memory_size) {
 		panic("%s: Missing memory setting 0x%08x, size=0x%08x\n",
 			__func__, (u32) memory_start, (u32) memory_size);
+=======
+	if (!memory_start || !memory_end) {
+		panic("%s: Missing memory setting 0x%08x-0x%08x\n",
+			__func__, (u32) memory_start, (u32) memory_end);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* reservation of region where is the kernel */
 	kernel_align_start = PAGE_DOWN((u32)_text);
 	/* ALIGN can be remove because _end in vmlinux.lds.S is align */
 	kernel_align_size = PAGE_UP((u32)klimit) - kernel_align_start;
+<<<<<<< HEAD
 	printk(KERN_INFO "%s: kernel addr:0x%08x-0x%08x size=0x%08x\n",
 		__func__, kernel_align_start, kernel_align_start
 			+ kernel_align_size, kernel_align_size);
 	memblock_reserve(kernel_align_start, kernel_align_size);
+=======
+	memblock_reserve(kernel_align_start, kernel_align_size);
+	printk(KERN_INFO "%s: kernel addr=0x%08x-0x%08x size=0x%08x\n",
+		__func__, kernel_align_start, kernel_align_start
+			+ kernel_align_size, kernel_align_size);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	/*
 	 * Kernel:
@@ -178,13 +228,20 @@ void __init setup_memory(void)
 	min_low_pfn = memory_start >> PAGE_SHIFT; /* minimum for allocation */
 	/* RAM is assumed contiguous */
 	num_physpages = max_mapnr = memory_size >> PAGE_SHIFT;
+<<<<<<< HEAD
 	max_low_pfn = ((u64)memory_start + (u64)lowmem_size) >> PAGE_SHIFT;
 	max_pfn = ((u64)memory_start + (u64)memory_size) >> PAGE_SHIFT;
+=======
+	max_pfn = max_low_pfn = memory_end >> PAGE_SHIFT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	printk(KERN_INFO "%s: max_mapnr: %#lx\n", __func__, max_mapnr);
 	printk(KERN_INFO "%s: min_low_pfn: %#lx\n", __func__, min_low_pfn);
 	printk(KERN_INFO "%s: max_low_pfn: %#lx\n", __func__, max_low_pfn);
+<<<<<<< HEAD
 	printk(KERN_INFO "%s: max_pfn: %#lx\n", __func__, max_pfn);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Find an area to use for the bootmem bitmap.
@@ -197,6 +254,7 @@ void __init setup_memory(void)
 		PFN_UP(TOPHYS((u32)klimit)), min_low_pfn, max_low_pfn);
 	memblock_reserve(PFN_UP(TOPHYS((u32)klimit)) << PAGE_SHIFT, map_size);
 
+<<<<<<< HEAD
 	/* Add active regions with valid PFNs */
 	for_each_memblock(memory, reg) {
 		unsigned long start_pfn, end_pfn;
@@ -230,6 +288,17 @@ void __init setup_memory(void)
 	/* XXX need to clip this if using highmem? */
 	sparse_memory_present_with_active_regions(0);
 
+=======
+	/* free bootmem is whole main memory */
+	free_bootmem(memory_start, memory_size);
+
+	/* reserve allocate blocks */
+	for_each_memblock(reserved, reg) {
+		pr_debug("reserved - 0x%08x-0x%08x\n",
+			 (u32) reg->base, (u32) reg->size);
+		reserve_bootmem(reg->base, reg->size, BOOTMEM_DEFAULT);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_MMU
 	init_bootmem_done = 1;
 #endif
@@ -274,6 +343,7 @@ void free_initmem(void)
 
 void __init mem_init(void)
 {
+<<<<<<< HEAD
 	pg_data_t *pgdat;
 	unsigned long reservedpages = 0, codesize, initsize, datasize, bsssize;
 
@@ -326,6 +396,15 @@ void __init mem_init(void)
 	pr_info("  * 0x%08lx..0x%08lx  : vmalloc & ioremap\n",
 		(unsigned long)VMALLOC_START, VMALLOC_END);
 #endif
+=======
+	high_memory = (void *)__va(memory_end);
+	/* this will put all memory onto the freelists */
+	totalram_pages += free_all_bootmem();
+
+	printk(KERN_INFO "Memory: %luk/%luk available\n",
+	       nr_free_pages() << (PAGE_SHIFT-10),
+	       num_physpages << (PAGE_SHIFT-10));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mem_init_done = 1;
 }
 
@@ -355,6 +434,10 @@ static void mm_cmdline_setup(void)
 		maxmem = memparse(p, &p);
 		if (maxmem && memory_size > maxmem) {
 			memory_size = maxmem;
+<<<<<<< HEAD
+=======
+			memory_end = memory_start + memory_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			memblock.memory.regions[0].size = memory_size;
 		}
 	}
@@ -398,6 +481,7 @@ asmlinkage void __init mmu_init(void)
 		machine_restart(NULL);
 	}
 
+<<<<<<< HEAD
 	if ((u32) memblock.memory.regions[0].size < 0x400000) {
 		printk(KERN_EMERG "Memory must be greater than 4MB\n");
 		machine_restart(NULL);
@@ -418,6 +502,17 @@ asmlinkage void __init mmu_init(void)
 		memory_size = lowmem_size;
 #endif
 	}
+=======
+	if ((u32) memblock.memory.regions[0].size < 0x1000000) {
+		printk(KERN_EMERG "Memory must be greater than 16MB\n");
+		machine_restart(NULL);
+	}
+	/* Find main memory where the kernel is */
+	memory_start = (u32) memblock.memory.regions[0].base;
+	memory_end = (u32) memblock.memory.regions[0].base +
+				(u32) memblock.memory.regions[0].size;
+	memory_size = memory_end - memory_start;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mm_cmdline_setup(); /* FIXME parse args from command line - not used */
 
@@ -444,6 +539,7 @@ asmlinkage void __init mmu_init(void)
 	/* Map in all of RAM starting at CONFIG_KERNEL_START */
 	mapin_ram();
 
+<<<<<<< HEAD
 	/* Extend vmalloc and ioremap area as big as possible */
 #ifdef CONFIG_HIGHMEM
 	ioremap_base = ioremap_bot = PKMAP_BASE;
@@ -458,6 +554,17 @@ asmlinkage void __init mmu_init(void)
 	/* This will also cause that unflatten device tree will be allocated
 	 * inside 768MB limit */
 	memblock_set_current_limit(memory_start + lowmem_size - 1);
+=======
+#ifdef HIGHMEM_START_BOOL
+	ioremap_base = HIGHMEM_START;
+#else
+	ioremap_base = 0xfe000000UL;	/* for now, could be 0xfffff000 */
+#endif /* CONFIG_HIGHMEM */
+	ioremap_bot = ioremap_base;
+
+	/* Initialize the context management stuff */
+	mmu_context_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* This is only called until mem_init is done. */
@@ -468,11 +575,19 @@ void __init *early_get_page(void)
 		p = alloc_bootmem_pages(PAGE_SIZE);
 	} else {
 		/*
+<<<<<<< HEAD
 		 * Mem start + kernel_tlb -> here is limit
 		 * because of mem mapping from head.S
 		 */
 		p = __va(memblock_alloc_base(PAGE_SIZE, PAGE_SIZE,
 					memory_start + kernel_tlb));
+=======
+		 * Mem start + 32MB -> here is limit
+		 * because of mem mapping from head.S
+		 */
+		p = __va(memblock_alloc_base(PAGE_SIZE, PAGE_SIZE,
+					memory_start + 0x2000000));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return p;
 }

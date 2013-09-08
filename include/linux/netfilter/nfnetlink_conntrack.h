@@ -43,7 +43,10 @@ enum ctattr_type {
 	CTA_ZONE,
 	CTA_SECCTX,
 	CTA_TIMESTAMP,
+<<<<<<< HEAD
 	CTA_MARK_MASK,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__CTA_MAX
 };
 #define CTA_MAX (__CTA_MAX - 1)
@@ -173,13 +176,17 @@ enum ctattr_expect {
 	CTA_EXPECT_HELP_NAME,
 	CTA_EXPECT_ZONE,
 	CTA_EXPECT_FLAGS,
+<<<<<<< HEAD
 	CTA_EXPECT_CLASS,
 	CTA_EXPECT_NAT,
 	CTA_EXPECT_FN,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__CTA_EXPECT_MAX
 };
 #define CTA_EXPECT_MAX (__CTA_EXPECT_MAX - 1)
 
+<<<<<<< HEAD
 enum ctattr_expect_nat {
 	CTA_EXPECT_NAT_UNSPEC,
 	CTA_EXPECT_NAT_DIR,
@@ -188,6 +195,8 @@ enum ctattr_expect_nat {
 };
 #define CTA_EXPECT_NAT_MAX (__CTA_EXPECT_NAT_MAX - 1)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum ctattr_help {
 	CTA_HELP_UNSPEC,
 	CTA_HELP_NAME,

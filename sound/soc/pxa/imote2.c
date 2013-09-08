@@ -30,6 +30,23 @@ static int imote2_asoc_hw_params(struct snd_pcm_substream *substream,
 		break;
 	}
 
+<<<<<<< HEAD
+=======
+	/* set codec DAI configuration */
+	ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_I2S
+				  | SND_SOC_DAIFMT_NB_NF
+				  | SND_SOC_DAIFMT_CBS_CFS);
+	if (ret < 0)
+		return ret;
+
+	/* CPU should be clock master */
+	ret = snd_soc_dai_set_fmt(cpu_dai,  SND_SOC_DAIFMT_I2S
+				  | SND_SOC_DAIFMT_NB_NF
+				  | SND_SOC_DAIFMT_CBS_CFS);
+	if (ret < 0)
+		return ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = snd_soc_dai_set_sysclk(codec_dai, 0, clk,
 				     SND_SOC_CLOCK_IN);
 	if (ret < 0)
@@ -53,6 +70,7 @@ static struct snd_soc_dai_link imote2_dai = {
 	.codec_dai_name = "wm8940-hifi",
 	.platform_name = "pxa-pcm-audio",
 	.codec_name = "wm8940-codec.0-0034",
+<<<<<<< HEAD
 	.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
 		   SND_SOC_DAIFMT_CBS_CFS,
 	.ops = &imote2_asoc_ops,
@@ -61,10 +79,18 @@ static struct snd_soc_dai_link imote2_dai = {
 static struct snd_soc_card imote2 = {
 	.name = "Imote2",
 	.owner = THIS_MODULE,
+=======
+	.ops = &imote2_asoc_ops,
+};
+
+static struct snd_soc_card snd_soc_imote2 = {
+	.name = "Imote2",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link = &imote2_dai,
 	.num_links = 1,
 };
 
+<<<<<<< HEAD
 static int __devinit imote2_probe(struct platform_device *pdev)
 {
 	struct snd_soc_card *card = &imote2;
@@ -97,8 +123,39 @@ static struct platform_driver imote2_driver = {
 };
 
 module_platform_driver(imote2_driver);
+=======
+static struct platform_device *imote2_snd_device;
+
+static int __init imote2_asoc_init(void)
+{
+	int ret;
+
+	if (!machine_is_intelmote2())
+		return -ENODEV;
+	imote2_snd_device = platform_device_alloc("soc-audio", -1);
+	if (!imote2_snd_device)
+		return -ENOMEM;
+
+	platform_set_drvdata(imote2_snd_device, &snd_soc_imote2);
+	ret = platform_device_add(imote2_snd_device);
+	if (ret)
+		platform_device_put(imote2_snd_device);
+
+	return ret;
+}
+module_init(imote2_asoc_init);
+
+static void __exit imote2_asoc_exit(void)
+{
+	platform_device_unregister(imote2_snd_device);
+}
+module_exit(imote2_asoc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Jonathan Cameron");
 MODULE_DESCRIPTION("ALSA SoC Imote 2");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_ALIAS("platform:imote2-audio");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

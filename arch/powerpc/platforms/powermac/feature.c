@@ -27,7 +27,10 @@
 #include <linux/adb.h>
 #include <linux/pmu.h>
 #include <linux/ioport.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pci.h>
 #include <asm/sections.h>
 #include <asm/errno.h>

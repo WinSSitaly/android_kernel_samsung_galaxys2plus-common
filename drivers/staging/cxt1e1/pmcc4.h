@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+/*
+ * $Id: pmcc4.h,v 1.4 2005/11/01 19:24:48 rickd PMCC4_3_1B $
+ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef _INC_PMCC4_H_
 #define _INC_PMCC4_H_
 
@@ -19,15 +26,58 @@
  * For further information, contact via email: support@sbei.com
  * SBE, Inc.  San Ramon, California  U.S.A.
  *-----------------------------------------------------------------------------
+<<<<<<< HEAD
  */
 
 #include <linux/types.h>
+=======
+ * RCS info:
+ * RCS revision: $Revision: 1.4 $
+ * Last changed on $Date: 2005/11/01 19:24:48 $
+ * Changed by $Author: rickd $
+ *-----------------------------------------------------------------------------
+ * $Log: pmcc4.h,v $
+ * Revision 1.4  2005/11/01 19:24:48  rickd
+ * Remove de-implement function prototypes.  Several <int> to
+ * <status_t> changes for consistent usage of same.
+ *
+ * Revision 1.3  2005/09/28 00:10:08  rickd
+ * Add GNU license info. Use config params from libsbew.h
+ *
+ * Revision 1.2  2005/04/28 23:43:03  rickd
+ * Add RCS tracking heading.
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+
+#if defined(__FreeBSD__) || defined(__NetBSD__)
+#include <sys/types.h>
+#else
+#ifndef __KERNEL__
+#include <sys/types.h>
+#else
+#include <linux/types.h>
+#endif
+#endif
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef int status_t;
 
 #define SBE_DRVR_FAIL     0
 #define SBE_DRVR_SUCCESS  1
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+extern      "C"
+{
+#endif
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /********************/
 /* PMCC4 memory Map */
 /********************/
@@ -67,6 +117,13 @@ typedef int status_t;
 #define sbeE1errSMF    0x02
 #define sbeE1CRC       0x01
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef __KERNEL__
 
 /*

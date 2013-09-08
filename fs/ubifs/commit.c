@@ -78,7 +78,11 @@ static int nothing_to_commit(struct ubifs_info *c)
 	 * If the root TNC node is dirty, we definitely have something to
 	 * commit.
 	 */
+<<<<<<< HEAD
 	if (c->zroot.znode && ubifs_zn_dirty(c->zroot.znode))
+=======
+	if (c->zroot.znode && test_bit(DIRTY_ZNODE, &c->zroot.znode->flags))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	/*
@@ -418,7 +422,11 @@ int ubifs_run_commit(struct ubifs_info *c)
 
 	spin_lock(&c->cs_lock);
 	if (c->cmt_state == COMMIT_BROKEN) {
+<<<<<<< HEAD
 		err = -EROFS;
+=======
+		err = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
@@ -444,7 +452,11 @@ int ubifs_run_commit(struct ubifs_info *c)
 	 * re-check it.
 	 */
 	if (c->cmt_state == COMMIT_BROKEN) {
+<<<<<<< HEAD
 		err = -EROFS;
+=======
+		err = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_cmt_unlock;
 	}
 
@@ -576,7 +588,11 @@ int dbg_check_old_index(struct ubifs_info *c, struct ubifs_zbranch *zroot)
 	struct idx_node *i;
 	size_t sz;
 
+<<<<<<< HEAD
 	if (!dbg_is_chk_index(c))
+=======
+	if (!(ubifs_chk_flags & UBIFS_CHK_OLD_IDX))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	INIT_LIST_HEAD(&list);

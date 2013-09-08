@@ -296,7 +296,12 @@ static struct pci_driver orinoco_nortel_driver = {
 static char version[] __initdata = DRIVER_NAME " " DRIVER_VERSION
 	" (Tobias Hoffmann & Christoph Jungegger <disdos@traum404.de>)";
 MODULE_AUTHOR("Christoph Jungegger <disdos@traum404.de>");
+<<<<<<< HEAD
 MODULE_DESCRIPTION("Driver for wireless LAN cards using the Nortel PCI bridge");
+=======
+MODULE_DESCRIPTION
+    ("Driver for wireless LAN cards using the Nortel PCI bridge");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("Dual MPL/GPL");
 
 static int __init orinoco_nortel_init(void)

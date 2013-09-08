@@ -41,7 +41,11 @@
 #include <asm/mach/map.h>
 
 #include <plat/board.h>
+<<<<<<< HEAD
 #include "common.h"
+=======
+#include <plat/common.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/hardware.h>
 #include <plat/mcspi.h>
 #include <plat/usb.h>
@@ -121,11 +125,14 @@ static struct platform_device pandora_leds_gpio = {
 	},
 };
 
+<<<<<<< HEAD
 static struct platform_device pandora_backlight = {
 	.name	= "pandora-backlight",
 	.id	= -1,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define GPIO_BUTTON(gpio_num, ev_type, ev_code, act_low, descr)	\
 {								\
 	.gpio		= gpio_num,				\
@@ -278,7 +285,10 @@ static struct omap2_hsmmc_info omap3pandora_mmc[] = {
 		.gpio_cd	= -EINVAL,
 		.gpio_wp	= 126,
 		.ext_clock	= 0,
+<<<<<<< HEAD
 		.deferred	= true,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.mmc		= 2,
@@ -287,7 +297,10 @@ static struct omap2_hsmmc_info omap3pandora_mmc[] = {
 		.gpio_wp	= 127,
 		.ext_clock	= 1,
 		.transceiver	= true,
+<<<<<<< HEAD
 		.deferred	= true,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.mmc		= 3,
@@ -307,7 +320,11 @@ static int omap3pandora_twl_gpio_setup(struct device *dev,
 	/* gpio + {0,1} is "mmc{0,1}_cd" (input/IRQ) */
 	omap3pandora_mmc[0].gpio_cd = gpio + 0;
 	omap3pandora_mmc[1].gpio_cd = gpio + 1;
+<<<<<<< HEAD
 	omap_hsmmc_late_init(omap3pandora_mmc);
+=======
+	omap2_hsmmc_init(omap3pandora_mmc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* gpio + 13 drives 32kHz buffer for wifi module */
 	gpio_32khz = gpio + 13;
@@ -327,6 +344,7 @@ static struct twl4030_gpio_platform_data omap3pandora_gpio_data = {
 	.setup		= omap3pandora_twl_gpio_setup,
 };
 
+<<<<<<< HEAD
 static struct regulator_consumer_supply pandora_vmmc1_supply[] = {
 	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.0"),
 };
@@ -338,10 +356,24 @@ static struct regulator_consumer_supply pandora_vmmc2_supply[] = {
 static struct regulator_consumer_supply pandora_vmmc3_supply[] = {
 	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.2"),
 };
+=======
+static struct regulator_consumer_supply pandora_vmmc1_supply =
+	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.0");
+
+static struct regulator_consumer_supply pandora_vmmc2_supply =
+	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.1");
+
+static struct regulator_consumer_supply pandora_vmmc3_supply =
+	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.2");
+
+static struct regulator_consumer_supply pandora_vdda_dac_supply =
+	REGULATOR_SUPPLY("vdda_dac", "omapdss_venc");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct regulator_consumer_supply pandora_vdds_supplies[] = {
 	REGULATOR_SUPPLY("vdds_sdi", "omapdss"),
 	REGULATOR_SUPPLY("vdds_dsi", "omapdss"),
+<<<<<<< HEAD
 	REGULATOR_SUPPLY("vdds_dsi", "omapdss_dsi.0"),
 };
 
@@ -352,6 +384,16 @@ static struct regulator_consumer_supply pandora_vcc_lcd_supply[] = {
 static struct regulator_consumer_supply pandora_usb_phy_supply[] = {
 	REGULATOR_SUPPLY("hsusb1", "ehci-omap.0"),
 };
+=======
+	REGULATOR_SUPPLY("vdds_dsi", "omapdss_dsi1"),
+};
+
+static struct regulator_consumer_supply pandora_vcc_lcd_supply =
+	REGULATOR_SUPPLY("vcc", "display0");
+
+static struct regulator_consumer_supply pandora_usb_phy_supply =
+	REGULATOR_SUPPLY("hsusb0", "ehci-omap.0");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* ads7846 on SPI and 2 nub controllers on I2C */
 static struct regulator_consumer_supply pandora_vaux4_supplies[] = {
@@ -360,9 +402,14 @@ static struct regulator_consumer_supply pandora_vaux4_supplies[] = {
 	REGULATOR_SUPPLY("vcc", "3-0067"),
 };
 
+<<<<<<< HEAD
 static struct regulator_consumer_supply pandora_adac_supply[] = {
 	REGULATOR_SUPPLY("vcc", "soc-audio"),
 };
+=======
+static struct regulator_consumer_supply pandora_adac_supply =
+	REGULATOR_SUPPLY("vcc", "soc-audio");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* VMMC1 for MMC1 pins CMD, CLK, DAT0..DAT3 (20 mA, plus card == max 220 mA) */
 static struct regulator_init_data pandora_vmmc1 = {
@@ -375,8 +422,13 @@ static struct regulator_init_data pandora_vmmc1 = {
 					| REGULATOR_CHANGE_MODE
 					| REGULATOR_CHANGE_STATUS,
 	},
+<<<<<<< HEAD
 	.num_consumer_supplies	= ARRAY_SIZE(pandora_vmmc1_supply),
 	.consumer_supplies	= pandora_vmmc1_supply,
+=======
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &pandora_vmmc1_supply,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* VMMC2 for MMC2 pins CMD, CLK, DAT0..DAT3 (max 100 mA) */
@@ -390,8 +442,43 @@ static struct regulator_init_data pandora_vmmc2 = {
 					| REGULATOR_CHANGE_MODE
 					| REGULATOR_CHANGE_STATUS,
 	},
+<<<<<<< HEAD
 	.num_consumer_supplies	= ARRAY_SIZE(pandora_vmmc2_supply),
 	.consumer_supplies	= pandora_vmmc2_supply,
+=======
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &pandora_vmmc2_supply,
+};
+
+/* VDAC for DSS driving S-Video */
+static struct regulator_init_data pandora_vdac = {
+	.constraints = {
+		.min_uV			= 1800000,
+		.max_uV			= 1800000,
+		.apply_uV		= true,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask		= REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &pandora_vdda_dac_supply,
+};
+
+/* VPLL2 for digital video outputs */
+static struct regulator_init_data pandora_vpll2 = {
+	.constraints = {
+		.min_uV			= 1800000,
+		.max_uV			= 1800000,
+		.apply_uV		= true,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask		= REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies	= ARRAY_SIZE(pandora_vdds_supplies),
+	.consumer_supplies	= pandora_vdds_supplies,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* VAUX1 for LCD */
@@ -405,8 +492,13 @@ static struct regulator_init_data pandora_vaux1 = {
 		.valid_ops_mask		= REGULATOR_CHANGE_MODE
 					| REGULATOR_CHANGE_STATUS,
 	},
+<<<<<<< HEAD
 	.num_consumer_supplies	= ARRAY_SIZE(pandora_vcc_lcd_supply),
 	.consumer_supplies	= pandora_vcc_lcd_supply,
+=======
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &pandora_vcc_lcd_supply,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* VAUX2 for USB host PHY */
@@ -420,8 +512,13 @@ static struct regulator_init_data pandora_vaux2 = {
 		.valid_ops_mask		= REGULATOR_CHANGE_MODE
 					| REGULATOR_CHANGE_STATUS,
 	},
+<<<<<<< HEAD
 	.num_consumer_supplies	= ARRAY_SIZE(pandora_usb_phy_supply),
 	.consumer_supplies	= pandora_usb_phy_supply,
+=======
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &pandora_usb_phy_supply,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* VAUX4 for ads7846 and nubs */
@@ -450,8 +547,13 @@ static struct regulator_init_data pandora_vsim = {
 		.valid_ops_mask		= REGULATOR_CHANGE_MODE
 					| REGULATOR_CHANGE_STATUS,
 	},
+<<<<<<< HEAD
 	.num_consumer_supplies	= ARRAY_SIZE(pandora_adac_supply),
 	.consumer_supplies	= pandora_adac_supply,
+=======
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &pandora_adac_supply,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Fixed regulator internal to Wifi module */
@@ -459,8 +561,13 @@ static struct regulator_init_data pandora_vmmc3 = {
 	.constraints = {
 		.valid_ops_mask		= REGULATOR_CHANGE_STATUS,
 	},
+<<<<<<< HEAD
 	.num_consumer_supplies	= ARRAY_SIZE(pandora_vmmc3_supply),
 	.consumer_supplies	= pandora_vmmc3_supply,
+=======
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &pandora_vmmc3_supply,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct fixed_voltage_config pandora_vwlan = {
@@ -481,6 +588,7 @@ static struct platform_device pandora_vwlan_device = {
 	},
 };
 
+<<<<<<< HEAD
 static struct twl4030_bci_platform_data pandora_bci_data;
 
 static struct twl4030_power_data pandora_power_data = {
@@ -491,13 +599,41 @@ static struct twl4030_platform_data omap3pandora_twldata = {
 	.gpio		= &omap3pandora_gpio_data,
 	.vmmc1		= &pandora_vmmc1,
 	.vmmc2		= &pandora_vmmc2,
+=======
+static struct twl4030_usb_data omap3pandora_usb_data = {
+	.usb_mode	= T2_USB_MODE_ULPI,
+};
+
+static struct twl4030_codec_audio_data omap3pandora_audio_data;
+
+static struct twl4030_codec_data omap3pandora_codec_data = {
+	.audio_mclk = 26000000,
+	.audio = &omap3pandora_audio_data,
+};
+
+static struct twl4030_bci_platform_data pandora_bci_data;
+
+static struct twl4030_platform_data omap3pandora_twldata = {
+	.irq_base	= TWL4030_IRQ_BASE,
+	.irq_end	= TWL4030_IRQ_END,
+	.gpio		= &omap3pandora_gpio_data,
+	.usb		= &omap3pandora_usb_data,
+	.codec		= &omap3pandora_codec_data,
+	.vmmc1		= &pandora_vmmc1,
+	.vmmc2		= &pandora_vmmc2,
+	.vdac		= &pandora_vdac,
+	.vpll2		= &pandora_vpll2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.vaux1		= &pandora_vaux1,
 	.vaux2		= &pandora_vaux2,
 	.vaux4		= &pandora_vaux4,
 	.vsim		= &pandora_vsim,
 	.keypad		= &pandora_kp_data,
 	.bci		= &pandora_bci_data,
+<<<<<<< HEAD
 	.power		= &pandora_power_data,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct i2c_board_info __initdata omap3pandora_i2c3_boardinfo[] = {
@@ -509,6 +645,7 @@ static struct i2c_board_info __initdata omap3pandora_i2c3_boardinfo[] = {
 
 static int __init omap3pandora_i2c_init(void)
 {
+<<<<<<< HEAD
 	omap3_pmic_get_config(&omap3pandora_twldata,
 			TWL_COMMON_PDATA_USB | TWL_COMMON_PDATA_AUDIO,
 			TWL_COMMON_REGULATOR_VDAC | TWL_COMMON_REGULATOR_VPLL2);
@@ -520,6 +657,8 @@ static int __init omap3pandora_i2c_init(void)
 					ARRAY_SIZE(pandora_vdds_supplies);
 	omap3pandora_twldata.vpll2->consumer_supplies = pandora_vdds_supplies;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap3_pmic_init("tps65950", &omap3pandora_twldata);
 	/* i2c2 pins are not connected */
 	omap_register_i2c_bus(3, 100, omap3pandora_i2c3_boardinfo,
@@ -537,6 +676,16 @@ static struct spi_board_info omap3pandora_spi_board_info[] __initdata = {
 	}
 };
 
+<<<<<<< HEAD
+=======
+static void __init omap3pandora_init_early(void)
+{
+	omap2_init_common_infrastructure();
+	omap2_init_common_devices(mt46h32m32lf6_sdrc_params,
+				  mt46h32m32lf6_sdrc_params);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init pandora_wl1251_init(void)
 {
 	struct wl12xx_platform_data pandora_wl1251_pdata;
@@ -569,11 +718,15 @@ static struct platform_device *omap3pandora_devices[] __initdata = {
 	&pandora_leds_gpio,
 	&pandora_keys_gpio,
 	&pandora_vwlan_device,
+<<<<<<< HEAD
 	&pandora_backlight,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct usbhs_omap_board_data usbhs_bdata __initconst = {
 
+<<<<<<< HEAD
 	.port_mode[0] = OMAP_USBHS_PORT_MODE_UNUSED,
 	.port_mode[1] = OMAP_EHCI_PORT_MODE_PHY,
 	.port_mode[2] = OMAP_USBHS_PORT_MODE_UNUSED,
@@ -581,6 +734,15 @@ static const struct usbhs_omap_board_data usbhs_bdata __initconst = {
 	.phy_reset  = true,
 	.reset_gpio_port[0]  = -EINVAL,
 	.reset_gpio_port[1]  = 16,
+=======
+	.port_mode[0] = OMAP_EHCI_PORT_MODE_PHY,
+	.port_mode[1] = OMAP_USBHS_PORT_MODE_UNUSED,
+	.port_mode[2] = OMAP_USBHS_PORT_MODE_UNUSED,
+
+	.phy_reset  = true,
+	.reset_gpio_port[0]  = 16,
+	.reset_gpio_port[1]  = -EINVAL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.reset_gpio_port[2]  = -EINVAL
 };
 
@@ -593,15 +755,21 @@ static struct omap_board_mux board_mux[] __initdata = {
 static void __init omap3pandora_init(void)
 {
 	omap3_mux_init(board_mux, OMAP_PACKAGE_CBB);
+<<<<<<< HEAD
 	omap_hsmmc_init(omap3pandora_mmc);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap3pandora_i2c_init();
 	pandora_wl1251_init();
 	platform_add_devices(omap3pandora_devices,
 			ARRAY_SIZE(omap3pandora_devices));
 	omap_display_init(&pandora_dss_data);
 	omap_serial_init();
+<<<<<<< HEAD
 	omap_sdrc_init(mt46h32m32lf6_sdrc_params,
 				  mt46h32m32lf6_sdrc_params);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spi_register_board_info(omap3pandora_spi_board_info,
 			ARRAY_SIZE(omap3pandora_spi_board_info));
 	omap_ads7846_init(1, OMAP3_PANDORA_TS_GPIO, 0, NULL);
@@ -615,6 +783,7 @@ static void __init omap3pandora_init(void)
 }
 
 MACHINE_START(OMAP3_PANDORA, "Pandora Handheld Console")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.reserve	= omap_reserve,
 	.map_io		= omap3_map_io,
@@ -624,4 +793,13 @@ MACHINE_START(OMAP3_PANDORA, "Pandora Handheld Console")
 	.init_machine	= omap3pandora_init,
 	.timer		= &omap3_timer,
 	.restart	= omap_prcm_restart,
+=======
+	.boot_params	= 0x80000100,
+	.reserve	= omap_reserve,
+	.map_io		= omap3_map_io,
+	.init_early	= omap3pandora_init_early,
+	.init_irq	= omap_init_irq,
+	.init_machine	= omap3pandora_init,
+	.timer		= &omap_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

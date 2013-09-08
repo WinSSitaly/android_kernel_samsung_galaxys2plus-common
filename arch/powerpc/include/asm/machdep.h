@@ -12,7 +12,10 @@
 #include <linux/seq_file.h>
 #include <linux/init.h>
 #include <linux/dma-mapping.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/setup.h>
 
@@ -86,9 +89,14 @@ struct machdep_calls {
 	void		(*pci_dma_dev_setup)(struct pci_dev *dev);
 	void		(*pci_dma_bus_setup)(struct pci_bus *bus);
 
+<<<<<<< HEAD
 	/* Platform set_dma_mask and dma_get_required_mask overrides */
 	int		(*dma_set_mask)(struct device *dev, u64 dma_mask);
 	u64		(*dma_get_required_mask)(struct device *dev);
+=======
+	/* Platform set_dma_mask override */
+	int		(*dma_set_mask)(struct device *dev, u64 dma_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int		(*probe)(void);
 	void		(*setup_arch)(void); /* Optional, may be NULL */
@@ -99,7 +107,13 @@ struct machdep_calls {
 
 	void		(*init_IRQ)(void);
 
+<<<<<<< HEAD
 	/* Return an irq, or NO_IRQ to indicate there are none pending. */
+=======
+	/* Return an irq, or NO_IRQ to indicate there are none pending.
+	 * If for some reason there is no irq, but the interrupt
+	 * shouldn't be counted as spurious, return NO_IRQ_IGNORE. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int	(*get_irq)(void);
 
 	/* PCI stuff */
@@ -211,9 +225,12 @@ struct machdep_calls {
 	 * allow assignment/enabling of the device. */
 	int  (*pcibios_enable_device_hook)(struct pci_dev *);
 
+<<<<<<< HEAD
 	/* Called after scan and before resource survey */
 	void (*pcibios_fixup_phb)(struct pci_controller *hose);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Called to shutdown machine specific hardware not already controlled
 	 * by other drivers.
 	 */

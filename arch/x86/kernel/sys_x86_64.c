@@ -14,11 +14,15 @@
 #include <linux/personality.h>
 #include <linux/random.h>
 #include <linux/uaccess.h>
+<<<<<<< HEAD
 #include <linux/elf.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/ia32.h>
 #include <asm/syscalls.h>
 
+<<<<<<< HEAD
 /*
  * Align a virtual address to avoid aliasing in the I$ on AMD F15h.
  *
@@ -81,6 +85,8 @@ static int __init control_va_addr_alignment(char *str)
 }
 __setup("align_va_addr", control_va_addr_alignment);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 SYSCALL_DEFINE6(mmap, unsigned long, addr, unsigned long, len,
 		unsigned long, prot, unsigned long, flags,
 		unsigned long, fd, unsigned long, off)
@@ -98,7 +104,11 @@ out:
 static void find_start_end(unsigned long flags, unsigned long *begin,
 			   unsigned long *end)
 {
+<<<<<<< HEAD
 	if (!test_thread_flag(TIF_ADDR32) && (flags & MAP_32BIT)) {
+=======
+	if (!test_thread_flag(TIF_IA32) && (flags & MAP_32BIT)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned long new_begin;
 		/* This is usually used needed to map code in small
 		   model, so it needs to be in the first 31bit. Limit
@@ -144,7 +154,11 @@ arch_get_unmapped_area(struct file *filp, unsigned long addr,
 		    (!vma || addr + len <= vma->vm_start))
 			return addr;
 	}
+<<<<<<< HEAD
 	if (((flags & MAP_32BIT) || test_thread_flag(TIF_ADDR32))
+=======
+	if (((flags & MAP_32BIT) || test_thread_flag(TIF_IA32))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    && len <= mm->cached_hole_size) {
 		mm->cached_hole_size = 0;
 		mm->free_area_cache = begin;
@@ -155,9 +169,12 @@ arch_get_unmapped_area(struct file *filp, unsigned long addr,
 	start_addr = addr;
 
 full_search:
+<<<<<<< HEAD
 
 	addr = align_addr(addr, filp, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (vma = find_vma(mm, addr); ; vma = vma->vm_next) {
 		/* At this point:  (!vma || addr < vma->vm_end). */
 		if (end - len < addr) {
@@ -183,7 +200,10 @@ full_search:
 			mm->cached_hole_size = vma->vm_start - addr;
 
 		addr = vma->vm_end;
+<<<<<<< HEAD
 		addr = align_addr(addr, filp, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -195,7 +215,11 @@ arch_get_unmapped_area_topdown(struct file *filp, const unsigned long addr0,
 {
 	struct vm_area_struct *vma;
 	struct mm_struct *mm = current->mm;
+<<<<<<< HEAD
 	unsigned long addr = addr0, start_addr;
+=======
+	unsigned long addr = addr0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* requested length too big for entire address space */
 	if (len > TASK_SIZE)
@@ -205,7 +229,11 @@ arch_get_unmapped_area_topdown(struct file *filp, const unsigned long addr0,
 		return addr;
 
 	/* for MAP_32BIT mappings we force the legact mmap base */
+<<<<<<< HEAD
 	if (!test_thread_flag(TIF_ADDR32) && (flags & MAP_32BIT))
+=======
+	if (!test_thread_flag(TIF_IA32) && (flags & MAP_32BIT))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto bottomup;
 
 	/* requesting a specific address */
@@ -223,6 +251,7 @@ arch_get_unmapped_area_topdown(struct file *filp, const unsigned long addr0,
 		mm->free_area_cache = mm->mmap_base;
 	}
 
+<<<<<<< HEAD
 try_again:
 	/* either no address requested or can't fit in requested address hole */
 	start_addr = addr = mm->free_area_cache;
@@ -234,6 +263,25 @@ try_again:
 	do {
 		addr = align_addr(addr, filp, ALIGN_TOPDOWN);
 
+=======
+	/* either no address requested or can't fit in requested address hole */
+	addr = mm->free_area_cache;
+
+	/* make sure it can fit in the remaining address space */
+	if (addr > len) {
+		vma = find_vma(mm, addr-len);
+		if (!vma || addr <= vma->vm_start)
+			/* remember the address as a hint for next time */
+			return mm->free_area_cache = addr-len;
+	}
+
+	if (mm->mmap_base < len)
+		goto bottomup;
+
+	addr = mm->mmap_base-len;
+
+	do {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Lookup failure means no vma is above this address,
 		 * else if new region fits below vma->vm_start,
@@ -252,6 +300,7 @@ try_again:
 		addr = vma->vm_start-len;
 	} while (len < vma->vm_start);
 
+<<<<<<< HEAD
 fail:
 	/*
 	 * if hint left us with no space for the requested
@@ -263,6 +312,8 @@ fail:
 		goto try_again;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bottomup:
 	/*
 	 * A failed mmap() very likely causes application failure,

@@ -57,9 +57,16 @@ static const struct contec_board contec_boards[] = {
 
 #define PCI_DEVICE_ID_PIO1616L 0x8172
 static DEFINE_PCI_DEVICE_TABLE(contec_pci_table) = {
+<<<<<<< HEAD
 	{ PCI_DEVICE(PCI_VENDOR_ID_CONTEC, PCI_DEVICE_ID_PIO1616L),
 		.driver_data = PIO1616L },
 	{0}
+=======
+	{
+	PCI_VENDOR_ID_CONTEC, PCI_DEVICE_ID_PIO1616L, PCI_ANY_ID,
+		    PCI_ANY_ID, 0, 0, PIO1616L}, {
+	0}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 MODULE_DEVICE_TABLE(pci, contec_pci_table);
@@ -196,8 +203,13 @@ static int contec_do_insn_bits(struct comedi_device *dev,
 			       struct comedi_insn *insn, unsigned int *data)
 {
 
+<<<<<<< HEAD
 	dev_dbg(dev->hw_dev, "contec_do_insn_bits called\n");
 	dev_dbg(dev->hw_dev, "data: %d %d\n", data[0], data[1]);
+=======
+	printk("contec_do_insn_bits called\n");
+	printk(" data: %d %d\n", data[0], data[1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (insn->n != 2)
 		return -EINVAL;
@@ -205,8 +217,13 @@ static int contec_do_insn_bits(struct comedi_device *dev,
 	if (data[0]) {
 		s->state &= ~data[0];
 		s->state |= data[0] & data[1];
+<<<<<<< HEAD
 		dev_dbg(dev->hw_dev, "out: %d on %lx\n", s->state,
 			dev->iobase + thisboard->out_offs);
+=======
+		printk("  out: %d on %lx\n", s->state,
+		       dev->iobase + thisboard->out_offs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		outw(s->state, dev->iobase + thisboard->out_offs);
 	}
 	return 2;
@@ -217,8 +234,13 @@ static int contec_di_insn_bits(struct comedi_device *dev,
 			       struct comedi_insn *insn, unsigned int *data)
 {
 
+<<<<<<< HEAD
 	dev_dbg(dev->hw_dev, "contec_di_insn_bits called\n");
 	dev_dbg(dev->hw_dev, "data: %d %d\n", data[0], data[1]);
+=======
+	printk("contec_di_insn_bits called\n");
+	printk(" data: %d %d\n", data[0], data[1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (insn->n != 2)
 		return -EINVAL;

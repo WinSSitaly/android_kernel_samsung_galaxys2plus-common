@@ -102,7 +102,10 @@
 #include <linux/nmi.h>
 #include <linux/delay.h>
 #include <linux/kthread.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define v1printk(a...) do { \
 	if (verbose) \

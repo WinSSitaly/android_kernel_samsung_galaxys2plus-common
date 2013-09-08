@@ -32,6 +32,7 @@
 
 #include <linux/slab.h>
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/spinlock.h>
 #include <linux/vmalloc.h>
 #include <linux/export.h>
@@ -65,6 +66,15 @@ struct xenbus_ring_ops {
 };
 
 static const struct xenbus_ring_ops *ring_ops __read_mostly;
+=======
+#include <linux/vmalloc.h>
+#include <asm/xen/hypervisor.h>
+#include <xen/interface/xen.h>
+#include <xen/interface/event_channel.h>
+#include <xen/events.h>
+#include <xen/grant_table.h>
+#include <xen/xenbus.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 const char *xenbus_strstate(enum xenbus_state state)
 {
@@ -460,6 +470,7 @@ EXPORT_SYMBOL_GPL(xenbus_free_evtchn);
  */
 int xenbus_map_ring_valloc(struct xenbus_device *dev, int gnt_ref, void **vaddr)
 {
+<<<<<<< HEAD
 	return ring_ops->map(dev, gnt_ref, vaddr);
 }
 EXPORT_SYMBOL_GPL(xenbus_map_ring_valloc);
@@ -489,29 +500,55 @@ static int xenbus_map_ring_valloc_pv(struct xenbus_device *dev,
 	}
 
 	op.host_addr = arbitrary_virt_to_machine(pte).maddr;
+=======
+	struct gnttab_map_grant_ref op = {
+		.flags = GNTMAP_host_map,
+		.ref   = gnt_ref,
+		.dom   = dev->otherend_id,
+	};
+	struct vm_struct *area;
+
+	*vaddr = NULL;
+
+	area = xen_alloc_vm_area(PAGE_SIZE);
+	if (!area)
+		return -ENOMEM;
+
+	op.host_addr = (unsigned long)area->addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (HYPERVISOR_grant_table_op(GNTTABOP_map_grant_ref, &op, 1))
 		BUG();
 
 	if (op.status != GNTST_okay) {
+<<<<<<< HEAD
 		free_vm_area(area);
 		kfree(node);
+=======
+		xen_free_vm_area(area);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		xenbus_dev_fatal(dev, op.status,
 				 "mapping in shared page %d from domain %d",
 				 gnt_ref, dev->otherend_id);
 		return op.status;
 	}
 
+<<<<<<< HEAD
 	node->handle = op.handle;
 	node->area = area;
 
 	spin_lock(&xenbus_valloc_lock);
 	list_add(&node->next, &xenbus_valloc_pages);
 	spin_unlock(&xenbus_valloc_lock);
+=======
+	/* Stuff the handle in an unused field */
+	area->phys_addr = (unsigned long)op.handle;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	*vaddr = area->addr;
 	return 0;
 }
+<<<<<<< HEAD
 
 static int xenbus_map_ring_valloc_hvm(struct xenbus_device *dev,
 				      int gnt_ref, void **vaddr)
@@ -548,6 +585,9 @@ static int xenbus_map_ring_valloc_hvm(struct xenbus_device *dev,
 	kfree(node);
 	return err;
 }
+=======
+EXPORT_SYMBOL_GPL(xenbus_map_ring_valloc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /**
@@ -567,10 +607,19 @@ static int xenbus_map_ring_valloc_hvm(struct xenbus_device *dev,
 int xenbus_map_ring(struct xenbus_device *dev, int gnt_ref,
 		    grant_handle_t *handle, void *vaddr)
 {
+<<<<<<< HEAD
 	struct gnttab_map_grant_ref op;
 
 	gnttab_set_map_op(&op, (unsigned long)vaddr, GNTMAP_host_map, gnt_ref,
 			  dev->otherend_id);
+=======
+	struct gnttab_map_grant_ref op = {
+		.host_addr = (unsigned long)vaddr,
+		.flags     = GNTMAP_host_map,
+		.ref       = gnt_ref,
+		.dom       = dev->otherend_id,
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (HYPERVISOR_grant_table_op(GNTTABOP_map_grant_ref, &op, 1))
 		BUG();
@@ -601,6 +650,7 @@ EXPORT_SYMBOL_GPL(xenbus_map_ring);
  */
 int xenbus_unmap_ring_vfree(struct xenbus_device *dev, void *vaddr)
 {
+<<<<<<< HEAD
 	return ring_ops->unmap(dev, vaddr);
 }
 EXPORT_SYMBOL_GPL(xenbus_unmap_ring_vfree);
@@ -625,19 +675,45 @@ static int xenbus_unmap_ring_vfree_pv(struct xenbus_device *dev, void *vaddr)
 	spin_unlock(&xenbus_valloc_lock);
 
 	if (!node) {
+=======
+	struct vm_struct *area;
+	struct gnttab_unmap_grant_ref op = {
+		.host_addr = (unsigned long)vaddr,
+	};
+
+	/* It'd be nice if linux/vmalloc.h provided a find_vm_area(void *addr)
+	 * method so that we don't have to muck with vmalloc internals here.
+	 * We could force the user to hang on to their struct vm_struct from
+	 * xenbus_map_ring_valloc, but these 6 lines considerably simplify
+	 * this API.
+	 */
+	read_lock(&vmlist_lock);
+	for (area = vmlist; area != NULL; area = area->next) {
+		if (area->addr == vaddr)
+			break;
+	}
+	read_unlock(&vmlist_lock);
+
+	if (!area) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		xenbus_dev_error(dev, -ENOENT,
 				 "can't find mapped virtual address %p", vaddr);
 		return GNTST_bad_virt_addr;
 	}
 
+<<<<<<< HEAD
 	op.handle = node->handle;
 	op.host_addr = arbitrary_virt_to_machine(
 		lookup_address((unsigned long)vaddr, &level)).maddr;
+=======
+	op.handle = (grant_handle_t)area->phys_addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (HYPERVISOR_grant_table_op(GNTTABOP_unmap_grant_ref, &op, 1))
 		BUG();
 
 	if (op.status == GNTST_okay)
+<<<<<<< HEAD
 		free_vm_area(node->area);
 	else
 		xenbus_dev_error(dev, op.status,
@@ -682,6 +758,18 @@ static int xenbus_unmap_ring_vfree_hvm(struct xenbus_device *dev, void *vaddr)
 	kfree(node);
 	return rv;
 }
+=======
+		xen_free_vm_area(area);
+	else
+		xenbus_dev_error(dev, op.status,
+				 "unmapping page at handle %d error %d",
+				 (int16_t)area->phys_addr, op.status);
+
+	return op.status;
+}
+EXPORT_SYMBOL_GPL(xenbus_unmap_ring_vfree);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * xenbus_unmap_ring
@@ -696,9 +784,16 @@ static int xenbus_unmap_ring_vfree_hvm(struct xenbus_device *dev, void *vaddr)
 int xenbus_unmap_ring(struct xenbus_device *dev,
 		      grant_handle_t handle, void *vaddr)
 {
+<<<<<<< HEAD
 	struct gnttab_unmap_grant_ref op;
 
 	gnttab_set_unmap_op(&op, (unsigned long)vaddr, GNTMAP_host_map, handle);
+=======
+	struct gnttab_unmap_grant_ref op = {
+		.host_addr = (unsigned long)vaddr,
+		.handle    = handle,
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (HYPERVISOR_grant_table_op(GNTTABOP_unmap_grant_ref, &op, 1))
 		BUG();
@@ -730,6 +825,7 @@ enum xenbus_state xenbus_read_driver_state(const char *path)
 	return result;
 }
 EXPORT_SYMBOL_GPL(xenbus_read_driver_state);
+<<<<<<< HEAD
 
 static const struct xenbus_ring_ops ring_ops_pv = {
 	.map = xenbus_map_ring_valloc_pv,
@@ -748,3 +844,5 @@ void __init xenbus_ring_ops_init(void)
 	else
 		ring_ops = &ring_ops_hvm;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

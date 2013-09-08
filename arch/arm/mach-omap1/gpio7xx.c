@@ -39,6 +39,7 @@ static struct __initdata resource omap7xx_mpu_gpio_resources[] = {
 	},
 };
 
+<<<<<<< HEAD
 static struct omap_gpio_reg_offs omap7xx_mpuio_regs = {
 	.revision	= USHRT_MAX,
 	.direction	= OMAP_MPUIO_IO_CNTL / 2,
@@ -56,6 +57,13 @@ static struct __initdata omap_gpio_platform_data omap7xx_mpu_gpio_config = {
 	.bank_width		= 16,
 	.bank_stride		= 2,
 	.regs                   = &omap7xx_mpuio_regs,
+=======
+static struct __initdata omap_gpio_platform_data omap7xx_mpu_gpio_config = {
+	.virtual_irq_start	= IH_MPUIO_BASE,
+	.bank_type		= METHOD_MPUIO,
+	.bank_width		= 32,
+	.bank_stride		= 2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device omap7xx_mpu_gpio = {
@@ -81,6 +89,7 @@ static struct __initdata resource omap7xx_gpio1_resources[] = {
 	},
 };
 
+<<<<<<< HEAD
 static struct omap_gpio_reg_offs omap7xx_gpio_regs = {
 	.revision	= USHRT_MAX,
 	.direction	= OMAP7XX_GPIO_DIR_CONTROL,
@@ -96,6 +105,12 @@ static struct __initdata omap_gpio_platform_data omap7xx_gpio1_config = {
 	.virtual_irq_start	= IH_GPIO_BASE,
 	.bank_width		= 32,
 	.regs			= &omap7xx_gpio_regs,
+=======
+static struct __initdata omap_gpio_platform_data omap7xx_gpio1_config = {
+	.virtual_irq_start	= IH_GPIO_BASE,
+	.bank_type		= METHOD_GPIO_7XX,
+	.bank_width		= 32,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device omap7xx_gpio1 = {
@@ -123,8 +138,13 @@ static struct __initdata resource omap7xx_gpio2_resources[] = {
 
 static struct __initdata omap_gpio_platform_data omap7xx_gpio2_config = {
 	.virtual_irq_start	= IH_GPIO_BASE + 32,
+<<<<<<< HEAD
 	.bank_width		= 32,
 	.regs			= &omap7xx_gpio_regs,
+=======
+	.bank_type		= METHOD_GPIO_7XX,
+	.bank_width		= 32,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device omap7xx_gpio2 = {
@@ -152,8 +172,13 @@ static struct __initdata resource omap7xx_gpio3_resources[] = {
 
 static struct __initdata omap_gpio_platform_data omap7xx_gpio3_config = {
 	.virtual_irq_start	= IH_GPIO_BASE + 64,
+<<<<<<< HEAD
 	.bank_width		= 32,
 	.regs			= &omap7xx_gpio_regs,
+=======
+	.bank_type		= METHOD_GPIO_7XX,
+	.bank_width		= 32,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device omap7xx_gpio3 = {
@@ -181,8 +206,13 @@ static struct __initdata resource omap7xx_gpio4_resources[] = {
 
 static struct __initdata omap_gpio_platform_data omap7xx_gpio4_config = {
 	.virtual_irq_start	= IH_GPIO_BASE + 96,
+<<<<<<< HEAD
 	.bank_width		= 32,
 	.regs			= &omap7xx_gpio_regs,
+=======
+	.bank_type		= METHOD_GPIO_7XX,
+	.bank_width		= 32,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device omap7xx_gpio4 = {
@@ -210,8 +240,13 @@ static struct __initdata resource omap7xx_gpio5_resources[] = {
 
 static struct __initdata omap_gpio_platform_data omap7xx_gpio5_config = {
 	.virtual_irq_start	= IH_GPIO_BASE + 128,
+<<<<<<< HEAD
 	.bank_width		= 32,
 	.regs			= &omap7xx_gpio_regs,
+=======
+	.bank_type		= METHOD_GPIO_7XX,
+	.bank_width		= 32,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device omap7xx_gpio5 = {
@@ -239,8 +274,13 @@ static struct __initdata resource omap7xx_gpio6_resources[] = {
 
 static struct __initdata omap_gpio_platform_data omap7xx_gpio6_config = {
 	.virtual_irq_start	= IH_GPIO_BASE + 160,
+<<<<<<< HEAD
 	.bank_width		= 32,
 	.regs			= &omap7xx_gpio_regs,
+=======
+	.bank_type		= METHOD_GPIO_7XX,
+	.bank_width		= 32,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device omap7xx_gpio6 = {
@@ -278,6 +318,11 @@ static int __init omap7xx_gpio_init(void)
 	for (i = 0; i < ARRAY_SIZE(omap7xx_gpio_dev); i++)
 		platform_device_register(omap7xx_gpio_dev[i]);
 
+<<<<<<< HEAD
+=======
+	gpio_bank_count = ARRAY_SIZE(omap7xx_gpio_dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 postcore_initcall(omap7xx_gpio_init);

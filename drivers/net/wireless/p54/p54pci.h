@@ -1,6 +1,9 @@
 #ifndef P54PCI_H
 #define P54PCI_H
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Defines for PCI based mac80211 Prism54 driver

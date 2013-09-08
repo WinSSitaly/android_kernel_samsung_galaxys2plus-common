@@ -4,7 +4,11 @@
  *  Copyright (C) 2008 Thomas Gleixner <tglx@linutronix.de>
  *  Copyright (C) 2008-2011 Red Hat, Inc., Ingo Molnar
  *  Copyright (C) 2008-2011 Red Hat, Inc., Peter Zijlstra <pzijlstr@redhat.com>
+<<<<<<< HEAD
  *  Copyright  Â©  2009 Paul Mackerras, IBM Corp. <paulus@au1.ibm.com>
+=======
+ *  Copyright  ©  2009 Paul Mackerras, IBM Corp. <paulus@au1.ibm.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * For licensing details see kernel-base/COPYING
  */
@@ -25,7 +29,10 @@
 #include <linux/reboot.h>
 #include <linux/vmstat.h>
 #include <linux/device.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/vmalloc.h>
 #include <linux/hardirq.h>
 #include <linux/rculist.h>
@@ -37,8 +44,11 @@
 #include <linux/ftrace_event.h>
 #include <linux/hw_breakpoint.h>
 
+<<<<<<< HEAD
 #include "internal.h"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/irq_regs.h>
 
 struct remote_function_call {
@@ -118,6 +128,7 @@ static int cpu_function_call(int cpu, int (*func) (void *info), void *info)
 		       PERF_FLAG_FD_OUTPUT  |\
 		       PERF_FLAG_PID_CGROUP)
 
+<<<<<<< HEAD
 /*
  * branch priv levels that need permission checks
  */
@@ -125,6 +136,8 @@ static int cpu_function_call(int cpu, int (*func) (void *info), void *info)
 	(PERF_SAMPLE_BRANCH_KERNEL |\
 	 PERF_SAMPLE_BRANCH_HV)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum event_type_t {
 	EVENT_FLEXIBLE = 0x1,
 	EVENT_PINNED = 0x2,
@@ -135,9 +148,14 @@ enum event_type_t {
  * perf_sched_events : >0 events exist
  * perf_cgroup_events: >0 per-cpu cgroup events exist on this cpu
  */
+<<<<<<< HEAD
 struct static_key_deferred perf_sched_events __read_mostly;
 static DEFINE_PER_CPU(atomic_t, perf_cgroup_events);
 static DEFINE_PER_CPU(atomic_t, perf_branch_stack_events);
+=======
+struct jump_label_key perf_sched_events __read_mostly;
+static DEFINE_PER_CPU(atomic_t, perf_cgroup_events);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static atomic_t nr_mmap_events __read_mostly;
 static atomic_t nr_comm_events __read_mostly;
@@ -211,6 +229,7 @@ __get_cpu_context(struct perf_event_context *ctx)
 	return this_cpu_ptr(ctx->pmu->pmu_cpu_context);
 }
 
+<<<<<<< HEAD
 static void perf_ctx_lock(struct perf_cpu_context *cpuctx,
 			  struct perf_event_context *ctx)
 {
@@ -227,6 +246,8 @@ static void perf_ctx_unlock(struct perf_cpu_context *cpuctx,
 	raw_spin_unlock(&cpuctx->ctx.lock);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_CGROUP_PERF
 
 /*
@@ -250,9 +271,15 @@ perf_cgroup_match(struct perf_event *event)
 	return !event->cgrp || event->cgrp == cpuctx->cgrp;
 }
 
+<<<<<<< HEAD
 static inline bool perf_tryget_cgroup(struct perf_event *event)
 {
 	return css_tryget(&event->cgrp->css);
+=======
+static inline void perf_get_cgroup(struct perf_event *event)
+{
+	css_get(&event->cgrp->css);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void perf_put_cgroup(struct perf_event *event)
@@ -367,9 +394,16 @@ void perf_cgroup_switch(struct task_struct *task, int mode)
 	rcu_read_lock();
 
 	list_for_each_entry_rcu(pmu, &pmus, entry) {
+<<<<<<< HEAD
 		cpuctx = this_cpu_ptr(pmu->pmu_cpu_context);
 		if (cpuctx->unique_pmu != pmu)
 			continue; /* ensure we process each cpuctx once */
+=======
+
+		cpuctx = this_cpu_ptr(pmu->pmu_cpu_context);
+
+		perf_pmu_disable(cpuctx->ctx.pmu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * perf_cgroup_events says at least one
@@ -379,8 +413,11 @@ void perf_cgroup_switch(struct task_struct *task, int mode)
 		 * events for a context.
 		 */
 		if (cpuctx->ctx.nr_cgroups > 0) {
+<<<<<<< HEAD
 			perf_ctx_lock(cpuctx, cpuctx->task_ctx);
 			perf_pmu_disable(cpuctx->ctx.pmu);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (mode & PERF_CGROUP_SWOUT) {
 				cpu_ctx_sched_out(cpuctx, EVENT_ALL);
@@ -393,17 +430,29 @@ void perf_cgroup_switch(struct task_struct *task, int mode)
 
 			if (mode & PERF_CGROUP_SWIN) {
 				WARN_ON_ONCE(cpuctx->cgrp);
+<<<<<<< HEAD
 				/*
 				 * set cgrp before ctxsw in to allow
 				 * event_filter_match() to not have to pass
 				 * task around
+=======
+				/* set cgrp before ctxsw in to
+				 * allow event_filter_match() to not
+				 * have to pass task around
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 */
 				cpuctx->cgrp = perf_cgroup_from_task(task);
 				cpu_ctx_sched_in(cpuctx, EVENT_ALL, task);
 			}
+<<<<<<< HEAD
 			perf_pmu_enable(cpuctx->ctx.pmu);
 			perf_ctx_unlock(cpuctx, cpuctx->task_ctx);
 		}
+=======
+		}
+
+		perf_pmu_enable(cpuctx->ctx.pmu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	rcu_read_unlock();
@@ -411,6 +460,7 @@ void perf_cgroup_switch(struct task_struct *task, int mode)
 	local_irq_restore(flags);
 }
 
+<<<<<<< HEAD
 static inline void perf_cgroup_sched_out(struct task_struct *task,
 					 struct task_struct *next)
 {
@@ -459,6 +509,16 @@ static inline void perf_cgroup_sched_in(struct task_struct *prev,
 	 */
 	if (cgrp1 != cgrp2)
 		perf_cgroup_switch(task, PERF_CGROUP_SWIN);
+=======
+static inline void perf_cgroup_sched_out(struct task_struct *task)
+{
+	perf_cgroup_switch(task, PERF_CGROUP_SWOUT);
+}
+
+static inline void perf_cgroup_sched_in(struct task_struct *task)
+{
+	perf_cgroup_switch(task, PERF_CGROUP_SWIN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int perf_cgroup_connect(int fd, struct perf_event *event,
@@ -484,11 +544,15 @@ static inline int perf_cgroup_connect(int fd, struct perf_event *event,
 	event->cgrp = cgrp;
 
 	/* must be done before we fput() the file */
+<<<<<<< HEAD
 	if (!perf_tryget_cgroup(event)) {
 		event->cgrp = NULL;
 		ret = -ENOENT;
 		goto out;
 	}
+=======
+	perf_get_cgroup(event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * all events in a group must monitor
@@ -574,6 +638,7 @@ static inline void update_cgrp_time_from_cpuctx(struct perf_cpu_context *cpuctx)
 {
 }
 
+<<<<<<< HEAD
 static inline void perf_cgroup_sched_out(struct task_struct *task,
 					 struct task_struct *next)
 {
@@ -581,6 +646,13 @@ static inline void perf_cgroup_sched_out(struct task_struct *task,
 
 static inline void perf_cgroup_sched_in(struct task_struct *prev,
 					struct task_struct *task)
+=======
+static inline void perf_cgroup_sched_out(struct task_struct *task)
+{
+}
+
+static inline void perf_cgroup_sched_in(struct task_struct *task)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 }
 
@@ -726,6 +798,7 @@ perf_lock_task_context(struct task_struct *task, int ctxn, unsigned long *flags)
 {
 	struct perf_event_context *ctx;
 
+<<<<<<< HEAD
 retry:
 	/*
 	 * One of the few rules of preemptible RCU is that one cannot do
@@ -738,6 +811,10 @@ retry:
 	 */
 	preempt_disable();
 	rcu_read_lock();
+=======
+	rcu_read_lock();
+retry:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ctx = rcu_dereference(task->perf_event_ctxp[ctxn]);
 	if (ctx) {
 		/*
@@ -753,8 +830,11 @@ retry:
 		raw_spin_lock_irqsave(&ctx->lock, *flags);
 		if (ctx != rcu_dereference(task->perf_event_ctxp[ctxn])) {
 			raw_spin_unlock_irqrestore(&ctx->lock, *flags);
+<<<<<<< HEAD
 			rcu_read_unlock();
 			preempt_enable();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto retry;
 		}
 
@@ -764,7 +844,10 @@ retry:
 		}
 	}
 	rcu_read_unlock();
+<<<<<<< HEAD
 	preempt_enable();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ctx;
 }
 
@@ -819,7 +902,10 @@ static u64 perf_event_time(struct perf_event *event)
 
 /*
  * Update the total_time_enabled and total_time_running fields for a event.
+<<<<<<< HEAD
  * The caller of this function needs to hold the ctx->lock.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void update_event_times(struct perf_event *event)
 {
@@ -840,7 +926,11 @@ static void update_event_times(struct perf_event *event)
 	 * here.
 	 */
 	if (is_cgroup_event(event))
+<<<<<<< HEAD
 		run_end = perf_cgroup_event_time(event);
+=======
+		run_end = perf_event_time(event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else if (ctx->is_active)
 		run_end = ctx->time;
 	else
@@ -906,9 +996,12 @@ list_add_event(struct perf_event *event, struct perf_event_context *ctx)
 	if (is_cgroup_event(event))
 		ctx->nr_cgroups++;
 
+<<<<<<< HEAD
 	if (has_branch_stack(event))
 		ctx->nr_branch_stack++;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_add_rcu(&event->event_entry, &ctx->event_list);
 	if (!ctx->nr_events)
 		perf_pmu_rotate_start(ctx->pmu);
@@ -918,6 +1011,7 @@ list_add_event(struct perf_event *event, struct perf_event_context *ctx)
 }
 
 /*
+<<<<<<< HEAD
  * Initialize event state based on the perf_event_attr::disabled.
  */
 static inline void perf_event__state_init(struct perf_event *event)
@@ -927,6 +1021,8 @@ static inline void perf_event__state_init(struct perf_event *event)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Called at perf_event creation and when events are attached/detached from a
  * group.
  */
@@ -1057,9 +1153,12 @@ list_del_event(struct perf_event *event, struct perf_event_context *ctx)
 			cpuctx->cgrp = NULL;
 	}
 
+<<<<<<< HEAD
 	if (has_branch_stack(event))
 		ctx->nr_branch_stack--;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ctx->nr_events--;
 	if (event->attr.inherit_stat)
 		ctx->nr_stat--;
@@ -1170,8 +1269,11 @@ event_sched_out(struct perf_event *event,
 	if (!is_software_event(event))
 		cpuctx->active_oncpu--;
 	ctx->nr_active--;
+<<<<<<< HEAD
 	if (event->attr.freq && event->attr.sample_freq)
 		ctx->nr_freq--;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (event->attr.exclusive || !cpuctx->active_oncpu)
 		cpuctx->exclusive = 0;
 }
@@ -1211,10 +1313,13 @@ static int __perf_remove_from_context(void *info)
 	raw_spin_lock(&ctx->lock);
 	event_sched_out(event, cpuctx, ctx);
 	list_del_event(event, ctx);
+<<<<<<< HEAD
 	if (!ctx->nr_events && cpuctx->task_ctx == ctx) {
 		ctx->is_active = 0;
 		cpuctx->task_ctx = NULL;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	raw_spin_unlock(&ctx->lock);
 
 	return 0;
@@ -1367,7 +1472,10 @@ retry:
 	}
 	raw_spin_unlock_irq(&ctx->lock);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(perf_event_disable);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void perf_set_shadow_time(struct perf_event *event,
 				 struct perf_event_context *ctx,
@@ -1449,8 +1557,11 @@ event_sched_in(struct perf_event *event,
 	if (!is_software_event(event))
 		cpuctx->active_oncpu++;
 	ctx->nr_active++;
+<<<<<<< HEAD
 	if (event->attr.freq && event->attr.sample_freq)
 		ctx->nr_freq++;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (event->attr.exclusive)
 		cpuctx->exclusive = 1;
@@ -1567,6 +1678,7 @@ static void add_event_to_ctx(struct perf_event *event,
 	event->tstamp_stopped = tstamp;
 }
 
+<<<<<<< HEAD
 static void task_ctx_sched_out(struct perf_event_context *ctx);
 static void
 ctx_sched_in(struct perf_event_context *ctx,
@@ -1585,6 +1697,10 @@ static void perf_event_sched_in(struct perf_cpu_context *cpuctx,
 	if (ctx)
 		ctx_sched_in(ctx, cpuctx, EVENT_FLEXIBLE, task);
 }
+=======
+static void perf_event_context_sched_in(struct perf_event_context *ctx,
+					struct task_struct *tsk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Cross CPU call to install and enable a performance event
@@ -1595,6 +1711,7 @@ static int  __perf_install_in_context(void *info)
 {
 	struct perf_event *event = info;
 	struct perf_event_context *ctx = event->ctx;
+<<<<<<< HEAD
 	struct perf_cpu_context *cpuctx = __get_cpu_context(ctx);
 	struct perf_event_context *task_ctx = cpuctx->task_ctx;
 	struct task_struct *task = current;
@@ -1626,6 +1743,22 @@ static int  __perf_install_in_context(void *info)
 
 	cpu_ctx_sched_out(cpuctx, EVENT_ALL);
 
+=======
+	struct perf_event *leader = event->group_leader;
+	struct perf_cpu_context *cpuctx = __get_cpu_context(ctx);
+	int err;
+
+	/*
+	 * In case we're installing a new context to an already running task,
+	 * could also happen before perf_event_task_sched_in() on architectures
+	 * which do context switches with IRQs enabled.
+	 */
+	if (ctx->task && !cpuctx->task_ctx)
+		perf_event_context_sched_in(ctx, ctx->task);
+
+	raw_spin_lock(&ctx->lock);
+	ctx->is_active = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	update_context_time(ctx);
 	/*
 	 * update cgrp time only if current cgrp
@@ -1636,6 +1769,7 @@ static int  __perf_install_in_context(void *info)
 
 	add_event_to_ctx(event, ctx);
 
+<<<<<<< HEAD
 	/*
 	 * Schedule everything back in
 	 */
@@ -1643,6 +1777,45 @@ static int  __perf_install_in_context(void *info)
 
 	perf_pmu_enable(cpuctx->ctx.pmu);
 	perf_ctx_unlock(cpuctx, task_ctx);
+=======
+	if (!event_filter_match(event))
+		goto unlock;
+
+	/*
+	 * Don't put the event on if it is disabled or if
+	 * it is in a group and the group isn't on.
+	 */
+	if (event->state != PERF_EVENT_STATE_INACTIVE ||
+	    (leader != event && leader->state != PERF_EVENT_STATE_ACTIVE))
+		goto unlock;
+
+	/*
+	 * An exclusive event can't go on if there are already active
+	 * hardware events, and no hardware event can go on if there
+	 * is already an exclusive event on.
+	 */
+	if (!group_can_go_on(event, cpuctx, 1))
+		err = -EEXIST;
+	else
+		err = event_sched_in(event, cpuctx, ctx);
+
+	if (err) {
+		/*
+		 * This event couldn't go on.  If it is in a group
+		 * then we have to pull the whole group off.
+		 * If the event group is pinned then put it in error state.
+		 */
+		if (leader != event)
+			group_sched_out(leader, cpuctx, ctx);
+		if (leader->attr.pinned) {
+			update_group_times(leader);
+			leader->state = PERF_EVENT_STATE_ERROR;
+		}
+	}
+
+unlock:
+	raw_spin_unlock(&ctx->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1707,7 +1880,12 @@ retry:
  * Note: this works for group members as well as group leaders
  * since the non-leader members' sibling_lists will be empty.
  */
+<<<<<<< HEAD
 static void __perf_event_mark_enabled(struct perf_event *event)
+=======
+static void __perf_event_mark_enabled(struct perf_event *event,
+					struct perf_event_context *ctx)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct perf_event *sub;
 	u64 tstamp = perf_event_time(event);
@@ -1731,6 +1909,7 @@ static int __perf_event_enable(void *info)
 	struct perf_cpu_context *cpuctx = __get_cpu_context(ctx);
 	int err;
 
+<<<<<<< HEAD
 	/*
 	 * There's a time window between 'ctx->is_active' check
 	 * in perf_event_enable function and this place having:
@@ -1741,6 +1920,9 @@ static int __perf_event_enable(void *info)
 	 * by perf_event_exit_task.
 	 */
 	if (!ctx->is_active)
+=======
+	if (WARN_ON_ONCE(!ctx->is_active))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	raw_spin_lock(&ctx->lock);
@@ -1754,7 +1936,11 @@ static int __perf_event_enable(void *info)
 	 */
 	perf_cgroup_set_timestamp(current, ctx);
 
+<<<<<<< HEAD
 	__perf_event_mark_enabled(event);
+=======
+	__perf_event_mark_enabled(event, ctx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!event_filter_match(event)) {
 		if (is_cgroup_event(event))
@@ -1835,7 +2021,11 @@ void perf_event_enable(struct perf_event *event)
 
 retry:
 	if (!ctx->is_active) {
+<<<<<<< HEAD
 		__perf_event_mark_enabled(event);
+=======
+		__perf_event_mark_enabled(event, ctx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
@@ -1862,9 +2052,14 @@ retry:
 out:
 	raw_spin_unlock_irq(&ctx->lock);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(perf_event_enable);
 
 int perf_event_refresh(struct perf_event *event, int refresh)
+=======
+
+static int perf_event_refresh(struct perf_event *event, int refresh)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * not supported on inherited events
@@ -1877,13 +2072,17 @@ int perf_event_refresh(struct perf_event *event, int refresh)
 
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(perf_event_refresh);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void ctx_sched_out(struct perf_event_context *ctx,
 			  struct perf_cpu_context *cpuctx,
 			  enum event_type_t event_type)
 {
 	struct perf_event *event;
+<<<<<<< HEAD
 	int is_active = ctx->is_active;
 
 	ctx->is_active &= ~event_type;
@@ -1897,15 +2096,40 @@ static void ctx_sched_out(struct perf_event_context *ctx,
 
 	perf_pmu_disable(ctx->pmu);
 	if ((is_active & EVENT_PINNED) && (event_type & EVENT_PINNED)) {
+=======
+
+	raw_spin_lock(&ctx->lock);
+	perf_pmu_disable(ctx->pmu);
+	ctx->is_active = 0;
+	if (likely(!ctx->nr_events))
+		goto out;
+	update_context_time(ctx);
+	update_cgrp_time_from_cpuctx(cpuctx);
+
+	if (!ctx->nr_active)
+		goto out;
+
+	if (event_type & EVENT_PINNED) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_for_each_entry(event, &ctx->pinned_groups, group_entry)
 			group_sched_out(event, cpuctx, ctx);
 	}
 
+<<<<<<< HEAD
 	if ((is_active & EVENT_FLEXIBLE) && (event_type & EVENT_FLEXIBLE)) {
 		list_for_each_entry(event, &ctx->flexible_groups, group_entry)
 			group_sched_out(event, cpuctx, ctx);
 	}
 	perf_pmu_enable(ctx->pmu);
+=======
+	if (event_type & EVENT_FLEXIBLE) {
+		list_for_each_entry(event, &ctx->flexible_groups, group_entry)
+			group_sched_out(event, cpuctx, ctx);
+	}
+out:
+	perf_pmu_enable(ctx->pmu);
+	raw_spin_unlock(&ctx->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2053,10 +2277,15 @@ static void perf_event_context_sched_out(struct task_struct *task, int ctxn,
 	rcu_read_unlock();
 
 	if (do_switch) {
+<<<<<<< HEAD
 		raw_spin_lock(&ctx->lock);
 		ctx_sched_out(ctx, cpuctx, EVENT_ALL);
 		cpuctx->task_ctx = NULL;
 		raw_spin_unlock(&ctx->lock);
+=======
+		ctx_sched_out(ctx, cpuctx, EVENT_ALL);
+		cpuctx->task_ctx = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -2088,10 +2317,18 @@ void __perf_event_task_sched_out(struct task_struct *task,
 	 * cgroup event are system-wide mode only
 	 */
 	if (atomic_read(&__get_cpu_var(perf_cgroup_events)))
+<<<<<<< HEAD
 		perf_cgroup_sched_out(task, next);
 }
 
 static void task_ctx_sched_out(struct perf_event_context *ctx)
+=======
+		perf_cgroup_sched_out(task);
+}
+
+static void task_ctx_sched_out(struct perf_event_context *ctx,
+			       enum event_type_t event_type)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct perf_cpu_context *cpuctx = __get_cpu_context(ctx);
 
@@ -2101,7 +2338,11 @@ static void task_ctx_sched_out(struct perf_event_context *ctx)
 	if (WARN_ON_ONCE(ctx != cpuctx->task_ctx))
 		return;
 
+<<<<<<< HEAD
 	ctx_sched_out(ctx, cpuctx, EVENT_ALL);
+=======
+	ctx_sched_out(ctx, cpuctx, event_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cpuctx->task_ctx = NULL;
 }
 
@@ -2180,11 +2421,19 @@ ctx_sched_in(struct perf_event_context *ctx,
 	     struct task_struct *task)
 {
 	u64 now;
+<<<<<<< HEAD
 	int is_active = ctx->is_active;
 
 	ctx->is_active |= event_type;
 	if (likely(!ctx->nr_events))
 		return;
+=======
+
+	raw_spin_lock(&ctx->lock);
+	ctx->is_active = 1;
+	if (likely(!ctx->nr_events))
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	now = perf_clock();
 	ctx->timestamp = now;
@@ -2193,12 +2442,24 @@ ctx_sched_in(struct perf_event_context *ctx,
 	 * First go through the list and put on any pinned groups
 	 * in order to give them the best chance of going on.
 	 */
+<<<<<<< HEAD
 	if (!(is_active & EVENT_PINNED) && (event_type & EVENT_PINNED))
 		ctx_pinned_sched_in(ctx, cpuctx);
 
 	/* Then walk through the lower prio flexible groups */
 	if (!(is_active & EVENT_FLEXIBLE) && (event_type & EVENT_FLEXIBLE))
 		ctx_flexible_sched_in(ctx, cpuctx);
+=======
+	if (event_type & EVENT_PINNED)
+		ctx_pinned_sched_in(ctx, cpuctx);
+
+	/* Then walk through the lower prio flexible groups */
+	if (event_type & EVENT_FLEXIBLE)
+		ctx_flexible_sched_in(ctx, cpuctx);
+
+out:
+	raw_spin_unlock(&ctx->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void cpu_ctx_sched_in(struct perf_cpu_context *cpuctx,
@@ -2210,6 +2471,22 @@ static void cpu_ctx_sched_in(struct perf_cpu_context *cpuctx,
 	ctx_sched_in(ctx, cpuctx, event_type, task);
 }
 
+<<<<<<< HEAD
+=======
+static void task_ctx_sched_in(struct perf_event_context *ctx,
+			      enum event_type_t event_type)
+{
+	struct perf_cpu_context *cpuctx;
+
+	cpuctx = __get_cpu_context(ctx);
+	if (cpuctx->task_ctx == ctx)
+		return;
+
+	ctx_sched_in(ctx, cpuctx, event_type, NULL);
+	cpuctx->task_ctx = ctx;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void perf_event_context_sched_in(struct perf_event_context *ctx,
 					struct task_struct *task)
 {
@@ -2219,7 +2496,10 @@ static void perf_event_context_sched_in(struct perf_event_context *ctx,
 	if (cpuctx->task_ctx == ctx)
 		return;
 
+<<<<<<< HEAD
 	perf_ctx_lock(cpuctx, ctx);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	perf_pmu_disable(ctx->pmu);
 	/*
 	 * We want to keep the following priority order:
@@ -2228,6 +2508,7 @@ static void perf_event_context_sched_in(struct perf_event_context *ctx,
 	 */
 	cpu_ctx_sched_out(cpuctx, EVENT_FLEXIBLE);
 
+<<<<<<< HEAD
 	if (ctx->nr_events)
 		cpuctx->task_ctx = ctx;
 
@@ -2235,12 +2516,20 @@ static void perf_event_context_sched_in(struct perf_event_context *ctx,
 
 	perf_pmu_enable(ctx->pmu);
 	perf_ctx_unlock(cpuctx, ctx);
+=======
+	ctx_sched_in(ctx, cpuctx, EVENT_PINNED, task);
+	cpu_ctx_sched_in(cpuctx, EVENT_FLEXIBLE, task);
+	ctx_sched_in(ctx, cpuctx, EVENT_FLEXIBLE, task);
+
+	cpuctx->task_ctx = ctx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Since these rotations are per-cpu, we need to ensure the
 	 * cpu-context we got scheduled on is actually rotating.
 	 */
 	perf_pmu_rotate_start(ctx->pmu);
+<<<<<<< HEAD
 }
 
 /*
@@ -2301,6 +2590,9 @@ static void perf_branch_stack_sched_in(struct task_struct *prev,
 	rcu_read_unlock();
 
 	local_irq_restore(flags);
+=======
+	perf_pmu_enable(ctx->pmu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2314,8 +2606,12 @@ static void perf_branch_stack_sched_in(struct task_struct *prev,
  * accessing the event control register. If a NMI hits, then it will
  * keep the event running.
  */
+<<<<<<< HEAD
 void __perf_event_task_sched_in(struct task_struct *prev,
 				struct task_struct *task)
+=======
+void __perf_event_task_sched_in(struct task_struct *task)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct perf_event_context *ctx;
 	int ctxn;
@@ -2333,11 +2629,15 @@ void __perf_event_task_sched_in(struct task_struct *prev,
 	 * cgroup event are system-wide mode only
 	 */
 	if (atomic_read(&__get_cpu_var(perf_cgroup_events)))
+<<<<<<< HEAD
 		perf_cgroup_sched_in(prev, task);
 
 	/* check for system-wide branch_stack events */
 	if (atomic_read(&__get_cpu_var(perf_branch_stack_events)))
 		perf_branch_stack_sched_in(prev, task);
+=======
+		perf_cgroup_sched_in(task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static u64 perf_calculate_period(struct perf_event *event, u64 nsec, u64 count)
@@ -2413,10 +2713,14 @@ do {					\
 	return div64_u64(dividend, divisor);
 }
 
+<<<<<<< HEAD
 static DEFINE_PER_CPU(int, perf_throttled_count);
 static DEFINE_PER_CPU(u64, perf_throttled_seq);
 
 static void perf_adjust_period(struct perf_event *event, u64 nsec, u64 count, bool disable)
+=======
+static void perf_adjust_period(struct perf_event *event, u64 nsec, u64 count)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hw_perf_event *hwc = &event->hw;
 	s64 period, sample_period;
@@ -2435,6 +2739,7 @@ static void perf_adjust_period(struct perf_event *event, u64 nsec, u64 count, bo
 	hwc->sample_period = sample_period;
 
 	if (local64_read(&hwc->period_left) > 8*sample_period) {
+<<<<<<< HEAD
 		if (disable)
 			event->pmu->stop(event, PERF_EF_UPDATE);
 
@@ -2469,6 +2774,22 @@ static void perf_adjust_freq_unthr_context(struct perf_event_context *ctx,
 	raw_spin_lock(&ctx->lock);
 	perf_pmu_disable(ctx->pmu);
 
+=======
+		event->pmu->stop(event, PERF_EF_UPDATE);
+		local64_set(&hwc->period_left, 0);
+		event->pmu->start(event, PERF_EF_RELOAD);
+	}
+}
+
+static void perf_ctx_adjust_freq(struct perf_event_context *ctx, u64 period)
+{
+	struct perf_event *event;
+	struct hw_perf_event *hwc;
+	u64 interrupts, now;
+	s64 delta;
+
+	raw_spin_lock(&ctx->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
 		if (event->state != PERF_EVENT_STATE_ACTIVE)
 			continue;
@@ -2478,8 +2799,18 @@ static void perf_adjust_freq_unthr_context(struct perf_event_context *ctx,
 
 		hwc = &event->hw;
 
+<<<<<<< HEAD
 		if (needs_unthr && hwc->interrupts == MAX_INTERRUPTS) {
 			hwc->interrupts = 0;
+=======
+		interrupts = hwc->interrupts;
+		hwc->interrupts = 0;
+
+		/*
+		 * unthrottle events on the tick
+		 */
+		if (interrupts == MAX_INTERRUPTS) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			perf_log_throttle(event, 1);
 			event->pmu->start(event, 0);
 		}
@@ -2487,15 +2818,20 @@ static void perf_adjust_freq_unthr_context(struct perf_event_context *ctx,
 		if (!event->attr.freq || !event->attr.sample_freq)
 			continue;
 
+<<<<<<< HEAD
 		/*
 		 * stop the event and update event->count
 		 */
 		event->pmu->stop(event, PERF_EF_UPDATE);
 
+=======
+		event->pmu->read(event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		now = local64_read(&event->count);
 		delta = now - hwc->freq_count_stamp;
 		hwc->freq_count_stamp = now;
 
+<<<<<<< HEAD
 		/*
 		 * restart the event
 		 * reload only if value has changed
@@ -2510,6 +2846,11 @@ static void perf_adjust_freq_unthr_context(struct perf_event_context *ctx,
 	}
 
 	perf_pmu_enable(ctx->pmu);
+=======
+		if (delta > 0)
+			perf_adjust_period(event, period, delta);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	raw_spin_unlock(&ctx->lock);
 }
 
@@ -2518,12 +2859,22 @@ static void perf_adjust_freq_unthr_context(struct perf_event_context *ctx,
  */
 static void rotate_ctx(struct perf_event_context *ctx)
 {
+<<<<<<< HEAD
+=======
+	raw_spin_lock(&ctx->lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Rotate the first entry last of non-pinned groups. Rotation might be
 	 * disabled by the inheritance code.
 	 */
 	if (!ctx->rotate_disable)
 		list_rotate_left(&ctx->flexible_groups);
+<<<<<<< HEAD
+=======
+
+	raw_spin_unlock(&ctx->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2533,6 +2884,10 @@ static void rotate_ctx(struct perf_event_context *ctx)
  */
 static void perf_rotate_context(struct perf_cpu_context *cpuctx)
 {
+<<<<<<< HEAD
+=======
+	u64 interval = (u64)cpuctx->jiffies_interval * TICK_NSEC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct perf_event_context *ctx = NULL;
 	int rotate = 0, remove = 1;
 
@@ -2549,6 +2904,7 @@ static void perf_rotate_context(struct perf_cpu_context *cpuctx)
 			rotate = 1;
 	}
 
+<<<<<<< HEAD
 	if (!rotate)
 		goto done;
 
@@ -2558,11 +2914,25 @@ static void perf_rotate_context(struct perf_cpu_context *cpuctx)
 	cpu_ctx_sched_out(cpuctx, EVENT_FLEXIBLE);
 	if (ctx)
 		ctx_sched_out(ctx, cpuctx, EVENT_FLEXIBLE);
+=======
+	perf_pmu_disable(cpuctx->ctx.pmu);
+	perf_ctx_adjust_freq(&cpuctx->ctx, interval);
+	if (ctx)
+		perf_ctx_adjust_freq(ctx, interval);
+
+	if (!rotate)
+		goto done;
+
+	cpu_ctx_sched_out(cpuctx, EVENT_FLEXIBLE);
+	if (ctx)
+		task_ctx_sched_out(ctx, EVENT_FLEXIBLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rotate_ctx(&cpuctx->ctx);
 	if (ctx)
 		rotate_ctx(ctx);
 
+<<<<<<< HEAD
 	perf_event_sched_in(cpuctx, ctx, current);
 
 	perf_pmu_enable(cpuctx->ctx.pmu);
@@ -2570,12 +2940,24 @@ static void perf_rotate_context(struct perf_cpu_context *cpuctx)
 done:
 	if (remove)
 		list_del_init(&cpuctx->rotation_list);
+=======
+	cpu_ctx_sched_in(cpuctx, EVENT_FLEXIBLE, current);
+	if (ctx)
+		task_ctx_sched_in(ctx, EVENT_FLEXIBLE);
+
+done:
+	if (remove)
+		list_del_init(&cpuctx->rotation_list);
+
+	perf_pmu_enable(cpuctx->ctx.pmu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void perf_event_task_tick(void)
 {
 	struct list_head *head = &__get_cpu_var(rotation_list);
 	struct perf_cpu_context *cpuctx, *tmp;
+<<<<<<< HEAD
 	struct perf_event_context *ctx;
 	int throttled;
 
@@ -2592,6 +2974,12 @@ void perf_event_task_tick(void)
 		if (ctx)
 			perf_adjust_freq_unthr_context(ctx, throttled);
 
+=======
+
+	WARN_ON(!irqs_disabled());
+
+	list_for_each_entry_safe(cpuctx, tmp, head, rotation_list) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (cpuctx->jiffies_interval == 1 ||
 				!(jiffies % cpuctx->jiffies_interval))
 			perf_rotate_context(cpuctx);
@@ -2608,7 +2996,11 @@ static int event_enable_on_exec(struct perf_event *event,
 	if (event->state >= PERF_EVENT_STATE_INACTIVE)
 		return 0;
 
+<<<<<<< HEAD
 	__perf_event_mark_enabled(event);
+=======
+	__perf_event_mark_enabled(event, ctx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 1;
 }
@@ -2635,12 +3027,27 @@ static void perf_event_enable_on_exec(struct perf_event_context *ctx)
 	 * ctxswin cgroup events which are already scheduled
 	 * in.
 	 */
+<<<<<<< HEAD
 	perf_cgroup_sched_out(current, NULL);
 
 	raw_spin_lock(&ctx->lock);
 	task_ctx_sched_out(ctx);
 
 	list_for_each_entry(event, &ctx->event_list, event_entry) {
+=======
+	perf_cgroup_sched_out(current);
+	task_ctx_sched_out(ctx, EVENT_ALL);
+
+	raw_spin_lock(&ctx->lock);
+
+	list_for_each_entry(event, &ctx->pinned_groups, group_entry) {
+		ret = event_enable_on_exec(event, ctx);
+		if (ret)
+			enabled = 1;
+	}
+
+	list_for_each_entry(event, &ctx->flexible_groups, group_entry) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = event_enable_on_exec(event, ctx);
 		if (ret)
 			enabled = 1;
@@ -2728,6 +3135,7 @@ static u64 perf_event_read(struct perf_event *event)
 }
 
 /*
+<<<<<<< HEAD
  * Initialize the perf_event context in a task_struct:
  */
 static void __perf_event_init_context(struct perf_event_context *ctx)
@@ -2761,6 +3169,250 @@ alloc_perf_context(struct pmu *pmu, struct task_struct *task)
 
 static struct task_struct *
 find_lively_task_by_vpid(pid_t vpid)
+=======
+ * Callchain support
+ */
+
+struct callchain_cpus_entries {
+	struct rcu_head			rcu_head;
+	struct perf_callchain_entry	*cpu_entries[0];
+};
+
+static DEFINE_PER_CPU(int, callchain_recursion[PERF_NR_CONTEXTS]);
+static atomic_t nr_callchain_events;
+static DEFINE_MUTEX(callchain_mutex);
+struct callchain_cpus_entries *callchain_cpus_entries;
+
+
+__weak void perf_callchain_kernel(struct perf_callchain_entry *entry,
+				  struct pt_regs *regs)
+{
+}
+
+__weak void perf_callchain_user(struct perf_callchain_entry *entry,
+				struct pt_regs *regs)
+{
+}
+
+static void release_callchain_buffers_rcu(struct rcu_head *head)
+{
+	struct callchain_cpus_entries *entries;
+	int cpu;
+
+	entries = container_of(head, struct callchain_cpus_entries, rcu_head);
+
+	for_each_possible_cpu(cpu)
+		kfree(entries->cpu_entries[cpu]);
+
+	kfree(entries);
+}
+
+static void release_callchain_buffers(void)
+{
+	struct callchain_cpus_entries *entries;
+
+	entries = callchain_cpus_entries;
+	rcu_assign_pointer(callchain_cpus_entries, NULL);
+	call_rcu(&entries->rcu_head, release_callchain_buffers_rcu);
+}
+
+static int alloc_callchain_buffers(void)
+{
+	int cpu;
+	int size;
+	struct callchain_cpus_entries *entries;
+
+	/*
+	 * We can't use the percpu allocation API for data that can be
+	 * accessed from NMI. Use a temporary manual per cpu allocation
+	 * until that gets sorted out.
+	 */
+	size = offsetof(struct callchain_cpus_entries, cpu_entries[nr_cpu_ids]);
+
+	entries = kzalloc(size, GFP_KERNEL);
+	if (!entries)
+		return -ENOMEM;
+
+	size = sizeof(struct perf_callchain_entry) * PERF_NR_CONTEXTS;
+
+	for_each_possible_cpu(cpu) {
+		entries->cpu_entries[cpu] = kmalloc_node(size, GFP_KERNEL,
+							 cpu_to_node(cpu));
+		if (!entries->cpu_entries[cpu])
+			goto fail;
+	}
+
+	rcu_assign_pointer(callchain_cpus_entries, entries);
+
+	return 0;
+
+fail:
+	for_each_possible_cpu(cpu)
+		kfree(entries->cpu_entries[cpu]);
+	kfree(entries);
+
+	return -ENOMEM;
+}
+
+static int get_callchain_buffers(void)
+{
+	int err = 0;
+	int count;
+
+	mutex_lock(&callchain_mutex);
+
+	count = atomic_inc_return(&nr_callchain_events);
+	if (WARN_ON_ONCE(count < 1)) {
+		err = -EINVAL;
+		goto exit;
+	}
+
+	if (count > 1) {
+		/* If the allocation failed, give up */
+		if (!callchain_cpus_entries)
+			err = -ENOMEM;
+		goto exit;
+	}
+
+	err = alloc_callchain_buffers();
+	if (err)
+		release_callchain_buffers();
+exit:
+	mutex_unlock(&callchain_mutex);
+
+	return err;
+}
+
+static void put_callchain_buffers(void)
+{
+	if (atomic_dec_and_mutex_lock(&nr_callchain_events, &callchain_mutex)) {
+		release_callchain_buffers();
+		mutex_unlock(&callchain_mutex);
+	}
+}
+
+static int get_recursion_context(int *recursion)
+{
+	int rctx;
+
+	if (in_nmi())
+		rctx = 3;
+	else if (in_irq())
+		rctx = 2;
+	else if (in_softirq())
+		rctx = 1;
+	else
+		rctx = 0;
+
+	if (recursion[rctx])
+		return -1;
+
+	recursion[rctx]++;
+	barrier();
+
+	return rctx;
+}
+
+static inline void put_recursion_context(int *recursion, int rctx)
+{
+	barrier();
+	recursion[rctx]--;
+}
+
+static struct perf_callchain_entry *get_callchain_entry(int *rctx)
+{
+	int cpu;
+	struct callchain_cpus_entries *entries;
+
+	*rctx = get_recursion_context(__get_cpu_var(callchain_recursion));
+	if (*rctx == -1)
+		return NULL;
+
+	entries = rcu_dereference(callchain_cpus_entries);
+	if (!entries)
+		return NULL;
+
+	cpu = smp_processor_id();
+
+	return &entries->cpu_entries[cpu][*rctx];
+}
+
+static void
+put_callchain_entry(int rctx)
+{
+	put_recursion_context(__get_cpu_var(callchain_recursion), rctx);
+}
+
+static struct perf_callchain_entry *perf_callchain(struct pt_regs *regs)
+{
+	int rctx;
+	struct perf_callchain_entry *entry;
+
+
+	entry = get_callchain_entry(&rctx);
+	if (rctx == -1)
+		return NULL;
+
+	if (!entry)
+		goto exit_put;
+
+	entry->nr = 0;
+
+	if (!user_mode(regs)) {
+		perf_callchain_store(entry, PERF_CONTEXT_KERNEL);
+		perf_callchain_kernel(entry, regs);
+		if (current->mm)
+			regs = task_pt_regs(current);
+		else
+			regs = NULL;
+	}
+
+	if (regs) {
+		perf_callchain_store(entry, PERF_CONTEXT_USER);
+		perf_callchain_user(entry, regs);
+	}
+
+exit_put:
+	put_callchain_entry(rctx);
+
+	return entry;
+}
+
+/*
+ * Initialize the perf_event context in a task_struct:
+ */
+static void __perf_event_init_context(struct perf_event_context *ctx)
+{
+	raw_spin_lock_init(&ctx->lock);
+	mutex_init(&ctx->mutex);
+	INIT_LIST_HEAD(&ctx->pinned_groups);
+	INIT_LIST_HEAD(&ctx->flexible_groups);
+	INIT_LIST_HEAD(&ctx->event_list);
+	atomic_set(&ctx->refcount, 1);
+}
+
+static struct perf_event_context *
+alloc_perf_context(struct pmu *pmu, struct task_struct *task)
+{
+	struct perf_event_context *ctx;
+
+	ctx = kzalloc(sizeof(struct perf_event_context), GFP_KERNEL);
+	if (!ctx)
+		return NULL;
+
+	__perf_event_init_context(ctx);
+	if (task) {
+		ctx->task = task;
+		get_task_struct(task);
+	}
+	ctx->pmu = pmu;
+
+	return ctx;
+}
+
+static struct task_struct *
+find_lively_task_by_vpid(pid_t vpid)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct task_struct *task;
 	int err;
@@ -2832,12 +3484,23 @@ retry:
 		unclone_ctx(ctx);
 		++ctx->pin_count;
 		raw_spin_unlock_irqrestore(&ctx->lock, flags);
+<<<<<<< HEAD
 	} else {
+=======
+	}
+
+	if (!ctx) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ctx = alloc_perf_context(pmu, task);
 		err = -ENOMEM;
 		if (!ctx)
 			goto errout;
 
+<<<<<<< HEAD
+=======
+		get_ctx(ctx);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = 0;
 		mutex_lock(&task->perf_event_mutex);
 		/*
@@ -2849,14 +3512,22 @@ retry:
 		else if (task->perf_event_ctxp[ctxn])
 			err = -EAGAIN;
 		else {
+<<<<<<< HEAD
 			get_ctx(ctx);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			++ctx->pin_count;
 			rcu_assign_pointer(task->perf_event_ctxp[ctxn], ctx);
 		}
 		mutex_unlock(&task->perf_event_mutex);
 
 		if (unlikely(err)) {
+<<<<<<< HEAD
 			put_ctx(ctx);
+=======
+			put_task_struct(task);
+			kfree(ctx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (err == -EAGAIN)
 				goto retry;
@@ -2883,8 +3554,12 @@ static void free_event_rcu(struct rcu_head *head)
 	kfree(event);
 }
 
+<<<<<<< HEAD
 static void ring_buffer_put(struct ring_buffer *rb);
 static void ring_buffer_detach(struct perf_event *event, struct ring_buffer *rb);
+=======
+static void perf_buffer_put(struct perf_buffer *buffer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void free_event(struct perf_event *event)
 {
@@ -2892,7 +3567,11 @@ static void free_event(struct perf_event *event)
 
 	if (!event->parent) {
 		if (event->attach_state & PERF_ATTACH_TASK)
+<<<<<<< HEAD
 			static_key_slow_dec_deferred(&perf_sched_events);
+=======
+			jump_label_dec(&perf_sched_events);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (event->attr.mmap || event->attr.mmap_data)
 			atomic_dec(&nr_mmap_events);
 		if (event->attr.comm)
@@ -2903,6 +3582,7 @@ static void free_event(struct perf_event *event)
 			put_callchain_buffers();
 		if (is_cgroup_event(event)) {
 			atomic_dec(&per_cpu(perf_cgroup_events, event->cpu));
+<<<<<<< HEAD
 			static_key_slow_dec_deferred(&perf_sched_events);
 		}
 
@@ -2933,6 +3613,15 @@ static void free_event(struct perf_event *event)
 			ring_buffer_put(rb); /* could be last */
 		}
 		mutex_unlock(&event->mmap_mutex);
+=======
+			jump_label_dec(&perf_sched_events);
+		}
+	}
+
+	if (event->buffer) {
+		perf_buffer_put(event->buffer);
+		event->buffer = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (is_cgroup_event(event))
@@ -2951,6 +3640,15 @@ int perf_event_release_kernel(struct perf_event *event)
 {
 	struct perf_event_context *ctx = event->ctx;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * Remove from the PMU, can't get re-enabled since we got
+	 * here because the last ref went.
+	 */
+	perf_event_disable(event);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	WARN_ON_ONCE(ctx->parent_ctx);
 	/*
 	 * There are two ways this annotation is useful:
@@ -2967,8 +3665,13 @@ int perf_event_release_kernel(struct perf_event *event)
 	mutex_lock_nested(&ctx->mutex, SINGLE_DEPTH_NESTING);
 	raw_spin_lock_irq(&ctx->lock);
 	perf_group_detach(event);
+<<<<<<< HEAD
 	raw_spin_unlock_irq(&ctx->lock);
 	perf_remove_from_context(event);
+=======
+	list_del_event(event, ctx);
+	raw_spin_unlock_irq(&ctx->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&ctx->mutex);
 
 	free_event(event);
@@ -2980,12 +3683,21 @@ EXPORT_SYMBOL_GPL(perf_event_release_kernel);
 /*
  * Called when the last reference to the file is gone.
  */
+<<<<<<< HEAD
 static void put_event(struct perf_event *event)
 {
 	struct task_struct *owner;
 
 	if (!atomic_long_dec_and_test(&event->refcount))
 		return;
+=======
+static int perf_release(struct inode *inode, struct file *file)
+{
+	struct perf_event *event = file->private_data;
+	struct task_struct *owner;
+
+	file->private_data = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rcu_read_lock();
 	owner = ACCESS_ONCE(event->owner);
@@ -3020,6 +3732,7 @@ static void put_event(struct perf_event *event)
 		put_task_struct(owner);
 	}
 
+<<<<<<< HEAD
 	perf_event_release_kernel(event);
 }
 
@@ -3027,6 +3740,9 @@ static int perf_release(struct inode *inode, struct file *file)
 {
 	put_event(file->private_data);
 	return 0;
+=======
+	return perf_event_release_kernel(event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 u64 perf_event_read_value(struct perf_event *event, u64 *enabled, u64 *running)
@@ -3166,6 +3882,7 @@ perf_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
 static unsigned int perf_poll(struct file *file, poll_table *wait)
 {
 	struct perf_event *event = file->private_data;
+<<<<<<< HEAD
 	struct ring_buffer *rb;
 	unsigned int events = POLL_HUP;
 
@@ -3178,6 +3895,16 @@ static unsigned int perf_poll(struct file *file, poll_table *wait)
 	if (rb)
 		events = atomic_xchg(&rb->poll, 0);
 	mutex_unlock(&event->mmap_mutex);
+=======
+	struct perf_buffer *buffer;
+	unsigned int events = POLL_HUP;
+
+	rcu_read_lock();
+	buffer = rcu_dereference(event->buffer);
+	if (buffer)
+		events = atomic_xchg(&buffer->poll, 0);
+	rcu_read_unlock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	poll_wait(file, &event->waitq, wait);
 
@@ -3223,7 +3950,11 @@ static void perf_event_for_each(struct perf_event *event,
 	perf_event_for_each_child(event, func);
 	func(event);
 	list_for_each_entry(sibling, &event->sibling_list, group_entry)
+<<<<<<< HEAD
 		perf_event_for_each_child(sibling, func);
+=======
+		perf_event_for_each_child(event, func);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&ctx->mutex);
 }
 
@@ -3262,7 +3993,11 @@ unlock:
 
 static const struct file_operations perf_fops;
 
+<<<<<<< HEAD
 static struct file *perf_fget_light(int fd, int *fput_needed)
+=======
+static struct perf_event *perf_fget_light(int fd, int *fput_needed)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct file *file;
 
@@ -3276,7 +4011,11 @@ static struct file *perf_fget_light(int fd, int *fput_needed)
 		return ERR_PTR(-EBADF);
 	}
 
+<<<<<<< HEAD
 	return file;
+=======
+	return file->private_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int perf_event_set_output(struct perf_event *event,
@@ -3308,21 +4047,34 @@ static long perf_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 
 	case PERF_EVENT_IOC_SET_OUTPUT:
 	{
+<<<<<<< HEAD
 		struct file *output_file = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct perf_event *output_event = NULL;
 		int fput_needed = 0;
 		int ret;
 
 		if (arg != -1) {
+<<<<<<< HEAD
 			output_file = perf_fget_light(arg, &fput_needed);
 			if (IS_ERR(output_file))
 				return PTR_ERR(output_file);
 			output_event = output_file->private_data;
+=======
+			output_event = perf_fget_light(arg, &fput_needed);
+			if (IS_ERR(output_event))
+				return PTR_ERR(output_event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		ret = perf_event_set_output(event, output_event);
 		if (output_event)
+<<<<<<< HEAD
 			fput_light(output_file, fput_needed);
+=======
+			fput_light(output_event->filp, fput_needed);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		return ret;
 	}
@@ -3366,6 +4118,13 @@ int perf_event_task_disable(void)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+#ifndef PERF_EVENT_INDEX_OFFSET
+# define PERF_EVENT_INDEX_OFFSET 0
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int perf_event_index(struct perf_event *event)
 {
 	if (event->hw.state & PERF_HES_STOPPED)
@@ -3374,6 +4133,7 @@ static int perf_event_index(struct perf_event *event)
 	if (event->state != PERF_EVENT_STATE_ACTIVE)
 		return 0;
 
+<<<<<<< HEAD
 	return event->pmu->event_idx(event);
 }
 
@@ -3392,6 +4152,9 @@ static void calc_timer_values(struct perf_event *event,
 
 void __weak arch_perf_update_userpage(struct perf_event_mmap_page *userpg, u64 now)
 {
+=======
+	return event->hw.idx + 1 - PERF_EVENT_INDEX_OFFSET;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -3402,6 +4165,7 @@ void __weak arch_perf_update_userpage(struct perf_event_mmap_page *userpg, u64 n
 void perf_event_update_userpage(struct perf_event *event)
 {
 	struct perf_event_mmap_page *userpg;
+<<<<<<< HEAD
 	struct ring_buffer *rb;
 	u64 enabled, running, now;
 
@@ -3421,6 +4185,16 @@ void perf_event_update_userpage(struct perf_event *event)
 		goto unlock;
 
 	userpg = rb->user_page;
+=======
+	struct perf_buffer *buffer;
+
+	rcu_read_lock();
+	buffer = rcu_dereference(event->buffer);
+	if (!buffer)
+		goto unlock;
+
+	userpg = buffer->user_page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Disable preemption so as to not let the corresponding user-space
@@ -3431,6 +4205,7 @@ void perf_event_update_userpage(struct perf_event *event)
 	barrier();
 	userpg->index = perf_event_index(event);
 	userpg->offset = perf_event_count(event);
+<<<<<<< HEAD
 	if (userpg->index)
 		userpg->offset -= local64_read(&event->hw.prev_count);
 
@@ -3442,6 +4217,17 @@ void perf_event_update_userpage(struct perf_event *event)
 
 	arch_perf_update_userpage(userpg, now);
 
+=======
+	if (event->state == PERF_EVENT_STATE_ACTIVE)
+		userpg->offset -= local64_read(&event->hw.prev_count);
+
+	userpg->time_enabled = event->total_time_enabled +
+			atomic64_read(&event->child_total_time_enabled);
+
+	userpg->time_running = event->total_time_running +
+			atomic64_read(&event->child_total_time_running);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	barrier();
 	++userpg->lock;
 	preempt_enable();
@@ -3449,10 +4235,227 @@ unlock:
 	rcu_read_unlock();
 }
 
+<<<<<<< HEAD
 static int perf_mmap_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
 {
 	struct perf_event *event = vma->vm_file->private_data;
 	struct ring_buffer *rb;
+=======
+static unsigned long perf_data_size(struct perf_buffer *buffer);
+
+static void
+perf_buffer_init(struct perf_buffer *buffer, long watermark, int flags)
+{
+	long max_size = perf_data_size(buffer);
+
+	if (watermark)
+		buffer->watermark = min(max_size, watermark);
+
+	if (!buffer->watermark)
+		buffer->watermark = max_size / 2;
+
+	if (flags & PERF_BUFFER_WRITABLE)
+		buffer->writable = 1;
+
+	atomic_set(&buffer->refcount, 1);
+}
+
+#ifndef CONFIG_PERF_USE_VMALLOC
+
+/*
+ * Back perf_mmap() with regular GFP_KERNEL-0 pages.
+ */
+
+static struct page *
+perf_mmap_to_page(struct perf_buffer *buffer, unsigned long pgoff)
+{
+	if (pgoff > buffer->nr_pages)
+		return NULL;
+
+	if (pgoff == 0)
+		return virt_to_page(buffer->user_page);
+
+	return virt_to_page(buffer->data_pages[pgoff - 1]);
+}
+
+static void *perf_mmap_alloc_page(int cpu)
+{
+	struct page *page;
+	int node;
+
+	node = (cpu == -1) ? cpu : cpu_to_node(cpu);
+	page = alloc_pages_node(node, GFP_KERNEL | __GFP_ZERO, 0);
+	if (!page)
+		return NULL;
+
+	return page_address(page);
+}
+
+static struct perf_buffer *
+perf_buffer_alloc(int nr_pages, long watermark, int cpu, int flags)
+{
+	struct perf_buffer *buffer;
+	unsigned long size;
+	int i;
+
+	size = sizeof(struct perf_buffer);
+	size += nr_pages * sizeof(void *);
+
+	buffer = kzalloc(size, GFP_KERNEL);
+	if (!buffer)
+		goto fail;
+
+	buffer->user_page = perf_mmap_alloc_page(cpu);
+	if (!buffer->user_page)
+		goto fail_user_page;
+
+	for (i = 0; i < nr_pages; i++) {
+		buffer->data_pages[i] = perf_mmap_alloc_page(cpu);
+		if (!buffer->data_pages[i])
+			goto fail_data_pages;
+	}
+
+	buffer->nr_pages = nr_pages;
+
+	perf_buffer_init(buffer, watermark, flags);
+
+	return buffer;
+
+fail_data_pages:
+	for (i--; i >= 0; i--)
+		free_page((unsigned long)buffer->data_pages[i]);
+
+	free_page((unsigned long)buffer->user_page);
+
+fail_user_page:
+	kfree(buffer);
+
+fail:
+	return NULL;
+}
+
+static void perf_mmap_free_page(unsigned long addr)
+{
+	struct page *page = virt_to_page((void *)addr);
+
+	page->mapping = NULL;
+	__free_page(page);
+}
+
+static void perf_buffer_free(struct perf_buffer *buffer)
+{
+	int i;
+
+	perf_mmap_free_page((unsigned long)buffer->user_page);
+	for (i = 0; i < buffer->nr_pages; i++)
+		perf_mmap_free_page((unsigned long)buffer->data_pages[i]);
+	kfree(buffer);
+}
+
+static inline int page_order(struct perf_buffer *buffer)
+{
+	return 0;
+}
+
+#else
+
+/*
+ * Back perf_mmap() with vmalloc memory.
+ *
+ * Required for architectures that have d-cache aliasing issues.
+ */
+
+static inline int page_order(struct perf_buffer *buffer)
+{
+	return buffer->page_order;
+}
+
+static struct page *
+perf_mmap_to_page(struct perf_buffer *buffer, unsigned long pgoff)
+{
+	if (pgoff > (1UL << page_order(buffer)))
+		return NULL;
+
+	return vmalloc_to_page((void *)buffer->user_page + pgoff * PAGE_SIZE);
+}
+
+static void perf_mmap_unmark_page(void *addr)
+{
+	struct page *page = vmalloc_to_page(addr);
+
+	page->mapping = NULL;
+}
+
+static void perf_buffer_free_work(struct work_struct *work)
+{
+	struct perf_buffer *buffer;
+	void *base;
+	int i, nr;
+
+	buffer = container_of(work, struct perf_buffer, work);
+	nr = 1 << page_order(buffer);
+
+	base = buffer->user_page;
+	for (i = 0; i < nr + 1; i++)
+		perf_mmap_unmark_page(base + (i * PAGE_SIZE));
+
+	vfree(base);
+	kfree(buffer);
+}
+
+static void perf_buffer_free(struct perf_buffer *buffer)
+{
+	schedule_work(&buffer->work);
+}
+
+static struct perf_buffer *
+perf_buffer_alloc(int nr_pages, long watermark, int cpu, int flags)
+{
+	struct perf_buffer *buffer;
+	unsigned long size;
+	void *all_buf;
+
+	size = sizeof(struct perf_buffer);
+	size += sizeof(void *);
+
+	buffer = kzalloc(size, GFP_KERNEL);
+	if (!buffer)
+		goto fail;
+
+	INIT_WORK(&buffer->work, perf_buffer_free_work);
+
+	all_buf = vmalloc_user((nr_pages + 1) * PAGE_SIZE);
+	if (!all_buf)
+		goto fail_all_buf;
+
+	buffer->user_page = all_buf;
+	buffer->data_pages[0] = all_buf + PAGE_SIZE;
+	buffer->page_order = ilog2(nr_pages);
+	buffer->nr_pages = 1;
+
+	perf_buffer_init(buffer, watermark, flags);
+
+	return buffer;
+
+fail_all_buf:
+	kfree(buffer);
+
+fail:
+	return NULL;
+}
+
+#endif
+
+static unsigned long perf_data_size(struct perf_buffer *buffer)
+{
+	return buffer->nr_pages << (PAGE_SHIFT + page_order(buffer));
+}
+
+static int perf_mmap_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
+{
+	struct perf_event *event = vma->vm_file->private_data;
+	struct perf_buffer *buffer;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = VM_FAULT_SIGBUS;
 
 	if (vmf->flags & FAULT_FLAG_MKWRITE) {
@@ -3462,14 +4465,23 @@ static int perf_mmap_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
 	}
 
 	rcu_read_lock();
+<<<<<<< HEAD
 	rb = rcu_dereference(event->rb);
 	if (!rb)
+=======
+	buffer = rcu_dereference(event->buffer);
+	if (!buffer)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto unlock;
 
 	if (vmf->pgoff && (vmf->flags & FAULT_FLAG_WRITE))
 		goto unlock;
 
+<<<<<<< HEAD
 	vmf->page = perf_mmap_to_page(rb, vmf->pgoff);
+=======
+	vmf->page = perf_mmap_to_page(buffer, vmf->pgoff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!vmf->page)
 		goto unlock;
 
@@ -3484,6 +4496,7 @@ unlock:
 	return ret;
 }
 
+<<<<<<< HEAD
 static void ring_buffer_attach(struct perf_event *event,
 			       struct ring_buffer *rb)
 {
@@ -3555,6 +4568,37 @@ static void ring_buffer_put(struct ring_buffer *rb)
 	WARN_ON_ONCE(!list_empty(&rb->event_list));
 
 	call_rcu(&rb->rcu_head, rb_free_rcu);
+=======
+static void perf_buffer_free_rcu(struct rcu_head *rcu_head)
+{
+	struct perf_buffer *buffer;
+
+	buffer = container_of(rcu_head, struct perf_buffer, rcu_head);
+	perf_buffer_free(buffer);
+}
+
+static struct perf_buffer *perf_buffer_get(struct perf_event *event)
+{
+	struct perf_buffer *buffer;
+
+	rcu_read_lock();
+	buffer = rcu_dereference(event->buffer);
+	if (buffer) {
+		if (!atomic_inc_not_zero(&buffer->refcount))
+			buffer = NULL;
+	}
+	rcu_read_unlock();
+
+	return buffer;
+}
+
+static void perf_buffer_put(struct perf_buffer *buffer)
+{
+	if (!atomic_dec_and_test(&buffer->refcount))
+		return;
+
+	call_rcu(&buffer->rcu_head, perf_buffer_free_rcu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void perf_mmap_open(struct vm_area_struct *vma)
@@ -3562,6 +4606,7 @@ static void perf_mmap_open(struct vm_area_struct *vma)
 	struct perf_event *event = vma->vm_file->private_data;
 
 	atomic_inc(&event->mmap_count);
+<<<<<<< HEAD
 	atomic_inc(&event->rb->mmap_count);
 }
 
@@ -3573,10 +4618,15 @@ static void perf_mmap_open(struct vm_area_struct *vma)
  * the buffer here, where we still have a VM context. This means we need
  * to detach all events redirecting to us.
  */
+=======
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void perf_mmap_close(struct vm_area_struct *vma)
 {
 	struct perf_event *event = vma->vm_file->private_data;
 
+<<<<<<< HEAD
 	struct ring_buffer *rb = event->rb;
 	struct user_struct *mmap_user = rb->mmap_user;
 	int mmap_locked = rb->mmap_locked;
@@ -3656,6 +4706,21 @@ again:
 	free_uid(mmap_user);
 
 	ring_buffer_put(rb); /* could be last */
+=======
+	if (atomic_dec_and_mutex_lock(&event->mmap_count, &event->mmap_mutex)) {
+		unsigned long size = perf_data_size(event->buffer);
+		struct user_struct *user = event->mmap_user;
+		struct perf_buffer *buffer = event->buffer;
+
+		atomic_long_sub((size >> PAGE_SHIFT) + 1, &user->locked_vm);
+		vma->vm_mm->locked_vm -= event->mmap_locked;
+		rcu_assign_pointer(event->buffer, NULL);
+		mutex_unlock(&event->mmap_mutex);
+
+		perf_buffer_put(buffer);
+		free_uid(user);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct vm_operations_struct perf_mmap_vmops = {
@@ -3671,7 +4736,11 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
 	unsigned long user_locked, user_lock_limit;
 	struct user_struct *user = current_user();
 	unsigned long locked, lock_limit;
+<<<<<<< HEAD
 	struct ring_buffer *rb;
+=======
+	struct perf_buffer *buffer;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long vma_size;
 	unsigned long nr_pages;
 	long user_extra, extra;
@@ -3680,7 +4749,11 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
 	/*
 	 * Don't allow mmap() of inherited per-task counters. This would
 	 * create a performance issue due to all children writing to the
+<<<<<<< HEAD
 	 * same rb.
+=======
+	 * same buffer.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	if (event->cpu == -1 && event->attr.inherit)
 		return -EINVAL;
@@ -3692,7 +4765,11 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
 	nr_pages = (vma_size / PAGE_SIZE) - 1;
 
 	/*
+<<<<<<< HEAD
 	 * If we have rb pages ensure they're a power-of-two number, so we
+=======
+	 * If we have buffer pages ensure they're a power-of-two number, so we
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * can do bitmasks instead of modulo.
 	 */
 	if (nr_pages != 0 && !is_power_of_2(nr_pages))
@@ -3705,6 +4782,7 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
 		return -EINVAL;
 
 	WARN_ON_ONCE(event->ctx->parent_ctx);
+<<<<<<< HEAD
 again:
 	mutex_lock(&event->mmap_mutex);
 	if (event->rb) {
@@ -3723,6 +4801,14 @@ again:
 			goto again;
 		}
 
+=======
+	mutex_lock(&event->mmap_mutex);
+	if (event->buffer) {
+		if (event->buffer->nr_pages == nr_pages)
+			atomic_inc(&event->buffer->refcount);
+		else
+			ret = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto unlock;
 	}
 
@@ -3742,7 +4828,11 @@ again:
 
 	lock_limit = rlimit(RLIMIT_MEMLOCK);
 	lock_limit >>= PAGE_SHIFT;
+<<<<<<< HEAD
 	locked = vma->vm_mm->pinned_vm + extra;
+=======
+	locked = vma->vm_mm->locked_vm + extra;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((locked > lock_limit) && perf_paranoid_tracepoint_raw() &&
 		!capable(CAP_IPC_LOCK)) {
@@ -3750,6 +4840,7 @@ again:
 		goto unlock;
 	}
 
+<<<<<<< HEAD
 	WARN_ON(event->rb);
 
 	if (vma->vm_flags & VM_WRITE)
@@ -3775,17 +4866,40 @@ again:
 	rcu_assign_pointer(event->rb, rb);
 
 	perf_event_update_userpage(event);
+=======
+	WARN_ON(event->buffer);
+
+	if (vma->vm_flags & VM_WRITE)
+		flags |= PERF_BUFFER_WRITABLE;
+
+	buffer = perf_buffer_alloc(nr_pages, event->attr.wakeup_watermark,
+				   event->cpu, flags);
+	if (!buffer) {
+		ret = -ENOMEM;
+		goto unlock;
+	}
+	rcu_assign_pointer(event->buffer, buffer);
+
+	atomic_long_add(user_extra, &user->locked_vm);
+	event->mmap_locked = extra;
+	event->mmap_user = get_current_user();
+	vma->vm_mm->locked_vm += event->mmap_locked;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unlock:
 	if (!ret)
 		atomic_inc(&event->mmap_count);
 	mutex_unlock(&event->mmap_mutex);
 
+<<<<<<< HEAD
 	/*
 	 * Since pinned accounting is per vm we cannot allow fork() to copy our
 	 * vma.
 	 */
 	vma->vm_flags |= VM_DONTCOPY | VM_RESERVED;
+=======
+	vma->vm_flags |= VM_RESERVED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vma->vm_ops = &perf_mmap_vmops;
 
 	return ret;
@@ -3827,7 +4941,11 @@ static const struct file_operations perf_fops = {
 
 void perf_event_wakeup(struct perf_event *event)
 {
+<<<<<<< HEAD
 	ring_buffer_wakeup(event);
+=======
+	wake_up_all(&event->waitq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (event->pending_kill) {
 		kill_fasync(&event->fasync, SIGIO, event->pending_kill);
@@ -3872,6 +4990,120 @@ int perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *cbs)
 }
 EXPORT_SYMBOL_GPL(perf_unregister_guest_info_callbacks);
 
+<<<<<<< HEAD
+=======
+/*
+ * Output
+ */
+static bool perf_output_space(struct perf_buffer *buffer, unsigned long tail,
+			      unsigned long offset, unsigned long head)
+{
+	unsigned long mask;
+
+	if (!buffer->writable)
+		return true;
+
+	mask = perf_data_size(buffer) - 1;
+
+	offset = (offset - tail) & mask;
+	head   = (head   - tail) & mask;
+
+	if ((int)(head - offset) < 0)
+		return false;
+
+	return true;
+}
+
+static void perf_output_wakeup(struct perf_output_handle *handle)
+{
+	atomic_set(&handle->buffer->poll, POLL_IN);
+
+	if (handle->nmi) {
+		handle->event->pending_wakeup = 1;
+		irq_work_queue(&handle->event->pending);
+	} else
+		perf_event_wakeup(handle->event);
+}
+
+/*
+ * We need to ensure a later event_id doesn't publish a head when a former
+ * event isn't done writing. However since we need to deal with NMIs we
+ * cannot fully serialize things.
+ *
+ * We only publish the head (and generate a wakeup) when the outer-most
+ * event completes.
+ */
+static void perf_output_get_handle(struct perf_output_handle *handle)
+{
+	struct perf_buffer *buffer = handle->buffer;
+
+	preempt_disable();
+	local_inc(&buffer->nest);
+	handle->wakeup = local_read(&buffer->wakeup);
+}
+
+static void perf_output_put_handle(struct perf_output_handle *handle)
+{
+	struct perf_buffer *buffer = handle->buffer;
+	unsigned long head;
+
+again:
+	head = local_read(&buffer->head);
+
+	/*
+	 * IRQ/NMI can happen here, which means we can miss a head update.
+	 */
+
+	if (!local_dec_and_test(&buffer->nest))
+		goto out;
+
+	/*
+	 * Publish the known good head. Rely on the full barrier implied
+	 * by atomic_dec_and_test() order the buffer->head read and this
+	 * write.
+	 */
+	buffer->user_page->data_head = head;
+
+	/*
+	 * Now check if we missed an update, rely on the (compiler)
+	 * barrier in atomic_dec_and_test() to re-read buffer->head.
+	 */
+	if (unlikely(head != local_read(&buffer->head))) {
+		local_inc(&buffer->nest);
+		goto again;
+	}
+
+	if (handle->wakeup != local_read(&buffer->wakeup))
+		perf_output_wakeup(handle);
+
+out:
+	preempt_enable();
+}
+
+__always_inline void perf_output_copy(struct perf_output_handle *handle,
+		      const void *buf, unsigned int len)
+{
+	do {
+		unsigned long size = min_t(unsigned long, handle->size, len);
+
+		memcpy(handle->addr, buf, size);
+
+		len -= size;
+		handle->addr += size;
+		buf += size;
+		handle->size -= size;
+		if (!handle->size) {
+			struct perf_buffer *buffer = handle->buffer;
+
+			handle->page++;
+			handle->page &= buffer->nr_pages - 1;
+			handle->addr = buffer->data_pages[handle->page];
+			handle->size = PAGE_SIZE << page_order(buffer);
+		}
+	} while (len);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __perf_event_header__init_id(struct perf_event_header *header,
 					 struct perf_sample_data *data,
 					 struct perf_event *event)
@@ -3902,9 +5134,15 @@ static void __perf_event_header__init_id(struct perf_event_header *header,
 	}
 }
 
+<<<<<<< HEAD
 void perf_event_header__init_id(struct perf_event_header *header,
 				struct perf_sample_data *data,
 				struct perf_event *event)
+=======
+static void perf_event_header__init_id(struct perf_event_header *header,
+				       struct perf_sample_data *data,
+				       struct perf_event *event)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (event->attr.sample_id_all)
 		__perf_event_header__init_id(header, data, event);
@@ -3931,14 +5169,130 @@ static void __perf_event__output_id_sample(struct perf_output_handle *handle,
 		perf_output_put(handle, data->cpu_entry);
 }
 
+<<<<<<< HEAD
 void perf_event__output_id_sample(struct perf_event *event,
 				  struct perf_output_handle *handle,
 				  struct perf_sample_data *sample)
+=======
+static void perf_event__output_id_sample(struct perf_event *event,
+					 struct perf_output_handle *handle,
+					 struct perf_sample_data *sample)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (event->attr.sample_id_all)
 		__perf_event__output_id_sample(handle, sample);
 }
 
+<<<<<<< HEAD
+=======
+int perf_output_begin(struct perf_output_handle *handle,
+		      struct perf_event *event, unsigned int size,
+		      int nmi, int sample)
+{
+	struct perf_buffer *buffer;
+	unsigned long tail, offset, head;
+	int have_lost;
+	struct perf_sample_data sample_data;
+	struct {
+		struct perf_event_header header;
+		u64			 id;
+		u64			 lost;
+	} lost_event;
+
+	rcu_read_lock();
+	/*
+	 * For inherited events we send all the output towards the parent.
+	 */
+	if (event->parent)
+		event = event->parent;
+
+	buffer = rcu_dereference(event->buffer);
+	if (!buffer)
+		goto out;
+
+	handle->buffer	= buffer;
+	handle->event	= event;
+	handle->nmi	= nmi;
+	handle->sample	= sample;
+
+	if (!buffer->nr_pages)
+		goto out;
+
+	have_lost = local_read(&buffer->lost);
+	if (have_lost) {
+		lost_event.header.size = sizeof(lost_event);
+		perf_event_header__init_id(&lost_event.header, &sample_data,
+					   event);
+		size += lost_event.header.size;
+	}
+
+	perf_output_get_handle(handle);
+
+	do {
+		/*
+		 * Userspace could choose to issue a mb() before updating the
+		 * tail pointer. So that all reads will be completed before the
+		 * write is issued.
+		 */
+		tail = ACCESS_ONCE(buffer->user_page->data_tail);
+		smp_rmb();
+		offset = head = local_read(&buffer->head);
+		head += size;
+		if (unlikely(!perf_output_space(buffer, tail, offset, head)))
+			goto fail;
+	} while (local_cmpxchg(&buffer->head, offset, head) != offset);
+
+	if (head - local_read(&buffer->wakeup) > buffer->watermark)
+		local_add(buffer->watermark, &buffer->wakeup);
+
+	handle->page = offset >> (PAGE_SHIFT + page_order(buffer));
+	handle->page &= buffer->nr_pages - 1;
+	handle->size = offset & ((PAGE_SIZE << page_order(buffer)) - 1);
+	handle->addr = buffer->data_pages[handle->page];
+	handle->addr += handle->size;
+	handle->size = (PAGE_SIZE << page_order(buffer)) - handle->size;
+
+	if (have_lost) {
+		lost_event.header.type = PERF_RECORD_LOST;
+		lost_event.header.misc = 0;
+		lost_event.id          = event->id;
+		lost_event.lost        = local_xchg(&buffer->lost, 0);
+
+		perf_output_put(handle, lost_event);
+		perf_event__output_id_sample(event, handle, &sample_data);
+	}
+
+	return 0;
+
+fail:
+	local_inc(&buffer->lost);
+	perf_output_put_handle(handle);
+out:
+	rcu_read_unlock();
+
+	return -ENOSPC;
+}
+
+void perf_output_end(struct perf_output_handle *handle)
+{
+	struct perf_event *event = handle->event;
+	struct perf_buffer *buffer = handle->buffer;
+
+	int wakeup_events = event->attr.wakeup_events;
+
+	if (handle->sample && wakeup_events) {
+		int events = local_inc_return(&buffer->events);
+		if (events >= wakeup_events) {
+			local_sub(wakeup_events, &buffer->events);
+			local_inc(&buffer->wakeup);
+		}
+	}
+
+	perf_output_put_handle(handle);
+	rcu_read_unlock();
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void perf_output_read_one(struct perf_output_handle *handle,
 				 struct perf_event *event,
 				 u64 enabled, u64 running)
@@ -3959,7 +5313,11 @@ static void perf_output_read_one(struct perf_output_handle *handle,
 	if (read_format & PERF_FORMAT_ID)
 		values[n++] = primary_event_id(event);
 
+<<<<<<< HEAD
 	__output_copy(handle, values, n * sizeof(u64));
+=======
+	perf_output_copy(handle, values, n * sizeof(u64));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -3989,7 +5347,11 @@ static void perf_output_read_group(struct perf_output_handle *handle,
 	if (read_format & PERF_FORMAT_ID)
 		values[n++] = primary_event_id(leader);
 
+<<<<<<< HEAD
 	__output_copy(handle, values, n * sizeof(u64));
+=======
+	perf_output_copy(handle, values, n * sizeof(u64));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_for_each_entry(sub, &leader->sibling_list, group_entry) {
 		n = 0;
@@ -4001,7 +5363,11 @@ static void perf_output_read_group(struct perf_output_handle *handle,
 		if (read_format & PERF_FORMAT_ID)
 			values[n++] = primary_event_id(sub);
 
+<<<<<<< HEAD
 		__output_copy(handle, values, n * sizeof(u64));
+=======
+		perf_output_copy(handle, values, n * sizeof(u64));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -4011,7 +5377,11 @@ static void perf_output_read_group(struct perf_output_handle *handle,
 static void perf_output_read(struct perf_output_handle *handle,
 			     struct perf_event *event)
 {
+<<<<<<< HEAD
 	u64 enabled = 0, running = 0, now;
+=======
+	u64 enabled = 0, running = 0, now, ctx_time;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64 read_format = event->attr.read_format;
 
 	/*
@@ -4023,8 +5393,17 @@ static void perf_output_read(struct perf_output_handle *handle,
 	 * because of locking issue as we are called in
 	 * NMI context
 	 */
+<<<<<<< HEAD
 	if (read_format & PERF_FORMAT_TOTAL_TIMES)
 		calc_timer_values(event, &now, &enabled, &running);
+=======
+	if (read_format & PERF_FORMAT_TOTAL_TIMES) {
+		now = perf_clock();
+		ctx_time = event->shadow_ctx_time + now;
+		enabled = ctx_time - event->tstamp_enabled;
+		running = ctx_time - event->tstamp_running;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (event->attr.read_format & PERF_FORMAT_GROUP)
 		perf_output_read_group(handle, event, enabled, running);
@@ -4077,7 +5456,11 @@ void perf_output_sample(struct perf_output_handle *handle,
 
 			size *= sizeof(u64);
 
+<<<<<<< HEAD
 			__output_copy(handle, data->callchain, size);
+=======
+			perf_output_copy(handle, data->callchain, size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			u64 nr = 0;
 			perf_output_put(handle, nr);
@@ -4087,8 +5470,13 @@ void perf_output_sample(struct perf_output_handle *handle,
 	if (sample_type & PERF_SAMPLE_RAW) {
 		if (data->raw) {
 			perf_output_put(handle, data->raw->size);
+<<<<<<< HEAD
 			__output_copy(handle, data->raw->data,
 					   data->raw->size);
+=======
+			perf_output_copy(handle, data->raw->data,
+					 data->raw->size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			struct {
 				u32	size;
@@ -4100,6 +5488,7 @@ void perf_output_sample(struct perf_output_handle *handle,
 			perf_output_put(handle, raw);
 		}
 	}
+<<<<<<< HEAD
 
 	if (!event->attr.watermark) {
 		int wakeup_events = event->attr.wakeup_events;
@@ -4132,6 +5521,8 @@ void perf_output_sample(struct perf_output_handle *handle,
 			perf_output_put(handle, nr);
 		}
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void perf_prepare_sample(struct perf_event_header *header,
@@ -4174,6 +5565,7 @@ void perf_prepare_sample(struct perf_event_header *header,
 		WARN_ON_ONCE(size & (sizeof(u64)-1));
 		header->size += size;
 	}
+<<<<<<< HEAD
 
 	if (sample_type & PERF_SAMPLE_BRANCH_STACK) {
 		int size = sizeof(u64); /* nr */
@@ -4186,6 +5578,11 @@ void perf_prepare_sample(struct perf_event_header *header,
 }
 
 static void perf_event_output(struct perf_event *event,
+=======
+}
+
+static void perf_event_output(struct perf_event *event, int nmi,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				struct perf_sample_data *data,
 				struct pt_regs *regs)
 {
@@ -4197,7 +5594,11 @@ static void perf_event_output(struct perf_event *event,
 
 	perf_prepare_sample(&header, data, event, regs);
 
+<<<<<<< HEAD
 	if (perf_output_begin(&handle, event, header.size))
+=======
+	if (perf_output_begin(&handle, event, header.size, nmi, 1))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto exit;
 
 	perf_output_sample(&handle, &header, data, event);
@@ -4237,7 +5638,11 @@ perf_event_read_event(struct perf_event *event,
 	int ret;
 
 	perf_event_header__init_id(&read_event.header, &sample, event);
+<<<<<<< HEAD
 	ret = perf_output_begin(&handle, event, read_event.header.size);
+=======
+	ret = perf_output_begin(&handle, event, read_event.header.size, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return;
 
@@ -4280,7 +5685,11 @@ static void perf_event_task_output(struct perf_event *event,
 	perf_event_header__init_id(&task_event->event_id.header, &sample, event);
 
 	ret = perf_output_begin(&handle, event,
+<<<<<<< HEAD
 				task_event->event_id.header.size);
+=======
+				task_event->event_id.header.size, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto out;
 
@@ -4335,7 +5744,11 @@ static void perf_event_task_event(struct perf_task_event *task_event)
 	rcu_read_lock();
 	list_for_each_entry_rcu(pmu, &pmus, entry) {
 		cpuctx = get_cpu_ptr(pmu->pmu_cpu_context);
+<<<<<<< HEAD
 		if (cpuctx->unique_pmu != pmu)
+=======
+		if (cpuctx->active_pmu != pmu)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto next;
 		perf_event_task_ctx(&cpuctx->ctx, task_event);
 
@@ -4417,7 +5830,11 @@ static void perf_event_comm_output(struct perf_event *event,
 
 	perf_event_header__init_id(&comm_event->event_id.header, &sample, event);
 	ret = perf_output_begin(&handle, event,
+<<<<<<< HEAD
 				comm_event->event_id.header.size);
+=======
+				comm_event->event_id.header.size, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ret)
 		goto out;
@@ -4426,7 +5843,11 @@ static void perf_event_comm_output(struct perf_event *event,
 	comm_event->event_id.tid = perf_event_tid(event, comm_event->task);
 
 	perf_output_put(&handle, comm_event->event_id);
+<<<<<<< HEAD
 	__output_copy(&handle, comm_event->comm,
+=======
+	perf_output_copy(&handle, comm_event->comm,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   comm_event->comm_size);
 
 	perf_event__output_id_sample(event, &handle, &sample);
@@ -4481,7 +5902,11 @@ static void perf_event_comm_event(struct perf_comm_event *comm_event)
 	rcu_read_lock();
 	list_for_each_entry_rcu(pmu, &pmus, entry) {
 		cpuctx = get_cpu_ptr(pmu->pmu_cpu_context);
+<<<<<<< HEAD
 		if (cpuctx->unique_pmu != pmu)
+=======
+		if (cpuctx->active_pmu != pmu)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto next;
 		perf_event_comm_ctx(&cpuctx->ctx, comm_event);
 
@@ -4564,7 +5989,11 @@ static void perf_event_mmap_output(struct perf_event *event,
 
 	perf_event_header__init_id(&mmap_event->event_id.header, &sample, event);
 	ret = perf_output_begin(&handle, event,
+<<<<<<< HEAD
 				mmap_event->event_id.header.size);
+=======
+				mmap_event->event_id.header.size, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto out;
 
@@ -4572,7 +6001,11 @@ static void perf_event_mmap_output(struct perf_event *event,
 	mmap_event->event_id.tid = perf_event_tid(event, current);
 
 	perf_output_put(&handle, mmap_event->event_id);
+<<<<<<< HEAD
 	__output_copy(&handle, mmap_event->file_name,
+=======
+	perf_output_copy(&handle, mmap_event->file_name,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   mmap_event->file_size);
 
 	perf_event__output_id_sample(event, &handle, &sample);
@@ -4628,7 +6061,11 @@ static void perf_event_mmap_event(struct perf_mmap_event *mmap_event)
 
 	if (file) {
 		/*
+<<<<<<< HEAD
 		 * d_path works from the end of the rb backwards, so we
+=======
+		 * d_path works from the end of the buffer backwards, so we
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * need to add enough zero bytes after the string to handle
 		 * the 64bit alignment we do later.
 		 */
@@ -4677,7 +6114,11 @@ got_name:
 	rcu_read_lock();
 	list_for_each_entry_rcu(pmu, &pmus, entry) {
 		cpuctx = get_cpu_ptr(pmu->pmu_cpu_context);
+<<<<<<< HEAD
 		if (cpuctx->unique_pmu != pmu)
+=======
+		if (cpuctx->active_pmu != pmu)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto next;
 		perf_event_mmap_ctx(&cpuctx->ctx, mmap_event,
 					vma->vm_flags & VM_EXEC);
@@ -4759,7 +6200,11 @@ static void perf_log_throttle(struct perf_event *event, int enable)
 	perf_event_header__init_id(&throttle_event.header, &sample, event);
 
 	ret = perf_output_begin(&handle, event,
+<<<<<<< HEAD
 				throttle_event.header.size);
+=======
+				throttle_event.header.size, 1, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return;
 
@@ -4772,13 +6217,20 @@ static void perf_log_throttle(struct perf_event *event, int enable)
  * Generic event overflow handling, sampling.
  */
 
+<<<<<<< HEAD
 static int __perf_event_overflow(struct perf_event *event,
+=======
+static int __perf_event_overflow(struct perf_event *event, int nmi,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   int throttle, struct perf_sample_data *data,
 				   struct pt_regs *regs)
 {
 	int events = atomic_read(&event->event_limit);
 	struct hw_perf_event *hwc = &event->hw;
+<<<<<<< HEAD
 	u64 seq;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	/*
@@ -4788,6 +6240,7 @@ static int __perf_event_overflow(struct perf_event *event,
 	if (unlikely(!is_sampling_event(event)))
 		return 0;
 
+<<<<<<< HEAD
 	seq = __this_cpu_read(perf_throttled_seq);
 	if (seq != hwc->interrupts_seq) {
 		hwc->interrupts_seq = seq;
@@ -4797,11 +6250,20 @@ static int __perf_event_overflow(struct perf_event *event,
 		if (unlikely(throttle
 			     && hwc->interrupts >= max_samples_per_tick)) {
 			__this_cpu_inc(perf_throttled_count);
+=======
+	if (unlikely(hwc->interrupts >= max_samples_per_tick)) {
+		if (throttle) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			hwc->interrupts = MAX_INTERRUPTS;
 			perf_log_throttle(event, 0);
 			ret = 1;
 		}
+<<<<<<< HEAD
 	}
+=======
+	} else
+		hwc->interrupts++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (event->attr.freq) {
 		u64 now = perf_clock();
@@ -4810,7 +6272,11 @@ static int __perf_event_overflow(struct perf_event *event,
 		hwc->freq_time_stamp = now;
 
 		if (delta > 0 && delta < 2*TICK_NSEC)
+<<<<<<< HEAD
 			perf_adjust_period(event, delta, hwc->last_period, true);
+=======
+			perf_adjust_period(event, delta, hwc->last_period);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -4827,6 +6293,7 @@ static int __perf_event_overflow(struct perf_event *event,
 	}
 
 	if (event->overflow_handler)
+<<<<<<< HEAD
 		event->overflow_handler(event, data, regs);
 	else
 		perf_event_output(event, data, regs);
@@ -4834,16 +6301,36 @@ static int __perf_event_overflow(struct perf_event *event,
 	if (event->fasync && event->pending_kill) {
 		event->pending_wakeup = 1;
 		irq_work_queue(&event->pending);
+=======
+		event->overflow_handler(event, nmi, data, regs);
+	else
+		perf_event_output(event, nmi, data, regs);
+
+	if (event->fasync && event->pending_kill) {
+		if (nmi) {
+			event->pending_wakeup = 1;
+			irq_work_queue(&event->pending);
+		} else
+			perf_event_wakeup(event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;
 }
 
+<<<<<<< HEAD
 int perf_event_overflow(struct perf_event *event,
 			  struct perf_sample_data *data,
 			  struct pt_regs *regs)
 {
 	return __perf_event_overflow(event, 1, data, regs);
+=======
+int perf_event_overflow(struct perf_event *event, int nmi,
+			  struct perf_sample_data *data,
+			  struct pt_regs *regs)
+{
+	return __perf_event_overflow(event, nmi, 1, data, regs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -4892,12 +6379,20 @@ again:
 }
 
 static void perf_swevent_overflow(struct perf_event *event, u64 overflow,
+<<<<<<< HEAD
 				    struct perf_sample_data *data,
+=======
+				    int nmi, struct perf_sample_data *data,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    struct pt_regs *regs)
 {
 	struct hw_perf_event *hwc = &event->hw;
 	int throttle = 0;
 
+<<<<<<< HEAD
+=======
+	data->period = event->hw.last_period;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!overflow)
 		overflow = perf_swevent_set_period(event);
 
@@ -4905,7 +6400,11 @@ static void perf_swevent_overflow(struct perf_event *event, u64 overflow,
 		return;
 
 	for (; overflow; overflow--) {
+<<<<<<< HEAD
 		if (__perf_event_overflow(event, throttle,
+=======
+		if (__perf_event_overflow(event, nmi, throttle,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					    data, regs)) {
 			/*
 			 * We inhibit the overflow from happening when
@@ -4918,7 +6417,11 @@ static void perf_swevent_overflow(struct perf_event *event, u64 overflow,
 }
 
 static void perf_swevent_event(struct perf_event *event, u64 nr,
+<<<<<<< HEAD
 			       struct perf_sample_data *data,
+=======
+			       int nmi, struct perf_sample_data *data,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       struct pt_regs *regs)
 {
 	struct hw_perf_event *hwc = &event->hw;
@@ -4931,6 +6434,7 @@ static void perf_swevent_event(struct perf_event *event, u64 nr,
 	if (!is_sampling_event(event))
 		return;
 
+<<<<<<< HEAD
 	if ((event->attr.sample_type & PERF_SAMPLE_PERIOD) && !event->attr.freq) {
 		data->period = nr;
 		return perf_swevent_overflow(event, 1, data, regs);
@@ -4939,11 +6443,19 @@ static void perf_swevent_event(struct perf_event *event, u64 nr,
 
 	if (nr == 1 && hwc->sample_period == 1 && !event->attr.freq)
 		return perf_swevent_overflow(event, 1, data, regs);
+=======
+	if (nr == 1 && hwc->sample_period == 1 && !event->attr.freq)
+		return perf_swevent_overflow(event, 1, nmi, data, regs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (local64_add_negative(nr, &hwc->period_left))
 		return;
 
+<<<<<<< HEAD
 	perf_swevent_overflow(event, 0, data, regs);
+=======
+	perf_swevent_overflow(event, 0, nmi, data, regs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int perf_exclude_event(struct perf_event *event,
@@ -5031,7 +6543,11 @@ find_swevent_head(struct swevent_htable *swhash, struct perf_event *event)
 }
 
 static void do_perf_sw_event(enum perf_type_id type, u32 event_id,
+<<<<<<< HEAD
 				    u64 nr,
+=======
+				    u64 nr, int nmi,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    struct perf_sample_data *data,
 				    struct pt_regs *regs)
 {
@@ -5047,7 +6563,11 @@ static void do_perf_sw_event(enum perf_type_id type, u32 event_id,
 
 	hlist_for_each_entry_rcu(event, node, head, hlist_entry) {
 		if (perf_swevent_match(event, type, event_id, data, regs))
+<<<<<<< HEAD
 			perf_swevent_event(event, nr, data, regs);
+=======
+			perf_swevent_event(event, nr, nmi, data, regs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 end:
 	rcu_read_unlock();
@@ -5068,7 +6588,12 @@ inline void perf_swevent_put_recursion_context(int rctx)
 	put_recursion_context(swhash->recursion, rctx);
 }
 
+<<<<<<< HEAD
 void __perf_sw_event(u32 event_id, u64 nr, struct pt_regs *regs, u64 addr)
+=======
+void __perf_sw_event(u32 event_id, u64 nr, int nmi,
+			    struct pt_regs *regs, u64 addr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct perf_sample_data data;
 	int rctx;
@@ -5080,7 +6605,11 @@ void __perf_sw_event(u32 event_id, u64 nr, struct pt_regs *regs, u64 addr)
 
 	perf_sample_data_init(&data, addr);
 
+<<<<<<< HEAD
 	do_perf_sw_event(PERF_TYPE_SOFTWARE, event_id, nr, &data, regs);
+=======
+	do_perf_sw_event(PERF_TYPE_SOFTWARE, event_id, nr, nmi, &data, regs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	perf_swevent_put_recursion_context(rctx);
 	preempt_enable_notrace();
@@ -5225,7 +6754,11 @@ fail:
 	return err;
 }
 
+<<<<<<< HEAD
 struct static_key perf_swevent_enabled[PERF_COUNT_SW_MAX];
+=======
+struct jump_label_key perf_swevent_enabled[PERF_COUNT_SW_MAX];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void sw_perf_event_destroy(struct perf_event *event)
 {
@@ -5233,7 +6766,11 @@ static void sw_perf_event_destroy(struct perf_event *event)
 
 	WARN_ON(event->parent);
 
+<<<<<<< HEAD
 	static_key_slow_dec(&perf_swevent_enabled[event_id]);
+=======
+	jump_label_dec(&perf_swevent_enabled[event_id]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	swevent_hlist_put(event);
 }
 
@@ -5244,12 +6781,15 @@ static int perf_swevent_init(struct perf_event *event)
 	if (event->attr.type != PERF_TYPE_SOFTWARE)
 		return -ENOENT;
 
+<<<<<<< HEAD
 	/*
 	 * no branch sampling for software events
 	 */
 	if (has_branch_stack(event))
 		return -EOPNOTSUPP;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (event_id) {
 	case PERF_COUNT_SW_CPU_CLOCK:
 	case PERF_COUNT_SW_TASK_CLOCK:
@@ -5269,18 +6809,25 @@ static int perf_swevent_init(struct perf_event *event)
 		if (err)
 			return err;
 
+<<<<<<< HEAD
 		static_key_slow_inc(&perf_swevent_enabled[event_id]);
+=======
+		jump_label_inc(&perf_swevent_enabled[event_id]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		event->destroy = sw_perf_event_destroy;
 	}
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int perf_swevent_event_idx(struct perf_event *event)
 {
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct pmu perf_swevent = {
 	.task_ctx_nr	= perf_sw_context,
 
@@ -5290,8 +6837,11 @@ static struct pmu perf_swevent = {
 	.start		= perf_swevent_start,
 	.stop		= perf_swevent_stop,
 	.read		= perf_swevent_read,
+<<<<<<< HEAD
 
 	.event_idx	= perf_swevent_event_idx,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #ifdef CONFIG_EVENT_TRACING
@@ -5341,7 +6891,11 @@ void perf_tp_event(u64 addr, u64 count, void *record, int entry_size,
 
 	hlist_for_each_entry_rcu(event, node, head, hlist_entry) {
 		if (perf_tp_event_match(event, &data, regs))
+<<<<<<< HEAD
 			perf_swevent_event(event, count, &data, regs);
+=======
+			perf_swevent_event(event, count, 1, &data, regs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	perf_swevent_put_recursion_context(rctx);
@@ -5360,12 +6914,15 @@ static int perf_tp_event_init(struct perf_event *event)
 	if (event->attr.type != PERF_TYPE_TRACEPOINT)
 		return -ENOENT;
 
+<<<<<<< HEAD
 	/*
 	 * no branch sampling for tracepoint events
 	 */
 	if (has_branch_stack(event))
 		return -EOPNOTSUPP;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = perf_trace_init(event);
 	if (err)
 		return err;
@@ -5384,8 +6941,11 @@ static struct pmu perf_tracepoint = {
 	.start		= perf_swevent_start,
 	.stop		= perf_swevent_stop,
 	.read		= perf_swevent_read,
+<<<<<<< HEAD
 
 	.event_idx	= perf_swevent_event_idx,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline void perf_tp_register(void)
@@ -5442,7 +7002,11 @@ void perf_bp_event(struct perf_event *bp, void *data)
 	perf_sample_data_init(&sample, bp->attr.bp_addr);
 
 	if (!bp->hw.state && !perf_exclude_event(bp, regs))
+<<<<<<< HEAD
 		perf_swevent_event(bp, 1, &sample, regs);
+=======
+		perf_swevent_event(bp, 1, 1, &sample, regs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif
 
@@ -5470,8 +7034,13 @@ static enum hrtimer_restart perf_swevent_hrtimer(struct hrtimer *hrtimer)
 	regs = get_irq_regs();
 
 	if (regs && !perf_exclude_event(event, regs)) {
+<<<<<<< HEAD
 		if (!(event->attr.exclude_idle && is_idle_task(current)))
 			if (perf_event_overflow(event, &data, regs))
+=======
+		if (!(event->attr.exclude_idle && current->pid == 0))
+			if (perf_event_overflow(event, 0, &data, regs))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ret = HRTIMER_NORESTART;
 	}
 
@@ -5591,12 +7160,15 @@ static int cpu_clock_event_init(struct perf_event *event)
 	if (event->attr.config != PERF_COUNT_SW_CPU_CLOCK)
 		return -ENOENT;
 
+<<<<<<< HEAD
 	/*
 	 * no branch sampling for software events
 	 */
 	if (has_branch_stack(event))
 		return -EOPNOTSUPP;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	perf_swevent_init_hrtimer(event);
 
 	return 0;
@@ -5611,8 +7183,11 @@ static struct pmu perf_cpu_clock = {
 	.start		= cpu_clock_event_start,
 	.stop		= cpu_clock_event_stop,
 	.read		= cpu_clock_event_read,
+<<<<<<< HEAD
 
 	.event_idx	= perf_swevent_event_idx,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -5671,12 +7246,15 @@ static int task_clock_event_init(struct perf_event *event)
 	if (event->attr.config != PERF_COUNT_SW_TASK_CLOCK)
 		return -ENOENT;
 
+<<<<<<< HEAD
 	/*
 	 * no branch sampling for software events
 	 */
 	if (has_branch_stack(event))
 		return -EOPNOTSUPP;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	perf_swevent_init_hrtimer(event);
 
 	return 0;
@@ -5691,8 +7269,11 @@ static struct pmu perf_task_clock = {
 	.start		= task_clock_event_start,
 	.stop		= task_clock_event_stop,
 	.read		= task_clock_event_read,
+<<<<<<< HEAD
 
 	.event_idx	= perf_swevent_event_idx,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void perf_pmu_nop_void(struct pmu *pmu)
@@ -5720,11 +7301,14 @@ static void perf_pmu_cancel_txn(struct pmu *pmu)
 	perf_pmu_enable(pmu);
 }
 
+<<<<<<< HEAD
 static int perf_event_idx_default(struct perf_event *event)
 {
 	return event->hw.idx + 1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Ensures all contexts with the same task_ctx_nr have the same
  * pmu_cpu_context too.
@@ -5753,8 +7337,13 @@ static void update_pmu_context(struct pmu *pmu, struct pmu *old_pmu)
 
 		cpuctx = per_cpu_ptr(pmu->pmu_cpu_context, cpu);
 
+<<<<<<< HEAD
 		if (cpuctx->unique_pmu == old_pmu)
 			cpuctx->unique_pmu = pmu;
+=======
+		if (cpuctx->active_pmu == old_pmu)
+			cpuctx->active_pmu = pmu;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -5811,7 +7400,10 @@ static int pmu_dev_alloc(struct pmu *pmu)
 	if (!pmu->dev)
 		goto out;
 
+<<<<<<< HEAD
 	pmu->dev->groups = pmu->attr_groups;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	device_initialize(pmu->dev);
 	ret = dev_set_name(pmu->dev, "%s", pmu->name);
 	if (ret)
@@ -5833,7 +7425,10 @@ free_dev:
 }
 
 static struct lock_class_key cpuctx_mutex;
+<<<<<<< HEAD
 static struct lock_class_key cpuctx_lock;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int perf_pmu_register(struct pmu *pmu, char *name, int type)
 {
@@ -5884,12 +7479,19 @@ skip_type:
 		cpuctx = per_cpu_ptr(pmu->pmu_cpu_context, cpu);
 		__perf_event_init_context(&cpuctx->ctx);
 		lockdep_set_class(&cpuctx->ctx.mutex, &cpuctx_mutex);
+<<<<<<< HEAD
 		lockdep_set_class(&cpuctx->ctx.lock, &cpuctx_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cpuctx->ctx.type = cpu_context;
 		cpuctx->ctx.pmu = pmu;
 		cpuctx->jiffies_interval = 1;
 		INIT_LIST_HEAD(&cpuctx->rotation_list);
+<<<<<<< HEAD
 		cpuctx->unique_pmu = pmu;
+=======
+		cpuctx->active_pmu = pmu;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 got_cpu_context:
@@ -5915,9 +7517,12 @@ got_cpu_context:
 		pmu->pmu_disable = perf_pmu_nop_void;
 	}
 
+<<<<<<< HEAD
 	if (!pmu->event_idx)
 		pmu->event_idx = perf_event_idx_default;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_add_rcu(&pmu->entry, &pmus);
 	ret = 0;
 unlock:
@@ -5971,7 +7576,10 @@ struct pmu *perf_init_event(struct perf_event *event)
 	pmu = idr_find(&pmu_idr, event->attr.type);
 	rcu_read_unlock();
 	if (pmu) {
+<<<<<<< HEAD
 		event->pmu = pmu;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = pmu->event_init(event);
 		if (ret)
 			pmu = ERR_PTR(ret);
@@ -5979,7 +7587,10 @@ struct pmu *perf_init_event(struct perf_event *event)
 	}
 
 	list_for_each_entry_rcu(pmu, &pmus, entry) {
+<<<<<<< HEAD
 		event->pmu = pmu;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = pmu->event_init(event);
 		if (!ret)
 			goto unlock;
@@ -6004,8 +7615,12 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
 		 struct task_struct *task,
 		 struct perf_event *group_leader,
 		 struct perf_event *parent_event,
+<<<<<<< HEAD
 		 perf_overflow_handler_t overflow_handler,
 		 void *context)
+=======
+		 perf_overflow_handler_t overflow_handler)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct pmu *pmu;
 	struct perf_event *event;
@@ -6034,14 +7649,20 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
 	INIT_LIST_HEAD(&event->group_entry);
 	INIT_LIST_HEAD(&event->event_entry);
 	INIT_LIST_HEAD(&event->sibling_list);
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&event->rb_entry);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	init_waitqueue_head(&event->waitq);
 	init_irq_work(&event->pending, perf_pending_event);
 
 	mutex_init(&event->mmap_mutex);
 
+<<<<<<< HEAD
 	atomic_long_set(&event->refcount, 1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	event->cpu		= cpu;
 	event->attr		= *attr;
 	event->group_leader	= group_leader;
@@ -6066,6 +7687,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
 #endif
 	}
 
+<<<<<<< HEAD
 	if (!overflow_handler && parent_event) {
 		overflow_handler = parent_event->overflow_handler;
 		context = parent_event->overflow_handler_context;
@@ -6075,6 +7697,15 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
 	event->overflow_handler_context = context;
 
 	perf_event__state_init(event);
+=======
+	if (!overflow_handler && parent_event)
+		overflow_handler = parent_event->overflow_handler;
+
+	event->overflow_handler	= overflow_handler;
+
+	if (attr->disabled)
+		event->state = PERF_EVENT_STATE_OFF;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pmu = NULL;
 
@@ -6108,9 +7739,17 @@ done:
 		return ERR_PTR(err);
 	}
 
+<<<<<<< HEAD
 	if (!event->parent) {
 		if (event->attach_state & PERF_ATTACH_TASK)
 			static_key_slow_inc(&perf_sched_events.key);
+=======
+	event->pmu = pmu;
+
+	if (!event->parent) {
+		if (event->attach_state & PERF_ATTACH_TASK)
+			jump_label_inc(&perf_sched_events);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (event->attr.mmap || event->attr.mmap_data)
 			atomic_inc(&nr_mmap_events);
 		if (event->attr.comm)
@@ -6124,12 +7763,15 @@ done:
 				return ERR_PTR(err);
 			}
 		}
+<<<<<<< HEAD
 		if (has_branch_stack(event)) {
 			static_key_slow_inc(&perf_sched_events.key);
 			if (!(event->attach_state & PERF_ATTACH_TASK))
 				atomic_inc(&per_cpu(perf_branch_stack_events,
 						    event->cpu));
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return event;
@@ -6190,6 +7832,16 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
 	if (ret)
 		return -EFAULT;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * If the type exists, the corresponding creation will verify
+	 * the attr->config.
+	 */
+	if (attr->type >= PERF_TYPE_MAX)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (attr->__reserved_1)
 		return -EINVAL;
 
@@ -6199,6 +7851,7 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
 	if (attr->read_format & ~(PERF_FORMAT_MAX-1))
 		return -EINVAL;
 
+<<<<<<< HEAD
 	if (attr->sample_type & PERF_SAMPLE_BRANCH_STACK) {
 		u64 mask = attr->branch_sample_type;
 
@@ -6233,6 +7886,8 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
 			attr->branch_sample_type = mask;
 		}
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return ret;
 
@@ -6245,7 +7900,11 @@ err_size:
 static int
 perf_event_set_output(struct perf_event *event, struct perf_event *output_event)
 {
+<<<<<<< HEAD
 	struct ring_buffer *rb = NULL, *old_rb = NULL;
+=======
+	struct perf_buffer *buffer = NULL, *old_buffer = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = -EINVAL;
 
 	if (!output_event)
@@ -6262,7 +7921,11 @@ perf_event_set_output(struct perf_event *event, struct perf_event *output_event)
 		goto out;
 
 	/*
+<<<<<<< HEAD
 	 * If its not a per-cpu rb, it must be the same task.
+=======
+	 * If its not a per-cpu buffer, it must be the same task.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	if (output_event->cpu == -1 && output_event->ctx != event->ctx)
 		goto out;
@@ -6273,6 +7936,7 @@ set:
 	if (atomic_read(&event->mmap_count))
 		goto unlock;
 
+<<<<<<< HEAD
 	old_rb = event->rb;
 
 	if (output_event) {
@@ -6300,10 +7964,26 @@ set:
 		wake_up_all(&event->waitq);
 	}
 
+=======
+	if (output_event) {
+		/* get the buffer we want to redirect to */
+		buffer = perf_buffer_get(output_event);
+		if (!buffer)
+			goto unlock;
+	}
+
+	old_buffer = event->buffer;
+	rcu_assign_pointer(event->buffer, buffer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = 0;
 unlock:
 	mutex_unlock(&event->mmap_mutex);
 
+<<<<<<< HEAD
+=======
+	if (old_buffer)
+		perf_buffer_put(old_buffer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return ret;
 }
@@ -6365,12 +8045,21 @@ SYSCALL_DEFINE5(perf_event_open,
 		return event_fd;
 
 	if (group_fd != -1) {
+<<<<<<< HEAD
 		group_file = perf_fget_light(group_fd, &fput_needed);
 		if (IS_ERR(group_file)) {
 			err = PTR_ERR(group_file);
 			goto err_fd;
 		}
 		group_leader = group_file->private_data;
+=======
+		group_leader = perf_fget_light(group_fd, &fput_needed);
+		if (IS_ERR(group_leader)) {
+			err = PTR_ERR(group_leader);
+			goto err_fd;
+		}
+		group_file = group_leader->filp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (flags & PERF_FLAG_FD_OUTPUT)
 			output_event = group_leader;
 		if (flags & PERF_FLAG_FD_NO_GROUP)
@@ -6385,8 +8074,12 @@ SYSCALL_DEFINE5(perf_event_open,
 		}
 	}
 
+<<<<<<< HEAD
 	event = perf_event_alloc(&attr, cpu, task, group_leader, NULL,
 				 NULL, NULL);
+=======
+	event = perf_event_alloc(&attr, cpu, task, group_leader, NULL, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(event)) {
 		err = PTR_ERR(event);
 		goto err_task;
@@ -6402,7 +8095,11 @@ SYSCALL_DEFINE5(perf_event_open,
 		 * - that may need work on context switch
 		 */
 		atomic_inc(&per_cpu(perf_cgroup_events, event->cpu));
+<<<<<<< HEAD
 		static_key_slow_inc(&perf_sched_events.key);
+=======
+		jump_label_inc(&perf_sched_events);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -6496,6 +8193,7 @@ SYSCALL_DEFINE5(perf_event_open,
 
 		mutex_lock(&gctx->mutex);
 		perf_remove_from_context(group_leader);
+<<<<<<< HEAD
 
 		/*
 		 * Removing from the context ends up with disabled
@@ -6507,12 +8205,21 @@ SYSCALL_DEFINE5(perf_event_open,
 				    group_entry) {
 			perf_remove_from_context(sibling);
 			perf_event__state_init(sibling);
+=======
+		list_for_each_entry(sibling, &group_leader->sibling_list,
+				    group_entry) {
+			perf_remove_from_context(sibling);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			put_ctx(gctx);
 		}
 		mutex_unlock(&gctx->mutex);
 		put_ctx(gctx);
 	}
 
+<<<<<<< HEAD
+=======
+	event->filp = event_file;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	WARN_ON_ONCE(ctx->parent_ctx);
 	mutex_lock(&ctx->mutex);
 
@@ -6578,8 +8285,12 @@ err_fd:
 struct perf_event *
 perf_event_create_kernel_counter(struct perf_event_attr *attr, int cpu,
 				 struct task_struct *task,
+<<<<<<< HEAD
 				 perf_overflow_handler_t overflow_handler,
 				 void *context)
+=======
+				 perf_overflow_handler_t overflow_handler)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct perf_event_context *ctx;
 	struct perf_event *event;
@@ -6589,8 +8300,12 @@ perf_event_create_kernel_counter(struct perf_event_attr *attr, int cpu,
 	 * Get the target context (task or percpu):
 	 */
 
+<<<<<<< HEAD
 	event = perf_event_alloc(attr, cpu, task, NULL, NULL,
 				 overflow_handler, context);
+=======
+	event = perf_event_alloc(attr, cpu, task, NULL, NULL, overflow_handler);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(event)) {
 		err = PTR_ERR(event);
 		goto err;
@@ -6602,6 +8317,10 @@ perf_event_create_kernel_counter(struct perf_event_attr *attr, int cpu,
 		goto err_free;
 	}
 
+<<<<<<< HEAD
+=======
+	event->filp = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	WARN_ON_ONCE(ctx->parent_ctx);
 	mutex_lock(&ctx->mutex);
 	perf_install_in_context(ctx, event, cpu);
@@ -6650,7 +8369,11 @@ static void sync_child_event(struct perf_event *child_event,
 	 * Release the parent event, if this was the last
 	 * reference to it.
 	 */
+<<<<<<< HEAD
 	put_event(parent_event);
+=======
+	fput(parent_event->filp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -6696,6 +8419,10 @@ static void perf_event_exit_task_context(struct task_struct *child, int ctxn)
 	 * our context.
 	 */
 	child_ctx = rcu_dereference_raw(child->perf_event_ctxp[ctxn]);
+<<<<<<< HEAD
+=======
+	task_ctx_sched_out(child_ctx, EVENT_ALL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Take the context lock here so that if find_get_context is
@@ -6703,7 +8430,10 @@ static void perf_event_exit_task_context(struct task_struct *child, int ctxn)
 	 * incremented the context's refcount before we do put_ctx below.
 	 */
 	raw_spin_lock(&child_ctx->lock);
+<<<<<<< HEAD
 	task_ctx_sched_out(child_ctx);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	child->perf_event_ctxp[ctxn] = NULL;
 	/*
 	 * If this context is a clone; unclone it so it can't get
@@ -6726,8 +8456,14 @@ static void perf_event_exit_task_context(struct task_struct *child, int ctxn)
 	 *
 	 *   __perf_event_exit_task()
 	 *     sync_child_event()
+<<<<<<< HEAD
 	 *       put_event()
 	 *         mutex_lock(&ctx->mutex)
+=======
+	 *       fput(parent_event->filp)
+	 *         perf_release()
+	 *           mutex_lock(&ctx->mutex)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 *
 	 * But since its the parent context it won't be the same instance.
 	 */
@@ -6795,7 +8531,11 @@ static void perf_free_event(struct perf_event *event,
 	list_del_init(&event->child_list);
 	mutex_unlock(&parent->child_mutex);
 
+<<<<<<< HEAD
 	put_event(parent);
+=======
+	fput(parent->filp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	perf_group_detach(event);
 	list_del_event(event, ctx);
@@ -6872,6 +8612,7 @@ inherit_event(struct perf_event *parent_event,
 					   parent_event->cpu,
 					   child,
 					   group_leader, parent_event,
+<<<<<<< HEAD
 				           NULL, NULL);
 	if (IS_ERR(child_event))
 		return child_event;
@@ -6881,6 +8622,11 @@ inherit_event(struct perf_event *parent_event,
 		return NULL;
 	}
 
+=======
+					   NULL);
+	if (IS_ERR(child_event))
+		return child_event;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	get_ctx(child_ctx);
 
 	/*
@@ -6905,8 +8651,11 @@ inherit_event(struct perf_event *parent_event,
 
 	child_event->ctx = child_ctx;
 	child_event->overflow_handler = parent_event->overflow_handler;
+<<<<<<< HEAD
 	child_event->overflow_handler_context
 		= parent_event->overflow_handler_context;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Precalculate sample_data sizes
@@ -6922,6 +8671,17 @@ inherit_event(struct perf_event *parent_event,
 	raw_spin_unlock_irqrestore(&child_ctx->lock, flags);
 
 	/*
+<<<<<<< HEAD
+=======
+	 * Get a reference to the parent filp - we will fput it
+	 * when the child event exits. This is safe to do because
+	 * we are in the parent and we know that the filp still
+	 * exists and has a nonzero count:
+	 */
+	atomic_long_inc(&parent_event->filp->f_count);
+
+	/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Link this into the parent event's child list
 	 */
 	WARN_ON_ONCE(parent_event->ctx->parent_ctx);
@@ -6978,7 +8738,11 @@ inherit_task_group(struct perf_event *event, struct task_struct *parent,
 		 * child.
 		 */
 
+<<<<<<< HEAD
 		child_ctx = alloc_perf_context(parent_ctx->pmu, child);
+=======
+		child_ctx = alloc_perf_context(event->pmu, child);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!child_ctx)
 			return -ENOMEM;
 
@@ -7251,6 +9015,7 @@ void __init perf_event_init(void)
 
 	ret = init_hw_breakpoint();
 	WARN(ret, "hw_breakpoint initialization failed with: %d", ret);
+<<<<<<< HEAD
 
 	/* do not patch jump label more than once per second */
 	jump_label_rate_limit(&perf_sched_events, HZ);
@@ -7261,6 +9026,8 @@ void __init perf_event_init(void)
 	 */
 	BUILD_BUG_ON((offsetof(struct perf_event_mmap_page, data_head))
 		     != 1024);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __init perf_event_sysfs_init(void)
@@ -7292,7 +9059,12 @@ unlock:
 device_initcall(perf_event_sysfs_init);
 
 #ifdef CONFIG_CGROUP_PERF
+<<<<<<< HEAD
 static struct cgroup_subsys_state *perf_cgroup_create(struct cgroup *cont)
+=======
+static struct cgroup_subsys_state *perf_cgroup_create(
+	struct cgroup_subsys *ss, struct cgroup *cont)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct perf_cgroup *jc;
 
@@ -7309,7 +9081,12 @@ static struct cgroup_subsys_state *perf_cgroup_create(struct cgroup *cont)
 	return &jc->css;
 }
 
+<<<<<<< HEAD
 static void perf_cgroup_destroy(struct cgroup *cont)
+=======
+static void perf_cgroup_destroy(struct cgroup_subsys *ss,
+				struct cgroup *cont)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct perf_cgroup *jc;
 	jc = container_of(cgroup_subsys_state(cont, perf_subsys_id),
@@ -7325,6 +9102,7 @@ static int __perf_cgroup_move(void *info)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void perf_cgroup_attach(struct cgroup *cgrp, struct cgroup_taskset *tset)
 {
 	struct task_struct *task;
@@ -7335,6 +9113,16 @@ static void perf_cgroup_attach(struct cgroup *cgrp, struct cgroup_taskset *tset)
 
 static void perf_cgroup_exit(struct cgroup *cgrp, struct cgroup *old_cgrp,
 			     struct task_struct *task)
+=======
+static void
+perf_cgroup_attach_task(struct cgroup *cgrp, struct task_struct *task)
+{
+	task_function_call(task, __perf_cgroup_move, task);
+}
+
+static void perf_cgroup_exit(struct cgroup_subsys *ss, struct cgroup *cgrp,
+		struct cgroup *old_cgrp, struct task_struct *task)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * cgroup_exit() is called in the copy_process() failure path.
@@ -7344,7 +9132,11 @@ static void perf_cgroup_exit(struct cgroup *cgrp, struct cgroup *old_cgrp,
 	if (!(task->flags & PF_EXITING))
 		return;
 
+<<<<<<< HEAD
 	task_function_call(task, __perf_cgroup_move, task);
+=======
+	perf_cgroup_attach_task(cgrp, task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct cgroup_subsys perf_subsys = {
@@ -7353,6 +9145,10 @@ struct cgroup_subsys perf_subsys = {
 	.create		= perf_cgroup_create,
 	.destroy	= perf_cgroup_destroy,
 	.exit		= perf_cgroup_exit,
+<<<<<<< HEAD
 	.attach		= perf_cgroup_attach,
+=======
+	.attach_task	= perf_cgroup_attach_task,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #endif /* CONFIG_CGROUP_PERF */

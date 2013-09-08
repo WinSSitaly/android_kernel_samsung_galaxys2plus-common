@@ -16,14 +16,20 @@
 
 #include <linux/io.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/unaligned.h>
 
 #include "hw.h"
 #include "hw-ops.h"
 #include "rc.h"
 #include "ar9003_mac.h"
+<<<<<<< HEAD
 #include "ar9003_mci.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static bool ath9k_hw_set_reset_reg(struct ath_hw *ah, u32 type);
 
@@ -89,10 +95,14 @@ static void ath9k_hw_set_clockrate(struct ath_hw *ah)
 	struct ath_common *common = ath9k_hw_common(ah);
 	unsigned int clockrate;
 
+<<<<<<< HEAD
 	/* AR9287 v1.3+ uses async FIFO and runs the MAC at 117 MHz */
 	if (AR_SREV_9287(ah) && AR_SREV_9287_13_OR_LATER(ah))
 		clockrate = 117;
 	else if (!ah->curchan) /* should really check for CCK instead */
+=======
+	if (!ah->curchan) /* should really check for CCK instead */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		clockrate = ATH9K_CLOCK_RATE_CCK;
 	else if (conf->channel->band == IEEE80211_BAND_2GHZ)
 		clockrate = ATH9K_CLOCK_RATE_2GHZ_OFDM;
@@ -104,6 +114,7 @@ static void ath9k_hw_set_clockrate(struct ath_hw *ah)
 	if (conf_is_ht40(conf))
 		clockrate *= 2;
 
+<<<<<<< HEAD
 	if (ah->curchan) {
 		if (IS_CHAN_HALF_RATE(ah->curchan))
 			clockrate /= 2;
@@ -111,6 +122,8 @@ static void ath9k_hw_set_clockrate(struct ath_hw *ah)
 			clockrate /= 4;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	common->clockrate = clockrate;
 }
 
@@ -134,7 +147,11 @@ bool ath9k_hw_wait(struct ath_hw *ah, u32 reg, u32 mask, u32 val, u32 timeout)
 		udelay(AH_TIME_QUANTUM);
 	}
 
+<<<<<<< HEAD
 	ath_dbg(ath9k_hw_common(ah), ANY,
+=======
+	ath_dbg(ath9k_hw_common(ah), ATH_DBG_ANY,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"timeout (%d us) on reg 0x%x: 0x%08x & 0x%08x != 0x%08x\n",
 		timeout, reg, REG_READ(ah, reg), mask, val);
 
@@ -263,6 +280,7 @@ static void ath9k_hw_read_revisions(struct ath_hw *ah)
 	case AR5416_AR9100_DEVID:
 		ah->hw_version.macVersion = AR_SREV_VERSION_9100;
 		break;
+<<<<<<< HEAD
 	case AR9300_DEVID_AR9330:
 		ah->hw_version.macVersion = AR_SREV_VERSION_9330;
 		if (ah->get_mac_revision) {
@@ -272,6 +290,8 @@ static void ath9k_hw_read_revisions(struct ath_hw *ah)
 			ah->hw_version.macRev = MS(val, AR_SREV_REVISION2);
 		}
 		return;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case AR9300_DEVID_AR9340:
 		ah->hw_version.macVersion = AR_SREV_VERSION_9340;
 		val = REG_READ(ah, AR_SREV);
@@ -286,12 +306,16 @@ static void ath9k_hw_read_revisions(struct ath_hw *ah)
 		ah->hw_version.macVersion =
 			(val & AR_SREV_VERSION2) >> AR_SREV_TYPE2_S;
 		ah->hw_version.macRev = MS(val, AR_SREV_REVISION2);
+<<<<<<< HEAD
 
 		if (AR_SREV_9462(ah))
 			ah->is_pciexpress = true;
 		else
 			ah->is_pciexpress = (val &
 					     AR_SREV_TYPE2_HOST_MODE) ? 0 : 1;
+=======
+		ah->is_pciexpress = (val & AR_SREV_TYPE2_HOST_MODE) ? 0 : 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		if (!AR_SREV_9100(ah))
 			ah->hw_version.macVersion = MS(val, AR_SREV_VERSION);
@@ -435,6 +459,10 @@ static void ath9k_hw_init_defaults(struct ath_hw *ah)
 
 	regulatory->country_code = CTRY_DEFAULT;
 	regulatory->power_limit = MAX_RATE_POWER;
+<<<<<<< HEAD
+=======
+	regulatory->tp_scale = ATH9K_TP_SCALE_MAX;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ah->hw_version.magic = AR5416_MAGIC;
 	ah->hw_version.subvendorid = 0;
@@ -446,10 +474,16 @@ static void ath9k_hw_init_defaults(struct ath_hw *ah)
 	if (AR_SREV_9100(ah))
 		ah->sta_id1_defaults |= AR_STA_ID1_AR9100_BA_FIX;
 	ah->enable_32kHz_clock = DONT_USE_32KHZ;
+<<<<<<< HEAD
 	ah->slottime = ATH9K_SLOT_TIME_9;
 	ah->globaltxtimeout = (u32) -1;
 	ah->power_mode = ATH9K_PM_UNDEFINED;
 	ah->htc_reset_init = true;
+=======
+	ah->slottime = 20;
+	ah->globaltxtimeout = (u32) -1;
+	ah->power_mode = ATH9K_PM_UNDEFINED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ath9k_hw_init_macaddr(struct ath_hw *ah)
@@ -493,7 +527,12 @@ static int ath9k_hw_post_init(struct ath_hw *ah)
 	if (ecode != 0)
 		return ecode;
 
+<<<<<<< HEAD
 	ath_dbg(ath9k_hw_common(ah), CONFIG, "Eeprom VER: %d, REV: %d\n",
+=======
+	ath_dbg(ath9k_hw_common(ah), ATH_DBG_CONFIG,
+		"Eeprom VER: %d, REV: %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ah->eep_ops->get_eeprom_ver(ah),
 		ah->eep_ops->get_eeprom_rev(ah));
 
@@ -505,7 +544,11 @@ static int ath9k_hw_post_init(struct ath_hw *ah)
 		return ecode;
 	}
 
+<<<<<<< HEAD
 	if (ah->config.enable_ani) {
+=======
+	if (!AR_SREV_9100(ah) && !AR_SREV_9340(ah)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ath9k_hw_ani_setup(ah);
 		ath9k_hw_ani_init(ah);
 	}
@@ -543,9 +586,12 @@ static int __ath9k_hw_init(struct ath_hw *ah)
 		return -EIO;
 	}
 
+<<<<<<< HEAD
 	if (AR_SREV_9462(ah))
 		ah->WARegVal &= ~AR_WA_D3_L1_DISABLE;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ath9k_hw_init_defaults(ah);
 	ath9k_hw_init_config(ah);
 
@@ -556,9 +602,15 @@ static int __ath9k_hw_init(struct ath_hw *ah)
 		return -EIO;
 	}
 
+<<<<<<< HEAD
 	if (NR_CPUS > 1 && ah->config.serialize_regmode == SER_REG_MODE_AUTO) {
 		if (ah->hw_version.macVersion == AR_SREV_VERSION_5416_PCI ||
 		    ((AR_SREV_9160(ah) || AR_SREV_9280(ah) || AR_SREV_9287(ah)) &&
+=======
+	if (ah->config.serialize_regmode == SER_REG_MODE_AUTO) {
+		if (ah->hw_version.macVersion == AR_SREV_VERSION_5416_PCI ||
+		    ((AR_SREV_9160(ah) || AR_SREV_9280(ah)) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     !ah->is_pciexpress)) {
 			ah->config.serialize_regmode =
 				SER_REG_MODE_ON;
@@ -568,7 +620,11 @@ static int __ath9k_hw_init(struct ath_hw *ah)
 		}
 	}
 
+<<<<<<< HEAD
 	ath_dbg(common, RESET, "serialize_regmode is %d\n",
+=======
+	ath_dbg(common, ATH_DBG_RESET, "serialize_regmode is %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ah->config.serialize_regmode);
 
 	if (AR_SREV_9285(ah) || AR_SREV_9271(ah))
@@ -586,10 +642,15 @@ static int __ath9k_hw_init(struct ath_hw *ah)
 	case AR_SREV_VERSION_9287:
 	case AR_SREV_VERSION_9271:
 	case AR_SREV_VERSION_9300:
+<<<<<<< HEAD
 	case AR_SREV_VERSION_9330:
 	case AR_SREV_VERSION_9485:
 	case AR_SREV_VERSION_9340:
 	case AR_SREV_VERSION_9462:
+=======
+	case AR_SREV_VERSION_9485:
+	case AR_SREV_VERSION_9340:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		ath_err(common,
@@ -598,8 +659,12 @@ static int __ath9k_hw_init(struct ath_hw *ah)
 		return -EOPNOTSUPP;
 	}
 
+<<<<<<< HEAD
 	if (AR_SREV_9271(ah) || AR_SREV_9100(ah) || AR_SREV_9340(ah) ||
 	    AR_SREV_9330(ah))
+=======
+	if (AR_SREV_9271(ah) || AR_SREV_9100(ah) || AR_SREV_9340(ah))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ah->is_pciexpress = false;
 
 	ah->hw_version.phyRev = REG_READ(ah, AR_PHY_CHIP_ID);
@@ -611,6 +676,7 @@ static int __ath9k_hw_init(struct ath_hw *ah)
 	if (!AR_SREV_9300_20_OR_LATER(ah))
 		ah->ani_function &= ~ATH9K_ANI_MRC_CCK;
 
+<<<<<<< HEAD
 	/* disable ANI for 9340 */
 	if (AR_SREV_9340(ah))
 		ah->config.enable_ani = false;
@@ -620,6 +686,19 @@ static int __ath9k_hw_init(struct ath_hw *ah)
 	if (!ah->is_pciexpress)
 		ath9k_hw_disablepcie(ah);
 
+=======
+	ath9k_hw_init_mode_regs(ah);
+
+
+	if (ah->is_pciexpress)
+		ath9k_hw_aspm_init(ah);
+	else
+		ath9k_hw_disablepcie(ah);
+
+	if (!AR_SREV_9300_20_OR_LATER(ah))
+		ar9002_hw_cck_chan14_spread(ah);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = ath9k_hw_post_init(ah);
 	if (r)
 		return r;
@@ -629,9 +708,12 @@ static int __ath9k_hw_init(struct ath_hw *ah)
 	if (r)
 		return r;
 
+<<<<<<< HEAD
 	if (ah->is_pciexpress)
 		ath9k_hw_aspm_init(ah);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = ath9k_hw_init_macaddr(ah);
 	if (r) {
 		ath_err(common, "Failed to initialize MAC address\n");
@@ -643,10 +725,14 @@ static int __ath9k_hw_init(struct ath_hw *ah)
 	else
 		ah->tx_trig_level = (AR_FTRIG_512B >> AR_FTRIG_S);
 
+<<<<<<< HEAD
 	if (AR_SREV_9330(ah))
 		ah->bb_watchdog_timeout_ms = 85;
 	else
 		ah->bb_watchdog_timeout_ms = 25;
+=======
+	ah->bb_watchdog_timeout_ms = 25;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	common->state = ATH_HW_INITIALIZED;
 
@@ -672,11 +758,15 @@ int ath9k_hw_init(struct ath_hw *ah)
 	case AR2427_DEVID_PCIE:
 	case AR9300_DEVID_PCIE:
 	case AR9300_DEVID_AR9485_PCIE:
+<<<<<<< HEAD
 	case AR9300_DEVID_AR9330:
 	case AR9300_DEVID_AR9340:
 	case AR9300_DEVID_AR9580:
 	case AR9300_DEVID_AR9462:
 	case AR9485_DEVID_AR1111:
+=======
+	case AR9300_DEVID_AR9340:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		if (common->bus_ops->ath_bus_type == ATH_USB)
@@ -721,13 +811,17 @@ static void ath9k_hw_init_qos(struct ath_hw *ah)
 
 u32 ar9003_get_pll_sqsum_dvc(struct ath_hw *ah)
 {
+<<<<<<< HEAD
 	struct ath_common *common = ath9k_hw_common(ah);
 	int i = 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	REG_CLR_BIT(ah, PLL3, PLL3_DO_MEAS_MASK);
 	udelay(100);
 	REG_SET_BIT(ah, PLL3, PLL3_DO_MEAS_MASK);
 
+<<<<<<< HEAD
 	while ((REG_READ(ah, PLL4) & PLL4_MEAS_DONE) == 0) {
 
 		udelay(100);
@@ -740,6 +834,11 @@ u32 ar9003_get_pll_sqsum_dvc(struct ath_hw *ah)
 		i++;
 	}
 
+=======
+	while ((REG_READ(ah, PLL4) & PLL4_MEAS_DONE) == 0)
+		udelay(100);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return (REG_READ(ah, PLL3) & SQSUM_DVC_MASK) >> 3;
 }
 EXPORT_SYMBOL(ar9003_get_pll_sqsum_dvc);
@@ -780,6 +879,7 @@ static void ath9k_hw_init_pll(struct ath_hw *ah,
 		REG_RMW_FIELD(ah, AR_CH0_BB_DPLL2,
 			      AR_CH0_BB_DPLL2_PLL_PWD, 0x0);
 		udelay(1000);
+<<<<<<< HEAD
 	} else if (AR_SREV_9330(ah)) {
 		u32 ddr_dpll2, pll_control2, kd;
 
@@ -813,6 +913,8 @@ static void ath9k_hw_init_pll(struct ath_hw *ah,
 		/* program BB PLL phase_shift */
 		REG_RMW_FIELD(ah, AR_CH0_BB_DPLL3,
 			      AR_CH0_BB_DPLL3_PHASE_SHIFT, 0x1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (AR_SREV_9340(ah)) {
 		u32 regval, pll2_divint, pll2_divfrac, refdiv;
 
@@ -854,7 +956,11 @@ static void ath9k_hw_init_pll(struct ath_hw *ah,
 
 	REG_WRITE(ah, AR_RTC_PLL_CONTROL, pll);
 
+<<<<<<< HEAD
 	if (AR_SREV_9485(ah) || AR_SREV_9340(ah) || AR_SREV_9330(ah))
+=======
+	if (AR_SREV_9485(ah) || AR_SREV_9340(ah))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		udelay(1000);
 
 	/* Switch the core clock for ar9271 to 117Mhz */
@@ -938,6 +1044,7 @@ static void ath9k_hw_init_interrupt_masks(struct ath_hw *ah,
 	}
 }
 
+<<<<<<< HEAD
 static void ath9k_hw_set_sifs_time(struct ath_hw *ah, u32 us)
 {
 	u32 val = ath9k_hw_mac_to_clks(ah, us - 2);
@@ -945,6 +1052,8 @@ static void ath9k_hw_set_sifs_time(struct ath_hw *ah, u32 us)
 	REG_WRITE(ah, AR_D_GBL_IFS_SIFS, val);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ath9k_hw_setslottime(struct ath_hw *ah, u32 us)
 {
 	u32 val = ath9k_hw_mac_to_clks(ah, us);
@@ -969,8 +1078,13 @@ static void ath9k_hw_set_cts_timeout(struct ath_hw *ah, u32 us)
 static bool ath9k_hw_set_global_txtimeout(struct ath_hw *ah, u32 tu)
 {
 	if (tu > 0xFFFF) {
+<<<<<<< HEAD
 		ath_dbg(ath9k_hw_common(ah), XMIT, "bad global tx timeout %u\n",
 			tu);
+=======
+		ath_dbg(ath9k_hw_common(ah), ATH_DBG_XMIT,
+			"bad global tx timeout %u\n", tu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ah->globaltxtimeout = (u32) -1;
 		return false;
 	} else {
@@ -982,6 +1096,7 @@ static bool ath9k_hw_set_global_txtimeout(struct ath_hw *ah, u32 tu)
 
 void ath9k_hw_init_global_settings(struct ath_hw *ah)
 {
+<<<<<<< HEAD
 	struct ath_common *common = ath9k_hw_common(ah);
 	struct ieee80211_conf *conf = &common->hw->conf;
 	const struct ath9k_channel *chan = ah->curchan;
@@ -1050,10 +1165,36 @@ void ath9k_hw_init_global_settings(struct ath_hw *ah)
 	/*
 	 * Workaround for early ACK timeouts, add an offset to match the
 	 * initval's 64us ack timeout value. Use 48us for the CTS timeout.
+=======
+	struct ieee80211_conf *conf = &ath9k_hw_common(ah)->hw->conf;
+	int acktimeout;
+	int slottime;
+	int sifstime;
+
+	ath_dbg(ath9k_hw_common(ah), ATH_DBG_RESET, "ah->misc_mode 0x%x\n",
+		ah->misc_mode);
+
+	if (ah->misc_mode != 0)
+		REG_SET_BIT(ah, AR_PCU_MISC, ah->misc_mode);
+
+	if (conf->channel && conf->channel->band == IEEE80211_BAND_5GHZ)
+		sifstime = 16;
+	else
+		sifstime = 10;
+
+	/* As defined by IEEE 802.11-2007 17.3.8.6 */
+	slottime = ah->slottime + 3 * ah->coverage_class;
+	acktimeout = slottime + sifstime;
+
+	/*
+	 * Workaround for early ACK timeouts, add an offset to match the
+	 * initval's 64us ack timeout value.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * This was initially only meant to work around an issue with delayed
 	 * BA frames in some implementations, but it has been found to fix ACK
 	 * timeout issues in other cases as well.
 	 */
+<<<<<<< HEAD
 	if (conf->channel && conf->channel->band == IEEE80211_BAND_2GHZ) {
 		acktimeout += 64 - sifstime - ah->slottime;
 		ctstimeout += 48 - sifstime - ah->slottime;
@@ -1074,6 +1215,16 @@ void ath9k_hw_init_global_settings(struct ath_hw *ah)
 		SM(tx_lat, AR_USEC_TX_LAT),
 		AR_USEC_TX_LAT | AR_USEC_RX_LAT | AR_USEC_USEC);
 
+=======
+	if (conf->channel && conf->channel->band == IEEE80211_BAND_2GHZ)
+		acktimeout += 64 - sifstime - ah->slottime;
+
+	ath9k_hw_setslottime(ah, ah->slottime);
+	ath9k_hw_set_ack_timeout(ah, acktimeout);
+	ath9k_hw_set_cts_timeout(ah, acktimeout);
+	if (ah->globaltxtimeout != (u32) -1)
+		ath9k_hw_set_global_txtimeout(ah, ah->globaltxtimeout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(ath9k_hw_init_global_settings);
 
@@ -1269,6 +1420,7 @@ static bool ath9k_hw_set_reset(struct ath_hw *ah, int type)
 			rst_flags |= AR_RTC_RC_MAC_COLD;
 	}
 
+<<<<<<< HEAD
 	if (AR_SREV_9330(ah)) {
 		int npend = 0;
 		int i;
@@ -1304,6 +1456,8 @@ static bool ath9k_hw_set_reset(struct ath_hw *ah, int type)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	REG_WRITE(ah, AR_RTC_RC, rst_flags);
 
 	REGWRITE_BUFFER_FLUSH(ah);
@@ -1312,7 +1466,12 @@ static bool ath9k_hw_set_reset(struct ath_hw *ah, int type)
 
 	REG_WRITE(ah, AR_RTC_RC, 0);
 	if (!ath9k_hw_wait(ah, AR_RTC_RC, AR_RTC_RC_M, 0, AH_WAIT_TIMEOUT)) {
+<<<<<<< HEAD
 		ath_dbg(ath9k_hw_common(ah), RESET, "RTC stuck in MAC reset\n");
+=======
+		ath_dbg(ath9k_hw_common(ah), ATH_DBG_RESET,
+			"RTC stuck in MAC reset\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return false;
 	}
 
@@ -1357,7 +1516,12 @@ static bool ath9k_hw_set_reset_power_on(struct ath_hw *ah)
 			   AR_RTC_STATUS_M,
 			   AR_RTC_STATUS_ON,
 			   AH_WAIT_TIMEOUT)) {
+<<<<<<< HEAD
 		ath_dbg(ath9k_hw_common(ah), RESET, "RTC not waking up\n");
+=======
+		ath_dbg(ath9k_hw_common(ah), ATH_DBG_RESET,
+			"RTC not waking up\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return false;
 	}
 
@@ -1366,8 +1530,11 @@ static bool ath9k_hw_set_reset_power_on(struct ath_hw *ah)
 
 static bool ath9k_hw_set_reset_reg(struct ath_hw *ah, u32 type)
 {
+<<<<<<< HEAD
 	bool ret = false;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (AR_SREV_9300_20_OR_LATER(ah)) {
 		REG_WRITE(ah, AR_WA, ah->WARegVal);
 		udelay(10);
@@ -1378,6 +1545,7 @@ static bool ath9k_hw_set_reset_reg(struct ath_hw *ah, u32 type)
 
 	switch (type) {
 	case ATH9K_RESET_POWER_ON:
+<<<<<<< HEAD
 		ret = ath9k_hw_set_reset_power_on(ah);
 		break;
 	case ATH9K_RESET_WARM:
@@ -1392,11 +1560,21 @@ static bool ath9k_hw_set_reset_reg(struct ath_hw *ah, u32 type)
 		REG_WRITE(ah, AR_RTC_KEEP_AWAKE, 0x2);
 
 	return ret;
+=======
+		return ath9k_hw_set_reset_power_on(ah);
+	case ATH9K_RESET_WARM:
+	case ATH9K_RESET_COLD:
+		return ath9k_hw_set_reset(ah, type);
+	default:
+		return false;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static bool ath9k_hw_chip_reset(struct ath_hw *ah,
 				struct ath9k_channel *chan)
 {
+<<<<<<< HEAD
 	int reset_type = ATH9K_RESET_WARM;
 
 	if (AR_SREV_9280(ah)) {
@@ -1409,6 +1587,12 @@ static bool ath9k_hw_chip_reset(struct ath_hw *ah,
 		reset_type = ATH9K_RESET_COLD;
 
 	if (!ath9k_hw_set_reset_reg(ah, reset_type))
+=======
+	if (AR_SREV_9280(ah) && ah->eep_ops->get_eeprom(ah, EEP_OL_PWRCTRL)) {
+		if (!ath9k_hw_set_reset_reg(ah, ATH9K_RESET_POWER_ON))
+			return false;
+	} else if (!ath9k_hw_set_reset_reg(ah, ATH9K_RESET_WARM))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return false;
 
 	if (!ath9k_hw_setpower(ah, ATH9K_PM_AWAKE))
@@ -1424,6 +1608,7 @@ static bool ath9k_hw_chip_reset(struct ath_hw *ah,
 static bool ath9k_hw_channel_change(struct ath_hw *ah,
 				    struct ath9k_channel *chan)
 {
+<<<<<<< HEAD
 	struct ath_common *common = ath9k_hw_common(ah);
 	u32 qnum;
 	int r;
@@ -1439,6 +1624,17 @@ static bool ath9k_hw_channel_change(struct ath_hw *ah,
 	for (qnum = 0; qnum < AR_NUM_QCU; qnum++) {
 		if (ath9k_hw_numtxpending(ah, qnum)) {
 			ath_dbg(common, QUEUE,
+=======
+	struct ath_regulatory *regulatory = ath9k_hw_regulatory(ah);
+	struct ath_common *common = ath9k_hw_common(ah);
+	struct ieee80211_channel *channel = chan->chan;
+	u32 qnum;
+	int r;
+
+	for (qnum = 0; qnum < AR_NUM_QCU; qnum++) {
+		if (ath9k_hw_numtxpending(ah, qnum)) {
+			ath_dbg(common, ATH_DBG_QUEUE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"Transmit frames pending on queue %d\n", qnum);
 			return false;
 		}
@@ -1449,6 +1645,7 @@ static bool ath9k_hw_channel_change(struct ath_hw *ah,
 		return false;
 	}
 
+<<<<<<< HEAD
 	if (edma && (band_switch || mode_diff)) {
 		ath9k_hw_mark_phy_inactive(ah);
 		udelay(5);
@@ -1461,6 +1658,8 @@ static bool ath9k_hw_channel_change(struct ath_hw *ah,
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ath9k_hw_set_channel_regs(ah, chan);
 
 	r = ath9k_hw_rf_set_freq(ah, chan);
@@ -1469,7 +1668,18 @@ static bool ath9k_hw_channel_change(struct ath_hw *ah,
 		return false;
 	}
 	ath9k_hw_set_clockrate(ah);
+<<<<<<< HEAD
 	ath9k_hw_apply_txpower(ah, chan, false);
+=======
+
+	ah->eep_ops->set_txpower(ah, chan,
+			     ath9k_regd_get_ctl(regulatory, chan),
+			     channel->max_antenna_gain * 2,
+			     channel->max_power * 2,
+			     min((u32) MAX_RATE_POWER,
+			     (u32) regulatory->power_limit), false);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ath9k_hw_rfbus_done(ah);
 
 	if (IS_CHAN_OFDM(chan) || IS_CHAN_HT(chan))
@@ -1477,6 +1687,7 @@ static bool ath9k_hw_channel_change(struct ath_hw *ah,
 
 	ath9k_hw_spur_mitigate_freq(ah, chan);
 
+<<<<<<< HEAD
 	if (edma && (band_switch || mode_diff)) {
 		ah->ah_flags |= AH_FASTCC;
 		if (band_switch || ini_reloaded)
@@ -1489,6 +1700,8 @@ static bool ath9k_hw_channel_change(struct ath_hw *ah,
 		ah->ah_flags &= ~AH_FASTCC;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return true;
 }
 
@@ -1534,6 +1747,7 @@ bool ath9k_hw_check_alive(struct ath_hw *ah)
 }
 EXPORT_SYMBOL(ath9k_hw_check_alive);
 
+<<<<<<< HEAD
 /*
  * Fast channel change:
  * (Change synthesizer based on channel freq without resetting chip)
@@ -1604,10 +1818,19 @@ int ath9k_hw_reset(struct ath_hw *ah, struct ath9k_channel *chan,
 {
 	struct ath_common *common = ath9k_hw_common(ah);
 	u32 saveLedState;
+=======
+int ath9k_hw_reset(struct ath_hw *ah, struct ath9k_channel *chan,
+		   struct ath9k_hw_cal_data *caldata, bool bChannelChange)
+{
+	struct ath_common *common = ath9k_hw_common(ah);
+	u32 saveLedState;
+	struct ath9k_channel *curchan = ah->curchan;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 saveDefAntenna;
 	u32 macStaId1;
 	u64 tsf = 0;
 	int i, r;
+<<<<<<< HEAD
 	bool start_mci_reset = false;
 	bool mci = !!(ah->caps.hw_caps & ATH9K_HW_CAP_MCI);
 	bool save_fullsleep = ah->chip_fullsleep;
@@ -1617,12 +1840,22 @@ int ath9k_hw_reset(struct ath_hw *ah, struct ath9k_channel *chan,
 		if (start_mci_reset)
 			return 0;
 	}
+=======
+
+	ah->txchainmask = common->tx_chainmask;
+	ah->rxchainmask = common->rx_chainmask;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!ath9k_hw_setpower(ah, ATH9K_PM_AWAKE))
 		return -EIO;
 
+<<<<<<< HEAD
 	if (ah->curchan && !ah->chip_fullsleep)
 		ath9k_hw_getnf(ah, ah->curchan);
+=======
+	if (curchan && !ah->chip_fullsleep)
+		ath9k_hw_getnf(ah, curchan);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ah->caldata = caldata;
 	if (caldata &&
@@ -1633,6 +1866,7 @@ int ath9k_hw_reset(struct ath_hw *ah, struct ath9k_channel *chan,
 		memset(caldata, 0, sizeof(*caldata));
 		ath9k_init_nfcal_hist_buffer(ah, chan);
 	}
+<<<<<<< HEAD
 	ah->noise = ath9k_hw_getchan_noise(ah, chan);
 
 	if (fastcc) {
@@ -1643,6 +1877,25 @@ int ath9k_hw_reset(struct ath_hw *ah, struct ath9k_channel *chan,
 
 	if (mci)
 		ar9003_mci_stop_bt(ah, save_fullsleep);
+=======
+
+	if (bChannelChange &&
+	    (ah->chip_fullsleep != true) &&
+	    (ah->curchan != NULL) &&
+	    (chan->channel != ah->curchan->channel) &&
+	    ((chan->channelFlags & CHANNEL_ALL) ==
+	     (ah->curchan->channelFlags & CHANNEL_ALL)) &&
+	    (!AR_SREV_9280(ah) || AR_DEVID_7010(ah))) {
+
+		if (ath9k_hw_channel_change(ah, chan)) {
+			ath9k_hw_loadnf(ah, ah->curchan);
+			ath9k_hw_start_nfcal(ah, true);
+			if (AR_SREV_9271(ah))
+				ar9002_hw_load_ani_reg(ah, chan);
+			return 0;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	saveDefAntenna = REG_READ(ah, AR_DEF_ANTENNA);
 	if (saveDefAntenna == 0)
@@ -1699,9 +1952,12 @@ int ath9k_hw_reset(struct ath_hw *ah, struct ath9k_channel *chan,
 	if (r)
 		return r;
 
+<<<<<<< HEAD
 	if (mci)
 		ar9003_mci_reset(ah, false, IS_CHAN_2GHZ(chan), save_fullsleep);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Some AR91xx SoC devices frequently fail to accept TSF writes
 	 * right after the chip reset. When that happens, write a new
@@ -1781,6 +2037,7 @@ int ath9k_hw_reset(struct ath_hw *ah, struct ath9k_channel *chan,
 
 	ath9k_hw_init_global_settings(ah);
 
+<<<<<<< HEAD
 	if (AR_SREV_9287(ah) && AR_SREV_9287_13_OR_LATER(ah)) {
 		REG_SET_BIT(ah, AR_MAC_PCU_LOGIC_ANALYZER,
 			    AR_MAC_PCU_LOGIC_ANALYZER_DISBUG20768);
@@ -1788,6 +2045,11 @@ int ath9k_hw_reset(struct ath_hw *ah, struct ath9k_channel *chan,
 			      AR_AHB_CUSTOM_BURST_ASYNC_FIFO_VAL);
 		REG_SET_BIT(ah, AR_PCU_MISC_MODE2,
 			    AR_PCU_MISC_MODE2_ENABLE_AGGWEP);
+=======
+	if (!AR_SREV_9300_20_OR_LATER(ah)) {
+		ar9002_hw_update_async_fifo(ah);
+		ar9002_hw_enable_wep_aggregation(ah);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	REG_SET_BIT(ah, AR_STA_ID1, AR_STA_ID1_PRESERVE_SEQNUM);
@@ -1808,6 +2070,7 @@ int ath9k_hw_reset(struct ath_hw *ah, struct ath9k_channel *chan,
 
 	ath9k_hw_init_bb(ah, chan);
 
+<<<<<<< HEAD
 	if (caldata) {
 		caldata->done_txiqcal_once = false;
 		caldata->done_txclcal_once = false;
@@ -1822,6 +2085,11 @@ int ath9k_hw_reset(struct ath_hw *ah, struct ath9k_channel *chan,
 	if (mci && ar9003_mci_end_reset(ah, chan, caldata))
 		return -EIO;
 
+=======
+	if (!ath9k_hw_init_cal(ah, chan))
+		return -EIO;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ENABLE_REGWRITE_BUFFER(ah);
 
 	ath9k_hw_restore_chainmask(ah);
@@ -1836,14 +2104,24 @@ int ath9k_hw_reset(struct ath_hw *ah, struct ath9k_channel *chan,
 		u32 mask;
 		mask = REG_READ(ah, AR_CFG);
 		if (mask & (AR_CFG_SWRB | AR_CFG_SWTB | AR_CFG_SWRG)) {
+<<<<<<< HEAD
 			ath_dbg(common, RESET, "CFG Byte Swap Set 0x%x\n",
 				mask);
+=======
+			ath_dbg(common, ATH_DBG_RESET,
+				"CFG Byte Swap Set 0x%x\n", mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			mask =
 				INIT_CONFIG_STATUS | AR_CFG_SWRB | AR_CFG_SWTB;
 			REG_WRITE(ah, AR_CFG, mask);
+<<<<<<< HEAD
 			ath_dbg(common, RESET, "Setting CFG 0x%x\n",
 				REG_READ(ah, AR_CFG));
+=======
+			ath_dbg(common, ATH_DBG_RESET,
+				"Setting CFG 0x%x\n", REG_READ(ah, AR_CFG));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		if (common->bus_ops->ath_bus_type == ATH_USB) {
@@ -1854,19 +2132,29 @@ int ath9k_hw_reset(struct ath_hw *ah, struct ath9k_channel *chan,
 				REG_WRITE(ah, AR_CFG, AR_CFG_SWTD | AR_CFG_SWRD);
 		}
 #ifdef __BIG_ENDIAN
+<<<<<<< HEAD
 		else if (AR_SREV_9330(ah) || AR_SREV_9340(ah))
+=======
+		else if (AR_SREV_9340(ah))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			REG_RMW(ah, AR_CFG, AR_CFG_SWRB | AR_CFG_SWTB, 0);
 		else
 			REG_WRITE(ah, AR_CFG, AR_CFG_SWTD | AR_CFG_SWRD);
 #endif
 	}
 
+<<<<<<< HEAD
 	if (ath9k_hw_btcoex_is_enabled(ah))
 		ath9k_hw_btcoex_enable(ah);
 
 	if (mci)
 		ar9003_mci_check_bt(ah);
 
+=======
+	if (ah->btcoex_hw.enabled)
+		ath9k_hw_btcoex_enable(ah);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (AR_SREV_9300_20_OR_LATER(ah)) {
 		ar9003_hw_bb_watchdog_config(ah);
 
@@ -1891,6 +2179,7 @@ static void ath9k_set_power_sleep(struct ath_hw *ah, int setChip)
 {
 	REG_SET_BIT(ah, AR_STA_ID1, AR_STA_ID1_PWR_SAV);
 	if (setChip) {
+<<<<<<< HEAD
 		if (AR_SREV_9462(ah)) {
 			REG_WRITE(ah, AR_TIMER_MODE,
 				  REG_READ(ah, AR_TIMER_MODE) & 0xFFFFFF00);
@@ -1903,28 +2192,46 @@ static void ath9k_set_power_sleep(struct ath_hw *ah, int setChip)
 			udelay(100);
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Clear the RTC force wake bit to allow the
 		 * mac to go to sleep.
 		 */
+<<<<<<< HEAD
 		REG_CLR_BIT(ah, AR_RTC_FORCE_WAKE, AR_RTC_FORCE_WAKE_EN);
 
 		if (AR_SREV_9462(ah))
 			udelay(100);
 
+=======
+		REG_CLR_BIT(ah, AR_RTC_FORCE_WAKE,
+			    AR_RTC_FORCE_WAKE_EN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!AR_SREV_9100(ah) && !AR_SREV_9300_20_OR_LATER(ah))
 			REG_WRITE(ah, AR_RC, AR_RC_AHB | AR_RC_HOSTIF);
 
 		/* Shutdown chip. Active low */
+<<<<<<< HEAD
 		if (!AR_SREV_5416(ah) && !AR_SREV_9271(ah)) {
 			REG_CLR_BIT(ah, AR_RTC_RESET, AR_RTC_RESET_EN);
 			udelay(2);
 		}
+=======
+		if (!AR_SREV_5416(ah) && !AR_SREV_9271(ah))
+			REG_CLR_BIT(ah, (AR_RTC_RESET),
+				    AR_RTC_RESET_EN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Clear Bit 14 of AR_WA after putting chip into Full Sleep mode. */
 	if (AR_SREV_9300_20_OR_LATER(ah))
+<<<<<<< HEAD
 		REG_WRITE(ah, AR_WA, ah->WARegVal & ~AR_WA_D3_L1_DISABLE);
+=======
+		REG_WRITE(ah, AR_WA,
+			  ah->WARegVal & ~AR_WA_D3_L1_DISABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1934,8 +2241,11 @@ static void ath9k_set_power_sleep(struct ath_hw *ah, int setChip)
  */
 static void ath9k_set_power_network_sleep(struct ath_hw *ah, int setChip)
 {
+<<<<<<< HEAD
 	u32 val;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	REG_SET_BIT(ah, AR_STA_ID1, AR_STA_ID1_PWR_SAV);
 	if (setChip) {
 		struct ath9k_hw_capabilities *pCap = &ah->caps;
@@ -1945,6 +2255,7 @@ static void ath9k_set_power_network_sleep(struct ath_hw *ah, int setChip)
 			REG_WRITE(ah, AR_RTC_FORCE_WAKE,
 				  AR_RTC_FORCE_WAKE_ON_INT);
 		} else {
+<<<<<<< HEAD
 
 			/* When chip goes into network sleep, it could be waken
 			 * up by MCI_INT interrupt caused by BT's HW messages
@@ -1960,15 +2271,20 @@ static void ath9k_set_power_network_sleep(struct ath_hw *ah, int setChip)
 					~AR_MCI_INTERRUPT_RX_HW_MSG_MASK;
 				REG_WRITE(ah, AR_MCI_INTERRUPT_RX_MSG_EN, val);
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * Clear the RTC force wake bit to allow the
 			 * mac to go to sleep.
 			 */
 			REG_CLR_BIT(ah, AR_RTC_FORCE_WAKE,
 				    AR_RTC_FORCE_WAKE_EN);
+<<<<<<< HEAD
 
 			if (AR_SREV_9462(ah))
 				udelay(30);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -1991,7 +2307,12 @@ static bool ath9k_hw_set_power_awake(struct ath_hw *ah, int setChip)
 	if (setChip) {
 		if ((REG_READ(ah, AR_RTC_STATUS) &
 		     AR_RTC_STATUS_M) == AR_RTC_STATUS_SHUTDOWN) {
+<<<<<<< HEAD
 			if (!ath9k_hw_set_reset_reg(ah, ATH9K_RESET_POWER_ON)) {
+=======
+			if (ath9k_hw_set_reset_reg(ah,
+					   ATH9K_RESET_POWER_ON) != true) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return false;
 			}
 			if (!AR_SREV_9300_20_OR_LATER(ah))
@@ -2040,12 +2361,17 @@ bool ath9k_hw_setpower(struct ath_hw *ah, enum ath9k_power_mode mode)
 	if (ah->power_mode == mode)
 		return status;
 
+<<<<<<< HEAD
 	ath_dbg(common, RESET, "%s -> %s\n",
+=======
+	ath_dbg(common, ATH_DBG_RESET, "%s -> %s\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		modes[ah->power_mode], modes[mode]);
 
 	switch (mode) {
 	case ATH9K_PM_AWAKE:
 		status = ath9k_hw_set_power_awake(ah, setChip);
+<<<<<<< HEAD
 
 		if (ah->caps.hw_caps & ATH9K_HW_CAP_MCI)
 			REG_WRITE(ah, AR_RTC_KEEP_AWAKE, 0x2);
@@ -2055,14 +2381,21 @@ bool ath9k_hw_setpower(struct ath_hw *ah, enum ath9k_power_mode mode)
 		if (ah->caps.hw_caps & ATH9K_HW_CAP_MCI)
 			ar9003_mci_set_full_sleep(ah);
 
+=======
+		break;
+	case ATH9K_PM_FULL_SLEEP:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ath9k_set_power_sleep(ah, setChip);
 		ah->chip_fullsleep = true;
 		break;
 	case ATH9K_PM_NETWORK_SLEEP:
+<<<<<<< HEAD
 
 		if (ah->caps.hw_caps & ATH9K_HW_CAP_MCI)
 			REG_WRITE(ah, AR_RTC_KEEP_AWAKE, 0x2);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ath9k_set_power_network_sleep(ah, setChip);
 		break;
 	default:
@@ -2112,8 +2445,14 @@ void ath9k_hw_beaconinit(struct ath_hw *ah, u32 next_beacon, u32 beacon_period)
 			AR_TBTT_TIMER_EN | AR_DBA_TIMER_EN | AR_SWBA_TIMER_EN;
 		break;
 	default:
+<<<<<<< HEAD
 		ath_dbg(ath9k_hw_common(ah), BEACON,
 			"%s: unsupported opmode: %d\n", __func__, ah->opmode);
+=======
+		ath_dbg(ath9k_hw_common(ah), ATH_DBG_BEACON,
+			"%s: unsupported opmode: %d\n",
+			__func__, ah->opmode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 		break;
 	}
@@ -2141,16 +2480,26 @@ void ath9k_hw_set_sta_beacon_timers(struct ath_hw *ah,
 	REG_WRITE(ah, AR_NEXT_TBTT_TIMER, TU_TO_USEC(bs->bs_nexttbtt));
 
 	REG_WRITE(ah, AR_BEACON_PERIOD,
+<<<<<<< HEAD
 		  TU_TO_USEC(bs->bs_intval));
 	REG_WRITE(ah, AR_DMA_BEACON_PERIOD,
 		  TU_TO_USEC(bs->bs_intval));
+=======
+		  TU_TO_USEC(bs->bs_intval & ATH9K_BEACON_PERIOD));
+	REG_WRITE(ah, AR_DMA_BEACON_PERIOD,
+		  TU_TO_USEC(bs->bs_intval & ATH9K_BEACON_PERIOD));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	REGWRITE_BUFFER_FLUSH(ah);
 
 	REG_RMW_FIELD(ah, AR_RSSI_THR,
 		      AR_RSSI_THR_BM_THR, bs->bs_bmissthreshold);
 
+<<<<<<< HEAD
 	beaconintval = bs->bs_intval;
+=======
+	beaconintval = bs->bs_intval & ATH9K_BEACON_PERIOD;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (bs->bs_sleepduration > beaconintval)
 		beaconintval = bs->bs_sleepduration;
@@ -2164,10 +2513,17 @@ void ath9k_hw_set_sta_beacon_timers(struct ath_hw *ah,
 	else
 		nextTbtt = bs->bs_nexttbtt;
 
+<<<<<<< HEAD
 	ath_dbg(common, BEACON, "next DTIM %d\n", bs->bs_nextdtim);
 	ath_dbg(common, BEACON, "next beacon %d\n", nextTbtt);
 	ath_dbg(common, BEACON, "beacon period %d\n", beaconintval);
 	ath_dbg(common, BEACON, "DTIM period %d\n", dtimperiod);
+=======
+	ath_dbg(common, ATH_DBG_BEACON, "next DTIM %d\n", bs->bs_nextdtim);
+	ath_dbg(common, ATH_DBG_BEACON, "next beacon %d\n", nextTbtt);
+	ath_dbg(common, ATH_DBG_BEACON, "beacon period %d\n", beaconintval);
+	ath_dbg(common, ATH_DBG_BEACON, "DTIM period %d\n", dtimperiod);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ENABLE_REGWRITE_BUFFER(ah);
 
@@ -2205,6 +2561,7 @@ EXPORT_SYMBOL(ath9k_hw_set_sta_beacon_timers);
 /* HW Capabilities */
 /*******************/
 
+<<<<<<< HEAD
 static u8 fixup_chainmask(u8 chip_chainmask, u8 eeprom_chainmask)
 {
 	eeprom_chainmask &= chip_chainmask;
@@ -2238,12 +2595,18 @@ static bool ath9k_hw_dfs_tested(struct ath_hw *ah)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int ath9k_hw_fill_cap_info(struct ath_hw *ah)
 {
 	struct ath9k_hw_capabilities *pCap = &ah->caps;
 	struct ath_regulatory *regulatory = ath9k_hw_regulatory(ah);
 	struct ath_common *common = ath9k_hw_common(ah);
+<<<<<<< HEAD
 	unsigned int chip_chainmask;
+=======
+	struct ath_btcoex_hw *btcoex_hw = &ah->btcoex_hw;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	u16 eeval;
 	u8 ant_div_ctl1, tx_chainmask, rx_chainmask;
@@ -2251,6 +2614,14 @@ int ath9k_hw_fill_cap_info(struct ath_hw *ah)
 	eeval = ah->eep_ops->get_eeprom(ah, EEP_REG_0);
 	regulatory->current_rd = eeval;
 
+<<<<<<< HEAD
+=======
+	eeval = ah->eep_ops->get_eeprom(ah, EEP_REG_1);
+	if (AR_SREV_9285_12_OR_LATER(ah))
+		eeval |= AR9285_RDEXT_DEFAULT;
+	regulatory->current_rd_ext = eeval;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ah->opmode != NL80211_IFTYPE_AP &&
 	    ah->hw_version.subvendorid == AR_SUBVENDOR_ID_NEW_A) {
 		if (regulatory->current_rd == 0x64 ||
@@ -2258,8 +2629,13 @@ int ath9k_hw_fill_cap_info(struct ath_hw *ah)
 			regulatory->current_rd += 5;
 		else if (regulatory->current_rd == 0x41)
 			regulatory->current_rd = 0x43;
+<<<<<<< HEAD
 		ath_dbg(common, REGULATORY, "regdomain mapped to 0x%x\n",
 			regulatory->current_rd);
+=======
+		ath_dbg(common, ATH_DBG_REGULATORY,
+			"regdomain mapped to 0x%x\n", regulatory->current_rd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	eeval = ah->eep_ops->get_eeprom(ah, EEP_OP_MODE);
@@ -2275,6 +2651,7 @@ int ath9k_hw_fill_cap_info(struct ath_hw *ah)
 	if (eeval & AR5416_OPFLAGS_11G)
 		pCap->hw_caps |= ATH9K_HW_CAP_2GHZ;
 
+<<<<<<< HEAD
 	if (AR_SREV_9485(ah) || AR_SREV_9285(ah) || AR_SREV_9330(ah))
 		chip_chainmask = 1;
 	else if (AR_SREV_9462(ah))
@@ -2286,6 +2663,8 @@ int ath9k_hw_fill_cap_info(struct ath_hw *ah)
 	else
 		chip_chainmask = 7;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pCap->tx_chainmask = ah->eep_ops->get_eeprom(ah, EEP_TX_MASK);
 	/*
 	 * For AR9271 we will temporarilly uses the rx chainmax as read from
@@ -2302,11 +2681,14 @@ int ath9k_hw_fill_cap_info(struct ath_hw *ah)
 		/* Use rx_chainmask from EEPROM. */
 		pCap->rx_chainmask = ah->eep_ops->get_eeprom(ah, EEP_RX_MASK);
 
+<<<<<<< HEAD
 	pCap->tx_chainmask = fixup_chainmask(chip_chainmask, pCap->tx_chainmask);
 	pCap->rx_chainmask = fixup_chainmask(chip_chainmask, pCap->rx_chainmask);
 	ah->txchainmask = pCap->tx_chainmask;
 	ah->rxchainmask = pCap->rx_chainmask;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ah->misc_mode |= AR_PCU_MIC_NEW_LOC_ENA;
 
 	/* enable key search for every frame in an aggregate */
@@ -2335,10 +2717,19 @@ int ath9k_hw_fill_cap_info(struct ath_hw *ah)
 	else
 		pCap->num_gpio_pins = AR_NUM_GPIO;
 
+<<<<<<< HEAD
 	if (AR_SREV_9160_10_OR_LATER(ah) || AR_SREV_9100(ah))
 		pCap->rts_aggr_limit = ATH_AMPDU_LIMIT_MAX;
 	else
 		pCap->rts_aggr_limit = (8 * 1024);
+=======
+	if (AR_SREV_9160_10_OR_LATER(ah) || AR_SREV_9100(ah)) {
+		pCap->hw_caps |= ATH9K_HW_CAP_CST;
+		pCap->rts_aggr_limit = ATH_AMPDU_LIMIT_MAX;
+	} else {
+		pCap->rts_aggr_limit = (8 * 1024);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if defined(CONFIG_RFKILL) || defined(CONFIG_RFKILL_MODULE)
 	ah->rfsilent = ah->eep_ops->get_eeprom(ah, EEP_RF_SILENT);
@@ -2361,9 +2752,37 @@ int ath9k_hw_fill_cap_info(struct ath_hw *ah)
 	else
 		pCap->hw_caps |= ATH9K_HW_CAP_4KB_SPLITTRANS;
 
+<<<<<<< HEAD
 	if (AR_SREV_9300_20_OR_LATER(ah)) {
 		pCap->hw_caps |= ATH9K_HW_CAP_EDMA | ATH9K_HW_CAP_FASTCLOCK;
 		if (!AR_SREV_9330(ah) && !AR_SREV_9485(ah))
+=======
+	if (common->btcoex_enabled) {
+		if (AR_SREV_9300_20_OR_LATER(ah)) {
+			btcoex_hw->scheme = ATH_BTCOEX_CFG_3WIRE;
+			btcoex_hw->btactive_gpio = ATH_BTACTIVE_GPIO_9300;
+			btcoex_hw->wlanactive_gpio = ATH_WLANACTIVE_GPIO_9300;
+			btcoex_hw->btpriority_gpio = ATH_BTPRIORITY_GPIO_9300;
+		} else if (AR_SREV_9280_20_OR_LATER(ah)) {
+			btcoex_hw->btactive_gpio = ATH_BTACTIVE_GPIO_9280;
+			btcoex_hw->wlanactive_gpio = ATH_WLANACTIVE_GPIO_9280;
+
+			if (AR_SREV_9285(ah)) {
+				btcoex_hw->scheme = ATH_BTCOEX_CFG_3WIRE;
+				btcoex_hw->btpriority_gpio =
+						ATH_BTPRIORITY_GPIO_9285;
+			} else {
+				btcoex_hw->scheme = ATH_BTCOEX_CFG_2WIRE;
+			}
+		}
+	} else {
+		btcoex_hw->scheme = ATH_BTCOEX_CFG_NONE;
+	}
+
+	if (AR_SREV_9300_20_OR_LATER(ah)) {
+		pCap->hw_caps |= ATH9K_HW_CAP_EDMA | ATH9K_HW_CAP_FASTCLOCK;
+		if (!AR_SREV_9485(ah))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pCap->hw_caps |= ATH9K_HW_CAP_LDPC;
 
 		pCap->rx_hp_qdepth = ATH9K_HW_RX_HP_QDEPTH;
@@ -2376,7 +2795,14 @@ int ath9k_hw_fill_cap_info(struct ath_hw *ah)
 			pCap->hw_caps |= ATH9K_HW_CAP_PAPRD;
 	} else {
 		pCap->tx_desc_len = sizeof(struct ath_desc);
+<<<<<<< HEAD
 		if (AR_SREV_9280_20(ah))
+=======
+		if (AR_SREV_9280_20(ah) &&
+		    ((ah->eep_ops->get_eeprom(ah, EEP_MINOR_REV) <=
+		      AR5416_EEP_MINOR_VER_16) ||
+		     ah->eep_ops->get_eeprom(ah, EEP_FSTCLK_5G)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pCap->hw_caps |= ATH9K_HW_CAP_FASTCLOCK;
 	}
 
@@ -2402,7 +2828,11 @@ int ath9k_hw_fill_cap_info(struct ath_hw *ah)
 	}
 
 
+<<<<<<< HEAD
 	if (AR_SREV_9330(ah) || AR_SREV_9485(ah)) {
+=======
+	if (AR_SREV_9485(ah)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ant_div_ctl1 = ah->eep_ops->get_eeprom(ah, EEP_ANT_DIV_CTL1);
 		/*
 		 * enable the diversity-combining algorithm only when
@@ -2424,9 +2854,12 @@ int ath9k_hw_fill_cap_info(struct ath_hw *ah)
 		pCap->pcie_lcr_offset = 0x80;
 	}
 
+<<<<<<< HEAD
 	if (ath9k_hw_dfs_tested(ah))
 		pCap->hw_caps |= ATH9K_HW_CAP_DFS;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tx_chainmask = pCap->tx_chainmask;
 	rx_chainmask = pCap->rx_chainmask;
 	while (tx_chainmask || rx_chainmask) {
@@ -2439,6 +2872,7 @@ int ath9k_hw_fill_cap_info(struct ath_hw *ah)
 		rx_chainmask >>= 1;
 	}
 
+<<<<<<< HEAD
 	if (AR_SREV_9300_20_OR_LATER(ah)) {
 		ah->enabled_cals |= TX_IQ_CAL;
 		if (AR_SREV_9485_OR_LATER(ah))
@@ -2456,6 +2890,8 @@ int ath9k_hw_fill_cap_info(struct ath_hw *ah)
 	}
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -2580,6 +3016,15 @@ void ath9k_hw_set_gpio(struct ath_hw *ah, u32 gpio, u32 val)
 }
 EXPORT_SYMBOL(ath9k_hw_set_gpio);
 
+<<<<<<< HEAD
+=======
+u32 ath9k_hw_getdefantenna(struct ath_hw *ah)
+{
+	return REG_READ(ah, AR_DEF_ANTENNA) & 0x7;
+}
+EXPORT_SYMBOL(ath9k_hw_getdefantenna);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void ath9k_hw_setantenna(struct ath_hw *ah, u32 antenna)
 {
 	REG_WRITE(ah, AR_DEF_ANTENNA, (antenna & 0x7));
@@ -2610,9 +3055,12 @@ void ath9k_hw_setrxfilter(struct ath_hw *ah, u32 bits)
 
 	ENABLE_REGWRITE_BUFFER(ah);
 
+<<<<<<< HEAD
 	if (AR_SREV_9462(ah))
 		bits |= ATH9K_RX_FILTER_CONTROL_WRAPPER;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	REG_WRITE(ah, AR_RX_FILTER, bits);
 
 	phybits = 0;
@@ -2637,7 +3085,10 @@ bool ath9k_hw_phy_disable(struct ath_hw *ah)
 		return false;
 
 	ath9k_hw_init_pll(ah, NULL);
+<<<<<<< HEAD
 	ah->htc_reset_init = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return true;
 }
 EXPORT_SYMBOL(ath9k_hw_phy_disable);
@@ -2655,6 +3106,7 @@ bool ath9k_hw_disable(struct ath_hw *ah)
 }
 EXPORT_SYMBOL(ath9k_hw_disable);
 
+<<<<<<< HEAD
 static int get_antenna_gain(struct ath_hw *ah, struct ath9k_channel *chan)
 {
 	enum eeprom_param gain_param;
@@ -2706,6 +3158,22 @@ void ath9k_hw_set_txpowerlimit(struct ath_hw *ah, u32 limit, bool test)
 
 	if (test)
 		channel->max_power = DIV_ROUND_UP(reg->max_power_level, 2);
+=======
+void ath9k_hw_set_txpowerlimit(struct ath_hw *ah, u32 limit, bool test)
+{
+	struct ath_regulatory *regulatory = ath9k_hw_regulatory(ah);
+	struct ath9k_channel *chan = ah->curchan;
+	struct ieee80211_channel *channel = chan->chan;
+
+	regulatory->power_limit = min(limit, (u32) MAX_RATE_POWER);
+
+	ah->eep_ops->set_txpower(ah, chan,
+				 ath9k_regd_get_ctl(regulatory, chan),
+				 channel->max_antenna_gain * 2,
+				 channel->max_power * 2,
+				 min((u32) MAX_RATE_POWER,
+				 (u32) regulatory->power_limit), test);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(ath9k_hw_set_txpowerlimit);
 
@@ -2765,7 +3233,11 @@ void ath9k_hw_reset_tsf(struct ath_hw *ah)
 {
 	if (!ath9k_hw_wait(ah, AR_SLP32_MODE, AR_SLP32_TSF_WRITE_STATUS, 0,
 			   AH_TSF_WRITE_TIMEOUT))
+<<<<<<< HEAD
 		ath_dbg(ath9k_hw_common(ah), RESET,
+=======
+		ath_dbg(ath9k_hw_common(ah), ATH_DBG_RESET,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"AR_SLP32_TSF_WRITE_STATUS limit exceeded\n");
 
 	REG_WRITE(ah, AR_RESET_TSF, AR_RESET_TSF_ONCE);
@@ -2890,7 +3362,11 @@ void ath9k_hw_gen_timer_start(struct ath_hw *ah,
 
 	timer_next = tsf + trig_timeout;
 
+<<<<<<< HEAD
 	ath_dbg(ath9k_hw_common(ah), HWTIMER,
+=======
+	ath_dbg(ath9k_hw_common(ah), ATH_DBG_HWTIMER,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"current tsf %x period %x timer_next %x\n",
 		tsf, timer_period, timer_next);
 
@@ -2904,6 +3380,7 @@ void ath9k_hw_gen_timer_start(struct ath_hw *ah,
 	REG_SET_BIT(ah, gen_tmr_configuration[timer->index].mode_addr,
 		    gen_tmr_configuration[timer->index].mode_mask);
 
+<<<<<<< HEAD
 	if (AR_SREV_9462(ah)) {
 		/*
 		 * Starting from AR9462, each generic timer can select which tsf
@@ -2918,6 +3395,8 @@ void ath9k_hw_gen_timer_start(struct ath_hw *ah,
 				       (1 << timer->index));
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Enable both trigger and thresh interrupt masks */
 	REG_SET_BIT(ah, AR_IMR_S5,
 		(SM(AR_GENTMR_BIT(timer->index), AR_IMR_S5_GENTIMER_THRESH) |
@@ -2979,8 +3458,13 @@ void ath_gen_timer_isr(struct ath_hw *ah)
 		index = rightmost_index(timer_table, &thresh_mask);
 		timer = timer_table->timers[index];
 		BUG_ON(!timer);
+<<<<<<< HEAD
 		ath_dbg(common, HWTIMER, "TSF overflow for Gen timer %d\n",
 			index);
+=======
+		ath_dbg(common, ATH_DBG_HWTIMER,
+			"TSF overflow for Gen timer %d\n", index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		timer->overflow(timer->arg);
 	}
 
@@ -2988,7 +3472,11 @@ void ath_gen_timer_isr(struct ath_hw *ah)
 		index = rightmost_index(timer_table, &trigger_mask);
 		timer = timer_table->timers[index];
 		BUG_ON(!timer);
+<<<<<<< HEAD
 		ath_dbg(common, HWTIMER,
+=======
+		ath_dbg(common, ATH_DBG_HWTIMER,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"Gen timer[%d] trigger\n", index);
 		timer->trigger(timer->arg);
 	}
@@ -2999,6 +3487,15 @@ EXPORT_SYMBOL(ath_gen_timer_isr);
 /* HTC  */
 /********/
 
+<<<<<<< HEAD
+=======
+void ath9k_hw_htc_resetinit(struct ath_hw *ah)
+{
+	ah->htc_reset_init = true;
+}
+EXPORT_SYMBOL(ath9k_hw_htc_resetinit);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct {
 	u32 version;
 	const char * name;
@@ -3014,10 +3511,14 @@ static struct {
 	{ AR_SREV_VERSION_9287,         "9287" },
 	{ AR_SREV_VERSION_9271,         "9271" },
 	{ AR_SREV_VERSION_9300,         "9300" },
+<<<<<<< HEAD
 	{ AR_SREV_VERSION_9330,         "9330" },
 	{ AR_SREV_VERSION_9340,		"9340" },
 	{ AR_SREV_VERSION_9485,         "9485" },
 	{ AR_SREV_VERSION_9462,         "9462" },
+=======
+	{ AR_SREV_VERSION_9485,         "9485" },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* For devices with external radios */

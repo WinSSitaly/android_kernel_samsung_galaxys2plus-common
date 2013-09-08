@@ -15,8 +15,11 @@
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 #include <linux/scatterlist.h>
+<<<<<<< HEAD
 
 #include "dmaengine.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "txx9dmac.h"
 
 static struct txx9dmac_chan *to_txx9dmac_chan(struct dma_chan *chan)
@@ -281,6 +284,24 @@ static void txx9dmac_desc_put(struct txx9dmac_chan *dc,
 	}
 }
 
+<<<<<<< HEAD
+=======
+/* Called with dc->lock held and bh disabled */
+static dma_cookie_t
+txx9dmac_assign_cookie(struct txx9dmac_chan *dc, struct txx9dmac_desc *desc)
+{
+	dma_cookie_t cookie = dc->chan.cookie;
+
+	if (++cookie < 0)
+		cookie = 1;
+
+	dc->chan.cookie = cookie;
+	desc->txd.cookie = cookie;
+
+	return cookie;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*----------------------------------------------------------------------*/
 
 static void txx9dmac_dump_regs(struct txx9dmac_chan *dc)
@@ -411,7 +432,11 @@ txx9dmac_descriptor_complete(struct txx9dmac_chan *dc,
 	dev_vdbg(chan2dev(&dc->chan), "descriptor %u %p complete\n",
 		 txd->cookie, desc);
 
+<<<<<<< HEAD
 	dma_cookie_complete(txd);
+=======
+	dc->completed = txd->cookie;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	callback = txd->callback;
 	param = txd->callback_param;
 
@@ -725,7 +750,11 @@ static dma_cookie_t txx9dmac_tx_submit(struct dma_async_tx_descriptor *tx)
 	dma_cookie_t cookie;
 
 	spin_lock_bh(&dc->lock);
+<<<<<<< HEAD
 	cookie = dma_cookie_assign(tx);
+=======
+	cookie = txx9dmac_assign_cookie(dc, desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_vdbg(chan2dev(tx->chan), "tx_submit: queued %u %p\n",
 		 desc->txd.cookie, desc);
@@ -832,8 +861,13 @@ txx9dmac_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dest, dma_addr_t src,
 
 static struct dma_async_tx_descriptor *
 txx9dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+<<<<<<< HEAD
 		unsigned int sg_len, enum dma_transfer_direction direction,
 		unsigned long flags, void *context)
+=======
+		unsigned int sg_len, enum dma_data_direction direction,
+		unsigned long flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct txx9dmac_chan *dc = to_txx9dmac_chan(chan);
 	struct txx9dmac_dev *ddev = dc->ddev;
@@ -847,9 +881,15 @@ txx9dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
 
 	BUG_ON(!ds || !ds->reg_width);
 	if (ds->tx_reg)
+<<<<<<< HEAD
 		BUG_ON(direction != DMA_MEM_TO_DEV);
 	else
 		BUG_ON(direction != DMA_DEV_TO_MEM);
+=======
+		BUG_ON(direction != DMA_TO_DEVICE);
+	else
+		BUG_ON(direction != DMA_FROM_DEVICE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(!sg_len))
 		return NULL;
 
@@ -869,7 +909,11 @@ txx9dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
 		mem = sg_dma_address(sg);
 
 		if (__is_dmac64(ddev)) {
+<<<<<<< HEAD
 			if (direction == DMA_MEM_TO_DEV) {
+=======
+			if (direction == DMA_TO_DEVICE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				desc->hwdesc.SAR = mem;
 				desc->hwdesc.DAR = ds->tx_reg;
 			} else {
@@ -878,7 +922,11 @@ txx9dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
 			}
 			desc->hwdesc.CNTR = sg_dma_len(sg);
 		} else {
+<<<<<<< HEAD
 			if (direction == DMA_MEM_TO_DEV) {
+=======
+			if (direction == DMA_TO_DEVICE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				desc->hwdesc32.SAR = mem;
 				desc->hwdesc32.DAR = ds->tx_reg;
 			} else {
@@ -887,7 +935,11 @@ txx9dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
 			}
 			desc->hwdesc32.CNTR = sg_dma_len(sg);
 		}
+<<<<<<< HEAD
 		if (direction == DMA_MEM_TO_DEV) {
+=======
+		if (direction == DMA_TO_DEVICE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sai = ds->reg_width;
 			dai = 0;
 		} else {
@@ -959,17 +1011,39 @@ txx9dmac_tx_status(struct dma_chan *chan, dma_cookie_t cookie,
 		   struct dma_tx_state *txstate)
 {
 	struct txx9dmac_chan *dc = to_txx9dmac_chan(chan);
+<<<<<<< HEAD
 	enum dma_status ret;
 
 	ret = dma_cookie_status(chan, cookie, txstate);
+=======
+	dma_cookie_t last_used;
+	dma_cookie_t last_complete;
+	int ret;
+
+	last_complete = dc->completed;
+	last_used = chan->cookie;
+
+	ret = dma_async_is_complete(cookie, last_complete, last_used);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret != DMA_SUCCESS) {
 		spin_lock_bh(&dc->lock);
 		txx9dmac_scan_descriptors(dc);
 		spin_unlock_bh(&dc->lock);
 
+<<<<<<< HEAD
 		ret = dma_cookie_status(chan, cookie, txstate);
 	}
 
+=======
+		last_complete = dc->completed;
+		last_used = chan->cookie;
+
+		ret = dma_async_is_complete(cookie, last_complete, last_used);
+	}
+
+	dma_set_tx_state(txstate, last_complete, last_used, 0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1034,7 +1108,11 @@ static int txx9dmac_alloc_chan_resources(struct dma_chan *chan)
 		return -EIO;
 	}
 
+<<<<<<< HEAD
 	dma_cookie_init(chan);
+=======
+	dc->completed = chan->cookie = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dc->ccr = TXX9_DMA_CCR_IMMCHN | TXX9_DMA_CCR_INTENE | CCR_LE;
 	txx9dmac_chan_set_SMPCHN(dc);
@@ -1163,7 +1241,11 @@ static int __init txx9dmac_chan_probe(struct platform_device *pdev)
 	dc->ddev->chan[ch] = dc;
 	dc->chan.device = &dc->dma;
 	list_add_tail(&dc->chan.device_node, &dc->chan.device->channels);
+<<<<<<< HEAD
 	dma_cookie_init(&dc->chan);
+=======
+	dc->chan.cookie = dc->completed = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (is_dmac64(dc))
 		dc->ch_regs = &__txx9dmac_regs(dc->ddev)->CHAN[ch];

@@ -219,8 +219,11 @@ static int __init
 acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
 {
 	struct acpi_madt_local_x2apic *processor = NULL;
+<<<<<<< HEAD
 	int apic_id;
 	u8 enabled;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	processor = (struct acpi_madt_local_x2apic *)header;
 
@@ -229,8 +232,11 @@ acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
 
 	acpi_table_print_madt_entry(header);
 
+<<<<<<< HEAD
 	apic_id = processor->local_apic_id;
 	enabled = processor->lapic_flags & ACPI_MADT_ENABLED;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_X86_X2APIC
 	/*
 	 * We need to register disabled CPU as well to permit
@@ -239,10 +245,15 @@ acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
 	 * to not preallocating memory for all NR_CPUS
 	 * when we use CPU hotplug.
 	 */
+<<<<<<< HEAD
 	if (!apic->apic_id_valid(apic_id) && enabled)
 		printk(KERN_WARNING PREFIX "x2apic entry ignored\n");
 	else
 		acpi_register_lapic(apic_id, enabled);
+=======
+	acpi_register_lapic(processor->local_apic_id,	/* APIC ID */
+			    processor->lapic_flags & ACPI_MADT_ENABLED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 	printk(KERN_WARNING PREFIX "x2apic entry ignored\n");
 #endif
@@ -422,6 +433,7 @@ acpi_parse_int_src_ovr(struct acpi_subtable_header * header,
 		return 0;
 	}
 
+<<<<<<< HEAD
 	if (intsrc->source_irq == 0) {
 		if (acpi_skip_timer_override) {
 			printk(PREFIX "BIOS IRQ0 override ignored.\n");
@@ -430,6 +442,14 @@ acpi_parse_int_src_ovr(struct acpi_subtable_header * header,
 
 		if ((intsrc->global_irq == 2) && acpi_fix_pin2_polarity
 			&& (intsrc->inti_flags & ACPI_MADT_POLARITY_MASK)) {
+=======
+	if (intsrc->source_irq == 0 && intsrc->global_irq == 2) {
+		if (acpi_skip_timer_override) {
+			printk(PREFIX "BIOS IRQ0 pin2 override ignored.\n");
+			return 0;
+		}
+		if (acpi_fix_pin2_polarity && (intsrc->inti_flags & ACPI_MADT_POLARITY_MASK)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			intsrc->inti_flags &= ~ACPI_MADT_POLARITY_MASK;
 			printk(PREFIX "BIOS IRQ0 pin2 override: forcing polarity to high active.\n");
 		}
@@ -595,7 +615,11 @@ void __init acpi_set_irq_model_ioapic(void)
 #ifdef CONFIG_ACPI_HOTPLUG_CPU
 #include <acpi/processor.h>
 
+<<<<<<< HEAD
 static void __cpuinit acpi_map_cpu2node(acpi_handle handle, int cpu, int physid)
+=======
+static void acpi_map_cpu2node(acpi_handle handle, int cpu, int physid)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 #ifdef CONFIG_ACPI_NUMA
 	int nid;
@@ -644,7 +668,10 @@ static int __cpuinit _acpi_map_lsapic(acpi_handle handle, int *pcpu)
 	kfree(buffer.pointer);
 	buffer.length = ACPI_ALLOCATE_BUFFER;
 	buffer.pointer = NULL;
+<<<<<<< HEAD
 	lapic = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!alloc_cpumask_var(&tmp_map, GFP_KERNEL))
 		goto out;
@@ -653,7 +680,11 @@ static int __cpuinit _acpi_map_lsapic(acpi_handle handle, int *pcpu)
 		goto free_tmp_map;
 
 	cpumask_copy(tmp_map, cpu_present_mask);
+<<<<<<< HEAD
 	acpi_register_lapic(physid, ACPI_MADT_ENABLED);
+=======
+	acpi_register_lapic(physid, lapic->lapic_flags & ACPI_MADT_ENABLED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If mp_register_lapic successfully generates a new logical cpu
@@ -1336,12 +1367,26 @@ static int __init dmi_disable_acpi(const struct dmi_system_id *d)
 }
 
 /*
+<<<<<<< HEAD
  * Force ignoring BIOS IRQ0 override
  */
 static int __init dmi_ignore_irq0_timer_override(const struct dmi_system_id *d)
 {
 	if (!acpi_skip_timer_override) {
 		pr_notice("%s detected: Ignoring BIOS IRQ0 override\n",
+=======
+ * Force ignoring BIOS IRQ0 pin2 override
+ */
+static int __init dmi_ignore_irq0_timer_override(const struct dmi_system_id *d)
+{
+	/*
+	 * The ati_ixp4x0_rev() early PCI quirk should have set
+	 * the acpi_skip_timer_override flag already:
+	 */
+	if (!acpi_skip_timer_override) {
+		WARN(1, KERN_ERR "ati_ixp4x0 quirk not complete.\n");
+		pr_notice("%s detected: Ignoring BIOS IRQ0 pin2 override\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			d->ident);
 		acpi_skip_timer_override = 1;
 	}
@@ -1435,7 +1480,11 @@ static struct dmi_system_id __initdata acpi_dmi_table_late[] = {
 	 * is enabled.  This input is incorrectly designated the
 	 * ISA IRQ 0 via an interrupt source override even though
 	 * it is wired to the output of the master 8259A and INTIN0
+<<<<<<< HEAD
 	 * is not connected at all.  Force ignoring BIOS IRQ0
+=======
+	 * is not connected at all.  Force ignoring BIOS IRQ0 pin2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * override in that cases.
 	 */
 	{
@@ -1470,6 +1519,7 @@ static struct dmi_system_id __initdata acpi_dmi_table_late[] = {
 		     DMI_MATCH(DMI_PRODUCT_NAME, "HP Compaq 6715b"),
 		     },
 	 },
+<<<<<<< HEAD
 	{
 	 .callback = dmi_ignore_irq0_timer_override,
 	 .ident = "FUJITSU SIEMENS",
@@ -1478,6 +1528,8 @@ static struct dmi_system_id __initdata acpi_dmi_table_late[] = {
 		     DMI_MATCH(DMI_PRODUCT_NAME, "AMILO PRO V2030"),
 		     },
 	 },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{}
 };
 

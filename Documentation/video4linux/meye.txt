@@ -55,7 +55,11 @@ Module use:
 -----------
 
 In order to automatically load the meye module on use, you can put those lines
+<<<<<<< HEAD
 in your /etc/modprobe.d/meye.conf file:
+=======
+in your /etc/modprobe.conf file:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	alias char-major-81 videodev
 	alias char-major-81-0 meye

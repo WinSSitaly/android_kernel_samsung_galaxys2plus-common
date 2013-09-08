@@ -53,12 +53,19 @@ enum {
 	ATA_DNXFER_QUIET	= (1 << 31),
 };
 
+<<<<<<< HEAD
 extern atomic_t ata_print_id;
+=======
+extern unsigned int ata_print_id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int atapi_passthru16;
 extern int libata_fua;
 extern int libata_noacpi;
 extern int libata_allow_tpm;
+<<<<<<< HEAD
 extern struct device_type ata_port_type;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct ata_link *ata_dev_phys_link(struct ata_device *dev);
 extern void ata_force_cbl(struct ata_port *ap);
 extern u64 ata_tf_to_lba(const struct ata_taskfile *tf);
@@ -105,7 +112,10 @@ extern int ata_cmd_ioctl(struct scsi_device *scsidev, void __user *arg);
 extern struct ata_port *ata_port_alloc(struct ata_host *host);
 extern const char *sata_spd_string(unsigned int spd);
 extern int ata_port_probe(struct ata_port *ap);
+<<<<<<< HEAD
 extern void __ata_port_probe(struct ata_port *ap);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* libata-acpi.c */
 #ifdef CONFIG_ATA_ACPI
@@ -152,6 +162,10 @@ extern void ata_eh_acquire(struct ata_port *ap);
 extern void ata_eh_release(struct ata_port *ap);
 extern enum blk_eh_timer_return ata_scsi_timed_out(struct scsi_cmnd *cmd);
 extern void ata_scsi_error(struct Scsi_Host *host);
+<<<<<<< HEAD
+=======
+extern void ata_port_wait_eh(struct ata_port *ap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void ata_eh_fastdrain_timerfn(unsigned long arg);
 extern void ata_qc_schedule_eh(struct ata_queued_cmd *qc);
 extern void ata_dev_disable(struct ata_device *dev);

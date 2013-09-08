@@ -55,6 +55,10 @@ struct io_attrs {
  *      -EINVAL: Invalid DSP word size (must be > 0).
  *               Invalid base address for DSP communications.
  *  Requires:
+<<<<<<< HEAD
+=======
+ *      io_init(void) called.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *      io_man != NULL.
  *      mgr_attrts != NULL.
  *  Ensures:
@@ -73,8 +77,42 @@ extern int io_create(struct io_mgr **io_man,
  *      0:        Success.
  *      -EFAULT:    hio_mgr was invalid.
  *  Requires:
+<<<<<<< HEAD
+=======
+ *      io_init(void) called.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  Ensures:
  */
 extern int io_destroy(struct io_mgr *hio_mgr);
 
+<<<<<<< HEAD
+=======
+/*
+ *  ======== io_exit ========
+ *  Purpose:
+ *      Discontinue usage of the IO module.
+ *  Parameters:
+ *  Returns:
+ *  Requires:
+ *      io_init(void) previously called.
+ *  Ensures:
+ *      Resources, if any acquired in io_init(void), are freed when the last
+ *      client of IO calls io_exit(void).
+ */
+extern void io_exit(void);
+
+/*
+ *  ======== io_init ========
+ *  Purpose:
+ *      Initialize the IO module's private state.
+ *  Parameters:
+ *  Returns:
+ *      TRUE if initialized; FALSE if error occurred.
+ *  Requires:
+ *  Ensures:
+ *      A requirement for each of the other public CHNL functions.
+ */
+extern bool io_init(void);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CHNL_ */

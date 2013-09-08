@@ -47,7 +47,10 @@
 #include <xen/xenbus.h>
 #include <xen/events.h>
 #include <xen/page.h>
+<<<<<<< HEAD
 #include <xen/platform_pci.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <xen/grant_table.h>
 
 #include <xen/interface/io/netif.h>
@@ -69,6 +72,7 @@ struct netfront_cb {
 
 #define NET_TX_RING_SIZE __CONST_RING_SIZE(xen_netif_tx, PAGE_SIZE)
 #define NET_RX_RING_SIZE __CONST_RING_SIZE(xen_netif_rx, PAGE_SIZE)
+<<<<<<< HEAD
 #define TX_MAX_TARGET min_t(int, NET_TX_RING_SIZE, 256)
 
 struct netfront_stats {
@@ -78,6 +82,9 @@ struct netfront_stats {
 	u64			tx_bytes;
 	struct u64_stats_sync	syncp;
 };
+=======
+#define TX_MAX_TARGET min_t(int, NET_RX_RING_SIZE, 256)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct netfront_info {
 	struct list_head list;
@@ -131,8 +138,11 @@ struct netfront_info {
 	struct mmu_update rx_mmu[NET_RX_RING_SIZE];
 
 	/* Statistics */
+<<<<<<< HEAD
 	struct netfront_stats __percpu *stats;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long rx_gso_checksum_fixup;
 };
 
@@ -202,7 +212,11 @@ static void xennet_sysfs_delif(struct net_device *netdev);
 #define xennet_sysfs_delif(dev) do { } while (0)
 #endif
 
+<<<<<<< HEAD
 static bool xennet_can_sg(struct net_device *dev)
+=======
+static int xennet_can_sg(struct net_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return dev->features & NETIF_F_SG;
 }
@@ -276,7 +290,11 @@ no_skb:
 			break;
 		}
 
+<<<<<<< HEAD
 		__skb_fill_page_desc(skb, 0, page, 0, 0);
+=======
+		skb_shinfo(skb)->frags[0].page = page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		skb_shinfo(skb)->nr_frags = 1;
 		__skb_queue_tail(&np->rx_batch, skb);
 	}
@@ -310,8 +328,13 @@ no_skb:
 		BUG_ON((signed short)ref < 0);
 		np->grant_rx_ref[id] = ref;
 
+<<<<<<< HEAD
 		pfn = page_to_pfn(skb_frag_page(&skb_shinfo(skb)->frags[0]));
 		vaddr = page_address(skb_frag_page(&skb_shinfo(skb)->frags[0]));
+=======
+		pfn = page_to_pfn(skb_shinfo(skb)->frags[0].page);
+		vaddr = page_address(skb_shinfo(skb)->frags[0].page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		req = RING_GET_REQUEST(&np->rx, req_prod + i);
 		gnttab_grant_foreign_access_ref(ref,
@@ -462,13 +485,21 @@ static void xennet_make_frags(struct sk_buff *skb, struct net_device *dev,
 		ref = gnttab_claim_grant_reference(&np->gref_tx_head);
 		BUG_ON((signed short)ref < 0);
 
+<<<<<<< HEAD
 		mfn = pfn_to_mfn(page_to_pfn(skb_frag_page(frag)));
+=======
+		mfn = pfn_to_mfn(page_to_pfn(frag->page));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gnttab_grant_foreign_access_ref(ref, np->xbdev->otherend_id,
 						mfn, GNTMAP_readonly);
 
 		tx->gref = np->grant_tx_ref[id] = ref;
 		tx->offset = frag->page_offset;
+<<<<<<< HEAD
 		tx->size = skb_frag_size(frag);
+=======
+		tx->size = frag->size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tx->flags = 0;
 	}
 
@@ -479,7 +510,10 @@ static int xennet_start_xmit(struct sk_buff *skb, struct net_device *dev)
 {
 	unsigned short id;
 	struct netfront_info *np = netdev_priv(dev);
+<<<<<<< HEAD
 	struct netfront_stats *stats = this_cpu_ptr(np->stats);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct xen_netif_tx_request *tx;
 	struct xen_netif_extra_info *extra;
 	char *data = skb->data;
@@ -490,7 +524,10 @@ static int xennet_start_xmit(struct sk_buff *skb, struct net_device *dev)
 	int frags = skb_shinfo(skb)->nr_frags;
 	unsigned int offset = offset_in_page(data);
 	unsigned int len = skb_headlen(skb);
+<<<<<<< HEAD
 	unsigned long flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	frags += DIV_ROUND_UP(offset + len, PAGE_SIZE);
 	if (unlikely(frags > MAX_SKB_FRAGS + 1)) {
@@ -500,12 +537,20 @@ static int xennet_start_xmit(struct sk_buff *skb, struct net_device *dev)
 		goto drop;
 	}
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&np->tx_lock, flags);
+=======
+	spin_lock_irq(&np->tx_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (unlikely(!netif_carrier_ok(dev) ||
 		     (frags > 1 && !xennet_can_sg(dev)) ||
 		     netif_needs_gso(skb, netif_skb_features(skb)))) {
+<<<<<<< HEAD
 		spin_unlock_irqrestore(&np->tx_lock, flags);
+=======
+		spin_unlock_irq(&np->tx_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto drop;
 	}
 
@@ -565,10 +610,15 @@ static int xennet_start_xmit(struct sk_buff *skb, struct net_device *dev)
 	if (notify)
 		notify_remote_via_irq(np->netdev->irq);
 
+<<<<<<< HEAD
 	u64_stats_update_begin(&stats->syncp);
 	stats->tx_bytes += skb->len;
 	stats->tx_packets++;
 	u64_stats_update_end(&stats->syncp);
+=======
+	dev->stats.tx_bytes += skb->len;
+	dev->stats.tx_packets++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Note: It is not safe to access skb after xennet_tx_buf_gc()! */
 	xennet_tx_buf_gc(dev);
@@ -576,7 +626,11 @@ static int xennet_start_xmit(struct sk_buff *skb, struct net_device *dev)
 	if (!netfront_tx_slot_available(np))
 		netif_stop_queue(dev);
 
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&np->tx_lock, flags);
+=======
+	spin_unlock_irq(&np->tx_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return NETDEV_TX_OK;
 
@@ -764,22 +818,37 @@ static RING_IDX xennet_fill_frags(struct netfront_info *np,
 	struct skb_shared_info *shinfo = skb_shinfo(skb);
 	int nr_frags = shinfo->nr_frags;
 	RING_IDX cons = np->rx.rsp_cons;
+<<<<<<< HEAD
+=======
+	skb_frag_t *frag = shinfo->frags + nr_frags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sk_buff *nskb;
 
 	while ((nskb = __skb_dequeue(list))) {
 		struct xen_netif_rx_response *rx =
 			RING_GET_RESPONSE(&np->rx, ++cons);
+<<<<<<< HEAD
 		skb_frag_t *nfrag = &skb_shinfo(nskb)->frags[0];
 
 		__skb_fill_page_desc(skb, nr_frags,
 				     skb_frag_page(nfrag),
 				     rx->offset, rx->status);
+=======
+
+		frag->page = skb_shinfo(nskb)->frags[0].page;
+		frag->page_offset = rx->offset;
+		frag->size = rx->status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		skb->data_len += rx->status;
 
 		skb_shinfo(nskb)->nr_frags = 0;
 		kfree_skb(nskb);
 
+<<<<<<< HEAD
+=======
+		frag++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nr_frags++;
 	}
 
@@ -861,8 +930,11 @@ out:
 static int handle_incoming_queue(struct net_device *dev,
 				 struct sk_buff_head *rxq)
 {
+<<<<<<< HEAD
 	struct netfront_info *np = netdev_priv(dev);
 	struct netfront_stats *stats = this_cpu_ptr(np->stats);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int packets_dropped = 0;
 	struct sk_buff *skb;
 
@@ -874,7 +946,11 @@ static int handle_incoming_queue(struct net_device *dev,
 		memcpy(skb->data, vaddr + offset,
 		       skb_headlen(skb));
 
+<<<<<<< HEAD
 		if (page != skb_frag_page(&skb_shinfo(skb)->frags[0]))
+=======
+		if (page != skb_shinfo(skb)->frags[0].page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			__free_page(page);
 
 		/* Ethernet work: Delayed to here as it peeks the header. */
@@ -887,10 +963,15 @@ static int handle_incoming_queue(struct net_device *dev,
 			continue;
 		}
 
+<<<<<<< HEAD
 		u64_stats_update_begin(&stats->syncp);
 		stats->rx_packets++;
 		stats->rx_bytes += skb->len;
 		u64_stats_update_end(&stats->syncp);
+=======
+		dev->stats.rx_packets++;
+		dev->stats.rx_bytes += skb->len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Pass it up. */
 		netif_receive_skb(skb);
@@ -955,8 +1036,12 @@ err:
 			}
 		}
 
+<<<<<<< HEAD
 		NETFRONT_SKB_CB(skb)->page =
 			skb_frag_page(&skb_shinfo(skb)->frags[0]);
+=======
+		NETFRONT_SKB_CB(skb)->page = skb_shinfo(skb)->frags[0].page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		NETFRONT_SKB_CB(skb)->offset = rx->offset;
 
 		len = rx->status;
@@ -967,10 +1052,17 @@ err:
 		if (rx->status > len) {
 			skb_shinfo(skb)->frags[0].page_offset =
 				rx->offset + len;
+<<<<<<< HEAD
 			skb_frag_size_set(&skb_shinfo(skb)->frags[0], rx->status - len);
 			skb->data_len = rx->status - len;
 		} else {
 			__skb_fill_page_desc(skb, 0, NULL, 0, 0);
+=======
+			skb_shinfo(skb)->frags[0].size = rx->status - len;
+			skb->data_len = rx->status - len;
+		} else {
+			skb_shinfo(skb)->frags[0].page = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			skb_shinfo(skb)->nr_frags = 0;
 		}
 
@@ -1053,6 +1145,7 @@ static int xennet_change_mtu(struct net_device *dev, int mtu)
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct rtnl_link_stats64 *xennet_get_stats64(struct net_device *dev,
 						    struct rtnl_link_stats64 *tot)
 {
@@ -1085,6 +1178,8 @@ static struct rtnl_link_stats64 *xennet_get_stats64(struct net_device *dev,
 	return tot;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void xennet_release_tx_bufs(struct netfront_info *np)
 {
 	struct sk_buff *skb;
@@ -1145,8 +1240,12 @@ static void xennet_release_rx_bufs(struct netfront_info *np)
 
 		if (!xen_feature(XENFEAT_auto_translated_physmap)) {
 			/* Remap the page. */
+<<<<<<< HEAD
 			const struct page *page =
 				skb_frag_page(&skb_shinfo(skb)->frags[0]);
+=======
+			struct page *page = skb_shinfo(skb)->frags[0].page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			unsigned long pfn = page_to_pfn(page);
 			void *vaddr = page_address(page);
 
@@ -1192,8 +1291,12 @@ static void xennet_uninit(struct net_device *dev)
 	gnttab_free_grant_references(np->gref_rx_head);
 }
 
+<<<<<<< HEAD
 static netdev_features_t xennet_fix_features(struct net_device *dev,
 	netdev_features_t features)
+=======
+static u32 xennet_fix_features(struct net_device *dev, u32 features)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct netfront_info *np = netdev_priv(dev);
 	int val;
@@ -1219,8 +1322,12 @@ static netdev_features_t xennet_fix_features(struct net_device *dev,
 	return features;
 }
 
+<<<<<<< HEAD
 static int xennet_set_features(struct net_device *dev,
 	netdev_features_t features)
+=======
+static int xennet_set_features(struct net_device *dev, u32 features)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (!(features & NETIF_F_SG) && dev->mtu > ETH_DATA_LEN) {
 		netdev_info(dev, "Reducing MTU because no SG offload");
@@ -1230,6 +1337,7 @@ static int xennet_set_features(struct net_device *dev,
 	return 0;
 }
 
+<<<<<<< HEAD
 static irqreturn_t xennet_interrupt(int irq, void *dev_id)
 {
 	struct net_device *dev = dev_id;
@@ -1257,20 +1365,28 @@ static void xennet_poll_controller(struct net_device *dev)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct net_device_ops xennet_netdev_ops = {
 	.ndo_open            = xennet_open,
 	.ndo_uninit          = xennet_uninit,
 	.ndo_stop            = xennet_close,
 	.ndo_start_xmit      = xennet_start_xmit,
 	.ndo_change_mtu	     = xennet_change_mtu,
+<<<<<<< HEAD
 	.ndo_get_stats64     = xennet_get_stats64,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ndo_set_mac_address = eth_mac_addr,
 	.ndo_validate_addr   = eth_validate_addr,
 	.ndo_fix_features    = xennet_fix_features,
 	.ndo_set_features    = xennet_set_features,
+<<<<<<< HEAD
 #ifdef CONFIG_NET_POLL_CONTROLLER
 	.ndo_poll_controller = xennet_poll_controller,
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct net_device * __devinit xennet_create_dev(struct xenbus_device *dev)
@@ -1280,8 +1396,16 @@ static struct net_device * __devinit xennet_create_dev(struct xenbus_device *dev
 	struct netfront_info *np;
 
 	netdev = alloc_etherdev(sizeof(struct netfront_info));
+<<<<<<< HEAD
 	if (!netdev)
 		return ERR_PTR(-ENOMEM);
+=======
+	if (!netdev) {
+		printk(KERN_WARNING "%s> alloc_etherdev failed.\n",
+		       __func__);
+		return ERR_PTR(-ENOMEM);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	np                   = netdev_priv(netdev);
 	np->xbdev            = dev;
@@ -1298,11 +1422,14 @@ static struct net_device * __devinit xennet_create_dev(struct xenbus_device *dev
 	np->rx_refill_timer.data = (unsigned long)netdev;
 	np->rx_refill_timer.function = rx_refill_timeout;
 
+<<<<<<< HEAD
 	err = -ENOMEM;
 	np->stats = alloc_percpu(struct netfront_stats);
 	if (np->stats == NULL)
 		goto exit;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Initialise tx_skbs as a free chain containing every entry. */
 	np->tx_skb_freelist = 0;
 	for (i = 0; i < NET_TX_RING_SIZE; i++) {
@@ -1321,7 +1448,11 @@ static struct net_device * __devinit xennet_create_dev(struct xenbus_device *dev
 					  &np->gref_tx_head) < 0) {
 		printk(KERN_ALERT "#### netfront can't alloc tx grant refs\n");
 		err = -ENOMEM;
+<<<<<<< HEAD
 		goto exit_free_stats;
+=======
+		goto exit;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	/* A grant for every rx ring slot */
 	if (gnttab_alloc_grant_references(RX_MAX_TARGET,
@@ -1357,8 +1488,11 @@ static struct net_device * __devinit xennet_create_dev(struct xenbus_device *dev
 
  exit_free_tx:
 	gnttab_free_grant_references(np->gref_tx_head);
+<<<<<<< HEAD
  exit_free_stats:
 	free_percpu(np->stats);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  exit:
 	free_netdev(netdev);
 	return ERR_PTR(err);
@@ -1477,6 +1611,29 @@ static int xen_net_read_mac(struct xenbus_device *dev, u8 mac[])
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static irqreturn_t xennet_interrupt(int irq, void *dev_id)
+{
+	struct net_device *dev = dev_id;
+	struct netfront_info *np = netdev_priv(dev);
+	unsigned long flags;
+
+	spin_lock_irqsave(&np->tx_lock, flags);
+
+	if (likely(netif_carrier_ok(dev))) {
+		xennet_tx_buf_gc(dev);
+		/* Under tx_lock: protects access to rx shared-ring indexes. */
+		if (RING_HAS_UNCONSUMED_RESPONSES(&np->rx))
+			napi_schedule(&np->napi);
+	}
+
+	spin_unlock_irqrestore(&np->tx_lock, flags);
+
+	return IRQ_HANDLED;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int setup_netfront(struct xenbus_device *dev, struct netfront_info *info)
 {
 	struct xen_netif_tx_sring *txs;
@@ -1662,8 +1819,11 @@ static int xennet_connect(struct net_device *dev)
 
 	/* Step 2: Rebuild the RX buffer freelist and the RX ring itself. */
 	for (requeue_idx = 0, i = 0; i < NET_RX_RING_SIZE; i++) {
+<<<<<<< HEAD
 		skb_frag_t *frag;
 		const struct page *page;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!np->rx_skbs[i])
 			continue;
 
@@ -1671,11 +1831,18 @@ static int xennet_connect(struct net_device *dev)
 		ref = np->grant_rx_ref[requeue_idx] = xennet_get_rx_ref(np, i);
 		req = RING_GET_REQUEST(&np->rx, requeue_idx);
 
+<<<<<<< HEAD
 		frag = &skb_shinfo(skb)->frags[0];
 		page = skb_frag_page(frag);
 		gnttab_grant_foreign_access_ref(
 			ref, np->xbdev->otherend_id,
 			pfn_to_mfn(page_to_pfn(page)),
+=======
+		gnttab_grant_foreign_access_ref(
+			ref, np->xbdev->otherend_id,
+			pfn_to_mfn(page_to_pfn(skb_shinfo(skb)->
+					       frags->page)),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			0);
 		req->gref = ref;
 		req->id   = requeue_idx;
@@ -1718,6 +1885,10 @@ static void netback_changed(struct xenbus_device *dev,
 	case XenbusStateInitialised:
 	case XenbusStateReconfiguring:
 	case XenbusStateReconfigured:
+<<<<<<< HEAD
+=======
+	case XenbusStateConnected:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case XenbusStateUnknown:
 	case XenbusStateClosed:
 		break;
@@ -1728,9 +1899,12 @@ static void netback_changed(struct xenbus_device *dev,
 		if (xennet_connect(netdev) != 0)
 			break;
 		xenbus_switch_state(dev, XenbusStateConnected);
+<<<<<<< HEAD
 		break;
 
 	case XenbusStateConnected:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		netif_notify_peers(netdev);
 		break;
 
@@ -1923,7 +2097,11 @@ static void xennet_sysfs_delif(struct net_device *netdev)
 
 #endif /* CONFIG_SYSFS */
 
+<<<<<<< HEAD
 static const struct xenbus_device_id netfront_ids[] = {
+=======
+static struct xenbus_device_id netfront_ids[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ "vif" },
 	{ "" }
 };
@@ -1935,6 +2113,7 @@ static int __devexit xennet_remove(struct xenbus_device *dev)
 
 	dev_dbg(&dev->dev, "%s\n", dev->nodename);
 
+<<<<<<< HEAD
 	xennet_disconnect_backend(info);
 
 	xennet_sysfs_delif(info->netdev);
@@ -1944,18 +2123,38 @@ static int __devexit xennet_remove(struct xenbus_device *dev)
 	del_timer_sync(&info->rx_refill_timer);
 
 	free_percpu(info->stats);
+=======
+	unregister_netdev(info->netdev);
+
+	xennet_disconnect_backend(info);
+
+	del_timer_sync(&info->rx_refill_timer);
+
+	xennet_sysfs_delif(info->netdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	free_netdev(info->netdev);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static DEFINE_XENBUS_DRIVER(netfront, ,
+=======
+static struct xenbus_driver netfront_driver = {
+	.name = "vif",
+	.owner = THIS_MODULE,
+	.ids = netfront_ids,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.probe = netfront_probe,
 	.remove = __devexit_p(xennet_remove),
 	.resume = netfront_resume,
 	.otherend_changed = netback_changed,
+<<<<<<< HEAD
 );
+=======
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __init netif_init(void)
 {
@@ -1965,9 +2164,12 @@ static int __init netif_init(void)
 	if (xen_initial_domain())
 		return 0;
 
+<<<<<<< HEAD
 	if (xen_hvm_domain() && !xen_platform_pci_unplug)
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk(KERN_INFO "Initialising Xen virtual ethernet driver.\n");
 
 	return xenbus_register_frontend(&netfront_driver);

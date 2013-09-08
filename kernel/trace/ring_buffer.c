@@ -154,12 +154,44 @@ enum {
 
 static unsigned long ring_buffer_flags __read_mostly = RB_BUFFERS_ON;
 
+<<<<<<< HEAD
 /* Used for individual buffers (after the counter) */
 #define RB_BUFFER_OFF		(1 << 20)
 
 #define BUF_PAGE_HDR_SIZE offsetof(struct buffer_data_page, data)
 
 /**
+=======
+#define BUF_PAGE_HDR_SIZE offsetof(struct buffer_data_page, data)
+
+/**
+ * tracing_on - enable all tracing buffers
+ *
+ * This function enables all tracing buffers that may have been
+ * disabled with tracing_off.
+ */
+void tracing_on(void)
+{
+	set_bit(RB_BUFFERS_ON_BIT, &ring_buffer_flags);
+}
+EXPORT_SYMBOL_GPL(tracing_on);
+
+/**
+ * tracing_off - turn off all tracing buffers
+ *
+ * This function stops all tracing buffers from recording data.
+ * It does not disable any overhead the tracers themselves may
+ * be causing. This function simply causes all recording to
+ * the ring buffers to fail.
+ */
+void tracing_off(void)
+{
+	clear_bit(RB_BUFFERS_ON_BIT, &ring_buffer_flags);
+}
+EXPORT_SYMBOL_GPL(tracing_off);
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * tracing_off_permanent - permanently disable ring buffers
  *
  * This function, once called, will disable all ring buffers
@@ -170,6 +202,18 @@ void tracing_off_permanent(void)
 	set_bit(RB_BUFFERS_DISABLED_BIT, &ring_buffer_flags);
 }
 
+<<<<<<< HEAD
+=======
+/**
+ * tracing_is_on - show state of ring buffers enabled
+ */
+int tracing_is_on(void)
+{
+	return ring_buffer_flags == RB_BUFFERS_ON;
+}
+EXPORT_SYMBOL_GPL(tracing_is_on);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define RB_EVNT_HDR_SIZE (offsetof(struct ring_buffer_event, array))
 #define RB_ALIGNMENT		4U
 #define RB_MAX_SMALL_DATA	(RB_ALIGNMENT * RINGBUF_TYPE_DATA_TYPE_LEN_MAX)
@@ -446,7 +490,11 @@ struct ring_buffer_per_cpu {
 	int				cpu;
 	atomic_t			record_disabled;
 	struct ring_buffer		*buffer;
+<<<<<<< HEAD
 	raw_spinlock_t			reader_lock;	/* serialize readers */
+=======
+	spinlock_t			reader_lock;	/* serialize readers */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	arch_spinlock_t			lock;
 	struct lock_class_key		lock_key;
 	struct list_head		*pages;
@@ -456,14 +504,20 @@ struct ring_buffer_per_cpu {
 	struct buffer_page		*reader_page;
 	unsigned long			lost_events;
 	unsigned long			last_overrun;
+<<<<<<< HEAD
 	local_t				entries_bytes;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_t				commit_overrun;
 	local_t				overrun;
 	local_t				entries;
 	local_t				committing;
 	local_t				commits;
 	unsigned long			read;
+<<<<<<< HEAD
 	unsigned long			read_bytes;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64				write_stamp;
 	u64				read_stamp;
 };
@@ -967,12 +1021,17 @@ static int rb_allocate_pages(struct ring_buffer_per_cpu *cpu_buffer,
 			     unsigned nr_pages)
 {
 	struct buffer_page *bpage, *tmp;
+<<<<<<< HEAD
+=======
+	unsigned long addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	LIST_HEAD(pages);
 	unsigned i;
 
 	WARN_ON(!nr_pages);
 
 	for (i = 0; i < nr_pages; i++) {
+<<<<<<< HEAD
 		struct page *page;
 		/*
 		 * __GFP_NORETRY flag makes sure that the allocation fails
@@ -982,6 +1041,10 @@ static int rb_allocate_pages(struct ring_buffer_per_cpu *cpu_buffer,
 		bpage = kzalloc_node(ALIGN(sizeof(*bpage), cache_line_size()),
 				    GFP_KERNEL | __GFP_NORETRY,
 				    cpu_to_node(cpu_buffer->cpu));
+=======
+		bpage = kzalloc_node(ALIGN(sizeof(*bpage), cache_line_size()),
+				    GFP_KERNEL, cpu_to_node(cpu_buffer->cpu));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!bpage)
 			goto free_pages;
 
@@ -989,11 +1052,18 @@ static int rb_allocate_pages(struct ring_buffer_per_cpu *cpu_buffer,
 
 		list_add(&bpage->list, &pages);
 
+<<<<<<< HEAD
 		page = alloc_pages_node(cpu_to_node(cpu_buffer->cpu),
 					GFP_KERNEL | __GFP_NORETRY, 0);
 		if (!page)
 			goto free_pages;
 		bpage->page = page_address(page);
+=======
+		addr = __get_free_page(GFP_KERNEL);
+		if (!addr)
+			goto free_pages;
+		bpage->page = (void *)addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rb_init_page(bpage->page);
 	}
 
@@ -1022,7 +1092,11 @@ rb_allocate_cpu_buffer(struct ring_buffer *buffer, int cpu)
 {
 	struct ring_buffer_per_cpu *cpu_buffer;
 	struct buffer_page *bpage;
+<<<<<<< HEAD
 	struct page *page;
+=======
+	unsigned long addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	cpu_buffer = kzalloc_node(ALIGN(sizeof(*cpu_buffer), cache_line_size()),
@@ -1032,7 +1106,11 @@ rb_allocate_cpu_buffer(struct ring_buffer *buffer, int cpu)
 
 	cpu_buffer->cpu = cpu;
 	cpu_buffer->buffer = buffer;
+<<<<<<< HEAD
 	raw_spin_lock_init(&cpu_buffer->reader_lock);
+=======
+	spin_lock_init(&cpu_buffer->reader_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lockdep_set_class(&cpu_buffer->reader_lock, buffer->reader_lock_key);
 	cpu_buffer->lock = (arch_spinlock_t)__ARCH_SPIN_LOCK_UNLOCKED;
 
@@ -1044,10 +1122,17 @@ rb_allocate_cpu_buffer(struct ring_buffer *buffer, int cpu)
 	rb_check_bpage(cpu_buffer, bpage);
 
 	cpu_buffer->reader_page = bpage;
+<<<<<<< HEAD
 	page = alloc_pages_node(cpu_to_node(cpu), GFP_KERNEL, 0);
 	if (!page)
 		goto fail_free_reader;
 	bpage->page = page_address(page);
+=======
+	addr = __get_free_page(GFP_KERNEL);
+	if (!addr)
+		goto fail_free_reader;
+	bpage->page = (void *)addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rb_init_page(bpage->page);
 
 	INIT_LIST_HEAD(&cpu_buffer->reader_page->list);
@@ -1229,7 +1314,11 @@ rb_remove_pages(struct ring_buffer_per_cpu *cpu_buffer, unsigned nr_pages)
 	struct list_head *p;
 	unsigned i;
 
+<<<<<<< HEAD
 	raw_spin_lock_irq(&cpu_buffer->reader_lock);
+=======
+	spin_lock_irq(&cpu_buffer->reader_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rb_head_page_deactivate(cpu_buffer);
 
 	for (i = 0; i < nr_pages; i++) {
@@ -1247,7 +1336,11 @@ rb_remove_pages(struct ring_buffer_per_cpu *cpu_buffer, unsigned nr_pages)
 	rb_check_pages(cpu_buffer);
 
 out:
+<<<<<<< HEAD
 	raw_spin_unlock_irq(&cpu_buffer->reader_lock);
+=======
+	spin_unlock_irq(&cpu_buffer->reader_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -1258,7 +1351,11 @@ rb_insert_pages(struct ring_buffer_per_cpu *cpu_buffer,
 	struct list_head *p;
 	unsigned i;
 
+<<<<<<< HEAD
 	raw_spin_lock_irq(&cpu_buffer->reader_lock);
+=======
+	spin_lock_irq(&cpu_buffer->reader_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rb_head_page_deactivate(cpu_buffer);
 
 	for (i = 0; i < nr_pages; i++) {
@@ -1273,7 +1370,11 @@ rb_insert_pages(struct ring_buffer_per_cpu *cpu_buffer,
 	rb_check_pages(cpu_buffer);
 
 out:
+<<<<<<< HEAD
 	raw_spin_unlock_irq(&cpu_buffer->reader_lock);
+=======
+	spin_unlock_irq(&cpu_buffer->reader_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1291,6 +1392,10 @@ int ring_buffer_resize(struct ring_buffer *buffer, unsigned long size)
 	unsigned nr_pages, rm_pages, new_pages;
 	struct buffer_page *bpage, *tmp;
 	unsigned long buffer_size;
+<<<<<<< HEAD
+=======
+	unsigned long addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	LIST_HEAD(pages);
 	int i, cpu;
 
@@ -1351,6 +1456,7 @@ int ring_buffer_resize(struct ring_buffer *buffer, unsigned long size)
 
 	for_each_buffer_cpu(buffer, cpu) {
 		for (i = 0; i < new_pages; i++) {
+<<<<<<< HEAD
 			struct page *page;
 			/*
 			 * __GFP_NORETRY flag makes sure that the allocation
@@ -1369,6 +1475,18 @@ int ring_buffer_resize(struct ring_buffer *buffer, unsigned long size)
 			if (!page)
 				goto free_pages;
 			bpage->page = page_address(page);
+=======
+			bpage = kzalloc_node(ALIGN(sizeof(*bpage),
+						  cache_line_size()),
+					    GFP_KERNEL, cpu_to_node(cpu));
+			if (!bpage)
+				goto free_pages;
+			list_add(&bpage->list, &pages);
+			addr = __get_free_page(GFP_KERNEL);
+			if (!addr)
+				goto free_pages;
+			bpage->page = (void *)addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rb_init_page(bpage->page);
 		}
 	}
@@ -1678,7 +1796,10 @@ rb_handle_head_page(struct ring_buffer_per_cpu *cpu_buffer,
 		 * the counters.
 		 */
 		local_add(entries, &cpu_buffer->overrun);
+<<<<<<< HEAD
 		local_sub(BUF_PAGE_SIZE, &cpu_buffer->entries_bytes);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * The entries will be zeroed out when we move the
@@ -1834,9 +1955,12 @@ rb_reset_tail(struct ring_buffer_per_cpu *cpu_buffer,
 	event = __rb_page_index(tail_page, tail);
 	kmemcheck_annotate_bitfield(event, bitfield);
 
+<<<<<<< HEAD
 	/* account for padding bytes */
 	local_add(BUF_PAGE_SIZE - tail, &cpu_buffer->entries_bytes);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Save the original length to the meta data.
 	 * This will be used by the reader to add lost event
@@ -2028,9 +2152,12 @@ __rb_reserve_next(struct ring_buffer_per_cpu *cpu_buffer,
 	if (!tail)
 		tail_page->page->time_stamp = ts;
 
+<<<<<<< HEAD
 	/* account for these added bytes */
 	local_add(length, &cpu_buffer->entries_bytes);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return event;
 }
 
@@ -2053,7 +2180,10 @@ rb_try_to_discard(struct ring_buffer_per_cpu *cpu_buffer,
 	if (bpage->page == (void *)addr && rb_page_write(bpage) == old_index) {
 		unsigned long write_mask =
 			local_read(&bpage->write) & ~RB_WRITE_MASK;
+<<<<<<< HEAD
 		unsigned long event_length = rb_event_length(event);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * This is on the tail page. It is possible that
 		 * a write could come in and move the tail page
@@ -2063,11 +2193,16 @@ rb_try_to_discard(struct ring_buffer_per_cpu *cpu_buffer,
 		old_index += write_mask;
 		new_index += write_mask;
 		index = local_cmpxchg(&bpage->write, old_index, new_index);
+<<<<<<< HEAD
 		if (index == old_index) {
 			/* update counters */
 			local_sub(event_length, &cpu_buffer->entries_bytes);
 			return 1;
 		}
+=======
+		if (index == old_index)
+			return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* could not discard */
@@ -2587,6 +2722,7 @@ void ring_buffer_record_enable(struct ring_buffer *buffer)
 EXPORT_SYMBOL_GPL(ring_buffer_record_enable);
 
 /**
+<<<<<<< HEAD
  * ring_buffer_record_off - stop all writes into the buffer
  * @buffer: The ring buffer to stop writes to.
  *
@@ -2644,6 +2780,8 @@ int ring_buffer_record_is_on(struct ring_buffer *buffer)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * ring_buffer_record_disable_cpu - stop all writes into the cpu_buffer
  * @buffer: The ring buffer to stop writes to.
  * @cpu: The CPU buffer to stop
@@ -2699,6 +2837,7 @@ rb_num_of_entries(struct ring_buffer_per_cpu *cpu_buffer)
 }
 
 /**
+<<<<<<< HEAD
  * ring_buffer_oldest_event_ts - get the oldest event timestamp from the buffer
  * @buffer: The ring buffer
  * @cpu: The per CPU buffer to read from.
@@ -2752,6 +2891,8 @@ unsigned long ring_buffer_bytes_cpu(struct ring_buffer *buffer, int cpu)
 EXPORT_SYMBOL_GPL(ring_buffer_bytes_cpu);
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * ring_buffer_entries_cpu - get the number of entries in a cpu buffer
  * @buffer: The ring buffer
  * @cpu: The per CPU buffer to get the entries from.
@@ -2895,9 +3036,15 @@ void ring_buffer_iter_reset(struct ring_buffer_iter *iter)
 
 	cpu_buffer = iter->cpu_buffer;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
 	rb_iter_reset(iter);
 	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+=======
+	spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+	rb_iter_reset(iter);
+	spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(ring_buffer_iter_reset);
 
@@ -3031,8 +3178,11 @@ rb_get_reader_page(struct ring_buffer_per_cpu *cpu_buffer)
 	 * Splice the empty reader page into the list around the head.
 	 */
 	reader = rb_set_head_page(cpu_buffer);
+<<<<<<< HEAD
 	if (!reader)
 		goto out;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cpu_buffer->reader_page->list.next = rb_list_head(reader->list.next);
 	cpu_buffer->reader_page->list.prev = reader->list.prev;
 
@@ -3358,12 +3508,20 @@ ring_buffer_peek(struct ring_buffer *buffer, int cpu, u64 *ts,
  again:
 	local_irq_save(flags);
 	if (dolock)
+<<<<<<< HEAD
 		raw_spin_lock(&cpu_buffer->reader_lock);
+=======
+		spin_lock(&cpu_buffer->reader_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	event = rb_buffer_peek(cpu_buffer, ts, lost_events);
 	if (event && event->type_len == RINGBUF_TYPE_PADDING)
 		rb_advance_reader(cpu_buffer);
 	if (dolock)
+<<<<<<< HEAD
 		raw_spin_unlock(&cpu_buffer->reader_lock);
+=======
+		spin_unlock(&cpu_buffer->reader_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_irq_restore(flags);
 
 	if (event && event->type_len == RINGBUF_TYPE_PADDING)
@@ -3388,9 +3546,15 @@ ring_buffer_iter_peek(struct ring_buffer_iter *iter, u64 *ts)
 	unsigned long flags;
 
  again:
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
 	event = rb_iter_peek(iter, ts);
 	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+=======
+	spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+	event = rb_iter_peek(iter, ts);
+	spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (event && event->type_len == RINGBUF_TYPE_PADDING)
 		goto again;
@@ -3430,7 +3594,11 @@ ring_buffer_consume(struct ring_buffer *buffer, int cpu, u64 *ts,
 	cpu_buffer = buffer->buffers[cpu];
 	local_irq_save(flags);
 	if (dolock)
+<<<<<<< HEAD
 		raw_spin_lock(&cpu_buffer->reader_lock);
+=======
+		spin_lock(&cpu_buffer->reader_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	event = rb_buffer_peek(cpu_buffer, ts, lost_events);
 	if (event) {
@@ -3439,7 +3607,11 @@ ring_buffer_consume(struct ring_buffer *buffer, int cpu, u64 *ts,
 	}
 
 	if (dolock)
+<<<<<<< HEAD
 		raw_spin_unlock(&cpu_buffer->reader_lock);
+=======
+		spin_unlock(&cpu_buffer->reader_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_irq_restore(flags);
 
  out:
@@ -3531,11 +3703,19 @@ ring_buffer_read_start(struct ring_buffer_iter *iter)
 
 	cpu_buffer = iter->cpu_buffer;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
 	arch_spin_lock(&cpu_buffer->lock);
 	rb_iter_reset(iter);
 	arch_spin_unlock(&cpu_buffer->lock);
 	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+=======
+	spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+	arch_spin_lock(&cpu_buffer->lock);
+	rb_iter_reset(iter);
+	arch_spin_unlock(&cpu_buffer->lock);
+	spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(ring_buffer_read_start);
 
@@ -3570,7 +3750,11 @@ ring_buffer_read(struct ring_buffer_iter *iter, u64 *ts)
 	struct ring_buffer_per_cpu *cpu_buffer = iter->cpu_buffer;
 	unsigned long flags;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+=======
+	spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  again:
 	event = rb_iter_peek(iter, ts);
 	if (!event)
@@ -3581,7 +3765,11 @@ ring_buffer_read(struct ring_buffer_iter *iter, u64 *ts)
 
 	rb_advance_iter(iter);
  out:
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+=======
+	spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return event;
 }
@@ -3620,13 +3808,19 @@ rb_reset_cpu(struct ring_buffer_per_cpu *cpu_buffer)
 	cpu_buffer->reader_page->read = 0;
 
 	local_set(&cpu_buffer->commit_overrun, 0);
+<<<<<<< HEAD
 	local_set(&cpu_buffer->entries_bytes, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_set(&cpu_buffer->overrun, 0);
 	local_set(&cpu_buffer->entries, 0);
 	local_set(&cpu_buffer->committing, 0);
 	local_set(&cpu_buffer->commits, 0);
 	cpu_buffer->read = 0;
+<<<<<<< HEAD
 	cpu_buffer->read_bytes = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cpu_buffer->write_stamp = 0;
 	cpu_buffer->read_stamp = 0;
@@ -3652,7 +3846,11 @@ void ring_buffer_reset_cpu(struct ring_buffer *buffer, int cpu)
 
 	atomic_inc(&cpu_buffer->record_disabled);
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+=======
+	spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (RB_WARN_ON(cpu_buffer, local_read(&cpu_buffer->committing)))
 		goto out;
@@ -3664,7 +3862,11 @@ void ring_buffer_reset_cpu(struct ring_buffer *buffer, int cpu)
 	arch_spin_unlock(&cpu_buffer->lock);
 
  out:
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+=======
+	spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	atomic_dec(&cpu_buffer->record_disabled);
 }
@@ -3702,10 +3904,17 @@ int ring_buffer_empty(struct ring_buffer *buffer)
 		cpu_buffer = buffer->buffers[cpu];
 		local_irq_save(flags);
 		if (dolock)
+<<<<<<< HEAD
 			raw_spin_lock(&cpu_buffer->reader_lock);
 		ret = rb_per_cpu_empty(cpu_buffer);
 		if (dolock)
 			raw_spin_unlock(&cpu_buffer->reader_lock);
+=======
+			spin_lock(&cpu_buffer->reader_lock);
+		ret = rb_per_cpu_empty(cpu_buffer);
+		if (dolock)
+			spin_unlock(&cpu_buffer->reader_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		local_irq_restore(flags);
 
 		if (!ret)
@@ -3736,10 +3945,17 @@ int ring_buffer_empty_cpu(struct ring_buffer *buffer, int cpu)
 	cpu_buffer = buffer->buffers[cpu];
 	local_irq_save(flags);
 	if (dolock)
+<<<<<<< HEAD
 		raw_spin_lock(&cpu_buffer->reader_lock);
 	ret = rb_per_cpu_empty(cpu_buffer);
 	if (dolock)
 		raw_spin_unlock(&cpu_buffer->reader_lock);
+=======
+		spin_lock(&cpu_buffer->reader_lock);
+	ret = rb_per_cpu_empty(cpu_buffer);
+	if (dolock)
+		spin_unlock(&cpu_buffer->reader_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_irq_restore(flags);
 
 	return ret;
@@ -3839,6 +4055,7 @@ EXPORT_SYMBOL_GPL(ring_buffer_swap_cpu);
  * Returns:
  *  The page allocated, or NULL on error.
  */
+<<<<<<< HEAD
 void *ring_buffer_alloc_read_page(struct ring_buffer *buffer, int cpu)
 {
 	struct buffer_data_page *bpage;
@@ -3850,6 +4067,18 @@ void *ring_buffer_alloc_read_page(struct ring_buffer *buffer, int cpu)
 		return NULL;
 
 	bpage = page_address(page);
+=======
+void *ring_buffer_alloc_read_page(struct ring_buffer *buffer)
+{
+	struct buffer_data_page *bpage;
+	unsigned long addr;
+
+	addr = __get_free_page(GFP_KERNEL);
+	if (!addr)
+		return NULL;
+
+	bpage = (void *)addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rb_init_page(bpage);
 
@@ -3936,7 +4165,11 @@ int ring_buffer_read_page(struct ring_buffer *buffer,
 	if (!bpage)
 		goto out;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+=======
+	spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	reader = rb_get_reader_page(cpu_buffer);
 	if (!reader)
@@ -4013,7 +4246,10 @@ int ring_buffer_read_page(struct ring_buffer *buffer,
 	} else {
 		/* update the entry counter */
 		cpu_buffer->read += rb_page_entries(reader);
+<<<<<<< HEAD
 		cpu_buffer->read_bytes += BUF_PAGE_SIZE;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* swap the pages */
 		rb_init_page(bpage);
@@ -4060,13 +4296,91 @@ int ring_buffer_read_page(struct ring_buffer *buffer,
 		memset(&bpage->data[commit], 0, BUF_PAGE_SIZE - commit);
 
  out_unlock:
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+=======
+	spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
  out:
 	return ret;
 }
 EXPORT_SYMBOL_GPL(ring_buffer_read_page);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_TRACING
+static ssize_t
+rb_simple_read(struct file *filp, char __user *ubuf,
+	       size_t cnt, loff_t *ppos)
+{
+	unsigned long *p = filp->private_data;
+	char buf[64];
+	int r;
+
+	if (test_bit(RB_BUFFERS_DISABLED_BIT, p))
+		r = sprintf(buf, "permanently disabled\n");
+	else
+		r = sprintf(buf, "%d\n", test_bit(RB_BUFFERS_ON_BIT, p));
+
+	return simple_read_from_buffer(ubuf, cnt, ppos, buf, r);
+}
+
+static ssize_t
+rb_simple_write(struct file *filp, const char __user *ubuf,
+		size_t cnt, loff_t *ppos)
+{
+	unsigned long *p = filp->private_data;
+	char buf[64];
+	unsigned long val;
+	int ret;
+
+	if (cnt >= sizeof(buf))
+		return -EINVAL;
+
+	if (copy_from_user(&buf, ubuf, cnt))
+		return -EFAULT;
+
+	buf[cnt] = 0;
+
+	ret = strict_strtoul(buf, 10, &val);
+	if (ret < 0)
+		return ret;
+
+	if (val)
+		set_bit(RB_BUFFERS_ON_BIT, p);
+	else
+		clear_bit(RB_BUFFERS_ON_BIT, p);
+
+	(*ppos)++;
+
+	return cnt;
+}
+
+static const struct file_operations rb_simple_fops = {
+	.open		= tracing_open_generic,
+	.read		= rb_simple_read,
+	.write		= rb_simple_write,
+	.llseek		= default_llseek,
+};
+
+
+static __init int rb_init_debugfs(void)
+{
+	struct dentry *d_tracer;
+
+	d_tracer = tracing_init_dentry();
+
+	trace_create_file("tracing_on", 0644, d_tracer,
+			    &ring_buffer_flags, &rb_simple_fops);
+
+	return 0;
+}
+
+fs_initcall(rb_init_debugfs);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_HOTPLUG_CPU
 static int rb_cpu_notify(struct notifier_block *self,
 			 unsigned long action, void *hcpu)

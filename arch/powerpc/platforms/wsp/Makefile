@@ -1,5 +1,6 @@
 ccflags-y			+= -mno-minimal-toc
 
+<<<<<<< HEAD
 obj-y				+= setup.o ics.o wsp.o
 obj-$(CONFIG_PPC_PSR2)		+= psr2.o
 obj-$(CONFIG_PPC_CHROMA)	+= chroma.o h8.o
@@ -8,3 +9,9 @@ obj-$(CONFIG_PPC_WSP)		+= scom_wsp.o
 obj-$(CONFIG_SMP)		+= smp.o scom_smp.o
 obj-$(CONFIG_PCI)		+= wsp_pci.o
 obj-$(CONFIG_PCI_MSI)		+= msi.o
+=======
+obj-y				+= setup.o ics.o
+obj-$(CONFIG_PPC_PSR2)		+= psr2.o opb_pic.o
+obj-$(CONFIG_PPC_WSP)		+= scom_wsp.o
+obj-$(CONFIG_SMP)		+= smp.o scom_smp.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -83,6 +83,7 @@ struct pt_regs {
 
 #ifndef __ASSEMBLY__
 
+<<<<<<< HEAD
 #define GET_IP(regs)		((regs)->nip)
 #define GET_USP(regs)		((regs)->gpr[1])
 #define GET_FP(regs)		(0)
@@ -109,6 +110,19 @@ static inline long regs_return_value(struct pt_regs *regs)
 		return -regs->gpr[3];
 }
 
+=======
+#define instruction_pointer(regs) ((regs)->nip)
+#define user_stack_pointer(regs) ((regs)->gpr[1])
+#define kernel_stack_pointer(regs) ((regs)->gpr[1])
+#define regs_return_value(regs) ((regs)->gpr[3])
+
+#ifdef CONFIG_SMP
+extern unsigned long profile_pc(struct pt_regs *regs);
+#else
+#define profile_pc(regs) instruction_pointer(regs)
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef __powerpc64__
 #define user_mode(regs) ((((regs)->msr) >> MSR_PR_LG) & 0x1)
 #else

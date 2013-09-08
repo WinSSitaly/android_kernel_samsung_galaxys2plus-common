@@ -61,7 +61,10 @@ hcall(unsigned long call,
 		     : "memory");
 	return call;
 }
+<<<<<<< HEAD
 /*:*/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Can't use our min() macro here: needs to be a constant */
 #define LGUEST_IRQS (NR_IRQS < 32 ? NR_IRQS: 32)

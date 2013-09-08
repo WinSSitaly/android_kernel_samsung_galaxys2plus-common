@@ -213,6 +213,10 @@ static struct platform_driver efi_rtc_driver = {
 		.name = "rtc-efi",
 		.owner = THIS_MODULE,
 	},
+<<<<<<< HEAD
+=======
+	.probe = efi_rtc_probe,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.remove = __exit_p(efi_rtc_remove),
 };
 

@@ -17,7 +17,10 @@
 #include <linux/err.h>
 #include <asm/io.h>
 #include <linux/scx200_gpio.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRVNAME "wrap-led"
 #define WRAP_POWER_LED_GPIO	2

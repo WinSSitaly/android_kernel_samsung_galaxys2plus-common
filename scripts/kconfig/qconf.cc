@@ -1478,6 +1478,7 @@ void ConfigMainWindow::loadConfig(void)
 	ConfigView::updateListAll();
 }
 
+<<<<<<< HEAD
 bool ConfigMainWindow::saveConfig(void)
 {
 	if (conf_write(NULL)) {
@@ -1485,6 +1486,12 @@ bool ConfigMainWindow::saveConfig(void)
 		return false;
 	}
 	return true;
+=======
+void ConfigMainWindow::saveConfig(void)
+{
+	if (conf_write(NULL))
+		QMessageBox::information(this, "qconf", _("Unable to save configuration!"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void ConfigMainWindow::saveConfigAs(void)
@@ -1645,11 +1652,15 @@ void ConfigMainWindow::closeEvent(QCloseEvent* e)
 	mb.setButtonText(QMessageBox::Cancel, _("Cancel Exit"));
 	switch (mb.exec()) {
 	case QMessageBox::Yes:
+<<<<<<< HEAD
 		if (saveConfig())
 			e->accept();
 		else
 			e->ignore();
 		break;
+=======
+		saveConfig();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case QMessageBox::No:
 		e->accept();
 		break;
@@ -1752,6 +1763,13 @@ int main(int ac, char** av)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
+<<<<<<< HEAD
+=======
+#ifndef LKC_DIRECT_LINK
+	kconfig_load();
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	progname = av[0];
 	configApp = new QApplication(ac, av);
 	if (ac > 1 && av[1][0] == '-') {

@@ -63,7 +63,11 @@
 #include <linux/mutex.h>
 #include <linux/amifdreg.h>
 #include <linux/amifd.h>
+<<<<<<< HEAD
 #include <linux/fs.h>
+=======
+#include <linux/buffer_head.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/blkdev.h>
 #include <linux/elevator.h>
 #include <linux/interrupt.h>

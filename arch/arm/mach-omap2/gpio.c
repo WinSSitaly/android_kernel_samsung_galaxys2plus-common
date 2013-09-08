@@ -23,6 +23,7 @@
 
 #include <plat/omap_hwmod.h>
 #include <plat/omap_device.h>
+<<<<<<< HEAD
 #include <plat/omap-pm.h>
 
 #include "powerdomain.h"
@@ -30,11 +31,28 @@
 static int __init omap2_gpio_dev_init(struct omap_hwmod *oh, void *unused)
 {
 	struct platform_device *pdev;
+=======
+
+static struct omap_device_pm_latency omap_gpio_latency[] = {
+	[0] = {
+		.deactivate_func = omap_device_idle_hwmods,
+		.activate_func   = omap_device_enable_hwmods,
+		.flags		 = OMAP_DEVICE_LATENCY_AUTO_ADJUST,
+	},
+};
+
+static int omap2_gpio_dev_init(struct omap_hwmod *oh, void *unused)
+{
+	struct omap_device *od;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct omap_gpio_platform_data *pdata;
 	struct omap_gpio_dev_attr *dev_attr;
 	char *name = "omap_gpio";
 	int id;
+<<<<<<< HEAD
 	struct powerdomain *pwrdm;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * extract the device id from name field available in the
@@ -56,6 +74,7 @@ static int __init omap2_gpio_dev_init(struct omap_hwmod *oh, void *unused)
 	pdata->bank_width = dev_attr->bank_width;
 	pdata->dbck_flag = dev_attr->dbck_flag;
 	pdata->virtual_irq_start = IH_GPIO_BASE + 32 * (id - 1);
+<<<<<<< HEAD
 	pdata->get_context_loss_count = omap_pm_get_dev_context_loss_count;
 	pdata->regs = kzalloc(sizeof(struct omap_gpio_reg_offs), GFP_KERNEL);
 	if (!pdata) {
@@ -116,6 +135,16 @@ static int __init omap2_gpio_dev_init(struct omap_hwmod *oh, void *unused)
 		pdata->regs->leveldetect1 = OMAP4_GPIO_LEVELDETECT1;
 		pdata->regs->risingdetect = OMAP4_GPIO_RISINGDETECT;
 		pdata->regs->fallingdetect = OMAP4_GPIO_FALLINGDETECT;
+=======
+
+	switch (oh->class->rev) {
+	case 0:
+	case 1:
+		pdata->bank_type = METHOD_GPIO_24XX;
+		break;
+	case 2:
+		pdata->bank_type = METHOD_GPIO_44XX;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		WARN(1, "Invalid gpio bank_type\n");
@@ -123,6 +152,7 @@ static int __init omap2_gpio_dev_init(struct omap_hwmod *oh, void *unused)
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	pwrdm = omap_hwmod_get_pwrdm(oh);
 	pdata->loses_context = pwrdm_can_ever_lose_context(pwrdm);
 
@@ -136,6 +166,21 @@ static int __init omap2_gpio_dev_init(struct omap_hwmod *oh, void *unused)
 		return PTR_ERR(pdev);
 	}
 
+=======
+	od = omap_device_build(name, id - 1, oh, pdata,
+				sizeof(*pdata),	omap_gpio_latency,
+				ARRAY_SIZE(omap_gpio_latency),
+				false);
+	kfree(pdata);
+
+	if (IS_ERR(od)) {
+		WARN(1, "Can't build omap_device for %s:%s.\n",
+					name, oh->name);
+		return PTR_ERR(od);
+	}
+
+	gpio_bank_count++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

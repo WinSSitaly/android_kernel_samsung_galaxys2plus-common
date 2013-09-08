@@ -1,6 +1,10 @@
 /*
  * Copyright (C) Sistina Software, Inc.  1997-2003 All rights reserved.
+<<<<<<< HEAD
  * Copyright 2004-2011 Red Hat, Inc.
+=======
+ * Copyright (C) 2004-2009 Red Hat, Inc.  All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -11,12 +15,16 @@
 #include <linux/dlm.h>
 #include <linux/slab.h>
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/delay.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/gfs2_ondisk.h>
 
 #include "incore.h"
 #include "glock.h"
 #include "util.h"
+<<<<<<< HEAD
 #include "sys.h"
 #include "trace_gfs2.h"
 
@@ -112,12 +120,19 @@ static inline void gfs2_update_request_times(struct gfs2_glock *gl)
 	preempt_enable();
 }
  
+=======
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void gdlm_ast(void *arg)
 {
 	struct gfs2_glock *gl = arg;
 	unsigned ret = gl->gl_state;
 
+<<<<<<< HEAD
 	gfs2_update_reply_times(gl);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BUG_ON(gl->gl_lksb.sb_flags & DLM_SBF_DEMOTED);
 
 	if (gl->gl_lksb.sb_flags & DLM_SBF_VALNOTVALID)
@@ -200,11 +215,18 @@ static int make_mode(const unsigned int lmstate)
 	return -1;
 }
 
+<<<<<<< HEAD
 static u32 make_flags(struct gfs2_glock *gl, const unsigned int gfs_flags,
 		      const int req)
 {
 	u32 lkf = DLM_LKF_VALBLK;
 	u32 lkid = gl->gl_lksb.sb_lkid;
+=======
+static u32 make_flags(const u32 lkid, const unsigned int gfs_flags,
+		      const int req)
+{
+	u32 lkf = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (gfs_flags & LM_FLAG_TRY)
 		lkf |= DLM_LKF_NOQUEUE;
@@ -228,6 +250,7 @@ static u32 make_flags(struct gfs2_glock *gl, const unsigned int gfs_flags,
 			BUG();
 	}
 
+<<<<<<< HEAD
 	if (lkid != 0) {
 		lkf |= DLM_LKF_CONVERT;
 		if (test_bit(GLF_BLOCKING, &gl->gl_flags))
@@ -243,6 +266,14 @@ static void gfs2_reverse_hex(char *c, u64 value)
 		*c-- = hex_asc[value & 0x0f];
 		value >>= 4;
 	}
+=======
+	if (lkid != 0) 
+		lkf |= DLM_LKF_CONVERT;
+
+	lkf |= DLM_LKF_VALBLK;
+
+	return lkf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int gdlm_lock(struct gfs2_glock *gl, unsigned int req_state,
@@ -251,6 +282,7 @@ static int gdlm_lock(struct gfs2_glock *gl, unsigned int req_state,
 	struct lm_lockstruct *ls = &gl->gl_sbd->sd_lockstruct;
 	int req;
 	u32 lkf;
+<<<<<<< HEAD
 	char strname[GDLM_STRNAME_BYTES] = "";
 
 	req = make_mode(req_state);
@@ -266,11 +298,21 @@ static int gdlm_lock(struct gfs2_glock *gl, unsigned int req_state,
 		gfs2_reverse_hex(strname + 23, gl->gl_name.ln_number);
 		gl->gl_dstamp = ktime_get_real();
 	}
+=======
+
+	req = make_mode(req_state);
+	lkf = make_flags(gl->gl_lksb.sb_lkid, flags, req);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Submit the actual lock request.
 	 */
 
+<<<<<<< HEAD
 	return dlm_lock(ls->ls_dlm, req, &gl->gl_lksb, lkf, strname,
+=======
+	return dlm_lock(ls->ls_dlm, req, &gl->gl_lksb, lkf, gl->gl_strname,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			GDLM_STRNAME_BYTES - 1, 0, gdlm_ast, gl, gdlm_bast);
 }
 
@@ -285,10 +327,13 @@ static void gdlm_put_lock(struct gfs2_glock *gl)
 		return;
 	}
 
+<<<<<<< HEAD
 	clear_bit(GLF_BLOCKING, &gl->gl_flags);
 	gfs2_glstats_inc(gl, GFS2_LKS_DCOUNT);
 	gfs2_sbstats_inc(gl, GFS2_LKS_DCOUNT);
 	gfs2_update_request_times(gl);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	error = dlm_unlock(ls->ls_dlm, gl->gl_lksb.sb_lkid, DLM_LKF_VALBLK,
 			   NULL, gl);
 	if (error) {
@@ -305,6 +350,7 @@ static void gdlm_cancel(struct gfs2_glock *gl)
 	dlm_unlock(ls->ls_dlm, gl->gl_lksb.sb_lkid, DLM_LKF_CANCEL, NULL, gl);
 }
 
+<<<<<<< HEAD
 /*
  * dlm/gfs2 recovery coordination using dlm_recover callbacks
  *
@@ -482,10 +528,14 @@ static void sync_wait_cb(void *arg)
 }
 
 static int sync_unlock(struct gfs2_sbd *sdp, struct dlm_lksb *lksb, char *name)
+=======
+static int gdlm_mount(struct gfs2_sbd *sdp, const char *fsname)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct lm_lockstruct *ls = &sdp->sd_lockstruct;
 	int error;
 
+<<<<<<< HEAD
 	error = dlm_unlock(ls->ls_dlm, lksb->sb_lkid, 0, lksb, ls);
 	if (error) {
 		fs_err(sdp, "%s lkid %x error %d\n",
@@ -1279,10 +1329,28 @@ static void gdlm_first_done(struct gfs2_sbd *sdp)
 		fs_err(sdp, "mount first_done error %d\n", error);
 }
 
+=======
+	if (fsname == NULL) {
+		fs_info(sdp, "no fsname found\n");
+		return -EINVAL;
+	}
+
+	error = dlm_new_lockspace(fsname, strlen(fsname), &ls->ls_dlm,
+				  DLM_LSFL_FS | DLM_LSFL_NEWEXCL |
+				  (ls->ls_nodir ? DLM_LSFL_NODIR : 0),
+				  GDLM_LVB_SIZE);
+	if (error)
+		printk(KERN_ERR "dlm_new_lockspace error %d", error);
+
+	return error;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void gdlm_unmount(struct gfs2_sbd *sdp)
 {
 	struct lm_lockstruct *ls = &sdp->sd_lockstruct;
 
+<<<<<<< HEAD
 	if (test_bit(DFL_NO_DLM_OPS, &ls->ls_recover_flags))
 		goto release;
 
@@ -1295,12 +1363,17 @@ static void gdlm_unmount(struct gfs2_sbd *sdp)
 
 	/* mounted_lock and control_lock will be purged in dlm recovery */
 release:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ls->ls_dlm) {
 		dlm_release_lockspace(ls->ls_dlm, 2);
 		ls->ls_dlm = NULL;
 	}
+<<<<<<< HEAD
 
 	free_recover_size(ls);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const match_table_t dlm_tokens = {
@@ -1314,8 +1387,11 @@ static const match_table_t dlm_tokens = {
 const struct lm_lockops gfs2_dlm_ops = {
 	.lm_proto_name = "lock_dlm",
 	.lm_mount = gdlm_mount,
+<<<<<<< HEAD
 	.lm_first_done = gdlm_first_done,
 	.lm_recovery_result = gdlm_recovery_result,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.lm_unmount = gdlm_unmount,
 	.lm_put_lock = gdlm_put_lock,
 	.lm_lock = gdlm_lock,

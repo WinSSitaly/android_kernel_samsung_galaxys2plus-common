@@ -36,6 +36,10 @@
 #include <asm/memory.h>
 #include <mach/hardware.h>
 #include <asm/mach-types.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/tlbflush.h>
 #include <asm/pgtable.h>
 
@@ -167,7 +171,11 @@ void __init ixdp2351_init_irq(void)
  */
 #define DEVPIN(dev, pin) ((pin) | ((dev) << 3))
 
+<<<<<<< HEAD
 static int __init ixdp2351_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+static int __init ixdp2351_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u8 bus = dev->bus->number;
 	u32 devpin = DEVPIN(PCI_SLOT(dev->devfn), pin);
@@ -325,6 +333,7 @@ static void __init ixdp2351_init(void)
 	ixp23xx_sys_init();
 }
 
+<<<<<<< HEAD
 static void ixdp2351_restart(char mode, const char *cmd)
 {
 	/* First try machine specific support */
@@ -336,12 +345,19 @@ static void ixdp2351_restart(char mode, const char *cmd)
 	ixp23xx_restart(mode, cmd);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_START(IXDP2351, "Intel IXDP2351 Development Platform")
 	/* Maintainer: MontaVista Software, Inc. */
 	.map_io		= ixdp2351_map_io,
 	.init_irq	= ixdp2351_init_irq,
 	.timer		= &ixp23xx_timer,
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.init_machine	= ixdp2351_init,
 	.restart	= ixdp2351_restart,
+=======
+	.boot_params	= 0x00000100,
+	.init_machine	= ixdp2351_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

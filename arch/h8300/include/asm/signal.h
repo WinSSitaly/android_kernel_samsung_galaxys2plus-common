@@ -121,7 +121,10 @@ struct sigaction {
 	void (*sa_restorer)(void);
 	sigset_t sa_mask;		/* mask last for extensibility */
 };
+<<<<<<< HEAD
 #define __ARCH_HAS_SA_RESTORER
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct k_sigaction {
 	struct sigaction sa;

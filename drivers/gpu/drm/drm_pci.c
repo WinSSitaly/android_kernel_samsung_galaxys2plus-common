@@ -39,7 +39,10 @@
 #include <linux/pci.h>
 #include <linux/slab.h>
 #include <linux/dma-mapping.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drmP.h"
 
 /**********************************************************************/
@@ -324,6 +327,11 @@ int drm_get_pci_dev(struct pci_dev *pdev, const struct pci_device_id *ent,
 	if (ret)
 		goto err_g1;
 
+<<<<<<< HEAD
+=======
+	pci_set_master(pdev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->pdev = pdev;
 	dev->dev = &pdev->dev;
 

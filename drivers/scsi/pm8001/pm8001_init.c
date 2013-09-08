@@ -61,7 +61,12 @@ static struct scsi_host_template pm8001_sht = {
 	.name			= DRV_NAME,
 	.queuecommand		= sas_queuecommand,
 	.target_alloc		= sas_target_alloc,
+<<<<<<< HEAD
 	.slave_configure	= sas_slave_configure,
+=======
+	.slave_configure	= pm8001_slave_configure,
+	.slave_destroy		= sas_slave_destroy,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.scan_finished		= pm8001_scan_finished,
 	.scan_start		= pm8001_scan_start,
 	.change_queue_depth	= sas_change_queue_depth,
@@ -75,6 +80,10 @@ static struct scsi_host_template pm8001_sht = {
 	.use_clustering		= ENABLE_CLUSTERING,
 	.eh_device_reset_handler = sas_eh_device_reset_handler,
 	.eh_bus_reset_handler	= sas_eh_bus_reset_handler,
+<<<<<<< HEAD
+=======
+	.slave_alloc		= pm8001_slave_alloc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.target_destroy		= sas_target_destroy,
 	.ioctl			= sas_ioctl,
 	.shost_attrs		= pm8001_host_attrs,

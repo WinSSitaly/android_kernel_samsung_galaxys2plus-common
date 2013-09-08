@@ -25,7 +25,10 @@
 #include <linux/gpio.h>
 #include <linux/spinlock.h>
 #include <linux/tty.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <sound/soc.h>
 #include <sound/jack.h>
@@ -331,7 +334,11 @@ static int cx81801_hangup(struct tty_struct *tty)
 	return 0;
 }
 
+<<<<<<< HEAD
 /* Line discipline .receive_buf() */
+=======
+/* Line discipline .recieve_buf() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void cx81801_receive(struct tty_struct *tty,
 				const unsigned char *cp, char *fp, int count)
 {
@@ -426,6 +433,33 @@ static struct snd_soc_ops ams_delta_ops = {
 };
 
 
+<<<<<<< HEAD
+=======
+/* Board specific codec bias level control */
+static int ams_delta_set_bias_level(struct snd_soc_card *card,
+					enum snd_soc_bias_level level)
+{
+	struct snd_soc_codec *codec = card->rtd->codec;
+
+	switch (level) {
+	case SND_SOC_BIAS_ON:
+	case SND_SOC_BIAS_PREPARE:
+	case SND_SOC_BIAS_STANDBY:
+		if (codec->dapm.bias_level == SND_SOC_BIAS_OFF)
+			ams_delta_latch2_write(AMS_DELTA_LATCH2_MODEM_NRESET,
+						AMS_DELTA_LATCH2_MODEM_NRESET);
+		break;
+	case SND_SOC_BIAS_OFF:
+		if (codec->dapm.bias_level != SND_SOC_BIAS_OFF)
+			ams_delta_latch2_write(AMS_DELTA_LATCH2_MODEM_NRESET,
+						0);
+	}
+	codec->dapm.bias_level = level;
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Digital mute implemented using modem/CPU multiplexer.
  * Shares hardware with codec config pulse generation */
 static bool ams_delta_muted = 1;
@@ -449,7 +483,11 @@ static int ams_delta_digital_mute(struct snd_soc_dai *dai, int mute)
 }
 
 /* Our codec DAI probably doesn't have its own .ops structure */
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops ams_delta_dai_ops = {
+=======
+static struct snd_soc_dai_ops ams_delta_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.digital_mute = ams_delta_digital_mute,
 };
 
@@ -489,6 +527,12 @@ static int ams_delta_cx20442_init(struct snd_soc_pcm_runtime *rtd)
 		ams_delta_ops.shutdown = ams_delta_shutdown;
 	}
 
+<<<<<<< HEAD
+=======
+	/* Set codec bias level */
+	ams_delta_set_bias_level(card, SND_SOC_BIAS_STANDBY);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Add hook switch - can be used to control the codec from userspace
 	 * even if line discipline fails */
 	ret = snd_soc_jack_new(rtd->codec, "hook_switch",
@@ -542,9 +586,16 @@ static int ams_delta_cx20442_init(struct snd_soc_pcm_runtime *rtd)
 	snd_soc_dapm_disable_pin(dapm, "Speaker");
 	snd_soc_dapm_disable_pin(dapm, "AGCIN");
 	snd_soc_dapm_disable_pin(dapm, "AGCOUT");
+<<<<<<< HEAD
 
 	/* Add virtual switch */
 	ret = snd_soc_add_codec_controls(codec, ams_delta_audio_controls,
+=======
+	snd_soc_dapm_sync(dapm);
+
+	/* Add virtual switch */
+	ret = snd_soc_add_controls(codec, ams_delta_audio_controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					ARRAY_SIZE(ams_delta_audio_controls));
 	if (ret)
 		dev_warn(card->dev,
@@ -558,7 +609,11 @@ static int ams_delta_cx20442_init(struct snd_soc_pcm_runtime *rtd)
 static struct snd_soc_dai_link ams_delta_dai_link = {
 	.name = "CX20442",
 	.stream_name = "CX20442",
+<<<<<<< HEAD
 	.cpu_dai_name = "omap-mcbsp.1",
+=======
+	.cpu_dai_name ="omap-mcbsp-dai.0",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.codec_dai_name = "cx20442-voice",
 	.init = ams_delta_cx20442_init,
 	.platform_name = "omap-pcm-audio",
@@ -569,9 +624,15 @@ static struct snd_soc_dai_link ams_delta_dai_link = {
 /* Audio card driver */
 static struct snd_soc_card ams_delta_audio_card = {
 	.name = "AMS_DELTA",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
 	.dai_link = &ams_delta_dai_link,
 	.num_links = 1,
+=======
+	.dai_link = &ams_delta_dai_link,
+	.num_links = 1,
+	.set_bias_level = ams_delta_set_bias_level,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Module init/exit */
@@ -608,7 +669,11 @@ err:
 	platform_device_put(ams_delta_audio_platform_device);
 	return ret;
 }
+<<<<<<< HEAD
 late_initcall(ams_delta_module_init);
+=======
+module_init(ams_delta_module_init);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void __exit ams_delta_module_exit(void)
 {
@@ -620,6 +685,12 @@ static void __exit ams_delta_module_exit(void)
 			ARRAY_SIZE(ams_delta_hook_switch_gpios),
 			ams_delta_hook_switch_gpios);
 
+<<<<<<< HEAD
+=======
+	/* Keep modem power on */
+	ams_delta_set_bias_level(&ams_delta_audio_card, SND_SOC_BIAS_STANDBY);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_device_unregister(cx20442_platform_device);
 	platform_device_unregister(ams_delta_audio_platform_device);
 }

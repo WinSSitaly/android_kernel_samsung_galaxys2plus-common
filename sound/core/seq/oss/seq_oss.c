@@ -21,7 +21,11 @@
  */
 
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mutex.h>
 #include <sound/core.h>
 #include <sound/minors.h>

@@ -2,7 +2,10 @@
  * omap_hwmod macros, structures
  *
  * Copyright (C) 2009-2011 Nokia Corporation
+<<<<<<< HEAD
  * Copyright (C) 2011 Texas Instruments, Inc.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Paul Walmsley
  *
  * Created in collaboration with (alphabetical order): Benoît Cousson,
@@ -47,6 +50,7 @@ extern struct omap_hwmod_sysc_fields omap_hwmod_sysc_type2;
  * with the original PRCM protocol defined for OMAP2420
  */
 #define SYSC_TYPE1_MIDLEMODE_SHIFT	12
+<<<<<<< HEAD
 #define SYSC_TYPE1_MIDLEMODE_MASK	(0x3 << SYSC_TYPE1_MIDLEMODE_SHIFT)
 #define SYSC_TYPE1_CLOCKACTIVITY_SHIFT	8
 #define SYSC_TYPE1_CLOCKACTIVITY_MASK	(0x3 << SYSC_TYPE1_CLOCKACTIVITY_SHIFT)
@@ -58,6 +62,19 @@ extern struct omap_hwmod_sysc_fields omap_hwmod_sysc_type2;
 #define SYSC_TYPE1_SOFTRESET_MASK	(1 << SYSC_TYPE1_SOFTRESET_SHIFT)
 #define SYSC_TYPE1_AUTOIDLE_SHIFT	0
 #define SYSC_TYPE1_AUTOIDLE_MASK	(1 << SYSC_TYPE1_AUTOIDLE_SHIFT)
+=======
+#define SYSC_TYPE1_MIDLEMODE_MASK	(0x3 << SYSC_MIDLEMODE_SHIFT)
+#define SYSC_TYPE1_CLOCKACTIVITY_SHIFT	8
+#define SYSC_TYPE1_CLOCKACTIVITY_MASK	(0x3 << SYSC_CLOCKACTIVITY_SHIFT)
+#define SYSC_TYPE1_SIDLEMODE_SHIFT	3
+#define SYSC_TYPE1_SIDLEMODE_MASK	(0x3 << SYSC_SIDLEMODE_SHIFT)
+#define SYSC_TYPE1_ENAWAKEUP_SHIFT	2
+#define SYSC_TYPE1_ENAWAKEUP_MASK	(1 << SYSC_ENAWAKEUP_SHIFT)
+#define SYSC_TYPE1_SOFTRESET_SHIFT	1
+#define SYSC_TYPE1_SOFTRESET_MASK	(1 << SYSC_SOFTRESET_SHIFT)
+#define SYSC_TYPE1_AUTOIDLE_SHIFT	0
+#define SYSC_TYPE1_AUTOIDLE_MASK	(1 << SYSC_AUTOIDLE_SHIFT)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * OCP SYSCONFIG bit shifts/masks TYPE2. These are for IPs compliant
@@ -78,6 +95,7 @@ extern struct omap_hwmod_sysc_fields omap_hwmod_sysc_type2;
 #define HWMOD_IDLEMODE_FORCE		(1 << 0)
 #define HWMOD_IDLEMODE_NO		(1 << 1)
 #define HWMOD_IDLEMODE_SMART		(1 << 2)
+<<<<<<< HEAD
 #define HWMOD_IDLEMODE_SMART_WKUP	(1 << 3)
 
 /* modulemode control type (SW or HW) */
@@ -85,6 +103,11 @@ extern struct omap_hwmod_sysc_fields omap_hwmod_sysc_type2;
 #define MODULEMODE_SWCTRL		2
 
 
+=======
+/* Slave idle mode flag only */
+#define HWMOD_IDLEMODE_SMART_WKUP	(1 << 3)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct omap_hwmod_mux_info - hwmod specific mux configuration
  * @pads:              array of omap_device_pad entries
@@ -97,14 +120,21 @@ struct omap_hwmod_mux_info {
 	struct omap_device_pad		*pads;
 	int				nr_pads_dynamic;
 	struct omap_device_pad		**pads_dynamic;
+<<<<<<< HEAD
 	int				*irqs;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool				enabled;
 };
 
 /**
  * struct omap_hwmod_irq_info - MPU IRQs used by the hwmod
  * @name: name of the IRQ channel (module local name)
+<<<<<<< HEAD
  * @irq: IRQ channel ID (should be non-negative except -1 = terminator)
+=======
+ * @irq_ch: IRQ channel ID
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * @name should be something short, e.g., "tx" or "rx".  It is for use
  * by platform_get_resource_byname().  It is defined locally to the
@@ -112,13 +142,21 @@ struct omap_hwmod_mux_info {
  */
 struct omap_hwmod_irq_info {
 	const char	*name;
+<<<<<<< HEAD
 	s16		irq;
+=======
+	u16		irq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
  * struct omap_hwmod_dma_info - DMA channels used by the hwmod
  * @name: name of the DMA channel (module local name)
+<<<<<<< HEAD
  * @dma_req: DMA request ID (should be non-negative except -1 = terminator)
+=======
+ * @dma_req: DMA request ID
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * @name should be something short, e.g., "tx" or "rx".  It is for use
  * by platform_get_resource_byname().  It is defined locally to the
@@ -126,7 +164,11 @@ struct omap_hwmod_irq_info {
  */
 struct omap_hwmod_dma_info {
 	const char	*name;
+<<<<<<< HEAD
 	s16		dma_req;
+=======
+	u16		dma_req;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -226,6 +268,10 @@ struct omap_hwmod_addr_space {
  * @clk: interface clock: OMAP clock name
  * @_clk: pointer to the interface struct clk (filled in at runtime)
  * @fw: interface firewall data
+<<<<<<< HEAD
+=======
+ * @addr_cnt: ARRAY_SIZE(@addr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @width: OCP data width
  * @user: initiators using this interface (see OCP_USER_* macros above)
  * @flags: OCP interface flags (see OCPIF_* macros above)
@@ -244,6 +290,10 @@ struct omap_hwmod_ocp_if {
 	union {
 		struct omap_hwmod_omap2_firewall omap2;
 	}				fw;
+<<<<<<< HEAD
+=======
+	u8				addr_cnt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8				width;
 	u8				user;
 	u8				flags;
@@ -262,7 +312,10 @@ struct omap_hwmod_ocp_if {
 #define MSTANDBY_FORCE		(HWMOD_IDLEMODE_FORCE << MASTER_STANDBY_SHIFT)
 #define MSTANDBY_NO		(HWMOD_IDLEMODE_NO << MASTER_STANDBY_SHIFT)
 #define MSTANDBY_SMART		(HWMOD_IDLEMODE_SMART << MASTER_STANDBY_SHIFT)
+<<<<<<< HEAD
 #define MSTANDBY_SMART_WKUP	(HWMOD_IDLEMODE_SMART_WKUP << MASTER_STANDBY_SHIFT)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* omap_hwmod_sysconfig.sysc_flags capability flags */
 #define SYSC_HAS_AUTOIDLE	(1 << 0)
@@ -305,7 +358,10 @@ struct omap_hwmod_sysc_fields {
  * @rev_offs: IP block revision register offset (from module base addr)
  * @sysc_offs: OCP_SYSCONFIG register offset (from module base addr)
  * @syss_offs: OCP_SYSSTATUS register offset (from module base addr)
+<<<<<<< HEAD
  * @srst_udelay: Delay needed after doing a softreset in usecs
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @idlemodes: One or more of {SIDLE,MSTANDBY}_{OFF,FORCE,SMART}
  * @sysc_flags: SYS{C,S}_HAS* flags indicating SYSCONFIG bits supported
  * @clockact: the default value of the module CLOCKACTIVITY bits
@@ -331,10 +387,16 @@ struct omap_hwmod_class_sysconfig {
 	u16 sysc_offs;
 	u16 syss_offs;
 	u16 sysc_flags;
+<<<<<<< HEAD
 	struct omap_hwmod_sysc_fields *sysc_fields;
 	u8 srst_udelay;
 	u8 idlemodes;
 	u8 clockact;
+=======
+	u8 idlemodes;
+	u8 clockact;
+	struct omap_hwmod_sysc_fields *sysc_fields;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -369,11 +431,17 @@ struct omap_hwmod_omap2_prcm {
  * @submodule_wkdep_bit: bit shift of the WKDEP range
  */
 struct omap_hwmod_omap4_prcm {
+<<<<<<< HEAD
 	u16		clkctrl_offs;
 	u16		rstctrl_offs;
 	u16		context_offs;
 	u8		submodule_wkdep_bit;
 	u8		modulemode;
+=======
+	void __iomem	*clkctrl_reg;
+	void __iomem	*rstctrl_reg;
+	u8		submodule_wkdep_bit;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -419,13 +487,19 @@ struct omap_hwmod_omap4_prcm {
  * _HWMOD_NO_MPU_PORT: no path exists for the MPU to write to this module
  * _HWMOD_WAKEUP_ENABLED: set when the omap_hwmod code has enabled ENAWAKEUP
  * _HWMOD_SYSCONFIG_LOADED: set when the OCP_SYSCONFIG value has been cached
+<<<<<<< HEAD
  * _HWMOD_SKIP_ENABLE: set if hwmod enabled during init (HWMOD_INIT_NO_IDLE) -
  *     causes the first call to _enable() to only update the pinmux
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 #define _HWMOD_NO_MPU_PORT			(1 << 0)
 #define _HWMOD_WAKEUP_ENABLED			(1 << 1)
 #define _HWMOD_SYSCONFIG_LOADED			(1 << 2)
+<<<<<<< HEAD
 #define _HWMOD_SKIP_ENABLE			(1 << 3)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * omap_hwmod._state definitions
@@ -480,12 +554,21 @@ struct omap_hwmod_class {
  * @name: name of the hwmod
  * @class: struct omap_hwmod_class * to the class of this hwmod
  * @od: struct omap_device currently associated with this hwmod (internal use)
+<<<<<<< HEAD
  * @mpu_irqs: ptr to an array of MPU IRQs
  * @sdma_reqs: ptr to an array of System DMA request IDs
+=======
+ * @mpu_irqs: ptr to an array of MPU IRQs (see also mpu_irqs_cnt)
+ * @sdma_reqs: ptr to an array of System DMA request IDs (see sdma_reqs_cnt)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @prcm: PRCM data pertaining to this hwmod
  * @main_clk: main clock: OMAP clock name
  * @_clk: pointer to the main struct clk (filled in at runtime)
  * @opt_clks: other device clocks that drivers can request (0..*)
+<<<<<<< HEAD
+=======
+ * @vdd_name: voltage domain name
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @voltdm: pointer to voltage domain (filled in at runtime)
  * @masters: ptr to array of OCP ifs that this hwmod can initiate on
  * @slaves: ptr to array of OCP ifs that this hwmod can respond on
@@ -493,6 +576,11 @@ struct omap_hwmod_class {
  * @_sysc_cache: internal-use hwmod flags
  * @_mpu_rt_va: cached register target start address (internal use)
  * @_mpu_port_index: cached MPU register target slave ID (internal use)
+<<<<<<< HEAD
+=======
+ * @mpu_irqs_cnt: number of @mpu_irqs
+ * @sdma_reqs_cnt: number of @sdma_reqs
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @opt_clks_cnt: number of @opt_clks
  * @master_cnt: number of @master entries
  * @slaves_cnt: number of @slave entries
@@ -501,6 +589,10 @@ struct omap_hwmod_class {
  * @_state: internal-use hwmod state
  * @_postsetup_state: internal-use state to leave the hwmod in after _setup()
  * @flags: hwmod flags (documented below)
+<<<<<<< HEAD
+=======
+ * @omap_chip: OMAP chips this hwmod is present on
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @_lock: spinlock serializing operations on this hwmod
  * @node: list node for hwmod list (internal use)
  *
@@ -527,8 +619,13 @@ struct omap_hwmod {
 	const char			*main_clk;
 	struct clk			*_clk;
 	struct omap_hwmod_opt_clk	*opt_clks;
+<<<<<<< HEAD
 	char				*clkdm_name;
 	struct clockdomain		*clkdm;
+=======
+	char				*vdd_name;
+	struct voltagedomain		*voltdm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct omap_hwmod_ocp_if	**masters; /* connect to *_IA */
 	struct omap_hwmod_ocp_if	**slaves;  /* connect to *_TA */
 	void				*dev_attr;
@@ -539,6 +636,11 @@ struct omap_hwmod {
 	u16				flags;
 	u8				_mpu_port_index;
 	u8				response_lat;
+<<<<<<< HEAD
+=======
+	u8				mpu_irqs_cnt;
+	u8				sdma_reqs_cnt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8				rst_lines_cnt;
 	u8				opt_clks_cnt;
 	u8				masters_cnt;
@@ -547,6 +649,10 @@ struct omap_hwmod {
 	u8				_int_flags;
 	u8				_state;
 	u8				_postsetup_state;
+<<<<<<< HEAD
+=======
+	const struct omap_chip_id	omap_chip;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int omap_hwmod_register(struct omap_hwmod **ohs);
@@ -577,7 +683,10 @@ void omap_hwmod_ocp_barrier(struct omap_hwmod *oh);
 
 void omap_hwmod_write(u32 v, struct omap_hwmod *oh, u16 reg_offs);
 u32 omap_hwmod_read(struct omap_hwmod *oh, u16 reg_offs);
+<<<<<<< HEAD
 int omap_hwmod_softreset(struct omap_hwmod *oh);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int omap_hwmod_count_resources(struct omap_hwmod *oh);
 int omap_hwmod_fill_resources(struct omap_hwmod *oh, struct resource *res);
@@ -604,12 +713,19 @@ int omap_hwmod_for_each_by_class(const char *classname,
 				 void *user);
 
 int omap_hwmod_set_postsetup_state(struct omap_hwmod *oh, u8 state);
+<<<<<<< HEAD
 int omap_hwmod_get_context_loss_count(struct omap_hwmod *oh);
 
 int omap_hwmod_no_setup_reset(struct omap_hwmod *oh);
 
 int omap_hwmod_pad_route_irq(struct omap_hwmod *oh, int pad_idx, int irq_idx);
 
+=======
+u32 omap_hwmod_get_context_loss_count(struct omap_hwmod *oh);
+
+int omap_hwmod_no_setup_reset(struct omap_hwmod *oh);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Chip variant-specific hwmod init routines - XXX should be converted
  * to use initcalls once the initial boot ordering is straightened out

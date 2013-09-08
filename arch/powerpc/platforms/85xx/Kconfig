@@ -6,7 +6,10 @@ menuconfig FSL_SOC_BOOKE
 	select MPIC
 	select PPC_PCI_CHOICE
 	select FSL_PCI if PCI
+<<<<<<< HEAD
 	select SERIAL_8250_EXTENDED if SERIAL_8250
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select SERIAL_8250_SHARE_IRQ if SERIAL_8250
 	default y
 
@@ -14,6 +17,7 @@ if FSL_SOC_BOOKE
 
 if PPC32
 
+<<<<<<< HEAD
 config FSL_85XX_CACHE_SRAM
 	bool
 	select PPC_LIB_RHEAP
@@ -23,6 +27,8 @@ config FSL_85XX_CACHE_SRAM
 	  cache-sram-size and cache-sram-offset kernel boot
 	  parameters should be passed when this option is enabled.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config MPC8540_ADS
 	bool "Freescale MPC8540 ADS"
 	select DEFAULT_UIMAGE
@@ -40,7 +46,10 @@ config MPC85xx_CDS
 	bool "Freescale MPC85xx CDS"
 	select DEFAULT_UIMAGE
 	select PPC_I8259
+<<<<<<< HEAD
 	select HAS_RAPIDIO
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  This option enables support for the MPC85xx CDS board
 
@@ -78,6 +87,7 @@ config MPC85xx_RDB
 	help
 	  This option enables support for the MPC85xx RDB (P2020 RDB) board
 
+<<<<<<< HEAD
 config P1010_RDB
 	bool "Freescale P1010RDB"
 	select DEFAULT_UIMAGE
@@ -91,16 +101,25 @@ config P1010_RDB
 config P1022_DS
 	bool "Freescale P1022 DS"
 	select DEFAULT_UIMAGE
+=======
+config P1022_DS
+	bool "Freescale P1022 DS"
+	select DEFAULT_UIMAGE
+	select CONFIG_PHYS_64BIT	# The DTS has 36-bit addresses
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select SWIOTLB
 	help
 	  This option enables support for the Freescale P1022DS reference board.
 
+<<<<<<< HEAD
 config P1023_RDS
 	bool "Freescale P1023 RDS"
 	select DEFAULT_UIMAGE
 	help
 	  This option enables support for the P1023 RDS board
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config SOCRATES
 	bool "Socrates"
 	select DEFAULT_UIMAGE
@@ -181,6 +200,7 @@ config SBC8560
 	help
 	  This option enables support for the Wind River SBC8560 board
 
+<<<<<<< HEAD
 config GE_IMP3A
 	bool "GE Intelligent Platforms IMP3A"
 	select DEFAULT_UIMAGE
@@ -209,12 +229,15 @@ config P2041_RDB
 	help
 	  This option enables support for the P2041 RDB board
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config P3041_DS
 	bool "Freescale P3041 DS"
 	select DEFAULT_UIMAGE
 	select PPC_E500MC
 	select PHYS_64BIT
 	select SWIOTLB
+<<<<<<< HEAD
 	select ARCH_REQUIRE_GPIOLIB
 	select GPIO_MPC8XXX
 	select HAS_RAPIDIO
@@ -234,16 +257,28 @@ config P3060_QDS
 	help
 	  This option enables support for the P3060 QDS board
 
+=======
+	select MPC8xxx_GPIO
+	select HAS_RAPIDIO
+	help
+	  This option enables support for the P3041 DS board
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config P4080_DS
 	bool "Freescale P4080 DS"
 	select DEFAULT_UIMAGE
 	select PPC_E500MC
 	select PHYS_64BIT
 	select SWIOTLB
+<<<<<<< HEAD
 	select ARCH_REQUIRE_GPIOLIB
 	select GPIO_MPC8XXX
 	select HAS_RAPIDIO
 	select PPC_EPAPR_HV_PIC
+=======
+	select MPC8xxx_GPIO
+	select HAS_RAPIDIO
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  This option enables support for the P4080 DS board
 
@@ -256,10 +291,15 @@ config P5020_DS
 	select PPC_E500MC
 	select PHYS_64BIT
 	select SWIOTLB
+<<<<<<< HEAD
 	select ARCH_REQUIRE_GPIOLIB
 	select GPIO_MPC8XXX
 	select HAS_RAPIDIO
 	select PPC_EPAPR_HV_PIC
+=======
+	select MPC8xxx_GPIO
+	select HAS_RAPIDIO
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  This option enables support for the P5020 DS board
 

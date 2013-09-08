@@ -241,7 +241,10 @@ static struct usb_composite_driver nokia_driver = {
 	.name		= "g_nokia",
 	.dev		= &device_desc,
 	.strings	= dev_strings,
+<<<<<<< HEAD
 	.max_speed	= USB_SPEED_HIGH,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.unbind		= __exit_p(nokia_unbind),
 };
 

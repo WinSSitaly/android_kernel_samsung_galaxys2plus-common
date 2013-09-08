@@ -168,6 +168,7 @@ struct vcounter_struct {
   unsigned long long vcnt1;
 };
 
+<<<<<<< HEAD
 #else /* !(__KERNEL__) */
 
 #ifndef CONFIG_SPARC32
@@ -191,6 +192,8 @@ struct vcounter_struct {
 
 #endif /* !CONFIG_SPARC32 */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* !(__KERNEL__) */
 
 #endif /* !(PERF_COUNTER_API) */

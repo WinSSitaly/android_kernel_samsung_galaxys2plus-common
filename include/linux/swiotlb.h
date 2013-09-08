@@ -24,7 +24,11 @@ extern int swiotlb_force;
 
 extern void swiotlb_init(int verbose);
 extern void swiotlb_init_with_tbl(char *tlb, unsigned long nslabs, int verbose);
+<<<<<<< HEAD
 extern unsigned long swiotlb_nr_tbl(void);
+=======
+extern unsigned long swioltb_nr_tbl(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Enumeration for sync targets

@@ -8,13 +8,28 @@
  * is licensed "as is" without any warranty of any kind, whether express
  * or implied.
  */
+<<<<<<< HEAD
 #include <mach/irqs.h>
 
+=======
+#include <mach/io.h>
+#include <mach/irqs.h>
+
+		.macro	disable_fiq
+		.endm
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.macro  get_irqnr_preamble, base, tmp
 		ldr \base, =davinci_intc_base
 		ldr \base, [\base]
 		.endm
 
+<<<<<<< HEAD
+=======
+		.macro  arch_ret_to_user, tmp1, tmp2
+		.endm
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.macro	get_irqnr_and_base, irqnr, irqstat, base, tmp
 #if defined(CONFIG_AINTC) && defined(CONFIG_CP_INTC)
 		ldr \tmp, =davinci_intc_type
@@ -39,3 +54,9 @@
 #endif
 1002:
 		.endm
+<<<<<<< HEAD
+=======
+
+		.macro	irq_prio_table
+		.endm
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

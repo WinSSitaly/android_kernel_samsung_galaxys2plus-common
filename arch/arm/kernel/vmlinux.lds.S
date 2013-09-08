@@ -4,23 +4,32 @@
  */
 
 #include <asm-generic/vmlinux.lds.h>
+<<<<<<< HEAD
 #include <asm/cache.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/thread_info.h>
 #include <asm/memory.h>
 #include <asm/page.h>
 	
 #define PROC_INFO							\
+<<<<<<< HEAD
 	. = ALIGN(4);							\
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	VMLINUX_SYMBOL(__proc_info_begin) = .;				\
 	*(.proc.info.init)						\
 	VMLINUX_SYMBOL(__proc_info_end) = .;
 
+<<<<<<< HEAD
 #define IDMAP_TEXT							\
 	ALIGN_FUNCTION();						\
 	VMLINUX_SYMBOL(__idmap_text_start) = .;				\
 	*(.idmap.text)							\
 	VMLINUX_SYMBOL(__idmap_text_end) = .;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_HOTPLUG_CPU
 #define ARM_CPU_DISCARD(x)
 #define ARM_CPU_KEEP(x)		x
@@ -32,10 +41,15 @@
 #if (defined(CONFIG_SMP_ON_UP) && !defined(CONFIG_DEBUG_SPINLOCK)) || \
 	defined(CONFIG_GENERIC_BUG)
 #define ARM_EXIT_KEEP(x)	x
+<<<<<<< HEAD
 #define ARM_EXIT_DISCARD(x)
 #else
 #define ARM_EXIT_KEEP(x)
 #define ARM_EXIT_DISCARD(x)	x
+=======
+#else
+#define ARM_EXIT_KEEP(x)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 OUTPUT_ARCH(arm)
@@ -49,12 +63,67 @@ jiffies = jiffies_64 + 4;
 
 SECTIONS
 {
+<<<<<<< HEAD
 	/*
 	 * XXX: The linker does not define how output sections are
 	 * assigned to input sections when there are multiple statements
 	 * matching the same input section name.  There is no documented
 	 * order of matching.
 	 *
+=======
+#ifdef CONFIG_XIP_KERNEL
+	. = XIP_VIRT_ADDR(CONFIG_XIP_PHYS_ADDR);
+#else
+	. = PAGE_OFFSET + TEXT_OFFSET;
+#endif
+
+	.init : {			/* Init code and data		*/
+		_stext = .;
+		_sinittext = .;
+			HEAD_TEXT
+			INIT_TEXT
+			ARM_EXIT_KEEP(EXIT_TEXT)
+		_einittext = .;
+		ARM_CPU_DISCARD(PROC_INFO)
+		__arch_info_begin = .;
+			*(.arch.info.init)
+		__arch_info_end = .;
+		__tagtable_begin = .;
+			*(.taglist.init)
+		__tagtable_end = .;
+#ifdef CONFIG_SMP_ON_UP
+		__smpalt_begin = .;
+			*(.alt.smp.init)
+		__smpalt_end = .;
+#endif
+
+		__pv_table_begin = .;
+			*(.pv_table)
+		__pv_table_end = .;
+
+		INIT_SETUP(16)
+
+		INIT_CALLS
+		CON_INITCALL
+		SECURITY_INITCALL
+		INIT_RAM_FS
+
+#ifndef CONFIG_XIP_KERNEL
+		__init_begin = _stext;
+		INIT_DATA
+		ARM_EXIT_KEEP(EXIT_DATA)
+#endif
+	}
+
+	PERCPU_SECTION(32)
+
+#ifndef CONFIG_XIP_KERNEL
+	. = ALIGN(PAGE_SIZE);
+	__init_end = .;
+#endif
+
+	/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * unwind exit sections must be discarded before the rest of the
 	 * unwind sections get included.
 	 */
@@ -63,9 +132,12 @@ SECTIONS
 		*(.ARM.extab.exit.text)
 		ARM_CPU_DISCARD(*(.ARM.exidx.cpuexit.text))
 		ARM_CPU_DISCARD(*(.ARM.extab.cpuexit.text))
+<<<<<<< HEAD
 		ARM_EXIT_DISCARD(EXIT_TEXT)
 		ARM_EXIT_DISCARD(EXIT_DATA)
 		EXIT_CALL
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef CONFIG_HOTPLUG
 		*(.ARM.exidx.devexit.text)
 		*(.ARM.extab.devexit.text)
@@ -74,6 +146,7 @@ SECTIONS
 		*(.fixup)
 		*(__ex_table)
 #endif
+<<<<<<< HEAD
 #ifndef CONFIG_SMP_ON_UP
 		*(.alt.smp.init)
 #endif
@@ -92,6 +165,12 @@ SECTIONS
 	}
 	.text : {			/* Real text segment		*/
 		_stext = .;		/* Text and read-only data	*/
+=======
+	}
+
+	.text : {			/* Real text segment		*/
+		_text = .;		/* Text and read-only data	*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			__exception_text_start = .;
 			*(.exception.text)
 			__exception_text_end = .;
@@ -100,11 +179,19 @@ SECTIONS
 			SCHED_TEXT
 			LOCK_TEXT
 			KPROBES_TEXT
+<<<<<<< HEAD
 			IDMAP_TEXT
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_MMU
 			*(.fixup)
 #endif
 			*(.gnu.warning)
+<<<<<<< HEAD
+=======
+			*(.rodata)
+			*(.rodata.*)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			*(.glue_7)
 			*(.glue_7t)
 		. = ALIGN(4);
@@ -133,6 +220,7 @@ SECTIONS
 
 	_etext = .;			/* End of text and rodata section */
 
+<<<<<<< HEAD
 #ifndef CONFIG_XIP_KERNEL
 	. = ALIGN(PAGE_SIZE);
 	__init_begin = .;
@@ -185,11 +273,16 @@ SECTIONS
 
 	PERCPU_SECTION(L1_CACHE_BYTES)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_XIP_KERNEL
 	__data_loc = ALIGN(4);		/* location in binary */
 	. = PAGE_OFFSET + TEXT_OFFSET;
 #else
+<<<<<<< HEAD
 	__init_end = .;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	. = ALIGN(THREAD_SIZE);
 	__data_loc = .;
 #endif
@@ -214,13 +307,22 @@ SECTIONS
 #endif
 
 		NOSAVE_DATA
+<<<<<<< HEAD
 		CACHELINE_ALIGNED_DATA(L1_CACHE_BYTES)
 		READ_MOSTLY_DATA(L1_CACHE_BYTES)
+=======
+		CACHELINE_ALIGNED_DATA(32)
+		READ_MOSTLY_DATA(32)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * The exception fixup table (might need resorting at runtime)
 		 */
+<<<<<<< HEAD
 		. = ALIGN(4);
+=======
+		. = ALIGN(32);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__start___ex_table = .;
 #ifdef CONFIG_MMU
 		*(__ex_table)
@@ -301,6 +403,18 @@ SECTIONS
 
 	STABS_DEBUG
 	.comment 0 : { *(.comment) }
+<<<<<<< HEAD
+=======
+
+	/* Default discards */
+	DISCARDS
+
+#ifndef CONFIG_SMP_ON_UP
+	/DISCARD/ : {
+		*(.alt.smp.init)
+	}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*

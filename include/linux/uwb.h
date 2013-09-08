@@ -33,7 +33,10 @@
 #include <linux/wait.h>
 #include <linux/workqueue.h>
 #include <linux/uwb/spec.h>
+<<<<<<< HEAD
 #include <asm/page.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct uwb_dev;
 struct uwb_beca_e;

@@ -22,6 +22,10 @@ enum die_val {
 	DIE_NMI_IPI,
 };
 
+<<<<<<< HEAD
 extern void die(struct pt_regs *, const char *);
+=======
+extern void die(const char *, struct pt_regs *, long);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

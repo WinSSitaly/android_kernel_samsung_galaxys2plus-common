@@ -123,12 +123,18 @@ int zr36067_debug = 1;
 module_param_named(debug, zr36067_debug, int, 0644);
 MODULE_PARM_DESC(debug, "Debug level (0-5)");
 
+<<<<<<< HEAD
 #define ZORAN_VERSION "0.10.1"
 
 MODULE_DESCRIPTION("Zoran-36057/36067 JPEG codec driver");
 MODULE_AUTHOR("Serguei Miridonov");
 MODULE_LICENSE("GPL");
 MODULE_VERSION(ZORAN_VERSION);
+=======
+MODULE_DESCRIPTION("Zoran-36057/36067 JPEG codec driver");
+MODULE_AUTHOR("Serguei Miridonov");
+MODULE_LICENSE("GPL");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define ZR_DEVICE(subven, subdev, data)	{ \
 	.vendor = PCI_VENDOR_ID_ZORAN, .device = PCI_DEVICE_ID_ZORAN_36057, \
@@ -1462,8 +1468,13 @@ static int __init zoran_init(void)
 {
 	int res;
 
+<<<<<<< HEAD
 	printk(KERN_INFO "Zoran MJPEG board driver version %s\n",
 	       ZORAN_VERSION);
+=======
+	printk(KERN_INFO "Zoran MJPEG board driver version %d.%d.%d\n",
+	       MAJOR_VERSION, MINOR_VERSION, RELEASE_VERSION);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* check the parameters we have been given, adjust if necessary */
 	if (v4l_nbufs < 2)

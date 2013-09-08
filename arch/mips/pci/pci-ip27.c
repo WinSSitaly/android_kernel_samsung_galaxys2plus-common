@@ -9,7 +9,10 @@
  */
 #include <linux/init.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pci.h>
 #include <linux/smp.h>
 #include <asm/sn/arch.h>
@@ -50,7 +53,11 @@ int __cpuinit bridge_probe(nasid_t nasid, int widget_id, int masterwid)
 	bridge_t *bridge;
 	int slot;
 
+<<<<<<< HEAD
 	pci_set_flags(PCI_PROBE_ONLY);
+=======
+	pci_probe_only = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	printk("a bridge\n");
 

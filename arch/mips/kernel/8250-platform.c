@@ -5,6 +5,10 @@
  *
  * Copyright (C) 2007 Ralf Baechle (ralf@linux-mips.org)
  */
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/serial_8250.h>
 

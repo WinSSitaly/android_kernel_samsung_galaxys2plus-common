@@ -1,13 +1,19 @@
 00-INDEX
 	- this file.
+<<<<<<< HEAD
 LSM.txt
 	- description of the Linux Security Module framework.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 SELinux.txt
 	- how to get started with the SELinux security enhancement.
 Smack.txt
 	- documentation on the Smack Linux Security Module.
+<<<<<<< HEAD
 Yama.txt
 	- documentation on the Yama Linux Security Module.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 apparmor.txt
 	- documentation on the AppArmor security extension.
 credentials.txt

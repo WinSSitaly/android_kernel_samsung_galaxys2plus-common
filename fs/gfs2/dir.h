@@ -25,7 +25,11 @@ extern int gfs2_dir_add(struct inode *inode, const struct qstr *filename,
 			const struct gfs2_inode *ip);
 extern int gfs2_dir_del(struct gfs2_inode *dip, const struct dentry *dentry);
 extern int gfs2_dir_read(struct inode *inode, u64 *offset, void *opaque,
+<<<<<<< HEAD
 			 filldir_t filldir, struct file_ra_state *f_ra);
+=======
+			 filldir_t filldir);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int gfs2_dir_mvino(struct gfs2_inode *dip, const struct qstr *filename,
 			  const struct gfs2_inode *nip, unsigned int new_type);
 
@@ -35,7 +39,10 @@ extern int gfs2_diradd_alloc_required(struct inode *dir,
 				      const struct qstr *filename);
 extern int gfs2_dir_get_new_buffer(struct gfs2_inode *ip, u64 block,
 				   struct buffer_head **bhp);
+<<<<<<< HEAD
 extern void gfs2_dir_hash_inval(struct gfs2_inode *ip);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline u32 gfs2_disk_hash(const char *data, int len)
 {

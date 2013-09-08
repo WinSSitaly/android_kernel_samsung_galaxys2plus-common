@@ -92,7 +92,11 @@ OPTIONS
 
   wfdno=n	the file descriptor for writing with trans=fd
 
+<<<<<<< HEAD
   msize=n	the number of bytes to use for 9p packet payload
+=======
+  maxdata=n	the number of bytes to use for 9p packet payload (msize)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
   port=n	port to connect to on the remote server
 

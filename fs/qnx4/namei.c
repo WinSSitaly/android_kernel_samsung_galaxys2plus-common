@@ -39,6 +39,13 @@ static int qnx4_match(int len, const char *name,
 	} else {
 		namelen = QNX4_SHORT_NAME_MAX;
 	}
+<<<<<<< HEAD
+=======
+	/* "" means "." ---> so paths like "/usr/lib//libc.a" work */
+	if (!len && (de->di_fname[0] == '.') && (de->di_fname[1] == '\0')) {
+		return 1;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	thislen = strlen( de->di_fname );
 	if ( thislen > namelen )
 		thislen = namelen;
@@ -68,9 +75,13 @@ static struct buffer_head *qnx4_find_entry(int len, struct inode *dir,
 	block = offset = blkofs = 0;
 	while (blkofs * QNX4_BLOCK_SIZE + offset < dir->i_size) {
 		if (!bh) {
+<<<<<<< HEAD
 			block = qnx4_block_map(dir, blkofs);
 			if (block)
 				bh = sb_bread(dir->i_sb, block);
+=======
+			bh = qnx4_bread(dir, blkofs, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!bh) {
 				blkofs++;
 				continue;
@@ -78,6 +89,10 @@ static struct buffer_head *qnx4_find_entry(int len, struct inode *dir,
 		}
 		*res_dir = (struct qnx4_inode_entry *) (bh->b_data + offset);
 		if (qnx4_match(len, name, bh, &offset)) {
+<<<<<<< HEAD
+=======
+			block = qnx4_block_map( dir, blkofs );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			*ino = block * QNX4_INODES_PER_BLOCK +
 			    (offset / QNX4_DIR_ENTRY_SIZE) - 1;
 			return bh;

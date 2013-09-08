@@ -27,11 +27,17 @@
  */
 
 #include <linux/cgroup.h>
+<<<<<<< HEAD
 #include <linux/cred.h>
 #include <linux/ctype.h>
 #include <linux/errno.h>
 #include <linux/fs.h>
 #include <linux/init_task.h>
+=======
+#include <linux/ctype.h>
+#include <linux/errno.h>
+#include <linux/fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/list.h>
 #include <linux/mm.h>
@@ -61,7 +67,11 @@
 #include <linux/poll.h>
 #include <linux/flex_array.h> /* used in cgroup_attach_proc */
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * cgroup_mutex is the master lock.  Any modification to cgroup or its
@@ -282,11 +292,45 @@ list_for_each_entry(_root, &roots, root_list)
 /* the list of cgroups eligible for automatic release. Protected by
  * release_list_lock */
 static LIST_HEAD(release_list);
+<<<<<<< HEAD
 static DEFINE_RAW_SPINLOCK(release_list_lock);
+=======
+static DEFINE_SPINLOCK(release_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void cgroup_release_agent(struct work_struct *work);
 static DECLARE_WORK(release_agent_work, cgroup_release_agent);
 static void check_for_release(struct cgroup *cgrp);
 
+<<<<<<< HEAD
+=======
+/*
+ * A queue for waiters to do rmdir() cgroup. A tasks will sleep when
+ * cgroup->count == 0 && list_empty(&cgroup->children) && subsys has some
+ * reference to css->refcnt. In general, this refcnt is expected to goes down
+ * to zero, soon.
+ *
+ * CGRP_WAIT_ON_RMDIR flag is set under cgroup's inode->i_mutex;
+ */
+DECLARE_WAIT_QUEUE_HEAD(cgroup_rmdir_waitq);
+
+static void cgroup_wakeup_rmdir_waiter(struct cgroup *cgrp)
+{
+	if (unlikely(test_and_clear_bit(CGRP_WAIT_ON_RMDIR, &cgrp->flags)))
+		wake_up_all(&cgroup_rmdir_waitq);
+}
+
+void cgroup_exclude_rmdir(struct cgroup_subsys_state *css)
+{
+	css_get(css);
+}
+
+void cgroup_release_and_wakeup_rmdir(struct cgroup_subsys_state *css)
+{
+	cgroup_wakeup_rmdir_waiter(css->cgroup);
+	css_put(css);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Link structure for associating css_set objects with cgroups */
 struct cg_cgroup_link {
 	/*
@@ -346,6 +390,7 @@ static struct hlist_head *css_set_hash(struct cgroup_subsys_state *css[])
 	return &css_set_table[index];
 }
 
+<<<<<<< HEAD
 /* We don't maintain the lists running through each css_set to its
  * task until after the first call to cgroup_iter_start(). This
  * reduces the fork()/exit() overhead for people who have cgroups
@@ -373,11 +418,21 @@ static void __put_css_set(struct css_set *cg, int taskexit)
 	hlist_del(&cg->hlist);
 	css_set_count--;
 
+=======
+static void free_css_set_work(struct work_struct *work)
+{
+	struct css_set *cg = container_of(work, struct css_set, work);
+	struct cg_cgroup_link *link;
+	struct cg_cgroup_link *saved_link;
+
+	write_lock(&css_set_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry_safe(link, saved_link, &cg->cg_links,
 				 cg_link_list) {
 		struct cgroup *cgrp = link->cgrp;
 		list_del(&link->cg_link_list);
 		list_del(&link->cgrp_link_list);
+<<<<<<< HEAD
 
 		/*
 		 * We may not be holding cgroup_mutex, and if cgrp->count is
@@ -400,6 +455,33 @@ static void __put_css_set(struct css_set *cg, int taskexit)
 	kfree_rcu(cg, rcu_head);
 }
 
+=======
+		if (atomic_dec_and_test(&cgrp->count)) {
+			check_for_release(cgrp);
+			cgroup_wakeup_rmdir_waiter(cgrp);
+		}
+		kfree(link);
+	}
+	write_unlock(&css_set_lock);
+
+	kfree(cg);
+}
+
+static void free_css_set_rcu(struct rcu_head *obj)
+{
+	struct css_set *cg = container_of(obj, struct css_set, rcu_head);
+
+	INIT_WORK(&cg->work, free_css_set_work);
+	schedule_work(&cg->work);
+}
+
+/* We don't maintain the lists running through each css_set to its
+ * task until after the first call to cgroup_iter_start(). This
+ * reduces the fork()/exit() overhead for people who have cgroups
+ * compiled into their kernel but not actually in use */
+static int use_task_css_set_links __read_mostly;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * refcounted get/put for css_set objects
  */
@@ -408,6 +490,7 @@ static inline void get_css_set(struct css_set *cg)
 	atomic_inc(&cg->refcount);
 }
 
+<<<<<<< HEAD
 static inline void put_css_set(struct css_set *cg)
 {
 	__put_css_set(cg, 0);
@@ -416,6 +499,28 @@ static inline void put_css_set(struct css_set *cg)
 static inline void put_css_set_taskexit(struct css_set *cg)
 {
 	__put_css_set(cg, 1);
+=======
+static void put_css_set(struct css_set *cg)
+{
+	/*
+	 * Ensure that the refcount doesn't hit zero while any readers
+	 * can see it. Similar to atomic_dec_and_lock(), but for an
+	 * rwlock
+	 */
+	if (atomic_add_unless(&cg->refcount, -1, 1))
+		return;
+	write_lock(&css_set_lock);
+	if (!atomic_dec_and_test(&cg->refcount)) {
+		write_unlock(&css_set_lock);
+		return;
+	}
+
+	hlist_del(&cg->hlist);
+	css_set_count--;
+
+	write_unlock(&css_set_lock);
+	call_rcu(&cg->rcu_head, free_css_set_rcu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -747,9 +852,15 @@ static struct cgroup *task_cgroup_from_root(struct task_struct *task,
  * cgroup_attach_task(), which overwrites one tasks cgroup pointer with
  * another.  It does so using cgroup_mutex, however there are
  * several performance critical places that need to reference
+<<<<<<< HEAD
  * task->cgroup without the expense of grabbing a system global
  * mutex.  Therefore except as noted below, when dereferencing or, as
  * in cgroup_attach_task(), modifying a task'ss cgroup pointer we use
+=======
+ * task->cgroups without the expense of grabbing a system global
+ * mutex.  Therefore except as noted below, when dereferencing or, as
+ * in cgroup_attach_task(), modifying a task's cgroups pointer we use
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * task_lock(), which acts on a spinlock (task->alloc_lock) already in
  * the task_struct routinely used for such matters.
  *
@@ -785,7 +896,11 @@ EXPORT_SYMBOL_GPL(cgroup_unlock);
  * -> cgroup_mkdir.
  */
 
+<<<<<<< HEAD
 static int cgroup_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode);
+=======
+static int cgroup_mkdir(struct inode *dir, struct dentry *dentry, int mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct dentry *cgroup_lookup(struct inode *, struct dentry *, struct nameidata *);
 static int cgroup_rmdir(struct inode *unused_dir, struct dentry *dentry);
 static int cgroup_populate_dir(struct cgroup *cgrp);
@@ -800,7 +915,11 @@ static struct backing_dev_info cgroup_backing_dev_info = {
 static int alloc_css_id(struct cgroup_subsys *ss,
 			struct cgroup *parent, struct cgroup *child);
 
+<<<<<<< HEAD
 static struct inode *cgroup_new_inode(umode_t mode, struct super_block *sb)
+=======
+static struct inode *cgroup_new_inode(mode_t mode, struct super_block *sb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inode *inode = new_inode(sb);
 
@@ -826,7 +945,11 @@ static int cgroup_call_pre_destroy(struct cgroup *cgrp)
 
 	for_each_subsys(cgrp->root, ss)
 		if (ss->pre_destroy) {
+<<<<<<< HEAD
 			ret = ss->pre_destroy(cgrp);
+=======
+			ret = ss->pre_destroy(ss, cgrp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret)
 				break;
 		}
@@ -854,7 +977,11 @@ static void cgroup_diput(struct dentry *dentry, struct inode *inode)
 		 * Release the subsystem state objects.
 		 */
 		for_each_subsys(cgrp->root, ss)
+<<<<<<< HEAD
 			ss->destroy(cgrp);
+=======
+			ss->destroy(ss, cgrp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		cgrp->root->number_of_cgroups--;
 		mutex_unlock(&cgroup_mutex);
@@ -939,6 +1066,7 @@ static void cgroup_d_remove_dir(struct dentry *dentry)
 }
 
 /*
+<<<<<<< HEAD
  * A queue for waiters to do rmdir() cgroup. A tasks will sleep when
  * cgroup->count == 0 && list_empty(&cgroup->children) && subsys has some
  * reference to css->refcnt. In general, this refcnt is expected to goes down
@@ -966,6 +1094,8 @@ void cgroup_release_and_wakeup_rmdir(struct cgroup_subsys_state *css)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Call with cgroup_mutex held. Drops reference counts on modules, including
  * any duplicate ones that parse_cgroupfs_options took. If this function
  * returns an error, no reference counts are touched.
@@ -1023,7 +1153,11 @@ static int rebind_subsystems(struct cgroupfs_root *root,
 			list_move(&ss->sibling, &root->subsys_list);
 			ss->root = root;
 			if (ss->bind)
+<<<<<<< HEAD
 				ss->bind(cgrp);
+=======
+				ss->bind(ss, cgrp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mutex_unlock(&ss->hierarchy_mutex);
 			/* refcount was already taken, and we're keeping it */
 		} else if (bit & removed_bits) {
@@ -1033,7 +1167,11 @@ static int rebind_subsystems(struct cgroupfs_root *root,
 			BUG_ON(cgrp->subsys[i]->cgroup != cgrp);
 			mutex_lock(&ss->hierarchy_mutex);
 			if (ss->bind)
+<<<<<<< HEAD
 				ss->bind(dummytop);
+=======
+				ss->bind(ss, dummytop);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dummytop->subsys[i]->cgroup = dummytop;
 			cgrp->subsys[i] = NULL;
 			subsys[i]->root = &rootnode;
@@ -1064,9 +1202,15 @@ static int rebind_subsystems(struct cgroupfs_root *root,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int cgroup_show_options(struct seq_file *seq, struct dentry *dentry)
 {
 	struct cgroupfs_root *root = dentry->d_sb->s_fs_info;
+=======
+static int cgroup_show_options(struct seq_file *seq, struct vfsmount *vfs)
+{
+	struct cgroupfs_root *root = vfs->mnt_sb->s_fs_info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct cgroup_subsys *ss;
 
 	mutex_lock(&cgroup_root_mutex);
@@ -1480,6 +1624,10 @@ static int cgroup_get_rootdir(struct super_block *sb)
 
 	struct inode *inode =
 		cgroup_new_inode(S_IFDIR | S_IRUGO | S_IXUGO | S_IWUSR, sb);
+<<<<<<< HEAD
+=======
+	struct dentry *dentry;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!inode)
 		return -ENOMEM;
@@ -1488,9 +1636,18 @@ static int cgroup_get_rootdir(struct super_block *sb)
 	inode->i_op = &cgroup_dir_inode_operations;
 	/* directories start off with i_nlink == 2 (for "." entry) */
 	inc_nlink(inode);
+<<<<<<< HEAD
 	sb->s_root = d_make_root(inode);
 	if (!sb->s_root)
 		return -ENOMEM;
+=======
+	dentry = d_alloc_root(inode);
+	if (!dentry) {
+		iput(inode);
+		return -ENOMEM;
+	}
+	sb->s_root = dentry;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* for everything else we want ->d_op set */
 	sb->s_d_op = &cgroup_dops;
 	return 0;
@@ -1540,7 +1697,10 @@ static struct dentry *cgroup_mount(struct file_system_type *fs_type,
 		struct list_head tmp_cg_links;
 		struct cgroup *root_cgrp = &root->top_cgroup;
 		struct cgroupfs_root *existing_root;
+<<<<<<< HEAD
 		const struct cred *cred;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int i;
 
 		BUG_ON(sb->s_root != NULL);
@@ -1611,9 +1771,13 @@ static struct dentry *cgroup_mount(struct file_system_type *fs_type,
 		BUG_ON(!list_empty(&root_cgrp->children));
 		BUG_ON(root->number_of_cgroups != 1);
 
+<<<<<<< HEAD
 		cred = override_creds(&init_cred);
 		cgroup_populate_dir(root_cgrp);
 		revert_creds(cred);
+=======
+		cgroup_populate_dir(root_cgrp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mutex_unlock(&cgroup_root_mutex);
 		mutex_unlock(&cgroup_mutex);
 		mutex_unlock(&inode->i_mutex);
@@ -1724,6 +1888,10 @@ int cgroup_path(const struct cgroup *cgrp, char *buf, int buflen)
 {
 	char *start;
 	struct dentry *dentry = rcu_dereference_check(cgrp->dentry,
+<<<<<<< HEAD
+=======
+						      rcu_read_lock_held() ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						      cgroup_lock_is_held());
 
 	if (!dentry || cgrp == dummytop) {
@@ -1749,6 +1917,10 @@ int cgroup_path(const struct cgroup *cgrp, char *buf, int buflen)
 			break;
 
 		dentry = rcu_dereference_check(cgrp->dentry,
+<<<<<<< HEAD
+=======
+					       rcu_read_lock_held() ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					       cgroup_lock_is_held());
 		if (!cgrp->parent)
 			continue;
@@ -1762,6 +1934,7 @@ int cgroup_path(const struct cgroup *cgrp, char *buf, int buflen)
 EXPORT_SYMBOL_GPL(cgroup_path);
 
 /*
+<<<<<<< HEAD
  * Control Group taskset
  */
 struct task_and_cgroup {
@@ -1842,12 +2015,15 @@ EXPORT_SYMBOL_GPL(cgroup_taskset_size);
 
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * cgroup_task_migrate - move a task from one cgroup to another.
  *
  * 'guarantee' is set if the caller promises that a new css_set for the task
  * will already exist. If not set, this function might sleep, and can fail with
  * -ENOMEM. Must be called with cgroup_mutex and threadgroup locked.
  */
+<<<<<<< HEAD
 static void cgroup_task_migrate(struct cgroup *cgrp, struct cgroup *oldcgrp,
 				struct task_struct *tsk, struct css_set *newcg)
 {
@@ -1862,6 +2038,47 @@ static void cgroup_task_migrate(struct cgroup *cgrp, struct cgroup *oldcgrp,
 	oldcg = tsk->cgroups;
 
 	task_lock(tsk);
+=======
+static int cgroup_task_migrate(struct cgroup *cgrp, struct cgroup *oldcgrp,
+			       struct task_struct *tsk, bool guarantee)
+{
+	struct css_set *oldcg;
+	struct css_set *newcg;
+
+	/*
+	 * get old css_set. we need to take task_lock and refcount it, because
+	 * an exiting task can change its css_set to init_css_set and drop its
+	 * old one without taking cgroup_mutex.
+	 */
+	task_lock(tsk);
+	oldcg = tsk->cgroups;
+	get_css_set(oldcg);
+	task_unlock(tsk);
+
+	/* locate or allocate a new css_set for this task. */
+	if (guarantee) {
+		/* we know the css_set we want already exists. */
+		struct cgroup_subsys_state *template[CGROUP_SUBSYS_COUNT];
+		read_lock(&css_set_lock);
+		newcg = find_existing_css_set(oldcg, cgrp, template);
+		BUG_ON(!newcg);
+		get_css_set(newcg);
+		read_unlock(&css_set_lock);
+	} else {
+		might_sleep();
+		/* find_css_set will give us newcg already referenced. */
+		newcg = find_css_set(oldcg, cgrp);
+		if (!newcg) {
+			put_css_set(oldcg);
+			return -ENOMEM;
+		}
+	}
+	put_css_set(oldcg);
+
+	/* @tsk can't exit as its threadgroup is locked */
+	task_lock(tsk);
+	WARN_ON_ONCE(tsk->flags & PF_EXITING);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rcu_assign_pointer(tsk->cgroups, newcg);
 	task_unlock(tsk);
 
@@ -1876,8 +2093,15 @@ static void cgroup_task_migrate(struct cgroup *cgrp, struct cgroup *oldcgrp,
 	 * trading it for newcg is protected by cgroup_mutex, we're safe to drop
 	 * it here; it will be freed under RCU.
 	 */
+<<<<<<< HEAD
 	set_bit(CGRP_RELEASABLE, &oldcgrp->flags);
 	put_css_set(oldcg);
+=======
+	put_css_set(oldcg);
+
+	set_bit(CGRP_RELEASABLE, &oldcgrp->flags);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1890,12 +2114,20 @@ static void cgroup_task_migrate(struct cgroup *cgrp, struct cgroup *oldcgrp,
  */
 int cgroup_attach_task(struct cgroup *cgrp, struct task_struct *tsk)
 {
+<<<<<<< HEAD
 	int retval = 0;
 	struct cgroup_subsys *ss, *failed_ss = NULL;
 	struct cgroup *oldcgrp;
 	struct cgroupfs_root *root = cgrp->root;
 	struct cgroup_taskset tset = { };
 	struct css_set *newcg;
+=======
+	int retval;
+	struct cgroup_subsys *ss, *failed_ss = NULL;
+	struct cgroup *oldcgrp;
+	struct cgroupfs_root *root = cgrp->root;
+	struct css_set *cg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* @tsk either already exited or can't exit until the end */
 	if (tsk->flags & PF_EXITING)
@@ -1906,12 +2138,18 @@ int cgroup_attach_task(struct cgroup *cgrp, struct task_struct *tsk)
 	if (cgrp == oldcgrp)
 		return 0;
 
+<<<<<<< HEAD
 	tset.single.task = tsk;
 	tset.single.cgrp = oldcgrp;
 
 	for_each_subsys(root, ss) {
 		if (ss->can_attach) {
 			retval = ss->can_attach(cgrp, &tset);
+=======
+	for_each_subsys(root, ss) {
+		if (ss->can_attach) {
+			retval = ss->can_attach(ss, cgrp, tsk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (retval) {
 				/*
 				 * Remember on which subsystem the can_attach()
@@ -1923,6 +2161,7 @@ int cgroup_attach_task(struct cgroup *cgrp, struct task_struct *tsk)
 				goto out;
 			}
 		}
+<<<<<<< HEAD
 	}
 
 	newcg = find_css_set(tsk->cgroups, cgrp);
@@ -1939,6 +2178,37 @@ int cgroup_attach_task(struct cgroup *cgrp, struct task_struct *tsk)
 	}
 
 	synchronize_rcu();
+=======
+		if (ss->can_attach_task) {
+			retval = ss->can_attach_task(cgrp, tsk);
+			if (retval) {
+				failed_ss = ss;
+				goto out;
+			}
+		}
+	}
+
+	task_lock(tsk);
+	cg = tsk->cgroups;
+	get_css_set(cg);
+	task_unlock(tsk);
+
+	retval = cgroup_task_migrate(cgrp, oldcgrp, tsk, false);
+	if (retval)
+		goto out;
+
+	for_each_subsys(root, ss) {
+		if (ss->pre_attach)
+			ss->pre_attach(cgrp);
+		if (ss->attach_task)
+			ss->attach_task(cgrp, tsk);
+		if (ss->attach)
+			ss->attach(ss, cgrp, oldcgrp, tsk);
+	}
+	set_bit(CGRP_RELEASABLE, &cgrp->flags);
+	/* put_css_set will not destroy cg until after an RCU grace period */
+	put_css_set(cg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * wake up rmdir() waiter. the rmdir should fail since the cgroup
@@ -1957,7 +2227,11 @@ out:
 				 */
 				break;
 			if (ss->cancel_attach)
+<<<<<<< HEAD
 				ss->cancel_attach(cgrp, &tset);
+=======
+				ss->cancel_attach(ss, cgrp, tsk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	return retval;
@@ -1987,11 +2261,81 @@ int cgroup_attach_task_all(struct task_struct *from, struct task_struct *tsk)
 }
 EXPORT_SYMBOL_GPL(cgroup_attach_task_all);
 
+<<<<<<< HEAD
+=======
+/*
+ * cgroup_attach_proc works in two stages, the first of which prefetches all
+ * new css_sets needed (to make sure we have enough memory before committing
+ * to the move) and stores them in a list of entries of the following type.
+ * TODO: possible optimization: use css_set->rcu_head for chaining instead
+ */
+struct cg_list_entry {
+	struct css_set *cg;
+	struct list_head links;
+};
+
+static bool css_set_check_fetched(struct cgroup *cgrp,
+				  struct task_struct *tsk, struct css_set *cg,
+				  struct list_head *newcg_list)
+{
+	struct css_set *newcg;
+	struct cg_list_entry *cg_entry;
+	struct cgroup_subsys_state *template[CGROUP_SUBSYS_COUNT];
+
+	read_lock(&css_set_lock);
+	newcg = find_existing_css_set(cg, cgrp, template);
+	if (newcg)
+		get_css_set(newcg);
+	read_unlock(&css_set_lock);
+
+	/* doesn't exist at all? */
+	if (!newcg)
+		return false;
+	/* see if it's already in the list */
+	list_for_each_entry(cg_entry, newcg_list, links) {
+		if (cg_entry->cg == newcg) {
+			put_css_set(newcg);
+			return true;
+		}
+	}
+
+	/* not found */
+	put_css_set(newcg);
+	return false;
+}
+
+/*
+ * Find the new css_set and store it in the list in preparation for moving the
+ * given task to the given cgroup. Returns 0 or -ENOMEM.
+ */
+static int css_set_prefetch(struct cgroup *cgrp, struct css_set *cg,
+			    struct list_head *newcg_list)
+{
+	struct css_set *newcg;
+	struct cg_list_entry *cg_entry;
+
+	/* ensure a new css_set will exist for this thread */
+	newcg = find_css_set(cg, cgrp);
+	if (!newcg)
+		return -ENOMEM;
+	/* add it to the list */
+	cg_entry = kmalloc(sizeof(struct cg_list_entry), GFP_KERNEL);
+	if (!cg_entry) {
+		put_css_set(newcg);
+		return -ENOMEM;
+	}
+	cg_entry->cg = newcg;
+	list_add(&cg_entry->links, newcg_list);
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * cgroup_attach_proc - attach all threads in a threadgroup to a cgroup
  * @cgrp: the cgroup to attach to
  * @leader: the threadgroup leader task_struct of the group to be attached
  *
+<<<<<<< HEAD
  * Call holding cgroup_mutex and the group_rwsem of the leader. Will take
  * task_lock of each thread in leader's threadgroup individually in turn.
  */
@@ -2006,11 +2350,36 @@ static int cgroup_attach_proc(struct cgroup *cgrp, struct task_struct *leader)
 	struct task_and_cgroup *tc;
 	struct flex_array *group;
 	struct cgroup_taskset tset = { };
+=======
+ * Call holding cgroup_mutex and the threadgroup_fork_lock of the leader. Will
+ * take task_lock of each thread in leader's threadgroup individually in turn.
+ */
+int cgroup_attach_proc(struct cgroup *cgrp, struct task_struct *leader)
+{
+	int retval, i, group_size;
+	struct cgroup_subsys *ss, *failed_ss = NULL;
+	bool cancel_failed_ss = false;
+	/* guaranteed to be initialized later, but the compiler needs this */
+	struct cgroup *oldcgrp = NULL;
+	struct css_set *oldcg;
+	struct cgroupfs_root *root = cgrp->root;
+	/* threadgroup list cursor and array */
+	struct task_struct *tsk;
+	struct flex_array *group;
+	/*
+	 * we need to make sure we have css_sets for all the tasks we're
+	 * going to move -before- we actually start moving them, so that in
+	 * case we get an ENOMEM we can bail out before making any changes.
+	 */
+	struct list_head newcg_list;
+	struct cg_list_entry *cg_entry, *temp_nobe;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * step 0: in order to do expensive, possibly blocking operations for
 	 * every thread, we cannot iterate the thread group list, since it needs
 	 * rcu or tasklist locked. instead, build an array of all threads in the
+<<<<<<< HEAD
 	 * group - group_rwsem prevents new threads from appearing, and if
 	 * threads exit, this will just be an over-estimate.
 	 */
@@ -2035,21 +2404,60 @@ static int cgroup_attach_proc(struct cgroup *cgrp, struct task_struct *leader)
 	do {
 		struct task_and_cgroup ent;
 
+=======
+	 * group - threadgroup_fork_lock prevents new threads from appearing,
+	 * and if threads exit, this will just be an over-estimate.
+	 */
+	group_size = get_nr_threads(leader);
+	/* flex_array supports very large thread-groups better than kmalloc. */
+	group = flex_array_alloc(sizeof(struct task_struct *), group_size,
+				 GFP_KERNEL);
+	if (!group)
+		return -ENOMEM;
+	/* pre-allocate to guarantee space while iterating in rcu read-side. */
+	retval = flex_array_prealloc(group, 0, group_size - 1, GFP_KERNEL);
+	if (retval)
+		goto out_free_group_list;
+
+	/* prevent changes to the threadgroup list while we take a snapshot. */
+	rcu_read_lock();
+	if (!thread_group_leader(leader)) {
+		/*
+		 * a race with de_thread from another thread's exec() may strip
+		 * us of our leadership, making while_each_thread unsafe to use
+		 * on this task. if this happens, there is no choice but to
+		 * throw this task away and try again (from cgroup_procs_write);
+		 * this is "double-double-toil-and-trouble-check locking".
+		 */
+		rcu_read_unlock();
+		retval = -EAGAIN;
+		goto out_free_group_list;
+	}
+	/* take a reference on each task in the group to go in the array. */
+	tsk = leader;
+	i = 0;
+	do {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* @tsk either already exited or can't exit until the end */
 		if (tsk->flags & PF_EXITING)
 			continue;
 
 		/* as per above, nr_threads may decrease, but not increase. */
 		BUG_ON(i >= group_size);
+<<<<<<< HEAD
 		ent.task = tsk;
 		ent.cgrp = task_cgroup_from_root(tsk, root);
 		/* nothing to do if this task is already in the cgroup */
 		if (ent.cgrp == cgrp)
 			continue;
+=======
+		get_task_struct(tsk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * saying GFP_ATOMIC has no effect here because we did prealloc
 		 * earlier, but it's good form to communicate our expectations.
 		 */
+<<<<<<< HEAD
 		retval = flex_array_put(group, i, &ent, GFP_ATOMIC);
 		BUG_ON(retval != 0);
 		i++;
@@ -2064,34 +2472,89 @@ static int cgroup_attach_proc(struct cgroup *cgrp, struct task_struct *leader)
 	retval = 0;
 	if (!group_size)
 		goto out_free_group_list;
+=======
+		retval = flex_array_put_ptr(group, i, tsk, GFP_ATOMIC);
+		BUG_ON(retval != 0);
+		i++;
+	} while_each_thread(leader, tsk);
+	/* remember the number of threads in the array for later. */
+	group_size = i;
+	rcu_read_unlock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * step 1: check that we can legitimately attach to the cgroup.
 	 */
 	for_each_subsys(root, ss) {
 		if (ss->can_attach) {
+<<<<<<< HEAD
 			retval = ss->can_attach(cgrp, &tset);
+=======
+			retval = ss->can_attach(ss, cgrp, leader);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (retval) {
 				failed_ss = ss;
 				goto out_cancel_attach;
 			}
 		}
+<<<<<<< HEAD
+=======
+		/* a callback to be run on every thread in the threadgroup. */
+		if (ss->can_attach_task) {
+			/* run on each task in the threadgroup. */
+			for (i = 0; i < group_size; i++) {
+				tsk = flex_array_get_ptr(group, i);
+				retval = ss->can_attach_task(cgrp, tsk);
+				if (retval) {
+					failed_ss = ss;
+					cancel_failed_ss = true;
+					goto out_cancel_attach;
+				}
+			}
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
 	 * step 2: make sure css_sets exist for all threads to be migrated.
 	 * we use find_css_set, which allocates a new one if necessary.
 	 */
+<<<<<<< HEAD
 	for (i = 0; i < group_size; i++) {
 		tc = flex_array_get(group, i);
 		tc->cg = find_css_set(tc->task->cgroups, cgrp);
 		if (!tc->cg) {
 			retval = -ENOMEM;
 			goto out_put_css_set_refs;
+=======
+	INIT_LIST_HEAD(&newcg_list);
+	for (i = 0; i < group_size; i++) {
+		tsk = flex_array_get_ptr(group, i);
+		/* nothing to do if this task is already in the cgroup */
+		oldcgrp = task_cgroup_from_root(tsk, root);
+		if (cgrp == oldcgrp)
+			continue;
+		/* get old css_set pointer */
+		task_lock(tsk);
+		oldcg = tsk->cgroups;
+		get_css_set(oldcg);
+		task_unlock(tsk);
+		/* see if the new one for us is already in the list? */
+		if (css_set_check_fetched(cgrp, tsk, oldcg, &newcg_list)) {
+			/* was already there, nothing to do. */
+			put_css_set(oldcg);
+		} else {
+			/* we don't already have it. get new one. */
+			retval = css_set_prefetch(cgrp, oldcg, &newcg_list);
+			put_css_set(oldcg);
+			if (retval)
+				goto out_list_teardown;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
 	/*
+<<<<<<< HEAD
 	 * step 3: now that we're guaranteed success wrt the css_sets,
 	 * proceed to move all tasks to the new cgroup.  There are no
 	 * failure cases after here, so this is the commit point.
@@ -2099,15 +2562,49 @@ static int cgroup_attach_proc(struct cgroup *cgrp, struct task_struct *leader)
 	for (i = 0; i < group_size; i++) {
 		tc = flex_array_get(group, i);
 		cgroup_task_migrate(cgrp, tc->cgrp, tc->task, tc->cg);
+=======
+	 * step 3: now that we're guaranteed success wrt the css_sets, proceed
+	 * to move all tasks to the new cgroup, calling ss->attach_task for each
+	 * one along the way. there are no failure cases after here, so this is
+	 * the commit point.
+	 */
+	for_each_subsys(root, ss) {
+		if (ss->pre_attach)
+			ss->pre_attach(cgrp);
+	}
+	for (i = 0; i < group_size; i++) {
+		tsk = flex_array_get_ptr(group, i);
+		/* leave current thread as it is if it's already there */
+		oldcgrp = task_cgroup_from_root(tsk, root);
+		if (cgrp == oldcgrp)
+			continue;
+		retval = cgroup_task_migrate(cgrp, oldcgrp, tsk, true);
+		BUG_ON(retval);
+		/* attach each task to each subsystem */
+		for_each_subsys(root, ss) {
+			if (ss->attach_task)
+				ss->attach_task(cgrp, tsk);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	/* nothing is sensitive to fork() after this point. */
 
 	/*
+<<<<<<< HEAD
 	 * step 4: do subsystem attach callbacks.
 	 */
 	for_each_subsys(root, ss) {
 		if (ss->attach)
 			ss->attach(cgrp, &tset);
+=======
+	 * step 4: do expensive, non-thread-specific subsystem callbacks.
+	 * TODO: if ever a subsystem needs to know the oldcgrp for each task
+	 * being moved, this call will need to be reworked to communicate that.
+	 */
+	for_each_subsys(root, ss) {
+		if (ss->attach)
+			ss->attach(ss, cgrp, oldcgrp, leader);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -2116,6 +2613,7 @@ static int cgroup_attach_proc(struct cgroup *cgrp, struct task_struct *leader)
 	synchronize_rcu();
 	cgroup_wakeup_rmdir_waiter(cgrp);
 	retval = 0;
+<<<<<<< HEAD
 out_put_css_set_refs:
 	if (retval) {
 		for (i = 0; i < group_size; i++) {
@@ -2134,11 +2632,59 @@ out_cancel_attach:
 				ss->cancel_attach(cgrp, &tset);
 		}
 	}
+=======
+out_list_teardown:
+	/* clean up the list of prefetched css_sets. */
+	list_for_each_entry_safe(cg_entry, temp_nobe, &newcg_list, links) {
+		list_del(&cg_entry->links);
+		put_css_set(cg_entry->cg);
+		kfree(cg_entry);
+	}
+out_cancel_attach:
+	/* same deal as in cgroup_attach_task */
+	if (retval) {
+		for_each_subsys(root, ss) {
+			if (ss == failed_ss) {
+				if (cancel_failed_ss && ss->cancel_attach)
+					ss->cancel_attach(ss, cgrp, leader);
+				break;
+			}
+			if (ss->cancel_attach)
+				ss->cancel_attach(ss, cgrp, leader);
+		}
+	}
+	/* clean up the array of referenced threads in the group. */
+	for (i = 0; i < group_size; i++) {
+		tsk = flex_array_get_ptr(group, i);
+		put_task_struct(tsk);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_free_group_list:
 	flex_array_free(group);
 	return retval;
 }
 
+<<<<<<< HEAD
+=======
+static int cgroup_allow_attach(struct cgroup *cgrp, struct task_struct *tsk)
+{
+	struct cgroup_subsys *ss;
+	int ret;
+
+	for_each_subsys(cgrp->root, ss) {
+		if (ss->allow_attach) {
+			ret = ss->allow_attach(cgrp, tsk);
+			if (ret)
+				return ret;
+		} else {
+			return -EACCES;
+		}
+	}
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Find the task_struct of the task to attach by vpid and pass it along to the
  * function to attach either it or all tasks in its threadgroup. Will lock
@@ -2153,6 +2699,7 @@ static int attach_task_by_pid(struct cgroup *cgrp, u64 pid, bool threadgroup)
 	if (!cgroup_lock_live_group(cgrp))
 		return -ENODEV;
 
+<<<<<<< HEAD
 retry_find_task:
 	rcu_read_lock();
 	if (pid) {
@@ -2162,6 +2709,26 @@ retry_find_task:
 			ret= -ESRCH;
 			goto out_unlock_cgroup;
 		}
+=======
+	if (pid) {
+		rcu_read_lock();
+		tsk = find_task_by_vpid(pid);
+		if (!tsk) {
+			rcu_read_unlock();
+			cgroup_unlock();
+			return -ESRCH;
+		}
+		if (threadgroup) {
+			/*
+			 * RCU protects this access, since tsk was found in the
+			 * tid map. a race with de_thread may cause group_leader
+			 * to stop being the leader, but cgroup_attach_proc will
+			 * detect it later.
+			 */
+			tsk = tsk->group_leader;
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * even if we're attaching all tasks in the thread group, we
 		 * only need to check permissions on one of them.
@@ -2170,6 +2737,7 @@ retry_find_task:
 		if (cred->euid &&
 		    cred->euid != tcred->uid &&
 		    cred->euid != tcred->suid) {
+<<<<<<< HEAD
 			rcu_read_unlock();
 			ret = -EACCES;
 			goto out_unlock_cgroup;
@@ -2203,6 +2771,39 @@ retry_find_task:
 
 	put_task_struct(tsk);
 out_unlock_cgroup:
+=======
+			/*
+			 * if the default permission check fails, give each
+			 * cgroup a chance to extend the permission check
+			 */
+			ret = cgroup_allow_attach(cgrp, tsk);
+			if (ret) {
+				rcu_read_unlock();
+				cgroup_unlock();
+				return ret;
+			}
+		}
+		get_task_struct(tsk);
+		rcu_read_unlock();
+	} else {
+		if (threadgroup)
+			tsk = current->group_leader;
+		else
+			tsk = current;
+		get_task_struct(tsk);
+	}
+
+	threadgroup_lock(tsk);
+
+	if (threadgroup)
+		ret = cgroup_attach_proc(cgrp, tsk);
+	else
+		ret = cgroup_attach_task(cgrp, tsk);
+
+	threadgroup_unlock(tsk);
+
+	put_task_struct(tsk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cgroup_unlock();
 	return ret;
 }
@@ -2214,7 +2815,20 @@ static int cgroup_tasks_write(struct cgroup *cgrp, struct cftype *cft, u64 pid)
 
 static int cgroup_procs_write(struct cgroup *cgrp, struct cftype *cft, u64 tgid)
 {
+<<<<<<< HEAD
 	return attach_task_by_pid(cgrp, tgid, true);
+=======
+	int ret;
+	do {
+		/*
+		 * attach_proc fails with -EAGAIN if threadgroup leadership
+		 * changes in the middle of the operation, in which case we need
+		 * to find the task_struct for the new leader and start over.
+		 */
+		ret = attach_task_by_pid(cgrp, tgid, true);
+	} while (ret == -EAGAIN);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -2524,7 +3138,11 @@ static inline struct cftype *__file_cft(struct file *file)
 	return __d_cft(file->f_dentry);
 }
 
+<<<<<<< HEAD
 static int cgroup_create_file(struct dentry *dentry, umode_t mode,
+=======
+static int cgroup_create_file(struct dentry *dentry, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				struct super_block *sb)
 {
 	struct inode *inode;
@@ -2565,7 +3183,11 @@ static int cgroup_create_file(struct dentry *dentry, umode_t mode,
  * @mode: mode to set on new directory.
  */
 static int cgroup_create_dir(struct cgroup *cgrp, struct dentry *dentry,
+<<<<<<< HEAD
 				umode_t mode)
+=======
+				mode_t mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dentry *parent;
 	int error = 0;
@@ -2576,7 +3198,13 @@ static int cgroup_create_dir(struct cgroup *cgrp, struct dentry *dentry,
 		dentry->d_fsdata = cgrp;
 		inc_nlink(parent->d_inode);
 		rcu_assign_pointer(cgrp->dentry, dentry);
+<<<<<<< HEAD
 	}
+=======
+		dget(dentry);
+	}
+	dput(dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return error;
 }
@@ -2590,9 +3218,15 @@ static int cgroup_create_dir(struct cgroup *cgrp, struct dentry *dentry,
  * returns S_IRUGO if it has only a read handler
  * returns S_IWUSR if it has only a write hander
  */
+<<<<<<< HEAD
 static umode_t cgroup_file_mode(const struct cftype *cft)
 {
 	umode_t mode = 0;
+=======
+static mode_t cgroup_file_mode(const struct cftype *cft)
+{
+	mode_t mode = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (cft->mode)
 		return cft->mode;
@@ -2615,7 +3249,11 @@ int cgroup_add_file(struct cgroup *cgrp,
 	struct dentry *dir = cgrp->dentry;
 	struct dentry *dentry;
 	int error;
+<<<<<<< HEAD
 	umode_t mode;
+=======
+	mode_t mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	char name[MAX_CGROUP_TYPE_NAMELEN + MAX_CFTYPE_NAME + 2] = { 0 };
 	if (subsys && !test_bit(ROOT_NOPREFIX, &cgrp->root->flags)) {
@@ -2702,12 +3340,19 @@ static void cgroup_advance_iter(struct cgroup *cgrp,
  * using their cgroups capability, we don't maintain the lists running
  * through each css_set to its tasks until we see the list actually
  * used - in other words after the first call to cgroup_iter_start().
+<<<<<<< HEAD
+=======
+ *
+ * The tasklist_lock is not held here, as do_each_thread() and
+ * while_each_thread() are protected by RCU.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void cgroup_enable_task_cg_lists(void)
 {
 	struct task_struct *p, *g;
 	write_lock(&css_set_lock);
 	use_task_css_set_links = 1;
+<<<<<<< HEAD
 	/*
 	 * We need tasklist_lock because RCU is not safe against
 	 * while_each_thread(). Besides, a forking task that has passed
@@ -2716,6 +3361,8 @@ static void cgroup_enable_task_cg_lists(void)
 	 * tasklist if we walk through it with RCU.
 	 */
 	read_lock(&tasklist_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do_each_thread(g, p) {
 		task_lock(p);
 		/*
@@ -2727,12 +3374,18 @@ static void cgroup_enable_task_cg_lists(void)
 			list_add(&p->cg_list, &p->cgroups->tasks);
 		task_unlock(p);
 	} while_each_thread(g, p);
+<<<<<<< HEAD
 	read_unlock(&tasklist_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	write_unlock(&css_set_lock);
 }
 
 void cgroup_iter_start(struct cgroup *cgrp, struct cgroup_iter *it)
+<<<<<<< HEAD
 	__acquires(css_set_lock)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * The first time anyone tries to iterate across a cgroup,
@@ -2772,7 +3425,10 @@ struct task_struct *cgroup_iter_next(struct cgroup *cgrp,
 }
 
 void cgroup_iter_end(struct cgroup *cgrp, struct cgroup_iter *it)
+<<<<<<< HEAD
 	__releases(css_set_lock)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	read_unlock(&css_set_lock);
 }
@@ -2947,6 +3603,7 @@ int cgroup_scan_tasks(struct cgroup_scanner *scan)
  *
  */
 
+<<<<<<< HEAD
 /* which pidlist file are we talking about? */
 enum cgroup_filetype {
 	CGROUP_FILE_PROCS,
@@ -2979,6 +3636,8 @@ struct cgroup_pidlist {
 	struct rw_semaphore mutex;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The following two functions "fix" the issue where there are more pids
  * than kmalloc will give memory for; in such cases, we use vmalloc/vfree.
@@ -3476,7 +4135,10 @@ static int cgroup_write_event_control(struct cgroup *cgrp, struct cftype *cft,
 				      const char *buffer)
 {
 	struct cgroup_event *event = NULL;
+<<<<<<< HEAD
 	struct cgroup *cgrp_cfile;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int efd, cfd;
 	struct file *efile = NULL;
 	struct file *cfile = NULL;
@@ -3521,8 +4183,12 @@ static int cgroup_write_event_control(struct cgroup *cgrp, struct cftype *cft,
 	}
 
 	/* the process need read permission on control file */
+<<<<<<< HEAD
 	/* AV: shouldn't we check that it's been opened for read instead? */
 	ret = inode_permission(cfile->f_path.dentry->d_inode, MAY_READ);
+=======
+	ret = file_permission(cfile, MAY_READ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		goto fail;
 
@@ -3532,6 +4198,7 @@ static int cgroup_write_event_control(struct cgroup *cgrp, struct cftype *cft,
 		goto fail;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * The file to be monitored must be in the same cgroup as
 	 * cgroup.event_control is.
@@ -3542,6 +4209,8 @@ static int cgroup_write_event_control(struct cgroup *cgrp, struct cftype *cft,
 		goto fail;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!event->cft->register_event || !event->cft->unregister_event) {
 		ret = -EINVAL;
 		goto fail;
@@ -3740,7 +4409,11 @@ static void cgroup_unlock_hierarchy(struct cgroupfs_root *root)
  * Must be called with the mutex on the parent inode held
  */
 static long cgroup_create(struct cgroup *parent, struct dentry *dentry,
+<<<<<<< HEAD
 			     umode_t mode)
+=======
+			     mode_t mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cgroup *cgrp;
 	struct cgroupfs_root *root = parent->root;
@@ -3774,7 +4447,11 @@ static long cgroup_create(struct cgroup *parent, struct dentry *dentry,
 		set_bit(CGRP_CLONE_CHILDREN, &cgrp->flags);
 
 	for_each_subsys(root, ss) {
+<<<<<<< HEAD
 		struct cgroup_subsys_state *css = ss->create(cgrp);
+=======
+		struct cgroup_subsys_state *css = ss->create(ss, cgrp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (IS_ERR(css)) {
 			err = PTR_ERR(css);
@@ -3788,7 +4465,11 @@ static long cgroup_create(struct cgroup *parent, struct dentry *dentry,
 		}
 		/* At error, ->destroy() callback has to free assigned ID. */
 		if (clone_children(parent) && ss->post_clone)
+<<<<<<< HEAD
 			ss->post_clone(cgrp);
+=======
+			ss->post_clone(ss, cgrp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	cgroup_lock_hierarchy(root);
@@ -3800,6 +4481,11 @@ static long cgroup_create(struct cgroup *parent, struct dentry *dentry,
 	if (err < 0)
 		goto err_remove;
 
+<<<<<<< HEAD
+=======
+	set_bit(CGRP_RELEASABLE, &parent->flags);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* The cgroup directory was pre-locked for us */
 	BUG_ON(!mutex_is_locked(&cgrp->dentry->d_inode->i_mutex));
 
@@ -3822,7 +4508,11 @@ static long cgroup_create(struct cgroup *parent, struct dentry *dentry,
 
 	for_each_subsys(root, ss) {
 		if (cgrp->subsys[ss->subsys_id])
+<<<<<<< HEAD
 			ss->destroy(cgrp);
+=======
+			ss->destroy(ss, cgrp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	mutex_unlock(&cgroup_mutex);
@@ -3834,7 +4524,11 @@ static long cgroup_create(struct cgroup *parent, struct dentry *dentry,
 	return err;
 }
 
+<<<<<<< HEAD
 static int cgroup_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+=======
+static int cgroup_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cgroup *c_parent = dentry->d_parent->d_fsdata;
 
@@ -3931,6 +4625,24 @@ static int cgroup_clear_css_refs(struct cgroup *cgrp)
 	return !failed;
 }
 
+<<<<<<< HEAD
+=======
+/* checks if all of the css_sets attached to a cgroup have a refcount of 0.
+ * Must be called with css_set_lock held */
+static int cgroup_css_sets_empty(struct cgroup *cgrp)
+{
+	struct cg_cgroup_link *link;
+
+	list_for_each_entry(link, &cgrp->css_sets, cgrp_link_list) {
+		struct css_set *cg = link->cg;
+		if (atomic_read(&cg->refcount) > 0)
+			return 0;
+	}
+
+	return 1;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int cgroup_rmdir(struct inode *unused_dir, struct dentry *dentry)
 {
 	struct cgroup *cgrp = dentry->d_fsdata;
@@ -3943,7 +4655,11 @@ static int cgroup_rmdir(struct inode *unused_dir, struct dentry *dentry)
 	/* the vfs holds both inode->i_mutex already */
 again:
 	mutex_lock(&cgroup_mutex);
+<<<<<<< HEAD
 	if (atomic_read(&cgrp->count) != 0) {
+=======
+	if (!cgroup_css_sets_empty(cgrp)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mutex_unlock(&cgroup_mutex);
 		return -EBUSY;
 	}
@@ -3976,7 +4692,11 @@ again:
 
 	mutex_lock(&cgroup_mutex);
 	parent = cgrp->parent;
+<<<<<<< HEAD
 	if (atomic_read(&cgrp->count) || !list_empty(&cgrp->children)) {
+=======
+	if (!cgroup_css_sets_empty(cgrp) || !list_empty(&cgrp->children)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		clear_bit(CGRP_WAIT_ON_RMDIR, &cgrp->flags);
 		mutex_unlock(&cgroup_mutex);
 		return -EBUSY;
@@ -4000,11 +4720,19 @@ again:
 	finish_wait(&cgroup_rmdir_waitq, &wait);
 	clear_bit(CGRP_WAIT_ON_RMDIR, &cgrp->flags);
 
+<<<<<<< HEAD
 	raw_spin_lock(&release_list_lock);
 	set_bit(CGRP_REMOVED, &cgrp->flags);
 	if (!list_empty(&cgrp->release_list))
 		list_del_init(&cgrp->release_list);
 	raw_spin_unlock(&release_list_lock);
+=======
+	spin_lock(&release_list_lock);
+	set_bit(CGRP_REMOVED, &cgrp->flags);
+	if (!list_empty(&cgrp->release_list))
+		list_del_init(&cgrp->release_list);
+	spin_unlock(&release_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cgroup_lock_hierarchy(cgrp->root);
 	/* delete this cgroup from parent->children */
@@ -4016,7 +4744,10 @@ again:
 	cgroup_d_remove_dir(d);
 	dput(d);
 
+<<<<<<< HEAD
 	set_bit(CGRP_RELEASABLE, &parent->flags);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	check_for_release(parent);
 
 	/*
@@ -4046,7 +4777,11 @@ static void __init cgroup_init_subsys(struct cgroup_subsys *ss)
 	/* Create the top cgroup state for this subsystem */
 	list_add(&ss->sibling, &rootnode.subsys_list);
 	ss->root = &rootnode;
+<<<<<<< HEAD
 	css = ss->create(dummytop);
+=======
+	css = ss->create(ss, dummytop);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* We don't handle early failures gracefully */
 	BUG_ON(IS_ERR(css));
 	init_cgroup_css(css, ss, dummytop);
@@ -4135,7 +4870,11 @@ int __init_or_module cgroup_load_subsys(struct cgroup_subsys *ss)
 	 * no ss->create seems to need anything important in the ss struct, so
 	 * this can happen first (i.e. before the rootnode attachment).
 	 */
+<<<<<<< HEAD
 	css = ss->create(dummytop);
+=======
+	css = ss->create(ss, dummytop);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(css)) {
 		/* failure case - need to deassign the subsys[] slot. */
 		subsys[i] = NULL;
@@ -4153,7 +4892,11 @@ int __init_or_module cgroup_load_subsys(struct cgroup_subsys *ss)
 		int ret = cgroup_init_idr(ss, css);
 		if (ret) {
 			dummytop->subsys[ss->subsys_id] = NULL;
+<<<<<<< HEAD
 			ss->destroy(dummytop);
+=======
+			ss->destroy(ss, dummytop);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			subsys[i] = NULL;
 			mutex_unlock(&cgroup_mutex);
 			return ret;
@@ -4251,7 +4994,11 @@ void cgroup_unload_subsys(struct cgroup_subsys *ss)
 	 * pointer to find their state. note that this also takes care of
 	 * freeing the css_id.
 	 */
+<<<<<<< HEAD
 	ss->destroy(dummytop);
+=======
+	ss->destroy(ss, dummytop);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dummytop->subsys[ss->subsys_id] = NULL;
 
 	mutex_unlock(&cgroup_mutex);
@@ -4516,7 +5263,11 @@ void cgroup_fork_callbacks(struct task_struct *child)
 		for (i = 0; i < CGROUP_BUILTIN_SUBSYS_COUNT; i++) {
 			struct cgroup_subsys *ss = subsys[i];
 			if (ss->fork)
+<<<<<<< HEAD
 				ss->fork(child);
+=======
+				ss->fork(ss, child);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }
@@ -4532,6 +5283,7 @@ void cgroup_fork_callbacks(struct task_struct *child)
  */
 void cgroup_post_fork(struct task_struct *child)
 {
+<<<<<<< HEAD
 	/*
 	 * use_task_css_set_links is set to 1 before we walk the tasklist
 	 * under the tasklist_lock and we read it here after we added the child
@@ -4543,6 +5295,8 @@ void cgroup_post_fork(struct task_struct *child)
 	 * in cgroup_enable_task_cg_lists() and read here after the tasklist_lock
 	 * lock on fork.
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (use_task_css_set_links) {
 		write_lock(&css_set_lock);
 		task_lock(child);
@@ -4620,14 +5374,22 @@ void cgroup_exit(struct task_struct *tsk, int run_callbacks)
 				struct cgroup *old_cgrp =
 					rcu_dereference_raw(cg->subsys[i])->cgroup;
 				struct cgroup *cgrp = task_cgroup(tsk, i);
+<<<<<<< HEAD
 				ss->exit(cgrp, old_cgrp, tsk);
+=======
+				ss->exit(ss, cgrp, old_cgrp, tsk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 	}
 	task_unlock(tsk);
 
 	if (cg)
+<<<<<<< HEAD
 		put_css_set_taskexit(cg);
+=======
+		put_css_set(cg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -4668,19 +5430,38 @@ static void check_for_release(struct cgroup *cgrp)
 		 * already queued for a userspace notification, queue
 		 * it now */
 		int need_schedule_work = 0;
+<<<<<<< HEAD
 		raw_spin_lock(&release_list_lock);
+=======
+		spin_lock(&release_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!cgroup_is_removed(cgrp) &&
 		    list_empty(&cgrp->release_list)) {
 			list_add(&cgrp->release_list, &release_list);
 			need_schedule_work = 1;
 		}
+<<<<<<< HEAD
 		raw_spin_unlock(&release_list_lock);
+=======
+		spin_unlock(&release_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (need_schedule_work)
 			schedule_work(&release_agent_work);
 	}
 }
 
 /* Caller must verify that the css is not for root cgroup */
+<<<<<<< HEAD
+=======
+void __css_get(struct cgroup_subsys_state *css, int count)
+{
+	atomic_add(count, &css->refcnt);
+	set_bit(CGRP_RELEASABLE, &css->cgroup->flags);
+}
+EXPORT_SYMBOL_GPL(__css_get);
+
+/* Caller must verify that the css is not for root cgroup */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __css_put(struct cgroup_subsys_state *css, int count)
 {
 	struct cgroup *cgrp = css->cgroup;
@@ -4688,10 +5469,14 @@ void __css_put(struct cgroup_subsys_state *css, int count)
 	rcu_read_lock();
 	val = atomic_sub_return(count, &css->refcnt);
 	if (val == 1) {
+<<<<<<< HEAD
 		if (notify_on_release(cgrp)) {
 			set_bit(CGRP_RELEASABLE, &cgrp->flags);
 			check_for_release(cgrp);
 		}
+=======
+		check_for_release(cgrp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cgroup_wakeup_rmdir_waiter(cgrp);
 	}
 	rcu_read_unlock();
@@ -4726,7 +5511,11 @@ static void cgroup_release_agent(struct work_struct *work)
 {
 	BUG_ON(work != &release_agent_work);
 	mutex_lock(&cgroup_mutex);
+<<<<<<< HEAD
 	raw_spin_lock(&release_list_lock);
+=======
+	spin_lock(&release_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (!list_empty(&release_list)) {
 		char *argv[3], *envp[3];
 		int i;
@@ -4735,7 +5524,11 @@ static void cgroup_release_agent(struct work_struct *work)
 						    struct cgroup,
 						    release_list);
 		list_del_init(&cgrp->release_list);
+<<<<<<< HEAD
 		raw_spin_unlock(&release_list_lock);
+=======
+		spin_unlock(&release_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pathbuf = kmalloc(PAGE_SIZE, GFP_KERNEL);
 		if (!pathbuf)
 			goto continue_free;
@@ -4765,9 +5558,15 @@ static void cgroup_release_agent(struct work_struct *work)
  continue_free:
 		kfree(pathbuf);
 		kfree(agentbuf);
+<<<<<<< HEAD
 		raw_spin_lock(&release_list_lock);
 	}
 	raw_spin_unlock(&release_list_lock);
+=======
+		spin_lock(&release_list_lock);
+	}
+	spin_unlock(&release_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&cgroup_mutex);
 }
 
@@ -4814,7 +5613,12 @@ unsigned short css_id(struct cgroup_subsys_state *css)
 	 * on this or this is under rcu_read_lock(). Once css->id is allocated,
 	 * it's unchanged until freed.
 	 */
+<<<<<<< HEAD
 	cssid = rcu_dereference_check(css->id, atomic_read(&css->refcnt));
+=======
+	cssid = rcu_dereference_check(css->id,
+			rcu_read_lock_held() || atomic_read(&css->refcnt));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (cssid)
 		return cssid->id;
@@ -4826,7 +5630,12 @@ unsigned short css_depth(struct cgroup_subsys_state *css)
 {
 	struct css_id *cssid;
 
+<<<<<<< HEAD
 	cssid = rcu_dereference_check(css->id, atomic_read(&css->refcnt));
+=======
+	cssid = rcu_dereference_check(css->id,
+			rcu_read_lock_held() || atomic_read(&css->refcnt));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (cssid)
 		return cssid->depth;
@@ -5025,8 +5834,11 @@ css_get_next(struct cgroup_subsys *ss, int id,
 		return NULL;
 
 	BUG_ON(!ss->use_id);
+<<<<<<< HEAD
 	WARN_ON_ONCE(!rcu_read_lock_held());
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* fill start point for scan */
 	tmpid = id;
 	while (1) {
@@ -5034,7 +5846,14 @@ css_get_next(struct cgroup_subsys *ss, int id,
 		 * scan next entry from bitmap(tree), tmpid is updated after
 		 * idr_get_next().
 		 */
+<<<<<<< HEAD
 		tmp = idr_get_next(&ss->idr, &tmpid);
+=======
+		spin_lock(&ss->id_lock);
+		tmp = idr_get_next(&ss->idr, &tmpid);
+		spin_unlock(&ss->id_lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!tmp)
 			break;
 		if (tmp->depth >= depth && tmp->stack[depth] == rootid) {
@@ -5074,7 +5893,12 @@ struct cgroup_subsys_state *cgroup_css_from_dir(struct file *f, int id)
 }
 
 #ifdef CONFIG_CGROUP_DEBUG
+<<<<<<< HEAD
 static struct cgroup_subsys_state *debug_create(struct cgroup *cont)
+=======
+static struct cgroup_subsys_state *debug_create(struct cgroup_subsys *ss,
+						   struct cgroup *cont)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cgroup_subsys_state *css = kzalloc(sizeof(*css), GFP_KERNEL);
 
@@ -5084,7 +5908,11 @@ static struct cgroup_subsys_state *debug_create(struct cgroup *cont)
 	return css;
 }
 
+<<<<<<< HEAD
 static void debug_destroy(struct cgroup *cont)
+=======
+static void debug_destroy(struct cgroup_subsys *ss, struct cgroup *cont)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	kfree(cont->subsys[debug_subsys_id]);
 }

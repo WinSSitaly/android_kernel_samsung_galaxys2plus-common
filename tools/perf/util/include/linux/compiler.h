@@ -5,9 +5,13 @@
 #define __always_inline	inline
 #endif
 #define __user
+<<<<<<< HEAD
 #ifndef __attribute_const__
 #define __attribute_const__
 #endif
+=======
+#define __attribute_const__
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define __used		__attribute__((__unused__))
 

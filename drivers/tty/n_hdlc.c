@@ -102,6 +102,10 @@
 #include <linux/if.h>
 #include <linux/bitops.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/termios.h>
 #include <asm/uaccess.h>
 
@@ -416,7 +420,11 @@ static void n_hdlc_send_frames(struct n_hdlc *n_hdlc, struct tty_struct *tty)
 				__FILE__,__LINE__,tbuf,tbuf->count);
 			
 		/* Send the next block of data to device */
+<<<<<<< HEAD
 		set_bit(TTY_DO_WRITE_WAKEUP, &tty->flags);
+=======
+		tty->flags |= (1 << TTY_DO_WRITE_WAKEUP);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		actual = tty->ops->write(tty, tbuf->buf, tbuf->count);
 
 		/* rollback was possible and has been done */
@@ -458,7 +466,11 @@ static void n_hdlc_send_frames(struct n_hdlc *n_hdlc, struct tty_struct *tty)
 	}
 	
 	if (!tbuf)
+<<<<<<< HEAD
 		clear_bit(TTY_DO_WRITE_WAKEUP, &tty->flags);
+=======
+		tty->flags  &= ~(1 << TTY_DO_WRITE_WAKEUP);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	
 	/* Clear the re-entry flag */
 	spin_lock_irqsave(&n_hdlc->tx_buf_list.spinlock, flags);
@@ -490,7 +502,11 @@ static void n_hdlc_tty_wakeup(struct tty_struct *tty)
 		return;
 
 	if (tty != n_hdlc->tty) {
+<<<<<<< HEAD
 		clear_bit(TTY_DO_WRITE_WAKEUP, &tty->flags);
+=======
+		tty->flags &= ~(1 << TTY_DO_WRITE_WAKEUP);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 

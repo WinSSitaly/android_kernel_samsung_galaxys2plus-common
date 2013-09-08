@@ -45,6 +45,10 @@ static inline void scsi_log_completion(struct scsi_cmnd *cmd, int disposition)
 enum {
 	SCSI_DEVINFO_GLOBAL = 0,
 	SCSI_DEVINFO_SPI,
+<<<<<<< HEAD
+=======
+	SCSI_DEVINFO_DH,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 extern int scsi_get_device_flags(struct scsi_device *sdev,
@@ -84,6 +88,10 @@ extern void scsi_next_command(struct scsi_cmnd *cmd);
 extern void scsi_io_completion(struct scsi_cmnd *, unsigned int);
 extern void scsi_run_host_queues(struct Scsi_Host *shost);
 extern struct request_queue *scsi_alloc_queue(struct scsi_device *sdev);
+<<<<<<< HEAD
+=======
+extern void scsi_free_queue(struct request_queue *q);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int scsi_init_queue(void);
 extern void scsi_exit_queue(void);
 struct request_queue;

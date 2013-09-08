@@ -13,7 +13,10 @@
 
 #include <linux/device.h>
 #include <linux/err.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/pm_runtime.h>
 
@@ -24,6 +27,13 @@
 #include "sdio_cis.h"
 #include "sdio_bus.h"
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MMC_EMBEDDED_SDIO
+#include <linux/mmc/host.h>
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* show configuration fields */
 #define sdio_config_attr(field, format_string)				\
 static ssize_t								\
@@ -168,13 +178,25 @@ static int sdio_bus_remove(struct device *dev)
 	int ret = 0;
 
 	/* Make sure card is powered before invoking ->remove() */
+<<<<<<< HEAD
 	if (func->card->host->caps & MMC_CAP_POWER_OFF_CARD)
 		pm_runtime_get_sync(dev);
+=======
+	if (func->card->host->caps & MMC_CAP_POWER_OFF_CARD) {
+		ret = pm_runtime_get_sync(dev);
+		if (ret < 0)
+			goto out;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	drv->remove(func);
 
 	if (func->irq_handler) {
+<<<<<<< HEAD
 		pr_warning("WARNING: driver %s did not remove "
+=======
+		printk(KERN_WARNING "WARNING: driver %s did not remove "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"its interrupt handler!\n", drv->name);
 		sdio_claim_host(func);
 		sdio_release_irq(func);
@@ -189,6 +211,7 @@ static int sdio_bus_remove(struct device *dev)
 	if (func->card->host->caps & MMC_CAP_POWER_OFF_CARD)
 		pm_runtime_put_sync(dev);
 
+<<<<<<< HEAD
 	return ret;
 }
 
@@ -201,6 +224,15 @@ static int pm_no_operation(struct device *dev)
 
 static const struct dev_pm_ops sdio_bus_pm_ops = {
 	SET_SYSTEM_SLEEP_PM_OPS(pm_no_operation, pm_no_operation)
+=======
+out:
+	return ret;
+}
+
+#ifdef CONFIG_PM_RUNTIME
+
+static const struct dev_pm_ops sdio_bus_pm_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	SET_RUNTIME_PM_OPS(
 		pm_generic_runtime_suspend,
 		pm_generic_runtime_resume,
@@ -210,11 +242,19 @@ static const struct dev_pm_ops sdio_bus_pm_ops = {
 
 #define SDIO_PM_OPS_PTR	(&sdio_bus_pm_ops)
 
+<<<<<<< HEAD
 #else /* !CONFIG_PM */
 
 #define SDIO_PM_OPS_PTR	NULL
 
 #endif /* !CONFIG_PM */
+=======
+#else /* !CONFIG_PM_RUNTIME */
+
+#define SDIO_PM_OPS_PTR	NULL
+
+#endif /* !CONFIG_PM_RUNTIME */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct bus_type sdio_bus_type = {
 	.name		= "sdio",
@@ -263,7 +303,18 @@ static void sdio_release_func(struct device *dev)
 {
 	struct sdio_func *func = dev_to_sdio_func(dev);
 
+<<<<<<< HEAD
 	sdio_free_func_cis(func);
+=======
+#ifdef CONFIG_MMC_EMBEDDED_SDIO
+	/*
+	 * If this device is embedded then we never allocated
+	 * cis tables for this func
+	 */
+	if (!func->card->host->embedded_sdio_data.funcs)
+#endif
+		sdio_free_func_cis(func);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (func->info)
 		kfree(func->info);

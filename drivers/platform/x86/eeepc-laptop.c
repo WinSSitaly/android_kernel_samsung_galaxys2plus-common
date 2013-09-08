@@ -568,7 +568,11 @@ static int eeepc_led_init(struct eeepc_laptop *eeepc)
 
 static void eeepc_led_exit(struct eeepc_laptop *eeepc)
 {
+<<<<<<< HEAD
 	if (!IS_ERR_OR_NULL(eeepc->tpd_led.dev))
+=======
+	if (eeepc->tpd_led.dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		led_classdev_unregister(&eeepc->tpd_led);
 	if (eeepc->led_workqueue)
 		destroy_workqueue(eeepc->led_workqueue);
@@ -646,7 +650,11 @@ static void eeepc_rfkill_hotplug(struct eeepc_laptop *eeepc, acpi_handle handle)
 		} else {
 			dev = pci_get_slot(bus, 0);
 			if (dev) {
+<<<<<<< HEAD
 				pci_stop_and_remove_bus_device(dev);
+=======
+				pci_remove_bus_device(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				pci_dev_put(dev);
 			}
 		}
@@ -1251,6 +1259,7 @@ static void eeepc_input_exit(struct eeepc_laptop *eeepc)
 /*
  * ACPI driver
  */
+<<<<<<< HEAD
 static void eeepc_input_notify(struct eeepc_laptop *eeepc, int event)
 {
 	if (!eeepc->inputdev)
@@ -1259,6 +1268,8 @@ static void eeepc_input_notify(struct eeepc_laptop *eeepc, int event)
 		pr_info("Unknown key %x pressed\n", event);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void eeepc_acpi_notify(struct acpi_device *device, u32 event)
 {
 	struct eeepc_laptop *eeepc = acpi_driver_data(device);
@@ -1295,11 +1306,20 @@ static void eeepc_acpi_notify(struct acpi_device *device, u32 event)
 				* event will be desired value (or else ignored)
 				*/
 			}
+<<<<<<< HEAD
 			eeepc_input_notify(eeepc, event);
 		}
 	} else {
 		/* Everything else is a bona-fide keypress event */
 		eeepc_input_notify(eeepc, event);
+=======
+			sparse_keymap_report_event(eeepc->inputdev, event,
+						   1, true);
+		}
+	} else {
+		/* Everything else is a bona-fide keypress event */
+		sparse_keymap_report_event(eeepc->inputdev, event, 1, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 

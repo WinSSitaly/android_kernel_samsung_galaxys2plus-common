@@ -27,10 +27,14 @@
 
 #include "../../perf.h"
 #include "../util.h"
+<<<<<<< HEAD
 #include "../thread.h"
 #include "../event.h"
 #include "../trace-event.h"
 #include "../evsel.h"
+=======
+#include "../trace-event.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <EXTERN.h>
 #include <perl.h>
@@ -248,11 +252,19 @@ static inline struct event *find_cache_event(int type)
 	return event;
 }
 
+<<<<<<< HEAD
 static void perl_process_tracepoint(union perf_event *pevent __unused,
 				    struct perf_sample *sample,
 				    struct perf_evsel *evsel,
 				    struct machine *machine __unused,
 				    struct thread *thread)
+=======
+static void perl_process_event(union perf_event *pevent __unused,
+			       struct perf_sample *sample,
+			       struct perf_evsel *evsel,
+			       struct perf_session *session __unused,
+			       struct thread *thread)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct format_field *field;
 	static char handler[256];
@@ -268,9 +280,12 @@ static void perl_process_tracepoint(union perf_event *pevent __unused,
 
 	dSP;
 
+<<<<<<< HEAD
 	if (evsel->attr.type != PERF_TYPE_TRACEPOINT)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	type = trace_parse_common_type(data);
 
 	event = find_cache_event(type);
@@ -338,6 +353,7 @@ static void perl_process_tracepoint(union perf_event *pevent __unused,
 	LEAVE;
 }
 
+<<<<<<< HEAD
 static void perl_process_event_generic(union perf_event *pevent __unused,
 				       struct perf_sample *sample,
 				       struct perf_evsel *evsel __unused,
@@ -374,6 +390,8 @@ static void perl_process_event(union perf_event *pevent,
 	perl_process_event_generic(pevent, sample, evsel, machine, thread);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void run_start_sub(void)
 {
 	dSP; /* access to Perl stack */
@@ -595,6 +613,7 @@ static int perl_generate_script(const char *outfile)
 	fprintf(ofp, "sub print_header\n{\n"
 		"\tmy ($event_name, $cpu, $secs, $nsecs, $pid, $comm) = @_;\n\n"
 		"\tprintf(\"%%-20s %%5u %%05u.%%09u %%8u %%-20s \",\n\t       "
+<<<<<<< HEAD
 		"$event_name, $cpu, $secs, $nsecs, $pid, $comm);\n}\n");
 
 	fprintf(ofp,
@@ -617,6 +636,9 @@ static int perl_generate_script(const char *outfile)
 		"\tuse Data::Dumper;\n"
 		"\tprint Dumper \\@event, \\@attr, \\@sample, \\@raw_data;\n"
 		"}\n");
+=======
+		"$event_name, $cpu, $secs, $nsecs, $pid, $comm);\n}");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fclose(ofp);
 

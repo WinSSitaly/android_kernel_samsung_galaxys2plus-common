@@ -1,6 +1,10 @@
 # Makefile for the Linux sound card driver
 #
+<<<<<<< HEAD
 
+=======
+obj-$(CONFIG_BCM_ALSA_SOUND) += caph/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_SOUND) += soundcore.o
 obj-$(CONFIG_SOUND_PRIME) += sound_firmware.o
 obj-$(CONFIG_SOUND_PRIME) += oss/

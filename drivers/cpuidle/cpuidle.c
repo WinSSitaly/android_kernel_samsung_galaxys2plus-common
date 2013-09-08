@@ -12,12 +12,19 @@
 #include <linux/mutex.h>
 #include <linux/sched.h>
 #include <linux/notifier.h>
+<<<<<<< HEAD
 #include <linux/pm_qos.h>
+=======
+#include <linux/pm_qos_params.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/cpu.h>
 #include <linux/cpuidle.h>
 #include <linux/ktime.h>
 #include <linux/hrtimer.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <trace/events/power.h>
 
 #include "cpuidle.h"
@@ -26,6 +33,7 @@ DEFINE_PER_CPU(struct cpuidle_device *, cpuidle_devices);
 
 DEFINE_MUTEX(cpuidle_lock);
 LIST_HEAD(cpuidle_detected_devices);
+<<<<<<< HEAD
 
 static int enabled_devices;
 static int off __read_mostly;
@@ -39,6 +47,11 @@ void disable_cpuidle(void)
 {
 	off = 1;
 }
+=======
+static void (*pm_idle_old)(void);
+
+static int enabled_devices;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if defined(CONFIG_ARCH_HAS_CPU_IDLE_WAIT)
 static void cpuidle_kick_cpus(void)
@@ -53,6 +66,7 @@ static void cpuidle_kick_cpus(void) {}
 
 static int __cpuidle_register_device(struct cpuidle_device *dev);
 
+<<<<<<< HEAD
 static inline int cpuidle_enter(struct cpuidle_device *dev,
 				struct cpuidle_driver *drv, int index)
 {
@@ -102,10 +116,13 @@ int cpuidle_play_dead(void)
 	return -ENODEV;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * cpuidle_idle_call - the main idle loop
  *
  * NOTE: no locks or semaphores should be used here
+<<<<<<< HEAD
  * return non-zero on failure
  */
 int cpuidle_idle_call(void)
@@ -123,6 +140,27 @@ int cpuidle_idle_call(void)
 	/* check if the device is ready */
 	if (!dev || !dev->enabled)
 		return -EBUSY;
+=======
+ */
+static void cpuidle_idle_call(void)
+{
+	struct cpuidle_device *dev = __this_cpu_read(cpuidle_devices);
+	struct cpuidle_state *target_state;
+	int next_state;
+
+	/* check if the device is ready */
+	if (!dev || !dev->enabled) {
+		if (pm_idle_old)
+			pm_idle_old();
+		else
+#if defined(CONFIG_ARCH_HAS_DEFAULT_IDLE)
+			default_idle();
+#else
+			local_irq_enable();
+#endif
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if 0
 	/* shows regressions, re-enable for 2.6.29 */
@@ -133,6 +171,7 @@ int cpuidle_idle_call(void)
 	hrtimer_peek_ahead_timers();
 #endif
 
+<<<<<<< HEAD
 	/* ask the governor for the next state */
 	next_state = cpuidle_curr_governor->select(drv, dev);
 	if (need_resched()) {
@@ -165,6 +204,47 @@ int cpuidle_idle_call(void)
 		cpuidle_curr_governor->reflect(dev, entered_state);
 
 	return 0;
+=======
+	/*
+	 * Call the device's prepare function before calling the
+	 * governor's select function.  ->prepare gives the device's
+	 * cpuidle driver a chance to update any dynamic information
+	 * of its cpuidle states for the current idle period, e.g.
+	 * state availability, latencies, residencies, etc.
+	 */
+	if (dev->prepare)
+		dev->prepare(dev);
+
+	/* ask the governor for the next state */
+	next_state = cpuidle_curr_governor->select(dev);
+	if (need_resched()) {
+		local_irq_enable();
+		return;
+	}
+
+	target_state = &dev->states[next_state];
+
+	/* enter the state and update stats */
+	dev->last_state = target_state;
+
+	trace_power_start(POWER_CSTATE, next_state, dev->cpu);
+	trace_cpu_idle(next_state, dev->cpu);
+
+	dev->last_residency = target_state->enter(dev, target_state);
+
+	trace_power_end(dev->cpu);
+	trace_cpu_idle(PWR_EVENT_EXIT, dev->cpu);
+
+	if (dev->last_state)
+		target_state = dev->last_state;
+
+	target_state->time += (unsigned long long)dev->last_residency;
+	target_state->usage++;
+
+	/* give the governor an opportunity to reflect on the outcome */
+	if (cpuidle_curr_governor->reflect)
+		cpuidle_curr_governor->reflect(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -172,10 +252,17 @@ int cpuidle_idle_call(void)
  */
 void cpuidle_install_idle_handler(void)
 {
+<<<<<<< HEAD
 	if (enabled_devices) {
 		/* Make sure all changes finished before we switch to new idle */
 		smp_wmb();
 		initialized = 1;
+=======
+	if (enabled_devices && (pm_idle != cpuidle_idle_call)) {
+		/* Make sure all changes finished before we switch to new idle */
+		smp_wmb();
+		pm_idle = cpuidle_idle_call;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -184,8 +271,13 @@ void cpuidle_install_idle_handler(void)
  */
 void cpuidle_uninstall_idle_handler(void)
 {
+<<<<<<< HEAD
 	if (enabled_devices) {
 		initialized = 0;
+=======
+	if (enabled_devices && pm_idle_old && (pm_idle != pm_idle_old)) {
+		pm_idle = pm_idle_old;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cpuidle_kick_cpus();
 	}
 }
@@ -212,6 +304,7 @@ void cpuidle_resume_and_unlock(void)
 
 EXPORT_SYMBOL_GPL(cpuidle_resume_and_unlock);
 
+<<<<<<< HEAD
 /**
  * cpuidle_wrap_enter - performs timekeeping and irqen around enter function
  * @dev: pointer to a valid cpuidle_device object
@@ -249,6 +342,14 @@ static int poll_idle(struct cpuidle_device *dev,
 {
 	ktime_t	t1, t2;
 	s64 diff;
+=======
+#ifdef CONFIG_ARCH_HAS_CPU_RELAX
+static int poll_idle(struct cpuidle_device *dev, struct cpuidle_state *st)
+{
+	ktime_t	t1, t2;
+	s64 diff;
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	t1 = ktime_get();
 	local_irq_enable();
@@ -260,6 +361,7 @@ static int poll_idle(struct cpuidle_device *dev,
 	if (diff > INT_MAX)
 		diff = INT_MAX;
 
+<<<<<<< HEAD
 	dev->last_residency = (int) diff;
 
 	return index;
@@ -268,6 +370,17 @@ static int poll_idle(struct cpuidle_device *dev,
 static void poll_idle_init(struct cpuidle_driver *drv)
 {
 	struct cpuidle_state *state = &drv->states[0];
+=======
+	ret = (int) diff;
+	return ret;
+}
+
+static void poll_idle_init(struct cpuidle_device *dev)
+{
+	struct cpuidle_state *state = &dev->states[0];
+
+	cpuidle_set_statedata(state, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	snprintf(state->name, CPUIDLE_NAME_LEN, "POLL");
 	snprintf(state->desc, CPUIDLE_DESC_LEN, "CPUIDLE CORE POLL IDLE");
@@ -276,10 +389,16 @@ static void poll_idle_init(struct cpuidle_driver *drv)
 	state->power_usage = -1;
 	state->flags = 0;
 	state->enter = poll_idle;
+<<<<<<< HEAD
 	state->disable = 0;
 }
 #else
 static void poll_idle_init(struct cpuidle_driver *drv) {}
+=======
+}
+#else
+static void poll_idle_init(struct cpuidle_device *dev) {}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_ARCH_HAS_CPU_RELAX */
 
 /**
@@ -292,6 +411,7 @@ static void poll_idle_init(struct cpuidle_driver *drv) {}
 int cpuidle_enable_device(struct cpuidle_device *dev)
 {
 	int ret, i;
+<<<<<<< HEAD
 	struct cpuidle_driver *drv = cpuidle_get_driver();
 
 	if (dev->enabled)
@@ -300,6 +420,15 @@ int cpuidle_enable_device(struct cpuidle_device *dev)
 		return -EIO;
 	if (!dev->state_count)
 		dev->state_count = drv->state_count;
+=======
+
+	if (dev->enabled)
+		return 0;
+	if (!cpuidle_get_driver() || !cpuidle_curr_governor)
+		return -EIO;
+	if (!dev->state_count)
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dev->registered == 0) {
 		ret = __cpuidle_register_device(dev);
@@ -307,15 +436,20 @@ int cpuidle_enable_device(struct cpuidle_device *dev)
 			return ret;
 	}
 
+<<<<<<< HEAD
 	cpuidle_enter_ops = drv->en_core_tk_irqen ?
 		cpuidle_enter_tk : cpuidle_enter;
 
 	poll_idle_init(drv);
+=======
+	poll_idle_init(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((ret = cpuidle_add_state_sysfs(dev)))
 		return ret;
 
 	if (cpuidle_curr_governor->enable &&
+<<<<<<< HEAD
 	    (ret = cpuidle_curr_governor->enable(drv, dev)))
 		goto fail_sysfs;
 
@@ -324,6 +458,17 @@ int cpuidle_enable_device(struct cpuidle_device *dev)
 		dev->states_usage[i].time = 0;
 	}
 	dev->last_residency = 0;
+=======
+	    (ret = cpuidle_curr_governor->enable(dev)))
+		goto fail_sysfs;
+
+	for (i = 0; i < dev->state_count; i++) {
+		dev->states[i].usage = 0;
+		dev->states[i].time = 0;
+	}
+	dev->last_residency = 0;
+	dev->last_state = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	smp_wmb();
 
@@ -357,7 +502,11 @@ void cpuidle_disable_device(struct cpuidle_device *dev)
 	dev->enabled = 0;
 
 	if (cpuidle_curr_governor->disable)
+<<<<<<< HEAD
 		cpuidle_curr_governor->disable(cpuidle_get_driver(), dev);
+=======
+		cpuidle_curr_governor->disable(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cpuidle_remove_state_sysfs(dev);
 	enabled_devices--;
@@ -375,19 +524,52 @@ EXPORT_SYMBOL_GPL(cpuidle_disable_device);
 static int __cpuidle_register_device(struct cpuidle_device *dev)
 {
 	int ret;
+<<<<<<< HEAD
 	struct device *cpu_dev = get_cpu_device((unsigned long)dev->cpu);
 	struct cpuidle_driver *cpuidle_driver = cpuidle_get_driver();
 
 	if (!dev)
+=======
+	struct sys_device *sys_dev = get_cpu_sysdev((unsigned long)dev->cpu);
+	struct cpuidle_driver *cpuidle_driver = cpuidle_get_driver();
+
+	if (!sys_dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	if (!try_module_get(cpuidle_driver->owner))
 		return -EINVAL;
 
 	init_completion(&dev->kobj_unregister);
 
+<<<<<<< HEAD
 	per_cpu(cpuidle_devices, dev->cpu) = dev;
 	list_add(&dev->device_list, &cpuidle_detected_devices);
 	if ((ret = cpuidle_add_sysfs(cpu_dev))) {
+=======
+	/*
+	 * cpuidle driver should set the dev->power_specified bit
+	 * before registering the device if the driver provides
+	 * power_usage numbers.
+	 *
+	 * For those devices whose ->power_specified is not set,
+	 * we fill in power_usage with decreasing values as the
+	 * cpuidle code has an implicit assumption that state Cn
+	 * uses less power than C(n-1).
+	 *
+	 * With CONFIG_ARCH_HAS_CPU_RELAX, C0 is already assigned
+	 * an power value of -1.  So we use -2, -3, etc, for other
+	 * c-states.
+	 */
+	if (!dev->power_specified) {
+		int i;
+		for (i = CPUIDLE_DRIVER_STATE_START; i < dev->state_count; i++)
+			dev->states[i].power_usage = -1 - i;
+	}
+
+	per_cpu(cpuidle_devices, dev->cpu) = dev;
+	list_add(&dev->device_list, &cpuidle_detected_devices);
+	if ((ret = cpuidle_add_sysfs(sys_dev))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		module_put(cpuidle_driver->owner);
 		return ret;
 	}
@@ -428,7 +610,11 @@ EXPORT_SYMBOL_GPL(cpuidle_register_device);
  */
 void cpuidle_unregister_device(struct cpuidle_device *dev)
 {
+<<<<<<< HEAD
 	struct device *cpu_dev = get_cpu_device((unsigned long)dev->cpu);
+=======
+	struct sys_device *sys_dev = get_cpu_sysdev((unsigned long)dev->cpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct cpuidle_driver *cpuidle_driver = cpuidle_get_driver();
 
 	if (dev->registered == 0)
@@ -438,7 +624,11 @@ void cpuidle_unregister_device(struct cpuidle_device *dev)
 
 	cpuidle_disable_device(dev);
 
+<<<<<<< HEAD
 	cpuidle_remove_sysfs(cpu_dev);
+=======
+	cpuidle_remove_sysfs(sys_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_del(&dev->device_list);
 	wait_for_completion(&dev->kobj_unregister);
 	per_cpu(cpuidle_devices, dev->cpu) = NULL;
@@ -492,10 +682,16 @@ static int __init cpuidle_init(void)
 {
 	int ret;
 
+<<<<<<< HEAD
 	if (cpuidle_disabled())
 		return -ENODEV;
 
 	ret = cpuidle_add_interface(cpu_subsys.dev_root);
+=======
+	pm_idle_old = pm_idle;
+
+	ret = cpuidle_add_class_sysfs(&cpu_sysdev_class);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -504,5 +700,8 @@ static int __init cpuidle_init(void)
 	return 0;
 }
 
+<<<<<<< HEAD
 module_param(off, int, 0444);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 core_initcall(cpuidle_init);

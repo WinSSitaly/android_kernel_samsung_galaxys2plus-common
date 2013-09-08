@@ -21,7 +21,11 @@
 #include <linux/usb.h>
 #include <linux/usb/serial.h>
 
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const struct usb_device_id id_table[] = {
 	{ USB_DEVICE(0x0a99, 0x0001) },	/* Talon Technology device */
@@ -35,6 +39,10 @@ static struct usb_driver navman_driver = {
 	.probe =	usb_serial_probe,
 	.disconnect =	usb_serial_disconnect,
 	.id_table =	id_table,
+<<<<<<< HEAD
+=======
+	.no_dynamic_id = 	1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void navman_read_int_callback(struct urb *urb)
@@ -121,6 +129,10 @@ static struct usb_serial_driver navman_device = {
 		.name =		"navman",
 	},
 	.id_table =		id_table,
+<<<<<<< HEAD
+=======
+	.usb_driver =		&navman_driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.num_ports =		1,
 	.open =			navman_open,
 	.close = 		navman_close,
@@ -128,12 +140,36 @@ static struct usb_serial_driver navman_device = {
 	.read_int_callback =	navman_read_int_callback,
 };
 
+<<<<<<< HEAD
 static struct usb_serial_driver * const serial_drivers[] = {
 	&navman_device, NULL
 };
 
 module_usb_serial_driver(navman_driver, serial_drivers);
 
+=======
+static int __init navman_init(void)
+{
+	int retval;
+
+	retval = usb_serial_register(&navman_device);
+	if (retval)
+		return retval;
+	retval = usb_register(&navman_driver);
+	if (retval)
+		usb_serial_deregister(&navman_device);
+	return retval;
+}
+
+static void __exit navman_exit(void)
+{
+	usb_deregister(&navman_driver);
+	usb_serial_deregister(&navman_device);
+}
+
+module_init(navman_init);
+module_exit(navman_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("GPL");
 
 module_param(debug, bool, S_IRUGO | S_IWUSR);

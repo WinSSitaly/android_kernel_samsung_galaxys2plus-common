@@ -44,7 +44,11 @@ static int fat_ioctl_set_attributes(struct file *file, u32 __user *user_attr)
 		goto out;
 
 	mutex_lock(&inode->i_mutex);
+<<<<<<< HEAD
 	err = mnt_want_write_file(file);
+=======
+	err = mnt_want_write(file->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		goto out_unlock_inode;
 
@@ -108,7 +112,11 @@ static int fat_ioctl_set_attributes(struct file *file, u32 __user *user_attr)
 	fat_save_attrs(inode, attr);
 	mark_inode_dirty(inode);
 out_drop_write:
+<<<<<<< HEAD
 	mnt_drop_write_file(file);
+=======
+	mnt_drop_write(file->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_unlock_inode:
 	mutex_unlock(&inode->i_mutex);
 out:
@@ -149,12 +157,20 @@ static int fat_file_release(struct inode *inode, struct file *filp)
 	return 0;
 }
 
+<<<<<<< HEAD
 int fat_file_fsync(struct file *filp, loff_t start, loff_t end, int datasync)
+=======
+int fat_file_fsync(struct file *filp, int datasync)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inode *inode = filp->f_mapping->host;
 	int res, err;
 
+<<<<<<< HEAD
 	res = generic_file_fsync(filp, start, end, datasync);
+=======
+	res = generic_file_fsync(filp, datasync);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = sync_mapping_buffers(MSDOS_SB(inode->i_sb)->fat_inode->i_mapping);
 
 	return res ? res : err;
@@ -314,7 +330,11 @@ EXPORT_SYMBOL_GPL(fat_getattr);
 static int fat_sanitize_mode(const struct msdos_sb_info *sbi,
 			     struct inode *inode, umode_t *mode_ptr)
 {
+<<<<<<< HEAD
 	umode_t mask, perm;
+=======
+	mode_t mask, perm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Note, the basic check is already done by a caller of
@@ -351,7 +371,11 @@ static int fat_sanitize_mode(const struct msdos_sb_info *sbi,
 
 static int fat_allow_set_time(struct msdos_sb_info *sbi, struct inode *inode)
 {
+<<<<<<< HEAD
 	umode_t allow_utime = sbi->options.allow_utime;
+=======
+	mode_t allow_utime = sbi->options.allow_utime;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (current_fsuid() != inode->i_uid) {
 		if (in_group_p(inode->i_gid))
@@ -397,8 +421,11 @@ int fat_setattr(struct dentry *dentry, struct iattr *attr)
 	 * sequence.
 	 */
 	if (attr->ia_valid & ATTR_SIZE) {
+<<<<<<< HEAD
 		inode_dio_wait(inode);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (attr->ia_size > inode->i_size) {
 			error = fat_cont_expand(inode, attr->ia_size);
 			if (error || attr->ia_valid == ATTR_SIZE)
@@ -431,10 +458,15 @@ int fat_setattr(struct dentry *dentry, struct iattr *attr)
 	}
 
 	if (attr->ia_valid & ATTR_SIZE) {
+<<<<<<< HEAD
 		down_write(&MSDOS_I(inode)->truncate_lock);
 		truncate_setsize(inode, attr->ia_size);
 		fat_truncate_blocks(inode, attr->ia_size);
 		up_write(&MSDOS_I(inode)->truncate_lock);
+=======
+		truncate_setsize(inode, attr->ia_size);
+		fat_truncate_blocks(inode, attr->ia_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	setattr_copy(inode, attr);

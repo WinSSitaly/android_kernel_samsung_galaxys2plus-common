@@ -44,10 +44,16 @@
 #include <asm/compat.h>
 #include <asm/mmu.h>
 #include <asm/hvcall.h>
+<<<<<<< HEAD
 #include <asm/xics.h>
 #endif
 #ifdef CONFIG_PPC_POWERNV
 #include <asm/opal.h>
+=======
+#endif
+#ifdef CONFIG_PPC_ISERIES
+#include <asm/iseries/alpaca.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 #if defined(CONFIG_KVM) || defined(CONFIG_KVM_GUEST)
 #include <linux/kvm_host.h>
@@ -76,7 +82,10 @@ int main(void)
 	DEFINE(SIGSEGV, SIGSEGV);
 	DEFINE(NMI_MASK, NMI_MASK);
 	DEFINE(THREAD_DSCR, offsetof(struct thread_struct, dscr));
+<<<<<<< HEAD
 	DEFINE(THREAD_DSCR_INHERIT, offsetof(struct thread_struct, dscr_inherit));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 	DEFINE(THREAD_INFO, offsetof(struct task_struct, stack));
 #endif /* CONFIG_PPC64 */
@@ -84,9 +93,12 @@ int main(void)
 	DEFINE(KSP, offsetof(struct thread_struct, ksp));
 	DEFINE(KSP_LIMIT, offsetof(struct thread_struct, ksp_limit));
 	DEFINE(PT_REGS, offsetof(struct thread_struct, regs));
+<<<<<<< HEAD
 #ifdef CONFIG_BOOKE
 	DEFINE(THREAD_NORMSAVES, offsetof(struct thread_struct, normsave[0]));
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DEFINE(THREAD_FPEXC_MODE, offsetof(struct thread_struct, fpexc_mode));
 	DEFINE(THREAD_FPR0, offsetof(struct thread_struct, fpr[0]));
 	DEFINE(THREAD_FPSCR, offsetof(struct thread_struct, fpscr));
@@ -133,7 +145,10 @@ int main(void)
 	DEFINE(ICACHEL1LINESPERPAGE, offsetof(struct ppc64_caches, ilines_per_page));
 	/* paca */
 	DEFINE(PACA_SIZE, sizeof(struct paca_struct));
+<<<<<<< HEAD
 	DEFINE(PACA_LOCK_TOKEN, offsetof(struct paca_struct, lock_token));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DEFINE(PACAPACAINDEX, offsetof(struct paca_struct, paca_index));
 	DEFINE(PACAPROCSTART, offsetof(struct paca_struct, cpu_start));
 	DEFINE(PACAKSAVE, offsetof(struct paca_struct, kstack));
@@ -145,7 +160,11 @@ int main(void)
 	DEFINE(PACAKBASE, offsetof(struct paca_struct, kernelbase));
 	DEFINE(PACAKMSR, offsetof(struct paca_struct, kernel_msr));
 	DEFINE(PACASOFTIRQEN, offsetof(struct paca_struct, soft_enabled));
+<<<<<<< HEAD
 	DEFINE(PACAIRQHAPPENED, offsetof(struct paca_struct, irq_happened));
+=======
+	DEFINE(PACAHARDIRQEN, offsetof(struct paca_struct, hard_enabled));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DEFINE(PACACONTEXTID, offsetof(struct paca_struct, context.id));
 #ifdef CONFIG_PPC_MM_SLICES
 	DEFINE(PACALOWSLICESPSIZE, offsetof(struct paca_struct,
@@ -193,9 +212,13 @@ int main(void)
 	DEFINE(LPPACASRR1, offsetof(struct lppaca, saved_srr1));
 	DEFINE(LPPACAANYINT, offsetof(struct lppaca, int_dword.any_int));
 	DEFINE(LPPACADECRINT, offsetof(struct lppaca, int_dword.fields.decr_int));
+<<<<<<< HEAD
 	DEFINE(LPPACA_PMCINUSE, offsetof(struct lppaca, pmcregs_in_use));
 	DEFINE(LPPACA_DTLIDX, offsetof(struct lppaca, dtl_idx));
 	DEFINE(LPPACA_YIELDCOUNT, offsetof(struct lppaca, yield_count));
+=======
+	DEFINE(LPPACA_DTLIDX, offsetof(struct lppaca, dtl_idx));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DEFINE(PACA_DTL_RIDX, offsetof(struct paca_struct, dtl_ridx));
 #endif /* CONFIG_PPC_STD_MMU_64 */
 	DEFINE(PACAEMERGSP, offsetof(struct paca_struct, emergency_sp));
@@ -206,7 +229,15 @@ int main(void)
 	DEFINE(PACA_USER_TIME, offsetof(struct paca_struct, user_time));
 	DEFINE(PACA_SYSTEM_TIME, offsetof(struct paca_struct, system_time));
 	DEFINE(PACA_TRAP_SAVE, offsetof(struct paca_struct, trap_save));
+<<<<<<< HEAD
 	DEFINE(PACA_NAPSTATELOST, offsetof(struct paca_struct, nap_state_lost));
+=======
+#ifdef CONFIG_KVM_BOOK3S_64_HANDLER
+	DEFINE(PACA_KVM_SVCPU, offsetof(struct paca_struct, shadow_vcpu));
+	DEFINE(SVCPU_SLB, offsetof(struct kvmppc_book3s_shadow_vcpu, slb));
+	DEFINE(SVCPU_SLB_MAX, offsetof(struct kvmppc_book3s_shadow_vcpu, slb_max));
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_PPC64 */
 
 	/* RTAS */
@@ -382,6 +413,20 @@ int main(void)
 	DEFINE(BUG_ENTRY_SIZE, sizeof(struct bug_entry));
 #endif
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_PPC_ISERIES
+	/* the assembler miscalculates the VSID values */
+	DEFINE(PAGE_OFFSET_ESID, GET_ESID(PAGE_OFFSET));
+	DEFINE(PAGE_OFFSET_VSID, KERNEL_VSID(PAGE_OFFSET));
+	DEFINE(VMALLOC_START_ESID, GET_ESID(VMALLOC_START));
+	DEFINE(VMALLOC_START_VSID, KERNEL_VSID(VMALLOC_START));
+
+	/* alpaca */
+	DEFINE(ALPACA_SIZE, sizeof(struct alpaca));
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DEFINE(PGD_TABLE_SIZE, PGD_TABLE_SIZE);
 	DEFINE(PTE_SIZE, sizeof(pte_t));
 
@@ -390,6 +435,7 @@ int main(void)
 	DEFINE(VCPU_HOST_PID, offsetof(struct kvm_vcpu, arch.host_pid));
 	DEFINE(VCPU_GPRS, offsetof(struct kvm_vcpu, arch.gpr));
 	DEFINE(VCPU_VRSAVE, offsetof(struct kvm_vcpu, arch.vrsave));
+<<<<<<< HEAD
 	DEFINE(VCPU_FPRS, offsetof(struct kvm_vcpu, arch.fpr));
 	DEFINE(VCPU_FPSCR, offsetof(struct kvm_vcpu, arch.fpscr));
 #ifdef CONFIG_ALTIVEC
@@ -552,6 +598,69 @@ int main(void)
 #endif /* CONFIG_KVM_BOOK3S_64_HV */
 
 #else /* CONFIG_PPC_BOOK3S */
+=======
+	DEFINE(VCPU_SPRG4, offsetof(struct kvm_vcpu, arch.sprg4));
+	DEFINE(VCPU_SPRG5, offsetof(struct kvm_vcpu, arch.sprg5));
+	DEFINE(VCPU_SPRG6, offsetof(struct kvm_vcpu, arch.sprg6));
+	DEFINE(VCPU_SPRG7, offsetof(struct kvm_vcpu, arch.sprg7));
+	DEFINE(VCPU_SHADOW_PID, offsetof(struct kvm_vcpu, arch.shadow_pid));
+	DEFINE(VCPU_SHARED, offsetof(struct kvm_vcpu, arch.shared));
+	DEFINE(VCPU_SHARED_MSR, offsetof(struct kvm_vcpu_arch_shared, msr));
+
+	/* book3s */
+#ifdef CONFIG_PPC_BOOK3S
+	DEFINE(VCPU_HOST_RETIP, offsetof(struct kvm_vcpu, arch.host_retip));
+	DEFINE(VCPU_HOST_MSR, offsetof(struct kvm_vcpu, arch.host_msr));
+	DEFINE(VCPU_SHADOW_MSR, offsetof(struct kvm_vcpu, arch.shadow_msr));
+	DEFINE(VCPU_TRAMPOLINE_LOWMEM, offsetof(struct kvm_vcpu, arch.trampoline_lowmem));
+	DEFINE(VCPU_TRAMPOLINE_ENTER, offsetof(struct kvm_vcpu, arch.trampoline_enter));
+	DEFINE(VCPU_HIGHMEM_HANDLER, offsetof(struct kvm_vcpu, arch.highmem_handler));
+	DEFINE(VCPU_RMCALL, offsetof(struct kvm_vcpu, arch.rmcall));
+	DEFINE(VCPU_HFLAGS, offsetof(struct kvm_vcpu, arch.hflags));
+	DEFINE(VCPU_SVCPU, offsetof(struct kvmppc_vcpu_book3s, shadow_vcpu) -
+			   offsetof(struct kvmppc_vcpu_book3s, vcpu));
+	DEFINE(SVCPU_CR, offsetof(struct kvmppc_book3s_shadow_vcpu, cr));
+	DEFINE(SVCPU_XER, offsetof(struct kvmppc_book3s_shadow_vcpu, xer));
+	DEFINE(SVCPU_CTR, offsetof(struct kvmppc_book3s_shadow_vcpu, ctr));
+	DEFINE(SVCPU_LR, offsetof(struct kvmppc_book3s_shadow_vcpu, lr));
+	DEFINE(SVCPU_PC, offsetof(struct kvmppc_book3s_shadow_vcpu, pc));
+	DEFINE(SVCPU_R0, offsetof(struct kvmppc_book3s_shadow_vcpu, gpr[0]));
+	DEFINE(SVCPU_R1, offsetof(struct kvmppc_book3s_shadow_vcpu, gpr[1]));
+	DEFINE(SVCPU_R2, offsetof(struct kvmppc_book3s_shadow_vcpu, gpr[2]));
+	DEFINE(SVCPU_R3, offsetof(struct kvmppc_book3s_shadow_vcpu, gpr[3]));
+	DEFINE(SVCPU_R4, offsetof(struct kvmppc_book3s_shadow_vcpu, gpr[4]));
+	DEFINE(SVCPU_R5, offsetof(struct kvmppc_book3s_shadow_vcpu, gpr[5]));
+	DEFINE(SVCPU_R6, offsetof(struct kvmppc_book3s_shadow_vcpu, gpr[6]));
+	DEFINE(SVCPU_R7, offsetof(struct kvmppc_book3s_shadow_vcpu, gpr[7]));
+	DEFINE(SVCPU_R8, offsetof(struct kvmppc_book3s_shadow_vcpu, gpr[8]));
+	DEFINE(SVCPU_R9, offsetof(struct kvmppc_book3s_shadow_vcpu, gpr[9]));
+	DEFINE(SVCPU_R10, offsetof(struct kvmppc_book3s_shadow_vcpu, gpr[10]));
+	DEFINE(SVCPU_R11, offsetof(struct kvmppc_book3s_shadow_vcpu, gpr[11]));
+	DEFINE(SVCPU_R12, offsetof(struct kvmppc_book3s_shadow_vcpu, gpr[12]));
+	DEFINE(SVCPU_R13, offsetof(struct kvmppc_book3s_shadow_vcpu, gpr[13]));
+	DEFINE(SVCPU_HOST_R1, offsetof(struct kvmppc_book3s_shadow_vcpu, host_r1));
+	DEFINE(SVCPU_HOST_R2, offsetof(struct kvmppc_book3s_shadow_vcpu, host_r2));
+	DEFINE(SVCPU_VMHANDLER, offsetof(struct kvmppc_book3s_shadow_vcpu,
+					 vmhandler));
+	DEFINE(SVCPU_SCRATCH0, offsetof(struct kvmppc_book3s_shadow_vcpu,
+					scratch0));
+	DEFINE(SVCPU_SCRATCH1, offsetof(struct kvmppc_book3s_shadow_vcpu,
+					scratch1));
+	DEFINE(SVCPU_IN_GUEST, offsetof(struct kvmppc_book3s_shadow_vcpu,
+					in_guest));
+	DEFINE(SVCPU_FAULT_DSISR, offsetof(struct kvmppc_book3s_shadow_vcpu,
+					   fault_dsisr));
+	DEFINE(SVCPU_FAULT_DAR, offsetof(struct kvmppc_book3s_shadow_vcpu,
+					 fault_dar));
+	DEFINE(SVCPU_LAST_INST, offsetof(struct kvmppc_book3s_shadow_vcpu,
+					 last_inst));
+	DEFINE(SVCPU_SHADOW_SRR1, offsetof(struct kvmppc_book3s_shadow_vcpu,
+					   shadow_srr1));
+#ifdef CONFIG_PPC_BOOK3S_32
+	DEFINE(SVCPU_SR, offsetof(struct kvmppc_book3s_shadow_vcpu, sr));
+#endif
+#else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DEFINE(VCPU_CR, offsetof(struct kvm_vcpu, arch.cr));
 	DEFINE(VCPU_XER, offsetof(struct kvm_vcpu, arch.xer));
 	DEFINE(VCPU_LR, offsetof(struct kvm_vcpu, arch.lr));
@@ -561,7 +670,11 @@ int main(void)
 	DEFINE(VCPU_FAULT_DEAR, offsetof(struct kvm_vcpu, arch.fault_dear));
 	DEFINE(VCPU_FAULT_ESR, offsetof(struct kvm_vcpu, arch.fault_esr));
 #endif /* CONFIG_PPC_BOOK3S */
+<<<<<<< HEAD
 #endif /* CONFIG_KVM */
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_KVM_GUEST
 	DEFINE(KVM_MAGIC_SCRATCH1, offsetof(struct kvm_vcpu_arch_shared,
@@ -591,6 +704,7 @@ int main(void)
 	DEFINE(TLBCAM_MAS7, offsetof(struct tlbcam, MAS7));
 #endif
 
+<<<<<<< HEAD
 #if defined(CONFIG_KVM) && defined(CONFIG_SPE)
 	DEFINE(VCPU_EVR, offsetof(struct kvm_vcpu, arch.evr[0]));
 	DEFINE(VCPU_ACC, offsetof(struct kvm_vcpu, arch.acc));
@@ -598,6 +712,8 @@ int main(void)
 	DEFINE(VCPU_HOST_SPEFSCR, offsetof(struct kvm_vcpu, arch.host_spefscr));
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_KVM_EXIT_TIMING
 	DEFINE(VCPU_TIMING_EXIT_TBU, offsetof(struct kvm_vcpu,
 						arch.timing_exit.tv32.tbu));
@@ -609,6 +725,7 @@ int main(void)
 					arch.timing_last_enter.tv32.tbl));
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_PPC_POWERNV
 	DEFINE(OPAL_MC_GPR3, offsetof(struct opal_machine_check_event, gpr3));
 	DEFINE(OPAL_MC_SRR0, offsetof(struct opal_machine_check_event, srr0));
@@ -616,5 +733,7 @@ int main(void)
 	DEFINE(PACA_OPAL_MC_EVT, offsetof(struct paca_struct, opal_mc_evt));
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }

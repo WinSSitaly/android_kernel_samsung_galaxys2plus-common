@@ -13,6 +13,9 @@
 
 #define COMMAND_LINE_SIZE	256
 
+<<<<<<< HEAD
 extern void set_except_vector(int n, void *addr);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

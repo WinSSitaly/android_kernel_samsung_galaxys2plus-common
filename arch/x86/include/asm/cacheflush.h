@@ -3,7 +3,10 @@
 
 /* Caches aren't brain-dead on the intel. */
 #include <asm-generic/cacheflush.h>
+<<<<<<< HEAD
 #include <asm/special_insns.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_X86_PAT
 /*

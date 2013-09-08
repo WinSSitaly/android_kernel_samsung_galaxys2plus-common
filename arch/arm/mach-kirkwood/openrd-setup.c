@@ -83,11 +83,14 @@ static struct i2c_board_info i2c_board_info[] __initdata = {
 	},
 };
 
+<<<<<<< HEAD
 static struct platform_device openrd_client_audio_device = {
 	.name		= "openrd-client-audio",
 	.id		= -1,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __initdata uart1;
 
 static int __init sd_uart_selection(char *str)
@@ -177,7 +180,10 @@ static void __init openrd_init(void)
 	kirkwood_i2c_init();
 
 	if (machine_is_openrd_client() || machine_is_openrd_ultimate()) {
+<<<<<<< HEAD
 		platform_device_register(&openrd_client_audio_device);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		i2c_register_board_info(0, i2c_board_info,
 			ARRAY_SIZE(i2c_board_info));
 		kirkwood_audio_init();
@@ -220,38 +226,59 @@ subsys_initcall(openrd_pci_init);
 #ifdef CONFIG_MACH_OPENRD_BASE
 MACHINE_START(OPENRD_BASE, "Marvell OpenRD Base Board")
 	/* Maintainer: Dhaval Vasa <dhaval.vasa@einfochips.com> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= 0x00000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= openrd_init,
 	.map_io		= kirkwood_map_io,
 	.init_early	= kirkwood_init_early,
 	.init_irq	= kirkwood_init_irq,
 	.timer		= &kirkwood_timer,
+<<<<<<< HEAD
 	.restart	= kirkwood_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 
 #ifdef CONFIG_MACH_OPENRD_CLIENT
 MACHINE_START(OPENRD_CLIENT, "Marvell OpenRD Client Board")
 	/* Maintainer: Dhaval Vasa <dhaval.vasa@einfochips.com> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= 0x00000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= openrd_init,
 	.map_io		= kirkwood_map_io,
 	.init_early	= kirkwood_init_early,
 	.init_irq	= kirkwood_init_irq,
 	.timer		= &kirkwood_timer,
+<<<<<<< HEAD
 	.restart	= kirkwood_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 
 #ifdef CONFIG_MACH_OPENRD_ULTIMATE
 MACHINE_START(OPENRD_ULTIMATE, "Marvell OpenRD Ultimate Board")
 	/* Maintainer: Dhaval Vasa <dhaval.vasa@einfochips.com> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= 0x00000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= openrd_init,
 	.map_io		= kirkwood_map_io,
 	.init_early	= kirkwood_init_early,
 	.init_irq	= kirkwood_init_irq,
 	.timer		= &kirkwood_timer,
+<<<<<<< HEAD
 	.restart	= kirkwood_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif

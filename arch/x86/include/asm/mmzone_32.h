@@ -14,6 +14,15 @@ extern struct pglist_data *node_data[];
 
 #include <asm/numaq.h>
 
+<<<<<<< HEAD
+=======
+extern void resume_map_numa_kva(pgd_t *pgd);
+
+#else /* !CONFIG_NUMA */
+
+static inline void resume_map_numa_kva(pgd_t *pgd) {}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_NUMA */
 
 #ifdef CONFIG_DISCONTIGMEM
@@ -28,15 +37,24 @@ extern struct pglist_data *node_data[];
  *    64Gb / 4096bytes/page = 16777216 pages
  */
 #define MAX_NR_PAGES 16777216
+<<<<<<< HEAD
 #define MAX_SECTIONS 1024
 #define PAGES_PER_SECTION (MAX_NR_PAGES/MAX_SECTIONS)
+=======
+#define MAX_ELEMENTS 1024
+#define PAGES_PER_ELEMENT (MAX_NR_PAGES/MAX_ELEMENTS)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern s8 physnode_map[];
 
 static inline int pfn_to_nid(unsigned long pfn)
 {
 #ifdef CONFIG_NUMA
+<<<<<<< HEAD
 	return((int) physnode_map[(pfn) / PAGES_PER_SECTION]);
+=======
+	return((int) physnode_map[(pfn) / PAGES_PER_ELEMENT]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 	return 0;
 #endif

@@ -31,7 +31,10 @@
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/kthread.h>
+<<<<<<< HEAD
 #include <linux/firmware.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "osdep_service.h"
 #include "drv_types.h"
 #include "xmit_osdep.h"
@@ -178,7 +181,11 @@ static uint loadparam(struct _adapter *padapter, struct  net_device *pnetdev)
 
 static int r871x_net_set_mac_address(struct net_device *pnetdev, void *p)
 {
+<<<<<<< HEAD
 	struct _adapter *padapter = (struct _adapter *)netdev_priv(pnetdev);
+=======
+	struct _adapter *padapter = (struct _adapter *)_netdev_priv(pnetdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sockaddr *addr = p;
 
 	if (padapter->bup == false)
@@ -188,7 +195,11 @@ static int r871x_net_set_mac_address(struct net_device *pnetdev, void *p)
 
 static struct net_device_stats *r871x_net_get_stats(struct net_device *pnetdev)
 {
+<<<<<<< HEAD
 	struct _adapter *padapter = (struct _adapter *) netdev_priv(pnetdev);
+=======
+	struct _adapter *padapter = (struct _adapter *) _netdev_priv(pnetdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct xmit_priv *pxmitpriv = &(padapter->xmitpriv);
 	struct recv_priv *precvpriv = &(padapter->recvpriv);
 
@@ -222,7 +233,11 @@ struct net_device *r8712_init_netdev(void)
 		strcpy(ifname, "wlan%d");
 		dev_alloc_name(pnetdev, ifname);
 	}
+<<<<<<< HEAD
 	padapter = (struct _adapter *) netdev_priv(pnetdev);
+=======
+	padapter = (struct _adapter *) _netdev_priv(pnetdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	padapter->pnetdev = pnetdev;
 	printk(KERN_INFO "r8712u: register rtl8712_netdev_ops to"
 	       " netdev_ops\n");
@@ -262,15 +277,26 @@ static void start_drv_timers(struct _adapter *padapter)
 	_set_timer(&padapter->mlmepriv.wdg_timer, 2000);
 }
 
+<<<<<<< HEAD
 void r8712_stop_drv_timers(struct _adapter *padapter)
 {
 	_cancel_timer_ex(&padapter->mlmepriv.assoc_timer);
+=======
+static void stop_drv_timers(struct _adapter *padapter)
+{
+	_cancel_timer_ex(&padapter->mlmepriv.assoc_timer);
+	_cancel_timer_ex(&padapter->mlmepriv.sitesurveyctrl.
+			 sitesurvey_ctrl_timer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	_cancel_timer_ex(&padapter->securitypriv.tkip_timer);
 	_cancel_timer_ex(&padapter->mlmepriv.scan_to_timer);
 	_cancel_timer_ex(&padapter->mlmepriv.dhcp_timer);
 	_cancel_timer_ex(&padapter->mlmepriv.wdg_timer);
+<<<<<<< HEAD
 	_cancel_timer_ex(&padapter->mlmepriv.sitesurveyctrl.
 			 sitesurvey_ctrl_timer);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static u8 init_default_value(struct _adapter *padapter)
@@ -287,9 +313,12 @@ static u8 init_default_value(struct _adapter *padapter)
 	pxmitpriv->vcs_type = pregistrypriv->vcs_type;
 	pxmitpriv->rts_thresh = pregistrypriv->rts_thresh;
 	pxmitpriv->frag_len = pregistrypriv->frag_thresh;
+<<<<<<< HEAD
 	/* mlme_priv */
 	/* Maybe someday we should rename this variable to "active_mode"(Jeff)*/
 	pmlmepriv->passive_mode = 1; /* 1: active, 0: passive. */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*ht_priv*/
 	{
 		int i;
@@ -330,6 +359,10 @@ u8 r8712_init_drv_sw(struct _adapter *padapter)
 	padapter->stapriv.padapter = padapter;
 	r8712_init_bcmc_stainfo(padapter);
 	r8712_init_pwrctrl_priv(padapter);
+<<<<<<< HEAD
+=======
+	sema_init(&(padapter->pwrctrlpriv.pnp_pwr_mgnt_sema), 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mp871xinit(padapter);
 	if (init_default_value(padapter) != _SUCCESS)
 		return _FAIL;
@@ -347,12 +380,20 @@ u8 r8712_free_drv_sw(struct _adapter *padapter)
 	r8712_free_mlme_priv(&padapter->mlmepriv);
 	r8712_free_io_queue(padapter);
 	_free_xmit_priv(&padapter->xmitpriv);
+<<<<<<< HEAD
 	if (padapter->fw_found)
 		_r8712_free_sta_priv(&padapter->stapriv);
 	_r8712_free_recv_priv(&padapter->recvpriv);
 	mp871xdeinit(padapter);
 	if (pnetdev)
 		free_netdev(pnetdev);
+=======
+	_r8712_free_sta_priv(&padapter->stapriv);
+	_r8712_free_recv_priv(&padapter->recvpriv);
+	mp871xdeinit(padapter);
+	if (pnetdev)
+		os_free_netdev(pnetdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return _SUCCESS;
 }
 
@@ -379,6 +420,7 @@ static void enable_video_mode(struct _adapter *padapter, int cbw40_value)
 	r8712_fw_cmd(padapter, intcmd);
 }
 
+<<<<<<< HEAD
 /**
  *
  * This function intends to handle the activation of an interface
@@ -390,6 +432,12 @@ static int netdev_open(struct net_device *pnetdev)
 	struct _adapter *padapter = (struct _adapter *)netdev_priv(pnetdev);
 
 	mutex_lock(&padapter->mutex_start);
+=======
+static int netdev_open(struct net_device *pnetdev)
+{
+	struct _adapter *padapter = (struct _adapter *)_netdev_priv(pnetdev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (padapter->bup == false) {
 		padapter->bDriverStopped = false;
 		padapter->bSurpriseRemoved = false;
@@ -437,12 +485,16 @@ static int netdev_open(struct net_device *pnetdev)
 	/* start driver mlme relation timer */
 	start_drv_timers(padapter);
 	padapter->ledpriv.LedControlHandler(padapter, LED_CTL_NO_LINK);
+<<<<<<< HEAD
 	mutex_unlock(&padapter->mutex_start);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 netdev_open_error:
 	padapter->bup = false;
 	netif_carrier_off(pnetdev);
 	netif_stop_queue(pnetdev);
+<<<<<<< HEAD
 	mutex_unlock(&padapter->mutex_start);
 	return -1;
 }
@@ -456,6 +508,14 @@ netdev_open_error:
 static int netdev_close(struct net_device *pnetdev)
 {
 	struct _adapter *padapter = (struct _adapter *) netdev_priv(pnetdev);
+=======
+	return -1;
+}
+
+static int netdev_close(struct net_device *pnetdev)
+{
+	struct _adapter *padapter = (struct _adapter *) _netdev_priv(pnetdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Close LED*/
 	padapter->ledpriv.LedControlHandler(padapter, LED_CTL_POWER_OFF);
@@ -475,6 +535,11 @@ static int netdev_close(struct net_device *pnetdev)
 	r8712_free_assoc_resources(padapter);
 	/*s2-4.*/
 	r8712_free_network_queue(padapter);
+<<<<<<< HEAD
+=======
+	/*Stop driver mlme relation timer*/
+	stop_drv_timers(padapter);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

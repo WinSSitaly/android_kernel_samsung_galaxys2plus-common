@@ -20,9 +20,15 @@
  */
 
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/mmc/host.h>
 #include "sdhci-pltfm.h"
+=======
+#include <linux/mmc/host.h>
+#include "sdhci-of.h"
+#include "sdhci.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Ops and quirks for the Nintendo Wii SDHCI controllers.
@@ -51,6 +57,7 @@ static void sdhci_hlwd_writeb(struct sdhci_host *host, u8 val, int reg)
 	udelay(SDHCI_HLWD_WRITE_DELAY);
 }
 
+<<<<<<< HEAD
 static struct sdhci_ops sdhci_hlwd_ops = {
 	.read_l = sdhci_be32bs_readl,
 	.read_w = sdhci_be32bs_readw,
@@ -98,3 +105,17 @@ module_platform_driver(sdhci_hlwd_driver);
 MODULE_DESCRIPTION("Nintendo Wii SDHCI OF driver");
 MODULE_AUTHOR("The GameCube Linux Team, Albert Herranz");
 MODULE_LICENSE("GPL v2");
+=======
+struct sdhci_of_data sdhci_hlwd = {
+	.quirks = SDHCI_QUIRK_32BIT_DMA_ADDR |
+		  SDHCI_QUIRK_32BIT_DMA_SIZE,
+	.ops = {
+		.read_l = sdhci_be32bs_readl,
+		.read_w = sdhci_be32bs_readw,
+		.read_b = sdhci_be32bs_readb,
+		.write_l = sdhci_hlwd_writel,
+		.write_w = sdhci_hlwd_writew,
+		.write_b = sdhci_hlwd_writeb,
+	},
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

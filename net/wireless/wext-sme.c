@@ -5,12 +5,18 @@
  * Copyright (C) 2009   Intel Corporation. All rights reserved.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/etherdevice.h>
 #include <linux/if_arp.h>
 #include <linux/slab.h>
 #include <net/cfg80211.h>
+<<<<<<< HEAD
 #include <net/cfg80211-wext.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "wext-compat.h"
 #include "nl80211.h"
 
@@ -30,9 +36,12 @@ int cfg80211_mgd_wext_connect(struct cfg80211_registered_device *rdev,
 	wdev->wext.connect.ie = wdev->wext.ie;
 	wdev->wext.connect.ie_len = wdev->wext.ie_len;
 
+<<<<<<< HEAD
 	/* Use default background scan period */
 	wdev->wext.connect.bg_scan_period = -1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (wdev->wext.keys) {
 		wdev->wext.keys->def = wdev->wext.default_key;
 		wdev->wext.keys->defmgmt = wdev->wext.default_mgmt_key;
@@ -133,7 +142,11 @@ int cfg80211_mgd_wext_giwfreq(struct net_device *dev,
 	struct ieee80211_channel *chan = NULL;
 
 	/* call only for station! */
+<<<<<<< HEAD
 	if (WARN_ON(wdev->iftype != NL80211_IFTYPE_STATION))
+=======
+	if ((wdev->iftype != NL80211_IFTYPE_P2P_CLIENT) && WARN_ON(wdev->iftype != NL80211_IFTYPE_STATION))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	wdev_lock(wdev);
@@ -370,6 +383,10 @@ int cfg80211_wext_siwgenie(struct net_device *dev,
 	wdev_unlock(wdev);
 	return err;
 }
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL_GPL(cfg80211_wext_siwgenie);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int cfg80211_wext_siwmlme(struct net_device *dev,
 			  struct iw_request_info *info,
@@ -406,3 +423,7 @@ int cfg80211_wext_siwmlme(struct net_device *dev,
 
 	return err;
 }
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL_GPL(cfg80211_wext_siwmlme);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

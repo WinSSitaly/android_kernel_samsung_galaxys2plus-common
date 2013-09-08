@@ -11,7 +11,14 @@
 
 #define EXT3FS_DEBUG
 
+<<<<<<< HEAD
 #include "ext3.h"
+=======
+#include <linux/ext3_jbd.h>
+
+#include <linux/errno.h>
+#include <linux/slab.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 #define outside(b, first, last)	((b) < (first) || (b) >= (last))

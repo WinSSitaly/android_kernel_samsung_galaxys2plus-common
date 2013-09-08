@@ -290,10 +290,17 @@ int snd_seq_timer_open(struct snd_seq_queue *q)
 			tid.device = SNDRV_TIMER_GLOBAL_SYSTEM;
 			err = snd_timer_open(&t, str, &tid, q->queue);
 		}
+<<<<<<< HEAD
 	}
 	if (err < 0) {
 		snd_printk(KERN_ERR "seq fatal error: cannot create timer (%i)\n", err);
 		return err;
+=======
+		if (err < 0) {
+			snd_printk(KERN_ERR "seq fatal error: cannot create timer (%i)\n", err);
+			return err;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	t->callback = snd_seq_timer_interrupt;
 	t->callback_data = q;

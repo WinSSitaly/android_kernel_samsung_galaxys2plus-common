@@ -17,9 +17,15 @@
 #include <linux/delay.h>
 #include <linux/pm.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/spi/spi.h>
 #include <linux/slab.h>
 #include <linux/of_device.h>
+=======
+#include <linux/platform_device.h>
+#include <linux/spi/spi.h>
+#include <linux/slab.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/pcm.h>
 #include <sound/pcm_params.h>
@@ -181,7 +187,11 @@ SND_SOC_DAPM_OUTPUT("SPKOUTP"),
 SND_SOC_DAPM_OUTPUT("SPKOUTN"),
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dapm_route wm8510_dapm_routes[] = {
+=======
+static const struct snd_soc_dapm_route audio_map[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Mono output mixer */
 	{"Mono Mixer", "PCM Playback Switch", "DAC"},
 	{"Mono Mixer", "Aux Playback Switch", "Aux Input"},
@@ -213,6 +223,20 @@ static const struct snd_soc_dapm_route wm8510_dapm_routes[] = {
 	{"ADC", NULL, "Boost Mixer"},
 };
 
+<<<<<<< HEAD
+=======
+static int wm8510_add_widgets(struct snd_soc_codec *codec)
+{
+	struct snd_soc_dapm_context *dapm = &codec->dapm;
+
+	snd_soc_dapm_new_controls(dapm, wm8510_dapm_widgets,
+				  ARRAY_SIZE(wm8510_dapm_widgets));
+	snd_soc_dapm_add_routes(dapm, audio_map, ARRAY_SIZE(audio_map));
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct pll_ {
 	unsigned int pre_div:4; /* prescale - 1 */
 	unsigned int n:4;
@@ -468,8 +492,11 @@ static int wm8510_set_bias_level(struct snd_soc_codec *codec,
 		power1 |= WM8510_POWER1_BIASEN | WM8510_POWER1_BUFIOEN;
 
 		if (codec->dapm.bias_level == SND_SOC_BIAS_OFF) {
+<<<<<<< HEAD
 			snd_soc_cache_sync(codec);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Initial cap charge at VMID 5k */
 			snd_soc_write(codec, WM8510_POWER1, power1 | 0x3);
 			mdelay(100);
@@ -497,7 +524,11 @@ static int wm8510_set_bias_level(struct snd_soc_codec *codec,
 #define WM8510_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE |\
 	SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops wm8510_dai_ops = {
+=======
+static struct snd_soc_dai_ops wm8510_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params	= wm8510_pcm_hw_params,
 	.digital_mute	= wm8510_mute,
 	.set_fmt	= wm8510_set_dai_fmt,
@@ -523,7 +554,11 @@ static struct snd_soc_dai_driver wm8510_dai = {
 	.symmetric_rates = 1,
 };
 
+<<<<<<< HEAD
 static int wm8510_suspend(struct snd_soc_codec *codec)
+=======
+static int wm8510_suspend(struct snd_soc_codec *codec, pm_message_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	wm8510_set_bias_level(codec, SND_SOC_BIAS_OFF);
 	return 0;
@@ -531,7 +566,22 @@ static int wm8510_suspend(struct snd_soc_codec *codec)
 
 static int wm8510_resume(struct snd_soc_codec *codec)
 {
+<<<<<<< HEAD
 	wm8510_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
+=======
+	int i;
+	u8 data[2];
+	u16 *cache = codec->reg_cache;
+
+	/* Sync reg_cache with the hardware */
+	for (i = 0; i < ARRAY_SIZE(wm8510_reg); i++) {
+		data[0] = (i << 1) | ((cache[i] >> 8) & 0x0001);
+		data[1] = cache[i] & 0x00ff;
+		codec->hw_write(codec->control_data, data, 2);
+	}
+	wm8510_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -550,6 +600,12 @@ static int wm8510_probe(struct snd_soc_codec *codec)
 
 	/* power on device */
 	wm8510_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
+<<<<<<< HEAD
+=======
+	snd_soc_add_controls(codec, wm8510_snd_controls,
+				ARRAY_SIZE(wm8510_snd_controls));
+	wm8510_add_widgets(codec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -573,6 +629,7 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8510 = {
 	.reg_cache_size = ARRAY_SIZE(wm8510_reg),
 	.reg_word_size = sizeof(u16),
 	.reg_cache_default =wm8510_reg,
+<<<<<<< HEAD
 
 	.controls = wm8510_snd_controls,
 	.num_controls = ARRAY_SIZE(wm8510_snd_controls),
@@ -585,6 +642,8 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8510 = {
 static const struct of_device_id wm8510_of_match[] = {
 	{ .compatible = "wlf,wm8510" },
 	{ },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #if defined(CONFIG_SPI_MASTER)
@@ -617,7 +676,10 @@ static struct spi_driver wm8510_spi_driver = {
 	.driver = {
 		.name	= "wm8510",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.of_match_table = wm8510_of_match,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe		= wm8510_spi_probe,
 	.remove		= __devexit_p(wm8510_spi_remove),
@@ -659,9 +721,14 @@ MODULE_DEVICE_TABLE(i2c, wm8510_i2c_id);
 
 static struct i2c_driver wm8510_i2c_driver = {
 	.driver = {
+<<<<<<< HEAD
 		.name = "wm8510",
 		.owner = THIS_MODULE,
 		.of_match_table = wm8510_of_match,
+=======
+		.name = "wm8510-codec",
+		.owner = THIS_MODULE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe =    wm8510_i2c_probe,
 	.remove =   __devexit_p(wm8510_i2c_remove),

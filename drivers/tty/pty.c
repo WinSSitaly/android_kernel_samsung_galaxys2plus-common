@@ -21,12 +21,20 @@
 #include <linux/major.h>
 #include <linux/mm.h>
 #include <linux/init.h>
+<<<<<<< HEAD
+=======
+#include <linux/sysctl.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/device.h>
 #include <linux/uaccess.h>
 #include <linux/bitops.h>
 #include <linux/devpts_fs.h>
 #include <linux/slab.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_UNIX98_PTYS
 static struct tty_driver *ptm_driver;
@@ -47,6 +55,10 @@ static void pty_close(struct tty_struct *tty, struct file *filp)
 	tty->packet = 0;
 	if (!tty->link)
 		return;
+<<<<<<< HEAD
+=======
+	tty->link->packet = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_bit(TTY_OTHER_CLOSED, &tty->link->flags);
 	wake_up_interruptible(&tty->link->read_wait);
 	wake_up_interruptible(&tty->link->write_wait);
@@ -391,6 +403,10 @@ static void __init legacy_pty_init(void)
 	if (!pty_slave_driver)
 		panic("Couldn't allocate pty slave driver");
 
+<<<<<<< HEAD
+=======
+	pty_driver->owner = THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pty_driver->driver_name = "pty_master";
 	pty_driver->name = "pty";
 	pty_driver->major = PTY_MASTER_MAJOR;
@@ -408,6 +424,10 @@ static void __init legacy_pty_init(void)
 	pty_driver->other = pty_slave_driver;
 	tty_set_operations(pty_driver, &master_pty_ops_bsd);
 
+<<<<<<< HEAD
+=======
+	pty_slave_driver->owner = THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pty_slave_driver->driver_name = "pty_slave";
 	pty_slave_driver->name = "ttyp";
 	pty_slave_driver->major = PTY_SLAVE_MAJOR;
@@ -434,9 +454,72 @@ static inline void legacy_pty_init(void) { }
 
 /* Unix98 devices */
 #ifdef CONFIG_UNIX98_PTYS
+<<<<<<< HEAD
 
 static struct cdev ptmx_cdev;
 
+=======
+/*
+ * sysctl support for setting limits on the number of Unix98 ptys allocated.
+ * Otherwise one can eat up all kernel memory by opening /dev/ptmx repeatedly.
+ */
+int pty_limit = NR_UNIX98_PTY_DEFAULT;
+static int pty_limit_min;
+static int pty_limit_max = NR_UNIX98_PTY_MAX;
+static int tty_count;
+static int pty_count;
+
+static inline void pty_inc_count(void)
+{
+	pty_count = (++tty_count) / 2;
+}
+
+static inline void pty_dec_count(void)
+{
+	pty_count = (--tty_count) / 2;
+}
+
+static struct cdev ptmx_cdev;
+
+static struct ctl_table pty_table[] = {
+	{
+		.procname	= "max",
+		.maxlen		= sizeof(int),
+		.mode		= 0644,
+		.data		= &pty_limit,
+		.proc_handler	= proc_dointvec_minmax,
+		.extra1		= &pty_limit_min,
+		.extra2		= &pty_limit_max,
+	}, {
+		.procname	= "nr",
+		.maxlen		= sizeof(int),
+		.mode		= 0444,
+		.data		= &pty_count,
+		.proc_handler	= proc_dointvec,
+	}, 
+	{}
+};
+
+static struct ctl_table pty_kern_table[] = {
+	{
+		.procname	= "pty",
+		.mode		= 0555,
+		.child		= pty_table,
+	},
+	{}
+};
+
+static struct ctl_table pty_root_table[] = {
+	{
+		.procname	= "kernel",
+		.mode		= 0555,
+		.child		= pty_kern_table,
+	},
+	{}
+};
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int pty_unix98_ioctl(struct tty_struct *tty,
 			    unsigned int cmd, unsigned long arg)
 {
@@ -464,8 +547,15 @@ static int pty_unix98_ioctl(struct tty_struct *tty,
 static struct tty_struct *ptm_unix98_lookup(struct tty_driver *driver,
 		struct inode *ptm_inode, int idx)
 {
+<<<<<<< HEAD
 	/* Master must be open via /dev/ptmx */
 	return ERR_PTR(-EIO);
+=======
+	struct tty_struct *tty = devpts_get_tty(ptm_inode, idx);
+	if (tty)
+		tty = tty->link;
+	return tty;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -536,6 +626,11 @@ static int pty_unix98_install(struct tty_driver *driver, struct tty_struct *tty)
 	 */
 	tty_driver_kref_get(driver);
 	tty->count++;
+<<<<<<< HEAD
+=======
+	pty_inc_count(); /* tty */
+	pty_inc_count(); /* tty->link */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 err_free_mem:
 	deinitialize_tty_struct(o_tty);
@@ -547,18 +642,28 @@ err_free_tty:
 	return -ENOMEM;
 }
 
+<<<<<<< HEAD
 static void ptm_unix98_remove(struct tty_driver *driver, struct tty_struct *tty)
 {
 }
 
 static void pts_unix98_remove(struct tty_driver *driver, struct tty_struct *tty)
 {
+=======
+static void pty_unix98_remove(struct tty_driver *driver, struct tty_struct *tty)
+{
+	pty_dec_count();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct tty_operations ptm_unix98_ops = {
 	.lookup = ptm_unix98_lookup,
 	.install = pty_unix98_install,
+<<<<<<< HEAD
 	.remove = ptm_unix98_remove,
+=======
+	.remove = pty_unix98_remove,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.open = pty_open,
 	.close = pty_close,
 	.write = pty_write,
@@ -575,7 +680,11 @@ static const struct tty_operations ptm_unix98_ops = {
 static const struct tty_operations pty_unix98_ops = {
 	.lookup = pts_unix98_lookup,
 	.install = pty_unix98_install,
+<<<<<<< HEAD
 	.remove = pts_unix98_remove,
+=======
+	.remove = pty_unix98_remove,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.open = pty_open,
 	.close = pty_close,
 	.write = pty_write,
@@ -607,9 +716,12 @@ static int ptmx_open(struct inode *inode, struct file *filp)
 
 	nonseekable_open(inode, filp);
 
+<<<<<<< HEAD
 	/* We refuse fsnotify events on ptmx, since it's a shared resource */
 	filp->f_mode |= FMODE_NONOTIFY;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	retval = tty_alloc_file(filp);
 	if (retval)
 		return retval;
@@ -625,7 +737,11 @@ static int ptmx_open(struct inode *inode, struct file *filp)
 
 	mutex_lock(&tty_mutex);
 	tty_lock();
+<<<<<<< HEAD
 	tty = tty_init_dev(ptm_driver, index);
+=======
+	tty = tty_init_dev(ptm_driver, index, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&tty_mutex);
 
 	if (IS_ERR(tty)) {
@@ -670,6 +786,10 @@ static void __init unix98_pty_init(void)
 	if (!pts_driver)
 		panic("Couldn't allocate Unix98 pts driver");
 
+<<<<<<< HEAD
+=======
+	ptm_driver->owner = THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ptm_driver->driver_name = "pty_master";
 	ptm_driver->name = "ptm";
 	ptm_driver->major = UNIX98_PTY_MASTER_MAJOR;
@@ -688,6 +808,10 @@ static void __init unix98_pty_init(void)
 	ptm_driver->other = pts_driver;
 	tty_set_operations(ptm_driver, &ptm_unix98_ops);
 
+<<<<<<< HEAD
+=======
+	pts_driver->owner = THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pts_driver->driver_name = "pty_slave";
 	pts_driver->name = "pts";
 	pts_driver->major = UNIX98_PTY_SLAVE_MAJOR;
@@ -708,6 +832,11 @@ static void __init unix98_pty_init(void)
 	if (tty_register_driver(pts_driver))
 		panic("Couldn't register Unix98 pts driver");
 
+<<<<<<< HEAD
+=======
+	register_sysctl_table(pty_root_table);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Now create the /dev/ptmx special device */
 	tty_default_fops(&ptmx_fops);
 	ptmx_fops.open = ptmx_open;

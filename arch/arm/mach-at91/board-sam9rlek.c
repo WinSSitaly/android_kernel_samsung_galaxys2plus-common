@@ -8,7 +8,10 @@
  */
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/mm.h>
 #include <linux/module.h>
@@ -31,6 +34,10 @@
 
 #include <mach/hardware.h>
 #include <mach/board.h>
+<<<<<<< HEAD
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/at91sam9_smc.h>
 #include <mach/at91_shdwc.h>
 
@@ -41,7 +48,11 @@
 static void __init ek_init_early(void)
 {
 	/* Initialize processor: 12.000 MHz crystal */
+<<<<<<< HEAD
 	at91_initialize(12000000);
+=======
+	at91sam9rl_initialize(12000000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* DBGU on ttyS0. (Rx & Tx only) */
 	at91_register_uart(0, 0, 0);
@@ -53,6 +64,15 @@ static void __init ek_init_early(void)
 	at91_set_serial_console(0);
 }
 
+<<<<<<< HEAD
+=======
+static void __init ek_init_irq(void)
+{
+	at91sam9rl_init_interrupts(NULL);
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * USB HS Device port
  */
@@ -67,8 +87,13 @@ static struct usba_platform_data __initdata ek_usba_udc_data = {
 static struct at91_mmc_data __initdata ek_mmc_data = {
 	.wire4		= 1,
 	.det_pin	= AT91_PIN_PA15,
+<<<<<<< HEAD
 	.wp_pin		= -EINVAL,
 	.vcc_pin	= -EINVAL,
+=======
+//	.wp_pin		= ... not connected
+//	.vcc_pin	= ... not connected
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -88,6 +113,7 @@ static struct mtd_partition __initdata ek_nand_partition[] = {
 	},
 };
 
+<<<<<<< HEAD
 static struct atmel_nand_data __initdata ek_nand_data = {
 	.ale		= 21,
 	.cle		= 22,
@@ -98,6 +124,21 @@ static struct atmel_nand_data __initdata ek_nand_data = {
 	.on_flash_bbt	= 1,
 	.parts		= ek_nand_partition,
 	.num_parts	= ARRAY_SIZE(ek_nand_partition),
+=======
+static struct mtd_partition * __init nand_partitions(int size, int *num_partitions)
+{
+	*num_partitions = ARRAY_SIZE(ek_nand_partition);
+	return ek_nand_partition;
+}
+
+static struct atmel_nand_data __initdata ek_nand_data = {
+	.ale		= 21,
+	.cle		= 22,
+//	.det_pin	= ... not connected
+	.rdy_pin	= AT91_PIN_PD17,
+	.enable_pin	= AT91_PIN_PB6,
+	.partition_info	= nand_partitions,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct sam9_smc_config __initdata ek_nand_smc_config = {
@@ -121,7 +162,11 @@ static struct sam9_smc_config __initdata ek_nand_smc_config = {
 static void __init ek_add_device_nand(void)
 {
 	/* configure chip-select 3 (NAND) */
+<<<<<<< HEAD
 	sam9_smc_configure(0, 3, &ek_nand_smc_config);
+=======
+	sam9_smc_configure(3, &ek_nand_smc_config);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	at91_add_device_nand(&ek_nand_data);
 }
@@ -206,7 +251,10 @@ static struct atmel_lcdfb_info __initdata ek_lcdc_data;
  * reset_pin is not connected: NRST
  */
 static struct ac97c_platform_data ek_ac97_data = {
+<<<<<<< HEAD
 	.reset_pin	= -EINVAL,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -322,8 +370,14 @@ static void __init ek_board_init(void)
 MACHINE_START(AT91SAM9RLEK, "Atmel AT91SAM9RL-EK")
 	/* Maintainer: Atmel */
 	.timer		= &at91sam926x_timer,
+<<<<<<< HEAD
 	.map_io		= at91_map_io,
 	.init_early	= ek_init_early,
 	.init_irq	= at91_init_irq_default,
+=======
+	.map_io		= at91sam9rl_map_io,
+	.init_early	= ek_init_early,
+	.init_irq	= ek_init_irq,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= ek_board_init,
 MACHINE_END

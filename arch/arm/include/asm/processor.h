@@ -55,6 +55,10 @@ struct thread_struct {
 #define start_thread(regs,pc,sp)					\
 ({									\
 	unsigned long *stack = (unsigned long *)sp;			\
+<<<<<<< HEAD
+=======
+	set_fs(USER_DS);						\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(regs->uregs, 0, sizeof(regs->uregs));			\
 	if (current->personality & ADDR_LIMIT_32BIT)			\
 		regs->ARM_cpsr = USR_MODE;				\
@@ -88,8 +92,11 @@ unsigned long get_wchan(struct task_struct *p);
 #define cpu_relax()			barrier()
 #endif
 
+<<<<<<< HEAD
 void cpu_idle_wait(void);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Create a new kernel thread
  */
@@ -124,8 +131,11 @@ static inline void prefetch(const void *ptr)
 
 #endif
 
+<<<<<<< HEAD
 #define HAVE_ARCH_PICK_MMAP_LAYOUT
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #endif /* __ASM_ARM_PROCESSOR_H */

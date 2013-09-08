@@ -113,12 +113,18 @@ static int last_trb(struct xhci_hcd *xhci, struct xhci_ring *ring,
 	if (ring == xhci->event_ring)
 		return trb == &seg->trbs[TRBS_PER_SEGMENT];
 	else
+<<<<<<< HEAD
 		return TRB_TYPE_LINK_LE32(trb->link.control);
+=======
+		return (le32_to_cpu(trb->link.control) & TRB_TYPE_BITMASK)
+			== TRB_TYPE(TRB_LINK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int enqueue_is_link_trb(struct xhci_ring *ring)
 {
 	struct xhci_link_trb *link = &ring->enqueue->link;
+<<<<<<< HEAD
 	return TRB_TYPE_LINK_LE32(link->control);
 }
 
@@ -130,6 +136,10 @@ union xhci_trb *xhci_find_next_enqueue(struct xhci_ring *ring)
 	if (TRB_TYPE_LINK_LE32(ring->enqueue->link.control))
 		return ring->enq_seg->next->trbs;
 	return ring->enqueue;
+=======
+	return ((le32_to_cpu(link->control) & TRB_TYPE_BITMASK) ==
+		TRB_TYPE(TRB_LINK));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Updates trb to point to the next TRB in the ring, and updates seg if the next
@@ -153,6 +163,7 @@ static void next_trb(struct xhci_hcd *xhci,
  * See Cycle bit rules. SW is the consumer for the event ring only.
  * Don't make a ring full of link TRBs.  That would be dumb and this would loop.
  */
+<<<<<<< HEAD
 static void inc_deq(struct xhci_hcd *xhci, struct xhci_ring *ring)
 {
 	unsigned long long addr;
@@ -186,6 +197,29 @@ static void inc_deq(struct xhci_hcd *xhci, struct xhci_ring *ring)
 		}
 	} while (last_trb(xhci, ring, ring->deq_seg, ring->dequeue));
 
+=======
+static void inc_deq(struct xhci_hcd *xhci, struct xhci_ring *ring, bool consumer)
+{
+	union xhci_trb *next = ++(ring->dequeue);
+	unsigned long long addr;
+
+	ring->deq_updates++;
+	/* Update the dequeue pointer further if that was a link TRB or we're at
+	 * the end of an event ring segment (which doesn't have link TRBS)
+	 */
+	while (last_trb(xhci, ring, ring->deq_seg, next)) {
+		if (consumer && last_trb_on_last_seg(xhci, ring, ring->deq_seg, next)) {
+			ring->cycle_state = (ring->cycle_state ? 0 : 1);
+			if (!in_interrupt())
+				xhci_dbg(xhci, "Toggle cycle state for ring %p = %i\n",
+						ring,
+						(unsigned int) ring->cycle_state);
+		}
+		ring->deq_seg = ring->deq_seg->next;
+		ring->dequeue = ring->deq_seg->trbs;
+		next = ring->dequeue;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	addr = (unsigned long long) xhci_trb_virt_to_dma(ring->deq_seg, ring->dequeue);
 }
 
@@ -207,17 +241,24 @@ static void inc_deq(struct xhci_hcd *xhci, struct xhci_ring *ring)
  *			prepare_transfer()?
  */
 static void inc_enq(struct xhci_hcd *xhci, struct xhci_ring *ring,
+<<<<<<< HEAD
 			bool more_trbs_coming)
+=======
+		bool consumer, bool more_trbs_coming, bool isoc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 chain;
 	union xhci_trb *next;
 	unsigned long long addr;
 
 	chain = le32_to_cpu(ring->enqueue->generic.field[3]) & TRB_CHAIN;
+<<<<<<< HEAD
 	/* If this is not event ring, there is one less usable TRB */
 	if (ring->type != TYPE_EVENT &&
 			!last_trb(xhci, ring, ring->enq_seg, ring->enqueue))
 		ring->num_trbs_free--;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	next = ++(ring->enqueue);
 
 	ring->enq_updates++;
@@ -225,6 +266,7 @@ static void inc_enq(struct xhci_hcd *xhci, struct xhci_ring *ring,
 	 * the end of an event ring segment (which doesn't have link TRBS)
 	 */
 	while (last_trb(xhci, ring, ring->enq_seg, next)) {
+<<<<<<< HEAD
 		if (ring->type != TYPE_EVENT) {
 			/*
 			 * If the caller doesn't plan on enqueueing more
@@ -257,6 +299,44 @@ static void inc_enq(struct xhci_hcd *xhci, struct xhci_ring *ring,
 			/* Toggle the cycle bit after the last ring segment. */
 			if (last_trb_on_last_seg(xhci, ring, ring->enq_seg, next)) {
 				ring->cycle_state = (ring->cycle_state ? 0 : 1);
+=======
+		if (!consumer) {
+			if (ring != xhci->event_ring) {
+				/*
+				 * If the caller doesn't plan on enqueueing more
+				 * TDs before ringing the doorbell, then we
+				 * don't want to give the link TRB to the
+				 * hardware just yet.  We'll give the link TRB
+				 * back in prepare_ring() just before we enqueue
+				 * the TD at the top of the ring.
+				 */
+				if (!chain && !more_trbs_coming)
+					break;
+
+				/* If we're not dealing with 0.95 hardware or
+				 * isoc rings on AMD 0.96 host,
+				 * carry over the chain bit of the previous TRB
+				 * (which may mean the chain bit is cleared).
+				 */
+				if (!(isoc && (xhci->quirks & XHCI_AMD_0x96_HOST))
+						&& !xhci_link_trb_quirk(xhci)) {
+					next->link.control &=
+						cpu_to_le32(~TRB_CHAIN);
+					next->link.control |=
+						cpu_to_le32(chain);
+				}
+				/* Give this link TRB to the hardware */
+				wmb();
+				next->link.control ^= cpu_to_le32(TRB_CYCLE);
+			}
+			/* Toggle the cycle bit after the last ring segment. */
+			if (last_trb_on_last_seg(xhci, ring, ring->enq_seg, next)) {
+				ring->cycle_state = (ring->cycle_state ? 0 : 1);
+				if (!in_interrupt())
+					xhci_dbg(xhci, "Toggle cycle state for ring %p = %i\n",
+							ring,
+							(unsigned int) ring->cycle_state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 		ring->enq_seg = ring->enq_seg->next;
@@ -267,6 +347,7 @@ static void inc_enq(struct xhci_hcd *xhci, struct xhci_ring *ring,
 }
 
 /*
+<<<<<<< HEAD
  * Check to see if there's room to enqueue num_trbs on the ring and make sure
  * enqueue pointer will not advance into dequeue segment. See rules above.
  */
@@ -284,21 +365,76 @@ static inline int room_on_ring(struct xhci_hcd *xhci, struct xhci_ring *ring,
 			return 0;
 	}
 
+=======
+ * Check to see if there's room to enqueue num_trbs on the ring.  See rules
+ * above.
+ * FIXME: this would be simpler and faster if we just kept track of the number
+ * of free TRBs in a ring.
+ */
+static int room_on_ring(struct xhci_hcd *xhci, struct xhci_ring *ring,
+		unsigned int num_trbs)
+{
+	int i;
+	union xhci_trb *enq = ring->enqueue;
+	struct xhci_segment *enq_seg = ring->enq_seg;
+	struct xhci_segment *cur_seg;
+	unsigned int left_on_ring;
+
+	/* If we are currently pointing to a link TRB, advance the
+	 * enqueue pointer before checking for space */
+	while (last_trb(xhci, ring, enq_seg, enq)) {
+		enq_seg = enq_seg->next;
+		enq = enq_seg->trbs;
+	}
+
+	/* Check if ring is empty */
+	if (enq == ring->dequeue) {
+		/* Can't use link trbs */
+		left_on_ring = TRBS_PER_SEGMENT - 1;
+		for (cur_seg = enq_seg->next; cur_seg != enq_seg;
+				cur_seg = cur_seg->next)
+			left_on_ring += TRBS_PER_SEGMENT - 1;
+
+		/* Always need one TRB free in the ring. */
+		left_on_ring -= 1;
+		if (num_trbs > left_on_ring) {
+			xhci_warn(xhci, "Not enough room on ring; "
+					"need %u TRBs, %u TRBs left\n",
+					num_trbs, left_on_ring);
+			return 0;
+		}
+		return 1;
+	}
+	/* Make sure there's an extra empty TRB available */
+	for (i = 0; i <= num_trbs; ++i) {
+		if (enq == ring->dequeue)
+			return 0;
+		enq++;
+		while (last_trb(xhci, ring, enq_seg, enq)) {
+			enq_seg = enq_seg->next;
+			enq = enq_seg->trbs;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
 /* Ring the host controller doorbell after placing a command on the ring */
 void xhci_ring_cmd_db(struct xhci_hcd *xhci)
 {
+<<<<<<< HEAD
 	if (!(xhci->cmd_ring_state & CMD_RING_STATE_RUNNING))
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	xhci_dbg(xhci, "// Ding dong!\n");
 	xhci_writel(xhci, DB_VALUE_HOST, &xhci->dba->doorbell[0]);
 	/* Flush PCI posted writes */
 	xhci_readl(xhci, &xhci->dba->doorbell[0]);
 }
 
+<<<<<<< HEAD
 static int xhci_abort_cmd_ring(struct xhci_hcd *xhci)
 {
 	u64 temp_64;
@@ -407,6 +543,8 @@ fail:
 	return retval;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void xhci_ring_ep_doorbell(struct xhci_hcd *xhci,
 		unsigned int slot_id,
 		unsigned int ep_index,
@@ -444,7 +582,11 @@ static void ring_doorbell_for_active_rings(struct xhci_hcd *xhci,
 
 	/* A ring has pending URBs if its TD list is not empty */
 	if (!(ep->ep_state & EP_HAS_STREAMS)) {
+<<<<<<< HEAD
 		if (ep->ring && !(list_empty(&ep->ring->td_list)))
+=======
+		if (!(list_empty(&ep->ring->td_list)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			xhci_ring_ep_doorbell(xhci, slot_id, ep_index, 0);
 		return;
 	}
@@ -473,7 +615,11 @@ static struct xhci_segment *find_trb_seg(
 	while (cur_seg->trbs > trb ||
 			&cur_seg->trbs[TRBS_PER_SEGMENT - 1] < trb) {
 		generic_trb = &cur_seg->trbs[TRBS_PER_SEGMENT - 1].generic;
+<<<<<<< HEAD
 		if (generic_trb->field[3] & cpu_to_le32(LINK_TOGGLE))
+=======
+		if (le32_to_cpu(generic_trb->field[3]) & LINK_TOGGLE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			*cycle_state ^= 0x1;
 		cur_seg = cur_seg->next;
 		if (cur_seg == start_seg)
@@ -590,8 +736,13 @@ void xhci_find_new_dequeue_state(struct xhci_hcd *xhci,
 	}
 
 	trb = &state->new_deq_ptr->generic;
+<<<<<<< HEAD
 	if (TRB_TYPE_LINK_LE32(trb->field[3]) &&
 	    (trb->field[3] & cpu_to_le32(LINK_TOGGLE)))
+=======
+	if ((le32_to_cpu(trb->field[3]) & TRB_TYPE_BITMASK) ==
+	    TRB_TYPE(TRB_LINK) && (le32_to_cpu(trb->field[3]) & LINK_TOGGLE))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		state->new_cycle_state ^= 0x1;
 	next_trb(xhci, ep_ring, &state->new_deq_seg, &state->new_deq_ptr);
 
@@ -630,7 +781,12 @@ static void td_to_noop(struct xhci_hcd *xhci, struct xhci_ring *ep_ring,
 	for (cur_seg = cur_td->start_seg, cur_trb = cur_td->first_trb;
 			true;
 			next_trb(xhci, ep_ring, &cur_seg, &cur_trb)) {
+<<<<<<< HEAD
 		if (TRB_TYPE_LINK_LE32(cur_trb->generic.field[3])) {
+=======
+		if ((le32_to_cpu(cur_trb->generic.field[3]) & TRB_TYPE_BITMASK)
+		    == TRB_TYPE(TRB_LINK)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Unchain any chained Link TRBs, but
 			 * leave the pointers intact.
 			 */
@@ -661,9 +817,18 @@ static void td_to_noop(struct xhci_hcd *xhci, struct xhci_ring *ep_ring,
 					cpu_to_le32(TRB_CYCLE);
 			cur_trb->generic.field[3] |= cpu_to_le32(
 				TRB_TYPE(TRB_TR_NOOP));
+<<<<<<< HEAD
 			xhci_dbg(xhci, "TRB to noop at offset 0x%llx\n",
 					(unsigned long long)
 					xhci_trb_virt_to_dma(cur_seg, cur_trb));
+=======
+			xhci_dbg(xhci, "Cancel TRB %p (0x%llx dma) "
+					"in seg %p (0x%llx dma)\n",
+					cur_trb,
+					(unsigned long long)xhci_trb_virt_to_dma(cur_seg, cur_trb),
+					cur_seg,
+					(unsigned long long)cur_seg->dma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		if (cur_trb == cur_td->last_trb)
 			break;
@@ -803,9 +968,15 @@ static void handle_stopped_endpoint(struct xhci_hcd *xhci,
 	 */
 	list_for_each(entry, &ep->cancelled_td_list) {
 		cur_td = list_entry(entry, struct xhci_td, cancelled_td_list);
+<<<<<<< HEAD
 		xhci_dbg(xhci, "Removing canceled TD starting at 0x%llx (dma).\n",
 				(unsigned long long)xhci_trb_virt_to_dma(
 					cur_td->start_seg, cur_td->first_trb));
+=======
+		xhci_dbg(xhci, "Cancelling TD starting at %p, 0x%llx (dma).\n",
+				cur_td->first_trb,
+				(unsigned long long)xhci_trb_virt_to_dma(cur_td->start_seg, cur_td->first_trb));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ep_ring = xhci_urb_to_transfer_ring(xhci, cur_td->urb);
 		if (!ep_ring) {
 			/* This shouldn't happen unless a driver is mucking
@@ -857,12 +1028,17 @@ remove_finished_td:
 		/* Otherwise ring the doorbell(s) to restart queued transfers */
 		ring_doorbell_for_active_rings(xhci, slot_id, ep_index);
 	}
+<<<<<<< HEAD
 
 	/* Clear stopped_td and stopped_trb if endpoint is not halted */
 	if (!(ep->ep_state & EP_HALTED)) {
 		ep->stopped_td = NULL;
 		ep->stopped_trb = NULL;
 	}
+=======
+	ep->stopped_td = NULL;
+	ep->stopped_trb = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Drop the lock and complete the URBs in the cancelled TD list.
@@ -1005,6 +1181,7 @@ void xhci_stop_endpoint_command_watchdog(unsigned long arg)
 	xhci_dbg(xhci, "xHCI host controller is dead.\n");
 }
 
+<<<<<<< HEAD
 
 static void update_ring_for_set_deq_completion(struct xhci_hcd *xhci,
 		struct xhci_virt_device *dev,
@@ -1053,6 +1230,8 @@ static void update_ring_for_set_deq_completion(struct xhci_hcd *xhci,
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * When we get a completion for a Set Transfer Ring Dequeue Pointer command,
  * we need to clear the set deq pending flag in the endpoint ring state, so that
@@ -1134,8 +1313,13 @@ static void handle_set_deq_completion(struct xhci_hcd *xhci,
 			/* Update the ring's dequeue segment and dequeue pointer
 			 * to reflect the new position.
 			 */
+<<<<<<< HEAD
 			update_ring_for_set_deq_completion(xhci, dev,
 				ep_ring, ep_index);
+=======
+			ep_ring->deq_seg = dev->eps[ep_index].queued_deq_seg;
+			ep_ring->dequeue = dev->eps[ep_index].queued_deq_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			xhci_warn(xhci, "Mismatch between completed Set TR Deq "
 					"Ptr command & xHCI internal state.\n");
@@ -1165,7 +1349,11 @@ static void handle_reset_ep_completion(struct xhci_hcd *xhci,
 	 * but we don't care.
 	 */
 	xhci_dbg(xhci, "Ignoring reset ep completion code of %u\n",
+<<<<<<< HEAD
 		 GET_COMP_CODE(le32_to_cpu(event->status)));
+=======
+		 (unsigned int) GET_COMP_CODE(le32_to_cpu(event->status)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* HW with the reset endpoint quirk needs to have a configure endpoint
 	 * command complete before the endpoint can be used.  Queue that here
@@ -1184,6 +1372,7 @@ static void handle_reset_ep_completion(struct xhci_hcd *xhci,
 	}
 }
 
+<<<<<<< HEAD
 /* Complete the command and detele it from the devcie's command queue.
  */
 static void xhci_complete_cmd_in_cmd_wait_list(struct xhci_hcd *xhci,
@@ -1198,6 +1387,8 @@ static void xhci_complete_cmd_in_cmd_wait_list(struct xhci_hcd *xhci,
 }
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Check to see if a command in the device's command queue matches this one.
  * Signal the completion or free the command, and return 1.  Return 0 if the
  * completed command isn't at the head of the command list.
@@ -1216,6 +1407,7 @@ static int handle_cmd_in_cmd_wait_list(struct xhci_hcd *xhci,
 	if (xhci->cmd_ring->dequeue != command->command_trb)
 		return 0;
 
+<<<<<<< HEAD
 	xhci_complete_cmd_in_cmd_wait_list(xhci, command,
 			GET_COMP_CODE(le32_to_cpu(event->status)));
 	return 1;
@@ -1365,6 +1557,17 @@ static int handle_stopped_cmd_ring(struct xhci_hcd *xhci,
 	return cur_trb_is_good;
 }
 
+=======
+	command->status = GET_COMP_CODE(le32_to_cpu(event->status));
+	list_del(&command->cmd_list);
+	if (command->completion)
+		complete(command->completion);
+	else
+		xhci_free_command(xhci, command);
+	return 1;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void handle_cmd_completion(struct xhci_hcd *xhci,
 		struct xhci_event_cmd *event)
 {
@@ -1390,6 +1593,7 @@ static void handle_cmd_completion(struct xhci_hcd *xhci,
 		xhci->error_bitmask |= 1 << 5;
 		return;
 	}
+<<<<<<< HEAD
 
 	if ((GET_COMP_CODE(le32_to_cpu(event->status)) == COMP_CMD_ABORT) ||
 		(GET_COMP_CODE(le32_to_cpu(event->status)) == COMP_CMD_STOP)) {
@@ -1412,6 +1616,8 @@ static void handle_cmd_completion(struct xhci_hcd *xhci,
 			return;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (le32_to_cpu(xhci->cmd_ring->dequeue->generic.field[3])
 		& TRB_TYPE_BITMASK) {
 	case TRB_TYPE(TRB_ENABLE_SLOT):
@@ -1522,7 +1728,11 @@ bandwidth_change:
 		xhci->error_bitmask |= 1 << 6;
 		break;
 	}
+<<<<<<< HEAD
 	inc_deq(xhci, xhci->cmd_ring);
+=======
+	inc_deq(xhci, xhci->cmd_ring, false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void handle_vendor_event(struct xhci_hcd *xhci,
@@ -1574,6 +1784,7 @@ static unsigned int find_faked_portnum_from_hw_portnum(struct usb_hcd *hcd,
 	return num_similar_speed_ports;
 }
 
+<<<<<<< HEAD
 static void handle_device_notification(struct xhci_hcd *xhci,
 		union xhci_trb *event)
 {
@@ -1594,6 +1805,8 @@ static void handle_device_notification(struct xhci_hcd *xhci,
 		usb_wakeup_notification(udev->parent, udev->portnum);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void handle_port_status(struct xhci_hcd *xhci,
 		union xhci_trb *event)
 {
@@ -1678,6 +1891,7 @@ static void handle_port_status(struct xhci_hcd *xhci,
 		}
 
 		if (DEV_SUPERSPEED(temp)) {
+<<<<<<< HEAD
 			xhci_dbg(xhci, "remote wake SS port %d\n", port_id);
 			/* Set a flag to say the port signaled remote wakeup,
 			 * so we can tell the difference between the end of
@@ -1693,17 +1907,39 @@ static void handle_port_status(struct xhci_hcd *xhci,
 			 */
 			bogus_port_status = true;
 			goto cleanup;
+=======
+			xhci_dbg(xhci, "resume SS port %d\n", port_id);
+			temp = xhci_port_state_to_neutral(temp);
+			temp &= ~PORT_PLS_MASK;
+			temp |= PORT_LINK_STROBE | XDEV_U0;
+			xhci_writel(xhci, temp, port_array[faked_port_index]);
+			slot_id = xhci_find_slot_id_by_port(hcd, xhci,
+					faked_port_index + 1);
+			if (!slot_id) {
+				xhci_dbg(xhci, "slot_id is zero\n");
+				goto cleanup;
+			}
+			xhci_ring_device(xhci, slot_id);
+			xhci_dbg(xhci, "resume SS port %d finished\n", port_id);
+			/* Clear PORT_PLC */
+			xhci_test_and_clear_bit(xhci, port_array,
+						faked_port_index, PORT_PLC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			xhci_dbg(xhci, "resume HS port %d\n", port_id);
 			bus_state->resume_done[faked_port_index] = jiffies +
 				msecs_to_jiffies(20);
+<<<<<<< HEAD
 			set_bit(faked_port_index, &bus_state->resuming_ports);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mod_timer(&hcd->rh_timer,
 				  bus_state->resume_done[faked_port_index]);
 			/* Do the rest in GetPortStatus */
 		}
 	}
 
+<<<<<<< HEAD
 	if ((temp & PORT_PLC) && (temp & PORT_PLS_MASK) == XDEV_U0 &&
 			DEV_SUPERSPEED(temp)) {
 		xhci_dbg(xhci, "resume SS port %d finished\n", port_id);
@@ -1730,13 +1966,19 @@ static void handle_port_status(struct xhci_hcd *xhci,
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (hcd->speed != HCD_USB3)
 		xhci_test_and_clear_bit(xhci, port_array, faked_port_index,
 					PORT_PLC);
 
 cleanup:
 	/* Update event ring dequeue pointer before dropping the lock */
+<<<<<<< HEAD
 	inc_deq(xhci, xhci->event_ring);
+=======
+	inc_deq(xhci, xhci->event_ring, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Don't make the USB core poll the roothub if we got a bad port status
 	 * change event.  Besides, at that point we can't tell which roothub
@@ -1745,6 +1987,7 @@ cleanup:
 	if (bogus_port_status)
 		return;
 
+<<<<<<< HEAD
 	/*
 	 * xHCI port-status-change events occur when the "or" of all the
 	 * status-change bits in the portsc register changes from 0 to 1.
@@ -1754,6 +1997,8 @@ cleanup:
 	 */
 	xhci_dbg(xhci, "%s: starting port polling.\n", __func__);
 	set_bit(HCD_FLAG_POLL_RH, &hcd->flags);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&xhci->lock);
 	/* Pass this up to the core */
 	usb_hcd_poll_rh_status(hcd);
@@ -1857,8 +2102,12 @@ static int xhci_requires_manual_halt_cleanup(struct xhci_hcd *xhci,
 		 * endpoint anyway.  Check if a babble halted the
 		 * endpoint.
 		 */
+<<<<<<< HEAD
 		if ((ep_ctx->ep_info & cpu_to_le32(EP_STATE_MASK)) ==
 		    cpu_to_le32(EP_STATE_HALTED))
+=======
+		if ((le32_to_cpu(ep_ctx->ep_info) & EP_STATE_MASK) == EP_STATE_HALTED)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 1;
 
 	return 0;
@@ -1940,8 +2189,13 @@ static int finish_td(struct xhci_hcd *xhci, struct xhci_td *td,
 		} else {
 			/* Update ring dequeue pointer */
 			while (ep_ring->dequeue != td->last_trb)
+<<<<<<< HEAD
 				inc_deq(xhci, ep_ring);
 			inc_deq(xhci, ep_ring);
+=======
+				inc_deq(xhci, ep_ring, false);
+			inc_deq(xhci, ep_ring, false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 td_cleanup:
@@ -2011,6 +2265,10 @@ static int process_ctrl_td(struct xhci_hcd *xhci, struct xhci_td *td,
 	ep_ctx = xhci_get_ep_ctx(xhci, xdev->out_ctx, ep_index);
 	trb_comp_code = GET_COMP_CODE(le32_to_cpu(event->transfer_len));
 
+<<<<<<< HEAD
+=======
+	xhci_debug_trb(xhci, xhci->event_ring->dequeue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (trb_comp_code) {
 	case COMP_SUCCESS:
 		if (event_trb == ep_ring->dequeue) {
@@ -2026,6 +2284,10 @@ static int process_ctrl_td(struct xhci_hcd *xhci, struct xhci_td *td,
 		}
 		break;
 	case COMP_SHORT_TX:
+<<<<<<< HEAD
+=======
+		xhci_warn(xhci, "WARN: short transfer on control ep\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (td->urb->transfer_flags & URB_SHORT_NOT_OK)
 			*status = -EREMOTEIO;
 		else
@@ -2047,8 +2309,13 @@ static int process_ctrl_td(struct xhci_hcd *xhci, struct xhci_td *td,
 		if (event_trb != ep_ring->dequeue &&
 				event_trb != td->last_trb)
 			td->urb->actual_length =
+<<<<<<< HEAD
 				td->urb->transfer_buffer_length -
 				EVENT_TRB_LEN(le32_to_cpu(event->transfer_len));
+=======
+				td->urb->transfer_buffer_length
+				- TRB_LEN(le32_to_cpu(event->transfer_len));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		else
 			td->urb->actual_length = 0;
 
@@ -2080,7 +2347,11 @@ static int process_ctrl_td(struct xhci_hcd *xhci, struct xhci_td *td,
 		/* Maybe the event was for the data stage? */
 			td->urb->actual_length =
 				td->urb->transfer_buffer_length -
+<<<<<<< HEAD
 				EVENT_TRB_LEN(le32_to_cpu(event->transfer_len));
+=======
+				TRB_LEN(le32_to_cpu(event->transfer_len));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			xhci_dbg(xhci, "Waiting for status "
 					"stage event\n");
 			return 0;
@@ -2116,12 +2387,17 @@ static int process_isoc_td(struct xhci_hcd *xhci, struct xhci_td *td,
 	/* handle completion code */
 	switch (trb_comp_code) {
 	case COMP_SUCCESS:
+<<<<<<< HEAD
 		if (EVENT_TRB_LEN(le32_to_cpu(event->transfer_len)) == 0) {
 			frame->status = 0;
 			break;
 		}
 		if ((xhci->quirks & XHCI_TRUST_TX_LENGTH))
 			trb_comp_code = COMP_SHORT_TX;
+=======
+		frame->status = 0;
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case COMP_SHORT_TX:
 		frame->status = td->urb->transfer_flags & URB_SHORT_NOT_OK ?
 				-EREMOTEIO : 0;
@@ -2137,7 +2413,10 @@ static int process_isoc_td(struct xhci_hcd *xhci, struct xhci_td *td,
 		break;
 	case COMP_DEV_ERR:
 	case COMP_STALL:
+<<<<<<< HEAD
 	case COMP_TX_ERR:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		frame->status = -EPROTO;
 		skip_td = true;
 		break;
@@ -2156,12 +2435,23 @@ static int process_isoc_td(struct xhci_hcd *xhci, struct xhci_td *td,
 		for (cur_trb = ep_ring->dequeue,
 		     cur_seg = ep_ring->deq_seg; cur_trb != event_trb;
 		     next_trb(xhci, ep_ring, &cur_seg, &cur_trb)) {
+<<<<<<< HEAD
 			if (!TRB_TYPE_NOOP_LE32(cur_trb->generic.field[3]) &&
 			    !TRB_TYPE_LINK_LE32(cur_trb->generic.field[3]))
 				len += TRB_LEN(le32_to_cpu(cur_trb->generic.field[2]));
 		}
 		len += TRB_LEN(le32_to_cpu(cur_trb->generic.field[2])) -
 			EVENT_TRB_LEN(le32_to_cpu(event->transfer_len));
+=======
+			if ((le32_to_cpu(cur_trb->generic.field[3]) &
+			 TRB_TYPE_BITMASK) != TRB_TYPE(TRB_TR_NOOP) &&
+			    (le32_to_cpu(cur_trb->generic.field[3]) &
+			 TRB_TYPE_BITMASK) != TRB_TYPE(TRB_LINK))
+				len += TRB_LEN(le32_to_cpu(cur_trb->generic.field[2]));
+		}
+		len += TRB_LEN(le32_to_cpu(cur_trb->generic.field[2])) -
+			TRB_LEN(le32_to_cpu(event->transfer_len));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (trb_comp_code != COMP_STOP_INVAL) {
 			frame->actual_length = len;
@@ -2194,8 +2484,13 @@ static int skip_isoc_td(struct xhci_hcd *xhci, struct xhci_td *td,
 
 	/* Update ring dequeue pointer */
 	while (ep_ring->dequeue != td->last_trb)
+<<<<<<< HEAD
 		inc_deq(xhci, ep_ring);
 	inc_deq(xhci, ep_ring);
+=======
+		inc_deq(xhci, ep_ring, false);
+	inc_deq(xhci, ep_ring, false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return finish_td(xhci, td, NULL, event, ep, status, true);
 }
@@ -2218,16 +2513,23 @@ static int process_bulk_intr_td(struct xhci_hcd *xhci, struct xhci_td *td,
 	switch (trb_comp_code) {
 	case COMP_SUCCESS:
 		/* Double check that the HW transferred everything. */
+<<<<<<< HEAD
 		if (event_trb != td->last_trb ||
 		    EVENT_TRB_LEN(le32_to_cpu(event->transfer_len)) != 0) {
+=======
+		if (event_trb != td->last_trb) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			xhci_warn(xhci, "WARN Successful completion "
 					"on short TX\n");
 			if (td->urb->transfer_flags & URB_SHORT_NOT_OK)
 				*status = -EREMOTEIO;
 			else
 				*status = 0;
+<<<<<<< HEAD
 			if ((xhci->quirks & XHCI_TRUST_TX_LENGTH))
 				trb_comp_code = COMP_SHORT_TX;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			*status = 0;
 		}
@@ -2247,6 +2549,7 @@ static int process_bulk_intr_td(struct xhci_hcd *xhci, struct xhci_td *td,
 				"%d bytes untransferred\n",
 				td->urb->ep->desc.bEndpointAddress,
 				td->urb->transfer_buffer_length,
+<<<<<<< HEAD
 				EVENT_TRB_LEN(le32_to_cpu(event->transfer_len)));
 	/* Fast path - was this the last TRB in the TD for this URB? */
 	if (event_trb == td->last_trb) {
@@ -2254,11 +2557,24 @@ static int process_bulk_intr_td(struct xhci_hcd *xhci, struct xhci_td *td,
 			td->urb->actual_length =
 				td->urb->transfer_buffer_length -
 				EVENT_TRB_LEN(le32_to_cpu(event->transfer_len));
+=======
+				TRB_LEN(le32_to_cpu(event->transfer_len)));
+	/* Fast path - was this the last TRB in the TD for this URB? */
+	if (event_trb == td->last_trb) {
+		if (TRB_LEN(le32_to_cpu(event->transfer_len)) != 0) {
+			td->urb->actual_length =
+				td->urb->transfer_buffer_length -
+				TRB_LEN(le32_to_cpu(event->transfer_len));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (td->urb->transfer_buffer_length <
 					td->urb->actual_length) {
 				xhci_warn(xhci, "HC gave bad length "
 						"of %d bytes left\n",
+<<<<<<< HEAD
 					  EVENT_TRB_LEN(le32_to_cpu(event->transfer_len)));
+=======
+					  TRB_LEN(le32_to_cpu(event->transfer_len)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				td->urb->actual_length = 0;
 				if (td->urb->transfer_flags & URB_SHORT_NOT_OK)
 					*status = -EREMOTEIO;
@@ -2289,8 +2605,15 @@ static int process_bulk_intr_td(struct xhci_hcd *xhci, struct xhci_td *td,
 		for (cur_trb = ep_ring->dequeue, cur_seg = ep_ring->deq_seg;
 				cur_trb != event_trb;
 				next_trb(xhci, ep_ring, &cur_seg, &cur_trb)) {
+<<<<<<< HEAD
 			if (!TRB_TYPE_NOOP_LE32(cur_trb->generic.field[3]) &&
 			    !TRB_TYPE_LINK_LE32(cur_trb->generic.field[3]))
+=======
+			if ((le32_to_cpu(cur_trb->generic.field[3]) &
+			 TRB_TYPE_BITMASK) != TRB_TYPE(TRB_TR_NOOP) &&
+			    (le32_to_cpu(cur_trb->generic.field[3]) &
+			 TRB_TYPE_BITMASK) != TRB_TYPE(TRB_LINK))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				td->urb->actual_length +=
 					TRB_LEN(le32_to_cpu(cur_trb->generic.field[2]));
 		}
@@ -2300,7 +2623,11 @@ static int process_bulk_intr_td(struct xhci_hcd *xhci, struct xhci_td *td,
 		if (trb_comp_code != COMP_STOP_INVAL)
 			td->urb->actual_length +=
 				TRB_LEN(le32_to_cpu(cur_trb->generic.field[2])) -
+<<<<<<< HEAD
 				EVENT_TRB_LEN(le32_to_cpu(event->transfer_len));
+=======
+				TRB_LEN(le32_to_cpu(event->transfer_len));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return finish_td(xhci, td, event_trb, event, ep, status, false);
@@ -2336,6 +2663,7 @@ static int handle_tx_event(struct xhci_hcd *xhci,
 	xdev = xhci->devs[slot_id];
 	if (!xdev) {
 		xhci_err(xhci, "ERROR Transfer event pointed to bad slot\n");
+<<<<<<< HEAD
 		xhci_err(xhci, "@%016llx %08x %08x %08x %08x\n",
 			 (unsigned long long) xhci_trb_virt_to_dma(
 				 xhci->event_ring->deq_seg,
@@ -2346,6 +2674,8 @@ static int handle_tx_event(struct xhci_hcd *xhci,
 			 le32_to_cpu(event->flags));
 		xhci_dbg(xhci, "Event ring:\n");
 		xhci_debug_segment(xhci, xhci->event_ring->deq_seg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
@@ -2359,6 +2689,7 @@ static int handle_tx_event(struct xhci_hcd *xhci,
 	    EP_STATE_DISABLED) {
 		xhci_err(xhci, "ERROR Transfer event for disabled endpoint "
 				"or incorrect stream ring\n");
+<<<<<<< HEAD
 		xhci_err(xhci, "@%016llx %08x %08x %08x %08x\n",
 			 (unsigned long long) xhci_trb_virt_to_dma(
 				 xhci->event_ring->deq_seg,
@@ -2369,6 +2700,8 @@ static int handle_tx_event(struct xhci_hcd *xhci,
 			 le32_to_cpu(event->flags));
 		xhci_dbg(xhci, "Event ring:\n");
 		xhci_debug_segment(xhci, xhci->event_ring->deq_seg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
@@ -2386,6 +2719,7 @@ static int handle_tx_event(struct xhci_hcd *xhci,
 	 * transfer type
 	 */
 	case COMP_SUCCESS:
+<<<<<<< HEAD
 		if (EVENT_TRB_LEN(le32_to_cpu(event->transfer_len)) == 0)
 			break;
 		if (xhci->quirks & XHCI_TRUST_TX_LENGTH)
@@ -2393,6 +2727,8 @@ static int handle_tx_event(struct xhci_hcd *xhci,
 		else
 			xhci_warn(xhci, "WARN Successful completion on short TX: "
 					"needs XHCI_TRUST_TX_LENGTH quirk?\n");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case COMP_SHORT_TX:
 		break;
 	case COMP_STOP:
@@ -2402,7 +2738,11 @@ static int handle_tx_event(struct xhci_hcd *xhci,
 		xhci_dbg(xhci, "Stopped on No-op or Link TRB\n");
 		break;
 	case COMP_STALL:
+<<<<<<< HEAD
 		xhci_dbg(xhci, "Stalled endpoint\n");
+=======
+		xhci_warn(xhci, "WARN: Stalled endpoint\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ep->ep_state |= EP_HALTED;
 		status = -EPIPE;
 		break;
@@ -2412,11 +2752,19 @@ static int handle_tx_event(struct xhci_hcd *xhci,
 		break;
 	case COMP_SPLIT_ERR:
 	case COMP_TX_ERR:
+<<<<<<< HEAD
 		xhci_dbg(xhci, "Transfer error on endpoint\n");
 		status = -EPROTO;
 		break;
 	case COMP_BABBLE:
 		xhci_dbg(xhci, "Babble error on endpoint\n");
+=======
+		xhci_warn(xhci, "WARN: transfer error on endpoint\n");
+		status = -EPROTO;
+		break;
+	case COMP_BABBLE:
+		xhci_warn(xhci, "WARN: babble error on endpoint\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		status = -EOVERFLOW;
 		break;
 	case COMP_DB_ERR:
@@ -2479,6 +2827,7 @@ static int handle_tx_event(struct xhci_hcd *xhci,
 		 * TD list.
 		 */
 		if (list_empty(&ep_ring->td_list)) {
+<<<<<<< HEAD
 			/*
 			 * A stopped endpoint may generate an extra completion
 			 * event if the device was suspended.  Don't print
@@ -2494,6 +2843,16 @@ static int handle_tx_event(struct xhci_hcd *xhci,
 						 TRB_TYPE_BITMASK)>>10);
 				xhci_print_trb_offsets(xhci, (union xhci_trb *) event);
 			}
+=======
+			xhci_warn(xhci, "WARN Event TRB for slot %d ep %d "
+					"with no TDs queued?\n",
+				  TRB_TO_SLOT_ID(le32_to_cpu(event->flags)),
+				  ep_index);
+			xhci_dbg(xhci, "Event TRB with TRB type ID %u\n",
+				 (unsigned int) (le32_to_cpu(event->flags)
+						 & TRB_TYPE_BITMASK)>>10);
+			xhci_print_trb_offsets(xhci, (union xhci_trb *) event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ep->skip) {
 				ep->skip = false;
 				xhci_dbg(xhci, "td_list is empty while skip "
@@ -2574,7 +2933,13 @@ static int handle_tx_event(struct xhci_hcd *xhci,
 		 * corresponding TD has been cancelled. Just ignore
 		 * the TD.
 		 */
+<<<<<<< HEAD
 		if (TRB_TYPE_NOOP_LE32(event_trb->generic.field[3])) {
+=======
+		if ((le32_to_cpu(event_trb->generic.field[3])
+			     & TRB_TYPE_BITMASK)
+				 == TRB_TYPE(TRB_TR_NOOP)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			xhci_dbg(xhci,
 				 "event_trb is a no-op TRB. Skip it\n");
 			goto cleanup;
@@ -2599,7 +2964,11 @@ cleanup:
 		 * Will roll back to continue process missed tds.
 		 */
 		if (trb_comp_code == COMP_MISSED_INT || !ep->skip) {
+<<<<<<< HEAD
 			inc_deq(xhci, xhci->event_ring);
+=======
+			inc_deq(xhci, xhci->event_ring, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (ret) {
@@ -2614,15 +2983,22 @@ cleanup:
 				(trb_comp_code != COMP_STALL &&
 					trb_comp_code != COMP_BABBLE))
 				xhci_urb_free_priv(xhci, urb_priv);
+<<<<<<< HEAD
 			else
 				kfree(urb_priv);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			usb_hcd_unlink_urb_from_ep(bus_to_hcd(urb->dev->bus), urb);
 			if ((urb->actual_length != urb->transfer_buffer_length &&
 						(urb->transfer_flags &
 						 URB_SHORT_NOT_OK)) ||
+<<<<<<< HEAD
 					(status != 0 &&
 					 !usb_endpoint_xfer_isoc(&urb->ep->desc)))
+=======
+					status != 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				xhci_dbg(xhci, "Giveback URB %p, len = %d, "
 						"expected = %x, status = %d\n",
 						urb, urb->actual_length,
@@ -2695,9 +3071,12 @@ static int xhci_handle_event(struct xhci_hcd *xhci)
 		else
 			update_ptrs = 0;
 		break;
+<<<<<<< HEAD
 	case TRB_TYPE(TRB_DEV_NOTE):
 		handle_device_notification(xhci, event);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		if ((le32_to_cpu(event->event_cmd.flags) & TRB_TYPE_BITMASK) >=
 		    TRB_TYPE(48))
@@ -2716,7 +3095,11 @@ static int xhci_handle_event(struct xhci_hcd *xhci)
 
 	if (update_ptrs)
 		/* Update SW event ring dequeue pointer */
+<<<<<<< HEAD
 		inc_deq(xhci, xhci->event_ring);
+=======
+		inc_deq(xhci, xhci->event_ring, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Are there more items on the event ring?  Caller will call us again to
 	 * check.
@@ -2767,7 +3150,11 @@ hw_died:
 	/* FIXME when MSI-X is supported and there are multiple vectors */
 	/* Clear the MSI-X event interrupt status */
 
+<<<<<<< HEAD
 	if (hcd->irq) {
+=======
+	if (hcd->irq != -1) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u32 irq_pending;
 		/* Acknowledge the PCI interrupt */
 		irq_pending = xhci_readl(xhci, &xhci->ir_set->irq_pending);
@@ -2819,7 +3206,21 @@ hw_died:
 
 irqreturn_t xhci_msi_irq(int irq, struct usb_hcd *hcd)
 {
+<<<<<<< HEAD
 	return xhci_irq(hcd);
+=======
+	irqreturn_t ret;
+	struct xhci_hcd *xhci;
+
+	xhci = hcd_to_xhci(hcd);
+	set_bit(HCD_FLAG_SAW_IRQ, &hcd->flags);
+	if (xhci->shared_hcd)
+		set_bit(HCD_FLAG_SAW_IRQ, &xhci->shared_hcd->flags);
+
+	ret = xhci_irq(hcd);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /****		Endpoint Ring Operations	****/
@@ -2832,7 +3233,11 @@ irqreturn_t xhci_msi_irq(int irq, struct usb_hcd *hcd)
  *			prepare_transfer()?
  */
 static void queue_trb(struct xhci_hcd *xhci, struct xhci_ring *ring,
+<<<<<<< HEAD
 		bool more_trbs_coming,
+=======
+		bool consumer, bool more_trbs_coming, bool isoc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u32 field1, u32 field2, u32 field3, u32 field4)
 {
 	struct xhci_generic_trb *trb;
@@ -2842,7 +3247,11 @@ static void queue_trb(struct xhci_hcd *xhci, struct xhci_ring *ring,
 	trb->field[1] = cpu_to_le32(field2);
 	trb->field[2] = cpu_to_le32(field3);
 	trb->field[3] = cpu_to_le32(field4);
+<<<<<<< HEAD
 	inc_enq(xhci, ring, more_trbs_coming);
+=======
+	inc_enq(xhci, ring, consumer, more_trbs_coming, isoc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2850,10 +3259,15 @@ static void queue_trb(struct xhci_hcd *xhci, struct xhci_ring *ring,
  * FIXME allocate segments if the ring is full.
  */
 static int prepare_ring(struct xhci_hcd *xhci, struct xhci_ring *ep_ring,
+<<<<<<< HEAD
 		u32 ep_state, unsigned int num_trbs, gfp_t mem_flags)
 {
 	unsigned int num_trbs_needed;
 
+=======
+		u32 ep_state, unsigned int num_trbs, bool isoc, gfp_t mem_flags)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Make sure the endpoint has been added to xHC schedule */
 	switch (ep_state) {
 	case EP_STATE_DISABLED:
@@ -2881,6 +3295,7 @@ static int prepare_ring(struct xhci_hcd *xhci, struct xhci_ring *ep_ring,
 		 */
 		return -EINVAL;
 	}
+<<<<<<< HEAD
 
 	while (1) {
 		if (room_on_ring(xhci, ep_ring, num_trbs))
@@ -2900,6 +3315,13 @@ static int prepare_ring(struct xhci_hcd *xhci, struct xhci_ring *ep_ring,
 			return -ENOMEM;
 		}
 	};
+=======
+	if (!room_on_ring(xhci, ep_ring, num_trbs)) {
+		/* FIXME allocate more room */
+		xhci_err(xhci, "ERROR no room on ep ring\n");
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (enqueue_is_link_trb(ep_ring)) {
 		struct xhci_ring *ring = ep_ring;
@@ -2911,19 +3333,36 @@ static int prepare_ring(struct xhci_hcd *xhci, struct xhci_ring *ep_ring,
 			/* If we're not dealing with 0.95 hardware or isoc rings
 			 * on AMD 0.96 host, clear the chain bit.
 			 */
+<<<<<<< HEAD
 			if (!xhci_link_trb_quirk(xhci) &&
 					!(ring->type == TYPE_ISOC &&
 					 (xhci->quirks & XHCI_AMD_0x96_HOST)))
+=======
+			if (!xhci_link_trb_quirk(xhci) && !(isoc &&
+					(xhci->quirks & XHCI_AMD_0x96_HOST)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				next->link.control &= cpu_to_le32(~TRB_CHAIN);
 			else
 				next->link.control |= cpu_to_le32(TRB_CHAIN);
 
 			wmb();
+<<<<<<< HEAD
 			next->link.control ^= cpu_to_le32(TRB_CYCLE);
+=======
+			next->link.control ^= cpu_to_le32((u32) TRB_CYCLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* Toggle the cycle bit after the last ring segment. */
 			if (last_trb_on_last_seg(xhci, ring, ring->enq_seg, next)) {
 				ring->cycle_state = (ring->cycle_state ? 0 : 1);
+<<<<<<< HEAD
+=======
+				if (!in_interrupt()) {
+					xhci_dbg(xhci, "queue_trb: Toggle cycle "
+						"state for ring %p = %i\n",
+						ring, (unsigned int)ring->cycle_state);
+				}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			ring->enq_seg = ring->enq_seg->next;
 			ring->enqueue = ring->enq_seg->trbs;
@@ -2941,6 +3380,10 @@ static int prepare_transfer(struct xhci_hcd *xhci,
 		unsigned int num_trbs,
 		struct urb *urb,
 		unsigned int td_index,
+<<<<<<< HEAD
+=======
+		bool isoc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gfp_t mem_flags)
 {
 	int ret;
@@ -2958,7 +3401,11 @@ static int prepare_transfer(struct xhci_hcd *xhci,
 
 	ret = prepare_ring(xhci, ep_ring,
 			   le32_to_cpu(ep_ctx->ep_info) & EP_STATE_MASK,
+<<<<<<< HEAD
 			   num_trbs, mem_flags);
+=======
+			   num_trbs, isoc, mem_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -2994,8 +3441,15 @@ static unsigned int count_sg_trbs_needed(struct xhci_hcd *xhci, struct urb *urb)
 	num_sgs = urb->num_mapped_sgs;
 	temp = urb->transfer_buffer_length;
 
+<<<<<<< HEAD
 	num_trbs = 0;
 	for_each_sg(urb->sg, sg, num_sgs, i) {
+=======
+	xhci_dbg(xhci, "count sg list trbs: \n");
+	num_trbs = 0;
+	for_each_sg(urb->sg, sg, num_sgs, i) {
+		unsigned int previous_total_trbs = num_trbs;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned int len = sg_dma_len(sg);
 
 		/* Scatter gather list entries may cross 64KB boundaries */
@@ -3010,11 +3464,28 @@ static unsigned int count_sg_trbs_needed(struct xhci_hcd *xhci, struct urb *urb)
 			num_trbs++;
 			running_total += TRB_MAX_BUFF_SIZE;
 		}
+<<<<<<< HEAD
+=======
+		xhci_dbg(xhci, " sg #%d: dma = %#llx, len = %#x (%d), num_trbs = %d\n",
+				i, (unsigned long long)sg_dma_address(sg),
+				len, len, num_trbs - previous_total_trbs);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		len = min_t(int, len, temp);
 		temp -= len;
 		if (temp == 0)
 			break;
 	}
+<<<<<<< HEAD
+=======
+	xhci_dbg(xhci, "\n");
+	if (!in_interrupt())
+		xhci_dbg(xhci, "ep %#x - urb len = %d, sglist used, "
+				"num_trbs = %d\n",
+				urb->ep->desc.bEndpointAddress,
+				urb->transfer_buffer_length,
+				num_trbs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return num_trbs;
 }
 
@@ -3088,7 +3559,11 @@ int xhci_queue_intr_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 				urb->dev->speed == USB_SPEED_FULL)
 			urb->interval /= 8;
 	}
+<<<<<<< HEAD
 	return xhci_queue_bulk_tx(xhci, mem_flags, urb, slot_id, ep_index);
+=======
+	return xhci_queue_bulk_tx(xhci, GFP_ATOMIC, urb, slot_id, ep_index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -3107,11 +3582,19 @@ static u32 xhci_td_remainder(unsigned int remainder)
 }
 
 /*
+<<<<<<< HEAD
  * For xHCI 1.0 host controllers, TD size is the number of max packet sized
  * packets remaining in the TD (*not* including this TRB).
  *
  * Total TD packet count = total_packet_count =
  *     DIV_ROUND_UP(TD size in bytes / wMaxPacketSize)
+=======
+ * For xHCI 1.0 host controllers, TD size is the number of packets remaining in
+ * the TD (*not* including this TRB).
+ *
+ * Total TD packet count = total_packet_count =
+ *     roundup(TD size in bytes / wMaxPacketSize)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Packets transferred up to and including this TRB = packets_transferred =
  *     rounddown(total bytes transferred including this TRB / wMaxPacketSize)
@@ -3119,27 +3602,44 @@ static u32 xhci_td_remainder(unsigned int remainder)
  * TD size = total_packet_count - packets_transferred
  *
  * It must fit in bits 21:17, so it can't be bigger than 31.
+<<<<<<< HEAD
  * The last TRB in a TD must have the TD size set to zero.
  */
 static u32 xhci_v1_0_td_remainder(int running_total, int trb_buff_len,
 		unsigned int total_packet_count, struct urb *urb,
 		unsigned int num_trbs_left)
+=======
+ */
+
+static u32 xhci_v1_0_td_remainder(int running_total, int trb_buff_len,
+		unsigned int total_packet_count, struct urb *urb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int packets_transferred;
 
 	/* One TRB with a zero-length data packet. */
+<<<<<<< HEAD
 	if (num_trbs_left == 0 || (running_total == 0 && trb_buff_len == 0))
+=======
+	if (running_total == 0 && trb_buff_len == 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	/* All the TRB queueing functions don't count the current TRB in
 	 * running_total.
 	 */
 	packets_transferred = (running_total + trb_buff_len) /
+<<<<<<< HEAD
 		GET_MAX_PACKET(usb_endpoint_maxp(&urb->ep->desc));
 
 	if ((total_packet_count - packets_transferred) > 31)
 		return 31 << 17;
 	return (total_packet_count - packets_transferred) << 17;
+=======
+		le16_to_cpu(urb->ep->desc.wMaxPacketSize);
+
+	return xhci_td_remainder(total_packet_count - packets_transferred);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int queue_bulk_sg_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
@@ -3166,12 +3666,21 @@ static int queue_bulk_sg_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 
 	num_trbs = count_sg_trbs_needed(xhci, urb);
 	num_sgs = urb->num_mapped_sgs;
+<<<<<<< HEAD
 	total_packet_count = DIV_ROUND_UP(urb->transfer_buffer_length,
 			usb_endpoint_maxp(&urb->ep->desc));
 
 	trb_buff_len = prepare_transfer(xhci, xhci->devs[slot_id],
 			ep_index, urb->stream_id,
 			num_trbs, urb, 0, mem_flags);
+=======
+	total_packet_count = roundup(urb->transfer_buffer_length,
+			le16_to_cpu(urb->ep->desc.wMaxPacketSize));
+
+	trb_buff_len = prepare_transfer(xhci, xhci->devs[slot_id],
+			ep_index, urb->stream_id,
+			num_trbs, urb, 0, false, mem_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (trb_buff_len < 0)
 		return trb_buff_len;
 
@@ -3203,6 +3712,11 @@ static int queue_bulk_sg_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 	trb_buff_len = min_t(int, trb_buff_len, this_sg_len);
 	if (trb_buff_len > urb->transfer_buffer_length)
 		trb_buff_len = urb->transfer_buffer_length;
+<<<<<<< HEAD
+=======
+	xhci_dbg(xhci, "First length to xfer from 1st sglist entry = %u\n",
+			trb_buff_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	first_trb = true;
 	/* Queue the first TRB, even if it's zero-length */
@@ -3234,6 +3748,14 @@ static int queue_bulk_sg_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 		if (usb_urb_dir_in(urb))
 			field |= TRB_ISP;
 
+<<<<<<< HEAD
+=======
+		xhci_dbg(xhci, " sg entry: dma = %#x, len = %#x (%d), "
+				"64KB boundary at %#x, end dma = %#x\n",
+				(unsigned int) addr, trb_buff_len, trb_buff_len,
+				(unsigned int) (addr + TRB_MAX_BUFF_SIZE) & ~(TRB_MAX_BUFF_SIZE - 1),
+				(unsigned int) addr + trb_buff_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (TRB_MAX_BUFF_SIZE -
 				(addr & (TRB_MAX_BUFF_SIZE - 1)) < trb_buff_len) {
 			xhci_warn(xhci, "WARN: sg dma xfer crosses 64KB boundaries!\n");
@@ -3249,8 +3771,12 @@ static int queue_bulk_sg_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 					running_total);
 		} else {
 			remainder = xhci_v1_0_td_remainder(running_total,
+<<<<<<< HEAD
 					trb_buff_len, total_packet_count, urb,
 					num_trbs - 1);
+=======
+					trb_buff_len, total_packet_count, urb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		length_field = TRB_LEN(trb_buff_len) |
 			remainder |
@@ -3260,7 +3786,11 @@ static int queue_bulk_sg_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 			more_trbs_coming = true;
 		else
 			more_trbs_coming = false;
+<<<<<<< HEAD
 		queue_trb(xhci, ep_ring, more_trbs_coming,
+=======
+		queue_trb(xhci, ep_ring, false, more_trbs_coming, false,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				lower_32_bits(addr),
 				upper_32_bits(addr),
 				length_field,
@@ -3340,9 +3870,24 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 	}
 	/* FIXME: this doesn't deal with URB_ZERO_PACKET - need one more */
 
+<<<<<<< HEAD
 	ret = prepare_transfer(xhci, xhci->devs[slot_id],
 			ep_index, urb->stream_id,
 			num_trbs, urb, 0, mem_flags);
+=======
+	if (!in_interrupt())
+		xhci_dbg(xhci, "ep %#x - urb len = %#x (%d), "
+				"addr = %#llx, num_trbs = %d\n",
+				urb->ep->desc.bEndpointAddress,
+				urb->transfer_buffer_length,
+				urb->transfer_buffer_length,
+				(unsigned long long)urb->transfer_dma,
+				num_trbs);
+
+	ret = prepare_transfer(xhci, xhci->devs[slot_id],
+			ep_index, urb->stream_id,
+			num_trbs, urb, 0, false, mem_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		return ret;
 
@@ -3358,8 +3903,13 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 	start_cycle = ep_ring->cycle_state;
 
 	running_total = 0;
+<<<<<<< HEAD
 	total_packet_count = DIV_ROUND_UP(urb->transfer_buffer_length,
 			usb_endpoint_maxp(&urb->ep->desc));
+=======
+	total_packet_count = roundup(urb->transfer_buffer_length,
+			le16_to_cpu(urb->ep->desc.wMaxPacketSize));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* How much data is in the first TRB? */
 	addr = (u64) urb->transfer_dma;
 	trb_buff_len = TRB_MAX_BUFF_SIZE -
@@ -3404,8 +3954,12 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 					running_total);
 		} else {
 			remainder = xhci_v1_0_td_remainder(running_total,
+<<<<<<< HEAD
 					trb_buff_len, total_packet_count, urb,
 					num_trbs - 1);
+=======
+					trb_buff_len, total_packet_count, urb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		length_field = TRB_LEN(trb_buff_len) |
 			remainder |
@@ -3415,7 +3969,11 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 			more_trbs_coming = true;
 		else
 			more_trbs_coming = false;
+<<<<<<< HEAD
 		queue_trb(xhci, ep_ring, more_trbs_coming,
+=======
+		queue_trb(xhci, ep_ring, false, more_trbs_coming, false,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				lower_32_bits(addr),
 				upper_32_bits(addr),
 				length_field,
@@ -3461,6 +4019,12 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 	if (!urb->setup_packet)
 		return -EINVAL;
 
+<<<<<<< HEAD
+=======
+	if (!in_interrupt())
+		xhci_dbg(xhci, "Queueing ctrl tx for slot id %d, ep %d\n",
+				slot_id, ep_index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* 1 TRB for setup, 1 for status */
 	num_trbs = 2;
 	/*
@@ -3472,7 +4036,11 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 		num_trbs++;
 	ret = prepare_transfer(xhci, xhci->devs[slot_id],
 			ep_index, urb->stream_id,
+<<<<<<< HEAD
 			num_trbs, urb, 0, mem_flags);
+=======
+			num_trbs, urb, 0, false, mem_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		return ret;
 
@@ -3505,7 +4073,11 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 		}
 	}
 
+<<<<<<< HEAD
 	queue_trb(xhci, ep_ring, true,
+=======
+	queue_trb(xhci, ep_ring, false, true, false,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  setup->bRequestType | setup->bRequest << 8 | le16_to_cpu(setup->wValue) << 16,
 		  le16_to_cpu(setup->wIndex) | le16_to_cpu(setup->wLength) << 16,
 		  TRB_LEN(8) | TRB_INTR_TARGET(0),
@@ -3525,7 +4097,11 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 	if (urb->transfer_buffer_length > 0) {
 		if (setup->bRequestType & USB_DIR_IN)
 			field |= TRB_DIR_IN;
+<<<<<<< HEAD
 		queue_trb(xhci, ep_ring, true,
+=======
+		queue_trb(xhci, ep_ring, false, true, false,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				lower_32_bits(urb->transfer_dma),
 				upper_32_bits(urb->transfer_dma),
 				length_field,
@@ -3541,7 +4117,11 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 		field = 0;
 	else
 		field = TRB_DIR_IN;
+<<<<<<< HEAD
 	queue_trb(xhci, ep_ring, false,
+=======
+	queue_trb(xhci, ep_ring, false, false, false,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			0,
 			0,
 			TRB_INTR_TARGET(0),
@@ -3652,6 +4232,18 @@ static int xhci_queue_isoc_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
+=======
+	if (!in_interrupt())
+		xhci_dbg(xhci, "ep %#x - urb len = %#x (%d),"
+				" addr = %#llx, num_tds = %d\n",
+				urb->ep->desc.bEndpointAddress,
+				urb->transfer_buffer_length,
+				urb->transfer_buffer_length,
+				(unsigned long long)urb->transfer_dma,
+				num_tds);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	start_addr = (u64) urb->transfer_dma;
 	start_trb = &ep_ring->enqueue->generic;
 	start_cycle = ep_ring->cycle_state;
@@ -3668,9 +4260,14 @@ static int xhci_queue_isoc_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 		addr = start_addr + urb->iso_frame_desc[i].offset;
 		td_len = urb->iso_frame_desc[i].length;
 		td_remain_len = td_len;
+<<<<<<< HEAD
 		total_packet_count = DIV_ROUND_UP(td_len,
 				GET_MAX_PACKET(
 					usb_endpoint_maxp(&urb->ep->desc)));
+=======
+		total_packet_count = roundup(td_len,
+				le16_to_cpu(urb->ep->desc.wMaxPacketSize));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* A zero-length transfer still involves at least one packet. */
 		if (total_packet_count == 0)
 			total_packet_count++;
@@ -3682,7 +4279,12 @@ static int xhci_queue_isoc_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 		trbs_per_td = count_isoc_trbs_needed(xhci, urb, i);
 
 		ret = prepare_transfer(xhci, xhci->devs[slot_id], ep_index,
+<<<<<<< HEAD
 				urb->stream_id, trbs_per_td, urb, i, mem_flags);
+=======
+				urb->stream_id, trbs_per_td, urb, i, true,
+				mem_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0) {
 			if (i == 0)
 				return ret;
@@ -3692,11 +4294,17 @@ static int xhci_queue_isoc_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 		td = urb_priv->td[i];
 		for (j = 0; j < trbs_per_td; j++) {
 			u32 remainder = 0;
+<<<<<<< HEAD
 			field = 0;
 
 			if (first_trb) {
 				field = TRB_TBC(burst_count) |
 					TRB_TLBPC(residue);
+=======
+			field = TRB_TBC(burst_count) | TRB_TLBPC(residue);
+
+			if (first_trb) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/* Queue the isoc TRB */
 				field |= TRB_TYPE(TRB_ISOC);
 				/* Assume URB_ISO_ASAP is set */
@@ -3727,9 +4335,13 @@ static int xhci_queue_isoc_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 			} else {
 				td->last_trb = ep_ring->enqueue;
 				field |= TRB_IOC;
+<<<<<<< HEAD
 				if (xhci->hci_version == 0x100 &&
 						!(xhci->quirks &
 							XHCI_AVOID_BEI)) {
+=======
+				if (xhci->hci_version == 0x100) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					/* Set BEI bit except for the last td */
 					if (i < num_tds - 1)
 						field |= TRB_BEI;
@@ -3750,14 +4362,22 @@ static int xhci_queue_isoc_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 			} else {
 				remainder = xhci_v1_0_td_remainder(
 						running_total, trb_buff_len,
+<<<<<<< HEAD
 						total_packet_count, urb,
 						(trbs_per_td - j - 1));
+=======
+						total_packet_count, urb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			length_field = TRB_LEN(trb_buff_len) |
 				remainder |
 				TRB_INTR_TARGET(0);
 
+<<<<<<< HEAD
 			queue_trb(xhci, ep_ring, more_trbs_coming,
+=======
+			queue_trb(xhci, ep_ring, false, more_trbs_coming, true,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				lower_32_bits(addr),
 				upper_32_bits(addr),
 				length_field,
@@ -3804,7 +4424,10 @@ cleanup:
 	ep_ring->enqueue = urb_priv->td[0]->first_trb;
 	ep_ring->enq_seg = urb_priv->td[0]->start_seg;
 	ep_ring->cycle_state = start_cycle;
+<<<<<<< HEAD
 	ep_ring->num_trbs_free = ep_ring->num_trbs_free_temp;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usb_hcd_unlink_urb_from_ep(bus_to_hcd(urb->dev->bus), urb);
 	return ret;
 }
@@ -3841,7 +4464,11 @@ int xhci_queue_isoc_tx_prepare(struct xhci_hcd *xhci, gfp_t mem_flags,
 	 * Do not insert any td of the urb to the ring if the check failed.
 	 */
 	ret = prepare_ring(xhci, ep_ring, le32_to_cpu(ep_ctx->ep_info) & EP_STATE_MASK,
+<<<<<<< HEAD
 			   num_trbs, mem_flags);
+=======
+			   num_trbs, true, mem_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -3877,9 +4504,13 @@ int xhci_queue_isoc_tx_prepare(struct xhci_hcd *xhci, gfp_t mem_flags,
 				urb->dev->speed == USB_SPEED_FULL)
 			urb->interval /= 8;
 	}
+<<<<<<< HEAD
 	ep_ring->num_trbs_free_temp = ep_ring->num_trbs_free;
 
 	return xhci_queue_isoc_tx(xhci, mem_flags, urb, slot_id, ep_index);
+=======
+	return xhci_queue_isoc_tx(xhci, GFP_ATOMIC, urb, slot_id, ep_index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /****		Command Ring Operations		****/
@@ -3902,7 +4533,11 @@ static int queue_command(struct xhci_hcd *xhci, u32 field1, u32 field2,
 		reserved_trbs++;
 
 	ret = prepare_ring(xhci, xhci->cmd_ring, EP_STATE_RUNNING,
+<<<<<<< HEAD
 			reserved_trbs, GFP_ATOMIC);
+=======
+			reserved_trbs, false, GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		xhci_err(xhci, "ERR: No room for command on command ring\n");
 		if (command_must_succeed)
@@ -3910,8 +4545,13 @@ static int queue_command(struct xhci_hcd *xhci, u32 field1, u32 field2,
 					"unfailable commands failed.\n");
 		return ret;
 	}
+<<<<<<< HEAD
 	queue_trb(xhci, xhci->cmd_ring, false, field1, field2, field3,
 			field4 | xhci->cmd_ring->cycle_state);
+=======
+	queue_trb(xhci, xhci->cmd_ring, false, false, false, field1, field2,
+			field3,	field4 | xhci->cmd_ring->cycle_state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

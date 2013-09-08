@@ -1,7 +1,11 @@
 /*
  * OMAP powerdomain control
  *
+<<<<<<< HEAD
  * Copyright (C) 2007-2008, 2011 Texas Instruments, Inc.
+=======
+ * Copyright (C) 2007-2008 Texas Instruments, Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (C) 2007-2011 Nokia Corporation
  *
  * Written by Paul Walmsley
@@ -77,11 +81,20 @@ static struct powerdomain *_pwrdm_lookup(const char *name)
 static int _pwrdm_register(struct powerdomain *pwrdm)
 {
 	int i;
+<<<<<<< HEAD
 	struct voltagedomain *voltdm;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!pwrdm || !pwrdm->name)
 		return -EINVAL;
 
+<<<<<<< HEAD
+=======
+	if (!omap_chip_is(pwrdm->omap_chip))
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cpu_is_omap44xx() &&
 	    pwrdm->prcm_partition == OMAP4430_INVALID_PRCM_PARTITION) {
 		pr_err("powerdomain: %s: missing OMAP4 PRCM partition ID\n",
@@ -92,6 +105,7 @@ static int _pwrdm_register(struct powerdomain *pwrdm)
 	if (_pwrdm_lookup(pwrdm->name))
 		return -EEXIST;
 
+<<<<<<< HEAD
 	voltdm = voltdm_lookup(pwrdm->voltdm.name);
 	if (!voltdm) {
 		pr_err("powerdomain: %s: voltagedomain %s does not exist\n",
@@ -102,6 +116,8 @@ static int _pwrdm_register(struct powerdomain *pwrdm)
 	INIT_LIST_HEAD(&pwrdm->voltdm_node);
 	voltdm_add_pwrdm(voltdm, pwrdm);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_add(&pwrdm->node, &pwrdm_list);
 
 	/* Initialize the powerdomain's state counter */
@@ -202,6 +218,7 @@ static int _pwrdm_post_transition_cb(struct powerdomain *pwrdm, void *unused)
 /* Public functions */
 
 /**
+<<<<<<< HEAD
  * pwrdm_register_platform_funcs - register powerdomain implementation fns
  * @po: func pointers for arch specific implementations
  *
@@ -272,6 +289,31 @@ int pwrdm_complete_init(void)
 		pwrdm_set_next_pwrst(temp_p, PWRDM_POWER_ON);
 
 	return 0;
+=======
+ * pwrdm_init - set up the powerdomain layer
+ * @pwrdm_list: array of struct powerdomain pointers to register
+ * @custom_funcs: func pointers for arch specific implementations
+ *
+ * Loop through the array of powerdomains @pwrdm_list, registering all
+ * that are available on the current CPU. If pwrdm_list is supplied
+ * and not null, all of the referenced powerdomains will be
+ * registered.  No return value.  XXX pwrdm_list is not really a
+ * "list"; it is an array.  Rename appropriately.
+ */
+void pwrdm_init(struct powerdomain **pwrdm_list, struct pwrdm_ops *custom_funcs)
+{
+	struct powerdomain **p = NULL;
+
+	if (!custom_funcs)
+		WARN(1, "powerdomain: No custom pwrdm functions registered\n");
+	else
+		arch_pwrdm = custom_funcs;
+
+	if (pwrdm_list) {
+		for (p = pwrdm_list; *p; p++)
+			_pwrdm_register(*p);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -438,6 +480,7 @@ int pwrdm_for_each_clkdm(struct powerdomain *pwrdm,
 }
 
 /**
+<<<<<<< HEAD
  * pwrdm_get_voltdm - return a ptr to the voltdm that this pwrdm resides in
  * @pwrdm: struct powerdomain *
  *
@@ -450,6 +493,8 @@ struct voltagedomain *pwrdm_get_voltdm(struct powerdomain *pwrdm)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * pwrdm_get_mem_bank_count - get number of memory banks in this powerdomain
  * @pwrdm: struct powerdomain *
  *
@@ -972,6 +1017,7 @@ int pwrdm_wait_transition(struct powerdomain *pwrdm)
 
 int pwrdm_state_switch(struct powerdomain *pwrdm)
 {
+<<<<<<< HEAD
 	int ret;
 
 	ret = pwrdm_wait_transition(pwrdm);
@@ -979,6 +1025,9 @@ int pwrdm_state_switch(struct powerdomain *pwrdm)
 		ret = _pwrdm_state_switch(pwrdm, PWRDM_STATE_NOW);
 
 	return ret;
+=======
+	return _pwrdm_state_switch(pwrdm, PWRDM_STATE_NOW);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int pwrdm_clkdm_state_switch(struct clockdomain *clkdm)
@@ -1008,16 +1057,27 @@ int pwrdm_post_transition(void)
  * @pwrdm: struct powerdomain * to wait for
  *
  * Context loss count is the sum of powerdomain off-mode counter, the
+<<<<<<< HEAD
  * logic off counter and the per-bank memory off counter.  Returns negative
  * (and WARNs) upon error, otherwise, returns the context loss count.
  */
 int pwrdm_get_context_loss_count(struct powerdomain *pwrdm)
+=======
+ * logic off counter and the per-bank memory off counter.  Returns 0
+ * (and WARNs) upon error, otherwise, returns the context loss count.
+ */
+u32 pwrdm_get_context_loss_count(struct powerdomain *pwrdm)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i, count;
 
 	if (!pwrdm) {
 		WARN(1, "powerdomain: %s: pwrdm is null\n", __func__);
+<<<<<<< HEAD
 		return -ENODEV;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	count = pwrdm->state_counter[PWRDM_POWER_OFF];
@@ -1026,6 +1086,7 @@ int pwrdm_get_context_loss_count(struct powerdomain *pwrdm)
 	for (i = 0; i < pwrdm->banks; i++)
 		count += pwrdm->ret_mem_off_counter[i];
 
+<<<<<<< HEAD
 	/*
 	 * Context loss count has to be a non-negative value. Clear the sign
 	 * bit to get a value range from 0 to INT_MAX.
@@ -1033,6 +1094,9 @@ int pwrdm_get_context_loss_count(struct powerdomain *pwrdm)
 	count &= INT_MAX;
 
 	pr_debug("powerdomain: %s: context loss count = %d\n",
+=======
+	pr_debug("powerdomain: %s: context loss count = %u\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 pwrdm->name, count);
 
 	return count;

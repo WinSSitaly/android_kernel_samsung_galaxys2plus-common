@@ -51,7 +51,11 @@
 
 
 /* local variables */
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRIVER_VERSION	"0.5"
 #define DRIVER_AUTHOR	"Greg Kroah-Hartman <greg@kroah.com>, Scott Murray <scottm@somanetworks.com>"

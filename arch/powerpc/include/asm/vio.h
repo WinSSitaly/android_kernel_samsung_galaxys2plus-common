@@ -69,7 +69,10 @@ struct vio_dev {
 };
 
 struct vio_driver {
+<<<<<<< HEAD
 	const char *name;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const struct vio_device_id *id_table;
 	int (*probe)(struct vio_dev *dev, const struct vio_device_id *id);
 	int (*remove)(struct vio_dev *dev);
@@ -77,6 +80,7 @@ struct vio_driver {
 	 * be loaded in a CMO environment if it uses DMA.
 	 */
 	unsigned long (*get_desired_dma)(struct vio_dev *dev);
+<<<<<<< HEAD
 	const struct dev_pm_ops *pm;
 	struct device_driver driver;
 };
@@ -88,6 +92,12 @@ extern int __vio_register_driver(struct vio_driver *drv, struct module *owner,
  */
 #define vio_register_driver(driver)		\
 	__vio_register_driver(driver, THIS_MODULE, KBUILD_MODNAME)
+=======
+	struct device_driver driver;
+};
+
+extern int vio_register_driver(struct vio_driver *drv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void vio_unregister_driver(struct vio_driver *drv);
 
 extern int vio_cmo_entitlement_update(size_t);

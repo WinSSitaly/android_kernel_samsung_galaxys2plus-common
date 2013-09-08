@@ -110,7 +110,11 @@ Module use:
 -----------
 
 In order to automatically load the sonypi module on use, you can put those
+<<<<<<< HEAD
 lines a configuration file in /etc/modprobe.d/:
+=======
+lines in your /etc/modprobe.conf file:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	alias char-major-10-250 sonypi
 	options sonypi minor=250

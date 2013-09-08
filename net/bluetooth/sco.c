@@ -41,16 +41,26 @@
 #include <linux/debugfs.h>
 #include <linux/seq_file.h>
 #include <linux/list.h>
+<<<<<<< HEAD
 #include <linux/security.h>
 #include <net/sock.h>
 
+=======
+#include <net/sock.h>
+
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/uaccess.h>
 
 #include <net/bluetooth/bluetooth.h>
 #include <net/bluetooth/hci_core.h>
 #include <net/bluetooth/sco.h>
 
+<<<<<<< HEAD
 static bool disable_esco;
+=======
+static int disable_esco;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const struct proto_ops sco_sock_ops;
 
@@ -177,6 +187,10 @@ static int sco_connect(struct sock *sk)
 {
 	bdaddr_t *src = &bt_sk(sk)->src;
 	bdaddr_t *dst = &bt_sk(sk)->dst;
+<<<<<<< HEAD
+=======
+	__u16 pkt_type = sco_pi(sk)->pkt_type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sco_conn *conn;
 	struct hci_conn *hcon;
 	struct hci_dev  *hdev;
@@ -188,6 +202,7 @@ static int sco_connect(struct sock *sk)
 	if (!hdev)
 		return -EHOSTUNREACH;
 
+<<<<<<< HEAD
 	hci_dev_lock(hdev);
 
 	if (lmp_esco_capable(hdev) && !disable_esco)
@@ -196,6 +211,18 @@ static int sco_connect(struct sock *sk)
 		type = SCO_LINK;
 
 	hcon = hci_connect(hdev, type, dst, BT_SECURITY_LOW, HCI_AT_NO_BONDING);
+=======
+	hci_dev_lock_bh(hdev);
+
+	if (lmp_esco_capable(hdev) && !disable_esco)
+		type = ESCO_LINK;
+	else {
+		type = SCO_LINK;
+		pkt_type &= SCO_ESCO_MASK;
+	}
+
+	hcon = hci_connect(hdev, type, pkt_type, dst, BT_SECURITY_LOW, HCI_AT_NO_BONDING);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(hcon)) {
 		err = PTR_ERR(hcon);
 		goto done;
@@ -224,7 +251,11 @@ static int sco_connect(struct sock *sk)
 	}
 
 done:
+<<<<<<< HEAD
 	hci_dev_unlock(hdev);
+=======
+	hci_dev_unlock_bh(hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hci_dev_put(hdev);
 	return err;
 }
@@ -378,7 +409,10 @@ static void __sco_sock_close(struct sock *sk)
 			sco_chan_del(sk, ECONNRESET);
 		break;
 
+<<<<<<< HEAD
 	case BT_CONNECT2:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case BT_CONNECT:
 	case BT_DISCONN:
 		sco_chan_del(sk, ECONNRESET);
@@ -404,10 +438,15 @@ static void sco_sock_init(struct sock *sk, struct sock *parent)
 {
 	BT_DBG("sk %p", sk);
 
+<<<<<<< HEAD
 	if (parent) {
 		sk->sk_type = parent->sk_type;
 		security_sk_clone(parent, sk);
 	}
+=======
+	if (parent)
+		sk->sk_type = parent->sk_type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct proto sco_proto = {
@@ -463,6 +502,7 @@ static int sco_sock_create(struct net *net, struct socket *sock, int protocol,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int sco_sock_bind(struct socket *sock, struct sockaddr *addr, int addr_len)
 {
 	struct sockaddr_sco *sa = (struct sockaddr_sco *) addr;
@@ -471,10 +511,27 @@ static int sco_sock_bind(struct socket *sock, struct sockaddr *addr, int addr_le
 	int err = 0;
 
 	BT_DBG("sk %p %s", sk, batostr(&sa->sco_bdaddr));
+=======
+static int sco_sock_bind(struct socket *sock, struct sockaddr *addr, int alen)
+{
+	struct sockaddr_sco sa;
+	struct sock *sk = sock->sk;
+	bdaddr_t *src = &sa.sco_bdaddr;
+	int len, err = 0;
+
+	BT_DBG("sk %p %s", sk, batostr(&sa.sco_bdaddr));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!addr || addr->sa_family != AF_BLUETOOTH)
 		return -EINVAL;
 
+<<<<<<< HEAD
+=======
+	memset(&sa, 0, sizeof(sa));
+	len = min_t(unsigned int, sizeof(sa), alen);
+	memcpy(&sa, addr, len);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lock_sock(sk);
 
 	if (sk->sk_state != BT_OPEN) {
@@ -482,17 +539,30 @@ static int sco_sock_bind(struct socket *sock, struct sockaddr *addr, int addr_le
 		goto done;
 	}
 
+<<<<<<< HEAD
 	write_lock(&sco_sk_list.lock);
+=======
+	write_lock_bh(&sco_sk_list.lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (bacmp(src, BDADDR_ANY) && __sco_get_sock_by_addr(src)) {
 		err = -EADDRINUSE;
 	} else {
 		/* Save source address */
+<<<<<<< HEAD
 		bacpy(&bt_sk(sk)->src, &sa->sco_bdaddr);
 		sk->sk_state = BT_BOUND;
 	}
 
 	write_unlock(&sco_sk_list.lock);
+=======
+		bacpy(&bt_sk(sk)->src, &sa.sco_bdaddr);
+		sco_pi(sk)->pkt_type = sa.sco_pkt_type;
+		sk->sk_state = BT_BOUND;
+	}
+
+	write_unlock_bh(&sco_sk_list.lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 done:
 	release_sock(sk);
@@ -501,6 +571,7 @@ done:
 
 static int sco_sock_connect(struct socket *sock, struct sockaddr *addr, int alen, int flags)
 {
+<<<<<<< HEAD
 	struct sockaddr_sco *sa = (struct sockaddr_sco *) addr;
 	struct sock *sk = sock->sk;
 	int err = 0;
@@ -522,6 +593,36 @@ static int sco_sock_connect(struct socket *sock, struct sockaddr *addr, int alen
 
 	/* Set destination address and psm */
 	bacpy(&bt_sk(sk)->dst, &sa->sco_bdaddr);
+=======
+	struct sock *sk = sock->sk;
+	struct sockaddr_sco sa;
+	int len, err = 0;
+
+	BT_DBG("sk %p", sk);
+
+	if (!addr || addr->sa_family != AF_BLUETOOTH)
+		return -EINVAL;
+
+	memset(&sa, 0, sizeof(sa));
+	len = min_t(unsigned int, sizeof(sa), alen);
+	memcpy(&sa, addr, len);
+
+	lock_sock(sk);
+
+	if (sk->sk_type != SOCK_SEQPACKET) {
+		err = -EINVAL;
+		goto done;
+	}
+
+	if (sk->sk_state != BT_OPEN && sk->sk_state != BT_BOUND) {
+		err = -EBADFD;
+		goto done;
+	}
+
+	/* Set destination address and psm */
+	bacpy(&bt_sk(sk)->dst, &sa.sco_bdaddr);
+	sco_pi(sk)->pkt_type = sa.sco_pkt_type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = sco_connect(sk);
 	if (err)
@@ -628,6 +729,10 @@ static int sco_sock_getname(struct socket *sock, struct sockaddr *addr, int *len
 		bacpy(&sa->sco_bdaddr, &bt_sk(sk)->dst);
 	else
 		bacpy(&sa->sco_bdaddr, &bt_sk(sk)->src);
+<<<<<<< HEAD
+=======
+	sa->sco_pkt_type = sco_pi(sk)->pkt_type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -877,6 +982,14 @@ static void sco_conn_ready(struct sco_conn *conn)
 		bacpy(&bt_sk(sk)->src, conn->src);
 		bacpy(&bt_sk(sk)->dst, conn->dst);
 
+<<<<<<< HEAD
+=======
+		if (!conn->hcon) {
+				BT_ERR("conn->hcon = NULL");
+				/* to do */
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hci_conn_hold(conn->hcon);
 		__sco_chan_add(conn, sk, parent);
 
@@ -893,12 +1006,22 @@ done:
 }
 
 /* ----- SCO interface with lower layer (HCI) ----- */
+<<<<<<< HEAD
 int sco_connect_ind(struct hci_dev *hdev, bdaddr_t *bdaddr)
+=======
+static int sco_connect_ind(struct hci_dev *hdev, bdaddr_t *bdaddr, __u8 type)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	register struct sock *sk;
 	struct hlist_node *node;
 	int lm = 0;
 
+<<<<<<< HEAD
+=======
+	if (type != SCO_LINK && type != ESCO_LINK)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BT_DBG("hdev %s, bdaddr %s", hdev->name, batostr(bdaddr));
 
 	/* Find listening sockets */
@@ -918,9 +1041,19 @@ int sco_connect_ind(struct hci_dev *hdev, bdaddr_t *bdaddr)
 	return lm;
 }
 
+<<<<<<< HEAD
 int sco_connect_cfm(struct hci_conn *hcon, __u8 status)
 {
 	BT_DBG("hcon %p bdaddr %s status %d", hcon, batostr(&hcon->dst), status);
+=======
+static int sco_connect_cfm(struct hci_conn *hcon, __u8 status)
+{
+	BT_DBG("hcon %p bdaddr %s status %d", hcon, batostr(&hcon->dst), status);
+
+	if (hcon->type != SCO_LINK && hcon->type != ESCO_LINK)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!status) {
 		struct sco_conn *conn;
 
@@ -933,6 +1066,7 @@ int sco_connect_cfm(struct hci_conn *hcon, __u8 status)
 	return 0;
 }
 
+<<<<<<< HEAD
 int sco_disconn_cfm(struct hci_conn *hcon, __u8 reason)
 {
 	BT_DBG("hcon %p reason %d", hcon, reason);
@@ -942,6 +1076,21 @@ int sco_disconn_cfm(struct hci_conn *hcon, __u8 reason)
 }
 
 int sco_recv_scodata(struct hci_conn *hcon, struct sk_buff *skb)
+=======
+static int sco_disconn_cfm(struct hci_conn *hcon, __u8 reason)
+{
+	BT_DBG("hcon %p reason %d", hcon, reason);
+
+	if (hcon->type != SCO_LINK && hcon->type != ESCO_LINK)
+		return -EINVAL;
+
+	sco_conn_del(hcon, bt_to_errno(reason));
+
+	return 0;
+}
+
+static int sco_recv_scodata(struct hci_conn *hcon, struct sk_buff *skb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sco_conn *conn = hcon->sco_data;
 
@@ -965,14 +1114,22 @@ static int sco_debugfs_show(struct seq_file *f, void *p)
 	struct sock *sk;
 	struct hlist_node *node;
 
+<<<<<<< HEAD
 	read_lock(&sco_sk_list.lock);
+=======
+	read_lock_bh(&sco_sk_list.lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sk_for_each(sk, node, &sco_sk_list.head) {
 		seq_printf(f, "%s %s %d\n", batostr(&bt_sk(sk)->src),
 				batostr(&bt_sk(sk)->dst), sk->sk_state);
 	}
 
+<<<<<<< HEAD
 	read_unlock(&sco_sk_list.lock);
+=======
+	read_unlock_bh(&sco_sk_list.lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1017,6 +1174,18 @@ static const struct net_proto_family sco_sock_family_ops = {
 	.create	= sco_sock_create,
 };
 
+<<<<<<< HEAD
+=======
+static struct hci_proto sco_hci_proto = {
+	.name		= "SCO",
+	.id		= HCI_PROTO_SCO,
+	.connect_ind	= sco_connect_ind,
+	.connect_cfm	= sco_connect_cfm,
+	.disconn_cfm	= sco_disconn_cfm,
+	.recv_scodata	= sco_recv_scodata
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int __init sco_init(void)
 {
 	int err;
@@ -1031,6 +1200,16 @@ int __init sco_init(void)
 		goto error;
 	}
 
+<<<<<<< HEAD
+=======
+	err = hci_register_proto(&sco_hci_proto);
+	if (err < 0) {
+		BT_ERR("SCO protocol registration failed");
+		bt_sock_unregister(BTPROTO_SCO);
+		goto error;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (bt_debugfs) {
 		sco_debugfs = debugfs_create_file("sco", 0444,
 					bt_debugfs, NULL, &sco_debugfs_fops);
@@ -1054,6 +1233,12 @@ void __exit sco_exit(void)
 	if (bt_sock_unregister(BTPROTO_SCO) < 0)
 		BT_ERR("SCO socket unregistration failed");
 
+<<<<<<< HEAD
+=======
+	if (hci_unregister_proto(&sco_hci_proto) < 0)
+		BT_ERR("SCO protocol unregistration failed");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	proto_unregister(&sco_proto);
 }
 

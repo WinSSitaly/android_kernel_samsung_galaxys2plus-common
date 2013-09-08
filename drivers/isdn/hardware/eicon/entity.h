@@ -11,17 +11,30 @@
 
 typedef struct _divas_um_idi_entity {
 	struct list_head          link;
+<<<<<<< HEAD
 	diva_um_idi_adapter_t *adapter; /* Back to adapter */
 	ENTITY e;
 	void *os_ref;
 	dword status;
 	void *os_context;
 	int rc_count;
+=======
+	diva_um_idi_adapter_t*    adapter; /* Back to adapter */
+	ENTITY                    e;
+	void*                     os_ref;
+	dword                     status;
+	void*                     os_context;
+	int                       rc_count;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	diva_um_idi_data_queue_t  data; /* definad by user 1 ... MAX */
 	diva_um_idi_data_queue_t  rc;   /* two entries */
 	BUFFERS                   XData;
 	BUFFERS                   RData;
+<<<<<<< HEAD
 	byte                      buffer[2048 + 512];
+=======
+	byte                      buffer[2048+512];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } divas_um_idi_entity_t;
 
 

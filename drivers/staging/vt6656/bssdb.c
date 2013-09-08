@@ -216,6 +216,29 @@ PKnownBSS BSSpSearchBSSList(void *hDeviceContext,
                         continue;
                     }
                 }
+<<<<<<< HEAD
+=======
+/*
+                if (pMgmt->eAuthenMode < WMAC_AUTH_WPA) {
+                    if (pCurrBSS->bWPAValid == TRUE) {
+                        // WPA AP will reject connection of station without WPA enable.
+                        continue;
+                    }
+                } else if ((pMgmt->eAuthenMode == WMAC_AUTH_WPA) ||
+                           (pMgmt->eAuthenMode == WMAC_AUTH_WPAPSK)) {
+                    if (pCurrBSS->bWPAValid == FALSE) {
+                        // station with WPA enable can't join NonWPA AP.
+                        continue;
+                    }
+                } else if ((pMgmt->eAuthenMode == WMAC_AUTH_WPA2) ||
+                           (pMgmt->eAuthenMode == WMAC_AUTH_WPA2PSK)) {
+                    if (pCurrBSS->bWPA2Valid == FALSE) {
+                        // station with WPA2 enable can't join NonWPA2 AP.
+                        continue;
+                    }
+                }
+*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
         pMgmt->pSameBSS[jj].uChannel = pCurrBSS->uChannel;
         DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"BSSpSearchBSSList pSelect1[%02X %02X %02X-%02X %02X %02X]\n",*pCurrBSS->abyBSSID,*(pCurrBSS->abyBSSID+1),*(pCurrBSS->abyBSSID+2),*(pCurrBSS->abyBSSID+3),*(pCurrBSS->abyBSSID+4),*(pCurrBSS->abyBSSID+5));
@@ -280,11 +303,26 @@ void BSSvClearBSSList(void *hDeviceContext, BOOL bKeepCurrBSSID)
                 continue;
             }
         }
+<<<<<<< HEAD
 
 	pMgmt->sBSSList[ii].bActive = FALSE;
         memset(&pMgmt->sBSSList[ii], 0, sizeof(KnownBSS));
     }
     BSSvClearAnyBSSJoinRecord(pDevice);
+=======
+/*
+        if ((pMgmt->sBSSList[ii].bActive) && (pMgmt->sBSSList[ii].uClearCount < BSS_CLEAR_COUNT)) {
+             pMgmt->sBSSList[ii].uClearCount ++;
+             continue;
+        }
+*/
+        pMgmt->sBSSList[ii].bActive = FALSE;
+        memset(&pMgmt->sBSSList[ii], 0, sizeof(KnownBSS));
+    }
+    BSSvClearAnyBSSJoinRecord(pDevice);
+
+    return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -497,6 +535,49 @@ BOOL BSSbInsertToBSSList(void *hDeviceContext,
             pBSSList->ldBmAverage[ii] = 0;
     }
 
+<<<<<<< HEAD
+=======
+/*
+    if ((pIE_Country != NULL) &&
+        (pMgmt->b11hEnable == TRUE)) {
+        CARDvSetCountryInfo(pMgmt->pAdapter,
+                            pBSSList->eNetworkTypeInUse,
+                            pIE_Country);
+    }
+
+    if ((bParsingQuiet == TRUE) && (pIE_Quiet != NULL)) {
+        if ((((PWLAN_IE_QUIET)pIE_Quiet)->len == 8) &&
+            (((PWLAN_IE_QUIET)pIE_Quiet)->byQuietCount != 0)) {
+            // valid EID
+            if (pQuiet == NULL) {
+                pQuiet = (PWLAN_IE_QUIET)pIE_Quiet;
+                CARDbSetQuiet(  pMgmt->pAdapter,
+                                TRUE,
+                                pQuiet->byQuietCount,
+                                pQuiet->byQuietPeriod,
+                                *((PWORD)pQuiet->abyQuietDuration),
+                                *((PWORD)pQuiet->abyQuietOffset)
+                                );
+            } else {
+                pQuiet = (PWLAN_IE_QUIET)pIE_Quiet;
+                CARDbSetQuiet(  pMgmt->pAdapter,
+                                FALSE,
+                                pQuiet->byQuietCount,
+                                pQuiet->byQuietPeriod,
+                                *((PWORD)pQuiet->abyQuietDuration),
+                                *((PWORD)pQuiet->abyQuietOffset)
+                                );
+            }
+        }
+    }
+
+    if ((bParsingQuiet == TRUE) &&
+        (pQuiet != NULL)) {
+        CARDbStartQuiet(pMgmt->pAdapter);
+    }
+*/
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     pBSSList->uIELength = uIELength;
     if (pBSSList->uIELength > WLAN_BEACON_FR_MAXLEN)
         pBSSList->uIELength = WLAN_BEACON_FR_MAXLEN;
@@ -542,6 +623,11 @@ BOOL BSSbUpdateToBSSList(void *hDeviceContext,
     PSRxMgmtPacket  pRxPacket = (PSRxMgmtPacket)pRxPacketContext;
     signed long            ldBm, ldBmSum;
     BOOL            bParsingQuiet = FALSE;
+<<<<<<< HEAD
+=======
+  //  BYTE            abyTmpSSID[WLAN_IEHDR_LEN + WLAN_SSID_MAXLEN + 1];
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
     if (pBSSList == NULL)
         return FALSE;
@@ -553,6 +639,10 @@ BOOL BSSbUpdateToBSSList(void *hDeviceContext,
     pBSSList->wCapInfo = cpu_to_le16(wCapInfo);
     pBSSList->uClearCount = 0;
     pBSSList->uChannel = byCurrChannel;
+<<<<<<< HEAD
+=======
+//    DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"BSSbUpdateToBSSList: pBSSList->uChannel: %d\n", pBSSList->uChannel);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
     if (pSSID->len > WLAN_SSID_MAXLEN)
         pSSID->len = WLAN_SSID_MAXLEN;
@@ -739,6 +829,10 @@ void BSSvCreateOneNode(void *hDeviceContext, unsigned int *puNodeIndex)
     pMgmt->sNodeDBTable[*puNodeIndex].byAuthSequence = 0;
     pMgmt->sNodeDBTable[*puNodeIndex].wEnQueueCnt = 0;
     DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "Create node index = %d\n", ii);
+<<<<<<< HEAD
+=======
+    return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -769,6 +863,11 @@ void BSSvRemoveOneNode(void *hDeviceContext, unsigned int uNodeIndex)
     memset(&pMgmt->sNodeDBTable[uNodeIndex], 0, sizeof(KnownNodeDB));
     // clear tx bit map
     pMgmt->abyPSTxMap[pMgmt->sNodeDBTable[uNodeIndex].wAID >> 3] &=  ~byMask[pMgmt->sNodeDBTable[uNodeIndex].wAID & 7];
+<<<<<<< HEAD
+=======
+
+    return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 /*+
  *
@@ -981,6 +1080,13 @@ if((pMgmt->eCurrState!=WMAC_STATE_ASSOC) &&
 
             // Rate fallback check
             if (!pDevice->bFixRate) {
+<<<<<<< HEAD
+=======
+/*
+                if ((pMgmt->eCurrMode == WMAC_MODE_ESS_STA) && (ii == 0))
+                    RATEvTxRateFallBack(pDevice, &(pMgmt->sNodeDBTable[ii]));
+*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
                 if (ii > 0) {
                     // ii = 0 for multicast node (AP & Adhoc)
 			RATEvTxRateFallBack((void *)pDevice,
@@ -1075,6 +1181,10 @@ if((pMgmt->eCurrState!=WMAC_STATE_ASSOC) &&
         (pMgmt->eCurrMode == WMAC_MODE_ESS_STA)) {
 
         if (pMgmt->sNodeDBTable[0].bActive) { // Assoc with BSS
+<<<<<<< HEAD
+=======
+           // DBG_PRT(MSG_LEVEL_INFO, KERN_INFO "Callback inactive Count = [%d]\n", pMgmt->sNodeDBTable[0].uInActiveCount);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
             if (pDevice->bUpdateBBVGA) {
 		/* s_vCheckSensitivity((void *) pDevice); */
@@ -1116,6 +1226,10 @@ if((pMgmt->eCurrState!=WMAC_STATE_ASSOC) &&
              pDevice->skb = dev_alloc_skb((int)pDevice->rx_buf_sz);
          }
    #ifdef WPA_SUPPLICANT_DRIVER_WEXT_SUPPORT
+<<<<<<< HEAD
+=======
+  // if(pDevice->bWPASuppWextEnabled == TRUE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
       {
 	union iwreq_data  wrqu;
 	memset(&wrqu, 0, sizeof (wrqu));
@@ -1144,6 +1258,10 @@ DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "bIsRoaming %d, !\n", pDevice->bIsRoaming );
                 pDevice->uIsroamingTime = 0;
                 pDevice->bRoaming = FALSE;
 
+<<<<<<< HEAD
+=======
+//            if ((pDevice->bWPADEVUp) && (pDevice->skb != NULL)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
              wpahdr = (viawget_wpa_header *)pDevice->skb->data;
              wpahdr->type = VIAWGET_CCKM_ROAM_MSG;
              wpahdr->resp_ie_len = 0;
@@ -1157,6 +1275,10 @@ DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "bIsRoaming %d, !\n", pDevice->bIsRoaming );
              netif_rx(pDevice->skb);
             pDevice->skb = dev_alloc_skb((int)pDevice->rx_buf_sz);
 
+<<<<<<< HEAD
+=======
+//         }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
           }
       else if ((pDevice->bRoaming == FALSE)&&(pDevice->bIsRoaming == TRUE)) {
                             pDevice->uIsroamingTime++;
@@ -1195,13 +1317,21 @@ else {
     }
 
     if (pMgmt->eCurrMode == WMAC_MODE_IBSS_STA) {
+<<<<<<< HEAD
         // if adhoc started which essid is NULL string, rescanning.
+=======
+        // if adhoc started which essid is NULL string, rescaning.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         if ((pMgmt->eCurrState == WMAC_STATE_STARTED) && (pCurrSSID->len == 0)) {
             if (pDevice->uAutoReConnectTime < 10) {
                 pDevice->uAutoReConnectTime++;
             }
             else {
+<<<<<<< HEAD
                 DBG_PRT(MSG_LEVEL_NOTICE, KERN_INFO "Adhoc re-scanning ...\n");
+=======
+                DBG_PRT(MSG_LEVEL_NOTICE, KERN_INFO "Adhoc re-scaning ...\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       pMgmt->eScanType = WMAC_SCAN_ACTIVE;
 		bScheduleCommand((void *) pDevice, WLAN_CMD_BSSID_SCAN, NULL);
 		bScheduleCommand((void *) pDevice, WLAN_CMD_SSID, NULL);
@@ -1234,6 +1364,10 @@ else {
 
     pMgmt->sTimerSecondCallback.expires = RUN_AT(HZ);
     add_timer(&pMgmt->sTimerSecondCallback);
+<<<<<<< HEAD
+=======
+    return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*+
@@ -1282,6 +1416,10 @@ void BSSvUpdateNodeTxCounter(void *hDeviceContext,
 
     // Only Unicast using support rates
     if (wFIFOCtl & FIFOCTL_NEEDACK) {
+<<<<<<< HEAD
+=======
+        //DBG_PRN_GRP21(("Device %08X, wRate %04X, byTSR %02X\n", hDeviceContext, wRate, byTSR));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         if (pMgmt->eCurrMode == WMAC_MODE_ESS_STA) {
             pMgmt->sNodeDBTable[0].uTxAttempts += 1;
             if ( !(byTSR & (TSR_TMO | TSR_RETRYTMO))) {
@@ -1392,6 +1530,13 @@ void BSSvUpdateNodeTxCounter(void *hDeviceContext,
             }
         }
     }
+<<<<<<< HEAD
+=======
+
+    return;
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*+
@@ -1432,6 +1577,11 @@ void BSSvClearNodeDBTable(void *hDeviceContext,
             memset(&pMgmt->sNodeDBTable[ii], 0, sizeof(KnownNodeDB));
         }
     }
+<<<<<<< HEAD
+=======
+
+    return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void s_vCheckSensitivity(void *hDeviceContext)
@@ -1495,6 +1645,10 @@ RxOkRatio = (RxCnt < 6) ? 2000:((pDevice->scStatistic.RxOkCnt * 2000) / RxCnt);
 //decide link quality
 if(pDevice->bLinkPass !=TRUE)
 {
+<<<<<<< HEAD
+=======
+ //  printk("s_uCalculateLinkQual-->Link disconnect and Poor quality**\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    pDevice->scStatistic.LinkQuality = 0;
    pDevice->scStatistic.SignalStren = 0;
 }
@@ -1518,6 +1672,10 @@ else
    pDevice->scStatistic.TxFailCount = 0;
    pDevice->scStatistic.TxNoRetryOkCount = 0;
    pDevice->scStatistic.TxRetryOkCount = 0;
+<<<<<<< HEAD
+=======
+   return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void BSSvClearAnyBSSJoinRecord(void *hDeviceContext)
@@ -1526,8 +1684,15 @@ void BSSvClearAnyBSSJoinRecord(void *hDeviceContext)
     PSMgmtObject    pMgmt = &(pDevice->sMgmtObj);
     unsigned int            ii;
 
+<<<<<<< HEAD
 	for (ii = 0; ii < MAX_BSS_NUM; ii++)
         pMgmt->sBSSList[ii].bSelected = FALSE;
+=======
+    for (ii = 0; ii < MAX_BSS_NUM; ii++) {
+        pMgmt->sBSSList[ii].bSelected = FALSE;
+    }
+    return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void s_vCheckPreEDThreshold(void *hDeviceContext)
@@ -1544,5 +1709,9 @@ void s_vCheckPreEDThreshold(void *hDeviceContext)
             BBvUpdatePreEDThreshold(pDevice, FALSE);
         }
     }
+<<<<<<< HEAD
+=======
+    return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 

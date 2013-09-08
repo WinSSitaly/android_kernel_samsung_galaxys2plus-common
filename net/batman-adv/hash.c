@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2006-2012 B.A.T.M.A.N. contributors:
+=======
+ * Copyright (C) 2006-2011 B.A.T.M.A.N. contributors:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Simon Wunderlich, Marek Lindner
  *
@@ -25,7 +29,11 @@
 /* clears the hash */
 static void hash_init(struct hashtable_t *hash)
 {
+<<<<<<< HEAD
 	uint32_t i;
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0 ; i < hash->size; i++) {
 		INIT_HLIST_HEAD(&hash->table[i]);
@@ -42,6 +50,7 @@ void hash_destroy(struct hashtable_t *hash)
 }
 
 /* allocates and clears the hash */
+<<<<<<< HEAD
 struct hashtable_t *hash_new(uint32_t size)
 {
 	struct hashtable_t *hash;
@@ -56,6 +65,21 @@ struct hashtable_t *hash_new(uint32_t size)
 
 	hash->list_locks = kmalloc(sizeof(*hash->list_locks) * size,
 				   GFP_ATOMIC);
+=======
+struct hashtable_t *hash_new(int size)
+{
+	struct hashtable_t *hash;
+
+	hash = kmalloc(sizeof(struct hashtable_t), GFP_ATOMIC);
+	if (!hash)
+		return NULL;
+
+	hash->table = kmalloc(sizeof(struct element_t *) * size, GFP_ATOMIC);
+	if (!hash->table)
+		goto free_hash;
+
+	hash->list_locks = kmalloc(sizeof(spinlock_t) * size, GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!hash->list_locks)
 		goto free_table;
 

@@ -147,7 +147,11 @@ DEFINE_EVENT(kmem_free, kmem_cache_free,
 	TP_ARGS(call_site, ptr)
 );
 
+<<<<<<< HEAD
 TRACE_EVENT(mm_page_free,
+=======
+TRACE_EVENT(mm_page_free_direct,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	TP_PROTO(struct page *page, unsigned int order),
 
@@ -169,7 +173,11 @@ TRACE_EVENT(mm_page_free,
 			__entry->order)
 );
 
+<<<<<<< HEAD
 TRACE_EVENT(mm_page_free_batched,
+=======
+TRACE_EVENT(mm_pagevec_free,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	TP_PROTO(struct page *page, int cold),
 
@@ -214,7 +222,11 @@ TRACE_EVENT(mm_page_alloc,
 
 	TP_printk("page=%p pfn=%lu order=%d migratetype=%d gfp_flags=%s",
 		__entry->page,
+<<<<<<< HEAD
 		__entry->page ? page_to_pfn(__entry->page) : 0,
+=======
+		page_to_pfn(__entry->page),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__entry->order,
 		__entry->migratetype,
 		show_gfp_flags(__entry->gfp_flags))
@@ -240,7 +252,11 @@ DECLARE_EVENT_CLASS(mm_page,
 
 	TP_printk("page=%p pfn=%lu order=%u migratetype=%d percpu_refill=%d",
 		__entry->page,
+<<<<<<< HEAD
 		__entry->page ? page_to_pfn(__entry->page) : 0,
+=======
+		page_to_pfn(__entry->page),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__entry->order,
 		__entry->migratetype,
 		__entry->order == 0)

@@ -7,12 +7,19 @@
 #include "linux/bootmem.h"
 #include "linux/initrd.h"
 #include "asm/types.h"
+<<<<<<< HEAD
+=======
+#include "initrd.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "init.h"
 #include "os.h"
 
 /* Changed by uml_initrd_setup, which is a setup */
 static char *initrd __initdata = NULL;
+<<<<<<< HEAD
 static int load_initrd(char *filename, void *buf, int size);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __init read_initrd(void)
 {
@@ -62,7 +69,11 @@ __uml_setup("initrd=", uml_initrd_setup,
 "    name of the file containing the image.\n\n"
 );
 
+<<<<<<< HEAD
 static int load_initrd(char *filename, void *buf, int size)
+=======
+int load_initrd(char *filename, void *buf, int size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int fd, n;
 

@@ -24,7 +24,10 @@
 #include <sound/tlv.h>
 #include <sound/i2c.h>
 #include <sound/pt2258.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Jochen Voss <voss@seehuhn.de>");
 MODULE_DESCRIPTION("PT2258 volume controller (Princeton Technology Corp.)");

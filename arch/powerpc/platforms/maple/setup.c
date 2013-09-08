@@ -17,7 +17,10 @@
 #include <linux/errno.h>
 #include <linux/sched.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mm.h>
 #include <linux/stddef.h>
 #include <linux/unistd.h>
@@ -47,6 +50,10 @@
 #include <asm/processor.h>
 #include <asm/sections.h>
 #include <asm/prom.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/pgtable.h>
 #include <asm/io.h>
 #include <asm/pci-bridge.h>
@@ -220,7 +227,11 @@ static void __init maple_init_IRQ(void)
 	unsigned long openpic_addr = 0;
 	int naddr, n, i, opplen, has_isus = 0;
 	struct mpic *mpic;
+<<<<<<< HEAD
 	unsigned int flags = 0;
+=======
+	unsigned int flags = MPIC_PRIMARY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Locate MPIC in the device-tree. Note that there is a bug
 	 * in Maple device-tree where the type of the controller is
@@ -261,7 +272,11 @@ static void __init maple_init_IRQ(void)
 		flags |= MPIC_BIG_ENDIAN;
 
 	/* XXX Maple specific bits */
+<<<<<<< HEAD
 	flags |= MPIC_U3_HT_IRQS;
+=======
+	flags |= MPIC_U3_HT_IRQS | MPIC_WANTS_RESET;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* All U3/U4 are big-endian, older SLOF firmware doesn't encode this */
 	flags |= MPIC_BIG_ENDIAN;
 
@@ -338,16 +353,46 @@ define_machine(maple) {
 #ifdef CONFIG_EDAC
 /*
  * Register a platform device for CPC925 memory controller on
+<<<<<<< HEAD
  * all boards with U3H (CPC925) bridge.
  */
+=======
+ * Motorola ATCA-6101 blade.
+ */
+#define MAPLE_CPC925_MODEL	"Motorola,ATCA-6101"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init maple_cpc925_edac_setup(void)
 {
 	struct platform_device *pdev;
 	struct device_node *np = NULL;
 	struct resource r;
+<<<<<<< HEAD
 	int ret;
 	volatile void __iomem *mem;
 	u32 rev;
+=======
+	const unsigned char *model;
+	int ret;
+
+	np = of_find_node_by_path("/");
+	if (!np) {
+		printk(KERN_ERR "%s: Unable to get root node\n", __func__);
+		return -ENODEV;
+	}
+
+	model = (const unsigned char *)of_get_property(np, "model", NULL);
+	if (!model) {
+		printk(KERN_ERR "%s: Unabel to get model info\n", __func__);
+		of_node_put(np);
+		return -ENODEV;
+	}
+
+	ret = strcmp(model, MAPLE_CPC925_MODEL);
+	of_node_put(np);
+
+	if (ret != 0)
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	np = of_find_node_by_type(NULL, "memory-controller");
 	if (!np) {
@@ -365,6 +410,7 @@ static int __init maple_cpc925_edac_setup(void)
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	mem = ioremap(r.start, resource_size(&r));
 	if (!mem) {
 		printk(KERN_ERR "%s: Unable to map memory-controller memory\n",
@@ -381,6 +427,8 @@ static int __init maple_cpc925_edac_setup(void)
 		return 0;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pdev = platform_device_register_simple("cpc925_edac", 0, &r, 1);
 	if (IS_ERR(pdev))
 		return PTR_ERR(pdev);

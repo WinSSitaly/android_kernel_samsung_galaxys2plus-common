@@ -15,7 +15,11 @@
 #include <linux/input/matrix_keypad.h>
 #include <linux/types.h>
 
+<<<<<<< HEAD
 #define DECLARE_9x9_KEYMAP(_name) \
+=======
+#define DECLARE_KEYMAP(_name) \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int _name[] = { \
 	KEY(0, 0, KEY_ESC), \
 	KEY(0, 1, KEY_1), \
@@ -62,6 +66,27 @@ int _name[] = { \
 	KEY(4, 6, KEY_Z), \
 	KEY(4, 7, KEY_X), \
 	KEY(4, 8, KEY_C), \
+<<<<<<< HEAD
+=======
+	KEY(4, 0, KEY_L), \
+	KEY(4, 1, KEY_SEMICOLON), \
+	KEY(4, 2, KEY_APOSTROPHE), \
+	KEY(4, 3, KEY_GRAVE), \
+	KEY(4, 4, KEY_LEFTSHIFT), \
+	KEY(4, 5, KEY_BACKSLASH), \
+	KEY(4, 6, KEY_Z), \
+	KEY(4, 7, KEY_X), \
+	KEY(4, 8, KEY_C), \
+	KEY(4, 0, KEY_L), \
+	KEY(4, 1, KEY_SEMICOLON), \
+	KEY(4, 2, KEY_APOSTROPHE), \
+	KEY(4, 3, KEY_GRAVE), \
+	KEY(4, 4, KEY_LEFTSHIFT), \
+	KEY(4, 5, KEY_BACKSLASH), \
+	KEY(4, 6, KEY_Z), \
+	KEY(4, 7, KEY_X), \
+	KEY(4, 8, KEY_C), \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	KEY(5, 0, KEY_V), \
 	KEY(5, 1, KEY_B), \
 	KEY(5, 2, KEY_N), \
@@ -100,6 +125,7 @@ int _name[] = { \
 	KEY(8, 8, KEY_KP0), \
 }
 
+<<<<<<< HEAD
 #define DECLARE_6x6_KEYMAP(_name) \
 int _name[] = { \
 	KEY(0, 0, KEY_RESERVED), \
@@ -144,11 +170,16 @@ int _name[] = { \
 #define KEYPAD_6x6     1
 #define KEYPAD_2x2     2
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct kbd_platform_data - spear keyboard platform data
  * keymap: pointer to keymap data (table and size)
  * rep: enables key autorepeat
+<<<<<<< HEAD
  * mode: choose keyboard support(9x9, 6x6, 2x2)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This structure is supposed to be used by platform code to supply
  * keymaps to drivers that implement keyboards.
@@ -156,7 +187,19 @@ int _name[] = { \
 struct kbd_platform_data {
 	const struct matrix_keymap_data *keymap;
 	bool rep;
+<<<<<<< HEAD
 	unsigned int mode;
 };
 
+=======
+};
+
+/* This function is used to set platform data field of pdev->dev */
+static inline void
+kbd_set_plat_data(struct platform_device *pdev, struct kbd_platform_data *data)
+{
+	pdev->dev.platform_data = data;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __PLAT_KEYBOARD_H */

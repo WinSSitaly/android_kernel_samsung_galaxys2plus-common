@@ -14,7 +14,10 @@
 #include <linux/init.h>
 #include <linux/types.h>
 #include <linux/errno.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/suspend.h>
 #include <linux/delay.h>
 #include <linux/device.h>

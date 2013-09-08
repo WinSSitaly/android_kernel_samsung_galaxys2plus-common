@@ -17,9 +17,14 @@
 
 #include <linux/delay.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/regmap.h>
 #include <linux/slab.h>
 #include <linux/module.h>
+=======
+#include <linux/platform_device.h>
+#include <linux/slab.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/pcm.h>
 #include <sound/pcm_params.h>
 #include <sound/soc.h>
@@ -27,6 +32,7 @@
 #include <sound/tlv.h>
 
 /* DA7210 register space */
+<<<<<<< HEAD
 #define DA7210_CONTROL			0x01
 #define DA7210_STATUS			0x02
 #define DA7210_STARTUP1			0x03
@@ -38,17 +44,27 @@
 #define DA7210_AUX1_R			0x0A
 #define DA7210_AUX2			0x0B
 #define DA7210_IN_GAIN			0x0C
+=======
+#define DA7210_STATUS			0x02
+#define DA7210_STARTUP1			0x03
+#define DA7210_MIC_L			0x07
+#define DA7210_MIC_R			0x08
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DA7210_INMIX_L			0x0D
 #define DA7210_INMIX_R			0x0E
 #define DA7210_ADC_HPF			0x0F
 #define DA7210_ADC			0x10
+<<<<<<< HEAD
 #define DA7210_ADC_EQ1_2		0X11
 #define DA7210_ADC_EQ3_4		0x12
 #define DA7210_ADC_EQ5			0x13
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DA7210_DAC_HPF			0x14
 #define DA7210_DAC_L			0x15
 #define DA7210_DAC_R			0x16
 #define DA7210_DAC_SEL			0x17
+<<<<<<< HEAD
 #define DA7210_SOFTMUTE			0x18
 #define DA7210_DAC_EQ1_2		0x19
 #define DA7210_DAC_EQ3_4		0x1A
@@ -62,6 +78,13 @@
 #define DA7210_HP_R_VOL			0x22
 #define DA7210_HP_CFG			0x23
 #define DA7210_ZERO_CROSS		0x24
+=======
+#define DA7210_OUTMIX_L			0x1C
+#define DA7210_OUTMIX_R			0x1D
+#define DA7210_HP_L_VOL			0x21
+#define DA7210_HP_R_VOL			0x22
+#define DA7210_HP_CFG			0x23
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DA7210_DAI_SRC_SEL		0x25
 #define DA7210_DAI_CFG1			0x26
 #define DA7210_DAI_CFG3			0x28
@@ -69,12 +92,15 @@
 #define DA7210_PLL_DIV2			0x2A
 #define DA7210_PLL_DIV3			0x2B
 #define DA7210_PLL			0x2C
+<<<<<<< HEAD
 #define DA7210_ALC_MAX			0x83
 #define DA7210_ALC_MIN			0x84
 #define DA7210_ALC_NOIS			0x85
 #define DA7210_ALC_ATT			0x86
 #define DA7210_ALC_REL			0x87
 #define DA7210_ALC_DEL			0x88
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DA7210_A_HID_UNLOCK		0x8A
 #define DA7210_A_TEST_UNLOCK		0x8B
 #define DA7210_A_PLL1			0x90
@@ -97,7 +123,10 @@
 #define DA7210_IN_R_EN			(1 << 7)
 
 /* ADC bit fields */
+<<<<<<< HEAD
 #define DA7210_ADC_ALC_EN		(1 << 0)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DA7210_ADC_L_EN			(1 << 3)
 #define DA7210_ADC_R_EN			(1 << 7)
 
@@ -131,17 +160,25 @@
 
 /* DAI_CFG1 bit fields */
 #define DA7210_DAI_WORD_S16_LE		(0 << 0)
+<<<<<<< HEAD
 #define DA7210_DAI_WORD_S20_3LE		(1 << 0)
 #define DA7210_DAI_WORD_S24_LE		(2 << 0)
 #define DA7210_DAI_WORD_S32_LE		(3 << 0)
 #define DA7210_DAI_FLEN_64BIT		(1 << 2)
 #define DA7210_DAI_MODE_SLAVE		(0 << 7)
+=======
+#define DA7210_DAI_WORD_S24_LE		(2 << 0)
+#define DA7210_DAI_FLEN_64BIT		(1 << 2)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DA7210_DAI_MODE_MASTER		(1 << 7)
 
 /* DAI_CFG3 bit fields */
 #define DA7210_DAI_FORMAT_I2SMODE	(0 << 0)
+<<<<<<< HEAD
 #define DA7210_DAI_FORMAT_LEFT_J	(1 << 0)
 #define DA7210_DAI_FORMAT_RIGHT_J	(2 << 0)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DA7210_DAI_OE			(1 << 3)
 #define DA7210_DAI_EN			(1 << 7)
 
@@ -164,6 +201,7 @@
 #define DA7210_PLL_FS_96000		(0xF << 0)
 #define DA7210_PLL_EN			(0x1 << 7)
 
+<<<<<<< HEAD
 /* SOFTMUTE bit fields */
 #define DA7210_RAMP_EN			(1 << 6)
 
@@ -206,6 +244,8 @@
 #define DA7210_OUT2_OUTMIX_L		(1 << 6)
 #define DA7210_OUT2_EN			(1 << 7)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DA7210_VERSION "0.0.1"
 
 /*
@@ -217,6 +257,7 @@
  * mute		: 0x10
  * reserved	: 0x00 - 0x0F
  *
+<<<<<<< HEAD
  * Reserved area are considered as "mute".
  */
 static const unsigned int hp_out_tlv[] = {
@@ -704,6 +745,118 @@ static bool da7210_volatile_register(struct device *dev,
 	default:
 		return false;
 	}
+=======
+ * ** FIXME **
+ *
+ * Reserved area are considered as "mute".
+ * -> min = -79.5 dB
+ */
+static const DECLARE_TLV_DB_SCALE(hp_out_tlv, -7950, 150, 1);
+
+static const struct snd_kcontrol_new da7210_snd_controls[] = {
+
+	SOC_DOUBLE_R_TLV("HeadPhone Playback Volume",
+			 DA7210_HP_L_VOL, DA7210_HP_R_VOL,
+			 0, 0x3F, 0, hp_out_tlv),
+};
+
+/* Codec private data */
+struct da7210_priv {
+	enum snd_soc_control_type control_type;
+	void *control_data;
+};
+
+/*
+ * Register cache
+ */
+static const u8 da7210_reg[] = {
+	0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* R0  - R7  */
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08,	/* R8  - RF  */
+	0x00, 0x00, 0x00, 0x00, 0x08, 0x10, 0x10, 0x54,	/* R10 - R17 */
+	0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* R18 - R1F */
+	0x00, 0x00, 0x00, 0x02, 0x00, 0x76, 0x00, 0x00,	/* R20 - R27 */
+	0x04, 0x00, 0x00, 0x30, 0x2A, 0x00, 0x40, 0x00,	/* R28 - R2F */
+	0x40, 0x00, 0x40, 0x00, 0x40, 0x00, 0x40, 0x00,	/* R30 - R37 */
+	0x40, 0x00, 0x40, 0x00, 0x40, 0x00, 0x00, 0x00,	/* R38 - R3F */
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* R40 - R4F */
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* R48 - R4F */
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* R50 - R57 */
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* R58 - R5F */
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* R60 - R67 */
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* R68 - R6F */
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* R70 - R77 */
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x54, 0x54, 0x00,	/* R78 - R7F */
+	0x00, 0x00, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x00,	/* R80 - R87 */
+	0x00,						/* R88       */
+};
+
+/*
+ * Read da7210 register cache
+ */
+static inline u32 da7210_read_reg_cache(struct snd_soc_codec *codec, u32 reg)
+{
+	u8 *cache = codec->reg_cache;
+	BUG_ON(reg >= ARRAY_SIZE(da7210_reg));
+	return cache[reg];
+}
+
+/*
+ * Write to the da7210 register space
+ */
+static int da7210_write(struct snd_soc_codec *codec, u32 reg, u32 value)
+{
+	u8 *cache = codec->reg_cache;
+	u8 data[2];
+
+	BUG_ON(codec->driver->volatile_register);
+
+	data[0] = reg & 0xff;
+	data[1] = value & 0xff;
+
+	if (reg >= codec->driver->reg_cache_size)
+		return -EIO;
+
+	if (2 != codec->hw_write(codec->control_data, data, 2))
+		return -EIO;
+
+	cache[reg] = value;
+	return 0;
+}
+
+/*
+ * Read from the da7210 register space.
+ */
+static inline u32 da7210_read(struct snd_soc_codec *codec, u32 reg)
+{
+	if (DA7210_STATUS == reg)
+		return i2c_smbus_read_byte_data(codec->control_data, reg);
+
+	return da7210_read_reg_cache(codec, reg);
+}
+
+static int da7210_startup(struct snd_pcm_substream *substream,
+			  struct snd_soc_dai *dai)
+{
+	int is_play = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
+	struct snd_soc_codec *codec = dai->codec;
+
+	if (is_play) {
+		/* Enable Out */
+		snd_soc_update_bits(codec, DA7210_OUTMIX_L, 0x1F, 0x10);
+		snd_soc_update_bits(codec, DA7210_OUTMIX_R, 0x1F, 0x10);
+
+	} else {
+		/* Volume 7 */
+		snd_soc_update_bits(codec, DA7210_MIC_L, 0x7, 0x7);
+		snd_soc_update_bits(codec, DA7210_MIC_R, 0x7, 0x7);
+
+		/* Enable Mic */
+		snd_soc_update_bits(codec, DA7210_INMIX_L, 0x1F, 0x1);
+		snd_soc_update_bits(codec, DA7210_INMIX_R, 0x1F, 0x1);
+	}
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -716,6 +869,7 @@ static int da7210_hw_params(struct snd_pcm_substream *substream,
 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
 	struct snd_soc_codec *codec = rtd->codec;
 	u32 dai_cfg1;
+<<<<<<< HEAD
 	u32 fs, bypass;
 
 	/* set DAI source to Left and Right ADC */
@@ -726,11 +880,25 @@ static int da7210_hw_params(struct snd_pcm_substream *substream,
 	snd_soc_write(codec, DA7210_DAI_CFG3, DA7210_DAI_OE | DA7210_DAI_EN);
 
 	dai_cfg1 = 0xFC & snd_soc_read(codec, DA7210_DAI_CFG1);
+=======
+	u32 hpf_reg, hpf_mask, hpf_value;
+	u32 fs, bypass;
+
+	/* set DAI source to Left and Right ADC */
+	da7210_write(codec, DA7210_DAI_SRC_SEL,
+		     DA7210_DAI_OUT_R_SRC | DA7210_DAI_OUT_L_SRC);
+
+	/* Enable DAI */
+	da7210_write(codec, DA7210_DAI_CFG3, DA7210_DAI_OE | DA7210_DAI_EN);
+
+	dai_cfg1 = 0xFC & da7210_read(codec, DA7210_DAI_CFG1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (params_format(params)) {
 	case SNDRV_PCM_FORMAT_S16_LE:
 		dai_cfg1 |= DA7210_DAI_WORD_S16_LE;
 		break;
+<<<<<<< HEAD
 	case SNDRV_PCM_FORMAT_S20_3LE:
 		dai_cfg1 |= DA7210_DAI_WORD_S20_3LE;
 		break;
@@ -740,51 +908,113 @@ static int da7210_hw_params(struct snd_pcm_substream *substream,
 	case SNDRV_PCM_FORMAT_S32_LE:
 		dai_cfg1 |= DA7210_DAI_WORD_S32_LE;
 		break;
+=======
+	case SNDRV_PCM_FORMAT_S24_LE:
+		dai_cfg1 |= DA7210_DAI_WORD_S24_LE;
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	snd_soc_write(codec, DA7210_DAI_CFG1, dai_cfg1);
+=======
+	da7210_write(codec, DA7210_DAI_CFG1, dai_cfg1);
+
+	hpf_reg = (SNDRV_PCM_STREAM_PLAYBACK == substream->stream) ?
+		DA7210_DAC_HPF : DA7210_ADC_HPF;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (params_rate(params)) {
 	case 8000:
 		fs		= DA7210_PLL_FS_8000;
+<<<<<<< HEAD
+=======
+		hpf_mask	= DA7210_VOICE_F0_MASK	| DA7210_VOICE_EN;
+		hpf_value	= DA7210_VOICE_F0_25	| DA7210_VOICE_EN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bypass		= DA7210_PLL_BYP;
 		break;
 	case 11025:
 		fs		= DA7210_PLL_FS_11025;
+<<<<<<< HEAD
+=======
+		hpf_mask	= DA7210_VOICE_F0_MASK	| DA7210_VOICE_EN;
+		hpf_value	= DA7210_VOICE_F0_25	| DA7210_VOICE_EN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bypass		= 0;
 		break;
 	case 12000:
 		fs		= DA7210_PLL_FS_12000;
+<<<<<<< HEAD
+=======
+		hpf_mask	= DA7210_VOICE_F0_MASK	| DA7210_VOICE_EN;
+		hpf_value	= DA7210_VOICE_F0_25	| DA7210_VOICE_EN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bypass		= DA7210_PLL_BYP;
 		break;
 	case 16000:
 		fs		= DA7210_PLL_FS_16000;
+<<<<<<< HEAD
+=======
+		hpf_mask	= DA7210_VOICE_F0_MASK	| DA7210_VOICE_EN;
+		hpf_value	= DA7210_VOICE_F0_25	| DA7210_VOICE_EN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bypass		= DA7210_PLL_BYP;
 		break;
 	case 22050:
 		fs		= DA7210_PLL_FS_22050;
+<<<<<<< HEAD
+=======
+		hpf_mask	= DA7210_VOICE_EN;
+		hpf_value	= 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bypass		= 0;
 		break;
 	case 32000:
 		fs		= DA7210_PLL_FS_32000;
+<<<<<<< HEAD
+=======
+		hpf_mask	= DA7210_VOICE_EN;
+		hpf_value	= 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bypass		= DA7210_PLL_BYP;
 		break;
 	case 44100:
 		fs		= DA7210_PLL_FS_44100;
+<<<<<<< HEAD
+=======
+		hpf_mask	= DA7210_VOICE_EN;
+		hpf_value	= 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bypass		= 0;
 		break;
 	case 48000:
 		fs		= DA7210_PLL_FS_48000;
+<<<<<<< HEAD
+=======
+		hpf_mask	= DA7210_VOICE_EN;
+		hpf_value	= 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bypass		= DA7210_PLL_BYP;
 		break;
 	case 88200:
 		fs		= DA7210_PLL_FS_88200;
+<<<<<<< HEAD
+=======
+		hpf_mask	= DA7210_VOICE_EN;
+		hpf_value	= 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bypass		= 0;
 		break;
 	case 96000:
 		fs		= DA7210_PLL_FS_96000;
+<<<<<<< HEAD
+=======
+		hpf_mask	= DA7210_VOICE_EN;
+		hpf_value	= 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bypass		= DA7210_PLL_BYP;
 		break;
 	default:
@@ -794,6 +1024,10 @@ static int da7210_hw_params(struct snd_pcm_substream *substream,
 	/* Disable active mode */
 	snd_soc_update_bits(codec, DA7210_STARTUP1, DA7210_SC_MST_EN, 0);
 
+<<<<<<< HEAD
+=======
+	snd_soc_update_bits(codec, hpf_reg, hpf_mask, hpf_value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_soc_update_bits(codec, DA7210_PLL, DA7210_PLL_FS_MASK, fs);
 	snd_soc_update_bits(codec, DA7210_PLL_DIV3, DA7210_PLL_BYP, bypass);
 
@@ -813,16 +1047,24 @@ static int da7210_set_dai_fmt(struct snd_soc_dai *codec_dai, u32 fmt)
 	u32 dai_cfg1;
 	u32 dai_cfg3;
 
+<<<<<<< HEAD
 	dai_cfg1 = 0x7f & snd_soc_read(codec, DA7210_DAI_CFG1);
 	dai_cfg3 = 0xfc & snd_soc_read(codec, DA7210_DAI_CFG3);
+=======
+	dai_cfg1 = 0x7f & da7210_read(codec, DA7210_DAI_CFG1);
+	dai_cfg3 = 0xfc & da7210_read(codec, DA7210_DAI_CFG3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
 	case SND_SOC_DAIFMT_CBM_CFM:
 		dai_cfg1 |= DA7210_DAI_MODE_MASTER;
 		break;
+<<<<<<< HEAD
 	case SND_SOC_DAIFMT_CBS_CFS:
 		dai_cfg1 |= DA7210_DAI_MODE_SLAVE;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return -EINVAL;
 	}
@@ -835,12 +1077,15 @@ static int da7210_set_dai_fmt(struct snd_soc_dai *codec_dai, u32 fmt)
 	case SND_SOC_DAIFMT_I2S:
 		dai_cfg3 |= DA7210_DAI_FORMAT_I2SMODE;
 		break;
+<<<<<<< HEAD
 	case SND_SOC_DAIFMT_LEFT_J:
 		dai_cfg3 |= DA7210_DAI_FORMAT_LEFT_J;
 		break;
 	case SND_SOC_DAIFMT_RIGHT_J:
 		dai_cfg3 |= DA7210_DAI_FORMAT_RIGHT_J;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return -EINVAL;
 	}
@@ -851,12 +1096,18 @@ static int da7210_set_dai_fmt(struct snd_soc_dai *codec_dai, u32 fmt)
 	 */
 	dai_cfg1 |= DA7210_DAI_FLEN_64BIT;
 
+<<<<<<< HEAD
 	snd_soc_write(codec, DA7210_DAI_CFG1, dai_cfg1);
 	snd_soc_write(codec, DA7210_DAI_CFG3, dai_cfg3);
+=======
+	da7210_write(codec, DA7210_DAI_CFG1, dai_cfg1);
+	da7210_write(codec, DA7210_DAI_CFG3, dai_cfg3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int da7210_mute(struct snd_soc_dai *dai, int mute)
 {
 	struct snd_soc_codec *codec = dai->codec;
@@ -877,6 +1128,15 @@ static const struct snd_soc_dai_ops da7210_dai_ops = {
 	.hw_params	= da7210_hw_params,
 	.set_fmt	= da7210_set_dai_fmt,
 	.digital_mute	= da7210_mute,
+=======
+#define DA7210_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE)
+
+/* DAI operations */
+static struct snd_soc_dai_ops da7210_dai_ops = {
+	.startup	= da7210_startup,
+	.hw_params	= da7210_hw_params,
+	.set_fmt	= da7210_set_dai_fmt,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct snd_soc_dai_driver da7210_dai = {
@@ -904,6 +1164,7 @@ static struct snd_soc_dai_driver da7210_dai = {
 static int da7210_probe(struct snd_soc_codec *codec)
 {
 	struct da7210_priv *da7210 = snd_soc_codec_get_drvdata(codec);
+<<<<<<< HEAD
 	int ret;
 
 	dev_info(codec->dev, "DA7210 Audio Codec %s\n", DA7210_VERSION);
@@ -914,6 +1175,13 @@ static int da7210_probe(struct snd_soc_codec *codec)
 		dev_err(codec->dev, "Failed to set cache I/O: %d\n", ret);
 		return ret;
 	}
+=======
+
+	dev_info(codec->dev, "DA7210 Audio Codec %s\n", DA7210_VERSION);
+
+	codec->control_data	= da7210->control_data;
+	codec->hw_write		= (hw_write_t)i2c_master_send;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* FIXME
 	 *
@@ -930,8 +1198,13 @@ static int da7210_probe(struct snd_soc_codec *codec)
 	/*
 	 * make sure that DA7210 use bypass mode before start up
 	 */
+<<<<<<< HEAD
 	snd_soc_write(codec, DA7210_STARTUP1, 0);
 	snd_soc_write(codec, DA7210_PLL_DIV3,
+=======
+	da7210_write(codec, DA7210_STARTUP1, 0);
+	da7210_write(codec, DA7210_PLL_DIV3,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     DA7210_MCLK_RANGE_10_20_MHZ | DA7210_PLL_BYP);
 
 	/*
@@ -939,6 +1212,7 @@ static int da7210_probe(struct snd_soc_codec *codec)
 	 */
 
 	/* Enable Left & Right MIC PGA and Mic Bias */
+<<<<<<< HEAD
 	snd_soc_write(codec, DA7210_MIC_L, DA7210_MIC_L_EN | DA7210_MICBIAS_EN);
 	snd_soc_write(codec, DA7210_MIC_R, DA7210_MIC_R_EN);
 
@@ -948,17 +1222,33 @@ static int da7210_probe(struct snd_soc_codec *codec)
 
 	/* Enable Left and Right ADC */
 	snd_soc_write(codec, DA7210_ADC, DA7210_ADC_L_EN | DA7210_ADC_R_EN);
+=======
+	da7210_write(codec, DA7210_MIC_L, DA7210_MIC_L_EN | DA7210_MICBIAS_EN);
+	da7210_write(codec, DA7210_MIC_R, DA7210_MIC_R_EN);
+
+	/* Enable Left and Right input PGA */
+	da7210_write(codec, DA7210_INMIX_L, DA7210_IN_L_EN);
+	da7210_write(codec, DA7210_INMIX_R, DA7210_IN_R_EN);
+
+	/* Enable Left and Right ADC */
+	da7210_write(codec, DA7210_ADC, DA7210_ADC_L_EN | DA7210_ADC_R_EN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * DAC settings
 	 */
 
 	/* Enable Left and Right DAC */
+<<<<<<< HEAD
 	snd_soc_write(codec, DA7210_DAC_SEL,
+=======
+	da7210_write(codec, DA7210_DAC_SEL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     DA7210_DAC_L_SRC_DAI_L | DA7210_DAC_L_EN |
 		     DA7210_DAC_R_SRC_DAI_R | DA7210_DAC_R_EN);
 
 	/* Enable Left and Right out PGA */
+<<<<<<< HEAD
 	snd_soc_write(codec, DA7210_OUTMIX_L, DA7210_OUT_L_EN);
 	snd_soc_write(codec, DA7210_OUTMIX_R, DA7210_OUT_R_EN);
 
@@ -1009,6 +1299,18 @@ static int da7210_probe(struct snd_soc_codec *codec)
 
 	/* Diable PLL and bypass it */
 	snd_soc_write(codec, DA7210_PLL, DA7210_PLL_FS_48000);
+=======
+	da7210_write(codec, DA7210_OUTMIX_L, DA7210_OUT_L_EN);
+	da7210_write(codec, DA7210_OUTMIX_R, DA7210_OUT_R_EN);
+
+	/* Enable Left and Right HeadPhone PGA */
+	da7210_write(codec, DA7210_HP_CFG,
+		     DA7210_HP_2CAP_MODE | DA7210_HP_SENSE_EN |
+		     DA7210_HP_L_EN | DA7210_HP_MODE | DA7210_HP_R_EN);
+
+	/* Diable PLL and bypass it */
+	da7210_write(codec, DA7210_PLL, DA7210_PLL_FS_48000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If 48kHz sound came, it use bypass mode,
@@ -1019,13 +1321,20 @@ static int da7210_probe(struct snd_soc_codec *codec)
 	 * DA7210_PLL_DIV3 :: DA7210_PLL_BYP bit.
 	 *   see da7210_hw_params
 	 */
+<<<<<<< HEAD
 	snd_soc_write(codec, DA7210_PLL_DIV1, 0xE5); /* MCLK = 12.288MHz */
 	snd_soc_write(codec, DA7210_PLL_DIV2, 0x99);
 	snd_soc_write(codec, DA7210_PLL_DIV3, 0x0A |
+=======
+	da7210_write(codec, DA7210_PLL_DIV1, 0xE5); /* MCLK = 12.288MHz */
+	da7210_write(codec, DA7210_PLL_DIV2, 0x99);
+	da7210_write(codec, DA7210_PLL_DIV3, 0x0A |
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     DA7210_MCLK_RANGE_10_20_MHZ | DA7210_PLL_BYP);
 	snd_soc_update_bits(codec, DA7210_PLL, DA7210_PLL_EN, DA7210_PLL_EN);
 
 	/* As suggested by Dialog */
+<<<<<<< HEAD
 	/* unlock */
 	regmap_write(da7210->regmap, DA7210_A_HID_UNLOCK,	0x8B);
 	regmap_write(da7210->regmap, DA7210_A_TEST_UNLOCK,	0xB4);
@@ -1037,6 +1346,20 @@ static int da7210_probe(struct snd_soc_codec *codec)
 
 	/* Activate all enabled subsystem */
 	snd_soc_write(codec, DA7210_STARTUP1, DA7210_SC_MST_EN);
+=======
+	da7210_write(codec, DA7210_A_HID_UNLOCK,	0x8B); /* unlock */
+	da7210_write(codec, DA7210_A_TEST_UNLOCK,	0xB4);
+	da7210_write(codec, DA7210_A_PLL1,		0x01);
+	da7210_write(codec, DA7210_A_CP_MODE,		0x7C);
+	da7210_write(codec, DA7210_A_HID_UNLOCK,	0x00); /* re-lock */
+	da7210_write(codec, DA7210_A_TEST_UNLOCK,	0x00);
+
+	/* Activate all enabled subsystem */
+	da7210_write(codec, DA7210_STARTUP1, DA7210_SC_MST_EN);
+
+	snd_soc_add_controls(codec, da7210_snd_controls,
+			     ARRAY_SIZE(da7210_snd_controls));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_info(codec->dev, "DA7210 Audio Codec %s\n", DA7210_VERSION);
 
@@ -1045,6 +1368,7 @@ static int da7210_probe(struct snd_soc_codec *codec)
 
 static struct snd_soc_codec_driver soc_codec_dev_da7210 = {
 	.probe			= da7210_probe,
+<<<<<<< HEAD
 
 	.controls		= da7210_snd_controls,
 	.num_controls		= ARRAY_SIZE(da7210_snd_controls),
@@ -1064,6 +1388,13 @@ static struct regmap_config da7210_regmap = {
 	.volatile_reg = da7210_volatile_register,
 	.readable_reg = da7210_readable_register,
 	.cache_type = REGCACHE_RBTREE,
+=======
+	.read			= da7210_read,
+	.write			= da7210_write,
+	.reg_cache_size		= ARRAY_SIZE(da7210_reg),
+	.reg_word_size		= sizeof(u8),
+	.reg_cache_default	= da7210_reg,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
@@ -1073,12 +1404,17 @@ static int __devinit da7210_i2c_probe(struct i2c_client *i2c,
 	struct da7210_priv *da7210;
 	int ret;
 
+<<<<<<< HEAD
 	da7210 = devm_kzalloc(&i2c->dev, sizeof(struct da7210_priv),
 			      GFP_KERNEL);
+=======
+	da7210 = kzalloc(sizeof(struct da7210_priv), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!da7210)
 		return -ENOMEM;
 
 	i2c_set_clientdata(i2c, da7210);
+<<<<<<< HEAD
 
 	da7210->regmap = regmap_init_i2c(i2c, &da7210_regmap);
 	if (IS_ERR(da7210->regmap)) {
@@ -1097,16 +1433,30 @@ static int __devinit da7210_i2c_probe(struct i2c_client *i2c,
 
 err_regmap:
 	regmap_exit(da7210->regmap);
+=======
+	da7210->control_data = i2c;
+	da7210->control_type = SND_SOC_I2C;
+
+	ret =  snd_soc_register_codec(&i2c->dev,
+			&soc_codec_dev_da7210, &da7210_dai, 1);
+	if (ret < 0)
+		kfree(da7210);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
 
 static int __devexit da7210_i2c_remove(struct i2c_client *client)
 {
+<<<<<<< HEAD
 	struct da7210_priv *da7210 = i2c_get_clientdata(client);
 
 	snd_soc_unregister_codec(&client->dev);
 	regmap_exit(da7210->regmap);
+=======
+	snd_soc_unregister_codec(&client->dev);
+	kfree(i2c_get_clientdata(client));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

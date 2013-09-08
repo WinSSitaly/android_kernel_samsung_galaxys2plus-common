@@ -125,7 +125,11 @@ struct max1619_data {
 	u8 temp_input2, temp_low2, temp_high2; /* remote */
 	u8 temp_crit2;
 	u8 temp_hyst2;
+<<<<<<< HEAD
 	u8 alarms;
+=======
+	u8 alarms; 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -133,8 +137,12 @@ struct max1619_data {
  */
 
 #define show_temp(value) \
+<<<<<<< HEAD
 static ssize_t show_##value(struct device *dev, struct device_attribute *attr, \
 			    char *buf) \
+=======
+static ssize_t show_##value(struct device *dev, struct device_attribute *attr, char *buf) \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 { \
 	struct max1619_data *data = max1619_update_device(dev); \
 	return sprintf(buf, "%d\n", temp_from_reg(data->value)); \
@@ -147,17 +155,26 @@ show_temp(temp_crit2);
 show_temp(temp_hyst2);
 
 #define set_temp2(value, reg) \
+<<<<<<< HEAD
 static ssize_t set_##value(struct device *dev, struct device_attribute *attr, \
 			   const char *buf, \
+=======
+static ssize_t set_##value(struct device *dev, struct device_attribute *attr, const char *buf, \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	size_t count) \
 { \
 	struct i2c_client *client = to_i2c_client(dev); \
 	struct max1619_data *data = i2c_get_clientdata(client); \
+<<<<<<< HEAD
 	long val; \
 	int err = kstrtol(buf, 10, &val); \
 	if (err) \
 		return err; \
 \
+=======
+	long val = simple_strtol(buf, NULL, 10); \
+ \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&data->update_lock); \
 	data->value = temp_to_reg(val); \
 	i2c_smbus_write_byte_data(client, reg, data->value); \
@@ -170,8 +187,12 @@ set_temp2(temp_high2, MAX1619_REG_W_REMOTE_HIGH);
 set_temp2(temp_crit2, MAX1619_REG_W_REMOTE_CRIT);
 set_temp2(temp_hyst2, MAX1619_REG_W_TCRIT_HYST);
 
+<<<<<<< HEAD
 static ssize_t show_alarms(struct device *dev, struct device_attribute *attr,
 			   char *buf)
+=======
+static ssize_t show_alarms(struct device *dev, struct device_attribute *attr, char *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct max1619_data *data = max1619_update_device(dev);
 	return sprintf(buf, "%d\n", data->alarms);
@@ -281,8 +302,12 @@ static int max1619_probe(struct i2c_client *new_client,
 	max1619_init_client(new_client);
 
 	/* Register sysfs hooks */
+<<<<<<< HEAD
 	err = sysfs_create_group(&new_client->dev.kobj, &max1619_group);
 	if (err)
+=======
+	if ((err = sysfs_create_group(&new_client->dev.kobj, &max1619_group)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto exit_free;
 
 	data->hwmon_dev = hwmon_device_register(&new_client->dev);
@@ -360,9 +385,27 @@ static struct max1619_data *max1619_update_device(struct device *dev)
 	return data;
 }
 
+<<<<<<< HEAD
 module_i2c_driver(max1619_driver);
+=======
+static int __init sensors_max1619_init(void)
+{
+	return i2c_add_driver(&max1619_driver);
+}
+
+static void __exit sensors_max1619_exit(void)
+{
+	i2c_del_driver(&max1619_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Alexey Fisher <fishor@mail.ru> and "
 	"Jean Delvare <khali@linux-fr.org>");
 MODULE_DESCRIPTION("MAX1619 sensor driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(sensors_max1619_init);
+module_exit(sensors_max1619_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

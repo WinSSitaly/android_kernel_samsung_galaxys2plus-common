@@ -16,7 +16,10 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/soc.h>
 
 static struct snd_soc_card ln2440sbc;
@@ -34,7 +37,10 @@ static struct snd_soc_dai_link ln2440sbc_dai[] = {
 
 static struct snd_soc_card ln2440sbc = {
 	.name = "LN2440SBC",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link = ln2440sbc_dai,
 	.num_links = ARRAY_SIZE(ln2440sbc_dai),
 };

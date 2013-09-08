@@ -390,8 +390,12 @@ int omap3_noncore_dpll_enable(struct clk *clk)
 	 * propagating?
 	 */
 	if (!r)
+<<<<<<< HEAD
 		clk->rate = (clk->recalc) ? clk->recalc(clk) :
 			omap2_get_dpll_rate(clk);
+=======
+		clk->rate = omap2_get_dpll_rate(clk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return r;
 }
@@ -425,7 +429,10 @@ void omap3_noncore_dpll_disable(struct clk *clk)
 int omap3_noncore_dpll_set_rate(struct clk *clk, unsigned long rate)
 {
 	struct clk *new_parent = NULL;
+<<<<<<< HEAD
 	unsigned long hw_rate;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 freqsel = 0;
 	struct dpll_data *dd;
 	int ret;
@@ -437,8 +444,12 @@ int omap3_noncore_dpll_set_rate(struct clk *clk, unsigned long rate)
 	if (!dd)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	hw_rate = (clk->recalc) ? clk->recalc(clk) : omap2_get_dpll_rate(clk);
 	if (rate == hw_rate)
+=======
+	if (rate == omap2_get_dpll_rate(clk))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	/*
@@ -458,7 +469,11 @@ int omap3_noncore_dpll_set_rate(struct clk *clk, unsigned long rate)
 			new_parent = dd->clk_bypass;
 	} else {
 		if (dd->last_rounded_rate != rate)
+<<<<<<< HEAD
 			rate = clk->round_rate(clk, rate);
+=======
+			omap2_dpll_round_rate(clk, rate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (dd->last_rounded_rate == 0)
 			return -EINVAL;

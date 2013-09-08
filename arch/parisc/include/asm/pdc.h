@@ -343,6 +343,11 @@
 
 #ifdef __KERNEL__
 
+<<<<<<< HEAD
+=======
+#include <asm/page.h> /* for __PAGE_OFFSET */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int pdc_type;
 
 /* Values for pdc_type */
@@ -675,6 +680,14 @@ static inline char * os_id_to_string(u16 os_id) {
 
 #endif /* __KERNEL__ */
 
+<<<<<<< HEAD
+=======
+#define PAGE0   ((struct zeropage *)__PAGE_OFFSET)
+
+/* DEFINITION OF THE ZERO-PAGE (PAG0) */
+/* based on work by Jason Eckhardt (jason@equator.com) */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* flags of the device_path */
 #define	PF_AUTOBOOT	0x80
 #define	PF_AUTOSEARCH	0x40

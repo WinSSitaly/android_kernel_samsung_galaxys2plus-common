@@ -1,6 +1,10 @@
 config ECRYPT_FS
 	tristate "eCrypt filesystem layer support (EXPERIMENTAL)"
+<<<<<<< HEAD
 	depends on EXPERIMENTAL && KEYS && CRYPTO && (ENCRYPTED_KEYS || ENCRYPTED_KEYS=n)
+=======
+	depends on EXPERIMENTAL && KEYS && CRYPTO
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select CRYPTO_ECB
 	select CRYPTO_CBC
 	select CRYPTO_MD5
@@ -12,3 +16,13 @@ config ECRYPT_FS
 
 	  To compile this file system support as a module, choose M here: the
 	  module will be called ecryptfs.
+<<<<<<< HEAD
+=======
+
+config WTL_ENCRYPTION_FILTER
+	bool "Enables filtering for some files not to encrypt on eCryptfs"
+	default n
+       depends on ECRYPT_FS
+       help
+         Modification of encrypted filesystem for SD card encryption
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

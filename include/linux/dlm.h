@@ -2,7 +2,11 @@
 *******************************************************************************
 **
 **  Copyright (C) Sistina Software, Inc.  1997-2003  All rights reserved.
+<<<<<<< HEAD
 **  Copyright (C) 2004-2011 Red Hat, Inc.  All rights reserved.
+=======
+**  Copyright (C) 2004-2008 Red Hat, Inc.  All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 **
 **  This copyrighted material is made available to anyone wishing to use,
 **  modify, copy, or redistribute it subject to the terms and conditions
@@ -74,6 +78,7 @@ struct dlm_lksb {
 
 #ifdef __KERNEL__
 
+<<<<<<< HEAD
 struct dlm_slot {
 	int nodeid; /* 1 to MAX_INT */
 	int slot;   /* 1 to MAX_INT */
@@ -144,6 +149,17 @@ int dlm_new_lockspace(const char *name, const char *cluster,
 		      uint32_t flags, int lvblen,
 		      const struct dlm_lockspace_ops *ops, void *ops_arg,
 		      int *ops_result, dlm_lockspace_t **lockspace);
+=======
+/*
+ * dlm_new_lockspace
+ *
+ * Starts a lockspace with the given name.  If the named lockspace exists in
+ * the cluster, the calling node joins it.
+ */
+
+int dlm_new_lockspace(const char *name, int namelen,
+		      dlm_lockspace_t **lockspace, uint32_t flags, int lvblen);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * dlm_release_lockspace

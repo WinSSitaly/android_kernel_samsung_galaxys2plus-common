@@ -176,11 +176,38 @@ static int jc42_probe(struct i2c_client *client,
 		      const struct i2c_device_id *id);
 static int jc42_detect(struct i2c_client *client, struct i2c_board_info *info);
 static int jc42_remove(struct i2c_client *client);
+<<<<<<< HEAD
+=======
+static int jc42_read_value(struct i2c_client *client, u8 reg);
+static int jc42_write_value(struct i2c_client *client, u8 reg, u16 value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct jc42_data *jc42_update_device(struct device *dev);
 
 static const struct i2c_device_id jc42_id[] = {
+<<<<<<< HEAD
 	{ "jc42", 0 },
+=======
+	{ "adt7408", 0 },
+	{ "at30ts00", 0 },
+	{ "cat94ts02", 0 },
+	{ "cat6095", 0 },
+	{ "jc42", 0 },
+	{ "max6604", 0 },
+	{ "mcp9804", 0 },
+	{ "mcp9805", 0 },
+	{ "mcp98242", 0 },
+	{ "mcp98243", 0 },
+	{ "mcp9843", 0 },
+	{ "se97", 0 },
+	{ "se97b", 0 },
+	{ "se98", 0 },
+	{ "stts424", 0 },
+	{ "stts2002", 0 },
+	{ "stts3000", 0 },
+	{ "tse2002", 0 },
+	{ "ts3000", 0 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ }
 };
 MODULE_DEVICE_TABLE(i2c, jc42_id);
@@ -193,7 +220,11 @@ static int jc42_suspend(struct device *dev)
 	struct jc42_data *data = i2c_get_clientdata(client);
 
 	data->config |= JC42_CFG_SHUTDOWN;
+<<<<<<< HEAD
 	i2c_smbus_write_word_swapped(client, JC42_REG_CONFIG, data->config);
+=======
+	jc42_write_value(client, JC42_REG_CONFIG, data->config);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -203,7 +234,11 @@ static int jc42_resume(struct device *dev)
 	struct jc42_data *data = i2c_get_clientdata(client);
 
 	data->config &= ~JC42_CFG_SHUTDOWN;
+<<<<<<< HEAD
 	i2c_smbus_write_word_swapped(client, JC42_REG_CONFIG, data->config);
+=======
+	jc42_write_value(client, JC42_REG_CONFIG, data->config);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -317,11 +352,19 @@ static ssize_t set_##value(struct device *dev,				\
 	struct jc42_data *data = i2c_get_clientdata(client);		\
 	int err, ret = count;						\
 	long val;							\
+<<<<<<< HEAD
 	if (kstrtol(buf, 10, &val) < 0)				\
 		return -EINVAL;						\
 	mutex_lock(&data->update_lock);					\
 	data->value = jc42_temp_to_reg(val, data->extended);		\
 	err = i2c_smbus_write_word_swapped(client, reg, data->value);	\
+=======
+	if (strict_strtol(buf, 10, &val) < 0)				\
+		return -EINVAL;						\
+	mutex_lock(&data->update_lock);					\
+	data->value = jc42_temp_to_reg(val, data->extended);		\
+	err = jc42_write_value(client, reg, data->value);		\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0)							\
 		ret = err;						\
 	mutex_unlock(&data->update_lock);				\
@@ -332,10 +375,15 @@ set(temp_min, JC42_REG_TEMP_LOWER);
 set(temp_max, JC42_REG_TEMP_UPPER);
 set(temp_crit, JC42_REG_TEMP_CRITICAL);
 
+<<<<<<< HEAD
 /*
  * JC42.4 compliant chips only support four hysteresis values.
  * Pick best choice and go from there.
  */
+=======
+/* JC42.4 compliant chips only support four hysteresis values.
+ * Pick best choice and go from there. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t set_temp_crit_hyst(struct device *dev,
 				  struct device_attribute *attr,
 				  const char *buf, size_t count)
@@ -347,7 +395,11 @@ static ssize_t set_temp_crit_hyst(struct device *dev,
 	int err;
 	int ret = count;
 
+<<<<<<< HEAD
 	if (kstrtoul(buf, 10, &val) < 0)
+=======
+	if (strict_strtoul(buf, 10, &val) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	diff = jc42_temp_from_reg(data->temp_crit) - val;
@@ -365,8 +417,12 @@ static ssize_t set_temp_crit_hyst(struct device *dev,
 	data->config = (data->config
 			& ~(JC42_CFG_HYST_MASK << JC42_CFG_HYST_SHIFT))
 	  | (hyst << JC42_CFG_HYST_SHIFT);
+<<<<<<< HEAD
 	err = i2c_smbus_write_word_swapped(client, JC42_REG_CONFIG,
 					   data->config);
+=======
+	err = jc42_write_value(client, JC42_REG_CONFIG, data->config);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0)
 		ret = err;
 	mutex_unlock(&data->update_lock);
@@ -423,7 +479,11 @@ static struct attribute *jc42_attributes[] = {
 	NULL
 };
 
+<<<<<<< HEAD
 static umode_t jc42_attribute_mode(struct kobject *kobj,
+=======
+static mode_t jc42_attribute_mode(struct kobject *kobj,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  struct attribute *attr, int index)
 {
 	struct device *dev = container_of(kobj, struct device, kobj);
@@ -451,19 +511,33 @@ static const struct attribute_group jc42_group = {
 };
 
 /* Return 0 if detection is successful, -ENODEV otherwise */
+<<<<<<< HEAD
 static int jc42_detect(struct i2c_client *client, struct i2c_board_info *info)
 {
 	struct i2c_adapter *adapter = client->adapter;
+=======
+static int jc42_detect(struct i2c_client *new_client,
+		       struct i2c_board_info *info)
+{
+	struct i2c_adapter *adapter = new_client->adapter;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i, config, cap, manid, devid;
 
 	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA |
 				     I2C_FUNC_SMBUS_WORD_DATA))
 		return -ENODEV;
 
+<<<<<<< HEAD
 	cap = i2c_smbus_read_word_swapped(client, JC42_REG_CAP);
 	config = i2c_smbus_read_word_swapped(client, JC42_REG_CONFIG);
 	manid = i2c_smbus_read_word_swapped(client, JC42_REG_MANID);
 	devid = i2c_smbus_read_word_swapped(client, JC42_REG_DEVICEID);
+=======
+	cap = jc42_read_value(new_client, JC42_REG_CAP);
+	config = jc42_read_value(new_client, JC42_REG_CONFIG);
+	manid = jc42_read_value(new_client, JC42_REG_MANID);
+	devid = jc42_read_value(new_client, JC42_REG_DEVICEID);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (cap < 0 || config < 0 || manid < 0 || devid < 0)
 		return -ENODEV;
@@ -482,6 +556,7 @@ static int jc42_detect(struct i2c_client *client, struct i2c_board_info *info)
 	return -ENODEV;
 }
 
+<<<<<<< HEAD
 static int jc42_probe(struct i2c_client *client, const struct i2c_device_id *id)
 {
 	struct jc42_data *data;
@@ -509,15 +584,56 @@ static int jc42_probe(struct i2c_client *client, const struct i2c_device_id *id)
 	if (config & JC42_CFG_SHUTDOWN) {
 		config &= ~JC42_CFG_SHUTDOWN;
 		i2c_smbus_write_word_swapped(client, JC42_REG_CONFIG, config);
+=======
+static int jc42_probe(struct i2c_client *new_client,
+		      const struct i2c_device_id *id)
+{
+	struct jc42_data *data;
+	int config, cap, err;
+
+	data = kzalloc(sizeof(struct jc42_data), GFP_KERNEL);
+	if (!data) {
+		err = -ENOMEM;
+		goto exit;
+	}
+
+	i2c_set_clientdata(new_client, data);
+	mutex_init(&data->update_lock);
+
+	cap = jc42_read_value(new_client, JC42_REG_CAP);
+	if (cap < 0) {
+		err = -EINVAL;
+		goto exit_free;
+	}
+	data->extended = !!(cap & JC42_CAP_RANGE);
+
+	config = jc42_read_value(new_client, JC42_REG_CONFIG);
+	if (config < 0) {
+		err = -EINVAL;
+		goto exit_free;
+	}
+	data->orig_config = config;
+	if (config & JC42_CFG_SHUTDOWN) {
+		config &= ~JC42_CFG_SHUTDOWN;
+		jc42_write_value(new_client, JC42_REG_CONFIG, config);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	data->config = config;
 
 	/* Register sysfs hooks */
+<<<<<<< HEAD
 	err = sysfs_create_group(&dev->kobj, &jc42_group);
 	if (err)
 		return err;
 
 	data->hwmon_dev = hwmon_device_register(dev);
+=======
+	err = sysfs_create_group(&new_client->dev.kobj, &jc42_group);
+	if (err)
+		goto exit_free;
+
+	data->hwmon_dev = hwmon_device_register(&new_client->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(data->hwmon_dev)) {
 		err = PTR_ERR(data->hwmon_dev);
 		goto exit_remove;
@@ -526,7 +642,14 @@ static int jc42_probe(struct i2c_client *client, const struct i2c_device_id *id)
 	return 0;
 
 exit_remove:
+<<<<<<< HEAD
 	sysfs_remove_group(&dev->kobj, &jc42_group);
+=======
+	sysfs_remove_group(&new_client->dev.kobj, &jc42_group);
+exit_free:
+	kfree(data);
+exit:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -536,11 +659,33 @@ static int jc42_remove(struct i2c_client *client)
 	hwmon_device_unregister(data->hwmon_dev);
 	sysfs_remove_group(&client->dev.kobj, &jc42_group);
 	if (data->config != data->orig_config)
+<<<<<<< HEAD
 		i2c_smbus_write_word_swapped(client, JC42_REG_CONFIG,
 					     data->orig_config);
 	return 0;
 }
 
+=======
+		jc42_write_value(client, JC42_REG_CONFIG, data->orig_config);
+	kfree(data);
+	return 0;
+}
+
+/* All registers are word-sized. */
+static int jc42_read_value(struct i2c_client *client, u8 reg)
+{
+	int ret = i2c_smbus_read_word_data(client, reg);
+	if (ret < 0)
+		return ret;
+	return swab16(ret);
+}
+
+static int jc42_write_value(struct i2c_client *client, u8 reg, u16 value)
+{
+	return i2c_smbus_write_word_data(client, reg, swab16(value));
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct jc42_data *jc42_update_device(struct device *dev)
 {
 	struct i2c_client *client = to_i2c_client(dev);
@@ -551,29 +696,45 @@ static struct jc42_data *jc42_update_device(struct device *dev)
 	mutex_lock(&data->update_lock);
 
 	if (time_after(jiffies, data->last_updated + HZ) || !data->valid) {
+<<<<<<< HEAD
 		val = i2c_smbus_read_word_swapped(client, JC42_REG_TEMP);
+=======
+		val = jc42_read_value(client, JC42_REG_TEMP);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (val < 0) {
 			ret = ERR_PTR(val);
 			goto abort;
 		}
 		data->temp_input = val;
 
+<<<<<<< HEAD
 		val = i2c_smbus_read_word_swapped(client,
 						  JC42_REG_TEMP_CRITICAL);
+=======
+		val = jc42_read_value(client, JC42_REG_TEMP_CRITICAL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (val < 0) {
 			ret = ERR_PTR(val);
 			goto abort;
 		}
 		data->temp_crit = val;
 
+<<<<<<< HEAD
 		val = i2c_smbus_read_word_swapped(client, JC42_REG_TEMP_LOWER);
+=======
+		val = jc42_read_value(client, JC42_REG_TEMP_LOWER);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (val < 0) {
 			ret = ERR_PTR(val);
 			goto abort;
 		}
 		data->temp_min = val;
 
+<<<<<<< HEAD
 		val = i2c_smbus_read_word_swapped(client, JC42_REG_TEMP_UPPER);
+=======
+		val = jc42_read_value(client, JC42_REG_TEMP_UPPER);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (val < 0) {
 			ret = ERR_PTR(val);
 			goto abort;
@@ -588,8 +749,26 @@ abort:
 	return ret;
 }
 
+<<<<<<< HEAD
 module_i2c_driver(jc42_driver);
+=======
+static int __init sensors_jc42_init(void)
+{
+	return i2c_add_driver(&jc42_driver);
+}
+
+static void __exit sensors_jc42_exit(void)
+{
+	i2c_del_driver(&jc42_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Guenter Roeck <guenter.roeck@ericsson.com>");
 MODULE_DESCRIPTION("JC42 driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(sensors_jc42_init);
+module_exit(sensors_jc42_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

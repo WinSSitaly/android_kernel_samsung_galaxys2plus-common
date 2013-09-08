@@ -20,8 +20,11 @@
  *		Patrick McHardy :	LRU queue of frag heads for evictor.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) "IPv4: " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/compiler.h>
 #include <linux/module.h>
 #include <linux/types.h>
@@ -251,7 +254,12 @@ static void ip_expire(unsigned long arg)
 		if (!head->dev)
 			goto out_rcu_unlock;
 
+<<<<<<< HEAD
 		/* skb has no dst, perform route lookup again */
+=======
+		/* skb dst is stale, drop it, and perform route lookup again */
+		skb_dst_drop(head);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iph = ip_hdr(head);
 		err = ip_route_input_noref(head, iph->daddr, iph->saddr,
 					   iph->tos, head->dev);
@@ -262,9 +270,14 @@ static void ip_expire(unsigned long arg)
 		 * Only an end host needs to send an ICMP
 		 * "Fragment Reassembly Timeout" message, per RFC792.
 		 */
+<<<<<<< HEAD
 		if (qp->user == IP_DEFRAG_AF_PACKET ||
 		    (qp->user == IP_DEFRAG_CONNTRACK_IN &&
 		     skb_rtable(head)->rt_type != RTN_LOCAL))
+=======
+		if (qp->user == IP_DEFRAG_CONNTRACK_IN &&
+		    skb_rtable(head)->rt_type != RTN_LOCAL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out_rcu_unlock;
 
 
@@ -294,11 +307,22 @@ static inline struct ipq *ip_find(struct net *net, struct iphdr *iph, u32 user)
 	hash = ipqhashfn(iph->id, iph->saddr, iph->daddr, iph->protocol);
 
 	q = inet_frag_find(&net->ipv4.frags, &ip4_frags, &arg, hash);
+<<<<<<< HEAD
 	if (IS_ERR_OR_NULL(q)) {
 		inet_frag_maybe_warn_overflow(q, pr_fmt());
 		return NULL;
 	}
 	return container_of(q, struct ipq, q);
+=======
+	if (q == NULL)
+		goto out_nomem;
+
+	return container_of(q, struct ipq, q);
+
+out_nomem:
+	LIMIT_NETDEBUG(KERN_ERR "ip_frag_create: no memory left !\n");
+	return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Is the fragment too far ahead to be part of ipq? */
@@ -390,7 +414,11 @@ static int ip_frag_queue(struct ipq *qp, struct sk_buff *skb)
 	/* Is this the final fragment? */
 	if ((flags & IP_MF) == 0) {
 		/* If we already have some bits beyond end
+<<<<<<< HEAD
 		 * or have different end, the segment is corrupted.
+=======
+		 * or have different end, the segment is corrrupted.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 */
 		if (end < qp->q.len ||
 		    ((qp->q.last_in & INET_FRAG_LAST_IN) && end != qp->q.len))
@@ -516,6 +544,7 @@ found:
 		qp->q.last_in |= INET_FRAG_FIRST_IN;
 
 	if (qp->q.last_in == (INET_FRAG_FIRST_IN | INET_FRAG_LAST_IN) &&
+<<<<<<< HEAD
 	    qp->q.meat == qp->q.len) {
 		unsigned long orefdst = skb->_skb_refdst;
 
@@ -526,6 +555,10 @@ found:
 	}
 
 	skb_dst_drop(skb);
+=======
+	    qp->q.meat == qp->q.len)
+		return ip_frag_reasm(qp, prev, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	write_lock(&ip4_frags.lock);
 	list_move_tail(&qp->q.lru_list, &qp->q.net->lru_list);
@@ -605,8 +638,13 @@ static int ip_frag_reasm(struct ipq *qp, struct sk_buff *prev,
 		head->next = clone;
 		skb_shinfo(clone)->frag_list = skb_shinfo(head)->frag_list;
 		skb_frag_list_init(head);
+<<<<<<< HEAD
 		for (i = 0; i < skb_shinfo(head)->nr_frags; i++)
 			plen += skb_frag_size(&skb_shinfo(head)->frags[i]);
+=======
+		for (i=0; i<skb_shinfo(head)->nr_frags; i++)
+			plen += skb_shinfo(head)->frags[i].size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		clone->len = clone->data_len = head->data_len - plen;
 		head->data_len -= clone->len;
 		head->len -= clone->len;
@@ -643,13 +681,23 @@ static int ip_frag_reasm(struct ipq *qp, struct sk_buff *prev,
 	return 0;
 
 out_nomem:
+<<<<<<< HEAD
 	LIMIT_NETDEBUG(KERN_ERR pr_fmt("queue_glue: no memory for gluing queue %p\n"),
 		       qp);
+=======
+	LIMIT_NETDEBUG(KERN_ERR "IP: queue_glue: no memory for gluing "
+			      "queue %p\n", qp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = -ENOMEM;
 	goto out_fail;
 out_oversize:
 	if (net_ratelimit())
+<<<<<<< HEAD
 		pr_info("Oversized IP packet from %pI4\n", &qp->saddr);
+=======
+		printk(KERN_INFO "Oversized IP packet from %pI4.\n",
+			&qp->saddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_fail:
 	IP_INC_STATS_BH(net, IPSTATS_MIB_REASMFAILS);
 	return err;
@@ -687,6 +735,7 @@ int ip_defrag(struct sk_buff *skb, u32 user)
 }
 EXPORT_SYMBOL(ip_defrag);
 
+<<<<<<< HEAD
 struct sk_buff *ip_check_defrag(struct sk_buff *skb, u32 user)
 {
 	struct iphdr iph;
@@ -722,6 +771,8 @@ struct sk_buff *ip_check_defrag(struct sk_buff *skb, u32 user)
 }
 EXPORT_SYMBOL(ip_check_defrag);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SYSCTL
 static int zero;
 

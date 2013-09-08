@@ -14,7 +14,11 @@
  * This file is licenced under the GPL.
  */
 
+<<<<<<< HEAD
 #include <linux/signal.h>
+=======
+#include <linux/signal.h>	/* IRQF_DISABLED */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/jiffies.h>
 #include <linux/platform_device.h>
 #include <linux/clk.h>
@@ -171,7 +175,11 @@ static void start_hnp(struct ohci_hcd *ohci)
 	unsigned long	flags;
 	u32 l;
 
+<<<<<<< HEAD
 	otg_start_hnp(ohci->transceiver->otg);
+=======
+	otg_start_hnp(ohci->transceiver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	local_irq_save(flags);
 	ohci->transceiver->state = OTG_STATE_A_SUSPEND;
@@ -210,9 +218,15 @@ static int ohci_omap_init(struct usb_hcd *hcd)
 
 #ifdef	CONFIG_USB_OTG
 	if (need_transceiver) {
+<<<<<<< HEAD
 		ohci->transceiver = usb_get_transceiver();
 		if (ohci->transceiver) {
 			int	status = otg_set_host(ohci->transceiver->otg,
+=======
+		ohci->transceiver = otg_get_transceiver();
+		if (ohci->transceiver) {
+			int	status = otg_set_host(ohci->transceiver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						&ohci_to_hcd(ohci)->self);
 			dev_dbg(hcd->self.controller, "init %s transceiver, status %d\n",
 					ohci->transceiver->label, status);
@@ -363,7 +377,11 @@ static int usb_hcd_omap_probe (const struct hc_driver *driver,
 		retval = -ENXIO;
 		goto err3;
 	}
+<<<<<<< HEAD
 	retval = usb_add_hcd(hcd, irq, 0);
+=======
+	retval = usb_add_hcd(hcd, irq, IRQF_DISABLED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval)
 		goto err3;
 
@@ -404,7 +422,11 @@ usb_hcd_omap_remove (struct usb_hcd *hcd, struct platform_device *pdev)
 
 	usb_remove_hcd(hcd);
 	if (ohci->transceiver) {
+<<<<<<< HEAD
 		(void) otg_set_host(ohci->transceiver->otg, 0);
+=======
+		(void) otg_set_host(ohci->transceiver, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		put_device(ohci->transceiver->dev);
 	}
 	if (machine_is_omap_osk())
@@ -516,6 +538,10 @@ static int ohci_omap_suspend(struct platform_device *dev, pm_message_t message)
 	ohci->next_statechange = jiffies;
 
 	omap_ohci_clock_power(0);
+<<<<<<< HEAD
+=======
+	ohci_to_hcd(ohci)->state = HC_STATE_SUSPENDED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

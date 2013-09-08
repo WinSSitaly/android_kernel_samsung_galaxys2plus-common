@@ -51,7 +51,10 @@
  * superseded by nicer dbg_xxx() macros...
  */
 #if CONFIG_JFFS2_FS_DEBUG > 0
+<<<<<<< HEAD
 #define DEBUG
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define D1(x) x
 #else
 #define D1(x)
@@ -63,6 +66,7 @@
 #define D2(x)
 #endif
 
+<<<<<<< HEAD
 #define jffs2_dbg(level, fmt, ...)		\
 do {						\
 	if (CONFIG_JFFS2_FS_DEBUG >= level)	\
@@ -90,6 +94,52 @@ do {						\
 #define JFFS2_DEBUG(fmt, ...)						\
 	printk(KERN_DEBUG "[JFFS2 DBG] (%d) %s: " fmt,			\
 	       task_pid_nr(current), __func__, ##__VA_ARGS__)
+=======
+/* The prefixes of JFFS2 messages */
+#define JFFS2_DBG_PREFIX	"[JFFS2 DBG]"
+#define JFFS2_ERR_PREFIX	"JFFS2 error:"
+#define JFFS2_WARN_PREFIX	"JFFS2 warning:"
+#define JFFS2_NOTICE_PREFIX	"JFFS2 notice:"
+
+#define JFFS2_ERR	KERN_ERR
+#define JFFS2_WARN	KERN_WARNING
+#define JFFS2_NOT	KERN_NOTICE
+#define JFFS2_DBG	KERN_DEBUG
+
+#define JFFS2_DBG_MSG_PREFIX	JFFS2_DBG JFFS2_DBG_PREFIX
+#define JFFS2_ERR_MSG_PREFIX	JFFS2_ERR JFFS2_ERR_PREFIX
+#define JFFS2_WARN_MSG_PREFIX	JFFS2_WARN JFFS2_WARN_PREFIX
+#define JFFS2_NOTICE_MSG_PREFIX	JFFS2_NOT JFFS2_NOTICE_PREFIX
+
+/* JFFS2 message macros */
+#define JFFS2_ERROR(fmt, ...)						\
+	do {								\
+		printk(JFFS2_ERR_MSG_PREFIX				\
+			" (%d) %s: " fmt, task_pid_nr(current),		\
+			__func__ , ##__VA_ARGS__);			\
+	} while(0)
+
+#define JFFS2_WARNING(fmt, ...)						\
+	do {								\
+		printk(JFFS2_WARN_MSG_PREFIX				\
+			" (%d) %s: " fmt, task_pid_nr(current),		\
+			__func__ , ##__VA_ARGS__);			\
+	} while(0)
+
+#define JFFS2_NOTICE(fmt, ...)						\
+	do {								\
+		printk(JFFS2_NOTICE_MSG_PREFIX				\
+			" (%d) %s: " fmt, task_pid_nr(current),		\
+			__func__ , ##__VA_ARGS__);			\
+	} while(0)
+
+#define JFFS2_DEBUG(fmt, ...)						\
+	do {								\
+		printk(JFFS2_DBG_MSG_PREFIX				\
+			" (%d) %s: " fmt, task_pid_nr(current),		\
+			__func__ , ##__VA_ARGS__);			\
+	} while(0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * We split our debugging messages on several parts, depending on the JFFS2

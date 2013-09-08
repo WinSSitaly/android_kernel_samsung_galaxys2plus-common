@@ -37,15 +37,23 @@
 #include <asm/io.h>
 #include <asm/irq.h>
 #include <asm/prom.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if defined(CONFIG_SERIAL_SUNSAB_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
 #define SUPPORT_SYSRQ
 #endif
 
 #include <linux/serial_core.h>
+<<<<<<< HEAD
 #include <linux/sunserialcore.h>
 
+=======
+
+#include "suncore.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "sunsab.h"
 
 struct uart_sunsab_port {

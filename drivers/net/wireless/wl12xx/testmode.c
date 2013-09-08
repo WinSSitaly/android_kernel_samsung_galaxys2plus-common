@@ -26,11 +26,16 @@
 #include <net/genetlink.h>
 
 #include "wl12xx.h"
+<<<<<<< HEAD
 #include "debug.h"
 #include "acx.h"
 #include "reg.h"
 #include "ps.h"
 #include "io.h"
+=======
+#include "acx.h"
+#include "reg.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define WL1271_TM_MAX_DATA_LENGTH 1024
 
@@ -39,10 +44,16 @@ enum wl1271_tm_commands {
 	WL1271_TM_CMD_TEST,
 	WL1271_TM_CMD_INTERROGATE,
 	WL1271_TM_CMD_CONFIGURE,
+<<<<<<< HEAD
 	WL1271_TM_CMD_NVS_PUSH,		/* Not in use. Keep to not break ABI */
 	WL1271_TM_CMD_SET_PLT_MODE,
 	WL1271_TM_CMD_RECOVER,
 	WL1271_TM_CMD_GET_MAC,
+=======
+	WL1271_TM_CMD_NVS_PUSH,
+	WL1271_TM_CMD_SET_PLT_MODE,
+	WL1271_TM_CMD_RECOVER,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	__WL1271_TM_CMD_AFTER_LAST
 };
@@ -92,6 +103,7 @@ static int wl1271_tm_cmd_test(struct wl1271 *wl, struct nlattr *tb[])
 		return -EMSGSIZE;
 
 	mutex_lock(&wl->mutex);
+<<<<<<< HEAD
 
 	if (wl->state == WL1271_STATE_OFF) {
 		ret = -EINVAL;
@@ -106,19 +118,33 @@ static int wl1271_tm_cmd_test(struct wl1271 *wl, struct nlattr *tb[])
 	if (ret < 0) {
 		wl1271_warning("testmode cmd test failed: %d", ret);
 		goto out_sleep;
+=======
+	ret = wl1271_cmd_test(wl, buf, buf_len, answer);
+	mutex_unlock(&wl->mutex);
+
+	if (ret < 0) {
+		wl1271_warning("testmode cmd test failed: %d", ret);
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (answer) {
 		len = nla_total_size(buf_len);
 		skb = cfg80211_testmode_alloc_reply_skb(wl->hw->wiphy, len);
+<<<<<<< HEAD
 		if (!skb) {
 			ret = -ENOMEM;
 			goto out_sleep;
 		}
+=======
+		if (!skb)
+			return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		NLA_PUT(skb, WL1271_TM_ATTR_DATA, buf_len, buf);
 		ret = cfg80211_testmode_reply(skb);
 		if (ret < 0)
+<<<<<<< HEAD
 			goto out_sleep;
 	}
 
@@ -133,6 +159,16 @@ nla_put_failure:
 	kfree_skb(skb);
 	ret = -EMSGSIZE;
 	goto out_sleep;
+=======
+			return ret;
+	}
+
+	return 0;
+
+nla_put_failure:
+	kfree_skb(skb);
+	return -EMSGSIZE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int wl1271_tm_cmd_interrogate(struct wl1271 *wl, struct nlattr *tb[])
@@ -149,6 +185,7 @@ static int wl1271_tm_cmd_interrogate(struct wl1271 *wl, struct nlattr *tb[])
 
 	ie_id = nla_get_u8(tb[WL1271_TM_ATTR_IE_ID]);
 
+<<<<<<< HEAD
 	mutex_lock(&wl->mutex);
 
 	if (wl->state == WL1271_STATE_OFF) {
@@ -196,6 +233,32 @@ nla_put_failure:
 	kfree_skb(skb);
 	ret = -EMSGSIZE;
 	goto out_free;
+=======
+	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
+	if (!cmd)
+		return -ENOMEM;
+
+	mutex_lock(&wl->mutex);
+	ret = wl1271_cmd_interrogate(wl, ie_id, cmd, sizeof(*cmd));
+	mutex_unlock(&wl->mutex);
+
+	if (ret < 0) {
+		wl1271_warning("testmode cmd interrogate failed: %d", ret);
+		return ret;
+	}
+
+	skb = cfg80211_testmode_alloc_reply_skb(wl->hw->wiphy, sizeof(*cmd));
+	if (!skb)
+		return -ENOMEM;
+
+	NLA_PUT(skb, WL1271_TM_ATTR_DATA, sizeof(*cmd), cmd);
+
+	return 0;
+
+nla_put_failure:
+	kfree_skb(skb);
+	return -EMSGSIZE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int wl1271_tm_cmd_configure(struct wl1271 *wl, struct nlattr *tb[])
@@ -230,6 +293,51 @@ static int wl1271_tm_cmd_configure(struct wl1271 *wl, struct nlattr *tb[])
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int wl1271_tm_cmd_nvs_push(struct wl1271 *wl, struct nlattr *tb[])
+{
+	int ret = 0;
+	size_t len;
+	void *buf;
+
+	wl1271_debug(DEBUG_TESTMODE, "testmode cmd nvs push");
+
+	if (!tb[WL1271_TM_ATTR_DATA])
+		return -EINVAL;
+
+	buf = nla_data(tb[WL1271_TM_ATTR_DATA]);
+	len = nla_len(tb[WL1271_TM_ATTR_DATA]);
+
+	mutex_lock(&wl->mutex);
+
+	kfree(wl->nvs);
+
+	if ((wl->chip.id == CHIP_ID_1283_PG20) &&
+	    (len != sizeof(struct wl128x_nvs_file)))
+		return -EINVAL;
+	else if (len != sizeof(struct wl1271_nvs_file))
+		return -EINVAL;
+
+	wl->nvs = kzalloc(len, GFP_KERNEL);
+	if (!wl->nvs) {
+		wl1271_error("could not allocate memory for the nvs file");
+		ret = -ENOMEM;
+		goto out;
+	}
+
+	memcpy(wl->nvs, buf, len);
+	wl->nvs_len = len;
+
+	wl1271_debug(DEBUG_TESTMODE, "testmode pushed nvs");
+
+out:
+	mutex_unlock(&wl->mutex);
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int wl1271_tm_cmd_set_plt_mode(struct wl1271 *wl, struct nlattr *tb[])
 {
 	u32 val;
@@ -261,11 +369,16 @@ static int wl1271_tm_cmd_recover(struct wl1271 *wl, struct nlattr *tb[])
 {
 	wl1271_debug(DEBUG_TESTMODE, "testmode cmd recover");
 
+<<<<<<< HEAD
 	wl12xx_queue_recovery_work(wl);
+=======
+	ieee80211_queue_work(wl->hw, &wl->recovery_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int wl12xx_tm_cmd_get_mac(struct wl1271 *wl, struct nlattr *tb[])
 {
 	struct sk_buff *skb;
@@ -312,6 +425,8 @@ nla_put_failure:
 	goto out;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int wl1271_tm_cmd(struct ieee80211_hw *hw, void *data, int len)
 {
 	struct wl1271 *wl = hw->priv;
@@ -332,12 +447,20 @@ int wl1271_tm_cmd(struct ieee80211_hw *hw, void *data, int len)
 		return wl1271_tm_cmd_interrogate(wl, tb);
 	case WL1271_TM_CMD_CONFIGURE:
 		return wl1271_tm_cmd_configure(wl, tb);
+<<<<<<< HEAD
+=======
+	case WL1271_TM_CMD_NVS_PUSH:
+		return wl1271_tm_cmd_nvs_push(wl, tb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case WL1271_TM_CMD_SET_PLT_MODE:
 		return wl1271_tm_cmd_set_plt_mode(wl, tb);
 	case WL1271_TM_CMD_RECOVER:
 		return wl1271_tm_cmd_recover(wl, tb);
+<<<<<<< HEAD
 	case WL1271_TM_CMD_GET_MAC:
 		return wl12xx_tm_cmd_get_mac(wl, tb);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return -EOPNOTSUPP;
 	}

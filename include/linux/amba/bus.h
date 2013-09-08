@@ -16,7 +16,10 @@
 
 #include <linux/clk.h>
 #include <linux/device.h>
+<<<<<<< HEAD
 #include <linux/mod_devicetable.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/err.h>
 #include <linux/resource.h>
 #include <linux/regulator/consumer.h>
@@ -30,11 +33,24 @@ struct amba_device {
 	struct device		dev;
 	struct resource		res;
 	struct clk		*pclk;
+<<<<<<< HEAD
+=======
+	struct regulator	*vcore;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64			dma_mask;
 	unsigned int		periphid;
 	unsigned int		irq[AMBA_NR_IRQS];
 };
 
+<<<<<<< HEAD
+=======
+struct amba_id {
+	unsigned int		id;
+	unsigned int		mask;
+	void			*data;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct amba_driver {
 	struct device_driver	drv;
 	int			(*probe)(struct amba_device *, const struct amba_id *);
@@ -59,9 +75,12 @@ extern struct bus_type amba_bustype;
 
 int amba_driver_register(struct amba_driver *);
 void amba_driver_unregister(struct amba_driver *);
+<<<<<<< HEAD
 struct amba_device *amba_device_alloc(const char *, resource_size_t, size_t);
 void amba_device_put(struct amba_device *);
 int amba_device_add(struct amba_device *, struct resource *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int amba_device_register(struct amba_device *, struct resource *);
 void amba_device_unregister(struct amba_device *);
 struct amba_device *amba_find_device(const char *, struct device *, unsigned int, unsigned int);
@@ -74,6 +93,15 @@ void amba_release_regions(struct amba_device *);
 #define amba_pclk_disable(d)	\
 	do { if (!IS_ERR((d)->pclk)) clk_disable((d)->pclk); } while (0)
 
+<<<<<<< HEAD
+=======
+#define amba_vcore_enable(d)	\
+	(IS_ERR((d)->vcore) ? 0 : regulator_enable((d)->vcore))
+
+#define amba_vcore_disable(d)	\
+	do { if (!IS_ERR((d)->vcore)) regulator_disable((d)->vcore); } while (0)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Some drivers don't use the struct amba_device */
 #define AMBA_CONFIG_BITS(a) (((a) >> 24) & 0xff)
 #define AMBA_REV_BITS(a) (((a) >> 20) & 0x0f)
@@ -85,6 +113,7 @@ void amba_release_regions(struct amba_device *);
 #define amba_manf(d)	AMBA_MANF_BITS((d)->periphid)
 #define amba_part(d)	AMBA_PART_BITS((d)->periphid)
 
+<<<<<<< HEAD
 #define __AMBA_DEV(busid, data, mask)				\
 	{							\
 		.coherent_dma_mask = mask,			\
@@ -127,4 +156,6 @@ struct amba_device name##_device = {				\
 #define module_amba_driver(__amba_drv) \
 	module_driver(__amba_drv, amba_driver_register, amba_driver_unregister)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

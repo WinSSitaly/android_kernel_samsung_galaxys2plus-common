@@ -23,6 +23,7 @@
 #include <linux/ahci_platform.h>
 #include "ahci.h"
 
+<<<<<<< HEAD
 enum ahci_type {
 	AHCI,		/* standard platform ahci */
 	IMX53_AHCI,	/* ahci on i.mx53 */
@@ -69,6 +70,8 @@ static const struct ata_port_info ahci_port_info[] = {
 	},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct scsi_host_template ahci_platform_sht = {
 	AHCI_SHT("ahci_platform"),
 };
@@ -76,9 +79,19 @@ static struct scsi_host_template ahci_platform_sht = {
 static int __init ahci_probe(struct platform_device *pdev)
 {
 	struct device *dev = &pdev->dev;
+<<<<<<< HEAD
 	struct ahci_platform_data *pdata = dev_get_platdata(dev);
 	const struct platform_device_id *id = platform_get_device_id(pdev);
 	struct ata_port_info pi = ahci_port_info[id ? id->driver_data : 0];
+=======
+	struct ahci_platform_data *pdata = dev->platform_data;
+	struct ata_port_info pi = {
+		.flags		= AHCI_FLAG_COMMON,
+		.pio_mask	= ATA_PIO4,
+		.udma_mask	= ATA_UDMA6,
+		.port_ops	= &ahci_ops,
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const struct ata_port_info *ppi[] = { &pi, NULL };
 	struct ahci_host_priv *hpriv;
 	struct ata_host *host;
@@ -202,7 +215,11 @@ err0:
 static int __devexit ahci_remove(struct platform_device *pdev)
 {
 	struct device *dev = &pdev->dev;
+<<<<<<< HEAD
 	struct ahci_platform_data *pdata = dev_get_platdata(dev);
+=======
+	struct ahci_platform_data *pdata = dev->platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ata_host *host = dev_get_drvdata(dev);
 
 	ata_host_detach(host);
@@ -213,6 +230,7 @@ static int __devexit ahci_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 static int ahci_suspend(struct device *dev)
 {
@@ -285,17 +303,23 @@ static const struct of_device_id ahci_of_match[] = {
 };
 MODULE_DEVICE_TABLE(of, ahci_of_match);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver ahci_driver = {
 	.remove = __devexit_p(ahci_remove),
 	.driver = {
 		.name = "ahci",
 		.owner = THIS_MODULE,
+<<<<<<< HEAD
 		.of_match_table = ahci_of_match,
 #ifdef CONFIG_PM
 		.pm = &ahci_pm_ops,
 #endif
 	},
 	.id_table	= ahci_devtype,
+=======
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init ahci_init(void)

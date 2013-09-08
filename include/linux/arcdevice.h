@@ -20,7 +20,10 @@
 #include <linux/if_arcnet.h>
 
 #ifdef __KERNEL__
+<<<<<<< HEAD
 #include  <linux/irqreturn.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifndef bool
 #define bool int

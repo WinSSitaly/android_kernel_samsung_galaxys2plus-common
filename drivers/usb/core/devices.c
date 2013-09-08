@@ -190,7 +190,11 @@ static char *usb_dump_endpoint_descriptor(int speed, char *start, char *end,
 	dir = usb_endpoint_dir_in(desc) ? 'I' : 'O';
 
 	if (speed == USB_SPEED_HIGH) {
+<<<<<<< HEAD
 		switch (usb_endpoint_maxp(desc) & (0x03 << 11)) {
+=======
+		switch (le16_to_cpu(desc->wMaxPacketSize) & (0x03 << 11)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case 1 << 11:
 			bandwidth = 2; break;
 		case 2 << 11:
@@ -240,7 +244,11 @@ static char *usb_dump_endpoint_descriptor(int speed, char *start, char *end,
 
 	start += sprintf(start, format_endpt, desc->bEndpointAddress, dir,
 			 desc->bmAttributes, type,
+<<<<<<< HEAD
 			 (usb_endpoint_maxp(desc) & 0x07ff) *
+=======
+			 (le16_to_cpu(desc->wMaxPacketSize) & 0x07ff) *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 bandwidth,
 			 interval, unit);
 	return start;
@@ -624,7 +632,11 @@ static ssize_t usb_device_read(struct file *file, char __user *buf,
 	/* print devices for all busses */
 	list_for_each_entry(bus, &usb_bus_list, bus_list) {
 		/* recurse through all children of the root hub */
+<<<<<<< HEAD
 		if (!bus_to_hcd(bus)->rh_registered)
+=======
+		if (!bus->root_hub)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		usb_lock_device(bus->root_hub);
 		ret = usb_device_dump(&buf, &nbytes, &skip_bytes, ppos,

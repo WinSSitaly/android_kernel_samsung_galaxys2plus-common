@@ -411,9 +411,17 @@ static int optidma_init_one(struct pci_dev *dev, const struct pci_device_id *id)
 		.port_ops = &optiplus_port_ops
 	};
 	const struct ata_port_info *ppi[] = { &info_82c700, NULL };
+<<<<<<< HEAD
 	int rc;
 
 	ata_print_version_once(&dev->dev, DRV_VERSION);
+=======
+	static int printed_version;
+	int rc;
+
+	if (!printed_version++)
+		dev_printk(KERN_DEBUG, &dev->dev, "version " DRV_VERSION "\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rc = pcim_enable_device(dev);
 	if (rc)

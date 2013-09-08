@@ -216,12 +216,20 @@ static void get_data_to_compute(struct crypto_cipher *tfm,
 			scatterwalk_start(&walk, sg_next(walk.sg));
 			n = scatterwalk_clamp(&walk, len);
 		}
+<<<<<<< HEAD
 		data_src = scatterwalk_map(&walk);
+=======
+		data_src = scatterwalk_map(&walk, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		compute_mac(tfm, data_src, n, pctx);
 		len -= n;
 
+<<<<<<< HEAD
 		scatterwalk_unmap(data_src);
+=======
+		scatterwalk_unmap(data_src, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		scatterwalk_advance(&walk, n);
 		scatterwalk_done(&walk, 0, len);
 		if (len)

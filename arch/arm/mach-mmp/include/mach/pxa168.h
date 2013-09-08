@@ -5,7 +5,10 @@ struct sys_timer;
 
 extern struct sys_timer pxa168_timer;
 extern void __init pxa168_init_irq(void);
+<<<<<<< HEAD
 extern void pxa168_restart(char, const char *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void pxa168_clear_keypad_wakeup(void);
 
 #include <linux/i2c.h>
@@ -15,11 +18,17 @@ extern void pxa168_clear_keypad_wakeup(void);
 #include <video/pxa168fb.h>
 #include <plat/pxa27x_keypad.h>
 #include <mach/cputype.h>
+<<<<<<< HEAD
 #include <linux/pxa168_eth.h>
 
 extern struct pxa_device_desc pxa168_device_uart1;
 extern struct pxa_device_desc pxa168_device_uart2;
 extern struct pxa_device_desc pxa168_device_uart3;
+=======
+
+extern struct pxa_device_desc pxa168_device_uart1;
+extern struct pxa_device_desc pxa168_device_uart2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct pxa_device_desc pxa168_device_twsi0;
 extern struct pxa_device_desc pxa168_device_twsi1;
 extern struct pxa_device_desc pxa168_device_pwm1;
@@ -34,6 +43,7 @@ extern struct pxa_device_desc pxa168_device_ssp5;
 extern struct pxa_device_desc pxa168_device_nand;
 extern struct pxa_device_desc pxa168_device_fb;
 extern struct pxa_device_desc pxa168_device_keypad;
+<<<<<<< HEAD
 extern struct pxa_device_desc pxa168_device_eth;
 
 struct pxa168_usb_pdata {
@@ -44,6 +54,8 @@ struct pxa168_usb_pdata {
 int __init pxa168_add_usb_host(struct pxa168_usb_pdata *pdata);
 
 extern struct platform_device pxa168_device_gpio;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int pxa168_add_uart(int id)
 {
@@ -52,7 +64,10 @@ static inline int pxa168_add_uart(int id)
 	switch (id) {
 	case 1: d = &pxa168_device_uart1; break;
 	case 2: d = &pxa168_device_uart2; break;
+<<<<<<< HEAD
 	case 3: d = &pxa168_device_uart3; break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (d == NULL)
@@ -131,8 +146,11 @@ static inline int pxa168_add_keypad(struct pxa27x_keypad_platform_data *data)
 	return pxa_register_device(&pxa168_device_keypad, data, sizeof(*data));
 }
 
+<<<<<<< HEAD
 static inline int pxa168_add_eth(struct pxa168_eth_platform_data *data)
 {
 	return pxa_register_device(&pxa168_device_eth, data, sizeof(*data));
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ASM_MACH_PXA168_H */

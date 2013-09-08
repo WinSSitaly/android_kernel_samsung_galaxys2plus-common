@@ -92,7 +92,10 @@ struct ctlr_info
 	unsigned int intr[4];
 	unsigned int msix_vector;
 	unsigned int msi_vector;
+<<<<<<< HEAD
 	int	intr_mode;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int 	cciss_max_sectors;
 	BYTE	cciss_read;
 	BYTE	cciss_write;

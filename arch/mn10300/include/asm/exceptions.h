@@ -110,7 +110,11 @@ extern asmlinkage void nmi_handler(void);
 extern asmlinkage void misalignment(struct pt_regs *, enum exception_code);
 
 extern void die(const char *, struct pt_regs *, enum exception_code)
+<<<<<<< HEAD
 	__noreturn;
+=======
+	ATTRIB_NORET;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int die_if_no_fixup(const char *, struct pt_regs *, enum exception_code);
 

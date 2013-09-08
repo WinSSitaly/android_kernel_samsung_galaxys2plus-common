@@ -424,7 +424,11 @@ einval:	li	v0, -ENOSYS
 	sys	sys_getresuid		3
 	sys	sys_ni_syscall		0	/* was sys_query_module */
 	sys	sys_poll		3
+<<<<<<< HEAD
 	sys	sys_ni_syscall		0	/* was nfsservctl */
+=======
+	sys	sys_nfsservctl		3
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sys	sys_setresgid		3	/* 4190 */
 	sys	sys_getresgid		3
 	sys	sys_prctl		5
@@ -496,7 +500,11 @@ einval:	li	v0, -ENOSYS
 	sys	sys_lookup_dcookie	4
 	sys	sys_epoll_create	1
 	sys	sys_epoll_ctl		4
+<<<<<<< HEAD
 	sys	sys_epoll_wait		4	/* 4250 */
+=======
+	sys	sys_epoll_wait		3	/* 4250 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sys	sys_remap_file_pages	5
 	sys	sys_set_tid_address	1
 	sys	sys_restart_syscall	0
@@ -589,10 +597,14 @@ einval:	li	v0, -ENOSYS
 	sys	sys_open_by_handle_at	3	/* 4340 */
 	sys	sys_clock_adjtime	2
 	sys	sys_syncfs		1
+<<<<<<< HEAD
 	sys	sys_sendmmsg		4
 	sys	sys_setns		2
 	sys	sys_process_vm_readv	6	/* 4345 */
 	sys	sys_process_vm_writev	6
+=======
+	sys	sys_setns		2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.endm
 
 	/* We pre-compute the number of _instruction_ bytes needed to

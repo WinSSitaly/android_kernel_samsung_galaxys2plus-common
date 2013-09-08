@@ -32,7 +32,11 @@ enum bus_reset_handling {
 	SUCCEED_ON_BUS_RESET,
 };
 
+<<<<<<< HEAD
 static __printf(2, 3)
+=======
+static __attribute__((format(printf, 2, 3)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void cmp_error(struct cmp_connection *c, const char *fmt, ...)
 {
 	va_list va;

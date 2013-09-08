@@ -34,6 +34,10 @@
 
 #include <asm/cacheflush.h>
 #include <asm/processor.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/stacktrace.h>
 
 #include "setup.h"
@@ -54,8 +58,12 @@ void cpu_idle(void)
 {
 	/* endless idle loop with no priority at all */
 	while (1) {
+<<<<<<< HEAD
 		tick_nohz_idle_enter();
 		rcu_idle_enter();
+=======
+		tick_nohz_stop_sched_tick(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		while (!need_resched()) {
 			local_irq_disable();
 			stop_critical_timings();
@@ -63,8 +71,12 @@ void cpu_idle(void)
 			local_irq_enable();
 			start_critical_timings();
 		}
+<<<<<<< HEAD
 		rcu_idle_exit();
 		tick_nohz_idle_exit();
+=======
+		tick_nohz_restart_sched_tick();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		preempt_enable_no_resched();
 		schedule();
 		preempt_disable();
@@ -380,7 +392,11 @@ int vectors_user_mapping(void)
 	return install_special_mapping(mm, 0xffff0000, PAGE_SIZE,
 				       VM_READ | VM_EXEC |
 				       VM_MAYREAD | VM_MAYEXEC |
+<<<<<<< HEAD
 				       VM_RESERVED,
+=======
+				       VM_ALWAYSDUMP | VM_RESERVED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				       NULL);
 }
 

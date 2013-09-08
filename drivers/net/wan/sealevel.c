@@ -12,8 +12,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/mm.h>
@@ -192,7 +195,11 @@ static int slvl_setup(struct slvl_device *sv, int iobase, int irq)
 	dev->irq = irq;
 
 	if (register_hdlc_device(dev)) {
+<<<<<<< HEAD
 		pr_err("unable to register HDLC device\n");
+=======
+		printk(KERN_ERR "sealevel: unable to register HDLC device\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		free_netdev(dev);
 		return -1;
 	}
@@ -217,7 +224,12 @@ static __init struct slvl_board *slvl_init(int iobase, int irq,
 	 */
 
 	if (!request_region(iobase, 8, "Sealevel 4021")) {
+<<<<<<< HEAD
 		pr_warn("I/O 0x%X already in use\n", iobase);
+=======
+		printk(KERN_WARNING "sealevel: I/O 0x%X already in use.\n",
+		       iobase);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 	}
 
@@ -268,7 +280,11 @@ static __init struct slvl_board *slvl_init(int iobase, int irq,
 
 	if (request_irq(irq, z8530_interrupt, IRQF_DISABLED,
 			"SeaLevel", dev) < 0) {
+<<<<<<< HEAD
 		pr_warn("IRQ %d already in use\n", irq);
+=======
+		printk(KERN_WARNING "sealevel: IRQ %d already in use.\n", irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_request_irq;
 	}
 
@@ -293,7 +309,11 @@ static __init struct slvl_board *slvl_init(int iobase, int irq,
 	 */
 
 	if (z8530_init(dev) != 0) {
+<<<<<<< HEAD
 		pr_err("Z8530 series device not found\n");
+=======
+		printk(KERN_ERR "Z8530 series device not found.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		enable_irq(irq);
 		goto free_hw;
 	}
@@ -362,7 +382,11 @@ static int io=0x238;
 static int txdma=1;
 static int rxdma=3;
 static int irq=5;
+<<<<<<< HEAD
 static bool slow=false;
+=======
+static int slow=0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(io, int, 0);
 MODULE_PARM_DESC(io, "The I/O base of the Sealevel card");

@@ -5,6 +5,10 @@
 #include "util.h"
 #include "probe-event.h"
 
+<<<<<<< HEAD
+=======
+#define MAX_PATH_LEN		 256
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MAX_PROBE_BUFFER	1024
 #define MAX_PROBES		 128
 
@@ -15,6 +19,7 @@ static inline int is_c_varname(const char *name)
 }
 
 #ifdef DWARF_SUPPORT
+<<<<<<< HEAD
 
 #include "dwarf-aux.h"
 
@@ -51,12 +56,39 @@ extern int debuginfo__find_available_vars_at(struct debuginfo *self,
 					     struct perf_probe_event *pev,
 					     struct variable_list **vls,
 					     int max_points, bool externs);
+=======
+/* Find probe_trace_events specified by perf_probe_event from debuginfo */
+extern int find_probe_trace_events(int fd, struct perf_probe_event *pev,
+				    struct probe_trace_event **tevs,
+				    int max_tevs);
+
+/* Find a perf_probe_point from debuginfo */
+extern int find_perf_probe_point(unsigned long addr,
+				 struct perf_probe_point *ppt);
+
+/* Find a line range */
+extern int find_line_range(int fd, struct line_range *lr);
+
+/* Find available variables */
+extern int find_available_vars_at(int fd, struct perf_probe_event *pev,
+				  struct variable_list **vls, int max_points,
+				  bool externs);
+
+#include <dwarf.h>
+#include <elfutils/libdw.h>
+#include <elfutils/libdwfl.h>
+#include <elfutils/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct probe_finder {
 	struct perf_probe_event	*pev;		/* Target probe event */
 
 	/* Callback when a probe point is found */
+<<<<<<< HEAD
 	int (*callback)(Dwarf_Die *sc_die, struct probe_finder *pf);
+=======
+	int (*callback)(Dwarf_Die *sp_die, struct probe_finder *pf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* For function searching */
 	int			lno;		/* Line number */

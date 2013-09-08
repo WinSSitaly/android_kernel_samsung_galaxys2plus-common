@@ -596,7 +596,11 @@ static void rtl8225_rf_set_chan(struct net_device *dev, short ch)
 {
 	struct r8180_priv *priv = ieee80211_priv(dev);
 	short gset = (priv->ieee80211->state == IEEE80211_LINKED &&
+<<<<<<< HEAD
 		ieee80211_is_54g(&priv->ieee80211->current_network)) ||
+=======
+		ieee80211_is_54g(priv->ieee80211->current_network)) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		priv->ieee80211->iw_mode == IW_MODE_MONITOR;
 
 	rtl8225_SetTXPowerLevel(dev, ch);
@@ -615,7 +619,11 @@ static void rtl8225_rf_set_chan(struct net_device *dev, short ch)
 	}
 
 	if (priv->ieee80211->state == IEEE80211_LINKED &&
+<<<<<<< HEAD
 	    ieee80211_is_shortslot(&priv->ieee80211->current_network))
+=======
+	    ieee80211_is_shortslot(priv->ieee80211->current_network))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		write_nic_byte(dev, SLOT, 0x9);
 	else
 		write_nic_byte(dev, SLOT, 0x14);

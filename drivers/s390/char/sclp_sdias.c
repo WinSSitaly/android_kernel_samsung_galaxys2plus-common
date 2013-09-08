@@ -8,7 +8,10 @@
 #define KMSG_COMPONENT "sclp_sdias"
 #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
 
+<<<<<<< HEAD
 #include <linux/completion.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <asm/sclp.h>
 #include <asm/debug.h>
@@ -63,6 +66,7 @@ struct sdias_sccb {
 } __attribute__((packed));
 
 static struct sdias_sccb sccb __attribute__((aligned(4096)));
+<<<<<<< HEAD
 static struct sdias_evbuf sdias_evbuf;
 
 static DECLARE_COMPLETION(evbuf_accepted);
@@ -86,6 +90,17 @@ static void sclp_sdias_receiver_fn(struct evbuf_header *evbuf)
 static void sdias_callback(struct sclp_req *request, void *data)
 {
 	complete(&evbuf_accepted);
+=======
+
+static int sclp_req_done;
+static wait_queue_head_t sdias_wq;
+static DEFINE_MUTEX(sdias_mutex);
+
+static void sdias_callback(struct sclp_req *request, void *data)
+{
+	sclp_req_done = 1;
+	wake_up(&sdias_wq); /* Inform caller, that request is complete */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	TRACE("callback done\n");
 }
 
@@ -95,6 +110,10 @@ static int sdias_sclp_send(struct sclp_req *req)
 	int rc;
 
 	for (retries = SDIAS_RETRIES; retries; retries--) {
+<<<<<<< HEAD
+=======
+		sclp_req_done = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		TRACE("add request\n");
 		rc = sclp_add_request(req);
 		if (rc) {
@@ -105,6 +124,7 @@ static int sdias_sclp_send(struct sclp_req *req)
 			continue;
 		}
 		/* initiated, wait for completion of service call */
+<<<<<<< HEAD
 		wait_for_completion(&evbuf_accepted);
 		if (req->status == SCLP_REQ_FAILED) {
 			TRACE("sclp request failed\n");
@@ -130,6 +150,18 @@ static int sdias_sclp_send(struct sclp_req *req)
 		return 0;
 	}
 	return -EIO;
+=======
+		wait_event(sdias_wq, (sclp_req_done == 1));
+		if (req->status == SCLP_REQ_FAILED) {
+			TRACE("sclp request failed\n");
+			rc = -EIO;
+			continue;
+		}
+		TRACE("request done\n");
+		break;
+	}
+	return rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -169,12 +201,22 @@ int sclp_sdias_blk_count(void)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	switch (sdias_evbuf.event_status) {
 		case 0:
 			rc = sdias_evbuf.blk_cnt;
 			break;
 		default:
 			pr_err("SCLP error: %x\n", sdias_evbuf.event_status);
+=======
+	switch (sccb.evbuf.event_status) {
+		case 0:
+			rc = sccb.evbuf.blk_cnt;
+			break;
+		default:
+			pr_err("SCLP error: %x\n",
+			       sccb.evbuf.event_status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rc = -EIO;
 			goto out;
 	}
@@ -239,18 +281,30 @@ int sclp_sdias_copy(void *dest, int start_blk, int nr_blks)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	switch (sdias_evbuf.event_status) {
 		case EVSTATE_ALL_STORED:
 			TRACE("all stored\n");
 		case EVSTATE_PART_STORED:
 			TRACE("part stored: %i\n", sdias_evbuf.blk_cnt);
+=======
+	switch (sccb.evbuf.event_status) {
+		case EVSTATE_ALL_STORED:
+			TRACE("all stored\n");
+		case EVSTATE_PART_STORED:
+			TRACE("part stored: %i\n", sccb.evbuf.blk_cnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case EVSTATE_NO_DATA:
 			TRACE("no data\n");
 		default:
 			pr_err("Error from SCLP while copying hsa. "
 			       "Event status = %x\n",
+<<<<<<< HEAD
 			       sdias_evbuf.event_status);
+=======
+			       sccb.evbuf.event_status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rc = -EIO;
 	}
 out:
@@ -258,6 +312,7 @@ out:
 	return rc;
 }
 
+<<<<<<< HEAD
 static int __init sclp_sdias_register_check(void)
 {
 	int rc;
@@ -290,11 +345,18 @@ static int __init sclp_sdias_init_async(void)
 
 int __init sclp_sdias_init(void)
 {
+=======
+int __init sclp_sdias_init(void)
+{
+	int rc;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ipl_info.type != IPL_TYPE_FCP_DUMP)
 		return 0;
 	sdias_dbf = debug_register("dump_sdias", 4, 1, 4 * sizeof(long));
 	debug_register_view(sdias_dbf, &debug_sprintf_view);
 	debug_set_level(sdias_dbf, 6);
+<<<<<<< HEAD
 	if (sclp_sdias_init_sync() == 0)
 		goto out;
 	if (sclp_sdias_init_async() == 0)
@@ -302,6 +364,12 @@ int __init sclp_sdias_init(void)
 	TRACE("init failed\n");
 	return -ENODEV;
 out:
+=======
+	rc = sclp_register(&sclp_sdias_register);
+	if (rc)
+		return rc;
+	init_waitqueue_head(&sdias_wq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	TRACE("init done\n");
 	return 0;
 }

@@ -477,7 +477,11 @@ static struct i2c_adapter ali15x3_adapter = {
 	.algo		= &smbus_algorithm,
 };
 
+<<<<<<< HEAD
 static DEFINE_PCI_DEVICE_TABLE(ali15x3_ids) = {
+=======
+static const struct pci_device_id ali15x3_ids[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ PCI_DEVICE(PCI_VENDOR_ID_AL, PCI_DEVICE_ID_AL_M7101) },
 	{ 0, }
 };

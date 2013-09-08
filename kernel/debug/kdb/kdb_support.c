@@ -384,9 +384,15 @@ static int kdb_getphys(void *res, unsigned long addr, size_t size)
 	if (!pfn_valid(pfn))
 		return 1;
 	page = pfn_to_page(pfn);
+<<<<<<< HEAD
 	vaddr = kmap_atomic(page);
 	memcpy(res, vaddr + (addr & (PAGE_SIZE - 1)), size);
 	kunmap_atomic(vaddr);
+=======
+	vaddr = kmap_atomic(page, KM_KDB);
+	memcpy(res, vaddr + (addr & (PAGE_SIZE - 1)), size);
+	kunmap_atomic(vaddr, KM_KDB);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -636,7 +642,11 @@ char kdb_task_state_char (const struct task_struct *p)
 		(p->exit_state & EXIT_ZOMBIE) ? 'Z' :
 		(p->exit_state & EXIT_DEAD) ? 'E' :
 		(p->state & TASK_INTERRUPTIBLE) ? 'S' : '?';
+<<<<<<< HEAD
 	if (is_idle_task(p)) {
+=======
+	if (p->pid == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Idle task.  Is it really idle, apart from the kdb
 		 * interrupt? */
 		if (!kdb_task_has_cpu(p) || kgdb_info[cpu].irq_depth == 1) {

@@ -25,6 +25,7 @@
 #include <media/v4l2-dev.h>
 #include <media/v4l2-fh.h>
 #include <media/v4l2-event.h>
+<<<<<<< HEAD
 #include <media/v4l2-ctrls.h>
 
 #include <linux/sched.h>
@@ -39,16 +40,99 @@ static unsigned sev_pos(const struct v4l2_subscribed_event *sev, unsigned idx)
 
 static int __v4l2_event_dequeue(struct v4l2_fh *fh, struct v4l2_event *event)
 {
+=======
+
+#include <linux/sched.h>
+#include <linux/slab.h>
+
+int v4l2_event_init(struct v4l2_fh *fh)
+{
+	fh->events = kzalloc(sizeof(*fh->events), GFP_KERNEL);
+	if (fh->events == NULL)
+		return -ENOMEM;
+
+	init_waitqueue_head(&fh->events->wait);
+
+	INIT_LIST_HEAD(&fh->events->free);
+	INIT_LIST_HEAD(&fh->events->available);
+	INIT_LIST_HEAD(&fh->events->subscribed);
+
+	fh->events->sequence = -1;
+
+	return 0;
+}
+EXPORT_SYMBOL_GPL(v4l2_event_init);
+
+int v4l2_event_alloc(struct v4l2_fh *fh, unsigned int n)
+{
+	struct v4l2_events *events = fh->events;
+	unsigned long flags;
+
+	if (!events) {
+		WARN_ON(1);
+		return -ENOMEM;
+	}
+
+	while (events->nallocated < n) {
+		struct v4l2_kevent *kev;
+
+		kev = kzalloc(sizeof(*kev), GFP_KERNEL);
+		if (kev == NULL)
+			return -ENOMEM;
+
+		spin_lock_irqsave(&fh->vdev->fh_lock, flags);
+		list_add_tail(&kev->list, &events->free);
+		events->nallocated++;
+		spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
+	}
+
+	return 0;
+}
+EXPORT_SYMBOL_GPL(v4l2_event_alloc);
+
+#define list_kfree(list, type, member)				\
+	while (!list_empty(list)) {				\
+		type *hi;					\
+		hi = list_first_entry(list, type, member);	\
+		list_del(&hi->member);				\
+		kfree(hi);					\
+	}
+
+void v4l2_event_free(struct v4l2_fh *fh)
+{
+	struct v4l2_events *events = fh->events;
+
+	if (!events)
+		return;
+
+	list_kfree(&events->free, struct v4l2_kevent, list);
+	list_kfree(&events->available, struct v4l2_kevent, list);
+	list_kfree(&events->subscribed, struct v4l2_subscribed_event, list);
+
+	kfree(events);
+	fh->events = NULL;
+}
+EXPORT_SYMBOL_GPL(v4l2_event_free);
+
+static int __v4l2_event_dequeue(struct v4l2_fh *fh, struct v4l2_event *event)
+{
+	struct v4l2_events *events = fh->events;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct v4l2_kevent *kev;
 	unsigned long flags;
 
 	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
 
+<<<<<<< HEAD
 	if (list_empty(&fh->available)) {
+=======
+	if (list_empty(&events->available)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
 		return -ENOENT;
 	}
 
+<<<<<<< HEAD
 	WARN_ON(fh->navailable == 0);
 
 	kev = list_first_entry(&fh->available, struct v4l2_kevent, list);
@@ -59,6 +143,16 @@ static int __v4l2_event_dequeue(struct v4l2_fh *fh, struct v4l2_event *event)
 	*event = kev->event;
 	kev->sev->first = sev_pos(kev->sev, 1);
 	kev->sev->in_use--;
+=======
+	WARN_ON(events->navailable == 0);
+
+	kev = list_first_entry(&events->available, struct v4l2_kevent, list);
+	list_move(&kev->list, &events->free);
+	events->navailable--;
+
+	kev->event.pending = events->navailable;
+	*event = kev->event;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
 
@@ -68,6 +162,10 @@ static int __v4l2_event_dequeue(struct v4l2_fh *fh, struct v4l2_event *event)
 int v4l2_event_dequeue(struct v4l2_fh *fh, struct v4l2_event *event,
 		       int nonblocking)
 {
+<<<<<<< HEAD
+=======
+	struct v4l2_events *events = fh->events;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	if (nonblocking)
@@ -78,8 +176,13 @@ int v4l2_event_dequeue(struct v4l2_fh *fh, struct v4l2_event *event,
 		mutex_unlock(fh->vdev->lock);
 
 	do {
+<<<<<<< HEAD
 		ret = wait_event_interruptible(fh->wait,
 					       fh->navailable != 0);
+=======
+		ret = wait_event_interruptible(events->wait,
+					       events->navailable != 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0)
 			break;
 
@@ -93,14 +196,23 @@ int v4l2_event_dequeue(struct v4l2_fh *fh, struct v4l2_event *event,
 }
 EXPORT_SYMBOL_GPL(v4l2_event_dequeue);
 
+<<<<<<< HEAD
 /* Caller must hold fh->vdev->fh_lock! */
 static struct v4l2_subscribed_event *v4l2_event_subscribed(
 		struct v4l2_fh *fh, u32 type, u32 id)
 {
+=======
+/* Caller must hold fh->event->lock! */
+static struct v4l2_subscribed_event *v4l2_event_subscribed(
+	struct v4l2_fh *fh, u32 type)
+{
+	struct v4l2_events *events = fh->events;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct v4l2_subscribed_event *sev;
 
 	assert_spin_locked(&fh->vdev->fh_lock);
 
+<<<<<<< HEAD
 	list_for_each_entry(sev, &fh->subscribed, list)
 		if (sev->type == type && sev->id == id)
 			return sev;
@@ -157,6 +269,14 @@ static void __v4l2_event_queue_fh(struct v4l2_fh *fh, const struct v4l2_event *e
 	fh->navailable++;
 
 	wake_up_all(&fh->wait);
+=======
+	list_for_each_entry(sev, &events->subscribed, list) {
+		if (sev->type == type)
+			return sev;
+	}
+
+	return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void v4l2_event_queue(struct video_device *vdev, const struct v4l2_event *ev)
@@ -169,6 +289,7 @@ void v4l2_event_queue(struct video_device *vdev, const struct v4l2_event *ev)
 
 	spin_lock_irqsave(&vdev->fh_lock, flags);
 
+<<<<<<< HEAD
 	list_for_each_entry(fh, &vdev->fh_list, list)
 		__v4l2_event_queue_fh(fh, ev, &timestamp);
 
@@ -253,14 +374,89 @@ int v4l2_event_subscribe(struct v4l2_fh *fh,
 		kfree(sev);
 	else if (ctrl)
 		v4l2_ctrl_add_event(ctrl, sev);
+=======
+	list_for_each_entry(fh, &vdev->fh_list, list) {
+		struct v4l2_events *events = fh->events;
+		struct v4l2_kevent *kev;
+
+		/* Are we subscribed? */
+		if (!v4l2_event_subscribed(fh, ev->type))
+			continue;
+
+		/* Increase event sequence number on fh. */
+		events->sequence++;
+
+		/* Do we have any free events? */
+		if (list_empty(&events->free))
+			continue;
+
+		/* Take one and fill it. */
+		kev = list_first_entry(&events->free, struct v4l2_kevent, list);
+		kev->event.type = ev->type;
+		kev->event.u = ev->u;
+		kev->event.timestamp = timestamp;
+		kev->event.sequence = events->sequence;
+		list_move_tail(&kev->list, &events->available);
+
+		events->navailable++;
+
+		wake_up_all(&events->wait);
+	}
+
+	spin_unlock_irqrestore(&vdev->fh_lock, flags);
+}
+EXPORT_SYMBOL_GPL(v4l2_event_queue);
+
+int v4l2_event_pending(struct v4l2_fh *fh)
+{
+	return fh->events->navailable;
+}
+EXPORT_SYMBOL_GPL(v4l2_event_pending);
+
+int v4l2_event_subscribe(struct v4l2_fh *fh,
+			 struct v4l2_event_subscription *sub)
+{
+	struct v4l2_events *events = fh->events;
+	struct v4l2_subscribed_event *sev;
+	unsigned long flags;
+
+	if (fh->events == NULL) {
+		WARN_ON(1);
+		return -ENOMEM;
+	}
+
+	sev = kmalloc(sizeof(*sev), GFP_KERNEL);
+	if (!sev)
+		return -ENOMEM;
+
+	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
+
+	if (v4l2_event_subscribed(fh, sub->type) == NULL) {
+		INIT_LIST_HEAD(&sev->list);
+		sev->type = sub->type;
+
+		list_add(&sev->list, &events->subscribed);
+		sev = NULL;
+	}
+
+	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
+
+	kfree(sev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 EXPORT_SYMBOL_GPL(v4l2_event_subscribe);
 
+<<<<<<< HEAD
 void v4l2_event_unsubscribe_all(struct v4l2_fh *fh)
 {
 	struct v4l2_event_subscription sub;
+=======
+static void v4l2_event_unsubscribe_all(struct v4l2_fh *fh)
+{
+	struct v4l2_events *events = fh->events;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct v4l2_subscribed_event *sev;
 	unsigned long flags;
 
@@ -268,6 +464,7 @@ void v4l2_event_unsubscribe_all(struct v4l2_fh *fh)
 		sev = NULL;
 
 		spin_lock_irqsave(&fh->vdev->fh_lock, flags);
+<<<<<<< HEAD
 		if (!list_empty(&fh->subscribed)) {
 			sev = list_first_entry(&fh->subscribed,
 					struct v4l2_subscribed_event, list);
@@ -280,13 +477,27 @@ void v4l2_event_unsubscribe_all(struct v4l2_fh *fh)
 	} while (sev);
 }
 EXPORT_SYMBOL_GPL(v4l2_event_unsubscribe_all);
+=======
+		if (!list_empty(&events->subscribed)) {
+			sev = list_first_entry(&events->subscribed,
+				       struct v4l2_subscribed_event, list);
+			list_del(&sev->list);
+		}
+		spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
+		kfree(sev);
+	} while (sev);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int v4l2_event_unsubscribe(struct v4l2_fh *fh,
 			   struct v4l2_event_subscription *sub)
 {
 	struct v4l2_subscribed_event *sev;
 	unsigned long flags;
+<<<<<<< HEAD
 	int i;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (sub->type == V4L2_EVENT_ALL) {
 		v4l2_event_unsubscribe_all(fh);
@@ -295,6 +506,7 @@ int v4l2_event_unsubscribe(struct v4l2_fh *fh,
 
 	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
 
+<<<<<<< HEAD
 	sev = v4l2_event_subscribed(fh, sub->type, sub->id);
 	if (sev != NULL) {
 		/* Remove any pending events for this subscription */
@@ -312,6 +524,13 @@ int v4l2_event_unsubscribe(struct v4l2_fh *fh,
 		if (ctrl)
 			v4l2_ctrl_del_event(ctrl, sev);
 	}
+=======
+	sev = v4l2_event_subscribed(fh, sub->type);
+	if (sev != NULL)
+		list_del(&sev->list);
+
+	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kfree(sev);
 

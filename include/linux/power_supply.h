@@ -13,11 +13,19 @@
 #ifndef __LINUX_POWER_SUPPLY_H__
 #define __LINUX_POWER_SUPPLY_H__
 
+<<<<<<< HEAD
 #include <linux/workqueue.h>
 #include <linux/leds.h>
 
 struct device;
 
+=======
+#include <linux/device.h>
+#include <linux/wakelock.h>
+#include <linux/workqueue.h>
+#include <linux/leds.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * All voltages, currents, charges, energies, time and temperatures in uV,
  * µA, µAh, µWh, seconds and tenths of degree Celsius unless otherwise
@@ -75,12 +83,15 @@ enum {
 	POWER_SUPPLY_CAPACITY_LEVEL_FULL,
 };
 
+<<<<<<< HEAD
 enum {
 	POWER_SUPPLY_SCOPE_UNKNOWN = 0,
 	POWER_SUPPLY_SCOPE_SYSTEM,
 	POWER_SUPPLY_SCOPE_DEVICE,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum power_supply_property {
 	/* Properties of type `int' */
 	POWER_SUPPLY_PROP_STATUS = 0,
@@ -118,12 +129,19 @@ enum power_supply_property {
 	POWER_SUPPLY_PROP_CAPACITY_LEVEL,
 	POWER_SUPPLY_PROP_TEMP,
 	POWER_SUPPLY_PROP_TEMP_AMBIENT,
+<<<<<<< HEAD
+=======
+	POWER_SUPPLY_PROP_BATT_TEMP_ADC,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	POWER_SUPPLY_PROP_TIME_TO_EMPTY_NOW,
 	POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG,
 	POWER_SUPPLY_PROP_TIME_TO_FULL_NOW,
 	POWER_SUPPLY_PROP_TIME_TO_FULL_AVG,
 	POWER_SUPPLY_PROP_TYPE, /* use power_supply.type instead */
+<<<<<<< HEAD
 	POWER_SUPPLY_PROP_SCOPE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Properties of type `const char *' */
 	POWER_SUPPLY_PROP_MODEL_NAME,
 	POWER_SUPPLY_PROP_MANUFACTURER,
@@ -131,8 +149,12 @@ enum power_supply_property {
 };
 
 enum power_supply_type {
+<<<<<<< HEAD
 	POWER_SUPPLY_TYPE_UNKNOWN = 0,
 	POWER_SUPPLY_TYPE_BATTERY,
+=======
+	POWER_SUPPLY_TYPE_BATTERY = 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	POWER_SUPPLY_TYPE_UPS,
 	POWER_SUPPLY_TYPE_MAINS,
 	POWER_SUPPLY_TYPE_USB,		/* Standard Downstream Port */
@@ -172,6 +194,12 @@ struct power_supply {
 	/* private */
 	struct device *dev;
 	struct work_struct changed_work;
+<<<<<<< HEAD
+=======
+	spinlock_t changed_lock;
+	bool changed;
+	struct wake_lock work_wake_lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_LEDS_TRIGGERS
 	struct led_trigger *charging_full_trig;
@@ -220,7 +248,10 @@ static inline int power_supply_is_system_supplied(void) { return -ENOSYS; }
 extern int power_supply_register(struct device *parent,
 				 struct power_supply *psy);
 extern void power_supply_unregister(struct power_supply *psy);
+<<<<<<< HEAD
 extern int power_supply_powers(struct power_supply *psy, struct device *dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* For APM emulation, think legacy userspace. */
 extern struct class *power_supply_class;

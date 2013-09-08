@@ -17,12 +17,19 @@
 #ifndef _ASM_TILE_ATOMIC_H
 #define _ASM_TILE_ATOMIC_H
 
+<<<<<<< HEAD
 #include <asm/cmpxchg.h>
 
 #ifndef __ASSEMBLY__
 
 #include <linux/compiler.h>
 #include <linux/types.h>
+=======
+#ifndef __ASSEMBLY__
+
+#include <linux/compiler.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define ATOMIC_INIT(i)	{ (i) }
 
@@ -123,6 +130,66 @@ static inline int atomic_read(const atomic_t *v)
  */
 #define atomic_add_negative(i, v)	(atomic_add_return((i), (v)) < 0)
 
+<<<<<<< HEAD
+=======
+/**
+ * atomic_inc_not_zero - increment unless the number is zero
+ * @v: pointer of type atomic_t
+ *
+ * Atomically increments @v by 1, so long as @v is non-zero.
+ * Returns non-zero if @v was non-zero, and zero otherwise.
+ */
+#define atomic_inc_not_zero(v)		atomic_add_unless((v), 1, 0)
+
+/* Nonexistent functions intended to cause link errors. */
+extern unsigned long __xchg_called_with_bad_pointer(void);
+extern unsigned long __cmpxchg_called_with_bad_pointer(void);
+
+#define xchg(ptr, x)							\
+	({								\
+		typeof(*(ptr)) __x;					\
+		switch (sizeof(*(ptr))) {				\
+		case 4:							\
+			__x = (typeof(__x))(typeof(__x-__x))atomic_xchg( \
+				(atomic_t *)(ptr),			\
+				(u32)(typeof((x)-(x)))(x));		\
+			break;						\
+		case 8:							\
+			__x = (typeof(__x))(typeof(__x-__x))atomic64_xchg( \
+				(atomic64_t *)(ptr),			\
+				(u64)(typeof((x)-(x)))(x));		\
+			break;						\
+		default:						\
+			__xchg_called_with_bad_pointer();		\
+		}							\
+		__x;							\
+	})
+
+#define cmpxchg(ptr, o, n)						\
+	({								\
+		typeof(*(ptr)) __x;					\
+		switch (sizeof(*(ptr))) {				\
+		case 4:							\
+			__x = (typeof(__x))(typeof(__x-__x))atomic_cmpxchg( \
+				(atomic_t *)(ptr),			\
+				(u32)(typeof((o)-(o)))(o),		\
+				(u32)(typeof((n)-(n)))(n));		\
+			break;						\
+		case 8:							\
+			__x = (typeof(__x))(typeof(__x-__x))atomic64_cmpxchg( \
+				(atomic64_t *)(ptr),			\
+				(u64)(typeof((o)-(o)))(o),		\
+				(u64)(typeof((n)-(n)))(n));		\
+			break;						\
+		default:						\
+			__cmpxchg_called_with_bad_pointer();		\
+		}							\
+		__x;							\
+	})
+
+#define tas(ptr) (xchg((ptr), 1))
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ASSEMBLY__ */
 
 #ifndef __tilegx__
@@ -131,4 +198,12 @@ static inline int atomic_read(const atomic_t *v)
 #include <asm/atomic_64.h>
 #endif
 
+<<<<<<< HEAD
+=======
+/* Provide the appropriate atomic_long_t definitions. */
+#ifndef __ASSEMBLY__
+#include <asm-generic/atomic-long.h>
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _ASM_TILE_ATOMIC_H */

@@ -36,7 +36,11 @@
 #include <linux/seq_file.h>
 #include <linux/compat.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <linux/hw_random.h>
 
@@ -1220,5 +1224,12 @@ void zcrypt_api_exit(void)
 	misc_deregister(&zcrypt_misc_device);
 }
 
+<<<<<<< HEAD
 module_init(zcrypt_api_init);
 module_exit(zcrypt_api_exit);
+=======
+#ifndef CONFIG_ZCRYPT_MONOLITHIC
+module_init(zcrypt_api_init);
+module_exit(zcrypt_api_exit);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

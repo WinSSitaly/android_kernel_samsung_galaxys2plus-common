@@ -261,9 +261,27 @@ static struct i2c_driver max6900_driver = {
 	.id_table = max6900_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(max6900_driver);
+=======
+static int __init max6900_init(void)
+{
+	return i2c_add_driver(&max6900_driver);
+}
+
+static void __exit max6900_exit(void)
+{
+	i2c_del_driver(&max6900_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Maxim MAX6900 RTC driver");
 MODULE_AUTHOR("Dale Farnsworth <dale@farnsworth.org>");
 MODULE_LICENSE("GPL");
 MODULE_VERSION(DRV_VERSION);
+<<<<<<< HEAD
+=======
+
+module_init(max6900_init);
+module_exit(max6900_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

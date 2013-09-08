@@ -13,7 +13,10 @@ config DRM_NOUVEAU
 	select ACPI_VIDEO if ACPI && X86 && BACKLIGHT_CLASS_DEVICE && VIDEO_OUTPUT_CONTROL && INPUT
 	select ACPI_WMI if ACPI
 	select MXM_WMI if ACPI
+<<<<<<< HEAD
 	select POWER_SUPPLY
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Choose this option for open-source nVidia support.
 

@@ -522,7 +522,11 @@ static void neo_copy_data_from_queue_to_uart(struct jsm_channel *ch)
 
 			writeb(circ->buf[circ->tail], &ch->ch_neo_uart->txrx);
 			jsm_printk(WRITE, INFO, &ch->ch_bd->pci_dev,
+<<<<<<< HEAD
 					"Tx data: %x\n", circ->buf[circ->tail]);
+=======
+					"Tx data: %x\n", circ->buf[circ->head]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			circ->tail = (circ->tail + 1) & (UART_XMIT_SIZE - 1);
 			ch->ch_txcount++;
 		}

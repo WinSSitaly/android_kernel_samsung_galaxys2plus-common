@@ -551,6 +551,10 @@ sclp_tty_init(void)
 		return rc;
 	}
 
+<<<<<<< HEAD
+=======
+	driver->owner = THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	driver->driver_name = "sclp_line";
 	driver->name = "sclp_line";
 	driver->major = TTY_MAJOR;

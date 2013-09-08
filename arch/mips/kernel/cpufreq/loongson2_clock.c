@@ -7,7 +7,10 @@
  * for more details.
  */
 
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/cpufreq.h>
 #include <linux/platform_device.h>
 

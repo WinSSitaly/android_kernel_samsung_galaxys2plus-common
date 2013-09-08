@@ -80,8 +80,13 @@ mwifiex_wmm_is_ra_list_empty(struct list_head *ra_list_hhead)
 	return true;
 }
 
+<<<<<<< HEAD
 void mwifiex_wmm_add_buf_txqueue(struct mwifiex_private *priv,
 					struct sk_buff *skb);
+=======
+void mwifiex_wmm_add_buf_txqueue(struct mwifiex_adapter *adapter,
+				 struct sk_buff *skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void mwifiex_ralist_add(struct mwifiex_private *priv, u8 *ra);
 
 int mwifiex_wmm_lists_empty(struct mwifiex_adapter *adapter);

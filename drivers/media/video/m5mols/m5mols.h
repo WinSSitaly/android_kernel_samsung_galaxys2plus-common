@@ -162,7 +162,13 @@ struct m5mols_version {
  * @pad: media pad
  * @ffmt: current fmt according to resolution type
  * @res_type: current resolution type
+<<<<<<< HEAD
  * @irq_waitq: waitqueue for the capture
+=======
+ * @code: current code
+ * @irq_waitq: waitqueue for the capture
+ * @work_irq: workqueue for the IRQ
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @flags: state variable for the interrupt handler
  * @handle: control handler
  * @autoexposure: Auto Exposure control
@@ -174,12 +180,23 @@ struct m5mols_version {
  * @ver: information of the version
  * @cap: the capture mode attributes
  * @power: current sensor's power status
+<<<<<<< HEAD
  * @isp_ready: 1 when the ISP controller has completed booting
  * @ctrl_sync: 1 when the control handler state is restored in H/W
  * @lock_ae: true means the Auto Exposure is locked
  * @lock_awb: true means the Aut WhiteBalance is locked
  * @resolution:	register value for current resolution
  * @mode: register value for current operation mode
+=======
+ * @ctrl_sync: true means all controls of the sensor are initialized
+ * @int_capture: true means the capture interrupt is issued once
+ * @lock_ae: true means the Auto Exposure is locked
+ * @lock_awb: true means the Aut WhiteBalance is locked
+ * @resolution:	register value for current resolution
+ * @interrupt: register value for current interrupt status
+ * @mode: register value for current operation mode
+ * @mode_save: register value for current operation mode for saving
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @set_power: optional power callback to the board code
  */
 struct m5mols_info {
@@ -188,6 +205,7 @@ struct m5mols_info {
 	struct media_pad pad;
 	struct v4l2_mbus_framefmt ffmt[M5MOLS_RESTYPE_MAX];
 	int res_type;
+<<<<<<< HEAD
 
 	wait_queue_head_t irq_waitq;
 	atomic_t irq_done;
@@ -198,6 +216,19 @@ struct m5mols_info {
 	struct v4l2_ctrl *autoexposure;
 	struct v4l2_ctrl *exposure;
 
+=======
+	enum v4l2_mbus_pixelcode code;
+	wait_queue_head_t irq_waitq;
+	struct work_struct work_irq;
+	unsigned long flags;
+
+	struct v4l2_ctrl_handler handle;
+	/* Autoexposure/exposure control cluster */
+	struct {
+		struct v4l2_ctrl *autoexposure;
+		struct v4l2_ctrl *exposure;
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct v4l2_ctrl *autowb;
 	struct v4l2_ctrl *colorfx;
 	struct v4l2_ctrl *saturation;
@@ -205,6 +236,7 @@ struct m5mols_info {
 
 	struct m5mols_version ver;
 	struct m5mols_capture cap;
+<<<<<<< HEAD
 
 	unsigned int isp_ready:1;
 	unsigned int power:1;
@@ -218,6 +250,23 @@ struct m5mols_info {
 	int (*set_power)(struct device *dev, int on);
 };
 
+=======
+	bool power;
+	bool ctrl_sync;
+	bool lock_ae;
+	bool lock_awb;
+	u8 resolution;
+	u8 interrupt;
+	u8 mode;
+	u8 mode_save;
+	int (*set_power)(struct device *dev, int on);
+};
+
+#define ST_CAPT_IRQ 0
+
+#define is_powered(__info) (__info->power)
+#define is_ctrl_synced(__info) (__info->ctrl_sync)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define is_available_af(__info)	(__info->ver.af)
 #define is_code(__code, __type) (__code == m5mols_default_ffmt[__type].code)
 #define is_manufacturer(__info, __manufacturer)	\
@@ -252,6 +301,7 @@ int m5mols_read_u8(struct v4l2_subdev *sd, u32 reg_comb, u8 *val);
 int m5mols_read_u16(struct v4l2_subdev *sd, u32 reg_comb, u16 *val);
 int m5mols_read_u32(struct v4l2_subdev *sd, u32 reg_comb, u32 *val);
 int m5mols_write(struct v4l2_subdev *sd, u32 reg_comb, u32 val);
+<<<<<<< HEAD
 
 int m5mols_busy_wait(struct v4l2_subdev *sd, u32 reg, u32 value, u32 mask,
 		     int timeout);
@@ -261,6 +311,9 @@ int m5mols_busy_wait(struct v4l2_subdev *sd, u32 reg, u32 value, u32 mask,
 /* ISP state transition timeout, in ms */
 #define M5MOLS_MODE_CHANGE_TIMEOUT	200
 #define M5MOLS_BUSY_WAIT_DEF_TIMEOUT	250
+=======
+int m5mols_busy(struct v4l2_subdev *sd, u8 category, u8 cmd, u8 value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Mode operation of the M-5MOLS
@@ -285,8 +338,12 @@ int m5mols_busy_wait(struct v4l2_subdev *sd, u32 reg, u32 value, u32 mask,
 int m5mols_mode(struct m5mols_info *info, u8 mode);
 
 int m5mols_enable_interrupt(struct v4l2_subdev *sd, u8 reg);
+<<<<<<< HEAD
 int m5mols_wait_interrupt(struct v4l2_subdev *sd, u8 condition, u32 timeout);
 int m5mols_restore_controls(struct m5mols_info *info);
+=======
+int m5mols_sync_controls(struct m5mols_info *info);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int m5mols_start_capture(struct m5mols_info *info);
 int m5mols_do_scenemode(struct m5mols_info *info, u8 mode);
 int m5mols_lock_3a(struct m5mols_info *info, bool lock);

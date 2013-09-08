@@ -18,6 +18,12 @@
  * but when we read them, we convert them to virtual addresses. See
  * arch/arm/plat-iop/pci.c.
  */
+<<<<<<< HEAD
+=======
+#define pcibios_assign_all_busses() 1
+#define PCIBIOS_MIN_IO		0x00000000
+#define PCIBIOS_MIN_MEM		0x00000000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifndef __ASSEMBLY__
 void iop32x_init_irq(void);

@@ -10,7 +10,11 @@
  * published by the Free Software Foundation.
 */
 
+<<<<<<< HEAD
                 .macro  addruart, rp, rv, tmp
+=======
+                .macro  addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef __ARMEB__
                 mov     \rp, #3         @ Uart regs are at off set of 3 if
 					@ byte writes used - Big Endian.

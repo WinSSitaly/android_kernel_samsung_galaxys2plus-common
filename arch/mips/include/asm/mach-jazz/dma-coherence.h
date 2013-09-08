@@ -50,6 +50,10 @@ static inline int plat_dma_supported(struct device *dev, u64 mask)
 
 static inline void plat_extra_sync_for_device(struct device *dev)
 {
+<<<<<<< HEAD
+=======
+	return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int plat_dma_mapping_error(struct device *dev,

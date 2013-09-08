@@ -20,8 +20,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MODULE_NAME "nw80x"
 
 #include "gspca.h"
@@ -1573,7 +1576,11 @@ static void reg_w(struct gspca_dev *gspca_dev,
 			len,
 			500);
 	if (ret < 0) {
+<<<<<<< HEAD
 		pr_err("reg_w err %d\n", ret);
+=======
+		err("reg_w err %d", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gspca_dev->usb_err = ret;
 	}
 }
@@ -1594,7 +1601,11 @@ static void reg_r(struct gspca_dev *gspca_dev,
 			0x00, index,
 			gspca_dev->usb_buf, len, 500);
 	if (ret < 0) {
+<<<<<<< HEAD
 		pr_err("reg_r err %d\n", ret);
+=======
+		err("reg_r err %d", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gspca_dev->usb_err = ret;
 		return;
 	}
@@ -1763,8 +1774,13 @@ static int sd_config(struct gspca_dev *gspca_dev,
 	if ((unsigned) webcam >= NWEBCAMS)
 		webcam = 0;
 	sd->webcam = webcam;
+<<<<<<< HEAD
 	gspca_dev->cam.ctrls = sd->ctrls;
 	gspca_dev->cam.needs_full_bandwidth = 1;
+=======
+	gspca_dev->cam.reverse_alts = 1;
+	gspca_dev->cam.ctrls = sd->ctrls;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sd->ag_cnt = -1;
 
 	/*
@@ -1804,8 +1820,12 @@ static int sd_config(struct gspca_dev *gspca_dev,
 		}
 	}
 	if (webcam_chip[sd->webcam] != sd->bridge) {
+<<<<<<< HEAD
 		pr_err("Bad webcam type %d for NW80%d\n",
 		       sd->webcam, sd->bridge);
+=======
+		err("Bad webcam type %d for NW80%d", sd->webcam, sd->bridge);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gspca_dev->usb_err = -ENODEV;
 		return gspca_dev->usb_err;
 	}
@@ -2118,7 +2138,22 @@ static struct usb_driver sd_driver = {
 #endif
 };
 
+<<<<<<< HEAD
 module_usb_driver(sd_driver);
+=======
+/* -- module insert / remove -- */
+static int __init sd_mod_init(void)
+{
+	return usb_register(&sd_driver);
+}
+static void __exit sd_mod_exit(void)
+{
+	usb_deregister(&sd_driver);
+}
+
+module_init(sd_mod_init);
+module_exit(sd_mod_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(webcam, int, 0644);
 MODULE_PARM_DESC(webcam,

@@ -20,12 +20,18 @@ lib-y += uaccess_old.o
 
 lib-y += ashldi3.o
 lib-y += ashrdi3.o
+<<<<<<< HEAD
 lib-y += cmpdi2.o
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 lib-y += divsi3.o
 lib-y += lshrdi3.o
 lib-y += modsi3.o
 lib-y += muldi3.o
 lib-y += mulsi3.o
+<<<<<<< HEAD
 lib-y += ucmpdi2.o
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 lib-y += udivsi3.o
 lib-y += umodsi3.o

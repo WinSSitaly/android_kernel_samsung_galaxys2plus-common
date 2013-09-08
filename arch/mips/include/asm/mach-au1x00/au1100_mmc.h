@@ -130,10 +130,15 @@ struct au1xmmc_platform_data {
 #define SD_CONFIG2_DF	(0x00000008)
 #define SD_CONFIG2_DC	(0x00000010)
 #define SD_CONFIG2_xx2	(0x000000e0)
+<<<<<<< HEAD
 #define SD_CONFIG2_BB	(0x00000080)
 #define SD_CONFIG2_WB	(0x00000100)
 #define SD_CONFIG2_RW	(0x00000200)
 #define SD_CONFIG2_DP	(0x00000400)
+=======
+#define SD_CONFIG2_WB	(0x00000100)
+#define SD_CONFIG2_RW	(0x00000200)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /*

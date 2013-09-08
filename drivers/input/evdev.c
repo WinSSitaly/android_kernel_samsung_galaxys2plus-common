@@ -20,9 +20,16 @@
 #include <linux/slab.h>
 #include <linux/module.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/input/mt.h>
 #include <linux/major.h>
 #include <linux/device.h>
+=======
+#include <linux/input.h>
+#include <linux/major.h>
+#include <linux/device.h>
+#include <linux/wakelock.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "input-compat.h"
 
 struct evdev {
@@ -43,10 +50,19 @@ struct evdev_client {
 	unsigned int tail;
 	unsigned int packet_head; /* [future] position of the first element of next packet */
 	spinlock_t buffer_lock; /* protects access to buffer, head and tail */
+<<<<<<< HEAD
 	struct fasync_struct *fasync;
 	struct evdev *evdev;
 	struct list_head node;
 	int clkid;
+=======
+	struct wake_lock wake_lock;
+	bool use_wake_lock;
+	char name[28];
+	struct fasync_struct *fasync;
+	struct evdev *evdev;
+	struct list_head node;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int bufsize;
 	struct input_event buffer[];
 };
@@ -55,6 +71,7 @@ static struct evdev *evdev_table[EVDEV_MINORS];
 static DEFINE_MUTEX(evdev_table_mutex);
 
 static void evdev_pass_event(struct evdev_client *client,
+<<<<<<< HEAD
 			     struct input_event *event,
 			     ktime_t mono, ktime_t real)
 {
@@ -62,6 +79,14 @@ static void evdev_pass_event(struct evdev_client *client,
 					mono : real);
 
 	/* Interrupts are disabled, just acquire the lock. */
+=======
+			     struct input_event *event)
+{
+	/* Interrupts are disabled, just acquire the lock. */
+	if( event->code == 116)
+		pr_info("%s  onkey event %d\n",__func__,event->code);
+	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&client->buffer_lock);
 
 	client->buffer[client->head++] = *event;
@@ -79,11 +104,24 @@ static void evdev_pass_event(struct evdev_client *client,
 		client->buffer[client->tail].code = SYN_DROPPED;
 		client->buffer[client->tail].value = 0;
 
+<<<<<<< HEAD
 		client->packet_head = client->tail;
+=======
+		pr_info("%s  onkey event %d\n",__func__,client->buffer[client->tail].code);
+
+		client->packet_head = client->tail;
+		if (client->use_wake_lock)
+			wake_unlock(&client->wake_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (event->type == EV_SYN && event->code == SYN_REPORT) {
 		client->packet_head = client->head;
+<<<<<<< HEAD
+=======
+		if (client->use_wake_lock)
+			wake_lock(&client->wake_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kill_fasync(&client->fasync, SIGIO, POLL_IN);
 	}
 
@@ -99,11 +137,19 @@ static void evdev_event(struct input_handle *handle,
 	struct evdev *evdev = handle->private;
 	struct evdev_client *client;
 	struct input_event event;
+<<<<<<< HEAD
 	ktime_t time_mono, time_real;
 
 	time_mono = ktime_get();
 	time_real = ktime_sub(time_mono, ktime_get_monotonic_offset());
 
+=======
+	struct timespec ts;
+
+	ktime_get_ts(&ts);
+	event.time.tv_sec = ts.tv_sec;
+	event.time.tv_usec = ts.tv_nsec / NSEC_PER_USEC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	event.type = type;
 	event.code = code;
 	event.value = value;
@@ -111,12 +157,20 @@ static void evdev_event(struct input_handle *handle,
 	rcu_read_lock();
 
 	client = rcu_dereference(evdev->grab);
+<<<<<<< HEAD
 
 	if (client)
 		evdev_pass_event(client, &event, time_mono, time_real);
 	else
 		list_for_each_entry_rcu(client, &evdev->client_list, node)
 			evdev_pass_event(client, &event, time_mono, time_real);
+=======
+	if (client)
+		evdev_pass_event(client, &event);
+	else
+		list_for_each_entry_rcu(client, &evdev->client_list, node)
+			evdev_pass_event(client, &event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rcu_read_unlock();
 
@@ -264,6 +318,11 @@ static int evdev_release(struct inode *inode, struct file *file)
 	mutex_unlock(&evdev->mutex);
 
 	evdev_detach_client(evdev, client);
+<<<<<<< HEAD
+=======
+	if (client->use_wake_lock)
+		wake_lock_destroy(&client->wake_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(client);
 
 	evdev_close_device(evdev);
@@ -315,6 +374,11 @@ static int evdev_open(struct inode *inode, struct file *file)
 
 	client->bufsize = bufsize;
 	spin_lock_init(&client->buffer_lock);
+<<<<<<< HEAD
+=======
+	snprintf(client->name, sizeof(client->name), "%s-%d",
+			dev_name(&evdev->dev), task_tgid_vnr(current));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	client->evdev = evdev;
 	evdev_attach_client(evdev, client);
 
@@ -341,7 +405,11 @@ static ssize_t evdev_write(struct file *file, const char __user *buffer,
 	struct evdev_client *client = file->private_data;
 	struct evdev *evdev = client->evdev;
 	struct input_event event;
+<<<<<<< HEAD
 	int retval = 0;
+=======
+	int retval;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (count < input_event_size())
 		return -EINVAL;
@@ -364,6 +432,13 @@ static ssize_t evdev_write(struct file *file, const char __user *buffer,
 
 		input_inject_event(&evdev->handle,
 				   event.type, event.code, event.value);
+<<<<<<< HEAD
+=======
+
+		if( event.code == 116)
+			pr_info("%s  onkey event %d\n",__func__,event.code);
+		
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} while (retval + input_event_size() <= count);
 
  out:
@@ -382,6 +457,12 @@ static int evdev_fetch_next_event(struct evdev_client *client,
 	if (have_event) {
 		*event = client->buffer[client->tail++];
 		client->tail &= client->bufsize - 1;
+<<<<<<< HEAD
+=======
+		if (client->use_wake_lock &&
+		    client->packet_head == client->tail)
+			wake_unlock(&client->wake_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	spin_unlock_irq(&client->buffer_lock);
@@ -402,8 +483,12 @@ static ssize_t evdev_read(struct file *file, char __user *buffer,
 
 	if (!(file->f_flags & O_NONBLOCK)) {
 		retval = wait_event_interruptible(evdev->wait,
+<<<<<<< HEAD
 				client->packet_head != client->tail ||
 				!evdev->exist);
+=======
+			 client->packet_head != client->tail || !evdev->exist);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (retval)
 			return retval;
 	}
@@ -418,11 +503,21 @@ static ssize_t evdev_read(struct file *file, char __user *buffer,
 			return -EFAULT;
 
 		retval += input_event_size();
+<<<<<<< HEAD
 	}
 
 	if (retval == 0 && (file->f_flags & O_NONBLOCK))
 		return -EAGAIN;
 
+=======
+
+		if( event.code == 116)
+			pr_info("%s  onkey event %d\n",__func__,event.code);
+	}
+
+	if (retval == 0 && file->f_flags & O_NONBLOCK)
+		retval = -EAGAIN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return retval;
 }
 
@@ -632,6 +727,7 @@ static int evdev_handle_set_keycode_v2(struct input_dev *dev, void __user *p)
 	return input_set_keycode(dev, &ke);
 }
 
+<<<<<<< HEAD
 static int evdev_handle_mt_request(struct input_dev *dev,
 				   unsigned int size,
 				   int __user *ip)
@@ -650,6 +746,33 @@ static int evdev_handle_mt_request(struct input_dev *dev,
 	for (i = 0; i < dev->mtsize && i < max_slots; i++)
 		if (put_user(input_mt_get_value(&mt[i], code), &ip[1 + i]))
 			return -EFAULT;
+=======
+static int evdev_enable_suspend_block(struct evdev *evdev,
+				      struct evdev_client *client)
+{
+	if (client->use_wake_lock)
+		return 0;
+
+	spin_lock_irq(&client->buffer_lock);
+	wake_lock_init(&client->wake_lock, WAKE_LOCK_SUSPEND, client->name);
+	client->use_wake_lock = true;
+	if (client->packet_head != client->tail)
+		wake_lock(&client->wake_lock);
+	spin_unlock_irq(&client->buffer_lock);
+	return 0;
+}
+
+static int evdev_disable_suspend_block(struct evdev *evdev,
+				       struct evdev_client *client)
+{
+	if (!client->use_wake_lock)
+		return 0;
+
+	spin_lock_irq(&client->buffer_lock);
+	client->use_wake_lock = false;
+	wake_lock_destroy(&client->wake_lock);
+	spin_unlock_irq(&client->buffer_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -716,6 +839,7 @@ static long evdev_do_ioctl(struct file *file, unsigned int cmd,
 		else
 			return evdev_ungrab(evdev, client);
 
+<<<<<<< HEAD
 	case EVIOCSCLOCKID:
 		if (copy_from_user(&i, p, sizeof(unsigned int)))
 			return -EFAULT;
@@ -724,6 +848,8 @@ static long evdev_do_ioctl(struct file *file, unsigned int cmd,
 		client->clkid = i;
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case EVIOCGKEYCODE:
 		return evdev_handle_get_keycode(dev, p);
 
@@ -735,6 +861,18 @@ static long evdev_do_ioctl(struct file *file, unsigned int cmd,
 
 	case EVIOCSKEYCODE_V2:
 		return evdev_handle_set_keycode_v2(dev, p);
+<<<<<<< HEAD
+=======
+
+	case EVIOCGSUSPENDBLOCK:
+		return put_user(client->use_wake_lock, ip);
+
+	case EVIOCSSUSPENDBLOCK:
+		if (p)
+			return evdev_enable_suspend_block(evdev, client);
+		else
+			return evdev_disable_suspend_block(evdev, client);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	size = _IOC_SIZE(cmd);
@@ -747,9 +885,12 @@ static long evdev_do_ioctl(struct file *file, unsigned int cmd,
 		return bits_to_user(dev->propbit, INPUT_PROP_MAX,
 				    size, p, compat_mode);
 
+<<<<<<< HEAD
 	case EVIOCGMTSLOTS(0):
 		return evdev_handle_mt_request(dev, size, ip);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case EVIOCGKEY(0):
 		return bits_to_user(dev->key, KEY_MAX, size, p, compat_mode);
 

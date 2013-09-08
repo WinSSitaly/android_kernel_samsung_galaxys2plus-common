@@ -40,7 +40,11 @@
 #include <linux/slab.h>
 
 #include <asm/uaccess.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <net/icmp.h>
 #include <net/ip.h>
@@ -93,7 +97,11 @@ struct pcpu_tstats {
 	unsigned long	rx_bytes;
 	unsigned long	tx_packets;
 	unsigned long	tx_bytes;
+<<<<<<< HEAD
 } __attribute__((aligned(4*sizeof(unsigned long))));
+=======
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct net_device_stats *ip6_get_stats(struct net_device *dev)
 {
@@ -352,7 +360,11 @@ ip6_tnl_dev_uninit(struct net_device *dev)
 	struct ip6_tnl_net *ip6n = net_generic(net, ip6_tnl_net_id);
 
 	if (dev == ip6n->fb_tnl_dev)
+<<<<<<< HEAD
 		RCU_INIT_POINTER(ip6n->tnls_wc[0], NULL);
+=======
+		rcu_assign_pointer(ip6n->tnls_wc[0], NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		ip6_tnl_unlink(ip6n, t);
 	ip6_tnl_dst_reset(t);
@@ -653,8 +665,13 @@ ip6ip6_err(struct sk_buff *skb, struct inet6_skb_parm *opt,
 		rt = rt6_lookup(dev_net(skb->dev), &ipv6_hdr(skb2)->saddr,
 				NULL, 0, 0);
 
+<<<<<<< HEAD
 		if (rt && rt->dst.dev)
 			skb2->dev = rt->dst.dev;
+=======
+		if (rt && rt->rt6i_dev)
+			skb2->dev = rt->rt6i_dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		icmpv6_send(skb2, rel_type, rel_code, rel_info);
 
@@ -891,7 +908,11 @@ static int ip6_tnl_xmit2(struct sk_buff *skb,
 	struct net_device_stats *stats = &t->dev->stats;
 	struct ipv6hdr *ipv6h = ipv6_hdr(skb);
 	struct ipv6_tel_txoption opt;
+<<<<<<< HEAD
 	struct dst_entry *dst = NULL, *ndst = NULL;
+=======
+	struct dst_entry *dst;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct net_device *tdev;
 	int mtu;
 	unsigned int max_headroom = sizeof(struct ipv6hdr);
@@ -899,6 +920,7 @@ static int ip6_tnl_xmit2(struct sk_buff *skb,
 	int err = -1;
 	int pkt_len;
 
+<<<<<<< HEAD
 	if (!fl6->flowi6_mark)
 		dst = ip6_tnl_dst_check(t);
 	if (!dst) {
@@ -913,6 +935,21 @@ static int ip6_tnl_xmit2(struct sk_buff *skb,
 			goto tx_err_link_failure;
 		}
 		dst = ndst;
+=======
+	if ((dst = ip6_tnl_dst_check(t)) != NULL)
+		dst_hold(dst);
+	else {
+		dst = ip6_route_output(net, NULL, fl6);
+
+		if (dst->error)
+			goto tx_err_link_failure;
+		dst = xfrm_lookup(net, dst, flowi6_to_flowi(fl6), NULL, 0);
+		if (IS_ERR(dst)) {
+			err = PTR_ERR(dst);
+			dst = NULL;
+			goto tx_err_link_failure;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	tdev = dst->dev;
@@ -958,12 +995,17 @@ static int ip6_tnl_xmit2(struct sk_buff *skb,
 		skb = new_skb;
 	}
 	skb_dst_drop(skb);
+<<<<<<< HEAD
 	if (fl6->flowi6_mark) {
 		skb_dst_set(skb, dst);
 		ndst = NULL;
 	} else {
 		skb_dst_set_noref(skb, dst);
 	}
+=======
+	skb_dst_set(skb, dst_clone(dst));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skb->transport_header = skb->network_header;
 
 	proto = fl6->flowi6_proto;
@@ -979,8 +1021,13 @@ static int ip6_tnl_xmit2(struct sk_buff *skb,
 	ipv6_change_dsfield(ipv6h, ~INET_ECN_MASK, dsfield);
 	ipv6h->hop_limit = t->parms.hop_limit;
 	ipv6h->nexthdr = proto;
+<<<<<<< HEAD
 	ipv6h->saddr = fl6->saddr;
 	ipv6h->daddr = fl6->daddr;
+=======
+	ipv6_addr_copy(&ipv6h->saddr, &fl6->saddr);
+	ipv6_addr_copy(&ipv6h->daddr, &fl6->daddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nf_reset(skb);
 	pkt_len = skb->len;
 	err = ip6_local_out(skb);
@@ -994,14 +1041,22 @@ static int ip6_tnl_xmit2(struct sk_buff *skb,
 		stats->tx_errors++;
 		stats->tx_aborted_errors++;
 	}
+<<<<<<< HEAD
 	if (ndst)
 		ip6_tnl_dst_store(t, ndst);
+=======
+	ip6_tnl_dst_store(t, dst);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 tx_err_link_failure:
 	stats->tx_carrier_errors++;
 	dst_link_failure(skb);
 tx_err_dst_release:
+<<<<<<< HEAD
 	dst_release(ndst);
+=======
+	dst_release(dst);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -1028,11 +1083,17 @@ ip4ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev)
 
 	dsfield = ipv4_get_dsfield(iph);
 
+<<<<<<< HEAD
 	if (t->parms.flags & IP6_TNL_F_USE_ORIG_TCLASS)
 		fl6.flowlabel |= htonl((__u32)iph->tos << IPV6_TCLASS_SHIFT)
 					  & IPV6_TCLASS_MASK;
 	if (t->parms.flags & IP6_TNL_F_USE_ORIG_FWMARK)
 		fl6.flowi6_mark = skb->mark;
+=======
+	if ((t->parms.flags & IP6_TNL_F_USE_ORIG_TCLASS))
+		fl6.flowlabel |= htonl((__u32)iph->tos << IPV6_TCLASS_SHIFT)
+					  & IPV6_TCLASS_MASK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = ip6_tnl_xmit2(skb, dev, dsfield, &fl6, encap_limit, &mtu);
 	if (err != 0) {
@@ -1079,12 +1140,19 @@ ip6ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev)
 	fl6.flowi6_proto = IPPROTO_IPV6;
 
 	dsfield = ipv6_get_dsfield(ipv6h);
+<<<<<<< HEAD
 	if (t->parms.flags & IP6_TNL_F_USE_ORIG_TCLASS)
 		fl6.flowlabel |= (*(__be32 *) ipv6h & IPV6_TCLASS_MASK);
 	if (t->parms.flags & IP6_TNL_F_USE_ORIG_FLOWLABEL)
 		fl6.flowlabel |= (*(__be32 *) ipv6h & IPV6_FLOWLABEL_MASK);
 	if (t->parms.flags & IP6_TNL_F_USE_ORIG_FWMARK)
 		fl6.flowi6_mark = skb->mark;
+=======
+	if ((t->parms.flags & IP6_TNL_F_USE_ORIG_TCLASS))
+		fl6.flowlabel |= (*(__be32 *) ipv6h & IPV6_TCLASS_MASK);
+	if ((t->parms.flags & IP6_TNL_F_USE_ORIG_FLOWLABEL))
+		fl6.flowlabel |= (*(__be32 *) ipv6h & IPV6_FLOWLABEL_MASK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = ip6_tnl_xmit2(skb, dev, dsfield, &fl6, encap_limit, &mtu);
 	if (err != 0) {
@@ -1155,8 +1223,13 @@ static void ip6_tnl_link_config(struct ip6_tnl *t)
 	memcpy(dev->broadcast, &p->raddr, sizeof(struct in6_addr));
 
 	/* Set up flowi template */
+<<<<<<< HEAD
 	fl6->saddr = p->laddr;
 	fl6->daddr = p->raddr;
+=======
+	ipv6_addr_copy(&fl6->saddr, &p->laddr);
+	ipv6_addr_copy(&fl6->daddr, &p->raddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fl6->flowi6_oif = p->link;
 	fl6->flowlabel = 0;
 
@@ -1185,11 +1258,19 @@ static void ip6_tnl_link_config(struct ip6_tnl *t)
 		if (rt == NULL)
 			return;
 
+<<<<<<< HEAD
 		if (rt->dst.dev) {
 			dev->hard_header_len = rt->dst.dev->hard_header_len +
 				sizeof (struct ipv6hdr);
 
 			dev->mtu = rt->dst.dev->mtu - sizeof (struct ipv6hdr);
+=======
+		if (rt->rt6i_dev) {
+			dev->hard_header_len = rt->rt6i_dev->hard_header_len +
+				sizeof (struct ipv6hdr);
+
+			dev->mtu = rt->rt6i_dev->mtu - sizeof (struct ipv6hdr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!(t->parms.flags & IP6_TNL_F_IGN_ENCAP_LIMIT))
 				dev->mtu-=8;
 
@@ -1212,8 +1293,13 @@ static void ip6_tnl_link_config(struct ip6_tnl *t)
 static int
 ip6_tnl_change(struct ip6_tnl *t, struct ip6_tnl_parm *p)
 {
+<<<<<<< HEAD
 	t->parms.laddr = p->laddr;
 	t->parms.raddr = p->raddr;
+=======
+	ipv6_addr_copy(&t->parms.laddr, &p->laddr);
+	ipv6_addr_copy(&t->parms.raddr, &p->raddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	t->parms.flags = p->flags;
 	t->parms.hop_limit = p->hop_limit;
 	t->parms.encap_limit = p->encap_limit;

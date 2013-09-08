@@ -4,7 +4,10 @@ to start learning about RCU:
 1.	What is RCU, Fundamentally?  http://lwn.net/Articles/262464/
 2.	What is RCU? Part 2: Usage   http://lwn.net/Articles/263130/
 3.	RCU part 3: the RCU API      http://lwn.net/Articles/264090/
+<<<<<<< HEAD
 4.	The RCU API, 2010 Edition    http://lwn.net/Articles/418853/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 What is RCU?
@@ -835,8 +838,11 @@ SRCU:	Critical sections	Grace period		Barrier
 
 	srcu_read_lock		synchronize_srcu	N/A
 	srcu_read_unlock	synchronize_srcu_expedited
+<<<<<<< HEAD
 	srcu_read_lock_raw
 	srcu_read_unlock_raw
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	srcu_dereference
 
 SRCU:	Initialization/cleanup
@@ -858,6 +864,7 @@ list can be helpful:
 
 a.	Will readers need to block?  If so, you need SRCU.
 
+<<<<<<< HEAD
 b.	Is it necessary to start a read-side critical section in a
 	hardirq handler or exception handler, and then to complete
 	this read-side critical section in the task that was
@@ -865,26 +872,45 @@ b.	Is it necessary to start a read-side critical section in a
 	srcu_read_unlock_raw() primitives.
 
 c.	What about the -rt patchset?  If readers would need to block
+=======
+b.	What about the -rt patchset?  If readers would need to block
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	in an non-rt kernel, you need SRCU.  If readers would block
 	in a -rt kernel, but not in a non-rt kernel, SRCU is not
 	necessary.
 
+<<<<<<< HEAD
 d.	Do you need to treat NMI handlers, hardirq handlers,
+=======
+c.	Do you need to treat NMI handlers, hardirq handlers,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	and code segments with preemption disabled (whether
 	via preempt_disable(), local_irq_save(), local_bh_disable(),
 	or some other mechanism) as if they were explicit RCU readers?
 	If so, you need RCU-sched.
 
+<<<<<<< HEAD
 e.	Do you need RCU grace periods to complete even in the face
+=======
+d.	Do you need RCU grace periods to complete even in the face
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	of softirq monopolization of one or more of the CPUs?  For
 	example, is your code subject to network-based denial-of-service
 	attacks?  If so, you need RCU-bh.
 
+<<<<<<< HEAD
 f.	Is your workload too update-intensive for normal use of
 	RCU, but inappropriate for other synchronization mechanisms?
 	If so, consider SLAB_DESTROY_BY_RCU.  But please be careful!
 
 g.	Otherwise, use RCU.
+=======
+e.	Is your workload too update-intensive for normal use of
+	RCU, but inappropriate for other synchronization mechanisms?
+	If so, consider SLAB_DESTROY_BY_RCU.  But please be careful!
+
+f.	Otherwise, use RCU.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 Of course, this all assumes that you have determined that RCU is in fact
 the right tool for your job.

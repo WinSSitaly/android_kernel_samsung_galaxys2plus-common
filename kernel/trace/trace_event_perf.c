@@ -24,11 +24,14 @@ static int	total_ref_count;
 static int perf_trace_event_perm(struct ftrace_event_call *tp_event,
 				 struct perf_event *p_event)
 {
+<<<<<<< HEAD
 	/* The ftrace function trace is allowed only for root. */
 	if (ftrace_event_is_function(tp_event) &&
 	    perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
 		return -EPERM;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* No tracing, just counting, so no obvious leak */
 	if (!(p_event->attr.sample_type & PERF_SAMPLE_RAW))
 		return 0;
@@ -49,6 +52,7 @@ static int perf_trace_event_perm(struct ftrace_event_call *tp_event,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int perf_trace_event_reg(struct ftrace_event_call *tp_event,
 				struct perf_event *p_event)
 {
@@ -56,10 +60,28 @@ static int perf_trace_event_reg(struct ftrace_event_call *tp_event,
 	int ret = -ENOMEM;
 	int cpu;
 
+=======
+static int perf_trace_event_init(struct ftrace_event_call *tp_event,
+				 struct perf_event *p_event)
+{
+	struct hlist_head __percpu *list;
+	int ret;
+	int cpu;
+
+	ret = perf_trace_event_perm(tp_event, p_event);
+	if (ret)
+		return ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	p_event->tp_event = tp_event;
 	if (tp_event->perf_refcount++ > 0)
 		return 0;
 
+<<<<<<< HEAD
+=======
+	ret = -ENOMEM;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list = alloc_percpu(struct hlist_head);
 	if (!list)
 		goto fail;
@@ -82,7 +104,11 @@ static int perf_trace_event_reg(struct ftrace_event_call *tp_event,
 		}
 	}
 
+<<<<<<< HEAD
 	ret = tp_event->class->reg(tp_event, TRACE_REG_PERF_REGISTER, NULL);
+=======
+	ret = tp_event->class->reg(tp_event, TRACE_REG_PERF_REGISTER);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto fail;
 
@@ -107,6 +133,7 @@ fail:
 	return ret;
 }
 
+<<<<<<< HEAD
 static void perf_trace_event_unreg(struct perf_event *p_event)
 {
 	struct ftrace_event_call *tp_event = p_event->tp_event;
@@ -170,6 +197,8 @@ static int perf_trace_event_init(struct ftrace_event_call *tp_event,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int perf_trace_init(struct perf_event *p_event)
 {
 	struct ftrace_event_call *tp_event;
@@ -192,6 +221,7 @@ int perf_trace_init(struct perf_event *p_event)
 	return ret;
 }
 
+<<<<<<< HEAD
 void perf_trace_destroy(struct perf_event *p_event)
 {
 	mutex_lock(&event_mutex);
@@ -200,6 +230,8 @@ void perf_trace_destroy(struct perf_event *p_event)
 	mutex_unlock(&event_mutex);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int perf_trace_add(struct perf_event *p_event, int flags)
 {
 	struct ftrace_event_call *tp_event = p_event->tp_event;
@@ -216,14 +248,53 @@ int perf_trace_add(struct perf_event *p_event, int flags)
 	list = this_cpu_ptr(pcpu_list);
 	hlist_add_head_rcu(&p_event->hlist_entry, list);
 
+<<<<<<< HEAD
 	return tp_event->class->reg(tp_event, TRACE_REG_PERF_ADD, p_event);
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void perf_trace_del(struct perf_event *p_event, int flags)
 {
+<<<<<<< HEAD
 	struct ftrace_event_call *tp_event = p_event->tp_event;
 	hlist_del_rcu(&p_event->hlist_entry);
 	tp_event->class->reg(tp_event, TRACE_REG_PERF_DEL, p_event);
+=======
+	hlist_del_rcu(&p_event->hlist_entry);
+}
+
+void perf_trace_destroy(struct perf_event *p_event)
+{
+	struct ftrace_event_call *tp_event = p_event->tp_event;
+	int i;
+
+	mutex_lock(&event_mutex);
+	if (--tp_event->perf_refcount > 0)
+		goto out;
+
+	tp_event->class->reg(tp_event, TRACE_REG_PERF_UNREGISTER);
+
+	/*
+	 * Ensure our callback won't be called anymore. The buffers
+	 * will be freed after that.
+	 */
+	tracepoint_synchronize_unregister();
+
+	free_percpu(tp_event->perf_events);
+	tp_event->perf_events = NULL;
+
+	if (!--total_ref_count) {
+		for (i = 0; i < PERF_NR_CONTEXTS; i++) {
+			free_percpu(perf_trace_buf[i]);
+			perf_trace_buf[i] = NULL;
+		}
+	}
+out:
+	module_put(tp_event->mod);
+	mutex_unlock(&event_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 __kprobes void *perf_trace_buf_prepare(int size, unsigned short type,
@@ -255,6 +326,7 @@ __kprobes void *perf_trace_buf_prepare(int size, unsigned short type,
 	return raw_data;
 }
 EXPORT_SYMBOL_GPL(perf_trace_buf_prepare);
+<<<<<<< HEAD
 
 #ifdef CONFIG_FUNCTION_TRACER
 static void
@@ -338,3 +410,5 @@ int perf_ftrace_event_register(struct ftrace_event_call *call,
 	return -EINVAL;
 }
 #endif /* CONFIG_FUNCTION_TRACER */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

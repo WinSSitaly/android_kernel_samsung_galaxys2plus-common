@@ -70,7 +70,11 @@ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
 static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
 					 unsigned long addr, pte_t *ptep)
 {
+<<<<<<< HEAD
 	flush_tlb_page(vma, addr & huge_page_mask(hstate_vma(vma)));
+=======
+	flush_tlb_mm(vma->vm_mm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int huge_pte_none(pte_t pte)

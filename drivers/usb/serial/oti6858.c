@@ -71,9 +71,16 @@ static struct usb_driver oti6858_driver = {
 	.probe =	usb_serial_probe,
 	.disconnect =	usb_serial_disconnect,
 	.id_table =	id_table,
+<<<<<<< HEAD
 };
 
 static bool debug;
+=======
+	.no_dynamic_id = 	1,
+};
+
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* requests */
 #define	OTI6858_REQ_GET_STATUS		(USB_DIR_IN | USB_TYPE_VENDOR | 0x00)
@@ -156,6 +163,10 @@ static struct usb_serial_driver oti6858_device = {
 		.name =		"oti6858",
 	},
 	.id_table =		id_table,
+<<<<<<< HEAD
+=======
+	.usb_driver =		&oti6858_driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.num_ports =		1,
 	.open =			oti6858_open,
 	.close =		oti6858_close,
@@ -174,10 +185,13 @@ static struct usb_serial_driver oti6858_device = {
 	.release =		oti6858_release,
 };
 
+<<<<<<< HEAD
 static struct usb_serial_driver * const serial_drivers[] = {
 	&oti6858_device, NULL
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct oti6858_private {
 	spinlock_t lock;
 
@@ -266,6 +280,10 @@ static void setup_line(struct work_struct *work)
 	spin_unlock_irqrestore(&priv->lock, flags);
 
 	dbg("%s(): submitting interrupt urb", __func__);
+<<<<<<< HEAD
+=======
+	port->interrupt_in_urb->dev = port->serial->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	result = usb_submit_urb(port->interrupt_in_urb, GFP_KERNEL);
 	if (result != 0) {
 		dev_err(&port->dev, "%s(): usb_submit_urb() failed"
@@ -304,7 +322,11 @@ static void send_data(struct work_struct *work)
 	if (count != 0) {
 		allow = kmalloc(1, GFP_KERNEL);
 		if (!allow) {
+<<<<<<< HEAD
 			dev_err_console(port, "%s(): kmalloc failed\n",
+=======
+			dev_err(&port->dev, "%s(): kmalloc failed\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					__func__);
 			return;
 		}
@@ -322,6 +344,10 @@ static void send_data(struct work_struct *work)
 		priv->flags.write_urb_in_use = 0;
 
 		dbg("%s(): submitting interrupt urb", __func__);
+<<<<<<< HEAD
+=======
+		port->interrupt_in_urb->dev = port->serial->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		result = usb_submit_urb(port->interrupt_in_urb, GFP_NOIO);
 		if (result != 0) {
 			dev_err(&port->dev, "%s(): usb_submit_urb() failed"
@@ -334,9 +360,16 @@ static void send_data(struct work_struct *work)
 					port->write_urb->transfer_buffer,
 					count, &port->lock);
 	port->write_urb->transfer_buffer_length = count;
+<<<<<<< HEAD
 	result = usb_submit_urb(port->write_urb, GFP_NOIO);
 	if (result != 0) {
 		dev_err_console(port, "%s(): usb_submit_urb() failed"
+=======
+	port->write_urb->dev = port->serial->dev;
+	result = usb_submit_urb(port->write_urb, GFP_NOIO);
+	if (result != 0) {
+		dev_err(&port->dev, "%s(): usb_submit_urb() failed"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       " with error %d\n", __func__, result);
 		priv->flags.write_urb_in_use = 0;
 	}
@@ -582,12 +615,20 @@ static int oti6858_open(struct tty_struct *tty, struct usb_serial_port *port)
 	kfree(buf);
 
 	dbg("%s(): submitting interrupt urb", __func__);
+<<<<<<< HEAD
+=======
+	port->interrupt_in_urb->dev = serial->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	result = usb_submit_urb(port->interrupt_in_urb, GFP_KERNEL);
 	if (result != 0) {
 		dev_err(&port->dev, "%s(): usb_submit_urb() failed"
 			       " with error %d\n", __func__, result);
 		oti6858_close(port);
+<<<<<<< HEAD
 		return result;
+=======
+		return -EPROTO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* setup termios */
@@ -835,6 +876,10 @@ static void oti6858_read_int_callback(struct urb *urb)
 	if (can_recv) {
 		int result;
 
+<<<<<<< HEAD
+=======
+		port->read_urb->dev = port->serial->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		result = usb_submit_urb(port->read_urb, GFP_ATOMIC);
 		if (result != 0) {
 			priv->flags.read_urb_in_use = 0;
@@ -863,6 +908,10 @@ static void oti6858_read_int_callback(struct urb *urb)
 		int result;
 
 /*		dbg("%s(): submitting interrupt urb", __func__); */
+<<<<<<< HEAD
+=======
+		urb->dev = port->serial->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		result = usb_submit_urb(urb, GFP_ATOMIC);
 		if (result != 0) {
 			dev_err(&urb->dev->dev,
@@ -890,6 +939,21 @@ static void oti6858_read_bulk_callback(struct urb *urb)
 	spin_unlock_irqrestore(&priv->lock, flags);
 
 	if (status != 0) {
+<<<<<<< HEAD
+=======
+		/*
+		if (status == -EPROTO) {
+			* PL2303 mysteriously fails with -EPROTO reschedule
+			   the read *
+			dbg("%s - caught -EPROTO, resubmitting the urb",
+								__func__);
+			result = usb_submit_urb(urb, GFP_ATOMIC);
+			if (result)
+				dev_err(&urb->dev->dev, "%s - failed resubmitting read urb, error %d\n", __func__, result);
+			return;
+		}
+		*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dbg("%s(): unable to handle the error, exiting", __func__);
 		return;
 	}
@@ -902,6 +966,10 @@ static void oti6858_read_bulk_callback(struct urb *urb)
 	tty_kref_put(tty);
 
 	/* schedule the interrupt urb */
+<<<<<<< HEAD
+=======
+	port->interrupt_in_urb->dev = port->serial->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	result = usb_submit_urb(port->interrupt_in_urb, GFP_ATOMIC);
 	if (result != 0 && result != -EPERM) {
 		dev_err(&port->dev, "%s(): usb_submit_urb() failed,"
@@ -938,9 +1006,16 @@ static void oti6858_write_bulk_callback(struct urb *urb)
 		dbg("%s(): overflow in write", __func__);
 
 		port->write_urb->transfer_buffer_length = 1;
+<<<<<<< HEAD
 		result = usb_submit_urb(port->write_urb, GFP_ATOMIC);
 		if (result) {
 			dev_err_console(port, "%s(): usb_submit_urb() failed,"
+=======
+		port->write_urb->dev = port->serial->dev;
+		result = usb_submit_urb(port->write_urb, GFP_ATOMIC);
+		if (result) {
+			dev_err(&port->dev, "%s(): usb_submit_urb() failed,"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					" error %d\n", __func__, result);
 		} else {
 			return;
@@ -950,6 +1025,10 @@ static void oti6858_write_bulk_callback(struct urb *urb)
 	priv->flags.write_urb_in_use = 0;
 
 	/* schedule the interrupt urb if we are still open */
+<<<<<<< HEAD
+=======
+	port->interrupt_in_urb->dev = port->serial->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dbg("%s(): submitting interrupt urb", __func__);
 	result = usb_submit_urb(port->interrupt_in_urb, GFP_ATOMIC);
 	if (result != 0) {
@@ -958,7 +1037,33 @@ static void oti6858_write_bulk_callback(struct urb *urb)
 	}
 }
 
+<<<<<<< HEAD
 module_usb_serial_driver(oti6858_driver, serial_drivers);
+=======
+/* module description and (de)initialization */
+
+static int __init oti6858_init(void)
+{
+	int retval;
+
+	retval = usb_serial_register(&oti6858_device);
+	if (retval == 0) {
+		retval = usb_register(&oti6858_driver);
+		if (retval)
+			usb_serial_deregister(&oti6858_device);
+	}
+	return retval;
+}
+
+static void __exit oti6858_exit(void)
+{
+	usb_deregister(&oti6858_driver);
+	usb_serial_deregister(&oti6858_device);
+}
+
+module_init(oti6858_init);
+module_exit(oti6858_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION(OTI6858_DESCRIPTION);
 MODULE_AUTHOR(OTI6858_AUTHOR);

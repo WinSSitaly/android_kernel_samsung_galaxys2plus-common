@@ -45,7 +45,10 @@
 MODULE_DESCRIPTION("v4l2 driver module for cx2388x based TV cards");
 MODULE_AUTHOR("Gerd Knorr <kraxel@bytesex.org> [SuSE Labs]");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_VERSION(CX88_VERSION);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* ------------------------------------------------------------------ */
 
@@ -221,6 +224,7 @@ static const struct cx88_ctrl cx8800_ctls[] = {
 		.reg                   = MO_UV_SATURATION,
 		.mask                  = 0x00ff,
 		.shift                 = 0,
+<<<<<<< HEAD
 	}, {
 		.v = {
 			.id            = V4L2_CID_SHARPNESS,
@@ -238,6 +242,9 @@ static const struct cx88_ctrl cx8800_ctls[] = {
 		.mask                  = 7 << 7,
 		.shift                 = 7,
 	}, {
+=======
+	},{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.v = {
 			.id            = V4L2_CID_CHROMA_AGC,
 			.name          = "Chroma AGC",
@@ -262,6 +269,7 @@ static const struct cx88_ctrl cx8800_ctls[] = {
 		.mask                  = 1 << 9,
 		.shift                 = 9,
 	}, {
+<<<<<<< HEAD
 		.v = {
 			.id            = V4L2_CID_BAND_STOP_FILTER,
 			.name          = "Notch filter",
@@ -276,6 +284,8 @@ static const struct cx88_ctrl cx8800_ctls[] = {
 		.mask                  = 3 << 11,
 		.shift                 = 11,
 	}, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* --- audio --- */
 		.v = {
 			.id            = V4L2_CID_AUDIO_MUTE,
@@ -331,10 +341,15 @@ const u32 cx88_user_ctrls[] = {
 	V4L2_CID_AUDIO_VOLUME,
 	V4L2_CID_AUDIO_BALANCE,
 	V4L2_CID_AUDIO_MUTE,
+<<<<<<< HEAD
 	V4L2_CID_SHARPNESS,
 	V4L2_CID_CHROMA_AGC,
 	V4L2_CID_COLOR_KILLER,
 	V4L2_CID_BAND_STOP_FILTER,
+=======
+	V4L2_CID_CHROMA_AGC,
+	V4L2_CID_COLOR_KILLER,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	0
 };
 EXPORT_SYMBOL(cx88_user_ctrls);
@@ -995,10 +1010,13 @@ int cx88_get_control (struct cx88_core  *core, struct v4l2_control *ctl)
 	case V4L2_CID_AUDIO_VOLUME:
 		ctl->value = 0x3f - (value & 0x3f);
 		break;
+<<<<<<< HEAD
 	case V4L2_CID_SHARPNESS:
 		ctl->value = ((value & 0x0200) ? (((value & 0x0180) >> 7) + 1)
 						 : 0);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		ctl->value = ((value + (c->off << c->shift)) & c->mask) >> c->shift;
 		break;
@@ -1076,12 +1094,15 @@ int cx88_set_control(struct cx88_core *core, struct v4l2_control *ctl)
 		}
 		mask=0xffff;
 		break;
+<<<<<<< HEAD
 	case V4L2_CID_SHARPNESS:
 		/* 0b000, 0b100, 0b101, 0b110, or 0b111 */
 		value = (ctl->value < 1 ? 0 : ((ctl->value + 3) << 7));
 		/* needs to be set for both fields */
 		cx_andor(MO_FILTER_EVEN, mask, value);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case V4L2_CID_CHROMA_AGC:
 		/* Do not allow chroma AGC to be enabled for SECAM */
 		value = ((ctl->value - c->off) << c->shift) & c->mask;
@@ -1204,6 +1225,10 @@ static int vidioc_querycap (struct file *file, void  *priv,
 	strcpy(cap->driver, "cx8800");
 	strlcpy(cap->card, core->board.name, sizeof(cap->card));
 	sprintf(cap->bus_info,"PCI:%s",pci_name(dev->pci));
+<<<<<<< HEAD
+=======
+	cap->version = CX88_VERSION_CODE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cap->capabilities =
 		V4L2_CAP_VIDEO_CAPTURE |
 		V4L2_CAP_READWRITE     |
@@ -1522,6 +1547,10 @@ static int radio_querycap (struct file *file, void  *priv,
 	strcpy(cap->driver, "cx8800");
 	strlcpy(cap->card, core->board.name, sizeof(cap->card));
 	sprintf(cap->bus_info,"PCI:%s", pci_name(dev->pci));
+<<<<<<< HEAD
+=======
+	cap->version = CX88_VERSION_CODE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cap->capabilities = V4L2_CAP_TUNER;
 	return 0;
 }
@@ -2180,8 +2209,19 @@ static struct pci_driver cx8800_pci_driver = {
 
 static int __init cx8800_init(void)
 {
+<<<<<<< HEAD
 	printk(KERN_INFO "cx88/0: cx2388x v4l2 driver version %s loaded\n",
 	       CX88_VERSION);
+=======
+	printk(KERN_INFO "cx88/0: cx2388x v4l2 driver version %d.%d.%d loaded\n",
+	       (CX88_VERSION_CODE >> 16) & 0xff,
+	       (CX88_VERSION_CODE >>  8) & 0xff,
+	       CX88_VERSION_CODE & 0xff);
+#ifdef SNAPSHOT
+	printk(KERN_INFO "cx2388x: snapshot date %04d-%02d-%02d\n",
+	       SNAPSHOT/10000, (SNAPSHOT/100)%100, SNAPSHOT%100);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return pci_register_driver(&cx8800_pci_driver);
 }
 
@@ -2192,3 +2232,14 @@ static void __exit cx8800_fini(void)
 
 module_init(cx8800_init);
 module_exit(cx8800_fini);
+<<<<<<< HEAD
+=======
+
+/* ----------------------------------------------------------- */
+/*
+ * Local variables:
+ * c-basic-offset: 8
+ * End:
+ * kate: eol "unix"; indent-width 3; remove-trailing-space on; replace-trailing-space-save on; tab-width 8; replace-tabs off; space-indent off; mixed-indent off
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

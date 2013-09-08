@@ -235,6 +235,7 @@ static inline struct audit_entry *audit_to_entry_common(struct audit_rule *rule)
 	switch(listnr) {
 	default:
 		goto exit_err;
+<<<<<<< HEAD
 #ifdef CONFIG_AUDITSYSCALL
 	case AUDIT_FILTER_ENTRY:
 		if (rule->action == AUDIT_ALWAYS)
@@ -244,6 +245,15 @@ static inline struct audit_entry *audit_to_entry_common(struct audit_rule *rule)
 #endif
 	case AUDIT_FILTER_USER:
 	case AUDIT_FILTER_TYPE:
+=======
+	case AUDIT_FILTER_USER:
+	case AUDIT_FILTER_TYPE:
+#ifdef CONFIG_AUDITSYSCALL
+	case AUDIT_FILTER_ENTRY:
+	case AUDIT_FILTER_EXIT:
+	case AUDIT_FILTER_TASK:
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		;
 	}
 	if (unlikely(rule->action == AUDIT_POSSIBLE)) {
@@ -387,7 +397,11 @@ static struct audit_entry *audit_rule_to_entry(struct audit_rule *rule)
 				goto exit_free;
 			break;
 		case AUDIT_FILETYPE:
+<<<<<<< HEAD
 			if (f->val & ~S_IFMT)
+=======
+			if ((f->val & ~S_IFMT) > S_IFMT)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto exit_free;
 			break;
 		case AUDIT_INODE:
@@ -461,8 +475,11 @@ static struct audit_entry *audit_data_to_entry(struct audit_rule_data *data,
 		case AUDIT_ARG1:
 		case AUDIT_ARG2:
 		case AUDIT_ARG3:
+<<<<<<< HEAD
 		case AUDIT_OBJ_UID:
 		case AUDIT_OBJ_GID:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case AUDIT_ARCH:
 			entry->rule.arch_f = f;
@@ -526,6 +543,10 @@ static struct audit_entry *audit_data_to_entry(struct audit_rule_data *data,
 				goto exit_free;
 			break;
 		case AUDIT_FILTERKEY:
+<<<<<<< HEAD
+=======
+			err = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (entry->rule.filterkey || f->val > AUDIT_MAX_KEY_LEN)
 				goto exit_free;
 			str = audit_unpack_string(&bufp, &remain, f->val);
@@ -539,11 +560,15 @@ static struct audit_entry *audit_data_to_entry(struct audit_rule_data *data,
 				goto exit_free;
 			break;
 		case AUDIT_FILETYPE:
+<<<<<<< HEAD
 			if (f->val & ~S_IFMT)
 				goto exit_free;
 			break;
 		case AUDIT_FIELD_COMPARE:
 			if (f->val > AUDIT_MAX_FIELD_COMPARE)
+=======
+			if ((f->val & ~S_IFMT) > S_IFMT)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto exit_free;
 			break;
 		default:

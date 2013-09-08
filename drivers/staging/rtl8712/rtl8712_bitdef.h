@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2010 Realtek Corporation. All rights reserved.
@@ -19,6 +20,8 @@
  ******************************************************************************/
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __RTL8712_BITDEF_H__
 #define __RTL8712_BITDEF_H__
 

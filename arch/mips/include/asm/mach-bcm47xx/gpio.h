@@ -10,7 +10,10 @@
 #define __BCM47XX_GPIO_H
 
 #include <linux/ssb/ssb_embedded.h>
+<<<<<<< HEAD
 #include <linux/bcma/bcma.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach-bcm47xx/bcm47xx.h>
 
 #define BCM47XX_EXTIF_GPIO_LINES	5
@@ -22,6 +25,7 @@ extern int gpio_to_irq(unsigned gpio);
 
 static inline int gpio_get_value(unsigned gpio)
 {
+<<<<<<< HEAD
 	switch (bcm47xx_bus_type) {
 #ifdef CONFIG_BCM47XX_SSB
 	case BCM47XX_BUS_TYPE_SSB:
@@ -85,10 +89,25 @@ static inline int gpio_direction_input(unsigned gpio)
 #endif
 	}
 	return -EINVAL;
+=======
+	return ssb_gpio_in(&ssb_bcm47xx, 1 << gpio);
+}
+
+static inline void gpio_set_value(unsigned gpio, int value)
+{
+	ssb_gpio_out(&ssb_bcm47xx, 1 << gpio, value ? 1 << gpio : 0);
+}
+
+static inline int gpio_direction_input(unsigned gpio)
+{
+	ssb_gpio_outen(&ssb_bcm47xx, 1 << gpio, 0);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int gpio_direction_output(unsigned gpio, int value)
 {
+<<<<<<< HEAD
 	switch (bcm47xx_bus_type) {
 #ifdef CONFIG_BCM47XX_SSB
 	case BCM47XX_BUS_TYPE_SSB:
@@ -111,10 +130,18 @@ static inline int gpio_direction_output(unsigned gpio, int value)
 #endif
 	}
 	return -EINVAL;
+=======
+	/* first set the gpio out value */
+	ssb_gpio_out(&ssb_bcm47xx, 1 << gpio, value ? 1 << gpio : 0);
+	/* then set the gpio mode */
+	ssb_gpio_outen(&ssb_bcm47xx, 1 << gpio, 1 << gpio);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int gpio_intmask(unsigned gpio, int value)
 {
+<<<<<<< HEAD
 	switch (bcm47xx_bus_type) {
 #ifdef CONFIG_BCM47XX_SSB
 	case BCM47XX_BUS_TYPE_SSB:
@@ -130,10 +157,16 @@ static inline int gpio_intmask(unsigned gpio, int value)
 #endif
 	}
 	return -EINVAL;
+=======
+	ssb_gpio_intmask(&ssb_bcm47xx, 1 << gpio,
+			 value ? 1 << gpio : 0);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int gpio_polarity(unsigned gpio, int value)
 {
+<<<<<<< HEAD
 	switch (bcm47xx_bus_type) {
 #ifdef CONFIG_BCM47XX_SSB
 	case BCM47XX_BUS_TYPE_SSB:
@@ -152,4 +185,15 @@ static inline int gpio_polarity(unsigned gpio, int value)
 }
 
 
+=======
+	ssb_gpio_polarity(&ssb_bcm47xx, 1 << gpio,
+			  value ? 1 << gpio : 0);
+	return 0;
+}
+
+
+/* cansleep wrappers */
+#include <asm-generic/gpio.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __BCM47XX_GPIO_H */

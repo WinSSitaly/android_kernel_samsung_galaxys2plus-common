@@ -10,9 +10,14 @@
 
 #include <linux/sunrpc/clnt.h>
 #include <linux/dns_resolver.h>
+<<<<<<< HEAD
 #include "dns_resolve.h"
 
 ssize_t nfs_dns_resolve_name(struct net *net, char *name, size_t namelen,
+=======
+
+ssize_t nfs_dns_resolve_name(char *name, size_t namelen,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct sockaddr *sa, size_t salen)
 {
 	ssize_t ret;
@@ -21,7 +26,11 @@ ssize_t nfs_dns_resolve_name(struct net *net, char *name, size_t namelen,
 
 	ip_len = dns_query(NULL, name, namelen, NULL, &ip_addr, NULL);
 	if (ip_len > 0)
+<<<<<<< HEAD
 		ret = rpc_pton(net, ip_addr, ip_len, sa, salen);
+=======
+		ret = rpc_pton(ip_addr, ip_len, sa, salen);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		ret = -ESRCH;
 	kfree(ip_addr);
@@ -41,15 +50,26 @@ ssize_t nfs_dns_resolve_name(struct net *net, char *name, size_t namelen,
 #include <linux/sunrpc/clnt.h>
 #include <linux/sunrpc/cache.h>
 #include <linux/sunrpc/svcauth.h>
+<<<<<<< HEAD
 #include <linux/sunrpc/rpc_pipe_fs.h>
 
 #include "dns_resolve.h"
 #include "cache_lib.h"
 #include "netns.h"
+=======
+
+#include "dns_resolve.h"
+#include "cache_lib.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define NFS_DNS_HASHBITS 4
 #define NFS_DNS_HASHTBL_SIZE (1 << NFS_DNS_HASHBITS)
 
+<<<<<<< HEAD
+=======
+static struct cache_head *nfs_dns_table[NFS_DNS_HASHTBL_SIZE];
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct nfs_dns_ent {
 	struct cache_head h;
 
@@ -214,7 +234,11 @@ static int nfs_dns_parse(struct cache_detail *cd, char *buf, int buflen)
 {
 	char buf1[NFS_DNS_HOSTNAME_MAXLEN+1];
 	struct nfs_dns_ent key, *item;
+<<<<<<< HEAD
 	unsigned int ttl;
+=======
+	unsigned long ttl;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ssize_t len;
 	int ret = -EINVAL;
 
@@ -225,7 +249,11 @@ static int nfs_dns_parse(struct cache_detail *cd, char *buf, int buflen)
 	len = qword_get(&buf, buf1, sizeof(buf1));
 	if (len <= 0)
 		goto out;
+<<<<<<< HEAD
 	key.addrlen = rpc_pton(cd->net, buf1, len,
+=======
+	key.addrlen = rpc_pton(buf1, len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			(struct sockaddr *)&key.addr,
 			sizeof(key.addr));
 
@@ -237,8 +265,12 @@ static int nfs_dns_parse(struct cache_detail *cd, char *buf, int buflen)
 	key.namelen = len;
 	memset(&key.h, 0, sizeof(key.h));
 
+<<<<<<< HEAD
 	if (get_uint(&buf, &ttl) < 0)
 		goto out;
+=======
+	ttl = get_expiry(&buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ttl == 0)
 		goto out;
 	key.h.expiry_time = ttl + seconds_since_boot();
@@ -261,6 +293,24 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+static struct cache_detail nfs_dns_resolve = {
+	.owner = THIS_MODULE,
+	.hash_size = NFS_DNS_HASHTBL_SIZE,
+	.hash_table = nfs_dns_table,
+	.name = "dns_resolve",
+	.cache_put = nfs_dns_ent_put,
+	.cache_upcall = nfs_dns_upcall,
+	.cache_parse = nfs_dns_parse,
+	.cache_show = nfs_dns_show,
+	.match = nfs_dns_match,
+	.init = nfs_dns_ent_init,
+	.update = nfs_dns_ent_update,
+	.alloc = nfs_dns_ent_alloc,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int do_cache_lookup(struct cache_detail *cd,
 		struct nfs_dns_ent *key,
 		struct nfs_dns_ent **item,
@@ -323,8 +373,13 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 ssize_t nfs_dns_resolve_name(struct net *net, char *name,
 		size_t namelen, struct sockaddr *sa, size_t salen)
+=======
+ssize_t nfs_dns_resolve_name(char *name, size_t namelen,
+		struct sockaddr *sa, size_t salen)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct nfs_dns_ent key = {
 		.hostname = name,
@@ -332,21 +387,31 @@ ssize_t nfs_dns_resolve_name(struct net *net, char *name,
 	};
 	struct nfs_dns_ent *item = NULL;
 	ssize_t ret;
+<<<<<<< HEAD
 	struct nfs_net *nn = net_generic(net, nfs_net_id);
 
 	ret = do_cache_lookup_wait(nn->nfs_dns_resolve, &key, &item);
+=======
+
+	ret = do_cache_lookup_wait(&nfs_dns_resolve, &key, &item);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret == 0) {
 		if (salen >= item->addrlen) {
 			memcpy(sa, &item->addr, item->addrlen);
 			ret = item->addrlen;
 		} else
 			ret = -EOVERFLOW;
+<<<<<<< HEAD
 		cache_put(&item->h, nn->nfs_dns_resolve);
+=======
+		cache_put(&item->h, &nfs_dns_resolve);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (ret == -ENOENT)
 		ret = -ESRCH;
 	return ret;
 }
 
+<<<<<<< HEAD
 int nfs_dns_resolver_cache_init(struct net *net)
 {
 	int err = -ENOMEM;
@@ -440,10 +505,21 @@ static struct notifier_block nfs_dns_resolver_block = {
 int nfs_dns_resolver_init(void)
 {
 	return rpc_pipefs_notifier_register(&nfs_dns_resolver_block);
+=======
+int nfs_dns_resolver_init(void)
+{
+	return nfs_cache_register(&nfs_dns_resolve);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void nfs_dns_resolver_destroy(void)
 {
+<<<<<<< HEAD
 	rpc_pipefs_notifier_unregister(&nfs_dns_resolver_block);
 }
+=======
+	nfs_cache_unregister(&nfs_dns_resolve);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

@@ -9,7 +9,10 @@
 #define KMSG_COMPONENT "zfcp"
 #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
 
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ctype.h>
 #include <linux/slab.h>
 #include <asm/debug.h>
@@ -164,6 +167,7 @@ void zfcp_dbf_hba_bit_err(char *tag, struct zfcp_fsf_req *req)
 	spin_unlock_irqrestore(&dbf->hba_lock, flags);
 }
 
+<<<<<<< HEAD
 /**
  * zfcp_dbf_hba_def_err - trace event for deferred error messages
  * @adapter: pointer to struct zfcp_adapter
@@ -220,6 +224,8 @@ void zfcp_dbf_hba_basic(char *tag, struct zfcp_adapter *adapter)
 	spin_unlock_irqrestore(&dbf->hba_lock, flags);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void zfcp_dbf_set_common(struct zfcp_dbf_rec *rec,
 				struct zfcp_adapter *adapter,
 				struct zfcp_port *port,

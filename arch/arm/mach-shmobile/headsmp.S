@@ -14,6 +14,7 @@
 #include <linux/init.h>
 #include <asm/memory.h>
 
+<<<<<<< HEAD
 	__CPUINIT
 
 /* Cache invalidation nicked from arch/arm/mach-imx/head-v7.S, thanks!
@@ -68,6 +69,9 @@ ENTRY(shmobile_invalidate_start)
 	bl	v7_invalidate_l1
 	b	secondary_startup
 ENDPROC(shmobile_invalidate_start)
+=======
+	__INIT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Reset vector for secondary CPUs.
@@ -77,5 +81,9 @@ ENDPROC(shmobile_invalidate_start)
 	.align  12
 ENTRY(shmobile_secondary_vector)
 	ldr     pc, 1f
+<<<<<<< HEAD
 1:	.long   shmobile_invalidate_start - PAGE_OFFSET + PLAT_PHYS_OFFSET
 ENDPROC(shmobile_secondary_vector)
+=======
+1:	.long   secondary_startup - PAGE_OFFSET + PLAT_PHYS_OFFSET
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

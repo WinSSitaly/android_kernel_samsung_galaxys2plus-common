@@ -22,9 +22,22 @@ extern struct clksrc_clk clk_mout_epll;
 extern int s5p64x0_epll_enable(struct clk *clk, int enable);
 extern unsigned long s5p64x0_epll_get_rate(struct clk *clk);
 
+<<<<<<< HEAD
 extern struct clksrc_clk clk_armclk;
 extern struct clksrc_clk clk_dout_mpll;
 
+=======
+extern unsigned long s5p64x0_armclk_get_rate(struct clk *clk);
+extern unsigned long s5p64x0_armclk_round_rate(struct clk *clk, unsigned long rate);
+extern int s5p64x0_armclk_set_rate(struct clk *clk, unsigned long rate);
+
+extern struct clk_ops s5p64x0_clkarm_ops;
+
+extern struct clksrc_clk clk_armclk;
+extern struct clksrc_clk clk_dout_mpll;
+
+extern struct clk *clkset_hclk_low_list[];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct clksrc_sources clkset_hclk_low;
 
 extern int s5p64x0_pclk_ctrl(struct clk *clk, int enable);

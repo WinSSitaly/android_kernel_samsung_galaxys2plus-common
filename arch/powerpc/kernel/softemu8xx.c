@@ -26,6 +26,10 @@
 
 #include <asm/pgtable.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 
 /* Eventually we may need a look-up table, but this works for now.

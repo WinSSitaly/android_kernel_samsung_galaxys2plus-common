@@ -27,7 +27,10 @@
  * transport class is framed entirely in terms of generic devices to
  * allow it to be used by any physical HBA in the system.
  */
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/attribute_container.h>
 #include <linux/transport_class.h>
 

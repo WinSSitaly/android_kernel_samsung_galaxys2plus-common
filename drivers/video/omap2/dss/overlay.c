@@ -38,7 +38,11 @@
 #include "dss_features.h"
 
 static int num_overlays;
+<<<<<<< HEAD
 static struct omap_overlay *overlays;
+=======
+static struct list_head overlay_list;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static ssize_t overlay_name_show(struct omap_overlay *ovl, char *buf)
 {
@@ -84,32 +88,48 @@ static ssize_t overlay_manager_store(struct omap_overlay *ovl, const char *buf,
 
 	old_mgr = ovl->manager;
 
+<<<<<<< HEAD
 	r = dispc_runtime_get();
 	if (r)
 		return r;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* detach old manager */
 	if (old_mgr) {
 		r = ovl->unset_manager(ovl);
 		if (r) {
 			DSSERR("detach failed\n");
+<<<<<<< HEAD
 			goto err;
+=======
+			return r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		r = old_mgr->apply(old_mgr);
 		if (r)
+<<<<<<< HEAD
 			goto err;
+=======
+			return r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (mgr) {
 		r = ovl->set_manager(ovl, mgr);
 		if (r) {
 			DSSERR("Failed to attach overlay\n");
+<<<<<<< HEAD
 			goto err;
+=======
+			return r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		r = mgr->apply(mgr);
 		if (r)
+<<<<<<< HEAD
 			goto err;
 	}
 
@@ -120,35 +140,55 @@ static ssize_t overlay_manager_store(struct omap_overlay *ovl, const char *buf,
 err:
 	dispc_runtime_put();
 	return r;
+=======
+			return r;
+	}
+
+	return size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t overlay_input_size_show(struct omap_overlay *ovl, char *buf)
 {
+<<<<<<< HEAD
 	struct omap_overlay_info info;
 
 	ovl->get_overlay_info(ovl, &info);
 
 	return snprintf(buf, PAGE_SIZE, "%d,%d\n",
 			info.width, info.height);
+=======
+	return snprintf(buf, PAGE_SIZE, "%d,%d\n",
+			ovl->info.width, ovl->info.height);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t overlay_screen_width_show(struct omap_overlay *ovl, char *buf)
 {
+<<<<<<< HEAD
 	struct omap_overlay_info info;
 
 	ovl->get_overlay_info(ovl, &info);
 
 	return snprintf(buf, PAGE_SIZE, "%d\n", info.screen_width);
+=======
+	return snprintf(buf, PAGE_SIZE, "%d\n", ovl->info.screen_width);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t overlay_position_show(struct omap_overlay *ovl, char *buf)
 {
+<<<<<<< HEAD
 	struct omap_overlay_info info;
 
 	ovl->get_overlay_info(ovl, &info);
 
 	return snprintf(buf, PAGE_SIZE, "%d,%d\n",
 			info.pos_x, info.pos_y);
+=======
+	return snprintf(buf, PAGE_SIZE, "%d,%d\n",
+			ovl->info.pos_x, ovl->info.pos_y);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t overlay_position_store(struct omap_overlay *ovl,
@@ -182,12 +222,17 @@ static ssize_t overlay_position_store(struct omap_overlay *ovl,
 
 static ssize_t overlay_output_size_show(struct omap_overlay *ovl, char *buf)
 {
+<<<<<<< HEAD
 	struct omap_overlay_info info;
 
 	ovl->get_overlay_info(ovl, &info);
 
 	return snprintf(buf, PAGE_SIZE, "%d,%d\n",
 			info.out_width, info.out_height);
+=======
+	return snprintf(buf, PAGE_SIZE, "%d,%d\n",
+			ovl->info.out_width, ovl->info.out_height);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t overlay_output_size_store(struct omap_overlay *ovl,
@@ -221,12 +266,17 @@ static ssize_t overlay_output_size_store(struct omap_overlay *ovl,
 
 static ssize_t overlay_enabled_show(struct omap_overlay *ovl, char *buf)
 {
+<<<<<<< HEAD
 	return snprintf(buf, PAGE_SIZE, "%d\n", ovl->is_enabled(ovl));
+=======
+	return snprintf(buf, PAGE_SIZE, "%d\n", ovl->info.enabled);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t overlay_enabled_store(struct omap_overlay *ovl, const char *buf,
 		size_t size)
 {
+<<<<<<< HEAD
 	int r;
 	bool enable;
 
@@ -247,10 +297,14 @@ static ssize_t overlay_enabled_store(struct omap_overlay *ovl, const char *buf,
 
 static ssize_t overlay_global_alpha_show(struct omap_overlay *ovl, char *buf)
 {
+=======
+	int r, enable;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct omap_overlay_info info;
 
 	ovl->get_overlay_info(ovl, &info);
 
+<<<<<<< HEAD
 	return snprintf(buf, PAGE_SIZE, "%d\n",
 			info.global_alpha);
 }
@@ -272,6 +326,13 @@ static ssize_t overlay_global_alpha_store(struct omap_overlay *ovl,
 	ovl->get_overlay_info(ovl, &info);
 
 	info.global_alpha = alpha;
+=======
+	r = kstrtoint(buf, 0, &enable);
+	if (r)
+		return r;
+
+	info.enabled = !!enable;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	r = ovl->set_overlay_info(ovl, &info);
 	if (r)
@@ -286,6 +347,7 @@ static ssize_t overlay_global_alpha_store(struct omap_overlay *ovl,
 	return size;
 }
 
+<<<<<<< HEAD
 static ssize_t overlay_pre_mult_alpha_show(struct omap_overlay *ovl,
 		char *buf)
 {
@@ -298,22 +360,45 @@ static ssize_t overlay_pre_mult_alpha_show(struct omap_overlay *ovl,
 }
 
 static ssize_t overlay_pre_mult_alpha_store(struct omap_overlay *ovl,
+=======
+static ssize_t overlay_global_alpha_show(struct omap_overlay *ovl, char *buf)
+{
+	return snprintf(buf, PAGE_SIZE, "%d\n",
+			ovl->info.global_alpha);
+}
+
+static ssize_t overlay_global_alpha_store(struct omap_overlay *ovl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		const char *buf, size_t size)
 {
 	int r;
 	u8 alpha;
 	struct omap_overlay_info info;
 
+<<<<<<< HEAD
 	if ((ovl->caps & OMAP_DSS_OVL_CAP_PRE_MULT_ALPHA) == 0)
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = kstrtou8(buf, 0, &alpha);
 	if (r)
 		return r;
 
 	ovl->get_overlay_info(ovl, &info);
 
+<<<<<<< HEAD
 	info.pre_mult_alpha = alpha;
+=======
+	/* Video1 plane does not support global alpha
+	 * to always make it 255 completely opaque
+	 */
+	if (!dss_has_feature(FEAT_GLOBAL_ALPHA_VID1) &&
+			ovl->id == OMAP_DSS_VIDEO1)
+		info.global_alpha = 255;
+	else
+		info.global_alpha = alpha;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	r = ovl->set_overlay_info(ovl, &info);
 	if (r)
@@ -328,6 +413,7 @@ static ssize_t overlay_pre_mult_alpha_store(struct omap_overlay *ovl,
 	return size;
 }
 
+<<<<<<< HEAD
 static ssize_t overlay_zorder_show(struct omap_overlay *ovl, char *buf)
 {
 	struct omap_overlay_info info;
@@ -348,12 +434,40 @@ static ssize_t overlay_zorder_store(struct omap_overlay *ovl,
 		return -ENODEV;
 
 	r = kstrtou8(buf, 0, &zorder);
+=======
+static ssize_t overlay_pre_mult_alpha_show(struct omap_overlay *ovl,
+		char *buf)
+{
+	return snprintf(buf, PAGE_SIZE, "%d\n",
+			ovl->info.pre_mult_alpha);
+}
+
+static ssize_t overlay_pre_mult_alpha_store(struct omap_overlay *ovl,
+		const char *buf, size_t size)
+{
+	int r;
+	u8 alpha;
+	struct omap_overlay_info info;
+
+	r = kstrtou8(buf, 0, &alpha);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (r)
 		return r;
 
 	ovl->get_overlay_info(ovl, &info);
 
+<<<<<<< HEAD
 	info.zorder = zorder;
+=======
+	/* only GFX and Video2 plane support pre alpha multiplied
+	 * set zero for Video1 plane
+	 */
+	if (!dss_has_feature(FEAT_GLOBAL_ALPHA_VID1) &&
+		ovl->id == OMAP_DSS_VIDEO1)
+		info.pre_mult_alpha = 0;
+	else
+		info.pre_mult_alpha = alpha;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	r = ovl->set_overlay_info(ovl, &info);
 	if (r)
@@ -394,8 +508,11 @@ static OVERLAY_ATTR(global_alpha, S_IRUGO|S_IWUSR,
 static OVERLAY_ATTR(pre_mult_alpha, S_IRUGO|S_IWUSR,
 		overlay_pre_mult_alpha_show,
 		overlay_pre_mult_alpha_store);
+<<<<<<< HEAD
 static OVERLAY_ATTR(zorder, S_IRUGO|S_IWUSR,
 		overlay_zorder_show, overlay_zorder_store);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct attribute *overlay_sysfs_attrs[] = {
 	&overlay_attr_name.attr,
@@ -407,7 +524,10 @@ static struct attribute *overlay_sysfs_attrs[] = {
 	&overlay_attr_enabled.attr,
 	&overlay_attr_global_alpha.attr,
 	&overlay_attr_pre_mult_alpha.attr,
+<<<<<<< HEAD
 	&overlay_attr_zorder.attr,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL
 };
 
@@ -451,6 +571,167 @@ static struct kobj_type overlay_ktype = {
 	.default_attrs = overlay_sysfs_attrs,
 };
 
+<<<<<<< HEAD
+=======
+/* Check if overlay parameters are compatible with display */
+int dss_check_overlay(struct omap_overlay *ovl, struct omap_dss_device *dssdev)
+{
+	struct omap_overlay_info *info;
+	u16 outw, outh;
+	u16 dw, dh;
+
+	if (!dssdev)
+		return 0;
+
+	if (!ovl->info.enabled)
+		return 0;
+
+	info = &ovl->info;
+
+	if (info->paddr == 0) {
+		DSSDBG("check_overlay failed: paddr 0\n");
+		return -EINVAL;
+	}
+
+	dssdev->driver->get_resolution(dssdev, &dw, &dh);
+
+	DSSDBG("check_overlay %d: (%d,%d %dx%d -> %dx%d) disp (%dx%d)\n",
+			ovl->id,
+			info->pos_x, info->pos_y,
+			info->width, info->height,
+			info->out_width, info->out_height,
+			dw, dh);
+
+	if ((ovl->caps & OMAP_DSS_OVL_CAP_SCALE) == 0) {
+		outw = info->width;
+		outh = info->height;
+	} else {
+		if (info->out_width == 0)
+			outw = info->width;
+		else
+			outw = info->out_width;
+
+		if (info->out_height == 0)
+			outh = info->height;
+		else
+			outh = info->out_height;
+	}
+
+	if (dw < info->pos_x + outw) {
+		DSSDBG("check_overlay failed 1: %d < %d + %d\n",
+				dw, info->pos_x, outw);
+		return -EINVAL;
+	}
+
+	if (dh < info->pos_y + outh) {
+		DSSDBG("check_overlay failed 2: %d < %d + %d\n",
+				dh, info->pos_y, outh);
+		return -EINVAL;
+	}
+
+	if ((ovl->supported_modes & info->color_mode) == 0) {
+		DSSERR("overlay doesn't support mode %d\n", info->color_mode);
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+static int dss_ovl_set_overlay_info(struct omap_overlay *ovl,
+		struct omap_overlay_info *info)
+{
+	int r;
+	struct omap_overlay_info old_info;
+
+	old_info = ovl->info;
+	ovl->info = *info;
+
+	if (ovl->manager) {
+		r = dss_check_overlay(ovl, ovl->manager->device);
+		if (r) {
+			ovl->info = old_info;
+			return r;
+		}
+	}
+
+	ovl->info_dirty = true;
+
+	return 0;
+}
+
+static void dss_ovl_get_overlay_info(struct omap_overlay *ovl,
+		struct omap_overlay_info *info)
+{
+	*info = ovl->info;
+}
+
+static int dss_ovl_wait_for_go(struct omap_overlay *ovl)
+{
+	return dss_mgr_wait_for_go_ovl(ovl);
+}
+
+static int omap_dss_set_manager(struct omap_overlay *ovl,
+		struct omap_overlay_manager *mgr)
+{
+	if (!mgr)
+		return -EINVAL;
+
+	if (ovl->manager) {
+		DSSERR("overlay '%s' already has a manager '%s'\n",
+				ovl->name, ovl->manager->name);
+		return -EINVAL;
+	}
+
+	if (ovl->info.enabled) {
+		DSSERR("overlay has to be disabled to change the manager\n");
+		return -EINVAL;
+	}
+
+	ovl->manager = mgr;
+
+	dss_clk_enable(DSS_CLK_ICK | DSS_CLK_FCK);
+	/* XXX: When there is an overlay on a DSI manual update display, and
+	 * the overlay is first disabled, then moved to tv, and enabled, we
+	 * seem to get SYNC_LOST_DIGIT error.
+	 *
+	 * Waiting doesn't seem to help, but updating the manual update display
+	 * after disabling the overlay seems to fix this. This hints that the
+	 * overlay is perhaps somehow tied to the LCD output until the output
+	 * is updated.
+	 *
+	 * Userspace workaround for this is to update the LCD after disabling
+	 * the overlay, but before moving the overlay to TV.
+	 */
+	dispc_set_channel_out(ovl->id, mgr->id);
+	dss_clk_disable(DSS_CLK_ICK | DSS_CLK_FCK);
+
+	return 0;
+}
+
+static int omap_dss_unset_manager(struct omap_overlay *ovl)
+{
+	int r;
+
+	if (!ovl->manager) {
+		DSSERR("failed to detach overlay: manager not set\n");
+		return -EINVAL;
+	}
+
+	if (ovl->info.enabled) {
+		DSSERR("overlay has to be disabled to unset the manager\n");
+		return -EINVAL;
+	}
+
+	r = ovl->wait_for_go(ovl);
+	if (r)
+		return r;
+
+	ovl->manager = NULL;
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int omap_dss_get_num_overlays(void)
 {
 	return num_overlays;
@@ -459,6 +740,7 @@ EXPORT_SYMBOL(omap_dss_get_num_overlays);
 
 struct omap_overlay *omap_dss_get_overlay(int num)
 {
+<<<<<<< HEAD
 	if (num >= num_overlays)
 		return NULL;
 
@@ -466,10 +748,48 @@ struct omap_overlay *omap_dss_get_overlay(int num)
 }
 EXPORT_SYMBOL(omap_dss_get_overlay);
 
+=======
+	int i = 0;
+	struct omap_overlay *ovl;
+
+	list_for_each_entry(ovl, &overlay_list, list) {
+		if (i++ == num)
+			return ovl;
+	}
+
+	return NULL;
+}
+EXPORT_SYMBOL(omap_dss_get_overlay);
+
+static void omap_dss_add_overlay(struct omap_overlay *overlay)
+{
+	++num_overlays;
+	list_add_tail(&overlay->list, &overlay_list);
+}
+
+static struct omap_overlay *dispc_overlays[MAX_DSS_OVERLAYS];
+
+void dss_overlay_setup_dispc_manager(struct omap_overlay_manager *mgr)
+{
+	mgr->num_overlays = dss_feat_get_num_ovls();
+	mgr->overlays = dispc_overlays;
+}
+
+#ifdef L4_EXAMPLE
+static struct omap_overlay *l4_overlays[1];
+void dss_overlay_setup_l4_manager(struct omap_overlay_manager *mgr)
+{
+	mgr->num_overlays = 1;
+	mgr->overlays = l4_overlays;
+}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void dss_init_overlays(struct platform_device *pdev)
 {
 	int i, r;
 
+<<<<<<< HEAD
 	num_overlays = dss_feat_get_num_ovls();
 
 	overlays = kzalloc(sizeof(struct omap_overlay) * num_overlays,
@@ -479,19 +799,42 @@ void dss_init_overlays(struct platform_device *pdev)
 
 	for (i = 0; i < num_overlays; ++i) {
 		struct omap_overlay *ovl = &overlays[i];
+=======
+	INIT_LIST_HEAD(&overlay_list);
+
+	num_overlays = 0;
+
+	for (i = 0; i < dss_feat_get_num_ovls(); ++i) {
+		struct omap_overlay *ovl;
+		ovl = kzalloc(sizeof(*ovl), GFP_KERNEL);
+
+		BUG_ON(ovl == NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		switch (i) {
 		case 0:
 			ovl->name = "gfx";
 			ovl->id = OMAP_DSS_GFX;
+<<<<<<< HEAD
+=======
+			ovl->caps = OMAP_DSS_OVL_CAP_DISPC;
+			ovl->info.global_alpha = 255;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case 1:
 			ovl->name = "vid1";
 			ovl->id = OMAP_DSS_VIDEO1;
+<<<<<<< HEAD
+=======
+			ovl->caps = OMAP_DSS_OVL_CAP_SCALE |
+				OMAP_DSS_OVL_CAP_DISPC;
+			ovl->info.global_alpha = 255;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case 2:
 			ovl->name = "vid2";
 			ovl->id = OMAP_DSS_VIDEO2;
+<<<<<<< HEAD
 			break;
 		case 3:
 			ovl->name = "vid3";
@@ -518,6 +861,62 @@ void dss_init_overlays(struct platform_device *pdev)
 		if (r)
 			DSSERR("failed to create sysfs file\n");
 	}
+=======
+			ovl->caps = OMAP_DSS_OVL_CAP_SCALE |
+				OMAP_DSS_OVL_CAP_DISPC;
+			ovl->info.global_alpha = 255;
+			break;
+		}
+
+		ovl->set_manager = &omap_dss_set_manager;
+		ovl->unset_manager = &omap_dss_unset_manager;
+		ovl->set_overlay_info = &dss_ovl_set_overlay_info;
+		ovl->get_overlay_info = &dss_ovl_get_overlay_info;
+		ovl->wait_for_go = &dss_ovl_wait_for_go;
+
+		ovl->supported_modes =
+			dss_feat_get_supported_color_modes(ovl->id);
+
+		omap_dss_add_overlay(ovl);
+
+		r = kobject_init_and_add(&ovl->kobj, &overlay_ktype,
+				&pdev->dev.kobj, "overlay%d", i);
+
+		if (r) {
+			DSSERR("failed to create sysfs file\n");
+			continue;
+		}
+
+		dispc_overlays[i] = ovl;
+	}
+
+#ifdef L4_EXAMPLE
+	{
+		struct omap_overlay *ovl;
+		ovl = kzalloc(sizeof(*ovl), GFP_KERNEL);
+
+		BUG_ON(ovl == NULL);
+
+		ovl->name = "l4";
+		ovl->supported_modes = OMAP_DSS_COLOR_RGB24U;
+
+		ovl->set_manager = &omap_dss_set_manager;
+		ovl->unset_manager = &omap_dss_unset_manager;
+		ovl->set_overlay_info = &dss_ovl_set_overlay_info;
+		ovl->get_overlay_info = &dss_ovl_get_overlay_info;
+
+		omap_dss_add_overlay(ovl);
+
+		r = kobject_init_and_add(&ovl->kobj, &overlay_ktype,
+				&pdev->dev.kobj, "overlayl4");
+
+		if (r)
+			DSSERR("failed to create sysfs file\n");
+
+		l4_overlays[0] = ovl;
+	}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* connect overlays to the new device, if not already connected. if force
@@ -563,24 +962,35 @@ void dss_recheck_connections(struct omap_dss_device *dssdev, bool force)
 	}
 
 	if (mgr) {
+<<<<<<< HEAD
 		dispc_runtime_get();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (i = 0; i < dss_feat_get_num_ovls(); i++) {
 			struct omap_overlay *ovl;
 			ovl = omap_dss_get_overlay(i);
 			if (!ovl->manager || force) {
 				if (ovl->manager)
+<<<<<<< HEAD
 					ovl->unset_manager(ovl);
 				ovl->set_manager(ovl, mgr);
 			}
 		}
 
 		dispc_runtime_put();
+=======
+					omap_dss_unset_manager(ovl);
+				omap_dss_set_manager(ovl, mgr);
+			}
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
 void dss_uninit_overlays(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	int i;
 
 	for (i = 0; i < num_overlays; ++i) {
@@ -673,3 +1083,19 @@ int dss_ovl_check(struct omap_overlay *ovl,
 
 	return 0;
 }
+=======
+	struct omap_overlay *ovl;
+
+	while (!list_empty(&overlay_list)) {
+		ovl = list_first_entry(&overlay_list,
+				struct omap_overlay, list);
+		list_del(&ovl->list);
+		kobject_del(&ovl->kobj);
+		kobject_put(&ovl->kobj);
+		kfree(ovl);
+	}
+
+	num_overlays = 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

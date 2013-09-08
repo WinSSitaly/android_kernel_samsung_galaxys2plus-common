@@ -36,6 +36,10 @@
  *                using information provided by Jiun-Kuei Jung @ AVerMedia.
  */
 
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/delay.h>
@@ -54,6 +58,10 @@
 #include <linux/mutex.h>
 #include <linux/slab.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/byteorder.h>
 
 #include <linux/dvb/video.h>
@@ -330,9 +338,14 @@ struct ivtv_stream {
 	struct ivtv *itv; 		/* for ease of use */
 	const char *name;		/* name of the stream */
 	int type;			/* stream type */
+<<<<<<< HEAD
 	u32 caps;			/* V4L2 capabilities */
 
 	struct v4l2_fh *fh;		/* pointer to the streaming filehandle */
+=======
+
+	u32 id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spinlock_t qlock; 		/* locks access to the queues */
 	unsigned long s_flags;		/* status flags, see above */
 	int dma;			/* can be PCI_DMA_TODEVICE, PCI_DMA_FROMDEVICE or PCI_DMA_NONE */
@@ -379,6 +392,10 @@ struct ivtv_stream {
 
 struct ivtv_open_id {
 	struct v4l2_fh fh;
+<<<<<<< HEAD
+=======
+	u32 open_id;                    /* unique ID for this file descriptor */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int type;                       /* stream type */
 	int yuv_frames;                 /* 1: started OUT_UDMA_YUV output mode */
 	struct ivtv *itv;
@@ -630,6 +647,7 @@ struct ivtv {
 
 	struct v4l2_device v4l2_dev;
 	struct cx2341x_handler cxhdl;
+<<<<<<< HEAD
 	struct {
 		/* PTS/Frame count control cluster */
 		struct v4l2_ctrl *ctrl_pts;
@@ -640,6 +658,8 @@ struct ivtv {
 		struct v4l2_ctrl *ctrl_audio_playback;
 		struct v4l2_ctrl *ctrl_audio_multilingual_playback;
 	};
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct v4l2_ctrl_handler hdl_gpio;
 	struct v4l2_subdev sd_gpio;	/* GPIO sub-device */
 	u16 instance;
@@ -659,6 +679,10 @@ struct ivtv {
 	u8 audio_stereo_mode;           /* decoder setting how to handle stereo MPEG audio */
 	u8 audio_bilingual_mode;        /* decoder setting how to handle bilingual MPEG audio */
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Locking */
 	spinlock_t lock;                /* lock access to this struct */
 	struct mutex serialize_lock;    /* mutex used to serialize open/close/start/stop/ioctl operations */

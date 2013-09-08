@@ -6,7 +6,10 @@
 #define _XT_CONNTRACK_H
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/netfilter.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/netfilter/nf_conntrack_tuple_common.h>
 
 #define XT_CONNTRACK_STATE_BIT(ctinfo) (1 << ((ctinfo)%IP_CT_IS_REPLY+1))

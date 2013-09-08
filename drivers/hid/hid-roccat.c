@@ -27,7 +27,10 @@
 #include <linux/poll.h>
 #include <linux/sched.h>
 #include <linux/hid-roccat.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define ROCCAT_FIRST_MINOR 0
 #define ROCCAT_MAX_DEVICES 8
@@ -163,6 +166,7 @@ static int roccat_open(struct inode *inode, struct file *file)
 
 	device = devices[minor];
 
+<<<<<<< HEAD
 	if (!device) {
 		pr_emerg("roccat device with minor %d doesn't exist\n", minor);
 		error = -ENODEV;
@@ -171,19 +175,37 @@ static int roccat_open(struct inode *inode, struct file *file)
 
 	mutex_lock(&device->readers_lock);
 
+=======
+	mutex_lock(&device->readers_lock);
+
+	if (!device) {
+		pr_emerg("roccat device with minor %d doesn't exist\n", minor);
+		error = -ENODEV;
+		goto exit_err;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!device->open++) {
 		/* power on device on adding first reader */
 		error = hid_hw_power(device->hid, PM_HINT_FULLON);
 		if (error < 0) {
 			--device->open;
+<<<<<<< HEAD
 			goto exit_err_readers;
+=======
+			goto exit_err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		error = hid_hw_open(device->hid);
 		if (error < 0) {
 			hid_hw_power(device->hid, PM_HINT_NORMAL);
 			--device->open;
+<<<<<<< HEAD
 			goto exit_err_readers;
+=======
+			goto exit_err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -194,6 +216,7 @@ static int roccat_open(struct inode *inode, struct file *file)
 	list_add_tail(&reader->node, &device->readers);
 	file->private_data = reader;
 
+<<<<<<< HEAD
 exit_err_readers:
 	mutex_unlock(&device->readers_lock);
 exit_err_devices:
@@ -201,6 +224,15 @@ exit_err_devices:
 	if (error)
 		kfree(reader);
 	return error;
+=======
+exit_unlock:
+	mutex_unlock(&device->readers_lock);
+	mutex_unlock(&devices_lock);
+	return error;
+exit_err:
+	kfree(reader);
+	goto exit_unlock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int roccat_release(struct inode *inode, struct file *file)

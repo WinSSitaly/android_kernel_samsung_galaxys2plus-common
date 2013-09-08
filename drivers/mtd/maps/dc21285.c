@@ -145,10 +145,20 @@ static struct map_info dc21285_map = {
 
 
 /* Partition stuff */
+<<<<<<< HEAD
+=======
+static struct mtd_partition *dc21285_parts;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const char *probes[] = { "RedBoot", "cmdlinepart", NULL };
 
 static int __init init_dc21285(void)
 {
+<<<<<<< HEAD
+=======
+
+	int nrparts;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Determine bankwidth */
 	switch (*CSR_SA110_CNTL & (3<<14)) {
 		case SA110_CNTL_ROMWIDTH_8:
@@ -196,7 +206,12 @@ static int __init init_dc21285(void)
 
 	dc21285_mtd->owner = THIS_MODULE;
 
+<<<<<<< HEAD
 	mtd_device_parse_register(dc21285_mtd, probes, NULL, NULL, 0);
+=======
+	nrparts = parse_mtd_partitions(dc21285_mtd, probes, &dc21285_parts, 0);
+	mtd_device_register(dc21285_mtd, dc21285_parts, nrparts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if(machine_is_ebsa285()) {
 		/*
@@ -219,6 +234,11 @@ static int __init init_dc21285(void)
 static void __exit cleanup_dc21285(void)
 {
 	mtd_device_unregister(dc21285_mtd);
+<<<<<<< HEAD
+=======
+	if (dc21285_parts)
+		kfree(dc21285_parts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	map_destroy(dc21285_mtd);
 	iounmap(dc21285_map.virt);
 }

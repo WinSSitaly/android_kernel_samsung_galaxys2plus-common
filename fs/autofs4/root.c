@@ -26,7 +26,11 @@
 static int autofs4_dir_symlink(struct inode *,struct dentry *,const char *);
 static int autofs4_dir_unlink(struct inode *,struct dentry *);
 static int autofs4_dir_rmdir(struct inode *,struct dentry *);
+<<<<<<< HEAD
 static int autofs4_dir_mkdir(struct inode *,struct dentry *,umode_t);
+=======
+static int autofs4_dir_mkdir(struct inode *,struct dentry *,int);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static long autofs4_root_ioctl(struct file *,unsigned int,unsigned long);
 #ifdef CONFIG_COMPAT
 static long autofs4_root_compat_ioctl(struct file *,unsigned int,unsigned long);
@@ -392,12 +396,19 @@ static struct vfsmount *autofs4_d_automount(struct path *path)
 		ino->flags |= AUTOFS_INF_PENDING;
 		spin_unlock(&sbi->fs_lock);
 		status = autofs4_mount_wait(dentry);
+<<<<<<< HEAD
 		spin_lock(&sbi->fs_lock);
 		ino->flags &= ~AUTOFS_INF_PENDING;
 		if (status) {
 			spin_unlock(&sbi->fs_lock);
 			return ERR_PTR(status);
 		}
+=======
+		if (status)
+			return ERR_PTR(status);
+		spin_lock(&sbi->fs_lock);
+		ino->flags &= ~AUTOFS_INF_PENDING;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 done:
 	if (!(ino->flags & AUTOFS_INF_EXPIRING)) {
@@ -701,7 +712,11 @@ static int autofs4_dir_rmdir(struct inode *dir, struct dentry *dentry)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int autofs4_dir_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+=======
+static int autofs4_dir_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct autofs_sb_info *sbi = autofs4_sbi(dir->i_sb);
 	struct autofs_info *ino = autofs4_dentry_ino(dentry);

@@ -1,10 +1,18 @@
+<<<<<<< HEAD
 #include "reiserfs.h"
+=======
+#include <linux/reiserfs_fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/capability.h>
 #include <linux/errno.h>
 #include <linux/fs.h>
 #include <linux/pagemap.h>
 #include <linux/xattr.h>
+<<<<<<< HEAD
 #include "xattr.h"
+=======
+#include <linux/reiserfs_xattr.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 
 static int

@@ -20,6 +20,10 @@
 #include <linux/io.h>
 #include <asm/irq.h>
 #include <asm/signal.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/hardware.h>
 #include <asm/mach/pci.h>
 #include <asm/hardware/iop3xx.h>
@@ -214,16 +218,26 @@ int iop3xx_pci_setup(int nr, struct pci_sys_data *sys)
 	sys->mem_offset = IOP3XX_PCI_LOWER_MEM_PA - *IOP3XX_OMWTVR0;
 	sys->io_offset  = IOP3XX_PCI_LOWER_IO_PA - *IOP3XX_OIOWTVR;
 
+<<<<<<< HEAD
 	pci_add_resource_offset(&sys->resources, &res[0], sys->io_offset);
 	pci_add_resource_offset(&sys->resources, &res[1], sys->mem_offset);
+=======
+	sys->resource[0] = &res[0];
+	sys->resource[1] = &res[1];
+	sys->resource[2] = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 1;
 }
 
 struct pci_bus *iop3xx_pci_scan_bus(int nr, struct pci_sys_data *sys)
 {
+<<<<<<< HEAD
 	return pci_scan_root_bus(NULL, sys->busnr, &iop3xx_ops, sys,
 				 &sys->resources);
+=======
+	return pci_scan_bus(sys->busnr, &iop3xx_ops, sys);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __init iop3xx_atu_setup(void)
@@ -373,9 +387,12 @@ void __init iop3xx_pci_preinit_cond(void)
 
 void __init iop3xx_pci_preinit(void)
 {
+<<<<<<< HEAD
 	pcibios_min_io = 0;
 	pcibios_min_mem = 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iop3xx_atu_disable();
 	iop3xx_atu_setup();
 	iop3xx_atu_debug();

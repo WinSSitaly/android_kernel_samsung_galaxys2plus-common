@@ -25,7 +25,10 @@
 
 #include <linux/kernel.h>
 #include <linux/via-core.h>
+<<<<<<< HEAD
 #include <asm/olpc.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "via_clock.h"
 #include "global.h"
 #include "debug.h"
@@ -290,10 +293,13 @@ static void dummy_set_pll(struct via_pll_config config)
 	printk(KERN_INFO "Using undocumented set PLL.\n%s", via_slap);
 }
 
+<<<<<<< HEAD
 static void noop_set_clock_state(u8 state)
 {
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void via_clock_init(struct via_clock *clock, int gfx_chip)
 {
 	switch (gfx_chip) {
@@ -351,6 +357,7 @@ void via_clock_init(struct via_clock *clock, int gfx_chip)
 		break;
 
 	}
+<<<<<<< HEAD
 
 	if (machine_is_olpc()) {
 		/* The OLPC XO-1.5 cannot suspend/resume reliably if the
@@ -365,4 +372,6 @@ void via_clock_init(struct via_clock *clock, int gfx_chip)
 		clock->set_primary_clock_state = noop_set_clock_state;
 		clock->set_secondary_clock_state = noop_set_clock_state;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

@@ -28,9 +28,13 @@
 #define HID_USAGE_Y_TILT		0x3e
 #define HID_USAGE_FINGER		0x22
 #define HID_USAGE_STYLUS		0x20
+<<<<<<< HEAD
 #define HID_COLLECTION			0xa1
 #define HID_COLLECTION_LOGICAL		0x02
 #define HID_COLLECTION_END		0xc0
+=======
+#define HID_COLLECTION			0xc0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum {
 	WCM_UNDEFINED = 0,
@@ -50,6 +54,7 @@ struct hid_descriptor {
 /* defines to get/set USB message */
 #define USB_REQ_GET_REPORT	0x01
 #define USB_REQ_SET_REPORT	0x09
+<<<<<<< HEAD
 
 #define WAC_HID_FEATURE_REPORT	0x03
 #define WAC_MSG_RETRIES		5
@@ -94,6 +99,28 @@ static int wacom_set_report(struct usb_interface *intf, u8 type, u8 id,
 	} while ((retval == -ETIMEDOUT || retval == -EPIPE) && --retries);
 
 	return retval;
+=======
+#define WAC_HID_FEATURE_REPORT	0x03
+
+static int usb_get_report(struct usb_interface *intf, unsigned char type,
+				unsigned char id, void *buf, int size)
+{
+	return usb_control_msg(interface_to_usbdev(intf),
+		usb_rcvctrlpipe(interface_to_usbdev(intf), 0),
+		USB_REQ_GET_REPORT, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
+		(type << 8) + id, intf->altsetting[0].desc.bInterfaceNumber,
+		buf, size, 100);
+}
+
+static int usb_set_report(struct usb_interface *intf, unsigned char type,
+				unsigned char id, void *buf, int size)
+{
+	return usb_control_msg(interface_to_usbdev(intf),
+		usb_sndctrlpipe(interface_to_usbdev(intf), 0),
+                USB_REQ_SET_REPORT, USB_TYPE_CLASS | USB_RECIP_INTERFACE,
+                (type << 8) + id, intf->altsetting[0].desc.bInterfaceNumber,
+		buf, size, 1000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void wacom_sys_irq(struct urb *urb)
@@ -167,6 +194,7 @@ static void wacom_close(struct input_dev *dev)
 		usb_autopm_put_interface(wacom->intf);
 }
 
+<<<<<<< HEAD
 /*
  * Static values for max X/Y and resolution of Pen interface is stored in
  * features. This mean physical size of active area can be computed.
@@ -236,6 +264,9 @@ static int wacom_parse_logical_collection(unsigned char *report,
  */
 static int wacom_parse_hid(struct usb_interface *intf,
 			   struct hid_descriptor *hid_desc,
+=======
+static int wacom_parse_hid(struct usb_interface *intf, struct hid_descriptor *hid_desc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   struct wacom_features *features)
 {
 	struct usb_device *dev = interface_to_usbdev(intf);
@@ -259,7 +290,11 @@ static int wacom_parse_hid(struct usb_interface *intf,
 			report,
 			hid_desc->wDescriptorLength,
 			5000); /* 5 secs */
+<<<<<<< HEAD
 	} while (result < 0 && limit++ < WAC_MSG_RETRIES);
+=======
+	} while (result < 0 && limit++ < 5);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* No need to parse the Descriptor. It isn't an error though */
 	if (result < 0)
@@ -291,10 +326,18 @@ static int wacom_parse_hid(struct usb_interface *intf,
 						if (features->type == TABLETPC2FG) {
 							/* need to reset back */
 							features->pktlen = WACOM_PKGLEN_TPC2FG;
+<<<<<<< HEAD
+=======
+							features->device_type = BTN_TOOL_DOUBLETAP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						}
 						if (features->type == BAMBOO_PT) {
 							/* need to reset back */
 							features->pktlen = WACOM_PKGLEN_BBTOUCH;
+<<<<<<< HEAD
+=======
+							features->device_type = BTN_TOOL_DOUBLETAP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 							features->x_phy =
 								get_unaligned_le16(&report[i + 5]);
 							features->x_max =
@@ -313,11 +356,26 @@ static int wacom_parse_hid(struct usb_interface *intf,
 						/* penabled only accepts exact bytes of data */
 						if (features->type == TABLETPC2FG)
 							features->pktlen = WACOM_PKGLEN_GRAPHIRE;
+<<<<<<< HEAD
+=======
+						if (features->type == BAMBOO_PT)
+							features->pktlen = WACOM_PKGLEN_BBFUN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						features->device_type = BTN_TOOL_PEN;
 						features->x_max =
 							get_unaligned_le16(&report[i + 3]);
 						i += 4;
 					}
+<<<<<<< HEAD
+=======
+				} else if (usage == WCM_DIGITIZER) {
+					/* max pressure isn't reported
+					features->pressure_max = (unsigned short)
+							(report[i+4] << 8  | report[i + 3]);
+					*/
+					features->pressure_max = 255;
+					i += 4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				}
 				break;
 
@@ -328,6 +386,10 @@ static int wacom_parse_hid(struct usb_interface *intf,
 						if (features->type == TABLETPC2FG) {
 							/* need to reset back */
 							features->pktlen = WACOM_PKGLEN_TPC2FG;
+<<<<<<< HEAD
+=======
+							features->device_type = BTN_TOOL_DOUBLETAP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 							features->y_max =
 								get_unaligned_le16(&report[i + 3]);
 							features->y_phy =
@@ -336,6 +398,10 @@ static int wacom_parse_hid(struct usb_interface *intf,
 						} else if (features->type == BAMBOO_PT) {
 							/* need to reset back */
 							features->pktlen = WACOM_PKGLEN_BBTOUCH;
+<<<<<<< HEAD
+=======
+							features->device_type = BTN_TOOL_DOUBLETAP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 							features->y_phy =
 								get_unaligned_le16(&report[i + 3]);
 							features->y_max =
@@ -352,6 +418,11 @@ static int wacom_parse_hid(struct usb_interface *intf,
 						/* penabled only accepts exact bytes of data */
 						if (features->type == TABLETPC2FG)
 							features->pktlen = WACOM_PKGLEN_GRAPHIRE;
+<<<<<<< HEAD
+=======
+						if (features->type == BAMBOO_PT)
+							features->pktlen = WACOM_PKGLEN_BBFUN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						features->device_type = BTN_TOOL_PEN;
 						features->y_max =
 							get_unaligned_le16(&report[i + 3]);
@@ -365,15 +436,19 @@ static int wacom_parse_hid(struct usb_interface *intf,
 				i++;
 				break;
 
+<<<<<<< HEAD
 			/*
 			 * Requiring Stylus Usage will ignore boot mouse
 			 * X/Y values and some cases of invalid Digitizer X/Y
 			 * values commonly reported.
 			 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			case HID_USAGE_STYLUS:
 				pen = 1;
 				i++;
 				break;
+<<<<<<< HEAD
 			}
 			break;
 
@@ -391,6 +466,22 @@ static int wacom_parse_hid(struct usb_interface *intf,
 				break;
 			}
 			break;
+=======
+
+			case HID_USAGE_UNDEFINED:
+				if (usage == WCM_DESKTOP && finger) /* capacity */
+					features->pressure_max =
+						get_unaligned_le16(&report[i + 3]);
+				i += 4;
+				break;
+			}
+			break;
+
+		case HID_COLLECTION:
+			/* reset UsagePage and Finger */
+			finger = usage = 0;
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -406,16 +497,25 @@ static int wacom_query_tablet_data(struct usb_interface *intf, struct wacom_feat
 	int limit = 0, report_id = 2;
 	int error = -ENOMEM;
 
+<<<<<<< HEAD
 	rep_data = kmalloc(4, GFP_KERNEL);
 	if (!rep_data)
 		return error;
 
 	/* ask to report tablet data if it is MT Tablet PC or
+=======
+	rep_data = kmalloc(2, GFP_KERNEL);
+	if (!rep_data)
+		return error;
+
+	/* ask to report tablet data if it is 2FGT Tablet PC or
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * not a Tablet PC */
 	if (features->type == TABLETPC2FG) {
 		do {
 			rep_data[0] = 3;
 			rep_data[1] = 4;
+<<<<<<< HEAD
 			rep_data[2] = 0;
 			rep_data[3] = 0;
 			report_id = 3;
@@ -439,6 +539,27 @@ static int wacom_query_tablet_data(struct usb_interface *intf, struct wacom_feat
 						WAC_HID_FEATURE_REPORT,
 						report_id, rep_data, 2, 1);
 		} while ((error < 0 || rep_data[1] != 2) && limit++ < WAC_MSG_RETRIES);
+=======
+			report_id = 3;
+			error = usb_set_report(intf, WAC_HID_FEATURE_REPORT,
+				report_id, rep_data, 2);
+			if (error >= 0)
+				error = usb_get_report(intf,
+					WAC_HID_FEATURE_REPORT, report_id,
+					rep_data, 3);
+		} while ((error < 0 || rep_data[1] != 4) && limit++ < 5);
+	} else if (features->type != TABLETPC) {
+		do {
+			rep_data[0] = 2;
+			rep_data[1] = 2;
+			error = usb_set_report(intf, WAC_HID_FEATURE_REPORT,
+				report_id, rep_data, 2);
+			if (error >= 0)
+				error = usb_get_report(intf,
+					WAC_HID_FEATURE_REPORT, report_id,
+					rep_data, 2);
+		} while ((error < 0 || rep_data[1] != 2) && limit++ < 5);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	kfree(rep_data);
@@ -460,6 +581,7 @@ static int wacom_retrieve_hid_descriptor(struct usb_interface *intf,
 	features->pressure_fuzz = 0;
 	features->distance_fuzz = 0;
 
+<<<<<<< HEAD
 	/*
 	 * The wireless device HID is basic and layout conflicts with
 	 * other tablets (monitor and touch interface can look like pen).
@@ -475,6 +597,8 @@ static int wacom_retrieve_hid_descriptor(struct usb_interface *intf,
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* only Tablet PCs and Bamboo P&T need to retrieve the info */
 	if ((features->type != TABLETPC) && (features->type != TABLETPC2FG) &&
 	    (features->type != BAMBOO_PT))
@@ -571,6 +695,7 @@ static void wacom_remove_shared_data(struct wacom_wac *wacom)
 	}
 }
 
+<<<<<<< HEAD
 static int wacom_led_control(struct wacom *wacom)
 {
 	unsigned char *buf;
@@ -989,6 +1114,8 @@ static void wacom_wireless_work(struct work_struct *work)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int wacom_probe(struct usb_interface *intf, const struct usb_device_id *id)
 {
 	struct usb_device *dev = interface_to_usbdev(intf);
@@ -996,14 +1123,26 @@ static int wacom_probe(struct usb_interface *intf, const struct usb_device_id *i
 	struct wacom *wacom;
 	struct wacom_wac *wacom_wac;
 	struct wacom_features *features;
+<<<<<<< HEAD
+=======
+	struct input_dev *input_dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int error;
 
 	if (!id->driver_info)
 		return -EINVAL;
 
 	wacom = kzalloc(sizeof(struct wacom), GFP_KERNEL);
+<<<<<<< HEAD
 	if (!wacom)
 		return -ENOMEM;
+=======
+	input_dev = input_allocate_device();
+	if (!wacom || !input_dev) {
+		error = -ENOMEM;
+		goto fail1;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wacom_wac = &wacom->wacom_wac;
 	wacom_wac->features = *((struct wacom_features *)id->driver_info);
@@ -1029,10 +1168,18 @@ static int wacom_probe(struct usb_interface *intf, const struct usb_device_id *i
 	wacom->usbdev = dev;
 	wacom->intf = intf;
 	mutex_init(&wacom->lock);
+<<<<<<< HEAD
 	INIT_WORK(&wacom->work, wacom_wireless_work);
 	usb_make_path(dev, wacom->phys, sizeof(wacom->phys));
 	strlcat(wacom->phys, "/input0", sizeof(wacom->phys));
 
+=======
+	usb_make_path(dev, wacom->phys, sizeof(wacom->phys));
+	strlcat(wacom->phys, "/input0", sizeof(wacom->phys));
+
+	wacom_wac->input = input_dev;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	endpoint = &intf->cur_altsetting->endpoint[0].desc;
 
 	/* Retrieve the physical and logical size for OEM devices */
@@ -1056,6 +1203,18 @@ static int wacom_probe(struct usb_interface *intf, const struct usb_device_id *i
 			goto fail3;
 	}
 
+<<<<<<< HEAD
+=======
+	input_dev->name = wacom_wac->name;
+	input_dev->dev.parent = &intf->dev;
+	input_dev->open = wacom_open;
+	input_dev->close = wacom_close;
+	usb_to_input_id(dev, &input_dev->id);
+	input_set_drvdata(input_dev, wacom);
+
+	wacom_setup_input_capabilities(input_dev, wacom_wac);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usb_fill_int_urb(wacom->irq, dev,
 			 usb_rcvintpipe(dev, endpoint->bEndpointAddress),
 			 wacom_wac->data, features->pktlen,
@@ -1063,6 +1222,7 @@ static int wacom_probe(struct usb_interface *intf, const struct usb_device_id *i
 	wacom->irq->transfer_dma = wacom->data_dma;
 	wacom->irq->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
 
+<<<<<<< HEAD
 	error = wacom_initialize_leds(wacom);
 	if (error)
 		goto fail4;
@@ -1077,10 +1237,17 @@ static int wacom_probe(struct usb_interface *intf, const struct usb_device_id *i
 			goto fail6;
 	}
 
+=======
+	error = input_register_device(input_dev);
+	if (error)
+		goto fail4;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Note that if query fails it is not a hard failure */
 	wacom_query_tablet_data(intf, features);
 
 	usb_set_intfdata(intf, wacom);
+<<<<<<< HEAD
 
 	if (features->quirks & WACOM_QUIRK_MONITOR) {
 		if (usb_submit_urb(wacom->irq, GFP_KERNEL))
@@ -1095,6 +1262,15 @@ static int wacom_probe(struct usb_interface *intf, const struct usb_device_id *i
  fail3:	usb_free_urb(wacom->irq);
  fail2:	usb_free_coherent(dev, WACOM_PKGLEN_MAX, wacom_wac->data, wacom->data_dma);
  fail1:	kfree(wacom);
+=======
+	return 0;
+
+ fail4:	wacom_remove_shared_data(wacom_wac);
+ fail3:	usb_free_urb(wacom->irq);
+ fail2:	usb_free_coherent(dev, WACOM_PKGLEN_MAX, wacom_wac->data, wacom->data_dma);
+ fail1:	input_free_device(input_dev);
+	kfree(wacom);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error;
 }
 
@@ -1105,11 +1281,15 @@ static void wacom_disconnect(struct usb_interface *intf)
 	usb_set_intfdata(intf, NULL);
 
 	usb_kill_urb(wacom->irq);
+<<<<<<< HEAD
 	cancel_work_sync(&wacom->work);
 	if (wacom->wacom_wac.input)
 		input_unregister_device(wacom->wacom_wac.input);
 	wacom_destroy_battery(wacom);
 	wacom_destroy_leds(wacom);
+=======
+	input_unregister_device(wacom->wacom_wac.input);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usb_free_urb(wacom->irq);
 	usb_free_coherent(interface_to_usbdev(intf), WACOM_PKGLEN_MAX,
 			wacom->wacom_wac.data, wacom->data_dma);
@@ -1132,17 +1312,29 @@ static int wacom_resume(struct usb_interface *intf)
 {
 	struct wacom *wacom = usb_get_intfdata(intf);
 	struct wacom_features *features = &wacom->wacom_wac.features;
+<<<<<<< HEAD
 	int rv = 0;
+=======
+	int rv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&wacom->lock);
 
 	/* switch to wacom mode first */
 	wacom_query_tablet_data(intf, features);
+<<<<<<< HEAD
 	wacom_led_control(wacom);
 
 	if ((wacom->open || features->quirks & WACOM_QUIRK_MONITOR)
 	     && usb_submit_urb(wacom->irq, GFP_NOIO) < 0)
 		rv = -EIO;
+=======
+
+	if (wacom->open)
+		rv = usb_submit_urb(wacom->irq, GFP_NOIO);
+	else
+		rv = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_unlock(&wacom->lock);
 
@@ -1165,4 +1357,25 @@ static struct usb_driver wacom_driver = {
 	.supports_autosuspend = 1,
 };
 
+<<<<<<< HEAD
 module_usb_driver(wacom_driver);
+=======
+static int __init wacom_init(void)
+{
+	int result;
+
+	result = usb_register(&wacom_driver);
+	if (result == 0)
+		printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_VERSION ":"
+		       DRIVER_DESC "\n");
+	return result;
+}
+
+static void __exit wacom_exit(void)
+{
+	usb_deregister(&wacom_driver);
+}
+
+module_init(wacom_init);
+module_exit(wacom_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

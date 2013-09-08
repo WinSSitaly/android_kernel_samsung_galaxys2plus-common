@@ -20,8 +20,11 @@
 #ifndef __ASM_ARM_HARDWARE_L2X0_H
 #define __ASM_ARM_HARDWARE_L2X0_H
 
+<<<<<<< HEAD
 #include <linux/errno.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define L2X0_CACHE_ID			0x000
 #define L2X0_CACHE_TYPE			0x004
 #define L2X0_CTRL			0x100
@@ -47,6 +50,7 @@
 #define L2X0_CLEAN_INV_LINE_PA		0x7F0
 #define L2X0_CLEAN_INV_LINE_IDX		0x7F8
 #define L2X0_CLEAN_INV_WAY		0x7FC
+<<<<<<< HEAD
 /*
  * The lockdown registers repeat 8 times for L310, the L210 has only one
  * D and one I lockdown register at 0x0900 and 0x0904.
@@ -56,6 +60,10 @@
 #define L2X0_LOCKDOWN_STRIDE		0x08
 #define L2X0_ADDR_FILTER_START		0xC00
 #define L2X0_ADDR_FILTER_END		0xC04
+=======
+#define L2X0_LOCKDOWN_WAY_D		0x900
+#define L2X0_LOCKDOWN_WAY_I		0x904
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define L2X0_TEST_OPERATION		0xF00
 #define L2X0_LINE_DATA			0xF10
 #define L2X0_LINE_TAG			0xF30
@@ -66,6 +74,7 @@
 #define   L2X0_STNDBY_MODE_EN		(1 << 0)
 
 /* Registers shifts and masks */
+<<<<<<< HEAD
 #define L2X0_CACHE_ID_PART_MASK		(0xf << 6)
 #define L2X0_CACHE_ID_PART_L210		(1 << 6)
 #define L2X0_CACHE_ID_PART_L310		(3 << 6)
@@ -86,6 +95,14 @@
 #define L2X0_AUX_CTRL_TAG_LATENCY_MASK		(0x7 << 6)
 #define L2X0_AUX_CTRL_DIRTY_LATENCY_SHIFT	9
 #define L2X0_AUX_CTRL_DIRTY_LATENCY_MASK	(0x7 << 9)
+=======
+#define L2X0_CACHE_ID_REV_MASK		(0x3f)
+#define L2X0_CACHE_ID_PART_MASK		(0xf << 6)
+#define L2X0_CACHE_ID_PART_L210		(1 << 6)
+#define L2X0_CACHE_ID_PART_L310		(3 << 6)
+
+#define L2X0_AUX_CTRL_MASK			0xc0000fff
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define L2X0_AUX_CTRL_ASSOCIATIVITY_SHIFT	16
 #define L2X0_AUX_CTRL_WAY_SIZE_SHIFT		17
 #define L2X0_AUX_CTRL_WAY_SIZE_MASK		(0x7 << 17)
@@ -96,6 +113,7 @@
 #define L2X0_AUX_CTRL_INSTR_PREFETCH_SHIFT	29
 #define L2X0_AUX_CTRL_EARLY_BRESP_SHIFT		30
 
+<<<<<<< HEAD
 #define L2X0_LATENCY_CTRL_SETUP_SHIFT	0
 #define L2X0_LATENCY_CTRL_RD_SHIFT	4
 #define L2X0_LATENCY_CTRL_WR_SHIFT	8
@@ -132,4 +150,12 @@ extern struct l2x0_regs l2x0_saved_regs;
 
 #endif /* __ASSEMBLY__ */
 
+=======
+#define REV_PL310_R2P0				4
+
+#ifndef __ASSEMBLY__
+extern void __init l2x0_init(void __iomem *base, __u32 aux_val, __u32 aux_mask);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

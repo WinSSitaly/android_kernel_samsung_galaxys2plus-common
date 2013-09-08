@@ -21,13 +21,19 @@
 #include <linux/suspend.h>
 #include <linux/fsl_devices.h>
 #include <linux/of_platform.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/reg.h>
 #include <asm/io.h>
 #include <asm/time.h>
 #include <asm/mpc6xx.h>
+<<<<<<< HEAD
 #include <asm/switch_to.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <sysdev/fsl_soc.h>
 

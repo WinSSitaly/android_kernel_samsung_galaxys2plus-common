@@ -12,9 +12,14 @@
  */
 #include <linux/init.h>
 #include <linux/ioport.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/screen_info.h>
 #include <linux/memblock.h>
+=======
+#include <linux/module.h>
+#include <linux/screen_info.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bootmem.h>
 #include <linux/initrd.h>
 #include <linux/root_dev.h>
@@ -31,6 +36,10 @@
 #include <asm/sections.h>
 #include <asm/setup.h>
 #include <asm/smp-ops.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/prom.h>
 
 struct cpuinfo_mips cpu_data[NR_CPUS] __read_mostly;
@@ -121,9 +130,12 @@ static void __init print_memory_map(void)
 		case BOOT_MEM_RAM:
 			printk(KERN_CONT "(usable)\n");
 			break;
+<<<<<<< HEAD
 		case BOOT_MEM_INIT_RAM:
 			printk(KERN_CONT "(usable after init)\n");
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case BOOT_MEM_ROM_DATA:
 			printk(KERN_CONT "(ROM data)\n");
 			break;
@@ -355,7 +367,11 @@ static void __init bootmem_init(void)
 			continue;
 #endif
 
+<<<<<<< HEAD
 		memblock_add_node(PFN_PHYS(start), PFN_PHYS(end - start), 0);
+=======
+		add_active_range(0, start, end);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -364,6 +380,7 @@ static void __init bootmem_init(void)
 	for (i = 0; i < boot_mem_map.nr_map; i++) {
 		unsigned long start, end, size;
 
+<<<<<<< HEAD
 		start = PFN_UP(boot_mem_map.map[i].addr);
 		end   = PFN_DOWN(boot_mem_map.map[i].addr
 				    + boot_mem_map.map[i].size);
@@ -382,6 +399,17 @@ static void __init bootmem_init(void)
 			continue;
 		}
 
+=======
+		/*
+		 * Reserve usable memory.
+		 */
+		if (boot_mem_map.map[i].type != BOOT_MEM_RAM)
+			continue;
+
+		start = PFN_UP(boot_mem_map.map[i].addr);
+		end   = PFN_DOWN(boot_mem_map.map[i].addr
+				    + boot_mem_map.map[i].size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * We are rounding up the start address of usable memory
 		 * and at the end of the usable range downwards.
@@ -467,13 +495,17 @@ early_param("mem", early_parse_mem);
 
 static void __init arch_mem_init(char **cmdline_p)
 {
+<<<<<<< HEAD
 	phys_t init_mem, init_end, init_size;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	extern void plat_mem_setup(void);
 
 	/* call board setup routine */
 	plat_mem_setup();
 
+<<<<<<< HEAD
 	init_mem = PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT;
 	init_end = PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT;
 	init_size = init_end - init_mem;
@@ -494,6 +526,8 @@ static void __init arch_mem_init(char **cmdline_p)
 					  BOOT_MEM_INIT_RAM);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pr_info("Determined physical RAM map:\n");
 	print_memory_map();
 
@@ -557,7 +591,10 @@ static void __init resource_init(void)
 		res = alloc_bootmem(sizeof(struct resource));
 		switch (boot_mem_map.map[i].type) {
 		case BOOT_MEM_RAM:
+<<<<<<< HEAD
 		case BOOT_MEM_INIT_RAM:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case BOOT_MEM_ROM_DATA:
 			res->name = "System RAM";
 			break;

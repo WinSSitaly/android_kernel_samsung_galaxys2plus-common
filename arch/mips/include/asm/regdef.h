@@ -6,8 +6,11 @@
  * Copyright (C) 1985 MIPS Computer Systems, Inc.
  * Copyright (C) 1994, 95, 99, 2003 by Ralf Baechle
  * Copyright (C) 1990 - 1992, 1999 Silicon Graphics, Inc.
+<<<<<<< HEAD
  * Copyright (C) 2011 Wind River Systems,
  *   written by Ralf Baechle <ralf@linux-mips.org>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 #ifndef _ASM_REGDEF_H
 #define _ASM_REGDEF_H
@@ -32,6 +35,7 @@
 #define t2      $10
 #define t3      $11
 #define t4      $12
+<<<<<<< HEAD
 #define ta0	$12
 #define t5      $13
 #define ta1	$13
@@ -39,6 +43,11 @@
 #define ta2	$14
 #define t7      $15
 #define ta3	$15
+=======
+#define t5      $13
+#define t6      $14
+#define t7      $15
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define s0      $16     /* callee saved */
 #define s1      $17
 #define s2      $18

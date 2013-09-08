@@ -4,10 +4,15 @@
 
 #include <linux/device.h>
 #include <linux/string.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/pm_qos.h>
 #include <linux/pm_runtime.h>
 #include <linux/atomic.h>
+=======
+#include <linux/pm_runtime.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/jiffies.h>
 #include "power.h"
 
@@ -118,14 +123,21 @@ static ssize_t control_store(struct device * dev, struct device_attribute *attr,
 	cp = memchr(buf, '\n', n);
 	if (cp)
 		len = cp - buf;
+<<<<<<< HEAD
 	device_lock(dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (len == sizeof ctrl_auto - 1 && strncmp(buf, ctrl_auto, len) == 0)
 		pm_runtime_allow(dev);
 	else if (len == sizeof ctrl_on - 1 && strncmp(buf, ctrl_on, len) == 0)
 		pm_runtime_forbid(dev);
 	else
+<<<<<<< HEAD
 		n = -EINVAL;
 	device_unlock(dev);
+=======
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return n;
 }
 
@@ -209,15 +221,20 @@ static ssize_t autosuspend_delay_ms_store(struct device *dev,
 	if (strict_strtol(buf, 10, &delay) != 0 || delay != (int) delay)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	device_lock(dev);
 	pm_runtime_set_autosuspend_delay(dev, delay);
 	device_unlock(dev);
+=======
+	pm_runtime_set_autosuspend_delay(dev, delay);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return n;
 }
 
 static DEVICE_ATTR(autosuspend_delay_ms, 0644, autosuspend_delay_ms_show,
 		autosuspend_delay_ms_store);
 
+<<<<<<< HEAD
 static ssize_t pm_qos_latency_show(struct device *dev,
 				   struct device_attribute *attr, char *buf)
 {
@@ -243,6 +260,8 @@ static ssize_t pm_qos_latency_store(struct device *dev,
 
 static DEVICE_ATTR(pm_qos_resume_latency_us, 0644,
 		   pm_qos_latency_show, pm_qos_latency_store);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_PM_RUNTIME */
 
 #ifdef CONFIG_PM_SLEEP
@@ -516,6 +535,7 @@ static struct attribute_group pm_runtime_attr_group = {
 	.attrs	= runtime_attrs,
 };
 
+<<<<<<< HEAD
 static struct attribute *pm_qos_attrs[] = {
 #ifdef CONFIG_PM_RUNTIME
 	&dev_attr_pm_qos_resume_latency_us.attr,
@@ -527,6 +547,8 @@ static struct attribute_group pm_qos_attr_group = {
 	.attrs	= pm_qos_attrs,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int dpm_sysfs_add(struct device *dev)
 {
 	int rc;
@@ -567,6 +589,7 @@ void wakeup_sysfs_remove(struct device *dev)
 	sysfs_unmerge_group(&dev->kobj, &pm_wakeup_attr_group);
 }
 
+<<<<<<< HEAD
 int pm_qos_sysfs_add(struct device *dev)
 {
 	return sysfs_merge_group(&dev->kobj, &pm_qos_attr_group);
@@ -577,6 +600,8 @@ void pm_qos_sysfs_remove(struct device *dev)
 	sysfs_unmerge_group(&dev->kobj, &pm_qos_attr_group);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void rpm_sysfs_remove(struct device *dev)
 {
 	sysfs_unmerge_group(&dev->kobj, &pm_runtime_attr_group);

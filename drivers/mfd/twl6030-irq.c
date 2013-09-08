@@ -32,15 +32,21 @@
  */
 
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/interrupt.h>
 #include <linux/irq.h>
 #include <linux/kthread.h>
 #include <linux/i2c/twl.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/suspend.h>
 #include <linux/of.h>
 #include <linux/irqdomain.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "twl-core.h"
 
@@ -53,8 +59,13 @@
  *
  * We set up IRQs starting at a platform-specified base. An interrupt map table,
  * specifies mapping between interrupt number and the associated module.
+<<<<<<< HEAD
  */
 #define TWL6030_NR_IRQS    20
+=======
+ *
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int twl6030_interrupt_mapping[24] = {
 	PWR_INTR_OFFSET,	/* Bit 0	PWRON			*/
@@ -87,6 +98,7 @@ static int twl6030_interrupt_mapping[24] = {
 /*----------------------------------------------------------------------*/
 
 static unsigned twl6030_irq_base;
+<<<<<<< HEAD
 static int twl_irq;
 static bool twl_irq_wake_enabled;
 
@@ -129,6 +141,10 @@ static int twl6030_irq_pm_notifier(struct notifier_block *notifier,
 static struct notifier_block twl6030_irq_pm_notifier_block = {
 	.notifier_call = twl6030_irq_pm_notifier,
 };
+=======
+
+static struct completion irq_event;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * This thread processes interrupts reported by the Primary Interrupt Handler.
@@ -140,6 +156,11 @@ static int twl6030_irq_thread(void *data)
 	static const unsigned max_i2c_errors = 100;
 	int ret;
 
+<<<<<<< HEAD
+=======
+	current->flags |= PF_NOFREEZE;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (!kthread_should_stop()) {
 		int i;
 		union {
@@ -238,6 +259,7 @@ static inline void activate_irq(int irq)
 #endif
 }
 
+<<<<<<< HEAD
 static int twl6030_irq_set_wake(struct irq_data *d, unsigned int on)
 {
 	if (on)
@@ -248,6 +270,13 @@ static int twl6030_irq_set_wake(struct irq_data *d, unsigned int on)
 	return 0;
 }
 
+=======
+/*----------------------------------------------------------------------*/
+
+static unsigned twl6030_irq_next;
+
+/*----------------------------------------------------------------------*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int twl6030_interrupt_unmask(u8 bit_mask, u8 offset)
 {
 	int ret;
@@ -317,8 +346,12 @@ int twl6030_mmc_card_detect_config(void)
 									ret);
 		return ret;
 	}
+<<<<<<< HEAD
 
 	return twl6030_irq_base + MMCDETECT_INTR_OFFSET;
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(twl6030_mmc_card_detect_config);
 
@@ -347,6 +380,7 @@ int twl6030_mmc_card_detect(struct device *dev, int slot)
 }
 EXPORT_SYMBOL(twl6030_mmc_card_detect);
 
+<<<<<<< HEAD
 int twl6030_init_irq(struct device *dev, int irq_num)
 {
 	struct			device_node *node = dev->of_node;
@@ -385,16 +419,45 @@ int twl6030_init_irq(struct device *dev, int irq_num)
 
 	/*
 	 * install an irq handler for each of the modules;
+=======
+int twl6030_init_irq(int irq_num, unsigned irq_base, unsigned irq_end)
+{
+
+	int	status = 0;
+	int	i;
+	struct task_struct	*task;
+	int ret;
+	u8 mask[4];
+
+	static struct irq_chip	twl6030_irq_chip;
+	mask[1] = 0xFF;
+	mask[2] = 0xFF;
+	mask[3] = 0xFF;
+	ret = twl_i2c_write(TWL_MODULE_PIH, &mask[0],
+			REG_INT_MSK_LINE_A, 3); /* MASK ALL INT LINES */
+	ret = twl_i2c_write(TWL_MODULE_PIH, &mask[0],
+			REG_INT_MSK_STS_A, 3); /* MASK ALL INT STS */
+	ret = twl_i2c_write(TWL_MODULE_PIH, &mask[0],
+			REG_INT_STS_A, 3); /* clear INT_STS_A,B,C */
+
+	twl6030_irq_base = irq_base;
+
+	/* install an irq handler for each of the modules;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * clone dummy irq_chip since PIH can't *do* anything
 	 */
 	twl6030_irq_chip = dummy_irq_chip;
 	twl6030_irq_chip.name = "twl6030";
 	twl6030_irq_chip.irq_set_type = NULL;
+<<<<<<< HEAD
 	twl6030_irq_chip.irq_set_wake = twl6030_irq_set_wake;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = irq_base; i < irq_end; i++) {
 		irq_set_chip_and_handler(i, &twl6030_irq_chip,
 					 handle_simple_irq);
+<<<<<<< HEAD
 		irq_set_chip_data(i, (void *)irq_num);
 		activate_irq(i);
 	}
@@ -415,10 +478,25 @@ int twl6030_init_irq(struct device *dev, int irq_num)
 	task = kthread_run(twl6030_irq_thread, (void *)irq_num, "twl6030-irq");
 	if (IS_ERR(task)) {
 		dev_err(dev, "could not create irq %d thread!\n", irq_num);
+=======
+		activate_irq(i);
+	}
+
+	twl6030_irq_next = i;
+	pr_info("twl6030: %s (irq %d) chaining IRQs %d..%d\n", "PIH",
+			irq_num, irq_base, twl6030_irq_next - 1);
+
+	/* install an irq handler to demultiplex the TWL6030 interrupt */
+	init_completion(&irq_event);
+	task = kthread_run(twl6030_irq_thread, (void *)irq_num, "twl6030-irq");
+	if (IS_ERR(task)) {
+		pr_err("twl6030: could not create irq %d thread!\n", irq_num);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		status = PTR_ERR(task);
 		goto fail_kthread;
 	}
 
+<<<<<<< HEAD
 	twl_irq = irq_num;
 	register_pm_notifier(&twl6030_irq_pm_notifier_block);
 	return irq_base;
@@ -430,12 +508,30 @@ fail_irq:
 	for (i = irq_base; i < irq_end; i++)
 		irq_set_chip_and_handler(i, NULL, NULL);
 
+=======
+	status = request_irq(irq_num, handle_twl6030_pih, IRQF_DISABLED,
+				"TWL6030-PIH", &irq_event);
+	if (status < 0) {
+		pr_err("twl6030: could not claim irq%d: %d\n", irq_num, status);
+		goto fail_irq;
+	}
+	return status;
+fail_irq:
+	free_irq(irq_num, &irq_event);
+
+fail_kthread:
+	for (i = irq_base; i < irq_end; i++)
+		irq_set_chip_and_handler(i, NULL, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return status;
 }
 
 int twl6030_exit_irq(void)
 {
+<<<<<<< HEAD
 	unregister_pm_notifier(&twl6030_irq_pm_notifier_block);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (twl6030_irq_base) {
 		pr_err("twl6030: can't yet clean up IRQs?\n");

@@ -41,6 +41,10 @@
  * USA.
  */
 
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
@@ -71,9 +75,12 @@ static void _firmware_event_work(struct work_struct *work);
 
 static u8 _scsih_check_for_pending_tm(struct MPT2SAS_ADAPTER *ioc, u16 smid);
 
+<<<<<<< HEAD
 static void _scsih_scan_start(struct Scsi_Host *shost);
 static int _scsih_scan_finished(struct Scsi_Host *shost, unsigned long time);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* global parameters */
 LIST_HEAD(mpt2sas_ioc_list);
 
@@ -82,7 +89,10 @@ static u8 scsi_io_cb_idx = -1;
 static u8 tm_cb_idx = -1;
 static u8 ctl_cb_idx = -1;
 static u8 base_cb_idx = -1;
+<<<<<<< HEAD
 static u8 port_enable_cb_idx = -1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u8 transport_cb_idx = -1;
 static u8 scsih_cb_idx = -1;
 static u8 config_cb_idx = -1;
@@ -97,16 +107,20 @@ static u32 logging_level;
 MODULE_PARM_DESC(logging_level, " bits for enabling additional logging info "
     "(default=0)");
 
+<<<<<<< HEAD
 static ushort max_sectors = 0xFFFF;
 module_param(max_sectors, ushort, 0);
 MODULE_PARM_DESC(max_sectors, "max sectors, range 64 to 32767  default=32767");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* scsi-mid layer global parmeter is max_report_luns, which is 511 */
 #define MPT2SAS_MAX_LUN (16895)
 static int max_lun = MPT2SAS_MAX_LUN;
 module_param(max_lun, int, 0);
 MODULE_PARM_DESC(max_lun, " max lun, default=16895 ");
 
+<<<<<<< HEAD
 /* diag_buffer_enable is bitwise
  * bit 0 set = TRACE
  * bit 1 set = SNAPSHOT
@@ -119,6 +133,8 @@ module_param(diag_buffer_enable, int, 0);
 MODULE_PARM_DESC(diag_buffer_enable, " post diag buffers "
 	"(TRACE=1/SNAPSHOT=2/EXTENDED=4/default=0)");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct sense_info - common structure for obtaining sense keys
  * @skey: sense key
@@ -133,8 +149,13 @@ struct sense_info {
 
 
 #define MPT2SAS_TURN_ON_FAULT_LED (0xFFFC)
+<<<<<<< HEAD
 #define MPT2SAS_PORT_ENABLE_COMPLETE (0xFFFD)
 #define MPT2SAS_REMOVE_UNRESPONDING_DEVICES (0xFFFF)
+=======
+#define MPT2SAS_RESCAN_AFTER_HOST_RESET (0xFFFF)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct fw_event_work - firmware event struct
  * @list: link list framework
@@ -388,11 +409,15 @@ _scsih_get_sas_address(struct MPT2SAS_ADAPTER *ioc, u16 handle,
 	Mpi2SasDevicePage0_t sas_device_pg0;
 	Mpi2ConfigReply_t mpi_reply;
 	u32 ioc_status;
+<<<<<<< HEAD
 	*sas_address = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (handle <= ioc->sas_hba.num_phys) {
 		*sas_address = ioc->sas_hba.sas_address;
 		return 0;
+<<<<<<< HEAD
 	}
 
 	if ((mpt2sas_config_get_sas_device_pg0(ioc, &mpi_reply, &sas_device_pg0,
@@ -416,6 +441,29 @@ _scsih_get_sas_address(struct MPT2SAS_ADAPTER *ioc, u16 handle,
 	    "failure at %s:%d/%s()!\n", ioc->name, handle, ioc_status,
 	     __FILE__, __LINE__, __func__);
 	return -EIO;
+=======
+	} else
+		*sas_address = 0;
+
+	if ((mpt2sas_config_get_sas_device_pg0(ioc, &mpi_reply, &sas_device_pg0,
+	    MPI2_SAS_DEVICE_PGAD_FORM_HANDLE, handle))) {
+		printk(MPT2SAS_ERR_FMT "failure at %s:%d/%s()!\n",
+		    ioc->name, __FILE__, __LINE__, __func__);
+		return -ENXIO;
+	}
+
+	ioc_status = le16_to_cpu(mpi_reply.IOCStatus) &
+	    MPI2_IOCSTATUS_MASK;
+	if (ioc_status != MPI2_IOCSTATUS_SUCCESS) {
+		printk(MPT2SAS_ERR_FMT "handle(0x%04x), ioc_status(0x%04x)"
+		    "\nfailure at %s:%d/%s()!\n", ioc->name, handle, ioc_status,
+		     __FILE__, __LINE__, __func__);
+		return -EIO;
+	}
+
+	*sas_address = le64_to_cpu(sas_device_pg0.SASAddress);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -443,11 +491,15 @@ _scsih_determine_boot_device(struct MPT2SAS_ADAPTER *ioc,
 	u16 slot;
 
 	 /* only process this function when driver loads */
+<<<<<<< HEAD
 	if (!ioc->is_driver_loading)
 		return;
 
 	 /* no Bios, return immediately */
 	if (!ioc->bios_pg3.BiosVersion)
+=======
+	if (!ioc->wait_for_port_enable_to_complete)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	if (!is_raid) {
@@ -610,6 +662,7 @@ _scsih_sas_device_add(struct MPT2SAS_ADAPTER *ioc,
 	spin_unlock_irqrestore(&ioc->sas_device_lock, flags);
 
 	if (!mpt2sas_transport_port_add(ioc, sas_device->handle,
+<<<<<<< HEAD
 	     sas_device->sas_address_parent)) {
 		_scsih_sas_device_remove(ioc, sas_device);
 	} else if (!sas_device->starget) {
@@ -623,6 +676,10 @@ _scsih_sas_device_add(struct MPT2SAS_ADAPTER *ioc,
 			sas_device->sas_address_parent);
 		_scsih_sas_device_remove(ioc, sas_device);
 	}
+=======
+	     sas_device->sas_address_parent))
+		_scsih_sas_device_remove(ioc, sas_device);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1434,10 +1491,13 @@ _scsih_slave_destroy(struct scsi_device *sdev)
 {
 	struct MPT2SAS_TARGET *sas_target_priv_data;
 	struct scsi_target *starget;
+<<<<<<< HEAD
 	struct Scsi_Host *shost;
 	struct MPT2SAS_ADAPTER *ioc;
 	struct _sas_device *sas_device;
 	unsigned long flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!sdev->hostdata)
 		return;
@@ -1445,6 +1505,7 @@ _scsih_slave_destroy(struct scsi_device *sdev)
 	starget = scsi_target(sdev);
 	sas_target_priv_data = starget->hostdata;
 	sas_target_priv_data->num_luns--;
+<<<<<<< HEAD
 
 	shost = dev_to_shost(&starget->dev);
 	ioc = shost_priv(shost);
@@ -1458,6 +1519,8 @@ _scsih_slave_destroy(struct scsi_device *sdev)
 		spin_unlock_irqrestore(&ioc->sas_device_lock, flags);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(sdev->hostdata);
 	sdev->hostdata = NULL;
 }
@@ -1649,10 +1712,15 @@ _scsih_set_level(struct scsi_device *sdev, struct _raid_device *raid_device)
  * _scsih_get_volume_capabilities - volume capabilities
  * @ioc: per adapter object
  * @sas_device: the raid_device object
+<<<<<<< HEAD
  *
  * Returns 0 for success, else 1
  */
 static int
+=======
+ */
+static void
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 _scsih_get_volume_capabilities(struct MPT2SAS_ADAPTER *ioc,
     struct _raid_device *raid_device)
 {
@@ -1665,10 +1733,16 @@ _scsih_get_volume_capabilities(struct MPT2SAS_ADAPTER *ioc,
 
 	if ((mpt2sas_config_get_number_pds(ioc, raid_device->handle,
 	    &num_pds)) || !num_pds) {
+<<<<<<< HEAD
 		dfailprintk(ioc, printk(MPT2SAS_WARN_FMT
 		    "failure at %s:%d/%s()!\n", ioc->name, __FILE__, __LINE__,
 		    __func__));
 		return 1;
+=======
+		printk(MPT2SAS_ERR_FMT "failure at %s:%d/%s()!\n",
+		    ioc->name, __FILE__, __LINE__, __func__);
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	raid_device->num_pds = num_pds;
@@ -1676,19 +1750,32 @@ _scsih_get_volume_capabilities(struct MPT2SAS_ADAPTER *ioc,
 	    sizeof(Mpi2RaidVol0PhysDisk_t));
 	vol_pg0 = kzalloc(sz, GFP_KERNEL);
 	if (!vol_pg0) {
+<<<<<<< HEAD
 		dfailprintk(ioc, printk(MPT2SAS_WARN_FMT
 		    "failure at %s:%d/%s()!\n", ioc->name, __FILE__, __LINE__,
 		    __func__));
 		return 1;
+=======
+		printk(MPT2SAS_ERR_FMT "failure at %s:%d/%s()!\n",
+		    ioc->name, __FILE__, __LINE__, __func__);
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if ((mpt2sas_config_get_raid_volume_pg0(ioc, &mpi_reply, vol_pg0,
 	     MPI2_RAID_VOLUME_PGAD_FORM_HANDLE, raid_device->handle, sz))) {
+<<<<<<< HEAD
 		dfailprintk(ioc, printk(MPT2SAS_WARN_FMT
 		    "failure at %s:%d/%s()!\n", ioc->name, __FILE__, __LINE__,
 		    __func__));
 		kfree(vol_pg0);
 		return 1;
+=======
+		printk(MPT2SAS_ERR_FMT "failure at %s:%d/%s()!\n",
+		    ioc->name, __FILE__, __LINE__, __func__);
+		kfree(vol_pg0);
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	raid_device->volume_type = vol_pg0->VolumeType;
@@ -1708,7 +1795,10 @@ _scsih_get_volume_capabilities(struct MPT2SAS_ADAPTER *ioc,
 	}
 
 	kfree(vol_pg0);
+<<<<<<< HEAD
 	return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 /**
  * _scsih_disable_ddio - Disable direct I/O for all the volumes
@@ -1780,9 +1870,17 @@ _scsih_init_warpdrive_properties(struct MPT2SAS_ADAPTER *ioc,
 	Mpi2ConfigReply_t mpi_reply;
 	u16 sz;
 	u8 num_pds, count;
+<<<<<<< HEAD
 	unsigned long stripe_sz, block_sz;
 	u8 stripe_exp, block_exp;
 	u64 dev_max_lba;
+=======
+	u64 mb = 1024 * 1024;
+	u64 tb_2 = 2 * mb * mb;
+	u64 capacity;
+	u32 stripe_sz;
+	u8 i, stripe_exp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!ioc->is_warpdrive)
 		return;
@@ -1846,6 +1944,7 @@ _scsih_init_warpdrive_properties(struct MPT2SAS_ADAPTER *ioc,
 			    vol_pg0->PhysDisk[count].PhysDiskNum);
 			goto out_error;
 		}
+<<<<<<< HEAD
 		/* Disable direct I/O if member drive lba exceeds 4 bytes */
 		dev_max_lba = le64_to_cpu(pd_pg0.DeviceMaxLBA);
 		if (dev_max_lba >> 32) {
@@ -1858,24 +1957,39 @@ _scsih_init_warpdrive_properties(struct MPT2SAS_ADAPTER *ioc,
 			goto out_error;
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		raid_device->pd_handle[count] = le16_to_cpu(pd_pg0.DevHandle);
 	}
 
 	/*
 	 * Assumption for WD: Direct I/O is not supported if the volume is
+<<<<<<< HEAD
 	 * not RAID0
 	 */
 	if (raid_device->volume_type != MPI2_RAID_VOL_TYPE_RAID0) {
+=======
+	 * not RAID0, if the stripe size is not 64KB, if the block size is
+	 * not 512 and if the volume size is >2TB
+	 */
+	if (raid_device->volume_type != MPI2_RAID_VOL_TYPE_RAID0 ||
+	    le16_to_cpu(vol_pg0->BlockSize) != 512) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(MPT2SAS_INFO_FMT "WarpDrive : Direct IO is disabled "
 		    "for the drive with handle(0x%04x): type=%d, "
 		    "s_sz=%uK, blk_size=%u\n", ioc->name,
 		    raid_device->handle, raid_device->volume_type,
+<<<<<<< HEAD
 		    (le32_to_cpu(vol_pg0->StripeSize) *
 		    le16_to_cpu(vol_pg0->BlockSize)) / 1024,
+=======
+		    le32_to_cpu(vol_pg0->StripeSize)/2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    le16_to_cpu(vol_pg0->BlockSize));
 		goto out_error;
 	}
 
+<<<<<<< HEAD
 	stripe_sz = le32_to_cpu(vol_pg0->StripeSize);
 	stripe_exp = find_first_bit(&stripe_sz, 32);
 	if (stripe_exp == 32) {
@@ -1897,6 +2011,34 @@ _scsih_init_warpdrive_properties(struct MPT2SAS_ADAPTER *ioc,
 		goto out_error;
 	}
 	raid_device->block_exponent = block_exp;
+=======
+	capacity = (u64) le16_to_cpu(vol_pg0->BlockSize) *
+	    (le64_to_cpu(vol_pg0->MaxLBA) + 1);
+
+	if (capacity > tb_2) {
+		printk(MPT2SAS_INFO_FMT "WarpDrive : Direct IO is disabled "
+		"for the drive with handle(0x%04x) since drive sz > 2TB\n",
+		ioc->name, raid_device->handle);
+		goto out_error;
+	}
+
+	stripe_sz = le32_to_cpu(vol_pg0->StripeSize);
+	stripe_exp = 0;
+	for (i = 0; i < 32; i++) {
+		if (stripe_sz & 1)
+			break;
+		stripe_exp++;
+		stripe_sz >>= 1;
+	}
+	if (i == 32) {
+		printk(MPT2SAS_INFO_FMT "WarpDrive : Direct IO is disabled "
+		    "for the drive with handle(0x%04x) invalid stripe sz %uK\n",
+		    ioc->name, raid_device->handle,
+		    le32_to_cpu(vol_pg0->StripeSize)/2);
+		goto out_error;
+	}
+	raid_device->stripe_exponent = stripe_exp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	raid_device->direct_io_enabled = 1;
 
 	printk(MPT2SAS_INFO_FMT "WarpDrive : Direct IO is Enabled for the drive"
@@ -1983,20 +2125,29 @@ _scsih_slave_configure(struct scsi_device *sdev)
 		     sas_target_priv_data->handle);
 		spin_unlock_irqrestore(&ioc->raid_device_lock, flags);
 		if (!raid_device) {
+<<<<<<< HEAD
 			dfailprintk(ioc, printk(MPT2SAS_WARN_FMT
 			    "failure at %s:%d/%s()!\n", ioc->name, __FILE__,
 			    __LINE__, __func__));
 			return 1;
+=======
+			printk(MPT2SAS_ERR_FMT "failure at %s:%d/%s()!\n",
+			    ioc->name, __FILE__, __LINE__, __func__);
+			return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		_scsih_get_volume_capabilities(ioc, raid_device);
 
+<<<<<<< HEAD
 		if (_scsih_get_volume_capabilities(ioc, raid_device)) {
 			dfailprintk(ioc, printk(MPT2SAS_WARN_FMT
 			    "failure at %s:%d/%s()!\n", ioc->name, __FILE__,
 			    __LINE__, __func__));
 			return 1;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * WARPDRIVE: Initialize the required data for Direct IO
 		 */
@@ -2070,6 +2221,7 @@ _scsih_slave_configure(struct scsi_device *sdev)
 	if (sas_device) {
 		if (sas_target_priv_data->flags &
 		    MPT_TARGET_FLAGS_RAID_COMPONENT) {
+<<<<<<< HEAD
 			if (mpt2sas_config_get_volume_handle(ioc,
 			    sas_device->handle, &sas_device->volume_handle)) {
 				dfailprintk(ioc, printk(MPT2SAS_WARN_FMT
@@ -2086,6 +2238,13 @@ _scsih_slave_configure(struct scsi_device *sdev)
 				    __FILE__, __LINE__, __func__));
 				return 1;
 			}
+=======
+			mpt2sas_config_get_volume_handle(ioc,
+			    sas_device->handle, &sas_device->volume_handle);
+			mpt2sas_config_get_volume_wwid(ioc,
+			    sas_device->volume_handle,
+			    &sas_device->volume_wwid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		if (sas_device->device_info & MPI2_SAS_DEVICE_INFO_SSP_TARGET) {
 			qdepth = MPT2SAS_SAS_QUEUE_DEPTH;
@@ -2114,11 +2273,14 @@ _scsih_slave_configure(struct scsi_device *sdev)
 
 		if (!ssp_target)
 			_scsih_display_sata_capabilities(ioc, sas_device, sdev);
+<<<<<<< HEAD
 	} else {
 		dfailprintk(ioc, printk(MPT2SAS_WARN_FMT
 		    "failure at %s:%d/%s()!\n", ioc->name, __FILE__, __LINE__,
 		    __func__));
 		return 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	_scsih_change_queue_depth(sdev, qdepth, SCSI_QDEPTH_DEFAULT);
@@ -2245,7 +2407,10 @@ _scsih_tm_done(struct MPT2SAS_ADAPTER *ioc, u16 smid, u8 msix_index, u32 reply)
 		return 1;
 	if (ioc->tm_cmds.smid != smid)
 		return 1;
+<<<<<<< HEAD
 	mpt2sas_base_flush_reply_queues(ioc);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ioc->tm_cmds.status |= MPT2_CMD_COMPLETE;
 	mpi_reply =  mpt2sas_base_get_reply_virt_addr(ioc, reply);
 	if (mpi_reply) {
@@ -2324,8 +2489,11 @@ mpt2sas_scsih_clear_tm_flag(struct MPT2SAS_ADAPTER *ioc, u16 handle)
  * @type: MPI2_SCSITASKMGMT_TASKTYPE__XXX (defined in mpi2_init.h)
  * @smid_task: smid assigned to the task
  * @timeout: timeout in seconds
+<<<<<<< HEAD
  * @serial_number: the serial_number from scmd
  * @m_type: TM_MUTEX_ON or TM_MUTEX_OFF
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Context: user
  *
  * A generic API for sending task management requests to firmware.
@@ -2337,18 +2505,29 @@ mpt2sas_scsih_clear_tm_flag(struct MPT2SAS_ADAPTER *ioc, u16 handle)
 int
 mpt2sas_scsih_issue_tm(struct MPT2SAS_ADAPTER *ioc, u16 handle, uint channel,
     uint id, uint lun, u8 type, u16 smid_task, ulong timeout,
+<<<<<<< HEAD
 	unsigned long serial_number, enum mutex_type m_type)
+=======
+    struct scsi_cmnd *scmd)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	Mpi2SCSITaskManagementRequest_t *mpi_request;
 	Mpi2SCSITaskManagementReply_t *mpi_reply;
 	u16 smid = 0;
 	u32 ioc_state;
 	unsigned long timeleft;
+<<<<<<< HEAD
 	struct scsiio_tracker *scsi_lookup = NULL;
 	int rc;
 
 	if (m_type == TM_MUTEX_ON)
 		mutex_lock(&ioc->tm_cmds.mutex);
+=======
+	struct scsi_cmnd *scmd_lookup;
+	int rc;
+
+	mutex_lock(&ioc->tm_cmds.mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ioc->tm_cmds.status != MPT2_CMD_NOT_USED) {
 		printk(MPT2SAS_INFO_FMT "%s: tm_cmd busy!!!\n",
 		    __func__, ioc->name);
@@ -2368,18 +2547,30 @@ mpt2sas_scsih_issue_tm(struct MPT2SAS_ADAPTER *ioc, u16 handle, uint channel,
 	if (ioc_state & MPI2_DOORBELL_USED) {
 		dhsprintk(ioc, printk(MPT2SAS_INFO_FMT "unexpected doorbell "
 		    "active!\n", ioc->name));
+<<<<<<< HEAD
 		rc = mpt2sas_base_hard_reset_handler(ioc, CAN_SLEEP,
 		    FORCE_BIG_HAMMER);
 		rc = (!rc) ? SUCCESS : FAILED;
+=======
+		mpt2sas_base_hard_reset_handler(ioc, CAN_SLEEP,
+		    FORCE_BIG_HAMMER);
+		rc = SUCCESS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_out;
 	}
 
 	if ((ioc_state & MPI2_IOC_STATE_MASK) == MPI2_IOC_STATE_FAULT) {
 		mpt2sas_base_fault_info(ioc, ioc_state &
 		    MPI2_DOORBELL_DATA_MASK);
+<<<<<<< HEAD
 		rc = mpt2sas_base_hard_reset_handler(ioc, CAN_SLEEP,
 		    FORCE_BIG_HAMMER);
 		rc = (!rc) ? SUCCESS : FAILED;
+=======
+		mpt2sas_base_hard_reset_handler(ioc, CAN_SLEEP,
+		    FORCE_BIG_HAMMER);
+		rc = SUCCESS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_out;
 	}
 
@@ -2391,9 +2582,12 @@ mpt2sas_scsih_issue_tm(struct MPT2SAS_ADAPTER *ioc, u16 handle, uint channel,
 		goto err_out;
 	}
 
+<<<<<<< HEAD
 	if (type == MPI2_SCSITASKMGMT_TASKTYPE_ABORT_TASK)
 		scsi_lookup = &ioc->scsi_lookup[smid_task - 1];
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dtmprintk(ioc, printk(MPT2SAS_INFO_FMT "sending tm: handle(0x%04x),"
 	    " task_type(0x%02x), smid(%d)\n", ioc->name, handle, type,
 	    smid_task));
@@ -2401,7 +2595,10 @@ mpt2sas_scsih_issue_tm(struct MPT2SAS_ADAPTER *ioc, u16 handle, uint channel,
 	mpi_request = mpt2sas_base_get_msg_frame(ioc, smid);
 	ioc->tm_cmds.smid = smid;
 	memset(mpi_request, 0, sizeof(Mpi2SCSITaskManagementRequest_t));
+<<<<<<< HEAD
 	memset(ioc->tm_cmds.reply, 0, sizeof(Mpi2SCSITaskManagementReply_t));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mpi_request->Function = MPI2_FUNCTION_SCSI_TASK_MGMT;
 	mpi_request->DevHandle = cpu_to_le16(handle);
 	mpi_request->TaskType = type;
@@ -2417,9 +2614,15 @@ mpt2sas_scsih_issue_tm(struct MPT2SAS_ADAPTER *ioc, u16 handle, uint channel,
 		_debug_dump_mf(mpi_request,
 		    sizeof(Mpi2SCSITaskManagementRequest_t)/4);
 		if (!(ioc->tm_cmds.status & MPT2_CMD_RESET)) {
+<<<<<<< HEAD
 			rc = mpt2sas_base_hard_reset_handler(ioc, CAN_SLEEP,
 			    FORCE_BIG_HAMMER);
 			rc = (!rc) ? SUCCESS : FAILED;
+=======
+			mpt2sas_base_hard_reset_handler(ioc, CAN_SLEEP,
+			    FORCE_BIG_HAMMER);
+			rc = SUCCESS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ioc->tm_cmds.status = MPT2_CMD_NOT_USED;
 			mpt2sas_scsih_clear_tm_flag(ioc, handle);
 			goto err_out;
@@ -2441,12 +2644,29 @@ mpt2sas_scsih_issue_tm(struct MPT2SAS_ADAPTER *ioc, u16 handle, uint channel,
 		}
 	}
 
+<<<<<<< HEAD
 	switch (type) {
 	case MPI2_SCSITASKMGMT_TASKTYPE_ABORT_TASK:
 		rc = SUCCESS;
 		if (scsi_lookup->scmd == NULL)
 			break;
 		rc = FAILED;
+=======
+	/* sanity check:
+	 * Check to see the commands were terminated.
+	 * This is only needed for eh callbacks, hence the scmd check.
+	 */
+	rc = FAILED;
+	if (scmd == NULL)
+		goto bypass_sanity_checks;
+	switch (type) {
+	case MPI2_SCSITASKMGMT_TASKTYPE_ABORT_TASK:
+		scmd_lookup = _scsih_scsi_lookup_get(ioc, smid_task);
+		if (scmd_lookup)
+			rc = FAILED;
+		else
+			rc = SUCCESS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case MPI2_SCSITASKMGMT_TASKTYPE_TARGET_RESET:
@@ -2456,13 +2676,17 @@ mpt2sas_scsih_issue_tm(struct MPT2SAS_ADAPTER *ioc, u16 handle, uint channel,
 			rc = SUCCESS;
 		break;
 
+<<<<<<< HEAD
 	case MPI2_SCSITASKMGMT_TASKTYPE_ABRT_TASK_SET:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case MPI2_SCSITASKMGMT_TASKTYPE_LOGICAL_UNIT_RESET:
 		if (_scsih_scsi_lookup_find_by_lun(ioc, id, lun, channel))
 			rc = FAILED;
 		else
 			rc = SUCCESS;
 		break;
+<<<<<<< HEAD
 	case MPI2_SCSITASKMGMT_TASKTYPE_QUERY_TASK:
 		rc = SUCCESS;
 		break;
@@ -2475,12 +2699,25 @@ mpt2sas_scsih_issue_tm(struct MPT2SAS_ADAPTER *ioc, u16 handle, uint channel,
 	ioc->tm_cmds.status = MPT2_CMD_NOT_USED;
 	if (m_type == TM_MUTEX_ON)
 		mutex_unlock(&ioc->tm_cmds.mutex);
+=======
+	}
+
+ bypass_sanity_checks:
+
+	mpt2sas_scsih_clear_tm_flag(ioc, handle);
+	ioc->tm_cmds.status = MPT2_CMD_NOT_USED;
+	mutex_unlock(&ioc->tm_cmds.mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return rc;
 
  err_out:
+<<<<<<< HEAD
 	if (m_type == TM_MUTEX_ON)
 		mutex_unlock(&ioc->tm_cmds.mutex);
+=======
+	mutex_unlock(&ioc->tm_cmds.mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -2590,8 +2827,12 @@ _scsih_abort(struct scsi_cmnd *scmd)
 	handle = sas_device_priv_data->sas_target->handle;
 	r = mpt2sas_scsih_issue_tm(ioc, handle, scmd->device->channel,
 	    scmd->device->id, scmd->device->lun,
+<<<<<<< HEAD
 	    MPI2_SCSITASKMGMT_TASKTYPE_ABORT_TASK, smid, 30,
 	    scmd->serial_number, TM_MUTEX_ON);
+=======
+	    MPI2_SCSITASKMGMT_TASKTYPE_ABORT_TASK, smid, 30, scmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
  out:
 	sdev_printk(KERN_INFO, scmd->device, "task abort: %s scmd(%p)\n",
@@ -2652,8 +2893,12 @@ _scsih_dev_reset(struct scsi_cmnd *scmd)
 
 	r = mpt2sas_scsih_issue_tm(ioc, handle, scmd->device->channel,
 	    scmd->device->id, scmd->device->lun,
+<<<<<<< HEAD
 	    MPI2_SCSITASKMGMT_TASKTYPE_LOGICAL_UNIT_RESET, 0, 30, 0,
 	    TM_MUTEX_ON);
+=======
+	    MPI2_SCSITASKMGMT_TASKTYPE_LOGICAL_UNIT_RESET, 0, 30, scmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
  out:
 	sdev_printk(KERN_INFO, scmd->device, "device reset: %s scmd(%p)\n",
@@ -2713,7 +2958,11 @@ _scsih_target_reset(struct scsi_cmnd *scmd)
 
 	r = mpt2sas_scsih_issue_tm(ioc, handle, scmd->device->channel,
 	    scmd->device->id, 0, MPI2_SCSITASKMGMT_TASKTYPE_TARGET_RESET, 0,
+<<<<<<< HEAD
 	    30, 0, TM_MUTEX_ON);
+=======
+	    30, scmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
  out:
 	starget_printk(KERN_INFO, starget, "target reset: %s scmd(%p)\n",
@@ -2798,12 +3047,17 @@ _scsih_fw_event_free(struct MPT2SAS_ADAPTER *ioc, struct fw_event_work
 
 
 /**
+<<<<<<< HEAD
  * _scsih_error_recovery_delete_devices - remove devices not responding
+=======
+ * _scsih_queue_rescan - queue a topology rescan from user context
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ioc: per adapter object
  *
  * Return nothing.
  */
 static void
+<<<<<<< HEAD
 _scsih_error_recovery_delete_devices(struct MPT2SAS_ADAPTER *ioc)
 {
 	struct fw_event_work *fw_event;
@@ -2835,6 +3089,18 @@ mpt2sas_port_enable_complete(struct MPT2SAS_ADAPTER *ioc)
 	if (!fw_event)
 		return;
 	fw_event->event = MPT2SAS_PORT_ENABLE_COMPLETE;
+=======
+_scsih_queue_rescan(struct MPT2SAS_ADAPTER *ioc)
+{
+	struct fw_event_work *fw_event;
+
+	if (ioc->wait_for_port_enable_to_complete)
+		return;
+	fw_event = kzalloc(sizeof(struct fw_event_work), GFP_ATOMIC);
+	if (!fw_event)
+		return;
+	fw_event->event = MPT2SAS_RESCAN_AFTER_HOST_RESET;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fw_event->ioc = ioc;
 	_scsih_fw_event_add(ioc, fw_event);
 }
@@ -2867,6 +3133,7 @@ _scsih_fw_event_cleanup_queue(struct MPT2SAS_ADAPTER *ioc)
 }
 
 /**
+<<<<<<< HEAD
  * _scsih_ublock_io_all_device - unblock every device
  * @ioc: per adapter object
  *
@@ -2892,6 +3159,8 @@ _scsih_ublock_io_all_device(struct MPT2SAS_ADAPTER *ioc)
 	}
 }
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * _scsih_ublock_io_device - set the device state to SDEV_RUNNING
  * @ioc: per adapter object
  * @handle: device handle
@@ -2921,6 +3190,7 @@ _scsih_ublock_io_device(struct MPT2SAS_ADAPTER *ioc, u16 handle)
 }
 
 /**
+<<<<<<< HEAD
  * _scsih_block_io_all_device - set the device state to SDEV_BLOCK
  * @ioc: per adapter object
  * @handle: device handle
@@ -2949,6 +3219,8 @@ _scsih_block_io_all_device(struct MPT2SAS_ADAPTER *ioc)
 
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * _scsih_block_io_device - set the device state to SDEV_BLOCK
  * @ioc: per adapter object
  * @handle: device handle
@@ -3082,6 +3354,7 @@ _scsih_tm_tr_send(struct MPT2SAS_ADAPTER *ioc, u16 handle)
 	Mpi2SCSITaskManagementRequest_t *mpi_request;
 	u16 smid;
 	struct _sas_device *sas_device;
+<<<<<<< HEAD
 	struct MPT2SAS_TARGET *sas_target_priv_data = NULL;
 	u64 sas_address = 0;
 	unsigned long flags;
@@ -3103,6 +3376,16 @@ _scsih_tm_tr_send(struct MPT2SAS_ADAPTER *ioc, u16 handle)
 		dewtprintk(ioc, printk(MPT2SAS_INFO_FMT "%s: host is not "
 		   "operational: handle(0x%04x)\n", __func__, ioc->name,
 		   handle));
+=======
+	struct MPT2SAS_TARGET *sas_target_priv_data;
+	unsigned long flags;
+	struct _tr_list *delayed_tr;
+
+	if (ioc->shost_recovery || ioc->remove_host ||
+	    ioc->pci_error_recovery) {
+		dewtprintk(ioc, printk(MPT2SAS_INFO_FMT "%s: host reset in "
+		   "progress!\n", __func__, ioc->name));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -3116,6 +3399,7 @@ _scsih_tm_tr_send(struct MPT2SAS_ADAPTER *ioc, u16 handle)
 	     sas_device->starget->hostdata) {
 		sas_target_priv_data = sas_device->starget->hostdata;
 		sas_target_priv_data->deleted = 1;
+<<<<<<< HEAD
 		sas_address = sas_device->sas_address;
 	}
 	spin_unlock_irqrestore(&ioc->sas_device_lock, flags);
@@ -3128,6 +3412,15 @@ _scsih_tm_tr_send(struct MPT2SAS_ADAPTER *ioc, u16 handle)
 		sas_target_priv_data->handle = MPT2SAS_INVALID_DEVICE_HANDLE;
 	}
 
+=======
+		dewtprintk(ioc, printk(MPT2SAS_INFO_FMT
+		    "setting delete flag: handle(0x%04x), "
+		    "sas_addr(0x%016llx)\n", ioc->name, handle,
+		    (unsigned long long) sas_device->sas_address));
+	}
+	spin_unlock_irqrestore(&ioc->sas_device_lock, flags);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	smid = mpt2sas_base_get_smid_hpr(ioc, ioc->tm_tr_cb_idx);
 	if (!smid) {
 		delayed_tr = kzalloc(sizeof(*delayed_tr), GFP_ATOMIC);
@@ -3308,6 +3601,7 @@ _scsih_tm_tr_complete(struct MPT2SAS_ADAPTER *ioc, u16 smid, u8 msix_index,
 	    mpt2sas_base_get_reply_virt_addr(ioc, reply);
 	Mpi2SasIoUnitControlRequest_t *mpi_request;
 	u16 smid_sas_ctrl;
+<<<<<<< HEAD
 	u32 ioc_state;
 
 	if (ioc->remove_host) {
@@ -3323,6 +3617,13 @@ _scsih_tm_tr_complete(struct MPT2SAS_ADAPTER *ioc, u16 smid, u8 msix_index,
 	if (ioc_state != MPI2_IOC_STATE_OPERATIONAL) {
 		dewtprintk(ioc, printk(MPT2SAS_INFO_FMT "%s: host is not "
 		    "operational\n", __func__, ioc->name));
+=======
+
+	if (ioc->shost_recovery || ioc->remove_host ||
+	    ioc->pci_error_recovery) {
+		dewtprintk(ioc, printk(MPT2SAS_INFO_FMT "%s: host reset in "
+		   "progress!\n", __func__, ioc->name));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 	}
 
@@ -3812,9 +4113,14 @@ _scsih_setup_direct_io(struct MPT2SAS_ADAPTER *ioc, struct scsi_cmnd *scmd,
 {
 	u32 v_lba, p_lba, stripe_off, stripe_unit, column, io_size;
 	u32 stripe_sz, stripe_exp;
+<<<<<<< HEAD
 	u8 num_pds, *cdb_ptr, i;
 	u8 cdb0 = scmd->cmnd[0];
 	u64 v_llba;
+=======
+	u8 num_pds, *cdb_ptr, *tmp_ptr, *lba_ptr1, *lba_ptr2;
+	u8 cdb0 = scmd->cmnd[0];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Try Direct I/O to RAID memeber disks
@@ -3825,11 +4131,23 @@ _scsih_setup_direct_io(struct MPT2SAS_ADAPTER *ioc, struct scsi_cmnd *scmd,
 
 		if ((cdb0 < READ_16) || !(cdb_ptr[2] | cdb_ptr[3] | cdb_ptr[4]
 			| cdb_ptr[5])) {
+<<<<<<< HEAD
 			io_size = scsi_bufflen(scmd) >>
 			    raid_device->block_exponent;
 			i = (cdb0 < READ_16) ? 2 : 6;
 			/* get virtual lba */
 			v_lba = be32_to_cpu(*(__be32 *)(&cdb_ptr[i]));
+=======
+			io_size = scsi_bufflen(scmd) >> 9;
+			/* get virtual lba */
+			lba_ptr1 = lba_ptr2 = (cdb0 < READ_16) ? &cdb_ptr[2] :
+			    &cdb_ptr[6];
+			tmp_ptr = (u8 *)&v_lba + 3;
+			*tmp_ptr-- = *lba_ptr1++;
+			*tmp_ptr-- = *lba_ptr1++;
+			*tmp_ptr-- = *lba_ptr1++;
+			*tmp_ptr = *lba_ptr1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (((u64)v_lba + (u64)io_size - 1) <=
 			    (u32)raid_device->max_lba) {
@@ -3848,6 +4166,7 @@ _scsih_setup_direct_io(struct MPT2SAS_ADAPTER *ioc, struct scsi_cmnd *scmd,
 					mpi_request->DevHandle =
 						cpu_to_le16(raid_device->
 						    pd_handle[column]);
+<<<<<<< HEAD
 					(*(__be32 *)(&cdb_ptr[i])) =
 						cpu_to_be32(p_lba);
 					/*
@@ -3881,6 +4200,13 @@ _scsih_setup_direct_io(struct MPT2SAS_ADAPTER *ioc, struct scsi_cmnd *scmd,
 						    pd_handle[column]);
 					(*(__be64 *)(&cdb_ptr[2])) =
 					    cpu_to_be64((u64)p_lba);
+=======
+					tmp_ptr = (u8 *)&p_lba + 3;
+					*lba_ptr2++ = *tmp_ptr--;
+					*lba_ptr2++ = *tmp_ptr--;
+					*lba_ptr2++ = *tmp_ptr--;
+					*lba_ptr2 = *tmp_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					/*
 					* WD: To indicate this I/O is directI/O
 					*/
@@ -3963,7 +4289,15 @@ _scsih_qcmd_lck(struct scsi_cmnd *scmd, void (*done)(struct scsi_cmnd *))
 			else
 				mpi_control |= MPI2_SCSIIO_CONTROL_SIMPLEQ;
 		} else
+<<<<<<< HEAD
 			mpi_control |= MPI2_SCSIIO_CONTROL_SIMPLEQ;
+=======
+/* MPI Revision I (UNIT = 0xA) - removed MPI2_SCSIIO_CONTROL_UNTAGGED */
+/*			mpi_control |= MPI2_SCSIIO_CONTROL_UNTAGGED;
+ */
+			mpi_control |= (0x500);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		mpi_control |= MPI2_SCSIIO_CONTROL_SIMPLEQ;
 	/* Make sure Device is not raid volume.
@@ -4412,7 +4746,10 @@ _scsih_io_done(struct MPT2SAS_ADAPTER *ioc, u16 smid, u8 msix_index, u32 reply)
 	u32 log_info;
 	struct MPT2SAS_DEVICE *sas_device_priv_data;
 	u32 response_code = 0;
+<<<<<<< HEAD
 	unsigned long flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mpi_reply = mpt2sas_base_get_reply_virt_addr(ioc, reply);
 	scmd = _scsih_scsi_lookup_get_clear(ioc, smid);
@@ -4432,17 +4769,24 @@ _scsih_io_done(struct MPT2SAS_ADAPTER *ioc, u16 smid, u8 msix_index, u32 reply)
 		scmd->result = DID_NO_CONNECT << 16;
 		goto out;
 	}
+<<<<<<< HEAD
 	ioc_status = le16_to_cpu(mpi_reply->IOCStatus);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * WARPDRIVE: If direct_io is set then it is directIO,
 	 * the failed direct I/O should be redirected to volume
 	 */
+<<<<<<< HEAD
 	if (_scsih_scsi_direct_io_get(ioc, smid) &&
 	    ((ioc_status & MPI2_IOCSTATUS_MASK)
 	    != MPI2_IOCSTATUS_SCSI_TASK_TERMINATED)) {
 		spin_lock_irqsave(&ioc->scsi_lookup_lock, flags);
 		ioc->scsi_lookup[smid - 1].scmd = scmd;
 		spin_unlock_irqrestore(&ioc->scsi_lookup_lock, flags);
+=======
+	if (_scsih_scsi_direct_io_get(ioc, smid)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		_scsih_scsi_direct_io_set(ioc, smid, 0);
 		memcpy(mpi_request->CDB.CDB32, scmd->cmnd, scmd->cmd_len);
 		mpi_request->DevHandle =
@@ -4473,6 +4817,10 @@ _scsih_io_done(struct MPT2SAS_ADAPTER *ioc, u16 smid, u8 msix_index, u32 reply)
 
 	xfer_cnt = le32_to_cpu(mpi_reply->TransferCount);
 	scsi_set_resid(scmd, scsi_bufflen(scmd) - xfer_cnt);
+<<<<<<< HEAD
+=======
+	ioc_status = le16_to_cpu(mpi_reply->IOCStatus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ioc_status & MPI2_IOCSTATUS_FLAG_LOG_INFO_AVAILABLE)
 		log_info =  le32_to_cpu(mpi_reply->IOCLogInfo);
 	else
@@ -4516,8 +4864,11 @@ _scsih_io_done(struct MPT2SAS_ADAPTER *ioc, u16 smid, u8 msix_index, u32 reply)
 			scmd->result = DID_TRANSPORT_DISRUPTED << 16;
 			goto out;
 		}
+<<<<<<< HEAD
 		scmd->result = DID_SOFT_ERROR << 16;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case MPI2_IOCSTATUS_SCSI_TASK_TERMINATED:
 	case MPI2_IOCSTATUS_SCSI_EXT_TERMINATED:
 		scmd->result = DID_RESET << 16;
@@ -5257,7 +5608,11 @@ _scsih_add_device(struct MPT2SAS_ADAPTER *ioc, u16 handle, u8 phy_num, u8 is_pd)
 	/* get device name */
 	sas_device->device_name = le64_to_cpu(sas_device_pg0.DeviceName);
 
+<<<<<<< HEAD
 	if (ioc->wait_for_discovery_to_complete)
+=======
+	if (ioc->wait_for_port_enable_to_complete)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		_scsih_sas_device_init_add(ioc, sas_device);
 	else
 		_scsih_sas_device_add(ioc, sas_device);
@@ -5293,9 +5648,12 @@ _scsih_remove_device(struct MPT2SAS_ADAPTER *ioc,
 	if (sas_device_backup.starget && sas_device_backup.starget->hostdata) {
 		sas_target_priv_data = sas_device_backup.starget->hostdata;
 		sas_target_priv_data->deleted = 1;
+<<<<<<< HEAD
 		_scsih_ublock_io_device(ioc, sas_device_backup.handle);
 		sas_target_priv_data->handle =
 		     MPT2SAS_INVALID_DEVICE_HANDLE;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	_scsih_ublock_io_device(ioc, sas_device_backup.handle);
@@ -5449,7 +5807,11 @@ _scsih_sas_topology_change_event(struct MPT2SAS_ADAPTER *ioc,
 		_scsih_sas_topology_change_event_debug(ioc, event_data);
 #endif
 
+<<<<<<< HEAD
 	if (ioc->remove_host || ioc->pci_error_recovery)
+=======
+	if (ioc->shost_recovery || ioc->remove_host || ioc->pci_error_recovery)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	if (!ioc->sas_hba.num_phys)
@@ -5510,9 +5872,12 @@ _scsih_sas_topology_change_event(struct MPT2SAS_ADAPTER *ioc,
 		switch (reason_code) {
 		case MPI2_EVENT_SAS_TOPO_RC_PHY_CHANGED:
 
+<<<<<<< HEAD
 			if (ioc->shost_recovery)
 				break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (link_rate == prev_link_rate)
 				break;
 
@@ -5526,9 +5891,12 @@ _scsih_sas_topology_change_event(struct MPT2SAS_ADAPTER *ioc,
 			break;
 		case MPI2_EVENT_SAS_TOPO_RC_TARG_ADDED:
 
+<<<<<<< HEAD
 			if (ioc->shost_recovery)
 				break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mpt2sas_transport_update_links(ioc, sas_address,
 			    handle, phy_number, link_rate);
 
@@ -5616,10 +5984,16 @@ _scsih_sas_device_status_change_event_debug(struct MPT2SAS_ADAPTER *ioc,
 		break;
 	}
 	printk(MPT2SAS_INFO_FMT "device status change: (%s)\n"
+<<<<<<< HEAD
 	    "\thandle(0x%04x), sas address(0x%016llx), tag(%d)",
 	    ioc->name, reason_str, le16_to_cpu(event_data->DevHandle),
 	    (unsigned long long)le64_to_cpu(event_data->SASAddress),
 	    le16_to_cpu(event_data->TaskTag));
+=======
+	    "\thandle(0x%04x), sas address(0x%016llx)", ioc->name,
+	    reason_str, le16_to_cpu(event_data->DevHandle),
+	    (unsigned long long)le64_to_cpu(event_data->SASAddress));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (event_data->ReasonCode == MPI2_EVENT_SAS_DEV_STAT_RC_SMART_DATA)
 		printk(MPT2SAS_INFO_FMT ", ASC(0x%x), ASCQ(0x%x)\n", ioc->name,
 		    event_data->ASC, event_data->ASCQ);
@@ -5740,7 +6114,11 @@ _scsih_sas_enclosure_dev_status_change_event(struct MPT2SAS_ADAPTER *ioc,
 }
 
 /**
+<<<<<<< HEAD
  * _scsih_sas_broadcast_primitive_event - handle broadcast events
+=======
+ * _scsih_sas_broadcast_primative_event - handle broadcast events
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ioc: per adapter object
  * @fw_event: The fw_event_work object
  * Context: user.
@@ -5748,7 +6126,11 @@ _scsih_sas_enclosure_dev_status_change_event(struct MPT2SAS_ADAPTER *ioc,
  * Return nothing.
  */
 static void
+<<<<<<< HEAD
 _scsih_sas_broadcast_primitive_event(struct MPT2SAS_ADAPTER *ioc,
+=======
+_scsih_sas_broadcast_primative_event(struct MPT2SAS_ADAPTER *ioc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     struct fw_event_work *fw_event)
 {
 	struct scsi_cmnd *scmd;
@@ -5759,6 +6141,7 @@ _scsih_sas_broadcast_primitive_event(struct MPT2SAS_ADAPTER *ioc,
 	u32 termination_count;
 	u32 query_count;
 	Mpi2SCSITaskManagementReply_t *mpi_reply;
+<<<<<<< HEAD
 	Mpi2EventDataSasBroadcastPrimitive_t *event_data = fw_event->event_data;
 	u16 ioc_status;
 	unsigned long flags;
@@ -5791,6 +6174,27 @@ broadcast_aen_retry:
 	for (smid = 1; smid <= ioc->scsiio_depth; smid++) {
 		if (ioc->shost_recovery)
 			goto out;
+=======
+#ifdef CONFIG_SCSI_MPT2SAS_LOGGING
+	Mpi2EventDataSasBroadcastPrimitive_t *event_data = fw_event->event_data;
+#endif
+	u16 ioc_status;
+	unsigned long flags;
+	int r;
+
+	dewtprintk(ioc, printk(MPT2SAS_INFO_FMT "broadcast primitive: "
+	    "phy number(%d), width(%d)\n", ioc->name, event_data->PhyNum,
+	    event_data->PortWidth));
+	dtmprintk(ioc, printk(MPT2SAS_INFO_FMT "%s: enter\n", ioc->name,
+	    __func__));
+
+	spin_lock_irqsave(&ioc->scsi_lookup_lock, flags);
+	ioc->broadcast_aen_busy = 0;
+	termination_count = 0;
+	query_count = 0;
+	mpi_reply = ioc->tm_cmds.reply;
+	for (smid = 1; smid <= ioc->scsiio_depth; smid++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		scmd = _scsih_scsi_lookup_get(ioc, smid);
 		if (!scmd)
 			continue;
@@ -5811,6 +6215,7 @@ broadcast_aen_retry:
 		lun = sas_device_priv_data->lun;
 		query_count++;
 
+<<<<<<< HEAD
 		if (ioc->shost_recovery)
 			goto out;
 
@@ -5895,6 +6300,36 @@ broadcast_aen_retry:
 	if (!ioc->shost_recovery)
 		_scsih_ublock_io_all_device(ioc);
 	mutex_unlock(&ioc->tm_cmds.mutex);
+=======
+		spin_unlock_irqrestore(&ioc->scsi_lookup_lock, flags);
+		mpt2sas_scsih_issue_tm(ioc, handle, 0, 0, lun,
+		    MPI2_SCSITASKMGMT_TASKTYPE_QUERY_TASK, smid, 30, NULL);
+		ioc->tm_cmds.status = MPT2_CMD_NOT_USED;
+		ioc_status = le16_to_cpu(mpi_reply->IOCStatus)
+		    & MPI2_IOCSTATUS_MASK;
+		if ((ioc_status == MPI2_IOCSTATUS_SUCCESS) &&
+		    (mpi_reply->ResponseCode ==
+		     MPI2_SCSITASKMGMT_RSP_TM_SUCCEEDED ||
+		     mpi_reply->ResponseCode ==
+		     MPI2_SCSITASKMGMT_RSP_IO_QUEUED_ON_IOC)) {
+			spin_lock_irqsave(&ioc->scsi_lookup_lock, flags);
+			continue;
+		}
+		r = mpt2sas_scsih_issue_tm(ioc, handle, sdev->channel, sdev->id,
+		    sdev->lun, MPI2_SCSITASKMGMT_TASKTYPE_ABORT_TASK, smid, 30,
+		    scmd);
+		if (r == FAILED)
+			sdev_printk(KERN_WARNING, sdev, "task abort: FAILED "
+			    "scmd(%p)\n", scmd);
+		termination_count += le32_to_cpu(mpi_reply->TerminationCount);
+		spin_lock_irqsave(&ioc->scsi_lookup_lock, flags);
+	}
+	spin_unlock_irqrestore(&ioc->scsi_lookup_lock, flags);
+
+	dtmprintk(ioc, printk(MPT2SAS_INFO_FMT
+	    "%s - exit, query_count = %d termination_count = %d\n",
+	    ioc->name, __func__, query_count, termination_count));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -5956,11 +6391,16 @@ _scsih_reprobe_lun(struct scsi_device *sdev, void *no_uld_attach)
 static void
 _scsih_reprobe_target(struct scsi_target *starget, int no_uld_attach)
 {
+<<<<<<< HEAD
 	struct MPT2SAS_TARGET *sas_target_priv_data;
 
 	if (starget == NULL)
 		return;
 	sas_target_priv_data = starget->hostdata;
+=======
+	struct MPT2SAS_TARGET *sas_target_priv_data = starget->hostdata;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (no_uld_attach)
 		sas_target_priv_data->flags |= MPT_TARGET_FLAGS_RAID_COMPONENT;
 	else
@@ -6015,7 +6455,11 @@ _scsih_sas_volume_add(struct MPT2SAS_ADAPTER *ioc,
 	raid_device->handle = handle;
 	raid_device->wwid = wwid;
 	_scsih_raid_device_add(ioc, raid_device);
+<<<<<<< HEAD
 	if (!ioc->wait_for_discovery_to_complete) {
+=======
+	if (!ioc->wait_for_port_enable_to_complete) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = scsi_add_device(ioc->shost, RAID_CHANNEL,
 		    raid_device->id, 0);
 		if (rc)
@@ -6297,10 +6741,13 @@ _scsih_sas_ir_config_change_event(struct MPT2SAS_ADAPTER *ioc,
 		_scsih_sas_ir_config_change_event_debug(ioc, event_data);
 
 #endif
+<<<<<<< HEAD
 
 	if (ioc->shost_recovery)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	foreign_config = (le32_to_cpu(event_data->Flags) &
 	    MPI2_EVENT_IR_CHANGE_FLAGS_FOREIGN_CONFIG) ? 1 : 0;
 
@@ -6359,9 +6806,12 @@ _scsih_sas_ir_volume_event(struct MPT2SAS_ADAPTER *ioc,
 	int rc;
 	Mpi2EventDataIrVolume_t *event_data = fw_event->event_data;
 
+<<<<<<< HEAD
 	if (ioc->shost_recovery)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (event_data->ReasonCode != MPI2_EVENT_IR_VOLUME_RC_STATE_CHANGED)
 		return;
 
@@ -6444,9 +6894,12 @@ _scsih_sas_ir_physical_disk_event(struct MPT2SAS_ADAPTER *ioc,
 	Mpi2EventDataIrPhysicalDisk_t *event_data = fw_event->event_data;
 	u64 sas_address;
 
+<<<<<<< HEAD
 	if (ioc->shost_recovery)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (event_data->ReasonCode != MPI2_EVENT_IR_PHYSDISK_RC_STATE_CHANGED)
 		return;
 
@@ -6690,10 +7143,17 @@ _scsih_search_responding_sas_devices(struct MPT2SAS_ADAPTER *ioc)
 	u32 device_info;
 	u16 slot;
 
+<<<<<<< HEAD
 	printk(MPT2SAS_INFO_FMT "search for end-devices: start\n", ioc->name);
 
 	if (list_empty(&ioc->sas_device_list))
 		goto out;
+=======
+	printk(MPT2SAS_INFO_FMT "%s\n", ioc->name, __func__);
+
+	if (list_empty(&ioc->sas_device_list))
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	handle = 0xFFFF;
 	while (!(mpt2sas_config_get_sas_device_pg0(ioc, &mpi_reply,
@@ -6712,9 +7172,12 @@ _scsih_search_responding_sas_devices(struct MPT2SAS_ADAPTER *ioc)
 		_scsih_mark_responding_sas_device(ioc, sas_address, slot,
 		    handle);
 	}
+<<<<<<< HEAD
 out:
 	printk(MPT2SAS_INFO_FMT "search for end-devices: complete\n",
 	    ioc->name);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -6791,6 +7254,7 @@ _scsih_search_responding_raid_devices(struct MPT2SAS_ADAPTER *ioc)
 	u16 handle;
 	u8 phys_disk_num;
 
+<<<<<<< HEAD
 	if (!ioc->ir_firmware)
 		return;
 
@@ -6799,6 +7263,12 @@ _scsih_search_responding_raid_devices(struct MPT2SAS_ADAPTER *ioc)
 
 	if (list_empty(&ioc->raid_device_list))
 		goto out;
+=======
+	printk(MPT2SAS_INFO_FMT "%s\n", ioc->name, __func__);
+
+	if (list_empty(&ioc->raid_device_list))
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	handle = 0xFFFF;
 	while (!(mpt2sas_config_get_raid_volume_pg1(ioc, &mpi_reply,
@@ -6837,9 +7307,12 @@ _scsih_search_responding_raid_devices(struct MPT2SAS_ADAPTER *ioc)
 			set_bit(handle, ioc->pd_handles);
 		}
 	}
+<<<<<<< HEAD
 out:
 	printk(MPT2SAS_INFO_FMT "search for responding raid volumes: "
 	    "complete\n", ioc->name);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -6899,10 +7372,17 @@ _scsih_search_responding_expanders(struct MPT2SAS_ADAPTER *ioc)
 	u64 sas_address;
 	u16 handle;
 
+<<<<<<< HEAD
 	printk(MPT2SAS_INFO_FMT "search for expanders: start\n", ioc->name);
 
 	if (list_empty(&ioc->sas_expander_list))
 		goto out;
+=======
+	printk(MPT2SAS_INFO_FMT "%s\n", ioc->name, __func__);
+
+	if (list_empty(&ioc->sas_expander_list))
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	handle = 0xFFFF;
 	while (!(mpt2sas_config_get_expander_pg0(ioc, &mpi_reply, &expander_pg0,
@@ -6921,8 +7401,11 @@ _scsih_search_responding_expanders(struct MPT2SAS_ADAPTER *ioc)
 		_scsih_mark_responding_expander(ioc, sas_address, handle);
 	}
 
+<<<<<<< HEAD
  out:
 	printk(MPT2SAS_INFO_FMT "search for expanders: complete\n", ioc->name);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -6938,8 +7421,11 @@ _scsih_remove_unresponding_sas_devices(struct MPT2SAS_ADAPTER *ioc)
 	struct _sas_node *sas_expander;
 	struct _raid_device *raid_device, *raid_device_next;
 
+<<<<<<< HEAD
 	printk(MPT2SAS_INFO_FMT "removing unresponding devices: start\n",
 	    ioc->name);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_for_each_entry_safe(sas_device, sas_device_next,
 	    &ioc->sas_device_list, list) {
@@ -6959,9 +7445,12 @@ _scsih_remove_unresponding_sas_devices(struct MPT2SAS_ADAPTER *ioc)
 		_scsih_remove_device(ioc, sas_device);
 	}
 
+<<<<<<< HEAD
 	if (!ioc->ir_firmware)
 		goto retry_expander_search;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry_safe(raid_device, raid_device_next,
 	    &ioc->raid_device_list, list) {
 		if (raid_device->responding) {
@@ -6988,6 +7477,7 @@ _scsih_remove_unresponding_sas_devices(struct MPT2SAS_ADAPTER *ioc)
 		mpt2sas_expander_remove(ioc, sas_expander->sas_address);
 		goto retry_expander_search;
 	}
+<<<<<<< HEAD
 	printk(MPT2SAS_INFO_FMT "removing unresponding devices: complete\n",
 	    ioc->name);
 	/* unblock devices */
@@ -7018,11 +7508,18 @@ _scsih_refresh_expander_links(struct MPT2SAS_ADAPTER *ioc,
 
 /**
  * _scsih_scan_for_devices_after_reset - scan for devices after host reset
+=======
+}
+
+/**
+ * _scsih_hide_unhide_sas_devices - add/remove device to/from OS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ioc: per adapter object
  *
  * Return nothing.
  */
 static void
+<<<<<<< HEAD
 _scsih_scan_for_devices_after_reset(struct MPT2SAS_ADAPTER *ioc)
 {
 	Mpi2ExpanderPage0_t expander_pg0;
@@ -7152,6 +7649,45 @@ _scsih_scan_for_devices_after_reset(struct MPT2SAS_ADAPTER *ioc)
 }
 
 
+=======
+_scsih_hide_unhide_sas_devices(struct MPT2SAS_ADAPTER *ioc)
+{
+	struct _sas_device *sas_device, *sas_device_next;
+
+	if (!ioc->is_warpdrive || ioc->mfg_pg10_hide_flag !=
+	    MFG_PAGE10_HIDE_IF_VOL_PRESENT)
+		return;
+
+	if (ioc->hide_drives) {
+		if (_scsih_get_num_volumes(ioc))
+			return;
+		ioc->hide_drives = 0;
+		list_for_each_entry_safe(sas_device, sas_device_next,
+		    &ioc->sas_device_list, list) {
+			if (!mpt2sas_transport_port_add(ioc, sas_device->handle,
+				sas_device->sas_address_parent)) {
+				_scsih_sas_device_remove(ioc, sas_device);
+			} else if (!sas_device->starget) {
+				mpt2sas_transport_port_remove(ioc,
+				    sas_device->sas_address,
+				    sas_device->sas_address_parent);
+				_scsih_sas_device_remove(ioc, sas_device);
+			}
+		}
+	} else {
+		if (!_scsih_get_num_volumes(ioc))
+			return;
+		ioc->hide_drives = 1;
+		list_for_each_entry_safe(sas_device, sas_device_next,
+		    &ioc->sas_device_list, list) {
+			mpt2sas_transport_port_remove(ioc,
+			    sas_device->sas_address,
+			    sas_device->sas_address_parent);
+		}
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * mpt2sas_scsih_reset_handler - reset callback handler (for scsih)
  * @ioc: per adapter object
@@ -7187,6 +7723,10 @@ mpt2sas_scsih_reset_handler(struct MPT2SAS_ADAPTER *ioc, int reset_phase)
 		}
 		_scsih_fw_event_cleanup_queue(ioc);
 		_scsih_flush_running_cmds(ioc);
+<<<<<<< HEAD
+=======
+		_scsih_queue_rescan(ioc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case MPT2_IOC_DONE_RESET:
 		dtmprintk(ioc, printk(MPT2SAS_INFO_FMT "%s: "
@@ -7196,6 +7736,7 @@ mpt2sas_scsih_reset_handler(struct MPT2SAS_ADAPTER *ioc, int reset_phase)
 		_scsih_search_responding_sas_devices(ioc);
 		_scsih_search_responding_raid_devices(ioc);
 		_scsih_search_responding_expanders(ioc);
+<<<<<<< HEAD
 		if (!ioc->is_driver_loading) {
 			_scsih_prep_device_scan(ioc);
 			_scsih_search_responding_sas_devices(ioc);
@@ -7203,6 +7744,8 @@ mpt2sas_scsih_reset_handler(struct MPT2SAS_ADAPTER *ioc, int reset_phase)
 			_scsih_search_responding_expanders(ioc);
 			_scsih_error_recovery_delete_devices(ioc);
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 }
@@ -7220,6 +7763,10 @@ _firmware_event_work(struct work_struct *work)
 {
 	struct fw_event_work *fw_event = container_of(work,
 	    struct fw_event_work, delayed_work.work);
+<<<<<<< HEAD
+=======
+	unsigned long flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct MPT2SAS_ADAPTER *ioc = fw_event->ioc;
 
 	/* the queue is being flushed so ignore this event */
@@ -7229,6 +7776,7 @@ _firmware_event_work(struct work_struct *work)
 		return;
 	}
 
+<<<<<<< HEAD
 	switch (fw_event->event) {
 	case MPT2SAS_REMOVE_UNRESPONDING_DEVICES:
 		while (scsi_host_in_recovery(ioc->shost))
@@ -7244,6 +7792,25 @@ _firmware_event_work(struct work_struct *work)
 		dewtprintk(ioc, printk(MPT2SAS_INFO_FMT "port enable: complete "
 		    "from worker thread\n", ioc->name));
 		break;
+=======
+	if (fw_event->event == MPT2SAS_RESCAN_AFTER_HOST_RESET) {
+		_scsih_fw_event_free(ioc, fw_event);
+		spin_lock_irqsave(&ioc->ioc_reset_in_progress_lock, flags);
+		if (ioc->shost_recovery) {
+			init_completion(&ioc->shost_recovery_done);
+			spin_unlock_irqrestore(&ioc->ioc_reset_in_progress_lock,
+			    flags);
+			wait_for_completion(&ioc->shost_recovery_done);
+		} else
+			spin_unlock_irqrestore(&ioc->ioc_reset_in_progress_lock,
+			    flags);
+		_scsih_remove_unresponding_sas_devices(ioc);
+		_scsih_hide_unhide_sas_devices(ioc);
+		return;
+	}
+
+	switch (fw_event->event) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case MPT2SAS_TURN_ON_FAULT_LED:
 		_scsih_turn_on_fault_led(ioc, fw_event->device_handle);
 		break;
@@ -7259,7 +7826,11 @@ _firmware_event_work(struct work_struct *work)
 		    fw_event);
 		break;
 	case MPI2_EVENT_SAS_BROADCAST_PRIMITIVE:
+<<<<<<< HEAD
 		_scsih_sas_broadcast_primitive_event(ioc,
+=======
+		_scsih_sas_broadcast_primative_event(ioc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    fw_event);
 		break;
 	case MPI2_EVENT_SAS_ENCL_DEVICE_STATUS_CHANGE:
@@ -7320,6 +7891,7 @@ mpt2sas_scsih_event_callback(struct MPT2SAS_ADAPTER *ioc, u8 msix_index,
 		    mpi_reply->EventData;
 
 		if (baen_data->Primitive !=
+<<<<<<< HEAD
 		    MPI2_EVENT_PRIMITIVE_ASYNCHRONOUS_EVENT)
 			return 1;
 
@@ -7328,6 +7900,12 @@ mpt2sas_scsih_event_callback(struct MPT2SAS_ADAPTER *ioc, u8 msix_index,
 			return 1;
 		} else
 			ioc->broadcast_aen_busy = 1;
+=======
+		    MPI2_EVENT_PRIMITIVE_ASYNCHRONOUS_EVENT ||
+		    ioc->broadcast_aen_busy)
+			return 1;
+		ioc->broadcast_aen_busy = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -7440,8 +8018,11 @@ static struct scsi_host_template scsih_driver_template = {
 	.slave_configure		= _scsih_slave_configure,
 	.target_destroy			= _scsih_target_destroy,
 	.slave_destroy			= _scsih_slave_destroy,
+<<<<<<< HEAD
 	.scan_finished			= _scsih_scan_finished,
 	.scan_start			= _scsih_scan_start,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.change_queue_depth 		= _scsih_change_queue_depth,
 	.change_queue_type		= _scsih_change_queue_type,
 	.eh_abort_handler		= _scsih_abort,
@@ -7452,7 +8033,11 @@ static struct scsi_host_template scsih_driver_template = {
 	.can_queue			= 1,
 	.this_id			= -1,
 	.sg_tablesize			= MPT2SAS_SG_DEPTH,
+<<<<<<< HEAD
 	.max_sectors			= 32767,
+=======
+	.max_sectors			= 8192,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.cmd_per_lun			= 7,
 	.use_clustering			= ENABLE_CLUSTERING,
 	.shost_attrs			= mpt2sas_host_attrs,
@@ -7702,12 +8287,16 @@ _scsih_probe_boot_devices(struct MPT2SAS_ADAPTER *ioc)
 	unsigned long flags;
 	int rc;
 
+<<<<<<< HEAD
 	 /* no Bios, return immediately */
 	if (!ioc->bios_pg3.BiosVersion)
 		return;
 
 	device = NULL;
 	is_raid = 0;
+=======
+	device = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ioc->req_boot_device.device) {
 		device =  ioc->req_boot_device.device;
 		is_raid = ioc->req_boot_device.is_raid;
@@ -7743,9 +8332,14 @@ _scsih_probe_boot_devices(struct MPT2SAS_ADAPTER *ioc)
 		    sas_device->sas_address_parent)) {
 			_scsih_sas_device_remove(ioc, sas_device);
 		} else if (!sas_device->starget) {
+<<<<<<< HEAD
 			if (!ioc->is_driver_loading)
 				mpt2sas_transport_port_remove(ioc, sas_address,
 					sas_address_parent);
+=======
+			mpt2sas_transport_port_remove(ioc, sas_address,
+			    sas_address_parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			_scsih_sas_device_remove(ioc, sas_device);
 		}
 	}
@@ -7799,10 +8393,16 @@ _scsih_probe_sas(struct MPT2SAS_ADAPTER *ioc)
 			kfree(sas_device);
 			continue;
 		} else if (!sas_device->starget) {
+<<<<<<< HEAD
 			if (!ioc->is_driver_loading)
 				mpt2sas_transport_port_remove(ioc,
 					sas_device->sas_address,
 					sas_device->sas_address_parent);
+=======
+			mpt2sas_transport_port_remove(ioc,
+			    sas_device->sas_address,
+			    sas_device->sas_address_parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			list_del(&sas_device->list);
 			kfree(sas_device);
 			continue;
@@ -7823,7 +8423,13 @@ _scsih_probe_sas(struct MPT2SAS_ADAPTER *ioc)
 static void
 _scsih_probe_devices(struct MPT2SAS_ADAPTER *ioc)
 {
+<<<<<<< HEAD
 	u16 volume_mapping_flags;
+=======
+	u16 volume_mapping_flags =
+	    le16_to_cpu(ioc->ioc_pg8.IRVolumeMappingFlags) &
+	    MPI2_IOCPAGE8_IRFLAGS_MASK_VOLUME_MAPPING_MODE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!(ioc->facts.ProtocolFlags & MPI2_IOCFACTS_PROTOCOL_SCSI_INITIATOR))
 		return;  /* return when IOC doesn't support initiator mode */
@@ -7831,6 +8437,7 @@ _scsih_probe_devices(struct MPT2SAS_ADAPTER *ioc)
 	_scsih_probe_boot_devices(ioc);
 
 	if (ioc->ir_firmware) {
+<<<<<<< HEAD
 		volume_mapping_flags =
 		    le16_to_cpu(ioc->ioc_pg8.IRVolumeMappingFlags) &
 		    MPI2_IOCPAGE8_IRFLAGS_MASK_VOLUME_MAPPING_MODE;
@@ -7841,11 +8448,21 @@ _scsih_probe_devices(struct MPT2SAS_ADAPTER *ioc)
 		} else {
 			_scsih_probe_sas(ioc);
 			_scsih_probe_raid(ioc);
+=======
+		if ((volume_mapping_flags &
+		     MPI2_IOCPAGE8_IRFLAGS_HIGH_VOLUME_MAPPING)) {
+			_scsih_probe_sas(ioc);
+			_scsih_probe_raid(ioc);
+		} else {
+			_scsih_probe_raid(ioc);
+			_scsih_probe_sas(ioc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else
 		_scsih_probe_sas(ioc);
 }
 
+<<<<<<< HEAD
 
 /**
  * _scsih_scan_start - scsi lld callback for .scan_start
@@ -7918,6 +8535,8 @@ _scsih_scan_finished(struct Scsi_Host *shost, unsigned long time)
 }
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * _scsih_probe - attach and add scsi host
  * @pdev: PCI device struct
@@ -7954,7 +8573,10 @@ _scsih_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 	ioc->tm_cb_idx = tm_cb_idx;
 	ioc->ctl_cb_idx = ctl_cb_idx;
 	ioc->base_cb_idx = base_cb_idx;
+<<<<<<< HEAD
 	ioc->port_enable_cb_idx = port_enable_cb_idx;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ioc->transport_cb_idx = transport_cb_idx;
 	ioc->scsih_cb_idx = scsih_cb_idx;
 	ioc->config_cb_idx = config_cb_idx;
@@ -7962,7 +8584,10 @@ _scsih_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 	ioc->tm_tr_volume_cb_idx = tm_tr_volume_cb_idx;
 	ioc->tm_sas_control_cb_idx = tm_sas_control_cb_idx;
 	ioc->logging_level = logging_level;
+<<<<<<< HEAD
 	ioc->schedule_dead_ioc_flush_running_cmds = &_scsih_flush_running_cmds;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* misc semaphores and spin locks */
 	mutex_init(&ioc->reset_in_progress_mutex);
 	spin_lock_init(&ioc->ioc_reset_in_progress_lock);
@@ -7987,6 +8612,7 @@ _scsih_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 	shost->transportt = mpt2sas_transport_template;
 	shost->unique_id = ioc->id;
 
+<<<<<<< HEAD
 	if (max_sectors != 0xFFFF) {
 		if (max_sectors < 64) {
 			shost->max_sectors = 64;
@@ -8006,6 +8632,8 @@ _scsih_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((scsi_add_host(shost, &pdev->dev))) {
 		printk(MPT2SAS_ERR_FMT "failure at %s:%d/%s()!\n",
 		    ioc->name, __FILE__, __LINE__, __func__);
@@ -8028,13 +8656,21 @@ _scsih_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 		goto out_thread_fail;
 	}
 
+<<<<<<< HEAD
 	ioc->is_driver_loading = 1;
+=======
+	ioc->wait_for_port_enable_to_complete = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((mpt2sas_base_attach(ioc))) {
 		printk(MPT2SAS_ERR_FMT "failure at %s:%d/%s()!\n",
 		    ioc->name, __FILE__, __LINE__, __func__);
 		goto out_attach_fail;
 	}
 
+<<<<<<< HEAD
+=======
+	ioc->wait_for_port_enable_to_complete = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ioc->is_warpdrive) {
 		if (ioc->mfg_pg10_hide_flag ==  MFG_PAGE10_EXPOSE_ALL_DISKS)
 			ioc->hide_drives = 0;
@@ -8048,8 +8684,13 @@ _scsih_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 		}
 	} else
 		ioc->hide_drives = 0;
+<<<<<<< HEAD
 	scsi_scan_host(shost);
 
+=======
+
+	_scsih_probe_devices(ioc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
  out_attach_fail:
@@ -8057,7 +8698,10 @@ _scsih_probe(struct pci_dev *pdev, const struct pci_device_id *id)
  out_thread_fail:
 	list_del(&ioc->list);
 	scsi_remove_host(shost);
+<<<<<<< HEAD
 	scsi_host_put(shost);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  out_add_shost_fail:
 	return -ENODEV;
 }
@@ -8304,8 +8948,11 @@ _scsih_init(void)
 
 	/* base internal commands callback handler */
 	base_cb_idx = mpt2sas_base_register_callback_handler(mpt2sas_base_done);
+<<<<<<< HEAD
 	port_enable_cb_idx = mpt2sas_base_register_callback_handler(
 		mpt2sas_port_enable_done);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* transport internal commands callback handler */
 	transport_cb_idx = mpt2sas_base_register_callback_handler(
@@ -8360,7 +9007,10 @@ _scsih_exit(void)
 	mpt2sas_base_release_callback_handler(scsi_io_cb_idx);
 	mpt2sas_base_release_callback_handler(tm_cb_idx);
 	mpt2sas_base_release_callback_handler(base_cb_idx);
+<<<<<<< HEAD
 	mpt2sas_base_release_callback_handler(port_enable_cb_idx);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mpt2sas_base_release_callback_handler(transport_cb_idx);
 	mpt2sas_base_release_callback_handler(scsih_cb_idx);
 	mpt2sas_base_release_callback_handler(config_cb_idx);

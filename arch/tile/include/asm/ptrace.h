@@ -112,6 +112,11 @@ struct pt_regs *get_pt_regs(struct pt_regs *);
 /* Trace the current syscall. */
 extern void do_syscall_trace(void);
 
+<<<<<<< HEAD
+=======
+extern void show_regs(struct pt_regs *);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define arch_has_single_step()	(1)
 
 /*

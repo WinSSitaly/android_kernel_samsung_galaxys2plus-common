@@ -3,7 +3,10 @@
  * not configured or static.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/ipv6.h>
 
 #define IPV6_ADDR_SCOPE_TYPE(scope)	((scope) << 16)

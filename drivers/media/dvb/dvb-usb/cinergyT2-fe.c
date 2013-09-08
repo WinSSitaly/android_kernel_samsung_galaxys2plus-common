@@ -40,8 +40,14 @@
  *  We replace errornous fields by default TPS fields (the ones with value 0).
  */
 
+<<<<<<< HEAD
 static uint16_t compute_tps(struct dtv_frontend_properties *op)
 {
+=======
+static uint16_t compute_tps(struct dvb_frontend_parameters *p)
+{
+	struct dvb_ofdm_parameters *op = &p->u.ofdm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint16_t tps = 0;
 
 	switch (op->code_rate_HP) {
@@ -82,7 +88,11 @@ static uint16_t compute_tps(struct dtv_frontend_properties *op)
 		/* tps |= (0 << 4) */;
 	}
 
+<<<<<<< HEAD
 	switch (op->modulation) {
+=======
+	switch (op->constellation) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case QAM_16:
 		tps |= (1 << 13);
 		break;
@@ -118,7 +128,11 @@ static uint16_t compute_tps(struct dtv_frontend_properties *op)
 		/* tps |= (0 << 2) */;
 	}
 
+<<<<<<< HEAD
 	switch (op->hierarchy) {
+=======
+	switch (op->hierarchy_information) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case HIERARCHY_1:
 		tps |= (1 << 10);
 		break;
@@ -262,9 +276,15 @@ static int cinergyt2_fe_get_tune_settings(struct dvb_frontend *fe,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int cinergyt2_fe_set_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *fep = &fe->dtv_property_cache;
+=======
+static int cinergyt2_fe_set_frontend(struct dvb_frontend *fe,
+				  struct dvb_frontend_parameters *fep)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct cinergyt2_fe_state *state = fe->demodulator_priv;
 	struct dvbt_set_parameters_msg param;
 	char result[2];
@@ -273,6 +293,7 @@ static int cinergyt2_fe_set_frontend(struct dvb_frontend *fe)
 	param.cmd = CINERGYT2_EP1_SET_TUNER_PARAMETERS;
 	param.tps = cpu_to_le16(compute_tps(fep));
 	param.freq = cpu_to_le32(fep->frequency / 1000);
+<<<<<<< HEAD
 	param.flags = 0;
 
 	switch (fep->bandwidth_hz) {
@@ -288,6 +309,11 @@ static int cinergyt2_fe_set_frontend(struct dvb_frontend *fe)
 		break;
 	}
 
+=======
+	param.bandwidth = 8 - fep->u.ofdm.bandwidth - BANDWIDTH_8_MHZ;
+	param.flags = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = dvb_usb_generic_rw(state->d,
 			(char *)&param, sizeof(param),
 			result, sizeof(result), 0);
@@ -297,6 +323,15 @@ static int cinergyt2_fe_set_frontend(struct dvb_frontend *fe)
 	return (err < 0) ? err : 0;
 }
 
+<<<<<<< HEAD
+=======
+static int cinergyt2_fe_get_frontend(struct dvb_frontend *fe,
+				  struct dvb_frontend_parameters *fep)
+{
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void cinergyt2_fe_release(struct dvb_frontend *fe)
 {
 	struct cinergyt2_fe_state *state = fe->demodulator_priv;
@@ -321,9 +356,15 @@ struct dvb_frontend *cinergyt2_fe_attach(struct dvb_usb_device *d)
 
 
 static struct dvb_frontend_ops cinergyt2_fe_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_DVBT },
 	.info = {
 		.name			= DRIVER_NAME,
+=======
+	.info = {
+		.name			= DRIVER_NAME,
+		.type			= FE_OFDM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min		= 174000000,
 		.frequency_max		= 862000000,
 		.frequency_stepsize	= 166667,
@@ -346,6 +387,10 @@ static struct dvb_frontend_ops cinergyt2_fe_ops = {
 	.sleep			= cinergyt2_fe_sleep,
 
 	.set_frontend		= cinergyt2_fe_set_frontend,
+<<<<<<< HEAD
+=======
+	.get_frontend		= cinergyt2_fe_get_frontend,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.get_tune_settings	= cinergyt2_fe_get_tune_settings,
 
 	.read_status		= cinergyt2_fe_read_status,

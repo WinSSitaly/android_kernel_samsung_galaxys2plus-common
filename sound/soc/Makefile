@@ -1,9 +1,12 @@
 snd-soc-core-objs := soc-core.o soc-dapm.o soc-jack.o soc-cache.o soc-utils.o
+<<<<<<< HEAD
 snd-soc-core-objs += soc-pcm.o soc-io.o
 
 ifneq ($(CONFIG_SND_SOC_DMAENGINE_PCM),)
 snd-soc-core-objs += soc-dmaengine-pcm.o
 endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 obj-$(CONFIG_SND_SOC)	+= snd-soc-core.o
 obj-$(CONFIG_SND_SOC)	+= codecs/
@@ -16,7 +19,10 @@ obj-$(CONFIG_SND_SOC)	+= fsl/
 obj-$(CONFIG_SND_SOC)   += imx/
 obj-$(CONFIG_SND_SOC)	+= jz4740/
 obj-$(CONFIG_SND_SOC)	+= mid-x86/
+<<<<<<< HEAD
 obj-$(CONFIG_SND_SOC)	+= mxs/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_SND_SOC)	+= nuc900/
 obj-$(CONFIG_SND_SOC)	+= omap/
 obj-$(CONFIG_SND_SOC)	+= kirkwood/
@@ -26,3 +32,7 @@ obj-$(CONFIG_SND_SOC)	+= s6000/
 obj-$(CONFIG_SND_SOC)	+= sh/
 obj-$(CONFIG_SND_SOC)	+= tegra/
 obj-$(CONFIG_SND_SOC)	+= txx9/
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_SND_SOC)	+= broadcom/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

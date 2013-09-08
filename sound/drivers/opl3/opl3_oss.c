@@ -18,7 +18,10 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "opl3_voice.h"
 
 static int snd_opl3_open_seq_oss(struct snd_seq_oss_arg *arg, void *closure);

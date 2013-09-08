@@ -25,7 +25,11 @@ static int show_cpuinfo(struct seq_file *m, void *v)
 	int i;
 
 #ifdef CONFIG_SMP
+<<<<<<< HEAD
 	if (!cpu_online(n))
+=======
+	if (!cpu_isset(n, cpu_online_map))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 #endif
 

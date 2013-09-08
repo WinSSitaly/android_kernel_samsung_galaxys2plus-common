@@ -576,6 +576,7 @@ static int au8522_enable_modulation(struct dvb_frontend *fe,
 }
 
 /* Talk to the demod, set the FEC, GUARD, QAM settings etc */
+<<<<<<< HEAD
 static int au8522_set_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
@@ -592,6 +593,29 @@ static int au8522_set_frontend(struct dvb_frontend *fe)
 		if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 1);
 		ret = fe->ops.tuner_ops.set_params(fe);
+=======
+static int au8522_set_frontend(struct dvb_frontend *fe,
+			       struct dvb_frontend_parameters *p)
+{
+	struct au8522_state *state = fe->demodulator_priv;
+	int ret = -EINVAL;
+
+	dprintk("%s(frequency=%d)\n", __func__, p->frequency);
+
+	if ((state->current_frequency == p->frequency) &&
+	    (state->current_modulation == p->u.vsb.modulation))
+		return 0;
+
+	au8522_enable_modulation(fe, p->u.vsb.modulation);
+
+	/* Allow the demod to settle */
+	msleep(100);
+
+	if (fe->ops.tuner_ops.set_params) {
+		if (fe->ops.i2c_gate_ctrl)
+			fe->ops.i2c_gate_ctrl(fe, 1);
+		ret = fe->ops.tuner_ops.set_params(fe, p);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 0);
 	}
@@ -599,12 +623,16 @@ static int au8522_set_frontend(struct dvb_frontend *fe)
 	if (ret < 0)
 		return ret;
 
+<<<<<<< HEAD
 	/* Allow the tuner to settle */
 	msleep(100);
 
 	au8522_enable_modulation(fe, c->modulation);
 
 	state->current_frequency = c->frequency;
+=======
+	state->current_frequency = p->frequency;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -862,6 +890,7 @@ static int au8522_read_snr(struct dvb_frontend *fe, u16 *snr)
 static int au8522_read_signal_strength(struct dvb_frontend *fe,
 				       u16 *signal_strength)
 {
+<<<<<<< HEAD
 	/* borrowed from lgdt330x.c
 	 *
 	 * Calculate strength from SNR up to 35dB
@@ -892,6 +921,9 @@ static int au8522_read_signal_strength(struct dvb_frontend *fe,
 	}
 
 	return ret;
+=======
+	return au8522_read_snr(fe, signal_strength);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int au8522_read_ucblocks(struct dvb_frontend *fe, u32 *ucblocks)
@@ -911,6 +943,7 @@ static int au8522_read_ber(struct dvb_frontend *fe, u32 *ber)
 	return au8522_read_ucblocks(fe, ber);
 }
 
+<<<<<<< HEAD
 static int au8522_get_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
@@ -918,6 +951,15 @@ static int au8522_get_frontend(struct dvb_frontend *fe)
 
 	c->frequency = state->current_frequency;
 	c->modulation = state->current_modulation;
+=======
+static int au8522_get_frontend(struct dvb_frontend *fe,
+				struct dvb_frontend_parameters *p)
+{
+	struct au8522_state *state = fe->demodulator_priv;
+
+	p->frequency = state->current_frequency;
+	p->u.vsb.modulation = state->current_modulation;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1010,9 +1052,16 @@ error:
 EXPORT_SYMBOL(au8522_attach);
 
 static struct dvb_frontend_ops au8522_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_ATSC, SYS_DVBC_ANNEX_B },
 	.info = {
 		.name			= "Auvitek AU8522 QAM/8VSB Frontend",
+=======
+
+	.info = {
+		.name			= "Auvitek AU8522 QAM/8VSB Frontend",
+		.type			= FE_ATSC,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min		= 54000000,
 		.frequency_max		= 858000000,
 		.frequency_stepsize	= 62500,

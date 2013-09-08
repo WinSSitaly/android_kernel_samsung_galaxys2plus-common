@@ -19,6 +19,10 @@ enum orion_ehci_phy_ver {
 };
 
 struct orion_ehci_data {
+<<<<<<< HEAD
+=======
+	struct mbus_dram_target_info	*dram;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	enum orion_ehci_phy_ver phy_version;
 };
 

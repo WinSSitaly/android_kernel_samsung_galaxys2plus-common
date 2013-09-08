@@ -560,9 +560,12 @@ static void data_enable_interrupts(struct fpga_device *priv)
 
 	/* flush the writes */
 	fpga_read_reg(priv, 0, MMAP_REG_STATUS);
+<<<<<<< HEAD
 	fpga_read_reg(priv, 1, MMAP_REG_STATUS);
 	fpga_read_reg(priv, 2, MMAP_REG_STATUS);
 	fpga_read_reg(priv, 3, MMAP_REG_STATUS);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* switch back to the external interrupt source */
 	iowrite32be(0x3F, priv->regs + SYS_IRQ_SOURCE_CTL);
@@ -594,12 +597,17 @@ static void data_dma_cb(void *data)
 	list_move_tail(&priv->inflight->entry, &priv->used);
 	priv->inflight = NULL;
 
+<<<<<<< HEAD
 	/*
 	 * If data dumping is still enabled, then clear the FPGA
 	 * status registers and re-enable FPGA interrupts
 	 */
 	if (priv->enabled)
 		data_enable_interrupts(priv);
+=======
+	/* clear the FPGA status and re-enable interrupts */
+	data_enable_interrupts(priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_irqrestore(&priv->lock, flags);
 
@@ -715,6 +723,7 @@ static irqreturn_t data_irq(int irq, void *dev_id)
 
 	spin_lock(&priv->lock);
 
+<<<<<<< HEAD
 	/*
 	 * This is an error case that should never happen.
 	 *
@@ -724,6 +733,8 @@ static irqreturn_t data_irq(int irq, void *dev_id)
 	 */
 	BUG_ON(priv->inflight != NULL);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* hide the interrupt by switching the IRQ driver to GPIO */
 	data_disable_interrupts(priv);
 
@@ -778,15 +789,22 @@ out:
  */
 static int data_device_enable(struct fpga_device *priv)
 {
+<<<<<<< HEAD
 	bool enabled;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 val;
 	int ret;
 
 	/* multiple enables are safe: they do nothing */
+<<<<<<< HEAD
 	spin_lock_irq(&priv->lock);
 	enabled = priv->enabled;
 	spin_unlock_irq(&priv->lock);
 	if (enabled)
+=======
+	if (priv->enabled)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	/* check that the FPGAs are programmed */
@@ -817,9 +835,12 @@ static int data_device_enable(struct fpga_device *priv)
 		goto out_error;
 	}
 
+<<<<<<< HEAD
 	/* prevent the FPGAs from generating interrupts */
 	data_disable_interrupts(priv);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* hookup the irq handler */
 	ret = request_irq(priv->irq, data_irq, IRQF_SHARED, drv_name, priv);
 	if (ret) {
@@ -827,6 +848,7 @@ static int data_device_enable(struct fpga_device *priv)
 		goto out_error;
 	}
 
+<<<<<<< HEAD
 	/* allow the DMA callback to re-enable FPGA interrupts */
 	spin_lock_irq(&priv->lock);
 	priv->enabled = true;
@@ -834,6 +856,13 @@ static int data_device_enable(struct fpga_device *priv)
 
 	/* allow the FPGAs to generate interrupts */
 	data_enable_interrupts(priv);
+=======
+	/* switch to the external FPGA IRQ line */
+	data_enable_interrupts(priv);
+
+	/* success, we're enabled */
+	priv->enabled = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 out_error:
@@ -859,6 +888,7 @@ out_error:
  */
 static int data_device_disable(struct fpga_device *priv)
 {
+<<<<<<< HEAD
 	spin_lock_irq(&priv->lock);
 
 	/* allow multiple disable */
@@ -889,10 +919,46 @@ static int data_device_disable(struct fpga_device *priv)
 	/* unhook the irq handler */
 	free_irq(priv->irq, priv);
 
+=======
+	int ret;
+
+	/* allow multiple disable */
+	if (!priv->enabled)
+		return 0;
+
+	/* switch to the internal GPIO IRQ line */
+	data_disable_interrupts(priv);
+
+	/* unhook the irq handler */
+	free_irq(priv->irq, priv);
+
+	/*
+	 * wait for all outstanding DMA to complete
+	 *
+	 * Device interrupts are disabled, therefore another buffer cannot
+	 * be marked inflight.
+	 */
+	ret = wait_event_interruptible(priv->wait, priv->inflight == NULL);
+	if (ret)
+		return ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* free the correlation table */
 	sg_free_table(&priv->corl_table);
 	priv->corl_nents = 0;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * We are taking the spinlock not to protect priv->enabled, but instead
+	 * to make sure that there are no readers in the process of altering
+	 * the free or used lists while we are setting this flag.
+	 */
+	spin_lock_irq(&priv->lock);
+	priv->enabled = false;
+	spin_unlock_irq(&priv->lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* free all buffers: the free and used lists are not being changed */
 	data_free_buffers(priv);
 	return 0;
@@ -920,6 +986,18 @@ static unsigned int list_num_entries(struct list_head *list)
 static int data_debug_show(struct seq_file *f, void *offset)
 {
 	struct fpga_device *priv = f->private;
+<<<<<<< HEAD
+=======
+	int ret;
+
+	/*
+	 * Lock the mutex first, so that we get an accurate value for enable
+	 * Lock the spinlock next, to get accurate list counts
+	 */
+	ret = mutex_lock_interruptible(&priv->mutex);
+	if (ret)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irq(&priv->lock);
 
@@ -932,6 +1010,10 @@ static int data_debug_show(struct seq_file *f, void *offset)
 	seq_printf(f, "num_dropped: %d\n", priv->num_dropped);
 
 	spin_unlock_irq(&priv->lock);
+<<<<<<< HEAD
+=======
+	mutex_unlock(&priv->mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -984,6 +1066,7 @@ static ssize_t data_en_show(struct device *dev, struct device_attribute *attr,
 			    char *buf)
 {
 	struct fpga_device *priv = dev_get_drvdata(dev);
+<<<<<<< HEAD
 	int ret;
 
 	spin_lock_irq(&priv->lock);
@@ -991,6 +1074,9 @@ static ssize_t data_en_show(struct device *dev, struct device_attribute *attr,
 	spin_unlock_irq(&priv->lock);
 
 	return ret;
+=======
+	return snprintf(buf, PAGE_SIZE, "%u\n", priv->enabled);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t data_en_set(struct device *dev, struct device_attribute *attr,
@@ -1006,7 +1092,10 @@ static ssize_t data_en_set(struct device *dev, struct device_attribute *attr,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	/* protect against concurrent enable/disable */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = mutex_lock_interruptible(&priv->mutex);
 	if (ret)
 		return ret;
@@ -1100,7 +1189,10 @@ static ssize_t data_read(struct file *filp, char __user *ubuf, size_t count,
 	struct fpga_reader *reader = filp->private_data;
 	struct fpga_device *priv = reader->priv;
 	struct list_head *used = &priv->used;
+<<<<<<< HEAD
 	bool drop_buffer = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct data_buf *dbuf;
 	size_t avail;
 	void *data;
@@ -1188,12 +1280,19 @@ have_buffer:
 	 * One of two things has happened, the device is disabled, or the
 	 * device has been reconfigured underneath us. In either case, we
 	 * should just throw away the buffer.
+<<<<<<< HEAD
 	 *
 	 * Lockdep complains if this is done under the spinlock, so we
 	 * handle it during the unlock path.
 	 */
 	if (!priv->enabled || dbuf->size != priv->bufsize) {
 		drop_buffer = true;
+=======
+	 */
+	if (!priv->enabled || dbuf->size != priv->bufsize) {
+		videobuf_dma_unmap(priv->dev, &dbuf->vb);
+		data_free_buffer(dbuf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_unlock;
 	}
 
@@ -1202,12 +1301,15 @@ have_buffer:
 
 out_unlock:
 	spin_unlock_irq(&priv->lock);
+<<<<<<< HEAD
 
 	if (drop_buffer) {
 		videobuf_dma_unmap(priv->dev, &dbuf->vb);
 		data_free_buffer(dbuf);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return count;
 }
 
@@ -1279,7 +1381,12 @@ static bool dma_filter(struct dma_chan *chan, void *data)
 	return true;
 }
 
+<<<<<<< HEAD
 static int data_of_probe(struct platform_device *op)
+=======
+static int data_of_probe(struct platform_device *op,
+			 const struct of_device_id *match)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct device_node *of_node = op->dev.of_node;
 	struct device *this_device;
@@ -1430,7 +1537,11 @@ static struct of_device_id data_of_match[] = {
 	{},
 };
 
+<<<<<<< HEAD
 static struct platform_driver data_of_driver = {
+=======
+static struct of_platform_driver data_of_driver = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.probe		= data_of_probe,
 	.remove		= data_of_remove,
 	.driver		= {
@@ -1440,8 +1551,30 @@ static struct platform_driver data_of_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(data_of_driver);
+=======
+/*
+ * Module Init / Exit
+ */
+
+static int __init data_init(void)
+{
+	return of_register_platform_driver(&data_of_driver);
+}
+
+static void __exit data_exit(void)
+{
+	of_unregister_platform_driver(&data_of_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Ira W. Snyder <iws@ovro.caltech.edu>");
 MODULE_DESCRIPTION("CARMA DATA-FPGA Access Driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(data_init);
+module_exit(data_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

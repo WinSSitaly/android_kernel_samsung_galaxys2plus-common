@@ -4,7 +4,10 @@
  */
 
 #include <linux/stddef.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bootmem.h>
 #include <linux/highmem.h>
 #include <linux/mm.h>
@@ -21,7 +24,10 @@
 
 /* allocated in paging_init, zeroed in mem_init, and unchanged thereafter */
 unsigned long *empty_zero_page = NULL;
+<<<<<<< HEAD
 EXPORT_SYMBOL(empty_zero_page);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* allocated in paging_init and unchanged thereafter */
 static unsigned long *empty_bad_page = NULL;
 

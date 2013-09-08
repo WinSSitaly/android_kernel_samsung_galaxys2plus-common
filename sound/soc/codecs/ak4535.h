@@ -34,4 +34,9 @@
 #define AK4535_VOL		0xe
 #define AK4535_STATUS		0xf
 
+<<<<<<< HEAD
+=======
+#define AK4535_CACHEREGNUM 	0x10
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

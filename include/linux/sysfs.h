@@ -17,7 +17,11 @@
 #include <linux/list.h>
 #include <linux/lockdep.h>
 #include <linux/kobject_ns.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct kobject;
 struct module;
@@ -25,7 +29,11 @@ enum kobj_ns_type;
 
 struct attribute {
 	const char		*name;
+<<<<<<< HEAD
 	umode_t			mode;
+=======
+	mode_t			mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_DEBUG_LOCK_ALLOC
 	struct lock_class_key	*key;
 	struct lock_class_key	skey;
@@ -55,7 +63,11 @@ do {							\
 
 struct attribute_group {
 	const char		*name;
+<<<<<<< HEAD
 	umode_t			(*is_visible)(struct kobject *,
+=======
+	mode_t			(*is_visible)(struct kobject *,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					      struct attribute *, int);
 	struct attribute	**attrs;
 };
@@ -112,7 +124,10 @@ struct bin_attribute {
 struct sysfs_ops {
 	ssize_t	(*show)(struct kobject *, struct attribute *,char *);
 	ssize_t	(*store)(struct kobject *,struct attribute *,const char *, size_t);
+<<<<<<< HEAD
 	const void *(*namespace)(struct kobject *, const struct attribute *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct sysfs_dirent;
@@ -133,7 +148,11 @@ int __must_check sysfs_create_file(struct kobject *kobj,
 int __must_check sysfs_create_files(struct kobject *kobj,
 				   const struct attribute **attr);
 int __must_check sysfs_chmod_file(struct kobject *kobj,
+<<<<<<< HEAD
 				  const struct attribute *attr, umode_t mode);
+=======
+				  const struct attribute *attr, mode_t mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void sysfs_remove_file(struct kobject *kobj, const struct attribute *attr);
 void sysfs_remove_files(struct kobject *kobj, const struct attribute **attr);
 
@@ -221,7 +240,11 @@ static inline int sysfs_create_files(struct kobject *kobj,
 }
 
 static inline int sysfs_chmod_file(struct kobject *kobj,
+<<<<<<< HEAD
 				   const struct attribute *attr, umode_t mode)
+=======
+				   const struct attribute *attr, mode_t mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }

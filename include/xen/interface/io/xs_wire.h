@@ -26,10 +26,14 @@ enum xsd_sockmsg_type
     XS_SET_PERMS,
     XS_WATCH_EVENT,
     XS_ERROR,
+<<<<<<< HEAD
     XS_IS_DOMAIN_INTRODUCED,
     XS_RESUME,
     XS_SET_TARGET,
     XS_RESTRICT
+=======
+    XS_IS_DOMAIN_INTRODUCED
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define XS_WRITE_NONE "NONE"

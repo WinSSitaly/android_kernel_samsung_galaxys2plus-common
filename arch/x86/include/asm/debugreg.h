@@ -78,6 +78,7 @@
  */
 #ifdef __KERNEL__
 
+<<<<<<< HEAD
 #include <linux/bug.h>
 
 DECLARE_PER_CPU(unsigned long, cpu_dr7);
@@ -147,6 +148,10 @@ static inline void native_set_debugreg(int regno, unsigned long value)
 	}
 }
 
+=======
+DECLARE_PER_CPU(unsigned long, cpu_dr7);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void hw_breakpoint_disable(void)
 {
 	/* Zero the control register for HW Breakpoint */
@@ -168,6 +173,7 @@ extern void aout_dump_debugregs(struct user *dump);
 
 extern void hw_breakpoint_restore(void);
 
+<<<<<<< HEAD
 #ifdef CONFIG_X86_64
 DECLARE_PER_CPU(int, debug_stack_usage);
 static inline void debug_stack_usage_inc(void)
@@ -190,6 +196,8 @@ static inline void debug_stack_usage_dec(void) { }
 #endif /* X86_64 */
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* __KERNEL__ */
 
 #endif /* _ASM_X86_DEBUGREG_H */

@@ -12,7 +12,10 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/soc.h>
 
 static struct snd_soc_card smdk2443;
@@ -30,7 +33,10 @@ static struct snd_soc_dai_link smdk2443_dai[] = {
 
 static struct snd_soc_card smdk2443 = {
 	.name = "SMDK2443",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link = smdk2443_dai,
 	.num_links = ARRAY_SIZE(smdk2443_dai),
 };

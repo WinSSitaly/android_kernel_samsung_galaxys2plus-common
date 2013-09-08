@@ -1,5 +1,6 @@
 #ifdef __KERNEL__
 # ifdef CONFIG_SUPERH32
+<<<<<<< HEAD
 
 #  include "unistd_32.h"
 #  define __ARCH_WANT_SYS_RT_SIGSUSPEND
@@ -41,6 +42,12 @@
  */
 # define cond_syscall(x) asm(".weak\t" #x "\n\t.set\t" #x ",sys_ni_syscall")
 
+=======
+#  include "unistd_32.h"
+# else
+#  include "unistd_64.h"
+# endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 # ifdef __SH5__
 #  include "unistd_64.h"

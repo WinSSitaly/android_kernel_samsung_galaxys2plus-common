@@ -47,9 +47,15 @@
  */
 #define EXT_DEBUG__
 #ifdef EXT_DEBUG
+<<<<<<< HEAD
 #define ext_debug(fmt, ...)	printk(fmt, ##__VA_ARGS__)
 #else
 #define ext_debug(fmt, ...)	no_printk(fmt, ##__VA_ARGS__)
+=======
+#define ext_debug(a...)		printk(a)
+#else
+#define ext_debug(a...)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /*
@@ -290,7 +296,10 @@ extern struct ext4_ext_path *ext4_ext_find_extent(struct inode *, ext4_lblk_t,
 							struct ext4_ext_path *);
 extern void ext4_ext_drop_refs(struct ext4_ext_path *);
 extern int ext4_ext_check_inode(struct inode *inode);
+<<<<<<< HEAD
 extern int ext4_find_delalloc_cluster(struct inode *inode, ext4_lblk_t lblk,
 				      int search_hint_reverse);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _EXT4_EXTENTS */
 

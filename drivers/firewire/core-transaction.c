@@ -565,6 +565,10 @@ int fw_core_add_address_handler(struct fw_address_handler *handler,
 				const struct fw_address_region *region)
 {
 	struct fw_address_handler *other;
+<<<<<<< HEAD
+=======
+	unsigned long flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = -EBUSY;
 
 	if (region->start & 0xffff000000000003ULL ||
@@ -574,7 +578,11 @@ int fw_core_add_address_handler(struct fw_address_handler *handler,
 	    handler->length == 0)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	spin_lock_bh(&address_handler_lock);
+=======
+	spin_lock_irqsave(&address_handler_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	handler->offset = region->start;
 	while (handler->offset + handler->length <= region->end) {
@@ -593,7 +601,11 @@ int fw_core_add_address_handler(struct fw_address_handler *handler,
 		}
 	}
 
+<<<<<<< HEAD
 	spin_unlock_bh(&address_handler_lock);
+=======
+	spin_unlock_irqrestore(&address_handler_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -601,6 +613,7 @@ EXPORT_SYMBOL(fw_core_add_address_handler);
 
 /**
  * fw_core_remove_address_handler() - unregister an address handler
+<<<<<<< HEAD
  *
  * When fw_core_remove_address_handler() returns, @handler->callback() is
  * guaranteed to not run on any CPU anymore.
@@ -610,6 +623,16 @@ void fw_core_remove_address_handler(struct fw_address_handler *handler)
 	spin_lock_bh(&address_handler_lock);
 	list_del(&handler->link);
 	spin_unlock_bh(&address_handler_lock);
+=======
+ */
+void fw_core_remove_address_handler(struct fw_address_handler *handler)
+{
+	unsigned long flags;
+
+	spin_lock_irqsave(&address_handler_lock, flags);
+	list_del(&handler->link);
+	spin_unlock_irqrestore(&address_handler_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(fw_core_remove_address_handler);
 
@@ -770,7 +793,11 @@ static struct fw_request *allocate_request(struct fw_card *card,
 		break;
 
 	default:
+<<<<<<< HEAD
 		fw_notice(card, "ERROR - corrupt request received - %08x %08x %08x\n",
+=======
+		fw_error("ERROR - corrupt request received - %08x %08x %08x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 p->header[0], p->header[1], p->header[2]);
 		return NULL;
 	}
@@ -826,6 +853,10 @@ static void handle_exclusive_region_request(struct fw_card *card,
 					    unsigned long long offset)
 {
 	struct fw_address_handler *handler;
+<<<<<<< HEAD
+=======
+	unsigned long flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int tcode, destination, source;
 
 	destination = HEADER_GET_DESTINATION(p->header[0]);
@@ -834,19 +865,41 @@ static void handle_exclusive_region_request(struct fw_card *card,
 	if (tcode == TCODE_LOCK_REQUEST)
 		tcode = 0x10 + HEADER_GET_EXTENDED_TCODE(p->header[3]);
 
+<<<<<<< HEAD
 	spin_lock_bh(&address_handler_lock);
 	handler = lookup_enclosing_address_handler(&address_handler_list,
 						   offset, request->length);
 	if (handler)
+=======
+	spin_lock_irqsave(&address_handler_lock, flags);
+	handler = lookup_enclosing_address_handler(&address_handler_list,
+						   offset, request->length);
+	spin_unlock_irqrestore(&address_handler_lock, flags);
+
+	/*
+	 * FIXME: lookup the fw_node corresponding to the sender of
+	 * this request and pass that to the address handler instead
+	 * of the node ID.  We may also want to move the address
+	 * allocations to fw_node so we only do this callback if the
+	 * upper layers registered it for this node.
+	 */
+
+	if (handler == NULL)
+		fw_send_response(card, request, RCODE_ADDRESS_ERROR);
+	else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		handler->address_callback(card, request,
 					  tcode, destination, source,
 					  p->generation, offset,
 					  request->data, request->length,
 					  handler->callback_data);
+<<<<<<< HEAD
 	spin_unlock_bh(&address_handler_lock);
 
 	if (!handler)
 		fw_send_response(card, request, RCODE_ADDRESS_ERROR);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void handle_fcp_region_request(struct fw_card *card,
@@ -855,6 +908,10 @@ static void handle_fcp_region_request(struct fw_card *card,
 				      unsigned long long offset)
 {
 	struct fw_address_handler *handler;
+<<<<<<< HEAD
+=======
+	unsigned long flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int tcode, destination, source;
 
 	if ((offset != (CSR_REGISTER_BASE | CSR_FCP_COMMAND) &&
@@ -876,7 +933,11 @@ static void handle_fcp_region_request(struct fw_card *card,
 		return;
 	}
 
+<<<<<<< HEAD
 	spin_lock_bh(&address_handler_lock);
+=======
+	spin_lock_irqsave(&address_handler_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(handler, &address_handler_list, link) {
 		if (is_enclosing_handler(handler, offset, request->length))
 			handler->address_callback(card, NULL, tcode,
@@ -886,7 +947,11 @@ static void handle_fcp_region_request(struct fw_card *card,
 						  request->length,
 						  handler->callback_data);
 	}
+<<<<<<< HEAD
 	spin_unlock_bh(&address_handler_lock);
+=======
+	spin_unlock_irqrestore(&address_handler_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fw_send_response(card, request, RCODE_COMPLETE);
 }
@@ -950,7 +1015,11 @@ void fw_core_handle_response(struct fw_card *card, struct fw_packet *p)
 
 	if (&t->link == &card->transaction_list) {
  timed_out:
+<<<<<<< HEAD
 		fw_notice(card, "unsolicited response (source %x, tlabel %x)\n",
+=======
+		fw_notify("Unsolicited response (source %x, tlabel %x)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  source, tlabel);
 		return;
 	}
@@ -1036,8 +1105,13 @@ static void update_split_timeout(struct fw_card *card)
 
 	cycles = card->split_timeout_hi * 8000 + (card->split_timeout_lo >> 19);
 
+<<<<<<< HEAD
 	/* minimum per IEEE 1394, maximum which doesn't overflow OHCI */
 	cycles = clamp(cycles, 800u, 3u * 8000u);
+=======
+	cycles = max(cycles, 800u); /* minimum as per the spec */
+	cycles = min(cycles, 3u * 8000u); /* maximum OHCI timeout */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	card->split_timeout_cycles = cycles;
 	card->split_timeout_jiffies = DIV_ROUND_UP(cycles * HZ, 8000);

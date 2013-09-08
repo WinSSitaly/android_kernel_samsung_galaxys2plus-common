@@ -8993,7 +8993,11 @@ ahd_handle_scsi_status(struct ahd_softc *ahd, struct scb *scb)
 					printk("Invalid Command IU Field\n");
 					break;
 				case SIU_PFC_TMF_NOT_SUPPORTED:
+<<<<<<< HEAD
 					printk("TMF not supported\n");
+=======
+					printk("TMF not supportd\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					break;
 				case SIU_PFC_TMF_FAILED:
 					printk("TMF failed\n");
@@ -9113,7 +9117,11 @@ ahd_handle_scsi_status(struct ahd_softc *ahd, struct scb *scb)
 		break;
 	}
 	case SCSI_STATUS_OK:
+<<<<<<< HEAD
 		printk("%s: Interrupted for status of 0???\n",
+=======
+		printk("%s: Interrupted for staus of 0???\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       ahd_name(ahd));
 		/* FALLTHROUGH */
 	default:

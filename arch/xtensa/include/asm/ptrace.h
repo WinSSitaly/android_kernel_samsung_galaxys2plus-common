@@ -120,6 +120,10 @@ struct pt_regs {
   (task_stack_page(tsk) + KERNEL_STACK_SIZE - (XCHAL_NUM_AREGS-16)*4) - 1)
 # define user_mode(regs) (((regs)->ps & 0x00000020)!=0)
 # define instruction_pointer(regs) ((regs)->pc)
+<<<<<<< HEAD
+=======
+extern void show_regs(struct pt_regs *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # ifndef CONFIG_SMP
 #  define profile_pc(regs) instruction_pointer(regs)

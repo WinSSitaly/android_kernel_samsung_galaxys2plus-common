@@ -12,8 +12,14 @@
 #include <asm/machvec.h>
 #include <linux/dma-mapping.h>
 
+<<<<<<< HEAD
 
 #ifdef CONFIG_INTEL_IOMMU
+=======
+#include <asm/system.h>
+
+#ifdef CONFIG_DMAR
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/kernel.h>
 
@@ -32,7 +38,10 @@ int force_iommu __read_mostly;
 #endif
 
 int iommu_pass_through;
+<<<<<<< HEAD
 int iommu_group_mf;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Dummy device used for NULL arguments (normally ISA). Better would
    be probably a smaller DMA mask, but this is bug-to-bug compatible

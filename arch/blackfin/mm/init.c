@@ -8,7 +8,10 @@
 #include <linux/swap.h>
 #include <linux/bootmem.h>
 #include <linux/uaccess.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/bfin-global.h>
 #include <asm/pda.h>
 #include <asm/cplbinit.h>

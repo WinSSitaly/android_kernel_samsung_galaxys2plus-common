@@ -18,7 +18,15 @@
 #include <linux/linkage.h>
 #include <linux/init.h>
 
+<<<<<<< HEAD
 	__CPUINIT
+=======
+/* Physical address needed since MMU not enabled yet on secondary core */
+#define OMAP4_AUX_CORE_BOOT1_PA			0x48281804
+
+	__INIT
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * OMAP4 specific entry point for secondary CPU to jump from ROM
  * code.  This routine also provides a holding flag into which

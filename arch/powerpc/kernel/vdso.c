@@ -9,6 +9,10 @@
  *  2 of the License, or (at your option) any later version.
  */
 
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/errno.h>
 #include <linux/sched.h>
 #include <linux/kernel.h>
@@ -24,6 +28,10 @@
 #include <linux/memblock.h>
 
 #include <asm/pgtable.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/processor.h>
 #include <asm/mmu.h>
 #include <asm/mmu_context.h>
@@ -262,11 +270,25 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
 	 * the "data" page of the vDSO or you'll stop getting kernel updates
 	 * and your nice userland gettimeofday will be totally dead.
 	 * It's fine to use that for setting breakpoints in the vDSO code
+<<<<<<< HEAD
 	 * pages though.
 	 */
 	rc = install_special_mapping(mm, vdso_base, vdso_pages << PAGE_SHIFT,
 				     VM_READ|VM_EXEC|
 				     VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
+=======
+	 * pages though
+	 *
+	 * Make sure the vDSO gets into every core dump.
+	 * Dumping its contents makes post-mortem fully interpretable later
+	 * without matching up the same kernel and hardware config to see
+	 * what PC values meant.
+	 */
+	rc = install_special_mapping(mm, vdso_base, vdso_pages << PAGE_SHIFT,
+				     VM_READ|VM_EXEC|
+				     VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC|
+				     VM_ALWAYSDUMP,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     vdso_pagelist);
 	if (rc) {
 		current->mm->context.vdso_base = 0;
@@ -720,10 +742,17 @@ static int __init vdso_init(void)
 	vdso_data->version.minor = SYSTEMCFG_MINOR;
 	vdso_data->processor = mfspr(SPRN_PVR);
 	/*
+<<<<<<< HEAD
 	 * Fake the old platform number for pSeries and add
 	 * in LPAR bit if necessary
 	 */
 	vdso_data->platform = 0x100;
+=======
+	 * Fake the old platform number for pSeries and iSeries and add
+	 * in LPAR bit if necessary
+	 */
+	vdso_data->platform = machine_is(iseries) ? 0x200 : 0x100;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (firmware_has_feature(FW_FEATURE_LPAR))
 		vdso_data->platform |= 1;
 	vdso_data->physicalMemorySize = memblock_phys_mem_size();

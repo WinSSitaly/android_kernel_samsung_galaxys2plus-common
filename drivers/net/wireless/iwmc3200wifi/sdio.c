@@ -63,7 +63,10 @@
  */
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/netdevice.h>
 #include <linux/debugfs.h>
@@ -264,6 +267,16 @@ static int if_sdio_send_chunk(struct iwm_priv *iwm, u8 *buf, int count)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+/* debugfs hooks */
+static int iwm_debugfs_sdio_open(struct inode *inode, struct file *filp)
+{
+	filp->private_data = inode->i_private;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t iwm_debugfs_sdio_read(struct file *filp, char __user *buffer,
 				     size_t count, loff_t *ppos)
 {
@@ -356,7 +369,11 @@ err:
 
 static const struct file_operations iwm_debugfs_sdio_fops = {
 	.owner =	THIS_MODULE,
+<<<<<<< HEAD
 	.open =		simple_open,
+=======
+	.open =		iwm_debugfs_sdio_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.read =		iwm_debugfs_sdio_read,
 	.llseek =	default_llseek,
 };

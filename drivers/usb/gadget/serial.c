@@ -100,6 +100,7 @@ static struct usb_device_descriptor device_desc = {
 	.bNumConfigurations =	1,
 };
 
+<<<<<<< HEAD
 static struct usb_otg_descriptor otg_descriptor = {
 	.bLength =		sizeof otg_descriptor,
 	.bDescriptorType =	USB_DT_OTG,
@@ -114,6 +115,8 @@ static const struct usb_descriptor_header *otg_desc[] = {
 	(struct usb_descriptor_header *) &otg_descriptor,
 	NULL,
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*-------------------------------------------------------------------------*/
 
@@ -123,11 +126,19 @@ MODULE_AUTHOR("Al Borchers");
 MODULE_AUTHOR("David Brownell");
 MODULE_LICENSE("GPL");
 
+<<<<<<< HEAD
 static bool use_acm = true;
 module_param(use_acm, bool, 0);
 MODULE_PARM_DESC(use_acm, "Use CDC ACM, default=yes");
 
 static bool use_obex = false;
+=======
+static int use_acm = true;
+module_param(use_acm, bool, 0);
+MODULE_PARM_DESC(use_acm, "Use CDC ACM, default=yes");
+
+static int use_obex = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(use_obex, bool, 0);
 MODULE_PARM_DESC(use_obex, "Use CDC OBEX, default=no");
 
@@ -242,7 +253,10 @@ static struct usb_composite_driver gserial_driver = {
 	.name		= "g_serial",
 	.dev		= &device_desc,
 	.strings	= dev_strings,
+<<<<<<< HEAD
 	.max_speed	= USB_SPEED_SUPER,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init init(void)

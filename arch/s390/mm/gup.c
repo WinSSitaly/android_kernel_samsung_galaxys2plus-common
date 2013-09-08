@@ -183,7 +183,11 @@ int get_user_pages_fast(unsigned long start, int nr_pages, int write,
 	addr = start;
 	len = (unsigned long) nr_pages << PAGE_SHIFT;
 	end = start + len;
+<<<<<<< HEAD
 	if ((end < start) || (end > TASK_SIZE))
+=======
+	if (end < start)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto slow_irqon;
 
 	/*

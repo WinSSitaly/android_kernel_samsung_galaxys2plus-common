@@ -1,6 +1,10 @@
 /*
  * Copyright (C) 2003 Sistina Software (UK) Limited.
+<<<<<<< HEAD
  * Copyright (C) 2004, 2010-2011 Red Hat, Inc. All rights reserved.
+=======
+ * Copyright (C) 2004, 2010 Red Hat, Inc. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This file is released under the GPL.
  */
@@ -15,9 +19,12 @@
 
 #define DM_MSG_PREFIX "flakey"
 
+<<<<<<< HEAD
 #define all_corrupt_bio_flags_match(bio, fc)	\
 	(((bio)->bi_rw & (fc)->corrupt_bio_flags) == (fc)->corrupt_bio_flags)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Flakey: Used for testing only, simulates intermittent,
  * catastrophic device failure.
@@ -28,6 +35,7 @@ struct flakey_c {
 	sector_t start;
 	unsigned up_interval;
 	unsigned down_interval;
+<<<<<<< HEAD
 	unsigned long flags;
 	unsigned corrupt_bio_byte;
 	unsigned corrupt_bio_rw;
@@ -173,10 +181,31 @@ static int flakey_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 	fc = kzalloc(sizeof(*fc), GFP_KERNEL);
 	if (!fc) {
 		ti->error = "Cannot allocate linear context";
+=======
+};
+
+/*
+ * Construct a flakey mapping: <dev_path> <offset> <up interval> <down interval>
+ */
+static int flakey_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+{
+	struct flakey_c *fc;
+	unsigned long long tmp;
+
+	if (argc != 4) {
+		ti->error = "dm-flakey: Invalid argument count";
+		return -EINVAL;
+	}
+
+	fc = kmalloc(sizeof(*fc), GFP_KERNEL);
+	if (!fc) {
+		ti->error = "dm-flakey: Cannot allocate linear context";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 	fc->start_time = jiffies;
 
+<<<<<<< HEAD
 	devname = dm_shift_arg(&as);
 
 	if (sscanf(dm_shift_arg(&as), "%llu%c", &tmpll, &dummy) != 1) {
@@ -195,10 +224,31 @@ static int flakey_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 
 	if (!(fc->up_interval + fc->down_interval)) {
 		ti->error = "Total (up + down) interval is zero";
+=======
+	if (sscanf(argv[1], "%llu", &tmp) != 1) {
+		ti->error = "dm-flakey: Invalid device sector";
+		goto bad;
+	}
+	fc->start = tmp;
+
+	if (sscanf(argv[2], "%u", &fc->up_interval) != 1) {
+		ti->error = "dm-flakey: Invalid up interval";
+		goto bad;
+	}
+
+	if (sscanf(argv[3], "%u", &fc->down_interval) != 1) {
+		ti->error = "dm-flakey: Invalid down interval";
+		goto bad;
+	}
+
+	if (!(fc->up_interval + fc->down_interval)) {
+		ti->error = "dm-flakey: Total (up + down) interval is zero";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto bad;
 	}
 
 	if (fc->up_interval + fc->down_interval < fc->up_interval) {
+<<<<<<< HEAD
 		ti->error = "Interval overflow";
 		goto bad;
 	}
@@ -209,11 +259,22 @@ static int flakey_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 
 	if (dm_get_device(ti, devname, dm_table_get_mode(ti->table), &fc->dev)) {
 		ti->error = "Device lookup failed";
+=======
+		ti->error = "dm-flakey: Interval overflow";
+		goto bad;
+	}
+
+	if (dm_get_device(ti, argv[0], dm_table_get_mode(ti->table), &fc->dev)) {
+		ti->error = "dm-flakey: Device lookup failed";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto bad;
 	}
 
 	ti->num_flush_requests = 1;
+<<<<<<< HEAD
 	ti->num_discard_requests = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ti->private = fc;
 	return 0;
 
@@ -234,7 +295,11 @@ static sector_t flakey_map_sector(struct dm_target *ti, sector_t bi_sector)
 {
 	struct flakey_c *fc = ti->private;
 
+<<<<<<< HEAD
 	return fc->start + dm_target_offset(ti, bi_sector);
+=======
+	return fc->start + (bi_sector - ti->begin);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void flakey_map_bio(struct dm_target *ti, struct bio *bio)
@@ -246,6 +311,7 @@ static void flakey_map_bio(struct dm_target *ti, struct bio *bio)
 		bio->bi_sector = flakey_map_sector(ti, bio->bi_sector);
 }
 
+<<<<<<< HEAD
 static void corrupt_bio_data(struct bio *bio, struct flakey_c *fc)
 {
 	unsigned bio_bytes = bio_cur_bytes(bio);
@@ -265,6 +331,8 @@ static void corrupt_bio_data(struct bio *bio, struct flakey_c *fc)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int flakey_map(struct dm_target *ti, struct bio *bio,
 		      union map_info *map_context)
 {
@@ -273,6 +341,7 @@ static int flakey_map(struct dm_target *ti, struct bio *bio,
 
 	/* Are we alive ? */
 	elapsed = (jiffies - fc->start_time) / HZ;
+<<<<<<< HEAD
 	if (elapsed % (fc->up_interval + fc->down_interval) >= fc->up_interval) {
 		/*
 		 * Flag this bio as submitted while down.
@@ -309,11 +378,17 @@ static int flakey_map(struct dm_target *ti, struct bio *bio,
 	}
 
 map_bio:
+=======
+	if (elapsed % (fc->up_interval + fc->down_interval) >= fc->up_interval)
+		return -EIO;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	flakey_map_bio(ti, bio);
 
 	return DM_MAPIO_REMAPPED;
 }
 
+<<<<<<< HEAD
 static int flakey_end_io(struct dm_target *ti, struct bio *bio,
 			 int error, union map_info *map_context)
 {
@@ -338,6 +413,12 @@ static int flakey_status(struct dm_target *ti, status_type_t type,
 	unsigned sz = 0;
 	struct flakey_c *fc = ti->private;
 	unsigned drop_writes;
+=======
+static int flakey_status(struct dm_target *ti, status_type_t type,
+			 char *result, unsigned int maxlen)
+{
+	struct flakey_c *fc = ti->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (type) {
 	case STATUSTYPE_INFO:
@@ -345,6 +426,7 @@ static int flakey_status(struct dm_target *ti, status_type_t type,
 		break;
 
 	case STATUSTYPE_TABLE:
+<<<<<<< HEAD
 		DMEMIT("%s %llu %u %u ", fc->dev->name,
 		       (unsigned long long)fc->start, fc->up_interval,
 		       fc->down_interval);
@@ -361,6 +443,11 @@ static int flakey_status(struct dm_target *ti, status_type_t type,
 			       (fc->corrupt_bio_rw == WRITE) ? 'w' : 'r',
 			       fc->corrupt_bio_value, fc->corrupt_bio_flags);
 
+=======
+		snprintf(result, maxlen, "%s %llu %u %u", fc->dev->name,
+			 (unsigned long long)fc->start, fc->up_interval,
+			 fc->down_interval);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 	return 0;
@@ -406,12 +493,19 @@ static int flakey_iterate_devices(struct dm_target *ti, iterate_devices_callout_
 
 static struct target_type flakey_target = {
 	.name   = "flakey",
+<<<<<<< HEAD
 	.version = {1, 2, 0},
+=======
+	.version = {1, 1, 0},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.module = THIS_MODULE,
 	.ctr    = flakey_ctr,
 	.dtr    = flakey_dtr,
 	.map    = flakey_map,
+<<<<<<< HEAD
 	.end_io = flakey_end_io,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.status = flakey_status,
 	.ioctl	= flakey_ioctl,
 	.merge	= flakey_merge,

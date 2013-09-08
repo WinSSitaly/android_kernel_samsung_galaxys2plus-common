@@ -32,7 +32,10 @@
 
 
 #include <linux/cpufreq.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/interrupt.h>
 #include <linux/io.h>
@@ -46,11 +49,18 @@
 #include <linux/timer.h>
 
 #include <mach/hardware.h>
+<<<<<<< HEAD
 
 #include "soc_common.h"
 
 static irqreturn_t soc_common_pcmcia_interrupt(int irq, void *dev);
 
+=======
+#include <asm/system.h>
+
+#include "soc_common.h"
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PCMCIA_DEBUG
 
 static int pc_debug;
@@ -106,6 +116,7 @@ void soc_common_pcmcia_get_timing(struct soc_pcmcia_socket *skt,
 }
 EXPORT_SYMBOL(soc_common_pcmcia_get_timing);
 
+<<<<<<< HEAD
 static void __soc_pcmcia_hw_shutdown(struct soc_pcmcia_socket *skt,
 	unsigned int nr)
 {
@@ -193,6 +204,8 @@ static void soc_pcmcia_hw_disable(struct soc_pcmcia_socket *skt)
 			irq_set_irq_type(skt->stat[i].irq, IRQ_TYPE_NONE);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned int soc_common_pcmcia_skt_state(struct soc_pcmcia_socket *skt)
 {
 	struct pcmcia_state state;
@@ -200,6 +213,7 @@ static unsigned int soc_common_pcmcia_skt_state(struct soc_pcmcia_socket *skt)
 
 	memset(&state, 0, sizeof(struct pcmcia_state));
 
+<<<<<<< HEAD
 	/* Make battery voltage state report 'good' */
 	state.bvd1 = 1;
 	state.bvd2 = 1;
@@ -216,6 +230,8 @@ static unsigned int soc_common_pcmcia_skt_state(struct soc_pcmcia_socket *skt)
 	if (gpio_is_valid(skt->stat[SOC_STAT_BVD2].gpio))
 		state.bvd2 = !!gpio_get_value(skt->stat[SOC_STAT_BVD2].gpio);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skt->ops->socket_state(skt, &state);
 
 	stat = state.detect  ? SS_DETECT : 0;
@@ -291,9 +307,14 @@ static int soc_common_pcmcia_sock_init(struct pcmcia_socket *sock)
 	struct soc_pcmcia_socket *skt = to_soc_pcmcia_socket(sock);
 
 	debug(skt, 2, "initializing socket\n");
+<<<<<<< HEAD
 	if (skt->ops->socket_init)
 		skt->ops->socket_init(skt);
 	soc_pcmcia_hw_enable(skt);
+=======
+
+	skt->ops->socket_init(skt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -313,9 +334,13 @@ static int soc_common_pcmcia_suspend(struct pcmcia_socket *sock)
 
 	debug(skt, 2, "suspending socket\n");
 
+<<<<<<< HEAD
 	soc_pcmcia_hw_disable(skt);
 	if (skt->ops->socket_suspend)
 		skt->ops->socket_suspend(skt);
+=======
+	skt->ops->socket_suspend(skt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -633,6 +658,72 @@ static struct pccard_operations soc_common_pcmcia_operations = {
 };
 
 
+<<<<<<< HEAD
+=======
+int soc_pcmcia_request_irqs(struct soc_pcmcia_socket *skt,
+			    struct pcmcia_irqs *irqs, int nr)
+{
+	int i, res = 0;
+
+	for (i = 0; i < nr; i++) {
+		if (irqs[i].sock != skt->nr)
+			continue;
+		res = request_irq(irqs[i].irq, soc_common_pcmcia_interrupt,
+				  IRQF_DISABLED, irqs[i].str, skt);
+		if (res)
+			break;
+		irq_set_irq_type(irqs[i].irq, IRQ_TYPE_NONE);
+	}
+
+	if (res) {
+		printk(KERN_ERR "PCMCIA: request for IRQ%d failed (%d)\n",
+			irqs[i].irq, res);
+
+		while (i--)
+			if (irqs[i].sock == skt->nr)
+				free_irq(irqs[i].irq, skt);
+	}
+	return res;
+}
+EXPORT_SYMBOL(soc_pcmcia_request_irqs);
+
+void soc_pcmcia_free_irqs(struct soc_pcmcia_socket *skt,
+			  struct pcmcia_irqs *irqs, int nr)
+{
+	int i;
+
+	for (i = 0; i < nr; i++)
+		if (irqs[i].sock == skt->nr)
+			free_irq(irqs[i].irq, skt);
+}
+EXPORT_SYMBOL(soc_pcmcia_free_irqs);
+
+void soc_pcmcia_disable_irqs(struct soc_pcmcia_socket *skt,
+			     struct pcmcia_irqs *irqs, int nr)
+{
+	int i;
+
+	for (i = 0; i < nr; i++)
+		if (irqs[i].sock == skt->nr)
+			irq_set_irq_type(irqs[i].irq, IRQ_TYPE_NONE);
+}
+EXPORT_SYMBOL(soc_pcmcia_disable_irqs);
+
+void soc_pcmcia_enable_irqs(struct soc_pcmcia_socket *skt,
+			    struct pcmcia_irqs *irqs, int nr)
+{
+	int i;
+
+	for (i = 0; i < nr; i++)
+		if (irqs[i].sock == skt->nr) {
+			irq_set_irq_type(irqs[i].irq, IRQ_TYPE_EDGE_RISING);
+			irq_set_irq_type(irqs[i].irq, IRQ_TYPE_EDGE_BOTH);
+		}
+}
+EXPORT_SYMBOL(soc_pcmcia_enable_irqs);
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static LIST_HEAD(soc_pcmcia_sockets);
 static DEFINE_MUTEX(soc_pcmcia_sockets_lock);
 
@@ -679,6 +770,7 @@ module_exit(soc_pcmcia_cpufreq_unregister);
 
 #endif
 
+<<<<<<< HEAD
 void soc_pcmcia_init_one(struct soc_pcmcia_socket *skt,
 	struct pcmcia_low_level *ops, struct device *dev)
 {
@@ -694,6 +786,8 @@ void soc_pcmcia_init_one(struct soc_pcmcia_socket *skt,
 }
 EXPORT_SYMBOL(soc_pcmcia_init_one);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void soc_pcmcia_remove_one(struct soc_pcmcia_socket *skt)
 {
 	mutex_lock(&soc_pcmcia_sockets_lock);
@@ -701,9 +795,14 @@ void soc_pcmcia_remove_one(struct soc_pcmcia_socket *skt)
 
 	pcmcia_unregister_socket(&skt->socket);
 
+<<<<<<< HEAD
 	soc_pcmcia_hw_shutdown(skt);
 
 	/* should not be required; violates some lowlevel drivers */
+=======
+	skt->ops->hw_shutdown(skt);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	soc_common_pcmcia_config_skt(skt, &dead_socket);
 
 	list_del(&skt->node);
@@ -760,7 +859,11 @@ int soc_pcmcia_add_one(struct soc_pcmcia_socket *skt)
 	 */
 	skt->ops->set_timing(skt);
 
+<<<<<<< HEAD
 	ret = soc_pcmcia_hw_init(skt);
+=======
+	ret = skt->ops->hw_init(skt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto out_err_6;
 
@@ -793,7 +896,11 @@ int soc_pcmcia_add_one(struct soc_pcmcia_socket *skt)
 	pcmcia_unregister_socket(&skt->socket);
 
  out_err_7:
+<<<<<<< HEAD
 	soc_pcmcia_hw_shutdown(skt);
+=======
+	skt->ops->hw_shutdown(skt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  out_err_6:
 	list_del(&skt->node);
 	mutex_unlock(&soc_pcmcia_sockets_lock);

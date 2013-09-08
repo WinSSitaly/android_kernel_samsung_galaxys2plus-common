@@ -81,6 +81,7 @@ static void __init linkstation_setup_arch(void)
 static void __init linkstation_init_IRQ(void)
 {
 	struct mpic *mpic;
+<<<<<<< HEAD
 
 	mpic = mpic_alloc(NULL, 0, 0, 4, 0, " EPIC     ");
 	BUG_ON(mpic == NULL);
@@ -93,6 +94,31 @@ static void __init linkstation_init_IRQ(void)
 
 	/* ttyS0, ttyS1 */
 	mpic_assign_isu(mpic, 2, mpic->paddr + 0x11100);
+=======
+	struct device_node *dnp;
+	const u32 *prop;
+	int size;
+	phys_addr_t paddr;
+
+	dnp = of_find_node_by_type(NULL, "open-pic");
+	if (dnp == NULL)
+		return;
+
+	prop = of_get_property(dnp, "reg", &size);
+	paddr = (phys_addr_t)of_translate_address(dnp, prop);
+
+	mpic = mpic_alloc(dnp, paddr, MPIC_PRIMARY | MPIC_WANTS_RESET, 4, 32, " EPIC     ");
+	BUG_ON(mpic == NULL);
+
+	/* PCI IRQs */
+	mpic_assign_isu(mpic, 0, paddr + 0x10200);
+
+	/* I2C */
+	mpic_assign_isu(mpic, 1, paddr + 0x11000);
+
+	/* ttyS0, ttyS1 */
+	mpic_assign_isu(mpic, 2, paddr + 0x11100);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mpic_init(mpic);
 }

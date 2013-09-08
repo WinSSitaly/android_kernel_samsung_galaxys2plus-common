@@ -48,8 +48,11 @@
 #include <linux/sunrpc/svcauth_gss.h>
 #include <linux/sunrpc/cache.h>
 
+<<<<<<< HEAD
 #include "../netns.h"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef RPC_DEBUG
 # define RPCDBG_FACILITY	RPCDBG_AUTH
 #endif
@@ -77,8 +80,15 @@ struct rsi {
 	int			major_status, minor_status;
 };
 
+<<<<<<< HEAD
 static struct rsi *rsi_update(struct cache_detail *cd, struct rsi *new, struct rsi *old);
 static struct rsi *rsi_lookup(struct cache_detail *cd, struct rsi *item);
+=======
+static struct cache_head *rsi_table[RSI_HASHMAX];
+static struct cache_detail rsi_cache;
+static struct rsi *rsi_update(struct rsi *new, struct rsi *old);
+static struct rsi *rsi_lookup(struct rsi *item);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void rsi_free(struct rsi *rsii)
 {
@@ -216,7 +226,11 @@ static int rsi_parse(struct cache_detail *cd,
 	if (dup_to_netobj(&rsii.in_token, buf, len))
 		goto out;
 
+<<<<<<< HEAD
 	rsip = rsi_lookup(cd, &rsii);
+=======
+	rsip = rsi_lookup(&rsii);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!rsip)
 		goto out;
 
@@ -258,20 +272,35 @@ static int rsi_parse(struct cache_detail *cd,
 	if (dup_to_netobj(&rsii.out_token, buf, len))
 		goto out;
 	rsii.h.expiry_time = expiry;
+<<<<<<< HEAD
 	rsip = rsi_update(cd, &rsii, rsip);
+=======
+	rsip = rsi_update(&rsii, rsip);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = 0;
 out:
 	rsi_free(&rsii);
 	if (rsip)
+<<<<<<< HEAD
 		cache_put(&rsip->h, cd);
+=======
+		cache_put(&rsip->h, &rsi_cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		status = -ENOMEM;
 	return status;
 }
 
+<<<<<<< HEAD
 static struct cache_detail rsi_cache_template = {
 	.owner		= THIS_MODULE,
 	.hash_size	= RSI_HASHMAX,
+=======
+static struct cache_detail rsi_cache = {
+	.owner		= THIS_MODULE,
+	.hash_size	= RSI_HASHMAX,
+	.hash_table     = rsi_table,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name           = "auth.rpcsec.init",
 	.cache_put      = rsi_put,
 	.cache_upcall   = rsi_upcall,
@@ -282,24 +311,40 @@ static struct cache_detail rsi_cache_template = {
 	.alloc		= rsi_alloc,
 };
 
+<<<<<<< HEAD
 static struct rsi *rsi_lookup(struct cache_detail *cd, struct rsi *item)
+=======
+static struct rsi *rsi_lookup(struct rsi *item)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cache_head *ch;
 	int hash = rsi_hash(item);
 
+<<<<<<< HEAD
 	ch = sunrpc_cache_lookup(cd, &item->h, hash);
+=======
+	ch = sunrpc_cache_lookup(&rsi_cache, &item->h, hash);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ch)
 		return container_of(ch, struct rsi, h);
 	else
 		return NULL;
 }
 
+<<<<<<< HEAD
 static struct rsi *rsi_update(struct cache_detail *cd, struct rsi *new, struct rsi *old)
+=======
+static struct rsi *rsi_update(struct rsi *new, struct rsi *old)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cache_head *ch;
 	int hash = rsi_hash(new);
 
+<<<<<<< HEAD
 	ch = sunrpc_cache_update(cd, &new->h,
+=======
+	ch = sunrpc_cache_update(&rsi_cache, &new->h,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 &old->h, hash);
 	if (ch)
 		return container_of(ch, struct rsi, h);
@@ -338,8 +383,15 @@ struct rsc {
 	char			*client_name;
 };
 
+<<<<<<< HEAD
 static struct rsc *rsc_update(struct cache_detail *cd, struct rsc *new, struct rsc *old);
 static struct rsc *rsc_lookup(struct cache_detail *cd, struct rsc *item);
+=======
+static struct cache_head *rsc_table[RSC_HASHMAX];
+static struct cache_detail rsc_cache;
+static struct rsc *rsc_update(struct rsc *new, struct rsc *old);
+static struct rsc *rsc_lookup(struct rsc *item);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void rsc_free(struct rsc *rsci)
 {
@@ -441,7 +493,11 @@ static int rsc_parse(struct cache_detail *cd,
 	if (expiry == 0)
 		goto out;
 
+<<<<<<< HEAD
 	rscp = rsc_lookup(cd, &rsci);
+=======
+	rscp = rsc_lookup(&rsci);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!rscp)
 		goto out;
 
@@ -503,21 +559,36 @@ static int rsc_parse(struct cache_detail *cd,
 
 	}
 	rsci.h.expiry_time = expiry;
+<<<<<<< HEAD
 	rscp = rsc_update(cd, &rsci, rscp);
+=======
+	rscp = rsc_update(&rsci, rscp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = 0;
 out:
 	gss_mech_put(gm);
 	rsc_free(&rsci);
 	if (rscp)
+<<<<<<< HEAD
 		cache_put(&rscp->h, cd);
+=======
+		cache_put(&rscp->h, &rsc_cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		status = -ENOMEM;
 	return status;
 }
 
+<<<<<<< HEAD
 static struct cache_detail rsc_cache_template = {
 	.owner		= THIS_MODULE,
 	.hash_size	= RSC_HASHMAX,
+=======
+static struct cache_detail rsc_cache = {
+	.owner		= THIS_MODULE,
+	.hash_size	= RSC_HASHMAX,
+	.hash_table	= rsc_table,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name		= "auth.rpcsec.context",
 	.cache_put	= rsc_put,
 	.cache_parse	= rsc_parse,
@@ -527,24 +598,40 @@ static struct cache_detail rsc_cache_template = {
 	.alloc		= rsc_alloc,
 };
 
+<<<<<<< HEAD
 static struct rsc *rsc_lookup(struct cache_detail *cd, struct rsc *item)
+=======
+static struct rsc *rsc_lookup(struct rsc *item)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cache_head *ch;
 	int hash = rsc_hash(item);
 
+<<<<<<< HEAD
 	ch = sunrpc_cache_lookup(cd, &item->h, hash);
+=======
+	ch = sunrpc_cache_lookup(&rsc_cache, &item->h, hash);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ch)
 		return container_of(ch, struct rsc, h);
 	else
 		return NULL;
 }
 
+<<<<<<< HEAD
 static struct rsc *rsc_update(struct cache_detail *cd, struct rsc *new, struct rsc *old)
+=======
+static struct rsc *rsc_update(struct rsc *new, struct rsc *old)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cache_head *ch;
 	int hash = rsc_hash(new);
 
+<<<<<<< HEAD
 	ch = sunrpc_cache_update(cd, &new->h,
+=======
+	ch = sunrpc_cache_update(&rsc_cache, &new->h,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 &old->h, hash);
 	if (ch)
 		return container_of(ch, struct rsc, h);
@@ -554,7 +641,11 @@ static struct rsc *rsc_update(struct cache_detail *cd, struct rsc *new, struct r
 
 
 static struct rsc *
+<<<<<<< HEAD
 gss_svc_searchbyctx(struct cache_detail *cd, struct xdr_netobj *handle)
+=======
+gss_svc_searchbyctx(struct xdr_netobj *handle)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct rsc rsci;
 	struct rsc *found;
@@ -562,11 +653,19 @@ gss_svc_searchbyctx(struct cache_detail *cd, struct xdr_netobj *handle)
 	memset(&rsci, 0, sizeof(rsci));
 	if (dup_to_netobj(&rsci.handle, handle->data, handle->len))
 		return NULL;
+<<<<<<< HEAD
 	found = rsc_lookup(cd, &rsci);
 	rsc_free(&rsci);
 	if (!found)
 		return NULL;
 	if (cache_check(cd, &found->h, NULL))
+=======
+	found = rsc_lookup(&rsci);
+	rsc_free(&rsci);
+	if (!found)
+		return NULL;
+	if (cache_check(&rsc_cache, &found->h, NULL))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 	return found;
 }
@@ -964,20 +1063,32 @@ svcauth_gss_set_client(struct svc_rqst *rqstp)
 }
 
 static inline int
+<<<<<<< HEAD
 gss_write_init_verf(struct cache_detail *cd, struct svc_rqst *rqstp, struct rsi *rsip)
+=======
+gss_write_init_verf(struct svc_rqst *rqstp, struct rsi *rsip)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct rsc *rsci;
 	int        rc;
 
 	if (rsip->major_status != GSS_S_COMPLETE)
 		return gss_write_null_verf(rqstp);
+<<<<<<< HEAD
 	rsci = gss_svc_searchbyctx(cd, &rsip->out_handle);
+=======
+	rsci = gss_svc_searchbyctx(&rsip->out_handle);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rsci == NULL) {
 		rsip->major_status = GSS_S_NO_CONTEXT;
 		return gss_write_null_verf(rqstp);
 	}
 	rc = gss_write_verf(rqstp, rsci->mechctx, GSS_SEQ_WIN);
+<<<<<<< HEAD
 	cache_put(&rsci->h, cd);
+=======
+	cache_put(&rsci->h, &rsc_cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -996,7 +1107,10 @@ static int svcauth_gss_handle_init(struct svc_rqst *rqstp,
 	struct xdr_netobj tmpobj;
 	struct rsi *rsip, rsikey;
 	int ret;
+<<<<<<< HEAD
 	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Read the verifier; should be NULL: */
 	*authp = rpc_autherr_badverf;
@@ -1025,17 +1139,29 @@ static int svcauth_gss_handle_init(struct svc_rqst *rqstp,
 	}
 
 	/* Perform upcall, or find upcall result: */
+<<<<<<< HEAD
 	rsip = rsi_lookup(sn->rsi_cache, &rsikey);
 	rsi_free(&rsikey);
 	if (!rsip)
 		return SVC_CLOSE;
 	if (cache_check(sn->rsi_cache, &rsip->h, &rqstp->rq_chandle) < 0)
+=======
+	rsip = rsi_lookup(&rsikey);
+	rsi_free(&rsikey);
+	if (!rsip)
+		return SVC_CLOSE;
+	if (cache_check(&rsi_cache, &rsip->h, &rqstp->rq_chandle) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* No upcall result: */
 		return SVC_CLOSE;
 
 	ret = SVC_CLOSE;
 	/* Got an answer to the upcall; use it: */
+<<<<<<< HEAD
 	if (gss_write_init_verf(sn->rsc_cache, rqstp, rsip))
+=======
+	if (gss_write_init_verf(rqstp, rsip))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	if (resv->iov_len + 4 > PAGE_SIZE)
 		goto out;
@@ -1052,7 +1178,11 @@ static int svcauth_gss_handle_init(struct svc_rqst *rqstp,
 
 	ret = SVC_COMPLETE;
 out:
+<<<<<<< HEAD
 	cache_put(&rsip->h, sn->rsi_cache);
+=======
+	cache_put(&rsip->h, &rsi_cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1076,7 +1206,10 @@ svcauth_gss_accept(struct svc_rqst *rqstp, __be32 *authp)
 	__be32		*rpcstart;
 	__be32		*reject_stat = resv->iov_base + resv->iov_len;
 	int		ret;
+<<<<<<< HEAD
 	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dprintk("RPC:       svcauth_gss: argv->iov_len = %zd\n",
 			argv->iov_len);
@@ -1127,7 +1260,11 @@ svcauth_gss_accept(struct svc_rqst *rqstp, __be32 *authp)
 	case RPC_GSS_PROC_DESTROY:
 		/* Look up the context, and check the verifier: */
 		*authp = rpcsec_gsserr_credproblem;
+<<<<<<< HEAD
 		rsci = gss_svc_searchbyctx(sn->rsc_cache, &gc->gc_ctx);
+=======
+		rsci = gss_svc_searchbyctx(&gc->gc_ctx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!rsci)
 			goto auth_err;
 		switch (gss_verify_header(rqstp, rsci, rpcstart, gc, authp)) {
@@ -1207,7 +1344,11 @@ drop:
 	ret = SVC_DROP;
 out:
 	if (rsci)
+<<<<<<< HEAD
 		cache_put(&rsci->h, sn->rsc_cache);
+=======
+		cache_put(&rsci->h, &rsc_cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1360,7 +1501,10 @@ svcauth_gss_release(struct svc_rqst *rqstp)
 	struct rpc_gss_wire_cred *gc = &gsd->clcred;
 	struct xdr_buf *resbuf = &rqstp->rq_res;
 	int stat = -EINVAL;
+<<<<<<< HEAD
 	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (gc->gc_proc != RPC_GSS_PROC_DATA)
 		goto out;
@@ -1403,7 +1547,11 @@ out_err:
 		put_group_info(rqstp->rq_cred.cr_group_info);
 	rqstp->rq_cred.cr_group_info = NULL;
 	if (gsd->rsci)
+<<<<<<< HEAD
 		cache_put(&gsd->rsci->h, sn->rsc_cache);
+=======
+		cache_put(&gsd->rsci->h, &rsc_cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gsd->rsci = NULL;
 
 	return stat;
@@ -1428,6 +1576,7 @@ static struct auth_ops svcauthops_gss = {
 	.set_client	= svcauth_gss_set_client,
 };
 
+<<<<<<< HEAD
 static int rsi_cache_create_net(struct net *net)
 {
 	struct sunrpc_net *sn = net_generic(net, sunrpc_net_id);
@@ -1500,10 +1649,30 @@ gss_svc_init_net(struct net *net)
 	return 0;
 out1:
 	rsc_cache_destroy_net(net);
+=======
+int
+gss_svc_init(void)
+{
+	int rv = svc_auth_register(RPC_AUTH_GSS, &svcauthops_gss);
+	if (rv)
+		return rv;
+	rv = cache_register(&rsc_cache);
+	if (rv)
+		goto out1;
+	rv = cache_register(&rsi_cache);
+	if (rv)
+		goto out2;
+	return 0;
+out2:
+	cache_unregister(&rsc_cache);
+out1:
+	svc_auth_unregister(RPC_AUTH_GSS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rv;
 }
 
 void
+<<<<<<< HEAD
 gss_svc_shutdown_net(struct net *net)
 {
 	rsi_cache_destroy_net(net);
@@ -1519,5 +1688,11 @@ gss_svc_init(void)
 void
 gss_svc_shutdown(void)
 {
+=======
+gss_svc_shutdown(void)
+{
+	cache_unregister(&rsc_cache);
+	cache_unregister(&rsi_cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	svc_auth_unregister(RPC_AUTH_GSS);
 }

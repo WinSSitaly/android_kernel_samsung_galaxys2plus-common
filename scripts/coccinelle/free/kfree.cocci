@@ -5,9 +5,15 @@
 //# SCTP_DBG_OBJCNT_DEC that do not actually evaluate their argument
 ///
 // Confidence: Moderate
+<<<<<<< HEAD
 // Copyright: (C) 2010-2012 Nicolas Palix.  GPLv2.
 // Copyright: (C) 2010-2012 Julia Lawall, INRIA/LIP6.  GPLv2.
 // Copyright: (C) 2010-2012 Gilles Muller, INRIA/LiP6.  GPLv2.
+=======
+// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
+// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
+// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 // URL: http://coccinelle.lip6.fr/
 // Comments:
 // Options: -no_includes -include_headers
@@ -23,7 +29,11 @@ position p1;
 kfree@p1(E)
 
 @print expression@
+<<<<<<< HEAD
 constant char [] c;
+=======
+constant char *c;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 expression free.E,E2;
 type T;
 position p;
@@ -37,10 +47,13 @@ identifier f;
 |
  E@p != E2
 |
+<<<<<<< HEAD
  E2 == E@p
 |
  E2 != E@p
 |
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  !E@p
 |
  E@p || ...
@@ -117,5 +130,9 @@ p1 << free.p1;
 p2 << r.p2;
 @@
 
+<<<<<<< HEAD
 msg = "ERROR: reference preceded by free on line %s" % (p1[0].line)
+=======
+msg = "reference preceded by free on line %s" % (p1[0].line)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 coccilib.report.print_report(p2[0],msg)

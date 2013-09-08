@@ -3,6 +3,7 @@
 
 #include <asm-generic/bug.h>
 
+<<<<<<< HEAD
 struct pt_regs;
 extern void __die(const char *, struct pt_regs *, const char *,
 	const char *, unsigned long) __attribute__((noreturn));
@@ -14,4 +15,6 @@ extern void __die_if_kernel(const char *, struct pt_regs *, const char *,
 #define die_if_kernel(msg, regs)					\
 	__die_if_kernel(msg, regs, __FILE__ ":", __func__, __LINE__)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _ASM_SCORE_BUG_H */

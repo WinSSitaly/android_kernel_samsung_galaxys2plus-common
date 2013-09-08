@@ -43,6 +43,10 @@
 /* For SCSI -> ATAPI command conversion */
 #include <scsi/scsi.h>
 
+<<<<<<< HEAD
+=======
+#include <linux/irq.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 #include <asm/byteorder.h>
 #include <linux/uaccess.h>

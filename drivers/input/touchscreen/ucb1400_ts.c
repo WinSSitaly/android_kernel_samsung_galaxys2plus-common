@@ -20,6 +20,7 @@
 
 #include <linux/module.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/delay.h>
 #include <linux/sched.h>
 #include <linux/wait.h>
@@ -31,13 +32,32 @@
 #define UCB1400_TS_POLL_PERIOD	10 /* ms */
 
 static bool adcsync;
+=======
+#include <linux/completion.h>
+#include <linux/delay.h>
+#include <linux/input.h>
+#include <linux/device.h>
+#include <linux/interrupt.h>
+#include <linux/suspend.h>
+#include <linux/kthread.h>
+#include <linux/freezer.h>
+#include <linux/ucb1400.h>
+
+static int adcsync;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ts_delay = 55; /* us */
 static int ts_delay_pressure;	/* us */
 
 /* Switch to interrupt mode. */
+<<<<<<< HEAD
 static void ucb1400_ts_mode_int(struct ucb1400_ts *ucb)
 {
 	ucb1400_reg_write(ucb->ac97, UCB_TS_CR,
+=======
+static inline void ucb1400_ts_mode_int(struct snd_ac97 *ac97)
+{
+	ucb1400_reg_write(ac97, UCB_TS_CR,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			UCB_TS_CR_TSMX_POW | UCB_TS_CR_TSPX_POW |
 			UCB_TS_CR_TSMY_GND | UCB_TS_CR_TSPY_GND |
 			UCB_TS_CR_MODE_INT);
@@ -47,15 +67,23 @@ static void ucb1400_ts_mode_int(struct ucb1400_ts *ucb)
  * Switch to pressure mode, and read pressure.  We don't need to wait
  * here, since both plates are being driven.
  */
+<<<<<<< HEAD
 static unsigned int ucb1400_ts_read_pressure(struct ucb1400_ts *ucb)
+=======
+static inline unsigned int ucb1400_ts_read_pressure(struct ucb1400_ts *ucb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	ucb1400_reg_write(ucb->ac97, UCB_TS_CR,
 			UCB_TS_CR_TSMX_POW | UCB_TS_CR_TSPX_POW |
 			UCB_TS_CR_TSMY_GND | UCB_TS_CR_TSPY_GND |
 			UCB_TS_CR_MODE_PRES | UCB_TS_CR_BIAS_ENA);
+<<<<<<< HEAD
 
 	udelay(ts_delay_pressure);
 
+=======
+	udelay(ts_delay_pressure);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ucb1400_adc_read(ucb->ac97, UCB_ADC_INP_TSPY, adcsync);
 }
 
@@ -65,7 +93,11 @@ static unsigned int ucb1400_ts_read_pressure(struct ucb1400_ts *ucb)
  * gives a faster response time.  Even so, we need to wait about 55us
  * for things to stabilise.
  */
+<<<<<<< HEAD
 static unsigned int ucb1400_ts_read_xpos(struct ucb1400_ts *ucb)
+=======
+static inline unsigned int ucb1400_ts_read_xpos(struct ucb1400_ts *ucb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	ucb1400_reg_write(ucb->ac97, UCB_TS_CR,
 			UCB_TS_CR_TSMX_GND | UCB_TS_CR_TSPX_POW |
@@ -88,7 +120,11 @@ static unsigned int ucb1400_ts_read_xpos(struct ucb1400_ts *ucb)
  * gives a faster response time.  Even so, we need to wait about 55us
  * for things to stabilise.
  */
+<<<<<<< HEAD
 static int ucb1400_ts_read_ypos(struct ucb1400_ts *ucb)
+=======
+static inline unsigned int ucb1400_ts_read_ypos(struct ucb1400_ts *ucb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	ucb1400_reg_write(ucb->ac97, UCB_TS_CR,
 			UCB_TS_CR_TSMY_GND | UCB_TS_CR_TSPY_POW |
@@ -109,7 +145,11 @@ static int ucb1400_ts_read_ypos(struct ucb1400_ts *ucb)
  * Switch to X plate resistance mode.  Set MX to ground, PX to
  * supply.  Measure current.
  */
+<<<<<<< HEAD
 static unsigned int ucb1400_ts_read_xres(struct ucb1400_ts *ucb)
+=======
+static inline unsigned int ucb1400_ts_read_xres(struct ucb1400_ts *ucb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	ucb1400_reg_write(ucb->ac97, UCB_TS_CR,
 			UCB_TS_CR_TSMX_GND | UCB_TS_CR_TSPX_POW |
@@ -121,7 +161,11 @@ static unsigned int ucb1400_ts_read_xres(struct ucb1400_ts *ucb)
  * Switch to Y plate resistance mode.  Set MY to ground, PY to
  * supply.  Measure current.
  */
+<<<<<<< HEAD
 static unsigned int ucb1400_ts_read_yres(struct ucb1400_ts *ucb)
+=======
+static inline unsigned int ucb1400_ts_read_yres(struct ucb1400_ts *ucb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	ucb1400_reg_write(ucb->ac97, UCB_TS_CR,
 			UCB_TS_CR_TSMY_GND | UCB_TS_CR_TSPY_POW |
@@ -129,13 +173,20 @@ static unsigned int ucb1400_ts_read_yres(struct ucb1400_ts *ucb)
 	return ucb1400_adc_read(ucb->ac97, 0, adcsync);
 }
 
+<<<<<<< HEAD
 static int ucb1400_ts_pen_up(struct ucb1400_ts *ucb)
 {
 	unsigned short val = ucb1400_reg_read(ucb->ac97, UCB_TS_CR);
+=======
+static inline int ucb1400_ts_pen_up(struct snd_ac97 *ac97)
+{
+	unsigned short val = ucb1400_reg_read(ac97, UCB_TS_CR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return val & (UCB_TS_CR_TSPX_LOW | UCB_TS_CR_TSMX_LOW);
 }
 
+<<<<<<< HEAD
 static void ucb1400_ts_irq_enable(struct ucb1400_ts *ucb)
 {
 	ucb1400_reg_write(ucb->ac97, UCB_IE_CLEAR, UCB_IE_TSPX);
@@ -149,6 +200,21 @@ static void ucb1400_ts_irq_disable(struct ucb1400_ts *ucb)
 }
 
 static void ucb1400_ts_report_event(struct input_dev *idev, u16 pressure, u16 x, u16 y)
+=======
+static inline void ucb1400_ts_irq_enable(struct snd_ac97 *ac97)
+{
+	ucb1400_reg_write(ac97, UCB_IE_CLEAR, UCB_IE_TSPX);
+	ucb1400_reg_write(ac97, UCB_IE_CLEAR, 0);
+	ucb1400_reg_write(ac97, UCB_IE_FAL, UCB_IE_TSPX);
+}
+
+static inline void ucb1400_ts_irq_disable(struct snd_ac97 *ac97)
+{
+	ucb1400_reg_write(ac97, UCB_IE_FAL, 0);
+}
+
+static void ucb1400_ts_evt_add(struct input_dev *idev, u16 pressure, u16 x, u16 y)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	input_report_abs(idev, ABS_X, x);
 	input_report_abs(idev, ABS_Y, y);
@@ -164,7 +230,11 @@ static void ucb1400_ts_event_release(struct input_dev *idev)
 	input_sync(idev);
 }
 
+<<<<<<< HEAD
 static void ucb1400_clear_pending_irq(struct ucb1400_ts *ucb)
+=======
+static void ucb1400_handle_pending_irq(struct ucb1400_ts *ucb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int isr;
 
@@ -173,6 +243,7 @@ static void ucb1400_clear_pending_irq(struct ucb1400_ts *ucb)
 	ucb1400_reg_write(ucb->ac97, UCB_IE_CLEAR, 0);
 
 	if (isr & UCB_IE_TSPX)
+<<<<<<< HEAD
 		ucb1400_ts_irq_disable(ucb);
 	else
 		dev_dbg(&ucb->ts_idev->dev,
@@ -201,6 +272,34 @@ static irqreturn_t ucb1400_irq(int irqnr, void *devid)
 	msleep(UCB1400_TS_POLL_PERIOD);
 
 	while (!ucb->stopped && !(penup = ucb1400_ts_pen_up(ucb))) {
+=======
+		ucb1400_ts_irq_disable(ucb->ac97);
+	else
+		dev_dbg(&ucb->ts_idev->dev, "ucb1400: unexpected IE_STATUS = %#x\n", isr);
+	enable_irq(ucb->irq);
+}
+
+static int ucb1400_ts_thread(void *_ucb)
+{
+	struct ucb1400_ts *ucb = _ucb;
+	struct task_struct *tsk = current;
+	int valid = 0;
+	struct sched_param param = { .sched_priority = 1 };
+
+	sched_setscheduler(tsk, SCHED_FIFO, &param);
+
+	set_freezable();
+	while (!kthread_should_stop()) {
+		unsigned int x, y, p;
+		long timeout;
+
+		ucb->ts_restart = 0;
+
+		if (ucb->irq_pending) {
+			ucb->irq_pending = 0;
+			ucb1400_handle_pending_irq(ucb);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ucb1400_adc_enable(ucb->ac97);
 		x = ucb1400_ts_read_xpos(ucb);
@@ -208,6 +307,7 @@ static irqreturn_t ucb1400_irq(int irqnr, void *devid)
 		p = ucb1400_ts_read_pressure(ucb);
 		ucb1400_adc_disable(ucb->ac97);
 
+<<<<<<< HEAD
 		ucb1400_ts_report_event(ucb->ts_idev, p, x, y);
 
 		wait_event_timeout(ucb->ts_wait, ucb->stopped,
@@ -248,22 +348,104 @@ static void ucb1400_ts_start(struct ucb1400_ts *ucb)
 	ucb1400_ts_irq_enable(ucb);
 
 	enable_irq(ucb->irq);
+=======
+		/* Switch back to interrupt mode. */
+		ucb1400_ts_mode_int(ucb->ac97);
+
+		msleep(10);
+
+		if (ucb1400_ts_pen_up(ucb->ac97)) {
+			ucb1400_ts_irq_enable(ucb->ac97);
+
+			/*
+			 * If we spat out a valid sample set last time,
+			 * spit out a "pen off" sample here.
+			 */
+			if (valid) {
+				ucb1400_ts_event_release(ucb->ts_idev);
+				valid = 0;
+			}
+
+			timeout = MAX_SCHEDULE_TIMEOUT;
+		} else {
+			valid = 1;
+			ucb1400_ts_evt_add(ucb->ts_idev, p, x, y);
+			timeout = msecs_to_jiffies(10);
+		}
+
+		wait_event_freezable_timeout(ucb->ts_wait,
+			ucb->irq_pending || ucb->ts_restart ||
+			kthread_should_stop(), timeout);
+	}
+
+	/* Send the "pen off" if we are stopping with the pen still active */
+	if (valid)
+		ucb1400_ts_event_release(ucb->ts_idev);
+
+	ucb->ts_task = NULL;
+	return 0;
+}
+
+/*
+ * A restriction with interrupts exists when using the ucb1400, as
+ * the codec read/write routines may sleep while waiting for codec
+ * access completion and uses semaphores for access control to the
+ * AC97 bus.  A complete codec read cycle could take  anywhere from
+ * 60 to 100uSec so we *definitely* don't want to spin inside the
+ * interrupt handler waiting for codec access.  So, we handle the
+ * interrupt by scheduling a RT kernel thread to run in process
+ * context instead of interrupt context.
+ */
+static irqreturn_t ucb1400_hard_irq(int irqnr, void *devid)
+{
+	struct ucb1400_ts *ucb = devid;
+
+	if (irqnr == ucb->irq) {
+		disable_irq_nosync(ucb->irq);
+		ucb->irq_pending = 1;
+		wake_up(&ucb->ts_wait);
+		return IRQ_HANDLED;
+	}
+	return IRQ_NONE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ucb1400_ts_open(struct input_dev *idev)
 {
 	struct ucb1400_ts *ucb = input_get_drvdata(idev);
+<<<<<<< HEAD
 
 	ucb1400_ts_start(ucb);
 
 	return 0;
+=======
+	int ret = 0;
+
+	BUG_ON(ucb->ts_task);
+
+	ucb->ts_task = kthread_run(ucb1400_ts_thread, ucb, "UCB1400_ts");
+	if (IS_ERR(ucb->ts_task)) {
+		ret = PTR_ERR(ucb->ts_task);
+		ucb->ts_task = NULL;
+	}
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void ucb1400_ts_close(struct input_dev *idev)
 {
 	struct ucb1400_ts *ucb = input_get_drvdata(idev);
 
+<<<<<<< HEAD
 	ucb1400_ts_stop(ucb);
+=======
+	if (ucb->ts_task)
+		kthread_stop(ucb->ts_task);
+
+	ucb1400_ts_irq_disable(ucb->ac97);
+	ucb1400_reg_write(ucb->ac97, UCB_TS_CR, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifndef NO_IRQ
@@ -274,8 +456,12 @@ static void ucb1400_ts_close(struct input_dev *idev)
  * Try to probe our interrupt, rather than relying on lots of
  * hard-coded machine dependencies.
  */
+<<<<<<< HEAD
 static int __devinit ucb1400_ts_detect_irq(struct ucb1400_ts *ucb,
 					   struct platform_device *pdev)
+=======
+static int ucb1400_ts_detect_irq(struct ucb1400_ts *ucb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long mask, timeout;
 
@@ -297,7 +483,11 @@ static int __devinit ucb1400_ts_detect_irq(struct ucb1400_ts *ucb,
 						UCB_ADC_DAT_VALID)) {
 		cpu_relax();
 		if (time_after(jiffies, timeout)) {
+<<<<<<< HEAD
 			dev_err(&pdev->dev, "timed out in IRQ probe\n");
+=======
+			printk(KERN_ERR "ucb1400: timed out in IRQ probe\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			probe_irq_off(mask);
 			return -ENODEV;
 		}
@@ -318,11 +508,19 @@ static int __devinit ucb1400_ts_detect_irq(struct ucb1400_ts *ucb,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int __devinit ucb1400_ts_probe(struct platform_device *pdev)
 {
 	struct ucb1400_ts *ucb = pdev->dev.platform_data;
 	int error, x_res, y_res;
 	u16 fcsr;
+=======
+static int ucb1400_ts_probe(struct platform_device *dev)
+{
+	int error, x_res, y_res;
+	u16 fcsr;
+	struct ucb1400_ts *ucb = dev->dev.platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ucb->ts_idev = input_allocate_device();
 	if (!ucb->ts_idev) {
@@ -332,6 +530,7 @@ static int __devinit ucb1400_ts_probe(struct platform_device *pdev)
 
 	/* Only in case the IRQ line wasn't supplied, try detecting it */
 	if (ucb->irq < 0) {
+<<<<<<< HEAD
 		error = ucb1400_ts_detect_irq(ucb, pdev);
 		if (error) {
 			dev_err(&pdev->dev, "IRQ probe failed\n");
@@ -345,6 +544,29 @@ static int __devinit ucb1400_ts_probe(struct platform_device *pdev)
 	input_set_drvdata(ucb->ts_idev, ucb);
 
 	ucb->ts_idev->dev.parent	= &pdev->dev;
+=======
+		error = ucb1400_ts_detect_irq(ucb);
+		if (error) {
+			printk(KERN_ERR "UCB1400: IRQ probe failed\n");
+			goto err_free_devs;
+		}
+	}
+
+	init_waitqueue_head(&ucb->ts_wait);
+
+	error = request_irq(ucb->irq, ucb1400_hard_irq, IRQF_TRIGGER_RISING,
+				"UCB1400", ucb);
+	if (error) {
+		printk(KERN_ERR "ucb1400: unable to grab irq%d: %d\n",
+				ucb->irq, error);
+		goto err_free_devs;
+	}
+	printk(KERN_DEBUG "UCB1400: found IRQ %d\n", ucb->irq);
+
+	input_set_drvdata(ucb->ts_idev, ucb);
+
+	ucb->ts_idev->dev.parent	= &dev->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ucb->ts_idev->name		= "UCB1400 touchscreen interface";
 	ucb->ts_idev->id.vendor		= ucb1400_reg_read(ucb->ac97,
 						AC97_VENDOR_ID1);
@@ -366,12 +588,17 @@ static int __devinit ucb1400_ts_probe(struct platform_device *pdev)
 	x_res = ucb1400_ts_read_xres(ucb);
 	y_res = ucb1400_ts_read_yres(ucb);
 	ucb1400_adc_disable(ucb->ac97);
+<<<<<<< HEAD
 	dev_dbg(&pdev->dev, "x/y = %d/%d\n", x_res, y_res);
+=======
+	printk(KERN_DEBUG "UCB1400: x/y = %d/%d\n", x_res, y_res);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	input_set_abs_params(ucb->ts_idev, ABS_X, 0, x_res, 0, 0);
 	input_set_abs_params(ucb->ts_idev, ABS_Y, 0, y_res, 0, 0);
 	input_set_abs_params(ucb->ts_idev, ABS_PRESSURE, 0, 0, 0, 0);
 
+<<<<<<< HEAD
 	ucb1400_ts_stop(ucb);
 
 	error = request_threaded_irq(ucb->irq, NULL, ucb1400_irq,
@@ -383,6 +610,8 @@ static int __devinit ucb1400_ts_probe(struct platform_device *pdev)
 		goto err_free_devs;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	error = input_register_device(ucb->ts_idev);
 	if (error)
 		goto err_free_irq;
@@ -395,6 +624,7 @@ err_free_devs:
 	input_free_device(ucb->ts_idev);
 err:
 	return error;
+<<<<<<< HEAD
 }
 
 static int __devexit ucb1400_ts_remove(struct platform_device *pdev)
@@ -450,6 +680,58 @@ static struct platform_driver ucb1400_ts_driver = {
 	},
 };
 module_platform_driver(ucb1400_ts_driver);
+=======
+
+}
+
+static int ucb1400_ts_remove(struct platform_device *dev)
+{
+	struct ucb1400_ts *ucb = dev->dev.platform_data;
+
+	free_irq(ucb->irq, ucb);
+	input_unregister_device(ucb->ts_idev);
+	return 0;
+}
+
+#ifdef CONFIG_PM
+static int ucb1400_ts_resume(struct platform_device *dev)
+{
+	struct ucb1400_ts *ucb = dev->dev.platform_data;
+
+	if (ucb->ts_task) {
+		/*
+		 * Restart the TS thread to ensure the
+		 * TS interrupt mode is set up again
+		 * after sleep.
+		 */
+		ucb->ts_restart = 1;
+		wake_up(&ucb->ts_wait);
+	}
+	return 0;
+}
+#else
+#define ucb1400_ts_resume NULL
+#endif
+
+static struct platform_driver ucb1400_ts_driver = {
+	.probe	= ucb1400_ts_probe,
+	.remove	= ucb1400_ts_remove,
+	.resume	= ucb1400_ts_resume,
+	.driver	= {
+		.name	= "ucb1400_ts",
+	},
+};
+
+static int __init ucb1400_ts_init(void)
+{
+	return platform_driver_register(&ucb1400_ts_driver);
+}
+
+static void __exit ucb1400_ts_exit(void)
+{
+	platform_driver_unregister(&ucb1400_ts_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(adcsync, bool, 0444);
 MODULE_PARM_DESC(adcsync, "Synchronize touch readings with ADCSYNC pin.");
@@ -463,5 +745,11 @@ MODULE_PARM_DESC(ts_delay_pressure,
 		"delay between panel setup and pressure read."
 		"  Default = 0us.");
 
+<<<<<<< HEAD
+=======
+module_init(ucb1400_ts_init);
+module_exit(ucb1400_ts_exit);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("Philips UCB1400 touchscreen driver");
 MODULE_LICENSE("GPL");

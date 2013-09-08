@@ -186,7 +186,11 @@
 #include <linux/delay.h>
 #include <linux/slab.h>
 #include <linux/gameport.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/dma-mapping.h>
 #include <sound/core.h>
 #include <sound/control.h>
@@ -301,7 +305,11 @@ static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;	/* ID for this card */
 module_param_array(id, charp, NULL, 0444);
 MODULE_PARM_DESC(id, "ID string for AZF3328 soundcard.");
 
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;	/* Enable this card */
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;	/* Enable this card */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_array(enable, bool, NULL, 0444);
 MODULE_PARM_DESC(enable, "Enable AZF3328 soundcard.");
 
@@ -2559,7 +2567,11 @@ snd_azf3328_create(struct snd_card *card,
 	codec_setup->name = "I2S_OUT";
 
 	if (request_irq(pci->irq, snd_azf3328_interrupt,
+<<<<<<< HEAD
 			IRQF_SHARED, KBUILD_MODNAME, chip)) {
+=======
+			IRQF_SHARED, card->shortname, chip)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printk(KERN_ERR "unable to grab IRQ %d\n", pci->irq);
 		err = -EBUSY;
 		goto out_err;
@@ -2625,6 +2637,7 @@ snd_azf3328_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
 	int err;
 
 	snd_azf3328_dbgcallenter();
+<<<<<<< HEAD
 	if (dev >= SNDRV_CARDS) {
 		err = -ENODEV;
 		goto out;
@@ -2633,11 +2646,22 @@ snd_azf3328_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
 		dev++;
 		err = -ENOENT;
 		goto out;
+=======
+	if (dev >= SNDRV_CARDS)
+		return -ENODEV;
+	if (!enable[dev]) {
+		dev++;
+		return -ENOENT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	err = snd_card_create(index[dev], id[dev], THIS_MODULE, 0, &card);
 	if (err < 0)
+<<<<<<< HEAD
 		goto out;
+=======
+		return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	strcpy(card->driver, "AZF3328");
 	strcpy(card->shortname, "Aztech AZF3328 (PCI168)");
@@ -2652,9 +2676,14 @@ snd_azf3328_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
 	   since our hardware ought to be similar, thus use same ID. */
 	err = snd_mpu401_uart_new(
 		card, 0,
+<<<<<<< HEAD
 		MPU401_HW_AZT2320, chip->mpu_io,
 		MPU401_INFO_INTEGRATED | MPU401_INFO_IRQ_HOOK,
 		-1, &chip->rmidi
+=======
+		MPU401_HW_AZT2320, chip->mpu_io, MPU401_INFO_INTEGRATED,
+		pci->irq, 0, &chip->rmidi
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	);
 	if (err < 0) {
 		snd_printk(KERN_ERR "azf3328: no MPU-401 device at 0x%lx?\n",
@@ -2684,9 +2713,16 @@ snd_azf3328_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
 		err = snd_opl3_hwdep_new(opl3, 0, 1, NULL);
 		if (err < 0)
 			goto out_err;
+<<<<<<< HEAD
 		opl3->private_data = chip;
 	}
 
+=======
+	}
+
+	opl3->private_data = chip;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sprintf(card->longname, "%s at 0x%lx, irq %i",
 		card->shortname, chip->ctrl_io, chip->irq);
 
@@ -2863,7 +2899,11 @@ snd_azf3328_resume(struct pci_dev *pci)
 
 
 static struct pci_driver driver = {
+<<<<<<< HEAD
 	.name = KBUILD_MODNAME,
+=======
+	.name = "AZF3328",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table = snd_azf3328_ids,
 	.probe = snd_azf3328_probe,
 	.remove = __devexit_p(snd_azf3328_remove),

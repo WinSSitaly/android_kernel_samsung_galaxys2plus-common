@@ -41,6 +41,11 @@ MODULE_PARM_DESC(nohwcrypt, "Disable hardware encryption");
 	.max_power = 20, \
 }
 
+<<<<<<< HEAD
+=======
+#define ATH_HTC_BTCOEX_PRODUCT_ID "wb193"
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct ieee80211_channel ath9k_2ghz_channels[] = {
 	CHAN2G(2412, 0), /* Channel 1 */
 	CHAN2G(2417, 1), /* Channel 2 */
@@ -297,7 +302,12 @@ static unsigned int ath9k_regread(void *hw_priv, u32 reg_offset)
 			  (u8 *) &val, sizeof(val),
 			  100);
 	if (unlikely(r)) {
+<<<<<<< HEAD
 		ath_dbg(common, WMI, "REGISTER READ FAILED: (0x%04x, %d)\n",
+=======
+		ath_dbg(common, ATH_DBG_WMI,
+			"REGISTER READ FAILED: (0x%04x, %d)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			reg_offset, r);
 		return -EIO;
 	}
@@ -324,7 +334,11 @@ static void ath9k_multi_regread(void *hw_priv, u32 *addr,
 			   (u8 *)tmpval, sizeof(u32) * count,
 			   100);
 	if (unlikely(ret)) {
+<<<<<<< HEAD
 		ath_dbg(common, WMI,
+=======
+		ath_dbg(common, ATH_DBG_WMI,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"Multiple REGISTER READ FAILED (count: %d)\n", count);
 	}
 
@@ -349,7 +363,12 @@ static void ath9k_regwrite_single(void *hw_priv, u32 val, u32 reg_offset)
 			  (u8 *) &val, sizeof(val),
 			  100);
 	if (unlikely(r)) {
+<<<<<<< HEAD
 		ath_dbg(common, WMI, "REGISTER WRITE FAILED:(0x%04x, %d)\n",
+=======
+		ath_dbg(common, ATH_DBG_WMI,
+			"REGISTER WRITE FAILED:(0x%04x, %d)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			reg_offset, r);
 	}
 }
@@ -380,7 +399,11 @@ static void ath9k_regwrite_buffer(void *hw_priv, u32 val, u32 reg_offset)
 			  (u8 *) &rsp_status, sizeof(rsp_status),
 			  100);
 		if (unlikely(r)) {
+<<<<<<< HEAD
 			ath_dbg(common, WMI,
+=======
+			ath_dbg(common, ATH_DBG_WMI,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"REGISTER WRITE FAILED, multi len: %d\n",
 				priv->wmi->multi_write_idx);
 		}
@@ -430,7 +453,11 @@ static void ath9k_regwrite_flush(void *hw_priv)
 			  (u8 *) &rsp_status, sizeof(rsp_status),
 			  100);
 		if (unlikely(r)) {
+<<<<<<< HEAD
 			ath_dbg(common, WMI,
+=======
+			ath_dbg(common, ATH_DBG_WMI,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"REGISTER WRITE FAILED, multi len: %d\n",
 				priv->wmi->multi_write_idx);
 		}
@@ -505,10 +532,18 @@ static void setup_ht_cap(struct ath9k_htc_priv *priv,
 	memset(&ht_info->mcs, 0, sizeof(ht_info->mcs));
 
 	/* ath9k_htc supports only 1 or 2 stream devices */
+<<<<<<< HEAD
 	tx_streams = ath9k_cmn_count_streams(priv->ah->txchainmask, 2);
 	rx_streams = ath9k_cmn_count_streams(priv->ah->rxchainmask, 2);
 
 	ath_dbg(common, CONFIG, "TX streams %d, RX streams: %d\n",
+=======
+	tx_streams = ath9k_cmn_count_streams(common->tx_chainmask, 2);
+	rx_streams = ath9k_cmn_count_streams(common->rx_chainmask, 2);
+
+	ath_dbg(common, ATH_DBG_CONFIG,
+		"TX streams %d, RX streams: %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tx_streams, rx_streams);
 
 	if (tx_streams != rx_streams) {
@@ -567,6 +602,28 @@ err:
 	return -EINVAL;
 }
 
+<<<<<<< HEAD
+=======
+static void ath9k_init_crypto(struct ath9k_htc_priv *priv)
+{
+	struct ath_common *common = ath9k_hw_common(priv->ah);
+	int i = 0;
+
+	/* Get the hardware key cache size. */
+	common->keymax = AR_KEYTABLE_SIZE;
+
+	if (priv->ah->misc_mode & AR_PCU_MIC_NEW_LOC_ENA)
+		common->crypt_caps |= ATH_CRYPT_CAP_MIC_COMBINED;
+
+	/*
+	 * Reset the key cache since some parts do not
+	 * reset the contents on initial power up.
+	 */
+	for (i = 0; i < common->keymax; i++)
+		ath_hw_keyreset(common, (u16) i);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ath9k_init_channels_rates(struct ath9k_htc_priv *priv)
 {
 	if (priv->ah->caps.hw_caps & ATH9K_HW_CAP_2GHZ) {
@@ -596,11 +653,43 @@ static void ath9k_init_misc(struct ath9k_htc_priv *priv)
 {
 	struct ath_common *common = ath9k_hw_common(priv->ah);
 
+<<<<<<< HEAD
+=======
+	common->tx_chainmask = priv->ah->caps.tx_chainmask;
+	common->rx_chainmask = priv->ah->caps.rx_chainmask;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy(common->bssidmask, ath_bcast_mac, ETH_ALEN);
 
 	priv->ah->opmode = NL80211_IFTYPE_STATION;
 }
 
+<<<<<<< HEAD
+=======
+static void ath9k_init_btcoex(struct ath9k_htc_priv *priv)
+{
+	int qnum;
+
+	switch (priv->ah->btcoex_hw.scheme) {
+	case ATH_BTCOEX_CFG_NONE:
+		break;
+	case ATH_BTCOEX_CFG_3WIRE:
+		priv->ah->btcoex_hw.btactive_gpio = 7;
+		priv->ah->btcoex_hw.btpriority_gpio = 6;
+		priv->ah->btcoex_hw.wlanactive_gpio = 8;
+		priv->btcoex.bt_stomp_type = ATH_BTCOEX_STOMP_LOW;
+		ath9k_hw_btcoex_init_3wire(priv->ah);
+		ath_htc_init_btcoex_work(priv);
+		qnum = priv->hwq_map[WME_AC_BE];
+		ath9k_hw_init_btcoex_hw(priv->ah, qnum);
+		break;
+	default:
+		WARN_ON(1);
+		break;
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ath9k_init_priv(struct ath9k_htc_priv *priv,
 			   u16 devid, char *product,
 			   u32 drv_info)
@@ -616,6 +705,10 @@ static int ath9k_init_priv(struct ath9k_htc_priv *priv,
 		return -ENOMEM;
 
 	ah->hw_version.devid = devid;
+<<<<<<< HEAD
+=======
+	ah->hw_version.subsysid = 0; /* FIXME */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ah->hw_version.usbdev = drv_info;
 	ah->ah_flags |= AH_USE_EEPROM;
 	ah->reg_ops.read = ath9k_regread;
@@ -670,10 +763,21 @@ static int ath9k_init_priv(struct ath9k_htc_priv *priv,
 	for (i = 0; i < ATH9K_HTC_MAX_BCN_VIF; i++)
 		priv->cur_beacon_conf.bslot[i] = NULL;
 
+<<<<<<< HEAD
 	ath9k_cmn_init_crypto(ah);
 	ath9k_init_channels_rates(priv);
 	ath9k_init_misc(priv);
 	ath9k_htc_init_btcoex(priv, product);
+=======
+	ath9k_init_crypto(priv);
+	ath9k_init_channels_rates(priv);
+	ath9k_init_misc(priv);
+
+	if (product && strncmp(product, ATH_HTC_BTCOEX_PRODUCT_ID, 5) == 0) {
+		ah->btcoex_hw.scheme = ATH_BTCOEX_CFG_3WIRE;
+		ath9k_init_btcoex(priv);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
@@ -699,7 +803,10 @@ static void ath9k_set_hw_capab(struct ath9k_htc_priv *priv,
 		IEEE80211_HW_RX_INCLUDES_FCS |
 		IEEE80211_HW_SUPPORTS_PS |
 		IEEE80211_HW_PS_NULLFUNC_STACK |
+<<<<<<< HEAD
 		IEEE80211_HW_REPORTS_TX_ACK_STATUS |
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		IEEE80211_HW_HOST_BROADCAST_PS_BUFFERING;
 
 	hw->wiphy->interface_modes =
@@ -711,8 +818,11 @@ static void ath9k_set_hw_capab(struct ath9k_htc_priv *priv,
 
 	hw->wiphy->flags &= ~WIPHY_FLAG_PS_ON_BY_DEFAULT;
 
+<<<<<<< HEAD
 	hw->wiphy->flags |= WIPHY_FLAG_IBSS_RSN;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hw->queues = 4;
 	hw->channel_change_time = 5000;
 	hw->max_listen_interval = 10;
@@ -771,7 +881,11 @@ static int ath9k_init_firmware_version(struct ath9k_htc_priv *priv)
 	 * required version.
 	 */
 	if (priv->fw_version_major != MAJOR_VERSION_REQ ||
+<<<<<<< HEAD
 	    priv->fw_version_minor < MINOR_VERSION_REQ) {
+=======
+	    priv->fw_version_minor != MINOR_VERSION_REQ) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_err(priv->dev, "ath9k_htc: Please upgrade to FW version %d.%d\n",
 			MAJOR_VERSION_REQ, MINOR_VERSION_REQ);
 		return -EINVAL;
@@ -821,7 +935,10 @@ static int ath9k_init_device(struct ath9k_htc_priv *priv,
 	if (error != 0)
 		goto err_rx;
 
+<<<<<<< HEAD
 	ath9k_hw_disable(priv->ah);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_MAC80211_LEDS
 	/* must be initialized before ieee80211_register_hw */
 	priv->led_cdev.default_trigger = ieee80211_create_tpt_led_trigger(priv->hw,
@@ -847,8 +964,14 @@ static int ath9k_init_device(struct ath9k_htc_priv *priv,
 		goto err_world;
 	}
 
+<<<<<<< HEAD
 	ath_dbg(common, CONFIG,
 		"WMI:%d, BCN:%d, CAB:%d, UAPSD:%d, MGMT:%d, BE:%d, BK:%d, VI:%d, VO:%d\n",
+=======
+	ath_dbg(common, ATH_DBG_CONFIG,
+		"WMI:%d, BCN:%d, CAB:%d, UAPSD:%d, MGMT:%d, "
+		"BE:%d, BK:%d, VI:%d, VO:%d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		priv->wmi_cmd_ep,
 		priv->beacon_ep,
 		priv->cab_ep,

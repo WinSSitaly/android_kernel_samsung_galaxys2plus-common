@@ -229,7 +229,11 @@ void mfp_write(int mfp, unsigned long val)
 	spin_unlock_irqrestore(&mfp_spin_lock, flags);
 }
 
+<<<<<<< HEAD
 void __init mfp_init_base(void __iomem *mfpr_base)
+=======
+void __init mfp_init_base(unsigned long mfpr_base)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 
@@ -237,7 +241,11 @@ void __init mfp_init_base(void __iomem *mfpr_base)
 	for (i = 0; i < ARRAY_SIZE(mfp_table); i++)
 		mfp_table[i].config = -1;
 
+<<<<<<< HEAD
 	mfpr_mmio_base = mfpr_base;
+=======
+	mfpr_mmio_base = (void __iomem *)mfpr_base;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __init mfp_init_addr(struct mfp_addr_map *map)

@@ -43,6 +43,7 @@ struct ucontext_ia32 {
 	compat_sigset_t	  uc_sigmask;	/* mask last for extensibility */
 };
 
+<<<<<<< HEAD
 struct ucontext_x32 {
 	unsigned int	  uc_flags;
 	unsigned int 	  uc_link;
@@ -52,6 +53,8 @@ struct ucontext_x32 {
 	compat_sigset_t	  uc_sigmask;	/* mask last for extensibility */
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* This matches struct stat64 in glibc2.2, hence the absolutely
  * insane amounts of padding around dev_t's.
  */
@@ -125,6 +128,7 @@ typedef struct compat_siginfo {
 			compat_clock_t _stime;
 		} _sigchld;
 
+<<<<<<< HEAD
 		/* SIGCHLD (x32 version) */
 		struct {
 			unsigned int _pid;	/* which child */
@@ -134,6 +138,8 @@ typedef struct compat_siginfo {
 			compat_s64 _stime;
 		} _sigchld_x32;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* SIGILL, SIGFPE, SIGSEGV, SIGBUS */
 		struct {
 			unsigned int _addr;	/* faulting insn/memory ref. */

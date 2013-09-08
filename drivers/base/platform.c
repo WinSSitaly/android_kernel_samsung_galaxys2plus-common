@@ -32,6 +32,7 @@ struct device platform_bus = {
 EXPORT_SYMBOL_GPL(platform_bus);
 
 /**
+<<<<<<< HEAD
  * arch_setup_pdev_archdata - Allow manipulation of archdata before its used
  * @pdev: platform device
  *
@@ -51,6 +52,8 @@ void __weak arch_setup_pdev_archdata(struct platform_device *pdev)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * platform_get_resource - get a resource for a device
  * @dev: platform device
  * @type: resource type
@@ -192,7 +195,10 @@ struct platform_device *platform_device_alloc(const char *name, int id)
 		pa->pdev.id = id;
 		device_initialize(&pa->pdev.dev);
 		pa->pdev.dev.release = platform_device_release;
+<<<<<<< HEAD
 		arch_setup_pdev_archdata(&pa->pdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return pa ? &pa->pdev : NULL;
@@ -354,7 +360,10 @@ EXPORT_SYMBOL_GPL(platform_device_del);
 int platform_device_register(struct platform_device *pdev)
 {
 	device_initialize(&pdev->dev);
+<<<<<<< HEAD
 	arch_setup_pdev_archdata(pdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return platform_device_add(pdev);
 }
 EXPORT_SYMBOL_GPL(platform_device_register);
@@ -375,6 +384,7 @@ void platform_device_unregister(struct platform_device *pdev)
 EXPORT_SYMBOL_GPL(platform_device_unregister);
 
 /**
+<<<<<<< HEAD
  * platform_device_register_full - add a platform-level device with
  * resources and platform-specific data
  *
@@ -384,10 +394,31 @@ EXPORT_SYMBOL_GPL(platform_device_unregister);
  */
 struct platform_device *platform_device_register_full(
 		const struct platform_device_info *pdevinfo)
+=======
+ * platform_device_register_resndata - add a platform-level device with
+ * resources and platform-specific data
+ *
+ * @parent: parent device for the device we're adding
+ * @name: base name of the device we're adding
+ * @id: instance id
+ * @res: set of resources that needs to be allocated for the device
+ * @num: number of resources
+ * @data: platform specific data for this platform device
+ * @size: size of platform specific data
+ *
+ * Returns &struct platform_device pointer on success, or ERR_PTR() on error.
+ */
+struct platform_device *platform_device_register_resndata(
+		struct device *parent,
+		const char *name, int id,
+		const struct resource *res, unsigned int num,
+		const void *data, size_t size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret = -ENOMEM;
 	struct platform_device *pdev;
 
+<<<<<<< HEAD
 	pdev = platform_device_alloc(pdevinfo->name, pdevinfo->id);
 	if (!pdev)
 		goto err_alloc;
@@ -417,22 +448,42 @@ struct platform_device *platform_device_register_full(
 
 	ret = platform_device_add_data(pdev,
 			pdevinfo->data, pdevinfo->size_data);
+=======
+	pdev = platform_device_alloc(name, id);
+	if (!pdev)
+		goto err;
+
+	pdev->dev.parent = parent;
+
+	ret = platform_device_add_resources(pdev, res, num);
+	if (ret)
+		goto err;
+
+	ret = platform_device_add_data(pdev, data, size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto err;
 
 	ret = platform_device_add(pdev);
 	if (ret) {
 err:
+<<<<<<< HEAD
 		kfree(pdev->dev.dma_mask);
 
 err_alloc:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		platform_device_put(pdev);
 		return ERR_PTR(ret);
 	}
 
 	return pdev;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(platform_device_register_full);
+=======
+EXPORT_SYMBOL_GPL(platform_device_register_resndata);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int platform_drv_probe(struct device *_dev)
 {
@@ -621,12 +672,20 @@ static int platform_uevent(struct device *dev, struct kobj_uevent_env *env)
 	int rc;
 
 	/* Some devices have extra OF data and an OF-style MODALIAS */
+<<<<<<< HEAD
 	rc = of_device_uevent_modalias(dev,env);
+=======
+	rc = of_device_uevent(dev,env);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc != -ENODEV)
 		return rc;
 
 	add_uevent_var(env, "MODALIAS=%s%s", PLATFORM_MODULE_PREFIX,
+<<<<<<< HEAD
 			pdev->name);
+=======
+		(pdev->id_entry) ? pdev->id_entry->name : pdev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -700,6 +759,28 @@ static int platform_legacy_resume(struct device *dev)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+int platform_pm_prepare(struct device *dev)
+{
+	struct device_driver *drv = dev->driver;
+	int ret = 0;
+
+	if (drv && drv->pm && drv->pm->prepare)
+		ret = drv->pm->prepare(dev);
+
+	return ret;
+}
+
+void platform_pm_complete(struct device *dev)
+{
+	struct device_driver *drv = dev->driver;
+
+	if (drv && drv->pm && drv->pm->complete)
+		drv->pm->complete(dev);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_PM_SLEEP */
 
 #ifdef CONFIG_SUSPEND
@@ -722,6 +803,25 @@ int platform_pm_suspend(struct device *dev)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+int platform_pm_suspend_noirq(struct device *dev)
+{
+	struct device_driver *drv = dev->driver;
+	int ret = 0;
+
+	if (!drv)
+		return 0;
+
+	if (drv->pm) {
+		if (drv->pm->suspend_noirq)
+			ret = drv->pm->suspend_noirq(dev);
+	}
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int platform_pm_resume(struct device *dev)
 {
 	struct device_driver *drv = dev->driver;
@@ -740,6 +840,25 @@ int platform_pm_resume(struct device *dev)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+int platform_pm_resume_noirq(struct device *dev)
+{
+	struct device_driver *drv = dev->driver;
+	int ret = 0;
+
+	if (!drv)
+		return 0;
+
+	if (drv->pm) {
+		if (drv->pm->resume_noirq)
+			ret = drv->pm->resume_noirq(dev);
+	}
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_SUSPEND */
 
 #ifdef CONFIG_HIBERNATE_CALLBACKS
@@ -762,6 +881,25 @@ int platform_pm_freeze(struct device *dev)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+int platform_pm_freeze_noirq(struct device *dev)
+{
+	struct device_driver *drv = dev->driver;
+	int ret = 0;
+
+	if (!drv)
+		return 0;
+
+	if (drv->pm) {
+		if (drv->pm->freeze_noirq)
+			ret = drv->pm->freeze_noirq(dev);
+	}
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int platform_pm_thaw(struct device *dev)
 {
 	struct device_driver *drv = dev->driver;
@@ -780,6 +918,25 @@ int platform_pm_thaw(struct device *dev)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+int platform_pm_thaw_noirq(struct device *dev)
+{
+	struct device_driver *drv = dev->driver;
+	int ret = 0;
+
+	if (!drv)
+		return 0;
+
+	if (drv->pm) {
+		if (drv->pm->thaw_noirq)
+			ret = drv->pm->thaw_noirq(dev);
+	}
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int platform_pm_poweroff(struct device *dev)
 {
 	struct device_driver *drv = dev->driver;
@@ -798,6 +955,25 @@ int platform_pm_poweroff(struct device *dev)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+int platform_pm_poweroff_noirq(struct device *dev)
+{
+	struct device_driver *drv = dev->driver;
+	int ret = 0;
+
+	if (!drv)
+		return 0;
+
+	if (drv->pm) {
+		if (drv->pm->poweroff_noirq)
+			ret = drv->pm->poweroff_noirq(dev);
+	}
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int platform_pm_restore(struct device *dev)
 {
 	struct device_driver *drv = dev->driver;
@@ -816,6 +992,25 @@ int platform_pm_restore(struct device *dev)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+int platform_pm_restore_noirq(struct device *dev)
+{
+	struct device_driver *drv = dev->driver;
+	int ret = 0;
+
+	if (!drv)
+		return 0;
+
+	if (drv->pm) {
+		if (drv->pm->restore_noirq)
+			ret = drv->pm->restore_noirq(dev);
+	}
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_HIBERNATE_CALLBACKS */
 
 static const struct dev_pm_ops platform_dev_pm_ops = {

@@ -24,8 +24,12 @@
 #include <linux/slab.h>
 #include <linux/time.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/device.h>
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/string.h>
 #include <sound/core.h>
 #include <sound/timer.h>
@@ -329,8 +333,11 @@ int snd_timer_close(struct snd_timer_instance *timeri)
 		mutex_unlock(&register_mutex);
 	} else {
 		timer = timeri->timer;
+<<<<<<< HEAD
 		if (snd_BUG_ON(!timer))
 			goto out;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* wait, until the active callback is finished */
 		spin_lock_irq(&timer->lock);
 		while (timeri->flags & SNDRV_TIMER_IFLG_CALLBACK) {
@@ -356,7 +363,10 @@ int snd_timer_close(struct snd_timer_instance *timeri)
 		}
 		mutex_unlock(&register_mutex);
 	}
+<<<<<<< HEAD
  out:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (timeri->private_free)
 		timeri->private_free(timeri);
 	kfree(timeri->owner);

@@ -1,6 +1,13 @@
 #ifndef __MACH_MX31_H__
 #define __MACH_MX31_H__
 
+<<<<<<< HEAD
+=======
+#ifndef __ASSEMBLER__
+#include <linux/io.h>
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * IRAM
  */
@@ -118,6 +125,19 @@
 #define MX31_IO_P2V(x)			IMX_IO_P2V(x)
 #define MX31_IO_ADDRESS(x)		IOMEM(MX31_IO_P2V(x))
 
+<<<<<<< HEAD
+=======
+#ifndef __ASSEMBLER__
+static inline void mx31_setup_weimcs(size_t cs,
+		unsigned upper, unsigned lower, unsigned addional)
+{
+	__raw_writel(upper, MX31_IO_ADDRESS(MX31_WEIM_CSCRxU(cs)));
+	__raw_writel(lower, MX31_IO_ADDRESS(MX31_WEIM_CSCRxL(cs)));
+	__raw_writel(addional, MX31_IO_ADDRESS(MX31_WEIM_CSCRxA(cs)));
+}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MX31_INT_I2C3		3
 #define MX31_INT_I2C2		4
 #define MX31_INT_MPEG4_ENCODER	5

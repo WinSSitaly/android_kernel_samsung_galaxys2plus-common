@@ -18,7 +18,10 @@
 
 #define __ARCH_IRQ_STAT
 #define __ARCH_HAS_DO_SOFTIRQ
+<<<<<<< HEAD
 #define __ARCH_IRQ_EXIT_IRQS_DISABLED
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define HARDIRQ_BITS	8
 

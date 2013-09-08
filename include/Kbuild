@@ -10,3 +10,7 @@ header-y += video/
 header-y += drm/
 header-y += xen/
 header-y += scsi/
+<<<<<<< HEAD
+=======
+header-y += trace/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

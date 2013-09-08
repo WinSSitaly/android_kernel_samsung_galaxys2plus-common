@@ -442,9 +442,15 @@ int crcimage(struct imgchunk *fchunk, unsigned int nfchunks,
 void free_chunks(struct imgchunk *fchunk, unsigned int *nfchunks)
 {
 	int i;
+<<<<<<< HEAD
 	for (i = 0; i < *nfchunks; i++)
 		kfree(fchunk[i].data);
 
+=======
+	for (i = 0; i < *nfchunks; i++) {
+		kfree(fchunk[i].data);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*nfchunks = 0;
 	memset(fchunk, 0, sizeof(*fchunk));
 

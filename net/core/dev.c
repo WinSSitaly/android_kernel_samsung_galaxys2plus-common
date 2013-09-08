@@ -73,6 +73,10 @@
  */
 
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bitops.h>
 #include <linux/capability.h>
 #include <linux/cpu.h>
@@ -132,9 +136,12 @@
 #include <linux/pci.h>
 #include <linux/inetdevice.h>
 #include <linux/cpu_rmap.h>
+<<<<<<< HEAD
 #include <linux/net_tstamp.h>
 #include <linux/static_key.h>
 #include <net/flow_keys.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "net-sysfs.h"
 
@@ -201,11 +208,14 @@ static struct list_head ptype_all __read_mostly;	/* Taps */
 DEFINE_RWLOCK(dev_base_lock);
 EXPORT_SYMBOL(dev_base_lock);
 
+<<<<<<< HEAD
 static inline void dev_base_seq_inc(struct net *net)
 {
 	while (++net->dev_base_seq == 0);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline struct hlist_head *dev_name_hash(struct net *net, const char *name)
 {
 	unsigned hash = full_name_hash(name, strnlen(name, IFNAMSIZ));
@@ -244,9 +254,12 @@ static int list_netdevice(struct net_device *dev)
 	hlist_add_head_rcu(&dev->index_hlist,
 			   dev_index_hash(net, dev->ifindex));
 	write_unlock_bh(&dev_base_lock);
+<<<<<<< HEAD
 
 	dev_base_seq_inc(net);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -263,8 +276,11 @@ static void unlist_netdevice(struct net_device *dev)
 	hlist_del_rcu(&dev->name_hlist);
 	hlist_del_rcu(&dev->index_hlist);
 	write_unlock_bh(&dev_base_lock);
+<<<<<<< HEAD
 
 	dev_base_seq_inc(dev_net(dev));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -445,7 +461,11 @@ void __dev_remove_pack(struct packet_type *pt)
 		}
 	}
 
+<<<<<<< HEAD
 	pr_warn("dev_remove_pack: %p not found\n", pt);
+=======
+	printk(KERN_WARNING "dev_remove_pack: %p not found.\n", pt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	spin_unlock(&ptype_lock);
 }
@@ -847,6 +867,7 @@ EXPORT_SYMBOL(dev_get_by_flags_rcu);
  *	to allow sysfs to work.  We also disallow any kind of
  *	whitespace.
  */
+<<<<<<< HEAD
 bool dev_valid_name(const char *name)
 {
 	if (*name == '\0')
@@ -862,6 +883,23 @@ bool dev_valid_name(const char *name)
 		name++;
 	}
 	return true;
+=======
+int dev_valid_name(const char *name)
+{
+	if (*name == '\0')
+		return 0;
+	if (strlen(name) >= IFNAMSIZ)
+		return 0;
+	if (!strcmp(name, ".") || !strcmp(name, ".."))
+		return 0;
+
+	while (*name) {
+		if (*name == '/' || isspace(*name))
+			return 0;
+		name++;
+	}
+	return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(dev_valid_name);
 
@@ -1038,7 +1076,12 @@ rollback:
 			memcpy(dev->name, oldname, IFNAMSIZ);
 			goto rollback;
 		} else {
+<<<<<<< HEAD
 			pr_err("%s: name change rollback failed: %d\n",
+=======
+			printk(KERN_ERR
+			       "%s: name change rollback failed: %d.\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       dev->name, ret);
 		}
 	}
@@ -1056,8 +1099,11 @@ rollback:
  */
 int dev_set_alias(struct net_device *dev, const char *alias, size_t len)
 {
+<<<<<<< HEAD
 	char *new_ifalias;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ASSERT_RTNL();
 
 	if (len >= IFALIASZ)
@@ -1071,10 +1117,16 @@ int dev_set_alias(struct net_device *dev, const char *alias, size_t len)
 		return 0;
 	}
 
+<<<<<<< HEAD
 	new_ifalias = krealloc(dev->ifalias, len + 1, GFP_KERNEL);
 	if (!new_ifalias)
 		return -ENOMEM;
 	dev->ifalias = new_ifalias;
+=======
+	dev->ifalias = krealloc(dev->ifalias, len + 1, GFP_KERNEL);
+	if (!dev->ifalias)
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	strlcpy(dev->ifalias, alias, len+1);
 	return len;
@@ -1140,8 +1192,14 @@ void dev_load(struct net *net, const char *name)
 		no_module = request_module("netdev-%s", name);
 	if (no_module && capable(CAP_SYS_MODULE)) {
 		if (!request_module("%s", name))
+<<<<<<< HEAD
 			pr_err("Loading kernel module for a network device with CAP_SYS_MODULE (deprecated).  Use CAP_NET_ADMIN and alias netdev-%s instead.\n",
 			       name);
+=======
+			pr_err("Loading kernel module for a network device "
+"with CAP_SYS_MODULE (deprecated).  Use CAP_NET_ADMIN and alias netdev-%s "
+"instead\n", name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 EXPORT_SYMBOL(dev_load);
@@ -1176,7 +1234,10 @@ static int __dev_open(struct net_device *dev)
 		net_dmaengine_get();
 		dev_set_rx_mode(dev);
 		dev_activate(dev);
+<<<<<<< HEAD
 		add_device_randomness(dev->dev_addr, dev->addr_len);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;
@@ -1320,6 +1381,11 @@ EXPORT_SYMBOL(dev_close);
  */
 void dev_disable_lro(struct net_device *dev)
 {
+<<<<<<< HEAD
+=======
+	u32 flags;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * If we're trying to disable lro on a vlan device
 	 * use the underlying physical device instead
@@ -1327,9 +1393,21 @@ void dev_disable_lro(struct net_device *dev)
 	if (is_vlan_dev(dev))
 		dev = vlan_dev_real_dev(dev);
 
+<<<<<<< HEAD
 	dev->wanted_features &= ~NETIF_F_LRO;
 	netdev_update_features(dev);
 
+=======
+	if (dev->ethtool_ops && dev->ethtool_ops->get_flags)
+		flags = dev->ethtool_ops->get_flags(dev);
+	else
+		flags = ethtool_op_get_flags(dev);
+
+	if (!(flags & ETH_FLAG_LRO))
+		return;
+
+	__ethtool_set_flags(dev, flags & ~ETH_FLAG_LRO);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(dev->features & NETIF_F_LRO))
 		netdev_WARN(dev, "failed to disable LRO!\n");
 }
@@ -1388,7 +1466,11 @@ rollback:
 	for_each_net(net) {
 		for_each_netdev(net, dev) {
 			if (dev == last)
+<<<<<<< HEAD
 				goto outroll;
+=======
+				break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (dev->flags & IFF_UP) {
 				nb->notifier_call(nb, NETDEV_GOING_DOWN, dev);
@@ -1399,7 +1481,10 @@ rollback:
 		}
 	}
 
+<<<<<<< HEAD
 outroll:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	raw_notifier_chain_unregister(&netdev_chain, nb);
 	goto unlock;
 }
@@ -1413,20 +1498,27 @@ EXPORT_SYMBOL(register_netdevice_notifier);
  *	register_netdevice_notifier(). The notifier is unlinked into the
  *	kernel structures and may then be reused. A negative errno code
  *	is returned on a failure.
+<<<<<<< HEAD
  *
  * 	After unregistering unregister and down device events are synthesized
  *	for all devices on the device list to the removed notifier to remove
  *	the need for special case cleanup code.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 int unregister_netdevice_notifier(struct notifier_block *nb)
 {
+<<<<<<< HEAD
 	struct net_device *dev;
 	struct net *net;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err;
 
 	rtnl_lock();
 	err = raw_notifier_chain_unregister(&netdev_chain, nb);
+<<<<<<< HEAD
 	if (err)
 		goto unlock;
 
@@ -1441,6 +1533,8 @@ int unregister_netdevice_notifier(struct notifier_block *nb)
 		}
 	}
 unlock:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtnl_unlock();
 	return err;
 }
@@ -1462,6 +1556,7 @@ int call_netdevice_notifiers(unsigned long val, struct net_device *dev)
 }
 EXPORT_SYMBOL(call_netdevice_notifiers);
 
+<<<<<<< HEAD
 static struct static_key netstamp_needed __read_mostly;
 #ifdef HAVE_JUMP_LABEL
 /* We are not allowed to call static_key_slow_dec() from irq context
@@ -1483,11 +1578,20 @@ void net_enable_timestamp(void)
 	}
 #endif
 	static_key_slow_inc(&netstamp_needed);
+=======
+/* When > 0 there are consumers of rx skb time stamps */
+static atomic_t netstamp_needed = ATOMIC_INIT(0);
+
+void net_enable_timestamp(void)
+{
+	atomic_inc(&netstamp_needed);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(net_enable_timestamp);
 
 void net_disable_timestamp(void)
 {
+<<<<<<< HEAD
 #ifdef HAVE_JUMP_LABEL
 	if (in_interrupt()) {
 		atomic_inc(&netstamp_needed_deferred);
@@ -1495,11 +1599,15 @@ void net_disable_timestamp(void)
 	}
 #endif
 	static_key_slow_dec(&netstamp_needed);
+=======
+	atomic_dec(&netstamp_needed);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(net_disable_timestamp);
 
 static inline void net_timestamp_set(struct sk_buff *skb)
 {
+<<<<<<< HEAD
 	skb->tstamp.tv64 = 0;
 	if (static_key_false(&netstamp_needed))
 		__net_timestamp(skb);
@@ -1560,6 +1668,18 @@ static int net_hwtstamp_validate(struct ifreq *ifr)
 		return -ERANGE;
 
 	return 0;
+=======
+	if (atomic_read(&netstamp_needed))
+		__net_timestamp(skb);
+	else
+		skb->tstamp.tv64 = 0;
+}
+
+static inline void net_timestamp_check(struct sk_buff *skb)
+{
+	if (!skb->tstamp.tv64 && atomic_read(&netstamp_needed))
+		__net_timestamp(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline bool is_skb_forwardable(struct net_device *dev,
@@ -1603,6 +1723,7 @@ static inline bool is_skb_forwardable(struct net_device *dev,
  */
 int dev_forward_skb(struct net_device *dev, struct sk_buff *skb)
 {
+<<<<<<< HEAD
 	if (skb_shinfo(skb)->tx_flags & SKBTX_DEV_ZEROCOPY) {
 		if (skb_copy_ubufs(skb, GFP_ATOMIC)) {
 			atomic_long_inc(&dev->rx_dropped);
@@ -1611,6 +1732,8 @@ int dev_forward_skb(struct net_device *dev, struct sk_buff *skb)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skb_orphan(skb);
 	nf_reset(skb);
 
@@ -1619,6 +1742,7 @@ int dev_forward_skb(struct net_device *dev, struct sk_buff *skb)
 		kfree_skb(skb);
 		return NET_RX_DROP;
 	}
+<<<<<<< HEAD
 	skb->skb_iif = 0;
 	skb->dev = dev;
 	skb_dst_drop(skb);
@@ -1629,6 +1753,12 @@ int dev_forward_skb(struct net_device *dev, struct sk_buff *skb)
 	secpath_reset(skb);
 	nf_reset(skb);
 	nf_reset_trace(skb);
+=======
+	skb_set_dev(skb, dev);
+	skb->tstamp.tv64 = 0;
+	skb->pkt_type = PACKET_HOST;
+	skb->protocol = eth_type_trans(skb, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return netif_rx(skb);
 }
 EXPORT_SYMBOL_GPL(dev_forward_skb);
@@ -1641,6 +1771,7 @@ static inline int deliver_skb(struct sk_buff *skb,
 	return pt_prev->func(skb, skb->dev, pt_prev, orig_dev);
 }
 
+<<<<<<< HEAD
 static inline bool skb_loop_sk(struct packet_type *ptype, struct sk_buff *skb)
 {
 	if (!ptype->af_packet_priv || !skb->sk)
@@ -1654,6 +1785,8 @@ static inline bool skb_loop_sk(struct packet_type *ptype, struct sk_buff *skb)
 	return false;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *	Support routine. Sends outgoing frames to any network
  *	taps currently in use.
@@ -1671,7 +1804,12 @@ static void dev_queue_xmit_nit(struct sk_buff *skb, struct net_device *dev)
 		 * they originated from - MvS (miquels@drinkel.ow.org)
 		 */
 		if ((ptype->dev == dev || !ptype->dev) &&
+<<<<<<< HEAD
 		    (!skb_loop_sk(ptype, skb))) {
+=======
+		    (ptype->af_packet_priv == NULL ||
+		     (struct sock *)ptype->af_packet_priv != skb->sk)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (pt_prev) {
 				deliver_skb(skb2, pt_prev, skb->dev);
 				pt_prev = ptype;
@@ -1693,9 +1831,16 @@ static void dev_queue_xmit_nit(struct sk_buff *skb, struct net_device *dev)
 			if (skb_network_header(skb2) < skb2->data ||
 			    skb2->network_header > skb2->tail) {
 				if (net_ratelimit())
+<<<<<<< HEAD
 					pr_crit("protocol %04x is buggy, dev %s\n",
 						ntohs(skb2->protocol),
 						dev->name);
+=======
+					printk(KERN_CRIT "protocol %04x is "
+					       "buggy, dev %s\n",
+					       ntohs(skb2->protocol),
+					       dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				skb_reset_network_header(skb2);
 			}
 
@@ -1728,7 +1873,13 @@ static void netif_setup_tc(struct net_device *dev, unsigned int txq)
 
 	/* If TC0 is invalidated disable TC mapping */
 	if (tc->offset + tc->count > txq) {
+<<<<<<< HEAD
 		pr_warn("Number of in use tx queues changed invalidating tc mappings. Priority traffic classification disabled!\n");
+=======
+		pr_warning("Number of in use tx queues changed "
+			   "invalidating tc mappings. Priority "
+			   "traffic classification disabled!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev->num_tc = 0;
 		return;
 	}
@@ -1739,8 +1890,16 @@ static void netif_setup_tc(struct net_device *dev, unsigned int txq)
 
 		tc = &dev->tc_to_txq[q];
 		if (tc->offset + tc->count > txq) {
+<<<<<<< HEAD
 			pr_warn("Number of in use tx queues changed. Priority %i to tc mapping %i is no longer valid. Setting map to 0\n",
 				i, q);
+=======
+			pr_warning("Number of in use tx queues "
+				   "changed. Priority %i to tc "
+				   "mapping %i is no longer valid "
+				   "setting map to 0\n",
+				   i, q);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			netdev_set_prio_tc_map(dev, i, 0);
 		}
 	}
@@ -1889,6 +2048,7 @@ void netif_device_attach(struct net_device *dev)
 }
 EXPORT_SYMBOL(netif_device_attach);
 
+<<<<<<< HEAD
 static void skb_warn_bad_offload(const struct sk_buff *skb)
 {
 	static const netdev_features_t null_features = 0;
@@ -1908,6 +2068,37 @@ static void skb_warn_bad_offload(const struct sk_buff *skb)
 	     skb->len, skb->data_len, skb_shinfo(skb)->gso_size,
 	     skb_shinfo(skb)->gso_type, skb->ip_summed);
 }
+=======
+/**
+ * skb_dev_set -- assign a new device to a buffer
+ * @skb: buffer for the new device
+ * @dev: network device
+ *
+ * If an skb is owned by a device already, we have to reset
+ * all data private to the namespace a device belongs to
+ * before assigning it a new device.
+ */
+#ifdef CONFIG_NET_NS
+void skb_set_dev(struct sk_buff *skb, struct net_device *dev)
+{
+	skb_dst_drop(skb);
+	if (skb->dev && !net_eq(dev_net(skb->dev), dev_net(dev))) {
+		secpath_reset(skb);
+		nf_reset(skb);
+		skb_init_secmark(skb);
+		skb->mark = 0;
+		skb->priority = 0;
+		skb->nf_trace = 0;
+		skb->ipvs_property = 0;
+#ifdef CONFIG_NET_SCHED
+		skb->tc_index = 0;
+#endif
+	}
+	skb->dev = dev;
+}
+EXPORT_SYMBOL(skb_set_dev);
+#endif /* CONFIG_NET_NS */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Invalidate hardware checksum when packet is to be mangled, and
@@ -1922,8 +2113,13 @@ int skb_checksum_help(struct sk_buff *skb)
 		goto out_set_summed;
 
 	if (unlikely(skb_shinfo(skb)->gso_size)) {
+<<<<<<< HEAD
 		skb_warn_bad_offload(skb);
 		return -EINVAL;
+=======
+		/* Let GSO fix up the checksum. */
+		goto out_set_summed;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	offset = skb_checksum_start_offset(skb);
@@ -1958,8 +2154,12 @@ EXPORT_SYMBOL(skb_checksum_help);
  *	It may return NULL if the skb requires no segmentation.  This is
  *	only possible when GSO is used for verifying header integrity.
  */
+<<<<<<< HEAD
 struct sk_buff *skb_gso_segment(struct sk_buff *skb,
 	netdev_features_t features)
+=======
+struct sk_buff *skb_gso_segment(struct sk_buff *skb, u32 features)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sk_buff *segs = ERR_PTR(-EPROTONOSUPPORT);
 	struct packet_type *ptype;
@@ -1983,7 +2183,20 @@ struct sk_buff *skb_gso_segment(struct sk_buff *skb,
 	__skb_pull(skb, skb->mac_len);
 
 	if (unlikely(skb->ip_summed != CHECKSUM_PARTIAL)) {
+<<<<<<< HEAD
 		skb_warn_bad_offload(skb);
+=======
+		struct net_device *dev = skb->dev;
+		struct ethtool_drvinfo info = {};
+
+		if (dev && dev->ethtool_ops && dev->ethtool_ops->get_drvinfo)
+			dev->ethtool_ops->get_drvinfo(dev, &info);
+
+		WARN(1, "%s: caps=(0x%lx, 0x%lx) len=%d data_len=%d ip_summed=%d\n",
+		     info.driver, dev ? dev->features : 0L,
+		     skb->sk ? skb->sk->sk_route_caps : 0L,
+		     skb->len, skb->data_len, skb->ip_summed);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (skb_header_cloned(skb) &&
 		    (err = pskb_expand_head(skb, 0, 0, GFP_ATOMIC)))
@@ -2019,7 +2232,12 @@ EXPORT_SYMBOL(skb_gso_segment);
 void netdev_rx_csum_fault(struct net_device *dev)
 {
 	if (net_ratelimit()) {
+<<<<<<< HEAD
 		pr_err("%s: hw csum failure\n", dev ? dev->name : "<unknown>");
+=======
+		printk(KERN_ERR "%s: hw csum failure.\n",
+			dev ? dev->name : "<unknown>");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dump_stack();
 	}
 }
@@ -2036,11 +2254,17 @@ static int illegal_highdma(struct net_device *dev, struct sk_buff *skb)
 #ifdef CONFIG_HIGHMEM
 	int i;
 	if (!(dev->features & NETIF_F_HIGHDMA)) {
+<<<<<<< HEAD
 		for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
 			skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
 			if (PageHighMem(skb_frag_page(frag)))
 				return 1;
 		}
+=======
+		for (i = 0; i < skb_shinfo(skb)->nr_frags; i++)
+			if (PageHighMem(skb_shinfo(skb)->frags[i].page))
+				return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (PCI_DMA_BUS_IS_PHYS) {
@@ -2049,8 +2273,12 @@ static int illegal_highdma(struct net_device *dev, struct sk_buff *skb)
 		if (!pdev)
 			return 0;
 		for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
+<<<<<<< HEAD
 			skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
 			dma_addr_t addr = page_to_phys(skb_frag_page(frag));
+=======
+			dma_addr_t addr = page_to_phys(skb_shinfo(skb)->frags[i].page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!pdev->dma_mask || addr + PAGE_SIZE - 1 > *pdev->dma_mask)
 				return 1;
 		}
@@ -2090,7 +2318,11 @@ static void dev_gso_skb_destructor(struct sk_buff *skb)
  *	This function segments the given skb and stores the list of segments
  *	in skb->next.
  */
+<<<<<<< HEAD
 static int dev_gso_segment(struct sk_buff *skb, netdev_features_t features)
+=======
+static int dev_gso_segment(struct sk_buff *skb, int features)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sk_buff *segs;
 
@@ -2110,7 +2342,30 @@ static int dev_gso_segment(struct sk_buff *skb, netdev_features_t features)
 	return 0;
 }
 
+<<<<<<< HEAD
 static bool can_checksum_protocol(netdev_features_t features, __be16 protocol)
+=======
+/*
+ * Try to orphan skb early, right before transmission by the device.
+ * We cannot orphan skb if tx timestamp is requested or the sk-reference
+ * is needed on driver level for other reasons, e.g. see net/can/raw.c
+ */
+static inline void skb_orphan_try(struct sk_buff *skb)
+{
+	struct sock *sk = skb->sk;
+
+	if (sk && !skb_shinfo(skb)->tx_flags) {
+		/* skb_tx_hash() wont be able to get sk.
+		 * We copy sk_hash into skb->rxhash
+		 */
+		if (!skb->rxhash)
+			skb->rxhash = sk->sk_hash;
+		skb_orphan(skb);
+	}
+}
+
+static bool can_checksum_protocol(unsigned long features, __be16 protocol)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return ((features & NETIF_F_GEN_CSUM) ||
 		((features & NETIF_F_V4_CSUM) &&
@@ -2121,11 +2376,17 @@ static bool can_checksum_protocol(netdev_features_t features, __be16 protocol)
 		 protocol == htons(ETH_P_FCOE)));
 }
 
+<<<<<<< HEAD
 static netdev_features_t harmonize_features(struct sk_buff *skb,
 	__be16 protocol, netdev_features_t features)
 {
 	if (skb->ip_summed != CHECKSUM_NONE &&
 	    !can_checksum_protocol(features, protocol)) {
+=======
+static u32 harmonize_features(struct sk_buff *skb, __be16 protocol, u32 features)
+{
+	if (!can_checksum_protocol(features, protocol)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		features &= ~NETIF_F_ALL_CSUM;
 		features &= ~NETIF_F_SG;
 	} else if (illegal_highdma(skb->dev, skb)) {
@@ -2135,6 +2396,7 @@ static netdev_features_t harmonize_features(struct sk_buff *skb,
 	return features;
 }
 
+<<<<<<< HEAD
 netdev_features_t netif_skb_features(struct sk_buff *skb)
 {
 	__be16 protocol = skb->protocol;
@@ -2142,6 +2404,12 @@ netdev_features_t netif_skb_features(struct sk_buff *skb)
 
 	if (skb_shinfo(skb)->gso_segs > skb->dev->gso_max_segs)
 		features &= ~NETIF_F_GSO_MASK;
+=======
+u32 netif_skb_features(struct sk_buff *skb)
+{
+	__be16 protocol = skb->protocol;
+	u32 features = skb->dev->features;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (protocol == htons(ETH_P_8021Q)) {
 		struct vlan_ethhdr *veh = (struct vlan_ethhdr *)skb->data;
@@ -2170,7 +2438,11 @@ EXPORT_SYMBOL(netif_skb_features);
  *	   support DMA from it.
  */
 static inline int skb_needs_linearize(struct sk_buff *skb,
+<<<<<<< HEAD
 				      netdev_features_t features)
+=======
+				      int features)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return skb_is_nonlinear(skb) &&
 			((skb_has_frag_list(skb) &&
@@ -2187,7 +2459,11 @@ int dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev,
 	unsigned int skb_len;
 
 	if (likely(!skb->next)) {
+<<<<<<< HEAD
 		netdev_features_t features;
+=======
+		u32 features;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * If device doesn't need skb->dst, release it right now while
@@ -2199,6 +2475,11 @@ int dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev,
 		if (!list_empty(&ptype_all))
 			dev_queue_xmit_nit(skb, dev);
 
+<<<<<<< HEAD
+=======
+		skb_orphan_try(skb);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		features = netif_skb_features(skb);
 
 		if (vlan_tx_tag_present(skb) &&
@@ -2266,7 +2547,11 @@ gso:
 			return rc;
 		}
 		txq_trans_update(txq);
+<<<<<<< HEAD
 		if (unlikely(netif_xmit_stopped(txq) && skb->next))
+=======
+		if (unlikely(netif_tx_queue_stopped(txq) && skb->next))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return NETDEV_TX_BUSY;
 	} while (skb->next);
 
@@ -2308,7 +2593,11 @@ u16 __skb_tx_hash(const struct net_device *dev, const struct sk_buff *skb,
 	if (skb->sk && skb->sk->sk_hash)
 		hash = skb->sk->sk_hash;
 	else
+<<<<<<< HEAD
 		hash = (__force u16) skb->protocol;
+=======
+		hash = (__force u16) skb->protocol ^ skb->rxhash;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hash = jhash_1word(hash, hashrnd);
 
 	return (u16) (((u64) hash * qcount) >> 32) + qoffset;
@@ -2319,9 +2608,15 @@ static inline u16 dev_cap_txqueue(struct net_device *dev, u16 queue_index)
 {
 	if (unlikely(queue_index >= dev->real_num_tx_queues)) {
 		if (net_ratelimit()) {
+<<<<<<< HEAD
 			pr_warn("%s selects TX queue %d, but real number of TX queues is %d\n",
 				dev->name, queue_index,
 				dev->real_num_tx_queues);
+=======
+			pr_warning("%s selects TX queue %d, but "
+				"real number of TX queues is %d\n",
+				dev->name, queue_index, dev->real_num_tx_queues);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		return 0;
 	}
@@ -2466,6 +2761,7 @@ static inline int __dev_xmit_skb(struct sk_buff *skb, struct Qdisc *q,
 	return rc;
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_NETPRIO_CGROUP)
 static void skb_update_prio(struct sk_buff *skb)
 {
@@ -2478,6 +2774,8 @@ static void skb_update_prio(struct sk_buff *skb)
 #define skb_update_prio(skb)
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEFINE_PER_CPU(int, xmit_recursion);
 #define RECURSION_LIMIT 10
 
@@ -2518,8 +2816,11 @@ int dev_queue_xmit(struct sk_buff *skb)
 	 */
 	rcu_read_lock_bh();
 
+<<<<<<< HEAD
 	skb_update_prio(skb);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	txq = dev_pick_tx(dev, skb);
 	q = rcu_dereference_bh(txq->qdisc);
 
@@ -2554,7 +2855,11 @@ int dev_queue_xmit(struct sk_buff *skb)
 
 			HARD_TX_LOCK(dev, txq, cpu);
 
+<<<<<<< HEAD
 			if (!netif_xmit_stopped(txq)) {
+=======
+			if (!netif_tx_queue_stopped(txq)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				__this_cpu_inc(xmit_recursion);
 				rc = dev_hard_start_xmit(skb, dev, txq);
 				__this_cpu_dec(xmit_recursion);
@@ -2565,16 +2870,26 @@ int dev_queue_xmit(struct sk_buff *skb)
 			}
 			HARD_TX_UNLOCK(dev, txq);
 			if (net_ratelimit())
+<<<<<<< HEAD
 				pr_crit("Virtual device %s asks to queue packet!\n",
 					dev->name);
+=======
+				printk(KERN_CRIT "Virtual device %s asks to "
+				       "queue packet!\n", dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			/* Recursion is detected! It is possible,
 			 * unfortunately
 			 */
 recursion_alert:
 			if (net_ratelimit())
+<<<<<<< HEAD
 				pr_crit("Dead loop on virtual device %s, fix it urgently!\n",
 					dev->name);
+=======
+				printk(KERN_CRIT "Dead loop on virtual device "
+				       "%s, fix it urgently!\n", dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -2609,6 +2924,7 @@ static inline void ____napi_schedule(struct softnet_data *sd,
 
 /*
  * __skb_get_rxhash: calculate a flow hash based on src/dst addresses
+<<<<<<< HEAD
  * and src/dst port numbers.  Sets rxhash in skb to non-zero hash value
  * on success, zero indicates no valid hash.  Also, sets l4_rxhash in skb
  * if hash is a canonical 4-tuple hash over transport ports.
@@ -2639,6 +2955,74 @@ void __skb_get_rxhash(struct sk_buff *skb)
 		hash = 1;
 
 	skb->rxhash = hash;
+=======
+ * and src/dst port numbers. Returns a non-zero hash number on success
+ * and 0 on failure.
+ */
+__u32 __skb_get_rxhash(struct sk_buff *skb)
+{
+	int nhoff, hash = 0, poff;
+	const struct ipv6hdr *ip6;
+	const struct iphdr *ip;
+	u8 ip_proto;
+	u32 addr1, addr2, ihl;
+	union {
+		u32 v32;
+		u16 v16[2];
+	} ports;
+
+	nhoff = skb_network_offset(skb);
+
+	switch (skb->protocol) {
+	case __constant_htons(ETH_P_IP):
+		if (!pskb_may_pull(skb, sizeof(*ip) + nhoff))
+			goto done;
+
+		ip = (const struct iphdr *) (skb->data + nhoff);
+		if (ip->frag_off & htons(IP_MF | IP_OFFSET))
+			ip_proto = 0;
+		else
+			ip_proto = ip->protocol;
+		addr1 = (__force u32) ip->saddr;
+		addr2 = (__force u32) ip->daddr;
+		ihl = ip->ihl;
+		break;
+	case __constant_htons(ETH_P_IPV6):
+		if (!pskb_may_pull(skb, sizeof(*ip6) + nhoff))
+			goto done;
+
+		ip6 = (const struct ipv6hdr *) (skb->data + nhoff);
+		ip_proto = ip6->nexthdr;
+		addr1 = (__force u32) ip6->saddr.s6_addr32[3];
+		addr2 = (__force u32) ip6->daddr.s6_addr32[3];
+		ihl = (40 >> 2);
+		break;
+	default:
+		goto done;
+	}
+
+	ports.v32 = 0;
+	poff = proto_ports_offset(ip_proto);
+	if (poff >= 0) {
+		nhoff += ihl * 4 + poff;
+		if (pskb_may_pull(skb, nhoff + 4)) {
+			ports.v32 = * (__force u32 *) (skb->data + nhoff);
+			if (ports.v16[1] < ports.v16[0])
+				swap(ports.v16[0], ports.v16[1]);
+		}
+	}
+
+	/* get a consistent hash (same value on both flow directions) */
+	if (addr2 < addr1)
+		swap(addr1, addr2);
+
+	hash = jhash_3words(addr1, addr2, ports.v32, hashrnd);
+	if (!hash)
+		hash = 1;
+
+done:
+	return hash;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(__skb_get_rxhash);
 
@@ -2648,13 +3032,23 @@ EXPORT_SYMBOL(__skb_get_rxhash);
 struct rps_sock_flow_table __rcu *rps_sock_flow_table __read_mostly;
 EXPORT_SYMBOL(rps_sock_flow_table);
 
+<<<<<<< HEAD
 struct static_key rps_needed __read_mostly;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct rps_dev_flow *
 set_rps_cpu(struct net_device *dev, struct sk_buff *skb,
 	    struct rps_dev_flow *rflow, u16 next_cpu)
 {
+<<<<<<< HEAD
 	if (next_cpu != RPS_NO_CPU) {
+=======
+	u16 tcpu;
+
+	tcpu = rflow->cpu = next_cpu;
+	if (tcpu != RPS_NO_CPU) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_RFS_ACCEL
 		struct netdev_rx_queue *rxqueue;
 		struct rps_dev_flow_table *flow_table;
@@ -2682,16 +3076,26 @@ set_rps_cpu(struct net_device *dev, struct sk_buff *skb,
 			goto out;
 		old_rflow = rflow;
 		rflow = &flow_table->flows[flow_id];
+<<<<<<< HEAD
+=======
+		rflow->cpu = next_cpu;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rflow->filter = rc;
 		if (old_rflow->filter == rflow->filter)
 			old_rflow->filter = RPS_NO_FILTER;
 	out:
 #endif
 		rflow->last_qtail =
+<<<<<<< HEAD
 			per_cpu(softnet_data, next_cpu).input_queue_head;
 	}
 
 	rflow->cpu = next_cpu;
+=======
+			per_cpu(softnet_data, tcpu).input_queue_head;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rflow;
 }
 
@@ -2726,13 +3130,21 @@ static int get_rps_cpu(struct net_device *dev, struct sk_buff *skb,
 	map = rcu_dereference(rxqueue->rps_map);
 	if (map) {
 		if (map->len == 1 &&
+<<<<<<< HEAD
 		    !rcu_access_pointer(rxqueue->rps_flow_table)) {
+=======
+		    !rcu_dereference_raw(rxqueue->rps_flow_table)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			tcpu = map->cpus[0];
 			if (cpu_online(tcpu))
 				cpu = tcpu;
 			goto done;
 		}
+<<<<<<< HEAD
 	} else if (!rcu_access_pointer(rxqueue->rps_flow_table)) {
+=======
+	} else if (!rcu_dereference_raw(rxqueue->rps_flow_table)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto done;
 	}
 
@@ -2766,10 +3178,15 @@ static int get_rps_cpu(struct net_device *dev, struct sk_buff *skb,
 		if (unlikely(tcpu != next_cpu) &&
 		    (tcpu == RPS_NO_CPU || !cpu_online(tcpu) ||
 		     ((int)(per_cpu(softnet_data, tcpu).input_queue_head -
+<<<<<<< HEAD
 		      rflow->last_qtail)) >= 0)) {
 			tcpu = next_cpu;
 			rflow = set_rps_cpu(dev, skb, rflow, next_cpu);
 		}
+=======
+		      rflow->last_qtail)) >= 0))
+			rflow = set_rps_cpu(dev, skb, rflow, next_cpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (tcpu != RPS_NO_CPU && cpu_online(tcpu)) {
 			*rflowp = rflow;
@@ -2931,11 +3348,20 @@ int netif_rx(struct sk_buff *skb)
 	if (netpoll_rx(skb))
 		return NET_RX_DROP;
 
+<<<<<<< HEAD
 	net_timestamp_check(netdev_tstamp_prequeue, skb);
 
 	trace_netif_rx(skb);
 #ifdef CONFIG_RPS
 	if (static_key_false(&rps_needed)) {
+=======
+	if (netdev_tstamp_prequeue)
+		net_timestamp_check(skb);
+
+	trace_netif_rx(skb);
+#ifdef CONFIG_RPS
+	{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct rps_dev_flow voidflow, *rflow = &voidflow;
 		int cpu;
 
@@ -2950,13 +3376,22 @@ int netif_rx(struct sk_buff *skb)
 
 		rcu_read_unlock();
 		preempt_enable();
+<<<<<<< HEAD
 	} else
 #endif
+=======
+	}
+#else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		unsigned int qtail;
 		ret = enqueue_to_backlog(skb, get_cpu(), &qtail);
 		put_cpu();
 	}
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 EXPORT_SYMBOL(netif_rx);
@@ -3059,8 +3494,13 @@ static int ing_filter(struct sk_buff *skb, struct netdev_queue *rxq)
 
 	if (unlikely(MAX_RED_LOOP < ttl++)) {
 		if (net_ratelimit())
+<<<<<<< HEAD
 			pr_warn("Redir loop detected Dropping packet (%d->%d)\n",
 				skb->skb_iif, dev->ifindex);
+=======
+			pr_warning( "Redir loop detected Dropping packet (%d->%d)\n",
+			       skb->skb_iif, dev->ifindex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return TC_ACT_SHOT;
 	}
 
@@ -3128,7 +3568,10 @@ int netdev_rx_handler_register(struct net_device *dev,
 	if (dev->rx_handler)
 		return -EBUSY;
 
+<<<<<<< HEAD
 	/* Note: rx_handler_data must be set before rx_handler */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rcu_assign_pointer(dev->rx_handler_data, rx_handler_data);
 	rcu_assign_pointer(dev->rx_handler, rx_handler);
 
@@ -3148,6 +3591,7 @@ void netdev_rx_handler_unregister(struct net_device *dev)
 {
 
 	ASSERT_RTNL();
+<<<<<<< HEAD
 	RCU_INIT_POINTER(dev->rx_handler, NULL);
 	/* a reader seeing a non NULL rx_handler in a rcu_read_lock()
 	 * section has a guarantee to see a non NULL rx_handler_data
@@ -3155,6 +3599,10 @@ void netdev_rx_handler_unregister(struct net_device *dev)
 	 */
 	synchronize_net();
 	RCU_INIT_POINTER(dev->rx_handler_data, NULL);
+=======
+	rcu_assign_pointer(dev->rx_handler, NULL);
+	rcu_assign_pointer(dev->rx_handler_data, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(netdev_rx_handler_unregister);
 
@@ -3168,7 +3616,12 @@ static int __netif_receive_skb(struct sk_buff *skb)
 	int ret = NET_RX_DROP;
 	__be16 type;
 
+<<<<<<< HEAD
 	net_timestamp_check(!netdev_tstamp_prequeue, skb);
+=======
+	if (!netdev_tstamp_prequeue)
+		net_timestamp_check(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	trace_netif_receive_skb(skb);
 
@@ -3220,6 +3673,7 @@ another_round:
 ncls:
 #endif
 
+<<<<<<< HEAD
 	if (vlan_tx_tag_present(skb)) {
 		if (pt_prev) {
 			ret = deliver_skb(skb, pt_prev, orig_dev);
@@ -3231,6 +3685,8 @@ ncls:
 			goto out;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rx_handler = rcu_dereference(skb->dev->rx_handler);
 	if (rx_handler) {
 		if (pt_prev) {
@@ -3239,7 +3695,10 @@ ncls:
 		}
 		switch (rx_handler(&skb)) {
 		case RX_HANDLER_CONSUMED:
+<<<<<<< HEAD
 			ret = NET_RX_SUCCESS;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out;
 		case RX_HANDLER_ANOTHER:
 			goto another_round;
@@ -3252,8 +3711,22 @@ ncls:
 		}
 	}
 
+<<<<<<< HEAD
 	if (vlan_tx_nonzero_tag_present(skb))
 		skb->pkt_type = PACKET_OTHERHOST;
+=======
+	if (vlan_tx_tag_present(skb)) {
+		if (pt_prev) {
+			ret = deliver_skb(skb, pt_prev, orig_dev);
+			pt_prev = NULL;
+		}
+		if (vlan_do_receive(&skb)) {
+			ret = __netif_receive_skb(skb);
+			goto out;
+		} else if (unlikely(!skb))
+			goto out;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* deliver only exact match when indicated */
 	null_or_dev = deliver_exact ? skb->dev : NULL;
@@ -3303,13 +3776,22 @@ out:
  */
 int netif_receive_skb(struct sk_buff *skb)
 {
+<<<<<<< HEAD
 	net_timestamp_check(netdev_tstamp_prequeue, skb);
+=======
+	if (netdev_tstamp_prequeue)
+		net_timestamp_check(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (skb_defer_rx_timestamp(skb))
 		return NET_RX_SUCCESS;
 
 #ifdef CONFIG_RPS
+<<<<<<< HEAD
 	if (static_key_false(&rps_needed)) {
+=======
+	{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct rps_dev_flow voidflow, *rflow = &voidflow;
 		int cpu, ret;
 
@@ -3320,12 +3802,25 @@ int netif_receive_skb(struct sk_buff *skb)
 		if (cpu >= 0) {
 			ret = enqueue_to_backlog(skb, cpu, &rflow->last_qtail);
 			rcu_read_unlock();
+<<<<<<< HEAD
 			return ret;
 		}
 		rcu_read_unlock();
 	}
 #endif
 	return __netif_receive_skb(skb);
+=======
+		} else {
+			rcu_read_unlock();
+			ret = __netif_receive_skb(skb);
+		}
+
+		return ret;
+	}
+#else
+	return __netif_receive_skb(skb);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(netif_receive_skb);
 
@@ -3477,10 +3972,17 @@ pull:
 		skb->data_len -= grow;
 
 		skb_shinfo(skb)->frags[0].page_offset += grow;
+<<<<<<< HEAD
 		skb_frag_size_sub(&skb_shinfo(skb)->frags[0], grow);
 
 		if (unlikely(!skb_frag_size(&skb_shinfo(skb)->frags[0]))) {
 			skb_frag_unref(skb, 0);
+=======
+		skb_shinfo(skb)->frags[0].size -= grow;
+
+		if (unlikely(!skb_shinfo(skb)->frags[0].size)) {
+			put_page(skb_shinfo(skb)->frags[0].page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			memmove(skb_shinfo(skb)->frags,
 				skb_shinfo(skb)->frags + 1,
 				--skb_shinfo(skb)->nr_frags * sizeof(skb_frag_t));
@@ -3550,10 +4052,18 @@ void skb_gro_reset_offset(struct sk_buff *skb)
 	NAPI_GRO_CB(skb)->frag0_len = 0;
 
 	if (skb->mac_header == skb->tail &&
+<<<<<<< HEAD
 	    !PageHighMem(skb_frag_page(&skb_shinfo(skb)->frags[0]))) {
 		NAPI_GRO_CB(skb)->frag0 =
 			skb_frag_address(&skb_shinfo(skb)->frags[0]);
 		NAPI_GRO_CB(skb)->frag0_len = skb_frag_size(&skb_shinfo(skb)->frags[0]);
+=======
+	    !PageHighMem(skb_shinfo(skb)->frags[0].page)) {
+		NAPI_GRO_CB(skb)->frag0 =
+			page_address(skb_shinfo(skb)->frags[0].page) +
+			skb_shinfo(skb)->frags[0].page_offset;
+		NAPI_GRO_CB(skb)->frag0_len = skb_shinfo(skb)->frags[0].size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 EXPORT_SYMBOL(skb_gro_reset_offset);
@@ -4036,6 +4546,7 @@ static int dev_ifconf(struct net *net, char __user *arg)
 }
 
 #ifdef CONFIG_PROC_FS
+<<<<<<< HEAD
 
 #define BUCKET_SPACE (32 - NETDEV_HASHBITS - 1)
 
@@ -4077,6 +4588,8 @@ static inline struct net_device *dev_from_bucket(struct seq_file *seq, loff_t *p
 	return NULL;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *	This is invoked by the /proc filesystem handler to display a device
  *	in detail.
@@ -4084,20 +4597,48 @@ static inline struct net_device *dev_from_bucket(struct seq_file *seq, loff_t *p
 void *dev_seq_start(struct seq_file *seq, loff_t *pos)
 	__acquires(RCU)
 {
+<<<<<<< HEAD
+=======
+	struct net *net = seq_file_net(seq);
+	loff_t off;
+	struct net_device *dev;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rcu_read_lock();
 	if (!*pos)
 		return SEQ_START_TOKEN;
 
+<<<<<<< HEAD
 	if (get_bucket(*pos) >= NETDEV_HASHENTRIES)
 		return NULL;
 
 	return dev_from_bucket(seq, pos);
+=======
+	off = 1;
+	for_each_netdev_rcu(net, dev)
+		if (off++ == *pos)
+			return dev;
+
+	return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void *dev_seq_next(struct seq_file *seq, void *v, loff_t *pos)
 {
+<<<<<<< HEAD
 	++*pos;
 	return dev_from_bucket(seq, pos);
+=======
+	struct net_device *dev = v;
+
+	if (v == SEQ_START_TOKEN)
+		dev = first_net_device_rcu(seq_file_net(seq));
+	else
+		dev = next_net_device_rcu(dev);
+
+	++*pos;
+	return dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void dev_seq_stop(struct seq_file *seq, void *v)
@@ -4449,7 +4990,11 @@ static void dev_change_rx_flags(struct net_device *dev, int flags)
 
 static int __dev_set_promiscuity(struct net_device *dev, int inc)
 {
+<<<<<<< HEAD
 	unsigned int old_flags = dev->flags;
+=======
+	unsigned short old_flags = dev->flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uid_t uid;
 	gid_t gid;
 
@@ -4466,15 +5011,27 @@ static int __dev_set_promiscuity(struct net_device *dev, int inc)
 			dev->flags &= ~IFF_PROMISC;
 		else {
 			dev->promiscuity -= inc;
+<<<<<<< HEAD
 			pr_warn("%s: promiscuity touches roof, set promiscuity failed. promiscuity feature of device might be broken.\n",
 				dev->name);
+=======
+			printk(KERN_WARNING "%s: promiscuity touches roof, "
+				"set promiscuity failed, promiscuity feature "
+				"of device might be broken.\n", dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EOVERFLOW;
 		}
 	}
 	if (dev->flags != old_flags) {
+<<<<<<< HEAD
 		pr_info("device %s %s promiscuous mode\n",
 			dev->name,
 			dev->flags & IFF_PROMISC ? "entered" : "left");
+=======
+		printk(KERN_INFO "device %s %s promiscuous mode\n",
+		       dev->name, (dev->flags & IFF_PROMISC) ? "entered" :
+							       "left");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (audit_enabled) {
 			current_uid_gid(&uid, &gid);
 			audit_log(current->audit_context, GFP_ATOMIC,
@@ -4505,7 +5062,11 @@ static int __dev_set_promiscuity(struct net_device *dev, int inc)
  */
 int dev_set_promiscuity(struct net_device *dev, int inc)
 {
+<<<<<<< HEAD
 	unsigned int old_flags = dev->flags;
+=======
+	unsigned short old_flags = dev->flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err;
 
 	err = __dev_set_promiscuity(dev, inc);
@@ -4532,7 +5093,11 @@ EXPORT_SYMBOL(dev_set_promiscuity);
 
 int dev_set_allmulti(struct net_device *dev, int inc)
 {
+<<<<<<< HEAD
 	unsigned int old_flags = dev->flags;
+=======
+	unsigned short old_flags = dev->flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ASSERT_RTNL();
 
@@ -4547,8 +5112,14 @@ int dev_set_allmulti(struct net_device *dev, int inc)
 			dev->flags &= ~IFF_ALLMULTI;
 		else {
 			dev->allmulti -= inc;
+<<<<<<< HEAD
 			pr_warn("%s: allmulti touches roof, set allmulti failed. allmulti feature of device might be broken.\n",
 				dev->name);
+=======
+			printk(KERN_WARNING "%s: allmulti touches roof, "
+				"set allmulti failed, allmulti feature of "
+				"device might be broken.\n", dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EOVERFLOW;
 		}
 	}
@@ -4577,12 +5148,19 @@ void __dev_set_rx_mode(struct net_device *dev)
 	if (!netif_device_present(dev))
 		return;
 
+<<<<<<< HEAD
 	if (!(dev->priv_flags & IFF_UNICAST_FLT)) {
+=======
+	if (ops->ndo_set_rx_mode)
+		ops->ndo_set_rx_mode(dev);
+	else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Unicast addresses changes may only happen under the rtnl,
 		 * therefore calling __dev_set_promiscuity here is safe.
 		 */
 		if (!netdev_uc_empty(dev) && !dev->uc_promisc) {
 			__dev_set_promiscuity(dev, 1);
+<<<<<<< HEAD
 			dev->uc_promisc = true;
 		} else if (netdev_uc_empty(dev) && dev->uc_promisc) {
 			__dev_set_promiscuity(dev, -1);
@@ -4592,6 +5170,17 @@ void __dev_set_rx_mode(struct net_device *dev)
 
 	if (ops->ndo_set_rx_mode)
 		ops->ndo_set_rx_mode(dev);
+=======
+			dev->uc_promisc = 1;
+		} else if (netdev_uc_empty(dev) && dev->uc_promisc) {
+			__dev_set_promiscuity(dev, -1);
+			dev->uc_promisc = 0;
+		}
+
+		if (ops->ndo_set_multicast_list)
+			ops->ndo_set_multicast_list(dev);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void dev_set_rx_mode(struct net_device *dev)
@@ -4602,6 +5191,33 @@ void dev_set_rx_mode(struct net_device *dev)
 }
 
 /**
+<<<<<<< HEAD
+=======
+ *	dev_ethtool_get_settings - call device's ethtool_ops::get_settings()
+ *	@dev: device
+ *	@cmd: memory area for ethtool_ops::get_settings() result
+ *
+ *      The cmd arg is initialized properly (cleared and
+ *      ethtool_cmd::cmd field set to ETHTOOL_GSET).
+ *
+ *	Return device's ethtool_ops::get_settings() result value or
+ *	-EOPNOTSUPP when device doesn't expose
+ *	ethtool_ops::get_settings() operation.
+ */
+int dev_ethtool_get_settings(struct net_device *dev,
+			     struct ethtool_cmd *cmd)
+{
+	if (!dev->ethtool_ops || !dev->ethtool_ops->get_settings)
+		return -EOPNOTSUPP;
+
+	memset(cmd, 0, sizeof(struct ethtool_cmd));
+	cmd->cmd = ETHTOOL_GSET;
+	return dev->ethtool_ops->get_settings(dev, cmd);
+}
+EXPORT_SYMBOL(dev_ethtool_get_settings);
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	dev_get_flags - get flags reported to userspace
  *	@dev: device
  *
@@ -4634,7 +5250,11 @@ EXPORT_SYMBOL(dev_get_flags);
 
 int __dev_change_flags(struct net_device *dev, unsigned int flags)
 {
+<<<<<<< HEAD
 	unsigned int old_flags = dev->flags;
+=======
+	int old_flags = dev->flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	ASSERT_RTNL();
@@ -4717,10 +5337,17 @@ void __dev_notify_flags(struct net_device *dev, unsigned int old_flags)
  *	Change settings on device based state flags. The flags are
  *	in the userspace exported format.
  */
+<<<<<<< HEAD
 int dev_change_flags(struct net_device *dev, unsigned int flags)
 {
 	int ret;
 	unsigned int changes, old_flags = dev->flags;
+=======
+int dev_change_flags(struct net_device *dev, unsigned flags)
+{
+	int ret, changes;
+	int old_flags = dev->flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = __dev_change_flags(dev, flags);
 	if (ret < 0)
@@ -4801,7 +5428,10 @@ int dev_set_mac_address(struct net_device *dev, struct sockaddr *sa)
 	err = ops->ndo_set_mac_address(dev, sa);
 	if (!err)
 		call_netdevice_notifiers(NETDEV_CHANGEADDR, dev);
+<<<<<<< HEAD
 	add_device_randomness(dev->dev_addr, dev->addr_len);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 EXPORT_SYMBOL(dev_set_mac_address);
@@ -4918,7 +5548,11 @@ static int dev_ifsioc(struct net *net, struct ifreq *ifr, unsigned int cmd)
 		return -EOPNOTSUPP;
 
 	case SIOCADDMULTI:
+<<<<<<< HEAD
 		if (!ops->ndo_set_rx_mode ||
+=======
+		if ((!ops->ndo_set_multicast_list && !ops->ndo_set_rx_mode) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    ifr->ifr_hwaddr.sa_family != AF_UNSPEC)
 			return -EINVAL;
 		if (!netif_device_present(dev))
@@ -4926,7 +5560,11 @@ static int dev_ifsioc(struct net *net, struct ifreq *ifr, unsigned int cmd)
 		return dev_mc_add_global(dev, ifr->ifr_hwaddr.sa_data);
 
 	case SIOCDELMULTI:
+<<<<<<< HEAD
 		if (!ops->ndo_set_rx_mode ||
+=======
+		if ((!ops->ndo_set_multicast_list && !ops->ndo_set_rx_mode) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    ifr->ifr_hwaddr.sa_family != AF_UNSPEC)
 			return -EINVAL;
 		if (!netif_device_present(dev))
@@ -4943,12 +5581,15 @@ static int dev_ifsioc(struct net *net, struct ifreq *ifr, unsigned int cmd)
 		ifr->ifr_newname[IFNAMSIZ-1] = '\0';
 		return dev_change_name(dev, ifr->ifr_newname);
 
+<<<<<<< HEAD
 	case SIOCSHWTSTAMP:
 		err = net_hwtstamp_validate(ifr);
 		if (err)
 			return err;
 		/* fall through */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 *	Unknown or private ioctl
 	 */
@@ -5206,8 +5847,13 @@ static void rollback_registered_many(struct list_head *head)
 		 * devices and proceed with the remaining.
 		 */
 		if (dev->reg_state == NETREG_UNINITIALIZED) {
+<<<<<<< HEAD
 			pr_debug("unregister_netdevice: device %s/%p never was registered\n",
 				 dev->name, dev);
+=======
+			pr_debug("unregister_netdevice: device %s/%p never "
+				 "was registered\n", dev->name, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			WARN_ON(1);
 			list_del(&dev->unreg_list);
@@ -5263,7 +5909,11 @@ static void rollback_registered_many(struct list_head *head)
 	dev = list_first_entry(head, struct net_device, unreg_list);
 	call_netdevice_notifiers(NETDEV_UNREGISTER_BATCH, dev);
 
+<<<<<<< HEAD
 	synchronize_net();
+=======
+	rcu_barrier();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_for_each_entry(dev, head, unreg_list)
 		dev_put(dev);
@@ -5278,8 +5928,12 @@ static void rollback_registered(struct net_device *dev)
 	list_del(&single);
 }
 
+<<<<<<< HEAD
 static netdev_features_t netdev_fix_features(struct net_device *dev,
 	netdev_features_t features)
+=======
+u32 netdev_fix_features(struct net_device *dev, u32 features)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Fix illegal checksum combinations */
 	if ((features & NETIF_F_HW_CSUM) &&
@@ -5288,6 +5942,15 @@ static netdev_features_t netdev_fix_features(struct net_device *dev,
 		features &= ~(NETIF_F_IP_CSUM|NETIF_F_IPV6_CSUM);
 	}
 
+<<<<<<< HEAD
+=======
+	if ((features & NETIF_F_NO_CSUM) &&
+	    (features & (NETIF_F_HW_CSUM|NETIF_F_IP_CSUM|NETIF_F_IPV6_CSUM))) {
+		netdev_warn(dev, "mixed no checksumming and other settings.\n");
+		features &= ~(NETIF_F_IP_CSUM|NETIF_F_IPV6_CSUM|NETIF_F_HW_CSUM);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Fix illegal SG+CSUM combinations. */
 	if ((features & NETIF_F_SG) &&
 	    !(features & NETIF_F_ALL_CSUM)) {
@@ -5332,10 +5995,18 @@ static netdev_features_t netdev_fix_features(struct net_device *dev,
 
 	return features;
 }
+<<<<<<< HEAD
 
 int __netdev_update_features(struct net_device *dev)
 {
 	netdev_features_t features;
+=======
+EXPORT_SYMBOL(netdev_fix_features);
+
+int __netdev_update_features(struct net_device *dev)
+{
+	u32 features;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err = 0;
 
 	ASSERT_RTNL();
@@ -5351,16 +6022,26 @@ int __netdev_update_features(struct net_device *dev)
 	if (dev->features == features)
 		return 0;
 
+<<<<<<< HEAD
 	netdev_dbg(dev, "Features changed: %pNF -> %pNF\n",
 		&dev->features, &features);
+=======
+	netdev_dbg(dev, "Features changed: 0x%08x -> 0x%08x\n",
+		dev->features, features);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dev->netdev_ops->ndo_set_features)
 		err = dev->netdev_ops->ndo_set_features(dev, features);
 
 	if (unlikely(err < 0)) {
 		netdev_err(dev,
+<<<<<<< HEAD
 			"set_features() failed (%d); wanted %pNF, left %pNF\n",
 			err, &features, &dev->features);
+=======
+			"set_features() failed (%d); wanted 0x%08x, left 0x%08x\n",
+			err, features, dev->features);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
@@ -5439,7 +6120,11 @@ static int netif_alloc_rx_queues(struct net_device *dev)
 
 	rx = kcalloc(count, sizeof(struct netdev_rx_queue), GFP_KERNEL);
 	if (!rx) {
+<<<<<<< HEAD
 		pr_err("netdev: Unable to allocate %u rx queues\n", count);
+=======
+		pr_err("netdev: Unable to allocate %u rx queues.\n", count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 	dev->_rx = rx;
@@ -5459,9 +6144,12 @@ static void netdev_init_one_queue(struct net_device *dev,
 	queue->xmit_lock_owner = -1;
 	netdev_queue_numa_node_write(queue, NUMA_NO_NODE);
 	queue->dev = dev;
+<<<<<<< HEAD
 #ifdef CONFIG_BQL
 	dql_init(&queue->dql, HZ);
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int netif_alloc_netdev_queues(struct net_device *dev)
@@ -5473,7 +6161,12 @@ static int netif_alloc_netdev_queues(struct net_device *dev)
 
 	tx = kcalloc(count, sizeof(struct netdev_queue), GFP_KERNEL);
 	if (!tx) {
+<<<<<<< HEAD
 		pr_err("netdev: Unable to allocate %u tx queues\n", count);
+=======
+		pr_err("netdev: Unable to allocate %u tx queues.\n",
+		       count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 	dev->_tx = tx;
@@ -5546,6 +6239,7 @@ int register_netdevice(struct net_device *dev)
 	dev->wanted_features = dev->features & dev->hw_features;
 
 	/* Turn on no cache copy if HW is doing checksum */
+<<<<<<< HEAD
 	if (!(dev->flags & IFF_LOOPBACK)) {
 		dev->hw_features |= NETIF_F_NOCACHE_COPY;
 		if (dev->features & NETIF_F_ALL_CSUM) {
@@ -5557,6 +6251,20 @@ int register_netdevice(struct net_device *dev)
 	/* Make NETIF_F_HIGHDMA inheritable to VLAN devices.
 	 */
 	dev->vlan_features |= NETIF_F_HIGHDMA;
+=======
+	dev->hw_features |= NETIF_F_NOCACHE_COPY;
+	if ((dev->features & NETIF_F_ALL_CSUM) &&
+	    !(dev->features & NETIF_F_NO_CSUM)) {
+		dev->wanted_features |= NETIF_F_NOCACHE_COPY;
+		dev->features |= NETIF_F_NOCACHE_COPY;
+	}
+
+	/* Enable GRO and NETIF_F_HIGHDMA for vlans by default,
+	 * vlan_dev_init() will do the dev->features check, so these features
+	 * are enabled only if supported by underlying device.
+	 */
+	dev->vlan_features |= (NETIF_F_GRO | NETIF_F_HIGHDMA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = call_netdevice_notifiers(NETDEV_POST_INIT, dev);
 	ret = notifier_to_errno(ret);
@@ -5580,7 +6288,10 @@ int register_netdevice(struct net_device *dev)
 	dev_init_scheduler(dev);
 	dev_hold(dev);
 	list_netdevice(dev);
+<<<<<<< HEAD
 	add_device_randomness(dev->dev_addr, dev->addr_len);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Notify protocols, that a new device appeared. */
 	ret = call_netdevice_notifiers(NETDEV_REGISTER, dev);
@@ -5733,8 +6444,15 @@ static void netdev_wait_allrefs(struct net_device *dev)
 		refcnt = netdev_refcnt_read(dev);
 
 		if (time_after(jiffies, warning_time + 10 * HZ)) {
+<<<<<<< HEAD
 			pr_emerg("unregister_netdevice: waiting for %s to become free. Usage count = %d\n",
 				 dev->name, refcnt);
+=======
+			printk(KERN_EMERG "unregister_netdevice: "
+			       "waiting for %s to become free. Usage "
+			       "count = %d\n",
+			       dev->name, refcnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			warning_time = jiffies;
 		}
 	}
@@ -5773,19 +6491,26 @@ void netdev_run_todo(void)
 
 	__rtnl_unlock();
 
+<<<<<<< HEAD
 	/* Wait for rcu callbacks to finish before attempting to drain
 	 * the device list.  This usually avoids a 250ms wait.
 	 */
 	if (!list_empty(&list))
 		rcu_barrier();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (!list_empty(&list)) {
 		struct net_device *dev
 			= list_first_entry(&list, struct net_device, todo_list);
 		list_del(&dev->todo_list);
 
 		if (unlikely(dev->reg_state != NETREG_UNREGISTERING)) {
+<<<<<<< HEAD
 			pr_err("network todo '%s' but state %d\n",
+=======
+			printk(KERN_ERR "network todo '%s' but state %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       dev->name, dev->reg_state);
 			dump_stack();
 			continue;
@@ -5799,8 +6524,13 @@ void netdev_run_todo(void)
 
 		/* paranoia */
 		BUG_ON(netdev_refcnt_read(dev));
+<<<<<<< HEAD
 		WARN_ON(rcu_access_pointer(dev->ip_ptr));
 		WARN_ON(rcu_access_pointer(dev->ip6_ptr));
+=======
+		WARN_ON(rcu_dereference_raw(dev->ip_ptr));
+		WARN_ON(rcu_dereference_raw(dev->ip6_ptr));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		WARN_ON(dev->dn_ptr);
 
 		if (dev->destructor)
@@ -5814,12 +6544,21 @@ void netdev_run_todo(void)
 /* Convert net_device_stats to rtnl_link_stats64.  They have the same
  * fields in the same order, with only the type differing.
  */
+<<<<<<< HEAD
 void netdev_stats_to_stats64(struct rtnl_link_stats64 *stats64,
 			     const struct net_device_stats *netdev_stats)
 {
 #if BITS_PER_LONG == 64
 	BUILD_BUG_ON(sizeof(*stats64) != sizeof(*netdev_stats));
 	memcpy(stats64, netdev_stats, sizeof(*stats64));
+=======
+static void netdev_stats_to_stats64(struct rtnl_link_stats64 *stats64,
+				    const struct net_device_stats *netdev_stats)
+{
+#if BITS_PER_LONG == 64
+        BUILD_BUG_ON(sizeof(*stats64) != sizeof(*netdev_stats));
+        memcpy(stats64, netdev_stats, sizeof(*stats64));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 	size_t i, n = sizeof(*stats64) / sizeof(u64);
 	const unsigned long *src = (const unsigned long *)netdev_stats;
@@ -5831,7 +6570,10 @@ void netdev_stats_to_stats64(struct rtnl_link_stats64 *stats64,
 		dst[i] = src[i];
 #endif
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(netdev_stats_to_stats64);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  *	dev_get_stats	- get network device statistics
@@ -5902,13 +6644,23 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
 	BUG_ON(strlen(name) >= sizeof(dev->name));
 
 	if (txqs < 1) {
+<<<<<<< HEAD
 		pr_err("alloc_netdev: Unable to allocate device with zero queues\n");
+=======
+		pr_err("alloc_netdev: Unable to allocate device "
+		       "with zero queues.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 	}
 
 #ifdef CONFIG_RPS
 	if (rxqs < 1) {
+<<<<<<< HEAD
 		pr_err("alloc_netdev: Unable to allocate device with zero RX queues\n");
+=======
+		pr_err("alloc_netdev: Unable to allocate device "
+		       "with zero RX queues.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 	}
 #endif
@@ -5924,7 +6676,11 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
 
 	p = kzalloc(alloc_size, GFP_KERNEL);
 	if (!p) {
+<<<<<<< HEAD
 		pr_err("alloc_netdev: Unable to allocate device\n");
+=======
+		printk(KERN_ERR "alloc_netdev: Unable to allocate device.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 	}
 
@@ -5944,8 +6700,14 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
 	dev_net_set(dev, &init_net);
 
 	dev->gso_max_size = GSO_MAX_SIZE;
+<<<<<<< HEAD
 	dev->gso_max_segs = GSO_MAX_SEGS;
 
+=======
+
+	INIT_LIST_HEAD(&dev->ethtool_ntuple_list.list);
+	dev->ethtool_ntuple_list.count = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_LIST_HEAD(&dev->napi_list);
 	INIT_LIST_HEAD(&dev->unreg_list);
 	INIT_LIST_HEAD(&dev->link_watch_list);
@@ -6004,11 +6766,21 @@ void free_netdev(struct net_device *dev)
 	kfree(dev->_rx);
 #endif
 
+<<<<<<< HEAD
 	kfree(rcu_dereference_protected(dev->ingress_queue, 1));
+=======
+	kfree(rcu_dereference_raw(dev->ingress_queue));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Flush device addresses */
 	dev_addr_flush(dev);
 
+<<<<<<< HEAD
+=======
+	/* Clear ethtool n-tuple list */
+	ethtool_ntuple_flush(dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry_safe(p, n, &dev->napi_list, dev_list)
 		netif_napi_del(p);
 
@@ -6286,8 +7058,12 @@ static int dev_cpu_callback(struct notifier_block *nfb,
  *	@one to the master device with current feature set @all.  Will not
  *	enable anything that is off in @mask. Returns the new feature set.
  */
+<<<<<<< HEAD
 netdev_features_t netdev_increment_features(netdev_features_t all,
 	netdev_features_t one, netdev_features_t mask)
+=======
+u32 netdev_increment_features(u32 all, u32 one, u32 mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (mask & NETIF_F_GEN_CSUM)
 		mask |= NETIF_F_ALL_CSUM;
@@ -6296,6 +7072,13 @@ netdev_features_t netdev_increment_features(netdev_features_t all,
 	all |= one & (NETIF_F_ONE_FOR_ALL|NETIF_F_ALL_CSUM) & mask;
 	all &= one | ~NETIF_F_ALL_FOR_ALL;
 
+<<<<<<< HEAD
+=======
+	/* If device needs checksumming, downgrade to it. */
+	if (all & (NETIF_F_ALL_CSUM & ~NETIF_F_NO_CSUM))
+		all &= ~NETIF_F_NO_CSUM;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* If one device supports hw checksumming, set for all. */
 	if (all & NETIF_F_GEN_CSUM)
 		all &= ~(NETIF_F_ALL_CSUM & ~NETIF_F_GEN_CSUM);
@@ -6320,8 +7103,12 @@ static struct hlist_head *netdev_create_hash(void)
 /* Initialize per network namespace state */
 static int __net_init netdev_init(struct net *net)
 {
+<<<<<<< HEAD
 	if (net != &init_net)
 		INIT_LIST_HEAD(&net->dev_base_head);
+=======
+	INIT_LIST_HEAD(&net->dev_base_head);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	net->dev_name_head = netdev_create_hash();
 	if (net->dev_name_head == NULL)
@@ -6361,7 +7148,11 @@ const char *netdev_drivername(const struct net_device *dev)
 	return empty;
 }
 
+<<<<<<< HEAD
 int __netdev_printk(const char *level, const struct net_device *dev,
+=======
+static int __netdev_printk(const char *level, const struct net_device *dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   struct va_format *vaf)
 {
 	int r;
@@ -6376,7 +7167,10 @@ int __netdev_printk(const char *level, const struct net_device *dev,
 
 	return r;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(__netdev_printk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int netdev_printk(const char *level, const struct net_device *dev,
 		  const char *format, ...)
@@ -6459,8 +7253,13 @@ static void __net_exit default_device_exit(struct net *net)
 		snprintf(fb_name, IFNAMSIZ, "dev%d", dev->ifindex);
 		err = dev_change_net_namespace(dev, &init_net, fb_name);
 		if (err) {
+<<<<<<< HEAD
 			pr_emerg("%s: failed to move %s to init_net: %d\n",
 				 __func__, dev->name, err);
+=======
+			printk(KERN_EMERG "%s: failed to move %s to init_net: %d\n",
+				__func__, dev->name, err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			BUG();
 		}
 	}

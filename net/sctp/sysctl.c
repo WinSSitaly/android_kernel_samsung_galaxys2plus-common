@@ -187,6 +187,7 @@ static ctl_table sctp_table[] = {
 		.proc_handler	= proc_dointvec,
 	},
 	{
+<<<<<<< HEAD
 		.procname	= "default_auto_asconf",
 		.data		= &sctp_default_auto_asconf,
 		.maxlen		= sizeof(int),
@@ -194,6 +195,8 @@ static ctl_table sctp_table[] = {
 		.proc_handler	= proc_dointvec,
 	},
 	{
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.procname	= "prsctp_enable",
 		.data		= &sctp_prsctp_enable,
 		.maxlen		= sizeof(int),

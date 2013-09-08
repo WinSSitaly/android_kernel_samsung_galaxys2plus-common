@@ -967,6 +967,7 @@ fb_set_var(struct fb_info *info, struct fb_var_screeninfo *var)
 	    memcmp(&info->var, var, sizeof(struct fb_var_screeninfo))) {
 		u32 activate = var->activate;
 
+<<<<<<< HEAD
 		/* When using FOURCC mode, make sure the red, green, blue and
 		 * transp fields are set to 0.
 		 */
@@ -981,6 +982,8 @@ fb_set_var(struct fb_info *info, struct fb_var_screeninfo *var)
 				return -EINVAL;
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!info->fbops->fb_check_var) {
 			*var = info->var;
 			goto done;
@@ -1168,10 +1171,15 @@ static long do_fb_ioctl(struct fb_info *info, unsigned int cmd,
 		event.data = &con2fb;
 		if (!lock_fb_info(info))
 			return -ENODEV;
+<<<<<<< HEAD
 		console_lock();
 		event.info = info;
 		ret = fb_notifier_call_chain(FB_EVENT_SET_CONSOLE_MAP, &event);
 		console_unlock();
+=======
+		event.info = info;
+		ret = fb_notifier_call_chain(FB_EVENT_SET_CONSOLE_MAP, &event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unlock_fb_info(info);
 		break;
 	case FBIOBLANK:
@@ -1364,12 +1372,22 @@ fb_mmap(struct file *file, struct vm_area_struct * vma)
 {
 	struct fb_info *info = file_fb_info(file);
 	struct fb_ops *fb;
+<<<<<<< HEAD
 	unsigned long mmio_pgoff;
+=======
+	unsigned long off;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long start;
 	u32 len;
 
 	if (!info)
 		return -ENODEV;
+<<<<<<< HEAD
+=======
+	if (vma->vm_pgoff > (~0UL >> PAGE_SHIFT))
+		return -EINVAL;
+	off = vma->vm_pgoff << PAGE_SHIFT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fb = info->fbops;
 	if (!fb)
 		return -ENODEV;
@@ -1381,6 +1399,7 @@ fb_mmap(struct file *file, struct vm_area_struct * vma)
 		return res;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * Ugh. This can be either the frame buffer mapping, or
 	 * if pgoff points past it, the mmio mapping.
@@ -1399,6 +1418,35 @@ fb_mmap(struct file *file, struct vm_area_struct * vma)
 	fb_pgprotect(file, vma, start);
 
 	return vm_iomap_memory(vma, start, len);
+=======
+	/* frame buffer memory */
+	start = info->fix.smem_start;
+	len = PAGE_ALIGN((start & ~PAGE_MASK) + info->fix.smem_len);
+	if (off >= len) {
+		/* memory mapped io */
+		off -= len;
+		if (info->var.accel_flags) {
+			mutex_unlock(&info->mm_lock);
+			return -EINVAL;
+		}
+		start = info->fix.mmio_start;
+		len = PAGE_ALIGN((start & ~PAGE_MASK) + info->fix.mmio_len);
+	}
+	mutex_unlock(&info->mm_lock);
+	start &= PAGE_MASK;
+	if ((vma->vm_end - vma->vm_start + off) > len)
+		return -EINVAL;
+	off += start;
+	vma->vm_pgoff = off >> PAGE_SHIFT;
+	/* This is an IO map - tell maydump to skip this VMA */
+	vma->vm_flags |= VM_IO | VM_RESERVED;
+	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
+	fb_pgprotect(file, vma, off);
+	if (io_remap_pfn_range(vma, vma->vm_start, off >> PAGE_SHIFT,
+			     vma->vm_end - vma->vm_start, vma->vm_page_prot))
+		return -EAGAIN;
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -1632,9 +1680,13 @@ static int do_register_framebuffer(struct fb_info *fb_info)
 	event.info = fb_info;
 	if (!lock_fb_info(fb_info))
 		return -ENODEV;
+<<<<<<< HEAD
 	console_lock();
 	fb_notifier_call_chain(FB_EVENT_FB_REGISTERED, &event);
 	console_unlock();
+=======
+	fb_notifier_call_chain(FB_EVENT_FB_REGISTERED, &event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unlock_fb_info(fb_info);
 	return 0;
 }
@@ -1650,10 +1702,15 @@ static int do_unregister_framebuffer(struct fb_info *fb_info)
 
 	if (!lock_fb_info(fb_info))
 		return -ENODEV;
+<<<<<<< HEAD
 	console_lock();
 	event.info = fb_info;
 	ret = fb_notifier_call_chain(FB_EVENT_FB_UNBIND, &event);
 	console_unlock();
+=======
+	event.info = fb_info;
+	ret = fb_notifier_call_chain(FB_EVENT_FB_UNBIND, &event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unlock_fb_info(fb_info);
 
 	if (ret)
@@ -1668,9 +1725,13 @@ static int do_unregister_framebuffer(struct fb_info *fb_info)
 	num_registered_fb--;
 	fb_cleanup_device(fb_info);
 	event.info = fb_info;
+<<<<<<< HEAD
 	console_lock();
 	fb_notifier_call_chain(FB_EVENT_FB_UNREGISTERED, &event);
 	console_unlock();
+=======
+	fb_notifier_call_chain(FB_EVENT_FB_UNREGISTERED, &event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* this may free fb info */
 	put_fb_info(fb_info);
@@ -1841,8 +1902,16 @@ int fb_new_modelist(struct fb_info *info)
 	err = 1;
 
 	if (!list_empty(&info->modelist)) {
+<<<<<<< HEAD
 		event.info = info;
 		err = fb_notifier_call_chain(FB_EVENT_NEW_MODELIST, &event);
+=======
+		if (!lock_fb_info(info))
+			return -ENODEV;
+		event.info = info;
+		err = fb_notifier_call_chain(FB_EVENT_NEW_MODELIST, &event);
+		unlock_fb_info(info);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return err;

@@ -245,7 +245,11 @@ static int hsmc_probe(struct platform_device *pdev)
 
 	hsmc->pclk = pclk;
 	hsmc->mck = mck;
+<<<<<<< HEAD
 	hsmc->regs = ioremap(regs->start, resource_size(regs));
+=======
+	hsmc->regs = ioremap(regs->start, regs->end - regs->start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!hsmc->regs)
 		goto out_disable_clocks;
 

@@ -54,6 +54,7 @@ typedef struct pm_message {
 /**
  * struct dev_pm_ops - device PM callbacks
  *
+<<<<<<< HEAD
  * Several device power state transitions are externally visible, affecting
  * the state of pending I/O queues and (for drivers that touch hardware)
  * interrupts, wakeups, DMA, and other hardware state.  There may also be
@@ -91,10 +92,44 @@ typedef struct pm_message {
  *	substantial amounts of memory from @prepare() in the GFP_KERNEL mode.
  *	[To work around these limitations, drivers may register suspend and
  *	hibernation notifiers to be executed before the freezing of tasks.]
+=======
+ * Several driver power state transitions are externally visible, affecting
+ * the state of pending I/O queues and (for drivers that touch hardware)
+ * interrupts, wakeups, DMA, and other hardware state.  There may also be
+ * internal transitions to various low power modes, which are transparent
+ * to the rest of the driver stack (such as a driver that's ON gating off
+ * clocks which are not in active use).
+ *
+ * The externally visible transitions are handled with the help of the following
+ * callbacks included in this structure:
+ *
+ * @prepare: Prepare the device for the upcoming transition, but do NOT change
+ *	its hardware state.  Prevent new children of the device from being
+ *	registered after @prepare() returns (the driver's subsystem and
+ *	generally the rest of the kernel is supposed to prevent new calls to the
+ *	probe method from being made too once @prepare() has succeeded).  If
+ *	@prepare() detects a situation it cannot handle (e.g. registration of a
+ *	child already in progress), it may return -EAGAIN, so that the PM core
+ *	can execute it once again (e.g. after the new child has been registered)
+ *	to recover from the race condition.  This method is executed for all
+ *	kinds of suspend transitions and is followed by one of the suspend
+ *	callbacks: @suspend(), @freeze(), or @poweroff().
+ *	The PM core executes @prepare() for all devices before starting to
+ *	execute suspend callbacks for any of them, so drivers may assume all of
+ *	the other devices to be present and functional while @prepare() is being
+ *	executed.  In particular, it is safe to make GFP_KERNEL memory
+ *	allocations from within @prepare().  However, drivers may NOT assume
+ *	anything about the availability of the user space at that time and it
+ *	is not correct to request firmware from within @prepare() (it's too
+ *	late to do that).  [To work around this limitation, drivers may
+ *	register suspend and hibernation notifiers that are executed before the
+ *	freezing of tasks.]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * @complete: Undo the changes made by @prepare().  This method is executed for
  *	all kinds of resume transitions, following one of the resume callbacks:
  *	@resume(), @thaw(), @restore().  Also called if the state transition
+<<<<<<< HEAD
  *	fails before the driver's suspend callback: @suspend(), @freeze() or
  *	@poweroff(), can be executed (e.g. if the suspend callback fails for one
  *	of the other devices that the PM core has unsuccessfully attempted to
@@ -214,6 +249,85 @@ typedef struct pm_message {
  * @thaw(), @restore(), @resume_noirq(), @thaw_noirq(), and @restore_noirq(), do
  * not cause the PM core to abort the resume transition during which they are
  * returned.  The error codes returned in those cases are only printed by the PM
+=======
+ *	fails before the driver's suspend callback (@suspend(), @freeze(),
+ *	@poweroff()) can be executed (e.g. if the suspend callback fails for one
+ *	of the other devices that the PM core has unsuccessfully attempted to
+ *	suspend earlier).
+ *	The PM core executes @complete() after it has executed the appropriate
+ *	resume callback for all devices.
+ *
+ * @suspend: Executed before putting the system into a sleep state in which the
+ *	contents of main memory are preserved.  Quiesce the device, put it into
+ *	a low power state appropriate for the upcoming system state (such as
+ *	PCI_D3hot), and enable wakeup events as appropriate.
+ *
+ * @resume: Executed after waking the system up from a sleep state in which the
+ *	contents of main memory were preserved.  Put the device into the
+ *	appropriate state, according to the information saved in memory by the
+ *	preceding @suspend().  The driver starts working again, responding to
+ *	hardware events and software requests.  The hardware may have gone
+ *	through a power-off reset, or it may have maintained state from the
+ *	previous suspend() which the driver may rely on while resuming.  On most
+ *	platforms, there are no restrictions on availability of resources like
+ *	clocks during @resume().
+ *
+ * @freeze: Hibernation-specific, executed before creating a hibernation image.
+ *	Quiesce operations so that a consistent image can be created, but do NOT
+ *	otherwise put the device into a low power device state and do NOT emit
+ *	system wakeup events.  Save in main memory the device settings to be
+ *	used by @restore() during the subsequent resume from hibernation or by
+ *	the subsequent @thaw(), if the creation of the image or the restoration
+ *	of main memory contents from it fails.
+ *
+ * @thaw: Hibernation-specific, executed after creating a hibernation image OR
+ *	if the creation of the image fails.  Also executed after a failing
+ *	attempt to restore the contents of main memory from such an image.
+ *	Undo the changes made by the preceding @freeze(), so the device can be
+ *	operated in the same way as immediately before the call to @freeze().
+ *
+ * @poweroff: Hibernation-specific, executed after saving a hibernation image.
+ *	Quiesce the device, put it into a low power state appropriate for the
+ *	upcoming system state (such as PCI_D3hot), and enable wakeup events as
+ *	appropriate.
+ *
+ * @restore: Hibernation-specific, executed after restoring the contents of main
+ *	memory from a hibernation image.  Driver starts working again,
+ *	responding to hardware events and software requests.  Drivers may NOT
+ *	make ANY assumptions about the hardware state right prior to @restore().
+ *	On most platforms, there are no restrictions on availability of
+ *	resources like clocks during @restore().
+ *
+ * @suspend_noirq: Complete the operations of ->suspend() by carrying out any
+ *	actions required for suspending the device that need interrupts to be
+ *	disabled
+ *
+ * @resume_noirq: Prepare for the execution of ->resume() by carrying out any
+ *	actions required for resuming the device that need interrupts to be
+ *	disabled
+ *
+ * @freeze_noirq: Complete the operations of ->freeze() by carrying out any
+ *	actions required for freezing the device that need interrupts to be
+ *	disabled
+ *
+ * @thaw_noirq: Prepare for the execution of ->thaw() by carrying out any
+ *	actions required for thawing the device that need interrupts to be
+ *	disabled
+ *
+ * @poweroff_noirq: Complete the operations of ->poweroff() by carrying out any
+ *	actions required for handling the device that need interrupts to be
+ *	disabled
+ *
+ * @restore_noirq: Prepare for the execution of ->restore() by carrying out any
+ *	actions required for restoring the operations of the device that need
+ *	interrupts to be disabled
+ *
+ * All of the above callbacks, except for @complete(), return error codes.
+ * However, the error codes returned by the resume operations, @resume(),
+ * @thaw(), @restore(), @resume_noirq(), @thaw_noirq(), and @restore_noirq() do
+ * not cause the PM core to abort the resume transition during which they are
+ * returned.  The error codes returned in that cases are only printed by the PM
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * core to the system logs for debugging purposes.  Still, it is recommended
  * that drivers only return error codes from their resume methods in case of an
  * unrecoverable failure (i.e. when the device being handled refuses to resume
@@ -222,6 +336,7 @@ typedef struct pm_message {
  * their children.
  *
  * It is allowed to unregister devices while the above callbacks are being
+<<<<<<< HEAD
  * executed.  However, a callback routine must NOT try to unregister the device
  * it was called for, although it may unregister children of that device (for
  * example, if it detects that a child was unplugged while the system was
@@ -259,6 +374,33 @@ typedef struct pm_message {
  * Refer to Documentation/power/runtime_pm.txt for more information about the
  * role of the above callbacks in device runtime power management.
  *
+=======
+ * executed.  However, it is not allowed to unregister a device from within any
+ * of its own callbacks.
+ *
+ * There also are the following callbacks related to run-time power management
+ * of devices:
+ *
+ * @runtime_suspend: Prepare the device for a condition in which it won't be
+ *	able to communicate with the CPU(s) and RAM due to power management.
+ *	This need not mean that the device should be put into a low power state.
+ *	For example, if the device is behind a link which is about to be turned
+ *	off, the device may remain at full power.  If the device does go to low
+ *	power and is capable of generating run-time wake-up events, remote
+ *	wake-up (i.e., a hardware mechanism allowing the device to request a
+ *	change of its power state via a wake-up event, such as PCI PME) should
+ *	be enabled for it.
+ *
+ * @runtime_resume: Put the device into the fully active state in response to a
+ *	wake-up event generated by hardware or at the request of software.  If
+ *	necessary, put the device into the full power state and restore its
+ *	registers, so that it is fully operational.
+ *
+ * @runtime_idle: Device appears to be inactive and it might be put into a low
+ *	power state if all of the necessary conditions are satisfied.  Check
+ *	these conditions and handle the device as appropriate, possibly queueing
+ *	a suspend request for it.  The return value is ignored by the PM core.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 struct dev_pm_ops {
@@ -270,12 +412,15 @@ struct dev_pm_ops {
 	int (*thaw)(struct device *dev);
 	int (*poweroff)(struct device *dev);
 	int (*restore)(struct device *dev);
+<<<<<<< HEAD
 	int (*suspend_late)(struct device *dev);
 	int (*resume_early)(struct device *dev);
 	int (*freeze_late)(struct device *dev);
 	int (*thaw_early)(struct device *dev);
 	int (*poweroff_late)(struct device *dev);
 	int (*restore_early)(struct device *dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*suspend_noirq)(struct device *dev);
 	int (*resume_noirq)(struct device *dev);
 	int (*freeze_noirq)(struct device *dev);
@@ -320,6 +465,7 @@ const struct dev_pm_ops name = { \
 /*
  * Use this for defining a set of PM operations to be used in all situations
  * (sustem suspend, hibernation or runtime PM).
+<<<<<<< HEAD
  * NOTE: In general, system suspend callbacks, .suspend() and .resume(), should
  * be different from the corresponding runtime PM callbacks, .runtime_suspend(),
  * and .runtime_resume(), because .runtime_suspend() always works on an already
@@ -329,6 +475,8 @@ const struct dev_pm_ops name = { \
  * suspend and "early" resume callback pointers, .suspend_late() and
  * .resume_early(), to the same routines as .runtime_suspend() and
  * .runtime_resume(), respectively (and analogously for hibernation).
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 #define UNIVERSAL_DEV_PM_OPS(name, suspend_fn, resume_fn, idle_fn) \
 const struct dev_pm_ops name = { \
@@ -336,6 +484,22 @@ const struct dev_pm_ops name = { \
 	SET_RUNTIME_PM_OPS(suspend_fn, resume_fn, idle_fn) \
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * Use this for subsystems (bus types, device types, device classes) that don't
+ * need any special suspend/resume handling in addition to invoking the PM
+ * callbacks provided by device drivers supporting both the system sleep PM and
+ * runtime PM, make the pm member point to generic_subsys_pm_ops.
+ */
+#ifdef CONFIG_PM
+extern struct dev_pm_ops generic_subsys_pm_ops;
+#define GENERIC_SUBSYS_PM_OPS	(&generic_subsys_pm_ops)
+#else
+#define GENERIC_SUBSYS_PM_OPS	NULL
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * PM_EVENT_ messages
  *
@@ -388,7 +552,10 @@ const struct dev_pm_ops name = { \
  *			requested by a driver.
  */
 
+<<<<<<< HEAD
 #define PM_EVENT_INVALID	(-1)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PM_EVENT_ON		0x0000
 #define PM_EVENT_FREEZE 	0x0001
 #define PM_EVENT_SUSPEND	0x0002
@@ -409,7 +576,10 @@ const struct dev_pm_ops name = { \
 #define PM_EVENT_AUTO_SUSPEND	(PM_EVENT_AUTO | PM_EVENT_SUSPEND)
 #define PM_EVENT_AUTO_RESUME	(PM_EVENT_AUTO | PM_EVENT_RESUME)
 
+<<<<<<< HEAD
 #define PMSG_INVALID	((struct pm_message){ .event = PM_EVENT_INVALID, })
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PMSG_ON		((struct pm_message){ .event = PM_EVENT_ON, })
 #define PMSG_FREEZE	((struct pm_message){ .event = PM_EVENT_FREEZE, })
 #define PMSG_QUIESCE	((struct pm_message){ .event = PM_EVENT_QUIESCE, })
@@ -430,8 +600,11 @@ const struct dev_pm_ops name = { \
 #define PMSG_AUTO_RESUME	((struct pm_message) \
 					{ .event = PM_EVENT_AUTO_RESUME, })
 
+<<<<<<< HEAD
 #define PMSG_IS_AUTO(msg)	(((msg).event & PM_EVENT_AUTO) != 0)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * Device run-time power management status.
  *
@@ -487,6 +660,7 @@ enum rpm_request {
 
 struct wakeup_source;
 
+<<<<<<< HEAD
 struct pm_domain_data {
 	struct list_head list_node;
 	struct device *dev;
@@ -503,19 +677,27 @@ struct pm_subsys_data {
 #endif
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct dev_pm_info {
 	pm_message_t		power_state;
 	unsigned int		can_wakeup:1;
 	unsigned int		async_suspend:1;
 	bool			is_prepared:1;	/* Owned by the PM core */
 	bool			is_suspended:1;	/* Ditto */
+<<<<<<< HEAD
 	bool			ignore_children:1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spinlock_t		lock;
 #ifdef CONFIG_PM_SLEEP
 	struct list_head	entry;
 	struct completion	completion;
 	struct wakeup_source	*wakeup;
+<<<<<<< HEAD
 	bool			wakeup_path:1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 	unsigned int		should_wakeup:1;
 #endif
@@ -527,6 +709,10 @@ struct dev_pm_info {
 	atomic_t		usage_count;
 	atomic_t		child_count;
 	unsigned int		disable_depth:3;
+<<<<<<< HEAD
+=======
+	unsigned int		ignore_children:1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int		idle_notification:1;
 	unsigned int		request_pending:1;
 	unsigned int		deferred_resume:1;
@@ -544,6 +730,7 @@ struct dev_pm_info {
 	unsigned long		active_jiffies;
 	unsigned long		suspended_jiffies;
 	unsigned long		accounting_timestamp;
+<<<<<<< HEAD
 	ktime_t			suspend_time;
 	s64			max_time_suspended_ns;
 	struct dev_pm_qos_request *pq_req;
@@ -555,13 +742,24 @@ struct dev_pm_info {
 extern void update_pm_runtime_accounting(struct device *dev);
 extern int dev_pm_get_subsys_data(struct device *dev);
 extern int dev_pm_put_subsys_data(struct device *dev);
+=======
+	void			*subsys_data;  /* Owned by the subsystem. */
+#endif
+};
+
+extern void update_pm_runtime_accounting(struct device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Power domains provide callbacks that are executed during system suspend,
  * hibernation, system resume and during runtime PM transitions along with
  * subsystem-level and driver-level callbacks.
  */
+<<<<<<< HEAD
 struct dev_pm_domain {
+=======
+struct dev_power_domain {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dev_pm_ops	ops;
 };
 
@@ -621,13 +819,21 @@ struct dev_pm_domain {
 
 #ifdef CONFIG_PM_SLEEP
 extern void device_pm_lock(void);
+<<<<<<< HEAD
 extern void dpm_resume_start(pm_message_t state);
+=======
+extern void dpm_resume_noirq(pm_message_t state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void dpm_resume_end(pm_message_t state);
 extern void dpm_resume(pm_message_t state);
 extern void dpm_complete(pm_message_t state);
 
 extern void device_pm_unlock(void);
+<<<<<<< HEAD
 extern int dpm_suspend_end(pm_message_t state);
+=======
+extern int dpm_suspend_noirq(pm_message_t state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int dpm_suspend_start(pm_message_t state);
 extern int dpm_suspend(pm_message_t state);
 extern int dpm_prepare(pm_message_t state);
@@ -642,6 +848,7 @@ extern void __suspend_report_result(const char *function, void *fn, int ret);
 extern int device_pm_wait_for_dev(struct device *sub, struct device *dev);
 
 extern int pm_generic_prepare(struct device *dev);
+<<<<<<< HEAD
 extern int pm_generic_suspend_late(struct device *dev);
 extern int pm_generic_suspend_noirq(struct device *dev);
 extern int pm_generic_suspend(struct device *dev);
@@ -659,6 +866,13 @@ extern int pm_generic_restore_early(struct device *dev);
 extern int pm_generic_restore(struct device *dev);
 extern int pm_generic_poweroff_noirq(struct device *dev);
 extern int pm_generic_poweroff_late(struct device *dev);
+=======
+extern int pm_generic_suspend(struct device *dev);
+extern int pm_generic_resume(struct device *dev);
+extern int pm_generic_freeze(struct device *dev);
+extern int pm_generic_thaw(struct device *dev);
+extern int pm_generic_restore(struct device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int pm_generic_poweroff(struct device *dev);
 extern void pm_generic_complete(struct device *dev);
 

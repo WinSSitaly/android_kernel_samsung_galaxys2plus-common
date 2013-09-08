@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Generic UP xchg and cmpxchg using interrupt disablement.  Does not
  * support SMP.
@@ -6,10 +7,21 @@
 #ifndef __ASM_GENERIC_CMPXCHG_H
 #define __ASM_GENERIC_CMPXCHG_H
 
+=======
+#ifndef __ASM_GENERIC_CMPXCHG_H
+#define __ASM_GENERIC_CMPXCHG_H
+
+/*
+ * Generic cmpxchg
+ *
+ * Uses the local cmpxchg. Does not support SMP.
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SMP
 #error "Cannot use generic cmpxchg on SMP"
 #endif
 
+<<<<<<< HEAD
 #include <linux/types.h>
 #include <linux/irqflags.h>
 
@@ -84,15 +96,24 @@ unsigned long __xchg(unsigned long x, volatile void *ptr, int size)
 
 #endif /* xchg */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Atomic compare and exchange.
  *
  * Do not define __HAVE_ARCH_CMPXCHG because we want to use it to check whether
  * a cmpxchg primitive faster than repeated local irq save/restore exists.
  */
+<<<<<<< HEAD
 #include <asm-generic/cmpxchg-local.h>
 
 #define cmpxchg(ptr, o, n)	cmpxchg_local((ptr), (o), (n))
 #define cmpxchg64(ptr, o, n)	cmpxchg64_local((ptr), (o), (n))
 
 #endif /* __ASM_GENERIC_CMPXCHG_H */
+=======
+#define cmpxchg(ptr, o, n)	cmpxchg_local((ptr), (o), (n))
+#define cmpxchg64(ptr, o, n)	cmpxchg64_local((ptr), (o), (n))
+
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

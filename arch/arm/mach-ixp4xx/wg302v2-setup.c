@@ -98,6 +98,7 @@ static void __init wg302v2_init(void)
 MACHINE_START(WG302V2, "Netgear WG302 v2 / WAG302 v2")
 	/* Maintainer: Imre Kaloz <kaloz@openwrt.org> */
 	.map_io		= ixp4xx_map_io,
+<<<<<<< HEAD
 	.init_early	= ixp4xx_init_early,
 	.init_irq	= ixp4xx_init_irq,
 	.timer		= &ixp4xx_timer,
@@ -107,5 +108,11 @@ MACHINE_START(WG302V2, "Netgear WG302 v2 / WAG302 v2")
 	.dma_zone_size	= SZ_64M,
 #endif
 	.restart	= ixp4xx_restart,
+=======
+	.init_irq	= ixp4xx_init_irq,
+	.timer		= &ixp4xx_timer,
+	.boot_params	= 0x0100,
+	.init_machine	= wg302v2_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif

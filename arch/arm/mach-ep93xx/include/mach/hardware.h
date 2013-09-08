@@ -5,8 +5,16 @@
 #ifndef __ASM_ARCH_HARDWARE_H
 #define __ASM_ARCH_HARDWARE_H
 
+<<<<<<< HEAD
 #include <mach/platform.h>
 
+=======
+#include <mach/ep93xx-regs.h>
+#include <mach/platform.h>
+
+#define pcibios_assign_all_busses()	0
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The EP93xx has two external crystal oscillators.  To generate the
  * required high-frequency clocks, the processor uses two phase-locked-

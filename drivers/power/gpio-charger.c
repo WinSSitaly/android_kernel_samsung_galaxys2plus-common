@@ -127,7 +127,11 @@ static int __devinit gpio_charger_probe(struct platform_device *pdev)
 		ret = request_any_context_irq(irq, gpio_charger_irq,
 				IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
 				dev_name(&pdev->dev), charger);
+<<<<<<< HEAD
 		if (ret < 0)
+=======
+		if (ret)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev_warn(&pdev->dev, "Failed to request irq: %d\n", ret);
 		else
 			gpio_charger->irq = irq;
@@ -185,7 +189,21 @@ static struct platform_driver gpio_charger_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(gpio_charger_driver);
+=======
+static int __init gpio_charger_init(void)
+{
+	return platform_driver_register(&gpio_charger_driver);
+}
+module_init(gpio_charger_init);
+
+static void __exit gpio_charger_exit(void)
+{
+	platform_driver_unregister(&gpio_charger_driver);
+}
+module_exit(gpio_charger_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Lars-Peter Clausen <lars@metafoo.de>");
 MODULE_DESCRIPTION("Driver for chargers which report their online status through a GPIO");

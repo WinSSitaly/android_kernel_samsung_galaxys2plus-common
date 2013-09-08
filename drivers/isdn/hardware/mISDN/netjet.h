@@ -55,3 +55,7 @@
 /* 2 * 64 byte is a compromise between IRQ count and latency */
 #define NJ_DMA_RXSIZE		128  /* 2 * 64 */
 #define NJ_DMA_TXSIZE		128  /* 2 * 64 */
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

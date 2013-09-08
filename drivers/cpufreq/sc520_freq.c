@@ -22,7 +22,10 @@
 #include <linux/timex.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
 #include <asm/cpu_device_id.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/msr.h>
 
 #define MMCR_BASE	0xfffef000	/* The default base address */
@@ -151,6 +154,7 @@ static struct cpufreq_driver sc520_freq_driver = {
 	.attr	= sc520_freq_attr,
 };
 
+<<<<<<< HEAD
 static const struct x86_cpu_id sc520_ids[] = {
 	{ X86_VENDOR_AMD, 4, 9 },
 	{}
@@ -164,6 +168,20 @@ static int __init sc520_freq_init(void)
 	if (!x86_match_cpu(sc520_ids))
 		return -ENODEV;
 
+=======
+
+static int __init sc520_freq_init(void)
+{
+	struct cpuinfo_x86 *c = &cpu_data(0);
+	int err;
+
+	/* Test if we have the right hardware */
+	if (c->x86_vendor != X86_VENDOR_AMD ||
+	    c->x86 != 4 || c->x86_model != 9) {
+		pr_debug("no Elan SC520 processor found!\n");
+		return -ENODEV;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cpuctl = ioremap((unsigned long)(MMCR_BASE + OFFS_CPUCTL), 1);
 	if (!cpuctl) {
 		printk(KERN_ERR "sc520_freq: error: failed to remap memory\n");

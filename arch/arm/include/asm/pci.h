@@ -3,6 +3,7 @@
 
 #ifdef __KERNEL__
 #include <asm-generic/pci-dma-compat.h>
+<<<<<<< HEAD
 #include <asm-generic/pci-bridge.h>
 
 #include <asm/mach/pci.h> /* for pci_sys_data */
@@ -16,6 +17,11 @@ static inline int pcibios_assign_all_busses(void)
 {
 	return pci_has_flag(PCI_REASSIGN_ALL_RSRC);
 }
+=======
+
+#include <asm/mach/pci.h> /* for pci_sys_data */
+#include <mach/hardware.h> /* for PCIBIOS_MIN_* */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_PCI_DOMAINS
 static inline int pci_domain_nr(struct pci_bus *bus)
@@ -31,6 +37,21 @@ static inline int pci_proc_domain(struct pci_bus *bus)
 }
 #endif /* CONFIG_PCI_DOMAINS */
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_PCI_HOST_ITE8152
+/* ITE bridge requires setting latency timer to avoid early bus access
+   termination by PIC bus mater devices
+*/
+extern void pcibios_set_master(struct pci_dev *dev);
+#else
+static inline void pcibios_set_master(struct pci_dev *dev)
+{
+	/* No special bus mastering setup handling */
+}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void pcibios_penalize_isa_irq(int irq, int active)
 {
 	/* We don't do dynamic PCI IRQ allocation */
@@ -57,6 +78,17 @@ static inline void pci_dma_burst_advice(struct pci_dev *pdev,
 extern int pci_mmap_page_range(struct pci_dev *dev, struct vm_area_struct *vma,
                                enum pci_mmap_state mmap_state, int write_combine);
 
+<<<<<<< HEAD
+=======
+extern void
+pcibios_resource_to_bus(struct pci_dev *dev, struct pci_bus_region *region,
+			 struct resource *res);
+
+extern void
+pcibios_bus_to_resource(struct pci_dev *dev, struct resource *res,
+			struct pci_bus_region *region);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Dummy implementation; always return 0.
  */

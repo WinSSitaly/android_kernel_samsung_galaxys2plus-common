@@ -30,8 +30,11 @@
  *
  ********************************************************************/
 
+<<<<<<< HEAD
 #include <linux/export.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/byteorder.h>
 
 #include <net/irda/irda.h>
@@ -62,7 +65,11 @@ int sysctl_max_noreply_time = 12;
  * Default is 10us which means using the unmodified value given by the
  * peer except if it's 0 (0 is likely a bug in the other stack).
  */
+<<<<<<< HEAD
 unsigned int sysctl_min_tx_turn_time = 10;
+=======
+unsigned sysctl_min_tx_turn_time = 10;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Maximum data size to be used in transmission in payload of LAP frame.
  * There is a bit of confusion in the IrDA spec :
@@ -77,13 +84,21 @@ unsigned int sysctl_min_tx_turn_time = 10;
  * bytes frames or all negotiated frame sizes, but you can use the sysctl
  * to play with this value anyway.
  * Jean II */
+<<<<<<< HEAD
 unsigned int sysctl_max_tx_data_size = 2042;
+=======
+unsigned sysctl_max_tx_data_size = 2042;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Maximum transmit window, i.e. number of LAP frames between turn-around.
  * This allow to override what the peer told us. Some peers are buggy and
  * don't always support what they tell us.
  * Jean II */
+<<<<<<< HEAD
 unsigned int sysctl_max_tx_window = 7;
+=======
+unsigned sysctl_max_tx_window = 7;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int irlap_param_baud_rate(void *instance, irda_param_t *param, int get);
 static int irlap_param_link_disconnect(void *instance, irda_param_t *parm,

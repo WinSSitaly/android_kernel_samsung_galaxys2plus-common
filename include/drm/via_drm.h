@@ -274,8 +274,11 @@ typedef struct drm_via_dmablit {
 	drm_via_blitsync_t sync;
 } drm_via_dmablit_t;
 
+<<<<<<< HEAD
 struct via_file_private {
 	struct list_head obj_list;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif				/* _VIA_DRM_H_ */

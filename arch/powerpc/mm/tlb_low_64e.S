@@ -30,6 +30,7 @@
 #define VPTE_PGD_SHIFT	(VPTE_PUD_SHIFT + PUD_INDEX_SIZE)
 #define VPTE_INDEX_SIZE (VPTE_PGD_SHIFT + PGD_INDEX_SIZE)
 
+<<<<<<< HEAD
 /**********************************************************************
  *                                                                    *
  * TLB miss handling for Book3E with a bolted linear mapping          *
@@ -230,6 +231,8 @@ itlb_miss_fault_bolted:
 	oris	r11,r11,_PAGE_ACCESSED@h
 	beq	tlb_miss_common_bolted
 	b	itlb_miss_kernel_bolted
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**********************************************************************
  *                                                                    *
@@ -547,24 +550,39 @@ END_MMU_FTR_SECTION_IFSET(MMU_FTR_USE_TLBRSRV)
 	rldicl	r11,r16,64-VPTE_PGD_SHIFT,64-PGD_INDEX_SIZE-3
 	clrrdi	r10,r11,3
 	ldx	r15,r10,r15
+<<<<<<< HEAD
 	cmpdi	cr0,r15,0
 	bge	virt_page_table_tlb_miss_fault
+=======
+	cmpldi	cr0,r15,0
+	beq	virt_page_table_tlb_miss_fault
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifndef CONFIG_PPC_64K_PAGES
 	/* Get to PUD entry */
 	rldicl	r11,r16,64-VPTE_PUD_SHIFT,64-PUD_INDEX_SIZE-3
 	clrrdi	r10,r11,3
 	ldx	r15,r10,r15
+<<<<<<< HEAD
 	cmpdi	cr0,r15,0
 	bge	virt_page_table_tlb_miss_fault
+=======
+	cmpldi	cr0,r15,0
+	beq	virt_page_table_tlb_miss_fault
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_PPC_64K_PAGES */
 
 	/* Get to PMD entry */
 	rldicl	r11,r16,64-VPTE_PMD_SHIFT,64-PMD_INDEX_SIZE-3
 	clrrdi	r10,r11,3
 	ldx	r15,r10,r15
+<<<<<<< HEAD
 	cmpdi	cr0,r15,0
 	bge	virt_page_table_tlb_miss_fault
+=======
+	cmpldi	cr0,r15,0
+	beq	virt_page_table_tlb_miss_fault
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Ok, we're all right, we can now create a kernel translation for
 	 * a 4K or 64K page from r16 -> r15.
@@ -796,24 +814,39 @@ htw_tlb_miss:
 	rldicl	r11,r16,64-(PGDIR_SHIFT-3),64-PGD_INDEX_SIZE-3
 	clrrdi	r10,r11,3
 	ldx	r15,r10,r15
+<<<<<<< HEAD
 	cmpdi	cr0,r15,0
 	bge	htw_tlb_miss_fault
+=======
+	cmpldi	cr0,r15,0
+	beq	htw_tlb_miss_fault
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifndef CONFIG_PPC_64K_PAGES
 	/* Get to PUD entry */
 	rldicl	r11,r16,64-(PUD_SHIFT-3),64-PUD_INDEX_SIZE-3
 	clrrdi	r10,r11,3
 	ldx	r15,r10,r15
+<<<<<<< HEAD
 	cmpdi	cr0,r15,0
 	bge	htw_tlb_miss_fault
+=======
+	cmpldi	cr0,r15,0
+	beq	htw_tlb_miss_fault
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_PPC_64K_PAGES */
 
 	/* Get to PMD entry */
 	rldicl	r11,r16,64-(PMD_SHIFT-3),64-PMD_INDEX_SIZE-3
 	clrrdi	r10,r11,3
 	ldx	r15,r10,r15
+<<<<<<< HEAD
 	cmpdi	cr0,r15,0
 	bge	htw_tlb_miss_fault
+=======
+	cmpldi	cr0,r15,0
+	beq	htw_tlb_miss_fault
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Ok, we're all right, we can now create an indirect entry for
 	 * a 1M or 256M page.

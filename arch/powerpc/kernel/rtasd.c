@@ -27,7 +27,11 @@
 #include <asm/rtas.h>
 #include <asm/prom.h>
 #include <asm/nvram.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/machdep.h>
 
 
@@ -472,6 +476,7 @@ static void start_event_scan(void)
 				 &event_scan_work, event_scan_delay);
 }
 
+<<<<<<< HEAD
 /* Cancel the rtas event scan work */
 void rtas_cancel_event_scan(void)
 {
@@ -479,6 +484,8 @@ void rtas_cancel_event_scan(void)
 }
 EXPORT_SYMBOL_GPL(rtas_cancel_event_scan);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init rtas_init(void)
 {
 	struct proc_dir_entry *entry;

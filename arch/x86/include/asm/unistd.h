@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #ifndef _ASM_X86_UNISTD_H
 #define _ASM_X86_UNISTD_H 1
 
@@ -71,3 +72,18 @@
 #endif
 
 #endif /* _ASM_X86_UNISTD_H */
+=======
+#ifdef __KERNEL__
+# ifdef CONFIG_X86_32
+#  include "unistd_32.h"
+# else
+#  include "unistd_64.h"
+# endif
+#else
+# ifdef __i386__
+#  include "unistd_32.h"
+# else
+#  include "unistd_64.h"
+# endif
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

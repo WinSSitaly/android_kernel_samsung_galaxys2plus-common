@@ -667,7 +667,11 @@ static void csi2_isr_buffer(struct isp_csi2_device *csi2)
 
 	csi2_ctx_enable(isp, csi2, 0, 0);
 
+<<<<<<< HEAD
 	buffer = omap3isp_video_buffer_next(&csi2->video_out);
+=======
+	buffer = omap3isp_video_buffer_next(&csi2->video_out, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Let video queue operation restart engine if there is an underrun
@@ -727,6 +731,7 @@ static void csi2_isr_ctx(struct isp_csi2_device *csi2,
 
 /*
  * omap3isp_csi2_isr - CSI2 interrupt handling.
+<<<<<<< HEAD
  */
 void omap3isp_csi2_isr(struct isp_csi2_device *csi2)
 {
@@ -736,6 +741,19 @@ void omap3isp_csi2_isr(struct isp_csi2_device *csi2)
 
 	if (!csi2->available)
 		return;
+=======
+ *
+ * Return -EIO on Transmission error
+ */
+int omap3isp_csi2_isr(struct isp_csi2_device *csi2)
+{
+	u32 csi2_irqstatus, cpxio1_irqstatus;
+	struct isp_device *isp = csi2->isp;
+	int retval = 0;
+
+	if (!csi2->available)
+		return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	csi2_irqstatus = isp_reg_readl(isp, csi2->regs1, ISPCSI2_IRQSTATUS);
 	isp_reg_writel(isp, csi2_irqstatus, csi2->regs1, ISPCSI2_IRQSTATUS);
@@ -748,7 +766,11 @@ void omap3isp_csi2_isr(struct isp_csi2_device *csi2)
 			       csi2->regs1, ISPCSI2_PHY_IRQSTATUS);
 		dev_dbg(isp->dev, "CSI2: ComplexIO Error IRQ "
 			"%x\n", cpxio1_irqstatus);
+<<<<<<< HEAD
 		pipe->error = true;
+=======
+		retval = -EIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (csi2_irqstatus & (ISPCSI2_IRQSTATUS_OCP_ERR_IRQ |
@@ -773,11 +795,19 @@ void omap3isp_csi2_isr(struct isp_csi2_device *csi2)
 			 ISPCSI2_IRQSTATUS_COMPLEXIO2_ERR_IRQ) ? 1 : 0,
 			(csi2_irqstatus &
 			 ISPCSI2_IRQSTATUS_FIFO_OVF_IRQ) ? 1 : 0);
+<<<<<<< HEAD
 		pipe->error = true;
 	}
 
 	if (omap3isp_module_sync_is_stopping(&csi2->wait, &csi2->stopping))
 		return;
+=======
+		retval = -EIO;
+	}
+
+	if (omap3isp_module_sync_is_stopping(&csi2->wait, &csi2->stopping))
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Successful cases */
 	if (csi2_irqstatus & ISPCSI2_IRQSTATUS_CONTEXT(0))
@@ -785,6 +815,11 @@ void omap3isp_csi2_isr(struct isp_csi2_device *csi2)
 
 	if (csi2_irqstatus & ISPCSI2_IRQSTATUS_ECC_CORRECTION_IRQ)
 		dev_dbg(isp->dev, "CSI2: ECC correction done\n");
+<<<<<<< HEAD
+=======
+
+	return retval;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* -----------------------------------------------------------------------------
@@ -1183,6 +1218,7 @@ static const struct media_entity_operations csi2_media_ops = {
 	.link_setup = csi2_link_setup,
 };
 
+<<<<<<< HEAD
 void omap3isp_csi2_unregister_entities(struct isp_csi2_device *csi2)
 {
 	v4l2_device_unregister_subdev(&csi2->subdev);
@@ -1214,6 +1250,8 @@ error:
  * ISP CSI2 initialisation and cleanup
  */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * csi2_init_entities - Initialize subdev and media entity.
  * @csi2: Pointer to csi2 structure.
@@ -1255,12 +1293,17 @@ static int csi2_init_entities(struct isp_csi2_device *csi2)
 
 	ret = omap3isp_video_init(&csi2->video_out, "CSI2a");
 	if (ret < 0)
+<<<<<<< HEAD
 		goto error_video;
+=======
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Connect the CSI2 subdev to the video node. */
 	ret = media_entity_create_link(&csi2->subdev.entity, CSI2_PAD_SOURCE,
 				       &csi2->video_out.video.entity, 0, 0);
 	if (ret < 0)
+<<<<<<< HEAD
 		goto error_link;
 
 	return 0;
@@ -1272,6 +1315,53 @@ error_video:
 	return ret;
 }
 
+=======
+		return ret;
+
+	return 0;
+}
+
+void omap3isp_csi2_unregister_entities(struct isp_csi2_device *csi2)
+{
+	media_entity_cleanup(&csi2->subdev.entity);
+
+	v4l2_device_unregister_subdev(&csi2->subdev);
+	omap3isp_video_unregister(&csi2->video_out);
+}
+
+int omap3isp_csi2_register_entities(struct isp_csi2_device *csi2,
+				    struct v4l2_device *vdev)
+{
+	int ret;
+
+	/* Register the subdev and video nodes. */
+	ret = v4l2_device_register_subdev(vdev, &csi2->subdev);
+	if (ret < 0)
+		goto error;
+
+	ret = omap3isp_video_register(&csi2->video_out, vdev);
+	if (ret < 0)
+		goto error;
+
+	return 0;
+
+error:
+	omap3isp_csi2_unregister_entities(csi2);
+	return ret;
+}
+
+/* -----------------------------------------------------------------------------
+ * ISP CSI2 initialisation and cleanup
+ */
+
+/*
+ * omap3isp_csi2_cleanup - Routine for module driver cleanup
+ */
+void omap3isp_csi2_cleanup(struct isp_device *isp)
+{
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * omap3isp_csi2_init - Routine for module driver init
  */
@@ -1291,7 +1381,11 @@ int omap3isp_csi2_init(struct isp_device *isp)
 
 	ret = csi2_init_entities(csi2a);
 	if (ret < 0)
+<<<<<<< HEAD
 		return ret;
+=======
+		goto fail;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (isp->revision == ISP_REVISION_15_0) {
 		csi2c->isp = isp;
@@ -1304,6 +1398,7 @@ int omap3isp_csi2_init(struct isp_device *isp)
 	}
 
 	return 0;
+<<<<<<< HEAD
 }
 
 /*
@@ -1315,4 +1410,9 @@ void omap3isp_csi2_cleanup(struct isp_device *isp)
 
 	omap3isp_video_cleanup(&csi2a->video_out);
 	media_entity_cleanup(&csi2a->subdev.entity);
+=======
+fail:
+	omap3isp_csi2_cleanup(isp);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

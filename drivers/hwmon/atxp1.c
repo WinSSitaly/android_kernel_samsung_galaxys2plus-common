@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
  * atxp1.c - kernel module for setting CPU VID and general purpose
  *	     I/Os using the Attansic ATXP1 chip.
  *
@@ -17,6 +18,26 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
+=======
+    atxp1.c - kernel module for setting CPU VID and general purpose
+                     I/Os using the Attansic ATXP1 chip.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/kernel.h>
 #include <linux/init.h>
@@ -48,7 +69,11 @@ static const unsigned short normal_i2c[] = { 0x37, 0x4e, I2C_CLIENT_END };
 static int atxp1_probe(struct i2c_client *client,
 		       const struct i2c_device_id *id);
 static int atxp1_remove(struct i2c_client *client);
+<<<<<<< HEAD
 static struct atxp1_data *atxp1_update_device(struct device *dev);
+=======
+static struct atxp1_data * atxp1_update_device(struct device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int atxp1_detect(struct i2c_client *client, struct i2c_board_info *info);
 
 static const struct i2c_device_id atxp1_id[] = {
@@ -83,7 +108,11 @@ struct atxp1_data {
 	u8 vrm;			/* Detected CPU VRM */
 };
 
+<<<<<<< HEAD
 static struct atxp1_data *atxp1_update_device(struct device *dev)
+=======
+static struct atxp1_data * atxp1_update_device(struct device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct i2c_client *client;
 	struct atxp1_data *data;
@@ -97,8 +126,12 @@ static struct atxp1_data *atxp1_update_device(struct device *dev)
 
 		/* Update local register data */
 		data->reg.vid = i2c_smbus_read_byte_data(client, ATXP1_VID);
+<<<<<<< HEAD
 		data->reg.cpu_vid = i2c_smbus_read_byte_data(client,
 							     ATXP1_CVID);
+=======
+		data->reg.cpu_vid = i2c_smbus_read_byte_data(client, ATXP1_CVID);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		data->reg.gpio1 = i2c_smbus_read_byte_data(client, ATXP1_GPIO1);
 		data->reg.gpio2 = i2c_smbus_read_byte_data(client, ATXP1_GPIO2);
 
@@ -107,41 +140,65 @@ static struct atxp1_data *atxp1_update_device(struct device *dev)
 
 	mutex_unlock(&data->update_lock);
 
+<<<<<<< HEAD
 	return data;
 }
 
 /* sys file functions for cpu0_vid */
 static ssize_t atxp1_showvcore(struct device *dev,
 			       struct device_attribute *attr, char *buf)
+=======
+	return(data);
+}
+
+/* sys file functions for cpu0_vid */
+static ssize_t atxp1_showvcore(struct device *dev, struct device_attribute *attr, char *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int size;
 	struct atxp1_data *data;
 
 	data = atxp1_update_device(dev);
 
+<<<<<<< HEAD
 	size = sprintf(buf, "%d\n", vid_from_reg(data->reg.vid & ATXP1_VIDMASK,
 						 data->vrm));
+=======
+	size = sprintf(buf, "%d\n", vid_from_reg(data->reg.vid & ATXP1_VIDMASK, data->vrm));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return size;
 }
 
+<<<<<<< HEAD
 static ssize_t atxp1_storevcore(struct device *dev,
 				struct device_attribute *attr,
 				const char *buf, size_t count)
+=======
+static ssize_t atxp1_storevcore(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct atxp1_data *data;
 	struct i2c_client *client;
 	int vid, cvid;
+<<<<<<< HEAD
 	unsigned long vcore;
 	int err;
+=======
+	unsigned int vcore;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	client = to_i2c_client(dev);
 	data = atxp1_update_device(dev);
 
+<<<<<<< HEAD
 	err = kstrtoul(buf, 10, &vcore);
 	if (err)
 		return err;
 
+=======
+	vcore = simple_strtoul(buf, NULL, 10);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vcore /= 25;
 	vcore *= 25;
 
@@ -153,10 +210,14 @@ static ssize_t atxp1_storevcore(struct device *dev,
 		return -1;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * If output enabled, use control register value.
 	 * Otherwise original CPU VID
 	 */
+=======
+	/* If output enabled, use control register value. Otherwise original CPU VID */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (data->reg.vid & ATXP1_VIDENA)
 		cvid = data->reg.vid & ATXP1_VIDMASK;
 	else
@@ -166,6 +227,7 @@ static ssize_t atxp1_storevcore(struct device *dev,
 	if (vid == cvid)
 		return count;
 
+<<<<<<< HEAD
 	dev_dbg(dev, "Setting VCore to %d mV (0x%02x)\n", (int)vcore, vid);
 
 	/* Write every 25 mV step to increase stability */
@@ -177,6 +239,20 @@ static ssize_t atxp1_storevcore(struct device *dev,
 		for (; cvid <= vid; cvid++)
 			i2c_smbus_write_byte_data(client,
 						ATXP1_VID, cvid | ATXP1_VIDENA);
+=======
+	dev_dbg(dev, "Setting VCore to %d mV (0x%02x)\n", vcore, vid);
+
+	/* Write every 25 mV step to increase stability */
+	if (cvid > vid) {
+		for (; cvid >= vid; cvid--) {
+        		i2c_smbus_write_byte_data(client, ATXP1_VID, cvid | ATXP1_VIDENA);
+		}
+	}
+	else {
+		for (; cvid <= vid; cvid++) {
+        		i2c_smbus_write_byte_data(client, ATXP1_VID, cvid | ATXP1_VIDENA);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	data->valid = 0;
@@ -184,6 +260,7 @@ static ssize_t atxp1_storevcore(struct device *dev,
 	return count;
 }
 
+<<<<<<< HEAD
 /*
  * CPU core reference voltage
  * unit: millivolt
@@ -194,6 +271,15 @@ static DEVICE_ATTR(cpu0_vid, S_IRUGO | S_IWUSR, atxp1_showvcore,
 /* sys file functions for GPIO1 */
 static ssize_t atxp1_showgpio1(struct device *dev,
 			       struct device_attribute *attr, char *buf)
+=======
+/* CPU core reference voltage
+    unit: millivolt
+*/
+static DEVICE_ATTR(cpu0_vid, S_IRUGO | S_IWUSR, atxp1_showvcore, atxp1_storevcore);
+
+/* sys file functions for GPIO1 */
+static ssize_t atxp1_showgpio1(struct device *dev, struct device_attribute *attr, char *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int size;
 	struct atxp1_data *data;
@@ -205,6 +291,7 @@ static ssize_t atxp1_showgpio1(struct device *dev,
 	return size;
 }
 
+<<<<<<< HEAD
 static ssize_t atxp1_storegpio1(struct device *dev,
 				struct device_attribute *attr, const char *buf,
 				size_t count)
@@ -213,18 +300,33 @@ static ssize_t atxp1_storegpio1(struct device *dev,
 	struct i2c_client *client;
 	unsigned long value;
 	int err;
+=======
+static ssize_t atxp1_storegpio1(struct device *dev, struct device_attribute *attr, const char*buf, size_t count)
+{
+	struct atxp1_data *data;
+	struct i2c_client *client;
+	unsigned int value;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	client = to_i2c_client(dev);
 	data = atxp1_update_device(dev);
 
+<<<<<<< HEAD
 	err = kstrtoul(buf, 16, &value);
 	if (err)
 		return err;
+=======
+	value = simple_strtoul(buf, NULL, 16);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	value &= ATXP1_GPIO1MASK;
 
 	if (value != (data->reg.gpio1 & ATXP1_GPIO1MASK)) {
+<<<<<<< HEAD
 		dev_info(dev, "Writing 0x%x to GPIO1.\n", (unsigned int)value);
+=======
+		dev_info(dev, "Writing 0x%x to GPIO1.\n", value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		i2c_smbus_write_byte_data(client, ATXP1_GPIO1, value);
 
@@ -234,6 +336,7 @@ static ssize_t atxp1_storegpio1(struct device *dev,
 	return count;
 }
 
+<<<<<<< HEAD
 /*
  * GPIO1 data register
  * unit: Four bit as hex (e.g. 0x0f)
@@ -243,6 +346,15 @@ static DEVICE_ATTR(gpio1, S_IRUGO | S_IWUSR, atxp1_showgpio1, atxp1_storegpio1);
 /* sys file functions for GPIO2 */
 static ssize_t atxp1_showgpio2(struct device *dev,
 			       struct device_attribute *attr, char *buf)
+=======
+/* GPIO1 data register
+    unit: Four bit as hex (e.g. 0x0f)
+*/
+static DEVICE_ATTR(gpio1, S_IRUGO | S_IWUSR, atxp1_showgpio1, atxp1_storegpio1);
+
+/* sys file functions for GPIO2 */
+static ssize_t atxp1_showgpio2(struct device *dev, struct device_attribute *attr, char *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int size;
 	struct atxp1_data *data;
@@ -254,6 +366,7 @@ static ssize_t atxp1_showgpio2(struct device *dev,
 	return size;
 }
 
+<<<<<<< HEAD
 static ssize_t atxp1_storegpio2(struct device *dev,
 				struct device_attribute *attr,
 				const char *buf, size_t count)
@@ -270,6 +383,21 @@ static ssize_t atxp1_storegpio2(struct device *dev,
 
 	if (value != data->reg.gpio2) {
 		dev_info(dev, "Writing 0x%x to GPIO1.\n", (unsigned int)value);
+=======
+static ssize_t atxp1_storegpio2(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
+{
+	struct atxp1_data *data;
+	struct i2c_client *client;
+	unsigned int value;
+
+	client = to_i2c_client(dev);
+	data = atxp1_update_device(dev);
+
+	value = simple_strtoul(buf, NULL, 16) & 0xff;
+
+	if (value != data->reg.gpio2) {
+		dev_info(dev, "Writing 0x%x to GPIO1.\n", value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		i2c_smbus_write_byte_data(client, ATXP1_GPIO2, value);
 
@@ -279,10 +407,16 @@ static ssize_t atxp1_storegpio2(struct device *dev,
 	return count;
 }
 
+<<<<<<< HEAD
 /*
  * GPIO2 data register
  * unit: Eight bit as hex (e.g. 0xff)
  */
+=======
+/* GPIO2 data register
+    unit: Eight bit as hex (e.g. 0xff)
+*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEVICE_ATTR(gpio2, S_IRUGO | S_IWUSR, atxp1_showgpio2, atxp1_storegpio2);
 
 static struct attribute *atxp1_attributes[] = {
@@ -315,10 +449,15 @@ static int atxp1_detect(struct i2c_client *new_client,
 	     (i2c_smbus_read_byte_data(new_client, 0xff) == 0)))
 		return -ENODEV;
 
+<<<<<<< HEAD
 	/*
 	 * No vendor ID, now checking if registers 0x10,0x11 (non-existent)
 	 * showing the same as register 0x00
 	 */
+=======
+	/* No vendor ID, now checking if registers 0x10,0x11 (non-existent)
+	 * showing the same as register 0x00 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	temp = i2c_smbus_read_byte_data(new_client, 0x00);
 
 	if (!((i2c_smbus_read_byte_data(new_client, 0x10) == temp) &&
@@ -360,8 +499,12 @@ static int atxp1_probe(struct i2c_client *new_client,
 	mutex_init(&data->update_lock);
 
 	/* Register sysfs hooks */
+<<<<<<< HEAD
 	err = sysfs_create_group(&new_client->dev.kobj, &atxp1_group);
 	if (err)
+=======
+	if ((err = sysfs_create_group(&new_client->dev.kobj, &atxp1_group)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto exit_free;
 
 	data->hwmon_dev = hwmon_device_register(&new_client->dev);
@@ -385,7 +528,11 @@ exit:
 
 static int atxp1_remove(struct i2c_client *client)
 {
+<<<<<<< HEAD
 	struct atxp1_data *data = i2c_get_clientdata(client);
+=======
+	struct atxp1_data * data = i2c_get_clientdata(client);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hwmon_device_unregister(data->hwmon_dev);
 	sysfs_remove_group(&client->dev.kobj, &atxp1_group);
@@ -395,4 +542,19 @@ static int atxp1_remove(struct i2c_client *client)
 	return 0;
 };
 
+<<<<<<< HEAD
 module_i2c_driver(atxp1_driver);
+=======
+static int __init atxp1_init(void)
+{
+	return i2c_add_driver(&atxp1_driver);
+};
+
+static void __exit atxp1_exit(void)
+{
+	i2c_del_driver(&atxp1_driver);
+};
+
+module_init(atxp1_init);
+module_exit(atxp1_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

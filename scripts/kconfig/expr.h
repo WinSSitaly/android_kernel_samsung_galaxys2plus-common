@@ -10,7 +10,10 @@
 extern "C" {
 #endif
 
+<<<<<<< HEAD
 #include <assert.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <stdio.h>
 #ifndef __cplusplus
 #include <stdbool.h>
@@ -173,6 +176,11 @@ struct menu {
 #define MENU_CHANGED		0x0001
 #define MENU_ROOT		0x0002
 
+<<<<<<< HEAD
+=======
+#ifndef SWIG
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct file *file_list;
 extern struct file *current_file;
 struct file *lookup_file(const char *name);
@@ -217,6 +225,10 @@ static inline int expr_is_no(struct expr *e)
 {
 	return e && (e->type == E_SYMBOL && e->left.sym == &symbol_no);
 }
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef __cplusplus
 }

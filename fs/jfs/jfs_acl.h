@@ -20,7 +20,11 @@
 
 #ifdef CONFIG_JFS_POSIX_ACL
 
+<<<<<<< HEAD
 struct posix_acl *jfs_get_acl(struct inode *inode, int type);
+=======
+int jfs_check_acl(struct inode *, int, unsigned int flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int jfs_init_acl(tid_t, struct inode *, struct inode *);
 int jfs_acl_chmod(struct inode *inode);
 

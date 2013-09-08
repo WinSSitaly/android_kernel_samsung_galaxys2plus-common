@@ -2,7 +2,10 @@
 #define _LINUX_PID_NS_H
 
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mm.h>
 #include <linux/threads.h>
 #include <linux/nsproxy.h>
@@ -31,9 +34,12 @@ struct pid_namespace {
 #ifdef CONFIG_BSD_PROCESS_ACCT
 	struct bsd_acct_struct *bacct;
 #endif
+<<<<<<< HEAD
 	gid_t pid_gid;
 	int hide_pid;
 	int reboot;	/* group exit code if this pidns was rebooted */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 extern struct pid_namespace init_pid_ns;
@@ -49,7 +55,10 @@ static inline struct pid_namespace *get_pid_ns(struct pid_namespace *ns)
 extern struct pid_namespace *copy_pid_ns(unsigned long flags, struct pid_namespace *ns);
 extern void free_pid_ns(struct kref *kref);
 extern void zap_pid_ns_processes(struct pid_namespace *pid_ns);
+<<<<<<< HEAD
 extern int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void put_pid_ns(struct pid_namespace *ns)
 {
@@ -77,15 +86,22 @@ static inline void put_pid_ns(struct pid_namespace *ns)
 {
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void zap_pid_ns_processes(struct pid_namespace *ns)
 {
 	BUG();
 }
+<<<<<<< HEAD
 
 static inline int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd)
 {
 	return 0;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_PID_NS */
 
 extern struct pid_namespace *task_active_pid_ns(struct task_struct *tsk);

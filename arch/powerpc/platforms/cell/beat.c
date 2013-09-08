@@ -18,7 +18,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/err.h>
 #include <linux/rtc.h>
@@ -230,7 +234,11 @@ static int __init beat_register_event(void)
 		}
 		ev->virq = virq;
 
+<<<<<<< HEAD
 		rc = request_irq(virq, ev->handler, 0,
+=======
+		rc = request_irq(virq, ev->handler, IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      ev->typecode, NULL);
 		if (rc != 0) {
 			printk(KERN_ERR "Beat: failed to request virtual IRQ"

@@ -214,6 +214,7 @@ exit:
 	return err;
 }
 
+<<<<<<< HEAD
 static int mc44s803_set_params(struct dvb_frontend *fe)
 {
 	struct mc44s803_priv *priv = fe->tuner_priv;
@@ -222,14 +223,31 @@ static int mc44s803_set_params(struct dvb_frontend *fe)
 	int err;
 
 	priv->frequency = c->frequency;
+=======
+static int mc44s803_set_params(struct dvb_frontend *fe,
+			       struct dvb_frontend_parameters *params)
+{
+	struct mc44s803_priv *priv = fe->tuner_priv;
+	u32 r1, r2, n1, n2, lo1, lo2, freq, val;
+	int err;
+
+	priv->frequency = params->frequency;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	r1 = MC44S803_OSC / 1000000;
 	r2 = MC44S803_OSC /  100000;
 
+<<<<<<< HEAD
 	n1 = (c->frequency + MC44S803_IF1 + 500000) / 1000000;
 	freq = MC44S803_OSC / r1 * n1;
 	lo1 = ((60 * n1) + (r1 / 2)) / r1;
 	freq = freq - c->frequency;
+=======
+	n1 = (params->frequency + MC44S803_IF1 + 500000) / 1000000;
+	freq = MC44S803_OSC / r1 * n1;
+	lo1 = ((60 * n1) + (r1 / 2)) / r1;
+	freq = freq - params->frequency;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	n2 = (freq - MC44S803_IF2 + 50000) / 100000;
 	lo2 = ((60 * n2) + (r2 / 2)) / r2;

@@ -9,7 +9,10 @@
 /* just for IFNAMSIZ */
 #include <linux/if.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "led.h"
 
 void ieee80211_led_rx(struct ieee80211_local *local)

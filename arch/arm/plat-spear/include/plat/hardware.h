@@ -14,4 +14,13 @@
 #ifndef __PLAT_HARDWARE_H
 #define __PLAT_HARDWARE_H
 
+<<<<<<< HEAD
+=======
+#ifndef __ASSEMBLY__
+#define IOMEM(x)	((void __iomem __force *)(x))
+#else
+#define IOMEM(x)	(x)
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __PLAT_HARDWARE_H */

@@ -72,6 +72,10 @@ extern unsigned long __udiv_qrnnd (unsigned int *, unsigned int,
 
 #define UDIV_NEEDS_NORMALIZATION 0
 
+<<<<<<< HEAD
 #define abort() BUG()
+=======
+#define abort() return 0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define __BYTE_ORDER __BIG_ENDIAN

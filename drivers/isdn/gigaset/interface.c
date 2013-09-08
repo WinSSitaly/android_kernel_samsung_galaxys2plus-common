@@ -14,7 +14,10 @@
 #include "gigaset.h"
 #include <linux/gigaset_dev.h>
 #include <linux/tty_flip.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*** our ioctls ***/
 
@@ -33,10 +36,17 @@ static int if_lock(struct cardstate *cs, int *arg)
 	}
 
 	if (!cmd && cs->mstate == MS_LOCKED && cs->connected) {
+<<<<<<< HEAD
 		cs->ops->set_modem_ctrl(cs, 0, TIOCM_DTR | TIOCM_RTS);
 		cs->ops->baud_rate(cs, B115200);
 		cs->ops->set_line_ctrl(cs, CS8);
 		cs->control_state = TIOCM_DTR | TIOCM_RTS;
+=======
+		cs->ops->set_modem_ctrl(cs, 0, TIOCM_DTR|TIOCM_RTS);
+		cs->ops->baud_rate(cs, B115200);
+		cs->ops->set_line_ctrl(cs, CS8);
+		cs->control_state = TIOCM_DTR|TIOCM_RTS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	cs->waiting = 1;
@@ -146,10 +156,19 @@ static const struct tty_operations if_ops = {
 static int if_open(struct tty_struct *tty, struct file *filp)
 {
 	struct cardstate *cs;
+<<<<<<< HEAD
+=======
+	unsigned long flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	gig_dbg(DEBUG_IF, "%d+%d: %s()",
 		tty->driver->minor_start, tty->index, __func__);
 
+<<<<<<< HEAD
+=======
+	tty->driver_data = NULL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cs = gigaset_get_cs_by_tty(tty);
 	if (!cs || !try_module_get(cs->driver->owner))
 		return -ENODEV;
@@ -160,10 +179,19 @@ static int if_open(struct tty_struct *tty, struct file *filp)
 	}
 	tty->driver_data = cs;
 
+<<<<<<< HEAD
 	++cs->port.count;
 
 	if (cs->port.count == 1) {
 		tty_port_tty_set(&cs->port, tty);
+=======
+	++cs->open_count;
+
+	if (cs->open_count == 1) {
+		spin_lock_irqsave(&cs->lock, flags);
+		cs->tty = tty;
+		spin_unlock_irqrestore(&cs->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tty->low_latency = 1;
 	}
 
@@ -173,10 +201,19 @@ static int if_open(struct tty_struct *tty, struct file *filp)
 
 static void if_close(struct tty_struct *tty, struct file *filp)
 {
+<<<<<<< HEAD
 	struct cardstate *cs = tty->driver_data;
 
 	if (!cs) { /* happens if we didn't find cs in open */
 		gig_dbg(DEBUG_IF, "%s: no cardstate", __func__);
+=======
+	struct cardstate *cs;
+	unsigned long flags;
+
+	cs = (struct cardstate *) tty->driver_data;
+	if (!cs) {
+		pr_err("%s: no cardstate\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -186,10 +223,22 @@ static void if_close(struct tty_struct *tty, struct file *filp)
 
 	if (!cs->connected)
 		gig_dbg(DEBUG_IF, "not connected");	/* nothing to do */
+<<<<<<< HEAD
 	else if (!cs->port.count)
 		dev_warn(cs->dev, "%s: device not opened\n", __func__);
 	else if (!--cs->port.count)
 		tty_port_tty_set(&cs->port, NULL);
+=======
+	else if (!cs->open_count)
+		dev_warn(cs->dev, "%s: device not opened\n", __func__);
+	else {
+		if (!--cs->open_count) {
+			spin_lock_irqsave(&cs->lock, flags);
+			cs->tty = NULL;
+			spin_unlock_irqrestore(&cs->lock, flags);
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_unlock(&cs->mutex);
 
@@ -199,12 +248,25 @@ static void if_close(struct tty_struct *tty, struct file *filp)
 static int if_ioctl(struct tty_struct *tty,
 		    unsigned int cmd, unsigned long arg)
 {
+<<<<<<< HEAD
 	struct cardstate *cs = tty->driver_data;
+=======
+	struct cardstate *cs;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int retval = -ENODEV;
 	int int_arg;
 	unsigned char buf[6];
 	unsigned version[4];
 
+<<<<<<< HEAD
+=======
+	cs = (struct cardstate *) tty->driver_data;
+	if (!cs) {
+		pr_err("%s: no cardstate\n", __func__);
+		return -ENODEV;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gig_dbg(DEBUG_IF, "%u: %s(0x%x)", cs->minor_index, __func__, cmd);
 
 	if (mutex_lock_interruptible(&cs->mutex))
@@ -213,7 +275,13 @@ static int if_ioctl(struct tty_struct *tty,
 	if (!cs->connected) {
 		gig_dbg(DEBUG_IF, "not connected");
 		retval = -ENODEV;
+<<<<<<< HEAD
 	} else {
+=======
+	} else if (!cs->open_count)
+		dev_warn(cs->dev, "%s: device not opened\n", __func__);
+	else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		retval = 0;
 		switch (cmd) {
 		case GIGASET_REDIR:
@@ -232,17 +300,29 @@ static int if_ioctl(struct tty_struct *tty,
 			break;
 		case GIGASET_BRKCHARS:
 			retval = copy_from_user(&buf,
+<<<<<<< HEAD
 						(const unsigned char __user *) arg, 6)
 				? -EFAULT : 0;
 			if (retval >= 0) {
 				gigaset_dbg_buffer(DEBUG_IF, "GIGASET_BRKCHARS",
 						   6, (const unsigned char *) arg);
+=======
+					(const unsigned char __user *) arg, 6)
+				? -EFAULT : 0;
+			if (retval >= 0) {
+				gigaset_dbg_buffer(DEBUG_IF, "GIGASET_BRKCHARS",
+						6, (const unsigned char *) arg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				retval = cs->ops->brkchars(cs, buf);
 			}
 			break;
 		case GIGASET_VERSION:
 			retval = copy_from_user(version,
+<<<<<<< HEAD
 						(unsigned __user *) arg, sizeof version)
+=======
+					(unsigned __user *) arg, sizeof version)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				? -EFAULT : 0;
 			if (retval >= 0)
 				retval = if_version(cs, version);
@@ -265,15 +345,31 @@ static int if_ioctl(struct tty_struct *tty,
 
 static int if_tiocmget(struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	struct cardstate *cs = tty->driver_data;
 	int retval;
 
+=======
+	struct cardstate *cs;
+	int retval;
+
+	cs = (struct cardstate *) tty->driver_data;
+	if (!cs) {
+		pr_err("%s: no cardstate\n", __func__);
+		return -ENODEV;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gig_dbg(DEBUG_IF, "%u: %s()", cs->minor_index, __func__);
 
 	if (mutex_lock_interruptible(&cs->mutex))
 		return -ERESTARTSYS;
 
+<<<<<<< HEAD
 	retval = cs->control_state & (TIOCM_RTS | TIOCM_DTR);
+=======
+	retval = cs->control_state & (TIOCM_RTS|TIOCM_DTR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_unlock(&cs->mutex);
 
@@ -283,10 +379,23 @@ static int if_tiocmget(struct tty_struct *tty)
 static int if_tiocmset(struct tty_struct *tty,
 		       unsigned int set, unsigned int clear)
 {
+<<<<<<< HEAD
 	struct cardstate *cs = tty->driver_data;
 	int retval;
 	unsigned mc;
 
+=======
+	struct cardstate *cs;
+	int retval;
+	unsigned mc;
+
+	cs = (struct cardstate *) tty->driver_data;
+	if (!cs) {
+		pr_err("%s: no cardstate\n", __func__);
+		return -ENODEV;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gig_dbg(DEBUG_IF, "%u: %s(0x%x, 0x%x)",
 		cs->minor_index, __func__, set, clear);
 
@@ -297,7 +406,11 @@ static int if_tiocmset(struct tty_struct *tty,
 		gig_dbg(DEBUG_IF, "not connected");
 		retval = -ENODEV;
 	} else {
+<<<<<<< HEAD
 		mc = (cs->control_state | set) & ~clear & (TIOCM_RTS | TIOCM_DTR);
+=======
+		mc = (cs->control_state | set) & ~clear & (TIOCM_RTS|TIOCM_DTR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		retval = cs->ops->set_modem_ctrl(cs, cs->control_state, mc);
 		cs->control_state = mc;
 	}
@@ -309,10 +422,23 @@ static int if_tiocmset(struct tty_struct *tty,
 
 static int if_write(struct tty_struct *tty, const unsigned char *buf, int count)
 {
+<<<<<<< HEAD
 	struct cardstate *cs = tty->driver_data;
 	struct cmdbuf_t *cb;
 	int retval;
 
+=======
+	struct cardstate *cs;
+	struct cmdbuf_t *cb;
+	int retval;
+
+	cs = (struct cardstate *) tty->driver_data;
+	if (!cs) {
+		pr_err("%s: no cardstate\n", __func__);
+		return -ENODEV;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gig_dbg(DEBUG_IF, "%u: %s()", cs->minor_index, __func__);
 
 	if (mutex_lock_interruptible(&cs->mutex))
@@ -323,6 +449,14 @@ static int if_write(struct tty_struct *tty, const unsigned char *buf, int count)
 		retval = -ENODEV;
 		goto done;
 	}
+<<<<<<< HEAD
+=======
+	if (!cs->open_count) {
+		dev_warn(cs->dev, "%s: device not opened\n", __func__);
+		retval = -ENODEV;
+		goto done;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cs->mstate != MS_LOCKED) {
 		dev_warn(cs->dev, "can't write to unlocked device\n");
 		retval = -EBUSY;
@@ -354,9 +488,21 @@ done:
 
 static int if_write_room(struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	struct cardstate *cs = tty->driver_data;
 	int retval = -ENODEV;
 
+=======
+	struct cardstate *cs;
+	int retval = -ENODEV;
+
+	cs = (struct cardstate *) tty->driver_data;
+	if (!cs) {
+		pr_err("%s: no cardstate\n", __func__);
+		return -ENODEV;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gig_dbg(DEBUG_IF, "%u: %s()", cs->minor_index, __func__);
 
 	if (mutex_lock_interruptible(&cs->mutex))
@@ -365,7 +511,13 @@ static int if_write_room(struct tty_struct *tty)
 	if (!cs->connected) {
 		gig_dbg(DEBUG_IF, "not connected");
 		retval = -ENODEV;
+<<<<<<< HEAD
 	} else if (cs->mstate != MS_LOCKED) {
+=======
+	} else if (!cs->open_count)
+		dev_warn(cs->dev, "%s: device not opened\n", __func__);
+	else if (cs->mstate != MS_LOCKED) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_warn(cs->dev, "can't write to unlocked device\n");
 		retval = -EBUSY;
 	} else
@@ -378,15 +530,32 @@ static int if_write_room(struct tty_struct *tty)
 
 static int if_chars_in_buffer(struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	struct cardstate *cs = tty->driver_data;
 	int retval = 0;
 
+=======
+	struct cardstate *cs;
+	int retval = 0;
+
+	cs = (struct cardstate *) tty->driver_data;
+	if (!cs) {
+		pr_err("%s: no cardstate\n", __func__);
+		return 0;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gig_dbg(DEBUG_IF, "%u: %s()", cs->minor_index, __func__);
 
 	mutex_lock(&cs->mutex);
 
 	if (!cs->connected)
 		gig_dbg(DEBUG_IF, "not connected");
+<<<<<<< HEAD
+=======
+	else if (!cs->open_count)
+		dev_warn(cs->dev, "%s: device not opened\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else if (cs->mstate != MS_LOCKED)
 		dev_warn(cs->dev, "can't write to unlocked device\n");
 	else
@@ -399,7 +568,17 @@ static int if_chars_in_buffer(struct tty_struct *tty)
 
 static void if_throttle(struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	struct cardstate *cs = tty->driver_data;
+=======
+	struct cardstate *cs;
+
+	cs = (struct cardstate *) tty->driver_data;
+	if (!cs) {
+		pr_err("%s: no cardstate\n", __func__);
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	gig_dbg(DEBUG_IF, "%u: %s()", cs->minor_index, __func__);
 
@@ -407,6 +586,11 @@ static void if_throttle(struct tty_struct *tty)
 
 	if (!cs->connected)
 		gig_dbg(DEBUG_IF, "not connected");	/* nothing to do */
+<<<<<<< HEAD
+=======
+	else if (!cs->open_count)
+		dev_warn(cs->dev, "%s: device not opened\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		gig_dbg(DEBUG_IF, "%s: not implemented\n", __func__);
 
@@ -415,7 +599,17 @@ static void if_throttle(struct tty_struct *tty)
 
 static void if_unthrottle(struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	struct cardstate *cs = tty->driver_data;
+=======
+	struct cardstate *cs;
+
+	cs = (struct cardstate *) tty->driver_data;
+	if (!cs) {
+		pr_err("%s: no cardstate\n", __func__);
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	gig_dbg(DEBUG_IF, "%u: %s()", cs->minor_index, __func__);
 
@@ -423,6 +617,11 @@ static void if_unthrottle(struct tty_struct *tty)
 
 	if (!cs->connected)
 		gig_dbg(DEBUG_IF, "not connected");	/* nothing to do */
+<<<<<<< HEAD
+=======
+	else if (!cs->open_count)
+		dev_warn(cs->dev, "%s: device not opened\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		gig_dbg(DEBUG_IF, "%s: not implemented\n", __func__);
 
@@ -431,12 +630,25 @@ static void if_unthrottle(struct tty_struct *tty)
 
 static void if_set_termios(struct tty_struct *tty, struct ktermios *old)
 {
+<<<<<<< HEAD
 	struct cardstate *cs = tty->driver_data;
+=======
+	struct cardstate *cs;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int iflag;
 	unsigned int cflag;
 	unsigned int old_cflag;
 	unsigned int control_state, new_state;
 
+<<<<<<< HEAD
+=======
+	cs = (struct cardstate *) tty->driver_data;
+	if (!cs) {
+		pr_err("%s: no cardstate\n", __func__);
+		return;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gig_dbg(DEBUG_IF, "%u: %s()", cs->minor_index, __func__);
 
 	mutex_lock(&cs->mutex);
@@ -446,6 +658,14 @@ static void if_set_termios(struct tty_struct *tty, struct ktermios *old)
 		goto out;
 	}
 
+<<<<<<< HEAD
+=======
+	if (!cs->open_count) {
+		dev_warn(cs->dev, "%s: device not opened\n", __func__);
+		goto out;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iflag = tty->termios->c_iflag;
 	cflag = tty->termios->c_cflag;
 	old_cflag = old ? old->c_cflag : cflag;
@@ -502,6 +722,7 @@ out:
 /* wakeup tasklet for the write operation */
 static void if_wake(unsigned long data)
 {
+<<<<<<< HEAD
 	struct cardstate *cs = (struct cardstate *)data;
 	struct tty_struct *tty = tty_port_tty_get(&cs->port);
 
@@ -509,6 +730,12 @@ static void if_wake(unsigned long data)
 		tty_wakeup(tty);
 		tty_kref_put(tty);
 	}
+=======
+	struct cardstate *cs = (struct cardstate *) data;
+
+	if (cs->tty)
+		tty_wakeup(cs->tty);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*** interface to common ***/
@@ -561,6 +788,7 @@ void gigaset_if_free(struct cardstate *cs)
 void gigaset_if_receive(struct cardstate *cs,
 			unsigned char *buffer, size_t len)
 {
+<<<<<<< HEAD
 	struct tty_struct *tty = tty_port_tty_get(&cs->port);
 
 	if (tty == NULL) {
@@ -571,6 +799,20 @@ void gigaset_if_receive(struct cardstate *cs,
 	tty_insert_flip_string(tty, buffer, len);
 	tty_flip_buffer_push(tty);
 	tty_kref_put(tty);
+=======
+	unsigned long flags;
+	struct tty_struct *tty;
+
+	spin_lock_irqsave(&cs->lock, flags);
+	tty = cs->tty;
+	if (tty == NULL)
+		gig_dbg(DEBUG_IF, "receive on closed device");
+	else {
+		tty_insert_flip_string(tty, buffer, len);
+		tty_flip_buffer_push(tty);
+	}
+	spin_unlock_irqrestore(&cs->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(gigaset_if_receive);
 
@@ -584,22 +826,42 @@ EXPORT_SYMBOL_GPL(gigaset_if_receive);
 void gigaset_if_initdriver(struct gigaset_driver *drv, const char *procname,
 			   const char *devname)
 {
+<<<<<<< HEAD
+=======
+	unsigned minors = drv->minors;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 	struct tty_driver *tty;
 
 	drv->have_tty = 0;
 
+<<<<<<< HEAD
 	drv->tty = tty = alloc_tty_driver(drv->minors);
 	if (tty == NULL)
 		goto enomem;
 
 	tty->type =		TTY_DRIVER_TYPE_SERIAL;
 	tty->subtype =		SERIAL_TYPE_NORMAL;
+=======
+	drv->tty = tty = alloc_tty_driver(minors);
+	if (tty == NULL)
+		goto enomem;
+
+	tty->magic =		TTY_DRIVER_MAGIC,
+	tty->type =		TTY_DRIVER_TYPE_SERIAL,
+	tty->subtype =		SERIAL_TYPE_NORMAL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tty->flags =		TTY_DRIVER_REAL_RAW | TTY_DRIVER_DYNAMIC_DEV;
 
 	tty->driver_name =	procname;
 	tty->name =		devname;
 	tty->minor_start =	drv->minor;
+<<<<<<< HEAD
+=======
+	tty->num =		drv->minors;
+
+	tty->owner =		THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tty->init_termios          = tty_std_termios;
 	tty->init_termios.c_cflag  = B9600 | CS8 | CREAD | HUPCL | CLOCAL;

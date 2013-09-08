@@ -34,7 +34,10 @@ int
 nouveau_notifier_init_channel(struct nouveau_channel *chan)
 {
 	struct drm_device *dev = chan->dev;
+<<<<<<< HEAD
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct nouveau_bo *ntfy = NULL;
 	uint32_t flags, ttmpl;
 	int ret;
@@ -47,7 +50,11 @@ nouveau_notifier_init_channel(struct nouveau_channel *chan)
 		ttmpl = TTM_PL_FLAG_TT;
 	}
 
+<<<<<<< HEAD
 	ret = nouveau_gem_new(dev, PAGE_SIZE, 0, flags, 0, 0, &ntfy);
+=======
+	ret = nouveau_gem_new(dev, NULL, PAGE_SIZE, 0, flags, 0, 0, &ntfy);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -59,22 +66,30 @@ nouveau_notifier_init_channel(struct nouveau_channel *chan)
 	if (ret)
 		goto out_err;
 
+<<<<<<< HEAD
 	if (dev_priv->card_type >= NV_50) {
 		ret = nouveau_bo_vma_add(ntfy, chan->vm, &chan->notifier_vma);
 		if (ret)
 			goto out_err;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = drm_mm_init(&chan->notifier_heap, 0, ntfy->bo.mem.size);
 	if (ret)
 		goto out_err;
 
 	chan->notifier_bo = ntfy;
 out_err:
+<<<<<<< HEAD
 	if (ret) {
 		nouveau_bo_vma_del(ntfy, &chan->notifier_vma);
 		drm_gem_object_unreference_unlocked(ntfy->gem);
 	}
+=======
+	if (ret)
+		drm_gem_object_unreference_unlocked(ntfy->gem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -87,7 +102,10 @@ nouveau_notifier_takedown_channel(struct nouveau_channel *chan)
 	if (!chan->notifier_bo)
 		return;
 
+<<<<<<< HEAD
 	nouveau_bo_vma_del(chan->notifier_bo, &chan->notifier_vma);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nouveau_bo_unmap(chan->notifier_bo);
 	mutex_lock(&dev->struct_mutex);
 	nouveau_bo_unpin(chan->notifier_bo);
@@ -115,7 +133,11 @@ nouveau_notifier_alloc(struct nouveau_channel *chan, uint32_t handle,
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct nouveau_gpuobj *nobj = NULL;
 	struct drm_mm_node *mem;
+<<<<<<< HEAD
 	uint64_t offset;
+=======
+	uint32_t offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int target, ret;
 
 	mem = drm_mm_search_free_in_range(&chan->notifier_heap, size, 0,
@@ -132,10 +154,17 @@ nouveau_notifier_alloc(struct nouveau_channel *chan, uint32_t handle,
 			target = NV_MEM_TARGET_VRAM;
 		else
 			target = NV_MEM_TARGET_GART;
+<<<<<<< HEAD
 		offset  = chan->notifier_bo->bo.offset;
 	} else {
 		target = NV_MEM_TARGET_VM;
 		offset = chan->notifier_vma.offset;
+=======
+		offset  = chan->notifier_bo->bo.mem.start << PAGE_SHIFT;
+	} else {
+		target = NV_MEM_TARGET_VM;
+		offset = chan->notifier_bo->vma.offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	offset += mem->start;
 
@@ -193,7 +222,11 @@ nouveau_ioctl_notifier_alloc(struct drm_device *dev, void *data,
 	if (unlikely(dev_priv->card_type >= NV_C0))
 		return -EINVAL;
 
+<<<<<<< HEAD
 	chan = nouveau_channel_get(file_priv, na->channel);
+=======
+	chan = nouveau_channel_get(dev, file_priv, na->channel);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(chan))
 		return PTR_ERR(chan);
 

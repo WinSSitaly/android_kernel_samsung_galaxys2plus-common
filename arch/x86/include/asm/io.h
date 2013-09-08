@@ -40,6 +40,11 @@
 #include <linux/compiler.h>
 #include <asm/page.h>
 
+<<<<<<< HEAD
+=======
+#include <xen/xen.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define build_mmio_read(name, size, type, reg, barrier) \
 static inline type name(const volatile void __iomem *addr) \
 { type ret; asm volatile("mov" size " %1,%0":reg (ret) \
@@ -332,7 +337,10 @@ extern void fixup_early_ioremap(void);
 extern bool is_early_ioremap_ptep(pte_t *ptep);
 
 #ifdef CONFIG_XEN
+<<<<<<< HEAD
 #include <xen/xen.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct bio_vec;
 
 extern bool xen_biovec_phys_mergeable(const struct bio_vec *vec1,

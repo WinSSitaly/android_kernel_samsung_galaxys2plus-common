@@ -14,7 +14,10 @@
 
 #include <linux/kernel.h>
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/i8253.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/input.h>
 #include <linux/platform_device.h>
@@ -26,6 +29,17 @@ MODULE_DESCRIPTION("PC Speaker beeper driver");
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:pcspkr");
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_MIPS) || defined(CONFIG_X86)
+/* Use the global PIT lock ! */
+#include <asm/i8253.h>
+#else
+#include <asm/8253pit.h>
+static DEFINE_RAW_SPINLOCK(i8253_lock);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int pcspkr_event(struct input_dev *dev, unsigned int type, unsigned int code, int value)
 {
 	unsigned int count = 0;
@@ -134,5 +148,22 @@ static struct platform_driver pcspkr_platform_driver = {
 	.remove		= __devexit_p(pcspkr_remove),
 	.shutdown	= pcspkr_shutdown,
 };
+<<<<<<< HEAD
 module_platform_driver(pcspkr_platform_driver);
 
+=======
+
+
+static int __init pcspkr_init(void)
+{
+	return platform_driver_register(&pcspkr_platform_driver);
+}
+
+static void __exit pcspkr_exit(void)
+{
+	platform_driver_unregister(&pcspkr_platform_driver);
+}
+
+module_init(pcspkr_init);
+module_exit(pcspkr_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

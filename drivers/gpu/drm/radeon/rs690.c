@@ -31,7 +31,11 @@
 #include "atom.h"
 #include "rs690d.h"
 
+<<<<<<< HEAD
 int rs690_mc_wait_for_idle(struct radeon_device *rdev)
+=======
+static int rs690_mc_wait_for_idle(struct radeon_device *rdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned i;
 	uint32_t tmp;
@@ -621,6 +625,7 @@ static int rs690_startup(struct radeon_device *rdev)
 	if (r)
 		return r;
 
+<<<<<<< HEAD
 	r = radeon_fence_driver_start_ring(rdev, RADEON_RING_TYPE_GFX_INDEX);
 	if (r) {
 		dev_err(rdev->dev, "failed initializing CP fences (%d).\n", r);
@@ -634,6 +639,9 @@ static int rs690_startup(struct radeon_device *rdev)
 			return r;
 	}
 
+=======
+	/* Enable IRQ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rs600_irq_set(rdev);
 	rdev->config.r300.hdp_cntl = RREG32(RADEON_HOST_PATH_CNTL);
 	/* 1M ring buffer */
@@ -642,6 +650,7 @@ static int rs690_startup(struct radeon_device *rdev)
 		dev_err(rdev->dev, "failed initializing CP (%d).\n", r);
 		return r;
 	}
+<<<<<<< HEAD
 
 	r = r600_audio_init(rdev);
 	if (r) {
@@ -657,6 +666,17 @@ static int rs690_startup(struct radeon_device *rdev)
 	if (r) {
 		dev_err(rdev->dev, "failed testing IB (%d).\n", r);
 		rdev->accel_working = false;
+=======
+	r = r100_ib_init(rdev);
+	if (r) {
+		dev_err(rdev->dev, "failed initializing IB (%d).\n", r);
+		return r;
+	}
+
+	r = r600_audio_init(rdev);
+	if (r) {
+		dev_err(rdev->dev, "failed initializing audio\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return r;
 	}
 
@@ -665,8 +685,11 @@ static int rs690_startup(struct radeon_device *rdev)
 
 int rs690_resume(struct radeon_device *rdev)
 {
+<<<<<<< HEAD
 	int r;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Make sur GART are not working */
 	rs400_gart_disable(rdev);
 	/* Resume clock before doing reset */
@@ -683,6 +706,7 @@ int rs690_resume(struct radeon_device *rdev)
 	rv515_clock_startup(rdev);
 	/* Initialize surface registers */
 	radeon_surface_init(rdev);
+<<<<<<< HEAD
 
 	rdev->accel_working = true;
 	r = rs690_startup(rdev);
@@ -690,11 +714,17 @@ int rs690_resume(struct radeon_device *rdev)
 		rdev->accel_working = false;
 	}
 	return r;
+=======
+	return rs690_startup(rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int rs690_suspend(struct radeon_device *rdev)
 {
+<<<<<<< HEAD
 	radeon_ib_pool_suspend(rdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r600_audio_fini(rdev);
 	r100_cp_disable(rdev);
 	radeon_wb_disable(rdev);
@@ -765,6 +795,12 @@ int rs690_init(struct radeon_device *rdev)
 	r = radeon_fence_driver_init(rdev);
 	if (r)
 		return r;
+<<<<<<< HEAD
+=======
+	r = radeon_irq_kms_init(rdev);
+	if (r)
+		return r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Memory manager */
 	r = radeon_bo_init(rdev);
 	if (r)
@@ -773,6 +809,7 @@ int rs690_init(struct radeon_device *rdev)
 	if (r)
 		return r;
 	rs600_set_safe_registers(rdev);
+<<<<<<< HEAD
 
 	r = radeon_ib_pool_init(rdev);
 	rdev->accel_working = true;
@@ -781,6 +818,9 @@ int rs690_init(struct radeon_device *rdev)
 		rdev->accel_working = false;
 	}
 
+=======
+	rdev->accel_working = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = rs690_startup(rdev);
 	if (r) {
 		/* Somethings want wront with the accel init stop accel */

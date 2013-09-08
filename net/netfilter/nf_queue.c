@@ -65,7 +65,11 @@ int nf_unregister_queue_handler(u_int8_t pf, const struct nf_queue_handler *qh)
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	RCU_INIT_POINTER(queue_handler[pf], NULL);
+=======
+	rcu_assign_pointer(queue_handler[pf], NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&queue_handler_mutex);
 
 	synchronize_rcu();
@@ -84,7 +88,11 @@ void nf_unregister_queue_handlers(const struct nf_queue_handler *qh)
 				queue_handler[pf],
 				lockdep_is_held(&queue_handler_mutex)
 				) == qh)
+<<<<<<< HEAD
 			RCU_INIT_POINTER(queue_handler[pf], NULL);
+=======
+			rcu_assign_pointer(queue_handler[pf], NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	mutex_unlock(&queue_handler_mutex);
 
@@ -203,6 +211,7 @@ err:
 	return status;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_BRIDGE_NETFILTER
 /* When called from bridge netfilter, skb->data must point to MAC header
  * before calling skb_gso_segment(). Else, original MAC header is lost
@@ -224,6 +233,8 @@ static void nf_bridge_adjust_segmented_data(struct sk_buff *skb)
 #define nf_bridge_adjust_segmented_data(s) do {} while (0)
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int nf_queue(struct sk_buff *skb,
 	     struct list_head *elem,
 	     u_int8_t pf, unsigned int hook,
@@ -233,7 +244,11 @@ int nf_queue(struct sk_buff *skb,
 	     unsigned int queuenum)
 {
 	struct sk_buff *segs;
+<<<<<<< HEAD
 	int err = -EINVAL;
+=======
+	int err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int queued;
 
 	if (!skb_is_gso(skb))
@@ -249,25 +264,39 @@ int nf_queue(struct sk_buff *skb,
 		break;
 	}
 
+<<<<<<< HEAD
 	nf_bridge_adjust_skb_data(skb);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	segs = skb_gso_segment(skb, 0);
 	/* Does not use PTR_ERR to limit the number of error codes that can be
 	 * returned by nf_queue.  For instance, callers rely on -ECANCELED to mean
 	 * 'ignore this hook'.
 	 */
 	if (IS_ERR(segs))
+<<<<<<< HEAD
 		goto out_err;
+=======
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	queued = 0;
 	err = 0;
 	do {
 		struct sk_buff *nskb = segs->next;
 
 		segs->next = NULL;
+<<<<<<< HEAD
 		if (err == 0) {
 			nf_bridge_adjust_segmented_data(segs);
 			err = __nf_queue(segs, elem, pf, hook, indev,
 					   outdev, okfn, queuenum);
 		}
+=======
+		if (err == 0)
+			err = __nf_queue(segs, elem, pf, hook, indev,
+					   outdev, okfn, queuenum);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err == 0)
 			queued++;
 		else
@@ -275,12 +304,20 @@ int nf_queue(struct sk_buff *skb,
 		segs = nskb;
 	} while (segs);
 
+<<<<<<< HEAD
 	if (queued) {
 		kfree_skb(skb);
 		return 0;
 	}
   out_err:
 	nf_bridge_adjust_segmented_data(skb);
+=======
+	/* also free orig skb if only some segments were queued */
+	if (unlikely(err && queued))
+		err = 0;
+	if (err == 0)
+		kfree_skb(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -336,7 +373,10 @@ void nf_reinject(struct nf_queue_entry *entry, unsigned int verdict)
 		}
 		break;
 	case NF_STOLEN:
+<<<<<<< HEAD
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		kfree_skb(skb);
 	}

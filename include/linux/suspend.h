@@ -6,21 +6,34 @@
 #include <linux/init.h>
 #include <linux/pm.h>
 #include <linux/mm.h>
+<<<<<<< HEAD
 #include <linux/freezer.h>
 #include <asm/errno.h>
 
 #ifdef CONFIG_VT
 extern void pm_set_vt_switch(int);
+=======
+#include <asm/errno.h>
+
+#if defined(CONFIG_PM_SLEEP) && defined(CONFIG_VT) && defined(CONFIG_VT_CONSOLE)
+extern void pm_set_vt_switch(int);
+extern int pm_prepare_console(void);
+extern void pm_restore_console(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 static inline void pm_set_vt_switch(int do_switch)
 {
 }
+<<<<<<< HEAD
 #endif
 
 #ifdef CONFIG_VT_CONSOLE_SLEEP
 extern int pm_prepare_console(void);
 extern void pm_restore_console(void);
 #else
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int pm_prepare_console(void)
 {
 	return 0;
@@ -38,6 +51,7 @@ typedef int __bitwise suspend_state_t;
 #define PM_SUSPEND_MEM		((__force suspend_state_t) 3)
 #define PM_SUSPEND_MAX		((__force suspend_state_t) 4)
 
+<<<<<<< HEAD
 enum suspend_stat_step {
 	SUSPEND_FREEZE = 1,
 	SUSPEND_PREPARE,
@@ -94,6 +108,8 @@ static inline void dpm_save_failed_step(enum suspend_stat_step step)
 	suspend_stats.last_failed_step %= REC_FAILED_NUM;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct platform_suspend_ops - Callbacks for managing platform dependent
  *	system sleep states.
@@ -152,6 +168,7 @@ static inline void dpm_save_failed_step(enum suspend_stat_step step)
  *	@enter() and @wake(), even if any of them fails.  It is executed after
  *	a failing @prepare.
  *
+<<<<<<< HEAD
  * @suspend_again: Returns whether the system should suspend again (true) or
  *	not (false). If the platform wants to poll sensors or execute some
  *	code during suspended without invoking userspace and most of devices,
@@ -159,6 +176,8 @@ static inline void dpm_save_failed_step(enum suspend_stat_step step)
  *	alarm-wakeup is already setup. This allows to execute some codes while
  *	being kept suspended in the view of userland and devices.
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @end: Called by the PM core right after resuming devices, to indicate to
  *	the platform that the system has returned to the working state or
  *	the transition to the sleep state has been aborted.
@@ -180,7 +199,10 @@ struct platform_suspend_ops {
 	int (*enter)(suspend_state_t state);
 	void (*wake)(void);
 	void (*finish)(void);
+<<<<<<< HEAD
 	bool (*suspend_again)(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void (*end)(void);
 	void (*recover)(void);
 };
@@ -328,6 +350,7 @@ static inline int hibernate(void) { return -ENOSYS; }
 static inline bool system_entering_hibernation(void) { return false; }
 #endif /* CONFIG_HIBERNATION */
 
+<<<<<<< HEAD
 /* Hibernation and suspend events */
 #define PM_HIBERNATION_PREPARE	0x0001 /* Going to hibernate */
 #define PM_POST_HIBERNATION	0x0002 /* Hibernation finished */
@@ -338,6 +361,8 @@ static inline bool system_entering_hibernation(void) { return false; }
 
 extern struct mutex pm_mutex;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PM_SLEEP
 void save_processor_state(void);
 void restore_processor_state(void);
@@ -358,6 +383,7 @@ extern bool events_check_enabled;
 extern bool pm_wakeup_pending(void);
 extern bool pm_get_wakeup_count(unsigned int *count);
 extern bool pm_save_wakeup_count(unsigned int count);
+<<<<<<< HEAD
 
 static inline void lock_system_sleep(void)
 {
@@ -386,6 +412,8 @@ static inline void unlock_system_sleep(void)
 	mutex_unlock(&pm_mutex);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else /* !CONFIG_PM_SLEEP */
 
 static inline int register_pm_notifier(struct notifier_block *nb)
@@ -401,6 +429,7 @@ static inline int unregister_pm_notifier(struct notifier_block *nb)
 #define pm_notifier(fn, pri)	do { (void)(fn); } while (0)
 
 static inline bool pm_wakeup_pending(void) { return false; }
+<<<<<<< HEAD
 
 static inline void lock_system_sleep(void) {}
 static inline void unlock_system_sleep(void) {}
@@ -440,5 +469,29 @@ static inline void page_key_memorize(unsigned long *pfn) {}
 static inline void page_key_write(void *address) {}
 
 #endif /* !CONFIG_ARCH_SAVE_PAGE_KEYS */
+=======
+#endif /* !CONFIG_PM_SLEEP */
+
+extern struct mutex pm_mutex;
+
+#ifndef CONFIG_HIBERNATE_CALLBACKS
+static inline void lock_system_sleep(void) {}
+static inline void unlock_system_sleep(void) {}
+
+#else
+
+/* Let some subsystems like memory hotadd exclude hibernation */
+
+static inline void lock_system_sleep(void)
+{
+	mutex_lock(&pm_mutex);
+}
+
+static inline void unlock_system_sleep(void)
+{
+	mutex_unlock(&pm_mutex);
+}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* _LINUX_SUSPEND_H */

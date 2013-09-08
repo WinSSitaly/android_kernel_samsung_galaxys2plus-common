@@ -12,8 +12,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "compr.h"
 
 static DEFINE_SPINLOCK(jffs2_compressor_list_lock);
@@ -55,6 +58,7 @@ static int jffs2_is_best_compression(struct jffs2_compressor *this,
 	return 0;
 }
 
+<<<<<<< HEAD
 /*
  * jffs2_selected_compress:
  * @compr: Explicit compression type to use (ie, JFFS2_COMPR_ZLIB).
@@ -127,6 +131,8 @@ static int jffs2_selected_compress(u8 compr, unsigned char *data_in,
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* jffs2_compress:
  * @data_in: Pointer to uncompressed data
  * @cpage_out: Pointer to returned pointer to buffer for compressed data
@@ -150,12 +156,17 @@ uint16_t jffs2_compress(struct jffs2_sb_info *c, struct jffs2_inode_info *f,
 			uint32_t *datalen, uint32_t *cdatalen)
 {
 	int ret = JFFS2_COMPR_NONE;
+<<<<<<< HEAD
 	int mode, compr_ret;
+=======
+	int compr_ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct jffs2_compressor *this, *best=NULL;
 	unsigned char *output_buf = NULL, *tmp_buf;
 	uint32_t orig_slen, orig_dlen;
 	uint32_t best_slen=0, best_dlen=0;
 
+<<<<<<< HEAD
 	if (c->mount_opts.override_compr)
 		mode = c->mount_opts.compr;
 	else
@@ -167,6 +178,43 @@ uint16_t jffs2_compress(struct jffs2_sb_info *c, struct jffs2_inode_info *f,
 	case JFFS2_COMPR_MODE_PRIORITY:
 		ret = jffs2_selected_compress(0, data_in, cpage_out, datalen,
 				cdatalen);
+=======
+	switch (jffs2_compression_mode) {
+	case JFFS2_COMPR_MODE_NONE:
+		break;
+	case JFFS2_COMPR_MODE_PRIORITY:
+		output_buf = kmalloc(*cdatalen,GFP_KERNEL);
+		if (!output_buf) {
+			printk(KERN_WARNING "JFFS2: No memory for compressor allocation. Compression failed.\n");
+			goto out;
+		}
+		orig_slen = *datalen;
+		orig_dlen = *cdatalen;
+		spin_lock(&jffs2_compressor_list_lock);
+		list_for_each_entry(this, &jffs2_compressor_list, list) {
+			/* Skip decompress-only backwards-compatibility and disabled modules */
+			if ((!this->compress)||(this->disabled))
+				continue;
+
+			this->usecount++;
+			spin_unlock(&jffs2_compressor_list_lock);
+			*datalen  = orig_slen;
+			*cdatalen = orig_dlen;
+			compr_ret = this->compress(data_in, output_buf, datalen, cdatalen);
+			spin_lock(&jffs2_compressor_list_lock);
+			this->usecount--;
+			if (!compr_ret) {
+				ret = this->compr;
+				this->stat_compr_blocks++;
+				this->stat_compr_orig_size += *datalen;
+				this->stat_compr_new_size  += *cdatalen;
+				break;
+			}
+		}
+		spin_unlock(&jffs2_compressor_list_lock);
+		if (ret == JFFS2_COMPR_NONE)
+			kfree(output_buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case JFFS2_COMPR_MODE_SIZE:
 	case JFFS2_COMPR_MODE_FAVOURLZO:
@@ -190,8 +238,12 @@ uint16_t jffs2_compress(struct jffs2_sb_info *c, struct jffs2_inode_info *f,
 				tmp_buf = kmalloc(orig_slen, GFP_KERNEL);
 				spin_lock(&jffs2_compressor_list_lock);
 				if (!tmp_buf) {
+<<<<<<< HEAD
 					pr_warn("No memory for compressor allocation. (%d bytes)\n",
 						orig_slen);
+=======
+					printk(KERN_WARNING "JFFS2: No memory for compressor allocation. (%d bytes)\n", orig_slen);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					continue;
 				}
 				else {
@@ -225,6 +277,7 @@ uint16_t jffs2_compress(struct jffs2_sb_info *c, struct jffs2_inode_info *f,
 			best->stat_compr_orig_size += best_slen;
 			best->stat_compr_new_size  += best_dlen;
 			ret = best->compr;
+<<<<<<< HEAD
 			*cpage_out = output_buf;
 		}
 		spin_unlock(&jffs2_compressor_list_lock);
@@ -241,12 +294,27 @@ uint16_t jffs2_compress(struct jffs2_sb_info *c, struct jffs2_inode_info *f,
 		pr_err("unknown compression mode\n");
 	}
 
+=======
+		}
+		spin_unlock(&jffs2_compressor_list_lock);
+		break;
+	default:
+		printk(KERN_ERR "JFFS2: unknown compression mode.\n");
+	}
+ out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret == JFFS2_COMPR_NONE) {
 		*cpage_out = data_in;
 		*datalen = *cdatalen;
 		none_stat_compr_blocks++;
 		none_stat_compr_size += *datalen;
 	}
+<<<<<<< HEAD
+=======
+	else {
+		*cpage_out = output_buf;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -280,8 +348,12 @@ int jffs2_decompress(struct jffs2_sb_info *c, struct jffs2_inode_info *f,
 				ret = this->decompress(cdata_in, data_out, cdatalen, datalen);
 				spin_lock(&jffs2_compressor_list_lock);
 				if (ret) {
+<<<<<<< HEAD
 					pr_warn("Decompressor \"%s\" returned %d\n",
 						this->name, ret);
+=======
+					printk(KERN_WARNING "Decompressor \"%s\" returned %d\n", this->name, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				}
 				else {
 					this->stat_decompr_blocks++;
@@ -291,7 +363,11 @@ int jffs2_decompress(struct jffs2_sb_info *c, struct jffs2_inode_info *f,
 				return ret;
 			}
 		}
+<<<<<<< HEAD
 		pr_warn("compression type 0x%02x not available\n", comprtype);
+=======
+		printk(KERN_WARNING "JFFS2 compression type 0x%02x not available.\n", comprtype);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock(&jffs2_compressor_list_lock);
 		return -EIO;
 	}
@@ -303,7 +379,11 @@ int jffs2_register_compressor(struct jffs2_compressor *comp)
 	struct jffs2_compressor *this;
 
 	if (!comp->name) {
+<<<<<<< HEAD
 		pr_warn("NULL compressor name at registering JFFS2 compressor. Failed.\n");
+=======
+		printk(KERN_WARNING "NULL compressor name at registering JFFS2 compressor. Failed.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 	comp->compr_buf_size=0;
@@ -313,7 +393,11 @@ int jffs2_register_compressor(struct jffs2_compressor *comp)
 	comp->stat_compr_new_size=0;
 	comp->stat_compr_blocks=0;
 	comp->stat_decompr_blocks=0;
+<<<<<<< HEAD
 	jffs2_dbg(1, "Registering JFFS2 compressor \"%s\"\n", comp->name);
+=======
+	D1(printk(KERN_DEBUG "Registering JFFS2 compressor \"%s\"\n", comp->name));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock(&jffs2_compressor_list_lock);
 
@@ -336,15 +420,25 @@ out:
 
 int jffs2_unregister_compressor(struct jffs2_compressor *comp)
 {
+<<<<<<< HEAD
 	D2(struct jffs2_compressor *this);
 
 	jffs2_dbg(1, "Unregistering JFFS2 compressor \"%s\"\n", comp->name);
+=======
+	D2(struct jffs2_compressor *this;)
+
+	D1(printk(KERN_DEBUG "Unregistering JFFS2 compressor \"%s\"\n", comp->name));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock(&jffs2_compressor_list_lock);
 
 	if (comp->usecount) {
 		spin_unlock(&jffs2_compressor_list_lock);
+<<<<<<< HEAD
 		pr_warn("Compressor module is in use. Unregister failed.\n");
+=======
+		printk(KERN_WARNING "JFFS2: Compressor modul is in use. Unregister failed.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 	list_del(&comp->list);
@@ -381,6 +475,7 @@ int __init jffs2_compressors_init(void)
 /* Setting default compression mode */
 #ifdef CONFIG_JFFS2_CMODE_NONE
 	jffs2_compression_mode = JFFS2_COMPR_MODE_NONE;
+<<<<<<< HEAD
 	jffs2_dbg(1, "default compression mode: none\n");
 #else
 #ifdef CONFIG_JFFS2_CMODE_SIZE
@@ -392,6 +487,19 @@ int __init jffs2_compressors_init(void)
 	jffs2_dbg(1, "default compression mode: favourlzo\n");
 #else
 	jffs2_dbg(1, "default compression mode: priority\n");
+=======
+	D1(printk(KERN_INFO "JFFS2: default compression mode: none\n");)
+#else
+#ifdef CONFIG_JFFS2_CMODE_SIZE
+	jffs2_compression_mode = JFFS2_COMPR_MODE_SIZE;
+	D1(printk(KERN_INFO "JFFS2: default compression mode: size\n");)
+#else
+#ifdef CONFIG_JFFS2_CMODE_FAVOURLZO
+	jffs2_compression_mode = JFFS2_COMPR_MODE_FAVOURLZO;
+	D1(printk(KERN_INFO "JFFS2: default compression mode: favourlzo\n");)
+#else
+	D1(printk(KERN_INFO "JFFS2: default compression mode: priority\n");)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 #endif
 #endif

@@ -423,7 +423,10 @@ static void __init palmphone_common_init(void)
 	palmtreo_leds_init();
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_MACH_TREO680
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init treo680_init(void)
 {
 	pxa2xx_mfp_config(ARRAY_AND_SIZE(treo680_pin_config));
@@ -431,9 +434,13 @@ static void __init treo680_init(void)
 	palm27x_mmc_init(GPIO_NR_TREO_SD_DETECT_N, GPIO_NR_TREO680_SD_READONLY,
 			GPIO_NR_TREO680_SD_POWER, 0);
 }
+<<<<<<< HEAD
 #endif
 
 #ifdef CONFIG_MACH_CENTRO
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init centro_init(void)
 {
 	pxa2xx_mfp_config(ARRAY_AND_SIZE(centro685_pin_config));
@@ -441,6 +448,7 @@ static void __init centro_init(void)
 	palm27x_mmc_init(GPIO_NR_TREO_SD_DETECT_N, -1,
 			GPIO_NR_CENTRO_SD_POWER, 1);
 }
+<<<<<<< HEAD
 #endif
 
 #ifdef CONFIG_MACH_TREO680
@@ -470,3 +478,23 @@ MACHINE_START(CENTRO, "Palm Centro 685")
 	.restart	= pxa_restart,
 MACHINE_END
 #endif
+=======
+
+MACHINE_START(TREO680, "Palm Treo 680")
+	.boot_params    = 0xa0000100,
+	.map_io         = pxa27x_map_io,
+	.reserve	= treo_reserve,
+	.init_irq       = pxa27x_init_irq,
+	.timer          = &pxa_timer,
+	.init_machine   = treo680_init,
+MACHINE_END
+
+MACHINE_START(CENTRO, "Palm Centro 685")
+	.boot_params    = 0xa0000100,
+	.map_io         = pxa27x_map_io,
+	.reserve	= treo_reserve,
+	.init_irq       = pxa27x_init_irq,
+	.timer          = &pxa_timer,
+	.init_machine	= centro_init,
+MACHINE_END
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

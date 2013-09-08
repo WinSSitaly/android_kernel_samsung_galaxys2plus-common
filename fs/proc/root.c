@@ -18,7 +18,10 @@
 #include <linux/bitops.h>
 #include <linux/mount.h>
 #include <linux/pid_namespace.h>
+<<<<<<< HEAD
 #include <linux/parser.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "internal.h"
 
@@ -37,6 +40,7 @@ static int proc_set_super(struct super_block *sb, void *data)
 	return err;
 }
 
+<<<<<<< HEAD
 enum {
 	Opt_gid, Opt_hidepid, Opt_err,
 };
@@ -94,6 +98,8 @@ int proc_remount(struct super_block *sb, int *flags, char *data)
 	return !proc_parse_options(data, pid);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct dentry *proc_mount(struct file_system_type *fs_type,
 	int flags, const char *dev_name, void *data)
 {
@@ -101,6 +107,7 @@ static struct dentry *proc_mount(struct file_system_type *fs_type,
 	struct super_block *sb;
 	struct pid_namespace *ns;
 	struct proc_inode *ei;
+<<<<<<< HEAD
 	char *options;
 
 	if (flags & MS_KERNMOUNT) {
@@ -110,16 +117,26 @@ static struct dentry *proc_mount(struct file_system_type *fs_type,
 		ns = current->nsproxy->pid_ns;
 		options = data;
 	}
+=======
+
+	if (flags & MS_KERNMOUNT)
+		ns = (struct pid_namespace *)data;
+	else
+		ns = current->nsproxy->pid_ns;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sb = sget(fs_type, proc_test_super, proc_set_super, ns);
 	if (IS_ERR(sb))
 		return ERR_CAST(sb);
 
+<<<<<<< HEAD
 	if (!proc_parse_options(options, ns)) {
 		deactivate_locked_super(sb);
 		return ERR_PTR(-EINVAL);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!sb->s_root) {
 		sb->s_flags = flags;
 		err = proc_fill_super(sb);
@@ -158,18 +175,31 @@ static struct file_system_type proc_fs_type = {
 
 void __init proc_root_init(void)
 {
+<<<<<<< HEAD
+=======
+	struct vfsmount *mnt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err;
 
 	proc_init_inodecache();
 	err = register_filesystem(&proc_fs_type);
 	if (err)
 		return;
+<<<<<<< HEAD
 	err = pid_ns_prepare_proc(&init_pid_ns);
 	if (err) {
+=======
+	mnt = kern_mount_data(&proc_fs_type, &init_pid_ns);
+	if (IS_ERR(mnt)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unregister_filesystem(&proc_fs_type);
 		return;
 	}
 
+<<<<<<< HEAD
+=======
+	init_pid_ns.proc_mnt = mnt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	proc_symlink("mounts", NULL, "self/mounts");
 
 	proc_net_init();
@@ -251,13 +281,20 @@ static const struct inode_operations proc_root_inode_operations = {
 struct proc_dir_entry proc_root = {
 	.low_ino	= PROC_ROOT_INO, 
 	.namelen	= 5, 
+<<<<<<< HEAD
+=======
+	.name		= "/proc",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.mode		= S_IFDIR | S_IRUGO | S_IXUGO, 
 	.nlink		= 2, 
 	.count		= ATOMIC_INIT(1),
 	.proc_iops	= &proc_root_inode_operations, 
 	.proc_fops	= &proc_root_operations,
 	.parent		= &proc_root,
+<<<<<<< HEAD
 	.name		= "/proc",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int pid_ns_prepare_proc(struct pid_namespace *ns)
@@ -274,5 +311,9 @@ int pid_ns_prepare_proc(struct pid_namespace *ns)
 
 void pid_ns_release_proc(struct pid_namespace *ns)
 {
+<<<<<<< HEAD
 	kern_unmount(ns->proc_mnt);
+=======
+	mntput(ns->proc_mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

@@ -387,6 +387,17 @@ int sm501_unit_power(struct device *dev, unsigned int unit, unsigned int to)
 
 EXPORT_SYMBOL_GPL(sm501_unit_power);
 
+<<<<<<< HEAD
+=======
+
+/* Perform a rounded division. */
+static long sm501fb_round_div(long num, long denom)
+{
+        /* n / d + 1 / 2 = (2n + d) / 2d */
+        return (2 * num + denom) / (2 * denom);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* clock value structure. */
 struct sm501_clock {
 	unsigned long mclk;
@@ -420,7 +431,11 @@ static int sm501_calc_clock(unsigned long freq,
 		/* try all 8 shift values.*/
 		for (shift = 0; shift < 8; shift++) {
 			/* Calculate difference to requested clock */
+<<<<<<< HEAD
 			diff = DIV_ROUND_CLOSEST(mclk, divider << shift) - freq;
+=======
+			diff = sm501fb_round_div(mclk, divider << shift) - freq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (diff < 0)
 				diff = -diff;
 
@@ -1712,7 +1727,11 @@ static int sm501_plat_remove(struct platform_device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static DEFINE_PCI_DEVICE_TABLE(sm501_pci_tbl) = {
+=======
+static struct pci_device_id sm501_pci_tbl[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0x126f, 0x0501, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0 },
 	{ 0, },
 };

@@ -32,7 +32,10 @@
 #include <linux/platform_device.h>
 #include <linux/ctype.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/of.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/ac97_codec.h>
 #include <sound/core.h>
 #include <sound/jack.h>
@@ -46,6 +49,10 @@
 
 #define NAME_SIZE	32
 
+<<<<<<< HEAD
+=======
+static DEFINE_MUTEX(pcm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DECLARE_WAIT_QUEUE_HEAD(soc_pm_waitq);
 
 #ifdef CONFIG_DEBUG_FS
@@ -59,6 +66,11 @@ static LIST_HEAD(dai_list);
 static LIST_HEAD(platform_list);
 static LIST_HEAD(codec_list);
 
+<<<<<<< HEAD
+=======
+static int soc_new_pcm(struct snd_soc_pcm_runtime *rtd, int num);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This is a timeout to do a DAPM powerdown after a stream is closed().
  * It can be used to eliminate pops between different playback streams, e.g.
@@ -105,7 +117,11 @@ static int format_register_str(struct snd_soc_codec *codec,
 	if (wordsize + regsize + 2 + 1 != len)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	ret = snd_soc_read(codec, reg);
+=======
+	ret = snd_soc_read(codec , reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		memset(regbuf, 'X', regsize);
 		regbuf[regsize] = '\0';
@@ -143,7 +159,11 @@ static ssize_t soc_codec_reg_show(struct snd_soc_codec *codec, char *buf,
 		step = codec->driver->reg_cache_step;
 
 	for (i = 0; i < codec->driver->reg_cache_size; i += step) {
+<<<<<<< HEAD
 		if (!snd_soc_codec_readable_register(codec, i))
+=======
+		if (codec->readable_register && !codec->readable_register(codec, i))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		if (codec->driver->display_register) {
 			count += codec->driver->display_register(codec, buf + count,
@@ -169,7 +189,12 @@ static ssize_t soc_codec_reg_show(struct snd_soc_codec *codec, char *buf,
 static ssize_t codec_reg_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
+<<<<<<< HEAD
 	struct snd_soc_pcm_runtime *rtd = dev_get_drvdata(dev);
+=======
+	struct snd_soc_pcm_runtime *rtd =
+			container_of(dev, struct snd_soc_pcm_runtime, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return soc_codec_reg_show(rtd->codec, buf, PAGE_SIZE, 0);
 }
@@ -179,7 +204,12 @@ static DEVICE_ATTR(codec_reg, 0444, codec_reg_show, NULL);
 static ssize_t pmdown_time_show(struct device *dev,
 				struct device_attribute *attr, char *buf)
 {
+<<<<<<< HEAD
 	struct snd_soc_pcm_runtime *rtd = dev_get_drvdata(dev);
+=======
+	struct snd_soc_pcm_runtime *rtd =
+			container_of(dev, struct snd_soc_pcm_runtime, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return sprintf(buf, "%ld\n", rtd->pmdown_time);
 }
@@ -188,7 +218,12 @@ static ssize_t pmdown_time_set(struct device *dev,
 			       struct device_attribute *attr,
 			       const char *buf, size_t count)
 {
+<<<<<<< HEAD
 	struct snd_soc_pcm_runtime *rtd = dev_get_drvdata(dev);
+=======
+	struct snd_soc_pcm_runtime *rtd =
+			container_of(dev, struct snd_soc_pcm_runtime, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	ret = strict_strtol(buf, 10, &rtd->pmdown_time);
@@ -201,6 +236,15 @@ static ssize_t pmdown_time_set(struct device *dev,
 static DEVICE_ATTR(pmdown_time, 0644, pmdown_time_show, pmdown_time_set);
 
 #ifdef CONFIG_DEBUG_FS
+<<<<<<< HEAD
+=======
+static int codec_reg_open_file(struct inode *inode, struct file *file)
+{
+	file->private_data = inode->i_private;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t codec_reg_read_file(struct file *file, char __user *user_buf,
 				   size_t count, loff_t *ppos)
 {
@@ -235,6 +279,10 @@ static ssize_t codec_reg_write_file(struct file *file,
 	size_t buf_size;
 	char *start = buf;
 	unsigned long reg, value;
+<<<<<<< HEAD
+=======
+	int step = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct snd_soc_codec *codec = file->private_data;
 
 	buf_size = min(count, (sizeof(buf)-1));
@@ -242,6 +290,12 @@ static ssize_t codec_reg_write_file(struct file *file,
 		return -EFAULT;
 	buf[buf_size] = 0;
 
+<<<<<<< HEAD
+=======
+	if (codec->driver->reg_cache_step)
+		step = codec->driver->reg_cache_step;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (*start == ' ')
 		start++;
 	reg = simple_strtoul(start, &start, 16);
@@ -258,7 +312,11 @@ static ssize_t codec_reg_write_file(struct file *file,
 }
 
 static const struct file_operations codec_reg_fops = {
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = codec_reg_open_file,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.read = codec_reg_read_file,
 	.write = codec_reg_write_file,
 	.llseek = default_llseek,
@@ -271,7 +329,12 @@ static void soc_init_codec_debugfs(struct snd_soc_codec *codec)
 	codec->debugfs_codec_root = debugfs_create_dir(codec->name,
 						       debugfs_card_root);
 	if (!codec->debugfs_codec_root) {
+<<<<<<< HEAD
 		dev_warn(codec->dev, "Failed to create codec debugfs directory\n");
+=======
+		printk(KERN_WARNING
+		       "ASoC: Failed to create codec debugfs directory\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -284,7 +347,12 @@ static void soc_init_codec_debugfs(struct snd_soc_codec *codec)
 						 codec->debugfs_codec_root,
 						 codec, &codec_reg_fops);
 	if (!codec->debugfs_reg)
+<<<<<<< HEAD
 		dev_warn(codec->dev, "Failed to create codec register debugfs file\n");
+=======
+		printk(KERN_WARNING
+		       "ASoC: Failed to create codec register debugfs file\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	snd_soc_dapm_debugfs_init(&codec->dapm, codec->debugfs_codec_root);
 }
@@ -294,6 +362,7 @@ static void soc_cleanup_codec_debugfs(struct snd_soc_codec *codec)
 	debugfs_remove_recursive(codec->debugfs_codec_root);
 }
 
+<<<<<<< HEAD
 static void soc_init_platform_debugfs(struct snd_soc_platform *platform)
 {
 	struct dentry *debugfs_card_root = platform->card->debugfs_card_root;
@@ -315,6 +384,8 @@ static void soc_cleanup_platform_debugfs(struct snd_soc_platform *platform)
 	debugfs_remove_recursive(platform->debugfs_platform_root);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t codec_list_read_file(struct file *file, char __user *user_buf,
 				    size_t count, loff_t *ppos)
 {
@@ -421,7 +492,11 @@ static void soc_init_card_debugfs(struct snd_soc_card *card)
 						     snd_soc_debugfs_root);
 	if (!card->debugfs_card_root) {
 		dev_warn(card->dev,
+<<<<<<< HEAD
 			 "ASoC: Failed to create card debugfs directory\n");
+=======
+			 "ASoC: Failed to create codec debugfs directory\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -448,6 +523,7 @@ static inline void soc_cleanup_codec_debugfs(struct snd_soc_codec *codec)
 {
 }
 
+<<<<<<< HEAD
 static inline void soc_init_platform_debugfs(struct snd_soc_platform *platform)
 {
 }
@@ -456,6 +532,8 @@ static inline void soc_cleanup_platform_debugfs(struct snd_soc_platform *platfor
 {
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void soc_init_card_debugfs(struct snd_soc_card *card)
 {
 }
@@ -498,6 +576,555 @@ static int soc_ac97_dev_register(struct snd_soc_codec *codec)
 }
 #endif
 
+<<<<<<< HEAD
+=======
+static int soc_pcm_apply_symmetry(struct snd_pcm_substream *substream)
+{
+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+	int ret;
+
+	if (!codec_dai->driver->symmetric_rates &&
+	    !cpu_dai->driver->symmetric_rates &&
+	    !rtd->dai_link->symmetric_rates)
+		return 0;
+
+	/* This can happen if multiple streams are starting simultaneously -
+	 * the second can need to get its constraints before the first has
+	 * picked a rate.  Complain and allow the application to carry on.
+	 */
+	if (!rtd->rate) {
+		dev_warn(&rtd->dev,
+			 "Not enforcing symmetric_rates due to race\n");
+		return 0;
+	}
+
+	dev_dbg(&rtd->dev, "Symmetry forces %dHz rate\n", rtd->rate);
+
+	ret = snd_pcm_hw_constraint_minmax(substream->runtime,
+					   SNDRV_PCM_HW_PARAM_RATE,
+					   rtd->rate, rtd->rate);
+	if (ret < 0) {
+		dev_err(&rtd->dev,
+			"Unable to apply rate symmetry constraint: %d\n", ret);
+		return ret;
+	}
+
+	return 0;
+}
+
+/*
+ * Called by ALSA when a PCM substream is opened, the runtime->hw record is
+ * then initialized and any private data can be allocated. This also calls
+ * startup for the cpu DAI, platform, machine and codec DAI.
+ */
+static int soc_pcm_open(struct snd_pcm_substream *substream)
+{
+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+	struct snd_pcm_runtime *runtime = substream->runtime;
+	struct snd_soc_platform *platform = rtd->platform;
+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+	struct snd_soc_dai_driver *cpu_dai_drv = cpu_dai->driver;
+	struct snd_soc_dai_driver *codec_dai_drv = codec_dai->driver;
+	int ret = 0;
+
+	mutex_lock(&pcm_mutex);
+
+	/* startup the audio subsystem */
+	if (cpu_dai->driver->ops->startup) {
+		ret = cpu_dai->driver->ops->startup(substream, cpu_dai);
+		if (ret < 0) {
+			printk(KERN_ERR "asoc: can't open interface %s\n",
+				cpu_dai->name);
+			goto out;
+		}
+	}
+
+	if (platform->driver->ops && platform->driver->ops->open) {
+		ret = platform->driver->ops->open(substream);
+		if (ret < 0) {
+			printk(KERN_ERR "asoc: can't open platform %s\n", platform->name);
+			goto platform_err;
+		}
+	}
+
+	if (codec_dai->driver->ops->startup) {
+		ret = codec_dai->driver->ops->startup(substream, codec_dai);
+		if (ret < 0) {
+			printk(KERN_ERR "asoc: can't open codec %s\n",
+				codec_dai->name);
+			goto codec_dai_err;
+		}
+	}
+
+	if (rtd->dai_link->ops && rtd->dai_link->ops->startup) {
+		ret = rtd->dai_link->ops->startup(substream);
+		if (ret < 0) {
+			printk(KERN_ERR "asoc: %s startup failed\n", rtd->dai_link->name);
+			goto machine_err;
+		}
+	}
+
+	/* Check that the codec and cpu DAIs are compatible */
+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+		runtime->hw.rate_min =
+			max(codec_dai_drv->playback.rate_min,
+			    cpu_dai_drv->playback.rate_min);
+		runtime->hw.rate_max =
+			min(codec_dai_drv->playback.rate_max,
+			    cpu_dai_drv->playback.rate_max);
+		runtime->hw.channels_min =
+			max(codec_dai_drv->playback.channels_min,
+				cpu_dai_drv->playback.channels_min);
+		runtime->hw.channels_max =
+			min(codec_dai_drv->playback.channels_max,
+				cpu_dai_drv->playback.channels_max);
+		runtime->hw.formats =
+			codec_dai_drv->playback.formats & cpu_dai_drv->playback.formats;
+		runtime->hw.rates =
+			codec_dai_drv->playback.rates & cpu_dai_drv->playback.rates;
+		if (codec_dai_drv->playback.rates
+			   & (SNDRV_PCM_RATE_KNOT | SNDRV_PCM_RATE_CONTINUOUS))
+			runtime->hw.rates |= cpu_dai_drv->playback.rates;
+		if (cpu_dai_drv->playback.rates
+			   & (SNDRV_PCM_RATE_KNOT | SNDRV_PCM_RATE_CONTINUOUS))
+			runtime->hw.rates |= codec_dai_drv->playback.rates;
+	} else {
+		runtime->hw.rate_min =
+			max(codec_dai_drv->capture.rate_min,
+			    cpu_dai_drv->capture.rate_min);
+		runtime->hw.rate_max =
+			min(codec_dai_drv->capture.rate_max,
+			    cpu_dai_drv->capture.rate_max);
+		runtime->hw.channels_min =
+			max(codec_dai_drv->capture.channels_min,
+				cpu_dai_drv->capture.channels_min);
+		runtime->hw.channels_max =
+			min(codec_dai_drv->capture.channels_max,
+				cpu_dai_drv->capture.channels_max);
+		runtime->hw.formats =
+			codec_dai_drv->capture.formats & cpu_dai_drv->capture.formats;
+		runtime->hw.rates =
+			codec_dai_drv->capture.rates & cpu_dai_drv->capture.rates;
+		if (codec_dai_drv->capture.rates
+			   & (SNDRV_PCM_RATE_KNOT | SNDRV_PCM_RATE_CONTINUOUS))
+			runtime->hw.rates |= cpu_dai_drv->capture.rates;
+		if (cpu_dai_drv->capture.rates
+			   & (SNDRV_PCM_RATE_KNOT | SNDRV_PCM_RATE_CONTINUOUS))
+			runtime->hw.rates |= codec_dai_drv->capture.rates;
+	}
+
+	ret = -EINVAL;
+	snd_pcm_limit_hw_rates(runtime);
+	if (!runtime->hw.rates) {
+		printk(KERN_ERR "asoc: %s <-> %s No matching rates\n",
+			codec_dai->name, cpu_dai->name);
+		goto config_err;
+	}
+	if (!runtime->hw.formats) {
+		printk(KERN_ERR "asoc: %s <-> %s No matching formats\n",
+			codec_dai->name, cpu_dai->name);
+		goto config_err;
+	}
+	if (!runtime->hw.channels_min || !runtime->hw.channels_max ||
+	    runtime->hw.channels_min > runtime->hw.channels_max) {
+		printk(KERN_ERR "asoc: %s <-> %s No matching channels\n",
+				codec_dai->name, cpu_dai->name);
+		goto config_err;
+	}
+
+	/* Symmetry only applies if we've already got an active stream. */
+	if (cpu_dai->active || codec_dai->active) {
+		ret = soc_pcm_apply_symmetry(substream);
+		if (ret != 0)
+			goto config_err;
+	}
+
+	pr_debug("asoc: %s <-> %s info:\n",
+			codec_dai->name, cpu_dai->name);
+	pr_debug("asoc: rate mask 0x%x\n", runtime->hw.rates);
+	pr_debug("asoc: min ch %d max ch %d\n", runtime->hw.channels_min,
+		 runtime->hw.channels_max);
+	pr_debug("asoc: min rate %d max rate %d\n", runtime->hw.rate_min,
+		 runtime->hw.rate_max);
+
+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+		cpu_dai->playback_active++;
+		codec_dai->playback_active++;
+	} else {
+		cpu_dai->capture_active++;
+		codec_dai->capture_active++;
+	}
+	cpu_dai->active++;
+	codec_dai->active++;
+	rtd->codec->active++;
+	mutex_unlock(&pcm_mutex);
+	return 0;
+
+config_err:
+	if (rtd->dai_link->ops && rtd->dai_link->ops->shutdown)
+		rtd->dai_link->ops->shutdown(substream);
+
+machine_err:
+	if (codec_dai->driver->ops->shutdown)
+		codec_dai->driver->ops->shutdown(substream, codec_dai);
+
+codec_dai_err:
+	if (platform->driver->ops && platform->driver->ops->close)
+		platform->driver->ops->close(substream);
+
+platform_err:
+	if (cpu_dai->driver->ops->shutdown)
+		cpu_dai->driver->ops->shutdown(substream, cpu_dai);
+out:
+	mutex_unlock(&pcm_mutex);
+	return ret;
+}
+
+/*
+ * Power down the audio subsystem pmdown_time msecs after close is called.
+ * This is to ensure there are no pops or clicks in between any music tracks
+ * due to DAPM power cycling.
+ */
+static void close_delayed_work(struct work_struct *work)
+{
+	struct snd_soc_pcm_runtime *rtd =
+			container_of(work, struct snd_soc_pcm_runtime, delayed_work.work);
+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+
+	mutex_lock(&pcm_mutex);
+
+	pr_debug("pop wq checking: %s status: %s waiting: %s\n",
+		 codec_dai->driver->playback.stream_name,
+		 codec_dai->playback_active ? "active" : "inactive",
+		 codec_dai->pop_wait ? "yes" : "no");
+
+	/* are we waiting on this codec DAI stream */
+	if (codec_dai->pop_wait == 1) {
+		codec_dai->pop_wait = 0;
+		snd_soc_dapm_stream_event(rtd,
+			codec_dai->driver->playback.stream_name,
+			SND_SOC_DAPM_STREAM_STOP);
+	}
+
+	mutex_unlock(&pcm_mutex);
+}
+
+/*
+ * Called by ALSA when a PCM substream is closed. Private data can be
+ * freed here. The cpu DAI, codec DAI, machine and platform are also
+ * shutdown.
+ */
+static int soc_codec_close(struct snd_pcm_substream *substream)
+{
+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+	struct snd_soc_platform *platform = rtd->platform;
+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+	struct snd_soc_codec *codec = rtd->codec;
+
+	mutex_lock(&pcm_mutex);
+
+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+		cpu_dai->playback_active--;
+		codec_dai->playback_active--;
+	} else {
+		cpu_dai->capture_active--;
+		codec_dai->capture_active--;
+	}
+
+	cpu_dai->active--;
+	codec_dai->active--;
+	codec->active--;
+
+	/* Muting the DAC suppresses artifacts caused during digital
+	 * shutdown, for example from stopping clocks.
+	 */
+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+		snd_soc_dai_digital_mute(codec_dai, 1);
+
+	if (cpu_dai->driver->ops->shutdown)
+		cpu_dai->driver->ops->shutdown(substream, cpu_dai);
+
+	if (codec_dai->driver->ops->shutdown)
+		codec_dai->driver->ops->shutdown(substream, codec_dai);
+
+	if (rtd->dai_link->ops && rtd->dai_link->ops->shutdown)
+		rtd->dai_link->ops->shutdown(substream);
+
+	if (platform->driver->ops && platform->driver->ops->close)
+		platform->driver->ops->close(substream);
+	cpu_dai->runtime = NULL;
+
+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+		/* start delayed pop wq here for playback streams */
+		codec_dai->pop_wait = 1;
+		schedule_delayed_work(&rtd->delayed_work,
+			msecs_to_jiffies(rtd->pmdown_time));
+	} else {
+		/* capture streams can be powered down now */
+		snd_soc_dapm_stream_event(rtd,
+			codec_dai->driver->capture.stream_name,
+			SND_SOC_DAPM_STREAM_STOP);
+	}
+
+	mutex_unlock(&pcm_mutex);
+	return 0;
+}
+
+/*
+ * Called by ALSA when the PCM substream is prepared, can set format, sample
+ * rate, etc.  This function is non atomic and can be called multiple times,
+ * it can refer to the runtime info.
+ */
+static int soc_pcm_prepare(struct snd_pcm_substream *substream)
+{
+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+	struct snd_soc_platform *platform = rtd->platform;
+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+	int ret = 0;
+
+	mutex_lock(&pcm_mutex);
+
+	if (rtd->dai_link->ops && rtd->dai_link->ops->prepare) {
+		ret = rtd->dai_link->ops->prepare(substream);
+		if (ret < 0) {
+			printk(KERN_ERR "asoc: machine prepare error\n");
+			goto out;
+		}
+	}
+
+	if (platform->driver->ops && platform->driver->ops->prepare) {
+		ret = platform->driver->ops->prepare(substream);
+		if (ret < 0) {
+			printk(KERN_ERR "asoc: platform prepare error\n");
+			goto out;
+		}
+	}
+
+	if (codec_dai->driver->ops->prepare) {
+		ret = codec_dai->driver->ops->prepare(substream, codec_dai);
+		if (ret < 0) {
+			printk(KERN_ERR "asoc: codec DAI prepare error\n");
+			goto out;
+		}
+	}
+
+	if (cpu_dai->driver->ops->prepare) {
+		ret = cpu_dai->driver->ops->prepare(substream, cpu_dai);
+		if (ret < 0) {
+			printk(KERN_ERR "asoc: cpu DAI prepare error\n");
+			goto out;
+		}
+	}
+
+	/* cancel any delayed stream shutdown that is pending */
+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK &&
+	    codec_dai->pop_wait) {
+		codec_dai->pop_wait = 0;
+		cancel_delayed_work(&rtd->delayed_work);
+	}
+
+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+		snd_soc_dapm_stream_event(rtd,
+					  codec_dai->driver->playback.stream_name,
+					  SND_SOC_DAPM_STREAM_START);
+	else
+		snd_soc_dapm_stream_event(rtd,
+					  codec_dai->driver->capture.stream_name,
+					  SND_SOC_DAPM_STREAM_START);
+
+	snd_soc_dai_digital_mute(codec_dai, 0);
+
+out:
+	mutex_unlock(&pcm_mutex);
+	return ret;
+}
+
+/*
+ * Called by ALSA when the hardware params are set by application. This
+ * function can also be called multiple times and can allocate buffers
+ * (using snd_pcm_lib_* ). It's non-atomic.
+ */
+static int soc_pcm_hw_params(struct snd_pcm_substream *substream,
+				struct snd_pcm_hw_params *params)
+{
+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+	struct snd_soc_platform *platform = rtd->platform;
+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+	int ret = 0;
+
+	mutex_lock(&pcm_mutex);
+
+	if (rtd->dai_link->ops && rtd->dai_link->ops->hw_params) {
+		ret = rtd->dai_link->ops->hw_params(substream, params);
+		if (ret < 0) {
+			printk(KERN_ERR "asoc: machine hw_params failed\n");
+			goto out;
+		}
+	}
+
+	if (codec_dai->driver->ops->hw_params) {
+		ret = codec_dai->driver->ops->hw_params(substream, params, codec_dai);
+		if (ret < 0) {
+			printk(KERN_ERR "asoc: can't set codec %s hw params\n",
+				codec_dai->name);
+			goto codec_err;
+		}
+	}
+
+	if (cpu_dai->driver->ops->hw_params) {
+		ret = cpu_dai->driver->ops->hw_params(substream, params, cpu_dai);
+		if (ret < 0) {
+			printk(KERN_ERR "asoc: interface %s hw params failed\n",
+				cpu_dai->name);
+			goto interface_err;
+		}
+	}
+
+	if (platform->driver->ops && platform->driver->ops->hw_params) {
+		ret = platform->driver->ops->hw_params(substream, params);
+		if (ret < 0) {
+			printk(KERN_ERR "asoc: platform %s hw params failed\n",
+				platform->name);
+			goto platform_err;
+		}
+	}
+
+	rtd->rate = params_rate(params);
+
+out:
+	mutex_unlock(&pcm_mutex);
+	return ret;
+
+platform_err:
+	if (cpu_dai->driver->ops->hw_free)
+		cpu_dai->driver->ops->hw_free(substream, cpu_dai);
+
+interface_err:
+	if (codec_dai->driver->ops->hw_free)
+		codec_dai->driver->ops->hw_free(substream, codec_dai);
+
+codec_err:
+	if (rtd->dai_link->ops && rtd->dai_link->ops->hw_free)
+		rtd->dai_link->ops->hw_free(substream);
+
+	mutex_unlock(&pcm_mutex);
+	return ret;
+}
+
+/*
+ * Frees resources allocated by hw_params, can be called multiple times
+ */
+static int soc_pcm_hw_free(struct snd_pcm_substream *substream)
+{
+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+	struct snd_soc_platform *platform = rtd->platform;
+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+	struct snd_soc_codec *codec = rtd->codec;
+
+	mutex_lock(&pcm_mutex);
+
+	/* apply codec digital mute */
+	if (!codec->active)
+		snd_soc_dai_digital_mute(codec_dai, 1);
+
+	/* free any machine hw params */
+	if (rtd->dai_link->ops && rtd->dai_link->ops->hw_free)
+		rtd->dai_link->ops->hw_free(substream);
+
+	/* free any DMA resources */
+	if (platform->driver->ops && platform->driver->ops->hw_free)
+		platform->driver->ops->hw_free(substream);
+
+	/* now free hw params for the DAIs  */
+	if (codec_dai->driver->ops->hw_free)
+		codec_dai->driver->ops->hw_free(substream, codec_dai);
+
+	if (cpu_dai->driver->ops->hw_free)
+		cpu_dai->driver->ops->hw_free(substream, cpu_dai);
+
+	mutex_unlock(&pcm_mutex);
+	return 0;
+}
+
+static int soc_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
+{
+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+	struct snd_soc_platform *platform = rtd->platform;
+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+	int ret;
+
+	if (codec_dai->driver->ops->trigger) {
+		ret = codec_dai->driver->ops->trigger(substream, cmd, codec_dai);
+		if (ret < 0)
+			return ret;
+	}
+
+	if (platform->driver->ops && platform->driver->ops->trigger) {
+		ret = platform->driver->ops->trigger(substream, cmd);
+		if (ret < 0)
+			return ret;
+	}
+
+	if (cpu_dai->driver->ops->trigger) {
+		ret = cpu_dai->driver->ops->trigger(substream, cmd, cpu_dai);
+		if (ret < 0)
+			return ret;
+	}
+	return 0;
+}
+
+/*
+ * soc level wrapper for pointer callback
+ * If cpu_dai, codec_dai, platform driver has the delay callback, than
+ * the runtime->delay will be updated accordingly.
+ */
+static snd_pcm_uframes_t soc_pcm_pointer(struct snd_pcm_substream *substream)
+{
+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+	struct snd_soc_platform *platform = rtd->platform;
+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+	struct snd_pcm_runtime *runtime = substream->runtime;
+	snd_pcm_uframes_t offset = 0;
+	snd_pcm_sframes_t delay = 0;
+
+	if (platform->driver->ops && platform->driver->ops->pointer)
+		offset = platform->driver->ops->pointer(substream);
+
+	if (cpu_dai->driver->ops->delay)
+		delay += cpu_dai->driver->ops->delay(substream, cpu_dai);
+
+	if (codec_dai->driver->ops->delay)
+		delay += codec_dai->driver->ops->delay(substream, codec_dai);
+
+	if (platform->driver->delay)
+		delay += platform->driver->delay(substream, codec_dai);
+
+	runtime->delay = delay;
+
+	return offset;
+}
+
+/* ASoC PCM operations */
+static struct snd_pcm_ops soc_pcm_ops = {
+	.open		= soc_pcm_open,
+	.close		= soc_codec_close,
+	.hw_params	= soc_pcm_hw_params,
+	.hw_free	= soc_pcm_hw_free,
+	.prepare	= soc_pcm_prepare,
+	.trigger	= soc_pcm_trigger,
+	.pointer	= soc_pcm_pointer,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PM_SLEEP
 /* powers down audio subsystem for suspend */
 int snd_soc_suspend(struct device *dev)
@@ -567,11 +1194,16 @@ int snd_soc_suspend(struct device *dev)
 	}
 
 	for (i = 0; i < card->num_rtd; i++) {
+<<<<<<< HEAD
 		struct snd_soc_dai *codec_dai = card->rtd[i].codec_dai;
+=======
+		struct snd_soc_dai_driver *driver = card->rtd[i].codec_dai->driver;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (card->rtd[i].dai_link->ignore_suspend)
 			continue;
 
+<<<<<<< HEAD
 		snd_soc_dapm_stream_event(&card->rtd[i],
 					  SNDRV_PCM_STREAM_PLAYBACK,
 					  codec_dai,
@@ -581,6 +1213,15 @@ int snd_soc_suspend(struct device *dev)
 					  SNDRV_PCM_STREAM_CAPTURE,
 					  codec_dai,
 					  SND_SOC_DAPM_STREAM_SUSPEND);
+=======
+		if (driver->playback.stream_name != NULL)
+			snd_soc_dapm_stream_event(&card->rtd[i], driver->playback.stream_name,
+				SND_SOC_DAPM_STREAM_SUSPEND);
+
+		if (driver->capture.stream_name != NULL)
+			snd_soc_dapm_stream_event(&card->rtd[i], driver->capture.stream_name,
+				SND_SOC_DAPM_STREAM_SUSPEND);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* suspend all CODECs */
@@ -590,6 +1231,7 @@ int snd_soc_suspend(struct device *dev)
 		if (!codec->suspended && codec->driver->suspend) {
 			switch (codec->dapm.bias_level) {
 			case SND_SOC_BIAS_STANDBY:
+<<<<<<< HEAD
 				/*
 				 * If the CODEC is capable of idle
 				 * bias off then being in STANDBY
@@ -603,6 +1245,10 @@ int snd_soc_suspend(struct device *dev)
 				}
 			case SND_SOC_BIAS_OFF:
 				codec->driver->suspend(codec);
+=======
+			case SND_SOC_BIAS_OFF:
+				codec->driver->suspend(codec, PMSG_SUSPEND);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				codec->suspended = 1;
 				codec->cache_sync = 1;
 				break;
@@ -683,11 +1329,16 @@ static void soc_resume_deferred(struct work_struct *work)
 	}
 
 	for (i = 0; i < card->num_rtd; i++) {
+<<<<<<< HEAD
 		struct snd_soc_dai *codec_dai = card->rtd[i].codec_dai;
+=======
+		struct snd_soc_dai_driver *driver = card->rtd[i].codec_dai->driver;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (card->rtd[i].dai_link->ignore_suspend)
 			continue;
 
+<<<<<<< HEAD
 		snd_soc_dapm_stream_event(&card->rtd[i],
 					  SNDRV_PCM_STREAM_PLAYBACK, codec_dai,
 					  SND_SOC_DAPM_STREAM_RESUME);
@@ -695,6 +1346,15 @@ static void soc_resume_deferred(struct work_struct *work)
 		snd_soc_dapm_stream_event(&card->rtd[i],
 					  SNDRV_PCM_STREAM_CAPTURE, codec_dai,
 					  SND_SOC_DAPM_STREAM_RESUME);
+=======
+		if (driver->playback.stream_name != NULL)
+			snd_soc_dapm_stream_event(&card->rtd[i], driver->playback.stream_name,
+				SND_SOC_DAPM_STREAM_RESUME);
+
+		if (driver->capture.stream_name != NULL)
+			snd_soc_dapm_stream_event(&card->rtd[i], driver->capture.stream_name,
+				SND_SOC_DAPM_STREAM_RESUME);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* unmute any active DACs */
@@ -739,12 +1399,15 @@ int snd_soc_resume(struct device *dev)
 	struct snd_soc_card *card = dev_get_drvdata(dev);
 	int i, ac97_control = 0;
 
+<<<<<<< HEAD
 	/* If the initialization of this soc device failed, there is no codec
 	 * associated with it. Just bail out in this case.
 	 */
 	if (list_empty(&card->codec_dev_list))
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* AC97 devices might have other drivers hanging off them so
 	 * need to resume immediately.  Other drivers don't have that
 	 * problem and may take a substantial amount of time to resume
@@ -771,7 +1434,11 @@ EXPORT_SYMBOL_GPL(snd_soc_resume);
 #define snd_soc_resume NULL
 #endif
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops null_dai_ops = {
+=======
+static struct snd_soc_dai_ops null_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int soc_bind_dai_link(struct snd_soc_card *card, int num)
@@ -793,6 +1460,7 @@ static int soc_bind_dai_link(struct snd_soc_card *card, int num)
 	}
 	/* no, then find CPU DAI from registered DAIs*/
 	list_for_each_entry(cpu_dai, &dai_list, list) {
+<<<<<<< HEAD
 		if (dai_link->cpu_dai_of_node) {
 			if (cpu_dai->dev->of_node != dai_link->cpu_dai_of_node)
 				continue;
@@ -803,6 +1471,12 @@ static int soc_bind_dai_link(struct snd_soc_card *card, int num)
 
 		rtd->cpu_dai = cpu_dai;
 		goto find_codec;
+=======
+		if (!strcmp(cpu_dai->name, dai_link->cpu_dai_name)) {
+			rtd->cpu_dai = cpu_dai;
+			goto find_codec;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	dev_dbg(card->dev, "CPU DAI %s not registered\n",
 			dai_link->cpu_dai_name);
@@ -815,6 +1489,7 @@ find_codec:
 
 	/* no, then find CODEC from registered CODECs*/
 	list_for_each_entry(codec, &codec_list, list) {
+<<<<<<< HEAD
 		if (dai_link->codec_of_node) {
 			if (codec->dev->of_node != dai_link->codec_of_node)
 				continue;
@@ -842,6 +1517,24 @@ find_codec:
 				dai_link->codec_dai_name);
 
 		goto find_platform;
+=======
+		if (!strcmp(codec->name, dai_link->codec_name)) {
+			rtd->codec = codec;
+
+			/* CODEC found, so find CODEC DAI from registered DAIs from this CODEC*/
+			list_for_each_entry(codec_dai, &dai_list, list) {
+				if (codec->dev == codec_dai->dev &&
+						!strcmp(codec_dai->name, dai_link->codec_dai_name)) {
+					rtd->codec_dai = codec_dai;
+					goto find_platform;
+				}
+			}
+			dev_dbg(card->dev, "CODEC DAI %s not registered\n",
+					dai_link->codec_dai_name);
+
+			goto find_platform;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	dev_dbg(card->dev, "CODEC %s not registered\n",
 			dai_link->codec_name);
@@ -853,11 +1546,16 @@ find_platform:
 
 	/* if there's no platform we match on the empty platform */
 	platform_name = dai_link->platform_name;
+<<<<<<< HEAD
 	if (!platform_name && !dai_link->platform_of_node)
+=======
+	if (!platform_name)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		platform_name = "snd-soc-dummy";
 
 	/* no, then find one from the set of registered platforms */
 	list_for_each_entry(platform, &platform_list, list) {
+<<<<<<< HEAD
 		if (dai_link->platform_of_node) {
 			if (platform->dev->of_node !=
 			    dai_link->platform_of_node)
@@ -869,6 +1567,12 @@ find_platform:
 
 		rtd->platform = platform;
 		goto out;
+=======
+		if (!strcmp(platform->name, platform_name)) {
+			rtd->platform = platform;
+			goto out;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	dev_dbg(card->dev, "platform %s not registered\n",
@@ -905,7 +1609,11 @@ static void soc_remove_codec(struct snd_soc_codec *codec)
 	module_put(codec->dev->driver->owner);
 }
 
+<<<<<<< HEAD
 static void soc_remove_dai_link(struct snd_soc_card *card, int num, int order)
+=======
+static void soc_remove_dai_link(struct snd_soc_card *card, int num)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct snd_soc_pcm_runtime *rtd = &card->rtd[num];
 	struct snd_soc_codec *codec = rtd->codec;
@@ -915,13 +1623,20 @@ static void soc_remove_dai_link(struct snd_soc_card *card, int num, int order)
 
 	/* unregister the rtd device */
 	if (rtd->dev_registered) {
+<<<<<<< HEAD
 		device_remove_file(rtd->dev, &dev_attr_pmdown_time);
 		device_remove_file(rtd->dev, &dev_attr_codec_reg);
 		device_unregister(rtd->dev);
+=======
+		device_remove_file(&rtd->dev, &dev_attr_pmdown_time);
+		device_remove_file(&rtd->dev, &dev_attr_codec_reg);
+		device_unregister(&rtd->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rtd->dev_registered = 0;
 	}
 
 	/* remove the CODEC DAI */
+<<<<<<< HEAD
 	if (codec_dai && codec_dai->probed &&
 			codec_dai->driver->remove_order == order) {
 		if (codec_dai->driver->remove) {
@@ -929,12 +1644,20 @@ static void soc_remove_dai_link(struct snd_soc_card *card, int num, int order)
 			if (err < 0)
 				pr_err("asoc: failed to remove %s: %d\n",
 							codec_dai->name, err);
+=======
+	if (codec_dai && codec_dai->probed) {
+		if (codec_dai->driver->remove) {
+			err = codec_dai->driver->remove(codec_dai);
+			if (err < 0)
+				printk(KERN_ERR "asoc: failed to remove %s\n", codec_dai->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		codec_dai->probed = 0;
 		list_del(&codec_dai->card_list);
 	}
 
 	/* remove the platform */
+<<<<<<< HEAD
 	if (platform && platform->probed &&
 			platform->driver->remove_order == order) {
 		if (platform->driver->remove) {
@@ -948,12 +1671,21 @@ static void soc_remove_dai_link(struct snd_soc_card *card, int num, int order)
 		snd_soc_dapm_free(&platform->dapm);
 
 		soc_cleanup_platform_debugfs(platform);
+=======
+	if (platform && platform->probed) {
+		if (platform->driver->remove) {
+			err = platform->driver->remove(platform);
+			if (err < 0)
+				printk(KERN_ERR "asoc: failed to remove %s\n", platform->name);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		platform->probed = 0;
 		list_del(&platform->card_list);
 		module_put(platform->dev->driver->owner);
 	}
 
 	/* remove the CODEC */
+<<<<<<< HEAD
 	if (codec && codec->probed &&
 			codec->driver->remove_order == order)
 		soc_remove_codec(codec);
@@ -966,6 +1698,17 @@ static void soc_remove_dai_link(struct snd_soc_card *card, int num, int order)
 			if (err < 0)
 				pr_err("asoc: failed to remove %s: %d\n",
 							cpu_dai->name, err);
+=======
+	if (codec && codec->probed)
+		soc_remove_codec(codec);
+
+	/* remove the cpu_dai */
+	if (cpu_dai && cpu_dai->probed) {
+		if (cpu_dai->driver->remove) {
+			err = cpu_dai->driver->remove(cpu_dai);
+			if (err < 0)
+				printk(KERN_ERR "asoc: failed to remove %s\n", cpu_dai->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		cpu_dai->probed = 0;
 		list_del(&cpu_dai->card_list);
@@ -975,6 +1718,7 @@ static void soc_remove_dai_link(struct snd_soc_card *card, int num, int order)
 
 static void soc_remove_dai_links(struct snd_soc_card *card)
 {
+<<<<<<< HEAD
 	int dai, order;
 
 	for (order = SND_SOC_COMP_ORDER_FIRST; order <= SND_SOC_COMP_ORDER_LAST;
@@ -982,6 +1726,13 @@ static void soc_remove_dai_links(struct snd_soc_card *card)
 		for (dai = 0; dai < card->num_rtd; dai++)
 			soc_remove_dai_link(card, dai, order);
 	}
+=======
+	int i;
+
+	for (i = 0; i < card->num_rtd; i++)
+		soc_remove_dai_link(card, i);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	card->num_rtd = 0;
 }
 
@@ -1007,7 +1758,10 @@ static int soc_probe_codec(struct snd_soc_card *card,
 {
 	int ret = 0;
 	const struct snd_soc_codec_driver *driver = codec->driver;
+<<<<<<< HEAD
 	struct snd_soc_dai *dai;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	codec->card = card;
 	codec->dapm.card = card;
@@ -1022,6 +1776,7 @@ static int soc_probe_codec(struct snd_soc_card *card,
 		snd_soc_dapm_new_controls(&codec->dapm, driver->dapm_widgets,
 					  driver->num_dapm_widgets);
 
+<<<<<<< HEAD
 	/* Create DAPM widgets for each DAI stream */
 	list_for_each_entry(dai, &dai_list, list) {
 		if (dai->dev != codec->dev)
@@ -1032,6 +1787,8 @@ static int soc_probe_codec(struct snd_soc_card *card,
 
 	codec->dapm.idle_bias_off = driver->idle_bias_off;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (driver->probe) {
 		ret = driver->probe(codec);
 		if (ret < 0) {
@@ -1043,7 +1800,11 @@ static int soc_probe_codec(struct snd_soc_card *card,
 	}
 
 	if (driver->controls)
+<<<<<<< HEAD
 		snd_soc_add_codec_controls(codec, driver->controls,
+=======
+		snd_soc_add_controls(codec, driver->controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     driver->num_controls);
 	if (driver->dapm_routes)
 		snd_soc_dapm_add_routes(&codec->dapm, driver->dapm_routes,
@@ -1063,6 +1824,7 @@ err_probe:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int soc_probe_platform(struct snd_soc_card *card,
 			   struct snd_soc_platform *platform)
 {
@@ -1118,6 +1880,9 @@ static void rtd_release(struct device *dev)
 {
 	kfree(dev);
 }
+=======
+static void rtd_release(struct device *dev) {}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int soc_post_component_init(struct snd_soc_card *card,
 				   struct snd_soc_codec *codec,
@@ -1140,9 +1905,12 @@ static int soc_post_component_init(struct snd_soc_card *card,
 	}
 	rtd->card = card;
 
+<<<<<<< HEAD
 	/* Make sure all DAPM widgets are instantiated */
 	snd_soc_dapm_new_widgets(&codec->dapm);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* machine controls, routes and widgets are not prefixed */
 	temp = codec->name_prefix;
 	codec->name_prefix = NULL;
@@ -1158,6 +1926,7 @@ static int soc_post_component_init(struct snd_soc_card *card,
 	}
 	codec->name_prefix = temp;
 
+<<<<<<< HEAD
 	/* register the rtd device */
 	rtd->codec = codec;
 
@@ -1171,6 +1940,17 @@ static int soc_post_component_init(struct snd_soc_card *card,
 	dev_set_drvdata(rtd->dev, rtd);
 	mutex_init(&rtd->pcm_mutex);
 	ret = device_add(rtd->dev);
+=======
+	/* Make sure all DAPM widgets are instantiated */
+	snd_soc_dapm_new_widgets(&codec->dapm);
+
+	/* register the rtd device */
+	rtd->codec = codec;
+	rtd->dev.parent = card->dev;
+	rtd->dev.release = rtd_release;
+	rtd->dev.init_name = name;
+	ret = device_register(&rtd->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		dev_err(card->dev,
 			"asoc: failed to register runtime device: %d\n", ret);
@@ -1179,14 +1959,22 @@ static int soc_post_component_init(struct snd_soc_card *card,
 	rtd->dev_registered = 1;
 
 	/* add DAPM sysfs entries for this codec */
+<<<<<<< HEAD
 	ret = snd_soc_dapm_sys_add(rtd->dev);
+=======
+	ret = snd_soc_dapm_sys_add(&rtd->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		dev_err(codec->dev,
 			"asoc: failed to add codec dapm sysfs entries: %d\n",
 			ret);
 
 	/* add codec sysfs entries */
+<<<<<<< HEAD
 	ret = device_create_file(rtd->dev, &dev_attr_codec_reg);
+=======
+	ret = device_create_file(&rtd->dev, &dev_attr_codec_reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		dev_err(codec->dev,
 			"asoc: failed to add codec sysfs files: %d\n", ret);
@@ -1194,7 +1982,11 @@ static int soc_post_component_init(struct snd_soc_card *card,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int soc_probe_dai_link(struct snd_soc_card *card, int num, int order)
+=======
+static int soc_probe_dai_link(struct snd_soc_card *card, int num)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct snd_soc_dai_link *dai_link = &card->dai_link[num];
 	struct snd_soc_pcm_runtime *rtd = &card->rtd[num];
@@ -1203,8 +1995,12 @@ static int soc_probe_dai_link(struct snd_soc_card *card, int num, int order)
 	struct snd_soc_dai *codec_dai = rtd->codec_dai, *cpu_dai = rtd->cpu_dai;
 	int ret;
 
+<<<<<<< HEAD
 	dev_dbg(card->dev, "probe %s dai link %d late %d\n",
 			card->name, num, order);
+=======
+	dev_dbg(card->dev, "probe %s dai link %d\n", card->name, num);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* config components */
 	codec_dai->codec = codec;
@@ -1216,34 +2012,52 @@ static int soc_probe_dai_link(struct snd_soc_card *card, int num, int order)
 	rtd->pmdown_time = pmdown_time;
 
 	/* probe the cpu_dai */
+<<<<<<< HEAD
 	if (!cpu_dai->probed &&
 			cpu_dai->driver->probe_order == order) {
+=======
+	if (!cpu_dai->probed) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!try_module_get(cpu_dai->dev->driver->owner))
 			return -ENODEV;
 
 		if (cpu_dai->driver->probe) {
 			ret = cpu_dai->driver->probe(cpu_dai);
 			if (ret < 0) {
+<<<<<<< HEAD
 				pr_err("asoc: failed to probe CPU DAI %s: %d\n",
 							cpu_dai->name, ret);
+=======
+				printk(KERN_ERR "asoc: failed to probe CPU DAI %s\n",
+						cpu_dai->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				module_put(cpu_dai->dev->driver->owner);
 				return ret;
 			}
 		}
 		cpu_dai->probed = 1;
+<<<<<<< HEAD
 		/* mark cpu_dai as probed and add to card dai list */
+=======
+		/* mark cpu_dai as probed and add to card cpu_dai list */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_add(&cpu_dai->card_list, &card->dai_dev_list);
 	}
 
 	/* probe the CODEC */
+<<<<<<< HEAD
 	if (!codec->probed &&
 			codec->driver->probe_order == order) {
+=======
+	if (!codec->probed) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = soc_probe_codec(card, codec);
 		if (ret < 0)
 			return ret;
 	}
 
 	/* probe the platform */
+<<<<<<< HEAD
 	if (!platform->probed &&
 			platform->driver->probe_order == order) {
 		ret = soc_probe_platform(card, platform);
@@ -1258,32 +2072,78 @@ static int soc_probe_dai_link(struct snd_soc_card *card, int num, int order)
 			if (ret < 0) {
 				pr_err("asoc: failed to probe CODEC DAI %s: %d\n",
 							codec_dai->name, ret);
+=======
+	if (!platform->probed) {
+		if (!try_module_get(platform->dev->driver->owner))
+			return -ENODEV;
+
+		if (platform->driver->probe) {
+			ret = platform->driver->probe(platform);
+			if (ret < 0) {
+				printk(KERN_ERR "asoc: failed to probe platform %s\n",
+						platform->name);
+				module_put(platform->dev->driver->owner);
+				return ret;
+			}
+		}
+		/* mark platform as probed and add to card platform list */
+		platform->probed = 1;
+		list_add(&platform->card_list, &card->platform_dev_list);
+	}
+
+	/* probe the CODEC DAI */
+	if (!codec_dai->probed) {
+		if (codec_dai->driver->probe) {
+			ret = codec_dai->driver->probe(codec_dai);
+			if (ret < 0) {
+				printk(KERN_ERR "asoc: failed to probe CODEC DAI %s\n",
+						codec_dai->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return ret;
 			}
 		}
 
+<<<<<<< HEAD
 		/* mark codec_dai as probed and add to card dai list */
+=======
+		/* mark cpu_dai as probed and add to card cpu_dai list */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		codec_dai->probed = 1;
 		list_add(&codec_dai->card_list, &card->dai_dev_list);
 	}
 
+<<<<<<< HEAD
 	/* complete DAI probe during last probe */
 	if (order != SND_SOC_COMP_ORDER_LAST)
 		return 0;
+=======
+	/* DAPM dai link stream work */
+	INIT_DELAYED_WORK(&rtd->delayed_work, close_delayed_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = soc_post_component_init(card, codec, num, 0);
 	if (ret)
 		return ret;
 
+<<<<<<< HEAD
 	ret = device_create_file(rtd->dev, &dev_attr_pmdown_time);
 	if (ret < 0)
 		pr_warn("asoc: failed to add pmdown_time sysfs:%d\n", ret);
+=======
+	ret = device_create_file(&rtd->dev, &dev_attr_pmdown_time);
+	if (ret < 0)
+		printk(KERN_WARNING "asoc: failed to add pmdown_time sysfs\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* create the pcm */
 	ret = soc_new_pcm(rtd, num);
 	if (ret < 0) {
+<<<<<<< HEAD
 		pr_err("asoc: can't create pcm %s :%d\n",
 				dai_link->stream_name, ret);
+=======
+		printk(KERN_ERR "asoc: can't create pcm %s\n", dai_link->stream_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 
@@ -1316,7 +2176,11 @@ static int soc_register_ac97_dai_link(struct snd_soc_pcm_runtime *rtd)
 
 		ret = soc_ac97_dev_register(rtd->codec);
 		if (ret < 0) {
+<<<<<<< HEAD
 			pr_err("asoc: AC97 device register failed:%d\n", ret);
+=======
+			printk(KERN_ERR "asoc: AC97 device register failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return ret;
 		}
 
@@ -1374,8 +2238,13 @@ static void soc_remove_aux_dev(struct snd_soc_card *card, int num)
 
 	/* unregister the rtd device */
 	if (rtd->dev_registered) {
+<<<<<<< HEAD
 		device_remove_file(rtd->dev, &dev_attr_codec_reg);
 		device_del(rtd->dev);
+=======
+		device_remove_file(&rtd->dev, &dev_attr_codec_reg);
+		device_unregister(&rtd->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rtd->dev_registered = 0;
 	}
 
@@ -1409,8 +2278,12 @@ static void snd_soc_instantiate_card(struct snd_soc_card *card)
 	struct snd_soc_codec *codec;
 	struct snd_soc_codec_conf *codec_conf;
 	enum snd_soc_compress_type compress_type;
+<<<<<<< HEAD
 	struct snd_soc_dai_link *dai_link;
 	int ret, i, order;
+=======
+	int ret, i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&card->mutex);
 
@@ -1456,8 +2329,13 @@ static void snd_soc_instantiate_card(struct snd_soc_card *card)
 	ret = snd_card_create(SNDRV_DEFAULT_IDX1, SNDRV_DEFAULT_STR1,
 			card->owner, 0, &card->snd_card);
 	if (ret < 0) {
+<<<<<<< HEAD
 		pr_err("asoc: can't create sound card for card %s: %d\n",
 			card->name, ret);
+=======
+		printk(KERN_ERR "asoc: can't create sound card for card %s\n",
+			card->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mutex_unlock(&card->mutex);
 		return;
 	}
@@ -1488,6 +2366,7 @@ static void snd_soc_instantiate_card(struct snd_soc_card *card)
 			goto card_probe_error;
 	}
 
+<<<<<<< HEAD
 	/* early DAI link probe */
 	for (order = SND_SOC_COMP_ORDER_FIRST; order <= SND_SOC_COMP_ORDER_LAST;
 			order++) {
@@ -1498,6 +2377,14 @@ static void snd_soc_instantiate_card(struct snd_soc_card *card)
 			       card->name, ret);
 				goto probe_dai_err;
 			}
+=======
+	for (i = 0; i < card->num_links; i++) {
+		ret = soc_probe_dai_link(card, i);
+		if (ret < 0) {
+			pr_err("asoc: failed to instantiate card %s: %d\n",
+			       card->name, ret);
+			goto probe_dai_err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -1510,15 +2397,26 @@ static void snd_soc_instantiate_card(struct snd_soc_card *card)
 		}
 	}
 
+<<<<<<< HEAD
 	snd_soc_dapm_link_dai_widgets(card);
 
 	if (card->controls)
 		snd_soc_add_card_controls(card, card->controls, card->num_controls);
+=======
+	/* We should have a non-codec control add function but we don't */
+	if (card->controls)
+		snd_soc_add_controls(list_first_entry(&card->codec_dev_list,
+						      struct snd_soc_codec,
+						      card_list),
+				     card->controls,
+				     card->num_controls);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (card->dapm_routes)
 		snd_soc_dapm_add_routes(&card->dapm, card->dapm_routes,
 					card->num_dapm_routes);
 
+<<<<<<< HEAD
 	snd_soc_dapm_new_widgets(&card->dapm);
 
 	for (i = 0; i < card->num_links; i++) {
@@ -1541,6 +2439,8 @@ static void snd_soc_instantiate_card(struct snd_soc_card *card)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snprintf(card->snd_card->shortname, sizeof(card->snd_card->shortname),
 		 "%s", card->name);
 	snprintf(card->snd_card->longname, sizeof(card->snd_card->longname),
@@ -1569,6 +2469,7 @@ static void snd_soc_instantiate_card(struct snd_soc_card *card)
 		}
 	}
 
+<<<<<<< HEAD
 	snd_soc_dapm_new_widgets(&card->dapm);
 
 	if (card->fully_routed)
@@ -1579,6 +2480,11 @@ static void snd_soc_instantiate_card(struct snd_soc_card *card)
 	if (ret < 0) {
 		pr_err("asoc: failed to register soundcard for %s: %d\n",
 							card->name, ret);
+=======
+	ret = snd_card_register(card->snd_card);
+	if (ret < 0) {
+		printk(KERN_ERR "asoc: failed to register soundcard for %s\n", card->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto probe_aux_dev_err;
 	}
 
@@ -1587,8 +2493,12 @@ static void snd_soc_instantiate_card(struct snd_soc_card *card)
 	for (i = 0; i < card->num_rtd; i++) {
 		ret = soc_register_ac97_dai_link(&card->rtd[i]);
 		if (ret < 0) {
+<<<<<<< HEAD
 			pr_err("asoc: failed to register AC97 %s: %d\n",
 							card->name, ret);
+=======
+			printk(KERN_ERR "asoc: failed to register AC97 %s\n", card->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			while (--i >= 0)
 				soc_unregister_ac97_dai_link(card->rtd[i].codec);
 			goto probe_aux_dev_err;
@@ -1597,7 +2507,10 @@ static void snd_soc_instantiate_card(struct snd_soc_card *card)
 #endif
 
 	card->instantiated = 1;
+<<<<<<< HEAD
 	snd_soc_dapm_sync(&card->dapm);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&card->mutex);
 	return;
 
@@ -1641,10 +2554,13 @@ static int soc_probe(struct platform_device *pdev)
 	if (!card)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	dev_warn(&pdev->dev,
 		 "ASoC machine %s should use snd_soc_register_card()\n",
 		 card->name);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Bodge while we unpick instantiation */
 	card->dev = &pdev->dev;
 
@@ -1682,6 +2598,10 @@ static int soc_cleanup_card_resources(struct snd_soc_card *card)
 
 	snd_soc_dapm_free(&card->dapm);
 
+<<<<<<< HEAD
+=======
+	kfree(card->rtd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_card_free(card->snd_card);
 	return 0;
 
@@ -1720,10 +2640,14 @@ EXPORT_SYMBOL_GPL(snd_soc_poweroff);
 const struct dev_pm_ops snd_soc_pm_ops = {
 	.suspend = snd_soc_suspend,
 	.resume = snd_soc_resume,
+<<<<<<< HEAD
 	.freeze = snd_soc_suspend,
 	.thaw = snd_soc_resume,
 	.poweroff = snd_soc_poweroff,
 	.restore = snd_soc_resume,
+=======
+	.poweroff = snd_soc_poweroff,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 EXPORT_SYMBOL_GPL(snd_soc_pm_ops);
 
@@ -1738,6 +2662,70 @@ static struct platform_driver soc_driver = {
 	.remove		= soc_remove,
 };
 
+<<<<<<< HEAD
+=======
+/* create a new pcm */
+static int soc_new_pcm(struct snd_soc_pcm_runtime *rtd, int num)
+{
+	struct snd_soc_codec *codec = rtd->codec;
+	struct snd_soc_platform *platform = rtd->platform;
+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+	struct snd_pcm *pcm;
+	char new_name[64];
+	int ret = 0, playback = 0, capture = 0;
+
+	/* check client and interface hw capabilities */
+	snprintf(new_name, sizeof(new_name), "%s %s-%d",
+			rtd->dai_link->stream_name, codec_dai->name, num);
+
+	if (codec_dai->driver->playback.channels_min)
+		playback = 1;
+	if (codec_dai->driver->capture.channels_min)
+		capture = 1;
+
+	dev_dbg(rtd->card->dev, "registered pcm #%d %s\n",num,new_name);
+	ret = snd_pcm_new(rtd->card->snd_card, new_name,
+			num, playback, capture, &pcm);
+	if (ret < 0) {
+		printk(KERN_ERR "asoc: can't create pcm for codec %s\n", codec->name);
+		return ret;
+	}
+
+	rtd->pcm = pcm;
+	pcm->private_data = rtd;
+	if (platform->driver->ops) {
+		soc_pcm_ops.mmap = platform->driver->ops->mmap;
+		soc_pcm_ops.pointer = platform->driver->ops->pointer;
+		soc_pcm_ops.ioctl = platform->driver->ops->ioctl;
+		soc_pcm_ops.copy = platform->driver->ops->copy;
+		soc_pcm_ops.silence = platform->driver->ops->silence;
+		soc_pcm_ops.ack = platform->driver->ops->ack;
+		soc_pcm_ops.page = platform->driver->ops->page;
+	}
+
+	if (playback)
+		snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK, &soc_pcm_ops);
+
+	if (capture)
+		snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_CAPTURE, &soc_pcm_ops);
+
+	if (platform->driver->pcm_new) {
+		ret = platform->driver->pcm_new(rtd->card->snd_card,
+						codec_dai, pcm);
+		if (ret < 0) {
+			pr_err("asoc: platform pcm constructor failed\n");
+			return ret;
+		}
+	}
+
+	pcm->private_free = platform->driver->pcm_free;
+	printk(KERN_INFO "asoc: %s <-> %s mapping ok\n", codec_dai->name,
+		cpu_dai->name);
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * snd_soc_codec_volatile_register: Report if a register is volatile.
  *
@@ -1770,7 +2758,11 @@ int snd_soc_codec_readable_register(struct snd_soc_codec *codec,
 	if (codec->readable_register)
 		return codec->readable_register(codec, reg);
 	else
+<<<<<<< HEAD
 		return 1;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(snd_soc_codec_readable_register);
 
@@ -1788,6 +2780,7 @@ int snd_soc_codec_writable_register(struct snd_soc_codec *codec,
 	if (codec->writable_register)
 		return codec->writable_register(codec, reg);
 	else
+<<<<<<< HEAD
 		return 1;
 }
 EXPORT_SYMBOL_GPL(snd_soc_codec_writable_register);
@@ -1824,6 +2817,12 @@ int snd_soc_platform_write(struct snd_soc_platform *platform,
 }
 EXPORT_SYMBOL_GPL(snd_soc_platform_write);
 
+=======
+		return 0;
+}
+EXPORT_SYMBOL_GPL(snd_soc_codec_writable_register);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * snd_soc_new_ac97_codec - initailise AC97 device
  * @codec: audio codec
@@ -1927,6 +2926,7 @@ EXPORT_SYMBOL_GPL(snd_soc_bulk_write_raw);
 int snd_soc_update_bits(struct snd_soc_codec *codec, unsigned short reg,
 				unsigned int mask, unsigned int value)
 {
+<<<<<<< HEAD
 	bool change;
 	unsigned int old, new;
 	int ret;
@@ -1949,6 +2949,25 @@ int snd_soc_update_bits(struct snd_soc_codec *codec, unsigned short reg,
 	if (ret < 0)
 		return ret;
 
+=======
+	int change;
+	unsigned int old, new;
+	int ret;
+
+	ret = snd_soc_read(codec, reg);
+	if (ret < 0)
+		return ret;
+
+	old = ret;
+	new = (old & ~mask) | value;
+	change = old != new;
+	if (change) {
+		ret = snd_soc_write(codec, reg, new);
+		if (ret < 0)
+			return ret;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return change;
 }
 EXPORT_SYMBOL_GPL(snd_soc_update_bits);
@@ -2039,7 +3058,11 @@ EXPORT_SYMBOL_GPL(snd_soc_set_runtime_hwparams);
  * Returns 0 for success, else error.
  */
 struct snd_kcontrol *snd_soc_cnew(const struct snd_kcontrol_new *_template,
+<<<<<<< HEAD
 				  void *data, const char *long_name,
+=======
+				  void *data, char *long_name,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  const char *prefix)
 {
 	struct snd_kcontrol_new template;
@@ -2053,6 +3076,7 @@ struct snd_kcontrol *snd_soc_cnew(const struct snd_kcontrol_new *_template,
 	if (!long_name)
 		long_name = template.name;
 
+<<<<<<< HEAD
 	if (prefix) {
 		name_len = strlen(long_name) + strlen(prefix) + 2;
 		name = kmalloc(name_len, GFP_KERNEL);
@@ -2159,11 +3183,41 @@ EXPORT_SYMBOL_GPL(snd_soc_add_card_controls);
  * Convienience function to add a list of controls.
  *
  * @dai: DAI to add controls to
+=======
+	if (prefix) {
+		name_len = strlen(long_name) + strlen(prefix) + 2;
+		name = kmalloc(name_len, GFP_ATOMIC);
+		if (!name)
+			return NULL;
+
+		snprintf(name, name_len, "%s %s", prefix, long_name);
+
+		template.name = name;
+	} else {
+		template.name = long_name;
+	}
+
+	kcontrol = snd_ctl_new1(&template, data);
+
+	kfree(name);
+
+	return kcontrol;
+}
+EXPORT_SYMBOL_GPL(snd_soc_cnew);
+
+/**
+ * snd_soc_add_controls - add an array of controls to a codec.
+ * Convienience function to add a list of controls. Many codecs were
+ * duplicating this code.
+ *
+ * @codec: codec to add controls to
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @controls: array of controls to add
  * @num_controls: number of elements in the array
  *
  * Return 0 for success, else error.
  */
+<<<<<<< HEAD
 int snd_soc_add_dai_controls(struct snd_soc_dai *dai,
 	const struct snd_kcontrol_new *controls, int num_controls)
 {
@@ -2173,6 +3227,29 @@ int snd_soc_add_dai_controls(struct snd_soc_dai *dai,
 			NULL, dai);
 }
 EXPORT_SYMBOL_GPL(snd_soc_add_dai_controls);
+=======
+int snd_soc_add_controls(struct snd_soc_codec *codec,
+	const struct snd_kcontrol_new *controls, int num_controls)
+{
+	struct snd_card *card = codec->card->snd_card;
+	int err, i;
+
+	for (i = 0; i < num_controls; i++) {
+		const struct snd_kcontrol_new *control = &controls[i];
+		err = snd_ctl_add(card, snd_soc_cnew(control, codec,
+						     control->name,
+						     codec->name_prefix));
+		if (err < 0) {
+			dev_err(codec->dev, "%s: Failed to add %s: %d\n",
+				codec->name, control->name, err);
+			return err;
+		}
+	}
+
+	return 0;
+}
+EXPORT_SYMBOL_GPL(snd_soc_add_controls);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * snd_soc_info_enum_double - enumerated double mixer info callback
@@ -2396,12 +3473,190 @@ EXPORT_SYMBOL_GPL(snd_soc_info_volsw_ext);
  * @kcontrol: mixer control
  * @uinfo: control element information
  *
+<<<<<<< HEAD
  * Callback to provide information about a single mixer control, or a double
  * mixer control that spans 2 registers.
+=======
+ * Callback to provide information about a single mixer control.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Returns 0 for success.
  */
 int snd_soc_info_volsw(struct snd_kcontrol *kcontrol,
+	struct snd_ctl_elem_info *uinfo)
+{
+	struct soc_mixer_control *mc =
+		(struct soc_mixer_control *)kcontrol->private_value;
+	int platform_max;
+<<<<<<< HEAD
+=======
+	unsigned int shift = mc->shift;
+	unsigned int rshift = mc->rshift;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+
+	if (!mc->platform_max)
+		mc->platform_max = mc->max;
+	platform_max = mc->platform_max;
+
+	if (platform_max == 1 && !strstr(kcontrol->id.name, " Volume"))
+		uinfo->type = SNDRV_CTL_ELEM_TYPE_BOOLEAN;
+	else
+		uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
+
+<<<<<<< HEAD
+	uinfo->count = snd_soc_volsw_is_stereo(mc) ? 2 : 1;
+=======
+	uinfo->count = shift == rshift ? 1 : 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+	uinfo->value.integer.min = 0;
+	uinfo->value.integer.max = platform_max;
+	return 0;
+}
+EXPORT_SYMBOL_GPL(snd_soc_info_volsw);
+
+/**
+ * snd_soc_get_volsw - single mixer get callback
+ * @kcontrol: mixer control
+ * @ucontrol: control element information
+ *
+<<<<<<< HEAD
+ * Callback to get the value of a single mixer control, or a double mixer
+ * control that spans 2 registers.
+=======
+ * Callback to get the value of a single mixer control.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+ *
+ * Returns 0 for success.
+ */
+int snd_soc_get_volsw(struct snd_kcontrol *kcontrol,
+	struct snd_ctl_elem_value *ucontrol)
+{
+	struct soc_mixer_control *mc =
+		(struct soc_mixer_control *)kcontrol->private_value;
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+	unsigned int reg = mc->reg;
+<<<<<<< HEAD
+	unsigned int reg2 = mc->rreg;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+	unsigned int shift = mc->shift;
+	unsigned int rshift = mc->rshift;
+	int max = mc->max;
+	unsigned int mask = (1 << fls(max)) - 1;
+	unsigned int invert = mc->invert;
+
+	ucontrol->value.integer.value[0] =
+		(snd_soc_read(codec, reg) >> shift) & mask;
+<<<<<<< HEAD
+	if (invert)
+		ucontrol->value.integer.value[0] =
+			max - ucontrol->value.integer.value[0];
+
+	if (snd_soc_volsw_is_stereo(mc)) {
+		if (reg == reg2)
+			ucontrol->value.integer.value[1] =
+				(snd_soc_read(codec, reg) >> rshift) & mask;
+		else
+			ucontrol->value.integer.value[1] =
+				(snd_soc_read(codec, reg2) >> shift) & mask;
+		if (invert)
+=======
+	if (shift != rshift)
+		ucontrol->value.integer.value[1] =
+			(snd_soc_read(codec, reg) >> rshift) & mask;
+	if (invert) {
+		ucontrol->value.integer.value[0] =
+			max - ucontrol->value.integer.value[0];
+		if (shift != rshift)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+			ucontrol->value.integer.value[1] =
+				max - ucontrol->value.integer.value[1];
+	}
+
+	return 0;
+}
+EXPORT_SYMBOL_GPL(snd_soc_get_volsw);
+
+/**
+ * snd_soc_put_volsw - single mixer put callback
+ * @kcontrol: mixer control
+ * @ucontrol: control element information
+ *
+<<<<<<< HEAD
+ * Callback to set the value of a single mixer control, or a double mixer
+ * control that spans 2 registers.
+=======
+ * Callback to set the value of a single mixer control.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+ *
+ * Returns 0 for success.
+ */
+int snd_soc_put_volsw(struct snd_kcontrol *kcontrol,
+	struct snd_ctl_elem_value *ucontrol)
+{
+	struct soc_mixer_control *mc =
+		(struct soc_mixer_control *)kcontrol->private_value;
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+	unsigned int reg = mc->reg;
+<<<<<<< HEAD
+	unsigned int reg2 = mc->rreg;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+	unsigned int shift = mc->shift;
+	unsigned int rshift = mc->rshift;
+	int max = mc->max;
+	unsigned int mask = (1 << fls(max)) - 1;
+	unsigned int invert = mc->invert;
+<<<<<<< HEAD
+	int err;
+	bool type_2r = 0;
+	unsigned int val2 = 0;
+	unsigned int val, val_mask;
+=======
+	unsigned int val, val2, val_mask;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+
+	val = (ucontrol->value.integer.value[0] & mask);
+	if (invert)
+		val = max - val;
+	val_mask = mask << shift;
+	val = val << shift;
+<<<<<<< HEAD
+	if (snd_soc_volsw_is_stereo(mc)) {
+		val2 = (ucontrol->value.integer.value[1] & mask);
+		if (invert)
+			val2 = max - val2;
+		if (reg == reg2) {
+			val_mask |= mask << rshift;
+			val |= val2 << rshift;
+		} else {
+			val2 = val2 << shift;
+			type_2r = 1;
+		}
+	}
+=======
+	if (shift != rshift) {
+		val2 = (ucontrol->value.integer.value[1] & mask);
+		if (invert)
+			val2 = max - val2;
+		val_mask |= mask << rshift;
+		val |= val2 << rshift;
+	}
+	return snd_soc_update_bits_locked(codec, reg, val_mask, val);
+}
+EXPORT_SYMBOL_GPL(snd_soc_put_volsw);
+
+/**
+ * snd_soc_info_volsw_2r - double mixer info callback
+ * @kcontrol: mixer control
+ * @uinfo: control element information
+ *
+ * Callback to provide information about a double mixer control that
+ * spans 2 codec registers.
+ *
+ * Returns 0 for success.
+ */
+int snd_soc_info_volsw_2r(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_info *uinfo)
 {
 	struct soc_mixer_control *mc =
@@ -2417,24 +3672,23 @@ int snd_soc_info_volsw(struct snd_kcontrol *kcontrol,
 	else
 		uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
 
-	uinfo->count = snd_soc_volsw_is_stereo(mc) ? 2 : 1;
+	uinfo->count = 2;
 	uinfo->value.integer.min = 0;
 	uinfo->value.integer.max = platform_max;
 	return 0;
 }
-EXPORT_SYMBOL_GPL(snd_soc_info_volsw);
+EXPORT_SYMBOL_GPL(snd_soc_info_volsw_2r);
 
 /**
- * snd_soc_get_volsw - single mixer get callback
+ * snd_soc_get_volsw_2r - double mixer get callback
  * @kcontrol: mixer control
  * @ucontrol: control element information
  *
- * Callback to get the value of a single mixer control, or a double mixer
- * control that spans 2 registers.
+ * Callback to get the value of a double mixer control that spans 2 registers.
  *
  * Returns 0 for success.
  */
-int snd_soc_get_volsw(struct snd_kcontrol *kcontrol,
+int snd_soc_get_volsw_2r(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
 	struct soc_mixer_control *mc =
@@ -2443,44 +3697,35 @@ int snd_soc_get_volsw(struct snd_kcontrol *kcontrol,
 	unsigned int reg = mc->reg;
 	unsigned int reg2 = mc->rreg;
 	unsigned int shift = mc->shift;
-	unsigned int rshift = mc->rshift;
 	int max = mc->max;
 	unsigned int mask = (1 << fls(max)) - 1;
 	unsigned int invert = mc->invert;
 
 	ucontrol->value.integer.value[0] =
 		(snd_soc_read(codec, reg) >> shift) & mask;
-	if (invert)
+	ucontrol->value.integer.value[1] =
+		(snd_soc_read(codec, reg2) >> shift) & mask;
+	if (invert) {
 		ucontrol->value.integer.value[0] =
 			max - ucontrol->value.integer.value[0];
-
-	if (snd_soc_volsw_is_stereo(mc)) {
-		if (reg == reg2)
-			ucontrol->value.integer.value[1] =
-				(snd_soc_read(codec, reg) >> rshift) & mask;
-		else
-			ucontrol->value.integer.value[1] =
-				(snd_soc_read(codec, reg2) >> shift) & mask;
-		if (invert)
-			ucontrol->value.integer.value[1] =
-				max - ucontrol->value.integer.value[1];
+		ucontrol->value.integer.value[1] =
+			max - ucontrol->value.integer.value[1];
 	}
 
 	return 0;
 }
-EXPORT_SYMBOL_GPL(snd_soc_get_volsw);
+EXPORT_SYMBOL_GPL(snd_soc_get_volsw_2r);
 
 /**
- * snd_soc_put_volsw - single mixer put callback
+ * snd_soc_put_volsw_2r - double mixer set callback
  * @kcontrol: mixer control
  * @ucontrol: control element information
  *
- * Callback to set the value of a single mixer control, or a double mixer
- * control that spans 2 registers.
+ * Callback to set the value of a double mixer control that spans 2 registers.
  *
  * Returns 0 for success.
  */
-int snd_soc_put_volsw(struct snd_kcontrol *kcontrol,
+int snd_soc_put_volsw_2r(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
 	struct soc_mixer_control *mc =
@@ -2489,42 +3734,42 @@ int snd_soc_put_volsw(struct snd_kcontrol *kcontrol,
 	unsigned int reg = mc->reg;
 	unsigned int reg2 = mc->rreg;
 	unsigned int shift = mc->shift;
-	unsigned int rshift = mc->rshift;
 	int max = mc->max;
 	unsigned int mask = (1 << fls(max)) - 1;
 	unsigned int invert = mc->invert;
 	int err;
-	bool type_2r = 0;
-	unsigned int val2 = 0;
-	unsigned int val, val_mask;
+	unsigned int val, val2, val_mask;
 
-	val = (ucontrol->value.integer.value[0] & mask);
-	if (invert)
-		val = max - val;
 	val_mask = mask << shift;
-	val = val << shift;
-	if (snd_soc_volsw_is_stereo(mc)) {
-		val2 = (ucontrol->value.integer.value[1] & mask);
-		if (invert)
-			val2 = max - val2;
-		if (reg == reg2) {
-			val_mask |= mask << rshift;
-			val |= val2 << rshift;
-		} else {
-			val2 = val2 << shift;
-			type_2r = 1;
-		}
+	val = (ucontrol->value.integer.value[0] & mask);
+	val2 = (ucontrol->value.integer.value[1] & mask);
+
+	if (invert) {
+		val = max - val;
+		val2 = max - val2;
 	}
+
+	val = val << shift;
+	val2 = val2 << shift;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = snd_soc_update_bits_locked(codec, reg, val_mask, val);
 	if (err < 0)
 		return err;
 
+<<<<<<< HEAD
 	if (type_2r)
 		err = snd_soc_update_bits_locked(codec, reg2, val_mask, val2);
 
 	return err;
 }
 EXPORT_SYMBOL_GPL(snd_soc_put_volsw);
+=======
+	err = snd_soc_update_bits_locked(codec, reg2, val_mask, val2);
+	return err;
+}
+EXPORT_SYMBOL_GPL(snd_soc_put_volsw_2r);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * snd_soc_info_volsw_s8 - signed mixer info callback
@@ -2740,6 +3985,7 @@ int snd_soc_put_volsw_2r_sx(struct snd_kcontrol *kcontrol,
 }
 EXPORT_SYMBOL_GPL(snd_soc_put_volsw_2r_sx);
 
+<<<<<<< HEAD
 int snd_soc_bytes_info(struct snd_kcontrol *kcontrol,
 		       struct snd_ctl_elem_info *uinfo)
 {
@@ -2849,6 +4095,8 @@ int snd_soc_bytes_put(struct snd_kcontrol *kcontrol,
 }
 EXPORT_SYMBOL_GPL(snd_soc_bytes_put);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * snd_soc_dai_set_sysclk - configure DAI system or master clock.
  * @dai: DAI
@@ -2864,7 +4112,11 @@ int snd_soc_dai_set_sysclk(struct snd_soc_dai *dai, int clk_id,
 	if (dai->driver && dai->driver->ops->set_sysclk)
 		return dai->driver->ops->set_sysclk(dai, clk_id, freq, dir);
 	else if (dai->codec && dai->codec->driver->set_sysclk)
+<<<<<<< HEAD
 		return dai->codec->driver->set_sysclk(dai->codec, clk_id, 0,
+=======
+		return dai->codec->driver->set_sysclk(dai->codec, clk_id,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						      freq, dir);
 	else
 		return -EINVAL;
@@ -2875,18 +4127,28 @@ EXPORT_SYMBOL_GPL(snd_soc_dai_set_sysclk);
  * snd_soc_codec_set_sysclk - configure CODEC system or master clock.
  * @codec: CODEC
  * @clk_id: DAI specific clock ID
+<<<<<<< HEAD
  * @source: Source for the clock
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @freq: new clock frequency in Hz
  * @dir: new clock direction - input/output.
  *
  * Configures the CODEC master (MCLK) or system (SYSCLK) clocking.
  */
 int snd_soc_codec_set_sysclk(struct snd_soc_codec *codec, int clk_id,
+<<<<<<< HEAD
 			     int source, unsigned int freq, int dir)
 {
 	if (codec->driver->set_sysclk)
 		return codec->driver->set_sysclk(codec, clk_id, source,
 						 freq, dir);
+=======
+	unsigned int freq, int dir)
+{
+	if (codec->driver->set_sysclk)
+		return codec->driver->set_sysclk(codec, clk_id, freq, dir);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		return -EINVAL;
 }
@@ -2966,11 +4228,18 @@ EXPORT_SYMBOL_GPL(snd_soc_codec_set_pll);
  */
 int snd_soc_dai_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
 {
+<<<<<<< HEAD
 	if (dai->driver == NULL)
 		return -EINVAL;
 	if (dai->driver->ops->set_fmt == NULL)
 		return -ENOTSUPP;
 	return dai->driver->ops->set_fmt(dai, fmt);
+=======
+	if (dai->driver && dai->driver->ops->set_fmt)
+		return dai->driver->ops->set_fmt(dai, fmt);
+	else
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(snd_soc_dai_set_fmt);
 
@@ -3065,6 +4334,7 @@ int snd_soc_register_card(struct snd_soc_card *card)
 	if (!card->name || !card->dev)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	for (i = 0; i < card->num_links; i++) {
 		struct snd_soc_dai_link *link = &card->dai_link[i];
 
@@ -3101,12 +4371,15 @@ int snd_soc_register_card(struct snd_soc_card *card)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_set_drvdata(card->dev, card);
 
 	snd_soc_initialize_card_lists(card);
 
 	soc_init_card_debugfs(card);
 
+<<<<<<< HEAD
 	card->rtd = devm_kzalloc(card->dev,
 				 sizeof(struct snd_soc_pcm_runtime) *
 				 (card->num_links + card->num_aux_devs),
@@ -3114,13 +4387,23 @@ int snd_soc_register_card(struct snd_soc_card *card)
 	if (card->rtd == NULL)
 		return -ENOMEM;
 	card->num_rtd = 0;
+=======
+	card->rtd = kzalloc(sizeof(struct snd_soc_pcm_runtime) *
+			    (card->num_links + card->num_aux_devs),
+			    GFP_KERNEL);
+	if (card->rtd == NULL)
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	card->rtd_aux = &card->rtd[card->num_links];
 
 	for (i = 0; i < card->num_links; i++)
 		card->rtd[i].dai_link = &card->dai_link[i];
 
 	INIT_LIST_HEAD(&card->list);
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&card->dapm_dirty);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	card->instantiated = 0;
 	mutex_init(&card->mutex);
 
@@ -3205,7 +4488,11 @@ static inline char *fmt_multiple_name(struct device *dev,
 		struct snd_soc_dai_driver *dai_drv)
 {
 	if (dai_drv->name == NULL) {
+<<<<<<< HEAD
 		pr_err("asoc: error - multiple DAI %s registered with no name\n",
+=======
+		printk(KERN_ERR "asoc: error - multiple DAI %s registered with no name\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				dev_name(dev));
 		return NULL;
 	}
@@ -3377,10 +4664,13 @@ int snd_soc_register_platform(struct device *dev,
 
 	platform->dev = dev;
 	platform->driver = platform_drv;
+<<<<<<< HEAD
 	platform->dapm.dev = dev;
 	platform->dapm.platform = platform;
 	platform->dapm.stream_event = platform_drv->stream_event;
 	mutex_init(&platform->mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&client_mutex);
 	list_add(&platform->list, &platform_list);
@@ -3489,12 +4779,18 @@ int snd_soc_register_codec(struct device *dev,
 	codec->volatile_register = codec_drv->volatile_register;
 	codec->readable_register = codec_drv->readable_register;
 	codec->writable_register = codec_drv->writable_register;
+<<<<<<< HEAD
 	codec->ignore_pmdown_time = codec_drv->ignore_pmdown_time;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	codec->dapm.bias_level = SND_SOC_BIAS_OFF;
 	codec->dapm.dev = dev;
 	codec->dapm.codec = codec;
 	codec->dapm.seq_notifier = codec_drv->seq_notifier;
+<<<<<<< HEAD
 	codec->dapm.stream_event = codec_drv->stream_event;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	codec->dev = dev;
 	codec->driver = codec_drv;
 	codec->num_dai = num_dai;
@@ -3592,6 +4888,7 @@ found:
 }
 EXPORT_SYMBOL_GPL(snd_soc_unregister_codec);
 
+<<<<<<< HEAD
 /* Retrieve a card's name from device tree */
 int snd_soc_of_parse_card_name(struct snd_soc_card *card,
 			       const char *propname)
@@ -3673,12 +4970,19 @@ int snd_soc_of_parse_audio_routing(struct snd_soc_card *card,
 }
 EXPORT_SYMBOL_GPL(snd_soc_of_parse_audio_routing);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init snd_soc_init(void)
 {
 #ifdef CONFIG_DEBUG_FS
 	snd_soc_debugfs_root = debugfs_create_dir("asoc", NULL);
 	if (IS_ERR(snd_soc_debugfs_root) || !snd_soc_debugfs_root) {
+<<<<<<< HEAD
 		pr_warn("ASoC: Failed to create debugfs directory\n");
+=======
+		printk(KERN_WARNING
+		       "ASoC: Failed to create debugfs directory\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_soc_debugfs_root = NULL;
 	}
 

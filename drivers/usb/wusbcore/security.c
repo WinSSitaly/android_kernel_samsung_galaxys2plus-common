@@ -26,7 +26,10 @@
 #include <linux/slab.h>
 #include <linux/usb/ch9.h>
 #include <linux/random.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "wusbhc.h"
 
 static void wusbhc_set_gtk_callback(struct urb *urb);
@@ -354,7 +357,11 @@ int wusb_dev_4way_handshake(struct wusbhc *wusbhc, struct wusb_dev *wusb_dev,
 	struct wusb_keydvt_in keydvt_in;
 	struct wusb_keydvt_out keydvt_out;
 
+<<<<<<< HEAD
 	hs = kcalloc(3, sizeof(hs[0]), GFP_KERNEL);
+=======
+	hs = kzalloc(3*sizeof(hs[0]), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (hs == NULL) {
 		dev_err(dev, "can't allocate handshake data\n");
 		goto error_kzalloc;

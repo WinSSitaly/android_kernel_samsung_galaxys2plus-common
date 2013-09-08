@@ -2461,7 +2461,11 @@ struct rpc_procinfo	nfs3_procedures[] = {
 	PROC(COMMIT,		commit,		commit,		5),
 };
 
+<<<<<<< HEAD
 const struct rpc_version nfs_version3 = {
+=======
+struct rpc_version		nfs_version3 = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.number			= 3,
 	.nrprocs		= ARRAY_SIZE(nfs3_procedures),
 	.procs			= nfs3_procedures
@@ -2489,7 +2493,11 @@ static struct rpc_procinfo	nfs3_acl_procedures[] = {
 	},
 };
 
+<<<<<<< HEAD
 const struct rpc_version nfsacl_version3 = {
+=======
+struct rpc_version		nfsacl_version3 = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.number			= 3,
 	.nrprocs		= sizeof(nfs3_acl_procedures)/
 				  sizeof(nfs3_acl_procedures[0]),

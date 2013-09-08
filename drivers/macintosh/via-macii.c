@@ -34,6 +34,10 @@
 #include <asm/macintosh.h>
 #include <asm/macints.h>
 #include <asm/mac_via.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static volatile unsigned char *via;
 
@@ -158,7 +162,11 @@ int macii_init(void)
 	err = macii_init_via();
 	if (err) goto out;
 
+<<<<<<< HEAD
 	err = request_irq(IRQ_MAC_ADB, macii_interrupt, 0, "ADB",
+=======
+	err = request_irq(IRQ_MAC_ADB, macii_interrupt, IRQ_FLG_LOCK, "ADB",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  macii_interrupt);
 	if (err) goto out;
 

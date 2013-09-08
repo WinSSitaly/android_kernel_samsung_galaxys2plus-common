@@ -12,9 +12,16 @@
 #include <linux/sched.h>
 #include <linux/mm.h>
 #include <linux/compat.h>
+<<<<<<< HEAD
 #include <linux/uaccess.h>
 
 #include <asm/ptrace.h>
+=======
+#include <linux/highmem.h>
+
+#include <asm/ptrace.h>
+#include <asm/uaccess.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/stacktrace.h>
 
 static int backtrace_stack(void *data, char *name)
@@ -37,6 +44,45 @@ static struct stacktrace_ops backtrace_ops = {
 	.walk_stack	= print_context_stack,
 };
 
+<<<<<<< HEAD
+=======
+/* from arch/x86/kernel/cpu/perf_event.c: */
+
+/*
+ * best effort, GUP based copy_from_user() that assumes IRQ or NMI context
+ */
+static unsigned long
+copy_from_user_nmi(void *to, const void __user *from, unsigned long n)
+{
+	unsigned long offset, addr = (unsigned long)from;
+	unsigned long size, len = 0;
+	struct page *page;
+	void *map;
+	int ret;
+
+	do {
+		ret = __get_user_pages_fast(addr, 1, 0, &page);
+		if (!ret)
+			break;
+
+		offset = addr & (PAGE_SIZE - 1);
+		size = min(PAGE_SIZE - offset, n - len);
+
+		map = kmap_atomic(page);
+		memcpy(to, map+offset, size);
+		kunmap_atomic(map);
+		put_page(page);
+
+		len  += size;
+		to   += size;
+		addr += size;
+
+	} while (len < n);
+
+	return len;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_COMPAT
 static struct stack_frame_ia32 *
 dump_user_backtrace_32(struct stack_frame_ia32 *head)
@@ -67,7 +113,11 @@ x86_backtrace_32(struct pt_regs * const regs, unsigned int depth)
 {
 	struct stack_frame_ia32 *head;
 
+<<<<<<< HEAD
 	/* User process is IA32 */
+=======
+	/* User process is 32-bit */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!current || !test_thread_flag(TIF_IA32))
 		return 0;
 

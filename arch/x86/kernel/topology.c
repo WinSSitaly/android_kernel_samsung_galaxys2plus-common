@@ -26,7 +26,10 @@
  * Send feedback to <colpatch@us.ibm.com>
  */
 #include <linux/nodemask.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mmzone.h>
 #include <linux/init.h>
 #include <linux/smp.h>

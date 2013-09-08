@@ -34,6 +34,10 @@
 #include <asm/irq.h>
 #include <asm/pgtable.h>
 #include <asm/page.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/hardware.h>
 #include <asm/mach-types.h>
 
@@ -251,8 +255,12 @@ void __init ixdp2x01_pci_preinit(void)
 
 #define DEVPIN(dev, pin) ((pin) | ((dev) << 3))
 
+<<<<<<< HEAD
 static int __init ixdp2x01_pci_map_irq(const struct pci_dev *dev, u8 slot,
 	u8 pin)
+=======
+static int __init ixdp2x01_pci_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u8 bus = dev->bus->number;
 	u32 devpin = DEVPIN(PCI_SLOT(dev->devfn), pin);
@@ -412,6 +420,7 @@ static void __init ixdp2x01_init_machine(void)
 	ixdp2x01_uart_init();
 }
 
+<<<<<<< HEAD
 static void ixdp2401_restart(char mode, const char *cmd)
 {
 	/*
@@ -441,28 +450,44 @@ static void ixdp280x_restart(char mode, const char *cmd)
 
 	ixp2000_restart(mode, cmd);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_ARCH_IXDP2401
 MACHINE_START(IXDP2401, "Intel IXDP2401 Development Platform")
 	/* Maintainer: MontaVista Software, Inc. */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= 0x00000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io		= ixdp2x01_map_io,
 	.init_irq	= ixdp2x01_init_irq,
 	.timer		= &ixdp2x01_timer,
 	.init_machine	= ixdp2x01_init_machine,
+<<<<<<< HEAD
 	.restart	= ixdp2401_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 
 #ifdef CONFIG_ARCH_IXDP2801
 MACHINE_START(IXDP2801, "Intel IXDP2801 Development Platform")
 	/* Maintainer: MontaVista Software, Inc. */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= 0x00000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io		= ixdp2x01_map_io,
 	.init_irq	= ixdp2x01_init_irq,
 	.timer		= &ixdp2x01_timer,
 	.init_machine	= ixdp2x01_init_machine,
+<<<<<<< HEAD
 	.restart	= ixdp280x_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 
 /*
@@ -471,12 +496,19 @@ MACHINE_END
  */
 MACHINE_START(IXDP28X5, "Intel IXDP2805/2855 Development Platform")
 	/* Maintainer: MontaVista Software, Inc. */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= 0x00000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io		= ixdp2x01_map_io,
 	.init_irq	= ixdp2x01_init_irq,
 	.timer		= &ixdp2x01_timer,
 	.init_machine	= ixdp2x01_init_machine,
+<<<<<<< HEAD
 	.restart	= ixdp280x_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 

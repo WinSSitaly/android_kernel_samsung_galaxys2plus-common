@@ -2,7 +2,11 @@
  * ffs-test.c.c -- user mode filesystem api for usb composite function
  *
  * Copyright (C) 2010 Samsung Electronics
+<<<<<<< HEAD
  *                    Author: Michal Nazarewicz <mina86@mina86.com>
+=======
+ *                    Author: Michal Nazarewicz <m.nazarewicz@samsung.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +40,10 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+<<<<<<< HEAD
 #include <tools/le_byteshift.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "../../include/linux/usb/functionfs.h"
 
@@ -48,6 +55,37 @@
 #define le32_to_cpu(x)  le32toh(x)
 #define le16_to_cpu(x)  le16toh(x)
 
+<<<<<<< HEAD
+=======
+static inline __u16 get_unaligned_le16(const void *_ptr)
+{
+	const __u8 *ptr = _ptr;
+	return ptr[0] | (ptr[1] << 8);
+}
+
+static inline __u32 get_unaligned_le32(const void *_ptr)
+{
+	const __u8 *ptr = _ptr;
+	return ptr[0] | (ptr[1] << 8) | (ptr[2] << 16) | (ptr[3] << 24);
+}
+
+static inline void put_unaligned_le16(__u16 val, void *_ptr)
+{
+	__u8 *ptr = _ptr;
+	*ptr++ = val;
+	*ptr++ = val >> 8;
+}
+
+static inline void put_unaligned_le32(__u32 val, void *_ptr)
+{
+	__u8 *ptr = _ptr;
+	*ptr++ = val;
+	*ptr++ = val >>  8;
+	*ptr++ = val >> 16;
+	*ptr++ = val >> 24;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /******************** Messages and Errors ***********************************/
 
@@ -297,7 +335,11 @@ static void *start_thread_helper(void *arg)
 
 		ret = t->in(t, t->buf, t->buf_size);
 		if (ret > 0) {
+<<<<<<< HEAD
 			ret = t->out(t, t->buf, ret);
+=======
+			ret = t->out(t, t->buf, t->buf_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			name = out_name;
 			op = "write";
 		} else {

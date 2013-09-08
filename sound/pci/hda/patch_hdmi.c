@@ -31,12 +31,19 @@
 #include <linux/init.h>
 #include <linux/delay.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/jack.h>
 #include "hda_codec.h"
 #include "hda_local.h"
+<<<<<<< HEAD
 #include "hda_jack.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static bool static_hdmi_pcm;
 module_param(static_hdmi_pcm, bool, 0644);
@@ -44,11 +51,16 @@ MODULE_PARM_DESC(static_hdmi_pcm, "Don't restrict PCM parameters per ELD info");
 
 /*
  * The HDMI/DisplayPort configuration can be highly dynamic. A graphics device
+<<<<<<< HEAD
  * could support N independent pipes, each of them can be connected to one or
+=======
+ * could support two independent pipes, each of them can be connected to one or
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * more ports (DVI, HDMI or DisplayPort).
  *
  * The HDA correspondence of pipes/ports are converter/pin nodes.
  */
+<<<<<<< HEAD
 #define MAX_HDMI_CVTS	8
 #define MAX_HDMI_PINS	8
 
@@ -83,6 +95,35 @@ struct hdmi_spec {
 
 	/*
 	 * Non-generic ATI/NVIDIA specific
+=======
+#define MAX_HDMI_CVTS	4
+#define MAX_HDMI_PINS	4
+
+struct hdmi_spec {
+	int num_cvts;
+	int num_pins;
+	hda_nid_t cvt[MAX_HDMI_CVTS+1];  /* audio sources */
+	hda_nid_t pin[MAX_HDMI_PINS+1];  /* audio sinks */
+
+	/*
+	 * source connection for each pin
+	 */
+	hda_nid_t pin_cvt[MAX_HDMI_PINS+1];
+
+	/*
+	 * HDMI sink attached to each pin
+	 */
+	struct hdmi_eld sink_eld[MAX_HDMI_PINS];
+
+	/*
+	 * export one pcm per pipe
+	 */
+	struct hda_pcm	pcm_rec[MAX_HDMI_CVTS];
+	struct hda_pcm_stream codec_pcm_pars[MAX_HDMI_CVTS];
+
+	/*
+	 * ati/nvhdmi specific
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	struct hda_multi_out multiout;
 	const struct hda_pcm_stream *pcm_playback;
@@ -292,6 +333,7 @@ static struct cea_channel_speaker_allocation channel_allocations[] = {
  * HDMI routines
  */
 
+<<<<<<< HEAD
 static int pin_nid_to_pin_index(struct hdmi_spec *spec, hda_nid_t pin_nid)
 {
 	int pin_idx;
@@ -389,6 +431,20 @@ static int hdmi_create_eld_ctl(struct hda_codec *codec, int pin_idx,
 	return 0;
 }
 
+=======
+static int hda_node_index(hda_nid_t *nids, hda_nid_t nid)
+{
+	int i;
+
+	for (i = 0; nids[i]; i++)
+		if (nids[i] == nid)
+			return i;
+
+	snd_printk(KERN_WARNING "HDMI: nid %d not registered\n", nid);
+	return -EINVAL;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef BE_PARANOID
 static void hdmi_get_dip_index(struct hda_codec *codec, hda_nid_t pin_nid,
 				int *packet_index, int *byte_index)
@@ -419,12 +475,17 @@ static void hdmi_write_dip_byte(struct hda_codec *codec, hda_nid_t pin_nid,
 	snd_hda_codec_write(codec, pin_nid, 0, AC_VERB_SET_HDMI_DIP_DATA, val);
 }
 
+<<<<<<< HEAD
 static void hdmi_init_pin(struct hda_codec *codec, hda_nid_t pin_nid)
+=======
+static void hdmi_enable_output(struct hda_codec *codec, hda_nid_t pin_nid)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Unmute */
 	if (get_wcaps(codec, pin_nid) & AC_WCAP_OUT_AMP)
 		snd_hda_codec_write(codec, pin_nid, 0,
 				AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_UNMUTE);
+<<<<<<< HEAD
 	/* Disable pin out until stream is active*/
 	snd_hda_codec_write(codec, pin_nid, 0,
 			    AC_VERB_SET_PIN_WIDGET_CONTROL, 0);
@@ -433,14 +494,31 @@ static void hdmi_init_pin(struct hda_codec *codec, hda_nid_t pin_nid)
 static int hdmi_get_channel_count(struct hda_codec *codec, hda_nid_t cvt_nid)
 {
 	return 1 + snd_hda_codec_read(codec, cvt_nid, 0,
+=======
+	/* Enable pin out */
+	snd_hda_codec_write(codec, pin_nid, 0,
+			    AC_VERB_SET_PIN_WIDGET_CONTROL, PIN_OUT);
+}
+
+static int hdmi_get_channel_count(struct hda_codec *codec, hda_nid_t nid)
+{
+	return 1 + snd_hda_codec_read(codec, nid, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					AC_VERB_GET_CVT_CHAN_COUNT, 0);
 }
 
 static void hdmi_set_channel_count(struct hda_codec *codec,
+<<<<<<< HEAD
 				   hda_nid_t cvt_nid, int chs)
 {
 	if (chs != hdmi_get_channel_count(codec, cvt_nid))
 		snd_hda_codec_write(codec, cvt_nid, 0,
+=======
+				   hda_nid_t nid, int chs)
+{
+	if (chs != hdmi_get_channel_count(codec, nid))
+		snd_hda_codec_write(codec, nid, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    AC_VERB_SET_CVT_CHAN_COUNT, chs - 1);
 }
 
@@ -477,8 +555,16 @@ static void init_channel_allocations(void)
  *
  * TODO: it could select the wrong CA from multiple candidates.
 */
+<<<<<<< HEAD
 static int hdmi_channel_allocation(struct hdmi_eld *eld, int channels)
 {
+=======
+static int hdmi_channel_allocation(struct hda_codec *codec, hda_nid_t nid,
+				   int channels)
+{
+	struct hdmi_spec *spec = codec->spec;
+	struct hdmi_eld *eld;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 	int ca = 0;
 	int spk_mask = 0;
@@ -490,6 +576,22 @@ static int hdmi_channel_allocation(struct hdmi_eld *eld, int channels)
 	if (channels <= 2)
 		return 0;
 
+<<<<<<< HEAD
+=======
+	i = hda_node_index(spec->pin_cvt, nid);
+	if (i < 0)
+		return 0;
+	eld = &spec->sink_eld[i];
+
+	/*
+	 * HDMI sink's ELD info cannot always be retrieved for now, e.g.
+	 * in console or for audio devices. Assume the highest speakers
+	 * configuration, to _not_ prohibit multi-channel audio playback.
+	 */
+	if (!eld->spk_alloc)
+		eld->spk_alloc = 0xffff;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * expand ELD's speaker allocation mask
 	 *
@@ -685,6 +787,7 @@ static bool hdmi_infoframe_uptodate(struct hda_codec *codec, hda_nid_t pin_nid,
 	return true;
 }
 
+<<<<<<< HEAD
 static void hdmi_setup_audio_infoframe(struct hda_codec *codec, int pin_idx,
 					struct snd_pcm_substream *substream)
 {
@@ -742,6 +845,69 @@ static void hdmi_setup_audio_infoframe(struct hda_codec *codec, int pin_idx,
 		hdmi_fill_audio_infoframe(codec, pin_nid,
 					    ai.bytes, sizeof(ai));
 		hdmi_start_infoframe_trans(codec, pin_nid);
+=======
+static void hdmi_setup_audio_infoframe(struct hda_codec *codec, hda_nid_t nid,
+					struct snd_pcm_substream *substream)
+{
+	struct hdmi_spec *spec = codec->spec;
+	hda_nid_t pin_nid;
+	int channels = substream->runtime->channels;
+	int ca;
+	int i;
+	union audio_infoframe ai;
+
+	ca = hdmi_channel_allocation(codec, nid, channels);
+
+	for (i = 0; i < spec->num_pins; i++) {
+		if (spec->pin_cvt[i] != nid)
+			continue;
+		if (!spec->sink_eld[i].monitor_present)
+			continue;
+
+		pin_nid = spec->pin[i];
+
+		memset(&ai, 0, sizeof(ai));
+		if (spec->sink_eld[i].conn_type == 0) { /* HDMI */
+			struct hdmi_audio_infoframe *hdmi_ai = &ai.hdmi;
+
+			hdmi_ai->type		= 0x84;
+			hdmi_ai->ver		= 0x01;
+			hdmi_ai->len		= 0x0a;
+			hdmi_ai->CC02_CT47	= channels - 1;
+			hdmi_ai->CA		= ca;
+			hdmi_checksum_audio_infoframe(hdmi_ai);
+		} else if (spec->sink_eld[i].conn_type == 1) { /* DisplayPort */
+			struct dp_audio_infoframe *dp_ai = &ai.dp;
+
+			dp_ai->type		= 0x84;
+			dp_ai->len		= 0x1b;
+			dp_ai->ver		= 0x11 << 2;
+			dp_ai->CC02_CT47	= channels - 1;
+			dp_ai->CA		= ca;
+		} else {
+			snd_printd("HDMI: unknown connection type at pin %d\n",
+				   pin_nid);
+			continue;
+		}
+
+		/*
+		 * sizeof(ai) is used instead of sizeof(*hdmi_ai) or
+		 * sizeof(*dp_ai) to avoid partial match/update problems when
+		 * the user switches between HDMI/DP monitors.
+		 */
+		if (!hdmi_infoframe_uptodate(codec, pin_nid, ai.bytes,
+					     sizeof(ai))) {
+			snd_printdd("hdmi_setup_audio_infoframe: "
+				    "cvt=%d pin=%d channels=%d\n",
+				    nid, pin_nid,
+				    channels);
+			hdmi_setup_channel_mapping(codec, pin_nid, ca);
+			hdmi_stop_infoframe_trans(codec, pin_nid);
+			hdmi_fill_audio_infoframe(codec, pin_nid,
+						  ai.bytes, sizeof(ai));
+			hdmi_start_infoframe_trans(codec, pin_nid);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -750,11 +916,17 @@ static void hdmi_setup_audio_infoframe(struct hda_codec *codec, int pin_idx,
  * Unsolicited events
  */
 
+<<<<<<< HEAD
 static void hdmi_present_sense(struct hdmi_spec_per_pin *per_pin, int repoll);
+=======
+static void hdmi_present_sense(struct hda_codec *codec, hda_nid_t pin_nid,
+			       struct hdmi_eld *eld);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void hdmi_intrinsic_event(struct hda_codec *codec, unsigned int res)
 {
 	struct hdmi_spec *spec = codec->spec;
+<<<<<<< HEAD
 	int tag = res >> AC_UNSOL_RES_TAG_SHIFT;
 	int pin_nid;
 	int pin_idx;
@@ -777,6 +949,22 @@ static void hdmi_intrinsic_event(struct hda_codec *codec, unsigned int res)
 
 	hdmi_present_sense(&spec->pins[pin_idx], 1);
 	snd_hda_jack_report_sync(codec);
+=======
+	int pin_nid = res >> AC_UNSOL_RES_TAG_SHIFT;
+	int pd = !!(res & AC_UNSOL_RES_PD);
+	int eldv = !!(res & AC_UNSOL_RES_ELDV);
+	int index;
+
+	printk(KERN_INFO
+		"HDMI hot plug event: Pin=%d Presence_Detect=%d ELD_Valid=%d\n",
+		pin_nid, pd, eldv);
+
+	index = hda_node_index(spec->pin, pin_nid);
+	if (index < 0)
+		return;
+
+	hdmi_present_sense(codec, pin_nid, &spec->sink_eld[index]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void hdmi_non_intrinsic_event(struct hda_codec *codec, unsigned int res)
@@ -787,8 +975,12 @@ static void hdmi_non_intrinsic_event(struct hda_codec *codec, unsigned int res)
 	int cp_ready = !!(res & AC_UNSOL_RES_CP_READY);
 
 	printk(KERN_INFO
+<<<<<<< HEAD
 		"HDMI CP event: CODEC=%d PIN=%d SUBTAG=0x%x CP_STATE=%d CP_READY=%d\n",
 		codec->addr,
+=======
+		"HDMI CP event: PIN=%d SUBTAG=0x%x CP_STATE=%d CP_READY=%d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tag,
 		subtag,
 		cp_state,
@@ -804,10 +996,18 @@ static void hdmi_non_intrinsic_event(struct hda_codec *codec, unsigned int res)
 
 static void hdmi_unsol_event(struct hda_codec *codec, unsigned int res)
 {
+<<<<<<< HEAD
 	int tag = res >> AC_UNSOL_RES_TAG_SHIFT;
 	int subtag = (res & AC_UNSOL_RES_SUBTAG) >> AC_UNSOL_RES_SUBTAG_SHIFT;
 
 	if (!snd_hda_jack_tbl_get_from_tag(codec, tag)) {
+=======
+	struct hdmi_spec *spec = codec->spec;
+	int tag = res >> AC_UNSOL_RES_TAG_SHIFT;
+	int subtag = (res & AC_UNSOL_RES_SUBTAG) >> AC_UNSOL_RES_SUBTAG_SHIFT;
+
+	if (hda_node_index(spec->pin, tag) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printd(KERN_INFO "Unexpected HDMI event tag 0x%x\n", tag);
 		return;
 	}
@@ -826,6 +1026,7 @@ static void hdmi_unsol_event(struct hda_codec *codec, unsigned int res)
 #define is_hbr_format(format) \
 	((format & AC_FMT_TYPE_NON_PCM) && (format & AC_FMT_CHAN_MASK) == 7)
 
+<<<<<<< HEAD
 static int hdmi_setup_stream(struct hda_codec *codec, hda_nid_t cvt_nid,
 			      hda_nid_t pin_nid, u32 stream_tag, int format)
 {
@@ -834,6 +1035,23 @@ static int hdmi_setup_stream(struct hda_codec *codec, hda_nid_t cvt_nid,
 
 	if (snd_hda_query_pin_caps(codec, pin_nid) & AC_PINCAP_HBR) {
 		pinctl = snd_hda_codec_read(codec, pin_nid, 0,
+=======
+static int hdmi_setup_stream(struct hda_codec *codec, hda_nid_t nid,
+			      u32 stream_tag, int format)
+{
+	struct hdmi_spec *spec = codec->spec;
+	int pinctl;
+	int new_pinctl = 0;
+	int i;
+
+	for (i = 0; i < spec->num_pins; i++) {
+		if (spec->pin_cvt[i] != nid)
+			continue;
+		if (!(snd_hda_query_pin_caps(codec, spec->pin[i]) & AC_PINCAP_HBR))
+			continue;
+
+		pinctl = snd_hda_codec_read(codec, spec->pin[i], 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					    AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
 
 		new_pinctl = pinctl & ~AC_PINCTL_EPT;
@@ -844,22 +1062,38 @@ static int hdmi_setup_stream(struct hda_codec *codec, hda_nid_t cvt_nid,
 
 		snd_printdd("hdmi_setup_stream: "
 			    "NID=0x%x, %spinctl=0x%x\n",
+<<<<<<< HEAD
 			    pin_nid,
+=======
+			    spec->pin[i],
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    pinctl == new_pinctl ? "" : "new-",
 			    new_pinctl);
 
 		if (pinctl != new_pinctl)
+<<<<<<< HEAD
 			snd_hda_codec_write(codec, pin_nid, 0,
 					    AC_VERB_SET_PIN_WIDGET_CONTROL,
 					    new_pinctl);
 
 	}
+=======
+			snd_hda_codec_write(codec, spec->pin[i], 0,
+					    AC_VERB_SET_PIN_WIDGET_CONTROL,
+					    new_pinctl);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (is_hbr_format(format) && !new_pinctl) {
 		snd_printdd("hdmi_setup_stream: HBR is not supported\n");
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	snd_hda_codec_setup_stream(codec, cvt_nid, stream_tag, 0, format);
+=======
+	snd_hda_codec_setup_stream(codec, nid, stream_tag, 0, format);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -871,6 +1105,7 @@ static int hdmi_pcm_open(struct hda_pcm_stream *hinfo,
 			 struct snd_pcm_substream *substream)
 {
 	struct hdmi_spec *spec = codec->spec;
+<<<<<<< HEAD
 	struct snd_pcm_runtime *runtime = substream->runtime;
 	int pin_idx, cvt_idx, mux_idx = 0;
 	struct hdmi_spec_per_pin *per_pin;
@@ -933,6 +1168,39 @@ static int hdmi_pcm_open(struct hda_pcm_stream *hinfo,
 	}
 
 	/* Store the updated parameters */
+=======
+	struct hdmi_eld *eld;
+	struct hda_pcm_stream *codec_pars;
+	struct snd_pcm_runtime *runtime = substream->runtime;
+	unsigned int idx;
+
+	for (idx = 0; idx < spec->num_cvts; idx++)
+		if (hinfo->nid == spec->cvt[idx])
+			break;
+	if (snd_BUG_ON(idx >= spec->num_cvts) ||
+	    snd_BUG_ON(idx >= spec->num_pins))
+		return -EINVAL;
+
+	/* save the PCM info the codec provides */
+	codec_pars = &spec->codec_pcm_pars[idx];
+	if (!codec_pars->rates)
+		*codec_pars = *hinfo;
+
+	eld = &spec->sink_eld[idx];
+	if (!static_hdmi_pcm && eld->eld_valid && eld->sad_count > 0) {
+		hdmi_eld_update_pcm_info(eld, hinfo, codec_pars);
+		if (hinfo->channels_min > hinfo->channels_max ||
+		    !hinfo->rates || !hinfo->formats)
+			return -ENODEV;
+	} else {
+		/* fallback to the codec default */
+		hinfo->channels_max = codec_pars->channels_max;
+		hinfo->rates = codec_pars->rates;
+		hinfo->formats = codec_pars->formats;
+		hinfo->maxbps = codec_pars->maxbps;
+	}
+	/* store the updated parameters */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	runtime->hw.channels_min = hinfo->channels_min;
 	runtime->hw.channels_max = hinfo->channels_max;
 	runtime->hw.formats = hinfo->formats;
@@ -946,11 +1214,20 @@ static int hdmi_pcm_open(struct hda_pcm_stream *hinfo,
 /*
  * HDA/HDMI auto parsing
  */
+<<<<<<< HEAD
 static int hdmi_read_pin_conn(struct hda_codec *codec, int pin_idx)
 {
 	struct hdmi_spec *spec = codec->spec;
 	struct hdmi_spec_per_pin *per_pin = &spec->pins[pin_idx];
 	hda_nid_t pin_nid = per_pin->pin_nid;
+=======
+static int hdmi_read_pin_conn(struct hda_codec *codec, hda_nid_t pin_nid)
+{
+	struct hdmi_spec *spec = codec->spec;
+	hda_nid_t conn_list[HDA_MAX_CONNECTIONS];
+	int conn_len, curr;
+	int index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!(get_wcaps(codec, pin_nid) & AC_WCAP_CONN_LIST)) {
 		snd_printk(KERN_WARNING
@@ -960,18 +1237,40 @@ static int hdmi_read_pin_conn(struct hda_codec *codec, int pin_idx)
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	per_pin->num_mux_nids = snd_hda_get_connections(codec, pin_nid,
 							per_pin->mux_nids,
 							HDA_MAX_CONNECTIONS);
+=======
+	conn_len = snd_hda_get_connections(codec, pin_nid, conn_list,
+					   HDA_MAX_CONNECTIONS);
+	if (conn_len > 1)
+		curr = snd_hda_codec_read(codec, pin_nid, 0,
+					  AC_VERB_GET_CONNECT_SEL, 0);
+	else
+		curr = 0;
+
+	index = hda_node_index(spec->pin, pin_nid);
+	if (index < 0)
+		return -EINVAL;
+
+	spec->pin_cvt[index] = conn_list[curr];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static void hdmi_present_sense(struct hdmi_spec_per_pin *per_pin, int repoll)
 {
 	struct hda_codec *codec = per_pin->codec;
 	struct hdmi_eld *eld = &per_pin->sink_eld;
 	hda_nid_t pin_nid = per_pin->pin_nid;
+=======
+static void hdmi_present_sense(struct hda_codec *codec, hda_nid_t pin_nid,
+			       struct hdmi_eld *eld)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Always execute a GetPinSense verb here, even when called from
 	 * hdmi_intrinsic_event; for some NVIDIA HW, the unsolicited
@@ -981,6 +1280,7 @@ static void hdmi_present_sense(struct hdmi_spec_per_pin *per_pin, int repoll)
 	 * the unsolicited response to avoid custom WARs.
 	 */
 	int present = snd_hda_pin_sense(codec, pin_nid);
+<<<<<<< HEAD
 	bool eld_valid = false;
 
 	memset(eld, 0, offsetof(struct hdmi_eld, eld_buffer));
@@ -1014,11 +1314,32 @@ static void hdmi_repoll_eld(struct work_struct *work)
 		per_pin->repoll_count = 0;
 
 	hdmi_present_sense(per_pin, per_pin->repoll_count);
+=======
+
+	memset(eld, 0, sizeof(*eld));
+
+	eld->monitor_present	= !!(present & AC_PINSENSE_PRESENCE);
+	if (eld->monitor_present)
+		eld->eld_valid	= !!(present & AC_PINSENSE_ELDV);
+	else
+		eld->eld_valid	= 0;
+
+	printk(KERN_INFO
+		"HDMI status: Pin=%d Presence_Detect=%d ELD_Valid=%d\n",
+		pin_nid, eld->monitor_present, eld->eld_valid);
+
+	if (eld->eld_valid)
+		if (!snd_hdmi_get_eld(eld, codec, pin_nid))
+			snd_hdmi_show_eld(eld);
+
+	snd_hda_input_jack_report(codec, pin_nid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int hdmi_add_pin(struct hda_codec *codec, hda_nid_t pin_nid)
 {
 	struct hdmi_spec *spec = codec->spec;
+<<<<<<< HEAD
 	unsigned int caps, config;
 	int pin_idx;
 	struct hdmi_spec_per_pin *per_pin;
@@ -1079,6 +1400,49 @@ static int hdmi_add_cvt(struct hda_codec *codec, hda_nid_t cvt_nid)
 	if (err < 0)
 		return err;
 
+=======
+	int err;
+
+	if (spec->num_pins >= MAX_HDMI_PINS) {
+		snd_printk(KERN_WARNING
+			   "HDMI: no space for pin %d\n", pin_nid);
+		return -E2BIG;
+	}
+
+	err = snd_hda_input_jack_add(codec, pin_nid,
+				     SND_JACK_VIDEOOUT, NULL);
+	if (err < 0)
+		return err;
+
+	hdmi_present_sense(codec, pin_nid, &spec->sink_eld[spec->num_pins]);
+
+	spec->pin[spec->num_pins] = pin_nid;
+	spec->num_pins++;
+
+	return hdmi_read_pin_conn(codec, pin_nid);
+}
+
+static int hdmi_add_cvt(struct hda_codec *codec, hda_nid_t nid)
+{
+	int i, found_pin = 0;
+	struct hdmi_spec *spec = codec->spec;
+
+	for (i = 0; i < spec->num_pins; i++)
+		if (nid == spec->pin_cvt[i]) {
+			found_pin = 1;
+			break;
+		}
+
+	if (!found_pin) {
+		snd_printdd("HDMI: Skipping node %d (no connection)\n", nid);
+		return -EINVAL;
+	}
+
+	if (snd_BUG_ON(spec->num_cvts >= MAX_HDMI_CVTS))
+		return -E2BIG;
+
+	spec->cvt[spec->num_cvts] = nid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spec->num_cvts++;
 
 	return 0;
@@ -1088,6 +1452,11 @@ static int hdmi_parse_codec(struct hda_codec *codec)
 {
 	hda_nid_t nid;
 	int i, nodes;
+<<<<<<< HEAD
+=======
+	int num_tmp_cvts = 0;
+	hda_nid_t tmp_cvt[MAX_HDMI_CVTS];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nodes = snd_hda_get_sub_nodes(codec, codec->afg, &nid);
 	if (!nid || nodes < 0) {
@@ -1098,6 +1467,10 @@ static int hdmi_parse_codec(struct hda_codec *codec)
 	for (i = 0; i < nodes; i++, nid++) {
 		unsigned int caps;
 		unsigned int type;
+<<<<<<< HEAD
+=======
+		unsigned int config;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		caps = snd_hda_param_read(codec, nid, AC_PAR_AUDIO_WIDGET_CAP);
 		type = get_wcaps_type(caps);
@@ -1107,14 +1480,41 @@ static int hdmi_parse_codec(struct hda_codec *codec)
 
 		switch (type) {
 		case AC_WID_AUD_OUT:
+<<<<<<< HEAD
 			hdmi_add_cvt(codec, nid);
 			break;
 		case AC_WID_PIN:
+=======
+			if (num_tmp_cvts >= MAX_HDMI_CVTS) {
+				snd_printk(KERN_WARNING
+					   "HDMI: no space for converter %d\n", nid);
+				continue;
+			}
+			tmp_cvt[num_tmp_cvts] = nid;
+			num_tmp_cvts++;
+			break;
+		case AC_WID_PIN:
+			caps = snd_hda_param_read(codec, nid, AC_PAR_PIN_CAP);
+			if (!(caps & (AC_PINCAP_HDMI | AC_PINCAP_DP)))
+				continue;
+
+			config = snd_hda_codec_read(codec, nid, 0,
+					     AC_VERB_GET_CONFIG_DEFAULT, 0);
+			if (get_defcfg_connect(config) == AC_JACK_PORT_NONE)
+				continue;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			hdmi_add_pin(codec, nid);
 			break;
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	for (i = 0; i < num_tmp_cvts; i++)
+		hdmi_add_cvt(codec, tmp_cvt[i]);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * G45/IbexPeak don't support EPSS: the unsolicited pin hot plug event
 	 * can be lost and presence sense verb will become inaccurate if the
@@ -1131,12 +1531,21 @@ static int hdmi_parse_codec(struct hda_codec *codec)
 
 /*
  */
+<<<<<<< HEAD
 static char *get_hdmi_pcm_name(int idx)
 {
 	static char names[MAX_HDMI_PINS][8];
 	sprintf(&names[idx][0], "HDMI %d", idx);
 	return &names[idx][0];
 }
+=======
+static char *generic_hdmi_pcm_names[MAX_HDMI_CVTS] = {
+	"HDMI 0",
+	"HDMI 1",
+	"HDMI 2",
+	"HDMI 3",
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * HDMI callbacks
@@ -1148,6 +1557,7 @@ static int generic_hdmi_playback_pcm_prepare(struct hda_pcm_stream *hinfo,
 					   unsigned int format,
 					   struct snd_pcm_substream *substream)
 {
+<<<<<<< HEAD
 	hda_nid_t cvt_nid = hinfo->nid;
 	struct hdmi_spec *spec = codec->spec;
 	int pin_idx = hinfo_to_pin_index(spec, hinfo);
@@ -1208,11 +1618,29 @@ static const struct hda_pcm_ops generic_ops = {
 	.open = hdmi_pcm_open,
 	.prepare = generic_hdmi_playback_pcm_prepare,
 	.cleanup = generic_hdmi_playback_pcm_cleanup,
+=======
+	hdmi_set_channel_count(codec, hinfo->nid,
+			       substream->runtime->channels);
+
+	hdmi_setup_audio_infoframe(codec, hinfo->nid, substream);
+
+	return hdmi_setup_stream(codec, hinfo->nid, stream_tag, format);
+}
+
+static const struct hda_pcm_stream generic_hdmi_pcm_playback = {
+	.substreams = 1,
+	.channels_min = 2,
+	.ops = {
+		.open = hdmi_pcm_open,
+		.prepare = generic_hdmi_playback_pcm_prepare,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int generic_hdmi_build_pcms(struct hda_codec *codec)
 {
 	struct hdmi_spec *spec = codec->spec;
+<<<<<<< HEAD
 	int pin_idx;
 
 	for (pin_idx = 0; pin_idx < spec->num_pins; pin_idx++) {
@@ -1248,10 +1676,41 @@ static int generic_hdmi_build_jack(struct hda_codec *codec, int pin_idx)
 	return snd_hda_jack_add_kctl(codec, per_pin->pin_nid, hdmi_str, 0);
 }
 
+=======
+	struct hda_pcm *info = spec->pcm_rec;
+	int i;
+
+	codec->num_pcms = spec->num_cvts;
+	codec->pcm_info = info;
+
+	for (i = 0; i < codec->num_pcms; i++, info++) {
+		unsigned int chans;
+		struct hda_pcm_stream *pstr;
+
+		chans = get_wcaps(codec, spec->cvt[i]);
+		chans = get_wcaps_channels(chans);
+
+		info->name = generic_hdmi_pcm_names[i];
+		info->pcm_type = HDA_PCM_TYPE_HDMI;
+		pstr = &info->stream[SNDRV_PCM_STREAM_PLAYBACK];
+		if (spec->pcm_playback)
+			*pstr = *spec->pcm_playback;
+		else
+			*pstr = generic_hdmi_pcm_playback;
+		pstr->nid = spec->cvt[i];
+		if (pstr->channels_max <= 2 && chans && chans <= 16)
+			pstr->channels_max = chans;
+	}
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int generic_hdmi_build_controls(struct hda_codec *codec)
 {
 	struct hdmi_spec *spec = codec->spec;
 	int err;
+<<<<<<< HEAD
 	int pin_idx;
 
 	for (pin_idx = 0; pin_idx < spec->num_pins; pin_idx++) {
@@ -1277,6 +1736,14 @@ static int generic_hdmi_build_controls(struct hda_codec *codec)
 			return err;
 
 		hdmi_present_sense(per_pin, 0);
+=======
+	int i;
+
+	for (i = 0; i < codec->num_pcms; i++) {
+		err = snd_hda_create_spdif_out_ctls(codec, spec->cvt[i]);
+		if (err < 0)
+			return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -1285,6 +1752,7 @@ static int generic_hdmi_build_controls(struct hda_codec *codec)
 static int generic_hdmi_init(struct hda_codec *codec)
 {
 	struct hdmi_spec *spec = codec->spec;
+<<<<<<< HEAD
 	int pin_idx;
 
 	for (pin_idx = 0; pin_idx < spec->num_pins; pin_idx++) {
@@ -1300,12 +1768,23 @@ static int generic_hdmi_init(struct hda_codec *codec)
 		snd_hda_eld_proc_new(codec, eld, pin_idx);
 	}
 	snd_hda_jack_report_sync(codec);
+=======
+	int i;
+
+	for (i = 0; spec->pin[i]; i++) {
+		hdmi_enable_output(codec, spec->pin[i]);
+		snd_hda_codec_write(codec, spec->pin[i], 0,
+				    AC_VERB_SET_UNSOLICITED_ENABLE,
+				    AC_USRSP_EN | spec->pin[i]);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static void generic_hdmi_free(struct hda_codec *codec)
 {
 	struct hdmi_spec *spec = codec->spec;
+<<<<<<< HEAD
 	int pin_idx;
 
 	for (pin_idx = 0; pin_idx < spec->num_pins; pin_idx++) {
@@ -1317,6 +1796,14 @@ static void generic_hdmi_free(struct hda_codec *codec)
 	}
 
 	flush_workqueue(codec->bus->workq);
+=======
+	int i;
+
+	for (i = 0; i < spec->num_pins; i++)
+		snd_hda_eld_proc_free(codec, &spec->sink_eld[i]);
+	snd_hda_input_jack_free(codec);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(spec);
 }
 
@@ -1331,6 +1818,10 @@ static const struct hda_codec_ops generic_hdmi_patch_ops = {
 static int patch_generic_hdmi(struct hda_codec *codec)
 {
 	struct hdmi_spec *spec;
+<<<<<<< HEAD
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spec = kzalloc(sizeof(*spec), GFP_KERNEL);
 	if (spec == NULL)
@@ -1344,6 +1835,7 @@ static int patch_generic_hdmi(struct hda_codec *codec)
 	}
 	codec->patch_ops = generic_hdmi_patch_ops;
 
+<<<<<<< HEAD
 	init_channel_allocations();
 
 	return 0;
@@ -1395,10 +1887,17 @@ static int simple_playback_build_controls(struct hda_codec *codec)
 		if (err < 0)
 			return err;
 	}
+=======
+	for (i = 0; i < spec->num_pins; i++)
+		snd_hda_eld_proc_new(codec, &spec->sink_eld[i], i);
+
+	init_channel_allocations();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static void simple_playback_free(struct hda_codec *codec)
 {
 	struct hdmi_spec *spec = codec->spec;
@@ -1406,6 +1905,8 @@ static void simple_playback_free(struct hda_codec *codec)
 	kfree(spec);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Nvidia specific implementations
  */
@@ -1594,25 +2095,42 @@ static int nvhdmi_8ch_7x_pcm_prepare(struct hda_pcm_stream *hinfo,
 				     struct snd_pcm_substream *substream)
 {
 	int chs;
+<<<<<<< HEAD
 	unsigned int dataDCC2, channel_id;
 	int i;
 	struct hdmi_spec *spec = codec->spec;
 	struct hda_spdif_out *spdif =
 		snd_hda_spdif_out_of_nid(codec, spec->cvts[0].cvt_nid);
+=======
+	unsigned int dataDCC1, dataDCC2, channel_id;
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&codec->spdif_mutex);
 
 	chs = substream->runtime->channels;
 
+<<<<<<< HEAD
 	dataDCC2 = 0x2;
 
 	/* turn off SPDIF once; otherwise the IEC958 bits won't be updated */
 	if (codec->spdif_status_reset && (spdif->ctls & AC_DIG1_ENABLE))
+=======
+	dataDCC1 = AC_DIG1_ENABLE | AC_DIG1_COPYRIGHT;
+	dataDCC2 = 0x2;
+
+	/* turn off SPDIF once; otherwise the IEC958 bits won't be updated */
+	if (codec->spdif_status_reset && (codec->spdif_ctls & AC_DIG1_ENABLE))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_hda_codec_write(codec,
 				nvhdmi_master_con_nid_7x,
 				0,
 				AC_VERB_SET_DIGI_CONVERT_1,
+<<<<<<< HEAD
 				spdif->ctls & ~AC_DIG1_ENABLE & 0xff);
+=======
+				codec->spdif_ctls & ~AC_DIG1_ENABLE & 0xff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* set the stream id */
 	snd_hda_codec_write(codec, nvhdmi_master_con_nid_7x, 0,
@@ -1624,12 +2142,20 @@ static int nvhdmi_8ch_7x_pcm_prepare(struct hda_pcm_stream *hinfo,
 
 	/* turn on again (if needed) */
 	/* enable and set the channel status audio/data flag */
+<<<<<<< HEAD
 	if (codec->spdif_status_reset && (spdif->ctls & AC_DIG1_ENABLE)) {
+=======
+	if (codec->spdif_status_reset && (codec->spdif_ctls & AC_DIG1_ENABLE)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_hda_codec_write(codec,
 				nvhdmi_master_con_nid_7x,
 				0,
 				AC_VERB_SET_DIGI_CONVERT_1,
+<<<<<<< HEAD
 				spdif->ctls & 0xff);
+=======
+				codec->spdif_ctls & 0xff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_hda_codec_write(codec,
 				nvhdmi_master_con_nid_7x,
 				0,
@@ -1646,12 +2172,20 @@ static int nvhdmi_8ch_7x_pcm_prepare(struct hda_pcm_stream *hinfo,
 		 *otherwise the IEC958 bits won't be updated
 		 */
 		if (codec->spdif_status_reset &&
+<<<<<<< HEAD
 		(spdif->ctls & AC_DIG1_ENABLE))
+=======
+		(codec->spdif_ctls & AC_DIG1_ENABLE))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			snd_hda_codec_write(codec,
 				nvhdmi_con_nids_7x[i],
 				0,
 				AC_VERB_SET_DIGI_CONVERT_1,
+<<<<<<< HEAD
 				spdif->ctls & ~AC_DIG1_ENABLE & 0xff);
+=======
+				codec->spdif_ctls & ~AC_DIG1_ENABLE & 0xff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* set the stream id */
 		snd_hda_codec_write(codec,
 				nvhdmi_con_nids_7x[i],
@@ -1667,12 +2201,20 @@ static int nvhdmi_8ch_7x_pcm_prepare(struct hda_pcm_stream *hinfo,
 		/* turn on again (if needed) */
 		/* enable and set the channel status audio/data flag */
 		if (codec->spdif_status_reset &&
+<<<<<<< HEAD
 		(spdif->ctls & AC_DIG1_ENABLE)) {
+=======
+		(codec->spdif_ctls & AC_DIG1_ENABLE)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			snd_hda_codec_write(codec,
 					nvhdmi_con_nids_7x[i],
 					0,
 					AC_VERB_SET_DIGI_CONVERT_1,
+<<<<<<< HEAD
 					spdif->ctls & 0xff);
+=======
+					codec->spdif_ctls & 0xff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			snd_hda_codec_write(codec,
 					nvhdmi_con_nids_7x[i],
 					0,
@@ -1717,6 +2259,7 @@ static const struct hda_pcm_stream nvhdmi_pcm_playback_2ch = {
 };
 
 static const struct hda_codec_ops nvhdmi_patch_ops_8ch_7x = {
+<<<<<<< HEAD
 	.build_controls = simple_playback_build_controls,
 	.build_pcms = simple_playback_build_pcms,
 	.init = nvhdmi_7x_init,
@@ -1728,6 +2271,19 @@ static const struct hda_codec_ops nvhdmi_patch_ops_2ch = {
 	.build_pcms = simple_playback_build_pcms,
 	.init = nvhdmi_7x_init,
 	.free = simple_playback_free,
+=======
+	.build_controls = generic_hdmi_build_controls,
+	.build_pcms = generic_hdmi_build_pcms,
+	.init = nvhdmi_7x_init,
+	.free = generic_hdmi_free,
+};
+
+static const struct hda_codec_ops nvhdmi_patch_ops_2ch = {
+	.build_controls = generic_hdmi_build_controls,
+	.build_pcms = generic_hdmi_build_pcms,
+	.init = nvhdmi_7x_init,
+	.free = generic_hdmi_free,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int patch_nvhdmi_2ch(struct hda_codec *codec)
@@ -1744,7 +2300,11 @@ static int patch_nvhdmi_2ch(struct hda_codec *codec)
 	spec->multiout.max_channels = 2;
 	spec->multiout.dig_out_nid = nvhdmi_master_con_nid_7x;
 	spec->num_cvts = 1;
+<<<<<<< HEAD
 	spec->cvts[0].cvt_nid = nvhdmi_master_con_nid_7x;
+=======
+	spec->cvt[0] = nvhdmi_master_con_nid_7x;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spec->pcm_playback = &nvhdmi_pcm_playback_2ch;
 
 	codec->patch_ops = nvhdmi_patch_ops_2ch;
@@ -1795,11 +2355,19 @@ static int atihdmi_playback_pcm_prepare(struct hda_pcm_stream *hinfo,
 					  substream);
 	if (err < 0)
 		return err;
+<<<<<<< HEAD
 	snd_hda_codec_write(codec, spec->cvts[0].cvt_nid, 0,
 			    AC_VERB_SET_CVT_CHAN_COUNT, chans - 1);
 	/* FIXME: XXX */
 	for (i = 0; i < chans; i++) {
 		snd_hda_codec_write(codec, spec->cvts[0].cvt_nid, 0,
+=======
+	snd_hda_codec_write(codec, spec->cvt[0], 0, AC_VERB_SET_CVT_CHAN_COUNT,
+			    chans - 1);
+	/* FIXME: XXX */
+	for (i = 0; i < chans; i++) {
+		snd_hda_codec_write(codec, spec->cvt[0], 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    AC_VERB_SET_HDMI_CHAN_SLOT,
 				    (i << 4) | i);
 	}
@@ -1830,18 +2398,30 @@ static int atihdmi_init(struct hda_codec *codec)
 
 	snd_hda_sequence_write(codec, atihdmi_basic_init);
 	/* SI codec requires to unmute the pin */
+<<<<<<< HEAD
 	if (get_wcaps(codec, spec->pins[0].pin_nid) & AC_WCAP_OUT_AMP)
 		snd_hda_codec_write(codec, spec->pins[0].pin_nid, 0,
+=======
+	if (get_wcaps(codec, spec->pin[0]) & AC_WCAP_OUT_AMP)
+		snd_hda_codec_write(codec, spec->pin[0], 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    AC_VERB_SET_AMP_GAIN_MUTE,
 				    AMP_OUT_UNMUTE);
 	return 0;
 }
 
 static const struct hda_codec_ops atihdmi_patch_ops = {
+<<<<<<< HEAD
 	.build_controls = simple_playback_build_controls,
 	.build_pcms = simple_playback_build_pcms,
 	.init = atihdmi_init,
 	.free = simple_playback_free,
+=======
+	.build_controls = generic_hdmi_build_controls,
+	.build_pcms = generic_hdmi_build_pcms,
+	.init = atihdmi_init,
+	.free = generic_hdmi_free,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -1859,8 +2439,13 @@ static int patch_atihdmi(struct hda_codec *codec)
 	spec->multiout.max_channels = 2;
 	spec->multiout.dig_out_nid = ATIHDMI_CVT_NID;
 	spec->num_cvts = 1;
+<<<<<<< HEAD
 	spec->cvts[0].cvt_nid = ATIHDMI_CVT_NID;
 	spec->pins[0].pin_nid = ATIHDMI_PIN_NID;
+=======
+	spec->cvt[0] = ATIHDMI_CVT_NID;
+	spec->pin[0] = ATIHDMI_PIN_NID;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spec->pcm_playback = &atihdmi_pcm_digital_playback;
 
 	codec->patch_ops = atihdmi_patch_ops;
@@ -1916,7 +2501,10 @@ static const struct hda_codec_preset snd_hda_preset_hdmi[] = {
 { .id = 0x80862804, .name = "IbexPeak HDMI",	.patch = patch_generic_hdmi },
 { .id = 0x80862805, .name = "CougarPoint HDMI",	.patch = patch_generic_hdmi },
 { .id = 0x80862806, .name = "PantherPoint HDMI", .patch = patch_generic_hdmi },
+<<<<<<< HEAD
 { .id = 0x80862880, .name = "CedarTrail HDMI",	.patch = patch_generic_hdmi },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 { .id = 0x808629fb, .name = "Crestline HDMI",	.patch = patch_generic_hdmi },
 {} /* terminator */
 };
@@ -1963,7 +2551,10 @@ MODULE_ALIAS("snd-hda-codec-id:80862803");
 MODULE_ALIAS("snd-hda-codec-id:80862804");
 MODULE_ALIAS("snd-hda-codec-id:80862805");
 MODULE_ALIAS("snd-hda-codec-id:80862806");
+<<<<<<< HEAD
 MODULE_ALIAS("snd-hda-codec-id:80862880");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_ALIAS("snd-hda-codec-id:808629fb");
 
 MODULE_LICENSE("GPL");

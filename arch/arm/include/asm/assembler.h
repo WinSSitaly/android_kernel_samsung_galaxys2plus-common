@@ -23,8 +23,11 @@
 #include <asm/ptrace.h>
 #include <asm/domain.h>
 
+<<<<<<< HEAD
 #define IOMEM(x)	(x)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Endian independent macros for shifting bytes within registers.
  */
@@ -194,6 +197,7 @@
 #endif
 
 /*
+<<<<<<< HEAD
  * Instruction barrier
  */
 	.macro	instr_sync
@@ -205,6 +209,8 @@
 	.endm
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * SMP data memory barrier
  */
 	.macro	smp_dmb mode
@@ -244,7 +250,11 @@
  */
 #ifdef CONFIG_THUMB2_KERNEL
 
+<<<<<<< HEAD
 	.macro	usraccoff, instr, reg, ptr, inc, off, cond, abort, t=TUSER()
+=======
+	.macro	usraccoff, instr, reg, ptr, inc, off, cond, abort, t=T()
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 9999:
 	.if	\inc == 1
 	\instr\cond\()b\()\t\().w \reg, [\ptr, #\off]
@@ -284,7 +294,11 @@
 
 #else	/* !CONFIG_THUMB2_KERNEL */
 
+<<<<<<< HEAD
 	.macro	usracc, instr, reg, ptr, inc, cond, rept, abort, t=TUSER()
+=======
+	.macro	usracc, instr, reg, ptr, inc, cond, rept, abort, t=T()
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.rept	\rept
 9999:
 	.if	\inc == 1
@@ -311,6 +325,7 @@
 	.macro	ldrusr, reg, ptr, inc, cond=al, rept=1, abort=9001f
 	usracc	ldr, \reg, \ptr, \inc, \cond, \rept, \abort
 	.endm
+<<<<<<< HEAD
 
 /* Utility macro for declaring string literals */
 	.macro	string name:req, string
@@ -328,4 +343,6 @@
 #endif
 	.endm
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ASM_ASSEMBLER_H__ */

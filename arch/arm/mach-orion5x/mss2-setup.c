@@ -73,7 +73,11 @@ static struct platform_device mss2_nor_flash = {
 /****************************************************************************
  * PCI setup
  ****************************************************************************/
+<<<<<<< HEAD
 static int __init mss2_pci_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+static int __init mss2_pci_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int irq;
 
@@ -261,12 +265,20 @@ static void __init mss2_init(void)
 
 MACHINE_START(MSS2, "Maxtor Shared Storage II")
 	/* Maintainer: Sylver Bruneau <sylver.bruneau@googlemail.com> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= 0x00000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= mss2_init,
 	.map_io		= orion5x_map_io,
 	.init_early	= orion5x_init_early,
 	.init_irq	= orion5x_init_irq,
 	.timer		= &orion5x_timer,
+<<<<<<< HEAD
 	.fixup		= tag_fixup_mem32,
 	.restart	= orion5x_restart,
+=======
+	.fixup		= tag_fixup_mem32
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

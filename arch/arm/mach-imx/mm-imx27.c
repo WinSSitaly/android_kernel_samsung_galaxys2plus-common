@@ -22,9 +22,15 @@
 #include <linux/init.h>
 #include <mach/hardware.h>
 #include <mach/common.h>
+<<<<<<< HEAD
 #include <mach/devices-common.h>
 #include <asm/pgtable.h>
 #include <asm/mach/map.h>
+=======
+#include <asm/pgtable.h>
+#include <asm/mach/map.h>
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/irqs.h>
 #include <mach/iomux-v1.h>
 
@@ -70,6 +76,7 @@ void __init imx27_init_early(void)
 			MX27_NUM_GPIO_PORT);
 }
 
+<<<<<<< HEAD
 void __init mx27_init_irq(void)
 {
 	mxc_init_irq(MX27_IO_ADDRESS(MX27_AVIC_BASE_ADDR));
@@ -93,4 +100,19 @@ void __init imx27_soc_init(void)
 	/* imx27 has the imx21 type audmux */
 	platform_device_register_simple("imx21-audmux", 0, imx27_audmux_res,
 					ARRAY_SIZE(imx27_audmux_res));
+=======
+static struct mxc_gpio_port imx27_gpio_ports[] = {
+	DEFINE_IMX_GPIO_PORT_IRQ(MX27, 0, 1, MX27_INT_GPIO),
+	DEFINE_IMX_GPIO_PORT(MX27, 1, 2),
+	DEFINE_IMX_GPIO_PORT(MX27, 2, 3),
+	DEFINE_IMX_GPIO_PORT(MX27, 3, 4),
+	DEFINE_IMX_GPIO_PORT(MX27, 4, 5),
+	DEFINE_IMX_GPIO_PORT(MX27, 5, 6),
+};
+
+void __init mx27_init_irq(void)
+{
+	mxc_init_irq(MX27_IO_ADDRESS(MX27_AVIC_BASE_ADDR));
+	mxc_gpio_init(imx27_gpio_ports,	ARRAY_SIZE(imx27_gpio_ports));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

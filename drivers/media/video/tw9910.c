@@ -22,6 +22,7 @@
 #include <linux/slab.h>
 #include <linux/kernel.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/v4l2-mediabus.h>
 #include <linux/videodev2.h>
 
@@ -29,6 +30,13 @@
 #include <media/tw9910.h>
 #include <media/v4l2-chip-ident.h>
 #include <media/v4l2-subdev.h>
+=======
+#include <linux/videodev2.h>
+#include <media/v4l2-chip-ident.h>
+#include <media/v4l2-subdev.h>
+#include <media/soc_camera.h>
+#include <media/tw9910.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define GET_ID(val)  ((val & 0xF8) >> 3)
 #define GET_REV(val) (val & 0x07)
@@ -205,10 +213,13 @@
 #define RTSEL_FIELD 0x06 /* 0110 = FIELD */
 #define RTSEL_RTCO  0x07 /* 0111 = RTCO ( Real Time Control ) */
 
+<<<<<<< HEAD
 /* HSYNC start and end are constant for now */
 #define HSYNC_START	0x0260
 #define HSYNC_END	0x0300
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * structure
  */
@@ -226,11 +237,29 @@ struct tw9910_scale_ctrl {
 	u16             vscale;
 };
 
+<<<<<<< HEAD
+=======
+struct tw9910_cropping_ctrl {
+	u16 vdelay;
+	u16 vactive;
+	u16 hdelay;
+	u16 hactive;
+};
+
+struct tw9910_hsync_ctrl {
+	u16 start;
+	u16 end;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct tw9910_priv {
 	struct v4l2_subdev		subdev;
 	struct tw9910_video_info	*info;
 	const struct tw9910_scale_ctrl	*scale;
+<<<<<<< HEAD
 	v4l2_std_id			norm;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32				revision;
 };
 
@@ -324,6 +353,14 @@ static const struct tw9910_scale_ctrl tw9910_pal_scales[] = {
 	},
 };
 
+<<<<<<< HEAD
+=======
+static const struct tw9910_hsync_ctrl tw9910_hsync_ctrl = {
+	.start = 0x0260,
+	.end   = 0x0300,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * general function
  */
@@ -368,20 +405,33 @@ static int tw9910_set_scale(struct i2c_client *client,
 	return ret;
 }
 
+<<<<<<< HEAD
 static int tw9910_set_hsync(struct i2c_client *client)
+=======
+static int tw9910_set_hsync(struct i2c_client *client,
+			    const struct tw9910_hsync_ctrl *hsync)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tw9910_priv *priv = to_tw9910(client);
 	int ret;
 
 	/* bit 10 - 3 */
 	ret = i2c_smbus_write_byte_data(client, HSBEGIN,
+<<<<<<< HEAD
 					(HSYNC_START & 0x07F8) >> 3);
+=======
+					(hsync->start & 0x07F8) >> 3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		return ret;
 
 	/* bit 10 - 3 */
 	ret = i2c_smbus_write_byte_data(client, HSEND,
+<<<<<<< HEAD
 					(HSYNC_END & 0x07F8) >> 3);
+=======
+					(hsync->end & 0x07F8) >> 3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		return ret;
 
@@ -389,8 +439,13 @@ static int tw9910_set_hsync(struct i2c_client *client)
 	/* bit 2 - 0 */
 	if (1 == priv->revision)
 		ret = tw9910_mask_set(client, HSLOWCTL, 0x77,
+<<<<<<< HEAD
 				      (HSYNC_START & 0x0007) << 4 |
 				      (HSYNC_END   & 0x0007));
+=======
+				      (hsync->start & 0x0007) << 4 |
+				      (hsync->end   & 0x0007));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -422,11 +477,20 @@ static int tw9910_power(struct i2c_client *client, int enable)
 	return tw9910_mask_set(client, ACNTL2, ACNTL2_PDN_MASK, acntl2);
 }
 
+<<<<<<< HEAD
 static const struct tw9910_scale_ctrl *tw9910_select_norm(v4l2_std_id norm,
 							  u32 width, u32 height)
 {
 	const struct tw9910_scale_ctrl *scale;
 	const struct tw9910_scale_ctrl *ret = NULL;
+=======
+static const struct tw9910_scale_ctrl*
+tw9910_select_norm(struct soc_camera_device *icd, u32 width, u32 height)
+{
+	const struct tw9910_scale_ctrl *scale;
+	const struct tw9910_scale_ctrl *ret = NULL;
+	v4l2_std_id norm = icd->vdev->current_norm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__u32 diff = 0xffffffff, tmp;
 	int size, i;
 
@@ -453,7 +517,11 @@ static const struct tw9910_scale_ctrl *tw9910_select_norm(v4l2_std_id norm,
 }
 
 /*
+<<<<<<< HEAD
  * subdevice operations
+=======
+ * soc_camera_ops function
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int tw9910_s_stream(struct v4l2_subdev *sd, int enable)
 {
@@ -495,6 +563,7 @@ static int tw9910_s_stream(struct v4l2_subdev *sd, int enable)
 	return tw9910_power(client, enable);
 }
 
+<<<<<<< HEAD
 static int tw9910_g_std(struct v4l2_subdev *sd, v4l2_std_id *norm)
 {
 	struct i2c_client *client = v4l2_get_subdevdata(sd);
@@ -514,6 +583,59 @@ static int tw9910_s_std(struct v4l2_subdev *sd, v4l2_std_id norm)
 		return -EINVAL;
 
 	priv->norm = norm;
+=======
+static int tw9910_set_bus_param(struct soc_camera_device *icd,
+				unsigned long flags)
+{
+	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
+	struct i2c_client *client = v4l2_get_subdevdata(sd);
+	u8 val = VSSL_VVALID | HSSL_DVALID;
+
+	/*
+	 * set OUTCTR1
+	 *
+	 * We use VVALID and DVALID signals to control VSYNC and HSYNC
+	 * outputs, in this mode their polarity is inverted.
+	 */
+	if (flags & SOCAM_HSYNC_ACTIVE_LOW)
+		val |= HSP_HI;
+
+	if (flags & SOCAM_VSYNC_ACTIVE_LOW)
+		val |= VSP_HI;
+
+	return i2c_smbus_write_byte_data(client, OUTCTR1, val);
+}
+
+static unsigned long tw9910_query_bus_param(struct soc_camera_device *icd)
+{
+	struct i2c_client *client = to_i2c_client(to_soc_camera_control(icd));
+	struct tw9910_priv *priv = to_tw9910(client);
+	struct soc_camera_link *icl = to_soc_camera_link(icd);
+	unsigned long flags = SOCAM_PCLK_SAMPLE_RISING | SOCAM_MASTER |
+		SOCAM_VSYNC_ACTIVE_HIGH | SOCAM_HSYNC_ACTIVE_HIGH |
+		SOCAM_VSYNC_ACTIVE_LOW  | SOCAM_HSYNC_ACTIVE_LOW  |
+		SOCAM_DATA_ACTIVE_HIGH | priv->info->buswidth;
+
+	return soc_camera_apply_sensor_flags(icl, flags);
+}
+
+static int tw9910_s_std(struct v4l2_subdev *sd, v4l2_std_id norm)
+{
+	int ret = -EINVAL;
+
+	if (norm & (V4L2_STD_NTSC | V4L2_STD_PAL))
+		ret = 0;
+
+	return ret;
+}
+
+static int tw9910_enum_input(struct soc_camera_device *icd,
+			     struct v4l2_input *inp)
+{
+	inp->type = V4L2_INPUT_TYPE_TUNER;
+	inp->std  = V4L2_STD_UNKNOWN;
+	strcpy(inp->name, "Video");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -566,17 +688,32 @@ static int tw9910_s_register(struct v4l2_subdev *sd,
 }
 #endif
 
+<<<<<<< HEAD
 static int tw9910_set_frame(struct v4l2_subdev *sd, u32 *width, u32 *height)
 {
 	struct i2c_client *client = v4l2_get_subdevdata(sd);
 	struct tw9910_priv *priv = to_tw9910(client);
 	int ret = -EINVAL;
 	u8 val;
+=======
+static int tw9910_s_crop(struct v4l2_subdev *sd, struct v4l2_crop *a)
+{
+	struct v4l2_rect *rect = &a->c;
+	struct i2c_client *client = v4l2_get_subdevdata(sd);
+	struct tw9910_priv *priv = to_tw9910(client);
+	struct soc_camera_device *icd = client->dev.platform_data;
+	int                 ret  = -EINVAL;
+	u8                  val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * select suitable norm
 	 */
+<<<<<<< HEAD
 	priv->scale = tw9910_select_norm(priv->norm, *width, *height);
+=======
+	priv->scale = tw9910_select_norm(icd, rect->width, rect->height);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!priv->scale)
 		goto tw9910_set_fmt_error;
 
@@ -634,12 +771,23 @@ static int tw9910_set_frame(struct v4l2_subdev *sd, u32 *width, u32 *height)
 	/*
 	 * set hsync
 	 */
+<<<<<<< HEAD
 	ret = tw9910_set_hsync(client);
 	if (ret < 0)
 		goto tw9910_set_fmt_error;
 
 	*width = priv->scale->width;
 	*height = priv->scale->height;
+=======
+	ret = tw9910_set_hsync(client, &tw9910_hsync_ctrl);
+	if (ret < 0)
+		goto tw9910_set_fmt_error;
+
+	rect->width = priv->scale->width;
+	rect->height = priv->scale->height;
+	rect->left = 0;
+	rect->top = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 
@@ -656,6 +804,7 @@ static int tw9910_g_crop(struct v4l2_subdev *sd, struct v4l2_crop *a)
 	struct i2c_client *client = v4l2_get_subdevdata(sd);
 	struct tw9910_priv *priv = to_tw9910(client);
 
+<<<<<<< HEAD
 	a->c.left	= 0;
 	a->c.top	= 0;
 	if (priv->norm & V4L2_STD_NTSC) {
@@ -665,6 +814,27 @@ static int tw9910_g_crop(struct v4l2_subdev *sd, struct v4l2_crop *a)
 		a->c.width	= 768;
 		a->c.height	= 576;
 	}
+=======
+	if (!priv->scale) {
+		int ret;
+		struct v4l2_crop crop = {
+			.c = {
+				.left	= 0,
+				.top	= 0,
+				.width	= 640,
+				.height	= 480,
+			},
+		};
+		ret = tw9910_s_crop(sd, &crop);
+		if (ret < 0)
+			return ret;
+	}
+
+	a->c.left	= 0;
+	a->c.top	= 0;
+	a->c.width	= priv->scale->width;
+	a->c.height	= priv->scale->height;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	a->type		= V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
 	return 0;
@@ -672,6 +842,7 @@ static int tw9910_g_crop(struct v4l2_subdev *sd, struct v4l2_crop *a)
 
 static int tw9910_cropcap(struct v4l2_subdev *sd, struct v4l2_cropcap *a)
 {
+<<<<<<< HEAD
 	struct i2c_client *client = v4l2_get_subdevdata(sd);
 	struct tw9910_priv *priv = to_tw9910(client);
 
@@ -685,6 +856,16 @@ static int tw9910_cropcap(struct v4l2_subdev *sd, struct v4l2_cropcap *a)
 		a->bounds.height	= 576;
 	}
 	a->defrect			= a->bounds;
+=======
+	a->bounds.left			= 0;
+	a->bounds.top			= 0;
+	a->bounds.width			= 768;
+	a->bounds.height		= 576;
+	a->defrect.left			= 0;
+	a->defrect.top			= 0;
+	a->defrect.width		= 640;
+	a->defrect.height		= 480;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	a->type				= V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	a->pixelaspect.numerator	= 1;
 	a->pixelaspect.denominator	= 1;
@@ -700,8 +881,20 @@ static int tw9910_g_fmt(struct v4l2_subdev *sd,
 
 	if (!priv->scale) {
 		int ret;
+<<<<<<< HEAD
 		u32 width = 640, height = 480;
 		ret = tw9910_set_frame(sd, &width, &height);
+=======
+		struct v4l2_crop crop = {
+			.c = {
+				.left	= 0,
+				.top	= 0,
+				.width	= 640,
+				.height	= 480,
+			},
+		};
+		ret = tw9910_s_crop(sd, &crop);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0)
 			return ret;
 	}
@@ -718,7 +911,21 @@ static int tw9910_g_fmt(struct v4l2_subdev *sd,
 static int tw9910_s_fmt(struct v4l2_subdev *sd,
 			struct v4l2_mbus_framefmt *mf)
 {
+<<<<<<< HEAD
 	u32 width = mf->width, height = mf->height;
+=======
+	struct i2c_client *client = v4l2_get_subdevdata(sd);
+	struct tw9910_priv *priv = to_tw9910(client);
+	/* See tw9910_s_crop() - no proper cropping support */
+	struct v4l2_crop a = {
+		.c = {
+			.left	= 0,
+			.top	= 0,
+			.width	= mf->width,
+			.height	= mf->height,
+		},
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	WARN_ON(mf->field != V4L2_FIELD_ANY &&
@@ -732,10 +939,17 @@ static int tw9910_s_fmt(struct v4l2_subdev *sd,
 
 	mf->colorspace = V4L2_COLORSPACE_JPEG;
 
+<<<<<<< HEAD
 	ret = tw9910_set_frame(sd, &width, &height);
 	if (!ret) {
 		mf->width	= width;
 		mf->height	= height;
+=======
+	ret = tw9910_s_crop(sd, &a);
+	if (!ret) {
+		mf->width	= priv->scale->width;
+		mf->height	= priv->scale->height;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return ret;
 }
@@ -744,7 +958,11 @@ static int tw9910_try_fmt(struct v4l2_subdev *sd,
 			  struct v4l2_mbus_framefmt *mf)
 {
 	struct i2c_client *client = v4l2_get_subdevdata(sd);
+<<<<<<< HEAD
 	struct tw9910_priv *priv = to_tw9910(client);
+=======
+	struct soc_camera_device *icd = client->dev.platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const struct tw9910_scale_ctrl *scale;
 
 	if (V4L2_FIELD_ANY == mf->field) {
@@ -760,7 +978,11 @@ static int tw9910_try_fmt(struct v4l2_subdev *sd,
 	/*
 	 * select suitable norm
 	 */
+<<<<<<< HEAD
 	scale = tw9910_select_norm(priv->norm, mf->width, mf->height);
+=======
+	scale = tw9910_select_norm(icd, mf->width, mf->height);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!scale)
 		return -EINVAL;
 
@@ -770,12 +992,28 @@ static int tw9910_try_fmt(struct v4l2_subdev *sd,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int tw9910_video_probe(struct i2c_client *client)
+=======
+static int tw9910_video_probe(struct soc_camera_device *icd,
+			      struct i2c_client *client)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tw9910_priv *priv = to_tw9910(client);
 	s32 id;
 
 	/*
+<<<<<<< HEAD
+=======
+	 * We must have a parent by now. And it cannot be a wrong one.
+	 * So this entire test is completely redundant.
+	 */
+	if (!icd->dev.parent ||
+	    to_soc_camera_host(icd->dev.parent)->nr != icd->iface)
+		return -ENODEV;
+
+	/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * tw9910 only use 8 or 16 bit bus width
 	 */
 	if (SOCAM_DATAWIDTH_16 != priv->info->buswidth &&
@@ -803,15 +1041,32 @@ static int tw9910_video_probe(struct i2c_client *client)
 	dev_info(&client->dev,
 		 "tw9910 Product ID %0x:%0x\n", id, priv->revision);
 
+<<<<<<< HEAD
 	priv->norm = V4L2_STD_NTSC;
+=======
+	icd->vdev->tvnorms      = V4L2_STD_NTSC | V4L2_STD_PAL;
+	icd->vdev->current_norm = V4L2_STD_NTSC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct v4l2_subdev_core_ops tw9910_subdev_core_ops = {
 	.g_chip_ident	= tw9910_g_chip_ident,
 	.s_std		= tw9910_s_std,
 	.g_std		= tw9910_g_std,
+=======
+static struct soc_camera_ops tw9910_ops = {
+	.set_bus_param		= tw9910_set_bus_param,
+	.query_bus_param	= tw9910_query_bus_param,
+	.enum_input		= tw9910_enum_input,
+};
+
+static struct v4l2_subdev_core_ops tw9910_subdev_core_ops = {
+	.g_chip_ident	= tw9910_g_chip_ident,
+	.s_std		= tw9910_s_std,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_VIDEO_ADV_DEBUG
 	.g_register	= tw9910_g_register,
 	.s_register	= tw9910_s_register,
@@ -828,6 +1083,7 @@ static int tw9910_enum_fmt(struct v4l2_subdev *sd, unsigned int index,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int tw9910_g_mbus_config(struct v4l2_subdev *sd,
 				struct v4l2_mbus_config *cfg)
 {
@@ -867,6 +1123,8 @@ static int tw9910_s_mbus_config(struct v4l2_subdev *sd,
 	return i2c_smbus_write_byte_data(client, OUTCTR1, val);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct v4l2_subdev_video_ops tw9910_subdev_video_ops = {
 	.s_stream	= tw9910_s_stream,
 	.g_mbus_fmt	= tw9910_g_fmt,
@@ -874,9 +1132,14 @@ static struct v4l2_subdev_video_ops tw9910_subdev_video_ops = {
 	.try_mbus_fmt	= tw9910_try_fmt,
 	.cropcap	= tw9910_cropcap,
 	.g_crop		= tw9910_g_crop,
+<<<<<<< HEAD
 	.enum_mbus_fmt	= tw9910_enum_fmt,
 	.g_mbus_config	= tw9910_g_mbus_config,
 	.s_mbus_config	= tw9910_s_mbus_config,
+=======
+	.s_crop		= tw9910_s_crop,
+	.enum_mbus_fmt	= tw9910_enum_fmt,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct v4l2_subdev_ops tw9910_subdev_ops = {
@@ -892,6 +1155,7 @@ static int tw9910_probe(struct i2c_client *client,
 			const struct i2c_device_id *did)
 
 {
+<<<<<<< HEAD
 	struct tw9910_priv		*priv;
 	struct tw9910_video_info	*info;
 	struct i2c_adapter		*adapter =
@@ -904,6 +1168,25 @@ static int tw9910_probe(struct i2c_client *client,
 		return -EINVAL;
 	}
 
+=======
+	struct tw9910_priv             *priv;
+	struct tw9910_video_info       *info;
+	struct soc_camera_device       *icd = client->dev.platform_data;
+	struct i2c_adapter             *adapter =
+		to_i2c_adapter(client->dev.parent);
+	struct soc_camera_link         *icl;
+	int                             ret;
+
+	if (!icd) {
+		dev_err(&client->dev, "TW9910: missing soc-camera data!\n");
+		return -EINVAL;
+	}
+
+	icl = to_soc_camera_link(icd);
+	if (!icl || !icl->priv)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info = icl->priv;
 
 	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA)) {
@@ -921,9 +1204,20 @@ static int tw9910_probe(struct i2c_client *client,
 
 	v4l2_i2c_subdev_init(&priv->subdev, client, &tw9910_subdev_ops);
 
+<<<<<<< HEAD
 	ret = tw9910_video_probe(client);
 	if (ret)
 		kfree(priv);
+=======
+	icd->ops     = &tw9910_ops;
+	icd->iface   = icl->bus_id;
+
+	ret = tw9910_video_probe(icd, client);
+	if (ret) {
+		icd->ops = NULL;
+		kfree(priv);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -931,7 +1225,13 @@ static int tw9910_probe(struct i2c_client *client,
 static int tw9910_remove(struct i2c_client *client)
 {
 	struct tw9910_priv *priv = to_tw9910(client);
+<<<<<<< HEAD
 
+=======
+	struct soc_camera_device *icd = client->dev.platform_data;
+
+	icd->ops = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(priv);
 	return 0;
 }
@@ -951,7 +1251,25 @@ static struct i2c_driver tw9910_i2c_driver = {
 	.id_table = tw9910_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(tw9910_i2c_driver);
+=======
+/*
+ * module function
+ */
+static int __init tw9910_module_init(void)
+{
+	return i2c_add_driver(&tw9910_i2c_driver);
+}
+
+static void __exit tw9910_module_exit(void)
+{
+	i2c_del_driver(&tw9910_i2c_driver);
+}
+
+module_init(tw9910_module_init);
+module_exit(tw9910_module_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("SoC Camera driver for tw9910");
 MODULE_AUTHOR("Kuninori Morimoto");

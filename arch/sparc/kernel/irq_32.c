@@ -13,7 +13,10 @@
 
 #include <linux/kernel_stat.h>
 #include <linux/seq_file.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/cacheflush.h>
 #include <asm/cpudata.h>

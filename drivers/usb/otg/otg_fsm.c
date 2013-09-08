@@ -28,6 +28,10 @@
 #include <linux/usb.h>
 #include <linux/usb/gadget.h>
 #include <linux/usb/otg.h>
+<<<<<<< HEAD
+=======
+#include <linux/types.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "otg_fsm.h"
 
@@ -117,10 +121,17 @@ void otg_leave_state(struct otg_fsm *fsm, enum usb_otg_state old_state)
 int otg_set_state(struct otg_fsm *fsm, enum usb_otg_state new_state)
 {
 	state_changed = 1;
+<<<<<<< HEAD
 	if (fsm->otg->phy->state == new_state)
 		return 0;
 	VDBG("Set state: %s\n", otg_state_string(new_state));
 	otg_leave_state(fsm, fsm->otg->phy->state);
+=======
+	if (fsm->transceiver->state == new_state)
+		return 0;
+	VDBG("Set state: %s\n", otg_state_string(new_state));
+	otg_leave_state(fsm, fsm->transceiver->state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (new_state) {
 	case OTG_STATE_B_IDLE:
 		otg_drv_vbus(fsm, 0);
@@ -155,8 +166,13 @@ int otg_set_state(struct otg_fsm *fsm, enum usb_otg_state new_state)
 		otg_loc_conn(fsm, 0);
 		otg_loc_sof(fsm, 1);
 		otg_set_protocol(fsm, PROTO_HOST);
+<<<<<<< HEAD
 		usb_bus_start_enum(fsm->otg->host,
 				fsm->otg->host->otg_port);
+=======
+		usb_bus_start_enum(fsm->transceiver->host,
+				fsm->transceiver->host->otg_port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case OTG_STATE_A_IDLE:
 		otg_drv_vbus(fsm, 0);
@@ -221,7 +237,11 @@ int otg_set_state(struct otg_fsm *fsm, enum usb_otg_state new_state)
 		break;
 	}
 
+<<<<<<< HEAD
 	fsm->otg->phy->state = new_state;
+=======
+	fsm->transceiver->state = new_state;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -233,7 +253,11 @@ int otg_statemachine(struct otg_fsm *fsm)
 
 	spin_lock_irqsave(&fsm->lock, flags);
 
+<<<<<<< HEAD
 	state = fsm->otg->phy->state;
+=======
+	state = fsm->transceiver->state;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	state_changed = 0;
 	/* State machine state change judgement */
 
@@ -248,7 +272,11 @@ int otg_statemachine(struct otg_fsm *fsm)
 	case OTG_STATE_B_IDLE:
 		if (!fsm->id)
 			otg_set_state(fsm, OTG_STATE_A_IDLE);
+<<<<<<< HEAD
 		else if (fsm->b_sess_vld && fsm->otg->gadget)
+=======
+		else if (fsm->b_sess_vld && fsm->transceiver->gadget)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			otg_set_state(fsm, OTG_STATE_B_PERIPHERAL);
 		else if (fsm->b_bus_req && fsm->b_sess_end && fsm->b_se0_srp)
 			otg_set_state(fsm, OTG_STATE_B_SRP_INIT);
@@ -260,7 +288,11 @@ int otg_statemachine(struct otg_fsm *fsm)
 	case OTG_STATE_B_PERIPHERAL:
 		if (!fsm->id || !fsm->b_sess_vld)
 			otg_set_state(fsm, OTG_STATE_B_IDLE);
+<<<<<<< HEAD
 		else if (fsm->b_bus_req && fsm->otg->
+=======
+		else if (fsm->b_bus_req && fsm->transceiver->
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				gadget->b_hnp_enable && fsm->a_bus_suspend)
 			otg_set_state(fsm, OTG_STATE_B_WAIT_ACON);
 		break;
@@ -302,7 +334,11 @@ int otg_statemachine(struct otg_fsm *fsm)
 		break;
 	case OTG_STATE_A_HOST:
 		if ((!fsm->a_bus_req || fsm->a_suspend_req) &&
+<<<<<<< HEAD
 				fsm->otg->host->b_hnp_enable)
+=======
+				fsm->transceiver->host->b_hnp_enable)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			otg_set_state(fsm, OTG_STATE_A_SUSPEND);
 		else if (fsm->id || !fsm->b_conn || fsm->a_bus_drop)
 			otg_set_state(fsm, OTG_STATE_A_WAIT_BCON);
@@ -310,9 +346,15 @@ int otg_statemachine(struct otg_fsm *fsm)
 			otg_set_state(fsm, OTG_STATE_A_VBUS_ERR);
 		break;
 	case OTG_STATE_A_SUSPEND:
+<<<<<<< HEAD
 		if (!fsm->b_conn && fsm->otg->host->b_hnp_enable)
 			otg_set_state(fsm, OTG_STATE_A_PERIPHERAL);
 		else if (!fsm->b_conn && !fsm->otg->host->b_hnp_enable)
+=======
+		if (!fsm->b_conn && fsm->transceiver->host->b_hnp_enable)
+			otg_set_state(fsm, OTG_STATE_A_PERIPHERAL);
+		else if (!fsm->b_conn && !fsm->transceiver->host->b_hnp_enable)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			otg_set_state(fsm, OTG_STATE_A_WAIT_BCON);
 		else if (fsm->a_bus_req || fsm->b_bus_resume)
 			otg_set_state(fsm, OTG_STATE_A_HOST);

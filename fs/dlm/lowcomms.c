@@ -52,7 +52,10 @@
 #include <linux/mutex.h>
 #include <linux/sctp.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <net/sctp/sctp.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/sctp/user.h>
 #include <net/ipv6.h>
 
@@ -282,7 +285,11 @@ static int nodeid_to_addr(int nodeid, struct sockaddr *retaddr)
 	} else {
 		struct sockaddr_in6 *in6  = (struct sockaddr_in6 *) &addr;
 		struct sockaddr_in6 *ret6 = (struct sockaddr_in6 *) retaddr;
+<<<<<<< HEAD
 		ret6->sin6_addr = in6->sin6_addr;
+=======
+		ipv6_addr_copy(&ret6->sin6_addr, &in6->sin6_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -475,6 +482,12 @@ static void process_sctp_notification(struct connection *con,
 			int prim_len, ret;
 			int addr_len;
 			struct connection *new_con;
+<<<<<<< HEAD
+=======
+			sctp_peeloff_arg_t parg;
+			int parglen = sizeof(parg);
+			int err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/*
 			 * We get this before any data for an association.
@@ -510,10 +523,19 @@ static void process_sctp_notification(struct connection *con,
 			}
 			make_sockaddr(&prim.ssp_addr, 0, &addr_len);
 			if (dlm_addr_to_nodeid(&prim.ssp_addr, &nodeid)) {
+<<<<<<< HEAD
 				unsigned char *b=(unsigned char *)&prim.ssp_addr;
 				log_print("reject connect from unknown addr");
 				print_hex_dump_bytes("ss: ", DUMP_PREFIX_NONE, 
 						     b, sizeof(struct sockaddr_storage));
+=======
+				int i;
+				unsigned char *b=(unsigned char *)&prim.ssp_addr;
+				log_print("reject connect from unknown addr");
+				for (i=0; i<sizeof(struct sockaddr_storage);i++)
+					printk("%02x ", b[i]);
+				printk("\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				sctp_send_shutdown(prim.ssp_assoc_id);
 				return;
 			}
@@ -523,6 +545,7 @@ static void process_sctp_notification(struct connection *con,
 				return;
 
 			/* Peel off a new sock */
+<<<<<<< HEAD
 			sctp_lock_sock(con->sock->sk);
 			ret = sctp_do_peeloff(con->sock->sk,
 				sn->sn_assoc_change.sac_assoc_id,
@@ -536,6 +559,25 @@ static void process_sctp_notification(struct connection *con,
 				return;
 			}
 			add_sock(new_con->sock, new_con);
+=======
+			parg.associd = sn->sn_assoc_change.sac_assoc_id;
+			ret = kernel_getsockopt(con->sock, IPPROTO_SCTP,
+						SCTP_SOCKOPT_PEELOFF,
+						(void *)&parg, &parglen);
+			if (ret < 0) {
+				log_print("Can't peel off a socket for "
+					  "connection %d to node %d: err=%d",
+					  parg.associd, nodeid, ret);
+				return;
+			}
+			new_con->sock = sockfd_lookup(parg.sd, &err);
+			if (!new_con->sock) {
+				log_print("sockfd_lookup error %d", err);
+				return;
+			}
+			add_sock(new_con->sock, new_con);
+			sockfd_put(new_con->sock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			log_print("connecting to %d sctp association %d",
 				 nodeid, (int)sn->sn_assoc_change.sac_assoc_id);
@@ -740,10 +782,14 @@ static int tcp_accept_from_sock(struct connection *con)
 	/* Get the new node's NODEID */
 	make_sockaddr(&peeraddr, 0, &len);
 	if (dlm_addr_to_nodeid(&peeraddr, &nodeid)) {
+<<<<<<< HEAD
 		unsigned char *b=(unsigned char *)&peeraddr;
 		log_print("connect from non cluster node");
 		print_hex_dump_bytes("ss: ", DUMP_PREFIX_NONE, 
 				     b, sizeof(struct sockaddr_storage));
+=======
+		log_print("connect from non cluster node");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sock_release(newsock);
 		mutex_unlock(&con->sock_mutex);
 		return -1;
@@ -1076,7 +1122,11 @@ static void init_local(void)
 	int i;
 
 	dlm_local_count = 0;
+<<<<<<< HEAD
 	for (i = 0; i < DLM_MAX_ADDR_COUNT; i++) {
+=======
+	for (i = 0; i < DLM_MAX_ADDR_COUNT - 1; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (dlm_our_addr(&sas, i))
 			break;
 

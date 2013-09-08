@@ -31,7 +31,11 @@
 #include <linux/init.h>
 #include <linux/pci.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/dma-mapping.h>
 #include <sound/core.h>
 #include <sound/pcm.h>
@@ -48,7 +52,11 @@ MODULE_SUPPORTED_DEVICE("{{ALI,M5451,pci},{ALI,M5451}}");
 static int index = SNDRV_DEFAULT_IDX1;	/* Index */
 static char *id = SNDRV_DEFAULT_STR1;	/* ID for this card */
 static int pcm_channels = 32;
+<<<<<<< HEAD
 static bool spdif;
+=======
+static int spdif;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(index, int, 0444);
 MODULE_PARM_DESC(index, "Index value for ALI M5451 PCI Audio.");
@@ -60,7 +68,11 @@ module_param(spdif, bool, 0444);
 MODULE_PARM_DESC(spdif, "Support SPDIF I/O");
 
 /* just for backward compatibility */
+<<<<<<< HEAD
 static bool enable;
+=======
+static int enable;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(enable, bool, 0444);
 
 
@@ -1435,7 +1447,11 @@ static snd_pcm_uframes_t snd_ali_pointer(struct snd_pcm_substream *substream)
 
 	spin_lock(&codec->reg_lock);
 	if (!pvoice->running) {
+<<<<<<< HEAD
 		spin_unlock(&codec->reg_lock);
+=======
+		spin_unlock_irq(&codec->reg_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 	outb(pvoice->number, ALI_REG(codec, ALI_GC_CIR));
@@ -2090,7 +2106,11 @@ static int __devinit snd_ali_resources(struct snd_ali *codec)
 	codec->port = pci_resource_start(codec->pci, 0);
 
 	if (request_irq(codec->pci->irq, snd_ali_card_interrupt,
+<<<<<<< HEAD
 			IRQF_SHARED, KBUILD_MODNAME, codec)) {
+=======
+			IRQF_SHARED, "ALI 5451", codec)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printk(KERN_ERR "Unable to request irq.\n");
 		return -EBUSY;
 	}
@@ -2295,7 +2315,11 @@ static void __devexit snd_ali_remove(struct pci_dev *pci)
 }
 
 static struct pci_driver driver = {
+<<<<<<< HEAD
 	.name = KBUILD_MODNAME,
+=======
+	.name = "ALI 5451",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table = snd_ali_ids,
 	.probe = snd_ali_probe,
 	.remove = __devexit_p(snd_ali_remove),

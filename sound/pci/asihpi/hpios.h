@@ -1,7 +1,11 @@
 /******************************************************************************
 
     AudioScience HPI driver
+<<<<<<< HEAD
     Copyright (C) 1997-2011  AudioScience Inc. <support@audioscience.com>
+=======
+    Copyright (C) 1997-2010  AudioScience Inc. <support@audioscience.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of version 2 of the GNU General Public License as
@@ -30,6 +34,10 @@ HPI Operating System Specific macros for Linux Kernel driver
 #define HPI_BUILD_KERNEL_MODE
 
 #include <linux/io.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ioctl.h>
 #include <linux/kernel.h>
 #include <linux/string.h>
@@ -37,7 +45,10 @@ HPI Operating System Specific macros for Linux Kernel driver
 #include <linux/firmware.h>
 #include <linux/interrupt.h>
 #include <linux/pci.h>
+<<<<<<< HEAD
 #include <linux/mutex.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define HPI_NO_OS_FILE_OPS
 
@@ -148,6 +159,7 @@ static inline void cond_unlock(struct hpios_spinlock *l)
 #define hpios_alistlock_lock(obj) spin_lock(&((obj)->list_lock.lock))
 #define hpios_alistlock_unlock(obj) spin_unlock(&((obj)->list_lock.lock))
 
+<<<<<<< HEAD
 struct snd_card;
 
 /** pci drvdata points to an instance of this struct */
@@ -160,6 +172,22 @@ struct hpi_adapter {
 	struct mutex mutex;
 	char *p_buffer;
 	size_t buffer_size;
+=======
+struct hpi_adapter {
+	/* mutex prevents contention for one card
+	   between multiple user programs (via ioctl) */
+	struct mutex mutex;
+	u16 index;
+	u16 type;
+
+	/* ALSA card structure */
+	void *snd_card_asihpi;
+
+	char *p_buffer;
+	size_t buffer_size;
+	struct pci_dev *pci;
+	void __iomem *ap_remapped_mem_base[HPI_MAX_ADAPTER_MEM_SPACES];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif

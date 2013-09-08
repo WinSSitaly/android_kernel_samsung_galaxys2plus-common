@@ -26,7 +26,11 @@
 
 #include <asm/cacheflush.h>
 #include <asm/pgalloc.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/mmu_context.h>
 #include <asm/m32r.h>

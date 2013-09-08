@@ -25,6 +25,10 @@ int ieee80211_wep_encrypt(struct ieee80211_local *local,
 			  const u8 *key, int keylen, int keyidx);
 int ieee80211_wep_decrypt_data(struct crypto_cipher *tfm, u8 *rc4key,
 			       size_t klen, u8 *data, size_t data_len);
+<<<<<<< HEAD
+=======
+bool ieee80211_wep_is_weak_iv(struct sk_buff *skb, struct ieee80211_key *key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 ieee80211_rx_result
 ieee80211_crypto_wep_decrypt(struct ieee80211_rx_data *rx);

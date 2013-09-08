@@ -211,7 +211,10 @@
 #define PCI_DEVICE_ID_INTEL_G41_HB          0x2E30
 #define PCI_DEVICE_ID_INTEL_G41_IG          0x2E32
 #define PCI_DEVICE_ID_INTEL_IRONLAKE_D_HB	    0x0040
+<<<<<<< HEAD
 #define PCI_DEVICE_ID_INTEL_IRONLAKE_D2_HB	    0x0069
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PCI_DEVICE_ID_INTEL_IRONLAKE_D_IG	    0x0042
 #define PCI_DEVICE_ID_INTEL_IRONLAKE_M_HB	    0x0044
 #define PCI_DEVICE_ID_INTEL_IRONLAKE_MA_HB	    0x0062
@@ -235,7 +238,10 @@
 #define PCI_DEVICE_ID_INTEL_IVYBRIDGE_M_GT2_IG		0x0166
 #define PCI_DEVICE_ID_INTEL_IVYBRIDGE_S_HB		0x0158  /* Server */
 #define PCI_DEVICE_ID_INTEL_IVYBRIDGE_S_GT1_IG		0x015A
+<<<<<<< HEAD
 #define PCI_DEVICE_ID_INTEL_IVYBRIDGE_S_GT2_IG		0x016A
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int intel_gmch_probe(struct pci_dev *pdev,
 			       struct agp_bridge_data *bridge);

@@ -20,6 +20,7 @@ static int set_x2apic_phys_mode(char *arg)
 }
 early_param("x2apic_phys", set_x2apic_phys_mode);
 
+<<<<<<< HEAD
 static bool x2apic_fadt_phys(void)
 {
 	if ((acpi_gbl_FADT.header.revision >= FADT2_REVISION_ID) &&
@@ -33,6 +34,14 @@ static bool x2apic_fadt_phys(void)
 static int x2apic_acpi_madt_oem_check(char *oem_id, char *oem_table_id)
 {
 	return x2apic_enabled() && (x2apic_phys || x2apic_fadt_phys());
+=======
+static int x2apic_acpi_madt_oem_check(char *oem_id, char *oem_table_id)
+{
+	if (x2apic_phys)
+		return x2apic_enabled();
+	else
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -115,7 +124,11 @@ static void init_x2apic_ldr(void)
 
 static int x2apic_phys_probe(void)
 {
+<<<<<<< HEAD
 	if (x2apic_mode && (x2apic_phys || x2apic_fadt_phys()))
+=======
+	if (x2apic_mode && x2apic_phys)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 
 	return apic == &apic_x2apic_phys;
@@ -126,7 +139,10 @@ static struct apic apic_x2apic_phys = {
 	.name				= "physical x2apic",
 	.probe				= x2apic_phys_probe,
 	.acpi_madt_oem_check		= x2apic_acpi_madt_oem_check,
+<<<<<<< HEAD
 	.apic_id_valid			= x2apic_apic_id_valid,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.apic_id_registered		= x2apic_apic_id_registered,
 
 	.irq_delivery_mode		= dest_Fixed,

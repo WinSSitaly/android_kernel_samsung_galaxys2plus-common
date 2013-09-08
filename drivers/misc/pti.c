@@ -33,8 +33,11 @@
 #include <linux/mutex.h>
 #include <linux/miscdevice.h>
 #include <linux/pti.h>
+<<<<<<< HEAD
 #include <linux/slab.h>
 #include <linux/uaccess.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRIVERNAME		"pti"
 #define PCINAME			"pciPTI"
@@ -148,20 +151,30 @@ static void pti_write_to_aperture(struct pti_masterchannel *mc,
 /**
  *  pti_control_frame_built_and_sent()- control frame build and send function.
  *
+<<<<<<< HEAD
  *  @mc:          The master / channel structure on which the function
  *                built a control frame.
  *  @thread_name: The thread name associated with the master / channel or
  *                'NULL' if using the 'current' global variable.
+=======
+ *  @mc: The master / channel structure on which the function
+ *       built a control frame.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *  To be able to post process the PTI contents on host side, a control frame
  *  is added before sending any PTI content. So the host side knows on
  *  each PTI frame the name of the thread using a dedicated master / channel.
+<<<<<<< HEAD
  *  The thread name is retrieved from 'current' global variable if 'thread_name'
  *  is 'NULL', else it is retrieved from 'thread_name' parameter.
+=======
+ *  The thread name is retrieved from the 'current' global variable.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  This function builds this frame and sends it to a master ID CONTROL_ID.
  *  The overhead is only 32 bytes since the driver only writes to HW
  *  in 32 byte chunks.
  */
+<<<<<<< HEAD
 static void pti_control_frame_built_and_sent(struct pti_masterchannel *mc,
 					     const char *thread_name)
 {
@@ -188,12 +201,40 @@ static void pti_control_frame_built_and_sent(struct pti_masterchannel *mc,
 	} else {
 		thread_name_p = thread_name;
 	}
+=======
+
+static void pti_control_frame_built_and_sent(struct pti_masterchannel *mc)
+{
+	struct pti_masterchannel mccontrol = {.master = CONTROL_ID,
+					      .channel = 0};
+	const char *control_format = "%3d %3d %s";
+	u8 control_frame[CONTROL_FRAME_LEN];
+
+	/*
+	 * Since we access the comm member in current's task_struct,
+	 * we only need to be as large as what 'comm' in that
+	 * structure is.
+	 */
+	char comm[TASK_COMM_LEN];
+
+	if (!in_interrupt())
+		get_task_comm(comm, current);
+	else
+		strncpy(comm, "Interrupt", TASK_COMM_LEN);
+
+	/* Absolutely ensure our buffer is zero terminated. */
+	comm[TASK_COMM_LEN-1] = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mccontrol.channel = pti_control_channel;
 	pti_control_channel = (pti_control_channel + 1) & 0x7f;
 
 	snprintf(control_frame, CONTROL_FRAME_LEN, control_format, mc->master,
+<<<<<<< HEAD
 		mc->channel, thread_name_p);
+=======
+		mc->channel, comm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pti_write_to_aperture(&mccontrol, control_frame, strlen(control_frame));
 }
 
@@ -215,13 +256,18 @@ static void pti_write_full_frame_to_aperture(struct pti_masterchannel *mc,
 						const unsigned char *buf,
 						int len)
 {
+<<<<<<< HEAD
 	pti_control_frame_built_and_sent(mc, NULL);
+=======
+	pti_control_frame_built_and_sent(mc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pti_write_to_aperture(mc, (u8 *)buf, len);
 }
 
 /**
  * get_id()- Allocate a master and channel ID.
  *
+<<<<<<< HEAD
  * @id_array:    an array of bits representing what channel
  *               id's are allocated for writing.
  * @max_ids:     The max amount of available write IDs to use.
@@ -229,6 +275,13 @@ static void pti_write_full_frame_to_aperture(struct pti_masterchannel *mc,
  *               PTI arch.
  * @thread_name: The thread name associated with the master / channel or
  *               'NULL' if using the 'current' global variable.
+=======
+ * @id_array: an array of bits representing what channel
+ *            id's are allocated for writing.
+ * @max_ids:  The max amount of available write IDs to use.
+ * @base_id:  The starting SW channel ID, based on the Intel
+ *            PTI arch.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Returns:
  *	pti_masterchannel struct with master, channel ID address
@@ -238,10 +291,14 @@ static void pti_write_full_frame_to_aperture(struct pti_masterchannel *mc,
  * channel id. The bit is one if the id is taken and 0 if free. For
  * every master there are 128 channel id's.
  */
+<<<<<<< HEAD
 static struct pti_masterchannel *get_id(u8 *id_array,
 					int max_ids,
 					int base_id,
 					const char *thread_name)
+=======
+static struct pti_masterchannel *get_id(u8 *id_array, int max_ids, int base_id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct pti_masterchannel *mc;
 	int i, j, mask;
@@ -271,7 +328,11 @@ static struct pti_masterchannel *get_id(u8 *id_array,
 	mc->master  = base_id;
 	mc->channel = ((i & 0xf)<<3) + j;
 	/* write new master Id / channel Id allocation to channel control */
+<<<<<<< HEAD
 	pti_control_frame_built_and_sent(mc, thread_name);
+=======
+	pti_control_frame_built_and_sent(mc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return mc;
 }
 
@@ -287,6 +348,7 @@ static struct pti_masterchannel *get_id(u8 *id_array,
  *				a master, channel ID address
  *				to write to PTI HW.
  *
+<<<<<<< HEAD
  * @type:        0- request Application  master, channel aperture ID
  *                  write address.
  *               1- request OS master, channel aperture ID write
@@ -296,13 +358,25 @@ static struct pti_masterchannel *get_id(u8 *id_array,
  *               Other values, error.
  * @thread_name: The thread name associated with the master / channel or
  *               'NULL' if using the 'current' global variable.
+=======
+ * @type: 0- request Application  master, channel aperture ID write address.
+ *        1- request OS master, channel aperture ID write
+ *           address.
+ *        2- request Modem master, channel aperture ID
+ *           write address.
+ *        Other values, error.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Returns:
  *	pti_masterchannel struct
  *	0 for error
  */
+<<<<<<< HEAD
 struct pti_masterchannel *pti_request_masterchannel(u8 type,
 						    const char *thread_name)
+=======
+struct pti_masterchannel *pti_request_masterchannel(u8 type)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct pti_masterchannel *mc;
 
@@ -311,6 +385,7 @@ struct pti_masterchannel *pti_request_masterchannel(u8 type,
 	switch (type) {
 
 	case 0:
+<<<<<<< HEAD
 		mc = get_id(drv_data->ia_app, MAX_APP_IDS,
 			    APP_BASE_ID, thread_name);
 		break;
@@ -323,6 +398,17 @@ struct pti_masterchannel *pti_request_masterchannel(u8 type,
 	case 2:
 		mc = get_id(drv_data->ia_modem, MAX_MODEM_IDS,
 			    MODEM_BASE_ID, thread_name);
+=======
+		mc = get_id(drv_data->ia_app, MAX_APP_IDS, APP_BASE_ID);
+		break;
+
+	case 1:
+		mc = get_id(drv_data->ia_os, MAX_OS_IDS, OS_BASE_ID);
+		break;
+
+	case 2:
+		mc = get_id(drv_data->ia_modem, MAX_MODEM_IDS, MODEM_BASE_ID);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		mc = NULL;
@@ -466,9 +552,15 @@ static void pti_tty_driver_close(struct tty_struct *tty, struct file *filp)
 }
 
 /**
+<<<<<<< HEAD
  * pti_tty_install()- Used to set up specific master-channels
  *		      to tty ports for organizational purposes when
  *		      tracing viewed from debuging tools.
+=======
+ * pti_tty_intstall()- Used to set up specific master-channels
+ *		       to tty ports for organizational purposes when
+ *		       tracing viewed from debuging tools.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * @driver: tty driver information.
  * @tty: tty struct containing pti information.
@@ -481,17 +573,33 @@ static int pti_tty_install(struct tty_driver *driver, struct tty_struct *tty)
 {
 	int idx = tty->index;
 	struct pti_tty *pti_tty_data;
+<<<<<<< HEAD
 	int ret = tty_standard_install(driver, tty);
 
 	if (ret == 0) {
+=======
+	int ret = tty_init_termios(tty);
+
+	if (ret == 0) {
+		tty_driver_kref_get(driver);
+		tty->count++;
+		driver->ttys[idx] = tty;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pti_tty_data = kmalloc(sizeof(struct pti_tty), GFP_KERNEL);
 		if (pti_tty_data == NULL)
 			return -ENOMEM;
 
 		if (idx == PTITTY_MINOR_START)
+<<<<<<< HEAD
 			pti_tty_data->mc = pti_request_masterchannel(0, NULL);
 		else
 			pti_tty_data->mc = pti_request_masterchannel(2, NULL);
+=======
+			pti_tty_data->mc = pti_request_masterchannel(0);
+		else
+			pti_tty_data->mc = pti_request_masterchannel(2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (pti_tty_data->mc == NULL) {
 			kfree(pti_tty_data);
@@ -580,7 +688,11 @@ static int pti_char_open(struct inode *inode, struct file *filp)
 	 * before assigning the value to filp->private_data.
 	 * Slightly easier to debug if this driver needs debugging.
 	 */
+<<<<<<< HEAD
 	mc = pti_request_masterchannel(0, NULL);
+=======
+	mc = pti_request_masterchannel(0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (mc == NULL)
 		return -ENOMEM;
 	filp->private_data = mc;
@@ -907,17 +1019,31 @@ static int __init pti_init(void)
 
 	/* First register module as tty device */
 
+<<<<<<< HEAD
 	pti_tty_driver = alloc_tty_driver(PTITTY_MINOR_NUM);
+=======
+	pti_tty_driver = alloc_tty_driver(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pti_tty_driver == NULL) {
 		pr_err("%s(%d): Memory allocation failed for ptiTTY driver\n",
 			__func__, __LINE__);
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
+=======
+	pti_tty_driver->owner			= THIS_MODULE;
+	pti_tty_driver->magic			= TTY_DRIVER_MAGIC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pti_tty_driver->driver_name		= DRIVERNAME;
 	pti_tty_driver->name			= TTYNAME;
 	pti_tty_driver->major			= 0;
 	pti_tty_driver->minor_start		= PTITTY_MINOR_START;
+<<<<<<< HEAD
+=======
+	pti_tty_driver->minor_num		= PTITTY_MINOR_NUM;
+	pti_tty_driver->num			= PTITTY_MINOR_NUM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pti_tty_driver->type			= TTY_DRIVER_TYPE_SYSTEM;
 	pti_tty_driver->subtype			= SYSTEM_TYPE_SYSCONS;
 	pti_tty_driver->flags			= TTY_DRIVER_REAL_RAW |

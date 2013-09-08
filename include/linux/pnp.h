@@ -50,7 +50,11 @@ static inline resource_size_t pnp_resource_len(struct resource *res)
 {
 	if (res->start == 0 && res->end == 0)
 		return 0;
+<<<<<<< HEAD
 	return resource_size(res);
+=======
+	return res->end - res->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 

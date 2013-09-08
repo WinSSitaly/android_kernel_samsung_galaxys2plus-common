@@ -41,7 +41,11 @@ static int __devinit usb_w90x900_probe(const struct hc_driver *driver,
 	}
 
 	hcd->rsrc_start = res->start;
+<<<<<<< HEAD
 	hcd->rsrc_len = resource_size(res);
+=======
+	hcd->rsrc_len = res->end - res->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len, hcd_name)) {
 		retval = -EBUSY;
@@ -78,8 +82,11 @@ static int __devinit usb_w90x900_probe(const struct hc_driver *driver,
 	if (irq < 0)
 		goto err4;
 
+<<<<<<< HEAD
 	ehci_reset(ehci);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	retval = usb_add_hcd(hcd, irq, IRQF_SHARED);
 	if (retval != 0)
 		goto err4;

@@ -49,18 +49,22 @@ struct sockaddr_ll {
 #define PACKET_VNET_HDR			15
 #define PACKET_TX_TIMESTAMP		16
 #define PACKET_TIMESTAMP		17
+<<<<<<< HEAD
 #define PACKET_FANOUT			18
 
 #define PACKET_FANOUT_HASH		0
 #define PACKET_FANOUT_LB		1
 #define PACKET_FANOUT_CPU		2
 #define PACKET_FANOUT_FLAG_DEFRAG	0x8000
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct tpacket_stats {
 	unsigned int	tp_packets;
 	unsigned int	tp_drops;
 };
 
+<<<<<<< HEAD
 struct tpacket_stats_v3 {
 	unsigned int	tp_packets;
 	unsigned int	tp_drops;
@@ -72,6 +76,8 @@ union tpacket_stats_u {
 	struct tpacket_stats_v3 stats3;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct tpacket_auxdata {
 	__u32		tp_status;
 	__u32		tp_len;
@@ -89,7 +95,10 @@ struct tpacket_auxdata {
 #define TP_STATUS_LOSING	0x4
 #define TP_STATUS_CSUMNOTREADY	0x8
 #define TP_STATUS_VLAN_VALID   0x10 /* auxdata has valid tp_vlan_tci */
+<<<<<<< HEAD
 #define TP_STATUS_BLK_TMO	0x20
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Tx ring - header status */
 #define TP_STATUS_AVAILABLE	0x0
@@ -97,9 +106,12 @@ struct tpacket_auxdata {
 #define TP_STATUS_SENDING	0x2
 #define TP_STATUS_WRONG_FORMAT	0x4
 
+<<<<<<< HEAD
 /* Rx ring - feature request bits */
 #define TP_FT_REQ_FILL_RXHASH	0x1
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct tpacket_hdr {
 	unsigned long	tp_status;
 	unsigned int	tp_len;
@@ -126,6 +138,7 @@ struct tpacket2_hdr {
 	__u16		tp_padding;
 };
 
+<<<<<<< HEAD
 struct tpacket_hdr_variant1 {
 	__u32	tp_rxhash;
 	__u32	tp_vlan_tci;
@@ -215,11 +228,17 @@ struct tpacket_block_desc {
 
 #define TPACKET2_HDRLEN		(TPACKET_ALIGN(sizeof(struct tpacket2_hdr)) + sizeof(struct sockaddr_ll))
 #define TPACKET3_HDRLEN		(TPACKET_ALIGN(sizeof(struct tpacket3_hdr)) + sizeof(struct sockaddr_ll))
+=======
+#define TPACKET2_HDRLEN		(TPACKET_ALIGN(sizeof(struct tpacket2_hdr)) + sizeof(struct sockaddr_ll))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum tpacket_versions {
 	TPACKET_V1,
 	TPACKET_V2,
+<<<<<<< HEAD
 	TPACKET_V3
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -242,6 +261,7 @@ struct tpacket_req {
 	unsigned int	tp_frame_nr;	/* Total number of frames */
 };
 
+<<<<<<< HEAD
 struct tpacket_req3 {
 	unsigned int	tp_block_size;	/* Minimal size of contiguous block */
 	unsigned int	tp_block_nr;	/* Number of blocks */
@@ -257,6 +277,8 @@ union tpacket_req_u {
 	struct tpacket_req3	req3;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct packet_mreq {
 	int		mr_ifindex;
 	unsigned short	mr_type;

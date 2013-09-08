@@ -8,9 +8,13 @@
  * published by the Free Software Foundation.
  */
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
 #include <linux/dmaengine.h>
 #include <linux/freezer.h>
+=======
+#include <linux/dmaengine.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/kthread.h>
 #include <linux/module.h>
@@ -214,6 +218,7 @@ static unsigned int dmatest_verify(u8 **bufs, unsigned int start,
 	return error_count;
 }
 
+<<<<<<< HEAD
 /* poor man's completion - we want to use wait_event_freezable() on it */
 struct dmatest_done {
 	bool			done;
@@ -226,6 +231,11 @@ static void dmatest_callback(void *arg)
 
 	done->done = true;
 	wake_up_all(done->wait);
+=======
+static void dmatest_callback(void *completion)
+{
+	complete(completion);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -244,9 +254,13 @@ static void dmatest_callback(void *arg)
  */
 static int dmatest_func(void *data)
 {
+<<<<<<< HEAD
 	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(done_wait);
 	struct dmatest_thread	*thread = data;
 	struct dmatest_done	done = { .wait = &done_wait };
+=======
+	struct dmatest_thread	*thread = data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dma_chan		*chan;
 	const char		*thread_name;
 	unsigned int		src_off, dst_off, len;
@@ -263,7 +277,10 @@ static int dmatest_func(void *data)
 	int			i;
 
 	thread_name = current->comm;
+<<<<<<< HEAD
 	set_freezable();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = -ENOMEM;
 
@@ -317,6 +334,11 @@ static int dmatest_func(void *data)
 		struct dma_async_tx_descriptor *tx = NULL;
 		dma_addr_t dma_srcs[src_cnt];
 		dma_addr_t dma_dsts[dst_cnt];
+<<<<<<< HEAD
+=======
+		struct completion cmp;
+		unsigned long tmo = msecs_to_jiffies(timeout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u8 align = 0;
 
 		total_tests++;
@@ -399,9 +421,15 @@ static int dmatest_func(void *data)
 			continue;
 		}
 
+<<<<<<< HEAD
 		done.done = false;
 		tx->callback = dmatest_callback;
 		tx->callback_param = &done;
+=======
+		init_completion(&cmp);
+		tx->callback = dmatest_callback;
+		tx->callback_param = &cmp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cookie = tx->tx_submit(tx);
 
 		if (dma_submit_error(cookie)) {
@@ -415,6 +443,7 @@ static int dmatest_func(void *data)
 		}
 		dma_async_issue_pending(chan);
 
+<<<<<<< HEAD
 		wait_event_freezable_timeout(done_wait, done.done,
 					     msecs_to_jiffies(timeout));
 
@@ -429,6 +458,12 @@ static int dmatest_func(void *data)
 			 * free it this time?" dancing.  For now, just
 			 * leave it dangling.
 			 */
+=======
+		tmo = wait_for_completion_timeout(&cmp, tmo);
+		status = dma_async_is_tx_complete(chan, cookie, NULL, NULL);
+
+		if (tmo == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pr_warning("%s: #%u: test timed out\n",
 				   thread_name, total_tests - 1);
 			failed_tests++;
@@ -498,8 +533,11 @@ err_srcs:
 	pr_notice("%s: terminating after %u tests, %u failures (status %d)\n",
 			thread_name, total_tests, failed_tests, ret);
 
+<<<<<<< HEAD
 	/* terminate all transfers on specified channels */
 	chan->device->device_control(chan, DMA_TERMINATE_ALL, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (iterations > 0)
 		while (!kthread_should_stop()) {
 			DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wait_dmatest_exit);
@@ -522,10 +560,13 @@ static void dmatest_cleanup_channel(struct dmatest_chan *dtc)
 		list_del(&thread->node);
 		kfree(thread);
 	}
+<<<<<<< HEAD
 
 	/* terminate all transfers on specified channels */
 	dtc->chan->device->device_control(dtc->chan, DMA_TERMINATE_ALL, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(dtc);
 }
 
@@ -599,7 +640,11 @@ static int dmatest_add_channel(struct dma_chan *chan)
 	}
 	if (dma_has_cap(DMA_PQ, dma_dev->cap_mask)) {
 		cnt = dmatest_add_threads(dtc, DMA_PQ);
+<<<<<<< HEAD
 		thread_count += cnt > 0 ? cnt : 0;
+=======
+		thread_count += cnt > 0 ?: 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	pr_info("dmatest: Started %u threads using %s\n",

@@ -33,8 +33,11 @@
 #include <linux/slab.h>
 #include <linux/posix_acl_xattr.h>
 #include <linux/pagemap.h>
+<<<<<<< HEAD
 #include <linux/swap.h>
 #include <linux/task_io_accounting_ops.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include "cifspdu.h"
 #include "cifsglob.h"
@@ -42,7 +45,10 @@
 #include "cifsproto.h"
 #include "cifs_unicode.h"
 #include "cifs_debug.h"
+<<<<<<< HEAD
 #include "fscache.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_CIFS_POSIX
 static struct {
@@ -86,6 +92,7 @@ static struct {
 #endif /* CONFIG_CIFS_WEAK_PW_HASH */
 #endif /* CIFS_POSIX */
 
+<<<<<<< HEAD
 /* Forward declarations */
 static void cifs_readv_complete(struct work_struct *work);
 
@@ -115,6 +122,8 @@ cifs_kmap_unlock(void)
 #define cifs_kmap_unlock() do { ; } while(0)
 #endif /* CONFIG_HIGHMEM */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Mark as invalid, all open files on tree connections since they
    were closed when session to server was lost */
 static void mark_open_files_invalid(struct cifs_tcon *pTcon)
@@ -139,7 +148,11 @@ static void mark_open_files_invalid(struct cifs_tcon *pTcon)
 static int
 cifs_reconnect_tcon(struct cifs_tcon *tcon, int smb_command)
 {
+<<<<<<< HEAD
 	int rc;
+=======
+	int rc = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct cifs_ses *ses;
 	struct TCP_Server_Info *server;
 	struct nls_table *nls_codepage;
@@ -484,11 +497,17 @@ CIFSSMBNegotiate(unsigned int xid, struct cifs_ses *ses)
 			goto neg_err_exit;
 		}
 		server->sec_mode = (__u8)le16_to_cpu(rsp->SecurityMode);
+<<<<<<< HEAD
 		server->maxReq = min_t(unsigned int,
 				       le16_to_cpu(rsp->MaxMpxCount),
 				       cifs_max_pending);
 		cifs_set_credits(server, server->maxReq);
 		server->maxBuf = le16_to_cpu(rsp->MaxBufSize);
+=======
+		server->maxReq = le16_to_cpu(rsp->MaxMpxCount);
+		server->maxBuf = min((__u32)le16_to_cpu(rsp->MaxBufSize),
+				(__u32)CIFSMaxBufSize + MAX_CIFS_HDR_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		server->max_vcs = le16_to_cpu(rsp->MaxNumberVcs);
 		/* even though we do not use raw we might as well set this
 		accurately, in case we ever find a need for it */
@@ -593,11 +612,18 @@ CIFSSMBNegotiate(unsigned int xid, struct cifs_ses *ses)
 
 	/* one byte, so no need to convert this or EncryptionKeyLen from
 	   little endian */
+<<<<<<< HEAD
 	server->maxReq = min_t(unsigned int, le16_to_cpu(pSMBr->MaxMpxCount),
 			       cifs_max_pending);
 	cifs_set_credits(server, server->maxReq);
 	/* probably no need to store and check maxvcs */
 	server->maxBuf = le32_to_cpu(pSMBr->MaxBufferSize);
+=======
+	server->maxReq = le16_to_cpu(pSMBr->MaxMpxCount);
+	/* probably no need to store and check maxvcs */
+	server->maxBuf = min(le32_to_cpu(pSMBr->MaxBufferSize),
+			(__u32) CIFSMaxBufSize + MAX_CIFS_HDR_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	server->max_rw = le32_to_cpu(pSMBr->MaxRawSize);
 	cFYI(DBG2, "Max buf = %d", ses->server->maxBuf);
 	server->capabilities = le32_to_cpu(pSMBr->Capabilities);
@@ -722,7 +748,11 @@ CIFSSMBTDis(const int xid, struct cifs_tcon *tcon)
 	if (rc)
 		return rc;
 
+<<<<<<< HEAD
 	rc = SendReceiveNoRsp(xid, tcon->ses, (char *)smb_buffer, 0);
+=======
+	rc = SendReceiveNoRsp(xid, tcon->ses, smb_buffer, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc)
 		cFYI(1, "Tree disconnect failed %d", rc);
 
@@ -747,7 +777,12 @@ cifs_echo_callback(struct mid_q_entry *mid)
 	struct TCP_Server_Info *server = mid->callback_data;
 
 	DeleteMidQEntry(mid);
+<<<<<<< HEAD
 	cifs_add_credits(server, 1);
+=======
+	atomic_dec(&server->inFlight);
+	wake_up(&server->request_q);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int
@@ -773,8 +808,12 @@ CIFSSMBEcho(struct TCP_Server_Info *server)
 	iov.iov_base = smb;
 	iov.iov_len = be32_to_cpu(smb->hdr.smb_buf_length) + 4;
 
+<<<<<<< HEAD
 	rc = cifs_call_async(server, &iov, 1, NULL, cifs_echo_callback,
 			     server, true);
+=======
+	rc = cifs_call_async(server, &iov, 1, cifs_echo_callback, server, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc)
 		cFYI(1, "Echo request failed: %d", rc);
 
@@ -818,7 +857,11 @@ CIFSSMBLogoff(const int xid, struct cifs_ses *ses)
 	pSMB->hdr.Uid = ses->Suid;
 
 	pSMB->AndXCommand = 0xFF;
+<<<<<<< HEAD
 	rc = SendReceiveNoRsp(xid, ses, (char *) pSMB, 0);
+=======
+	rc = SendReceiveNoRsp(xid, ses, (struct smb_hdr *) pSMB, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 session_already_dead:
 	mutex_unlock(&ses->session_mutex);
 
@@ -851,8 +894,13 @@ PsxDelete:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *) pSMB->FileName, fileName,
 				       PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *) pSMB->FileName, fileName,
+				     PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 	} else { /* BB add path length overrun check */
@@ -923,8 +971,13 @@ DelFileRetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *) pSMB->fileName, fileName,
 				       PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *) pSMB->fileName, fileName,
+				     PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 	} else {		/* BB improve check for buffer overruns BB */
@@ -968,8 +1021,13 @@ RmDirRetry:
 		return rc;
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
+<<<<<<< HEAD
 		name_len = cifsConvertToUTF16((__le16 *) pSMB->DirName, dirName,
 					      PATH_MAX, nls_codepage, remap);
+=======
+		name_len = cifsConvertToUCS((__le16 *) pSMB->DirName, dirName,
+					 PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 	} else {		/* BB improve check for buffer overruns BB */
@@ -1011,8 +1069,13 @@ MkDirRetry:
 		return rc;
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
+<<<<<<< HEAD
 		name_len = cifsConvertToUTF16((__le16 *) pSMB->DirName, name,
 					      PATH_MAX, nls_codepage, remap);
+=======
+		name_len = cifsConvertToUCS((__le16 *) pSMB->DirName, name,
+					    PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 	} else {		/* BB improve check for buffer overruns BB */
@@ -1060,8 +1123,13 @@ PsxCreat:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *) pSMB->FileName, name,
 				       PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *) pSMB->FileName, name,
+				     PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -1227,8 +1295,13 @@ OldOpenRetry:
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		count = 1;      /* account for one byte pad to word boundary */
 		name_len =
+<<<<<<< HEAD
 		   cifsConvertToUTF16((__le16 *) (pSMB->fileName + 1),
 				      fileName, PATH_MAX, nls_codepage, remap);
+=======
+		   cifsConvertToUCS((__le16 *) (pSMB->fileName + 1),
+				    fileName, PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;     /* trailing null */
 		name_len *= 2;
 	} else {                /* BB improve check for buffer overruns BB */
@@ -1334,8 +1407,13 @@ openRetry:
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		count = 1;	/* account for one byte pad to word boundary */
 		name_len =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *) (pSMB->fileName + 1),
 				       fileName, PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *) (pSMB->fileName + 1),
+				     fileName, PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 		pSMB->NameLength = cpu_to_le16(name_len);
@@ -1411,6 +1489,7 @@ openRetry:
 	return rc;
 }
 
+<<<<<<< HEAD
 struct cifs_readdata *
 cifs_readdata_alloc(unsigned int nr_pages)
 {
@@ -1783,6 +1862,8 @@ cifs_async_readv(struct cifs_readdata *rdata)
 	return rc;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int
 CIFSSMBRead(const int xid, struct cifs_io_parms *io_parms, unsigned int *nbytes,
 	    char **buf, int *pbuf_type)
@@ -2063,7 +2144,11 @@ cifs_writev_requeue(struct cifs_writedata *wdata)
 	kref_put(&wdata->refcount, cifs_writedata_release);
 }
 
+<<<<<<< HEAD
 void
+=======
+static void
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 cifs_writev_complete(struct work_struct *work)
 {
 	struct cifs_writedata *wdata = container_of(work,
@@ -2072,9 +2157,13 @@ cifs_writev_complete(struct work_struct *work)
 	int i = 0;
 
 	if (wdata->result == 0) {
+<<<<<<< HEAD
 		spin_lock(&inode->i_lock);
 		cifs_update_eof(CIFS_I(inode), wdata->offset, wdata->bytes);
 		spin_unlock(&inode->i_lock);
+=======
+		cifs_update_eof(CIFS_I(inode), wdata->offset, wdata->bytes);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cifs_stats_bytes_written(tlink_tcon(wdata->cfile->tlink),
 					 wdata->bytes);
 	} else if (wdata->sync_mode == WB_SYNC_ALL && wdata->result == -EAGAIN)
@@ -2095,7 +2184,11 @@ cifs_writev_complete(struct work_struct *work)
 }
 
 struct cifs_writedata *
+<<<<<<< HEAD
 cifs_writedata_alloc(unsigned int nr_pages, work_func_t complete)
+=======
+cifs_writedata_alloc(unsigned int nr_pages)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cifs_writedata *wdata;
 
@@ -2109,16 +2202,25 @@ cifs_writedata_alloc(unsigned int nr_pages, work_func_t complete)
 	wdata = kzalloc(sizeof(*wdata) +
 			sizeof(struct page *) * (nr_pages - 1), GFP_NOFS);
 	if (wdata != NULL) {
+<<<<<<< HEAD
 		kref_init(&wdata->refcount);
 		INIT_LIST_HEAD(&wdata->list);
 		init_completion(&wdata->done);
 		INIT_WORK(&wdata->work, complete);
+=======
+		INIT_WORK(&wdata->work, cifs_writev_complete);
+		kref_init(&wdata->refcount);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return wdata;
 }
 
 /*
+<<<<<<< HEAD
  * Check the mid_state and signature on received buffer (if any), and queue the
+=======
+ * Check the midState and signature on received buffer (if any), and queue the
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * workqueue completion task.
  */
 static void
@@ -2129,7 +2231,11 @@ cifs_writev_callback(struct mid_q_entry *mid)
 	unsigned int written;
 	WRITE_RSP *smb = (WRITE_RSP *)mid->resp_buf;
 
+<<<<<<< HEAD
 	switch (mid->mid_state) {
+=======
+	switch (mid->midState) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case MID_RESPONSE_RECEIVED:
 		wdata->result = cifs_check_receive(mid, tcon->ses->server, 0);
 		if (wdata->result != 0)
@@ -2161,9 +2267,16 @@ cifs_writev_callback(struct mid_q_entry *mid)
 		break;
 	}
 
+<<<<<<< HEAD
 	queue_work(cifsiod_wq, &wdata->work);
 	DeleteMidQEntry(mid);
 	cifs_add_credits(tcon->ses->server, 1);
+=======
+	queue_work(system_nrt_wq, &wdata->work);
+	DeleteMidQEntry(mid);
+	atomic_dec(&tcon->ses->server->inFlight);
+	wake_up(&tcon->ses->server->request_q);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* cifs_async_writev - send an async write, and set up mid to handle result */
@@ -2174,6 +2287,10 @@ cifs_async_writev(struct cifs_writedata *wdata)
 	WRITE_REQ *smb = NULL;
 	int wct;
 	struct cifs_tcon *tcon = tlink_tcon(wdata->cfile->tlink);
+<<<<<<< HEAD
+=======
+	struct inode *inode = wdata->cfile->dentry->d_inode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct kvec *iov = NULL;
 
 	if (tcon->ses->capabilities & CAP_LARGE_FILES) {
@@ -2197,8 +2314,13 @@ cifs_async_writev(struct cifs_writedata *wdata)
 		goto async_writev_out;
 	}
 
+<<<<<<< HEAD
 	smb->hdr.Pid = cpu_to_le16((__u16)wdata->pid);
 	smb->hdr.PidHigh = cpu_to_le16((__u16)(wdata->pid >> 16));
+=======
+	smb->hdr.Pid = cpu_to_le16((__u16)wdata->cfile->pid);
+	smb->hdr.PidHigh = cpu_to_le16((__u16)(wdata->cfile->pid >> 16));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	smb->AndXCommand = 0xFF;	/* none */
 	smb->Fid = wdata->cfile->netfid;
@@ -2216,6 +2338,7 @@ cifs_async_writev(struct cifs_writedata *wdata)
 	iov[0].iov_len = be32_to_cpu(smb->hdr.smb_buf_length) + 4 + 1;
 	iov[0].iov_base = smb;
 
+<<<<<<< HEAD
 	/*
 	 * This function should marshal up the page array into the kvec
 	 * array, reserving [0] for the header. It should kmap the pages
@@ -2225,6 +2348,17 @@ cifs_async_writev(struct cifs_writedata *wdata)
 	cifs_kmap_lock();
 	wdata->marshal_iov(iov, wdata);
 	cifs_kmap_unlock();
+=======
+	/* marshal up the pages into iov array */
+	wdata->bytes = 0;
+	for (i = 0; i < wdata->nr_pages; i++) {
+		iov[i + 1].iov_len = min(inode->i_size -
+				      page_offset(wdata->pages[i]),
+					(loff_t)PAGE_CACHE_SIZE);
+		iov[i + 1].iov_base = kmap(wdata->pages[i]);
+		wdata->bytes += iov[i + 1].iov_len;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cFYI(1, "async write at %llu %u bytes", wdata->offset, wdata->bytes);
 
@@ -2245,7 +2379,11 @@ cifs_async_writev(struct cifs_writedata *wdata)
 
 	kref_get(&wdata->refcount);
 	rc = cifs_call_async(tcon->ses->server, iov, wdata->nr_pages + 1,
+<<<<<<< HEAD
 			     NULL, cifs_writev_callback, wdata, false);
+=======
+			     cifs_writev_callback, wdata, false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (rc == 0)
 		cifs_stats_inc(&tcon->num_writes);
@@ -2371,6 +2509,7 @@ CIFSSMBWrite2(const int xid, struct cifs_io_parms *io_parms,
 	return rc;
 }
 
+<<<<<<< HEAD
 int cifs_lockv(const int xid, struct cifs_tcon *tcon, const __u16 netfid,
 	       const __u8 lock_type, const __u32 num_unlock,
 	       const __u32 num_lock, LOCKING_ANDX_RANGE *buf)
@@ -2415,6 +2554,12 @@ int cifs_lockv(const int xid, struct cifs_tcon *tcon, const __u16 netfid,
 int
 CIFSSMBLock(const int xid, struct cifs_tcon *tcon,
 	    const __u16 smb_file_id, const __u32 netpid, const __u64 len,
+=======
+
+int
+CIFSSMBLock(const int xid, struct cifs_tcon *tcon,
+	    const __u16 smb_file_id, const __u64 len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    const __u64 offset, const __u32 numUnlock,
 	    const __u32 numLock, const __u8 lockType,
 	    const bool waitFlag, const __u8 oplock_level)
@@ -2450,7 +2595,11 @@ CIFSSMBLock(const int xid, struct cifs_tcon *tcon,
 	pSMB->Fid = smb_file_id; /* netfid stays le */
 
 	if ((numLock != 0) || (numUnlock != 0)) {
+<<<<<<< HEAD
 		pSMB->Locks[0].Pid = cpu_to_le16(netpid);
+=======
+		pSMB->Locks[0].Pid = cpu_to_le16(current->tgid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* BB where to store pid high? */
 		pSMB->Locks[0].LengthLow = cpu_to_le32((u32)len);
 		pSMB->Locks[0].LengthHigh = cpu_to_le32((u32)(len>>32));
@@ -2469,7 +2618,12 @@ CIFSSMBLock(const int xid, struct cifs_tcon *tcon,
 			(struct smb_hdr *) pSMB, &bytes_returned);
 		cifs_small_buf_release(pSMB);
 	} else {
+<<<<<<< HEAD
 		rc = SendReceiveNoRsp(xid, tcon->ses, (char *)pSMB, timeout);
+=======
+		rc = SendReceiveNoRsp(xid, tcon->ses, (struct smb_hdr *)pSMB,
+				      timeout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* SMB buffer freed by function above */
 	}
 	cifs_stats_inc(&tcon->num_locks);
@@ -2483,9 +2637,15 @@ CIFSSMBLock(const int xid, struct cifs_tcon *tcon,
 
 int
 CIFSSMBPosixLock(const int xid, struct cifs_tcon *tcon,
+<<<<<<< HEAD
 		const __u16 smb_file_id, const __u32 netpid, const int get_flag,
 		const __u64 len, struct file_lock *pLockData,
 		const __u16 lock_type, const bool waitFlag)
+=======
+		const __u16 smb_file_id, const int get_flag, const __u64 len,
+		struct file_lock *pLockData, const __u16 lock_type,
+		const bool waitFlag)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct smb_com_transaction2_sfi_req *pSMB  = NULL;
 	struct smb_com_transaction2_sfi_rsp *pSMBr = NULL;
@@ -2543,7 +2703,11 @@ CIFSSMBPosixLock(const int xid, struct cifs_tcon *tcon,
 	} else
 		pSMB->Timeout = 0;
 
+<<<<<<< HEAD
 	parm_data->pid = cpu_to_le32(netpid);
+=======
+	parm_data->pid = cpu_to_le32(current->tgid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	parm_data->start = cpu_to_le64(pLockData->fl_start);
 	parm_data->length = cpu_to_le64(len);  /* normalize negative numbers */
 
@@ -2636,7 +2800,11 @@ CIFSSMBClose(const int xid, struct cifs_tcon *tcon, int smb_file_id)
 	pSMB->FileID = (__u16) smb_file_id;
 	pSMB->LastWriteTime = 0xFFFFFFFF;
 	pSMB->ByteCount = 0;
+<<<<<<< HEAD
 	rc = SendReceiveNoRsp(xid, tcon->ses, (char *) pSMB, 0);
+=======
+	rc = SendReceiveNoRsp(xid, tcon->ses, (struct smb_hdr *) pSMB, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cifs_stats_inc(&tcon->num_closes);
 	if (rc) {
 		if (rc != -EINTR) {
@@ -2665,7 +2833,11 @@ CIFSSMBFlush(const int xid, struct cifs_tcon *tcon, int smb_file_id)
 
 	pSMB->FileID = (__u16) smb_file_id;
 	pSMB->ByteCount = 0;
+<<<<<<< HEAD
 	rc = SendReceiveNoRsp(xid, tcon->ses, (char *) pSMB, 0);
+=======
+	rc = SendReceiveNoRsp(xid, tcon->ses, (struct smb_hdr *) pSMB, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cifs_stats_inc(&tcon->num_flushes);
 	if (rc)
 		cERROR(1, "Send error in Flush = %d", rc);
@@ -2699,16 +2871,26 @@ renameRetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *) pSMB->OldFileName, fromName,
 				       PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *) pSMB->OldFileName, fromName,
+				     PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 		pSMB->OldFileName[name_len] = 0x04;	/* pad */
 	/* protocol requires ASCII signature byte on Unicode string */
 		pSMB->OldFileName[name_len + 1] = 0x00;
 		name_len2 =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *)&pSMB->OldFileName[name_len+2],
 				       toName, PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *)&pSMB->OldFileName[name_len + 2],
+				     toName, PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len2 += 1 /* trailing null */  + 1 /* Signature word */ ;
 		name_len2 *= 2;	/* convert to bytes */
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -2788,12 +2970,19 @@ int CIFSSMBRenameOpenFile(const int xid, struct cifs_tcon *pTcon,
 	/* unicode only call */
 	if (target_name == NULL) {
 		sprintf(dummy_string, "cifs%x", pSMB->hdr.Mid);
+<<<<<<< HEAD
 		len_of_str =
 			cifsConvertToUTF16((__le16 *)rename_info->target_name,
 					dummy_string, 24, nls_codepage, remap);
 	} else {
 		len_of_str =
 			cifsConvertToUTF16((__le16 *)rename_info->target_name,
+=======
+		len_of_str = cifsConvertToUCS((__le16 *)rename_info->target_name,
+					dummy_string, 24, nls_codepage, remap);
+	} else {
+		len_of_str = cifsConvertToUCS((__le16 *)rename_info->target_name,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					target_name, PATH_MAX, nls_codepage,
 					remap);
 	}
@@ -2847,17 +3036,28 @@ copyRetry:
 	pSMB->Flags = cpu_to_le16(flags & COPY_TREE);
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
+<<<<<<< HEAD
 		name_len = cifsConvertToUTF16((__le16 *) pSMB->OldFileName,
 					      fromName, PATH_MAX, nls_codepage,
 					      remap);
+=======
+		name_len = cifsConvertToUCS((__le16 *) pSMB->OldFileName,
+					    fromName, PATH_MAX, nls_codepage,
+					    remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;     /* trailing null */
 		name_len *= 2;
 		pSMB->OldFileName[name_len] = 0x04;     /* pad */
 		/* protocol requires ASCII signature byte on Unicode string */
 		pSMB->OldFileName[name_len + 1] = 0x00;
 		name_len2 =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *)&pSMB->OldFileName[name_len+2],
 				       toName, PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *)&pSMB->OldFileName[name_len + 2],
+				toName, PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len2 += 1 /* trailing null */  + 1 /* Signature word */ ;
 		name_len2 *= 2; /* convert to bytes */
 	} else { 	/* BB improve the check for buffer overruns BB */
@@ -2913,9 +3113,15 @@ createSymLinkRetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 		    cifs_strtoUTF16((__le16 *) pSMB->FileName, fromName,
 				    /* find define for this maxpathcomponent */
 				    PATH_MAX, nls_codepage);
+=======
+		    cifs_strtoUCS((__le16 *) pSMB->FileName, fromName, PATH_MAX
+				  /* find define for this maxpathcomponent */
+				  , nls_codepage);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 
@@ -2937,9 +3143,15 @@ createSymLinkRetry:
 	data_offset = (char *) (&pSMB->hdr.Protocol) + offset;
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len_target =
+<<<<<<< HEAD
 		    cifs_strtoUTF16((__le16 *) data_offset, toName, PATH_MAX
 				    /* find define for this maxpathcomponent */
 				    , nls_codepage);
+=======
+		    cifs_strtoUCS((__le16 *) data_offset, toName, PATH_MAX
+				  /* find define for this maxpathcomponent */
+				  , nls_codepage);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len_target++;	/* trailing null */
 		name_len_target *= 2;
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -3001,8 +3213,13 @@ createHardLinkRetry:
 		return rc;
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
+<<<<<<< HEAD
 		name_len = cifsConvertToUTF16((__le16 *) pSMB->FileName, toName,
 					      PATH_MAX, nls_codepage, remap);
+=======
+		name_len = cifsConvertToUCS((__le16 *) pSMB->FileName, toName,
+					    PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 
@@ -3024,8 +3241,13 @@ createHardLinkRetry:
 	data_offset = (char *) (&pSMB->hdr.Protocol) + offset;
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len_target =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *) data_offset, fromName,
 				       PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *) data_offset, fromName, PATH_MAX,
+				     nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len_target++;	/* trailing null */
 		name_len_target *= 2;
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -3094,8 +3316,13 @@ winCreateHardLinkRetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *) pSMB->OldFileName, fromName,
 				       PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *) pSMB->OldFileName, fromName,
+				     PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 
@@ -3103,8 +3330,13 @@ winCreateHardLinkRetry:
 		pSMB->OldFileName[name_len] = 0x04;
 		pSMB->OldFileName[name_len + 1] = 0x00; /* pad */
 		name_len2 =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *)&pSMB->OldFileName[name_len+2],
 				       toName, PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *)&pSMB->OldFileName[name_len + 2],
+				     toName, PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len2 += 1 /* trailing null */  + 1 /* Signature word */ ;
 		name_len2 *= 2;	/* convert to bytes */
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -3160,8 +3392,13 @@ querySymLinkRetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 			cifs_strtoUTF16((__le16 *) pSMB->FileName, searchName,
 					PATH_MAX, nls_codepage);
+=======
+		    cifs_strtoUCS((__le16 *) pSMB->FileName, searchName,
+				  PATH_MAX, nls_codepage);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -3218,8 +3455,13 @@ querySymLinkRetry:
 				is_unicode = false;
 
 			/* BB FIXME investigate remapping reserved chars here */
+<<<<<<< HEAD
 			*symlinkinfo = cifs_strndup_from_utf16(data_start,
 					count, is_unicode, nls_codepage);
+=======
+			*symlinkinfo = cifs_strndup_from_ucs(data_start, count,
+						    is_unicode, nls_codepage);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!*symlinkinfo)
 				rc = -ENOMEM;
 		}
@@ -3262,7 +3504,12 @@ CIFSSMBQueryReparseLinkInfo(const int xid, struct cifs_tcon *tcon,
 	pSMB->TotalDataCount = 0;
 	pSMB->MaxParameterCount = cpu_to_le32(2);
 	/* BB find exact data count max from sess structure BB */
+<<<<<<< HEAD
 	pSMB->MaxDataCount = cpu_to_le32(CIFSMaxBufSize & 0xFFFFFF00);
+=======
+	pSMB->MaxDataCount = cpu_to_le32((tcon->ses->server->maxBuf -
+					  MAX_CIFS_HDR_SIZE) & 0xFFFFFF00);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pSMB->MaxSetupCount = 4;
 	pSMB->Reserved = 0;
 	pSMB->ParameterOffset = 0;
@@ -3502,9 +3749,14 @@ queryAclRetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 			cifsConvertToUTF16((__le16 *) pSMB->FileName,
 					   searchName, PATH_MAX, nls_codepage,
 					   remap);
+=======
+			cifsConvertToUCS((__le16 *) pSMB->FileName, searchName,
+					 PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;     /* trailing null */
 		name_len *= 2;
 		pSMB->FileName[name_len] = 0;
@@ -3590,8 +3842,13 @@ setAclRetry:
 		return rc;
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 			cifsConvertToUTF16((__le16 *) pSMB->FileName, fileName,
 					   PATH_MAX, nls_codepage, remap);
+=======
+			cifsConvertToUCS((__le16 *) pSMB->FileName, fileName,
+				      PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;     /* trailing null */
 		name_len *= 2;
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -3756,7 +4013,12 @@ smb_init_nttransact(const __u16 sub_command, const int setup_count,
 	pSMB->Reserved = 0;
 	pSMB->TotalParameterCount = cpu_to_le32(parm_len);
 	pSMB->TotalDataCount  = 0;
+<<<<<<< HEAD
 	pSMB->MaxDataCount = cpu_to_le32(CIFSMaxBufSize & 0xFFFFFF00);
+=======
+	pSMB->MaxDataCount = cpu_to_le32((tcon->ses->server->maxBuf -
+					  MAX_CIFS_HDR_SIZE) & 0xFFFFFF00);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pSMB->ParameterCount = pSMB->TotalParameterCount;
 	pSMB->DataCount  = pSMB->TotalDataCount;
 	temp_offset = offsetof(struct smb_com_ntransact_req, Parms) +
@@ -3916,18 +4178,32 @@ qsec_out:
 
 int
 CIFSSMBSetCIFSACL(const int xid, struct cifs_tcon *tcon, __u16 fid,
+<<<<<<< HEAD
 			struct cifs_ntsd *pntsd, __u32 acllen, int aclflag)
+=======
+			struct cifs_ntsd *pntsd, __u32 acllen)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	__u16 byte_count, param_count, data_count, param_offset, data_offset;
 	int rc = 0;
 	int bytes_returned = 0;
 	SET_SEC_DESC_REQ *pSMB = NULL;
+<<<<<<< HEAD
 	void *pSMBr;
 
 setCifsAclRetry:
 	rc = smb_init(SMB_COM_NT_TRANSACT, 19, tcon, (void **) &pSMB, &pSMBr);
 	if (rc)
 		return rc;
+=======
+	NTRANSACT_RSP *pSMBr = NULL;
+
+setCifsAclRetry:
+	rc = smb_init(SMB_COM_NT_TRANSACT, 19, tcon, (void **) &pSMB,
+			(void **) &pSMBr);
+	if (rc)
+			return (rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pSMB->MaxSetupCount = 0;
 	pSMB->Reserved = 0;
@@ -3952,11 +4228,20 @@ setCifsAclRetry:
 
 	pSMB->Fid = fid; /* file handle always le */
 	pSMB->Reserved2 = 0;
+<<<<<<< HEAD
 	pSMB->AclFlags = cpu_to_le32(aclflag);
 
 	if (pntsd && acllen) {
 		memcpy((char *)pSMBr + offsetof(struct smb_hdr, Protocol) +
 				data_offset, pntsd, acllen);
+=======
+	pSMB->AclFlags = cpu_to_le32(CIFS_ACL_DACL);
+
+	if (pntsd && acllen) {
+		memcpy((char *) &pSMBr->hdr.Protocol + data_offset,
+			(char *) pntsd,
+			acllen);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		inc_rfc1001_len(pSMB, byte_count + data_count);
 	} else
 		inc_rfc1001_len(pSMB, byte_count);
@@ -3999,9 +4284,14 @@ QInfRetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 			cifsConvertToUTF16((__le16 *) pSMB->FileName,
 					   searchName, PATH_MAX, nls_codepage,
 					   remap);
+=======
+			cifsConvertToUCS((__le16 *) pSMB->FileName, searchName,
+					PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;     /* trailing null */
 		name_len *= 2;
 	} else {
@@ -4138,8 +4428,13 @@ QPathInfoRetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *) pSMB->FileName, searchName,
 				       PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *) pSMB->FileName, searchName,
+				     PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -4307,8 +4602,13 @@ UnixQPathInfoRetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *) pSMB->FileName, searchName,
 				       PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *) pSMB->FileName, searchName,
+				  PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -4374,7 +4674,11 @@ int
 CIFSFindFirst(const int xid, struct cifs_tcon *tcon,
 	      const char *searchName,
 	      const struct nls_table *nls_codepage,
+<<<<<<< HEAD
 	      __u16 *pnetfid, __u16 search_flags,
+=======
+	      __u16 *pnetfid,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	      struct cifs_search_info *psrch_inf, int remap, const char dirsep)
 {
 /* level 257 SMB_ */
@@ -4396,8 +4700,13 @@ findFirstRetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *) pSMB->FileName, searchName,
 				       PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *) pSMB->FileName, searchName,
+				 PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* We can not add the asterik earlier in case
 		it got remapped to 0xF03A as if it were part of the
 		directory name instead of a wildcard */
@@ -4425,7 +4734,12 @@ findFirstRetry:
 	params = 12 + name_len /* includes null */ ;
 	pSMB->TotalDataCount = 0;	/* no EAs */
 	pSMB->MaxParameterCount = cpu_to_le16(10);
+<<<<<<< HEAD
 	pSMB->MaxDataCount = cpu_to_le16(CIFSMaxBufSize & 0xFFFFFF00);
+=======
+	pSMB->MaxDataCount = cpu_to_le16((tcon->ses->server->maxBuf -
+					  MAX_CIFS_HDR_SIZE) & 0xFFFFFF00);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pSMB->MaxSetupCount = 0;
 	pSMB->Reserved = 0;
 	pSMB->Flags = 0;
@@ -4446,7 +4760,12 @@ findFirstRetry:
 	    cpu_to_le16(ATTR_READONLY | ATTR_HIDDEN | ATTR_SYSTEM |
 			ATTR_DIRECTORY);
 	pSMB->SearchCount = cpu_to_le16(CIFSMaxBufSize/sizeof(FILE_UNIX_INFO));
+<<<<<<< HEAD
 	pSMB->SearchFlags = cpu_to_le16(search_flags);
+=======
+	pSMB->SearchFlags = cpu_to_le16(CIFS_SEARCH_CLOSE_AT_END |
+		CIFS_SEARCH_RETURN_RESUME);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pSMB->InformationLevel = cpu_to_le16(psrch_inf->info_level);
 
 	/* BB what should we set StorageType to? Does it matter? BB */
@@ -4498,7 +4817,12 @@ findFirstRetry:
 			psrch_inf->index_of_last_entry = 2 /* skip . and .. */ +
 				psrch_inf->entries_in_buffer;
 			lnoff = le16_to_cpu(parms->LastNameOffset);
+<<<<<<< HEAD
 			if (CIFSMaxBufSize < lnoff) {
+=======
+			if (tcon->ses->server->maxBuf - MAX_CIFS_HDR_SIZE <
+			      lnoff) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				cERROR(1, "ignoring corrupt resume name");
 				psrch_inf->last_entry = NULL;
 				return rc;
@@ -4516,8 +4840,13 @@ findFirstRetry:
 	return rc;
 }
 
+<<<<<<< HEAD
 int CIFSFindNext(const int xid, struct cifs_tcon *tcon, __u16 searchHandle,
 		 __u16 search_flags, struct cifs_search_info *psrch_inf)
+=======
+int CIFSFindNext(const int xid, struct cifs_tcon *tcon,
+		 __u16 searchHandle, struct cifs_search_info *psrch_inf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	TRANSACTION2_FNEXT_REQ *pSMB = NULL;
 	TRANSACTION2_FNEXT_RSP *pSMBr = NULL;
@@ -4542,7 +4871,13 @@ int CIFSFindNext(const int xid, struct cifs_tcon *tcon, __u16 searchHandle,
 	byte_count = 0;
 	pSMB->TotalDataCount = 0;       /* no EAs */
 	pSMB->MaxParameterCount = cpu_to_le16(8);
+<<<<<<< HEAD
 	pSMB->MaxDataCount = cpu_to_le16(CIFSMaxBufSize & 0xFFFFFF00);
+=======
+	pSMB->MaxDataCount =
+		cpu_to_le16((tcon->ses->server->maxBuf - MAX_CIFS_HDR_SIZE) &
+				0xFFFFFF00);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pSMB->MaxSetupCount = 0;
 	pSMB->Reserved = 0;
 	pSMB->Flags = 0;
@@ -4560,7 +4895,12 @@ int CIFSFindNext(const int xid, struct cifs_tcon *tcon, __u16 searchHandle,
 		cpu_to_le16(CIFSMaxBufSize / sizeof(FILE_UNIX_INFO));
 	pSMB->InformationLevel = cpu_to_le16(psrch_inf->info_level);
 	pSMB->ResumeKey = psrch_inf->resume_key;
+<<<<<<< HEAD
 	pSMB->SearchFlags = cpu_to_le16(search_flags);
+=======
+	pSMB->SearchFlags =
+	      cpu_to_le16(CIFS_SEARCH_CLOSE_AT_END | CIFS_SEARCH_RETURN_RESUME);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	name_len = psrch_inf->resume_name_len;
 	params += name_len;
@@ -4623,7 +4963,12 @@ int CIFSFindNext(const int xid, struct cifs_tcon *tcon, __u16 searchHandle,
 			psrch_inf->index_of_last_entry +=
 				psrch_inf->entries_in_buffer;
 			lnoff = le16_to_cpu(parms->LastNameOffset);
+<<<<<<< HEAD
 			if (CIFSMaxBufSize < lnoff) {
+=======
+			if (tcon->ses->server->maxBuf - MAX_CIFS_HDR_SIZE <
+			      lnoff) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				cERROR(1, "ignoring corrupt resume name");
 				psrch_inf->last_entry = NULL;
 				return rc;
@@ -4669,7 +5014,11 @@ CIFSFindClose(const int xid, struct cifs_tcon *tcon,
 
 	pSMB->FileID = searchHandle;
 	pSMB->ByteCount = 0;
+<<<<<<< HEAD
 	rc = SendReceiveNoRsp(xid, tcon->ses, (char *) pSMB, 0);
+=======
+	rc = SendReceiveNoRsp(xid, tcon->ses, (struct smb_hdr *) pSMB, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc)
 		cERROR(1, "Send error in FindClose = %d", rc);
 
@@ -4706,9 +5055,14 @@ GetInodeNumberRetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 			cifsConvertToUTF16((__le16 *) pSMB->FileName,
 					   searchName, PATH_MAX, nls_codepage,
 					   remap);
+=======
+			cifsConvertToUCS((__le16 *) pSMB->FileName, searchName,
+					 PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;     /* trailing null */
 		name_len *= 2;
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -4845,9 +5199,15 @@ parse_DFS_referrals(TRANSACTION2_GET_DFS_REFER_RSP *pSMBr,
 				rc = -ENOMEM;
 				goto parse_DFS_referrals_exit;
 			}
+<<<<<<< HEAD
 			cifsConvertToUTF16((__le16 *) tmp, searchName,
 					   PATH_MAX, nls_codepage, remap);
 			node->path_consumed = cifs_utf16_bytes(tmp,
+=======
+			cifsConvertToUCS((__le16 *) tmp, searchName,
+					PATH_MAX, nls_codepage, remap);
+			node->path_consumed = cifs_ucs2_bytes(tmp,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					le16_to_cpu(pSMBr->PathConsumed),
 					nls_codepage);
 			kfree(tmp);
@@ -4860,8 +5220,13 @@ parse_DFS_referrals(TRANSACTION2_GET_DFS_REFER_RSP *pSMBr,
 		/* copy DfsPath */
 		temp = (char *)ref + le16_to_cpu(ref->DfsPathOffset);
 		max_len = data_end - temp;
+<<<<<<< HEAD
 		node->path_name = cifs_strndup_from_utf16(temp, max_len,
 						is_unicode, nls_codepage);
+=======
+		node->path_name = cifs_strndup_from_ucs(temp, max_len,
+						      is_unicode, nls_codepage);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!node->path_name) {
 			rc = -ENOMEM;
 			goto parse_DFS_referrals_exit;
@@ -4870,6 +5235,7 @@ parse_DFS_referrals(TRANSACTION2_GET_DFS_REFER_RSP *pSMBr,
 		/* copy link target UNC */
 		temp = (char *)ref + le16_to_cpu(ref->NetworkAddressOffset);
 		max_len = data_end - temp;
+<<<<<<< HEAD
 		node->node_name = cifs_strndup_from_utf16(temp, max_len,
 						is_unicode, nls_codepage);
 		if (!node->node_name) {
@@ -4878,6 +5244,12 @@ parse_DFS_referrals(TRANSACTION2_GET_DFS_REFER_RSP *pSMBr,
 		}
 
 		ref++;
+=======
+		node->node_name = cifs_strndup_from_ucs(temp, max_len,
+						      is_unicode, nls_codepage);
+		if (!node->node_name)
+			rc = -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 parse_DFS_referrals_exit:
@@ -4928,9 +5300,14 @@ getDFSRetry:
 	if (ses->capabilities & CAP_UNICODE) {
 		pSMB->hdr.Flags2 |= SMBFLG2_UNICODE;
 		name_len =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *) pSMB->RequestFileName,
 				       searchName, PATH_MAX, nls_codepage,
 				       remap);
+=======
+		    cifsConvertToUCS((__le16 *) pSMB->RequestFileName,
+				     searchName, PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -5562,8 +5939,13 @@ SetEOFRetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *) pSMB->FileName, fileName,
 				       PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *) pSMB->FileName, fileName,
+				     PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -5694,7 +6076,11 @@ CIFSSMBSetFileSize(const int xid, struct cifs_tcon *tcon, __u64 size,
 	pSMB->Reserved4 = 0;
 	inc_rfc1001_len(pSMB, byte_count);
 	pSMB->ByteCount = cpu_to_le16(byte_count);
+<<<<<<< HEAD
 	rc = SendReceiveNoRsp(xid, tcon->ses, (char *) pSMB, 0);
+=======
+	rc = SendReceiveNoRsp(xid, tcon->ses, (struct smb_hdr *) pSMB, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc) {
 		cFYI(1, "Send error in SetFileInfo (SetFileSize) = %d", rc);
 	}
@@ -5738,8 +6124,12 @@ CIFSSMBSetFileInfo(const int xid, struct cifs_tcon *tcon,
 	param_offset = offsetof(struct smb_com_transaction2_sfi_req, Fid) - 4;
 	offset = param_offset + params;
 
+<<<<<<< HEAD
 	data_offset = (char *)pSMB +
 			offsetof(struct smb_hdr, Protocol) + offset;
+=======
+	data_offset = (char *) (&pSMB->hdr.Protocol) + offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	count = sizeof(FILE_BASIC_INFO);
 	pSMB->MaxParameterCount = cpu_to_le16(2);
@@ -5764,7 +6154,11 @@ CIFSSMBSetFileInfo(const int xid, struct cifs_tcon *tcon,
 	inc_rfc1001_len(pSMB, byte_count);
 	pSMB->ByteCount = cpu_to_le16(byte_count);
 	memcpy(data_offset, data, sizeof(FILE_BASIC_INFO));
+<<<<<<< HEAD
 	rc = SendReceiveNoRsp(xid, tcon->ses, (char *) pSMB, 0);
+=======
+	rc = SendReceiveNoRsp(xid, tcon->ses, (struct smb_hdr *) pSMB, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc)
 		cFYI(1, "Send error in Set Time (SetFileInfo) = %d", rc);
 
@@ -5823,7 +6217,11 @@ CIFSSMBSetFileDisposition(const int xid, struct cifs_tcon *tcon,
 	inc_rfc1001_len(pSMB, byte_count);
 	pSMB->ByteCount = cpu_to_le16(byte_count);
 	*data_offset = delete_file ? 1 : 0;
+<<<<<<< HEAD
 	rc = SendReceiveNoRsp(xid, tcon->ses, (char *) pSMB, 0);
+=======
+	rc = SendReceiveNoRsp(xid, tcon->ses, (struct smb_hdr *) pSMB, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc)
 		cFYI(1, "Send error in SetFileDisposition = %d", rc);
 
@@ -5853,8 +6251,13 @@ SetTimesRetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *) pSMB->FileName, fileName,
 				       PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *) pSMB->FileName, fileName,
+				     PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -5934,8 +6337,13 @@ SetAttrLgcyRetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 			ConvertToUTF16((__le16 *) pSMB->fileName, fileName,
 				       PATH_MAX, nls_codepage);
+=======
+			ConvertToUCS((__le16 *) pSMB->fileName, fileName,
+				PATH_MAX, nls_codepage);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;     /* trailing null */
 		name_len *= 2;
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -6008,7 +6416,11 @@ CIFSSMBUnixSetFileInfo(const int xid, struct cifs_tcon *tcon,
 		       u16 fid, u32 pid_of_opener)
 {
 	struct smb_com_transaction2_sfi_req *pSMB  = NULL;
+<<<<<<< HEAD
 	char *data_offset;
+=======
+	FILE_UNIX_BASIC_INFO *data_offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rc = 0;
 	u16 params, param_offset, offset, byte_count, count;
 
@@ -6030,9 +6442,14 @@ CIFSSMBUnixSetFileInfo(const int xid, struct cifs_tcon *tcon,
 	param_offset = offsetof(struct smb_com_transaction2_sfi_req, Fid) - 4;
 	offset = param_offset + params;
 
+<<<<<<< HEAD
 	data_offset = (char *)pSMB +
 			offsetof(struct smb_hdr, Protocol) + offset;
 
+=======
+	data_offset = (FILE_UNIX_BASIC_INFO *)
+				((char *)(&pSMB->hdr.Protocol) + offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	count = sizeof(FILE_UNIX_BASIC_INFO);
 
 	pSMB->MaxParameterCount = cpu_to_le16(2);
@@ -6054,9 +6471,15 @@ CIFSSMBUnixSetFileInfo(const int xid, struct cifs_tcon *tcon,
 	inc_rfc1001_len(pSMB, byte_count);
 	pSMB->ByteCount = cpu_to_le16(byte_count);
 
+<<<<<<< HEAD
 	cifs_fill_unix_set_info((FILE_UNIX_BASIC_INFO *)data_offset, args);
 
 	rc = SendReceiveNoRsp(xid, tcon->ses, (char *) pSMB, 0);
+=======
+	cifs_fill_unix_set_info(data_offset, args);
+
+	rc = SendReceiveNoRsp(xid, tcon->ses, (struct smb_hdr *) pSMB, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc)
 		cFYI(1, "Send error in Set Time (SetFileInfo) = %d", rc);
 
@@ -6088,8 +6511,13 @@ setPermsRetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *) pSMB->FileName, fileName,
 				       PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *) pSMB->FileName, fileName,
+				     PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -6170,7 +6598,10 @@ CIFSSMBQAllEAs(const int xid, struct cifs_tcon *tcon,
 	char *temp_ptr;
 	char *end_of_smb;
 	__u16 params, byte_count, data_offset;
+<<<<<<< HEAD
 	unsigned int ea_name_len = ea_name ? strlen(ea_name) : 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cFYI(1, "In Query All EAs path %s", searchName);
 QAllEAsRetry:
@@ -6181,8 +6612,13 @@ QAllEAsRetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		list_len =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *) pSMB->FileName, searchName,
 				       PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *) pSMB->FileName, searchName,
+				     PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_len++;	/* trailing null */
 		list_len *= 2;
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -6288,8 +6724,12 @@ QAllEAsRetry:
 		}
 
 		if (ea_name) {
+<<<<<<< HEAD
 			if (ea_name_len == name_len &&
 			    memcmp(ea_name, temp_ptr, name_len) == 0) {
+=======
+			if (strncmp(ea_name, temp_ptr, name_len) == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				temp_ptr += name_len + 1;
 				rc = value_len;
 				if (buf_size == 0)
@@ -6359,8 +6799,13 @@ SetEARetry:
 
 	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 		name_len =
+<<<<<<< HEAD
 		    cifsConvertToUTF16((__le16 *) pSMB->FileName, fileName,
 				       PATH_MAX, nls_codepage, remap);
+=======
+		    cifsConvertToUCS((__le16 *) pSMB->FileName, fileName,
+				     PATH_MAX, nls_codepage, remap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name_len++;	/* trailing null */
 		name_len *= 2;
 	} else {	/* BB improve the check for buffer overruns BB */
@@ -6484,7 +6929,16 @@ int CIFSSMBNotify(const int xid, struct cifs_tcon *tcon,
 	pSMB->TotalParameterCount = 0 ;
 	pSMB->TotalDataCount = 0;
 	pSMB->MaxParameterCount = cpu_to_le32(2);
+<<<<<<< HEAD
 	pSMB->MaxDataCount = cpu_to_le32(CIFSMaxBufSize & 0xFFFFFF00);
+=======
+	/* BB find exact data count max from sess structure BB */
+	pSMB->MaxDataCount = 0; /* same in little endian or be */
+/* BB VERIFY verify which is correct for above BB */
+	pSMB->MaxDataCount = cpu_to_le32((tcon->ses->server->maxBuf -
+					     MAX_CIFS_HDR_SIZE) & 0xFFFFFF00);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pSMB->MaxSetupCount = 4;
 	pSMB->Reserved = 0;
 	pSMB->ParameterOffset = 0;

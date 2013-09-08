@@ -5,6 +5,7 @@
  *
  * U5500 PRCMU API.
  */
+<<<<<<< HEAD
 #ifndef __MFD_DB5500_PRCMU_H
 #define __MFD_DB5500_PRCMU_H
 
@@ -68,12 +69,27 @@ void db5500_prcmu_early_init(void);
 int db5500_prcmu_set_display_clocks(void);
 int db5500_prcmu_disable_dsipll(void);
 int db5500_prcmu_enable_dsipll(void);
+=======
+#ifndef __MACH_PRCMU_U5500_H
+#define __MACH_PRCMU_U5500_H
+
+#ifdef CONFIG_UX500_SOC_DB5500
+
+void db5500_prcmu_early_init(void);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int db5500_prcmu_abb_read(u8 slave, u8 reg, u8 *value, u8 size);
 int db5500_prcmu_abb_write(u8 slave, u8 reg, u8 *value, u8 size);
 
 #else /* !CONFIG_UX500_SOC_DB5500 */
 
+<<<<<<< HEAD
 static inline void db5500_prcmu_early_init(void) {}
+=======
+static inline void db5500_prcmu_early_init(void)
+{
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int db5500_prcmu_abb_read(u8 slave, u8 reg, u8 *value, u8 size)
 {
@@ -85,6 +101,7 @@ static inline int db5500_prcmu_abb_write(u8 slave, u8 reg, u8 *value, u8 size)
 	return -ENOSYS;
 }
 
+<<<<<<< HEAD
 static inline int db5500_prcmu_set_display_clocks(void)
 {
 	return 0;
@@ -103,3 +120,17 @@ static inline int db5500_prcmu_enable_dsipll(void)
 #endif /* CONFIG_MFD_DB5500_PRCMU */
 
 #endif /* __MFD_DB5500_PRCMU_H */
+=======
+#endif /* CONFIG_UX500_SOC_DB5500 */
+
+static inline int db5500_prcmu_config_abb_event_readout(u32 abb_events)
+{
+#ifdef CONFIG_MACH_U5500_SIMULATOR
+	return 0;
+#else
+	return -1;
+#endif
+}
+
+#endif /* __MACH_PRCMU_U5500_H */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -15,8 +15,13 @@
 #include <net/netfilter/nf_conntrack_extend.h>
 
 struct nf_conn_counter {
+<<<<<<< HEAD
 	atomic64_t packets;
 	atomic64_t bytes;
+=======
+	u_int64_t packets;
+	u_int64_t bytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline

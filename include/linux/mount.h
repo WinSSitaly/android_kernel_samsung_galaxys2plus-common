@@ -14,7 +14,11 @@
 #include <linux/nodemask.h>
 #include <linux/spinlock.h>
 #include <linux/seqlock.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct super_block;
 struct vfsmount;
@@ -47,10 +51,52 @@ struct mnt_namespace;
 
 #define MNT_INTERNAL	0x4000
 
+<<<<<<< HEAD
 struct vfsmount {
 	struct dentry *mnt_root;	/* root of the mounted tree */
 	struct super_block *mnt_sb;	/* pointer to superblock */
 	int mnt_flags;
+=======
+struct mnt_pcp {
+	int mnt_count;
+	int mnt_writers;
+};
+
+struct vfsmount {
+	struct list_head mnt_hash;
+	struct vfsmount *mnt_parent;	/* fs we are mounted on */
+	struct dentry *mnt_mountpoint;	/* dentry of mountpoint */
+	struct dentry *mnt_root;	/* root of the mounted tree */
+	struct super_block *mnt_sb;	/* pointer to superblock */
+#ifdef CONFIG_SMP
+	struct mnt_pcp __percpu *mnt_pcp;
+	atomic_t mnt_longterm;		/* how many of the refs are longterm */
+#else
+	int mnt_count;
+	int mnt_writers;
+#endif
+	struct list_head mnt_mounts;	/* list of children, anchored here */
+	struct list_head mnt_child;	/* and going through their mnt_child */
+	int mnt_flags;
+	/* 4 bytes hole on 64bits arches without fsnotify */
+#ifdef CONFIG_FSNOTIFY
+	__u32 mnt_fsnotify_mask;
+	struct hlist_head mnt_fsnotify_marks;
+#endif
+	const char *mnt_devname;	/* Name of device e.g. /dev/dsk/hda1 */
+	struct list_head mnt_list;
+	struct list_head mnt_expire;	/* link in fs-specific expiry list */
+	struct list_head mnt_share;	/* circular list of shared mounts */
+	struct list_head mnt_slave_list;/* list of slave mounts */
+	struct list_head mnt_slave;	/* slave list entry */
+	struct vfsmount *mnt_master;	/* slave is on master->mnt_slave_list */
+	struct mnt_namespace *mnt_ns;	/* containing namespace */
+	int mnt_id;			/* mount identifier */
+	int mnt_group_id;		/* peer group identifier */
+	int mnt_expiry_mark;		/* true if marked for expiry */
+	int mnt_pinned;
+	int mnt_ghosts;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct file; /* forward dec */
@@ -59,13 +105,22 @@ extern int mnt_want_write(struct vfsmount *mnt);
 extern int mnt_want_write_file(struct file *file);
 extern int mnt_clone_write(struct vfsmount *mnt);
 extern void mnt_drop_write(struct vfsmount *mnt);
+<<<<<<< HEAD
 extern void mnt_drop_write_file(struct file *file);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void mntput(struct vfsmount *mnt);
 extern struct vfsmount *mntget(struct vfsmount *mnt);
 extern void mnt_pin(struct vfsmount *mnt);
 extern void mnt_unpin(struct vfsmount *mnt);
 extern int __mnt_is_readonly(struct vfsmount *mnt);
 
+<<<<<<< HEAD
+=======
+extern struct vfsmount *do_kern_mount(const char *fstype, int flags,
+				      const char *name, void *data);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct file_system_type;
 extern struct vfsmount *vfs_kern_mount(struct file_system_type *type,
 				      int flags, const char *name,

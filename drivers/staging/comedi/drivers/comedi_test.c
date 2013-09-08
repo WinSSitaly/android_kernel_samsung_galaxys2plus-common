@@ -461,7 +461,11 @@ static int waveform_ai_cancel(struct comedi_device *dev,
 			      struct comedi_subdevice *s)
 {
 	devpriv->timer_running = 0;
+<<<<<<< HEAD
 	del_timer_sync(&devpriv->timer);
+=======
+	del_timer(&devpriv->timer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

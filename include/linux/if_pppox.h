@@ -20,14 +20,24 @@
 #include <linux/types.h>
 #include <asm/byteorder.h>
 
+<<<<<<< HEAD
 #include <linux/socket.h>
 #include <linux/if_ether.h>
 #ifdef  __KERNEL__
+=======
+#ifdef  __KERNEL__
+#include <linux/if_ether.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/if.h>
 #include <linux/netdevice.h>
 #include <linux/ppp_channel.h>
 #endif /* __KERNEL__ */
 #include <linux/if_pppol2tp.h>
+<<<<<<< HEAD
+=======
+#include <linux/if_pppolac.h>
+#include <linux/if_pppopns.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* For user-space programs to pick up these definitions
  * which they wouldn't get otherwise without defining __KERNEL__
@@ -61,10 +71,19 @@ struct pptp_addr {
 #define PX_PROTO_OE    0 /* Currently just PPPoE */
 #define PX_PROTO_OL2TP 1 /* Now L2TP also */
 #define PX_PROTO_PPTP  2
+<<<<<<< HEAD
 #define PX_MAX_PROTO   3
 
 struct sockaddr_pppox {
 	__kernel_sa_family_t sa_family;       /* address family, AF_PPPOX */
+=======
+#define PX_PROTO_OLAC  3
+#define PX_PROTO_OPNS  4
+#define PX_MAX_PROTO   5
+
+struct sockaddr_pppox {
+	sa_family_t     sa_family;            /* address family, AF_PPPOX */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int    sa_protocol;          /* protocol identifier */
 	union {
 		struct pppoe_addr  pppoe;
@@ -78,7 +97,11 @@ struct sockaddr_pppox {
  * type instead.
  */
 struct sockaddr_pppol2tp {
+<<<<<<< HEAD
 	__kernel_sa_family_t sa_family; /* address family, AF_PPPOX */
+=======
+	sa_family_t     sa_family;      /* address family, AF_PPPOX */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int    sa_protocol;    /* protocol identifier */
 	struct pppol2tp_addr pppol2tp;
 } __attribute__((packed));
@@ -87,7 +110,11 @@ struct sockaddr_pppol2tp {
  * bits. So we need a different sockaddr structure.
  */
 struct sockaddr_pppol2tpv3 {
+<<<<<<< HEAD
 	__kernel_sa_family_t sa_family; /* address family, AF_PPPOX */
+=======
+	sa_family_t     sa_family;      /* address family, AF_PPPOX */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int    sa_protocol;    /* protocol identifier */
 	struct pppol2tpv3_addr pppol2tp;
 } __attribute__((packed));
@@ -128,11 +155,19 @@ struct pppoe_tag {
 
 struct pppoe_hdr {
 #if defined(__LITTLE_ENDIAN_BITFIELD)
+<<<<<<< HEAD
 	__u8 type : 4;
 	__u8 ver : 4;
 #elif defined(__BIG_ENDIAN_BITFIELD)
 	__u8 ver : 4;
 	__u8 type : 4;
+=======
+	__u8 ver : 4;
+	__u8 type : 4;
+#elif defined(__BIG_ENDIAN_BITFIELD)
+	__u8 type : 4;
+	__u8 ver : 4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 #error	"Please fix <asm/byteorder.h>"
 #endif
@@ -168,6 +203,28 @@ struct pptp_opt {
 	u32 seq_sent, seq_recv;
 	int ppp_flags;
 };
+<<<<<<< HEAD
+=======
+
+struct pppolac_opt {
+	__u32		local;
+	__u32		remote;
+	__u32		recv_sequence;
+	__u32		xmit_sequence;
+	atomic_t	sequencing;
+	int		(*backlog_rcv)(struct sock *sk_udp, struct sk_buff *skb);
+};
+
+struct pppopns_opt {
+	__u16		local;
+	__u16		remote;
+	__u32		recv_sequence;
+	__u32		xmit_sequence;
+	void		(*data_ready)(struct sock *sk_raw, int length);
+	int		(*backlog_rcv)(struct sock *sk_raw, struct sk_buff *skb);
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/sock.h>
 
 struct pppox_sock {
@@ -178,6 +235,11 @@ struct pppox_sock {
 	union {
 		struct pppoe_opt pppoe;
 		struct pptp_opt  pptp;
+<<<<<<< HEAD
+=======
+		struct pppolac_opt lac;
+		struct pppopns_opt pns;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} proto;
 	__be16			num;
 };

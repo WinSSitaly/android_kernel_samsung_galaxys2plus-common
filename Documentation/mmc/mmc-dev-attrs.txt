@@ -64,6 +64,7 @@ Note on Erase Size and Preferred Erase Size:
 	size specified by the card.
 
 	"preferred_erase_size" is in bytes.
+<<<<<<< HEAD
 
 SD/MMC/SDIO Clock Gating Attribute
 ==================================
@@ -74,3 +75,5 @@ This attribute appears only if CONFIG_MMC_CLKGATE is enabled.
 	clkgate_delay	Tune the clock gating delay with desired value in milliseconds.
 
 echo <desired delay> > /sys/class/mmc_host/mmcX/clkgate_delay
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

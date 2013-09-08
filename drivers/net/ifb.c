@@ -32,7 +32,10 @@
 #include <linux/netdevice.h>
 #include <linux/etherdevice.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/moduleparam.h>
 #include <net/pkt_sched.h>
 #include <net/net_namespace.h>
@@ -41,6 +44,7 @@
 struct ifb_private {
 	struct tasklet_struct   ifb_tasklet;
 	int     tasklet_pending;
+<<<<<<< HEAD
 
 	struct u64_stats_sync	rsync;
 	struct sk_buff_head     rq;
@@ -51,6 +55,10 @@ struct ifb_private {
 	struct sk_buff_head     tq;
 	u64 tx_packets;
 	u64 tx_bytes;
+=======
+	struct sk_buff_head     rq;
+	struct sk_buff_head     tq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int numifbs = 2;
@@ -62,8 +70,15 @@ static int ifb_close(struct net_device *dev);
 
 static void ri_tasklet(unsigned long dev)
 {
+<<<<<<< HEAD
 	struct net_device *_dev = (struct net_device *)dev;
 	struct ifb_private *dp = netdev_priv(_dev);
+=======
+
+	struct net_device *_dev = (struct net_device *)dev;
+	struct ifb_private *dp = netdev_priv(_dev);
+	struct net_device_stats *stats = &_dev->stats;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct netdev_queue *txq;
 	struct sk_buff *skb;
 
@@ -83,18 +98,27 @@ static void ri_tasklet(unsigned long dev)
 
 		skb->tc_verd = 0;
 		skb->tc_verd = SET_TC_NCLS(skb->tc_verd);
+<<<<<<< HEAD
 
 		u64_stats_update_begin(&dp->tsync);
 		dp->tx_packets++;
 		dp->tx_bytes += skb->len;
 		u64_stats_update_end(&dp->tsync);
+=======
+		stats->tx_packets++;
+		stats->tx_bytes +=skb->len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		rcu_read_lock();
 		skb->dev = dev_get_by_index_rcu(&init_net, skb->skb_iif);
 		if (!skb->dev) {
 			rcu_read_unlock();
 			dev_kfree_skb(skb);
+<<<<<<< HEAD
 			_dev->stats.tx_dropped++;
+=======
+			stats->tx_dropped++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (skb_queue_len(&dp->tq) != 0)
 				goto resched;
 			break;
@@ -129,6 +153,7 @@ resched:
 
 }
 
+<<<<<<< HEAD
 static struct rtnl_link_stats64 *ifb_stats64(struct net_device *dev,
 					     struct rtnl_link_stats64 *stats)
 {
@@ -160,11 +185,20 @@ static const struct net_device_ops ifb_netdev_ops = {
 	.ndo_open	= ifb_open,
 	.ndo_stop	= ifb_close,
 	.ndo_get_stats64 = ifb_stats64,
+=======
+static const struct net_device_ops ifb_netdev_ops = {
+	.ndo_open	= ifb_open,
+	.ndo_stop	= ifb_close,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ndo_start_xmit	= ifb_xmit,
 	.ndo_validate_addr = eth_validate_addr,
 };
 
+<<<<<<< HEAD
 #define IFB_FEATURES (NETIF_F_HW_CSUM | NETIF_F_SG  | NETIF_F_FRAGLIST	| \
+=======
+#define IFB_FEATURES (NETIF_F_NO_CSUM | NETIF_F_SG  | NETIF_F_FRAGLIST	| \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      NETIF_F_TSO_ECN | NETIF_F_TSO | NETIF_F_TSO6	| \
 		      NETIF_F_HIGHDMA | NETIF_F_HW_VLAN_TX)
 
@@ -184,12 +218,17 @@ static void ifb_setup(struct net_device *dev)
 	dev->flags |= IFF_NOARP;
 	dev->flags &= ~IFF_MULTICAST;
 	dev->priv_flags &= ~(IFF_XMIT_DST_RELEASE | IFF_TX_SKB_SHARING);
+<<<<<<< HEAD
 	eth_hw_addr_random(dev);
+=======
+	random_ether_addr(dev->dev_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static netdev_tx_t ifb_xmit(struct sk_buff *skb, struct net_device *dev)
 {
 	struct ifb_private *dp = netdev_priv(dev);
+<<<<<<< HEAD
 	u32 from = G_TC_FROM(skb->tc_verd);
 
 	u64_stats_update_begin(&dp->rsync);
@@ -200,6 +239,17 @@ static netdev_tx_t ifb_xmit(struct sk_buff *skb, struct net_device *dev)
 	if (!(from & (AT_INGRESS|AT_EGRESS)) || !skb->skb_iif) {
 		dev_kfree_skb(skb);
 		dev->stats.rx_dropped++;
+=======
+	struct net_device_stats *stats = &dev->stats;
+	u32 from = G_TC_FROM(skb->tc_verd);
+
+	stats->rx_packets++;
+	stats->rx_bytes+=skb->len;
+
+	if (!(from & (AT_INGRESS|AT_EGRESS)) || !skb->skb_iif) {
+		dev_kfree_skb(skb);
+		stats->rx_dropped++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NETDEV_TX_OK;
 	}
 
@@ -290,6 +340,7 @@ static int __init ifb_init_module(void)
 
 	rtnl_lock();
 	err = __rtnl_link_register(&ifb_link_ops);
+<<<<<<< HEAD
 	if (err < 0)
 		goto out;
 
@@ -301,6 +352,13 @@ static int __init ifb_init_module(void)
 		__rtnl_link_unregister(&ifb_link_ops);
 
 out:
+=======
+
+	for (i = 0; i < numifbs && !err; i++)
+		err = ifb_init_one(i);
+	if (err)
+		__rtnl_link_unregister(&ifb_link_ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtnl_unlock();
 
 	return err;

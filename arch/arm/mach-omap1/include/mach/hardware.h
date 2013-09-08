@@ -2,6 +2,7 @@
  * arch/arm/mach-omap1/include/mach/hardware.h
  */
 
+<<<<<<< HEAD
 #ifndef __MACH_HARDWARE_H
 #define __MACH_HARDWARE_H
 
@@ -38,4 +39,6 @@ static inline u32 omap_cs3_phys(void)
 #endif
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/hardware.h>

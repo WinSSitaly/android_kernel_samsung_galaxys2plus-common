@@ -96,6 +96,15 @@ struct insn {
 #define X86_VEX_P(vex)	((vex) & 0x03)		/* VEX3 Byte2, VEX2 Byte1 */
 #define X86_VEX_M_MAX	0x1f			/* VEX3.M Maximum value */
 
+<<<<<<< HEAD
+=======
+/* The last prefix is needed for two-byte and three-byte opcodes */
+static inline insn_byte_t insn_last_prefix(struct insn *insn)
+{
+	return insn->prefixes.bytes[3];
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void insn_init(struct insn *insn, const void *kaddr, int x86_64);
 extern void insn_get_prefixes(struct insn *insn);
 extern void insn_get_opcode(struct insn *insn);
@@ -131,6 +140,7 @@ static inline int insn_is_avx(struct insn *insn)
 	return (insn->vex_prefix.value != 0);
 }
 
+<<<<<<< HEAD
 /* Ensure this instruction is decoded completely */
 static inline int insn_complete(struct insn *insn)
 {
@@ -138,6 +148,8 @@ static inline int insn_complete(struct insn *insn)
 		insn->displacement.got && insn->immediate.got;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline insn_byte_t insn_vex_m_bits(struct insn *insn)
 {
 	if (insn->vex_prefix.nbytes == 2)	/* 2 bytes VEX */
@@ -154,6 +166,7 @@ static inline insn_byte_t insn_vex_p_bits(struct insn *insn)
 		return X86_VEX_P(insn->vex_prefix.bytes[2]);
 }
 
+<<<<<<< HEAD
 /* Get the last prefix id from last prefix or VEX prefix */
 static inline int insn_last_prefix_id(struct insn *insn)
 {
@@ -166,6 +179,8 @@ static inline int insn_last_prefix_id(struct insn *insn)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Offset of each field from kaddr */
 static inline int insn_offset_rex_prefix(struct insn *insn)
 {

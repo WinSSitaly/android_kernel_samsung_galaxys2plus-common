@@ -3,9 +3,13 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <crypto/aes.h>
 #include <asm/aes.h>
+=======
+#include <crypto/aes.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 asmlinkage void aes_enc_blk(struct crypto_aes_ctx *ctx, u8 *out, const u8 *in);
 asmlinkage void aes_dec_blk(struct crypto_aes_ctx *ctx, u8 *out, const u8 *in);

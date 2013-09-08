@@ -109,11 +109,20 @@ struct btrfs_workers {
 	char *name;
 };
 
+<<<<<<< HEAD
 void btrfs_queue_worker(struct btrfs_workers *workers, struct btrfs_work *work);
 int btrfs_start_workers(struct btrfs_workers *workers);
 void btrfs_stop_workers(struct btrfs_workers *workers);
 void btrfs_init_workers(struct btrfs_workers *workers, char *name, int max,
 			struct btrfs_workers *async_starter);
 void btrfs_requeue_work(struct btrfs_work *work);
+=======
+int btrfs_queue_worker(struct btrfs_workers *workers, struct btrfs_work *work);
+int btrfs_start_workers(struct btrfs_workers *workers, int num_workers);
+int btrfs_stop_workers(struct btrfs_workers *workers);
+void btrfs_init_workers(struct btrfs_workers *workers, char *name, int max,
+			struct btrfs_workers *async_starter);
+int btrfs_requeue_work(struct btrfs_work *work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void btrfs_set_work_high_prio(struct btrfs_work *work);
 #endif

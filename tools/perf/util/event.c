@@ -1,6 +1,10 @@
 #include <linux/types.h>
 #include "event.h"
 #include "debug.h"
+<<<<<<< HEAD
+=======
+#include "session.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "sort.h"
 #include "string.h"
 #include "strlist.h"
@@ -43,27 +47,55 @@ static struct perf_sample synth_sample = {
 	.period	   = 1,
 };
 
+<<<<<<< HEAD
 static pid_t perf_event__get_comm_tgid(pid_t pid, char *comm, size_t len)
+=======
+static pid_t perf_event__synthesize_comm(union perf_event *event, pid_t pid,
+					 int full, perf_event__handler_t process,
+					 struct perf_session *session)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	char filename[PATH_MAX];
 	char bf[BUFSIZ];
 	FILE *fp;
 	size_t size = 0;
+<<<<<<< HEAD
 	pid_t tgid = -1;
+=======
+	DIR *tasks;
+	struct dirent dirent, *next;
+	pid_t tgid = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	snprintf(filename, sizeof(filename), "/proc/%d/status", pid);
 
 	fp = fopen(filename, "r");
 	if (fp == NULL) {
+<<<<<<< HEAD
+=======
+out_race:
+		/*
+		 * We raced with a task exiting - just return:
+		 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_debug("couldn't open %s\n", filename);
 		return 0;
 	}
 
+<<<<<<< HEAD
 	while (!comm[0] || (tgid < 0)) {
 		if (fgets(bf, sizeof(bf), fp) == NULL) {
 			pr_warning("couldn't get COMM and pgid, malformed %s\n",
 				   filename);
 			break;
+=======
+	memset(&event->comm, 0, sizeof(event->comm));
+
+	while (!event->comm.comm[0] || !event->comm.pid) {
+		if (fgets(bf, sizeof(bf), fp) == NULL) {
+			pr_warning("couldn't get COMM and pgid, malformed %s\n", filename);
+			goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (memcmp(bf, "Name:", 5) == 0) {
@@ -71,15 +103,20 @@ static pid_t perf_event__get_comm_tgid(pid_t pid, char *comm, size_t len)
 			while (*name && isspace(*name))
 				++name;
 			size = strlen(name) - 1;
+<<<<<<< HEAD
 			if (size >= len)
 				size = len - 1;
 			memcpy(comm, name, size);
 			comm[size] = '\0';
 
+=======
+			memcpy(event->comm.comm, name, size++);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else if (memcmp(bf, "Tgid:", 5) == 0) {
 			char *tgids = bf + 5;
 			while (*tgids && isspace(*tgids))
 				++tgids;
+<<<<<<< HEAD
 			tgid = atoi(tgids);
 		}
 	}
@@ -121,16 +158,37 @@ static pid_t perf_event__synthesize_comm(struct perf_tool *tool,
 		event->comm.tid = pid;
 
 		process(tool, event, &synth_sample, machine);
+=======
+			tgid = event->comm.pid = atoi(tgids);
+		}
+	}
+
+	event->comm.header.type = PERF_RECORD_COMM;
+	size = ALIGN(size, sizeof(u64));
+	memset(event->comm.comm + size, 0, session->id_hdr_size);
+	event->comm.header.size = (sizeof(event->comm) -
+				(sizeof(event->comm.comm) - size) +
+				session->id_hdr_size);
+	if (!full) {
+		event->comm.tid = pid;
+
+		process(event, &synth_sample, session);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
 	snprintf(filename, sizeof(filename), "/proc/%d/task", pid);
 
 	tasks = opendir(filename);
+<<<<<<< HEAD
 	if (tasks == NULL) {
 		pr_debug("couldn't open %s\n", filename);
 		return 0;
 	}
+=======
+	if (tasks == NULL)
+		goto out_race;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (!readdir_r(tasks, &dirent, &next) && next) {
 		char *end;
@@ -138,6 +196,7 @@ static pid_t perf_event__synthesize_comm(struct perf_tool *tool,
 		if (*end)
 			continue;
 
+<<<<<<< HEAD
 		/* already have tgid; jut want to update the comm */
 		(void) perf_event__get_comm_tgid(pid, event->comm.comm,
 					 sizeof(event->comm.comm));
@@ -152,10 +211,16 @@ static pid_t perf_event__synthesize_comm(struct perf_tool *tool,
 		event->comm.tid = pid;
 
 		process(tool, event, &synth_sample, machine);
+=======
+		event->comm.tid = pid;
+
+		process(event, &synth_sample, session);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	closedir(tasks);
 out:
+<<<<<<< HEAD
 	return tgid;
 }
 
@@ -164,6 +229,17 @@ static int perf_event__synthesize_mmap_events(struct perf_tool *tool,
 					      pid_t pid, pid_t tgid,
 					      perf_event__handler_t process,
 					      struct machine *machine)
+=======
+	fclose(fp);
+
+	return tgid;
+}
+
+static int perf_event__synthesize_mmap_events(union perf_event *event,
+					      pid_t pid, pid_t tgid,
+					      perf_event__handler_t process,
+					      struct perf_session *session)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	char filename[PATH_MAX];
 	FILE *fp;
@@ -202,17 +278,23 @@ static int perf_event__synthesize_mmap_events(struct perf_tool *tool,
 			continue;
 		pbf += n + 3;
 		if (*pbf == 'x') { /* vm_exec */
+<<<<<<< HEAD
 			char anonstr[] = "//anon\n";
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			char *execname = strchr(bf, '/');
 
 			/* Catch VDSO */
 			if (execname == NULL)
 				execname = strstr(bf, "[vdso]");
 
+<<<<<<< HEAD
 			/* Catch anonymous mmaps */
 			if ((execname == NULL) && !strstr(bf, "["))
 				execname = anonstr;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (execname == NULL)
 				continue;
 
@@ -226,12 +308,21 @@ static int perf_event__synthesize_mmap_events(struct perf_tool *tool,
 			event->mmap.len -= event->mmap.start;
 			event->mmap.header.size = (sizeof(event->mmap) -
 					        (sizeof(event->mmap.filename) - size));
+<<<<<<< HEAD
 			memset(event->mmap.filename + size, 0, machine->id_hdr_size);
 			event->mmap.header.size += machine->id_hdr_size;
 			event->mmap.pid = tgid;
 			event->mmap.tid = pid;
 
 			process(tool, event, &synth_sample, machine);
+=======
+			memset(event->mmap.filename + size, 0, session->id_hdr_size);
+			event->mmap.header.size += session->id_hdr_size;
+			event->mmap.pid = tgid;
+			event->mmap.tid = pid;
+
+			process(event, &synth_sample, session);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -239,14 +330,23 @@ static int perf_event__synthesize_mmap_events(struct perf_tool *tool,
 	return 0;
 }
 
+<<<<<<< HEAD
 int perf_event__synthesize_modules(struct perf_tool *tool,
 				   perf_event__handler_t process,
+=======
+int perf_event__synthesize_modules(perf_event__handler_t process,
+				   struct perf_session *session,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   struct machine *machine)
 {
 	struct rb_node *nd;
 	struct map_groups *kmaps = &machine->kmaps;
 	union perf_event *event = zalloc((sizeof(event->mmap) +
+<<<<<<< HEAD
 					  machine->id_hdr_size));
+=======
+					  session->id_hdr_size));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (event == NULL) {
 		pr_debug("Not enough memory synthesizing mmap event "
 			 "for kernel modules\n");
@@ -276,15 +376,24 @@ int perf_event__synthesize_modules(struct perf_tool *tool,
 		event->mmap.header.type = PERF_RECORD_MMAP;
 		event->mmap.header.size = (sizeof(event->mmap) -
 				        (sizeof(event->mmap.filename) - size));
+<<<<<<< HEAD
 		memset(event->mmap.filename + size, 0, machine->id_hdr_size);
 		event->mmap.header.size += machine->id_hdr_size;
+=======
+		memset(event->mmap.filename + size, 0, session->id_hdr_size);
+		event->mmap.header.size += session->id_hdr_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		event->mmap.start = pos->start;
 		event->mmap.len   = pos->end - pos->start;
 		event->mmap.pid   = machine->pid;
 
 		memcpy(event->mmap.filename, pos->dso->long_name,
 		       pos->dso->long_name_len + 1);
+<<<<<<< HEAD
 		process(tool, event, &synth_sample, machine);
+=======
+		process(event, &synth_sample, session);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	free(event);
@@ -293,6 +402,7 @@ int perf_event__synthesize_modules(struct perf_tool *tool,
 
 static int __event__synthesize_thread(union perf_event *comm_event,
 				      union perf_event *mmap_event,
+<<<<<<< HEAD
 				      pid_t pid, int full,
 					  perf_event__handler_t process,
 				      struct perf_tool *tool,
@@ -319,12 +429,38 @@ int perf_event__synthesize_thread_map(struct perf_tool *tool,
 		goto out;
 
 	mmap_event = malloc(sizeof(mmap_event->mmap) + machine->id_hdr_size);
+=======
+				      pid_t pid, perf_event__handler_t process,
+				      struct perf_session *session)
+{
+	pid_t tgid = perf_event__synthesize_comm(comm_event, pid, 1, process,
+					    session);
+	if (tgid == -1)
+		return -1;
+	return perf_event__synthesize_mmap_events(mmap_event, pid, tgid,
+					     process, session);
+}
+
+int perf_event__synthesize_thread_map(struct thread_map *threads,
+				      perf_event__handler_t process,
+				      struct perf_session *session)
+{
+	union perf_event *comm_event, *mmap_event;
+	int err = -1, thread;
+
+	comm_event = malloc(sizeof(comm_event->comm) + session->id_hdr_size);
+	if (comm_event == NULL)
+		goto out;
+
+	mmap_event = malloc(sizeof(mmap_event->mmap) + session->id_hdr_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (mmap_event == NULL)
 		goto out_free_comm;
 
 	err = 0;
 	for (thread = 0; thread < threads->nr; ++thread) {
 		if (__event__synthesize_thread(comm_event, mmap_event,
+<<<<<<< HEAD
 					       threads->map[thread], 0,
 					       process, tool, machine)) {
 			err = -1;
@@ -356,6 +492,13 @@ int perf_event__synthesize_thread_map(struct perf_tool *tool,
 				break;
 			}
 		}
+=======
+					       threads->map[thread],
+					       process, session)) {
+			err = -1;
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	free(mmap_event);
 out_free_comm:
@@ -364,20 +507,33 @@ out:
 	return err;
 }
 
+<<<<<<< HEAD
 int perf_event__synthesize_threads(struct perf_tool *tool,
 				   perf_event__handler_t process,
 				   struct machine *machine)
+=======
+int perf_event__synthesize_threads(perf_event__handler_t process,
+				   struct perf_session *session)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	DIR *proc;
 	struct dirent dirent, *next;
 	union perf_event *comm_event, *mmap_event;
 	int err = -1;
 
+<<<<<<< HEAD
 	comm_event = malloc(sizeof(comm_event->comm) + machine->id_hdr_size);
 	if (comm_event == NULL)
 		goto out;
 
 	mmap_event = malloc(sizeof(mmap_event->mmap) + machine->id_hdr_size);
+=======
+	comm_event = malloc(sizeof(comm_event->comm) + session->id_hdr_size);
+	if (comm_event == NULL)
+		goto out;
+
+	mmap_event = malloc(sizeof(mmap_event->mmap) + session->id_hdr_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (mmap_event == NULL)
 		goto out_free_comm;
 
@@ -392,8 +548,13 @@ int perf_event__synthesize_threads(struct perf_tool *tool,
 		if (*end) /* only interested in proper numerical dirents */
 			continue;
 
+<<<<<<< HEAD
 		__event__synthesize_thread(comm_event, mmap_event, pid, 1,
 					   process, tool, machine);
+=======
+		__event__synthesize_thread(comm_event, mmap_event, pid,
+					   process, session);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	closedir(proc);
@@ -428,8 +589,13 @@ static int find_symbol_cb(void *arg, const char *name, char type,
 	return 1;
 }
 
+<<<<<<< HEAD
 int perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
 				       perf_event__handler_t process,
+=======
+int perf_event__synthesize_kernel_mmap(perf_event__handler_t process,
+				       struct perf_session *session,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				       struct machine *machine,
 				       const char *symbol_name)
 {
@@ -446,7 +612,11 @@ int perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
 	 */
 	struct process_symbol_args args = { .name = symbol_name, };
 	union perf_event *event = zalloc((sizeof(event->mmap) +
+<<<<<<< HEAD
 					  machine->id_hdr_size));
+=======
+					  session->id_hdr_size));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (event == NULL) {
 		pr_debug("Not enough memory synthesizing mmap event "
 			 "for kernel modules\n");
@@ -480,18 +650,27 @@ int perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
 	size = ALIGN(size, sizeof(u64));
 	event->mmap.header.type = PERF_RECORD_MMAP;
 	event->mmap.header.size = (sizeof(event->mmap) -
+<<<<<<< HEAD
 			(sizeof(event->mmap.filename) - size) + machine->id_hdr_size);
+=======
+			(sizeof(event->mmap.filename) - size) + session->id_hdr_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	event->mmap.pgoff = args.start;
 	event->mmap.start = map->start;
 	event->mmap.len   = map->end - event->mmap.start;
 	event->mmap.pid   = machine->pid;
 
+<<<<<<< HEAD
 	err = process(tool, event, &synth_sample, machine);
+=======
+	err = process(event, &synth_sample, session);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	free(event);
 
 	return err;
 }
 
+<<<<<<< HEAD
 size_t perf_event__fprintf_comm(union perf_event *event, FILE *fp)
 {
 	return fprintf(fp, ": %s:%d\n", event->comm.comm, event->comm.tid);
@@ -506,6 +685,15 @@ int perf_event__process_comm(struct perf_tool *tool __used,
 
 	if (dump_trace)
 		perf_event__fprintf_comm(event, stdout);
+=======
+int perf_event__process_comm(union perf_event *event,
+			     struct perf_sample *sample __used,
+			     struct perf_session *session)
+{
+	struct thread *thread = perf_session__findnew(session, event->comm.tid);
+
+	dump_printf(": %s:%d\n", event->comm.comm, event->comm.tid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (thread == NULL || thread__set_comm(thread, event->comm.comm)) {
 		dump_printf("problem processing PERF_RECORD_COMM, skipping event.\n");
@@ -515,6 +703,7 @@ int perf_event__process_comm(struct perf_tool *tool __used,
 	return 0;
 }
 
+<<<<<<< HEAD
 int perf_event__process_lost(struct perf_tool *tool __used,
 			     union perf_event *event,
 			     struct perf_sample *sample __used,
@@ -522,6 +711,15 @@ int perf_event__process_lost(struct perf_tool *tool __used,
 {
 	dump_printf(": id:%" PRIu64 ": lost:%" PRIu64 "\n",
 		    event->lost.id, event->lost.lost);
+=======
+int perf_event__process_lost(union perf_event *event,
+			     struct perf_sample *sample __used,
+			     struct perf_session *session)
+{
+	dump_printf(": id:%" PRIu64 ": lost:%" PRIu64 "\n",
+		    event->lost.id, event->lost.lost);
+	session->hists.stats.total_lost += event->lost.lost;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -538,6 +736,7 @@ static void perf_event__set_kernel_mmap_len(union perf_event *event,
 		maps[MAP__FUNCTION]->end = ~0ULL;
 }
 
+<<<<<<< HEAD
 static int perf_event__process_kernel_mmap(struct perf_tool *tool __used,
 					   union perf_event *event,
 					   struct machine *machine)
@@ -547,6 +746,23 @@ static int perf_event__process_kernel_mmap(struct perf_tool *tool __used,
 	enum dso_kernel_type kernel_type;
 	bool is_kernel_mmap;
 
+=======
+static int perf_event__process_kernel_mmap(union perf_event *event,
+					   struct perf_session *session)
+{
+	struct map *map;
+	char kmmap_prefix[PATH_MAX];
+	struct machine *machine;
+	enum dso_kernel_type kernel_type;
+	bool is_kernel_mmap;
+
+	machine = perf_session__findnew_machine(session, event->mmap.pid);
+	if (!machine) {
+		pr_err("Can't find id %d's machine\n", event->mmap.pid);
+		goto out_problem;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	machine__mmap_name(machine, kmmap_prefix, sizeof(kmmap_prefix));
 	if (machine__is_host(machine))
 		kernel_type = DSO_TYPE_KERNEL;
@@ -555,7 +771,11 @@ static int perf_event__process_kernel_mmap(struct perf_tool *tool __used,
 
 	is_kernel_mmap = memcmp(event->mmap.filename,
 				kmmap_prefix,
+<<<<<<< HEAD
 				strlen(kmmap_prefix) - 1) == 0;
+=======
+				strlen(kmmap_prefix)) == 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (event->mmap.filename[0] == '/' ||
 	    (!is_kernel_mmap && event->mmap.filename[0] == '[')) {
 
@@ -613,9 +833,15 @@ static int perf_event__process_kernel_mmap(struct perf_tool *tool __used,
 		 * time /proc/sys/kernel/kptr_restrict was non zero.
 		 */
 		if (event->mmap.pgoff != 0) {
+<<<<<<< HEAD
 			maps__set_kallsyms_ref_reloc_sym(machine->vmlinux_maps,
 							 symbol_name,
 							 event->mmap.pgoff);
+=======
+			perf_session__set_kallsyms_ref_reloc_sym(machine->vmlinux_maps,
+								 symbol_name,
+								 event->mmap.pgoff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (machine__is_default_guest(machine)) {
@@ -631,6 +857,7 @@ out_problem:
 	return -1;
 }
 
+<<<<<<< HEAD
 size_t perf_event__fprintf_mmap(union perf_event *event, FILE *fp)
 {
 	return fprintf(fp, " %d/%d: [%#" PRIx64 "(%#" PRIx64 ") @ %#" PRIx64 "]: %s\n",
@@ -643,23 +870,47 @@ int perf_event__process_mmap(struct perf_tool *tool,
 			     struct perf_sample *sample __used,
 			     struct machine *machine)
 {
+=======
+int perf_event__process_mmap(union perf_event *event,
+			     struct perf_sample *sample __used,
+			     struct perf_session *session)
+{
+	struct machine *machine;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct thread *thread;
 	struct map *map;
 	u8 cpumode = event->header.misc & PERF_RECORD_MISC_CPUMODE_MASK;
 	int ret = 0;
 
+<<<<<<< HEAD
 	if (dump_trace)
 		perf_event__fprintf_mmap(event, stdout);
 
 	if (cpumode == PERF_RECORD_MISC_GUEST_KERNEL ||
 	    cpumode == PERF_RECORD_MISC_KERNEL) {
 		ret = perf_event__process_kernel_mmap(tool, event, machine);
+=======
+	dump_printf(" %d/%d: [%#" PRIx64 "(%#" PRIx64 ") @ %#" PRIx64 "]: %s\n",
+			event->mmap.pid, event->mmap.tid, event->mmap.start,
+			event->mmap.len, event->mmap.pgoff, event->mmap.filename);
+
+	if (cpumode == PERF_RECORD_MISC_GUEST_KERNEL ||
+	    cpumode == PERF_RECORD_MISC_KERNEL) {
+		ret = perf_event__process_kernel_mmap(event, session);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0)
 			goto out_problem;
 		return 0;
 	}
 
+<<<<<<< HEAD
 	thread = machine__findnew_thread(machine, event->mmap.pid);
+=======
+	machine = perf_session__find_host_machine(session);
+	if (machine == NULL)
+		goto out_problem;
+	thread = perf_session__findnew(session, event->mmap.pid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (thread == NULL)
 		goto out_problem;
 	map = map__new(&machine->user_dsos, event->mmap.start,
@@ -677,6 +928,7 @@ out_problem:
 	return 0;
 }
 
+<<<<<<< HEAD
 size_t perf_event__fprintf_task(union perf_event *event, FILE *fp)
 {
 	return fprintf(fp, "(%d:%d):(%d:%d)\n",
@@ -697,6 +949,20 @@ int perf_event__process_task(struct perf_tool *tool __used,
 
 	if (event->header.type == PERF_RECORD_EXIT) {
 		machine__remove_thread(machine, thread);
+=======
+int perf_event__process_task(union perf_event *event,
+			     struct perf_sample *sample __used,
+			     struct perf_session *session)
+{
+	struct thread *thread = perf_session__findnew(session, event->fork.tid);
+	struct thread *parent = perf_session__findnew(session, event->fork.ptid);
+
+	dump_printf("(%d:%d):(%d:%d)\n", event->fork.pid, event->fork.tid,
+		    event->fork.ppid, event->fork.ptid);
+
+	if (event->header.type == PERF_RECORD_EXIT) {
+		perf_session__remove_thread(session, thread);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
@@ -709,6 +975,7 @@ int perf_event__process_task(struct perf_tool *tool __used,
 	return 0;
 }
 
+<<<<<<< HEAD
 size_t perf_event__fprintf(union perf_event *event, FILE *fp)
 {
 	size_t ret = fprintf(fp, "PERF_RECORD_%s",
@@ -748,6 +1015,24 @@ int perf_event__process(struct perf_tool *tool, union perf_event *event,
 		break;
 	case PERF_RECORD_LOST:
 		perf_event__process_lost(tool, event, sample, machine);
+=======
+int perf_event__process(union perf_event *event, struct perf_sample *sample,
+			struct perf_session *session)
+{
+	switch (event->header.type) {
+	case PERF_RECORD_COMM:
+		perf_event__process_comm(event, sample, session);
+		break;
+	case PERF_RECORD_MMAP:
+		perf_event__process_mmap(event, sample, session);
+		break;
+	case PERF_RECORD_FORK:
+	case PERF_RECORD_EXIT:
+		perf_event__process_task(event, sample, session);
+		break;
+	case PERF_RECORD_LOST:
+		perf_event__process_lost(event, sample, session);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		break;
 	}
@@ -756,17 +1041,27 @@ int perf_event__process(struct perf_tool *tool, union perf_event *event,
 }
 
 void thread__find_addr_map(struct thread *self,
+<<<<<<< HEAD
 			   struct machine *machine, u8 cpumode,
 			   enum map_type type, u64 addr,
 			   struct addr_location *al)
 {
 	struct map_groups *mg = &self->mg;
+=======
+			   struct perf_session *session, u8 cpumode,
+			   enum map_type type, pid_t pid, u64 addr,
+			   struct addr_location *al)
+{
+	struct map_groups *mg = &self->mg;
+	struct machine *machine = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	al->thread = self;
 	al->addr = addr;
 	al->cpumode = cpumode;
 	al->filtered = false;
 
+<<<<<<< HEAD
 	if (machine == NULL) {
 		al->map = NULL;
 		return;
@@ -779,6 +1074,26 @@ void thread__find_addr_map(struct thread *self,
 		al->level = '.';
 	} else if (cpumode == PERF_RECORD_MISC_GUEST_KERNEL && perf_guest) {
 		al->level = 'g';
+=======
+	if (cpumode == PERF_RECORD_MISC_KERNEL && perf_host) {
+		al->level = 'k';
+		machine = perf_session__find_host_machine(session);
+		if (machine == NULL) {
+			al->map = NULL;
+			return;
+		}
+		mg = &machine->kmaps;
+	} else if (cpumode == PERF_RECORD_MISC_USER && perf_host) {
+		al->level = '.';
+		machine = perf_session__find_host_machine(session);
+	} else if (cpumode == PERF_RECORD_MISC_GUEST_KERNEL && perf_guest) {
+		al->level = 'g';
+		machine = perf_session__find_machine(session, pid);
+		if (machine == NULL) {
+			al->map = NULL;
+			return;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mg = &machine->kmaps;
 	} else {
 		/*
@@ -824,12 +1139,22 @@ try_again:
 		al->addr = al->map->map_ip(al->map, al->addr);
 }
 
+<<<<<<< HEAD
 void thread__find_addr_location(struct thread *thread, struct machine *machine,
 				u8 cpumode, enum map_type type, u64 addr,
 				struct addr_location *al,
 				symbol_filter_t filter)
 {
 	thread__find_addr_map(thread, machine, cpumode, type, addr, al);
+=======
+void thread__find_addr_location(struct thread *self,
+				struct perf_session *session, u8 cpumode,
+				enum map_type type, pid_t pid, u64 addr,
+				struct addr_location *al,
+				symbol_filter_t filter)
+{
+	thread__find_addr_map(self, session, cpumode, type, pid, addr, al);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (al->map != NULL)
 		al->sym = map__find_symbol(al->map, al->addr, filter);
 	else
@@ -837,13 +1162,21 @@ void thread__find_addr_location(struct thread *thread, struct machine *machine,
 }
 
 int perf_event__preprocess_sample(const union perf_event *event,
+<<<<<<< HEAD
 				  struct machine *machine,
+=======
+				  struct perf_session *session,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  struct addr_location *al,
 				  struct perf_sample *sample,
 				  symbol_filter_t filter)
 {
 	u8 cpumode = event->header.misc & PERF_RECORD_MISC_CPUMODE_MASK;
+<<<<<<< HEAD
 	struct thread *thread = machine__findnew_thread(machine, event->ip.pid);
+=======
+	struct thread *thread = perf_session__findnew(session, event->ip.pid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (thread == NULL)
 		return -1;
@@ -854,18 +1187,30 @@ int perf_event__preprocess_sample(const union perf_event *event,
 
 	dump_printf(" ... thread: %s:%d\n", thread->comm, thread->pid);
 	/*
+<<<<<<< HEAD
 	 * Have we already created the kernel maps for this machine?
+=======
+	 * Have we already created the kernel maps for the host machine?
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 *
 	 * This should have happened earlier, when we processed the kernel MMAP
 	 * events, but for older perf.data files there was no such thing, so do
 	 * it now.
 	 */
 	if (cpumode == PERF_RECORD_MISC_KERNEL &&
+<<<<<<< HEAD
 	    machine->vmlinux_maps[MAP__FUNCTION] == NULL)
 		machine__create_kernel_maps(machine);
 
 	thread__find_addr_map(thread, machine, cpumode, MAP__FUNCTION,
 			      event->ip.ip, al);
+=======
+	    session->host_machine.vmlinux_maps[MAP__FUNCTION] == NULL)
+		machine__create_kernel_maps(&session->host_machine);
+
+	thread__find_addr_map(thread, session, cpumode, MAP__FUNCTION,
+			      event->ip.pid, event->ip.ip, al);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dump_printf(" ...... dso: %s\n",
 		    al->map ? al->map->dso->long_name :
 			al->level == 'H' ? "[hypervisor]" : "<not found>");
@@ -873,6 +1218,7 @@ int perf_event__preprocess_sample(const union perf_event *event,
 	al->cpu = sample->cpu;
 
 	if (al->map) {
+<<<<<<< HEAD
 		struct dso *dso = al->map->dso;
 
 		if (symbol_conf.dso_list &&
@@ -881,6 +1227,15 @@ int perf_event__preprocess_sample(const union perf_event *event,
 			       (dso->short_name != dso->long_name &&
 				strlist__has_entry(symbol_conf.dso_list,
 						   dso->long_name)))))
+=======
+		if (symbol_conf.dso_list &&
+		    (!al->map || !al->map->dso ||
+		     !(strlist__has_entry(symbol_conf.dso_list,
+					  al->map->dso->short_name) ||
+		       (al->map->dso->short_name != al->map->dso->long_name &&
+			strlist__has_entry(symbol_conf.dso_list,
+					   al->map->dso->long_name)))))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out_filtered;
 
 		al->sym = map__find_symbol(al->map, al->addr, filter);

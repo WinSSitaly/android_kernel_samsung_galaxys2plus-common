@@ -9,9 +9,13 @@
  */
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+<<<<<<< HEAD
 #include <linux/hardirq.h>
 #include <linux/slab.h>
 #include <linux/export.h>
+=======
+#include <linux/slab.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "libertas_tf.h"
 

@@ -154,7 +154,11 @@ struct mtd_info *__init crisv32_nand_flash_probe(void)
 	this->ecc.mode = NAND_ECC_SOFT;
 
 	/* Enable the following for a flash based bad block table */
+<<<<<<< HEAD
 	/* this->bbt_options = NAND_BBT_USE_FLASH; */
+=======
+	/* this->options = NAND_USE_FLASH_BBT; */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Scan to find existence of the device */
 	if (nand_scan(crisv32_mtd, 1)) {

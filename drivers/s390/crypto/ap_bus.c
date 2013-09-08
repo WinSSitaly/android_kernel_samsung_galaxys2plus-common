@@ -6,7 +6,10 @@
  *	      Martin Schwidefsky <schwidefsky@de.ibm.com>
  *	      Ralph Wuerthner <rwuerthn@de.ibm.com>
  *	      Felix Beck <felix.beck@de.ibm.com>
+<<<<<<< HEAD
  *	      Holger Dengler <hd@linux.vnet.ibm.com>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Adjunct processor bus.
  *
@@ -41,11 +44,19 @@
 #include <linux/mutex.h>
 #include <asm/reset.h>
 #include <asm/airq.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
 #include <asm/isc.h>
 #include <linux/hrtimer.h>
 #include <linux/ktime.h>
 #include <asm/facility.h>
+=======
+#include <asm/atomic.h>
+#include <asm/system.h>
+#include <asm/isc.h>
+#include <linux/hrtimer.h>
+#include <linux/ktime.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "ap_bus.h"
 
@@ -223,6 +234,7 @@ ap_queue_interruption_control(ap_qid_t qid, void *ind)
 }
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_64BIT
 static inline struct ap_queue_status
 __ap_query_functions(ap_qid_t qid, unsigned int *functions)
@@ -269,6 +281,49 @@ static int ap_query_functions(ap_qid_t qid, unsigned int *functions)
 		switch (status.response_code) {
 		case AP_RESPONSE_NORMAL:
 			return 0;
+=======
+static inline struct ap_queue_status __ap_4096_commands_available(ap_qid_t qid,
+								  int *support)
+{
+	register unsigned long reg0 asm ("0") = 0UL | qid | (1UL << 23);
+	register struct ap_queue_status reg1 asm ("1");
+	register unsigned long reg2 asm ("2") = 0UL;
+
+	asm volatile(
+		".long 0xb2af0000\n"
+		"0: la    %1,0\n"
+		"1:\n"
+		EX_TABLE(0b, 1b)
+		: "+d" (reg0), "=d" (reg1), "=d" (reg2)
+		:
+		: "cc");
+
+	if (reg2 & 0x6000000000000000ULL)
+		*support = 1;
+	else
+		*support = 0;
+
+	return reg1;
+}
+
+/**
+ * ap_4096_commands_availablen(): Check for availability of 4096 bit RSA
+ * support.
+ * @qid: The AP queue number
+ *
+ * Returns 1 if 4096 bit RSA keys are support fo the AP, returns 0 if not.
+ */
+int ap_4096_commands_available(ap_qid_t qid)
+{
+	struct ap_queue_status status;
+	int i, support = 0;
+	status = __ap_4096_commands_available(qid, &support);
+
+	for (i = 0; i < AP_MAX_RESET; i++) {
+		switch (status.response_code) {
+		case AP_RESPONSE_NORMAL:
+			return support;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case AP_RESPONSE_RESET_IN_PROGRESS:
 		case AP_RESPONSE_BUSY:
 			break;
@@ -276,7 +331,11 @@ static int ap_query_functions(ap_qid_t qid, unsigned int *functions)
 		case AP_RESPONSE_DECONFIGURED:
 		case AP_RESPONSE_CHECKSTOPPED:
 		case AP_RESPONSE_INVALID_ADDRESS:
+<<<<<<< HEAD
 			return -ENODEV;
+=======
+			return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case AP_RESPONSE_OTHERWISE_CHANGED:
 			break;
 		default:
@@ -284,6 +343,7 @@ static int ap_query_functions(ap_qid_t qid, unsigned int *functions)
 		}
 		if (i < AP_MAX_RESET - 1) {
 			udelay(5);
+<<<<<<< HEAD
 			status = __ap_query_functions(qid, functions);
 		}
 	}
@@ -309,6 +369,12 @@ int ap_4096_commands_available(ap_qid_t qid)
 
 	return test_ap_facility(functions, 1) &&
 	       test_ap_facility(functions, 2);
+=======
+			status = __ap_4096_commands_available(qid, &support);
+		}
+	}
+	return support;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(ap_4096_commands_available);
 
@@ -1162,7 +1228,10 @@ static void ap_scan_bus(struct work_struct *unused)
 	struct device *dev;
 	ap_qid_t qid;
 	int queue_depth, device_type;
+<<<<<<< HEAD
 	unsigned int device_functions;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rc, i;
 
 	if (ap_select_domain() != 0)
@@ -1211,12 +1280,17 @@ static void ap_scan_bus(struct work_struct *unused)
 		INIT_LIST_HEAD(&ap_dev->list);
 		setup_timer(&ap_dev->timeout, ap_request_timeout,
 			    (unsigned long) ap_dev);
+<<<<<<< HEAD
 		switch (device_type) {
 		case 0:
+=======
+		if (device_type == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ap_probe_device_type(ap_dev)) {
 				kfree(ap_dev);
 				continue;
 			}
+<<<<<<< HEAD
 			break;
 		case 10:
 			if (ap_query_functions(qid, &device_functions)) {
@@ -1235,6 +1309,11 @@ static void ap_scan_bus(struct work_struct *unused)
 		default:
 			ap_dev->device_type = device_type;
 		}
+=======
+		}
+		else
+			ap_dev->device_type = device_type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ap_dev->device.bus = &ap_bus_type;
 		ap_dev->device.parent = ap_root_device;
@@ -1271,16 +1350,30 @@ ap_config_timeout(unsigned long ptr)
 }
 
 /**
+<<<<<<< HEAD
  * __ap_schedule_poll_timer(): Schedule poll timer.
  *
  * Set up the timer to run the poll tasklet
  */
 static inline void __ap_schedule_poll_timer(void)
+=======
+ * ap_schedule_poll_timer(): Schedule poll timer.
+ *
+ * Set up the timer to run the poll tasklet
+ */
+static inline void ap_schedule_poll_timer(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	ktime_t hr_time;
 
 	spin_lock_bh(&ap_poll_timer_lock);
+<<<<<<< HEAD
 	if (hrtimer_is_queued(&ap_poll_timer) || ap_suspend_flag)
+=======
+	if (ap_using_interrupts() || ap_suspend_flag)
+		goto out;
+	if (hrtimer_is_queued(&ap_poll_timer))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	if (ktime_to_ns(hrtimer_expires_remaining(&ap_poll_timer)) <= 0) {
 		hr_time = ktime_set(0, poll_timeout);
@@ -1292,6 +1385,7 @@ out:
 }
 
 /**
+<<<<<<< HEAD
  * ap_schedule_poll_timer(): Schedule poll timer.
  *
  * Set up the timer to run the poll tasklet
@@ -1304,6 +1398,8 @@ static inline void ap_schedule_poll_timer(void)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * ap_poll_read(): Receive pending reply messages from an AP device.
  * @ap_dev: pointer to the AP device
  * @flags: pointer to control flags, bit 2^0 is set if another poll is
@@ -1384,9 +1480,14 @@ static int ap_poll_write(struct ap_device *ap_dev, unsigned long *flags)
 			*flags |= 1;
 		*flags |= 2;
 		break;
+<<<<<<< HEAD
 	case AP_RESPONSE_RESET_IN_PROGRESS:
 		__ap_schedule_poll_timer();
 	case AP_RESPONSE_Q_FULL:
+=======
+	case AP_RESPONSE_Q_FULL:
+	case AP_RESPONSE_RESET_IN_PROGRESS:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*flags |= 2;
 		break;
 	case AP_RESPONSE_MESSAGE_TOO_BIG:
@@ -1552,8 +1653,11 @@ static void ap_reset(struct ap_device *ap_dev)
 	rc = ap_init_queue(ap_dev->qid);
 	if (rc == -ENODEV)
 		ap_dev->unregistered = 1;
+<<<<<<< HEAD
 	else
 		__ap_schedule_poll_timer();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __ap_poll_device(struct ap_device *ap_dev, unsigned long *flags)
@@ -1862,5 +1966,12 @@ void ap_module_exit(void)
 	}
 }
 
+<<<<<<< HEAD
 module_init(ap_module_init);
 module_exit(ap_module_exit);
+=======
+#ifndef CONFIG_ZCRYPT_MONOLITHIC
+module_init(ap_module_init);
+module_exit(ap_module_exit);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

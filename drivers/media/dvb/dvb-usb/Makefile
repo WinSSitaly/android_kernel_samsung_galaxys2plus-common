@@ -54,6 +54,10 @@ obj-$(CONFIG_DVB_USB_DIB0700) += dvb-usb-dib0700.o
 dvb-usb-opera-objs = opera1.o
 obj-$(CONFIG_DVB_USB_OPERA1) += dvb-usb-opera.o
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 dvb-usb-af9005-objs = af9005.o af9005-fe.o
 obj-$(CONFIG_DVB_USB_AF9005) += dvb-usb-af9005.o
 
@@ -63,9 +67,12 @@ obj-$(CONFIG_DVB_USB_AF9005_REMOTE) += dvb-usb-af9005-remote.o
 dvb-usb-anysee-objs = anysee.o
 obj-$(CONFIG_DVB_USB_ANYSEE) += dvb-usb-anysee.o
 
+<<<<<<< HEAD
 dvb-usb-pctv452e-objs = pctv452e.o
 obj-$(CONFIG_DVB_USB_PCTV452E) += dvb-usb-pctv452e.o
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 dvb-usb-dw2102-objs = dw2102.o
 obj-$(CONFIG_DVB_USB_DW2102) += dvb-usb-dw2102.o
 
@@ -87,9 +94,12 @@ obj-$(CONFIG_DVB_USB_FRIIO) += dvb-usb-friio.o
 dvb-usb-ec168-objs = ec168.o
 obj-$(CONFIG_DVB_USB_EC168) += dvb-usb-ec168.o
 
+<<<<<<< HEAD
 dvb-usb-az6007-objs = az6007.o
 obj-$(CONFIG_DVB_USB_AZ6007) += dvb-usb-az6007.o
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 dvb-usb-az6027-objs = az6027.o
 obj-$(CONFIG_DVB_USB_AZ6027) += dvb-usb-az6027.o
 
@@ -99,6 +109,7 @@ obj-$(CONFIG_DVB_USB_LME2510) += dvb-usb-lmedm04.o
 dvb-usb-technisat-usb2-objs = technisat-usb2.o
 obj-$(CONFIG_DVB_USB_TECHNISAT_USB2) += dvb-usb-technisat-usb2.o
 
+<<<<<<< HEAD
 dvb-usb-it913x-objs := it913x.o
 obj-$(CONFIG_DVB_USB_IT913X) += dvb-usb-it913x.o
 
@@ -115,4 +126,9 @@ ccflags-y += -I$(srctree)/drivers/media/dvb/frontends/
 # due to tuner-xc3028
 ccflags-y += -I$(srctree)/drivers/media/common/tuners
 ccflags-y += -I$(srctree)/drivers/media/dvb/ttpci
+=======
+EXTRA_CFLAGS += -Idrivers/media/dvb/dvb-core/ -Idrivers/media/dvb/frontends/
+# due to tuner-xc3028
+EXTRA_CFLAGS += -Idrivers/media/common/tuners
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 

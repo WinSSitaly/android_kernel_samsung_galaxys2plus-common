@@ -458,7 +458,12 @@ static ssize_t ib_umad_write(struct file *filp, const char __user *buf,
 		goto err;
 	}
 
+<<<<<<< HEAD
 	if (packet->mad.hdr.id >= IB_UMAD_MAX_AGENTS) {
+=======
+	if (packet->mad.hdr.id < 0 ||
+	    packet->mad.hdr.id >= IB_UMAD_MAX_AGENTS) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EINVAL;
 		goto err;
 	}
@@ -702,7 +707,11 @@ static int ib_umad_unreg_agent(struct ib_umad_file *file, u32 __user *arg)
 	mutex_lock(&file->port->file_mutex);
 	mutex_lock(&file->mutex);
 
+<<<<<<< HEAD
 	if (id >= IB_UMAD_MAX_AGENTS || !__get_agent(file, id)) {
+=======
+	if (id < 0 || id >= IB_UMAD_MAX_AGENTS || !__get_agent(file, id)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EINVAL;
 		goto out;
 	}
@@ -1175,7 +1184,11 @@ static void ib_umad_remove_one(struct ib_device *device)
 	kref_put(&umad_dev->ref, ib_umad_release_dev);
 }
 
+<<<<<<< HEAD
 static char *umad_devnode(struct device *dev, umode_t *mode)
+=======
+static char *umad_devnode(struct device *dev, mode_t *mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return kasprintf(GFP_KERNEL, "infiniband/%s", dev_name(dev));
 }

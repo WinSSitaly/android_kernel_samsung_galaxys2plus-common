@@ -2,8 +2,13 @@
 #define __LINUX_DEBUG_LOCKING_H
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
 #include <linux/bug.h>
+=======
+#include <asm/atomic.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct task_struct;
 

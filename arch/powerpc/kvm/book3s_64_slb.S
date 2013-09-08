@@ -53,7 +53,11 @@ slb_exit_skip_ ## num:
 	 * R1 = host R1
 	 * R2 = host R2
 	 * R3 = shadow vcpu
+<<<<<<< HEAD
 	 * all other volatile GPRS = free except R4, R6
+=======
+	 * all other volatile GPRS = free
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * SVCPU[CR]  = guest CR
 	 * SVCPU[XER] = guest XER
 	 * SVCPU[CTR] = guest CTR

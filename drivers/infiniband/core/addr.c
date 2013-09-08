@@ -37,7 +37,10 @@
 #include <linux/inetdevice.h>
 #include <linux/slab.h>
 #include <linux/workqueue.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/arp.h>
 #include <net/neighbour.h>
 #include <net/route.h>
@@ -178,6 +181,7 @@ static void queue_req(struct addr_req *req)
 	mutex_unlock(&lock);
 }
 
+<<<<<<< HEAD
 static int dst_fetch_ha(struct dst_entry *dst, struct rdma_dev_addr *dev_addr, void *daddr)
 {
 	struct neighbour *n;
@@ -201,6 +205,8 @@ static int dst_fetch_ha(struct dst_entry *dst, struct rdma_dev_addr *dev_addr, v
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int addr4_resolve(struct sockaddr_in *src_in,
 			 struct sockaddr_in *dst_in,
 			 struct rdma_dev_addr *addr)
@@ -208,6 +214,10 @@ static int addr4_resolve(struct sockaddr_in *src_in,
 	__be32 src_ip = src_in->sin_addr.s_addr;
 	__be32 dst_ip = dst_in->sin_addr.s_addr;
 	struct rtable *rt;
+<<<<<<< HEAD
+=======
+	struct neighbour *neigh;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct flowi4 fl4;
 	int ret;
 
@@ -236,7 +246,24 @@ static int addr4_resolve(struct sockaddr_in *src_in,
 		goto put;
 	}
 
+<<<<<<< HEAD
 	ret = dst_fetch_ha(&rt->dst, addr, &fl4.daddr);
+=======
+	neigh = neigh_lookup(&arp_tbl, &rt->rt_gateway, rt->dst.dev);
+	if (!neigh || !(neigh->nud_state & NUD_VALID)) {
+		rcu_read_lock();
+		neigh_event_send(dst_get_neighbour(&rt->dst), NULL);
+		rcu_read_unlock();
+		ret = -ENODATA;
+		if (neigh)
+			goto release;
+		goto put;
+	}
+
+	ret = rdma_copy_addr(addr, neigh->dev, neigh->ha);
+release:
+	neigh_release(neigh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 put:
 	ip_rt_put(rt);
 out:
@@ -249,12 +276,21 @@ static int addr6_resolve(struct sockaddr_in6 *src_in,
 			 struct rdma_dev_addr *addr)
 {
 	struct flowi6 fl6;
+<<<<<<< HEAD
+=======
+	struct neighbour *neigh;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dst_entry *dst;
 	int ret;
 
 	memset(&fl6, 0, sizeof fl6);
+<<<<<<< HEAD
 	fl6.daddr = dst_in->sin6_addr;
 	fl6.saddr = src_in->sin6_addr;
+=======
+	ipv6_addr_copy(&fl6.daddr, &dst_in->sin6_addr);
+	ipv6_addr_copy(&fl6.saddr, &src_in->sin6_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fl6.flowi6_oif = addr->bound_dev_if;
 
 	dst = ip6_route_output(&init_net, NULL, &fl6);
@@ -268,7 +304,11 @@ static int addr6_resolve(struct sockaddr_in6 *src_in,
 			goto put;
 
 		src_in->sin6_family = AF_INET6;
+<<<<<<< HEAD
 		src_in->sin6_addr = fl6.saddr;
+=======
+		ipv6_addr_copy(&src_in->sin6_addr, &fl6.saddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (dst->dev->flags & IFF_LOOPBACK) {
@@ -284,7 +324,20 @@ static int addr6_resolve(struct sockaddr_in6 *src_in,
 		goto put;
 	}
 
+<<<<<<< HEAD
 	ret = dst_fetch_ha(dst, addr, &fl6.daddr);
+=======
+	rcu_read_lock();
+	neigh = dst_get_neighbour(dst);
+	if (!neigh || !(neigh->nud_state & NUD_VALID)) {
+		if (neigh)
+			neigh_event_send(neigh, NULL);
+		ret = -ENODATA;
+	} else {
+		ret = rdma_copy_addr(addr, dst->dev, neigh->ha);
+	}
+	rcu_read_unlock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 put:
 	dst_release(dst);
 	return ret;

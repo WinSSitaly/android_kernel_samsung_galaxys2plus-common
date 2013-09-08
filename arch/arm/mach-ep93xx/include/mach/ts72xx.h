@@ -6,7 +6,11 @@
  * TS72xx memory map:
  *
  * virt		phys		size
+<<<<<<< HEAD
  * febff000	22000000	4K	model number register (bits 0-2)
+=======
+ * febff000	22000000	4K	model number register
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * febfe000	22400000	4K	options register
  * febfd000	22800000	4K	options register #2
  * febf9000	10800000	4K	TS-5620 RTC index register
@@ -20,9 +24,12 @@
 #define TS72XX_MODEL_TS7200		0x00
 #define TS72XX_MODEL_TS7250		0x01
 #define TS72XX_MODEL_TS7260		0x02
+<<<<<<< HEAD
 #define TS72XX_MODEL_TS7300		0x03
 #define TS72XX_MODEL_TS7400		0x04
 #define TS72XX_MODEL_MASK		0x07
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 #define TS72XX_OPTIONS_PHYS_BASE	0x22400000
@@ -54,6 +61,7 @@
 
 #ifndef __ASSEMBLY__
 
+<<<<<<< HEAD
 static inline int ts72xx_model(void)
 {
 	return __raw_readb(TS72XX_MODEL_VIRT_BASE) & TS72XX_MODEL_MASK;
@@ -62,15 +70,25 @@ static inline int ts72xx_model(void)
 static inline int board_is_ts7200(void)
 {
 	return ts72xx_model() == TS72XX_MODEL_TS7200;
+=======
+static inline int board_is_ts7200(void)
+{
+	return __raw_readb(TS72XX_MODEL_VIRT_BASE) == TS72XX_MODEL_TS7200;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int board_is_ts7250(void)
 {
+<<<<<<< HEAD
 	return ts72xx_model() == TS72XX_MODEL_TS7250;
+=======
+	return __raw_readb(TS72XX_MODEL_VIRT_BASE) == TS72XX_MODEL_TS7250;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int board_is_ts7260(void)
 {
+<<<<<<< HEAD
 	return ts72xx_model() == TS72XX_MODEL_TS7260;
 }
 
@@ -82,6 +100,9 @@ static inline int board_is_ts7300(void)
 static inline int board_is_ts7400(void)
 {
 	return ts72xx_model() == TS72XX_MODEL_TS7400;
+=======
+	return __raw_readb(TS72XX_MODEL_VIRT_BASE) == TS72XX_MODEL_TS7260;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int is_max197_installed(void)

@@ -27,7 +27,10 @@
 
 #include <linux/cpufreq.h>
 #include <linux/timer.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/hw_irq.h>
 #include <asm/io.h>

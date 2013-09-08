@@ -1079,12 +1079,22 @@ static int sd_config(struct gspca_dev *gspca_dev,
 	}
 	cam->npkt = 36;			/* 36 packets per ISOC message */
 
+<<<<<<< HEAD
+=======
+	if (sensor_data[sd->sensor].flags & F_COARSE_EXPO) {
+		sd->ctrls[EXPOSURE].min = COARSE_EXPOSURE_MIN;
+		sd->ctrls[EXPOSURE].max = COARSE_EXPOSURE_MAX;
+		sd->ctrls[EXPOSURE].def = COARSE_EXPOSURE_DEF;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 /* this function is called at probe and resume time */
 static int sd_init(struct gspca_dev *gspca_dev)
 {
+<<<<<<< HEAD
 	struct sd *sd = (struct sd *) gspca_dev;
 	const __u8 stop = 0x09; /* Disable stream turn of LED */
 
@@ -1096,6 +1106,10 @@ static int sd_init(struct gspca_dev *gspca_dev)
 			sd->ctrls[EXPOSURE].val = COARSE_EXPOSURE_DEF;
 	}
 
+=======
+	const __u8 stop = 0x09; /* Disable stream turn of LED */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	reg_w(gspca_dev, 0x01, &stop, 1);
 
 	return 0;
@@ -1530,4 +1544,19 @@ static struct usb_driver sd_driver = {
 #endif
 };
 
+<<<<<<< HEAD
 module_usb_driver(sd_driver);
+=======
+/* -- module insert / remove -- */
+static int __init sd_mod_init(void)
+{
+	return usb_register(&sd_driver);
+}
+static void __exit sd_mod_exit(void)
+{
+	usb_deregister(&sd_driver);
+}
+
+module_init(sd_mod_init);
+module_exit(sd_mod_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

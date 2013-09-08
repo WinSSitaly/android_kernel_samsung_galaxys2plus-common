@@ -9,7 +9,10 @@
 #include <linux/init.h>
 #include <linux/timex.h>
 #include <linux/smp.h>
+<<<<<<< HEAD
 #include <linux/percpu.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unsigned long lpj_fine;
 unsigned long preset_lpj;
@@ -244,6 +247,7 @@ recalibrate:
 	return lpj;
 }
 
+<<<<<<< HEAD
 static DEFINE_PER_CPU(unsigned long, cpu_loops_per_jiffy) = { 0 };
 
 /*
@@ -259,10 +263,13 @@ unsigned long __attribute__((weak)) __cpuinit calibrate_delay_is_known(void)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __cpuinit calibrate_delay(void)
 {
 	unsigned long lpj;
 	static bool printed;
+<<<<<<< HEAD
 	int this_cpu = smp_processor_id();
 
 	if (per_cpu(cpu_loops_per_jiffy, this_cpu)) {
@@ -271,6 +278,10 @@ void __cpuinit calibrate_delay(void)
 			pr_info("Calibrating delay loop (skipped) "
 				"already calibrated this CPU");
 	} else if (preset_lpj) {
+=======
+
+	if (preset_lpj) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		lpj = preset_lpj;
 		if (!printed)
 			pr_info("Calibrating delay loop (skipped) "
@@ -279,8 +290,11 @@ void __cpuinit calibrate_delay(void)
 		lpj = lpj_fine;
 		pr_info("Calibrating delay loop (skipped), "
 			"value calculated using timer frequency.. ");
+<<<<<<< HEAD
 	} else if ((lpj = calibrate_delay_is_known())) {
 		;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if ((lpj = calibrate_delay_direct()) != 0) {
 		if (!printed)
 			pr_info("Calibrating delay using timer "
@@ -290,7 +304,10 @@ void __cpuinit calibrate_delay(void)
 			pr_info("Calibrating delay loop... ");
 		lpj = calibrate_delay_converge();
 	}
+<<<<<<< HEAD
 	per_cpu(cpu_loops_per_jiffy, this_cpu) = lpj;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!printed)
 		pr_cont("%lu.%02lu BogoMIPS (lpj=%lu)\n",
 			lpj/(500000/HZ),

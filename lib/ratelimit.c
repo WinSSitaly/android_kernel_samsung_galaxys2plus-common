@@ -11,7 +11,11 @@
 
 #include <linux/ratelimit.h>
 #include <linux/jiffies.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * __ratelimit - rate limiting
@@ -39,7 +43,11 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
 	 * in addition to the one that will be printed by
 	 * the entity that is holding the lock already:
 	 */
+<<<<<<< HEAD
 	if (!raw_spin_trylock_irqsave(&rs->lock, flags))
+=======
+	if (!spin_trylock_irqsave(&rs->lock, flags))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	if (!rs->begin)
@@ -60,7 +68,11 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
 		rs->missed++;
 		ret = 0;
 	}
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&rs->lock, flags);
+=======
+	spin_unlock_irqrestore(&rs->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }

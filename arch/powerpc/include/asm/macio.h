@@ -76,7 +76,11 @@ static inline unsigned long macio_resource_len(struct macio_dev *dev, int resour
 	struct resource *res = &dev->resource[resource_no];
 	if (res->start == 0 || res->end == 0 || res->end < res->start)
 		return 0;
+<<<<<<< HEAD
 	return resource_size(res);
+=======
+	return res->end - res->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 extern int macio_enable_devres(struct macio_dev *dev);

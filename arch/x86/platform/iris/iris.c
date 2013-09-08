@@ -42,7 +42,11 @@ MODULE_AUTHOR("Sébastien Hinderer <Sebastien.Hinderer@ens-lyon.org>");
 MODULE_DESCRIPTION("A power_off handler for Iris devices from EuroBraille");
 MODULE_SUPPORTED_DEVICE("Eurobraille/Iris");
 
+<<<<<<< HEAD
 static bool force;
+=======
+static int force;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(force, bool, 0);
 MODULE_PARM_DESC(force, "Set to one to force poweroff handler installation.");

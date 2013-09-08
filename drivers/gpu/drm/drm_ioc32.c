@@ -29,7 +29,10 @@
  */
 #include <linux/compat.h>
 #include <linux/ratelimit.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "drmP.h"
 #include "drm_core.h"
@@ -315,8 +318,12 @@ static int compat_drm_getclient(struct file *file, unsigned int cmd,
 	if (err)
 		return err;
 
+<<<<<<< HEAD
 	if (__get_user(c32.idx, &client->idx)
 	    || __get_user(c32.auth, &client->auth)
+=======
+	if (__get_user(c32.auth, &client->auth)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    || __get_user(c32.pid, &client->pid)
 	    || __get_user(c32.uid, &client->uid)
 	    || __get_user(c32.magic, &client->magic)

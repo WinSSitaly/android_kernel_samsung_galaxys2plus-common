@@ -37,6 +37,7 @@ typedef u16 __nocast zd_addr_t;
 	if (net_ratelimit()) \
 		dev_printk_f(KERN_DEBUG, dev, fmt, ## args); \
 } while (0)
+<<<<<<< HEAD
 #  define dev_dbg_f_cond(dev, cond, fmt, args...) ({ \
 	bool __cond = !!(cond); \
 	if (unlikely(__cond)) \
@@ -46,6 +47,11 @@ typedef u16 __nocast zd_addr_t;
 #  define dev_dbg_f(dev, fmt, args...) do { (void)(dev); } while (0)
 #  define dev_dbg_f_limit(dev, fmt, args...) do { (void)(dev); } while (0)
 #  define dev_dbg_f_cond(dev, cond, fmt, args...) do { (void)(dev); } while (0)
+=======
+#else
+#  define dev_dbg_f(dev, fmt, args...) do { (void)(dev); } while (0)
+#  define dev_dbg_f_limit(dev, fmt, args...) do { (void)(dev); } while (0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* DEBUG */
 
 #ifdef DEBUG

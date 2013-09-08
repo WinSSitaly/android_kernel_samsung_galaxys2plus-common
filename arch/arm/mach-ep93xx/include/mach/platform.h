@@ -21,6 +21,23 @@ struct ep93xx_eth_data
 void ep93xx_map_io(void);
 void ep93xx_init_irq(void);
 
+<<<<<<< HEAD
+=======
+/* EP93xx System Controller software locked register write */
+void ep93xx_syscon_swlocked_write(unsigned int val, void __iomem *reg);
+void ep93xx_devcfg_set_clear(unsigned int set_bits, unsigned int clear_bits);
+
+static inline void ep93xx_devcfg_set_bits(unsigned int bits)
+{
+	ep93xx_devcfg_set_clear(bits, 0x00);
+}
+
+static inline void ep93xx_devcfg_clear_bits(unsigned int bits)
+{
+	ep93xx_devcfg_set_clear(0x00, bits);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define EP93XX_CHIP_REV_D0	3
 #define EP93XX_CHIP_REV_D1	4
 #define EP93XX_CHIP_REV_E0	5
@@ -45,13 +62,20 @@ void ep93xx_register_keypad(struct ep93xx_keypad_platform_data *data);
 int ep93xx_keypad_acquire_gpio(struct platform_device *pdev);
 void ep93xx_keypad_release_gpio(struct platform_device *pdev);
 void ep93xx_register_i2s(void);
+<<<<<<< HEAD
 int ep93xx_i2s_acquire(void);
+=======
+int ep93xx_i2s_acquire(unsigned i2s_pins, unsigned i2s_config);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void ep93xx_i2s_release(void);
 void ep93xx_register_ac97(void);
 
 void ep93xx_init_devices(void);
 extern struct sys_timer ep93xx_timer;
 
+<<<<<<< HEAD
 void ep93xx_restart(char, const char *);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

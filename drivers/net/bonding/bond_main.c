@@ -54,6 +54,10 @@
 #include <linux/inet.h>
 #include <linux/bitops.h>
 #include <linux/io.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/dma.h>
 #include <linux/uaccess.h>
 #include <linux/errno.h>
@@ -76,7 +80,10 @@
 #include <net/route.h>
 #include <net/net_namespace.h>
 #include <net/netns/generic.h>
+<<<<<<< HEAD
 #include <net/pkt_sched.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "bonding.h"
 #include "bond_3ad.h"
 #include "bond_alb.h"
@@ -98,7 +105,10 @@ static char *mode;
 static char *primary;
 static char *primary_reselect;
 static char *lacp_rate;
+<<<<<<< HEAD
 static int min_links;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static char *ad_select;
 static char *xmit_hash_policy;
 static int arp_interval = BOND_LINK_ARP_INTERV;
@@ -151,9 +161,12 @@ module_param(ad_select, charp, 0);
 MODULE_PARM_DESC(ad_select, "803.ad aggregation selection logic; "
 			    "0 for stable (default), 1 for bandwidth, "
 			    "2 for count");
+<<<<<<< HEAD
 module_param(min_links, int, 0);
 MODULE_PARM_DESC(min_links, "Minimum number of available links before turning on carrier");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(xmit_hash_policy, charp, 0);
 MODULE_PARM_DESC(xmit_hash_policy, "balance-xor and 802.3ad hashing method; "
 				   "0 for layer 2 (default), 1 for layer 3+4, "
@@ -333,6 +346,19 @@ static int bond_del_vlan(struct bonding *bond, unsigned short vlan_id)
 
 			kfree(vlan);
 
+<<<<<<< HEAD
+=======
+			if (list_empty(&bond->vlan_list) &&
+			    (bond->slave_cnt == 0)) {
+				/* Last VLAN removed and no slaves, so
+				 * restore block on adding VLANs. This will
+				 * be removed once new slaves that are not
+				 * VLAN challenged will be added.
+				 */
+				bond->dev->features |= NETIF_F_VLAN_CHALLENGED;
+			}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			res = 0;
 			goto out;
 		}
@@ -382,6 +408,11 @@ struct vlan_entry *bond_next_vlan(struct bonding *bond, struct vlan_entry *curr)
 	return next;
 }
 
+<<<<<<< HEAD
+=======
+#define bond_queue_mapping(skb) (*(u16 *)((skb)->cb))
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * bond_dev_queue_xmit - Prepare skb for xmit.
  *
@@ -393,10 +424,16 @@ int bond_dev_queue_xmit(struct bonding *bond, struct sk_buff *skb,
 			struct net_device *slave_dev)
 {
 	skb->dev = slave_dev;
+<<<<<<< HEAD
 
 	BUILD_BUG_ON(sizeof(skb->queue_mapping) !=
 		     sizeof(qdisc_skb_cb(skb)->bond_queue_mapping));
 	skb->queue_mapping = qdisc_skb_cb(skb)->bond_queue_mapping;
+=======
+	skb->priority = 1;
+
+	skb->queue_mapping = bond_queue_mapping(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (unlikely(netpoll_tx_running(slave_dev)))
 		bond_netpoll_send_skb(bond_get_slave_by_dev(bond, slave_dev), skb);
@@ -407,8 +444,14 @@ int bond_dev_queue_xmit(struct bonding *bond, struct sk_buff *skb,
 }
 
 /*
+<<<<<<< HEAD
  * In the following 2 functions, bond_vlan_rx_add_vid and bond_vlan_rx_kill_vid,
  * We don't protect the slave list iteration with a lock because:
+=======
+ * In the following 3 functions, bond_vlan_rx_register(), bond_vlan_rx_add_vid
+ * and bond_vlan_rx_kill_vid, We don't protect the slave list iteration with a
+ * lock because:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * a. This operation is performed in IOCTL context,
  * b. The operation is protected by the RTNL semaphore in the 8021q code,
  * c. Holding a lock with BH disabled while directly calling a base driver
@@ -424,10 +467,41 @@ int bond_dev_queue_xmit(struct bonding *bond, struct sk_buff *skb,
 */
 
 /**
+<<<<<<< HEAD
+=======
+ * bond_vlan_rx_register - Propagates registration to slaves
+ * @bond_dev: bonding net device that got called
+ * @grp: vlan group being registered
+ */
+static void bond_vlan_rx_register(struct net_device *bond_dev,
+				  struct vlan_group *grp)
+{
+	struct bonding *bond = netdev_priv(bond_dev);
+	struct slave *slave;
+	int i;
+
+	write_lock_bh(&bond->lock);
+	bond->vlgrp = grp;
+	write_unlock_bh(&bond->lock);
+
+	bond_for_each_slave(bond, slave, i) {
+		struct net_device *slave_dev = slave->dev;
+		const struct net_device_ops *slave_ops = slave_dev->netdev_ops;
+
+		if ((slave_dev->features & NETIF_F_HW_VLAN_RX) &&
+		    slave_ops->ndo_vlan_rx_register) {
+			slave_ops->ndo_vlan_rx_register(slave_dev, grp);
+		}
+	}
+}
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * bond_vlan_rx_add_vid - Propagates adding an id to slaves
  * @bond_dev: bonding net device that got called
  * @vid: vlan id being added
  */
+<<<<<<< HEAD
 static int bond_vlan_rx_add_vid(struct net_device *bond_dev, uint16_t vid)
 {
 	struct bonding *bond = netdev_priv(bond_dev);
@@ -438,12 +512,29 @@ static int bond_vlan_rx_add_vid(struct net_device *bond_dev, uint16_t vid)
 		res = vlan_vid_add(slave->dev, vid);
 		if (res)
 			goto unwind;
+=======
+static void bond_vlan_rx_add_vid(struct net_device *bond_dev, uint16_t vid)
+{
+	struct bonding *bond = netdev_priv(bond_dev);
+	struct slave *slave;
+	int i, res;
+
+	bond_for_each_slave(bond, slave, i) {
+		struct net_device *slave_dev = slave->dev;
+		const struct net_device_ops *slave_ops = slave_dev->netdev_ops;
+
+		if ((slave_dev->features & NETIF_F_HW_VLAN_FILTER) &&
+		    slave_ops->ndo_vlan_rx_add_vid) {
+			slave_ops->ndo_vlan_rx_add_vid(slave_dev, vid);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	res = bond_add_vlan(bond, vid);
 	if (res) {
 		pr_err("%s: Error: Failed to add vlan id %d\n",
 		       bond_dev->name, vid);
+<<<<<<< HEAD
 		return res;
 	}
 
@@ -456,6 +547,9 @@ unwind:
 		vlan_vid_del(slave->dev, vid);
 
 	return res;
+=======
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -463,6 +557,7 @@ unwind:
  * @bond_dev: bonding net device that got called
  * @vid: vlan id being removed
  */
+<<<<<<< HEAD
 static int bond_vlan_rx_kill_vid(struct net_device *bond_dev, uint16_t vid)
 {
 	struct bonding *bond = netdev_priv(bond_dev);
@@ -471,20 +566,48 @@ static int bond_vlan_rx_kill_vid(struct net_device *bond_dev, uint16_t vid)
 
 	bond_for_each_slave(bond, slave, i)
 		vlan_vid_del(slave->dev, vid);
+=======
+static void bond_vlan_rx_kill_vid(struct net_device *bond_dev, uint16_t vid)
+{
+	struct bonding *bond = netdev_priv(bond_dev);
+	struct slave *slave;
+	struct net_device *vlan_dev;
+	int i, res;
+
+	bond_for_each_slave(bond, slave, i) {
+		struct net_device *slave_dev = slave->dev;
+		const struct net_device_ops *slave_ops = slave_dev->netdev_ops;
+
+		if ((slave_dev->features & NETIF_F_HW_VLAN_FILTER) &&
+		    slave_ops->ndo_vlan_rx_kill_vid) {
+			/* Save and then restore vlan_dev in the grp array,
+			 * since the slave's driver might clear it.
+			 */
+			vlan_dev = vlan_group_get_device(bond->vlgrp, vid);
+			slave_ops->ndo_vlan_rx_kill_vid(slave_dev, vid);
+			vlan_group_set_device(bond->vlgrp, vid, vlan_dev);
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	res = bond_del_vlan(bond, vid);
 	if (res) {
 		pr_err("%s: Error: Failed to remove vlan id %d\n",
 		       bond_dev->name, vid);
+<<<<<<< HEAD
 		return res;
 	}
 
 	return 0;
+=======
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void bond_add_vlans_on_slave(struct bonding *bond, struct net_device *slave_dev)
 {
 	struct vlan_entry *vlan;
+<<<<<<< HEAD
 	int res;
 
 	list_for_each_entry(vlan, &bond->vlan_list, vlan_list) {
@@ -494,18 +617,63 @@ static void bond_add_vlans_on_slave(struct bonding *bond, struct net_device *sla
 				   bond->dev->name, vlan->vlan_id,
 				   slave_dev->name);
 	}
+=======
+	const struct net_device_ops *slave_ops = slave_dev->netdev_ops;
+
+	if (!bond->vlgrp)
+		return;
+
+	if ((slave_dev->features & NETIF_F_HW_VLAN_RX) &&
+	    slave_ops->ndo_vlan_rx_register)
+		slave_ops->ndo_vlan_rx_register(slave_dev, bond->vlgrp);
+
+	if (!(slave_dev->features & NETIF_F_HW_VLAN_FILTER) ||
+	    !(slave_ops->ndo_vlan_rx_add_vid))
+		return;
+
+	list_for_each_entry(vlan, &bond->vlan_list, vlan_list)
+		slave_ops->ndo_vlan_rx_add_vid(slave_dev, vlan->vlan_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void bond_del_vlans_from_slave(struct bonding *bond,
 				      struct net_device *slave_dev)
 {
+<<<<<<< HEAD
 	struct vlan_entry *vlan;
+=======
+	const struct net_device_ops *slave_ops = slave_dev->netdev_ops;
+	struct vlan_entry *vlan;
+	struct net_device *vlan_dev;
+
+	if (!bond->vlgrp)
+		return;
+
+	if (!(slave_dev->features & NETIF_F_HW_VLAN_FILTER) ||
+	    !(slave_ops->ndo_vlan_rx_kill_vid))
+		goto unreg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_for_each_entry(vlan, &bond->vlan_list, vlan_list) {
 		if (!vlan->vlan_id)
 			continue;
+<<<<<<< HEAD
 		vlan_vid_del(slave_dev, vlan->vlan_id);
 	}
+=======
+		/* Save and then restore vlan_dev in the grp array,
+		 * since the slave's driver might clear it.
+		 */
+		vlan_dev = vlan_group_get_device(bond->vlgrp, vlan->vlan_id);
+		slave_ops->ndo_vlan_rx_kill_vid(slave_dev, vlan->vlan_id);
+		vlan_group_set_device(bond->vlgrp, vlan->vlan_id, vlan_dev);
+	}
+
+unreg:
+	if ((slave_dev->features & NETIF_F_HW_VLAN_RX) &&
+	    slave_ops->ndo_vlan_rx_register)
+		slave_ops->ndo_vlan_rx_register(slave_dev, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*------------------------------- Link status -------------------------------*/
@@ -549,12 +717,17 @@ down:
 /*
  * Get link speed and duplex from the slave's base driver
  * using ethtool. If for some reason the call fails or the
+<<<<<<< HEAD
  * values are invalid, set speed and duplex to -1,
+=======
+ * values are invalid, fake speed and duplex to 100/Full
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * and return error.
  */
 static int bond_update_speed_duplex(struct slave *slave)
 {
 	struct net_device *slave_dev = slave->dev;
+<<<<<<< HEAD
 	struct ethtool_cmd ecmd;
 	u32 slave_speed;
 	int res;
@@ -571,6 +744,35 @@ static int bond_update_speed_duplex(struct slave *slave)
 		return -1;
 
 	switch (ecmd.duplex) {
+=======
+	struct ethtool_cmd etool = { .cmd = ETHTOOL_GSET };
+	u32 slave_speed;
+	int res;
+
+	/* Fake speed and duplex */
+	slave->speed = SPEED_100;
+	slave->duplex = DUPLEX_FULL;
+
+	if (!slave_dev->ethtool_ops || !slave_dev->ethtool_ops->get_settings)
+		return -1;
+
+	res = slave_dev->ethtool_ops->get_settings(slave_dev, &etool);
+	if (res < 0)
+		return -1;
+
+	slave_speed = ethtool_cmd_speed(&etool);
+	switch (slave_speed) {
+	case SPEED_10:
+	case SPEED_100:
+	case SPEED_1000:
+	case SPEED_10000:
+		break;
+	default:
+		return -1;
+	}
+
+	switch (etool.duplex) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case DUPLEX_FULL:
 	case DUPLEX_HALF:
 		break;
@@ -579,7 +781,11 @@ static int bond_update_speed_duplex(struct slave *slave)
 	}
 
 	slave->speed = slave_speed;
+<<<<<<< HEAD
 	slave->duplex = ecmd.duplex;
+=======
+	slave->duplex = etool.duplex;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -766,11 +972,16 @@ static void __bond_resend_igmp_join_requests(struct net_device *dev)
  */
 static void bond_resend_igmp_join_requests(struct bonding *bond)
 {
+<<<<<<< HEAD
 	struct net_device *bond_dev, *vlan_dev, *master_dev;
+=======
+	struct net_device *vlan_dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct vlan_entry *vlan;
 
 	read_lock(&bond->lock);
 
+<<<<<<< HEAD
 	bond_dev = bond->dev;
 
 	/* rejoin all groups on bond device */
@@ -794,6 +1005,19 @@ static void bond_resend_igmp_join_requests(struct bonding *bond)
 		rcu_read_unlock();
 		if (vlan_dev)
 			__bond_resend_igmp_join_requests(vlan_dev);
+=======
+	/* rejoin all groups on bond device */
+	__bond_resend_igmp_join_requests(bond->dev);
+
+	/* rejoin all groups on vlan devices */
+	if (bond->vlgrp) {
+		list_for_each_entry(vlan, &bond->vlan_list, vlan_list) {
+			vlan_dev = vlan_group_get_device(bond->vlgrp,
+							 vlan->vlan_id);
+			if (vlan_dev)
+				__bond_resend_igmp_join_requests(vlan_dev);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (--bond->igmp_retrans > 0)
@@ -892,6 +1116,7 @@ static void bond_do_fail_over_mac(struct bonding *bond,
 
 	switch (bond->params.fail_over_mac) {
 	case BOND_FOM_ACTIVE:
+<<<<<<< HEAD
 		if (new_active) {
 			memcpy(bond->dev->dev_addr,  new_active->dev->dev_addr,
 			       new_active->dev->addr_len);
@@ -901,6 +1126,11 @@ static void bond_do_fail_over_mac(struct bonding *bond,
 			read_lock(&bond->lock);
 			write_lock_bh(&bond->curr_slave_lock);
 		}
+=======
+		if (new_active)
+			memcpy(bond->dev->dev_addr,  new_active->dev->dev_addr,
+			       new_active->dev->addr_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case BOND_FOM_FOLLOW:
 		/*
@@ -1342,12 +1572,20 @@ static int bond_sethwaddr(struct net_device *bond_dev,
 	return 0;
 }
 
+<<<<<<< HEAD
 static netdev_features_t bond_fix_features(struct net_device *dev,
 	netdev_features_t features)
 {
 	struct slave *slave;
 	struct bonding *bond = netdev_priv(dev);
 	netdev_features_t mask;
+=======
+static u32 bond_fix_features(struct net_device *dev, u32 features)
+{
+	struct slave *slave;
+	struct bonding *bond = netdev_priv(dev);
+	u32 mask;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	read_lock(&bond->lock);
@@ -1381,10 +1619,15 @@ static void bond_compute_features(struct bonding *bond)
 {
 	struct slave *slave;
 	struct net_device *bond_dev = bond->dev;
+<<<<<<< HEAD
 	netdev_features_t vlan_features = BOND_VLAN_FEATURES;
 	unsigned short max_hard_header_len = ETH_HLEN;
 	unsigned int gso_max_size = GSO_MAX_SIZE;
 	u16 gso_max_segs = GSO_MAX_SEGS;
+=======
+	u32 vlan_features = BOND_VLAN_FEATURES;
+	unsigned short max_hard_header_len = ETH_HLEN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	read_lock(&bond->lock);
@@ -1398,16 +1641,22 @@ static void bond_compute_features(struct bonding *bond)
 
 		if (slave->dev->hard_header_len > max_hard_header_len)
 			max_hard_header_len = slave->dev->hard_header_len;
+<<<<<<< HEAD
 
 		gso_max_size = min(gso_max_size, slave->dev->gso_max_size);
 		gso_max_segs = min(gso_max_segs, slave->dev->gso_max_segs);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 done:
 	bond_dev->vlan_features = vlan_features;
 	bond_dev->hard_header_len = max_hard_header_len;
+<<<<<<< HEAD
 	bond_dev->gso_max_segs = gso_max_segs;
 	netif_set_gso_max_size(bond_dev, gso_max_size);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	read_unlock(&bond->lock);
 
@@ -1452,9 +1701,14 @@ static rx_handler_result_t bond_handle_frame(struct sk_buff **pskb)
 	struct sk_buff *skb = *pskb;
 	struct slave *slave;
 	struct bonding *bond;
+<<<<<<< HEAD
 	int (*recv_probe)(struct sk_buff *, struct bonding *,
 				struct slave *);
 	int ret = RX_HANDLER_ANOTHER;
+=======
+	void (*recv_probe)(struct sk_buff *, struct bonding *,
+				struct slave *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	skb = skb_share_check(skb, GFP_ATOMIC);
 	if (unlikely(!skb))
@@ -1473,12 +1727,17 @@ static rx_handler_result_t bond_handle_frame(struct sk_buff **pskb)
 		struct sk_buff *nskb = skb_clone(skb, GFP_ATOMIC);
 
 		if (likely(nskb)) {
+<<<<<<< HEAD
 			ret = recv_probe(nskb, bond, slave);
 			dev_kfree_skb(nskb);
 			if (ret == RX_HANDLER_CONSUMED) {
 				consume_skb(skb);
 				return ret;
 			}
+=======
+			recv_probe(nskb, bond, slave);
+			dev_kfree_skb(nskb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -1500,7 +1759,11 @@ static rx_handler_result_t bond_handle_frame(struct sk_buff **pskb)
 		memcpy(eth_hdr(skb)->h_dest, bond->dev->dev_addr, ETH_ALEN);
 	}
 
+<<<<<<< HEAD
 	return ret;
+=======
+	return RX_HANDLER_ANOTHER;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* enslave device <slave> to bond device <master> */
@@ -1530,7 +1793,11 @@ int bond_enslave(struct net_device *bond_dev, struct net_device *slave_dev)
 	/* no need to lock since we're protected by rtnl_lock */
 	if (slave_dev->features & NETIF_F_VLAN_CHALLENGED) {
 		pr_debug("%s: NETIF_F_VLAN_CHALLENGED\n", slave_dev->name);
+<<<<<<< HEAD
 		if (bond_vlan_used(bond)) {
+=======
+		if (bond->vlgrp) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pr_err("%s: Error: cannot enslave VLAN challenged slave %s on VLAN enabled bond %s\n",
 			       bond_dev->name, slave_dev->name, bond_dev->name);
 			return -EPERM;
@@ -1737,8 +2004,11 @@ int bond_enslave(struct net_device *bond_dev, struct net_device *slave_dev)
 
 	bond_compute_features(bond);
 
+<<<<<<< HEAD
 	bond_update_speed_duplex(new_slave);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	read_lock(&bond->lock);
 
 	new_slave->last_arp_rx = jiffies;
@@ -1782,6 +2052,20 @@ int bond_enslave(struct net_device *bond_dev, struct net_device *slave_dev)
 		new_slave->link  = BOND_LINK_DOWN;
 	}
 
+<<<<<<< HEAD
+=======
+	if (bond_update_speed_duplex(new_slave) &&
+	    (new_slave->link != BOND_LINK_DOWN)) {
+		pr_warning("%s: Warning: failed to get speed and duplex from %s, assumed to be 100Mb/sec and Full.\n",
+			   bond_dev->name, new_slave->dev->name);
+
+		if (bond->params.mode == BOND_MODE_8023AD) {
+			pr_warning("%s: Warning: Operation of 802.3ad mode requires ETHTOOL support in base driver for proper aggregator selection.\n",
+				   bond_dev->name);
+		}
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (USES_PRIMARY(bond->params.mode) && bond->params.primary[0]) {
 		/* if there is a primary slave, remember it */
 		if (strcmp(bond->params.primary, new_slave->dev->name) == 0) {
@@ -1809,7 +2093,12 @@ int bond_enslave(struct net_device *bond_dev, struct net_device *slave_dev)
 			/* Initialize AD with the number of times that the AD timer is called in 1 second
 			 * can be called only after the mac address of the bond is set
 			 */
+<<<<<<< HEAD
 			bond_3ad_initialize(bond, 1000/AD_TIMER_INTERVAL);
+=======
+			bond_3ad_initialize(bond, 1000/AD_TIMER_INTERVAL,
+					    bond->params.lacp_fast);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			SLAVE_AD_INFO(new_slave).id =
 				SLAVE_AD_INFO(new_slave->prev).id + 1;
@@ -1888,7 +2177,10 @@ err_detach:
 	write_unlock_bh(&bond->lock);
 
 err_close:
+<<<<<<< HEAD
 	slave_dev->priv_flags &= ~IFF_BONDING;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_close(slave_dev);
 
 err_unset_master:
@@ -1933,7 +2225,11 @@ int bond_release(struct net_device *bond_dev, struct net_device *slave_dev)
 	struct bonding *bond = netdev_priv(bond_dev);
 	struct slave *slave, *oldcurrent;
 	struct sockaddr addr;
+<<<<<<< HEAD
 	netdev_features_t old_features = bond_dev->features;
+=======
+	u32 old_features = bond_dev->features;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* slave is not a slave or master is not master of this slave */
 	if (!(slave_dev->flags & IFF_SLAVE) ||
@@ -1957,11 +2253,19 @@ int bond_release(struct net_device *bond_dev, struct net_device *slave_dev)
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	write_unlock_bh(&bond->lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* unregister rx_handler early so bond_handle_frame wouldn't be called
 	 * for this slave anymore.
 	 */
 	netdev_rx_handler_unregister(slave_dev);
+<<<<<<< HEAD
+=======
+	write_unlock_bh(&bond->lock);
+	synchronize_net();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	write_lock_bh(&bond->lock);
 
 	if (!bond->params.fail_over_mac) {
@@ -2036,7 +2340,11 @@ int bond_release(struct net_device *bond_dev, struct net_device *slave_dev)
 		 */
 		memset(bond_dev->dev_addr, 0, bond_dev->addr_len);
 
+<<<<<<< HEAD
 		if (bond_vlan_used(bond)) {
+=======
+		if (bond->vlgrp) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pr_warning("%s: Warning: clearing HW address of %s while it still has VLANs.\n",
 				   bond_dev->name, bond_dev->name);
 			pr_warning("%s: When re-adding slaves, make sure the bond's HW address matches its VLANs'.\n",
@@ -2047,9 +2355,12 @@ int bond_release(struct net_device *bond_dev, struct net_device *slave_dev)
 	write_unlock_bh(&bond->lock);
 	unblock_netpoll_tx();
 
+<<<<<<< HEAD
 	if (bond->slave_cnt == 0)
 		call_netdevice_notifiers(NETDEV_CHANGEADDR, bond->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bond_compute_features(bond);
 	if (!(bond_dev->features & NETIF_F_VLAN_CHALLENGED) &&
 	    (old_features & NETIF_F_VLAN_CHALLENGED))
@@ -2221,7 +2532,11 @@ static int bond_release_all(struct net_device *bond_dev)
 	 */
 	memset(bond_dev->dev_addr, 0, bond_dev->addr_len);
 
+<<<<<<< HEAD
 	if (bond_vlan_used(bond)) {
+=======
+	if (bond->vlgrp) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_warning("%s: Warning: clearing HW address of %s while it still has VLANs.\n",
 			   bond_dev->name, bond_dev->name);
 		pr_warning("%s: When re-adding slaves, make sure the bond's HW address matches its VLANs'.\n",
@@ -2462,6 +2777,11 @@ static void bond_miimon_commit(struct bonding *bond)
 				bond_set_backup_slave(slave);
 			}
 
+<<<<<<< HEAD
+=======
+			bond_update_speed_duplex(slave);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pr_info("%s: link status definitely up for interface %s, %u Mbps %s duplex.\n",
 				bond->dev->name, slave->dev->name,
 				slave->speed, slave->duplex ? "full" : "half");
@@ -2540,11 +2860,18 @@ void bond_mii_monitor(struct work_struct *work)
 	struct bonding *bond = container_of(work, struct bonding,
 					    mii_work.work);
 	bool should_notify_peers = false;
+<<<<<<< HEAD
 	unsigned long delay;
 
 	read_lock(&bond->lock);
 
 	delay = msecs_to_jiffies(bond->params.miimon);
+=======
+
+	read_lock(&bond->lock);
+	if (bond->kill_timers)
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (bond->slave_cnt == 0)
 		goto re_arm;
@@ -2553,6 +2880,7 @@ void bond_mii_monitor(struct work_struct *work)
 
 	if (bond_miimon_inspect(bond)) {
 		read_unlock(&bond->lock);
+<<<<<<< HEAD
 
 		/* Race avoidance with bond_close cancel of workqueue */
 		if (!rtnl_trylock()) {
@@ -2562,6 +2890,9 @@ void bond_mii_monitor(struct work_struct *work)
 			goto re_arm;
 		}
 
+=======
+		rtnl_lock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		read_lock(&bond->lock);
 
 		bond_miimon_commit(bond);
@@ -2573,6 +2904,7 @@ void bond_mii_monitor(struct work_struct *work)
 
 re_arm:
 	if (bond->params.miimon)
+<<<<<<< HEAD
 		queue_delayed_work(bond->wq, &bond->mii_work, delay);
 
 	read_unlock(&bond->lock);
@@ -2584,11 +2916,21 @@ re_arm:
 			read_unlock(&bond->lock);
 			return;
 		}
+=======
+		queue_delayed_work(bond->wq, &bond->mii_work,
+				   msecs_to_jiffies(bond->params.miimon));
+out:
+	read_unlock(&bond->lock);
+
+	if (should_notify_peers) {
+		rtnl_lock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		netdev_bonding_change(bond->dev, NETDEV_NOTIFY_PEERS);
 		rtnl_unlock();
 	}
 }
 
+<<<<<<< HEAD
 static int bond_has_this_ip(struct bonding *bond, __be32 ip)
 {
 	struct vlan_entry *vlan;
@@ -2602,6 +2944,41 @@ static int bond_has_this_ip(struct bonding *bond, __be32 ip)
 		vlan_dev = __vlan_find_dev_deep(bond->dev, vlan->vlan_id);
 		rcu_read_unlock();
 		if (vlan_dev && ip == bond_confirm_addr(vlan_dev, 0, ip))
+=======
+static __be32 bond_glean_dev_ip(struct net_device *dev)
+{
+	struct in_device *idev;
+	struct in_ifaddr *ifa;
+	__be32 addr = 0;
+
+	if (!dev)
+		return 0;
+
+	rcu_read_lock();
+	idev = __in_dev_get_rcu(dev);
+	if (!idev)
+		goto out;
+
+	ifa = idev->ifa_list;
+	if (!ifa)
+		goto out;
+
+	addr = ifa->ifa_local;
+out:
+	rcu_read_unlock();
+	return addr;
+}
+
+static int bond_has_this_ip(struct bonding *bond, __be32 ip)
+{
+	struct vlan_entry *vlan;
+
+	if (ip == bond->master_ip)
+		return 1;
+
+	list_for_each_entry(vlan, &bond->vlan_list, vlan_list) {
+		if (ip == vlan->vlan_ip)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 1;
 	}
 
@@ -2643,6 +3020,7 @@ static void bond_arp_send_all(struct bonding *bond, struct slave *slave)
 	int i, vlan_id;
 	__be32 *targets = bond->params.arp_targets;
 	struct vlan_entry *vlan;
+<<<<<<< HEAD
 	struct net_device *vlan_dev = NULL;
 	struct rtable *rt;
 
@@ -2656,6 +3034,19 @@ static void bond_arp_send_all(struct bonding *bond, struct slave *slave)
 			addr = bond_confirm_addr(bond->dev, targets[i], 0);
 			bond_arp_send(slave->dev, ARPOP_REQUEST, targets[i],
 				      addr, 0);
+=======
+	struct net_device *vlan_dev;
+	struct rtable *rt;
+
+	for (i = 0; (i < BOND_MAX_ARP_TARGETS); i++) {
+		if (!targets[i])
+			break;
+		pr_debug("basa: target %x\n", targets[i]);
+		if (!bond->vlgrp) {
+			pr_debug("basa: empty vlan: arp_send\n");
+			bond_arp_send(slave->dev, ARPOP_REQUEST, targets[i],
+				      bond->master_ip, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 
@@ -2680,18 +3071,27 @@ static void bond_arp_send_all(struct bonding *bond, struct slave *slave)
 		if (rt->dst.dev == bond->dev) {
 			ip_rt_put(rt);
 			pr_debug("basa: rtdev == bond->dev: arp_send\n");
+<<<<<<< HEAD
 			addr = bond_confirm_addr(bond->dev, targets[i], 0);
 			bond_arp_send(slave->dev, ARPOP_REQUEST, targets[i],
 				      addr, 0);
+=======
+			bond_arp_send(slave->dev, ARPOP_REQUEST, targets[i],
+				      bond->master_ip, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 
 		vlan_id = 0;
 		list_for_each_entry(vlan, &bond->vlan_list, vlan_list) {
+<<<<<<< HEAD
 			rcu_read_lock();
 			vlan_dev = __vlan_find_dev_deep(bond->dev,
 							vlan->vlan_id);
 			rcu_read_unlock();
+=======
+			vlan_dev = vlan_group_get_device(bond->vlgrp, vlan->vlan_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (vlan_dev == rt->dst.dev) {
 				vlan_id = vlan->vlan_id;
 				pr_debug("basa: vlan match on %s %d\n",
@@ -2700,11 +3100,18 @@ static void bond_arp_send_all(struct bonding *bond, struct slave *slave)
 			}
 		}
 
+<<<<<<< HEAD
 		if (vlan_id && vlan_dev) {
 			ip_rt_put(rt);
 			addr = bond_confirm_addr(vlan_dev, targets[i], 0);
 			bond_arp_send(slave->dev, ARPOP_REQUEST, targets[i],
 				      addr, vlan_id);
+=======
+		if (vlan_id) {
+			ip_rt_put(rt);
+			bond_arp_send(slave->dev, ARPOP_REQUEST, targets[i],
+				      vlan->vlan_ip, vlan_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 
@@ -2734,7 +3141,11 @@ static void bond_validate_arp(struct bonding *bond, struct slave *slave, __be32 
 	}
 }
 
+<<<<<<< HEAD
 static int bond_arp_rcv(struct sk_buff *skb, struct bonding *bond,
+=======
+static void bond_arp_rcv(struct sk_buff *skb, struct bonding *bond,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 struct slave *slave)
 {
 	struct arphdr *arp;
@@ -2742,7 +3153,11 @@ static int bond_arp_rcv(struct sk_buff *skb, struct bonding *bond,
 	__be32 sip, tip;
 
 	if (skb->protocol != __cpu_to_be16(ETH_P_ARP))
+<<<<<<< HEAD
 		return RX_HANDLER_ANOTHER;
+=======
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	read_lock(&bond->lock);
 
@@ -2787,7 +3202,10 @@ static int bond_arp_rcv(struct sk_buff *skb, struct bonding *bond,
 
 out_unlock:
 	read_unlock(&bond->lock);
+<<<<<<< HEAD
 	return RX_HANDLER_ANOTHER;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2810,6 +3228,12 @@ void bond_loadbalance_arp_mon(struct work_struct *work)
 
 	delta_in_ticks = msecs_to_jiffies(bond->params.arp_interval);
 
+<<<<<<< HEAD
+=======
+	if (bond->kill_timers)
+		goto out;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (bond->slave_cnt == 0)
 		goto re_arm;
 
@@ -2908,7 +3332,11 @@ void bond_loadbalance_arp_mon(struct work_struct *work)
 re_arm:
 	if (bond->params.arp_interval)
 		queue_delayed_work(bond->wq, &bond->arp_work, delta_in_ticks);
+<<<<<<< HEAD
 
+=======
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	read_unlock(&bond->lock);
 }
 
@@ -3153,6 +3581,12 @@ void bond_activebackup_arp_mon(struct work_struct *work)
 
 	read_lock(&bond->lock);
 
+<<<<<<< HEAD
+=======
+	if (bond->kill_timers)
+		goto out;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	delta_in_ticks = msecs_to_jiffies(bond->params.arp_interval);
 
 	if (bond->slave_cnt == 0)
@@ -3162,6 +3596,7 @@ void bond_activebackup_arp_mon(struct work_struct *work)
 
 	if (bond_ab_arp_inspect(bond, delta_in_ticks)) {
 		read_unlock(&bond->lock);
+<<<<<<< HEAD
 
 		/* Race avoidance with bond_close flush of workqueue */
 		if (!rtnl_trylock()) {
@@ -3171,6 +3606,9 @@ void bond_activebackup_arp_mon(struct work_struct *work)
 			goto re_arm;
 		}
 
+=======
+		rtnl_lock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		read_lock(&bond->lock);
 
 		bond_ab_arp_commit(bond, delta_in_ticks);
@@ -3185,6 +3623,7 @@ void bond_activebackup_arp_mon(struct work_struct *work)
 re_arm:
 	if (bond->params.arp_interval)
 		queue_delayed_work(bond->wq, &bond->arp_work, delta_in_ticks);
+<<<<<<< HEAD
 
 	read_unlock(&bond->lock);
 
@@ -3195,6 +3634,13 @@ re_arm:
 			read_unlock(&bond->lock);
 			return;
 		}
+=======
+out:
+	read_unlock(&bond->lock);
+
+	if (should_notify_peers) {
+		rtnl_lock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		netdev_bonding_change(bond->dev, NETDEV_NOTIFY_PEERS);
 		rtnl_unlock();
 	}
@@ -3223,12 +3669,15 @@ static int bond_master_netdev_event(unsigned long event,
 	switch (event) {
 	case NETDEV_CHANGENAME:
 		return bond_event_changename(event_bond);
+<<<<<<< HEAD
 	case NETDEV_UNREGISTER:
 		bond_remove_proc_entry(event_bond);
 		break;
 	case NETDEV_REGISTER:
 		bond_create_proc_entry(event_bond);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		break;
 	}
@@ -3241,7 +3690,10 @@ static int bond_slave_netdev_event(unsigned long event,
 {
 	struct net_device *bond_dev = slave_dev->master;
 	struct bonding *bond = netdev_priv(bond_dev);
+<<<<<<< HEAD
 	struct slave *slave = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (event) {
 	case NETDEV_UNREGISTER:
@@ -3252,6 +3704,7 @@ static int bond_slave_netdev_event(unsigned long event,
 				bond_release(bond_dev, slave_dev);
 		}
 		break;
+<<<<<<< HEAD
 	case NETDEV_UP:
 	case NETDEV_CHANGE:
 		slave = bond_get_slave_by_dev(bond, slave_dev);
@@ -3262,6 +3715,22 @@ static int bond_slave_netdev_event(unsigned long event,
 			bond_update_speed_duplex(slave);
 
 			if (bond->params.mode == BOND_MODE_8023AD) {
+=======
+	case NETDEV_CHANGE:
+		if (bond->params.mode == BOND_MODE_8023AD || bond_is_lb(bond)) {
+			struct slave *slave;
+
+			slave = bond_get_slave_by_dev(bond, slave_dev);
+			if (slave) {
+				u32 old_speed = slave->speed;
+				u8  old_duplex = slave->duplex;
+
+				bond_update_speed_duplex(slave);
+
+				if (bond_is_lb(bond))
+					break;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				if (old_speed != slave->speed)
 					bond_3ad_adapter_speed_changed(slave);
 				if (old_duplex != slave->duplex)
@@ -3337,10 +3806,72 @@ static int bond_netdev_event(struct notifier_block *this,
 	return NOTIFY_DONE;
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * bond_inetaddr_event: handle inetaddr notifier chain events.
+ *
+ * We keep track of device IPs primarily to use as source addresses in
+ * ARP monitor probes (rather than spewing out broadcasts all the time).
+ *
+ * We track one IP for the main device (if it has one), plus one per VLAN.
+ */
+static int bond_inetaddr_event(struct notifier_block *this, unsigned long event, void *ptr)
+{
+	struct in_ifaddr *ifa = ptr;
+	struct net_device *vlan_dev, *event_dev = ifa->ifa_dev->dev;
+	struct bond_net *bn = net_generic(dev_net(event_dev), bond_net_id);
+	struct bonding *bond;
+	struct vlan_entry *vlan;
+
+	list_for_each_entry(bond, &bn->dev_list, bond_list) {
+		if (bond->dev == event_dev) {
+			switch (event) {
+			case NETDEV_UP:
+				bond->master_ip = ifa->ifa_local;
+				return NOTIFY_OK;
+			case NETDEV_DOWN:
+				bond->master_ip = bond_glean_dev_ip(bond->dev);
+				return NOTIFY_OK;
+			default:
+				return NOTIFY_DONE;
+			}
+		}
+
+		list_for_each_entry(vlan, &bond->vlan_list, vlan_list) {
+			if (!bond->vlgrp)
+				continue;
+			vlan_dev = vlan_group_get_device(bond->vlgrp, vlan->vlan_id);
+			if (vlan_dev == event_dev) {
+				switch (event) {
+				case NETDEV_UP:
+					vlan->vlan_ip = ifa->ifa_local;
+					return NOTIFY_OK;
+				case NETDEV_DOWN:
+					vlan->vlan_ip =
+						bond_glean_dev_ip(vlan_dev);
+					return NOTIFY_OK;
+				default:
+					return NOTIFY_DONE;
+				}
+			}
+		}
+	}
+	return NOTIFY_DONE;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct notifier_block bond_netdev_notifier = {
 	.notifier_call = bond_netdev_event,
 };
 
+<<<<<<< HEAD
+=======
+static struct notifier_block bond_inetaddr_notifier = {
+	.notifier_call = bond_inetaddr_event,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*---------------------------- Hashing Policies -----------------------------*/
 
 /*
@@ -3373,7 +3904,11 @@ static int bond_xmit_hash_policy_l34(struct sk_buff *skb, int count)
 	int layer4_xor = 0;
 
 	if (skb->protocol == htons(ETH_P_IP)) {
+<<<<<<< HEAD
 		if (!ip_is_fragment(iph) &&
+=======
+		if (!(iph->frag_off & htons(IP_MF|IP_OFFSET)) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    (iph->protocol == IPPROTO_TCP ||
 		     iph->protocol == IPPROTO_UDP)) {
 			layer4_xor = ntohs((*layer4hdr ^ *(layer4hdr + 1)));
@@ -3398,6 +3933,7 @@ static int bond_xmit_hash_policy_l2(struct sk_buff *skb, int count)
 
 /*-------------------------- Device entry points ----------------------------*/
 
+<<<<<<< HEAD
 static void bond_work_init_all(struct bonding *bond)
 {
 	INIT_DELAYED_WORK(&bond->mcast_work,
@@ -3443,11 +3979,21 @@ static int bond_open(struct net_device *bond_dev)
 	read_unlock(&bond->lock);
 
 	bond_work_init_all(bond);
+=======
+static int bond_open(struct net_device *bond_dev)
+{
+	struct bonding *bond = netdev_priv(bond_dev);
+
+	bond->kill_timers = 0;
+
+	INIT_DELAYED_WORK(&bond->mcast_work, bond_resend_igmp_join_requests_delayed);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (bond_is_lb(bond)) {
 		/* bond_alb_initialize must be called before the timer
 		 * is started.
 		 */
+<<<<<<< HEAD
 		if (bond_alb_initialize(bond, (bond->params.mode == BOND_MODE_ALB)))
 			return -ENOMEM;
 		queue_delayed_work(bond->wq, &bond->alb_work, 0);
@@ -3457,12 +4003,40 @@ static int bond_open(struct net_device *bond_dev)
 		queue_delayed_work(bond->wq, &bond->mii_work, 0);
 
 	if (bond->params.arp_interval) {  /* arp interval, in milliseconds. */
+=======
+		if (bond_alb_initialize(bond, (bond->params.mode == BOND_MODE_ALB))) {
+			/* something went wrong - fail the open operation */
+			return -ENOMEM;
+		}
+
+		INIT_DELAYED_WORK(&bond->alb_work, bond_alb_monitor);
+		queue_delayed_work(bond->wq, &bond->alb_work, 0);
+	}
+
+	if (bond->params.miimon) {  /* link check interval, in milliseconds. */
+		INIT_DELAYED_WORK(&bond->mii_work, bond_mii_monitor);
+		queue_delayed_work(bond->wq, &bond->mii_work, 0);
+	}
+
+	if (bond->params.arp_interval) {  /* arp interval, in milliseconds. */
+		if (bond->params.mode == BOND_MODE_ACTIVEBACKUP)
+			INIT_DELAYED_WORK(&bond->arp_work,
+					  bond_activebackup_arp_mon);
+		else
+			INIT_DELAYED_WORK(&bond->arp_work,
+					  bond_loadbalance_arp_mon);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		queue_delayed_work(bond->wq, &bond->arp_work, 0);
 		if (bond->params.arp_validate)
 			bond->recv_probe = bond_arp_rcv;
 	}
 
 	if (bond->params.mode == BOND_MODE_8023AD) {
+<<<<<<< HEAD
+=======
+		INIT_DELAYED_WORK(&bond->ad_work, bond_3ad_state_machine_handler);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		queue_delayed_work(bond->wq, &bond->ad_work, 0);
 		/* register to receive LACPDUs */
 		bond->recv_probe = bond_3ad_lacpdu_recv;
@@ -3477,10 +4051,44 @@ static int bond_close(struct net_device *bond_dev)
 	struct bonding *bond = netdev_priv(bond_dev);
 
 	write_lock_bh(&bond->lock);
+<<<<<<< HEAD
 	bond->send_peer_notif = 0;
 	write_unlock_bh(&bond->lock);
 
 	bond_work_cancel_all(bond);
+=======
+
+	bond->send_peer_notif = 0;
+
+	/* signal timers not to re-arm */
+	bond->kill_timers = 1;
+
+	write_unlock_bh(&bond->lock);
+
+	if (bond->params.miimon) {  /* link check interval, in milliseconds. */
+		cancel_delayed_work(&bond->mii_work);
+	}
+
+	if (bond->params.arp_interval) {  /* arp interval, in milliseconds. */
+		cancel_delayed_work(&bond->arp_work);
+	}
+
+	switch (bond->params.mode) {
+	case BOND_MODE_8023AD:
+		cancel_delayed_work(&bond->ad_work);
+		break;
+	case BOND_MODE_TLB:
+	case BOND_MODE_ALB:
+		cancel_delayed_work(&bond->alb_work);
+		break;
+	default:
+		break;
+	}
+
+	if (delayed_work_pending(&bond->mcast_work))
+		cancel_delayed_work(&bond->mcast_work);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (bond_is_lb(bond)) {
 		/* Must be called only after all
 		 * slaves have been released
@@ -3665,6 +4273,7 @@ static bool bond_addr_in_mc_list(unsigned char *addr,
 	return false;
 }
 
+<<<<<<< HEAD
 static void bond_change_rx_flags(struct net_device *bond_dev, int change)
 {
 	struct bonding *bond = netdev_priv(bond_dev);
@@ -3678,14 +4287,51 @@ static void bond_change_rx_flags(struct net_device *bond_dev, int change)
 				  bond_dev->flags & IFF_ALLMULTI ? 1 : -1);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void bond_set_multicast_list(struct net_device *bond_dev)
 {
 	struct bonding *bond = netdev_priv(bond_dev);
 	struct netdev_hw_addr *ha;
 	bool found;
 
+<<<<<<< HEAD
 	read_lock(&bond->lock);
 
+=======
+	/*
+	 * Do promisc before checking multicast_mode
+	 */
+	if ((bond_dev->flags & IFF_PROMISC) && !(bond->flags & IFF_PROMISC))
+		/*
+		 * FIXME: Need to handle the error when one of the multi-slaves
+		 * encounters error.
+		 */
+		bond_set_promiscuity(bond, 1);
+
+
+	if (!(bond_dev->flags & IFF_PROMISC) && (bond->flags & IFF_PROMISC))
+		bond_set_promiscuity(bond, -1);
+
+
+	/* set allmulti flag to slaves */
+	if ((bond_dev->flags & IFF_ALLMULTI) && !(bond->flags & IFF_ALLMULTI))
+		/*
+		 * FIXME: Need to handle the error when one of the multi-slaves
+		 * encounters error.
+		 */
+		bond_set_allmulti(bond, 1);
+
+
+	if (!(bond_dev->flags & IFF_ALLMULTI) && (bond->flags & IFF_ALLMULTI))
+		bond_set_allmulti(bond, -1);
+
+
+	read_lock(&bond->lock);
+
+	bond->flags = bond_dev->flags;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* looking for addresses to add to slaves' mc list */
 	netdev_for_each_mc_addr(ha, bond_dev) {
 		found = bond_addr_in_mc_list(ha->addr, &bond->mc_list,
@@ -3710,6 +4356,7 @@ static void bond_set_multicast_list(struct net_device *bond_dev)
 	read_unlock(&bond->lock);
 }
 
+<<<<<<< HEAD
 static int bond_neigh_init(struct neighbour *n)
 {
 	struct bonding *bond = netdev_priv(n->dev);
@@ -3762,6 +4409,19 @@ static int bond_neigh_setup(struct net_device *dev,
 	if (parms->dev == dev)
 		parms->neigh_setup = bond_neigh_init;
 
+=======
+static int bond_neigh_setup(struct net_device *dev, struct neigh_parms *parms)
+{
+	struct bonding *bond = netdev_priv(dev);
+	struct slave *slave = bond->first_slave;
+
+	if (slave) {
+		const struct net_device_ops *slave_ops
+			= slave->dev->netdev_ops;
+		if (slave_ops->ndo_neigh_setup)
+			return slave_ops->ndo_neigh_setup(slave->dev, parms);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -4164,7 +4824,11 @@ static u16 bond_select_queue(struct net_device *dev, struct sk_buff *skb)
 	/*
 	 * Save the original txq to restore before passing to the driver
 	 */
+<<<<<<< HEAD
 	qdisc_skb_cb(skb)->bond_queue_mapping = skb->queue_mapping;
+=======
+	bond_queue_mapping(skb) = skb->queue_mapping;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (unlikely(txq >= dev->real_num_tx_queues)) {
 		do {
@@ -4285,12 +4949,21 @@ static const struct net_device_ops bond_netdev_ops = {
 	.ndo_select_queue	= bond_select_queue,
 	.ndo_get_stats64	= bond_get_stats,
 	.ndo_do_ioctl		= bond_do_ioctl,
+<<<<<<< HEAD
 	.ndo_change_rx_flags	= bond_change_rx_flags,
 	.ndo_set_rx_mode	= bond_set_multicast_list,
 	.ndo_change_mtu		= bond_change_mtu,
 	.ndo_set_mac_address	= bond_set_mac_address,
 	.ndo_neigh_setup	= bond_neigh_setup,
 	.ndo_vlan_rx_add_vid	= bond_vlan_rx_add_vid,
+=======
+	.ndo_set_multicast_list	= bond_set_multicast_list,
+	.ndo_change_mtu		= bond_change_mtu,
+	.ndo_set_mac_address 	= bond_set_mac_address,
+	.ndo_neigh_setup	= bond_neigh_setup,
+	.ndo_vlan_rx_register	= bond_vlan_rx_register,
+	.ndo_vlan_rx_add_vid 	= bond_vlan_rx_add_vid,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ndo_vlan_rx_kill_vid	= bond_vlan_rx_kill_vid,
 #ifdef CONFIG_NET_POLL_CONTROLLER
 	.ndo_netpoll_setup	= bond_netpoll_setup,
@@ -4361,10 +5034,41 @@ static void bond_setup(struct net_device *bond_dev)
 				NETIF_F_HW_VLAN_RX |
 				NETIF_F_HW_VLAN_FILTER;
 
+<<<<<<< HEAD
 	bond_dev->hw_features &= ~(NETIF_F_ALL_CSUM & ~NETIF_F_HW_CSUM);
 	bond_dev->features |= bond_dev->hw_features;
 }
 
+=======
+	bond_dev->hw_features &= ~(NETIF_F_ALL_CSUM & ~NETIF_F_NO_CSUM);
+	bond_dev->features |= bond_dev->hw_features;
+}
+
+static void bond_work_cancel_all(struct bonding *bond)
+{
+	write_lock_bh(&bond->lock);
+	bond->kill_timers = 1;
+	write_unlock_bh(&bond->lock);
+
+	if (bond->params.miimon && delayed_work_pending(&bond->mii_work))
+		cancel_delayed_work(&bond->mii_work);
+
+	if (bond->params.arp_interval && delayed_work_pending(&bond->arp_work))
+		cancel_delayed_work(&bond->arp_work);
+
+	if (bond->params.mode == BOND_MODE_ALB &&
+	    delayed_work_pending(&bond->alb_work))
+		cancel_delayed_work(&bond->alb_work);
+
+	if (bond->params.mode == BOND_MODE_8023AD &&
+	    delayed_work_pending(&bond->ad_work))
+		cancel_delayed_work(&bond->ad_work);
+
+	if (delayed_work_pending(&bond->mcast_work))
+		cancel_delayed_work(&bond->mcast_work);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
 * Destroy a bonding device.
 * Must be under rtnl_lock when this function is called.
@@ -4383,6 +5087,11 @@ static void bond_uninit(struct net_device *bond_dev)
 
 	bond_work_cancel_all(bond);
 
+<<<<<<< HEAD
+=======
+	bond_remove_proc_entry(bond);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bond_debug_unregister(bond);
 
 	__hw_addr_flush(&bond->mc_list);
@@ -4671,7 +5380,11 @@ static int bond_check_params(struct bond_params *params)
 		/* miimon and arp_interval not set, we need one so things
 		 * work as expected, see bonding.txt for details
 		 */
+<<<<<<< HEAD
 		pr_debug("Warning: either miimon or arp_interval and arp_ip_target module parameters must be specified, otherwise bonding will not detect link failures! see bonding.txt for details.\n");
+=======
+		pr_warning("Warning: either miimon or arp_interval and arp_ip_target module parameters must be specified, otherwise bonding will not detect link failures! see bonding.txt for details.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (primary && !USES_PRIMARY(bond_mode)) {
@@ -4728,7 +5441,10 @@ static int bond_check_params(struct bond_params *params)
 	params->tx_queues = tx_queues;
 	params->all_slaves_active = all_slaves_active;
 	params->resend_igmp = resend_igmp;
+<<<<<<< HEAD
 	params->min_links = min_links;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (primary) {
 		strncpy(params->primary, primary, IFNAMSIZ);
@@ -4784,6 +5500,10 @@ static int bond_init(struct net_device *bond_dev)
 
 	bond_set_lockdep_class(bond_dev);
 
+<<<<<<< HEAD
+=======
+	bond_create_proc_entry(bond);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_add_tail(&bond->bond_list, &bn->dev_list);
 
 	bond_prepare_sysfs_group(bond);
@@ -4805,6 +5525,7 @@ static int bond_validate(struct nlattr *tb[], struct nlattr *data[])
 	return 0;
 }
 
+<<<<<<< HEAD
 static int bond_get_tx_queues(struct net *net, struct nlattr *tb[],
 			      unsigned int *num_queues,
 			      unsigned int *real_num_queues)
@@ -4813,12 +5534,17 @@ static int bond_get_tx_queues(struct net *net, struct nlattr *tb[],
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct rtnl_link_ops bond_link_ops __read_mostly = {
 	.kind		= "bond",
 	.priv_size	= sizeof(struct bonding),
 	.setup		= bond_setup,
 	.validate	= bond_validate,
+<<<<<<< HEAD
 	.get_tx_queues	= bond_get_tx_queues,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Create a new bond based on the specified name and bonding parameters.
@@ -4863,7 +5589,10 @@ static int __net_init bond_net_init(struct net *net)
 	INIT_LIST_HEAD(&bn->dev_list);
 
 	bond_create_proc_dir(bn);
+<<<<<<< HEAD
 	bond_create_sysfs(bn);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	
 	return 0;
 }
@@ -4871,6 +5600,7 @@ static int __net_init bond_net_init(struct net *net)
 static void __net_exit bond_net_exit(struct net *net)
 {
 	struct bond_net *bn = net_generic(net, bond_net_id);
+<<<<<<< HEAD
 	struct bonding *bond, *tmp_bond;
 	LIST_HEAD(list);
 
@@ -4883,6 +5613,10 @@ static void __net_exit bond_net_exit(struct net *net)
 		unregister_netdevice_queue(bond->dev, &list);
 	unregister_netdevice_many(&list);
 	rtnl_unlock();
+=======
+
+	bond_destroy_proc_dir(bn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct pernet_operations bond_net_ops = {
@@ -4919,7 +5653,16 @@ static int __init bonding_init(void)
 			goto err;
 	}
 
+<<<<<<< HEAD
 	register_netdevice_notifier(&bond_netdev_notifier);
+=======
+	res = bond_create_sysfs();
+	if (res)
+		goto err;
+
+	register_netdevice_notifier(&bond_netdev_notifier);
+	register_inetaddr_notifier(&bond_inetaddr_notifier);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return res;
 err:
@@ -4933,7 +5676,13 @@ err_link:
 static void __exit bonding_exit(void)
 {
 	unregister_netdevice_notifier(&bond_netdev_notifier);
+<<<<<<< HEAD
 
+=======
+	unregister_inetaddr_notifier(&bond_inetaddr_notifier);
+
+	bond_destroy_sysfs();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bond_destroy_debugfs();
 
 	rtnl_link_unregister(&bond_link_ops);

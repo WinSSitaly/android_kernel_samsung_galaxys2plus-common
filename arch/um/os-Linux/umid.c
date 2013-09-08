@@ -13,7 +13,13 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include "init.h"
+<<<<<<< HEAD
 #include "os.h"
+=======
+#include "kern_constants.h"
+#include "os.h"
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define UML_DIR "~/.uml/"
 

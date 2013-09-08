@@ -15,7 +15,10 @@
 #include <linux/gfp.h>
 #include <asm/unaligned.h>
 #include <net/mac80211.h>
+<<<<<<< HEAD
 #include <crypto/aes.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "ieee80211_i.h"
 #include "michael.h"
@@ -53,8 +56,12 @@ ieee80211_tx_h_michael_mic_add(struct ieee80211_tx_data *tx)
 	}
 
 	if (info->control.hw_key &&
+<<<<<<< HEAD
 	    (info->flags & IEEE80211_TX_CTL_DONTFRAG ||
 	     tx->local->ops->set_frag_threshold) &&
+=======
+	    !(tx->flags & IEEE80211_TX_FRAGMENTED) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    !(tx->key->conf.flags & IEEE80211_KEY_FLAG_GENERATE_MMIC)) {
 		/* hwaccel - with no need for SW-generated MMIC */
 		return TX_CONTINUE;
@@ -88,6 +95,14 @@ ieee80211_rx_h_michael_mic_verify(struct ieee80211_rx_data *rx)
 	struct sk_buff *skb = rx->skb;
 	struct ieee80211_rx_status *status = IEEE80211_SKB_RXCB(skb);
 	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;
+<<<<<<< HEAD
+=======
+	int queue = rx->queue;
+
+	/* otherwise, TKIP is vulnerable to TID 0 vs. non-QoS replays */
+	if (rx->queue == NUM_RX_DATA_QUEUES - 1)
+		queue = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * it makes no sense to check for MIC errors on anything other
@@ -106,8 +121,12 @@ ieee80211_rx_h_michael_mic_verify(struct ieee80211_rx_data *rx)
 		if (status->flag & RX_FLAG_MMIC_ERROR)
 			goto mic_fail;
 
+<<<<<<< HEAD
 		if (!(status->flag & RX_FLAG_IV_STRIPPED) && rx->key &&
 		    rx->key->conf.cipher == WLAN_CIPHER_SUITE_TKIP)
+=======
+		if (!(status->flag & RX_FLAG_IV_STRIPPED) && rx->key)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto update_iv;
 
 		return RX_CONTINUE;
@@ -139,10 +158,13 @@ ieee80211_rx_h_michael_mic_verify(struct ieee80211_rx_data *rx)
 	if (skb->len < hdrlen + MICHAEL_MIC_LEN)
 		return RX_DROP_UNUSABLE;
 
+<<<<<<< HEAD
 	if (skb_linearize(rx->skb))
 		return RX_DROP_UNUSABLE;
 	hdr = (void *)skb->data;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	data = skb->data + hdrlen;
 	data_len = skb->len - hdrlen - MICHAEL_MIC_LEN;
 	key = &rx->key->conf.key[NL80211_TKIP_DATA_OFFSET_RX_MIC_KEY];
@@ -155,8 +177,13 @@ ieee80211_rx_h_michael_mic_verify(struct ieee80211_rx_data *rx)
 
 update_iv:
 	/* update IV in key information to be able to detect replays */
+<<<<<<< HEAD
 	rx->key->u.tkip.rx[rx->security_idx].iv32 = rx->tkip_iv32;
 	rx->key->u.tkip.rx[rx->security_idx].iv16 = rx->tkip_iv16;
+=======
+	rx->key->u.tkip.rx[queue].iv32 = rx->tkip_iv32;
+	rx->key->u.tkip.rx[queue].iv16 = rx->tkip_iv16;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return RX_CONTINUE;
 
@@ -178,7 +205,10 @@ static int tkip_encrypt_skb(struct ieee80211_tx_data *tx, struct sk_buff *skb)
 	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *) skb->data;
 	struct ieee80211_key *key = tx->key;
 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
+<<<<<<< HEAD
 	unsigned long flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int hdrlen;
 	int len, tail;
 	u8 *pos;
@@ -206,12 +236,20 @@ static int tkip_encrypt_skb(struct ieee80211_tx_data *tx, struct sk_buff *skb)
 	pos += hdrlen;
 
 	/* Increase IV for the frame */
+<<<<<<< HEAD
 	spin_lock_irqsave(&key->u.tkip.txlock, flags);
 	key->u.tkip.tx.iv16++;
 	if (key->u.tkip.tx.iv16 == 0)
 		key->u.tkip.tx.iv32++;
 	pos = ieee80211_tkip_add_iv(pos, key);
 	spin_unlock_irqrestore(&key->u.tkip.txlock, flags);
+=======
+	key->u.tkip.tx.iv16++;
+	if (key->u.tkip.tx.iv16 == 0)
+		key->u.tkip.tx.iv32++;
+
+	pos = ieee80211_tkip_add_iv(pos, key, key->u.tkip.tx.iv16);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* hwaccel - with software IV */
 	if (info->control.hw_key)
@@ -220,14 +258,21 @@ static int tkip_encrypt_skb(struct ieee80211_tx_data *tx, struct sk_buff *skb)
 	/* Add room for ICV */
 	skb_put(skb, TKIP_ICV_LEN);
 
+<<<<<<< HEAD
 	return ieee80211_tkip_encrypt_data(tx->local->wep_tx_tfm,
 					   key, skb, pos, len);
+=======
+	hdr = (struct ieee80211_hdr *) skb->data;
+	return ieee80211_tkip_encrypt_data(tx->local->wep_tx_tfm,
+					   key, pos, len, hdr->addr2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
 ieee80211_tx_result
 ieee80211_crypto_tkip_encrypt(struct ieee80211_tx_data *tx)
 {
+<<<<<<< HEAD
 	struct sk_buff *skb;
 
 	ieee80211_tx_set_protected(tx);
@@ -236,6 +281,16 @@ ieee80211_crypto_tkip_encrypt(struct ieee80211_tx_data *tx)
 		if (tkip_encrypt_skb(tx, skb) < 0)
 			return TX_DROP;
 	}
+=======
+	struct sk_buff *skb = tx->skb;
+
+	ieee80211_tx_set_protected(tx);
+
+	do {
+		if (tkip_encrypt_skb(tx, skb) < 0)
+			return TX_DROP;
+	} while ((skb = skb->next));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return TX_CONTINUE;
 }
@@ -249,6 +304,14 @@ ieee80211_crypto_tkip_decrypt(struct ieee80211_rx_data *rx)
 	struct ieee80211_key *key = rx->key;
 	struct sk_buff *skb = rx->skb;
 	struct ieee80211_rx_status *status = IEEE80211_SKB_RXCB(skb);
+<<<<<<< HEAD
+=======
+	int queue = rx->queue;
+
+	/* otherwise, TKIP is vulnerable to TID 0 vs. non-QoS replays */
+	if (rx->queue == NUM_RX_DATA_QUEUES - 1)
+		queue = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hdrlen = ieee80211_hdrlen(hdr->frame_control);
 
@@ -258,11 +321,14 @@ ieee80211_crypto_tkip_decrypt(struct ieee80211_rx_data *rx)
 	if (!rx->sta || skb->len - hdrlen < 12)
 		return RX_DROP_UNUSABLE;
 
+<<<<<<< HEAD
 	/* it may be possible to optimize this a bit more */
 	if (skb_linearize(rx->skb))
 		return RX_DROP_UNUSABLE;
 	hdr = (void *)skb->data;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Let TKIP code verify IV, but skip decryption.
 	 * In the case where hardware checks the IV as well,
@@ -274,7 +340,11 @@ ieee80211_crypto_tkip_decrypt(struct ieee80211_rx_data *rx)
 	res = ieee80211_tkip_decrypt_data(rx->local->wep_rx_tfm,
 					  key, skb->data + hdrlen,
 					  skb->len - hdrlen, rx->sta->sta.addr,
+<<<<<<< HEAD
 					  hdr->addr1, hwaccel, rx->security_idx,
+=======
+					  hdr->addr1, hwaccel, queue,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					  &rx->tkip_iv32,
 					  &rx->tkip_iv16);
 	if (res != TKIP_DECRYPT_OK)
@@ -302,10 +372,15 @@ static void ccmp_special_blocks(struct sk_buff *skb, u8 *pn, u8 *scratch,
 	unsigned int hdrlen;
 	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;
 
+<<<<<<< HEAD
 	memset(scratch, 0, 6 * AES_BLOCK_SIZE);
 
 	b_0 = scratch + 3 * AES_BLOCK_SIZE;
 	aad = scratch + 4 * AES_BLOCK_SIZE;
+=======
+	b_0 = scratch + 3 * AES_BLOCK_LEN;
+	aad = scratch + 4 * AES_BLOCK_LEN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Mask FC: zero subtype b4 b5 b6 (if not mgmt)
@@ -394,6 +469,7 @@ static int ccmp_encrypt_skb(struct ieee80211_tx_data *tx, struct sk_buff *skb)
 	struct ieee80211_key *key = tx->key;
 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
 	int hdrlen, len, tail;
+<<<<<<< HEAD
 	u8 *pos;
 	u8 pn[6];
 	u64 pn64;
@@ -402,6 +478,13 @@ static int ccmp_encrypt_skb(struct ieee80211_tx_data *tx, struct sk_buff *skb)
 	if (info->control.hw_key &&
 	    !(info->control.hw_key->flags & IEEE80211_KEY_FLAG_GENERATE_IV) &&
 	    !(info->control.hw_key->flags & IEEE80211_KEY_FLAG_PUT_IV_SPACE)) {
+=======
+	u8 *pos, *pn;
+	int i;
+
+	if (info->control.hw_key &&
+	    !(info->control.hw_key->flags & IEEE80211_KEY_FLAG_GENERATE_IV)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * hwaccel has no need for preallocated room for CCMP
 		 * header or MIC fields
@@ -423,6 +506,7 @@ static int ccmp_encrypt_skb(struct ieee80211_tx_data *tx, struct sk_buff *skb)
 
 	pos = skb_push(skb, CCMP_HDR_LEN);
 	memmove(pos, pos + CCMP_HDR_LEN, hdrlen);
+<<<<<<< HEAD
 
 	/* the HW only needs room for the IV, but not the actual IV */
 	if (info->control.hw_key &&
@@ -440,6 +524,19 @@ static int ccmp_encrypt_skb(struct ieee80211_tx_data *tx, struct sk_buff *skb)
 	pn[2] = pn64 >> 24;
 	pn[1] = pn64 >> 32;
 	pn[0] = pn64 >> 40;
+=======
+	hdr = (struct ieee80211_hdr *) pos;
+	pos += hdrlen;
+
+	/* PN = PN + 1 */
+	pn = key->u.ccmp.tx_pn;
+
+	for (i = CCMP_PN_LEN - 1; i >= 0; i--) {
+		pn[i]++;
+		if (pn[i])
+			break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ccmp_pn2hdr(pos, pn, key->conf.keyidx);
 
@@ -448,8 +545,13 @@ static int ccmp_encrypt_skb(struct ieee80211_tx_data *tx, struct sk_buff *skb)
 		return 0;
 
 	pos += CCMP_HDR_LEN;
+<<<<<<< HEAD
 	ccmp_special_blocks(skb, pn, scratch, 0);
 	ieee80211_aes_ccm_encrypt(key->u.ccmp.tfm, scratch, pos, len,
+=======
+	ccmp_special_blocks(skb, pn, key->u.ccmp.tx_crypto_buf, 0);
+	ieee80211_aes_ccm_encrypt(key->u.ccmp.tfm, key->u.ccmp.tx_crypto_buf, pos, len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  pos, skb_put(skb, CCMP_MIC_LEN));
 
 	return 0;
@@ -459,6 +561,7 @@ static int ccmp_encrypt_skb(struct ieee80211_tx_data *tx, struct sk_buff *skb)
 ieee80211_tx_result
 ieee80211_crypto_ccmp_encrypt(struct ieee80211_tx_data *tx)
 {
+<<<<<<< HEAD
 	struct sk_buff *skb;
 
 	ieee80211_tx_set_protected(tx);
@@ -467,6 +570,16 @@ ieee80211_crypto_ccmp_encrypt(struct ieee80211_tx_data *tx)
 		if (ccmp_encrypt_skb(tx, skb) < 0)
 			return TX_DROP;
 	}
+=======
+	struct sk_buff *skb = tx->skb;
+
+	ieee80211_tx_set_protected(tx);
+
+	do {
+		if (ccmp_encrypt_skb(tx, skb) < 0)
+			return TX_DROP;
+	} while ((skb = skb->next));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return TX_CONTINUE;
 }
@@ -494,6 +607,7 @@ ieee80211_crypto_ccmp_decrypt(struct ieee80211_rx_data *rx)
 	if (!rx->sta || data_len < 0)
 		return RX_DROP_UNUSABLE;
 
+<<<<<<< HEAD
 	if (status->flag & RX_FLAG_DECRYPTED) {
 		if (!pskb_may_pull(rx->skb, hdrlen + CCMP_HDR_LEN))
 			return RX_DROP_UNUSABLE;
@@ -505,6 +619,12 @@ ieee80211_crypto_ccmp_decrypt(struct ieee80211_rx_data *rx)
 	ccmp_hdr2pn(pn, skb->data + hdrlen);
 
 	queue = rx->security_idx;
+=======
+	ccmp_hdr2pn(pn, skb->data + hdrlen);
+
+	queue = ieee80211_is_mgmt(hdr->frame_control) ?
+		NUM_RX_DATA_QUEUES : rx->queue;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (memcmp(pn, key->u.ccmp.rx_pn[queue], CCMP_PN_LEN) <= 0) {
 		key->u.ccmp.replays++;
@@ -512,12 +632,20 @@ ieee80211_crypto_ccmp_decrypt(struct ieee80211_rx_data *rx)
 	}
 
 	if (!(status->flag & RX_FLAG_DECRYPTED)) {
+<<<<<<< HEAD
 		u8 scratch[6 * AES_BLOCK_SIZE];
 		/* hardware didn't decrypt/verify MIC */
 		ccmp_special_blocks(skb, pn, scratch, 1);
 
 		if (ieee80211_aes_ccm_decrypt(
 			    key->u.ccmp.tfm, scratch,
+=======
+		/* hardware didn't decrypt/verify MIC */
+		ccmp_special_blocks(skb, pn, key->u.ccmp.rx_crypto_buf, 1);
+
+		if (ieee80211_aes_ccm_decrypt(
+			    key->u.ccmp.tfm, key->u.ccmp.rx_crypto_buf,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    skb->data + hdrlen + CCMP_HDR_LEN, data_len,
 			    skb->data + skb->len - CCMP_MIC_LEN,
 			    skb->data + hdrlen + CCMP_HDR_LEN))
@@ -527,8 +655,12 @@ ieee80211_crypto_ccmp_decrypt(struct ieee80211_rx_data *rx)
 	memcpy(key->u.ccmp.rx_pn[queue], pn, CCMP_PN_LEN);
 
 	/* Remove CCMP header and MIC */
+<<<<<<< HEAD
 	if (pskb_trim(skb, skb->len - CCMP_MIC_LEN))
 		return RX_DROP_UNUSABLE;
+=======
+	skb_trim(skb, skb->len - CCMP_MIC_LEN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memmove(skb->data + CCMP_HDR_LEN, skb->data, hdrlen);
 	skb_pull(skb, CCMP_HDR_LEN);
 
@@ -549,6 +681,7 @@ static void bip_aad(struct sk_buff *skb, u8 *aad)
 }
 
 
+<<<<<<< HEAD
 static inline void bip_ipn_set64(u8 *d, u64 pn)
 {
 	*d++ = pn;
@@ -559,6 +692,8 @@ static inline void bip_ipn_set64(u8 *d, u64 pn)
 	*d = pn >> 40;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void bip_ipn_swap(u8 *d, const u8 *s)
 {
 	*d++ = s[5];
@@ -573,6 +708,7 @@ static inline void bip_ipn_swap(u8 *d, const u8 *s)
 ieee80211_tx_result
 ieee80211_crypto_aes_cmac_encrypt(struct ieee80211_tx_data *tx)
 {
+<<<<<<< HEAD
 	struct sk_buff *skb;
 	struct ieee80211_tx_info *info;
 	struct ieee80211_key *key = tx->key;
@@ -589,6 +725,17 @@ ieee80211_crypto_aes_cmac_encrypt(struct ieee80211_tx_data *tx)
 
 	if (info->control.hw_key)
 		return TX_CONTINUE;
+=======
+	struct sk_buff *skb = tx->skb;
+	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
+	struct ieee80211_key *key = tx->key;
+	struct ieee80211_mmie *mmie;
+	u8 *pn, aad[20];
+	int i;
+
+	if (info->control.hw_key)
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (WARN_ON(skb_tailroom(skb) < sizeof(*mmie)))
 		return TX_DROP;
@@ -599,17 +746,33 @@ ieee80211_crypto_aes_cmac_encrypt(struct ieee80211_tx_data *tx)
 	mmie->key_id = cpu_to_le16(key->conf.keyidx);
 
 	/* PN = PN + 1 */
+<<<<<<< HEAD
 	pn64 = atomic64_inc_return(&key->u.aes_cmac.tx_pn);
 
 	bip_ipn_set64(mmie->sequence_number, pn64);
+=======
+	pn = key->u.aes_cmac.tx_pn;
+
+	for (i = sizeof(key->u.aes_cmac.tx_pn) - 1; i >= 0; i--) {
+		pn[i]++;
+		if (pn[i])
+			break;
+	}
+	bip_ipn_swap(mmie->sequence_number, pn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bip_aad(skb, aad);
 
 	/*
 	 * MIC = AES-128-CMAC(IGTK, AAD || Management Frame Body || MMIE, 64)
 	 */
+<<<<<<< HEAD
 	ieee80211_aes_cmac(key->u.aes_cmac.tfm, aad,
 			   skb->data + 24, skb->len - 24, mmie->mic);
+=======
+	ieee80211_aes_cmac(key->u.aes_cmac.tfm, key->u.aes_cmac.tx_crypto_buf,
+			   aad, skb->data + 24, skb->len - 24, mmie->mic);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return TX_CONTINUE;
 }
@@ -628,8 +791,11 @@ ieee80211_crypto_aes_cmac_decrypt(struct ieee80211_rx_data *rx)
 	if (!ieee80211_is_mgmt(hdr->frame_control))
 		return RX_CONTINUE;
 
+<<<<<<< HEAD
 	/* management frames are already linear */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (skb->len < 24 + sizeof(*mmie))
 		return RX_DROP_UNUSABLE;
 
@@ -649,7 +815,12 @@ ieee80211_crypto_aes_cmac_decrypt(struct ieee80211_rx_data *rx)
 	if (!(status->flag & RX_FLAG_DECRYPTED)) {
 		/* hardware didn't decrypt/verify MIC */
 		bip_aad(skb, aad);
+<<<<<<< HEAD
 		ieee80211_aes_cmac(key->u.aes_cmac.tfm, aad,
+=======
+		ieee80211_aes_cmac(key->u.aes_cmac.tfm,
+				   key->u.aes_cmac.rx_crypto_buf, aad,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   skb->data + 24, skb->len - 24, mic);
 		if (memcmp(mic, mmie->mic, sizeof(mmie->mic)) != 0) {
 			key->u.aes_cmac.icverrors++;
@@ -664,6 +835,7 @@ ieee80211_crypto_aes_cmac_decrypt(struct ieee80211_rx_data *rx)
 
 	return RX_CONTINUE;
 }
+<<<<<<< HEAD
 
 ieee80211_tx_result
 ieee80211_crypto_hw_encrypt(struct ieee80211_tx_data *tx)
@@ -683,3 +855,5 @@ ieee80211_crypto_hw_encrypt(struct ieee80211_tx_data *tx)
 
 	return TX_CONTINUE;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

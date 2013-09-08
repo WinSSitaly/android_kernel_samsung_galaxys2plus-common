@@ -10,7 +10,10 @@
 #include <linux/device.h>
 #include <linux/init.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/hardware.h>
 #include <asm/mach-types.h>
@@ -20,6 +23,7 @@
 
 #define CERF_SOCKET	1
 
+<<<<<<< HEAD
 static int cerf_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
 {
 	int ret;
@@ -38,16 +42,43 @@ static int cerf_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
 	skt->stat[SOC_STAT_RDY].name = "CF_IRQ";
 
 	return 0;
+=======
+static struct pcmcia_irqs irqs[] = {
+	{ CERF_SOCKET, CERF_IRQ_GPIO_CF_CD,   "CF_CD"   },
+	{ CERF_SOCKET, CERF_IRQ_GPIO_CF_BVD2, "CF_BVD2" },
+	{ CERF_SOCKET, CERF_IRQ_GPIO_CF_BVD1, "CF_BVD1" }
+};
+
+static int cerf_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
+{
+	skt->socket.pci_irq = CERF_IRQ_GPIO_CF_IRQ;
+
+	return soc_pcmcia_request_irqs(skt, irqs, ARRAY_SIZE(irqs));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void cerf_pcmcia_hw_shutdown(struct soc_pcmcia_socket *skt)
 {
+<<<<<<< HEAD
 	gpio_free(CERF_GPIO_CF_RESET);
+=======
+	soc_pcmcia_free_irqs(skt, irqs, ARRAY_SIZE(irqs));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
 cerf_pcmcia_socket_state(struct soc_pcmcia_socket *skt, struct pcmcia_state *state)
 {
+<<<<<<< HEAD
+=======
+	unsigned long levels = GPLR;
+
+	state->detect	= (levels & CERF_GPIO_CF_CD)  ?0:1;
+	state->ready	= (levels & CERF_GPIO_CF_IRQ) ?1:0;
+	state->bvd1	= (levels & CERF_GPIO_CF_BVD1)?1:0;
+	state->bvd2	= (levels & CERF_GPIO_CF_BVD2)?1:0;
+	state->wrprot	= 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	state->vs_3v	= 1;
 	state->vs_Xv	= 0;
 }
@@ -68,17 +99,44 @@ cerf_pcmcia_configure_socket(struct soc_pcmcia_socket *skt,
 		return -1;
 	}
 
+<<<<<<< HEAD
 	gpio_set_value(CERF_GPIO_CF_RESET, !!(state->flags & SS_RESET));
+=======
+	if (state->flags & SS_RESET) {
+		GPSR = CERF_GPIO_CF_RESET;
+	} else {
+		GPCR = CERF_GPIO_CF_RESET;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void cerf_pcmcia_socket_init(struct soc_pcmcia_socket *skt)
+{
+	soc_pcmcia_enable_irqs(skt, irqs, ARRAY_SIZE(irqs));
+}
+
+static void cerf_pcmcia_socket_suspend(struct soc_pcmcia_socket *skt)
+{
+	soc_pcmcia_disable_irqs(skt, irqs, ARRAY_SIZE(irqs));
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct pcmcia_low_level cerf_pcmcia_ops = { 
 	.owner			= THIS_MODULE,
 	.hw_init		= cerf_pcmcia_hw_init,
 	.hw_shutdown		= cerf_pcmcia_hw_shutdown,
 	.socket_state		= cerf_pcmcia_socket_state,
 	.configure_socket	= cerf_pcmcia_configure_socket,
+<<<<<<< HEAD
+=======
+
+	.socket_init		= cerf_pcmcia_socket_init,
+	.socket_suspend		= cerf_pcmcia_socket_suspend,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int __devinit pcmcia_cerf_init(struct device *dev)

@@ -18,16 +18,152 @@
 #include "hid-ids.h"
 
 /*
+<<<<<<< HEAD
  * See WPXXXXU model descriptions, device and HID report descriptors at
  * http://sf.net/apps/mediawiki/digimend/?title=UC-Logic_Tablet_WP4030U
  * http://sf.net/apps/mediawiki/digimend/?title=UC-Logic_Tablet_WP5540U
  * http://sf.net/apps/mediawiki/digimend/?title=UC-Logic_Tablet_WP8060U
+=======
+ * The original descriptors of WPXXXXU tablets have three report IDs, of
+ * which only two are used (8 and 9), and the remaining (7) seems to have
+ * the originally intended pen description which was abandoned for some
+ * reason.  From this unused description it is possible to extract the
+ * actual physical extents and resolution. All the models use the same
+ * descriptor with different extents for the unused report ID.
+ *
+ * Here it is:
+ *
+ *  Usage Page (Digitizer),         ; Digitizer (0Dh)
+ *  Usage (Pen),                    ; Pen (02h, application collection)
+ *  Collection (Application),
+ *    Report ID (7),
+ *    Usage (Stylus),               ; Stylus (20h, logical collection)
+ *    Collection (Physical),
+ *      Usage (Tip Switch),         ; Tip switch (42h, momentary control)
+ *      Usage (Barrel Switch),      ; Barrel switch (44h, momentary control)
+ *      Usage (Eraser),             ; Eraser (45h, momentary control)
+ *      Logical Minimum (0),
+ *      Logical Maximum (1),
+ *      Report Size (1),
+ *      Report Count (3),
+ *      Input (Variable),
+ *      Report Count (3),
+ *      Input (Constant, Variable),
+ *      Usage (In Range),           ; In range (32h, momentary control)
+ *      Report Count (1),
+ *      Input (Variable),
+ *      Report Count (1),
+ *      Input (Constant, Variable),
+ *      Usage Page (Desktop),       ; Generic desktop controls (01h)
+ *      Usage (X),                  ; X (30h, dynamic value)
+ *      Report Size (16),
+ *      Report Count (1),
+ *      Push,
+ *      Unit Exponent (13),
+ *      Unit (Inch^3),
+ *      Physical Minimum (0),
+ *      Physical Maximum (Xpm),
+ *      Logical Maximum (Xlm),
+ *      Input (Variable),
+ *      Usage (Y),                  ; Y (31h, dynamic value)
+ *      Physical Maximum (Ypm),
+ *      Logical Maximum (Ylm),
+ *      Input (Variable),
+ *      Pop,
+ *      Usage Page (Digitizer),     ; Digitizer (0Dh)
+ *      Usage (Tip Pressure),       ; Tip pressure (30h, dynamic value)
+ *      Logical Maximum (1023),
+ *      Input (Variable),
+ *      Report Size (16),
+ *    End Collection,
+ *  End Collection,
+ *  Usage Page (Desktop),           ; Generic desktop controls (01h)
+ *  Usage (Mouse),                  ; Mouse (02h, application collection)
+ *  Collection (Application),
+ *    Report ID (8),
+ *    Usage (Pointer),              ; Pointer (01h, physical collection)
+ *    Collection (Physical),
+ *      Usage Page (Button),        ; Button (09h)
+ *      Usage Minimum (01h),
+ *      Usage Maximum (03h),
+ *      Logical Minimum (0),
+ *      Logical Maximum (1),
+ *      Report Count (3),
+ *      Report Size (1),
+ *      Input (Variable),
+ *      Report Count (5),
+ *      Input (Constant),
+ *      Usage Page (Desktop),       ; Generic desktop controls (01h)
+ *      Usage (X),                  ; X (30h, dynamic value)
+ *      Usage (Y),                  ; Y (31h, dynamic value)
+ *      Usage (Wheel),              ; Wheel (38h, dynamic value)
+ *      Usage (00h),
+ *      Logical Minimum (-127),
+ *      Logical Maximum (127),
+ *      Report Size (8),
+ *      Report Count (4),
+ *      Input (Variable, Relative),
+ *    End Collection,
+ *  End Collection,
+ *  Usage Page (Desktop),           ; Generic desktop controls (01h)
+ *  Usage (Mouse),                  ; Mouse (02h, application collection)
+ *  Collection (Application),
+ *    Report ID (9),
+ *    Usage (Pointer),              ; Pointer (01h, physical collection)
+ *    Collection (Physical),
+ *      Usage Page (Button),        ; Button (09h)
+ *      Usage Minimum (01h),
+ *      Usage Maximum (03h),
+ *      Logical Minimum (0),
+ *      Logical Maximum (1),
+ *      Report Count (3),
+ *      Report Size (1),
+ *      Input (Variable),
+ *      Report Count (5),
+ *      Input (Constant),
+ *      Usage Page (Desktop),       ; Generic desktop controls (01h)
+ *      Usage (X),                  ; X (30h, dynamic value)
+ *      Usage (Y),                  ; Y (31h, dynamic value)
+ *      Logical Minimum (0),
+ *      Logical Maximum (32767),
+ *      Physical Minimum (0),
+ *      Physical Maximum (32767),
+ *      Report Count (2),
+ *      Report Size (16),
+ *      Input (Variable),
+ *      Usage Page (Digitizer),     ; Digitizer (0Dh)
+ *      Usage (Tip Pressure),       ; Tip pressure (30h, dynamic value)
+ *      Logical Maximum (1023),
+ *      Report Count (1),
+ *      Report Size (16),
+ *      Input (Variable),
+ *    End Collection,
+ *  End Collection
+ *
+ * Here are the extents values for the WPXXXXU models:
+ *
+ *              Xpm     Xlm     Ypm     Ylm
+ *  WP4030U     4000    8000    3000    6000
+ *  WP5540U     5500    11000   4000    8000
+ *  WP8060U     8000    16000   6000    12000
+ *
+ * This suggests that all of them have 2000 LPI resolution, as advertised.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 /* Size of the original descriptor of WPXXXXU tablets */
 #define WPXXXXU_RDESC_ORIG_SIZE	212
 
+<<<<<<< HEAD
 /* Fixed WP4030U report descriptor */
+=======
+/*
+ * Fixed WP4030U report descriptor.
+ * Although the hardware might actually support it, the mouse description
+ * has been removed, since there seems to be no devices having one and it
+ * wouldn't make much sense because of the working area size.
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __u8 wp4030u_rdesc_fixed[] = {
 	0x05, 0x0D,         /*  Usage Page (Digitizer),             */
 	0x09, 0x02,         /*  Usage (Pen),                        */
@@ -218,6 +354,7 @@ static __u8 wp8060u_rdesc_fixed[] = {
 };
 
 /*
+<<<<<<< HEAD
  * See WP1062 description, device and HID report descriptors at
  * http://sf.net/apps/mediawiki/digimend/?title=UC-Logic_Tablet_WP1062
  */
@@ -273,12 +410,152 @@ static __u8 wp1062_rdesc_fixed[] = {
 /*
  * See PF1209 description, device and HID report descriptors at
  * http://sf.net/apps/mediawiki/digimend/?title=UC-Logic_Tablet_PF1209
+=======
+ * Original PF1209 report descriptor.
+ *
+ * The descriptor is similar to WPXXXXU descriptors, with an addition of a
+ * feature report (ID 4) of unknown purpose.
+ *
+ * Although the advertised resolution is 4000 LPI the unused report ID
+ * (taken from WPXXXXU, it seems) states 2000 LPI, but it is probably
+ * incorrect and is a result of blind copying without understanding. Anyway
+ * the real logical extents are always scaled to 0..32767, which IMHO spoils
+ * the precision.
+ *
+ *  Usage Page (Digitizer),         ; Digitizer (0Dh)
+ *  Usage (Pen),                    ; Pen (02h, application collection)
+ *  Collection (Application),
+ *    Report ID (7),
+ *    Usage (Stylus),               ; Stylus (20h, logical collection)
+ *    Collection (Physical),
+ *      Usage (Tip Switch),         ; Tip switch (42h, momentary control)
+ *      Usage (Barrel Switch),      ; Barrel switch (44h, momentary control)
+ *      Usage (Eraser),             ; Eraser (45h, momentary control)
+ *      Logical Minimum (0),
+ *      Logical Maximum (1),
+ *      Report Size (1),
+ *      Report Count (3),
+ *      Input (Variable),
+ *      Report Count (3),
+ *      Input (Constant, Variable),
+ *      Usage (In Range),           ; In range (32h, momentary control)
+ *      Report Count (1),
+ *      Input (Variable),
+ *      Report Count (1),
+ *      Input (Constant, Variable),
+ *      Usage Page (Desktop),       ; Generic desktop controls (01h)
+ *      Usage (X),                  ; X (30h, dynamic value)
+ *      Report Size (16),
+ *      Report Count (1),
+ *      Push,
+ *      Unit Exponent (13),
+ *      Unit (Inch^3),
+ *      Physical Minimum (0),
+ *      Physical Maximum (12000),
+ *      Logical Maximum (24000),
+ *      Input (Variable),
+ *      Usage (Y),                  ; Y (31h, dynamic value)
+ *      Physical Maximum (9000),
+ *      Logical Maximum (18000),
+ *      Input (Variable),
+ *      Pop,
+ *      Usage Page (Digitizer),     ; Digitizer (0Dh)
+ *      Usage (Tip Pressure),       ; Tip pressure (30h, dynamic value)
+ *      Logical Maximum (1023),
+ *      Input (Variable),
+ *      Report Size (16),
+ *    End Collection,
+ *  End Collection,
+ *  Usage Page (Desktop),           ; Generic desktop controls (01h)
+ *  Usage (Mouse),                  ; Mouse (02h, application collection)
+ *  Collection (Application),
+ *    Report ID (8),
+ *    Usage (Pointer),              ; Pointer (01h, physical collection)
+ *    Collection (Physical),
+ *      Usage Page (Button),        ; Button (09h)
+ *      Usage Minimum (01h),
+ *      Usage Maximum (03h),
+ *      Logical Minimum (0),
+ *      Logical Maximum (1),
+ *      Report Count (3),
+ *      Report Size (1),
+ *      Input (Variable),
+ *      Report Count (5),
+ *      Input (Constant),
+ *      Usage Page (Desktop),       ; Generic desktop controls (01h)
+ *      Usage (X),                  ; X (30h, dynamic value)
+ *      Usage (Y),                  ; Y (31h, dynamic value)
+ *      Usage (Wheel),              ; Wheel (38h, dynamic value)
+ *      Usage (00h),
+ *      Logical Minimum (-127),
+ *      Logical Maximum (127),
+ *      Report Size (8),
+ *      Report Count (4),
+ *      Input (Variable, Relative),
+ *    End Collection,
+ *  End Collection,
+ *  Usage Page (Desktop),           ; Generic desktop controls (01h)
+ *  Usage (Mouse),                  ; Mouse (02h, application collection)
+ *  Collection (Application),
+ *    Report ID (9),
+ *    Usage (Pointer),              ; Pointer (01h, physical collection)
+ *    Collection (Physical),
+ *      Usage Page (Button),        ; Button (09h)
+ *      Usage Minimum (01h),
+ *      Usage Maximum (03h),
+ *      Logical Minimum (0),
+ *      Logical Maximum (1),
+ *      Report Count (3),
+ *      Report Size (1),
+ *      Input (Variable),
+ *      Report Count (5),
+ *      Input (Constant),
+ *      Usage Page (Desktop),       ; Generic desktop controls (01h)
+ *      Usage (X),                  ; X (30h, dynamic value)
+ *      Usage (Y),                  ; Y (31h, dynamic value)
+ *      Logical Minimum (0),
+ *      Logical Maximum (32767),
+ *      Physical Minimum (0),
+ *      Physical Maximum (32767),
+ *      Report Count (2),
+ *      Report Size (16),
+ *      Input (Variable),
+ *      Usage Page (Digitizer),     ; Digitizer (0Dh)
+ *      Usage (Tip Pressure),       ; Tip pressure (30h, dynamic value)
+ *      Logical Maximum (1023),
+ *      Report Count (1),
+ *      Report Size (16),
+ *      Input (Variable),
+ *    End Collection,
+ *  End Collection,
+ *  Usage Page (Desktop),           ; Generic desktop controls (01h)
+ *  Usage (00h),
+ *  Collection (Application),
+ *    Report ID (4),
+ *    Logical Minimum (0),
+ *    Logical Maximum (255),
+ *    Usage (00h),
+ *    Report Size (8),
+ *    Report Count (3),
+ *    Feature (Variable),
+ *  End Collection
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 /* Size of the original descriptor of PF1209 tablet */
 #define PF1209_RDESC_ORIG_SIZE	234
 
+<<<<<<< HEAD
 /* Fixed PF1209 report descriptor */
+=======
+/*
+ * Fixed PF1209 report descriptor
+ *
+ * The descriptor is fixed similarly to WP5540U and WP8060U, plus the
+ * feature report is removed, because its purpose is unknown and it is of no
+ * use to the generic HID driver anyway for now.
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __u8 pf1209_rdesc_fixed[] = {
 	0x05, 0x0D,         /*  Usage Page (Digitizer),             */
 	0x09, 0x02,         /*  Usage (Pen),                        */
@@ -380,12 +657,15 @@ static __u8 *uclogic_report_fixup(struct hid_device *hdev, __u8 *rdesc,
 			*rsize = sizeof(wp8060u_rdesc_fixed);
 		}
 		break;
+<<<<<<< HEAD
 	case USB_DEVICE_ID_UCLOGIC_TABLET_WP1062:
 		if (*rsize == WP1062_RDESC_ORIG_SIZE) {
 			rdesc = wp1062_rdesc_fixed;
 			*rsize = sizeof(wp1062_rdesc_fixed);
 		}
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return rdesc;
@@ -400,8 +680,11 @@ static const struct hid_device_id uclogic_devices[] = {
 				USB_DEVICE_ID_UCLOGIC_TABLET_WP5540U) },
 	{ HID_USB_DEVICE(USB_VENDOR_ID_UCLOGIC,
 				USB_DEVICE_ID_UCLOGIC_TABLET_WP8060U) },
+<<<<<<< HEAD
 	{ HID_USB_DEVICE(USB_VENDOR_ID_UCLOGIC,
 				USB_DEVICE_ID_UCLOGIC_TABLET_WP1062) },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ }
 };
 MODULE_DEVICE_TABLE(hid, uclogic_devices);

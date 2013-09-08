@@ -74,9 +74,12 @@
 #define TEGRA_QUATERNARY_ICTLR_BASE	0x60004300
 #define TEGRA_QUATERNARY_ICTLR_SIZE	SZ_64
 
+<<<<<<< HEAD
 #define TEGRA_QUINARY_ICTLR_BASE	0x60004400
 #define TEGRA_QUINARY_ICTLR_SIZE	SZ_64
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define TEGRA_TMR1_BASE			0x60005000
 #define TEGRA_TMR1_SIZE			SZ_8
 
@@ -113,9 +116,12 @@
 #define TEGRA_AHB_GIZMO_BASE		0x6000C004
 #define TEGRA_AHB_GIZMO_SIZE		0x10C
 
+<<<<<<< HEAD
 #define TEGRA_SB_BASE			0x6000C200
 #define TEGRA_SB_SIZE			256
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define TEGRA_STATMON_BASE		0x6000C400
 #define TEGRA_STATMON_SIZE		SZ_1K
 
@@ -277,6 +283,7 @@
 # define TEGRA_DEBUG_UART_BASE TEGRA_UARTE_BASE
 #endif
 
+<<<<<<< HEAD
 /* On TEGRA, many peripherals are very closely packed in
  * two 256MB io windows (that actually only use about 64KB
  * at the start of each).
@@ -319,4 +326,6 @@
 
 #define IO_ADDRESS(n) (IO_TO_VIRT(n))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

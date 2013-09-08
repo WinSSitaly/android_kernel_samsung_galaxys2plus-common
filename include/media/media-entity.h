@@ -98,7 +98,11 @@ struct media_entity {
 
 		/* Sub-device specifications */
 		/* Nothing needed yet */
+<<<<<<< HEAD
 	} info;
+=======
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline u32 media_entity_type(struct media_entity *entity)

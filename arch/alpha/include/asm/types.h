@@ -15,4 +15,12 @@
 #include <asm-generic/int-l64.h>
 #endif
 
+<<<<<<< HEAD
+=======
+#ifndef __ASSEMBLY__
+
+typedef unsigned int umode_t;
+
+#endif /* __ASSEMBLY__ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _ALPHA_TYPES_H */

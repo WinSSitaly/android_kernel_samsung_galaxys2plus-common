@@ -405,6 +405,7 @@ struct virtio_device_id {
 };
 #define VIRTIO_DEV_ANY_ID	0xffffffff
 
+<<<<<<< HEAD
 /*
  * For Hyper-V devices we use the device guid as the id.
  */
@@ -423,6 +424,8 @@ struct rpmsg_device_id {
 	char name[RPMSG_NAME_SIZE];
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* i2c */
 
 #define I2C_NAME_SIZE	20
@@ -551,6 +554,7 @@ struct isapnp_device_id {
 	kernel_ulong_t driver_data;	/* data private to the driver */
 };
 
+<<<<<<< HEAD
 /**
  * struct amba_id - identifies a device on an AMBA bus
  * @id: The significant bits if the hardware device ID
@@ -590,4 +594,6 @@ struct x86_cpu_id {
 #define X86_MODEL_ANY  0
 #define X86_FEATURE_ANY 0	/* Same as FPU, you can't test for that */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* LINUX_MOD_DEVICETABLE_H */

@@ -24,11 +24,18 @@
 #include <linux/suspend.h>
 #include <linux/delay.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/kfifo.h>
 #include "aerdrv.h"
 
 static bool forceload;
 static bool nosourceid;
+=======
+#include "aerdrv.h"
+
+static int forceload;
+static int nosourceid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(forceload, bool, 0);
 module_param(nosourceid, bool, 0);
 
@@ -446,7 +453,12 @@ static struct pcie_port_service_driver *find_aer_service(struct pci_dev *dev)
 	return drv;
 }
 
+<<<<<<< HEAD
 static pci_ers_result_t reset_link(struct pci_dev *dev)
+=======
+static pci_ers_result_t reset_link(struct pcie_device *aerdev,
+		struct pci_dev *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct pci_dev *udev;
 	pci_ers_result_t status;
@@ -486,6 +498,10 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
 
 /**
  * do_recovery - handle nonfatal/fatal error recovery process
+<<<<<<< HEAD
+=======
+ * @aerdev: pointer to a pcie_device data structure of root port
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @dev: pointer to a pci_dev data structure of agent detecting an error
  * @severity: error severity type
  *
@@ -493,7 +509,12 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
  * error detected message to all downstream drivers within a hierarchy in
  * question and return the returned code.
  */
+<<<<<<< HEAD
 static void do_recovery(struct pci_dev *dev, int severity)
+=======
+static void do_recovery(struct pcie_device *aerdev, struct pci_dev *dev,
+		int severity)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	pci_ers_result_t status, result = PCI_ERS_RESULT_RECOVERED;
 	enum pci_channel_state state;
@@ -509,7 +530,11 @@ static void do_recovery(struct pci_dev *dev, int severity)
 			report_error_detected);
 
 	if (severity == AER_FATAL) {
+<<<<<<< HEAD
 		result = reset_link(dev);
+=======
+		result = reset_link(aerdev, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (result != PCI_ERS_RESULT_RECOVERED)
 			goto failed;
 	}
@@ -574,6 +599,7 @@ static void handle_error_source(struct pcie_device *aerdev,
 			pci_write_config_dword(dev, pos + PCI_ERR_COR_STATUS,
 					info->status);
 	} else
+<<<<<<< HEAD
 		do_recovery(dev, info->severity);
 }
 
@@ -642,6 +668,11 @@ static void aer_recover_work_func(struct work_struct *work)
 }
 #endif
 
+=======
+		do_recovery(aerdev, dev, info->severity);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * get_device_error_info - read error status from dev and store it to info
  * @dev: pointer to the device expected to have a error record

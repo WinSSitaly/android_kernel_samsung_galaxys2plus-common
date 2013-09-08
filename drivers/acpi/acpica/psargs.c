@@ -5,7 +5,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -484,6 +488,7 @@ acpi_ps_get_next_simple_arg(struct acpi_parse_state *parser_state,
 static union acpi_parse_object *acpi_ps_get_next_field(struct acpi_parse_state
 						       *parser_state)
 {
+<<<<<<< HEAD
 	u32 aml_offset;
 	union acpi_parse_object *field;
 	union acpi_parse_object *arg = NULL;
@@ -532,6 +537,36 @@ static union acpi_parse_object *acpi_ps_get_next_field(struct acpi_parse_state
 
 		opcode = AML_INT_NAMEDFIELD_OP;
 		break;
+=======
+	u32 aml_offset = (u32)
+	    ACPI_PTR_DIFF(parser_state->aml,
+			  parser_state->aml_start);
+	union acpi_parse_object *field;
+	u16 opcode;
+	u32 name;
+
+	ACPI_FUNCTION_TRACE(ps_get_next_field);
+
+	/* Determine field type */
+
+	switch (ACPI_GET8(parser_state->aml)) {
+	default:
+
+		opcode = AML_INT_NAMEDFIELD_OP;
+		break;
+
+	case 0x00:
+
+		opcode = AML_INT_RESERVEDFIELD_OP;
+		parser_state->aml++;
+		break;
+
+	case 0x01:
+
+		opcode = AML_INT_ACCESSFIELD_OP;
+		parser_state->aml++;
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Allocate a new field op */
@@ -569,6 +604,7 @@ static union acpi_parse_object *acpi_ps_get_next_field(struct acpi_parse_state
 		break;
 
 	case AML_INT_ACCESSFIELD_OP:
+<<<<<<< HEAD
 	case AML_INT_EXTACCESSFIELD_OP:
 
 		/*
@@ -674,6 +710,18 @@ static union acpi_parse_object *acpi_ps_get_next_field(struct acpi_parse_state
 		/* Link the buffer/namestring to parent (CONNECTION_OP) */
 
 		acpi_ps_append_arg(field, arg);
+=======
+
+		/*
+		 * Get access_type and access_attrib and merge into the field Op
+		 * access_type is first operand, access_attribute is second
+		 */
+		field->common.value.integer =
+		    (((u32) ACPI_GET8(parser_state->aml) << 8));
+		parser_state->aml++;
+		field->common.value.integer |= ACPI_GET8(parser_state->aml);
+		parser_state->aml++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	default:

@@ -17,14 +17,22 @@
 
 #include "bfad_drv.h"
 #include "bfa_modules.h"
+<<<<<<< HEAD
 #include "bfi_reg.h"
+=======
+#include "bfi_cbreg.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void
 bfa_hwcb_reginit(struct bfa_s *bfa)
 {
 	struct bfa_iocfc_regs_s	*bfa_regs = &bfa->iocfc.bfa_regs;
 	void __iomem *kva = bfa_ioc_bar0(&bfa->ioc);
+<<<<<<< HEAD
 	int	fn = bfa_ioc_pcifn(&bfa->ioc);
+=======
+	int			i, q, fn = bfa_ioc_pcifn(&bfa->ioc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (fn == 0) {
 		bfa_regs->intr_status = (kva + HOSTFN0_INT_STATUS);
@@ -33,6 +41,32 @@ bfa_hwcb_reginit(struct bfa_s *bfa)
 		bfa_regs->intr_status = (kva + HOSTFN1_INT_STATUS);
 		bfa_regs->intr_mask   = (kva + HOSTFN1_INT_MSK);
 	}
+<<<<<<< HEAD
+=======
+
+	for (i = 0; i < BFI_IOC_MAX_CQS; i++) {
+		/*
+		 * CPE registers
+		 */
+		q = CPE_Q_NUM(fn, i);
+		bfa_regs->cpe_q_pi[i] = (kva + CPE_Q_PI(q));
+		bfa_regs->cpe_q_ci[i] = (kva + CPE_Q_CI(q));
+		bfa_regs->cpe_q_depth[i] = (kva + CPE_Q_DEPTH(q));
+
+		/*
+		 * RME registers
+		 */
+		q = CPE_Q_NUM(fn, i);
+		bfa_regs->rme_q_pi[i] = (kva + RME_Q_PI(q));
+		bfa_regs->rme_q_ci[i] = (kva + RME_Q_CI(q));
+		bfa_regs->rme_q_depth[i] = (kva + RME_Q_DEPTH(q));
+	}
+}
+
+void
+bfa_hwcb_reqq_ack(struct bfa_s *bfa, int reqq)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -42,6 +76,7 @@ bfa_hwcb_reqq_ack_msix(struct bfa_s *bfa, int reqq)
 			bfa->iocfc.bfa_regs.intr_status);
 }
 
+<<<<<<< HEAD
 /*
  * Actions to respond RME Interrupt for Crossbow ASIC:
  * - Write 1 to Interrupt Status register
@@ -72,6 +107,18 @@ bfa_hwcb_rspq_ack(struct bfa_s *bfa, int rspq, u32 ci)
 	bfa_rspq_ci(bfa, rspq) = ci;
 	writel(ci, bfa->iocfc.bfa_regs.rme_q_ci[rspq]);
 	mmiowb();
+=======
+void
+bfa_hwcb_rspq_ack(struct bfa_s *bfa, int rspq)
+{
+}
+
+static void
+bfa_hwcb_rspq_ack_msix(struct bfa_s *bfa, int rspq)
+{
+	writel(__HFN_INT_RME_Q0 << RME_Q_NUM(bfa_ioc_pcifn(&bfa->ioc), rspq),
+			bfa->iocfc.bfa_regs.intr_status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void
@@ -101,6 +148,7 @@ bfa_hwcb_msix_getvecs(struct bfa_s *bfa, u32 *msix_vecs_bmap,
 }
 
 /*
+<<<<<<< HEAD
  * Dummy interrupt handler for handling spurious interrupts.
  */
 static void
@@ -109,11 +157,14 @@ bfa_hwcb_msix_dummy(struct bfa_s *bfa, int vec)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * No special setup required for crossbow -- vector assignments are implicit.
  */
 void
 bfa_hwcb_msix_init(struct bfa_s *bfa, int nvecs)
 {
+<<<<<<< HEAD
 	WARN_ON((nvecs != 1) && (nvecs != __HFN_NUMINTS));
 
 	bfa->msix.nvecs = nvecs;
@@ -130,10 +181,20 @@ bfa_hwcb_msix_ctrl_install(struct bfa_s *bfa)
 
 	if (bfa->msix.nvecs == 1) {
 		for (i = BFI_MSIX_CPE_QMIN_CB; i < BFI_MSIX_CB_MAX; i++)
+=======
+	int i;
+
+	WARN_ON((nvecs != 1) && (nvecs != __HFN_NUMINTS));
+
+	bfa->msix.nvecs = nvecs;
+	if (nvecs == 1) {
+		for (i = 0; i < BFA_MSIX_CB_MAX; i++)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			bfa->msix.handler[i] = bfa_msix_all;
 		return;
 	}
 
+<<<<<<< HEAD
 	for (i = BFI_MSIX_RME_QMAX_CB+1; i < BFI_MSIX_CB_MAX; i++)
 		bfa->msix.handler[i] = bfa_msix_lpu_err;
 }
@@ -157,15 +218,36 @@ bfa_hwcb_msix_queue_install(struct bfa_s *bfa)
 
 	for (i = BFI_MSIX_RME_QMIN_CB; i <= BFI_MSIX_RME_QMAX_CB; i++)
 		bfa->msix.handler[i] = bfa_msix_rspq;
+=======
+	for (i = BFA_MSIX_CPE_Q0; i <= BFA_MSIX_CPE_Q7; i++)
+		bfa->msix.handler[i] = bfa_msix_reqq;
+
+	for (i = BFA_MSIX_RME_Q0; i <= BFA_MSIX_RME_Q7; i++)
+		bfa->msix.handler[i] = bfa_msix_rspq;
+
+	for (; i < BFA_MSIX_CB_MAX; i++)
+		bfa->msix.handler[i] = bfa_msix_lpu_err;
+}
+
+/*
+ * Crossbow -- dummy, interrupts are masked
+ */
+void
+bfa_hwcb_msix_install(struct bfa_s *bfa)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void
 bfa_hwcb_msix_uninstall(struct bfa_s *bfa)
 {
+<<<<<<< HEAD
 	int i;
 
 	for (i = 0; i < BFI_MSIX_CB_MAX; i++)
 		bfa->msix.handler[i] = bfa_hwcb_msix_dummy;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -174,6 +256,7 @@ bfa_hwcb_msix_uninstall(struct bfa_s *bfa)
 void
 bfa_hwcb_isr_mode_set(struct bfa_s *bfa, bfa_boolean_t msix)
 {
+<<<<<<< HEAD
 	if (msix) {
 		bfa->iocfc.hwif.hw_reqq_ack = bfa_hwcb_reqq_ack_msix;
 		bfa->iocfc.hwif.hw_rspq_ack = bfa_hwcb_rspq_ack_msix;
@@ -181,11 +264,20 @@ bfa_hwcb_isr_mode_set(struct bfa_s *bfa, bfa_boolean_t msix)
 		bfa->iocfc.hwif.hw_reqq_ack = NULL;
 		bfa->iocfc.hwif.hw_rspq_ack = bfa_hwcb_rspq_ack;
 	}
+=======
+	bfa->iocfc.hwif.hw_reqq_ack = bfa_hwcb_reqq_ack_msix;
+	bfa->iocfc.hwif.hw_rspq_ack = bfa_hwcb_rspq_ack_msix;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void
 bfa_hwcb_msix_get_rme_range(struct bfa_s *bfa, u32 *start, u32 *end)
 {
+<<<<<<< HEAD
 	*start = BFI_MSIX_RME_QMIN_CB;
 	*end = BFI_MSIX_RME_QMAX_CB;
+=======
+	*start = BFA_MSIX_RME_Q0;
+	*end = BFA_MSIX_RME_Q7;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

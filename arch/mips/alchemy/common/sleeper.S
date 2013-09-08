@@ -153,6 +153,7 @@ LEAF(alchemy_sleep_au1550)
 
 END(alchemy_sleep_au1550)
 
+<<<<<<< HEAD
 /* sleepcode for Au1300 memory controller type */
 LEAF(alchemy_sleep_au1300)
 
@@ -226,6 +227,8 @@ LEAF(alchemy_sleep_au1300)
 
 END(alchemy_sleep_au1300)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* This is where we return upon wakeup.
 	 * Reload all of the registers and return.

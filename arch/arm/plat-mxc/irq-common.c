@@ -23,17 +23,30 @@
 
 int imx_irq_set_priority(unsigned char irq, unsigned char prio)
 {
+<<<<<<< HEAD
 	struct irq_chip_generic *gc;
 	struct mxc_extra_irq *exirq;
+=======
+	struct mxc_irq_chip *chip;
+	struct irq_chip *base;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	ret = -ENOSYS;
 
+<<<<<<< HEAD
 	gc = irq_get_chip_data(irq);
 	if (gc && gc->private) {
 		exirq = gc->private;
 		if (exirq->set_priority)
 			ret = exirq->set_priority(irq, prio);
+=======
+	base = irq_get_chip(irq);
+	if (base) {
+		chip = container_of(base, struct mxc_irq_chip, base);
+		if (chip->set_priority)
+			ret = chip->set_priority(irq, prio);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;
@@ -42,17 +55,30 @@ EXPORT_SYMBOL(imx_irq_set_priority);
 
 int mxc_set_irq_fiq(unsigned int irq, unsigned int type)
 {
+<<<<<<< HEAD
 	struct irq_chip_generic *gc;
 	struct mxc_extra_irq *exirq;
+=======
+	struct mxc_irq_chip *chip;
+	struct irq_chip *base;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	ret = -ENOSYS;
 
+<<<<<<< HEAD
 	gc = irq_get_chip_data(irq);
 	if (gc && gc->private) {
 		exirq = gc->private;
 		if (exirq->set_irq_fiq)
 			ret = exirq->set_irq_fiq(irq, type);
+=======
+	base = irq_get_chip(irq);
+	if (base) {
+		chip = container_of(base, struct mxc_irq_chip, base);
+		if (chip->set_irq_fiq)
+			ret = chip->set_irq_fiq(irq, type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;

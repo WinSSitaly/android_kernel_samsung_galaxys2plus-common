@@ -117,6 +117,7 @@
 #define IEEE80211_MAX_MESH_ID_LEN	32
 
 #define IEEE80211_QOS_CTL_LEN		2
+<<<<<<< HEAD
 /* 1d tag mask */
 #define IEEE80211_QOS_CTL_TAG1D_MASK		0x0007
 /* TID mask */
@@ -133,6 +134,10 @@
 #define IEEE80211_QOS_CTL_A_MSDU_PRESENT	0x0080
 /* Mesh Control 802.11s */
 #define IEEE80211_QOS_CTL_MESH_CONTROL_PRESENT  0x0100
+=======
+#define IEEE80211_QOS_CTL_TID_MASK	0x000F
+#define IEEE80211_QOS_CTL_TAG1D_MASK	0x0007
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* U-APSD queue for WMM IEs sent by AP */
 #define IEEE80211_WMM_IE_AP_QOSINFO_UAPSD	(1<<7)
@@ -544,6 +549,7 @@ static inline int ieee80211_is_qos_nullfunc(__le16 fc)
 	       cpu_to_le16(IEEE80211_FTYPE_DATA | IEEE80211_STYPE_QOS_NULLFUNC);
 }
 
+<<<<<<< HEAD
 /**
  * ieee80211_is_first_frag - check if IEEE80211_SCTL_FRAG is not set
  * @seq_ctrl: frame sequence control bytes in little-endian byteorder
@@ -553,6 +559,8 @@ static inline int ieee80211_is_first_frag(__le16 seq_ctrl)
 	return (seq_ctrl & cpu_to_le16(IEEE80211_SCTL_FRAG)) == 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ieee80211s_hdr {
 	u8 flags;
 	u8 ttl;
@@ -641,6 +649,7 @@ struct ieee80211_rann_ie {
 	u8 rann_ttl;
 	u8 rann_addr[6];
 	u32 rann_seq;
+<<<<<<< HEAD
 	u32 rann_interval;
 	u32 rann_metric;
 } __attribute__ ((packed));
@@ -649,6 +658,11 @@ enum ieee80211_rann_flags {
 	RANN_FLAG_IS_GATE = 1 << 0,
 };
 
+=======
+	u32 rann_metric;
+} __attribute__ ((packed));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define WLAN_SA_QUERY_TR_ID_LEN 2
 
 struct ieee80211_mgmt {
@@ -753,10 +767,26 @@ struct ieee80211_mgmt {
 					__le16 params;
 					__le16 reason_code;
 				} __attribute__((packed)) delba;
+<<<<<<< HEAD
 				struct {
 					u8 action_code;
 					u8 variable[0];
 				} __attribute__((packed)) self_prot;
+=======
+				struct{
+					u8 action_code;
+					/* capab_info for open and confirm,
+					 * reason for close
+					 */
+					__le16 aux;
+					/* Followed in plink_confirm by status
+					 * code, AID and supported rates,
+					 * and directly by supported rates in
+					 * plink_open and plink_close
+					 */
+					u8 variable[0];
+				} __attribute__((packed)) plink_action;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				struct{
 					u8 action_code;
 					u8 variable[0];
@@ -769,20 +799,26 @@ struct ieee80211_mgmt {
 					u8 action;
 					u8 smps_control;
 				} __attribute__ ((packed)) ht_smps;
+<<<<<<< HEAD
 				struct {
 					u8 action_code;
 					u8 dialog_token;
 					__le16 capability;
 					u8 variable[0];
 				} __packed tdls_discover_resp;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} u;
 		} __attribute__ ((packed)) action;
 	} u;
 } __attribute__ ((packed));
 
+<<<<<<< HEAD
 /* Supported Rates value encodings in 802.11n-2009 7.3.2.2 */
 #define BSS_MEMBERSHIP_SELECTOR_HT_PHY	127
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* mgmt header + 1 byte category code */
 #define IEEE80211_MIN_ACTION_SIZE offsetof(struct ieee80211_mgmt, u.action.u)
 
@@ -796,6 +832,7 @@ struct ieee80211_mmie {
 	u8 mic[8];
 } __attribute__ ((packed));
 
+<<<<<<< HEAD
 struct ieee80211_vendor_ie {
 	u8 element_id;
 	u8 len;
@@ -803,6 +840,8 @@ struct ieee80211_vendor_ie {
 	u8 oui_type;
 } __packed;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Control frames */
 struct ieee80211_rts {
 	__le16 frame_control;
@@ -824,6 +863,7 @@ struct ieee80211_pspoll {
 	u8 ta[6];
 } __attribute__ ((packed));
 
+<<<<<<< HEAD
 /* TDLS */
 
 /* Link-id information element */
@@ -870,6 +910,8 @@ struct ieee80211_tdls_data {
 	} u;
 } __packed;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct ieee80211_bar - HT Block Ack Request
  *
@@ -886,11 +928,17 @@ struct ieee80211_bar {
 } __attribute__((packed));
 
 /* 802.11 BAR control masks */
+<<<<<<< HEAD
 #define IEEE80211_BAR_CTRL_ACK_POLICY_NORMAL	0x0000
 #define IEEE80211_BAR_CTRL_MULTI_TID		0x0002
 #define IEEE80211_BAR_CTRL_CBMTID_COMPRESSED_BA	0x0004
 #define IEEE80211_BAR_CTRL_TID_INFO_MASK	0xf000
 #define IEEE80211_BAR_CTRL_TID_INFO_SHIFT	12
+=======
+#define IEEE80211_BAR_CTRL_ACK_POLICY_NORMAL     0x0000
+#define IEEE80211_BAR_CTRL_CBMTID_COMPRESSED_BA  0x0004
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define IEEE80211_HT_MCS_MASK_LEN		10
 
@@ -1261,13 +1309,24 @@ enum ieee80211_eid {
 	WLAN_EID_TS_DELAY = 43,
 	WLAN_EID_TCLAS_PROCESSING = 44,
 	WLAN_EID_QOS_CAPA = 46,
+<<<<<<< HEAD
 	/* 802.11z */
 	WLAN_EID_LINK_ID = 101,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* 802.11s */
 	WLAN_EID_MESH_CONFIG = 113,
 	WLAN_EID_MESH_ID = 114,
 	WLAN_EID_LINK_METRIC_REPORT = 115,
 	WLAN_EID_CONGESTION_NOTIFICATION = 116,
+<<<<<<< HEAD
+=======
+	/* Note that the Peer Link IE has been replaced with the similar
+	 * Peer Management IE.  We will keep the former definition until mesh
+	 * code is changed to comply with latest 802.11s drafts.
+	 */
+	WLAN_EID_PEER_LINK = 55,  /* no longer in 802.11s drafts */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	WLAN_EID_PEER_MGMT = 117,
 	WLAN_EID_CHAN_SWITCH_PARAM = 118,
 	WLAN_EID_MESH_AWAKE_WINDOW = 119,
@@ -1346,11 +1405,20 @@ enum ieee80211_category {
 	WLAN_CATEGORY_HT = 7,
 	WLAN_CATEGORY_SA_QUERY = 8,
 	WLAN_CATEGORY_PROTECTED_DUAL_OF_ACTION = 9,
+<<<<<<< HEAD
 	WLAN_CATEGORY_TDLS = 12,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	WLAN_CATEGORY_MESH_ACTION = 13,
 	WLAN_CATEGORY_MULTIHOP_ACTION = 14,
 	WLAN_CATEGORY_SELF_PROTECTED = 15,
 	WLAN_CATEGORY_WMM = 17,
+<<<<<<< HEAD
+=======
+	/* TODO: remove MESH_PATH_SEL after mesh is updated
+	 * to current 802.11s draft  */
+	WLAN_CATEGORY_MESH_PATH_SEL = 32,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	WLAN_CATEGORY_VENDOR_SPECIFIC_PROTECTED = 126,
 	WLAN_CATEGORY_VENDOR_SPECIFIC = 127,
 };
@@ -1376,6 +1444,7 @@ enum ieee80211_ht_actioncode {
 	WLAN_HT_ACTION_ASEL_IDX_FEEDBACK = 7,
 };
 
+<<<<<<< HEAD
 /* Self Protected Action codes */
 enum ieee80211_self_protected_actioncode {
 	WLAN_SP_RESERVED = 0,
@@ -1401,6 +1470,8 @@ enum ieee80211_mesh_actioncode {
 	WLAN_MESH_ACTION_TBTT_ADJUSTMENT_RESPONSE,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Security key length */
 enum ieee80211_key_len {
 	WLAN_KEY_LEN_WEP40 = 5,
@@ -1410,6 +1481,7 @@ enum ieee80211_key_len {
 	WLAN_KEY_LEN_AES_CMAC = 16,
 };
 
+<<<<<<< HEAD
 /* Public action codes */
 enum ieee80211_pub_actioncode {
 	WLAN_PUB_ACTION_TDLS_DISCOVER_RES = 14,
@@ -1440,6 +1512,8 @@ enum ieee80211_tdls_actioncode {
 /* TDLS specific payload type in the LLC/SNAP header */
 #define WLAN_TDLS_SNAP_RFTYPE	0x2
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * enum - mesh path selection protocol identifier
  *
@@ -1556,6 +1630,12 @@ enum ieee80211_sa_query_action {
 };
 
 
+<<<<<<< HEAD
+=======
+/* A-MSDU 802.11n */
+#define IEEE80211_QOS_CONTROL_A_MSDU_PRESENT 0x0080
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* cipher suite selectors */
 #define WLAN_CIPHER_SUITE_USE_GROUP	0x000FAC00
 #define WLAN_CIPHER_SUITE_WEP40		0x000FAC01
@@ -1564,19 +1644,36 @@ enum ieee80211_sa_query_action {
 #define WLAN_CIPHER_SUITE_CCMP		0x000FAC04
 #define WLAN_CIPHER_SUITE_WEP104	0x000FAC05
 #define WLAN_CIPHER_SUITE_AES_CMAC	0x000FAC06
+<<<<<<< HEAD
 
 #define WLAN_CIPHER_SUITE_SMS4		0x00147201
+=======
+/*
+WAPI
+*/
+#define WLAN_CIPHER_SUITE_SMS4          0x000FAC07
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* AKM suite selectors */
 #define WLAN_AKM_SUITE_8021X		0x000FAC01
 #define WLAN_AKM_SUITE_PSK		0x000FAC02
 #define WLAN_AKM_SUITE_SAE			0x000FAC08
 #define WLAN_AKM_SUITE_FT_OVER_SAE	0x000FAC09
+<<<<<<< HEAD
+=======
+#define WLAN_AKM_SUITE_CCKM		0x000FAC04 /* CCKM */
+/*
+WAPI
+*/
+#define WLAN_AKM_SUITE_WAPI_PSK         0x000FAC04
+#define WLAN_AKM_SUITE_WAPI_CERT        0x000FAC12
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define WLAN_MAX_KEY_LEN		32
 
 #define WLAN_PMKID_LEN			16
 
+<<<<<<< HEAD
 #define WLAN_OUI_WFA			0x506f9a
 #define WLAN_OUI_TYPE_WFA_P2P		9
 
@@ -1617,6 +1714,8 @@ struct ieee80211_tspec_ie {
 	__le16 medium_time;
 } __packed;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * ieee80211_get_qos_ctl - get pointer to qos control bytes
  * @hdr: the frame
@@ -1704,6 +1803,7 @@ static inline bool ieee80211_is_robust_mgmt_frame(struct ieee80211_hdr *hdr)
 }
 
 /**
+<<<<<<< HEAD
  * ieee80211_is_public_action - check if frame is a public action frame
  * @hdr: the frame
  * @len: length of the frame
@@ -1721,6 +1821,8 @@ static inline bool ieee80211_is_public_action(struct ieee80211_hdr *hdr,
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * ieee80211_fhss_chan_to_freq - get channel frequency
  * @channel: the FHSS channel
  *

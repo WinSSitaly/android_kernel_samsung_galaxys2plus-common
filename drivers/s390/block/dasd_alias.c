@@ -189,12 +189,20 @@ int dasd_alias_make_device_known_to_lcu(struct dasd_device *device)
 	unsigned long flags;
 	struct alias_server *server, *newserver;
 	struct alias_lcu *lcu, *newlcu;
+<<<<<<< HEAD
+=======
+	int is_lcu_known;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dasd_uid uid;
 
 	private = (struct dasd_eckd_private *) device->private;
 
 	device->discipline->get_uid(device, &uid);
 	spin_lock_irqsave(&aliastree.lock, flags);
+<<<<<<< HEAD
+=======
+	is_lcu_known = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	server = _find_server(&uid);
 	if (!server) {
 		spin_unlock_irqrestore(&aliastree.lock, flags);
@@ -206,6 +214,10 @@ int dasd_alias_make_device_known_to_lcu(struct dasd_device *device)
 		if (!server) {
 			list_add(&newserver->server, &aliastree.serverlist);
 			server = newserver;
+<<<<<<< HEAD
+=======
+			is_lcu_known = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			/* someone was faster */
 			_free_server(newserver);
@@ -223,10 +235,18 @@ int dasd_alias_make_device_known_to_lcu(struct dasd_device *device)
 		if (!lcu) {
 			list_add(&newlcu->lcu, &server->lculist);
 			lcu = newlcu;
+<<<<<<< HEAD
+=======
+			is_lcu_known = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			/* someone was faster */
 			_free_lcu(newlcu);
 		}
+<<<<<<< HEAD
+=======
+		is_lcu_known = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	spin_lock(&lcu->lock);
 	list_add(&device->alias_list, &lcu->inactive_devices);
@@ -234,7 +254,68 @@ int dasd_alias_make_device_known_to_lcu(struct dasd_device *device)
 	spin_unlock(&lcu->lock);
 	spin_unlock_irqrestore(&aliastree.lock, flags);
 
+<<<<<<< HEAD
 	return 0;
+=======
+	return is_lcu_known;
+}
+
+/*
+ * The first device to be registered on an LCU will have to do
+ * some additional setup steps to configure that LCU on the
+ * storage server. All further devices should wait with their
+ * initialization until the first device is done.
+ * To synchronize this work, the first device will call
+ * dasd_alias_lcu_setup_complete when it is done, and all
+ * other devices will wait for it with dasd_alias_wait_for_lcu_setup.
+ */
+void dasd_alias_lcu_setup_complete(struct dasd_device *device)
+{
+	unsigned long flags;
+	struct alias_server *server;
+	struct alias_lcu *lcu;
+	struct dasd_uid uid;
+
+	device->discipline->get_uid(device, &uid);
+	lcu = NULL;
+	spin_lock_irqsave(&aliastree.lock, flags);
+	server = _find_server(&uid);
+	if (server)
+		lcu = _find_lcu(server, &uid);
+	spin_unlock_irqrestore(&aliastree.lock, flags);
+	if (!lcu) {
+		DBF_EVENT_DEVID(DBF_ERR, device->cdev,
+				"could not find lcu for %04x %02x",
+				uid.ssid, uid.real_unit_addr);
+		WARN_ON(1);
+		return;
+	}
+	complete_all(&lcu->lcu_setup);
+}
+
+void dasd_alias_wait_for_lcu_setup(struct dasd_device *device)
+{
+	unsigned long flags;
+	struct alias_server *server;
+	struct alias_lcu *lcu;
+	struct dasd_uid uid;
+
+	device->discipline->get_uid(device, &uid);
+	lcu = NULL;
+	spin_lock_irqsave(&aliastree.lock, flags);
+	server = _find_server(&uid);
+	if (server)
+		lcu = _find_lcu(server, &uid);
+	spin_unlock_irqrestore(&aliastree.lock, flags);
+	if (!lcu) {
+		DBF_EVENT_DEVID(DBF_ERR, device->cdev,
+				"could not find lcu for %04x %02x",
+				uid.ssid, uid.real_unit_addr);
+		WARN_ON(1);
+		return;
+	}
+	wait_for_completion(&lcu->lcu_setup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -643,6 +724,7 @@ struct dasd_device *dasd_alias_get_start_dev(struct dasd_device *base_device)
 	if (lcu->pav == NO_PAV ||
 	    lcu->flags & (NEED_UAC_UPDATE | UPDATE_PENDING))
 		return NULL;
+<<<<<<< HEAD
 	if (unlikely(!(private->features.feature[8] & 0x01))) {
 		/*
 		 * PAV enabled but prefix not, very unlikely
@@ -653,6 +735,8 @@ struct dasd_device *dasd_alias_get_start_dev(struct dasd_device *base_device)
 			      "Prefix not enabled with PAV enabled\n");
 		return NULL;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&lcu->lock, flags);
 	alias_device = group->next;

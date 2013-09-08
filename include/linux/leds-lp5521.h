@@ -26,12 +26,16 @@
 /* See Documentation/leds/leds-lp5521.txt */
 
 struct lp5521_led_config {
+<<<<<<< HEAD
 	char		*name;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8		chan_nr;
 	u8		led_current; /* mA x10, 0 if led is not connected */
 	u8		max_current;
 };
 
+<<<<<<< HEAD
 struct lp5521_led_pattern {
 	u8 *r;
 	u8 *g;
@@ -41,10 +45,13 @@ struct lp5521_led_pattern {
 	u8 size_b;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define LP5521_CLOCK_AUTO	0
 #define LP5521_CLOCK_INT	1
 #define LP5521_CLOCK_EXT	2
 
+<<<<<<< HEAD
 /* Bits in CONFIG register */
 #define LP5521_PWM_HF			0x40	/* PWM: 0 = 256Hz, 1 = 558Hz */
 #define LP5521_PWRSAVE_EN		0x20	/* 1 = Power save mode */
@@ -57,6 +64,8 @@ struct lp5521_led_pattern {
 #define LP5521_CLK_INT			1	/* Internal clock */
 #define LP5521_CLK_AUTO			2	/* Automatic clock selection */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct lp5521_platform_data {
 	struct lp5521_led_config *led_config;
 	u8	num_channels;
@@ -65,9 +74,12 @@ struct lp5521_platform_data {
 	void	(*release_resources)(void);
 	void	(*enable)(bool state);
 	const char *label;
+<<<<<<< HEAD
 	u8	update_config;
 	struct lp5521_led_pattern *patterns;
 	int num_patterns;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif /* __LINUX_LP5521_H */

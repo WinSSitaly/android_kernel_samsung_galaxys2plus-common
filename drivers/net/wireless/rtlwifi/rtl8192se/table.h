@@ -1,5 +1,9 @@
 /******************************************************************************
+<<<<<<< HEAD
  * Copyright(c) 2008 - 2012 Realtek Corporation. All rights reserved.
+=======
+ * Copyright(c) 2008 - 2010 Realtek Corporation. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or

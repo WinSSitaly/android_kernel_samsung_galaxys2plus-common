@@ -15,6 +15,7 @@ endif
 
 # Define V to have a more verbose compile.
 #
+<<<<<<< HEAD
 # Define O to save output files in a separate directory.
 #
 # Define ARCH as name of target architecture if you want cross-builds.
@@ -25,6 +26,8 @@ endif
 #
 # Define NO_LIBPYTHON to disable python script extension.
 #
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # Define PYTHON to point to the python binary if the default
 # `python' is not correct; for example: PYTHON=python2
 #
@@ -40,12 +43,15 @@ endif
 # Define EXTRA_CFLAGS=-m64 or EXTRA_CFLAGS=-m32 as appropriate for cross-builds.
 #
 # Define NO_DWARF if you do not want debug-info analysis feature at all.
+<<<<<<< HEAD
 #
 # Define WERROR=0 to disable treating any warnings as errors.
 #
 # Define NO_NEWT if you do not want TUI support.
 #
 # Define NO_DEMANGLE if you do not want C++ symbol demangling.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 $(OUTPUT)PERF-VERSION-FILE: .FORCE-PERF-VERSION-FILE
 	@$(SHELL_PATH) util/PERF-VERSION-GEN $(OUTPUT)
@@ -70,11 +76,16 @@ ifeq ($(ARCH),x86_64)
 	ARCH := x86
 	IS_X86_64 := 0
 	ifeq (, $(findstring m32,$(EXTRA_CFLAGS)))
+<<<<<<< HEAD
 		IS_X86_64 := $(shell echo __x86_64__ | ${CC} -E -x c - | tail -n 1)
+=======
+		IS_X86_64 := $(shell echo __x86_64__ | ${CC} -E -xc - | tail -n 1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	endif
 	ifeq (${IS_X86_64}, 1)
 		RAW_ARCH := x86_64
 		ARCH_CFLAGS := -DARCH_X86_64
+<<<<<<< HEAD
 		ARCH_INCLUDE = ../../arch/x86/lib/memcpy_64.S ../../arch/x86/lib/memset_64.S
 	endif
 endif
@@ -84,6 +95,12 @@ ifneq ($(WERROR),0)
 	CFLAGS_WERROR := -Werror
 endif
 
+=======
+		ARCH_INCLUDE = ../../arch/x86/lib/memcpy_64.S
+	endif
+endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #
 # Include saner warnings here, which can catch bugs:
 #
@@ -116,9 +133,15 @@ ifndef PERF_DEBUG
   CFLAGS_OPTIMIZE = -O6
 endif
 
+<<<<<<< HEAD
 CFLAGS = -fno-omit-frame-pointer -ggdb3 -Wall -Wextra -std=gnu99 $(CFLAGS_WERROR) $(CFLAGS_OPTIMIZE) -D_FORTIFY_SOURCE=2 $(EXTRA_WARNINGS) $(EXTRA_CFLAGS)
 EXTLIBS = -lpthread -lrt -lelf -lm
 ALL_CFLAGS = $(CFLAGS) -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE
+=======
+CFLAGS = -fno-omit-frame-pointer -ggdb3 -Wall -Wextra -std=gnu99 -Werror $(CFLAGS_OPTIMIZE) -D_FORTIFY_SOURCE=2 $(EXTRA_WARNINGS) $(EXTRA_CFLAGS)
+EXTLIBS = -lpthread -lrt -lelf -lm
+ALL_CFLAGS = $(CFLAGS) -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ALL_LDFLAGS = $(LDFLAGS)
 STRIP ?= strip
 
@@ -182,7 +205,14 @@ endif
 
 ### --- END CONFIGURATION SECTION ---
 
+<<<<<<< HEAD
 BASIC_CFLAGS = -Iutil/include -Iarch/$(ARCH)/include -I$(OUTPUT)/util -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE
+=======
+# Those must not be GNU-specific; they are shared with perl/ which may
+# be built by a different compiler. (Note that this is an artifact now
+# but it still might be nice to keep that distinction.)
+BASIC_CFLAGS = -Iutil/include -Iarch/$(ARCH)/include
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 BASIC_LDFLAGS =
 
 # Guard against environment variables
@@ -197,6 +227,7 @@ SCRIPT_SH += perf-archive.sh
 grep-libs = $(filter -l%,$(1))
 strip-libs = $(filter-out -l%,$(1))
 
+<<<<<<< HEAD
 PYTHON_EXT_SRCS := $(shell grep -v ^\# util/python-ext-sources)
 PYTHON_EXT_DEPS := util/python-ext-sources util/setup.py
 
@@ -205,6 +236,13 @@ $(OUTPUT)python/perf.so: $(PYRF_OBJS) $(PYTHON_EXT_SRCS) $(PYTHON_EXT_DEPS)
 	  --quiet build_ext; \
 	mkdir -p $(OUTPUT)python && \
 	cp $(PYTHON_EXTBUILD_LIB)perf.so $(OUTPUT)python/
+=======
+$(OUTPUT)python/perf.so: $(PYRF_OBJS)
+	$(QUIET_GEN)CFLAGS='$(BASIC_CFLAGS)' $(PYTHON_WORD) util/setup.py \
+	  --quiet build_ext \
+	  --build-lib='$(OUTPUT)python' \
+	  --build-temp='$(OUTPUT)python/temp'
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #
 # No Perl scripts right now:
 #
@@ -234,6 +272,7 @@ endif
 
 export PERL_PATH
 
+<<<<<<< HEAD
 FLEX = flex
 BISON= bison
 
@@ -252,6 +291,8 @@ $(OUTPUT)util/pmu-bison.c: util/pmu.y
 $(OUTPUT)util/parse-events.o: $(OUTPUT)util/parse-events-flex.c $(OUTPUT)util/parse-events-bison.c
 $(OUTPUT)util/pmu.o: $(OUTPUT)util/pmu-flex.c $(OUTPUT)util/pmu-bison.c
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 LIB_FILE=$(OUTPUT)libperf.a
 
 LIB_H += ../../include/linux/perf_event.h
@@ -267,7 +308,11 @@ LIB_H += util/include/linux/const.h
 LIB_H += util/include/linux/ctype.h
 LIB_H += util/include/linux/kernel.h
 LIB_H += util/include/linux/list.h
+<<<<<<< HEAD
 LIB_H += util/include/linux/export.h
+=======
+LIB_H += util/include/linux/module.h
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 LIB_H += util/include/linux/poison.h
 LIB_H += util/include/linux/prefetch.h
 LIB_H += util/include/linux/rbtree.h
@@ -284,8 +329,11 @@ LIB_H += util/include/asm/uaccess.h
 LIB_H += util/include/dwarf-regs.h
 LIB_H += util/include/asm/dwarf2.h
 LIB_H += util/include/asm/cpufeature.h
+<<<<<<< HEAD
 LIB_H += util/include/asm/unistd_32.h
 LIB_H += util/include/asm/unistd_64.h
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 LIB_H += perf.h
 LIB_H += util/annotate.h
 LIB_H += util/cache.h
@@ -293,8 +341,11 @@ LIB_H += util/callchain.h
 LIB_H += util/build-id.h
 LIB_H += util/debug.h
 LIB_H += util/debugfs.h
+<<<<<<< HEAD
 LIB_H += util/sysfs.h
 LIB_H += util/pmu.h
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 LIB_H += util/event.h
 LIB_H += util/evsel.h
 LIB_H += util/evlist.h
@@ -314,7 +365,10 @@ LIB_H += util/strbuf.h
 LIB_H += util/strlist.h
 LIB_H += util/strfilter.h
 LIB_H += util/svghelper.h
+<<<<<<< HEAD
 LIB_H += util/tool.h
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 LIB_H += util/run-command.h
 LIB_H += util/sigchain.h
 LIB_H += util/symbol.h
@@ -326,7 +380,10 @@ LIB_H += util/thread.h
 LIB_H += util/thread_map.h
 LIB_H += util/trace-event.h
 LIB_H += util/probe-finder.h
+<<<<<<< HEAD
 LIB_H += util/dwarf-aux.h
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 LIB_H += util/probe-event.h
 LIB_H += util/pstack.h
 LIB_H += util/cpumap.h
@@ -341,8 +398,11 @@ LIB_OBJS += $(OUTPUT)util/build-id.o
 LIB_OBJS += $(OUTPUT)util/config.o
 LIB_OBJS += $(OUTPUT)util/ctype.o
 LIB_OBJS += $(OUTPUT)util/debugfs.o
+<<<<<<< HEAD
 LIB_OBJS += $(OUTPUT)util/sysfs.o
 LIB_OBJS += $(OUTPUT)util/pmu.o
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 LIB_OBJS += $(OUTPUT)util/environment.o
 LIB_OBJS += $(OUTPUT)util/event.o
 LIB_OBJS += $(OUTPUT)util/evlist.o
@@ -379,10 +439,13 @@ LIB_OBJS += $(OUTPUT)util/session.o
 LIB_OBJS += $(OUTPUT)util/thread.o
 LIB_OBJS += $(OUTPUT)util/thread_map.o
 LIB_OBJS += $(OUTPUT)util/trace-event-parse.o
+<<<<<<< HEAD
 LIB_OBJS += $(OUTPUT)util/parse-events-flex.o
 LIB_OBJS += $(OUTPUT)util/parse-events-bison.o
 LIB_OBJS += $(OUTPUT)util/pmu-flex.o
 LIB_OBJS += $(OUTPUT)util/pmu-bison.o
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 LIB_OBJS += $(OUTPUT)util/trace-event-read.o
 LIB_OBJS += $(OUTPUT)util/trace-event-info.o
 LIB_OBJS += $(OUTPUT)util/trace-event-scripting.o
@@ -404,10 +467,15 @@ BUILTIN_OBJS += $(OUTPUT)bench/sched-messaging.o
 BUILTIN_OBJS += $(OUTPUT)bench/sched-pipe.o
 ifeq ($(RAW_ARCH),x86_64)
 BUILTIN_OBJS += $(OUTPUT)bench/mem-memcpy-x86-64-asm.o
+<<<<<<< HEAD
 BUILTIN_OBJS += $(OUTPUT)bench/mem-memset-x86-64-asm.o
 endif
 BUILTIN_OBJS += $(OUTPUT)bench/mem-memcpy.o
 BUILTIN_OBJS += $(OUTPUT)bench/mem-memset.o
+=======
+endif
+BUILTIN_OBJS += $(OUTPUT)bench/mem-memcpy.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 BUILTIN_OBJS += $(OUTPUT)builtin-diff.o
 BUILTIN_OBJS += $(OUTPUT)builtin-evlist.o
@@ -491,7 +559,10 @@ else
 	BASIC_CFLAGS += -DDWARF_SUPPORT
 	EXTLIBS += -lelf -ldw
 	LIB_OBJS += $(OUTPUT)util/probe-finder.o
+<<<<<<< HEAD
 	LIB_OBJS += $(OUTPUT)util/dwarf-aux.o
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endif # PERF_HAVE_DWARF_REGS
 endif # NO_DWARF
 
@@ -511,13 +582,20 @@ else
 		LIB_OBJS += $(OUTPUT)util/ui/browsers/annotate.o
 		LIB_OBJS += $(OUTPUT)util/ui/browsers/hists.o
 		LIB_OBJS += $(OUTPUT)util/ui/browsers/map.o
+<<<<<<< HEAD
+=======
+		LIB_OBJS += $(OUTPUT)util/ui/browsers/top.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		LIB_OBJS += $(OUTPUT)util/ui/helpline.o
 		LIB_OBJS += $(OUTPUT)util/ui/progress.o
 		LIB_OBJS += $(OUTPUT)util/ui/util.o
 		LIB_H += util/ui/browser.h
 		LIB_H += util/ui/browsers/map.h
 		LIB_H += util/ui/helpline.h
+<<<<<<< HEAD
 		LIB_H += util/ui/keysyms.h
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		LIB_H += util/ui/libslang.h
 		LIB_H += util/ui/progress.h
 		LIB_H += util/ui/util.h
@@ -525,6 +603,7 @@ else
 	endif
 endif
 
+<<<<<<< HEAD
 ifdef NO_GTK2
 	BASIC_CFLAGS += -DNO_GTK2_SUPPORT
 else
@@ -539,6 +618,8 @@ else
 	endif
 endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ifdef NO_LIBPERL
 	BASIC_CFLAGS += -DNO_LIBPERL
 else
@@ -575,6 +656,7 @@ else
 
   PYTHON_WORD := $(call shell-wordify,$(PYTHON))
 
+<<<<<<< HEAD
   # python extension build directories
   PYTHON_EXTBUILD     := $(OUTPUT)python_ext_build/
   PYTHON_EXTBUILD_LIB := $(PYTHON_EXTBUILD)lib/
@@ -582,6 +664,11 @@ else
   export PYTHON_EXTBUILD_LIB PYTHON_EXTBUILD_TMP
 
   python-clean := rm -rf $(PYTHON_EXTBUILD) $(OUTPUT)python/perf.so
+=======
+  python-clean := $(PYTHON_WORD) util/setup.py clean \
+    --build-lib='$(OUTPUT)python' \
+    --build-temp='$(OUTPUT)python/temp'
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
   ifdef NO_LIBPYTHON
     $(call disable-python)
@@ -685,8 +772,11 @@ ifndef V
 	QUIET_LINK     = @echo '   ' LINK $@;
 	QUIET_MKDIR    = @echo '   ' MKDIR $@;
 	QUIET_GEN      = @echo '   ' GEN $@;
+<<<<<<< HEAD
 	QUIET_FLEX     = @echo '   ' FLEX $@;
 	QUIET_BISON    = @echo '   ' BISON $@;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endif
 endif
 
@@ -767,6 +857,7 @@ $(OUTPUT)perf.o perf.spec \
 	$(SCRIPTS) \
 	: $(OUTPUT)PERF-VERSION-FILE
 
+<<<<<<< HEAD
 .SUFFIXES:
 .SUFFIXES: .o .c .S .s
 
@@ -789,6 +880,14 @@ $(OUTPUT)%.o: %.S
 	$(QUIET_CC)$(CC) -o $@ -c $(ALL_CFLAGS) $<
 $(OUTPUT)%.s: %.S
 	$(QUIET_CC)$(CC) -o $@ -E $(ALL_CFLAGS) $<
+=======
+$(OUTPUT)%.o: %.c $(OUTPUT)PERF-CFLAGS
+	$(QUIET_CC)$(CC) -o $@ -c $(ALL_CFLAGS) $<
+$(OUTPUT)%.s: %.c $(OUTPUT)PERF-CFLAGS
+	$(QUIET_CC)$(CC) -S $(ALL_CFLAGS) $<
+$(OUTPUT)%.o: %.S
+	$(QUIET_CC)$(CC) -o $@ -c $(ALL_CFLAGS) $<
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 $(OUTPUT)util/exec_cmd.o: util/exec_cmd.c $(OUTPUT)PERF-CFLAGS
 	$(QUIET_CC)$(CC) -o $@ -c $(ALL_CFLAGS) \
@@ -806,6 +905,12 @@ $(OUTPUT)util/ui/browser.o: util/ui/browser.c $(OUTPUT)PERF-CFLAGS
 $(OUTPUT)util/ui/browsers/annotate.o: util/ui/browsers/annotate.c $(OUTPUT)PERF-CFLAGS
 	$(QUIET_CC)$(CC) -o $@ -c $(ALL_CFLAGS) -DENABLE_SLFUTURE_CONST $<
 
+<<<<<<< HEAD
+=======
+$(OUTPUT)util/ui/browsers/top.o: util/ui/browsers/top.c $(OUTPUT)PERF-CFLAGS
+	$(QUIET_CC)$(CC) -o $@ -c $(ALL_CFLAGS) -DENABLE_SLFUTURE_CONST $<
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 $(OUTPUT)util/ui/browsers/hists.o: util/ui/browsers/hists.c $(OUTPUT)PERF-CFLAGS
 	$(QUIET_CC)$(CC) -o $@ -c $(ALL_CFLAGS) -DENABLE_SLFUTURE_CONST $<
 
@@ -871,6 +976,10 @@ help:
 	@echo '  quick-install-html	- install the html documentation quickly'
 	@echo ''
 	@echo 'Perf maintainer targets:'
+<<<<<<< HEAD
+=======
+	@echo '  distclean		- alias to clean'
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	@echo '  clean			- clean all binary objects and build output'
 
 doc:
@@ -952,9 +1061,12 @@ install: all
 	$(INSTALL) scripts/python/*.py -t '$(DESTDIR_SQ)$(perfexec_instdir_SQ)/scripts/python'
 	$(INSTALL) scripts/python/bin/* -t '$(DESTDIR_SQ)$(perfexec_instdir_SQ)/scripts/python/bin'
 
+<<<<<<< HEAD
 install-python_ext:
 	$(PYTHON_WORD) util/setup.py --quiet install --root='/$(DESTDIR_SQ)'
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 install-doc:
 	$(MAKE) -C Documentation install
 
@@ -982,12 +1094,19 @@ quick-install-html:
 ### Cleaning rules
 
 clean:
+<<<<<<< HEAD
 	$(RM) $(LIB_OBJS) $(BUILTIN_OBJS) $(LIB_FILE) $(OUTPUT)perf-archive $(OUTPUT)perf.o $(LANG_BINDINGS)
+=======
+	$(RM) $(OUTPUT){*.o,*/*.o,*/*/*.o,*/*/*/*.o,$(LIB_FILE),perf-archive}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	$(RM) $(ALL_PROGRAMS) perf
 	$(RM) *.spec *.pyc *.pyo */*.pyc */*.pyo $(OUTPUT)common-cmds.h TAGS tags cscope*
 	$(MAKE) -C Documentation/ clean
 	$(RM) $(OUTPUT)PERF-VERSION-FILE $(OUTPUT)PERF-CFLAGS
+<<<<<<< HEAD
 	$(RM) $(OUTPUT)util/*-{bison,flex}*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	$(python-clean)
 
 .PHONY: all install clean strip

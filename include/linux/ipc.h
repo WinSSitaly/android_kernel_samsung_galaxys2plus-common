@@ -93,7 +93,11 @@ struct kern_ipc_perm
 	gid_t		gid;
 	uid_t		cuid;
 	gid_t		cgid;
+<<<<<<< HEAD
 	umode_t		mode; 
+=======
+	mode_t		mode; 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long	seq;
 	void		*security;
 };

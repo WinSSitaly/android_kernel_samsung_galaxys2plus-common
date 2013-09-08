@@ -54,6 +54,7 @@ static void warn_no_thread(unsigned int irq, struct irqaction *action)
 static void irq_wake_thread(struct irq_desc *desc, struct irqaction *action)
 {
 	/*
+<<<<<<< HEAD
 	 * In case the thread crashed and was killed we just pretend that
 	 * we handled the interrupt. The hardirq handler has disabled the
 	 * device interrupt, so no irq storm is lurking.
@@ -66,6 +67,16 @@ static void irq_wake_thread(struct irq_desc *desc, struct irqaction *action)
 	 * RUNTHREAD bit is already set, nothing to do.
 	 */
 	if (test_and_set_bit(IRQTF_RUNTHREAD, &action->thread_flags))
+=======
+	 * Wake up the handler thread for this action. In case the
+	 * thread crashed and was killed we just pretend that we
+	 * handled the interrupt. The hardirq handler has disabled the
+	 * device interrupt, so no irq storm is lurking. If the
+	 * RUNTHREAD bit is already set, nothing to do.
+	 */
+	if (test_bit(IRQTF_DIED, &action->thread_flags) ||
+	    test_and_set_bit(IRQTF_RUNTHREAD, &action->thread_flags))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	/*
@@ -114,6 +125,7 @@ static void irq_wake_thread(struct irq_desc *desc, struct irqaction *action)
 	 * threads_oneshot untouched and runs the thread another time.
 	 */
 	desc->threads_oneshot |= action->thread_mask;
+<<<<<<< HEAD
 
 	/*
 	 * We increment the threads_active counter in case we wake up
@@ -126,6 +138,8 @@ static void irq_wake_thread(struct irq_desc *desc, struct irqaction *action)
 	 */
 	atomic_inc(&desc->threads_active);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wake_up_process(action->thread);
 }
 
@@ -133,7 +147,11 @@ irqreturn_t
 handle_irq_event_percpu(struct irq_desc *desc, struct irqaction *action)
 {
 	irqreturn_t retval = IRQ_NONE;
+<<<<<<< HEAD
 	unsigned int flags = 0, irq = desc->irq_data.irq;
+=======
+	unsigned int random = 0, irq = desc->irq_data.irq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	do {
 		irqreturn_t res;
@@ -161,7 +179,11 @@ handle_irq_event_percpu(struct irq_desc *desc, struct irqaction *action)
 
 			/* Fall through to add to randomness */
 		case IRQ_HANDLED:
+<<<<<<< HEAD
 			flags |= action->flags;
+=======
+			random |= action->flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		default:
@@ -172,7 +194,12 @@ handle_irq_event_percpu(struct irq_desc *desc, struct irqaction *action)
 		action = action->next;
 	} while (action);
 
+<<<<<<< HEAD
 	add_interrupt_randomness(irq, flags);
+=======
+	if (random & IRQF_SAMPLE_RANDOM)
+		add_interrupt_randomness(irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!noirqdebug)
 		note_interrupt(irq, desc, retval);

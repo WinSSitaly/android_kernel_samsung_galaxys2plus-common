@@ -94,6 +94,7 @@ int __dlm_lockres_unused(struct dlm_lock_resource *res)
 {
 	int bit;
 
+<<<<<<< HEAD
 	assert_spin_locked(&res->spinlock);
 
 	if (__dlm_lockres_has_locks(res))
@@ -103,17 +104,33 @@ int __dlm_lockres_unused(struct dlm_lock_resource *res)
 	if (res->inflight_locks)
 		return 0;
 
+=======
+	if (__dlm_lockres_has_locks(res))
+		return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!list_empty(&res->dirty) || res->state & DLM_LOCK_RES_DIRTY)
 		return 0;
 
 	if (res->state & DLM_LOCK_RES_RECOVERING)
 		return 0;
 
+<<<<<<< HEAD
 	/* Another node has this resource with this node as the master */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bit = find_next_bit(res->refmap, O2NM_MAX_NODES, 0);
 	if (bit < O2NM_MAX_NODES)
 		return 0;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * since the bit for dlm->node_num is not set, inflight_locks better
+	 * be zero
+	 */
+	BUG_ON(res->inflight_locks != 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
@@ -187,6 +204,11 @@ static void dlm_purge_lockres(struct dlm_ctxt *dlm,
 		/* clear our bit from the master's refmap, ignore errors */
 		ret = dlm_drop_lockres_ref(dlm, res);
 		if (ret < 0) {
+<<<<<<< HEAD
+=======
+			mlog(ML_ERROR, "%s: deref %.*s failed %d\n", dlm->name,
+			     res->lockname.len, res->lockname.name, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!dlm_is_host_down(ret))
 				BUG();
 		}
@@ -209,7 +231,11 @@ static void dlm_purge_lockres(struct dlm_ctxt *dlm,
 		BUG();
 	}
 
+<<<<<<< HEAD
 	__dlm_unhash_lockres(dlm, res);
+=======
+	__dlm_unhash_lockres(res);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* lockres is not in the hash now.  drop the flag and wake up
 	 * any processes waiting in dlm_get_lock_resource. */

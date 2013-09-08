@@ -95,6 +95,7 @@ void udf_truncate_tail_extent(struct inode *inode)
 		lbcount += elen;
 		if (lbcount > inode->i_size) {
 			if (lbcount - inode->i_size >= inode->i_sb->s_blocksize)
+<<<<<<< HEAD
 				udf_warn(inode->i_sb,
 					 "Too long extent after EOF in inode %u: i_size: %lld lbcount: %lld extent %u+%u\n",
 					 (unsigned)inode->i_ino,
@@ -102,14 +103,31 @@ void udf_truncate_tail_extent(struct inode *inode)
 					 (long long)lbcount,
 					 (unsigned)eloc.logicalBlockNum,
 					 (unsigned)elen);
+=======
+				printk(KERN_WARNING
+				       "udf_truncate_tail_extent(): Too long "
+				       "extent after EOF in inode %u: i_size: "
+				       "%Ld lbcount: %Ld extent %u+%u\n",
+				       (unsigned)inode->i_ino,
+				       (long long)inode->i_size,
+				       (long long)lbcount,
+				       (unsigned)eloc.logicalBlockNum,
+				       (unsigned)elen);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			nelen = elen - (lbcount - inode->i_size);
 			epos.offset -= adsize;
 			extent_trunc(inode, &epos, &eloc, etype, elen, nelen);
 			epos.offset += adsize;
 			if (udf_next_aext(inode, &epos, &eloc, &elen, 1) != -1)
+<<<<<<< HEAD
 				udf_err(inode->i_sb,
 					"Extent after EOF in inode %u\n",
 					(unsigned)inode->i_ino);
+=======
+				printk(KERN_ERR "udf_truncate_tail_extent(): "
+				       "Extent after EOF in inode %u.\n",
+				       (unsigned)inode->i_ino);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	}

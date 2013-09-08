@@ -124,7 +124,11 @@ int shpchp_unconfigure_device(struct slot *p_slot)
 				break;
 			}
 		}
+<<<<<<< HEAD
 		pci_stop_and_remove_bus_device(temp);
+=======
+		pci_remove_bus_device(temp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pci_dev_put(temp);
 	}
 	return rc;

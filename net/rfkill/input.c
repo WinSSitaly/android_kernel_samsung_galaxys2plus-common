@@ -15,7 +15,10 @@
 
 #include <linux/input.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/moduleparam.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/workqueue.h>
 #include <linux/init.h>
 #include <linux/rfkill.h>

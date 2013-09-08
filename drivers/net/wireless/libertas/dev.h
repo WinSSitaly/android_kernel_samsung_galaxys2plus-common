@@ -6,6 +6,10 @@
 #ifndef _LBS_DEV_H_
 #define _LBS_DEV_H_
 
+<<<<<<< HEAD
+=======
+#include "mesh.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "defs.h"
 #include "host.h"
 
@@ -21,6 +25,7 @@ struct sleep_params {
 	uint16_t sp_reserved;
 };
 
+<<<<<<< HEAD
 /* Mesh statistics */
 struct lbs_mesh_stats {
 	u32	fwd_bcast_cnt;		/* Fwd: Broadcast counter */
@@ -32,6 +37,8 @@ struct lbs_mesh_stats {
 	u32	drop_blind;		/* Rx:  Dropped by blinding table */
 	u32	tx_failed_cnt;		/* Tx:  Failed transmissions */
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Private structure for the MV device */
 struct lbs_private {
@@ -46,6 +53,10 @@ struct lbs_private {
 	/* CFG80211 */
 	struct wireless_dev *wdev;
 	bool wiphy_registered;
+<<<<<<< HEAD
+=======
+	bool stopping;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct cfg80211_scan_request *scan_req;
 	u8 assoc_bss[ETH_ALEN];
 	u8 disassoc_reason;
@@ -53,7 +64,13 @@ struct lbs_private {
 	/* Mesh */
 	struct net_device *mesh_dev; /* Virtual device */
 #ifdef CONFIG_LIBERTAS_MESH
+<<<<<<< HEAD
 	struct lbs_mesh_stats mstats;
+=======
+	u32 mesh_connect_status;
+	struct lbs_mesh_stats mstats;
+	int mesh_open;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint16_t mesh_tlv;
 	u8 mesh_ssid[IEEE80211_MAX_SSID_LEN + 1];
 	u8 mesh_ssid_len;
@@ -95,14 +112,20 @@ struct lbs_private {
 
 	/* Hardware access */
 	void *card;
+<<<<<<< HEAD
 	bool iface_running;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 fw_ready;
 	u8 surpriseremoved;
 	u8 setup_fw_on_resume;
 	int (*hw_host_to_card) (struct lbs_private *priv, u8 type, u8 *payload, u16 nb);
 	void (*reset_card) (struct lbs_private *priv);
+<<<<<<< HEAD
 	int (*power_save) (struct lbs_private *priv);
 	int (*power_restore) (struct lbs_private *priv);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*enter_deep_sleep) (struct lbs_private *priv);
 	int (*exit_deep_sleep) (struct lbs_private *priv);
 	int (*reset_deep_sleep_wakeup) (struct lbs_private *priv);
@@ -158,7 +181,10 @@ struct lbs_private {
 	/* protected by hard_start_xmit serialization */
 	u8 txretrycount;
 	struct sk_buff *currenttxskb;
+<<<<<<< HEAD
 	struct timer_list tx_lockup_timer;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Locks */
 	struct mutex lock;
@@ -180,10 +206,15 @@ struct lbs_private {
 	wait_queue_head_t scan_q;
 	/* Whether the scan was initiated internally and not by cfg80211 */
 	bool internal_scan;
+<<<<<<< HEAD
+=======
+	unsigned long last_scan;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 extern struct cmd_confirm_sleep confirm_sleep;
 
+<<<<<<< HEAD
 /* Check if there is an interface active. */
 static inline int lbs_iface_active(struct lbs_private *priv)
 {
@@ -196,4 +227,6 @@ static inline int lbs_iface_active(struct lbs_private *priv)
 	return r;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

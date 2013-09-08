@@ -20,11 +20,20 @@
 #include <linux/io.h>
 
 #include <asm/checksum.h>
+<<<<<<< HEAD
 
 #include "ksyms.h"
 
 EXPORT_SYMBOL(find_next_zero_bit);
 EXPORT_SYMBOL(find_next_bit);
+=======
+#include <asm/system.h>
+
+#include "ksyms.h"
+
+EXPORT_SYMBOL(__uc32_find_next_zero_bit);
+EXPORT_SYMBOL(__uc32_find_next_bit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 EXPORT_SYMBOL(__backtrace);
 

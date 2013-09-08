@@ -95,12 +95,20 @@ typedef enum tagWZONETYPE {
 // Ioctl interface structure
 // Command structure
 //
+<<<<<<< HEAD
+=======
+#pragma pack(1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef struct tagSCmdRequest {
 	u8 name[16];
 	void	*data;
 	u16	    wResult;
 	u16     wCmdCode;
+<<<<<<< HEAD
 } __packed SCmdRequest, *PSCmdRequest;
+=======
+} SCmdRequest, *PSCmdRequest;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 //
 // Scan
@@ -110,7 +118,11 @@ typedef struct tagSCmdScan {
 
     u8	    ssid[SSID_MAXLEN + 2];
 
+<<<<<<< HEAD
 } __packed SCmdScan, *PSCmdScan;
+=======
+} SCmdScan, *PSCmdScan;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 //
 // BSS Join
@@ -125,7 +137,11 @@ typedef struct tagSCmdBSSJoin {
     BOOL    bPSEnable;
     BOOL    bShareKeyAuth;
 
+<<<<<<< HEAD
 } __packed SCmdBSSJoin, *PSCmdBSSJoin;
+=======
+} SCmdBSSJoin, *PSCmdBSSJoin;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 //
 // Zonetype Setting
@@ -136,7 +152,11 @@ typedef struct tagSCmdZoneTypeSet {
  BOOL       bWrite;
  WZONETYPE  ZoneType;
 
+<<<<<<< HEAD
 } __packed SCmdZoneTypeSet, *PSCmdZoneTypeSet;
+=======
+} SCmdZoneTypeSet, *PSCmdZoneTypeSet;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct tagSWPAResult {
          char	ifname[100];
@@ -144,7 +164,11 @@ typedef struct tagSWPAResult {
 	u8 key_mgmt;
 	u8 eap_type;
          BOOL authenticated;
+<<<<<<< HEAD
 } __packed SWPAResult, *PSWPAResult;
+=======
+} SWPAResult, *PSWPAResult;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct tagSCmdStartAP {
 
@@ -156,7 +180,11 @@ typedef struct tagSCmdStartAP {
     BOOL    bShareKeyAuth;
     u8      byBasicRate;
 
+<<<<<<< HEAD
 } __packed SCmdStartAP, *PSCmdStartAP;
+=======
+} SCmdStartAP, *PSCmdStartAP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct tagSCmdSetWEP {
 
@@ -166,7 +194,11 @@ typedef struct tagSCmdSetWEP {
     BOOL    bWepKeyAvailable[WEP_NKEYS];
     u32     auWepKeyLength[WEP_NKEYS];
 
+<<<<<<< HEAD
 } __packed SCmdSetWEP, *PSCmdSetWEP;
+=======
+} SCmdSetWEP, *PSCmdSetWEP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct tagSBSSIDItem {
 
@@ -179,14 +211,22 @@ typedef struct tagSBSSIDItem {
     BOOL    bWEPOn;
     u32     uRSSI;
 
+<<<<<<< HEAD
 } __packed SBSSIDItem;
+=======
+} SBSSIDItem;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 typedef struct tagSBSSIDList {
 
 	u32		    uItem;
 	SBSSIDItem	sBSSIDList[0];
+<<<<<<< HEAD
 } __packed SBSSIDList, *PSBSSIDList;
+=======
+} SBSSIDList, *PSBSSIDList;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 typedef struct tagSNodeItem {
@@ -207,7 +247,11 @@ typedef struct tagSNodeItem {
     u32            uTxAttempts;
     u16            wFailureRatio;
 
+<<<<<<< HEAD
 } __packed SNodeItem;
+=======
+} SNodeItem;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 typedef struct tagSNodeList {
@@ -215,7 +259,11 @@ typedef struct tagSNodeList {
 	u32		    uItem;
 	SNodeItem	sNodeList[0];
 
+<<<<<<< HEAD
 } __packed SNodeList, *PSNodeList;
+=======
+} SNodeList, *PSNodeList;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 typedef struct tagSCmdLinkStatus {
@@ -228,7 +276,11 @@ typedef struct tagSCmdLinkStatus {
     u32     uChannel;
     u32     uLinkRate;
 
+<<<<<<< HEAD
 } __packed SCmdLinkStatus, *PSCmdLinkStatus;
+=======
+} SCmdLinkStatus, *PSCmdLinkStatus;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 //
 // 802.11 counter
@@ -246,7 +298,11 @@ typedef struct tagSDot11MIBCount {
     u32 ReceivedFragmentCount;
     u32 MulticastReceivedFrameCount;
     u32 FCSErrorCount;
+<<<<<<< HEAD
 } __packed SDot11MIBCount, *PSDot11MIBCount;
+=======
+} SDot11MIBCount, *PSDot11MIBCount;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 
@@ -354,13 +410,21 @@ typedef struct tagSStatMIBCount {
     u32   ullTxBroadcastBytes[2];
     u32   ullTxMulticastBytes[2];
     u32   ullTxDirectedBytes[2];
+<<<<<<< HEAD
 } __packed SStatMIBCount, *PSStatMIBCount;
+=======
+} SStatMIBCount, *PSStatMIBCount;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct tagSCmdValue {
 
     u32     dwValue;
 
+<<<<<<< HEAD
 } __packed SCmdValue,  *PSCmdValue;
+=======
+} SCmdValue,  *PSCmdValue;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 //
 // hostapd & viawget ioctl related
@@ -430,7 +494,11 @@ struct viawget_hostapd_param {
 			u8 ssid[32];
 		} scan_req;
 	} u;
+<<<<<<< HEAD
 } __packed;
+=======
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*---------------------  Export Classes  ----------------------------*/
 

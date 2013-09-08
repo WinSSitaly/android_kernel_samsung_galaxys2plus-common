@@ -22,6 +22,7 @@
 
 struct clk;
 
+<<<<<<< HEAD
 enum tegra_clk_ex_param {
 	TEGRA_CLK_VI_INP_SEL,
 	TEGRA_CLK_DTV_INVERT,
@@ -31,11 +32,17 @@ enum tegra_clk_ex_param {
 	TEGRA_CLK_PLLD_MIPI_MUX_SEL,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void tegra_periph_reset_deassert(struct clk *c);
 void tegra_periph_reset_assert(struct clk *c);
 
 unsigned long clk_get_rate_all_locked(struct clk *c);
+<<<<<<< HEAD
 void tegra2_sdmmc_tap_delay(struct clk *c, int delay);
 int tegra_clk_cfg_ex(struct clk *c, enum tegra_clk_ex_param p, u32 setting);
+=======
+void tegra_sdmmc_tap_delay(struct clk *c, int delay);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

@@ -7,6 +7,10 @@
  * Copyright (C) 1996, Linus Torvalds
  */
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/machvec.h>
 #include <asm/compiler.h>
 #include <asm-generic/mm_hooks.h>

@@ -10,9 +10,15 @@
  */
 
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <asm/current.h>
 #include <asm/mmu_context.h>
 #include <asm/switch_to.h>
+=======
+#include <asm/system.h>
+#include <asm/current.h>
+#include <asm/mmu_context.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void save_processor_state(void)
 {
@@ -33,6 +39,10 @@ void save_processor_state(void)
 void restore_processor_state(void)
 {
 #ifdef CONFIG_PPC32
+<<<<<<< HEAD
 	switch_mmu_context(current->active_mm, current->active_mm);
+=======
+	switch_mmu_context(NULL, current->active_mm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }

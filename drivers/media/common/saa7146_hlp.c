@@ -1,7 +1,11 @@
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
 #include <linux/kernel.h>
 #include <linux/export.h>
+=======
+#include <linux/kernel.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/saa7146_vv.h>
 
 static void calculate_output_format_register(struct saa7146_dev* saa, u32 palette, u32* clip_format)
@@ -714,8 +718,13 @@ static int calculate_video_dma_grab_packed(struct saa7146_dev* dev, struct saa71
 
 	int depth = sfmt->depth;
 
+<<<<<<< HEAD
 	DEB_CAP("[size=%dx%d,fields=%s]\n",
 		width, height, v4l2_field_names[field]);
+=======
+	DEB_CAP(("[size=%dx%d,fields=%s]\n",
+		width,height,v4l2_field_names[field]));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if( bytesperline != 0) {
 		vdma1.pitch = bytesperline*2;
@@ -840,8 +849,13 @@ static int calculate_video_dma_grab_planar(struct saa7146_dev* dev, struct saa71
 	BUG_ON(0 == buf->pt[1].dma);
 	BUG_ON(0 == buf->pt[2].dma);
 
+<<<<<<< HEAD
 	DEB_CAP("[size=%dx%d,fields=%s]\n",
 		width, height, v4l2_field_names[field]);
+=======
+	DEB_CAP(("[size=%dx%d,fields=%s]\n",
+		width,height,v4l2_field_names[field]));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* fixme: look at bytesperline! */
 
@@ -1001,12 +1015,20 @@ void saa7146_set_capture(struct saa7146_dev *dev, struct saa7146_buf *buf, struc
 	struct saa7146_vv *vv = dev->vv_data;
 	u32 vdma1_prot_addr;
 
+<<<<<<< HEAD
 	DEB_CAP("buf:%p, next:%p\n", buf, next);
+=======
+	DEB_CAP(("buf:%p, next:%p\n",buf,next));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	vdma1_prot_addr = saa7146_read(dev, PROT_ADDR1);
 	if( 0 == vdma1_prot_addr ) {
 		/* clear out beginning of streaming bit (rps register 0)*/
+<<<<<<< HEAD
 		DEB_CAP("forcing sync to new frame\n");
+=======
+		DEB_CAP(("forcing sync to new frame\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		saa7146_write(dev, MC2, MASK_27 );
 	}
 

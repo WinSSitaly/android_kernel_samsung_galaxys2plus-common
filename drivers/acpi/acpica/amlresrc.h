@@ -6,7 +6,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,6 +62,7 @@
 #define ACPI_RESTAG_TYPESPECIFICATTRIBUTES      "_ATT"
 #define ACPI_RESTAG_BASEADDRESS                 "_BAS"
 #define ACPI_RESTAG_BUSMASTER                   "_BM_"	/* Master(1), Slave(0) */
+<<<<<<< HEAD
 #define ACPI_RESTAG_DEBOUNCETIME                "_DBT"
 #define ACPI_RESTAG_DECODE                      "_DEC"
 #define ACPI_RESTAG_DEVICEPOLARITY              "_DPL"
@@ -66,40 +71,58 @@
 #define ACPI_RESTAG_DRIVESTRENGTH               "_DRS"
 #define ACPI_RESTAG_ENDIANNESS                  "_END"
 #define ACPI_RESTAG_FLOWCONTROL                 "_FLC"
+=======
+#define ACPI_RESTAG_DECODE                      "_DEC"
+#define ACPI_RESTAG_DMA                         "_DMA"
+#define ACPI_RESTAG_DMATYPE                     "_TYP"	/* Compatible(0), A(1), B(2), F(3) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ACPI_RESTAG_GRANULARITY                 "_GRA"
 #define ACPI_RESTAG_INTERRUPT                   "_INT"
 #define ACPI_RESTAG_INTERRUPTLEVEL              "_LL_"	/* active_lo(1), active_hi(0) */
 #define ACPI_RESTAG_INTERRUPTSHARE              "_SHR"	/* Shareable(1), no_share(0) */
 #define ACPI_RESTAG_INTERRUPTTYPE               "_HE_"	/* Edge(1), Level(0) */
+<<<<<<< HEAD
 #define ACPI_RESTAG_IORESTRICTION               "_IOR"
 #define ACPI_RESTAG_LENGTH                      "_LEN"
 #define ACPI_RESTAG_LINE                        "_LIN"
+=======
+#define ACPI_RESTAG_LENGTH                      "_LEN"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ACPI_RESTAG_MEMATTRIBUTES               "_MTP"	/* Memory(0), Reserved(1), ACPI(2), NVS(3) */
 #define ACPI_RESTAG_MEMTYPE                     "_MEM"	/* non_cache(0), Cacheable(1) Cache+combine(2), Cache+prefetch(3) */
 #define ACPI_RESTAG_MAXADDR                     "_MAX"
 #define ACPI_RESTAG_MINADDR                     "_MIN"
 #define ACPI_RESTAG_MAXTYPE                     "_MAF"
 #define ACPI_RESTAG_MINTYPE                     "_MIF"
+<<<<<<< HEAD
 #define ACPI_RESTAG_MODE                        "_MOD"
 #define ACPI_RESTAG_PARITY                      "_PAR"
 #define ACPI_RESTAG_PHASE                       "_PHA"
 #define ACPI_RESTAG_PIN                         "_PIN"
 #define ACPI_RESTAG_PINCONFIG                   "_PPI"
 #define ACPI_RESTAG_POLARITY                    "_POL"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ACPI_RESTAG_REGISTERBITOFFSET           "_RBO"
 #define ACPI_RESTAG_REGISTERBITWIDTH            "_RBW"
 #define ACPI_RESTAG_RANGETYPE                   "_RNG"
 #define ACPI_RESTAG_READWRITETYPE               "_RW_"	/* read_only(0), Writeable (1) */
+<<<<<<< HEAD
 #define ACPI_RESTAG_LENGTH_RX                   "_RXL"
 #define ACPI_RESTAG_LENGTH_TX                   "_TXL"
 #define ACPI_RESTAG_SLAVEMODE                   "_SLV"
 #define ACPI_RESTAG_SPEED                       "_SPE"
 #define ACPI_RESTAG_STOPBITS                    "_STB"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ACPI_RESTAG_TRANSLATION                 "_TRA"
 #define ACPI_RESTAG_TRANSTYPE                   "_TRS"	/* Sparse(1), Dense(0) */
 #define ACPI_RESTAG_TYPE                        "_TTP"	/* Translation(1), Static (0) */
 #define ACPI_RESTAG_XFERTYPE                    "_SIZ"	/* 8(0), 8_and16(1), 16(2) */
+<<<<<<< HEAD
 #define ACPI_RESTAG_VENDORDATA                  "_VEN"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Default sizes for "small" resource descriptors */
 
@@ -109,7 +132,10 @@
 #define ASL_RDESC_END_DEPEND_SIZE               0x00
 #define ASL_RDESC_IO_SIZE                       0x07
 #define ASL_RDESC_FIXED_IO_SIZE                 0x03
+<<<<<<< HEAD
 #define ASL_RDESC_FIXED_DMA_SIZE                0x05
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ASL_RDESC_END_TAG_SIZE                  0x01
 
 struct asl_resource_node {
@@ -184,12 +210,15 @@ struct aml_resource_end_tag {
 	AML_RESOURCE_SMALL_HEADER_COMMON u8 checksum;
 };
 
+<<<<<<< HEAD
 struct aml_resource_fixed_dma {
 	AML_RESOURCE_SMALL_HEADER_COMMON u16 request_lines;
 	u16 channels;
 	u8 width;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * LARGE descriptors
  */
@@ -289,6 +318,7 @@ struct aml_resource_generic_register {
 	u64 address;
 };
 
+<<<<<<< HEAD
 /* Common descriptor for gpio_int and gpio_io (ACPI 5.0) */
 
 struct aml_resource_gpio {
@@ -393,6 +423,8 @@ struct aml_resource_uart_serialbus {
 #define AML_RESOURCE_UART_TYPE_REVISION         1	/* ACPI 5.0 */
 #define AML_RESOURCE_UART_MIN_DATA_LEN          10
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* restore default alignment */
 
 #pragma pack()
@@ -414,7 +446,10 @@ union aml_resource {
 	struct aml_resource_end_dependent end_dpf;
 	struct aml_resource_io io;
 	struct aml_resource_fixed_io fixed_io;
+<<<<<<< HEAD
 	struct aml_resource_fixed_dma fixed_dma;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct aml_resource_vendor_small vendor_small;
 	struct aml_resource_end_tag end_tag;
 
@@ -430,11 +465,14 @@ union aml_resource {
 	struct aml_resource_address64 address64;
 	struct aml_resource_extended_address64 ext_address64;
 	struct aml_resource_extended_irq extended_irq;
+<<<<<<< HEAD
 	struct aml_resource_gpio gpio;
 	struct aml_resource_i2c_serialbus i2c_serial_bus;
 	struct aml_resource_spi_serialbus spi_serial_bus;
 	struct aml_resource_uart_serialbus uart_serial_bus;
 	struct aml_resource_common_serialbus common_serial_bus;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Utility overlays */
 

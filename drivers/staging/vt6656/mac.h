@@ -422,7 +422,11 @@
 
 void MACvSetMultiAddrByHash(PSDevice pDevice, BYTE byHashIdx);
 void MACvWriteMultiAddr(PSDevice pDevice, unsigned int uByteIdx, BYTE byData);
+<<<<<<< HEAD
 void MACbShutdown(PSDevice pDevice);
+=======
+BOOL MACbShutdown(PSDevice pDevice);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void MACvSetBBType(PSDevice pDevice, BYTE byType);
 void MACvSetMISCFifo(PSDevice pDevice, WORD wOffset, DWORD dwData);
 void MACvDisableKeyEntry(PSDevice pDevice, unsigned int uEntryIdx);

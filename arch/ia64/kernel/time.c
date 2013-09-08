@@ -29,12 +29,22 @@
 #include <asm/ptrace.h>
 #include <asm/sal.h>
 #include <asm/sections.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "fsyscall_gtod_data.h"
 
 static cycle_t itc_get_cycles(struct clocksource *cs);
 
+<<<<<<< HEAD
 struct fsyscall_gtod_data_t fsyscall_gtod_data;
+=======
+struct fsyscall_gtod_data_t fsyscall_gtod_data = {
+	.lock = __SEQLOCK_UNLOCKED(fsyscall_gtod_data.lock),
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct itc_jitter_data_t itc_jitter_data;
 
@@ -457,13 +467,23 @@ void update_vsyscall_tz(void)
 void update_vsyscall(struct timespec *wall, struct timespec *wtm,
 			struct clocksource *c, u32 mult)
 {
+<<<<<<< HEAD
 	write_seqcount_begin(&fsyscall_gtod_data.seq);
+=======
+        unsigned long flags;
+
+        write_seqlock_irqsave(&fsyscall_gtod_data.lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
         /* copy fsyscall clock data */
         fsyscall_gtod_data.clk_mask = c->mask;
         fsyscall_gtod_data.clk_mult = mult;
         fsyscall_gtod_data.clk_shift = c->shift;
+<<<<<<< HEAD
         fsyscall_gtod_data.clk_fsys_mmio = c->archdata.fsys_mmio;
+=======
+        fsyscall_gtod_data.clk_fsys_mmio = c->fsys_mmio;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         fsyscall_gtod_data.clk_cycle_last = c->cycle_last;
 
 	/* copy kernel time structures */
@@ -480,6 +500,10 @@ void update_vsyscall(struct timespec *wall, struct timespec *wtm,
 		fsyscall_gtod_data.monotonic_time.tv_sec++;
 	}
 
+<<<<<<< HEAD
 	write_seqcount_end(&fsyscall_gtod_data.seq);
+=======
+        write_sequnlock_irqrestore(&fsyscall_gtod_data.lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 

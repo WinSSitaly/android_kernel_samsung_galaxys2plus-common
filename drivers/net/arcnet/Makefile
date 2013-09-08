@@ -12,4 +12,7 @@ obj-$(CONFIG_ARCNET_RIM_I) += arc-rimi.o
 obj-$(CONFIG_ARCNET_COM20020) += com20020.o
 obj-$(CONFIG_ARCNET_COM20020_ISA) += com20020-isa.o
 obj-$(CONFIG_ARCNET_COM20020_PCI) += com20020-pci.o
+<<<<<<< HEAD
 obj-$(CONFIG_ARCNET_COM20020_CS) += com20020_cs.o
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

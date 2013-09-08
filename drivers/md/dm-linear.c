@@ -29,7 +29,10 @@ static int linear_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 {
 	struct linear_c *lc;
 	unsigned long long tmp;
+<<<<<<< HEAD
 	char dummy;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (argc != 2) {
 		ti->error = "Invalid argument count";
@@ -42,7 +45,11 @@ static int linear_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	if (sscanf(argv[1], "%llu%c", &tmp, &dummy) != 1) {
+=======
+	if (sscanf(argv[1], "%llu", &tmp) != 1) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ti->error = "dm-linear: Invalid device sector";
 		goto bad;
 	}

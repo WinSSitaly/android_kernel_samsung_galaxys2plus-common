@@ -271,4 +271,19 @@ static struct i2c_driver upd64031a_driver = {
 	.id_table	= upd64031a_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(upd64031a_driver);
+=======
+static __init int init_upd64031a(void)
+{
+	return i2c_add_driver(&upd64031a_driver);
+}
+
+static __exit void exit_upd64031a(void)
+{
+	i2c_del_driver(&upd64031a_driver);
+}
+
+module_init(init_upd64031a);
+module_exit(exit_upd64031a);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

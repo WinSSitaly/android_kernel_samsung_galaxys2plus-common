@@ -11,12 +11,20 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 
 #include <linux/i2c/tps65010.h>
 
 #include <plat/mmc.h>
+<<<<<<< HEAD
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "board-h2.h"
 

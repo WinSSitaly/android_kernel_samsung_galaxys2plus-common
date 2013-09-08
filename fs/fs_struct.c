@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/fs.h>
 #include <linux/path.h>
@@ -26,11 +30,18 @@ void set_fs_root(struct fs_struct *fs, struct path *path)
 {
 	struct path old_root;
 
+<<<<<<< HEAD
 	path_get_longterm(path);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&fs->lock);
 	write_seqcount_begin(&fs->seq);
 	old_root = fs->root;
 	fs->root = *path;
+<<<<<<< HEAD
+=======
+	path_get_longterm(path);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	write_seqcount_end(&fs->seq);
 	spin_unlock(&fs->lock);
 	if (old_root.dentry)
@@ -45,11 +56,18 @@ void set_fs_pwd(struct fs_struct *fs, struct path *path)
 {
 	struct path old_pwd;
 
+<<<<<<< HEAD
 	path_get_longterm(path);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&fs->lock);
 	write_seqcount_begin(&fs->seq);
 	old_pwd = fs->pwd;
 	fs->pwd = *path;
+<<<<<<< HEAD
+=======
+	path_get_longterm(path);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	write_seqcount_end(&fs->seq);
 	spin_unlock(&fs->lock);
 
@@ -57,6 +75,7 @@ void set_fs_pwd(struct fs_struct *fs, struct path *path)
 		path_put_longterm(&old_pwd);
 }
 
+<<<<<<< HEAD
 static inline int replace_path(struct path *p, const struct path *old, const struct path *new)
 {
 	if (likely(p->dentry != old->dentry || p->mnt != old->mnt))
@@ -65,6 +84,8 @@ static inline int replace_path(struct path *p, const struct path *old, const str
 	return 1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void chroot_fs_refs(struct path *old_root, struct path *new_root)
 {
 	struct task_struct *g, *p;
@@ -76,6 +97,7 @@ void chroot_fs_refs(struct path *old_root, struct path *new_root)
 		task_lock(p);
 		fs = p->fs;
 		if (fs) {
+<<<<<<< HEAD
 			int hits = 0;
 			spin_lock(&fs->lock);
 			write_seqcount_begin(&fs->seq);
@@ -86,6 +108,23 @@ void chroot_fs_refs(struct path *old_root, struct path *new_root)
 				count++;
 				path_get_longterm(new_root);
 			}
+=======
+			spin_lock(&fs->lock);
+			write_seqcount_begin(&fs->seq);
+			if (fs->root.dentry == old_root->dentry
+			    && fs->root.mnt == old_root->mnt) {
+				path_get_longterm(new_root);
+				fs->root = *new_root;
+				count++;
+			}
+			if (fs->pwd.dentry == old_root->dentry
+			    && fs->pwd.mnt == old_root->mnt) {
+				path_get_longterm(new_root);
+				fs->pwd = *new_root;
+				count++;
+			}
+			write_seqcount_end(&fs->seq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			spin_unlock(&fs->lock);
 		}
 		task_unlock(p);
@@ -110,8 +149,15 @@ void exit_fs(struct task_struct *tsk)
 		int kill;
 		task_lock(tsk);
 		spin_lock(&fs->lock);
+<<<<<<< HEAD
 		tsk->fs = NULL;
 		kill = !--fs->users;
+=======
+		write_seqcount_begin(&fs->seq);
+		tsk->fs = NULL;
+		kill = !--fs->users;
+		write_seqcount_end(&fs->seq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock(&fs->lock);
 		task_unlock(tsk);
 		if (kill)

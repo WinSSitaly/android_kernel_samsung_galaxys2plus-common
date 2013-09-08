@@ -9,7 +9,10 @@
 
 #include <linux/types.h>
 #include <linux/linkage.h>
+<<<<<<< HEAD
 #include <mach/irq.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* init functions only */
 extern int __init init_arch_irq(void);

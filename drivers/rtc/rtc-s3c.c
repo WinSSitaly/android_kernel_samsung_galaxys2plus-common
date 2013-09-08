@@ -25,7 +25,10 @@
 #include <linux/clk.h>
 #include <linux/log2.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/of.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/hardware.h>
 #include <asm/uaccess.h>
@@ -35,6 +38,7 @@
 
 enum s3c_cpu_type {
 	TYPE_S3C2410,
+<<<<<<< HEAD
 	TYPE_S3C2416,
 	TYPE_S3C2443,
 	TYPE_S3C64XX,
@@ -44,6 +48,11 @@ struct s3c_rtc_drv_data {
 	int cpu_type;
 };
 
+=======
+	TYPE_S3C64XX,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* I have yet to find an S3C implementation with more than one
  * of these rtc blocks in */
 
@@ -58,6 +67,7 @@ static enum s3c_cpu_type s3c_rtc_cpu_type;
 
 static DEFINE_SPINLOCK(s3c_rtc_pie_lock);
 
+<<<<<<< HEAD
 static void s3c_rtc_alarm_clk_enable(bool enable)
 {
 	static DEFINE_SPINLOCK(s3c_rtc_alarm_clk_lock);
@@ -79,22 +89,30 @@ static void s3c_rtc_alarm_clk_enable(bool enable)
 	spin_unlock_irqrestore(&s3c_rtc_alarm_clk_lock, irq_flags);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* IRQ Handlers */
 
 static irqreturn_t s3c_rtc_alarmirq(int irq, void *id)
 {
 	struct rtc_device *rdev = id;
 
+<<<<<<< HEAD
 	clk_enable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtc_update_irq(rdev, 1, RTC_AF | RTC_IRQF);
 
 	if (s3c_rtc_cpu_type == TYPE_S3C64XX)
 		writeb(S3C2410_INTP_ALM, s3c_rtc_base + S3C2410_INTP);
 
+<<<<<<< HEAD
 	clk_disable(rtc_clk);
 
 	s3c_rtc_alarm_clk_enable(false);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return IRQ_HANDLED;
 }
 
@@ -102,13 +120,19 @@ static irqreturn_t s3c_rtc_tickirq(int irq, void *id)
 {
 	struct rtc_device *rdev = id;
 
+<<<<<<< HEAD
 	clk_enable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtc_update_irq(rdev, 1, RTC_PF | RTC_IRQF);
 
 	if (s3c_rtc_cpu_type == TYPE_S3C64XX)
 		writeb(S3C2410_INTP_TIC, s3c_rtc_base + S3C2410_INTP);
 
+<<<<<<< HEAD
 	clk_disable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return IRQ_HANDLED;
 }
 
@@ -119,16 +143,22 @@ static int s3c_rtc_setaie(struct device *dev, unsigned int enabled)
 
 	pr_debug("%s: aie=%d\n", __func__, enabled);
 
+<<<<<<< HEAD
 	clk_enable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tmp = readb(s3c_rtc_base + S3C2410_RTCALM) & ~S3C2410_RTCALM_ALMEN;
 
 	if (enabled)
 		tmp |= S3C2410_RTCALM_ALMEN;
 
 	writeb(tmp, s3c_rtc_base + S3C2410_RTCALM);
+<<<<<<< HEAD
 	clk_disable(rtc_clk);
 
 	s3c_rtc_alarm_clk_enable(enabled);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -138,19 +168,29 @@ static int s3c_rtc_setfreq(struct device *dev, int freq)
 	struct platform_device *pdev = to_platform_device(dev);
 	struct rtc_device *rtc_dev = platform_get_drvdata(pdev);
 	unsigned int tmp = 0;
+<<<<<<< HEAD
 	int val;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!is_power_of_2(freq))
 		return -EINVAL;
 
+<<<<<<< HEAD
 	clk_enable(rtc_clk);
 	spin_lock_irq(&s3c_rtc_pie_lock);
 
 	if (s3c_rtc_cpu_type != TYPE_S3C64XX) {
+=======
+	spin_lock_irq(&s3c_rtc_pie_lock);
+
+	if (s3c_rtc_cpu_type == TYPE_S3C2410) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tmp = readb(s3c_rtc_base + S3C2410_TICNT);
 		tmp &= S3C2410_TICNT_ENABLE;
 	}
 
+<<<<<<< HEAD
 	val = (rtc_dev->max_user_freq / freq) - 1;
 
 	if (s3c_rtc_cpu_type == TYPE_S3C2416 || s3c_rtc_cpu_type == TYPE_S3C2443) {
@@ -166,6 +206,12 @@ static int s3c_rtc_setfreq(struct device *dev, int freq)
 	writel(tmp, s3c_rtc_base + S3C2410_TICNT);
 	spin_unlock_irq(&s3c_rtc_pie_lock);
 	clk_disable(rtc_clk);
+=======
+	tmp |= (rtc_dev->max_user_freq / freq)-1;
+
+	writel(tmp, s3c_rtc_base + S3C2410_TICNT);
+	spin_unlock_irq(&s3c_rtc_pie_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -177,7 +223,10 @@ static int s3c_rtc_gettime(struct device *dev, struct rtc_time *rtc_tm)
 	unsigned int have_retried = 0;
 	void __iomem *base = s3c_rtc_base;
 
+<<<<<<< HEAD
 	clk_enable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  retry_get_time:
 	rtc_tm->tm_min  = readb(base + S3C2410_RTCMIN);
 	rtc_tm->tm_hour = readb(base + S3C2410_RTCHOUR);
@@ -196,6 +245,13 @@ static int s3c_rtc_gettime(struct device *dev, struct rtc_time *rtc_tm)
 		goto retry_get_time;
 	}
 
+<<<<<<< HEAD
+=======
+	pr_debug("read time %04d.%02d.%02d %02d:%02d:%02d\n",
+		 1900 + rtc_tm->tm_year, rtc_tm->tm_mon, rtc_tm->tm_mday,
+		 rtc_tm->tm_hour, rtc_tm->tm_min, rtc_tm->tm_sec);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtc_tm->tm_sec = bcd2bin(rtc_tm->tm_sec);
 	rtc_tm->tm_min = bcd2bin(rtc_tm->tm_min);
 	rtc_tm->tm_hour = bcd2bin(rtc_tm->tm_hour);
@@ -204,6 +260,7 @@ static int s3c_rtc_gettime(struct device *dev, struct rtc_time *rtc_tm)
 	rtc_tm->tm_year = bcd2bin(rtc_tm->tm_year);
 
 	rtc_tm->tm_year += 100;
+<<<<<<< HEAD
 
 	pr_debug("read time %04d.%02d.%02d %02d:%02d:%02d\n",
 		 1900 + rtc_tm->tm_year, rtc_tm->tm_mon, rtc_tm->tm_mday,
@@ -212,6 +269,10 @@ static int s3c_rtc_gettime(struct device *dev, struct rtc_time *rtc_tm)
 	rtc_tm->tm_mon -= 1;
 
 	clk_disable(rtc_clk);
+=======
+	rtc_tm->tm_mon -= 1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rtc_valid_tm(rtc_tm);
 }
 
@@ -231,14 +292,20 @@ static int s3c_rtc_settime(struct device *dev, struct rtc_time *tm)
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	clk_enable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writeb(bin2bcd(tm->tm_sec),  base + S3C2410_RTCSEC);
 	writeb(bin2bcd(tm->tm_min),  base + S3C2410_RTCMIN);
 	writeb(bin2bcd(tm->tm_hour), base + S3C2410_RTCHOUR);
 	writeb(bin2bcd(tm->tm_mday), base + S3C2410_RTCDATE);
 	writeb(bin2bcd(tm->tm_mon + 1), base + S3C2410_RTCMON);
 	writeb(bin2bcd(year), base + S3C2410_RTCYEAR);
+<<<<<<< HEAD
 	clk_disable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -249,7 +316,10 @@ static int s3c_rtc_getalarm(struct device *dev, struct rtc_wkalrm *alrm)
 	void __iomem *base = s3c_rtc_base;
 	unsigned int alm_en;
 
+<<<<<<< HEAD
 	clk_enable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	alm_tm->tm_sec  = readb(base + S3C2410_ALMSEC);
 	alm_tm->tm_min  = readb(base + S3C2410_ALMMIN);
 	alm_tm->tm_hour = readb(base + S3C2410_ALMHOUR);
@@ -301,7 +371,10 @@ static int s3c_rtc_getalarm(struct device *dev, struct rtc_wkalrm *alrm)
 	else
 		alm_tm->tm_year = -1;
 
+<<<<<<< HEAD
 	clk_disable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -311,12 +384,21 @@ static int s3c_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
 	void __iomem *base = s3c_rtc_base;
 	unsigned int alrm_en;
 
+<<<<<<< HEAD
 	clk_enable(rtc_clk);
 	pr_debug("s3c_rtc_setalarm: %d, %04d.%02d.%02d %02d:%02d:%02d\n",
 		 alrm->enabled,
 		 1900 + tm->tm_year, tm->tm_mon + 1, tm->tm_mday,
 		 tm->tm_hour, tm->tm_min, tm->tm_sec);
 
+=======
+	pr_debug("s3c_rtc_setalarm: %d, %04d.%02d.%02d %02d:%02d:%02d\n",
+		 alrm->enabled,
+		 1900 + tm->tm_year, tm->tm_mon, tm->tm_mday,
+		 tm->tm_hour, tm->tm_min, tm->tm_sec);
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	alrm_en = readb(base + S3C2410_RTCALM) & S3C2410_RTCALM_ALMEN;
 	writeb(0x00, base + S3C2410_RTCALM);
 
@@ -341,7 +423,10 @@ static int s3c_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
 
 	s3c_rtc_setaie(dev, alrm->enabled);
 
+<<<<<<< HEAD
 	clk_disable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -349,7 +434,10 @@ static int s3c_rtc_proc(struct device *dev, struct seq_file *seq)
 {
 	unsigned int ticnt;
 
+<<<<<<< HEAD
 	clk_enable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (s3c_rtc_cpu_type == TYPE_S3C64XX) {
 		ticnt = readw(s3c_rtc_base + S3C2410_RTCCON);
 		ticnt &= S3C64XX_RTCCON_TICEN;
@@ -359,11 +447,60 @@ static int s3c_rtc_proc(struct device *dev, struct seq_file *seq)
 	}
 
 	seq_printf(seq, "periodic_IRQ\t: %s\n", ticnt  ? "yes" : "no");
+<<<<<<< HEAD
 	clk_disable(rtc_clk);
 	return 0;
 }
 
 static const struct rtc_class_ops s3c_rtcops = {
+=======
+	return 0;
+}
+
+static int s3c_rtc_open(struct device *dev)
+{
+	struct platform_device *pdev = to_platform_device(dev);
+	struct rtc_device *rtc_dev = platform_get_drvdata(pdev);
+	int ret;
+
+	ret = request_irq(s3c_rtc_alarmno, s3c_rtc_alarmirq,
+			  IRQF_DISABLED,  "s3c2410-rtc alarm", rtc_dev);
+
+	if (ret) {
+		dev_err(dev, "IRQ%d error %d\n", s3c_rtc_alarmno, ret);
+		return ret;
+	}
+
+	ret = request_irq(s3c_rtc_tickno, s3c_rtc_tickirq,
+			  IRQF_DISABLED,  "s3c2410-rtc tick", rtc_dev);
+
+	if (ret) {
+		dev_err(dev, "IRQ%d error %d\n", s3c_rtc_tickno, ret);
+		goto tick_err;
+	}
+
+	return ret;
+
+ tick_err:
+	free_irq(s3c_rtc_alarmno, rtc_dev);
+	return ret;
+}
+
+static void s3c_rtc_release(struct device *dev)
+{
+	struct platform_device *pdev = to_platform_device(dev);
+	struct rtc_device *rtc_dev = platform_get_drvdata(pdev);
+
+	/* do not clear AIE here, it may be needed for wake */
+
+	free_irq(s3c_rtc_alarmno, rtc_dev);
+	free_irq(s3c_rtc_tickno, rtc_dev);
+}
+
+static const struct rtc_class_ops s3c_rtcops = {
+	.open		= s3c_rtc_open,
+	.release	= s3c_rtc_release,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.read_time	= s3c_rtc_gettime,
 	.set_time	= s3c_rtc_settime,
 	.read_alarm	= s3c_rtc_getalarm,
@@ -380,7 +517,10 @@ static void s3c_rtc_enable(struct platform_device *pdev, int en)
 	if (s3c_rtc_base == NULL)
 		return;
 
+<<<<<<< HEAD
 	clk_enable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!en) {
 		tmp = readw(base + S3C2410_RTCCON);
 		if (s3c_rtc_cpu_type == TYPE_S3C64XX)
@@ -388,7 +528,11 @@ static void s3c_rtc_enable(struct platform_device *pdev, int en)
 		tmp &= ~S3C2410_RTCCON_RTCEN;
 		writew(tmp, base + S3C2410_RTCCON);
 
+<<<<<<< HEAD
 		if (s3c_rtc_cpu_type != TYPE_S3C64XX) {
+=======
+		if (s3c_rtc_cpu_type == TYPE_S3C2410) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			tmp = readb(base + S3C2410_TICNT);
 			tmp &= ~S3C2410_TICNT_ENABLE;
 			writeb(tmp, base + S3C2410_TICNT);
@@ -420,21 +564,31 @@ static void s3c_rtc_enable(struct platform_device *pdev, int en)
 				base + S3C2410_RTCCON);
 		}
 	}
+<<<<<<< HEAD
 	clk_disable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __devexit s3c_rtc_remove(struct platform_device *dev)
 {
 	struct rtc_device *rtc = platform_get_drvdata(dev);
 
+<<<<<<< HEAD
 	free_irq(s3c_rtc_alarmno, rtc);
 	free_irq(s3c_rtc_tickno, rtc);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_set_drvdata(dev, NULL);
 	rtc_device_unregister(rtc);
 
 	s3c_rtc_setaie(&dev->dev, 0);
 
+<<<<<<< HEAD
+=======
+	clk_disable(rtc_clk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clk_put(rtc_clk);
 	rtc_clk = NULL;
 
@@ -445,6 +599,7 @@ static int __devexit s3c_rtc_remove(struct platform_device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct of_device_id s3c_rtc_dt_match[];
 
 static inline int s3c_rtc_get_driver_data(struct platform_device *pdev)
@@ -461,13 +616,18 @@ static inline int s3c_rtc_get_driver_data(struct platform_device *pdev)
 	return platform_get_device_id(pdev)->driver_data;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit s3c_rtc_probe(struct platform_device *pdev)
 {
 	struct rtc_device *rtc;
 	struct rtc_time rtc_tm;
 	struct resource *res;
 	int ret;
+<<<<<<< HEAD
 	int tmp;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pr_debug("%s: probe=%p\n", __func__, pdev);
 
@@ -496,7 +656,12 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
 		return -ENOENT;
 	}
 
+<<<<<<< HEAD
 	s3c_rtc_mem = request_mem_region(res->start, resource_size(res),
+=======
+	s3c_rtc_mem = request_mem_region(res->start,
+					 res->end-res->start+1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					 pdev->name);
 
 	if (s3c_rtc_mem == NULL) {
@@ -505,7 +670,11 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
 		goto err_nores;
 	}
 
+<<<<<<< HEAD
 	s3c_rtc_base = ioremap(res->start, resource_size(res));
+=======
+	s3c_rtc_base = ioremap(res->start, res->end - res->start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (s3c_rtc_base == NULL) {
 		dev_err(&pdev->dev, "failed ioremap()\n");
 		ret = -EINVAL;
@@ -542,7 +711,11 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
 		goto err_nortc;
 	}
 
+<<<<<<< HEAD
 	s3c_rtc_cpu_type = s3c_rtc_get_driver_data(pdev);
+=======
+	s3c_rtc_cpu_type = platform_get_device_id(pdev)->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Check RTC Time */
 
@@ -561,21 +734,29 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
 		dev_warn(&pdev->dev, "warning: invalid RTC value so initializing it\n");
 	}
 
+<<<<<<< HEAD
 	if (s3c_rtc_cpu_type != TYPE_S3C2410)
+=======
+	if (s3c_rtc_cpu_type == TYPE_S3C64XX)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rtc->max_user_freq = 32768;
 	else
 		rtc->max_user_freq = 128;
 
+<<<<<<< HEAD
 	if (s3c_rtc_cpu_type == TYPE_S3C2416 || s3c_rtc_cpu_type == TYPE_S3C2443) {
 		tmp = readw(s3c_rtc_base + S3C2410_RTCCON);
 		tmp |= S3C2443_RTCCON_TICSEL;
 		writew(tmp, s3c_rtc_base + S3C2410_RTCCON);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_set_drvdata(pdev, rtc);
 
 	s3c_rtc_setfreq(&pdev->dev, 1);
 
+<<<<<<< HEAD
 	ret = request_irq(s3c_rtc_alarmno, s3c_rtc_alarmirq,
 			  0,  "s3c2410-rtc alarm", rtc);
 	if (ret) {
@@ -602,6 +783,10 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
 	platform_set_drvdata(pdev, NULL);
 	rtc_device_unregister(rtc);
 
+=======
+	return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  err_nortc:
 	s3c_rtc_enable(pdev, 0);
 	clk_disable(rtc_clk);
@@ -625,7 +810,10 @@ static int ticnt_save, ticnt_en_save;
 
 static int s3c_rtc_suspend(struct platform_device *pdev, pm_message_t state)
 {
+<<<<<<< HEAD
 	clk_enable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* save TICNT for anyone using periodic interrupts */
 	ticnt_save = readb(s3c_rtc_base + S3C2410_TICNT);
 	if (s3c_rtc_cpu_type == TYPE_S3C64XX) {
@@ -640,7 +828,10 @@ static int s3c_rtc_suspend(struct platform_device *pdev, pm_message_t state)
 		else
 			dev_err(&pdev->dev, "enable_irq_wake failed\n");
 	}
+<<<<<<< HEAD
 	clk_disable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -649,7 +840,10 @@ static int s3c_rtc_resume(struct platform_device *pdev)
 {
 	unsigned int tmp;
 
+<<<<<<< HEAD
 	clk_enable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	s3c_rtc_enable(pdev, 1);
 	writeb(ticnt_save, s3c_rtc_base + S3C2410_TICNT);
 	if (s3c_rtc_cpu_type == TYPE_S3C64XX && ticnt_en_save) {
@@ -661,7 +855,10 @@ static int s3c_rtc_resume(struct platform_device *pdev)
 		disable_irq_wake(s3c_rtc_alarmno);
 		wake_en = false;
 	}
+<<<<<<< HEAD
 	clk_disable(rtc_clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -670,6 +867,7 @@ static int s3c_rtc_resume(struct platform_device *pdev)
 #define s3c_rtc_resume  NULL
 #endif
 
+<<<<<<< HEAD
 static struct s3c_rtc_drv_data s3c_rtc_drv_data_array[] = {
 	[TYPE_S3C2410] = { TYPE_S3C2410 },
 	[TYPE_S3C2416] = { TYPE_S3C2416 },
@@ -699,17 +897,22 @@ MODULE_DEVICE_TABLE(of, s3c_rtc_dt_match);
 #define s3c_rtc_dt_match NULL
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_device_id s3c_rtc_driver_ids[] = {
 	{
 		.name		= "s3c2410-rtc",
 		.driver_data	= TYPE_S3C2410,
 	}, {
+<<<<<<< HEAD
 		.name		= "s3c2416-rtc",
 		.driver_data	= TYPE_S3C2416,
 	}, {
 		.name		= "s3c2443-rtc",
 		.driver_data	= TYPE_S3C2443,
 	}, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.name		= "s3c64xx-rtc",
 		.driver_data	= TYPE_S3C64XX,
 	},
@@ -727,11 +930,32 @@ static struct platform_driver s3c_rtc_driver = {
 	.driver		= {
 		.name	= "s3c-rtc",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.of_match_table	= s3c_rtc_dt_match,
 	},
 };
 
 module_platform_driver(s3c_rtc_driver);
+=======
+	},
+};
+
+static char __initdata banner[] = "S3C24XX RTC, (c) 2004,2006 Simtec Electronics\n";
+
+static int __init s3c_rtc_init(void)
+{
+	printk(banner);
+	return platform_driver_register(&s3c_rtc_driver);
+}
+
+static void __exit s3c_rtc_exit(void)
+{
+	platform_driver_unregister(&s3c_rtc_driver);
+}
+
+module_init(s3c_rtc_init);
+module_exit(s3c_rtc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Samsung S3C RTC Driver");
 MODULE_AUTHOR("Ben Dooks <ben@simtec.co.uk>");

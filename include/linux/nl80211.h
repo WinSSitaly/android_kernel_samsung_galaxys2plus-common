@@ -6,7 +6,11 @@
  * Copyright 2006-2010 Johannes Berg <johannes@sipsolutions.net>
  * Copyright 2008 Michael Wu <flamingice@sourmilk.net>
  * Copyright 2008 Luis Carlos Cobo <luisca@cozybit.com>
+<<<<<<< HEAD
  * Copyright 2008 Michael Buesch <m@bues.ch>
+=======
+ * Copyright 2008 Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright 2008, 2009 Luis R. Rodriguez <lrodriguez@atheros.com>
  * Copyright 2008 Jouni Malinen <jouni.malinen@atheros.com>
  * Copyright 2008 Colin McCabe <colin@cozybit.com>
@@ -156,6 +160,7 @@
  * @NL80211_CMD_DEL_KEY: delete a key identified by %NL80211_ATTR_KEY_IDX
  *	or %NL80211_ATTR_MAC.
  *
+<<<<<<< HEAD
  * @NL80211_CMD_GET_BEACON: (not used)
  * @NL80211_CMD_SET_BEACON: change the beacon on an access point interface
  *	using the %NL80211_ATTR_BEACON_HEAD and %NL80211_ATTR_BEACON_TAIL
@@ -173,6 +178,16 @@
  * @NL80211_CMD_NEW_BEACON: old alias for %NL80211_CMD_START_AP
  * @NL80211_CMD_STOP_AP: Stop AP operation on the given interface
  * @NL80211_CMD_DEL_BEACON: old alias for %NL80211_CMD_STOP_AP
+=======
+ * @NL80211_CMD_GET_BEACON: retrieve beacon information (returned in a
+ *	%NL80222_CMD_NEW_BEACON message)
+ * @NL80211_CMD_SET_BEACON: set the beacon on an access point interface
+ *	using the %NL80211_ATTR_BEACON_INTERVAL, %NL80211_ATTR_DTIM_PERIOD,
+ *	%NL80211_ATTR_BEACON_HEAD and %NL80211_ATTR_BEACON_TAIL attributes.
+ * @NL80211_CMD_NEW_BEACON: add a new beacon to an access point interface,
+ *	parameters are like for %NL80211_CMD_SET_BEACON.
+ * @NL80211_CMD_DEL_BEACON: remove the beacon, stop sending it
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * @NL80211_CMD_GET_STATION: Get station attributes for station identified by
  *	%NL80211_ATTR_MAC on the interface identified by %NL80211_ATTR_IFINDEX.
@@ -240,8 +255,11 @@
  *
  * @NL80211_CMD_GET_SCAN: get scan results
  * @NL80211_CMD_TRIGGER_SCAN: trigger a new scan with the given parameters
+<<<<<<< HEAD
  *	%NL80211_ATTR_TX_NO_CCK_RATE is used to decide whether to send the
  *	probe requests at CCK rate or not.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @NL80211_CMD_NEW_SCAN_RESULTS: scan notification (as a reply to
  *	NL80211_CMD_GET_SCAN and on the "scan" multicast group)
  * @NL80211_CMD_SCAN_ABORTED: scan was aborted, for unspecified reasons,
@@ -258,8 +276,12 @@
  *	passed, all channels allowed for the current regulatory domain
  *	are used.  Extra IEs can also be passed from the userspace by
  *	using the %NL80211_ATTR_IE attribute.
+<<<<<<< HEAD
  * @NL80211_CMD_STOP_SCHED_SCAN: stop a scheduled scan.  Returns -ENOENT
  *	if scheduled scan is not running.
+=======
+ * @NL80211_CMD_STOP_SCHED_SCAN: stop a scheduled scan
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @NL80211_CMD_SCHED_SCAN_RESULTS: indicates that there are scheduled scan
  *	results available.
  * @NL80211_CMD_SCHED_SCAN_STOPPED: indicates that the scheduled scan has
@@ -369,11 +391,14 @@
  *	%NL80211_ATTR_WIPHY_FREQ, %NL80211_ATTR_CONTROL_PORT,
  *	%NL80211_ATTR_CONTROL_PORT_ETHERTYPE and
  *	%NL80211_ATTR_CONTROL_PORT_NO_ENCRYPT.
+<<<<<<< HEAD
  *	Background scan period can optionally be
  *	specified in %NL80211_ATTR_BG_SCAN_PERIOD,
  *	if not specified default background scan configuration
  *	in driver is used and if period value is 0, bg scan will be disabled.
  *	This attribute is ignored if driver does not support roam scan.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	It is also sent as an event, with the BSSID and response IEs when the
  *	connection is established or failed to be established. This can be
  *	determined by the STATUS_CODE attribute.
@@ -441,8 +466,11 @@
  *	specified using %NL80211_ATTR_DURATION. When called, this operation
  *	returns a cookie (%NL80211_ATTR_COOKIE) that will be included with the
  *	TX status event pertaining to the TX request.
+<<<<<<< HEAD
  *	%NL80211_ATTR_TX_NO_CCK_RATE is used to decide whether to send the
  *	management frames at CCK rate or not in 2GHz band.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @NL80211_CMD_FRAME_WAIT_CANCEL: When an off-channel TX was requested, this
  *	command may be used with the corresponding cookie to cancel the wait
  *	time if it is known that it is no longer necessary.
@@ -572,10 +600,15 @@ enum nl80211_commands {
 
 	NL80211_CMD_GET_BEACON,
 	NL80211_CMD_SET_BEACON,
+<<<<<<< HEAD
 	NL80211_CMD_START_AP,
 	NL80211_CMD_NEW_BEACON = NL80211_CMD_START_AP,
 	NL80211_CMD_STOP_AP,
 	NL80211_CMD_DEL_BEACON = NL80211_CMD_STOP_AP,
+=======
+	NL80211_CMD_NEW_BEACON,
+	NL80211_CMD_DEL_BEACON,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	NL80211_CMD_GET_STATION,
 	NL80211_CMD_SET_STATION,
@@ -709,8 +742,11 @@ enum nl80211_commands {
 #define NL80211_CMD_DISASSOCIATE NL80211_CMD_DISASSOCIATE
 #define NL80211_CMD_REG_BEACON_HINT NL80211_CMD_REG_BEACON_HINT
 
+<<<<<<< HEAD
 #define NL80211_ATTR_FEATURE_FLAGS NL80211_ATTR_FEATURE_FLAGS
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* source-level API compatibility */
 #define NL80211_CMD_GET_MESH_PARAMS NL80211_CMD_GET_MESH_CONFIG
 #define NL80211_CMD_SET_MESH_PARAMS NL80211_CMD_SET_MESH_CONFIG
@@ -919,6 +955,7 @@ enum nl80211_commands {
  * @NL80211_ATTR_STATUS_CODE: StatusCode for the %NL80211_CMD_CONNECT
  *	event (u16)
  * @NL80211_ATTR_PRIVACY: Flag attribute, used with connect(), indicating
+<<<<<<< HEAD
  *	that protected APs should be used. This is also used with NEW_BEACON to
  *	indicate that the BSS is to use protection.
  *
@@ -933,6 +970,20 @@ enum nl80211_commands {
  *	(a u32 with flags from &enum nl80211_wpa_versions).
  * @NL80211_ATTR_AKM_SUITES: Used with CONNECT, ASSOCIATE, and NEW_BEACON to
  *	indicate which key management algorithm(s) to use (an array of u32).
+=======
+ *	that protected APs should be used.
+ *
+ * @NL80211_ATTR_CIPHERS_PAIRWISE: Used with CONNECT and ASSOCIATE to
+ *	indicate which unicast key ciphers will be used with the connection
+ *	(an array of u32).
+ * @NL80211_ATTR_CIPHER_GROUP: Used with CONNECT and ASSOCIATE to indicate
+ *	which group key cipher will be used with the connection (a u32).
+ * @NL80211_ATTR_WPA_VERSIONS: Used with CONNECT and ASSOCIATE to indicate
+ *	which WPA version(s) the AP we want to associate with is using
+ *	(a u32 with flags from &enum nl80211_wpa_versions).
+ * @NL80211_ATTR_AKM_SUITES: Used with CONNECT and ASSOCIATE to indicate
+ *	which key management algorithm(s) to use (an array of u32).
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * @NL80211_ATTR_REQ_IE: (Re)association request information elements as
  *	sent out by the card, for ROAM and successful CONNECT events.
@@ -1072,8 +1123,13 @@ enum nl80211_commands {
  *	driving the peer link management state machine.
  *	@NL80211_MESH_SETUP_USERSPACE_AMPE must be enabled.
  *
+<<<<<<< HEAD
  * @NL80211_ATTR_WOWLAN_TRIGGERS_SUPPORTED: indicates, as part of the wiphy
  *	capabilities, the supported WoWLAN triggers
+=======
+ * @NL80211_ATTR_WOWLAN_SUPPORTED: indicates, as part of the wiphy capabilities,
+ *	the supported WoWLAN triggers
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @NL80211_ATTR_WOWLAN_TRIGGERS: used by %NL80211_CMD_SET_WOWLAN to
  *	indicate which WoW triggers should be enabled. This is also
  *	used by %NL80211_CMD_GET_WOWLAN to get the currently enabled WoWLAN
@@ -1500,17 +1556,27 @@ enum nl80211_attrs {
 #define NL80211_ATTR_AKM_SUITES NL80211_ATTR_AKM_SUITES
 #define NL80211_ATTR_KEY NL80211_ATTR_KEY
 #define NL80211_ATTR_KEYS NL80211_ATTR_KEYS
+<<<<<<< HEAD
 #define NL80211_ATTR_FEATURE_FLAGS NL80211_ATTR_FEATURE_FLAGS
 
 #define NL80211_MAX_SUPP_RATES			32
 #define NL80211_MAX_SUPP_HT_RATES		77
+=======
+
+#define NL80211_MAX_SUPP_RATES			32
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NL80211_MAX_SUPP_REG_RULES		32
 #define NL80211_TKIP_DATA_OFFSET_ENCR_KEY	0
 #define NL80211_TKIP_DATA_OFFSET_TX_MIC_KEY	16
 #define NL80211_TKIP_DATA_OFFSET_RX_MIC_KEY	24
 #define NL80211_HT_CAPABILITY_LEN		26
 
+<<<<<<< HEAD
 #define NL80211_MAX_NR_CIPHER_SUITES		5
+=======
+#define NL80211_MAX_NR_CIPHER_SUITES		6
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NL80211_MAX_NR_AKM_SUITES		2
 
 /**
@@ -1565,11 +1631,14 @@ enum nl80211_iftype {
  * @NL80211_STA_FLAG_WME: station is WME/QoS capable
  * @NL80211_STA_FLAG_MFP: station uses management frame protection
  * @NL80211_STA_FLAG_AUTHENTICATED: station is authenticated
+<<<<<<< HEAD
  * @NL80211_STA_FLAG_TDLS_PEER: station is a TDLS peer -- this flag should
  *	only be used in managed mode (even in the flags mask). Note that the
  *	flag can't be changed, it is only valid while adding a station, and
  *	attempts to change it will silently be ignored (rather than rejected
  *	as errors.)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @NL80211_STA_FLAG_MAX: highest station flag number currently defined
  * @__NL80211_STA_FLAG_AFTER_LAST: internal use
  */
@@ -1580,7 +1649,10 @@ enum nl80211_sta_flags {
 	NL80211_STA_FLAG_WME,
 	NL80211_STA_FLAG_MFP,
 	NL80211_STA_FLAG_AUTHENTICATED,
+<<<<<<< HEAD
 	NL80211_STA_FLAG_TDLS_PEER,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* keep last */
 	__NL80211_STA_FLAG_AFTER_LAST,
@@ -1683,8 +1755,11 @@ enum nl80211_sta_bss_param {
  * @NL80211_STA_INFO_BSS_PARAM: current station's view of BSS, nested attribute
  *     containing info as possible, see &enum nl80211_sta_bss_param
  * @NL80211_STA_INFO_CONNECTED_TIME: time since the station is last connected
+<<<<<<< HEAD
  * @NL80211_STA_INFO_STA_FLAGS: Contains a struct nl80211_sta_flag_update.
  * @NL80211_STA_INFO_BEACON_LOSS: count of times beacon loss was detected (u32)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @__NL80211_STA_INFO_AFTER_LAST: internal
  * @NL80211_STA_INFO_MAX: highest possible station info attribute
  */
@@ -1706,8 +1781,11 @@ enum nl80211_sta_info {
 	NL80211_STA_INFO_RX_BITRATE,
 	NL80211_STA_INFO_BSS_PARAM,
 	NL80211_STA_INFO_CONNECTED_TIME,
+<<<<<<< HEAD
 	NL80211_STA_INFO_STA_FLAGS,
 	NL80211_STA_INFO_BEACON_LOSS,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* keep last */
 	__NL80211_STA_INFO_AFTER_LAST,
@@ -1982,6 +2060,7 @@ enum nl80211_reg_rule_flags {
 };
 
 /**
+<<<<<<< HEAD
  * enum nl80211_dfs_regions - regulatory DFS regions
  *
  * @NL80211_DFS_UNSET: Country has no DFS master region specified
@@ -1997,6 +2076,8 @@ enum nl80211_dfs_regions {
 };
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * enum nl80211_survey_info - survey information
  *
  * These attribute types are used with %NL80211_ATTR_SURVEY_INFO
@@ -2122,6 +2203,7 @@ enum nl80211_mntr_flags {
  * @NL80211_MESHCONF_ELEMENT_TTL: specifies the value of TTL field set at a
  * source mesh point for path selection elements.
  *
+<<<<<<< HEAD
  * @NL80211_MESHCONF_HWMP_RANN_INTERVAL:  The interval of time (in TUs) between
  * root announcements are transmitted.
  *
@@ -2140,6 +2222,8 @@ enum nl80211_mntr_flags {
  * threshold for average signal strength of candidate station to establish
  * a peer link.
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @NL80211_MESHCONF_ATTR_MAX: highest possible mesh configuration attribute
  *
  * @__NL80211_MESHCONF_ATTR_AFTER_LAST: internal use
@@ -2161,11 +2245,14 @@ enum nl80211_meshconf_params {
 	NL80211_MESHCONF_HWMP_NET_DIAM_TRVS_TIME,
 	NL80211_MESHCONF_HWMP_ROOTMODE,
 	NL80211_MESHCONF_ELEMENT_TTL,
+<<<<<<< HEAD
 	NL80211_MESHCONF_HWMP_RANN_INTERVAL,
 	NL80211_MESHCONF_GATE_ANNOUNCEMENTS,
 	NL80211_MESHCONF_HWMP_PERR_MIN_INTERVAL,
 	NL80211_MESHCONF_FORWARDING,
 	NL80211_MESHCONF_RSSI_THRESHOLD,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* keep last */
 	__NL80211_MESHCONF_ATTR_AFTER_LAST,
@@ -2375,6 +2462,14 @@ enum nl80211_mfp {
 enum nl80211_wpa_versions {
 	NL80211_WPA_VERSION_1 = 1 << 0,
 	NL80211_WPA_VERSION_2 = 1 << 1,
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_TARGET_LOCALE_CHN)
+	NL80211_WAPI_VERSION_1 = 1 << 2,	/* Support WAPI feature */
+#else
+	NL80211_WAPI_VERSION_1 = 1 << 2,
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -2439,15 +2534,21 @@ enum nl80211_key_attributes {
  *	in an array of rates as defined in IEEE 802.11 7.3.2.2 (u8 values with
  *	1 = 500 kbps) but without the IE length restriction (at most
  *	%NL80211_MAX_SUPP_RATES in a single array).
+<<<<<<< HEAD
  * @NL80211_TXRATE_MCS: HT (MCS) rates allowed for TX rate selection
  *	in an array of MCS numbers.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @__NL80211_TXRATE_AFTER_LAST: internal
  * @NL80211_TXRATE_MAX: highest TX rate attribute
  */
 enum nl80211_tx_rate_attributes {
 	__NL80211_TXRATE_INVALID,
 	NL80211_TXRATE_LEGACY,
+<<<<<<< HEAD
 	NL80211_TXRATE_MCS,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* keep last */
 	__NL80211_TXRATE_AFTER_LAST,
@@ -2584,6 +2685,7 @@ struct nl80211_wowlan_pattern_support {
  *
  *	In %NL80211_ATTR_WOWLAN_TRIGGERS_SUPPORTED, it is a binary attribute
  *	carrying a &struct nl80211_wowlan_pattern_support.
+<<<<<<< HEAD
  * @NL80211_WOWLAN_TRIG_GTK_REKEY_SUPPORTED: Not a real trigger, and cannot be
  *	used when setting, used only to indicate that GTK rekeying is supported
  *	by the device (flag)
@@ -2594,6 +2696,8 @@ struct nl80211_wowlan_pattern_support {
  * @NL80211_WOWLAN_TRIG_4WAY_HANDSHAKE: wake up on 4-way handshake (flag)
  * @NL80211_WOWLAN_TRIG_RFKILL_RELEASE: wake up when rfkill is released
  *	(on devices that have rfkill in the device) (flag)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @NUM_NL80211_WOWLAN_TRIG: number of wake on wireless triggers
  * @MAX_NL80211_WOWLAN_TRIG: highest wowlan trigger attribute number
  */
@@ -2603,11 +2707,14 @@ enum nl80211_wowlan_triggers {
 	NL80211_WOWLAN_TRIG_DISCONNECT,
 	NL80211_WOWLAN_TRIG_MAGIC_PKT,
 	NL80211_WOWLAN_TRIG_PKT_PATTERN,
+<<<<<<< HEAD
 	NL80211_WOWLAN_TRIG_GTK_REKEY_SUPPORTED,
 	NL80211_WOWLAN_TRIG_GTK_REKEY_FAILURE,
 	NL80211_WOWLAN_TRIG_EAP_IDENT_REQUEST,
 	NL80211_WOWLAN_TRIG_4WAY_HANDSHAKE,
 	NL80211_WOWLAN_TRIG_RFKILL_RELEASE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* keep last */
 	NUM_NL80211_WOWLAN_TRIG,
@@ -2721,6 +2828,7 @@ enum nl80211_plink_state {
 	MAX_NL80211_PLINK_STATES = NUM_NL80211_PLINK_STATES - 1
 };
 
+<<<<<<< HEAD
 #define NL80211_KCK_LEN			16
 #define NL80211_KEK_LEN			16
 #define NL80211_REPLAY_CTR_LEN		8
@@ -2863,4 +2971,6 @@ enum nl80211_probe_resp_offload_support_attr {
 	NL80211_PROBE_RESP_OFFLOAD_SUPPORT_80211U =	1<<3,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __LINUX_NL80211_H */

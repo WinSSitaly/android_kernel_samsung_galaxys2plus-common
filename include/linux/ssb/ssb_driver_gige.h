@@ -2,7 +2,10 @@
 #define LINUX_SSB_DRIVER_GIGE_H_
 
 #include <linux/ssb/ssb.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pci.h>
 #include <linux/spinlock.h>
 

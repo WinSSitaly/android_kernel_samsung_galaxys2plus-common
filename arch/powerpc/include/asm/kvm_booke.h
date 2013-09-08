@@ -93,8 +93,11 @@ static inline ulong kvmppc_get_fault_dar(struct kvm_vcpu *vcpu)
 	return vcpu->arch.fault_dear;
 }
 
+<<<<<<< HEAD
 static inline ulong kvmppc_get_msr(struct kvm_vcpu *vcpu)
 {
 	return vcpu->arch.shared->msr;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ASM_KVM_BOOKE_H__ */

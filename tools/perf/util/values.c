@@ -32,7 +32,10 @@ void perf_read_values_destroy(struct perf_read_values *values)
 
 	for (i = 0; i < values->threads; i++)
 		free(values->value[i]);
+<<<<<<< HEAD
 	free(values->value);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	free(values->pid);
 	free(values->tid);
 	free(values->counterrawid);

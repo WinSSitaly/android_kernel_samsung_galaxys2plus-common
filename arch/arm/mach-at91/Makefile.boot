@@ -3,6 +3,7 @@
 #   PARAMS_PHYS must be within 4MB of ZRELADDR
 #   INITRD_PHYS must be in RAM
 
+<<<<<<< HEAD
 ifeq ($(CONFIG_ARCH_AT91SAM9G45),y)
    zreladdr-y	+= 0x70008000
 params_phys-y	:= 0x70000100
@@ -20,3 +21,18 @@ dtb-$(CONFIG_MACH_AT91SAM_DT) += usb_a9g20.dtb
 dtb-$(CONFIG_MACH_AT91SAM_DT) += at91sam9m10g45ek.dtb
 # sam9x5
 dtb-$(CONFIG_MACH_AT91SAM_DT) += at91sam9g25ek.dtb
+=======
+ifeq ($(CONFIG_ARCH_AT91CAP9),y)
+   zreladdr-y	:= 0x70008000
+params_phys-y	:= 0x70000100
+initrd_phys-y	:= 0x70410000
+else ifeq ($(CONFIG_ARCH_AT91SAM9G45),y)
+   zreladdr-y	:= 0x70008000
+params_phys-y	:= 0x70000100
+initrd_phys-y	:= 0x70410000
+else
+   zreladdr-y	:= 0x20008000
+params_phys-y	:= 0x20000100
+initrd_phys-y	:= 0x20410000
+endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -34,7 +34,11 @@
 #include <acpi/acpi_drivers.h>
 #include <linux/dmi.h>
 
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int check_sta_before_sun;
 
 #define DRIVER_VERSION 	"0.1"

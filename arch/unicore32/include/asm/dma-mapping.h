@@ -82,6 +82,7 @@ static inline int dma_set_mask(struct device *dev, u64 dma_mask)
 	return 0;
 }
 
+<<<<<<< HEAD
 #define dma_alloc_coherent(d,s,h,f)	dma_alloc_attrs(d,s,h,f,NULL)
 
 static inline void *dma_alloc_attrs(struct device *dev, size_t size,
@@ -102,6 +103,22 @@ static inline void dma_free_attrs(struct device *dev, size_t size,
 	struct dma_map_ops *dma_ops = get_dma_ops(dev);
 
 	dma_ops->free(dev, size, cpu_addr, dma_handle, attrs);
+=======
+static inline void *dma_alloc_coherent(struct device *dev, size_t size,
+				       dma_addr_t *dma_handle, gfp_t flag)
+{
+	struct dma_map_ops *dma_ops = get_dma_ops(dev);
+
+	return dma_ops->alloc_coherent(dev, size, dma_handle, flag);
+}
+
+static inline void dma_free_coherent(struct device *dev, size_t size,
+				     void *cpu_addr, dma_addr_t dma_handle)
+{
+	struct dma_map_ops *dma_ops = get_dma_ops(dev);
+
+	dma_ops->free_coherent(dev, size, cpu_addr, dma_handle);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #define dma_alloc_noncoherent(d, s, h, f) dma_alloc_coherent(d, s, h, f)

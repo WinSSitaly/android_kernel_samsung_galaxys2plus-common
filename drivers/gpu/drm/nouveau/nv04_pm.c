@@ -27,6 +27,7 @@
 #include "nouveau_hw.h"
 #include "nouveau_pm.h"
 
+<<<<<<< HEAD
 int
 nv04_pm_clocks_get(struct drm_device *dev, struct nouveau_pm_level *perflvl)
 {
@@ -46,10 +47,14 @@ nv04_pm_clocks_get(struct drm_device *dev, struct nouveau_pm_level *perflvl)
 }
 
 struct nv04_pm_clock {
+=======
+struct nv04_pm_state {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pll_lims pll;
 	struct nouveau_pll_vals calc;
 };
 
+<<<<<<< HEAD
 struct nv04_pm_state {
 	struct nv04_pm_clock core;
 	struct nv04_pm_clock memory;
@@ -102,11 +107,52 @@ prog_pll(struct drm_device *dev, struct nv04_pm_clock *clk)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	u32 reg = clk->pll.reg;
+=======
+int
+nv04_pm_clock_get(struct drm_device *dev, u32 id)
+{
+	return nouveau_hw_get_clock(dev, id);
+}
+
+void *
+nv04_pm_clock_pre(struct drm_device *dev, struct nouveau_pm_level *perflvl,
+		  u32 id, int khz)
+{
+	struct nv04_pm_state *state;
+	int ret;
+
+	state = kzalloc(sizeof(*state), GFP_KERNEL);
+	if (!state)
+		return ERR_PTR(-ENOMEM);
+
+	ret = get_pll_limits(dev, id, &state->pll);
+	if (ret) {
+		kfree(state);
+		return (ret == -ENOENT) ? NULL : ERR_PTR(ret);
+	}
+
+	ret = nouveau_calc_pll_mnp(dev, &state->pll, khz, &state->calc);
+	if (!ret) {
+		kfree(state);
+		return ERR_PTR(-EINVAL);
+	}
+
+	return state;
+}
+
+void
+nv04_pm_clock_set(struct drm_device *dev, void *pre_state)
+{
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	struct nv04_pm_state *state = pre_state;
+	u32 reg = state->pll.reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* thank the insane nouveau_hw_setpll() interface for this */
 	if (dev_priv->card_type >= NV_40)
 		reg += 4;
 
+<<<<<<< HEAD
 	nouveau_hw_setpll(dev, reg, &clk->calc);
 }
 
@@ -135,3 +181,18 @@ nv04_pm_clocks_set(struct drm_device *dev, void *pre_state)
 	kfree(state);
 	return 0;
 }
+=======
+	nouveau_hw_setpll(dev, reg, &state->calc);
+
+	if (dev_priv->card_type < NV_30 && reg == NV_PRAMDAC_MPLL_COEFF) {
+		if (dev_priv->card_type == NV_20)
+			nv_mask(dev, 0x1002c4, 0, 1 << 20);
+
+		/* Reset the DLLs */
+		nv_mask(dev, 0x1002c0, 0, 1 << 8);
+	}
+
+	kfree(state);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

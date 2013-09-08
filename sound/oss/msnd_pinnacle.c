@@ -1294,8 +1294,11 @@ static int __init calibrate_adc(WORD srate)
 
 static int upload_dsp_code(void)
 {
+<<<<<<< HEAD
 	int ret = 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	msnd_outb(HPBLKSEL_0, dev.io + HP_BLKS);
 #ifndef HAVE_DSPCODEH
 	INITCODESIZE = mod_firmware_load(INITCODEFILE, &INITCODE);
@@ -1314,8 +1317,12 @@ static int upload_dsp_code(void)
 	memcpy_toio(dev.base, PERMCODE, PERMCODESIZE);
 	if (msnd_upload_host(&dev, INITCODE, INITCODESIZE) < 0) {
 		printk(KERN_WARNING LOGNAME ": Error uploading to DSP\n");
+<<<<<<< HEAD
 		ret = -ENODEV;
 		goto out;
+=======
+		return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 #ifdef HAVE_DSPCODEH
 	printk(KERN_INFO LOGNAME ": DSP firmware uploaded (resident)\n");
@@ -1323,13 +1330,20 @@ static int upload_dsp_code(void)
 	printk(KERN_INFO LOGNAME ": DSP firmware uploaded\n");
 #endif
 
+<<<<<<< HEAD
 out:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef HAVE_DSPCODEH
 	vfree(INITCODE);
 	vfree(PERMCODE);
 #endif
 
+<<<<<<< HEAD
 	return ret;
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef MSND_CLASSIC
@@ -1635,7 +1649,11 @@ static int ide_irq __initdata = 0;
 static int joystick_io __initdata = 0;
 
 /* If we have the digital daugherboard... */
+<<<<<<< HEAD
 static bool digital __initdata = false;
+=======
+static int digital __initdata = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 static int fifosize __initdata =	DEFFIFOSIZE;
@@ -1705,7 +1723,11 @@ static int joystick_io __initdata =	CONFIG_MSNDPIN_JOYSTICK_IO;
 #ifndef CONFIG_MSNDPIN_DIGITAL
 #  define CONFIG_MSNDPIN_DIGITAL	0
 #endif
+<<<<<<< HEAD
 static bool digital __initdata =	CONFIG_MSNDPIN_DIGITAL;
+=======
+static int digital __initdata =		CONFIG_MSNDPIN_DIGITAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* MSND_CLASSIC */
 

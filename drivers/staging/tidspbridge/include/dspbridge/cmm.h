@@ -79,6 +79,10 @@ extern void *cmm_calloc_buf(struct cmm_object *hcmm_mgr,
  *      -EPERM:      Failed to initialize critical sect sync object.
  *
  *  Requires:
+<<<<<<< HEAD
+=======
+ *      cmm_init(void) called.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *      ph_cmm_mgr != NULL.
  *      mgr_attrts->min_block_size >= 4 bytes.
  *  Ensures:
@@ -110,6 +114,23 @@ extern int cmm_create(struct cmm_object **ph_cmm_mgr,
 extern int cmm_destroy(struct cmm_object *hcmm_mgr, bool force);
 
 /*
+<<<<<<< HEAD
+=======
+ *  ======== cmm_exit ========
+ *  Purpose:
+ *     Discontinue usage of module. Cleanup CMM module if CMM cRef reaches zero.
+ *  Parameters:
+ *     n/a
+ *  Returns:
+ *     n/a
+ *  Requires:
+ *     CMM is initialized.
+ *  Ensures:
+ */
+extern void cmm_exit(void);
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  ======== cmm_free_buf ========
  *  Purpose:
  *      Free the given buffer.
@@ -170,6 +191,22 @@ extern int cmm_get_info(struct cmm_object *hcmm_mgr,
 			       struct cmm_info *cmm_info_obj);
 
 /*
+<<<<<<< HEAD
+=======
+ *  ======== cmm_init ========
+ *  Purpose:
+ *      Initializes private state of CMM module.
+ *  Parameters:
+ *  Returns:
+ *      TRUE if initialized; FALSE if error occurred.
+ *  Requires:
+ *  Ensures:
+ *      CMM initialized.
+ */
+extern bool cmm_init(void);
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  ======== cmm_register_gppsm_seg ========
  *  Purpose:
  *      Register a block of SM with the CMM.
@@ -305,6 +342,10 @@ extern int cmm_xlator_free_buf(struct cmm_xlatorobject *xlator,
  *      0:        Success.
  *      -EFAULT:    Bad translator handle.
  *  Requires:
+<<<<<<< HEAD
+=======
+ *      (refs > 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *      (paddr != NULL)
  *      (ul_size > 0)
  *  Ensures:
@@ -326,6 +367,10 @@ extern int cmm_xlator_info(struct cmm_xlatorobject *xlator,
  *  Returns:
  *     Valid address on success, else NULL.
  *  Requires:
+<<<<<<< HEAD
+=======
+ *      refs > 0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *      paddr != NULL
  *      xtype >= CMM_VA2PA) && (xtype <= CMM_DSPPA2PA)
  *  Ensures:

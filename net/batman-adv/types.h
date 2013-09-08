@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2007-2012 B.A.T.M.A.N. contributors:
+=======
+ * Copyright (C) 2007-2011 B.A.T.M.A.N. contributors:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Marek Lindner, Simon Wunderlich
  *
@@ -57,7 +61,11 @@ struct hard_iface {
  *	@batman_seqno_reset: time when the batman seqno window was reset
  *	@gw_flags: flags related to gateway class
  *	@flags: for now only VIS_SERVER flag
+<<<<<<< HEAD
  *	@last_real_seqno: last and best known sequence number
+=======
+ *	@last_real_seqno: last and best known squence number
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	@last_ttl: ttl of last received packet
  *	@last_bcast_seqno: last broadcast sequence number received by this host
  *
@@ -75,6 +83,7 @@ struct orig_node {
 	unsigned long batman_seqno_reset;
 	uint8_t gw_flags;
 	uint8_t flags;
+<<<<<<< HEAD
 	atomic_t last_ttvn; /* last seen translation table version number */
 	uint16_t tt_crc;
 	unsigned char *tt_buff;
@@ -88,6 +97,10 @@ struct orig_node {
 	 * the true destination or not. This flag will be reset to false as
 	 * soon as I receive a new TTVN from this orig_node */
 	bool tt_poss_change;
+=======
+	unsigned char *tt_buff;
+	int16_t tt_buff_len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint32_t last_real_seqno;
 	uint8_t last_ttl;
 	unsigned long bcast_bits[NUM_WORDS];
@@ -105,7 +118,10 @@ struct orig_node {
 	spinlock_t ogm_cnt_lock;
 	/* bcast_seqno_lock protects bcast_bits, last_bcast_seqno */
 	spinlock_t bcast_seqno_lock;
+<<<<<<< HEAD
 	spinlock_t tt_list_lock; /* protects tt_list */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atomic_t bond_candidates;
 	struct list_head bond_list;
 };
@@ -147,7 +163,10 @@ struct bat_priv {
 	atomic_t aggregated_ogms;	/* boolean */
 	atomic_t bonding;		/* boolean */
 	atomic_t fragmentation;		/* boolean */
+<<<<<<< HEAD
 	atomic_t ap_isolation;		/* boolean */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atomic_t vis_mode;		/* VIS_TYPE_* */
 	atomic_t gw_mode;		/* GW_MODE_* */
 	atomic_t gw_sel_class;		/* uint */
@@ -158,6 +177,7 @@ struct bat_priv {
 	atomic_t bcast_seqno;
 	atomic_t bcast_queue_left;
 	atomic_t batman_queue_left;
+<<<<<<< HEAD
 	atomic_t ttvn; /* translation table version number */
 	atomic_t tt_ogm_append_cnt;
 	atomic_t tt_local_changes; /* changes registered in a OGM interval */
@@ -167,6 +187,8 @@ struct bat_priv {
 	 * destination or not. This flag will be reset to false as soon as I
 	 * increase my TTVN */
 	bool tt_poss_change;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char num_ifaces;
 	struct debug_log *debug_log;
 	struct kobject *mesh_obj;
@@ -175,11 +197,15 @@ struct bat_priv {
 	struct hlist_head forw_bcast_list;
 	struct hlist_head gw_list;
 	struct hlist_head softif_neigh_vids;
+<<<<<<< HEAD
 	struct list_head tt_changes_list; /* tracks changes in a OGM int */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head vis_send_list;
 	struct hashtable_t *orig_hash;
 	struct hashtable_t *tt_local_hash;
 	struct hashtable_t *tt_global_hash;
+<<<<<<< HEAD
 	struct list_head tt_req_list; /* list of pending tt_requests */
 	struct list_head tt_roam_list;
 	struct hashtable_t *vis_hash;
@@ -188,25 +214,42 @@ struct bat_priv {
 	spinlock_t tt_changes_list_lock; /* protects tt_changes */
 	spinlock_t tt_req_list_lock; /* protects tt_req_list */
 	spinlock_t tt_roam_list_lock; /* protects tt_roam_list */
+=======
+	struct hashtable_t *vis_hash;
+	spinlock_t forw_bat_list_lock; /* protects forw_bat_list */
+	spinlock_t forw_bcast_list_lock; /* protects  */
+	spinlock_t tt_lhash_lock; /* protects tt_local_hash */
+	spinlock_t tt_ghash_lock; /* protects tt_global_hash */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spinlock_t gw_list_lock; /* protects gw_list and curr_gw */
 	spinlock_t vis_hash_lock; /* protects vis_hash */
 	spinlock_t vis_list_lock; /* protects vis_info::recv_list */
 	spinlock_t softif_neigh_lock; /* protects soft-interface neigh list */
 	spinlock_t softif_neigh_vid_lock; /* protects soft-interface vid list */
+<<<<<<< HEAD
 	atomic_t num_local_tt;
 	/* Checksum of the local table, recomputed before sending a new OGM */
 	atomic_t tt_crc;
 	unsigned char *tt_buff;
 	int16_t tt_buff_len;
 	spinlock_t tt_buff_lock; /* protects tt_buff */
+=======
+	int16_t num_local_tt;
+	atomic_t tt_local_changed;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct delayed_work tt_work;
 	struct delayed_work orig_work;
 	struct delayed_work vis_work;
 	struct gw_node __rcu *curr_gw;  /* rcu protected pointer */
+<<<<<<< HEAD
 	atomic_t gw_reselect;
 	struct hard_iface __rcu *primary_if;  /* rcu protected pointer */
 	struct vis_info *my_vis_info;
 	struct bat_algo_ops *bat_algo_ops;
+=======
+	struct hard_iface __rcu *primary_if;  /* rcu protected pointer */
+	struct vis_info *my_vis_info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct socket_client {
@@ -224,6 +267,7 @@ struct socket_packet {
 	struct icmp_packet_rr icmp_packet;
 };
 
+<<<<<<< HEAD
 struct tt_common_entry {
 	uint8_t addr[ETH_ALEN];
 	struct hlist_node hash_entry;
@@ -260,6 +304,19 @@ struct tt_roam_node {
 	atomic_t counter;
 	unsigned long first_time;
 	struct list_head list;
+=======
+struct tt_local_entry {
+	uint8_t addr[ETH_ALEN];
+	unsigned long last_seen;
+	char never_purge;
+	struct hlist_node hash_entry;
+};
+
+struct tt_global_entry {
+	uint8_t addr[ETH_ALEN];
+	struct orig_node *orig_node;
+	struct hlist_node hash_entry;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -303,10 +360,17 @@ struct frag_packet_list_entry {
 };
 
 struct vis_info {
+<<<<<<< HEAD
 	unsigned long first_seen;
 	/* list of server-neighbors we received a vis-packet
 	 * from.  we should not reply to them. */
 	struct list_head recv_list;
+=======
+	unsigned long       first_seen;
+	struct list_head    recv_list;
+			    /* list of server-neighbors we received a vis-packet
+			     * from.  we should not reply to them. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head send_list;
 	struct kref refcount;
 	struct hlist_node hash_entry;
@@ -345,6 +409,7 @@ struct softif_neigh {
 	struct rcu_head rcu;
 };
 
+<<<<<<< HEAD
 struct bat_algo_ops {
 	struct hlist_node list;
 	char *name;
@@ -364,4 +429,6 @@ struct bat_algo_ops {
 				struct sk_buff *skb);
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _NET_BATMAN_ADV_TYPES_H_ */

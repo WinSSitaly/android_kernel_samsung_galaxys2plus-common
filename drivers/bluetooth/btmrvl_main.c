@@ -18,8 +18,11 @@
  * this warranty disclaimer.
  **/
 
+<<<<<<< HEAD
 #include <linux/module.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/bluetooth/bluetooth.h>
 #include <net/bluetooth/hci_core.h>
 
@@ -387,6 +390,13 @@ static int btmrvl_ioctl(struct hci_dev *hdev,
 	return -ENOIOCTLCMD;
 }
 
+<<<<<<< HEAD
+=======
+static void btmrvl_destruct(struct hci_dev *hdev)
+{
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int btmrvl_send_frame(struct sk_buff *skb)
 {
 	struct hci_dev *hdev = (struct hci_dev *) skb->dev;
@@ -394,13 +404,21 @@ static int btmrvl_send_frame(struct sk_buff *skb)
 
 	BT_DBG("type=%d, len=%d", skb->pkt_type, skb->len);
 
+<<<<<<< HEAD
 	if (!hdev) {
+=======
+	if (!hdev || !hdev->driver_data) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		BT_ERR("Frame for unknown HCI device");
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	priv = hci_get_drvdata(hdev);
 
+=======
+	priv = (struct btmrvl_private *) hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!test_bit(HCI_RUNNING, &hdev->flags)) {
 		BT_ERR("Failed testing HCI_RUNING, flags=%lx", hdev->flags);
 		print_hex_dump_bytes("data: ", DUMP_PREFIX_OFFSET,
@@ -431,7 +449,11 @@ static int btmrvl_send_frame(struct sk_buff *skb)
 
 static int btmrvl_flush(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	struct btmrvl_private *priv = hci_get_drvdata(hdev);
+=======
+	struct btmrvl_private *priv = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	skb_queue_purge(&priv->adapter->tx_queue);
 
@@ -440,7 +462,11 @@ static int btmrvl_flush(struct hci_dev *hdev)
 
 static int btmrvl_close(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	struct btmrvl_private *priv = hci_get_drvdata(hdev);
+=======
+	struct btmrvl_private *priv = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!test_and_clear_bit(HCI_RUNNING, &hdev->flags))
 		return 0;
@@ -472,6 +498,11 @@ static int btmrvl_service_main_thread(void *data)
 
 	init_waitqueue_entry(&wait, current);
 
+<<<<<<< HEAD
+=======
+	current->flags |= PF_NOFREEZE;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (;;) {
 		add_wait_queue(&thread->wait_q, &wait);
 
@@ -543,14 +574,24 @@ int btmrvl_register_hdev(struct btmrvl_private *priv)
 	}
 
 	priv->btmrvl_dev.hcidev = hdev;
+<<<<<<< HEAD
 	hci_set_drvdata(hdev, priv);
+=======
+	hdev->driver_data = priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hdev->bus = HCI_SDIO;
 	hdev->open = btmrvl_open;
 	hdev->close = btmrvl_close;
 	hdev->flush = btmrvl_flush;
 	hdev->send = btmrvl_send_frame;
+<<<<<<< HEAD
 	hdev->ioctl = btmrvl_ioctl;
+=======
+	hdev->destruct = btmrvl_destruct;
+	hdev->ioctl = btmrvl_ioctl;
+	hdev->owner = THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	btmrvl_send_module_cfg_cmd(priv, MODULE_BRINGUP_REQ);
 

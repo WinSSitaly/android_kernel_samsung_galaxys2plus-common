@@ -146,8 +146,19 @@ enum dibx000_adc_states {
 	DIBX000_VBG_DISABLE,
 };
 
+<<<<<<< HEAD
 #define BANDWIDTH_TO_KHZ(v)	((v) / 1000)
 #define BANDWIDTH_TO_HZ(v)	((v) * 1000)
+=======
+#define BANDWIDTH_TO_KHZ(v) ((v) == BANDWIDTH_8_MHZ  ? 8000 : \
+				(v) == BANDWIDTH_7_MHZ  ? 7000 : \
+				(v) == BANDWIDTH_6_MHZ  ? 6000 : 8000)
+
+#define BANDWIDTH_TO_INDEX(v) ( \
+	(v) == 8000 ? BANDWIDTH_8_MHZ : \
+		(v) == 7000 ? BANDWIDTH_7_MHZ : \
+		(v) == 6000 ? BANDWIDTH_6_MHZ : BANDWIDTH_8_MHZ )
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Chip output mode. */
 #define OUTMODE_HIGH_Z              0
@@ -270,6 +281,7 @@ struct dibSubbandSelection {
 #define DEMOD_TIMF_GET    0x01
 #define DEMOD_TIMF_UPDATE 0x02
 
+<<<<<<< HEAD
 #define MPEG_ON_DIBTX		1
 #define DIV_ON_DIBTX		2
 #define ADC_ON_DIBTX		3
@@ -277,4 +289,6 @@ struct dibSubbandSelection {
 #define DIBTX_ON_HOSTBUS	5
 #define MPEG_ON_HOSTBUS		6
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

@@ -30,6 +30,7 @@
 #include "drm_edid.h"
 #include "nouveau_i2c.h"
 
+<<<<<<< HEAD
 enum nouveau_underscan_type {
 	UNDERSCAN_OFF,
 	UNDERSCAN_ON,
@@ -67,6 +68,15 @@ struct nouveau_connector {
 	enum nouveau_underscan_type underscan;
 	u32 underscan_hborder;
 	u32 underscan_vborder;
+=======
+struct nouveau_connector {
+	struct drm_connector base;
+
+	struct dcb_connector_table_entry *dcb;
+
+	int scaling_mode;
+	bool use_dithering;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct nouveau_encoder *detected_encoder;
 	struct edid *edid;

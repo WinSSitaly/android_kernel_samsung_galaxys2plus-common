@@ -14,9 +14,15 @@
 #include <linux/signal.h>
 #include <linux/smp.h>
 #include <linux/kdebug.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 
 #include <asm/delay.h>
+=======
+
+#include <asm/delay.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/ptrace.h>
 #include <asm/oplib.h>
 #include <asm/page.h>

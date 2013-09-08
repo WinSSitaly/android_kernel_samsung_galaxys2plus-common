@@ -26,7 +26,10 @@ typedef int (*intercept_handler_t)(struct kvm_vcpu *vcpu);
 
 /* negativ values are error codes, positive values for internal conditions */
 #define SIE_INTERCEPT_RERUNVCPU		(1<<0)
+<<<<<<< HEAD
 #define SIE_INTERCEPT_UCONTROL		(1<<1)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int kvm_handle_sie_intercept(struct kvm_vcpu *vcpu);
 
 #define VM_EVENT(d_kvm, d_loglevel, d_string, d_args...)\
@@ -48,6 +51,7 @@ static inline int __cpu_is_stopped(struct kvm_vcpu *vcpu)
 	return atomic_read(&vcpu->arch.sie_block->cpuflags) & CPUSTAT_STOP_INT;
 }
 
+<<<<<<< HEAD
 static inline int kvm_is_ucontrol(struct kvm *kvm)
 {
 #ifdef CONFIG_KVM_S390_UCONTROL
@@ -65,6 +69,8 @@ static inline void kvm_s390_set_prefix(struct kvm_vcpu *vcpu, u32 prefix)
 	vcpu->arch.sie_block->ihcpu  = 0xffff;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int kvm_s390_handle_wait(struct kvm_vcpu *vcpu);
 enum hrtimer_restart kvm_s390_idle_wakeup(struct hrtimer *timer);
 void kvm_s390_tasklet(unsigned long parm);
@@ -76,9 +82,41 @@ int kvm_s390_inject_vcpu(struct kvm_vcpu *vcpu,
 int kvm_s390_inject_program_int(struct kvm_vcpu *vcpu, u16 code);
 int kvm_s390_inject_sigp_stop(struct kvm_vcpu *vcpu, int action);
 
+<<<<<<< HEAD
 /* implemented in priv.c */
 int kvm_s390_handle_b2(struct kvm_vcpu *vcpu);
 int kvm_s390_handle_e5(struct kvm_vcpu *vcpu);
+=======
+static inline long kvm_s390_vcpu_get_memsize(struct kvm_vcpu *vcpu)
+{
+	return vcpu->arch.sie_block->gmslm
+		- vcpu->arch.sie_block->gmsor
+		- VIRTIODESCSPACE + 1ul;
+}
+
+static inline void kvm_s390_vcpu_set_mem(struct kvm_vcpu *vcpu)
+{
+	int idx;
+	struct kvm_memory_slot *mem;
+	struct kvm_memslots *memslots;
+
+	idx = srcu_read_lock(&vcpu->kvm->srcu);
+	memslots = kvm_memslots(vcpu->kvm);
+
+	mem = &memslots->memslots[0];
+
+	vcpu->arch.sie_block->gmsor = mem->userspace_addr;
+	vcpu->arch.sie_block->gmslm =
+		mem->userspace_addr +
+		(mem->npages << PAGE_SHIFT) +
+		VIRTIODESCSPACE - 1ul;
+
+	srcu_read_unlock(&vcpu->kvm->srcu, idx);
+}
+
+/* implemented in priv.c */
+int kvm_s390_handle_b2(struct kvm_vcpu *vcpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* implemented in sigp.c */
 int kvm_s390_handle_sigp(struct kvm_vcpu *vcpu);

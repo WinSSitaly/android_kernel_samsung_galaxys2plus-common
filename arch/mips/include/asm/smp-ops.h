@@ -11,8 +11,11 @@
 #ifndef __ASM_SMP_OPS_H
 #define __ASM_SMP_OPS_H
 
+<<<<<<< HEAD
 #include <linux/errno.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SMP
 
 #include <linux/cpumask.h>
@@ -58,6 +61,7 @@ static inline void register_smp_ops(struct plat_smp_ops *ops)
 
 #endif /* !CONFIG_SMP */
 
+<<<<<<< HEAD
 static inline int register_up_smp_ops(void)
 {
 #ifdef CONFIG_SMP_UP
@@ -96,5 +100,10 @@ static inline int register_vsmp_smp_ops(void)
 	return -ENODEV;
 #endif
 }
+=======
+extern struct plat_smp_ops up_smp_ops;
+extern struct plat_smp_ops cmp_smp_ops;
+extern struct plat_smp_ops vsmp_smp_ops;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __ASM_SMP_OPS_H */

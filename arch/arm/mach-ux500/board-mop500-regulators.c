@@ -74,6 +74,7 @@ static struct regulator_consumer_supply ab8500_vtvout_consumers[] = {
 	REGULATOR_SUPPLY("vddadc", "ab8500-gpadc.0"),
 };
 
+<<<<<<< HEAD
 static struct regulator_consumer_supply ab8500_vaud_consumers[] = {
 	/* AB8500 audio-codec main supply */
 	REGULATOR_SUPPLY("vaud", "ab8500-codec.0"),
@@ -98,6 +99,12 @@ static struct regulator_consumer_supply ab8500_vintcore_consumers[] = {
 	/* SoC core supply, no device */
 	REGULATOR_SUPPLY("v-intcore", NULL),
 	/* USB Transceiver */
+=======
+static struct regulator_consumer_supply ab8500_vintcore_consumers[] = {
+	/* SoC core supply, no device */
+	REGULATOR_SUPPLY("v-intcore", NULL),
+	/* USB Transciever */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	REGULATOR_SUPPLY("vddulpivio18", "ab8500-usb.0"),
 };
 
@@ -292,6 +299,7 @@ struct regulator_init_data ab8500_regulators[AB8500_NUM_REGULATORS] = {
 			.max_uV = 2900000,
 			.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE |
 					  REGULATOR_CHANGE_STATUS,
+<<<<<<< HEAD
 			.boot_on = 1, /* display is on at boot */
 			/*
 			 * This voltage cannot be disabled right now because
@@ -300,6 +308,9 @@ struct regulator_init_data ab8500_regulators[AB8500_NUM_REGULATORS] = {
 			 * AUX3.
 			 */
 			.always_on = 1,
+=======
+			.boot_on = 1, /* must be on for display */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 		.num_consumer_supplies = ARRAY_SIZE(ab8500_vaux1_consumers),
 		.consumer_supplies = ab8500_vaux1_consumers,
@@ -343,8 +354,11 @@ struct regulator_init_data ab8500_regulators[AB8500_NUM_REGULATORS] = {
 			.name = "V-AUD",
 			.valid_ops_mask = REGULATOR_CHANGE_STATUS,
 		},
+<<<<<<< HEAD
 		.num_consumer_supplies = ARRAY_SIZE(ab8500_vaud_consumers),
 		.consumer_supplies = ab8500_vaud_consumers,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	/* supply for v-anamic1 VAMic1-LDO */
 	[AB8500_LDO_ANAMIC1] = {
@@ -352,8 +366,11 @@ struct regulator_init_data ab8500_regulators[AB8500_NUM_REGULATORS] = {
 			.name = "V-AMIC1",
 			.valid_ops_mask = REGULATOR_CHANGE_STATUS,
 		},
+<<<<<<< HEAD
 		.num_consumer_supplies = ARRAY_SIZE(ab8500_vamic1_consumers),
 		.consumer_supplies = ab8500_vamic1_consumers,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	/* supply for v-amic2, VAMIC2 LDO, reuse constants for AMIC1 */
 	[AB8500_LDO_ANAMIC2] = {
@@ -361,8 +378,11 @@ struct regulator_init_data ab8500_regulators[AB8500_NUM_REGULATORS] = {
 			.name = "V-AMIC2",
 			.valid_ops_mask = REGULATOR_CHANGE_STATUS,
 		},
+<<<<<<< HEAD
 		.num_consumer_supplies = ARRAY_SIZE(ab8500_vamic2_consumers),
 		.consumer_supplies = ab8500_vamic2_consumers,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	/* supply for v-dmic, VDMIC LDO */
 	[AB8500_LDO_DMIC] = {
@@ -370,8 +390,11 @@ struct regulator_init_data ab8500_regulators[AB8500_NUM_REGULATORS] = {
 			.name = "V-DMIC",
 			.valid_ops_mask = REGULATOR_CHANGE_STATUS,
 		},
+<<<<<<< HEAD
 		.num_consumer_supplies = ARRAY_SIZE(ab8500_vdmic_consumers),
 		.consumer_supplies = ab8500_vdmic_consumers,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	/* supply for v-intcore12, VINTCORE12 LDO */
 	[AB8500_LDO_INTCORE] = {

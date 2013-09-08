@@ -42,8 +42,11 @@ static const unsigned int bug_pins[] __initconst = {
 
 static void __init bug_board_init(void)
 {
+<<<<<<< HEAD
 	imx31_soc_init();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mxc_iomux_setup_multiple_pins(bug_pins,
 				      ARRAY_SIZE(bug_pins), "uart-4");
 	imx31_add_imx_uart4(&uart_pdata);
@@ -62,8 +65,13 @@ MACHINE_START(BUG, "BugLabs BUGBase")
 	.map_io = mx31_map_io,
 	.init_early = imx31_init_early,
 	.init_irq = mx31_init_irq,
+<<<<<<< HEAD
 	.handle_irq = imx31_handle_irq,
 	.timer = &bug_timer,
 	.init_machine = bug_board_init,
 	.restart	= mxc_restart,
+=======
+	.timer = &bug_timer,
+	.init_machine = bug_board_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

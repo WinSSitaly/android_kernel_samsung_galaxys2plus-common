@@ -21,7 +21,11 @@
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 
+<<<<<<< HEAD
 #include "common.h"
+=======
+#include <plat/common.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/board.h>
 #include <plat/usb.h>
 
@@ -34,6 +38,20 @@
 
 #define ZOOM3_EHCI_RESET_GPIO		64
 
+<<<<<<< HEAD
+=======
+static void __init omap_zoom_init_early(void)
+{
+	omap2_init_common_infrastructure();
+	if (machine_is_omap_zoom2())
+		omap2_init_common_devices(mt46h32m32lf6_sdrc_params,
+					  mt46h32m32lf6_sdrc_params);
+	else if (machine_is_omap_zoom3())
+		omap2_init_common_devices(h8mbx00u0mer0em_sdrc_params,
+					  h8mbx00u0mer0em_sdrc_params);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_OMAP_MUX
 static struct omap_board_mux board_mux[] __initdata = {
 	/* WLAN IRQ - GPIO 162 */
@@ -118,6 +136,7 @@ static void __init omap_zoom_init(void)
 						ZOOM_NAND_CS, NAND_BUSWIDTH_16);
 	zoom_debugboard_init();
 	zoom_peripherals_init();
+<<<<<<< HEAD
 
 	if (machine_is_omap_zoom2())
 		omap_sdrc_init(mt46h32m32lf6_sdrc_params,
@@ -126,10 +145,13 @@ static void __init omap_zoom_init(void)
 		omap_sdrc_init(h8mbx00u0mer0em_sdrc_params,
 					  h8mbx00u0mer0em_sdrc_params);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	zoom_display_init();
 }
 
 MACHINE_START(OMAP_ZOOM2, "OMAP Zoom2 board")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.reserve	= omap_reserve,
 	.map_io		= omap3_map_io,
@@ -151,4 +173,23 @@ MACHINE_START(OMAP_ZOOM3, "OMAP Zoom3 board")
 	.init_machine	= omap_zoom_init,
 	.timer		= &omap3_timer,
 	.restart	= omap_prcm_restart,
+=======
+	.boot_params	= 0x80000100,
+	.reserve	= omap_reserve,
+	.map_io		= omap3_map_io,
+	.init_early	= omap_zoom_init_early,
+	.init_irq	= omap_init_irq,
+	.init_machine	= omap_zoom_init,
+	.timer		= &omap_timer,
+MACHINE_END
+
+MACHINE_START(OMAP_ZOOM3, "OMAP Zoom3 board")
+	.boot_params	= 0x80000100,
+	.reserve	= omap_reserve,
+	.map_io		= omap3_map_io,
+	.init_early	= omap_zoom_init_early,
+	.init_irq	= omap_init_irq,
+	.init_machine	= omap_zoom_init,
+	.timer		= &omap_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

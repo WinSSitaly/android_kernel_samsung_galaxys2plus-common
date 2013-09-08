@@ -267,7 +267,12 @@ static void atbm8830_release(struct dvb_frontend *fe)
 	kfree(state);
 }
 
+<<<<<<< HEAD
 static int atbm8830_set_fe(struct dvb_frontend *fe)
+=======
+static int atbm8830_set_fe(struct dvb_frontend *fe,
+			  struct dvb_frontend_parameters *fe_params)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct atbm_state *priv = fe->demodulator_priv;
 	int i;
@@ -278,7 +283,11 @@ static int atbm8830_set_fe(struct dvb_frontend *fe)
 	if (fe->ops.tuner_ops.set_params) {
 		if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 1);
+<<<<<<< HEAD
 		fe->ops.tuner_ops.set_params(fe);
+=======
+		fe->ops.tuner_ops.set_params(fe, fe_params);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 0);
 	}
@@ -297,13 +306,20 @@ static int atbm8830_set_fe(struct dvb_frontend *fe)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int atbm8830_get_fe(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+=======
+static int atbm8830_get_fe(struct dvb_frontend *fe,
+			  struct dvb_frontend_parameters *fe_params)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dprintk("%s\n", __func__);
 
 	/* TODO: get real readings from device */
 	/* inversion status */
+<<<<<<< HEAD
 	c->inversion = INVERSION_OFF;
 
 	/* bandwidth */
@@ -322,6 +338,26 @@ static int atbm8830_get_fe(struct dvb_frontend *fe)
 
 	/* hierarchy */
 	c->hierarchy = HIERARCHY_NONE;
+=======
+	fe_params->inversion = INVERSION_OFF;
+
+	/* bandwidth */
+	fe_params->u.ofdm.bandwidth = BANDWIDTH_8_MHZ;
+
+	fe_params->u.ofdm.code_rate_HP = FEC_AUTO;
+	fe_params->u.ofdm.code_rate_LP = FEC_AUTO;
+
+	fe_params->u.ofdm.constellation = QAM_AUTO;
+
+	/* transmission mode */
+	fe_params->u.ofdm.transmission_mode = TRANSMISSION_MODE_AUTO;
+
+	/* guard interval */
+	fe_params->u.ofdm.guard_interval = GUARD_INTERVAL_AUTO;
+
+	/* hierarchy */
+	fe_params->u.ofdm.hierarchy_information = HIERARCHY_NONE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -428,9 +464,15 @@ static int atbm8830_i2c_gate_ctrl(struct dvb_frontend *fe, int enable)
 }
 
 static struct dvb_frontend_ops atbm8830_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_DMBTH },
 	.info = {
 		.name = "AltoBeam ATBM8830/8831 DMB-TH",
+=======
+	.info = {
+		.name = "AltoBeam ATBM8830/8831 DMB-TH",
+		.type = FE_OFDM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min = 474000000,
 		.frequency_max = 858000000,
 		.frequency_stepsize = 10000,

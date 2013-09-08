@@ -213,8 +213,12 @@ msmsdcc_dma_exec_func(struct msm_dmov_cmd *cmd)
 	msmsdcc_writel(host, host->cmd_timeout, MMCIDATATIMER);
 	msmsdcc_writel(host, (unsigned int)host->curr.xfer_size,
 		       MMCIDATALENGTH);
+<<<<<<< HEAD
 	msmsdcc_writel(host, (msmsdcc_readl(host, MMCIMASK0) &
 			(~MCI_IRQ_PIO)) | host->cmd_pio_irqmask, MMCIMASK0);
+=======
+	msmsdcc_writel(host, host->cmd_pio_irqmask, MMCIMASK1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	msmsdcc_writel(host, host->cmd_datactrl, MMCIDATACTRL);
 
 	if (host->cmd_cmd) {
@@ -389,7 +393,11 @@ static int msmsdcc_config_dma(struct msmsdcc_host *host, struct mmc_data *data)
 	n = dma_map_sg(mmc_dev(host->mmc), host->dma.sg,
 			host->dma.num_ents, host->dma.dir);
 	if (n == 0) {
+<<<<<<< HEAD
 		pr_err("%s: Unable to map in all sg elements\n",
+=======
+		printk(KERN_ERR "%s: Unable to map in all sg elements\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mmc_hostname(host->mmc));
 		host->dma.sg = NULL;
 		host->dma.num_ents = 0;
@@ -475,7 +483,11 @@ msmsdcc_start_command_deferred(struct msmsdcc_host *host,
 		*c |= MCI_CSPM_MCIABORT;
 
 	if (host->curr.cmd != NULL) {
+<<<<<<< HEAD
 		pr_err("%s: Overlapping command requests\n",
+=======
+		printk(KERN_ERR "%s: Overlapping command requests\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mmc_hostname(host->mmc));
 	}
 	host->curr.cmd = cmd;
@@ -544,9 +556,13 @@ msmsdcc_start_data(struct msmsdcc_host *host, struct mmc_data *data,
 
 		msmsdcc_writel(host, host->curr.xfer_size, MMCIDATALENGTH);
 
+<<<<<<< HEAD
 		msmsdcc_writel(host, (msmsdcc_readl(host, MMCIMASK0) &
 				(~MCI_IRQ_PIO)) | pio_irqmask, MMCIMASK0);
 
+=======
+		msmsdcc_writel(host, pio_irqmask, MMCIMASK1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		msmsdcc_writel(host, datactrl, MMCIDATACTRL);
 
 		if (cmd) {
@@ -662,6 +678,7 @@ msmsdcc_pio_irq(int irq, void *dev_id)
 {
 	struct msmsdcc_host	*host = dev_id;
 	uint32_t		status;
+<<<<<<< HEAD
 	u32 mci_mask0;
 
 	status = msmsdcc_readl(host, MMCISTATUS);
@@ -669,6 +686,10 @@ msmsdcc_pio_irq(int irq, void *dev_id)
 
 	if (((mci_mask0 & status) & MCI_IRQ_PIO) == 0)
 		return IRQ_NONE;
+=======
+
+	status = msmsdcc_readl(host, MMCISTATUS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	do {
 		unsigned long flags;
@@ -689,8 +710,13 @@ msmsdcc_pio_irq(int irq, void *dev_id)
 
 		/* Map the current scatter buffer */
 		local_irq_save(flags);
+<<<<<<< HEAD
 		buffer = kmap_atomic(sg_page(host->pio.sg))
 				     + host->pio.sg->offset;
+=======
+		buffer = kmap_atomic(sg_page(host->pio.sg),
+				     KM_BIO_SRC_IRQ) + host->pio.sg->offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		buffer += host->pio.sg_off;
 		remain = host->pio.sg->length - host->pio.sg_off;
 		len = 0;
@@ -700,7 +726,11 @@ msmsdcc_pio_irq(int irq, void *dev_id)
 			len = msmsdcc_pio_write(host, buffer, remain, status);
 
 		/* Unmap the buffer */
+<<<<<<< HEAD
 		kunmap_atomic(buffer);
+=======
+		kunmap_atomic(buffer, KM_BIO_SRC_IRQ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		local_irq_restore(flags);
 
 		host->pio.sg_off += len;
@@ -727,12 +757,19 @@ msmsdcc_pio_irq(int irq, void *dev_id)
 	} while (1);
 
 	if (status & MCI_RXACTIVE && host->curr.xfer_remain < MCI_FIFOSIZE)
+<<<<<<< HEAD
 		msmsdcc_writel(host, (mci_mask0 & (~MCI_IRQ_PIO)) |
 					MCI_RXDATAAVLBLMASK, MMCIMASK0);
 
 	if (!host->curr.xfer_remain)
 		msmsdcc_writel(host, (mci_mask0 & (~MCI_IRQ_PIO)) | 0,
 					MMCIMASK0);
+=======
+		msmsdcc_writel(host, MCI_RXDATAAVLBLMASK, MMCIMASK1);
+
+	if (!host->curr.xfer_remain)
+		msmsdcc_writel(host, 0, MMCIMASK1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return IRQ_HANDLED;
 }
@@ -864,8 +901,11 @@ msmsdcc_irq(int irq, void *dev_id)
 	do {
 		status = msmsdcc_readl(host, MMCISTATUS);
 		status &= msmsdcc_readl(host, MMCIMASK0);
+<<<<<<< HEAD
 		if ((status & (~MCI_IRQ_PIO)) == 0)
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		msmsdcc_writel(host, status, MMCICLEAR);
 
 		if (status & MCI_SDIOINTR)
@@ -951,7 +991,11 @@ static void msmsdcc_setup_gpio(struct msmsdcc_host *host, bool enable)
 	struct msm_mmc_gpio_data *curr;
 	int i, rc = 0;
 
+<<<<<<< HEAD
 	if (!host->plat->gpio_data || host->gpio_config_status == enable)
+=======
+	if (!host->plat->gpio_data && host->gpio_config_status == enable)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	curr = host->plat->gpio_data;
@@ -1064,6 +1108,7 @@ static void msmsdcc_enable_sdio_irq(struct mmc_host *mmc, int enable)
 	spin_unlock_irqrestore(&host->lock, flags);
 }
 
+<<<<<<< HEAD
 static void msmsdcc_init_card(struct mmc_host *mmc, struct mmc_card *card)
 {
 	struct msmsdcc_host *host = mmc_priv(mmc);
@@ -1072,11 +1117,16 @@ static void msmsdcc_init_card(struct mmc_host *mmc, struct mmc_card *card)
 		host->plat->init_card(card);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct mmc_host_ops msmsdcc_ops = {
 	.request	= msmsdcc_request,
 	.set_ios	= msmsdcc_set_ios,
 	.enable_sdio_irq = msmsdcc_enable_sdio_irq,
+<<<<<<< HEAD
 	.init_card	= msmsdcc_init_card,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void
@@ -1113,7 +1163,11 @@ msmsdcc_platform_status_irq(int irq, void *dev_id)
 {
 	struct msmsdcc_host *host = dev_id;
 
+<<<<<<< HEAD
 	pr_debug("%s: %d\n", __func__, irq);
+=======
+	printk(KERN_DEBUG "%s: %d\n", __func__, irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	msmsdcc_check_status((unsigned long) host);
 	return IRQ_HANDLED;
 }
@@ -1123,7 +1177,11 @@ msmsdcc_status_notify_cb(int card_present, void *dev_id)
 {
 	struct msmsdcc_host *host = dev_id;
 
+<<<<<<< HEAD
 	pr_debug("%s: card_present %d\n", mmc_hostname(host->mmc),
+=======
+	printk(KERN_DEBUG "%s: card_present %d\n", mmc_hostname(host->mmc),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       card_present);
 	msmsdcc_check_status((unsigned long) host);
 }
@@ -1171,6 +1229,10 @@ msmsdcc_probe(struct platform_device *pdev)
 	struct msmsdcc_host *host;
 	struct mmc_host *mmc;
 	struct resource *cmd_irqres = NULL;
+<<<<<<< HEAD
+=======
+	struct resource *pio_irqres = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct resource *stat_irqres = NULL;
 	struct resource *memres = NULL;
 	struct resource *dmares = NULL;
@@ -1195,10 +1257,19 @@ msmsdcc_probe(struct platform_device *pdev)
 	dmares = platform_get_resource(pdev, IORESOURCE_DMA, 0);
 	cmd_irqres = platform_get_resource_byname(pdev, IORESOURCE_IRQ,
 						  "cmd_irq");
+<<<<<<< HEAD
 	stat_irqres = platform_get_resource_byname(pdev, IORESOURCE_IRQ,
 						   "status_irq");
 
 	if (!cmd_irqres || !memres) {
+=======
+	pio_irqres = platform_get_resource_byname(pdev, IORESOURCE_IRQ,
+						  "pio_irq");
+	stat_irqres = platform_get_resource_byname(pdev, IORESOURCE_IRQ,
+						   "status_irq");
+
+	if (!cmd_irqres || !pio_irqres || !memres) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_err("%s: Invalid resource\n", __func__);
 		return -ENXIO;
 	}
@@ -1218,20 +1289,31 @@ msmsdcc_probe(struct platform_device *pdev)
 	host->plat = plat;
 	host->mmc = mmc;
 	host->curr.cmd = NULL;
+<<<<<<< HEAD
 	init_timer(&host->busclk_timer);
 	host->busclk_timer.data = (unsigned long) host;
 	host->busclk_timer.function = msmsdcc_busclk_expired;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	host->cmdpoll = 1;
 
 	host->base = ioremap(memres->start, PAGE_SIZE);
 	if (!host->base) {
 		ret = -ENOMEM;
+<<<<<<< HEAD
 		goto host_free;
 	}
 
 	host->cmd_irqres = cmd_irqres;
+=======
+		goto out;
+	}
+
+	host->cmd_irqres = cmd_irqres;
+	host->pio_irqres = pio_irqres;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	host->memres = memres;
 	host->dmares = dmares;
 	spin_lock_init(&host->lock);
@@ -1242,6 +1324,7 @@ msmsdcc_probe(struct platform_device *pdev)
 	/*
 	 * Setup DMA
 	 */
+<<<<<<< HEAD
 	if (host->dmares) {
 		ret = msmsdcc_init_dma(host);
 		if (ret)
@@ -1249,12 +1332,19 @@ msmsdcc_probe(struct platform_device *pdev)
 	} else {
 		host->dma.channel = -1;
 	}
+=======
+	msmsdcc_init_dma(host);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Get our clocks */
 	host->pclk = clk_get(&pdev->dev, "sdc_pclk");
 	if (IS_ERR(host->pclk)) {
 		ret = PTR_ERR(host->pclk);
+<<<<<<< HEAD
 		goto dma_free;
+=======
+		goto host_free;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	host->clk = clk_get(&pdev->dev, "sdc_clk");
@@ -1263,17 +1353,29 @@ msmsdcc_probe(struct platform_device *pdev)
 		goto pclk_put;
 	}
 
+<<<<<<< HEAD
 	ret = clk_set_rate(host->clk, msmsdcc_fmin);
 	if (ret) {
 		pr_err("%s: Clock rate set failed (%d)\n", __func__, ret);
 		goto clk_put;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Enable clocks */
 	ret = msmsdcc_enable_clocks(host);
 	if (ret)
 		goto clk_put;
 
+<<<<<<< HEAD
+=======
+	ret = clk_set_rate(host->clk, msmsdcc_fmin);
+	if (ret) {
+		pr_err("%s: Clock rate set failed (%d)\n", __func__, ret);
+		goto clk_disable;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	host->pclk_rate = clk_get_rate(host->pclk);
 	host->clk_rate = clk_get_rate(host->clk);
 
@@ -1343,12 +1445,23 @@ msmsdcc_probe(struct platform_device *pdev)
 		host->eject = !host->oldstat;
 	}
 
+<<<<<<< HEAD
+=======
+	init_timer(&host->busclk_timer);
+	host->busclk_timer.data = (unsigned long) host;
+	host->busclk_timer.function = msmsdcc_busclk_expired;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = request_irq(cmd_irqres->start, msmsdcc_irq, IRQF_SHARED,
 			  DRIVER_NAME " (cmd)", host);
 	if (ret)
 		goto stat_irq_free;
 
+<<<<<<< HEAD
 	ret = request_irq(cmd_irqres->start, msmsdcc_pio_irq, IRQF_SHARED,
+=======
+	ret = request_irq(pio_irqres->start, msmsdcc_pio_irq, IRQF_SHARED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  DRIVER_NAME " (pio)", host);
 	if (ret)
 		goto cmd_irq_free;
@@ -1391,6 +1504,7 @@ msmsdcc_probe(struct platform_device *pdev)
 	clk_put(host->clk);
  pclk_put:
 	clk_put(host->pclk);
+<<<<<<< HEAD
 dma_free:
 	if (host->dmares)
 		dma_free_coherent(NULL, sizeof(struct msmsdcc_nc_dmadata),
@@ -1398,6 +1512,8 @@ dma_free:
 ioremap_free:
 	tasklet_kill(&host->dma_tlet);
 	iounmap(host->base);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  host_free:
 	mmc_free_host(mmc);
  out:
@@ -1480,7 +1596,22 @@ static struct platform_driver msmsdcc_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(msmsdcc_driver);
+=======
+static int __init msmsdcc_init(void)
+{
+	return platform_driver_register(&msmsdcc_driver);
+}
+
+static void __exit msmsdcc_exit(void)
+{
+	platform_driver_unregister(&msmsdcc_driver);
+}
+
+module_init(msmsdcc_init);
+module_exit(msmsdcc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Qualcomm MSM 7X00A Multimedia Card Interface driver");
 MODULE_LICENSE("GPL");

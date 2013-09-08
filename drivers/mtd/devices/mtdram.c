@@ -34,23 +34,49 @@ static struct mtd_info *mtd_info;
 
 static int ram_erase(struct mtd_info *mtd, struct erase_info *instr)
 {
+<<<<<<< HEAD
 	memset((char *)mtd->priv + instr->addr, 0xff, instr->len);
 	instr->state = MTD_ERASE_DONE;
 	mtd_erase_callback(instr);
+=======
+	if (instr->addr + instr->len > mtd->size)
+		return -EINVAL;
+
+	memset((char *)mtd->priv + instr->addr, 0xff, instr->len);
+
+	instr->state = MTD_ERASE_DONE;
+	mtd_erase_callback(instr);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int ram_point(struct mtd_info *mtd, loff_t from, size_t len,
 		size_t *retlen, void **virt, resource_size_t *phys)
 {
+<<<<<<< HEAD
+=======
+	if (from + len > mtd->size)
+		return -EINVAL;
+
+	/* can we return a physical address with this driver? */
+	if (phys)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*virt = mtd->priv + from;
 	*retlen = len;
 	return 0;
 }
 
+<<<<<<< HEAD
 static int ram_unpoint(struct mtd_info *mtd, loff_t from, size_t len)
 {
 	return 0;
+=======
+static void ram_unpoint(struct mtd_info *mtd, loff_t from, size_t len)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -69,7 +95,15 @@ static unsigned long ram_get_unmapped_area(struct mtd_info *mtd,
 static int ram_read(struct mtd_info *mtd, loff_t from, size_t len,
 		size_t *retlen, u_char *buf)
 {
+<<<<<<< HEAD
 	memcpy(buf, mtd->priv + from, len);
+=======
+	if (from + len > mtd->size)
+		return -EINVAL;
+
+	memcpy(buf, mtd->priv + from, len);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*retlen = len;
 	return 0;
 }
@@ -77,7 +111,15 @@ static int ram_read(struct mtd_info *mtd, loff_t from, size_t len,
 static int ram_write(struct mtd_info *mtd, loff_t to, size_t len,
 		size_t *retlen, const u_char *buf)
 {
+<<<<<<< HEAD
 	memcpy((char *)mtd->priv + to, buf, len);
+=======
+	if (to + len > mtd->size)
+		return -EINVAL;
+
+	memcpy((char *)mtd->priv + to, buf, len);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*retlen = len;
 	return 0;
 }
@@ -107,12 +149,21 @@ int mtdram_init_device(struct mtd_info *mtd, void *mapped_address,
 	mtd->priv = mapped_address;
 
 	mtd->owner = THIS_MODULE;
+<<<<<<< HEAD
 	mtd->_erase = ram_erase;
 	mtd->_point = ram_point;
 	mtd->_unpoint = ram_unpoint;
 	mtd->_get_unmapped_area = ram_get_unmapped_area;
 	mtd->_read = ram_read;
 	mtd->_write = ram_write;
+=======
+	mtd->erase = ram_erase;
+	mtd->point = ram_point;
+	mtd->unpoint = ram_unpoint;
+	mtd->get_unmapped_area = ram_get_unmapped_area;
+	mtd->read = ram_read;
+	mtd->write = ram_write;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mtd_device_register(mtd, NULL, 0))
 		return -EIO;

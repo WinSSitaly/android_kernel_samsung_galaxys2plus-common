@@ -40,6 +40,11 @@ struct netpoll_info {
 	struct netpoll *netpoll;
 };
 
+<<<<<<< HEAD
+=======
+void netpoll_poll_dev(struct net_device *dev);
+void netpoll_poll(struct netpoll *np);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void netpoll_send_udp(struct netpoll *np, const char *msg, int len);
 void netpoll_print_options(struct netpoll *np);
 int netpoll_parse_options(struct netpoll *np, char *opt);

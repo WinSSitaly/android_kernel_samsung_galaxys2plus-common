@@ -27,7 +27,12 @@
 #ifndef _CRYSTALHD_HW_H_
 #define _CRYSTALHD_HW_H_
 
+<<<<<<< HEAD
 #include "crystalhd.h"
+=======
+#include "crystalhd_misc.h"
+#include "crystalhd_fw_if.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* HW constants..*/
 #define DMA_ENGINE_CNT		2

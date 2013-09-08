@@ -13,7 +13,11 @@
 #include <linux/spinlock.h>
 #include "internals.h"
 
+<<<<<<< HEAD
 static unsigned long ack_handle[INTC_NR_IRQS];
+=======
+static unsigned long ack_handle[NR_IRQS];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static intc_enum __init intc_grp_id(struct intc_desc *desc,
 				    intc_enum enum_id)
@@ -172,8 +176,14 @@ intc_get_prio_handle(struct intc_desc *desc, struct intc_desc_int *d,
 	return 0;
 }
 
+<<<<<<< HEAD
 static unsigned int intc_ack_data(struct intc_desc *desc,
 				  struct intc_desc_int *d, intc_enum enum_id)
+=======
+static unsigned int __init intc_ack_data(struct intc_desc *desc,
+					  struct intc_desc_int *d,
+					  intc_enum enum_id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct intc_mask_reg *mr = desc->hw.ack_regs;
 	unsigned int i, j, fn, mode;

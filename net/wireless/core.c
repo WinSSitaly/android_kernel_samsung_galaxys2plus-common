@@ -488,6 +488,7 @@ int wiphy_register(struct wiphy *wiphy)
 	int i;
 	u16 ifmodes = wiphy->interface_modes;
 
+<<<<<<< HEAD
 	if (WARN_ON((wiphy->wowlan.flags & WIPHY_WOWLAN_GTK_REKEY_FAILURE) &&
 		    !(wiphy->wowlan.flags & WIPHY_WOWLAN_SUPPORTS_GTK_REKEY)))
 		return -EINVAL;
@@ -496,6 +497,8 @@ int wiphy_register(struct wiphy *wiphy)
 		    !(wiphy->flags & WIPHY_FLAG_HAVE_AP_SME)))
 		return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (WARN_ON(wiphy->addresses && !wiphy->n_addresses))
 		return -EINVAL;
 
@@ -552,7 +555,12 @@ int wiphy_register(struct wiphy *wiphy)
 		for (i = 0; i < sband->n_channels; i++) {
 			sband->channels[i].orig_flags =
 				sband->channels[i].flags;
+<<<<<<< HEAD
 			sband->channels[i].orig_mag = INT_MAX;
+=======
+			sband->channels[i].orig_mag =
+				sband->channels[i].max_antenna_gain;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sband->channels[i].orig_mpwr =
 				sband->channels[i].max_power;
 			sband->channels[i].band = band;
@@ -585,7 +593,11 @@ int wiphy_register(struct wiphy *wiphy)
 	}
 
 	/* set up regulatory info */
+<<<<<<< HEAD
 	regulatory_update(wiphy, NL80211_REGDOM_SET_BY_CORE);
+=======
+	wiphy_update_regulatory(wiphy, NL80211_REGDOM_SET_BY_CORE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_add_rcu(&rdev->list, &cfg80211_rdev_list);
 	cfg80211_rdev_list_generation++;
@@ -619,9 +631,12 @@ int wiphy_register(struct wiphy *wiphy)
 	if (res)
 		goto out_rm_dev;
 
+<<<<<<< HEAD
 	rtnl_lock();
 	rdev->wiphy.registered = true;
 	rtnl_unlock();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 out_rm_dev:
@@ -653,10 +668,13 @@ void wiphy_unregister(struct wiphy *wiphy)
 {
 	struct cfg80211_registered_device *rdev = wiphy_to_dev(wiphy);
 
+<<<<<<< HEAD
 	rtnl_lock();
 	rdev->wiphy.registered = false;
 	rtnl_unlock();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rfkill_unregister(rdev->rfkill);
 
 	/* protect the device list */
@@ -932,8 +950,12 @@ static int cfg80211_netdev_notifier_call(struct notifier_block * nb,
 		 * Configure power management to the driver here so that its
 		 * correctly set also after interface type changes etc.
 		 */
+<<<<<<< HEAD
 		if ((wdev->iftype == NL80211_IFTYPE_STATION ||
 		     wdev->iftype == NL80211_IFTYPE_P2P_CLIENT) &&
+=======
+		if (wdev->iftype == NL80211_IFTYPE_STATION &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    rdev->ops->set_power_mgmt)
 			if (rdev->ops->set_power_mgmt(wdev->wiphy, dev,
 						      wdev->ps,
@@ -974,11 +996,14 @@ static int cfg80211_netdev_notifier_call(struct notifier_block * nb,
 		 */
 		synchronize_rcu();
 		INIT_LIST_HEAD(&wdev->list);
+<<<<<<< HEAD
 		/*
 		 * Ensure that all events have been processed and
 		 * freed.
 		 */
 		cfg80211_process_wdev_events(wdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case NETDEV_PRE_UP:
 		if (!(wdev->wiphy->interface_modes & BIT(wdev->iftype)))

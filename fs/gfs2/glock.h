@@ -113,6 +113,7 @@ enum {
 
 #define GLR_TRYFAILED		13
 
+<<<<<<< HEAD
 #define GL_GLOCK_MAX_HOLD        (long)(HZ / 5)
 #define GL_GLOCK_DFT_HOLD        (long)(HZ / 5)
 #define GL_GLOCK_MIN_HOLD        (long)(10)
@@ -126,6 +127,12 @@ struct lm_lockops {
 	void (*lm_recovery_result) (struct gfs2_sbd *sdp, unsigned int jid,
 				    unsigned int result);
 	void (*lm_unmount) (struct gfs2_sbd *sdp);
+=======
+struct lm_lockops {
+	const char *lm_proto_name;
+	int (*lm_mount) (struct gfs2_sbd *sdp, const char *fsname);
+ 	void (*lm_unmount) (struct gfs2_sbd *sdp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void (*lm_withdraw) (struct gfs2_sbd *sdp);
 	void (*lm_put_lock) (struct gfs2_glock *gl);
 	int (*lm_lock) (struct gfs2_glock *gl, unsigned int req_state,
@@ -204,7 +211,11 @@ int gfs2_glock_nq_m(unsigned int num_gh, struct gfs2_holder *ghs);
 void gfs2_glock_dq_m(unsigned int num_gh, struct gfs2_holder *ghs);
 void gfs2_glock_dq_uninit_m(unsigned int num_gh, struct gfs2_holder *ghs);
 
+<<<<<<< HEAD
 __printf(2, 3)
+=======
+__attribute__ ((format(printf, 2, 3)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void gfs2_print_dbg(struct seq_file *seq, const char *fmt, ...);
 
 /**

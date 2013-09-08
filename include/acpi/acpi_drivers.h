@@ -128,7 +128,11 @@ extern int is_dock_device(acpi_handle handle);
 extern int register_dock_notifier(struct notifier_block *nb);
 extern void unregister_dock_notifier(struct notifier_block *nb);
 extern int register_hotplug_dock_device(acpi_handle handle,
+<<<<<<< HEAD
 					const struct acpi_dock_ops *ops,
+=======
+					struct acpi_dock_ops *ops,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					void *context);
 extern void unregister_hotplug_dock_device(acpi_handle handle);
 #else
@@ -144,7 +148,11 @@ static inline void unregister_dock_notifier(struct notifier_block *nb)
 {
 }
 static inline int register_hotplug_dock_device(acpi_handle handle,
+<<<<<<< HEAD
 					       const struct acpi_dock_ops *ops,
+=======
+					       struct acpi_dock_ops *ops,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					       void *context)
 {
 	return -ENODEV;

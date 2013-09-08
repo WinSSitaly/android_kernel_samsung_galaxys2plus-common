@@ -20,7 +20,10 @@
  */
 
 #include <linux/blkdev.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/raid/md_u.h>
 #include <linux/seq_file.h>
 #include <linux/slab.h>
@@ -32,7 +35,11 @@
 #define	NR_RESERVED_BUFS	32
 
 
+<<<<<<< HEAD
 static int multipath_map (struct mpconf *conf)
+=======
+static int multipath_map (multipath_conf_t *conf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i, disks = conf->raid_disks;
 
@@ -43,7 +50,11 @@ static int multipath_map (struct mpconf *conf)
 
 	rcu_read_lock();
 	for (i = 0; i < disks; i++) {
+<<<<<<< HEAD
 		struct md_rdev *rdev = rcu_dereference(conf->multipaths[i].rdev);
+=======
+		mdk_rdev_t *rdev = rcu_dereference(conf->multipaths[i].rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rdev && test_bit(In_sync, &rdev->flags)) {
 			atomic_inc(&rdev->nr_pending);
 			rcu_read_unlock();
@@ -59,8 +70,13 @@ static int multipath_map (struct mpconf *conf)
 static void multipath_reschedule_retry (struct multipath_bh *mp_bh)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	struct mddev *mddev = mp_bh->mddev;
 	struct mpconf *conf = mddev->private;
+=======
+	mddev_t *mddev = mp_bh->mddev;
+	multipath_conf_t *conf = mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&conf->device_lock, flags);
 	list_add(&mp_bh->retry_list, &conf->retry_list);
@@ -77,7 +93,11 @@ static void multipath_reschedule_retry (struct multipath_bh *mp_bh)
 static void multipath_end_bh_io (struct multipath_bh *mp_bh, int err)
 {
 	struct bio *bio = mp_bh->master_bio;
+<<<<<<< HEAD
 	struct mpconf *conf = mp_bh->mddev->private;
+=======
+	multipath_conf_t *conf = mp_bh->mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bio_endio(bio, err);
 	mempool_free(mp_bh, conf->pool);
@@ -87,8 +107,13 @@ static void multipath_end_request(struct bio *bio, int error)
 {
 	int uptodate = test_bit(BIO_UPTODATE, &bio->bi_flags);
 	struct multipath_bh *mp_bh = bio->bi_private;
+<<<<<<< HEAD
 	struct mpconf *conf = mp_bh->mddev->private;
 	struct md_rdev *rdev = conf->multipaths[mp_bh->path].rdev;
+=======
+	multipath_conf_t *conf = mp_bh->mddev->private;
+	mdk_rdev_t *rdev = conf->multipaths[mp_bh->path].rdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (uptodate)
 		multipath_end_bh_io(mp_bh, 0);
@@ -107,15 +132,25 @@ static void multipath_end_request(struct bio *bio, int error)
 	rdev_dec_pending(rdev, conf->mddev);
 }
 
+<<<<<<< HEAD
 static void multipath_make_request(struct mddev *mddev, struct bio * bio)
 {
 	struct mpconf *conf = mddev->private;
+=======
+static int multipath_make_request(mddev_t *mddev, struct bio * bio)
+{
+	multipath_conf_t *conf = mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct multipath_bh * mp_bh;
 	struct multipath_info *multipath;
 
 	if (unlikely(bio->bi_rw & REQ_FLUSH)) {
 		md_flush_request(mddev, bio);
+<<<<<<< HEAD
 		return;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	mp_bh = mempool_alloc(conf->pool, GFP_NOIO);
@@ -127,7 +162,11 @@ static void multipath_make_request(struct mddev *mddev, struct bio * bio)
 	if (mp_bh->path < 0) {
 		bio_endio(bio, -EIO);
 		mempool_free(mp_bh, conf->pool);
+<<<<<<< HEAD
 		return;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	multipath = conf->multipaths + mp_bh->path;
 
@@ -138,12 +177,21 @@ static void multipath_make_request(struct mddev *mddev, struct bio * bio)
 	mp_bh->bio.bi_end_io = multipath_end_request;
 	mp_bh->bio.bi_private = mp_bh;
 	generic_make_request(&mp_bh->bio);
+<<<<<<< HEAD
 	return;
 }
 
 static void multipath_status (struct seq_file *seq, struct mddev *mddev)
 {
 	struct mpconf *conf = mddev->private;
+=======
+	return 0;
+}
+
+static void multipath_status (struct seq_file *seq, mddev_t *mddev)
+{
+	multipath_conf_t *conf = mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 	
 	seq_printf (seq, " [%d/%d] [", conf->raid_disks,
@@ -157,8 +205,13 @@ static void multipath_status (struct seq_file *seq, struct mddev *mddev)
 
 static int multipath_congested(void *data, int bits)
 {
+<<<<<<< HEAD
 	struct mddev *mddev = data;
 	struct mpconf *conf = mddev->private;
+=======
+	mddev_t *mddev = data;
+	multipath_conf_t *conf = mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i, ret = 0;
 
 	if (mddev_congested(mddev, bits))
@@ -166,7 +219,11 @@ static int multipath_congested(void *data, int bits)
 
 	rcu_read_lock();
 	for (i = 0; i < mddev->raid_disks ; i++) {
+<<<<<<< HEAD
 		struct md_rdev *rdev = rcu_dereference(conf->multipaths[i].rdev);
+=======
+		mdk_rdev_t *rdev = rcu_dereference(conf->multipaths[i].rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rdev && !test_bit(Faulty, &rdev->flags)) {
 			struct request_queue *q = bdev_get_queue(rdev->bdev);
 
@@ -184,9 +241,15 @@ static int multipath_congested(void *data, int bits)
 /*
  * Careful, this can execute in IRQ contexts as well!
  */
+<<<<<<< HEAD
 static void multipath_error (struct mddev *mddev, struct md_rdev *rdev)
 {
 	struct mpconf *conf = mddev->private;
+=======
+static void multipath_error (mddev_t *mddev, mdk_rdev_t *rdev)
+{
+	multipath_conf_t *conf = mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char b[BDEVNAME_SIZE];
 
 	if (conf->raid_disks - mddev->degraded <= 1) {
@@ -219,7 +282,11 @@ static void multipath_error (struct mddev *mddev, struct md_rdev *rdev)
 	       conf->raid_disks - mddev->degraded);
 }
 
+<<<<<<< HEAD
 static void print_multipath_conf (struct mpconf *conf)
+=======
+static void print_multipath_conf (multipath_conf_t *conf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 	struct multipath_info *tmp;
@@ -243,9 +310,15 @@ static void print_multipath_conf (struct mpconf *conf)
 }
 
 
+<<<<<<< HEAD
 static int multipath_add_disk(struct mddev *mddev, struct md_rdev *rdev)
 {
 	struct mpconf *conf = mddev->private;
+=======
+static int multipath_add_disk(mddev_t *mddev, mdk_rdev_t *rdev)
+{
+	multipath_conf_t *conf = mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct request_queue *q;
 	int err = -EEXIST;
 	int path;
@@ -292,16 +365,29 @@ static int multipath_add_disk(struct mddev *mddev, struct md_rdev *rdev)
 	return err;
 }
 
+<<<<<<< HEAD
 static int multipath_remove_disk(struct mddev *mddev, struct md_rdev *rdev)
 {
 	struct mpconf *conf = mddev->private;
 	int err = 0;
 	int number = rdev->raid_disk;
+=======
+static int multipath_remove_disk(mddev_t *mddev, int number)
+{
+	multipath_conf_t *conf = mddev->private;
+	int err = 0;
+	mdk_rdev_t *rdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct multipath_info *p = conf->multipaths + number;
 
 	print_multipath_conf(conf);
 
+<<<<<<< HEAD
 	if (rdev == p->rdev) {
+=======
+	rdev = p->rdev;
+	if (rdev) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (test_bit(In_sync, &rdev->flags) ||
 		    atomic_read(&rdev->nr_pending)) {
 			printk(KERN_ERR "hot-remove-disk, slot %d is identified"
@@ -335,12 +421,20 @@ abort:
  *	3.	Performs writes following reads for array syncronising.
  */
 
+<<<<<<< HEAD
 static void multipathd (struct mddev *mddev)
+=======
+static void multipathd (mddev_t *mddev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct multipath_bh *mp_bh;
 	struct bio *bio;
 	unsigned long flags;
+<<<<<<< HEAD
 	struct mpconf *conf = mddev->private;
+=======
+	multipath_conf_t *conf = mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head *head = &conf->retry_list;
 
 	md_check_recovery(mddev);
@@ -379,7 +473,11 @@ static void multipathd (struct mddev *mddev)
 	spin_unlock_irqrestore(&conf->device_lock, flags);
 }
 
+<<<<<<< HEAD
 static sector_t multipath_size(struct mddev *mddev, sector_t sectors, int raid_disks)
+=======
+static sector_t multipath_size(mddev_t *mddev, sector_t sectors, int raid_disks)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	WARN_ONCE(sectors || raid_disks,
 		  "%s does not support generic reshape\n", __func__);
@@ -387,12 +485,21 @@ static sector_t multipath_size(struct mddev *mddev, sector_t sectors, int raid_d
 	return mddev->dev_sectors;
 }
 
+<<<<<<< HEAD
 static int multipath_run (struct mddev *mddev)
 {
 	struct mpconf *conf;
 	int disk_idx;
 	struct multipath_info *disk;
 	struct md_rdev *rdev;
+=======
+static int multipath_run (mddev_t *mddev)
+{
+	multipath_conf_t *conf;
+	int disk_idx;
+	struct multipath_info *disk;
+	mdk_rdev_t *rdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int working_disks;
 
 	if (md_check_no_bitmap(mddev))
@@ -409,7 +516,11 @@ static int multipath_run (struct mddev *mddev)
 	 * should be freed in multipath_stop()]
 	 */
 
+<<<<<<< HEAD
 	conf = kzalloc(sizeof(struct mpconf), GFP_KERNEL);
+=======
+	conf = kzalloc(sizeof(multipath_conf_t), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mddev->private = conf;
 	if (!conf) {
 		printk(KERN_ERR 
@@ -428,7 +539,11 @@ static int multipath_run (struct mddev *mddev)
 	}
 
 	working_disks = 0;
+<<<<<<< HEAD
 	rdev_for_each(rdev, mddev) {
+=======
+	list_for_each_entry(rdev, &mddev->disks, same_set) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		disk_idx = rdev->raid_disk;
 		if (disk_idx < 0 ||
 		    disk_idx >= mddev->raid_disks)
@@ -510,9 +625,15 @@ out:
 }
 
 
+<<<<<<< HEAD
 static int multipath_stop (struct mddev *mddev)
 {
 	struct mpconf *conf = mddev->private;
+=======
+static int multipath_stop (mddev_t *mddev)
+{
+	multipath_conf_t *conf = mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	md_unregister_thread(&mddev->thread);
 	blk_sync_queue(mddev->queue); /* the unplug fn references 'conf'*/
@@ -523,7 +644,11 @@ static int multipath_stop (struct mddev *mddev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct md_personality multipath_personality =
+=======
+static struct mdk_personality multipath_personality =
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	.name		= "multipath",
 	.level		= LEVEL_MULTIPATH,

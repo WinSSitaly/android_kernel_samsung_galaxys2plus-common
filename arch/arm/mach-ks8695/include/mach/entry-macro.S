@@ -14,10 +14,22 @@
 #include <mach/hardware.h>
 #include <mach/regs-irq.h>
 
+<<<<<<< HEAD
+=======
+	.macro	disable_fiq
+	.endm
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.macro  get_irqnr_preamble, base, tmp
 		ldr	\base, =KS8695_IRQ_VA			@ Base address of interrupt controller
 	.endm
 
+<<<<<<< HEAD
+=======
+	.macro  arch_ret_to_user, tmp1, tmp2
+	.endm
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.macro	get_irqnr_and_base, irqnr, irqstat, base, tmp
 		ldr	\irqstat, [\base, #KS8695_INTMS]	@ Mask Status register
 

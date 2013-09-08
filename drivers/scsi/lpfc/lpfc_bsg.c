@@ -42,7 +42,10 @@
 #include "lpfc.h"
 #include "lpfc_logmsg.h"
 #include "lpfc_crtn.h"
+<<<<<<< HEAD
 #include "lpfc_debugfs.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "lpfc_vport.h"
 #include "lpfc_version.h"
 
@@ -589,10 +592,14 @@ lpfc_bsg_rport_els(struct fc_bsg_job *job)
 	}
 	cmdiocbq->iocb.un.elsreq64.bdl.bdeSize =
 		(request_nseg + reply_nseg) * sizeof(struct ulp_bde64);
+<<<<<<< HEAD
 	if (phba->sli_rev == LPFC_SLI_REV4)
 		cmdiocbq->iocb.ulpContext = phba->sli4_hba.rpi_ids[rpi];
 	else
 		cmdiocbq->iocb.ulpContext = rpi;
+=======
+	cmdiocbq->iocb.ulpContext = rpi;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmdiocbq->iocb_flag |= LPFC_IO_LIBDFC;
 	cmdiocbq->context1 = NULL;
 	cmdiocbq->context2 = NULL;
@@ -919,11 +926,17 @@ lpfc_bsg_ct_unsol_event(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
 				} else {
 					switch (cmd) {
 					case ELX_LOOPBACK_DATA:
+<<<<<<< HEAD
 						if (phba->sli_rev <
 						    LPFC_SLI_REV4)
 							diag_cmd_data_free(phba,
 							(struct lpfc_dmabufext
 							 *)dmabuf);
+=======
+						diag_cmd_data_free(phba,
+						(struct lpfc_dmabufext *)
+							dmabuf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						break;
 					case ELX_LOOPBACK_XRI_SETUP:
 						if ((phba->sli_rev ==
@@ -1005,8 +1018,12 @@ lpfc_bsg_ct_unsol_event(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
 error_ct_unsol_exit:
 	if (!list_empty(&head))
 		list_del(&head);
+<<<<<<< HEAD
 	if ((phba->sli_rev < LPFC_SLI_REV4) &&
 	    (evt_req_id == SLI_CT_ELX_LOOPBACK))
+=======
+	if (evt_req_id == SLI_CT_ELX_LOOPBACK)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	return 1;
 }
@@ -1572,8 +1589,13 @@ lpfc_sli3_bsg_diag_loopback_mode(struct lpfc_hba *phba, struct fc_bsg_job *job)
 	struct diag_mode_set *loopback_mode;
 	uint32_t link_flags;
 	uint32_t timeout;
+<<<<<<< HEAD
 	LPFC_MBOXQ_t *pmboxq  = NULL;
 	int mbxstatus = MBX_SUCCESS;
+=======
+	LPFC_MBOXQ_t *pmboxq;
+	int mbxstatus;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i = 0;
 	int rc = 0;
 
@@ -1621,6 +1643,10 @@ lpfc_sli3_bsg_diag_loopback_mode(struct lpfc_hba *phba, struct fc_bsg_job *job)
 				rc = -ETIMEDOUT;
 				goto loopback_mode_exit;
 			}
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			msleep(10);
 		}
 
@@ -1640,9 +1666,13 @@ lpfc_sli3_bsg_diag_loopback_mode(struct lpfc_hba *phba, struct fc_bsg_job *job)
 		if ((mbxstatus != MBX_SUCCESS) || (pmboxq->u.mb.mbxStatus))
 			rc = -ENODEV;
 		else {
+<<<<<<< HEAD
 			spin_lock_irq(&phba->hbalock);
 			phba->link_flag |= LS_LOOPBACK_MODE;
 			spin_unlock_irq(&phba->hbalock);
+=======
+			phba->link_flag |= LS_LOOPBACK_MODE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* wait for the link attention interrupt */
 			msleep(100);
 
@@ -1666,7 +1696,11 @@ loopback_mode_exit:
 	/*
 	 * Let SLI layer release mboxq if mbox command completed after timeout.
 	 */
+<<<<<<< HEAD
 	if (pmboxq && mbxstatus != MBX_TIMEOUT)
+=======
+	if (mbxstatus != MBX_TIMEOUT)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mempool_free(pmboxq, phba->mbox_mem_pool);
 
 job_error:
@@ -1707,6 +1741,7 @@ lpfc_sli4_bsg_set_link_diag_state(struct lpfc_hba *phba, uint32_t diag)
 		rc = -ENOMEM;
 		goto link_diag_state_set_out;
 	}
+<<<<<<< HEAD
 	lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
 			"3128 Set link to diagnostic state:x%x (x%x/x%x)\n",
 			diag, phba->sli4_hba.lnk_info.lnk_tp,
@@ -1717,6 +1752,13 @@ lpfc_sli4_bsg_set_link_diag_state(struct lpfc_hba *phba, uint32_t diag)
 	       phba->sli4_hba.lnk_info.lnk_no);
 	bf_set(lpfc_mbx_set_diag_state_link_type, &link_diag_state->u.req,
 	       phba->sli4_hba.lnk_info.lnk_tp);
+=======
+	link_diag_state = &pmboxq->u.mqe.un.link_diag_state;
+	bf_set(lpfc_mbx_set_diag_state_link_num, &link_diag_state->u.req,
+	       phba->sli4_hba.link_state.number);
+	bf_set(lpfc_mbx_set_diag_state_link_type, &link_diag_state->u.req,
+	       phba->sli4_hba.link_state.type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (diag)
 		bf_set(lpfc_mbx_set_diag_state_diag,
 		       &link_diag_state->u.req, 1);
@@ -1739,6 +1781,7 @@ link_diag_state_set_out:
 }
 
 /**
+<<<<<<< HEAD
  * lpfc_sli4_bsg_set_internal_loopback - set sli4 internal loopback diagnostic
  * @phba: Pointer to HBA context object.
  *
@@ -1812,6 +1855,8 @@ lpfc_sli4_diag_fcport_reg_setup(struct lpfc_hba *phba)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * lpfc_sli4_bsg_diag_loopback_mode - process an sli4 bsg vendor command
  * @phba: Pointer to HBA context object.
  * @job: LPFC_BSG_VENDOR_DIAG_MODE
@@ -1823,8 +1868,15 @@ static int
 lpfc_sli4_bsg_diag_loopback_mode(struct lpfc_hba *phba, struct fc_bsg_job *job)
 {
 	struct diag_mode_set *loopback_mode;
+<<<<<<< HEAD
 	uint32_t link_flags, timeout;
 	int i, rc = 0;
+=======
+	uint32_t link_flags, timeout, req_len, alloc_len;
+	struct lpfc_mbx_set_link_diag_loopback *link_diag_loopback;
+	LPFC_MBOXQ_t *pmboxq = NULL;
+	int mbxstatus, i, rc = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* no data to return just the return code */
 	job->reply->reply_payload_rcv_len = 0;
@@ -1845,6 +1897,7 @@ lpfc_sli4_bsg_diag_loopback_mode(struct lpfc_hba *phba, struct fc_bsg_job *job)
 	if (rc)
 		goto job_error;
 
+<<<<<<< HEAD
 	/* indicate we are in loobpack diagnostic mode */
 	spin_lock_irq(&phba->hbalock);
 	phba->link_flag |= LS_LOOPBACK_MODE;
@@ -1858,32 +1911,44 @@ lpfc_sli4_bsg_diag_loopback_mode(struct lpfc_hba *phba, struct fc_bsg_job *job)
 	/* bring the link to diagnostic mode */
 	lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
 			"3129 Bring link to diagnostic state.\n");
+=======
+	/* bring the link to diagnostic mode */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	loopback_mode = (struct diag_mode_set *)
 		job->request->rqst_data.h_vendor.vendor_cmd;
 	link_flags = loopback_mode->type;
 	timeout = loopback_mode->timeout * 100;
 
 	rc = lpfc_sli4_bsg_set_link_diag_state(phba, 1);
+<<<<<<< HEAD
 	if (rc) {
 		lpfc_printf_log(phba, KERN_WARNING, LOG_LIBDFC,
 				"3130 Failed to bring link to diagnostic "
 				"state, rc:x%x\n", rc);
 		goto loopback_mode_exit;
 	}
+=======
+	if (rc)
+		goto loopback_mode_exit;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* wait for link down before proceeding */
 	i = 0;
 	while (phba->link_state != LPFC_LINK_DOWN) {
 		if (i++ > timeout) {
 			rc = -ETIMEDOUT;
+<<<<<<< HEAD
 			lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
 					"3131 Timeout waiting for link to "
 					"diagnostic mode, timeout:%d ms\n",
 					timeout * 10);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto loopback_mode_exit;
 		}
 		msleep(10);
 	}
+<<<<<<< HEAD
 
 	/* set up loopback mode */
 	lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
@@ -1930,15 +1995,55 @@ lpfc_sli4_bsg_diag_loopback_mode(struct lpfc_hba *phba, struct fc_bsg_job *job)
 
 	if (!rc) {
 		/* wait for the port ready */
+=======
+	/* set up loopback mode */
+	pmboxq = mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
+	if (!pmboxq) {
+		rc = -ENOMEM;
+		goto loopback_mode_exit;
+	}
+	req_len = (sizeof(struct lpfc_mbx_set_link_diag_loopback) -
+		   sizeof(struct lpfc_sli4_cfg_mhdr));
+	alloc_len = lpfc_sli4_config(phba, pmboxq, LPFC_MBOX_SUBSYSTEM_FCOE,
+				LPFC_MBOX_OPCODE_FCOE_LINK_DIAG_LOOPBACK,
+				req_len, LPFC_SLI4_MBX_EMBED);
+	if (alloc_len != req_len) {
+		rc = -ENOMEM;
+		goto loopback_mode_exit;
+	}
+	link_diag_loopback = &pmboxq->u.mqe.un.link_diag_loopback;
+	bf_set(lpfc_mbx_set_diag_state_link_num,
+	       &link_diag_loopback->u.req, phba->sli4_hba.link_state.number);
+	bf_set(lpfc_mbx_set_diag_state_link_type,
+	       &link_diag_loopback->u.req, phba->sli4_hba.link_state.type);
+	if (link_flags == INTERNAL_LOOP_BACK)
+		bf_set(lpfc_mbx_set_diag_lpbk_type,
+		       &link_diag_loopback->u.req,
+		       LPFC_DIAG_LOOPBACK_TYPE_INTERNAL);
+	else
+		bf_set(lpfc_mbx_set_diag_lpbk_type,
+		       &link_diag_loopback->u.req,
+		       LPFC_DIAG_LOOPBACK_TYPE_EXTERNAL);
+
+	mbxstatus = lpfc_sli_issue_mbox_wait(phba, pmboxq, LPFC_MBOX_TMO);
+	if ((mbxstatus != MBX_SUCCESS) || (pmboxq->u.mb.mbxStatus))
+		rc = -ENODEV;
+	else {
+		phba->link_flag |= LS_LOOPBACK_MODE;
+		/* wait for the link attention interrupt */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		msleep(100);
 		i = 0;
 		while (phba->link_state != LPFC_HBA_READY) {
 			if (i++ > timeout) {
 				rc = -ETIMEDOUT;
+<<<<<<< HEAD
 				lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
 					"3133 Timeout waiting for port "
 					"loopback mode ready, timeout:%d ms\n",
 					timeout * 10);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 			}
 			msleep(10);
@@ -1946,6 +2051,7 @@ lpfc_sli4_bsg_diag_loopback_mode(struct lpfc_hba *phba, struct fc_bsg_job *job)
 	}
 
 loopback_mode_exit:
+<<<<<<< HEAD
 	/* clear loopback diagnostic mode */
 	if (rc) {
 		spin_lock_irq(&phba->hbalock);
@@ -1954,6 +2060,16 @@ loopback_mode_exit:
 	}
 	lpfc_bsg_diag_mode_exit(phba);
 
+=======
+	lpfc_bsg_diag_mode_exit(phba);
+
+	/*
+	 * Let SLI layer release mboxq if mbox command completed after timeout.
+	 */
+	if (pmboxq && (mbxstatus != MBX_TIMEOUT))
+		mempool_free(pmboxq, phba->mbox_mem_pool);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 job_error:
 	/* make error code available to userspace */
 	job->reply->result = rc;
@@ -1997,6 +2113,10 @@ lpfc_bsg_diag_loopback_mode(struct fc_bsg_job *job)
 		rc = -ENODEV;
 
 	return rc;
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -2012,9 +2132,13 @@ lpfc_sli4_bsg_diag_mode_end(struct fc_bsg_job *job)
 	struct Scsi_Host *shost;
 	struct lpfc_vport *vport;
 	struct lpfc_hba *phba;
+<<<<<<< HEAD
 	struct diag_mode_set *loopback_mode_end_cmd;
 	uint32_t timeout;
 	int rc, i;
+=======
+	int rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	shost = job->shost;
 	if (!shost)
@@ -2032,6 +2156,7 @@ lpfc_sli4_bsg_diag_mode_end(struct fc_bsg_job *job)
 	    LPFC_SLI_INTF_IF_TYPE_2)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	/* clear loopback diagnostic mode */
 	spin_lock_irq(&phba->hbalock);
 	phba->link_flag &= ~LS_LOOPBACK_MODE;
@@ -2073,6 +2198,13 @@ loopback_mode_end_exit:
 	/* complete the job back to userspace if no error */
 	if (rc == 0)
 		job->job_done(job);
+=======
+	rc = lpfc_sli4_bsg_set_link_diag_state(phba, 0);
+
+	if (!rc)
+		rc = phba->lpfc_hba_init_link(phba, MBX_NOWAIT);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -2167,9 +2299,15 @@ lpfc_sli4_bsg_link_diag_test(struct fc_bsg_job *job)
 	}
 	run_link_diag_test = &pmboxq->u.mqe.un.link_diag_test;
 	bf_set(lpfc_mbx_run_diag_test_link_num, &run_link_diag_test->u.req,
+<<<<<<< HEAD
 	       phba->sli4_hba.lnk_info.lnk_no);
 	bf_set(lpfc_mbx_run_diag_test_link_type, &run_link_diag_test->u.req,
 	       phba->sli4_hba.lnk_info.lnk_tp);
+=======
+	       phba->sli4_hba.link_state.number);
+	bf_set(lpfc_mbx_run_diag_test_link_type, &run_link_diag_test->u.req,
+	       phba->sli4_hba.link_state.type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bf_set(lpfc_mbx_run_diag_test_test_id, &run_link_diag_test->u.req,
 	       link_diag_test_cmd->test_id);
 	bf_set(lpfc_mbx_run_diag_test_loops, &run_link_diag_test->u.req,
@@ -2246,6 +2384,7 @@ static int lpfcdiag_loop_self_reg(struct lpfc_hba *phba, uint16_t *rpi)
 	if (!mbox)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	if (phba->sli_rev < LPFC_SLI_REV4)
 		status = lpfc_reg_rpi(phba, 0, phba->pport->fc_myDID,
 				(uint8_t *)&phba->pport->fc_sparam,
@@ -2258,6 +2397,12 @@ static int lpfcdiag_loop_self_reg(struct lpfc_hba *phba, uint16_t *rpi)
 				mbox, *rpi);
 	}
 
+=======
+	if (phba->sli_rev == LPFC_SLI_REV4)
+		*rpi = lpfc_sli4_alloc_rpi(phba);
+	status = lpfc_reg_rpi(phba, 0, phba->pport->fc_myDID,
+			      (uint8_t *)&phba->pport->fc_sparam, mbox, *rpi);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (status) {
 		mempool_free(mbox, phba->mbox_mem_pool);
 		if (phba->sli_rev == LPFC_SLI_REV4)
@@ -2280,8 +2425,12 @@ static int lpfcdiag_loop_self_reg(struct lpfc_hba *phba, uint16_t *rpi)
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	if (phba->sli_rev < LPFC_SLI_REV4)
 		*rpi = mbox->u.mb.un.varWords[0];
+=======
+	*rpi = mbox->u.mb.un.varWords[0];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lpfc_mbuf_free(phba, dmabuff->virt, dmabuff->phys);
 	kfree(dmabuff);
@@ -2306,12 +2455,16 @@ static int lpfcdiag_loop_self_unreg(struct lpfc_hba *phba, uint16_t rpi)
 	if (mbox == NULL)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	if (phba->sli_rev < LPFC_SLI_REV4)
 		lpfc_unreg_login(phba, 0, rpi, mbox);
 	else
 		lpfc_unreg_login(phba, phba->pport->vpi,
 				 phba->sli4_hba.rpi_ids[rpi], mbox);
 
+=======
+	lpfc_unreg_login(phba, 0, rpi, mbox);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = lpfc_sli_issue_mbox_wait(phba, mbox, LPFC_MBOX_TMO);
 
 	if ((status != MBX_SUCCESS) || (mbox->u.mb.mbxStatus)) {
@@ -2799,15 +2952,24 @@ lpfc_bsg_diag_loopback_run(struct fc_bsg_job *job)
 	uint32_t full_size;
 	size_t segment_len = 0, segment_offset = 0, current_offset = 0;
 	uint16_t rpi = 0;
+<<<<<<< HEAD
 	struct lpfc_iocbq *cmdiocbq, *rspiocbq = NULL;
 	IOCB_t *cmd, *rsp = NULL;
+=======
+	struct lpfc_iocbq *cmdiocbq, *rspiocbq;
+	IOCB_t *cmd, *rsp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct lpfc_sli_ct_request *ctreq;
 	struct lpfc_dmabuf *txbmp;
 	struct ulp_bde64 *txbpl = NULL;
 	struct lpfc_dmabufext *txbuffer = NULL;
 	struct list_head head;
 	struct lpfc_dmabuf  *curr;
+<<<<<<< HEAD
 	uint16_t txxri = 0, rxxri;
+=======
+	uint16_t txxri, rxxri;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint32_t num_bde;
 	uint8_t *ptr = NULL, *rx_databuf = NULL;
 	int rc = 0;
@@ -2834,6 +2996,10 @@ lpfc_bsg_diag_loopback_run(struct fc_bsg_job *job)
 		rc = -EINVAL;
 		goto loopback_test_exit;
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	diag_mode = (struct diag_mode_test *)
 		job->request->rqst_data.h_vendor.vendor_cmd;
 
@@ -2888,6 +3054,7 @@ lpfc_bsg_diag_loopback_run(struct fc_bsg_job *job)
 	if (rc)
 		goto loopback_test_exit;
 
+<<<<<<< HEAD
 	if (phba->sli_rev < LPFC_SLI_REV4) {
 		rc = lpfcdiag_loop_get_xri(phba, rpi, &txxri, &rxxri);
 		if (rc) {
@@ -2901,6 +3068,20 @@ lpfc_bsg_diag_loopback_run(struct fc_bsg_job *job)
 			goto loopback_test_exit;
 		}
 	}
+=======
+	rc = lpfcdiag_loop_get_xri(phba, rpi, &txxri, &rxxri);
+	if (rc) {
+		lpfcdiag_loop_self_unreg(phba, rpi);
+		goto loopback_test_exit;
+	}
+
+	rc = lpfcdiag_loop_post_rxbufs(phba, rxxri, full_size);
+	if (rc) {
+		lpfcdiag_loop_self_unreg(phba, rpi);
+		goto loopback_test_exit;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	evt = lpfc_bsg_event_new(FC_REG_CT_EVENT, current->pid,
 				SLI_CT_ELX_LOOPBACK);
 	if (!evt) {
@@ -2915,8 +3096,12 @@ lpfc_bsg_diag_loopback_run(struct fc_bsg_job *job)
 	spin_unlock_irqrestore(&phba->ct_ev_lock, flags);
 
 	cmdiocbq = lpfc_sli_get_iocbq(phba);
+<<<<<<< HEAD
 	if (phba->sli_rev < LPFC_SLI_REV4)
 		rspiocbq = lpfc_sli_get_iocbq(phba);
+=======
+	rspiocbq = lpfc_sli_get_iocbq(phba);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	txbmp = kmalloc(sizeof(struct lpfc_dmabuf), GFP_KERNEL);
 
 	if (txbmp) {
@@ -2929,18 +3114,27 @@ lpfc_bsg_diag_loopback_run(struct fc_bsg_job *job)
 		}
 	}
 
+<<<<<<< HEAD
 	if (!cmdiocbq || !txbmp || !txbpl || !txbuffer || !txbmp->virt) {
 		rc = -ENOMEM;
 		goto err_loopback_test_exit;
 	}
 	if ((phba->sli_rev < LPFC_SLI_REV4) && !rspiocbq) {
+=======
+	if (!cmdiocbq || !rspiocbq || !txbmp || !txbpl || !txbuffer ||
+		!txbmp->virt) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -ENOMEM;
 		goto err_loopback_test_exit;
 	}
 
 	cmd = &cmdiocbq->iocb;
+<<<<<<< HEAD
 	if (phba->sli_rev < LPFC_SLI_REV4)
 		rsp = &rspiocbq->iocb;
+=======
+	rsp = &rspiocbq->iocb;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	INIT_LIST_HEAD(&head);
 	list_add_tail(&head, &txbuffer->dma.list);
@@ -2970,6 +3164,10 @@ lpfc_bsg_diag_loopback_run(struct fc_bsg_job *job)
 	list_del(&head);
 
 	/* Build the XMIT_SEQUENCE iocb */
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	num_bde = (uint32_t)txbuffer->flag;
 
 	cmd->un.xseq64.bdl.addrHigh = putPaddrHigh(txbmp->phys);
@@ -2986,6 +3184,7 @@ lpfc_bsg_diag_loopback_run(struct fc_bsg_job *job)
 	cmd->ulpBdeCount = 1;
 	cmd->ulpLe = 1;
 	cmd->ulpClass = CLASS3;
+<<<<<<< HEAD
 
 	if (phba->sli_rev < LPFC_SLI_REV4) {
 		cmd->ulpContext = txxri;
@@ -2998,15 +3197,26 @@ lpfc_bsg_diag_loopback_run(struct fc_bsg_job *job)
 	}
 	cmdiocbq->iocb_flag |= LPFC_IO_LIBDFC;
 	cmdiocbq->vport = phba->pport;
+=======
+	cmd->ulpContext = txxri;
+
+	cmdiocbq->iocb_flag |= LPFC_IO_LIBDFC;
+	cmdiocbq->vport = phba->pport;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iocb_stat = lpfc_sli_issue_iocb_wait(phba, LPFC_ELS_RING, cmdiocbq,
 					     rspiocbq, (phba->fc_ratov * 2) +
 					     LPFC_DRVR_TIMEOUT);
 
+<<<<<<< HEAD
 	if ((iocb_stat != IOCB_SUCCESS) || ((phba->sli_rev < LPFC_SLI_REV4) &&
 					   (rsp->ulpStatus != IOCB_SUCCESS))) {
 		lpfc_printf_log(phba, KERN_ERR, LOG_LIBDFC,
 				"3126 Failed loopback test issue iocb: "
 				"iocb_stat:x%x\n", iocb_stat);
+=======
+	if ((iocb_stat != IOCB_SUCCESS) || (rsp->ulpStatus != IOCB_SUCCESS)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -EIO;
 		goto err_loopback_test_exit;
 	}
@@ -3016,12 +3226,18 @@ lpfc_bsg_diag_loopback_run(struct fc_bsg_job *job)
 		evt->wq, !list_empty(&evt->events_to_see),
 		((phba->fc_ratov * 2) + LPFC_DRVR_TIMEOUT) * HZ);
 	evt->waiting = 0;
+<<<<<<< HEAD
 	if (list_empty(&evt->events_to_see)) {
 		rc = (time_left) ? -EINTR : -ETIMEDOUT;
 		lpfc_printf_log(phba, KERN_ERR, LOG_LIBDFC,
 				"3125 Not receiving unsolicited event, "
 				"rc:x%x\n", rc);
 	} else {
+=======
+	if (list_empty(&evt->events_to_see))
+		rc = (time_left) ? -EINTR : -ETIMEDOUT;
+	else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_lock_irqsave(&phba->ct_ev_lock, flags);
 		list_move(evt->events_to_see.prev, &evt->events_to_get);
 		evdat = list_entry(evt->events_to_get.prev,
@@ -3078,7 +3294,11 @@ loopback_test_exit:
 	job->reply->result = rc;
 	job->dd_data = NULL;
 	/* complete the job back to userspace if no error */
+<<<<<<< HEAD
 	if (rc == IOCB_SUCCESS)
+=======
+	if (rc == 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		job->job_done(job);
 	return rc;
 }
@@ -3265,9 +3485,13 @@ static int lpfc_bsg_check_cmd_access(struct lpfc_hba *phba,
 			&& (mb->un.varWords[1] == 1)) {
 			phba->wait_4_mlo_maint_flg = 1;
 		} else if (mb->un.varWords[0] == SETVAR_MLORST) {
+<<<<<<< HEAD
 			spin_lock_irq(&phba->hbalock);
 			phba->link_flag &= ~LS_LOOPBACK_MODE;
 			spin_unlock_irq(&phba->hbalock);
+=======
+			phba->link_flag &= ~LS_LOOPBACK_MODE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			phba->fc_topology = LPFC_TOPOLOGY_PT_PT;
 		}
 		break;
@@ -3329,9 +3553,12 @@ lpfc_bsg_issue_mbox_ext_handle_job(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmboxq)
 	unsigned long flags;
 	uint32_t size;
 	int rc = 0;
+<<<<<<< HEAD
 	struct lpfc_dmabuf *dmabuf;
 	struct lpfc_sli_config_mbox *sli_cfg_mbx;
 	uint8_t *pmbx;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&phba->ct_ev_lock, flags);
 	dd_data = pmboxq->context1;
@@ -3348,6 +3575,7 @@ lpfc_bsg_issue_mbox_ext_handle_job(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmboxq)
 	 */
 	pmb = (uint8_t *)&pmboxq->u.mb;
 	pmb_buf = (uint8_t *)dd_data->context_un.mbox.mb;
+<<<<<<< HEAD
 	/* Copy the byte swapped response mailbox back to the user */
 	memcpy(pmb_buf, pmb, sizeof(MAILBOX_t));
 	/* if there is any non-embedded extended data copy that too */
@@ -3361,6 +3589,9 @@ lpfc_bsg_issue_mbox_ext_handle_job(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmboxq)
 			&pmbx[sizeof(MAILBOX_t)],
 			sli_cfg_mbx->un.sli_config_emb0_subsys.mse[0].buf_len);
 	}
+=======
+	memcpy(pmb_buf, pmb, sizeof(MAILBOX_t));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	job = dd_data->context_un.mbox.set_job;
 	if (job) {
@@ -3382,11 +3613,14 @@ lpfc_bsg_issue_mbox_ext_handle_job(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmboxq)
 				"(x%x/x%x) complete bsg job done, bsize:%d\n",
 				phba->mbox_ext_buf_ctx.nembType,
 				phba->mbox_ext_buf_ctx.mboxType, size);
+<<<<<<< HEAD
 		lpfc_idiag_mbxacc_dump_bsg_mbox(phba,
 					phba->mbox_ext_buf_ctx.nembType,
 					phba->mbox_ext_buf_ctx.mboxType,
 					dma_ebuf, sta_pos_addr,
 					phba->mbox_ext_buf_ctx.mbx_dmabuf, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		spin_unlock_irqrestore(&phba->ct_ev_lock, flags);
 
@@ -3639,10 +3873,13 @@ lpfc_bsg_sli_cfg_read_cmd_ext(struct lpfc_hba *phba, struct fc_bsg_job *job,
 				"ext_buf_cnt:%d\n", ext_buf_cnt);
 	}
 
+<<<<<<< HEAD
 	/* before dma descriptor setup */
 	lpfc_idiag_mbxacc_dump_bsg_mbox(phba, nemb_tp, mbox_rd, dma_mbox,
 					sta_pre_addr, dmabuf, ext_buf_cnt);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* reject non-embedded mailbox command with none external buffer */
 	if (ext_buf_cnt == 0) {
 		rc = -EPERM;
@@ -3690,10 +3927,13 @@ lpfc_bsg_sli_cfg_read_cmd_ext(struct lpfc_hba *phba, struct fc_bsg_job *job,
 		}
 	}
 
+<<<<<<< HEAD
 	/* after dma descriptor setup */
 	lpfc_idiag_mbxacc_dump_bsg_mbox(phba, nemb_tp, mbox_rd, dma_mbox,
 					sta_pos_addr, dmabuf, ext_buf_cnt);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* construct base driver mbox command */
 	pmb = &pmboxq->u.mb;
 	pmbx = (uint8_t *)dmabuf->virt;
@@ -3723,6 +3963,7 @@ lpfc_bsg_sli_cfg_read_cmd_ext(struct lpfc_hba *phba, struct fc_bsg_job *job,
 	/* state change */
 	phba->mbox_ext_buf_ctx.state = LPFC_BSG_MBOX_PORT;
 
+<<<<<<< HEAD
 	/*
 	 * Non-embedded mailbox subcommand data gets byte swapped here because
 	 * the lower level driver code only does the first 64 mailbox words.
@@ -3735,6 +3976,8 @@ lpfc_bsg_sli_cfg_read_cmd_ext(struct lpfc_hba *phba, struct fc_bsg_job *job,
 				sli_cfg_mbx->un.sli_config_emb0_subsys.
 					mse[0].buf_len);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = lpfc_sli_issue_mbox(phba, pmboxq, MBX_NOWAIT);
 	if ((rc == MBX_SUCCESS) || (rc == MBX_BUSY)) {
 		lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
@@ -3791,7 +4034,11 @@ lpfc_bsg_sli_cfg_write_cmd_ext(struct lpfc_hba *phba, struct fc_bsg_job *job,
 			&sli_cfg_mbx->un.sli_config_emb0_subsys.sli_config_hdr);
 		if (ext_buf_cnt > LPFC_MBX_SLI_CONFIG_MAX_MSE) {
 			lpfc_printf_log(phba, KERN_ERR, LOG_LIBDFC,
+<<<<<<< HEAD
 					"2953 Failed SLI_CONFIG(mse) wr, "
+=======
+					"2953 Handled SLI_CONFIG(mse) wr, "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"ext_buf_cnt(%d) out of range(%d)\n",
 					ext_buf_cnt,
 					LPFC_MBX_SLI_CONFIG_MAX_MSE);
@@ -3809,7 +4056,11 @@ lpfc_bsg_sli_cfg_write_cmd_ext(struct lpfc_hba *phba, struct fc_bsg_job *job,
 		ext_buf_cnt = sli_cfg_mbx->un.sli_config_emb1_subsys.hbd_count;
 		if (ext_buf_cnt > LPFC_MBX_SLI_CONFIG_MAX_HBD) {
 			lpfc_printf_log(phba, KERN_ERR, LOG_LIBDFC,
+<<<<<<< HEAD
 					"2954 Failed SLI_CONFIG(hbd) wr, "
+=======
+					"2954 Handled SLI_CONFIG(hbd) wr, "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"ext_buf_cnt(%d) out of range(%d)\n",
 					ext_buf_cnt,
 					LPFC_MBX_SLI_CONFIG_MAX_HBD);
@@ -3820,20 +4071,26 @@ lpfc_bsg_sli_cfg_write_cmd_ext(struct lpfc_hba *phba, struct fc_bsg_job *job,
 				"ext_buf_cnt:%d\n", ext_buf_cnt);
 	}
 
+<<<<<<< HEAD
 	/* before dma buffer descriptor setup */
 	lpfc_idiag_mbxacc_dump_bsg_mbox(phba, nemb_tp, mbox_wr, dma_mbox,
 					sta_pre_addr, dmabuf, ext_buf_cnt);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ext_buf_cnt == 0)
 		return -EPERM;
 
 	/* for the first external buffer */
 	lpfc_bsg_sli_cfg_dma_desc_setup(phba, nemb_tp, 0, dmabuf, dmabuf);
 
+<<<<<<< HEAD
 	/* after dma descriptor setup */
 	lpfc_idiag_mbxacc_dump_bsg_mbox(phba, nemb_tp, mbox_wr, dma_mbox,
 					sta_pos_addr, dmabuf, ext_buf_cnt);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* log for looking forward */
 	for (i = 1; i < ext_buf_cnt; i++) {
 		if (nemb_tp == nemb_mse)
@@ -3903,7 +4160,10 @@ lpfc_bsg_sli_cfg_write_cmd_ext(struct lpfc_hba *phba, struct fc_bsg_job *job,
 				"2956 Failed to issue SLI_CONFIG ext-buffer "
 				"maibox command, rc:x%x\n", rc);
 		rc = -EPIPE;
+<<<<<<< HEAD
 		goto job_error;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* wait for additoinal external buffers */
@@ -3938,7 +4198,11 @@ lpfc_bsg_handle_sli_cfg_mbox(struct lpfc_hba *phba, struct fc_bsg_job *job,
 	uint32_t opcode;
 	int rc = SLI_CONFIG_NOT_HANDLED;
 
+<<<<<<< HEAD
 	/* state change on new multi-buffer pass-through mailbox command */
+=======
+	/* state change */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	phba->mbox_ext_buf_ctx.state = LPFC_BSG_MBOX_HOST;
 
 	sli_cfg_mbx = (struct lpfc_sli_config_mbox *)dmabuf->virt;
@@ -3969,6 +4233,7 @@ lpfc_bsg_handle_sli_cfg_mbox(struct lpfc_hba *phba, struct fc_bsg_job *job,
 				break;
 			default:
 				lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
+<<<<<<< HEAD
 						"2959 Reject SLI_CONFIG "
 						"subsys_fcoe, opcode:x%x\n",
 						opcode);
@@ -3991,14 +4256,27 @@ lpfc_bsg_handle_sli_cfg_mbox(struct lpfc_hba *phba, struct fc_bsg_job *job,
 						"subsys_comn, opcode:x%x\n",
 						opcode);
 				rc = -EPERM;
+=======
+						"2959 Not handled SLI_CONFIG "
+						"subsys_fcoe, opcode:x%x\n",
+						opcode);
+				rc = SLI_CONFIG_NOT_HANDLED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 			}
 		} else {
 			lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
+<<<<<<< HEAD
 					"2977 Reject SLI_CONFIG "
 					"subsys:x%d, opcode:x%x\n",
 					subsys, opcode);
 			rc = -EPERM;
+=======
+					"2977 Handled SLI_CONFIG "
+					"subsys:x%d, opcode:x%x\n",
+					subsys, opcode);
+			rc = SLI_CONFIG_NOT_HANDLED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		subsys = bsg_bf_get(lpfc_emb1_subcmnd_subsys,
@@ -4034,17 +4312,24 @@ lpfc_bsg_handle_sli_cfg_mbox(struct lpfc_hba *phba, struct fc_bsg_job *job,
 			}
 		} else {
 			lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
+<<<<<<< HEAD
 					"2978 Not handled SLI_CONFIG "
+=======
+					"2978 Handled SLI_CONFIG "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"subsys:x%d, opcode:x%x\n",
 					subsys, opcode);
 			rc = SLI_CONFIG_NOT_HANDLED;
 		}
 	}
+<<<<<<< HEAD
 
 	/* state reset on not handled new multi-buffer mailbox command */
 	if (rc != SLI_CONFIG_HANDLED)
 		phba->mbox_ext_buf_ctx.state = LPFC_BSG_MBOX_IDLE;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -4106,12 +4391,15 @@ lpfc_bsg_read_ebuf_get(struct lpfc_hba *phba, struct fc_bsg_job *job)
 	dmabuf = list_first_entry(&phba->mbox_ext_buf_ctx.ext_dmabuf_list,
 				  struct lpfc_dmabuf, list);
 	list_del_init(&dmabuf->list);
+<<<<<<< HEAD
 
 	/* after dma buffer descriptor setup */
 	lpfc_idiag_mbxacc_dump_bsg_mbox(phba, phba->mbox_ext_buf_ctx.nembType,
 					mbox_rd, dma_ebuf, sta_pos_addr,
 					dmabuf, index);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pbuf = (uint8_t *)dmabuf->virt;
 	job->reply->reply_payload_rcv_len =
 		sg_copy_from_buffer(job->reply_payload.sg_list,
@@ -4194,11 +4482,14 @@ lpfc_bsg_write_ebuf_set(struct lpfc_hba *phba, struct fc_bsg_job *job,
 					dmabuf);
 	list_add_tail(&dmabuf->list, &phba->mbox_ext_buf_ctx.ext_dmabuf_list);
 
+<<<<<<< HEAD
 	/* after write dma buffer */
 	lpfc_idiag_mbxacc_dump_bsg_mbox(phba, phba->mbox_ext_buf_ctx.nembType,
 					mbox_wr, dma_ebuf, sta_pos_addr,
 					dmabuf, index);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (phba->mbox_ext_buf_ctx.seqNum == phba->mbox_ext_buf_ctx.numBuf) {
 		lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
 				"2968 SLI_CONFIG ext-buffer wr all %d "
@@ -4502,8 +4793,16 @@ lpfc_bsg_issue_mbox(struct lpfc_hba *phba, struct fc_bsg_job *job,
 
 	/* extended mailbox commands will need an extended buffer */
 	if (mbox_req->inExtWLen || mbox_req->outExtWLen) {
+<<<<<<< HEAD
 		from = pmbx;
 		ext = from + sizeof(MAILBOX_t);
+=======
+		/* any data for the device? */
+		if (mbox_req->inExtWLen) {
+			from = pmbx;
+			ext = from + sizeof(MAILBOX_t);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pmboxq->context2 = ext;
 		pmboxq->in_ext_byte_len =
 			mbox_req->inExtWLen * sizeof(uint32_t);
@@ -4559,12 +4858,16 @@ lpfc_bsg_issue_mbox(struct lpfc_hba *phba, struct fc_bsg_job *job,
 							+ sizeof(MAILBOX_t));
 		}
 	} else if (phba->sli_rev == LPFC_SLI_REV4) {
+<<<<<<< HEAD
 		/* Let type 4 (well known data) through because the data is
 		 * returned in varwords[4-8]
 		 * otherwise check the recieve length and fetch the buffer addr
 		 */
 		if ((pmb->mbxCommand == MBX_DUMP_MEMORY) &&
 			(pmb->un.varDmp.type != DMP_WELL_KNOWN)) {
+=======
+		if (pmb->mbxCommand == MBX_DUMP_MEMORY) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* rebuild the command for sli4 using our own buffers
 			* like we do for biu diags
 			*/

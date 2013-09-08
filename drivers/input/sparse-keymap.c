@@ -15,7 +15,10 @@
 
 #include <linux/input.h>
 #include <linux/input/sparse-keymap.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 
 MODULE_AUTHOR("Dmitry Torokhov <dtor@mail.ru>");

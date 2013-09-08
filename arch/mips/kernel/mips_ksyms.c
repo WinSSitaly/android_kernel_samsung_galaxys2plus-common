@@ -9,7 +9,11 @@
  * Copyright (C) 1999, 2000, 01 Silicon Graphics, Inc.
  */
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/checksum.h>
 #include <asm/pgtable.h>
 #include <asm/uaccess.h>

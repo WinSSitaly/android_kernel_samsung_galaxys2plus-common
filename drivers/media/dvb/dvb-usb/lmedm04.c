@@ -77,7 +77,10 @@
 #include "stv0299.h"
 #include "dvb-pll.h"
 #include "z0194a.h"
+<<<<<<< HEAD
 #include "m88rs2000.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 
@@ -105,7 +108,11 @@ MODULE_PARM_DESC(firmware, "set default firmware 0=Sharp7395 1=LG");
 
 static int pid_filter;
 module_param_named(pid, pid_filter, int, 0644);
+<<<<<<< HEAD
 MODULE_PARM_DESC(pid, "set default 0=default 1=off 2=on");
+=======
+MODULE_PARM_DESC(pid, "set default 0=on 1=off");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
@@ -114,7 +121,10 @@ DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
 #define TUNER_LG	0x1
 #define TUNER_S7395	0x2
 #define TUNER_S0194	0x3
+<<<<<<< HEAD
 #define TUNER_RS2000	0x4
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct lme2510_state {
 	u8 id;
@@ -123,8 +133,11 @@ struct lme2510_state {
 	u8 signal_level;
 	u8 signal_sn;
 	u8 time_key;
+<<<<<<< HEAD
 	u8 last_key;
 	u8 key_timeout;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 i2c_talk_onoff;
 	u8 i2c_gate;
 	u8 i2c_tuner_gate_w;
@@ -132,7 +145,10 @@ struct lme2510_state {
 	u8 i2c_tuner_addr;
 	u8 stream_on;
 	u8 pid_size;
+<<<<<<< HEAD
 	u8 pid_off;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *buffer;
 	struct urb *lme_urb;
 	void *usb_buffer;
@@ -167,7 +183,11 @@ static int lme2510_usb_talk(struct dvb_usb_device *d,
 	int ret = 0;
 
 	if (st->usb_buffer == NULL) {
+<<<<<<< HEAD
 		st->usb_buffer = kmalloc(64, GFP_KERNEL);
+=======
+		st->usb_buffer = kmalloc(512, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (st->usb_buffer == NULL) {
 			info("MEM Error no memory");
 			return -ENOMEM;
@@ -180,6 +200,7 @@ static int lme2510_usb_talk(struct dvb_usb_device *d,
 	if (ret < 0)
 		return -EAGAIN;
 
+<<<<<<< HEAD
 	/* the read/write capped at 64 */
 	memcpy(buff, wbuf, (wlen < 64) ? wlen : 64);
 
@@ -187,6 +208,21 @@ static int lme2510_usb_talk(struct dvb_usb_device *d,
 
 	ret |= lme2510_bulk_read(d->udev, buff, (rlen < 64) ?
 			rlen : 64 , 0x01);
+=======
+	/* the read/write capped at 512 */
+	memcpy(buff, wbuf, (wlen > 512) ? 512 : wlen);
+
+	ret |= usb_clear_halt(d->udev, usb_sndbulkpipe(d->udev, 0x01));
+
+	ret |= lme2510_bulk_write(d->udev, buff, wlen , 0x01);
+
+	msleep(10);
+
+	ret |= usb_clear_halt(d->udev, usb_rcvbulkpipe(d->udev, 0x01));
+
+	ret |= lme2510_bulk_read(d->udev, buff, (rlen > 512) ?
+			512 : rlen , 0x01);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (rlen > 0)
 		memcpy(rbuf, buff, rlen);
@@ -198,6 +234,7 @@ static int lme2510_usb_talk(struct dvb_usb_device *d,
 
 static int lme2510_stream_restart(struct dvb_usb_device *d)
 {
+<<<<<<< HEAD
 	struct lme2510_state *st = d->priv;
 	u8 all_pids[] = LME_ALL_PIDS;
 	u8 stream_on[] = LME_ST_ON_W;
@@ -206,6 +243,11 @@ static int lme2510_stream_restart(struct dvb_usb_device *d)
 	if (st->pid_off)
 		ret = lme2510_usb_talk(d, all_pids, sizeof(all_pids),
 			rbuff, sizeof(rbuff));
+=======
+	static u8 stream_on[] = LME_ST_ON_W;
+	int ret;
+	u8 rbuff[10];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*Restart Stream Command*/
 	ret = lme2510_usb_talk(d, stream_on, sizeof(stream_on),
 			rbuff, sizeof(rbuff));
@@ -312,6 +354,7 @@ static void lme2510_int_response(struct urb *lme_urb)
 						((ibuf[2] & 0x01) << 0x03);
 				}
 				break;
+<<<<<<< HEAD
 			case TUNER_RS2000:
 				if (ibuf[2] > 0)
 					st->signal_lock = 0xff;
@@ -320,6 +363,8 @@ static void lme2510_int_response(struct urb *lme_urb)
 				st->signal_level = ibuf[4];
 				st->signal_sn = ibuf[5];
 				st->time_key = ibuf[7];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			default:
 				break;
 			}
@@ -345,7 +390,11 @@ static int lme2510_int_read(struct dvb_usb_adapter *adap)
 	if (lme_int->lme_urb == NULL)
 			return -ENOMEM;
 
+<<<<<<< HEAD
 	lme_int->buffer = usb_alloc_coherent(adap->dev->udev, 128, GFP_ATOMIC,
+=======
+	lme_int->buffer = usb_alloc_coherent(adap->dev->udev, 5000, GFP_ATOMIC,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					&lme_int->lme_urb->transfer_dma);
 
 	if (lme_int->buffer == NULL)
@@ -355,10 +404,17 @@ static int lme2510_int_read(struct dvb_usb_adapter *adap)
 				adap->dev->udev,
 				usb_rcvintpipe(adap->dev->udev, 0xa),
 				lme_int->buffer,
+<<<<<<< HEAD
 				128,
 				lme2510_int_response,
 				adap,
 				8);
+=======
+				4096,
+				lme2510_int_response,
+				adap,
+				11);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lme_int->lme_urb->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
 
@@ -371,12 +427,17 @@ static int lme2510_int_read(struct dvb_usb_adapter *adap)
 static int lme2510_pid_filter_ctrl(struct dvb_usb_adapter *adap, int onoff)
 {
 	struct lme2510_state *st = adap->dev->priv;
+<<<<<<< HEAD
 	static u8 clear_pid_reg[] = LME_ALL_PIDS;
+=======
+	static u8 clear_pid_reg[] = LME_CLEAR_PID;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	static u8 rbuf[1];
 	int ret;
 
 	deb_info(1, "PID Clearing Filter");
 
+<<<<<<< HEAD
 	mutex_lock(&adap->dev->i2c_mutex);
 
 	if (!onoff) {
@@ -385,6 +446,15 @@ static int lme2510_pid_filter_ctrl(struct dvb_usb_adapter *adap, int onoff)
 		st->pid_off = true;
 	} else
 		st->pid_off = false;
+=======
+	ret = mutex_lock_interruptible(&adap->dev->i2c_mutex);
+	if (ret < 0)
+		return -EAGAIN;
+
+	if (!onoff)
+		ret |= lme2510_usb_talk(adap->dev, clear_pid_reg,
+			sizeof(clear_pid_reg), rbuf, sizeof(rbuf));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	st->pid_size = 0;
 
@@ -401,10 +471,20 @@ static int lme2510_pid_filter(struct dvb_usb_adapter *adap, int index, u16 pid,
 	deb_info(3, "%s PID=%04x Index=%04x onoff=%02x", __func__,
 		pid, index, onoff);
 
+<<<<<<< HEAD
 	if (onoff) {
 		mutex_lock(&adap->dev->i2c_mutex);
 		ret |= lme2510_enable_pid(adap->dev, index, pid);
 		mutex_unlock(&adap->dev->i2c_mutex);
+=======
+	if (onoff)
+		if (!pid_filter) {
+			ret = mutex_lock_interruptible(&adap->dev->i2c_mutex);
+			if (ret < 0)
+				return -EAGAIN;
+			ret |= lme2510_enable_pid(adap->dev, index, pid);
+			mutex_unlock(&adap->dev->i2c_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 
@@ -436,6 +516,12 @@ static int lme2510_msg(struct dvb_usb_device *d,
 	int ret = 0;
 	struct lme2510_state *st = d->priv;
 
+<<<<<<< HEAD
+=======
+	if (mutex_lock_interruptible(&d->i2c_mutex) < 0)
+			return -EAGAIN;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (st->i2c_talk_onoff == 1) {
 
 		ret = lme2510_usb_talk(d, wbuf, wlen, rbuf, rlen);
@@ -464,6 +550,11 @@ static int lme2510_msg(struct dvb_usb_device *d,
 						st->i2c_talk_onoff = 0;
 					}
 				}
+<<<<<<< HEAD
+=======
+				if ((wbuf[3] != 0x6) & (wbuf[3] != 0x5))
+					msleep(5);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			break;
 		case TUNER_S0194:
@@ -478,12 +569,18 @@ static int lme2510_msg(struct dvb_usb_device *d,
 				}
 			}
 			break;
+<<<<<<< HEAD
 		case TUNER_RS2000:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			break;
 		}
 	} else {
+<<<<<<< HEAD
 		/* TODO rewrite this section */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		switch (st->tuner_config) {
 		case TUNER_LG:
 			switch (wbuf[3]) {
@@ -567,6 +664,7 @@ static int lme2510_msg(struct dvb_usb_device *d,
 				break;
 			}
 			break;
+<<<<<<< HEAD
 		case TUNER_RS2000:
 			switch (wbuf[3]) {
 			case 0x8c:
@@ -585,6 +683,8 @@ static int lme2510_msg(struct dvb_usb_device *d,
 				st->i2c_talk_onoff = 1;
 				break;
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			break;
 		}
@@ -594,6 +694,11 @@ static int lme2510_msg(struct dvb_usb_device *d,
 
 	}
 
+<<<<<<< HEAD
+=======
+	mutex_unlock(&d->i2c_mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -603,13 +708,20 @@ static int lme2510_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[],
 {
 	struct dvb_usb_device *d = i2c_get_adapdata(adap);
 	struct lme2510_state *st = d->priv;
+<<<<<<< HEAD
 	static u8 obuf[64], ibuf[64];
+=======
+	static u8 obuf[64], ibuf[512];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i, read, read_o;
 	u16 len;
 	u8 gate = st->i2c_gate;
 
+<<<<<<< HEAD
 	mutex_lock(&d->i2c_mutex);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (gate == 0)
 		gate = 5;
 
@@ -646,9 +758,14 @@ static int lme2510_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[],
 			len = msg[i].len+3;
 		}
 
+<<<<<<< HEAD
 		if (lme2510_msg(d, obuf, len, ibuf, 64) < 0) {
 			deb_info(1, "i2c transfer failed.");
 			mutex_unlock(&d->i2c_mutex);
+=======
+		if (lme2510_msg(d, obuf, len, ibuf, 512) < 0) {
+			deb_info(1, "i2c transfer failed.");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EAGAIN;
 		}
 
@@ -661,8 +778,11 @@ static int lme2510_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[],
 			}
 		}
 	}
+<<<<<<< HEAD
 
 	mutex_unlock(&d->i2c_mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return i;
 }
 
@@ -682,9 +802,12 @@ static int lme2510_identify_state(struct usb_device *udev,
 		struct dvb_usb_device_description **desc,
 		int *cold)
 {
+<<<<<<< HEAD
 	if (pid_filter != 2)
 		props->adapter[0].fe[0].caps &=
 			~DVB_USB_ADAP_NEED_PID_FILTERING;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*cold = 0;
 	return 0;
 }
@@ -692,7 +815,11 @@ static int lme2510_identify_state(struct usb_device *udev,
 static int lme2510_streaming_ctrl(struct dvb_usb_adapter *adap, int onoff)
 {
 	struct lme2510_state *st = adap->dev->priv;
+<<<<<<< HEAD
 	static u8 clear_reg_3[] = LME_ALL_PIDS;
+=======
+	static u8 clear_reg_3[] = LME_CLEAR_PID;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	static u8 rbuf[1];
 	int ret = 0, rlen = sizeof(rbuf);
 
@@ -704,7 +831,12 @@ static int lme2510_streaming_ctrl(struct dvb_usb_adapter *adap, int onoff)
 	else {
 		deb_info(1, "STM Steam Off");
 		/* mutex is here only to avoid collision with I2C */
+<<<<<<< HEAD
 		mutex_lock(&adap->dev->i2c_mutex);
+=======
+		if (mutex_lock_interruptible(&adap->dev->i2c_mutex) < 0)
+			return -EAGAIN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ret = lme2510_usb_talk(adap->dev, clear_reg_3,
 				sizeof(clear_reg_3), rbuf, rlen);
@@ -809,18 +941,29 @@ static int lme_firmware_switch(struct usb_device *udev, int cold)
 	const char fw_c_s7395[] = "dvb-usb-lme2510c-s7395.fw";
 	const char fw_c_lg[] = "dvb-usb-lme2510c-lg.fw";
 	const char fw_c_s0194[] = "dvb-usb-lme2510c-s0194.fw";
+<<<<<<< HEAD
 	const char fw_c_rs2000[] = "dvb-usb-lme2510c-rs2000.fw";
 	const char fw_lg[] = "dvb-usb-lme2510-lg.fw";
 	const char fw_s0194[] = "dvb-usb-lme2510-s0194.fw";
 	const char *fw_lme;
 	int ret = 0, cold_fw;
+=======
+	const char fw_lg[] = "dvb-usb-lme2510-lg.fw";
+	const char fw_s0194[] = "dvb-usb-lme2510-s0194.fw";
+	const char *fw_lme;
+	int ret, cold_fw;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cold = (cold > 0) ? (cold & 1) : 0;
 
 	cold_fw = !cold;
 
+<<<<<<< HEAD
 	switch (le16_to_cpu(udev->descriptor.idProduct)) {
 	case 0x1122:
+=======
+	if (le16_to_cpu(udev->descriptor.idProduct) == 0x1122) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		switch (dvb_usb_lme2510_firmware) {
 		default:
 			dvb_usb_lme2510_firmware = TUNER_S0194;
@@ -843,8 +986,12 @@ static int lme_firmware_switch(struct usb_device *udev, int cold)
 			cold_fw = 0;
 			break;
 		}
+<<<<<<< HEAD
 		break;
 	case 0x1120:
+=======
+	} else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		switch (dvb_usb_lme2510_firmware) {
 		default:
 			dvb_usb_lme2510_firmware = TUNER_S7395;
@@ -873,6 +1020,7 @@ static int lme_firmware_switch(struct usb_device *udev, int cold)
 			cold_fw = 0;
 			break;
 		}
+<<<<<<< HEAD
 		break;
 	case 0x22f0:
 		fw_lme = fw_c_rs2000;
@@ -884,6 +1032,10 @@ static int lme_firmware_switch(struct usb_device *udev, int cold)
 	}
 
 
+=======
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cold_fw) {
 		info("FRM Loading %s file", fw_lme);
 		ret = lme2510_download_firmware(udev, fw);
@@ -946,6 +1098,7 @@ static struct stv0299_config sharp_z0194_config = {
 	.set_symbol_rate = sharp_z0194a_set_symbol_rate,
 };
 
+<<<<<<< HEAD
 static int dm04_rs2000_set_ts_param(struct dvb_frontend *fe,
 	int caller)
 {
@@ -969,6 +1122,8 @@ static struct m88rs2000_config m88rs2000_config = {
 	.set_ts_params = dm04_rs2000_set_ts_param,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int dm04_lme2510_set_voltage(struct dvb_frontend *fe,
 					fe_sec_voltage_t voltage)
 {
@@ -978,7 +1133,12 @@ static int dm04_lme2510_set_voltage(struct dvb_frontend *fe,
 	static u8 rbuf[1];
 	int ret = 0, len = 3, rlen = 1;
 
+<<<<<<< HEAD
 	mutex_lock(&adap->dev->i2c_mutex);
+=======
+	if (mutex_lock_interruptible(&adap->dev->i2c_mutex) < 0)
+			return -EAGAIN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (voltage) {
 	case SEC_VOLTAGE_18:
@@ -999,6 +1159,7 @@ static int dm04_lme2510_set_voltage(struct dvb_frontend *fe,
 	return (ret < 0) ? -ENODEV : 0;
 }
 
+<<<<<<< HEAD
 static int dm04_rs2000_read_signal_strength(struct dvb_frontend *fe,
 	u16 *strength)
 {
@@ -1018,13 +1179,20 @@ static int dm04_rs2000_read_snr(struct dvb_frontend *fe, u16 *snr)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int lme_name(struct dvb_usb_adapter *adap)
 {
 	struct lme2510_state *st = adap->dev->priv;
 	const char *desc = adap->dev->desc->name;
 	char *fe_name[] = {"", " LG TDQY-P001F", " SHARP:BS2F7HZ7395",
+<<<<<<< HEAD
 				" SHARP:BS2F7HZ0194", " RS2000"};
 	char *name = adap->fe_adap[0].fe->ops.info.name;
+=======
+				" SHARP:BS2F7HZ0194"};
+	char *name = adap->fe->ops.info.name;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	strlcpy(name, desc, 128);
 	strlcat(name, fe_name[st->tuner_config], 128);
@@ -1039,6 +1207,7 @@ static int dm04_lme2510_frontend_attach(struct dvb_usb_adapter *adap)
 	int ret = 0;
 
 	st->i2c_talk_onoff = 1;
+<<<<<<< HEAD
 	switch (le16_to_cpu(adap->dev->udev->descriptor.idProduct)) {
 	case 0x1122:
 	case 0x1120:
@@ -1118,12 +1287,75 @@ static int dm04_lme2510_frontend_attach(struct dvb_usb_adapter *adap)
 		if (adap->fe_adap[0].fe) {
 			dvb_frontend_detach(adap->fe_adap[0].fe);
 			adap->fe_adap[0].fe = NULL;
+=======
+
+	st->i2c_gate = 4;
+	adap->fe = dvb_attach(tda10086_attach, &tda10086_config,
+		&adap->dev->i2c_adap);
+
+	if (adap->fe) {
+		info("TUN Found Frontend TDA10086");
+		st->i2c_tuner_gate_w = 4;
+		st->i2c_tuner_gate_r = 4;
+		st->i2c_tuner_addr = 0xc0;
+		st->tuner_config = TUNER_LG;
+		if (dvb_usb_lme2510_firmware != TUNER_LG) {
+			dvb_usb_lme2510_firmware = TUNER_LG;
+			ret = lme_firmware_switch(adap->dev->udev, 1);
+		}
+		goto end;
+	}
+
+	st->i2c_gate = 4;
+	adap->fe = dvb_attach(stv0299_attach, &sharp_z0194_config,
+			&adap->dev->i2c_adap);
+	if (adap->fe) {
+		info("FE Found Stv0299");
+		st->i2c_tuner_gate_w = 4;
+		st->i2c_tuner_gate_r = 5;
+		st->i2c_tuner_addr = 0xc0;
+		st->tuner_config = TUNER_S0194;
+		if (dvb_usb_lme2510_firmware != TUNER_S0194) {
+			dvb_usb_lme2510_firmware = TUNER_S0194;
+			ret = lme_firmware_switch(adap->dev->udev, 1);
+		}
+		goto end;
+	}
+
+	st->i2c_gate = 5;
+	adap->fe = dvb_attach(stv0288_attach, &lme_config,
+			&adap->dev->i2c_adap);
+	if (adap->fe) {
+		info("FE Found Stv0288");
+		st->i2c_tuner_gate_w = 4;
+		st->i2c_tuner_gate_r = 5;
+		st->i2c_tuner_addr = 0xc0;
+		st->tuner_config = TUNER_S7395;
+		if (dvb_usb_lme2510_firmware != TUNER_S7395) {
+			dvb_usb_lme2510_firmware = TUNER_S7395;
+			ret = lme_firmware_switch(adap->dev->udev, 1);
+		}
+	} else {
+		info("DM04 Not Supported");
+		return -ENODEV;
+	}
+
+
+end:	if (ret) {
+		if (adap->fe) {
+			dvb_frontend_detach(adap->fe);
+			adap->fe = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		adap->dev->props.rc.core.rc_codes = NULL;
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	adap->fe_adap[0].fe->ops.set_voltage = dm04_lme2510_set_voltage;
+=======
+	adap->fe->ops.set_voltage = dm04_lme2510_set_voltage;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = lme_name(adap);
 	return ret;
 }
@@ -1131,21 +1363,34 @@ static int dm04_lme2510_frontend_attach(struct dvb_usb_adapter *adap)
 static int dm04_lme2510_tuner(struct dvb_usb_adapter *adap)
 {
 	struct lme2510_state *st = adap->dev->priv;
+<<<<<<< HEAD
 	char *tun_msg[] = {"", "TDA8263", "IX2505V", "DVB_PLL_OPERA", "RS2000"};
+=======
+	char *tun_msg[] = {"", "TDA8263", "IX2505V", "DVB_PLL_OPERA"};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	switch (st->tuner_config) {
 	case TUNER_LG:
+<<<<<<< HEAD
 		if (dvb_attach(tda826x_attach, adap->fe_adap[0].fe, 0xc0,
+=======
+		if (dvb_attach(tda826x_attach, adap->fe, 0xc0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			&adap->dev->i2c_adap, 1))
 			ret = st->tuner_config;
 		break;
 	case TUNER_S7395:
+<<<<<<< HEAD
 		if (dvb_attach(ix2505v_attach , adap->fe_adap[0].fe, &lme_tuner,
+=======
+		if (dvb_attach(ix2505v_attach , adap->fe, &lme_tuner,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			&adap->dev->i2c_adap))
 			ret = st->tuner_config;
 		break;
 	case TUNER_S0194:
+<<<<<<< HEAD
 		if (dvb_attach(dvb_pll_attach , adap->fe_adap[0].fe, 0xc0,
 			&adap->dev->i2c_adap, DVB_PLL_OPERA1))
 			ret = st->tuner_config;
@@ -1153,6 +1398,12 @@ static int dm04_lme2510_tuner(struct dvb_usb_adapter *adap)
 	case TUNER_RS2000:
 		ret = st->tuner_config;
 		break;
+=======
+		if (dvb_attach(dvb_pll_attach , adap->fe, 0xc0,
+			&adap->dev->i2c_adap, DVB_PLL_OPERA1))
+			ret = st->tuner_config;
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		break;
 	}
@@ -1160,7 +1411,11 @@ static int dm04_lme2510_tuner(struct dvb_usb_adapter *adap)
 	if (ret)
 		info("TUN Found %s tuner", tun_msg[ret]);
 	else {
+<<<<<<< HEAD
 		info("TUN No tuner found --- resetting device");
+=======
+		info("TUN No tuner found --- reseting device");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		lme_coldreset(adap->dev->udev);
 		return -ENODEV;
 	}
@@ -1181,9 +1436,16 @@ static int lme2510_powerup(struct dvb_usb_device *d, int onoff)
 	static u8 lnb_on[] = LNB_ON;
 	static u8 lnb_off[] = LNB_OFF;
 	static u8 rbuf[1];
+<<<<<<< HEAD
 	int ret = 0, len = 3, rlen = 1;
 
 	mutex_lock(&d->i2c_mutex);
+=======
+	int ret, len = 3, rlen = 1;
+
+	if (mutex_lock_interruptible(&d->i2c_mutex) < 0)
+		return -EAGAIN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (onoff)
 		ret = lme2510_usb_talk(d, lnb_on, len, rbuf, rlen);
@@ -1241,7 +1503,10 @@ static int lme2510_probe(struct usb_interface *intf,
 static struct usb_device_id lme2510_table[] = {
 	{ USB_DEVICE(0x3344, 0x1122) },  /* LME2510 */
 	{ USB_DEVICE(0x3344, 0x1120) },  /* LME2510C */
+<<<<<<< HEAD
 	{ USB_DEVICE(0x3344, 0x22f0) },  /* LME2510C RS2000 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{}		/* Terminating entry */
 };
 
@@ -1253,13 +1518,20 @@ static struct dvb_usb_device_properties lme2510_properties = {
 	.num_adapters = 1,
 	.adapter = {
 		{
+<<<<<<< HEAD
 		.num_frontends = 1,
 		.fe = {{
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.caps = DVB_USB_ADAP_HAS_PID_FILTER|
 				DVB_USB_ADAP_NEED_PID_FILTERING|
 				DVB_USB_ADAP_PID_FILTER_CAN_BE_TURNED_OFF,
 			.streaming_ctrl   = lme2510_streaming_ctrl,
+<<<<<<< HEAD
 			.pid_filter_count = 32,
+=======
+			.pid_filter_count = 15,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.pid_filter = lme2510_pid_filter,
 			.pid_filter_ctrl  = lme2510_pid_filter_ctrl,
 			.frontend_attach  = dm04_lme2510_frontend_attach,
@@ -1276,7 +1548,10 @@ static struct dvb_usb_device_properties lme2510_properties = {
 					}
 				}
 			}
+<<<<<<< HEAD
 		}},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	},
 	.rc.core = {
@@ -1304,13 +1579,20 @@ static struct dvb_usb_device_properties lme2510c_properties = {
 	.num_adapters = 1,
 	.adapter = {
 		{
+<<<<<<< HEAD
 		.num_frontends = 1,
 		.fe = {{
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.caps = DVB_USB_ADAP_HAS_PID_FILTER|
 				DVB_USB_ADAP_NEED_PID_FILTERING|
 				DVB_USB_ADAP_PID_FILTER_CAN_BE_TURNED_OFF,
 			.streaming_ctrl   = lme2510_streaming_ctrl,
+<<<<<<< HEAD
 			.pid_filter_count = 32,
+=======
+			.pid_filter_count = 15,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.pid_filter = lme2510_pid_filter,
 			.pid_filter_ctrl  = lme2510_pid_filter_ctrl,
 			.frontend_attach  = dm04_lme2510_frontend_attach,
@@ -1327,7 +1609,10 @@ static struct dvb_usb_device_properties lme2510c_properties = {
 					}
 				}
 			}
+<<<<<<< HEAD
 		}},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	},
 	.rc.core = {
@@ -1340,14 +1625,21 @@ static struct dvb_usb_device_properties lme2510c_properties = {
 	.identify_state   = lme2510_identify_state,
 	.i2c_algo         = &lme2510_i2c_algo,
 	.generic_bulk_ctrl_endpoint = 0,
+<<<<<<< HEAD
 	.num_device_descs = 2,
+=======
+	.num_device_descs = 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.devices = {
 		{   "DM04_LME2510C_DVB-S",
 			{ &lme2510_table[1], NULL },
 			},
+<<<<<<< HEAD
 		{   "DM04_LME2510C_DVB-S RS2000",
 			{ &lme2510_table[2], NULL },
 			},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 };
 
@@ -1358,7 +1650,11 @@ static void *lme2510_exit_int(struct dvb_usb_device *d)
 	void *buffer = NULL;
 
 	if (adap != NULL) {
+<<<<<<< HEAD
 		lme2510_kill_urb(&adap->fe_adap[0].stream);
+=======
+		lme2510_kill_urb(&adap->stream);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		adap->feedcount = 0;
 	}
 
@@ -1372,7 +1668,11 @@ static void *lme2510_exit_int(struct dvb_usb_device *d)
 
 	if (st->lme_urb != NULL) {
 		usb_kill_urb(st->lme_urb);
+<<<<<<< HEAD
 		usb_free_coherent(d->udev, 128, st->buffer,
+=======
+		usb_free_coherent(d->udev, 5000, st->buffer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  st->lme_urb->transfer_dma);
 		info("Interrupt Service Stopped");
 	}
@@ -1400,9 +1700,36 @@ static struct usb_driver lme2510_driver = {
 	.id_table	= lme2510_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(lme2510_driver);
 
 MODULE_AUTHOR("Malcolm Priestley <tvboxspy@gmail.com>");
 MODULE_DESCRIPTION("LME2510(C) DVB-S USB2.0");
 MODULE_VERSION("1.99");
+=======
+/* module stuff */
+static int __init lme2510_module_init(void)
+{
+	int result = usb_register(&lme2510_driver);
+	if (result) {
+		err("usb_register failed. Error number %d", result);
+		return result;
+	}
+
+	return 0;
+}
+
+static void __exit lme2510_module_exit(void)
+{
+	/* deregister this driver from the USB subsystem */
+	usb_deregister(&lme2510_driver);
+}
+
+module_init(lme2510_module_init);
+module_exit(lme2510_module_exit);
+
+MODULE_AUTHOR("Malcolm Priestley <tvboxspy@gmail.com>");
+MODULE_DESCRIPTION("LME2510(C) DVB-S USB2.0");
+MODULE_VERSION("1.88");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("GPL");

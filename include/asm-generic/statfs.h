@@ -15,7 +15,11 @@ typedef __kernel_fsid_t	fsid_t;
  * with a 10' pole.
  */
 #ifndef __statfs_word
+<<<<<<< HEAD
 #if __BITS_PER_LONG == 64
+=======
+#if BITS_PER_LONG == 64
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define __statfs_word long
 #else
 #define __statfs_word __u32

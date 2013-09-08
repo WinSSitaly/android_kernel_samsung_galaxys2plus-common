@@ -27,6 +27,10 @@
 
 #include <linux/linkage.h>
 #include <asm/assembler.h>
+<<<<<<< HEAD
+=======
+#include <mach/io.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <plat/omap24xx.h>
 

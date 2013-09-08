@@ -1,11 +1,28 @@
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/errno.h>
 #include <linux/kmod.h>
+=======
+#include <linux/major.h>
+#include <linux/errno.h>
+#include <linux/signal.h>
+#include <linux/fcntl.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/interrupt.h>
 #include <linux/tty.h>
 #include <linux/tty_driver.h>
+<<<<<<< HEAD
 #include <linux/file.h>
+=======
+#include <linux/tty_flip.h>
+#include <linux/devpts_fs.h>
+#include <linux/file.h>
+#include <linux/console.h>
+#include <linux/timer.h>
+#include <linux/ctype.h>
+#include <linux/kd.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mm.h>
 #include <linux/string.h>
 #include <linux/slab.h>
@@ -16,8 +33,23 @@
 #include <linux/device.h>
 #include <linux/wait.h>
 #include <linux/bitops.h>
+<<<<<<< HEAD
 #include <linux/seq_file.h>
 #include <linux/uaccess.h>
+=======
+#include <linux/delay.h>
+#include <linux/seq_file.h>
+
+#include <linux/uaccess.h>
+#include <asm/system.h>
+
+#include <linux/kbd_kern.h>
+#include <linux/vt_kern.h>
+#include <linux/selection.h>
+
+#include <linux/kmod.h>
+#include <linux/nsproxy.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ratelimit.h>
 
 /*
@@ -433,6 +465,10 @@ static int tty_ldisc_open(struct tty_struct *tty, struct tty_ldisc *ld)
 	if (ld->ops->open) {
 		int ret;
                 /* BTM here locks versus a hangup event */
+<<<<<<< HEAD
+=======
+		WARN_ON(!tty_locked());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = ld->ops->open(tty);
 		if (ret)
 			clear_bit(TTY_LDISC_OPEN, &tty->flags);
@@ -540,6 +576,11 @@ static int tty_ldisc_wait_idle(struct tty_struct *tty, long timeout)
 	long ret;
 	ret = wait_event_timeout(tty_ldisc_idle,
 			atomic_read(&tty->ldisc->users) == 1, timeout);
+<<<<<<< HEAD
+=======
+	if (ret < 0)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret > 0 ? 0 : -EBUSY;
 }
 

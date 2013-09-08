@@ -19,7 +19,10 @@
 #include <linux/sched.h>
 #include <linux/pci.h>
 #include <linux/stat.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/topology.h>
 #include <linux/mm.h>
 #include <linux/fs.h>
@@ -330,7 +333,11 @@ static void remove_callback(struct device *dev)
 	struct pci_dev *pdev = to_pci_dev(dev);
 
 	mutex_lock(&pci_remove_rescan_mutex);
+<<<<<<< HEAD
 	pci_stop_and_remove_bus_device(pdev);
+=======
+	pci_remove_bus_device(pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&pci_remove_rescan_mutex);
 }
 
@@ -366,10 +373,14 @@ dev_bus_rescan_store(struct device *dev, struct device_attribute *attr,
 
 	if (val) {
 		mutex_lock(&pci_remove_rescan_mutex);
+<<<<<<< HEAD
 		if (!pci_is_root_bus(bus) && list_empty(&bus->devices))
 			pci_rescan_bus_bridge_resize(bus->self);
 		else
 			pci_rescan_bus(bus);
+=======
+		pci_rescan_bus(bus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mutex_unlock(&pci_remove_rescan_mutex);
 	}
 	return count;
@@ -435,7 +446,11 @@ pci_read_config(struct file *filp, struct kobject *kobj,
 	u8 *data = (u8*) buf;
 
 	/* Several chips lock up trying to read undefined config space */
+<<<<<<< HEAD
 	if (security_capable(filp->f_cred, &init_user_ns, CAP_SYS_ADMIN) == 0) {
+=======
+	if (security_capable(&init_user_ns, filp->f_cred, CAP_SYS_ADMIN) == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		size = dev->cfg_size;
 	} else if (dev->hdr_type == PCI_HEADER_TYPE_CARDBUS) {
 		size = 128;

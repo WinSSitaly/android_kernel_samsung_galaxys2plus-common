@@ -29,7 +29,10 @@
 #include "pvrusb2-v4l2.h"
 #include "pvrusb2-ioread.h"
 #include <linux/videodev2.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/v4l2-dev.h>
 #include <media/v4l2-common.h>
 #include <media/v4l2-ioctl.h>
@@ -92,10 +95,18 @@ static struct v4l2_capability pvr_capability ={
 	.driver         = "pvrusb2",
 	.card           = "Hauppauge WinTV pvr-usb2",
 	.bus_info       = "usb",
+<<<<<<< HEAD
 	.version        = LINUX_VERSION_CODE,
 	.capabilities   = (V4L2_CAP_VIDEO_CAPTURE |
 			   V4L2_CAP_TUNER | V4L2_CAP_AUDIO | V4L2_CAP_RADIO |
 			   V4L2_CAP_READWRITE),
+=======
+	.version        = KERNEL_VERSION(0, 9, 0),
+	.capabilities   = (V4L2_CAP_VIDEO_CAPTURE |
+			   V4L2_CAP_TUNER | V4L2_CAP_AUDIO | V4L2_CAP_RADIO |
+			   V4L2_CAP_READWRITE),
+	.reserved       = {0,0,0,0}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct v4l2_fmtdesc pvr_fmtdesc [] = {
@@ -227,6 +238,7 @@ static long pvr2_v4l2_do_ioctl(struct file *file, unsigned int cmd, void *arg)
 		break;
 	}
 
+<<<<<<< HEAD
 	case VIDIOC_QUERYSTD:
 	{
 		v4l2_std_id *std = arg;
@@ -235,6 +247,8 @@ static long pvr2_v4l2_do_ioctl(struct file *file, unsigned int cmd, void *arg)
 		break;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case VIDIOC_G_STD:
 	{
 		int val = 0;
@@ -377,6 +391,14 @@ static long pvr2_v4l2_do_ioctl(struct file *file, unsigned int cmd, void *arg)
 		break;
 	}
 
+<<<<<<< HEAD
+=======
+	case VIDIOC_S_AUDIO:
+	{
+		ret = -EINVAL;
+		break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case VIDIOC_G_TUNER:
 	{
 		struct v4l2_tuner *vt = (struct v4l2_tuner *)arg;
@@ -853,7 +875,11 @@ static long pvr2_v4l2_do_ioctl(struct file *file, unsigned int cmd, void *arg)
 #endif
 
 	default :
+<<<<<<< HEAD
 		ret = -ENOTTY;
+=======
+		ret = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 

@@ -4,6 +4,7 @@
 #include <linux/fb.h>
 #include <video/sh_mobile_meram.h>
 
+<<<<<<< HEAD
 /* Register definitions */
 #define _LDDCKR			0x410
 #define LDDCKR_ICKSEL_BUS	(0 << 16)
@@ -121,6 +122,28 @@ enum {
 	SYS16C	= LDMT1R_IFM | LDMT1R_MIFTYP_SYS16C,	/* 18bpp, 2:16 */
 	SYS18	= LDMT1R_IFM | LDMT1R_MIFTYP_SYS18,	/* 18bpp */
 	SYS24	= LDMT1R_IFM | LDMT1R_MIFTYP_SYS24,	/* 24bpp */
+=======
+enum {
+	RGB8,   /* 24bpp, 8:8:8 */
+	RGB9,   /* 18bpp, 9:9 */
+	RGB12A, /* 24bpp, 12:12 */
+	RGB12B, /* 12bpp */
+	RGB16,  /* 16bpp */
+	RGB18,  /* 18bpp */
+	RGB24,  /* 24bpp */
+	YUV422, /* 16bpp */
+	SYS8A,  /* 24bpp, 8:8:8 */
+	SYS8B,  /* 18bpp, 8:8:2 */
+	SYS8C,  /* 18bpp, 2:8:8 */
+	SYS8D,  /* 16bpp, 8:8 */
+	SYS9,   /* 18bpp, 9:9 */
+	SYS12,  /* 24bpp, 12:12 */
+	SYS16A, /* 16bpp */
+	SYS16B, /* 18bpp, 16:2 */
+	SYS16C, /* 18bpp, 2:16 */
+	SYS18,  /* 18bpp */
+	SYS24,  /* 24bpp */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum { LCDC_CHAN_DISABLED = 0,
@@ -147,6 +170,7 @@ struct sh_mobile_lcdc_sys_bus_ops {
 	unsigned long (*read_data)(void *handle);
 };
 
+<<<<<<< HEAD
 struct sh_mobile_lcdc_panel_cfg {
 	unsigned long width;		/* Panel width in mm */
 	unsigned long height;		/* Panel height in mm */
@@ -156,18 +180,41 @@ struct sh_mobile_lcdc_panel_cfg {
 			       struct sh_mobile_lcdc_sys_bus_ops *sys_ops);
 	void (*display_on)(void);
 	void (*display_off)(void);
+=======
+struct module;
+struct sh_mobile_lcdc_board_cfg {
+	struct module *owner;
+	void *board_data;
+	int (*setup_sys)(void *board_data, void *sys_ops_handle,
+			 struct sh_mobile_lcdc_sys_bus_ops *sys_ops);
+	void (*start_transfer)(void *board_data, void *sys_ops_handle,
+			       struct sh_mobile_lcdc_sys_bus_ops *sys_ops);
+	void (*display_on)(void *board_data, struct fb_info *info);
+	void (*display_off)(void *board_data);
+	int (*set_brightness)(void *board_data, int brightness);
+	int (*get_brightness)(void *board_data);
+};
+
+struct sh_mobile_lcdc_lcd_size_cfg { /* width and height of panel in mm */
+	unsigned long width;
+	unsigned long height;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* backlight info */
 struct sh_mobile_lcdc_bl_info {
 	const char *name;
 	int max_brightness;
+<<<<<<< HEAD
 	int (*set_brightness)(int brightness);
 	int (*get_brightness)(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct sh_mobile_lcdc_chan_cfg {
 	int chan;
+<<<<<<< HEAD
 	int fourcc;
 	int colorspace;
 	int interface_type; /* selects RGBn or SYSn I/F, see above */
@@ -181,6 +228,20 @@ struct sh_mobile_lcdc_chan_cfg {
 	const struct sh_mobile_meram_cfg *meram_cfg;
 
 	struct platform_device *tx_dev;	/* HDMI/DSI transmitter device */
+=======
+	int bpp;
+	int interface_type; /* selects RGBn or SYSn I/F, see above */
+	int clock_divider;
+	unsigned long flags; /* LCDC_FLAGS_... */
+	const struct fb_videomode *lcd_cfg;
+	int num_cfg;
+	struct sh_mobile_lcdc_lcd_size_cfg lcd_size_cfg;
+	struct sh_mobile_lcdc_board_cfg board_cfg;
+	struct sh_mobile_lcdc_bl_info bl_info;
+	struct sh_mobile_lcdc_sys_bus_cfg sys_bus_cfg; /* only for SYSn I/F */
+	int nonstd;
+	struct sh_mobile_meram_cfg *meram_cfg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct sh_mobile_lcdc_info {

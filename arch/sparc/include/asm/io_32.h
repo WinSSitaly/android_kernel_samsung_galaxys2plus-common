@@ -6,7 +6,11 @@
 #include <linux/ioport.h>  /* struct resource */
 
 #include <asm/page.h>      /* IO address mapping routines need this */
+<<<<<<< HEAD
 #include <asm-generic/pci_iomap.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define page_to_phys(page)	(page_to_pfn(page) << PAGE_SHIFT)
 
@@ -324,6 +328,10 @@ extern void ioport_unmap(void __iomem *);
 
 /* Create a virtual mapping cookie for a PCI BAR (memory or IO) */
 struct pci_dev;
+<<<<<<< HEAD
+=======
+extern void __iomem *pci_iomap(struct pci_dev *dev, int bar, unsigned long max);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void pci_iounmap(struct pci_dev *dev, void __iomem *);
 
 /*

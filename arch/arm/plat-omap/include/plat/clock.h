@@ -58,14 +58,20 @@ struct clkops {
 #define RATE_IN_36XX		(1 << 4)
 #define RATE_IN_4430		(1 << 5)
 #define RATE_IN_TI816X		(1 << 6)
+<<<<<<< HEAD
 #define RATE_IN_4460		(1 << 7)
 #define RATE_IN_AM33XX		(1 << 8)
 #define RATE_IN_TI814X		(1 << 9)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define RATE_IN_24XX		(RATE_IN_242X | RATE_IN_243X)
 #define RATE_IN_34XX		(RATE_IN_3430ES1 | RATE_IN_3430ES2PLUS)
 #define RATE_IN_3XXX		(RATE_IN_34XX | RATE_IN_36XX)
+<<<<<<< HEAD
 #define RATE_IN_44XX		(RATE_IN_4430 | RATE_IN_4460)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* RATE_IN_3430ES2PLUS_36XX includes 34xx/35xx with ES >=2, and all 36xx/37xx */
 #define RATE_IN_3430ES2PLUS_36XX	(RATE_IN_3430ES2PLUS | RATE_IN_36XX)
@@ -82,11 +88,20 @@ struct clkops {
  *
  * @div is the divisor that should be applied to the parent clock's rate
  * to produce the current clock's rate.
+<<<<<<< HEAD
+=======
+ *
+ * XXX @flags probably should be replaced with an struct omap_chip.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct clksel_rate {
 	u32			val;
 	u8			div;
+<<<<<<< HEAD
 	u16			flags;
+=======
+	u8			flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -154,7 +169,11 @@ struct dpll_data {
 	u16			max_multiplier;
 	u8			last_rounded_n;
 	u8			min_divider;
+<<<<<<< HEAD
 	u16			max_divider;
+=======
+	u8			max_divider;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8			modes;
 #if defined(CONFIG_ARCH_OMAP3) || defined(CONFIG_ARCH_OMAP4)
 	void __iomem		*autoidle_reg;
@@ -167,8 +186,13 @@ struct dpll_data {
 	u8			auto_recal_bit;
 	u8			recal_en_bit;
 	u8			recal_st_bit;
+<<<<<<< HEAD
 #  endif
 	u8			flags;
+=======
+	u8			flags;
+#  endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif
@@ -272,6 +296,11 @@ struct clk {
 #endif
 };
 
+<<<<<<< HEAD
+=======
+struct cpufreq_frequency_table;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct clk_functions {
 	int		(*clk_enable)(struct clk *clk);
 	void		(*clk_disable)(struct clk *clk);
@@ -281,6 +310,13 @@ struct clk_functions {
 	void		(*clk_allow_idle)(struct clk *clk);
 	void		(*clk_deny_idle)(struct clk *clk);
 	void		(*clk_disable_unused)(struct clk *clk);
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_CPU_FREQ
+	void		(*clk_init_cpufreq_table)(struct cpufreq_frequency_table **);
+	void		(*clk_exit_cpufreq_table)(struct cpufreq_frequency_table **);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 extern int mpurate;
@@ -295,6 +331,13 @@ extern void recalculate_root_clocks(void);
 extern unsigned long followparent_recalc(struct clk *clk);
 extern void clk_enable_init_clocks(void);
 unsigned long omap_fixed_divisor_recalc(struct clk *clk);
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_CPU_FREQ
+extern void clk_init_cpufreq_table(struct cpufreq_frequency_table **table);
+extern void clk_exit_cpufreq_table(struct cpufreq_frequency_table **table);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct clk *omap_clk_get_by_name(const char *name);
 extern int omap_clk_enable_autoidle_all(void);
 extern int omap_clk_disable_autoidle_all(void);

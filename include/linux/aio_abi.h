@@ -30,7 +30,11 @@
 #include <linux/types.h>
 #include <asm/byteorder.h>
 
+<<<<<<< HEAD
 typedef __kernel_ulong_t aio_context_t;
+=======
+typedef unsigned long	aio_context_t;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum {
 	IOCB_CMD_PREAD = 0,

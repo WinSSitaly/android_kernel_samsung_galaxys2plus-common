@@ -39,7 +39,11 @@ config PCIEASPM
 	  Power Management) and Clock Power Management. ASPM supports
 	  state L0/L0s/L1.
 
+<<<<<<< HEAD
 	  ASPM is initially set up by the firmware. With this option enabled,
+=======
+	  ASPM is initially set up the the firmware. With this option enabled,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	  Linux can modify this state in order to disable ASPM on known-bad
 	  hardware or configurations and enable it when known-safe.
 
@@ -55,6 +59,7 @@ config PCIEASPM_DEBUG
 	  This enables PCI Express ASPM debug support. It will add per-device
 	  interface to control ASPM.
 
+<<<<<<< HEAD
 choice
 	prompt "Default ASPM policy"
 	default PCIEASPM_DEFAULT
@@ -80,6 +85,8 @@ config PCIEASPM_PERFORMANCE
 	  Disable PCI Express ASPM L0s and L1, even if the BIOS enabled them.
 endchoice
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config PCIE_PME
 	def_bool y
 	depends on PCIEPORTBUS && PM_RUNTIME && EXPERIMENTAL && ACPI

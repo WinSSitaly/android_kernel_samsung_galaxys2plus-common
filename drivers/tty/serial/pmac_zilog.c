@@ -99,9 +99,12 @@ MODULE_LICENSE("GPL");
 #define PMACZILOG_NAME		"ttyPZ"
 #endif
 
+<<<<<<< HEAD
 #define pmz_debug(fmt, arg...)	pr_debug("ttyPZ%d: " fmt, uap->port.line, ## arg)
 #define pmz_error(fmt, arg...)	pr_err("ttyPZ%d: " fmt, uap->port.line, ## arg)
 #define pmz_info(fmt, arg...)	pr_info("ttyPZ%d: " fmt, uap->port.line, ## arg)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * For the sake of early serial console, we can do a pre-probe
@@ -109,6 +112,10 @@ MODULE_LICENSE("GPL");
  */
 static struct uart_pmac_port	pmz_ports[MAX_ZS_PORTS];
 static int			pmz_ports_count;
+<<<<<<< HEAD
+=======
+static DEFINE_MUTEX(pmz_irq_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct uart_driver pmz_uart_reg = {
 	.owner		=	THIS_MODULE,
@@ -128,6 +135,12 @@ static void pmz_load_zsregs(struct uart_pmac_port *uap, u8 *regs)
 {
 	int i;
 
+<<<<<<< HEAD
+=======
+	if (ZS_IS_ASLEEP(uap))
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Let pending transmits finish.  */
 	for (i = 0; i < 1000; i++) {
 		unsigned char stat = read_zsreg(uap, R1);
@@ -215,6 +228,7 @@ static void pmz_maybe_update_regs(struct uart_pmac_port *uap)
 	}
 }
 
+<<<<<<< HEAD
 static void pmz_interrupt_control(struct uart_pmac_port *uap, int enable)
 {
 	if (enable) {
@@ -227,12 +241,37 @@ static void pmz_interrupt_control(struct uart_pmac_port *uap, int enable)
 	write_zsreg(uap, R1, uap->curregs[1]);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct tty_struct *pmz_receive_chars(struct uart_pmac_port *uap)
 {
 	struct tty_struct *tty = NULL;
 	unsigned char ch, r1, drop, error, flag;
 	int loops = 0;
 
+<<<<<<< HEAD
+=======
+	/* The interrupt can be enabled when the port isn't open, typically
+	 * that happens when using one port is open and the other closed (stale
+	 * interrupt) or when one port is used as a console.
+	 */
+	if (!ZS_IS_OPEN(uap)) {
+		pmz_debug("pmz: draining input\n");
+		/* Port is closed, drain input data */
+		for (;;) {
+			if ((++loops) > 1000)
+				goto flood;
+			(void)read_zsreg(uap, R1);
+			write_zsreg(uap, R0, ERR_RES);
+			(void)read_zsdata(uap);
+			ch = read_zsreg(uap, R0);
+			if (!(ch & Rx_CH_AV))
+				break;
+		}
+		return NULL;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Sanity check, make sure the old bug is no longer happening */
 	if (uap->port.state == NULL || uap->port.state->port.tty == NULL) {
 		WARN_ON(1);
@@ -330,7 +369,13 @@ static struct tty_struct *pmz_receive_chars(struct uart_pmac_port *uap)
 
 	return tty;
  flood:
+<<<<<<< HEAD
 	pmz_interrupt_control(uap, 0);
+=======
+	uap->curregs[R1] &= ~(EXT_INT_ENAB | TxINT_ENAB | RxINT_MASK);
+	write_zsreg(uap, R1, uap->curregs[R1]);
+	zssync(uap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pmz_error("pmz: rx irq flood !\n");
 	return tty;
 }
@@ -372,6 +417,11 @@ static void pmz_transmit_chars(struct uart_pmac_port *uap)
 {
 	struct circ_buf *xmit;
 
+<<<<<<< HEAD
+=======
+	if (ZS_IS_ASLEEP(uap))
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ZS_IS_CONS(uap)) {
 		unsigned char status = read_zsreg(uap, R0);
 
@@ -468,10 +518,13 @@ static irqreturn_t pmz_interrupt(int irq, void *dev_id)
 	/* Channel A */
 	tty = NULL;
 	if (r3 & (CHAEXT | CHATxIP | CHARxIP)) {
+<<<<<<< HEAD
 		if (!ZS_IS_OPEN(uap_a)) {
 			pmz_debug("ChanA interrupt while not open !\n");
 			goto skip_a;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		write_zsreg(uap_a, R0, RES_H_IUS);
 		zssync(uap_a);		
 		if (r3 & CHAEXT)
@@ -482,21 +535,31 @@ static irqreturn_t pmz_interrupt(int irq, void *dev_id)
 			pmz_transmit_chars(uap_a);
 		rc = IRQ_HANDLED;
 	}
+<<<<<<< HEAD
  skip_a:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&uap_a->port.lock);
 	if (tty != NULL)
 		tty_flip_buffer_push(tty);
 
+<<<<<<< HEAD
 	if (!uap_b)
+=======
+	if (uap_b->node == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	spin_lock(&uap_b->port.lock);
 	tty = NULL;
 	if (r3 & (CHBEXT | CHBTxIP | CHBRxIP)) {
+<<<<<<< HEAD
 		if (!ZS_IS_OPEN(uap_b)) {
 			pmz_debug("ChanB interrupt while not open !\n");
 			goto skip_b;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		write_zsreg(uap_b, R0, RES_H_IUS);
 		zssync(uap_b);
 		if (r3 & CHBEXT)
@@ -507,12 +570,21 @@ static irqreturn_t pmz_interrupt(int irq, void *dev_id)
 			pmz_transmit_chars(uap_b);
 		rc = IRQ_HANDLED;
 	}
+<<<<<<< HEAD
  skip_b:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&uap_b->port.lock);
 	if (tty != NULL)
 		tty_flip_buffer_push(tty);
 
  out:
+<<<<<<< HEAD
+=======
+#ifdef DEBUG_HARD
+	pmz_debug("irq done.\n");
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -537,8 +609,17 @@ static inline u8 pmz_peek_status(struct uart_pmac_port *uap)
  */
 static unsigned int pmz_tx_empty(struct uart_port *port)
 {
+<<<<<<< HEAD
 	unsigned char status;
 
+=======
+	struct uart_pmac_port *uap = to_pmz(port);
+	unsigned char status;
+
+	if (ZS_IS_ASLEEP(uap) || uap->node == NULL)
+		return TIOCSER_TEMT;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = pmz_peek_status(to_pmz(port));
 	if (status & Tx_BUF_EMP)
 		return TIOCSER_TEMT;
@@ -560,7 +641,12 @@ static void pmz_set_mctrl(struct uart_port *port, unsigned int mctrl)
 	if (ZS_IS_IRDA(uap))
 		return;
 	/* We get called during boot with a port not up yet */
+<<<<<<< HEAD
 	if (!(ZS_IS_OPEN(uap) || ZS_IS_CONS(uap)))
+=======
+	if (ZS_IS_ASLEEP(uap) ||
+	    !(ZS_IS_OPEN(uap) || ZS_IS_CONS(uap)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	set_bits = clear_bits = 0;
@@ -579,7 +665,12 @@ static void pmz_set_mctrl(struct uart_port *port, unsigned int mctrl)
 	/* NOTE: Not subject to 'transmitter active' rule.  */ 
 	uap->curregs[R5] |= set_bits;
 	uap->curregs[R5] &= ~clear_bits;
+<<<<<<< HEAD
 
+=======
+	if (ZS_IS_ASLEEP(uap))
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	write_zsreg(uap, R5, uap->curregs[R5]);
 	pmz_debug("pmz_set_mctrl: set bits: %x, clear bits: %x -> %x\n",
 		  set_bits, clear_bits, uap->curregs[R5]);
@@ -597,6 +688,12 @@ static unsigned int pmz_get_mctrl(struct uart_port *port)
 	unsigned char status;
 	unsigned int ret;
 
+<<<<<<< HEAD
+=======
+	if (ZS_IS_ASLEEP(uap) || uap->node == NULL)
+		return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = read_zsreg(uap, R0);
 
 	ret = 0;
@@ -634,6 +731,12 @@ static void pmz_start_tx(struct uart_port *port)
 	uap->flags |= PMACZILOG_FLAG_TX_ACTIVE;
 	uap->flags &= ~PMACZILOG_FLAG_TX_STOPPED;
 
+<<<<<<< HEAD
+=======
+	if (ZS_IS_ASLEEP(uap) || uap->node == NULL)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = read_zsreg(uap, R0);
 
 	/* TX busy?  Just wait for the TX done interrupt.  */
@@ -672,6 +775,12 @@ static void pmz_stop_rx(struct uart_port *port)
 {
 	struct uart_pmac_port *uap = to_pmz(port);
 
+<<<<<<< HEAD
+=======
+	if (ZS_IS_ASLEEP(uap) || uap->node == NULL)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pmz_debug("pmz: stop_rx()()\n");
 
 	/* Disable all RX interrupts.  */
@@ -690,12 +799,21 @@ static void pmz_enable_ms(struct uart_port *port)
 	struct uart_pmac_port *uap = to_pmz(port);
 	unsigned char new_reg;
 
+<<<<<<< HEAD
 	if (ZS_IS_IRDA(uap))
+=======
+	if (ZS_IS_IRDA(uap) || uap->node == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	new_reg = uap->curregs[R15] | (DCDIE | SYNCIE | CTSIE);
 	if (new_reg != uap->curregs[R15]) {
 		uap->curregs[R15] = new_reg;
 
+<<<<<<< HEAD
+=======
+		if (ZS_IS_ASLEEP(uap))
+			return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* NOTE: Not subject to 'transmitter active' rule. */
 		write_zsreg(uap, R15, uap->curregs[R15]);
 	}
@@ -711,6 +829,11 @@ static void pmz_break_ctl(struct uart_port *port, int break_state)
 	unsigned char set_bits, clear_bits, new_reg;
 	unsigned long flags;
 
+<<<<<<< HEAD
+=======
+	if (uap->node == NULL)
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_bits = clear_bits = 0;
 
 	if (break_state)
@@ -723,6 +846,15 @@ static void pmz_break_ctl(struct uart_port *port, int break_state)
 	new_reg = (uap->curregs[R5] | set_bits) & ~clear_bits;
 	if (new_reg != uap->curregs[R5]) {
 		uap->curregs[R5] = new_reg;
+<<<<<<< HEAD
+=======
+
+		/* NOTE: Not subject to 'transmitter active' rule. */
+		if (ZS_IS_ASLEEP(uap)) {
+			spin_unlock_irqrestore(&port->lock, flags);
+			return;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		write_zsreg(uap, R5, uap->curregs[R5]);
 	}
 
@@ -896,6 +1028,7 @@ static int __pmz_startup(struct uart_pmac_port *uap)
 
 static void pmz_irda_reset(struct uart_pmac_port *uap)
 {
+<<<<<<< HEAD
 	unsigned long flags;
 
 	spin_lock_irqsave(&uap->port.lock, flags);
@@ -911,6 +1044,16 @@ static void pmz_irda_reset(struct uart_pmac_port *uap)
 	zssync(uap);
 	spin_unlock_irqrestore(&uap->port.lock, flags);
 	msleep(10);
+=======
+	uap->curregs[R5] |= DTR;
+	write_zsreg(uap, R5, uap->curregs[R5]);
+	zssync(uap);
+	mdelay(110);
+	uap->curregs[R5] &= ~DTR;
+	write_zsreg(uap, R5, uap->curregs[R5]);
+	zssync(uap);
+	mdelay(10);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -925,6 +1068,16 @@ static int pmz_startup(struct uart_port *port)
 
 	pmz_debug("pmz: startup()\n");
 
+<<<<<<< HEAD
+=======
+	if (ZS_IS_ASLEEP(uap))
+		return -EAGAIN;
+	if (uap->node == NULL)
+		return -ENODEV;
+
+	mutex_lock(&pmz_irq_mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uap->flags |= PMACZILOG_FLAG_IS_OPEN;
 
 	/* A console is never powered down. Else, power up and
@@ -935,6 +1088,7 @@ static int pmz_startup(struct uart_port *port)
 		pwr_delay = __pmz_startup(uap);
 		spin_unlock_irqrestore(&port->lock, flags);
 	}	
+<<<<<<< HEAD
 	sprintf(uap->irq_name, PMACZILOG_NAME"%d", uap->port.line);
 	if (request_irq(uap->port.irq, pmz_interrupt, IRQF_SHARED,
 			uap->irq_name, uap)) {
@@ -943,6 +1097,20 @@ static int pmz_startup(struct uart_port *port)
 		return -ENXIO;
 	}
 
+=======
+
+	pmz_get_port_A(uap)->flags |= PMACZILOG_FLAG_IS_IRQ_ON;
+	if (request_irq(uap->port.irq, pmz_interrupt, IRQF_SHARED,
+			"SCC", uap)) {
+		pmz_error("Unable to register zs interrupt handler.\n");
+		pmz_set_scc_power(uap, 0);
+		mutex_unlock(&pmz_irq_mutex);
+		return -ENXIO;
+	}
+
+	mutex_unlock(&pmz_irq_mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Right now, we deal with delay by blocking here, I'll be
 	 * smarter later on
 	 */
@@ -955,9 +1123,18 @@ static int pmz_startup(struct uart_port *port)
 	if (ZS_IS_IRDA(uap))
 		pmz_irda_reset(uap);
 
+<<<<<<< HEAD
 	/* Enable interrupt requests for the channel */
 	spin_lock_irqsave(&port->lock, flags);
 	pmz_interrupt_control(uap, 1);
+=======
+	/* Enable interrupts emission from the chip */
+	spin_lock_irqsave(&port->lock, flags);
+	uap->curregs[R1] |= INT_ALL_Rx | TxINT_ENAB;
+	if (!ZS_IS_EXTCLK(uap))
+		uap->curregs[R1] |= EXT_INT_ENAB;
+	write_zsreg(uap, R1, uap->curregs[R1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&port->lock, flags);
 
 	pmz_debug("pmz: startup() done.\n");
@@ -972,6 +1149,7 @@ static void pmz_shutdown(struct uart_port *port)
 
 	pmz_debug("pmz: shutdown()\n");
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&port->lock, flags);
 
 	/* Disable interrupt requests for the channel */
@@ -988,6 +1166,12 @@ static void pmz_shutdown(struct uart_port *port)
 	}
 
 	spin_unlock_irqrestore(&port->lock, flags);
+=======
+	if (uap->node == NULL)
+		return;
+
+	mutex_lock(&pmz_irq_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Release interrupt handler */
 	free_irq(uap->port.irq, uap);
@@ -996,11 +1180,45 @@ static void pmz_shutdown(struct uart_port *port)
 
 	uap->flags &= ~PMACZILOG_FLAG_IS_OPEN;
 
+<<<<<<< HEAD
 	if (!ZS_IS_CONS(uap))
 		pmz_set_scc_power(uap, 0);	/* Shut the chip down */
 
 	spin_unlock_irqrestore(&port->lock, flags);
 
+=======
+	if (!ZS_IS_OPEN(uap->mate))
+		pmz_get_port_A(uap)->flags &= ~PMACZILOG_FLAG_IS_IRQ_ON;
+
+	/* Disable interrupts */
+	if (!ZS_IS_ASLEEP(uap)) {
+		uap->curregs[R1] &= ~(EXT_INT_ENAB | TxINT_ENAB | RxINT_MASK);
+		write_zsreg(uap, R1, uap->curregs[R1]);
+		zssync(uap);
+	}
+
+	if (ZS_IS_CONS(uap) || ZS_IS_ASLEEP(uap)) {
+		spin_unlock_irqrestore(&port->lock, flags);
+		mutex_unlock(&pmz_irq_mutex);
+		return;
+	}
+
+	/* Disable receiver and transmitter.  */
+	uap->curregs[R3] &= ~RxENABLE;
+	uap->curregs[R5] &= ~TxENABLE;
+
+	/* Disable all interrupts and BRK assertion.  */
+	uap->curregs[R5] &= ~SND_BRK;
+	pmz_maybe_update_regs(uap);
+
+	/* Shut the chip down */
+	pmz_set_scc_power(uap, 0);
+
+	spin_unlock_irqrestore(&port->lock, flags);
+
+	mutex_unlock(&pmz_irq_mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pmz_debug("pmz: shutdown() done.\n");
 }
 
@@ -1248,6 +1466,12 @@ static void __pmz_set_termios(struct uart_port *port, struct ktermios *termios,
 
 	pmz_debug("pmz: set_termios()\n");
 
+<<<<<<< HEAD
+=======
+	if (ZS_IS_ASLEEP(uap))
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy(&uap->termios_cache, termios, sizeof(struct ktermios));
 
 	/* XXX Check which revs of machines actually allow 1 and 4Mb speeds
@@ -1297,15 +1521,29 @@ static void pmz_set_termios(struct uart_port *port, struct ktermios *termios,
 	spin_lock_irqsave(&port->lock, flags);	
 
 	/* Disable IRQs on the port */
+<<<<<<< HEAD
 	pmz_interrupt_control(uap, 0);
+=======
+	uap->curregs[R1] &= ~(EXT_INT_ENAB | TxINT_ENAB | RxINT_MASK);
+	write_zsreg(uap, R1, uap->curregs[R1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Setup new port configuration */
 	__pmz_set_termios(port, termios, old);
 
 	/* Re-enable IRQs on the port */
+<<<<<<< HEAD
 	if (ZS_IS_OPEN(uap))
 		pmz_interrupt_control(uap, 1);
 
+=======
+	if (ZS_IS_OPEN(uap)) {
+		uap->curregs[R1] |= INT_ALL_Rx | TxINT_ENAB;
+		if (!ZS_IS_EXTCLK(uap))
+			uap->curregs[R1] |= EXT_INT_ENAB;
+		write_zsreg(uap, R1, uap->curregs[R1]);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&port->lock, flags);
 }
 
@@ -1348,6 +1586,7 @@ static int pmz_verify_port(struct uart_port *port, struct serial_struct *ser)
 static int pmz_poll_get_char(struct uart_port *port)
 {
 	struct uart_pmac_port *uap = (struct uart_pmac_port *)port;
+<<<<<<< HEAD
 	int tries = 2;
 
 	while (tries) {
@@ -1358,6 +1597,12 @@ static int pmz_poll_get_char(struct uart_port *port)
 	}
 
 	return NO_POLL_CHAR;
+=======
+
+	while ((read_zsreg(uap, R0) & Rx_CH_AV) == 0)
+		udelay(5);
+	return read_zsdata(uap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void pmz_poll_put_char(struct uart_port *port, unsigned char c)
@@ -1512,7 +1757,11 @@ no_dma:
 	 * fixed up interrupt info, but we use the device-tree directly
 	 * here due to early probing so we need the fixup too.
 	 */
+<<<<<<< HEAD
 	if (uap->port.irq == 0 &&
+=======
+	if (uap->port.irq == NO_IRQ &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    np->parent && np->parent->parent &&
 	    of_device_is_compatible(np->parent->parent, "gatwick")) {
 		/* IRQs on gatwick are offset by 64 */
@@ -1551,12 +1800,16 @@ static void pmz_dispose_port(struct uart_pmac_port *uap)
  */
 static int pmz_attach(struct macio_dev *mdev, const struct of_device_id *match)
 {
+<<<<<<< HEAD
 	struct uart_pmac_port *uap;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 	
 	/* Iterate the pmz_ports array to find a matching entry
 	 */
 	for (i = 0; i < MAX_ZS_PORTS; i++)
+<<<<<<< HEAD
 		if (pmz_ports[i].node == mdev->ofdev.dev.of_node)
 			break;
 	if (i >= MAX_ZS_PORTS)
@@ -1579,6 +1832,22 @@ static int pmz_attach(struct macio_dev *mdev, const struct of_device_id *match)
 		uap->flags |= PMACZILOG_FLAG_RSRC_REQUESTED;
 
 	return uart_add_one_port(&pmz_uart_reg, &uap->port);
+=======
+		if (pmz_ports[i].node == mdev->ofdev.dev.of_node) {
+			struct uart_pmac_port *uap = &pmz_ports[i];
+
+			uap->dev = mdev;
+			dev_set_drvdata(&mdev->ofdev.dev, uap);
+			if (macio_request_resources(uap->dev, "pmac_zilog"))
+				printk(KERN_WARNING "%s: Failed to request resource"
+				       ", port still active\n",
+				       uap->node->name);
+			else
+				uap->flags |= PMACZILOG_FLAG_RSRC_REQUESTED;				
+			return 0;
+		}
+	return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1592,15 +1861,21 @@ static int pmz_detach(struct macio_dev *mdev)
 	if (!uap)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	uart_remove_one_port(&pmz_uart_reg, &uap->port);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (uap->flags & PMACZILOG_FLAG_RSRC_REQUESTED) {
 		macio_release_resources(uap->dev);
 		uap->flags &= ~PMACZILOG_FLAG_RSRC_REQUESTED;
 	}
 	dev_set_drvdata(&mdev->ofdev.dev, NULL);
 	uap->dev = NULL;
+<<<<<<< HEAD
 	uap->port.dev = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	
 	return 0;
 }
@@ -1609,13 +1884,66 @@ static int pmz_detach(struct macio_dev *mdev)
 static int pmz_suspend(struct macio_dev *mdev, pm_message_t pm_state)
 {
 	struct uart_pmac_port *uap = dev_get_drvdata(&mdev->ofdev.dev);
+<<<<<<< HEAD
+=======
+	struct uart_state *state;
+	unsigned long flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (uap == NULL) {
 		printk("HRM... pmz_suspend with NULL uap\n");
 		return 0;
 	}
 
+<<<<<<< HEAD
 	uart_suspend_port(&pmz_uart_reg, &uap->port);
+=======
+	if (pm_state.event == mdev->ofdev.dev.power.power_state.event)
+		return 0;
+
+	pmz_debug("suspend, switching to state %d\n", pm_state.event);
+
+	state = pmz_uart_reg.state + uap->port.line;
+
+	mutex_lock(&pmz_irq_mutex);
+	mutex_lock(&state->port.mutex);
+
+	spin_lock_irqsave(&uap->port.lock, flags);
+
+	if (ZS_IS_OPEN(uap) || ZS_IS_CONS(uap)) {
+		/* Disable receiver and transmitter.  */
+		uap->curregs[R3] &= ~RxENABLE;
+		uap->curregs[R5] &= ~TxENABLE;
+
+		/* Disable all interrupts and BRK assertion.  */
+		uap->curregs[R1] &= ~(EXT_INT_ENAB | TxINT_ENAB | RxINT_MASK);
+		uap->curregs[R5] &= ~SND_BRK;
+		pmz_load_zsregs(uap, uap->curregs);
+		uap->flags |= PMACZILOG_FLAG_IS_ASLEEP;
+		mb();
+	}
+
+	spin_unlock_irqrestore(&uap->port.lock, flags);
+
+	if (ZS_IS_OPEN(uap) || ZS_IS_OPEN(uap->mate))
+		if (ZS_IS_ASLEEP(uap->mate) && ZS_IS_IRQ_ON(pmz_get_port_A(uap))) {
+			pmz_get_port_A(uap)->flags &= ~PMACZILOG_FLAG_IS_IRQ_ON;
+			disable_irq(uap->port.irq);
+		}
+
+	if (ZS_IS_CONS(uap))
+		uap->port.cons->flags &= ~CON_ENABLED;
+
+	/* Shut the chip down */
+	pmz_set_scc_power(uap, 0);
+
+	mutex_unlock(&state->port.mutex);
+	mutex_unlock(&pmz_irq_mutex);
+
+	pmz_debug("suspend, switching complete\n");
+
+	mdev->ofdev.dev.power.power_state = pm_state;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1624,20 +1952,89 @@ static int pmz_suspend(struct macio_dev *mdev, pm_message_t pm_state)
 static int pmz_resume(struct macio_dev *mdev)
 {
 	struct uart_pmac_port *uap = dev_get_drvdata(&mdev->ofdev.dev);
+<<<<<<< HEAD
+=======
+	struct uart_state *state;
+	unsigned long flags;
+	int pwr_delay = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (uap == NULL)
 		return 0;
 
+<<<<<<< HEAD
 	uart_resume_port(&pmz_uart_reg, &uap->port);
+=======
+	if (mdev->ofdev.dev.power.power_state.event == PM_EVENT_ON)
+		return 0;
+	
+	pmz_debug("resume, switching to state 0\n");
+
+	state = pmz_uart_reg.state + uap->port.line;
+
+	mutex_lock(&pmz_irq_mutex);
+	mutex_lock(&state->port.mutex);
+
+	spin_lock_irqsave(&uap->port.lock, flags);
+	if (!ZS_IS_OPEN(uap) && !ZS_IS_CONS(uap)) {
+		spin_unlock_irqrestore(&uap->port.lock, flags);
+		goto bail;
+	}
+	pwr_delay = __pmz_startup(uap);
+
+	/* Take care of config that may have changed while asleep */
+	__pmz_set_termios(&uap->port, &uap->termios_cache, NULL);
+
+	if (ZS_IS_OPEN(uap)) {
+		/* Enable interrupts */		
+		uap->curregs[R1] |= INT_ALL_Rx | TxINT_ENAB;
+		if (!ZS_IS_EXTCLK(uap))
+			uap->curregs[R1] |= EXT_INT_ENAB;
+		write_zsreg(uap, R1, uap->curregs[R1]);
+	}
+
+	spin_unlock_irqrestore(&uap->port.lock, flags);
+
+	if (ZS_IS_CONS(uap))
+		uap->port.cons->flags |= CON_ENABLED;
+
+	/* Re-enable IRQ on the controller */
+	if (ZS_IS_OPEN(uap) && !ZS_IS_IRQ_ON(pmz_get_port_A(uap))) {
+		pmz_get_port_A(uap)->flags |= PMACZILOG_FLAG_IS_IRQ_ON;
+		enable_irq(uap->port.irq);
+	}
+
+ bail:
+	mutex_unlock(&state->port.mutex);
+	mutex_unlock(&pmz_irq_mutex);
+
+	/* Right now, we deal with delay by blocking here, I'll be
+	 * smarter later on
+	 */
+	if (pwr_delay != 0) {
+		pmz_debug("pmz: delaying %d ms\n", pwr_delay);
+		msleep(pwr_delay);
+	}
+
+	pmz_debug("resume, switching complete\n");
+
+	mdev->ofdev.dev.power.power_state.event = PM_EVENT_ON;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 /*
  * Probe all ports in the system and build the ports array, we register
+<<<<<<< HEAD
  * with the serial layer later, so we get a proper struct device which
  * allows the tty to attach properly. This is later than it used to be
  * but the tty layer really wants it that way.
+=======
+ * with the serial layer at this point, the macio-type probing is only
+ * used later to "attach" to the sysfs tree so we get power management
+ * events
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int __init pmz_probe(void)
 {
@@ -1673,10 +2070,15 @@ static int __init pmz_probe(void)
 		/*
 		 * Fill basic fields in the port structures
 		 */
+<<<<<<< HEAD
 		if (node_b != NULL) {
 			pmz_ports[count].mate		= &pmz_ports[count+1];
 			pmz_ports[count+1].mate		= &pmz_ports[count];
 		}
+=======
+		pmz_ports[count].mate		= &pmz_ports[count+1];
+		pmz_ports[count+1].mate		= &pmz_ports[count];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pmz_ports[count].flags		= PMACZILOG_FLAG_IS_CHANNEL_A;
 		pmz_ports[count].node		= node_a;
 		pmz_ports[count+1].node		= node_b;
@@ -1714,8 +2116,13 @@ static int __init pmz_init_port(struct uart_pmac_port *uap)
 	struct resource *r_ports;
 	int irq;
 
+<<<<<<< HEAD
 	r_ports = platform_get_resource(uap->pdev, IORESOURCE_MEM, 0);
 	irq = platform_get_irq(uap->pdev, 0);
+=======
+	r_ports = platform_get_resource(uap->node, IORESOURCE_MEM, 0);
+	irq = platform_get_irq(uap->node, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!r_ports || !irq)
 		return -ENODEV;
 
@@ -1744,19 +2151,33 @@ static int __init pmz_probe(void)
 
 	pmz_ports_count = 0;
 
+<<<<<<< HEAD
 	pmz_ports[0].port.line = 0;
 	pmz_ports[0].flags     = PMACZILOG_FLAG_IS_CHANNEL_A;
 	pmz_ports[0].pdev      = &scc_a_pdev;
+=======
+	pmz_ports[0].mate      = &pmz_ports[1];
+	pmz_ports[0].port.line = 0;
+	pmz_ports[0].flags     = PMACZILOG_FLAG_IS_CHANNEL_A;
+	pmz_ports[0].node      = &scc_a_pdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = pmz_init_port(&pmz_ports[0]);
 	if (err)
 		return err;
 	pmz_ports_count++;
 
+<<<<<<< HEAD
 	pmz_ports[0].mate      = &pmz_ports[1];
 	pmz_ports[1].mate      = &pmz_ports[0];
 	pmz_ports[1].port.line = 1;
 	pmz_ports[1].flags     = 0;
 	pmz_ports[1].pdev      = &scc_b_pdev;
+=======
+	pmz_ports[1].mate      = &pmz_ports[0];
+	pmz_ports[1].port.line = 1;
+	pmz_ports[1].flags     = 0;
+	pmz_ports[1].node      = &scc_b_pdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = pmz_init_port(&pmz_ports[1]);
 	if (err)
 		return err;
@@ -1772,6 +2193,7 @@ static void pmz_dispose_port(struct uart_pmac_port *uap)
 
 static int __init pmz_attach(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct uart_pmac_port *uap;
 	int i;
 
@@ -1787,10 +2209,19 @@ static int __init pmz_attach(struct platform_device *pdev)
 	platform_set_drvdata(pdev, uap);
 
 	return uart_add_one_port(&pmz_uart_reg, &uap->port);
+=======
+	int i;
+
+	for (i = 0; i < pmz_ports_count; i++)
+		if (pmz_ports[i].node == pdev)
+			return 0;
+	return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __exit pmz_detach(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct uart_pmac_port *uap = platform_get_drvdata(pdev);
 
 	if (!uap)
@@ -1801,6 +2232,8 @@ static int __exit pmz_detach(struct platform_device *pdev)
 	platform_set_drvdata(pdev, NULL);
 	uap->port.dev = NULL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1832,13 +2265,45 @@ static struct console pmz_console = {
  */
 static int __init pmz_register(void)
 {
+<<<<<<< HEAD
+=======
+	int i, rc;
+	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pmz_uart_reg.nr = pmz_ports_count;
 	pmz_uart_reg.cons = PMACZILOG_CONSOLE;
 
 	/*
 	 * Register this driver with the serial core
 	 */
+<<<<<<< HEAD
 	return uart_register_driver(&pmz_uart_reg);
+=======
+	rc = uart_register_driver(&pmz_uart_reg);
+	if (rc)
+		return rc;
+
+	/*
+	 * Register each port with the serial core
+	 */
+	for (i = 0; i < pmz_ports_count; i++) {
+		struct uart_pmac_port *uport = &pmz_ports[i];
+		/* NULL node may happen on wallstreet */
+		if (uport->node != NULL)
+			rc = uart_add_one_port(&pmz_uart_reg, &uport->port);
+		if (rc)
+			goto err_out;
+	}
+
+	return 0;
+err_out:
+	while (i-- > 0) {
+		struct uart_pmac_port *uport = &pmz_ports[i];
+		uart_remove_one_port(&pmz_uart_reg, &uport->port);
+	}
+	uart_unregister_driver(&pmz_uart_reg);
+	return rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_PPC_PMAC
@@ -1937,6 +2402,7 @@ static void __exit exit_pmz(void)
 
 	for (i = 0; i < pmz_ports_count; i++) {
 		struct uart_pmac_port *uport = &pmz_ports[i];
+<<<<<<< HEAD
 #ifdef CONFIG_PPC_PMAC
 		if (uport->node != NULL)
 			pmz_dispose_port(uport);
@@ -1944,6 +2410,12 @@ static void __exit exit_pmz(void)
 		if (uport->pdev != NULL)
 			pmz_dispose_port(uport);
 #endif
+=======
+		if (uport->node != NULL) {
+			uart_remove_one_port(&pmz_uart_reg, &uport->port);
+			pmz_dispose_port(uport);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	/* Unregister UART driver */
 	uart_unregister_driver(&pmz_uart_reg);
@@ -1970,6 +2442,11 @@ static void pmz_console_write(struct console *con, const char *s, unsigned int c
 	struct uart_pmac_port *uap = &pmz_ports[con->index];
 	unsigned long flags;
 
+<<<<<<< HEAD
+=======
+	if (ZS_IS_ASLEEP(uap))
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&uap->port.lock, flags);
 
 	/* Turn of interrupts and enable the transmitter. */
@@ -2014,6 +2491,7 @@ static int __init pmz_console_setup(struct console *co, char *options)
 	if (co->index >= pmz_ports_count)
 		co->index = 0;
 	uap = &pmz_ports[co->index];
+<<<<<<< HEAD
 #ifdef CONFIG_PPC_PMAC
 	if (uap->node == NULL)
 		return -ENODEV;
@@ -2021,6 +2499,10 @@ static int __init pmz_console_setup(struct console *co, char *options)
 	if (uap->pdev == NULL)
 		return -ENODEV;
 #endif
+=======
+	if (uap->node == NULL)
+		return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	port = &uap->port;
 
 	/*

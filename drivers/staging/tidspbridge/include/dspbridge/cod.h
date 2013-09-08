@@ -100,6 +100,24 @@ extern int cod_create(struct cod_manager **mgr,
 extern void cod_delete(struct cod_manager *cod_mgr_obj);
 
 /*
+<<<<<<< HEAD
+=======
+ *  ======== cod_exit ========
+ *  Purpose:
+ *      Discontinue usage of the COD module.
+ *  Parameters:
+ *      None.
+ *  Returns:
+ *      None.
+ *  Requires:
+ *      COD initialized.
+ *  Ensures:
+ *      Resources acquired in cod_init(void) are freed.
+ */
+extern void cod_exit(void);
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  ======== cod_get_base_lib ========
  *  Purpose:
  *      Get handle to the base image DBL library.
@@ -228,6 +246,23 @@ extern int cod_get_sym_value(struct cod_manager *cod_mgr_obj,
 				    char *str_sym, u32 * pul_value);
 
 /*
+<<<<<<< HEAD
+=======
+ *  ======== cod_init ========
+ *  Purpose:
+ *      Initialize the COD module's private state.
+ *  Parameters:
+ *      None.
+ *  Returns:
+ *      TRUE if initialized; FALSE if error occurred.
+ *  Requires:
+ *  Ensures:
+ *      A requirement for each of the other public COD functions.
+ */
+extern bool cod_init(void);
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  ======== cod_load_base ========
  *  Purpose:
  *      Load the initial program image, optionally with command-line arguments,

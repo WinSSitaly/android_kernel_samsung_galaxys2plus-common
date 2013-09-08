@@ -45,6 +45,10 @@
 #include <asm/uaccess.h>
 #include <asm/io.h>
 #include <asm/irq.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "uhci-hcd.h"
 
@@ -58,7 +62,11 @@
 #define DRIVER_DESC "USB Universal Host Controller Interface driver"
 
 /* for flakey hardware, ignore overcurrent indicators */
+<<<<<<< HEAD
 static bool ignore_oc;
+=======
+static int ignore_oc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(ignore_oc, bool, S_IRUGO);
 MODULE_PARM_DESC(ignore_oc, "ignore hardware overcurrent indications");
 
@@ -293,6 +301,7 @@ __acquires(uhci->lock)
 	 * and that remote wakeups should be enabled.
 	 */
 	egsm_enable = USBCMD_EGSM;
+<<<<<<< HEAD
 	int_enable = USBINTR_RESUME;
 	wakeup_enable = 1;
 
@@ -337,6 +346,52 @@ __acquires(uhci->lock)
 		egsm_enable = int_enable = 0;
 
 	uhci->RD_enable = !!int_enable;
+=======
+	uhci->RD_enable = 1;
+	int_enable = USBINTR_RESUME;
+	wakeup_enable = 1;
+
+	/* In auto-stop mode wakeups must always be detected, but
+	 * Resume-Detect interrupts may be prohibited.  (In the absence
+	 * of CONFIG_PM, they are always disallowed.)
+	 */
+	if (auto_stop) {
+		if (!device_may_wakeup(&rhdev->dev))
+			int_enable = 0;
+
+	/* In bus-suspend mode wakeups may be disabled, but if they are
+	 * allowed then so are Resume-Detect interrupts.
+	 */
+	} else {
+#ifdef CONFIG_PM
+		if (!rhdev->do_remote_wakeup)
+			wakeup_enable = 0;
+#endif
+	}
+
+	/* EGSM causes the root hub to echo a 'K' signal (resume) out any
+	 * port which requests a remote wakeup.  According to the USB spec,
+	 * every hub is supposed to do this.  But if we are ignoring
+	 * remote-wakeup requests anyway then there's no point to it.
+	 * We also shouldn't enable EGSM if it's broken.
+	 */
+	if (!wakeup_enable || global_suspend_mode_is_broken(uhci))
+		egsm_enable = 0;
+
+	/* If we're ignoring wakeup events then there's no reason to
+	 * enable Resume-Detect interrupts.  We also shouldn't enable
+	 * them if they are broken or disallowed.
+	 *
+	 * This logic may lead us to enabling RD but not EGSM.  The UHCI
+	 * spec foolishly says that RD works only when EGSM is on, but
+	 * there's no harm in enabling it anyway -- perhaps some chips
+	 * will implement it!
+	 */
+	if (!wakeup_enable || resume_detect_interrupts_are_broken(uhci) ||
+			!int_enable)
+		uhci->RD_enable = int_enable = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uhci_writew(uhci, int_enable, USBINTR);
 	uhci_writew(uhci, egsm_enable | USBCMD_CF, USBCMD);
 	mb();
@@ -363,12 +418,19 @@ __acquires(uhci->lock)
 	uhci->rh_state = new_state;
 	uhci->is_stopped = UHCI_IS_STOPPED;
 
+<<<<<<< HEAD
 	/*
 	 * If remote wakeup is enabled but either EGSM or RD interrupts
 	 * doesn't work, then we won't get an interrupt when a wakeup event
 	 * occurs.  Thus the suspended root hub needs to be polled.
 	 */
 	if (wakeup_enable && (!int_enable || !egsm_enable))
+=======
+	/* If interrupts don't work and remote wakeup is enabled then
+	 * the suspended root hub needs to be polled.
+	 */
+	if (!int_enable && wakeup_enable)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_bit(HCD_FLAG_POLL_RH, &uhci_to_hcd(uhci)->flags);
 	else
 		clear_bit(HCD_FLAG_POLL_RH, &uhci_to_hcd(uhci)->flags);
@@ -447,10 +509,13 @@ static irqreturn_t uhci_irq(struct usb_hcd *hcd)
 		return IRQ_NONE;
 	uhci_writew(uhci, status, USBSTS);		/* Clear it */
 
+<<<<<<< HEAD
 	spin_lock(&uhci->lock);
 	if (unlikely(!uhci->is_initialized))	/* not yet configured */
 		goto done;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (status & ~(USBSTS_USBINT | USBSTS_ERROR | USBSTS_RD)) {
 		if (status & USBSTS_HSE)
 			dev_err(uhci_dev(uhci), "host system error, "
@@ -459,6 +524,10 @@ static irqreturn_t uhci_irq(struct usb_hcd *hcd)
 			dev_err(uhci_dev(uhci), "host controller process "
 					"error, something bad happened!\n");
 		if (status & USBSTS_HCH) {
+<<<<<<< HEAD
+=======
+			spin_lock(&uhci->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (uhci->rh_state >= UHCI_RH_RUNNING) {
 				dev_err(uhci_dev(uhci),
 					"host controller halted, "
@@ -476,6 +545,7 @@ static irqreturn_t uhci_irq(struct usb_hcd *hcd)
 				 * pending unlinks */
 				mod_timer(&hcd->rh_timer, jiffies);
 			}
+<<<<<<< HEAD
 		}
 	}
 
@@ -485,6 +555,17 @@ static irqreturn_t uhci_irq(struct usb_hcd *hcd)
 	} else {
 		uhci_scan_schedule(uhci);
  done:
+=======
+			spin_unlock(&uhci->lock);
+		}
+	}
+
+	if (status & USBSTS_RD)
+		usb_hcd_poll_rh_status(hcd);
+	else {
+		spin_lock(&uhci->lock);
+		uhci_scan_schedule(uhci);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock(&uhci->lock);
 	}
 
@@ -567,9 +648,12 @@ static int uhci_start(struct usb_hcd *hcd)
 	struct dentry __maybe_unused *dentry;
 
 	hcd->uses_new_polling = 1;
+<<<<<<< HEAD
 	/* Accept arbitrarily long scatter-gather lists */
 	if (!(hcd->driver->flags & HCD_LOCAL_MEM))
 		hcd->self.sg_tablesize = ~0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_init(&uhci->lock);
 	setup_timer(&uhci->fsbr_timer, uhci_fsbr_timeout,
@@ -665,9 +749,15 @@ static int uhci_start(struct usb_hcd *hcd)
 	 */
 	mb();
 
+<<<<<<< HEAD
 	spin_lock_irq(&uhci->lock);
 	configure_hc(uhci);
 	uhci->is_initialized = 1;
+=======
+	configure_hc(uhci);
+	uhci->is_initialized = 1;
+	spin_lock_irq(&uhci->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	start_rh(uhci);
 	spin_unlock_irq(&uhci->lock);
 	return 0;

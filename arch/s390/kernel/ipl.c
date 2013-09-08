@@ -2,7 +2,11 @@
  *  arch/s390/kernel/ipl.c
  *    ipl/reipl/dump support for Linux on s390.
  *
+<<<<<<< HEAD
  *    Copyright IBM Corp. 2005,2012
+=======
+ *    Copyright IBM Corp. 2005,2007
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *    Author(s): Michael Holzheu <holzheu@de.ibm.com>
  *		 Heiko Carstens <heiko.carstens@de.ibm.com>
  *		 Volker Sameske <sameske@de.ibm.com>
@@ -16,8 +20,11 @@
 #include <linux/ctype.h>
 #include <linux/fs.h>
 #include <linux/gfp.h>
+<<<<<<< HEAD
 #include <linux/crash_dump.h>
 #include <linux/debug_locks.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/ipl.h>
 #include <asm/smp.h>
 #include <asm/setup.h>
@@ -26,10 +33,15 @@
 #include <asm/ebcdic.h>
 #include <asm/reset.h>
 #include <asm/sclp.h>
+<<<<<<< HEAD
 #include <asm/checksum.h>
 #include <asm/debug.h>
 #include <asm/os_info.h>
 #include "entry.h"
+=======
+#include <asm/sigp.h>
+#include <asm/checksum.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define IPL_PARM_BLOCK_VERSION 0
 
@@ -49,13 +61,19 @@
  * - halt
  * - power off
  * - reipl
+<<<<<<< HEAD
  * - restart
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 #define ON_PANIC_STR		"on_panic"
 #define ON_HALT_STR		"on_halt"
 #define ON_POFF_STR		"on_poff"
 #define ON_REIPL_STR		"on_reboot"
+<<<<<<< HEAD
 #define ON_RESTART_STR		"on_restart"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct shutdown_action;
 struct shutdown_trigger {
@@ -279,8 +297,13 @@ static ssize_t ipl_type_show(struct kobject *kobj, struct kobj_attribute *attr,
 static struct kobj_attribute sys_ipl_type_attr = __ATTR_RO(ipl_type);
 
 /* VM IPL PARM routines */
+<<<<<<< HEAD
 static size_t reipl_get_ascii_vmparm(char *dest, size_t size,
 				     const struct ipl_parameter_block *ipb)
+=======
+size_t reipl_get_ascii_vmparm(char *dest, size_t size,
+				   const struct ipl_parameter_block *ipb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 	size_t len;
@@ -342,8 +365,13 @@ static size_t scpdata_length(const char* buf, size_t count)
 	return count;
 }
 
+<<<<<<< HEAD
 static size_t reipl_append_ascii_scpdata(char *dest, size_t size,
 					 const struct ipl_parameter_block *ipb)
+=======
+size_t reipl_append_ascii_scpdata(char *dest, size_t size,
+				  const struct ipl_parameter_block *ipb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	size_t count;
 	size_t i;
@@ -573,7 +601,11 @@ static void __ipl_run(void *unused)
 
 static void ipl_run(struct shutdown_trigger *trigger)
 {
+<<<<<<< HEAD
 	smp_call_ipl_cpu(__ipl_run, NULL);
+=======
+	smp_switch_to_ipl_cpu(__ipl_run, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __init ipl_init(void)
@@ -952,6 +984,7 @@ static struct attribute_group reipl_nss_attr_group = {
 	.attrs = reipl_nss_attrs,
 };
 
+<<<<<<< HEAD
 static void set_reipl_block_actual(struct ipl_parameter_block *reipl_block)
 {
 	reipl_block_actual = reipl_block;
@@ -959,6 +992,8 @@ static void set_reipl_block_actual(struct ipl_parameter_block *reipl_block)
 			  reipl_block->hdr.len);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* reipl type */
 
 static int reipl_set_type(enum ipl_type type)
@@ -974,7 +1009,11 @@ static int reipl_set_type(enum ipl_type type)
 			reipl_method = REIPL_METHOD_CCW_VM;
 		else
 			reipl_method = REIPL_METHOD_CCW_CIO;
+<<<<<<< HEAD
 		set_reipl_block_actual(reipl_block_ccw);
+=======
+		reipl_block_actual = reipl_block_ccw;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case IPL_TYPE_FCP:
 		if (diag308_set_works)
@@ -983,7 +1022,11 @@ static int reipl_set_type(enum ipl_type type)
 			reipl_method = REIPL_METHOD_FCP_RO_VM;
 		else
 			reipl_method = REIPL_METHOD_FCP_RO_DIAG;
+<<<<<<< HEAD
 		set_reipl_block_actual(reipl_block_fcp);
+=======
+		reipl_block_actual = reipl_block_fcp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case IPL_TYPE_FCP_DUMP:
 		reipl_method = REIPL_METHOD_FCP_DUMP;
@@ -993,7 +1036,11 @@ static int reipl_set_type(enum ipl_type type)
 			reipl_method = REIPL_METHOD_NSS_DIAG;
 		else
 			reipl_method = REIPL_METHOD_NSS;
+<<<<<<< HEAD
 		set_reipl_block_actual(reipl_block_nss);
+=======
+		reipl_block_actual = reipl_block_nss;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case IPL_TYPE_UNKNOWN:
 		reipl_method = REIPL_METHOD_DEFAULT;
@@ -1110,7 +1157,11 @@ static void __reipl_run(void *unused)
 
 static void reipl_run(struct shutdown_trigger *trigger)
 {
+<<<<<<< HEAD
 	smp_call_ipl_cpu(__reipl_run, NULL);
+=======
+	smp_switch_to_ipl_cpu(__reipl_run, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void reipl_block_ccw_init(struct ipl_parameter_block *ipb)
@@ -1231,7 +1282,11 @@ static int __init reipl_fcp_init(void)
 	/* sysfs: create fcp kset for mixing attr group and bin attrs */
 	reipl_fcp_kset = kset_create_and_add(IPL_FCP_STR, NULL,
 					     &reipl_kset->kobj);
+<<<<<<< HEAD
 	if (!reipl_fcp_kset) {
+=======
+	if (!reipl_kset) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		free_page((unsigned long) reipl_block_fcp);
 		return -ENOMEM;
 	}
@@ -1265,6 +1320,7 @@ static int __init reipl_fcp_init(void)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int __init reipl_type_init(void)
 {
 	enum ipl_type reipl_type = ipl_info.type;
@@ -1288,6 +1344,8 @@ out:
 	return reipl_set_type(reipl_type);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init reipl_init(void)
 {
 	int rc;
@@ -1309,7 +1367,14 @@ static int __init reipl_init(void)
 	rc = reipl_nss_init();
 	if (rc)
 		return rc;
+<<<<<<< HEAD
 	return reipl_type_init();
+=======
+	rc = reipl_set_type(ipl_info.type);
+	if (rc)
+		return rc;
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct shutdown_action __refdata reipl_action = {
@@ -1450,7 +1515,11 @@ static void dump_run(struct shutdown_trigger *trigger)
 	if (dump_method == DUMP_METHOD_NONE)
 		return;
 	smp_send_stop();
+<<<<<<< HEAD
 	smp_call_ipl_cpu(__dump_run, NULL);
+=======
+	smp_switch_to_ipl_cpu(__dump_run, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __init dump_ccw_init(void)
@@ -1528,12 +1597,39 @@ static struct shutdown_action __refdata dump_action = {
 
 static void dump_reipl_run(struct shutdown_trigger *trigger)
 {
+<<<<<<< HEAD
 	u32 csum;
 
 	csum = csum_partial(reipl_block_actual, reipl_block_actual->hdr.len, 0);
 	copy_to_absolute_zero(&S390_lowcore.ipib_checksum, &csum, sizeof(csum));
 	copy_to_absolute_zero(&S390_lowcore.ipib, &reipl_block_actual,
 			      sizeof(reipl_block_actual));
+=======
+	preempt_disable();
+	/*
+	 * Bypass dynamic address translation (DAT) when storing IPL parameter
+	 * information block address and checksum into the prefix area
+	 * (corresponding to absolute addresses 0-8191).
+	 * When enhanced DAT applies and the STE format control in one,
+	 * the absolute address is formed without prefixing. In this case a
+	 * normal store (stg/st) into the prefix area would no more match to
+	 * absolute addresses 0-8191.
+	 */
+#ifdef CONFIG_64BIT
+	asm volatile("sturg %0,%1"
+		:: "a" ((unsigned long) reipl_block_actual),
+		"a" (&lowcore_ptr[smp_processor_id()]->ipib));
+#else
+	asm volatile("stura %0,%1"
+		:: "a" ((unsigned long) reipl_block_actual),
+		"a" (&lowcore_ptr[smp_processor_id()]->ipib));
+#endif
+	asm volatile("stura %0,%1"
+		:: "a" (csum_partial(reipl_block_actual,
+				     reipl_block_actual->hdr.len, 0)),
+		"a" (&lowcore_ptr[smp_processor_id()]->ipib_checksum));
+	preempt_enable();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dump_run(trigger);
 }
 
@@ -1559,20 +1655,29 @@ static char vmcmd_on_reboot[128];
 static char vmcmd_on_panic[128];
 static char vmcmd_on_halt[128];
 static char vmcmd_on_poff[128];
+<<<<<<< HEAD
 static char vmcmd_on_restart[128];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 DEFINE_IPL_ATTR_STR_RW(vmcmd, on_reboot, "%s\n", "%s\n", vmcmd_on_reboot);
 DEFINE_IPL_ATTR_STR_RW(vmcmd, on_panic, "%s\n", "%s\n", vmcmd_on_panic);
 DEFINE_IPL_ATTR_STR_RW(vmcmd, on_halt, "%s\n", "%s\n", vmcmd_on_halt);
 DEFINE_IPL_ATTR_STR_RW(vmcmd, on_poff, "%s\n", "%s\n", vmcmd_on_poff);
+<<<<<<< HEAD
 DEFINE_IPL_ATTR_STR_RW(vmcmd, on_restart, "%s\n", "%s\n", vmcmd_on_restart);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct attribute *vmcmd_attrs[] = {
 	&sys_vmcmd_on_reboot_attr.attr,
 	&sys_vmcmd_on_panic_attr.attr,
 	&sys_vmcmd_on_halt_attr.attr,
 	&sys_vmcmd_on_poff_attr.attr,
+<<<<<<< HEAD
 	&sys_vmcmd_on_restart_attr.attr,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL,
 };
 
@@ -1594,8 +1699,11 @@ static void vmcmd_run(struct shutdown_trigger *trigger)
 		cmd = vmcmd_on_halt;
 	else if (strcmp(trigger->name, ON_POFF_STR) == 0)
 		cmd = vmcmd_on_poff;
+<<<<<<< HEAD
 	else if (strcmp(trigger->name, ON_RESTART_STR) == 0)
 		cmd = vmcmd_on_restart;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		return;
 
@@ -1631,10 +1739,18 @@ static struct shutdown_action vmcmd_action = {SHUTDOWN_ACTION_VMCMD_STR,
 
 static void stop_run(struct shutdown_trigger *trigger)
 {
+<<<<<<< HEAD
 	if (strcmp(trigger->name, ON_PANIC_STR) == 0 ||
 	    strcmp(trigger->name, ON_RESTART_STR) == 0)
 		disabled_wait((unsigned long) __builtin_return_address(0));
 	smp_stop_cpu();
+=======
+	if (strcmp(trigger->name, ON_PANIC_STR) == 0)
+		disabled_wait((unsigned long) __builtin_return_address(0));
+	while (sigp(smp_processor_id(), sigp_stop) == sigp_busy)
+		cpu_relax();
+	for (;;);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct shutdown_action stop_action = {SHUTDOWN_ACTION_STOP_STR,
@@ -1722,11 +1838,15 @@ static struct kobj_attribute on_panic_attr =
 
 static void do_panic(void)
 {
+<<<<<<< HEAD
 	lgr_info_log();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	on_panic_trigger.action->fn(&on_panic_trigger);
 	stop_run(&on_panic_trigger);
 }
 
+<<<<<<< HEAD
 /* on restart */
 
 static struct shutdown_trigger on_restart_trigger = {ON_RESTART_STR,
@@ -1766,6 +1886,8 @@ void do_restart(void)
 	smp_call_online_cpu(__do_restart, NULL);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* on halt */
 
 static struct shutdown_trigger on_halt_trigger = {ON_HALT_STR, &stop_action};
@@ -1842,9 +1964,13 @@ static void __init shutdown_triggers_init(void)
 	if (sysfs_create_file(&shutdown_actions_kset->kobj,
 			      &on_poff_attr.attr))
 		goto fail;
+<<<<<<< HEAD
 	if (sysfs_create_file(&shutdown_actions_kset->kobj,
 			      &on_restart_attr.attr))
 		goto fail;
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 fail:
 	panic("shutdown_triggers_init failed\n");
@@ -2020,19 +2146,26 @@ static void do_reset_calls(void)
 {
 	struct reset_call *reset;
 
+<<<<<<< HEAD
 #ifdef CONFIG_64BIT
 	if (diag308_set_works) {
 		diag308_reset();
 		return;
 	}
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(reset, &rcall, list)
 		reset->fn();
 }
 
 u32 dump_prefix_page;
 
+<<<<<<< HEAD
 void s390_reset_system(void (*func)(void *), void *data)
+=======
+void s390_reset_system(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct _lowcore *lc;
 
@@ -2051,11 +2184,16 @@ void s390_reset_system(void (*func)(void *), void *data)
 	__ctl_clear_bit(0,28);
 
 	/* Set new machine check handler */
+<<<<<<< HEAD
 	S390_lowcore.mcck_new_psw.mask = psw_kernel_bits | PSW_MASK_DAT;
+=======
+	S390_lowcore.mcck_new_psw.mask = psw_kernel_bits & ~PSW_MASK_MCHECK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	S390_lowcore.mcck_new_psw.addr =
 		PSW_ADDR_AMODE | (unsigned long) s390_base_mcck_handler;
 
 	/* Set new program check handler */
+<<<<<<< HEAD
 	S390_lowcore.program_new_psw.mask = psw_kernel_bits | PSW_MASK_DAT;
 	S390_lowcore.program_new_psw.addr =
 		PSW_ADDR_AMODE | (unsigned long) s390_base_pgm_handler;
@@ -2067,3 +2205,12 @@ void s390_reset_system(void (*func)(void *), void *data)
 	if (func)
 		func(data);
 }
+=======
+	S390_lowcore.program_new_psw.mask = psw_kernel_bits & ~PSW_MASK_MCHECK;
+	S390_lowcore.program_new_psw.addr =
+		PSW_ADDR_AMODE | (unsigned long) s390_base_pgm_handler;
+
+	do_reset_calls();
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

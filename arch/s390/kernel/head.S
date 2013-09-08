@@ -22,7 +22,10 @@
  */
 
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/linkage.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/asm-offsets.h>
 #include <asm/thread_info.h>
 #include <asm/page.h>
@@ -329,8 +332,13 @@ iplstart:
 #
 # reset files in VM reader
 #
+<<<<<<< HEAD
 	stidp	__LC_SAVE_AREA_SYNC	# store cpuid
 	tm	__LC_SAVE_AREA_SYNC,0xff# running VM ?
+=======
+	stidp	__LC_SAVE_AREA		# store cpuid
+	tm	__LC_SAVE_AREA,0xff	# running VM ?
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bno	.Lnoreset
 	la	%r2,.Lreset
 	lhi	%r3,26
@@ -384,7 +392,12 @@ iplstart:
 # doesn't need a builtin ipl record.
 #
 	.org	0x800
+<<<<<<< HEAD
 ENTRY(start)
+=======
+	.globl	start
+start:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	stm	%r0,%r15,0x07b0		# store registers
 	basr	%r12,%r0
 .base:
@@ -448,6 +461,7 @@ ENTRY(start)
 # or linload or SALIPL
 #
 	.org	0x10000
+<<<<<<< HEAD
 ENTRY(startup)
 	j	.Lep_startup_normal
 	.org	0x10008
@@ -466,10 +480,15 @@ ENTRY(startup)
 ENTRY(startup_kdump)
 	j	.Lep_startup_kdump
 .Lep_startup_normal:
+=======
+	.globl	startup
+startup:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	basr	%r13,0			# get base
 .LPG0:
 	xc	0x200(256),0x200	# partially clear lowcore
 	xc	0x300(256),0x300
+<<<<<<< HEAD
 	xc	0xe00(256),0xe00
 	stck	__LC_LAST_UPDATE_CLOCK
 	spt	5f-.LPG0(%r13)
@@ -477,6 +496,14 @@ ENTRY(startup_kdump)
 	xc	__LC_STFL_FAC_LIST(8),__LC_STFL_FAC_LIST
 #ifndef CONFIG_MARCH_G5
 	# check capabilities against MARCH_{G5,Z900,Z990,Z9_109,Z10}
+=======
+	stck	__LC_LAST_UPDATE_CLOCK
+	spt	5f-.LPG0(%r13)
+	mvc	__LC_LAST_UPDATE_TIMER(8),5f-.LPG0(%r13)
+#ifndef CONFIG_MARCH_G5
+	# check capabilities against MARCH_{G5,Z900,Z990,Z9_109,Z10}
+	xc	__LC_STFL_FAC_LIST(8),__LC_STFL_FAC_LIST
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.insn	s,0xb2b10000,__LC_STFL_FAC_LIST	# store facility list
 	tm	__LC_STFL_FAC_LIST,0x01	# stfle available ?
 	jz	0f
@@ -552,8 +579,11 @@ ENTRY(startup_kdump)
 	.align	8
 5:	.long	0x7fffffff,0xffffffff
 
+<<<<<<< HEAD
 #include "head_kdump.S"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #
 # params at 10400 (setup.h)
 #
@@ -561,8 +591,11 @@ ENTRY(startup_kdump)
 	.long	0,0			# IPL_DEVICE
 	.long	0,0			# INITRD_START
 	.long	0,0			# INITRD_SIZE
+<<<<<<< HEAD
 	.long	0,0			# OLDMEM_BASE
 	.long	0,0			# OLDMEM_SIZE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.org	COMMAND_LINE
 	.byte	"root=/dev/ram0 ro"

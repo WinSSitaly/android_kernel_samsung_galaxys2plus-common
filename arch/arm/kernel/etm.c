@@ -15,6 +15,10 @@
 #include <linux/init.h>
 #include <linux/types.h>
 #include <linux/io.h>
+<<<<<<< HEAD
+=======
+#include <linux/slab.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sysrq.h>
 #include <linux/device.h>
 #include <linux/clk.h>
@@ -24,7 +28,10 @@
 #include <linux/miscdevice.h>
 #include <linux/vmalloc.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/hardware/coresight.h>
 #include <asm/sections.h>
 
@@ -37,26 +44,54 @@ MODULE_AUTHOR("Alexander Shishkin");
 struct tracectx {
 	unsigned int	etb_bufsz;
 	void __iomem	*etb_regs;
+<<<<<<< HEAD
 	void __iomem	*etm_regs;
 	unsigned long	flags;
 	int		ncmppairs;
 	int		etm_portsz;
+=======
+	void __iomem	**etm_regs;
+	int		etm_regs_count;
+	unsigned long	flags;
+	int		ncmppairs;
+	int		etm_portsz;
+	u32		etb_fc;
+	unsigned long	range_start;
+	unsigned long	range_end;
+	unsigned long	data_range_start;
+	unsigned long	data_range_end;
+	bool		dump_initial_etb;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct device	*dev;
 	struct clk	*emu_clk;
 	struct mutex	mutex;
 };
 
+<<<<<<< HEAD
 static struct tracectx tracer;
+=======
+static struct tracectx tracer = {
+	.range_start = (unsigned long)_stext,
+	.range_end = (unsigned long)_etext,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline bool trace_isrunning(struct tracectx *t)
 {
 	return !!(t->flags & TRACER_RUNNING);
 }
 
+<<<<<<< HEAD
 static int etm_setup_address_range(struct tracectx *t, int n,
 		unsigned long start, unsigned long end, int exclude, int data)
 {
 	u32 flags = ETMAAT_ARM | ETMAAT_IGNCONTEXTID | ETMAAT_NSONLY | \
+=======
+static int etm_setup_address_range(struct tracectx *t, int id, int n,
+		unsigned long start, unsigned long end, int exclude, int data)
+{
+	u32 flags = ETMAAT_ARM | ETMAAT_IGNCONTEXTID | ETMAAT_IGNSECURITY |
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    ETMAAT_NOVALCMP;
 
 	if (n < 1 || n > t->ncmppairs)
@@ -72,6 +107,7 @@ static int etm_setup_address_range(struct tracectx *t, int n,
 		flags |= ETMAAT_IEXEC;
 
 	/* first comparator for the range */
+<<<<<<< HEAD
 	etm_writel(t, flags, ETMR_COMP_ACC_TYPE(n * 2));
 	etm_writel(t, start, ETMR_COMP_VAL(n * 2));
 
@@ -81,15 +117,38 @@ static int etm_setup_address_range(struct tracectx *t, int n,
 
 	flags = exclude ? ETMTE_INCLEXCL : 0;
 	etm_writel(t, flags | (1 << n), ETMR_TRACEENCTRL);
+=======
+	etm_writel(t, id, flags, ETMR_COMP_ACC_TYPE(n * 2));
+	etm_writel(t, id, start, ETMR_COMP_VAL(n * 2));
+
+	/* second comparator is right next to it */
+	etm_writel(t, id, flags, ETMR_COMP_ACC_TYPE(n * 2 + 1));
+	etm_writel(t, id, end, ETMR_COMP_VAL(n * 2 + 1));
+
+	if (data) {
+		flags = exclude ? ETMVDC3_EXCLONLY : 0;
+		if (exclude)
+			n += 8;
+		etm_writel(t, id, flags | BIT(n), ETMR_VIEWDATACTRL3);
+	} else {
+		flags = exclude ? ETMTE_INCLEXCL : 0;
+		etm_writel(t, id, flags | (1 << n), ETMR_TRACEENCTRL);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int trace_start(struct tracectx *t)
+=======
+static int trace_start_etm(struct tracectx *t, int id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 v;
 	unsigned long timeout = TRACER_TIMEOUT;
 
+<<<<<<< HEAD
 	etb_unlock(t);
 
 	etb_writel(t, 0, ETBR_FORMATTERCTRL);
@@ -98,11 +157,14 @@ static int trace_start(struct tracectx *t)
 	etb_lock(t);
 
 	/* configure etm */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	v = ETMCTRL_OPTS | ETMCTRL_PROGRAM | ETMCTRL_PORTSIZE(t->etm_portsz);
 
 	if (t->flags & TRACER_CYCLE_ACC)
 		v |= ETMCTRL_CYCLEACCURATE;
 
+<<<<<<< HEAD
 	etm_unlock(t);
 
 	etm_writel(t, v, ETMR_CTRL);
@@ -120,10 +182,48 @@ static int trace_start(struct tracectx *t)
 	etm_writel(t, 0, ETMR_TRACEENCTRL2);
 	etm_writel(t, 0, ETMR_TRACESSCTRL);
 	etm_writel(t, 0x6f, ETMR_TRACEENEVT);
+=======
+	if (t->flags & TRACER_TRACE_DATA)
+		v |= ETMCTRL_DATA_DO_ADDR;
+
+	etm_unlock(t, id);
+
+	etm_writel(t, id, v, ETMR_CTRL);
+
+	while (!(etm_readl(t, id, ETMR_CTRL) & ETMCTRL_PROGRAM) && --timeout)
+		;
+	if (!timeout) {
+		dev_dbg(t->dev, "Waiting for progbit to assert timed out\n");
+		etm_lock(t, id);
+		return -EFAULT;
+	}
+
+	if (t->range_start || t->range_end)
+		etm_setup_address_range(t, id, 1,
+					t->range_start, t->range_end, 0, 0);
+	else
+		etm_writel(t, id, ETMTE_INCLEXCL, ETMR_TRACEENCTRL);
+
+	etm_writel(t, id, 0, ETMR_TRACEENCTRL2);
+	etm_writel(t, id, 0, ETMR_TRACESSCTRL);
+	etm_writel(t, id, 0x6f, ETMR_TRACEENEVT);
+
+	etm_writel(t, id, 0, ETMR_VIEWDATACTRL1);
+	etm_writel(t, id, 0, ETMR_VIEWDATACTRL2);
+
+	if (t->data_range_start || t->data_range_end)
+		etm_setup_address_range(t, id, 2, t->data_range_start,
+					t->data_range_end, 0, 1);
+	else
+		etm_writel(t, id, ETMVDC3_EXCLONLY, ETMR_VIEWDATACTRL3);
+
+	etm_writel(t, id, 0x6f, ETMR_VIEWDATAEVT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	v &= ~ETMCTRL_PROGRAM;
 	v |= ETMCTRL_PORTSEL;
 
+<<<<<<< HEAD
 	etm_writel(t, v, ETMR_CTRL);
 
 	timeout = TRACER_TIMEOUT;
@@ -136,12 +236,51 @@ static int trace_start(struct tracectx *t)
 	}
 
 	etm_lock(t);
+=======
+	etm_writel(t, id, v, ETMR_CTRL);
+
+	timeout = TRACER_TIMEOUT;
+	while (etm_readl(t, id, ETMR_CTRL) & ETMCTRL_PROGRAM && --timeout)
+		;
+	if (!timeout) {
+		dev_dbg(t->dev, "Waiting for progbit to deassert timed out\n");
+		etm_lock(t, id);
+		return -EFAULT;
+	}
+
+	etm_lock(t, id);
+	return 0;
+}
+
+static int trace_start(struct tracectx *t)
+{
+	int ret;
+	int id;
+	u32 etb_fc = t->etb_fc;
+
+	etb_unlock(t);
+
+	t->dump_initial_etb = false;
+	etb_writel(t, 0, ETBR_WRITEADDR);
+	etb_writel(t, etb_fc, ETBR_FORMATTERCTRL);
+	etb_writel(t, 1, ETBR_CTRL);
+
+	etb_lock(t);
+
+	/* configure etm(s) */
+	for (id = 0; id < t->etm_regs_count; id++) {
+		ret = trace_start_etm(t, id);
+		if (ret)
+			return ret;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	t->flags |= TRACER_RUNNING;
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int trace_stop(struct tracectx *t)
 {
 	unsigned long timeout = TRACER_TIMEOUT;
@@ -161,6 +300,46 @@ static int trace_stop(struct tracectx *t)
 
 	etb_unlock(t);
 	etb_writel(t, ETBFF_MANUAL_FLUSH, ETBR_FORMATTERCTRL);
+=======
+static int trace_stop_etm(struct tracectx *t, int id)
+{
+	unsigned long timeout = TRACER_TIMEOUT;
+
+	etm_unlock(t, id);
+
+	etm_writel(t, id, 0x441, ETMR_CTRL);
+	while (!(etm_readl(t, id, ETMR_CTRL) & ETMCTRL_PROGRAM) && --timeout)
+		;
+	if (!timeout) {
+		dev_dbg(t->dev, "Waiting for progbit to assert timed out\n");
+		etm_lock(t, id);
+		return -EFAULT;
+	}
+
+	etm_lock(t, id);
+	return 0;
+}
+
+static int trace_stop(struct tracectx *t)
+{
+	int id;
+	int ret;
+	unsigned long timeout = TRACER_TIMEOUT;
+	u32 etb_fc = t->etb_fc;
+
+	for (id = 0; id < t->etm_regs_count; id++) {
+		ret = trace_stop_etm(t, id);
+		if (ret)
+			return ret;
+	}
+
+	etb_unlock(t);
+	if (etb_fc) {
+		etb_fc |= ETBFF_STOPFL;
+		etb_writel(t, t->etb_fc, ETBR_FORMATTERCTRL);
+	}
+	etb_writel(t, etb_fc | ETBFF_MANUAL_FLUSH, ETBR_FORMATTERCTRL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	timeout = TRACER_TIMEOUT;
 	while (etb_readl(t, ETBR_FORMATTERCTRL) &
@@ -185,13 +364,18 @@ static int trace_stop(struct tracectx *t)
 static int etb_getdatalen(struct tracectx *t)
 {
 	u32 v;
+<<<<<<< HEAD
 	int rp, wp;
+=======
+	int wp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	v = etb_readl(t, ETBR_STATUS);
 
 	if (v & 1)
 		return t->etb_bufsz;
 
+<<<<<<< HEAD
 	rp = etb_readl(t, ETBR_READADDR);
 	wp = etb_readl(t, ETBR_WRITEADDR);
 
@@ -203,6 +387,10 @@ static int etb_getdatalen(struct tracectx *t)
 	}
 
 	return wp - rp;
+=======
+	wp = etb_readl(t, ETBR_WRITEADDR);
+	return wp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* sysrq+v will always stop the running trace and leave it at that */
@@ -235,6 +423,7 @@ static void etm_dump(void)
 		printk("%08x", cpu_to_be32(etb_readl(t, ETBR_READMEM)));
 	printk(KERN_INFO "\n--- ETB buffer end ---\n");
 
+<<<<<<< HEAD
 	/* deassert the overflow bit */
 	etb_writel(t, 1, ETBR_CTRL);
 	etb_writel(t, 0, ETBR_CTRL);
@@ -243,13 +432,25 @@ static void etm_dump(void)
 	etb_writel(t, 0, ETBR_READADDR);
 	etb_writel(t, 0, ETBR_WRITEADDR);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	etb_lock(t);
 }
 
 static void sysrq_etm_dump(int key)
 {
+<<<<<<< HEAD
 	dev_dbg(tracer.dev, "Dumping ETB buffer\n");
 	etm_dump();
+=======
+	if (!mutex_trylock(&tracer.mutex)) {
+		printk(KERN_INFO "Tracing hardware busy\n");
+		return;
+	}
+	dev_dbg(tracer.dev, "Dumping ETB buffer\n");
+	etm_dump();
+	mutex_unlock(&tracer.mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct sysrq_key_op sysrq_etm_op = {
@@ -276,6 +477,13 @@ static ssize_t etb_read(struct file *file, char __user *data,
 	struct tracectx *t = file->private_data;
 	u32 first = 0;
 	u32 *buf;
+<<<<<<< HEAD
+=======
+	int wpos;
+	int skip;
+	long wlength;
+	loff_t pos = *ppos;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&t->mutex);
 
@@ -287,6 +495,7 @@ static ssize_t etb_read(struct file *file, char __user *data,
 	etb_unlock(t);
 
 	total = etb_getdatalen(t);
+<<<<<<< HEAD
 	if (total == t->etb_bufsz)
 		first = etb_readl(t, ETBR_WRITEADDR);
 
@@ -312,6 +521,41 @@ static ssize_t etb_read(struct file *file, char __user *data,
 
 	length -= copy_to_user(data, buf, length);
 	vfree(buf);
+=======
+	if (total == 0 && t->dump_initial_etb)
+		total = t->etb_bufsz;
+	if (total == t->etb_bufsz)
+		first = etb_readl(t, ETBR_WRITEADDR);
+
+	if (pos > total * 4) {
+		skip = 0;
+		wpos = total;
+	} else {
+		skip = (int)pos % 4;
+		wpos = (int)pos / 4;
+	}
+	total -= wpos;
+	first = (first + wpos) % t->etb_bufsz;
+
+	etb_writel(t, first, ETBR_READADDR);
+
+	wlength = min(total, DIV_ROUND_UP(skip + (int)len, 4));
+	length = min(total * 4 - skip, (int)len);
+	buf = vmalloc(wlength * 4);
+
+	dev_dbg(t->dev, "ETB read %ld bytes to %lld from %ld words at %d\n",
+		length, pos, wlength, first);
+	dev_dbg(t->dev, "ETB buffer length: %d\n", total + wpos);
+	dev_dbg(t->dev, "ETB status reg: %x\n", etb_readl(t, ETBR_STATUS));
+	for (i = 0; i < wlength; i++)
+		buf[i] = etb_readl(t, ETBR_READMEM);
+
+	etb_lock(t);
+
+	length -= copy_to_user(data, (u8 *)buf + skip, length);
+	vfree(buf);
+	*ppos = pos + length;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	mutex_unlock(&t->mutex);
@@ -348,12 +592,17 @@ static int __devinit etb_probe(struct amba_device *dev, const struct amba_id *id
 	if (ret)
 		goto out;
 
+<<<<<<< HEAD
+=======
+	mutex_lock(&t->mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	t->etb_regs = ioremap_nocache(dev->res.start, resource_size(&dev->res));
 	if (!t->etb_regs) {
 		ret = -ENOMEM;
 		goto out_release;
 	}
 
+<<<<<<< HEAD
 	amba_set_drvdata(dev, t);
 
 	etb_miscdev.parent = &dev->dev;
@@ -370,6 +619,12 @@ static int __devinit etb_probe(struct amba_device *dev, const struct amba_id *id
 
 	clk_enable(t->emu_clk);
 
+=======
+	t->dev = &dev->dev;
+	t->dump_initial_etb = true;
+	amba_set_drvdata(dev, t);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	etb_unlock(t);
 	t->etb_bufsz = etb_readl(t, ETBR_DEPTH);
 	dev_dbg(&dev->dev, "Size: %x\n", t->etb_bufsz);
@@ -378,6 +633,23 @@ static int __devinit etb_probe(struct amba_device *dev, const struct amba_id *id
 	etb_writel(t, 0, ETBR_CTRL);
 	etb_writel(t, 0x1000, ETBR_FORMATTERCTRL);
 	etb_lock(t);
+<<<<<<< HEAD
+=======
+	mutex_unlock(&t->mutex);
+
+	etb_miscdev.parent = &dev->dev;
+
+	ret = misc_register(&etb_miscdev);
+	if (ret)
+		goto out_unmap;
+
+	/* Get optional clock. Currently used to select clock source on omap3 */
+	t->emu_clk = clk_get(&dev->dev, "emu_src_ck");
+	if (IS_ERR(t->emu_clk))
+		dev_dbg(&dev->dev, "Failed to obtain emu_src_ck.\n");
+	else
+		clk_enable(t->emu_clk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_dbg(&dev->dev, "ETB AMBA driver initialized.\n");
 
@@ -385,10 +657,20 @@ out:
 	return ret;
 
 out_unmap:
+<<<<<<< HEAD
 	amba_set_drvdata(dev, NULL);
 	iounmap(t->etb_regs);
 
 out_release:
+=======
+	mutex_lock(&t->mutex);
+	amba_set_drvdata(dev, NULL);
+	iounmap(t->etb_regs);
+	t->etb_regs = NULL;
+
+out_release:
+	mutex_unlock(&t->mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	amba_release_regions(dev);
 
 	return ret;
@@ -403,8 +685,15 @@ static int etb_remove(struct amba_device *dev)
 	iounmap(t->etb_regs);
 	t->etb_regs = NULL;
 
+<<<<<<< HEAD
 	clk_disable(t->emu_clk);
 	clk_put(t->emu_clk);
+=======
+	if (!IS_ERR(t->emu_clk)) {
+		clk_disable(t->emu_clk);
+		clk_put(t->emu_clk);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	amba_release_regions(dev);
 
@@ -448,7 +737,14 @@ static ssize_t trace_running_store(struct kobject *kobj,
 		return -EINVAL;
 
 	mutex_lock(&tracer.mutex);
+<<<<<<< HEAD
 	ret = value ? trace_start(&tracer) : trace_stop(&tracer);
+=======
+	if (!tracer.etb_regs)
+		ret = -ENODEV;
+	else
+		ret = value ? trace_start(&tracer) : trace_stop(&tracer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&tracer.mutex);
 
 	return ret ? : n;
@@ -463,6 +759,7 @@ static ssize_t trace_info_show(struct kobject *kobj,
 {
 	u32 etb_wa, etb_ra, etb_st, etb_fc, etm_ctrl, etm_st;
 	int datalen;
+<<<<<<< HEAD
 
 	etb_unlock(&tracer);
 	datalen = etb_getdatalen(&tracer);
@@ -484,15 +781,59 @@ static ssize_t trace_info_show(struct kobject *kobj,
 			"ETBR_FORMATTERCTRL:\t%08x\n"
 			"ETMR_CTRL:\t%08x\n"
 			"ETMR_STATUS:\t%08x\n",
+=======
+	int id;
+	int ret;
+
+	mutex_lock(&tracer.mutex);
+	if (tracer.etb_regs) {
+		etb_unlock(&tracer);
+		datalen = etb_getdatalen(&tracer);
+		etb_wa = etb_readl(&tracer, ETBR_WRITEADDR);
+		etb_ra = etb_readl(&tracer, ETBR_READADDR);
+		etb_st = etb_readl(&tracer, ETBR_STATUS);
+		etb_fc = etb_readl(&tracer, ETBR_FORMATTERCTRL);
+		etb_lock(&tracer);
+	} else {
+		etb_wa = etb_ra = etb_st = etb_fc = ~0;
+		datalen = -1;
+	}
+
+	ret = sprintf(buf, "Trace buffer len: %d\nComparator pairs: %d\n"
+			"ETBR_WRITEADDR:\t%08x\n"
+			"ETBR_READADDR:\t%08x\n"
+			"ETBR_STATUS:\t%08x\n"
+			"ETBR_FORMATTERCTRL:\t%08x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			datalen,
 			tracer.ncmppairs,
 			etb_wa,
 			etb_ra,
 			etb_st,
+<<<<<<< HEAD
 			etb_fc,
 			etm_ctrl,
 			etm_st
 			);
+=======
+			etb_fc
+			);
+
+	for (id = 0; id < tracer.etm_regs_count; id++) {
+		etm_unlock(&tracer, id);
+		etm_ctrl = etm_readl(&tracer, id, ETMR_CTRL);
+		etm_st = etm_readl(&tracer, id, ETMR_STATUS);
+		etm_lock(&tracer, id);
+		ret += sprintf(buf + ret, "ETMR_CTRL:\t%08x\n"
+			"ETMR_STATUS:\t%08x\n",
+			etm_ctrl,
+			etm_st
+			);
+	}
+	mutex_unlock(&tracer.mutex);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct kobj_attribute trace_info_attr =
@@ -531,27 +872,125 @@ static ssize_t trace_mode_store(struct kobject *kobj,
 static struct kobj_attribute trace_mode_attr =
 	__ATTR(trace_mode, 0644, trace_mode_show, trace_mode_store);
 
+<<<<<<< HEAD
+=======
+static ssize_t trace_range_show(struct kobject *kobj,
+				  struct kobj_attribute *attr,
+				  char *buf)
+{
+	return sprintf(buf, "%08lx %08lx\n",
+			tracer.range_start, tracer.range_end);
+}
+
+static ssize_t trace_range_store(struct kobject *kobj,
+				   struct kobj_attribute *attr,
+				   const char *buf, size_t n)
+{
+	unsigned long range_start, range_end;
+
+	if (sscanf(buf, "%lx %lx", &range_start, &range_end) != 2)
+		return -EINVAL;
+
+	mutex_lock(&tracer.mutex);
+	tracer.range_start = range_start;
+	tracer.range_end = range_end;
+	mutex_unlock(&tracer.mutex);
+
+	return n;
+}
+
+
+static struct kobj_attribute trace_range_attr =
+	__ATTR(trace_range, 0644, trace_range_show, trace_range_store);
+
+static ssize_t trace_data_range_show(struct kobject *kobj,
+				  struct kobj_attribute *attr,
+				  char *buf)
+{
+	unsigned long range_start;
+	u64 range_end;
+	mutex_lock(&tracer.mutex);
+	range_start = tracer.data_range_start;
+	range_end = tracer.data_range_end;
+	if (!range_end && (tracer.flags & TRACER_TRACE_DATA))
+		range_end = 0x100000000ULL;
+	mutex_unlock(&tracer.mutex);
+	return sprintf(buf, "%08lx %08llx\n", range_start, range_end);
+}
+
+static ssize_t trace_data_range_store(struct kobject *kobj,
+				   struct kobj_attribute *attr,
+				   const char *buf, size_t n)
+{
+	unsigned long range_start;
+	u64 range_end;
+
+	if (sscanf(buf, "%lx %llx", &range_start, &range_end) != 2)
+		return -EINVAL;
+
+	mutex_lock(&tracer.mutex);
+	tracer.data_range_start = range_start;
+	tracer.data_range_end = (unsigned long)range_end;
+	if (range_end)
+		tracer.flags |= TRACER_TRACE_DATA;
+	else
+		tracer.flags &= ~TRACER_TRACE_DATA;
+	mutex_unlock(&tracer.mutex);
+
+	return n;
+}
+
+
+static struct kobj_attribute trace_data_range_attr =
+	__ATTR(trace_data_range, 0644,
+		trace_data_range_show, trace_data_range_store);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit etm_probe(struct amba_device *dev, const struct amba_id *id)
 {
 	struct tracectx *t = &tracer;
 	int ret = 0;
+<<<<<<< HEAD
 
 	if (t->etm_regs) {
 		dev_dbg(&dev->dev, "ETM already initialized\n");
 		ret = -EBUSY;
 		goto out;
 	}
+=======
+	void __iomem **new_regs;
+	int new_count;
+
+	mutex_lock(&t->mutex);
+	new_count = t->etm_regs_count + 1;
+	new_regs = krealloc(t->etm_regs,
+				sizeof(t->etm_regs[0]) * new_count, GFP_KERNEL);
+
+	if (!new_regs) {
+		dev_dbg(&dev->dev, "Failed to allocate ETM register array\n");
+		ret = -ENOMEM;
+		goto out;
+	}
+	t->etm_regs = new_regs;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = amba_request_regions(dev, NULL);
 	if (ret)
 		goto out;
 
+<<<<<<< HEAD
 	t->etm_regs = ioremap_nocache(dev->res.start, resource_size(&dev->res));
 	if (!t->etm_regs) {
+=======
+	t->etm_regs[t->etm_regs_count] =
+		ioremap_nocache(dev->res.start, resource_size(&dev->res));
+	if (!t->etm_regs[t->etm_regs_count]) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENOMEM;
 		goto out_release;
 	}
 
+<<<<<<< HEAD
 	amba_set_drvdata(dev, t);
 
 	mutex_init(&t->mutex);
@@ -567,6 +1006,22 @@ static int __devinit etm_probe(struct amba_device *dev, const struct amba_id *id
 	t->ncmppairs = etm_readl(t, ETMR_CONFCODE) & 0xf;
 	etm_writel(t, 0x440, ETMR_CTRL);
 	etm_lock(t);
+=======
+	amba_set_drvdata(dev, t->etm_regs[t->etm_regs_count]);
+
+	t->flags = TRACER_CYCLE_ACC | TRACER_TRACE_DATA;
+	t->etm_portsz = 1;
+
+	etm_unlock(t, t->etm_regs_count);
+	(void)etm_readl(t, t->etm_regs_count, ETMMR_PDSR);
+	/* dummy first read */
+	(void)etm_readl(&tracer, t->etm_regs_count, ETMMR_OSSRR);
+
+	t->ncmppairs = etm_readl(t, t->etm_regs_count, ETMR_CONFCODE) & 0xf;
+	etm_writel(t, t->etm_regs_count, 0x441, ETMR_CTRL);
+	etm_writel(t, t->etm_regs_count, new_count, ETMR_TRACEIDR);
+	etm_lock(t, t->etm_regs_count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = sysfs_create_file(&dev->dev.kobj,
 			&trace_running_attr.attr);
@@ -582,23 +1037,54 @@ static int __devinit etm_probe(struct amba_device *dev, const struct amba_id *id
 	if (ret)
 		dev_dbg(&dev->dev, "Failed to create trace_mode in sysfs\n");
 
+<<<<<<< HEAD
 	dev_dbg(t->dev, "ETM AMBA driver initialized.\n");
 
 out:
+=======
+	ret = sysfs_create_file(&dev->dev.kobj, &trace_range_attr.attr);
+	if (ret)
+		dev_dbg(&dev->dev, "Failed to create trace_range in sysfs\n");
+
+	ret = sysfs_create_file(&dev->dev.kobj, &trace_data_range_attr.attr);
+	if (ret)
+		dev_dbg(&dev->dev,
+			"Failed to create trace_data_range in sysfs\n");
+
+	dev_dbg(&dev->dev, "ETM AMBA driver initialized.\n");
+
+	/* Enable formatter if there are multiple trace sources */
+	if (new_count > 1)
+		t->etb_fc = ETBFF_ENFCONT | ETBFF_ENFTC;
+
+	t->etm_regs_count = new_count;
+
+out:
+	mutex_unlock(&t->mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 
 out_unmap:
 	amba_set_drvdata(dev, NULL);
+<<<<<<< HEAD
 	iounmap(t->etm_regs);
+=======
+	iounmap(t->etm_regs[t->etm_regs_count]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out_release:
 	amba_release_regions(dev);
 
+<<<<<<< HEAD
+=======
+	mutex_unlock(&t->mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int etm_remove(struct amba_device *dev)
 {
+<<<<<<< HEAD
 	struct tracectx *t = amba_get_drvdata(dev);
 
 	amba_set_drvdata(dev, NULL);
@@ -612,6 +1098,36 @@ static int etm_remove(struct amba_device *dev)
 	sysfs_remove_file(&dev->dev.kobj, &trace_info_attr.attr);
 	sysfs_remove_file(&dev->dev.kobj, &trace_mode_attr.attr);
 
+=======
+	int i;
+	struct tracectx *t = &tracer;
+	void __iomem	*etm_regs = amba_get_drvdata(dev);
+
+	sysfs_remove_file(&dev->dev.kobj, &trace_running_attr.attr);
+	sysfs_remove_file(&dev->dev.kobj, &trace_info_attr.attr);
+	sysfs_remove_file(&dev->dev.kobj, &trace_mode_attr.attr);
+	sysfs_remove_file(&dev->dev.kobj, &trace_range_attr.attr);
+	sysfs_remove_file(&dev->dev.kobj, &trace_data_range_attr.attr);
+
+	amba_set_drvdata(dev, NULL);
+
+	mutex_lock(&t->mutex);
+	for (i = 0; i < t->etm_regs_count; i++)
+		if (t->etm_regs[i] == etm_regs)
+			break;
+	for (; i < t->etm_regs_count - 1; i++)
+		t->etm_regs[i] = t->etm_regs[i + 1];
+	t->etm_regs_count--;
+	if (!t->etm_regs_count) {
+		kfree(t->etm_regs);
+		t->etm_regs = NULL;
+	}
+	mutex_unlock(&t->mutex);
+
+	iounmap(etm_regs);
+	amba_release_regions(dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -620,6 +1136,13 @@ static struct amba_id etm_ids[] = {
 		.id	= 0x0003b921,
 		.mask	= 0x0007ffff,
 	},
+<<<<<<< HEAD
+=======
+	{
+		.id	= 0x0003b950,
+		.mask	= 0x0007ffff,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0, 0 },
 };
 
@@ -637,6 +1160,11 @@ static int __init etm_init(void)
 {
 	int retval;
 
+<<<<<<< HEAD
+=======
+	mutex_init(&tracer.mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	retval = amba_driver_register(&etb_driver);
 	if (retval) {
 		printk(KERN_ERR "Failed to register etb\n");

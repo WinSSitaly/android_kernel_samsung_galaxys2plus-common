@@ -25,10 +25,18 @@
 #include <linux/interrupt.h>
 #include <linux/compiler.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
 #include <asm/cacheflush.h>
 #include <asm/cpu.h>
 #include <asm/processor.h>
+=======
+#include <asm/atomic.h>
+#include <asm/cacheflush.h>
+#include <asm/cpu.h>
+#include <asm/processor.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/hardirq.h>
 #include <asm/mmu_context.h>
 #include <asm/smp.h>

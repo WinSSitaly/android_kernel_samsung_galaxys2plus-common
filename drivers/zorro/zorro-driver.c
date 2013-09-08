@@ -37,7 +37,10 @@ zorro_match_device(const struct zorro_device_id *ids,
 	}
 	return NULL;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(zorro_match_device);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 static int zorro_device_probe(struct device *dev)
@@ -92,7 +95,10 @@ int zorro_register_driver(struct zorro_driver *drv)
 	/* register with core */
 	return driver_register(&drv->driver);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(zorro_register_driver);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
     /**
@@ -109,7 +115,10 @@ void zorro_unregister_driver(struct zorro_driver *drv)
 {
 	driver_unregister(&drv->driver);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(zorro_unregister_driver);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
     /**
@@ -171,7 +180,10 @@ struct bus_type zorro_bus_type = {
 	.probe	= zorro_device_probe,
 	.remove	= zorro_device_remove,
 };
+<<<<<<< HEAD
 EXPORT_SYMBOL(zorro_bus_type);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 static int __init zorro_driver_init(void)
@@ -181,3 +193,10 @@ static int __init zorro_driver_init(void)
 
 postcore_initcall(zorro_driver_init);
 
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL(zorro_match_device);
+EXPORT_SYMBOL(zorro_register_driver);
+EXPORT_SYMBOL(zorro_unregister_driver);
+EXPORT_SYMBOL(zorro_bus_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

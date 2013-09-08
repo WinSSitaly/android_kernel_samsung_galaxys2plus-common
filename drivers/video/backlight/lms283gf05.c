@@ -17,7 +17,10 @@
 
 #include <linux/spi/spi.h>
 #include <linux/spi/lms283gf05.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct lms283gf05_state {
 	struct spi_device	*spi;
@@ -226,7 +229,22 @@ static struct spi_driver lms283gf05_driver = {
 	.remove		= __devexit_p(lms283gf05_remove),
 };
 
+<<<<<<< HEAD
 module_spi_driver(lms283gf05_driver);
+=======
+static __init int lms283gf05_init(void)
+{
+	return spi_register_driver(&lms283gf05_driver);
+}
+
+static __exit void lms283gf05_exit(void)
+{
+	spi_unregister_driver(&lms283gf05_driver);
+}
+
+module_init(lms283gf05_init);
+module_exit(lms283gf05_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Marek Vasut <marek.vasut@gmail.com>");
 MODULE_DESCRIPTION("LCD283GF05 LCD");

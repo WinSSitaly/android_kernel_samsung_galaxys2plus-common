@@ -10,7 +10,10 @@
 #include <linux/mm.h>
 #include <linux/device.h>
 #include <linux/dma-mapping.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/cacheflush.h>
 
 void *dma_alloc_coherent(struct device *dev, size_t size,

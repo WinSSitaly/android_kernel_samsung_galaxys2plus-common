@@ -1,10 +1,13 @@
 #
 # Timer subsystem related configuration options
 #
+<<<<<<< HEAD
 
 # Core internal switch. Selected by NO_HZ / HIGH_RES_TIMERS. This is
 # only related to the tick functionality. Oneshot clockevent devices
 # are supported independ of this.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TICK_ONESHOT
 	bool
 
@@ -29,7 +32,12 @@ config HIGH_RES_TIMERS
 config GENERIC_CLOCKEVENTS_BUILD
 	bool
 	default y
+<<<<<<< HEAD
 	depends on GENERIC_CLOCKEVENTS
 
 config GENERIC_CLOCKEVENTS_MIN_ADJUST
 	bool
+=======
+	depends on GENERIC_CLOCKEVENTS || GENERIC_CLOCKEVENTS_MIGR
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

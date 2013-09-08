@@ -18,7 +18,11 @@
  *
  * Copyright (C) IBM Corporation, 2004
  *
+<<<<<<< HEAD
  * Author: Max AsbÃ¶ck <amax@us.ibm.com>
+=======
+ * Author: Max Asböck <amax@us.ibm.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This driver is based on code originally written by Pete Reynolds
  * and others.
@@ -211,6 +215,7 @@ static void __exit ibmasm_exit (void)
 
 static int __init ibmasm_init(void)
 {
+<<<<<<< HEAD
 	int result = pci_register_driver(&ibmasm_driver);
 	if (result)
 		return result;
@@ -222,6 +227,20 @@ static int __init ibmasm_init(void)
 		return result;
 	}
 
+=======
+	int result;
+
+	result = ibmasmfs_register();
+	if (result) {
+		err("Failed to register ibmasmfs file system");
+		return result;
+	}
+	result = pci_register_driver(&ibmasm_driver);
+	if (result) {
+		ibmasmfs_unregister();
+		return result;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ibmasm_register_panic_notifier();
 	info(DRIVER_DESC " version " DRIVER_VERSION " loaded");
 	return 0;

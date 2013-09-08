@@ -1306,10 +1306,13 @@ static ssize_t dvb_ca_en50221_io_write(struct file *file,
 	/* fragment the packets & store in the buffer */
 	while (fragpos < count) {
 		fraglen = ca->slot_info[slot].link_buf_size - 2;
+<<<<<<< HEAD
 		if (fraglen < 0)
 			break;
 		if (fraglen > HOST_LINK_BUF_SIZE - 2)
 			fraglen = HOST_LINK_BUF_SIZE - 2;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if ((count - fragpos) < fraglen)
 			fraglen = count - fragpos;
 

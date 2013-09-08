@@ -11,13 +11,17 @@
 
 #include <linux/usb.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <linux/usb/isp1760.h>
 #include <linux/usb/hcd.h>
 
 #include "isp1760-hcd.h"
 
+<<<<<<< HEAD
 #if defined(CONFIG_OF) && defined(CONFIG_OF_IRQ)
 #include <linux/slab.h>
 #include <linux/of.h>
@@ -25,12 +29,18 @@
 #include <linux/of_address.h>
 #include <linux/of_irq.h>
 #include <linux/of_gpio.h>
+=======
+#ifdef CONFIG_PPC_OF
+#include <linux/of.h>
+#include <linux/of_platform.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifdef CONFIG_PCI
 #include <linux/pci.h>
 #endif
 
+<<<<<<< HEAD
 #if defined(CONFIG_OF) && defined(CONFIG_OF_IRQ)
 struct isp1760 {
 	struct usb_hcd *hcd;
@@ -40,6 +50,12 @@ struct isp1760 {
 static int of_isp1760_probe(struct platform_device *dev)
 {
 	struct isp1760 *drvdata;
+=======
+#ifdef CONFIG_PPC_OF
+static int of_isp1760_probe(struct platform_device *dev)
+{
+	struct usb_hcd *hcd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct device_node *dp = dev->dev.of_node;
 	struct resource *res;
 	struct resource memory;
@@ -47,6 +63,7 @@ static int of_isp1760_probe(struct platform_device *dev)
 	int virq;
 	resource_size_t res_len;
 	int ret;
+<<<<<<< HEAD
 	unsigned int devflags = 0;
 	enum of_gpio_flags gpio_flags;
 	u32 bus_width = 0;
@@ -60,14 +77,27 @@ static int of_isp1760_probe(struct platform_device *dev)
 		ret = -ENXIO;
 		goto free_data;
 	}
+=======
+	const unsigned int *prop;
+	unsigned int devflags = 0;
+
+	ret = of_address_to_resource(dp, 0, &memory);
+	if (ret)
+		return -ENXIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	res_len = resource_size(&memory);
 
 	res = request_mem_region(memory.start, res_len, dev_name(&dev->dev));
+<<<<<<< HEAD
 	if (!res) {
 		ret = -EBUSY;
 		goto free_data;
 	}
+=======
+	if (!res)
+		return -EBUSY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (of_irq_map_one(dp, 0, &oirq)) {
 		ret = -ENODEV;
@@ -81,8 +111,13 @@ static int of_isp1760_probe(struct platform_device *dev)
 		devflags |= ISP1760_FLAG_ISP1761;
 
 	/* Some systems wire up only 16 of the 32 data lines */
+<<<<<<< HEAD
 	of_property_read_u32(dp, "bus-width", &bus_width);
 	if (bus_width == 16)
+=======
+	prop = of_get_property(dp, "bus-width", NULL);
+	if (prop && *prop == 16)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		devflags |= ISP1760_FLAG_BUS_WIDTH_16;
 
 	if (of_get_property(dp, "port1-otg", NULL) != NULL)
@@ -97,6 +132,7 @@ static int of_isp1760_probe(struct platform_device *dev)
 	if (of_get_property(dp, "dreq-polarity", NULL) != NULL)
 		devflags |= ISP1760_FLAG_DREQ_POL_HIGH;
 
+<<<<<<< HEAD
 	drvdata->rst_gpio = of_get_gpio_flags(dp, 0, &gpio_flags);
 	if (gpio_is_valid(drvdata->rst_gpio)) {
 		ret = gpio_request(drvdata->rst_gpio, dev_name(&dev->dev));
@@ -131,11 +167,27 @@ release_reg:
 	release_mem_region(memory.start, res_len);
 free_data:
 	kfree(drvdata);
+=======
+	hcd = isp1760_register(memory.start, res_len, virq,
+		IRQF_SHARED | IRQF_DISABLED, &dev->dev, dev_name(&dev->dev),
+		devflags);
+	if (IS_ERR(hcd)) {
+		ret = PTR_ERR(hcd);
+		goto release_reg;
+	}
+
+	dev_set_drvdata(&dev->dev, hcd);
+	return ret;
+
+release_reg:
+	release_mem_region(memory.start, res_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int of_isp1760_remove(struct platform_device *dev)
 {
+<<<<<<< HEAD
 	struct isp1760 *drvdata = dev_get_drvdata(&dev->dev);
 
 	dev_set_drvdata(&dev->dev, NULL);
@@ -149,6 +201,16 @@ static int of_isp1760_remove(struct platform_device *dev)
 		gpio_free(drvdata->rst_gpio);
 
 	kfree(drvdata);
+=======
+	struct usb_hcd *hcd = dev_get_drvdata(&dev->dev);
+
+	dev_set_drvdata(&dev->dev, NULL);
+
+	usb_remove_hcd(hcd);
+	iounmap(hcd->regs);
+	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
+	usb_put_hcd(hcd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -285,7 +347,11 @@ static int __devinit isp1761_pci_probe(struct pci_dev *dev,
 
 	dev->dev.dma_mask = NULL;
 	hcd = isp1760_register(pci_mem_phy0, memlength, dev->irq,
+<<<<<<< HEAD
 		IRQF_SHARED, -ENOENT, &dev->dev, dev_name(&dev->dev),
+=======
+		IRQF_SHARED | IRQF_DISABLED, &dev->dev, dev_name(&dev->dev),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		devflags);
 	if (IS_ERR(hcd)) {
 		ret_status = -ENODEV;
@@ -358,7 +424,11 @@ static int __devinit isp1760_plat_probe(struct platform_device *pdev)
 	resource_size_t mem_size;
 	struct isp1760_platform_data *priv = pdev->dev.platform_data;
 	unsigned int devflags = 0;
+<<<<<<< HEAD
 	unsigned long irqflags = IRQF_SHARED;
+=======
+	unsigned long irqflags = IRQF_SHARED | IRQF_DISABLED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	if (!mem_res) {
@@ -396,8 +466,12 @@ static int __devinit isp1760_plat_probe(struct platform_device *pdev)
 	}
 
 	hcd = isp1760_register(mem_res->start, mem_size, irq_res->start,
+<<<<<<< HEAD
 			       irqflags, -ENOENT,
 			       &pdev->dev, dev_name(&pdev->dev), devflags);
+=======
+			       irqflags, &pdev->dev, dev_name(&pdev->dev), devflags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(hcd)) {
 		pr_warning("isp1760: Failed to register the HCD device\n");
 		ret = -ENODEV;
@@ -442,7 +516,11 @@ static int __init isp1760_init(void)
 	ret = platform_driver_register(&isp1760_plat_driver);
 	if (!ret)
 		any_ret = 0;
+<<<<<<< HEAD
 #if defined(CONFIG_OF) && defined(CONFIG_OF_IRQ)
+=======
+#ifdef CONFIG_PPC_OF
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = platform_driver_register(&isp1760_of_driver);
 	if (!ret)
 		any_ret = 0;
@@ -462,7 +540,11 @@ module_init(isp1760_init);
 static void __exit isp1760_exit(void)
 {
 	platform_driver_unregister(&isp1760_plat_driver);
+<<<<<<< HEAD
 #if defined(CONFIG_OF) && defined(CONFIG_OF_IRQ)
+=======
+#ifdef CONFIG_PPC_OF
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_driver_unregister(&isp1760_of_driver);
 #endif
 #ifdef CONFIG_PCI

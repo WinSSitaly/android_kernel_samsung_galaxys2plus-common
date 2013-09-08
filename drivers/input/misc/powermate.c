@@ -441,7 +441,22 @@ static struct usb_driver powermate_driver = {
         .id_table =     powermate_devices,
 };
 
+<<<<<<< HEAD
 module_usb_driver(powermate_driver);
+=======
+static int __init powermate_init(void)
+{
+	return usb_register(&powermate_driver);
+}
+
+static void __exit powermate_cleanup(void)
+{
+	usb_deregister(&powermate_driver);
+}
+
+module_init(powermate_init);
+module_exit(powermate_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR( "William R Sowerbutts" );
 MODULE_DESCRIPTION( "Griffin Technology, Inc PowerMate driver" );

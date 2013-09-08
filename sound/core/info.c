@@ -24,7 +24,10 @@
 #include <linux/mm.h>
 #include <linux/slab.h>
 #include <linux/string.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/minors.h>
 #include <sound/info.h>
@@ -532,7 +535,11 @@ int __init snd_info_init(void)
 {
 	struct proc_dir_entry *p;
 
+<<<<<<< HEAD
 	p = proc_mkdir("asound", NULL);
+=======
+	p = create_proc_entry("asound", S_IFDIR | S_IRUGO | S_IXUGO, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (p == NULL)
 		return -ENOMEM;
 	snd_proc_root = p;

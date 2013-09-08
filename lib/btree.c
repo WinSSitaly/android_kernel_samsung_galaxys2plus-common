@@ -319,8 +319,13 @@ void *btree_get_prev(struct btree_head *head, struct btree_geo *geo,
 
 	if (head->height == 0)
 		return NULL;
+<<<<<<< HEAD
 	longcpy(key, __key, geo->keylen);
 retry:
+=======
+retry:
+	longcpy(key, __key, geo->keylen);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dec_key(geo, key);
 
 	node = head->node;
@@ -351,13 +356,20 @@ retry:
 	}
 miss:
 	if (retry_key) {
+<<<<<<< HEAD
 		longcpy(key, retry_key, geo->keylen);
+=======
+		__key = retry_key;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		retry_key = NULL;
 		goto retry;
 	}
 	return NULL;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(btree_get_prev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int getpos(struct btree_geo *geo, unsigned long *node,
 		unsigned long *key)

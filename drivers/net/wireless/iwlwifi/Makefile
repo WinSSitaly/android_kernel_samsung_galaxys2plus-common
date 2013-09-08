@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # WIFI
 obj-$(CONFIG_IWLWIFI)	+= iwlwifi.o
 iwlwifi-objs		:= iwl-agn.o iwl-agn-rs.o iwl-mac80211.o
@@ -20,6 +21,27 @@ iwlwifi-objs		+= iwl-trans-pcie.o iwl-trans-pcie-rx.o iwl-trans-pcie-tx.o
 iwlwifi-$(CONFIG_IWLWIFI_DEBUGFS) += iwl-debugfs.o
 iwlwifi-$(CONFIG_IWLWIFI_DEVICE_TRACING) += iwl-devtrace.o
 iwlwifi-$(CONFIG_IWLWIFI_DEVICE_TESTMODE) += iwl-testmode.o
+=======
+# AGN
+obj-$(CONFIG_IWLAGN)	+= iwlagn.o
+iwlagn-objs		:= iwl-agn.o iwl-agn-rs.o
+iwlagn-objs		+= iwl-agn-ucode.o iwl-agn-tx.o
+iwlagn-objs		+= iwl-agn-lib.o iwl-agn-calib.o iwl-io.o
+iwlagn-objs		+= iwl-agn-tt.o iwl-agn-sta.o iwl-agn-eeprom.o
+
+iwlagn-objs 		+= iwl-core.o iwl-eeprom.o iwl-hcmd.o iwl-power.o
+iwlagn-objs 		+= iwl-rx.o iwl-tx.o iwl-sta.o
+iwlagn-objs 		+= iwl-scan.o iwl-led.o
+iwlagn-objs             += iwl-agn-rxon.o iwl-agn-hcmd.o iwl-agn-ict.o
+iwlagn-objs             += iwl-5000.o
+iwlagn-objs             += iwl-6000.o
+iwlagn-objs             += iwl-1000.o
+iwlagn-objs             += iwl-2000.o
+
+iwlagn-$(CONFIG_IWLWIFI_DEBUGFS) += iwl-debugfs.o
+iwlagn-$(CONFIG_IWLWIFI_DEVICE_TRACING) += iwl-devtrace.o
+iwlagn-$(CONFIG_IWLWIFI_DEVICE_SVTOOL) += iwl-sv-open.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 CFLAGS_iwl-devtrace.o := -I$(src)
 

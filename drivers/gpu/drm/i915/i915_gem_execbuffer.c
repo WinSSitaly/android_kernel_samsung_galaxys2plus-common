@@ -32,7 +32,10 @@
 #include "i915_drv.h"
 #include "i915_trace.h"
 #include "intel_drv.h"
+<<<<<<< HEAD
 #include <linux/dma_remapping.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct change_domains {
 	uint32_t invalidate_domains;
@@ -203,9 +206,15 @@ i915_gem_object_set_to_gpu_domain(struct drm_i915_gem_object *obj,
 	cd->invalidate_domains |= invalidate_domains;
 	cd->flush_domains |= flush_domains;
 	if (flush_domains & I915_GEM_GPU_DOMAINS)
+<<<<<<< HEAD
 		cd->flush_rings |= intel_ring_flag(obj->ring);
 	if (invalidate_domains & I915_GEM_GPU_DOMAINS)
 		cd->flush_rings |= intel_ring_flag(ring);
+=======
+		cd->flush_rings |= obj->ring->id;
+	if (invalidate_domains & I915_GEM_GPU_DOMAINS)
+		cd->flush_rings |= ring->id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct eb_objects {
@@ -287,14 +296,22 @@ i915_gem_execbuffer_relocate_entry(struct drm_i915_gem_object *obj,
 	 * exec_object list, so it should have a GTT space bound by now.
 	 */
 	if (unlikely(target_offset == 0)) {
+<<<<<<< HEAD
 		DRM_DEBUG("No GTT space found for object %d\n",
+=======
+		DRM_ERROR("No GTT space found for object %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  reloc->target_handle);
 		return ret;
 	}
 
 	/* Validate that the target is in a valid r/w GPU domain */
 	if (unlikely(reloc->write_domain & (reloc->write_domain - 1))) {
+<<<<<<< HEAD
 		DRM_DEBUG("reloc with multiple write domains: "
+=======
+		DRM_ERROR("reloc with multiple write domains: "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  "obj %p target %d offset %d "
 			  "read %08x write %08x",
 			  obj, reloc->target_handle,
@@ -303,9 +320,14 @@ i915_gem_execbuffer_relocate_entry(struct drm_i915_gem_object *obj,
 			  reloc->write_domain);
 		return ret;
 	}
+<<<<<<< HEAD
 	if (unlikely((reloc->write_domain | reloc->read_domains)
 		     & ~I915_GEM_GPU_DOMAINS)) {
 		DRM_DEBUG("reloc with read/write non-GPU domains: "
+=======
+	if (unlikely((reloc->write_domain | reloc->read_domains) & I915_GEM_DOMAIN_CPU)) {
+		DRM_ERROR("reloc with read/write CPU domains: "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  "obj %p target %d offset %d "
 			  "read %08x write %08x",
 			  obj, reloc->target_handle,
@@ -316,7 +338,11 @@ i915_gem_execbuffer_relocate_entry(struct drm_i915_gem_object *obj,
 	}
 	if (unlikely(reloc->write_domain && target_obj->pending_write_domain &&
 		     reloc->write_domain != target_obj->pending_write_domain)) {
+<<<<<<< HEAD
 		DRM_DEBUG("Write domain conflict: "
+=======
+		DRM_ERROR("Write domain conflict: "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  "obj %p target %d offset %d "
 			  "new %08x old %08x\n",
 			  obj, reloc->target_handle,
@@ -337,7 +363,11 @@ i915_gem_execbuffer_relocate_entry(struct drm_i915_gem_object *obj,
 
 	/* Check that the relocation address is valid... */
 	if (unlikely(reloc->offset > obj->base.size - 4)) {
+<<<<<<< HEAD
 		DRM_DEBUG("Relocation beyond object bounds: "
+=======
+		DRM_ERROR("Relocation beyond object bounds: "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  "obj %p target %d offset %d size %d.\n",
 			  obj, reloc->target_handle,
 			  (int) reloc->offset,
@@ -345,7 +375,11 @@ i915_gem_execbuffer_relocate_entry(struct drm_i915_gem_object *obj,
 		return ret;
 	}
 	if (unlikely(reloc->offset & 3)) {
+<<<<<<< HEAD
 		DRM_DEBUG("Relocation not 4-byte aligned: "
+=======
+		DRM_ERROR("Relocation not 4-byte aligned: "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  "obj %p target %d offset %d.\n",
 			  obj, reloc->target_handle,
 			  (int) reloc->offset);
@@ -462,6 +496,7 @@ i915_gem_execbuffer_relocate(struct drm_device *dev,
 	return ret;
 }
 
+<<<<<<< HEAD
 #define  __EXEC_OBJECT_HAS_FENCE (1<<31)
 
 static int
@@ -510,12 +545,17 @@ err_unpin:
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int
 i915_gem_execbuffer_reserve(struct intel_ring_buffer *ring,
 			    struct drm_file *file,
 			    struct list_head *objects)
 {
+<<<<<<< HEAD
 	drm_i915_private_t *dev_priv = ring->dev->dev_private;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct drm_i915_gem_object *obj;
 	int ret, retry;
 	bool has_fenced_gpu_access = INTEL_INFO(ring->dev)->gen < 4;
@@ -568,7 +608,10 @@ i915_gem_execbuffer_reserve(struct intel_ring_buffer *ring,
 		list_for_each_entry(obj, objects, exec_list) {
 			struct drm_i915_gem_exec_object2 *entry = obj->exec_entry;
 			bool need_fence, need_mappable;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!obj->gtt_space)
 				continue;
 
@@ -583,13 +626,24 @@ i915_gem_execbuffer_reserve(struct intel_ring_buffer *ring,
 			    (need_mappable && !obj->map_and_fenceable))
 				ret = i915_gem_object_unbind(obj);
 			else
+<<<<<<< HEAD
 				ret = pin_and_fence_object(obj, ring);
 			if (ret)
 				goto err;
+=======
+				ret = i915_gem_object_pin(obj,
+							  entry->alignment,
+							  need_mappable);
+			if (ret)
+				goto err;
+
+			entry++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/* Bind fresh objects */
 		list_for_each_entry(obj, objects, exec_list) {
+<<<<<<< HEAD
 			if (obj->gtt_space)
 				continue;
 
@@ -632,6 +686,49 @@ i915_gem_execbuffer_reserve(struct intel_ring_buffer *ring,
 
 				obj->has_aliasing_ppgtt_mapping = 1;
 			}
+=======
+			struct drm_i915_gem_exec_object2 *entry = obj->exec_entry;
+			bool need_fence;
+
+			need_fence =
+				has_fenced_gpu_access &&
+				entry->flags & EXEC_OBJECT_NEEDS_FENCE &&
+				obj->tiling_mode != I915_TILING_NONE;
+
+			if (!obj->gtt_space) {
+				bool need_mappable =
+					entry->relocation_count ? true : need_fence;
+
+				ret = i915_gem_object_pin(obj,
+							  entry->alignment,
+							  need_mappable);
+				if (ret)
+					break;
+			}
+
+			if (has_fenced_gpu_access) {
+				if (need_fence) {
+					ret = i915_gem_object_get_fence(obj, ring);
+					if (ret)
+						break;
+				} else if (entry->flags & EXEC_OBJECT_NEEDS_FENCE &&
+					   obj->tiling_mode == I915_TILING_NONE) {
+					/* XXX pipelined! */
+					ret = i915_gem_object_put_fence(obj);
+					if (ret)
+						break;
+				}
+				obj->pending_fenced_gpu_access = need_fence;
+			}
+
+			entry->offset = obj->gtt_offset;
+		}
+
+		/* Decrement pin count for bound objects */
+		list_for_each_entry(obj, objects, exec_list) {
+			if (obj->gtt_space)
+				i915_gem_object_unpin(obj);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (ret != -ENOSPC || retry > 1)
@@ -648,6 +745,7 @@ i915_gem_execbuffer_reserve(struct intel_ring_buffer *ring,
 	} while (1);
 
 err:
+<<<<<<< HEAD
 	list_for_each_entry_continue_reverse(obj, objects, exec_list) {
 		struct drm_i915_gem_exec_object2 *entry;
 
@@ -661,6 +759,18 @@ err:
 		}
 
 		i915_gem_object_unpin(obj);
+=======
+	obj = list_entry(obj->exec_list.prev,
+			 struct drm_i915_gem_object,
+			 exec_list);
+	while (objects != &obj->exec_list) {
+		if (obj->gtt_space)
+			i915_gem_object_unpin(obj);
+
+		obj = list_entry(obj->exec_list.prev,
+				 struct drm_i915_gem_object,
+				 exec_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;
@@ -707,8 +817,11 @@ i915_gem_execbuffer_relocate_slow(struct drm_device *dev,
 	total = 0;
 	for (i = 0; i < count; i++) {
 		struct drm_i915_gem_relocation_entry __user *user_relocs;
+<<<<<<< HEAD
 		u64 invalid_offset = (u64)-1;
 		int j;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		user_relocs = (void __user *)(uintptr_t)exec[i].relocs_ptr;
 
@@ -719,6 +832,7 @@ i915_gem_execbuffer_relocate_slow(struct drm_device *dev,
 			goto err;
 		}
 
+<<<<<<< HEAD
 		/* As we do not update the known relocation offsets after
 		 * relocating (due to the complexities in lock handling),
 		 * we need to mark them as invalid now so that we force the
@@ -738,6 +852,8 @@ i915_gem_execbuffer_relocate_slow(struct drm_device *dev,
 			}
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reloc_offset[i] = total;
 		total += exec[i].relocation_count;
 	}
@@ -754,7 +870,11 @@ i915_gem_execbuffer_relocate_slow(struct drm_device *dev,
 		obj = to_intel_bo(drm_gem_object_lookup(dev, file,
 							exec[i].handle));
 		if (&obj->base == NULL) {
+<<<<<<< HEAD
 			DRM_DEBUG("Invalid object handle %d at index %d\n",
+=======
+			DRM_ERROR("Invalid object handle %d at index %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   exec[i].handle, i);
 			ret = -ENOENT;
 			goto err;
@@ -819,6 +939,7 @@ i915_gem_execbuffer_flush(struct drm_device *dev,
 	return 0;
 }
 
+<<<<<<< HEAD
 static bool
 intel_enable_semaphores(struct drm_device *dev)
 {
@@ -835,6 +956,8 @@ intel_enable_semaphores(struct drm_device *dev)
 	return 1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int
 i915_gem_execbuffer_sync_rings(struct drm_i915_gem_object *obj,
 			       struct intel_ring_buffer *to)
@@ -847,7 +970,11 @@ i915_gem_execbuffer_sync_rings(struct drm_i915_gem_object *obj,
 		return 0;
 
 	/* XXX gpu semaphores are implicated in various hard hangs on SNB */
+<<<<<<< HEAD
 	if (!intel_enable_semaphores(obj->base.dev))
+=======
+	if (INTEL_INFO(obj->base.dev)->gen < 6 || !i915_semaphores)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return i915_gem_object_wait_rendering(obj);
 
 	idx = intel_ring_sync_index(from, to);
@@ -873,8 +1000,12 @@ i915_gem_execbuffer_sync_rings(struct drm_i915_gem_object *obj,
 	}
 
 	from->sync_seqno[idx] = seqno;
+<<<<<<< HEAD
 
 	return to->sync_to(to, from, seqno - 1);
+=======
+	return intel_ring_sync(to, from, seqno - 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -957,13 +1088,17 @@ validate_exec_list(struct drm_i915_gem_exec_object2 *exec,
 		   int count)
 {
 	int i;
+<<<<<<< HEAD
 	int relocs_total = 0;
 	int relocs_max = INT_MAX / sizeof(struct drm_i915_gem_relocation_entry);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < count; i++) {
 		char __user *ptr = (char __user *)(uintptr_t)exec[i].relocs_ptr;
 		int length; /* limited by fault_in_pages_readable() */
 
+<<<<<<< HEAD
 		/* First check for malicious input causing overflow in
 		 * the worst case where we need to allocate the entire
 		 * relocation tree as a single array.
@@ -971,6 +1106,12 @@ validate_exec_list(struct drm_i915_gem_exec_object2 *exec,
 		if (exec[i].relocation_count > relocs_max - relocs_total)
 			return -EINVAL;
 		relocs_total += exec[i].relocation_count;
+=======
+		/* First check for malicious input causing overflow */
+		if (exec[i].relocation_count >
+		    INT_MAX / sizeof(struct drm_i915_gem_relocation_entry))
+			return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		length = exec[i].relocation_count *
 			sizeof(struct drm_i915_gem_relocation_entry);
@@ -1048,6 +1189,7 @@ i915_gem_execbuffer_retire_commands(struct drm_device *dev,
 }
 
 static int
+<<<<<<< HEAD
 i915_reset_gen7_sol_offsets(struct drm_device *dev,
 			    struct intel_ring_buffer *ring)
 {
@@ -1073,6 +1215,8 @@ i915_reset_gen7_sol_offsets(struct drm_device *dev,
 }
 
 static int
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 i915_gem_do_execbuffer(struct drm_device *dev, void *data,
 		       struct drm_file *file,
 		       struct drm_i915_gem_execbuffer2 *args,
@@ -1086,11 +1230,18 @@ i915_gem_do_execbuffer(struct drm_device *dev, void *data,
 	struct intel_ring_buffer *ring;
 	u32 exec_start, exec_len;
 	u32 seqno;
+<<<<<<< HEAD
 	u32 mask;
 	int ret, mode, i;
 
 	if (!i915_gem_check_execbuffer(args)) {
 		DRM_DEBUG("execbuf with invalid offset/length\n");
+=======
+	int ret, mode, i;
+
+	if (!i915_gem_check_execbuffer(args)) {
+		DRM_ERROR("execbuf with invalid offset/length\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -1105,26 +1256,41 @@ i915_gem_do_execbuffer(struct drm_device *dev, void *data,
 		break;
 	case I915_EXEC_BSD:
 		if (!HAS_BSD(dev)) {
+<<<<<<< HEAD
 			DRM_DEBUG("execbuf with invalid ring (BSD)\n");
+=======
+			DRM_ERROR("execbuf with invalid ring (BSD)\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EINVAL;
 		}
 		ring = &dev_priv->ring[VCS];
 		break;
 	case I915_EXEC_BLT:
 		if (!HAS_BLT(dev)) {
+<<<<<<< HEAD
 			DRM_DEBUG("execbuf with invalid ring (BLT)\n");
+=======
+			DRM_ERROR("execbuf with invalid ring (BLT)\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EINVAL;
 		}
 		ring = &dev_priv->ring[BCS];
 		break;
 	default:
+<<<<<<< HEAD
 		DRM_DEBUG("execbuf with unknown ring: %d\n",
+=======
+		DRM_ERROR("execbuf with unknown ring: %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  (int)(args->flags & I915_EXEC_RING_MASK));
 		return -EINVAL;
 	}
 
 	mode = args->flags & I915_EXEC_CONSTANTS_MASK;
+<<<<<<< HEAD
 	mask = I915_EXEC_CONSTANTS_MASK;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (mode) {
 	case I915_EXEC_CONSTANTS_REL_GENERAL:
 	case I915_EXEC_CONSTANTS_ABSOLUTE:
@@ -1138,6 +1304,7 @@ i915_gem_do_execbuffer(struct drm_device *dev, void *data,
 			    mode == I915_EXEC_CONSTANTS_REL_SURFACE)
 				return -EINVAL;
 
+<<<<<<< HEAD
 			/* The HW changed the meaning on this bit on gen6 */
 			if (INTEL_INFO(dev)->gen >= 6)
 				mask &= ~I915_EXEC_CONSTANTS_REL_SURFACE;
@@ -1145,17 +1312,43 @@ i915_gem_do_execbuffer(struct drm_device *dev, void *data,
 		break;
 	default:
 		DRM_DEBUG("execbuf with unknown constants: %d\n", mode);
+=======
+			ret = intel_ring_begin(ring, 4);
+			if (ret)
+				return ret;
+
+			intel_ring_emit(ring, MI_NOOP);
+			intel_ring_emit(ring, MI_LOAD_REGISTER_IMM(1));
+			intel_ring_emit(ring, INSTPM);
+			intel_ring_emit(ring,
+					I915_EXEC_CONSTANTS_MASK << 16 | mode);
+			intel_ring_advance(ring);
+
+			dev_priv->relative_constants_mode = mode;
+		}
+		break;
+	default:
+		DRM_ERROR("execbuf with unknown constants: %d\n", mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
 	if (args->buffer_count < 1) {
+<<<<<<< HEAD
 		DRM_DEBUG("execbuf with %d buffers\n", args->buffer_count);
+=======
+		DRM_ERROR("execbuf with %d buffers\n", args->buffer_count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
 	if (args->num_cliprects != 0) {
 		if (ring != &dev_priv->ring[RCS]) {
+<<<<<<< HEAD
 			DRM_DEBUG("clip rectangles are only valid with the render ring\n");
+=======
+			DRM_ERROR("clip rectangles are only valid with the render ring\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EINVAL;
 		}
 
@@ -1205,7 +1398,11 @@ i915_gem_do_execbuffer(struct drm_device *dev, void *data,
 		obj = to_intel_bo(drm_gem_object_lookup(dev, file,
 							exec[i].handle));
 		if (&obj->base == NULL) {
+<<<<<<< HEAD
 			DRM_DEBUG("Invalid object handle %d at index %d\n",
+=======
+			DRM_ERROR("Invalid object handle %d at index %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   exec[i].handle, i);
 			/* prevent error path from reading uninitialized data */
 			ret = -ENOENT;
@@ -1213,7 +1410,11 @@ i915_gem_do_execbuffer(struct drm_device *dev, void *data,
 		}
 
 		if (!list_empty(&obj->exec_list)) {
+<<<<<<< HEAD
 			DRM_DEBUG("Object %p [handle %d, index %d] appears more than once in object list\n",
+=======
+			DRM_ERROR("Object %p [handle %d, index %d] appears more than once in object list\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   obj, exec[i].handle, i);
 			ret = -EINVAL;
 			goto err;
@@ -1251,7 +1452,11 @@ i915_gem_do_execbuffer(struct drm_device *dev, void *data,
 
 	/* Set the pending read domains for the batch buffer to COMMAND */
 	if (batch_obj->base.pending_write_domain) {
+<<<<<<< HEAD
 		DRM_DEBUG("Attempting to use self-modifying batch buffer\n");
+=======
+		DRM_ERROR("Attempting to use self-modifying batch buffer\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EINVAL;
 		goto err;
 	}
@@ -1268,7 +1473,11 @@ i915_gem_do_execbuffer(struct drm_device *dev, void *data,
 			 * so every billion or so execbuffers, we need to stall
 			 * the GPU in order to reset the counters.
 			 */
+<<<<<<< HEAD
 			ret = i915_gpu_idle(dev, true);
+=======
+			ret = i915_gpu_idle(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret)
 				goto err;
 
@@ -1276,6 +1485,7 @@ i915_gem_do_execbuffer(struct drm_device *dev, void *data,
 		}
 	}
 
+<<<<<<< HEAD
 	if (ring == &dev_priv->ring[RCS] &&
 	    mode != dev_priv->relative_constants_mode) {
 		ret = intel_ring_begin(ring, 4);
@@ -1297,6 +1507,8 @@ i915_gem_do_execbuffer(struct drm_device *dev, void *data,
 			goto err;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_i915_gem_ring_dispatch(ring, seqno);
 
 	exec_start = batch_obj->gtt_offset + args->batch_start_offset;
@@ -1356,7 +1568,11 @@ i915_gem_execbuffer(struct drm_device *dev, void *data,
 	int ret, i;
 
 	if (args->buffer_count < 1) {
+<<<<<<< HEAD
 		DRM_DEBUG("execbuf with %d buffers\n", args->buffer_count);
+=======
+		DRM_ERROR("execbuf with %d buffers\n", args->buffer_count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -1364,7 +1580,11 @@ i915_gem_execbuffer(struct drm_device *dev, void *data,
 	exec_list = drm_malloc_ab(sizeof(*exec_list), args->buffer_count);
 	exec2_list = drm_malloc_ab(sizeof(*exec2_list), args->buffer_count);
 	if (exec_list == NULL || exec2_list == NULL) {
+<<<<<<< HEAD
 		DRM_DEBUG("Failed to allocate exec list for %d buffers\n",
+=======
+		DRM_ERROR("Failed to allocate exec list for %d buffers\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  args->buffer_count);
 		drm_free_large(exec_list);
 		drm_free_large(exec2_list);
@@ -1375,7 +1595,11 @@ i915_gem_execbuffer(struct drm_device *dev, void *data,
 			     (uintptr_t) args->buffers_ptr,
 			     sizeof(*exec_list) * args->buffer_count);
 	if (ret != 0) {
+<<<<<<< HEAD
 		DRM_DEBUG("copy %d exec entries failed %d\n",
+=======
+		DRM_ERROR("copy %d exec entries failed %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  args->buffer_count, ret);
 		drm_free_large(exec_list);
 		drm_free_large(exec2_list);
@@ -1416,7 +1640,11 @@ i915_gem_execbuffer(struct drm_device *dev, void *data,
 				   sizeof(*exec_list) * args->buffer_count);
 		if (ret) {
 			ret = -EFAULT;
+<<<<<<< HEAD
 			DRM_DEBUG("failed to copy %d exec entries "
+=======
+			DRM_ERROR("failed to copy %d exec entries "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  "back to user (%d)\n",
 				  args->buffer_count, ret);
 		}
@@ -1437,7 +1665,11 @@ i915_gem_execbuffer2(struct drm_device *dev, void *data,
 
 	if (args->buffer_count < 1 ||
 	    args->buffer_count > UINT_MAX / sizeof(*exec2_list)) {
+<<<<<<< HEAD
 		DRM_DEBUG("execbuf2 with %d buffers\n", args->buffer_count);
+=======
+		DRM_ERROR("execbuf2 with %d buffers\n", args->buffer_count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -1447,7 +1679,11 @@ i915_gem_execbuffer2(struct drm_device *dev, void *data,
 		exec2_list = drm_malloc_ab(sizeof(*exec2_list),
 					   args->buffer_count);
 	if (exec2_list == NULL) {
+<<<<<<< HEAD
 		DRM_DEBUG("Failed to allocate exec list for %d buffers\n",
+=======
+		DRM_ERROR("Failed to allocate exec list for %d buffers\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  args->buffer_count);
 		return -ENOMEM;
 	}
@@ -1456,7 +1692,11 @@ i915_gem_execbuffer2(struct drm_device *dev, void *data,
 			     (uintptr_t) args->buffers_ptr,
 			     sizeof(*exec2_list) * args->buffer_count);
 	if (ret != 0) {
+<<<<<<< HEAD
 		DRM_DEBUG("copy %d exec entries failed %d\n",
+=======
+		DRM_ERROR("copy %d exec entries failed %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  args->buffer_count, ret);
 		drm_free_large(exec2_list);
 		return -EFAULT;
@@ -1471,7 +1711,11 @@ i915_gem_execbuffer2(struct drm_device *dev, void *data,
 				   sizeof(*exec2_list) * args->buffer_count);
 		if (ret) {
 			ret = -EFAULT;
+<<<<<<< HEAD
 			DRM_DEBUG("failed to copy %d exec entries "
+=======
+			DRM_ERROR("failed to copy %d exec entries "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  "back to user (%d)\n",
 				  args->buffer_count, ret);
 		}

@@ -1,4 +1,9 @@
 /*
+<<<<<<< HEAD
+=======
+ * eeh_event.c
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -19,7 +24,10 @@
 #include <linux/delay.h>
 #include <linux/list.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/sched.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pci.h>
 #include <linux/slab.h>
 #include <linux/workqueue.h>
@@ -44,7 +52,11 @@ DECLARE_WORK(eeh_event_wq, eeh_thread_launcher);
 DEFINE_MUTEX(eeh_event_mutex);
 
 /**
+<<<<<<< HEAD
  * eeh_event_handler - Dispatch EEH events.
+=======
+ * eeh_event_handler - dispatch EEH events.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @dummy - unused
  *
  * The detection of a frozen slot can occur inside an interrupt,
@@ -56,10 +68,18 @@ DEFINE_MUTEX(eeh_event_mutex);
 static int eeh_event_handler(void * dummy)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	struct eeh_event *event;
 	struct eeh_dev *edev;
 
 	set_task_comm(current, "eehd");
+=======
+	struct eeh_event	*event;
+	struct pci_dn *pdn;
+
+	daemonize ("eehd");
+	set_current_state(TASK_INTERRUPTIBLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&eeh_eventlist_lock, flags);
 	event = NULL;
@@ -76,6 +96,7 @@ static int eeh_event_handler(void * dummy)
 
 	/* Serialize processing of EEH events */
 	mutex_lock(&eeh_event_mutex);
+<<<<<<< HEAD
 	edev = event->edev;
 	eeh_mark_slot(eeh_dev_to_of_node(edev), EEH_MODE_RECOVERING);
 
@@ -90,26 +111,49 @@ static int eeh_event_handler(void * dummy)
 		pci_dev_put(edev->pdev);
 	}
 
+=======
+	eeh_mark_slot(event->dn, EEH_MODE_RECOVERING);
+
+	printk(KERN_INFO "EEH: Detected PCI bus error on device %s\n",
+	       eeh_pci_name(event->dev));
+
+	pdn = handle_eeh_events(event);
+
+	eeh_clear_slot(event->dn, EEH_MODE_RECOVERING);
+	pci_dev_put(event->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(event);
 	mutex_unlock(&eeh_event_mutex);
 
 	/* If there are no new errors after an hour, clear the counter. */
+<<<<<<< HEAD
 	if (edev && edev->freeze_count>0) {
 		msleep_interruptible(3600*1000);
 		if (edev->freeze_count>0)
 			edev->freeze_count--;
 
+=======
+	if (pdn && pdn->eeh_freeze_count>0) {
+		msleep_interruptible (3600*1000);
+		if (pdn->eeh_freeze_count>0)
+			pdn->eeh_freeze_count--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
 }
 
 /**
+<<<<<<< HEAD
  * eeh_thread_launcher - Start kernel thread to handle EEH events
  * @dummy - unused
  *
  * This routine is called to start the kernel thread for processing
  * EEH event.
+=======
+ * eeh_thread_launcher
+ * @dummy - unused
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void eeh_thread_launcher(struct work_struct *dummy)
 {
@@ -118,18 +162,31 @@ static void eeh_thread_launcher(struct work_struct *dummy)
 }
 
 /**
+<<<<<<< HEAD
  * eeh_send_failure_event - Generate a PCI error event
  * @edev: EEH device
+=======
+ * eeh_send_failure_event - generate a PCI error event
+ * @dev pci device
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This routine can be called within an interrupt context;
  * the actual event will be delivered in a normal context
  * (from a workqueue).
  */
+<<<<<<< HEAD
 int eeh_send_failure_event(struct eeh_dev *edev)
 {
 	unsigned long flags;
 	struct eeh_event *event;
 	struct device_node *dn = eeh_dev_to_of_node(edev);
+=======
+int eeh_send_failure_event (struct device_node *dn,
+                            struct pci_dev *dev)
+{
+	unsigned long flags;
+	struct eeh_event *event;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const char *location;
 
 	if (!mem_init_done) {
@@ -141,6 +198,7 @@ int eeh_send_failure_event(struct eeh_dev *edev)
 	}
 	event = kmalloc(sizeof(*event), GFP_ATOMIC);
 	if (event == NULL) {
+<<<<<<< HEAD
 		printk(KERN_ERR "EEH: out of memory, event not handled\n");
 		return 1;
  	}
@@ -149,6 +207,17 @@ int eeh_send_failure_event(struct eeh_dev *edev)
 		pci_dev_get(edev->pdev);
 
 	event->edev = edev;
+=======
+		printk (KERN_ERR "EEH: out of memory, event not handled\n");
+		return 1;
+ 	}
+
+	if (dev)
+		pci_dev_get(dev);
+
+	event->dn = dn;
+	event->dev = dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* We may or may not be called in an interrupt context */
 	spin_lock_irqsave(&eeh_eventlist_lock, flags);
@@ -159,3 +228,8 @@ int eeh_send_failure_event(struct eeh_dev *edev)
 
 	return 0;
 }
+<<<<<<< HEAD
+=======
+
+/********************** END OF FILE ******************************/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

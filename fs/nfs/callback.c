@@ -85,7 +85,11 @@ nfs4_callback_svc(void *vrqstp)
 		}
 		if (err < 0) {
 			if (err != preverr) {
+<<<<<<< HEAD
 				printk(KERN_WARNING "NFS: %s: unexpected error "
+=======
+				printk(KERN_WARNING "%s: unexpected error "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"from svc_recv (%d)\n", __func__, err);
 				preverr = err;
 			}
@@ -101,8 +105,13 @@ nfs4_callback_svc(void *vrqstp)
 /*
  * Prepare to bring up the NFSv4 callback service
  */
+<<<<<<< HEAD
 static struct svc_rqst *
 nfs4_callback_up(struct svc_serv *serv, struct rpc_xprt *xprt)
+=======
+struct svc_rqst *
+nfs4_callback_up(struct svc_serv *serv)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 
@@ -125,7 +134,11 @@ nfs4_callback_up(struct svc_serv *serv, struct rpc_xprt *xprt)
 	else
 		goto out_err;
 
+<<<<<<< HEAD
 	return svc_prepare_thread(serv, &serv->sv_pools[0], NUMA_NO_NODE);
+=======
+	return svc_prepare_thread(serv, &serv->sv_pools[0]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out_err:
 	if (ret == 0)
@@ -172,7 +185,11 @@ nfs41_callback_svc(void *vrqstp)
 /*
  * Bring up the NFSv4.1 callback service
  */
+<<<<<<< HEAD
 static struct svc_rqst *
+=======
+struct svc_rqst *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 nfs41_callback_up(struct svc_serv *serv, struct rpc_xprt *xprt)
 {
 	struct svc_rqst *rqstp;
@@ -199,7 +216,11 @@ nfs41_callback_up(struct svc_serv *serv, struct rpc_xprt *xprt)
 	INIT_LIST_HEAD(&serv->sv_cb_list);
 	spin_lock_init(&serv->sv_cb_lock);
 	init_waitqueue_head(&serv->sv_cb_waitq);
+<<<<<<< HEAD
 	rqstp = svc_prepare_thread(serv, &serv->sv_pools[0], NUMA_NO_NODE);
+=======
+	rqstp = svc_prepare_thread(serv, &serv->sv_pools[0]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(rqstp)) {
 		svc_xprt_put(serv->sv_bc_xprt);
 		serv->sv_bc_xprt = NULL;
@@ -253,7 +274,10 @@ int nfs_callback_up(u32 minorversion, struct rpc_xprt *xprt)
 	char svc_name[12];
 	int ret = 0;
 	int minorversion_setup;
+<<<<<<< HEAD
 	struct net *net = &init_net;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&nfs_callback_mutex);
 	if (cb_info->users++ || cb_info->task != NULL) {
@@ -266,17 +290,24 @@ int nfs_callback_up(u32 minorversion, struct rpc_xprt *xprt)
 		goto out_err;
 	}
 
+<<<<<<< HEAD
 	ret = svc_bind(serv, net);
 	if (ret < 0) {
 		printk(KERN_WARNING "NFS: bind callback service failed\n");
 		goto out_err;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	minorversion_setup =  nfs_minorversion_callback_svc_setup(minorversion,
 					serv, xprt, &rqstp, &callback_svc);
 	if (!minorversion_setup) {
 		/* v4.0 callback setup */
+<<<<<<< HEAD
 		rqstp = nfs4_callback_up(serv, xprt);
+=======
+		rqstp = nfs4_callback_up(serv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		callback_svc = nfs4_callback_svc;
 	}
 
@@ -313,8 +344,11 @@ out_err:
 	dprintk("NFS: Couldn't create callback socket or server thread; "
 		"err = %d\n", ret);
 	cb_info->users--;
+<<<<<<< HEAD
 	if (serv)
 		svc_shutdown_net(serv, net);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	goto out;
 }
 
@@ -329,7 +363,10 @@ void nfs_callback_down(int minorversion)
 	cb_info->users--;
 	if (cb_info->users == 0 && cb_info->task != NULL) {
 		kthread_stop(cb_info->task);
+<<<<<<< HEAD
 		svc_shutdown_net(cb_info->serv, &init_net);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		svc_exit_thread(cb_info->rqst);
 		cb_info->serv = NULL;
 		cb_info->rqst = NULL;
@@ -342,6 +379,10 @@ void nfs_callback_down(int minorversion)
 int
 check_gss_callback_principal(struct nfs_client *clp, struct svc_rqst *rqstp)
 {
+<<<<<<< HEAD
+=======
+	struct rpc_clnt *r = clp->cl_rpcclient;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *p = svc_gss_principal(rqstp);
 
 	if (rqstp->rq_authop->flavour != RPC_AUTH_GSS)
@@ -362,7 +403,11 @@ check_gss_callback_principal(struct nfs_client *clp, struct svc_rqst *rqstp)
 	if (memcmp(p, "nfs@", 4) != 0)
 		return 0;
 	p += 4;
+<<<<<<< HEAD
 	if (strcmp(p, clp->cl_hostname) != 0)
+=======
+	if (strcmp(p, r->cl_server) != 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	return 1;
 }

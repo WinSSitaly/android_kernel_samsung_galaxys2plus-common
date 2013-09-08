@@ -93,6 +93,7 @@ mwifiex_reset_connect_state(struct mwifiex_private *priv)
 	 */
 
 	dev_dbg(adapter->dev, "info: previous SSID=%s, SSID len=%u\n",
+<<<<<<< HEAD
 		priv->prev_ssid.ssid, priv->prev_ssid.ssid_len);
 
 	dev_dbg(adapter->dev, "info: current SSID=%s, SSID len=%u\n",
@@ -102,6 +103,17 @@ mwifiex_reset_connect_state(struct mwifiex_private *priv)
 	memcpy(&priv->prev_ssid,
 	       &priv->curr_bss_params.bss_descriptor.ssid,
 	       sizeof(struct cfg80211_ssid));
+=======
+	       priv->prev_ssid.ssid, priv->prev_ssid.ssid_len);
+
+	dev_dbg(adapter->dev, "info: current SSID=%s, SSID len=%u\n",
+	       priv->curr_bss_params.bss_descriptor.ssid.ssid,
+	       priv->curr_bss_params.bss_descriptor.ssid.ssid_len);
+
+	memcpy(&priv->prev_ssid,
+	       &priv->curr_bss_params.bss_descriptor.ssid,
+	       sizeof(struct mwifiex_802_11_ssid));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memcpy(priv->prev_bssid,
 	       priv->curr_bss_params.bss_descriptor.mac_address, ETH_ALEN);
@@ -115,6 +127,7 @@ mwifiex_reset_connect_state(struct mwifiex_private *priv)
 	if (adapter->num_cmd_timeout && adapter->curr_cmd)
 		return;
 	priv->media_connected = false;
+<<<<<<< HEAD
 	dev_dbg(adapter->dev,
 		"info: successfully disconnected from %pM: reason code %d\n",
 		priv->cfg_bssid, WLAN_REASON_DEAUTH_LEAVING);
@@ -131,6 +144,25 @@ mwifiex_reset_connect_state(struct mwifiex_private *priv)
 	/* Reset wireless stats signal info */
 	priv->qual_level = 0;
 	priv->qual_noise = 0;
+=======
+	if (!priv->disconnect) {
+		priv->disconnect = 1;
+		dev_dbg(adapter->dev, "info: successfully disconnected from"
+				" %pM: reason code %d\n", priv->cfg_bssid,
+				WLAN_REASON_DEAUTH_LEAVING);
+		cfg80211_disconnected(priv->netdev,
+				WLAN_REASON_DEAUTH_LEAVING, NULL, 0,
+				GFP_KERNEL);
+		queue_work(priv->workqueue, &priv->cfg_workqueue);
+	}
+	if (!netif_queue_stopped(priv->netdev))
+		netif_stop_queue(priv->netdev);
+	if (netif_carrier_ok(priv->netdev))
+		netif_carrier_off(priv->netdev);
+	/* Reset wireless stats signal info */
+	priv->w_stats.qual.level = 0;
+	priv->w_stats.qual.noise = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -192,15 +224,24 @@ int mwifiex_process_sta_event(struct mwifiex_private *priv)
 
 	switch (eventcause) {
 	case EVENT_DUMMY_HOST_WAKEUP_SIGNAL:
+<<<<<<< HEAD
 		dev_err(adapter->dev,
 			"invalid EVENT: DUMMY_HOST_WAKEUP_SIGNAL, ignore it\n");
+=======
+		dev_err(adapter->dev, "invalid EVENT: DUMMY_HOST_WAKEUP_SIGNAL,"
+				" ignoring it\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case EVENT_LINK_SENSED:
 		dev_dbg(adapter->dev, "event: LINK_SENSED\n");
 		if (!netif_carrier_ok(priv->netdev))
 			netif_carrier_on(priv->netdev);
 		if (netif_queue_stopped(priv->netdev))
+<<<<<<< HEAD
 			mwifiex_wake_up_net_dev_queue(priv->netdev, adapter);
+=======
+			netif_wake_queue(priv->netdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case EVENT_DEAUTHENTICATED:
@@ -235,7 +276,12 @@ int mwifiex_process_sta_event(struct mwifiex_private *priv)
 	case EVENT_PS_AWAKE:
 		dev_dbg(adapter->dev, "info: EVENT: AWAKE\n");
 		if (!adapter->pps_uapsd_mode &&
+<<<<<<< HEAD
 		    priv->media_connected && adapter->sleep_period.period) {
+=======
+			priv->media_connected &&
+			adapter->sleep_period.period) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				adapter->pps_uapsd_mode = true;
 				dev_dbg(adapter->dev,
 					"event: PPS/UAPSD mode activated\n");
@@ -243,6 +289,7 @@ int mwifiex_process_sta_event(struct mwifiex_private *priv)
 		adapter->tx_lock_flag = false;
 		if (adapter->pps_uapsd_mode && adapter->gen_null_pkt) {
 			if (mwifiex_check_last_packet_indication(priv)) {
+<<<<<<< HEAD
 				if (adapter->data_sent) {
 					adapter->ps_state = PS_STATE_AWAKE;
 					adapter->pm_wakeup_card_req = false;
@@ -256,6 +303,17 @@ int mwifiex_process_sta_event(struct mwifiex_private *priv)
 						adapter->ps_state =
 							PS_STATE_SLEEP;
 					return 0;
+=======
+				if (!adapter->data_sent) {
+					if (!mwifiex_send_null_packet(priv,
+					MWIFIEX_TxPD_POWER_MGMT_NULL_PACKET
+					|
+					MWIFIEX_TxPD_POWER_MGMT_LAST_PACKET))
+						adapter->ps_state =
+							PS_STATE_SLEEP;
+					return 0;
+				}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 		adapter->ps_state = PS_STATE_AWAKE;
@@ -294,13 +352,25 @@ int mwifiex_process_sta_event(struct mwifiex_private *priv)
 		priv->adhoc_is_link_sensed = false;
 		mwifiex_clean_txrx(priv);
 		if (!netif_queue_stopped(priv->netdev))
+<<<<<<< HEAD
 			mwifiex_stop_net_dev_queue(priv->netdev, adapter);
+=======
+			netif_stop_queue(priv->netdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (netif_carrier_ok(priv->netdev))
 			netif_carrier_off(priv->netdev);
 		break;
 
 	case EVENT_BG_SCAN_REPORT:
 		dev_dbg(adapter->dev, "event: BGS_REPORT\n");
+<<<<<<< HEAD
+=======
+		/* Clear the previous scan result */
+		memset(adapter->scan_table, 0x00,
+		       sizeof(struct mwifiex_bssdescriptor) * IW_MAX_AP);
+		adapter->num_in_scan_table = 0;
+		adapter->bcn_buf_end = adapter->bcn_buf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = mwifiex_send_cmd_async(priv,
 					     HostCmd_CMD_802_11_BG_SCAN_QUERY,
 					     HostCmd_ACT_GEN_GET, 0, NULL);
@@ -374,12 +444,20 @@ int mwifiex_process_sta_event(struct mwifiex_private *priv)
 		break;
 	case EVENT_AMSDU_AGGR_CTRL:
 		dev_dbg(adapter->dev, "event:  AMSDU_AGGR_CTRL %d\n",
+<<<<<<< HEAD
 			*(u16 *) adapter->event_body);
+=======
+		       *(u16 *) adapter->event_body);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		adapter->tx_buf_size =
 			min(adapter->curr_tx_buf_size,
 			    le16_to_cpu(*(__le16 *) adapter->event_body));
 		dev_dbg(adapter->dev, "event: tx_buf_size %d\n",
+<<<<<<< HEAD
 			adapter->tx_buf_size);
+=======
+				adapter->tx_buf_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case EVENT_WEP_ICV_ERR:
@@ -395,7 +473,11 @@ int mwifiex_process_sta_event(struct mwifiex_private *priv)
 		break;
 	default:
 		dev_dbg(adapter->dev, "event: unknown event id: %#x\n",
+<<<<<<< HEAD
 			eventcause);
+=======
+						eventcause);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 

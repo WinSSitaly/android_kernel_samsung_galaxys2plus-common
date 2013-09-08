@@ -38,7 +38,11 @@
 #include <media/lirc.h>
 #include <media/lirc_dev.h>
 
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define IRCTL_DEV_NAME	"BaseRemoteCtl"
 #define NOPLUG		-1

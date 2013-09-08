@@ -23,6 +23,7 @@
 
 #pragma pack(1)
 
+<<<<<<< HEAD
 /* Per dma segment max size */
 #define BFI_MEM_DMA_SEG_SZ	(131072)
 
@@ -41,11 +42,22 @@
 #define BFI_MEM_SEG_REQ_OFFSET(_tag, _sz)	\
 	((_tag) - (BFI_MEM_SEG_FROM_TAG(_tag, _sz) * BFI_MEM_NREQS_SEG(_sz)))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * BFI FW image type
  */
 #define	BFI_FLASH_CHUNK_SZ			256	/*  Flash chunk size */
 #define	BFI_FLASH_CHUNK_SZ_WORDS	(BFI_FLASH_CHUNK_SZ/sizeof(u32))
+<<<<<<< HEAD
+=======
+enum {
+	BFI_IMAGE_CB_FC,
+	BFI_IMAGE_CT_FC,
+	BFI_IMAGE_CT_CNA,
+	BFI_IMAGE_MAX,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Msg header common to all msgs
@@ -55,13 +67,19 @@ struct bfi_mhdr_s {
 	u8		msg_id;		/*  msg opcode with in the class   */
 	union {
 		struct {
+<<<<<<< HEAD
 			u8	qid;
 			u8	fn_lpu;	/*  msg destination		    */
+=======
+			u8	rsvd;
+			u8	lpu_id;	/*  msg destination		    */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} h2i;
 		u16	i2htok;	/*  token in msgs to host	    */
 	} mtag;
 };
 
+<<<<<<< HEAD
 #define bfi_fn_lpu(__fn, __lpu)	((__fn) << 1 | (__lpu))
 #define bfi_mhdr_2_fn(_mh)	((_mh)->mtag.h2i.fn_lpu >> 1)
 
@@ -69,6 +87,12 @@ struct bfi_mhdr_s {
 	(_mh).msg_class		= (_mc);      \
 	(_mh).msg_id		= (_op);      \
 	(_mh).mtag.h2i.fn_lpu	= (_fn_lpu);      \
+=======
+#define bfi_h2i_set(_mh, _mc, _op, _lpuid) do {		\
+	(_mh).msg_class		= (_mc);      \
+	(_mh).msg_id		= (_op);      \
+	(_mh).mtag.h2i.lpu_id	= (_lpuid);      \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } while (0)
 
 #define bfi_i2h_set(_mh, _mc, _op, _i2htok) do {		\
@@ -116,7 +140,11 @@ union bfi_addr_u {
 };
 
 /*
+<<<<<<< HEAD
  * Scatter Gather Element used for fast-path IO requests
+=======
+ * Scatter Gather Element
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct bfi_sge_s {
 #ifdef __BIG_ENDIAN
@@ -131,6 +159,7 @@ struct bfi_sge_s {
 	union bfi_addr_u sga;
 };
 
+<<<<<<< HEAD
 /**
  * Generic DMA addr-len pair.
  */
@@ -139,6 +168,8 @@ struct bfi_alen_s {
 	u32			al_len;		/* length of buffer	*/
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Scatter Gather Page
  */
@@ -150,12 +181,15 @@ struct bfi_sgpg_s {
 	u32	rsvd[BFI_SGPG_RSVD_WD_LEN];
 };
 
+<<<<<<< HEAD
 /* FCP module definitions */
 #define BFI_IO_MAX	(2000)
 #define BFI_IOIM_SNSLEN	(256)
 #define BFI_IOIM_SNSBUF_SEGS	\
 	BFI_MEM_DMA_NSEGS(BFI_IO_MAX, BFI_IOIM_SNSLEN)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Large Message structure - 128 Bytes size Msgs
  */
@@ -178,6 +212,7 @@ struct bfi_mbmsg_s {
 };
 
 /*
+<<<<<<< HEAD
  * Supported PCI function class codes (personality)
  */
 enum bfi_pcifn_class {
@@ -186,21 +221,33 @@ enum bfi_pcifn_class {
 };
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Message Classes
  */
 enum bfi_mclass {
 	BFI_MC_IOC		= 1,	/*  IO Controller (IOC)	    */
+<<<<<<< HEAD
 	BFI_MC_DIAG		= 2,    /*  Diagnostic Msgs            */
 	BFI_MC_FLASH		= 3,	/*  Flash message class	*/
 	BFI_MC_CEE		= 4,	/*  CEE	*/
 	BFI_MC_FCPORT		= 5,	/*  FC port			    */
 	BFI_MC_IOCFC		= 6,	/*  FC - IO Controller (IOC)	    */
 	BFI_MC_ABLK		= 7,	/*  ASIC block configuration	    */
+=======
+	BFI_MC_FCPORT		= 5,	/*  FC port			    */
+	BFI_MC_IOCFC		= 6,	/*  FC - IO Controller (IOC)	    */
+	BFI_MC_LL               = 7,    /*  Link Layer                      */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BFI_MC_UF		= 8,	/*  Unsolicited frame receive	    */
 	BFI_MC_FCXP		= 9,	/*  FC Transport		    */
 	BFI_MC_LPS		= 10,	/*  lport fc login services	    */
 	BFI_MC_RPORT		= 11,	/*  Remote port		    */
+<<<<<<< HEAD
 	BFI_MC_ITN		= 12,	/*  I-T nexus (Initiator mode)	    */
+=======
+	BFI_MC_ITNIM		= 12,	/*  I-T nexus (Initiator mode)	    */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BFI_MC_IOIM_READ	= 13,	/*  read IO (Initiator mode)	    */
 	BFI_MC_IOIM_WRITE	= 14,	/*  write IO (Initiator mode)	    */
 	BFI_MC_IOIM_IO		= 15,	/*  IO (Initiator mode)	    */
@@ -208,8 +255,11 @@ enum bfi_mclass {
 	BFI_MC_IOIM_IOCOM	= 17,	/*  good IO completion		    */
 	BFI_MC_TSKIM		= 18,	/*  Initiator Task management	    */
 	BFI_MC_PORT		= 21,	/*  Physical port		    */
+<<<<<<< HEAD
 	BFI_MC_SFP		= 22,	/*  SFP module	*/
 	BFI_MC_PHY		= 25,   /*  External PHY message class	*/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BFI_MC_MAX		= 32
 };
 
@@ -217,12 +267,27 @@ enum bfi_mclass {
 #define BFI_IOC_MAX_CQS_ASIC	8
 #define BFI_IOC_MSGLEN_MAX	32	/* 32 bytes */
 
+<<<<<<< HEAD
+=======
+#define BFI_BOOT_TYPE_OFF		8
+#define BFI_BOOT_LOADER_OFF		12
+
+#define BFI_BOOT_TYPE_NORMAL		0
+#define	BFI_BOOT_TYPE_FLASH		1
+#define	BFI_BOOT_TYPE_MEMTEST		2
+
+#define BFI_BOOT_LOADER_OS		0
+#define BFI_BOOT_LOADER_BIOS		1
+#define BFI_BOOT_LOADER_UEFI		2
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *----------------------------------------------------------------------
  *				IOC
  *----------------------------------------------------------------------
  */
 
+<<<<<<< HEAD
 /*
  * Different asic generations
  */
@@ -239,6 +304,8 @@ enum bfi_asic_mode {
 	BFI_ASIC_MODE_COMBO	= 4,	/* FC 16G and Ethernet 10G port	*/
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum bfi_ioc_h2i_msgs {
 	BFI_IOC_H2I_ENABLE_REQ		= 1,
 	BFI_IOC_H2I_DISABLE_REQ		= 2,
@@ -251,8 +318,13 @@ enum bfi_ioc_i2h_msgs {
 	BFI_IOC_I2H_ENABLE_REPLY	= BFA_I2HM(1),
 	BFI_IOC_I2H_DISABLE_REPLY	= BFA_I2HM(2),
 	BFI_IOC_I2H_GETATTR_REPLY	= BFA_I2HM(3),
+<<<<<<< HEAD
 	BFI_IOC_I2H_HBEAT		= BFA_I2HM(4),
 	BFI_IOC_I2H_ACQ_ADDR_REPLY	= BFA_I2HM(5),
+=======
+	BFI_IOC_I2H_READY_EVENT		= BFA_I2HM(4),
+	BFI_IOC_I2H_HBEAT		= BFA_I2HM(5),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -267,8 +339,12 @@ struct bfi_ioc_attr_s {
 	wwn_t		mfg_pwwn;	/*  Mfg port wwn	   */
 	wwn_t		mfg_nwwn;	/*  Mfg node wwn	   */
 	mac_t		mfg_mac;	/*  Mfg mac		   */
+<<<<<<< HEAD
 	u8		port_mode;	/* bfi_port_mode	   */
 	u8		rsvd_a;
+=======
+	u16	rsvd_a;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wwn_t		pwwn;
 	wwn_t		nwwn;
 	mac_t		mac;		/*  PBC or Mfg mac	   */
@@ -320,6 +396,7 @@ struct bfi_ioc_getattr_reply_s {
 #define BFI_IOC_FW_SIGNATURE	(0xbfadbfad)
 #define BFI_IOC_MD5SUM_SZ	4
 struct bfi_ioc_image_hdr_s {
+<<<<<<< HEAD
 	u32	signature;	/* constant signature		*/
 	u8	asic_gen;	/* asic generation		*/
 	u8	asic_mode;
@@ -327,10 +404,17 @@ struct bfi_ioc_image_hdr_s {
 	u8	port1_mode;	/* device mode for port 1	*/
 	u32	exec;		/* exec vector			*/
 	u32	bootenv;	/* fimware boot env		*/
+=======
+	u32	signature;	/*  constant signature */
+	u32	rsvd_a;
+	u32	exec;		/*  exec vector	*/
+	u32	param;		/*  parameters		*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32	rsvd_b[4];
 	u32	md5sum[BFI_IOC_MD5SUM_SZ];
 };
 
+<<<<<<< HEAD
 #define BFI_FWBOOT_DEVMODE_OFF		4
 #define BFI_FWBOOT_TYPE_OFF		8
 #define BFI_FWBOOT_ENV_OFF		12
@@ -347,6 +431,15 @@ struct bfi_ioc_image_hdr_s {
 enum bfi_port_mode {
 	BFI_PORT_MODE_FC	= 1,
 	BFI_PORT_MODE_ETH	= 2,
+=======
+/*
+ *  BFI_IOC_I2H_READY_EVENT message
+ */
+struct bfi_ioc_rdy_event_s {
+	struct bfi_mhdr_s	mh;		/*  common msg header */
+	u8			init_status;	/*  init event status */
+	u8			rsvd[3];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct bfi_ioc_hbeat_s {
@@ -405,8 +498,13 @@ enum {
  */
 struct bfi_ioc_ctrl_req_s {
 	struct bfi_mhdr_s	mh;
+<<<<<<< HEAD
 	u16			clscode;
 	u16			rsvd;
+=======
+	u8			ioc_class;
+	u8			rsvd[3];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32		tv_sec;
 };
 #define bfi_ioc_enable_req_t struct bfi_ioc_ctrl_req_s;
@@ -418,9 +516,13 @@ struct bfi_ioc_ctrl_req_s {
 struct bfi_ioc_ctrl_reply_s {
 	struct bfi_mhdr_s	mh;		/*  Common msg header     */
 	u8			status;		/*  enable/disable status */
+<<<<<<< HEAD
 	u8			port_mode;	/*  bfa_mode_s	*/
 	u8			cap_bm;		/*  capability bit mask */
 	u8			rsvd;
+=======
+	u8			rsvd[3];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #define bfi_ioc_enable_reply_t struct bfi_ioc_ctrl_reply_s;
 #define bfi_ioc_disable_reply_t struct bfi_ioc_ctrl_reply_s;
@@ -442,7 +544,11 @@ union bfi_ioc_h2i_msg_u {
  */
 union bfi_ioc_i2h_msg_u {
 	struct bfi_mhdr_s		mh;
+<<<<<<< HEAD
 	struct bfi_ioc_ctrl_reply_s	fw_event;
+=======
+	struct bfi_ioc_rdy_event_s	rdy_event;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32			mboxmsg[BFI_IOC_MSGSZ];
 };
 
@@ -455,7 +561,10 @@ union bfi_ioc_i2h_msg_u {
 
 #define BFI_PBC_MAX_BLUNS	8
 #define BFI_PBC_MAX_VPORTS	16
+<<<<<<< HEAD
 #define BFI_PBC_PORT_DISABLED	2
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * PBC boot lun configuration
@@ -637,6 +746,7 @@ union bfi_port_i2h_msg_u {
 	struct bfi_port_generic_rsp_s   clearstats_rsp;
 };
 
+<<<<<<< HEAD
 /*
  *----------------------------------------------------------------------
  *				ABLK
@@ -1147,6 +1257,8 @@ struct bfi_phy_write_rsp_s {
 	u32			length;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #pragma pack()
 
 #endif /* __BFI_H__ */

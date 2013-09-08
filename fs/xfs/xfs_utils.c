@@ -53,7 +53,11 @@ xfs_dir_ialloc(
 					   output: may be a new transaction. */
 	xfs_inode_t	*dp,		/* directory within whose allocate
 					   the inode. */
+<<<<<<< HEAD
 	umode_t		mode,
+=======
+	mode_t		mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	xfs_nlink_t	nlink,
 	xfs_dev_t	rdev,
 	prid_t		prid,		/* project id */
@@ -296,6 +300,11 @@ xfs_bumplink(
 	xfs_trans_t *tp,
 	xfs_inode_t *ip)
 {
+<<<<<<< HEAD
+=======
+	if (ip->i_d.di_nlink >= XFS_MAXLINK)
+		return XFS_ERROR(EMLINK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	xfs_trans_ichgtime(tp, ip, XFS_ICHGTIME_CHG);
 
 	ASSERT(ip->i_d.di_nlink > 0);

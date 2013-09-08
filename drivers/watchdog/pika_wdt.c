@@ -5,8 +5,11 @@
  *   Sean MacLennan <smaclennan@pikatech.com>
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/errno.h>
 #include <linux/module.h>
@@ -25,6 +28,10 @@
 #include <linux/of_platform.h>
 
 #define DRV_NAME "PIKA-WDT"
+<<<<<<< HEAD
+=======
+#define PFX DRV_NAME ": "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Hardware timeout in seconds */
 #define WDT_HW_TIMEOUT 2
@@ -39,8 +46,13 @@ module_param(heartbeat, int, 0);
 MODULE_PARM_DESC(heartbeat, "Watchdog heartbeats in seconds. "
 	"(default = " __MODULE_STRING(WDT_HEARTBEAT) ")");
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 module_param(nowayout, bool, 0);
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started "
 	"(default=" __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
 
@@ -91,7 +103,11 @@ static void pikawdt_ping(unsigned long data)
 		pikawdt_reset();
 		mod_timer(&pikawdt_private.timer, jiffies + WDT_TIMEOUT);
 	} else
+<<<<<<< HEAD
 		pr_crit("I will reset your machine !\n");
+=======
+		printk(KERN_CRIT PFX "I will reset your machine !\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -229,14 +245,22 @@ static int __init pikawdt_init(void)
 
 	np = of_find_compatible_node(NULL, NULL, "pika,fpga");
 	if (np == NULL) {
+<<<<<<< HEAD
 		pr_err("Unable to find fpga\n");
+=======
+		printk(KERN_ERR PFX "Unable to find fpga.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOENT;
 	}
 
 	pikawdt_private.fpga = of_iomap(np, 0);
 	of_node_put(np);
 	if (pikawdt_private.fpga == NULL) {
+<<<<<<< HEAD
 		pr_err("Unable to map fpga\n");
+=======
+		printk(KERN_ERR PFX "Unable to map fpga.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 
@@ -245,7 +269,11 @@ static int __init pikawdt_init(void)
 	/* POST information is in the sd area. */
 	np = of_find_compatible_node(NULL, NULL, "pika,fpga-sd");
 	if (np == NULL) {
+<<<<<<< HEAD
 		pr_err("Unable to find fpga-sd\n");
+=======
+		printk(KERN_ERR PFX "Unable to find fpga-sd.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENOENT;
 		goto out;
 	}
@@ -253,7 +281,11 @@ static int __init pikawdt_init(void)
 	fpga = of_iomap(np, 0);
 	of_node_put(np);
 	if (fpga == NULL) {
+<<<<<<< HEAD
 		pr_err("Unable to map fpga-sd\n");
+=======
+		printk(KERN_ERR PFX "Unable to map fpga-sd.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENOMEM;
 		goto out;
 	}
@@ -272,12 +304,21 @@ static int __init pikawdt_init(void)
 
 	ret = misc_register(&pikawdt_miscdev);
 	if (ret) {
+<<<<<<< HEAD
 		pr_err("Unable to register miscdev\n");
 		goto out;
 	}
 
 	pr_info("initialized. heartbeat=%d sec (nowayout=%d)\n",
 		heartbeat, nowayout);
+=======
+		printk(KERN_ERR PFX "Unable to register miscdev.\n");
+		goto out;
+	}
+
+	printk(KERN_INFO PFX "initialized. heartbeat=%d sec (nowayout=%d)\n",
+							heartbeat, nowayout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 out:

@@ -22,4 +22,16 @@ struct mcp23s08_platform_data {
 	 * base to base+15 (or base+31 for s17 variant).
 	 */
 	unsigned	base;
+<<<<<<< HEAD
+=======
+
+	void		*context;	/* param to setup/teardown */
+
+	int		(*setup)(struct spi_device *spi,
+					int gpio, unsigned ngpio,
+					void *context);
+	int		(*teardown)(struct spi_device *spi,
+					int gpio, unsigned ngpio,
+					void *context);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };

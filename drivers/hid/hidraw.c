@@ -259,6 +259,10 @@ static int hidraw_open(struct inode *inode, struct file *file)
 
 	mutex_lock(&minors_lock);
 	if (!hidraw_table[minor]) {
+<<<<<<< HEAD
+=======
+		kfree(list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = -ENODEV;
 		goto out_unlock;
 	}
@@ -271,10 +275,15 @@ static int hidraw_open(struct inode *inode, struct file *file)
 	dev = hidraw_table[minor];
 	if (!dev->open++) {
 		err = hid_hw_power(dev->hid, PM_HINT_FULLON);
+<<<<<<< HEAD
 		if (err < 0) {
 			dev->open--;
 			goto out_unlock;
 		}
+=======
+		if (err < 0)
+			goto out_unlock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		err = hid_hw_open(dev->hid);
 		if (err < 0) {
@@ -286,8 +295,11 @@ static int hidraw_open(struct inode *inode, struct file *file)
 out_unlock:
 	mutex_unlock(&minors_lock);
 out:
+<<<<<<< HEAD
 	if (err < 0)
 		kfree(list);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 
 }
@@ -513,12 +525,21 @@ void hidraw_disconnect(struct hid_device *hid)
 {
 	struct hidraw *hidraw = hid->hidraw;
 
+<<<<<<< HEAD
 	mutex_lock(&minors_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hidraw->exist = 0;
 
 	device_destroy(hidraw_class, MKDEV(hidraw_major, hidraw->minor));
 
+<<<<<<< HEAD
 	hidraw_table[hidraw->minor] = NULL;
+=======
+	mutex_lock(&minors_lock);
+	hidraw_table[hidraw->minor] = NULL;
+	mutex_unlock(&minors_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (hidraw->open) {
 		hid_hw_close(hid);
@@ -526,7 +547,10 @@ void hidraw_disconnect(struct hid_device *hid)
 	} else {
 		kfree(hidraw);
 	}
+<<<<<<< HEAD
 	mutex_unlock(&minors_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(hidraw_disconnect);
 

@@ -31,7 +31,11 @@
 #include <linux/rcupdate.h>
 #include <linux/interrupt.h>
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bitops.h>
 #include <linux/module.h>
 #include <linux/completion.h>
@@ -48,6 +52,14 @@
 
 #ifdef CONFIG_RCU_BOOST
 
+<<<<<<< HEAD
+=======
+DECLARE_PER_CPU(unsigned int, rcu_cpu_kthread_status);
+DECLARE_PER_CPU(unsigned int, rcu_cpu_kthread_cpu);
+DECLARE_PER_CPU(unsigned int, rcu_cpu_kthread_loops);
+DECLARE_PER_CPU(char, rcu_cpu_has_work);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static char convert_kthread_status(unsigned int kthread_status)
 {
 	if (kthread_status > RCU_KTHREAD_MAX)
@@ -61,6 +73,7 @@ static void print_one_rcu_data(struct seq_file *m, struct rcu_data *rdp)
 {
 	if (!rdp->beenonline)
 		return;
+<<<<<<< HEAD
 	seq_printf(m, "%3d%cc=%lu g=%lu pq=%d pgp=%lu qp=%d",
 		   rdp->cpu,
 		   cpu_is_offline(rdp->cpu) ? '!' : ' ',
@@ -68,13 +81,30 @@ static void print_one_rcu_data(struct seq_file *m, struct rcu_data *rdp)
 		   rdp->passed_quiesce, rdp->passed_quiesce_gpnum,
 		   rdp->qs_pending);
 	seq_printf(m, " dt=%d/%llx/%d df=%lu",
+=======
+	seq_printf(m, "%3d%cc=%lu g=%lu pq=%d pqc=%lu qp=%d",
+		   rdp->cpu,
+		   cpu_is_offline(rdp->cpu) ? '!' : ' ',
+		   rdp->completed, rdp->gpnum,
+		   rdp->passed_quiesc, rdp->passed_quiesc_completed,
+		   rdp->qs_pending);
+#ifdef CONFIG_NO_HZ
+	seq_printf(m, " dt=%d/%d/%d df=%lu",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   atomic_read(&rdp->dynticks->dynticks),
 		   rdp->dynticks->dynticks_nesting,
 		   rdp->dynticks->dynticks_nmi_nesting,
 		   rdp->dynticks_fqs);
+<<<<<<< HEAD
 	seq_printf(m, " of=%lu", rdp->offline_fqs);
 	seq_printf(m, " ql=%ld/%ld qs=%c%c%c%c",
 		   rdp->qlen_lazy, rdp->qlen,
+=======
+#endif /* #ifdef CONFIG_NO_HZ */
+	seq_printf(m, " of=%lu ri=%lu", rdp->offline_fqs, rdp->resched_ipi);
+	seq_printf(m, " ql=%ld qs=%c%c%c%c",
+		   rdp->qlen,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   ".N"[rdp->nxttail[RCU_NEXT_READY_TAIL] !=
 			rdp->nxttail[RCU_NEXT_TAIL]],
 		   ".R"[rdp->nxttail[RCU_WAIT_TAIL] !=
@@ -137,15 +167,28 @@ static void print_one_rcu_data_csv(struct seq_file *m, struct rcu_data *rdp)
 		   rdp->cpu,
 		   cpu_is_offline(rdp->cpu) ? "\"N\"" : "\"Y\"",
 		   rdp->completed, rdp->gpnum,
+<<<<<<< HEAD
 		   rdp->passed_quiesce, rdp->passed_quiesce_gpnum,
 		   rdp->qs_pending);
 	seq_printf(m, ",%d,%llx,%d,%lu",
+=======
+		   rdp->passed_quiesc, rdp->passed_quiesc_completed,
+		   rdp->qs_pending);
+#ifdef CONFIG_NO_HZ
+	seq_printf(m, ",%d,%d,%d,%lu",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   atomic_read(&rdp->dynticks->dynticks),
 		   rdp->dynticks->dynticks_nesting,
 		   rdp->dynticks->dynticks_nmi_nesting,
 		   rdp->dynticks_fqs);
+<<<<<<< HEAD
 	seq_printf(m, ",%lu", rdp->offline_fqs);
 	seq_printf(m, ",%ld,%ld,\"%c%c%c%c\"", rdp->qlen_lazy, rdp->qlen,
+=======
+#endif /* #ifdef CONFIG_NO_HZ */
+	seq_printf(m, ",%lu,%lu", rdp->offline_fqs, rdp->resched_ipi);
+	seq_printf(m, ",%ld,\"%c%c%c%c\"", rdp->qlen,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   ".N"[rdp->nxttail[RCU_NEXT_READY_TAIL] !=
 			rdp->nxttail[RCU_NEXT_TAIL]],
 		   ".R"[rdp->nxttail[RCU_WAIT_TAIL] !=
@@ -166,9 +209,17 @@ static void print_one_rcu_data_csv(struct seq_file *m, struct rcu_data *rdp)
 
 static int show_rcudata_csv(struct seq_file *m, void *unused)
 {
+<<<<<<< HEAD
 	seq_puts(m, "\"CPU\",\"Online?\",\"c\",\"g\",\"pq\",\"pgp\",\"pq\",");
 	seq_puts(m, "\"dt\",\"dt nesting\",\"dt NMI nesting\",\"df\",");
 	seq_puts(m, "\"of\",\"qll\",\"ql\",\"qs\"");
+=======
+	seq_puts(m, "\"CPU\",\"Online?\",\"c\",\"g\",\"pq\",\"pqc\",\"pq\",");
+#ifdef CONFIG_NO_HZ
+	seq_puts(m, "\"dt\",\"dt nesting\",\"dt NMI nesting\",\"df\",");
+#endif /* #ifdef CONFIG_NO_HZ */
+	seq_puts(m, "\"of\",\"ri\",\"ql\",\"qs\"");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_RCU_BOOST
 	seq_puts(m, "\"kt\",\"ktl\"");
 #endif /* #ifdef CONFIG_RCU_BOOST */
@@ -272,7 +323,11 @@ static void print_one_rcu_state(struct seq_file *m, struct rcu_state *rsp)
 	gpnum = rsp->gpnum;
 	seq_printf(m, "c=%lu g=%lu s=%d jfq=%ld j=%x "
 		      "nfqs=%lu/nfqsng=%lu(%lu) fqlh=%lu\n",
+<<<<<<< HEAD
 		   rsp->completed, gpnum, rsp->fqs_state,
+=======
+		   rsp->completed, gpnum, rsp->signaled,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   (long)(rsp->jiffies_force_qs - jiffies),
 		   (int)(jiffies & 0xffff),
 		   rsp->n_force_qs, rsp->n_force_qs_ngp,

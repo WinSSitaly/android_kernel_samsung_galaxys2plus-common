@@ -1,7 +1,11 @@
 /*
  * AD714X CapTouch Programmable Controller driver (I2C bus)
  *
+<<<<<<< HEAD
  * Copyright 2009-2011 Analog Devices Inc.
+=======
+ * Copyright 2009 Analog Devices Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Licensed under the GPL-2 or later.
  */
@@ -27,6 +31,7 @@ static int ad714x_i2c_resume(struct device *dev)
 
 static SIMPLE_DEV_PM_OPS(ad714x_i2c_pm, ad714x_i2c_suspend, ad714x_i2c_resume);
 
+<<<<<<< HEAD
 static int ad714x_i2c_write(struct ad714x_chip *chip,
 			    unsigned short reg, unsigned short data)
 {
@@ -70,6 +75,56 @@ static int ad714x_i2c_read(struct ad714x_chip *chip,
 		data[i] = be16_to_cpu(chip->xfer_buf[i]);
 
 	return 0;
+=======
+static int ad714x_i2c_write(struct device *dev, unsigned short reg,
+				unsigned short data)
+{
+	struct i2c_client *client = to_i2c_client(dev);
+	int ret = 0;
+	u8 *_reg = (u8 *)&reg;
+	u8 *_data = (u8 *)&data;
+
+	u8 tx[4] = {
+		_reg[1],
+		_reg[0],
+		_data[1],
+		_data[0]
+	};
+
+	ret = i2c_master_send(client, tx, 4);
+	if (ret < 0)
+		dev_err(&client->dev, "I2C write error\n");
+
+	return ret;
+}
+
+static int ad714x_i2c_read(struct device *dev, unsigned short reg,
+				unsigned short *data)
+{
+	struct i2c_client *client = to_i2c_client(dev);
+	int ret = 0;
+	u8 *_reg = (u8 *)&reg;
+	u8 *_data = (u8 *)data;
+
+	u8 tx[2] = {
+		_reg[1],
+		_reg[0]
+	};
+	u8 rx[2];
+
+	ret = i2c_master_send(client, tx, 2);
+	if (ret >= 0)
+		ret = i2c_master_recv(client, rx, 2);
+
+	if (unlikely(ret < 0)) {
+		dev_err(&client->dev, "I2C read error\n");
+	} else {
+		_data[0] = rx[1];
+		_data[1] = rx[0];
+	}
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __devinit ad714x_i2c_probe(struct i2c_client *client,
@@ -116,7 +171,21 @@ static struct i2c_driver ad714x_i2c_driver = {
 	.id_table = ad714x_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(ad714x_i2c_driver);
+=======
+static __init int ad714x_i2c_init(void)
+{
+	return i2c_add_driver(&ad714x_i2c_driver);
+}
+module_init(ad714x_i2c_init);
+
+static __exit void ad714x_i2c_exit(void)
+{
+	i2c_del_driver(&ad714x_i2c_driver);
+}
+module_exit(ad714x_i2c_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Analog Devices AD714X Capacitance Touch Sensor I2C Bus Driver");
 MODULE_AUTHOR("Barry Song <21cnbao@gmail.com>");

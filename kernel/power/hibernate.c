@@ -9,13 +9,20 @@
  * This file is released under the GPLv2.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/suspend.h>
 #include <linux/syscalls.h>
 #include <linux/reboot.h>
 #include <linux/string.h>
 #include <linux/device.h>
+<<<<<<< HEAD
 #include <linux/async.h>
+=======
+#include <linux/kmod.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/delay.h>
 #include <linux/fs.h>
 #include <linux/mount.h>
@@ -30,6 +37,7 @@
 #include "power.h"
 
 
+<<<<<<< HEAD
 static int nocompress;
 static int noresume;
 static int resume_wait;
@@ -38,10 +46,23 @@ static char resume_file[256] = CONFIG_PM_STD_PARTITION;
 dev_t swsusp_resume_device;
 sector_t swsusp_resume_block;
 int in_suspend __nosavedata;
+=======
+static int nocompress = 0;
+static int noresume = 0;
+static char resume_file[256] = CONFIG_PM_STD_PARTITION;
+dev_t swsusp_resume_device;
+sector_t swsusp_resume_block;
+int in_suspend __nosavedata = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum {
 	HIBERNATION_INVALID,
 	HIBERNATION_PLATFORM,
+<<<<<<< HEAD
+=======
+	HIBERNATION_TEST,
+	HIBERNATION_TESTPROC,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	HIBERNATION_SHUTDOWN,
 	HIBERNATION_REBOOT,
 	/* keep last */
@@ -52,8 +73,11 @@ enum {
 
 static int hibernation_mode = HIBERNATION_SHUTDOWN;
 
+<<<<<<< HEAD
 bool freezer_test_done;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct platform_hibernation_ops *hibernation_ops;
 
 /**
@@ -68,14 +92,22 @@ void hibernation_set_ops(const struct platform_hibernation_ops *ops)
 		WARN_ON(1);
 		return;
 	}
+<<<<<<< HEAD
 	lock_system_sleep();
+=======
+	mutex_lock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hibernation_ops = ops;
 	if (ops)
 		hibernation_mode = HIBERNATION_PLATFORM;
 	else if (hibernation_mode == HIBERNATION_PLATFORM)
 		hibernation_mode = HIBERNATION_SHUTDOWN;
 
+<<<<<<< HEAD
 	unlock_system_sleep();
+=======
+	mutex_unlock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static bool entering_platform_hibernation;
@@ -93,6 +125,18 @@ static void hibernation_debug_sleep(void)
 	mdelay(5000);
 }
 
+<<<<<<< HEAD
+=======
+static int hibernation_testmode(int mode)
+{
+	if (hibernation_mode == mode) {
+		hibernation_debug_sleep();
+		return 1;
+	}
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int hibernation_test(int level)
 {
 	if (pm_test_level == level) {
@@ -102,6 +146,10 @@ static int hibernation_test(int level)
 	return 0;
 }
 #else /* !CONFIG_PM_DEBUG */
+<<<<<<< HEAD
+=======
+static int hibernation_testmode(int mode) { return 0; }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int hibernation_test(int level) { return 0; }
 #endif /* !CONFIG_PM_DEBUG */
 
@@ -244,8 +292,13 @@ void swsusp_show_speed(struct timeval *start, struct timeval *stop,
  * create_image - Create a hibernation image.
  * @platform_mode: Whether or not to use the platform driver.
  *
+<<<<<<< HEAD
  * Execute device drivers' "late" and "noirq" freeze callbacks, create a
  * hibernation image and run the drivers' "noirq" and "early" thaw callbacks.
+=======
+ * Execute device drivers' .freeze_noirq() callbacks, create a hibernation image
+ * and execute the drivers' .thaw_noirq() callbacks.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Control reappears in this routine after the subsequent restore.
  */
@@ -253,7 +306,11 @@ static int create_image(int platform_mode)
 {
 	int error;
 
+<<<<<<< HEAD
 	error = dpm_suspend_end(PMSG_FREEZE);
+=======
+	error = dpm_suspend_noirq(PMSG_FREEZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error) {
 		printk(KERN_ERR "PM: Some devices failed to power down, "
 			"aborting hibernation\n");
@@ -265,7 +322,12 @@ static int create_image(int platform_mode)
 		goto Platform_finish;
 
 	error = disable_nonboot_cpus();
+<<<<<<< HEAD
 	if (error || hibernation_test(TEST_CPUS))
+=======
+	if (error || hibernation_test(TEST_CPUS)
+	    || hibernation_testmode(HIBERNATION_TEST))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto Enable_cpus;
 
 	local_irq_disable();
@@ -305,7 +367,11 @@ static int create_image(int platform_mode)
  Platform_finish:
 	platform_finish(platform_mode);
 
+<<<<<<< HEAD
 	dpm_resume_start(in_suspend ?
+=======
+	dpm_resume_noirq(in_suspend ?
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		(error ? PMSG_RECOVER : PMSG_THAW) : PMSG_RESTORE);
 
 	return error;
@@ -319,13 +385,18 @@ static int create_image(int platform_mode)
  */
 int hibernation_snapshot(int platform_mode)
 {
+<<<<<<< HEAD
 	pm_message_t msg;
+=======
+	pm_message_t msg = PMSG_RECOVER;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int error;
 
 	error = platform_begin(platform_mode);
 	if (error)
 		goto Close;
 
+<<<<<<< HEAD
 	/* Preallocate image memory before shutting down devices. */
 	error = hibernate_preallocate_memory();
 	if (error)
@@ -368,6 +439,33 @@ int hibernation_snapshot(int platform_mode)
 	 * image creation has failed and (2) after a successful restore.
 	 */
 
+=======
+	error = dpm_prepare(PMSG_FREEZE);
+	if (error)
+		goto Complete_devices;
+
+	/* Preallocate image memory before shutting down devices. */
+	error = hibernate_preallocate_memory();
+	if (error)
+		goto Complete_devices;
+
+	suspend_console();
+	pm_restrict_gfp_mask();
+	error = dpm_suspend(PMSG_FREEZE);
+	if (error)
+		goto Recover_platform;
+
+	if (hibernation_test(TEST_DEVICES))
+		goto Recover_platform;
+
+	error = create_image(platform_mode);
+	/*
+	 * Control returns here (1) after the image has been created or the
+	 * image creation has failed and (2) after a successful restore.
+	 */
+
+ Resume_devices:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* We may need to release the preallocated image pages here. */
 	if (error || !in_suspend)
 		swsusp_free();
@@ -378,35 +476,58 @@ int hibernation_snapshot(int platform_mode)
 	if (error || !in_suspend)
 		pm_restore_gfp_mask();
 
+<<<<<<< HEAD
 	ftrace_start();
 	resume_console();
+=======
+	resume_console();
+
+ Complete_devices:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dpm_complete(msg);
 
  Close:
 	platform_end(platform_mode);
 	return error;
 
+<<<<<<< HEAD
  Thaw:
 	thaw_kernel_threads();
  Cleanup:
 	swsusp_free();
 	goto Close;
+=======
+ Recover_platform:
+	platform_recover(platform_mode);
+	goto Resume_devices;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
  * resume_target_kernel - Restore system state from a hibernation image.
  * @platform_mode: Whether or not to use the platform driver.
  *
+<<<<<<< HEAD
  * Execute device drivers' "noirq" and "late" freeze callbacks, restore the
  * contents of highmem that have not been restored yet from the image and run
  * the low-level code that will restore the remaining contents of memory and
  * switch to the just restored target kernel.
+=======
+ * Execute device drivers' .freeze_noirq() callbacks, restore the contents of
+ * highmem that have not been restored yet from the image and run the low-level
+ * code that will restore the remaining contents of memory and switch to the
+ * just restored target kernel.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int resume_target_kernel(bool platform_mode)
 {
 	int error;
 
+<<<<<<< HEAD
 	error = dpm_suspend_end(PMSG_QUIESCE);
+=======
+	error = dpm_suspend_noirq(PMSG_QUIESCE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error) {
 		printk(KERN_ERR "PM: Some devices failed to power down, "
 			"aborting resume\n");
@@ -463,7 +584,11 @@ static int resume_target_kernel(bool platform_mode)
  Cleanup:
 	platform_restore_cleanup(platform_mode);
 
+<<<<<<< HEAD
 	dpm_resume_start(PMSG_RECOVER);
+=======
+	dpm_resume_noirq(PMSG_RECOVER);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return error;
 }
@@ -473,7 +598,11 @@ static int resume_target_kernel(bool platform_mode)
  * @platform_mode: If set, use platform driver to prepare for the transition.
  *
  * This routine must be called with pm_mutex held.  If it is successful, control
+<<<<<<< HEAD
  * reappears in the restored target kernel in hibernation_snapshot().
+=======
+ * reappears in the restored target kernel in hibernation_snaphot().
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int hibernation_restore(int platform_mode)
 {
@@ -481,7 +610,10 @@ int hibernation_restore(int platform_mode)
 
 	pm_prepare_console();
 	suspend_console();
+<<<<<<< HEAD
 	ftrace_stop();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pm_restrict_gfp_mask();
 	error = dpm_suspend_start(PMSG_QUIESCE);
 	if (!error) {
@@ -489,7 +621,10 @@ int hibernation_restore(int platform_mode)
 		dpm_resume_end(PMSG_RECOVER);
 	}
 	pm_restore_gfp_mask();
+<<<<<<< HEAD
 	ftrace_start();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	resume_console();
 	pm_restore_console();
 	return error;
@@ -516,7 +651,10 @@ int hibernation_platform_enter(void)
 
 	entering_platform_hibernation = true;
 	suspend_console();
+<<<<<<< HEAD
 	ftrace_stop();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	error = dpm_suspend_start(PMSG_HIBERNATE);
 	if (error) {
 		if (hibernation_ops->recover)
@@ -524,7 +662,11 @@ int hibernation_platform_enter(void)
 		goto Resume_devices;
 	}
 
+<<<<<<< HEAD
 	error = dpm_suspend_end(PMSG_HIBERNATE);
+=======
+	error = dpm_suspend_noirq(PMSG_HIBERNATE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error)
 		goto Resume_devices;
 
@@ -555,12 +697,19 @@ int hibernation_platform_enter(void)
  Platform_finish:
 	hibernation_ops->finish();
 
+<<<<<<< HEAD
 	dpm_resume_start(PMSG_RESTORE);
+=======
+	dpm_resume_noirq(PMSG_RESTORE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
  Resume_devices:
 	entering_platform_hibernation = false;
 	dpm_resume_end(PMSG_RESTORE);
+<<<<<<< HEAD
 	ftrace_start();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	resume_console();
 
  Close:
@@ -579,6 +728,12 @@ int hibernation_platform_enter(void)
 static void power_down(void)
 {
 	switch (hibernation_mode) {
+<<<<<<< HEAD
+=======
+	case HIBERNATION_TEST:
+	case HIBERNATION_TESTPROC:
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case HIBERNATION_REBOOT:
 		kernel_restart(NULL);
 		break;
@@ -597,6 +752,20 @@ static void power_down(void)
 	while(1);
 }
 
+<<<<<<< HEAD
+=======
+static int prepare_processes(void)
+{
+	int error = 0;
+
+	if (freeze_processes()) {
+		error = -EBUSY;
+		thaw_processes();
+	}
+	return error;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * hibernate - Carry out system hibernation, including saving the image.
  */
@@ -604,7 +773,11 @@ int hibernate(void)
 {
 	int error;
 
+<<<<<<< HEAD
 	lock_system_sleep();
+=======
+	mutex_lock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* The snapshot device should not be opened while we're running */
 	if (!atomic_add_unless(&snapshot_device_available, -1, 0)) {
 		error = -EBUSY;
@@ -616,21 +789,47 @@ int hibernate(void)
 	if (error)
 		goto Exit;
 
+<<<<<<< HEAD
 	/* Allocate memory management structures */
 	error = create_basic_memory_bitmaps();
 	if (error)
 		goto Exit;
+=======
+	error = usermodehelper_disable();
+	if (error)
+		goto Exit;
+
+	/* Allocate memory management structures */
+	error = create_basic_memory_bitmaps();
+	if (error)
+		goto Enable_umh;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	printk(KERN_INFO "PM: Syncing filesystems ... ");
 	sys_sync();
 	printk("done.\n");
 
+<<<<<<< HEAD
 	error = freeze_processes();
 	if (error)
 		goto Free_bitmaps;
 
 	error = hibernation_snapshot(hibernation_mode == HIBERNATION_PLATFORM);
 	if (error || freezer_test_done)
+=======
+	error = prepare_processes();
+	if (error)
+		goto Free_bitmaps;
+
+	if (hibernation_test(TEST_FREEZER))
+		goto Thaw;
+
+	if (hibernation_testmode(HIBERNATION_TESTPROC))
+		goto Thaw;
+
+	error = hibernation_snapshot(hibernation_mode == HIBERNATION_PLATFORM);
+	if (error)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto Thaw;
 
 	if (in_suspend) {
@@ -640,9 +839,12 @@ int hibernate(void)
 			flags |= SF_PLATFORM_MODE;
 		if (nocompress)
 			flags |= SF_NOCOMPRESS_MODE;
+<<<<<<< HEAD
 		else
 		        flags |= SF_CRC32_MODE;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_debug("PM: writing image.\n");
 		error = swsusp_write(flags);
 		swsusp_free();
@@ -656,18 +858,29 @@ int hibernate(void)
 
  Thaw:
 	thaw_processes();
+<<<<<<< HEAD
 
 	/* Don't bother checking whether freezer_test_done is true */
 	freezer_test_done = false;
 
  Free_bitmaps:
 	free_basic_memory_bitmaps();
+=======
+ Free_bitmaps:
+	free_basic_memory_bitmaps();
+ Enable_umh:
+	usermodehelper_enable();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  Exit:
 	pm_notifier_call_chain(PM_POST_HIBERNATION);
 	pm_restore_console();
 	atomic_inc(&snapshot_device_available);
  Unlock:
+<<<<<<< HEAD
 	unlock_system_sleep();
+=======
+	mutex_unlock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error;
 }
 
@@ -720,12 +933,15 @@ static int software_resume(void)
 
 	pr_debug("PM: Checking hibernation image partition %s\n", resume_file);
 
+<<<<<<< HEAD
 	if (resume_delay) {
 		printk(KERN_INFO "Waiting %dsec before reading resume device...\n",
 			resume_delay);
 		ssleep(resume_delay);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Check if the device is there */
 	swsusp_resume_device = name_to_dev_t(resume_file);
 	if (!swsusp_resume_device) {
@@ -734,6 +950,7 @@ static int software_resume(void)
 		 * to wait for this to finish.
 		 */
 		wait_for_device_probe();
+<<<<<<< HEAD
 
 		if (resume_wait) {
 			while ((swsusp_resume_device = name_to_dev_t(resume_file)) == 0)
@@ -741,6 +958,8 @@ static int software_resume(void)
 			async_synchronize_full();
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * We can't depend on SCSI devices being available after loading
 		 * one of their modules until scsi_complete_async_scans() is
@@ -776,12 +995,23 @@ static int software_resume(void)
 	if (error)
 		goto close_finish;
 
+<<<<<<< HEAD
+=======
+	error = usermodehelper_disable();
+	if (error)
+		goto close_finish;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	error = create_basic_memory_bitmaps();
 	if (error)
 		goto close_finish;
 
 	pr_debug("PM: Preparing processes for restore.\n");
+<<<<<<< HEAD
 	error = freeze_processes();
+=======
+	error = prepare_processes();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error) {
 		swsusp_close(FMODE_READ);
 		goto Done;
@@ -799,6 +1029,10 @@ static int software_resume(void)
 	thaw_processes();
  Done:
 	free_basic_memory_bitmaps();
+<<<<<<< HEAD
+=======
+	usermodehelper_enable();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  Finish:
 	pm_notifier_call_chain(PM_POST_RESTORE);
 	pm_restore_console();
@@ -820,6 +1054,11 @@ static const char * const hibernation_modes[] = {
 	[HIBERNATION_PLATFORM]	= "platform",
 	[HIBERNATION_SHUTDOWN]	= "shutdown",
 	[HIBERNATION_REBOOT]	= "reboot",
+<<<<<<< HEAD
+=======
+	[HIBERNATION_TEST]	= "test",
+	[HIBERNATION_TESTPROC]	= "testproc",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -828,15 +1067,28 @@ static const char * const hibernation_modes[] = {
  * Hibernation can be handled in several ways.  There are a few different ways
  * to put the system into the sleep state: using the platform driver (e.g. ACPI
  * or other hibernation_ops), powering it off or rebooting it (for testing
+<<<<<<< HEAD
  * mostly).
  *
  * The sysfs file /sys/power/disk provides an interface for selecting the
  * hibernation mode to use.  Reading from this file causes the available modes
  * to be printed.  There are 3 modes that can be supported:
+=======
+ * mostly), or using one of the two available test modes.
+ *
+ * The sysfs file /sys/power/disk provides an interface for selecting the
+ * hibernation mode to use.  Reading from this file causes the available modes
+ * to be printed.  There are 5 modes that can be supported:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *	'platform'
  *	'shutdown'
  *	'reboot'
+<<<<<<< HEAD
+=======
+ *	'test'
+ *	'testproc'
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * If a platform hibernation driver is in use, 'platform' will be supported
  * and will be used by default.  Otherwise, 'shutdown' will be used by default.
@@ -860,6 +1112,11 @@ static ssize_t disk_show(struct kobject *kobj, struct kobj_attribute *attr,
 		switch (i) {
 		case HIBERNATION_SHUTDOWN:
 		case HIBERNATION_REBOOT:
+<<<<<<< HEAD
+=======
+		case HIBERNATION_TEST:
+		case HIBERNATION_TESTPROC:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case HIBERNATION_PLATFORM:
 			if (hibernation_ops)
@@ -888,7 +1145,11 @@ static ssize_t disk_store(struct kobject *kobj, struct kobj_attribute *attr,
 	p = memchr(buf, '\n', n);
 	len = p ? p - buf : n;
 
+<<<<<<< HEAD
 	lock_system_sleep();
+=======
+	mutex_lock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = HIBERNATION_FIRST; i <= HIBERNATION_MAX; i++) {
 		if (len == strlen(hibernation_modes[i])
 		    && !strncmp(buf, hibernation_modes[i], len)) {
@@ -900,6 +1161,11 @@ static ssize_t disk_store(struct kobject *kobj, struct kobj_attribute *attr,
 		switch (mode) {
 		case HIBERNATION_SHUTDOWN:
 		case HIBERNATION_REBOOT:
+<<<<<<< HEAD
+=======
+		case HIBERNATION_TEST:
+		case HIBERNATION_TESTPROC:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			hibernation_mode = mode;
 			break;
 		case HIBERNATION_PLATFORM:
@@ -914,7 +1180,11 @@ static ssize_t disk_store(struct kobject *kobj, struct kobj_attribute *attr,
 	if (!error)
 		pr_debug("PM: Hibernation mode set to '%s'\n",
 			 hibernation_modes[mode]);
+<<<<<<< HEAD
 	unlock_system_sleep();
+=======
+	mutex_unlock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error ? error : n;
 }
 
@@ -941,9 +1211,15 @@ static ssize_t resume_store(struct kobject *kobj, struct kobj_attribute *attr,
 	if (maj != MAJOR(res) || min != MINOR(res))
 		goto out;
 
+<<<<<<< HEAD
 	lock_system_sleep();
 	swsusp_resume_device = res;
 	unlock_system_sleep();
+=======
+	mutex_lock(&pm_mutex);
+	swsusp_resume_device = res;
+	mutex_unlock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk(KERN_INFO "PM: Starting manual resume from disk\n");
 	noresume = 0;
 	software_resume();
@@ -1056,6 +1332,7 @@ static int __init noresume_setup(char *str)
 	return 1;
 }
 
+<<<<<<< HEAD
 static int __init resumewait_setup(char *str)
 {
 	resume_wait = 1;
@@ -1068,9 +1345,14 @@ static int __init resumedelay_setup(char *str)
 	return 1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 __setup("noresume", noresume_setup);
 __setup("resume_offset=", resume_offset_setup);
 __setup("resume=", resume_setup);
 __setup("hibernate=", hibernate_setup);
+<<<<<<< HEAD
 __setup("resumewait", resumewait_setup);
 __setup("resumedelay=", resumedelay_setup);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

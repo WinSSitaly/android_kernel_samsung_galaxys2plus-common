@@ -52,9 +52,15 @@ static ssize_t pcm_set_impulse_volume(struct device *dev,
 	line6pcm->impulse_volume = value;
 
 	if (value > 0)
+<<<<<<< HEAD
 		line6_pcm_acquire(line6pcm, LINE6_BITS_PCM_IMPULSE);
 	else
 		line6_pcm_release(line6pcm, LINE6_BITS_PCM_IMPULSE);
+=======
+		line6_pcm_start(line6pcm, MASK_PCM_IMPULSE);
+	else
+		line6_pcm_stop(line6pcm, MASK_PCM_IMPULSE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return count;
 }
@@ -86,6 +92,7 @@ static DEVICE_ATTR(impulse_period, S_IWUSR | S_IRUGO, pcm_get_impulse_period,
 
 #endif
 
+<<<<<<< HEAD
 static bool test_flags(unsigned long flags0, unsigned long flags1,
 		       unsigned long mask)
 {
@@ -93,10 +100,14 @@ static bool test_flags(unsigned long flags0, unsigned long flags1,
 }
 
 int line6_pcm_acquire(struct snd_line6_pcm *line6pcm, int channels)
+=======
+int line6_pcm_start(struct snd_line6_pcm *line6pcm, int channels)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags_old =
 	    __sync_fetch_and_or(&line6pcm->flags, channels);
 	unsigned long flags_new = flags_old | channels;
+<<<<<<< HEAD
 	unsigned long flags_final = flags_old;
 	int err = 0;
 	
@@ -121,20 +132,57 @@ int line6_pcm_acquire(struct snd_line6_pcm *line6pcm, int channels)
 	}
 
 	if (test_flags(flags_old, flags_new, LINE6_BITS_CAPTURE_STREAM)) {
+=======
+	int err = 0;
+
+#if LINE6_BACKUP_MONITOR_SIGNAL
+	if (!(line6pcm->line6->properties->capabilities & LINE6_BIT_HWMON)) {
+		line6pcm->prev_fbuf =
+		    kmalloc(LINE6_ISO_PACKETS * line6pcm->max_packet_size,
+			    GFP_KERNEL);
+
+		if (!line6pcm->prev_fbuf) {
+			dev_err(line6pcm->line6->ifcdev,
+				"cannot malloc monitor buffer\n");
+			return -ENOMEM;
+		}
+	}
+#else
+	line6pcm->prev_fbuf = NULL;
+#endif
+
+	if (((flags_old & MASK_CAPTURE) == 0) &&
+	    ((flags_new & MASK_CAPTURE) != 0)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		   Waiting for completion of active URBs in the stop handler is
 		   a bug, we therefore report an error if capturing is restarted
 		   too soon.
 		 */
+<<<<<<< HEAD
 		if (line6pcm->active_urb_in | line6pcm->unlink_urb_in) {
 			dev_err(line6pcm->line6->ifcdev, "Device not yet ready\n");
 			return -EBUSY;
+=======
+		if (line6pcm->active_urb_in | line6pcm->unlink_urb_in)
+			return -EBUSY;
+
+		line6pcm->buffer_in =
+		    kmalloc(LINE6_ISO_BUFFERS * LINE6_ISO_PACKETS *
+			    line6pcm->max_packet_size, GFP_KERNEL);
+
+		if (!line6pcm->buffer_in) {
+			dev_err(line6pcm->line6->ifcdev,
+				"cannot malloc capture buffer\n");
+			return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		line6pcm->count_in = 0;
 		line6pcm->prev_fsize = 0;
 		err = line6_submit_audio_in_all_urbs(line6pcm);
 
+<<<<<<< HEAD
 		if (err < 0)
 			goto pcm_acquire_error;
 
@@ -166,11 +214,36 @@ int line6_pcm_acquire(struct snd_line6_pcm *line6pcm, int channels)
 		if (line6pcm->active_urb_out | line6pcm->unlink_urb_out) {
 			dev_err(line6pcm->line6->ifcdev, "Device not yet ready\n");
 			return -EBUSY;
+=======
+		if (err < 0) {
+			__sync_fetch_and_and(&line6pcm->flags, ~channels);
+			return err;
+		}
+	}
+
+	if (((flags_old & MASK_PLAYBACK) == 0) &&
+	    ((flags_new & MASK_PLAYBACK) != 0)) {
+		/*
+		   See comment above regarding PCM restart.
+		 */
+		if (line6pcm->active_urb_out | line6pcm->unlink_urb_out)
+			return -EBUSY;
+
+		line6pcm->buffer_out =
+		    kmalloc(LINE6_ISO_BUFFERS * LINE6_ISO_PACKETS *
+			    line6pcm->max_packet_size, GFP_KERNEL);
+
+		if (!line6pcm->buffer_out) {
+			dev_err(line6pcm->line6->ifcdev,
+				"cannot malloc playback buffer\n");
+			return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		line6pcm->count_out = 0;
 		err = line6_submit_audio_out_all_urbs(line6pcm);
 
+<<<<<<< HEAD
 		if (err < 0)
 			goto pcm_acquire_error;
 
@@ -189,11 +262,24 @@ pcm_acquire_error:
 }
 
 int line6_pcm_release(struct snd_line6_pcm *line6pcm, int channels)
+=======
+		if (err < 0) {
+			__sync_fetch_and_and(&line6pcm->flags, ~channels);
+			return err;
+		}
+	}
+
+	return 0;
+}
+
+int line6_pcm_stop(struct snd_line6_pcm *line6pcm, int channels)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags_old =
 	    __sync_fetch_and_and(&line6pcm->flags, ~channels);
 	unsigned long flags_new = flags_old & ~channels;
 
+<<<<<<< HEAD
 	if (test_flags(flags_new, flags_old, LINE6_BITS_CAPTURE_STREAM))
 		line6_unlink_audio_in_urbs(line6pcm);
 
@@ -209,6 +295,24 @@ int line6_pcm_release(struct snd_line6_pcm *line6pcm, int channels)
 		line6_wait_clear_audio_out_urbs(line6pcm);
 		line6_free_playback_buffer(line6pcm);
 	}
+=======
+	if (((flags_old & MASK_CAPTURE) != 0) &&
+	    ((flags_new & MASK_CAPTURE) == 0)) {
+		line6_unlink_audio_in_urbs(line6pcm);
+		kfree(line6pcm->buffer_in);
+		line6pcm->buffer_in = NULL;
+	}
+
+	if (((flags_old & MASK_PLAYBACK) != 0) &&
+	    ((flags_new & MASK_PLAYBACK) == 0)) {
+		line6_unlink_audio_out_urbs(line6pcm);
+		kfree(line6pcm->buffer_out);
+		line6pcm->buffer_out = NULL;
+	}
+#if LINE6_BACKUP_MONITOR_SIGNAL
+	kfree(line6pcm->prev_fbuf);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -222,7 +326,11 @@ int snd_line6_trigger(struct snd_pcm_substream *substream, int cmd)
 	unsigned long flags;
 
 	spin_lock_irqsave(&line6pcm->lock_trigger, flags);
+<<<<<<< HEAD
 	clear_bit(LINE6_INDEX_PREPARED, &line6pcm->flags);
+=======
+	clear_bit(BIT_PREPARED, &line6pcm->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	snd_pcm_group_for_each_entry(s, substream) {
 		switch (s->stream) {
@@ -421,12 +529,18 @@ int line6_init_pcm(struct usb_line6 *line6,
 	case LINE6_DEVID_PODXT:
 	case LINE6_DEVID_PODXTLIVE:
 	case LINE6_DEVID_PODXTPRO:
+<<<<<<< HEAD
 	case LINE6_DEVID_PODHD300:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ep_read = 0x82;
 		ep_write = 0x01;
 		break;
 
+<<<<<<< HEAD
 	case LINE6_DEVID_PODHD500:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case LINE6_DEVID_PODX3:
 	case LINE6_DEVID_PODX3LIVE:
 		ep_read = 0x86;
@@ -471,6 +585,7 @@ int line6_init_pcm(struct usb_line6 *line6,
 	line6pcm->line6 = line6;
 	line6pcm->ep_audio_read = ep_read;
 	line6pcm->ep_audio_write = ep_write;
+<<<<<<< HEAD
 
 	/* Read and write buffers are sized identically, so choose minimum */
 	line6pcm->max_packet_size = min(
@@ -479,6 +594,11 @@ int line6_init_pcm(struct usb_line6 *line6,
 			usb_maxpacket(line6->usbdev,
 				usb_sndisocpipe(line6->usbdev, ep_write), 1));
 
+=======
+	line6pcm->max_packet_size = usb_maxpacket(line6->usbdev,
+						  usb_rcvintpipe(line6->usbdev,
+								 ep_read), 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	line6pcm->properties = properties;
 	line6->line6pcm = line6pcm;
 
@@ -533,6 +653,7 @@ int snd_line6_prepare(struct snd_pcm_substream *substream)
 {
 	struct snd_line6_pcm *line6pcm = snd_pcm_substream_chip(substream);
 
+<<<<<<< HEAD
 	switch (substream->stream) {
 	case SNDRV_PCM_STREAM_PLAYBACK:
 		if ((line6pcm->flags & LINE6_BITS_PLAYBACK_STREAM) == 0)
@@ -551,6 +672,9 @@ int snd_line6_prepare(struct snd_pcm_substream *substream)
 	}
 
 	if (!test_and_set_bit(LINE6_INDEX_PREPARED, &line6pcm->flags)) {
+=======
+	if (!test_and_set_bit(BIT_PREPARED, &line6pcm->flags)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		line6pcm->count_out = 0;
 		line6pcm->pos_out = 0;
 		line6pcm->pos_out_done = 0;

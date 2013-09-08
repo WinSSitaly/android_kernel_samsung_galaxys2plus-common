@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  *  linux/arch/m68k/kernel/process.c
  *
@@ -378,3 +379,10 @@ unsigned long get_wchan(struct task_struct *p)
 	} while (count++ < 16);
 	return 0;
 }
+=======
+#ifdef CONFIG_MMU
+#include "process_mm.c"
+#else
+#include "process_no.c"
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

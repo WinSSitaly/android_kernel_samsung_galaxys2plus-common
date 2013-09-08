@@ -17,7 +17,11 @@
 #include <linux/threads.h>
 #include <linux/cpumask.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/smp-ops.h>
 
 extern int smp_num_siblings;

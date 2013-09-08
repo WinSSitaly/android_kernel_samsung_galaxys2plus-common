@@ -37,7 +37,10 @@
 #include <linux/atm.h>
 #include <linux/delay.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bitops.h>
 #include <linux/wait.h>
 #include <linux/jiffies.h>
@@ -46,7 +49,11 @@
 
 #include <asm/io.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/byteorder.h>
 
 #ifdef CONFIG_ATM_IDT77252_USE_SUNI
@@ -3416,28 +3423,48 @@ init_card(struct atm_dev *dev)
 
 	size = sizeof(struct vc_map *) * card->tct_size;
 	IPRINTK("%s: allocate %d byte for VC map.\n", card->name, size);
+<<<<<<< HEAD
 	card->vcs = vzalloc(size);
 	if (!card->vcs) {
+=======
+	if (NULL == (card->vcs = vmalloc(size))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk("%s: memory allocation failure.\n", card->name);
 		deinit_card(card);
 		return -1;
 	}
+<<<<<<< HEAD
+=======
+	memset(card->vcs, 0, size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	size = sizeof(struct vc_map *) * card->scd_size;
 	IPRINTK("%s: allocate %d byte for SCD to VC mapping.\n",
 	        card->name, size);
+<<<<<<< HEAD
 	card->scd2vc = vzalloc(size);
 	if (!card->scd2vc) {
+=======
+	if (NULL == (card->scd2vc = vmalloc(size))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk("%s: memory allocation failure.\n", card->name);
 		deinit_card(card);
 		return -1;
 	}
+<<<<<<< HEAD
+=======
+	memset(card->scd2vc, 0, size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	size = sizeof(struct tst_info) * (card->tst_size - 2);
 	IPRINTK("%s: allocate %d byte for TST to VC mapping.\n",
 		card->name, size);
+<<<<<<< HEAD
 	card->soft_tst = vmalloc(size);
 	if (!card->soft_tst) {
+=======
+	if (NULL == (card->soft_tst = vmalloc(size))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk("%s: memory allocation failure.\n", card->name);
 		deinit_card(card);
 		return -1;

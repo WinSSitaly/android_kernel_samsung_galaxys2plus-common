@@ -55,6 +55,7 @@ qla4xxx_optrom_version_show(struct device *dev, struct device_attribute *attr,
 			ha->bootload_patch, ha->bootload_build);
 }
 
+<<<<<<< HEAD
 static ssize_t
 qla4xxx_board_id_show(struct device *dev, struct device_attribute *attr,
 		      char *buf)
@@ -119,27 +120,35 @@ qla4xxx_hba_model_show(struct device *dev, struct device_attribute *attr,
 	return snprintf(buf, PAGE_SIZE, "%s\n", ha->model_name);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEVICE_ATTR(fw_version, S_IRUGO, qla4xxx_fw_version_show, NULL);
 static DEVICE_ATTR(serial_num, S_IRUGO, qla4xxx_serial_num_show, NULL);
 static DEVICE_ATTR(iscsi_version, S_IRUGO, qla4xxx_iscsi_version_show, NULL);
 static DEVICE_ATTR(optrom_version, S_IRUGO, qla4xxx_optrom_version_show, NULL);
+<<<<<<< HEAD
 static DEVICE_ATTR(board_id, S_IRUGO, qla4xxx_board_id_show, NULL);
 static DEVICE_ATTR(fw_state, S_IRUGO, qla4xxx_fw_state_show, NULL);
 static DEVICE_ATTR(phy_port_cnt, S_IRUGO, qla4xxx_phy_port_cnt_show, NULL);
 static DEVICE_ATTR(phy_port_num, S_IRUGO, qla4xxx_phy_port_num_show, NULL);
 static DEVICE_ATTR(iscsi_func_cnt, S_IRUGO, qla4xxx_iscsi_func_cnt_show, NULL);
 static DEVICE_ATTR(hba_model, S_IRUGO, qla4xxx_hba_model_show, NULL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct device_attribute *qla4xxx_host_attrs[] = {
 	&dev_attr_fw_version,
 	&dev_attr_serial_num,
 	&dev_attr_iscsi_version,
 	&dev_attr_optrom_version,
+<<<<<<< HEAD
 	&dev_attr_board_id,
 	&dev_attr_fw_state,
 	&dev_attr_phy_port_cnt,
 	&dev_attr_phy_port_num,
 	&dev_attr_iscsi_func_cnt,
 	&dev_attr_hba_model,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL,
 };

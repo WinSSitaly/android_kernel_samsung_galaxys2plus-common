@@ -88,8 +88,15 @@
 #define IRQ_U2P		PXA_IRQ(93)	/* USB PHY D+/D- Lines (PXA935) */
 
 #define PXA_GPIO_IRQ_BASE	PXA_IRQ(96)
+<<<<<<< HEAD
 #define PXA_NR_BUILTIN_GPIO	(192)
 #define PXA_GPIO_TO_IRQ(x)	(PXA_GPIO_IRQ_BASE + (x))
+=======
+#define PXA_GPIO_IRQ_NUM	(192)
+
+#define GPIO_2_x_TO_IRQ(x)	(PXA_GPIO_IRQ_BASE + (x))
+#define IRQ_GPIO(x)	(((x) < 2) ? (IRQ_GPIO0 + (x)) : GPIO_2_x_TO_IRQ(x))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * The following interrupts are for board specific purposes. Since
@@ -98,6 +105,7 @@
  * By default, no board IRQ is reserved. It should be finished in
  * custom board since sparse IRQ is already enabled.
  */
+<<<<<<< HEAD
 #define IRQ_BOARD_START		(PXA_GPIO_IRQ_BASE + PXA_NR_BUILTIN_GPIO)
 
 #define PXA_NR_IRQS		(IRQ_BOARD_START)
@@ -113,5 +121,10 @@ void ichp_handle_irq(struct pt_regs *);
 
 void pxa_init_irq(int irq_nr, int (*set_wake)(struct irq_data *, unsigned int));
 #endif
+=======
+#define IRQ_BOARD_START		(PXA_GPIO_IRQ_BASE + PXA_GPIO_IRQ_NUM)
+
+#define NR_IRQS			(IRQ_BOARD_START)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __ASM_MACH_IRQS_H */

@@ -47,6 +47,10 @@ struct thread_struct {
  */
 #define start_thread(regs, ip, usp) \
 do { \
+<<<<<<< HEAD
+=======
+	set_fs(USER_DS); \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	regs->erp = ip; \
 	regs->ccs |= 1 << (U_CCS_BITNR + CCS_SHIFT); \
 	wrusp(usp); \

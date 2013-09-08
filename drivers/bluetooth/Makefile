@@ -29,3 +29,9 @@ hci_uart-$(CONFIG_BT_HCIUART_BCSP)	+= hci_bcsp.o
 hci_uart-$(CONFIG_BT_HCIUART_LL)	+= hci_ll.o
 hci_uart-$(CONFIG_BT_HCIUART_ATH3K)	+= hci_ath.o
 hci_uart-objs				:= $(hci_uart-y)
+<<<<<<< HEAD
+=======
+
+obj-$(CONFIG_BT_HCIUART_BRCM) += hci_brcm.o
+obj-$(CONFIG_BCM_BZHW) += bcm_bzhw.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

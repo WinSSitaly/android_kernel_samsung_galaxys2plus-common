@@ -65,7 +65,11 @@ enum {
 #define usbip_dbg_flag_vhci_tx	(usbip_debug_flag & usbip_debug_vhci_tx)
 #define usbip_dbg_flag_stub_rx	(usbip_debug_flag & usbip_debug_stub_rx)
 #define usbip_dbg_flag_stub_tx	(usbip_debug_flag & usbip_debug_stub_tx)
+<<<<<<< HEAD
 #define usbip_dbg_flag_vhci_sysfs  (usbip_debug_flag & usbip_debug_vhci_sysfs)
+=======
+#define usbip_dbg_flag_vhci_sysfs   (usbip_debug_flag & usbip_debug_vhci_sysfs)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern unsigned long usbip_debug_flag;
 extern struct device_attribute dev_attr_usbip_debug;
@@ -104,6 +108,7 @@ extern struct device_attribute dev_attr_usbip_debug;
 	usbip_dbg_with_flag(usbip_debug_stub_tx, fmt , ##args)
 
 /*
+<<<<<<< HEAD
  * USB/IP request headers
  *
  * Each request is transferred across the network to its counterpart, which
@@ -125,10 +130,35 @@ extern struct device_attribute dev_attr_usbip_debug;
  *    (server to client)
  *
  */
+=======
+ * USB/IP request headers.
+ * Currently, we define 4 request types:
+ *
+ *  - CMD_SUBMIT transfers a USB request, corresponding to usb_submit_urb().
+ *    (client to server)
+ *  - RET_RETURN transfers the result of CMD_SUBMIT.
+ *    (server to client)
+ *  - CMD_UNLINK transfers an unlink request of a pending USB request.
+ *    (client to server)
+ *  - RET_UNLINK transfers the result of CMD_UNLINK.
+ *    (server to client)
+ *
+ * Note: The below request formats are based on the USB subsystem of Linux. Its
+ * details will be defined when other implementations come.
+ *
+ *
+ */
+
+/*
+ * A basic header followed by other additional headers.
+ */
+struct usbip_header_basic {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define USBIP_CMD_SUBMIT	0x0001
 #define USBIP_CMD_UNLINK	0x0002
 #define USBIP_RET_SUBMIT	0x0003
 #define USBIP_RET_UNLINK	0x0004
+<<<<<<< HEAD
 
 #define USBIP_DIR_OUT	0x00
 #define USBIP_DIR_IN	0x01
@@ -162,10 +192,41 @@ struct usbip_header_basic {
  */
 struct usbip_header_cmd_submit {
 	__u32 transfer_flags;
+=======
+	__u32 command;
+
+	 /* sequential number which identifies requests.
+	  * incremented per connections */
+	__u32 seqnum;
+
+	/* devid is used to specify a remote USB device uniquely instead
+	 * of busnum and devnum in Linux. In the case of Linux stub_driver,
+	 * this value is ((busnum << 16) | devnum) */
+	__u32 devid;
+
+#define USBIP_DIR_OUT	0
+#define USBIP_DIR_IN	1
+	__u32 direction;
+	__u32 ep;     /* endpoint number */
+} __packed;
+
+/*
+ * An additional header for a CMD_SUBMIT packet.
+ */
+struct usbip_header_cmd_submit {
+	/* these values are basically the same as in a URB. */
+
+	/* the same in a URB. */
+	__u32 transfer_flags;
+
+	/* set the following data size (out),
+	 * or expected reading data size (in) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__s32 transfer_buffer_length;
 
 	/* it is difficult for usbip to sync frames (reserved only?) */
 	__s32 start_frame;
+<<<<<<< HEAD
 	__s32 number_of_packets;
 	__s32 interval;
 
@@ -199,15 +260,62 @@ struct usbip_header_cmd_unlink {
 /**
  * struct usbip_header_ret_unlink - USBIP_RET_UNLINK packet header
  * @status: return status of the request
+=======
+
+	/* the number of iso descriptors that follows this header */
+	__s32 number_of_packets;
+
+	/* the maximum time within which this request works in a host
+	 * controller of a server side */
+	__s32 interval;
+
+	/* set setup packet data for a CTRL request */
+	unsigned char setup[8];
+} __packed;
+
+/*
+ * An additional header for a RET_SUBMIT packet.
+ */
+struct usbip_header_ret_submit {
+	__s32 status;
+	__s32 actual_length;		/* returned data length */
+	__s32 start_frame;		/* ISO and INT */
+	__s32 number_of_packets;	/* ISO only */
+	__s32 error_count;		/* ISO only */
+} __packed;
+
+/*
+ * An additional header for a CMD_UNLINK packet.
+ */
+struct usbip_header_cmd_unlink {
+	__u32 seqnum;			/* URB's seqnum that will be unlinked */
+} __packed;
+
+/*
+ * An additional header for a RET_UNLINK packet.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct usbip_header_ret_unlink {
 	__s32 status;
 } __packed;
 
+<<<<<<< HEAD
 /**
  * struct usbip_header - common header for all usbip packets
  * @base: the basic header
  * @u: packet type dependent header
+=======
+/* the same as usb_iso_packet_descriptor but packed for pdu */
+struct usbip_iso_packet_descriptor {
+	__u32 offset;
+	__u32 length;			/* expected length */
+	__u32 actual_length;
+	__u32 status;
+} __packed;
+
+/*
+ * All usbip packets use a common header to keep code simple.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct usbip_header {
 	struct usbip_header_basic base;
@@ -220,6 +328,7 @@ struct usbip_header {
 	} u;
 } __packed;
 
+<<<<<<< HEAD
 /*
  * This is the same as usb_iso_packet_descriptor but packed for pdu.
  */
@@ -229,6 +338,42 @@ struct usbip_iso_packet_descriptor {
 	__u32 actual_length;
 	__u32 status;
 } __packed;
+=======
+int usbip_xmit(int, struct socket *, char *, int, int);
+int usbip_sendmsg(struct socket *, struct msghdr *, int);
+
+static inline int interface_to_busnum(struct usb_interface *interface)
+{
+	struct usb_device *udev = interface_to_usbdev(interface);
+	return udev->bus->busnum;
+}
+
+static inline int interface_to_devnum(struct usb_interface *interface)
+{
+	struct usb_device *udev = interface_to_usbdev(interface);
+	return udev->devnum;
+}
+
+static inline int interface_to_infnum(struct usb_interface *interface)
+{
+	return interface->cur_altsetting->desc.bInterfaceNumber;
+}
+
+#if 0
+int setnodelay(struct socket *);
+int setquickack(struct socket *);
+int setkeepalive(struct socket *socket);
+void setreuse(struct socket *);
+#endif
+
+struct socket *sockfd_to_socket(unsigned int);
+int set_sockaddr(struct socket *socket, struct sockaddr_storage *ss);
+
+void usbip_dump_urb(struct urb *purb);
+void usbip_dump_header(struct usbip_header *pdu);
+
+struct usbip_device;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum usbip_side {
 	USBIP_VHCI,
@@ -251,7 +396,24 @@ enum usbip_status {
 	VDEV_ST_ERROR
 };
 
+<<<<<<< HEAD
 /* event handler */
+=======
+/* a common structure for stub_device and vhci_device */
+struct usbip_device {
+	enum usbip_side side;
+	enum usbip_status status;
+
+	/* lock for status */
+	spinlock_t lock;
+
+	struct socket *tcp_socket;
+
+	struct task_struct *tcp_rx;
+	struct task_struct *tcp_tx;
+
+	/* event handler */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define USBIP_EH_SHUTDOWN	(1 << 0)
 #define USBIP_EH_BYE		(1 << 1)
 #define USBIP_EH_RESET		(1 << 2)
@@ -268,6 +430,7 @@ enum usbip_status {
 #define	VDEV_EVENT_ERROR_TCP	(USBIP_EH_SHUTDOWN | USBIP_EH_RESET)
 #define	VDEV_EVENT_ERROR_MALLOC	(USBIP_EH_SHUTDOWN | USBIP_EH_UNUSABLE)
 
+<<<<<<< HEAD
 /* a common structure for stub_device and vhci_device */
 struct usbip_device {
 	enum usbip_side side;
@@ -281,6 +444,8 @@ struct usbip_device {
 	struct task_struct *tcp_rx;
 	struct task_struct *tcp_tx;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long event;
 	struct task_struct *eh;
 	wait_queue_head_t eh_waitq;
@@ -292,6 +457,7 @@ struct usbip_device {
 	} eh_ops;
 };
 
+<<<<<<< HEAD
 /* usbip_common.c */
 void usbip_dump_urb(struct urb *purb);
 void usbip_dump_header(struct usbip_header *pdu);
@@ -308,6 +474,19 @@ void *usbip_alloc_iso_desc_pdu(struct urb *urb, ssize_t *bufflen);
 int usbip_recv_iso(struct usbip_device *ud, struct urb *urb);
 void usbip_pad_iso(struct usbip_device *ud, struct urb *urb);
 int usbip_recv_xbuff(struct usbip_device *ud, struct urb *urb);
+=======
+void usbip_pack_pdu(struct usbip_header *pdu, struct urb *urb, int cmd,
+		    int pack);
+
+void usbip_header_correct_endian(struct usbip_header *pdu, int send);
+/* some members of urb must be substituted before. */
+int usbip_recv_xbuff(struct usbip_device *ud, struct urb *urb);
+/* some members of urb must be substituted before. */
+int usbip_recv_iso(struct usbip_device *ud, struct urb *urb);
+/* some members of urb must be substituted before. */
+int usbip_pad_iso(struct usbip_device *ud, struct urb *urb);
+void *usbip_alloc_iso_desc_pdu(struct urb *urb, ssize_t *bufflen);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* usbip_event.c */
 int usbip_start_eh(struct usbip_device *ud);
@@ -315,6 +494,7 @@ void usbip_stop_eh(struct usbip_device *ud);
 void usbip_event_add(struct usbip_device *ud, unsigned long event);
 int usbip_event_happened(struct usbip_device *ud);
 
+<<<<<<< HEAD
 static inline int interface_to_busnum(struct usb_interface *interface)
 {
 	struct usb_device *udev = interface_to_usbdev(interface);
@@ -327,4 +507,6 @@ static inline int interface_to_devnum(struct usb_interface *interface)
 	return udev->devnum;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __USBIP_COMMON_H */

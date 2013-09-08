@@ -30,13 +30,23 @@
 #include <linux/seccomp.h>
 #include <linux/audit.h>
 #include <trace/syscall.h>
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_PPC32
+#include <linux/module.h>
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/hw_breakpoint.h>
 #include <linux/perf_event.h>
 
 #include <asm/uaccess.h>
 #include <asm/page.h>
 #include <asm/pgtable.h>
+<<<<<<< HEAD
 #include <asm/switch_to.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/syscalls.h>
@@ -879,7 +889,11 @@ void user_disable_single_step(struct task_struct *task)
 }
 
 #ifdef CONFIG_HAVE_HW_BREAKPOINT
+<<<<<<< HEAD
 void ptrace_triggered(struct perf_event *bp,
+=======
+void ptrace_triggered(struct perf_event *bp, int nmi,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      struct perf_sample_data *data, struct pt_regs *regs)
 {
 	struct perf_event_attr attr;
@@ -970,7 +984,11 @@ int ptrace_set_debugreg(struct task_struct *task, unsigned long addr,
 								&attr.bp_type);
 
 	thread->ptrace_bps[0] = bp = register_user_hw_breakpoint(&attr,
+<<<<<<< HEAD
 					       ptrace_triggered, NULL, task);
+=======
+							ptrace_triggered, task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(bp)) {
 		thread->ptrace_bps[0] = NULL;
 		ptrace_put_breakpoints(task);
@@ -1494,6 +1512,7 @@ long arch_ptrace(struct task_struct *child, long request,
 		if (index < PT_FPR0) {
 			tmp = ptrace_get_reg(child, (int) index);
 		} else {
+<<<<<<< HEAD
 			unsigned int fpidx = index - PT_FPR0;
 
 			flush_fp_to_thread(child);
@@ -1502,6 +1521,11 @@ long arch_ptrace(struct task_struct *child, long request,
 					[fpidx * TS_FPRWIDTH];
 			else
 				tmp = child->thread.fpscr.val;
+=======
+			flush_fp_to_thread(child);
+			tmp = ((unsigned long *)child->thread.fpr)
+				[TS_FPRWIDTH * (index - PT_FPR0)];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		ret = put_user(tmp, datalp);
 		break;
@@ -1527,6 +1551,7 @@ long arch_ptrace(struct task_struct *child, long request,
 		if (index < PT_FPR0) {
 			ret = ptrace_put_reg(child, index, data);
 		} else {
+<<<<<<< HEAD
 			unsigned int fpidx = index - PT_FPR0;
 
 			flush_fp_to_thread(child);
@@ -1535,6 +1560,11 @@ long arch_ptrace(struct task_struct *child, long request,
 					[fpidx * TS_FPRWIDTH] = data;
 			else
 				child->thread.fpscr.val = data;
+=======
+			flush_fp_to_thread(child);
+			((unsigned long *)child->thread.fpr)
+				[TS_FPRWIDTH * (index - PT_FPR0)] = data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = 0;
 		}
 		break;
@@ -1724,6 +1754,7 @@ long do_syscall_trace_enter(struct pt_regs *regs)
 	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
 		trace_sys_enter(regs, regs->gpr[0]);
 
+<<<<<<< HEAD
 #ifdef CONFIG_PPC64
 	if (!is_32bit_task())
 		audit_syscall_entry(AUDIT_ARCH_PPC64,
@@ -1738,6 +1769,24 @@ long do_syscall_trace_enter(struct pt_regs *regs)
 				    regs->gpr[4] & 0xffffffff,
 				    regs->gpr[5] & 0xffffffff,
 				    regs->gpr[6] & 0xffffffff);
+=======
+	if (unlikely(current->audit_context)) {
+#ifdef CONFIG_PPC64
+		if (!is_32bit_task())
+			audit_syscall_entry(AUDIT_ARCH_PPC64,
+					    regs->gpr[0],
+					    regs->gpr[3], regs->gpr[4],
+					    regs->gpr[5], regs->gpr[6]);
+		else
+#endif
+			audit_syscall_entry(AUDIT_ARCH_PPC,
+					    regs->gpr[0],
+					    regs->gpr[3] & 0xffffffff,
+					    regs->gpr[4] & 0xffffffff,
+					    regs->gpr[5] & 0xffffffff,
+					    regs->gpr[6] & 0xffffffff);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret ?: regs->gpr[0];
 }
@@ -1746,7 +1795,13 @@ void do_syscall_trace_leave(struct pt_regs *regs)
 {
 	int step;
 
+<<<<<<< HEAD
 	audit_syscall_exit(regs);
+=======
+	if (unlikely(current->audit_context))
+		audit_syscall_exit((regs->ccr&0x10000000)?AUDITSC_FAILURE:AUDITSC_SUCCESS,
+				   regs->result);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
 		trace_sys_exit(regs, regs->result);

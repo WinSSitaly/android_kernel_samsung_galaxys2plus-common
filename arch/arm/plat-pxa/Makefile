@@ -4,6 +4,10 @@
 
 obj-y	:= dma.o
 
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_GENERIC_GPIO)	+= gpio.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_PXA3xx)		+= mfp.o
 obj-$(CONFIG_PXA95x)		+= mfp.o
 obj-$(CONFIG_ARCH_MMP)		+= mfp.o

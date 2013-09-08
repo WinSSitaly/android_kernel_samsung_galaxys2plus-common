@@ -7,14 +7,22 @@
  */
 
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/linkage.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/asm-offsets.h>
 #include <asm/thread_info.h>
 #include <asm/page.h>
 #include "sizes.h"
 
 __HEAD
+<<<<<<< HEAD
 ENTRY(startup_continue)
+=======
+	.globl	startup_continue
+startup_continue:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	basr	%r13,0			# get base
 .LPG1:
 	# setup stack

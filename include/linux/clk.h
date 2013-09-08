@@ -3,7 +3,10 @@
  *
  *  Copyright (C) 2004 ARM Limited.
  *  Written by Deep Blue Solutions Limited.
+<<<<<<< HEAD
  *  Copyright (C) 2011-2012 Linaro Ltd <mturquette@linaro.org>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -12,6 +15,7 @@
 #ifndef __LINUX_CLK_H
 #define __LINUX_CLK_H
 
+<<<<<<< HEAD
 #include <linux/kernel.h>
 #include <linux/notifier.h>
 
@@ -82,6 +86,19 @@ int clk_notifier_register(struct clk *clk, struct notifier_block *nb);
 int clk_notifier_unregister(struct clk *clk, struct notifier_block *nb);
 
 #endif /* !CONFIG_COMMON_CLK */
+=======
+struct device;
+
+/*
+ * The base API.
+ */
+
+
+/*
+ * struct clk - an machine class defined object / cookie.
+ */
+struct clk;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * clk_get - lookup and obtain a reference to a clock producer.
@@ -101,6 +118,7 @@ int clk_notifier_unregister(struct clk *clk, struct notifier_block *nb);
 struct clk *clk_get(struct device *dev, const char *id);
 
 /**
+<<<<<<< HEAD
  * clk_prepare - prepare a clock source
  * @clk: clock source
  *
@@ -119,13 +137,18 @@ static inline int clk_prepare(struct clk *clk)
 #endif
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * clk_enable - inform the system when the clock source should be running.
  * @clk: clock source
  *
  * If the clock can not be enabled/disabled, this should return success.
  *
+<<<<<<< HEAD
  * May be called from atomic contexts.
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Returns success (0) or negative errno.
  */
 int clk_enable(struct clk *clk);
@@ -137,8 +160,11 @@ int clk_enable(struct clk *clk);
  * Inform the system that a clock source is no longer required by
  * a driver and may be shut down.
  *
+<<<<<<< HEAD
  * May be called from atomic contexts.
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Implementation detail: if the clock source is shared between
  * multiple drivers, clk_enable() calls must be balanced by the
  * same number of clk_disable() calls for the clock source to be
@@ -146,6 +172,7 @@ int clk_enable(struct clk *clk);
  */
 void clk_disable(struct clk *clk);
 
+<<<<<<< HEAD
 
 /**
  * clk_unprepare - undo preparation of a clock source
@@ -187,6 +214,8 @@ static inline void clk_disable_unprepare(struct clk *clk)
 	clk_unprepare(clk);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
  *		  This is only valid once the clock source has been enabled.

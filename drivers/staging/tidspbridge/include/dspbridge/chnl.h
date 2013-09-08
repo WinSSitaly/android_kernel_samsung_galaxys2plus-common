@@ -48,6 +48,10 @@
  *      -ECHRNG:     This manager cannot handle this many channels.
  *      -EEXIST:       Channel manager already exists for this device.
  *  Requires:
+<<<<<<< HEAD
+=======
+ *      chnl_init(void) called.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *      channel_mgr != NULL.
  *      mgr_attrts != NULL.
  *  Ensures:
@@ -69,6 +73,10 @@ extern int chnl_create(struct chnl_mgr **channel_mgr,
  *      0:            Success.
  *      -EFAULT:        hchnl_mgr was invalid.
  *  Requires:
+<<<<<<< HEAD
+=======
+ *      chnl_init(void) called.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  Ensures:
  *      0:            Cancels I/O on each open channel.
  *                          Closes each open channel.
@@ -77,4 +85,34 @@ extern int chnl_create(struct chnl_mgr **channel_mgr,
  */
 extern int chnl_destroy(struct chnl_mgr *hchnl_mgr);
 
+<<<<<<< HEAD
+=======
+/*
+ *  ======== chnl_exit ========
+ *  Purpose:
+ *      Discontinue usage of the CHNL module.
+ *  Parameters:
+ *  Returns:
+ *  Requires:
+ *      chnl_init(void) previously called.
+ *  Ensures:
+ *      Resources, if any acquired in chnl_init(void), are freed when the last
+ *      client of CHNL calls chnl_exit(void).
+ */
+extern void chnl_exit(void);
+
+/*
+ *  ======== chnl_init ========
+ *  Purpose:
+ *      Initialize the CHNL module's private state.
+ *  Parameters:
+ *  Returns:
+ *      TRUE if initialized; FALSE if error occurred.
+ *  Requires:
+ *  Ensures:
+ *      A requirement for each of the other public CHNL functions.
+ */
+extern bool chnl_init(void);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CHNL_ */

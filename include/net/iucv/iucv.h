@@ -120,7 +120,11 @@ struct iucv_message {
 	u32 reply_size;
 	u8  rmmsg[8];
 	u8  flags;
+<<<<<<< HEAD
 } __packed;
+=======
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * struct iucv_handler
@@ -459,6 +463,7 @@ int __iucv_message_send(struct iucv_path *path, struct iucv_message *msg,
 int iucv_message_send2way(struct iucv_path *path, struct iucv_message *msg,
 			  u8 flags, u32 srccls, void *buffer, size_t size,
 			  void *answer, size_t asize, size_t *residual);
+<<<<<<< HEAD
 
 struct iucv_interface {
 	int (*message_receive)(struct iucv_path *path, struct iucv_message *msg,
@@ -493,3 +498,5 @@ struct iucv_interface {
 };
 
 extern struct iucv_interface iucv_if;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -63,7 +63,13 @@ ENTRY(_start)
 real_start:
 #endif
 
+<<<<<<< HEAD
 	mts	rmsr, r0
+=======
+	mfs	r1, rmsr
+	andi	r1, r1, ~2
+	mts	rmsr, r1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * According to Xilinx, msrclr instruction behaves like 'mfs rX,rpc'
  * if the msrclr instruction is not enabled. We use this to detect
@@ -71,7 +77,10 @@ real_start:
  * r8 == 0 - msr instructions are implemented
  * r8 != 0 - msr instructions are not implemented
  */
+<<<<<<< HEAD
 	mfs	r1, rmsr
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	msrclr	r8, 0 /* clear nothing - just read msr for test */
 	cmpu	r8, r8, r1 /* r1 must contain msr reg content */
 
@@ -95,7 +104,11 @@ big_endian:
 _prepare_copy_fdt:
 	or	r11, r0, r0 /* incremment */
 	ori	r4, r0, TOPHYS(_fdt_start)
+<<<<<<< HEAD
 	ori	r3, r0, (0x8000 - 4)
+=======
+	ori	r3, r0, (0x4000 - 4)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 _copy_fdt:
 	lw	r12, r7, r11 /* r12 = r7 + r11 */
 	sw	r12, r4, r11 /* addr[r4 + r11] = r12 */
@@ -149,7 +162,10 @@ _copy_bram:
 _invalidate:
 	mts	rtlbx, r3
 	mts	rtlbhi, r0			/* flush: ensure V is clear   */
+<<<<<<< HEAD
 	mts	rtlblo, r0
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bgtid	r3, _invalidate		/* loop for all entries       */
 	addik	r3, r3, -1
 	/* sync */
@@ -169,6 +185,7 @@ _invalidate:
 	addik	r3,r0, CONFIG_KERNEL_START /* Load the kernel virtual address */
 	tophys(r4,r3)			/* Load the kernel physical address */
 
+<<<<<<< HEAD
 	/* start to do TLB calculation */
 	addik	r12, r0, _end
 	rsub	r12, r3, r12
@@ -216,6 +233,8 @@ GT20: /* TLB1 is 16MB - kernel size >20MB */
 	addik	r10, r0, 0x1000000 /* means TLB1 is 16MB */
 tlb_end:
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Configure and load two entries into TLB slots 0 and 1.
 	 * In case we are pinning TLBs, these are reserved in by the
@@ -225,6 +244,7 @@ tlb_end:
 	andi	r4,r4,0xfffffc00	/* Mask off the real page number */
 	ori	r4,r4,(TLB_WR | TLB_EX)	/* Set the write and execute bits */
 
+<<<<<<< HEAD
 	/*
 	 * TLB0 is always used - check if is not zero (r9 stores TLB0 value)
 	 * if is use TLB1 value and clear it (r10 stores TLB1 value)
@@ -253,10 +273,17 @@ tlb0_not_zero:
 	/* Load tlb_skip size value which is index to first unused TLB entry */
 	lwi	r11, r0, TOPHYS(tlb_skip)
 	mts     rtlbx,r11		/* TLB slow 0 */
+=======
+	andi	r3,r3,0xfffffc00	/* Mask off the effective page number */
+	ori	r3,r3,(TLB_VALID | TLB_PAGESZ(PAGESZ_16M))
+
+	mts     rtlbx,r0		/* TLB slow 0 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mts	rtlblo,r4		/* Load the data portion of the entry */
 	mts	rtlbhi,r3		/* Load the tag portion of the entry */
 
+<<<<<<< HEAD
 	/* Increase tlb_skip size */
 	addik	r11, r11, 1
 	swi	r11, r0, TOPHYS(tlb_skip)
@@ -285,21 +312,35 @@ tlb0_not_zero:
 
 	lwi	r11, r0, TOPHYS(tlb_skip)
 	mts     rtlbx, r11		/* r11 is used from TLB0 */
+=======
+	addik	r4, r4, 0x01000000	/* Map next 16 M entries */
+	addik	r3, r3, 0x01000000
+
+	ori	r6,r0,1			/* TLB slot 1 */
+	mts     rtlbx,r6
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mts	rtlblo,r4		/* Load the data portion of the entry */
 	mts	rtlbhi,r3		/* Load the tag portion of the entry */
 
+<<<<<<< HEAD
 	/* Increase tlb_skip size */
 	addik	r11, r11, 1
 	swi	r11, r0, TOPHYS(tlb_skip)
 
 jump_over2:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Load a TLB entry for LMB, since we need access to
 	 * the exception vectors, using a 4k real==virtual mapping.
 	 */
+<<<<<<< HEAD
 	/* Use temporary TLB_ID for LMB - clear this temporary mapping later */
 	ori	r6, r0, MICROBLAZE_LMB_TLB_ID
+=======
+	ori	r6,r0,3			/* TLB slot 3 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mts     rtlbx,r6
 
 	ori	r4,r0,(TLB_WR | TLB_EX)
@@ -338,8 +379,13 @@ start_here:
 	 * Please see $(ARCH)/mach-$(SUBARCH)/setup.c for
 	 * the function.
 	 */
+<<<<<<< HEAD
 	addik	r11, r0, machine_early_init
 	brald	r15, r11
+=======
+	addik	r9, r0, machine_early_init
+	brald	r15, r9
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nop
 
 #ifndef CONFIG_MMU
@@ -368,7 +414,12 @@ start_here:
 
 	/* Load up the kernel context */
 kernel_load_context:
+<<<<<<< HEAD
 	ori	r5, r0, MICROBLAZE_LMB_TLB_ID
+=======
+	# Keep entry 0 and 1 valid. Entry 3 mapped to LMB can go away.
+	ori	r5,r0,3
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mts     rtlbx,r5
 	nop
 	mts	rtlbhi,r0

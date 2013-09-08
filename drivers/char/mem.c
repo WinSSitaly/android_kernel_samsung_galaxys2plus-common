@@ -26,7 +26,10 @@
 #include <linux/bootmem.h>
 #include <linux/splice.h>
 #include <linux/pfn.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/uaccess.h>
 #include <asm/io.h>
@@ -57,6 +60,10 @@ static inline int valid_mmap_phys_addr_range(unsigned long pfn, size_t size)
 }
 #endif
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_DEVMEM) || defined(CONFIG_DEVKMEM)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_STRICT_DEVMEM
 static inline int range_is_allowed(unsigned long pfn, unsigned long size)
 {
@@ -82,7 +89,13 @@ static inline int range_is_allowed(unsigned long pfn, unsigned long size)
 	return 1;
 }
 #endif
+<<<<<<< HEAD
 
+=======
+#endif
+
+#ifdef CONFIG_DEVMEM
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __weak unxlate_dev_mem_ptr(unsigned long phys, void *addr)
 {
 }
@@ -209,6 +222,12 @@ static ssize_t write_mem(struct file *file, const char __user *buf,
 	*ppos += written;
 	return written;
 }
+<<<<<<< HEAD
+=======
+#endif	/* CONFIG_DEVMEM */
+
+#if defined(CONFIG_DEVMEM) || defined(CONFIG_DEVKMEM)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int __weak phys_mem_access_prot_allowed(struct file *file,
 	unsigned long pfn, unsigned long size, pgprot_t *vma_prot)
@@ -330,6 +349,10 @@ static int mmap_mem(struct file *file, struct vm_area_struct *vma)
 	}
 	return 0;
 }
+<<<<<<< HEAD
+=======
+#endif	/* CONFIG_DEVMEM */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_DEVKMEM
 static int mmap_kmem(struct file *file, struct vm_area_struct *vma)
@@ -694,6 +717,11 @@ static loff_t null_lseek(struct file *file, loff_t offset, int orig)
 	return file->f_pos = 0;
 }
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_DEVMEM) || defined(CONFIG_DEVKMEM) || defined(CONFIG_DEVPORT)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The memory devices use the full 32/64 bits of the offset, and so we cannot
  * check against negative addresses: they are ok. The return value is weird,
@@ -727,10 +755,20 @@ static loff_t memory_lseek(struct file *file, loff_t offset, int orig)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+#endif
+
+#if defined(CONFIG_DEVMEM) || defined(CONFIG_DEVKMEM) || defined(CONFIG_DEVPORT)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int open_port(struct inode * inode, struct file * filp)
 {
 	return capable(CAP_SYS_RAWIO) ? 0 : -EPERM;
 }
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define zero_lseek	null_lseek
 #define full_lseek      null_lseek
@@ -740,6 +778,10 @@ static int open_port(struct inode * inode, struct file * filp)
 #define open_kmem	open_mem
 #define open_oldmem	open_mem
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_DEVMEM
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct file_operations mem_fops = {
 	.llseek		= memory_lseek,
 	.read		= read_mem,
@@ -748,6 +790,10 @@ static const struct file_operations mem_fops = {
 	.open		= open_mem,
 	.get_unmapped_area = get_unmapped_area_mem,
 };
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_DEVKMEM
 static const struct file_operations kmem_fops = {
@@ -847,11 +893,21 @@ static const struct file_operations kmsg_fops = {
 
 static const struct memdev {
 	const char *name;
+<<<<<<< HEAD
 	umode_t mode;
 	const struct file_operations *fops;
 	struct backing_dev_info *dev_info;
 } devlist[] = {
 	 [1] = { "mem", 0, &mem_fops, &directly_mappable_cdev_bdi },
+=======
+	mode_t mode;
+	const struct file_operations *fops;
+	struct backing_dev_info *dev_info;
+} devlist[] = {
+#ifdef CONFIG_DEVMEM
+	 [1] = { "mem", 0, &mem_fops, &directly_mappable_cdev_bdi },
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_DEVKMEM
 	 [2] = { "kmem", 0, &kmem_fops, &directly_mappable_cdev_bdi },
 #endif
@@ -901,7 +957,11 @@ static const struct file_operations memory_fops = {
 	.llseek = noop_llseek,
 };
 
+<<<<<<< HEAD
 static char *mem_devnode(struct device *dev, umode_t *mode)
+=======
+static char *mem_devnode(struct device *dev, mode_t *mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (mode && devlist[MINOR(dev->devt)].mode)
 		*mode = devlist[MINOR(dev->devt)].mode;

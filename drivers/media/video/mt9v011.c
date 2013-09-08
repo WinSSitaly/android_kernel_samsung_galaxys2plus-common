@@ -9,7 +9,10 @@
 #include <linux/slab.h>
 #include <linux/videodev2.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/div64.h>
 #include <media/v4l2-device.h>
 #include <media/v4l2-chip-ident.h>
@@ -55,11 +58,16 @@ static struct v4l2_queryctrl mt9v011_qctrl[] = {
 		.type = V4L2_CTRL_TYPE_INTEGER,
 		.name = "Gain",
 		.minimum = 0,
+<<<<<<< HEAD
 		.maximum = (1 << 12) - 1 - 0x0020,
+=======
+		.maximum = (1 << 10) - 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.step = 1,
 		.default_value = 0x0020,
 		.flags = 0,
 	}, {
+<<<<<<< HEAD
 		.id = V4L2_CID_EXPOSURE,
 		.type = V4L2_CTRL_TYPE_INTEGER,
 		.name = "Exposure",
@@ -69,6 +77,8 @@ static struct v4l2_queryctrl mt9v011_qctrl[] = {
 		.default_value = 0x01fc,
 		.flags = 0,
 	}, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.id = V4L2_CID_RED_BALANCE,
 		.type = V4L2_CTRL_TYPE_INTEGER,
 		.name = "Red Balance",
@@ -115,8 +125,12 @@ struct mt9v011 {
 	unsigned hflip:1;
 	unsigned vflip:1;
 
+<<<<<<< HEAD
 	u16 global_gain, exposure;
 	s16 red_bal, blue_bal;
+=======
+	u16 global_gain, red_bal, blue_bal;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline struct mt9v011 *to_mt9v011(struct v4l2_subdev *sd)
@@ -191,6 +205,7 @@ static const struct i2c_reg_value mt9v011_init_default[] = {
 		{ R07_MT9V011_OUT_CTRL, 0x0002 },	/* chip enable */
 };
 
+<<<<<<< HEAD
 
 static u16 calc_mt9v011_gain(s16 lineargain)
 {
@@ -253,6 +268,26 @@ static void set_balance(struct v4l2_subdev *sd)
 	mt9v011_write(sd, R2C_MT9V011_BLUE_GAIN, blue_gain);
 	mt9v011_write(sd, R2D_MT9V011_RED_GAIN, red_gain);
 	mt9v011_write(sd, R09_MT9V011_SHUTTER_WIDTH, exposure);
+=======
+static void set_balance(struct v4l2_subdev *sd)
+{
+	struct mt9v011 *core = to_mt9v011(sd);
+	u16 green1_gain, green2_gain, blue_gain, red_gain;
+
+	green1_gain = core->global_gain;
+	green2_gain = core->global_gain;
+
+	blue_gain = core->global_gain +
+		    core->global_gain * core->blue_bal / (1 << 9);
+
+	red_gain = core->global_gain +
+		   core->global_gain * core->blue_bal / (1 << 9);
+
+	mt9v011_write(sd, R2B_MT9V011_GREEN_1_GAIN, green1_gain);
+	mt9v011_write(sd, R2E_MT9V011_GREEN_2_GAIN,  green1_gain);
+	mt9v011_write(sd, R2C_MT9V011_BLUE_GAIN, blue_gain);
+	mt9v011_write(sd, R2D_MT9V011_RED_GAIN, red_gain);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void calc_fps(struct v4l2_subdev *sd, u32 *numerator, u32 *denominator)
@@ -341,7 +376,11 @@ static void set_res(struct v4l2_subdev *sd)
 	 * be missing.
 	 */
 
+<<<<<<< HEAD
 	hstart = 20 + (640 - core->width) / 2;
+=======
+	hstart = 14 + (640 - core->width) / 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mt9v011_write(sd, R02_MT9V011_COLSTART, hstart);
 	mt9v011_write(sd, R04_MT9V011_WIDTH, core->width);
 	mt9v011_write(sd, R05_MT9V011_HBLANK, 771 - core->width);
@@ -393,9 +432,12 @@ static int mt9v011_g_ctrl(struct v4l2_subdev *sd, struct v4l2_control *ctrl)
 	case V4L2_CID_GAIN:
 		ctrl->value = core->global_gain;
 		return 0;
+<<<<<<< HEAD
 	case V4L2_CID_EXPOSURE:
 		ctrl->value = core->exposure;
 		return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case V4L2_CID_RED_BALANCE:
 		ctrl->value = core->red_bal;
 		return 0;
@@ -450,9 +492,12 @@ static int mt9v011_s_ctrl(struct v4l2_subdev *sd, struct v4l2_control *ctrl)
 	case V4L2_CID_GAIN:
 		core->global_gain = ctrl->value;
 		break;
+<<<<<<< HEAD
 	case V4L2_CID_EXPOSURE:
 		core->exposure = ctrl->value;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case V4L2_CID_RED_BALANCE:
 		core->red_bal = ctrl->value;
 		break;
@@ -659,7 +704,10 @@ static int mt9v011_probe(struct i2c_client *c,
 	}
 
 	core->global_gain = 0x0024;
+<<<<<<< HEAD
 	core->exposure = 0x01fc;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	core->width  = 640;
 	core->height = 480;
 	core->xtal = 27000000;	/* Hz */
@@ -709,4 +757,19 @@ static struct i2c_driver mt9v011_driver = {
 	.id_table	= mt9v011_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(mt9v011_driver);
+=======
+static __init int init_mt9v011(void)
+{
+	return i2c_add_driver(&mt9v011_driver);
+}
+
+static __exit void exit_mt9v011(void)
+{
+	i2c_del_driver(&mt9v011_driver);
+}
+
+module_init(init_mt9v011);
+module_exit(exit_mt9v011);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

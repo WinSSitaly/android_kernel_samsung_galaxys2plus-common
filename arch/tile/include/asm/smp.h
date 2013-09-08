@@ -43,6 +43,13 @@ void evaluate_message(int tag);
 /* Boot a secondary cpu */
 void online_secondary(void);
 
+<<<<<<< HEAD
+=======
+/* Call a function on a specified set of CPUs (may include this one). */
+extern void on_each_cpu_mask(const struct cpumask *mask,
+			     void (*func)(void *), void *info, bool wait);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Topology of the supervisor tile grid, and coordinates of boot processor */
 extern HV_Topology smp_topology;
 
@@ -87,6 +94,12 @@ void print_disabled_cpus(void);
 
 #else /* !CONFIG_SMP */
 
+<<<<<<< HEAD
+=======
+#define on_each_cpu_mask(mask, func, info, wait)		\
+  do { if (cpumask_test_cpu(0, (mask))) func(info); } while (0)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define smp_master_cpu		0
 #define smp_height		1
 #define smp_width		1

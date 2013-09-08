@@ -143,11 +143,18 @@ struct sigstack {
 #define SA_ONSTACK	_SV_SSTACK
 #define SA_RESTART	_SV_INTR
 #define SA_ONESHOT	_SV_RESET
+<<<<<<< HEAD
 #define SA_NODEFER	0x20u
 #define SA_NOCLDWAIT    0x100u
 #define SA_SIGINFO      0x200u
 
 #define SA_NOMASK	SA_NODEFER
+=======
+#define SA_NOMASK	0x20u
+#define SA_NOCLDWAIT    0x100u
+#define SA_SIGINFO      0x200u
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define SIG_BLOCK          0x01	/* for blocking signals */
 #define SIG_UNBLOCK        0x02	/* for unblocking signals */
@@ -192,7 +199,10 @@ struct __old_sigaction {
 	unsigned long		sa_flags;
 	void			(*sa_restorer)(void);  /* not used by Linux/SPARC yet */
 };
+<<<<<<< HEAD
 #define __ARCH_HAS_SA_RESTORER
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct sigaltstack {
 	void			__user *ss_sp;

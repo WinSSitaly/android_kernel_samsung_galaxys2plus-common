@@ -27,6 +27,10 @@
 #include <linux/memblock.h>
 
 #include <asm/mmu.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/page.h>
 #include <asm/cacheflush.h>
 
@@ -77,7 +81,15 @@ static void __init ppc44x_pin_tlb(unsigned int virt, unsigned int phys)
 		"tlbwe	%1,%3,%5\n"
 		"tlbwe	%0,%3,%6\n"
 	:
+<<<<<<< HEAD
 	: "r" (PPC44x_TLB_SW | PPC44x_TLB_SR | PPC44x_TLB_SX | PPC44x_TLB_G),
+=======
+#ifdef CONFIG_PPC47x
+	: "r" (PPC47x_TLB2_S_RWX),
+#else
+	: "r" (PPC44x_TLB_SW | PPC44x_TLB_SR | PPC44x_TLB_SX | PPC44x_TLB_G),
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	  "r" (phys),
 	  "r" (virt | PPC44x_TLB_VALID | PPC44x_TLB_256M),
 	  "r" (entry),
@@ -181,11 +193,18 @@ void __init MMU_init_hw(void)
 unsigned long __init mmu_mapin_ram(unsigned long top)
 {
 	unsigned long addr;
+<<<<<<< HEAD
 	unsigned long memstart = memstart_addr & ~(PPC_PIN_SIZE - 1);
 
 	/* Pin in enough TLBs to cover any lowmem not covered by the
 	 * initial 256M mapping established in head_44x.S */
 	for (addr = memstart + PPC_PIN_SIZE; addr < lowmem_end_addr;
+=======
+
+	/* Pin in enough TLBs to cover any lowmem not covered by the
+	 * initial 256M mapping established in head_44x.S */
+	for (addr = PPC_PIN_SIZE; addr < lowmem_end_addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	     addr += PPC_PIN_SIZE) {
 		if (mmu_has_feature(MMU_FTR_TYPE_47x))
 			ppc47x_pin_tlb(addr + PAGE_OFFSET, addr);
@@ -214,25 +233,37 @@ unsigned long __init mmu_mapin_ram(unsigned long top)
 void setup_initial_memory_limit(phys_addr_t first_memblock_base,
 				phys_addr_t first_memblock_size)
 {
+<<<<<<< HEAD
 	u64 size;
 
 #ifndef CONFIG_NONSTATIC_KERNEL
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* We don't currently support the first MEMBLOCK not mapping 0
 	 * physical on those processors
 	 */
 	BUG_ON(first_memblock_base != 0);
+<<<<<<< HEAD
 #endif
 
 	/* 44x has a 256M TLB entry pinned at boot */
 	size = (min_t(u64, first_memblock_size, PPC_PIN_SIZE));
 	memblock_set_current_limit(first_memblock_base + size);
+=======
+
+	/* 44x has a 256M TLB entry pinned at boot */
+	memblock_set_current_limit(min_t(u64, first_memblock_size, PPC_PIN_SIZE));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_SMP
 void __cpuinit mmu_init_secondary(int cpu)
 {
 	unsigned long addr;
+<<<<<<< HEAD
 	unsigned long memstart = memstart_addr & ~(PPC_PIN_SIZE - 1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Pin in enough TLBs to cover any lowmem not covered by the
 	 * initial 256M mapping established in head_44x.S
@@ -243,7 +274,11 @@ void __cpuinit mmu_init_secondary(int cpu)
 	 * stack. current (r2) isn't initialized, smp_processor_id()
 	 * will not work, current thread info isn't accessible, ...
 	 */
+<<<<<<< HEAD
 	for (addr = memstart + PPC_PIN_SIZE; addr < lowmem_end_addr;
+=======
+	for (addr = PPC_PIN_SIZE; addr < lowmem_end_addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	     addr += PPC_PIN_SIZE) {
 		if (mmu_has_feature(MMU_FTR_TYPE_47x))
 			ppc47x_pin_tlb(addr + PAGE_OFFSET, addr);

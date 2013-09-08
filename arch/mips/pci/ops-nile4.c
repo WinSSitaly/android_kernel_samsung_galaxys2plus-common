@@ -4,6 +4,10 @@
 #include <asm/bootinfo.h>
 
 #include <asm/lasat/lasat.h>
+<<<<<<< HEAD
+=======
+#include <asm/gt64120.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/nile4.h>
 
 #define PCI_ACCESS_READ  0

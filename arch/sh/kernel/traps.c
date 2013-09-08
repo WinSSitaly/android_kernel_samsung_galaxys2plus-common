@@ -7,7 +7,11 @@
 #include <linux/uaccess.h>
 #include <linux/hardirq.h>
 #include <asm/unwinder.h>
+<<<<<<< HEAD
 #include <asm/traps.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_GENERIC_BUG
 static void handle_BUG(struct pt_regs *regs)

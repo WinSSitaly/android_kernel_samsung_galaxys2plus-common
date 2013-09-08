@@ -5,7 +5,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +52,11 @@
 
 #define _COMPONENT          ACPI_EVENTS
 ACPI_MODULE_NAME("evgpeinit")
+<<<<<<< HEAD
 #if (!ACPI_REDUCED_HARDWARE)	/* Entire module */
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Note: History of _PRW support in ACPICA
  *
@@ -440,5 +448,8 @@ acpi_ev_match_gpe_method(acpi_handle obj_handle,
 			  name, gpe_number));
 	return_ACPI_STATUS(AE_OK);
 }
+<<<<<<< HEAD
 
 #endif				/* !ACPI_REDUCED_HARDWARE */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

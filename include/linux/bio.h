@@ -23,7 +23,10 @@
 #include <linux/highmem.h>
 #include <linux/mempool.h>
 #include <linux/ioprio.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_BLOCK
 
@@ -102,10 +105,17 @@ static inline int bio_has_allocated_vec(struct bio *bio)
  * I/O completely on that queue (see ide-dma for example)
  */
 #define __bio_kmap_atomic(bio, idx, kmtype)				\
+<<<<<<< HEAD
 	(kmap_atomic(bio_iovec_idx((bio), (idx))->bv_page) +	\
 		bio_iovec_idx((bio), (idx))->bv_offset)
 
 #define __bio_kunmap_atomic(addr, kmtype) kunmap_atomic(addr)
+=======
+	(kmap_atomic(bio_iovec_idx((bio), (idx))->bv_page, kmtype) +	\
+		bio_iovec_idx((bio), (idx))->bv_offset)
+
+#define __bio_kunmap_atomic(addr, kmtype) kunmap_atomic(addr, kmtype)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * merge helpers etc
@@ -212,8 +222,13 @@ extern void bio_pair_release(struct bio_pair *dbio);
 extern struct bio_set *bioset_create(unsigned int, unsigned int);
 extern void bioset_free(struct bio_set *);
 
+<<<<<<< HEAD
 extern struct bio *bio_alloc(gfp_t, unsigned int);
 extern struct bio *bio_kmalloc(gfp_t, unsigned int);
+=======
+extern struct bio *bio_alloc(gfp_t, int);
+extern struct bio *bio_kmalloc(gfp_t, int);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct bio *bio_alloc_bioset(gfp_t, int, struct bio_set *);
 extern void bio_put(struct bio *);
 extern void bio_free(struct bio *, struct bio_set *);
@@ -270,6 +285,17 @@ extern void bvec_free_bs(struct bio_set *, struct bio_vec *, unsigned int);
 extern unsigned int bvec_nr_vecs(unsigned short idx);
 
 /*
+<<<<<<< HEAD
+=======
+ * Allow queuer to specify a completion CPU for this bio
+ */
+static inline void bio_set_completion_cpu(struct bio *bio, unsigned int cpu)
+{
+	bio->bi_comp_cpu = cpu;
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * bio_set is used to allow other portions of the IO system to
  * allocate their own private memory pools for bio and iovec structures.
  * These memory pools in turn all allocate from the bio_slab
@@ -318,7 +344,11 @@ static inline char *bvec_kmap_irq(struct bio_vec *bvec, unsigned long *flags)
 	 * balancing is a lot nicer this way
 	 */
 	local_irq_save(*flags);
+<<<<<<< HEAD
 	addr = (unsigned long) kmap_atomic(bvec->bv_page);
+=======
+	addr = (unsigned long) kmap_atomic(bvec->bv_page, KM_BIO_SRC_IRQ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BUG_ON(addr & ~PAGE_MASK);
 
@@ -329,7 +359,11 @@ static inline void bvec_kunmap_irq(char *buffer, unsigned long *flags)
 {
 	unsigned long ptr = (unsigned long) buffer & PAGE_MASK;
 
+<<<<<<< HEAD
 	kunmap_atomic((void *) ptr);
+=======
+	kunmap_atomic((void *) ptr, KM_BIO_SRC_IRQ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_irq_restore(*flags);
 }
 
@@ -516,6 +550,7 @@ extern void bio_integrity_init(void);
 
 #else /* CONFIG_BLK_DEV_INTEGRITY */
 
+<<<<<<< HEAD
 static inline int bio_integrity(struct bio *bio)
 {
 	return 0;
@@ -574,6 +609,22 @@ static inline void bio_integrity_init(void)
 {
 	return;
 }
+=======
+#define bio_integrity(a)		(0)
+#define bioset_integrity_create(a, b)	(0)
+#define bio_integrity_prep(a)		(0)
+#define bio_integrity_enabled(a)	(0)
+#define bio_integrity_clone(a, b, c, d)	(0)
+#define bioset_integrity_free(a)	do { } while (0)
+#define bio_integrity_free(a, b)	do { } while (0)
+#define bio_integrity_endio(a, b)	do { } while (0)
+#define bio_integrity_advance(a, b)	do { } while (0)
+#define bio_integrity_trim(a, b, c)	do { } while (0)
+#define bio_integrity_split(a, b, c)	do { } while (0)
+#define bio_integrity_set_tag(a, b, c)	do { } while (0)
+#define bio_integrity_get_tag(a, b, c)	do { } while (0)
+#define bio_integrity_init(a)		do { } while (0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* CONFIG_BLK_DEV_INTEGRITY */
 

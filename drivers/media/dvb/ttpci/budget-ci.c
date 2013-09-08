@@ -193,6 +193,10 @@ static int msp430_ir_init(struct budget_ci *budget_ci)
 	dev->input_phys = budget_ci->ir.phys;
 	dev->input_id.bustype = BUS_PCI;
 	dev->input_id.version = 1;
+<<<<<<< HEAD
+=======
+	dev->scanmask = 0xff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (saa->pci->subsystem_vendor) {
 		dev->input_id.vendor = saa->pci->subsystem_vendor;
 		dev->input_id.product = saa->pci->subsystem_device;
@@ -233,8 +237,11 @@ static int msp430_ir_init(struct budget_ci *budget_ci)
 		dev->map_name = RC_MAP_BUDGET_CI_OLD;
 		break;
 	}
+<<<<<<< HEAD
 	if (!budget_ci->ir.full_rc5)
 		dev->scanmask = 0xff;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	error = rc_register_device(dev);
 	if (error) {
@@ -660,23 +667,37 @@ static int philips_su1278_tt_set_symbol_rate(struct dvb_frontend *fe, u32 srate,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int philips_su1278_tt_tuner_set_params(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int philips_su1278_tt_tuner_set_params(struct dvb_frontend *fe,
+					   struct dvb_frontend_parameters *params)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct budget_ci *budget_ci = (struct budget_ci *) fe->dvb->priv;
 	u32 div;
 	u8 buf[4];
 	struct i2c_msg msg = {.addr = 0x60,.flags = 0,.buf = buf,.len = sizeof(buf) };
 
+<<<<<<< HEAD
 	if ((p->frequency < 950000) || (p->frequency > 2150000))
 		return -EINVAL;
 
 	div = (p->frequency + (500 - 1)) / 500;	/* round correctly */
+=======
+	if ((params->frequency < 950000) || (params->frequency > 2150000))
+		return -EINVAL;
+
+	div = (params->frequency + (500 - 1)) / 500;	// round correctly
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	buf[0] = (div >> 8) & 0x7f;
 	buf[1] = div & 0xff;
 	buf[2] = 0x80 | ((div & 0x18000) >> 10) | 2;
 	buf[3] = 0x20;
 
+<<<<<<< HEAD
 	if (p->symbol_rate < 4000000)
 		buf[3] |= 1;
 
@@ -687,6 +708,18 @@ static int philips_su1278_tt_tuner_set_params(struct dvb_frontend *fe)
 	else if (p->frequency < 2050000)
 		buf[3] |= 0x80;
 	else if (p->frequency < 2150000)
+=======
+	if (params->u.qpsk.symbol_rate < 4000000)
+		buf[3] |= 1;
+
+	if (params->frequency < 1250000)
+		buf[3] |= 0;
+	else if (params->frequency < 1550000)
+		buf[3] |= 0x40;
+	else if (params->frequency < 2050000)
+		buf[3] |= 0x80;
+	else if (params->frequency < 2150000)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		buf[3] |= 0xC0;
 
 	if (fe->ops.i2c_gate_ctrl)
@@ -741,9 +774,14 @@ static int philips_tdm1316l_tuner_init(struct dvb_frontend *fe)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe, struct dvb_frontend_parameters *params)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct budget_ci *budget_ci = (struct budget_ci *) fe->dvb->priv;
 	u8 tuner_buf[4];
 	struct i2c_msg tuner_msg = {.addr = budget_ci->tuner_pll_address,.flags = 0,.buf = tuner_buf,.len = sizeof(tuner_buf) };
@@ -751,7 +789,11 @@ static int philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe)
 	u8 band, cp, filter;
 
 	// determine charge pump
+<<<<<<< HEAD
 	tuner_frequency = p->frequency + 36130000;
+=======
+	tuner_frequency = params->frequency + 36130000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (tuner_frequency < 87000000)
 		return -EINVAL;
 	else if (tuner_frequency < 130000000)
@@ -776,6 +818,7 @@ static int philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe)
 		return -EINVAL;
 
 	// determine band
+<<<<<<< HEAD
 	if (p->frequency < 49000000)
 		return -EINVAL;
 	else if (p->frequency < 159000000)
@@ -783,23 +826,45 @@ static int philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe)
 	else if (p->frequency < 444000000)
 		band = 2;
 	else if (p->frequency < 861000000)
+=======
+	if (params->frequency < 49000000)
+		return -EINVAL;
+	else if (params->frequency < 159000000)
+		band = 1;
+	else if (params->frequency < 444000000)
+		band = 2;
+	else if (params->frequency < 861000000)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		band = 4;
 	else
 		return -EINVAL;
 
 	// setup PLL filter and TDA9889
+<<<<<<< HEAD
 	switch (p->bandwidth_hz) {
 	case 6000000:
+=======
+	switch (params->u.ofdm.bandwidth) {
+	case BANDWIDTH_6_MHZ:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tda1004x_writereg(fe, 0x0C, 0x14);
 		filter = 0;
 		break;
 
+<<<<<<< HEAD
 	case 7000000:
+=======
+	case BANDWIDTH_7_MHZ:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tda1004x_writereg(fe, 0x0C, 0x80);
 		filter = 0;
 		break;
 
+<<<<<<< HEAD
 	case 8000000:
+=======
+	case BANDWIDTH_8_MHZ:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tda1004x_writereg(fe, 0x0C, 0x14);
 		filter = 1;
 		break;
@@ -810,7 +875,11 @@ static int philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe)
 
 	// calculate divisor
 	// ((36130000+((1000000/6)/2)) + Finput)/(1000000/6)
+<<<<<<< HEAD
 	tuner_frequency = (((p->frequency / 1000) * 6) + 217280) / 1000;
+=======
+	tuner_frequency = (((params->frequency / 1000) * 6) + 217280) / 1000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	// setup tuner buffer
 	tuner_buf[0] = tuner_frequency >> 8;
@@ -857,9 +926,14 @@ static struct tda1004x_config philips_tdm1316l_config_invert = {
 	.request_firmware = philips_tdm1316l_request_firmware,
 };
 
+<<<<<<< HEAD
 static int dvbc_philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int dvbc_philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe, struct dvb_frontend_parameters *params)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct budget_ci *budget_ci = (struct budget_ci *) fe->dvb->priv;
 	u8 tuner_buf[5];
 	struct i2c_msg tuner_msg = {.addr = budget_ci->tuner_pll_address,
@@ -870,7 +944,11 @@ static int dvbc_philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe)
 	u8 band, cp, filter;
 
 	// determine charge pump
+<<<<<<< HEAD
 	tuner_frequency = p->frequency + 36125000;
+=======
+	tuner_frequency = params->frequency + 36125000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (tuner_frequency < 87000000)
 		return -EINVAL;
 	else if (tuner_frequency < 130000000) {
@@ -907,7 +985,11 @@ static int dvbc_philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe)
 	filter = 1;
 
 	// calculate divisor
+<<<<<<< HEAD
 	tuner_frequency = (p->frequency + 36125000 + (62500/2)) / 62500;
+=======
+	tuner_frequency = (params->frequency + 36125000 + (62500/2)) / 62500;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	// setup tuner buffer
 	tuner_buf[0] = tuner_frequency >> 8;
@@ -1056,6 +1138,10 @@ static const struct stb0899_s1_reg tt3200_stb0899_s1_init_1[] = {
 	{ STB0899_DISRX_ST0     	, 0x04 },
 	{ STB0899_DISRX_ST1     	, 0x00 },
 	{ STB0899_DISPARITY     	, 0x00 },
+<<<<<<< HEAD
+=======
+	{ STB0899_DISFIFO       	, 0x00 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ STB0899_DISSTATUS		, 0x20 },
 	{ STB0899_DISF22        	, 0x8c },
 	{ STB0899_DISF22RX      	, 0x9a },

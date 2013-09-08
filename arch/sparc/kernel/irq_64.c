@@ -5,6 +5,10 @@
  * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)
  */
 
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/linkage.h>
 #include <linux/ptrace.h>
@@ -25,7 +29,12 @@
 
 #include <asm/ptrace.h>
 #include <asm/processor.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/irq.h>
 #include <asm/io.h>
 #include <asm/iommu.h>

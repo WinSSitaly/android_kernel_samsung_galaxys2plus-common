@@ -294,6 +294,7 @@ bool strlazymatch(const char *str, const char *pat)
 {
 	return __match_glob(str, pat, true);
 }
+<<<<<<< HEAD
 
 /**
  * strtailcmp - Compare the tail of two strings
@@ -313,3 +314,5 @@ int strtailcmp(const char *s1, const char *s2)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

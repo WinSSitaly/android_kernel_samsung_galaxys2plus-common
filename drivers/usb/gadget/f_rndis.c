@@ -5,22 +5,45 @@
  * Copyright (C) 2003-2004 Robert Schwebel, Benedikt Spranger
  * Copyright (C) 2008 Nokia Corporation
  * Copyright (C) 2009 Samsung Electronics
+<<<<<<< HEAD
  *                    Author: Michal Nazarewicz (mina86@mina86.com)
+=======
+ *                    Author: Michal Nazarewicz (m.nazarewicz@samsung.com)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 /* #define VERBOSE_DEBUG */
 
 #include <linux/slab.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/device.h>
 #include <linux/etherdevice.h>
 
 #include <linux/atomic.h>
+=======
+#include <linux/platform_device.h>
+#include <linux/etherdevice.h>
+
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "u_ether.h"
 #include "rndis.h"
@@ -67,13 +90,35 @@
  *   - MS-Windows drivers sometimes emit undocumented requests.
  */
 
+<<<<<<< HEAD
+=======
+struct rndis_ep_descs {
+	struct usb_endpoint_descriptor	*in;
+	struct usb_endpoint_descriptor	*out;
+	struct usb_endpoint_descriptor	*notify;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct f_rndis {
 	struct gether			port;
 	u8				ctrl_id, data_id;
 	u8				ethaddr[ETH_ALEN];
+<<<<<<< HEAD
 	int				config;
 
 	struct usb_ep			*notify;
+=======
+	u32				vendorID;
+	const char			*manufacturer;
+	int				config;
+
+
+	struct rndis_ep_descs		fs;
+	struct rndis_ep_descs		hs;
+
+	struct usb_ep			*notify;
+	struct usb_endpoint_descriptor	*notify_desc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct usb_request		*notify_req;
 	atomic_t			notify_count;
 };
@@ -86,12 +131,19 @@ static inline struct f_rndis *func_to_rndis(struct usb_function *f)
 /* peak (theoretical) bulk transfer rate in bits-per-second */
 static unsigned int bitrate(struct usb_gadget *g)
 {
+<<<<<<< HEAD
 	if (gadget_is_superspeed(g) && g->speed == USB_SPEED_SUPER)
 		return 13 * 1024 * 8 * 1000 * 8;
 	else if (gadget_is_dualspeed(g) && g->speed == USB_SPEED_HIGH)
 		return 13 * 512 * 8 * 1000 * 8;
 	else
 		return 19 * 64 * 1 * 1000 * 8;
+=======
+	if (gadget_is_dualspeed(g) && g->speed == USB_SPEED_HIGH)
+		return 13 * 512 * 8 * 1000 * 8;
+	else
+		return 19 *  64 * 1 * 1000 * 8;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*-------------------------------------------------------------------------*/
@@ -170,12 +222,19 @@ static struct usb_interface_assoc_descriptor
 rndis_iad_descriptor = {
 	.bLength =		sizeof rndis_iad_descriptor,
 	.bDescriptorType =	USB_DT_INTERFACE_ASSOCIATION,
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bFirstInterface =	0, /* XXX, hardcoded */
 	.bInterfaceCount = 	2,	// control + data
 	.bFunctionClass =	USB_CLASS_COMM,
 	.bFunctionSubClass =	USB_CDC_SUBCLASS_ETHERNET,
+<<<<<<< HEAD
 	.bFunctionProtocol =	USB_CDC_PROTO_NONE,
+=======
+	.bFunctionProtocol =	USB_CDC_ACM_PROTO_VENDOR,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* .iFunction = DYNAMIC */
 };
 
@@ -209,7 +268,10 @@ static struct usb_endpoint_descriptor fs_out_desc = {
 
 static struct usb_descriptor_header *eth_fs_function[] = {
 	(struct usb_descriptor_header *) &rndis_iad_descriptor,
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* control interface matches ACM, not Ethernet */
 	(struct usb_descriptor_header *) &rndis_control_intf,
 	(struct usb_descriptor_header *) &header_desc,
@@ -217,7 +279,10 @@ static struct usb_descriptor_header *eth_fs_function[] = {
 	(struct usb_descriptor_header *) &rndis_acm_descriptor,
 	(struct usb_descriptor_header *) &rndis_union_desc,
 	(struct usb_descriptor_header *) &fs_notify_desc,
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* data interface has no altsetting */
 	(struct usb_descriptor_header *) &rndis_data_intf,
 	(struct usb_descriptor_header *) &fs_in_desc,
@@ -236,7 +301,10 @@ static struct usb_endpoint_descriptor hs_notify_desc = {
 	.wMaxPacketSize =	cpu_to_le16(STATUS_BYTECOUNT),
 	.bInterval =		LOG2_STATUS_INTERVAL_MSEC + 4,
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct usb_endpoint_descriptor hs_in_desc = {
 	.bLength =		USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType =	USB_DT_ENDPOINT,
@@ -257,7 +325,10 @@ static struct usb_endpoint_descriptor hs_out_desc = {
 
 static struct usb_descriptor_header *eth_hs_function[] = {
 	(struct usb_descriptor_header *) &rndis_iad_descriptor,
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* control interface matches ACM, not Ethernet */
 	(struct usb_descriptor_header *) &rndis_control_intf,
 	(struct usb_descriptor_header *) &header_desc,
@@ -265,7 +336,10 @@ static struct usb_descriptor_header *eth_hs_function[] = {
 	(struct usb_descriptor_header *) &rndis_acm_descriptor,
 	(struct usb_descriptor_header *) &rndis_union_desc,
 	(struct usb_descriptor_header *) &hs_notify_desc,
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* data interface has no altsetting */
 	(struct usb_descriptor_header *) &rndis_data_intf,
 	(struct usb_descriptor_header *) &hs_in_desc,
@@ -273,6 +347,7 @@ static struct usb_descriptor_header *eth_hs_function[] = {
 	NULL,
 };
 
+<<<<<<< HEAD
 /* super speed support: */
 
 static struct usb_endpoint_descriptor ss_notify_desc = {
@@ -343,6 +418,8 @@ static struct usb_descriptor_header *eth_ss_function[] = {
 	NULL,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* string descriptors: */
 
 static struct usb_string rndis_string_defs[] = {
@@ -362,6 +439,13 @@ static struct usb_gadget_strings *rndis_strings[] = {
 	NULL,
 };
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_ETH_SKB_ALLOC_OPTIMIZATION
+#define DMA_ALIGN_ROOM 4
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*-------------------------------------------------------------------------*/
 
 static struct sk_buff *rndis_add_header(struct gether *port,
@@ -369,7 +453,15 @@ static struct sk_buff *rndis_add_header(struct gether *port,
 {
 	struct sk_buff *skb2;
 
+<<<<<<< HEAD
 	skb2 = skb_realloc_headroom(skb, sizeof(struct rndis_packet_msg_type));
+=======
+	skb2 = skb_realloc_headroom(skb, sizeof(struct rndis_packet_msg_type)
+#ifdef CONFIG_USB_ETH_SKB_ALLOC_OPTIMIZATION
+		+ DMA_ALIGN_ROOM
+#endif
+	);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (skb2)
 		rndis_add_hdr(skb2);
 
@@ -500,7 +592,10 @@ rndis_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
 			if (buf) {
 				memcpy(req->buf, buf, n);
 				req->complete = rndis_response_complete;
+<<<<<<< HEAD
 				req->context = rndis;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				rndis_free_response(rndis->config, buf);
 				value = n;
 			}
@@ -543,6 +638,7 @@ static int rndis_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
 		if (rndis->notify->driver_data) {
 			VDBG(cdev, "reset rndis control %d\n", intf);
 			usb_ep_disable(rndis->notify);
+<<<<<<< HEAD
 		}
 		if (!rndis->notify->desc) {
 			VDBG(cdev, "init rndis ctrl %d\n", intf);
@@ -550,6 +646,15 @@ static int rndis_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
 				goto fail;
 		}
 		usb_ep_enable(rndis->notify);
+=======
+		} else {
+			VDBG(cdev, "init rndis ctrl %d\n", intf);
+		}
+		rndis->notify_desc = ep_choose(cdev->gadget,
+				rndis->hs.notify,
+				rndis->fs.notify);
+		usb_ep_enable(rndis->notify, rndis->notify_desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rndis->notify->driver_data = rndis;
 
 	} else if (intf == rndis->data_id) {
@@ -557,6 +662,7 @@ static int rndis_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
 
 		if (rndis->port.in_ep->driver_data) {
 			DBG(cdev, "reset rndis\n");
+<<<<<<< HEAD
 			gether_disconnect(&rndis->port);
 		}
 
@@ -571,6 +677,19 @@ static int rndis_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
 				goto fail;
 			}
 		}
+=======
+			pr_info("reset rndis\n");
+			gether_disconnect(&rndis->port);
+		}
+
+		if (!rndis->port.in) {
+			DBG(cdev, "init rndis\n");
+		}
+		rndis->port.in = ep_choose(cdev->gadget,
+				rndis->hs.in, rndis->fs.in);
+		rndis->port.out = ep_choose(cdev->gadget,
+				rndis->hs.out, rndis->fs.out);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Avoid ZLPs; they can be troublesome. */
 		rndis->port.is_zlp_ok = false;
@@ -613,6 +732,10 @@ static void rndis_disable(struct usb_function *f)
 		return;
 
 	DBG(cdev, "rndis deactivated\n");
+<<<<<<< HEAD
+=======
+	pr_info("%s\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rndis_uninit(rndis->config);
 	gether_disconnect(&rndis->port);
@@ -621,6 +744,21 @@ static void rndis_disable(struct usb_function *f)
 	rndis->notify->driver_data = NULL;
 }
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_BRCM_NETCONSOLE
+/* Keep the function for debugging purpose */
+static void rndis_suspend(struct usb_function *f)
+{
+	struct f_rndis		*rndis = func_to_rndis(f);
+	struct usb_composite_dev *cdev = f->config->cdev;
+
+	DBG(cdev, "rndis suspend\n");
+	gether_disconnect(&rndis->port);
+}
+#endif //#ifdef CONFIG_BRCM_NETCONSOLE
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*-------------------------------------------------------------------------*/
 
 /*
@@ -635,6 +773,10 @@ static void rndis_open(struct gether *geth)
 	struct f_rndis		*rndis = func_to_rndis(&geth->func);
 	struct usb_composite_dev *cdev = geth->func.config->cdev;
 
+<<<<<<< HEAD
+=======
+        printk("USBD][%s] RNDIS node open\n",__func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DBG(cdev, "%s\n", __func__);
 
 	rndis_set_param_medium(rndis->config, NDIS_MEDIUM_802_3,
@@ -646,6 +788,10 @@ static void rndis_close(struct gether *geth)
 {
 	struct f_rndis		*rndis = func_to_rndis(&geth->func);
 
+<<<<<<< HEAD
+=======
+        printk("USBD][%s] RNDIS  node close \n",__func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DBG(geth->func.config->cdev, "%s\n", __func__);
 
 	rndis_set_param_medium(rndis->config, NDIS_MEDIUM_802_3, 0);
@@ -725,6 +871,16 @@ rndis_bind(struct usb_configuration *c, struct usb_function *f)
 	if (!f->descriptors)
 		goto fail;
 
+<<<<<<< HEAD
+=======
+	rndis->fs.in = usb_find_endpoint(eth_fs_function,
+			f->descriptors, &fs_in_desc);
+	rndis->fs.out = usb_find_endpoint(eth_fs_function,
+			f->descriptors, &fs_out_desc);
+	rndis->fs.notify = usb_find_endpoint(eth_fs_function,
+			f->descriptors, &fs_notify_desc);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* support all relevant hardware speeds... we expect that when
 	 * hardware is dual speed, all bulk-capable endpoints work at
 	 * both speeds
@@ -739,6 +895,7 @@ rndis_bind(struct usb_configuration *c, struct usb_function *f)
 
 		/* copy descriptors, and track endpoint copies */
 		f->hs_descriptors = usb_copy_descriptors(eth_hs_function);
+<<<<<<< HEAD
 		if (!f->hs_descriptors)
 			goto fail;
 	}
@@ -755,6 +912,18 @@ rndis_bind(struct usb_configuration *c, struct usb_function *f)
 		f->ss_descriptors = usb_copy_descriptors(eth_ss_function);
 		if (!f->ss_descriptors)
 			goto fail;
+=======
+
+		if (!f->hs_descriptors)
+			goto fail;
+
+		rndis->hs.in = usb_find_endpoint(eth_hs_function,
+				f->hs_descriptors, &hs_in_desc);
+		rndis->hs.out = usb_find_endpoint(eth_hs_function,
+				f->hs_descriptors, &hs_out_desc);
+		rndis->hs.notify = usb_find_endpoint(eth_hs_function,
+				f->hs_descriptors, &hs_notify_desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	rndis->port.open = rndis_open;
@@ -768,12 +937,18 @@ rndis_bind(struct usb_configuration *c, struct usb_function *f)
 	rndis_set_param_medium(rndis->config, NDIS_MEDIUM_802_3, 0);
 	rndis_set_host_mac(rndis->config, rndis->ethaddr);
 
+<<<<<<< HEAD
 #if 0
 // FIXME
 	if (rndis_set_param_vendor(rndis->config, vendorID,
 				manufacturer))
 		goto fail0;
 #endif
+=======
+	if (rndis_set_param_vendor(rndis->config, rndis->vendorID,
+				   rndis->manufacturer))
+			goto fail;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* NOTE:  all that is done without knowing or caring about
 	 * the network link ... which is unavailable to this code
@@ -781,15 +956,21 @@ rndis_bind(struct usb_configuration *c, struct usb_function *f)
 	 */
 
 	DBG(cdev, "RNDIS: %s speed IN/%s OUT/%s NOTIFY/%s\n",
+<<<<<<< HEAD
 			gadget_is_superspeed(c->cdev->gadget) ? "super" :
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			gadget_is_dualspeed(c->cdev->gadget) ? "dual" : "full",
 			rndis->port.in_ep->name, rndis->port.out_ep->name,
 			rndis->notify->name);
 	return 0;
 
 fail:
+<<<<<<< HEAD
 	if (gadget_is_superspeed(c->cdev->gadget) && f->ss_descriptors)
 		usb_free_descriptors(f->ss_descriptors);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (gadget_is_dualspeed(c->cdev->gadget) && f->hs_descriptors)
 		usb_free_descriptors(f->hs_descriptors);
 	if (f->descriptors)
@@ -803,9 +984,15 @@ fail:
 	/* we might as well release our claims on endpoints */
 	if (rndis->notify)
 		rndis->notify->driver_data = NULL;
+<<<<<<< HEAD
 	if (rndis->port.out_ep)
 		rndis->port.out_ep->driver_data = NULL;
 	if (rndis->port.in_ep)
+=======
+	if (rndis->port.out)
+		rndis->port.out_ep->driver_data = NULL;
+	if (rndis->port.in)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rndis->port.in_ep->driver_data = NULL;
 
 	ERROR(cdev, "%s: can't bind, err %d\n", f->name, status);
@@ -821,8 +1008,11 @@ rndis_unbind(struct usb_configuration *c, struct usb_function *f)
 	rndis_deregister(rndis->config);
 	rndis_exit();
 
+<<<<<<< HEAD
 	if (gadget_is_superspeed(c->cdev->gadget))
 		usb_free_descriptors(f->ss_descriptors);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (gadget_is_dualspeed(c->cdev->gadget))
 		usb_free_descriptors(f->hs_descriptors);
 	usb_free_descriptors(f->descriptors);
@@ -853,7 +1043,12 @@ static inline bool can_support_rndis(struct usb_configuration *c)
  * for calling @gether_cleanup() before module unload.
  */
 int
+<<<<<<< HEAD
 rndis_bind_config(struct usb_configuration *c, u8 ethaddr[ETH_ALEN])
+=======
+rndis_bind_config(struct usb_configuration *c, u8 ethaddr[ETH_ALEN],
+				u32 vendorID, const char *manufacturer)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct f_rndis	*rndis;
 	int		status;
@@ -861,6 +1056,7 @@ rndis_bind_config(struct usb_configuration *c, u8 ethaddr[ETH_ALEN])
 	if (!can_support_rndis(c) || !ethaddr)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	/* maybe allocate device-global string IDs */
 	if (rndis_string_defs[0].id == 0) {
 
@@ -869,6 +1065,16 @@ rndis_bind_config(struct usb_configuration *c, u8 ethaddr[ETH_ALEN])
 		if (status < 0)
 			return status;
 
+=======
+	/* setup RNDIS itself */
+	status = rndis_init();
+	if (status < 0)
+		return status;
+
+	/* maybe allocate device-global string IDs */
+	if (rndis_string_defs[0].id == 0) {
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* control interface label */
 		status = usb_string_id(c->cdev);
 		if (status < 0)
@@ -898,6 +1104,11 @@ rndis_bind_config(struct usb_configuration *c, u8 ethaddr[ETH_ALEN])
 		goto fail;
 
 	memcpy(rndis->ethaddr, ethaddr, ETH_ALEN);
+<<<<<<< HEAD
+=======
+	rndis->vendorID = vendorID;
+	rndis->manufacturer = manufacturer;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* RNDIS activates when the host changes this filter */
 	rndis->port.cdc_filter = 0;
@@ -915,6 +1126,12 @@ rndis_bind_config(struct usb_configuration *c, u8 ethaddr[ETH_ALEN])
 	rndis->port.func.set_alt = rndis_set_alt;
 	rndis->port.func.setup = rndis_setup;
 	rndis->port.func.disable = rndis_disable;
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_BRCM_NETCONSOLE
+	rndis->port.func.suspend = rndis_suspend;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	status = usb_add_function(c, &rndis->port.func);
 	if (status) {

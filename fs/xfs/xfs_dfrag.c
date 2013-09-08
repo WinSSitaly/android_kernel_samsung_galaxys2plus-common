@@ -163,14 +163,22 @@ xfs_swap_extents_check_format(
 
 	/* Check temp in extent form to max in target */
 	if (tip->i_d.di_format == XFS_DINODE_FMT_EXTENTS &&
+<<<<<<< HEAD
 	    XFS_IFORK_NEXTENTS(tip, XFS_DATA_FORK) >
 			XFS_IFORK_MAXEXT(ip, XFS_DATA_FORK))
+=======
+	    XFS_IFORK_NEXTENTS(tip, XFS_DATA_FORK) > ip->i_df.if_ext_max)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return EINVAL;
 
 	/* Check target in extent form to max in temp */
 	if (ip->i_d.di_format == XFS_DINODE_FMT_EXTENTS &&
+<<<<<<< HEAD
 	    XFS_IFORK_NEXTENTS(ip, XFS_DATA_FORK) >
 			XFS_IFORK_MAXEXT(tip, XFS_DATA_FORK))
+=======
+	    XFS_IFORK_NEXTENTS(ip, XFS_DATA_FORK) > tip->i_df.if_ext_max)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return EINVAL;
 
 	/*
@@ -182,6 +190,7 @@ xfs_swap_extents_check_format(
 	 * (a common defrag case) which will occur when the temp inode is in
 	 * extent format...
 	 */
+<<<<<<< HEAD
 	if (tip->i_d.di_format == XFS_DINODE_FMT_BTREE) {
 		if (XFS_IFORK_BOFF(ip) &&
 		    tip->i_df.if_broot_bytes > XFS_IFORK_BOFF(ip))
@@ -201,6 +210,20 @@ xfs_swap_extents_check_format(
 		    XFS_IFORK_MAXEXT(tip, XFS_DATA_FORK))
 			return EINVAL;
 	}
+=======
+	if (tip->i_d.di_format == XFS_DINODE_FMT_BTREE &&
+	    ((XFS_IFORK_BOFF(ip) &&
+	      tip->i_df.if_broot_bytes > XFS_IFORK_BOFF(ip)) ||
+	     XFS_IFORK_NEXTENTS(tip, XFS_DATA_FORK) <= ip->i_df.if_ext_max))
+		return EINVAL;
+
+	/* Reciprocal target->temp btree format checks */
+	if (ip->i_d.di_format == XFS_DINODE_FMT_BTREE &&
+	    ((XFS_IFORK_BOFF(tip) &&
+	      ip->i_df.if_broot_bytes > XFS_IFORK_BOFF(tip)) ||
+	     XFS_IFORK_NEXTENTS(ip, XFS_DATA_FORK) <= tip->i_df.if_ext_max))
+		return EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -215,7 +238,11 @@ xfs_swap_extents(
 	xfs_trans_t	*tp;
 	xfs_bstat_t	*sbp = &sxp->sx_stat;
 	xfs_ifork_t	*tempifp, *ifp, *tifp;
+<<<<<<< HEAD
 	int		src_log_flags, target_log_flags;
+=======
+	int		ilf_fields, tilf_fields;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int		error = 0;
 	int		aforkblks = 0;
 	int		taforkblks = 0;
@@ -358,6 +385,19 @@ xfs_swap_extents(
 	*tifp = *tempifp;	/* struct copy */
 
 	/*
+<<<<<<< HEAD
+=======
+	 * Fix the in-memory data fork values that are dependent on the fork
+	 * offset in the inode. We can't assume they remain the same as attr2
+	 * has dynamic fork offsets.
+	 */
+	ifp->if_ext_max = XFS_IFORK_SIZE(ip, XFS_DATA_FORK) /
+					(uint)sizeof(xfs_bmbt_rec_t);
+	tifp->if_ext_max = XFS_IFORK_SIZE(tip, XFS_DATA_FORK) /
+					(uint)sizeof(xfs_bmbt_rec_t);
+
+	/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Fix the on-disk inode values
 	 */
 	tmp = (__uint64_t)ip->i_d.di_nblocks;
@@ -385,8 +425,14 @@ xfs_swap_extents(
 	tip->i_delayed_blks = ip->i_delayed_blks;
 	ip->i_delayed_blks = 0;
 
+<<<<<<< HEAD
 	src_log_flags = XFS_ILOG_CORE;
 	switch (ip->i_d.di_format) {
+=======
+	ilf_fields = XFS_ILOG_CORE;
+
+	switch(ip->i_d.di_format) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case XFS_DINODE_FMT_EXTENTS:
 		/* If the extents fit in the inode, fix the
 		 * pointer.  Otherwise it's already NULL or
@@ -396,6 +442,7 @@ xfs_swap_extents(
 			ifp->if_u1.if_extents =
 				ifp->if_u2.if_inline_ext;
 		}
+<<<<<<< HEAD
 		src_log_flags |= XFS_ILOG_DEXT;
 		break;
 	case XFS_DINODE_FMT_BTREE:
@@ -405,6 +452,18 @@ xfs_swap_extents(
 
 	target_log_flags = XFS_ILOG_CORE;
 	switch (tip->i_d.di_format) {
+=======
+		ilf_fields |= XFS_ILOG_DEXT;
+		break;
+	case XFS_DINODE_FMT_BTREE:
+		ilf_fields |= XFS_ILOG_DBROOT;
+		break;
+	}
+
+	tilf_fields = XFS_ILOG_CORE;
+
+	switch(tip->i_d.di_format) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case XFS_DINODE_FMT_EXTENTS:
 		/* If the extents fit in the inode, fix the
 		 * pointer.  Otherwise it's already NULL or
@@ -414,19 +473,34 @@ xfs_swap_extents(
 			tifp->if_u1.if_extents =
 				tifp->if_u2.if_inline_ext;
 		}
+<<<<<<< HEAD
 		target_log_flags |= XFS_ILOG_DEXT;
 		break;
 	case XFS_DINODE_FMT_BTREE:
 		target_log_flags |= XFS_ILOG_DBROOT;
+=======
+		tilf_fields |= XFS_ILOG_DEXT;
+		break;
+	case XFS_DINODE_FMT_BTREE:
+		tilf_fields |= XFS_ILOG_DBROOT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
 
+<<<<<<< HEAD
 	xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL | XFS_IOLOCK_EXCL);
 	xfs_trans_ijoin(tp, tip, XFS_ILOCK_EXCL | XFS_IOLOCK_EXCL);
 
 	xfs_trans_log_inode(tp, ip,  src_log_flags);
 	xfs_trans_log_inode(tp, tip, target_log_flags);
+=======
+	xfs_trans_ijoin_ref(tp, ip, XFS_ILOCK_EXCL | XFS_IOLOCK_EXCL);
+	xfs_trans_ijoin_ref(tp, tip, XFS_ILOCK_EXCL | XFS_IOLOCK_EXCL);
+
+	xfs_trans_log_inode(tp, ip,  ilf_fields);
+	xfs_trans_log_inode(tp, tip, tilf_fields);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If this is a synchronous mount, make sure that the
@@ -435,7 +509,11 @@ xfs_swap_extents(
 	if (mp->m_flags & XFS_MOUNT_WSYNC)
 		xfs_trans_set_sync(tp);
 
+<<<<<<< HEAD
 	error = xfs_trans_commit(tp, 0);
+=======
+	error = xfs_trans_commit(tp, XFS_TRANS_SWAPEXT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	trace_xfs_swap_extent_after(ip, 0);
 	trace_xfs_swap_extent_after(tip, 1);

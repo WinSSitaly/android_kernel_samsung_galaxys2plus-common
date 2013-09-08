@@ -21,6 +21,10 @@
 #include <linux/smp.h>
 #include <linux/rtc.h>
 #include <asm/clock.h>
+<<<<<<< HEAD
+=======
+#include <asm/hwblk.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/rtc.h>
 
 /* Dummy RTC ops */
@@ -109,6 +113,10 @@ void __init time_init(void)
 	if (board_time_init)
 		board_time_init();
 
+<<<<<<< HEAD
+=======
+	hwblk_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clk_init();
 
 	late_time_init = sh_late_time_init;

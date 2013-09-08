@@ -35,3 +35,7 @@ static inline int kvm_para_has_feature(unsigned int feature)
 }
 #endif /* __KERNEL__ */
 #endif /* __LINUX_KVM_PARA_H */
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

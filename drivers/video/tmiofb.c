@@ -744,7 +744,11 @@ static int __devinit tmiofb_probe(struct platform_device *dev)
 		goto err_ioremap_vram;
 	}
 
+<<<<<<< HEAD
 	retval = request_irq(irq, &tmiofb_irq, 0,
+=======
+	retval = request_irq(irq, &tmiofb_irq, IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					dev_name(&dev->dev), info);
 
 	if (retval)

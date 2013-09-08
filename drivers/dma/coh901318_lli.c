@@ -7,10 +7,18 @@
  * Author: Per Friden <per.friden@stericsson.com>
  */
 
+<<<<<<< HEAD
 #include <linux/spinlock.h>
 #include <linux/memory.h>
 #include <linux/gfp.h>
 #include <linux/dmapool.h>
+=======
+#include <linux/dma-mapping.h>
+#include <linux/spinlock.h>
+#include <linux/dmapool.h>
+#include <linux/memory.h>
+#include <linux/gfp.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/coh901318.h>
 
 #include "coh901318_lli.h"
@@ -176,18 +184,30 @@ coh901318_lli_fill_single(struct coh901318_pool *pool,
 			  struct coh901318_lli *lli,
 			  dma_addr_t buf, unsigned int size,
 			  dma_addr_t dev_addr, u32 ctrl_chained, u32 ctrl_eom,
+<<<<<<< HEAD
 			  enum dma_transfer_direction dir)
+=======
+			  enum dma_data_direction dir)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int s = size;
 	dma_addr_t src;
 	dma_addr_t dst;
 
 
+<<<<<<< HEAD
 	if (dir == DMA_MEM_TO_DEV) {
 		src = buf;
 		dst = dev_addr;
 
 	} else if (dir == DMA_DEV_TO_MEM) {
+=======
+	if (dir == DMA_TO_DEVICE) {
+		src = buf;
+		dst = dev_addr;
+
+	} else if (dir == DMA_FROM_DEVICE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		src = dev_addr;
 		dst = buf;
@@ -214,9 +234,15 @@ coh901318_lli_fill_single(struct coh901318_pool *pool,
 
 		lli = coh901318_lli_next(lli);
 
+<<<<<<< HEAD
 		if (dir == DMA_MEM_TO_DEV)
 			src += block_size;
 		else if (dir == DMA_DEV_TO_MEM)
+=======
+		if (dir == DMA_TO_DEVICE)
+			src += block_size;
+		else if (dir == DMA_FROM_DEVICE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dst += block_size;
 	}
 
@@ -233,7 +259,11 @@ coh901318_lli_fill_sg(struct coh901318_pool *pool,
 		      struct scatterlist *sgl, unsigned int nents,
 		      dma_addr_t dev_addr, u32 ctrl_chained, u32 ctrl,
 		      u32 ctrl_last,
+<<<<<<< HEAD
 		      enum dma_transfer_direction dir, u32 ctrl_irq_mask)
+=======
+		      enum dma_data_direction dir, u32 ctrl_irq_mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 	struct scatterlist *sg;
@@ -248,9 +278,15 @@ coh901318_lli_fill_sg(struct coh901318_pool *pool,
 
 	spin_lock(&pool->lock);
 
+<<<<<<< HEAD
 	if (dir == DMA_MEM_TO_DEV)
 		dst = dev_addr;
 	else if (dir == DMA_DEV_TO_MEM)
+=======
+	if (dir == DMA_TO_DEVICE)
+		dst = dev_addr;
+	else if (dir == DMA_FROM_DEVICE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		src = dev_addr;
 	else
 		goto err;
@@ -268,7 +304,11 @@ coh901318_lli_fill_sg(struct coh901318_pool *pool,
 			ctrl_sg = ctrl ? ctrl : ctrl_last;
 
 
+<<<<<<< HEAD
 		if (dir == DMA_MEM_TO_DEV)
+=======
+		if (dir == DMA_TO_DEVICE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* increment source address */
 			src = sg_phys(sg);
 		else
@@ -292,7 +332,11 @@ coh901318_lli_fill_sg(struct coh901318_pool *pool,
 			lli->src_addr = src;
 			lli->dst_addr = dst;
 
+<<<<<<< HEAD
 			if (dir == DMA_DEV_TO_MEM)
+=======
+			if (dir == DMA_FROM_DEVICE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				dst += elem_size;
 			else
 				src += elem_size;

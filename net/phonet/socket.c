@@ -31,7 +31,10 @@
 #include <net/tcp_states.h>
 
 #include <linux/phonet.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/phonet/phonet.h>
 #include <net/phonet/pep.h>
 #include <net/phonet/pn_dev.h>
@@ -696,7 +699,11 @@ int pn_sock_unbind_res(struct sock *sk, u8 res)
 
 	mutex_lock(&resource_mutex);
 	if (pnres.sk[res] == sk) {
+<<<<<<< HEAD
 		RCU_INIT_POINTER(pnres.sk[res], NULL);
+=======
+		rcu_assign_pointer(pnres.sk[res], NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = 0;
 	}
 	mutex_unlock(&resource_mutex);
@@ -715,7 +722,11 @@ void pn_sock_unbind_all_res(struct sock *sk)
 	mutex_lock(&resource_mutex);
 	for (res = 0; res < 256; res++) {
 		if (pnres.sk[res] == sk) {
+<<<<<<< HEAD
 			RCU_INIT_POINTER(pnres.sk[res], NULL);
+=======
+			rcu_assign_pointer(pnres.sk[res], NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			match++;
 		}
 	}

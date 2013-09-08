@@ -503,6 +503,7 @@ static void device_irq_exit(struct pm860x_chip *chip)
 		free_irq(chip->core_irq, chip);
 }
 
+<<<<<<< HEAD
 int pm8606_osc_enable(struct pm860x_chip *chip, unsigned short client)
 {
 	int ret = -EIO;
@@ -598,6 +599,8 @@ static void __devinit device_osc_init(struct i2c_client *i2c)
 	chip->osc_status = PM8606_REF_GP_OSC_OFF;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __devinit device_bk_init(struct pm860x_chip *chip,
 				     struct pm860x_platform_data *pdata)
 {
@@ -862,6 +865,7 @@ out:
 	return;
 }
 
+<<<<<<< HEAD
 static void __devinit device_8606_init(struct pm860x_chip *chip,
 				       struct i2c_client *i2c,
 				       struct pm860x_platform_data *pdata)
@@ -871,6 +875,8 @@ static void __devinit device_8606_init(struct pm860x_chip *chip,
 	device_led_init(chip, pdata);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int __devinit pm860x_device_init(struct pm860x_chip *chip,
 		       struct pm860x_platform_data *pdata)
 {
@@ -878,7 +884,12 @@ int __devinit pm860x_device_init(struct pm860x_chip *chip,
 
 	switch (chip->id) {
 	case CHIP_PM8606:
+<<<<<<< HEAD
 		device_8606_init(chip, chip->client, pdata);
+=======
+		device_bk_init(chip, pdata);
+		device_led_init(chip, pdata);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CHIP_PM8607:
 		device_8607_init(chip, chip->client, pdata);
@@ -888,7 +899,12 @@ int __devinit pm860x_device_init(struct pm860x_chip *chip,
 	if (chip->companion) {
 		switch (chip->id) {
 		case CHIP_PM8607:
+<<<<<<< HEAD
 			device_8606_init(chip, chip->companion, pdata);
+=======
+			device_bk_init(chip, pdata);
+			device_led_init(chip, pdata);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case CHIP_PM8606:
 			device_8607_init(chip, chip->companion, pdata);

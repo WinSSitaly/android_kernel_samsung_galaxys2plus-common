@@ -131,7 +131,22 @@ static struct spi_driver dac124s085_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_spi_driver(dac124s085_driver);
+=======
+static int __init dac124s085_leds_init(void)
+{
+	return spi_register_driver(&dac124s085_driver);
+}
+
+static void __exit dac124s085_leds_exit(void)
+{
+	spi_unregister_driver(&dac124s085_driver);
+}
+
+module_init(dac124s085_leds_init);
+module_exit(dac124s085_leds_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Guennadi Liakhovetski <lg@denx.de>");
 MODULE_DESCRIPTION("DAC124S085 LED driver");

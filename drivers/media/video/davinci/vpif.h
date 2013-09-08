@@ -18,7 +18,12 @@
 
 #include <linux/io.h>
 #include <linux/videodev2.h>
+<<<<<<< HEAD
 #include <media/davinci/vpif_types.h>
+=======
+#include <mach/hardware.h>
+#include <mach/dm646x.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Maximum channel allowed */
 #define VPIF_NUM_CHANNELS		(4)

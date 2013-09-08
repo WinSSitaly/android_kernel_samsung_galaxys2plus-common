@@ -28,8 +28,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MODULE_NAME "konica"
 
 #include <linux/input.h>
@@ -202,7 +205,11 @@ static void reg_w(struct gspca_dev *gspca_dev, u16 value, u16 index)
 			0,
 			1000);
 	if (ret < 0) {
+<<<<<<< HEAD
 		pr_err("reg_w err %d\n", ret);
+=======
+		err("reg_w err %d", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gspca_dev->usb_err = ret;
 	}
 }
@@ -223,7 +230,11 @@ static void reg_r(struct gspca_dev *gspca_dev, u16 value, u16 index)
 			2,
 			1000);
 	if (ret < 0) {
+<<<<<<< HEAD
 		pr_err("reg_w err %d\n", ret);
+=======
+		err("reg_w err %d", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gspca_dev->usb_err = ret;
 	}
 }
@@ -247,6 +258,12 @@ static int sd_config(struct gspca_dev *gspca_dev,
 	gspca_dev->cam.cam_mode = vga_mode;
 	gspca_dev->cam.nmodes = ARRAY_SIZE(vga_mode);
 	gspca_dev->cam.no_urb_create = 1;
+<<<<<<< HEAD
+=======
+	/* The highest alt setting has an isoc packetsize of 0, so we
+	   don't want to use it */
+	gspca_dev->nbalt--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sd->brightness  = BRIGHTNESS_DEFAULT;
 	sd->contrast    = CONTRAST_DEFAULT;
@@ -283,7 +300,11 @@ static int sd_start(struct gspca_dev *gspca_dev)
 	intf = usb_ifnum_to_if(sd->gspca_dev.dev, sd->gspca_dev.iface);
 	alt = usb_altnum_to_altsetting(intf, sd->gspca_dev.alt);
 	if (!alt) {
+<<<<<<< HEAD
 		pr_err("Couldn't get altsetting\n");
+=======
+		err("Couldn't get altsetting");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	}
 
@@ -314,7 +335,11 @@ static int sd_start(struct gspca_dev *gspca_dev)
 			le16_to_cpu(alt->endpoint[i].desc.wMaxPacketSize);
 		urb = usb_alloc_urb(SD_NPKT, GFP_KERNEL);
 		if (!urb) {
+<<<<<<< HEAD
 			pr_err("usb_alloc_urb failed\n");
+=======
+			err("usb_alloc_urb failed");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ENOMEM;
 		}
 		gspca_dev->urb[n] = urb;
@@ -323,7 +348,11 @@ static int sd_start(struct gspca_dev *gspca_dev)
 						GFP_KERNEL,
 						&urb->transfer_dma);
 		if (urb->transfer_buffer == NULL) {
+<<<<<<< HEAD
 			pr_err("usb_buffer_alloc failed\n");
+=======
+			err("usb_buffer_alloc failed");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ENOMEM;
 		}
 
@@ -385,7 +414,11 @@ static void sd_isoc_irq(struct urb *urb)
 		PDEBUG(D_ERR, "urb status: %d", urb->status);
 		st = usb_submit_urb(urb, GFP_ATOMIC);
 		if (st < 0)
+<<<<<<< HEAD
 			pr_err("resubmit urb error %d\n", st);
+=======
+			err("resubmit urb error %d", st);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -476,7 +509,11 @@ resubmit:
 	}
 	st = usb_submit_urb(status_urb, GFP_ATOMIC);
 	if (st < 0)
+<<<<<<< HEAD
 		pr_err("usb_submit_urb(status_urb) ret %d\n", st);
+=======
+		err("usb_submit_urb(status_urb) ret %d", st);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int sd_setbrightness(struct gspca_dev *gspca_dev, __s32 val)
@@ -631,4 +668,19 @@ static struct usb_driver sd_driver = {
 #endif
 };
 
+<<<<<<< HEAD
 module_usb_driver(sd_driver);
+=======
+/* -- module insert / remove -- */
+static int __init sd_mod_init(void)
+{
+	return usb_register(&sd_driver);
+}
+static void __exit sd_mod_exit(void)
+{
+	usb_deregister(&sd_driver);
+}
+
+module_init(sd_mod_init);
+module_exit(sd_mod_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

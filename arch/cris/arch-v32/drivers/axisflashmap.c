@@ -404,7 +404,12 @@ static int __init init_axis_flash(void)
 		 */
 		int blockstat;
 		do {
+<<<<<<< HEAD
 			blockstat = mtd_block_isbad(main_mtd, ptable_sector);
+=======
+			blockstat = main_mtd->block_isbad(main_mtd,
+				ptable_sector);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (blockstat < 0)
 				ptable_sector = 0; /* read error */
 			else if (blockstat)
@@ -412,8 +417,13 @@ static int __init init_axis_flash(void)
 		} while (blockstat && ptable_sector);
 #endif
 		if (ptable_sector) {
+<<<<<<< HEAD
 			mtd_read(main_mtd, ptable_sector, PAGESIZE, &len,
 				 page);
+=======
+			main_mtd->read(main_mtd, ptable_sector, PAGESIZE,
+				&len, page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ptable_head = &((struct partitiontable *) page)->head;
 		}
 

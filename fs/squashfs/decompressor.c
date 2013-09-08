@@ -52,12 +52,15 @@ static const struct squashfs_decompressor squashfs_xz_comp_ops = {
 };
 #endif
 
+<<<<<<< HEAD
 #ifndef CONFIG_SQUASHFS_ZLIB
 static const struct squashfs_decompressor squashfs_zlib_comp_ops = {
 	NULL, NULL, NULL, ZLIB_COMPRESSION, "zlib", 0
 };
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct squashfs_decompressor squashfs_unknown_comp_ops = {
 	NULL, NULL, NULL, 0, "unknown", 0
 };

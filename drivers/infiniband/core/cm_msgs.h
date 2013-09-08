@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2004, 2011 Intel Corporation.  All rights reserved.
+=======
+ * Copyright (c) 2004 Intel Corporation.  All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (c) 2004 Topspin Corporation.  All rights reserved.
  * Copyright (c) 2004 Voltaire Corporation.  All rights reserved.
  *
@@ -86,7 +90,11 @@ struct cm_req_msg {
 	__be16 pkey;
 	/* path MTU:4, RDC exists:1, RNR retry count:3. */
 	u8 offset50;
+<<<<<<< HEAD
 	/* max CM Retries:4, SRQ:1, extended transport type:3 */
+=======
+	/* max CM Retries:4, SRQ:1, rsvd:3 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 offset51;
 
 	__be16 primary_local_lid;
@@ -175,11 +183,14 @@ static inline enum ib_qp_type cm_req_get_qp_type(struct cm_req_msg *req_msg)
 	switch(transport_type) {
 	case 0: return IB_QPT_RC;
 	case 1: return IB_QPT_UC;
+<<<<<<< HEAD
 	case 3:
 		switch (req_msg->offset51 & 0x7) {
 		case 1: return IB_QPT_XRC_TGT;
 		default: return 0;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default: return 0;
 	}
 }
@@ -193,12 +204,15 @@ static inline void cm_req_set_qp_type(struct cm_req_msg *req_msg,
 						  req_msg->offset40) &
 						   0xFFFFFFF9) | 0x2);
 		break;
+<<<<<<< HEAD
 	case IB_QPT_XRC_INI:
 		req_msg->offset40 = cpu_to_be32((be32_to_cpu(
 						 req_msg->offset40) &
 						   0xFFFFFFF9) | 0x6);
 		req_msg->offset51 = (req_msg->offset51 & 0xF8) | 1;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		req_msg->offset40 = cpu_to_be32(be32_to_cpu(
 						 req_msg->offset40) &
@@ -538,6 +552,7 @@ static inline void cm_rep_set_local_qpn(struct cm_rep_msg *rep_msg, __be32 qpn)
 			    (be32_to_cpu(rep_msg->offset12) & 0x000000FF));
 }
 
+<<<<<<< HEAD
 static inline __be32 cm_rep_get_local_eecn(struct cm_rep_msg *rep_msg)
 {
 	return cpu_to_be32(be32_to_cpu(rep_msg->offset16) >> 8);
@@ -555,6 +570,8 @@ static inline __be32 cm_rep_get_qpn(struct cm_rep_msg *rep_msg, enum ib_qp_type 
 		cm_rep_get_local_eecn(rep_msg) : cm_rep_get_local_qpn(rep_msg);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline __be32 cm_rep_get_starting_psn(struct cm_rep_msg *rep_msg)
 {
 	return cpu_to_be32(be32_to_cpu(rep_msg->offset20) >> 8);
@@ -799,7 +816,10 @@ struct cm_apr_msg {
 
 	u8 info_length;
 	u8 ap_status;
+<<<<<<< HEAD
 	__be16 rsvd;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 info[IB_CM_APR_INFO_LENGTH];
 
 	u8 private_data[IB_CM_APR_PRIVATE_DATA_SIZE];

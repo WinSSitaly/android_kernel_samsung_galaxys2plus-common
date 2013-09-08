@@ -7,10 +7,18 @@
 #include <linux/types.h>
 #include <linux/kernel.h>
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/rwsem.h>
 
 #include <linux/atomic.h>
+=======
+#include <linux/module.h>
+#include <linux/rwsem.h>
+
+#include <asm/system.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * lock for reading
@@ -116,6 +124,18 @@ void down_read_nested(struct rw_semaphore *sem, int subclass)
 
 EXPORT_SYMBOL(down_read_nested);
 
+<<<<<<< HEAD
+=======
+void down_read_non_owner(struct rw_semaphore *sem)
+{
+	might_sleep();
+
+	__down_read(sem);
+}
+
+EXPORT_SYMBOL(down_read_non_owner);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void down_write_nested(struct rw_semaphore *sem, int subclass)
 {
 	might_sleep();
@@ -126,6 +146,16 @@ void down_write_nested(struct rw_semaphore *sem, int subclass)
 
 EXPORT_SYMBOL(down_write_nested);
 
+<<<<<<< HEAD
+=======
+void up_read_non_owner(struct rw_semaphore *sem)
+{
+	__up_read(sem);
+}
+
+EXPORT_SYMBOL(up_read_non_owner);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 

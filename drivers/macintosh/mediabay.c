@@ -356,7 +356,11 @@ static void poll_media_bay(struct media_bay_info* bay)
 	static char *mb_content_types[] = {
 		"a floppy drive",
 		"a floppy drive",
+<<<<<<< HEAD
 		"an unsupported audio device",
+=======
+		"an unsuported audio device",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"an ATA device",
 		"an unsupported PCI device",
 		"an unknown device",

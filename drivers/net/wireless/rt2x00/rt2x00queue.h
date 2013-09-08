@@ -54,7 +54,11 @@
  * @QID_RX: RX queue
  * @QID_OTHER: None of the above (don't use, only present for completeness)
  * @QID_BEACON: Beacon queue (value unspecified, don't send it to device)
+<<<<<<< HEAD
  * @QID_ATIM: Atim queue (value unspecified, don't send it to device)
+=======
+ * @QID_ATIM: Atim queue (value unspeficied, don't send it to device)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 enum data_queue_qid {
 	QID_AC_VO = 0,
@@ -288,8 +292,13 @@ enum txentry_desc_flags {
  * @signal: PLCP signal.
  * @service: PLCP service.
  * @msc: MCS.
+<<<<<<< HEAD
  * @stbc: Use Space Time Block Coding (only available for MCS rates < 8).
  * @ba_size: Size of the recepients RX reorder buffer - 1.
+=======
+ * @stbc: STBC.
+ * @ba_size: BA size.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @rate_mode: Rate mode (See @enum rate_modulation).
  * @mpdu_density: MDPU density.
  * @retry_limit: Max number of retries.
@@ -321,7 +330,10 @@ struct txentry_desc {
 			u8 ba_size;
 			u8 mpdu_density;
 			enum txop txop;
+<<<<<<< HEAD
 			int wcid;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} ht;
 	} u;
 
@@ -636,6 +648,21 @@ static inline int rt2x00queue_threshold(struct data_queue *queue)
 {
 	return rt2x00queue_available(queue) < queue->threshold;
 }
+<<<<<<< HEAD
+=======
+
+/**
+ * rt2x00queue_status_timeout - Check if a timeout occurred for STATUS reports
+ * @entry: Queue entry to check.
+ */
+static inline int rt2x00queue_status_timeout(struct queue_entry *entry)
+{
+	if (!test_bit(ENTRY_DATA_STATUS_PENDING, &entry->flags))
+		return false;
+	return time_after(jiffies, entry->last_action + msecs_to_jiffies(100));
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * rt2x00queue_dma_timeout - Check if a timeout occurred for DMA transfers
  * @entry: Queue entry to check.

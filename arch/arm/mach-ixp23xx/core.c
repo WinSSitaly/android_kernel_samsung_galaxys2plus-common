@@ -34,9 +34,15 @@
 #include <asm/memory.h>
 #include <mach/hardware.h>
 #include <asm/irq.h>
+<<<<<<< HEAD
 #include <asm/tlbflush.h>
 #include <asm/pgtable.h>
 #include <asm/system_misc.h>
+=======
+#include <asm/system.h>
+#include <asm/tlbflush.h>
+#include <asm/pgtable.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach/map.h>
 #include <asm/mach/time.h>
@@ -441,6 +447,7 @@ static struct platform_device *ixp23xx_devices[] __initdata = {
 
 void __init ixp23xx_sys_init(void)
 {
+<<<<<<< HEAD
 	/* by default, the idle code is disabled */
 	disable_hlt();
 
@@ -453,3 +460,8 @@ void ixp23xx_restart(char mode, const char *cmd)
 	/* Use on-chip reset capability */
 	*IXP23XX_RESET0 |= IXP23XX_RST_ALL;
 }
+=======
+	*IXP23XX_EXP_UNIT_FUSE |= 0xf;
+	platform_add_devices(ixp23xx_devices, ARRAY_SIZE(ixp23xx_devices));
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

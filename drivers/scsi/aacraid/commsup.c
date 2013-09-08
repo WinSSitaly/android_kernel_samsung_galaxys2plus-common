@@ -416,7 +416,10 @@ int aac_fib_send(u16 command, struct fib *fibptr, unsigned long size,
 	unsigned long flags = 0;
 	unsigned long qflags;
 	unsigned long mflags = 0;
+<<<<<<< HEAD
 	unsigned long sflags = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 	if (!(hw_fib->header.XferState & cpu_to_le32(HostOwned)))
@@ -513,6 +516,7 @@ int aac_fib_send(u16 command, struct fib *fibptr, unsigned long size,
 		spin_lock_irqsave(&fibptr->event_lock, flags);
 	}
 
+<<<<<<< HEAD
 	if (dev->sync_mode) {
 		if (wait)
 			spin_unlock_irqrestore(&fibptr->event_lock, flags);
@@ -538,6 +542,8 @@ int aac_fib_send(u16 command, struct fib *fibptr, unsigned long size,
 		return -EINPROGRESS;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (aac_adapter_deliver(fibptr) != 0) {
 		printk(KERN_ERR "aac_fib_send: returned -EBUSY\n");
 		if (wait) {

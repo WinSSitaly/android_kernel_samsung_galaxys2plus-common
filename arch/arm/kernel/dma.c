@@ -23,7 +23,11 @@
 
 #include <asm/mach/dma.h>
 
+<<<<<<< HEAD
 DEFINE_RAW_SPINLOCK(dma_spin_lock);
+=======
+DEFINE_SPINLOCK(dma_spin_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL(dma_spin_lock);
 
 static dma_t *dma_chan[MAX_DMA_CHANNELS];

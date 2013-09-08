@@ -15,7 +15,10 @@
 #include <asm/page.h>
 #include <asm/processor.h>	/* For TASK_SIZE */
 #include <asm/machvec.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct mm_struct;
 struct vm_area_struct;

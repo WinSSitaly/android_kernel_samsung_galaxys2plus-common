@@ -29,11 +29,14 @@
 
 struct jffs2_inodirty;
 
+<<<<<<< HEAD
 struct jffs2_mount_opts {
 	bool override_compr;
 	unsigned int compr;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* A struct for the overall file system control.  Pointers to
    jffs2_sb_info structs are named `c' in the source code.
    Nee jffs_control
@@ -131,7 +134,10 @@ struct jffs2_sb_info {
 #endif
 
 	struct jffs2_summary *summary;		/* Summary information */
+<<<<<<< HEAD
 	struct jffs2_mount_opts mount_opts;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_JFFS2_FS_XATTR
 #define XATTRINDEX_HASHSIZE	(57)

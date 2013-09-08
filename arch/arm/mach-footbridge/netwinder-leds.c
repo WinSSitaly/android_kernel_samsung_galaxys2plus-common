@@ -24,19 +24,31 @@
 #include <mach/hardware.h>
 #include <asm/leds.h>
 #include <asm/mach-types.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define LED_STATE_ENABLED	1
 #define LED_STATE_CLAIMED	2
 static char led_state;
 static char hw_led_state;
 
+<<<<<<< HEAD
 static DEFINE_RAW_SPINLOCK(leds_lock);
+=======
+static DEFINE_SPINLOCK(leds_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void netwinder_leds_event(led_event_t evt)
 {
 	unsigned long flags;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&leds_lock, flags);
+=======
+	spin_lock_irqsave(&leds_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (evt) {
 	case led_start:
@@ -116,12 +128,21 @@ static void netwinder_leds_event(led_event_t evt)
 		break;
 	}
 
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&leds_lock, flags);
 
 	if  (led_state & LED_STATE_ENABLED) {
 		raw_spin_lock_irqsave(&nw_gpio_lock, flags);
 		nw_gpio_modify_op(GPIO_RED_LED | GPIO_GREEN_LED, hw_led_state);
 		raw_spin_unlock_irqrestore(&nw_gpio_lock, flags);
+=======
+	spin_unlock_irqrestore(&leds_lock, flags);
+
+	if  (led_state & LED_STATE_ENABLED) {
+		spin_lock_irqsave(&nw_gpio_lock, flags);
+		nw_gpio_modify_op(GPIO_RED_LED | GPIO_GREEN_LED, hw_led_state);
+		spin_unlock_irqrestore(&nw_gpio_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 

@@ -12,10 +12,16 @@
 
 #include <linux/kernel.h>
 #include <linux/errno.h>
+<<<<<<< HEAD
+=======
+
+#define ARCH_NR_GPIOS 1024
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sh_pfc.h>
 
 #ifdef CONFIG_GPIOLIB
 
+<<<<<<< HEAD
 static inline int irq_to_gpio(unsigned int irq)
 {
 	return -ENOSYS;
@@ -24,6 +30,32 @@ static inline int irq_to_gpio(unsigned int irq)
 #else
 
 #define __ARM_GPIOLIB_COMPLEX
+=======
+static inline int gpio_get_value(unsigned gpio)
+{
+	return __gpio_get_value(gpio);
+}
+
+static inline void gpio_set_value(unsigned gpio, int value)
+{
+	__gpio_set_value(gpio, value);
+}
+
+static inline int gpio_cansleep(unsigned gpio)
+{
+	return __gpio_cansleep(gpio);
+}
+
+static inline int gpio_to_irq(unsigned gpio)
+{
+	return __gpio_to_irq(gpio);
+}
+
+static inline int irq_to_gpio(unsigned int irq)
+{
+	return -ENOSYS;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* CONFIG_GPIOLIB */
 

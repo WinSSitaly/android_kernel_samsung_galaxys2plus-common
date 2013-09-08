@@ -1,7 +1,10 @@
 #ifndef HOSTAP_WLAN_H
 #define HOSTAP_WLAN_H
 
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/wireless.h>
 #include <linux/netdevice.h>
 #include <linux/mutex.h>

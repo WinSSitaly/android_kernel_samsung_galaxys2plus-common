@@ -562,9 +562,16 @@ static int dbfs_d204_create(void **data, void **data_free_ptr, size_t *size)
 	void *base;
 
 	buf_size = PAGE_SIZE * (diag204_buf_pages + 1) + sizeof(d204->hdr);
+<<<<<<< HEAD
 	base = vzalloc(buf_size);
 	if (!base)
 		return -ENOMEM;
+=======
+	base = vmalloc(buf_size);
+	if (!base)
+		return -ENOMEM;
+	memset(base, 0, buf_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	d204 = page_align_ptr(base + sizeof(d204->hdr)) - sizeof(d204->hdr);
 	rc = diag204_do_store(d204->buf, diag204_buf_pages);
 	if (rc) {

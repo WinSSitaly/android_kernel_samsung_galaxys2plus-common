@@ -16,7 +16,10 @@
 
 #include <asm/irq.h>
 #include <asm/mach-types.h>
+<<<<<<< HEAD
 #include <asm/system_info.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/hardware/dec21285.h>
 #include <mach/hardware.h>
 
@@ -332,7 +335,11 @@ static int serial21285_verify_port(struct uart_port *port, struct serial_struct 
 	int ret = 0;
 	if (ser->type != PORT_UNKNOWN && ser->type != PORT_21285)
 		ret = -EINVAL;
+<<<<<<< HEAD
 	if (ser->irq <= 0)
+=======
+	if (ser->irq != NO_IRQ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EINVAL;
 	if (ser->baud_base != port->uartclk / 16)
 		ret = -EINVAL;
@@ -361,7 +368,11 @@ static struct uart_ops serial21285_ops = {
 static struct uart_port serial21285_port = {
 	.mapbase	= 0x42000160,
 	.iotype		= UPIO_MEM,
+<<<<<<< HEAD
 	.irq		= 0,
+=======
+	.irq		= NO_IRQ,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.fifosize	= 16,
 	.ops		= &serial21285_ops,
 	.flags		= UPF_BOOT_AUTOCONF,

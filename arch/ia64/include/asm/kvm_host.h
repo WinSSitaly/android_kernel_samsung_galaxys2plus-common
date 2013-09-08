@@ -459,9 +459,12 @@ struct kvm_sal_data {
 	unsigned long boot_gp;
 };
 
+<<<<<<< HEAD
 struct kvm_arch_memory_slot {
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct kvm_arch {
 	spinlock_t dirty_log_lock;
 

@@ -287,7 +287,11 @@ static atomic_t policy_opencount = ATOMIC_INIT(1);
 /*
  * ima_open_policy: sequentialize access to the policy file
  */
+<<<<<<< HEAD
 static int ima_open_policy(struct inode * inode, struct file * filp)
+=======
+int ima_open_policy(struct inode * inode, struct file * filp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* No point in being allowed to open it if you aren't going to write */
 	if (!(filp->f_flags & O_WRONLY))

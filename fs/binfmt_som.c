@@ -147,8 +147,15 @@ static int map_som_binary(struct file *file,
 	code_size = SOM_PAGEALIGN(hpuxhdr->exec_tsize);
 	current->mm->start_code = code_start;
 	current->mm->end_code = code_start + code_size;
+<<<<<<< HEAD
 	retval = vm_mmap(file, code_start, code_size, prot,
 			flags, SOM_PAGESTART(hpuxhdr->exec_tfile));
+=======
+	down_write(&current->mm->mmap_sem);
+	retval = do_mmap(file, code_start, code_size, prot,
+			flags, SOM_PAGESTART(hpuxhdr->exec_tfile));
+	up_write(&current->mm->mmap_sem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval < 0 && retval > -1024)
 		goto out;
 
@@ -156,16 +163,31 @@ static int map_som_binary(struct file *file,
 	data_size = SOM_PAGEALIGN(hpuxhdr->exec_dsize);
 	current->mm->start_data = data_start;
 	current->mm->end_data = bss_start = data_start + data_size;
+<<<<<<< HEAD
 	retval = vm_mmap(file, data_start, data_size,
 			prot | PROT_WRITE, flags,
 			SOM_PAGESTART(hpuxhdr->exec_dfile));
+=======
+	down_write(&current->mm->mmap_sem);
+	retval = do_mmap(file, data_start, data_size,
+			prot | PROT_WRITE, flags,
+			SOM_PAGESTART(hpuxhdr->exec_dfile));
+	up_write(&current->mm->mmap_sem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval < 0 && retval > -1024)
 		goto out;
 
 	som_brk = bss_start + SOM_PAGEALIGN(hpuxhdr->exec_bsize);
 	current->mm->start_brk = current->mm->brk = som_brk;
+<<<<<<< HEAD
 	retval = vm_mmap(NULL, bss_start, som_brk - bss_start,
 			prot | PROT_WRITE, MAP_FIXED | MAP_PRIVATE, 0);
+=======
+	down_write(&current->mm->mmap_sem);
+	retval = do_mmap(NULL, bss_start, som_brk - bss_start,
+			prot | PROT_WRITE, MAP_FIXED | MAP_PRIVATE, 0);
+	up_write(&current->mm->mmap_sem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval > 0 || retval < -1024)
 		retval = 0;
 out:
@@ -219,6 +241,10 @@ load_som_binary(struct linux_binprm * bprm, struct pt_regs * regs)
 		goto out_free;
 
 	/* OK, This is the point of no return */
+<<<<<<< HEAD
+=======
+	current->flags &= ~PF_FORKNOEXEC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	current->personality = PER_HPUX;
 	setup_new_exec(bprm);
 
@@ -282,8 +308,12 @@ static int load_som_library(struct file *f)
 
 static int __init init_som_binfmt(void)
 {
+<<<<<<< HEAD
 	register_binfmt(&som_format);
 	return 0;
+=======
+	return register_binfmt(&som_format);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit exit_som_binfmt(void)

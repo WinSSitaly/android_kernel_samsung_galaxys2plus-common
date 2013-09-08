@@ -3,13 +3,29 @@
  *
  * Copyright (C) 2003-2008 Alan Stern
  * Copyright (C) 2009 Samsung Electronics
+<<<<<<< HEAD
  *                    Author: Michal Nazarewicz <mina86@mina86.com>
+=======
+ *                    Author: Michal Nazarewicz <m.nazarewicz@samsung.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 
@@ -69,6 +85,7 @@ static struct usb_device_descriptor msg_device_desc = {
 	.bNumConfigurations =	1,
 };
 
+<<<<<<< HEAD
 static struct usb_otg_descriptor otg_descriptor = {
 	.bLength =		sizeof otg_descriptor,
 	.bDescriptorType =	USB_DT_OTG,
@@ -85,6 +102,8 @@ static const struct usb_descriptor_header *otg_desc[] = {
 	NULL,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /****************************** Configurations ******************************/
 
@@ -113,11 +132,14 @@ static int __init msg_do_config(struct usb_configuration *c)
 	struct fsg_config config;
 	int ret;
 
+<<<<<<< HEAD
 	if (gadget_is_otg(c->cdev->gadget)) {
 		c->descriptors = otg_desc;
 		c->bmAttributes |= USB_CONFIG_ATT_WAKEUP;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fsg_config_from_params(&config, &mod_data);
 	config.ops = &ops;
 
@@ -160,7 +182,10 @@ static struct usb_composite_driver msg_driver = {
 	.name		= "g_mass_storage",
 	.dev		= &msg_device_desc,
 	.iProduct	= DRIVER_DESC,
+<<<<<<< HEAD
 	.max_speed	= USB_SPEED_SUPER,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.needs_serial	= 1,
 };
 

@@ -28,10 +28,16 @@
 #include <crypto/aes.h>
 #include <crypto/des.h>
 #include <crypto/sha.h>
+<<<<<<< HEAD
 #include <crypto/md5.h>
 #include <crypto/aead.h>
 #include <crypto/authenc.h>
 #include <crypto/scatterwalk.h>
 #include <crypto/internal/skcipher.h>
+=======
+#include <crypto/aead.h>
+#include <crypto/authenc.h>
+#include <crypto/scatterwalk.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* !defined(CAAM_COMPAT_H) */

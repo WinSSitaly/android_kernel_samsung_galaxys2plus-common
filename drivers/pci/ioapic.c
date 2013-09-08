@@ -17,7 +17,10 @@
  */
 
 #include <linux/pci.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/acpi.h>
 #include <linux/slab.h>
 #include <acpi/acpi_bus.h>
@@ -27,7 +30,11 @@ struct ioapic {
 	u32		gsi_base;
 };
 
+<<<<<<< HEAD
 static int __devinit ioapic_probe(struct pci_dev *dev, const struct pci_device_id *ent)
+=======
+static int ioapic_probe(struct pci_dev *dev, const struct pci_device_id *ent)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	acpi_handle handle;
 	acpi_status status;
@@ -88,7 +95,11 @@ exit_free:
 	return -ENODEV;
 }
 
+<<<<<<< HEAD
 static void __devexit ioapic_remove(struct pci_dev *dev)
+=======
+static void ioapic_remove(struct pci_dev *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ioapic *ioapic = pci_get_drvdata(dev);
 
@@ -99,12 +110,22 @@ static void __devexit ioapic_remove(struct pci_dev *dev)
 }
 
 
+<<<<<<< HEAD
 static DEFINE_PCI_DEVICE_TABLE(ioapic_devices) = {
 	{ PCI_DEVICE_CLASS(PCI_CLASS_SYSTEM_PIC_IOAPIC, ~0) },
 	{ PCI_DEVICE_CLASS(PCI_CLASS_SYSTEM_PIC_IOXAPIC, ~0) },
 	{ }
 };
 MODULE_DEVICE_TABLE(pci, ioapic_devices);
+=======
+static struct pci_device_id ioapic_devices[] = {
+	{ PCI_ANY_ID, PCI_ANY_ID, PCI_ANY_ID, PCI_ANY_ID,
+	  PCI_CLASS_SYSTEM_PIC_IOAPIC << 8, 0xffff00, },
+	{ PCI_ANY_ID, PCI_ANY_ID, PCI_ANY_ID, PCI_ANY_ID,
+	  PCI_CLASS_SYSTEM_PIC_IOXAPIC << 8, 0xffff00, },
+	{ }
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct pci_driver ioapic_driver = {
 	.name		= "ioapic",

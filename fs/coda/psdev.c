@@ -38,6 +38,10 @@
 #include <linux/mutex.h>
 #include <linux/device.h>
 #include <asm/io.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/poll.h>
 #include <asm/uaccess.h>
 

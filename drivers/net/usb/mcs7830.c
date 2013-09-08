@@ -239,7 +239,11 @@ static int mcs7830_set_mac_address(struct net_device *netdev, void *p)
 		return -EBUSY;
 
 	if (!is_valid_ether_addr(addr->sa_data))
+<<<<<<< HEAD
 		return -EADDRNOTAVAIL;
+=======
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = mcs7830_hif_set_mac_address(dev, addr->sa_data);
 
@@ -553,7 +557,11 @@ static const struct net_device_ops mcs7830_netdev_ops = {
 	.ndo_change_mtu		= usbnet_change_mtu,
 	.ndo_validate_addr	= eth_validate_addr,
 	.ndo_do_ioctl 		= mcs7830_ioctl,
+<<<<<<< HEAD
 	.ndo_set_rx_mode	= mcs7830_set_multicast,
+=======
+	.ndo_set_multicast_list = mcs7830_set_multicast,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ndo_set_mac_address	= mcs7830_set_mac_address,
 };
 
@@ -692,7 +700,21 @@ static struct usb_driver mcs7830_driver = {
 	.reset_resume = mcs7830_reset_resume,
 };
 
+<<<<<<< HEAD
 module_usb_driver(mcs7830_driver);
+=======
+static int __init mcs7830_init(void)
+{
+	return usb_register(&mcs7830_driver);
+}
+module_init(mcs7830_init);
+
+static void __exit mcs7830_exit(void)
+{
+	usb_deregister(&mcs7830_driver);
+}
+module_exit(mcs7830_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("USB to network adapter MCS7830)");
 MODULE_LICENSE("GPL");

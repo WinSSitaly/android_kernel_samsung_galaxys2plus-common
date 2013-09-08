@@ -5,7 +5,11 @@
  ******************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -264,6 +268,7 @@ struct acpi_rsconvert_info acpi_rs_convert_dma[6] = {
 	 AML_OFFSET(dma.dma_channel_mask),
 	 ACPI_RS_OFFSET(data.dma.channel_count)}
 };
+<<<<<<< HEAD
 
 /*******************************************************************************
  *
@@ -295,3 +300,5 @@ struct acpi_rsconvert_info acpi_rs_convert_fixed_dma[4] = {
 	 1},
 
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

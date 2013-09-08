@@ -6,16 +6,23 @@
  * Copyright (C) 2011 Wind River Systems,
  *   written by Ralf Baechle <ralf@linux-mips.org>
  */
+<<<<<<< HEAD
 #include <linux/compiler.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/errno.h>
 #include <linux/mm.h>
 #include <linux/mman.h>
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/personality.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/random.h>
 #include <linux/sched.h>
 
 unsigned long shm_align_mask = PAGE_SIZE - 1;	/* Sane caches */
+<<<<<<< HEAD
 EXPORT_SYMBOL(shm_align_mask);
 
 /* gap between mmap and stack */
@@ -77,6 +84,26 @@ static unsigned long arch_get_unmapped_area_common(struct file *filp,
 
 	if (flags & MAP_FIXED) {
 		/* Even MAP_FIXED mappings must reside within TASK_SIZE */
+=======
+
+EXPORT_SYMBOL(shm_align_mask);
+
+#define COLOUR_ALIGN(addr,pgoff)				\
+	((((addr) + shm_align_mask) & ~shm_align_mask) +	\
+	 (((pgoff) << PAGE_SHIFT) & shm_align_mask))
+
+unsigned long arch_get_unmapped_area(struct file *filp, unsigned long addr,
+	unsigned long len, unsigned long pgoff, unsigned long flags)
+{
+	struct vm_area_struct * vmm;
+	int do_color_align;
+
+	if (len > TASK_SIZE)
+		return -ENOMEM;
+
+	if (flags & MAP_FIXED) {
+		/* Even MAP_FIXED mappings must reside within TASK_SIZE.  */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (TASK_SIZE - len < addr)
 			return -EINVAL;
 
@@ -93,13 +120,17 @@ static unsigned long arch_get_unmapped_area_common(struct file *filp,
 	do_color_align = 0;
 	if (filp || (flags & MAP_SHARED))
 		do_color_align = 1;
+<<<<<<< HEAD
 
 	/* requesting a specific address */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (addr) {
 		if (do_color_align)
 			addr = COLOUR_ALIGN(addr, pgoff);
 		else
 			addr = PAGE_ALIGN(addr);
+<<<<<<< HEAD
 
 		vma = find_vma(mm, addr);
 		if (TASK_SIZE - len >= addr &&
@@ -219,6 +250,31 @@ unsigned long arch_get_unmapped_area_topdown(struct file *filp,
 			addr0, len, pgoff, flags, DOWN);
 }
 
+=======
+		vmm = find_vma(current->mm, addr);
+		if (TASK_SIZE - len >= addr &&
+		    (!vmm || addr + len <= vmm->vm_start))
+			return addr;
+	}
+	addr = current->mm->mmap_base;
+	if (do_color_align)
+		addr = COLOUR_ALIGN(addr, pgoff);
+	else
+		addr = PAGE_ALIGN(addr);
+
+	for (vmm = find_vma(current->mm, addr); ; vmm = vmm->vm_next) {
+		/* At this point:  (!vmm || addr < vmm->vm_end). */
+		if (TASK_SIZE - len < addr)
+			return -ENOMEM;
+		if (!vmm || addr + len <= vmm->vm_start)
+			return addr;
+		addr = vmm->vm_end;
+		if (do_color_align)
+			addr = COLOUR_ALIGN(addr, pgoff);
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void arch_pick_mmap_layout(struct mm_struct *mm)
 {
 	unsigned long random_factor = 0UL;
@@ -232,6 +288,7 @@ void arch_pick_mmap_layout(struct mm_struct *mm)
 			random_factor &= 0xffffffful;
 	}
 
+<<<<<<< HEAD
 	if (mmap_is_legacy()) {
 		mm->mmap_base = TASK_UNMAPPED_BASE + random_factor;
 		mm->get_unmapped_area = arch_get_unmapped_area;
@@ -241,6 +298,11 @@ void arch_pick_mmap_layout(struct mm_struct *mm)
 		mm->get_unmapped_area = arch_get_unmapped_area_topdown;
 		mm->unmap_area = arch_unmap_area_topdown;
 	}
+=======
+	mm->mmap_base = TASK_UNMAPPED_BASE + random_factor;
+	mm->get_unmapped_area = arch_get_unmapped_area;
+	mm->unmap_area = arch_unmap_area;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline unsigned long brk_rnd(void)

@@ -113,6 +113,7 @@ static const struct pci_device_id triflex_pci_tbl[] = {
 };
 MODULE_DEVICE_TABLE(pci, triflex_pci_tbl);
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 static int triflex_ide_pci_suspend(struct pci_dev *dev, pm_message_t state)
 {
@@ -127,12 +128,18 @@ static int triflex_ide_pci_suspend(struct pci_dev *dev, pm_message_t state)
 #define triflex_ide_pci_suspend NULL
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct pci_driver triflex_pci_driver = {
 	.name		= "TRIFLEX_IDE",
 	.id_table	= triflex_pci_tbl,
 	.probe		= triflex_init_one,
 	.remove		= ide_pci_remove,
+<<<<<<< HEAD
 	.suspend	= triflex_ide_pci_suspend,
+=======
+	.suspend	= ide_pci_suspend,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.resume		= ide_pci_resume,
 };
 

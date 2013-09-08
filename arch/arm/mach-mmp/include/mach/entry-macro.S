@@ -8,6 +8,15 @@
 
 #include <mach/regs-icu.h>
 
+<<<<<<< HEAD
+=======
+	.macro	disable_fiq
+	.endm
+
+	.macro	arch_ret_to_user, tmp1, tmp2
+	.endm
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.macro	get_irqnr_preamble, base, tmp
 	mrc	p15, 0, \tmp, c0, c0, 0		@ CPUID
 	and	\tmp, \tmp, #0xff00

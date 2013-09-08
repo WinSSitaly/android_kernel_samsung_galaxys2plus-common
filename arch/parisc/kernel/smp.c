@@ -31,9 +31,15 @@
 #include <linux/delay.h>
 #include <linux/bitops.h>
 #include <linux/ftrace.h>
+<<<<<<< HEAD
 #include <linux/cpu.h>
 
 #include <linux/atomic.h>
+=======
+
+#include <asm/system.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/current.h>
 #include <asm/delay.h>
 #include <asm/tlbflush.h>
@@ -291,11 +297,17 @@ smp_cpu_init(int cpunum)
 	mb();
 
 	/* Well, support 2.4 linux scheme as well. */
+<<<<<<< HEAD
 	if (cpu_online(cpunum))	{
+=======
+	if (cpu_isset(cpunum, cpu_online_map))
+	{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		extern void machine_halt(void); /* arch/parisc.../process.c */
 
 		printk(KERN_CRIT "CPU#%d already initialized!\n", cpunum);
 		machine_halt();
+<<<<<<< HEAD
 	}
 
 	notify_cpu_starting(cpunum);
@@ -303,6 +315,10 @@ smp_cpu_init(int cpunum)
 	ipi_call_lock();
 	set_cpu_online(cpunum, true);
 	ipi_call_unlock();
+=======
+	}  
+	set_cpu_online(cpunum, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Initialise the idle task for this CPU */
 	atomic_inc(&init_mm.mm_count);

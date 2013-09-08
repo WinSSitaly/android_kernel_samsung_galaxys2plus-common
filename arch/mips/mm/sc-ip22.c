@@ -12,6 +12,10 @@
 #include <asm/bcache.h>
 #include <asm/page.h>
 #include <asm/pgtable.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/bootinfo.h>
 #include <asm/sgi/ip22.h>
 #include <asm/sgi/mc.h>

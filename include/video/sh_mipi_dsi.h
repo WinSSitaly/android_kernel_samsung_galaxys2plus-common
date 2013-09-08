@@ -28,6 +28,7 @@ enum sh_mipi_dsi_data_fmt {
 struct sh_mobile_lcdc_chan_cfg;
 
 #define SH_MIPI_DSI_HSABM	(1 << 0)
+<<<<<<< HEAD
 #define SH_MIPI_DSI_HBPBM	(1 << 1)
 #define SH_MIPI_DSI_HFPBM	(1 << 2)
 #define SH_MIPI_DSI_BL2E	(1 << 3)
@@ -44,10 +45,14 @@ struct sh_mobile_lcdc_chan_cfg;
 					 SH_MIPI_DSI_HSAE)
 #define SH_MIPI_DSI_SYNC_EVENTS_MODE	(0)
 #define SH_MIPI_DSI_SYNC_BURST_MODE	(SH_MIPI_DSI_BL2E)
+=======
+#define SH_MIPI_DSI_HSPBM	(1 << 1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct sh_mipi_dsi_info {
 	enum sh_mipi_dsi_data_fmt	data_format;
 	struct sh_mobile_lcdc_chan_cfg	*lcd_chan;
+<<<<<<< HEAD
 	int				lane;
 	unsigned long			flags;
 	u32				clksrc;
@@ -56,6 +61,11 @@ struct sh_mipi_dsi_info {
 	int	(*set_dot_clock)(struct platform_device *pdev,
 				 void __iomem *base,
 				 int enable);
+=======
+	unsigned long			flags;
+	u32				clksrc;
+	unsigned int			vsynw_offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif

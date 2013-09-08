@@ -29,7 +29,10 @@ struct ceph_x_authorizer {
 	struct ceph_buffer *buf;
 	unsigned service;
 	u64 nonce;
+<<<<<<< HEAD
 	u64 secret_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char reply_buf[128];  /* big enough for encrypted blob */
 };
 

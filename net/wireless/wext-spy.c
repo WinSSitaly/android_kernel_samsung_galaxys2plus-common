@@ -10,7 +10,10 @@
 #include <linux/wireless.h>
 #include <linux/netdevice.h>
 #include <linux/etherdevice.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/iw_handler.h>
 #include <net/arp.h>
 #include <net/wext.h>

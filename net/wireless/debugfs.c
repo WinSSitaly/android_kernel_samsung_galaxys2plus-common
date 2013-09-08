@@ -13,6 +13,15 @@
 #include "core.h"
 #include "debugfs.h"
 
+<<<<<<< HEAD
+=======
+static int cfg80211_open_file_generic(struct inode *inode, struct file *file)
+{
+	file->private_data = inode->i_private;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DEBUGFS_READONLY_FILE(name, buflen, fmt, value...)		\
 static ssize_t name## _read(struct file *file, char __user *userbuf,	\
 			    size_t count, loff_t *ppos)			\
@@ -27,7 +36,11 @@ static ssize_t name## _read(struct file *file, char __user *userbuf,	\
 									\
 static const struct file_operations name## _ops = {			\
 	.read = name## _read,						\
+<<<<<<< HEAD
 	.open = simple_open,						\
+=======
+	.open = cfg80211_open_file_generic,				\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek = generic_file_llseek,					\
 };
 
@@ -96,7 +109,11 @@ static ssize_t ht40allow_map_read(struct file *file,
 
 static const struct file_operations ht40allow_map_ops = {
 	.read = ht40allow_map_read,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = cfg80211_open_file_generic,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek = default_llseek,
 };
 

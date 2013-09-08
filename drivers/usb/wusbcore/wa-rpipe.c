@@ -58,10 +58,16 @@
  *  destination address.
  */
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
 #include <linux/bitmap.h>
 #include <linux/slab.h>
 #include <linux/export.h>
+=======
+#include <asm/atomic.h>
+#include <linux/bitmap.h>
+#include <linux/slab.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "wusbhc.h"
 #include "wa-hc.h"

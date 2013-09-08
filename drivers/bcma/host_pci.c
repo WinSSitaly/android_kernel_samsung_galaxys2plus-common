@@ -9,7 +9,10 @@
 #include <linux/slab.h>
 #include <linux/bcma/bcma.h>
 #include <linux/pci.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void bcma_host_pci_switch_core(struct bcma_device *core)
 {
@@ -21,6 +24,7 @@ static void bcma_host_pci_switch_core(struct bcma_device *core)
 	pr_debug("Switched to core: 0x%X\n", core->id.id);
 }
 
+<<<<<<< HEAD
 /* Provides access to the requested core. Returns base offset that has to be
  * used. It makes use of fixed windows when possible. */
 static u16 bcma_host_pci_provide_access_to_core(struct bcma_device *core)
@@ -40,38 +44,65 @@ static u16 bcma_host_pci_provide_access_to_core(struct bcma_device *core)
 static u8 bcma_host_pci_read8(struct bcma_device *core, u16 offset)
 {
 	offset += bcma_host_pci_provide_access_to_core(core);
+=======
+static u8 bcma_host_pci_read8(struct bcma_device *core, u16 offset)
+{
+	if (core->bus->mapped_core != core)
+		bcma_host_pci_switch_core(core);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ioread8(core->bus->mmio + offset);
 }
 
 static u16 bcma_host_pci_read16(struct bcma_device *core, u16 offset)
 {
+<<<<<<< HEAD
 	offset += bcma_host_pci_provide_access_to_core(core);
+=======
+	if (core->bus->mapped_core != core)
+		bcma_host_pci_switch_core(core);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ioread16(core->bus->mmio + offset);
 }
 
 static u32 bcma_host_pci_read32(struct bcma_device *core, u16 offset)
 {
+<<<<<<< HEAD
 	offset += bcma_host_pci_provide_access_to_core(core);
+=======
+	if (core->bus->mapped_core != core)
+		bcma_host_pci_switch_core(core);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ioread32(core->bus->mmio + offset);
 }
 
 static void bcma_host_pci_write8(struct bcma_device *core, u16 offset,
 				 u8 value)
 {
+<<<<<<< HEAD
 	offset += bcma_host_pci_provide_access_to_core(core);
+=======
+	if (core->bus->mapped_core != core)
+		bcma_host_pci_switch_core(core);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iowrite8(value, core->bus->mmio + offset);
 }
 
 static void bcma_host_pci_write16(struct bcma_device *core, u16 offset,
 				 u16 value)
 {
+<<<<<<< HEAD
 	offset += bcma_host_pci_provide_access_to_core(core);
+=======
+	if (core->bus->mapped_core != core)
+		bcma_host_pci_switch_core(core);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iowrite16(value, core->bus->mmio + offset);
 }
 
 static void bcma_host_pci_write32(struct bcma_device *core, u16 offset,
 				 u32 value)
 {
+<<<<<<< HEAD
 	offset += bcma_host_pci_provide_access_to_core(core);
 	iowrite32(value, core->bus->mmio + offset);
 }
@@ -123,6 +154,12 @@ void bcma_host_pci_block_write(struct bcma_device *core, const void *buffer,
 	}
 }
 #endif
+=======
+	if (core->bus->mapped_core != core)
+		bcma_host_pci_switch_core(core);
+	iowrite32(value, core->bus->mmio + offset);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static u32 bcma_host_pci_aread32(struct bcma_device *core, u16 offset)
 {
@@ -146,16 +183,24 @@ const struct bcma_host_ops bcma_host_pci_ops = {
 	.write8		= bcma_host_pci_write8,
 	.write16	= bcma_host_pci_write16,
 	.write32	= bcma_host_pci_write32,
+<<<<<<< HEAD
 #ifdef CONFIG_BCMA_BLOCKIO
 	.block_read	= bcma_host_pci_block_read,
 	.block_write	= bcma_host_pci_block_write,
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.aread32	= bcma_host_pci_aread32,
 	.awrite32	= bcma_host_pci_awrite32,
 };
 
+<<<<<<< HEAD
 static int __devinit bcma_host_pci_probe(struct pci_dev *dev,
 					 const struct pci_device_id *id)
+=======
+static int bcma_host_pci_probe(struct pci_dev *dev,
+			     const struct pci_device_id *id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bcma_bus *bus;
 	int err = -ENOMEM;
@@ -234,6 +279,7 @@ static void bcma_host_pci_remove(struct pci_dev *dev)
 	pci_set_drvdata(dev, NULL);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 static int bcma_host_pci_suspend(struct device *dev)
 {
@@ -263,11 +309,16 @@ static SIMPLE_DEV_PM_OPS(bcma_pm_ops, bcma_host_pci_suspend,
 
 #endif /* CONFIG_PM */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEFINE_PCI_DEVICE_TABLE(bcma_pci_bridge_tbl) = {
 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x0576) },
 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4331) },
 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4353) },
+<<<<<<< HEAD
 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4357) },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4727) },
 	{ 0, },
 };
@@ -278,7 +329,10 @@ static struct pci_driver bcma_pci_bridge_driver = {
 	.id_table = bcma_pci_bridge_tbl,
 	.probe = bcma_host_pci_probe,
 	.remove = bcma_host_pci_remove,
+<<<<<<< HEAD
 	.driver.pm = BCMA_PM_OPS,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int __init bcma_host_pci_init(void)

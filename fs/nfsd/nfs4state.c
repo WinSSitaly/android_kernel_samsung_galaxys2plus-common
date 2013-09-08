@@ -37,7 +37,10 @@
 #include <linux/slab.h>
 #include <linux/namei.h>
 #include <linux/swap.h>
+<<<<<<< HEAD
 #include <linux/pagemap.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sunrpc/svcauth_gss.h>
 #include <linux/sunrpc/clnt.h>
 #include "xdr4.h"
@@ -49,6 +52,7 @@
 time_t nfsd4_lease = 90;     /* default lease time */
 time_t nfsd4_grace = 90;
 static time_t boot_time;
+<<<<<<< HEAD
 
 #define all_ones {{~0,~0},~0}
 static const stateid_t one_stateid = {
@@ -70,6 +74,23 @@ static u64 current_sessionid = 1;
 
 /* forward declarations */
 static int check_for_locks(struct nfs4_file *filp, struct nfs4_lockowner *lowner);
+=======
+static u32 current_ownerid = 1;
+static u32 current_fileid = 1;
+static u32 current_delegid = 1;
+static stateid_t zerostateid;             /* bits all 0 */
+static stateid_t onestateid;              /* bits all 1 */
+static u64 current_sessionid = 1;
+
+#define ZERO_STATEID(stateid) (!memcmp((stateid), &zerostateid, sizeof(stateid_t)))
+#define ONE_STATEID(stateid)  (!memcmp((stateid), &onestateid, sizeof(stateid_t)))
+
+/* forward declarations */
+static struct nfs4_stateid * find_stateid(stateid_t *stid, int flags);
+static struct nfs4_delegation * find_delegation_stateid(struct inode *ino, stateid_t *stid);
+static char user_recovery_dirname[PATH_MAX] = "/var/lib/nfs/v4recovery";
+static void nfs4_set_recdir(char *recdir);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Locking: */
 
@@ -83,8 +104,12 @@ static DEFINE_MUTEX(client_mutex);
  */
 static DEFINE_SPINLOCK(recall_lock);
 
+<<<<<<< HEAD
 static struct kmem_cache *openowner_slab = NULL;
 static struct kmem_cache *lockowner_slab = NULL;
+=======
+static struct kmem_cache *stateowner_slab = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct kmem_cache *file_slab = NULL;
 static struct kmem_cache *stateid_slab = NULL;
 static struct kmem_cache *deleg_slab = NULL;
@@ -95,6 +120,7 @@ nfs4_lock_state(void)
 	mutex_lock(&client_mutex);
 }
 
+<<<<<<< HEAD
 static void free_session(struct kref *);
 
 /* Must be called under the client_lock */
@@ -108,6 +134,8 @@ static void nfsd4_get_session(struct nfsd4_session *ses)
 	kref_get(&ses->se_ref);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void
 nfs4_unlock_state(void)
 {
@@ -129,11 +157,14 @@ opaque_hashval(const void *ptr, int nbytes)
 
 static struct list_head del_recall_lru;
 
+<<<<<<< HEAD
 static void nfsd4_free_file(struct nfs4_file *f)
 {
 	kmem_cache_free(file_slab, f);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void
 put_nfs4_file(struct nfs4_file *fi)
 {
@@ -141,7 +172,11 @@ put_nfs4_file(struct nfs4_file *fi)
 		list_del(&fi->fi_hash);
 		spin_unlock(&recall_lock);
 		iput(fi->fi_inode);
+<<<<<<< HEAD
 		nfsd4_free_file(fi);
+=======
+		kmem_cache_free(file_slab, fi);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -158,11 +193,16 @@ unsigned int max_delegations;
  * Open owner state (share locks)
  */
 
+<<<<<<< HEAD
 /* hash tables for lock and open owners */
+=======
+/* hash tables for nfs4_stateowner */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define OWNER_HASH_BITS              8
 #define OWNER_HASH_SIZE             (1 << OWNER_HASH_BITS)
 #define OWNER_HASH_MASK             (OWNER_HASH_SIZE - 1)
 
+<<<<<<< HEAD
 static unsigned int ownerstr_hashval(u32 clientid, struct xdr_netobj *ownername)
 {
 	unsigned int ret;
@@ -172,12 +212,21 @@ static unsigned int ownerstr_hashval(u32 clientid, struct xdr_netobj *ownername)
 	return ret & OWNER_HASH_MASK;
 }
 
+=======
+#define ownerid_hashval(id) \
+        ((id) & OWNER_HASH_MASK)
+#define ownerstr_hashval(clientid, ownername) \
+        (((clientid) + opaque_hashval((ownername.data), (ownername.len))) & OWNER_HASH_MASK)
+
+static struct list_head	ownerid_hashtbl[OWNER_HASH_SIZE];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct list_head	ownerstr_hashtbl[OWNER_HASH_SIZE];
 
 /* hash table for nfs4_file */
 #define FILE_HASH_BITS                   8
 #define FILE_HASH_SIZE                  (1 << FILE_HASH_BITS)
 
+<<<<<<< HEAD
 static unsigned int file_hashval(struct inode *ino)
 {
 	/* XXX: why are we hashing on inode pointer, anyway? */
@@ -185,6 +234,20 @@ static unsigned int file_hashval(struct inode *ino)
 }
 
 static struct list_head file_hashtbl[FILE_HASH_SIZE];
+=======
+/* hash table for (open)nfs4_stateid */
+#define STATEID_HASH_BITS              10
+#define STATEID_HASH_SIZE              (1 << STATEID_HASH_BITS)
+#define STATEID_HASH_MASK              (STATEID_HASH_SIZE - 1)
+
+#define file_hashval(x) \
+        hash_ptr(x, FILE_HASH_BITS)
+#define stateid_hashval(owner_id, file_id)  \
+        (((owner_id) + (file_id)) & STATEID_HASH_MASK)
+
+static struct list_head file_hashtbl[FILE_HASH_SIZE];
+static struct list_head stateid_hashtbl[STATEID_HASH_SIZE];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void __nfs4_file_get_access(struct nfs4_file *fp, int oflag)
 {
@@ -213,7 +276,17 @@ static void __nfs4_file_put_access(struct nfs4_file *fp, int oflag)
 {
 	if (atomic_dec_and_test(&fp->fi_access[oflag])) {
 		nfs4_file_put_fd(fp, oflag);
+<<<<<<< HEAD
 		if (atomic_read(&fp->fi_access[1 - oflag]) == 0)
+=======
+		/*
+		 * It's also safe to get rid of the RDWR open *if*
+		 * we no longer have need of the other kind of access
+		 * or if we already have the other kind of open:
+		 */
+		if (fp->fi_fds[1-oflag]
+			|| atomic_read(&fp->fi_access[1 - oflag]) == 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			nfs4_file_put_fd(fp, O_RDWR);
 	}
 }
@@ -227,6 +300,7 @@ static void nfs4_file_put_access(struct nfs4_file *fp, int oflag)
 		__nfs4_file_put_access(fp, oflag);
 }
 
+<<<<<<< HEAD
 static inline int get_new_stid(struct nfs4_stid *stid)
 {
 	static int min_stateid = 0;
@@ -294,6 +368,10 @@ static struct nfs4_ol_stateid * nfs4_alloc_stateid(struct nfs4_client *clp)
 
 static struct nfs4_delegation *
 alloc_init_deleg(struct nfs4_client *clp, struct nfs4_ol_stateid *stp, struct svc_fh *current_fh, u32 type)
+=======
+static struct nfs4_delegation *
+alloc_init_deleg(struct nfs4_client *clp, struct nfs4_stateid *stp, struct svc_fh *current_fh, u32 type)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct nfs4_delegation *dp;
 	struct nfs4_file *fp = stp->st_file;
@@ -310,6 +388,7 @@ alloc_init_deleg(struct nfs4_client *clp, struct nfs4_ol_stateid *stp, struct sv
 		return NULL;
 	if (num_delegations > max_delegations)
 		return NULL;
+<<<<<<< HEAD
 	dp = delegstateid(nfs4_alloc_stid(clp, deleg_slab));
 	if (dp == NULL)
 		return dp;
@@ -320,13 +399,29 @@ alloc_init_deleg(struct nfs4_client *clp, struct nfs4_ol_stateid *stp, struct sv
 	 * 0 anyway just for consistency and use 1:
 	 */
 	dp->dl_stid.sc_stateid.si_generation = 1;
+=======
+	dp = kmem_cache_alloc(deleg_slab, GFP_KERNEL);
+	if (dp == NULL)
+		return dp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	num_delegations++;
 	INIT_LIST_HEAD(&dp->dl_perfile);
 	INIT_LIST_HEAD(&dp->dl_perclnt);
 	INIT_LIST_HEAD(&dp->dl_recall_lru);
+<<<<<<< HEAD
 	get_nfs4_file(fp);
 	dp->dl_file = fp;
 	dp->dl_type = type;
+=======
+	dp->dl_client = clp;
+	get_nfs4_file(fp);
+	dp->dl_file = fp;
+	dp->dl_type = type;
+	dp->dl_stateid.si_boot = boot_time;
+	dp->dl_stateid.si_stateownerid = current_delegid++;
+	dp->dl_stateid.si_fileid = 0;
+	dp->dl_stateid.si_generation = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fh_copy_shallow(&dp->dl_fh, &current_fh->fh_handle);
 	dp->dl_time = 0;
 	atomic_set(&dp->dl_count, 1);
@@ -355,6 +450,7 @@ static void nfs4_put_deleg_lease(struct nfs4_file *fp)
 	}
 }
 
+<<<<<<< HEAD
 static void unhash_stid(struct nfs4_stid *s)
 {
 	struct idr *stateids = &s->sc_client->cl_stateids;
@@ -362,11 +458,16 @@ static void unhash_stid(struct nfs4_stid *s)
 	idr_remove(stateids, s->sc_stateid.si_opaque.so_id);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Called under the state lock. */
 static void
 unhash_delegation(struct nfs4_delegation *dp)
 {
+<<<<<<< HEAD
 	unhash_stid(&dp->dl_stid);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_del_init(&dp->dl_perclnt);
 	spin_lock(&recall_lock);
 	list_del_init(&dp->dl_perfile);
@@ -388,6 +489,7 @@ static DEFINE_SPINLOCK(client_lock);
 #define CLIENT_HASH_SIZE                (1 << CLIENT_HASH_BITS)
 #define CLIENT_HASH_MASK                (CLIENT_HASH_SIZE - 1)
 
+<<<<<<< HEAD
 static unsigned int clientid_hashval(u32 id)
 {
 	return id & CLIENT_HASH_MASK;
@@ -398,6 +500,12 @@ static unsigned int clientstr_hashval(const char *name)
 	return opaque_hashval(name, 8) & CLIENT_HASH_MASK;
 }
 
+=======
+#define clientid_hashval(id) \
+	((id) & CLIENT_HASH_MASK)
+#define clientstr_hashval(name) \
+	(opaque_hashval((name), 8) & CLIENT_HASH_MASK)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * reclaim_str_hashtbl[] holds known client info from previous reset/reboot
  * used in reboot/reset lease grace period processing
@@ -464,7 +572,11 @@ set_deny(unsigned int *deny, unsigned long bmap) {
 }
 
 static int
+<<<<<<< HEAD
 test_share(struct nfs4_ol_stateid *stp, struct nfsd4_open *open) {
+=======
+test_share(struct nfs4_stateid *stp, struct nfsd4_open *open) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int access, deny;
 
 	set_access(&access, stp->st_access_bmap);
@@ -487,13 +599,23 @@ static int nfs4_access_to_omode(u32 access)
 	BUG();
 }
 
+<<<<<<< HEAD
 static void unhash_generic_stateid(struct nfs4_ol_stateid *stp)
 {
+=======
+static void unhash_generic_stateid(struct nfs4_stateid *stp)
+{
+	list_del(&stp->st_hash);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_del(&stp->st_perfile);
 	list_del(&stp->st_perstateowner);
 }
 
+<<<<<<< HEAD
 static void close_generic_stateid(struct nfs4_ol_stateid *stp)
+=======
+static void free_generic_stateid(struct nfs4_stateid *stp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 
@@ -502,6 +624,7 @@ static void close_generic_stateid(struct nfs4_ol_stateid *stp)
 			if (test_bit(i, &stp->st_access_bmap))
 				nfs4_file_put_access(stp->st_file,
 						nfs4_access_to_omode(i));
+<<<<<<< HEAD
 			__clear_bit(i, &stp->st_access_bmap);
 		}
 	}
@@ -515,10 +638,20 @@ static void free_generic_stateid(struct nfs4_ol_stateid *stp)
 }
 
 static void release_lock_stateid(struct nfs4_ol_stateid *stp)
+=======
+		}
+	}
+	put_nfs4_file(stp->st_file);
+	kmem_cache_free(stateid_slab, stp);
+}
+
+static void release_lock_stateid(struct nfs4_stateid *stp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct file *file;
 
 	unhash_generic_stateid(stp);
+<<<<<<< HEAD
 	unhash_stid(&stp->st_stid);
 	file = find_any_file(stp->st_file);
 	if (file)
@@ -537,10 +670,29 @@ static void unhash_lockowner(struct nfs4_lockowner *lo)
 	while (!list_empty(&lo->lo_owner.so_stateids)) {
 		stp = list_first_entry(&lo->lo_owner.so_stateids,
 				struct nfs4_ol_stateid, st_perstateowner);
+=======
+	file = find_any_file(stp->st_file);
+	if (file)
+		locks_remove_posix(file, (fl_owner_t)stp->st_stateowner);
+	free_generic_stateid(stp);
+}
+
+static void unhash_lockowner(struct nfs4_stateowner *sop)
+{
+	struct nfs4_stateid *stp;
+
+	list_del(&sop->so_idhash);
+	list_del(&sop->so_strhash);
+	list_del(&sop->so_perstateid);
+	while (!list_empty(&sop->so_stateids)) {
+		stp = list_first_entry(&sop->so_stateids,
+				struct nfs4_stateid, st_perstateowner);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		release_lock_stateid(stp);
 	}
 }
 
+<<<<<<< HEAD
 static void release_lockowner(struct nfs4_lockowner *lo)
 {
 	unhash_lockowner(lo);
@@ -582,10 +734,51 @@ static void unhash_openowner(struct nfs4_openowner *oo)
 	while (!list_empty(&oo->oo_owner.so_stateids)) {
 		stp = list_first_entry(&oo->oo_owner.so_stateids,
 				struct nfs4_ol_stateid, st_perstateowner);
+=======
+static void release_lockowner(struct nfs4_stateowner *sop)
+{
+	unhash_lockowner(sop);
+	nfs4_put_stateowner(sop);
+}
+
+static void
+release_stateid_lockowners(struct nfs4_stateid *open_stp)
+{
+	struct nfs4_stateowner *lock_sop;
+
+	while (!list_empty(&open_stp->st_lockowners)) {
+		lock_sop = list_entry(open_stp->st_lockowners.next,
+				struct nfs4_stateowner, so_perstateid);
+		/* list_del(&open_stp->st_lockowners);  */
+		BUG_ON(lock_sop->so_is_open_owner);
+		release_lockowner(lock_sop);
+	}
+}
+
+static void release_open_stateid(struct nfs4_stateid *stp)
+{
+	unhash_generic_stateid(stp);
+	release_stateid_lockowners(stp);
+	free_generic_stateid(stp);
+}
+
+static void unhash_openowner(struct nfs4_stateowner *sop)
+{
+	struct nfs4_stateid *stp;
+
+	list_del(&sop->so_idhash);
+	list_del(&sop->so_strhash);
+	list_del(&sop->so_perclient);
+	list_del(&sop->so_perstateid); /* XXX: necessary? */
+	while (!list_empty(&sop->so_stateids)) {
+		stp = list_first_entry(&sop->so_stateids,
+				struct nfs4_stateid, st_perstateowner);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		release_open_stateid(stp);
 	}
 }
 
+<<<<<<< HEAD
 static void release_last_closed_stateid(struct nfs4_openowner *oo)
 {
 	struct nfs4_ol_stateid *s = oo->oo_last_closed_stid;
@@ -603,6 +796,13 @@ static void release_openowner(struct nfs4_openowner *oo)
 	list_del(&oo->oo_close_lru);
 	release_last_closed_stateid(oo);
 	nfs4_free_openowner(oo);
+=======
+static void release_openowner(struct nfs4_stateowner *sop)
+{
+	unhash_openowner(sop);
+	list_del(&sop->so_close_lru);
+	nfs4_put_stateowner(sop);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #define SESSION_HASH_SIZE	512
@@ -616,13 +816,17 @@ hash_sessionid(struct nfs4_sessionid *sessionid)
 	return sid->sequence % SESSION_HASH_SIZE;
 }
 
+<<<<<<< HEAD
 #ifdef NFSD_DEBUG
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void
 dump_sessionid(const char *fn, struct nfs4_sessionid *sessionid)
 {
 	u32 *ptr = (u32 *)(&sessionid->data[0]);
 	dprintk("%s: %u:%u:%u:%u\n", fn, ptr[0], ptr[1], ptr[2], ptr[3]);
 }
+<<<<<<< HEAD
 #else
 static inline void
 dump_sessionid(const char *fn, struct nfs4_sessionid *sessionid)
@@ -630,6 +834,8 @@ dump_sessionid(const char *fn, struct nfs4_sessionid *sessionid)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void
 gen_sessionid(struct nfsd4_session *ses)
@@ -686,7 +892,11 @@ static int nfsd4_sanitize_slot_size(u32 size)
 /*
  * XXX: If we run out of reserved DRC memory we could (up to a point)
  * re-negotiate active sessions and reduce their slot usage to make
+<<<<<<< HEAD
  * room for new connections. For now we just fail the create session.
+=======
+ * rooom for new connections. For now we just fail the create session.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int nfsd4_get_drc_mem(int slotsize, u32 num)
 {
@@ -851,12 +1061,19 @@ static void nfsd4_del_conns(struct nfsd4_session *s)
 	spin_unlock(&clp->cl_lock);
 }
 
+<<<<<<< HEAD
 static void free_session(struct kref *kref)
+=======
+void free_session(struct kref *kref)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct nfsd4_session *ses;
 	int mem;
 
+<<<<<<< HEAD
 	lockdep_assert_held(&client_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ses = container_of(kref, struct nfsd4_session, se_ref);
 	nfsd4_del_conns(ses);
 	spin_lock(&nfsd_drc_lock);
@@ -867,6 +1084,7 @@ static void free_session(struct kref *kref)
 	kfree(ses);
 }
 
+<<<<<<< HEAD
 void nfsd4_put_session(struct nfsd4_session *ses)
 {
 	spin_lock(&client_lock);
@@ -874,6 +1092,8 @@ void nfsd4_put_session(struct nfsd4_session *ses)
 	spin_unlock(&client_lock);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct nfsd4_session *alloc_init_session(struct svc_rqst *rqstp, struct nfs4_client *clp, struct nfsd4_create_session *cses)
 {
 	struct nfsd4_session *new;
@@ -921,9 +1141,13 @@ static struct nfsd4_session *alloc_init_session(struct svc_rqst *rqstp, struct n
 	status = nfsd4_new_conn_from_crses(rqstp, new);
 	/* whoops: benny points out, status is ignored! (err, or bogus) */
 	if (status) {
+<<<<<<< HEAD
 		spin_lock(&client_lock);
 		free_session(&new->se_ref);
 		spin_unlock(&client_lock);
+=======
+		free_session(&new->se_ref);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 	}
 	if (cses->flags & SESSION4_BACK_CHAN) {
@@ -985,6 +1209,12 @@ renew_client_locked(struct nfs4_client *clp)
 		return;
 	}
 
+<<<<<<< HEAD
+=======
+	/*
+	* Move client to the end to the LRU list.
+	*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dprintk("renewing client (clientid %08x/%08x)\n", 
 			clp->cl_clientid.cl_boot, 
 			clp->cl_clientid.cl_id);
@@ -1023,11 +1253,19 @@ static struct nfs4_client *alloc_client(struct xdr_netobj name)
 	clp = kzalloc(sizeof(struct nfs4_client), GFP_KERNEL);
 	if (clp == NULL)
 		return NULL;
+<<<<<<< HEAD
 	clp->cl_name.data = kmemdup(name.data, name.len, GFP_KERNEL);
+=======
+	clp->cl_name.data = kmalloc(name.len, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (clp->cl_name.data == NULL) {
 		kfree(clp);
 		return NULL;
 	}
+<<<<<<< HEAD
+=======
+	memcpy(clp->cl_name.data, name.data, name.len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clp->cl_name.len = name.len;
 	return clp;
 }
@@ -1035,20 +1273,30 @@ static struct nfs4_client *alloc_client(struct xdr_netobj name)
 static inline void
 free_client(struct nfs4_client *clp)
 {
+<<<<<<< HEAD
 	lockdep_assert_held(&client_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (!list_empty(&clp->cl_sessions)) {
 		struct nfsd4_session *ses;
 		ses = list_entry(clp->cl_sessions.next, struct nfsd4_session,
 				se_perclnt);
 		list_del(&ses->se_perclnt);
+<<<<<<< HEAD
 		nfsd4_put_session_locked(ses);
+=======
+		nfsd4_put_session(ses);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (clp->cl_cred.cr_group_info)
 		put_group_info(clp->cl_cred.cr_group_info);
 	kfree(clp->cl_principal);
 	kfree(clp->cl_name.data);
+<<<<<<< HEAD
 	idr_remove_all(&clp->cl_stateids);
 	idr_destroy(&clp->cl_stateids);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(clp);
 }
 
@@ -1084,7 +1332,11 @@ unhash_client_locked(struct nfs4_client *clp)
 static void
 expire_client(struct nfs4_client *clp)
 {
+<<<<<<< HEAD
 	struct nfs4_openowner *oo;
+=======
+	struct nfs4_stateowner *sop;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct nfs4_delegation *dp;
 	struct list_head reaplist;
 
@@ -1098,11 +1350,20 @@ expire_client(struct nfs4_client *clp)
 	spin_unlock(&recall_lock);
 	while (!list_empty(&reaplist)) {
 		dp = list_entry(reaplist.next, struct nfs4_delegation, dl_recall_lru);
+<<<<<<< HEAD
 		unhash_delegation(dp);
 	}
 	while (!list_empty(&clp->cl_openowners)) {
 		oo = list_entry(clp->cl_openowners.next, struct nfs4_openowner, oo_perclient);
 		release_openowner(oo);
+=======
+		list_del_init(&dp->dl_recall_lru);
+		unhash_delegation(dp);
+	}
+	while (!list_empty(&clp->cl_openowners)) {
+		sop = list_entry(clp->cl_openowners.next, struct nfs4_stateowner, so_perclient);
+		release_openowner(sop);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	nfsd4_shutdown_callback(clp);
 	if (clp->cl_cb_conn.cb_xprt)
@@ -1170,6 +1431,7 @@ static void gen_clid(struct nfs4_client *clp)
 
 static void gen_confirm(struct nfs4_client *clp)
 {
+<<<<<<< HEAD
 	__be32 verf[2];
 	static u32 i;
 
@@ -1193,6 +1455,14 @@ static struct nfs4_stid *find_stateid_by_type(struct nfs4_client *cl, stateid_t 
 	if (typemask & s->sc_type)
 		return s;
 	return NULL;
+=======
+	static u32 i;
+	u32 *p;
+
+	p = (u32 *)clp->cl_confirm.data;
+	*p++ = get_seconds();
+	*p++ = i++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct nfs4_client *create_client(struct xdr_netobj name, char *recdir,
@@ -1212,14 +1482,21 @@ static struct nfs4_client *create_client(struct xdr_netobj name, char *recdir,
 	if (princ) {
 		clp->cl_principal = kstrdup(princ, GFP_KERNEL);
 		if (clp->cl_principal == NULL) {
+<<<<<<< HEAD
 			spin_lock(&client_lock);
 			free_client(clp);
 			spin_unlock(&client_lock);
+=======
+			free_client(clp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return NULL;
 		}
 	}
 
+<<<<<<< HEAD
 	idr_init(&clp->cl_stateids);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy(clp->cl_recdir, recdir, HEXDIR_LEN);
 	atomic_set(&clp->cl_refcount, 0);
 	clp->cl_cb_state = NFSD4_CB_UNKNOWN;
@@ -1243,6 +1520,20 @@ static struct nfs4_client *create_client(struct xdr_netobj name, char *recdir,
 	return clp;
 }
 
+<<<<<<< HEAD
+=======
+static int check_name(struct xdr_netobj name)
+{
+	if (name.len == 0) 
+		return 0;
+	if (name.len > NFS4_OPAQUE_LIMIT) {
+		dprintk("NFSD: check_name: name too long(%d)!\n", name.len);
+		return 0;
+	}
+	return 1;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 add_to_unconfirmed(struct nfs4_client *clp, unsigned int strhashval)
 {
@@ -1274,10 +1565,15 @@ find_confirmed_client(clientid_t *clid)
 	unsigned int idhashval = clientid_hashval(clid->cl_id);
 
 	list_for_each_entry(clp, &conf_id_hashtbl[idhashval], cl_idhash) {
+<<<<<<< HEAD
 		if (same_clid(&clp->cl_clientid, clid)) {
 			renew_client(clp);
 			return clp;
 		}
+=======
+		if (same_clid(&clp->cl_clientid, clid))
+			return clp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return NULL;
 }
@@ -1324,6 +1620,23 @@ find_unconfirmed_client_by_str(const char *dname, unsigned int hashval)
 	return NULL;
 }
 
+<<<<<<< HEAD
+=======
+static void rpc_svcaddr2sockaddr(struct sockaddr *sa, unsigned short family, union svc_addr_u *svcaddr)
+{
+	switch (family) {
+	case AF_INET:
+		((struct sockaddr_in *)sa)->sin_family = AF_INET;
+		((struct sockaddr_in *)sa)->sin_addr = svcaddr->addr;
+		return;
+	case AF_INET6:
+		((struct sockaddr_in6 *)sa)->sin6_family = AF_INET6;
+		((struct sockaddr_in6 *)sa)->sin6_addr = svcaddr->addr6;
+		return;
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 gen_callback(struct nfs4_client *clp, struct nfsd4_setclientid *se, struct svc_rqst *rqstp)
 {
@@ -1342,7 +1655,11 @@ gen_callback(struct nfs4_client *clp, struct nfsd4_setclientid *se, struct svc_r
 	else
 		goto out_err;
 
+<<<<<<< HEAD
 	conn->cb_addrlen = rpc_uaddr2sockaddr(&init_net, se->se_callback_addr_val,
+=======
+	conn->cb_addrlen = rpc_uaddr2sockaddr(se->se_callback_addr_val,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					    se->se_callback_addr_len,
 					    (struct sockaddr *)&conn->cb_addr,
 					    sizeof(conn->cb_addr));
@@ -1355,7 +1672,11 @@ gen_callback(struct nfs4_client *clp, struct nfsd4_setclientid *se, struct svc_r
 
 	conn->cb_prog = se->se_callback_prog;
 	conn->cb_ident = se->se_callback_ident;
+<<<<<<< HEAD
 	memcpy(&conn->cb_saddr, &rqstp->rq_daddr, rqstp->rq_daddrlen);
+=======
+	rpc_svcaddr2sockaddr((struct sockaddr *)&conn->cb_saddr, expected_family, &rqstp->rq_daddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 out_err:
 	conn->cb_addr.ss_family = AF_UNSPEC;
@@ -1381,7 +1702,10 @@ nfsd4_store_cache_entry(struct nfsd4_compoundres *resp)
 	slot->sl_opcnt = resp->opcnt;
 	slot->sl_status = resp->cstate.status;
 
+<<<<<<< HEAD
 	slot->sl_flags |= NFSD4_SLOT_INITIALIZED;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (nfsd4_not_cached(resp)) {
 		slot->sl_datalen = 0;
 		return;
@@ -1409,12 +1733,22 @@ nfsd4_enc_sequence_replay(struct nfsd4_compoundargs *args,
 	struct nfsd4_op *op;
 	struct nfsd4_slot *slot = resp->cstate.slot;
 
+<<<<<<< HEAD
+=======
+	dprintk("--> %s resp->opcnt %d cachethis %u \n", __func__,
+		resp->opcnt, resp->cstate.slot->sl_cachethis);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Encode the replayed sequence operation */
 	op = &args->ops[resp->opcnt - 1];
 	nfsd4_encode_operation(resp, op);
 
 	/* Return nfserr_retry_uncached_rep in next operation. */
+<<<<<<< HEAD
 	if (args->opcnt > 1 && !(slot->sl_flags & NFSD4_SLOT_CACHETHIS)) {
+=======
+	if (args->opcnt > 1 && slot->sl_cachethis == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		op = &args->ops[resp->opcnt++];
 		op->status = nfserr_retry_uncached_rep;
 		nfsd4_encode_operation(resp, op);
@@ -1485,7 +1819,11 @@ nfsd4_exchange_id(struct svc_rqst *rqstp,
 		__func__, rqstp, exid, exid->clname.len, exid->clname.data,
 		addr_str, exid->flags, exid->spa_how);
 
+<<<<<<< HEAD
 	if (exid->flags & ~EXCHGID4_FLAG_MASK_A)
+=======
+	if (!check_name(exid->clname) || (exid->flags & ~EXCHGID4_FLAG_MASK_A))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return nfserr_inval;
 
 	/* Currently only support SP4_NONE */
@@ -1607,11 +1945,24 @@ check_slot_seqid(u32 seqid, u32 slot_seqid, int slot_inuse)
 		else
 			return nfserr_seq_misordered;
 	}
+<<<<<<< HEAD
 	/* Note unsigned 32-bit arithmetic handles wraparound: */
 	if (likely(seqid == slot_seqid + 1))
 		return nfs_ok;
 	if (seqid == slot_seqid)
 		return nfserr_replay_cache;
+=======
+	/* Normal */
+	if (likely(seqid == slot_seqid + 1))
+		return nfs_ok;
+	/* Replay */
+	if (seqid == slot_seqid)
+		return nfserr_replay_cache;
+	/* Wraparound */
+	if (seqid == 1 && (slot_seqid + 1) == 0)
+		return nfs_ok;
+	/* Misordered replay or misordered new request */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return nfserr_seq_misordered;
 }
 
@@ -1636,6 +1987,7 @@ nfsd4_replay_create_session(struct nfsd4_create_session *cr_ses,
 	return slot->sl_status;
 }
 
+<<<<<<< HEAD
 #define NFSD_MIN_REQ_HDR_SEQ_SZ	((\
 			2 * 2 + /* credential,verifier: AUTH_NULL, length 0 */ \
 			1 +	/* MIN tag is length with zero, only length */ \
@@ -1659,6 +2011,8 @@ static __be32 check_forechannel_attrs(struct nfsd4_channel_attrs fchannel)
 		|| fchannel.maxresp_sz < NFSD_MIN_RESP_HDR_SEQ_SZ;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 __be32
 nfsd4_create_session(struct svc_rqst *rqstp,
 		     struct nfsd4_compound_state *cstate,
@@ -1727,10 +2081,13 @@ nfsd4_create_session(struct svc_rqst *rqstp,
 	cr_ses->flags &= ~SESSION4_PERSIST;
 	cr_ses->flags &= ~SESSION4_RDMA;
 
+<<<<<<< HEAD
 	status = nfserr_toosmall;
 	if (check_forechannel_attrs(cr_ses->fore_channel))
 		goto out;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = nfserr_jukebox;
 	new = alloc_init_session(rqstp, conf, cr_ses);
 	if (!new)
@@ -1842,10 +2199,16 @@ nfsd4_destroy_session(struct svc_rqst *r,
 	nfsd4_probe_callback_sync(ses->se_client);
 	nfs4_unlock_state();
 
+<<<<<<< HEAD
 	spin_lock(&client_lock);
 	nfsd4_del_conns(ses);
 	nfsd4_put_session_locked(ses);
 	spin_unlock(&client_lock);
+=======
+	nfsd4_del_conns(ses);
+
+	nfsd4_put_session(ses);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = nfs_ok;
 out:
 	dprintk("%s returns %d\n", __func__, ntohl(status));
@@ -1893,6 +2256,7 @@ static bool nfsd4_session_too_many_ops(struct svc_rqst *rqstp, struct nfsd4_sess
 	return args->opcnt > session->se_fchannel.maxops;
 }
 
+<<<<<<< HEAD
 static bool nfsd4_request_too_big(struct svc_rqst *rqstp,
 				  struct nfsd4_session *session)
 {
@@ -1901,6 +2265,8 @@ static bool nfsd4_request_too_big(struct svc_rqst *rqstp,
 	return xb->len > session->se_fchannel.maxreq_sz;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 __be32
 nfsd4_sequence(struct svc_rqst *rqstp,
 	       struct nfsd4_compound_state *cstate,
@@ -1933,10 +2299,13 @@ nfsd4_sequence(struct svc_rqst *rqstp,
 	if (nfsd4_session_too_many_ops(rqstp, session))
 		goto out;
 
+<<<<<<< HEAD
 	status = nfserr_req_too_big;
 	if (nfsd4_request_too_big(rqstp, session))
 		goto out;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = nfserr_badslot;
 	if (seq->slotid >= session->se_fchannel.maxreqs)
 		goto out;
@@ -1949,12 +2318,17 @@ nfsd4_sequence(struct svc_rqst *rqstp,
 	 * sr_highest_slotid and the sr_target_slot id to maxslots */
 	seq->maxslots = session->se_fchannel.maxreqs;
 
+<<<<<<< HEAD
 	status = check_slot_seqid(seq->seqid, slot->sl_seqid,
 					slot->sl_flags & NFSD4_SLOT_INUSE);
 	if (status == nfserr_replay_cache) {
 		status = nfserr_seq_misordered;
 		if (!(slot->sl_flags & NFSD4_SLOT_INITIALIZED))
 			goto out;
+=======
+	status = check_slot_seqid(seq->seqid, slot->sl_seqid, slot->sl_inuse);
+	if (status == nfserr_replay_cache) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cstate->slot = slot;
 		cstate->session = session;
 		/* Return the cached reply status and set cstate->status
@@ -1970,12 +2344,18 @@ nfsd4_sequence(struct svc_rqst *rqstp,
 	conn = NULL;
 
 	/* Success! bump slot seqid */
+<<<<<<< HEAD
 	slot->sl_seqid = seq->seqid;
 	slot->sl_flags |= NFSD4_SLOT_INUSE;
 	if (seq->cachethis)
 		slot->sl_flags |= NFSD4_SLOT_CACHETHIS;
 	else
 		slot->sl_flags &= ~NFSD4_SLOT_CACHETHIS;
+=======
+	slot->sl_inuse = true;
+	slot->sl_seqid = seq->seqid;
+	slot->sl_cachethis = seq->cachethis;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cstate->slot = slot;
 	cstate->session = session;
@@ -1987,6 +2367,7 @@ out:
 
 		nfsd4_get_session(cstate->session);
 		atomic_inc(&clp->cl_refcount);
+<<<<<<< HEAD
 		switch (clp->cl_cb_state) {
 		case NFSD4_CB_DOWN:
 			seq->status_flags = SEQ4_STATUS_CB_PATH_DOWN;
@@ -1997,6 +2378,10 @@ out:
 		default:
 			seq->status_flags = 0;
 		}
+=======
+		if (clp->cl_cb_state == NFSD4_CB_DOWN)
+			seq->status_flags |= SEQ4_STATUS_CB_PATH_DOWN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	kfree(conn);
 	spin_unlock(&client_lock);
@@ -2004,6 +2389,7 @@ out:
 	return status;
 }
 
+<<<<<<< HEAD
 static inline bool has_resources(struct nfs4_client *clp)
 {
 	return !list_empty(&clp->cl_openowners)
@@ -2048,6 +2434,8 @@ out:
 	return status;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 __be32
 nfsd4_reclaim_complete(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate, struct nfsd4_reclaim_complete *rc)
 {
@@ -2065,8 +2453,12 @@ nfsd4_reclaim_complete(struct svc_rqst *rqstp, struct nfsd4_compound_state *csta
 
 	nfs4_lock_state();
 	status = nfserr_complete_already;
+<<<<<<< HEAD
 	if (test_and_set_bit(NFSD4_CLIENT_RECLAIM_COMPLETE,
 			     &cstate->session->se_client->cl_flags))
+=======
+	if (cstate->session->se_client->cl_firststate)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	status = nfserr_stale_clientid;
@@ -2081,7 +2473,11 @@ nfsd4_reclaim_complete(struct svc_rqst *rqstp, struct nfsd4_compound_state *csta
 		goto out;
 
 	status = nfs_ok;
+<<<<<<< HEAD
 	nfsd4_client_record_create(cstate->session->se_client);
+=======
+	nfsd4_create_clid_dir(cstate->session->se_client);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	nfs4_unlock_state();
 	return status;
@@ -2091,13 +2487,26 @@ __be32
 nfsd4_setclientid(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 		  struct nfsd4_setclientid *setclid)
 {
+<<<<<<< HEAD
 	struct xdr_netobj 	clname = setclid->se_name;
+=======
+	struct xdr_netobj 	clname = { 
+		.len = setclid->se_namelen,
+		.data = setclid->se_name,
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nfs4_verifier		clverifier = setclid->se_verf;
 	unsigned int 		strhashval;
 	struct nfs4_client	*conf, *unconf, *new;
 	__be32 			status;
 	char                    dname[HEXDIR_LEN];
 	
+<<<<<<< HEAD
+=======
+	if (!check_name(clname))
+		return nfserr_inval;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = nfs4_make_rec_clidname(dname, &clname);
 	if (status)
 		return status;
@@ -2276,7 +2685,11 @@ nfsd4_setclientid_confirm(struct svc_rqst *rqstp,
 			conf = find_confirmed_client_by_str(unconf->cl_recdir,
 							    hash);
 			if (conf) {
+<<<<<<< HEAD
 				nfsd4_client_record_remove(conf);
+=======
+				nfsd4_remove_clid_dir(conf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				expire_client(conf);
 			}
 			move_to_confirmed(unconf);
@@ -2301,6 +2714,7 @@ out:
 	return status;
 }
 
+<<<<<<< HEAD
 static struct nfs4_file *nfsd4_alloc_file(void)
 {
 	return kmem_cache_alloc(file_slab, GFP_KERNEL);
@@ -2323,6 +2737,33 @@ static void nfsd4_init_file(struct nfs4_file *fp, struct inode *ino)
 	spin_lock(&recall_lock);
 	list_add(&fp->fi_hash, &file_hashtbl[hashval]);
 	spin_unlock(&recall_lock);
+=======
+/* OPEN Share state helper functions */
+static inline struct nfs4_file *
+alloc_init_file(struct inode *ino)
+{
+	struct nfs4_file *fp;
+	unsigned int hashval = file_hashval(ino);
+
+	fp = kmem_cache_alloc(file_slab, GFP_KERNEL);
+	if (fp) {
+		atomic_set(&fp->fi_ref, 1);
+		INIT_LIST_HEAD(&fp->fi_hash);
+		INIT_LIST_HEAD(&fp->fi_stateids);
+		INIT_LIST_HEAD(&fp->fi_delegations);
+		fp->fi_inode = igrab(ino);
+		fp->fi_id = current_fileid++;
+		fp->fi_had_conflict = false;
+		fp->fi_lease = NULL;
+		memset(fp->fi_fds, 0, sizeof(fp->fi_fds));
+		memset(fp->fi_access, 0, sizeof(fp->fi_access));
+		spin_lock(&recall_lock);
+		list_add(&fp->fi_hash, &file_hashtbl[hashval]);
+		spin_unlock(&recall_lock);
+		return fp;
+	}
+	return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -2337,13 +2778,18 @@ nfsd4_free_slab(struct kmem_cache **slab)
 void
 nfsd4_free_slabs(void)
 {
+<<<<<<< HEAD
 	nfsd4_free_slab(&openowner_slab);
 	nfsd4_free_slab(&lockowner_slab);
+=======
+	nfsd4_free_slab(&stateowner_slab);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nfsd4_free_slab(&file_slab);
 	nfsd4_free_slab(&stateid_slab);
 	nfsd4_free_slab(&deleg_slab);
 }
 
+<<<<<<< HEAD
 int
 nfsd4_init_slabs(void)
 {
@@ -2354,13 +2800,25 @@ nfsd4_init_slabs(void)
 	lockowner_slab = kmem_cache_create("nfsd4_lockowners",
 			sizeof(struct nfs4_lockowner), 0, 0, NULL);
 	if (lockowner_slab == NULL)
+=======
+static int
+nfsd4_init_slabs(void)
+{
+	stateowner_slab = kmem_cache_create("nfsd4_stateowners",
+			sizeof(struct nfs4_stateowner), 0, 0, NULL);
+	if (stateowner_slab == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_nomem;
 	file_slab = kmem_cache_create("nfsd4_files",
 			sizeof(struct nfs4_file), 0, 0, NULL);
 	if (file_slab == NULL)
 		goto out_nomem;
 	stateid_slab = kmem_cache_create("nfsd4_stateids",
+<<<<<<< HEAD
 			sizeof(struct nfs4_ol_stateid), 0, 0, NULL);
+=======
+			sizeof(struct nfs4_stateid), 0, 0, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (stateid_slab == NULL)
 		goto out_nomem;
 	deleg_slab = kmem_cache_create("nfsd4_delegations",
@@ -2374,6 +2832,7 @@ out_nomem:
 	return -ENOMEM;
 }
 
+<<<<<<< HEAD
 void nfs4_free_openowner(struct nfs4_openowner *oo)
 {
 	kfree(oo->oo_owner.so_owner.data);
@@ -2451,17 +2910,108 @@ static void init_open_stateid(struct nfs4_ol_stateid *stp, struct nfs4_file *fp,
 	stp->st_access_bmap = 0;
 	stp->st_deny_bmap = 0;
 	__set_bit(open->op_share_access, &stp->st_access_bmap);
+=======
+void
+nfs4_free_stateowner(struct kref *kref)
+{
+	struct nfs4_stateowner *sop =
+		container_of(kref, struct nfs4_stateowner, so_ref);
+	kfree(sop->so_owner.data);
+	kmem_cache_free(stateowner_slab, sop);
+}
+
+static inline struct nfs4_stateowner *
+alloc_stateowner(struct xdr_netobj *owner)
+{
+	struct nfs4_stateowner *sop;
+
+	if ((sop = kmem_cache_alloc(stateowner_slab, GFP_KERNEL))) {
+		if ((sop->so_owner.data = kmalloc(owner->len, GFP_KERNEL))) {
+			memcpy(sop->so_owner.data, owner->data, owner->len);
+			sop->so_owner.len = owner->len;
+			kref_init(&sop->so_ref);
+			return sop;
+		} 
+		kmem_cache_free(stateowner_slab, sop);
+	}
+	return NULL;
+}
+
+static struct nfs4_stateowner *
+alloc_init_open_stateowner(unsigned int strhashval, struct nfs4_client *clp, struct nfsd4_open *open) {
+	struct nfs4_stateowner *sop;
+	struct nfs4_replay *rp;
+	unsigned int idhashval;
+
+	if (!(sop = alloc_stateowner(&open->op_owner)))
+		return NULL;
+	idhashval = ownerid_hashval(current_ownerid);
+	INIT_LIST_HEAD(&sop->so_idhash);
+	INIT_LIST_HEAD(&sop->so_strhash);
+	INIT_LIST_HEAD(&sop->so_perclient);
+	INIT_LIST_HEAD(&sop->so_stateids);
+	INIT_LIST_HEAD(&sop->so_perstateid);  /* not used */
+	INIT_LIST_HEAD(&sop->so_close_lru);
+	sop->so_time = 0;
+	list_add(&sop->so_idhash, &ownerid_hashtbl[idhashval]);
+	list_add(&sop->so_strhash, &ownerstr_hashtbl[strhashval]);
+	list_add(&sop->so_perclient, &clp->cl_openowners);
+	sop->so_is_open_owner = 1;
+	sop->so_id = current_ownerid++;
+	sop->so_client = clp;
+	sop->so_seqid = open->op_seqid;
+	sop->so_confirmed = 0;
+	rp = &sop->so_replay;
+	rp->rp_status = nfserr_serverfault;
+	rp->rp_buflen = 0;
+	rp->rp_buf = rp->rp_ibuf;
+	return sop;
+}
+
+static inline void
+init_stateid(struct nfs4_stateid *stp, struct nfs4_file *fp, struct nfsd4_open *open) {
+	struct nfs4_stateowner *sop = open->op_stateowner;
+	unsigned int hashval = stateid_hashval(sop->so_id, fp->fi_id);
+
+	INIT_LIST_HEAD(&stp->st_hash);
+	INIT_LIST_HEAD(&stp->st_perstateowner);
+	INIT_LIST_HEAD(&stp->st_lockowners);
+	INIT_LIST_HEAD(&stp->st_perfile);
+	list_add(&stp->st_hash, &stateid_hashtbl[hashval]);
+	list_add(&stp->st_perstateowner, &sop->so_stateids);
+	list_add(&stp->st_perfile, &fp->fi_stateids);
+	stp->st_stateowner = sop;
+	get_nfs4_file(fp);
+	stp->st_file = fp;
+	stp->st_stateid.si_boot = boot_time;
+	stp->st_stateid.si_stateownerid = sop->so_id;
+	stp->st_stateid.si_fileid = fp->fi_id;
+	stp->st_stateid.si_generation = 0;
+	stp->st_access_bmap = 0;
+	stp->st_deny_bmap = 0;
+	__set_bit(open->op_share_access & ~NFS4_SHARE_WANT_MASK,
+		  &stp->st_access_bmap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__set_bit(open->op_share_deny, &stp->st_deny_bmap);
 	stp->st_openstp = NULL;
 }
 
 static void
+<<<<<<< HEAD
 move_to_close_lru(struct nfs4_openowner *oo)
 {
 	dprintk("NFSD: move_to_close_lru nfs4_openowner %p\n", oo);
 
 	list_move_tail(&oo->oo_close_lru, &close_lru);
 	oo->oo_time = get_seconds();
+=======
+move_to_close_lru(struct nfs4_stateowner *sop)
+{
+	dprintk("NFSD: move_to_close_lru nfs4_stateowner %p\n", sop);
+
+	list_move_tail(&sop->so_close_lru, &close_lru);
+	sop->so_time = get_seconds();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -2473,6 +3023,7 @@ same_owner_str(struct nfs4_stateowner *sop, struct xdr_netobj *owner,
 		(sop->so_client->cl_clientid.cl_id == clid->cl_id);
 }
 
+<<<<<<< HEAD
 static struct nfs4_openowner *
 find_openstateowner_str(unsigned int hashval, struct nfsd4_open *open)
 {
@@ -2487,6 +3038,16 @@ find_openstateowner_str(unsigned int hashval, struct nfsd4_open *open)
 			renew_client(oo->oo_owner.so_client);
 			return oo;
 		}
+=======
+static struct nfs4_stateowner *
+find_openstateowner_str(unsigned int hashval, struct nfsd4_open *open)
+{
+	struct nfs4_stateowner *so = NULL;
+
+	list_for_each_entry(so, &ownerstr_hashtbl[hashval], so_strhash) {
+		if (same_owner_str(so, &open->op_owner, &open->op_clientid))
+			return so;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return NULL;
 }
@@ -2510,6 +3071,34 @@ find_file(struct inode *ino)
 	return NULL;
 }
 
+<<<<<<< HEAD
+=======
+static inline int access_valid(u32 x, u32 minorversion)
+{
+	if ((x & NFS4_SHARE_ACCESS_MASK) < NFS4_SHARE_ACCESS_READ)
+		return 0;
+	if ((x & NFS4_SHARE_ACCESS_MASK) > NFS4_SHARE_ACCESS_BOTH)
+		return 0;
+	x &= ~NFS4_SHARE_ACCESS_MASK;
+	if (minorversion && x) {
+		if ((x & NFS4_SHARE_WANT_MASK) > NFS4_SHARE_WANT_CANCEL)
+			return 0;
+		if ((x & NFS4_SHARE_WHEN_MASK) > NFS4_SHARE_PUSH_DELEG_WHEN_UNCONTENDED)
+			return 0;
+		x &= ~(NFS4_SHARE_WANT_MASK | NFS4_SHARE_WHEN_MASK);
+	}
+	if (x)
+		return 0;
+	return 1;
+}
+
+static inline int deny_valid(u32 x)
+{
+	/* Note: unlike access bits, deny bits may be zero. */
+	return x <= NFS4_SHARE_DENY_BOTH;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Called to check deny when READ with all zero stateid or
  * WRITE with all zero or all one stateid
@@ -2519,7 +3108,11 @@ nfs4_share_conflict(struct svc_fh *current_fh, unsigned int deny_type)
 {
 	struct inode *ino = current_fh->fh_dentry->d_inode;
 	struct nfs4_file *fp;
+<<<<<<< HEAD
 	struct nfs4_ol_stateid *stp;
+=======
+	struct nfs4_stateid *stp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__be32 ret;
 
 	dprintk("NFSD: nfs4_share_conflict\n");
@@ -2590,6 +3183,7 @@ int nfsd_change_deleg_cb(struct file_lock **onlist, int arg)
 }
 
 static const struct lock_manager_operations nfsd_lease_mng_ops = {
+<<<<<<< HEAD
 	.lm_break = nfsd_break_deleg_cb,
 	.lm_change = nfsd_change_deleg_cb,
 };
@@ -2604,6 +3198,12 @@ static __be32 nfsd4_check_seqid(struct nfsd4_compound_state *cstate, struct nfs4
 		return nfs_ok;
 	return nfserr_bad_seqid;
 }
+=======
+	.fl_break = nfsd_break_deleg_cb,
+	.fl_change = nfsd_change_deleg_cb,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 __be32
 nfsd4_process_open1(struct nfsd4_compound_state *cstate,
@@ -2612,6 +3212,7 @@ nfsd4_process_open1(struct nfsd4_compound_state *cstate,
 	clientid_t *clientid = &open->op_clientid;
 	struct nfs4_client *clp = NULL;
 	unsigned int strhashval;
+<<<<<<< HEAD
 	struct nfs4_openowner *oo = NULL;
 	__be32 status;
 
@@ -2655,6 +3256,59 @@ alloc_stateid:
 	open->op_stp = nfs4_alloc_stateid(clp);
 	if (!open->op_stp)
 		return nfserr_jukebox;
+=======
+	struct nfs4_stateowner *sop = NULL;
+
+	if (!check_name(open->op_owner))
+		return nfserr_inval;
+
+	if (STALE_CLIENTID(&open->op_clientid))
+		return nfserr_stale_clientid;
+
+	strhashval = ownerstr_hashval(clientid->cl_id, open->op_owner);
+	sop = find_openstateowner_str(strhashval, open);
+	open->op_stateowner = sop;
+	if (!sop) {
+		/* Make sure the client's lease hasn't expired. */
+		clp = find_confirmed_client(clientid);
+		if (clp == NULL)
+			return nfserr_expired;
+		goto renew;
+	}
+	/* When sessions are used, skip open sequenceid processing */
+	if (nfsd4_has_session(cstate))
+		goto renew;
+	if (!sop->so_confirmed) {
+		/* Replace unconfirmed owners without checking for replay. */
+		clp = sop->so_client;
+		release_openowner(sop);
+		open->op_stateowner = NULL;
+		goto renew;
+	}
+	if (open->op_seqid == sop->so_seqid - 1) {
+		if (sop->so_replay.rp_buflen)
+			return nfserr_replay_me;
+		/* The original OPEN failed so spectacularly
+		 * that we don't even have replay data saved!
+		 * Therefore, we have no choice but to continue
+		 * processing this OPEN; presumably, we'll
+		 * fail again for the same reason.
+		 */
+		dprintk("nfsd4_process_open1: replay with no replay cache\n");
+		goto renew;
+	}
+	if (open->op_seqid != sop->so_seqid)
+		return nfserr_bad_seqid;
+renew:
+	if (open->op_stateowner == NULL) {
+		sop = alloc_init_open_stateowner(strhashval, clp, open);
+		if (sop == NULL)
+			return nfserr_jukebox;
+		open->op_stateowner = sop;
+	}
+	list_del_init(&sop->so_close_lru);
+	renew_client(sop->so_client);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return nfs_ok;
 }
 
@@ -2667,6 +3321,7 @@ nfs4_check_delegmode(struct nfs4_delegation *dp, int flags)
 		return nfs_ok;
 }
 
+<<<<<<< HEAD
 static int share_access_to_flags(u32 share_access)
 {
 	return share_access == NFS4_SHARE_ACCESS_READ ? RD_STATE : WR_STATE;
@@ -2690,12 +3345,42 @@ static bool nfsd4_is_deleg_cur(struct nfsd4_open *open)
 
 static __be32
 nfs4_check_deleg(struct nfs4_client *cl, struct nfs4_file *fp, struct nfsd4_open *open,
+=======
+static struct nfs4_delegation *
+find_delegation_file(struct nfs4_file *fp, stateid_t *stid)
+{
+	struct nfs4_delegation *dp;
+
+	spin_lock(&recall_lock);
+	list_for_each_entry(dp, &fp->fi_delegations, dl_perfile)
+		if (dp->dl_stateid.si_stateownerid == stid->si_stateownerid) {
+			spin_unlock(&recall_lock);
+			return dp;
+		}
+	spin_unlock(&recall_lock);
+	return NULL;
+}
+
+static int share_access_to_flags(u32 share_access)
+{
+	share_access &= ~NFS4_SHARE_WANT_MASK;
+
+	return share_access == NFS4_SHARE_ACCESS_READ ? RD_STATE : WR_STATE;
+}
+
+static __be32
+nfs4_check_deleg(struct nfs4_file *fp, struct nfsd4_open *open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct nfs4_delegation **dp)
 {
 	int flags;
 	__be32 status = nfserr_bad_stateid;
 
+<<<<<<< HEAD
 	*dp = find_deleg_stateid(cl, &open->op_delegate_stateid);
+=======
+	*dp = find_delegation_file(fp, &open->op_delegate_stateid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (*dp == NULL)
 		goto out;
 	flags = share_access_to_flags(open->op_share_access);
@@ -2703,25 +3388,42 @@ nfs4_check_deleg(struct nfs4_client *cl, struct nfs4_file *fp, struct nfsd4_open
 	if (status)
 		*dp = NULL;
 out:
+<<<<<<< HEAD
 	if (!nfsd4_is_deleg_cur(open))
 		return nfs_ok;
 	if (status)
 		return status;
 	open->op_openowner->oo_flags |= NFS4_OO_CONFIRMED;
+=======
+	if (open->op_claim_type != NFS4_OPEN_CLAIM_DELEGATE_CUR)
+		return nfs_ok;
+	if (status)
+		return status;
+	open->op_stateowner->so_confirmed = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return nfs_ok;
 }
 
 static __be32
+<<<<<<< HEAD
 nfs4_check_open(struct nfs4_file *fp, struct nfsd4_open *open, struct nfs4_ol_stateid **stpp)
 {
 	struct nfs4_ol_stateid *local;
 	struct nfs4_openowner *oo = open->op_openowner;
+=======
+nfs4_check_open(struct nfs4_file *fp, struct nfsd4_open *open, struct nfs4_stateid **stpp)
+{
+	struct nfs4_stateid *local;
+	__be32 status = nfserr_share_denied;
+	struct nfs4_stateowner *sop = open->op_stateowner;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_for_each_entry(local, &fp->fi_stateids, st_perfile) {
 		/* ignore lock owners */
 		if (local->st_stateowner->so_is_open_owner == 0)
 			continue;
 		/* remember if we have seen this open owner */
+<<<<<<< HEAD
 		if (local->st_stateowner == &oo->oo_owner)
 			*stpp = local;
 		/* check for conflicting share reservations */
@@ -2734,6 +3436,23 @@ nfs4_check_open(struct nfs4_file *fp, struct nfsd4_open *open, struct nfs4_ol_st
 static void nfs4_free_stateid(struct nfs4_ol_stateid *s)
 {
 	kmem_cache_free(stateid_slab, s);
+=======
+		if (local->st_stateowner == sop)
+			*stpp = local;
+		/* check for conflicting share reservations */
+		if (!test_share(local, open))
+			goto out;
+	}
+	status = 0;
+out:
+	return status;
+}
+
+static inline struct nfs4_stateid *
+nfs4_alloc_stateid(void)
+{
+	return kmem_cache_alloc(stateid_slab, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int nfs4_access_to_access(u32 nfs4_access)
@@ -2754,6 +3473,15 @@ static __be32 nfs4_get_vfs_file(struct svc_rqst *rqstp, struct nfs4_file *fp,
 	int oflag = nfs4_access_to_omode(open->op_share_access);
 	int access = nfs4_access_to_access(open->op_share_access);
 
+<<<<<<< HEAD
+=======
+	/* CLAIM_DELEGATE_CUR is used in response to a broken lease;
+	 * allowing it to break the lease and return EAGAIN leaves the
+	 * client unable to make progress in returning the delegation */
+	if (open->op_claim_type == NFS4_OPEN_CLAIM_DELEGATE_CUR)
+		access |= NFSD_MAY_NOT_BREAK_LEASE;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!fp->fi_fds[oflag]) {
 		status = nfsd_open(rqstp, cur_fh, S_IFREG, access,
 			&fp->fi_fds[oflag]);
@@ -2765,6 +3493,30 @@ static __be32 nfs4_get_vfs_file(struct svc_rqst *rqstp, struct nfs4_file *fp,
 	return nfs_ok;
 }
 
+<<<<<<< HEAD
+=======
+static __be32
+nfs4_new_open(struct svc_rqst *rqstp, struct nfs4_stateid **stpp,
+		struct nfs4_file *fp, struct svc_fh *cur_fh,
+		struct nfsd4_open *open)
+{
+	struct nfs4_stateid *stp;
+	__be32 status;
+
+	stp = nfs4_alloc_stateid();
+	if (stp == NULL)
+		return nfserr_jukebox;
+
+	status = nfs4_get_vfs_file(rqstp, fp, cur_fh, open);
+	if (status) {
+		kmem_cache_free(stateid_slab, stp);
+		return status;
+	}
+	*stpp = stp;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline __be32
 nfsd4_truncate(struct svc_rqst *rqstp, struct svc_fh *fh,
 		struct nfsd4_open *open)
@@ -2781,9 +3533,15 @@ nfsd4_truncate(struct svc_rqst *rqstp, struct svc_fh *fh,
 }
 
 static __be32
+<<<<<<< HEAD
 nfs4_upgrade_open(struct svc_rqst *rqstp, struct nfs4_file *fp, struct svc_fh *cur_fh, struct nfs4_ol_stateid *stp, struct nfsd4_open *open)
 {
 	u32 op_share_access = open->op_share_access;
+=======
+nfs4_upgrade_open(struct svc_rqst *rqstp, struct nfs4_file *fp, struct svc_fh *cur_fh, struct nfs4_stateid *stp, struct nfsd4_open *open)
+{
+	u32 op_share_access = open->op_share_access & ~NFS4_SHARE_WANT_MASK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool new_access;
 	__be32 status;
 
@@ -2810,9 +3568,16 @@ nfs4_upgrade_open(struct svc_rqst *rqstp, struct nfs4_file *fp, struct svc_fh *c
 
 
 static void
+<<<<<<< HEAD
 nfs4_set_claim_prev(struct nfsd4_open *open, bool has_session)
 {
 	open->op_openowner->oo_flags |= NFS4_OO_CONFIRMED;
+=======
+nfs4_set_claim_prev(struct nfsd4_open *open)
+{
+	open->op_stateowner->so_confirmed = 1;
+	open->op_stateowner->so_client->cl_firststate = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Should we give out recallable state?: */
@@ -2855,7 +3620,11 @@ static int nfs4_setlease(struct nfs4_delegation *dp, int flag)
 	if (!fl)
 		return -ENOMEM;
 	fl->fl_file = find_readable_file(fp);
+<<<<<<< HEAD
 	list_add(&dp->dl_perclnt, &dp->dl_stid.sc_client->cl_delegations);
+=======
+	list_add(&dp->dl_perclnt, &dp->dl_client->cl_delegations);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = vfs_setlease(fl->fl_file, fl->fl_type, &fl);
 	if (status) {
 		list_del_init(&dp->dl_perclnt);
@@ -2884,6 +3653,7 @@ static int nfs4_set_delegation(struct nfs4_delegation *dp, int flag)
 	atomic_inc(&fp->fi_delegees);
 	list_add(&dp->dl_perfile, &fp->fi_delegations);
 	spin_unlock(&recall_lock);
+<<<<<<< HEAD
 	list_add(&dp->dl_perclnt, &dp->dl_stid.sc_client->cl_delegations);
 	return 0;
 }
@@ -2909,10 +3679,17 @@ static void nfsd4_open_deleg_none_ext(struct nfsd4_open *open, int status)
 	}
 }
 
+=======
+	list_add(&dp->dl_perclnt, &dp->dl_client->cl_delegations);
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Attempt to hand out a delegation.
  */
 static void
+<<<<<<< HEAD
 nfs4_open_delegation(struct svc_fh *fh, struct nfsd4_open *open, struct nfs4_ol_stateid *stp)
 {
 	struct nfs4_delegation *dp;
@@ -2921,6 +3698,16 @@ nfs4_open_delegation(struct svc_fh *fh, struct nfsd4_open *open, struct nfs4_ol_
 	int status = 0, flag = 0;
 
 	cb_up = nfsd4_cb_channel_good(oo->oo_owner.so_client);
+=======
+nfs4_open_delegation(struct svc_fh *fh, struct nfsd4_open *open, struct nfs4_stateid *stp)
+{
+	struct nfs4_delegation *dp;
+	struct nfs4_stateowner *sop = stp->st_stateowner;
+	int cb_up;
+	int status, flag = 0;
+
+	cb_up = nfsd4_cb_channel_good(sop->so_client);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	flag = NFS4_OPEN_DELEGATE_NONE;
 	open->op_recall = 0;
 	switch (open->op_claim_type) {
@@ -2936,7 +3723,11 @@ nfs4_open_delegation(struct svc_fh *fh, struct nfsd4_open *open, struct nfs4_ol_
 			 * had the chance to reclaim theirs.... */
 			if (locks_in_grace())
 				goto out;
+<<<<<<< HEAD
 			if (!cb_up || !(oo->oo_flags & NFS4_OO_CONFIRMED))
+=======
+			if (!cb_up || !sop->so_confirmed)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto out;
 			if (open->op_share_access & NFS4_SHARE_ACCESS_WRITE)
 				flag = NFS4_OPEN_DELEGATE_WRITE;
@@ -2947,13 +3738,18 @@ nfs4_open_delegation(struct svc_fh *fh, struct nfsd4_open *open, struct nfs4_ol_
 			goto out;
 	}
 
+<<<<<<< HEAD
 	dp = alloc_init_deleg(oo->oo_owner.so_client, stp, fh, flag);
+=======
+	dp = alloc_init_deleg(sop->so_client, stp, fh, flag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dp == NULL)
 		goto out_no_deleg;
 	status = nfs4_set_delegation(dp, flag);
 	if (status)
 		goto out_free;
 
+<<<<<<< HEAD
 	memcpy(&open->op_delegate_stateid, &dp->dl_stid.sc_stateid, sizeof(dp->dl_stid.sc_stateid));
 
 	dprintk("NFSD: delegation stateid=" STATEID_FMT "\n",
@@ -2969,6 +3765,18 @@ out:
 		if (open->op_deleg_want)
 			nfsd4_open_deleg_none_ext(open, status);
 	}
+=======
+	memcpy(&open->op_delegate_stateid, &dp->dl_stateid, sizeof(dp->dl_stateid));
+
+	dprintk("NFSD: delegation stateid=" STATEID_FMT "\n",
+		STATEID_VAL(&dp->dl_stateid));
+out:
+	if (open->op_claim_type == NFS4_OPEN_CLAIM_PREVIOUS
+			&& flag == NFS4_OPEN_DELEGATE_NONE
+			&& open->op_delegate_type != NFS4_OPEN_DELEGATE_NONE)
+		dprintk("NFSD: WARNING: refusing delegation reclaim\n");
+	open->op_delegate_type = flag;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 out_free:
 	nfs4_put_delegation(dp);
@@ -2977,6 +3785,7 @@ out_no_deleg:
 	goto out;
 }
 
+<<<<<<< HEAD
 static void nfsd4_deleg_xgrade_none_ext(struct nfsd4_open *open,
 					struct nfs4_delegation *dp)
 {
@@ -2995,6 +3804,8 @@ static void nfsd4_deleg_xgrade_none_ext(struct nfsd4_open *open,
 	 */
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * called with nfs4_lock_state() held.
  */
@@ -3002,6 +3813,7 @@ __be32
 nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nfsd4_open *open)
 {
 	struct nfsd4_compoundres *resp = rqstp->rq_resp;
+<<<<<<< HEAD
 	struct nfs4_client *cl = open->op_openowner->oo_owner.so_client;
 	struct nfs4_file *fp = NULL;
 	struct inode *ino = current_fh->fh_dentry->d_inode;
@@ -3009,6 +3821,18 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
 	struct nfs4_delegation *dp = NULL;
 	__be32 status;
 
+=======
+	struct nfs4_file *fp = NULL;
+	struct inode *ino = current_fh->fh_dentry->d_inode;
+	struct nfs4_stateid *stp = NULL;
+	struct nfs4_delegation *dp = NULL;
+	__be32 status;
+
+	status = nfserr_inval;
+	if (!access_valid(open->op_share_access, resp->cstate.minorversion)
+			|| !deny_valid(open->op_share_deny))
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Lookup file; if found, lookup stateid and check open request,
 	 * and check for delegations in the process of being recalled.
@@ -3018,17 +3842,30 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
 	if (fp) {
 		if ((status = nfs4_check_open(fp, open, &stp)))
 			goto out;
+<<<<<<< HEAD
 		status = nfs4_check_deleg(cl, fp, open, &dp);
+=======
+		status = nfs4_check_deleg(fp, open, &dp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (status)
 			goto out;
 	} else {
 		status = nfserr_bad_stateid;
+<<<<<<< HEAD
 		if (nfsd4_is_deleg_cur(open))
 			goto out;
 		status = nfserr_jukebox;
 		fp = open->op_file;
 		open->op_file = NULL;
 		nfsd4_init_file(fp, ino);
+=======
+		if (open->op_claim_type == NFS4_OPEN_CLAIM_DELEGATE_CUR)
+			goto out;
+		status = nfserr_jukebox;
+		fp = alloc_init_file(ino);
+		if (fp == NULL)
+			goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -3040,6 +3877,7 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
 		status = nfs4_upgrade_open(rqstp, fp, current_fh, stp, open);
 		if (status)
 			goto out;
+<<<<<<< HEAD
 	} else {
 		status = nfs4_get_vfs_file(rqstp, fp, current_fh, open);
 		if (status)
@@ -3047,11 +3885,20 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
 		stp = open->op_stp;
 		open->op_stp = NULL;
 		init_open_stateid(stp, fp, open);
+=======
+		update_stateid(&stp->st_stateid);
+	} else {
+		status = nfs4_new_open(rqstp, &stp, fp, current_fh, open);
+		if (status)
+			goto out;
+		init_stateid(stp, fp, open);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		status = nfsd4_truncate(rqstp, current_fh, open);
 		if (status) {
 			release_open_stateid(stp);
 			goto out;
 		}
+<<<<<<< HEAD
 	}
 	update_stateid(&stp->st_stid.sc_stateid);
 	memcpy(&open->op_stateid, &stp->st_stid.sc_stateid, sizeof(stateid_t));
@@ -3065,12 +3912,22 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
 			goto nodeleg;
 		}
 	}
+=======
+		if (nfsd4_has_session(&resp->cstate))
+			update_stateid(&stp->st_stateid);
+	}
+	memcpy(&open->op_stateid, &stp->st_stateid, sizeof(stateid_t));
+
+	if (nfsd4_has_session(&resp->cstate))
+		open->op_stateowner->so_confirmed = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	* Attempt to hand out a delegation. No error return, because the
 	* OPEN succeeds even if we fail.
 	*/
 	nfs4_open_delegation(current_fh, open, stp);
+<<<<<<< HEAD
 nodeleg:
 	status = nfs_ok;
 
@@ -3086,17 +3943,34 @@ out:
 		put_nfs4_file(fp);
 	if (status == 0 && open->op_claim_type == NFS4_OPEN_CLAIM_PREVIOUS)
 		nfs4_set_claim_prev(open, nfsd4_has_session(&resp->cstate));
+=======
+
+	status = nfs_ok;
+
+	dprintk("%s: stateid=" STATEID_FMT "\n", __func__,
+		STATEID_VAL(&stp->st_stateid));
+out:
+	if (fp)
+		put_nfs4_file(fp);
+	if (status == 0 && open->op_claim_type == NFS4_OPEN_CLAIM_PREVIOUS)
+		nfs4_set_claim_prev(open);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	* To finish the open response, we just need to set the rflags.
 	*/
 	open->op_rflags = NFS4_OPEN_RESULT_LOCKTYPE_POSIX;
+<<<<<<< HEAD
 	if (!(open->op_openowner->oo_flags & NFS4_OO_CONFIRMED) &&
+=======
+	if (!open->op_stateowner->so_confirmed &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    !nfsd4_has_session(&resp->cstate))
 		open->op_rflags |= NFS4_OPEN_RESULT_CONFIRM;
 
 	return status;
 }
 
+<<<<<<< HEAD
 void nfsd4_cleanup_open_state(struct nfsd4_open *open, __be32 status)
 {
 	if (open->op_openowner) {
@@ -3118,6 +3992,8 @@ void nfsd4_cleanup_open_state(struct nfsd4_open *open, __be32 status)
 		nfs4_free_stateid(open->op_stp);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 __be32
 nfsd4_renew(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 	    clientid_t *clid)
@@ -3138,6 +4014,10 @@ nfsd4_renew(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 		dprintk("nfsd4_renew: clientid not found!\n");
 		goto out;
 	}
+<<<<<<< HEAD
+=======
+	renew_client(clp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = nfserr_cb_path_down;
 	if (!list_empty(&clp->cl_delegations)
 			&& clp->cl_cb_state != NFSD4_CB_UP)
@@ -3155,7 +4035,11 @@ static void
 nfsd4_end_grace(void)
 {
 	dprintk("NFSD: end of grace period\n");
+<<<<<<< HEAD
 	nfsd4_record_grace_done(&init_net, boot_time);
+=======
+	nfsd4_recdir_purge_old();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	locks_end_grace(&nfsd4_manager);
 	/*
 	 * Now that every NFSv4 client has had the chance to recover and
@@ -3169,7 +4053,11 @@ static time_t
 nfs4_laundromat(void)
 {
 	struct nfs4_client *clp;
+<<<<<<< HEAD
 	struct nfs4_openowner *oo;
+=======
+	struct nfs4_stateowner *sop;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct nfs4_delegation *dp;
 	struct list_head *pos, *next, reaplist;
 	time_t cutoff = get_seconds() - nfsd4_lease;
@@ -3204,7 +4092,11 @@ nfs4_laundromat(void)
 		clp = list_entry(pos, struct nfs4_client, cl_lru);
 		dprintk("NFSD: purging unused client (clientid %08x)\n",
 			clp->cl_clientid.cl_id);
+<<<<<<< HEAD
 		nfsd4_client_record_remove(clp);
+=======
+		nfsd4_remove_clid_dir(clp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		expire_client(clp);
 	}
 	spin_lock(&recall_lock);
@@ -3221,18 +4113,34 @@ nfs4_laundromat(void)
 	spin_unlock(&recall_lock);
 	list_for_each_safe(pos, next, &reaplist) {
 		dp = list_entry (pos, struct nfs4_delegation, dl_recall_lru);
+<<<<<<< HEAD
+=======
+		list_del_init(&dp->dl_recall_lru);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unhash_delegation(dp);
 	}
 	test_val = nfsd4_lease;
 	list_for_each_safe(pos, next, &close_lru) {
+<<<<<<< HEAD
 		oo = container_of(pos, struct nfs4_openowner, oo_close_lru);
 		if (time_after((unsigned long)oo->oo_time, (unsigned long)cutoff)) {
 			u = oo->oo_time - cutoff;
+=======
+		sop = list_entry(pos, struct nfs4_stateowner, so_close_lru);
+		if (time_after((unsigned long)sop->so_time, (unsigned long)cutoff)) {
+			u = sop->so_time - cutoff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (test_val > u)
 				test_val = u;
 			break;
 		}
+<<<<<<< HEAD
 		release_openowner(oo);
+=======
+		dprintk("NFSD: purging unused open stateowner (so_id %d)\n",
+			sop->so_id);
+		release_openowner(sop);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (clientid_val < NFSD_LAUNDROMAT_MINTIMEOUT)
 		clientid_val = NFSD_LAUNDROMAT_MINTIMEOUT;
@@ -3254,17 +4162,42 @@ laundromat_main(struct work_struct *not_used)
 	queue_delayed_work(laundry_wq, &laundromat_work, t*HZ);
 }
 
+<<<<<<< HEAD
 static inline __be32 nfs4_check_fh(struct svc_fh *fhp, struct nfs4_ol_stateid *stp)
 {
 	if (fhp->fh_dentry->d_inode != stp->st_file->fi_inode)
 		return nfserr_bad_stateid;
 	return nfs_ok;
+=======
+static struct nfs4_stateowner *
+search_close_lru(u32 st_id, int flags)
+{
+	struct nfs4_stateowner *local = NULL;
+
+	if (flags & CLOSE_STATE) {
+		list_for_each_entry(local, &close_lru, so_close_lru) {
+			if (local->so_id == st_id)
+				return local;
+		}
+	}
+	return NULL;
+}
+
+static inline int
+nfs4_check_fh(struct svc_fh *fhp, struct nfs4_stateid *stp)
+{
+	return fhp->fh_dentry->d_inode != stp->st_file->fi_inode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
 STALE_STATEID(stateid_t *stateid)
 {
+<<<<<<< HEAD
 	if (stateid->si_opaque.so_clid.cl_boot == boot_time)
+=======
+	if (stateid->si_boot == boot_time)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	dprintk("NFSD: stale stateid " STATEID_FMT "!\n",
 		STATEID_VAL(stateid));
@@ -3287,7 +4220,11 @@ access_permit_write(unsigned long access_bmap)
 }
 
 static
+<<<<<<< HEAD
 __be32 nfs4_check_openmode(struct nfs4_ol_stateid *stp, int flags)
+=======
+__be32 nfs4_check_openmode(struct nfs4_stateid *stp, int flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
         __be32 status = nfserr_openmode;
 
@@ -3330,6 +4267,7 @@ grace_disallows_io(struct inode *inode)
 	return locks_in_grace() && mandatory_lock(inode);
 }
 
+<<<<<<< HEAD
 /* Returns true iff a is later than b: */
 static bool stateid_generation_after(stateid_t *a, stateid_t *b)
 {
@@ -3337,11 +4275,15 @@ static bool stateid_generation_after(stateid_t *a, stateid_t *b)
 }
 
 static int check_stateid_generation(stateid_t *in, stateid_t *ref, bool has_session)
+=======
+static int check_stateid_generation(stateid_t *in, stateid_t *ref, int flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * When sessions are used the stateid generation number is ignored
 	 * when it is zero.
 	 */
+<<<<<<< HEAD
 	if (has_session && in->si_generation == 0)
 		return nfs_ok;
 
@@ -3404,6 +4346,33 @@ static __be32 nfsd4_lookup_stateid(stateid_t *stateid, unsigned char typemask, s
 		return nfserr_bad_stateid;
 	return nfs_ok;
 
+=======
+	if ((flags & HAS_SESSION) && in->si_generation == 0)
+		goto out;
+
+	/* If the client sends us a stateid from the future, it's buggy: */
+	if (in->si_generation > ref->si_generation)
+		return nfserr_bad_stateid;
+	/*
+	 * The following, however, can happen.  For example, if the
+	 * client sends an open and some IO at the same time, the open
+	 * may bump si_generation while the IO is still in flight.
+	 * Thanks to hard links and renames, the client never knows what
+	 * file an open will affect.  So it could avoid that situation
+	 * only by serializing all opens and IO from the same open
+	 * owner.  To recover from the old_stateid error, the client
+	 * will just have to retry the IO:
+	 */
+	if (in->si_generation < ref->si_generation)
+		return nfserr_old_stateid;
+out:
+	return nfs_ok;
+}
+
+static int is_delegation_stateid(stateid_t *stateid)
+{
+	return stateid->si_fileid == 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -3413,8 +4382,12 @@ __be32
 nfs4_preprocess_stateid_op(struct nfsd4_compound_state *cstate,
 			   stateid_t *stateid, int flags, struct file **filpp)
 {
+<<<<<<< HEAD
 	struct nfs4_stid *s;
 	struct nfs4_ol_stateid *stp = NULL;
+=======
+	struct nfs4_stateid *stp = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct nfs4_delegation *dp = NULL;
 	struct svc_fh *current_fh = &cstate->current_fh;
 	struct inode *ino = current_fh->fh_dentry->d_inode;
@@ -3426,6 +4399,7 @@ nfs4_preprocess_stateid_op(struct nfsd4_compound_state *cstate,
 	if (grace_disallows_io(ino))
 		return nfserr_grace;
 
+<<<<<<< HEAD
 	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid))
 		return check_special_stateids(current_fh, stateid, flags);
 
@@ -3441,10 +4415,40 @@ nfs4_preprocess_stateid_op(struct nfsd4_compound_state *cstate,
 		status = nfs4_check_delegmode(dp, flags);
 		if (status)
 			goto out;
+=======
+	if (nfsd4_has_session(cstate))
+		flags |= HAS_SESSION;
+
+	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid))
+		return check_special_stateids(current_fh, stateid, flags);
+
+	status = nfserr_stale_stateid;
+	if (STALE_STATEID(stateid)) 
+		goto out;
+
+	/*
+	 * We assume that any stateid that has the current boot time,
+	 * but that we can't find, is expired:
+	 */
+	status = nfserr_expired;
+	if (is_delegation_stateid(stateid)) {
+		dp = find_delegation_stateid(ino, stateid);
+		if (!dp)
+			goto out;
+		status = check_stateid_generation(stateid, &dp->dl_stateid,
+						  flags);
+		if (status)
+			goto out;
+		status = nfs4_check_delegmode(dp, flags);
+		if (status)
+			goto out;
+		renew_client(dp->dl_client);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (filpp) {
 			*filpp = dp->dl_file->fi_deleg_file;
 			BUG_ON(!*filpp);
 		}
+<<<<<<< HEAD
 		break;
 	case NFS4_OPEN_STID:
 	case NFS4_LOCK_STID:
@@ -3454,25 +4458,47 @@ nfs4_preprocess_stateid_op(struct nfsd4_compound_state *cstate,
 			goto out;
 		if (stp->st_stateowner->so_is_open_owner
 		    && !(openowner(stp->st_stateowner)->oo_flags & NFS4_OO_CONFIRMED))
+=======
+	} else { /* open or lock stateid */
+		stp = find_stateid(stateid, flags);
+		if (!stp)
+			goto out;
+		status = nfserr_bad_stateid;
+		if (nfs4_check_fh(current_fh, stp))
+			goto out;
+		if (!stp->st_stateowner->so_confirmed)
+			goto out;
+		status = check_stateid_generation(stateid, &stp->st_stateid,
+						  flags);
+		if (status)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out;
 		status = nfs4_check_openmode(stp, flags);
 		if (status)
 			goto out;
+<<<<<<< HEAD
+=======
+		renew_client(stp->st_stateowner->so_client);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (filpp) {
 			if (flags & RD_STATE)
 				*filpp = find_readable_file(stp->st_file);
 			else
 				*filpp = find_writeable_file(stp->st_file);
 		}
+<<<<<<< HEAD
 		break;
 	default:
 		return nfserr_bad_stateid;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	status = nfs_ok;
 out:
 	return status;
 }
 
+<<<<<<< HEAD
 static __be32
 nfsd4_free_lock_stateid(struct nfs4_ol_stateid *stp)
 {
@@ -3535,6 +4561,8 @@ out:
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int
 setlkflg (int type)
 {
@@ -3542,6 +4570,7 @@ setlkflg (int type)
 		RD_STATE : WR_STATE;
 }
 
+<<<<<<< HEAD
 static __be32 nfs4_seqid_op_checks(struct nfsd4_compound_state *cstate, stateid_t *stateid, u32 seqid, struct nfs4_ol_stateid *stp)
 {
 	struct svc_fh *current_fh = &cstate->current_fh;
@@ -3563,21 +4592,35 @@ static __be32 nfs4_seqid_op_checks(struct nfsd4_compound_state *cstate, stateid_
 	return nfs4_check_fh(current_fh, stp);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* 
  * Checks for sequence id mutating operations. 
  */
 static __be32
 nfs4_preprocess_seqid_op(struct nfsd4_compound_state *cstate, u32 seqid,
+<<<<<<< HEAD
 			 stateid_t *stateid, char typemask,
 			 struct nfs4_ol_stateid **stpp)
 {
 	__be32 status;
 	struct nfs4_stid *s;
+=======
+			 stateid_t *stateid, int flags,
+			 struct nfs4_stateowner **sopp,
+			 struct nfs4_stateid **stpp, struct nfsd4_lock *lock)
+{
+	struct nfs4_stateid *stp;
+	struct nfs4_stateowner *sop;
+	struct svc_fh *current_fh = &cstate->current_fh;
+	__be32 status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dprintk("NFSD: %s: seqid=%d stateid = " STATEID_FMT "\n", __func__,
 		seqid, STATEID_VAL(stateid));
 
 	*stpp = NULL;
+<<<<<<< HEAD
 	status = nfsd4_lookup_stateid(stateid, typemask, &s);
 	if (status)
 		return status;
@@ -3600,6 +4643,108 @@ static __be32 nfs4_preprocess_confirmed_seqid_op(struct nfsd4_compound_state *cs
 	if (!(oo->oo_flags & NFS4_OO_CONFIRMED))
 		return nfserr_bad_stateid;
 	return nfs_ok;
+=======
+	*sopp = NULL;
+
+	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid)) {
+		dprintk("NFSD: preprocess_seqid_op: magic stateid!\n");
+		return nfserr_bad_stateid;
+	}
+
+	if (STALE_STATEID(stateid))
+		return nfserr_stale_stateid;
+
+	if (nfsd4_has_session(cstate))
+		flags |= HAS_SESSION;
+
+	/*
+	* We return BAD_STATEID if filehandle doesn't match stateid, 
+	* the confirmed flag is incorrecly set, or the generation 
+	* number is incorrect.  
+	*/
+	stp = find_stateid(stateid, flags);
+	if (stp == NULL) {
+		/*
+		 * Also, we should make sure this isn't just the result of
+		 * a replayed close:
+		 */
+		sop = search_close_lru(stateid->si_stateownerid, flags);
+		/* It's not stale; let's assume it's expired: */
+		if (sop == NULL)
+			return nfserr_expired;
+		*sopp = sop;
+		goto check_replay;
+	}
+
+	*stpp = stp;
+	*sopp = sop = stp->st_stateowner;
+
+	if (lock) {
+		clientid_t *lockclid = &lock->v.new.clientid;
+		struct nfs4_client *clp = sop->so_client;
+		int lkflg = 0;
+		__be32 status;
+
+		lkflg = setlkflg(lock->lk_type);
+
+		if (lock->lk_is_new) {
+			if (!sop->so_is_open_owner)
+				return nfserr_bad_stateid;
+			if (!(flags & HAS_SESSION) &&
+			    !same_clid(&clp->cl_clientid, lockclid))
+				return nfserr_bad_stateid;
+			/* stp is the open stateid */
+			status = nfs4_check_openmode(stp, lkflg);
+			if (status)
+				return status;
+		} else {
+			/* stp is the lock stateid */
+			status = nfs4_check_openmode(stp->st_openstp, lkflg);
+			if (status)
+				return status;
+               }
+	}
+
+	if (nfs4_check_fh(current_fh, stp)) {
+		dprintk("NFSD: preprocess_seqid_op: fh-stateid mismatch!\n");
+		return nfserr_bad_stateid;
+	}
+
+	/*
+	*  We now validate the seqid and stateid generation numbers.
+	*  For the moment, we ignore the possibility of 
+	*  generation number wraparound.
+	*/
+	if (!(flags & HAS_SESSION) && seqid != sop->so_seqid)
+		goto check_replay;
+
+	if (sop->so_confirmed && flags & CONFIRM) {
+		dprintk("NFSD: preprocess_seqid_op: expected"
+				" unconfirmed stateowner!\n");
+		return nfserr_bad_stateid;
+	}
+	if (!sop->so_confirmed && !(flags & CONFIRM)) {
+		dprintk("NFSD: preprocess_seqid_op: stateowner not"
+				" confirmed yet!\n");
+		return nfserr_bad_stateid;
+	}
+	status = check_stateid_generation(stateid, &stp->st_stateid, flags);
+	if (status)
+		return status;
+	renew_client(sop->so_client);
+	return nfs_ok;
+
+check_replay:
+	if (seqid == sop->so_seqid - 1) {
+		dprintk("NFSD: preprocess_seqid_op: retransmission?\n");
+		/* indicate replay to calling function */
+		return nfserr_replay_me;
+	}
+	dprintk("NFSD: preprocess_seqid_op: bad seqid (expected %d, got %d)\n",
+			sop->so_seqid, seqid);
+	*sopp = NULL;
+	return nfserr_bad_seqid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 __be32
@@ -3607,8 +4752,13 @@ nfsd4_open_confirm(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 		   struct nfsd4_open_confirm *oc)
 {
 	__be32 status;
+<<<<<<< HEAD
 	struct nfs4_openowner *oo;
 	struct nfs4_ol_stateid *stp;
+=======
+	struct nfs4_stateowner *sop;
+	struct nfs4_stateid *stp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dprintk("NFSD: nfsd4_open_confirm on file %.*s\n",
 			(int)cstate->current_fh.fh_dentry->d_name.len,
@@ -3620,6 +4770,7 @@ nfsd4_open_confirm(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 
 	nfs4_lock_state();
 
+<<<<<<< HEAD
 	status = nfs4_preprocess_seqid_op(cstate,
 					oc->oc_seqid, &oc->oc_req_stateid,
 					NFS4_OPEN_STID, &stp);
@@ -3666,6 +4817,41 @@ static inline void nfs4_stateid_downgrade(struct nfs4_ol_stateid *stp, u32 to_ac
 		break;
 	default:
 		BUG();
+=======
+	if ((status = nfs4_preprocess_seqid_op(cstate,
+					oc->oc_seqid, &oc->oc_req_stateid,
+					CONFIRM | OPEN_STATE,
+					&oc->oc_stateowner, &stp, NULL)))
+		goto out; 
+
+	sop = oc->oc_stateowner;
+	sop->so_confirmed = 1;
+	update_stateid(&stp->st_stateid);
+	memcpy(&oc->oc_resp_stateid, &stp->st_stateid, sizeof(stateid_t));
+	dprintk("NFSD: %s: success, seqid=%d stateid=" STATEID_FMT "\n",
+		__func__, oc->oc_seqid, STATEID_VAL(&stp->st_stateid));
+
+	nfsd4_create_clid_dir(sop->so_client);
+out:
+	if (oc->oc_stateowner) {
+		nfs4_get_stateowner(oc->oc_stateowner);
+		cstate->replay_owner = oc->oc_stateowner;
+	}
+	nfs4_unlock_state();
+	return status;
+}
+
+static inline void nfs4_file_downgrade(struct nfs4_stateid *stp, unsigned int to_access)
+{
+	int i;
+
+	for (i = 1; i < 4; i++) {
+		if (test_bit(i, &stp->st_access_bmap)
+					&& ((i & to_access) != i)) {
+			nfs4_file_put_access(stp->st_file, nfs4_access_to_omode(i));
+			__clear_bit(i, &stp->st_access_bmap);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -3685,12 +4871,17 @@ nfsd4_open_downgrade(struct svc_rqst *rqstp,
 		     struct nfsd4_open_downgrade *od)
 {
 	__be32 status;
+<<<<<<< HEAD
 	struct nfs4_ol_stateid *stp;
+=======
+	struct nfs4_stateid *stp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dprintk("NFSD: nfsd4_open_downgrade on file %.*s\n", 
 			(int)cstate->current_fh.fh_dentry->d_name.len,
 			cstate->current_fh.fh_dentry->d_name.name);
 
+<<<<<<< HEAD
 	/* We don't yet support WANT bits: */
 	if (od->od_deleg_want)
 		dprintk("NFSD: %s: od_deleg_want=0x%x ignored\n", __func__,
@@ -3701,6 +4892,22 @@ nfsd4_open_downgrade(struct svc_rqst *rqstp,
 					&od->od_stateid, &stp);
 	if (status)
 		goto out; 
+=======
+	if (!access_valid(od->od_share_access, cstate->minorversion)
+			|| !deny_valid(od->od_share_deny))
+		return nfserr_inval;
+	/* We don't yet support WANT bits: */
+	od->od_share_access &= NFS4_SHARE_ACCESS_MASK;
+
+	nfs4_lock_state();
+	if ((status = nfs4_preprocess_seqid_op(cstate,
+					od->od_seqid,
+					&od->od_stateid, 
+					OPEN_STATE,
+					&od->od_stateowner, &stp, NULL)))
+		goto out; 
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = nfserr_inval;
 	if (!test_bit(od->od_share_access, &stp->st_access_bmap)) {
 		dprintk("NFSD:access not a subset current bitmap: 0x%lx, input access=%08x\n",
@@ -3712,6 +4919,7 @@ nfsd4_open_downgrade(struct svc_rqst *rqstp,
 			stp->st_deny_bmap, od->od_share_deny);
 		goto out;
 	}
+<<<<<<< HEAD
 	nfs4_stateid_downgrade(stp, od->od_share_access);
 
 	reset_union_bmap_deny(od->od_share_deny, &stp->st_deny_bmap);
@@ -3749,6 +4957,22 @@ static void nfsd4_close_open_stateid(struct nfs4_ol_stateid *s)
 {
 	unhash_open_stateid(s);
 	s->st_stid.sc_type = NFS4_CLOSED_STID;
+=======
+	nfs4_file_downgrade(stp, od->od_share_access);
+
+	reset_union_bmap_deny(od->od_share_deny, &stp->st_deny_bmap);
+
+	update_stateid(&stp->st_stateid);
+	memcpy(&od->od_stateid, &stp->st_stateid, sizeof(stateid_t));
+	status = nfs_ok;
+out:
+	if (od->od_stateowner) {
+		nfs4_get_stateowner(od->od_stateowner);
+		cstate->replay_owner = od->od_stateowner;
+	}
+	nfs4_unlock_state();
+	return status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -3759,14 +4983,19 @@ nfsd4_close(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 	    struct nfsd4_close *close)
 {
 	__be32 status;
+<<<<<<< HEAD
 	struct nfs4_openowner *oo;
 	struct nfs4_ol_stateid *stp;
+=======
+	struct nfs4_stateid *stp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dprintk("NFSD: nfsd4_close on file %.*s\n", 
 			(int)cstate->current_fh.fh_dentry->d_name.len,
 			cstate->current_fh.fh_dentry->d_name.name);
 
 	nfs4_lock_state();
+<<<<<<< HEAD
 	status = nfs4_preprocess_seqid_op(cstate, close->cl_seqid,
 					&close->cl_stateid,
 					NFS4_OPEN_STID|NFS4_CLOSED_STID,
@@ -3781,16 +5010,42 @@ nfsd4_close(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 	nfsd4_close_open_stateid(stp);
 	release_last_closed_stateid(oo);
 	oo->oo_last_closed_stid = stp;
+=======
+	/* check close_lru for replay */
+	if ((status = nfs4_preprocess_seqid_op(cstate,
+					close->cl_seqid,
+					&close->cl_stateid, 
+					OPEN_STATE | CLOSE_STATE,
+					&close->cl_stateowner, &stp, NULL)))
+		goto out; 
+	status = nfs_ok;
+	update_stateid(&stp->st_stateid);
+	memcpy(&close->cl_stateid, &stp->st_stateid, sizeof(stateid_t));
+
+	/* release_stateid() calls nfsd_close() if needed */
+	release_open_stateid(stp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* place unused nfs4_stateowners on so_close_lru list to be
 	 * released by the laundromat service after the lease period
 	 * to enable us to handle CLOSE replay
 	 */
+<<<<<<< HEAD
 	if (list_empty(&oo->oo_owner.so_stateids))
 		move_to_close_lru(oo);
 out:
 	if (!cstate->replay_owner)
 		nfs4_unlock_state();
+=======
+	if (list_empty(&close->cl_stateowner->so_stateids))
+		move_to_close_lru(close->cl_stateowner);
+out:
+	if (close->cl_stateowner) {
+		nfs4_get_stateowner(close->cl_stateowner);
+		cstate->replay_owner = close->cl_stateowner;
+	}
+	nfs4_unlock_state();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return status;
 }
 
@@ -3800,14 +5055,21 @@ nfsd4_delegreturn(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 {
 	struct nfs4_delegation *dp;
 	stateid_t *stateid = &dr->dr_stateid;
+<<<<<<< HEAD
 	struct nfs4_stid *s;
 	struct inode *inode;
 	__be32 status;
+=======
+	struct inode *inode;
+	__be32 status;
+	int flags = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((status = fh_verify(rqstp, &cstate->current_fh, S_IFREG, 0)))
 		return status;
 	inode = cstate->current_fh.fh_dentry->d_inode;
 
+<<<<<<< HEAD
 	nfs4_lock_state();
 	status = nfsd4_lookup_stateid(stateid, NFS4_DELEG_STID, &s);
 	if (status)
@@ -3816,6 +5078,28 @@ nfsd4_delegreturn(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 	status = check_stateid_generation(stateid, &dp->dl_stid.sc_stateid, nfsd4_has_session(cstate));
 	if (status)
 		goto out;
+=======
+	if (nfsd4_has_session(cstate))
+		flags |= HAS_SESSION;
+	nfs4_lock_state();
+	status = nfserr_bad_stateid;
+	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid))
+		goto out;
+	status = nfserr_stale_stateid;
+	if (STALE_STATEID(stateid))
+		goto out;
+	status = nfserr_bad_stateid;
+	if (!is_delegation_stateid(stateid))
+		goto out;
+	status = nfserr_expired;
+	dp = find_delegation_stateid(inode, stateid);
+	if (!dp)
+		goto out;
+	status = check_stateid_generation(stateid, &dp->dl_stateid, flags);
+	if (status)
+		goto out;
+	renew_client(dp->dl_client);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	unhash_delegation(dp);
 out:
@@ -3825,11 +5109,21 @@ out:
 }
 
 
+<<<<<<< HEAD
 #define LOFF_OVERFLOW(start, len)      ((u64)(len) > ~(u64)(start))
 
 #define LOCKOWNER_INO_HASH_BITS 8
 #define LOCKOWNER_INO_HASH_SIZE (1 << LOCKOWNER_INO_HASH_BITS)
 #define LOCKOWNER_INO_HASH_MASK (LOCKOWNER_INO_HASH_SIZE - 1)
+=======
+/* 
+ * Lock owner state (byte-range locks)
+ */
+#define LOFF_OVERFLOW(start, len)      ((u64)(len) > ~(u64)(start))
+#define LOCK_HASH_BITS              8
+#define LOCK_HASH_SIZE             (1 << LOCK_HASH_BITS)
+#define LOCK_HASH_MASK             (LOCK_HASH_SIZE - 1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline u64
 end_offset(u64 start, u64 len)
@@ -3851,6 +5145,7 @@ last_byte_offset(u64 start, u64 len)
 	return end > start ? end - 1: NFS4_MAX_UINT64;
 }
 
+<<<<<<< HEAD
 static unsigned int lockowner_ino_hashval(struct inode *inode, u32 cl_id, struct xdr_netobj *ownername)
 {
 	return (file_hashval(inode) + cl_id
@@ -3859,6 +5154,69 @@ static unsigned int lockowner_ino_hashval(struct inode *inode, u32 cl_id, struct
 }
 
 static struct list_head lockowner_ino_hashtbl[LOCKOWNER_INO_HASH_SIZE];
+=======
+#define lockownerid_hashval(id) \
+        ((id) & LOCK_HASH_MASK)
+
+static inline unsigned int
+lock_ownerstr_hashval(struct inode *inode, u32 cl_id,
+		struct xdr_netobj *ownername)
+{
+	return (file_hashval(inode) + cl_id
+			+ opaque_hashval(ownername->data, ownername->len))
+		& LOCK_HASH_MASK;
+}
+
+static struct list_head lock_ownerid_hashtbl[LOCK_HASH_SIZE];
+static struct list_head	lock_ownerstr_hashtbl[LOCK_HASH_SIZE];
+static struct list_head lockstateid_hashtbl[STATEID_HASH_SIZE];
+
+static struct nfs4_stateid *
+find_stateid(stateid_t *stid, int flags)
+{
+	struct nfs4_stateid *local;
+	u32 st_id = stid->si_stateownerid;
+	u32 f_id = stid->si_fileid;
+	unsigned int hashval;
+
+	dprintk("NFSD: find_stateid flags 0x%x\n",flags);
+	if (flags & (LOCK_STATE | RD_STATE | WR_STATE)) {
+		hashval = stateid_hashval(st_id, f_id);
+		list_for_each_entry(local, &lockstateid_hashtbl[hashval], st_hash) {
+			if ((local->st_stateid.si_stateownerid == st_id) &&
+			    (local->st_stateid.si_fileid == f_id))
+				return local;
+		}
+	} 
+
+	if (flags & (OPEN_STATE | RD_STATE | WR_STATE)) {
+		hashval = stateid_hashval(st_id, f_id);
+		list_for_each_entry(local, &stateid_hashtbl[hashval], st_hash) {
+			if ((local->st_stateid.si_stateownerid == st_id) &&
+			    (local->st_stateid.si_fileid == f_id))
+				return local;
+		}
+	}
+	return NULL;
+}
+
+static struct nfs4_delegation *
+find_delegation_stateid(struct inode *ino, stateid_t *stid)
+{
+	struct nfs4_file *fp;
+	struct nfs4_delegation *dl;
+
+	dprintk("NFSD: %s: stateid=" STATEID_FMT "\n", __func__,
+		STATEID_VAL(stid));
+
+	fp = find_file(ino);
+	if (!fp)
+		return NULL;
+	dl = find_delegation_file(fp, stid);
+	put_nfs4_file(fp);
+	return dl;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * TODO: Linux file offsets are _signed_ 64-bit quantities, which means that
@@ -3885,6 +5243,7 @@ static const struct lock_manager_operations nfsd_posix_mng_ops  = {
 static inline void
 nfs4_set_lock_denied(struct file_lock *fl, struct nfsd4_lock_denied *deny)
 {
+<<<<<<< HEAD
 	struct nfs4_lockowner *lo;
 
 	if (fl->fl_lmops == &nfsd_posix_mng_ops) {
@@ -3900,6 +5259,17 @@ nfs4_set_lock_denied(struct file_lock *fl, struct nfsd4_lock_denied *deny)
 nevermind:
 		deny->ld_owner.len = 0;
 		deny->ld_owner.data = NULL;
+=======
+	struct nfs4_stateowner *sop;
+
+	if (fl->fl_lmops == &nfsd_posix_mng_ops) {
+		sop = (struct nfs4_stateowner *) fl->fl_owner;
+		kref_get(&sop->so_ref);
+		deny->ld_sop = sop;
+		deny->ld_clientid = sop->so_client->cl_clientid;
+	} else {
+		deny->ld_sop = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		deny->ld_clientid.cl_boot = 0;
 		deny->ld_clientid.cl_id = 0;
 	}
@@ -3912,6 +5282,7 @@ nevermind:
 		deny->ld_type = NFS4_WRITE_LT;
 }
 
+<<<<<<< HEAD
 static bool same_lockowner_ino(struct nfs4_lockowner *lo, struct inode *inode, clientid_t *clid, struct xdr_netobj *owner)
 {
 	struct nfs4_ol_stateid *lst;
@@ -3933,10 +5304,23 @@ find_lockowner_str(struct inode *inode, clientid_t *clid,
 	list_for_each_entry(lo, &lockowner_ino_hashtbl[hashval], lo_owner_ino_hash) {
 		if (same_lockowner_ino(lo, inode, clid, owner))
 			return lo;
+=======
+static struct nfs4_stateowner *
+find_lockstateowner_str(struct inode *inode, clientid_t *clid,
+		struct xdr_netobj *owner)
+{
+	unsigned int hashval = lock_ownerstr_hashval(inode, clid->cl_id, owner);
+	struct nfs4_stateowner *op;
+
+	list_for_each_entry(op, &lock_ownerstr_hashtbl[hashval], so_strhash) {
+		if (same_owner_str(op, owner, clid))
+			return op;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return NULL;
 }
 
+<<<<<<< HEAD
 static void hash_lockowner(struct nfs4_lockowner *lo, unsigned int strhashval, struct nfs4_client *clp, struct nfs4_ol_stateid *open_stp)
 {
 	struct inode *inode = open_stp->st_file->fi_inode;
@@ -3948,11 +5332,14 @@ static void hash_lockowner(struct nfs4_lockowner *lo, unsigned int strhashval, s
 	list_add(&lo->lo_perstateid, &open_stp->st_lockowners);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Alloc a lock owner structure.
  * Called in nfsd4_lock - therefore, OPEN and OPEN_CONFIRM (if needed) has 
  * occurred. 
  *
+<<<<<<< HEAD
  * strhashval = ownerstr_hashval
  */
 
@@ -3990,6 +5377,72 @@ alloc_init_lock_stateid(struct nfs4_lockowner *lo, struct nfs4_file *fp, struct 
 	stp->st_access_bmap = 0;
 	stp->st_deny_bmap = open_stp->st_deny_bmap;
 	stp->st_openstp = open_stp;
+=======
+ * strhashval = lock_ownerstr_hashval 
+ */
+
+static struct nfs4_stateowner *
+alloc_init_lock_stateowner(unsigned int strhashval, struct nfs4_client *clp, struct nfs4_stateid *open_stp, struct nfsd4_lock *lock) {
+	struct nfs4_stateowner *sop;
+	struct nfs4_replay *rp;
+	unsigned int idhashval;
+
+	if (!(sop = alloc_stateowner(&lock->lk_new_owner)))
+		return NULL;
+	idhashval = lockownerid_hashval(current_ownerid);
+	INIT_LIST_HEAD(&sop->so_idhash);
+	INIT_LIST_HEAD(&sop->so_strhash);
+	INIT_LIST_HEAD(&sop->so_perclient);
+	INIT_LIST_HEAD(&sop->so_stateids);
+	INIT_LIST_HEAD(&sop->so_perstateid);
+	INIT_LIST_HEAD(&sop->so_close_lru); /* not used */
+	sop->so_time = 0;
+	list_add(&sop->so_idhash, &lock_ownerid_hashtbl[idhashval]);
+	list_add(&sop->so_strhash, &lock_ownerstr_hashtbl[strhashval]);
+	list_add(&sop->so_perstateid, &open_stp->st_lockowners);
+	sop->so_is_open_owner = 0;
+	sop->so_id = current_ownerid++;
+	sop->so_client = clp;
+	/* It is the openowner seqid that will be incremented in encode in the
+	 * case of new lockowners; so increment the lock seqid manually: */
+	sop->so_seqid = lock->lk_new_lock_seqid + 1;
+	sop->so_confirmed = 1;
+	rp = &sop->so_replay;
+	rp->rp_status = nfserr_serverfault;
+	rp->rp_buflen = 0;
+	rp->rp_buf = rp->rp_ibuf;
+	return sop;
+}
+
+static struct nfs4_stateid *
+alloc_init_lock_stateid(struct nfs4_stateowner *sop, struct nfs4_file *fp, struct nfs4_stateid *open_stp)
+{
+	struct nfs4_stateid *stp;
+	unsigned int hashval = stateid_hashval(sop->so_id, fp->fi_id);
+
+	stp = nfs4_alloc_stateid();
+	if (stp == NULL)
+		goto out;
+	INIT_LIST_HEAD(&stp->st_hash);
+	INIT_LIST_HEAD(&stp->st_perfile);
+	INIT_LIST_HEAD(&stp->st_perstateowner);
+	INIT_LIST_HEAD(&stp->st_lockowners); /* not used */
+	list_add(&stp->st_hash, &lockstateid_hashtbl[hashval]);
+	list_add(&stp->st_perfile, &fp->fi_stateids);
+	list_add(&stp->st_perstateowner, &sop->so_stateids);
+	stp->st_stateowner = sop;
+	get_nfs4_file(fp);
+	stp->st_file = fp;
+	stp->st_stateid.si_boot = boot_time;
+	stp->st_stateid.si_stateownerid = sop->so_id;
+	stp->st_stateid.si_fileid = fp->fi_id;
+	stp->st_stateid.si_generation = 0;
+	stp->st_access_bmap = 0;
+	stp->st_deny_bmap = open_stp->st_deny_bmap;
+	stp->st_openstp = open_stp;
+
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return stp;
 }
 
@@ -4000,7 +5453,11 @@ check_lock_length(u64 offset, u64 length)
 	     LOFF_OVERFLOW(offset, length)));
 }
 
+<<<<<<< HEAD
 static void get_lock_access(struct nfs4_ol_stateid *lock_stp, u32 access)
+=======
+static void get_lock_access(struct nfs4_stateid *lock_stp, u32 access)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct nfs4_file *fp = lock_stp->st_file;
 	int oflag = nfs4_access_to_omode(access);
@@ -4011,6 +5468,7 @@ static void get_lock_access(struct nfs4_ol_stateid *lock_stp, u32 access)
 	__set_bit(access, &lock_stp->st_access_bmap);
 }
 
+<<<<<<< HEAD
 __be32 lookup_or_create_lock_state(struct nfsd4_compound_state *cstate, struct nfs4_ol_stateid *ost, struct nfsd4_lock *lock, struct nfs4_ol_stateid **lst, bool *new)
 {
 	struct nfs4_file *fi = ost->st_file;
@@ -4042,6 +5500,8 @@ __be32 lookup_or_create_lock_state(struct nfsd4_compound_state *cstate, struct n
 	return nfs_ok;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *  LOCK operation 
  */
@@ -4049,16 +5509,26 @@ __be32
 nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 	   struct nfsd4_lock *lock)
 {
+<<<<<<< HEAD
 	struct nfs4_openowner *open_sop = NULL;
 	struct nfs4_lockowner *lock_sop = NULL;
 	struct nfs4_ol_stateid *lock_stp;
+=======
+	struct nfs4_stateowner *open_sop = NULL;
+	struct nfs4_stateowner *lock_sop = NULL;
+	struct nfs4_stateid *lock_stp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct nfs4_file *fp;
 	struct file *filp = NULL;
 	struct file_lock file_lock;
 	struct file_lock conflock;
 	__be32 status = 0;
+<<<<<<< HEAD
 	bool new_state = false;
 	int lkflg;
+=======
+	unsigned int strhashval;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err;
 
 	dprintk("NFSD: nfsd4_lock: start=%Ld length=%Ld\n",
@@ -4082,6 +5552,7 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 		 * Use open owner and open stateid to create lock owner and
 		 * lock stateid.
 		 */
+<<<<<<< HEAD
 		struct nfs4_ol_stateid *open_stp = NULL;
 
 		if (nfsd4_has_session(cstate))
@@ -4109,10 +5580,45 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 		status = lookup_or_create_lock_state(cstate, open_stp, lock,
 							&lock_stp, &new_state);
 		if (status)
+=======
+		struct nfs4_stateid *open_stp = NULL;
+		
+		status = nfserr_stale_clientid;
+		if (!nfsd4_has_session(cstate) &&
+		    STALE_CLIENTID(&lock->lk_new_clientid))
+			goto out;
+
+		/* validate and update open stateid and open seqid */
+		status = nfs4_preprocess_seqid_op(cstate,
+				        lock->lk_new_open_seqid,
+		                        &lock->lk_new_open_stateid,
+					OPEN_STATE,
+		                        &lock->lk_replay_owner, &open_stp,
+					lock);
+		if (status)
+			goto out;
+		open_sop = lock->lk_replay_owner;
+		/* create lockowner and lock stateid */
+		fp = open_stp->st_file;
+		strhashval = lock_ownerstr_hashval(fp->fi_inode, 
+				open_sop->so_client->cl_clientid.cl_id, 
+				&lock->v.new.owner);
+		/* XXX: Do we need to check for duplicate stateowners on
+		 * the same file, or should they just be allowed (and
+		 * create new stateids)? */
+		status = nfserr_jukebox;
+		lock_sop = alloc_init_lock_stateowner(strhashval,
+				open_sop->so_client, open_stp, lock);
+		if (lock_sop == NULL)
+			goto out;
+		lock_stp = alloc_init_lock_stateid(lock_sop, fp, open_stp);
+		if (lock_stp == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out;
 	} else {
 		/* lock (lock owner + lock stateid) already exists */
 		status = nfs4_preprocess_seqid_op(cstate,
+<<<<<<< HEAD
 				       lock->lk_old_lock_seqid,
 				       &lock->lk_old_lock_stateid,
 				       NFS4_LOCK_STID, &lock_stp);
@@ -4126,6 +5632,18 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 	status = nfs4_check_openmode(lock_stp, lkflg);
 	if (status)
 		goto out;
+=======
+				       lock->lk_old_lock_seqid, 
+				       &lock->lk_old_lock_stateid, 
+				       LOCK_STATE,
+				       &lock->lk_replay_owner, &lock_stp, lock);
+		if (status)
+			goto out;
+		lock_sop = lock->lk_replay_owner;
+		fp = lock_stp->st_file;
+	}
+	/* lock->lk_replay_owner and lock_stp have been created or found */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	status = nfserr_grace;
 	if (locks_in_grace() && !lock->lk_reclaim)
@@ -4176,8 +5694,13 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 	err = vfs_lock_file(filp, F_SETLK, &file_lock, &conflock);
 	switch (-err) {
 	case 0: /* success! */
+<<<<<<< HEAD
 		update_stateid(&lock_stp->st_stid.sc_stateid);
 		memcpy(&lock->lk_resp_stateid, &lock_stp->st_stid.sc_stateid, 
+=======
+		update_stateid(&lock_stp->st_stateid);
+		memcpy(&lock->lk_resp_stateid, &lock_stp->st_stateid, 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				sizeof(stateid_t));
 		status = 0;
 		break;
@@ -4195,10 +5718,20 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 		break;
 	}
 out:
+<<<<<<< HEAD
 	if (status && new_state)
 		release_lockowner(lock_sop);
 	if (!cstate->replay_owner)
 		nfs4_unlock_state();
+=======
+	if (status && lock->lk_is_new && lock_sop)
+		release_lockowner(lock_sop);
+	if (lock->lk_replay_owner) {
+		nfs4_get_stateowner(lock->lk_replay_owner);
+		cstate->replay_owner = lock->lk_replay_owner;
+	}
+	nfs4_unlock_state();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return status;
 }
 
@@ -4228,7 +5761,10 @@ nfsd4_lockt(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 {
 	struct inode *inode;
 	struct file_lock file_lock;
+<<<<<<< HEAD
 	struct nfs4_lockowner *lo;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__be32 status;
 
 	if (locks_in_grace())
@@ -4237,14 +5773,27 @@ nfsd4_lockt(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 	if (check_lock_length(lockt->lt_offset, lockt->lt_length))
 		 return nfserr_inval;
 
+<<<<<<< HEAD
+=======
+	lockt->lt_stateowner = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nfs4_lock_state();
 
 	status = nfserr_stale_clientid;
 	if (!nfsd4_has_session(cstate) && STALE_CLIENTID(&lockt->lt_clientid))
 		goto out;
 
+<<<<<<< HEAD
 	if ((status = fh_verify(rqstp, &cstate->current_fh, S_IFREG, 0)))
 		goto out;
+=======
+	if ((status = fh_verify(rqstp, &cstate->current_fh, S_IFREG, 0))) {
+		dprintk("NFSD: nfsd4_lockt: fh_verify() failed!\n");
+		if (status == nfserr_symlink)
+			status = nfserr_inval;
+		goto out;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	inode = cstate->current_fh.fh_dentry->d_inode;
 	locks_init_lock(&file_lock);
@@ -4263,9 +5812,16 @@ nfsd4_lockt(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	lo = find_lockowner_str(inode, &lockt->lt_clientid, &lockt->lt_owner);
 	if (lo)
 		file_lock.fl_owner = (fl_owner_t)lo;
+=======
+	lockt->lt_stateowner = find_lockstateowner_str(inode,
+			&lockt->lt_clientid, &lockt->lt_owner);
+	if (lockt->lt_stateowner)
+		file_lock.fl_owner = (fl_owner_t)lockt->lt_stateowner;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	file_lock.fl_pid = current->tgid;
 	file_lock.fl_flags = FL_POSIX;
 
@@ -4291,7 +5847,11 @@ __be32
 nfsd4_locku(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 	    struct nfsd4_locku *locku)
 {
+<<<<<<< HEAD
 	struct nfs4_ol_stateid *stp;
+=======
+	struct nfs4_stateid *stp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct file *filp = NULL;
 	struct file_lock file_lock;
 	__be32 status;
@@ -4306,10 +5866,20 @@ nfsd4_locku(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 
 	nfs4_lock_state();
 									        
+<<<<<<< HEAD
 	status = nfs4_preprocess_seqid_op(cstate, locku->lu_seqid,
 					&locku->lu_stateid, NFS4_LOCK_STID, &stp);
 	if (status)
 		goto out;
+=======
+	if ((status = nfs4_preprocess_seqid_op(cstate,
+					locku->lu_seqid, 
+					&locku->lu_stateid, 
+					LOCK_STATE,
+					&locku->lu_stateowner, &stp, NULL)))
+		goto out;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	filp = find_any_file(stp->st_file);
 	if (!filp) {
 		status = nfserr_lock_range;
@@ -4318,7 +5888,11 @@ nfsd4_locku(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 	BUG_ON(!filp);
 	locks_init_lock(&file_lock);
 	file_lock.fl_type = F_UNLCK;
+<<<<<<< HEAD
 	file_lock.fl_owner = (fl_owner_t)lockowner(stp->st_stateowner);
+=======
+	file_lock.fl_owner = (fl_owner_t) locku->lu_stateowner;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	file_lock.fl_pid = current->tgid;
 	file_lock.fl_file = filp;
 	file_lock.fl_flags = FL_POSIX; 
@@ -4339,12 +5913,24 @@ nfsd4_locku(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 	/*
 	* OK, unlock succeeded; the only thing left to do is update the stateid.
 	*/
+<<<<<<< HEAD
 	update_stateid(&stp->st_stid.sc_stateid);
 	memcpy(&locku->lu_stateid, &stp->st_stid.sc_stateid, sizeof(stateid_t));
 
 out:
 	if (!cstate->replay_owner)
 		nfs4_unlock_state();
+=======
+	update_stateid(&stp->st_stateid);
+	memcpy(&locku->lu_stateid, &stp->st_stateid, sizeof(stateid_t));
+
+out:
+	if (locku->lu_stateowner) {
+		nfs4_get_stateowner(locku->lu_stateowner);
+		cstate->replay_owner = locku->lu_stateowner;
+	}
+	nfs4_unlock_state();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return status;
 
 out_nfserr:
@@ -4358,7 +5944,11 @@ out_nfserr:
  * 	0: no locks held by lockowner
  */
 static int
+<<<<<<< HEAD
 check_for_locks(struct nfs4_file *filp, struct nfs4_lockowner *lowner)
+=======
+check_for_locks(struct nfs4_file *filp, struct nfs4_stateowner *lowner)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct file_lock **flpp;
 	struct inode *inode = filp->fi_inode;
@@ -4383,11 +5973,18 @@ nfsd4_release_lockowner(struct svc_rqst *rqstp,
 {
 	clientid_t *clid = &rlockowner->rl_clientid;
 	struct nfs4_stateowner *sop;
+<<<<<<< HEAD
 	struct nfs4_lockowner *lo;
 	struct nfs4_ol_stateid *stp;
 	struct xdr_netobj *owner = &rlockowner->rl_owner;
 	struct list_head matches;
 	unsigned int hashval = ownerstr_hashval(clid->cl_id, owner);
+=======
+	struct nfs4_stateid *stp;
+	struct xdr_netobj *owner = &rlockowner->rl_owner;
+	struct list_head matches;
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__be32 status;
 
 	dprintk("nfsd4_release_lockowner clientid: (%08x/%08x):\n",
@@ -4402,6 +5999,7 @@ nfsd4_release_lockowner(struct svc_rqst *rqstp,
 	nfs4_lock_state();
 
 	status = nfserr_locks_held;
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&matches);
 
 	list_for_each_entry(sop, &ownerstr_hashtbl[hashval], so_strhash) {
@@ -4415,6 +6013,25 @@ nfsd4_release_lockowner(struct svc_rqst *rqstp,
 			if (check_for_locks(stp->st_file, lo))
 				goto out;
 			list_add(&lo->lo_list, &matches);
+=======
+	/* XXX: we're doing a linear search through all the lockowners.
+	 * Yipes!  For now we'll just hope clients aren't really using
+	 * release_lockowner much, but eventually we have to fix these
+	 * data structures. */
+	INIT_LIST_HEAD(&matches);
+	for (i = 0; i < LOCK_HASH_SIZE; i++) {
+		list_for_each_entry(sop, &lock_ownerid_hashtbl[i], so_idhash) {
+			if (!same_owner_str(sop, owner, clid))
+				continue;
+			list_for_each_entry(stp, &sop->so_stateids,
+					st_perstateowner) {
+				if (check_for_locks(stp->st_file, sop))
+					goto out;
+				/* Note: so_perclient unused for lockowners,
+				 * so it's OK to fool with here. */
+				list_add(&sop->so_perclient, &matches);
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	/* Clients probably won't expect us to return with some (but not all)
@@ -4422,12 +6039,21 @@ nfsd4_release_lockowner(struct svc_rqst *rqstp,
 	 * have been checked. */
 	status = nfs_ok;
 	while (!list_empty(&matches)) {
+<<<<<<< HEAD
 		lo = list_entry(matches.next, struct nfs4_lockowner,
 								lo_list);
 		/* unhash_stateowner deletes so_perclient only
 		 * for openowners. */
 		list_del(&lo->lo_list);
 		release_lockowner(lo);
+=======
+		sop = list_entry(matches.next, struct nfs4_stateowner,
+								so_perclient);
+		/* unhash_stateowner deletes so_perclient only
+		 * for openowners. */
+		list_del(&sop->so_perclient);
+		release_lockowner(sop);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 out:
 	nfs4_unlock_state();
@@ -4447,9 +6073,13 @@ nfs4_has_reclaimed_state(const char *name, bool use_exchange_id)
 	struct nfs4_client *clp;
 
 	clp = find_confirmed_client_by_str(name, strhashval);
+<<<<<<< HEAD
 	if (!clp)
 		return 0;
 	return test_bit(NFSD4_CLIENT_STABLE, &clp->cl_flags);
+=======
+	return clp ? 1 : 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -4473,7 +6103,11 @@ nfs4_client_to_reclaim(const char *name)
 	return 1;
 }
 
+<<<<<<< HEAD
 void
+=======
+static void
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 nfs4_release_reclaim(void)
 {
 	struct nfs4_client_reclaim *crp = NULL;
@@ -4493,12 +6127,28 @@ nfs4_release_reclaim(void)
 
 /*
  * called from OPEN, CLAIM_PREVIOUS with a new clientid. */
+<<<<<<< HEAD
 struct nfs4_client_reclaim *
 nfsd4_find_reclaim_client(struct nfs4_client *clp)
 {
 	unsigned int strhashval;
 	struct nfs4_client_reclaim *crp = NULL;
 
+=======
+static struct nfs4_client_reclaim *
+nfs4_find_reclaim_client(clientid_t *clid)
+{
+	unsigned int strhashval;
+	struct nfs4_client *clp;
+	struct nfs4_client_reclaim *crp = NULL;
+
+
+	/* find clientid in conf_id_hashtbl */
+	clp = find_confirmed_client(clid);
+	if (clp == NULL)
+		return NULL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dprintk("NFSD: nfs4_find_reclaim_client for %.*s with recdir %s\n",
 		            clp->cl_name.len, clp->cl_name.data,
 			    clp->cl_recdir);
@@ -4519,6 +6169,7 @@ nfsd4_find_reclaim_client(struct nfs4_client *clp)
 __be32
 nfs4_check_open_reclaim(clientid_t *clid)
 {
+<<<<<<< HEAD
 	struct nfs4_client *clp;
 
 	/* find clientid in conf_id_hashtbl */
@@ -4650,6 +6301,21 @@ nfs4_state_init(void)
 {
 	int i;
 
+=======
+	return nfs4_find_reclaim_client(clid) ? nfs_ok : nfserr_reclaim_bad;
+}
+
+/* initialization to perform at module load time: */
+
+int
+nfs4_state_init(void)
+{
+	int i, status;
+
+	status = nfsd4_init_slabs();
+	if (status)
+		return status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < CLIENT_HASH_SIZE; i++) {
 		INIT_LIST_HEAD(&conf_id_hashtbl[i]);
 		INIT_LIST_HEAD(&conf_str_hashtbl[i]);
@@ -4664,13 +6330,44 @@ nfs4_state_init(void)
 	}
 	for (i = 0; i < OWNER_HASH_SIZE; i++) {
 		INIT_LIST_HEAD(&ownerstr_hashtbl[i]);
+<<<<<<< HEAD
 	}
 	for (i = 0; i < LOCKOWNER_INO_HASH_SIZE; i++)
 		INIT_LIST_HEAD(&lockowner_ino_hashtbl[i]);
+=======
+		INIT_LIST_HEAD(&ownerid_hashtbl[i]);
+	}
+	for (i = 0; i < STATEID_HASH_SIZE; i++) {
+		INIT_LIST_HEAD(&stateid_hashtbl[i]);
+		INIT_LIST_HEAD(&lockstateid_hashtbl[i]);
+	}
+	for (i = 0; i < LOCK_HASH_SIZE; i++) {
+		INIT_LIST_HEAD(&lock_ownerid_hashtbl[i]);
+		INIT_LIST_HEAD(&lock_ownerstr_hashtbl[i]);
+	}
+	memset(&onestateid, ~0, sizeof(stateid_t));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_LIST_HEAD(&close_lru);
 	INIT_LIST_HEAD(&client_lru);
 	INIT_LIST_HEAD(&del_recall_lru);
 	reclaim_str_hashtbl_size = 0;
+<<<<<<< HEAD
+=======
+	return 0;
+}
+
+static void
+nfsd4_load_reboot_recovery_data(void)
+{
+	int status;
+
+	nfs4_lock_state();
+	nfsd4_init_recdir(user_recovery_dirname);
+	status = nfsd4_recdir_load();
+	nfs4_unlock_state();
+	if (status)
+		printk("NFSD: Failure reading reboot recovery data\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -4696,6 +6393,7 @@ set_max_delegations(void)
 
 /* initialization to perform when the nfsd service is started: */
 
+<<<<<<< HEAD
 int
 nfs4_state_start(void)
 {
@@ -4710,11 +6408,19 @@ nfs4_state_start(void)
 	 */
 	get_net(&init_net);
 	nfsd4_client_tracking_init(&init_net);
+=======
+static int
+__nfs4_state_start(void)
+{
+	int ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	boot_time = get_seconds();
 	locks_start_grace(&nfsd4_manager);
 	printk(KERN_INFO "NFSD: starting %ld-second grace period\n",
 	       nfsd4_grace);
 	ret = set_callback_cred();
+<<<<<<< HEAD
 	if (ret) {
 		ret = -ENOMEM;
 		goto out_recovery;
@@ -4724,6 +6430,13 @@ nfs4_state_start(void)
 		ret = -ENOMEM;
 		goto out_recovery;
 	}
+=======
+	if (ret)
+		return -ENOMEM;
+	laundry_wq = create_singlethread_workqueue("nfsd4");
+	if (laundry_wq == NULL)
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = nfsd4_create_callback_queue();
 	if (ret)
 		goto out_free_laundry;
@@ -4732,12 +6445,25 @@ nfs4_state_start(void)
 	return 0;
 out_free_laundry:
 	destroy_workqueue(laundry_wq);
+<<<<<<< HEAD
 out_recovery:
 	nfsd4_client_tracking_exit(&init_net);
 	put_net(&init_net);
 	return ret;
 }
 
+=======
+	return ret;
+}
+
+int
+nfs4_state_start(void)
+{
+	nfsd4_load_reboot_recovery_data();
+	return __nfs4_state_start();
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 __nfs4_state_shutdown(void)
 {
@@ -4765,11 +6491,19 @@ __nfs4_state_shutdown(void)
 	spin_unlock(&recall_lock);
 	list_for_each_safe(pos, next, &reaplist) {
 		dp = list_entry (pos, struct nfs4_delegation, dl_recall_lru);
+<<<<<<< HEAD
 		unhash_delegation(dp);
 	}
 
 	nfsd4_client_tracking_exit(&init_net);
 	put_net(&init_net);
+=======
+		list_del_init(&dp->dl_recall_lru);
+		unhash_delegation(dp);
+	}
+
+	nfsd4_shutdown_recdir();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void
@@ -4779,11 +6513,16 @@ nfs4_state_shutdown(void)
 	destroy_workqueue(laundry_wq);
 	locks_end_grace(&nfsd4_manager);
 	nfs4_lock_state();
+<<<<<<< HEAD
+=======
+	nfs4_release_reclaim();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__nfs4_state_shutdown();
 	nfs4_unlock_state();
 	nfsd4_destroy_callback_queue();
 }
 
+<<<<<<< HEAD
 static void
 get_stateid(struct nfsd4_compound_state *cstate, stateid_t *stateid)
 {
@@ -4883,4 +6622,41 @@ void
 nfsd4_get_writestateid(struct nfsd4_compound_state *cstate, struct nfsd4_write *write)
 {
 	get_stateid(cstate, &write->wr_stateid);
+=======
+/*
+ * user_recovery_dirname is protected by the nfsd_mutex since it's only
+ * accessed when nfsd is starting.
+ */
+static void
+nfs4_set_recdir(char *recdir)
+{
+	strcpy(user_recovery_dirname, recdir);
+}
+
+/*
+ * Change the NFSv4 recovery directory to recdir.
+ */
+int
+nfs4_reset_recoverydir(char *recdir)
+{
+	int status;
+	struct path path;
+
+	status = kern_path(recdir, LOOKUP_FOLLOW, &path);
+	if (status)
+		return status;
+	status = -ENOTDIR;
+	if (S_ISDIR(path.dentry->d_inode->i_mode)) {
+		nfs4_set_recdir(recdir);
+		status = 0;
+	}
+	path_put(&path);
+	return status;
+}
+
+char *
+nfs4_recoverydir(void)
+{
+	return user_recovery_dirname;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

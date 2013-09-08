@@ -1,7 +1,11 @@
 /*
  * OMAP2XXX powerdomain definitions
  *
+<<<<<<< HEAD
  * Copyright (C) 2007-2008, 2011 Texas Instruments, Inc.
+=======
+ * Copyright (C) 2007-2008 Texas Instruments, Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (C) 2007-2011 Nokia Corporation
  *
  * Paul Walmsley, Jouni Högander
@@ -28,6 +32,10 @@
 static struct powerdomain dsp_pwrdm = {
 	.name		  = "dsp_pwrdm",
 	.prcm_offs	  = OMAP24XX_DSP_MOD,
+<<<<<<< HEAD
+=======
+	.omap_chip	  = OMAP_CHIP_INIT(CHIP_IS_OMAP24XX),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.pwrsts		  = PWRSTS_OFF_RET_ON,
 	.pwrsts_logic_ret = PWRSTS_RET,
 	.banks		  = 1,
@@ -37,12 +45,19 @@ static struct powerdomain dsp_pwrdm = {
 	.pwrsts_mem_on	  = {
 		[0] = PWRSTS_ON,
 	},
+<<<<<<< HEAD
 	.voltdm           = { .name = "core" },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct powerdomain mpu_24xx_pwrdm = {
 	.name		  = "mpu_pwrdm",
 	.prcm_offs	  = MPU_MOD,
+<<<<<<< HEAD
+=======
+	.omap_chip	  = OMAP_CHIP_INIT(CHIP_IS_OMAP24XX),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.pwrsts		  = PWRSTS_OFF_RET_ON,
 	.pwrsts_logic_ret = PWRSTS_OFF_RET,
 	.banks		  = 1,
@@ -52,12 +67,19 @@ static struct powerdomain mpu_24xx_pwrdm = {
 	.pwrsts_mem_on	  = {
 		[0] = PWRSTS_ON,
 	},
+<<<<<<< HEAD
 	.voltdm           = { .name = "core" },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct powerdomain core_24xx_pwrdm = {
 	.name		  = "core_pwrdm",
 	.prcm_offs	  = CORE_MOD,
+<<<<<<< HEAD
+=======
+	.omap_chip	  = OMAP_CHIP_INIT(CHIP_IS_OMAP24XX),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.pwrsts		  = PWRSTS_OFF_RET_ON,
 	.banks		  = 3,
 	.pwrsts_mem_ret	  = {
@@ -70,7 +92,10 @@ static struct powerdomain core_24xx_pwrdm = {
 		[1] = PWRSTS_OFF_RET_ON, /* MEM2ONSTATE */
 		[2] = PWRSTS_OFF_RET_ON, /* MEM3ONSTATE */
 	},
+<<<<<<< HEAD
 	.voltdm           = { .name = "core" },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -78,11 +103,20 @@ static struct powerdomain core_24xx_pwrdm = {
  * 2430-specific powerdomains
  */
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SOC_OMAP2430
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* XXX 2430 KILLDOMAINWKUP bit?  No current users apparently */
 
 static struct powerdomain mdm_pwrdm = {
 	.name		  = "mdm_pwrdm",
 	.prcm_offs	  = OMAP2430_MDM_MOD,
+<<<<<<< HEAD
+=======
+	.omap_chip	  = OMAP_CHIP_INIT(CHIP_IS_OMAP2430),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.pwrsts		  = PWRSTS_OFF_RET_ON,
 	.pwrsts_logic_ret = PWRSTS_RET,
 	.banks		  = 1,
@@ -92,6 +126,7 @@ static struct powerdomain mdm_pwrdm = {
 	.pwrsts_mem_on	  = {
 		[0] = PWRSTS_ON,  /* MEMONSTATE */
 	},
+<<<<<<< HEAD
 	.voltdm           = { .name = "core" },
 };
 
@@ -132,4 +167,31 @@ void __init omap243x_powerdomains_init(void)
 	pwrdm_register_pwrdms(powerdomains_omap24xx);
 	pwrdm_register_pwrdms(powerdomains_omap2430);
 	pwrdm_complete_init();
+=======
+};
+
+#endif     /* CONFIG_SOC_OMAP2430 */
+
+/* As powerdomains are added or removed above, this list must also be changed */
+static struct powerdomain *powerdomains_omap2xxx[] __initdata = {
+
+	&wkup_omap2_pwrdm,
+	&gfx_omap2_pwrdm,
+
+#ifdef CONFIG_ARCH_OMAP2
+	&dsp_pwrdm,
+	&mpu_24xx_pwrdm,
+	&core_24xx_pwrdm,
+#endif
+
+#ifdef CONFIG_SOC_OMAP2430
+	&mdm_pwrdm,
+#endif
+	NULL
+};
+
+void __init omap2xxx_powerdomains_init(void)
+{
+	pwrdm_init(powerdomains_omap2xxx, &omap2_pwrdm_operations);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

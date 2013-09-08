@@ -69,7 +69,11 @@ static void nv04_tv_dpms(struct drm_encoder *encoder, int mode)
 	struct nv04_mode_state *state = &dev_priv->mode_reg;
 	uint8_t crtc1A;
 
+<<<<<<< HEAD
 	NV_DEBUG(dev, "Setting dpms mode %d on TV encoder (output %d)\n",
+=======
+	NV_INFO(dev, "Setting dpms mode %d on TV encoder (output %d)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mode, nv_encoder->dcb->index);
 
 	state->pllsel &= ~(PLLSEL_TV_CRTC1_MASK | PLLSEL_TV_CRTC2_MASK);
@@ -162,7 +166,11 @@ static void nv04_tv_commit(struct drm_encoder *encoder)
 
 	helper->dpms(encoder, DRM_MODE_DPMS_ON);
 
+<<<<<<< HEAD
 	NV_DEBUG(dev, "Output %s is running on CRTC %d using output %c\n",
+=======
+	NV_INFO(dev, "Output %s is running on CRTC %d using output %c\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      drm_get_connector_name(&nouveau_encoder_connector_get(nv_encoder)->base), nv_crtc->index,
 		      '@' + ffs(nv_encoder->dcb->or));
 }

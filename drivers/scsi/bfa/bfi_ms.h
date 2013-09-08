@@ -28,15 +28,21 @@ enum bfi_iocfc_h2i_msgs {
 	BFI_IOCFC_H2I_CFG_REQ		= 1,
 	BFI_IOCFC_H2I_SET_INTR_REQ	= 2,
 	BFI_IOCFC_H2I_UPDATEQ_REQ	= 3,
+<<<<<<< HEAD
 	BFI_IOCFC_H2I_FAA_QUERY_REQ	= 4,
 	BFI_IOCFC_H2I_ADDR_REQ		= 5,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum bfi_iocfc_i2h_msgs {
 	BFI_IOCFC_I2H_CFG_REPLY		= BFA_I2HM(1),
 	BFI_IOCFC_I2H_UPDATEQ_RSP	= BFA_I2HM(3),
+<<<<<<< HEAD
 	BFI_IOCFC_I2H_FAA_QUERY_RSP	= BFA_I2HM(4),
 	BFI_IOCFC_I2H_ADDR_MSG		= BFA_I2HM(5),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct bfi_iocfc_cfg_s {
@@ -44,12 +50,15 @@ struct bfi_iocfc_cfg_s {
 	u8	 sense_buf_len;	/*  SCSI sense length	    */
 	u16	rsvd_1;
 	u32	endian_sig;	/*  endian signature of host     */
+<<<<<<< HEAD
 	u8	rsvd_2;
 	u8	single_msix_vec;
 	u8	rsvd[2];
 	__be16	num_ioim_reqs;
 	__be16	num_fwtio_reqs;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Request and response circular queue base addresses, size and
@@ -64,8 +73,12 @@ struct bfi_iocfc_cfg_s {
 
 	union bfi_addr_u  stats_addr;	/*  DMA-able address for stats	  */
 	union bfi_addr_u  cfgrsp_addr;	/*  config response dma address  */
+<<<<<<< HEAD
 	union bfi_addr_u  ioim_snsbase[BFI_IOIM_SNSBUF_SEGS];
 					/*  IO sense buf base addr segments */
+=======
+	union bfi_addr_u  ioim_snsbase;  /*  IO sense buffer base address */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfa_iocfc_intr_attr_s intr_attr; /*  IOC interrupt attributes */
 };
 
@@ -79,6 +92,7 @@ struct bfi_iocfc_bootwwns {
 	u8		rsvd[7];
 };
 
+<<<<<<< HEAD
 /**
  * Queue configuration response from firmware
  */
@@ -92,12 +106,17 @@ struct bfi_iocfc_qreg_s {
 	u8	hw_qid[BFI_IOC_MAX_CQS];
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct bfi_iocfc_cfgrsp_s {
 	struct bfa_iocfc_fwcfg_s	fwcfg;
 	struct bfa_iocfc_intr_attr_s	intr_attr;
 	struct bfi_iocfc_bootwwns	bootwwns;
 	struct bfi_pbc_s		pbc_cfg;
+<<<<<<< HEAD
 	struct bfi_iocfc_qreg_s		qreg;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -175,6 +194,7 @@ union bfi_iocfc_i2h_msg_u {
 	u32 mboxmsg[BFI_IOC_MSGSZ];
 };
 
+<<<<<<< HEAD
 /*
  * BFI_IOCFC_H2I_FAA_ENABLE_REQ BFI_IOCFC_H2I_FAA_DISABLE_REQ message
  */
@@ -213,6 +233,8 @@ struct bfi_faa_en_dis_rsp_s {
  * BFI_IOCFC_I2H_FAA_QUERY_RSP message
  */
 #define bfi_faa_query_rsp_t struct bfi_faa_query_s
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum bfi_fcport_h2i {
 	BFI_FCPORT_H2I_ENABLE_REQ		= (1),
@@ -276,8 +298,12 @@ struct bfi_fcport_enable_req_s {
 struct bfi_fcport_set_svc_params_req_s {
 	struct bfi_mhdr_s  mh;		/*  msg header */
 	__be16	   tx_bbcredit;	/*  Tx credits */
+<<<<<<< HEAD
 	u8	bb_scn;		/* BB_SC FC credit recovery */
 	u8	rsvd;
+=======
+	u16	   rsvd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -357,12 +383,21 @@ struct bfi_fcxp_send_req_s {
 	u8	 class;		/*  FC class used for req/rsp	    */
 	u8	 rsp_timeout;	/*  timeout in secs, 0-no response */
 	u8	 cts;		/*  continue sequence		    */
+<<<<<<< HEAD
 	u8	 lp_fwtag;	/*  lport tag			    */
 	struct fchs_s	fchs;	/*  request FC header structure    */
 	__be32	req_len;	/*  request payload length	    */
 	__be32	rsp_maxlen;	/*  max response length expected   */
 	struct bfi_alen_s req_alen;	/* request buffer	*/
 	struct bfi_alen_s rsp_alen;	/* response buffer	*/
+=======
+	u8	 lp_tag;	/*  lport tag			    */
+	struct fchs_s	fchs;	/*  request FC header structure    */
+	__be32	req_len;	/*  request payload length	    */
+	__be32	rsp_maxlen;	/*  max response length expected   */
+	struct bfi_sge_s   req_sge[BFA_FCXP_MAX_SGES];	/*  request buf    */
+	struct bfi_sge_s   rsp_sge[BFA_FCXP_MAX_SGES];	/*  response buf   */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -392,7 +427,11 @@ struct bfi_uf_buf_post_s {
 	struct bfi_mhdr_s  mh;		/*  Common msg header		*/
 	u16	buf_tag;	/*  buffer tag			*/
 	__be16	buf_len;	/*  total buffer length	*/
+<<<<<<< HEAD
 	struct bfi_alen_s alen;	/* buffer address/len pair	*/
+=======
+	struct bfi_sge_s   sge[BFA_UF_MAX_SGES]; /*  buffer DMA SGEs	*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct bfi_uf_frm_rcvd_s {
@@ -410,27 +449,45 @@ enum bfi_lps_h2i_msgs {
 };
 
 enum bfi_lps_i2h_msgs {
+<<<<<<< HEAD
 	BFI_LPS_I2H_LOGIN_RSP	= BFA_I2HM(1),
 	BFI_LPS_I2H_LOGOUT_RSP	= BFA_I2HM(2),
 	BFI_LPS_I2H_CVL_EVENT	= BFA_I2HM(3),
+=======
+	BFI_LPS_H2I_LOGIN_RSP	= BFA_I2HM(1),
+	BFI_LPS_H2I_LOGOUT_RSP	= BFA_I2HM(2),
+	BFI_LPS_H2I_CVL_EVENT	= BFA_I2HM(3),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct bfi_lps_login_req_s {
 	struct bfi_mhdr_s  mh;		/*  common msg header		*/
+<<<<<<< HEAD
 	u8		bfa_tag;
+=======
+	u8		lp_tag;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8		alpa;
 	__be16		pdu_size;
 	wwn_t		pwwn;
 	wwn_t		nwwn;
 	u8		fdisc;
 	u8		auth_en;
+<<<<<<< HEAD
 	u8		lps_role;
 	u8		bb_scn;
+=======
+	u8		rsvd[2];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct bfi_lps_login_rsp_s {
 	struct bfi_mhdr_s  mh;		/*  common msg header		*/
+<<<<<<< HEAD
 	u8		fw_tag;
+=======
+	u8		lp_tag;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8		status;
 	u8		lsrjt_rsn;
 	u8		lsrjt_expl;
@@ -445,33 +502,52 @@ struct bfi_lps_login_rsp_s {
 	mac_t		fcf_mac;
 	u8		ext_status;
 	u8		brcd_switch;	/*  attached peer is brcd switch */
+<<<<<<< HEAD
 	u8		bb_scn;		/* atatched port's bb_scn */
 	u8		bfa_tag;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct bfi_lps_logout_req_s {
 	struct bfi_mhdr_s  mh;		/*  common msg header		*/
+<<<<<<< HEAD
 	u8		fw_tag;
+=======
+	u8		lp_tag;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8		rsvd[3];
 	wwn_t		port_name;
 };
 
 struct bfi_lps_logout_rsp_s {
 	struct bfi_mhdr_s  mh;		/*  common msg header		*/
+<<<<<<< HEAD
 	u8		bfa_tag;
+=======
+	u8		lp_tag;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8		status;
 	u8		rsvd[2];
 };
 
 struct bfi_lps_cvl_event_s {
 	struct bfi_mhdr_s  mh;		/*  common msg header		*/
+<<<<<<< HEAD
 	u8		bfa_tag;
+=======
+	u8		lp_tag;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8		rsvd[3];
 };
 
 struct bfi_lps_n2n_pid_req_s {
 	struct bfi_mhdr_s	mh;	/*  common msg header		*/
+<<<<<<< HEAD
 	u8	fw_tag;
+=======
+	u8	lp_tag;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32	lp_pid:24;
 };
 
@@ -506,7 +582,11 @@ struct bfi_rport_create_req_s {
 	u16	bfa_handle;	/*  host rport handle		*/
 	__be16	max_frmsz;	/*  max rcv pdu size		*/
 	u32	pid:24,	/*  remote port ID		*/
+<<<<<<< HEAD
 		lp_fwtag:8;	/*  local port tag		*/
+=======
+		lp_tag:8;	/*  local port tag		*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32	local_pid:24,	/*  local port ID		*/
 		cisc:8;
 	u8	fc_class;	/*  supported FC classes	*/
@@ -569,6 +649,7 @@ union bfi_rport_i2h_msg_u {
  * Initiator mode I-T nexus interface defines.
  */
 
+<<<<<<< HEAD
 enum bfi_itn_h2i {
 	BFI_ITN_H2I_CREATE_REQ = 1,	/*  i-t nexus creation */
 	BFI_ITN_H2I_DELETE_REQ = 2,	/*  i-t nexus deletion */
@@ -581,41 +662,74 @@ enum bfi_itn_i2h {
 };
 
 struct bfi_itn_create_req_s {
+=======
+enum bfi_itnim_h2i {
+	BFI_ITNIM_H2I_CREATE_REQ = 1,	/*  i-t nexus creation */
+	BFI_ITNIM_H2I_DELETE_REQ = 2,	/*  i-t nexus deletion */
+};
+
+enum bfi_itnim_i2h {
+	BFI_ITNIM_I2H_CREATE_RSP = BFA_I2HM(1),
+	BFI_ITNIM_I2H_DELETE_RSP = BFA_I2HM(2),
+	BFI_ITNIM_I2H_SLER_EVENT = BFA_I2HM(3),
+};
+
+struct bfi_itnim_create_req_s {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfi_mhdr_s  mh;		/*  common msg header		 */
 	u16	fw_handle;	/*  f/w handle for itnim	 */
 	u8	class;		/*  FC class for IO		 */
 	u8	seq_rec;	/*  sequence recovery support	 */
 	u8	msg_no;		/*  seq id of the msg		 */
+<<<<<<< HEAD
 	u8	role;
 };
 
 struct bfi_itn_create_rsp_s {
+=======
+};
+
+struct bfi_itnim_create_rsp_s {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfi_mhdr_s  mh;		/*  common msg header		 */
 	u16	bfa_handle;	/*  bfa handle for itnim	 */
 	u8	status;		/*  fcp request status		 */
 	u8	seq_id;		/*  seq id of the msg		 */
 };
 
+<<<<<<< HEAD
 struct bfi_itn_delete_req_s {
+=======
+struct bfi_itnim_delete_req_s {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfi_mhdr_s  mh;		/*  common msg header		 */
 	u16	fw_handle;	/*  f/w itnim handle		 */
 	u8	seq_id;		/*  seq id of the msg		 */
 	u8	rsvd;
 };
 
+<<<<<<< HEAD
 struct bfi_itn_delete_rsp_s {
+=======
+struct bfi_itnim_delete_rsp_s {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfi_mhdr_s  mh;		/*  common msg header		 */
 	u16	bfa_handle;	/*  bfa handle for itnim	 */
 	u8	status;		/*  fcp request status		 */
 	u8	seq_id;		/*  seq id of the msg		 */
 };
 
+<<<<<<< HEAD
 struct bfi_itn_sler_event_s {
+=======
+struct bfi_itnim_sler_event_s {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfi_mhdr_s  mh;		/*  common msg header		 */
 	u16	bfa_handle;	/*  bfa handle for itnim	 */
 	u16	rsvd;
 };
 
+<<<<<<< HEAD
 union bfi_itn_h2i_msg_u {
 	struct bfi_itn_create_req_s *create_req;
 	struct bfi_itn_delete_req_s *delete_req;
@@ -626,6 +740,18 @@ union bfi_itn_i2h_msg_u {
 	struct bfi_itn_create_rsp_s *create_rsp;
 	struct bfi_itn_delete_rsp_s *delete_rsp;
 	struct bfi_itn_sler_event_s *sler_event;
+=======
+union bfi_itnim_h2i_msg_u {
+	struct bfi_itnim_create_req_s *create_req;
+	struct bfi_itnim_delete_req_s *delete_req;
+	struct bfi_msg_s	*msg;
+};
+
+union bfi_itnim_i2h_msg_u {
+	struct bfi_itnim_create_rsp_s *create_rsp;
+	struct bfi_itnim_delete_rsp_s *delete_rsp;
+	struct bfi_itnim_sler_event_s *sler_event;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfi_msg_s	*msg;
 };
 
@@ -761,6 +887,10 @@ enum bfi_ioim_status {
 	BFI_IOIM_STS_PATHTOV = 8,
 };
 
+<<<<<<< HEAD
+=======
+#define BFI_IOIM_SNSLEN	(256)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * I/O response message
  */
@@ -839,6 +969,7 @@ struct bfi_tskim_rsp_s {
 
 #pragma pack()
 
+<<<<<<< HEAD
 /*
  * Crossbow PCI MSI-X vector defines
  */
@@ -862,4 +993,6 @@ enum {
 	BFI_MSIX_CT_MAX = 9,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __BFI_MS_H__ */

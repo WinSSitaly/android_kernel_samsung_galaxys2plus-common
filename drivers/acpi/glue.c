@@ -6,7 +6,10 @@
  *
  * This file is released under the GPLv2.
  */
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/list.h>
 #include <linux/device.h>

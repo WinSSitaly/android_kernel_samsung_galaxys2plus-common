@@ -233,7 +233,10 @@ static int blktrans_open(struct block_device *bdev, fmode_t mode)
 	ret = __get_mtd_device(dev->mtd);
 	if (ret)
 		goto error_release;
+<<<<<<< HEAD
 	dev->file_mode = mode;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unlock:
 	dev->open++;
@@ -428,8 +431,11 @@ int add_mtd_blktrans_dev(struct mtd_blktrans_dev *new)
 	new->rq->queuedata = new;
 	blk_queue_logical_block_size(new->rq, tr->blksize);
 
+<<<<<<< HEAD
 	queue_flag_set_unlocked(QUEUE_FLAG_NONROT, new->rq);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (tr->discard) {
 		queue_flag_set_unlocked(QUEUE_FLAG_DISCARD, new->rq);
 		new->rq->limits.max_discard_sectors = UINT_MAX;

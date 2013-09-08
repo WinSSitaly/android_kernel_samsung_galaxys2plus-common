@@ -20,10 +20,13 @@ config BCM63XX_CPU_6348
 config BCM63XX_CPU_6358
 	bool "support 6358 CPU"
 	select HW_HAS_PCI
+<<<<<<< HEAD
 
 config BCM63XX_CPU_6368
 	bool "support 6368 CPU"
 	select HW_HAS_PCI
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endmenu
 
 source "arch/mips/bcm63xx/boards/Kconfig"

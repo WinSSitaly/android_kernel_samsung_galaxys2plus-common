@@ -857,6 +857,7 @@ enum davinci_da850_index {
 	DA850_MMCSD0_CLK,
 	DA850_MMCSD0_CMD,
 
+<<<<<<< HEAD
 	/* MMC/SD1 function */
 	DA850_MMCSD1_DAT_0,
 	DA850_MMCSD1_DAT_1,
@@ -865,6 +866,8 @@ enum davinci_da850_index {
 	DA850_MMCSD1_CLK,
 	DA850_MMCSD1_CMD,
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* EMIF2.5/EMIFA function */
 	DA850_EMA_D_7,
 	DA850_EMA_D_6,
@@ -924,8 +927,11 @@ enum davinci_da850_index {
 	DA850_GPIO3_13,
 	DA850_GPIO4_0,
 	DA850_GPIO4_1,
+<<<<<<< HEAD
 	DA850_GPIO6_9,
 	DA850_GPIO6_10,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DA850_GPIO6_13,
 	DA850_RTC_ALARM,
 };

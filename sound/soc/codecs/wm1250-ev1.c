@@ -12,6 +12,7 @@
 
 #include <linux/init.h>
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/slab.h>
 #include <linux/i2c.h>
 #include <linux/gpio.h>
@@ -65,6 +66,12 @@ static int wm1250_ev1_set_bias_level(struct snd_soc_codec *codec,
 
 	return 0;
 }
+=======
+#include <linux/i2c.h>
+
+#include <sound/soc.h>
+#include <sound/soc-dapm.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const struct snd_soc_dapm_widget wm1250_ev1_dapm_widgets[] = {
 SND_SOC_DAPM_ADC("ADC", "wm1250-ev1 Capture", SND_SOC_NOPM, 0, 0),
@@ -102,6 +109,7 @@ static struct snd_soc_codec_driver soc_codec_dev_wm1250_ev1 = {
 	.num_dapm_widgets = ARRAY_SIZE(wm1250_ev1_dapm_widgets),
 	.dapm_routes = wm1250_ev1_dapm_routes,
 	.num_dapm_routes = ARRAY_SIZE(wm1250_ev1_dapm_routes),
+<<<<<<< HEAD
 
 	.set_bias_level = wm1250_ev1_set_bias_level,
 	.idle_bias_off = true,
@@ -189,12 +197,24 @@ static int __devinit wm1250_ev1_probe(struct i2c_client *i2c,
 	}
 
 	return 0;
+=======
+};
+
+static int __devinit wm1250_ev1_probe(struct i2c_client *i2c,
+				      const struct i2c_device_id *id)
+{
+	return snd_soc_register_codec(&i2c->dev, &soc_codec_dev_wm1250_ev1,
+				      &wm1250_ev1_dai, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __devexit wm1250_ev1_remove(struct i2c_client *i2c)
 {
 	snd_soc_unregister_codec(&i2c->dev);
+<<<<<<< HEAD
 	wm1250_ev1_free(i2c);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

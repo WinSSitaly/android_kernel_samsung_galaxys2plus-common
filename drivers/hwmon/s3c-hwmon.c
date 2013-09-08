@@ -393,7 +393,22 @@ static struct platform_driver s3c_hwmon_driver = {
 	.remove		= __devexit_p(s3c_hwmon_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(s3c_hwmon_driver);
+=======
+static int __init s3c_hwmon_init(void)
+{
+	return platform_driver_register(&s3c_hwmon_driver);
+}
+
+static void __exit s3c_hwmon_exit(void)
+{
+	platform_driver_unregister(&s3c_hwmon_driver);
+}
+
+module_init(s3c_hwmon_init);
+module_exit(s3c_hwmon_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Ben Dooks <ben@simtec.co.uk>");
 MODULE_DESCRIPTION("S3C ADC HWMon driver");

@@ -41,8 +41,11 @@ Table of Contents
   3.5	/proc/<pid>/mountinfo - Information about mounts
   3.6	/proc/<pid>/comm  & /proc/<pid>/task/<tid>/comm
 
+<<<<<<< HEAD
   4	Configuring procfs
   4.1	Mount options
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 ------------------------------------------------------------------------------
 Preface
@@ -290,7 +293,11 @@ Table 1-4: Contents of the stat files (as of 2.6.30-rc7)
   rsslim        current limit in bytes on the rss
   start_code    address above which program text can run
   end_code      address below which program text can run
+<<<<<<< HEAD
   start_stack   address of the start of the main process stack
+=======
+  start_stack   address of the start of the stack
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   esp           current value of ESP
   eip           current value of EIP
   pending       bitmap of pending signals
@@ -307,9 +314,12 @@ Table 1-4: Contents of the stat files (as of 2.6.30-rc7)
   blkio_ticks   time spent waiting for block IO
   gtime         guest time of the task in jiffies
   cgtime        guest time of the task children in jiffies
+<<<<<<< HEAD
   start_data    address above which program data+bss is placed
   end_data      address below which program data+bss is placed
   start_brk     address above which program heap can be expanded with brk()
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ..............................................................................
 
 The /proc/PID/maps file containing the currently mapped memory regions and
@@ -325,7 +335,11 @@ address           perms offset  dev   inode      pathname
 a7cb1000-a7cb2000 ---p 00000000 00:00 0
 a7cb2000-a7eb2000 rw-p 00000000 00:00 0
 a7eb2000-a7eb3000 ---p 00000000 00:00 0
+<<<<<<< HEAD
 a7eb3000-a7ed5000 rw-p 00000000 00:00 0          [stack:1001]
+=======
+a7eb3000-a7ed5000 rw-p 00000000 00:00 0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 a7ed5000-a8008000 r-xp 00000000 03:00 4222       /lib/libc.so.6
 a8008000-a800a000 r--p 00133000 03:00 4222       /lib/libc.so.6
 a800a000-a800b000 rw-p 00135000 03:00 4222       /lib/libc.so.6
@@ -357,12 +371,16 @@ is not associated with a file:
 
  [heap]                   = the heap of the program
  [stack]                  = the stack of the main process
+<<<<<<< HEAD
  [stack:1001]             = the stack of the thread with tid 1001
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  [vdso]                   = the "virtual dynamic shared object",
                             the kernel system call handler
 
  or if empty, the mapping is anonymous.
 
+<<<<<<< HEAD
 The /proc/PID/task/TID/maps is a view of the virtual memory from the viewpoint
 of the individual tasks of a process. In this file you will see a mapping marked
 as [stack] if that task sees it as a stack. This is a key difference from the
@@ -390,6 +408,8 @@ a8043000-a8044000 r--p 0001b000 03:00 8317       /lib/ld-linux.so.2
 a8044000-a8045000 rw-p 0001c000 03:00 8317       /lib/ld-linux.so.2
 aff35000-aff4a000 rw-p 00000000 00:00 0
 ffffe000-fffff000 r-xp 00000000 00:00 0          [vdso]
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 The /proc/PID/smaps is an extension based on maps, showing the memory
 consumption for each of the process's mappings. For each of mappings there
@@ -1296,7 +1316,11 @@ review the kernel documentation in the directory /usr/src/linux/Documentation.
 This chapter  is  heavily  based  on the documentation included in the pre 2.2
 kernels, and became part of it in version 2.2.1 of the Linux kernel.
 
+<<<<<<< HEAD
 Please see: Documentation/sysctl/ directory for descriptions of these
+=======
+Please see: Documentation/sysctls/ directory for descriptions of these
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 entries.
 
 ------------------------------------------------------------------------------
@@ -1575,6 +1599,7 @@ a task to set its own or one of its thread siblings comm value. The comm value
 is limited in size compared to the cmdline value, so writing anything longer
 then the kernel's TASK_COMM_LEN (currently 16 chars) will result in a truncated
 comm value.
+<<<<<<< HEAD
 
 
 ------------------------------------------------------------------------------
@@ -1612,3 +1637,5 @@ run any program at all, etc.
 gid= defines a group authorized to learn processes information otherwise
 prohibited by hidepid=.  If you use some daemon like identd which needs to learn
 information about processes information, just add identd to this group.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

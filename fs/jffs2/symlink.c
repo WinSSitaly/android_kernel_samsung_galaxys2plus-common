@@ -9,8 +9,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/fs.h>
 #include <linux/namei.h>
@@ -22,7 +25,11 @@ const struct inode_operations jffs2_symlink_inode_operations =
 {
 	.readlink =	generic_readlink,
 	.follow_link =	jffs2_follow_link,
+<<<<<<< HEAD
 	.get_acl =	jffs2_get_acl,
+=======
+	.check_acl =	jffs2_check_acl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.setattr =	jffs2_setattr,
 	.setxattr =	jffs2_setxattr,
 	.getxattr =	jffs2_getxattr,
@@ -49,11 +56,18 @@ static void *jffs2_follow_link(struct dentry *dentry, struct nameidata *nd)
 	 */
 
 	if (!p) {
+<<<<<<< HEAD
 		pr_err("%s(): can't find symlink target\n", __func__);
 		p = ERR_PTR(-EIO);
 	}
 	jffs2_dbg(1, "%s(): target path is '%s'\n",
 		  __func__, (char *)f->target);
+=======
+		printk(KERN_ERR "jffs2_follow_link(): can't find symlink target\n");
+		p = ERR_PTR(-EIO);
+	}
+	D1(printk(KERN_DEBUG "jffs2_follow_link(): target path is '%s'\n", (char *) f->target));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nd_set_link(nd, p);
 

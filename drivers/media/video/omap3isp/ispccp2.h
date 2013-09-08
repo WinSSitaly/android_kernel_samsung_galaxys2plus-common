@@ -81,7 +81,11 @@ struct isp_ccp2_device {
 	struct isp_interface_mem_config mem_cfg;
 	struct isp_video video_in;
 	struct isp_csiphy *phy;
+<<<<<<< HEAD
 	struct regulator *vdds_csib;
+=======
+	unsigned int error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	enum isp_pipeline_stream_state state;
 	wait_queue_head_t wait;
 	atomic_t stopping;
@@ -93,6 +97,10 @@ void omap3isp_ccp2_cleanup(struct isp_device *isp);
 int omap3isp_ccp2_register_entities(struct isp_ccp2_device *ccp2,
 			struct v4l2_device *vdev);
 void omap3isp_ccp2_unregister_entities(struct isp_ccp2_device *ccp2);
+<<<<<<< HEAD
 void omap3isp_ccp2_isr(struct isp_ccp2_device *ccp2);
+=======
+int omap3isp_ccp2_isr(struct isp_ccp2_device *ccp2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif	/* OMAP3_ISP_CCP2_H */

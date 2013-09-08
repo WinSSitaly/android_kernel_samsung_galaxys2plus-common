@@ -13,11 +13,14 @@ config ARCH_OMAP1
 	bool "TI OMAP1"
 	select CLKDEV_LOOKUP
 	select CLKSRC_MMIO
+<<<<<<< HEAD
 	select GENERIC_IRQ_CHIP
 	select IRQ_DOMAIN
 	select HAVE_IDE
 	select NEED_MACH_MEMORY_H
 	select NEED_MACH_IO_H if PCCARD
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  "Systems based on omap7xx, omap15xx or omap16xx"
 
@@ -26,8 +29,11 @@ config ARCH_OMAP2PLUS
 	select CLKDEV_LOOKUP
 	select GENERIC_IRQ_CHIP
 	select OMAP_DM_TIMER
+<<<<<<< HEAD
 	select USE_OF
 	select PROC_DEVICETREE if PROC_FS
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  "Systems based on OMAP2, OMAP3 or OMAP4"
 
@@ -114,6 +120,17 @@ config OMAP_MUX_WARNINGS
 	  to change the pin multiplexing setup.	 When there are no warnings
 	  printed, it's safe to deselect OMAP_MUX for your product.
 
+<<<<<<< HEAD
+=======
+config OMAP_MCBSP
+	bool "McBSP support"
+	depends on ARCH_OMAP
+	default y
+	help
+	  Say Y here if you want support for the OMAP Multichannel
+	  Buffered Serial Port.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config OMAP_MBOX_FWK
 	tristate "Mailbox framework support"
 	depends on ARCH_OMAP
@@ -130,6 +147,21 @@ config OMAP_MBOX_KFIFO_SIZE
 	  This can also be changed at runtime (via the mbox_kfifo_size
 	  module parameter).
 
+<<<<<<< HEAD
+=======
+config OMAP_IOMMU
+	tristate
+
+config OMAP_IOMMU_DEBUG
+       tristate "Export OMAP IOMMU internals in DebugFS"
+       depends on OMAP_IOMMU && DEBUG_FS
+       help
+         Select this to see extensive information about
+         the internal state of OMAP IOMMU in debugfs.
+
+         Say N unless you know you need this.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config OMAP_IOMMU_IVA2
 	bool
 
@@ -198,6 +230,12 @@ choice
 	depends on ARCH_OMAP
 	default OMAP_PM_NOOP
 
+<<<<<<< HEAD
+=======
+config OMAP_PM_NONE
+	bool "No PM layer"
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config OMAP_PM_NOOP
 	bool "No-op/debug PM layer"
 

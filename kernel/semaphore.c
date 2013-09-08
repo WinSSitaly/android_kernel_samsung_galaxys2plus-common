@@ -27,7 +27,11 @@
 
 #include <linux/compiler.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/semaphore.h>
 #include <linux/spinlock.h>
@@ -54,12 +58,20 @@ void down(struct semaphore *sem)
 {
 	unsigned long flags;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&sem->lock, flags);
+=======
+	spin_lock_irqsave(&sem->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (likely(sem->count > 0))
 		sem->count--;
 	else
 		__down(sem);
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&sem->lock, flags);
+=======
+	spin_unlock_irqrestore(&sem->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(down);
 
@@ -77,12 +89,20 @@ int down_interruptible(struct semaphore *sem)
 	unsigned long flags;
 	int result = 0;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&sem->lock, flags);
+=======
+	spin_lock_irqsave(&sem->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (likely(sem->count > 0))
 		sem->count--;
 	else
 		result = __down_interruptible(sem);
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&sem->lock, flags);
+=======
+	spin_unlock_irqrestore(&sem->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return result;
 }
@@ -103,12 +123,20 @@ int down_killable(struct semaphore *sem)
 	unsigned long flags;
 	int result = 0;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&sem->lock, flags);
+=======
+	spin_lock_irqsave(&sem->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (likely(sem->count > 0))
 		sem->count--;
 	else
 		result = __down_killable(sem);
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&sem->lock, flags);
+=======
+	spin_unlock_irqrestore(&sem->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return result;
 }
@@ -132,11 +160,19 @@ int down_trylock(struct semaphore *sem)
 	unsigned long flags;
 	int count;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&sem->lock, flags);
 	count = sem->count - 1;
 	if (likely(count >= 0))
 		sem->count = count;
 	raw_spin_unlock_irqrestore(&sem->lock, flags);
+=======
+	spin_lock_irqsave(&sem->lock, flags);
+	count = sem->count - 1;
+	if (likely(count >= 0))
+		sem->count = count;
+	spin_unlock_irqrestore(&sem->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return (count < 0);
 }
@@ -157,12 +193,20 @@ int down_timeout(struct semaphore *sem, long jiffies)
 	unsigned long flags;
 	int result = 0;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&sem->lock, flags);
+=======
+	spin_lock_irqsave(&sem->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (likely(sem->count > 0))
 		sem->count--;
 	else
 		result = __down_timeout(sem, jiffies);
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&sem->lock, flags);
+=======
+	spin_unlock_irqrestore(&sem->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return result;
 }
@@ -179,12 +223,20 @@ void up(struct semaphore *sem)
 {
 	unsigned long flags;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&sem->lock, flags);
+=======
+	spin_lock_irqsave(&sem->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (likely(list_empty(&sem->wait_list)))
 		sem->count++;
 	else
 		__up(sem);
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&sem->lock, flags);
+=======
+	spin_unlock_irqrestore(&sem->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(up);
 
@@ -217,9 +269,15 @@ static inline int __sched __down_common(struct semaphore *sem, long state,
 		if (timeout <= 0)
 			goto timed_out;
 		__set_task_state(task, state);
+<<<<<<< HEAD
 		raw_spin_unlock_irq(&sem->lock);
 		timeout = schedule_timeout(timeout);
 		raw_spin_lock_irq(&sem->lock);
+=======
+		spin_unlock_irq(&sem->lock);
+		timeout = schedule_timeout(timeout);
+		spin_lock_irq(&sem->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (waiter.up)
 			return 0;
 	}

@@ -5,9 +5,14 @@
 # Rewritten to use lists instead of if-statements.
 #
 
+<<<<<<< HEAD
 # GPIO must come after pinctrl as gpios may need to mux pins etc
 obj-y				+= pinctrl/
 obj-y				+= gpio/
+=======
+obj-y				+= gpio/
+obj-$(CONFIG_GENERIC_PWM)	+= pwm/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_PCI)		+= pci/
 obj-$(CONFIG_PARISC)		+= parisc/
 obj-$(CONFIG_RAPIDIO)		+= rapidio/
@@ -52,8 +57,13 @@ obj-$(CONFIG_SCSI)		+= scsi/
 obj-$(CONFIG_ATA)		+= ata/
 obj-$(CONFIG_TARGET_CORE)	+= target/
 obj-$(CONFIG_MTD)		+= mtd/
+<<<<<<< HEAD
 obj-$(CONFIG_SPI)		+= spi/
 obj-y				+= hsi/
+=======
+obj-$(CONFIG_SAMSUNG_PARAM)	+= param/
+obj-$(CONFIG_SPI)		+= spi/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-y				+= net/
 obj-$(CONFIG_ATM)		+= atm/
 obj-$(CONFIG_FUSION)		+= message/
@@ -85,8 +95,16 @@ obj-$(CONFIG_PTP_1588_CLOCK)	+= ptp/
 obj-$(CONFIG_W1)		+= w1/
 obj-$(CONFIG_POWER_SUPPLY)	+= power/
 obj-$(CONFIG_HWMON)		+= hwmon/
+<<<<<<< HEAD
 obj-$(CONFIG_THERMAL)		+= thermal/
 obj-$(CONFIG_WATCHDOG)		+= watchdog/
+=======
+obj-$(CONFIG_HAPTIC)		+= haptic/
+obj-y +=motor/
+obj-$(CONFIG_THERMAL)		+= thermal/
+obj-$(CONFIG_WATCHDOG)		+= watchdog/
+obj-$(CONFIG_PHONE)		+= telephony/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_MD)		+= md/
 obj-$(CONFIG_BT)		+= bluetooth/
 obj-$(CONFIG_ACCESSIBILITY)	+= accessibility/
@@ -97,9 +115,16 @@ obj-$(CONFIG_EISA)		+= eisa/
 obj-y				+= lguest/
 obj-$(CONFIG_CPU_FREQ)		+= cpufreq/
 obj-$(CONFIG_CPU_IDLE)		+= cpuidle/
+<<<<<<< HEAD
 obj-y				+= mmc/
 obj-$(CONFIG_MEMSTICK)		+= memstick/
 obj-y				+= leds/
+=======
+obj-$(CONFIG_MMC)		+= mmc/
+obj-$(CONFIG_MEMSTICK)		+= memstick/
+obj-y				+= leds/
+obj-$(CONFIG_SWITCH)		+= switch/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_INFINIBAND)	+= infiniband/
 obj-$(CONFIG_SGI_SN)		+= sn/
 obj-y				+= firmware/
@@ -122,6 +147,7 @@ obj-y				+= platform/
 obj-y				+= ieee802154/
 #common clk code
 obj-y				+= clk/
+<<<<<<< HEAD
 
 obj-$(CONFIG_HWSPINLOCK)	+= hwspinlock/
 obj-$(CONFIG_NFC)		+= nfc/
@@ -134,3 +160,14 @@ obj-$(CONFIG_VIRT_DRIVERS)	+= virt/
 obj-$(CONFIG_HYPERV)		+= hv/
 
 obj-$(CONFIG_PM_DEVFREQ)	+= devfreq/
+=======
+obj-$(CONFIG_NEW_SENSORS)	+= sensors/
+
+obj-$(CONFIG_HWSPINLOCK)	+= hwspinlock/
+obj-$(CONFIG_MMCPOLL)		+= mmc-poll/
+obj-$(CONFIG_SAMSUNG_MHL)       += accessory/
+
+ifeq (1, $(shell if [ -d $(srctree)/drivers/exfat ] ; then echo 1 ; fi))
+obj-y                           += exfat/
+endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -166,8 +166,11 @@ static struct dvb_usb_device_properties nova_t_properties = {
 	.num_adapters     = 1,
 	.adapter          = {
 		{
+<<<<<<< HEAD
 		.num_frontends = 1,
 		.fe = {{
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.caps = DVB_USB_ADAP_HAS_PID_FILTER | DVB_USB_ADAP_PID_FILTER_CAN_BE_TURNED_OFF,
 			.pid_filter_count = 32,
 
@@ -188,7 +191,11 @@ static struct dvb_usb_device_properties nova_t_properties = {
 					}
 				}
 			},
+<<<<<<< HEAD
 		}},
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.size_of_priv     = sizeof(struct dibusb_state),
 		}
 	},
@@ -225,7 +232,30 @@ static struct usb_driver nova_t_driver = {
 	.id_table	= nova_t_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(nova_t_driver);
+=======
+/* module stuff */
+static int __init nova_t_module_init(void)
+{
+	int result;
+	if ((result = usb_register(&nova_t_driver))) {
+		err("usb_register failed. Error number %d",result);
+		return result;
+	}
+
+	return 0;
+}
+
+static void __exit nova_t_module_exit(void)
+{
+	/* deregister this driver from the USB subsystem */
+	usb_deregister(&nova_t_driver);
+}
+
+module_init (nova_t_module_init);
+module_exit (nova_t_module_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Patrick Boettcher <patrick.boettcher@desy.de>");
 MODULE_DESCRIPTION("Hauppauge WinTV-NOVA-T usb2");

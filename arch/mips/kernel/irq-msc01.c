@@ -9,6 +9,10 @@
  *
  * Copyright (C) 2004, 06 Ralf Baechle <ralf@linux-mips.org>
  */
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/interrupt.h>
 #include <linux/kernel.h>
 #include <linux/sched.h>

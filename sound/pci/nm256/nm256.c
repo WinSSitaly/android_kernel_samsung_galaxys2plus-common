@@ -30,7 +30,11 @@
 #include <linux/init.h>
 #include <linux/pci.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mutex.h>
 
 #include <sound/core.h>
@@ -57,12 +61,21 @@ static int index = SNDRV_DEFAULT_IDX1;	/* Index */
 static char *id = SNDRV_DEFAULT_STR1;	/* ID for this card */
 static int playback_bufsize = 16;
 static int capture_bufsize = 16;
+<<<<<<< HEAD
 static bool force_ac97;			/* disabled as default */
 static int buffer_top;			/* not specified */
 static bool use_cache;			/* disabled */
 static bool vaio_hack;			/* disabled */
 static bool reset_workaround;
 static bool reset_workaround_2;
+=======
+static int force_ac97;			/* disabled as default */
+static int buffer_top;			/* not specified */
+static int use_cache;			/* disabled */
+static int vaio_hack;			/* disabled */
+static int reset_workaround;
+static int reset_workaround_2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(index, int, 0444);
 MODULE_PARM_DESC(index, "Index value for " CARD_NAME " soundcard.");
@@ -86,7 +99,11 @@ module_param(reset_workaround_2, bool, 0444);
 MODULE_PARM_DESC(reset_workaround_2, "Enable extended AC97 RESET workaround for some other laptops.");
 
 /* just for backward compatibility */
+<<<<<<< HEAD
 static bool enable;
+=======
+static int enable;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(enable, bool, 0444);
 
 
@@ -465,7 +482,11 @@ static int snd_nm256_acquire_irq(struct nm256 *chip)
 	mutex_lock(&chip->irq_mutex);
 	if (chip->irq < 0) {
 		if (request_irq(chip->pci->irq, chip->interrupt, IRQF_SHARED,
+<<<<<<< HEAD
 				KBUILD_MODNAME, chip)) {
+=======
+				chip->card->driver, chip)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			snd_printk(KERN_ERR "unable to grab IRQ %d\n", chip->pci->irq);
 			mutex_unlock(&chip->irq_mutex);
 			return -EBUSY;
@@ -1743,7 +1764,11 @@ static void __devexit snd_nm256_remove(struct pci_dev *pci)
 
 
 static struct pci_driver driver = {
+<<<<<<< HEAD
 	.name = KBUILD_MODNAME,
+=======
+	.name = "NeoMagic 256",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table = snd_nm256_ids,
 	.probe = snd_nm256_probe,
 	.remove = __devexit_p(snd_nm256_remove),

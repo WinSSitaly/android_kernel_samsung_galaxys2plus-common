@@ -585,9 +585,15 @@ static int s5h1411_register_reset(struct dvb_frontend *fe)
 }
 
 /* Talk to the demod, set the FEC, GUARD, QAM settings etc */
+<<<<<<< HEAD
 static int s5h1411_set_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int s5h1411_set_frontend(struct dvb_frontend *fe,
+	struct dvb_frontend_parameters *p)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct s5h1411_state *state = fe->demodulator_priv;
 
 	dprintk("%s(frequency=%d)\n", __func__, p->frequency);
@@ -596,13 +602,21 @@ static int s5h1411_set_frontend(struct dvb_frontend *fe)
 
 	state->current_frequency = p->frequency;
 
+<<<<<<< HEAD
 	s5h1411_enable_modulation(fe, p->modulation);
+=======
+	s5h1411_enable_modulation(fe, p->u.vsb.modulation);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (fe->ops.tuner_ops.set_params) {
 		if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 1);
 
+<<<<<<< HEAD
 		fe->ops.tuner_ops.set_params(fe);
+=======
+		fe->ops.tuner_ops.set_params(fe, p);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 0);
@@ -794,6 +808,7 @@ static int s5h1411_read_snr(struct dvb_frontend *fe, u16 *snr)
 static int s5h1411_read_signal_strength(struct dvb_frontend *fe,
 	u16 *signal_strength)
 {
+<<<<<<< HEAD
 	/* borrowed from lgdt330x.c
 	 *
 	 * Calculate strength from SNR up to 35dB
@@ -824,6 +839,9 @@ static int s5h1411_read_signal_strength(struct dvb_frontend *fe,
 	}
 
 	return ret;
+=======
+	return s5h1411_read_snr(fe, signal_strength);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int s5h1411_read_ucblocks(struct dvb_frontend *fe, u32 *ucblocks)
@@ -840,6 +858,7 @@ static int s5h1411_read_ber(struct dvb_frontend *fe, u32 *ber)
 	return s5h1411_read_ucblocks(fe, ber);
 }
 
+<<<<<<< HEAD
 static int s5h1411_get_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
@@ -847,6 +866,15 @@ static int s5h1411_get_frontend(struct dvb_frontend *fe)
 
 	p->frequency = state->current_frequency;
 	p->modulation = state->current_modulation;
+=======
+static int s5h1411_get_frontend(struct dvb_frontend *fe,
+				struct dvb_frontend_parameters *p)
+{
+	struct s5h1411_state *state = fe->demodulator_priv;
+
+	p->frequency = state->current_frequency;
+	p->u.vsb.modulation = state->current_modulation;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -915,9 +943,16 @@ error:
 EXPORT_SYMBOL(s5h1411_attach);
 
 static struct dvb_frontend_ops s5h1411_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_ATSC, SYS_DVBC_ANNEX_B },
 	.info = {
 		.name			= "Samsung S5H1411 QAM/8VSB Frontend",
+=======
+
+	.info = {
+		.name			= "Samsung S5H1411 QAM/8VSB Frontend",
+		.type			= FE_ATSC,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min		= 54000000,
 		.frequency_max		= 858000000,
 		.frequency_stepsize	= 62500,

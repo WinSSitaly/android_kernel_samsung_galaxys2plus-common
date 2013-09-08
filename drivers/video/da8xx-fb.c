@@ -32,6 +32,7 @@
 #include <linux/console.h>
 #include <linux/slab.h>
 #include <video/da8xx-fb.h>
+<<<<<<< HEAD
 #include <asm/div64.h>
 
 #define DRIVER_NAME "da8xx_lcdc"
@@ -39,6 +40,11 @@
 #define LCD_VERSION_1	1
 #define LCD_VERSION_2	2
 
+=======
+
+#define DRIVER_NAME "da8xx_lcdc"
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* LCD Status Register */
 #define LCD_END_OF_FRAME1		BIT(9)
 #define LCD_END_OF_FRAME0		BIT(8)
@@ -53,9 +59,13 @@
 #define LCD_DMA_BURST_4			0x2
 #define LCD_DMA_BURST_8			0x3
 #define LCD_DMA_BURST_16		0x4
+<<<<<<< HEAD
 #define LCD_V1_END_OF_FRAME_INT_ENA	BIT(2)
 #define LCD_V2_END_OF_FRAME0_INT_ENA	BIT(8)
 #define LCD_V2_END_OF_FRAME1_INT_ENA	BIT(9)
+=======
+#define LCD_END_OF_FRAME_INT_ENA	BIT(2)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define LCD_DUAL_FRAME_BUFFER_ENABLE	BIT(0)
 
 /* LCD Control Register */
@@ -71,18 +81,26 @@
 #define LCD_MONO_8BIT_MODE		BIT(9)
 #define LCD_RASTER_ORDER		BIT(8)
 #define LCD_TFT_MODE			BIT(7)
+<<<<<<< HEAD
 #define LCD_V1_UNDERFLOW_INT_ENA	BIT(6)
 #define LCD_V2_UNDERFLOW_INT_ENA	BIT(5)
 #define LCD_V1_PL_INT_ENA		BIT(4)
 #define LCD_V2_PL_INT_ENA		BIT(6)
+=======
+#define LCD_UNDERFLOW_INT_ENA		BIT(6)
+#define LCD_PL_ENABLE			BIT(4)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define LCD_MONOCHROME_MODE		BIT(1)
 #define LCD_RASTER_ENABLE		BIT(0)
 #define LCD_TFT_ALT_ENABLE		BIT(23)
 #define LCD_STN_565_ENABLE		BIT(24)
+<<<<<<< HEAD
 #define LCD_V2_DMA_CLK_EN		BIT(2)
 #define LCD_V2_LIDD_CLK_EN		BIT(1)
 #define LCD_V2_CORE_CLK_EN		BIT(0)
 #define LCD_V2_LPP_B10			26
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* LCD Raster Timing 2 Register */
 #define LCD_AC_BIAS_TRANSITIONS_PER_INT(x)	((x) << 16)
@@ -94,7 +112,10 @@
 #define LCD_INVERT_FRAME_CLOCK			BIT(20)
 
 /* LCD Block */
+<<<<<<< HEAD
 #define  LCD_PID_REG				0x0
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define  LCD_CTRL_REG				0x4
 #define  LCD_STAT_REG				0x8
 #define  LCD_RASTER_CTRL_REG			0x28
@@ -107,6 +128,7 @@
 #define  LCD_DMA_FRM_BUF_BASE_ADDR_1_REG	0x4C
 #define  LCD_DMA_FRM_BUF_CEILING_ADDR_1_REG	0x50
 
+<<<<<<< HEAD
 /* Interrupt Registers available only in Version 2 */
 #define  LCD_RAW_STAT_REG			0x58
 #define  LCD_MASKED_STAT_REG			0x5c
@@ -119,6 +141,8 @@
 #define  LCD_CLK_RESET_REG			0x70
 #define  LCD_CLK_MAIN_RESET			BIT(3)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define LCD_NUM_BUFFERS	2
 
 #define WSI_TIMEOUT	50
@@ -130,8 +154,11 @@
 
 static resource_size_t da8xx_fb_reg_base;
 static struct resource *lcdc_regs;
+<<<<<<< HEAD
 static unsigned int lcd_revision;
 static irq_handler_t lcdc_irq_handler;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline unsigned int lcdc_read(unsigned int addr)
 {
@@ -162,7 +189,10 @@ struct da8xx_fb_par {
 	int			vsync_timeout;
 #ifdef CONFIG_CPU_FREQ
 	struct notifier_block	freq_transition;
+<<<<<<< HEAD
 	unsigned int		lcd_fck_rate;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	void (*panel_power_ctrl)(int);
 };
@@ -176,6 +206,10 @@ static struct fb_var_screeninfo da8xx_fb_var __devinitdata = {
 	.activate = 0,
 	.height = -1,
 	.width = -1,
+<<<<<<< HEAD
+=======
+	.pixclock = 46666,	/* 46us - AUO display */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.accel_flags = 0,
 	.left_margin = LEFT_MARGIN,
 	.right_margin = RIGHT_MARGIN,
@@ -239,6 +273,7 @@ static struct da8xx_panel known_lcd_panels[] = {
 		.pxl_clk = 7833600,
 		.invert_pxl_clk = 0,
 	},
+<<<<<<< HEAD
 	[2] = {
 		/* Hitachi SP10Q010 */
 		.name = "SP10Q010",
@@ -253,6 +288,8 @@ static struct da8xx_panel known_lcd_panels[] = {
 		.pxl_clk = 7833600,
 		.invert_pxl_clk = 0,
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Enable the Raster Engine of the LCD Controller */
@@ -260,10 +297,13 @@ static inline void lcd_enable_raster(void)
 {
 	u32 reg;
 
+<<<<<<< HEAD
 	/* Bring LCDC out of reset */
 	if (lcd_revision == LCD_VERSION_2)
 		lcdc_write(0, LCD_CLK_RESET_REG);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	reg = lcdc_read(LCD_RASTER_CTRL_REG);
 	if (!(reg & LCD_RASTER_ENABLE))
 		lcdc_write(reg | LCD_RASTER_ENABLE, LCD_RASTER_CTRL_REG);
@@ -277,10 +317,13 @@ static inline void lcd_disable_raster(void)
 	reg = lcdc_read(LCD_RASTER_CTRL_REG);
 	if (reg & LCD_RASTER_ENABLE)
 		lcdc_write(reg & ~LCD_RASTER_ENABLE, LCD_RASTER_CTRL_REG);
+<<<<<<< HEAD
 
 	if (lcd_revision == LCD_VERSION_2)
 		/* Write 1 to reset LCDC */
 		lcdc_write(LCD_CLK_MAIN_RESET, LCD_CLK_RESET_REG);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void lcd_blit(int load_mode, struct da8xx_fb_par *par)
@@ -289,7 +332,10 @@ static void lcd_blit(int load_mode, struct da8xx_fb_par *par)
 	u32 end;
 	u32 reg_ras;
 	u32 reg_dma;
+<<<<<<< HEAD
 	u32 reg_int;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* init reg to clear PLM (loading mode) fields */
 	reg_ras = lcdc_read(LCD_RASTER_CTRL_REG);
@@ -302,6 +348,7 @@ static void lcd_blit(int load_mode, struct da8xx_fb_par *par)
 		end      = par->dma_end;
 
 		reg_ras |= LCD_PALETTE_LOAD_MODE(DATA_ONLY);
+<<<<<<< HEAD
 		if (lcd_revision == LCD_VERSION_1) {
 			reg_dma |= LCD_V1_END_OF_FRAME_INT_ENA;
 		} else {
@@ -310,6 +357,9 @@ static void lcd_blit(int load_mode, struct da8xx_fb_par *par)
 				LCD_V2_END_OF_FRAME1_INT_ENA;
 			lcdc_write(reg_int, LCD_INT_ENABLE_SET_REG);
 		}
+=======
+		reg_dma |= LCD_END_OF_FRAME_INT_ENA;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reg_dma |= LCD_DUAL_FRAME_BUFFER_ENABLE;
 
 		lcdc_write(start, LCD_DMA_FRM_BUF_BASE_ADDR_0_REG);
@@ -321,6 +371,7 @@ static void lcd_blit(int load_mode, struct da8xx_fb_par *par)
 		end      = start + par->palette_sz - 1;
 
 		reg_ras |= LCD_PALETTE_LOAD_MODE(PALETTE_ONLY);
+<<<<<<< HEAD
 
 		if (lcd_revision == LCD_VERSION_1) {
 			reg_ras |= LCD_V1_PL_INT_ENA;
@@ -329,6 +380,9 @@ static void lcd_blit(int load_mode, struct da8xx_fb_par *par)
 				LCD_V2_PL_INT_ENA;
 			lcdc_write(reg_int, LCD_INT_ENABLE_SET_REG);
 		}
+=======
+		reg_ras |= LCD_PL_ENABLE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		lcdc_write(start, LCD_DMA_FRM_BUF_BASE_ADDR_0_REG);
 		lcdc_write(end, LCD_DMA_FRM_BUF_CEILING_ADDR_0_REG);
@@ -412,7 +466,10 @@ static void lcd_cfg_vertical_sync(int back_porch, int pulse_width,
 static int lcd_cfg_display(const struct lcd_ctrl_config *cfg)
 {
 	u32 reg;
+<<<<<<< HEAD
 	u32 reg_int;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	reg = lcdc_read(LCD_RASTER_CTRL_REG) & ~(LCD_TFT_MODE |
 						LCD_MONO_8BIT_MODE |
@@ -440,6 +497,7 @@ static int lcd_cfg_display(const struct lcd_ctrl_config *cfg)
 	}
 
 	/* enable additional interrupts here */
+<<<<<<< HEAD
 	if (lcd_revision == LCD_VERSION_1) {
 		reg |= LCD_V1_UNDERFLOW_INT_ENA;
 	} else {
@@ -447,6 +505,9 @@ static int lcd_cfg_display(const struct lcd_ctrl_config *cfg)
 			LCD_V2_UNDERFLOW_INT_ENA;
 		lcdc_write(reg_int, LCD_INT_ENABLE_SET_REG);
 	}
+=======
+	reg |= LCD_UNDERFLOW_INT_ENA;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lcdc_write(reg, LCD_RASTER_CTRL_REG);
 
@@ -484,6 +545,7 @@ static int lcd_cfg_frame_buffer(struct da8xx_fb_par *par, u32 width, u32 height,
 
 	/* Set the Panel Width */
 	/* Pixels per line = (PPL + 1)*16 */
+<<<<<<< HEAD
 	if (lcd_revision == LCD_VERSION_1) {
 		/*
 		 * 0x3F in bits 4..9 gives max horizontal resolution = 1024
@@ -510,10 +572,21 @@ static int lcd_cfg_frame_buffer(struct da8xx_fb_par *par, u32 width, u32 height,
 
 	/* Set the Panel Height */
 	/* Set bits 9:0 of Lines Per Pixel */
+=======
+	/*0x3F in bits 4..9 gives max horisontal resolution = 1024 pixels*/
+	width &= 0x3f0;
+	reg = lcdc_read(LCD_RASTER_TIMING_0_REG);
+	reg &= 0xfffffc00;
+	reg |= ((width >> 4) - 1) << 4;
+	lcdc_write(reg, LCD_RASTER_TIMING_0_REG);
+
+	/* Set the Panel Height */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	reg = lcdc_read(LCD_RASTER_TIMING_1_REG);
 	reg = ((height - 1) & 0x3ff) | (reg & 0xfffffc00);
 	lcdc_write(reg, LCD_RASTER_TIMING_1_REG);
 
+<<<<<<< HEAD
 	/* Set bit 10 of Lines Per Pixel */
 	if (lcd_revision == LCD_VERSION_2) {
 		reg = lcdc_read(LCD_RASTER_TIMING_2_REG);
@@ -521,6 +594,8 @@ static int lcd_cfg_frame_buffer(struct da8xx_fb_par *par, u32 width, u32 height,
 		lcdc_write(reg, LCD_RASTER_TIMING_2_REG);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Set the Raster Order of the Frame Buffer */
 	reg = lcdc_read(LCD_RASTER_CTRL_REG) & ~(1 << 8);
 	if (raster_order)
@@ -561,6 +636,7 @@ static int fb_setcolreg(unsigned regno, unsigned red, unsigned green,
 	if (info->fix.visual == FB_VISUAL_DIRECTCOLOR)
 		return 1;
 
+<<<<<<< HEAD
 	if (info->var.bits_per_pixel == 4) {
 		if (regno > 15)
 			return 1;
@@ -581,6 +657,9 @@ static int fb_setcolreg(unsigned regno, unsigned red, unsigned green,
 		palette[regno] = pal;
 
 	} else if (info->var.bits_per_pixel == 8) {
+=======
+	if (info->var.bits_per_pixel == 8) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		red >>= 4;
 		green >>= 8;
 		blue >>= 12;
@@ -626,6 +705,7 @@ static void lcd_reset(struct da8xx_fb_par *par)
 	/* DMA has to be disabled */
 	lcdc_write(0, LCD_DMA_CTRL_REG);
 	lcdc_write(0, LCD_RASTER_CTRL_REG);
+<<<<<<< HEAD
 
 	if (lcd_revision == LCD_VERSION_2) {
 		lcdc_write(0, LCD_INT_ENABLE_SET_REG);
@@ -633,6 +713,8 @@ static void lcd_reset(struct da8xx_fb_par *par)
 		lcdc_write(LCD_CLK_MAIN_RESET, LCD_CLK_RESET_REG);
 		lcdc_write(0, LCD_CLK_RESET_REG);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void lcd_calc_clk_divider(struct da8xx_fb_par *par)
@@ -645,11 +727,14 @@ static void lcd_calc_clk_divider(struct da8xx_fb_par *par)
 	/* Configure the LCD clock divisor. */
 	lcdc_write(LCD_CLK_DIVISOR(div) |
 			(LCD_RASTER_MODE & 0x1), LCD_CTRL_REG);
+<<<<<<< HEAD
 
 	if (lcd_revision == LCD_VERSION_2)
 		lcdc_write(LCD_V2_DMA_CLK_EN | LCD_V2_LIDD_CLK_EN |
 				LCD_V2_CORE_CLK_EN, LCD_CLK_ENABLE_REG);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int lcd_init(struct da8xx_fb_par *par, const struct lcd_ctrl_config *cfg,
@@ -710,6 +795,7 @@ static int lcd_init(struct da8xx_fb_par *par, const struct lcd_ctrl_config *cfg,
 	return 0;
 }
 
+<<<<<<< HEAD
 /* IRQ handler for version 2 of LCDC */
 static irqreturn_t lcdc_irq_handler_rev02(int irq, void *arg)
 {
@@ -767,6 +853,9 @@ static irqreturn_t lcdc_irq_handler_rev02(int irq, void *arg)
 
 /* IRQ handler for version 1 LCDC */
 static irqreturn_t lcdc_irq_handler_rev01(int irq, void *arg)
+=======
+static irqreturn_t lcdc_irq_handler(int irq, void *arg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct da8xx_fb_par *par = arg;
 	u32 stat = lcdc_read(LCD_STAT_REG);
@@ -789,7 +878,11 @@ static irqreturn_t lcdc_irq_handler_rev01(int irq, void *arg)
 
 		/* Disable PL completion inerrupt */
 		reg_ras  = lcdc_read(LCD_RASTER_CTRL_REG);
+<<<<<<< HEAD
 		reg_ras &= ~LCD_V1_PL_INT_ENA;
+=======
+		reg_ras &= ~LCD_PL_ENABLE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		lcdc_write(reg_ras, LCD_RASTER_CTRL_REG);
 
 		/* Setup and start data loading mode */
@@ -835,7 +928,10 @@ static int fb_check_var(struct fb_var_screeninfo *var,
 		var->blue.length = 8;
 		var->transp.offset = 0;
 		var->transp.length = 0;
+<<<<<<< HEAD
 		var->nonstd = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case 4:
 		var->red.offset = 0;
@@ -846,7 +942,10 @@ static int fb_check_var(struct fb_var_screeninfo *var,
 		var->blue.length = 4;
 		var->transp.offset = 0;
 		var->transp.length = 0;
+<<<<<<< HEAD
 		var->nonstd = FB_NONSTD_REV_PIX_IN_B;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case 16:		/* RGB 565 */
 		var->red.offset = 11;
@@ -857,7 +956,10 @@ static int fb_check_var(struct fb_var_screeninfo *var,
 		var->blue.length = 5;
 		var->transp.offset = 0;
 		var->transp.length = 0;
+<<<<<<< HEAD
 		var->nonstd = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		err = -EINVAL;
@@ -877,6 +979,7 @@ static int lcd_da8xx_cpufreq_transition(struct notifier_block *nb,
 	struct da8xx_fb_par *par;
 
 	par = container_of(nb, struct da8xx_fb_par, freq_transition);
+<<<<<<< HEAD
 	if (val == CPUFREQ_POSTCHANGE) {
 		if (par->lcd_fck_rate != clk_get_rate(par->lcdc_clk)) {
 			par->lcd_fck_rate = clk_get_rate(par->lcdc_clk);
@@ -884,6 +987,13 @@ static int lcd_da8xx_cpufreq_transition(struct notifier_block *nb,
 			lcd_calc_clk_divider(par);
 			lcd_enable_raster();
 		}
+=======
+	if (val == CPUFREQ_PRECHANGE) {
+		lcd_disable_raster();
+	} else if (val == CPUFREQ_POSTCHANGE) {
+		lcd_calc_clk_divider(par);
+		lcd_enable_raster();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -1065,8 +1175,13 @@ static int da8xx_pan_display(struct fb_var_screeninfo *var,
 
 			start	= fix->smem_start +
 				new_var.yoffset * fix->line_length +
+<<<<<<< HEAD
 				new_var.xoffset * fbi->var.bits_per_pixel / 8;
 			end	= start + fbi->var.yres * fix->line_length - 1;
+=======
+				new_var.xoffset * var->bits_per_pixel / 8;
+			end	= start + var->yres * fix->line_length - 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			par->dma_start	= start;
 			par->dma_end	= end;
 		}
@@ -1087,6 +1202,7 @@ static struct fb_ops da8xx_fb_ops = {
 	.fb_blank = cfb_blank,
 };
 
+<<<<<<< HEAD
 /* Calculate and return pixel clock period in pico seconds */
 static unsigned int da8xxfb_pixel_clk_period(struct da8xx_fb_par *par)
 {
@@ -1103,6 +1219,8 @@ static unsigned int da8xxfb_pixel_clk_period(struct da8xx_fb_par *par)
 	return pix_clk_period_picosec;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit fb_probe(struct platform_device *device)
 {
 	struct da8xx_lcdc_platform_data *fb_pdata =
@@ -1149,6 +1267,7 @@ static int __devinit fb_probe(struct platform_device *device)
 	if (ret)
 		goto err_clk_put;
 
+<<<<<<< HEAD
 	/* Determine LCD IP Version */
 	switch (lcdc_read(LCD_PID_REG)) {
 	case 0x4C100102:
@@ -1165,6 +1284,8 @@ static int __devinit fb_probe(struct platform_device *device)
 		break;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0, lcdc_info = known_lcd_panels;
 		i < ARRAY_SIZE(known_lcd_panels);
 		i++, lcdc_info++) {
@@ -1192,9 +1313,12 @@ static int __devinit fb_probe(struct platform_device *device)
 
 	par = da8xx_fb_info->par;
 	par->lcdc_clk = fb_clk;
+<<<<<<< HEAD
 #ifdef CONFIG_CPU_FREQ
 	par->lcd_fck_rate = clk_get_rate(fb_clk);
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	par->pxl_clk = lcdc_info->pxl_clk;
 	if (fb_pdata->panel_power_ctrl) {
 		par->panel_power_ctrl = fb_pdata->panel_power_ctrl;
@@ -1267,11 +1391,14 @@ static int __devinit fb_probe(struct platform_device *device)
 
 	da8xx_fb_var.hsync_len = lcdc_info->hsw;
 	da8xx_fb_var.vsync_len = lcdc_info->vsw;
+<<<<<<< HEAD
 	da8xx_fb_var.right_margin = lcdc_info->hfp;
 	da8xx_fb_var.left_margin  = lcdc_info->hbp;
 	da8xx_fb_var.lower_margin = lcdc_info->vfp;
 	da8xx_fb_var.upper_margin = lcdc_info->vbp;
 	da8xx_fb_var.pixclock = da8xxfb_pixel_clk_period(par);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Initialize fbinfo */
 	da8xx_fb_info->flags = FBINFO_FLAG_DEFAULT;
@@ -1313,6 +1440,7 @@ static int __devinit fb_probe(struct platform_device *device)
 	}
 #endif
 
+<<<<<<< HEAD
 	if (lcd_revision == LCD_VERSION_1)
 		lcdc_irq_handler = lcdc_irq_handler_rev01;
 	else
@@ -1320,6 +1448,9 @@ static int __devinit fb_probe(struct platform_device *device)
 
 	ret = request_irq(par->irq, lcdc_irq_handler, 0,
 			DRIVER_NAME, par);
+=======
+	ret = request_irq(par->irq, lcdc_irq_handler, 0, DRIVER_NAME, par);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto irq_freq;
 	return 0;
@@ -1327,8 +1458,13 @@ static int __devinit fb_probe(struct platform_device *device)
 irq_freq:
 #ifdef CONFIG_CPU_FREQ
 	lcd_da8xx_cpufreq_deregister(par);
+<<<<<<< HEAD
 err_cpu_freq:
 #endif
+=======
+#endif
+err_cpu_freq:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unregister_framebuffer(da8xx_fb_info);
 
 err_dealloc_cmap:

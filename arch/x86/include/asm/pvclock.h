@@ -44,7 +44,11 @@ static inline u64 pvclock_scale_delta(u64 delta, u32 mul_frac, int shift)
 		: "a" ((u32)delta), "1" ((u32)(delta >> 32)), "2" (mul_frac) );
 #elif defined(__x86_64__)
 	__asm__ (
+<<<<<<< HEAD
 		"mulq %[mul_frac] ; shrd $32, %[hi], %[lo]"
+=======
+		"mul %[mul_frac] ; shrd $32, %[hi], %[lo]"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		: [lo]"=a"(product),
 		  [hi]"=d"(tmp)
 		: "0"(delta),

@@ -131,9 +131,12 @@ struct pt_regs {
 #ifdef __KERNEL__
 
 #include <linux/init.h>
+<<<<<<< HEAD
 #ifdef CONFIG_PARAVIRT
 #include <asm/paravirt_types.h>
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct cpuinfo_x86;
 struct task_struct;
@@ -145,6 +148,10 @@ extern unsigned long
 convert_ip_to_linear(struct task_struct *child, struct pt_regs *regs);
 extern void send_sigtrap(struct task_struct *tsk, struct pt_regs *regs,
 			 int error_code, int si_code);
+<<<<<<< HEAD
+=======
+void signal_fault(struct pt_regs *regs, void __user *frame, char *where);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern long syscall_trace_enter(struct pt_regs *);
 extern void syscall_trace_leave(struct pt_regs *);
@@ -189,6 +196,7 @@ static inline int v8086_mode(struct pt_regs *regs)
 #endif
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_X86_64
 static inline bool user_64bit_mode(struct pt_regs *regs)
 {
@@ -213,6 +221,23 @@ static inline unsigned long kernel_stack_pointer(struct pt_regs *regs)
 	return regs->sp;
 }
 #endif
+=======
+/*
+ * X86_32 CPUs don't save ss and esp if the CPU is already in kernel mode
+ * when it traps.  The previous stack will be directly underneath the saved
+ * registers, and 'sp/ss' won't even have been saved. Thus the '&regs->sp'.
+ *
+ * This is valid only for kernel mode traps.
+ */
+static inline unsigned long kernel_stack_pointer(struct pt_regs *regs)
+{
+#ifdef CONFIG_X86_32
+	return (unsigned long)(&regs->sp);
+#else
+	return regs->sp;
+#endif
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define GET_IP(regs) ((regs)->ip)
 #define GET_FP(regs) ((regs)->bp)

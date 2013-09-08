@@ -65,11 +65,23 @@ static unsigned char readb_outer_space(unsigned long long phys)
 
 	__asm__ __volatile__ (
 	"	.set	mips3		\n"
+<<<<<<< HEAD
 	"	ld	%0, %1		\n"
 	"	lbu	%0, (%0)	\n"
 	"	.set	mips0		\n"
 	: "=r" (res)
 	: "m" (vaddr));
+=======
+	"	.set	push		\n"
+	"	.set	noreorder	\n"
+	"	.set	nomacro		\n"
+	"	ld	%0, %1		\n"
+	"	.set	pop		\n"
+	"	lbu	%0, (%0)	\n"
+	"	.set	mips0		\n"
+	: "=r" (res)
+	: "R" (vaddr));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	write_c0_status(sr);
 	ssnop_4();
@@ -89,11 +101,23 @@ static void writeb_outer_space(unsigned long long phys, unsigned char c)
 
 	__asm__ __volatile__ (
 	"	.set	mips3		\n"
+<<<<<<< HEAD
 	"	ld	%0, %1		\n"
 	"	sb	%2, (%0)	\n"
 	"	.set	mips0		\n"
 	: "=&r" (tmp)
 	: "m" (vaddr), "r" (c));
+=======
+	"	.set	push		\n"
+	"	.set	noreorder	\n"
+	"	.set	nomacro		\n"
+	"	ld	%0, %1		\n"
+	"	.set	pop		\n"
+	"	sb	%2, (%0)	\n"
+	"	.set	mips0		\n"
+	: "=&r" (tmp)
+	: "R" (vaddr), "r" (c));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	write_c0_status(sr);
 	ssnop_4();

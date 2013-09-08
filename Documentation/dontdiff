@@ -66,6 +66,10 @@ GRTAGS
 GSYMS
 GTAGS
 Image
+<<<<<<< HEAD
+=======
+Kerntypes
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Module.markers
 Module.symvers
 PENDING
@@ -158,6 +162,10 @@ logo_*.c
 logo_*_clut224.c
 logo_*_mono.c
 lxdialog
+<<<<<<< HEAD
+=======
+mach
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 mach-types
 mach-types.h
 machtypes.h

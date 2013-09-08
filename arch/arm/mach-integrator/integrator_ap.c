@@ -32,12 +32,16 @@
 #include <linux/interrupt.h>
 #include <linux/io.h>
 #include <linux/mtd/physmap.h>
+<<<<<<< HEAD
 #include <linux/clk.h>
 #include <video/vga.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/hardware.h>
 #include <mach/platform.h>
 #include <asm/hardware/arm_timer.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
 #include <asm/param.h>		/* HZ */
 #include <asm/mach-types.h>
@@ -45,6 +49,14 @@
 
 #include <mach/lm.h>
 #include <mach/irqs.h>
+=======
+#include <asm/irq.h>
+#include <asm/setup.h>
+#include <asm/param.h>		/* HZ */
+#include <asm/mach-types.h>
+
+#include <mach/lm.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach/arch.h>
 #include <asm/mach/irq.h>
@@ -157,7 +169,10 @@ static struct map_desc ap_io_desc[] __initdata = {
 static void __init ap_map_io(void)
 {
 	iotable_init(ap_io_desc, ARRAY_SIZE(ap_io_desc));
+<<<<<<< HEAD
 	vga_base = PCI_MEMORY_VADDR;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #define INTEGRATOR_SC_VALID_INT	0x003fffff
@@ -324,6 +339,7 @@ static void __init ap_init(void)
 #define TIMER1_VA_BASE IO_ADDRESS(INTEGRATOR_TIMER1_BASE)
 #define TIMER2_VA_BASE IO_ADDRESS(INTEGRATOR_TIMER2_BASE)
 
+<<<<<<< HEAD
 static unsigned long timer_reload;
 
 static u32 notrace integrator_read_sched_clock(void)
@@ -339,6 +355,29 @@ static void integrator_clocksource_init(unsigned long inrate)
 
 	if (rate >= 1500000) {
 		rate /= 16;
+=======
+/*
+ * How long is the timer interval?
+ */
+#define TIMER_INTERVAL	(TICKS_PER_uSEC * mSEC_10)
+#if TIMER_INTERVAL >= 0x100000
+#define TICKS2USECS(x)	(256 * (x) / TICKS_PER_uSEC)
+#elif TIMER_INTERVAL >= 0x10000
+#define TICKS2USECS(x)	(16 * (x) / TICKS_PER_uSEC)
+#else
+#define TICKS2USECS(x)	((x) / TICKS_PER_uSEC)
+#endif
+
+static unsigned long timer_reload;
+
+static void integrator_clocksource_init(u32 khz)
+{
+	void __iomem *base = (void __iomem *)TIMER2_VA_BASE;
+	u32 ctrl = TIMER_CTRL_ENABLE | TIMER_CTRL_PERIODIC;
+
+	if (khz >= 1500) {
+		khz /= 16;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ctrl |= TIMER_CTRL_DIV16;
 	}
 
@@ -346,8 +385,12 @@ static void integrator_clocksource_init(unsigned long inrate)
 	writel(ctrl, base + TIMER_CTRL);
 
 	clocksource_mmio_init(base + TIMER_VALUE, "timer2",
+<<<<<<< HEAD
 			rate, 200, 16, clocksource_mmio_readl_down);
 	setup_sched_clock(integrator_read_sched_clock, 16, rate);
+=======
+		khz * 1000, 200, 16, clocksource_mmio_readl_down);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __iomem * const clkevt_base = (void __iomem *)TIMER1_VA_BASE;
@@ -371,6 +414,7 @@ static void clkevt_set_mode(enum clock_event_mode mode, struct clock_event_devic
 {
 	u32 ctrl = readl(clkevt_base + TIMER_CTRL) & ~TIMER_CTRL_ENABLE;
 
+<<<<<<< HEAD
 	/* Disable timer */
 	writel(ctrl, clkevt_base + TIMER_CTRL);
 
@@ -394,6 +438,17 @@ static void clkevt_set_mode(enum clock_event_mode mode, struct clock_event_devic
 		break;
 	}
 
+=======
+	BUG_ON(mode == CLOCK_EVT_MODE_ONESHOT);
+
+	if (mode == CLOCK_EVT_MODE_PERIODIC) {
+		writel(ctrl, clkevt_base + TIMER_CTRL);
+		writel(timer_reload, clkevt_base + TIMER_LOAD);
+		ctrl |= TIMER_CTRL_PERIODIC | TIMER_CTRL_ENABLE;
+	}
+
+	writel(ctrl, clkevt_base + TIMER_CTRL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int clkevt_set_next_event(unsigned long next, struct clock_event_device *evt)
@@ -409,10 +464,19 @@ static int clkevt_set_next_event(unsigned long next, struct clock_event_device *
 
 static struct clock_event_device integrator_clockevent = {
 	.name		= "timer1",
+<<<<<<< HEAD
 	.features	= CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
 	.set_mode	= clkevt_set_mode,
 	.set_next_event	= clkevt_set_next_event,
 	.rating		= 300,
+=======
+	.shift		= 34,
+	.features	= CLOCK_EVT_FEAT_PERIODIC,
+	.set_mode	= clkevt_set_mode,
+	.set_next_event	= clkevt_set_next_event,
+	.rating		= 300,
+	.cpumask	= cpu_all_mask,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct irqaction integrator_timer_irq = {
@@ -422,6 +486,7 @@ static struct irqaction integrator_timer_irq = {
 	.dev_id		= &integrator_clockevent,
 };
 
+<<<<<<< HEAD
 static void integrator_clockevent_init(unsigned long inrate)
 {
 	unsigned long rate = inrate;
@@ -443,6 +508,31 @@ static void integrator_clockevent_init(unsigned long inrate)
 					rate,
 					1,
 					0xffffU);
+=======
+static void integrator_clockevent_init(u32 khz)
+{
+	struct clock_event_device *evt = &integrator_clockevent;
+	unsigned int ctrl = 0;
+
+	if (khz * 1000 > 0x100000 * HZ) {
+		khz /= 256;
+		ctrl |= TIMER_CTRL_DIV256;
+	} else if (khz * 1000 > 0x10000 * HZ) {
+		khz /= 16;
+		ctrl |= TIMER_CTRL_DIV16;
+	}
+
+	timer_reload = khz * 1000 / HZ;
+	writel(ctrl, clkevt_base + TIMER_CTRL);
+
+	evt->irq = IRQ_TIMERINT1;
+	evt->mult = div_sc(khz, NSEC_PER_MSEC, evt->shift);
+	evt->max_delta_ns = clockevent_delta2ns(0xffff, evt);
+	evt->min_delta_ns = clockevent_delta2ns(0xf, evt);
+
+	setup_irq(IRQ_TIMERINT1, &integrator_timer_irq);
+	clockevents_register_device(evt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -450,6 +540,7 @@ static void integrator_clockevent_init(unsigned long inrate)
  */
 static void __init ap_init_timer(void)
 {
+<<<<<<< HEAD
 	struct clk *clk;
 	unsigned long rate;
 
@@ -457,13 +548,21 @@ static void __init ap_init_timer(void)
 	BUG_ON(IS_ERR(clk));
 	clk_enable(clk);
 	rate = clk_get_rate(clk);
+=======
+	u32 khz = TICKS_PER_uSEC * 1000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	writel(0, TIMER0_VA_BASE + TIMER_CTRL);
 	writel(0, TIMER1_VA_BASE + TIMER_CTRL);
 	writel(0, TIMER2_VA_BASE + TIMER_CTRL);
 
+<<<<<<< HEAD
 	integrator_clocksource_init(rate);
 	integrator_clockevent_init(rate);
+=======
+	integrator_clocksource_init(khz);
+	integrator_clockevent_init(khz);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct sys_timer ap_timer = {
@@ -472,13 +571,22 @@ static struct sys_timer ap_timer = {
 
 MACHINE_START(INTEGRATOR, "ARM-Integrator")
 	/* Maintainer: ARM Ltd/Deep Blue Solutions Ltd */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.reserve	= integrator_reserve,
 	.map_io		= ap_map_io,
 	.nr_irqs	= NR_IRQS_INTEGRATOR_AP,
+=======
+	.boot_params	= 0x00000100,
+	.reserve	= integrator_reserve,
+	.map_io		= ap_map_io,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_early	= integrator_init_early,
 	.init_irq	= ap_init_irq,
 	.timer		= &ap_timer,
 	.init_machine	= ap_init,
+<<<<<<< HEAD
 	.restart	= integrator_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

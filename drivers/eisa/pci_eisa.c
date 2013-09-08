@@ -19,10 +19,17 @@
 /* There is only *one* pci_eisa device per machine, right ? */
 static struct eisa_root_device pci_eisa_root;
 
+<<<<<<< HEAD
 static int __init pci_eisa_init(struct pci_dev *pdev)
 {
 	int rc, i;
 	struct resource *res, *bus_res = NULL;
+=======
+static int __init pci_eisa_init(struct pci_dev *pdev,
+				const struct pci_device_id *ent)
+{
+	int rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((rc = pci_enable_device (pdev))) {
 		printk (KERN_ERR "pci_eisa : Could not enable device %s\n",
@@ -30,6 +37,7 @@ static int __init pci_eisa_init(struct pci_dev *pdev)
 		return rc;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * The Intel 82375 PCI-EISA bridge is a subtractive-decode PCI
 	 * device, so the resources available on EISA are the same as those
@@ -54,6 +62,11 @@ static int __init pci_eisa_init(struct pci_dev *pdev)
 	pci_eisa_root.dev              = &pdev->dev;
 	pci_eisa_root.res	       = bus_res;
 	pci_eisa_root.bus_base_addr    = bus_res->start;
+=======
+	pci_eisa_root.dev              = &pdev->dev;
+	pci_eisa_root.res	       = pdev->bus->resource[0];
+	pci_eisa_root.bus_base_addr    = pdev->bus->resource[0]->start;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pci_eisa_root.slots	       = EISA_MAX_SLOTS;
 	pci_eisa_root.dma_mask         = pdev->dma_mask;
 	dev_set_drvdata(pci_eisa_root.dev, &pci_eisa_root);
@@ -66,6 +79,7 @@ static int __init pci_eisa_init(struct pci_dev *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 /*
  * We have to call pci_eisa_init_early() before pnpacpi_init()/isapnp_init().
  *   Otherwise pnp resource will get enabled early and could prevent eisa
@@ -89,3 +103,24 @@ static int __init pci_eisa_init_early(void)
 	return 0;
 }
 subsys_initcall_sync(pci_eisa_init_early);
+=======
+static struct pci_device_id pci_eisa_pci_tbl[] = {
+	{ PCI_ANY_ID, PCI_ANY_ID, PCI_ANY_ID, PCI_ANY_ID,
+	  PCI_CLASS_BRIDGE_EISA << 8, 0xffff00, 0 },
+	{ 0, }
+};
+
+static struct pci_driver pci_eisa_driver = {
+	.name		= "pci_eisa",
+	.id_table	= pci_eisa_pci_tbl,
+	.probe		= pci_eisa_init,
+};
+
+static int __init pci_eisa_init_module (void)
+{
+	return pci_register_driver (&pci_eisa_driver);
+}
+
+device_initcall(pci_eisa_init_module);
+MODULE_DEVICE_TABLE(pci, pci_eisa_pci_tbl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

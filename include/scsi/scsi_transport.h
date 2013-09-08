@@ -22,7 +22,10 @@
 
 #include <linux/transport_class.h>
 #include <linux/blkdev.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <scsi/scsi_host.h>
 #include <scsi/scsi_device.h>
 

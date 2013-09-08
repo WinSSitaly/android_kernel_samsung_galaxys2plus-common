@@ -32,6 +32,10 @@ static ctl_table nfs_cb_sysctls[] = {
 		.extra1 = (int *)&nfs_set_port_min,
 		.extra2 = (int *)&nfs_set_port_max,
 	},
+<<<<<<< HEAD
+=======
+#ifndef CONFIG_NFS_USE_NEW_IDMAPPER
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.procname = "idmap_cache_timeout",
 		.data = &nfs_idmap_cache_timeout,
@@ -39,6 +43,10 @@ static ctl_table nfs_cb_sysctls[] = {
 		.mode = 0644,
 		.proc_handler = proc_dointvec_jiffies,
 	},
+<<<<<<< HEAD
+=======
+#endif /* CONFIG_NFS_USE_NEW_IDMAPPER */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	{
 		.procname	= "nfs_mountpoint_timeout",

@@ -169,8 +169,15 @@ static struct netconsole_target *alloc_param_target(char *target_config)
 	 * Note that these targets get their config_item fields zeroed-out.
 	 */
 	nt = kzalloc(sizeof(*nt), GFP_KERNEL);
+<<<<<<< HEAD
 	if (!nt)
 		goto fail;
+=======
+	if (!nt) {
+		printk(KERN_ERR "netconsole: failed to allocate memory\n");
+		goto fail;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nt->np.name = "netconsole";
 	strlcpy(nt->np.dev_name, "eth0", IFNAMSIZ);
@@ -549,8 +556,15 @@ static struct config_item *make_netconsole_target(struct config_group *group,
 	 * Target is disabled at creation (enabled == 0).
 	 */
 	nt = kzalloc(sizeof(*nt), GFP_KERNEL);
+<<<<<<< HEAD
 	if (!nt)
 		return ERR_PTR(-ENOMEM);
+=======
+	if (!nt) {
+		printk(KERN_ERR "netconsole: failed to allocate memory\n");
+		return ERR_PTR(-ENOMEM);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nt->np.name = "netconsole";
 	strlcpy(nt->np.dev_name, "eth0", IFNAMSIZ);
@@ -626,7 +640,10 @@ static int netconsole_netdev_event(struct notifier_block *this,
 		goto done;
 
 	spin_lock_irqsave(&target_list_lock, flags);
+<<<<<<< HEAD
 restart:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(nt, &target_list, list) {
 		netconsole_target_get(nt);
 		if (nt->np.dev == dev) {
@@ -638,6 +655,7 @@ restart:
 			case NETDEV_JOIN:
 			case NETDEV_UNREGISTER:
 				/*
+<<<<<<< HEAD
 				 * we might sleep in __netpoll_cleanup()
 				 * rtnl_lock already held
 				 */
@@ -650,6 +668,24 @@ restart:
 				stopped = true;
 				netconsole_target_put(nt);
 				goto restart;
+=======
+				 * rtnl_lock already held
+				 */
+				if (nt->np.dev) {
+					spin_unlock_irqrestore(
+							      &target_list_lock,
+							      flags);
+					__netpoll_cleanup(&nt->np);
+					spin_lock_irqsave(&target_list_lock,
+							  flags);
+					dev_put(nt->np.dev);
+					nt->np.dev = NULL;
+					netconsole_target_put(nt);
+				}
+				nt->enabled = 0;
+				stopped = true;
+				break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 		netconsole_target_put(nt);
@@ -797,6 +833,7 @@ static void __exit cleanup_netconsole(void)
 	}
 }
 
+<<<<<<< HEAD
 /*
  * Use late_initcall to ensure netconsole is
  * initialized after network device driver if built-in.
@@ -804,4 +841,7 @@ static void __exit cleanup_netconsole(void)
  * late_initcall() and module_init() are identical if built as module.
  */
 late_initcall(init_netconsole);
+=======
+module_init(init_netconsole);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_exit(cleanup_netconsole);

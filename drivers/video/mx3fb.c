@@ -245,7 +245,10 @@ struct mx3fb_data {
 
 	uint32_t		h_start_width;
 	uint32_t		v_start_width;
+<<<<<<< HEAD
 	enum disp_data_mapping	disp_data_fmt;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct dma_chan_request {
@@ -288,6 +291,7 @@ static void mx3fb_write_reg(struct mx3fb_data *mx3fb, u32 value, unsigned long r
 	__raw_writel(value, mx3fb->reg_base + reg);
 }
 
+<<<<<<< HEAD
 struct di_mapping {
 	uint32_t b0, b1, b2;
 };
@@ -296,6 +300,13 @@ static const struct di_mapping di_mappings[] = {
 	[IPU_DISP_DATA_MAPPING_RGB666] = { 0x0005000f, 0x000b000f, 0x0011000f },
 	[IPU_DISP_DATA_MAPPING_RGB565] = { 0x0004003f, 0x000a000f, 0x000f003f },
 	[IPU_DISP_DATA_MAPPING_RGB888] = { 0x00070000, 0x000f0000, 0x00170000 },
+=======
+static const uint32_t di_mappings[] = {
+	0x1600AAAA, 0x00E05555, 0x00070000, 3,	/* RGB888 */
+	0x0005000F, 0x000B000F, 0x0011000F, 1,	/* RGB666 */
+	0x0011000F, 0x000B000F, 0x0005000F, 1,	/* BGR666 */
+	0x0004003F, 0x000A000F, 0x000F003F, 1	/* RGB565 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void sdc_fb_init(struct mx3fb_info *fbi)
@@ -337,8 +348,13 @@ static void sdc_enable_channel(struct mx3fb_info *mx3_fbi)
 
 	/* This enables the channel */
 	if (mx3_fbi->cookie < 0) {
+<<<<<<< HEAD
 		mx3_fbi->txd = dmaengine_prep_slave_sg(dma_chan,
 		      &mx3_fbi->sg[0], 1, DMA_MEM_TO_DEV, DMA_PREP_INTERRUPT);
+=======
+		mx3_fbi->txd = dma_chan->device->device_prep_slave_sg(dma_chan,
+		      &mx3_fbi->sg[0], 1, DMA_TO_DEVICE, DMA_PREP_INTERRUPT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!mx3_fbi->txd) {
 			dev_err(mx3fb->dev, "Cannot allocate descriptor on %d\n",
 				dma_chan->chan_id);
@@ -386,9 +402,12 @@ static void sdc_disable_channel(struct mx3fb_info *mx3_fbi)
 	uint32_t enabled;
 	unsigned long flags;
 
+<<<<<<< HEAD
 	if (mx3_fbi->txd == NULL)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&mx3fb->lock, flags);
 
 	enabled = sdc_fb_uninit(mx3_fbi);
@@ -429,6 +448,10 @@ static int sdc_set_window_pos(struct mx3fb_data *mx3fb, enum ipu_channel channel
  * @pixel_clk:		desired pixel clock frequency in Hz.
  * @width:		width of panel in pixels.
  * @height:		height of panel in pixels.
+<<<<<<< HEAD
+=======
+ * @pixel_fmt:		pixel format of buffer as FOURCC ASCII code.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @h_start_width:	number of pixel clocks between the HSYNC signal pulse
  *			and the start of valid data.
  * @h_sync_width:	width of the HSYNC signal in units of pixel clocks.
@@ -445,6 +468,10 @@ static int sdc_set_window_pos(struct mx3fb_data *mx3fb, enum ipu_channel channel
 static int sdc_init_panel(struct mx3fb_data *mx3fb, enum ipu_panel panel,
 			  uint32_t pixel_clk,
 			  uint16_t width, uint16_t height,
+<<<<<<< HEAD
+=======
+			  enum pixel_fmt pixel_fmt,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  uint16_t h_start_width, uint16_t h_sync_width,
 			  uint16_t h_end_width, uint16_t v_start_width,
 			  uint16_t v_sync_width, uint16_t v_end_width,
@@ -455,7 +482,10 @@ static int sdc_init_panel(struct mx3fb_data *mx3fb, enum ipu_panel panel,
 	uint32_t old_conf;
 	uint32_t div;
 	struct clk *ipu_clk;
+<<<<<<< HEAD
 	const struct di_mapping *map;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_dbg(mx3fb->dev, "panel size = %d x %d", width, height);
 
@@ -543,10 +573,43 @@ static int sdc_init_panel(struct mx3fb_data *mx3fb, enum ipu_panel panel,
 		sig.Vsync_pol << DI_D3_VSYNC_POL_SHIFT;
 	mx3fb_write_reg(mx3fb, old_conf, DI_DISP_SIG_POL);
 
+<<<<<<< HEAD
 	map = &di_mappings[mx3fb->disp_data_fmt];
 	mx3fb_write_reg(mx3fb, map->b0, DI_DISP3_B0_MAP);
 	mx3fb_write_reg(mx3fb, map->b1, DI_DISP3_B1_MAP);
 	mx3fb_write_reg(mx3fb, map->b2, DI_DISP3_B2_MAP);
+=======
+	switch (pixel_fmt) {
+	case IPU_PIX_FMT_RGB24:
+		mx3fb_write_reg(mx3fb, di_mappings[0], DI_DISP3_B0_MAP);
+		mx3fb_write_reg(mx3fb, di_mappings[1], DI_DISP3_B1_MAP);
+		mx3fb_write_reg(mx3fb, di_mappings[2], DI_DISP3_B2_MAP);
+		mx3fb_write_reg(mx3fb, mx3fb_read_reg(mx3fb, DI_DISP_ACC_CC) |
+			     ((di_mappings[3] - 1) << 12), DI_DISP_ACC_CC);
+		break;
+	case IPU_PIX_FMT_RGB666:
+		mx3fb_write_reg(mx3fb, di_mappings[4], DI_DISP3_B0_MAP);
+		mx3fb_write_reg(mx3fb, di_mappings[5], DI_DISP3_B1_MAP);
+		mx3fb_write_reg(mx3fb, di_mappings[6], DI_DISP3_B2_MAP);
+		mx3fb_write_reg(mx3fb, mx3fb_read_reg(mx3fb, DI_DISP_ACC_CC) |
+			     ((di_mappings[7] - 1) << 12), DI_DISP_ACC_CC);
+		break;
+	case IPU_PIX_FMT_BGR666:
+		mx3fb_write_reg(mx3fb, di_mappings[8], DI_DISP3_B0_MAP);
+		mx3fb_write_reg(mx3fb, di_mappings[9], DI_DISP3_B1_MAP);
+		mx3fb_write_reg(mx3fb, di_mappings[10], DI_DISP3_B2_MAP);
+		mx3fb_write_reg(mx3fb, mx3fb_read_reg(mx3fb, DI_DISP_ACC_CC) |
+			     ((di_mappings[11] - 1) << 12), DI_DISP_ACC_CC);
+		break;
+	default:
+		mx3fb_write_reg(mx3fb, di_mappings[12], DI_DISP3_B0_MAP);
+		mx3fb_write_reg(mx3fb, di_mappings[13], DI_DISP3_B1_MAP);
+		mx3fb_write_reg(mx3fb, di_mappings[14], DI_DISP3_B2_MAP);
+		mx3fb_write_reg(mx3fb, mx3fb_read_reg(mx3fb, DI_DISP_ACC_CC) |
+			     ((di_mappings[15] - 1) << 12), DI_DISP_ACC_CC);
+		break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_irqrestore(&mx3fb->lock, lock_flags);
 
@@ -757,6 +820,11 @@ static int __set_par(struct fb_info *fbi, bool lock)
 		if (sdc_init_panel(mx3fb, mode,
 				   (PICOS2KHZ(fbi->var.pixclock)) * 1000UL,
 				   fbi->var.xres, fbi->var.yres,
+<<<<<<< HEAD
+=======
+				   (fbi->var.sync & FB_SYNC_SWAP_RGB) ?
+				   IPU_PIX_FMT_BGR666 : IPU_PIX_FMT_RGB666,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   fbi->var.left_margin,
 				   fbi->var.hsync_len,
 				   fbi->var.right_margin +
@@ -964,6 +1032,7 @@ static void __blank(int blank, struct fb_info *fbi)
 {
 	struct mx3fb_info *mx3_fbi = fbi->par;
 	struct mx3fb_data *mx3fb = mx3_fbi->mx3fb;
+<<<<<<< HEAD
 	int was_blank = mx3_fbi->blank;
 
 	mx3_fbi->blank = blank;
@@ -977,6 +1046,11 @@ static void __blank(int blank, struct fb_info *fbi)
 	if (blank > FB_BLANK_UNBLANK && was_blank > FB_BLANK_UNBLANK)
 		return;
 
+=======
+
+	mx3_fbi->blank = blank;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (blank) {
 	case FB_BLANK_POWERDOWN:
 	case FB_BLANK_VSYNC_SUSPEND:
@@ -1050,15 +1124,24 @@ static int mx3fb_pan_display(struct fb_var_screeninfo *var,
 	y_bottom = var->yoffset;
 
 	if (!(var->vmode & FB_VMODE_YWRAP))
+<<<<<<< HEAD
 		y_bottom += fbi->var.yres;
+=======
+		y_bottom += var->yres;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (y_bottom > fbi->var.yres_virtual)
 		return -EINVAL;
 
 	mutex_lock(&mx3_fbi->mutex);
 
+<<<<<<< HEAD
 	offset = var->yoffset * fbi->fix.line_length
 	       + var->xoffset * (fbi->var.bits_per_pixel / 8);
+=======
+	offset = (var->yoffset * var->xres_virtual + var->xoffset) *
+		(var->bits_per_pixel / 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	base = fbi->fix.smem_start + offset;
 
 	dev_dbg(fbi->device, "Updating SDC BG buf %d address=0x%08lX\n",
@@ -1091,8 +1174,13 @@ static int mx3fb_pan_display(struct fb_var_screeninfo *var,
 	if (mx3_fbi->txd)
 		async_tx_ack(mx3_fbi->txd);
 
+<<<<<<< HEAD
 	txd = dmaengine_prep_slave_sg(dma_chan, sg +
 		mx3_fbi->cur_ipu_buf, 1, DMA_MEM_TO_DEV, DMA_PREP_INTERRUPT);
+=======
+	txd = dma_chan->device->device_prep_slave_sg(dma_chan, sg +
+		mx3_fbi->cur_ipu_buf, 1, DMA_TO_DEVICE, DMA_PREP_INTERRUPT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!txd) {
 		dev_err(fbi->device,
 			"Error preparing a DMA transaction descriptor.\n");
@@ -1324,12 +1412,15 @@ static int init_fb_chan(struct mx3fb_data *mx3fb, struct idmac_channel *ichan)
 	const struct fb_videomode *mode;
 	int ret, num_modes;
 
+<<<<<<< HEAD
 	if (mx3fb_pdata->disp_data_fmt >= ARRAY_SIZE(di_mappings)) {
 		dev_err(dev, "Illegal display data format %d\n",
 				mx3fb_pdata->disp_data_fmt);
 		return -EINVAL;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ichan->client = mx3fb;
 	irq = ichan->eof_irq;
 
@@ -1383,8 +1474,11 @@ static int init_fb_chan(struct mx3fb_data *mx3fb, struct idmac_channel *ichan)
 	mx3fbi->mx3fb		= mx3fb;
 	mx3fbi->blank		= FB_BLANK_NORMAL;
 
+<<<<<<< HEAD
 	mx3fb->disp_data_fmt	= mx3fb_pdata->disp_data_fmt;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	init_completion(&mx3fbi->flip_cmpl);
 	disable_irq(ichan->eof_irq);
 	dev_dbg(mx3fb->dev, "disabling irq %d\n", ichan->eof_irq);

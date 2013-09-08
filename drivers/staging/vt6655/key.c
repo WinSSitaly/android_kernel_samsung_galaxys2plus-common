@@ -655,9 +655,12 @@ bool KeybSetDefaultKey (
         return (false);
     }
 
+<<<<<<< HEAD
     if (uKeyLength > MAX_KEY_LEN)
 	    return false;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     pTable->KeyTable[MAX_KEY_TABLE-1].bInUse = true;
     for(ii=0;ii<ETH_ALEN;ii++)
         pTable->KeyTable[MAX_KEY_TABLE-1].abyBSSID[ii] = 0xFF;

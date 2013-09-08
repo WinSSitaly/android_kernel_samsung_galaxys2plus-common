@@ -28,7 +28,10 @@
 
 #include "sas_internal.h"
 
+<<<<<<< HEAD
 #include <scsi/sas_ata.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <scsi/scsi_transport.h>
 #include <scsi/scsi_transport_sas.h>
 #include "../scsi_sas_internal.h"
@@ -72,6 +75,7 @@ static int smp_execute_task(struct domain_device *dev, void *req, int req_size,
 	struct sas_internal *i =
 		to_sas_internal(dev->port->ha->core.shost->transportt);
 
+<<<<<<< HEAD
 	mutex_lock(&dev->ex_dev.cmd_mutex);
 	for (retry = 0; retry < 3; retry++) {
 		if (test_bit(SAS_DEV_GONE, &dev->state)) {
@@ -84,6 +88,13 @@ static int smp_execute_task(struct domain_device *dev, void *req, int req_size,
 			res = -ENOMEM;
 			break;
 		}
+=======
+	for (retry = 0; retry < 3; retry++) {
+		task = sas_alloc_task(GFP_KERNEL);
+		if (!task)
+			return -ENOMEM;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		task->dev = dev;
 		task->task_proto = dev->tproto;
 		sg_init_one(&task->smp_task.smp_req, req, req_size);
@@ -101,7 +112,11 @@ static int smp_execute_task(struct domain_device *dev, void *req, int req_size,
 		if (res) {
 			del_timer(&task->timer);
 			SAS_DPRINTK("executing SMP task failed:%d\n", res);
+<<<<<<< HEAD
 			break;
+=======
+			goto ex_err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		wait_for_completion(&task->completion);
@@ -111,20 +126,30 @@ static int smp_execute_task(struct domain_device *dev, void *req, int req_size,
 			i->dft->lldd_abort_task(task);
 			if (!(task->task_state_flags & SAS_TASK_STATE_DONE)) {
 				SAS_DPRINTK("SMP task aborted and not done\n");
+<<<<<<< HEAD
 				break;
+=======
+				goto ex_err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 		if (task->task_status.resp == SAS_TASK_COMPLETE &&
 		    task->task_status.stat == SAM_STAT_GOOD) {
 			res = 0;
 			break;
+<<<<<<< HEAD
 		}
 		if (task->task_status.resp == SAS_TASK_COMPLETE &&
 		    task->task_status.stat == SAS_DATA_UNDERRUN) {
+=======
+		} if (task->task_status.resp == SAS_TASK_COMPLETE &&
+		      task->task_status.stat == SAS_DATA_UNDERRUN) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* no error, but return the number of bytes of
 			 * underrun */
 			res = task->task_status.residual;
 			break;
+<<<<<<< HEAD
 		}
 		if (task->task_status.resp == SAS_TASK_COMPLETE &&
 		    task->task_status.stat == SAS_DATA_OVERRUN) {
@@ -135,6 +160,13 @@ static int smp_execute_task(struct domain_device *dev, void *req, int req_size,
 		    task->task_status.stat == SAS_DEVICE_UNKNOWN)
 			break;
 		else {
+=======
+		} if (task->task_status.resp == SAS_TASK_COMPLETE &&
+		      task->task_status.stat == SAS_DATA_OVERRUN) {
+			res = -EMSGSIZE;
+			break;
+		} else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			SAS_DPRINTK("%s: task to dev %016llx response: 0x%x "
 				    "status 0x%x\n", __func__,
 				    SAS_ADDR(dev->sas_addr),
@@ -144,10 +176,18 @@ static int smp_execute_task(struct domain_device *dev, void *req, int req_size,
 			task = NULL;
 		}
 	}
+<<<<<<< HEAD
 	mutex_unlock(&dev->ex_dev.cmd_mutex);
 
 	BUG_ON(retry == 3 && task != NULL);
 	sas_free_task(task);
+=======
+ex_err:
+	BUG_ON(retry == 3 && task != NULL);
+	if (task != NULL) {
+		sas_free_task(task);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return res;
 }
 
@@ -166,6 +206,7 @@ static inline void *alloc_smp_resp(int size)
 	return kzalloc(size, GFP_KERNEL);
 }
 
+<<<<<<< HEAD
 static char sas_route_char(struct domain_device *dev, struct ex_phy *phy)
 {
 	switch (phy->routing_attr) {
@@ -212,6 +253,21 @@ static void sas_set_ex_phy(struct domain_device *dev, int phy_id, void *rsp)
 	if (new_phy) {
 		if (WARN_ON_ONCE(test_bit(SAS_HA_ATA_EH_ACTIVE, &ha->state)))
 			return;
+=======
+/* ---------- Expander configuration ---------- */
+
+static void sas_set_ex_phy(struct domain_device *dev, int phy_id,
+			   void *disc_resp)
+{
+	struct expander_device *ex = &dev->ex_dev;
+	struct ex_phy *phy = &ex->ex_phy[phy_id];
+	struct smp_resp *resp = disc_resp;
+	struct discover_resp *dr = &resp->disc;
+	struct sas_rphy *rphy = dev->rphy;
+	int rediscover = (phy->phy != NULL);
+
+	if (!rediscover) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		phy->phy = sas_phy_alloc(&rphy->dev, phy_id);
 
 		/* FIXME: error_handling */
@@ -230,6 +286,7 @@ static void sas_set_ex_phy(struct domain_device *dev, int phy_id, void *rsp)
 		break;
 	}
 
+<<<<<<< HEAD
 	/* check if anything important changed to squelch debug */
 	dev_type = phy->attached_dev_type;
 	linkrate  = phy->linkrate;
@@ -250,6 +307,10 @@ static void sas_set_ex_phy(struct domain_device *dev, int phy_id, void *rsp)
 	if (test_bit(SAS_HA_ATA_EH_ACTIVE, &ha->state))
 		goto out;
 	phy->phy_id = phy_id;
+=======
+	phy->phy_id = phy_id;
+	phy->attached_dev_type = dr->attached_dev_type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	phy->linkrate = dr->linkrate;
 	phy->attached_sata_host = dr->attached_sata_host;
 	phy->attached_sata_dev  = dr->attached_sata_dev;
@@ -271,11 +332,17 @@ static void sas_set_ex_phy(struct domain_device *dev, int phy_id, void *rsp)
 	phy->last_da_index = -1;
 
 	phy->phy->identify.sas_address = SAS_ADDR(phy->attached_sas_addr);
+<<<<<<< HEAD
 	phy->phy->identify.device_type = dr->attached_dev_type;
 	phy->phy->identify.initiator_port_protocols = phy->attached_iproto;
 	phy->phy->identify.target_port_protocols = phy->attached_tproto;
 	if (!phy->attached_tproto && dr->attached_sata_dev)
 		phy->phy->identify.target_port_protocols = SAS_PROTOCOL_SATA;
+=======
+	phy->phy->identify.device_type = phy->attached_dev_type;
+	phy->phy->identify.initiator_port_protocols = phy->attached_iproto;
+	phy->phy->identify.target_port_protocols = phy->attached_tproto;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	phy->phy->identify.phy_identifier = phy_id;
 	phy->phy->minimum_linkrate_hw = dr->hmin_linkrate;
 	phy->phy->maximum_linkrate_hw = dr->hmax_linkrate;
@@ -283,13 +350,18 @@ static void sas_set_ex_phy(struct domain_device *dev, int phy_id, void *rsp)
 	phy->phy->maximum_linkrate = dr->pmax_linkrate;
 	phy->phy->negotiated_linkrate = phy->linkrate;
 
+<<<<<<< HEAD
  skip:
 	if (new_phy)
+=======
+	if (!rediscover)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (sas_phy_add(phy->phy)) {
 			sas_phy_free(phy->phy);
 			return;
 		}
 
+<<<<<<< HEAD
  out:
 	switch (phy->attached_dev_type) {
 	case SATA_PENDING:
@@ -363,6 +435,16 @@ struct domain_device *sas_ex_to_ata(struct domain_device *ex_dev, int phy_id)
 		return dev;
 
 	return NULL;
+=======
+	SAS_DPRINTK("ex %016llx phy%02d:%c attached: %016llx\n",
+		    SAS_ADDR(dev->sas_addr), phy->phy_id,
+		    phy->routing_attr == TABLE_ROUTING ? 'T' :
+		    phy->routing_attr == DIRECT_ROUTING ? 'D' :
+		    phy->routing_attr == SUBTRACTIVE_ROUTING ? 'S' : '?',
+		    SAS_ADDR(phy->attached_sas_addr));
+
+	return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #define DISCOVER_REQ_SIZE  16
@@ -371,6 +453,7 @@ struct domain_device *sas_ex_to_ata(struct domain_device *ex_dev, int phy_id)
 static int sas_ex_phy_discover_helper(struct domain_device *dev, u8 *disc_req,
 				      u8 *disc_resp, int single)
 {
+<<<<<<< HEAD
 	struct discover_resp *dr;
 	int res;
 
@@ -384,12 +467,45 @@ static int sas_ex_phy_discover_helper(struct domain_device *dev, u8 *disc_req,
 	if (memcmp(dev->sas_addr, dr->attached_sas_addr, SAS_ADDR_SIZE) == 0) {
 		sas_printk("Found loopback topology, just ignore it!\n");
 		return 0;
+=======
+	int i, res;
+
+	disc_req[9] = single;
+	for (i = 1 ; i < 3; i++) {
+		struct discover_resp *dr;
+
+		res = smp_execute_task(dev, disc_req, DISCOVER_REQ_SIZE,
+				       disc_resp, DISCOVER_RESP_SIZE);
+		if (res)
+			return res;
+		/* This is detecting a failure to transmit initial
+		 * dev to host FIS as described in section G.5 of
+		 * sas-2 r 04b */
+		dr = &((struct smp_resp *)disc_resp)->disc;
+		if (memcmp(dev->sas_addr, dr->attached_sas_addr,
+			  SAS_ADDR_SIZE) == 0) {
+			sas_printk("Found loopback topology, just ignore it!\n");
+			return 0;
+		}
+		if (!(dr->attached_dev_type == 0 &&
+		      dr->attached_sata_dev))
+			break;
+		/* In order to generate the dev to host FIS, we
+		 * send a link reset to the expander port */
+		sas_smp_phy_control(dev, single, PHY_FUNC_LINK_RESET, NULL);
+		/* Wait for the reset to trigger the negotiation */
+		msleep(500);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	sas_set_ex_phy(dev, single, disc_resp);
 	return 0;
 }
 
+<<<<<<< HEAD
 int sas_ex_phy_discover(struct domain_device *dev, int single)
+=======
+static int sas_ex_phy_discover(struct domain_device *dev, int single)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct expander_device *ex = &dev->ex_dev;
 	int  res = 0;
@@ -456,7 +572,10 @@ static void ex_assign_report_general(struct domain_device *dev,
 	dev->ex_dev.ex_change_count = be16_to_cpu(rg->change_count);
 	dev->ex_dev.max_route_indexes = be16_to_cpu(rg->route_indexes);
 	dev->ex_dev.num_phys = min(rg->num_phys, (u8)MAX_EXPANDER_PHYS);
+<<<<<<< HEAD
 	dev->ex_dev.t2t_supp = rg->t2t_supp;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->ex_dev.conf_route_table = rg->conf_route_table;
 	dev->ex_dev.configuring = rg->configuring;
 	memcpy(dev->ex_dev.enclosure_logical_id, rg->enclosure_logical_id, 8);
@@ -694,8 +813,14 @@ int sas_smp_get_phy_events(struct sas_phy *phy)
 #define RPS_REQ_SIZE  16
 #define RPS_RESP_SIZE 60
 
+<<<<<<< HEAD
 int sas_get_report_phy_sata(struct domain_device *dev, int phy_id,
 			    struct smp_resp *rps_resp)
+=======
+static int sas_get_report_phy_sata(struct domain_device *dev,
+					  int phy_id,
+					  struct smp_resp *rps_resp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int res;
 	u8 *rps_req = alloc_smp_req(RPS_REQ_SIZE);
@@ -781,11 +906,18 @@ static struct domain_device *sas_ex_discover_end_dev(
 	if (phy->attached_sata_host || phy->attached_sata_ps)
 		return NULL;
 
+<<<<<<< HEAD
 	child = sas_alloc_device();
 	if (!child)
 		return NULL;
 
 	kref_get(&parent->kref);
+=======
+	child = kzalloc(sizeof(*child), GFP_KERNEL);
+	if (!child)
+		return NULL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	child->parent = parent;
 	child->port   = parent->port;
 	child->iproto = phy->attached_iproto;
@@ -801,6 +933,7 @@ static struct domain_device *sas_ex_discover_end_dev(
 		}
 	}
 	sas_ex_get_linkrate(parent, child, phy);
+<<<<<<< HEAD
 	sas_device_set_phy(child, phy->port);
 
 #ifdef CONFIG_SCSI_SAS_ATA
@@ -821,6 +954,38 @@ static struct domain_device *sas_ex_discover_end_dev(
 		get_device(&rphy->dev);
 
 		list_add_tail(&child->disco_list_node, &parent->port->disco_list);
+=======
+
+#ifdef CONFIG_SCSI_SAS_ATA
+	if ((phy->attached_tproto & SAS_PROTOCOL_STP) || phy->attached_sata_dev) {
+		child->dev_type = SATA_DEV;
+		if (phy->attached_tproto & SAS_PROTOCOL_STP)
+			child->tproto = phy->attached_tproto;
+		if (phy->attached_sata_dev)
+			child->tproto |= SATA_DEV;
+		res = sas_get_report_phy_sata(parent, phy_id,
+					      &child->sata_dev.rps_resp);
+		if (res) {
+			SAS_DPRINTK("report phy sata to %016llx:0x%x returned "
+				    "0x%x\n", SAS_ADDR(parent->sas_addr),
+				    phy_id, res);
+			goto out_free;
+		}
+		memcpy(child->frame_rcvd, &child->sata_dev.rps_resp.rps.fis,
+		       sizeof(struct dev_to_host_fis));
+
+		rphy = sas_end_device_alloc(phy->port);
+		if (unlikely(!rphy))
+			goto out_free;
+
+		sas_init_dev(child);
+
+		child->rphy = rphy;
+
+		spin_lock_irq(&parent->port->dev_list_lock);
+		list_add_tail(&child->dev_list_node, &parent->port->dev_list);
+		spin_unlock_irq(&parent->port->dev_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		res = sas_discover_sata(child);
 		if (res) {
@@ -842,10 +1007,18 @@ static struct domain_device *sas_ex_discover_end_dev(
 		sas_init_dev(child);
 
 		child->rphy = rphy;
+<<<<<<< HEAD
 		get_device(&rphy->dev);
 		sas_fill_in_rphy(child, rphy);
 
 		list_add_tail(&child->disco_list_node, &parent->port->disco_list);
+=======
+		sas_fill_in_rphy(child, rphy);
+
+		spin_lock_irq(&parent->port->dev_list_lock);
+		list_add_tail(&child->dev_list_node, &parent->port->dev_list);
+		spin_unlock_irq(&parent->port->dev_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		res = sas_discover_end_dev(child);
 		if (res) {
@@ -867,20 +1040,33 @@ static struct domain_device *sas_ex_discover_end_dev(
 
  out_list_del:
 	sas_rphy_free(child->rphy);
+<<<<<<< HEAD
 	list_del(&child->disco_list_node);
 	spin_lock_irq(&parent->port->dev_list_lock);
 	list_del(&child->dev_list_node);
 	spin_unlock_irq(&parent->port->dev_list_lock);
+=======
+	child->rphy = NULL;
+	list_del(&child->dev_list_node);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  out_free:
 	sas_port_delete(phy->port);
  out_err:
 	phy->port = NULL;
+<<<<<<< HEAD
 	sas_put_device(child);
+=======
+	kfree(child);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NULL;
 }
 
 /* See if this phy is part of a wide port */
+<<<<<<< HEAD
 static bool sas_ex_join_wide_port(struct domain_device *parent, int phy_id)
+=======
+static int sas_ex_join_wide_port(struct domain_device *parent, int phy_id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ex_phy *phy = &parent->ex_dev.ex_phy[phy_id];
 	int i;
@@ -896,11 +1082,19 @@ static bool sas_ex_join_wide_port(struct domain_device *parent, int phy_id)
 			sas_port_add_phy(ephy->port, phy->phy);
 			phy->port = ephy->port;
 			phy->phy_state = PHY_DEVICE_DISCOVERED;
+<<<<<<< HEAD
 			return true;
 		}
 	}
 
 	return false;
+=======
+			return 0;
+		}
+	}
+
+	return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct domain_device *sas_ex_discover_expander(
@@ -922,7 +1116,11 @@ static struct domain_device *sas_ex_discover_expander(
 			    phy->attached_phy_id);
 		return NULL;
 	}
+<<<<<<< HEAD
 	child = sas_alloc_device();
+=======
+	child = kzalloc(sizeof(*child), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!child)
 		return NULL;
 
@@ -946,10 +1144,15 @@ static struct domain_device *sas_ex_discover_expander(
 	}
 	port = parent->port;
 	child->rphy = rphy;
+<<<<<<< HEAD
 	get_device(&rphy->dev);
 	edev = rphy_to_expander_device(rphy);
 	child->dev_type = phy->attached_dev_type;
 	kref_get(&parent->kref);
+=======
+	edev = rphy_to_expander_device(rphy);
+	child->dev_type = phy->attached_dev_type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	child->parent = parent;
 	child->port = port;
 	child->iproto = phy->attached_iproto;
@@ -970,11 +1173,18 @@ static struct domain_device *sas_ex_discover_expander(
 
 	res = sas_discover_expander(child);
 	if (res) {
+<<<<<<< HEAD
 		sas_rphy_delete(rphy);
 		spin_lock_irq(&parent->port->dev_list_lock);
 		list_del(&child->dev_list_node);
 		spin_unlock_irq(&parent->port->dev_list_lock);
 		sas_put_device(child);
+=======
+		spin_lock_irq(&parent->port->dev_list_lock);
+		list_del(&child->dev_list_node);
+		spin_unlock_irq(&parent->port->dev_list_lock);
+		kfree(child);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 	}
 	list_add_tail(&child->siblings, &parent->ex_dev.children);
@@ -1024,8 +1234,12 @@ static int sas_ex_discover_dev(struct domain_device *dev, int phy_id)
 
 	if (ex_phy->attached_dev_type != SAS_END_DEV &&
 	    ex_phy->attached_dev_type != FANOUT_DEV &&
+<<<<<<< HEAD
 	    ex_phy->attached_dev_type != EDGE_DEV &&
 	    ex_phy->attached_dev_type != SATA_PENDING) {
+=======
+	    ex_phy->attached_dev_type != EDGE_DEV) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		SAS_DPRINTK("unknown device type(0x%x) attached to ex %016llx "
 			    "phy 0x%x\n", ex_phy->attached_dev_type,
 			    SAS_ADDR(dev->sas_addr),
@@ -1042,7 +1256,12 @@ static int sas_ex_discover_dev(struct domain_device *dev, int phy_id)
 		return res;
 	}
 
+<<<<<<< HEAD
 	if (sas_ex_join_wide_port(dev, phy_id)) {
+=======
+	res = sas_ex_join_wide_port(dev, phy_id);
+	if (!res) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		SAS_DPRINTK("Attaching ex phy%d to wide port %016llx\n",
 			    phy_id, SAS_ADDR(ex_phy->attached_sas_addr));
 		return res;
@@ -1050,7 +1269,10 @@ static int sas_ex_discover_dev(struct domain_device *dev, int phy_id)
 
 	switch (ex_phy->attached_dev_type) {
 	case SAS_END_DEV:
+<<<<<<< HEAD
 	case SATA_PENDING:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		child = sas_ex_discover_end_dev(dev, phy_id);
 		break;
 	case FANOUT_DEV:
@@ -1088,7 +1310,12 @@ static int sas_ex_discover_dev(struct domain_device *dev, int phy_id)
 			if (SAS_ADDR(ex->ex_phy[i].attached_sas_addr) ==
 			    SAS_ADDR(child->sas_addr)) {
 				ex->ex_phy[i].phy_state= PHY_DEVICE_DISCOVERED;
+<<<<<<< HEAD
 				if (sas_ex_join_wide_port(dev, i))
+=======
+				res = sas_ex_join_wide_port(dev, i);
+				if (!res)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					SAS_DPRINTK("Attaching ex phy%d to wide port %016llx\n",
 						    i, SAS_ADDR(ex->ex_phy[i].attached_sas_addr));
 
@@ -1244,14 +1471,27 @@ static void sas_print_parent_topology_bug(struct domain_device *child,
 						 struct ex_phy *parent_phy,
 						 struct ex_phy *child_phy)
 {
+<<<<<<< HEAD
+=======
+	static const char ra_char[] = {
+		[DIRECT_ROUTING] = 'D',
+		[SUBTRACTIVE_ROUTING] = 'S',
+		[TABLE_ROUTING] = 'T',
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	static const char *ex_type[] = {
 		[EDGE_DEV] = "edge",
 		[FANOUT_DEV] = "fanout",
 	};
 	struct domain_device *parent = child->parent;
 
+<<<<<<< HEAD
 	sas_printk("%s ex %016llx phy 0x%x <--> %s ex %016llx "
 		   "phy 0x%x has %c:%c routing link!\n",
+=======
+	sas_printk("%s ex %016llx phy 0x%x <--> %s ex %016llx phy 0x%x "
+		   "has %c:%c routing link!\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		   ex_type[parent->dev_type],
 		   SAS_ADDR(parent->sas_addr),
@@ -1261,8 +1501,13 @@ static void sas_print_parent_topology_bug(struct domain_device *child,
 		   SAS_ADDR(child->sas_addr),
 		   child_phy->phy_id,
 
+<<<<<<< HEAD
 		   sas_route_char(parent, parent_phy),
 		   sas_route_char(child, child_phy));
+=======
+		   ra_char[parent_phy->routing_attr],
+		   ra_char[child_phy->routing_attr]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int sas_check_eeds(struct domain_device *child,
@@ -1355,6 +1600,7 @@ static int sas_check_parent_topology(struct domain_device *child)
 					sas_print_parent_topology_bug(child, parent_phy, child_phy);
 					res = -ENODEV;
 				}
+<<<<<<< HEAD
 			} else if (parent_phy->routing_attr == TABLE_ROUTING) {
 				if (child_phy->routing_attr == SUBTRACTIVE_ROUTING ||
 				    (child_phy->routing_attr == TABLE_ROUTING &&
@@ -1364,6 +1610,12 @@ static int sas_check_parent_topology(struct domain_device *child)
 					sas_print_parent_topology_bug(child, parent_phy, child_phy);
 					res = -ENODEV;
 				}
+=======
+			} else if (parent_phy->routing_attr == TABLE_ROUTING &&
+				   child_phy->routing_attr != SUBTRACTIVE_ROUTING) {
+				sas_print_parent_topology_bug(child, parent_phy, child_phy);
+				res = -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			break;
 		case FANOUT_DEV:
@@ -1719,8 +1971,13 @@ static int sas_get_phy_change_count(struct domain_device *dev,
 	return res;
 }
 
+<<<<<<< HEAD
 static int sas_get_phy_attached_dev(struct domain_device *dev, int phy_id,
 				    u8 *sas_addr, enum sas_dev_type *type)
+=======
+static int sas_get_phy_attached_sas_addr(struct domain_device *dev,
+					 int phy_id, u8 *attached_sas_addr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int res;
 	struct smp_resp *disc_resp;
@@ -1732,11 +1989,18 @@ static int sas_get_phy_attached_dev(struct domain_device *dev, int phy_id,
 	dr = &disc_resp->disc;
 
 	res = sas_get_phy_discover(dev, phy_id, disc_resp);
+<<<<<<< HEAD
 	if (res == 0) {
 		memcpy(sas_addr, disc_resp->disc.attached_sas_addr, 8);
 		*type = to_dev_type(dr);
 		if (*type == 0)
 			memset(sas_addr, 0, 8);
+=======
+	if (!res) {
+		memcpy(attached_sas_addr,disc_resp->disc.attached_sas_addr,8);
+		if (dr->attached_dev_type == 0)
+			memset(attached_sas_addr, 0, 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	kfree(disc_resp);
 	return res;
@@ -1859,12 +2123,17 @@ out:
 	return res;
 }
 
+<<<<<<< HEAD
 static void sas_unregister_ex_tree(struct asd_sas_port *port, struct domain_device *dev)
+=======
+static void sas_unregister_ex_tree(struct domain_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct expander_device *ex = &dev->ex_dev;
 	struct domain_device *child, *n;
 
 	list_for_each_entry_safe(child, n, &ex->children, siblings) {
+<<<<<<< HEAD
 		set_bit(SAS_DEV_GONE, &child->state);
 		if (child->dev_type == EDGE_DEV ||
 		    child->dev_type == FANOUT_DEV)
@@ -1873,6 +2142,16 @@ static void sas_unregister_ex_tree(struct asd_sas_port *port, struct domain_devi
 			sas_unregister_dev(port, child);
 	}
 	sas_unregister_dev(port, dev);
+=======
+		child->gone = 1;
+		if (child->dev_type == EDGE_DEV ||
+		    child->dev_type == FANOUT_DEV)
+			sas_unregister_ex_tree(child);
+		else
+			sas_unregister_dev(child);
+	}
+	sas_unregister_dev(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void sas_unregister_devs_sas_addr(struct domain_device *parent,
@@ -1880,12 +2159,17 @@ static void sas_unregister_devs_sas_addr(struct domain_device *parent,
 {
 	struct expander_device *ex_dev = &parent->ex_dev;
 	struct ex_phy *phy = &ex_dev->ex_phy[phy_id];
+<<<<<<< HEAD
 	struct domain_device *child, *n, *found = NULL;
+=======
+	struct domain_device *child, *n;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (last) {
 		list_for_each_entry_safe(child, n,
 			&ex_dev->children, siblings) {
 			if (SAS_ADDR(child->sas_addr) ==
 			    SAS_ADDR(phy->attached_sas_addr)) {
+<<<<<<< HEAD
 				set_bit(SAS_DEV_GONE, &child->state);
 				if (child->dev_type == EDGE_DEV ||
 				    child->dev_type == FANOUT_DEV)
@@ -1896,12 +2180,27 @@ static void sas_unregister_devs_sas_addr(struct domain_device *parent,
 				break;
 			}
 		}
+=======
+				child->gone = 1;
+				if (child->dev_type == EDGE_DEV ||
+				    child->dev_type == FANOUT_DEV)
+					sas_unregister_ex_tree(child);
+				else
+					sas_unregister_dev(child);
+				break;
+			}
+		}
+		parent->gone = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sas_disable_routing(parent, phy->attached_sas_addr);
 	}
 	memset(phy->attached_sas_addr, 0, SAS_ADDR_SIZE);
 	if (phy->port) {
 		sas_port_delete_phy(phy->port, phy->phy);
+<<<<<<< HEAD
 		sas_device_set_phy(found, phy->port);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (phy->port->num_phys == 0)
 			sas_port_delete(phy->port);
 		phy->port = NULL;
@@ -1953,12 +2252,18 @@ static int sas_discover_new(struct domain_device *dev, int phy_id)
 {
 	struct ex_phy *ex_phy = &dev->ex_dev.ex_phy[phy_id];
 	struct domain_device *child;
+<<<<<<< HEAD
 	int res;
+=======
+	bool found = false;
+	int res, i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	SAS_DPRINTK("ex %016llx phy%d new device attached\n",
 		    SAS_ADDR(dev->sas_addr), phy_id);
 	res = sas_ex_phy_discover(dev, phy_id);
 	if (res)
+<<<<<<< HEAD
 		return res;
 
 	if (sas_ex_join_wide_port(dev, phy_id))
@@ -1967,6 +2272,27 @@ static int sas_discover_new(struct domain_device *dev, int phy_id)
 	res = sas_ex_discover_devices(dev, phy_id);
 	if (res)
 		return res;
+=======
+		goto out;
+	/* to support the wide port inserted */
+	for (i = 0; i < dev->ex_dev.num_phys; i++) {
+		struct ex_phy *ex_phy_temp = &dev->ex_dev.ex_phy[i];
+		if (i == phy_id)
+			continue;
+		if (SAS_ADDR(ex_phy_temp->attached_sas_addr) ==
+		    SAS_ADDR(ex_phy->attached_sas_addr)) {
+			found = true;
+			break;
+		}
+	}
+	if (found) {
+		sas_ex_join_wide_port(dev, phy_id);
+		return 0;
+	}
+	res = sas_ex_discover_devices(dev, phy_id);
+	if (!res)
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(child, &dev->ex_dev.children, siblings) {
 		if (SAS_ADDR(child->sas_addr) ==
 		    SAS_ADDR(ex_phy->attached_sas_addr)) {
@@ -1976,6 +2302,7 @@ static int sas_discover_new(struct domain_device *dev, int phy_id)
 			break;
 		}
 	}
+<<<<<<< HEAD
 	return res;
 }
 
@@ -1994,28 +2321,50 @@ static bool dev_type_flutter(enum sas_dev_type new, enum sas_dev_type old)
 	return false;
 }
 
+=======
+out:
+	return res;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
 {
 	struct expander_device *ex = &dev->ex_dev;
 	struct ex_phy *phy = &ex->ex_phy[phy_id];
+<<<<<<< HEAD
 	enum sas_dev_type type = NO_DEVICE;
 	u8 sas_addr[8];
 	int res;
 
 	res = sas_get_phy_attached_dev(dev, phy_id, sas_addr, &type);
+=======
+	u8 attached_sas_addr[8];
+	int res;
+
+	res = sas_get_phy_attached_sas_addr(dev, phy_id, attached_sas_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (res) {
 	case SMP_RESP_NO_PHY:
 		phy->phy_state = PHY_NOT_PRESENT;
 		sas_unregister_devs_sas_addr(dev, phy_id, last);
+<<<<<<< HEAD
 		return res;
 	case SMP_RESP_PHY_VACANT:
 		phy->phy_state = PHY_VACANT;
 		sas_unregister_devs_sas_addr(dev, phy_id, last);
 		return res;
+=======
+		goto out; break;
+	case SMP_RESP_PHY_VACANT:
+		phy->phy_state = PHY_VACANT;
+		sas_unregister_devs_sas_addr(dev, phy_id, last);
+		goto out; break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SMP_RESP_FUNC_ACC:
 		break;
 	}
 
+<<<<<<< HEAD
 	if (SAS_ADDR(sas_addr) == 0) {
 		phy->phy_state = PHY_EMPTY;
 		sas_unregister_devs_sas_addr(dev, phy_id, last);
@@ -2044,6 +2393,20 @@ static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
 	}
 
 	return sas_discover_new(dev, phy_id);
+=======
+	if (SAS_ADDR(attached_sas_addr) == 0) {
+		phy->phy_state = PHY_EMPTY;
+		sas_unregister_devs_sas_addr(dev, phy_id, last);
+	} else if (SAS_ADDR(attached_sas_addr) ==
+		   SAS_ADDR(phy->attached_sas_addr)) {
+		SAS_DPRINTK("ex %016llx phy 0x%x broadcast flutter\n",
+			    SAS_ADDR(dev->sas_addr), phy_id);
+		sas_ex_phy_discover(dev, phy_id);
+	} else
+		res = sas_discover_new(dev, phy_id);
+out:
+	return res;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -2106,7 +2469,13 @@ int sas_ex_revalidate_domain(struct domain_device *port_dev)
 	struct domain_device *dev = NULL;
 
 	res = sas_find_bcast_dev(port_dev, &dev);
+<<<<<<< HEAD
 	while (res == 0 && dev) {
+=======
+	if (res)
+		goto out;
+	if (dev) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct expander_device *ex = &dev->ex_dev;
 		int i = 0, phy_id;
 
@@ -2118,10 +2487,15 @@ int sas_ex_revalidate_domain(struct domain_device *port_dev)
 			res = sas_rediscover(dev, phy_id);
 			i = phy_id + 1;
 		} while (i < ex->num_phys);
+<<<<<<< HEAD
 
 		dev = NULL;
 		res = sas_find_bcast_dev(port_dev, &dev);
 	}
+=======
+	}
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return res;
 }
 

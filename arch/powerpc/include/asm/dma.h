@@ -24,6 +24,10 @@
 
 #include <asm/io.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifndef MAX_DMA_CHANNELS
 #define MAX_DMA_CHANNELS	8
@@ -33,6 +37,11 @@
 /* Doesn't really apply... */
 #define MAX_DMA_ADDRESS		(~0UL)
 
+<<<<<<< HEAD
+=======
+#if !defined(CONFIG_PPC_ISERIES) || defined(CONFIG_PCI)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef HAVE_REALLY_SLOW_DMA_CONTROLLER
 #define dma_outb	outb_p
 #else
@@ -351,5 +360,10 @@ extern int isa_dma_bridge_buggy;
 #define isa_dma_bridge_buggy	(0)
 #endif
 
+<<<<<<< HEAD
+=======
+#endif	/* !defined(CONFIG_PPC_ISERIES) || defined(CONFIG_PCI) */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __KERNEL__ */
 #endif	/* _ASM_POWERPC_DMA_H */

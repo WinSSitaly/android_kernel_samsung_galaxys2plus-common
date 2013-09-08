@@ -32,11 +32,19 @@
  */
 static const __initconst struct hypervisor_x86 * const hypervisors[] =
 {
+<<<<<<< HEAD
 #ifdef CONFIG_XEN_PVHVM
 	&x86_hyper_xen_hvm,
 #endif
 	&x86_hyper_vmware,
 	&x86_hyper_ms_hyperv,
+=======
+	&x86_hyper_vmware,
+	&x86_hyper_ms_hyperv,
+#ifdef CONFIG_XEN_PVHVM
+	&x86_hyper_xen_hvm,
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 const struct hypervisor_x86 *x86_hyper;

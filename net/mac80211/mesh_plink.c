@@ -19,23 +19,50 @@
 #define mpl_dbg(fmt, args...)	do { (void)(0); } while (0)
 #endif
 
+<<<<<<< HEAD
 #define PLINK_GET_LLID(p) (p + 2)
 #define PLINK_GET_PLID(p) (p + 4)
+=======
+#define PLINK_GET_LLID(p) (p + 4)
+#define PLINK_GET_PLID(p) (p + 6)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define mod_plink_timer(s, t) (mod_timer(&s->plink_timer, \
 				jiffies + HZ * t / 1000))
 
+<<<<<<< HEAD
+=======
+/* Peer link cancel reasons, all subject to ANA approval */
+#define MESH_LINK_CANCELLED			2
+#define MESH_MAX_NEIGHBORS			3
+#define MESH_CAPABILITY_POLICY_VIOLATION	4
+#define MESH_CLOSE_RCVD				5
+#define MESH_MAX_RETRIES			6
+#define MESH_CONFIRM_TIMEOUT			7
+#define MESH_SECURITY_ROLE_NEGOTIATION_DIFFERS	8
+#define MESH_SECURITY_AUTHENTICATION_IMPOSSIBLE	9
+#define MESH_SECURITY_FAILED_VERIFICATION	10
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define dot11MeshMaxRetries(s) (s->u.mesh.mshcfg.dot11MeshMaxRetries)
 #define dot11MeshRetryTimeout(s) (s->u.mesh.mshcfg.dot11MeshRetryTimeout)
 #define dot11MeshConfirmTimeout(s) (s->u.mesh.mshcfg.dot11MeshConfirmTimeout)
 #define dot11MeshHoldingTimeout(s) (s->u.mesh.mshcfg.dot11MeshHoldingTimeout)
 #define dot11MeshMaxPeerLinks(s) (s->u.mesh.mshcfg.dot11MeshMaxPeerLinks)
 
+<<<<<<< HEAD
 /* We only need a valid sta if user configured a minimum rssi_threshold. */
 #define rssi_threshold_check(sta, sdata) \
 		(sdata->u.mesh.mshcfg.rssi_threshold == 0 ||\
 		(sta && (s8) -ewma_read(&sta->avg_signal) > \
 		sdata->u.mesh.mshcfg.rssi_threshold))
+=======
+enum plink_frame_type {
+	PLINK_OPEN = 1,
+	PLINK_CONFIRM,
+	PLINK_CLOSE
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum plink_event {
 	PLINK_UNDEFINED,
@@ -49,10 +76,13 @@ enum plink_event {
 	CLS_IGNR
 };
 
+<<<<<<< HEAD
 static int mesh_plink_frame_tx(struct ieee80211_sub_if_data *sdata,
 		enum ieee80211_self_protected_actioncode action,
 		u8 *da, __le16 llid, __le16 plid, __le16 reason);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline
 void mesh_plink_inc_estab_count(struct ieee80211_sub_if_data *sdata)
 {
@@ -86,6 +116,7 @@ static inline void mesh_plink_fsm_restart(struct sta_info *sta)
  *       on it in the lifecycle management section!
  */
 static struct sta_info *mesh_plink_alloc(struct ieee80211_sub_if_data *sdata,
+<<<<<<< HEAD
 					 u8 *hw_addr, u32 rates,
 					 struct ieee802_11_elems *elems)
 {
@@ -95,6 +126,13 @@ static struct sta_info *mesh_plink_alloc(struct ieee80211_sub_if_data *sdata,
 
 	sband = local->hw.wiphy->bands[local->oper_channel->band];
 
+=======
+					 u8 *hw_addr, u32 rates)
+{
+	struct ieee80211_local *local = sdata->local;
+	struct sta_info *sta;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (local->num_sta >= MESH_MAX_PLINKS)
 		return NULL;
 
@@ -102,6 +140,7 @@ static struct sta_info *mesh_plink_alloc(struct ieee80211_sub_if_data *sdata,
 	if (!sta)
 		return NULL;
 
+<<<<<<< HEAD
 	sta_info_pre_move_state(sta, IEEE80211_STA_AUTH);
 	sta_info_pre_move_state(sta, IEEE80211_STA_ASSOC);
 	sta_info_pre_move_state(sta, IEEE80211_STA_AUTHORIZED);
@@ -113,6 +152,10 @@ static struct sta_info *mesh_plink_alloc(struct ieee80211_sub_if_data *sdata,
 		ieee80211_ht_cap_ie_to_sta_ht_cap(sdata, sband,
 						  elems->ht_cap_elem,
 						  &sta->sta.ht_cap);
+=======
+	sta->flags = WLAN_STA_AUTHORIZED | WLAN_STA_AUTH;
+	sta->sta.supp_rates[local->hw.conf.channel->band] = rates;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rate_control_rate_init(sta);
 
 	return sta;
@@ -156,10 +199,13 @@ void mesh_plink_deactivate(struct sta_info *sta)
 
 	spin_lock_bh(&sta->lock);
 	deactivated = __mesh_plink_deactivate(sta);
+<<<<<<< HEAD
 	sta->reason = cpu_to_le16(WLAN_REASON_MESH_PEER_CANCELED);
 	mesh_plink_frame_tx(sdata, WLAN_SP_MESH_PEERING_CLOSE,
 			    sta->sta.addr, sta->llid, sta->plid,
 			    sta->reason);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_bh(&sta->lock);
 
 	if (deactivated)
@@ -167,6 +213,7 @@ void mesh_plink_deactivate(struct sta_info *sta)
 }
 
 static int mesh_plink_frame_tx(struct ieee80211_sub_if_data *sdata,
+<<<<<<< HEAD
 		enum ieee80211_self_protected_actioncode action,
 		u8 *da, __le16 llid, __le16 plid, __le16 reason) {
 	struct ieee80211_local *local = sdata->local;
@@ -195,11 +242,34 @@ static int mesh_plink_frame_tx(struct ieee80211_sub_if_data *sdata,
 	skb_reserve(skb, local->tx_headroom);
 	mgmt = (struct ieee80211_mgmt *) skb_put(skb, hdr_len);
 	memset(mgmt, 0, hdr_len);
+=======
+		enum plink_frame_type action, u8 *da, __le16 llid, __le16 plid,
+		__le16 reason) {
+	struct ieee80211_local *local = sdata->local;
+	struct sk_buff *skb = dev_alloc_skb(local->hw.extra_tx_headroom + 400 +
+			sdata->u.mesh.ie_len);
+	struct ieee80211_mgmt *mgmt;
+	bool include_plid = false;
+	static const u8 meshpeeringproto[] = { 0x00, 0x0F, 0xAC, 0x2A };
+	u8 *pos;
+	int ie_len;
+
+	if (!skb)
+		return -1;
+	skb_reserve(skb, local->hw.extra_tx_headroom);
+	/* 25 is the size of the common mgmt part (24) plus the size of the
+	 * common action part (1)
+	 */
+	mgmt = (struct ieee80211_mgmt *)
+		skb_put(skb, 25 + sizeof(mgmt->u.action.u.plink_action));
+	memset(mgmt, 0, 25 + sizeof(mgmt->u.action.u.plink_action));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mgmt->frame_control = cpu_to_le16(IEEE80211_FTYPE_MGMT |
 					  IEEE80211_STYPE_ACTION);
 	memcpy(mgmt->da, da, ETH_ALEN);
 	memcpy(mgmt->sa, sdata->vif.addr, ETH_ALEN);
 	memcpy(mgmt->bssid, sdata->vif.addr, ETH_ALEN);
+<<<<<<< HEAD
 	mgmt->u.action.category = WLAN_CATEGORY_SELF_PROTECTED;
 	mgmt->u.action.u.self_prot.action_code = action;
 
@@ -270,6 +340,59 @@ static int mesh_plink_frame_tx(struct ieee80211_sub_if_data *sdata,
 	if (mesh_add_vendor_ies(skb, sdata))
 		return -1;
 
+=======
+	mgmt->u.action.category = WLAN_CATEGORY_MESH_ACTION;
+	mgmt->u.action.u.plink_action.action_code = action;
+
+	if (action == PLINK_CLOSE)
+		mgmt->u.action.u.plink_action.aux = reason;
+	else {
+		mgmt->u.action.u.plink_action.aux = cpu_to_le16(0x0);
+		if (action == PLINK_CONFIRM) {
+			pos = skb_put(skb, 4);
+			/* two-byte status code followed by two-byte AID */
+			memset(pos, 0, 2);
+			memcpy(pos + 2, &plid, 2);
+		}
+		mesh_mgmt_ies_add(skb, sdata);
+	}
+
+	/* Add Peer Link Management element */
+	switch (action) {
+	case PLINK_OPEN:
+		ie_len = 6;
+		break;
+	case PLINK_CONFIRM:
+		ie_len = 8;
+		include_plid = true;
+		break;
+	case PLINK_CLOSE:
+	default:
+		if (!plid)
+			ie_len = 8;
+		else {
+			ie_len = 10;
+			include_plid = true;
+		}
+		break;
+	}
+
+	pos = skb_put(skb, 2 + ie_len);
+	*pos++ = WLAN_EID_PEER_LINK;
+	*pos++ = ie_len;
+	memcpy(pos, meshpeeringproto, sizeof(meshpeeringproto));
+	pos += 4;
+	memcpy(pos, &llid, 2);
+	if (include_plid) {
+		pos += 2;
+		memcpy(pos, &plid, 2);
+	}
+	if (action == PLINK_CLOSE) {
+		pos += 2;
+		memcpy(pos, &reason, 2);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ieee80211_tx_skb(sdata, skb);
 	return 0;
 }
@@ -293,7 +416,11 @@ void mesh_neighbour_update(u8 *hw_addr, u32 rates,
 					elems->ie_start, elems->total_len,
 					GFP_KERNEL);
 		else
+<<<<<<< HEAD
 			sta = mesh_plink_alloc(sdata, hw_addr, rates, elems);
+=======
+			sta = mesh_plink_alloc(sdata, hw_addr, rates);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!sta)
 			return;
 		if (sta_info_insert_rcu(sta)) {
@@ -307,8 +434,12 @@ void mesh_neighbour_update(u8 *hw_addr, u32 rates,
 	if (mesh_peer_accepts_plinks(elems) &&
 			sta->plink_state == NL80211_PLINK_LISTEN &&
 			sdata->u.mesh.accepting_plinks &&
+<<<<<<< HEAD
 			sdata->u.mesh.mshcfg.auto_open_plinks &&
 			rssi_threshold_check(sta, sdata))
+=======
+			sdata->u.mesh.mshcfg.auto_open_plinks)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mesh_plink_open(sta);
 
 	rcu_read_unlock();
@@ -360,21 +491,38 @@ static void mesh_plink_timer(unsigned long data)
 			++sta->plink_retries;
 			mod_plink_timer(sta, sta->plink_timeout);
 			spin_unlock_bh(&sta->lock);
+<<<<<<< HEAD
 			mesh_plink_frame_tx(sdata, WLAN_SP_MESH_PEERING_OPEN,
 					    sta->sta.addr, llid, 0, 0);
 			break;
 		}
 		reason = cpu_to_le16(WLAN_REASON_MESH_MAX_RETRIES);
+=======
+			mesh_plink_frame_tx(sdata, PLINK_OPEN, sta->sta.addr, llid,
+					    0, 0);
+			break;
+		}
+		reason = cpu_to_le16(MESH_MAX_RETRIES);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* fall through on else */
 	case NL80211_PLINK_CNF_RCVD:
 		/* confirm timer */
 		if (!reason)
+<<<<<<< HEAD
 			reason = cpu_to_le16(WLAN_REASON_MESH_CONFIRM_TIMEOUT);
 		sta->plink_state = NL80211_PLINK_HOLDING;
 		mod_plink_timer(sta, dot11MeshHoldingTimeout(sdata));
 		spin_unlock_bh(&sta->lock);
 		mesh_plink_frame_tx(sdata, WLAN_SP_MESH_PEERING_CLOSE,
 				    sta->sta.addr, llid, plid, reason);
+=======
+			reason = cpu_to_le16(MESH_CONFIRM_TIMEOUT);
+		sta->plink_state = NL80211_PLINK_HOLDING;
+		mod_plink_timer(sta, dot11MeshHoldingTimeout(sdata));
+		spin_unlock_bh(&sta->lock);
+		mesh_plink_frame_tx(sdata, PLINK_CLOSE, sta->sta.addr, llid, plid,
+				    reason);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case NL80211_PLINK_HOLDING:
 		/* holding timer */
@@ -418,7 +566,11 @@ int mesh_plink_open(struct sta_info *sta)
 	__le16 llid;
 	struct ieee80211_sub_if_data *sdata = sta->sdata;
 
+<<<<<<< HEAD
 	if (!test_sta_flag(sta, WLAN_STA_AUTH))
+=======
+	if (!test_sta_flags(sta, WLAN_STA_AUTH))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EPERM;
 
 	spin_lock_bh(&sta->lock);
@@ -434,7 +586,11 @@ int mesh_plink_open(struct sta_info *sta)
 	mpl_dbg("Mesh plink: starting establishment with %pM\n",
 		sta->sta.addr);
 
+<<<<<<< HEAD
 	return mesh_plink_frame_tx(sdata, WLAN_SP_MESH_PEERING_OPEN,
+=======
+	return mesh_plink_frame_tx(sdata, PLINK_OPEN,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   sta->sta.addr, llid, 0, 0);
 }
 
@@ -460,7 +616,11 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 	struct ieee802_11_elems elems;
 	struct sta_info *sta;
 	enum plink_event event;
+<<<<<<< HEAD
 	enum ieee80211_self_protected_actioncode ftype;
+=======
+	enum plink_frame_type ftype;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	size_t baselen;
 	bool deactivated, matches_local = true;
 	u8 ie_len;
@@ -487,15 +647,25 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 		return;
 	}
 
+<<<<<<< HEAD
 	baseaddr = mgmt->u.action.u.self_prot.variable;
 	baselen = (u8 *) mgmt->u.action.u.self_prot.variable - (u8 *) mgmt;
 	if (mgmt->u.action.u.self_prot.action_code ==
 						WLAN_SP_MESH_PEERING_CONFIRM) {
+=======
+	baseaddr = mgmt->u.action.u.plink_action.variable;
+	baselen = (u8 *) mgmt->u.action.u.plink_action.variable - (u8 *) mgmt;
+	if (mgmt->u.action.u.plink_action.action_code == PLINK_CONFIRM) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		baseaddr += 4;
 		baselen += 4;
 	}
 	ieee802_11_parse_elems(baseaddr, len - baselen, &elems);
+<<<<<<< HEAD
 	if (!elems.peering) {
+=======
+	if (!elems.peer_link) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mpl_dbg("Mesh plink: missing necessary peer link ie\n");
 		return;
 	}
@@ -505,39 +675,62 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 		return;
 	}
 
+<<<<<<< HEAD
 	ftype = mgmt->u.action.u.self_prot.action_code;
 	ie_len = elems.peering_len;
 	if ((ftype == WLAN_SP_MESH_PEERING_OPEN && ie_len != 4) ||
 	    (ftype == WLAN_SP_MESH_PEERING_CONFIRM && ie_len != 6) ||
 	    (ftype == WLAN_SP_MESH_PEERING_CLOSE && ie_len != 6
 							&& ie_len != 8)) {
+=======
+	ftype = mgmt->u.action.u.plink_action.action_code;
+	ie_len = elems.peer_link_len;
+	if ((ftype == PLINK_OPEN && ie_len != 6) ||
+	    (ftype == PLINK_CONFIRM && ie_len != 8) ||
+	    (ftype == PLINK_CLOSE && ie_len != 8 && ie_len != 10)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mpl_dbg("Mesh plink: incorrect plink ie length %d %d\n",
 		    ftype, ie_len);
 		return;
 	}
 
+<<<<<<< HEAD
 	if (ftype != WLAN_SP_MESH_PEERING_CLOSE &&
 				(!elems.mesh_id || !elems.mesh_config)) {
+=======
+	if (ftype != PLINK_CLOSE && (!elems.mesh_id || !elems.mesh_config)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mpl_dbg("Mesh plink: missing necessary ie\n");
 		return;
 	}
 	/* Note the lines below are correct, the llid in the frame is the plid
 	 * from the point of view of this host.
 	 */
+<<<<<<< HEAD
 	memcpy(&plid, PLINK_GET_LLID(elems.peering), 2);
 	if (ftype == WLAN_SP_MESH_PEERING_CONFIRM ||
 	    (ftype == WLAN_SP_MESH_PEERING_CLOSE && ie_len == 8))
 		memcpy(&llid, PLINK_GET_PLID(elems.peering), 2);
+=======
+	memcpy(&plid, PLINK_GET_LLID(elems.peer_link), 2);
+	if (ftype == PLINK_CONFIRM || (ftype == PLINK_CLOSE && ie_len == 10))
+		memcpy(&llid, PLINK_GET_PLID(elems.peer_link), 2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rcu_read_lock();
 
 	sta = sta_info_get(sdata, mgmt->sa);
+<<<<<<< HEAD
 	if (!sta && ftype != WLAN_SP_MESH_PEERING_OPEN) {
+=======
+	if (!sta && ftype != PLINK_OPEN) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mpl_dbg("Mesh plink: cls or cnf from unknown peer\n");
 		rcu_read_unlock();
 		return;
 	}
 
+<<<<<<< HEAD
 	if (ftype == WLAN_SP_MESH_PEERING_OPEN &&
 	    !rssi_threshold_check(sta, sdata)) {
 		mpl_dbg("Mesh plink: %pM does not meet rssi threshold\n",
@@ -547,6 +740,9 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 	}
 
 	if (sta && !test_sta_flag(sta, WLAN_STA_AUTH)) {
+=======
+	if (sta && !test_sta_flags(sta, WLAN_STA_AUTH)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mpl_dbg("Mesh plink: Action frame from non-authed peer\n");
 		rcu_read_unlock();
 		return;
@@ -559,6 +755,7 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 
 	/* Now we will figure out the appropriate event... */
 	event = PLINK_UNDEFINED;
+<<<<<<< HEAD
 	if (ftype != WLAN_SP_MESH_PEERING_CLOSE &&
 	    (!mesh_matches_local(&elems, sdata))) {
 		matches_local = false;
@@ -570,12 +767,26 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 			event = CNF_RJCT;
 			break;
 		default:
+=======
+	if (ftype != PLINK_CLOSE && (!mesh_matches_local(&elems, sdata))) {
+		matches_local = false;
+		switch (ftype) {
+		case PLINK_OPEN:
+			event = OPN_RJCT;
+			break;
+		case PLINK_CONFIRM:
+			event = CNF_RJCT;
+			break;
+		case PLINK_CLOSE:
+			/* avoid warning */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	}
 
 	if (!sta && !matches_local) {
 		rcu_read_unlock();
+<<<<<<< HEAD
 		reason = cpu_to_le16(WLAN_REASON_MESH_CONFIG);
 		llid = 0;
 		mesh_plink_frame_tx(sdata, WLAN_SP_MESH_PEERING_CLOSE,
@@ -583,6 +794,15 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 		return;
 	} else if (!sta) {
 		/* ftype == WLAN_SP_MESH_PEERING_OPEN */
+=======
+		reason = cpu_to_le16(MESH_CAPABILITY_POLICY_VIOLATION);
+		llid = 0;
+		mesh_plink_frame_tx(sdata, PLINK_CLOSE, mgmt->sa, llid,
+				    plid, reason);
+		return;
+	} else if (!sta) {
+		/* ftype == PLINK_OPEN */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u32 rates;
 
 		rcu_read_unlock();
@@ -593,7 +813,11 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 		}
 
 		rates = ieee80211_sta_get_rates(local, &elems, rx_status->band);
+<<<<<<< HEAD
 		sta = mesh_plink_alloc(sdata, mgmt->sa, rates, &elems);
+=======
+		sta = mesh_plink_alloc(sdata, mgmt->sa, rates);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!sta) {
 			mpl_dbg("Mesh plink error: plink table full\n");
 			return;
@@ -607,21 +831,33 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 	} else if (matches_local) {
 		spin_lock_bh(&sta->lock);
 		switch (ftype) {
+<<<<<<< HEAD
 		case WLAN_SP_MESH_PEERING_OPEN:
+=======
+		case PLINK_OPEN:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!mesh_plink_free_count(sdata) ||
 			    (sta->plid && sta->plid != plid))
 				event = OPN_IGNR;
 			else
 				event = OPN_ACPT;
 			break;
+<<<<<<< HEAD
 		case WLAN_SP_MESH_PEERING_CONFIRM:
+=======
+		case PLINK_CONFIRM:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!mesh_plink_free_count(sdata) ||
 			    (sta->llid != llid || sta->plid != plid))
 				event = CNF_IGNR;
 			else
 				event = CNF_ACPT;
 			break;
+<<<<<<< HEAD
 		case WLAN_SP_MESH_PEERING_CLOSE:
+=======
+		case PLINK_CLOSE:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (sta->plink_state == NL80211_PLINK_ESTAB)
 				/* Do not check for llid or plid. This does not
 				 * follow the standard but since multiple plinks
@@ -670,12 +906,19 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 			sta->llid = llid;
 			mesh_plink_timer_set(sta, dot11MeshRetryTimeout(sdata));
 			spin_unlock_bh(&sta->lock);
+<<<<<<< HEAD
 			mesh_plink_frame_tx(sdata,
 					    WLAN_SP_MESH_PEERING_OPEN,
 					    sta->sta.addr, llid, 0, 0);
 			mesh_plink_frame_tx(sdata,
 					    WLAN_SP_MESH_PEERING_CONFIRM,
 					    sta->sta.addr, llid, plid, 0);
+=======
+			mesh_plink_frame_tx(sdata, PLINK_OPEN, sta->sta.addr, llid,
+					    0, 0);
+			mesh_plink_frame_tx(sdata, PLINK_CONFIRM, sta->sta.addr,
+					    llid, plid, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		default:
 			spin_unlock_bh(&sta->lock);
@@ -687,10 +930,17 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 		switch (event) {
 		case OPN_RJCT:
 		case CNF_RJCT:
+<<<<<<< HEAD
 			reason = cpu_to_le16(WLAN_REASON_MESH_CONFIG);
 		case CLS_ACPT:
 			if (!reason)
 				reason = cpu_to_le16(WLAN_REASON_MESH_CLOSE);
+=======
+			reason = cpu_to_le16(MESH_CAPABILITY_POLICY_VIOLATION);
+		case CLS_ACPT:
+			if (!reason)
+				reason = cpu_to_le16(MESH_CLOSE_RCVD);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sta->reason = reason;
 			sta->plink_state = NL80211_PLINK_HOLDING;
 			if (!mod_plink_timer(sta,
@@ -699,9 +949,14 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 
 			llid = sta->llid;
 			spin_unlock_bh(&sta->lock);
+<<<<<<< HEAD
 			mesh_plink_frame_tx(sdata,
 					    WLAN_SP_MESH_PEERING_CLOSE,
 					    sta->sta.addr, llid, plid, reason);
+=======
+			mesh_plink_frame_tx(sdata, PLINK_CLOSE, sta->sta.addr, llid,
+					    plid, reason);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case OPN_ACPT:
 			/* retry timer is left untouched */
@@ -709,9 +964,14 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 			sta->plid = plid;
 			llid = sta->llid;
 			spin_unlock_bh(&sta->lock);
+<<<<<<< HEAD
 			mesh_plink_frame_tx(sdata,
 					    WLAN_SP_MESH_PEERING_CONFIRM,
 					    sta->sta.addr, llid, plid, 0);
+=======
+			mesh_plink_frame_tx(sdata, PLINK_CONFIRM, sta->sta.addr, llid,
+					    plid, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case CNF_ACPT:
 			sta->plink_state = NL80211_PLINK_CNF_RCVD;
@@ -731,10 +991,17 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 		switch (event) {
 		case OPN_RJCT:
 		case CNF_RJCT:
+<<<<<<< HEAD
 			reason = cpu_to_le16(WLAN_REASON_MESH_CONFIG);
 		case CLS_ACPT:
 			if (!reason)
 				reason = cpu_to_le16(WLAN_REASON_MESH_CLOSE);
+=======
+			reason = cpu_to_le16(MESH_CAPABILITY_POLICY_VIOLATION);
+		case CLS_ACPT:
+			if (!reason)
+				reason = cpu_to_le16(MESH_CLOSE_RCVD);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sta->reason = reason;
 			sta->plink_state = NL80211_PLINK_HOLDING;
 			if (!mod_plink_timer(sta,
@@ -743,15 +1010,25 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 
 			llid = sta->llid;
 			spin_unlock_bh(&sta->lock);
+<<<<<<< HEAD
 			mesh_plink_frame_tx(sdata, WLAN_SP_MESH_PEERING_CLOSE,
 					    sta->sta.addr, llid, plid, reason);
+=======
+			mesh_plink_frame_tx(sdata, PLINK_CLOSE, sta->sta.addr, llid,
+					    plid, reason);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case OPN_ACPT:
 			llid = sta->llid;
 			spin_unlock_bh(&sta->lock);
+<<<<<<< HEAD
 			mesh_plink_frame_tx(sdata,
 					    WLAN_SP_MESH_PEERING_CONFIRM,
 					    sta->sta.addr, llid, plid, 0);
+=======
+			mesh_plink_frame_tx(sdata, PLINK_CONFIRM, sta->sta.addr, llid,
+					    plid, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case CNF_ACPT:
 			del_timer(&sta->plink_timer);
@@ -772,10 +1049,17 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 		switch (event) {
 		case OPN_RJCT:
 		case CNF_RJCT:
+<<<<<<< HEAD
 			reason = cpu_to_le16(WLAN_REASON_MESH_CONFIG);
 		case CLS_ACPT:
 			if (!reason)
 				reason = cpu_to_le16(WLAN_REASON_MESH_CLOSE);
+=======
+			reason = cpu_to_le16(MESH_CAPABILITY_POLICY_VIOLATION);
+		case CLS_ACPT:
+			if (!reason)
+				reason = cpu_to_le16(MESH_CLOSE_RCVD);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sta->reason = reason;
 			sta->plink_state = NL80211_PLINK_HOLDING;
 			if (!mod_plink_timer(sta,
@@ -784,9 +1068,14 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 
 			llid = sta->llid;
 			spin_unlock_bh(&sta->lock);
+<<<<<<< HEAD
 			mesh_plink_frame_tx(sdata,
 					    WLAN_SP_MESH_PEERING_CLOSE,
 					    sta->sta.addr, llid, plid, reason);
+=======
+			mesh_plink_frame_tx(sdata, PLINK_CLOSE, sta->sta.addr, llid,
+					    plid, reason);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case OPN_ACPT:
 			del_timer(&sta->plink_timer);
@@ -796,9 +1085,14 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 			ieee80211_bss_info_change_notify(sdata, BSS_CHANGED_BEACON);
 			mpl_dbg("Mesh plink with %pM ESTABLISHED\n",
 				sta->sta.addr);
+<<<<<<< HEAD
 			mesh_plink_frame_tx(sdata,
 					    WLAN_SP_MESH_PEERING_CONFIRM,
 					    sta->sta.addr, llid, plid, 0);
+=======
+			mesh_plink_frame_tx(sdata, PLINK_CONFIRM, sta->sta.addr, llid,
+					    plid, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		default:
 			spin_unlock_bh(&sta->lock);
@@ -809,7 +1103,11 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 	case NL80211_PLINK_ESTAB:
 		switch (event) {
 		case CLS_ACPT:
+<<<<<<< HEAD
 			reason = cpu_to_le16(WLAN_REASON_MESH_CLOSE);
+=======
+			reason = cpu_to_le16(MESH_CLOSE_RCVD);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sta->reason = reason;
 			deactivated = __mesh_plink_deactivate(sta);
 			sta->plink_state = NL80211_PLINK_HOLDING;
@@ -818,15 +1116,25 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 			spin_unlock_bh(&sta->lock);
 			if (deactivated)
 				ieee80211_bss_info_change_notify(sdata, BSS_CHANGED_BEACON);
+<<<<<<< HEAD
 			mesh_plink_frame_tx(sdata, WLAN_SP_MESH_PEERING_CLOSE,
 					    sta->sta.addr, llid, plid, reason);
+=======
+			mesh_plink_frame_tx(sdata, PLINK_CLOSE, sta->sta.addr, llid,
+					    plid, reason);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case OPN_ACPT:
 			llid = sta->llid;
 			spin_unlock_bh(&sta->lock);
+<<<<<<< HEAD
 			mesh_plink_frame_tx(sdata,
 					    WLAN_SP_MESH_PEERING_CONFIRM,
 					    sta->sta.addr, llid, plid, 0);
+=======
+			mesh_plink_frame_tx(sdata, PLINK_CONFIRM, sta->sta.addr, llid,
+					    plid, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		default:
 			spin_unlock_bh(&sta->lock);
@@ -848,8 +1156,13 @@ void mesh_rx_plink_frame(struct ieee80211_sub_if_data *sdata, struct ieee80211_m
 			llid = sta->llid;
 			reason = sta->reason;
 			spin_unlock_bh(&sta->lock);
+<<<<<<< HEAD
 			mesh_plink_frame_tx(sdata, WLAN_SP_MESH_PEERING_CLOSE,
 					    sta->sta.addr, llid, plid, reason);
+=======
+			mesh_plink_frame_tx(sdata, PLINK_CLOSE, sta->sta.addr,
+					    llid, plid, reason);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		default:
 			spin_unlock_bh(&sta->lock);

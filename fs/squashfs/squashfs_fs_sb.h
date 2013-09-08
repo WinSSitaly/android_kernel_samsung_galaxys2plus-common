@@ -28,7 +28,10 @@
 struct squashfs_cache {
 	char			*name;
 	int			entries;
+<<<<<<< HEAD
 	int			curr_blk;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			next_blk;
 	int			num_waiters;
 	int			unused;

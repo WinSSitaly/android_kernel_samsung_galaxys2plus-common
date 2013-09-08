@@ -354,7 +354,10 @@ static void lkdtm_do_action(enum ctype which)
 static void lkdtm_handler(void)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	bool do_it = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&count_lock, flags);
 	count--;
@@ -362,6 +365,7 @@ static void lkdtm_handler(void)
 			cp_name_to_str(cpoint), cp_type_to_str(cptype), count);
 
 	if (count == 0) {
+<<<<<<< HEAD
 		do_it = true;
 		count = cpoint_count;
 	}
@@ -369,6 +373,12 @@ static void lkdtm_handler(void)
 
 	if (do_it)
 		lkdtm_do_action(cptype);
+=======
+		lkdtm_do_action(cptype);
+		count = cpoint_count;
+	}
+	spin_unlock_irqrestore(&count_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int lkdtm_register_cpoint(enum cname which)

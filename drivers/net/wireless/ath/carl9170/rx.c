@@ -472,7 +472,11 @@ static struct sk_buff *carl9170_rx_copy_data(u8 *buf, int len)
 		u8 *qc = ieee80211_get_qos_ctl(hdr);
 		reserved += NET_IP_ALIGN;
 
+<<<<<<< HEAD
 		if (*qc & IEEE80211_QOS_CTL_A_MSDU_PRESENT)
+=======
+		if (*qc & IEEE80211_QOS_CONTROL_A_MSDU_PRESENT)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			reserved += NET_IP_ALIGN;
 	}
 

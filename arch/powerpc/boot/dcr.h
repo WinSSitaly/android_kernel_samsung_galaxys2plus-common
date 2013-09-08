@@ -9,12 +9,15 @@
 	})
 #define mtdcr(rn, val) \
 	asm volatile("mtdcr %0,%1" : : "i"(rn), "r"(val))
+<<<<<<< HEAD
 #define mfdcrx(rn) \
 	({	\
 		unsigned long rval; \
 		asm volatile("mfdcrx %0,%1" : "=r"(rval) : "r"(rn)); \
 		rval; \
 	})
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* 440GP/440GX SDRAM controller DCRs */
 #define DCRN_SDRAM0_CFGADDR				0x010

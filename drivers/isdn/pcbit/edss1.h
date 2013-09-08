@@ -2,10 +2,17 @@
  * DSS.1 module definitions
  *
  * Copyright (C) 1996 Universidade de Lisboa
+<<<<<<< HEAD
  *
  * Written by Pedro Roque Marques (roque@di.fc.ul.pt)
  *
  * This software may be used and distributed according to the terms of
+=======
+ * 
+ * Written by Pedro Roque Marques (roque@di.fc.ul.pt)
+ *
+ * This software may be used and distributed according to the terms of 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * the GNU General Public License, incorporated herein by reference.
  */
 
@@ -62,9 +69,15 @@
 /*
  *  Cause values
  *  only the ones we use
+<<<<<<< HEAD
  */
 
 #define CAUSE_NORMAL          0x10U
+=======
+ */ 
+
+#define CAUSE_NORMAL          0x10U 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define CAUSE_NOCHAN          0x22U
 
 struct callb_data {
@@ -94,6 +107,15 @@ extern const char * const isdn_state_table[];
 
 void pcbit_fsm_event(struct pcbit_dev *, struct pcbit_chan *,
 		     unsigned short event, struct callb_data *);
+<<<<<<< HEAD
 char *strisdnevent(ushort ev);
 
 #endif
+=======
+char * strisdnevent(ushort ev);
+
+#endif
+
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -113,14 +113,22 @@ out:
 
 static void __exit nf_nat_ftp_fini(void)
 {
+<<<<<<< HEAD
 	RCU_INIT_POINTER(nf_nat_ftp_hook, NULL);
+=======
+	rcu_assign_pointer(nf_nat_ftp_hook, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	synchronize_rcu();
 }
 
 static int __init nf_nat_ftp_init(void)
 {
 	BUG_ON(nf_nat_ftp_hook != NULL);
+<<<<<<< HEAD
 	RCU_INIT_POINTER(nf_nat_ftp_hook, nf_nat_ftp);
+=======
+	rcu_assign_pointer(nf_nat_ftp_hook, nf_nat_ftp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

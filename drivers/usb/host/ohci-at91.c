@@ -14,8 +14,11 @@
 
 #include <linux/clk.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/of_platform.h>
 #include <linux/of_gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/hardware.h>
 #include <asm/gpio.h>
@@ -27,10 +30,13 @@
 #error "CONFIG_ARCH_AT91 must be defined."
 #endif
 
+<<<<<<< HEAD
 #define valid_port(index)	((index) >= 0 && (index) < AT91_MAX_USBH_PORTS)
 #define at91_for_each_port(index)	\
 		for ((index) = 0; (index) < AT91_MAX_USBH_PORTS; (index)++)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* interface and function clocks; sometimes also an AHB clock */
 static struct clk *iclk, *fclk, *hclk;
 static int clocked;
@@ -41,7 +47,12 @@ extern int usb_disabled(void);
 
 static void at91_start_clock(void)
 {
+<<<<<<< HEAD
 	clk_enable(hclk);
+=======
+	if (cpu_is_at91sam9261() || cpu_is_at91sam9g10())
+		clk_enable(hclk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clk_enable(iclk);
 	clk_enable(fclk);
 	clocked = 1;
@@ -51,7 +62,12 @@ static void at91_stop_clock(void)
 {
 	clk_disable(fclk);
 	clk_disable(iclk);
+<<<<<<< HEAD
 	clk_disable(hclk);
+=======
+	if (cpu_is_at91sam9261() || cpu_is_at91sam9g10())
+		clk_disable(hclk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clocked = 0;
 }
 
@@ -94,7 +110,11 @@ static void at91_stop_hc(struct platform_device *pdev)
 
 /*-------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 static void __devexit usb_hcd_at91_remove (struct usb_hcd *, struct platform_device *);
+=======
+static void usb_hcd_at91_remove (struct usb_hcd *, struct platform_device *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* configure so an HC device and id are always provided */
 /* always called with process context; sleeping is OK */
@@ -108,7 +128,11 @@ static void __devexit usb_hcd_at91_remove (struct usb_hcd *, struct platform_dev
  * then invokes the start() method for the HCD associated with it
  * through the hotplug entry's driver_data.
  */
+<<<<<<< HEAD
 static int __devinit usb_hcd_at91_probe(const struct hc_driver *driver,
+=======
+static int usb_hcd_at91_probe(const struct hc_driver *driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			struct platform_device *pdev)
 {
 	int retval;
@@ -145,6 +169,7 @@ static int __devinit usb_hcd_at91_probe(const struct hc_driver *driver,
 	}
 
 	iclk = clk_get(&pdev->dev, "ohci_clk");
+<<<<<<< HEAD
 	if (IS_ERR(iclk)) {
 		dev_err(&pdev->dev, "failed to get ohci_clk\n");
 		retval = PTR_ERR(iclk);
@@ -162,6 +187,11 @@ static int __devinit usb_hcd_at91_probe(const struct hc_driver *driver,
 		retval = PTR_ERR(hclk);
 		goto err5;
 	}
+=======
+	fclk = clk_get(&pdev->dev, "uhpck");
+	if (cpu_is_at91sam9261() || cpu_is_at91sam9g10())
+		hclk = clk_get(&pdev->dev, "hck0");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	at91_start_hc(pdev);
 	ohci_hcd_init(hcd_to_ohci(hcd));
@@ -173,6 +203,7 @@ static int __devinit usb_hcd_at91_probe(const struct hc_driver *driver,
 	/* Error handling */
 	at91_stop_hc(pdev);
 
+<<<<<<< HEAD
 	clk_put(hclk);
  err5:
 	clk_put(fclk);
@@ -180,6 +211,13 @@ static int __devinit usb_hcd_at91_probe(const struct hc_driver *driver,
 	clk_put(iclk);
 
  err3:
+=======
+	if (cpu_is_at91sam9261() || cpu_is_at91sam9g10())
+		clk_put(hclk);
+	clk_put(fclk);
+	clk_put(iclk);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iounmap(hcd->regs);
 
  err2:
@@ -203,7 +241,11 @@ static int __devinit usb_hcd_at91_probe(const struct hc_driver *driver,
  * context, "rmmod" or something similar.
  *
  */
+<<<<<<< HEAD
 static void __devexit usb_hcd_at91_remove(struct usb_hcd *hcd,
+=======
+static void usb_hcd_at91_remove(struct usb_hcd *hcd,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				struct platform_device *pdev)
 {
 	usb_remove_hcd(hcd);
@@ -212,7 +254,12 @@ static void __devexit usb_hcd_at91_remove(struct usb_hcd *hcd,
 	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
 	usb_put_hcd(hcd);
 
+<<<<<<< HEAD
 	clk_put(hclk);
+=======
+	if (cpu_is_at91sam9261() || cpu_is_at91sam9g10())
+		clk_put(hclk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clk_put(fclk);
 	clk_put(iclk);
 	fclk = iclk = hclk = NULL;
@@ -223,7 +270,11 @@ static void __devexit usb_hcd_at91_remove(struct usb_hcd *hcd,
 /*-------------------------------------------------------------------------*/
 
 static int __devinit
+<<<<<<< HEAD
 ohci_at91_reset (struct usb_hcd *hcd)
+=======
+ohci_at91_start (struct usb_hcd *hcd)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct at91_usbh_data	*board = hcd->self.controller->platform_data;
 	struct ohci_hcd		*ohci = hcd_to_ohci (hcd);
@@ -233,6 +284,7 @@ ohci_at91_reset (struct usb_hcd *hcd)
 		return ret;
 
 	ohci->num_ports = board->ports;
+<<<<<<< HEAD
 	return 0;
 }
 
@@ -241,6 +293,8 @@ ohci_at91_start (struct usb_hcd *hcd)
 {
 	struct ohci_hcd		*ohci = hcd_to_ohci (hcd);
 	int			ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((ret = ohci_run(ohci)) < 0) {
 		err("can't start %s", hcd->self.bus_name);
@@ -250,6 +304,7 @@ ohci_at91_start (struct usb_hcd *hcd)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void ohci_at91_usb_set_power(struct at91_usbh_data *pdata, int port, int enable)
 {
 	if (!valid_port(port))
@@ -410,6 +465,8 @@ static int ohci_at91_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*-------------------------------------------------------------------------*/
 
 static const struct hc_driver ohci_at91_hc_driver = {
@@ -426,7 +483,10 @@ static const struct hc_driver ohci_at91_hc_driver = {
 	/*
 	 * basic lifecycle operations
 	 */
+<<<<<<< HEAD
 	.reset =		ohci_at91_reset,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.start =		ohci_at91_start,
 	.stop =			ohci_stop,
 	.shutdown =		ohci_shutdown,
@@ -446,8 +506,13 @@ static const struct hc_driver ohci_at91_hc_driver = {
 	/*
 	 * root hub support
 	 */
+<<<<<<< HEAD
 	.hub_status_data =	ohci_at91_hub_status_data,
 	.hub_control =		ohci_at91_hub_control,
+=======
+	.hub_status_data =	ohci_hub_status_data,
+	.hub_control =		ohci_hub_control,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PM
 	.bus_suspend =		ohci_bus_suspend,
 	.bus_resume =		ohci_bus_resume,
@@ -457,6 +522,7 @@ static const struct hc_driver ohci_at91_hc_driver = {
 
 /*-------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 static irqreturn_t ohci_hcd_at91_overcurrent_irq(int irq, void *data)
 {
 	struct platform_device *pdev = data;
@@ -633,6 +699,24 @@ static int __devinit ohci_hcd_at91_drv_probe(struct platform_device *pdev)
 				dev_err(&pdev->dev,
 					"can't get gpio IRQ for overcurrent\n");
 			}
+=======
+static int ohci_hcd_at91_drv_probe(struct platform_device *pdev)
+{
+	struct at91_usbh_data	*pdata = pdev->dev.platform_data;
+	int			i;
+
+	if (pdata) {
+		/* REVISIT make the driver support per-port power switching,
+		 * and also overcurrent detection.  Here we assume the ports
+		 * are always powered while this driver is active, and use
+		 * active-low power switches.
+		 */
+		for (i = 0; i < ARRAY_SIZE(pdata->vbus_pin); i++) {
+			if (pdata->vbus_pin[i] <= 0)
+				continue;
+			gpio_request(pdata->vbus_pin[i], "ohci_vbus");
+			gpio_direction_output(pdata->vbus_pin[i], 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -640,12 +724,17 @@ static int __devinit ohci_hcd_at91_drv_probe(struct platform_device *pdev)
 	return usb_hcd_at91_probe(&ohci_at91_hc_driver, pdev);
 }
 
+<<<<<<< HEAD
 static int __devexit ohci_hcd_at91_drv_remove(struct platform_device *pdev)
+=======
+static int ohci_hcd_at91_drv_remove(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct at91_usbh_data	*pdata = pdev->dev.platform_data;
 	int			i;
 
 	if (pdata) {
+<<<<<<< HEAD
 		at91_for_each_port(i) {
 			if (!gpio_is_valid(pdata->vbus_pin[i]))
 				continue;
@@ -659,6 +748,14 @@ static int __devexit ohci_hcd_at91_drv_remove(struct platform_device *pdev)
 			free_irq(gpio_to_irq(pdata->overcurrent_pin[i]), pdev);
 			gpio_free(pdata->overcurrent_pin[i]);
 		}
+=======
+		for (i = 0; i < ARRAY_SIZE(pdata->vbus_pin); i++) {
+			if (pdata->vbus_pin[i] <= 0)
+				continue;
+			gpio_direction_output(pdata->vbus_pin[i], 1);
+			gpio_free(pdata->vbus_pin[i]);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	device_init_wakeup(&pdev->dev, 0);
@@ -716,13 +813,20 @@ MODULE_ALIAS("platform:at91_ohci");
 
 static struct platform_driver ohci_hcd_at91_driver = {
 	.probe		= ohci_hcd_at91_drv_probe,
+<<<<<<< HEAD
 	.remove		= __devexit_p(ohci_hcd_at91_drv_remove),
+=======
+	.remove		= ohci_hcd_at91_drv_remove,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.shutdown	= usb_hcd_platform_shutdown,
 	.suspend	= ohci_hcd_at91_drv_suspend,
 	.resume		= ohci_hcd_at91_drv_resume,
 	.driver		= {
 		.name	= "at91_ohci",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.of_match_table	= of_match_ptr(at91_ohci_dt_ids),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };

@@ -321,8 +321,11 @@ opp_init_cpufreq_table - cpufreq framework typically is initialized with
 	addition to CONFIG_PM as power management feature is required to
 	dynamically scale voltage and frequency in a system.
 
+<<<<<<< HEAD
 opp_free_cpufreq_table - Free up the table allocated by opp_init_cpufreq_table
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 7. Data Structures
 ==================
 Typically an SoC contains multiple voltage domains which are variable. Each

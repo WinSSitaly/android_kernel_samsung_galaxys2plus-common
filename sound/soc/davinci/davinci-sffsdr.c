@@ -93,7 +93,10 @@ static struct snd_soc_dai_link sffsdr_dai = {
 /* davinci-sffsdr audio machine driver */
 static struct snd_soc_card snd_soc_sffsdr = {
 	.name = "DaVinci SFFSDR",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link = &sffsdr_dai,
 	.num_links = 1,
 };

@@ -1,6 +1,10 @@
 /* bnx2i_hwi.c: Broadcom NetXtreme II iSCSI driver.
  *
+<<<<<<< HEAD
  * Copyright (c) 2006 - 2011 Broadcom Corporation
+=======
+ * Copyright (c) 2006 - 2010 Broadcom Corporation
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (c) 2007, 2008 Red Hat, Inc.  All rights reserved.
  * Copyright (c) 2007, 2008 Mike Christie
  *
@@ -17,8 +21,11 @@
 #include <scsi/libiscsi.h>
 #include "bnx2i.h"
 
+<<<<<<< HEAD
 DECLARE_PER_CPU(struct bnx2i_percpu_s, bnx2i_percpu);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * bnx2i_get_cid_num - get cid from ep
  * @ep: 	endpoint pointer
@@ -133,16 +140,28 @@ static void bnx2i_iscsi_license_error(struct bnx2i_hba *hba, u32 error_code)
  *	the driver. EQ event is generated CQ index is hit or at least 1 CQ is
  *	outstanding and on chip timer expires
  */
+<<<<<<< HEAD
 int bnx2i_arm_cq_event_coalescing(struct bnx2i_endpoint *ep, u8 action)
 {
 	struct bnx2i_5771x_cq_db *cq_db;
 	u16 cq_index;
 	u16 next_index = 0;
+=======
+void bnx2i_arm_cq_event_coalescing(struct bnx2i_endpoint *ep, u8 action)
+{
+	struct bnx2i_5771x_cq_db *cq_db;
+	u16 cq_index;
+	u16 next_index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 num_active_cmds;
 
 	/* Coalesce CQ entries only on 10G devices */
 	if (!test_bit(BNX2I_NX2_DEV_57710, &ep->hba->cnic_dev_type))
+<<<<<<< HEAD
 		return 0;
+=======
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Do not update CQ DB multiple times before firmware writes
 	 * '0xFFFF' to CQDB->SQN field. Deviation may cause spurious
@@ -152,6 +171,7 @@ int bnx2i_arm_cq_event_coalescing(struct bnx2i_endpoint *ep, u8 action)
 
 	if (action != CNIC_ARM_CQE_FP)
 		if (cq_db->sqn[0] && cq_db->sqn[0] != 0xFFFF)
+<<<<<<< HEAD
 			return 0;
 
 	if (action == CNIC_ARM_CQE || action == CNIC_ARM_CQE_FP) {
@@ -163,6 +183,18 @@ int bnx2i_arm_cq_event_coalescing(struct bnx2i_endpoint *ep, u8 action)
 			if (next_index > num_active_cmds - event_coal_min)
 				next_index = num_active_cmds - event_coal_min;
 		}
+=======
+			return;
+
+	if (action == CNIC_ARM_CQE || action == CNIC_ARM_CQE_FP) {
+		num_active_cmds = ep->num_active_cmds;
+		if (num_active_cmds <= event_coal_min)
+			next_index = 1;
+		else
+			next_index = event_coal_min +
+				     ((num_active_cmds - event_coal_min) >>
+				     ep->ec_shift);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!next_index)
 			next_index = 1;
 		cq_index = ep->qp.cqe_exp_seq_sn + next_index - 1;
@@ -173,7 +205,10 @@ int bnx2i_arm_cq_event_coalescing(struct bnx2i_endpoint *ep, u8 action)
 
 		cq_db->sqn[0] = cq_index;
 	}
+<<<<<<< HEAD
 	return next_index;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -269,7 +304,11 @@ static void bnx2i_ring_sq_dbell(struct bnx2i_conn *bnx2i_conn, int count)
 	struct bnx2i_5771x_sq_rq_db *sq_db;
 	struct bnx2i_endpoint *ep = bnx2i_conn->ep;
 
+<<<<<<< HEAD
 	atomic_inc(&ep->num_active_cmds);
+=======
+	ep->num_active_cmds++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wmb();	/* flush SQ WQE memory before the doorbell is rung */
 	if (test_bit(BNX2I_NX2_DEV_57710, &ep->hba->cnic_dev_type)) {
 		sq_db = (struct bnx2i_5771x_sq_rq_db *) ep->qp.sq_pgtbl_virt;
@@ -332,11 +371,19 @@ int bnx2i_send_iscsi_login(struct bnx2i_conn *bnx2i_conn,
 {
 	struct bnx2i_cmd *bnx2i_cmd;
 	struct bnx2i_login_request *login_wqe;
+<<<<<<< HEAD
 	struct iscsi_login_req *login_hdr;
 	u32 dword;
 
 	bnx2i_cmd = (struct bnx2i_cmd *)task->dd_data;
 	login_hdr = (struct iscsi_login_req *)task->hdr;
+=======
+	struct iscsi_login *login_hdr;
+	u32 dword;
+
+	bnx2i_cmd = (struct bnx2i_cmd *)task->dd_data;
+	login_hdr = (struct iscsi_login *)task->hdr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	login_wqe = (struct bnx2i_login_request *)
 						bnx2i_conn->ep->qp.sq_prod_qe;
 
@@ -434,7 +481,11 @@ int bnx2i_send_iscsi_tmf(struct bnx2i_conn *bnx2i_conn,
 	default:
 		tmfabort_wqe->ref_itt = RESERVED_ITT;
 	}
+<<<<<<< HEAD
 	memcpy(scsi_lun, &tmfabort_hdr->lun, sizeof(struct scsi_lun));
+=======
+	memcpy(scsi_lun, tmfabort_hdr->lun, sizeof(struct scsi_lun));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tmfabort_wqe->lun[0] = be32_to_cpu(scsi_lun[0]);
 	tmfabort_wqe->lun[1] = be32_to_cpu(scsi_lun[1]);
 
@@ -551,7 +602,11 @@ int bnx2i_send_iscsi_nopout(struct bnx2i_conn *bnx2i_conn,
 
 	nopout_wqe->op_code = nopout_hdr->opcode;
 	nopout_wqe->op_attr = ISCSI_FLAG_CMD_FINAL;
+<<<<<<< HEAD
 	memcpy(nopout_wqe->lun, &nopout_hdr->lun, 8);
+=======
+	memcpy(nopout_wqe->lun, nopout_hdr->lun, 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (test_bit(BNX2I_NX2_DEV_57710, &ep->hba->cnic_dev_type)) {
 		u32 tmp = nopout_wqe->lun[0];
@@ -563,7 +618,11 @@ int bnx2i_send_iscsi_nopout(struct bnx2i_conn *bnx2i_conn,
 	nopout_wqe->itt = ((u16)task->itt |
 			   (ISCSI_TASK_TYPE_MPATH <<
 			    ISCSI_TMF_REQUEST_TYPE_SHIFT));
+<<<<<<< HEAD
 	nopout_wqe->ttt = be32_to_cpu(nopout_hdr->ttt);
+=======
+	nopout_wqe->ttt = nopout_hdr->ttt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nopout_wqe->flags = 0;
 	if (!unsol)
 		nopout_wqe->flags = ISCSI_NOP_OUT_REQUEST_LOCAL_COMPLETION;
@@ -1264,9 +1323,12 @@ int bnx2i_send_fw_iscsi_init_msg(struct bnx2i_hba *hba)
 	int rc = 0;
 	u64 mask64;
 
+<<<<<<< HEAD
 	memset(&iscsi_init, 0x00, sizeof(struct iscsi_kwqe_init1));
 	memset(&iscsi_init2, 0x00, sizeof(struct iscsi_kwqe_init2));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bnx2i_adjust_qp_size(hba);
 
 	iscsi_init.flags =
@@ -1315,6 +1377,7 @@ int bnx2i_send_fw_iscsi_init_msg(struct bnx2i_hba *hba)
 		  ISCSI_KCQE_COMPLETION_STATUS_PROTOCOL_ERR_EXP_DATASN) |
 		/* EMC */
 		(1ULL << ISCSI_KCQE_COMPLETION_STATUS_PROTOCOL_ERR_LUN));
+<<<<<<< HEAD
 	if (error_mask1) {
 		iscsi_init2.error_bit_map[0] = error_mask1;
 		mask64 &= (u32)(~mask64);
@@ -1327,6 +1390,16 @@ int bnx2i_send_fw_iscsi_init_msg(struct bnx2i_hba *hba)
 		mask64 &= 0xffffffff;
 		mask64 |= ((u64)error_mask2 << 32);
 	} else
+=======
+	if (error_mask1)
+		iscsi_init2.error_bit_map[0] = error_mask1;
+	else
+		iscsi_init2.error_bit_map[0] = (u32) mask64;
+
+	if (error_mask2)
+		iscsi_init2.error_bit_map[1] = error_mask2;
+	else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iscsi_init2.error_bit_map[1] = (u32) (mask64 >> 32);
 
 	iscsi_error_mask = mask64;
@@ -1342,25 +1415,43 @@ int bnx2i_send_fw_iscsi_init_msg(struct bnx2i_hba *hba)
 
 /**
  * bnx2i_process_scsi_cmd_resp - this function handles scsi cmd completion.
+<<<<<<< HEAD
  * @session:	iscsi session
  * @bnx2i_conn:	bnx2i connection
+=======
+ * @conn:	iscsi connection
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @cqe:	pointer to newly DMA'ed CQE entry for processing
  *
  * process SCSI CMD Response CQE & complete the request to SCSI-ML
  */
+<<<<<<< HEAD
 int bnx2i_process_scsi_cmd_resp(struct iscsi_session *session,
 				struct bnx2i_conn *bnx2i_conn,
 				struct cqe *cqe)
+=======
+static int bnx2i_process_scsi_cmd_resp(struct iscsi_session *session,
+				       struct bnx2i_conn *bnx2i_conn,
+				       struct cqe *cqe)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct iscsi_conn *conn = bnx2i_conn->cls_conn->dd_data;
 	struct bnx2i_cmd_response *resp_cqe;
 	struct bnx2i_cmd *bnx2i_cmd;
 	struct iscsi_task *task;
+<<<<<<< HEAD
 	struct iscsi_scsi_rsp *hdr;
 	u32 datalen = 0;
 
 	resp_cqe = (struct bnx2i_cmd_response *)cqe;
 	spin_lock_bh(&session->lock);
+=======
+	struct iscsi_cmd_rsp *hdr;
+	u32 datalen = 0;
+
+	resp_cqe = (struct bnx2i_cmd_response *)cqe;
+	spin_lock(&session->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	task = iscsi_itt_to_task(conn,
 				 resp_cqe->itt & ISCSI_CMD_RESPONSE_INDEX);
 	if (!task)
@@ -1383,7 +1474,11 @@ int bnx2i_process_scsi_cmd_resp(struct iscsi_session *session,
 	}
 	bnx2i_iscsi_unmap_sg_list(bnx2i_cmd);
 
+<<<<<<< HEAD
 	hdr = (struct iscsi_scsi_rsp *)task->hdr;
+=======
+	hdr = (struct iscsi_cmd_rsp *)task->hdr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	resp_cqe = (struct bnx2i_cmd_response *)cqe;
 	hdr->opcode = resp_cqe->op_code;
 	hdr->max_cmdsn = cpu_to_be32(resp_cqe->max_cmd_sn);
@@ -1421,7 +1516,11 @@ done:
 	__iscsi_complete_pdu(conn, (struct iscsi_hdr *)hdr,
 			     conn->data, datalen);
 fail:
+<<<<<<< HEAD
 	spin_unlock_bh(&session->lock);
+=======
+	spin_unlock(&session->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1723,7 +1822,11 @@ static int bnx2i_process_nopin_mesg(struct iscsi_session *session,
 		hdr->flags = ISCSI_FLAG_CMD_FINAL;
 		hdr->itt = task->hdr->itt;
 		hdr->ttt = cpu_to_be32(nop_in->ttt);
+<<<<<<< HEAD
 		memcpy(&hdr->lun, nop_in->lun, 8);
+=======
+		memcpy(hdr->lun, nop_in->lun, 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 done:
 	__iscsi_complete_pdu(conn, (struct iscsi_hdr *)hdr, NULL, 0);
@@ -1766,7 +1869,11 @@ static void bnx2i_process_async_mesg(struct iscsi_session *session,
 	resp_hdr->opcode = async_cqe->op_code;
 	resp_hdr->flags = 0x80;
 
+<<<<<<< HEAD
 	memcpy(&resp_hdr->lun, async_cqe->lun, 8);
+=======
+	memcpy(resp_hdr->lun, async_cqe->lun, 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	resp_hdr->exp_cmdsn = cpu_to_be32(async_cqe->exp_cmd_sn);
 	resp_hdr->max_cmdsn = cpu_to_be32(async_cqe->max_cmd_sn);
 
@@ -1848,6 +1955,7 @@ static void bnx2i_process_cmd_cleanup_resp(struct iscsi_session *session,
 }
 
 
+<<<<<<< HEAD
 /**
  * bnx2i_percpu_io_thread - thread per cpu for ios
  *
@@ -1979,6 +2087,23 @@ static int bnx2i_process_new_cqes(struct bnx2i_conn *bnx2i_conn)
 			bnx2i_conn->hba->netdev->name);
 		goto out;
 	}
+=======
+
+/**
+ * bnx2i_process_new_cqes - process newly DMA'ed CQE's
+ * @bnx2i_conn:		iscsi connection
+ *
+ * this function is called by generic KCQ handler to process all pending CQE's
+ */
+static void bnx2i_process_new_cqes(struct bnx2i_conn *bnx2i_conn)
+{
+	struct iscsi_conn *conn = bnx2i_conn->cls_conn->dd_data;
+	struct iscsi_session *session = conn->session;
+	struct qp_info *qp = &bnx2i_conn->ep->qp;
+	struct bnx2i_nop_in_msg *nopin;
+	int tgt_async_msg;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (1) {
 		nopin = (struct bnx2i_nop_in_msg *) qp->cq_cons_qe;
 		if (nopin->cq_req_sn != qp->cqe_exp_seq_sn)
@@ -2001,9 +2126,14 @@ static int bnx2i_process_new_cqes(struct bnx2i_conn *bnx2i_conn)
 		switch (nopin->op_code) {
 		case ISCSI_OP_SCSI_CMD_RSP:
 		case ISCSI_OP_SCSI_DATA_IN:
+<<<<<<< HEAD
 			/* Run the kthread engine only for data cmds
 			   All other cmds will be completed in this bh! */
 			bnx2i_queue_scsi_cmd_resp(session, bnx2i_conn, nopin);
+=======
+			bnx2i_process_scsi_cmd_resp(session, bnx2i_conn,
+						    qp->cq_cons_qe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case ISCSI_OP_LOGIN_RSP:
 			bnx2i_process_login_resp(session, bnx2i_conn,
@@ -2047,6 +2177,7 @@ static int bnx2i_process_new_cqes(struct bnx2i_conn *bnx2i_conn)
 			printk(KERN_ALERT "bnx2i: unknown opcode 0x%x\n",
 					  nopin->op_code);
 		}
+<<<<<<< HEAD
 		if (!tgt_async_msg) {
 			if (!atomic_read(&bnx2i_conn->ep->num_active_cmds))
 				printk(KERN_ALERT "bnx2i (%s): no active cmd! "
@@ -2056,12 +2187,19 @@ static int bnx2i_process_new_cqes(struct bnx2i_conn *bnx2i_conn)
 			else
 				atomic_dec(&bnx2i_conn->ep->num_active_cmds);
 		}
+=======
+		if (!tgt_async_msg)
+			bnx2i_conn->ep->num_active_cmds--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 cqe_out:
 		/* clear out in production version only, till beta keep opcode
 		 * field intact, will be helpful in debugging (context dump)
 		 * nopin->op_code = 0;
 		 */
+<<<<<<< HEAD
 		cqe_cnt++;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		qp->cqe_exp_seq_sn++;
 		if (qp->cqe_exp_seq_sn == (qp->cqe_size * 2 + 1))
 			qp->cqe_exp_seq_sn = ISCSI_INITIAL_SN;
@@ -2074,8 +2212,11 @@ cqe_out:
 			qp->cq_cons_idx++;
 		}
 	}
+<<<<<<< HEAD
 out:
 	return cqe_cnt;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -2091,7 +2232,10 @@ static void bnx2i_fastpath_notification(struct bnx2i_hba *hba,
 {
 	struct bnx2i_conn *bnx2i_conn;
 	u32 iscsi_cid;
+<<<<<<< HEAD
 	int nxt_idx;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	iscsi_cid = new_cqe_kcqe->iscsi_conn_id;
 	bnx2i_conn = bnx2i_get_conn_from_id(hba, iscsi_cid);
@@ -2104,12 +2248,18 @@ static void bnx2i_fastpath_notification(struct bnx2i_hba *hba,
 		printk(KERN_ALERT "cid #%x - ep not bound\n", iscsi_cid);
 		return;
 	}
+<<<<<<< HEAD
 
 	bnx2i_process_new_cqes(bnx2i_conn);
 	nxt_idx = bnx2i_arm_cq_event_coalescing(bnx2i_conn->ep,
 						CNIC_ARM_CQE_FP);
 	if (nxt_idx && nxt_idx == bnx2i_process_new_cqes(bnx2i_conn))
 		bnx2i_arm_cq_event_coalescing(bnx2i_conn->ep, CNIC_ARM_CQE_FP);
+=======
+	bnx2i_process_new_cqes(bnx2i_conn);
+	bnx2i_arm_cq_event_coalescing(bnx2i_conn->ep, CNIC_ARM_CQE_FP);
+	bnx2i_process_new_cqes(bnx2i_conn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -2455,7 +2605,11 @@ static void bnx2i_process_ofld_cmpl(struct bnx2i_hba *hba,
 			printk(KERN_ALERT "bnx2i (%s): ofld1 cmpl - invalid "
 				"opcode\n", hba->netdev->name);
 		else if (ofld_kcqe->completion_status ==
+<<<<<<< HEAD
 			 ISCSI_KCQE_COMPLETION_STATUS_CID_BUSY)
+=======
+			ISCSI_KCQE_COMPLETION_STATUS_CID_BUSY)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* error status code valid only for 5771x chipset */
 			ep->state = EP_STATE_OFLD_FAILED_CID_BUSY;
 		else
@@ -2529,11 +2683,15 @@ static void bnx2i_indicate_kcqe(void *context, struct kcqe *kcqe[],
  * bnx2i_indicate_netevent - Generic netdev event handler
  * @context:	adapter structure pointer
  * @event:	event type
+<<<<<<< HEAD
  * @vlan_id:	vlans id - associated vlan id with this event
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Handles four netdev events, NETDEV_UP, NETDEV_DOWN,
  *	NETDEV_GOING_DOWN and NETDEV_CHANGE
  */
+<<<<<<< HEAD
 static void bnx2i_indicate_netevent(void *context, unsigned long event,
 				    u16 vlan_id)
 {
@@ -2543,6 +2701,12 @@ static void bnx2i_indicate_netevent(void *context, unsigned long event,
 	if (vlan_id != 0)
 		return;
 
+=======
+static void bnx2i_indicate_netevent(void *context, unsigned long event)
+{
+	struct bnx2i_hba *hba = context;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (event) {
 	case NETDEV_UP:
 		if (!test_bit(ADAPTER_STATE_UP, &hba->adapter_state))
@@ -2660,7 +2824,11 @@ static void bnx2i_cm_remote_abort(struct cnic_sock *cm_sk)
 
 
 static int bnx2i_send_nl_mesg(void *context, u32 msg_type,
+<<<<<<< HEAD
 			      char *buf, u16 buflen)
+=======
+			       char *buf, u16 buflen)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bnx2i_hba *hba = context;
 	int rc;

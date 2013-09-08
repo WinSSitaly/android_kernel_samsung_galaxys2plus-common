@@ -10,16 +10,27 @@
  */
 
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/power_supply.h>
 #include <linux/apm-emulation.h>
 
 
+<<<<<<< HEAD
 #define PSY_PROP(psy, prop, val) (psy->get_property(psy, \
 			 POWER_SUPPLY_PROP_##prop, val))
 
 #define _MPSY_PROP(prop, val) (main_battery->get_property(main_battery, \
 							 prop, val))
+=======
+#define PSY_PROP(psy, prop, val) psy->get_property(psy, \
+			 POWER_SUPPLY_PROP_##prop, val)
+
+#define _MPSY_PROP(prop, val) main_battery->get_property(main_battery, \
+							 prop, val)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MPSY_PROP(prop, val) _MPSY_PROP(POWER_SUPPLY_PROP_##prop, val)
 

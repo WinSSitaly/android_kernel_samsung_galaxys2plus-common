@@ -79,7 +79,11 @@ nouveau_irq_handler(DRM_IRQ_ARGS)
 	int i;
 
 	stat = nv_rd32(dev, NV03_PMC_INTR_0);
+<<<<<<< HEAD
 	if (stat == 0 || stat == ~0)
+=======
+	if (!stat)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return IRQ_NONE;
 
 	spin_lock_irqsave(&dev_priv->context_switch_lock, flags);

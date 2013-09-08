@@ -3,6 +3,10 @@ include include/asm-generic/Kbuild.asm
 generic-y += atomic.h
 generic-y += auxvec.h
 generic-y += bitsperlong.h
+<<<<<<< HEAD
+=======
+generic-y += bug.h
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 generic-y += bugs.h
 generic-y += cputime.h
 generic-y += current.h

@@ -19,17 +19,25 @@
 
 #include "hw.h"
 #include "rc.h"
+<<<<<<< HEAD
 #include "dfs_debug.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct ath_txq;
 struct ath_buf;
 
 #ifdef CONFIG_ATH9K_DEBUGFS
 #define TX_STAT_INC(q, c) sc->debug.stats.txstats[q].c++
+<<<<<<< HEAD
 #define RESET_STAT_INC(sc, type) sc->debug.stats.reset[type]++
 #else
 #define TX_STAT_INC(q, c) do { } while (0)
 #define RESET_STAT_INC(sc, type) do { } while (0)
+=======
+#else
+#define TX_STAT_INC(q, c) do { } while (0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifdef CONFIG_ATH9K_DEBUGFS
@@ -119,7 +127,10 @@ struct ath_tx_stats {
 	u32 tx_bytes_all;
 	u32 queued;
 	u32 completed;
+<<<<<<< HEAD
 	u32 xretries;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 a_aggr;
 	u32 a_queued_hw;
 	u32 a_queued_sw;
@@ -165,6 +176,7 @@ struct ath_rx_stats {
 	u32 post_delim_crc_err;
 	u32 decrypt_busy_err;
 	u32 phy_err_stats[ATH9K_PHYERR_MAX];
+<<<<<<< HEAD
 };
 
 enum ath_reset_type {
@@ -175,12 +187,22 @@ enum ath_reset_type {
 	RESET_TYPE_TX_HANG,
 	RESET_TYPE_PLL_HANG,
 	__RESET_TYPE_MAX
+=======
+	int8_t rs_rssi_ctl0;
+	int8_t rs_rssi_ctl1;
+	int8_t rs_rssi_ctl2;
+	int8_t rs_rssi_ext0;
+	int8_t rs_rssi_ext1;
+	int8_t rs_rssi_ext2;
+	u8 rs_antenna;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct ath_stats {
 	struct ath_interrupt_stats istats;
 	struct ath_tx_stats txstats[ATH9K_NUM_TX_QUEUES];
 	struct ath_rx_stats rxstats;
+<<<<<<< HEAD
 	struct ath_dfs_stats dfs_stats;
 	u32 reset[__RESET_TYPE_MAX];
 };
@@ -222,12 +244,15 @@ struct ath_dbg_bb_mac_samp {
 	} rs[ATH_DBG_MAX_SAMPLES];
 	struct ath_cycle_counters cc;
 	struct ath9k_nfcal_hist nfCalHist[NUM_NF_READINGS];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct ath9k_debug {
 	struct dentry *debugfs_phy;
 	u32 regidx;
 	struct ath_stats stats;
+<<<<<<< HEAD
 #ifdef CONFIG_ATH9K_MAC_DEBUG
 	spinlock_t samp_lock;
 	struct ath_dbg_bb_mac_samp bb_mac_samp[ATH_DBG_MAX_SAMPLES];
@@ -235,14 +260,20 @@ struct ath9k_debug {
 	u8 tsidx;
 	u8 rsidx;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int ath9k_init_debug(struct ath_hw *ah);
 
 void ath_debug_stat_interrupt(struct ath_softc *sc, enum ath9k_int status);
 void ath_debug_stat_tx(struct ath_softc *sc, struct ath_buf *bf,
+<<<<<<< HEAD
 		       struct ath_tx_status *ts, struct ath_txq *txq,
 		       unsigned int flags);
+=======
+		       struct ath_tx_status *ts, struct ath_txq *txq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void ath_debug_stat_rx(struct ath_softc *sc, struct ath_rx_status *rs);
 
 #else
@@ -260,8 +291,12 @@ static inline void ath_debug_stat_interrupt(struct ath_softc *sc,
 static inline void ath_debug_stat_tx(struct ath_softc *sc,
 				     struct ath_buf *bf,
 				     struct ath_tx_status *ts,
+<<<<<<< HEAD
 				     struct ath_txq *txq,
 				     unsigned int flags)
+=======
+				     struct ath_txq *txq)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 }
 
@@ -272,6 +307,7 @@ static inline void ath_debug_stat_rx(struct ath_softc *sc,
 
 #endif /* CONFIG_ATH9K_DEBUGFS */
 
+<<<<<<< HEAD
 #ifdef CONFIG_ATH9K_MAC_DEBUG
 
 void ath9k_debug_samp_bb_mac(struct ath_softc *sc);
@@ -285,4 +321,6 @@ static inline void ath9k_debug_samp_bb_mac(struct ath_softc *sc)
 #endif
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* DEBUG_H */

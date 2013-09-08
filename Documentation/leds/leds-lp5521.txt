@@ -43,6 +43,7 @@ Format: 10x mA i.e 10 means 1.0 mA
 example platform data:
 
 Note: chan_nr can have values between 0 and 2.
+<<<<<<< HEAD
 The name of each channel can be configurable.
 If the name field is not defined, the default name will be set to 'xxxx:channelN'
 (XXXX : pdata->label or i2c client name, N : channel number)
@@ -50,16 +51,27 @@ If the name field is not defined, the default name will be set to 'xxxx:channelN
 static struct lp5521_led_config lp5521_led_config[] = {
         {
 		.name = "red",
+=======
+
+static struct lp5521_led_config lp5521_led_config[] = {
+        {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
                 .chan_nr        = 0,
                 .led_current    = 50,
 		.max_current    = 130,
         }, {
+<<<<<<< HEAD
 		.name = "green",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
                 .chan_nr        = 1,
                 .led_current    = 0,
 		.max_current    = 130,
         }, {
+<<<<<<< HEAD
 		.name = "blue",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
                 .chan_nr        = 2,
                 .led_current    = 0,
 		.max_current    = 130,
@@ -92,6 +104,7 @@ static struct lp5521_platform_data lp5521_platform_data = {
 
 If the current is set to 0 in the platform data, that channel is
 disabled and it is not visible in the sysfs.
+<<<<<<< HEAD
 
 The 'update_config' : CONFIG register (ADDR 08h)
 This value is platform-specific data.
@@ -149,3 +162,5 @@ To start the pattern #1,
 (xxxx : i2c bus & slave address)
 To end the pattern,
 # echo 0 > /sys/bus/i2c/devices/xxxx/led_pattern
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

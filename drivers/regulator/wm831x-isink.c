@@ -101,7 +101,11 @@ static int wm831x_isink_set_current(struct regulator_dev *rdev,
 
 	for (i = 0; i < ARRAY_SIZE(wm831x_isinkv_values); i++) {
 		int val = wm831x_isinkv_values[i];
+<<<<<<< HEAD
 		if (min_uA <= val && val <= max_uA) {
+=======
+		if (min_uA >= val && val <= max_uA) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = wm831x_set_bits(wm831x, isink->reg,
 					      WM831X_CS1_ISEL_MASK, i);
 			return ret;
@@ -162,8 +166,12 @@ static __devinit int wm831x_isink_probe(struct platform_device *pdev)
 	if (pdata == NULL || pdata->isink[id] == NULL)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	isink = devm_kzalloc(&pdev->dev, sizeof(struct wm831x_isink),
 			     GFP_KERNEL);
+=======
+	isink = kzalloc(sizeof(struct wm831x_isink), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (isink == NULL) {
 		dev_err(&pdev->dev, "Unable to allocate private data\n");
 		return -ENOMEM;
@@ -190,7 +198,11 @@ static __devinit int wm831x_isink_probe(struct platform_device *pdev)
 	isink->desc.owner = THIS_MODULE;
 
 	isink->regulator = regulator_register(&isink->desc, &pdev->dev,
+<<<<<<< HEAD
 					     pdata->isink[id], isink, NULL);
+=======
+					     pdata->isink[id], isink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(isink->regulator)) {
 		ret = PTR_ERR(isink->regulator);
 		dev_err(wm831x->dev, "Failed to register ISINK%d: %d\n",
@@ -214,6 +226,10 @@ static __devinit int wm831x_isink_probe(struct platform_device *pdev)
 err_regulator:
 	regulator_unregister(isink->regulator);
 err:
+<<<<<<< HEAD
+=======
+	kfree(isink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -226,6 +242,10 @@ static __devexit int wm831x_isink_remove(struct platform_device *pdev)
 	free_irq(platform_get_irq(pdev, 0), isink);
 
 	regulator_unregister(isink->regulator);
+<<<<<<< HEAD
+=======
+	kfree(isink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

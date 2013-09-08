@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #
 # m68k/Makefile
 #
@@ -169,3 +170,12 @@ archclean:
 
 install:
 	sh $(srctree)/arch/m68k/install.sh $(KERNELRELEASE) vmlinux.gz System.map "$(INSTALL_PATH)"
+=======
+KBUILD_DEFCONFIG := multi_defconfig
+
+ifdef CONFIG_MMU
+include $(srctree)/arch/m68k/Makefile_mm
+else
+include $(srctree)/arch/m68k/Makefile_no
+endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

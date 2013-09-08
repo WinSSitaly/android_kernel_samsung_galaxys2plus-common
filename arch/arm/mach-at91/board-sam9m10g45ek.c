@@ -14,7 +14,10 @@
  */
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/mm.h>
 #include <linux/module.h>
@@ -24,6 +27,7 @@
 #include <linux/gpio_keys.h>
 #include <linux/input.h>
 #include <linux/leds.h>
+<<<<<<< HEAD
 #include <linux/atmel-mci.h>
 #include <linux/delay.h>
 
@@ -31,6 +35,13 @@
 #include <video/atmel_lcdc.h>
 #include <media/soc_camera.h>
 #include <media/atmel-isi.h>
+=======
+#include <linux/clk.h>
+#include <linux/atmel-mci.h>
+
+#include <mach/hardware.h>
+#include <video/atmel_lcdc.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/setup.h>
 #include <asm/mach-types.h>
@@ -41,6 +52,10 @@
 #include <asm/mach/irq.h>
 
 #include <mach/board.h>
+<<<<<<< HEAD
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/at91sam9_smc.h>
 #include <mach/at91_shdwc.h>
 #include <mach/system_rev.h>
@@ -52,7 +67,11 @@
 static void __init ek_init_early(void)
 {
 	/* Initialize processor: 12.000 MHz crystal */
+<<<<<<< HEAD
 	at91_initialize(12000000);
+=======
+	at91sam9g45_initialize(12000000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* DGBU on ttyS0. (Rx & Tx only) */
 	at91_register_uart(0, 0, 0);
@@ -65,14 +84,26 @@ static void __init ek_init_early(void)
 	at91_set_serial_console(0);
 }
 
+<<<<<<< HEAD
+=======
+static void __init ek_init_irq(void)
+{
+	at91sam9g45_init_interrupts(NULL);
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * USB HS Host port (common to OHCI & EHCI)
  */
 static struct at91_usbh_data __initdata ek_usbh_hs_data = {
 	.ports		= 2,
 	.vbus_pin	= {AT91_PIN_PD1, AT91_PIN_PD3},
+<<<<<<< HEAD
 	.vbus_pin_active_low = {1, 1},
 	.overcurrent_pin= {-EINVAL, -EINVAL},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -104,7 +135,10 @@ static struct mci_platform_data __initdata mci0_data = {
 	.slot[0] = {
 		.bus_width	= 4,
 		.detect_pin	= AT91_PIN_PD10,
+<<<<<<< HEAD
 		.wp_pin		= -EINVAL,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 
@@ -120,7 +154,11 @@ static struct mci_platform_data __initdata mci1_data = {
 /*
  * MACB Ethernet device
  */
+<<<<<<< HEAD
 static struct macb_platform_data __initdata ek_macb_data = {
+=======
+static struct at91_eth_data __initdata ek_macb_data = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.phy_irq_pin	= AT91_PIN_PD5,
 	.is_rmii	= 1,
 };
@@ -142,17 +180,30 @@ static struct mtd_partition __initdata ek_nand_partition[] = {
 	},
 };
 
+<<<<<<< HEAD
+=======
+static struct mtd_partition * __init nand_partitions(int size, int *num_partitions)
+{
+	*num_partitions = ARRAY_SIZE(ek_nand_partition);
+	return ek_nand_partition;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* det_pin is not connected */
 static struct atmel_nand_data __initdata ek_nand_data = {
 	.ale		= 21,
 	.cle		= 22,
 	.rdy_pin	= AT91_PIN_PC8,
 	.enable_pin	= AT91_PIN_PC14,
+<<<<<<< HEAD
 	.det_pin	= -EINVAL,
 	.ecc_mode	= NAND_ECC_SOFT,
 	.on_flash_bbt	= 1,
 	.parts		= ek_nand_partition,
 	.num_parts	= ARRAY_SIZE(ek_nand_partition),
+=======
+	.partition_info	= nand_partitions,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct sam9_smc_config __initdata ek_nand_smc_config = {
@@ -183,13 +234,18 @@ static void __init ek_add_device_nand(void)
 		ek_nand_smc_config.mode |= AT91_SMC_DBW_8;
 
 	/* configure chip-select 3 (NAND) */
+<<<<<<< HEAD
 	sam9_smc_configure(0, 3, &ek_nand_smc_config);
+=======
+	sam9_smc_configure(3, &ek_nand_smc_config);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	at91_add_device_nand(&ek_nand_data);
 }
 
 
 /*
+<<<<<<< HEAD
  *  ISI
  */
 static struct isi_platform_data __initdata isi_data = {
@@ -255,6 +311,8 @@ static struct platform_device isi_ov2640 = {
 
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * LCD Controller
  */
 #if defined(CONFIG_FB_ATMEL) || defined(CONFIG_FB_ATMEL_MODULE)
@@ -403,7 +461,10 @@ static void __init ek_add_device_buttons(void) {}
  * reset_pin is not connected: NRST
  */
 static struct ac97c_platform_data ek_ac97_data = {
+<<<<<<< HEAD
 	.reset_pin	= -EINVAL,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -447,12 +508,16 @@ static struct gpio_led ek_pwm_led[] = {
 #endif
 };
 
+<<<<<<< HEAD
 static struct platform_device *devices[] __initdata = {
 #if defined(CONFIG_SOC_CAMERA_OV2640) || \
 	defined(CONFIG_SOC_CAMERA_OV2640_MODULE)
 	&isi_ov2640,
 #endif
 };
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void __init ek_board_init(void)
 {
@@ -474,8 +539,11 @@ static void __init ek_board_init(void)
 	ek_add_device_nand();
 	/* I2C */
 	at91_add_device_i2c(0, NULL, 0);
+<<<<<<< HEAD
 	/* ISI, using programmable clock as ISI_MCK */
 	at91_add_device_isi(&isi_data, true);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* LCD Controller */
 	at91_add_device_lcdc(&ek_lcdc_data);
 	/* Touch Screen */
@@ -487,15 +555,24 @@ static void __init ek_board_init(void)
 	/* LEDs */
 	at91_gpio_leds(ek_leds, ARRAY_SIZE(ek_leds));
 	at91_pwm_leds(ek_pwm_led, ARRAY_SIZE(ek_pwm_led));
+<<<<<<< HEAD
 	/* Other platform devices */
 	platform_add_devices(devices, ARRAY_SIZE(devices));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 MACHINE_START(AT91SAM9M10G45EK, "Atmel AT91SAM9M10G45-EK")
 	/* Maintainer: Atmel */
 	.timer		= &at91sam926x_timer,
+<<<<<<< HEAD
 	.map_io		= at91_map_io,
 	.init_early	= ek_init_early,
 	.init_irq	= at91_init_irq_default,
+=======
+	.map_io		= at91sam9g45_map_io,
+	.init_early	= ek_init_early,
+	.init_irq	= ek_init_irq,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= ek_board_init,
 MACHINE_END

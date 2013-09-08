@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Linux performance counter support for MIPS.
  *
@@ -107,6 +108,18 @@ static struct mips_pmu mipspmu;
 #define M_PERFCTL_SUPERVISOR		(1      <<  2)
 #define M_PERFCTL_USER			(1      <<  3)
 #define M_PERFCTL_INTERRUPT_ENABLE	(1      <<  4)
+=======
+#if defined(CONFIG_CPU_MIPS32) || defined(CONFIG_CPU_MIPS64) || \
+    defined(CONFIG_CPU_R10000) || defined(CONFIG_CPU_SB1)
+
+#define M_CONFIG1_PC	(1 << 4)
+
+#define M_PERFCTL_EXL			(1UL      <<  0)
+#define M_PERFCTL_KERNEL		(1UL      <<  1)
+#define M_PERFCTL_SUPERVISOR		(1UL      <<  2)
+#define M_PERFCTL_USER			(1UL      <<  3)
+#define M_PERFCTL_INTERRUPT_ENABLE	(1UL      <<  4)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define M_PERFCTL_EVENT(event)		(((event) & 0x3ff)  << 5)
 #define M_PERFCTL_VPEID(vpe)		((vpe)    << 16)
 #define M_PERFCTL_MT_EN(filter)		((filter) << 20)
@@ -114,8 +127,13 @@ static struct mips_pmu mipspmu;
 #define    M_TC_EN_VPE			M_PERFCTL_MT_EN(1)
 #define    M_TC_EN_TC			M_PERFCTL_MT_EN(2)
 #define M_PERFCTL_TCID(tcid)		((tcid)   << 22)
+<<<<<<< HEAD
 #define M_PERFCTL_WIDE			(1      << 30)
 #define M_PERFCTL_MORE			(1      << 31)
+=======
+#define M_PERFCTL_WIDE			(1UL      << 30)
+#define M_PERFCTL_MORE			(1UL      << 31)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define M_PERFCTL_COUNT_EVENT_WHENEVER	(M_PERFCTL_EXL |		\
 					M_PERFCTL_KERNEL |		\
@@ -130,12 +148,19 @@ static struct mips_pmu mipspmu;
 #endif
 #define M_PERFCTL_EVENT_MASK		0xfe0
 
+<<<<<<< HEAD
+=======
+#define M_COUNTER_OVERFLOW		(1UL      << 31)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_MIPS_MT_SMP
 static int cpu_has_mipsmt_pertccounters;
 
+<<<<<<< HEAD
 static DEFINE_RWLOCK(pmuint_rwlock);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * FIXME: For VSMP, vpe_id() is redefined for Perf-events, because
  * cpu_data[cpuid].vpe_id reports 0 for _both_ CPUs.
@@ -149,13 +174,18 @@ static DEFINE_RWLOCK(pmuint_rwlock);
 #endif
 
 /* Copied from op_model_mipsxx.c */
+<<<<<<< HEAD
 static unsigned int vpe_shift(void)
+=======
+static inline unsigned int vpe_shift(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (num_possible_cpus() > 1)
 		return 1;
 
 	return 0;
 }
+<<<<<<< HEAD
 
 static unsigned int counters_total_to_per_cpu(unsigned int counters)
 {
@@ -279,12 +309,146 @@ static unsigned int mipsxx_pmu_read_control(unsigned int idx)
 		return read_c0_perfctrl2();
 	case 3:
 		return read_c0_perfctrl3();
+=======
+#else /* !CONFIG_MIPS_MT_SMP */
+#define vpe_id()	0
+
+static inline unsigned int vpe_shift(void)
+{
+	return 0;
+}
+#endif /* CONFIG_MIPS_MT_SMP */
+
+static inline unsigned int
+counters_total_to_per_cpu(unsigned int counters)
+{
+	return counters >> vpe_shift();
+}
+
+static inline unsigned int
+counters_per_cpu_to_total(unsigned int counters)
+{
+	return counters << vpe_shift();
+}
+
+#define __define_perf_accessors(r, n, np)				\
+									\
+static inline unsigned int r_c0_ ## r ## n(void)			\
+{									\
+	unsigned int cpu = vpe_id();					\
+									\
+	switch (cpu) {							\
+	case 0:								\
+		return read_c0_ ## r ## n();				\
+	case 1:								\
+		return read_c0_ ## r ## np();				\
+	default:							\
+		BUG();							\
+	}								\
+	return 0;							\
+}									\
+									\
+static inline void w_c0_ ## r ## n(unsigned int value)			\
+{									\
+	unsigned int cpu = vpe_id();					\
+									\
+	switch (cpu) {							\
+	case 0:								\
+		write_c0_ ## r ## n(value);				\
+		return;							\
+	case 1:								\
+		write_c0_ ## r ## np(value);				\
+		return;							\
+	default:							\
+		BUG();							\
+	}								\
+	return;								\
+}									\
+
+__define_perf_accessors(perfcntr, 0, 2)
+__define_perf_accessors(perfcntr, 1, 3)
+__define_perf_accessors(perfcntr, 2, 0)
+__define_perf_accessors(perfcntr, 3, 1)
+
+__define_perf_accessors(perfctrl, 0, 2)
+__define_perf_accessors(perfctrl, 1, 3)
+__define_perf_accessors(perfctrl, 2, 0)
+__define_perf_accessors(perfctrl, 3, 1)
+
+static inline int __n_counters(void)
+{
+	if (!(read_c0_config1() & M_CONFIG1_PC))
+		return 0;
+	if (!(read_c0_perfctrl0() & M_PERFCTL_MORE))
+		return 1;
+	if (!(read_c0_perfctrl1() & M_PERFCTL_MORE))
+		return 2;
+	if (!(read_c0_perfctrl2() & M_PERFCTL_MORE))
+		return 3;
+
+	return 4;
+}
+
+static inline int n_counters(void)
+{
+	int counters;
+
+	switch (current_cpu_type()) {
+	case CPU_R10000:
+		counters = 2;
+		break;
+
+	case CPU_R12000:
+	case CPU_R14000:
+		counters = 4;
+		break;
+
+	default:
+		counters = __n_counters();
+	}
+
+	return counters;
+}
+
+static void reset_counters(void *arg)
+{
+	int counters = (int)(long)arg;
+	switch (counters) {
+	case 4:
+		w_c0_perfctrl3(0);
+		w_c0_perfcntr3(0);
+	case 3:
+		w_c0_perfctrl2(0);
+		w_c0_perfcntr2(0);
+	case 2:
+		w_c0_perfctrl1(0);
+		w_c0_perfcntr1(0);
+	case 1:
+		w_c0_perfctrl0(0);
+		w_c0_perfcntr0(0);
+	}
+}
+
+static inline u64
+mipsxx_pmu_read_counter(unsigned int idx)
+{
+	switch (idx) {
+	case 0:
+		return r_c0_perfcntr0();
+	case 1:
+		return r_c0_perfcntr1();
+	case 2:
+		return r_c0_perfcntr2();
+	case 3:
+		return r_c0_perfcntr3();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		WARN_ONCE(1, "Invalid performance counter number (%d)\n", idx);
 		return 0;
 	}
 }
 
+<<<<<<< HEAD
 static void mipsxx_pmu_write_control(unsigned int idx, unsigned int val)
 {
 	idx = mipsxx_pmu_swizzle_perf_idx(idx);
@@ -301,10 +465,28 @@ static void mipsxx_pmu_write_control(unsigned int idx, unsigned int val)
 		return;
 	case 3:
 		write_c0_perfctrl3(val);
+=======
+static inline void
+mipsxx_pmu_write_counter(unsigned int idx, u64 val)
+{
+	switch (idx) {
+	case 0:
+		w_c0_perfcntr0(val);
+		return;
+	case 1:
+		w_c0_perfcntr1(val);
+		return;
+	case 2:
+		w_c0_perfcntr2(val);
+		return;
+	case 3:
+		w_c0_perfcntr3(val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 }
 
+<<<<<<< HEAD
 static int mipsxx_pmu_alloc_counter(struct cpu_hw_events *cpuc,
 				    struct hw_perf_event *hwc)
 {
@@ -800,6 +982,49 @@ static void reset_counters(void *arg)
 	}
 }
 
+=======
+static inline unsigned int
+mipsxx_pmu_read_control(unsigned int idx)
+{
+	switch (idx) {
+	case 0:
+		return r_c0_perfctrl0();
+	case 1:
+		return r_c0_perfctrl1();
+	case 2:
+		return r_c0_perfctrl2();
+	case 3:
+		return r_c0_perfctrl3();
+	default:
+		WARN_ONCE(1, "Invalid performance counter number (%d)\n", idx);
+		return 0;
+	}
+}
+
+static inline void
+mipsxx_pmu_write_control(unsigned int idx, unsigned int val)
+{
+	switch (idx) {
+	case 0:
+		w_c0_perfctrl0(val);
+		return;
+	case 1:
+		w_c0_perfctrl1(val);
+		return;
+	case 2:
+		w_c0_perfctrl2(val);
+		return;
+	case 3:
+		w_c0_perfctrl3(val);
+		return;
+	}
+}
+
+#ifdef CONFIG_MIPS_MT_SMP
+static DEFINE_RWLOCK(pmuint_rwlock);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* 24K/34K/1004K cores can share the same event map. */
 static const struct mips_perf_event mipsxxcore_event_map
 				[PERF_COUNT_HW_MAX] = {
@@ -824,6 +1049,7 @@ static const struct mips_perf_event mipsxx74Kcore_event_map
 	[PERF_COUNT_HW_BUS_CYCLES] = { UNSUPPORTED_PERF_EVENT_ID },
 };
 
+<<<<<<< HEAD
 static const struct mips_perf_event octeon_event_map[PERF_COUNT_HW_MAX] = {
 	[PERF_COUNT_HW_CPU_CYCLES] = { 0x01, CNTR_ALL },
 	[PERF_COUNT_HW_INSTRUCTIONS] = { 0x03, CNTR_ALL },
@@ -834,6 +1060,8 @@ static const struct mips_perf_event octeon_event_map[PERF_COUNT_HW_MAX] = {
 	[PERF_COUNT_HW_BUS_CYCLES] = { 0x25, CNTR_ALL },
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* 24K/34K/1004K cores can share the same cache event map. */
 static const struct mips_perf_event mipsxxcore_cache_map
 				[PERF_COUNT_HW_CACHE_MAX]
@@ -934,6 +1162,7 @@ static const struct mips_perf_event mipsxxcore_cache_map
 		[C(RESULT_MISS)]	= { UNSUPPORTED_PERF_EVENT_ID },
 	},
 },
+<<<<<<< HEAD
 [C(NODE)] = {
 	[C(OP_READ)] = {
 		[C(RESULT_ACCESS)]	= { UNSUPPORTED_PERF_EVENT_ID },
@@ -948,6 +1177,8 @@ static const struct mips_perf_event mipsxxcore_cache_map
 		[C(RESULT_MISS)]	= { UNSUPPORTED_PERF_EVENT_ID },
 	},
 },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* 74K core has completely different cache event map. */
@@ -1051,6 +1282,7 @@ static const struct mips_perf_event mipsxx74Kcore_cache_map
 		[C(RESULT_MISS)]	= { UNSUPPORTED_PERF_EVENT_ID },
 	},
 },
+<<<<<<< HEAD
 [C(NODE)] = {
 	[C(OP_READ)] = {
 		[C(RESULT_ACCESS)]	= { UNSUPPORTED_PERF_EVENT_ID },
@@ -1166,6 +1398,14 @@ static const struct mips_perf_event octeon_cache_map
 #ifdef CONFIG_MIPS_MT_SMP
 static void check_and_calc_range(struct perf_event *event,
 				 const struct mips_perf_event *pev)
+=======
+};
+
+#ifdef CONFIG_MIPS_MT_SMP
+static void
+check_and_calc_range(struct perf_event *event,
+			const struct mips_perf_event *pev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hw_perf_event *hwc = &event->hw;
 
@@ -1188,8 +1428,14 @@ static void check_and_calc_range(struct perf_event *event,
 		hwc->config_base |= M_TC_EN_ALL;
 }
 #else
+<<<<<<< HEAD
 static void check_and_calc_range(struct perf_event *event,
 				 const struct mips_perf_event *pev)
+=======
+static void
+check_and_calc_range(struct perf_event *event,
+			const struct mips_perf_event *pev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 }
 #endif
@@ -1211,7 +1457,11 @@ static int __hw_perf_event_init(struct perf_event *event)
 	} else if (PERF_TYPE_RAW == event->attr.type) {
 		/* We are working on the global raw event. */
 		mutex_lock(&raw_event_mutex);
+<<<<<<< HEAD
 		pev = mipspmu.map_raw_event(event->attr.config);
+=======
+		pev = mipspmu->map_raw_event(event->attr.config);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		/* The event type is not (yet) supported. */
 		return -EOPNOTSUPP;
@@ -1256,12 +1506,17 @@ static int __hw_perf_event_init(struct perf_event *event)
 	hwc->config = 0;
 
 	if (!hwc->sample_period) {
+<<<<<<< HEAD
 		hwc->sample_period  = mipspmu.max_period;
+=======
+		hwc->sample_period  = MAX_PERIOD;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hwc->last_period    = hwc->sample_period;
 		local64_set(&hwc->period_left, hwc->sample_period);
 	}
 
 	err = 0;
+<<<<<<< HEAD
 	if (event->group_leader != event)
 		err = validate_group(event);
 
@@ -1270,12 +1525,23 @@ static int __hw_perf_event_init(struct perf_event *event)
 	if (err)
 		event->destroy(event);
 
+=======
+	if (event->group_leader != event) {
+		err = validate_group(event);
+		if (err)
+			return -EINVAL;
+	}
+
+	event->destroy = hw_perf_event_destroy;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
 static void pause_local_counters(void)
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
+<<<<<<< HEAD
 	int ctr = mipspmu.num_counters;
 	unsigned long flags;
 
@@ -1286,31 +1552,82 @@ static void pause_local_counters(void)
 		mipsxx_pmu_write_control(ctr, cpuc->saved_ctrl[ctr] &
 					 ~M_PERFCTL_COUNT_EVENT_WHENEVER);
 	} while (ctr > 0);
+=======
+	int counters = mipspmu->num_counters;
+	unsigned long flags;
+
+	local_irq_save(flags);
+	switch (counters) {
+	case 4:
+		cpuc->saved_ctrl[3] = r_c0_perfctrl3();
+		w_c0_perfctrl3(cpuc->saved_ctrl[3] &
+			~M_PERFCTL_COUNT_EVENT_WHENEVER);
+	case 3:
+		cpuc->saved_ctrl[2] = r_c0_perfctrl2();
+		w_c0_perfctrl2(cpuc->saved_ctrl[2] &
+			~M_PERFCTL_COUNT_EVENT_WHENEVER);
+	case 2:
+		cpuc->saved_ctrl[1] = r_c0_perfctrl1();
+		w_c0_perfctrl1(cpuc->saved_ctrl[1] &
+			~M_PERFCTL_COUNT_EVENT_WHENEVER);
+	case 1:
+		cpuc->saved_ctrl[0] = r_c0_perfctrl0();
+		w_c0_perfctrl0(cpuc->saved_ctrl[0] &
+			~M_PERFCTL_COUNT_EVENT_WHENEVER);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_irq_restore(flags);
 }
 
 static void resume_local_counters(void)
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
+<<<<<<< HEAD
 	int ctr = mipspmu.num_counters;
 
 	do {
 		ctr--;
 		mipsxx_pmu_write_control(ctr, cpuc->saved_ctrl[ctr]);
 	} while (ctr > 0);
+=======
+	int counters = mipspmu->num_counters;
+	unsigned long flags;
+
+	local_irq_save(flags);
+	switch (counters) {
+	case 4:
+		w_c0_perfctrl3(cpuc->saved_ctrl[3]);
+	case 3:
+		w_c0_perfctrl2(cpuc->saved_ctrl[2]);
+	case 2:
+		w_c0_perfctrl1(cpuc->saved_ctrl[1]);
+	case 1:
+		w_c0_perfctrl0(cpuc->saved_ctrl[0]);
+	}
+	local_irq_restore(flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int mipsxx_pmu_handle_shared_irq(void)
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 	struct perf_sample_data data;
+<<<<<<< HEAD
 	unsigned int counters = mipspmu.num_counters;
 	u64 counter;
+=======
+	unsigned int counters = mipspmu->num_counters;
+	unsigned int counter;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int handled = IRQ_NONE;
 	struct pt_regs *regs;
 
 	if (cpu_has_mips_r2 && !(read_c0_cause() & (1 << 26)))
 		return handled;
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * First we pause the local counters, so that when we are locked
 	 * here, the counters are all paused. When it gets locked due to
@@ -1331,9 +1648,19 @@ static int mipsxx_pmu_handle_shared_irq(void)
 #define HANDLE_COUNTER(n)						\
 	case n + 1:							\
 		if (test_bit(n, cpuc->used_mask)) {			\
+<<<<<<< HEAD
 			counter = mipspmu.read_counter(n);		\
 			if (counter & mipspmu.overflow) {		\
 				handle_associated_event(cpuc, n, &data, regs); \
+=======
+			counter = r_c0_perfcntr ## n();			\
+			if (counter & M_COUNTER_OVERFLOW) {		\
+				w_c0_perfcntr ## n(counter &		\
+						VALID_COUNT);		\
+				if (test_and_change_bit(n, cpuc->msbs))	\
+					handle_associated_event(cpuc,	\
+						n, &data, regs);	\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				handled = IRQ_HANDLED;			\
 			}						\
 		}
@@ -1358,16 +1685,130 @@ static int mipsxx_pmu_handle_shared_irq(void)
 	return handled;
 }
 
+<<<<<<< HEAD
 static irqreturn_t mipsxx_pmu_handle_irq(int irq, void *dev)
+=======
+static irqreturn_t
+mipsxx_pmu_handle_irq(int irq, void *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return mipsxx_pmu_handle_shared_irq();
 }
 
+<<<<<<< HEAD
 /* 24K */
+=======
+static void mipsxx_pmu_start(void)
+{
+#ifdef CONFIG_MIPS_MT_SMP
+	write_unlock(&pmuint_rwlock);
+#endif
+	resume_local_counters();
+}
+
+/*
+ * MIPS performance counters can be per-TC. The control registers can
+ * not be directly accessed across CPUs. Hence if we want to do global
+ * control, we need cross CPU calls. on_each_cpu() can help us, but we
+ * can not make sure this function is called with interrupts enabled. So
+ * here we pause local counters and then grab a rwlock and leave the
+ * counters on other CPUs alone. If any counter interrupt raises while
+ * we own the write lock, simply pause local counters on that CPU and
+ * spin in the handler. Also we know we won't be switched to another
+ * CPU after pausing local counters and before grabbing the lock.
+ */
+static void mipsxx_pmu_stop(void)
+{
+	pause_local_counters();
+#ifdef CONFIG_MIPS_MT_SMP
+	write_lock(&pmuint_rwlock);
+#endif
+}
+
+static int
+mipsxx_pmu_alloc_counter(struct cpu_hw_events *cpuc,
+			struct hw_perf_event *hwc)
+{
+	int i;
+
+	/*
+	 * We only need to care the counter mask. The range has been
+	 * checked definitely.
+	 */
+	unsigned long cntr_mask = (hwc->event_base >> 8) & 0xffff;
+
+	for (i = mipspmu->num_counters - 1; i >= 0; i--) {
+		/*
+		 * Note that some MIPS perf events can be counted by both
+		 * even and odd counters, wheresas many other are only by
+		 * even _or_ odd counters. This introduces an issue that
+		 * when the former kind of event takes the counter the
+		 * latter kind of event wants to use, then the "counter
+		 * allocation" for the latter event will fail. In fact if
+		 * they can be dynamically swapped, they both feel happy.
+		 * But here we leave this issue alone for now.
+		 */
+		if (test_bit(i, &cntr_mask) &&
+			!test_and_set_bit(i, cpuc->used_mask))
+			return i;
+	}
+
+	return -EAGAIN;
+}
+
+static void
+mipsxx_pmu_enable_event(struct hw_perf_event *evt, int idx)
+{
+	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
+	unsigned long flags;
+
+	WARN_ON(idx < 0 || idx >= mipspmu->num_counters);
+
+	local_irq_save(flags);
+	cpuc->saved_ctrl[idx] = M_PERFCTL_EVENT(evt->event_base & 0xff) |
+		(evt->config_base & M_PERFCTL_CONFIG_MASK) |
+		/* Make sure interrupt enabled. */
+		M_PERFCTL_INTERRUPT_ENABLE;
+	/*
+	 * We do not actually let the counter run. Leave it until start().
+	 */
+	local_irq_restore(flags);
+}
+
+static void
+mipsxx_pmu_disable_event(int idx)
+{
+	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
+	unsigned long flags;
+
+	WARN_ON(idx < 0 || idx >= mipspmu->num_counters);
+
+	local_irq_save(flags);
+	cpuc->saved_ctrl[idx] = mipsxx_pmu_read_control(idx) &
+		~M_PERFCTL_COUNT_EVENT_WHENEVER;
+	mipsxx_pmu_write_control(idx, cpuc->saved_ctrl[idx]);
+	local_irq_restore(flags);
+}
+
+/* 24K */
+#define IS_UNSUPPORTED_24K_EVENT(r, b)					\
+	((b) == 12 || (r) == 151 || (r) == 152 || (b) == 26 ||		\
+	 (b) == 27 || (r) == 28 || (r) == 158 || (b) == 31 ||		\
+	 (b) == 32 || (b) == 34 || (b) == 36 || (r) == 168 ||		\
+	 (r) == 172 || (b) == 47 || ((b) >= 56 && (b) <= 63) ||		\
+	 ((b) >= 68 && (b) <= 127))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define IS_BOTH_COUNTERS_24K_EVENT(b)					\
 	((b) == 0 || (b) == 1 || (b) == 11)
 
 /* 34K */
+<<<<<<< HEAD
+=======
+#define IS_UNSUPPORTED_34K_EVENT(r, b)					\
+	((b) == 12 || (r) == 27 || (r) == 158 || (b) == 36 ||		\
+	 (b) == 38 || (r) == 175 || ((b) >= 56 && (b) <= 63) ||		\
+	 ((b) >= 68 && (b) <= 127))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define IS_BOTH_COUNTERS_34K_EVENT(b)					\
 	((b) == 0 || (b) == 1 || (b) == 11)
 #ifdef CONFIG_MIPS_MT_SMP
@@ -1380,10 +1821,26 @@ static irqreturn_t mipsxx_pmu_handle_irq(int irq, void *dev)
 #endif
 
 /* 74K */
+<<<<<<< HEAD
+=======
+#define IS_UNSUPPORTED_74K_EVENT(r, b)					\
+	((r) == 5 || ((r) >= 135 && (r) <= 137) ||			\
+	 ((b) >= 10 && (b) <= 12) || (b) == 22 || (b) == 27 ||		\
+	 (b) == 33 || (b) == 34 || ((b) >= 47 && (b) <= 49) ||		\
+	 (r) == 178 || (b) == 55 || (b) == 57 || (b) == 60 ||		\
+	 (b) == 61 || (r) == 62 || (r) == 191 ||			\
+	 ((b) >= 64 && (b) <= 127))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define IS_BOTH_COUNTERS_74K_EVENT(b)					\
 	((b) == 0 || (b) == 1)
 
 /* 1004K */
+<<<<<<< HEAD
+=======
+#define IS_UNSUPPORTED_1004K_EVENT(r, b)				\
+	((b) == 12 || (r) == 27 || (r) == 158 || (b) == 38 ||		\
+	 (r) == 175 || (b) == 63 || ((b) >= 68 && (b) <= 127))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define IS_BOTH_COUNTERS_1004K_EVENT(b)					\
 	((b) == 0 || (b) == 1 || (b) == 11)
 #ifdef CONFIG_MIPS_MT_SMP
@@ -1404,15 +1861,28 @@ static irqreturn_t mipsxx_pmu_handle_irq(int irq, void *dev)
  * then 128 needs to be added to 15 as the input for the event config,
  * i.e., 143 (0x8F) to be used.
  */
+<<<<<<< HEAD
 static const struct mips_perf_event *mipsxx_pmu_map_raw_event(u64 config)
+=======
+static const struct mips_perf_event *
+mipsxx_pmu_map_raw_event(u64 config)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int raw_id = config & 0xff;
 	unsigned int base_id = raw_id & 0x7f;
 
+<<<<<<< HEAD
 	raw_event.event_id = base_id;
 
 	switch (current_cpu_type()) {
 	case CPU_24K:
+=======
+	switch (current_cpu_type()) {
+	case CPU_24K:
+		if (IS_UNSUPPORTED_24K_EVENT(raw_id, base_id))
+			return ERR_PTR(-EOPNOTSUPP);
+		raw_event.event_id = base_id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (IS_BOTH_COUNTERS_24K_EVENT(base_id))
 			raw_event.cntr_mask = CNTR_EVEN | CNTR_ODD;
 		else
@@ -1427,6 +1897,12 @@ static const struct mips_perf_event *mipsxx_pmu_map_raw_event(u64 config)
 #endif
 		break;
 	case CPU_34K:
+<<<<<<< HEAD
+=======
+		if (IS_UNSUPPORTED_34K_EVENT(raw_id, base_id))
+			return ERR_PTR(-EOPNOTSUPP);
+		raw_event.event_id = base_id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (IS_BOTH_COUNTERS_34K_EVENT(base_id))
 			raw_event.cntr_mask = CNTR_EVEN | CNTR_ODD;
 		else
@@ -1442,6 +1918,12 @@ static const struct mips_perf_event *mipsxx_pmu_map_raw_event(u64 config)
 #endif
 		break;
 	case CPU_74K:
+<<<<<<< HEAD
+=======
+		if (IS_UNSUPPORTED_74K_EVENT(raw_id, base_id))
+			return ERR_PTR(-EOPNOTSUPP);
+		raw_event.event_id = base_id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (IS_BOTH_COUNTERS_74K_EVENT(base_id))
 			raw_event.cntr_mask = CNTR_EVEN | CNTR_ODD;
 		else
@@ -1452,6 +1934,12 @@ static const struct mips_perf_event *mipsxx_pmu_map_raw_event(u64 config)
 #endif
 		break;
 	case CPU_1004K:
+<<<<<<< HEAD
+=======
+		if (IS_UNSUPPORTED_1004K_EVENT(raw_id, base_id))
+			return ERR_PTR(-EOPNOTSUPP);
+		raw_event.event_id = base_id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (IS_BOTH_COUNTERS_1004K_EVENT(base_id))
 			raw_event.cntr_mask = CNTR_EVEN | CNTR_ODD;
 		else
@@ -1471,6 +1959,7 @@ static const struct mips_perf_event *mipsxx_pmu_map_raw_event(u64 config)
 	return &raw_event;
 }
 
+<<<<<<< HEAD
 static const struct mips_perf_event *octeon_pmu_map_raw_event(u64 config)
 {
 	unsigned int raw_id = config & 0xff;
@@ -1503,12 +1992,46 @@ static const struct mips_perf_event *octeon_pmu_map_raw_event(u64 config)
 
 	return &raw_event;
 }
+=======
+static struct mips_pmu mipsxxcore_pmu = {
+	.handle_irq = mipsxx_pmu_handle_irq,
+	.handle_shared_irq = mipsxx_pmu_handle_shared_irq,
+	.start = mipsxx_pmu_start,
+	.stop = mipsxx_pmu_stop,
+	.alloc_counter = mipsxx_pmu_alloc_counter,
+	.read_counter = mipsxx_pmu_read_counter,
+	.write_counter = mipsxx_pmu_write_counter,
+	.enable_event = mipsxx_pmu_enable_event,
+	.disable_event = mipsxx_pmu_disable_event,
+	.map_raw_event = mipsxx_pmu_map_raw_event,
+	.general_event_map = &mipsxxcore_event_map,
+	.cache_event_map = &mipsxxcore_cache_map,
+};
+
+static struct mips_pmu mipsxx74Kcore_pmu = {
+	.handle_irq = mipsxx_pmu_handle_irq,
+	.handle_shared_irq = mipsxx_pmu_handle_shared_irq,
+	.start = mipsxx_pmu_start,
+	.stop = mipsxx_pmu_stop,
+	.alloc_counter = mipsxx_pmu_alloc_counter,
+	.read_counter = mipsxx_pmu_read_counter,
+	.write_counter = mipsxx_pmu_write_counter,
+	.enable_event = mipsxx_pmu_enable_event,
+	.disable_event = mipsxx_pmu_disable_event,
+	.map_raw_event = mipsxx_pmu_map_raw_event,
+	.general_event_map = &mipsxx74Kcore_event_map,
+	.cache_event_map = &mipsxx74Kcore_cache_map,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __init
 init_hw_perf_events(void)
 {
 	int counters, irq;
+<<<<<<< HEAD
 	int counter_bits;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pr_info("Performance counters: ");
 
@@ -1540,6 +2063,7 @@ init_hw_perf_events(void)
 	}
 #endif
 
+<<<<<<< HEAD
 	mipspmu.map_raw_event = mipsxx_pmu_map_raw_event;
 
 	switch (current_cpu_type()) {
@@ -1570,6 +2094,34 @@ init_hw_perf_events(void)
 		mipspmu.general_event_map = &octeon_event_map;
 		mipspmu.cache_event_map = &octeon_cache_map;
 		mipspmu.map_raw_event = octeon_pmu_map_raw_event;
+=======
+	on_each_cpu(reset_counters, (void *)(long)counters, 1);
+
+	switch (current_cpu_type()) {
+	case CPU_24K:
+		mipsxxcore_pmu.name = "mips/24K";
+		mipsxxcore_pmu.num_counters = counters;
+		mipsxxcore_pmu.irq = irq;
+		mipspmu = &mipsxxcore_pmu;
+		break;
+	case CPU_34K:
+		mipsxxcore_pmu.name = "mips/34K";
+		mipsxxcore_pmu.num_counters = counters;
+		mipsxxcore_pmu.irq = irq;
+		mipspmu = &mipsxxcore_pmu;
+		break;
+	case CPU_74K:
+		mipsxx74Kcore_pmu.name = "mips/74K";
+		mipsxx74Kcore_pmu.num_counters = counters;
+		mipsxx74Kcore_pmu.irq = irq;
+		mipspmu = &mipsxx74Kcore_pmu;
+		break;
+	case CPU_1004K:
+		mipsxxcore_pmu.name = "mips/1004K";
+		mipsxxcore_pmu.num_counters = counters;
+		mipsxxcore_pmu.irq = irq;
+		mipspmu = &mipsxxcore_pmu;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		pr_cont("Either hardware does not support performance "
@@ -1577,6 +2129,7 @@ init_hw_perf_events(void)
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	mipspmu.num_counters = counters;
 	mipspmu.irq = irq;
 
@@ -1601,9 +2154,20 @@ init_hw_perf_events(void)
 	pr_cont("%s PMU enabled, %d %d-bit counters available to each "
 		"CPU, irq %d%s\n", mipspmu.name, counters, counter_bits, irq,
 		irq < 0 ? " (share with timer interrupt)" : "");
+=======
+	if (mipspmu)
+		pr_cont("%s PMU enabled, %d counters available to each "
+			"CPU, irq %d%s\n", mipspmu->name, counters, irq,
+			irq < 0 ? " (share with timer interrupt)" : "");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	perf_pmu_register(&pmu, "cpu", PERF_TYPE_RAW);
 
 	return 0;
 }
 early_initcall(init_hw_perf_events);
+<<<<<<< HEAD
+=======
+
+#endif /* defined(CONFIG_CPU_MIPS32)... */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

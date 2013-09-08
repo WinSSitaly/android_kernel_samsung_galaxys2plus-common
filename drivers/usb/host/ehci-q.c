@@ -111,6 +111,11 @@ qh_update (struct ehci_hcd *ehci, struct ehci_qh *qh, struct ehci_qtd *qtd)
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	/* HC must see latest qtd and qh data before we clear ACTIVE+HALT */
+	wmb ();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hw->hw_token &= cpu_to_hc32(ehci, QTD_TOGGLE | QTD_STS_PING);
 }
 
@@ -128,6 +133,7 @@ qh_refresh (struct ehci_hcd *ehci, struct ehci_qh *qh)
 	else {
 		qtd = list_entry (qh->qtd_list.next,
 				struct ehci_qtd, qtd_list);
+<<<<<<< HEAD
 		/*
 		 * first qtd may already be partially processed.
 		 * If we come here during unlink, the QH overlay region
@@ -139,6 +145,11 @@ qh_refresh (struct ehci_hcd *ehci, struct ehci_qh *qh)
 			qh->hw->hw_qtd_next = qtd->hw_next;
 			qtd = NULL;
 		}
+=======
+		/* first qtd may already be partially processed */
+		if (cpu_to_hc32(ehci, qtd->qtd_dma) == qh->hw->hw_current)
+			qtd = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (qtd)
@@ -159,7 +170,11 @@ static void ehci_clear_tt_buffer_complete(struct usb_hcd *hcd,
 	spin_lock_irqsave(&ehci->lock, flags);
 	qh->clearing_tt = 0;
 	if (qh->qh_state == QH_STATE_IDLE && !list_empty(&qh->qtd_list)
+<<<<<<< HEAD
 			&& ehci->rh_state == EHCI_RH_RUNNING)
+=======
+			&& HC_IS_RUNNING(hcd->state))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		qh_link_async(ehci, qh);
 	spin_unlock_irqrestore(&ehci->lock, flags);
 }
@@ -381,6 +396,7 @@ qh_completions (struct ehci_hcd *ehci, struct ehci_qh *qh)
  retry_xacterr:
 		if ((token & QTD_STS_ACTIVE) == 0) {
 
+<<<<<<< HEAD
 			/* Report Data Buffer Error: non-fatal but useful */
 			if (token & QTD_STS_DBE)
 				ehci_dbg(ehci,
@@ -392,6 +408,8 @@ qh_completions (struct ehci_hcd *ehci, struct ehci_qh *qh)
 					qtd,
 					qh);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* on STALL, error, and short reads this urb must
 			 * complete and all its qtds must be recycled.
 			 */
@@ -442,7 +460,11 @@ qh_completions (struct ehci_hcd *ehci, struct ehci_qh *qh)
 
 		/* stop scanning when we reach qtds the hc is using */
 		} else if (likely (!stopped
+<<<<<<< HEAD
 				&& ehci->rh_state == EHCI_RH_RUNNING)) {
+=======
+				&& HC_IS_RUNNING (ehci_to_hcd(ehci)->state))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		/* scan the whole queue for unlinks whenever it stops */
@@ -450,7 +472,11 @@ qh_completions (struct ehci_hcd *ehci, struct ehci_qh *qh)
 			stopped = 1;
 
 			/* cancel everything if we halt, suspend, etc */
+<<<<<<< HEAD
 			if (ehci->rh_state != EHCI_RH_RUNNING)
+=======
+			if (!HC_IS_RUNNING(ehci_to_hcd(ehci)->state))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				last_status = -ESHUTDOWN;
 
 			/* this qtd is active; skip it unless a previous qtd
@@ -741,8 +767,12 @@ qh_urb_transaction (
 
 	/*
 	 * control requests may need a terminating data "status" ack;
+<<<<<<< HEAD
 	 * other OUT ones may need a terminating short packet
 	 * (zero length).
+=======
+	 * bulk ones may need a terminating short packet (zero length).
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	if (likely (urb->transfer_buffer_length != 0)) {
 		int	one_more = 0;
@@ -751,7 +781,11 @@ qh_urb_transaction (
 			one_more = 1;
 			token ^= 0x0100;	/* "in" <--> "out"  */
 			token |= QTD_TOGGLE;	/* force DATA1 */
+<<<<<<< HEAD
 		} else if (usb_pipeout(urb->pipe)
+=======
+		} else if (usb_pipebulk (urb->pipe)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				&& (urb->transfer_flags & URB_ZERO_PACKET)
 				&& !(urb->transfer_buffer_length % maxpacket)) {
 			one_more = 1;
@@ -995,8 +1029,14 @@ static void qh_link_async (struct ehci_hcd *ehci, struct ehci_qh *qh)
 			/* in case a clear of CMD_ASE didn't take yet */
 			(void)handshake(ehci, &ehci->regs->status,
 					STS_ASS, 0, 150);
+<<<<<<< HEAD
 			cmd |= CMD_ASE;
 			ehci_writel(ehci, cmd, &ehci->regs->command);
+=======
+			cmd |= CMD_ASE | CMD_RUN;
+			ehci_writel(ehci, cmd, &ehci->regs->command);
+			ehci_to_hcd(ehci)->state = HC_STATE_RUNNING;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* posted write need not be known to HC yet ... */
 		}
 	}
@@ -1012,6 +1052,15 @@ static void qh_link_async (struct ehci_hcd *ehci, struct ehci_qh *qh)
 	head->qh_next.qh = qh;
 	head->hw->hw_next = dma;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * flush qh descriptor into memory immediately,
+	 * see comments in qh_append_tds.
+	 * */
+	ehci_sync_mem();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	qh_get(qh);
 	qh->xacterrs = 0;
 	qh->qh_state = QH_STATE_LINKED;
@@ -1075,7 +1124,11 @@ static struct ehci_qh *qh_append_tds (
 			 */
 			token = qtd->hw_token;
 			qtd->hw_token = HALT_BIT(ehci);
+<<<<<<< HEAD
 
+=======
+			wmb ();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dummy = qh->dummy;
 
 			dma = dummy->qtd_dma;
@@ -1099,6 +1152,21 @@ static struct ehci_qh *qh_append_tds (
 			wmb ();
 			dummy->hw_token = token;
 
+<<<<<<< HEAD
+=======
+			/*
+			 * Writing to dma coherent buffer on ARM may
+			 * be delayed to reach memory, so HC may not see
+			 * hw_token of dummy qtd in time, which can cause
+			 * the qtd transaction to be executed very late,
+			 * and degrade performance a lot. ehci_sync_mem
+			 * is added to flush 'token' immediatelly into
+			 * memory, so that ehci can execute the transaction
+			 * ASAP.
+			 * */
+			ehci_sync_mem();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			urb->hcpriv = qh_get (qh);
 		}
 	}
@@ -1185,6 +1253,7 @@ static void end_unlink_async (struct ehci_hcd *ehci)
 
 	qh_completions (ehci, qh);
 
+<<<<<<< HEAD
 	if (!list_empty(&qh->qtd_list) && ehci->rh_state == EHCI_RH_RUNNING) {
 		qh_link_async (ehci, qh);
 	} else {
@@ -1192,6 +1261,16 @@ static void end_unlink_async (struct ehci_hcd *ehci)
 		 * active but idle for a while once it empties.
 		 */
 		if (ehci->rh_state == EHCI_RH_RUNNING
+=======
+	if (!list_empty (&qh->qtd_list)
+			&& HC_IS_RUNNING (ehci_to_hcd(ehci)->state))
+		qh_link_async (ehci, qh);
+	else {
+		/* it's not free to turn the async schedule on/off; leave it
+		 * active but idle for a while once it empties.
+		 */
+		if (HC_IS_RUNNING (ehci_to_hcd(ehci)->state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				&& ehci->async->qh_next.qh == NULL)
 			timer_action (ehci, TIMER_ASYNC_OFF);
 	}
@@ -1227,7 +1306,11 @@ static void start_unlink_async (struct ehci_hcd *ehci, struct ehci_qh *qh)
 	/* stop async schedule right now? */
 	if (unlikely (qh == ehci->async)) {
 		/* can't get here without STS_ASS set */
+<<<<<<< HEAD
 		if (ehci->rh_state != EHCI_RH_HALTED
+=======
+		if (ehci_to_hcd(ehci)->state != HC_STATE_HALT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				&& !ehci->reclaim) {
 			/* ... and CMD_IAAD clear */
 			ehci_writel(ehci, cmd & ~CMD_ASE,
@@ -1253,7 +1336,11 @@ static void start_unlink_async (struct ehci_hcd *ehci, struct ehci_qh *qh)
 	wmb ();
 
 	/* If the controller isn't running, we don't have to wait for it */
+<<<<<<< HEAD
 	if (unlikely(ehci->rh_state != EHCI_RH_RUNNING)) {
+=======
+	if (unlikely(!HC_IS_RUNNING(ehci_to_hcd(ehci)->state))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* if (unlikely (qh->reclaim != 0))
 		 *	this will recurse, probably not much
 		 */
@@ -1276,7 +1363,11 @@ static void scan_async (struct ehci_hcd *ehci)
 	enum ehci_timer_action	action = TIMER_IO_WATCHDOG;
 
 	timer_action_done (ehci, TIMER_ASYNC_SHRINK);
+<<<<<<< HEAD
 	stopped = (ehci->rh_state != EHCI_RH_RUNNING);
+=======
+	stopped = !HC_IS_RUNNING(ehci_to_hcd(ehci)->state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ehci->qh_scan_next = ehci->async->qh_next.qh;
 	while (ehci->qh_scan_next) {

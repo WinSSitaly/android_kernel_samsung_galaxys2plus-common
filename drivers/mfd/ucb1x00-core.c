@@ -23,12 +23,23 @@
 #include <linux/init.h>
 #include <linux/errno.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/irq.h>
 #include <linux/device.h>
 #include <linux/mutex.h>
 #include <linux/mfd/ucb1x00.h>
 #include <linux/pm.h>
 #include <linux/gpio.h>
+=======
+#include <linux/device.h>
+#include <linux/mutex.h>
+#include <linux/mfd/ucb1x00.h>
+#include <linux/gpio.h>
+#include <linux/semaphore.h>
+
+#include <mach/dma.h>
+#include <mach/hardware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static DEFINE_MUTEX(ucb1x00_mutex);
 static LIST_HEAD(ucb1x00_drivers);
@@ -100,7 +111,11 @@ void ucb1x00_io_write(struct ucb1x00 *ucb, unsigned int set, unsigned int clear)
  *	ucb1x00_enable must have been called to enable the comms
  *	before using this function.
  *
+<<<<<<< HEAD
  *	This function does not take any mutexes or spinlocks.
+=======
+ *	This function does not take any semaphores or spinlocks.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 unsigned int ucb1x00_io_read(struct ucb1x00 *ucb)
 {
@@ -118,15 +133,20 @@ static void ucb1x00_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
 	else
 		ucb->io_out &= ~(1 << offset);
 
+<<<<<<< HEAD
 	ucb1x00_enable(ucb);
 	ucb1x00_reg_write(ucb, UCB_IO_DATA, ucb->io_out);
 	ucb1x00_disable(ucb);
+=======
+	ucb1x00_reg_write(ucb, UCB_IO_DATA, ucb->io_out);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&ucb->io_lock, flags);
 }
 
 static int ucb1x00_gpio_get(struct gpio_chip *chip, unsigned offset)
 {
 	struct ucb1x00 *ucb = container_of(chip, struct ucb1x00, gpio);
+<<<<<<< HEAD
 	unsigned val;
 
 	ucb1x00_enable(ucb);
@@ -134,6 +154,9 @@ static int ucb1x00_gpio_get(struct gpio_chip *chip, unsigned offset)
 	ucb1x00_disable(ucb);
 
 	return val & (1 << offset);
+=======
+	return ucb1x00_reg_read(ucb, UCB_IO_DATA) & (1 << offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ucb1x00_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
@@ -143,9 +166,13 @@ static int ucb1x00_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
 
 	spin_lock_irqsave(&ucb->io_lock, flags);
 	ucb->io_dir &= ~(1 << offset);
+<<<<<<< HEAD
 	ucb1x00_enable(ucb);
 	ucb1x00_reg_write(ucb, UCB_IO_DIR, ucb->io_dir);
 	ucb1x00_disable(ucb);
+=======
+	ucb1x00_reg_write(ucb, UCB_IO_DIR, ucb->io_dir);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&ucb->io_lock, flags);
 
 	return 0;
@@ -156,6 +183,7 @@ static int ucb1x00_gpio_direction_output(struct gpio_chip *chip, unsigned offset
 {
 	struct ucb1x00 *ucb = container_of(chip, struct ucb1x00, gpio);
 	unsigned long flags;
+<<<<<<< HEAD
 	unsigned old, mask = 1 << offset;
 
 	spin_lock_irqsave(&ucb->io_lock, flags);
@@ -174,11 +202,24 @@ static int ucb1x00_gpio_direction_output(struct gpio_chip *chip, unsigned offset
 		ucb1x00_reg_write(ucb, UCB_IO_DIR, ucb->io_dir);
 	}
 	ucb1x00_disable(ucb);
+=======
+
+	spin_lock_irqsave(&ucb->io_lock, flags);
+	ucb->io_dir |= (1 << offset);
+	ucb1x00_reg_write(ucb, UCB_IO_DIR, ucb->io_dir);
+
+	if (value)
+		ucb->io_out |= 1 << offset;
+	else
+		ucb->io_out &= ~(1 << offset);
+	ucb1x00_reg_write(ucb, UCB_IO_DATA, ucb->io_out);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&ucb->io_lock, flags);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int ucb1x00_to_irq(struct gpio_chip *chip, unsigned offset)
 {
 	struct ucb1x00 *ucb = container_of(chip, struct ucb1x00, gpio);
@@ -186,6 +227,8 @@ static int ucb1x00_to_irq(struct gpio_chip *chip, unsigned offset)
 	return ucb->irq_base > 0 ? ucb->irq_base + offset : -ENXIO;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * UCB1300 data sheet says we must:
  *  1. enable ADC	=> 5us (including reference startup time)
@@ -203,7 +246,11 @@ static int ucb1x00_to_irq(struct gpio_chip *chip, unsigned offset)
  *	Any code wishing to use the ADC converter must call this
  *	function prior to using it.
  *
+<<<<<<< HEAD
  *	This function takes the ADC mutex to prevent two or more
+=======
+ *	This function takes the ADC semaphore to prevent two or more
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	concurrent uses, and therefore may sleep.  As a result, it
  *	can only be called from process context, not interrupt
  *	context.
@@ -213,7 +260,11 @@ static int ucb1x00_to_irq(struct gpio_chip *chip, unsigned offset)
  */
 void ucb1x00_adc_enable(struct ucb1x00 *ucb)
 {
+<<<<<<< HEAD
 	mutex_lock(&ucb->adc_mutex);
+=======
+	down(&ucb->adc_sem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ucb->adc_cr |= UCB_ADC_ENA;
 
@@ -235,7 +286,11 @@ void ucb1x00_adc_enable(struct ucb1x00 *ucb)
  *	complete (2 frames max without sync).
  *
  *	If called for a synchronised ADC conversion, it may sleep
+<<<<<<< HEAD
  *	with the ADC mutex held.
+=======
+ *	with the ADC semaphore held.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 unsigned int ucb1x00_adc_read(struct ucb1x00 *ucb, int adc_channel, int sync)
 {
@@ -263,7 +318,11 @@ unsigned int ucb1x00_adc_read(struct ucb1x00 *ucb, int adc_channel, int sync)
  *	ucb1x00_adc_disable - disable the ADC converter
  *	@ucb: UCB1x00 structure describing chip
  *
+<<<<<<< HEAD
  *	Disable the ADC converter and release the ADC mutex.
+=======
+ *	Disable the ADC converter and release the ADC semaphore.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void ucb1x00_adc_disable(struct ucb1x00 *ucb)
 {
@@ -271,7 +330,11 @@ void ucb1x00_adc_disable(struct ucb1x00 *ucb)
 	ucb1x00_reg_write(ucb, UCB_ADC_CR, ucb->adc_cr);
 	ucb1x00_disable(ucb);
 
+<<<<<<< HEAD
 	mutex_unlock(&ucb->adc_mutex);
+=======
+	up(&ucb->adc_sem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -282,9 +345,16 @@ void ucb1x00_adc_disable(struct ucb1x00 *ucb)
  * SIBCLK to talk to the chip.  We leave the clock running until
  * we have finished processing all interrupts from the chip.
  */
+<<<<<<< HEAD
 static void ucb1x00_irq(unsigned int irq, struct irq_desc *desc)
 {
 	struct ucb1x00 *ucb = irq_desc_get_handler_data(desc);
+=======
+static irqreturn_t ucb1x00_irq(int irqnr, void *devid)
+{
+	struct ucb1x00 *ucb = devid;
+	struct ucb1x00_irq *irq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int isr, i;
 
 	ucb1x00_enable(ucb);
@@ -292,6 +362,7 @@ static void ucb1x00_irq(unsigned int irq, struct irq_desc *desc)
 	ucb1x00_reg_write(ucb, UCB_IE_CLEAR, isr);
 	ucb1x00_reg_write(ucb, UCB_IE_CLEAR, 0);
 
+<<<<<<< HEAD
 	for (i = 0; i < 16 && isr; i++, isr >>= 1, irq++)
 		if (isr & 1)
 			generic_handle_irq(ucb->irq_base + i);
@@ -389,6 +460,158 @@ static struct irq_chip ucb1x00_irqchip = {
 	.irq_set_type = ucb1x00_irq_set_type,
 	.irq_set_wake = ucb1x00_irq_set_wake,
 };
+=======
+	for (i = 0, irq = ucb->irq_handler; i < 16 && isr; i++, isr >>= 1, irq++)
+		if (isr & 1 && irq->fn)
+			irq->fn(i, irq->devid);
+	ucb1x00_disable(ucb);
+
+	return IRQ_HANDLED;
+}
+
+/**
+ *	ucb1x00_hook_irq - hook a UCB1x00 interrupt
+ *	@ucb:   UCB1x00 structure describing chip
+ *	@idx:   interrupt index
+ *	@fn:    function to call when interrupt is triggered
+ *	@devid: device id to pass to interrupt handler
+ *
+ *	Hook the specified interrupt.  You can only register one handler
+ *	for each interrupt source.  The interrupt source is not enabled
+ *	by this function; use ucb1x00_enable_irq instead.
+ *
+ *	Interrupt handlers will be called with other interrupts enabled.
+ *
+ *	Returns zero on success, or one of the following errors:
+ *	 -EINVAL if the interrupt index is invalid
+ *	 -EBUSY if the interrupt has already been hooked
+ */
+int ucb1x00_hook_irq(struct ucb1x00 *ucb, unsigned int idx, void (*fn)(int, void *), void *devid)
+{
+	struct ucb1x00_irq *irq;
+	int ret = -EINVAL;
+
+	if (idx < 16) {
+		irq = ucb->irq_handler + idx;
+		ret = -EBUSY;
+
+		spin_lock_irq(&ucb->lock);
+		if (irq->fn == NULL) {
+			irq->devid = devid;
+			irq->fn = fn;
+			ret = 0;
+		}
+		spin_unlock_irq(&ucb->lock);
+	}
+	return ret;
+}
+
+/**
+ *	ucb1x00_enable_irq - enable an UCB1x00 interrupt source
+ *	@ucb: UCB1x00 structure describing chip
+ *	@idx: interrupt index
+ *	@edges: interrupt edges to enable
+ *
+ *	Enable the specified interrupt to trigger on %UCB_RISING,
+ *	%UCB_FALLING or both edges.  The interrupt should have been
+ *	hooked by ucb1x00_hook_irq.
+ */
+void ucb1x00_enable_irq(struct ucb1x00 *ucb, unsigned int idx, int edges)
+{
+	unsigned long flags;
+
+	if (idx < 16) {
+		spin_lock_irqsave(&ucb->lock, flags);
+
+		ucb1x00_enable(ucb);
+		if (edges & UCB_RISING) {
+			ucb->irq_ris_enbl |= 1 << idx;
+			ucb1x00_reg_write(ucb, UCB_IE_RIS, ucb->irq_ris_enbl);
+		}
+		if (edges & UCB_FALLING) {
+			ucb->irq_fal_enbl |= 1 << idx;
+			ucb1x00_reg_write(ucb, UCB_IE_FAL, ucb->irq_fal_enbl);
+		}
+		ucb1x00_disable(ucb);
+		spin_unlock_irqrestore(&ucb->lock, flags);
+	}
+}
+
+/**
+ *	ucb1x00_disable_irq - disable an UCB1x00 interrupt source
+ *	@ucb: UCB1x00 structure describing chip
+ *	@edges: interrupt edges to disable
+ *
+ *	Disable the specified interrupt triggering on the specified
+ *	(%UCB_RISING, %UCB_FALLING or both) edges.
+ */
+void ucb1x00_disable_irq(struct ucb1x00 *ucb, unsigned int idx, int edges)
+{
+	unsigned long flags;
+
+	if (idx < 16) {
+		spin_lock_irqsave(&ucb->lock, flags);
+
+		ucb1x00_enable(ucb);
+		if (edges & UCB_RISING) {
+			ucb->irq_ris_enbl &= ~(1 << idx);
+			ucb1x00_reg_write(ucb, UCB_IE_RIS, ucb->irq_ris_enbl);
+		}
+		if (edges & UCB_FALLING) {
+			ucb->irq_fal_enbl &= ~(1 << idx);
+			ucb1x00_reg_write(ucb, UCB_IE_FAL, ucb->irq_fal_enbl);
+		}
+		ucb1x00_disable(ucb);
+		spin_unlock_irqrestore(&ucb->lock, flags);
+	}
+}
+
+/**
+ *	ucb1x00_free_irq - disable and free the specified UCB1x00 interrupt
+ *	@ucb: UCB1x00 structure describing chip
+ *	@idx: interrupt index
+ *	@devid: device id.
+ *
+ *	Disable the interrupt source and remove the handler.  devid must
+ *	match the devid passed when hooking the interrupt.
+ *
+ *	Returns zero on success, or one of the following errors:
+ *	 -EINVAL if the interrupt index is invalid
+ *	 -ENOENT if devid does not match
+ */
+int ucb1x00_free_irq(struct ucb1x00 *ucb, unsigned int idx, void *devid)
+{
+	struct ucb1x00_irq *irq;
+	int ret;
+
+	if (idx >= 16)
+		goto bad;
+
+	irq = ucb->irq_handler + idx;
+	ret = -ENOENT;
+
+	spin_lock_irq(&ucb->lock);
+	if (irq->devid == devid) {
+		ucb->irq_ris_enbl &= ~(1 << idx);
+		ucb->irq_fal_enbl &= ~(1 << idx);
+
+		ucb1x00_enable(ucb);
+		ucb1x00_reg_write(ucb, UCB_IE_RIS, ucb->irq_ris_enbl);
+		ucb1x00_reg_write(ucb, UCB_IE_FAL, ucb->irq_fal_enbl);
+		ucb1x00_disable(ucb);
+
+		irq->fn = NULL;
+		irq->devid = NULL;
+		ret = 0;
+	}
+	spin_unlock_irq(&ucb->lock);
+	return ret;
+
+bad:
+	printk(KERN_ERR "Freeing bad UCB1x00 irq %d\n", idx);
+	return -EINVAL;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int ucb1x00_add_dev(struct ucb1x00 *ucb, struct ucb1x00_driver *drv)
 {
@@ -403,8 +626,13 @@ static int ucb1x00_add_dev(struct ucb1x00 *ucb, struct ucb1x00_driver *drv)
 		ret = drv->add(dev);
 
 		if (ret == 0) {
+<<<<<<< HEAD
 			list_add_tail(&dev->dev_node, &ucb->devs);
 			list_add_tail(&dev->drv_node, &drv->devs);
+=======
+			list_add(&dev->dev_node, &ucb->devs);
+			list_add(&dev->drv_node, &drv->devs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			kfree(dev);
 		}
@@ -496,6 +724,7 @@ static struct class ucb1x00_class = {
 
 static int ucb1x00_probe(struct mcp *mcp)
 {
+<<<<<<< HEAD
 	struct ucb1x00_plat_data *pdata = mcp->attached_device.platform_data;
 	struct ucb1x00_driver *drv;
 	struct ucb1x00 *ucb;
@@ -513,18 +742,39 @@ static int ucb1x00_probe(struct mcp *mcp)
 	if (id != UCB_ID_1200 && id != UCB_ID_1300 && id != UCB_ID_TC35143) {
 		printk(KERN_WARNING "UCB1x00 ID not found: %04x\n", id);
 		goto out;
+=======
+	struct ucb1x00 *ucb;
+	struct ucb1x00_driver *drv;
+	unsigned int id;
+	int ret = -ENODEV;
+	int temp;
+
+	mcp_enable(mcp);
+	id = mcp_reg_read(mcp, UCB_ID);
+
+	if (id != UCB_ID_1200 && id != UCB_ID_1300 && id != UCB_ID_TC35143) {
+		printk(KERN_WARNING "UCB1x00 ID not found: %04x\n", id);
+		goto err_disable;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ucb = kzalloc(sizeof(struct ucb1x00), GFP_KERNEL);
 	ret = -ENOMEM;
 	if (!ucb)
+<<<<<<< HEAD
 		goto out;
 
 	device_initialize(&ucb->dev);
+=======
+		goto err_disable;
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ucb->dev.class = &ucb1x00_class;
 	ucb->dev.parent = &mcp->attached_device;
 	dev_set_name(&ucb->dev, "ucb1x00");
 
+<<<<<<< HEAD
 	raw_spin_lock_init(&ucb->irq_lock);
 	spin_lock_init(&ucb->io_lock);
 	mutex_init(&ucb->adc_mutex);
@@ -571,11 +821,31 @@ static int ucb1x00_probe(struct mcp *mcp)
 		ucb->gpio.dev = &ucb->dev;
 		ucb->gpio.owner = THIS_MODULE;
 		ucb->gpio.base = pdata->gpio_base;
+=======
+	spin_lock_init(&ucb->lock);
+	spin_lock_init(&ucb->io_lock);
+	sema_init(&ucb->adc_sem, 1);
+
+	ucb->id  = id;
+	ucb->mcp = mcp;
+	ucb->irq = ucb1x00_detect_irq(ucb);
+	if (ucb->irq == NO_IRQ) {
+		printk(KERN_ERR "UCB1x00: IRQ probe failed\n");
+		ret = -ENODEV;
+		goto err_free;
+	}
+
+	ucb->gpio.base = -1;
+	if (mcp->gpio_base != 0) {
+		ucb->gpio.label = dev_name(&ucb->dev);
+		ucb->gpio.base = mcp->gpio_base;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ucb->gpio.ngpio = 10;
 		ucb->gpio.set = ucb1x00_gpio_set;
 		ucb->gpio.get = ucb1x00_gpio_get;
 		ucb->gpio.direction_input = ucb1x00_gpio_direction_input;
 		ucb->gpio.direction_output = ucb1x00_gpio_direction_output;
+<<<<<<< HEAD
 		ucb->gpio.to_irq = ucb1x00_to_irq;
 		ret = gpiochip_add(&ucb->gpio);
 		if (ret)
@@ -591,11 +861,38 @@ static int ucb1x00_probe(struct mcp *mcp)
 	INIT_LIST_HEAD(&ucb->devs);
 	mutex_lock(&ucb1x00_mutex);
 	list_add_tail(&ucb->node, &ucb1x00_devices);
+=======
+		ret = gpiochip_add(&ucb->gpio);
+		if (ret)
+			goto err_free;
+	} else
+		dev_info(&ucb->dev, "gpio_base not set so no gpiolib support");
+
+	ret = request_irq(ucb->irq, ucb1x00_irq, IRQF_TRIGGER_RISING,
+			  "UCB1x00", ucb);
+	if (ret) {
+		printk(KERN_ERR "ucb1x00: unable to grab irq%d: %d\n",
+			ucb->irq, ret);
+		goto err_gpio;
+	}
+
+	mcp_set_drvdata(mcp, ucb);
+
+	ret = device_register(&ucb->dev);
+	if (ret)
+		goto err_irq;
+
+
+	INIT_LIST_HEAD(&ucb->devs);
+	mutex_lock(&ucb1x00_mutex);
+	list_add(&ucb->node, &ucb1x00_devices);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(drv, &ucb1x00_drivers, node) {
 		ucb1x00_add_dev(ucb, drv);
 	}
 	mutex_unlock(&ucb1x00_mutex);
 
+<<<<<<< HEAD
 	return ret;
 
  err_gpio_add:
@@ -610,12 +907,29 @@ static int ucb1x00_probe(struct mcp *mcp)
  out:
 	if (pdata && pdata->reset)
 		pdata->reset(UCB_RST_PROBE_FAIL);
+=======
+	goto out;
+
+ err_irq:
+	free_irq(ucb->irq, ucb);
+ err_gpio:
+	if (ucb->gpio.base != -1)
+		temp = gpiochip_remove(&ucb->gpio);
+ err_free:
+	kfree(ucb);
+ err_disable:
+	mcp_disable(mcp);
+ out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static void ucb1x00_remove(struct mcp *mcp)
 {
+<<<<<<< HEAD
 	struct ucb1x00_plat_data *pdata = mcp->attached_device.platform_data;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ucb1x00 *ucb = mcp_get_drvdata(mcp);
 	struct list_head *l, *n;
 	int ret;
@@ -634,12 +948,17 @@ static void ucb1x00_remove(struct mcp *mcp)
 			dev_err(&ucb->dev, "Can't remove gpio chip: %d\n", ret);
 	}
 
+<<<<<<< HEAD
 	irq_set_chained_handler(ucb->irq, NULL);
 	irq_free_descs(ucb->irq_base, 16);
 	device_unregister(&ucb->dev);
 
 	if (pdata && pdata->reset)
 		pdata->reset(UCB_RST_REMOVE);
+=======
+	free_irq(ucb->irq, ucb);
+	device_unregister(&ucb->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int ucb1x00_register_driver(struct ucb1x00_driver *drv)
@@ -648,7 +967,11 @@ int ucb1x00_register_driver(struct ucb1x00_driver *drv)
 
 	INIT_LIST_HEAD(&drv->devs);
 	mutex_lock(&ucb1x00_mutex);
+<<<<<<< HEAD
 	list_add_tail(&drv->node, &ucb1x00_drivers);
+=======
+	list_add(&drv->node, &ucb1x00_drivers);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(ucb, &ucb1x00_devices, node) {
 		ucb1x00_add_dev(ucb, drv);
 	}
@@ -669,6 +992,7 @@ void ucb1x00_unregister_driver(struct ucb1x00_driver *drv)
 	mutex_unlock(&ucb1x00_mutex);
 }
 
+<<<<<<< HEAD
 static int ucb1x00_suspend(struct device *dev)
 {
 	struct ucb1x00_plat_data *pdata = dev->platform_data;
@@ -732,11 +1056,38 @@ static int ucb1x00_resume(struct device *dev)
 	list_for_each_entry(udev, &ucb->devs, dev_node) {
 		if (udev->drv->resume)
 			udev->drv->resume(udev);
+=======
+static int ucb1x00_suspend(struct mcp *mcp, pm_message_t state)
+{
+	struct ucb1x00 *ucb = mcp_get_drvdata(mcp);
+	struct ucb1x00_dev *dev;
+
+	mutex_lock(&ucb1x00_mutex);
+	list_for_each_entry(dev, &ucb->devs, dev_node) {
+		if (dev->drv->suspend)
+			dev->drv->suspend(dev, state);
 	}
 	mutex_unlock(&ucb1x00_mutex);
 	return 0;
 }
 
+static int ucb1x00_resume(struct mcp *mcp)
+{
+	struct ucb1x00 *ucb = mcp_get_drvdata(mcp);
+	struct ucb1x00_dev *dev;
+
+	ucb1x00_reg_write(ucb, UCB_IO_DIR, ucb->io_dir);
+	mutex_lock(&ucb1x00_mutex);
+	list_for_each_entry(dev, &ucb->devs, dev_node) {
+		if (dev->drv->resume)
+			dev->drv->resume(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+	}
+	mutex_unlock(&ucb1x00_mutex);
+	return 0;
+}
+
+<<<<<<< HEAD
 static const struct dev_pm_ops ucb1x00_pm_ops = {
 	SET_SYSTEM_SLEEP_PM_OPS(ucb1x00_suspend, ucb1x00_resume)
 };
@@ -749,6 +1100,16 @@ static struct mcp_driver ucb1x00_driver = {
 	},
 	.probe		= ucb1x00_probe,
 	.remove		= ucb1x00_remove,
+=======
+static struct mcp_driver ucb1x00_driver = {
+	.drv		= {
+		.name	= "ucb1x00",
+	},
+	.probe		= ucb1x00_probe,
+	.remove		= ucb1x00_remove,
+	.suspend	= ucb1x00_suspend,
+	.resume		= ucb1x00_resume,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init ucb1x00_init(void)
@@ -779,10 +1140,21 @@ EXPORT_SYMBOL(ucb1x00_adc_enable);
 EXPORT_SYMBOL(ucb1x00_adc_read);
 EXPORT_SYMBOL(ucb1x00_adc_disable);
 
+<<<<<<< HEAD
 EXPORT_SYMBOL(ucb1x00_register_driver);
 EXPORT_SYMBOL(ucb1x00_unregister_driver);
 
 MODULE_ALIAS("mcp:ucb1x00");
+=======
+EXPORT_SYMBOL(ucb1x00_hook_irq);
+EXPORT_SYMBOL(ucb1x00_free_irq);
+EXPORT_SYMBOL(ucb1x00_enable_irq);
+EXPORT_SYMBOL(ucb1x00_disable_irq);
+
+EXPORT_SYMBOL(ucb1x00_register_driver);
+EXPORT_SYMBOL(ucb1x00_unregister_driver);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_AUTHOR("Russell King <rmk@arm.linux.org.uk>");
 MODULE_DESCRIPTION("UCB1x00 core driver");
 MODULE_LICENSE("GPL");

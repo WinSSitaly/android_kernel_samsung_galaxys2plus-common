@@ -31,6 +31,7 @@ config PCI_DEBUG
 
 	  When in doubt, say N.
 
+<<<<<<< HEAD
 config PCI_REALLOC_ENABLE_AUTO
 	bool "Enable PCI resource re-allocation detection"
 	depends on PCI
@@ -44,6 +45,8 @@ config PCI_REALLOC_ENABLE_AUTO
 
 	  When in doubt, say N.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config PCI_STUB
 	tristate "PCI Stub driver"
 	depends on PCI
@@ -64,6 +67,20 @@ config XEN_PCIDEV_FRONTEND
           The PCI device frontend driver allows the kernel to import arbitrary
           PCI devices from a PCI backend to support PCI driver domains.
 
+<<<<<<< HEAD
+=======
+config XEN_PCIDEV_FE_DEBUG
+        bool "Xen PCI Frontend debugging"
+        depends on XEN_PCIDEV_FRONTEND && PCI_DEBUG
+	help
+	  Say Y here if you want the Xen PCI frontend to produce a bunch of debug
+	  messages to the system log.  Select this if you are having a
+	  problem with Xen PCI frontend support and want to see more of what is
+	  going on.
+
+	  When in doubt, say N.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config HT_IRQ
 	bool "Interrupts on hypertransport devices"
 	default y
@@ -73,6 +90,7 @@ config HT_IRQ
 
 	   If unsure say Y.
 
+<<<<<<< HEAD
 config PCI_ATS
 	bool
 
@@ -80,6 +98,11 @@ config PCI_IOV
 	bool "PCI IOV support"
 	depends on PCI
 	select PCI_ATS
+=======
+config PCI_IOV
+	bool "PCI IOV support"
+	depends on PCI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  I/O Virtualization is a PCI feature supported by some devices
 	  which allows them to create virtual devices which share their
@@ -87,6 +110,7 @@ config PCI_IOV
 
 	  If unsure, say N.
 
+<<<<<<< HEAD
 config PCI_PRI
 	bool "PCI PRI support"
 	depends on PCI
@@ -116,6 +140,14 @@ config PCI_IOAPIC
 	depends on ACPI
 	depends on HOTPLUG
 	default !X86
+=======
+config PCI_IOAPIC
+	bool
+	depends on PCI
+	depends on ACPI
+	depends on HOTPLUG
+	default y
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config PCI_LABEL
 	def_bool y if (DMI || ACPI)

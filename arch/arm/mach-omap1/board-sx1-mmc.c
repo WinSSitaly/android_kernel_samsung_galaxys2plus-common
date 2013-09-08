@@ -12,11 +12,18 @@
  * published by the Free Software Foundation.
  */
 
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 
 #include <mach/hardware.h>
 #include <plat/mmc.h>
+<<<<<<< HEAD
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/board-sx1.h>
 
 #if defined(CONFIG_MMC_OMAP) || defined(CONFIG_MMC_OMAP_MODULE)

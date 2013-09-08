@@ -3,7 +3,10 @@
 #ifndef	__ASM_ARCH_OMAP_USB_H
 #define	__ASM_ARCH_OMAP_USB_H
 
+<<<<<<< HEAD
 #include <linux/io.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/usb/musb.h>
 #include <plat/board.h>
 
@@ -101,11 +104,18 @@ extern void usb_musb_init(struct omap_musb_board_data *board_data);
 
 extern void usbhs_init(const struct usbhs_omap_board_data *pdata);
 
+<<<<<<< HEAD
+=======
+extern int omap_usbhs_enable(struct device *dev);
+extern void omap_usbhs_disable(struct device *dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int omap4430_phy_power(struct device *dev, int ID, int on);
 extern int omap4430_phy_set_clk(struct device *dev, int on);
 extern int omap4430_phy_init(struct device *dev);
 extern int omap4430_phy_exit(struct device *dev);
 extern int omap4430_phy_suspend(struct device *dev, int suspend);
+<<<<<<< HEAD
 
 /*
  * NOTE: Please update omap USB drivers to use ioremap + read/write
@@ -145,13 +155,18 @@ static inline void omap_writel(u32 v, u32 pa)
 	__raw_writel(v, OMAP2_L4_IO_ADDRESS(pa));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 extern void am35x_musb_reset(void);
 extern void am35x_musb_phy_power(u8 on);
 extern void am35x_musb_clear_irq(void);
 extern void am35x_set_mode(u8 musb_mode);
+<<<<<<< HEAD
 extern void ti81xx_musb_phy_power(u8 on);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * FIXME correct answer depends on hmc_mode,
@@ -311,6 +326,7 @@ static inline void omap2_usbfs_init(struct omap_usb_config *pdata)
 #define CONF2_OTGPWRDN		(1 << 2)
 #define CONF2_DATPOL		(1 << 1)
 
+<<<<<<< HEAD
 /* TI81XX specific definitions */
 #define USBCTRL0	0x620
 #define USBSTAT0	0x624
@@ -342,6 +358,8 @@ static inline void omap2_usbfs_init(struct omap_usb_config *pdata)
 #define USBPHY_OTGSESSEND_EN	(1 << 20)
 #define USBPHY_DATA_POLARITY	(1 << 23)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_ARCH_OMAP1) && defined(CONFIG_USB)
 u32 omap1_usb0_init(unsigned nwires, unsigned is_device);
 u32 omap1_usb1_init(unsigned nwires);

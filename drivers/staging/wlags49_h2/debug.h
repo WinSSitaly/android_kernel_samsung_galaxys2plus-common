@@ -43,7 +43,11 @@
  *
  * Disclaimer
  *
+<<<<<<< HEAD
  * THIS SOFTWARE IS PROVIDED Â“AS ISÂ” AND ANY EXPRESS OR IMPLIED WARRANTIES,
+=======
+ * THIS SOFTWARE IS PROVIDED “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * INCLUDING, BUT NOT LIMITED TO, INFRINGEMENT AND THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  ANY
  * USE, MODIFICATION OR DISTRIBUTION OF THIS SOFTWARE IS SOLELY AT THE USERS OWN
@@ -129,6 +133,7 @@
 #define _LEAVE_STR          "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 
 
+<<<<<<< HEAD
 #define _DBG_ENTER(A)						\
 	DBG_PRINT("%s:%.*s:%s\n", DBG_NAME(A), ++DBG_LEVEL(A),	\
 		  _ENTER_STR, __func__)
@@ -138,6 +143,13 @@
 
 
 #define DBG_FUNC(F)
+=======
+#define _DBG_ENTER(A)       DBG_PRINT("%s:%.*s:%s\n", DBG_NAME(A), ++DBG_LEVEL(A), _ENTER_STR, __FUNC__)
+#define _DBG_LEAVE(A)       DBG_PRINT("%s:%.*s:%s\n", DBG_NAME(A), DBG_LEVEL(A)--, _LEAVE_STR, __FUNC__)
+
+
+#define DBG_FUNC(F)         static const char *__FUNC__ = F;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DBG_ENTER(A)        {if (DBG_FLAGS(A) & DBG_TRACE_ON) \
 				_DBG_ENTER(A); }
@@ -149,6 +161,7 @@
 				DBG_PRINT("  %s -- "F"\n", N, S); }
 
 
+<<<<<<< HEAD
 #define DBG_ERROR(A, S...) do {						\
 		if (DBG_FLAGS(A) & DBG_ERROR_ON) {			\
 			DBG_PRINT("%s:ERROR:%s ", DBG_NAME(A), __func__); \
@@ -176,6 +189,31 @@
 			DBG_PRINT("%s:%s ", DBG_NAME(A), __func__);	\
 			DBG_PRINTC(S);					\
 		} } while (0)
+=======
+#define DBG_ERROR(A, S...)   {if (DBG_FLAGS(A) & DBG_ERROR_ON) {\
+				DBG_PRINT("%s:ERROR:%s ", DBG_NAME(A), __FUNC__);\
+				DBG_PRINTC(S); \
+				DBG_TRAP; \
+				} \
+				}
+
+
+#define DBG_WARNING(A, S...) {if (DBG_FLAGS(A) & DBG_WARNING_ON) {\
+				DBG_PRINT("%s:WARNING:%s ", DBG_NAME(A), __FUNC__);\
+				DBG_PRINTC(S); } }
+
+
+#define DBG_NOTICE(A, S...)  {if (DBG_FLAGS(A) & DBG_NOTICE_ON) {\
+				DBG_PRINT("%s:NOTICE:%s ", DBG_NAME(A), __FUNC__);\
+				DBG_PRINTC(S); \
+				} \
+				}
+
+
+#define DBG_TRACE(A, S...)   do {if (DBG_FLAGS(A) & DBG_TRACE_ON) {\
+				DBG_PRINT("%s:%s ", DBG_NAME(A), __FUNC__);\
+				DBG_PRINTC(S); } } while (0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 #define DBG_RX(A, S...)      {if (DBG_FLAGS(A) & DBG_RX_ON) {\
@@ -189,12 +227,22 @@
 				DBG_PRINT(S); } }
 
 
+<<<<<<< HEAD
 #define DBG_ASSERT(C) do { \
 		if (!(C)) {						\
 			DBG_PRINT("ASSERT(%s) -- %s#%d (%s)\n",		\
 				  #C, __FILE__, __LINE__, __func__);	\
 			DBG_TRAP;					\
 		} } while (0)
+=======
+#define DBG_ASSERT(C)		{ \
+				if (!(C)) {\
+					DBG_PRINT("ASSERT(%s) -- %s#%d (%s)\n", \
+					#C, __FILE__, __LINE__, __FUNC__); \
+					DBG_TRAP; \
+					} \
+					}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct {
     char           *dbgName;

@@ -20,8 +20,14 @@ static void kill_off_processes(void)
 		os_kill_ptraced_process(userspace_pid[0], 1);
 	else {
 		struct task_struct *p;
+<<<<<<< HEAD
 		int pid;
 
+=======
+		int pid, me;
+
+		me = os_getpid();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for_each_process(p) {
 			if (p->mm == NULL)
 				continue;

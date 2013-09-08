@@ -112,8 +112,15 @@ ip_vs_dest_set_insert(struct ip_vs_dest_set *set, struct ip_vs_dest *dest)
 	}
 
 	e = kmalloc(sizeof(*e), GFP_ATOMIC);
+<<<<<<< HEAD
 	if (e == NULL)
 		return NULL;
+=======
+	if (e == NULL) {
+		pr_err("%s(): no memory\n", __func__);
+		return NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	atomic_inc(&dest->refcnt);
 	e->dest = dest;
@@ -371,8 +378,15 @@ ip_vs_lblcr_new(struct ip_vs_lblcr_table *tbl, const union nf_inet_addr *daddr,
 	en = ip_vs_lblcr_get(dest->af, tbl, daddr);
 	if (!en) {
 		en = kmalloc(sizeof(*en), GFP_ATOMIC);
+<<<<<<< HEAD
 		if (!en)
 			return NULL;
+=======
+		if (!en) {
+			pr_err("%s(): no memory\n", __func__);
+			return NULL;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		en->af = dest->af;
 		ip_vs_addr_copy(dest->af, &en->addr, daddr);
@@ -512,9 +526,16 @@ static int ip_vs_lblcr_init_svc(struct ip_vs_service *svc)
 	 *    Allocate the ip_vs_lblcr_table for this service
 	 */
 	tbl = kmalloc(sizeof(*tbl), GFP_ATOMIC);
+<<<<<<< HEAD
 	if (tbl == NULL)
 		return -ENOMEM;
 
+=======
+	if (tbl == NULL) {
+		pr_err("%s(): no memory\n", __func__);
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	svc->sched_data = tbl;
 	IP_VS_DBG(6, "LBLCR hash table (memory=%Zdbytes) allocated for "
 		  "current service\n", sizeof(*tbl));
@@ -745,9 +766,12 @@ static int __net_init __ip_vs_lblcr_init(struct net *net)
 {
 	struct netns_ipvs *ipvs = net_ipvs(net);
 
+<<<<<<< HEAD
 	if (!ipvs)
 		return -ENOENT;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!net_eq(net, &init_net)) {
 		ipvs->lblcr_ctl_table = kmemdup(vs_vars_table,
 						sizeof(vs_vars_table),

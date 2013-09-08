@@ -7,13 +7,19 @@
 #include <linux/delay.h>
 #include <linux/reboot.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/irq.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/pgtable.h>
 #include <asm/pgalloc.h>
 #include <asm/mmu_context.h>
 #include <asm/cacheflush.h>
 #include <asm/mach-types.h>
+<<<<<<< HEAD
 #include <asm/system_misc.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern const unsigned char relocate_new_kernel[];
 extern const unsigned int relocate_new_kernel_size;
@@ -54,6 +60,7 @@ void machine_crash_nonpanic_core(void *unused)
 		cpu_relax();
 }
 
+<<<<<<< HEAD
 static void machine_kexec_mask_interrupts(void)
 {
 	unsigned int i;
@@ -77,6 +84,8 @@ static void machine_kexec_mask_interrupts(void)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void machine_crash_shutdown(struct pt_regs *regs)
 {
 	unsigned long msecs;
@@ -94,7 +103,10 @@ void machine_crash_shutdown(struct pt_regs *regs)
 		printk(KERN_WARNING "Non-crashing CPUs did not react to IPI\n");
 
 	crash_save_cpu(regs, smp_processor_id());
+<<<<<<< HEAD
 	machine_kexec_mask_interrupts();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	printk(KERN_INFO "Loading crashdump kernel...\n");
 }
@@ -136,5 +148,9 @@ void machine_kexec(struct kimage *image)
 	if (kexec_reinit)
 		kexec_reinit();
 
+<<<<<<< HEAD
 	soft_restart(reboot_code_buffer_phys);
+=======
+	arm_machine_reset(reboot_code_buffer_phys);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

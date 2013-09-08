@@ -29,7 +29,10 @@
 #include <linux/firmware.h>
 #include <linux/moduleparam.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/snd_wavefront.h>
 #include <sound/initval.h>

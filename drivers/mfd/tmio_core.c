@@ -6,7 +6,10 @@
  * published by the Free Software Foundation.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mfd/tmio.h>
 
 int tmio_core_mmc_enable(void __iomem *cnf, int shift, unsigned long base)

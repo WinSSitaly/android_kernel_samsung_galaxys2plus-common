@@ -145,12 +145,16 @@ void gfs2_trans_add_bh(struct gfs2_glock *gl, struct buffer_head *bh, int meta)
 	struct gfs2_sbd *sdp = gl->gl_sbd;
 	struct gfs2_bufdata *bd;
 
+<<<<<<< HEAD
 	lock_buffer(bh);
 	gfs2_log_lock(sdp);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bd = bh->b_private;
 	if (bd)
 		gfs2_assert(sdp, bd->bd_gl == gl);
 	else {
+<<<<<<< HEAD
 		gfs2_log_unlock(sdp);
 		unlock_buffer(bh);
 		gfs2_attach_bufdata(gl, bh, meta);
@@ -161,6 +165,12 @@ void gfs2_trans_add_bh(struct gfs2_glock *gl, struct buffer_head *bh, int meta)
 	lops_add(sdp, &bd->bd_le);
 	gfs2_log_unlock(sdp);
 	unlock_buffer(bh);
+=======
+		gfs2_attach_bufdata(gl, bh, meta);
+		bd = bh->b_private;
+	}
+	lops_add(sdp, &bd->bd_le);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void gfs2_trans_add_revoke(struct gfs2_sbd *sdp, struct gfs2_bufdata *bd)
@@ -193,3 +203,11 @@ void gfs2_trans_add_unrevoke(struct gfs2_sbd *sdp, u64 blkno, unsigned int len)
 	gfs2_log_unlock(sdp);
 }
 
+<<<<<<< HEAD
+=======
+void gfs2_trans_add_rg(struct gfs2_rgrpd *rgd)
+{
+	lops_add(rgd->rd_sbd, &rgd->rd_le);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

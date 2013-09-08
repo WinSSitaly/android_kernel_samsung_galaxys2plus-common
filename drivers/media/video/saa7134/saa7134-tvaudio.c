@@ -332,6 +332,7 @@ static int tvaudio_checkcarrier(struct saa7134_dev *dev, struct mainscan *scan)
 {
 	__s32 left,right,value;
 
+<<<<<<< HEAD
 	if (!(dev->tvnorm->id & scan->std)) {
 		value = 0;
 		dprintk("skipping %d.%03d MHz [%4s]\n",
@@ -339,6 +340,8 @@ static int tvaudio_checkcarrier(struct saa7134_dev *dev, struct mainscan *scan)
 		return 0;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (audio_debug > 1) {
 		int i;
 		dprintk("debug %d:",scan->carr);
@@ -355,6 +358,7 @@ static int tvaudio_checkcarrier(struct saa7134_dev *dev, struct mainscan *scan)
 		}
 		printk("\n");
 	}
+<<<<<<< HEAD
 
 	tvaudio_setcarrier(dev,scan->carr-90,scan->carr-90);
 	saa_readl(SAA7134_LEVEL_READOUT1 >> 2);
@@ -374,6 +378,32 @@ static int tvaudio_checkcarrier(struct saa7134_dev *dev, struct mainscan *scan)
 	dprintk("scanning %d.%03d MHz [%4s] =>  dc is %5d [%d/%d]\n",
 		scan->carr / 1000, scan->carr % 1000,
 		scan->name, value, left, right);
+=======
+	if (dev->tvnorm->id & scan->std) {
+		tvaudio_setcarrier(dev,scan->carr-90,scan->carr-90);
+		saa_readl(SAA7134_LEVEL_READOUT1 >> 2);
+		if (tvaudio_sleep(dev,SCAN_SAMPLE_DELAY))
+			return -1;
+		left = saa_readl(SAA7134_LEVEL_READOUT1 >> 2);
+
+		tvaudio_setcarrier(dev,scan->carr+90,scan->carr+90);
+		saa_readl(SAA7134_LEVEL_READOUT1 >> 2);
+		if (tvaudio_sleep(dev,SCAN_SAMPLE_DELAY))
+			return -1;
+		right = saa_readl(SAA7134_LEVEL_READOUT1 >> 2);
+
+		left >>= 16;
+		right >>= 16;
+		value = left > right ? left - right : right - left;
+		dprintk("scanning %d.%03d MHz [%4s] =>  dc is %5d [%d/%d]\n",
+			scan->carr / 1000, scan->carr % 1000,
+			scan->name, value, left, right);
+	} else {
+		value = 0;
+		dprintk("skipping %d.%03d MHz [%4s]\n",
+			scan->carr / 1000, scan->carr % 1000, scan->name);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return value;
 }
 
@@ -548,7 +578,10 @@ static int tvaudio_thread(void *data)
 				dev->tvnorm->name, carrier/1000, carrier%1000,
 				max1, max2);
 			dev->last_carrier = carrier;
+<<<<<<< HEAD
 			dev->automute = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		} else if (0 != dev->last_carrier) {
 			/* no carrier -- try last detected one as fallback */
@@ -556,7 +589,10 @@ static int tvaudio_thread(void *data)
 			dprintk("audio carrier scan failed, "
 				"using %d.%03d MHz [last detected]\n",
 				carrier/1000, carrier%1000);
+<<<<<<< HEAD
 			dev->automute = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		} else {
 			/* no carrier + no fallback -- use default */
@@ -564,9 +600,15 @@ static int tvaudio_thread(void *data)
 			dprintk("audio carrier scan failed, "
 				"using %d.%03d MHz [default]\n",
 				carrier/1000, carrier%1000);
+<<<<<<< HEAD
 			dev->automute = 1;
 		}
 		tvaudio_setcarrier(dev,carrier,carrier);
+=======
+		}
+		tvaudio_setcarrier(dev,carrier,carrier);
+		dev->automute = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		saa_andorb(SAA7134_STEREO_DAC_OUTPUT_SELECT, 0x30, 0x00);
 		saa7134_tvaudio_setmute(dev);
 		/* find the exact tv audio norm */
@@ -605,7 +647,11 @@ static int tvaudio_thread(void *data)
 			if (kthread_should_stop())
 				break;
 			if (UNSET == dev->thread.mode) {
+<<<<<<< HEAD
 				rx = tvaudio_getstereo(dev, &tvaudio[audio]);
+=======
+				rx = tvaudio_getstereo(dev,&tvaudio[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				mode = saa7134_tvaudio_rx2mode(rx);
 			} else {
 				mode = dev->thread.mode;
@@ -1024,7 +1070,10 @@ int saa7134_tvaudio_init2(struct saa7134_dev *dev)
 	}
 
 	dev->thread.thread = NULL;
+<<<<<<< HEAD
 	dev->thread.scan1 = dev->thread.scan2 = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (my_thread) {
 		saa7134_tvaudio_init(dev);
 		/* start tvaudio thread */
@@ -1034,12 +1083,17 @@ int saa7134_tvaudio_init2(struct saa7134_dev *dev)
 			       dev->name);
 			/* XXX: missing error handling here */
 		}
+<<<<<<< HEAD
+=======
+		saa7134_tvaudio_do_scan(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	saa7134_enable_i2s(dev);
 	return 0;
 }
 
+<<<<<<< HEAD
 int saa7134_tvaudio_close(struct saa7134_dev *dev)
 {
 	dev->automute = 1;
@@ -1047,6 +1101,8 @@ int saa7134_tvaudio_close(struct saa7134_dev *dev)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int saa7134_tvaudio_fini(struct saa7134_dev *dev)
 {
 	/* shutdown tvaudio thread */

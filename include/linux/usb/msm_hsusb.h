@@ -160,7 +160,11 @@ struct msm_otg_platform_data {
  *               detection process.
  */
 struct msm_otg {
+<<<<<<< HEAD
 	struct usb_phy phy;
+=======
+	struct otg_transceiver otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct msm_otg_platform_data *pdata;
 	int irq;
 	struct clk *clk;

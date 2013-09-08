@@ -18,7 +18,10 @@
 #include <asm/io.h>
 #include <linux/nsc_gpio.h>
 #include <linux/scx200_gpio.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRVNAME "net48xx-led"
 #define NET48XX_ERROR_LED_GPIO	20

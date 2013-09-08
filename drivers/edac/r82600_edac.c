@@ -131,7 +131,11 @@ struct r82600_error_info {
 	u32 eapr;
 };
 
+<<<<<<< HEAD
 static bool disable_hardware_scrub;
+=======
+static unsigned int disable_hardware_scrub;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct edac_pci_ctl_info *r82600_pci;
 
@@ -373,7 +377,11 @@ static void __devexit r82600_remove_one(struct pci_dev *pdev)
 	edac_mc_free(mci);
 }
 
+<<<<<<< HEAD
 static DEFINE_PCI_DEVICE_TABLE(r82600_pci_tbl) = {
+=======
+static const struct pci_device_id r82600_pci_tbl[] __devinitdata = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 	 PCI_DEVICE(PCI_VENDOR_ID_RADISYS, R82600_BRIDGE_ID)
 	 },

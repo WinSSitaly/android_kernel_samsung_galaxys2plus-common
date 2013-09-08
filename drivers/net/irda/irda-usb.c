@@ -1914,8 +1914,46 @@ static struct usb_driver irda_driver = {
 #endif
 };
 
+<<<<<<< HEAD
 module_usb_driver(irda_driver);
 
+=======
+/************************* MODULE CALLBACKS *************************/
+/*
+ * Deal with module insertion/removal
+ * Mostly tell USB about our existence
+ */
+
+/*------------------------------------------------------------------*/
+/*
+ * Module insertion
+ */
+static int __init usb_irda_init(void)
+{
+	int	ret;
+
+	ret = usb_register(&irda_driver);
+	if (ret < 0)
+		return ret;
+
+	IRDA_MESSAGE("USB IrDA support registered\n");
+	return 0;
+}
+module_init(usb_irda_init);
+
+/*------------------------------------------------------------------*/
+/*
+ * Module removal
+ */
+static void __exit usb_irda_cleanup(void)
+{
+	/* Deregister the driver and remove all pending instances */
+	usb_deregister(&irda_driver);
+}
+module_exit(usb_irda_cleanup);
+
+/*------------------------------------------------------------------*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Module parameters
  */

@@ -16,11 +16,19 @@
 
 #include <asm/mach/flash.h>
 
+<<<<<<< HEAD
 #include <plat/cpu.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/nand.h>
 #include <plat/board.h>
 #include <plat/gpmc.h>
 
+<<<<<<< HEAD
+=======
+static struct omap_nand_platform_data *gpmc_nand_data;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct resource gpmc_nand_resource = {
 	.flags		= IORESOURCE_MEM,
 };
@@ -32,7 +40,11 @@ static struct platform_device gpmc_nand_device = {
 	.resource	= &gpmc_nand_resource,
 };
 
+<<<<<<< HEAD
 static int omap2_nand_gpmc_retime(struct omap_nand_platform_data *gpmc_nand_data)
+=======
+static int omap2_nand_gpmc_retime(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct gpmc_timings t;
 	int err;
@@ -82,11 +94,20 @@ static int omap2_nand_gpmc_retime(struct omap_nand_platform_data *gpmc_nand_data
 	return 0;
 }
 
+<<<<<<< HEAD
 int __init gpmc_nand_init(struct omap_nand_platform_data *gpmc_nand_data)
+=======
+int __init gpmc_nand_init(struct omap_nand_platform_data *_nand_data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err	= 0;
 	struct device *dev = &gpmc_nand_device.dev;
 
+<<<<<<< HEAD
+=======
+	gpmc_nand_data = _nand_data;
+	gpmc_nand_data->nand_setup = omap2_nand_gpmc_retime;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gpmc_nand_device.dev.platform_data = gpmc_nand_data;
 
 	err = gpmc_cs_request(gpmc_nand_data->cs, NAND_IO_SIZE,
@@ -97,7 +118,11 @@ int __init gpmc_nand_init(struct omap_nand_platform_data *gpmc_nand_data)
 	}
 
 	 /* Set timings in GPMC */
+<<<<<<< HEAD
 	err = omap2_nand_gpmc_retime(gpmc_nand_data);
+=======
+	err = omap2_nand_gpmc_retime();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0) {
 		dev_err(dev, "Unable to set gpmc timings: %d\n", err);
 		return err;

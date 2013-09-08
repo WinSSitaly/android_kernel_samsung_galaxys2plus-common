@@ -34,8 +34,12 @@
 static u8 twl4030_start_script_address = 0x2b;
 
 #define PWR_P1_SW_EVENTS	0x10
+<<<<<<< HEAD
 #define PWR_DEVOFF		(1 << 0)
 #define SEQ_OFFSYNC		(1 << 0)
+=======
+#define PWR_DEVOFF	(1<<0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PHY_TO_OFF_PM_MASTER(p)		(p - 0x36)
 #define PHY_TO_OFF_PM_RECEIVER(p)	(p - 0x5b)
@@ -124,7 +128,11 @@ static u8 res_config_addrs[] = {
 	[RES_MAIN_REF]	= 0x94,
 };
 
+<<<<<<< HEAD
 static int __devinit twl4030_write_script_byte(u8 address, u8 byte)
+=======
+static int __init twl4030_write_script_byte(u8 address, u8 byte)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 
@@ -138,7 +146,11 @@ out:
 	return err;
 }
 
+<<<<<<< HEAD
 static int __devinit twl4030_write_script_ins(u8 address, u16 pmb_message,
+=======
+static int __init twl4030_write_script_ins(u8 address, u16 pmb_message,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					   u8 delay, u8 next)
 {
 	int err;
@@ -158,7 +170,11 @@ out:
 	return err;
 }
 
+<<<<<<< HEAD
 static int __devinit twl4030_write_script(u8 address, struct twl4030_ins *script,
+=======
+static int __init twl4030_write_script(u8 address, struct twl4030_ins *script,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				       int len)
 {
 	int err;
@@ -183,7 +199,11 @@ static int __devinit twl4030_write_script(u8 address, struct twl4030_ins *script
 	return err;
 }
 
+<<<<<<< HEAD
 static int __devinit twl4030_config_wakeup3_sequence(u8 address)
+=======
+static int __init twl4030_config_wakeup3_sequence(u8 address)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 	u8 data;
@@ -208,7 +228,11 @@ out:
 	return err;
 }
 
+<<<<<<< HEAD
 static int __devinit twl4030_config_wakeup12_sequence(u8 address)
+=======
+static int __init twl4030_config_wakeup12_sequence(u8 address)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err = 0;
 	u8 data;
@@ -262,7 +286,11 @@ out:
 	return err;
 }
 
+<<<<<<< HEAD
 static int __devinit twl4030_config_sleep_sequence(u8 address)
+=======
+static int __init twl4030_config_sleep_sequence(u8 address)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 
@@ -276,7 +304,11 @@ static int __devinit twl4030_config_sleep_sequence(u8 address)
 	return err;
 }
 
+<<<<<<< HEAD
 static int __devinit twl4030_config_warmreset_sequence(u8 address)
+=======
+static int __init twl4030_config_warmreset_sequence(u8 address)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 	u8 rd_data;
@@ -324,7 +356,11 @@ out:
 	return err;
 }
 
+<<<<<<< HEAD
 static int __devinit twl4030_configure_resource(struct twl4030_resconfig *rconfig)
+=======
+static int __init twl4030_configure_resource(struct twl4030_resconfig *rconfig)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int rconfig_addr;
 	int err;
@@ -416,7 +452,11 @@ static int __devinit twl4030_configure_resource(struct twl4030_resconfig *rconfi
 	return 0;
 }
 
+<<<<<<< HEAD
 static int __devinit load_twl4030_script(struct twl4030_script *tscript,
+=======
+static int __init load_twl4030_script(struct twl4030_script *tscript,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       u8 address)
 {
 	int err;
@@ -512,6 +552,7 @@ int twl4030_remove_script(u8 flags)
 	return err;
 }
 
+<<<<<<< HEAD
 /*
  * In master mode, start the power off sequence.
  * After a successful execution, TWL shuts down the power to the SoC
@@ -528,11 +569,18 @@ void twl4030_power_off(void)
 }
 
 void __devinit twl4030_power_init(struct twl4030_power_data *twl4030_scripts)
+=======
+void __init twl4030_power_init(struct twl4030_power_data *twl4030_scripts)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err = 0;
 	int i;
 	struct twl4030_resconfig *resconfig;
+<<<<<<< HEAD
 	u8 val, address = twl4030_start_script_address;
+=======
+	u8 address = twl4030_start_script_address;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = twl_i2c_write_u8(TWL4030_MODULE_PM_MASTER,
 			TWL4030_PM_MASTER_KEY_CFG1,
@@ -564,6 +612,7 @@ void __devinit twl4030_power_init(struct twl4030_power_data *twl4030_scripts)
 		}
 	}
 
+<<<<<<< HEAD
 	/* Board has to be wired properly to use this feature */
 	if (twl4030_scripts->use_poweroff && !pm_power_off) {
 		/* Default for SEQ_OFFSYNC is set, lets ensure this */
@@ -586,6 +635,8 @@ void __devinit twl4030_power_init(struct twl4030_power_data *twl4030_scripts)
 	}
 
 relock:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = twl_i2c_write_u8(TWL4030_MODULE_PM_MASTER, 0,
 			TWL4030_PM_MASTER_PROTECT_KEY);
 	if (err)

@@ -47,7 +47,11 @@
 #define ASSERT_INVERTED_SENTINEL(_x, _y) do { } while (0)
 #endif
 
+<<<<<<< HEAD
 #define ASSERT_SPINLOCK(_l)	lockdep_assert_held(_l)
+=======
+#define ASSERT_SPINLOCK(_l)	WARN_ON(!spin_is_locked(_l))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * A pool is the highest-level data structure managed by tmem and
@@ -147,7 +151,10 @@ struct tmem_obj {
 	unsigned int objnode_tree_height;
 	unsigned long objnode_count;
 	long pampd_count;
+<<<<<<< HEAD
 	void *extra; /* for private use by pampd implementation */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DECL_SENTINEL
 };
 
@@ -167,6 +174,7 @@ struct tmem_objnode {
 
 /* pampd abstract datatype methods provided by the PAM implementation */
 struct tmem_pamops {
+<<<<<<< HEAD
 	void *(*create)(char *, size_t, bool, int,
 			struct tmem_pool *, struct tmem_oid *, uint32_t);
 	int (*get_data)(char *, size_t *, bool, void *, struct tmem_pool *,
@@ -179,6 +187,12 @@ struct tmem_pamops {
 	bool (*is_remote)(void *);
 	void (*new_obj)(struct tmem_obj *);
 	int (*replace_in_obj)(void *, struct tmem_obj *);
+=======
+	void *(*create)(struct tmem_pool *, struct tmem_oid *, uint32_t,
+			struct page *);
+	int (*get_data)(struct page *, void *, struct tmem_pool *);
+	void (*free)(void *, struct tmem_pool *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 extern void tmem_register_pamops(struct tmem_pamops *m);
 
@@ -193,11 +207,17 @@ extern void tmem_register_hostops(struct tmem_hostops *m);
 
 /* core tmem accessor functions */
 extern int tmem_put(struct tmem_pool *, struct tmem_oid *, uint32_t index,
+<<<<<<< HEAD
 			char *, size_t, bool, bool);
 extern int tmem_get(struct tmem_pool *, struct tmem_oid *, uint32_t index,
 			char *, size_t *, bool, int);
 extern int tmem_replace(struct tmem_pool *, struct tmem_oid *, uint32_t index,
 			void *);
+=======
+			struct page *page);
+extern int tmem_get(struct tmem_pool *, struct tmem_oid *, uint32_t index,
+			struct page *page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int tmem_flush_page(struct tmem_pool *, struct tmem_oid *,
 			uint32_t index);
 extern int tmem_flush_object(struct tmem_pool *, struct tmem_oid *);

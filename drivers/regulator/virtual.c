@@ -16,7 +16,10 @@
 #include <linux/platform_device.h>
 #include <linux/regulator/consumer.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct virtual_consumer_data {
 	struct mutex lock;
@@ -47,6 +50,10 @@ static void update_voltage_constraints(struct device *dev,
 		}
 	}
 
+<<<<<<< HEAD
+=======
+#if 0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (data->min_uV && data->max_uV && !data->enabled) {
 		dev_dbg(dev, "Enabling regulator\n");
 		ret = regulator_enable(data->regulator);
@@ -66,6 +73,11 @@ static void update_voltage_constraints(struct device *dev,
 			dev_err(dev, "regulator_disable() failed: %d\n",
 				ret);
 	}
+<<<<<<< HEAD
+=======
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void update_current_limit_constraints(struct device *dev,
@@ -352,7 +364,21 @@ static struct platform_driver regulator_virtual_consumer_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(regulator_virtual_consumer_driver);
+=======
+static int __init regulator_virtual_consumer_init(void)
+{
+	return platform_driver_register(&regulator_virtual_consumer_driver);
+}
+module_init(regulator_virtual_consumer_init);
+
+static void __exit regulator_virtual_consumer_exit(void)
+{
+	platform_driver_unregister(&regulator_virtual_consumer_driver);
+}
+module_exit(regulator_virtual_consumer_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");
 MODULE_DESCRIPTION("Virtual regulator consumer");

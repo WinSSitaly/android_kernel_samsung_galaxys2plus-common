@@ -38,6 +38,10 @@
 #include <asm/tsc.h>
 #include <asm/processor.h>
 #include <asm/percpu.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/desc.h>
 #include <linux/random.h>
 

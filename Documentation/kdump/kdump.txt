@@ -17,8 +17,13 @@ You can use common commands, such as cp and scp, to copy the
 memory image to a dump file on the local disk, or across the network to
 a remote system.
 
+<<<<<<< HEAD
 Kdump and kexec are currently supported on the x86, x86_64, ppc64, ia64,
 and s390x architectures.
+=======
+Kdump and kexec are currently supported on the x86, x86_64, ppc64 and ia64
+architectures.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 When the system kernel boots, it reserves a small section of memory for
 the dump-capture kernel. This ensures that ongoing Direct Memory Access
@@ -34,18 +39,25 @@ Similarly on PPC64 machines first 32KB of physical memory is needed for
 booting regardless of where the kernel is loaded and to support 64K page
 size kexec backs up the first 64KB memory.
 
+<<<<<<< HEAD
 For s390x, when kdump is triggered, the crashkernel region is exchanged
 with the region [0, crashkernel region size] and then the kdump kernel
 runs in [0, crashkernel region size]. Therefore no relocatable kernel is
 needed for s390x.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 All of the necessary information about the system kernel's core image is
 encoded in the ELF format, and stored in a reserved area of memory
 before a crash. The physical address of the start of the ELF header is
 passed to the dump-capture kernel through the elfcorehdr= boot
+<<<<<<< HEAD
 parameter. Optionally the size of the ELF header can also be passed
 when using the elfcorehdr=[size[KMG]@]offset[KMG] syntax.
 
+=======
+parameter.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 With the dump-capture kernel, you can access the memory image, or "old
 memory," in two ways:
@@ -298,10 +310,13 @@ Boot into System Kernel
    The region may be automatically placed on ia64, see the
    dump-capture kernel config option notes above.
 
+<<<<<<< HEAD
    On s390x, typically use "crashkernel=xxM". The value of xx is dependent
    on the memory consumption of the kdump system. In general this is not
    dependent on the memory size of the production system.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Load the Dump-capture Kernel
 ============================
 
@@ -319,8 +334,11 @@ For ppc64:
 	- Use vmlinux
 For ia64:
 	- Use vmlinux or vmlinuz.gz
+<<<<<<< HEAD
 For s390x:
 	- Use image or bzImage
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 If you are using a uncompressed vmlinux image then use following command
@@ -350,8 +368,11 @@ For i386, x86_64 and ia64:
 For ppc64:
 	"1 maxcpus=1 noirqdistrib reset_devices"
 
+<<<<<<< HEAD
 For s390x:
 	"1 maxcpus=1 cgroup_disable=memory"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 Notes on loading the dump-capture kernel:
 
@@ -377,6 +398,7 @@ Notes on loading the dump-capture kernel:
   dump. Hence generally it is useful either to build a UP dump-capture
   kernel or specify maxcpus=1 option while loading dump-capture kernel.
 
+<<<<<<< HEAD
 * For s390x there are two kdump modes: If a ELF header is specified with
   the elfcorehdr= kernel parameter, it is used by the kdump kernel as it
   is done on all other architectures. If no elfcorehdr= kernel parameter is
@@ -391,6 +413,8 @@ Notes on loading the dump-capture kernel:
   "allow_lun_scan" zfcp module parameter should be set to zero before
   setting FCP devices online.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Kernel Panic
 ============
 

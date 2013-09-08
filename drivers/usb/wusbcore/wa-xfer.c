@@ -83,8 +83,11 @@
 #include <linux/spinlock.h>
 #include <linux/slab.h>
 #include <linux/hash.h>
+<<<<<<< HEAD
 #include <linux/ratelimit.h>
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "wa-hc.h"
 #include "wusbhc.h"
@@ -1219,14 +1222,24 @@ static int wa_xfer_status_to_errno(u8 status)
 	if (status == 0)
 		return 0;
 	if (status >= ARRAY_SIZE(xlat)) {
+<<<<<<< HEAD
 		printk_ratelimited(KERN_ERR "%s(): BUG? "
+=======
+		if (printk_ratelimit())
+			printk(KERN_ERR "%s(): BUG? "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       "Unknown WA transfer status 0x%02x\n",
 			       __func__, real_status);
 		return -EINVAL;
 	}
 	errno = xlat[status];
 	if (unlikely(errno > 0)) {
+<<<<<<< HEAD
 		printk_ratelimited(KERN_ERR "%s(): BUG? "
+=======
+		if (printk_ratelimit())
+			printk(KERN_ERR "%s(): BUG? "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       "Inconsistent WA status: 0x%02x\n",
 			       __func__, real_status);
 		errno = -errno;

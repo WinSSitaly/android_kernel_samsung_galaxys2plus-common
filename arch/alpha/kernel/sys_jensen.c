@@ -15,6 +15,10 @@
 #include <linux/init.h>
 
 #include <asm/ptrace.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define __EXTERN_INLINE inline
 #include <asm/io.h>

@@ -41,6 +41,7 @@
 #include <linux/netfilter/nf_conntrack_proto_gre.h>
 #include <linux/netfilter/nf_conntrack_pptp.h>
 
+<<<<<<< HEAD
 enum grep_conntrack {
 	GRE_CT_UNREPLIED,
 	GRE_CT_REPLIED,
@@ -51,6 +52,10 @@ static unsigned int gre_timeouts[GRE_CT_MAX] = {
 	[GRE_CT_UNREPLIED]	= 30*HZ,
 	[GRE_CT_REPLIED]	= 180*HZ,
 };
+=======
+#define GRE_TIMEOUT		(30 * HZ)
+#define GRE_STREAM_TIMEOUT	(180 * HZ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int proto_gre_net_id __read_mostly;
 struct netns_proto_gre {
@@ -235,19 +240,26 @@ static int gre_print_conntrack(struct seq_file *s, struct nf_conn *ct)
 			  (ct->proto.gre.stream_timeout / HZ));
 }
 
+<<<<<<< HEAD
 static unsigned int *gre_get_timeouts(struct net *net)
 {
 	return gre_timeouts;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Returns verdict for packet, and may modify conntrack */
 static int gre_packet(struct nf_conn *ct,
 		      const struct sk_buff *skb,
 		      unsigned int dataoff,
 		      enum ip_conntrack_info ctinfo,
 		      u_int8_t pf,
+<<<<<<< HEAD
 		      unsigned int hooknum,
 		      unsigned int *timeouts)
+=======
+		      unsigned int hooknum)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* If we've seen traffic both ways, this is a GRE connection.
 	 * Extend timeout. */
@@ -255,8 +267,13 @@ static int gre_packet(struct nf_conn *ct,
 		nf_ct_refresh_acct(ct, ctinfo, skb,
 				   ct->proto.gre.stream_timeout);
 		/* Also, more likely to be important, and not a probe. */
+<<<<<<< HEAD
 		if (!test_and_set_bit(IPS_ASSURED_BIT, &ct->status))
 			nf_conntrack_event_cache(IPCT_ASSURED, ct);
+=======
+		set_bit(IPS_ASSURED_BIT, &ct->status);
+		nf_conntrack_event_cache(IPCT_ASSURED, ct);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		nf_ct_refresh_acct(ct, ctinfo, skb,
 				   ct->proto.gre.timeout);
@@ -266,15 +283,24 @@ static int gre_packet(struct nf_conn *ct,
 
 /* Called when a new connection for this protocol found. */
 static bool gre_new(struct nf_conn *ct, const struct sk_buff *skb,
+<<<<<<< HEAD
 		    unsigned int dataoff, unsigned int *timeouts)
+=======
+		    unsigned int dataoff)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	pr_debug(": ");
 	nf_ct_dump_tuple(&ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple);
 
 	/* initialize to sane value.  Ideally a conntrack helper
 	 * (e.g. in case of pptp) is increasing them */
+<<<<<<< HEAD
 	ct->proto.gre.stream_timeout = timeouts[GRE_CT_REPLIED];
 	ct->proto.gre.timeout = timeouts[GRE_CT_UNREPLIED];
+=======
+	ct->proto.gre.stream_timeout = GRE_STREAM_TIMEOUT;
+	ct->proto.gre.timeout = GRE_TIMEOUT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return true;
 }
@@ -292,6 +318,7 @@ static void gre_destroy(struct nf_conn *ct)
 		nf_ct_gre_keymap_destroy(master);
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
 
 #include <linux/netfilter/nfnetlink.h>
@@ -338,6 +365,8 @@ gre_timeout_nla_policy[CTA_TIMEOUT_GRE_MAX+1] = {
 };
 #endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* protocol helper struct */
 static struct nf_conntrack_l4proto nf_conntrack_l4proto_gre4 __read_mostly = {
 	.l3proto	 = AF_INET,
@@ -347,17 +376,25 @@ static struct nf_conntrack_l4proto nf_conntrack_l4proto_gre4 __read_mostly = {
 	.invert_tuple	 = gre_invert_tuple,
 	.print_tuple	 = gre_print_tuple,
 	.print_conntrack = gre_print_conntrack,
+<<<<<<< HEAD
 	.get_timeouts    = gre_get_timeouts,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.packet		 = gre_packet,
 	.new		 = gre_new,
 	.destroy	 = gre_destroy,
 	.me 		 = THIS_MODULE,
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK)
+=======
+#if defined(CONFIG_NF_CT_NETLINK) || defined(CONFIG_NF_CT_NETLINK_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.tuple_to_nlattr = nf_ct_port_tuple_to_nlattr,
 	.nlattr_tuple_size = nf_ct_port_nlattr_tuple_size,
 	.nlattr_to_tuple = nf_ct_port_nlattr_to_tuple,
 	.nla_policy	 = nf_ct_port_nla_policy,
 #endif
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
 	.ctnl_timeout    = {
 		.nlattr_to_obj	= gre_timeout_nlattr_to_obj,
@@ -367,6 +404,8 @@ static struct nf_conntrack_l4proto nf_conntrack_l4proto_gre4 __read_mostly = {
 		.nla_policy	= gre_timeout_nla_policy,
 	},
 #endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int proto_gre_net_init(struct net *net)

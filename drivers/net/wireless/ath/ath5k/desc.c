@@ -24,6 +24,7 @@
 #include "ath5k.h"
 #include "reg.h"
 #include "debug.h"
+<<<<<<< HEAD
 
 
 /**
@@ -41,12 +42,16 @@
  * have function pointers on &struct ath5k_hw we initialize at runtime based on
  * the chip used.
  */
+=======
+#include "base.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /************************\
 * TX Control descriptors *
 \************************/
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_setup_2word_tx_desc() - Initialize a 2-word tx control descriptor
  * @ah: The &struct ath5k_hw
@@ -81,6 +86,18 @@ ath5k_hw_setup_2word_tx_desc(struct ath5k_hw *ah,
 			unsigned int antenna_mode,
 			unsigned int flags,
 			unsigned int rtscts_rate, unsigned int rtscts_duration)
+=======
+/*
+ * Initialize the 2-word tx control descriptor on 5210/5211
+ */
+static int
+ath5k_hw_setup_2word_tx_desc(struct ath5k_hw *ah, struct ath5k_desc *desc,
+	unsigned int pkt_len, unsigned int hdr_len, int padsize,
+	enum ath5k_pkt_type type,
+	unsigned int tx_power, unsigned int tx_rate0, unsigned int tx_tries0,
+	unsigned int key_index, unsigned int antenna_mode, unsigned int flags,
+	unsigned int rtscts_rate, unsigned int rtscts_duration)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 frame_type;
 	struct ath5k_hw_2w_tx_ctl *tx_ctl;
@@ -95,12 +112,20 @@ ath5k_hw_setup_2word_tx_desc(struct ath5k_hw *ah,
 	 *   noise on the channel, so it is important to avoid this.
 	 */
 	if (unlikely(tx_tries0 == 0)) {
+<<<<<<< HEAD
 		ATH5K_ERR(ah, "zero retries\n");
+=======
+		ATH5K_ERR(ah->ah_sc, "zero retries\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		WARN_ON(1);
 		return -EINVAL;
 	}
 	if (unlikely(tx_rate0 == 0)) {
+<<<<<<< HEAD
 		ATH5K_ERR(ah, "zero rate\n");
+=======
+		ATH5K_ERR(ah->ah_sc, "zero rate\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		WARN_ON(1);
 		return -EINVAL;
 	}
@@ -213,6 +238,7 @@ ath5k_hw_setup_2word_tx_desc(struct ath5k_hw *ah,
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_setup_4word_tx_desc() - Initialize a 4-word tx control descriptor
  * @ah: The &struct ath5k_hw
@@ -247,6 +273,19 @@ ath5k_hw_setup_4word_tx_desc(struct ath5k_hw *ah,
 			unsigned int antenna_mode,
 			unsigned int flags,
 			unsigned int rtscts_rate, unsigned int rtscts_duration)
+=======
+/*
+ * Initialize the 4-word tx control descriptor on 5212
+ */
+static int ath5k_hw_setup_4word_tx_desc(struct ath5k_hw *ah,
+	struct ath5k_desc *desc, unsigned int pkt_len, unsigned int hdr_len,
+	int padsize,
+	enum ath5k_pkt_type type, unsigned int tx_power, unsigned int tx_rate0,
+	unsigned int tx_tries0, unsigned int key_index,
+	unsigned int antenna_mode, unsigned int flags,
+	unsigned int rtscts_rate,
+	unsigned int rtscts_duration)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath5k_hw_4w_tx_ctl *tx_ctl;
 	unsigned int frame_len;
@@ -266,12 +305,20 @@ ath5k_hw_setup_4word_tx_desc(struct ath5k_hw *ah,
 	 *   noise on the channel, so it is important to avoid this.
 	 */
 	if (unlikely(tx_tries0 == 0)) {
+<<<<<<< HEAD
 		ATH5K_ERR(ah, "zero retries\n");
+=======
+		ATH5K_ERR(ah->ah_sc, "zero retries\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		WARN_ON(1);
 		return -EINVAL;
 	}
 	if (unlikely(tx_rate0 == 0)) {
+<<<<<<< HEAD
 		ATH5K_ERR(ah, "zero rate\n");
+=======
+		ATH5K_ERR(ah->ah_sc, "zero rate\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		WARN_ON(1);
 		return -EINVAL;
 	}
@@ -356,6 +403,7 @@ ath5k_hw_setup_4word_tx_desc(struct ath5k_hw *ah,
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_setup_mrr_tx_desc() - Initialize an MRR tx control descriptor
  * @ah: The &struct ath5k_hw
@@ -379,6 +427,15 @@ ath5k_hw_setup_mrr_tx_desc(struct ath5k_hw *ah,
 			u_int tx_rate1, u_int tx_tries1,
 			u_int tx_rate2, u_int tx_tries2,
 			u_int tx_rate3, u_int tx_tries3)
+=======
+/*
+ * Initialize a 4-word multi rate retry tx control descriptor on 5212
+ */
+int
+ath5k_hw_setup_mrr_tx_desc(struct ath5k_hw *ah, struct ath5k_desc *desc,
+	unsigned int tx_rate1, u_int tx_tries1, u_int tx_rate2,
+	u_int tx_tries2, unsigned int tx_rate3, u_int tx_tries3)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath5k_hw_4w_tx_ctl *tx_ctl;
 
@@ -395,7 +452,11 @@ ath5k_hw_setup_mrr_tx_desc(struct ath5k_hw *ah,
 	if (unlikely((tx_rate1 == 0 && tx_tries1 != 0) ||
 		     (tx_rate2 == 0 && tx_tries2 != 0) ||
 		     (tx_rate3 == 0 && tx_tries3 != 0))) {
+<<<<<<< HEAD
 		ATH5K_ERR(ah, "zero rate\n");
+=======
+		ATH5K_ERR(ah->ah_sc, "zero rate\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		WARN_ON(1);
 		return -EINVAL;
 	}
@@ -430,6 +491,7 @@ ath5k_hw_setup_mrr_tx_desc(struct ath5k_hw *ah,
 * TX Status descriptors *
 \***********************/
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_proc_2word_tx_status() - Process a tx status descriptor on 5210/1
  * @ah: The &struct ath5k_hw
@@ -440,6 +502,13 @@ static int
 ath5k_hw_proc_2word_tx_status(struct ath5k_hw *ah,
 				struct ath5k_desc *desc,
 				struct ath5k_tx_status *ts)
+=======
+/*
+ * Process the tx status descriptor on 5210/5211
+ */
+static int ath5k_hw_proc_2word_tx_status(struct ath5k_hw *ah,
+		struct ath5k_desc *desc, struct ath5k_tx_status *ts)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath5k_hw_2w_tx_ctl *tx_ctl;
 	struct ath5k_hw_tx_status *tx_status;
@@ -484,6 +553,7 @@ ath5k_hw_proc_2word_tx_status(struct ath5k_hw *ah,
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_proc_4word_tx_status() - Process a tx status descriptor on 5212
  * @ah: The &struct ath5k_hw
@@ -494,6 +564,13 @@ static int
 ath5k_hw_proc_4word_tx_status(struct ath5k_hw *ah,
 				struct ath5k_desc *desc,
 				struct ath5k_tx_status *ts)
+=======
+/*
+ * Process a tx status descriptor on 5212
+ */
+static int ath5k_hw_proc_4word_tx_status(struct ath5k_hw *ah,
+		struct ath5k_desc *desc, struct ath5k_tx_status *ts)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath5k_hw_4w_tx_ctl *tx_ctl;
 	struct ath5k_hw_tx_status *tx_status;
@@ -550,6 +627,7 @@ ath5k_hw_proc_4word_tx_status(struct ath5k_hw *ah,
 * RX Descriptors *
 \****************/
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_setup_rx_desc() - Initialize an rx control descriptor
  * @ah: The &struct ath5k_hw
@@ -561,6 +639,13 @@ int
 ath5k_hw_setup_rx_desc(struct ath5k_hw *ah,
 			struct ath5k_desc *desc,
 			u32 size, unsigned int flags)
+=======
+/*
+ * Initialize an rx control descriptor
+ */
+int ath5k_hw_setup_rx_desc(struct ath5k_hw *ah, struct ath5k_desc *desc,
+			   u32 size, unsigned int flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath5k_hw_rx_ctl *rx_ctl;
 
@@ -587,6 +672,7 @@ ath5k_hw_setup_rx_desc(struct ath5k_hw *ah,
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_proc_5210_rx_status() - Process the rx status descriptor on 5210/1
  * @ah: The &struct ath5k_hw
@@ -603,6 +689,13 @@ static int
 ath5k_hw_proc_5210_rx_status(struct ath5k_hw *ah,
 				struct ath5k_desc *desc,
 				struct ath5k_rx_status *rs)
+=======
+/*
+ * Process the rx status descriptor on 5210/5211
+ */
+static int ath5k_hw_proc_5210_rx_status(struct ath5k_hw *ah,
+		struct ath5k_desc *desc, struct ath5k_rx_status *rs)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath5k_hw_rx_status *rx_status;
 
@@ -681,6 +774,7 @@ ath5k_hw_proc_5210_rx_status(struct ath5k_hw *ah,
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_proc_5212_rx_status() - Process the rx status descriptor on 5212
  * @ah: The &struct ath5k_hw
@@ -697,6 +791,14 @@ static int
 ath5k_hw_proc_5212_rx_status(struct ath5k_hw *ah,
 				struct ath5k_desc *desc,
 				struct ath5k_rx_status *rs)
+=======
+/*
+ * Process the rx status descriptor on 5212
+ */
+static int ath5k_hw_proc_5212_rx_status(struct ath5k_hw *ah,
+					struct ath5k_desc *desc,
+					struct ath5k_rx_status *rs)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath5k_hw_rx_status *rx_status;
 	u32 rxstat0, rxstat1;
@@ -763,6 +865,7 @@ ath5k_hw_proc_5212_rx_status(struct ath5k_hw *ah,
 * Attach *
 \********/
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_init_desc_functions() - Init function pointers inside ah
  * @ah: The &struct ath5k_hw
@@ -773,6 +876,12 @@ ath5k_hw_proc_5212_rx_status(struct ath5k_hw *ah,
  */
 int
 ath5k_hw_init_desc_functions(struct ath5k_hw *ah)
+=======
+/*
+ * Init function pointers inside ath5k_hw struct
+ */
+int ath5k_hw_init_desc_functions(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (ah->ah_version == AR5K_AR5212) {
 		ah->ah_setup_tx_desc = ath5k_hw_setup_4word_tx_desc;

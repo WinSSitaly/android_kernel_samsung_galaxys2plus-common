@@ -23,9 +23,13 @@
 
 #include <linux/slab.h>
 #include <linux/wl12xx.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 
 #include "debug.h"
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "acx.h"
 #include "reg.h"
 #include "boot.h"
@@ -33,6 +37,68 @@
 #include "event.h"
 #include "rx.h"
 
+<<<<<<< HEAD
+=======
+static struct wl1271_partition_set part_table[PART_TABLE_LEN] = {
+	[PART_DOWN] = {
+		.mem = {
+			.start = 0x00000000,
+			.size  = 0x000177c0
+		},
+		.reg = {
+			.start = REGISTERS_BASE,
+			.size  = 0x00008800
+		},
+		.mem2 = {
+			.start = 0x00000000,
+			.size  = 0x00000000
+		},
+		.mem3 = {
+			.start = 0x00000000,
+			.size  = 0x00000000
+		},
+	},
+
+	[PART_WORK] = {
+		.mem = {
+			.start = 0x00040000,
+			.size  = 0x00014fc0
+		},
+		.reg = {
+			.start = REGISTERS_BASE,
+			.size  = 0x0000a000
+		},
+		.mem2 = {
+			.start = 0x003004f8,
+			.size  = 0x00000004
+		},
+		.mem3 = {
+			.start = 0x00040404,
+			.size  = 0x00000000
+		},
+	},
+
+	[PART_DRPW] = {
+		.mem = {
+			.start = 0x00040000,
+			.size  = 0x00014fc0
+		},
+		.reg = {
+			.start = DRPW_BASE,
+			.size  = 0x00006000
+		},
+		.mem2 = {
+			.start = 0x00000000,
+			.size  = 0x00000000
+		},
+		.mem3 = {
+			.start = 0x00000000,
+			.size  = 0x00000000
+		}
+	}
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void wl1271_boot_set_ecpu_ctrl(struct wl1271 *wl, u32 flag)
 {
 	u32 cpu_ctrl;
@@ -45,6 +111,7 @@ static void wl1271_boot_set_ecpu_ctrl(struct wl1271 *wl, u32 flag)
 	wl1271_write32(wl, ACX_REG_ECPU_CONTROL, cpu_ctrl);
 }
 
+<<<<<<< HEAD
 static unsigned int wl12xx_get_fw_ver_quirks(struct wl1271 *wl)
 {
 	unsigned int quirks = 0;
@@ -62,6 +129,8 @@ static unsigned int wl12xx_get_fw_ver_quirks(struct wl1271 *wl)
 	return quirks;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void wl1271_parse_fw_ver(struct wl1271 *wl)
 {
 	int ret;
@@ -76,9 +145,12 @@ static void wl1271_parse_fw_ver(struct wl1271 *wl)
 		memset(wl->chip.fw_ver, 0, sizeof(wl->chip.fw_ver));
 		return;
 	}
+<<<<<<< HEAD
 
 	/* Check if any quirks are needed with older fw versions */
 	wl->quirks |= wl12xx_get_fw_ver_quirks(wl);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void wl1271_boot_fw_version(struct wl1271 *wl)
@@ -122,13 +194,21 @@ static int wl1271_boot_upload_firmware_chunk(struct wl1271 *wl, void *buf,
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	memcpy(&partition, &wl12xx_part_table[PART_DOWN], sizeof(partition));
+=======
+	memcpy(&partition, &part_table[PART_DOWN], sizeof(partition));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	partition.mem.start = dest;
 	wl1271_set_partition(wl, &partition);
 
 	/* 10.1 set partition limit and chunk num */
 	chunk_num = 0;
+<<<<<<< HEAD
 	partition_limit = wl12xx_part_table[PART_DOWN].mem.size;
+=======
+	partition_limit = part_table[PART_DOWN].mem.size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (chunk_num < fw_data_len / CHUNK_SIZE) {
 		/* 10.2 update partition, if needed */
@@ -136,7 +216,11 @@ static int wl1271_boot_upload_firmware_chunk(struct wl1271 *wl, void *buf,
 		if (addr > partition_limit) {
 			addr = dest + chunk_num * CHUNK_SIZE;
 			partition_limit = chunk_num * CHUNK_SIZE +
+<<<<<<< HEAD
 				wl12xx_part_table[PART_DOWN].mem.size;
+=======
+				part_table[PART_DOWN].mem.size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			partition.mem.start = addr;
 			wl1271_set_partition(wl, &partition);
 		}
@@ -237,7 +321,13 @@ static int wl1271_boot_upload_nvs(struct wl1271 *wl)
 		 */
 		if (wl->nvs_len == sizeof(struct wl1271_nvs_file) ||
 		    wl->nvs_len == WL1271_INI_LEGACY_NVS_FILE_SIZE) {
+<<<<<<< HEAD
 			if (nvs->general_params.dual_mode_select)
+=======
+			/* for now 11a is unsupported in AP mode */
+			if (wl->bss_type != BSS_TYPE_AP_BSS &&
+			    nvs->general_params.dual_mode_select)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				wl->enable_11a = true;
 		}
 
@@ -258,12 +348,21 @@ static int wl1271_boot_upload_nvs(struct wl1271 *wl)
 	}
 
 	/* update current MAC address to NVS */
+<<<<<<< HEAD
 	nvs_ptr[11] = wl->addresses[0].addr[0];
 	nvs_ptr[10] = wl->addresses[0].addr[1];
 	nvs_ptr[6] = wl->addresses[0].addr[2];
 	nvs_ptr[5] = wl->addresses[0].addr[3];
 	nvs_ptr[4] = wl->addresses[0].addr[4];
 	nvs_ptr[3] = wl->addresses[0].addr[5];
+=======
+	nvs_ptr[11] = wl->mac_addr[0];
+	nvs_ptr[10] = wl->mac_addr[1];
+	nvs_ptr[6] = wl->mac_addr[2];
+	nvs_ptr[5] = wl->mac_addr[3];
+	nvs_ptr[4] = wl->mac_addr[4];
+	nvs_ptr[3] = wl->mac_addr[5];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Layout before the actual NVS tables:
@@ -324,7 +423,11 @@ static int wl1271_boot_upload_nvs(struct wl1271 *wl)
 	nvs_len -= nvs_ptr - (u8 *)wl->nvs;
 
 	/* Now we must set the partition correctly */
+<<<<<<< HEAD
 	wl1271_set_partition(wl, &wl12xx_part_table[PART_WORK]);
+=======
+	wl1271_set_partition(wl, &part_table[PART_WORK]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Copy the NVS tables to a new block to ensure alignment */
 	nvs_aligned = kmemdup(nvs_ptr, nvs_len, GFP_KERNEL);
@@ -433,7 +536,11 @@ static int wl1271_boot_run_firmware(struct wl1271 *wl)
 	wl->event_box_addr = wl1271_read32(wl, REG_EVENT_MAILBOX_PTR);
 
 	/* set the working partition to its "running" mode offset */
+<<<<<<< HEAD
 	wl1271_set_partition(wl, &wl12xx_part_table[PART_WORK]);
+=======
+	wl1271_set_partition(wl, &part_table[PART_WORK]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wl1271_debug(DEBUG_MAILBOX, "cmd_box_addr 0x%x event_box_addr 0x%x",
 		     wl->cmd_box_addr, wl->event_box_addr);
@@ -448,11 +555,18 @@ static int wl1271_boot_run_firmware(struct wl1271 *wl)
 	/* unmask required mbox events  */
 	wl->event_mask = BSS_LOSE_EVENT_ID |
 		SCAN_COMPLETE_EVENT_ID |
+<<<<<<< HEAD
 		ROLE_STOP_COMPLETE_EVENT_ID |
+=======
+		PS_REPORT_EVENT_ID |
+		JOIN_EVENT_COMPLETE_ID |
+		DISCONNECT_EVENT_COMPLETE_ID |
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		RSSI_SNR_TRIGGER_0_EVENT_ID |
 		PSPOLL_DELIVERY_FAILURE_EVENT_ID |
 		SOFT_GEMINI_SENSE_EVENT_ID |
 		PERIODIC_SCAN_REPORT_EVENT_ID |
+<<<<<<< HEAD
 		PERIODIC_SCAN_COMPLETE_EVENT_ID |
 		DUMMY_PACKET_EVENT_ID |
 		PEER_REMOVE_COMPLETE_EVENT_ID |
@@ -461,6 +575,14 @@ static int wl1271_boot_run_firmware(struct wl1271 *wl)
 		INACTIVE_STA_EVENT_ID |
 		MAX_TX_RETRY_EVENT_ID |
 		CHANNEL_SWITCH_COMPLETE_EVENT_ID;
+=======
+		PERIODIC_SCAN_COMPLETE_EVENT_ID;
+
+	if (wl->bss_type == BSS_TYPE_AP_BSS)
+		wl->event_mask |= STA_REMOVE_COMPLETE_EVENT_ID;
+	else
+		wl->event_mask |= DUMMY_PACKET_EVENT_ID;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = wl1271_event_unmask(wl);
 	if (ret < 0) {
@@ -487,6 +609,22 @@ static int wl1271_boot_write_irq_polarity(struct wl1271 *wl)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void wl1271_boot_hw_version(struct wl1271 *wl)
+{
+	u32 fuse;
+
+	fuse = wl1271_top_reg_read(wl, REG_FUSE_DATA_2_1);
+	fuse = (fuse & PG_VER_MASK) >> PG_VER_OFFSET;
+
+	wl->hw_pg_ver = (s8)fuse;
+
+	if (((wl->hw_pg_ver & PG_MAJOR_VER_MASK) >> PG_MAJOR_VER_OFFSET) < 3)
+		wl->quirks |= WL12XX_QUIRK_END_OF_TRANSACTION;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int wl128x_switch_tcxo_to_fref(struct wl1271 *wl)
 {
 	u16 spare_reg;
@@ -625,8 +763,12 @@ static int wl127x_boot_clk(struct wl1271 *wl)
 	u32 pause;
 	u32 clk;
 
+<<<<<<< HEAD
 	if (WL127X_PG_GET_MAJOR(wl->hw_pg_ver) < 3)
 		wl->quirks |= WL12XX_QUIRK_END_OF_TRANSACTION;
+=======
+	wl1271_boot_hw_version(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (wl->ref_clock == CONF_REF_CLK_19_2_E ||
 	    wl->ref_clock == CONF_REF_CLK_38_4_E ||
@@ -694,7 +836,11 @@ int wl1271_load_firmware(struct wl1271 *wl)
 	wl1271_write32(wl, WELP_ARM_COMMAND, WELP_ARM_COMMAND_VAL);
 	udelay(500);
 
+<<<<<<< HEAD
 	wl1271_set_partition(wl, &wl12xx_part_table[PART_DRPW]);
+=======
+	wl1271_set_partition(wl, &part_table[PART_DRPW]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Read-modify-write DRPW_SCRATCH_START register (see next state)
 	   to be used by DRPw FW. The RTRIM value will be added by the FW
@@ -713,7 +859,11 @@ int wl1271_load_firmware(struct wl1271 *wl)
 
 	wl1271_write32(wl, DRPW_SCRATCH_START, clk);
 
+<<<<<<< HEAD
 	wl1271_set_partition(wl, &wl12xx_part_table[PART_WORK]);
+=======
+	wl1271_set_partition(wl, &part_table[PART_WORK]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Disable interrupts */
 	wl1271_write32(wl, ACX_REG_INTERRUPT_MASK, WL1271_ACX_INTR_ALL);
@@ -779,6 +929,12 @@ int wl1271_boot(struct wl1271 *wl)
 	/* Enable firmware interrupts now */
 	wl1271_boot_enable_interrupts(wl);
 
+<<<<<<< HEAD
+=======
+	/* set the wl1271 default filters */
+	wl1271_set_default_filters(wl);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wl1271_event_mbox_config(wl);
 
 out:

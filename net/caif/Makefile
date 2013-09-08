@@ -10,6 +10,9 @@ caif-y := caif_dev.o \
 obj-$(CONFIG_CAIF) += caif.o
 obj-$(CONFIG_CAIF_NETDEV) += chnl_net.o
 obj-$(CONFIG_CAIF) += caif_socket.o
+<<<<<<< HEAD
 obj-$(CONFIG_CAIF_USB) += caif_usb.o
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 export-y := caif.o

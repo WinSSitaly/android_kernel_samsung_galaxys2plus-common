@@ -1,8 +1,11 @@
 #ifndef _IPT_LOG_H
 #define _IPT_LOG_H
 
+<<<<<<< HEAD
 #warning "Please update iptables, this file will be removed soon!"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* make sure not to change this without changing netfilter.h:NF_LOG_* (!) */
 #define IPT_LOG_TCPSEQ		0x01	/* Log TCP sequence numbers */
 #define IPT_LOG_TCPOPT		0x02	/* Log TCP options */

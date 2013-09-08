@@ -2,14 +2,21 @@
 #include "perf.h"
 
 #include "util/util.h"
+<<<<<<< HEAD
 #include "util/evlist.h"
 #include "util/cache.h"
 #include "util/evsel.h"
+=======
+#include "util/cache.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "util/symbol.h"
 #include "util/thread.h"
 #include "util/header.h"
 #include "util/session.h"
+<<<<<<< HEAD
 #include "util/tool.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "util/parse-options.h"
 #include "util/trace-event.h"
@@ -17,13 +24,20 @@
 #include "util/debug.h"
 
 #include <sys/prctl.h>
+<<<<<<< HEAD
 #include <sys/resource.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <semaphore.h>
 #include <pthread.h>
 #include <math.h>
 
+<<<<<<< HEAD
 static const char		*input_name;
+=======
+static char			const *input_name = "perf.data";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static char			default_sort_order[] = "avg, max, switch, runtime";
 static const char		*sort_order = default_sort_order;
@@ -727,21 +741,33 @@ struct trace_migrate_task_event {
 
 struct trace_sched_handler {
 	void (*switch_event)(struct trace_switch_event *,
+<<<<<<< HEAD
 			     struct machine *,
+=======
+			     struct perf_session *,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     struct event *,
 			     int cpu,
 			     u64 timestamp,
 			     struct thread *thread);
 
 	void (*runtime_event)(struct trace_runtime_event *,
+<<<<<<< HEAD
 			      struct machine *,
+=======
+			      struct perf_session *,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      struct event *,
 			      int cpu,
 			      u64 timestamp,
 			      struct thread *thread);
 
 	void (*wakeup_event)(struct trace_wakeup_event *,
+<<<<<<< HEAD
 			     struct machine *,
+=======
+			     struct perf_session *,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     struct event *,
 			     int cpu,
 			     u64 timestamp,
@@ -754,7 +780,11 @@ struct trace_sched_handler {
 			   struct thread *thread);
 
 	void (*migrate_task_event)(struct trace_migrate_task_event *,
+<<<<<<< HEAD
 			   struct machine *machine,
+=======
+			   struct perf_session *session,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   struct event *,
 			   int cpu,
 			   u64 timestamp,
@@ -764,7 +794,11 @@ struct trace_sched_handler {
 
 static void
 replay_wakeup_event(struct trace_wakeup_event *wakeup_event,
+<<<<<<< HEAD
 		    struct machine *machine __used,
+=======
+		    struct perf_session *session __used,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    struct event *event,
 		    int cpu __used,
 		    u64 timestamp __used,
@@ -791,7 +825,11 @@ static u64 cpu_last_switched[MAX_CPUS];
 
 static void
 replay_switch_event(struct trace_switch_event *switch_event,
+<<<<<<< HEAD
 		    struct machine *machine __used,
+=======
+		    struct perf_session *session __used,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    struct event *event,
 		    int cpu,
 		    u64 timestamp,
@@ -1025,7 +1063,11 @@ add_sched_in_event(struct work_atoms *atoms, u64 timestamp)
 
 static void
 latency_switch_event(struct trace_switch_event *switch_event,
+<<<<<<< HEAD
 		     struct machine *machine,
+=======
+		     struct perf_session *session,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     struct event *event __used,
 		     int cpu,
 		     u64 timestamp,
@@ -1049,8 +1091,13 @@ latency_switch_event(struct trace_switch_event *switch_event,
 		die("hm, delta: %" PRIu64 " < 0 ?\n", delta);
 
 
+<<<<<<< HEAD
 	sched_out = machine__findnew_thread(machine, switch_event->prev_pid);
 	sched_in = machine__findnew_thread(machine, switch_event->next_pid);
+=======
+	sched_out = perf_session__findnew(session, switch_event->prev_pid);
+	sched_in = perf_session__findnew(session, switch_event->next_pid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	out_events = thread_atoms_search(&atom_root, sched_out, &cmp_pid);
 	if (!out_events) {
@@ -1078,13 +1125,21 @@ latency_switch_event(struct trace_switch_event *switch_event,
 
 static void
 latency_runtime_event(struct trace_runtime_event *runtime_event,
+<<<<<<< HEAD
 		     struct machine *machine,
+=======
+		     struct perf_session *session,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     struct event *event __used,
 		     int cpu,
 		     u64 timestamp,
 		     struct thread *this_thread __used)
 {
+<<<<<<< HEAD
 	struct thread *thread = machine__findnew_thread(machine, runtime_event->pid);
+=======
+	struct thread *thread = perf_session__findnew(session, runtime_event->pid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct work_atoms *atoms = thread_atoms_search(&atom_root, thread, &cmp_pid);
 
 	BUG_ON(cpu >= MAX_CPUS || cpu < 0);
@@ -1101,7 +1156,11 @@ latency_runtime_event(struct trace_runtime_event *runtime_event,
 
 static void
 latency_wakeup_event(struct trace_wakeup_event *wakeup_event,
+<<<<<<< HEAD
 		     struct machine *machine,
+=======
+		     struct perf_session *session,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     struct event *__event __used,
 		     int cpu __used,
 		     u64 timestamp,
@@ -1115,7 +1174,11 @@ latency_wakeup_event(struct trace_wakeup_event *wakeup_event,
 	if (!wakeup_event->success)
 		return;
 
+<<<<<<< HEAD
 	wakee = machine__findnew_thread(machine, wakeup_event->pid);
+=======
+	wakee = perf_session__findnew(session, wakeup_event->pid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atoms = thread_atoms_search(&atom_root, wakee, &cmp_pid);
 	if (!atoms) {
 		thread_atoms_insert(wakee);
@@ -1149,7 +1212,11 @@ latency_wakeup_event(struct trace_wakeup_event *wakeup_event,
 
 static void
 latency_migrate_task_event(struct trace_migrate_task_event *migrate_task_event,
+<<<<<<< HEAD
 		     struct machine *machine,
+=======
+		     struct perf_session *session,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     struct event *__event __used,
 		     int cpu __used,
 		     u64 timestamp,
@@ -1165,7 +1232,11 @@ latency_migrate_task_event(struct trace_migrate_task_event *migrate_task_event,
 	if (profile_cpu == -1)
 		return;
 
+<<<<<<< HEAD
 	migrant = machine__findnew_thread(machine, migrate_task_event->pid);
+=======
+	migrant = perf_session__findnew(session, migrate_task_event->pid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atoms = thread_atoms_search(&atom_root, migrant, &cmp_pid);
 	if (!atoms) {
 		thread_atoms_insert(migrant);
@@ -1360,6 +1431,7 @@ static void sort_lat(void)
 static struct trace_sched_handler *trace_handler;
 
 static void
+<<<<<<< HEAD
 process_sched_wakeup_event(struct perf_tool *tool __used,
 			   struct event *event,
 			   struct perf_sample *sample,
@@ -1367,6 +1439,14 @@ process_sched_wakeup_event(struct perf_tool *tool __used,
 			   struct thread *thread)
 {
 	void *data = sample->raw_data;
+=======
+process_sched_wakeup_event(void *data, struct perf_session *session,
+			   struct event *event,
+			   int cpu __used,
+			   u64 timestamp __used,
+			   struct thread *thread __used)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct trace_wakeup_event wakeup_event;
 
 	FILL_COMMON_FIELDS(wakeup_event, event, data);
@@ -1378,8 +1458,13 @@ process_sched_wakeup_event(struct perf_tool *tool __used,
 	FILL_FIELD(wakeup_event, cpu, event, data);
 
 	if (trace_handler->wakeup_event)
+<<<<<<< HEAD
 		trace_handler->wakeup_event(&wakeup_event, machine, event,
 					    sample->cpu, sample->time, thread);
+=======
+		trace_handler->wakeup_event(&wakeup_event, session, event,
+					    cpu, timestamp, thread);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1397,7 +1482,11 @@ static char next_shortname2 = '0';
 
 static void
 map_switch_event(struct trace_switch_event *switch_event,
+<<<<<<< HEAD
 		 struct machine *machine,
+=======
+		 struct perf_session *session,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 struct event *event __used,
 		 int this_cpu,
 		 u64 timestamp,
@@ -1425,8 +1514,13 @@ map_switch_event(struct trace_switch_event *switch_event,
 		die("hm, delta: %" PRIu64 " < 0 ?\n", delta);
 
 
+<<<<<<< HEAD
 	sched_out = machine__findnew_thread(machine, switch_event->prev_pid);
 	sched_in = machine__findnew_thread(machine, switch_event->next_pid);
+=======
+	sched_out = perf_session__findnew(session, switch_event->prev_pid);
+	sched_in = perf_session__findnew(session, switch_event->next_pid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	curr_thread[this_cpu] = sched_in;
 
@@ -1474,6 +1568,7 @@ map_switch_event(struct trace_switch_event *switch_event,
 	}
 }
 
+<<<<<<< HEAD
 static void
 process_sched_switch_event(struct perf_tool *tool __used,
 			   struct event *event,
@@ -1483,6 +1578,16 @@ process_sched_switch_event(struct perf_tool *tool __used,
 {
 	int this_cpu = sample->cpu;
 	void *data = sample->raw_data;
+=======
+
+static void
+process_sched_switch_event(void *data, struct perf_session *session,
+			   struct event *event,
+			   int this_cpu,
+			   u64 timestamp __used,
+			   struct thread *thread __used)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct trace_switch_event switch_event;
 
 	FILL_COMMON_FIELDS(switch_event, event, data);
@@ -1504,13 +1609,19 @@ process_sched_switch_event(struct perf_tool *tool __used,
 			nr_context_switch_bugs++;
 	}
 	if (trace_handler->switch_event)
+<<<<<<< HEAD
 		trace_handler->switch_event(&switch_event, machine, event,
 					    this_cpu, sample->time, thread);
+=======
+		trace_handler->switch_event(&switch_event, session, event,
+					    this_cpu, timestamp, thread);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	curr_pid[this_cpu] = switch_event.next_pid;
 }
 
 static void
+<<<<<<< HEAD
 process_sched_runtime_event(struct perf_tool *tool __used,
 			    struct event *event,
 			    struct perf_sample *sample,
@@ -1518,6 +1629,14 @@ process_sched_runtime_event(struct perf_tool *tool __used,
 			    struct thread *thread)
 {
 	void *data = sample->raw_data;
+=======
+process_sched_runtime_event(void *data, struct perf_session *session,
+			   struct event *event,
+			   int cpu __used,
+			   u64 timestamp __used,
+			   struct thread *thread __used)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct trace_runtime_event runtime_event;
 
 	FILL_ARRAY(runtime_event, comm, event, data);
@@ -1526,6 +1645,7 @@ process_sched_runtime_event(struct perf_tool *tool __used,
 	FILL_FIELD(runtime_event, vruntime, event, data);
 
 	if (trace_handler->runtime_event)
+<<<<<<< HEAD
 		trace_handler->runtime_event(&runtime_event, machine, event,
 					     sample->cpu, sample->time, thread);
 }
@@ -1538,6 +1658,18 @@ process_sched_fork_event(struct perf_tool *tool __used,
 			 struct thread *thread)
 {
 	void *data = sample->raw_data;
+=======
+		trace_handler->runtime_event(&runtime_event, session, event, cpu, timestamp, thread);
+}
+
+static void
+process_sched_fork_event(void *data,
+			 struct event *event,
+			 int cpu __used,
+			 u64 timestamp __used,
+			 struct thread *thread __used)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct trace_fork_event fork_event;
 
 	FILL_COMMON_FIELDS(fork_event, event, data);
@@ -1549,6 +1681,7 @@ process_sched_fork_event(struct perf_tool *tool __used,
 
 	if (trace_handler->fork_event)
 		trace_handler->fork_event(&fork_event, event,
+<<<<<<< HEAD
 					  sample->cpu, sample->time, thread);
 }
 
@@ -1557,6 +1690,15 @@ process_sched_exit_event(struct perf_tool *tool __used,
 			 struct event *event,
 			 struct perf_sample *sample __used,
 			 struct machine *machine __used,
+=======
+					  cpu, timestamp, thread);
+}
+
+static void
+process_sched_exit_event(struct event *event,
+			 int cpu __used,
+			 u64 timestamp __used,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 struct thread *thread __used)
 {
 	if (verbose)
@@ -1564,6 +1706,7 @@ process_sched_exit_event(struct perf_tool *tool __used,
 }
 
 static void
+<<<<<<< HEAD
 process_sched_migrate_task_event(struct perf_tool *tool __used,
 				 struct event *event,
 				 struct perf_sample *sample,
@@ -1571,6 +1714,14 @@ process_sched_migrate_task_event(struct perf_tool *tool __used,
 				 struct thread *thread)
 {
 	void *data = sample->raw_data;
+=======
+process_sched_migrate_task_event(void *data, struct perf_session *session,
+			   struct event *event,
+			   int cpu __used,
+			   u64 timestamp __used,
+			   struct thread *thread __used)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct trace_migrate_task_event migrate_task_event;
 
 	FILL_COMMON_FIELDS(migrate_task_event, event, data);
@@ -1581,6 +1732,7 @@ process_sched_migrate_task_event(struct perf_tool *tool __used,
 	FILL_FIELD(migrate_task_event, cpu, event, data);
 
 	if (trace_handler->migrate_task_event)
+<<<<<<< HEAD
 		trace_handler->migrate_task_event(&migrate_task_event, machine,
 						  event, sample->cpu,
 						  sample->time, thread);
@@ -1616,18 +1768,81 @@ static int perf_sched__process_tracepoint_sample(struct perf_tool *tool,
 
 		f(tool, evsel->handler.data, sample, machine, thread);
 	}
+=======
+		trace_handler->migrate_task_event(&migrate_task_event, session,
+						 event, cpu, timestamp, thread);
+}
+
+static void process_raw_event(union perf_event *raw_event __used,
+			      struct perf_session *session, void *data, int cpu,
+			      u64 timestamp, struct thread *thread)
+{
+	struct event *event;
+	int type;
+
+
+	type = trace_parse_common_type(data);
+	event = trace_find_event(type);
+
+	if (!strcmp(event->name, "sched_switch"))
+		process_sched_switch_event(data, session, event, cpu, timestamp, thread);
+	if (!strcmp(event->name, "sched_stat_runtime"))
+		process_sched_runtime_event(data, session, event, cpu, timestamp, thread);
+	if (!strcmp(event->name, "sched_wakeup"))
+		process_sched_wakeup_event(data, session, event, cpu, timestamp, thread);
+	if (!strcmp(event->name, "sched_wakeup_new"))
+		process_sched_wakeup_event(data, session, event, cpu, timestamp, thread);
+	if (!strcmp(event->name, "sched_process_fork"))
+		process_sched_fork_event(data, event, cpu, timestamp, thread);
+	if (!strcmp(event->name, "sched_process_exit"))
+		process_sched_exit_event(event, cpu, timestamp, thread);
+	if (!strcmp(event->name, "sched_migrate_task"))
+		process_sched_migrate_task_event(data, session, event, cpu, timestamp, thread);
+}
+
+static int process_sample_event(union perf_event *event,
+				struct perf_sample *sample,
+				struct perf_evsel *evsel __used,
+				struct perf_session *session)
+{
+	struct thread *thread;
+
+	if (!(session->sample_type & PERF_SAMPLE_RAW))
+		return 0;
+
+	thread = perf_session__findnew(session, sample->pid);
+	if (thread == NULL) {
+		pr_debug("problem processing %d event, skipping it.\n",
+			 event->header.type);
+		return -1;
+	}
+
+	dump_printf(" ... thread: %s:%d\n", thread->comm, thread->pid);
+
+	if (profile_cpu != -1 && profile_cpu != (int)sample->cpu)
+		return 0;
+
+	process_raw_event(event, session, sample->raw_data, sample->cpu,
+			  sample->time, thread);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct perf_tool perf_sched = {
 	.sample			= perf_sched__process_tracepoint_sample,
+=======
+static struct perf_event_ops event_ops = {
+	.sample			= process_sample_event,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.comm			= perf_event__process_comm,
 	.lost			= perf_event__process_lost,
 	.fork			= perf_event__process_task,
 	.ordered_samples	= true,
 };
 
+<<<<<<< HEAD
 static void read_events(bool destroy, struct perf_session **psession)
 {
 	int err = -EINVAL;
@@ -1653,16 +1868,33 @@ static void read_events(bool destroy, struct perf_session **psession)
 		if (err)
 			die("Failed to process events, error %d", err);
 
+=======
+static int read_events(void)
+{
+	int err = -EINVAL;
+	struct perf_session *session = perf_session__new(input_name, O_RDONLY,
+							 0, false, &event_ops);
+	if (session == NULL)
+		return -ENOMEM;
+
+	if (perf_session__has_traces(session, "record -R")) {
+		err = perf_session__process_events(session, &event_ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nr_events      = session->hists.stats.nr_events[0];
 		nr_lost_events = session->hists.stats.total_lost;
 		nr_lost_chunks = session->hists.stats.nr_events[PERF_RECORD_LOST];
 	}
 
+<<<<<<< HEAD
 	if (destroy)
 		perf_session__delete(session);
 
 	if (psession)
 		*psession = session;
+=======
+	perf_session__delete(session);
+	return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void print_bad_events(void)
@@ -1698,10 +1930,16 @@ static void print_bad_events(void)
 static void __cmd_lat(void)
 {
 	struct rb_node *next;
+<<<<<<< HEAD
 	struct perf_session *session;
 
 	setup_pager();
 	read_events(false, &session);
+=======
+
+	setup_pager();
+	read_events();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sort_lat();
 
 	printf("\n ---------------------------------------------------------------------------------------------------------------\n");
@@ -1727,7 +1965,10 @@ static void __cmd_lat(void)
 	print_bad_events();
 	printf("\n");
 
+<<<<<<< HEAD
 	perf_session__delete(session);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct trace_sched_handler map_ops  = {
@@ -1742,7 +1983,11 @@ static void __cmd_map(void)
 	max_cpu = sysconf(_SC_NPROCESSORS_CONF);
 
 	setup_pager();
+<<<<<<< HEAD
 	read_events(true, NULL);
+=======
+	read_events();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	print_bad_events();
 }
 
@@ -1755,7 +2000,11 @@ static void __cmd_replay(void)
 
 	test_calibrations();
 
+<<<<<<< HEAD
 	read_events(true, NULL);
+=======
+	read_events();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	printf("nr_run_events:        %ld\n", nr_run_events);
 	printf("nr_sleep_events:      %ld\n", nr_sleep_events);
@@ -1780,7 +2029,11 @@ static void __cmd_replay(void)
 
 
 static const char * const sched_usage[] = {
+<<<<<<< HEAD
 	"perf sched [<options>] {record|latency|map|replay|script}",
+=======
+	"perf sched [<options>] {record|latency|map|replay|trace}",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL
 };
 

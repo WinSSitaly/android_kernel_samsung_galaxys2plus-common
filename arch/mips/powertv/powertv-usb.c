@@ -29,7 +29,10 @@
  */
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ioport.h>
 #include <linux/platform_device.h>
 #include <asm/mach-powertv/asic.h>

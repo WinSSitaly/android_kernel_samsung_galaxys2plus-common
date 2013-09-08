@@ -21,7 +21,10 @@
  */
 #define KVM_FEATURE_CLOCKSOURCE2        3
 #define KVM_FEATURE_ASYNC_PF		4
+<<<<<<< HEAD
 #define KVM_FEATURE_STEAL_TIME		5
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* The last 8 bits are used to indicate how to interpret the flags field
  * in pvclock structure. If no bits are set, all flags are ignored.
@@ -31,11 +34,15 @@
 #define MSR_KVM_WALL_CLOCK  0x11
 #define MSR_KVM_SYSTEM_TIME 0x12
 
+<<<<<<< HEAD
 #define KVM_MSR_ENABLED 1
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Custom MSRs falls in the range 0x4b564d00-0x4b564dff */
 #define MSR_KVM_WALL_CLOCK_NEW  0x4b564d00
 #define MSR_KVM_SYSTEM_TIME_NEW 0x4b564d01
 #define MSR_KVM_ASYNC_PF_EN 0x4b564d02
+<<<<<<< HEAD
 #define MSR_KVM_STEAL_TIME  0x4b564d03
 
 struct kvm_steal_time {
@@ -48,6 +55,8 @@ struct kvm_steal_time {
 #define KVM_STEAL_ALIGNMENT_BITS 5
 #define KVM_STEAL_VALID_BITS ((-1ULL << (KVM_STEAL_ALIGNMENT_BITS + 1)))
 #define KVM_STEAL_RESERVED_MASK (((1 << KVM_STEAL_ALIGNMENT_BITS) - 1 ) << 1)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define KVM_MAX_MMU_OP_BATCH           32
 
@@ -170,9 +179,12 @@ static inline int kvm_para_available(void)
 	unsigned int eax, ebx, ecx, edx;
 	char signature[13];
 
+<<<<<<< HEAD
 	if (boot_cpu_data.cpuid_level < 0)
 		return 0;	/* So we don't blow up on old processors */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cpuid(KVM_CPUID_SIGNATURE, &eax, &ebx, &ecx, &edx);
 	memcpy(signature + 0, &ebx, 4);
 	memcpy(signature + 4, &ecx, 4);
@@ -195,7 +207,10 @@ void __init kvm_guest_init(void);
 void kvm_async_pf_task_wait(u32 token);
 void kvm_async_pf_task_wake(u32 token);
 u32 kvm_read_and_reset_pf_reason(void);
+<<<<<<< HEAD
 extern void kvm_disable_steal_time(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 #define kvm_guest_init() do { } while (0)
 #define kvm_async_pf_task_wait(T) do {} while(0)
@@ -204,11 +219,14 @@ static inline u32 kvm_read_and_reset_pf_reason(void)
 {
 	return 0;
 }
+<<<<<<< HEAD
 
 static inline void kvm_disable_steal_time(void)
 {
 	return;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #endif /* __KERNEL__ */

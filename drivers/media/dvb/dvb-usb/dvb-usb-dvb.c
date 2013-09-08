@@ -17,20 +17,30 @@ static int dvb_usb_ctrl_feed(struct dvb_demux_feed *dvbdmxfeed, int onoff)
 	if (adap == NULL)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	if ((adap->active_fe < 0) ||
 	    (adap->active_fe >= adap->num_frontends_initialized)) {
 		return -EINVAL;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	newfeedcount = adap->feedcount + (onoff ? 1 : -1);
 
 	/* stop feed before setting a new pid if there will be no pid anymore */
 	if (newfeedcount == 0) {
 		deb_ts("stop feeding\n");
+<<<<<<< HEAD
 		usb_urb_kill(&adap->fe_adap[adap->active_fe].stream);
 
 		if (adap->props.fe[adap->active_fe].streaming_ctrl != NULL) {
 			ret = adap->props.fe[adap->active_fe].streaming_ctrl(adap, 0);
+=======
+		usb_urb_kill(&adap->stream);
+
+		if (adap->props.streaming_ctrl != NULL) {
+			ret = adap->props.streaming_ctrl(adap, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret < 0) {
 				err("error while stopping stream.");
 				return ret;
@@ -41,6 +51,7 @@ static int dvb_usb_ctrl_feed(struct dvb_demux_feed *dvbdmxfeed, int onoff)
 	adap->feedcount = newfeedcount;
 
 	/* activate the pid on the device specific pid_filter */
+<<<<<<< HEAD
 	deb_ts("setting pid (%s): %5d %04x at index %d '%s'\n",
 		adap->fe_adap[adap->active_fe].pid_filtering ?
 		"yes" : "no", dvbdmxfeed->pid, dvbdmxfeed->pid,
@@ -49,12 +60,22 @@ static int dvb_usb_ctrl_feed(struct dvb_demux_feed *dvbdmxfeed, int onoff)
 		adap->fe_adap[adap->active_fe].pid_filtering &&
 		adap->props.fe[adap->active_fe].pid_filter != NULL)
 		adap->props.fe[adap->active_fe].pid_filter(adap, dvbdmxfeed->index, dvbdmxfeed->pid, onoff);
+=======
+	deb_ts("setting pid (%s): %5d %04x at index %d '%s'\n",adap->pid_filtering ?
+		"yes" : "no", dvbdmxfeed->pid,dvbdmxfeed->pid,dvbdmxfeed->index,onoff ?
+		"on" : "off");
+	if (adap->props.caps & DVB_USB_ADAP_HAS_PID_FILTER &&
+		adap->pid_filtering &&
+		adap->props.pid_filter != NULL)
+		adap->props.pid_filter(adap, dvbdmxfeed->index, dvbdmxfeed->pid,onoff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* start the feed if this was the first feed and there is still a feed
 	 * for reception.
 	 */
 	if (adap->feedcount == onoff && adap->feedcount > 0) {
 		deb_ts("submitting all URBs\n");
+<<<<<<< HEAD
 		usb_urb_submit(&adap->fe_adap[adap->active_fe].stream);
 
 		deb_ts("controlling pid parser\n");
@@ -64,14 +85,30 @@ static int dvb_usb_ctrl_feed(struct dvb_demux_feed *dvbdmxfeed, int onoff)
 			adap->props.fe[adap->active_fe].pid_filter_ctrl != NULL) {
 			ret = adap->props.fe[adap->active_fe].pid_filter_ctrl(adap,
 				adap->fe_adap[adap->active_fe].pid_filtering);
+=======
+		usb_urb_submit(&adap->stream);
+
+		deb_ts("controlling pid parser\n");
+		if (adap->props.caps & DVB_USB_ADAP_HAS_PID_FILTER &&
+			adap->props.caps &
+			DVB_USB_ADAP_PID_FILTER_CAN_BE_TURNED_OFF &&
+			adap->props.pid_filter_ctrl != NULL) {
+			ret = adap->props.pid_filter_ctrl(adap,
+				adap->pid_filtering);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret < 0) {
 				err("could not handle pid_parser");
 				return ret;
 			}
 		}
 		deb_ts("start feeding\n");
+<<<<<<< HEAD
 		if (adap->props.fe[adap->active_fe].streaming_ctrl != NULL) {
 			ret = adap->props.fe[adap->active_fe].streaming_ctrl(adap, 1);
+=======
+		if (adap->props.streaming_ctrl != NULL) {
+			ret = adap->props.streaming_ctrl(adap, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret < 0) {
 				err("error while enabling fifo.");
 				return ret;
@@ -96,7 +133,10 @@ static int dvb_usb_stop_feed(struct dvb_demux_feed *dvbdmxfeed)
 
 int dvb_usb_adapter_dvb_init(struct dvb_usb_adapter *adap, short *adapter_nums)
 {
+<<<<<<< HEAD
 	int i;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = dvb_register_adapter(&adap->dvb_adap, adap->dev->desc->name,
 				       adap->dev->owner, &adap->dev->udev->dev,
 				       adapter_nums);
@@ -119,12 +159,16 @@ int dvb_usb_adapter_dvb_init(struct dvb_usb_adapter *adap, short *adapter_nums)
 	adap->demux.dmx.capabilities = DMX_TS_FILTERING | DMX_SECTION_FILTERING;
 	adap->demux.priv             = adap;
 
+<<<<<<< HEAD
 	adap->demux.filternum        = 0;
 	for (i = 0; i < adap->props.num_frontends; i++) {
 		if (adap->demux.filternum < adap->fe_adap[i].max_feed_count)
 			adap->demux.filternum = adap->fe_adap[i].max_feed_count;
 	}
 	adap->demux.feednum          = adap->demux.filternum;
+=======
+	adap->demux.feednum          = adap->demux.filternum = adap->max_feed_count;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	adap->demux.start_feed       = dvb_usb_start_feed;
 	adap->demux.stop_feed        = dvb_usb_stop_feed;
 	adap->demux.write_to_decoder = NULL;
@@ -141,17 +185,24 @@ int dvb_usb_adapter_dvb_init(struct dvb_usb_adapter *adap, short *adapter_nums)
 		goto err_dmx_dev;
 	}
 
+<<<<<<< HEAD
 	if ((ret = dvb_net_init(&adap->dvb_adap, &adap->dvb_net,
 						&adap->demux.dmx)) < 0) {
 		err("dvb_net_init failed: error %d",ret);
 		goto err_net_init;
 	}
+=======
+	dvb_net_init(&adap->dvb_adap, &adap->dvb_net, &adap->demux.dmx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	adap->state |= DVB_USB_ADAP_STATE_DVB;
 	return 0;
 
+<<<<<<< HEAD
 err_net_init:
 	dvb_dmxdev_release(&adap->dmxdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_dmx_dev:
 	dvb_dmx_release(&adap->demux);
 err_dmx:
@@ -174,6 +225,7 @@ int dvb_usb_adapter_dvb_exit(struct dvb_usb_adapter *adap)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int dvb_usb_set_active_fe(struct dvb_frontend *fe, int onoff)
 {
 	struct dvb_usb_adapter *adap = fe->dvb->priv;
@@ -191,16 +243,23 @@ static int dvb_usb_set_active_fe(struct dvb_frontend *fe, int onoff)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int dvb_usb_fe_wakeup(struct dvb_frontend *fe)
 {
 	struct dvb_usb_adapter *adap = fe->dvb->priv;
 
 	dvb_usb_device_power_ctrl(adap->dev, 1);
 
+<<<<<<< HEAD
 	dvb_usb_set_active_fe(fe, 1);
 
 	if (adap->fe_adap[fe->id].fe_init)
 		adap->fe_adap[fe->id].fe_init(fe);
+=======
+	if (adap->fe_init)
+		adap->fe_init(fe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -209,16 +268,22 @@ static int dvb_usb_fe_sleep(struct dvb_frontend *fe)
 {
 	struct dvb_usb_adapter *adap = fe->dvb->priv;
 
+<<<<<<< HEAD
 	if (adap->fe_adap[fe->id].fe_sleep)
 		adap->fe_adap[fe->id].fe_sleep(fe);
 
 	dvb_usb_set_active_fe(fe, 0);
+=======
+	if (adap->fe_sleep)
+		adap->fe_sleep(fe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return dvb_usb_device_power_ctrl(adap->dev, 0);
 }
 
 int dvb_usb_adapter_frontend_init(struct dvb_usb_adapter *adap)
 {
+<<<<<<< HEAD
 	int ret, i;
 
 	/* register all given adapter frontends */
@@ -268,12 +333,37 @@ int dvb_usb_adapter_frontend_init(struct dvb_usb_adapter *adap)
 
 		adap->num_frontends_initialized++;
 	}
+=======
+	if (adap->props.frontend_attach == NULL) {
+		err("strange: '%s' #%d doesn't want to attach a frontend.",adap->dev->desc->name, adap->id);
+		return 0;
+	}
+
+	/* re-assign sleep and wakeup functions */
+	if (adap->props.frontend_attach(adap) == 0 && adap->fe != NULL) {
+		adap->fe_init  = adap->fe->ops.init;  adap->fe->ops.init  = dvb_usb_fe_wakeup;
+		adap->fe_sleep = adap->fe->ops.sleep; adap->fe->ops.sleep = dvb_usb_fe_sleep;
+
+		if (dvb_register_frontend(&adap->dvb_adap, adap->fe)) {
+			err("Frontend registration failed.");
+			dvb_frontend_detach(adap->fe);
+			adap->fe = NULL;
+			return -ENODEV;
+		}
+
+		/* only attach the tuner if the demod is there */
+		if (adap->props.tuner_attach != NULL)
+			adap->props.tuner_attach(adap);
+	} else
+		err("no frontend was attached by '%s'",adap->dev->desc->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 int dvb_usb_adapter_frontend_exit(struct dvb_usb_adapter *adap)
 {
+<<<<<<< HEAD
 	int i = adap->num_frontends_initialized - 1;
 
 	/* unregister all given adapter frontends */
@@ -285,5 +375,11 @@ int dvb_usb_adapter_frontend_exit(struct dvb_usb_adapter *adap)
 	}
 	adap->num_frontends_initialized = 0;
 
+=======
+	if (adap->fe != NULL) {
+		dvb_unregister_frontend(adap->fe);
+		dvb_frontend_detach(adap->fe);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }

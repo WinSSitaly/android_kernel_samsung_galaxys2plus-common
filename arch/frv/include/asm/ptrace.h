@@ -78,6 +78,10 @@ register struct pt_regs *__frame asm("gr28");
 #define user_stack_pointer(regs)	((regs)->sp)
 
 extern unsigned long user_stack(const struct pt_regs *);
+<<<<<<< HEAD
+=======
+extern void show_regs(struct pt_regs *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define profile_pc(regs) ((regs)->pc)
 
 #define task_pt_regs(task) ((task)->thread.frame0)

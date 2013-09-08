@@ -12,6 +12,10 @@
 #include <asm/processor-flags.h>
 #include <asm/cpufeature.h>
 #include <asm/tlbflush.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mtrr.h>
 #include <asm/msr.h>
 #include <asm/pat.h>
@@ -546,7 +550,10 @@ static void generic_get_mtrr(unsigned int reg, unsigned long *base,
 
 		if (tmp != mask_lo) {
 			printk(KERN_WARNING "mtrr: your BIOS has configured an incorrect mask, fixing it.\n");
+<<<<<<< HEAD
 			add_taint(TAINT_FIRMWARE_WORKAROUND);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mask_lo = tmp;
 		}
 	}
@@ -693,7 +700,10 @@ static void prepare_set(void) __acquires(set_atomicity_lock)
 
 	/* Disable MTRRs, and set the default type to uncached */
 	mtrr_wrmsr(MSR_MTRRdefType, deftype_lo & ~0xcff, deftype_hi);
+<<<<<<< HEAD
 	wbinvd();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void post_set(void) __releases(set_atomicity_lock)

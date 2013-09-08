@@ -30,7 +30,10 @@
 
 ******************************************************************************/
 
+<<<<<<< HEAD
 #include <linux/hardirq.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kmod.h>
 #include <linux/slab.h>
 #include <linux/module.h>
@@ -474,6 +477,20 @@ int libipw_wx_set_encode(struct libipw_device *ieee,
 	if (ieee->set_security)
 		ieee->set_security(dev, &sec);
 
+<<<<<<< HEAD
+=======
+	/* Do not reset port if card is in Managed mode since resetting will
+	 * generate new IEEE 802.11 authentication which may end up in looping
+	 * with IEEE 802.1X.  If your hardware requires a reset after WEP
+	 * configuration (for example... Prism2), implement the reset_port in
+	 * the callbacks structures used to initialize the 802.11 stack. */
+	if (ieee->reset_on_keychange &&
+	    ieee->iw_mode != IW_MODE_INFRA &&
+	    ieee->reset_port && ieee->reset_port(dev)) {
+		printk(KERN_DEBUG "%s: reset_port failed\n", dev->name);
+		return -EINVAL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -677,6 +694,23 @@ int libipw_wx_set_encodeext(struct libipw_device *ieee,
 	if (ieee->set_security)
 		ieee->set_security(ieee->dev, &sec);
 
+<<<<<<< HEAD
+=======
+	/*
+	 * Do not reset port if card is in Managed mode since resetting will
+	 * generate new IEEE 802.11 authentication which may end up in looping
+	 * with IEEE 802.1X. If your hardware requires a reset after WEP
+	 * configuration (for example... Prism2), implement the reset_port in
+	 * the callbacks structures used to initialize the 802.11 stack.
+	 */
+	if (ieee->reset_on_keychange &&
+	    ieee->iw_mode != IW_MODE_INFRA &&
+	    ieee->reset_port && ieee->reset_port(dev)) {
+		LIBIPW_DEBUG_WX("%s: reset_port failed\n", dev->name);
+		return -EINVAL;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 

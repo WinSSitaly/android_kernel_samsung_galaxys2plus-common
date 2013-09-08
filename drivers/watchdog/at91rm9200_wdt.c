@@ -9,8 +9,11 @@
  * 2 of the License, or (at your option) any later version.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bitops.h>
 #include <linux/errno.h>
 #include <linux/fs.h>
@@ -30,14 +33,22 @@
 #define WDT_MAX_TIME		256	/* seconds */
 
 static int wdt_time = WDT_DEFAULT_TIME;
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(wdt_time, int, 0);
 MODULE_PARM_DESC(wdt_time, "Watchdog time in seconds. (default="
 				__MODULE_STRING(WDT_DEFAULT_TIME) ")");
 
 #ifdef CONFIG_WATCHDOG_NOWAYOUT
+<<<<<<< HEAD
 module_param(nowayout, bool, 0);
+=======
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout,
 		"Watchdog cannot be stopped once started (default="
 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
@@ -53,7 +64,11 @@ static unsigned long at91wdt_busy;
  */
 static inline void at91_wdt_stop(void)
 {
+<<<<<<< HEAD
 	at91_st_write(AT91_ST_WDMR, AT91_ST_EXTEN);
+=======
+	at91_sys_write(AT91_ST_WDMR, AT91_ST_EXTEN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -61,9 +76,15 @@ static inline void at91_wdt_stop(void)
  */
 static inline void at91_wdt_start(void)
 {
+<<<<<<< HEAD
 	at91_st_write(AT91_ST_WDMR, AT91_ST_EXTEN | AT91_ST_RSTEN |
 				(((65536 * wdt_time) >> 8) & AT91_ST_WDV));
 	at91_st_write(AT91_ST_CR, AT91_ST_WDRST);
+=======
+	at91_sys_write(AT91_ST_WDMR, AT91_ST_EXTEN | AT91_ST_RSTEN |
+				(((65536 * wdt_time) >> 8) & AT91_ST_WDV));
+	at91_sys_write(AT91_ST_CR, AT91_ST_WDRST);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -71,7 +92,11 @@ static inline void at91_wdt_start(void)
  */
 static inline void at91_wdt_reload(void)
 {
+<<<<<<< HEAD
 	at91_st_write(AT91_ST_CR, AT91_ST_WDRST);
+=======
+	at91_sys_write(AT91_ST_CR, AT91_ST_WDRST);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* ......................................................................... */
@@ -211,8 +236,13 @@ static int __devinit at91wdt_probe(struct platform_device *pdev)
 	if (res)
 		return res;
 
+<<<<<<< HEAD
 	pr_info("AT91 Watchdog Timer enabled (%d seconds%s)\n",
 		wdt_time, nowayout ? ", nowayout" : "");
+=======
+	printk(KERN_INFO "AT91 Watchdog Timer enabled (%d seconds%s)\n",
+				wdt_time, nowayout ? ", nowayout" : "");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -270,8 +300,13 @@ static int __init at91_wdt_init(void)
 	   if not reset to the default */
 	if (at91_wdt_settimeout(wdt_time)) {
 		at91_wdt_settimeout(WDT_DEFAULT_TIME);
+<<<<<<< HEAD
 		pr_info("wdt_time value must be 1 <= wdt_time <= 256, using %d\n",
 			wdt_time);
+=======
+		pr_info("at91_wdt: wdt_time value must be 1 <= wdt_time <= 256"
+						", using %d\n", wdt_time);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return platform_driver_register(&at91wdt_driver);

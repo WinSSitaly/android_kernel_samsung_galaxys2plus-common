@@ -28,12 +28,15 @@
 #define SIXAXIS_CONTROLLER_USB  (1 << 1)
 #define SIXAXIS_CONTROLLER_BT   (1 << 2)
 
+<<<<<<< HEAD
 static const u8 sixaxis_rdesc_fixup[] = {
 	0x95, 0x13, 0x09, 0x01, 0x81, 0x02, 0x95, 0x0C,
 	0x81, 0x01, 0x75, 0x10, 0x95, 0x04, 0x26, 0xFF,
 	0x03, 0x46, 0xFF, 0x03, 0x09, 0x01, 0x81, 0x02
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct sony_sc {
 	unsigned long quirks;
 };
@@ -49,6 +52,7 @@ static __u8 *sony_report_fixup(struct hid_device *hdev, __u8 *rdesc,
 		hid_info(hdev, "Fixing up Sony Vaio VGX report descriptor\n");
 		rdesc[55] = 0x06;
 	}
+<<<<<<< HEAD
 
 	/* The HID descriptor exposed over BT has a trailing zero byte */
 	if ((((sc->quirks & SIXAXIS_CONTROLLER_USB) && *rsize == 148) ||
@@ -80,6 +84,11 @@ static int sony_raw_event(struct hid_device *hdev, struct hid_report *report,
 	return 0;
 }
 
+=======
+	return rdesc;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The Sony Sixaxis does not handle HID Output Reports on the Interrupt EP
  * like it should according to usbhid/hid-core.c::usbhid_output_raw_report()
@@ -228,7 +237,10 @@ static struct hid_driver sony_driver = {
 	.probe = sony_probe,
 	.remove = sony_remove,
 	.report_fixup = sony_report_fixup,
+<<<<<<< HEAD
 	.raw_event = sony_raw_event
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init sony_init(void)

@@ -35,7 +35,11 @@
 #include <linux/compiler.h>
 
 #include <asm/ptrace.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/code-patching.h>
 #include <asm/irq.h>
 #include <asm/page.h>
@@ -125,7 +129,11 @@ static volatile u32 __iomem *psurge_start;
 static int psurge_type = PSURGE_NONE;
 
 /* irq for secondary cpus to report */
+<<<<<<< HEAD
 static struct irq_domain *psurge_host;
+=======
+static struct irq_host *psurge_host;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int psurge_secondary_virq;
 
 /*
@@ -176,7 +184,11 @@ static void smp_psurge_cause_ipi(int cpu, unsigned long data)
 	psurge_set_ipi(cpu);
 }
 
+<<<<<<< HEAD
 static int psurge_host_map(struct irq_domain *h, unsigned int virq,
+=======
+static int psurge_host_map(struct irq_host *h, unsigned int virq,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 irq_hw_number_t hw)
 {
 	irq_set_chip_and_handler(virq, &dummy_irq_chip, handle_percpu_irq);
@@ -184,7 +196,11 @@ static int psurge_host_map(struct irq_domain *h, unsigned int virq,
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct irq_domain_ops psurge_host_ops = {
+=======
+struct irq_host_ops psurge_host_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map	= psurge_host_map,
 };
 
@@ -192,14 +208,23 @@ static int psurge_secondary_ipi_init(void)
 {
 	int rc = -ENOMEM;
 
+<<<<<<< HEAD
 	psurge_host = irq_domain_add_nomap(NULL, 0, &psurge_host_ops, NULL);
+=======
+	psurge_host = irq_alloc_host(NULL, IRQ_HOST_MAP_NOMAP, 0,
+		&psurge_host_ops, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (psurge_host)
 		psurge_secondary_virq = irq_create_direct_mapping(psurge_host);
 
 	if (psurge_secondary_virq)
 		rc = request_irq(psurge_secondary_virq, psurge_ipi_intr,
+<<<<<<< HEAD
 			IRQF_PERCPU | IRQF_NO_THREAD, "IPI", NULL);
+=======
+			IRQF_DISABLED|IRQF_PERCPU, "IPI", NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (rc)
 		pr_err("Failed to setup secondary cpu IPI\n");
@@ -407,7 +432,11 @@ static int __init smp_psurge_kick_cpu(int nr)
 
 static struct irqaction psurge_irqaction = {
 	.handler = psurge_ipi_intr,
+<<<<<<< HEAD
 	.flags = IRQF_PERCPU | IRQF_NO_THREAD,
+=======
+	.flags = IRQF_DISABLED|IRQF_PERCPU,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name = "primary IPI",
 };
 
@@ -446,7 +475,11 @@ void __init smp_psurge_give_timebase(void)
 
 /* PowerSurge-style Macs */
 struct smp_ops_t psurge_smp_ops = {
+<<<<<<< HEAD
 	.message_pass	= NULL,	/* Use smp_muxed_ipi_message_pass */
+=======
+	.message_pass	= smp_muxed_ipi_message_pass,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.cause_ipi	= smp_psurge_cause_ipi,
 	.probe		= smp_psurge_probe,
 	.kick_cpu	= smp_psurge_kick_cpu,

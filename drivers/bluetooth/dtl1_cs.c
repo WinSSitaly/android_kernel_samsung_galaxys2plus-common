@@ -38,6 +38,10 @@
 #include <linux/serial.h>
 #include <linux/serial_reg.h>
 #include <linux/bitops.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 
 #include <pcmcia/cistpl.h>
@@ -82,6 +86,12 @@ typedef struct dtl1_info_t {
 
 
 static int dtl1_config(struct pcmcia_device *link);
+<<<<<<< HEAD
+=======
+static void dtl1_release(struct pcmcia_device *link);
+
+static void dtl1_detach(struct pcmcia_device *p_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /* Transmit states  */
@@ -363,7 +373,11 @@ static int dtl1_hci_open(struct hci_dev *hdev)
 
 static int dtl1_hci_flush(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	dtl1_info_t *info = hci_get_drvdata(hdev);
+=======
+	dtl1_info_t *info = (dtl1_info_t *)(hdev->driver_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Drop TX queue */
 	skb_queue_purge(&(info->txq));
@@ -395,7 +409,11 @@ static int dtl1_hci_send_frame(struct sk_buff *skb)
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	info = hci_get_drvdata(hdev);
+=======
+	info = (dtl1_info_t *)(hdev->driver_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (bt_cb(skb)->pkt_type) {
 	case HCI_COMMAND_PKT:
@@ -438,6 +456,14 @@ static int dtl1_hci_send_frame(struct sk_buff *skb)
 }
 
 
+<<<<<<< HEAD
+=======
+static void dtl1_hci_destruct(struct hci_dev *hdev)
+{
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int dtl1_hci_ioctl(struct hci_dev *hdev, unsigned int cmd,  unsigned long arg)
 {
 	return -ENOIOCTLCMD;
@@ -474,15 +500,27 @@ static int dtl1_open(dtl1_info_t *info)
 	info->hdev = hdev;
 
 	hdev->bus = HCI_PCCARD;
+<<<<<<< HEAD
 	hci_set_drvdata(hdev, info);
+=======
+	hdev->driver_data = info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	SET_HCIDEV_DEV(hdev, &info->p_dev->dev);
 
 	hdev->open     = dtl1_hci_open;
 	hdev->close    = dtl1_hci_close;
 	hdev->flush    = dtl1_hci_flush;
 	hdev->send     = dtl1_hci_send_frame;
+<<<<<<< HEAD
 	hdev->ioctl    = dtl1_hci_ioctl;
 
+=======
+	hdev->destruct = dtl1_hci_destruct;
+	hdev->ioctl    = dtl1_hci_ioctl;
+
+	hdev->owner = THIS_MODULE;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&(info->lock), flags);
 
 	/* Reset UART */
@@ -539,7 +577,13 @@ static int dtl1_close(dtl1_info_t *info)
 
 	spin_unlock_irqrestore(&(info->lock), flags);
 
+<<<<<<< HEAD
 	hci_unregister_dev(hdev);
+=======
+	if (hci_unregister_dev(hdev) < 0)
+		BT_ERR("Can't unregister HCI device %s", hdev->name);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hci_free_dev(hdev);
 
 	return 0;
@@ -567,8 +611,13 @@ static void dtl1_detach(struct pcmcia_device *link)
 {
 	dtl1_info_t *info = link->priv;
 
+<<<<<<< HEAD
 	dtl1_close(info);
 	pcmcia_disable_device(link);
+=======
+	dtl1_release(link);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(info);
 }
 
@@ -607,10 +656,28 @@ static int dtl1_config(struct pcmcia_device *link)
 	return 0;
 
 failed:
+<<<<<<< HEAD
 	dtl1_detach(link);
 	return -ENODEV;
 }
 
+=======
+	dtl1_release(link);
+	return -ENODEV;
+}
+
+
+static void dtl1_release(struct pcmcia_device *link)
+{
+	dtl1_info_t *info = link->priv;
+
+	dtl1_close(info);
+
+	pcmcia_disable_device(link);
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct pcmcia_device_id dtl1_ids[] = {
 	PCMCIA_DEVICE_PROD_ID12("Nokia Mobile Phones", "DTL-1", 0xe1bfdd64, 0xe168480d),
 	PCMCIA_DEVICE_PROD_ID12("Nokia Mobile Phones", "DTL-4", 0xe1bfdd64, 0x9102bc82),

@@ -147,8 +147,26 @@ static struct platform_driver jornada_bl_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(jornada_bl_driver);
+=======
+static int __init jornada_bl_init(void)
+{
+	return platform_driver_register(&jornada_bl_driver);
+}
+
+static void __exit jornada_bl_exit(void)
+{
+	platform_driver_unregister(&jornada_bl_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Kristoffer Ericson <kristoffer.ericson>");
 MODULE_DESCRIPTION("HP Jornada 710/720/728 Backlight driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(jornada_bl_init);
+module_exit(jornada_bl_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

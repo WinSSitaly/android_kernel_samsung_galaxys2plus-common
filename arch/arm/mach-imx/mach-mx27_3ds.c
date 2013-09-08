@@ -29,9 +29,12 @@
 #include <linux/mfd/mc13783.h>
 #include <linux/spi/spi.h>
 #include <linux/regulator/machine.h>
+<<<<<<< HEAD
 #include <linux/spi/l4f00242t03.h>
 
 #include <media/soc_camera.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
@@ -45,6 +48,7 @@
 
 #include "devices-imx27.h"
 
+<<<<<<< HEAD
 #define SD1_EN_GPIO		IMX_GPIO_NR(2, 25)
 #define OTG_PHY_RESET_GPIO	IMX_GPIO_NR(2, 23)
 #define SPI2_SS0		IMX_GPIO_NR(4, 21)
@@ -56,6 +60,12 @@
 #define LCD_ENABLE		IMX_GPIO_NR(1, 31)
 #define CSI_PWRDWN		IMX_GPIO_NR(4, 19)
 #define CSI_RESET		IMX_GPIO_NR(3, 6)
+=======
+#define SD1_EN_GPIO (GPIO_PORTB + 25)
+#define OTG_PHY_RESET_GPIO (GPIO_PORTB + 23)
+#define SPI2_SS0 (GPIO_PORTD + 21)
+#define EXPIO_PARENT_INT	(MXC_INTERNAL_IRQS + GPIO_PORTC + 28)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const int mx27pdk_pins[] __initconst = {
 	/* UART1 */
@@ -104,16 +114,20 @@ static const int mx27pdk_pins[] __initconst = {
 	PE2_PF_USBOTG_DIR,
 	PE24_PF_USBOTG_CLK,
 	PE25_PF_USBOTG_DATA7,
+<<<<<<< HEAD
 	/* CSPI1 */
 	PD31_PF_CSPI1_MOSI,
 	PD30_PF_CSPI1_MISO,
 	PD29_PF_CSPI1_SCLK,
 	PD25_PF_CSPI1_RDY,
 	SPI1_SS0 | GPIO_GPIO | GPIO_OUT,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* CSPI2 */
 	PD22_PF_CSPI2_SCLK,
 	PD23_PF_CSPI2_MISO,
 	PD24_PF_CSPI2_MOSI,
+<<<<<<< HEAD
 	SPI2_SS0 | GPIO_GPIO | GPIO_OUT,
 	/* I2C1 */
 	PD17_PF_I2C_DATA,
@@ -165,6 +179,11 @@ static const int mx27pdk_pins[] __initconst = {
 static struct gpio mx27_3ds_camera_gpios[] = {
 	{ CSI_PWRDWN, GPIOF_OUT_INIT_HIGH, "camera-power" },
 	{ CSI_RESET, GPIOF_OUT_INIT_HIGH, "camera-reset" },
+=======
+	/* I2C1 */
+	PD17_PF_I2C_DATA,
+	PD18_PF_I2C_CLK,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct imxuart_platform_data uart_pdata __initconst = {
@@ -195,13 +214,22 @@ static const struct matrix_keymap_data mx27_3ds_keymap_data __initconst = {
 static int mx27_3ds_sdhc1_init(struct device *dev, irq_handler_t detect_irq,
 				void *data)
 {
+<<<<<<< HEAD
 	return request_irq(gpio_to_irq(SD1_CD), detect_irq,
 	IRQF_TRIGGER_FALLING | IRQF_TRIGGER_RISING, "sdhc1-card-detect", data);
+=======
+	return request_irq(IRQ_GPIOB(26), detect_irq, IRQF_TRIGGER_FALLING |
+			IRQF_TRIGGER_RISING, "sdhc1-card-detect", data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void mx27_3ds_sdhc1_exit(struct device *dev, void *data)
 {
+<<<<<<< HEAD
 	free_irq(gpio_to_irq(SD1_CD), data);
+=======
+	free_irq(IRQ_GPIOB(26), data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct imxmmc_platform_data sdhc1_pdata __initconst = {
@@ -257,6 +285,7 @@ static int __init mx27_3ds_otg_mode(char *options)
 __setup("otg_mode=", mx27_3ds_otg_mode);
 
 /* Regulators */
+<<<<<<< HEAD
 static struct regulator_init_data gpo_init = {
 	.constraints = {
 		.boot_on = 1,
@@ -267,22 +296,34 @@ static struct regulator_init_data gpo_init = {
 static struct regulator_consumer_supply vmmc1_consumers[] = {
 	REGULATOR_SUPPLY("vcore", "spi0.0"),
 	REGULATOR_SUPPLY("cmos_2v8", "soc-camera-pdrv.0"),
+=======
+static struct regulator_consumer_supply vmmc1_consumers[] = {
+	REGULATOR_SUPPLY("lcd_2v8", NULL),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct regulator_init_data vmmc1_init = {
 	.constraints = {
 		.min_uV	= 2800000,
 		.max_uV = 2800000,
+<<<<<<< HEAD
 		.apply_uV = 1,
 		.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE |
 				  REGULATOR_CHANGE_STATUS,
+=======
+		.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.num_consumer_supplies = ARRAY_SIZE(vmmc1_consumers),
 	.consumer_supplies = vmmc1_consumers,
 };
 
 static struct regulator_consumer_supply vgen_consumers[] = {
+<<<<<<< HEAD
 	REGULATOR_SUPPLY("vdd", "spi0.0"),
+=======
+	REGULATOR_SUPPLY("vdd_lcdio", NULL),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct regulator_init_data vgen_init = {
@@ -295,6 +336,7 @@ static struct regulator_init_data vgen_init = {
 	.consumer_supplies = vgen_consumers,
 };
 
+<<<<<<< HEAD
 static struct regulator_consumer_supply vvib_consumers[] = {
 	REGULATOR_SUPPLY("cmos_vcore", "soc-camera-pdrv.0"),
 };
@@ -311,6 +353,8 @@ static struct regulator_init_data vvib_init = {
 	.consumer_supplies = vvib_consumers,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct mc13xxx_regulator_init_data mx27_3ds_regulators[] = {
 	{
 		.id = MC13783_REG_VMMC1,
@@ -318,6 +362,7 @@ static struct mc13xxx_regulator_init_data mx27_3ds_regulators[] = {
 	}, {
 		.id = MC13783_REG_VGEN,
 		.init_data = &vgen_init,
+<<<<<<< HEAD
 	}, {
 		.id = MC13783_REG_GPO1, /* Turn on 1.8V */
 		.init_data = &gpo_init,
@@ -327,6 +372,8 @@ static struct mc13xxx_regulator_init_data mx27_3ds_regulators[] = {
 	}, {
 		.id = MC13783_REG_VVIB,  /* Power OV2640 */
 		.init_data = &vvib_init,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 
@@ -337,6 +384,7 @@ static struct mc13xxx_platform_data mc13783_pdata = {
 		.num_regulators = ARRAY_SIZE(mx27_3ds_regulators),
 
 	},
+<<<<<<< HEAD
 	.flags  = MC13XXX_USE_TOUCHSCREEN | MC13XXX_USE_RTC,
 };
 
@@ -436,6 +484,17 @@ static const struct imx_fb_platform_data mx27_3ds_fb_data __initconst = {
 static struct l4f00242t03_pdata mx27_3ds_lcd_pdata = {
 	.reset_gpio		= LCD_RESET,
 	.data_enable_gpio	= LCD_ENABLE,
+=======
+	.flags  = MC13783_USE_REGULATOR,
+};
+
+/* SPI */
+static int spi2_internal_chipselect[] = {SPI2_SS0};
+
+static const struct spi_imx_master spi2_pdata __initconst = {
+	.chipselect	= spi2_internal_chipselect,
+	.num_chipselect	= ARRAY_SIZE(spi2_internal_chipselect),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct spi_board_info mx27_3ds_spi_devs[] __initdata = {
@@ -445,6 +504,7 @@ static struct spi_board_info mx27_3ds_spi_devs[] __initdata = {
 		.bus_num	= 1,
 		.chip_select	= 0, /* SS0 */
 		.platform_data	= &mc13783_pdata,
+<<<<<<< HEAD
 		.irq = IMX_GPIO_TO_IRQ(PMIC_INT),
 		.mode = SPI_CS_HIGH,
 	}, {
@@ -464,15 +524,25 @@ static const struct mx2_camera_platform_data mx27_3ds_cam_pdata __initconst = {
 	.clk = 26000000,
 };
 
+=======
+		.irq = IRQ_GPIOC(14),
+		.mode = SPI_CS_HIGH,
+	},
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct imxi2c_platform_data mx27_3ds_i2c0_data __initconst = {
 	.bitrate = 100000,
 };
 
 static void __init mx27pdk_init(void)
 {
+<<<<<<< HEAD
 	int ret;
 	imx27_soc_init();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mxc_gpio_setup_multiple_pins(mx27pdk_pins, ARRAY_SIZE(mx27pdk_pins),
 		"mx27pdk");
 	mx27_3ds_sdhc1_enable_level_translator();
@@ -495,13 +565,17 @@ static void __init mx27pdk_init(void)
 		imx27_add_fsl_usb2_udc(&otg_device_pdata);
 
 	imx27_add_spi_imx1(&spi2_pdata);
+<<<<<<< HEAD
 	imx27_add_spi_imx0(&spi1_pdata);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spi_register_board_info(mx27_3ds_spi_devs,
 						ARRAY_SIZE(mx27_3ds_spi_devs));
 
 	if (mxc_expio_init(MX27_CS5_BASE_ADDR, EXPIO_PARENT_INT))
 		pr_warn("Init of the debugboard failed, all devices on the debugboard are unusable.\n");
 	imx27_add_imx_i2c(0, &mx27_3ds_i2c0_data);
+<<<<<<< HEAD
 	platform_add_devices(devices, ARRAY_SIZE(devices));
 	imx27_add_imx_fb(&mx27_3ds_fb_data);
 
@@ -513,6 +587,8 @@ static void __init mx27pdk_init(void)
 	}
 
 	imx27_add_mx2_camera(&mx27_3ds_cam_pdata);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __init mx27pdk_timer_init(void)
@@ -526,6 +602,7 @@ static struct sys_timer mx27pdk_timer = {
 
 MACHINE_START(MX27_3DS, "Freescale MX27PDK")
 	/* maintainer: Freescale Semiconductor, Inc. */
+<<<<<<< HEAD
 	.atag_offset = 0x100,
 	.map_io = mx27_map_io,
 	.init_early = imx27_init_early,
@@ -534,4 +611,12 @@ MACHINE_START(MX27_3DS, "Freescale MX27PDK")
 	.timer = &mx27pdk_timer,
 	.init_machine = mx27pdk_init,
 	.restart	= mxc_restart,
+=======
+	.boot_params = MX27_PHYS_OFFSET + 0x100,
+	.map_io = mx27_map_io,
+	.init_early = imx27_init_early,
+	.init_irq = mx27_init_irq,
+	.timer = &mx27pdk_timer,
+	.init_machine = mx27pdk_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

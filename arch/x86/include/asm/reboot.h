@@ -23,7 +23,11 @@ void machine_real_restart(unsigned int type);
 #define MRR_BIOS	0
 #define MRR_APM		1
 
+<<<<<<< HEAD
 typedef void (*nmi_shootdown_cb)(int, struct pt_regs*);
+=======
+typedef void (*nmi_shootdown_cb)(int, struct die_args*);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void nmi_shootdown_cpus(nmi_shootdown_cb callback);
 
 #endif /* _ASM_X86_REBOOT_H */

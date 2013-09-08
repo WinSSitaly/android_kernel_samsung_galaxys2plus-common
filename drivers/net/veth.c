@@ -12,12 +12,18 @@
 #include <linux/slab.h>
 #include <linux/ethtool.h>
 #include <linux/etherdevice.h>
+<<<<<<< HEAD
 #include <linux/u64_stats_sync.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <net/dst.h>
 #include <net/xfrm.h>
 #include <linux/veth.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRV_NAME	"veth"
 #define DRV_VERSION	"1.0"
@@ -26,12 +32,21 @@
 #define MAX_MTU 65535		/* Max L3 MTU (arbitrary) */
 
 struct veth_net_stats {
+<<<<<<< HEAD
 	u64			rx_packets;
 	u64			rx_bytes;
 	u64			tx_packets;
 	u64			tx_bytes;
 	u64			rx_dropped;
 	struct u64_stats_sync	syncp;
+=======
+	unsigned long	rx_packets;
+	unsigned long	tx_packets;
+	unsigned long	rx_bytes;
+	unsigned long	tx_bytes;
+	unsigned long	tx_dropped;
+	unsigned long	rx_dropped;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct veth_priv {
@@ -66,8 +81,14 @@ static int veth_get_settings(struct net_device *dev, struct ethtool_cmd *cmd)
 
 static void veth_get_drvinfo(struct net_device *dev, struct ethtool_drvinfo *info)
 {
+<<<<<<< HEAD
 	strlcpy(info->driver, DRV_NAME, sizeof(info->driver));
 	strlcpy(info->version, DRV_VERSION, sizeof(info->version));
+=======
+	strcpy(info->driver, DRV_NAME);
+	strcpy(info->version, DRV_VERSION);
+	strcpy(info->fw_version, "N/A");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void veth_get_strings(struct net_device *dev, u32 stringset, u8 *buf)
@@ -125,6 +146,12 @@ static netdev_tx_t veth_xmit(struct sk_buff *skb, struct net_device *dev)
 	stats = this_cpu_ptr(priv->stats);
 	rcv_stats = this_cpu_ptr(rcv_priv->stats);
 
+<<<<<<< HEAD
+=======
+	if (!(rcv->flags & IFF_UP))
+		goto tx_drop;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* don't change ip_summed == CHECKSUM_PARTIAL, as that
 	   will cause bad checksum on forwarded packets */
 	if (skb->ip_summed == CHECKSUM_NONE &&
@@ -135,6 +162,7 @@ static netdev_tx_t veth_xmit(struct sk_buff *skb, struct net_device *dev)
 	if (dev_forward_skb(rcv, skb) != NET_RX_SUCCESS)
 		goto rx_drop;
 
+<<<<<<< HEAD
 	u64_stats_update_begin(&stats->syncp);
 	stats->tx_bytes += length;
 	stats->tx_packets++;
@@ -151,6 +179,23 @@ rx_drop:
 	u64_stats_update_begin(&rcv_stats->syncp);
 	rcv_stats->rx_dropped++;
 	u64_stats_update_end(&rcv_stats->syncp);
+=======
+	stats->tx_bytes += length;
+	stats->tx_packets++;
+
+	rcv_stats->rx_bytes += length;
+	rcv_stats->rx_packets++;
+
+	return NETDEV_TX_OK;
+
+tx_drop:
+	kfree_skb(skb);
+	stats->tx_dropped++;
+	return NETDEV_TX_OK;
+
+rx_drop:
+	rcv_stats->rx_dropped++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NETDEV_TX_OK;
 }
 
@@ -158,6 +203,7 @@ rx_drop:
  * general routines
  */
 
+<<<<<<< HEAD
 static struct rtnl_link_stats64 *veth_get_stats64(struct net_device *dev,
 						  struct rtnl_link_stats64 *tot)
 {
@@ -186,6 +232,34 @@ static struct rtnl_link_stats64 *veth_get_stats64(struct net_device *dev,
 	}
 
 	return tot;
+=======
+static struct net_device_stats *veth_get_stats(struct net_device *dev)
+{
+	struct veth_priv *priv;
+	int cpu;
+	struct veth_net_stats *stats, total = {0};
+
+	priv = netdev_priv(dev);
+
+	for_each_possible_cpu(cpu) {
+		stats = per_cpu_ptr(priv->stats, cpu);
+
+		total.rx_packets += stats->rx_packets;
+		total.tx_packets += stats->tx_packets;
+		total.rx_bytes   += stats->rx_bytes;
+		total.tx_bytes   += stats->tx_bytes;
+		total.tx_dropped += stats->tx_dropped;
+		total.rx_dropped += stats->rx_dropped;
+	}
+	dev->stats.rx_packets = total.rx_packets;
+	dev->stats.tx_packets = total.tx_packets;
+	dev->stats.rx_bytes   = total.rx_bytes;
+	dev->stats.tx_bytes   = total.tx_bytes;
+	dev->stats.tx_dropped = total.tx_dropped;
+	dev->stats.rx_dropped = total.rx_dropped;
+
+	return &dev->stats;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int veth_open(struct net_device *dev)
@@ -255,7 +329,11 @@ static const struct net_device_ops veth_netdev_ops = {
 	.ndo_stop            = veth_close,
 	.ndo_start_xmit      = veth_xmit,
 	.ndo_change_mtu      = veth_change_mtu,
+<<<<<<< HEAD
 	.ndo_get_stats64     = veth_get_stats64,
+=======
+	.ndo_get_stats       = veth_get_stats,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ndo_set_mac_address = eth_mac_addr,
 };
 
@@ -270,7 +348,11 @@ static void veth_setup(struct net_device *dev)
 	dev->features |= NETIF_F_LLTX;
 	dev->destructor = veth_dev_free;
 
+<<<<<<< HEAD
 	dev->hw_features = NETIF_F_HW_CSUM | NETIF_F_SG | NETIF_F_RXCSUM;
+=======
+	dev->hw_features = NETIF_F_NO_CSUM | NETIF_F_SG | NETIF_F_RXCSUM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -346,7 +428,11 @@ static int veth_newlink(struct net *src_net, struct net_device *dev,
 	}
 
 	if (tbp[IFLA_ADDRESS] == NULL)
+<<<<<<< HEAD
 		eth_hw_addr_random(peer);
+=======
+		random_ether_addr(peer->dev_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = register_netdevice(peer);
 	put_net(net);
@@ -368,7 +454,11 @@ static int veth_newlink(struct net *src_net, struct net_device *dev,
 	 */
 
 	if (tb[IFLA_ADDRESS] == NULL)
+<<<<<<< HEAD
 		eth_hw_addr_random(dev);
+=======
+		random_ether_addr(dev->dev_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (tb[IFLA_IFNAME])
 		nla_strlcpy(dev->name, tb[IFLA_IFNAME], IFNAMSIZ);

@@ -325,14 +325,20 @@ struct aac_dev *aac_init_adapter(struct aac_dev *dev)
 {
 	u32 status[5];
 	struct Scsi_Host * host = dev->scsi_host_ptr;
+<<<<<<< HEAD
 	extern int aac_sync_mode;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 *	Check the preferred comm settings, defaults from template.
 	 */
 	dev->management_fib_count = 0;
 	spin_lock_init(&dev->manage_lock);
+<<<<<<< HEAD
 	spin_lock_init(&dev->sync_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->max_fib_size = sizeof(struct hw_fib);
 	dev->sg_tablesize = host->sg_tablesize = (dev->max_fib_size
 		- sizeof(struct aac_fibhdr)
@@ -346,6 +352,7 @@ struct aac_dev *aac_init_adapter(struct aac_dev *dev)
 	 		(status[0] == 0x00000001)) {
 		if (status[1] & le32_to_cpu(AAC_OPT_NEW_COMM_64))
 			dev->raw_io_64 = 1;
+<<<<<<< HEAD
 		dev->sync_mode = aac_sync_mode;
 		if (dev->a_ops.adapter_comm &&
 			(status[1] & le32_to_cpu(AAC_OPT_NEW_COMM))) {
@@ -361,6 +368,15 @@ struct aac_dev *aac_init_adapter(struct aac_dev *dev)
 					/* switch to sync. mode */
 					dev->comm_interface = AAC_COMM_MESSAGE_TYPE1;
 					dev->sync_mode = 1;
+=======
+		if (dev->a_ops.adapter_comm) {
+			if (status[1] & le32_to_cpu(AAC_OPT_NEW_COMM_TYPE1)) {
+				dev->comm_interface = AAC_COMM_MESSAGE_TYPE1;
+				dev->raw_io_interface = 1;
+			} else if (status[1] & le32_to_cpu(AAC_OPT_NEW_COMM)) {
+				dev->comm_interface = AAC_COMM_MESSAGE;
+				dev->raw_io_interface = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 		if ((dev->comm_interface == AAC_COMM_MESSAGE) &&
@@ -465,7 +481,10 @@ struct aac_dev *aac_init_adapter(struct aac_dev *dev)
 	}
 		
 	INIT_LIST_HEAD(&dev->fib_list);
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&dev->sync_fib_list);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return dev;
 }

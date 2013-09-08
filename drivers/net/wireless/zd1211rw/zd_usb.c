@@ -28,7 +28,10 @@
 #include <linux/skbuff.h>
 #include <linux/usb.h>
 #include <linux/workqueue.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/mac80211.h>
 #include <asm/unaligned.h>
 
@@ -112,9 +115,12 @@ MODULE_DEVICE_TABLE(usb, usb_ids);
 #define FW_ZD1211_PREFIX	"zd1211/zd1211_"
 #define FW_ZD1211B_PREFIX	"zd1211/zd1211b_"
 
+<<<<<<< HEAD
 static bool check_read_regs(struct zd_usb *usb, struct usb_req_read_regs *req,
 			    unsigned int count);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* USB device initialization */
 static void int_urb_complete(struct urb *urb);
 
@@ -369,6 +375,7 @@ exit:
 
 #define urb_dev(urb) (&(urb)->dev->dev)
 
+<<<<<<< HEAD
 static inline void handle_regs_int_override(struct urb *urb)
 {
 	struct zd_usb *usb = urb->context;
@@ -383,6 +390,8 @@ static inline void handle_regs_int_override(struct urb *urb)
 	spin_unlock(&intr->lock);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void handle_regs_int(struct urb *urb)
 {
 	struct zd_usb *usb = urb->context;
@@ -401,6 +410,7 @@ static inline void handle_regs_int(struct urb *urb)
 				USB_MAX_EP_INT_BUFFER);
 		spin_unlock(&mac->lock);
 		schedule_work(&mac->process_intr);
+<<<<<<< HEAD
 	} else if (atomic_read(&intr->read_regs_enabled)) {
 		len = urb->actual_length;
 		intr->read_regs.length = urb->actual_length;
@@ -423,23 +433,39 @@ static inline void handle_regs_int(struct urb *urb)
 		intr->read_regs_int_overridden = 0;
 		complete(&intr->read_regs.completion);
 
+=======
+	} else if (intr->read_regs_enabled) {
+		intr->read_regs.length = len = urb->actual_length;
+
+		if (len > sizeof(intr->read_regs.buffer))
+			len = sizeof(intr->read_regs.buffer);
+		memcpy(intr->read_regs.buffer, urb->transfer_buffer, len);
+		intr->read_regs_enabled = 0;
+		complete(&intr->read_regs.completion);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
 out:
 	spin_unlock(&intr->lock);
+<<<<<<< HEAD
 
 	/* CR_INTERRUPT might override read_reg too. */
 	if (int_num == CR_INTERRUPT && atomic_read(&intr->read_regs_enabled))
 		handle_regs_int_override(urb);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void int_urb_complete(struct urb *urb)
 {
 	int r;
 	struct usb_int_header *hdr;
+<<<<<<< HEAD
 	struct zd_usb *usb;
 	struct zd_usb_interrupt *intr;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (urb->status) {
 	case 0:
@@ -468,6 +494,7 @@ static void int_urb_complete(struct urb *urb)
 		goto resubmit;
 	}
 
+<<<<<<< HEAD
 	/* USB_INT_ID_RETRY_FAILED triggered by tx-urb submit can override
 	 * pending USB_INT_ID_REGS causing read command timeout.
 	 */
@@ -476,6 +503,8 @@ static void int_urb_complete(struct urb *urb)
 	if (hdr->id != USB_INT_ID_REGS && atomic_read(&intr->read_regs_enabled))
 		handle_regs_int_override(urb);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (hdr->id) {
 	case USB_INT_ID_REGS:
 		handle_regs_int(urb);
@@ -625,8 +654,13 @@ static void handle_rx_packet(struct zd_usb *usb, const u8 *buffer,
 
 	if (length < sizeof(struct rx_length_info)) {
 		/* It's not a complete packet anyhow. */
+<<<<<<< HEAD
 		dev_dbg_f(zd_usb_dev(usb), "invalid, small RX packet : %d\n",
 					   length);
+=======
+		printk("%s: invalid, small RX packet : %d\n",
+		       __func__, length);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 	length_info = (struct rx_length_info *)
@@ -1104,7 +1138,11 @@ static void zd_tx_watchdog_handler(struct work_struct *work)
 		goto out;
 
 	/* TX halted, try reset */
+<<<<<<< HEAD
 	dev_warn(zd_usb_dev(usb), "TX-stall detected, resetting device...");
+=======
+	dev_warn(zd_usb_dev(usb), "TX-stall detected, reseting device...");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	usb_queue_reset_device(usb->intf);
 
@@ -1175,7 +1213,10 @@ static inline void init_usb_interrupt(struct zd_usb *usb)
 	spin_lock_init(&intr->lock);
 	intr->interval = int_urb_interval(zd_usb_to_usbdev(usb));
 	init_completion(&intr->read_regs.completion);
+<<<<<<< HEAD
 	atomic_set(&intr->read_regs_enabled, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	intr->read_regs.cr_int_addr = cpu_to_le16((u16)CR_INTERRUPT);
 }
 
@@ -1610,16 +1651,24 @@ static int usb_int_regs_length(unsigned int count)
 	return sizeof(struct usb_int_regs) + count * sizeof(struct reg_data);
 }
 
+<<<<<<< HEAD
 static void prepare_read_regs_int(struct zd_usb *usb,
 				  struct usb_req_read_regs *req,
 				  unsigned int count)
+=======
+static void prepare_read_regs_int(struct zd_usb *usb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct zd_usb_interrupt *intr = &usb->intr;
 
 	spin_lock_irq(&intr->lock);
+<<<<<<< HEAD
 	atomic_set(&intr->read_regs_enabled, 1);
 	intr->read_regs.req = req;
 	intr->read_regs.req_count = count;
+=======
+	intr->read_regs_enabled = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_COMPLETION(intr->read_regs.completion);
 	spin_unlock_irq(&intr->lock);
 }
@@ -1629,6 +1678,7 @@ static void disable_read_regs_int(struct zd_usb *usb)
 	struct zd_usb_interrupt *intr = &usb->intr;
 
 	spin_lock_irq(&intr->lock);
+<<<<<<< HEAD
 	atomic_set(&intr->read_regs_enabled, 0);
 	spin_unlock_irq(&intr->lock);
 }
@@ -1636,11 +1686,27 @@ static void disable_read_regs_int(struct zd_usb *usb)
 static bool check_read_regs(struct zd_usb *usb, struct usb_req_read_regs *req,
 			    unsigned int count)
 {
+=======
+	intr->read_regs_enabled = 0;
+	spin_unlock_irq(&intr->lock);
+}
+
+static int get_results(struct zd_usb *usb, u16 *values,
+	               struct usb_req_read_regs *req, unsigned int count)
+{
+	int r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 	struct zd_usb_interrupt *intr = &usb->intr;
 	struct read_regs_int *rr = &intr->read_regs;
 	struct usb_int_regs *regs = (struct usb_int_regs *)rr->buffer;
 
+<<<<<<< HEAD
+=======
+	spin_lock_irq(&intr->lock);
+
+	r = -EIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* The created block size seems to be larger than expected.
 	 * However results appear to be correct.
 	 */
@@ -1648,14 +1714,23 @@ static bool check_read_regs(struct zd_usb *usb, struct usb_req_read_regs *req,
 		dev_dbg_f(zd_usb_dev(usb),
 			 "error: actual length %d less than expected %d\n",
 			 rr->length, usb_int_regs_length(count));
+<<<<<<< HEAD
 		return false;
 	}
 
+=======
+		goto error_unlock;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rr->length > sizeof(rr->buffer)) {
 		dev_dbg_f(zd_usb_dev(usb),
 			 "error: actual length %d exceeds buffer size %zu\n",
 			 rr->length, sizeof(rr->buffer));
+<<<<<<< HEAD
 		return false;
+=======
+		goto error_unlock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	for (i = 0; i < count; i++) {
@@ -1665,6 +1740,7 @@ static bool check_read_regs(struct zd_usb *usb, struct usb_req_read_regs *req,
 				 "rd[%d] addr %#06hx expected %#06hx\n", i,
 				 le16_to_cpu(rd->addr),
 				 le16_to_cpu(req->addr[i]));
+<<<<<<< HEAD
 			return false;
 		}
 	}
@@ -1698,6 +1774,10 @@ static int get_results(struct zd_usb *usb, u16 *values,
 
 	for (i = 0; i < count; i++) {
 		struct reg_data *rd = &regs->regs[i];
+=======
+			goto error_unlock;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		values[i] = le16_to_cpu(rd->value);
 	}
 
@@ -1710,11 +1790,19 @@ error_unlock:
 int zd_usb_ioread16v(struct zd_usb *usb, u16 *values,
 	             const zd_addr_t *addresses, unsigned int count)
 {
+<<<<<<< HEAD
 	int r, i, req_len, actual_req_len, try_count = 0;
 	struct usb_device *udev;
 	struct usb_req_read_regs *req = NULL;
 	unsigned long timeout;
 	bool retry = false;
+=======
+	int r;
+	int i, req_len, actual_req_len;
+	struct usb_device *udev;
+	struct usb_req_read_regs *req = NULL;
+	unsigned long timeout;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (count < 1) {
 		dev_dbg_f(zd_usb_dev(usb), "error: count is zero\n");
@@ -1750,10 +1838,15 @@ int zd_usb_ioread16v(struct zd_usb *usb, u16 *values,
 	for (i = 0; i < count; i++)
 		req->addr[i] = cpu_to_le16((u16)addresses[i]);
 
+<<<<<<< HEAD
 retry_read:
 	try_count++;
 	udev = zd_usb_to_usbdev(usb);
 	prepare_read_regs_int(usb, req, count);
+=======
+	udev = zd_usb_to_usbdev(usb);
+	prepare_read_regs_int(usb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = zd_ep_regs_out_msg(udev, req, req_len, &actual_req_len, 50 /*ms*/);
 	if (r) {
 		dev_dbg_f(zd_usb_dev(usb),
@@ -1777,12 +1870,16 @@ retry_read:
 		goto error;
 	}
 
+<<<<<<< HEAD
 	r = get_results(usb, values, req, count, &retry);
 	if (retry && try_count < 20) {
 		dev_dbg_f(zd_usb_dev(usb), "read retry, tries so far: %d\n",
 				try_count);
 		goto retry_read;
 	}
+=======
+	r = get_results(usb, values, req, count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 error:
 	return r;
 }

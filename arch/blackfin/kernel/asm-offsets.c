@@ -14,7 +14,10 @@
 #include <linux/irq.h>
 #include <linux/thread_info.h>
 #include <linux/kbuild.h>
+<<<<<<< HEAD
 #include <asm/pda.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int main(void)
 {
@@ -139,6 +142,7 @@ int main(void)
 	DEFINE(PDA_DF_SEQSTAT, offsetof(struct blackfin_pda, seqstat_doublefault));
 	DEFINE(PDA_DF_RETX, offsetof(struct blackfin_pda, retx_doublefault));
 #endif
+<<<<<<< HEAD
 
 	/* PDA initial management */
 	DEFINE(PDA_INIT_RETX, offsetof(struct blackfin_initial_pda, retx));
@@ -149,6 +153,8 @@ int main(void)
 	DEFINE(PDA_INIT_DF_RETX, offsetof(struct blackfin_initial_pda, retx_doublefault));
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SMP
 	/* Inter-core lock (in L2 SRAM) */
 	DEFINE(SIZEOF_CORELOCK, sizeof(struct corelock_slot));

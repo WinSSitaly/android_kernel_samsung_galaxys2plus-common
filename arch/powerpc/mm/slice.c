@@ -29,7 +29,11 @@
 #include <linux/pagemap.h>
 #include <linux/err.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mman.h>
 #include <asm/mmu.h>
 #include <asm/spu.h>

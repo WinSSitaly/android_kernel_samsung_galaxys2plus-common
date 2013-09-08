@@ -55,7 +55,10 @@ static void zoom_panel_disable_lcd(struct omap_dss_device *dssdev)
 
 static int zoom_set_bl_intensity(struct omap_dss_device *dssdev, int level)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_TWL4030_CORE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char c;
 	u8 mux_pwm, enb_pwm;
 
@@ -91,9 +94,12 @@ static int zoom_set_bl_intensity(struct omap_dss_device *dssdev, int level)
 	c = ((50 * (100 - level)) / 100) + 1;
 	twl_i2c_write_u8(TWL4030_MODULE_PWM1, 0x7F, TWL_LED_PWMOFF);
 	twl_i2c_write_u8(TWL4030_MODULE_PWM1, c, TWL_LED_PWMON);
+<<<<<<< HEAD
 #else
 	pr_warn("Backlight not enabled\n");
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -121,6 +127,10 @@ static struct omap_dss_board_info zoom_dss_data = {
 
 static struct omap2_mcspi_device_config dss_lcd_mcspi_config = {
 	.turbo_mode		= 1,
+<<<<<<< HEAD
+=======
+	.single_channel	= 1,  /* 0: slave, 1: master */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct spi_board_info nec_8048_spi_board_info[] __initdata = {

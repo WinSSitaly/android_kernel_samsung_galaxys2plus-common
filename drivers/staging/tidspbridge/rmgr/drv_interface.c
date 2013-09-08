@@ -16,12 +16,28 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+<<<<<<< HEAD
 #include <plat/dsp.h>
 
 #include <linux/types.h>
 #include <linux/platform_device.h>
 #include <linux/pm.h>
 #include <linux/module.h>
+=======
+/*  ----------------------------------- Host OS */
+
+#include <plat/dsp.h>
+
+#include <dspbridge/host_os.h>
+#include <linux/types.h>
+#include <linux/platform_device.h>
+#include <linux/pm.h>
+
+#ifdef MODULE
+#include <linux/module.h>
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/device.h>
 #include <linux/init.h>
 #include <linux/moduleparam.h>
@@ -30,25 +46,52 @@
 /*  ----------------------------------- DSP/BIOS Bridge */
 #include <dspbridge/dbdefs.h>
 
+<<<<<<< HEAD
 /*  ----------------------------------- OS Adaptation Layer */
 #include <dspbridge/clk.h>
 
 /*  ----------------------------------- Platform Manager */
+=======
+/*  ----------------------------------- Trace & Debug */
+#include <dspbridge/dbc.h>
+
+/*  ----------------------------------- OS Adaptation Layer */
+#include <dspbridge/clk.h>
+#include <dspbridge/sync.h>
+
+/*  ----------------------------------- Platform Manager */
+#include <dspbridge/dspapi-ioctl.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <dspbridge/dspapi.h>
 #include <dspbridge/dspdrv.h>
 
 /*  ----------------------------------- Resource Manager */
 #include <dspbridge/pwr.h>
 
+<<<<<<< HEAD
 #include <dspbridge/resourcecleanup.h>
 #include <dspbridge/proc.h>
 #include <dspbridge/dev.h>
+=======
+/*  ----------------------------------- This */
+#include <drv_interface.h>
+
+#include <dspbridge/resourcecleanup.h>
+#include <dspbridge/chnl.h>
+#include <dspbridge/proc.h>
+#include <dspbridge/dev.h>
+#include <dspbridge/drv.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_TIDSPBRIDGE_DVFS
 #include <mach-omap2/omap3-opp.h>
 #endif
 
 /*  ----------------------------------- Globals */
+<<<<<<< HEAD
+=======
+#define DRIVER_NAME  "DspBridge"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DSPBRIDGE_VERSION	"0.3"
 s32 dsp_debug;
 
@@ -117,6 +160,7 @@ MODULE_AUTHOR("Texas Instruments");
 MODULE_LICENSE("GPL");
 MODULE_VERSION(DSPBRIDGE_VERSION);
 
+<<<<<<< HEAD
 /*
  * This function is called when an application opens handle to the
  * bridge driver.
@@ -277,6 +321,9 @@ static int bridge_mmap(struct file *filp, struct vm_area_struct *vma)
 
 	return status;
 }
+=======
+static char *driver_name = DRIVER_NAME;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const struct file_operations bridge_fops = {
 	.open = bridge_open,
@@ -356,10 +403,17 @@ void bridge_recover_schedule(void)
 #endif
 #ifdef CONFIG_TIDSPBRIDGE_DVFS
 static int dspbridge_scale_notification(struct notifier_block *op,
+<<<<<<< HEAD
 					unsigned long val, void *ptr)
 {
 	struct omap_dsp_platform_data *pdata =
 	    omap_dspbridge_dev->dev.platform_data;
+=======
+		unsigned long val, void *ptr)
+{
+	struct omap_dsp_platform_data *pdata =
+		omap_dspbridge_dev->dev.platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (CPUFREQ_POSTCHANGE == val && pdata->dsp_get_opp)
 		pwr_pm_post_scale(PRCM_VDD1, pdata->dsp_get_opp());
@@ -464,7 +518,11 @@ err2:
 err1:
 #ifdef CONFIG_TIDSPBRIDGE_DVFS
 	cpufreq_unregister_notifier(&iva_clk_notifier,
+<<<<<<< HEAD
 				    CPUFREQ_TRANSITION_NOTIFIER);
+=======
+					CPUFREQ_TRANSITION_NOTIFIER);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	dsp_clk_exit();
 
@@ -490,7 +548,11 @@ static int __devinit omap34_xx_bridge_probe(struct platform_device *pdev)
 		goto err1;
 
 	/* use 2.6 device model */
+<<<<<<< HEAD
 	err = alloc_chrdev_region(&dev, 0, 1, "DspBridge");
+=======
+	err = alloc_chrdev_region(&dev, 0, 1, driver_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err) {
 		pr_err("%s: Can't get major %d\n", __func__, driver_major);
 		goto err1;
@@ -530,6 +592,10 @@ err1:
 static int __devexit omap34_xx_bridge_remove(struct platform_device *pdev)
 {
 	dev_t devno;
+<<<<<<< HEAD
+=======
+	bool ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int status = 0;
 	struct drv_data *drv_datap = dev_get_drvdata(bridge);
 
@@ -542,13 +608,18 @@ static int __devexit omap34_xx_bridge_remove(struct platform_device *pdev)
 
 #ifdef CONFIG_TIDSPBRIDGE_DVFS
 	if (cpufreq_unregister_notifier(&iva_clk_notifier,
+<<<<<<< HEAD
 					CPUFREQ_TRANSITION_NOTIFIER))
+=======
+						CPUFREQ_TRANSITION_NOTIFIER))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_err("%s: cpufreq_unregister_notifier failed for iva2_ck\n",
 		       __func__);
 #endif /* #ifdef CONFIG_TIDSPBRIDGE_DVFS */
 
 	if (driver_context) {
 		/* Put the DSP in reset state */
+<<<<<<< HEAD
 		dsp_deinit(driver_context);
 		driver_context = 0;
 	}
@@ -556,6 +627,13 @@ static int __devexit omap34_xx_bridge_remove(struct platform_device *pdev)
 	kfree(drv_datap);
 	dev_set_drvdata(bridge, NULL);
 
+=======
+		ret = dsp_deinit(driver_context);
+		driver_context = 0;
+		DBC_ASSERT(ret == true);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 func_cont:
 	mem_ext_phys_pool_release();
 
@@ -574,7 +652,11 @@ func_cont:
 }
 
 #ifdef CONFIG_PM
+<<<<<<< HEAD
 static int bridge_suspend(struct platform_device *pdev, pm_message_t state)
+=======
+static int BRIDGE_SUSPEND(struct platform_device *pdev, pm_message_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 status;
 	u32 command = PWR_EMERGENCYDEEPSLEEP;
@@ -587,7 +669,11 @@ static int bridge_suspend(struct platform_device *pdev, pm_message_t state)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int bridge_resume(struct platform_device *pdev)
+=======
+static int BRIDGE_RESUME(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 status;
 
@@ -599,6 +685,12 @@ static int bridge_resume(struct platform_device *pdev)
 	wake_up(&bridge_suspend_data.suspend_wq);
 	return 0;
 }
+<<<<<<< HEAD
+=======
+#else
+#define BRIDGE_SUSPEND NULL
+#define BRIDGE_RESUME NULL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 static struct platform_driver bridge_driver = {
@@ -607,10 +699,15 @@ static struct platform_driver bridge_driver = {
 		   },
 	.probe = omap34_xx_bridge_probe,
 	.remove = __devexit_p(omap34_xx_bridge_remove),
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 	.suspend = bridge_suspend,
 	.resume = bridge_resume,
 #endif
+=======
+	.suspend = BRIDGE_SUSPEND,
+	.resume = BRIDGE_RESUME,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init bridge_init(void)
@@ -623,6 +720,164 @@ static void __exit bridge_exit(void)
 	platform_driver_unregister(&bridge_driver);
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * This function is called when an application opens handle to the
+ * bridge driver.
+ */
+static int bridge_open(struct inode *ip, struct file *filp)
+{
+	int status = 0;
+	struct process_context *pr_ctxt = NULL;
+
+	/*
+	 * Allocate a new process context and insert it into global
+	 * process context list.
+	 */
+
+#ifdef CONFIG_TIDSPBRIDGE_RECOVERY
+	if (recover) {
+		if (filp->f_flags & O_NONBLOCK ||
+			wait_for_completion_interruptible(&bridge_open_comp))
+			return -EBUSY;
+	}
+#endif
+	pr_ctxt = kzalloc(sizeof(struct process_context), GFP_KERNEL);
+	if (pr_ctxt) {
+		pr_ctxt->res_state = PROC_RES_ALLOCATED;
+		spin_lock_init(&pr_ctxt->dmm_map_lock);
+		INIT_LIST_HEAD(&pr_ctxt->dmm_map_list);
+		spin_lock_init(&pr_ctxt->dmm_rsv_lock);
+		INIT_LIST_HEAD(&pr_ctxt->dmm_rsv_list);
+
+		pr_ctxt->node_id = kzalloc(sizeof(struct idr), GFP_KERNEL);
+		if (pr_ctxt->node_id) {
+			idr_init(pr_ctxt->node_id);
+		} else {
+			status = -ENOMEM;
+			goto err;
+		}
+
+		pr_ctxt->stream_id = kzalloc(sizeof(struct idr), GFP_KERNEL);
+		if (pr_ctxt->stream_id)
+			idr_init(pr_ctxt->stream_id);
+		else
+			status = -ENOMEM;
+	} else {
+		status = -ENOMEM;
+	}
+err:
+	filp->private_data = pr_ctxt;
+#ifdef CONFIG_TIDSPBRIDGE_RECOVERY
+	if (!status)
+		atomic_inc(&bridge_cref);
+#endif
+	return status;
+}
+
+/*
+ * This function is called when an application closes handle to the bridge
+ * driver.
+ */
+static int bridge_release(struct inode *ip, struct file *filp)
+{
+	int status = 0;
+	struct process_context *pr_ctxt;
+
+	if (!filp->private_data) {
+		status = -EIO;
+		goto err;
+	}
+
+	pr_ctxt = filp->private_data;
+	flush_signals(current);
+	drv_remove_all_resources(pr_ctxt);
+	proc_detach(pr_ctxt);
+	kfree(pr_ctxt);
+
+	filp->private_data = NULL;
+
+err:
+#ifdef CONFIG_TIDSPBRIDGE_RECOVERY
+	if (!atomic_dec_return(&bridge_cref))
+		complete(&bridge_comp);
+#endif
+	return status;
+}
+
+/* This function provides IO interface to the bridge driver. */
+static long bridge_ioctl(struct file *filp, unsigned int code,
+			 unsigned long args)
+{
+	int status;
+	u32 retval = 0;
+	union trapped_args buf_in;
+
+	DBC_REQUIRE(filp != NULL);
+#ifdef CONFIG_TIDSPBRIDGE_RECOVERY
+	if (recover) {
+		status = -EIO;
+		goto err;
+	}
+#endif
+#ifdef CONFIG_PM
+	status = omap34_xxbridge_suspend_lockout(&bridge_suspend_data, filp);
+	if (status != 0)
+		return status;
+#endif
+
+	if (!filp->private_data) {
+		status = -EIO;
+		goto err;
+	}
+
+	status = copy_from_user(&buf_in, (union trapped_args *)args,
+				sizeof(union trapped_args));
+
+	if (!status) {
+		status = api_call_dev_ioctl(code, &buf_in, &retval,
+					     filp->private_data);
+
+		if (!status) {
+			status = retval;
+		} else {
+			dev_dbg(bridge, "%s: IOCTL Failed, code: 0x%x "
+				"status 0x%x\n", __func__, code, status);
+			status = -1;
+		}
+
+	}
+
+err:
+	return status;
+}
+
+/* This function maps kernel space memory to user space memory. */
+static int bridge_mmap(struct file *filp, struct vm_area_struct *vma)
+{
+	u32 offset = vma->vm_pgoff << PAGE_SHIFT;
+	u32 status;
+
+	DBC_ASSERT(vma->vm_start < vma->vm_end);
+
+	vma->vm_flags |= VM_RESERVED | VM_IO;
+	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
+
+	dev_dbg(bridge, "%s: vm filp %p offset %x start %lx end %lx page_prot "
+		"%lx flags %lx\n", __func__, filp, offset,
+		vma->vm_start, vma->vm_end, vma->vm_page_prot, vma->vm_flags);
+
+	status = remap_pfn_range(vma, vma->vm_start, vma->vm_pgoff,
+				 vma->vm_end - vma->vm_start,
+				 vma->vm_page_prot);
+	if (status != 0)
+		status = -EAGAIN;
+
+	return status;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* To remove all process resources before removing the process from the
  * process context list */
 int drv_remove_all_resources(void *process_ctxt)

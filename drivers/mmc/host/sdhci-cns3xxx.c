@@ -15,8 +15,14 @@
 #include <linux/delay.h>
 #include <linux/device.h>
 #include <linux/mmc/host.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <mach/cns3xxx.h>
+=======
+#include <linux/mmc/sdhci-pltfm.h>
+#include <mach/cns3xxx.h>
+#include "sdhci.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "sdhci-pltfm.h"
 
 static unsigned int sdhci_cns3xxx_get_max_clk(struct sdhci_host *host)
@@ -85,7 +91,11 @@ static struct sdhci_ops sdhci_cns3xxx_ops = {
 	.set_clock	= sdhci_cns3xxx_set_clock,
 };
 
+<<<<<<< HEAD
 static struct sdhci_pltfm_data sdhci_cns3xxx_pdata = {
+=======
+struct sdhci_pltfm_data sdhci_cns3xxx_pdata = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ops = &sdhci_cns3xxx_ops,
 	.quirks = SDHCI_QUIRK_BROKEN_DMA |
 		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
@@ -94,6 +104,7 @@ static struct sdhci_pltfm_data sdhci_cns3xxx_pdata = {
 		  SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
 		  SDHCI_QUIRK_NONSTANDARD_CLOCK,
 };
+<<<<<<< HEAD
 
 static int __devinit sdhci_cns3xxx_probe(struct platform_device *pdev)
 {
@@ -121,3 +132,5 @@ MODULE_DESCRIPTION("SDHCI driver for CNS3xxx");
 MODULE_AUTHOR("Scott Shu, "
 	      "Anton Vorontsov <avorontsov@mvista.com>");
 MODULE_LICENSE("GPL v2");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

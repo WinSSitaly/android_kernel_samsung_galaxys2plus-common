@@ -113,8 +113,12 @@
  *		2 of the License, or (at your option) any later version.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) "IPv4: " fmt
 
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/types.h>
 #include <linux/kernel.h>
@@ -149,7 +153,11 @@
 /*
  *	Process Router Attention IP option (RFC 2113)
  */
+<<<<<<< HEAD
 bool ip_call_ra_chain(struct sk_buff *skb)
+=======
+int ip_call_ra_chain(struct sk_buff *skb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ip_ra_chain *ra;
 	u8 protocol = ip_hdr(skb)->protocol;
@@ -166,9 +174,15 @@ bool ip_call_ra_chain(struct sk_buff *skb)
 		    (!sk->sk_bound_dev_if ||
 		     sk->sk_bound_dev_if == dev->ifindex) &&
 		    net_eq(sock_net(sk), dev_net(dev))) {
+<<<<<<< HEAD
 			if (ip_is_fragment(ip_hdr(skb))) {
 				if (ip_defrag(skb, IP_DEFRAG_CALL_RA_CHAIN))
 					return true;
+=======
+			if (ip_hdr(skb)->frag_off & htons(IP_MF | IP_OFFSET)) {
+				if (ip_defrag(skb, IP_DEFRAG_CALL_RA_CHAIN))
+					return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			if (last) {
 				struct sk_buff *skb2 = skb_clone(skb, GFP_ATOMIC);
@@ -181,9 +195,15 @@ bool ip_call_ra_chain(struct sk_buff *skb)
 
 	if (last) {
 		raw_rcv(last, skb);
+<<<<<<< HEAD
 		return true;
 	}
 	return false;
+=======
+		return 1;
+	}
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ip_local_deliver_finish(struct sk_buff *skb)
@@ -257,7 +277,11 @@ int ip_local_deliver(struct sk_buff *skb)
 	 *	Reassemble IP fragments.
 	 */
 
+<<<<<<< HEAD
 	if (ip_is_fragment(ip_hdr(skb))) {
+=======
+	if (ip_hdr(skb)->frag_off & htons(IP_MF | IP_OFFSET)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ip_defrag(skb, IP_DEFRAG_LOCAL_DELIVER))
 			return 0;
 	}
@@ -266,7 +290,11 @@ int ip_local_deliver(struct sk_buff *skb)
 		       ip_local_deliver_finish);
 }
 
+<<<<<<< HEAD
 static inline bool ip_rcv_options(struct sk_buff *skb)
+=======
+static inline int ip_rcv_options(struct sk_buff *skb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ip_options *opt;
 	const struct iphdr *iph;
@@ -300,8 +328,13 @@ static inline bool ip_rcv_options(struct sk_buff *skb)
 			if (!IN_DEV_SOURCE_ROUTE(in_dev)) {
 				if (IN_DEV_LOG_MARTIANS(in_dev) &&
 				    net_ratelimit())
+<<<<<<< HEAD
 					pr_info("source route option %pI4 -> %pI4\n",
 						&iph->saddr, &iph->daddr);
+=======
+					printk(KERN_INFO "source route option %pI4 -> %pI4\n",
+					       &iph->saddr, &iph->daddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto drop;
 			}
 		}
@@ -310,9 +343,15 @@ static inline bool ip_rcv_options(struct sk_buff *skb)
 			goto drop;
 	}
 
+<<<<<<< HEAD
 	return false;
 drop:
 	return true;
+=======
+	return 0;
+drop:
+	return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ip_rcv_finish(struct sk_buff *skb)

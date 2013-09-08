@@ -18,7 +18,10 @@
 #include <linux/kernel.h>
 #include <linux/platform_device.h>
 #include <linux/bootmem.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/irqs.h>
 #include <mach/iommu.h>
 

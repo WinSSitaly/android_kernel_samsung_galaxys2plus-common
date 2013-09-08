@@ -27,7 +27,10 @@
 #include <linux/msg.h>
 #include <linux/shm.h>
 #include <linux/syscalls.h>
+<<<<<<< HEAD
 #include <linux/ptrace.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/mutex.h>
 #include <asm/uaccess.h>
@@ -118,7 +121,10 @@ extern int sem_ctls[];
 
 static inline int compat_ipc_parse_version(int *cmd)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_ARCH_WANT_OLD_COMPAT_IPC
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int version = *cmd & IPC_64;
 
 	/* this is tricky: architectures that have support for the old
@@ -130,10 +136,13 @@ static inline int compat_ipc_parse_version(int *cmd)
 	*cmd &= ~IPC_64;
 #endif
 	return version;
+<<<<<<< HEAD
 #else
 	/* With the asm-generic APIs, we always use the 64-bit versions. */
 	return IPC_64;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int __get_compat_ipc64_perm(struct ipc64_perm *p64,
@@ -238,9 +247,16 @@ static inline int put_compat_semid_ds(struct semid64_ds *s,
 	return err;
 }
 
+<<<<<<< HEAD
 static long do_compat_semctl(int first, int second, int third, u32 pad)
 {
 	union semun fourth;
+=======
+long compat_sys_semctl(int first, int second, int third, void __user *uptr)
+{
+	union semun fourth;
+	u32 pad;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err, err2;
 	struct semid64_ds s64;
 	struct semid64_ds __user *up64;
@@ -248,6 +264,13 @@ static long do_compat_semctl(int first, int second, int third, u32 pad)
 
 	memset(&s64, 0, sizeof(s64));
 
+<<<<<<< HEAD
+=======
+	if (!uptr)
+		return -EINVAL;
+	if (get_user(pad, (u32 __user *) uptr))
+		return -EFAULT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((third & (~IPC_64)) == SETVAL)
 		fourth.val = (int) pad;
 	else
@@ -306,6 +329,7 @@ static long do_compat_semctl(int first, int second, int third, u32 pad)
 	return err;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_ARCH_WANT_OLD_COMPAT_IPC
 long compat_sys_semctl(int first, int second, int third, void __user *uptr)
 {
@@ -318,6 +342,8 @@ long compat_sys_semctl(int first, int second, int third, void __user *uptr)
 	return do_compat_semctl(first, second, third, pad);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 long compat_sys_msgsnd(int first, int second, int third, void __user *uptr)
 {
 	struct compat_msgbuf __user *up = uptr;
@@ -366,6 +392,7 @@ long compat_sys_msgrcv(int first, int second, int msgtyp, int third,
 out:
 	return err;
 }
+<<<<<<< HEAD
 #else
 long compat_sys_semctl(int semid, int semnum, int cmd, int arg)
 {
@@ -397,6 +424,8 @@ long compat_sys_msgrcv(int msqid, struct compat_msgbuf __user *msgp,
 	return err;
 }
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int get_compat_msqid64(struct msqid64_ds *m64,
 				     struct compat_msqid64_ds __user *up64)
@@ -514,7 +543,10 @@ long compat_sys_msgctl(int first, int second, void __user *uptr)
 	return err;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_ARCH_WANT_OLD_COMPAT_IPC
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 long compat_sys_shmat(int first, int second, compat_uptr_t third, int version,
 			void __user *uptr)
 {
@@ -530,6 +562,7 @@ long compat_sys_shmat(int first, int second, compat_uptr_t third, int version,
 	uaddr = compat_ptr(third);
 	return put_user(raddr, uaddr);
 }
+<<<<<<< HEAD
 #else
 long compat_sys_shmat(int shmid, compat_uptr_t shmaddr, int shmflg)
 {
@@ -543,6 +576,8 @@ long compat_sys_shmat(int shmid, compat_uptr_t shmaddr, int shmflg)
 	return (long)ret;
 }
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int get_compat_shmid64_ds(struct shmid64_ds *s64,
 					struct compat_shmid64_ds __user *up64)

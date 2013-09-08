@@ -22,6 +22,7 @@ static inline int page_is_file_cache(struct page *page)
 }
 
 static inline void
+<<<<<<< HEAD
 add_page_to_lru_list(struct zone *zone, struct page *page, enum lru_list lru)
 {
 	struct lruvec *lruvec;
@@ -37,6 +38,35 @@ del_page_from_lru_list(struct zone *zone, struct page *page, enum lru_list lru)
 	mem_cgroup_lru_del_list(page, lru);
 	list_del(&page->lru);
 	__mod_zone_page_state(zone, NR_LRU_BASE + lru, -hpage_nr_pages(page));
+=======
+__add_page_to_lru_list(struct zone *zone, struct page *page, enum lru_list l,
+		       struct list_head *head)
+{
+	list_add(&page->lru, head);
+	__mod_zone_page_state(zone, NR_LRU_BASE + l, hpage_nr_pages(page));
+	if (PageCma(page))
+		__mod_zone_page_state(zone, NR_LRU_CMA_BASE + l,
+				hpage_nr_pages(page));
+
+	mem_cgroup_add_lru_list(page, l);
+}
+
+static inline void
+add_page_to_lru_list(struct zone *zone, struct page *page, enum lru_list l)
+{
+	__add_page_to_lru_list(zone, page, l, &zone->lru[l].list);
+}
+
+static inline void
+del_page_from_lru_list(struct zone *zone, struct page *page, enum lru_list l)
+{
+	list_del(&page->lru);
+	__mod_zone_page_state(zone, NR_LRU_BASE + l, -hpage_nr_pages(page));
+	if (PageCma(page))
+		__mod_zone_page_state(zone, NR_LRU_CMA_BASE + l,
+						-hpage_nr_pages(page));
+	mem_cgroup_del_lru_list(page, l);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -54,6 +84,7 @@ static inline enum lru_list page_lru_base_type(struct page *page)
 	return LRU_INACTIVE_ANON;
 }
 
+<<<<<<< HEAD
 /**
  * page_off_lru - which LRU list was page on? clearing its lru flags.
  * @page: the page to test
@@ -76,6 +107,29 @@ static inline enum lru_list page_off_lru(struct page *page)
 		}
 	}
 	return lru;
+=======
+static inline void
+del_page_from_lru(struct zone *zone, struct page *page)
+{
+	enum lru_list l;
+
+	list_del(&page->lru);
+	if (PageUnevictable(page)) {
+		__ClearPageUnevictable(page);
+		l = LRU_UNEVICTABLE;
+	} else {
+		l = page_lru_base_type(page);
+		if (PageActive(page)) {
+			__ClearPageActive(page);
+			l += LRU_ACTIVE;
+		}
+	}
+	__mod_zone_page_state(zone, NR_LRU_BASE + l, -hpage_nr_pages(page));
+	if (PageCma(page))
+		__mod_zone_page_state(zone, NR_LRU_CMA_BASE + l,
+						-hpage_nr_pages(page));
+	mem_cgroup_del_lru_list(page, l);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -96,6 +150,10 @@ static inline enum lru_list page_lru(struct page *page)
 		if (PageActive(page))
 			lru += LRU_ACTIVE;
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return lru;
 }
 

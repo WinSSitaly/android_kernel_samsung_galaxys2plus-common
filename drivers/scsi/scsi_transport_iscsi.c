@@ -23,8 +23,11 @@
 #include <linux/module.h>
 #include <linux/mutex.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/bsg-lib.h>
 #include <linux/idr.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/tcp.h>
 #include <scsi/scsi.h>
 #include <scsi/scsi_host.h>
@@ -33,7 +36,14 @@
 #include <scsi/scsi_transport_iscsi.h>
 #include <scsi/iscsi_if.h>
 #include <scsi/scsi_cmnd.h>
+<<<<<<< HEAD
 #include <scsi/scsi_bsg_iscsi.h>
+=======
+
+#define ISCSI_SESSION_ATTRS 23
+#define ISCSI_CONN_ATTRS 13
+#define ISCSI_HOST_ATTRS 4
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define ISCSI_TRANSPORT_VERSION "2.0-870"
 
@@ -75,14 +85,25 @@ struct iscsi_internal {
 	struct list_head list;
 	struct device dev;
 
+<<<<<<< HEAD
 	struct transport_container conn_cont;
 	struct transport_container session_cont;
+=======
+	struct device_attribute *host_attrs[ISCSI_HOST_ATTRS + 1];
+	struct transport_container conn_cont;
+	struct device_attribute *conn_attrs[ISCSI_CONN_ATTRS + 1];
+	struct transport_container session_cont;
+	struct device_attribute *session_attrs[ISCSI_SESSION_ATTRS + 1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static atomic_t iscsi_session_nr; /* sysfs session id for next new session */
 static struct workqueue_struct *iscsi_eh_timer_workq;
 
+<<<<<<< HEAD
 static DEFINE_IDA(iscsi_sess_ida);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * list of registered transports and lock that must
  * be held while accessing list. The iscsi_transport_lock must
@@ -267,6 +288,7 @@ struct iscsi_endpoint *iscsi_lookup_endpoint(u64 handle)
 }
 EXPORT_SYMBOL_GPL(iscsi_lookup_endpoint);
 
+<<<<<<< HEAD
 /*
  * Interface to display network param to sysfs
  */
@@ -552,6 +574,8 @@ iscsi_bsg_host_add(struct Scsi_Host *shost, struct iscsi_cls_host *ihost)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int iscsi_setup_host(struct transport_container *tc, struct device *dev,
 			    struct device *cdev)
 {
@@ -561,6 +585,7 @@ static int iscsi_setup_host(struct transport_container *tc, struct device *dev,
 	memset(ihost, 0, sizeof(*ihost));
 	atomic_set(&ihost->nr_scans, 0);
 	mutex_init(&ihost->mutex);
+<<<<<<< HEAD
 
 	iscsi_bsg_host_add(shost, ihost);
 	/* ignore any bsg add error - we just can't do sgio */
@@ -578,13 +603,19 @@ static int iscsi_remove_host(struct transport_container *tc,
 		bsg_remove_queue(ihost->bsg_q);
 		blk_cleanup_queue(ihost->bsg_q);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static DECLARE_TRANSPORT_CLASS(iscsi_host_class,
 			       "iscsi_host",
 			       iscsi_setup_host,
+<<<<<<< HEAD
 			       iscsi_remove_host,
+=======
+			       NULL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       NULL);
 
 static DECLARE_TRANSPORT_CLASS(iscsi_session_class,
@@ -703,6 +734,7 @@ int iscsi_session_chkready(struct iscsi_cls_session *session)
 }
 EXPORT_SYMBOL_GPL(iscsi_session_chkready);
 
+<<<<<<< HEAD
 int iscsi_is_session_online(struct iscsi_cls_session *session)
 {
 	unsigned long flags;
@@ -716,6 +748,8 @@ int iscsi_is_session_online(struct iscsi_cls_session *session)
 }
 EXPORT_SYMBOL_GPL(iscsi_is_session_online);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void iscsi_session_release(struct device *dev)
 {
 	struct iscsi_cls_session *session = iscsi_dev_to_session(dev);
@@ -727,11 +761,18 @@ static void iscsi_session_release(struct device *dev)
 	kfree(session);
 }
 
+<<<<<<< HEAD
 int iscsi_is_session_dev(const struct device *dev)
 {
 	return dev->release == iscsi_session_release;
 }
 EXPORT_SYMBOL_GPL(iscsi_is_session_dev);
+=======
+static int iscsi_is_session_dev(const struct device *dev)
+{
+	return dev->release == iscsi_session_release;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int iscsi_iter_session_fn(struct device *dev, void *data)
 {
@@ -993,7 +1034,10 @@ static void __iscsi_unbind_session(struct work_struct *work)
 	struct Scsi_Host *shost = iscsi_session_to_shost(session);
 	struct iscsi_cls_host *ihost = shost->shost_data;
 	unsigned long flags;
+<<<<<<< HEAD
 	unsigned int target_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ISCSI_DBG_TRANS_SESSION(session, "Unbinding session\n");
 
@@ -1005,15 +1049,21 @@ static void __iscsi_unbind_session(struct work_struct *work)
 		mutex_unlock(&ihost->mutex);
 		return;
 	}
+<<<<<<< HEAD
 
 	target_id = session->target_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	session->target_id = ISCSI_MAX_TARGET;
 	spin_unlock_irqrestore(&session->lock, flags);
 	mutex_unlock(&ihost->mutex);
 
+<<<<<<< HEAD
 	if (session->ida_used)
 		ida_simple_remove(&iscsi_sess_ida, target_id);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	scsi_remove_target(&session->dev);
 	iscsi_session_event(session, ISCSI_KEVENT_UNBIND_SESSION);
 	ISCSI_DBG_TRANS_SESSION(session, "Completed target removal\n");
@@ -1031,7 +1081,10 @@ iscsi_alloc_session(struct Scsi_Host *shost, struct iscsi_transport *transport,
 		return NULL;
 
 	session->transport = transport;
+<<<<<<< HEAD
 	session->creator = -1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	session->recovery_tmo = 120;
 	session->state = ISCSI_SESSION_FREE;
 	INIT_DELAYED_WORK(&session->recovery_work, session_recovery_timedout);
@@ -1055,17 +1108,42 @@ iscsi_alloc_session(struct Scsi_Host *shost, struct iscsi_transport *transport,
 }
 EXPORT_SYMBOL_GPL(iscsi_alloc_session);
 
+<<<<<<< HEAD
+=======
+static int iscsi_get_next_target_id(struct device *dev, void *data)
+{
+	struct iscsi_cls_session *session;
+	unsigned long flags;
+	int err = 0;
+
+	if (!iscsi_is_session_dev(dev))
+		return 0;
+
+	session = iscsi_dev_to_session(dev);
+	spin_lock_irqsave(&session->lock, flags);
+	if (*((unsigned int *) data) == session->target_id)
+		err = -EEXIST;
+	spin_unlock_irqrestore(&session->lock, flags);
+	return err;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int iscsi_add_session(struct iscsi_cls_session *session, unsigned int target_id)
 {
 	struct Scsi_Host *shost = iscsi_session_to_shost(session);
 	struct iscsi_cls_host *ihost;
 	unsigned long flags;
+<<<<<<< HEAD
 	int id = 0;
+=======
+	unsigned int id = target_id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err;
 
 	ihost = shost->shost_data;
 	session->sid = atomic_add_return(1, &iscsi_session_nr);
 
+<<<<<<< HEAD
 	if (target_id == ISCSI_MAX_TARGET) {
 		id = ida_simple_get(&iscsi_sess_ida, 0, 0, GFP_KERNEL);
 
@@ -1078,13 +1156,37 @@ int iscsi_add_session(struct iscsi_cls_session *session, unsigned int target_id)
 		session->ida_used = true;
 	} else
 		session->target_id = target_id;
+=======
+	if (id == ISCSI_MAX_TARGET) {
+		for (id = 0; id < ISCSI_MAX_TARGET; id++) {
+			err = device_for_each_child(&shost->shost_gendev, &id,
+						    iscsi_get_next_target_id);
+			if (!err)
+				break;
+		}
+
+		if (id == ISCSI_MAX_TARGET) {
+			iscsi_cls_session_printk(KERN_ERR, session,
+						 "Too many iscsi targets. Max "
+						 "number of targets is %d.\n",
+						 ISCSI_MAX_TARGET - 1);
+			err = -EOVERFLOW;
+			goto release_host;
+		}
+	}
+	session->target_id = id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_set_name(&session->dev, "session%u", session->sid);
 	err = device_add(&session->dev);
 	if (err) {
 		iscsi_cls_session_printk(KERN_ERR, session,
 					 "could not register session's dev\n");
+<<<<<<< HEAD
 		goto release_ida;
+=======
+		goto release_host;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	transport_register_device(&session->dev);
 
@@ -1096,10 +1198,15 @@ int iscsi_add_session(struct iscsi_cls_session *session, unsigned int target_id)
 	ISCSI_DBG_TRANS_SESSION(session, "Completed session adding\n");
 	return 0;
 
+<<<<<<< HEAD
 release_ida:
 	if (session->ida_used)
 		ida_simple_remove(&iscsi_sess_ida, session->target_id);
 
+=======
+release_host:
+	scsi_host_put(shost);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 EXPORT_SYMBOL_GPL(iscsi_add_session);
@@ -1443,6 +1550,7 @@ void iscsi_conn_error_event(struct iscsi_cls_conn *conn, enum iscsi_err error)
 }
 EXPORT_SYMBOL_GPL(iscsi_conn_error_event);
 
+<<<<<<< HEAD
 void iscsi_conn_login_event(struct iscsi_cls_conn *conn,
 			    enum iscsi_conn_state state)
 {
@@ -1537,6 +1645,8 @@ void iscsi_ping_comp_event(uint32_t host_no, struct iscsi_transport *transport,
 }
 EXPORT_SYMBOL_GPL(iscsi_ping_comp_event);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int
 iscsi_if_send_reply(uint32_t group, int seq, int type, int done, int multi,
 		    void *payload, int size)
@@ -1696,9 +1806,14 @@ EXPORT_SYMBOL_GPL(iscsi_session_event);
 
 static int
 iscsi_if_create_session(struct iscsi_internal *priv, struct iscsi_endpoint *ep,
+<<<<<<< HEAD
 			struct iscsi_uevent *ev, pid_t pid,
 			uint32_t initial_cmdsn,	uint16_t cmds_max,
 			uint16_t queue_depth)
+=======
+			struct iscsi_uevent *ev, uint32_t initial_cmdsn,
+			uint16_t cmds_max, uint16_t queue_depth)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct iscsi_transport *transport = priv->iscsi_transport;
 	struct iscsi_cls_session *session;
@@ -1709,7 +1824,10 @@ iscsi_if_create_session(struct iscsi_internal *priv, struct iscsi_endpoint *ep,
 	if (!session)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	session->creator = pid;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	shost = iscsi_session_to_shost(session);
 	ev->r.c_session_ret.host_no = shost->host_no;
 	ev->r.c_session_ret.sid = session->sid;
@@ -1953,6 +2071,7 @@ iscsi_set_path(struct iscsi_transport *transport, struct iscsi_uevent *ev)
 }
 
 static int
+<<<<<<< HEAD
 iscsi_set_iface_params(struct iscsi_transport *transport,
 		       struct iscsi_uevent *ev, uint32_t len)
 {
@@ -2093,6 +2212,8 @@ static int iscsi_delete_chap(struct iscsi_transport *transport,
 }
 
 static int
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 iscsi_if_recv_msg(struct sk_buff *skb, struct nlmsghdr *nlh, uint32_t *group)
 {
 	int err = 0;
@@ -2119,7 +2240,10 @@ iscsi_if_recv_msg(struct sk_buff *skb, struct nlmsghdr *nlh, uint32_t *group)
 	switch (nlh->nlmsg_type) {
 	case ISCSI_UEVENT_CREATE_SESSION:
 		err = iscsi_if_create_session(priv, ep, ev,
+<<<<<<< HEAD
 					      NETLINK_CB(skb).pid,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					      ev->u.c_session.initial_cmdsn,
 					      ev->u.c_session.cmds_max,
 					      ev->u.c_session.queue_depth);
@@ -2132,7 +2256,10 @@ iscsi_if_recv_msg(struct sk_buff *skb, struct nlmsghdr *nlh, uint32_t *group)
 		}
 
 		err = iscsi_if_create_session(priv, ep, ev,
+<<<<<<< HEAD
 					NETLINK_CB(skb).pid,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					ev->u.c_bound_session.initial_cmdsn,
 					ev->u.c_bound_session.cmds_max,
 					ev->u.c_bound_session.queue_depth);
@@ -2233,6 +2360,7 @@ iscsi_if_recv_msg(struct sk_buff *skb, struct nlmsghdr *nlh, uint32_t *group)
 	case ISCSI_UEVENT_PATH_UPDATE:
 		err = iscsi_set_path(transport, ev);
 		break;
+<<<<<<< HEAD
 	case ISCSI_UEVENT_SET_IFACE_PARAMS:
 		err = iscsi_set_iface_params(transport, ev,
 					     nlmsg_attrlen(nlh, sizeof(*ev)));
@@ -2246,6 +2374,8 @@ iscsi_if_recv_msg(struct sk_buff *skb, struct nlmsghdr *nlh, uint32_t *group)
 	case ISCSI_UEVENT_DELETE_CHAP:
 		err = iscsi_delete_chap(transport, ev);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		err = -ENOSYS;
 		break;
@@ -2295,11 +2425,17 @@ iscsi_if_rx(struct sk_buff *skb)
 			 */
 			if (ev->type == ISCSI_UEVENT_GET_STATS && !err)
 				break;
+<<<<<<< HEAD
 			if (ev->type == ISCSI_UEVENT_GET_CHAP && !err)
 				break;
 			err = iscsi_if_send_reply(group, nlh->nlmsg_seq,
 				nlh->nlmsg_type, 0, 0, ev, sizeof(*ev));
 		} while (err < 0 && err != -ECONNREFUSED && err != -ESRCH);
+=======
+			err = iscsi_if_send_reply(group, nlh->nlmsg_seq,
+				nlh->nlmsg_type, 0, 0, ev, sizeof(*ev));
+		} while (err < 0 && err != -ECONNREFUSED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		skb_pull(skb, rlen);
 	}
 	mutex_unlock(&rx_queue_mutex);
@@ -2376,6 +2512,7 @@ static ISCSI_CLASS_ATTR(conn, field, S_IRUGO,				\
 iscsi_conn_ep_attr(address, ISCSI_PARAM_CONN_ADDRESS);
 iscsi_conn_ep_attr(port, ISCSI_PARAM_CONN_PORT);
 
+<<<<<<< HEAD
 static struct attribute *iscsi_conn_attrs[] = {
 	&dev_attr_conn_max_recv_dlength.attr,
 	&dev_attr_conn_max_xmit_dlength.attr,
@@ -2440,6 +2577,8 @@ static struct attribute_group iscsi_conn_group = {
 	.is_visible = iscsi_conn_attr_is_visible,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * iSCSI session attrs
  */
@@ -2461,6 +2600,10 @@ show_session_param_##param(struct device *dev,				\
 	iscsi_session_attr_show(param, perm)				\
 static ISCSI_CLASS_ATTR(sess, field, S_IRUGO, show_session_param_##param, \
 			NULL);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 iscsi_session_attr(targetname, ISCSI_PARAM_TARGET_NAME, 0);
 iscsi_session_attr(initial_r2t, ISCSI_PARAM_INITIAL_R2T_EN, 0);
 iscsi_session_attr(max_outstanding_r2t, ISCSI_PARAM_MAX_R2T, 0);
@@ -2475,8 +2618,11 @@ iscsi_session_attr(username, ISCSI_PARAM_USERNAME, 1);
 iscsi_session_attr(username_in, ISCSI_PARAM_USERNAME_IN, 1);
 iscsi_session_attr(password, ISCSI_PARAM_PASSWORD, 1);
 iscsi_session_attr(password_in, ISCSI_PARAM_PASSWORD_IN, 1);
+<<<<<<< HEAD
 iscsi_session_attr(chap_out_idx, ISCSI_PARAM_CHAP_OUT_IDX, 1);
 iscsi_session_attr(chap_in_idx, ISCSI_PARAM_CHAP_IN_IDX, 1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 iscsi_session_attr(fast_abort, ISCSI_PARAM_FAST_ABORT, 0);
 iscsi_session_attr(abort_tmo, ISCSI_PARAM_ABORT_TMO, 0);
 iscsi_session_attr(lu_reset_tmo, ISCSI_PARAM_LU_RESET_TMO, 0);
@@ -2494,6 +2640,7 @@ show_priv_session_state(struct device *dev, struct device_attribute *attr,
 }
 static ISCSI_CLASS_ATTR(priv_sess, state, S_IRUGO, show_priv_session_state,
 			NULL);
+<<<<<<< HEAD
 static ssize_t
 show_priv_session_creator(struct device *dev, struct device_attribute *attr,
 			char *buf)
@@ -2503,6 +2650,8 @@ show_priv_session_creator(struct device *dev, struct device_attribute *attr,
 }
 static ISCSI_CLASS_ATTR(priv_sess, creator, S_IRUGO, show_priv_session_creator,
 			NULL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define iscsi_priv_session_attr_show(field, format)			\
 static ssize_t								\
@@ -2548,6 +2697,7 @@ static ISCSI_CLASS_ATTR(priv_sess, field, S_IRUGO | S_IWUSR,		\
 			store_priv_session_##field)
 iscsi_priv_session_rw_attr(recovery_tmo, "%d");
 
+<<<<<<< HEAD
 static struct attribute *iscsi_session_attrs[] = {
 	&dev_attr_sess_initial_r2t.attr,
 	&dev_attr_sess_max_outstanding_r2t.attr,
@@ -2651,6 +2801,8 @@ static struct attribute_group iscsi_session_group = {
 	.is_visible = iscsi_session_attr_is_visible,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * iSCSI host attrs
  */
@@ -2673,6 +2825,7 @@ iscsi_host_attr(netdev, ISCSI_HOST_PARAM_NETDEV_NAME);
 iscsi_host_attr(hwaddress, ISCSI_HOST_PARAM_HWADDRESS);
 iscsi_host_attr(ipaddress, ISCSI_HOST_PARAM_IPADDRESS);
 iscsi_host_attr(initiatorname, ISCSI_HOST_PARAM_INITIATOR_NAME);
+<<<<<<< HEAD
 iscsi_host_attr(port_state, ISCSI_HOST_PARAM_PORT_STATE);
 iscsi_host_attr(port_speed, ISCSI_HOST_PARAM_PORT_SPEED);
 
@@ -2773,6 +2926,44 @@ char *iscsi_get_port_state_name(struct Scsi_Host *shost)
 	return state;
 }
 EXPORT_SYMBOL_GPL(iscsi_get_port_state_name);
+=======
+
+#define SETUP_PRIV_SESSION_RD_ATTR(field)				\
+do {									\
+	priv->session_attrs[count] = &dev_attr_priv_sess_##field; \
+	count++;							\
+} while (0)
+
+#define SETUP_PRIV_SESSION_RW_ATTR(field)				\
+do {									\
+	priv->session_attrs[count] = &dev_attr_priv_sess_##field;	\
+	count++;							\
+} while (0)
+
+#define SETUP_SESSION_RD_ATTR(field, param_flag)			\
+do {									\
+	if (tt->param_mask & param_flag) {				\
+		priv->session_attrs[count] = &dev_attr_sess_##field; \
+		count++;						\
+	}								\
+} while (0)
+
+#define SETUP_CONN_RD_ATTR(field, param_flag)				\
+do {									\
+	if (tt->param_mask & param_flag) {				\
+		priv->conn_attrs[count] = &dev_attr_conn_##field; \
+		count++;						\
+	}								\
+} while (0)
+
+#define SETUP_HOST_RD_ATTR(field, param_flag)				\
+do {									\
+	if (tt->host_param_mask & param_flag) {				\
+		priv->host_attrs[count] = &dev_attr_host_##field; \
+		count++;						\
+	}								\
+} while (0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int iscsi_session_match(struct attribute_container *cont,
 			   struct device *dev)
@@ -2844,7 +3035,11 @@ iscsi_register_transport(struct iscsi_transport *tt)
 {
 	struct iscsi_internal *priv;
 	unsigned long flags;
+<<<<<<< HEAD
 	int err;
+=======
+	int count = 0, err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BUG_ON(!tt);
 
@@ -2871,6 +3066,7 @@ iscsi_register_transport(struct iscsi_transport *tt)
 		goto unregister_dev;
 
 	/* host parameters */
+<<<<<<< HEAD
 	priv->t.host_attrs.ac.class = &iscsi_host_class.class;
 	priv->t.host_attrs.ac.match = iscsi_host_match;
 	priv->t.host_attrs.ac.grp = &iscsi_host_group;
@@ -2889,6 +3085,79 @@ iscsi_register_transport(struct iscsi_transport *tt)
 	priv->session_cont.ac.grp = &iscsi_session_group;
 	transport_container_register(&priv->session_cont);
 
+=======
+	priv->t.host_attrs.ac.attrs = &priv->host_attrs[0];
+	priv->t.host_attrs.ac.class = &iscsi_host_class.class;
+	priv->t.host_attrs.ac.match = iscsi_host_match;
+	priv->t.host_size = sizeof(struct iscsi_cls_host);
+	transport_container_register(&priv->t.host_attrs);
+
+	SETUP_HOST_RD_ATTR(netdev, ISCSI_HOST_NETDEV_NAME);
+	SETUP_HOST_RD_ATTR(ipaddress, ISCSI_HOST_IPADDRESS);
+	SETUP_HOST_RD_ATTR(hwaddress, ISCSI_HOST_HWADDRESS);
+	SETUP_HOST_RD_ATTR(initiatorname, ISCSI_HOST_INITIATOR_NAME);
+	BUG_ON(count > ISCSI_HOST_ATTRS);
+	priv->host_attrs[count] = NULL;
+	count = 0;
+
+	/* connection parameters */
+	priv->conn_cont.ac.attrs = &priv->conn_attrs[0];
+	priv->conn_cont.ac.class = &iscsi_connection_class.class;
+	priv->conn_cont.ac.match = iscsi_conn_match;
+	transport_container_register(&priv->conn_cont);
+
+	SETUP_CONN_RD_ATTR(max_recv_dlength, ISCSI_MAX_RECV_DLENGTH);
+	SETUP_CONN_RD_ATTR(max_xmit_dlength, ISCSI_MAX_XMIT_DLENGTH);
+	SETUP_CONN_RD_ATTR(header_digest, ISCSI_HDRDGST_EN);
+	SETUP_CONN_RD_ATTR(data_digest, ISCSI_DATADGST_EN);
+	SETUP_CONN_RD_ATTR(ifmarker, ISCSI_IFMARKER_EN);
+	SETUP_CONN_RD_ATTR(ofmarker, ISCSI_OFMARKER_EN);
+	SETUP_CONN_RD_ATTR(address, ISCSI_CONN_ADDRESS);
+	SETUP_CONN_RD_ATTR(port, ISCSI_CONN_PORT);
+	SETUP_CONN_RD_ATTR(exp_statsn, ISCSI_EXP_STATSN);
+	SETUP_CONN_RD_ATTR(persistent_address, ISCSI_PERSISTENT_ADDRESS);
+	SETUP_CONN_RD_ATTR(persistent_port, ISCSI_PERSISTENT_PORT);
+	SETUP_CONN_RD_ATTR(ping_tmo, ISCSI_PING_TMO);
+	SETUP_CONN_RD_ATTR(recv_tmo, ISCSI_RECV_TMO);
+
+	BUG_ON(count > ISCSI_CONN_ATTRS);
+	priv->conn_attrs[count] = NULL;
+	count = 0;
+
+	/* session parameters */
+	priv->session_cont.ac.attrs = &priv->session_attrs[0];
+	priv->session_cont.ac.class = &iscsi_session_class.class;
+	priv->session_cont.ac.match = iscsi_session_match;
+	transport_container_register(&priv->session_cont);
+
+	SETUP_SESSION_RD_ATTR(initial_r2t, ISCSI_INITIAL_R2T_EN);
+	SETUP_SESSION_RD_ATTR(max_outstanding_r2t, ISCSI_MAX_R2T);
+	SETUP_SESSION_RD_ATTR(immediate_data, ISCSI_IMM_DATA_EN);
+	SETUP_SESSION_RD_ATTR(first_burst_len, ISCSI_FIRST_BURST);
+	SETUP_SESSION_RD_ATTR(max_burst_len, ISCSI_MAX_BURST);
+	SETUP_SESSION_RD_ATTR(data_pdu_in_order, ISCSI_PDU_INORDER_EN);
+	SETUP_SESSION_RD_ATTR(data_seq_in_order, ISCSI_DATASEQ_INORDER_EN);
+	SETUP_SESSION_RD_ATTR(erl, ISCSI_ERL);
+	SETUP_SESSION_RD_ATTR(targetname, ISCSI_TARGET_NAME);
+	SETUP_SESSION_RD_ATTR(tpgt, ISCSI_TPGT);
+	SETUP_SESSION_RD_ATTR(password, ISCSI_USERNAME);
+	SETUP_SESSION_RD_ATTR(password_in, ISCSI_USERNAME_IN);
+	SETUP_SESSION_RD_ATTR(username, ISCSI_PASSWORD);
+	SETUP_SESSION_RD_ATTR(username_in, ISCSI_PASSWORD_IN);
+	SETUP_SESSION_RD_ATTR(fast_abort, ISCSI_FAST_ABORT);
+	SETUP_SESSION_RD_ATTR(abort_tmo, ISCSI_ABORT_TMO);
+	SETUP_SESSION_RD_ATTR(lu_reset_tmo,ISCSI_LU_RESET_TMO);
+	SETUP_SESSION_RD_ATTR(tgt_reset_tmo,ISCSI_TGT_RESET_TMO);
+	SETUP_SESSION_RD_ATTR(ifacename, ISCSI_IFACE_NAME);
+	SETUP_SESSION_RD_ATTR(initiatorname, ISCSI_INITIATOR_NAME);
+	SETUP_SESSION_RD_ATTR(targetalias, ISCSI_TARGET_ALIAS);
+	SETUP_PRIV_SESSION_RW_ATTR(recovery_tmo);
+	SETUP_PRIV_SESSION_RD_ATTR(state);
+
+	BUG_ON(count > ISCSI_SESSION_ATTRS);
+	priv->session_attrs[count] = NULL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&iscsi_transport_lock, flags);
 	list_add(&priv->list, &iscsi_transports);
 	spin_unlock_irqrestore(&iscsi_transport_lock, flags);
@@ -2950,6 +3219,7 @@ static __init int iscsi_transport_init(void)
 	if (err)
 		goto unregister_transport_class;
 
+<<<<<<< HEAD
 	err = class_register(&iscsi_iface_class);
 	if (err)
 		goto unregister_endpoint_class;
@@ -2957,6 +3227,11 @@ static __init int iscsi_transport_init(void)
 	err = transport_class_register(&iscsi_host_class);
 	if (err)
 		goto unregister_iface_class;
+=======
+	err = transport_class_register(&iscsi_host_class);
+	if (err)
+		goto unregister_endpoint_class;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = transport_class_register(&iscsi_connection_class);
 	if (err)
@@ -2987,8 +3262,11 @@ unregister_conn_class:
 	transport_class_unregister(&iscsi_connection_class);
 unregister_host_class:
 	transport_class_unregister(&iscsi_host_class);
+<<<<<<< HEAD
 unregister_iface_class:
 	class_unregister(&iscsi_iface_class);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 unregister_endpoint_class:
 	class_unregister(&iscsi_endpoint_class);
 unregister_transport_class:
@@ -3004,7 +3282,10 @@ static void __exit iscsi_transport_exit(void)
 	transport_class_unregister(&iscsi_session_class);
 	transport_class_unregister(&iscsi_host_class);
 	class_unregister(&iscsi_endpoint_class);
+<<<<<<< HEAD
 	class_unregister(&iscsi_iface_class);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	class_unregister(&iscsi_transport_class);
 }
 

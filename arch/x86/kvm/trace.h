@@ -2,8 +2,11 @@
 #define _TRACE_KVM_H
 
 #include <linux/tracepoint.h>
+<<<<<<< HEAD
 #include <asm/vmx.h>
 #include <asm/svm.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #undef TRACE_SYSTEM
 #define TRACE_SYSTEM kvm
@@ -183,6 +186,7 @@ TRACE_EVENT(kvm_apic,
 #define KVM_ISA_VMX   1
 #define KVM_ISA_SVM   2
 
+<<<<<<< HEAD
 #define VMX_EXIT_REASONS \
 	{ EXIT_REASON_EXCEPTION_NMI,		"EXCEPTION_NMI" }, \
 	{ EXIT_REASON_EXTERNAL_INTERRUPT,	"EXTERNAL_INTERRUPT" }, \
@@ -272,6 +276,8 @@ TRACE_EVENT(kvm_apic,
 	{ SVM_EXIT_XSETBV,			"xsetbv" }, \
 	{ SVM_EXIT_NPF,				"npf" }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Tracepoint for kvm guest exit:
  */
@@ -296,9 +302,14 @@ TRACE_EVENT(kvm_exit,
 	),
 
 	TP_printk("reason %s rip 0x%lx info %llx %llx",
+<<<<<<< HEAD
 		 (__entry->isa == KVM_ISA_VMX) ?
 		 __print_symbolic(__entry->exit_reason, VMX_EXIT_REASONS) :
 		 __print_symbolic(__entry->exit_reason, SVM_EXIT_REASONS),
+=======
+		 ftrace_print_symbols_seq(p, __entry->exit_reason,
+					  kvm_x86_ops->exit_reasons_str),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 __entry->guest_rip, __entry->info1, __entry->info2)
 );
 
@@ -578,9 +589,15 @@ TRACE_EVENT(kvm_nested_intercepts,
 TRACE_EVENT(kvm_nested_vmexit,
 	    TP_PROTO(__u64 rip, __u32 exit_code,
 		     __u64 exit_info1, __u64 exit_info2,
+<<<<<<< HEAD
 		     __u32 exit_int_info, __u32 exit_int_info_err, __u32 isa),
 	    TP_ARGS(rip, exit_code, exit_info1, exit_info2,
 		    exit_int_info, exit_int_info_err, isa),
+=======
+		     __u32 exit_int_info, __u32 exit_int_info_err),
+	    TP_ARGS(rip, exit_code, exit_info1, exit_info2,
+		    exit_int_info, exit_int_info_err),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	TP_STRUCT__entry(
 		__field(	__u64,		rip			)
@@ -589,7 +606,10 @@ TRACE_EVENT(kvm_nested_vmexit,
 		__field(	__u64,		exit_info2		)
 		__field(	__u32,		exit_int_info		)
 		__field(	__u32,		exit_int_info_err	)
+<<<<<<< HEAD
 		__field(	__u32,		isa			)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	),
 
 	TP_fast_assign(
@@ -599,14 +619,22 @@ TRACE_EVENT(kvm_nested_vmexit,
 		__entry->exit_info2		= exit_info2;
 		__entry->exit_int_info		= exit_int_info;
 		__entry->exit_int_info_err	= exit_int_info_err;
+<<<<<<< HEAD
 		__entry->isa			= isa;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	),
 	TP_printk("rip: 0x%016llx reason: %s ext_inf1: 0x%016llx "
 		  "ext_inf2: 0x%016llx ext_int: 0x%08x ext_int_err: 0x%08x",
 		  __entry->rip,
+<<<<<<< HEAD
 		 (__entry->isa == KVM_ISA_VMX) ?
 		 __print_symbolic(__entry->exit_code, VMX_EXIT_REASONS) :
 		 __print_symbolic(__entry->exit_code, SVM_EXIT_REASONS),
+=======
+		  ftrace_print_symbols_seq(p, __entry->exit_code,
+					   kvm_x86_ops->exit_reasons_str),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  __entry->exit_info1, __entry->exit_info2,
 		  __entry->exit_int_info, __entry->exit_int_info_err)
 );
@@ -617,9 +645,15 @@ TRACE_EVENT(kvm_nested_vmexit,
 TRACE_EVENT(kvm_nested_vmexit_inject,
 	    TP_PROTO(__u32 exit_code,
 		     __u64 exit_info1, __u64 exit_info2,
+<<<<<<< HEAD
 		     __u32 exit_int_info, __u32 exit_int_info_err, __u32 isa),
 	    TP_ARGS(exit_code, exit_info1, exit_info2,
 		    exit_int_info, exit_int_info_err, isa),
+=======
+		     __u32 exit_int_info, __u32 exit_int_info_err),
+	    TP_ARGS(exit_code, exit_info1, exit_info2,
+		    exit_int_info, exit_int_info_err),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	TP_STRUCT__entry(
 		__field(	__u32,		exit_code		)
@@ -627,7 +661,10 @@ TRACE_EVENT(kvm_nested_vmexit_inject,
 		__field(	__u64,		exit_info2		)
 		__field(	__u32,		exit_int_info		)
 		__field(	__u32,		exit_int_info_err	)
+<<<<<<< HEAD
 		__field(	__u32,		isa			)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	),
 
 	TP_fast_assign(
@@ -636,14 +673,22 @@ TRACE_EVENT(kvm_nested_vmexit_inject,
 		__entry->exit_info2		= exit_info2;
 		__entry->exit_int_info		= exit_int_info;
 		__entry->exit_int_info_err	= exit_int_info_err;
+<<<<<<< HEAD
 		__entry->isa			= isa;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	),
 
 	TP_printk("reason: %s ext_inf1: 0x%016llx "
 		  "ext_inf2: 0x%016llx ext_int: 0x%08x ext_int_err: 0x%08x",
+<<<<<<< HEAD
 		 (__entry->isa == KVM_ISA_VMX) ?
 		 __print_symbolic(__entry->exit_code, VMX_EXIT_REASONS) :
 		 __print_symbolic(__entry->exit_code, SVM_EXIT_REASONS),
+=======
+		  ftrace_print_symbols_seq(p, __entry->exit_code,
+					   kvm_x86_ops->exit_reasons_str),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__entry->exit_info1, __entry->exit_info2,
 		__entry->exit_int_info, __entry->exit_int_info_err)
 );
@@ -773,12 +818,21 @@ TRACE_EVENT(kvm_emulate_insn,
 		),
 
 	TP_fast_assign(
+<<<<<<< HEAD
 		__entry->rip = vcpu->arch.emulate_ctxt.fetch.start;
 		__entry->csbase = kvm_x86_ops->get_segment_base(vcpu, VCPU_SREG_CS);
 		__entry->len = vcpu->arch.emulate_ctxt._eip
 			       - vcpu->arch.emulate_ctxt.fetch.start;
 		memcpy(__entry->insn,
 		       vcpu->arch.emulate_ctxt.fetch.data,
+=======
+		__entry->rip = vcpu->arch.emulate_ctxt.decode.fetch.start;
+		__entry->csbase = kvm_x86_ops->get_segment_base(vcpu, VCPU_SREG_CS);
+		__entry->len = vcpu->arch.emulate_ctxt.decode.eip
+			       - vcpu->arch.emulate_ctxt.decode.fetch.start;
+		memcpy(__entry->insn,
+		       vcpu->arch.emulate_ctxt.decode.fetch.data,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       15);
 		__entry->flags = kei_decode_mode(vcpu->arch.emulate_ctxt.mode);
 		__entry->failed = failed;
@@ -796,6 +850,7 @@ TRACE_EVENT(kvm_emulate_insn,
 #define trace_kvm_emulate_insn_start(vcpu) trace_kvm_emulate_insn(vcpu, 0)
 #define trace_kvm_emulate_insn_failed(vcpu) trace_kvm_emulate_insn(vcpu, 1)
 
+<<<<<<< HEAD
 TRACE_EVENT(
 	vcpu_match_mmio,
 	TP_PROTO(gva_t gva, gpa_t gpa, bool write, bool gpa_match),
@@ -819,6 +874,8 @@ TRACE_EVENT(
 		  __entry->write ? "Write" : "Read",
 		  __entry->gpa_match ? "GPA" : "GVA")
 );
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _TRACE_KVM_H */
 
 #undef TRACE_INCLUDE_PATH

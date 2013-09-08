@@ -55,7 +55,11 @@
 #define DRIVER_AUTHOR "Greg Kroah-Hartman <greg@kroah.com>, Bill Ryder <bryder@sgi.com>, Kuba Ober <kuba@mareimbrium.org>, Andreas Mohr, Johan Hovold <jhovold@gmail.com>"
 #define DRIVER_DESC "USB FTDI Serial Converters Driver"
 
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __u16 vendor = FTDI_VID;
 static __u16 product;
 
@@ -73,10 +77,15 @@ struct ftdi_private {
 				 */
 	int flags;		/* some ASYNC_xxxx flags are supported */
 	unsigned long last_dtr_rts;	/* saved modem control outputs */
+<<<<<<< HEAD
 	struct async_icount	icount;
 	wait_queue_head_t delta_msr_wait; /* Used for TIOCMIWAIT */
 	char prev_status;        /* Used for TIOCMIWAIT */
 	bool dev_gone;        /* Used to abort TIOCMIWAIT */
+=======
+	wait_queue_head_t delta_msr_wait; /* Used for TIOCMIWAIT */
+	char prev_status, diff_status;        /* Used for TIOCMIWAIT */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char transmit_empty;	/* If transmitter is empty or not */
 	struct usb_serial_port *port;
 	__u16 interface;	/* FT2232C, FT2232H or FT4232H port interface
@@ -197,10 +206,13 @@ static struct usb_device_id id_table_combined [] = {
 	{ USB_DEVICE(FTDI_VID, FTDI_OPENDCC_THROTTLE_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_OPENDCC_GATEWAY_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_OPENDCC_GBM_PID) },
+<<<<<<< HEAD
 	{ USB_DEVICE(FTDI_VID, FTDI_OPENDCC_GBM_BOOST_PID) },
 	{ USB_DEVICE(NEWPORT_VID, NEWPORT_AGILIS_PID) },
 	{ USB_DEVICE(NEWPORT_VID, NEWPORT_CONEX_CC_PID) },
 	{ USB_DEVICE(NEWPORT_VID, NEWPORT_CONEX_AGP_PID) },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ USB_DEVICE(INTERBIOMETRICS_VID, INTERBIOMETRICS_IOBOARD_PID) },
 	{ USB_DEVICE(INTERBIOMETRICS_VID, INTERBIOMETRICS_MINI_IOBOARD_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_SPROG_II) },
@@ -588,12 +600,18 @@ static struct usb_device_id id_table_combined [] = {
 	{ USB_DEVICE(FTDI_VID, FTDI_IBS_PEDO_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_IBS_PROD_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_TAVIR_STK500_PID) },
+<<<<<<< HEAD
 	{ USB_DEVICE(FTDI_VID, FTDI_TIAO_UMPA_PID),
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
 	/*
 	 * ELV devices:
 	 */
 	{ USB_DEVICE(FTDI_ELV_VID, FTDI_ELV_WS300_PID) },
+=======
+	/*
+	 * ELV devices:
+	 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ USB_DEVICE(FTDI_VID, FTDI_ELV_USR_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_ELV_MSM1_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_ELV_KL100_PID) },
@@ -651,7 +669,10 @@ static struct usb_device_id id_table_combined [] = {
 	{ USB_DEVICE(FTDI_VID, FTDI_RM_CANVIEW_PID) },
 	{ USB_DEVICE(ACTON_VID, ACTON_SPECTRAPRO_PID) },
 	{ USB_DEVICE(CONTEC_VID, CONTEC_COM1USBH_PID) },
+<<<<<<< HEAD
 	{ USB_DEVICE(MITSUBISHI_VID, MITSUBISHI_FXUSB_PID) },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ USB_DEVICE(BANDB_VID, BANDB_USOTL4_PID) },
 	{ USB_DEVICE(BANDB_VID, BANDB_USTL4_PID) },
 	{ USB_DEVICE(BANDB_VID, BANDB_USO9ML2_PID) },
@@ -681,7 +702,10 @@ static struct usb_device_id id_table_combined [] = {
 	{ USB_DEVICE(FTDI_VID, XSENS_CONVERTER_5_PID) },
 	{ USB_DEVICE(FTDI_VID, XSENS_CONVERTER_6_PID) },
 	{ USB_DEVICE(FTDI_VID, XSENS_CONVERTER_7_PID) },
+<<<<<<< HEAD
 	{ USB_DEVICE(FTDI_VID, FTDI_OMNI1509) },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ USB_DEVICE(MOBILITY_VID, MOBILITY_USB_SERIAL_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_ACTIVE_ROBOTS_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_MHAM_KW_PID) },
@@ -713,7 +737,10 @@ static struct usb_device_id id_table_combined [] = {
 	{ USB_DEVICE(FTDI_VID, FTDI_PCDJ_DAC2_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_RRCIRKITS_LOCOBUFFER_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_ASK_RDR400_PID) },
+<<<<<<< HEAD
 	{ USB_DEVICE(FTDI_VID, FTDI_NZR_SEM_USB_PID) },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ USB_DEVICE(ICOM_VID, ICOM_ID_1_PID) },
 	{ USB_DEVICE(ICOM_VID, ICOM_OPC_U_UC_PID) },
 	{ USB_DEVICE(ICOM_VID, ICOM_ID_RP2C1_PID) },
@@ -745,6 +772,7 @@ static struct usb_device_id id_table_combined [] = {
 	{ USB_DEVICE(FTDI_VID, FTDI_NDI_AURORA_SCU_PID),
 		.driver_info = (kernel_ulong_t)&ftdi_NDI_device_quirk },
 	{ USB_DEVICE(TELLDUS_VID, TELLDUS_TELLSTICK_PID) },
+<<<<<<< HEAD
 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_S03_PID) },
 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_59_PID) },
 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_57A_PID) },
@@ -773,6 +801,10 @@ static struct usb_device_id id_table_combined [] = {
 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_W5R_PID) },
 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_A5R_PID) },
 	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_USB_PW1_PID) },
+=======
+	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_SERIAL_VX7_PID) },
+	{ USB_DEVICE(RTSYSTEMS_VID, RTSYSTEMS_CT29B_PID) },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ USB_DEVICE(FTDI_VID, FTDI_MAXSTREAM_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_PHI_FISCO_PID) },
 	{ USB_DEVICE(TML_VID, TML_USB_SERIAL_PID) },
@@ -839,14 +871,19 @@ static struct usb_device_id id_table_combined [] = {
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
 	{ USB_DEVICE(ADI_VID, ADI_GNICEPLUS_PID),
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
+<<<<<<< HEAD
 	{ USB_DEVICE_AND_INTERFACE_INFO(MICROCHIP_VID, MICROCHIP_USB_BOARD_PID,
 					USB_CLASS_VENDOR_SPEC,
 					USB_SUBCLASS_VENDOR_SPEC, 0x00) },
+=======
+	{ USB_DEVICE(MICROCHIP_VID, MICROCHIP_USB_BOARD_PID) },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ USB_DEVICE(JETI_VID, JETI_SPC1201_PID) },
 	{ USB_DEVICE(MARVELL_VID, MARVELL_SHEEVAPLUG_PID),
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
 	{ USB_DEVICE(LARSENBRUSGAARD_VID, LB_ALTITRACK_PID) },
 	{ USB_DEVICE(GN_OTOMETRICS_VID, AURICAL_USB_PID) },
+<<<<<<< HEAD
 	{ USB_DEVICE(FTDI_VID, PI_C865_PID) },
 	{ USB_DEVICE(FTDI_VID, PI_C857_PID) },
 	{ USB_DEVICE(PI_VID, PI_C866_PID) },
@@ -866,6 +903,8 @@ static struct usb_device_id id_table_combined [] = {
 	{ USB_DEVICE(PI_VID, PI_1015_PID) },
 	{ USB_DEVICE(PI_VID, PI_1016_PID) },
 	{ USB_DEVICE(KONDO_VID, KONDO_USB_SERIAL_PID) },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ USB_DEVICE(BAYER_VID, BAYER_CONTOUR_CABLE_PID) },
 	{ USB_DEVICE(FTDI_VID, MARVELL_OPENRD_PID),
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
@@ -906,16 +945,23 @@ static struct usb_device_id id_table_combined [] = {
 	{ USB_DEVICE(FTDI_VID, FTDI_DOTEC_PID) },
 	{ USB_DEVICE(QIHARDWARE_VID, MILKYMISTONE_JTAGSERIAL_PID),
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
+<<<<<<< HEAD
 	{ USB_DEVICE(ST_VID, ST_STMCLT_2232_PID),
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
 	{ USB_DEVICE(ST_VID, ST_STMCLT_4232_PID),
+=======
+	{ USB_DEVICE(ST_VID, ST_STMCLT1030_PID),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.driver_info = (kernel_ulong_t)&ftdi_stmclite_quirk },
 	{ USB_DEVICE(FTDI_VID, FTDI_RF_R106) },
 	{ USB_DEVICE(FTDI_VID, FTDI_DISTORTEC_JTAG_LOCK_PICK_PID),
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
 	{ USB_DEVICE(FTDI_VID, FTDI_LUMEL_PD12_PID) },
+<<<<<<< HEAD
 	/* Crucible Devices */
 	{ USB_DEVICE(FTDI_VID, FTDI_CT_COMET_PID) },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ },					/* Optional parameter entry */
 	{ }					/* Terminating entry */
 };
@@ -927,6 +973,10 @@ static struct usb_driver ftdi_driver = {
 	.probe =	usb_serial_probe,
 	.disconnect =	usb_serial_disconnect,
 	.id_table =	id_table_combined,
+<<<<<<< HEAD
+=======
+	.no_dynamic_id =	1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const char *ftdi_chip_name[] = {
@@ -966,8 +1016,11 @@ static void ftdi_set_termios(struct tty_struct *tty,
 static int  ftdi_tiocmget(struct tty_struct *tty);
 static int  ftdi_tiocmset(struct tty_struct *tty,
 			unsigned int set, unsigned int clear);
+<<<<<<< HEAD
 static int ftdi_get_icount(struct tty_struct *tty,
 			   struct serial_icounter_struct *icount);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int  ftdi_ioctl(struct tty_struct *tty,
 			unsigned int cmd, unsigned long arg);
 static void ftdi_break_ctl(struct tty_struct *tty, int break_state);
@@ -985,6 +1038,10 @@ static struct usb_serial_driver ftdi_sio_device = {
 		.name =		"ftdi_sio",
 	},
 	.description =		"FTDI USB Serial Device",
+<<<<<<< HEAD
+=======
+	.usb_driver = 		&ftdi_driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table =		id_table_combined,
 	.num_ports =		1,
 	.bulk_in_size =		512,
@@ -1001,16 +1058,22 @@ static struct usb_serial_driver ftdi_sio_device = {
 	.prepare_write_buffer =	ftdi_prepare_write_buffer,
 	.tiocmget =		ftdi_tiocmget,
 	.tiocmset =		ftdi_tiocmset,
+<<<<<<< HEAD
 	.get_icount =           ftdi_get_icount,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ioctl =		ftdi_ioctl,
 	.set_termios =		ftdi_set_termios,
 	.break_ctl =		ftdi_break_ctl,
 };
 
+<<<<<<< HEAD
 static struct usb_serial_driver * const serial_drivers[] = {
 	&ftdi_sio_device, NULL
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define WDR_TIMEOUT 5000 /* default urb timeout */
 #define WDR_SHORT_TIMEOUT 1000	/* shorter urb timeout */
@@ -1300,10 +1363,14 @@ static int change_speed(struct tty_struct *tty, struct usb_serial_port *port)
 	urb_index_value = get_ftdi_divisor(tty, port);
 	urb_value = (__u16)urb_index_value;
 	urb_index = (__u16)(urb_index_value >> 16);
+<<<<<<< HEAD
 	if ((priv->chip_type == FT2232C) || (priv->chip_type == FT2232H) ||
 		(priv->chip_type == FT4232H) || (priv->chip_type == FT232H)) {
 		/* Probably the BM type needs the MSB of the encoded fractional
 		 * divider also moved like for the chips above. Any infos? */
+=======
+	if (priv->interface) {	/* FT2232C */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		urb_index = (__u16)((urb_index << 8) | priv->interface);
 	}
 
@@ -1577,7 +1644,11 @@ static void ftdi_set_max_packet_size(struct usb_serial_port *port)
 	}
 
 	/* set max packet size based on descriptor */
+<<<<<<< HEAD
 	priv->max_packet_size = usb_endpoint_maxp(ep_desc);
+=======
+	priv->max_packet_size = le16_to_cpu(ep_desc->wMaxPacketSize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_info(&udev->dev, "Setting MaxPacketSize %d\n", priv->max_packet_size);
 }
@@ -1739,11 +1810,17 @@ static int ftdi_sio_port_probe(struct usb_serial_port *port)
 
 	kref_init(&priv->kref);
 	mutex_init(&priv->cfg_lock);
+<<<<<<< HEAD
 	memset(&priv->icount, 0x00, sizeof(priv->icount));
 	init_waitqueue_head(&priv->delta_msr_wait);
 
 	priv->flags = ASYNC_LOW_LATENCY;
 	priv->dev_gone = false;
+=======
+	init_waitqueue_head(&priv->delta_msr_wait);
+
+	priv->flags = ASYNC_LOW_LATENCY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (quirk && quirk->port_probe)
 		quirk->port_probe(priv);
@@ -1787,8 +1864,12 @@ static void ftdi_HE_TIRA1_setup(struct ftdi_private *priv)
 
 /*
  * Module parameter to control latency timer for NDI FTDI-based USB devices.
+<<<<<<< HEAD
  * If this value is not set in /etc/modprobe.d/ its value will be set
  * to 1ms.
+=======
+ * If this value is not set in modprobe.conf.local its value will be set to 1ms.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int ndi_latency_timer = 1;
 
@@ -1846,7 +1927,11 @@ static int ftdi_8u2232c_probe(struct usb_serial *serial)
 	dbg("%s", __func__);
 
 	if ((udev->manufacturer && !strcmp(udev->manufacturer, "CALAO Systems")) ||
+<<<<<<< HEAD
 	    (udev->product && !strcmp(udev->product, "BeagleBone/XDS100V2")))
+=======
+	    (udev->product && !strcmp(udev->product, "BeagleBone/XDS100")))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ftdi_jtag_probe(serial);
 
 	return 0;
@@ -1902,9 +1987,12 @@ static int ftdi_sio_port_remove(struct usb_serial_port *port)
 
 	dbg("%s", __func__);
 
+<<<<<<< HEAD
 	priv->dev_gone = true;
 	wake_up_interruptible_all(&priv->delta_msr_wait);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	remove_sysfs_attrs(port);
 
 	kref_put(&priv->kref, ftdi_sio_priv_release);
@@ -1950,14 +2038,22 @@ static void ftdi_dtr_rts(struct usb_serial_port *port, int on)
 {
 	struct ftdi_private *priv = usb_get_serial_port_data(port);
 
+<<<<<<< HEAD
 	/* Disable flow control */
 	if (!on) {
 		if (usb_control_msg(port->serial->dev,
+=======
+	mutex_lock(&port->serial->disc_mutex);
+	if (!port->serial->disconnected) {
+		/* Disable flow control */
+		if (!on && usb_control_msg(port->serial->dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    usb_sndctrlpipe(port->serial->dev, 0),
 			    FTDI_SIO_SET_FLOW_CTRL_REQUEST,
 			    FTDI_SIO_SET_FLOW_CTRL_REQUEST_TYPE,
 			    0, priv->interface, NULL, 0,
 			    WDR_TIMEOUT) < 0) {
+<<<<<<< HEAD
 			dev_err(&port->dev, "error from flowcontrol urb\n");
 		}
 	}
@@ -1966,6 +2062,17 @@ static void ftdi_dtr_rts(struct usb_serial_port *port, int on)
 		set_mctrl(port, TIOCM_DTR | TIOCM_RTS);
 	else
 		clear_mctrl(port, TIOCM_DTR | TIOCM_RTS);
+=======
+			    dev_err(&port->dev, "error from flowcontrol urb\n");
+		}
+		/* drop RTS and DTR */
+		if (on)
+			set_mctrl(port, TIOCM_DTR | TIOCM_RTS);
+		else
+			clear_mctrl(port, TIOCM_DTR | TIOCM_RTS);
+	}
+	mutex_unlock(&port->serial->disc_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2010,7 +2117,10 @@ static int ftdi_prepare_write_buffer(struct usb_serial_port *port,
 			c = kfifo_out(&port->write_fifo, &buffer[i + 1], len);
 			if (!c)
 				break;
+<<<<<<< HEAD
 			priv->icount.tx += c;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			buffer[i] = (c << 2) + 1;
 			count += c + 1;
 		}
@@ -2018,7 +2128,10 @@ static int ftdi_prepare_write_buffer(struct usb_serial_port *port,
 	} else {
 		count = kfifo_out_locked(&port->write_fifo, dest, size,
 								&port->lock);
+<<<<<<< HEAD
 		priv->icount.tx += count;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return count;
@@ -2047,6 +2160,7 @@ static int ftdi_process_packet(struct tty_struct *tty,
 	   are only processed once.  */
 	status = packet[0] & FTDI_STATUS_B0_MASK;
 	if (status != priv->prev_status) {
+<<<<<<< HEAD
 		char diff_status = status ^ priv->prev_status;
 
 		if (diff_status & FTDI_RS0_CTS)
@@ -2059,6 +2173,10 @@ static int ftdi_process_packet(struct tty_struct *tty,
 			priv->icount.dcd++;
 
 		wake_up_interruptible_all(&priv->delta_msr_wait);
+=======
+		priv->diff_status |= status ^ priv->prev_status;
+		wake_up_interruptible(&priv->delta_msr_wait);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		priv->prev_status = status;
 	}
 
@@ -2068,6 +2186,7 @@ static int ftdi_process_packet(struct tty_struct *tty,
 		 * over framing errors */
 		if (packet[1] & FTDI_RS_BI) {
 			flag = TTY_BREAK;
+<<<<<<< HEAD
 			priv->icount.brk++;
 			usb_serial_handle_break(port);
 		} else if (packet[1] & FTDI_RS_PE) {
@@ -2082,6 +2201,17 @@ static int ftdi_process_packet(struct tty_struct *tty,
 			priv->icount.overrun++;
 			tty_insert_flip_char(tty, 0, TTY_OVERRUN);
 		}
+=======
+			usb_serial_handle_break(port);
+		} else if (packet[1] & FTDI_RS_PE) {
+			flag = TTY_PARITY;
+		} else if (packet[1] & FTDI_RS_FE) {
+			flag = TTY_FRAME;
+		}
+		/* Overrun is special, not associated with a char */
+		if (packet[1] & FTDI_RS_OE)
+			tty_insert_flip_char(tty, 0, TTY_OVERRUN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* save if the transmitter is empty or not */
@@ -2093,7 +2223,10 @@ static int ftdi_process_packet(struct tty_struct *tty,
 	len -= 2;
 	if (!len)
 		return 0;	/* status only */
+<<<<<<< HEAD
 	priv->icount.rx += len;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ch = packet + 2;
 
 	if (port->port.console && port->sysrq) {
@@ -2198,9 +2331,12 @@ static void ftdi_set_termios(struct tty_struct *tty,
 
 	cflag = termios->c_cflag;
 
+<<<<<<< HEAD
 	if (!old_termios)
 		goto no_skip;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (old_termios->c_cflag == termios->c_cflag
 	    && old_termios->c_ispeed == termios->c_ispeed
 	    && old_termios->c_ospeed == termios->c_ospeed)
@@ -2214,7 +2350,10 @@ static void ftdi_set_termios(struct tty_struct *tty,
 	    (termios->c_cflag & (CSIZE|PARODD|PARENB|CMSPAR|CSTOPB)))
 		goto no_data_parity_stop_changes;
 
+<<<<<<< HEAD
 no_skip:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Set number of data bits, parity, stop bits */
 
 	urb_value = 0;
@@ -2409,6 +2548,7 @@ static int ftdi_tiocmset(struct tty_struct *tty,
 	return update_mctrl(port, set, clear);
 }
 
+<<<<<<< HEAD
 static int ftdi_get_icount(struct tty_struct *tty,
 				struct serial_icounter_struct *icount)
 {
@@ -2430,13 +2570,18 @@ static int ftdi_get_icount(struct tty_struct *tty,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ftdi_ioctl(struct tty_struct *tty,
 					unsigned int cmd, unsigned long arg)
 {
 	struct usb_serial_port *port = tty->driver_data;
 	struct ftdi_private *priv = usb_get_serial_port_data(port);
+<<<<<<< HEAD
 	struct async_icount cnow;
 	struct async_icount cprev;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dbg("%s cmd 0x%04x", __func__, cmd);
 
@@ -2456,16 +2601,25 @@ static int ftdi_ioctl(struct tty_struct *tty,
 	 * - mask passed in arg for lines of interest
 	 *   (use |'ed TIOCM_RNG/DSR/CD/CTS for masking)
 	 * Caller should use TIOCGICOUNT to see which one it was.
+<<<<<<< HEAD
+=======
+	 * (except that the driver doesn't support it !)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 *
 	 * This code is borrowed from linux/drivers/char/serial.c
 	 */
 	case TIOCMIWAIT:
+<<<<<<< HEAD
 		cprev = priv->icount;
 		while (!priv->dev_gone) {
+=======
+		while (priv != NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			interruptible_sleep_on(&priv->delta_msr_wait);
 			/* see if a signal did it */
 			if (signal_pending(current))
 				return -ERESTARTSYS;
+<<<<<<< HEAD
 			cnow = priv->icount;
 			if (((arg & TIOCM_RNG) && (cnow.rng != cprev.rng)) ||
 			    ((arg & TIOCM_DSR) && (cnow.dsr != cprev.dsr)) ||
@@ -2477,6 +2631,33 @@ static int ftdi_ioctl(struct tty_struct *tty,
 		}
 		return -EIO;
 		break;
+=======
+			else {
+				char diff = priv->diff_status;
+
+				if (diff == 0)
+					return -EIO; /* no change => error */
+
+				/* Consume all events */
+				priv->diff_status = 0;
+
+				/* Return 0 if caller wanted to know about
+				   these bits */
+				if (((arg & TIOCM_RNG) && (diff & FTDI_RS0_RI)) ||
+				    ((arg & TIOCM_DSR) && (diff & FTDI_RS0_DSR)) ||
+				    ((arg & TIOCM_CD)  && (diff & FTDI_RS0_RLSD)) ||
+				    ((arg & TIOCM_CTS) && (diff & FTDI_RS0_CTS))) {
+					return 0;
+				}
+				/*
+				 * Otherwise caller can't care less about what
+				 * happened,and so we continue to wait for more
+				 * events.
+				 */
+			}
+		}
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case TIOCSERGETLSR:
 		return get_lsr_info(port, (struct serial_struct __user *)arg);
 		break;
@@ -2504,10 +2685,26 @@ static int __init ftdi_init(void)
 		id_table_combined[i].idVendor = vendor;
 		id_table_combined[i].idProduct = product;
 	}
+<<<<<<< HEAD
 	retval = usb_serial_register_drivers(&ftdi_driver, serial_drivers);
 	if (retval == 0)
 		printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_VERSION ":"
 			       DRIVER_DESC "\n");
+=======
+	retval = usb_serial_register(&ftdi_sio_device);
+	if (retval)
+		goto failed_sio_register;
+	retval = usb_register(&ftdi_driver);
+	if (retval)
+		goto failed_usb_register;
+
+	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_VERSION ":"
+	       DRIVER_DESC "\n");
+	return 0;
+failed_usb_register:
+	usb_serial_deregister(&ftdi_sio_device);
+failed_sio_register:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return retval;
 }
 
@@ -2515,7 +2712,12 @@ static void __exit ftdi_exit(void)
 {
 	dbg("%s", __func__);
 
+<<<<<<< HEAD
 	usb_serial_deregister_drivers(&ftdi_driver, serial_drivers);
+=======
+	usb_deregister(&ftdi_driver);
+	usb_serial_deregister(&ftdi_sio_device);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 

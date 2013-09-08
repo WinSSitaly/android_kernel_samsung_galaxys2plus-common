@@ -33,7 +33,11 @@
 #include <linux/pci.h>
 #include <linux/slab.h>
 #include <linux/gameport.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mutex.h>
 
 #include <sound/core.h>
@@ -83,12 +87,20 @@ MODULE_SUPPORTED_DEVICE("{{Ensoniq,AudioPCI ES1371/73},"
 
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;	/* Index 0-MAX */
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;	/* ID for this card */
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;	/* Enable switches */
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;	/* Enable switches */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef SUPPORT_JOYSTICK
 #ifdef CHIP1371
 static int joystick_port[SNDRV_CARDS];
 #else
+<<<<<<< HEAD
 static bool joystick[SNDRV_CARDS];
+=======
+static int joystick[SNDRV_CARDS];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 #endif
 #ifdef CHIP1371
@@ -2120,7 +2132,11 @@ static int __devinit snd_ensoniq_create(struct snd_card *card,
 	}
 	ensoniq->port = pci_resource_start(pci, 0);
 	if (request_irq(pci->irq, snd_audiopci_interrupt, IRQF_SHARED,
+<<<<<<< HEAD
 			KBUILD_MODNAME, ensoniq)) {
+=======
+			"Ensoniq AudioPCI", ensoniq)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printk(KERN_ERR "unable to grab IRQ %d\n", pci->irq);
 		snd_ensoniq_free(ensoniq);
 		return -EBUSY;
@@ -2489,7 +2505,11 @@ static void __devexit snd_audiopci_remove(struct pci_dev *pci)
 }
 
 static struct pci_driver driver = {
+<<<<<<< HEAD
 	.name = KBUILD_MODNAME,
+=======
+	.name = DRIVER_NAME,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table = snd_audiopci_ids,
 	.probe = snd_audiopci_probe,
 	.remove = __devexit_p(snd_audiopci_remove),

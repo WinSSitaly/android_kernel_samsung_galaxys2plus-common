@@ -17,8 +17,15 @@
  *  ext3 symlink handling code
  */
 
+<<<<<<< HEAD
 #include <linux/namei.h>
 #include "ext3.h"
+=======
+#include <linux/fs.h>
+#include <linux/jbd.h>
+#include <linux/ext3_fs.h>
+#include <linux/namei.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "xattr.h"
 
 static void * ext3_follow_link(struct dentry *dentry, struct nameidata *nd)

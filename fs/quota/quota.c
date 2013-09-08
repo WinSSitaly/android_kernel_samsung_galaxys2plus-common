@@ -13,6 +13,10 @@
 #include <linux/kernel.h>
 #include <linux/security.h>
 #include <linux/syscalls.h>
+<<<<<<< HEAD
+=======
+#include <linux/buffer_head.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/capability.h>
 #include <linux/quotaops.h>
 #include <linux/types.h>
@@ -282,15 +286,23 @@ static int do_quotactl(struct super_block *sb, int type, int cmd, qid_t id,
 	case Q_XGETQUOTA:
 		return quota_getxquota(sb, type, id, addr);
 	case Q_XQUOTASYNC:
+<<<<<<< HEAD
 		if (sb->s_flags & MS_RDONLY)
 			return -EROFS;
 		/* XFS quotas are fully coherent now, making this call a noop */
+=======
+		/* caller already holds s_umount */
+		if (sb->s_flags & MS_RDONLY)
+			return -EROFS;
+		writeback_inodes_sb(sb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	default:
 		return -EINVAL;
 	}
 }
 
+<<<<<<< HEAD
 /* Return 1 if 'cmd' will block on frozen filesystem */
 static int quotactl_cmd_write(int cmd)
 {
@@ -306,11 +318,17 @@ static int quotactl_cmd_write(int cmd)
 	return 1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * look up a superblock on which quota ops will be performed
  * - use the name of a block device to find the superblock thereon
  */
+<<<<<<< HEAD
 static struct super_block *quotactl_block(const char __user *special, int cmd)
+=======
+static struct super_block *quotactl_block(const char __user *special)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 #ifdef CONFIG_BLOCK
 	struct block_device *bdev;
@@ -323,10 +341,14 @@ static struct super_block *quotactl_block(const char __user *special, int cmd)
 	putname(tmp);
 	if (IS_ERR(bdev))
 		return ERR_CAST(bdev);
+<<<<<<< HEAD
 	if (quotactl_cmd_write(cmd))
 		sb = get_super_thawed(bdev);
 	else
 		sb = get_super(bdev);
+=======
+	sb = get_super(bdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bdput(bdev);
 	if (!sb)
 		return ERR_PTR(-ENODEV);
@@ -378,16 +400,25 @@ SYSCALL_DEFINE4(quotactl, unsigned int, cmd, const char __user *, special,
 			pathp = &path;
 	}
 
+<<<<<<< HEAD
 	sb = quotactl_block(special, cmds);
 	if (IS_ERR(sb)) {
 		ret = PTR_ERR(sb);
 		goto out;
 	}
+=======
+	sb = quotactl_block(special);
+	if (IS_ERR(sb))
+		return PTR_ERR(sb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = do_quotactl(sb, type, cmds, id, addr, pathp);
 
 	drop_super(sb);
+<<<<<<< HEAD
 out:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pathp && !IS_ERR(pathp))
 		path_put(pathp);
 	return ret;

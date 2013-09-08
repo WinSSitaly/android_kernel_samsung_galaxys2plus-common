@@ -689,7 +689,11 @@ static int imx_ep_enable(struct usb_ep *usb_ep,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	if (imx_ep->fifosize < usb_endpoint_maxp(desc)) {
+=======
+	if (imx_ep->fifosize < le16_to_cpu(desc->wMaxPacketSize)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		D_ERR(imx_usb->dev,
 			"<%s> bad %s maxpacket\n", __func__, usb_ep->name);
 		return -ERANGE;
@@ -1237,6 +1241,7 @@ irq_handler_t intr_handler(int i)
  *******************************************************************************
  */
 
+<<<<<<< HEAD
 static int imx_udc_start(struct usb_gadget_driver *driver,
 		int (*bind)(struct usb_gadget *));
 static int imx_udc_stop(struct usb_gadget_driver *driver);
@@ -1245,6 +1250,11 @@ static const struct usb_gadget_ops imx_udc_ops = {
 	.wakeup		 = imx_udc_wakeup,
 	.start		= imx_udc_start,
 	.stop		= imx_udc_stop,
+=======
+static const struct usb_gadget_ops imx_udc_ops = {
+	.get_frame	 = imx_udc_get_frame,
+	.wakeup		 = imx_udc_wakeup,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct imx_udc_struct controller = {
@@ -1329,14 +1339,22 @@ static struct imx_udc_struct controller = {
  * USB gadget driver functions
  *******************************************************************************
  */
+<<<<<<< HEAD
 static int imx_udc_start(struct usb_gadget_driver *driver,
+=======
+int usb_gadget_probe_driver(struct usb_gadget_driver *driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int (*bind)(struct usb_gadget *))
 {
 	struct imx_udc_struct *imx_usb = &controller;
 	int retval;
 
 	if (!driver
+<<<<<<< HEAD
 		|| driver->max_speed < USB_SPEED_FULL
+=======
+		|| driver->speed < USB_SPEED_FULL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		|| !bind
 		|| !driver->disconnect
 		|| !driver->setup)
@@ -1373,8 +1391,14 @@ fail:
 	imx_usb->gadget.dev.driver = NULL;
 	return retval;
 }
+<<<<<<< HEAD
 
 static int imx_udc_stop(struct usb_gadget_driver *driver)
+=======
+EXPORT_SYMBOL(usb_gadget_probe_driver);
+
+int usb_gadget_unregister_driver(struct usb_gadget_driver *driver)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct imx_udc_struct *imx_usb = &controller;
 
@@ -1398,6 +1422,10 @@ static int imx_udc_stop(struct usb_gadget_driver *driver)
 
 	return 0;
 }
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL(usb_gadget_unregister_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*******************************************************************************
  * Module functions
@@ -1478,7 +1506,11 @@ static int __init imx_udc_probe(struct platform_device *pdev)
 
 	for (i = 0; i < IMX_USB_NB_EP + 1; i++) {
 		ret = request_irq(imx_usb->usbd_int[i], intr_handler(i),
+<<<<<<< HEAD
 				     0, driver_name, imx_usb);
+=======
+				     IRQF_DISABLED, driver_name, imx_usb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret) {
 			dev_err(&pdev->dev, "can't get irq %i, err %d\n",
 				imx_usb->usbd_int[i], ret);
@@ -1507,6 +1539,7 @@ static int __init imx_udc_probe(struct platform_device *pdev)
 	imx_usb->timer.function = handle_config;
 	imx_usb->timer.data = (unsigned long)imx_usb;
 
+<<<<<<< HEAD
 	ret = usb_add_gadget_udc(&pdev->dev, &imx_usb->gadget);
 	if (ret)
 		goto fail4;
@@ -1515,6 +1548,10 @@ static int __init imx_udc_probe(struct platform_device *pdev)
 fail4:
 	for (i = 0; i < IMX_USB_NB_EP + 1; i++)
 		free_irq(imx_usb->usbd_int[i], imx_usb);
+=======
+	return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 fail3:
 	clk_put(clk);
 	clk_disable(clk);
@@ -1534,7 +1571,10 @@ static int __exit imx_udc_remove(struct platform_device *pdev)
 	struct imxusb_platform_data *pdata = pdev->dev.platform_data;
 	int i;
 
+<<<<<<< HEAD
 	usb_del_gadget_udc(&imx_usb->gadget);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	imx_udc_disable(imx_usb);
 	del_timer(&imx_usb->timer);
 

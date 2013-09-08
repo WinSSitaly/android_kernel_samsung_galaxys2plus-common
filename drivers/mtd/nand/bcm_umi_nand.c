@@ -31,6 +31,10 @@
 #include <linux/mtd/partitions.h>
 
 #include <asm/mach-types.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/reg_nand.h>
 #include <mach/reg_umi.h>
@@ -51,6 +55,11 @@
 static const __devinitconst char gBanner[] = KERN_INFO \
 	"BCM UMI MTD NAND Driver: 1.00\n";
 
+<<<<<<< HEAD
+=======
+const char *part_probes[] = { "cmdlinepart", NULL };
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if NAND_ECC_BCH
 static uint8_t scan_ff_pattern[] = { 0xff };
 
@@ -373,6 +382,7 @@ static int __devinit bcm_umi_nand_probe(struct platform_device *pdev)
 
 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 
+<<<<<<< HEAD
 	if (!r) {
 		err = -ENXIO;
 		goto out_free;
@@ -385,6 +395,18 @@ static int __devinit bcm_umi_nand_probe(struct platform_device *pdev)
 		printk(KERN_ERR "ioremap to access BCM UMI NAND chip failed\n");
 		err = -EIO;
 		goto out_free;
+=======
+	if (!r)
+		return -ENXIO;
+
+	/* map physical address */
+	bcm_umi_io_base = ioremap(r->start, r->end - r->start + 1);
+
+	if (!bcm_umi_io_base) {
+		printk(KERN_ERR "ioremap to access BCM UMI NAND chip failed\n");
+		kfree(board_mtd);
+		return -EIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Get pointer to private data */
@@ -400,8 +422,14 @@ static int __devinit bcm_umi_nand_probe(struct platform_device *pdev)
 	/* Initialize the NAND hardware.  */
 	if (bcm_umi_nand_inithw() < 0) {
 		printk(KERN_ERR "BCM UMI NAND chip could not be initialized\n");
+<<<<<<< HEAD
 		err = -EIO;
 		goto out_unmap;
+=======
+		iounmap(bcm_umi_io_base);
+		kfree(board_mtd);
+		return -EIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Set address of NAND IO lines */
@@ -434,7 +462,11 @@ static int __devinit bcm_umi_nand_probe(struct platform_device *pdev)
 #if USE_DMA
 	err = nand_dma_init();
 	if (err != 0)
+<<<<<<< HEAD
 		goto out_unmap;
+=======
+		return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	/* Figure out the size of the device that we have.
@@ -445,7 +477,13 @@ static int __devinit bcm_umi_nand_probe(struct platform_device *pdev)
 	err = nand_scan_ident(board_mtd, 1, NULL);
 	if (err) {
 		printk(KERN_ERR "nand_scan failed: %d\n", err);
+<<<<<<< HEAD
 		goto out_unmap;
+=======
+		iounmap(bcm_umi_io_base);
+		kfree(board_mtd);
+		return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Now that we know the nand size, we can setup the ECC layout */
@@ -464,13 +502,18 @@ static int __devinit bcm_umi_nand_probe(struct platform_device *pdev)
 		{
 			printk(KERN_ERR "NAND - Unrecognized pagesize: %d\n",
 					 board_mtd->writesize);
+<<<<<<< HEAD
 			err = -EINVAL;
 			goto out_unmap;
+=======
+			return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
 #if NAND_ECC_BCH
 	if (board_mtd->writesize > 512) {
+<<<<<<< HEAD
 		if (this->bbt_options & NAND_BBT_USE_FLASH)
 			largepage_bbt.options = NAND_BBT_SCAN2NDPAGE;
 		this->badblock_pattern = &largepage_bbt;
@@ -483,6 +526,12 @@ static int __devinit bcm_umi_nand_probe(struct platform_device *pdev)
 	 */
 	this->ecc.strength = 6;
 
+=======
+		if (this->options & NAND_USE_FLASH_BBT)
+			largepage_bbt.options = NAND_BBT_SCAN2NDPAGE;
+		this->badblock_pattern = &largepage_bbt;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	/* Now finish off the scan, now that ecc.layout has been initialized. */
@@ -490,6 +539,7 @@ static int __devinit bcm_umi_nand_probe(struct platform_device *pdev)
 	err = nand_scan_tail(board_mtd);
 	if (err) {
 		printk(KERN_ERR "nand_scan failed: %d\n", err);
+<<<<<<< HEAD
 		goto out_unmap;
 	}
 
@@ -504,6 +554,35 @@ out_unmap:
 out_free:
 	kfree(board_mtd);
 	return err;
+=======
+		iounmap(bcm_umi_io_base);
+		kfree(board_mtd);
+		return err;
+	}
+
+	/* Register the partitions */
+	{
+		int nr_partitions;
+		struct mtd_partition *partition_info;
+
+		board_mtd->name = "bcm_umi-nand";
+		nr_partitions =
+		    parse_mtd_partitions(board_mtd, part_probes,
+					 &partition_info, 0);
+
+		if (nr_partitions <= 0) {
+			printk(KERN_ERR "BCM UMI NAND: Too few partitions - %d\n",
+			       nr_partitions);
+			iounmap(bcm_umi_io_base);
+			kfree(board_mtd);
+			return -EIO;
+		}
+		mtd_device_register(board_mtd, partition_info, nr_partitions);
+	}
+
+	/* Return happy */
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int bcm_umi_nand_remove(struct platform_device *pdev)
@@ -553,7 +632,22 @@ static struct platform_driver nand_driver = {
 	.resume = bcm_umi_nand_resume,
 };
 
+<<<<<<< HEAD
 module_platform_driver(nand_driver);
+=======
+static int __init nand_init(void)
+{
+	return platform_driver_register(&nand_driver);
+}
+
+static void __exit nand_exit(void)
+{
+	platform_driver_unregister(&nand_driver);
+}
+
+module_init(nand_init);
+module_exit(nand_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Broadcom");

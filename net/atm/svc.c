@@ -20,7 +20,10 @@
 #include <linux/bitops.h>
 #include <net/sock.h>		/* for sock_no_* */
 #include <linux/uaccess.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "resources.h"
 #include "common.h"		/* common for PVCs and SVCs */

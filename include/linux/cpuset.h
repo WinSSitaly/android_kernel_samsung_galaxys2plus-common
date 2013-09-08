@@ -22,7 +22,11 @@ extern int cpuset_init(void);
 extern void cpuset_init_smp(void);
 extern void cpuset_update_active_cpus(void);
 extern void cpuset_cpus_allowed(struct task_struct *p, struct cpumask *mask);
+<<<<<<< HEAD
 extern void cpuset_cpus_allowed_fallback(struct task_struct *p);
+=======
+extern int cpuset_cpus_allowed_fallback(struct task_struct *p);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern nodemask_t cpuset_mems_allowed(struct task_struct *p);
 #define cpuset_current_mems_allowed (current->mems_allowed)
 void cpuset_init_current_mems_allowed(void);
@@ -89,6 +93,7 @@ extern void rebuild_sched_domains(void);
 extern void cpuset_print_task_mems_allowed(struct task_struct *p);
 
 /*
+<<<<<<< HEAD
  * get_mems_allowed is required when making decisions involving mems_allowed
  * such as during page allocation. mems_allowed can be updated in parallel
  * and depending on the new value an operation can fail potentially causing
@@ -108,14 +113,50 @@ static inline unsigned int get_mems_allowed(void)
 static inline bool put_mems_allowed(unsigned int seq)
 {
 	return !read_seqcount_retry(&current->mems_allowed_seq, seq);
+=======
+ * reading current mems_allowed and mempolicy in the fastpath must protected
+ * by get_mems_allowed()
+ */
+static inline void get_mems_allowed(void)
+{
+	current->mems_allowed_change_disable++;
+
+	/*
+	 * ensure that reading mems_allowed and mempolicy happens after the
+	 * update of ->mems_allowed_change_disable.
+	 *
+	 * the write-side task finds ->mems_allowed_change_disable is not 0,
+	 * and knows the read-side task is reading mems_allowed or mempolicy,
+	 * so it will clear old bits lazily.
+	 */
+	smp_mb();
+}
+
+static inline void put_mems_allowed(void)
+{
+	/*
+	 * ensure that reading mems_allowed and mempolicy before reducing
+	 * mems_allowed_change_disable.
+	 *
+	 * the write-side task will know that the read-side task is still
+	 * reading mems_allowed or mempolicy, don't clears old bits in the
+	 * nodemask.
+	 */
+	smp_mb();
+	--ACCESS_ONCE(current->mems_allowed_change_disable);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void set_mems_allowed(nodemask_t nodemask)
 {
 	task_lock(current);
+<<<<<<< HEAD
 	write_seqcount_begin(&current->mems_allowed_seq);
 	current->mems_allowed = nodemask;
 	write_seqcount_end(&current->mems_allowed_seq);
+=======
+	current->mems_allowed = nodemask;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	task_unlock(current);
 }
 
@@ -135,8 +176,15 @@ static inline void cpuset_cpus_allowed(struct task_struct *p,
 	cpumask_copy(mask, cpu_possible_mask);
 }
 
+<<<<<<< HEAD
 static inline void cpuset_cpus_allowed_fallback(struct task_struct *p)
 {
+=======
+static inline int cpuset_cpus_allowed_fallback(struct task_struct *p)
+{
+	do_set_cpus_allowed(p, cpu_possible_mask);
+	return cpumask_any(cpu_active_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline nodemask_t cpuset_mems_allowed(struct task_struct *p)
@@ -223,6 +271,7 @@ static inline void set_mems_allowed(nodemask_t nodemask)
 {
 }
 
+<<<<<<< HEAD
 static inline unsigned int get_mems_allowed(void)
 {
 	return 0;
@@ -231,6 +280,14 @@ static inline unsigned int get_mems_allowed(void)
 static inline bool put_mems_allowed(unsigned int seq)
 {
 	return true;
+=======
+static inline void get_mems_allowed(void)
+{
+}
+
+static inline void put_mems_allowed(void)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #endif /* !CONFIG_CPUSETS */

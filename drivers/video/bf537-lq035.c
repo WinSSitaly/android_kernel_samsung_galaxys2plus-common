@@ -383,19 +383,37 @@ static int __devinit request_ports(void)
 	}
 
 #if (defined(UD) && defined(LBR))
+<<<<<<< HEAD
 	if (gpio_request_one(UD, GPIOF_OUT_INIT_LOW, KBUILD_MODNAME)) {
+=======
+	if (gpio_request(UD, KBUILD_MODNAME)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_err("requesting GPIO %d failed\n", UD);
 		return -EBUSY;
 	}
 
+<<<<<<< HEAD
 	if (gpio_request_one(LBR, GPIOF_OUT_INIT_HIGH, KBUILD_MODNAME)) {
+=======
+	if (gpio_request(LBR, KBUILD_MODNAME)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_err("requesting GPIO %d failed\n", LBR);
 		gpio_free(UD);
 		return -EBUSY;
 	}
+<<<<<<< HEAD
 #endif
 
 	if (gpio_request_one(MOD, GPIOF_OUT_INIT_HIGH, KBUILD_MODNAME)) {
+=======
+
+	gpio_direction_output(UD, 0);
+	gpio_direction_output(LBR, 1);
+
+#endif
+
+	if (gpio_request(MOD, KBUILD_MODNAME)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_err("requesting GPIO %d failed\n", MOD);
 #if (defined(UD) && defined(LBR))
 		gpio_free(LBR);
@@ -404,6 +422,11 @@ static int __devinit request_ports(void)
 		return -EBUSY;
 	}
 
+<<<<<<< HEAD
+=======
+	gpio_direction_output(MOD, 1);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	SSYNC();
 	return 0;
 }

@@ -47,6 +47,7 @@
  *  - FUSE_IOCTL_UNRESTRICTED shall now return with array of 'struct
  *    fuse_ioctl_iovec' instead of ambiguous 'struct iovec'
  *  - add FUSE_IOCTL_32BIT flag
+<<<<<<< HEAD
  *
  * 7.17
  *  - add FUSE_FLOCK_LOCKS and FUSE_RELEASE_FLOCK_UNLOCK
@@ -54,6 +55,8 @@
  * 7.18
  *  - add FUSE_IOCTL_DIR flag
  *  - add FUSE_NOTIFY_DELETE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #ifndef _LINUX_FUSE_H
@@ -85,7 +88,11 @@
 #define FUSE_KERNEL_VERSION 7
 
 /** Minor version number of this interface */
+<<<<<<< HEAD
 #define FUSE_KERNEL_MINOR_VERSION 18
+=======
+#define FUSE_KERNEL_MINOR_VERSION 16
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /** The node ID of the root inode */
 #define FUSE_ROOT_ID 1
@@ -160,10 +167,15 @@ struct fuse_file_lock {
 /**
  * INIT request/reply flags
  *
+<<<<<<< HEAD
  * FUSE_POSIX_LOCKS: remote locking for POSIX file locks
  * FUSE_EXPORT_SUPPORT: filesystem handles lookups of "." and ".."
  * FUSE_DONT_MASK: don't apply umask to file mode on create operations
  * FUSE_FLOCK_LOCKS: remote locking for BSD style file locks
+=======
+ * FUSE_EXPORT_SUPPORT: filesystem handles lookups of "." and ".."
+ * FUSE_DONT_MASK: don't apply umask to file mode on create operations
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 #define FUSE_ASYNC_READ		(1 << 0)
 #define FUSE_POSIX_LOCKS	(1 << 1)
@@ -172,7 +184,10 @@ struct fuse_file_lock {
 #define FUSE_EXPORT_SUPPORT	(1 << 4)
 #define FUSE_BIG_WRITES		(1 << 5)
 #define FUSE_DONT_MASK		(1 << 6)
+<<<<<<< HEAD
 #define FUSE_FLOCK_LOCKS	(1 << 10)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * CUSE INIT request/reply flags
@@ -185,7 +200,10 @@ struct fuse_file_lock {
  * Release flags
  */
 #define FUSE_RELEASE_FLUSH	(1 << 0)
+<<<<<<< HEAD
 #define FUSE_RELEASE_FLOCK_UNLOCK	(1 << 1)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * Getattr flags
@@ -218,7 +236,10 @@ struct fuse_file_lock {
  * FUSE_IOCTL_UNRESTRICTED: not restricted to well-formed ioctls, retry allowed
  * FUSE_IOCTL_RETRY: retry with new iovecs
  * FUSE_IOCTL_32BIT: 32bit ioctl
+<<<<<<< HEAD
  * FUSE_IOCTL_DIR: is a directory
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * FUSE_IOCTL_MAX_IOV: maximum of in_iovecs + out_iovecs
  */
@@ -226,7 +247,10 @@ struct fuse_file_lock {
 #define FUSE_IOCTL_UNRESTRICTED	(1 << 1)
 #define FUSE_IOCTL_RETRY	(1 << 2)
 #define FUSE_IOCTL_32BIT	(1 << 3)
+<<<<<<< HEAD
 #define FUSE_IOCTL_DIR		(1 << 4)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define FUSE_IOCTL_MAX_IOV	256
 
@@ -289,7 +313,10 @@ enum fuse_notify_code {
 	FUSE_NOTIFY_INVAL_ENTRY = 3,
 	FUSE_NOTIFY_STORE = 4,
 	FUSE_NOTIFY_RETRIEVE = 5,
+<<<<<<< HEAD
 	FUSE_NOTIFY_DELETE = 6,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	FUSE_NOTIFY_CODE_MAX,
 };
 
@@ -593,7 +620,11 @@ struct fuse_dirent {
 	__u64	off;
 	__u32	namelen;
 	__u32	type;
+<<<<<<< HEAD
 	char name[];
+=======
+	char name[0];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define FUSE_NAME_OFFSET offsetof(struct fuse_dirent, name)
@@ -613,6 +644,7 @@ struct fuse_notify_inval_entry_out {
 	__u32	padding;
 };
 
+<<<<<<< HEAD
 struct fuse_notify_delete_out {
 	__u64	parent;
 	__u64	child;
@@ -620,6 +652,8 @@ struct fuse_notify_delete_out {
 	__u32	padding;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct fuse_notify_store_out {
 	__u64	nodeid;
 	__u64	offset;

@@ -16,6 +16,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 #include <media/v4l2-ioctl.h>
 #include <media/v4l2-device.h>
@@ -23,7 +27,10 @@
 #include <linux/interrupt.h>
 #include <linux/slab.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/timb_radio.h>
 
 #define DRIVER_NAME "timb-radio"
@@ -44,6 +51,10 @@ static int timbradio_vidioc_querycap(struct file *file, void  *priv,
 	strlcpy(v->driver, DRIVER_NAME, sizeof(v->driver));
 	strlcpy(v->card, "Timberdale Radio", sizeof(v->card));
 	snprintf(v->bus_info, sizeof(v->bus_info), "platform:"DRIVER_NAME);
+<<<<<<< HEAD
+=======
+	v->version = KERNEL_VERSION(0, 0, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	v->capabilities = V4L2_CAP_TUNER | V4L2_CAP_RADIO;
 	return 0;
 }
@@ -226,10 +237,30 @@ static struct platform_driver timbradio_platform_driver = {
 	.remove		= timbradio_remove,
 };
 
+<<<<<<< HEAD
 module_platform_driver(timbradio_platform_driver);
+=======
+/*--------------------------------------------------------------------------*/
+
+static int __init timbradio_init(void)
+{
+	return platform_driver_register(&timbradio_platform_driver);
+}
+
+static void __exit timbradio_exit(void)
+{
+	platform_driver_unregister(&timbradio_platform_driver);
+}
+
+module_init(timbradio_init);
+module_exit(timbradio_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Timberdale Radio driver");
 MODULE_AUTHOR("Mocean Laboratories <info@mocean-labs.com>");
 MODULE_LICENSE("GPL v2");
+<<<<<<< HEAD
 MODULE_VERSION("0.0.2");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_ALIAS("platform:"DRIVER_NAME);

@@ -1,5 +1,8 @@
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pci.h>
 #include <asm/mach-powertv/interrupts.h>
 #include "powertv-pci.h"

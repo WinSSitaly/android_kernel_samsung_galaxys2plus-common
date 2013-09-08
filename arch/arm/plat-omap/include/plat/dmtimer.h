@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * arch/arm/plat-omap/include/plat/dmtimer.h
+=======
+ * arch/arm/plat-omap/include/mach/dmtimer.h
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * OMAP Dual-Mode Timers
  *
@@ -32,11 +36,14 @@
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+<<<<<<< HEAD
 #include <linux/clk.h>
 #include <linux/delay.h>
 #include <linux/io.h>
 #include <linux/platform_device.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __ASM_ARCH_DMTIMER_H
 #define __ASM_ARCH_DMTIMER_H
 
@@ -60,6 +67,7 @@
  * in OMAP4 can be distinguished.
  */
 #define OMAP_TIMER_IP_VERSION_1                        0x1
+<<<<<<< HEAD
 
 /* timer capabilities used in hwmod database */
 #define OMAP_TIMER_SECURE				0x80000000
@@ -110,6 +118,18 @@ struct dmtimer_platform_data {
 struct omap_dm_timer *omap_dm_timer_request(void);
 struct omap_dm_timer *omap_dm_timer_request_specific(int timer_id);
 int omap_dm_timer_free(struct omap_dm_timer *timer);
+=======
+struct omap_dm_timer;
+extern struct omap_dm_timer *gptimer_wakeup;
+extern struct sys_timer omap_timer;
+struct clk;
+
+int omap_dm_timer_init(void);
+
+struct omap_dm_timer *omap_dm_timer_request(void);
+struct omap_dm_timer *omap_dm_timer_request_specific(int timer_id);
+void omap_dm_timer_free(struct omap_dm_timer *timer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void omap_dm_timer_enable(struct omap_dm_timer *timer);
 void omap_dm_timer_disable(struct omap_dm_timer *timer);
 
@@ -118,6 +138,7 @@ int omap_dm_timer_get_irq(struct omap_dm_timer *timer);
 u32 omap_dm_timer_modify_idlect_mask(u32 inputmask);
 struct clk *omap_dm_timer_get_fclk(struct omap_dm_timer *timer);
 
+<<<<<<< HEAD
 int omap_dm_timer_trigger(struct omap_dm_timer *timer);
 int omap_dm_timer_start(struct omap_dm_timer *timer);
 int omap_dm_timer_stop(struct omap_dm_timer *timer);
@@ -423,5 +444,27 @@ static inline void __omap_dm_timer_write_status(struct omap_dm_timer *timer,
 {
 	__raw_writel(value, timer->irq_stat);
 }
+=======
+void omap_dm_timer_trigger(struct omap_dm_timer *timer);
+void omap_dm_timer_start(struct omap_dm_timer *timer);
+void omap_dm_timer_stop(struct omap_dm_timer *timer);
+
+int omap_dm_timer_set_source(struct omap_dm_timer *timer, int source);
+void omap_dm_timer_set_load(struct omap_dm_timer *timer, int autoreload, unsigned int value);
+void omap_dm_timer_set_load_start(struct omap_dm_timer *timer, int autoreload, unsigned int value);
+void omap_dm_timer_set_match(struct omap_dm_timer *timer, int enable, unsigned int match);
+void omap_dm_timer_set_pwm(struct omap_dm_timer *timer, int def_on, int toggle, int trigger);
+void omap_dm_timer_set_prescaler(struct omap_dm_timer *timer, int prescaler);
+
+void omap_dm_timer_set_int_enable(struct omap_dm_timer *timer, unsigned int value);
+
+unsigned int omap_dm_timer_read_status(struct omap_dm_timer *timer);
+void omap_dm_timer_write_status(struct omap_dm_timer *timer, unsigned int value);
+unsigned int omap_dm_timer_read_counter(struct omap_dm_timer *timer);
+void omap_dm_timer_write_counter(struct omap_dm_timer *timer, unsigned int value);
+
+int omap_dm_timers_active(void);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __ASM_ARCH_DMTIMER_H */

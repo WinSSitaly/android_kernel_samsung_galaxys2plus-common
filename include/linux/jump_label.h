@@ -1,6 +1,7 @@
 #ifndef _LINUX_JUMP_LABEL_H
 #define _LINUX_JUMP_LABEL_H
 
+<<<<<<< HEAD
 /*
  * Jump label support
  *
@@ -71,6 +72,24 @@ struct static_key_deferred {
 # include <asm/jump_label.h>
 # define HAVE_JUMP_LABEL
 #endif	/* CC_HAVE_ASM_GOTO && CONFIG_JUMP_LABEL */
+=======
+#include <linux/types.h>
+#include <linux/compiler.h>
+
+#if defined(CC_HAVE_ASM_GOTO) && defined(CONFIG_JUMP_LABEL)
+
+struct jump_label_key {
+	atomic_t enabled;
+	struct jump_entry *entries;
+#ifdef CONFIG_MODULES
+	struct jump_label_mod *next;
+#endif
+};
+
+# include <asm/jump_label.h>
+# define HAVE_JUMP_LABEL
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum jump_label_type {
 	JUMP_LABEL_DISABLE = 0,
@@ -81,6 +100,7 @@ struct module;
 
 #ifdef HAVE_JUMP_LABEL
 
+<<<<<<< HEAD
 #define JUMP_LABEL_TRUE_BRANCH 1UL
 
 static
@@ -109,6 +129,15 @@ static __always_inline bool static_key_true(struct static_key *key)
 
 /* Deprecated. Please use 'static_key_false() instead. */
 static __always_inline bool static_branch(struct static_key *key)
+=======
+#ifdef CONFIG_MODULES
+#define JUMP_LABEL_INIT {{ 0 }, NULL, NULL}
+#else
+#define JUMP_LABEL_INIT {{ 0 }, NULL}
+#endif
+
+static __always_inline bool static_branch(struct jump_label_key *key)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return arch_static_branch(key);
 }
@@ -116,6 +145,7 @@ static __always_inline bool static_branch(struct static_key *key)
 extern struct jump_entry __start___jump_table[];
 extern struct jump_entry __stop___jump_table[];
 
+<<<<<<< HEAD
 extern void jump_label_init(void);
 extern void jump_label_lock(void);
 extern void jump_label_unlock(void);
@@ -155,10 +185,37 @@ struct static_key_deferred {
 static __always_inline bool static_key_false(struct static_key *key)
 {
 	if (unlikely(atomic_read(&key->enabled)) > 0)
+=======
+extern void jump_label_lock(void);
+extern void jump_label_unlock(void);
+extern void arch_jump_label_transform(struct jump_entry *entry,
+				 enum jump_label_type type);
+extern void arch_jump_label_text_poke_early(jump_label_t addr);
+extern int jump_label_text_reserved(void *start, void *end);
+extern void jump_label_inc(struct jump_label_key *key);
+extern void jump_label_dec(struct jump_label_key *key);
+extern bool jump_label_enabled(struct jump_label_key *key);
+extern void jump_label_apply_nops(struct module *mod);
+
+#else
+
+#include <asm/atomic.h>
+
+#define JUMP_LABEL_INIT {ATOMIC_INIT(0)}
+
+struct jump_label_key {
+	atomic_t enabled;
+};
+
+static __always_inline bool static_branch(struct jump_label_key *key)
+{
+	if (unlikely(atomic_read(&key->enabled)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return true;
 	return false;
 }
 
+<<<<<<< HEAD
 static __always_inline bool static_key_true(struct static_key *key)
 {
 	if (likely(atomic_read(&key->enabled)) > 0)
@@ -175,20 +232,30 @@ static __always_inline bool static_branch(struct static_key *key)
 }
 
 static inline void static_key_slow_inc(struct static_key *key)
+=======
+static inline void jump_label_inc(struct jump_label_key *key)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	atomic_inc(&key->enabled);
 }
 
+<<<<<<< HEAD
 static inline void static_key_slow_dec(struct static_key *key)
+=======
+static inline void jump_label_dec(struct jump_label_key *key)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	atomic_dec(&key->enabled);
 }
 
+<<<<<<< HEAD
 static inline void static_key_slow_dec_deferred(struct static_key_deferred *key)
 {
 	static_key_slow_dec(&key->key);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int jump_label_text_reserved(void *start, void *end)
 {
 	return 0;
@@ -197,6 +264,7 @@ static inline int jump_label_text_reserved(void *start, void *end)
 static inline void jump_label_lock(void) {}
 static inline void jump_label_unlock(void) {}
 
+<<<<<<< HEAD
 static inline int jump_label_apply_nops(struct module *mod)
 {
 	return 0;
@@ -224,3 +292,18 @@ static inline bool static_key_enabled(struct static_key *key)
 }
 
 #endif	/* _LINUX_JUMP_LABEL_H */
+=======
+static inline bool jump_label_enabled(struct jump_label_key *key)
+{
+	return !!atomic_read(&key->enabled);
+}
+
+static inline int jump_label_apply_nops(struct module *mod)
+{
+	return 0;
+}
+
+#endif
+
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

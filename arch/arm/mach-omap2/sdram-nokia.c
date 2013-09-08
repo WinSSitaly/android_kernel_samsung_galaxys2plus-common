@@ -1,7 +1,11 @@
 /*
  * SDRC register values for Nokia boards
  *
+<<<<<<< HEAD
  * Copyright (C) 2008, 2010-2011 Nokia Corporation
+=======
+ * Copyright (C) 2008, 2010 Nokia Corporation
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Lauri Leukkunen <lauri.leukkunen@nokia.com>
  *
@@ -17,7 +21,12 @@
 #include <linux/err.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
 #include "common.h"
+=======
+#include <plat/io.h>
+#include <plat/common.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/clock.h>
 #include <plat/sdrc.h>
 
@@ -106,6 +115,7 @@ static const struct sdram_timings nokia_195dot2mhz_timings[] = {
 	},
 };
 
+<<<<<<< HEAD
 static const struct sdram_timings nokia_200mhz_timings[] = {
 	{
 		.casl = 3,
@@ -127,16 +137,23 @@ static const struct sdram_timings nokia_200mhz_timings[] = {
 	},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct {
 	long rate;
 	struct sdram_timings const *data;
 } nokia_timings[] = {
 	{ 83000000, nokia_166mhz_timings },
 	{ 97600000, nokia_97dot6mhz_timings },
+<<<<<<< HEAD
 	{ 100000000, nokia_200mhz_timings },
 	{ 166000000, nokia_166mhz_timings },
 	{ 195200000, nokia_195dot2mhz_timings },
 	{ 200000000, nokia_200mhz_timings },
+=======
+	{ 166000000, nokia_166mhz_timings },
+	{ 195200000, nokia_195dot2mhz_timings },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 static struct omap_sdrc_params nokia_sdrc_params[ARRAY_SIZE(nokia_timings) + 1];
 

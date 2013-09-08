@@ -22,6 +22,10 @@
 #include <linux/ioport.h>
 #include <linux/module.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
+=======
+#include <linux/scatterlist.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/seq_file.h>
 #include <linux/slab.h>
 #include <linux/stat.h>
@@ -32,7 +36,10 @@
 #include <linux/mmc/dw_mmc.h>
 #include <linux/bitops.h>
 #include <linux/regulator/consumer.h>
+<<<<<<< HEAD
 #include <linux/workqueue.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "dw_mmc.h"
 
@@ -61,7 +68,11 @@ struct idmac_desc {
 
 	u32		des1;	/* Buffer sizes */
 #define IDMAC_SET_BUFFER1_SIZE(d, s) \
+<<<<<<< HEAD
 	((d)->des1 = ((d)->des1 & 0x03ffe000) | ((s) & 0x1fff))
+=======
+	((d)->des1 = ((d)->des1 & 0x03ffc000) | ((s) & 0x3fff))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	u32		des2;	/* buffer 1 physical address */
 
@@ -100,8 +111,11 @@ struct dw_mci_slot {
 	int			last_detect_state;
 };
 
+<<<<<<< HEAD
 static struct workqueue_struct *dw_mci_card_workqueue;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_DEBUG_FS)
 static int dw_mci_req_show(struct seq_file *s, void *v)
 {
@@ -268,7 +282,11 @@ static void dw_mci_start_command(struct dw_mci *host,
 				 struct mmc_command *cmd, u32 cmd_flags)
 {
 	host->cmd = cmd;
+<<<<<<< HEAD
 	dev_vdbg(&host->dev,
+=======
+	dev_vdbg(&host->pdev->dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 "start command: ARGR=0x%08x CMDR=0x%08x\n",
 		 cmd->arg, cmd_flags);
 
@@ -286,7 +304,11 @@ static void send_stop_cmd(struct dw_mci *host, struct mmc_data *data)
 /* DMA interface functions */
 static void dw_mci_stop_dma(struct dw_mci *host)
 {
+<<<<<<< HEAD
 	if (host->using_dma) {
+=======
+	if (host->use_dma) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		host->dma_ops->stop(host);
 		host->dma_ops->cleanup(host);
 	} else {
@@ -295,6 +317,7 @@ static void dw_mci_stop_dma(struct dw_mci *host)
 	}
 }
 
+<<<<<<< HEAD
 static int dw_mci_get_dma_dir(struct mmc_data *data)
 {
 	if (data->flags & MMC_DATA_WRITE)
@@ -303,17 +326,25 @@ static int dw_mci_get_dma_dir(struct mmc_data *data)
 		return DMA_FROM_DEVICE;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_MMC_DW_IDMAC
 static void dw_mci_dma_cleanup(struct dw_mci *host)
 {
 	struct mmc_data *data = host->data;
 
 	if (data)
+<<<<<<< HEAD
 		if (!data->host_cookie)
 			dma_unmap_sg(&host->dev,
 				     data->sg,
 				     data->sg_len,
 				     dw_mci_get_dma_dir(data));
+=======
+		dma_unmap_sg(&host->pdev->dev, data->sg, data->sg_len,
+			     ((data->flags & MMC_DATA_WRITE)
+			      ? DMA_TO_DEVICE : DMA_FROM_DEVICE));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void dw_mci_idmac_stop_dma(struct dw_mci *host)
@@ -336,7 +367,11 @@ static void dw_mci_idmac_complete_dma(struct dw_mci *host)
 {
 	struct mmc_data *data = host->data;
 
+<<<<<<< HEAD
 	dev_vdbg(&host->dev, "DMA complete\n");
+=======
+	dev_vdbg(&host->pdev->dev, "DMA complete\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	host->dma_ops->cleanup(host);
 
@@ -438,6 +473,7 @@ static struct dw_mci_dma_ops dw_mci_idmac_ops = {
 };
 #endif /* CONFIG_MMC_DW_IDMAC */
 
+<<<<<<< HEAD
 static int dw_mci_pre_dma_transfer(struct dw_mci *host,
 				   struct mmc_data *data,
 				   bool next)
@@ -447,6 +483,17 @@ static int dw_mci_pre_dma_transfer(struct dw_mci *host,
 
 	if (!next && data->host_cookie)
 		return data->host_cookie;
+=======
+static int dw_mci_submit_data_dma(struct dw_mci *host, struct mmc_data *data)
+{
+	struct scatterlist *sg;
+	unsigned int i, direction, sg_len;
+	u32 temp;
+
+	/* If we don't have a channel, we can't do DMA */
+	if (!host->use_dma)
+		return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * We don't do DMA on "complex" transfers, i.e. with
@@ -455,7 +502,10 @@ static int dw_mci_pre_dma_transfer(struct dw_mci *host,
 	 */
 	if (data->blocks * data->blksz < DW_MCI_DMA_THRESHOLD)
 		return -EINVAL;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (data->blksz & 3)
 		return -EINVAL;
 
@@ -464,6 +514,7 @@ static int dw_mci_pre_dma_transfer(struct dw_mci *host,
 			return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	sg_len = dma_map_sg(&host->dev,
 			    data->sg,
 			    data->sg_len,
@@ -534,6 +585,17 @@ static int dw_mci_submit_data_dma(struct dw_mci *host, struct mmc_data *data)
 	host->using_dma = 1;
 
 	dev_vdbg(&host->dev,
+=======
+	if (data->flags & MMC_DATA_READ)
+		direction = DMA_FROM_DEVICE;
+	else
+		direction = DMA_TO_DEVICE;
+
+	sg_len = dma_map_sg(&host->pdev->dev, data->sg, data->sg_len,
+			    direction);
+
+	dev_vdbg(&host->pdev->dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 "sd sg_cpu: %#lx sg_dma: %#lx sg_len: %d\n",
 		 (unsigned long)host->sg_cpu, (unsigned long)host->sg_dma,
 		 sg_len);
@@ -563,6 +625,7 @@ static void dw_mci_submit_data(struct dw_mci *host, struct mmc_data *data)
 	host->sg = NULL;
 	host->data = data;
 
+<<<<<<< HEAD
 	if (data->flags & MMC_DATA_READ)
 		host->dir_status = DW_MCI_RECV_STATUS;
 	else
@@ -581,6 +644,16 @@ static void dw_mci_submit_data(struct dw_mci *host, struct mmc_data *data)
 		host->part_buf_count = 0;
 
 		mci_writel(host, RINTSTS, SDMMC_INT_TXDR | SDMMC_INT_RXDR);
+=======
+	if (dw_mci_submit_data_dma(host, data)) {
+		host->sg = data->sg;
+		host->pio_offset = 0;
+		if (data->flags & MMC_DATA_READ)
+			host->dir_status = DW_MCI_RECV_STATUS;
+		else
+			host->dir_status = DW_MCI_SEND_STATUS;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		temp = mci_readl(host, INTMASK);
 		temp |= SDMMC_INT_TXDR | SDMMC_INT_RXDR;
 		mci_writel(host, INTMASK, temp);
@@ -647,8 +720,13 @@ static void dw_mci_setup_bus(struct dw_mci_slot *slot)
 			     SDMMC_CMD_UPD_CLK | SDMMC_CMD_PRV_DAT_WAIT, 0);
 
 		/* enable clock */
+<<<<<<< HEAD
 		mci_writel(host, CLKENA, ((SDMMC_CLKEN_ENABLE |
 			   SDMMC_CLKEN_LOW_PWR) << slot->id));
+=======
+		mci_writel(host, CLKENA, SDMMC_CLKEN_ENABLE |
+			   SDMMC_CLKEN_LOW_PWR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* inform CIU */
 		mci_send_cmd(slot,
@@ -658,6 +736,7 @@ static void dw_mci_setup_bus(struct dw_mci_slot *slot)
 	}
 
 	/* Set the current slot bus width */
+<<<<<<< HEAD
 	mci_writel(host, CTYPE, (slot->ctype << slot->id));
 }
 
@@ -666,6 +745,16 @@ static void __dw_mci_start_request(struct dw_mci *host,
 				   struct mmc_command *cmd)
 {
 	struct mmc_request *mrq;
+=======
+	mci_writel(host, CTYPE, slot->ctype);
+}
+
+static void dw_mci_start_request(struct dw_mci *host,
+				 struct dw_mci_slot *slot)
+{
+	struct mmc_request *mrq;
+	struct mmc_command *cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mmc_data	*data;
 	u32 cmdflags;
 
@@ -683,13 +772,21 @@ static void __dw_mci_start_request(struct dw_mci *host,
 	host->completed_events = 0;
 	host->data_status = 0;
 
+<<<<<<< HEAD
 	data = cmd->data;
+=======
+	data = mrq->data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (data) {
 		dw_mci_set_timeout(host);
 		mci_writel(host, BYTCNT, data->blksz*data->blocks);
 		mci_writel(host, BLKSIZ, data->blksz);
 	}
 
+<<<<<<< HEAD
+=======
+	cmd = mrq->cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmdflags = dw_mci_prepare_command(slot->mmc, cmd);
 
 	/* this is the first command, send the initialization clock */
@@ -707,6 +804,7 @@ static void __dw_mci_start_request(struct dw_mci *host,
 		host->stop_cmdr = dw_mci_prepare_command(slot->mmc, mrq->stop);
 }
 
+<<<<<<< HEAD
 static void dw_mci_start_request(struct dw_mci *host,
 				 struct dw_mci_slot *slot)
 {
@@ -718,12 +816,18 @@ static void dw_mci_start_request(struct dw_mci *host,
 }
 
 /* must be called with host->lock held */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void dw_mci_queue_request(struct dw_mci *host, struct dw_mci_slot *slot,
 				 struct mmc_request *mrq)
 {
 	dev_vdbg(&slot->mmc->class_dev, "queue request: state=%d\n",
 		 host->state);
 
+<<<<<<< HEAD
+=======
+	spin_lock_bh(&host->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	slot->mrq = mrq;
 
 	if (host->state == STATE_IDLE) {
@@ -732,6 +836,11 @@ static void dw_mci_queue_request(struct dw_mci *host, struct dw_mci_slot *slot,
 	} else {
 		list_add_tail(&slot->queue_node, &host->queue);
 	}
+<<<<<<< HEAD
+=======
+
+	spin_unlock_bh(&host->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void dw_mci_request(struct mmc_host *mmc, struct mmc_request *mrq)
@@ -741,6 +850,7 @@ static void dw_mci_request(struct mmc_host *mmc, struct mmc_request *mrq)
 
 	WARN_ON(slot->mrq);
 
+<<<<<<< HEAD
 	/*
 	 * The check for card presence and queueing of the request must be
 	 * atomic, otherwise the card could be removed in between and the
@@ -750,14 +860,22 @@ static void dw_mci_request(struct mmc_host *mmc, struct mmc_request *mrq)
 
 	if (!test_bit(DW_MMC_CARD_PRESENT, &slot->flags)) {
 		spin_unlock_bh(&host->lock);
+=======
+	if (!test_bit(DW_MMC_CARD_PRESENT, &slot->flags)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mrq->cmd->error = -ENOMEDIUM;
 		mmc_request_done(mmc, mrq);
 		return;
 	}
 
+<<<<<<< HEAD
 	dw_mci_queue_request(host, slot, mrq);
 
 	spin_unlock_bh(&host->lock);
+=======
+	/* We don't support multiple blocks of weird lengths. */
+	dw_mci_queue_request(host, slot, mrq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
@@ -780,6 +898,7 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 		break;
 	}
 
+<<<<<<< HEAD
 	regs = mci_readl(slot->host, UHS_REG);
 
 	/* DDR mode set */
@@ -789,6 +908,14 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 		regs &= ~(0x1 << slot->id) << 16;
 
 	mci_writel(slot->host, UHS_REG, regs);
+=======
+	/* DDR mode set */
+	if (ios->ddr) {
+		regs = mci_readl(slot->host, UHS_REG);
+		regs |= (0x1 << slot->id) << 16;
+		mci_writel(slot->host, UHS_REG, regs);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ios->clock) {
 		/*
@@ -849,6 +976,7 @@ static int dw_mci_get_cd(struct mmc_host *mmc)
 	return present;
 }
 
+<<<<<<< HEAD
 static void dw_mci_enable_sdio_irq(struct mmc_host *mmc, int enb)
 {
 	struct dw_mci_slot *slot = mmc_priv(mmc);
@@ -874,6 +1002,13 @@ static const struct mmc_host_ops dw_mci_ops = {
 	.get_ro			= dw_mci_get_ro,
 	.get_cd			= dw_mci_get_cd,
 	.enable_sdio_irq	= dw_mci_enable_sdio_irq,
+=======
+static const struct mmc_host_ops dw_mci_ops = {
+	.request	= dw_mci_request,
+	.set_ios	= dw_mci_set_ios,
+	.get_ro		= dw_mci_get_ro,
+	.get_cd		= dw_mci_get_cd,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void dw_mci_request_end(struct dw_mci *host, struct mmc_request *mrq)
@@ -891,12 +1026,20 @@ static void dw_mci_request_end(struct dw_mci *host, struct mmc_request *mrq)
 		slot = list_entry(host->queue.next,
 				  struct dw_mci_slot, queue_node);
 		list_del(&slot->queue_node);
+<<<<<<< HEAD
 		dev_vdbg(&host->dev, "list not empty: %s is next\n",
+=======
+		dev_vdbg(&host->pdev->dev, "list not empty: %s is next\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 mmc_hostname(slot->mmc));
 		host->state = STATE_SENDING_CMD;
 		dw_mci_start_request(host, slot);
 	} else {
+<<<<<<< HEAD
 		dev_vdbg(&host->dev, "list empty\n");
+=======
+		dev_vdbg(&host->pdev->dev, "list empty\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		host->state = STATE_IDLE;
 	}
 
@@ -954,7 +1097,11 @@ static void dw_mci_tasklet_func(unsigned long priv)
 	struct mmc_command *cmd;
 	enum dw_mci_state state;
 	enum dw_mci_state prev_state;
+<<<<<<< HEAD
 	u32 status, ctrl;
+=======
+	u32 status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock(&host->lock);
 
@@ -976,6 +1123,7 @@ static void dw_mci_tasklet_func(unsigned long priv)
 			cmd = host->cmd;
 			host->cmd = NULL;
 			set_bit(EVENT_CMD_COMPLETE, &host->completed_events);
+<<<<<<< HEAD
 			dw_mci_command_complete(host, cmd);
 			if (cmd == host->mrq->sbc && !cmd->error) {
 				prev_state = state = STATE_SENDING_CMD;
@@ -984,6 +1132,9 @@ static void dw_mci_tasklet_func(unsigned long priv)
 				goto unlock;
 			}
 
+=======
+			dw_mci_command_complete(host, host->mrq->cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!host->mrq->data || cmd->error) {
 				dw_mci_request_end(host, host->mrq);
 				goto unlock;
@@ -1021,6 +1172,7 @@ static void dw_mci_tasklet_func(unsigned long priv)
 
 			if (status & DW_MCI_DATA_ERROR_FLAGS) {
 				if (status & SDMMC_INT_DTO) {
+<<<<<<< HEAD
 					data->error = -ETIMEDOUT;
 				} else if (status & SDMMC_INT_DCRC) {
 					data->error = -EILSEQ;
@@ -1036,11 +1188,23 @@ static void dw_mci_tasklet_func(unsigned long priv)
 					data->error = -ETIMEDOUT;
 				} else {
 					dev_err(&host->dev,
+=======
+					dev_err(&host->pdev->dev,
+						"data timeout error\n");
+					data->error = -ETIMEDOUT;
+				} else if (status & SDMMC_INT_DCRC) {
+					dev_err(&host->pdev->dev,
+						"data CRC error\n");
+					data->error = -EILSEQ;
+				} else {
+					dev_err(&host->pdev->dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						"data FIFO error "
 						"(status=%08x)\n",
 						status);
 					data->error = -EIO;
 				}
+<<<<<<< HEAD
 				/*
 				 * After an error, there may be data lingering
 				 * in the FIFO, so reset it - doing so
@@ -1052,6 +1216,8 @@ static void dw_mci_tasklet_func(unsigned long priv)
 				ctrl = mci_readl(host, CTRL);
 				ctrl |= SDMMC_CTRL_FIFO_RESET;
 				mci_writel(host, CTRL, ctrl);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else {
 				data->bytes_xfered = data->blocks * data->blksz;
 				data->error = 0;
@@ -1062,12 +1228,15 @@ static void dw_mci_tasklet_func(unsigned long priv)
 				goto unlock;
 			}
 
+<<<<<<< HEAD
 			if (host->mrq->sbc && !data->error) {
 				data->stop->error = 0;
 				dw_mci_request_end(host, host->mrq);
 				goto unlock;
 			}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			prev_state = state = STATE_SENDING_STOP;
 			if (!data->error)
 				send_stop_cmd(host, data);
@@ -1099,6 +1268,7 @@ unlock:
 
 }
 
+<<<<<<< HEAD
 /* push final bytes to part_buf, only use during push */
 static void dw_mci_set_part_bytes(struct dw_mci *host, void *buf, int cnt)
 {
@@ -1211,11 +1381,37 @@ static void dw_mci_pull_data16(struct dw_mci *host, void *buf, int cnt)
 	if (cnt) {
 		host->part_buf16 = mci_readw(host, DATA(host->data_offset));
 		dw_mci_pull_final_bytes(host, buf, cnt);
+=======
+static void dw_mci_push_data16(struct dw_mci *host, void *buf, int cnt)
+{
+	u16 *pdata = (u16 *)buf;
+
+	WARN_ON(cnt % 2 != 0);
+
+	cnt = cnt >> 1;
+	while (cnt > 0) {
+		mci_writew(host, DATA, *pdata++);
+		cnt--;
+	}
+}
+
+static void dw_mci_pull_data16(struct dw_mci *host, void *buf, int cnt)
+{
+	u16 *pdata = (u16 *)buf;
+
+	WARN_ON(cnt % 2 != 0);
+
+	cnt = cnt >> 1;
+	while (cnt > 0) {
+		*pdata++ = mci_readw(host, DATA);
+		cnt--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
 static void dw_mci_push_data32(struct dw_mci *host, void *buf, int cnt)
 {
+<<<<<<< HEAD
 	/* try and push anything in the part_buf */
 	if (unlikely(host->part_buf_count)) {
 		int len = dw_mci_push_part_bytes(host, buf, cnt);
@@ -1257,11 +1453,23 @@ static void dw_mci_push_data32(struct dw_mci *host, void *buf, int cnt)
 		if (!sg_next(host->sg))
 			mci_writel(host, DATA(host->data_offset),
 						host->part_buf32);
+=======
+	u32 *pdata = (u32 *)buf;
+
+	WARN_ON(cnt % 4 != 0);
+	WARN_ON((unsigned long)pdata & 0x3);
+
+	cnt = cnt >> 2;
+	while (cnt > 0) {
+		mci_writel(host, DATA, *pdata++);
+		cnt--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
 static void dw_mci_pull_data32(struct dw_mci *host, void *buf, int cnt)
 {
+<<<<<<< HEAD
 #ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
 	if (unlikely((unsigned long)buf & 0x3)) {
 		while (cnt >= 4) {
@@ -1289,11 +1497,23 @@ static void dw_mci_pull_data32(struct dw_mci *host, void *buf, int cnt)
 	if (cnt) {
 		host->part_buf32 = mci_readl(host, DATA(host->data_offset));
 		dw_mci_pull_final_bytes(host, buf, cnt);
+=======
+	u32 *pdata = (u32 *)buf;
+
+	WARN_ON(cnt % 4 != 0);
+	WARN_ON((unsigned long)pdata & 0x3);
+
+	cnt = cnt >> 2;
+	while (cnt > 0) {
+		*pdata++ = mci_readl(host, DATA);
+		cnt--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
 static void dw_mci_push_data64(struct dw_mci *host, void *buf, int cnt)
 {
+<<<<<<< HEAD
 	/* try and push anything in the part_buf */
 	if (unlikely(host->part_buf_count)) {
 		int len = dw_mci_push_part_bytes(host, buf, cnt);
@@ -1383,17 +1603,48 @@ static void dw_mci_pull_data(struct dw_mci *host, void *buf, int cnt)
 
 	/* get the rest of the data */
 	host->pull_data(host, buf, cnt);
+=======
+	u64 *pdata = (u64 *)buf;
+
+	WARN_ON(cnt % 8 != 0);
+
+	cnt = cnt >> 3;
+	while (cnt > 0) {
+		mci_writeq(host, DATA, *pdata++);
+		cnt--;
+	}
+}
+
+static void dw_mci_pull_data64(struct dw_mci *host, void *buf, int cnt)
+{
+	u64 *pdata = (u64 *)buf;
+
+	WARN_ON(cnt % 8 != 0);
+
+	cnt = cnt >> 3;
+	while (cnt > 0) {
+		*pdata++ = mci_readq(host, DATA);
+		cnt--;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void dw_mci_read_data_pio(struct dw_mci *host)
 {
+<<<<<<< HEAD
 	struct sg_mapping_iter *sg_miter = &host->sg_miter;
 	void *buf;
 	unsigned int offset;
+=======
+	struct scatterlist *sg = host->sg;
+	void *buf = sg_virt(sg);
+	unsigned int offset = host->pio_offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mmc_data	*data = host->data;
 	int shift = host->data_shift;
 	u32 status;
 	unsigned int nbytes = 0, len;
+<<<<<<< HEAD
 	unsigned int remain, fcnt;
 
 	do {
@@ -1417,14 +1668,53 @@ static void dw_mci_read_data_pio(struct dw_mci *host)
 			remain -= len;
 		} while (remain);
 		sg_miter->consumed = offset;
+=======
+
+	do {
+		len = SDMMC_GET_FCNT(mci_readl(host, STATUS)) << shift;
+		if (offset + len <= sg->length) {
+			host->pull_data(host, (void *)(buf + offset), len);
+
+			offset += len;
+			nbytes += len;
+
+			if (offset == sg->length) {
+				flush_dcache_page(sg_page(sg));
+				host->sg = sg = sg_next(sg);
+				if (!sg)
+					goto done;
+
+				offset = 0;
+				buf = sg_virt(sg);
+			}
+		} else {
+			unsigned int remaining = sg->length - offset;
+			host->pull_data(host, (void *)(buf + offset),
+					remaining);
+			nbytes += remaining;
+
+			flush_dcache_page(sg_page(sg));
+			host->sg = sg = sg_next(sg);
+			if (!sg)
+				goto done;
+
+			offset = len - remaining;
+			buf = sg_virt(sg);
+			host->pull_data(host, buf, offset);
+			nbytes += offset;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		status = mci_readl(host, MINTSTS);
 		mci_writel(host, RINTSTS, SDMMC_INT_RXDR);
 		if (status & DW_MCI_DATA_ERROR_FLAGS) {
 			host->data_status = status;
 			data->bytes_xfered += nbytes;
+<<<<<<< HEAD
 			sg_miter_stop(sg_miter);
 			host->sg = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			smp_wmb();
 
 			set_bit(EVENT_DATA_ERROR, &host->pending_events);
@@ -1433,6 +1723,7 @@ static void dw_mci_read_data_pio(struct dw_mci *host)
 			return;
 		}
 	} while (status & SDMMC_INT_RXDR); /*if the RXDR is ready read again*/
+<<<<<<< HEAD
 	data->bytes_xfered += nbytes;
 
 	if (!remain) {
@@ -1441,25 +1732,40 @@ static void dw_mci_read_data_pio(struct dw_mci *host)
 		sg_miter->consumed = 0;
 	}
 	sg_miter_stop(sg_miter);
+=======
+	len = SDMMC_GET_FCNT(mci_readl(host, STATUS));
+	host->pio_offset = offset;
+	data->bytes_xfered += nbytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 
 done:
 	data->bytes_xfered += nbytes;
+<<<<<<< HEAD
 	sg_miter_stop(sg_miter);
 	host->sg = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	smp_wmb();
 	set_bit(EVENT_XFER_COMPLETE, &host->pending_events);
 }
 
 static void dw_mci_write_data_pio(struct dw_mci *host)
 {
+<<<<<<< HEAD
 	struct sg_mapping_iter *sg_miter = &host->sg_miter;
 	void *buf;
 	unsigned int offset;
+=======
+	struct scatterlist *sg = host->sg;
+	void *buf = sg_virt(sg);
+	unsigned int offset = host->pio_offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mmc_data	*data = host->data;
 	int shift = host->data_shift;
 	u32 status;
 	unsigned int nbytes = 0, len;
+<<<<<<< HEAD
 	unsigned int fifo_depth = host->fifo_depth;
 	unsigned int remain, fcnt;
 
@@ -1485,14 +1791,52 @@ static void dw_mci_write_data_pio(struct dw_mci *host)
 			remain -= len;
 		} while (remain);
 		sg_miter->consumed = offset;
+=======
+
+	do {
+		len = SDMMC_FIFO_SZ -
+			(SDMMC_GET_FCNT(mci_readl(host, STATUS)) << shift);
+		if (offset + len <= sg->length) {
+			host->push_data(host, (void *)(buf + offset), len);
+
+			offset += len;
+			nbytes += len;
+			if (offset == sg->length) {
+				host->sg = sg = sg_next(sg);
+				if (!sg)
+					goto done;
+
+				offset = 0;
+				buf = sg_virt(sg);
+			}
+		} else {
+			unsigned int remaining = sg->length - offset;
+
+			host->push_data(host, (void *)(buf + offset),
+					remaining);
+			nbytes += remaining;
+
+			host->sg = sg = sg_next(sg);
+			if (!sg)
+				goto done;
+
+			offset = len - remaining;
+			buf = sg_virt(sg);
+			host->push_data(host, (void *)buf, offset);
+			nbytes += offset;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		status = mci_readl(host, MINTSTS);
 		mci_writel(host, RINTSTS, SDMMC_INT_TXDR);
 		if (status & DW_MCI_DATA_ERROR_FLAGS) {
 			host->data_status = status;
 			data->bytes_xfered += nbytes;
+<<<<<<< HEAD
 			sg_miter_stop(sg_miter);
 			host->sg = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			smp_wmb();
 
@@ -1502,6 +1846,7 @@ static void dw_mci_write_data_pio(struct dw_mci *host)
 			return;
 		}
 	} while (status & SDMMC_INT_TXDR); /* if TXDR write again */
+<<<<<<< HEAD
 	data->bytes_xfered += nbytes;
 
 	if (!remain) {
@@ -1510,12 +1855,21 @@ static void dw_mci_write_data_pio(struct dw_mci *host)
 		sg_miter->consumed = 0;
 	}
 	sg_miter_stop(sg_miter);
+=======
+
+	host->pio_offset = offset;
+	data->bytes_xfered += nbytes;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 
 done:
 	data->bytes_xfered += nbytes;
+<<<<<<< HEAD
 	sg_miter_stop(sg_miter);
 	host->sg = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	smp_wmb();
 	set_bit(EVENT_XFER_COMPLETE, &host->pending_events);
 }
@@ -1536,7 +1890,10 @@ static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
 	struct dw_mci *host = dev_id;
 	u32 status, pending;
 	unsigned int pass_count = 0;
+<<<<<<< HEAD
 	int i;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	do {
 		status = mci_readl(host, RINTSTS);
@@ -1560,6 +1917,10 @@ static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
 			host->cmd_status = status;
 			smp_wmb();
 			set_bit(EVENT_CMD_COMPLETE, &host->pending_events);
+<<<<<<< HEAD
+=======
+			tasklet_schedule(&host->tasklet);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (pending & DW_MCI_DATA_ERROR_FLAGS) {
@@ -1568,9 +1929,13 @@ static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
 			host->data_status = status;
 			smp_wmb();
 			set_bit(EVENT_DATA_ERROR, &host->pending_events);
+<<<<<<< HEAD
 			if (!(pending & (SDMMC_INT_DTO | SDMMC_INT_DCRC |
 					 SDMMC_INT_SBE | SDMMC_INT_EBE)))
 				tasklet_schedule(&host->tasklet);
+=======
+			tasklet_schedule(&host->tasklet);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (pending & SDMMC_INT_DATA_OVER) {
@@ -1588,13 +1953,21 @@ static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
 
 		if (pending & SDMMC_INT_RXDR) {
 			mci_writel(host, RINTSTS, SDMMC_INT_RXDR);
+<<<<<<< HEAD
 			if (host->dir_status == DW_MCI_RECV_STATUS && host->sg)
+=======
+			if (host->sg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				dw_mci_read_data_pio(host);
 		}
 
 		if (pending & SDMMC_INT_TXDR) {
 			mci_writel(host, RINTSTS, SDMMC_INT_TXDR);
+<<<<<<< HEAD
 			if (host->dir_status == DW_MCI_SEND_STATUS && host->sg)
+=======
+			if (host->sg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				dw_mci_write_data_pio(host);
 		}
 
@@ -1605,6 +1978,7 @@ static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
 
 		if (pending & SDMMC_INT_CD) {
 			mci_writel(host, RINTSTS, SDMMC_INT_CD);
+<<<<<<< HEAD
 			queue_work(dw_mci_card_workqueue, &host->card_work);
 		}
 
@@ -1615,6 +1989,9 @@ static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
 				mci_writel(host, RINTSTS, SDMMC_INT_SDIO(i));
 				mmc_signal_sdio_irq(slot->mmc);
 			}
+=======
+			tasklet_schedule(&host->card_tasklet);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 	} while (pass_count++ < 5);
@@ -1633,9 +2010,15 @@ static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
 static void dw_mci_work_routine_card(struct work_struct *work)
 {
 	struct dw_mci *host = container_of(work, struct dw_mci, card_work);
+=======
+static void dw_mci_tasklet_card(unsigned long data)
+{
+	struct dw_mci *host = (struct dw_mci *)data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	for (i = 0; i < host->num_slots; i++) {
@@ -1647,6 +2030,7 @@ static void dw_mci_work_routine_card(struct work_struct *work)
 
 		present = dw_mci_get_cd(mmc);
 		while (present != slot->last_detect_state) {
+<<<<<<< HEAD
 			dev_dbg(&slot->mmc->class_dev, "card %s\n",
 				present ? "inserted" : "removed");
 
@@ -1662,6 +2046,24 @@ static void dw_mci_work_routine_card(struct work_struct *work)
 			/* Mark card as present if applicable */
 			if (present != 0)
 				set_bit(DW_MMC_CARD_PRESENT, &slot->flags);
+=======
+			spin_lock(&host->lock);
+
+			dev_dbg(&slot->mmc->class_dev, "card %s\n",
+				present ? "inserted" : "removed");
+
+			/* Card change detected */
+			slot->last_detect_state = present;
+
+			/* Power up slot */
+			if (present != 0) {
+				if (host->pdata->setpower)
+					host->pdata->setpower(slot->id,
+							      mmc->ocr_avail);
+
+				set_bit(DW_MMC_CARD_PRESENT, &slot->flags);
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* Clean up queue if present */
 			mrq = slot->mrq;
@@ -1711,6 +2113,11 @@ static void dw_mci_work_routine_card(struct work_struct *work)
 
 			/* Power down slot */
 			if (present == 0) {
+<<<<<<< HEAD
+=======
+				if (host->pdata->setpower)
+					host->pdata->setpower(slot->id, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				clear_bit(DW_MMC_CARD_PRESENT, &slot->flags);
 
 				/*
@@ -1718,7 +2125,10 @@ static void dw_mci_work_routine_card(struct work_struct *work)
 				 * block interrupt, hence setting the
 				 * scatter-gather pointer to NULL.
 				 */
+<<<<<<< HEAD
 				sg_miter_stop(&host->sg_miter);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				host->sg = NULL;
 
 				ctrl = mci_readl(host, CTRL);
@@ -1733,12 +2143,16 @@ static void dw_mci_work_routine_card(struct work_struct *work)
 
 			}
 
+<<<<<<< HEAD
 			spin_unlock_bh(&host->lock);
 
 			/* Power down slot (after spin_unlock, may sleep) */
 			if (present == 0 && host->pdata->setpower)
 				host->pdata->setpower(slot->id, 0);
 
+=======
+			spin_unlock(&host->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			present = dw_mci_get_cd(mmc);
 		}
 
@@ -1752,7 +2166,11 @@ static int __init dw_mci_init_slot(struct dw_mci *host, unsigned int id)
 	struct mmc_host *mmc;
 	struct dw_mci_slot *slot;
 
+<<<<<<< HEAD
 	mmc = mmc_alloc_host(sizeof(struct dw_mci_slot), &host->dev);
+=======
+	mmc = mmc_alloc_host(sizeof(struct dw_mci_slot), &host->pdev->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!mmc)
 		return -ENOMEM;
 
@@ -1779,15 +2197,21 @@ static int __init dw_mci_init_slot(struct dw_mci *host, unsigned int id)
 
 	if (host->pdata->caps)
 		mmc->caps = host->pdata->caps;
+<<<<<<< HEAD
 
 	if (host->pdata->caps2)
 		mmc->caps2 = host->pdata->caps2;
+=======
+	else
+		mmc->caps = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (host->pdata->get_bus_wd)
 		if (host->pdata->get_bus_wd(slot->id) >= 4)
 			mmc->caps |= MMC_CAP_4_BIT_DATA;
 
 	if (host->pdata->quirks & DW_MCI_QUIRK_HIGHSPEED)
+<<<<<<< HEAD
 		mmc->caps |= MMC_CAP_SD_HIGHSPEED | MMC_CAP_MMC_HIGHSPEED;
 
 	if (mmc->caps2 & MMC_CAP2_POWEROFF_NOTIFY)
@@ -1795,6 +2219,17 @@ static int __init dw_mci_init_slot(struct dw_mci *host, unsigned int id)
 	else
 		mmc->power_notify_type = MMC_HOST_PW_NOTIFY_NONE;
 
+=======
+		mmc->caps |= MMC_CAP_SD_HIGHSPEED;
+
+#ifdef CONFIG_MMC_DW_IDMAC
+	mmc->max_segs = host->ring_size;
+	mmc->max_blk_size = 65536;
+	mmc->max_blk_count = host->ring_size;
+	mmc->max_seg_size = 0x1000;
+	mmc->max_req_size = mmc->max_seg_size * mmc->max_blk_count;
+#else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (host->pdata->blk_settings) {
 		mmc->max_segs = host->pdata->blk_settings->max_segs;
 		mmc->max_blk_size = host->pdata->blk_settings->max_blk_size;
@@ -1803,6 +2238,7 @@ static int __init dw_mci_init_slot(struct dw_mci *host, unsigned int id)
 		mmc->max_seg_size = host->pdata->blk_settings->max_seg_size;
 	} else {
 		/* Useful defaults if platform data is unset. */
+<<<<<<< HEAD
 #ifdef CONFIG_MMC_DW_IDMAC
 		mmc->max_segs = host->ring_size;
 		mmc->max_blk_size = 65536;
@@ -1810,17 +2246,28 @@ static int __init dw_mci_init_slot(struct dw_mci *host, unsigned int id)
 		mmc->max_seg_size = 0x1000;
 		mmc->max_req_size = mmc->max_seg_size * mmc->max_blk_count;
 #else
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mmc->max_segs = 64;
 		mmc->max_blk_size = 65536; /* BLKSIZ is 16 bits */
 		mmc->max_blk_count = 512;
 		mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
 		mmc->max_seg_size = mmc->max_req_size;
+<<<<<<< HEAD
 #endif /* CONFIG_MMC_DW_IDMAC */
 	}
 
 	host->vmmc = regulator_get(mmc_dev(mmc), "vmmc");
 	if (IS_ERR(host->vmmc)) {
 		pr_info("%s: no vmmc regulator found\n", mmc_hostname(mmc));
+=======
+	}
+#endif /* CONFIG_MMC_DW_IDMAC */
+
+	host->vmmc = regulator_get(mmc_dev(mmc), "vmmc");
+	if (IS_ERR(host->vmmc)) {
+		printk(KERN_INFO "%s: no vmmc regulator found\n", mmc_hostname(mmc));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		host->vmmc = NULL;
 	} else
 		regulator_enable(host->vmmc);
@@ -1844,7 +2291,11 @@ static int __init dw_mci_init_slot(struct dw_mci *host, unsigned int id)
 	 * Card may have been plugged in prior to boot so we
 	 * need to run the detect tasklet
 	 */
+<<<<<<< HEAD
 	queue_work(dw_mci_card_workqueue, &host->card_work);
+=======
+	tasklet_schedule(&host->card_tasklet);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1864,10 +2315,17 @@ static void dw_mci_cleanup_slot(struct dw_mci_slot *slot, unsigned int id)
 static void dw_mci_init_dma(struct dw_mci *host)
 {
 	/* Alloc memory for sg translation */
+<<<<<<< HEAD
 	host->sg_cpu = dma_alloc_coherent(&host->dev, PAGE_SIZE,
 					  &host->sg_dma, GFP_KERNEL);
 	if (!host->sg_cpu) {
 		dev_err(&host->dev, "%s: could not alloc DMA memory\n",
+=======
+	host->sg_cpu = dma_alloc_coherent(&host->pdev->dev, PAGE_SIZE,
+					  &host->sg_dma, GFP_KERNEL);
+	if (!host->sg_cpu) {
+		dev_err(&host->pdev->dev, "%s: could not alloc DMA memory\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			__func__);
 		goto no_dma;
 	}
@@ -1875,21 +2333,35 @@ static void dw_mci_init_dma(struct dw_mci *host)
 	/* Determine which DMA interface to use */
 #ifdef CONFIG_MMC_DW_IDMAC
 	host->dma_ops = &dw_mci_idmac_ops;
+<<<<<<< HEAD
 	dev_info(&host->dev, "Using internal DMA controller.\n");
+=======
+	dev_info(&host->pdev->dev, "Using internal DMA controller.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	if (!host->dma_ops)
 		goto no_dma;
 
+<<<<<<< HEAD
 	if (host->dma_ops->init && host->dma_ops->start &&
 	    host->dma_ops->stop && host->dma_ops->cleanup) {
 		if (host->dma_ops->init(host)) {
 			dev_err(&host->dev, "%s: Unable to initialize "
+=======
+	if (host->dma_ops->init) {
+		if (host->dma_ops->init(host)) {
+			dev_err(&host->pdev->dev, "%s: Unable to initialize "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"DMA Controller.\n", __func__);
 			goto no_dma;
 		}
 	} else {
+<<<<<<< HEAD
 		dev_err(&host->dev, "DMA initialization not found.\n");
+=======
+		dev_err(&host->pdev->dev, "DMA initialization not found.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto no_dma;
 	}
 
@@ -1897,7 +2369,11 @@ static void dw_mci_init_dma(struct dw_mci *host)
 	return;
 
 no_dma:
+<<<<<<< HEAD
 	dev_info(&host->dev, "Using PIO mode.\n");
+=======
+	dev_info(&host->pdev->dev, "Using PIO mode.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	host->use_dma = 0;
 	return;
 }
@@ -1923,6 +2399,7 @@ static bool mci_wait_reset(struct device *dev, struct dw_mci *host)
 	return false;
 }
 
+<<<<<<< HEAD
 int dw_mci_probe(struct dw_mci *host)
 {
 	int width, i, ret = 0;
@@ -1948,12 +2425,68 @@ int dw_mci_probe(struct dw_mci *host)
 
 	host->bus_hz = host->pdata->bus_hz;
 	host->quirks = host->pdata->quirks;
+=======
+static int dw_mci_probe(struct platform_device *pdev)
+{
+	struct dw_mci *host;
+	struct resource	*regs;
+	struct dw_mci_board *pdata;
+	int irq, ret, i, width;
+	u32 fifo_size;
+
+	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	if (!regs)
+		return -ENXIO;
+
+	irq = platform_get_irq(pdev, 0);
+	if (irq < 0)
+		return irq;
+
+	host = kzalloc(sizeof(struct dw_mci), GFP_KERNEL);
+	if (!host)
+		return -ENOMEM;
+
+	host->pdev = pdev;
+	host->pdata = pdata = pdev->dev.platform_data;
+	if (!pdata || !pdata->init) {
+		dev_err(&pdev->dev,
+			"Platform data must supply init function\n");
+		ret = -ENODEV;
+		goto err_freehost;
+	}
+
+	if (!pdata->select_slot && pdata->num_slots > 1) {
+		dev_err(&pdev->dev,
+			"Platform data must supply select_slot function\n");
+		ret = -ENODEV;
+		goto err_freehost;
+	}
+
+	if (!pdata->bus_hz) {
+		dev_err(&pdev->dev,
+			"Platform data must supply bus speed\n");
+		ret = -ENODEV;
+		goto err_freehost;
+	}
+
+	host->bus_hz = pdata->bus_hz;
+	host->quirks = pdata->quirks;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_init(&host->lock);
 	INIT_LIST_HEAD(&host->queue);
 
+<<<<<<< HEAD
 
 	host->dma_ops = host->pdata->dma_ops;
+=======
+	ret = -ENOMEM;
+	host->regs = ioremap(regs->start, regs->end - regs->start + 1);
+	if (!host->regs)
+		goto err_freehost;
+
+	host->dma_ops = pdata->dma_ops;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dw_mci_init_dma(host);
 
 	/*
@@ -1983,7 +2516,11 @@ int dw_mci_probe(struct dw_mci *host)
 	}
 
 	/* Reset all blocks */
+<<<<<<< HEAD
 	if (!mci_wait_reset(&host->dev, host)) {
+=======
+	if (!mci_wait_reset(&pdev->dev, host)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENODEV;
 		goto err_dmaunmap;
 	}
@@ -1999,6 +2536,7 @@ int dw_mci_probe(struct dw_mci *host)
 	 * FIFO threshold settings  RxMark  = fifo_size / 2 - 1,
 	 *                          Tx Mark = fifo_size / 2 DMA Size = 8
 	 */
+<<<<<<< HEAD
 	if (!host->pdata->fifo_depth) {
 		/*
 		 * Power-on value of RX_WMark is FIFO_DEPTH-1, but this may
@@ -2012,6 +2550,10 @@ int dw_mci_probe(struct dw_mci *host)
 		fifo_size = host->pdata->fifo_depth;
 	}
 	host->fifo_depth = fifo_size;
+=======
+	fifo_size = mci_readl(host, FIFOTH);
+	fifo_size = (fifo_size >> 16) & 0x7ff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	host->fifoth_val = ((0x2 << 28) | ((fifo_size/2 - 1) << 16) |
 			((fifo_size/2) << 0));
 	mci_writel(host, FIFOTH, host->fifoth_val);
@@ -2021,6 +2563,7 @@ int dw_mci_probe(struct dw_mci *host)
 	mci_writel(host, CLKSRC, 0);
 
 	tasklet_init(&host->tasklet, dw_mci_tasklet_func, (unsigned long)host);
+<<<<<<< HEAD
 	dw_mci_card_workqueue = alloc_workqueue("dw-mci-card",
 			WQ_MEM_RECLAIM | WQ_NON_REENTRANT, 1);
 	if (!dw_mci_card_workqueue)
@@ -2029,6 +2572,16 @@ int dw_mci_probe(struct dw_mci *host)
 	ret = request_irq(host->irq, dw_mci_interrupt, host->irq_flags, "dw-mci", host);
 	if (ret)
 		goto err_workqueue;
+=======
+	tasklet_init(&host->card_tasklet,
+		     dw_mci_tasklet_card, (unsigned long)host);
+
+	ret = request_irq(irq, dw_mci_interrupt, 0, "dw-mci", host);
+	if (ret)
+		goto err_dmaunmap;
+
+	platform_set_drvdata(pdev, host);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (host->pdata->num_slots)
 		host->num_slots = host->pdata->num_slots;
@@ -2045,6 +2598,7 @@ int dw_mci_probe(struct dw_mci *host)
 	}
 
 	/*
+<<<<<<< HEAD
 	 * In 2.40a spec, Data offset is changed.
 	 * Need to check the version-id and set data-offset for DATA register.
 	 */
@@ -2057,6 +2611,8 @@ int dw_mci_probe(struct dw_mci *host)
 		host->data_offset = DATA_240A_OFFSET;
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Enable interrupts for command done, data over, data empty, card det,
 	 * receive ready and error such as transmit, receive timeout, crc error
 	 */
@@ -2066,12 +2622,19 @@ int dw_mci_probe(struct dw_mci *host)
 		   DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
 	mci_writel(host, CTRL, SDMMC_CTRL_INT_ENABLE); /* Enable mci interrupt */
 
+<<<<<<< HEAD
 	dev_info(&host->dev, "DW MMC controller at irq %d, "
 		 "%d bit host data width, "
 		 "%u deep fifo\n",
 		 host->irq, width, fifo_size);
 	if (host->quirks & DW_MCI_QUIRK_IDMAC_DTO)
 		dev_info(&host->dev, "Internal DMAC interrupt fix enabled.\n");
+=======
+	dev_info(&pdev->dev, "DW MMC controller at irq %d, "
+		 "%d bit host data width\n", irq, width);
+	if (host->quirks & DW_MCI_QUIRK_IDMAC_DTO)
+		dev_info(&pdev->dev, "Internal DMAC interrupt fix enabled.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
@@ -2082,34 +2645,64 @@ err_init_slot:
 			dw_mci_cleanup_slot(host->slot[i], i);
 		i--;
 	}
+<<<<<<< HEAD
 	free_irq(host->irq, host);
 
 err_workqueue:
 	destroy_workqueue(dw_mci_card_workqueue);
+=======
+	free_irq(irq, host);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 err_dmaunmap:
 	if (host->use_dma && host->dma_ops->exit)
 		host->dma_ops->exit(host);
+<<<<<<< HEAD
 	dma_free_coherent(&host->dev, PAGE_SIZE,
 			  host->sg_cpu, host->sg_dma);
+=======
+	dma_free_coherent(&host->pdev->dev, PAGE_SIZE,
+			  host->sg_cpu, host->sg_dma);
+	iounmap(host->regs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (host->vmmc) {
 		regulator_disable(host->vmmc);
 		regulator_put(host->vmmc);
 	}
+<<<<<<< HEAD
 	return ret;
 }
 EXPORT_SYMBOL(dw_mci_probe);
 
 void dw_mci_remove(struct dw_mci *host)
 {
+=======
+
+
+err_freehost:
+	kfree(host);
+	return ret;
+}
+
+static int __exit dw_mci_remove(struct platform_device *pdev)
+{
+	struct dw_mci *host = platform_get_drvdata(pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	mci_writel(host, RINTSTS, 0xFFFFFFFF);
 	mci_writel(host, INTMASK, 0); /* disable all mmc interrupt first */
 
+<<<<<<< HEAD
 	for (i = 0; i < host->num_slots; i++) {
 		dev_dbg(&host->dev, "remove slot %d\n", i);
+=======
+	platform_set_drvdata(pdev, NULL);
+
+	for (i = 0; i < host->num_slots; i++) {
+		dev_dbg(&pdev->dev, "remove slot %d\n", i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (host->slot[i])
 			dw_mci_cleanup_slot(host->slot[i], i);
 	}
@@ -2118,9 +2711,14 @@ void dw_mci_remove(struct dw_mci *host)
 	mci_writel(host, CLKENA, 0);
 	mci_writel(host, CLKSRC, 0);
 
+<<<<<<< HEAD
 	free_irq(host->irq, host);
 	destroy_workqueue(dw_mci_card_workqueue);
 	dma_free_coherent(&host->dev, PAGE_SIZE, host->sg_cpu, host->sg_dma);
+=======
+	free_irq(platform_get_irq(pdev, 0), host);
+	dma_free_coherent(&pdev->dev, PAGE_SIZE, host->sg_cpu, host->sg_dma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (host->use_dma && host->dma_ops->exit)
 		host->dma_ops->exit(host);
@@ -2130,6 +2728,7 @@ void dw_mci_remove(struct dw_mci *host)
 		regulator_put(host->vmmc);
 	}
 
+<<<<<<< HEAD
 }
 EXPORT_SYMBOL(dw_mci_remove);
 
@@ -2142,6 +2741,22 @@ EXPORT_SYMBOL(dw_mci_remove);
 int dw_mci_suspend(struct dw_mci *host)
 {
 	int i, ret = 0;
+=======
+	iounmap(host->regs);
+
+	kfree(host);
+	return 0;
+}
+
+#ifdef CONFIG_PM
+/*
+ * TODO: we should probably disable the clock to the card in the suspend path.
+ */
+static int dw_mci_suspend(struct platform_device *pdev, pm_message_t mesg)
+{
+	int i, ret;
+	struct dw_mci *host = platform_get_drvdata(pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < host->num_slots; i++) {
 		struct dw_mci_slot *slot = host->slot[i];
@@ -2163,11 +2778,19 @@ int dw_mci_suspend(struct dw_mci *host)
 
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(dw_mci_suspend);
 
 int dw_mci_resume(struct dw_mci *host)
 {
 	int i, ret;
+=======
+
+static int dw_mci_resume(struct platform_device *pdev)
+{
+	int i, ret;
+	struct dw_mci *host = platform_get_drvdata(pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (host->vmmc)
 		regulator_enable(host->vmmc);
@@ -2175,7 +2798,11 @@ int dw_mci_resume(struct dw_mci *host)
 	if (host->dma_ops->init)
 		host->dma_ops->init(host);
 
+<<<<<<< HEAD
 	if (!mci_wait_reset(&host->dev, host)) {
+=======
+	if (!mci_wait_reset(&pdev->dev, host)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENODEV;
 		return ret;
 	}
@@ -2197,6 +2824,7 @@ int dw_mci_resume(struct dw_mci *host)
 		if (ret < 0)
 			return ret;
 	}
+<<<<<<< HEAD
 	return 0;
 }
 EXPORT_SYMBOL(dw_mci_resume);
@@ -2206,10 +2834,36 @@ static int __init dw_mci_init(void)
 {
 	printk(KERN_INFO "Synopsys Designware Multimedia Card Interface Driver");
 	return 0;
+=======
+
+	return 0;
+}
+#else
+#define dw_mci_suspend	NULL
+#define dw_mci_resume	NULL
+#endif /* CONFIG_PM */
+
+static struct platform_driver dw_mci_driver = {
+	.remove		= __exit_p(dw_mci_remove),
+	.suspend	= dw_mci_suspend,
+	.resume		= dw_mci_resume,
+	.driver		= {
+		.name		= "dw_mmc",
+	},
+};
+
+static int __init dw_mci_init(void)
+{
+	return platform_driver_probe(&dw_mci_driver, dw_mci_probe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit dw_mci_exit(void)
 {
+<<<<<<< HEAD
+=======
+	platform_driver_unregister(&dw_mci_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(dw_mci_init);

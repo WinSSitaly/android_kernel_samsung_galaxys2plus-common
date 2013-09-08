@@ -4,7 +4,11 @@
 
 #include <linux/time.h>
 #include <linux/fs.h>
+<<<<<<< HEAD
 #include "reiserfs.h"
+=======
+#include <linux/reiserfs_fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/string.h>
 #include <linux/buffer_head.h>
 
@@ -329,7 +333,11 @@ void reiserfs_debug(struct super_block *s, int level, const char *fmt, ...)
     Numbering scheme for panic used by Vladimir and Anatoly( Hans completely ignores this scheme, and considers it
     pointless complexity):
 
+<<<<<<< HEAD
     panics in reiserfs.h have numbers from 1000 to 1999
+=======
+    panics in reiserfs_fs.h have numbers from 1000 to 1999
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     super.c				        2000 to 2999
     preserve.c (unused)			    3000 to 3999
     bitmap.c				    4000 to 4999

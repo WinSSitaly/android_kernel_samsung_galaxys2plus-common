@@ -46,6 +46,10 @@
 #include <linux/slab.h>
 #include <linux/tcp.h>
 #include <linux/types.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/wireless.h>
 #include <linux/etherdevice.h>
 #include <asm/uaccess.h>
@@ -282,7 +286,11 @@ int __init ieee80211_debug_init(void)
 
 	ieee80211_debug_level = debug;
 
+<<<<<<< HEAD
 	ieee80211_proc = proc_mkdir(DRV_NAME, init_net.proc_net);
+=======
+	ieee80211_proc = create_proc_entry(DRV_NAME, S_IFDIR, init_net.proc_net);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ieee80211_proc == NULL) {
 		IEEE80211_ERROR("Unable to create " DRV_NAME
 				" proc directory\n");

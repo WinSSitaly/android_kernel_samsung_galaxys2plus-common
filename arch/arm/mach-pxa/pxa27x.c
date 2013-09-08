@@ -11,8 +11,11 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
 #include <linux/gpio-pxa.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
@@ -26,8 +29,13 @@
 #include <asm/mach/map.h>
 #include <mach/hardware.h>
 #include <asm/irq.h>
+<<<<<<< HEAD
 #include <asm/suspend.h>
 #include <mach/irqs.h>
+=======
+#include <mach/irqs.h>
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/pxa27x.h>
 #include <mach/reset.h>
 #include <mach/ohci.h>
@@ -47,9 +55,15 @@ void pxa27x_clear_otgph(void)
 EXPORT_SYMBOL(pxa27x_clear_otgph);
 
 static unsigned long ac97_reset_config[] = {
+<<<<<<< HEAD
 	GPIO113_AC97_nRESET_GPIO_HIGH,
 	GPIO113_AC97_nRESET,
 	GPIO95_AC97_nRESET_GPIO_HIGH,
+=======
+	GPIO113_GPIO,
+	GPIO113_AC97_nRESET,
+	GPIO95_GPIO,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	GPIO95_AC97_nRESET,
 };
 
@@ -229,7 +243,10 @@ static struct clk_lookup pxa27x_clkregs[] = {
 	INIT_CLKREG(&clk_pxa27x_im, NULL, "IMCLK"),
 	INIT_CLKREG(&clk_pxa27x_memc, NULL, "MEMCLK"),
 	INIT_CLKREG(&clk_pxa27x_mem, "pxa2xx-pcmcia", NULL),
+<<<<<<< HEAD
 	INIT_CLKREG(&clk_dummy, "pxa-gpio", NULL),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #ifdef CONFIG_PM
@@ -287,11 +304,14 @@ void pxa27x_cpu_pm_restore(unsigned long *sleep_save)
 void pxa27x_cpu_pm_enter(suspend_state_t state)
 {
 	extern void pxa_cpu_standby(void);
+<<<<<<< HEAD
 #ifndef CONFIG_IWMMXT
 	u64 acc0;
 
 	asm volatile("mra %Q0, %R0, acc0" : "=r" (acc0));
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* ensure voltage-change sequencer not initiated, which hangs */
 	PCFR &= ~PCFR_FVC;
@@ -307,10 +327,14 @@ void pxa27x_cpu_pm_enter(suspend_state_t state)
 		pxa_cpu_standby();
 		break;
 	case PM_SUSPEND_MEM:
+<<<<<<< HEAD
 		cpu_suspend(pwrmode, pxa27x_finish_suspend);
 #ifndef CONFIG_IWMMXT
 		asm volatile("mar acc0, %Q0, %R0" : "=r" (acc0));
 #endif
+=======
+		pxa27x_cpu_suspend(pwrmode, PLAT_PHYS_OFFSET - PAGE_OFFSET);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 }
@@ -356,7 +380,11 @@ static inline void pxa27x_init_pm(void) {}
  */
 static int pxa27x_set_wake(struct irq_data *d, unsigned int on)
 {
+<<<<<<< HEAD
 	int gpio = pxa_irq_to_gpio(d->irq);
+=======
+	int gpio = irq_to_gpio(d->irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint32_t mask;
 
 	if (gpio >= 0 && gpio < 128)
@@ -387,11 +415,19 @@ static int pxa27x_set_wake(struct irq_data *d, unsigned int on)
 void __init pxa27x_init_irq(void)
 {
 	pxa_init_irq(34, pxa27x_set_wake);
+<<<<<<< HEAD
+=======
+	pxa_init_gpio(IRQ_GPIO_2_x, 2, 120, pxa27x_set_wake);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct map_desc pxa27x_io_desc[] __initdata = {
 	{	/* Mem Ctl */
+<<<<<<< HEAD
 		.virtual	= (unsigned long)SMEMC_VIRT,
+=======
+		.virtual	= SMEMC_VIRT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.pfn		= __phys_to_pfn(PXA2XX_SMEMC_BASE),
 		.length		= 0x00200000,
 		.type		= MT_DEVICE
@@ -421,10 +457,13 @@ void __init pxa27x_set_i2c_power_info(struct i2c_pxa_platform_data *info)
 	pxa_register_device(&pxa27x_device_i2c_power, info);
 }
 
+<<<<<<< HEAD
 static struct pxa_gpio_platform_data pxa27x_gpio_info __initdata = {
 	.gpio_set_wake = gpio_set_wake,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_device *devices[] __initdata = {
 	&pxa27x_device_udc,
 	&pxa_device_pmu,
@@ -459,9 +498,15 @@ static int __init pxa27x_init(void)
 
 		register_syscore_ops(&pxa_irq_syscore_ops);
 		register_syscore_ops(&pxa2xx_mfp_syscore_ops);
+<<<<<<< HEAD
 		register_syscore_ops(&pxa2xx_clock_syscore_ops);
 
 		pxa_register_device(&pxa_device_gpio, &pxa27x_gpio_info);
+=======
+		register_syscore_ops(&pxa_gpio_syscore_ops);
+		register_syscore_ops(&pxa2xx_clock_syscore_ops);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = platform_add_devices(devices, ARRAY_SIZE(devices));
 	}
 

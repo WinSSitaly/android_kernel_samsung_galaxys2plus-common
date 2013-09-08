@@ -241,8 +241,14 @@ command you are interested in.
 
 *  I have more questions, who can I ask?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<<<<<<< HEAD
 Just ask them on the linux-kernel mailing list:
 	linux-kernel@vger.kernel.org
+=======
+And I'll answer any questions about the registration system you got, also
+responding as soon as possible.
+ -Crutcher
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 *  Credits
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

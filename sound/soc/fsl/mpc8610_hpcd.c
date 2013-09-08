@@ -14,7 +14,10 @@
 #include <linux/interrupt.h>
 #include <linux/of_device.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/of_i2c.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/soc.h>
 #include <asm/fsl_guts.h>
 
@@ -58,9 +61,15 @@ static int mpc8610_hpcd_machine_probe(struct snd_soc_card *card)
 {
 	struct mpc8610_hpcd_data *machine_data =
 		container_of(card, struct mpc8610_hpcd_data, card);
+<<<<<<< HEAD
 	struct ccsr_guts __iomem *guts;
 
 	guts = ioremap(guts_phys, sizeof(struct ccsr_guts));
+=======
+	struct ccsr_guts_86xx __iomem *guts;
+
+	guts = ioremap(guts_phys, sizeof(struct ccsr_guts_86xx));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!guts) {
 		dev_err(card->dev, "could not map global utilities\n");
 		return -ENOMEM;
@@ -142,9 +151,15 @@ static int mpc8610_hpcd_machine_remove(struct snd_soc_card *card)
 {
 	struct mpc8610_hpcd_data *machine_data =
 		container_of(card, struct mpc8610_hpcd_data, card);
+<<<<<<< HEAD
 	struct ccsr_guts __iomem *guts;
 
 	guts = ioremap(guts_phys, sizeof(struct ccsr_guts));
+=======
+	struct ccsr_guts_86xx __iomem *guts;
+
+	guts = ioremap(guts_phys, sizeof(struct ccsr_guts_86xx));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!guts) {
 		dev_err(card->dev, "could not map global utilities\n");
 		return -ENOMEM;
@@ -234,7 +249,11 @@ static int get_parent_cell_index(struct device_node *np)
 	if (!iprop)
 		return -1;
 
+<<<<<<< HEAD
 	return be32_to_cpup(iprop);
+=======
+	return *iprop;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -245,14 +264,23 @@ static int get_parent_cell_index(struct device_node *np)
  * 'struct device'  It's ugly and hackish, but it works.
  *
  * The dev_name for such devices include the bus number and I2C address. For
+<<<<<<< HEAD
  * example, "cs4270.0-004f".
+=======
+ * example, "cs4270-codec.0-004f".
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int codec_node_dev_name(struct device_node *np, char *buf, size_t len)
 {
 	const u32 *iprop;
+<<<<<<< HEAD
 	int addr;
 	char temp[DAI_NAME_SIZE];
 	struct i2c_client *i2c;
+=======
+	int bus, addr;
+	char temp[DAI_NAME_SIZE];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	of_modalias_node(np, temp, DAI_NAME_SIZE);
 
@@ -260,6 +288,7 @@ static int codec_node_dev_name(struct device_node *np, char *buf, size_t len)
 	if (!iprop)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	addr = be32_to_cpup(iprop);
 
 	/* We need the adapter number */
@@ -268,12 +297,25 @@ static int codec_node_dev_name(struct device_node *np, char *buf, size_t len)
 		return -ENODEV;
 
 	snprintf(buf, len, "%s.%u-%04x", temp, i2c->adapter->nr, addr);
+=======
+	addr = *iprop;
+
+	bus = get_parent_cell_index(np);
+	if (bus < 0)
+		return bus;
+
+	snprintf(buf, len, "%s-codec.%u-%04x", temp, bus, addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 static int get_dma_channel(struct device_node *ssi_np,
+<<<<<<< HEAD
 			   const char *name,
+=======
+			   const char *compatible,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   struct snd_soc_dai_link *dai,
 			   unsigned int *dma_channel_id,
 			   unsigned int *dma_id)
@@ -283,7 +325,11 @@ static int get_dma_channel(struct device_node *ssi_np,
 	const u32 *iprop;
 	int ret;
 
+<<<<<<< HEAD
 	dma_channel_np = get_node_by_phandle_name(ssi_np, name,
+=======
+	dma_channel_np = get_node_by_phandle_name(ssi_np, compatible,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						  "fsl,ssi-dma-channel");
 	if (!dma_channel_np)
 		return -EINVAL;
@@ -308,7 +354,11 @@ static int get_dma_channel(struct device_node *ssi_np,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	*dma_channel_id = be32_to_cpup(iprop);
+=======
+	*dma_channel_id = *iprop;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*dma_id = get_parent_cell_index(dma_channel_np);
 	of_node_put(dma_channel_np);
 
@@ -336,18 +386,32 @@ static int mpc8610_hpcd_probe(struct platform_device *pdev)
 	const char *sprop;
 	const u32 *iprop;
 
+<<<<<<< HEAD
 	/* Find the codec node for this SSI. */
 	codec_np = of_parse_phandle(np, "codec-handle", 0);
+=======
+	/* We are only interested in SSIs with a codec phandle in them,
+	 * so let's make sure this SSI has one. The MPC8610 HPCD only
+	 * knows about the CS4270 codec, so reject anything else.
+	 */
+	codec_np = get_node_by_phandle_name(np, "codec-handle",
+					    "cirrus,cs4270");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!codec_np) {
 		dev_err(dev, "invalid codec node\n");
 		return -EINVAL;
 	}
 
 	machine_data = kzalloc(sizeof(struct mpc8610_hpcd_data), GFP_KERNEL);
+<<<<<<< HEAD
 	if (!machine_data) {
 		ret = -ENOMEM;
 		goto error_alloc;
 	}
+=======
+	if (!machine_data)
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	machine_data->dai[0].cpu_dai_name = dev_name(&ssi_pdev->dev);
 	machine_data->dai[0].ops = &mpc8610_hpcd_ops;
@@ -380,7 +444,11 @@ static int mpc8610_hpcd_probe(struct platform_device *pdev)
 		ret = -EINVAL;
 		goto error;
 	}
+<<<<<<< HEAD
 	machine_data->ssi_id = be32_to_cpup(iprop);
+=======
+	machine_data->ssi_id = *iprop;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Get the serial format and clock direction. */
 	sprop = of_get_property(np, "fsl,mode", NULL);
@@ -391,8 +459,12 @@ static int mpc8610_hpcd_probe(struct platform_device *pdev)
 	}
 
 	if (strcasecmp(sprop, "i2s-slave") == 0) {
+<<<<<<< HEAD
 		machine_data->dai_format =
 			SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBM_CFM;
+=======
+		machine_data->dai_format = SND_SOC_DAIFMT_I2S;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		machine_data->codec_clk_direction = SND_SOC_CLOCK_OUT;
 		machine_data->cpu_clk_direction = SND_SOC_CLOCK_IN;
 
@@ -407,6 +479,7 @@ static int mpc8610_hpcd_probe(struct platform_device *pdev)
 			ret = -EINVAL;
 			goto error;
 		}
+<<<<<<< HEAD
 		machine_data->clk_frequency = be32_to_cpup(iprop);
 	} else if (strcasecmp(sprop, "i2s-master") == 0) {
 		machine_data->dai_format =
@@ -441,6 +514,35 @@ static int mpc8610_hpcd_probe(struct platform_device *pdev)
 	} else if (strcasecmp(sprop, "ac97-master") == 0) {
 		machine_data->dai_format =
 			SND_SOC_DAIFMT_AC97 | SND_SOC_DAIFMT_CBS_CFS;
+=======
+		machine_data->clk_frequency = *iprop;
+	} else if (strcasecmp(sprop, "i2s-master") == 0) {
+		machine_data->dai_format = SND_SOC_DAIFMT_I2S;
+		machine_data->codec_clk_direction = SND_SOC_CLOCK_IN;
+		machine_data->cpu_clk_direction = SND_SOC_CLOCK_OUT;
+	} else if (strcasecmp(sprop, "lj-slave") == 0) {
+		machine_data->dai_format = SND_SOC_DAIFMT_LEFT_J;
+		machine_data->codec_clk_direction = SND_SOC_CLOCK_OUT;
+		machine_data->cpu_clk_direction = SND_SOC_CLOCK_IN;
+	} else if (strcasecmp(sprop, "lj-master") == 0) {
+		machine_data->dai_format = SND_SOC_DAIFMT_LEFT_J;
+		machine_data->codec_clk_direction = SND_SOC_CLOCK_IN;
+		machine_data->cpu_clk_direction = SND_SOC_CLOCK_OUT;
+	} else if (strcasecmp(sprop, "rj-slave") == 0) {
+		machine_data->dai_format = SND_SOC_DAIFMT_RIGHT_J;
+		machine_data->codec_clk_direction = SND_SOC_CLOCK_OUT;
+		machine_data->cpu_clk_direction = SND_SOC_CLOCK_IN;
+	} else if (strcasecmp(sprop, "rj-master") == 0) {
+		machine_data->dai_format = SND_SOC_DAIFMT_RIGHT_J;
+		machine_data->codec_clk_direction = SND_SOC_CLOCK_IN;
+		machine_data->cpu_clk_direction = SND_SOC_CLOCK_OUT;
+	} else if (strcasecmp(sprop, "ac97-slave") == 0) {
+		machine_data->dai_format = SND_SOC_DAIFMT_AC97;
+		machine_data->codec_clk_direction = SND_SOC_CLOCK_OUT;
+		machine_data->cpu_clk_direction = SND_SOC_CLOCK_IN;
+	} else if (strcasecmp(sprop, "ac97-master") == 0) {
+		machine_data->dai_format = SND_SOC_DAIFMT_AC97;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		machine_data->codec_clk_direction = SND_SOC_CLOCK_IN;
 		machine_data->cpu_clk_direction = SND_SOC_CLOCK_OUT;
 	} else {
@@ -503,7 +605,11 @@ static int mpc8610_hpcd_probe(struct platform_device *pdev)
 	ret = platform_device_add(sound_device);
 	if (ret) {
 		dev_err(&pdev->dev, "platform device add failed\n");
+<<<<<<< HEAD
 		goto error_sound;
+=======
+		goto error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	dev_set_drvdata(&pdev->dev, sound_device);
 
@@ -511,12 +617,23 @@ static int mpc8610_hpcd_probe(struct platform_device *pdev)
 
 	return 0;
 
+<<<<<<< HEAD
 error_sound:
 	platform_device_put(sound_device);
 error:
 	kfree(machine_data);
 error_alloc:
 	of_node_put(codec_np);
+=======
+error:
+	of_node_put(codec_np);
+
+	if (sound_device)
+		platform_device_unregister(sound_device);
+
+	kfree(machine_data);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -546,7 +663,11 @@ static struct platform_driver mpc8610_hpcd_driver = {
 	.probe = mpc8610_hpcd_probe,
 	.remove = __devexit_p(mpc8610_hpcd_remove),
 	.driver = {
+<<<<<<< HEAD
 		/* The name must match 'compatible' property in the device tree,
+=======
+		/* The name must match the 'model' property in the device tree,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * in lowercase letters.
 		 */
 		.name = "snd-soc-mpc8610hpcd",

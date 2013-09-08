@@ -31,8 +31,11 @@ static inline void crypto_set_aead_spawn(
 	crypto_set_spawn(&spawn->base, inst);
 }
 
+<<<<<<< HEAD
 struct crypto_alg *crypto_lookup_aead(const char *name, u32 type, u32 mask);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int crypto_grab_aead(struct crypto_aead_spawn *spawn, const char *name,
 		     u32 type, u32 mask);
 

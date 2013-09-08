@@ -11,7 +11,10 @@
 #include <linux/platform_device.h>
 #include <linux/uio_driver.h>
 #include <linux/stringify.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 
 #define DRIVER_NAME "uio_pdrv"
@@ -59,7 +62,11 @@ static int uio_pdrv_probe(struct platform_device *pdev)
 
 		uiomem->memtype = UIO_MEM_PHYS;
 		uiomem->addr = r->start;
+<<<<<<< HEAD
 		uiomem->size = resource_size(r);
+=======
+		uiomem->size = r->end - r->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		++uiomem;
 	}
 
@@ -104,7 +111,21 @@ static struct platform_driver uio_pdrv = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(uio_pdrv);
+=======
+static int __init uio_pdrv_init(void)
+{
+	return platform_driver_register(&uio_pdrv);
+}
+
+static void __exit uio_pdrv_exit(void)
+{
+	platform_driver_unregister(&uio_pdrv);
+}
+module_init(uio_pdrv_init);
+module_exit(uio_pdrv_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Uwe Kleine-Koenig");
 MODULE_DESCRIPTION("Userspace I/O platform driver");

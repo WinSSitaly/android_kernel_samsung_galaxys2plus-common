@@ -35,6 +35,10 @@
 #include <net/arp.h>
 #include <net/sock.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Create the HIPPI MAC header for an arbitrary protocol layer

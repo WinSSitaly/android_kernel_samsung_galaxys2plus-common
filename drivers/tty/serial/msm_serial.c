@@ -19,7 +19,10 @@
 # define SUPPORT_SYSRQ
 #endif
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/hrtimer.h>
 #include <linux/module.h>
 #include <linux/io.h>
@@ -34,8 +37,11 @@
 #include <linux/clk.h>
 #include <linux/platform_device.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/of.h>
 #include <linux/of_device.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "msm_serial.h"
 
@@ -592,8 +598,14 @@ static void msm_release_port(struct uart_port *port)
 		iowrite32(GSBI_PROTOCOL_IDLE, msm_port->gsbi_base +
 			  GSBI_CONTROL);
 
+<<<<<<< HEAD
 		gsbi_resource = platform_get_resource(pdev,
 							IORESOURCE_MEM, 1);
+=======
+		gsbi_resource = platform_get_resource_byname(pdev,
+							     IORESOURCE_MEM,
+							     "gsbi_resource");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (unlikely(!gsbi_resource))
 			return;
@@ -614,7 +626,12 @@ static int msm_request_port(struct uart_port *port)
 	resource_size_t size;
 	int ret;
 
+<<<<<<< HEAD
 	uart_resource = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+=======
+	uart_resource = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+						     "uart_resource");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(!uart_resource))
 		return -ENXIO;
 
@@ -629,7 +646,12 @@ static int msm_request_port(struct uart_port *port)
 		goto fail_release_port;
 	}
 
+<<<<<<< HEAD
 	gsbi_resource = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+=======
+	gsbi_resource = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+						     "gsbi_resource");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Is this a GSBI-based port? */
 	if (gsbi_resource) {
 		size = resource_size(gsbi_resource);
@@ -804,6 +826,11 @@ static int __init msm_console_setup(struct console *co, char *options)
 	if (unlikely(!port->membase))
 		return -ENXIO;
 
+<<<<<<< HEAD
+=======
+	port->cons = co;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	msm_init_clock(port);
 
 	if (options)
@@ -857,8 +884,11 @@ static struct uart_driver msm_uart_driver = {
 	.cons = MSM_CONSOLE,
 };
 
+<<<<<<< HEAD
 static atomic_t msm_uart_next_id = ATOMIC_INIT(0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init msm_serial_probe(struct platform_device *pdev)
 {
 	struct msm_port *msm_port;
@@ -866,9 +896,12 @@ static int __init msm_serial_probe(struct platform_device *pdev)
 	struct uart_port *port;
 	int irq;
 
+<<<<<<< HEAD
 	if (pdev->id == -1)
 		pdev->id = atomic_inc_return(&msm_uart_next_id) - 1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(pdev->id < 0 || pdev->id >= UART_NR))
 		return -ENXIO;
 
@@ -878,7 +911,11 @@ static int __init msm_serial_probe(struct platform_device *pdev)
 	port->dev = &pdev->dev;
 	msm_port = UART_TO_MSM(port);
 
+<<<<<<< HEAD
 	if (platform_get_resource(pdev, IORESOURCE_MEM, 1))
+=======
+	if (platform_get_resource_byname(pdev, IORESOURCE_MEM, "gsbi_resource"))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		msm_port->is_uartdm = 1;
 	else
 		msm_port->is_uartdm = 0;
@@ -902,7 +939,12 @@ static int __init msm_serial_probe(struct platform_device *pdev)
 	printk(KERN_INFO "uartclk = %d\n", port->uartclk);
 
 
+<<<<<<< HEAD
 	resource = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+=======
+	resource = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+						     "uart_resource");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(!resource))
 		return -ENXIO;
 	port->mapbase = resource->start;
@@ -926,17 +968,23 @@ static int __devexit msm_serial_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct of_device_id msm_match_table[] = {
 	{ .compatible = "qcom,msm-uart" },
 	{}
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver msm_platform_driver = {
 	.remove = msm_serial_remove,
 	.driver = {
 		.name = "msm_serial",
 		.owner = THIS_MODULE,
+<<<<<<< HEAD
 		.of_match_table = msm_match_table,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

@@ -42,11 +42,19 @@ void v3_copy_user_highpage(struct page *to, struct page *from,
 {
 	void *kto, *kfrom;
 
+<<<<<<< HEAD
 	kto = kmap_atomic(to);
 	kfrom = kmap_atomic(from);
 	v3_copy_user_page(kto, kfrom);
 	kunmap_atomic(kfrom);
 	kunmap_atomic(kto);
+=======
+	kto = kmap_atomic(to, KM_USER0);
+	kfrom = kmap_atomic(from, KM_USER1);
+	v3_copy_user_page(kto, kfrom);
+	kunmap_atomic(kfrom, KM_USER1);
+	kunmap_atomic(kto, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -56,7 +64,11 @@ void v3_copy_user_highpage(struct page *to, struct page *from,
  */
 void v3_clear_user_highpage(struct page *page, unsigned long vaddr)
 {
+<<<<<<< HEAD
 	void *ptr, *kaddr = kmap_atomic(page);
+=======
+	void *ptr, *kaddr = kmap_atomic(page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	asm volatile("\n\
 	mov	r1, %2				@ 1\n\
 	mov	r2, #0				@ 1\n\
@@ -72,7 +84,11 @@ void v3_clear_user_highpage(struct page *page, unsigned long vaddr)
 	: "=r" (ptr)
 	: "0" (kaddr), "I" (PAGE_SIZE / 64)
 	: "r1", "r2", "r3", "ip", "lr");
+<<<<<<< HEAD
 	kunmap_atomic(kaddr);
+=======
+	kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct cpu_user_fns v3_user_fns __initdata = {

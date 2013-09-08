@@ -28,7 +28,11 @@
 #include <linux/fs.h>
 #include <linux/file.h>
 #include <net/genetlink.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Maximum length of a cpumask that can be specified in
@@ -291,6 +295,7 @@ static int add_del_listener(pid_t pid, const struct cpumask *mask, int isadd)
 	if (!cpumask_subset(mask, cpu_possible_mask))
 		return -EINVAL;
 
+<<<<<<< HEAD
 	if (isadd == REGISTER) {
 		for_each_cpu(cpu, mask) {
 			s = kmalloc_node(sizeof(struct listener),
@@ -299,10 +304,23 @@ static int add_del_listener(pid_t pid, const struct cpumask *mask, int isadd)
 				goto cleanup;
 
 			s->pid = pid;
+=======
+	s = NULL;
+	if (isadd == REGISTER) {
+		for_each_cpu(cpu, mask) {
+			if (!s)
+				s = kmalloc_node(sizeof(struct listener),
+						 GFP_KERNEL, cpu_to_node(cpu));
+			if (!s)
+				goto cleanup;
+			s->pid = pid;
+			INIT_LIST_HEAD(&s->list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			s->valid = 1;
 
 			listeners = &per_cpu(listener_array, cpu);
 			down_write(&listeners->sem);
+<<<<<<< HEAD
 			list_for_each_entry(s2, &listeners->list, list) {
 				if (s2->pid == pid && s2->valid)
 					goto exists;
@@ -313,6 +331,18 @@ exists:
 			up_write(&listeners->sem);
 			kfree(s); /* nop if NULL */
 		}
+=======
+			list_for_each_entry_safe(s2, tmp, &listeners->list, list) {
+				if (s2->pid == pid)
+					goto next_cpu;
+			}
+			list_add(&s->list, &listeners->list);
+			s = NULL;
+next_cpu:
+			up_write(&listeners->sem);
+		}
+		kfree(s);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 

@@ -9,7 +9,10 @@
 #include <linux/string.h>
 #include <linux/skbuff.h>
 #include <linux/hardirq.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/caif/cfpkt.h>
 
 #define PKT_PREFIX  48
@@ -63,6 +66,10 @@ static inline struct cfpkt *skb_to_pkt(struct sk_buff *skb)
 	return (struct cfpkt *) skb;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct cfpkt *cfpkt_fromnative(enum caif_direction dir, void *nativepkt)
 {
 	struct cfpkt *pkt = skb_to_pkt(nativepkt);
@@ -104,12 +111,20 @@ void cfpkt_destroy(struct cfpkt *pkt)
 	kfree_skb(skb);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 inline bool cfpkt_more(struct cfpkt *pkt)
 {
 	struct sk_buff *skb = pkt_to_skb(pkt);
 	return skb->len > 0;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int cfpkt_peek_head(struct cfpkt *pkt, void *data, u16 len)
 {
 	struct sk_buff *skb = pkt_to_skb(pkt);
@@ -141,11 +156,17 @@ int cfpkt_extr_head(struct cfpkt *pkt, void *data, u16 len)
 	}
 	from = skb_pull(skb, len);
 	from -= len;
+<<<<<<< HEAD
 	if (data)
 		memcpy(data, from, len);
 	return 0;
 }
 EXPORT_SYMBOL(cfpkt_extr_head);
+=======
+	memcpy(data, from, len);
+	return 0;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int cfpkt_extr_trail(struct cfpkt *pkt, void *dta, u16 len)
 {
@@ -169,11 +190,19 @@ int cfpkt_extr_trail(struct cfpkt *pkt, void *dta, u16 len)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int cfpkt_pad_trail(struct cfpkt *pkt, u16 len)
 {
 	return cfpkt_add_body(pkt, NULL, len);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int cfpkt_add_body(struct cfpkt *pkt, const void *data, u16 len)
 {
 	struct sk_buff *skb = pkt_to_skb(pkt);
@@ -252,19 +281,31 @@ int cfpkt_add_head(struct cfpkt *pkt, const void *data2, u16 len)
 	memcpy(to, data, len);
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(cfpkt_add_head);
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 inline int cfpkt_add_trail(struct cfpkt *pkt, const void *data, u16 len)
 {
 	return cfpkt_add_body(pkt, data, len);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 inline u16 cfpkt_getlen(struct cfpkt *pkt)
 {
 	struct sk_buff *skb = pkt_to_skb(pkt);
 	return skb->len;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 inline u16 cfpkt_iterate(struct cfpkt *pkt,
 			    u16 (*iter_func)(u16, void *, u16),
 			    u16 data)
@@ -282,6 +323,10 @@ inline u16 cfpkt_iterate(struct cfpkt *pkt,
 	return iter_func(data, pkt->skb.data, cfpkt_getlen(pkt));
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int cfpkt_setlen(struct cfpkt *pkt, u16 len)
 {
 	struct sk_buff *skb = pkt_to_skb(pkt);
@@ -393,4 +438,7 @@ struct caif_payload_info *cfpkt_info(struct cfpkt *pkt)
 {
 	return (struct caif_payload_info *)&pkt_to_skb(pkt)->cb;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(cfpkt_info);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

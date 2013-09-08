@@ -21,8 +21,11 @@
 #include <linux/io.h>
 #include <mach/hardware.h>
 
+<<<<<<< HEAD
 #include "pci.h"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void * __iomem __iop13xx_io(unsigned long io_addr)
 {
 	void __iomem * io_virt;
@@ -42,8 +45,13 @@ void * __iomem __iop13xx_io(unsigned long io_addr)
 }
 EXPORT_SYMBOL(__iop13xx_io);
 
+<<<<<<< HEAD
 static void __iomem *__iop13xx_ioremap_caller(unsigned long cookie,
 	size_t size, unsigned int mtype, void *caller)
+=======
+void * __iomem __iop13xx_ioremap(unsigned long cookie, size_t size,
+	unsigned int mtype)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	void __iomem * retval;
 
@@ -78,14 +86,27 @@ static void __iomem *__iop13xx_ioremap_caller(unsigned long cookie,
 		break;
 	default:
 		retval = __arm_ioremap_caller(cookie, size, mtype,
+<<<<<<< HEAD
 				caller);
+=======
+				__builtin_return_address(0));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return retval;
 }
+<<<<<<< HEAD
 
 static void __iop13xx_iounmap(volatile void __iomem *addr)
 {
+=======
+EXPORT_SYMBOL(__iop13xx_ioremap);
+
+void __iop13xx_iounmap(void __iomem *addr)
+{
+	extern void __iounmap(volatile void __iomem *addr);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (iop13xx_atue_mem_base)
 		if (addr >= (void __iomem *) iop13xx_atue_mem_base &&
 	 	    addr < (void __iomem *) (iop13xx_atue_mem_base +
@@ -109,9 +130,13 @@ static void __iop13xx_iounmap(volatile void __iomem *addr)
 skip:
 	return;
 }
+<<<<<<< HEAD
 
 void __init iop13xx_init_early(void)
 {
 	arch_ioremap_caller = __iop13xx_ioremap_caller;
 	arch_iounmap = __iop13xx_iounmap;
 }
+=======
+EXPORT_SYMBOL(__iop13xx_iounmap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

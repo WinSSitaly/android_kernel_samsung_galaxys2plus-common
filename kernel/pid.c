@@ -27,7 +27,11 @@
  */
 
 #include <linux/mm.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/init.h>
 #include <linux/rculist.h>
@@ -137,9 +141,13 @@ static int pid_before(int base, int a, int b)
 }
 
 /*
+<<<<<<< HEAD
  * We might be racing with someone else trying to set pid_ns->last_pid
  * at the pid allocation time (there's also a sysctl for this, but racing
  * with this one is OK, see comment in kernel/pid_namespace.c about it).
+=======
+ * We might be racing with someone else trying to set pid_ns->last_pid.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * We want the winner to have the "later" value, because if the
  * "earlier" value prevails, then a pid may get reused immediately.
  *
@@ -407,6 +415,10 @@ struct task_struct *pid_task(struct pid *pid, enum pid_type type)
 	if (pid) {
 		struct hlist_node *first;
 		first = rcu_dereference_check(hlist_first_rcu(&pid->tasks[type]),
+<<<<<<< HEAD
+=======
+					      rcu_read_lock_held() ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					      lockdep_tasklist_lock_is_held());
 		if (first)
 			result = hlist_entry(first, struct task_struct, pids[(type)].node);
@@ -420,9 +432,13 @@ EXPORT_SYMBOL(pid_task);
  */
 struct task_struct *find_task_by_pid_ns(pid_t nr, struct pid_namespace *ns)
 {
+<<<<<<< HEAD
 	rcu_lockdep_assert(rcu_read_lock_held(),
 			   "find_task_by_pid_ns() needs rcu_read_lock()"
 			   " protection");
+=======
+	rcu_lockdep_assert(rcu_read_lock_held());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return pid_task(find_pid_ns(nr, ns), PIDTYPE_PID);
 }
 
@@ -543,12 +559,20 @@ struct pid *find_ge_pid(int nr, struct pid_namespace *ns)
  */
 void __init pidhash_init(void)
 {
+<<<<<<< HEAD
 	unsigned int i, pidhash_size;
+=======
+	int i, pidhash_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pid_hash = alloc_large_system_hash("PID", sizeof(*pid_hash), 0, 18,
 					   HASH_EARLY | HASH_SMALL,
 					   &pidhash_shift, NULL, 4096);
+<<<<<<< HEAD
 	pidhash_size = 1U << pidhash_shift;
+=======
+	pidhash_size = 1 << pidhash_shift;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < pidhash_size; i++)
 		INIT_HLIST_HEAD(&pid_hash[i]);

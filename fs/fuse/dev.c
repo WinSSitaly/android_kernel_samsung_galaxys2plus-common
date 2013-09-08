@@ -19,6 +19,12 @@
 #include <linux/pipe_fs_i.h>
 #include <linux/swap.h>
 #include <linux/splice.h>
+<<<<<<< HEAD
+=======
+#include <linux/iocontext.h>
+#include <linux/ioprio.h>
+#include <linux/freezer.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_ALIAS_MISCDEV(FUSE_MINOR);
 MODULE_ALIAS("devname:fuse");
@@ -237,17 +243,50 @@ static u64 fuse_get_unique(struct fuse_conn *fc)
 	return fc->reqctr;
 }
 
+<<<<<<< HEAD
+=======
+static inline int is_rt(struct fuse_conn *fc)
+{
+	/* Returns 1 if request is RT class                     */
+	/* && FUSE_HANDLE_RT_CLASS bit of fc->flags is set.     */
+	/* FUSE_HANDLE_RT_CLASS bit is set by 'handle_rt_class' */
+	/* mount option while mounting a file system.           */
+	struct io_context *ioc;
+
+	if (!fc)
+		return 0;
+
+	if (!(fc->flags & FUSE_HANDLE_RT_CLASS)) /* Don't handle RT class */
+		return 0;
+
+	ioc = get_io_context(GFP_NOWAIT, 0);
+	if (ioc && IOPRIO_PRIO_CLASS(ioc->ioprio) == IOPRIO_CLASS_RT)
+		return 1;
+
+	return 0;
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void queue_request(struct fuse_conn *fc, struct fuse_req *req)
 {
 	req->in.h.len = sizeof(struct fuse_in_header) +
 		len_args(req->in.numargs, (struct fuse_arg *) req->in.args);
+<<<<<<< HEAD
 	list_add_tail(&req->list, &fc->pending);
+=======
+	list_add_tail(&req->list, &fc->pending[is_rt(fc)]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	req->state = FUSE_REQ_PENDING;
 	if (!req->waiting) {
 		req->waiting = 1;
 		atomic_inc(&fc->num_waiting);
 	}
+<<<<<<< HEAD
 	wake_up(&fc->waitq);
+=======
+	wake_up(&fc->waitq[is_rt(fc)]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kill_fasync(&fc->fasync, SIGIO, POLL_IN);
 }
 
@@ -261,7 +300,11 @@ void fuse_queue_forget(struct fuse_conn *fc, struct fuse_forget_link *forget,
 	if (fc->connected) {
 		fc->forget_list_tail->next = forget;
 		fc->forget_list_tail = forget;
+<<<<<<< HEAD
 		wake_up(&fc->waitq);
+=======
+		wake_up(&fc->waitq[is_rt(fc)]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kill_fasync(&fc->fasync, SIGIO, POLL_IN);
 	} else {
 		kfree(forget);
@@ -337,8 +380,13 @@ __acquires(fc->lock)
 
 static void queue_interrupt(struct fuse_conn *fc, struct fuse_req *req)
 {
+<<<<<<< HEAD
 	list_add_tail(&req->intr_entry, &fc->interrupts);
 	wake_up(&fc->waitq);
+=======
+	list_add_tail(&req->intr_entry, &fc->interrupts[is_rt(fc)]);
+	wake_up(&fc->waitq[is_rt(fc)]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kill_fasync(&fc->fasync, SIGIO, POLL_IN);
 }
 
@@ -387,7 +435,14 @@ __acquires(fc->lock)
 	 * Wait it out.
 	 */
 	spin_unlock(&fc->lock);
+<<<<<<< HEAD
 	wait_event(req->waitq, req->state == FUSE_REQ_FINISHED);
+=======
+
+	while (req->state != FUSE_REQ_FINISHED)
+		wait_event_freezable(req->waitq,
+				     req->state == FUSE_REQ_FINISHED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&fc->lock);
 
 	if (!req->aborted)
@@ -838,10 +893,17 @@ static int fuse_copy_page(struct fuse_copy_state *cs, struct page **pagep,
 			}
 		}
 		if (page) {
+<<<<<<< HEAD
 			void *mapaddr = kmap_atomic(page);
 			void *buf = mapaddr + offset;
 			offset += fuse_copy_do(cs, &buf, &count);
 			kunmap_atomic(mapaddr);
+=======
+			void *mapaddr = kmap_atomic(page, KM_USER0);
+			void *buf = mapaddr + offset;
+			offset += fuse_copy_do(cs, &buf, &count);
+			kunmap_atomic(mapaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else
 			offset += fuse_copy_do(cs, NULL, &count);
 	}
@@ -913,8 +975,13 @@ static int forget_pending(struct fuse_conn *fc)
 
 static int request_pending(struct fuse_conn *fc)
 {
+<<<<<<< HEAD
 	return !list_empty(&fc->pending) || !list_empty(&fc->interrupts) ||
 		forget_pending(fc);
+=======
+	return !list_empty(&fc->pending[is_rt(fc)]) ||
+		!list_empty(&fc->interrupts[is_rt(fc)]) || forget_pending(fc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Wait until a request is available on the pending list */
@@ -924,7 +991,11 @@ __acquires(fc->lock)
 {
 	DECLARE_WAITQUEUE(wait, current);
 
+<<<<<<< HEAD
 	add_wait_queue_exclusive(&fc->waitq, &wait);
+=======
+	add_wait_queue_exclusive(&fc->waitq[is_rt(fc)], &wait);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (fc->connected && !request_pending(fc)) {
 		set_current_state(TASK_INTERRUPTIBLE);
 		if (signal_pending(current))
@@ -935,7 +1006,11 @@ __acquires(fc->lock)
 		spin_lock(&fc->lock);
 	}
 	set_current_state(TASK_RUNNING);
+<<<<<<< HEAD
 	remove_wait_queue(&fc->waitq, &wait);
+=======
+	remove_wait_queue(&fc->waitq[is_rt(fc)], &wait);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1122,21 +1197,36 @@ static ssize_t fuse_dev_do_read(struct fuse_conn *fc, struct file *file,
 	if (!request_pending(fc))
 		goto err_unlock;
 
+<<<<<<< HEAD
 	if (!list_empty(&fc->interrupts)) {
 		req = list_entry(fc->interrupts.next, struct fuse_req,
 				 intr_entry);
+=======
+	if (!list_empty(&fc->interrupts[is_rt(fc)])) {
+		req = list_entry(fc->interrupts[is_rt(fc)].next,
+				struct fuse_req, intr_entry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return fuse_read_interrupt(fc, cs, nbytes, req);
 	}
 
 	if (forget_pending(fc)) {
+<<<<<<< HEAD
 		if (list_empty(&fc->pending) || fc->forget_batch-- > 0)
+=======
+		if (list_empty(&fc->pending[is_rt(fc)]) ||
+			fc->forget_batch-- > 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return fuse_read_forget(fc, cs, nbytes);
 
 		if (fc->forget_batch <= -8)
 			fc->forget_batch = 16;
 	}
 
+<<<<<<< HEAD
 	req = list_entry(fc->pending.next, struct fuse_req, list);
+=======
+	req = list_entry(fc->pending[is_rt(fc)].next, struct fuse_req, list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	req->state = FUSE_REQ_READING;
 	list_move(&req->list, &fc->io);
 
@@ -1378,6 +1468,7 @@ static int fuse_notify_inval_entry(struct fuse_conn *fc, unsigned int size,
 	down_read(&fc->killsb);
 	err = -ENOENT;
 	if (fc->sb)
+<<<<<<< HEAD
 		err = fuse_reverse_inval_entry(fc->sb, outarg.parent, 0, &name);
 	up_read(&fc->killsb);
 	kfree(buf);
@@ -1431,6 +1522,9 @@ static int fuse_notify_delete(struct fuse_conn *fc, unsigned int size,
 	if (fc->sb)
 		err = fuse_reverse_inval_entry(fc->sb, outarg.parent,
 					       outarg.child, &name);
+=======
+		err = fuse_reverse_inval_entry(fc->sb, outarg.parent, &name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	up_read(&fc->killsb);
 	kfree(buf);
 	return err;
@@ -1576,7 +1670,10 @@ static int fuse_retrieve(struct fuse_conn *fc, struct inode *inode,
 		req->pages[req->num_pages] = page;
 		req->num_pages++;
 
+<<<<<<< HEAD
 		offset = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		num -= this_num;
 		total_len += this_num;
 		index++;
@@ -1650,9 +1747,12 @@ static int fuse_notify(struct fuse_conn *fc, enum fuse_notify_code code,
 	case FUSE_NOTIFY_RETRIEVE:
 		return fuse_notify_retrieve(fc, size, cs);
 
+<<<<<<< HEAD
 	case FUSE_NOTIFY_DELETE:
 		return fuse_notify_delete(fc, size, cs);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		fuse_copy_finish(cs);
 		return -EINVAL;
@@ -1894,7 +1994,11 @@ static unsigned fuse_dev_poll(struct file *file, poll_table *wait)
 	if (!fc)
 		return POLLERR;
 
+<<<<<<< HEAD
 	poll_wait(file, &fc->waitq, wait);
+=======
+	poll_wait(file, &fc->waitq[is_rt(fc)], wait);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock(&fc->lock);
 	if (!fc->connected)
@@ -1967,7 +2071,12 @@ __acquires(fc->lock)
 {
 	fc->max_background = UINT_MAX;
 	flush_bg_queue(fc);
+<<<<<<< HEAD
 	end_requests(fc, &fc->pending);
+=======
+	end_requests(fc, &fc->pending[0]);
+	end_requests(fc, &fc->pending[1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	end_requests(fc, &fc->processing);
 	while (forget_pending(fc))
 		kfree(dequeue_forget(fc, 1, NULL));
@@ -2016,7 +2125,12 @@ void fuse_abort_conn(struct fuse_conn *fc)
 		end_io_requests(fc);
 		end_queued_requests(fc);
 		end_polls(fc);
+<<<<<<< HEAD
 		wake_up_all(&fc->waitq);
+=======
+		wake_up_all(&fc->waitq[0]);
+		wake_up_all(&fc->waitq[1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wake_up_all(&fc->blocked_waitq);
 		kill_fasync(&fc->fasync, SIGIO, POLL_IN);
 	}

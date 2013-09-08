@@ -6,7 +6,11 @@ if ISDN_I4L
 
 config ISDN_PPP
 	bool "Support synchronous PPP"
+<<<<<<< HEAD
 	depends on INET && NETDEVICES
+=======
+	depends on INET
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select SLHC
 	help
 	  Over digital connections such as ISDN, there is no need to

@@ -41,6 +41,10 @@
 #include <asm/ptrace_offsets.h>
 #include <asm/rse.h>
 #include <asm/sections.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 
 #include "entry.h"

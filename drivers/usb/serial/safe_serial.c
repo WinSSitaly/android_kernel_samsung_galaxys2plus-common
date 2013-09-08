@@ -81,9 +81,15 @@
 #define CONFIG_USB_SERIAL_SAFE_PADDED 0
 #endif
 
+<<<<<<< HEAD
 static bool debug;
 static bool safe = 1;
 static bool padded = CONFIG_USB_SERIAL_SAFE_PADDED;
+=======
+static int debug;
+static int safe = 1;
+static int padded = CONFIG_USB_SERIAL_SAFE_PADDED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRIVER_VERSION "v0.1"
 #define DRIVER_AUTHOR "sl@lineo.com, tbr@lineo.com, Johan Hovold <jhovold@gmail.com>"
@@ -156,6 +162,10 @@ static struct usb_driver safe_driver = {
 	.probe =	usb_serial_probe,
 	.disconnect =	usb_serial_disconnect,
 	.id_table =	id_table,
+<<<<<<< HEAD
+=======
+	.no_dynamic_id = 	1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const __u16 crc10_table[256] = {
@@ -308,12 +318,17 @@ static struct usb_serial_driver safe_device = {
 		.name =		"safe_serial",
 	},
 	.id_table =		id_table,
+<<<<<<< HEAD
+=======
+	.usb_driver =		&safe_driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.num_ports =		1,
 	.process_read_urb =	safe_process_read_urb,
 	.prepare_write_buffer =	safe_prepare_write_buffer,
 	.attach =		safe_startup,
 };
 
+<<<<<<< HEAD
 static struct usb_serial_driver * const serial_drivers[] = {
 	&safe_device, NULL
 };
@@ -321,6 +336,11 @@ static struct usb_serial_driver * const serial_drivers[] = {
 static int __init safe_init(void)
 {
 	int i;
+=======
+static int __init safe_init(void)
+{
+	int i, retval;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_VERSION ":"
 	       DRIVER_DESC "\n");
@@ -339,12 +359,32 @@ static int __init safe_init(void)
 		}
 	}
 
+<<<<<<< HEAD
 	return usb_serial_register_drivers(&safe_driver, serial_drivers);
+=======
+	retval = usb_serial_register(&safe_device);
+	if (retval)
+		goto failed_usb_serial_register;
+	retval = usb_register(&safe_driver);
+	if (retval)
+		goto failed_usb_register;
+
+	return 0;
+failed_usb_register:
+	usb_serial_deregister(&safe_device);
+failed_usb_serial_register:
+	return retval;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit safe_exit(void)
 {
+<<<<<<< HEAD
 	usb_serial_deregister_drivers(&safe_driver, serial_drivers);
+=======
+	usb_deregister(&safe_driver);
+	usb_serial_deregister(&safe_device);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(safe_init);

@@ -100,9 +100,13 @@
 #define		APIC_TIMER_BASE_CLKIN		0x0
 #define		APIC_TIMER_BASE_TMBASE		0x1
 #define		APIC_TIMER_BASE_DIV		0x2
+<<<<<<< HEAD
 #define		APIC_LVT_TIMER_ONESHOT		(0 << 17)
 #define		APIC_LVT_TIMER_PERIODIC		(1 << 17)
 #define		APIC_LVT_TIMER_TSCDEADLINE	(2 << 17)
+=======
+#define		APIC_LVT_TIMER_PERIODIC		(1 << 17)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define		APIC_LVT_MASKED			(1 << 16)
 #define		APIC_LVT_LEVEL_TRIGGER		(1 << 15)
 #define		APIC_LVT_REMOTE_IRR		(1 << 14)
@@ -144,7 +148,10 @@
 
 #define APIC_BASE (fix_to_virt(FIX_APIC_BASE))
 #define APIC_BASE_MSR	0x800
+<<<<<<< HEAD
 #define XAPIC_ENABLE	(1UL << 11)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define X2APIC_ENABLE	(1UL << 10)
 
 #ifdef CONFIG_X86_32

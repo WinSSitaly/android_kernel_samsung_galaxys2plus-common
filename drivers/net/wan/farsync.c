@@ -25,7 +25,10 @@
 #include <linux/slab.h>
 #include <linux/ioport.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/if.h>
 #include <linux/hdlc.h>
 #include <asm/io.h>
@@ -1665,9 +1668,16 @@ check_started_ok(struct fst_card_info *card)
 	 * existing firmware etc so we just report it for the moment.
 	 */
 	if (FST_RDL(card, numberOfPorts) != card->nports) {
+<<<<<<< HEAD
 		pr_warn("Port count mismatch on card %d.  Firmware thinks %d we say %d\n",
 			card->card_no,
 			FST_RDL(card, numberOfPorts), card->nports);
+=======
+		pr_warning("Port count mismatch on card %d. "
+			   "Firmware thinks %d we say %d\n",
+			   card->card_no,
+			   FST_RDL(card, numberOfPorts), card->nports);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -2483,7 +2493,10 @@ fst_add_one(struct pci_dev *pdev, const struct pci_device_id *ent)
 		pr_err("Control memory remap failed\n");
 		pci_release_regions(pdev);
 		pci_disable_device(pdev);
+<<<<<<< HEAD
 		iounmap(card->mem);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(card);
 		return -ENODEV;
 	}

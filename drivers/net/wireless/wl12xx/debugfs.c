@@ -27,11 +27,17 @@
 #include <linux/slab.h>
 
 #include "wl12xx.h"
+<<<<<<< HEAD
 #include "debug.h"
 #include "acx.h"
 #include "ps.h"
 #include "io.h"
 #include "tx.h"
+=======
+#include "acx.h"
+#include "ps.h"
+#include "io.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* ms */
 #define WL1271_DEBUGFS_STATS_LIFETIME 1000
@@ -63,7 +69,11 @@ static ssize_t name## _read(struct file *file, char __user *userbuf,	\
 									\
 static const struct file_operations name## _ops = {			\
 	.read = name## _read,						\
+<<<<<<< HEAD
 	.open = simple_open,						\
+=======
+	.open = wl1271_open_file_generic,				\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek	= generic_file_llseek,					\
 };
 
@@ -73,6 +83,7 @@ static const struct file_operations name## _ops = {			\
 	if (!entry || IS_ERR(entry))					\
 		goto err;						\
 
+<<<<<<< HEAD
 #define DEBUGFS_ADD_PREFIX(prefix, name, parent)			\
 	do {								\
 		entry = debugfs_create_file(#name, 0400, parent,	\
@@ -81,6 +92,8 @@ static const struct file_operations name## _ops = {			\
 			goto err;					\
 	} while (0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DEBUGFS_FWSTATS_FILE(sub, name, fmt)				\
 static ssize_t sub## _ ##name## _read(struct file *file,		\
 				      char __user *userbuf,		\
@@ -96,7 +109,11 @@ static ssize_t sub## _ ##name## _read(struct file *file,		\
 									\
 static const struct file_operations sub## _ ##name## _ops = {		\
 	.read = sub## _ ##name## _read,					\
+<<<<<<< HEAD
 	.open = simple_open,						\
+=======
+	.open = wl1271_open_file_generic,				\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek	= generic_file_llseek,					\
 };
 
@@ -113,7 +130,11 @@ static void wl1271_debugfs_update_stats(struct wl1271 *wl)
 	if (ret < 0)
 		goto out;
 
+<<<<<<< HEAD
 	if (wl->state == WL1271_STATE_ON && !wl->plt &&
+=======
+	if (wl->state == WL1271_STATE_ON &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    time_after(jiffies, wl->stats.fw_stats_update +
 		       msecs_to_jiffies(WL1271_DEBUGFS_STATS_LIFETIME))) {
 		wl1271_acx_statistics(wl, wl->stats.fw_stats);
@@ -126,6 +147,15 @@ out:
 	mutex_unlock(&wl->mutex);
 }
 
+<<<<<<< HEAD
+=======
+static int wl1271_open_file_generic(struct inode *inode, struct file *file)
+{
+	file->private_data = inode->i_private;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 DEBUGFS_FWSTATS_FILE(tx, internal_desc_overflow, "%u");
 
 DEBUGFS_FWSTATS_FILE(rx, out_of_mem, "%u");
@@ -229,7 +259,11 @@ static ssize_t tx_queue_len_read(struct file *file, char __user *userbuf,
 	char buf[20];
 	int res;
 
+<<<<<<< HEAD
 	queue_len = wl1271_tx_total_queue_count(wl);
+=======
+	queue_len = wl->tx_queue_count;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	res = scnprintf(buf, sizeof(buf), "%u\n", queue_len);
 	return simple_read_from_buffer(userbuf, count, ppos, buf, res);
@@ -237,7 +271,11 @@ static ssize_t tx_queue_len_read(struct file *file, char __user *userbuf,
 
 static const struct file_operations tx_queue_len_ops = {
 	.read = tx_queue_len_read,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = wl1271_open_file_generic,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek = default_llseek,
 };
 
@@ -260,10 +298,25 @@ static ssize_t gpio_power_write(struct file *file,
 			   size_t count, loff_t *ppos)
 {
 	struct wl1271 *wl = file->private_data;
+<<<<<<< HEAD
 	unsigned long value;
 	int ret;
 
 	ret = kstrtoul_from_user(user_buf, count, 10, &value);
+=======
+	char buf[10];
+	size_t len;
+	unsigned long value;
+	int ret;
+
+	len = min(count, sizeof(buf) - 1);
+	if (copy_from_user(buf, user_buf, len)) {
+		return -EFAULT;
+	}
+	buf[len] = '\0';
+
+	ret = kstrtoul(buf, 0, &value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		wl1271_warning("illegal value in gpio_power");
 		return -EINVAL;
@@ -283,7 +336,11 @@ static ssize_t gpio_power_write(struct file *file,
 static const struct file_operations gpio_power_ops = {
 	.read = gpio_power_read,
 	.write = gpio_power_write,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = wl1271_open_file_generic,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek = default_llseek,
 };
 
@@ -294,7 +351,11 @@ static ssize_t start_recovery_write(struct file *file,
 	struct wl1271 *wl = file->private_data;
 
 	mutex_lock(&wl->mutex);
+<<<<<<< HEAD
 	wl12xx_queue_recovery_work(wl);
+=======
+	ieee80211_queue_work(wl->hw, &wl->recovery_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&wl->mutex);
 
 	return count;
@@ -302,6 +363,7 @@ static ssize_t start_recovery_write(struct file *file,
 
 static const struct file_operations start_recovery_ops = {
 	.write = start_recovery_write,
+<<<<<<< HEAD
 	.open = simple_open,
 	.llseek = default_llseek,
 };
@@ -478,6 +540,9 @@ static const struct file_operations split_scan_timeout_ops = {
 	.read = split_scan_timeout_read,
 	.write = split_scan_timeout_write,
 	.open = simple_open,
+=======
+	.open = wl1271_open_file_generic,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek = default_llseek,
 };
 
@@ -486,6 +551,7 @@ static ssize_t driver_state_read(struct file *file, char __user *user_buf,
 {
 	struct wl1271 *wl = file->private_data;
 	int res = 0;
+<<<<<<< HEAD
 	ssize_t ret;
 	char *buf;
 
@@ -494,11 +560,18 @@ static ssize_t driver_state_read(struct file *file, char __user *user_buf,
 	buf = kmalloc(DRIVER_STATE_BUF_LEN, GFP_KERNEL);
 	if (!buf)
 		return -ENOMEM;
+=======
+	char buf[1024];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&wl->mutex);
 
 #define DRIVER_STATE_PRINT(x, fmt)   \
+<<<<<<< HEAD
 	(res += scnprintf(buf + res, DRIVER_STATE_BUF_LEN - res,\
+=======
+	(res += scnprintf(buf + res, sizeof(buf) - res,\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  #x " = " fmt "\n", wl->x))
 
 #define DRIVER_STATE_PRINT_LONG(x) DRIVER_STATE_PRINT(x, "%ld")
@@ -509,6 +582,7 @@ static ssize_t driver_state_read(struct file *file, char __user *user_buf,
 
 	DRIVER_STATE_PRINT_INT(tx_blocks_available);
 	DRIVER_STATE_PRINT_INT(tx_allocated_blocks);
+<<<<<<< HEAD
 	DRIVER_STATE_PRINT_INT(tx_allocated_pkts[0]);
 	DRIVER_STATE_PRINT_INT(tx_allocated_pkts[1]);
 	DRIVER_STATE_PRINT_INT(tx_allocated_pkts[2]);
@@ -531,6 +605,44 @@ static ssize_t driver_state_read(struct file *file, char __user *user_buf,
 	DRIVER_STATE_PRINT_INT(sg_enabled);
 	DRIVER_STATE_PRINT_INT(enable_11a);
 	DRIVER_STATE_PRINT_INT(noise);
+=======
+	DRIVER_STATE_PRINT_INT(tx_frames_cnt);
+	DRIVER_STATE_PRINT_LHEX(tx_frames_map[0]);
+	DRIVER_STATE_PRINT_INT(tx_queue_count);
+	DRIVER_STATE_PRINT_INT(tx_packets_count);
+	DRIVER_STATE_PRINT_INT(tx_results_count);
+	DRIVER_STATE_PRINT_LHEX(flags);
+	DRIVER_STATE_PRINT_INT(tx_blocks_freed[0]);
+	DRIVER_STATE_PRINT_INT(tx_blocks_freed[1]);
+	DRIVER_STATE_PRINT_INT(tx_blocks_freed[2]);
+	DRIVER_STATE_PRINT_INT(tx_blocks_freed[3]);
+	DRIVER_STATE_PRINT_INT(tx_security_last_seq);
+	DRIVER_STATE_PRINT_INT(rx_counter);
+	DRIVER_STATE_PRINT_INT(session_counter);
+	DRIVER_STATE_PRINT_INT(state);
+	DRIVER_STATE_PRINT_INT(bss_type);
+	DRIVER_STATE_PRINT_INT(channel);
+	DRIVER_STATE_PRINT_HEX(rate_set);
+	DRIVER_STATE_PRINT_HEX(basic_rate_set);
+	DRIVER_STATE_PRINT_HEX(basic_rate);
+	DRIVER_STATE_PRINT_INT(band);
+	DRIVER_STATE_PRINT_INT(beacon_int);
+	DRIVER_STATE_PRINT_INT(psm_entry_retry);
+	DRIVER_STATE_PRINT_INT(ps_poll_failures);
+	DRIVER_STATE_PRINT_HEX(filters);
+	DRIVER_STATE_PRINT_HEX(rx_config);
+	DRIVER_STATE_PRINT_HEX(rx_filter);
+	DRIVER_STATE_PRINT_INT(power_level);
+	DRIVER_STATE_PRINT_INT(rssi_thold);
+	DRIVER_STATE_PRINT_INT(last_rssi_event);
+	DRIVER_STATE_PRINT_INT(sg_enabled);
+	DRIVER_STATE_PRINT_INT(enable_11a);
+	DRIVER_STATE_PRINT_INT(noise);
+	DRIVER_STATE_PRINT_LHEX(ap_hlid_map[0]);
+	DRIVER_STATE_PRINT_INT(last_tx_hlid);
+	DRIVER_STATE_PRINT_INT(ba_support);
+	DRIVER_STATE_PRINT_HEX(ba_rx_bitmap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DRIVER_STATE_PRINT_HEX(ap_fw_ps_map);
 	DRIVER_STATE_PRINT_LHEX(ap_ps_map);
 	DRIVER_STATE_PRINT_HEX(quirks);
@@ -549,6 +661,7 @@ static ssize_t driver_state_read(struct file *file, char __user *user_buf,
 #undef DRIVER_STATE_PRINT_LHEX
 #undef DRIVER_STATE_PRINT_STR
 #undef DRIVER_STATE_PRINT
+<<<<<<< HEAD
 #undef DRIVER_STATE_BUF_LEN
 
 	mutex_unlock(&wl->mutex);
@@ -556,10 +669,17 @@ static ssize_t driver_state_read(struct file *file, char __user *user_buf,
 	ret = simple_read_from_buffer(user_buf, count, ppos, buf, res);
 	kfree(buf);
 	return ret;
+=======
+
+	mutex_unlock(&wl->mutex);
+
+	return simple_read_from_buffer(user_buf, count, ppos, buf, res);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct file_operations driver_state_ops = {
 	.read = driver_state_read,
+<<<<<<< HEAD
 	.open = simple_open,
 	.llseek = default_llseek,
 };
@@ -670,6 +790,9 @@ static ssize_t vifs_state_read(struct file *file, char __user *user_buf,
 static const struct file_operations vifs_state_ops = {
 	.read = vifs_state_read,
 	.open = simple_open,
+=======
+	.open = wl1271_open_file_generic,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek = default_llseek,
 };
 
@@ -693,10 +816,24 @@ static ssize_t dtim_interval_write(struct file *file,
 				   size_t count, loff_t *ppos)
 {
 	struct wl1271 *wl = file->private_data;
+<<<<<<< HEAD
 	unsigned long value;
 	int ret;
 
 	ret = kstrtoul_from_user(user_buf, count, 10, &value);
+=======
+	char buf[10];
+	size_t len;
+	unsigned long value;
+	int ret;
+
+	len = min(count, sizeof(buf) - 1);
+	if (copy_from_user(buf, user_buf, len))
+		return -EFAULT;
+	buf[len] = '\0';
+
+	ret = kstrtoul(buf, 0, &value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		wl1271_warning("illegal value for dtim_interval");
 		return -EINVAL;
@@ -727,6 +864,7 @@ static ssize_t dtim_interval_write(struct file *file,
 static const struct file_operations dtim_interval_ops = {
 	.read = dtim_interval_read,
 	.write = dtim_interval_write,
+<<<<<<< HEAD
 	.open = simple_open,
 	.llseek = default_llseek,
 };
@@ -786,6 +924,9 @@ static const struct file_operations suspend_dtim_interval_ops = {
 	.read = suspend_dtim_interval_read,
 	.write = suspend_dtim_interval_write,
 	.open = simple_open,
+=======
+	.open = wl1271_open_file_generic,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek = default_llseek,
 };
 
@@ -809,10 +950,24 @@ static ssize_t beacon_interval_write(struct file *file,
 				     size_t count, loff_t *ppos)
 {
 	struct wl1271 *wl = file->private_data;
+<<<<<<< HEAD
 	unsigned long value;
 	int ret;
 
 	ret = kstrtoul_from_user(user_buf, count, 10, &value);
+=======
+	char buf[10];
+	size_t len;
+	unsigned long value;
+	int ret;
+
+	len = min(count, sizeof(buf) - 1);
+	if (copy_from_user(buf, user_buf, len))
+		return -EFAULT;
+	buf[len] = '\0';
+
+	ret = kstrtoul(buf, 0, &value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		wl1271_warning("illegal value for beacon_interval");
 		return -EINVAL;
@@ -843,6 +998,7 @@ static ssize_t beacon_interval_write(struct file *file,
 static const struct file_operations beacon_interval_ops = {
 	.read = beacon_interval_read,
 	.write = beacon_interval_write,
+<<<<<<< HEAD
 	.open = simple_open,
 	.llseek = default_llseek,
 };
@@ -998,6 +1154,9 @@ out:
 static const struct file_operations beacon_filtering_ops = {
 	.write = beacon_filtering_write,
 	.open = simple_open,
+=======
+	.open = wl1271_open_file_generic,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek = default_llseek,
 };
 
@@ -1005,7 +1164,11 @@ static int wl1271_debugfs_add_files(struct wl1271 *wl,
 				     struct dentry *rootdir)
 {
 	int ret = 0;
+<<<<<<< HEAD
 	struct dentry *entry, *stats, *streaming;
+=======
+	struct dentry *entry, *stats;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	stats = debugfs_create_dir("fw-statistics", rootdir);
 	if (!stats || IS_ERR(stats)) {
@@ -1111,6 +1274,7 @@ static int wl1271_debugfs_add_files(struct wl1271 *wl,
 	DEBUGFS_ADD(gpio_power, rootdir);
 	DEBUGFS_ADD(start_recovery, rootdir);
 	DEBUGFS_ADD(driver_state, rootdir);
+<<<<<<< HEAD
 	DEBUGFS_ADD(vifs_state, rootdir);
 	DEBUGFS_ADD(dtim_interval, rootdir);
 	DEBUGFS_ADD(suspend_dtim_interval, rootdir);
@@ -1127,6 +1291,10 @@ static int wl1271_debugfs_add_files(struct wl1271 *wl,
 	DEBUGFS_ADD_PREFIX(rx_streaming, interval, streaming);
 	DEBUGFS_ADD_PREFIX(rx_streaming, always, streaming);
 
+=======
+	DEBUGFS_ADD(dtim_interval, rootdir);
+	DEBUGFS_ADD(beacon_interval, rootdir);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 

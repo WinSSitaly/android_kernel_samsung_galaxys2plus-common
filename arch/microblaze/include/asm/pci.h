@@ -40,7 +40,17 @@ struct pci_dev;
  * Set this to 1 if you want the kernel to re-assign all PCI
  * bus numbers (don't do that on ppc64 yet !)
  */
+<<<<<<< HEAD
 #define pcibios_assign_all_busses()	0
+=======
+#define pcibios_assign_all_busses() \
+	(pci_has_flag(PCI_REASSIGN_ALL_BUS))
+
+static inline void pcibios_set_master(struct pci_dev *dev)
+{
+	/* No special bus mastering setup handling */
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void pcibios_penalize_isa_irq(int irq, int active)
 {
@@ -94,6 +104,17 @@ extern int pci_mmap_legacy_page_range(struct pci_bus *bus,
  */
 #define PCI_DMA_BUS_IS_PHYS     (1)
 
+<<<<<<< HEAD
+=======
+extern void pcibios_resource_to_bus(struct pci_dev *dev,
+			struct pci_bus_region *region,
+			struct resource *res);
+
+extern void pcibios_bus_to_resource(struct pci_dev *dev,
+			struct resource *res,
+			struct pci_bus_region *region);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline struct resource *pcibios_select_root(struct pci_dev *pdev,
 			struct resource *res)
 {

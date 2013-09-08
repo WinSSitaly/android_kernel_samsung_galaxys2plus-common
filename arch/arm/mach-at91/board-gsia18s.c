@@ -75,13 +75,24 @@ static void __init gsia18s_init_early(void)
 	at91_register_uart(AT91SAM9260_ID_US4, 5, 0);
 }
 
+<<<<<<< HEAD
+=======
+static void __init init_irq(void)
+{
+	at91sam9260_init_interrupts(NULL);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Two USB Host ports
  */
 static struct at91_usbh_data __initdata usbh_data = {
 	.ports		= 2,
+<<<<<<< HEAD
 	.vbus_pin	= {-EINVAL, -EINVAL},
 	.overcurrent_pin= {-EINVAL, -EINVAL},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -89,13 +100,21 @@ static struct at91_usbh_data __initdata usbh_data = {
  */
 static struct at91_udc_data __initdata udc_data = {
 	.vbus_pin	= AT91_PIN_PA22,
+<<<<<<< HEAD
 	.pullup_pin	= -EINVAL,		/* pull-up driven by UDC */
+=======
+	.pullup_pin	= 0,		/* pull-up driven by UDC */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
  * MACB Ethernet device
  */
+<<<<<<< HEAD
 static struct macb_platform_data __initdata macb_data = {
+=======
+static struct at91_eth_data __initdata macb_data = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.phy_irq_pin	= AT91_PIN_PA28,
 	.is_rmii	= 1,
 };
@@ -532,7 +551,10 @@ static struct i2c_board_info __initdata gsia18s_i2c_devices[] = {
 static struct at91_cf_data __initdata gsia18s_cf1_data = {
 	.irq_pin	= AT91_PIN_PA27,
 	.det_pin	= AT91_PIN_PB30,
+<<<<<<< HEAD
 	.vcc_pin	= -EINVAL,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.rst_pin	= AT91_PIN_PB31,
 	.chipselect	= 5,
 	.flags		= AT91_CF_TRUE_IDE,
@@ -575,8 +597,14 @@ static void __init gsia18s_board_init(void)
 
 MACHINE_START(GSIA18S, "GS_IA18_S")
 	.timer		= &at91sam926x_timer,
+<<<<<<< HEAD
 	.map_io		= at91_map_io,
 	.init_early	= gsia18s_init_early,
 	.init_irq	= at91_init_irq_default,
+=======
+	.map_io		= at91sam9260_map_io,
+	.init_early	= gsia18s_init_early,
+	.init_irq	= init_irq,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= gsia18s_board_init,
 MACHINE_END

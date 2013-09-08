@@ -66,6 +66,10 @@ struct ts_event {
 struct tsc2007 {
 	struct input_dev	*input;
 	char			phys[32];
+<<<<<<< HEAD
+=======
+	struct delayed_work	work;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct i2c_client	*client;
 
@@ -75,11 +79,17 @@ struct tsc2007 {
 	unsigned long		poll_delay;
 	unsigned long		poll_period;
 
+<<<<<<< HEAD
 	int			irq;
 
 	wait_queue_head_t	wait;
 	bool			stopped;
 
+=======
+	bool			pendown;
+	int			irq;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			(*get_pendown_state)(void);
 	void			(*clear_penirq)(void);
 };
@@ -142,8 +152,30 @@ static u32 tsc2007_calculate_pressure(struct tsc2007 *tsc, struct ts_event *tc)
 	return rt;
 }
 
+<<<<<<< HEAD
 static bool tsc2007_is_pen_down(struct tsc2007 *ts)
 {
+=======
+static void tsc2007_send_up_event(struct tsc2007 *tsc)
+{
+	struct input_dev *input = tsc->input;
+
+	dev_dbg(&tsc->client->dev, "UP\n");
+
+	input_report_key(input, BTN_TOUCH, 0);
+	input_report_abs(input, ABS_PRESSURE, 0);
+	input_sync(input);
+}
+
+static void tsc2007_work(struct work_struct *work)
+{
+	struct tsc2007 *ts =
+		container_of(to_delayed_work(work), struct tsc2007, work);
+	bool debounced = false;
+	struct ts_event tc;
+	u32 rt;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * NOTE: We can't rely on the pressure to determine the pen down
 	 * state, even though this controller has a pressure sensor.
@@ -154,6 +186,7 @@ static bool tsc2007_is_pen_down(struct tsc2007 *ts)
 	 * The only safe way to check for the pen up condition is in the
 	 * work function by reading the pen signal state (it's a GPIO
 	 * and IRQ). Unfortunately such callback is not always available,
+<<<<<<< HEAD
 	 * in that case we assume that the pen is down and expect caller
 	 * to fall back on the pressure reading.
 	 */
@@ -230,6 +263,83 @@ static irqreturn_t tsc2007_hard_irq(int irq, void *handle)
 
 	if (!ts->get_pendown_state || likely(ts->get_pendown_state()))
 		return IRQ_WAKE_THREAD;
+=======
+	 * in that case we have rely on the pressure anyway.
+	 */
+	if (ts->get_pendown_state) {
+		if (unlikely(!ts->get_pendown_state())) {
+			tsc2007_send_up_event(ts);
+			ts->pendown = false;
+			goto out;
+		}
+
+		dev_dbg(&ts->client->dev, "pen is still down\n");
+	}
+	tsc2007_read_values(ts, &tc);
+#ifdef CONFIG_ARCH_KONA
+	if(ts->clear_penirq)
+		ts->clear_penirq();
+#endif
+	rt = tsc2007_calculate_pressure(ts, &tc);
+	if (rt > ts->max_rt) {
+		/*
+		 * Sample found inconsistent by debouncing or pressure is
+		 * beyond the maximum. Don't report it to user space,
+		 * repeat at least once more the measurement.
+		 */
+		dev_dbg(&ts->client->dev, "ignored pressure %d\n", rt);
+		debounced = true;
+		goto out;
+
+	}
+
+	if (rt) {
+		struct input_dev *input = ts->input;
+
+		if (!ts->pendown) {
+			dev_dbg(&ts->client->dev, "DOWN\n");
+
+			input_report_key(input, BTN_TOUCH, 1);
+			ts->pendown = true;
+		}
+
+		input_report_abs(input, ABS_X, tc.x);
+		input_report_abs(input, ABS_Y, tc.y);
+		input_report_abs(input, ABS_PRESSURE, rt);
+
+		input_sync(input);
+
+		dev_dbg(&ts->client->dev, "point(%4d,%4d), pressure (%4u)\n",
+			tc.x, tc.y, rt);
+
+	} else if (!ts->get_pendown_state && ts->pendown) {
+		/*
+		 * We don't have callback to check pendown state, so we
+		 * have to assume that since pressure reported is 0 the
+		 * pen was lifted up.
+		 */
+		tsc2007_send_up_event(ts);
+		ts->pendown = false;
+	}
+
+ out:
+	if (ts->pendown || debounced)
+		schedule_delayed_work(&ts->work,
+				      msecs_to_jiffies(ts->poll_period));
+	else
+		enable_irq(ts->irq);
+}
+
+static irqreturn_t tsc2007_irq(int irq, void *handle)
+{
+	struct tsc2007 *ts = handle;
+
+	if (!ts->get_pendown_state || likely(ts->get_pendown_state())) {
+		disable_irq_nosync(ts->irq);
+		schedule_delayed_work(&ts->work,
+				      msecs_to_jiffies(ts->poll_delay));
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ts->clear_penirq)
 		ts->clear_penirq();
@@ -237,6 +347,7 @@ static irqreturn_t tsc2007_hard_irq(int irq, void *handle)
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
 static void tsc2007_stop(struct tsc2007 *ts)
 {
 	ts->stopped = true;
@@ -271,6 +382,19 @@ static void tsc2007_close(struct input_dev *input_dev)
 	struct tsc2007 *ts = input_get_drvdata(input_dev);
 
 	tsc2007_stop(ts);
+=======
+static void tsc2007_free_irq(struct tsc2007 *ts)
+{
+	free_irq(ts->irq, ts);
+	if (cancel_delayed_work_sync(&ts->work)) {
+		/*
+		 * Work was pending, therefore we need to enable
+		 * IRQ here to balance the disable_irq() done in the
+		 * interrupt handler.
+		 */
+		enable_irq(ts->irq);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __devinit tsc2007_probe(struct i2c_client *client,
@@ -300,7 +424,11 @@ static int __devinit tsc2007_probe(struct i2c_client *client,
 	ts->client = client;
 	ts->irq = client->irq;
 	ts->input = input_dev;
+<<<<<<< HEAD
 	init_waitqueue_head(&ts->wait);
+=======
+	INIT_DELAYED_WORK(&ts->work, tsc2007_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ts->model             = pdata->model;
 	ts->x_plate_ohms      = pdata->x_plate_ohms;
@@ -310,12 +438,15 @@ static int __devinit tsc2007_probe(struct i2c_client *client,
 	ts->get_pendown_state = pdata->get_pendown_state;
 	ts->clear_penirq      = pdata->clear_penirq;
 
+<<<<<<< HEAD
 	if (pdata->x_plate_ohms == 0) {
 		dev_err(&client->dev, "x_plate_ohms is not set up in platform data");
 		err = -EINVAL;
 		goto err_free_mem;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snprintf(ts->phys, sizeof(ts->phys),
 		 "%s/input0", dev_name(&client->dev));
 
@@ -323,11 +454,14 @@ static int __devinit tsc2007_probe(struct i2c_client *client,
 	input_dev->phys = ts->phys;
 	input_dev->id.bustype = BUS_I2C;
 
+<<<<<<< HEAD
 	input_dev->open = tsc2007_open;
 	input_dev->close = tsc2007_close;
 
 	input_set_drvdata(input_dev, ts);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	input_dev->evbit[0] = BIT_MASK(EV_KEY) | BIT_MASK(EV_ABS);
 	input_dev->keybit[BIT_WORD(BTN_TOUCH)] = BIT_MASK(BTN_TOUCH);
 
@@ -339,14 +473,26 @@ static int __devinit tsc2007_probe(struct i2c_client *client,
 	if (pdata->init_platform_hw)
 		pdata->init_platform_hw();
 
+<<<<<<< HEAD
 	err = request_threaded_irq(ts->irq, tsc2007_hard_irq, tsc2007_soft_irq,
 				   IRQF_ONESHOT, client->dev.driver->name, ts);
+=======
+	err = request_irq(ts->irq, tsc2007_irq, 0,
+			client->dev.driver->name, ts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0) {
 		dev_err(&client->dev, "irq %d busy?\n", ts->irq);
 		goto err_free_mem;
 	}
 
+<<<<<<< HEAD
 	tsc2007_stop(ts);
+=======
+	/* Prepare for touch readings - power down ADC and enable PENIRQ */
+	err = tsc2007_xfer(ts, PWRDOWN);
+	if (err < 0)
+		goto err_free_irq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = input_register_device(input_dev);
 	if (err)
@@ -357,7 +503,11 @@ static int __devinit tsc2007_probe(struct i2c_client *client,
 	return 0;
 
  err_free_irq:
+<<<<<<< HEAD
 	free_irq(ts->irq, ts);
+=======
+	tsc2007_free_irq(ts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pdata->exit_platform_hw)
 		pdata->exit_platform_hw();
  err_free_mem:
@@ -371,7 +521,11 @@ static int __devexit tsc2007_remove(struct i2c_client *client)
 	struct tsc2007	*ts = i2c_get_clientdata(client);
 	struct tsc2007_platform_data *pdata = client->dev.platform_data;
 
+<<<<<<< HEAD
 	free_irq(ts->irq, ts);
+=======
+	tsc2007_free_irq(ts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (pdata->exit_platform_hw)
 		pdata->exit_platform_hw();
@@ -399,7 +553,22 @@ static struct i2c_driver tsc2007_driver = {
 	.remove		= __devexit_p(tsc2007_remove),
 };
 
+<<<<<<< HEAD
 module_i2c_driver(tsc2007_driver);
+=======
+static int __init tsc2007_init(void)
+{
+	return i2c_add_driver(&tsc2007_driver);
+}
+
+static void __exit tsc2007_exit(void)
+{
+	i2c_del_driver(&tsc2007_driver);
+}
+
+module_init(tsc2007_init);
+module_exit(tsc2007_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Kwangwoo Lee <kwlee@mtekvision.com>");
 MODULE_DESCRIPTION("TSC2007 TouchScreen Driver");

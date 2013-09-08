@@ -35,6 +35,7 @@
 #define EVERGREEN_P1PLL_SS_CNTL                         0x414
 #define EVERGREEN_P2PLL_SS_CNTL                         0x454
 #       define EVERGREEN_PxPLL_SS_EN                    (1 << 12)
+<<<<<<< HEAD
 
 #define EVERGREEN_AUDIO_PLL1_MUL			0x5b0
 #define EVERGREEN_AUDIO_PLL1_DIV			0x5b4
@@ -43,6 +44,8 @@
 #define EVERGREEN_AUDIO_ENABLE				0x5e78
 #define EVERGREEN_AUDIO_VENDOR_ID			0x5ec0
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* GRPH blocks at 0x6800, 0x7400, 0x10000, 0x10c00, 0x11800, 0x12400 */
 #define EVERGREEN_GRPH_ENABLE                           0x6800
 #define EVERGREEN_GRPH_CONTROL                          0x6804
@@ -50,6 +53,7 @@
 #       define EVERGREEN_GRPH_DEPTH_8BPP                0
 #       define EVERGREEN_GRPH_DEPTH_16BPP               1
 #       define EVERGREEN_GRPH_DEPTH_32BPP               2
+<<<<<<< HEAD
 #       define EVERGREEN_GRPH_NUM_BANKS(x)              (((x) & 0x3) << 2)
 #       define EVERGREEN_ADDR_SURF_2_BANK               0
 #       define EVERGREEN_ADDR_SURF_4_BANK               1
@@ -61,6 +65,8 @@
 #       define EVERGREEN_ADDR_SURF_BANK_WIDTH_2         1
 #       define EVERGREEN_ADDR_SURF_BANK_WIDTH_4         2
 #       define EVERGREEN_ADDR_SURF_BANK_WIDTH_8         3
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #       define EVERGREEN_GRPH_FORMAT(x)                 (((x) & 0x7) << 8)
 /* 8 BPP */
 #       define EVERGREEN_GRPH_FORMAT_INDEXED            0
@@ -80,6 +86,7 @@
 #       define EVERGREEN_GRPH_FORMAT_8B_BGRA1010102     5
 #       define EVERGREEN_GRPH_FORMAT_RGB111110          6
 #       define EVERGREEN_GRPH_FORMAT_BGR101111          7
+<<<<<<< HEAD
 #       define EVERGREEN_GRPH_BANK_HEIGHT(x)            (((x) & 0x3) << 11)
 #       define EVERGREEN_ADDR_SURF_BANK_HEIGHT_1        0
 #       define EVERGREEN_ADDR_SURF_BANK_HEIGHT_2        1
@@ -98,6 +105,8 @@
 #       define EVERGREEN_ADDR_SURF_MACRO_TILE_ASPECT_2  1
 #       define EVERGREEN_ADDR_SURF_MACRO_TILE_ASPECT_4  2
 #       define EVERGREEN_ADDR_SURF_MACRO_TILE_ASPECT_8  3
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #       define EVERGREEN_GRPH_ARRAY_MODE(x)             (((x) & 0x7) << 20)
 #       define EVERGREEN_GRPH_ARRAY_LINEAR_GENERAL      0
 #       define EVERGREEN_GRPH_ARRAY_LINEAR_ALIGNED      1
@@ -218,6 +227,7 @@
 #define EVERGREEN_CRTC_CONTROL                          0x6e70
 #       define EVERGREEN_CRTC_MASTER_EN                 (1 << 0)
 #       define EVERGREEN_CRTC_DISP_READ_REQUEST_DISABLE (1 << 24)
+<<<<<<< HEAD
 #define EVERGREEN_CRTC_BLANK_CONTROL                    0x6e74
 #       define EVERGREEN_CRTC_BLANK_DATA_EN             (1 << 8)
 #define EVERGREEN_CRTC_STATUS                           0x6e8c
@@ -227,15 +237,24 @@
 #define EVERGREEN_CRTC_UPDATE_LOCK                      0x6ed4
 #define EVERGREEN_MASTER_UPDATE_LOCK                    0x6ef4
 #define EVERGREEN_MASTER_UPDATE_MODE                    0x6ef8
+=======
+#define EVERGREEN_CRTC_STATUS                           0x6e8c
+#define EVERGREEN_CRTC_STATUS_POSITION                  0x6e90
+#define EVERGREEN_MASTER_UPDATE_MODE                    0x6ef8
+#define EVERGREEN_CRTC_UPDATE_LOCK                      0x6ed4
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define EVERGREEN_DC_GPIO_HPD_MASK                      0x64b0
 #define EVERGREEN_DC_GPIO_HPD_A                         0x64b4
 #define EVERGREEN_DC_GPIO_HPD_EN                        0x64b8
 #define EVERGREEN_DC_GPIO_HPD_Y                         0x64bc
 
+<<<<<<< HEAD
 /* HDMI blocks at 0x7030, 0x7c30, 0x10830, 0x11430, 0x12030, 0x12c30 */
 #define EVERGREEN_HDMI_BASE				0x7030
 
 #define EVERGREEN_HDMI_CONFIG_OFFSET			0xf0
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

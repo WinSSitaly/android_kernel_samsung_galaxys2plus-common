@@ -20,4 +20,13 @@
 #ifndef __MACH_MXS_HARDWARE_H__
 #define __MACH_MXS_HARDWARE_H__
 
+<<<<<<< HEAD
+=======
+#ifdef __ASSEMBLER__
+#define IOMEM(addr)	(addr)
+#else
+#define IOMEM(addr)	((void __force __iomem *)(addr))
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __MACH_MXS_HARDWARE_H__ */

@@ -40,9 +40,15 @@ static DEFINE_RWLOCK(cls_mod_lock);
 
 /* Find classifier type by string name */
 
+<<<<<<< HEAD
 static const struct tcf_proto_ops *tcf_proto_lookup_ops(struct nlattr *kind)
 {
 	const struct tcf_proto_ops *t = NULL;
+=======
+static struct tcf_proto_ops *tcf_proto_lookup_ops(struct nlattr *kind)
+{
+	struct tcf_proto_ops *t = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (kind) {
 		read_lock(&cls_mod_lock);
@@ -132,7 +138,11 @@ static int tc_ctl_tfilter(struct sk_buff *skb, struct nlmsghdr *n, void *arg)
 	struct Qdisc  *q;
 	struct tcf_proto **back, **chain;
 	struct tcf_proto *tp;
+<<<<<<< HEAD
 	const struct tcf_proto_ops *tp_ops;
+=======
+	struct tcf_proto_ops *tp_ops;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const struct Qdisc_class_ops *cops;
 	unsigned long cl;
 	unsigned long fh;
@@ -610,10 +620,17 @@ EXPORT_SYMBOL(tcf_exts_dump_stats);
 
 static int __init tc_filter_init(void)
 {
+<<<<<<< HEAD
 	rtnl_register(PF_UNSPEC, RTM_NEWTFILTER, tc_ctl_tfilter, NULL, NULL);
 	rtnl_register(PF_UNSPEC, RTM_DELTFILTER, tc_ctl_tfilter, NULL, NULL);
 	rtnl_register(PF_UNSPEC, RTM_GETTFILTER, tc_ctl_tfilter,
 		      tc_dump_tfilter, NULL);
+=======
+	rtnl_register(PF_UNSPEC, RTM_NEWTFILTER, tc_ctl_tfilter, NULL);
+	rtnl_register(PF_UNSPEC, RTM_DELTFILTER, tc_ctl_tfilter, NULL);
+	rtnl_register(PF_UNSPEC, RTM_GETTFILTER, tc_ctl_tfilter,
+						 tc_dump_tfilter);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

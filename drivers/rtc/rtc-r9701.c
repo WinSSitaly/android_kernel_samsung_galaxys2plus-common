@@ -122,6 +122,7 @@ static const struct rtc_class_ops r9701_rtc_ops = {
 static int __devinit r9701_probe(struct spi_device *spi)
 {
 	struct rtc_device *rtc;
+<<<<<<< HEAD
 	struct rtc_time dt;
 	unsigned char tmp;
 	int res;
@@ -154,6 +155,11 @@ static int __devinit r9701_probe(struct spi_device *spi)
 		}
 	}
 
+=======
+	unsigned char tmp;
+	int res;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtc = rtc_device_register("r9701",
 				&spi->dev, &r9701_rtc_ops, THIS_MODULE);
 	if (IS_ERR(rtc))
@@ -161,6 +167,16 @@ static int __devinit r9701_probe(struct spi_device *spi)
 
 	dev_set_drvdata(&spi->dev, rtc);
 
+<<<<<<< HEAD
+=======
+	tmp = R100CNT;
+	res = read_regs(&spi->dev, &tmp, 1);
+	if (res || tmp != 0x20) {
+		rtc_device_unregister(rtc);
+		return res;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -181,7 +197,21 @@ static struct spi_driver r9701_driver = {
 	.remove = __devexit_p(r9701_remove),
 };
 
+<<<<<<< HEAD
 module_spi_driver(r9701_driver);
+=======
+static __init int r9701_init(void)
+{
+	return spi_register_driver(&r9701_driver);
+}
+module_init(r9701_init);
+
+static __exit void r9701_exit(void)
+{
+	spi_unregister_driver(&r9701_driver);
+}
+module_exit(r9701_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("r9701 spi RTC driver");
 MODULE_AUTHOR("Magnus Damm <damm@opensource.se>");

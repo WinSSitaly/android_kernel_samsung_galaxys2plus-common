@@ -21,13 +21,20 @@
 
 #include <linux/init.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/amba/bus.h>
 #include <linux/amba/pl061.h>
 #include <linux/amba/mmci.h>
 #include <linux/amba/pl022.h>
+<<<<<<< HEAD
 #include <linux/mtd/physmap.h>
 #include <linux/mtd/partitions.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 
 #include <mach/hardware.h>
@@ -113,14 +120,26 @@ static void __init realview_pb1176_map_io(void)
 
 static struct pl061_platform_data gpio0_plat_data = {
 	.gpio_base	= 0,
+<<<<<<< HEAD
+=======
+	.irq_base	= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct pl061_platform_data gpio1_plat_data = {
 	.gpio_base	= 8,
+<<<<<<< HEAD
+=======
+	.irq_base	= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct pl061_platform_data gpio2_plat_data = {
 	.gpio_base	= 16,
+<<<<<<< HEAD
+=======
+	.irq_base	= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct pl022_ssp_controller ssp0_plat_data = {
@@ -132,6 +151,7 @@ static struct pl022_ssp_controller ssp0_plat_data = {
 /*
  * RealView PB1176 AMBA devices
  */
+<<<<<<< HEAD
 #define GPIO2_IRQ	{ IRQ_PB1176_GPIO2 }
 #define GPIO3_IRQ	{ IRQ_PB1176_GPIO3 }
 #define AACI_IRQ	{ IRQ_PB1176_AACI }
@@ -176,6 +196,52 @@ APB_DEVICE(uart2,	"dev:uart2",	PB1176_UART2,	NULL);
 APB_DEVICE(uart3,	"dev:uart3",	PB1176_UART3,	NULL);
 APB_DEVICE(ssp0,	"dev:ssp0",	PB1176_SSP,	&ssp0_plat_data);
 AHB_DEVICE(clcd,	"dev:clcd",	PB1176_CLCD,	&clcd_plat_data);
+=======
+#define GPIO2_IRQ	{ IRQ_PB1176_GPIO2, NO_IRQ }
+#define GPIO3_IRQ	{ IRQ_PB1176_GPIO3, NO_IRQ }
+#define AACI_IRQ	{ IRQ_PB1176_AACI, NO_IRQ }
+#define MMCI0_IRQ	{ IRQ_PB1176_MMCI0A, IRQ_PB1176_MMCI0B }
+#define KMI0_IRQ	{ IRQ_PB1176_KMI0, NO_IRQ }
+#define KMI1_IRQ	{ IRQ_PB1176_KMI1, NO_IRQ }
+#define PB1176_SMC_IRQ	{ NO_IRQ, NO_IRQ }
+#define MPMC_IRQ	{ NO_IRQ, NO_IRQ }
+#define PB1176_CLCD_IRQ	{ IRQ_DC1176_CLCD, NO_IRQ }
+#define SCTL_IRQ	{ NO_IRQ, NO_IRQ }
+#define PB1176_WATCHDOG_IRQ	{ IRQ_DC1176_WATCHDOG, NO_IRQ }
+#define PB1176_GPIO0_IRQ	{ IRQ_PB1176_GPIO0, NO_IRQ }
+#define GPIO1_IRQ	{ IRQ_PB1176_GPIO1, NO_IRQ }
+#define PB1176_RTC_IRQ	{ IRQ_DC1176_RTC, NO_IRQ }
+#define SCI_IRQ		{ IRQ_PB1176_SCI, NO_IRQ }
+#define PB1176_UART0_IRQ	{ IRQ_DC1176_UART0, NO_IRQ }
+#define PB1176_UART1_IRQ	{ IRQ_DC1176_UART1, NO_IRQ }
+#define PB1176_UART2_IRQ	{ IRQ_DC1176_UART2, NO_IRQ }
+#define PB1176_UART3_IRQ	{ IRQ_DC1176_UART3, NO_IRQ }
+#define PB1176_UART4_IRQ	{ IRQ_PB1176_UART4, NO_IRQ }
+#define PB1176_SSP_IRQ		{ IRQ_DC1176_SSP, NO_IRQ }
+
+/* FPGA Primecells */
+AMBA_DEVICE(aaci,	"fpga:aaci",	AACI,		NULL);
+AMBA_DEVICE(mmc0,	"fpga:mmc0",	MMCI0,		&realview_mmc0_plat_data);
+AMBA_DEVICE(kmi0,	"fpga:kmi0",	KMI0,		NULL);
+AMBA_DEVICE(kmi1,	"fpga:kmi1",	KMI1,		NULL);
+AMBA_DEVICE(uart4,	"fpga:uart4",	PB1176_UART4,	NULL);
+
+/* DevChip Primecells */
+AMBA_DEVICE(smc,	"dev:smc",	PB1176_SMC,	NULL);
+AMBA_DEVICE(sctl,	"dev:sctl",	SCTL,		NULL);
+AMBA_DEVICE(wdog,	"dev:wdog",	PB1176_WATCHDOG,	NULL);
+AMBA_DEVICE(gpio0,	"dev:gpio0",	PB1176_GPIO0,	&gpio0_plat_data);
+AMBA_DEVICE(gpio1,	"dev:gpio1",	GPIO1,		&gpio1_plat_data);
+AMBA_DEVICE(gpio2,	"dev:gpio2",	GPIO2,		&gpio2_plat_data);
+AMBA_DEVICE(rtc,	"dev:rtc",	PB1176_RTC,	NULL);
+AMBA_DEVICE(sci0,	"dev:sci0",	SCI,		NULL);
+AMBA_DEVICE(uart0,	"dev:uart0",	PB1176_UART0,	NULL);
+AMBA_DEVICE(uart1,	"dev:uart1",	PB1176_UART1,	NULL);
+AMBA_DEVICE(uart2,	"dev:uart2",	PB1176_UART2,	NULL);
+AMBA_DEVICE(uart3,	"dev:uart3",	PB1176_UART3,	NULL);
+AMBA_DEVICE(ssp0,	"dev:ssp0",	PB1176_SSP,	&ssp0_plat_data);
+AMBA_DEVICE(clcd,	"dev:clcd",	PB1176_CLCD,	&clcd_plat_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct amba_device *amba_devs[] __initdata = {
 	&uart0_device,
@@ -203,17 +269,26 @@ static struct amba_device *amba_devs[] __initdata = {
  * RealView PB1176 platform devices
  */
 static struct resource realview_pb1176_flash_resources[] = {
+<<<<<<< HEAD
 	{
+=======
+	[0] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.start		= REALVIEW_PB1176_FLASH_BASE,
 		.end		= REALVIEW_PB1176_FLASH_BASE + REALVIEW_PB1176_FLASH_SIZE - 1,
 		.flags		= IORESOURCE_MEM,
 	},
+<<<<<<< HEAD
 #ifdef CONFIG_REALVIEW_PB1176_SECURE_FLASH
 	{
+=======
+	[1] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.start		= REALVIEW_PB1176_SEC_FLASH_BASE,
 		.end		= REALVIEW_PB1176_SEC_FLASH_BASE + REALVIEW_PB1176_SEC_FLASH_SIZE - 1,
 		.flags		= IORESOURCE_MEM,
 	},
+<<<<<<< HEAD
 #endif
 };
 
@@ -245,6 +320,14 @@ static struct platform_device pb1176_rom_device = {
 		.platform_data = &pb1176_rom_pdata,
 	},
 };
+=======
+};
+#ifdef CONFIG_REALVIEW_PB1176_SECURE_FLASH
+#define PB1176_FLASH_BLOCKS	2
+#else
+#define PB1176_FLASH_BLOCKS	1
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct resource realview_pb1176_smsc911x_resources[] = {
 	[0] = {
@@ -333,16 +416,27 @@ static struct sys_timer realview_pb1176_timer = {
 	.init		= realview_pb1176_timer_init,
 };
 
+<<<<<<< HEAD
 static void realview_pb1176_restart(char mode, const char *cmd)
+=======
+static void realview_pb1176_reset(char mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	void __iomem *reset_ctrl = __io_address(REALVIEW_SYS_RESETCTL);
 	void __iomem *lock_ctrl = __io_address(REALVIEW_SYS_LOCK);
 	__raw_writel(REALVIEW_SYS_LOCK_VAL, lock_ctrl);
 	__raw_writel(REALVIEW_PB1176_SYS_SOFT_RESET, reset_ctrl);
+<<<<<<< HEAD
 	dsb();
 }
 
 static void realview_pb1176_fixup(struct tag *tags, char **from,
+=======
+}
+
+static void realview_pb1176_fixup(struct machine_desc *mdesc,
+				  struct tag *tags, char **from,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  struct meminfo *meminfo)
 {
 	/*
@@ -363,8 +457,12 @@ static void __init realview_pb1176_init(void)
 #endif
 
 	realview_flash_register(realview_pb1176_flash_resources,
+<<<<<<< HEAD
 				ARRAY_SIZE(realview_pb1176_flash_resources));
 	platform_device_register(&pb1176_rom_device);
+=======
+				PB1176_FLASH_BLOCKS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	realview_eth_register(NULL, realview_pb1176_smsc911x_resources);
 	platform_device_register(&realview_i2c_device);
 	realview_usb_register(realview_pb1176_isp1761_resources);
@@ -379,20 +477,32 @@ static void __init realview_pb1176_init(void)
 #ifdef CONFIG_LEDS
 	leds_event = realview_leds_event;
 #endif
+<<<<<<< HEAD
+=======
+	realview_reset = realview_pb1176_reset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 MACHINE_START(REALVIEW_PB1176, "ARM-RealView PB1176")
 	/* Maintainer: ARM Ltd/Deep Blue Solutions Ltd */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= PLAT_PHYS_OFFSET + 0x00000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.fixup		= realview_pb1176_fixup,
 	.map_io		= realview_pb1176_map_io,
 	.init_early	= realview_init_early,
 	.init_irq	= gic_init_irq,
 	.timer		= &realview_pb1176_timer,
+<<<<<<< HEAD
 	.handle_irq	= gic_handle_irq,
 	.init_machine	= realview_pb1176_init,
 #ifdef CONFIG_ZONE_DMA
 	.dma_zone_size	= SZ_256M,
 #endif
 	.restart	= realview_pb1176_restart,
+=======
+	.init_machine	= realview_pb1176_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

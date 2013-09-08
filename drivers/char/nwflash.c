@@ -32,6 +32,10 @@
 #include <asm/io.h>
 #include <asm/leds.h>
 #include <asm/mach-types.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 
 /*****************************************************************************/
@@ -50,7 +54,11 @@ static int write_block(unsigned long p, const char __user *buf, int count);
 #define KFLASH_ID	0x89A6		//Intel flash
 #define KFLASH_ID4	0xB0D4		//Intel flash 4Meg
 
+<<<<<<< HEAD
 static bool flashdebug;		//if set - we will display progress msgs
+=======
+static int flashdebug;		//if set - we will display progress msgs
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int gbWriteEnable;
 static int gbWriteBase64Enable;

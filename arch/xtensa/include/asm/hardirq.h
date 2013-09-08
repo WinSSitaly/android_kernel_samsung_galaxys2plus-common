@@ -11,6 +11,12 @@
 #ifndef _XTENSA_HARDIRQ_H
 #define _XTENSA_HARDIRQ_H
 
+<<<<<<< HEAD
+=======
+void ack_bad_irq(unsigned int irq);
+#define ack_bad_irq ack_bad_irq
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm-generic/hardirq.h>
 
 #endif	/* _XTENSA_HARDIRQ_H */

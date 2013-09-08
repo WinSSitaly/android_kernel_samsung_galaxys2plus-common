@@ -277,9 +277,17 @@ static void i82975x_get_error_info(struct mem_ctl_info *mci,
 static int i82975x_process_error_info(struct mem_ctl_info *mci,
 		struct i82975x_error_info *info, int handle_errors)
 {
+<<<<<<< HEAD
 	int row, chan;
 	unsigned long offst, page;
 
+=======
+	int row, multi_chan, chan;
+	unsigned long offst, page;
+
+	multi_chan = mci->csrows[0].nr_channels - 1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!(info->errsts2 & 0x0003))
 		return 0;
 
@@ -292,6 +300,7 @@ static int i82975x_process_error_info(struct mem_ctl_info *mci,
 	}
 
 	page = (unsigned long) info->eap;
+<<<<<<< HEAD
 	page >>= 1;
 	if (info->xeap & 1)
 		page |= 0x80000000;
@@ -311,11 +320,26 @@ static int i82975x_process_error_info(struct mem_ctl_info *mci,
 			& ((1 << PAGE_SHIFT) -
 				(1 << mci->csrows[row].grain));
 
+=======
+	if (info->xeap & 1)
+		page |= 0x100000000ul;
+	chan = page & 1;
+	page >>= 1;
+	offst = page & ((1 << PAGE_SHIFT) - 1);
+	page >>= PAGE_SHIFT;
+	row = edac_mc_find_csrow_by_page(mci, page);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (info->errsts & 0x0002)
 		edac_mc_handle_ue(mci, page, offst , row, "i82975x UE");
 	else
 		edac_mc_handle_ce(mci, page, offst, info->derrsyn, row,
+<<<<<<< HEAD
 				chan, "i82975x CE");
+=======
+				multi_chan ? chan : 0,
+				"i82975x CE");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 1;
 }
@@ -418,7 +442,11 @@ static void i82975x_init_csrows(struct mem_ctl_info *mci,
 		csrow->last_page = cumul_size - 1;
 		csrow->nr_pages = cumul_size - last_cumul_size;
 		last_cumul_size = cumul_size;
+<<<<<<< HEAD
 		csrow->grain = 1 << 7;	/* 128Byte cache-line resolution */
+=======
+		csrow->grain = 1 << 6;	/* I82975X_EAP has 64B resolution */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		csrow->mtype = MEM_DDR2; /* I82975x supports only DDR2 */
 		csrow->dtype = i82975x_dram_type(mch_window, index);
 		csrow->edac_mode = EDAC_SECDED; /* only supported */
@@ -612,7 +640,11 @@ static void __devexit i82975x_remove_one(struct pci_dev *pdev)
 	edac_mc_free(mci);
 }
 
+<<<<<<< HEAD
 static DEFINE_PCI_DEVICE_TABLE(i82975x_pci_tbl) = {
+=======
+static const struct pci_device_id i82975x_pci_tbl[] __devinitdata = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		PCI_VEND_DEV(INTEL, 82975_0), PCI_ANY_ID, PCI_ANY_ID, 0, 0,
 		I82975X

@@ -38,18 +38,27 @@ kvm-e500-objs := \
 	e500_emulate.o
 kvm-objs-$(CONFIG_KVM_E500) := $(kvm-e500-objs)
 
+<<<<<<< HEAD
 kvm-book3s_64-objs-$(CONFIG_KVM_BOOK3S_64_PR) := \
 	../../../virt/kvm/coalesced_mmio.o \
 	fpu.o \
 	book3s_paired_singles.o \
 	book3s_pr.o \
 	book3s_pr_papr.o \
+=======
+kvm-book3s_64-objs := \
+	$(common-objs-y) \
+	fpu.o \
+	book3s_paired_singles.o \
+	book3s.o \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	book3s_emulate.o \
 	book3s_interrupts.o \
 	book3s_mmu_hpte.o \
 	book3s_64_mmu_host.o \
 	book3s_64_mmu.o \
 	book3s_32_mmu.o
+<<<<<<< HEAD
 kvm-book3s_64-builtin-objs-$(CONFIG_KVM_BOOK3S_64_PR) := \
 	book3s_rmhandlers.o
 
@@ -71,13 +80,19 @@ kvm-book3s_64-module-objs := \
 	$(kvm-book3s_64-objs-y)
 
 kvm-objs-$(CONFIG_KVM_BOOK3S_64) := $(kvm-book3s_64-module-objs)
+=======
+kvm-objs-$(CONFIG_KVM_BOOK3S_64) := $(kvm-book3s_64-objs)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 kvm-book3s_32-objs := \
 	$(common-objs-y) \
 	fpu.o \
 	book3s_paired_singles.o \
 	book3s.o \
+<<<<<<< HEAD
 	book3s_pr.o \
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	book3s_emulate.o \
 	book3s_interrupts.o \
 	book3s_mmu_hpte.o \
@@ -92,4 +107,7 @@ obj-$(CONFIG_KVM_E500) += kvm.o
 obj-$(CONFIG_KVM_BOOK3S_64) += kvm.o
 obj-$(CONFIG_KVM_BOOK3S_32) += kvm.o
 
+<<<<<<< HEAD
 obj-y += $(kvm-book3s_64-builtin-objs-y)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

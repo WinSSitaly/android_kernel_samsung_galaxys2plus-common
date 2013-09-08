@@ -13,7 +13,10 @@
  */
 
 #include <linux/bitrev.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "rc-core-priv.h"
 
 #define NEC_NBITS		32
@@ -194,8 +197,13 @@ static int ir_nec_decode(struct rc_dev *dev, struct ir_raw_event ev)
 		return 0;
 	}
 
+<<<<<<< HEAD
 	IR_dprintk(1, "NEC decode failed at count %d state %d (%uus %s)\n",
 		   data->count, data->state, TO_US(ev.duration), TO_STR(ev.pulse));
+=======
+	IR_dprintk(1, "NEC decode failed at state %d (%uus %s)\n",
+		   data->state, TO_US(ev.duration), TO_STR(ev.pulse));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	data->state = STATE_INACTIVE;
 	return -EINVAL;
 }

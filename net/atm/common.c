@@ -23,7 +23,11 @@
 #include <linux/uaccess.h>
 #include <linux/poll.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "resources.h"		/* atm_find_dev */
 #include "common.h"		/* prototypes */
@@ -214,6 +218,7 @@ void vcc_release_async(struct atm_vcc *vcc, int reply)
 }
 EXPORT_SYMBOL(vcc_release_async);
 
+<<<<<<< HEAD
 void vcc_process_recv_queue(struct atm_vcc *vcc)
 {
 	struct sk_buff_head queue, *rq;
@@ -234,6 +239,8 @@ void vcc_process_recv_queue(struct atm_vcc *vcc)
 }
 EXPORT_SYMBOL(vcc_process_recv_queue);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void atm_dev_signal_change(struct atm_dev *dev, char signal)
 {
 	pr_debug("%s signal=%d dev=%p number=%d dev->signal=%d\n",
@@ -520,6 +527,7 @@ int vcc_recvmsg(struct kiocb *iocb, struct socket *sock, struct msghdr *msg,
 	struct sk_buff *skb;
 	int copied, error = -EINVAL;
 
+<<<<<<< HEAD
 	msg->msg_namelen = 0;
 
 	if (sock->state != SS_CONNECTED)
@@ -529,6 +537,12 @@ int vcc_recvmsg(struct kiocb *iocb, struct socket *sock, struct msghdr *msg,
 	if (flags & ~(MSG_DONTWAIT | MSG_PEEK))
 		return -EOPNOTSUPP;
 
+=======
+	if (sock->state != SS_CONNECTED)
+		return -ENOTCONN;
+	if (flags & ~MSG_DONTWAIT)		/* only handle MSG_DONTWAIT */
+		return -EOPNOTSUPP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vcc = ATM_SD(sock);
 	if (test_bit(ATM_VF_RELEASED, &vcc->flags) ||
 	    test_bit(ATM_VF_CLOSE, &vcc->flags) ||
@@ -549,6 +563,7 @@ int vcc_recvmsg(struct kiocb *iocb, struct socket *sock, struct msghdr *msg,
 	if (error)
 		return error;
 	sock_recv_ts_and_drops(msg, sk, skb);
+<<<<<<< HEAD
 
 	if (!(flags & MSG_PEEK)) {
 		pr_debug("%d -= %d\n", atomic_read(&sk->sk_rmem_alloc),
@@ -556,6 +571,10 @@ int vcc_recvmsg(struct kiocb *iocb, struct socket *sock, struct msghdr *msg,
 		atm_return(vcc, skb->truesize);
 	}
 
+=======
+	pr_debug("%d -= %d\n", atomic_read(&sk->sk_rmem_alloc), skb->truesize);
+	atm_return(vcc, skb->truesize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skb_free_datagram(sk, skb);
 	return copied;
 }
@@ -814,7 +833,10 @@ int vcc_getsockopt(struct socket *sock, int level, int optname,
 
 		if (!vcc->dev || !test_bit(ATM_VF_ADDR, &vcc->flags))
 			return -ENOTCONN;
+<<<<<<< HEAD
 		memset(&pvc, 0, sizeof(pvc));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pvc.sap_family = AF_ATMPVC;
 		pvc.sap_addr.itf = vcc->dev->number;
 		pvc.sap_addr.vpi = vcc->vpi;

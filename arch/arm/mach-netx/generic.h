@@ -19,7 +19,10 @@
 
 extern void __init netx_map_io(void);
 extern void __init netx_init_irq(void);
+<<<<<<< HEAD
 extern void netx_restart(char, const char *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct sys_timer;
 extern struct sys_timer netx_timer;

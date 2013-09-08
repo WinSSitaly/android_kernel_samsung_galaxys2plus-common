@@ -26,7 +26,10 @@
 #include <linux/list.h>
 #include <linux/sort.h>
 #include <linux/string.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <media/v4l2-int-device.h>
 

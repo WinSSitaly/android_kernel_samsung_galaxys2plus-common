@@ -4,7 +4,11 @@
  * but are connected to the PCI bus by a PLX9052.
  *
  * Current maintainers are:
+<<<<<<< HEAD
  *	Pavel Roskin <proski AT gnu.org>
+=======
+ * 	Pavel Roskin <proski AT gnu.org>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * and	David Gibson <hermes AT gibson.dropbear.id.au>
  *
  * (C) Copyright David Gibson, IBM Corp. 2001-2003.
@@ -102,14 +106,22 @@
 #define PLX_RESET_TIME	(500)	/* milliseconds */
 
 #define PLX_INTCSR		0x4c /* Interrupt Control & Status Register */
+<<<<<<< HEAD
 #define PLX_INTCSR_INTEN	(1 << 6) /* Interrupt Enable bit */
+=======
+#define PLX_INTCSR_INTEN	(1<<6) /* Interrupt Enable bit */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Do a soft reset of the card using the Configuration Option Register
  */
 static int orinoco_plx_cor_reset(struct orinoco_private *priv)
 {
+<<<<<<< HEAD
 	struct hermes *hw = &priv->hw;
+=======
+	hermes_t *hw = &priv->hw;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct orinoco_pci_card *card = priv->card;
 	unsigned long timeout;
 	u16 reg;

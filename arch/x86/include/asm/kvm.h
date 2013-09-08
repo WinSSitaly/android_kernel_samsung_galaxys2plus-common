@@ -321,8 +321,11 @@ struct kvm_xcrs {
 	__u64 padding[16];
 };
 
+<<<<<<< HEAD
 /* definition of registers in kvm_run */
 struct kvm_sync_regs {
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _ASM_X86_KVM_H */

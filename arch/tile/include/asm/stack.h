@@ -25,6 +25,10 @@
 struct KBacktraceIterator {
 	BacktraceIterator it;
 	struct task_struct *task;     /* task we are backtracing */
+<<<<<<< HEAD
+=======
+	pte_t *pgtable;		      /* page table for user space access */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int end;		      /* iteration complete. */
 	int new_context;              /* new context is starting */
 	int profile;                  /* profiling, so stop on async intrpt */

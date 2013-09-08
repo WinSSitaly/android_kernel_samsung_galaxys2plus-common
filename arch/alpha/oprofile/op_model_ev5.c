@@ -11,6 +11,10 @@
 #include <linux/init.h>
 #include <linux/smp.h>
 #include <asm/ptrace.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "op_impl.h"
 

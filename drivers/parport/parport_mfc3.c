@@ -397,7 +397,11 @@ static void __exit parport_mfc3_exit(void)
 
 
 MODULE_AUTHOR("Joerg Dorchain <joerg@dorchain.net>");
+<<<<<<< HEAD
 MODULE_DESCRIPTION("Parport Driver for Multiface 3 expansion cards Parallel Port");
+=======
+MODULE_DESCRIPTION("Parport Driver for Multiface 3 expansion cards Paralllel Port");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_SUPPORTED_DEVICE("Multiface 3 Parallel Port");
 MODULE_LICENSE("GPL");
 

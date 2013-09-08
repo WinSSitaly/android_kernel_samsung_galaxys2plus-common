@@ -13,6 +13,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/kernel.h>
@@ -39,6 +51,15 @@
 #define NCM_NDP_HDR_CRC		0x01000000
 #define NCM_NDP_HDR_NOCRC	0x00000000
 
+<<<<<<< HEAD
+=======
+struct ncm_ep_descs {
+	struct usb_endpoint_descriptor	*in;
+	struct usb_endpoint_descriptor	*out;
+	struct usb_endpoint_descriptor	*notify;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum ncm_notify_state {
 	NCM_NOTIFY_NONE,		/* don't notify */
 	NCM_NOTIFY_CONNECT,		/* issue CONNECT next */
@@ -51,7 +72,15 @@ struct f_ncm {
 
 	char				ethaddr[14];
 
+<<<<<<< HEAD
 	struct usb_ep			*notify;
+=======
+	struct ncm_ep_descs		fs;
+	struct ncm_ep_descs		hs;
+
+	struct usb_ep			*notify;
+	struct usb_endpoint_descriptor	*notify_desc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct usb_request		*notify_req;
 	u8				notify_state;
 	bool				is_open;
@@ -124,7 +153,11 @@ static struct usb_cdc_ncm_ntb_parameters ntb_parameters = {
 #define LOG2_STATUS_INTERVAL_MSEC	5	/* 1 << 5 == 32 msec */
 #define NCM_STATUS_BYTECOUNT		16	/* 8 byte header + data */
 
+<<<<<<< HEAD
 static struct usb_interface_assoc_descriptor ncm_iad_desc __initdata = {
+=======
+static struct usb_interface_assoc_descriptor ncm_iad_desc = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bLength =		sizeof ncm_iad_desc,
 	.bDescriptorType =	USB_DT_INTERFACE_ASSOCIATION,
 
@@ -138,7 +171,11 @@ static struct usb_interface_assoc_descriptor ncm_iad_desc __initdata = {
 
 /* interface descriptor: */
 
+<<<<<<< HEAD
 static struct usb_interface_descriptor ncm_control_intf __initdata = {
+=======
+static struct usb_interface_descriptor ncm_control_intf = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bLength =		sizeof ncm_control_intf,
 	.bDescriptorType =	USB_DT_INTERFACE,
 
@@ -150,7 +187,11 @@ static struct usb_interface_descriptor ncm_control_intf __initdata = {
 	/* .iInterface = DYNAMIC */
 };
 
+<<<<<<< HEAD
 static struct usb_cdc_header_desc ncm_header_desc __initdata = {
+=======
+static struct usb_cdc_header_desc ncm_header_desc = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bLength =		sizeof ncm_header_desc,
 	.bDescriptorType =	USB_DT_CS_INTERFACE,
 	.bDescriptorSubType =	USB_CDC_HEADER_TYPE,
@@ -158,7 +199,11 @@ static struct usb_cdc_header_desc ncm_header_desc __initdata = {
 	.bcdCDC =		cpu_to_le16(0x0110),
 };
 
+<<<<<<< HEAD
 static struct usb_cdc_union_desc ncm_union_desc __initdata = {
+=======
+static struct usb_cdc_union_desc ncm_union_desc = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bLength =		sizeof(ncm_union_desc),
 	.bDescriptorType =	USB_DT_CS_INTERFACE,
 	.bDescriptorSubType =	USB_CDC_UNION_TYPE,
@@ -166,7 +211,11 @@ static struct usb_cdc_union_desc ncm_union_desc __initdata = {
 	/* .bSlaveInterface0 =	DYNAMIC */
 };
 
+<<<<<<< HEAD
 static struct usb_cdc_ether_desc ecm_desc __initdata = {
+=======
+static struct usb_cdc_ether_desc ecm_desc = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bLength =		sizeof ecm_desc,
 	.bDescriptorType =	USB_DT_CS_INTERFACE,
 	.bDescriptorSubType =	USB_CDC_ETHERNET_TYPE,
@@ -181,7 +230,11 @@ static struct usb_cdc_ether_desc ecm_desc __initdata = {
 
 #define NCAPS	(USB_CDC_NCM_NCAP_ETH_FILTER | USB_CDC_NCM_NCAP_CRC_MODE)
 
+<<<<<<< HEAD
 static struct usb_cdc_ncm_desc ncm_desc __initdata = {
+=======
+static struct usb_cdc_ncm_desc ncm_desc = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bLength =		sizeof ncm_desc,
 	.bDescriptorType =	USB_DT_CS_INTERFACE,
 	.bDescriptorSubType =	USB_CDC_NCM_TYPE,
@@ -193,7 +246,11 @@ static struct usb_cdc_ncm_desc ncm_desc __initdata = {
 
 /* the default data interface has no endpoints ... */
 
+<<<<<<< HEAD
 static struct usb_interface_descriptor ncm_data_nop_intf __initdata = {
+=======
+static struct usb_interface_descriptor ncm_data_nop_intf = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bLength =		sizeof ncm_data_nop_intf,
 	.bDescriptorType =	USB_DT_INTERFACE,
 
@@ -208,7 +265,11 @@ static struct usb_interface_descriptor ncm_data_nop_intf __initdata = {
 
 /* ... but the "real" data interface has two bulk endpoints */
 
+<<<<<<< HEAD
 static struct usb_interface_descriptor ncm_data_intf __initdata = {
+=======
+static struct usb_interface_descriptor ncm_data_intf = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bLength =		sizeof ncm_data_intf,
 	.bDescriptorType =	USB_DT_INTERFACE,
 
@@ -223,7 +284,11 @@ static struct usb_interface_descriptor ncm_data_intf __initdata = {
 
 /* full speed support: */
 
+<<<<<<< HEAD
 static struct usb_endpoint_descriptor fs_ncm_notify_desc __initdata = {
+=======
+static struct usb_endpoint_descriptor fs_ncm_notify_desc = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bLength =		USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType =	USB_DT_ENDPOINT,
 
@@ -233,7 +298,11 @@ static struct usb_endpoint_descriptor fs_ncm_notify_desc __initdata = {
 	.bInterval =		1 << LOG2_STATUS_INTERVAL_MSEC,
 };
 
+<<<<<<< HEAD
 static struct usb_endpoint_descriptor fs_ncm_in_desc __initdata = {
+=======
+static struct usb_endpoint_descriptor fs_ncm_in_desc = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bLength =		USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType =	USB_DT_ENDPOINT,
 
@@ -241,7 +310,11 @@ static struct usb_endpoint_descriptor fs_ncm_in_desc __initdata = {
 	.bmAttributes =		USB_ENDPOINT_XFER_BULK,
 };
 
+<<<<<<< HEAD
 static struct usb_endpoint_descriptor fs_ncm_out_desc __initdata = {
+=======
+static struct usb_endpoint_descriptor fs_ncm_out_desc = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bLength =		USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType =	USB_DT_ENDPOINT,
 
@@ -249,7 +322,11 @@ static struct usb_endpoint_descriptor fs_ncm_out_desc __initdata = {
 	.bmAttributes =		USB_ENDPOINT_XFER_BULK,
 };
 
+<<<<<<< HEAD
 static struct usb_descriptor_header *ncm_fs_function[] __initdata = {
+=======
+static struct usb_descriptor_header *ncm_fs_function[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	(struct usb_descriptor_header *) &ncm_iad_desc,
 	/* CDC NCM control descriptors */
 	(struct usb_descriptor_header *) &ncm_control_intf,
@@ -268,7 +345,11 @@ static struct usb_descriptor_header *ncm_fs_function[] __initdata = {
 
 /* high speed support: */
 
+<<<<<<< HEAD
 static struct usb_endpoint_descriptor hs_ncm_notify_desc __initdata = {
+=======
+static struct usb_endpoint_descriptor hs_ncm_notify_desc = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bLength =		USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType =	USB_DT_ENDPOINT,
 
@@ -277,7 +358,11 @@ static struct usb_endpoint_descriptor hs_ncm_notify_desc __initdata = {
 	.wMaxPacketSize =	cpu_to_le16(NCM_STATUS_BYTECOUNT),
 	.bInterval =		LOG2_STATUS_INTERVAL_MSEC + 4,
 };
+<<<<<<< HEAD
 static struct usb_endpoint_descriptor hs_ncm_in_desc __initdata = {
+=======
+static struct usb_endpoint_descriptor hs_ncm_in_desc = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bLength =		USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType =	USB_DT_ENDPOINT,
 
@@ -286,7 +371,11 @@ static struct usb_endpoint_descriptor hs_ncm_in_desc __initdata = {
 	.wMaxPacketSize =	cpu_to_le16(512),
 };
 
+<<<<<<< HEAD
 static struct usb_endpoint_descriptor hs_ncm_out_desc __initdata = {
+=======
+static struct usb_endpoint_descriptor hs_ncm_out_desc = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bLength =		USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType =	USB_DT_ENDPOINT,
 
@@ -295,7 +384,11 @@ static struct usb_endpoint_descriptor hs_ncm_out_desc __initdata = {
 	.wMaxPacketSize =	cpu_to_le16(512),
 };
 
+<<<<<<< HEAD
 static struct usb_descriptor_header *ncm_hs_function[] __initdata = {
+=======
+static struct usb_descriptor_header *ncm_hs_function[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	(struct usb_descriptor_header *) &ncm_iad_desc,
 	/* CDC NCM control descriptors */
 	(struct usb_descriptor_header *) &ncm_control_intf,
@@ -783,6 +876,7 @@ static int ncm_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
 		if (ncm->notify->driver_data) {
 			DBG(cdev, "reset ncm control %d\n", intf);
 			usb_ep_disable(ncm->notify);
+<<<<<<< HEAD
 		}
 
 		if (!(ncm->notify->desc)) {
@@ -791,6 +885,15 @@ static int ncm_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
 				goto fail;
 		}
 		usb_ep_enable(ncm->notify);
+=======
+		} else {
+			DBG(cdev, "init ncm ctrl %d\n", intf);
+			ncm->notify_desc = ep_choose(cdev->gadget,
+					ncm->hs.notify,
+					ncm->fs.notify);
+		}
+		usb_ep_enable(ncm->notify, ncm->notify_desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ncm->notify->driver_data = ncm;
 
 	/* Data interface has two altsettings, 0 and 1 */
@@ -811,6 +914,7 @@ static int ncm_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
 		if (alt == 1) {
 			struct net_device	*net;
 
+<<<<<<< HEAD
 			if (!ncm->port.in_ep->desc ||
 			    !ncm->port.out_ep->desc) {
 				DBG(cdev, "init ncm\n");
@@ -822,6 +926,16 @@ static int ncm_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
 					ncm->port.out_ep->desc = NULL;
 					goto fail;
 				}
+=======
+			if (!ncm->port.in) {
+				DBG(cdev, "init ncm\n");
+				ncm->port.in = ep_choose(cdev->gadget,
+							 ncm->hs.in,
+							 ncm->fs.in);
+				ncm->port.out = ep_choose(cdev->gadget,
+							  ncm->hs.out,
+							  ncm->fs.out);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 
 			/* TODO */
@@ -1096,7 +1210,11 @@ static void ncm_disable(struct usb_function *f)
 	if (ncm->notify->driver_data) {
 		usb_ep_disable(ncm->notify);
 		ncm->notify->driver_data = NULL;
+<<<<<<< HEAD
 		ncm->notify->desc = NULL;
+=======
+		ncm->notify_desc = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1148,7 +1266,11 @@ static void ncm_close(struct gether *geth)
 
 /* ethernet function driver setup/binding */
 
+<<<<<<< HEAD
 static int __init
+=======
+static int
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ncm_bind(struct usb_configuration *c, struct usb_function *f)
 {
 	struct usb_composite_dev *cdev = c->cdev;
@@ -1213,6 +1335,16 @@ ncm_bind(struct usb_configuration *c, struct usb_function *f)
 	if (!f->descriptors)
 		goto fail;
 
+<<<<<<< HEAD
+=======
+	ncm->fs.in = usb_find_endpoint(ncm_fs_function,
+			f->descriptors, &fs_ncm_in_desc);
+	ncm->fs.out = usb_find_endpoint(ncm_fs_function,
+			f->descriptors, &fs_ncm_out_desc);
+	ncm->fs.notify = usb_find_endpoint(ncm_fs_function,
+			f->descriptors, &fs_ncm_notify_desc);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * support all relevant hardware speeds... we expect that when
 	 * hardware is dual speed, all bulk-capable endpoints work at
@@ -1230,6 +1362,16 @@ ncm_bind(struct usb_configuration *c, struct usb_function *f)
 		f->hs_descriptors = usb_copy_descriptors(ncm_hs_function);
 		if (!f->hs_descriptors)
 			goto fail;
+<<<<<<< HEAD
+=======
+
+		ncm->hs.in = usb_find_endpoint(ncm_hs_function,
+				f->hs_descriptors, &hs_ncm_in_desc);
+		ncm->hs.out = usb_find_endpoint(ncm_hs_function,
+				f->hs_descriptors, &hs_ncm_out_desc);
+		ncm->hs.notify = usb_find_endpoint(ncm_hs_function,
+				f->hs_descriptors, &hs_ncm_notify_desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -1259,9 +1401,15 @@ fail:
 	/* we might as well release our claims on endpoints */
 	if (ncm->notify)
 		ncm->notify->driver_data = NULL;
+<<<<<<< HEAD
 	if (ncm->port.out_ep)
 		ncm->port.out_ep->driver_data = NULL;
 	if (ncm->port.in_ep)
+=======
+	if (ncm->port.out)
+		ncm->port.out_ep->driver_data = NULL;
+	if (ncm->port.in)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ncm->port.in_ep->driver_data = NULL;
 
 	ERROR(cdev, "%s: can't bind, err %d\n", f->name, status);
@@ -1287,6 +1435,23 @@ ncm_unbind(struct usb_configuration *c, struct usb_function *f)
 	kfree(ncm);
 }
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_ETH_SKB_ALLOC_OPTIMIZATION
+/**
+ * ncm_ntb_out_size - set the max ntb out size for uplink.
+ *
+ */
+void ncm_ntb_out_size(u32 ntb_out_size)
+{
+	if (ntb_out_size)
+		ntb_parameters.dwNtbOutMaxSize = ntb_out_size;
+	pr_info("ntb_parameters.dwNtbOutMaxSize = %d\n",
+		ntb_parameters.dwNtbOutMaxSize);
+}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * ncm_bind_config - add CDC Network link to a configuration
  * @c: the configuration to support the network link
@@ -1299,7 +1464,11 @@ ncm_unbind(struct usb_configuration *c, struct usb_function *f)
  * Caller must have called @gether_setup().  Caller is also responsible
  * for calling @gether_cleanup() before module unload.
  */
+<<<<<<< HEAD
 int __init ncm_bind_config(struct usb_configuration *c, u8 ethaddr[ETH_ALEN])
+=======
+int ncm_bind_config(struct usb_configuration *c, u8 ethaddr[ETH_ALEN])
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct f_ncm	*ncm;
 	int		status;

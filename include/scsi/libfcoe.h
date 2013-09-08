@@ -147,7 +147,10 @@ struct fcoe_ctlr {
 	u8 map_dest;
 	u8 spma;
 	u8 probe_tries;
+<<<<<<< HEAD
 	u8 priority;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 dest_addr[ETH_ALEN];
 	u8 ctl_src_addr[ETH_ALEN];
 
@@ -165,8 +168,12 @@ struct fcoe_ctlr {
  * @switch_name: WWN of switch from advertisement
  * @fabric_name: WWN of fabric from advertisement
  * @fc_map:	 FC_MAP value from advertisement
+<<<<<<< HEAD
  * @fcf_mac:	 Ethernet address of the FCF for FIP traffic
  * @fcoe_mac:	 Ethernet address of the FCF for FCoE traffic
+=======
+ * @fcf_mac:	 Ethernet address of the FCF
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @vfid:	 virtual fabric ID
  * @pri:	 selection priority, smaller values are better
  * @flogi_sent:	 current FLOGI sent to this FCF
@@ -189,7 +196,10 @@ struct fcoe_fcf {
 	u32 fc_map;
 	u16 vfid;
 	u8 fcf_mac[ETH_ALEN];
+<<<<<<< HEAD
 	u8 fcoe_mac[ETH_ALEN];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	u8 pri;
 	u8 flogi_sent;
@@ -232,11 +242,14 @@ int fcoe_libfc_config(struct fc_lport *, struct fcoe_ctlr *,
 		      const struct libfc_function_template *, int init_fcp);
 u32 fcoe_fc_crc(struct fc_frame *fp);
 int fcoe_start_io(struct sk_buff *skb);
+<<<<<<< HEAD
 int fcoe_get_wwn(struct net_device *netdev, u64 *wwn, int type);
 void __fcoe_get_lesb(struct fc_lport *lport, struct fc_els_lesb *fc_lesb,
 		     struct net_device *netdev);
 void fcoe_wwn_to_str(u64 wwn, char *buf, int len);
 int fcoe_validate_vport_create(struct fc_vport *vport);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * is_fip_mode() - returns true if FIP mode selected.
@@ -304,7 +317,10 @@ struct fcoe_percpu_s {
  * @lport:		       The associated local port
  * @fcoe_pending_queue:	       The pending Rx queue of skbs
  * @fcoe_pending_queue_active: Indicates if the pending queue is active
+<<<<<<< HEAD
  * @priority:		       Packet priority (DCB)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @max_queue_depth:	       Max queue depth of pending queue
  * @min_queue_depth:	       Min queue depth of pending queue
  * @timer:		       The queue timer
@@ -320,7 +336,10 @@ struct fcoe_port {
 	struct fc_lport	      *lport;
 	struct sk_buff_head   fcoe_pending_queue;
 	u8		      fcoe_pending_queue_active;
+<<<<<<< HEAD
 	u8		      priority;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32		      max_queue_depth;
 	u32		      min_queue_depth;
 	struct timer_list     timer;

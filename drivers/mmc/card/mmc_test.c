@@ -22,7 +22,10 @@
 #include <linux/debugfs.h>
 #include <linux/uaccess.h>
 #include <linux/seq_file.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define RESULT_OK		0
 #define RESULT_FAIL		1
@@ -149,6 +152,7 @@ struct mmc_test_card {
 	struct mmc_test_general_result	*gr;
 };
 
+<<<<<<< HEAD
 enum mmc_test_prep_media {
 	MMC_TEST_PREP_NONE = 0,
 	MMC_TEST_PREP_WRITE_FULL = 1 << 0,
@@ -170,6 +174,8 @@ struct mmc_test_async_req {
 	struct mmc_test_card *test;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*******************************************************************/
 /*  General helper functions                                       */
 /*******************************************************************/
@@ -225,7 +231,11 @@ static void mmc_test_prepare_mrq(struct mmc_test_card *test,
 static int mmc_test_busy(struct mmc_command *cmd)
 {
 	return !(cmd->resp[0] & R1_READY_FOR_DATA) ||
+<<<<<<< HEAD
 		(R1_CURRENT_STATE(cmd->resp[0]) == R1_STATE_PRG);
+=======
+		(R1_CURRENT_STATE(cmd->resp[0]) == 7);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -251,7 +261,11 @@ static int mmc_test_wait_busy(struct mmc_test_card *test)
 		if (!busy && mmc_test_busy(&cmd)) {
 			busy = 1;
 			if (test->card->host->caps & MMC_CAP_WAIT_WHILE_BUSY)
+<<<<<<< HEAD
 				pr_info("%s: Warning: Host did not "
+=======
+				printk(KERN_INFO "%s: Warning: Host did not "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"wait for busy state to end.\n",
 					mmc_hostname(test->card->host));
 		}
@@ -389,6 +403,7 @@ out_free:
  * Map memory into a scatterlist.  Optionally allow the same memory to be
  * mapped more than once.
  */
+<<<<<<< HEAD
 static int mmc_test_map_sg(struct mmc_test_mem *mem, unsigned long size,
 			   struct scatterlist *sglist, int repeat,
 			   unsigned int max_segs, unsigned int max_seg_sz,
@@ -401,14 +416,28 @@ static int mmc_test_map_sg(struct mmc_test_mem *mem, unsigned long size,
 	sg_init_table(sglist, max_segs);
 	if (min_sg_len > max_segs)
 		min_sg_len = max_segs;
+=======
+static int mmc_test_map_sg(struct mmc_test_mem *mem, unsigned long sz,
+			   struct scatterlist *sglist, int repeat,
+			   unsigned int max_segs, unsigned int max_seg_sz,
+			   unsigned int *sg_len)
+{
+	struct scatterlist *sg = NULL;
+	unsigned int i;
+
+	sg_init_table(sglist, max_segs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	*sg_len = 0;
 	do {
 		for (i = 0; i < mem->cnt; i++) {
 			unsigned long len = PAGE_SIZE << mem->arr[i].order;
 
+<<<<<<< HEAD
 			if (min_sg_len && (size / min_sg_len < len))
 				len = ALIGN(size / min_sg_len, 512);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (len > sz)
 				len = sz;
 			if (len > max_seg_sz)
@@ -553,7 +582,11 @@ static void mmc_test_print_rate(struct mmc_test_card *test, uint64_t bytes,
 	rate = mmc_test_rate(bytes, &ts);
 	iops = mmc_test_rate(100, &ts); /* I/O ops per sec x 100 */
 
+<<<<<<< HEAD
 	pr_info("%s: Transfer of %u sectors (%u%s KiB) took %lu.%09lu "
+=======
+	printk(KERN_INFO "%s: Transfer of %u sectors (%u%s KiB) took %lu.%09lu "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 "seconds (%u kB/s, %u KiB/s, %u.%02u IOPS)\n",
 			 mmc_hostname(test->card->host), sectors, sectors >> 1,
 			 (sectors & 1 ? ".5" : ""), (unsigned long)ts.tv_sec,
@@ -579,6 +612,7 @@ static void mmc_test_print_avg_rate(struct mmc_test_card *test, uint64_t bytes,
 	rate = mmc_test_rate(tot, &ts);
 	iops = mmc_test_rate(count * 100, &ts); /* I/O ops per sec x 100 */
 
+<<<<<<< HEAD
 	pr_info("%s: Transfer of %u x %u sectors (%u x %u%s KiB) took "
 			 "%lu.%09lu seconds (%u kB/s, %u KiB/s, "
 			 "%u.%02u IOPS, sg_len %d)\n",
@@ -587,6 +621,15 @@ static void mmc_test_print_avg_rate(struct mmc_test_card *test, uint64_t bytes,
 			 (unsigned long)ts.tv_sec, (unsigned long)ts.tv_nsec,
 			 rate / 1000, rate / 1024, iops / 100, iops % 100,
 			 test->area.sg_len);
+=======
+	printk(KERN_INFO "%s: Transfer of %u x %u sectors (%u x %u%s KiB) took "
+			 "%lu.%09lu seconds (%u kB/s, %u KiB/s, "
+			 "%u.%02u IOPS)\n",
+			 mmc_hostname(test->card->host), count, sectors, count,
+			 sectors >> 1, (sectors & 1 ? ".5" : ""),
+			 (unsigned long)ts.tv_sec, (unsigned long)ts.tv_nsec,
+			 rate / 1000, rate / 1024, iops / 100, iops % 100);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mmc_test_save_transfer_result(test, count, sectors, ts, rate, iops);
 }
@@ -689,7 +732,11 @@ static void mmc_test_prepare_broken_mrq(struct mmc_test_card *test,
  * Checks that a normal transfer didn't have any errors
  */
 static int mmc_test_check_result(struct mmc_test_card *test,
+<<<<<<< HEAD
 				 struct mmc_request *mrq)
+=======
+	struct mmc_request *mrq)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 
@@ -713,6 +760,7 @@ static int mmc_test_check_result(struct mmc_test_card *test,
 	return ret;
 }
 
+<<<<<<< HEAD
 static int mmc_test_check_result_async(struct mmc_card *card,
 				       struct mmc_async_req *areq)
 {
@@ -724,6 +772,8 @@ static int mmc_test_check_result_async(struct mmc_card *card,
 	return mmc_test_check_result(test_async->test, areq->mrq);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Checks that a "short transfer" behaved as expected
  */
@@ -759,6 +809,7 @@ static int mmc_test_check_broken_result(struct mmc_test_card *test,
 }
 
 /*
+<<<<<<< HEAD
  * Tests nonblock transfer with certain parameters
  */
 static void mmc_test_nonblock_reset(struct mmc_request *mrq,
@@ -838,6 +889,8 @@ err:
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Tests a basic transfer with certain parameters
  */
 static int mmc_test_simple_transfer(struct mmc_test_card *test,
@@ -1409,7 +1462,11 @@ static int mmc_test_multi_read_high(struct mmc_test_card *test)
 
 static int mmc_test_no_highmem(struct mmc_test_card *test)
 {
+<<<<<<< HEAD
 	pr_info("%s: Highmem not configured - test skipped\n",
+=======
+	printk(KERN_INFO "%s: Highmem not configured - test skipped\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       mmc_hostname(test->card->host));
 	return 0;
 }
@@ -1420,7 +1477,11 @@ static int mmc_test_no_highmem(struct mmc_test_card *test)
  * Map sz bytes so that it can be transferred.
  */
 static int mmc_test_area_map(struct mmc_test_card *test, unsigned long sz,
+<<<<<<< HEAD
 			     int max_scatter, int min_sg_len)
+=======
+			     int max_scatter)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct mmc_test_area *t = &test->area;
 	int err;
@@ -1433,10 +1494,17 @@ static int mmc_test_area_map(struct mmc_test_card *test, unsigned long sz,
 				       &t->sg_len);
 	} else {
 		err = mmc_test_map_sg(t->mem, sz, t->sg, 1, t->max_segs,
+<<<<<<< HEAD
 				      t->max_seg_sz, &t->sg_len, min_sg_len);
 	}
 	if (err)
 		pr_info("%s: Failed to map sg list\n",
+=======
+				      t->max_seg_sz, &t->sg_len);
+	}
+	if (err)
+		printk(KERN_INFO "%s: Failed to map sg list\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       mmc_hostname(test->card->host));
 	return err;
 }
@@ -1454,6 +1522,7 @@ static int mmc_test_area_transfer(struct mmc_test_card *test,
 }
 
 /*
+<<<<<<< HEAD
  * Map and transfer bytes for multiple transfers.
  */
 static int mmc_test_area_io_seq(struct mmc_test_card *test, unsigned long sz,
@@ -1465,6 +1534,16 @@ static int mmc_test_area_io_seq(struct mmc_test_card *test, unsigned long sz,
 	int ret = 0;
 	int i;
 	struct mmc_test_area *t = &test->area;
+=======
+ * Map and transfer bytes.
+ */
+static int mmc_test_area_io(struct mmc_test_card *test, unsigned long sz,
+			    unsigned int dev_addr, int write, int max_scatter,
+			    int timed)
+{
+	struct timespec ts1, ts2;
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * In the case of a maximally scattered transfer, the maximum transfer
@@ -1482,12 +1561,17 @@ static int mmc_test_area_io_seq(struct mmc_test_card *test, unsigned long sz,
 			sz = max_tfr;
 	}
 
+<<<<<<< HEAD
 	ret = mmc_test_area_map(test, sz, max_scatter, min_sg_len);
+=======
+	ret = mmc_test_area_map(test, sz, max_scatter);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
 	if (timed)
 		getnstimeofday(&ts1);
+<<<<<<< HEAD
 	if (nonblock)
 		ret = mmc_test_nonblock_transfer(test, t->sg, t->sg_len,
 				 dev_addr, t->blocks, 512, write, count);
@@ -1497,6 +1581,10 @@ static int mmc_test_area_io_seq(struct mmc_test_card *test, unsigned long sz,
 			dev_addr += sz >> 9;
 		}
 
+=======
+
+	ret = mmc_test_area_transfer(test, dev_addr, write);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -1504,11 +1592,16 @@ static int mmc_test_area_io_seq(struct mmc_test_card *test, unsigned long sz,
 		getnstimeofday(&ts2);
 
 	if (timed)
+<<<<<<< HEAD
 		mmc_test_print_avg_rate(test, sz, count, &ts1, &ts2);
+=======
+		mmc_test_print_rate(test, sz, &ts1, &ts2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int mmc_test_area_io(struct mmc_test_card *test, unsigned long sz,
 			    unsigned int dev_addr, int write, int max_scatter,
 			    int timed)
@@ -1517,6 +1610,8 @@ static int mmc_test_area_io(struct mmc_test_card *test, unsigned long sz,
 				    timed, 1, false, 0);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Write the test area entirely.
  */
@@ -1581,7 +1676,10 @@ static int mmc_test_area_init(struct mmc_test_card *test, int erase, int fill)
 
 	t->max_segs = test->card->host->max_segs;
 	t->max_seg_sz = test->card->host->max_seg_size;
+<<<<<<< HEAD
 	t->max_seg_sz -= t->max_seg_sz % 512;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	t->max_tfr = t->max_sz;
 	if (t->max_tfr >> 9 > test->card->host->max_blk_count)
@@ -2091,6 +2189,7 @@ static int mmc_test_large_seq_write_perf(struct mmc_test_card *test)
 	return mmc_test_large_seq_perf(test, 1);
 }
 
+<<<<<<< HEAD
 static int mmc_test_rw_multiple(struct mmc_test_card *test,
 				struct mmc_test_multiple_rw *tdata,
 				unsigned int reqsize, unsigned int size,
@@ -2355,6 +2454,8 @@ static int mmc_test_hw_reset(struct mmc_test_card *test)
 	return RESULT_UNSUP_HOST;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct mmc_test_case mmc_test_cases[] = {
 	{
 		.name = "Basic write (no data verification)",
@@ -2622,6 +2723,7 @@ static const struct mmc_test_case mmc_test_cases[] = {
 		.cleanup = mmc_test_area_cleanup,
 	},
 
+<<<<<<< HEAD
 	{
 		.name = "Write performance with blocking req 4k to 4MB",
 		.prepare = mmc_test_area_prepare,
@@ -2682,6 +2784,8 @@ static const struct mmc_test_case mmc_test_cases[] = {
 		.name = "eMMC hardware reset",
 		.run = mmc_test_hw_reset,
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static DEFINE_MUTEX(mmc_test_lock);
@@ -2692,7 +2796,11 @@ static void mmc_test_run(struct mmc_test_card *test, int testcase)
 {
 	int i, ret;
 
+<<<<<<< HEAD
 	pr_info("%s: Starting tests of card %s...\n",
+=======
+	printk(KERN_INFO "%s: Starting tests of card %s...\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mmc_hostname(test->card->host), mmc_card_id(test->card));
 
 	mmc_claim_host(test->card->host);
@@ -2703,14 +2811,22 @@ static void mmc_test_run(struct mmc_test_card *test, int testcase)
 		if (testcase && ((i + 1) != testcase))
 			continue;
 
+<<<<<<< HEAD
 		pr_info("%s: Test case %d. %s...\n",
+=======
+		printk(KERN_INFO "%s: Test case %d. %s...\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mmc_hostname(test->card->host), i + 1,
 			mmc_test_cases[i].name);
 
 		if (mmc_test_cases[i].prepare) {
 			ret = mmc_test_cases[i].prepare(test);
 			if (ret) {
+<<<<<<< HEAD
 				pr_info("%s: Result: Prepare "
+=======
+				printk(KERN_INFO "%s: Result: Prepare "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"stage failed! (%d)\n",
 					mmc_hostname(test->card->host),
 					ret);
@@ -2740,6 +2856,7 @@ static void mmc_test_run(struct mmc_test_card *test, int testcase)
 		ret = mmc_test_cases[i].run(test);
 		switch (ret) {
 		case RESULT_OK:
+<<<<<<< HEAD
 			pr_info("%s: Result: OK\n",
 				mmc_hostname(test->card->host));
 			break;
@@ -2749,16 +2866,35 @@ static void mmc_test_run(struct mmc_test_card *test, int testcase)
 			break;
 		case RESULT_UNSUP_HOST:
 			pr_info("%s: Result: UNSUPPORTED "
+=======
+			printk(KERN_INFO "%s: Result: OK\n",
+				mmc_hostname(test->card->host));
+			break;
+		case RESULT_FAIL:
+			printk(KERN_INFO "%s: Result: FAILED\n",
+				mmc_hostname(test->card->host));
+			break;
+		case RESULT_UNSUP_HOST:
+			printk(KERN_INFO "%s: Result: UNSUPPORTED "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"(by host)\n",
 				mmc_hostname(test->card->host));
 			break;
 		case RESULT_UNSUP_CARD:
+<<<<<<< HEAD
 			pr_info("%s: Result: UNSUPPORTED "
+=======
+			printk(KERN_INFO "%s: Result: UNSUPPORTED "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"(by card)\n",
 				mmc_hostname(test->card->host));
 			break;
 		default:
+<<<<<<< HEAD
 			pr_info("%s: Result: ERROR (%d)\n",
+=======
+			printk(KERN_INFO "%s: Result: ERROR (%d)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				mmc_hostname(test->card->host), ret);
 		}
 
@@ -2769,7 +2905,11 @@ static void mmc_test_run(struct mmc_test_card *test, int testcase)
 		if (mmc_test_cases[i].cleanup) {
 			ret = mmc_test_cases[i].cleanup(test);
 			if (ret) {
+<<<<<<< HEAD
 				pr_info("%s: Warning: Cleanup "
+=======
+				printk(KERN_INFO "%s: Warning: Cleanup "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"stage failed! (%d)\n",
 					mmc_hostname(test->card->host),
 					ret);
@@ -2779,7 +2919,11 @@ static void mmc_test_run(struct mmc_test_card *test, int testcase)
 
 	mmc_release_host(test->card->host);
 
+<<<<<<< HEAD
 	pr_info("%s: Tests completed.\n",
+=======
+	printk(KERN_INFO "%s: Tests completed.\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mmc_hostname(test->card->host));
 }
 
@@ -2906,6 +3050,7 @@ static const struct file_operations mmc_test_fops_test = {
 	.release	= single_release,
 };
 
+<<<<<<< HEAD
 static int mtf_testlist_show(struct seq_file *sf, void *data)
 {
 	int i;
@@ -2933,6 +3078,9 @@ static const struct file_operations mmc_test_fops_testlist = {
 };
 
 static void mmc_test_free_dbgfs_file(struct mmc_card *card)
+=======
+static void mmc_test_free_file_test(struct mmc_card *card)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct mmc_test_dbgfs_file *df, *dfs;
 
@@ -2949,6 +3097,7 @@ static void mmc_test_free_dbgfs_file(struct mmc_card *card)
 	mutex_unlock(&mmc_test_lock);
 }
 
+<<<<<<< HEAD
 static int __mmc_test_register_dbgfs_file(struct mmc_card *card,
 	const char *name, umode_t mode, const struct file_operations *fops)
 {
@@ -2964,6 +3113,25 @@ static int __mmc_test_register_dbgfs_file(struct mmc_card *card,
 			"Can't create %s. Perhaps debugfs is disabled.\n",
 			name);
 		return -ENODEV;
+=======
+static int mmc_test_register_file_test(struct mmc_card *card)
+{
+	struct dentry *file = NULL;
+	struct mmc_test_dbgfs_file *df;
+	int ret = 0;
+
+	mutex_lock(&mmc_test_lock);
+
+	if (card->debugfs_root)
+		file = debugfs_create_file("test", S_IWUSR | S_IRUGO,
+			card->debugfs_root, card, &mmc_test_fops_test);
+
+	if (IS_ERR_OR_NULL(file)) {
+		dev_err(&card->dev,
+			"Can't create file. Perhaps debugfs is disabled.\n");
+		ret = -ENODEV;
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	df = kmalloc(sizeof(struct mmc_test_dbgfs_file), GFP_KERNEL);
@@ -2971,13 +3139,19 @@ static int __mmc_test_register_dbgfs_file(struct mmc_card *card,
 		debugfs_remove(file);
 		dev_err(&card->dev,
 			"Can't allocate memory for internal usage.\n");
+<<<<<<< HEAD
 		return -ENOMEM;
+=======
+		ret = -ENOMEM;
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	df->card = card;
 	df->file = file;
 
 	list_add(&df->link, &mmc_test_file_test);
+<<<<<<< HEAD
 	return 0;
 }
 
@@ -2996,6 +3170,8 @@ static int mmc_test_register_dbgfs_file(struct mmc_card *card)
 		&mmc_test_fops_testlist);
 	if (ret)
 		goto err;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 err:
 	mutex_unlock(&mmc_test_lock);
@@ -3010,7 +3186,11 @@ static int mmc_test_probe(struct mmc_card *card)
 	if (!mmc_card_mmc(card) && !mmc_card_sd(card))
 		return -ENODEV;
 
+<<<<<<< HEAD
 	ret = mmc_test_register_dbgfs_file(card);
+=======
+	ret = mmc_test_register_file_test(card);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -3022,7 +3202,11 @@ static int mmc_test_probe(struct mmc_card *card)
 static void mmc_test_remove(struct mmc_card *card)
 {
 	mmc_test_free_result(card);
+<<<<<<< HEAD
 	mmc_test_free_dbgfs_file(card);
+=======
+	mmc_test_free_file_test(card);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct mmc_driver mmc_driver = {
@@ -3042,7 +3226,11 @@ static void __exit mmc_test_exit(void)
 {
 	/* Clear stalled data if card is still plugged */
 	mmc_test_free_result(NULL);
+<<<<<<< HEAD
 	mmc_test_free_dbgfs_file(NULL);
+=======
+	mmc_test_free_file_test(NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mmc_unregister_driver(&mmc_driver);
 }

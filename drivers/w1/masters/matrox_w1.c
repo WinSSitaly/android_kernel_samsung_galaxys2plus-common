@@ -1,7 +1,11 @@
 /*
  *	matrox_w1.c
  *
+<<<<<<< HEAD
  * Copyright (c) 2004 Evgeniy Polyakov <zbr@ioremap.net>
+=======
+ * Copyright (c) 2004 Evgeniy Polyakov <johnpol@2ka.mipt.ru>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +24,11 @@
  */
 
 #include <asm/types.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 
 #include <linux/delay.h>
@@ -39,7 +47,11 @@
 #include "../w1_log.h"
 
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_AUTHOR("Evgeniy Polyakov <zbr@ioremap.net>");
+=======
+MODULE_AUTHOR("Evgeniy Polyakov <johnpol@2ka.mipt.ru>");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("Driver for transport(Dallas 1-wire prtocol) over VGA DDC(matrox gpio).");
 
 static struct pci_device_id matrox_w1_tbl[] = {

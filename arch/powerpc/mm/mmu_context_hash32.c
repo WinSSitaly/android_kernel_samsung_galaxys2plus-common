@@ -24,7 +24,10 @@
 
 #include <linux/mm.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mmu_context.h>
 #include <asm/tlbflush.h>

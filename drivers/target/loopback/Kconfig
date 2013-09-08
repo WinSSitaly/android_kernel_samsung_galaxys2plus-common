@@ -3,3 +3,12 @@ config LOOPBACK_TARGET
 	help
 	  Say Y here to enable the TCM Virtual SAS target and Linux/SCSI LLD
 	  fabric loopback module.
+<<<<<<< HEAD
+=======
+
+config LOOPBACK_TARGET_CDB_DEBUG
+	bool "TCM loopback fabric module CDB debug code"
+	depends on LOOPBACK_TARGET
+	help
+	  Say Y here to enable the TCM loopback fabric module CDB debug code
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

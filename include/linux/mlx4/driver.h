@@ -33,6 +33,10 @@
 #ifndef MLX4_DRIVER_H
 #define MLX4_DRIVER_H
 
+<<<<<<< HEAD
+=======
+#include <linux/device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mlx4/device.h>
 
 struct mlx4_dev;

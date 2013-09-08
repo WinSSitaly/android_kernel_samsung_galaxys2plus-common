@@ -37,8 +37,13 @@
 #define THUMB(x...)	x
 #ifdef __ASSEMBLY__
 #define W(instr)	instr.w
+<<<<<<< HEAD
 #define BSYM(sym)	sym + 1
 #endif
+=======
+#endif
+#define BSYM(sym)	sym + 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #else	/* !CONFIG_THUMB2_KERNEL */
 
@@ -49,8 +54,13 @@
 #define THUMB(x...)
 #ifdef __ASSEMBLY__
 #define W(instr)	instr
+<<<<<<< HEAD
 #define BSYM(sym)	sym
 #endif
+=======
+#endif
+#define BSYM(sym)	sym
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif	/* CONFIG_THUMB2_KERNEL */
 

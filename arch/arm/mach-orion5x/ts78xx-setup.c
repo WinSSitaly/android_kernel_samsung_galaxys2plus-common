@@ -275,7 +275,11 @@ static struct platform_nand_data ts78xx_ts_nand_data = {
 		.partitions		= ts78xx_ts_nand_parts,
 		.nr_partitions		= ARRAY_SIZE(ts78xx_ts_nand_parts),
 		.chip_delay		= 15,
+<<<<<<< HEAD
 		.bbt_options		= NAND_BBT_USE_FLASH,
+=======
+		.options		= NAND_USE_FLASH_BBT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.ctrl	= {
 		/*
@@ -621,11 +625,18 @@ static void __init ts78xx_init(void)
 
 MACHINE_START(TS78XX, "Technologic Systems TS-78xx SBC")
 	/* Maintainer: Alexander Clouter <alex@digriz.org.uk> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= 0x00000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= ts78xx_init,
 	.map_io		= ts78xx_map_io,
 	.init_early	= orion5x_init_early,
 	.init_irq	= orion5x_init_irq,
 	.timer		= &orion5x_timer,
+<<<<<<< HEAD
 	.restart	= orion5x_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

@@ -204,7 +204,12 @@ scb2_flash_remove(struct pci_dev *dev)
 		return;
 
 	/* disable flash writes */
+<<<<<<< HEAD
 	mtd_lock(scb2_mtd, 0, scb2_mtd->size);
+=======
+	if (scb2_mtd->lock)
+		scb2_mtd->lock(scb2_mtd, 0, scb2_mtd->size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mtd_device_unregister(scb2_mtd);
 	map_destroy(scb2_mtd);

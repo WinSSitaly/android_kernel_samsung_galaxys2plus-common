@@ -29,7 +29,11 @@
  *    Dave Airlie
  */
 #include <linux/seq_file.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/wait.h>
 #include <linux/list.h>
 #include <linux/kref.h>
@@ -40,6 +44,7 @@
 #include "radeon.h"
 #include "radeon_trace.h"
 
+<<<<<<< HEAD
 static void radeon_fence_write(struct radeon_device *rdev, u32 seq, int ring)
 {
 	if (rdev->wb.enabled) {
@@ -58,6 +63,34 @@ static u32 radeon_fence_read(struct radeon_device *rdev, int ring)
 	} else {
 		seq = RREG32(rdev->fence_drv[ring].scratch_reg);
 	}
+=======
+static void radeon_fence_write(struct radeon_device *rdev, u32 seq)
+{
+	if (rdev->wb.enabled) {
+		u32 scratch_index;
+		if (rdev->wb.use_event)
+			scratch_index = R600_WB_EVENT_OFFSET + rdev->fence_drv.scratch_reg - rdev->scratch.reg_base;
+		else
+			scratch_index = RADEON_WB_SCRATCH_OFFSET + rdev->fence_drv.scratch_reg - rdev->scratch.reg_base;
+		rdev->wb.wb[scratch_index/4] = cpu_to_le32(seq);;
+	} else
+		WREG32(rdev->fence_drv.scratch_reg, seq);
+}
+
+static u32 radeon_fence_read(struct radeon_device *rdev)
+{
+	u32 seq;
+
+	if (rdev->wb.enabled) {
+		u32 scratch_index;
+		if (rdev->wb.use_event)
+			scratch_index = R600_WB_EVENT_OFFSET + rdev->fence_drv.scratch_reg - rdev->scratch.reg_base;
+		else
+			scratch_index = RADEON_WB_SCRATCH_OFFSET + rdev->fence_drv.scratch_reg - rdev->scratch.reg_base;
+		seq = le32_to_cpu(rdev->wb.wb[scratch_index/4]);
+	} else
+		seq = RREG32(rdev->fence_drv.scratch_reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return seq;
 }
 
@@ -65,6 +98,7 @@ int radeon_fence_emit(struct radeon_device *rdev, struct radeon_fence *fence)
 {
 	unsigned long irq_flags;
 
+<<<<<<< HEAD
 	write_lock_irqsave(&rdev->fence_lock, irq_flags);
 	if (fence->emitted) {
 		write_unlock_irqrestore(&rdev->fence_lock, irq_flags);
@@ -87,6 +121,30 @@ int radeon_fence_emit(struct radeon_device *rdev, struct radeon_fence *fence)
 }
 
 static bool radeon_fence_poll_locked(struct radeon_device *rdev, int ring)
+=======
+	write_lock_irqsave(&rdev->fence_drv.lock, irq_flags);
+	if (fence->emited) {
+		write_unlock_irqrestore(&rdev->fence_drv.lock, irq_flags);
+		return 0;
+	}
+	fence->seq = atomic_add_return(1, &rdev->fence_drv.seq);
+	if (!rdev->cp.ready)
+		/* FIXME: cp is not running assume everythings is done right
+		 * away
+		 */
+		radeon_fence_write(rdev, fence->seq);
+	else
+		radeon_fence_ring_emit(rdev, fence);
+
+	trace_radeon_fence_emit(rdev->ddev, fence->seq);
+	fence->emited = true;
+	list_move_tail(&fence->list, &rdev->fence_drv.emited);
+	write_unlock_irqrestore(&rdev->fence_drv.lock, irq_flags);
+	return 0;
+}
+
+static bool radeon_fence_poll_locked(struct radeon_device *rdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct radeon_fence *fence;
 	struct list_head *i, *n;
@@ -94,6 +152,7 @@ static bool radeon_fence_poll_locked(struct radeon_device *rdev, int ring)
 	bool wake = false;
 	unsigned long cjiffies;
 
+<<<<<<< HEAD
 	seq = radeon_fence_read(rdev, ring);
 	if (seq != rdev->fence_drv[ring].last_seq) {
 		rdev->fence_drv[ring].last_seq = seq;
@@ -106,22 +165,48 @@ static bool radeon_fence_poll_locked(struct radeon_device *rdev, int ring)
 			if (time_after(rdev->fence_drv[ring].last_timeout, cjiffies)) {
 				/* update the timeout */
 				rdev->fence_drv[ring].last_timeout -= cjiffies;
+=======
+	seq = radeon_fence_read(rdev);
+	if (seq != rdev->fence_drv.last_seq) {
+		rdev->fence_drv.last_seq = seq;
+		rdev->fence_drv.last_jiffies = jiffies;
+		rdev->fence_drv.last_timeout = RADEON_FENCE_JIFFIES_TIMEOUT;
+	} else {
+		cjiffies = jiffies;
+		if (time_after(cjiffies, rdev->fence_drv.last_jiffies)) {
+			cjiffies -= rdev->fence_drv.last_jiffies;
+			if (time_after(rdev->fence_drv.last_timeout, cjiffies)) {
+				/* update the timeout */
+				rdev->fence_drv.last_timeout -= cjiffies;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else {
 				/* the 500ms timeout is elapsed we should test
 				 * for GPU lockup
 				 */
+<<<<<<< HEAD
 				rdev->fence_drv[ring].last_timeout = 1;
+=======
+				rdev->fence_drv.last_timeout = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		} else {
 			/* wrap around update last jiffies, we will just wait
 			 * a little longer
 			 */
+<<<<<<< HEAD
 			rdev->fence_drv[ring].last_jiffies = cjiffies;
+=======
+			rdev->fence_drv.last_jiffies = cjiffies;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		return false;
 	}
 	n = NULL;
+<<<<<<< HEAD
 	list_for_each(i, &rdev->fence_drv[ring].emitted) {
+=======
+	list_for_each(i, &rdev->fence_drv.emited) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fence = list_entry(i, struct radeon_fence, list);
 		if (fence->seq == seq) {
 			n = i;
@@ -133,11 +218,19 @@ static bool radeon_fence_poll_locked(struct radeon_device *rdev, int ring)
 		i = n;
 		do {
 			n = i->prev;
+<<<<<<< HEAD
 			list_move_tail(i, &rdev->fence_drv[ring].signaled);
 			fence = list_entry(i, struct radeon_fence, list);
 			fence->signaled = true;
 			i = n;
 		} while (i != &rdev->fence_drv[ring].emitted);
+=======
+			list_move_tail(i, &rdev->fence_drv.signaled);
+			fence = list_entry(i, struct radeon_fence, list);
+			fence->signaled = true;
+			i = n;
+		} while (i != &rdev->fence_drv.emited);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wake = true;
 	}
 	return wake;
@@ -149,6 +242,7 @@ static void radeon_fence_destroy(struct kref *kref)
         struct radeon_fence *fence;
 
 	fence = container_of(kref, struct radeon_fence, kref);
+<<<<<<< HEAD
 	write_lock_irqsave(&fence->rdev->fence_lock, irq_flags);
 	list_del(&fence->list);
 	fence->emitted = false;
@@ -161,6 +255,16 @@ static void radeon_fence_destroy(struct kref *kref)
 int radeon_fence_create(struct radeon_device *rdev,
 			struct radeon_fence **fence,
 			int ring)
+=======
+	write_lock_irqsave(&fence->rdev->fence_drv.lock, irq_flags);
+	list_del(&fence->list);
+	fence->emited = false;
+	write_unlock_irqrestore(&fence->rdev->fence_drv.lock, irq_flags);
+	kfree(fence);
+}
+
+int radeon_fence_create(struct radeon_device *rdev, struct radeon_fence **fence)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long irq_flags;
 
@@ -170,6 +274,7 @@ int radeon_fence_create(struct radeon_device *rdev,
 	}
 	kref_init(&((*fence)->kref));
 	(*fence)->rdev = rdev;
+<<<<<<< HEAD
 	(*fence)->emitted = false;
 	(*fence)->signaled = false;
 	(*fence)->seq = 0;
@@ -183,6 +288,20 @@ int radeon_fence_create(struct radeon_device *rdev,
 	return 0;
 }
 
+=======
+	(*fence)->emited = false;
+	(*fence)->signaled = false;
+	(*fence)->seq = 0;
+	INIT_LIST_HEAD(&(*fence)->list);
+
+	write_lock_irqsave(&rdev->fence_drv.lock, irq_flags);
+	list_add_tail(&(*fence)->list, &rdev->fence_drv.created);
+	write_unlock_irqrestore(&rdev->fence_drv.lock, irq_flags);
+	return 0;
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bool radeon_fence_signaled(struct radeon_fence *fence)
 {
 	unsigned long irq_flags;
@@ -194,12 +313,17 @@ bool radeon_fence_signaled(struct radeon_fence *fence)
 	if (fence->rdev->gpu_lockup)
 		return true;
 
+<<<<<<< HEAD
 	write_lock_irqsave(&fence->rdev->fence_lock, irq_flags);
+=======
+	write_lock_irqsave(&fence->rdev->fence_drv.lock, irq_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	signaled = fence->signaled;
 	/* if we are shuting down report all fence as signaled */
 	if (fence->rdev->shutdown) {
 		signaled = true;
 	}
+<<<<<<< HEAD
 	if (!fence->emitted) {
 		WARN(1, "Querying an unemitted fence : %p !\n", fence);
 		signaled = true;
@@ -209,6 +333,17 @@ bool radeon_fence_signaled(struct radeon_fence *fence)
 		signaled = fence->signaled;
 	}
 	write_unlock_irqrestore(&fence->rdev->fence_lock, irq_flags);
+=======
+	if (!fence->emited) {
+		WARN(1, "Querying an unemited fence : %p !\n", fence);
+		signaled = true;
+	}
+	if (!signaled) {
+		radeon_fence_poll_locked(fence->rdev);
+		signaled = fence->signaled;
+	}
+	write_unlock_irqrestore(&fence->rdev->fence_drv.lock, irq_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return signaled;
 }
 
@@ -227,6 +362,7 @@ int radeon_fence_wait(struct radeon_fence *fence, bool intr)
 	if (radeon_fence_signaled(fence)) {
 		return 0;
 	}
+<<<<<<< HEAD
 	timeout = rdev->fence_drv[fence->ring].last_timeout;
 retry:
 	/* save current sequence used to check for GPU lockup */
@@ -237,14 +373,33 @@ retry:
 		r = wait_event_interruptible_timeout(rdev->fence_drv[fence->ring].queue,
 				radeon_fence_signaled(fence), timeout);
 		radeon_irq_kms_sw_irq_put(rdev, fence->ring);
+=======
+	timeout = rdev->fence_drv.last_timeout;
+retry:
+	/* save current sequence used to check for GPU lockup */
+	seq = rdev->fence_drv.last_seq;
+	trace_radeon_fence_wait_begin(rdev->ddev, seq);
+	if (intr) {
+		radeon_irq_kms_sw_irq_get(rdev);
+		r = wait_event_interruptible_timeout(rdev->fence_drv.queue,
+				radeon_fence_signaled(fence), timeout);
+		radeon_irq_kms_sw_irq_put(rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (unlikely(r < 0)) {
 			return r;
 		}
 	} else {
+<<<<<<< HEAD
 		radeon_irq_kms_sw_irq_get(rdev, fence->ring);
 		r = wait_event_timeout(rdev->fence_drv[fence->ring].queue,
 			 radeon_fence_signaled(fence), timeout);
 		radeon_irq_kms_sw_irq_put(rdev, fence->ring);
+=======
+		radeon_irq_kms_sw_irq_get(rdev);
+		r = wait_event_timeout(rdev->fence_drv.queue,
+			 radeon_fence_signaled(fence), timeout);
+		radeon_irq_kms_sw_irq_put(rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	trace_radeon_fence_wait_end(rdev->ddev, seq);
 	if (unlikely(!radeon_fence_signaled(fence))) {
@@ -255,6 +410,7 @@ retry:
 			timeout = r;
 			goto retry;
 		}
+<<<<<<< HEAD
 		/* don't protect read access to rdev->fence_drv[t].last_seq
 		 * if we experiencing a lockup the value doesn't change
 		 */
@@ -262,6 +418,14 @@ retry:
 		    radeon_gpu_is_lockup(rdev, &rdev->ring[fence->ring])) {
 			/* good news we believe it's a lockup */
 			printk(KERN_WARNING "GPU lockup (waiting for 0x%08X last fence id 0x%08X)\n",
+=======
+		/* don't protect read access to rdev->fence_drv.last_seq
+		 * if we experiencing a lockup the value doesn't change
+		 */
+		if (seq == rdev->fence_drv.last_seq && radeon_gpu_is_lockup(rdev)) {
+			/* good news we believe it's a lockup */
+			WARN(1, "GPU lockup (waiting for 0x%08X last fence id 0x%08X)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     fence->seq, seq);
 			/* FIXME: what should we do ? marking everyone
 			 * as signaled for now
@@ -270,6 +434,7 @@ retry:
 			r = radeon_gpu_reset(rdev);
 			if (r)
 				return r;
+<<<<<<< HEAD
 			radeon_fence_write(rdev, fence->seq, fence->ring);
 			rdev->gpu_lockup = false;
 		}
@@ -278,12 +443,26 @@ retry:
 		rdev->fence_drv[fence->ring].last_timeout = RADEON_FENCE_JIFFIES_TIMEOUT;
 		rdev->fence_drv[fence->ring].last_jiffies = jiffies;
 		write_unlock_irqrestore(&rdev->fence_lock, irq_flags);
+=======
+			radeon_fence_write(rdev, fence->seq);
+			rdev->gpu_lockup = false;
+		}
+		timeout = RADEON_FENCE_JIFFIES_TIMEOUT;
+		write_lock_irqsave(&rdev->fence_drv.lock, irq_flags);
+		rdev->fence_drv.last_timeout = RADEON_FENCE_JIFFIES_TIMEOUT;
+		rdev->fence_drv.last_jiffies = jiffies;
+		write_unlock_irqrestore(&rdev->fence_drv.lock, irq_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto retry;
 	}
 	return 0;
 }
 
+<<<<<<< HEAD
 int radeon_fence_wait_next(struct radeon_device *rdev, int ring)
+=======
+int radeon_fence_wait_next(struct radeon_device *rdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long irq_flags;
 	struct radeon_fence *fence;
@@ -292,6 +471,7 @@ int radeon_fence_wait_next(struct radeon_device *rdev, int ring)
 	if (rdev->gpu_lockup) {
 		return 0;
 	}
+<<<<<<< HEAD
 	write_lock_irqsave(&rdev->fence_lock, irq_flags);
 	if (list_empty(&rdev->fence_drv[ring].emitted)) {
 		write_unlock_irqrestore(&rdev->fence_lock, irq_flags);
@@ -301,12 +481,27 @@ int radeon_fence_wait_next(struct radeon_device *rdev, int ring)
 			   struct radeon_fence, list);
 	radeon_fence_ref(fence);
 	write_unlock_irqrestore(&rdev->fence_lock, irq_flags);
+=======
+	write_lock_irqsave(&rdev->fence_drv.lock, irq_flags);
+	if (list_empty(&rdev->fence_drv.emited)) {
+		write_unlock_irqrestore(&rdev->fence_drv.lock, irq_flags);
+		return 0;
+	}
+	fence = list_entry(rdev->fence_drv.emited.next,
+			   struct radeon_fence, list);
+	radeon_fence_ref(fence);
+	write_unlock_irqrestore(&rdev->fence_drv.lock, irq_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = radeon_fence_wait(fence, false);
 	radeon_fence_unref(&fence);
 	return r;
 }
 
+<<<<<<< HEAD
 int radeon_fence_wait_last(struct radeon_device *rdev, int ring)
+=======
+int radeon_fence_wait_last(struct radeon_device *rdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long irq_flags;
 	struct radeon_fence *fence;
@@ -315,6 +510,7 @@ int radeon_fence_wait_last(struct radeon_device *rdev, int ring)
 	if (rdev->gpu_lockup) {
 		return 0;
 	}
+<<<<<<< HEAD
 	write_lock_irqsave(&rdev->fence_lock, irq_flags);
 	if (list_empty(&rdev->fence_drv[ring].emitted)) {
 		write_unlock_irqrestore(&rdev->fence_lock, irq_flags);
@@ -324,6 +520,17 @@ int radeon_fence_wait_last(struct radeon_device *rdev, int ring)
 			   struct radeon_fence, list);
 	radeon_fence_ref(fence);
 	write_unlock_irqrestore(&rdev->fence_lock, irq_flags);
+=======
+	write_lock_irqsave(&rdev->fence_drv.lock, irq_flags);
+	if (list_empty(&rdev->fence_drv.emited)) {
+		write_unlock_irqrestore(&rdev->fence_drv.lock, irq_flags);
+		return 0;
+	}
+	fence = list_entry(rdev->fence_drv.emited.prev,
+			   struct radeon_fence, list);
+	radeon_fence_ref(fence);
+	write_unlock_irqrestore(&rdev->fence_drv.lock, irq_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = radeon_fence_wait(fence, false);
 	radeon_fence_unref(&fence);
 	return r;
@@ -345,11 +552,16 @@ void radeon_fence_unref(struct radeon_fence **fence)
 	}
 }
 
+<<<<<<< HEAD
 void radeon_fence_process(struct radeon_device *rdev, int ring)
+=======
+void radeon_fence_process(struct radeon_device *rdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long irq_flags;
 	bool wake;
 
+<<<<<<< HEAD
 	write_lock_irqsave(&rdev->fence_lock, irq_flags);
 	wake = radeon_fence_poll_locked(rdev, ring);
 	write_unlock_irqrestore(&rdev->fence_lock, irq_flags);
@@ -424,11 +636,20 @@ static void radeon_fence_driver_init_ring(struct radeon_device *rdev, int ring)
 	INIT_LIST_HEAD(&rdev->fence_drv[ring].signaled);
 	init_waitqueue_head(&rdev->fence_drv[ring].queue);
 	rdev->fence_drv[ring].initialized = false;
+=======
+	write_lock_irqsave(&rdev->fence_drv.lock, irq_flags);
+	wake = radeon_fence_poll_locked(rdev);
+	write_unlock_irqrestore(&rdev->fence_drv.lock, irq_flags);
+	if (wake) {
+		wake_up_all(&rdev->fence_drv.queue);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int radeon_fence_driver_init(struct radeon_device *rdev)
 {
 	unsigned long irq_flags;
+<<<<<<< HEAD
 	int ring;
 
 	write_lock_irqsave(&rdev->fence_lock, irq_flags);
@@ -436,6 +657,25 @@ int radeon_fence_driver_init(struct radeon_device *rdev)
 		radeon_fence_driver_init_ring(rdev, ring);
 	}
 	write_unlock_irqrestore(&rdev->fence_lock, irq_flags);
+=======
+	int r;
+
+	write_lock_irqsave(&rdev->fence_drv.lock, irq_flags);
+	r = radeon_scratch_get(rdev, &rdev->fence_drv.scratch_reg);
+	if (r) {
+		dev_err(rdev->dev, "fence failed to get scratch register\n");
+		write_unlock_irqrestore(&rdev->fence_drv.lock, irq_flags);
+		return r;
+	}
+	radeon_fence_write(rdev, 0);
+	atomic_set(&rdev->fence_drv.seq, 0);
+	INIT_LIST_HEAD(&rdev->fence_drv.created);
+	INIT_LIST_HEAD(&rdev->fence_drv.emited);
+	INIT_LIST_HEAD(&rdev->fence_drv.signaled);
+	init_waitqueue_head(&rdev->fence_drv.queue);
+	rdev->fence_drv.initialized = true;
+	write_unlock_irqrestore(&rdev->fence_drv.lock, irq_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (radeon_debugfs_fence_init(rdev)) {
 		dev_err(rdev->dev, "fence debugfs file creation failed\n");
 	}
@@ -445,6 +685,7 @@ int radeon_fence_driver_init(struct radeon_device *rdev)
 void radeon_fence_driver_fini(struct radeon_device *rdev)
 {
 	unsigned long irq_flags;
+<<<<<<< HEAD
 	int ring;
 
 	for (ring = 0; ring < RADEON_NUM_RINGS; ring++) {
@@ -457,6 +698,16 @@ void radeon_fence_driver_fini(struct radeon_device *rdev)
 		write_unlock_irqrestore(&rdev->fence_lock, irq_flags);
 		rdev->fence_drv[ring].initialized = false;
 	}
+=======
+
+	if (!rdev->fence_drv.initialized)
+		return;
+	wake_up_all(&rdev->fence_drv.queue);
+	write_lock_irqsave(&rdev->fence_drv.lock, irq_flags);
+	radeon_scratch_free(rdev, rdev->fence_drv.scratch_reg);
+	write_unlock_irqrestore(&rdev->fence_drv.lock, irq_flags);
+	rdev->fence_drv.initialized = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -470,6 +721,7 @@ static int radeon_debugfs_fence_info(struct seq_file *m, void *data)
 	struct drm_device *dev = node->minor->dev;
 	struct radeon_device *rdev = dev->dev_private;
 	struct radeon_fence *fence;
+<<<<<<< HEAD
 	int i;
 
 	for (i = 0; i < RADEON_NUM_RINGS; ++i) {
@@ -485,6 +737,16 @@ static int radeon_debugfs_fence_info(struct seq_file *m, void *data)
 			seq_printf(m, "Last emitted fence %p with 0x%08X\n",
 				   fence,  fence->seq);
 		}
+=======
+
+	seq_printf(m, "Last signaled fence 0x%08X\n",
+		   radeon_fence_read(rdev));
+	if (!list_empty(&rdev->fence_drv.emited)) {
+		   fence = list_entry(rdev->fence_drv.emited.prev,
+				      struct radeon_fence, list);
+		   seq_printf(m, "Last emited fence %p with 0x%08X\n",
+			      fence,  fence->seq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }

@@ -69,6 +69,7 @@ extern int nf_conntrack_broadcast_help(struct sk_buff *skb,
 				       enum ip_conntrack_info ctinfo,
 				       unsigned int timeout);
 
+<<<<<<< HEAD
 struct nf_ct_helper_expectfn {
 	struct list_head head;
 	const char *name;
@@ -82,4 +83,6 @@ nf_ct_helper_expectfn_find_by_name(const char *name);
 struct nf_ct_helper_expectfn *
 nf_ct_helper_expectfn_find_by_symbol(const void *symbol);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /*_NF_CONNTRACK_HELPER_H*/

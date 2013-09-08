@@ -3,7 +3,11 @@
  *
  * Based on hid-gyration.c
  *
+<<<<<<< HEAD
  * Copyright (c) 2009 Bruno PrÃ©mont <bonbons@linux-vserver.org>
+=======
+ * Copyright (c) 2009 Bruno Prémont <bonbons@linux-vserver.org>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 /*

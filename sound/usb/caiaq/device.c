@@ -50,12 +50,20 @@ MODULE_SUPPORTED_DEVICE("{{Native Instruments, RigKontrol2},"
 			 "{Native Instruments, Session I/O},"
 			 "{Native Instruments, GuitarRig mobile}"
 			 "{Native Instruments, Traktor Kontrol X1}"
+<<<<<<< HEAD
 			 "{Native Instruments, Traktor Kontrol S4}"
 			 "{Native Instruments, Maschine Controller}");
 
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX; /* Index 0-max */
 static char* id[SNDRV_CARDS] = SNDRV_DEFAULT_STR; /* Id for this card */
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP; /* Enable this card */
+=======
+			 "{Native Instruments, Traktor Kontrol S4}");
+
+static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX; /* Index 0-max */
+static char* id[SNDRV_CARDS] = SNDRV_DEFAULT_STR; /* Id for this card */
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP; /* Enable this card */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int snd_card_used[SNDRV_CARDS];
 
 module_param_array(index, int, NULL, 0444);
@@ -147,11 +155,14 @@ static struct usb_device_id snd_usb_id_table[] = {
 		.idVendor =     USB_VID_NATIVEINSTRUMENTS,
 		.idProduct =    USB_PID_TRAKTORAUDIO2
 	},
+<<<<<<< HEAD
 	{
 		.match_flags =  USB_DEVICE_ID_MATCH_DEVICE,
 		.idVendor =     USB_VID_NATIVEINSTRUMENTS,
 		.idProduct =    USB_PID_MASCHINECONTROLLER
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ /* terminator */ }
 };
 
@@ -485,7 +496,11 @@ static int __devinit snd_probe(struct usb_interface *intf,
 		     const struct usb_device_id *id)
 {
 	int ret;
+<<<<<<< HEAD
 	struct snd_card *card = NULL;
+=======
+	struct snd_card *card;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct usb_device *device = interface_to_usbdev(intf);
 
 	ret = create_card(device, intf, &card);
@@ -538,5 +553,20 @@ static struct usb_driver snd_usb_driver = {
 	.id_table 	= snd_usb_id_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(snd_usb_driver);
+=======
+static int __init snd_module_init(void)
+{
+	return usb_register(&snd_usb_driver);
+}
+
+static void __exit snd_module_exit(void)
+{
+	usb_deregister(&snd_usb_driver);
+}
+
+module_init(snd_module_init)
+module_exit(snd_module_exit)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 

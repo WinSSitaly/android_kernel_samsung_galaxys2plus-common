@@ -18,6 +18,10 @@
  */
 
 #include <linux/module.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/spinlock.h>
 #include <linux/netdevice.h>
 #include <linux/etherdevice.h>
@@ -31,8 +35,11 @@
 #include <linux/sysfs.h>
 #include <linux/ctype.h>
 #include <linux/workqueue.h>
+<<<<<<< HEAD
 #include <net/dcbnl.h>
 #include <net/dcbevent.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <scsi/scsi_tcq.h>
 #include <scsi/scsicam.h>
 #include <scsi/scsi_transport.h>
@@ -53,16 +60,24 @@ MODULE_DESCRIPTION("FCoE");
 MODULE_LICENSE("GPL v2");
 
 /* Performance tuning parameters for fcoe */
+<<<<<<< HEAD
 static unsigned int fcoe_ddp_min = 4096;
+=======
+static unsigned int fcoe_ddp_min;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(ddp_min, fcoe_ddp_min, uint, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(ddp_min, "Minimum I/O size in bytes for "	\
 		 "Direct Data Placement (DDP).");
 
+<<<<<<< HEAD
 unsigned int fcoe_debug_logging;
 module_param_named(debug_logging, fcoe_debug_logging, int, S_IRUGO|S_IWUSR);
 MODULE_PARM_DESC(debug_logging, "a bit mask of logging levels");
 
 static DEFINE_MUTEX(fcoe_config_mutex);
+=======
+DEFINE_MUTEX(fcoe_config_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct workqueue_struct *fcoe_wq;
 
@@ -71,8 +86,13 @@ static DECLARE_COMPLETION(fcoe_flush_completion);
 
 /* fcoe host list */
 /* must only by accessed under the RTNL mutex */
+<<<<<<< HEAD
 static LIST_HEAD(fcoe_hostlist);
 static DEFINE_PER_CPU(struct fcoe_percpu_s, fcoe_percpu);
+=======
+LIST_HEAD(fcoe_hostlist);
+DEFINE_PER_CPU(struct fcoe_percpu_s, fcoe_percpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Function Prototypes */
 static int fcoe_reset(struct Scsi_Host *);
@@ -104,11 +124,16 @@ static void fcoe_destroy_work(struct work_struct *);
 static int fcoe_ddp_setup(struct fc_lport *, u16, struct scatterlist *,
 			  unsigned int);
 static int fcoe_ddp_done(struct fc_lport *, u16);
+<<<<<<< HEAD
 static int fcoe_ddp_target(struct fc_lport *, u16, struct scatterlist *,
 			   unsigned int);
 static int fcoe_cpu_callback(struct notifier_block *, unsigned long, void *);
 static int fcoe_dcb_app_notification(struct notifier_block *notifier,
 				     ulong event, void *ptr);
+=======
+
+static int fcoe_cpu_callback(struct notifier_block *, unsigned long, void *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static bool fcoe_match(struct net_device *netdev);
 static int fcoe_create(struct net_device *netdev, enum fip_state fip_mode);
@@ -137,11 +162,14 @@ static struct notifier_block fcoe_cpu_notifier = {
 	.notifier_call = fcoe_cpu_callback,
 };
 
+<<<<<<< HEAD
 /* notification function for DCB events */
 static struct notifier_block dcb_notifier = {
 	.notifier_call = fcoe_dcb_app_notification,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct scsi_transport_template *fcoe_nport_scsi_transport;
 static struct scsi_transport_template *fcoe_vport_scsi_transport;
 
@@ -150,24 +178,36 @@ static int fcoe_vport_create(struct fc_vport *, bool disabled);
 static int fcoe_vport_disable(struct fc_vport *, bool disable);
 static void fcoe_set_vport_symbolic_name(struct fc_vport *);
 static void fcoe_set_port_id(struct fc_lport *, u32, struct fc_frame *);
+<<<<<<< HEAD
+=======
+static int fcoe_validate_vport_create(struct fc_vport *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct libfc_function_template fcoe_libfc_fcn_templ = {
 	.frame_send = fcoe_xmit,
 	.ddp_setup = fcoe_ddp_setup,
 	.ddp_done = fcoe_ddp_done,
+<<<<<<< HEAD
 	.ddp_target = fcoe_ddp_target,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.elsct_send = fcoe_elsct_send,
 	.get_lesb = fcoe_get_lesb,
 	.lport_set_port_id = fcoe_set_port_id,
 };
 
+<<<<<<< HEAD
 static struct fc_function_template fcoe_nport_fc_functions = {
+=======
+struct fc_function_template fcoe_nport_fc_functions = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.show_host_node_name = 1,
 	.show_host_port_name = 1,
 	.show_host_supported_classes = 1,
 	.show_host_supported_fc4s = 1,
 	.show_host_active_fc4s = 1,
 	.show_host_maxframe_size = 1,
+<<<<<<< HEAD
 	.show_host_serial_number = 1,
 	.show_host_manufacturer = 1,
 	.show_host_model = 1,
@@ -176,6 +216,8 @@ static struct fc_function_template fcoe_nport_fc_functions = {
 	.show_host_driver_version = 1,
 	.show_host_firmware_version = 1,
 	.show_host_optionrom_version = 1,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.show_host_port_id = 1,
 	.show_host_supported_speeds = 1,
@@ -209,13 +251,18 @@ static struct fc_function_template fcoe_nport_fc_functions = {
 	.bsg_request = fc_lport_bsg_request,
 };
 
+<<<<<<< HEAD
 static struct fc_function_template fcoe_vport_fc_functions = {
+=======
+struct fc_function_template fcoe_vport_fc_functions = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.show_host_node_name = 1,
 	.show_host_port_name = 1,
 	.show_host_supported_classes = 1,
 	.show_host_supported_fc4s = 1,
 	.show_host_active_fc4s = 1,
 	.show_host_maxframe_size = 1,
+<<<<<<< HEAD
 	.show_host_serial_number = 1,
 	.show_host_manufacturer = 1,
 	.show_host_model = 1,
@@ -224,6 +271,8 @@ static struct fc_function_template fcoe_vport_fc_functions = {
 	.show_host_driver_version = 1,
 	.show_host_firmware_version = 1,
 	.show_host_optionrom_version = 1,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.show_host_port_id = 1,
 	.show_host_supported_speeds = 1,
@@ -308,7 +357,10 @@ static int fcoe_interface_setup(struct fcoe_interface *fcoe,
 	 * use the first one for SPMA */
 	real_dev = (netdev->priv_flags & IFF_802_1Q_VLAN) ?
 		vlan_dev_real_dev(netdev) : netdev;
+<<<<<<< HEAD
 	fcoe->realdev = real_dev;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rcu_read_lock();
 	for_each_dev_addr(real_dev, ha) {
 		if ((ha->type == NETDEV_HW_ADDR_T_SAN) &&
@@ -380,10 +432,18 @@ static struct fcoe_interface *fcoe_interface_create(struct net_device *netdev,
 	if (!fcoe) {
 		FCOE_NETDEV_DBG(netdev, "Could not allocate fcoe structure\n");
 		fcoe = ERR_PTR(-ENOMEM);
+<<<<<<< HEAD
 		goto out_putmod;
 	}
 
 	dev_hold(netdev);
+=======
+		goto out_nomod;
+	}
+
+	dev_hold(netdev);
+	kref_init(&fcoe->kref);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Initialize FIP.
@@ -399,31 +459,100 @@ static struct fcoe_interface *fcoe_interface_create(struct net_device *netdev,
 		kfree(fcoe);
 		dev_put(netdev);
 		fcoe = ERR_PTR(err);
+<<<<<<< HEAD
 		goto out_putmod;
+=======
+		goto out_nomod;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	goto out;
 
+<<<<<<< HEAD
 out_putmod:
+=======
+out_nomod:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	module_put(THIS_MODULE);
 out:
 	return fcoe;
 }
 
 /**
+<<<<<<< HEAD
+=======
+ * fcoe_interface_release() - fcoe_port kref release function
+ * @kref: Embedded reference count in an fcoe_interface struct
+ */
+static void fcoe_interface_release(struct kref *kref)
+{
+	struct fcoe_interface *fcoe;
+	struct net_device *netdev;
+
+	fcoe = container_of(kref, struct fcoe_interface, kref);
+	netdev = fcoe->netdev;
+	/* tear-down the FCoE controller */
+	fcoe_ctlr_destroy(&fcoe->ctlr);
+	kfree(fcoe);
+	dev_put(netdev);
+	module_put(THIS_MODULE);
+}
+
+/**
+ * fcoe_interface_get() - Get a reference to a FCoE interface
+ * @fcoe: The FCoE interface to be held
+ */
+static inline void fcoe_interface_get(struct fcoe_interface *fcoe)
+{
+	kref_get(&fcoe->kref);
+}
+
+/**
+ * fcoe_interface_put() - Put a reference to a FCoE interface
+ * @fcoe: The FCoE interface to be released
+ */
+static inline void fcoe_interface_put(struct fcoe_interface *fcoe)
+{
+	kref_put(&fcoe->kref, fcoe_interface_release);
+}
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * fcoe_interface_cleanup() - Clean up a FCoE interface
  * @fcoe: The FCoE interface to be cleaned up
  *
  * Caller must be holding the RTNL mutex
  */
+<<<<<<< HEAD
 static void fcoe_interface_cleanup(struct fcoe_interface *fcoe)
+=======
+void fcoe_interface_cleanup(struct fcoe_interface *fcoe)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct net_device *netdev = fcoe->netdev;
 	struct fcoe_ctlr *fip = &fcoe->ctlr;
 	u8 flogi_maddr[ETH_ALEN];
 	const struct net_device_ops *ops;
+<<<<<<< HEAD
 
 	rtnl_lock();
+=======
+	struct fcoe_port *port = lport_priv(fcoe->ctlr.lp);
+
+	FCOE_NETDEV_DBG(netdev, "Destroying interface\n");
+
+	/* Logout of the fabric */
+	fc_fabric_logoff(fcoe->ctlr.lp);
+
+	/* Cleanup the fc_lport */
+	fc_lport_destroy(fcoe->ctlr.lp);
+
+	/* Stop the transmit retry timer */
+	del_timer_sync(&port->timer);
+
+	/* Free existing transmit skbs */
+	fcoe_clean_pending_queue(fcoe->ctlr.lp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Don't listen for Ethernet packets anymore.
@@ -446,6 +575,12 @@ static void fcoe_interface_cleanup(struct fcoe_interface *fcoe)
 	} else
 		dev_mc_del(netdev, FIP_ALL_ENODE_MACS);
 
+<<<<<<< HEAD
+=======
+	if (!is_zero_ether_addr(port->data_src_addr))
+		dev_uc_del(netdev, port->data_src_addr);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Tell the LLD we are done w/ FCoE */
 	ops = netdev->netdev_ops;
 	if (ops->ndo_fcoe_disable) {
@@ -453,6 +588,7 @@ static void fcoe_interface_cleanup(struct fcoe_interface *fcoe)
 			FCOE_NETDEV_DBG(netdev, "Failed to disable FCoE"
 					" specific feature for LLD.\n");
 	}
+<<<<<<< HEAD
 
 	rtnl_unlock();
 
@@ -462,6 +598,9 @@ static void fcoe_interface_cleanup(struct fcoe_interface *fcoe)
 	kfree(fcoe);
 	dev_put(netdev);
 	module_put(THIS_MODULE);
+=======
+	fcoe_interface_put(fcoe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -486,6 +625,7 @@ static int fcoe_fip_recv(struct sk_buff *skb, struct net_device *netdev,
 }
 
 /**
+<<<<<<< HEAD
  * fcoe_port_send() - Send an Ethernet-encapsulated FIP/FCoE frame
  * @port: The FCoE port
  * @skb: The FIP/FCoE packet to be sent
@@ -499,6 +639,8 @@ static void fcoe_port_send(struct fcoe_port *port, struct sk_buff *skb)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * fcoe_fip_send() - Send an Ethernet-encapsulated FIP frame
  * @fip: The FCoE controller
  * @skb: The FIP packet to be sent
@@ -506,7 +648,11 @@ static void fcoe_port_send(struct fcoe_port *port, struct sk_buff *skb)
 static void fcoe_fip_send(struct fcoe_ctlr *fip, struct sk_buff *skb)
 {
 	skb->dev = fcoe_from_ctlr(fip)->netdev;
+<<<<<<< HEAD
 	fcoe_port_send(lport_priv(fip->lp), skb);
+=======
+	dev_queue_xmit(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -576,6 +722,26 @@ static int fcoe_lport_config(struct fc_lport *lport)
 }
 
 /**
+<<<<<<< HEAD
+=======
+ * fcoe_get_wwn() - Get the world wide name from LLD if it supports it
+ * @netdev: the associated net device
+ * @wwn: the output WWN
+ * @type: the type of WWN (WWPN or WWNN)
+ *
+ * Returns: 0 for success
+ */
+static int fcoe_get_wwn(struct net_device *netdev, u64 *wwn, int type)
+{
+	const struct net_device_ops *ops = netdev->netdev_ops;
+
+	if (ops->ndo_fcoe_get_wwn)
+		return ops->ndo_fcoe_get_wwn(netdev, wwn, type);
+	return -EINVAL;
+}
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * fcoe_netdev_features_change - Updates the lport's offload flags based
  * on the LLD netdev's FCoE feature flags
  */
@@ -717,6 +883,7 @@ static int fcoe_shost_config(struct fc_lport *lport, struct device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 
 /**
  * fcoe_fdmi_info() - Get FDMI related info from net devive for SW FCoE
@@ -796,6 +963,8 @@ static void fcoe_fdmi_info(struct fc_lport *lport, struct net_device *netdev)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * fcoe_oem_match() - The match routine for the offloaded exchange manager
  * @fp: The I/O frame
@@ -814,7 +983,11 @@ static void fcoe_fdmi_info(struct fc_lport *lport, struct net_device *netdev)
  *
  * Returns: True for read types I/O, otherwise returns false.
  */
+<<<<<<< HEAD
 static bool fcoe_oem_match(struct fc_frame *fp)
+=======
+bool fcoe_oem_match(struct fc_frame *fp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct fc_frame_header *fh = fc_frame_header_get(fp);
 	struct fcp_cmnd *fcp;
@@ -822,12 +995,20 @@ static bool fcoe_oem_match(struct fc_frame *fp)
 	if (fc_fcp_is_read(fr_fsp(fp)) &&
 	    (fr_fsp(fp)->data_len > fcoe_ddp_min))
 		return true;
+<<<<<<< HEAD
 	else if ((fr_fsp(fp) == NULL) &&
 		 (fh->fh_r_ctl == FC_RCTL_DD_UNSOL_CMD) &&
 		 (ntohs(fh->fh_rx_id) == FC_XID_UNKNOWN)) {
 		fcp = fc_frame_payload_get(fp, sizeof(*fcp));
 		if ((fcp->fc_flags & FCP_CFL_WRDATA) &&
 		    (ntohl(fcp->fc_dl) > fcoe_ddp_min))
+=======
+	else if (!(ntoh24(fh->fh_f_ctl) & FC_FC_EX_CTX)) {
+		fcp = fc_frame_payload_get(fp, sizeof(*fcp));
+		if (ntohs(fh->fh_rx_id) == FC_XID_UNKNOWN &&
+		    fcp && (ntohl(fcp->fc_dl) > fcoe_ddp_min) &&
+		    (fcp->fc_flags & FCP_CFL_WRDATA))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return true;
 	}
 	return false;
@@ -920,6 +1101,7 @@ skip_oem:
  */
 static void fcoe_if_destroy(struct fc_lport *lport)
 {
+<<<<<<< HEAD
 	struct fcoe_port *port = lport_priv(lport);
 	struct fcoe_interface *fcoe = port->priv;
 	struct net_device *netdev = fcoe->netdev;
@@ -943,6 +1125,8 @@ static void fcoe_if_destroy(struct fc_lport *lport)
 		dev_uc_del(netdev, port->data_src_addr);
 	rtnl_unlock();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Free queued packets for the per-CPU receive threads */
 	fcoe_percpu_clean(lport);
 
@@ -986,6 +1170,7 @@ static int fcoe_ddp_setup(struct fc_lport *lport, u16 xid,
 }
 
 /**
+<<<<<<< HEAD
  * fcoe_ddp_target() - Call a LLD's ddp_target through the net device
  * @lport: The local port to setup DDP for
  * @xid:   The exchange ID for this DDP transfer
@@ -1008,6 +1193,8 @@ static int fcoe_ddp_target(struct fc_lport *lport, u16 xid,
 
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * fcoe_ddp_done() - Call a LLD's ddp_done through the net device
  * @lport: The local port to complete DDP on
  * @xid:   The exchange ID for this DDP transfer
@@ -1106,9 +1293,12 @@ static struct fc_lport *fcoe_if_create(struct fcoe_interface *fcoe,
 		goto out_lp_destroy;
 	}
 
+<<<<<<< HEAD
 	/* Initialized FDMI information */
 	fcoe_fdmi_info(lport, netdev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * fcoe_em_alloc() and fcoe_hostlist_add() both
 	 * need to be atomic with respect to other changes to the
@@ -1132,6 +1322,10 @@ static struct fc_lport *fcoe_if_create(struct fcoe_interface *fcoe,
 		goto out_lp_destroy;
 	}
 
+<<<<<<< HEAD
+=======
+	fcoe_interface_get(fcoe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return lport;
 
 out_lp_destroy:
@@ -1172,7 +1366,11 @@ static int __init fcoe_if_init(void)
  *
  * Returns: 0 on success
  */
+<<<<<<< HEAD
 static int __exit fcoe_if_exit(void)
+=======
+int __exit fcoe_if_exit(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	fc_release_transport(fcoe_nport_scsi_transport);
 	fc_release_transport(fcoe_vport_scsi_transport);
@@ -1192,9 +1390,14 @@ static void fcoe_percpu_thread_create(unsigned int cpu)
 
 	p = &per_cpu(fcoe_percpu, cpu);
 
+<<<<<<< HEAD
 	thread = kthread_create_on_node(fcoe_percpu_receive_thread,
 					(void *)p, cpu_to_node(cpu),
 					"fcoethread/%d", cpu);
+=======
+	thread = kthread_create(fcoe_percpu_receive_thread,
+				(void *)p, "fcoethread/%d", cpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (likely(!IS_ERR(thread))) {
 		kthread_bind(thread, cpu);
@@ -1330,6 +1533,7 @@ static int fcoe_cpu_callback(struct notifier_block *nfb,
 }
 
 /**
+<<<<<<< HEAD
  * fcoe_select_cpu() - Selects CPU to handle post-processing of incoming
  *			command.
  *
@@ -1350,6 +1554,8 @@ static inline unsigned int fcoe_select_cpu(void)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * fcoe_rcv() - Receive packets from a net device
  * @skb:    The received packet
  * @netdev: The net device that the packet was received on
@@ -1361,7 +1567,11 @@ static inline unsigned int fcoe_select_cpu(void)
  *
  * Returns: 0 for success
  */
+<<<<<<< HEAD
 static int fcoe_rcv(struct sk_buff *skb, struct net_device *netdev,
+=======
+int fcoe_rcv(struct sk_buff *skb, struct net_device *netdev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	     struct packet_type *ptype, struct net_device *olddev)
 {
 	struct fc_lport *lport;
@@ -1415,11 +1625,16 @@ static int fcoe_rcv(struct sk_buff *skb, struct net_device *netdev,
 
 	fr = fcoe_dev_from_skb(skb);
 	fr->fr_dev = lport;
+<<<<<<< HEAD
+=======
+	fr->ptype = ptype;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * In case the incoming frame's exchange is originated from
 	 * the initiator, then received frame's exchange id is ANDed
 	 * with fc_cpu_mask bits to get the same cpu on which exchange
+<<<<<<< HEAD
 	 * was originated, otherwise select cpu using rx exchange id
 	 * or fcoe_select_cpu().
 	 */
@@ -1437,6 +1652,17 @@ static int fcoe_rcv(struct sk_buff *skb, struct net_device *netdev,
 
 	fps = &per_cpu(fcoe_percpu, cpu);
 	spin_lock(&fps->fcoe_rx_list.lock);
+=======
+	 * was originated, otherwise just use the current cpu.
+	 */
+	if (ntoh24(fh->fh_f_ctl) & FC_FC_EX_CTX)
+		cpu = ntohs(fh->fh_ox_id) & fc_cpu_mask;
+	else
+		cpu = smp_processor_id();
+
+	fps = &per_cpu(fcoe_percpu, cpu);
+	spin_lock_bh(&fps->fcoe_rx_list.lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(!fps->thread)) {
 		/*
 		 * The targeted CPU is not ready, let's target
@@ -1447,12 +1673,21 @@ static int fcoe_rcv(struct sk_buff *skb, struct net_device *netdev,
 				"ready for incoming skb- using first online "
 				"CPU.\n");
 
+<<<<<<< HEAD
 		spin_unlock(&fps->fcoe_rx_list.lock);
 		cpu = cpumask_first(cpu_online_mask);
 		fps = &per_cpu(fcoe_percpu, cpu);
 		spin_lock(&fps->fcoe_rx_list.lock);
 		if (!fps->thread) {
 			spin_unlock(&fps->fcoe_rx_list.lock);
+=======
+		spin_unlock_bh(&fps->fcoe_rx_list.lock);
+		cpu = cpumask_first(cpu_online_mask);
+		fps = &per_cpu(fcoe_percpu, cpu);
+		spin_lock_bh(&fps->fcoe_rx_list.lock);
+		if (!fps->thread) {
+			spin_unlock_bh(&fps->fcoe_rx_list.lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto err;
 		}
 	}
@@ -1463,6 +1698,7 @@ static int fcoe_rcv(struct sk_buff *skb, struct net_device *netdev,
 	 * so we're free to queue skbs into it's queue.
 	 */
 
+<<<<<<< HEAD
 	/*
 	 * Note: We used to have a set of conditions under which we would
 	 * call fcoe_recv_frame directly, rather than queuing to the rx list
@@ -1474,6 +1710,26 @@ static int fcoe_rcv(struct sk_buff *skb, struct net_device *netdev,
 	if (fps->thread->state == TASK_INTERRUPTIBLE)
 		wake_up_process(fps->thread);
 	spin_unlock(&fps->fcoe_rx_list.lock);
+=======
+	/* If this is a SCSI-FCP frame, and this is already executing on the
+	 * correct CPU, and the queue for this CPU is empty, then go ahead
+	 * and process the frame directly in the softirq context.
+	 * This lets us process completions without context switching from the
+	 * NET_RX softirq, to our receive processing thread, and then back to
+	 * BLOCK softirq context.
+	 */
+	if (fh->fh_type == FC_TYPE_FCP &&
+	    cpu == smp_processor_id() &&
+	    skb_queue_empty(&fps->fcoe_rx_list)) {
+		spin_unlock_bh(&fps->fcoe_rx_list.lock);
+		fcoe_recv_frame(skb);
+	} else {
+		__skb_queue_tail(&fps->fcoe_rx_list, skb);
+		if (fps->fcoe_rx_list.qlen == 1)
+			wake_up_process(fps->thread);
+		spin_unlock_bh(&fps->fcoe_rx_list.lock);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 err:
@@ -1510,7 +1766,11 @@ static int fcoe_alloc_paged_crc_eof(struct sk_buff *skb, int tlen)
  *
  * Return: 0 for success
  */
+<<<<<<< HEAD
 static int fcoe_xmit(struct fc_lport *lport, struct fc_frame *fp)
+=======
+int fcoe_xmit(struct fc_lport *lport, struct fc_frame *fp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int wlen;
 	u32 crc;
@@ -1552,7 +1812,11 @@ static int fcoe_xmit(struct fc_lport *lport, struct fc_frame *fp)
 
 	/* crc offload */
 	if (likely(lport->crc_offload)) {
+<<<<<<< HEAD
 		skb->ip_summed = CHECKSUM_UNNECESSARY;
+=======
+		skb->ip_summed = CHECKSUM_PARTIAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		skb->csum_start = skb_headroom(skb);
 		skb->csum_offset = skb->len;
 		crc = 0;
@@ -1569,7 +1833,11 @@ static int fcoe_xmit(struct fc_lport *lport, struct fc_frame *fp)
 			return -ENOMEM;
 		}
 		frag = &skb_shinfo(skb)->frags[skb_shinfo(skb)->nr_frags - 1];
+<<<<<<< HEAD
 		cp = kmap_atomic(skb_frag_page(frag))
+=======
+		cp = kmap_atomic(frag->page, KM_SKB_DATA_SOFTIRQ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			+ frag->page_offset;
 	} else {
 		cp = (struct fcoe_crc_eof *)skb_put(skb, tlen);
@@ -1580,7 +1848,11 @@ static int fcoe_xmit(struct fc_lport *lport, struct fc_frame *fp)
 	cp->fcoe_crc32 = cpu_to_le32(~crc);
 
 	if (skb_is_nonlinear(skb)) {
+<<<<<<< HEAD
 		kunmap_atomic(cp);
+=======
+		kunmap_atomic(cp, KM_SKB_DATA_SOFTIRQ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cp = NULL;
 	}
 
@@ -1590,6 +1862,7 @@ static int fcoe_xmit(struct fc_lport *lport, struct fc_frame *fp)
 	skb_reset_network_header(skb);
 	skb->mac_len = elen;
 	skb->protocol = htons(ETH_P_FCOE);
+<<<<<<< HEAD
 	skb->priority = port->priority;
 
 	if (fcoe->netdev->priv_flags & IFF_802_1Q_VLAN &&
@@ -1599,6 +1872,9 @@ static int fcoe_xmit(struct fc_lport *lport, struct fc_frame *fp)
 		skb->dev = fcoe->realdev;
 	} else
 		skb->dev = fcoe->netdev;
+=======
+	skb->dev = fcoe->netdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* fill up mac and fcoe headers */
 	eh = eth_hdr(skb);
@@ -1634,7 +1910,15 @@ static int fcoe_xmit(struct fc_lport *lport, struct fc_frame *fp)
 
 	/* send down to lld */
 	fr_dev(fp) = lport;
+<<<<<<< HEAD
 	fcoe_port_send(port, skb);
+=======
+	if (port->fcoe_pending_queue.qlen)
+		fcoe_check_wait_queue(lport, skb);
+	else if (fcoe_start_io(skb))
+		fcoe_check_wait_queue(lport, skb);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1730,7 +2014,12 @@ static void fcoe_recv_frame(struct sk_buff *skb)
 			skb->dev ? skb->dev->name : "<NULL>");
 
 	port = lport_priv(lport);
+<<<<<<< HEAD
 	skb_linearize(skb); /* check for skb_is_nonlinear is within skb_linearize */
+=======
+	if (skb_is_nonlinear(skb))
+		skb_linearize(skb);	/* not ideal */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Frame length checks and setting up the header pointers
@@ -1786,6 +2075,7 @@ drop:
  *
  * Return: 0 for success
  */
+<<<<<<< HEAD
 static int fcoe_percpu_receive_thread(void *arg)
 {
 	struct fcoe_percpu_s *p = arg;
@@ -1793,12 +2083,19 @@ static int fcoe_percpu_receive_thread(void *arg)
 	struct sk_buff_head tmp;
 
 	skb_queue_head_init(&tmp);
+=======
+int fcoe_percpu_receive_thread(void *arg)
+{
+	struct fcoe_percpu_s *p = arg;
+	struct sk_buff *skb;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	set_user_nice(current, -20);
 
 	while (!kthread_should_stop()) {
 
 		spin_lock_bh(&p->fcoe_rx_list.lock);
+<<<<<<< HEAD
 		skb_queue_splice_init(&p->fcoe_rx_list, &tmp);
 		spin_unlock_bh(&p->fcoe_rx_list.lock);
 
@@ -1807,12 +2104,24 @@ static int fcoe_percpu_receive_thread(void *arg)
 
 		spin_lock_bh(&p->fcoe_rx_list.lock);
 		if (!skb_queue_len(&p->fcoe_rx_list)) {
+=======
+		while ((skb = __skb_dequeue(&p->fcoe_rx_list)) == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			set_current_state(TASK_INTERRUPTIBLE);
 			spin_unlock_bh(&p->fcoe_rx_list.lock);
 			schedule();
 			set_current_state(TASK_RUNNING);
+<<<<<<< HEAD
 		} else
 			spin_unlock_bh(&p->fcoe_rx_list.lock);
+=======
+			if (kthread_should_stop())
+				return 0;
+			spin_lock_bh(&p->fcoe_rx_list.lock);
+		}
+		spin_unlock_bh(&p->fcoe_rx_list.lock);
+		fcoe_recv_frame(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }
@@ -1822,7 +2131,10 @@ static int fcoe_percpu_receive_thread(void *arg)
  */
 static void fcoe_dev_setup(void)
 {
+<<<<<<< HEAD
 	register_dcbevent_notifier(&dcb_notifier);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	register_netdevice_notifier(&fcoe_notifier);
 }
 
@@ -1831,6 +2143,7 @@ static void fcoe_dev_setup(void)
  */
 static void fcoe_dev_cleanup(void)
 {
+<<<<<<< HEAD
 	unregister_dcbevent_notifier(&dcb_notifier);
 	unregister_netdevice_notifier(&fcoe_notifier);
 }
@@ -1894,6 +2207,11 @@ static int fcoe_dcb_app_notification(struct notifier_block *notifier,
 	return NOTIFY_OK;
 }
 
+=======
+	unregister_netdevice_notifier(&fcoe_notifier);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * fcoe_device_notification() - Handler for net device events
  * @notifier: The context of the notification
@@ -1948,6 +2266,10 @@ static int fcoe_device_notification(struct notifier_block *notifier,
 	case NETDEV_UNREGISTER:
 		list_del(&fcoe->list);
 		port = lport_priv(fcoe->ctlr.lp);
+<<<<<<< HEAD
+=======
+		fcoe_interface_cleanup(fcoe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		queue_work(fcoe_wq, &port->destroy_work);
 		goto out;
 		break;
@@ -2041,22 +2363,37 @@ static int fcoe_destroy(struct net_device *netdev)
 {
 	struct fcoe_interface *fcoe;
 	struct fc_lport *lport;
+<<<<<<< HEAD
 	struct fcoe_port *port;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rc = 0;
 
 	mutex_lock(&fcoe_config_mutex);
 	rtnl_lock();
 	fcoe = fcoe_hostlist_lookup_port(netdev);
 	if (!fcoe) {
+<<<<<<< HEAD
+=======
+		rtnl_unlock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -ENODEV;
 		goto out_nodev;
 	}
 	lport = fcoe->ctlr.lp;
+<<<<<<< HEAD
 	port = lport_priv(lport);
 	list_del(&fcoe->list);
 	queue_work(fcoe_wq, &port->destroy_work);
 out_nodev:
 	rtnl_unlock();
+=======
+	list_del(&fcoe->list);
+	fcoe_interface_cleanup(fcoe);
+	rtnl_unlock();
+	fcoe_if_destroy(lport);
+out_nodev:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&fcoe_config_mutex);
 	return rc;
 }
@@ -2068,6 +2405,7 @@ out_nodev:
 static void fcoe_destroy_work(struct work_struct *work)
 {
 	struct fcoe_port *port;
+<<<<<<< HEAD
 	struct fcoe_interface *fcoe;
 
 	port = container_of(work, struct fcoe_port, destroy_work);
@@ -2077,6 +2415,12 @@ static void fcoe_destroy_work(struct work_struct *work)
 	fcoe_if_destroy(port->lport);
 	fcoe_interface_cleanup(fcoe);
 
+=======
+
+	port = container_of(work, struct fcoe_port, destroy_work);
+	mutex_lock(&fcoe_config_mutex);
+	fcoe_if_destroy(port->lport);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&fcoe_config_mutex);
 }
 
@@ -2095,6 +2439,7 @@ static bool fcoe_match(struct net_device *netdev)
 }
 
 /**
+<<<<<<< HEAD
  * fcoe_dcb_create() - Initialize DCB attributes and hooks
  * @netdev: The net_device object of the L2 link that should be queried
  * @port: The fcoe_port to bind FCoE APP priority with
@@ -2135,6 +2480,8 @@ static void fcoe_dcb_create(struct fcoe_interface *fcoe)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * fcoe_create() - Create a fcoe interface
  * @netdev  : The net_device object the Ethernet interface to create on
  * @fip_mode: The FIP mode for this creation
@@ -2145,7 +2492,11 @@ static void fcoe_dcb_create(struct fcoe_interface *fcoe)
  */
 static int fcoe_create(struct net_device *netdev, enum fip_state fip_mode)
 {
+<<<<<<< HEAD
 	int rc = 0;
+=======
+	int rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct fcoe_interface *fcoe;
 	struct fc_lport *lport;
 
@@ -2169,23 +2520,32 @@ static int fcoe_create(struct net_device *netdev, enum fip_state fip_mode)
 		printk(KERN_ERR "fcoe: Failed to create interface (%s)\n",
 		       netdev->name);
 		rc = -EIO;
+<<<<<<< HEAD
 		rtnl_unlock();
 		fcoe_interface_cleanup(fcoe);
 		goto out_nortnl;
+=======
+		fcoe_interface_cleanup(fcoe);
+		goto out_free;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Make this the "master" N_Port */
 	fcoe->ctlr.lp = lport;
 
+<<<<<<< HEAD
 	/* setup DCB priority attributes. */
 	fcoe_dcb_create(fcoe);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* add to lports list */
 	fcoe_hostlist_add(lport);
 
 	/* start FIP Discovery and FLOGI */
 	lport->boot_time = jiffies;
 	fc_fabric_login(lport);
+<<<<<<< HEAD
 	if (!fcoe_link_ok(lport)) {
 		rtnl_unlock();
 		fcoe_ctlr_link_up(&fcoe->ctlr);
@@ -2196,6 +2556,24 @@ static int fcoe_create(struct net_device *netdev, enum fip_state fip_mode)
 out_nodev:
 	rtnl_unlock();
 out_nortnl:
+=======
+	if (!fcoe_link_ok(lport))
+		fcoe_ctlr_link_up(&fcoe->ctlr);
+
+	/*
+	 * Release from init in fcoe_interface_create(), on success lport
+	 * should be holding a reference taken in fcoe_if_create().
+	 */
+	fcoe_interface_put(fcoe);
+	rtnl_unlock();
+	mutex_unlock(&fcoe_config_mutex);
+
+	return 0;
+out_free:
+	fcoe_interface_put(fcoe);
+out_nodev:
+	rtnl_unlock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&fcoe_config_mutex);
 	return rc;
 }
@@ -2207,12 +2585,20 @@ out_nortnl:
  * Returns: 0 if the ethtool query was successful
  *          -1 if the ethtool query failed
  */
+<<<<<<< HEAD
 static int fcoe_link_speed_update(struct fc_lport *lport)
+=======
+int fcoe_link_speed_update(struct fc_lport *lport)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct net_device *netdev = fcoe_netdev(lport);
 	struct ethtool_cmd ecmd;
 
+<<<<<<< HEAD
 	if (!__ethtool_get_settings(netdev, &ecmd)) {
+=======
+	if (!dev_ethtool_get_settings(netdev, &ecmd)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		lport->link_supported_speeds &=
 			~(FC_PORTSPEED_1GBIT | FC_PORTSPEED_10GBIT);
 		if (ecmd.supported & (SUPPORTED_1000baseT_Half |
@@ -2241,7 +2627,11 @@ static int fcoe_link_speed_update(struct fc_lport *lport)
  * Returns: 0 if link is UP and OK, -1 if not
  *
  */
+<<<<<<< HEAD
 static int fcoe_link_ok(struct fc_lport *lport)
+=======
+int fcoe_link_ok(struct fc_lport *lport)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct net_device *netdev = fcoe_netdev(lport);
 
@@ -2261,17 +2651,47 @@ static int fcoe_link_ok(struct fc_lport *lport)
  * there no packets that will be handled by the lport, but also that any
  * threads already handling packet have returned.
  */
+<<<<<<< HEAD
 static void fcoe_percpu_clean(struct fc_lport *lport)
 {
 	struct fcoe_percpu_s *pp;
 	struct sk_buff *skb;
+=======
+void fcoe_percpu_clean(struct fc_lport *lport)
+{
+	struct fcoe_percpu_s *pp;
+	struct fcoe_rcv_info *fr;
+	struct sk_buff_head *list;
+	struct sk_buff *skb, *next;
+	struct sk_buff *head;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int cpu;
 
 	for_each_possible_cpu(cpu) {
 		pp = &per_cpu(fcoe_percpu, cpu);
+<<<<<<< HEAD
 
 		if (!pp->thread || !cpu_online(cpu))
 			continue;
+=======
+		spin_lock_bh(&pp->fcoe_rx_list.lock);
+		list = &pp->fcoe_rx_list;
+		head = list->next;
+		for (skb = head; skb != (struct sk_buff *)list;
+		     skb = next) {
+			next = skb->next;
+			fr = fcoe_dev_from_skb(skb);
+			if (fr->fr_dev == lport) {
+				__skb_unlink(skb, list);
+				kfree_skb(skb);
+			}
+		}
+
+		if (!pp->thread || !cpu_online(cpu)) {
+			spin_unlock_bh(&pp->fcoe_rx_list.lock);
+			continue;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		skb = dev_alloc_skb(0);
 		if (!skb) {
@@ -2280,7 +2700,10 @@ static void fcoe_percpu_clean(struct fc_lport *lport)
 		}
 		skb->destructor = fcoe_percpu_flush_done;
 
+<<<<<<< HEAD
 		spin_lock_bh(&pp->fcoe_rx_list.lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__skb_queue_tail(&pp->fcoe_rx_list, skb);
 		if (pp->fcoe_rx_list.qlen == 1)
 			wake_up_process(pp->thread);
@@ -2296,7 +2719,11 @@ static void fcoe_percpu_clean(struct fc_lport *lport)
  *
  * Returns: Always 0 (return value required by FC transport template)
  */
+<<<<<<< HEAD
 static int fcoe_reset(struct Scsi_Host *shost)
+=======
+int fcoe_reset(struct Scsi_Host *shost)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct fc_lport *lport = shost_priv(shost);
 	struct fcoe_port *port = lport_priv(lport);
@@ -2459,6 +2886,10 @@ static void __exit fcoe_exit(void)
 	list_for_each_entry_safe(fcoe, tmp, &fcoe_hostlist, list) {
 		list_del(&fcoe->list);
 		port = lport_priv(fcoe->ctlr.lp);
+<<<<<<< HEAD
+=======
+		fcoe_interface_cleanup(fcoe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		queue_work(fcoe_wq, &port->destroy_work);
 	}
 	rtnl_unlock();
@@ -2508,11 +2939,22 @@ static void fcoe_flogi_resp(struct fc_seq *seq, struct fc_frame *fp, void *arg)
 		goto done;
 
 	mac = fr_cb(fp)->granted_mac;
+<<<<<<< HEAD
 	/* pre-FIP */
 	if (is_zero_ether_addr(mac))
 		fcoe_ctlr_recv_flogi(fip, lport, fp);
 	if (!is_zero_ether_addr(mac))
 		fcoe_update_src_mac(lport, mac);
+=======
+	if (is_zero_ether_addr(mac)) {
+		/* pre-FIP */
+		if (fcoe_ctlr_recv_flogi(fip, lport, fp)) {
+			fc_frame_free(fp);
+			return;
+		}
+	}
+	fcoe_update_src_mac(lport, mac);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 done:
 	fc_lport_flogi_resp(seq, fp, lport);
 }
@@ -2594,7 +3036,11 @@ static int fcoe_vport_create(struct fc_vport *vport, bool disabled)
 
 	rc = fcoe_validate_vport_create(vport);
 	if (rc) {
+<<<<<<< HEAD
 		fcoe_wwn_to_str(vport->port_name, buf, sizeof(buf));
+=======
+		wwn_to_str(vport->port_name, buf, sizeof(buf));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR "fcoe: Failed to create vport, "
 			"WWPN (0x%s) already exists\n",
 			buf);
@@ -2602,9 +3048,13 @@ static int fcoe_vport_create(struct fc_vport *vport, bool disabled)
 	}
 
 	mutex_lock(&fcoe_config_mutex);
+<<<<<<< HEAD
 	rtnl_lock();
 	vn_port = fcoe_if_create(fcoe, &vport->dev, 1);
 	rtnl_unlock();
+=======
+	vn_port = fcoe_if_create(fcoe, &vport->dev, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&fcoe_config_mutex);
 
 	if (IS_ERR(vn_port)) {
@@ -2634,15 +3084,23 @@ static int fcoe_vport_destroy(struct fc_vport *vport)
 	struct Scsi_Host *shost = vport_to_shost(vport);
 	struct fc_lport *n_port = shost_priv(shost);
 	struct fc_lport *vn_port = vport->dd_data;
+<<<<<<< HEAD
+=======
+	struct fcoe_port *port = lport_priv(vn_port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&n_port->lp_mutex);
 	list_del(&vn_port->list);
 	mutex_unlock(&n_port->lp_mutex);
+<<<<<<< HEAD
 
 	mutex_lock(&fcoe_config_mutex);
 	fcoe_if_destroy(vn_port);
 	mutex_unlock(&fcoe_config_mutex);
 
+=======
+	queue_work(fcoe_wq, &port->destroy_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -2706,9 +3164,34 @@ static void fcoe_set_vport_symbolic_name(struct fc_vport *vport)
 static void fcoe_get_lesb(struct fc_lport *lport,
 			 struct fc_els_lesb *fc_lesb)
 {
+<<<<<<< HEAD
 	struct net_device *netdev = fcoe_netdev(lport);
 
 	__fcoe_get_lesb(lport, fc_lesb, netdev);
+=======
+	unsigned int cpu;
+	u32 lfc, vlfc, mdac;
+	struct fcoe_dev_stats *devst;
+	struct fcoe_fc_els_lesb *lesb;
+	struct rtnl_link_stats64 temp;
+	struct net_device *netdev = fcoe_netdev(lport);
+
+	lfc = 0;
+	vlfc = 0;
+	mdac = 0;
+	lesb = (struct fcoe_fc_els_lesb *)fc_lesb;
+	memset(lesb, 0, sizeof(*lesb));
+	for_each_possible_cpu(cpu) {
+		devst = per_cpu_ptr(lport->dev_stats, cpu);
+		lfc += devst->LinkFailureCount;
+		vlfc += devst->VLinkFailureCount;
+		mdac += devst->MissDiscAdvCount;
+	}
+	lesb->lesb_link_fail = htonl(lfc);
+	lesb->lesb_vlink_fail = htonl(vlfc);
+	lesb->lesb_miss_fka = htonl(mdac);
+	lesb->lesb_fcs_error = htonl(dev_get_stats(netdev, &temp)->rx_crc_errors);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -2732,3 +3215,52 @@ static void fcoe_set_port_id(struct fc_lport *lport,
 	if (fp && fc_frame_payload_op(fp) == ELS_FLOGI)
 		fcoe_ctlr_recv_flogi(&fcoe->ctlr, lport, fp);
 }
+<<<<<<< HEAD
+=======
+
+/**
+ * fcoe_validate_vport_create() - Validate a vport before creating it
+ * @vport: NPIV port to be created
+ *
+ * This routine is meant to add validation for a vport before creating it
+ * via fcoe_vport_create().
+ * Current validations are:
+ *      - WWPN supplied is unique for given lport
+ *
+ *
+*/
+static int fcoe_validate_vport_create(struct fc_vport *vport)
+{
+	struct Scsi_Host *shost = vport_to_shost(vport);
+	struct fc_lport *n_port = shost_priv(shost);
+	struct fc_lport *vn_port;
+	int rc = 0;
+	char buf[32];
+
+	mutex_lock(&n_port->lp_mutex);
+
+	wwn_to_str(vport->port_name, buf, sizeof(buf));
+	/* Check if the wwpn is not same as that of the lport */
+	if (!memcmp(&n_port->wwpn, &vport->port_name, sizeof(u64))) {
+		FCOE_DBG("vport WWPN 0x%s is same as that of the "
+			"base port WWPN\n", buf);
+		rc = -EINVAL;
+		goto out;
+	}
+
+	/* Check if there is any existing vport with same wwpn */
+	list_for_each_entry(vn_port, &n_port->vports, list) {
+		if (!memcmp(&vn_port->wwpn, &vport->port_name, sizeof(u64))) {
+			FCOE_DBG("vport with given WWPN 0x%s already "
+			"exists\n", buf);
+			rc = -EINVAL;
+			break;
+		}
+	}
+
+out:
+	mutex_unlock(&n_port->lp_mutex);
+
+	return rc;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

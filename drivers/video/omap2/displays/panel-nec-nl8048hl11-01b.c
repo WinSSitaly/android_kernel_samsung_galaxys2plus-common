@@ -163,6 +163,7 @@ static void nec_8048_panel_remove(struct omap_dss_device *dssdev)
 	kfree(necd);
 }
 
+<<<<<<< HEAD
 static int nec_8048_panel_power_on(struct omap_dss_device *dssdev)
 {
 	int r;
@@ -180,12 +181,25 @@ static int nec_8048_panel_power_on(struct omap_dss_device *dssdev)
 		r = dssdev->platform_enable(dssdev);
 		if (r)
 			goto err1;
+=======
+static int nec_8048_panel_enable(struct omap_dss_device *dssdev)
+{
+	int r = 0;
+	struct nec_8048_data *necd = dev_get_drvdata(&dssdev->dev);
+	struct backlight_device *bl = necd->bl;
+
+	if (dssdev->platform_enable) {
+		r = dssdev->platform_enable(dssdev);
+		if (r)
+			return r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	r = nec_8048_bl_update_status(bl);
 	if (r < 0)
 		dev_err(&dssdev->dev, "failed to set lcd brightness\n");
 
+<<<<<<< HEAD
 	return 0;
 err1:
 	omapdss_dpi_display_disable(dssdev);
@@ -194,18 +208,31 @@ err0:
 }
 
 static void nec_8048_panel_power_off(struct omap_dss_device *dssdev)
+=======
+	r = omapdss_dpi_display_enable(dssdev);
+
+	return r;
+}
+
+static void nec_8048_panel_disable(struct omap_dss_device *dssdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct nec_8048_data *necd = dev_get_drvdata(&dssdev->dev);
 	struct backlight_device *bl = necd->bl;
 
+<<<<<<< HEAD
 	if (dssdev->state != OMAP_DSS_DISPLAY_ACTIVE)
 		return;
+=======
+	omapdss_dpi_display_disable(dssdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bl->props.brightness = 0;
 	nec_8048_bl_update_status(bl);
 
 	if (dssdev->platform_disable)
 		dssdev->platform_disable(dssdev);
+<<<<<<< HEAD
 
 	omapdss_dpi_display_disable(dssdev);
 }
@@ -228,19 +255,26 @@ static void nec_8048_panel_disable(struct omap_dss_device *dssdev)
 	nec_8048_panel_power_off(dssdev);
 
 	dssdev->state = OMAP_DSS_DISPLAY_DISABLED;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int nec_8048_panel_suspend(struct omap_dss_device *dssdev)
 {
+<<<<<<< HEAD
 	nec_8048_panel_power_off(dssdev);
 
 	dssdev->state = OMAP_DSS_DISPLAY_SUSPENDED;
 
+=======
+	nec_8048_panel_disable(dssdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int nec_8048_panel_resume(struct omap_dss_device *dssdev)
 {
+<<<<<<< HEAD
 	int r;
 
 	r = nec_8048_panel_power_on(dssdev);
@@ -250,6 +284,9 @@ static int nec_8048_panel_resume(struct omap_dss_device *dssdev)
 	dssdev->state = OMAP_DSS_DISPLAY_ACTIVE;
 
 	return 0;
+=======
+	return nec_8048_panel_enable(dssdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int nec_8048_recommended_bpp(struct omap_dss_device *dssdev)
@@ -346,12 +383,31 @@ static struct spi_driver nec_8048_spi_driver = {
 	.resume		= nec_8048_spi_resume,
 	.driver		= {
 		.name	= "nec_8048_spi",
+<<<<<<< HEAD
+=======
+		.bus	= &spi_bus_type,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.owner	= THIS_MODULE,
 	},
 };
 
+<<<<<<< HEAD
 module_spi_driver(nec_8048_spi_driver);
 
+=======
+static int __init nec_8048_lcd_init(void)
+{
+	return spi_register_driver(&nec_8048_spi_driver);
+}
+
+static void __exit nec_8048_lcd_exit(void)
+{
+	return spi_unregister_driver(&nec_8048_spi_driver);
+}
+
+module_init(nec_8048_lcd_init);
+module_exit(nec_8048_lcd_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_AUTHOR("Erik Gilling <konkers@android.com>");
 MODULE_DESCRIPTION("NEC-nl8048hl11-01b Driver");
 MODULE_LICENSE("GPL");

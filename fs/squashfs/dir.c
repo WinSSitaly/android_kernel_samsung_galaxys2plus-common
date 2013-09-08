@@ -64,7 +64,11 @@ static int get_dir_index_using_offset(struct super_block *sb,
 	 * is offset by 3 because we invent "." and ".." entries which are
 	 * not actually stored in the directory.
 	 */
+<<<<<<< HEAD
 	if (f_pos <= 3)
+=======
+	if (f_pos < 3)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return f_pos;
 	f_pos -= 3;
 
@@ -105,7 +109,11 @@ static int squashfs_readdir(struct file *file, void *dirent, filldir_t filldir)
 	struct inode *inode = file->f_dentry->d_inode;
 	struct squashfs_sb_info *msblk = inode->i_sb->s_fs_info;
 	u64 block = squashfs_i(inode)->start + msblk->directory_table;
+<<<<<<< HEAD
 	int offset = squashfs_i(inode)->offset, length, dir_count, size,
+=======
+	int offset = squashfs_i(inode)->offset, length = 0, dir_count, size,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				type, err;
 	unsigned int inode_number;
 	struct squashfs_dir_header dirh;
@@ -173,7 +181,12 @@ static int squashfs_readdir(struct file *file, void *dirent, filldir_t filldir)
 
 		dir_count = le32_to_cpu(dirh.count) + 1;
 
+<<<<<<< HEAD
 		if (dir_count > SQUASHFS_DIR_COUNT)
+=======
+		/* dir_count should never be larger than 256 */
+		if (dir_count > 256)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto failed_read;
 
 		while (dir_count--) {

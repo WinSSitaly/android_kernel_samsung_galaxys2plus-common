@@ -41,6 +41,7 @@
 	(SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3BE)
 
 #define AC97PCR_START(stype)	\
+<<<<<<< HEAD
 	((stype) == SNDRV_PCM_STREAM_PLAYBACK ? PSC_AC97PCR_TS : PSC_AC97PCR_RS)
 #define AC97PCR_STOP(stype)	\
 	((stype) == SNDRV_PCM_STREAM_PLAYBACK ? PSC_AC97PCR_TP : PSC_AC97PCR_RP)
@@ -49,6 +50,16 @@
 
 #define AC97STAT_BUSY(stype)	\
 	((stype) == SNDRV_PCM_STREAM_PLAYBACK ? PSC_AC97STAT_TB : PSC_AC97STAT_RB)
+=======
+	((stype) == PCM_TX ? PSC_AC97PCR_TS : PSC_AC97PCR_RS)
+#define AC97PCR_STOP(stype)	\
+	((stype) == PCM_TX ? PSC_AC97PCR_TP : PSC_AC97PCR_RP)
+#define AC97PCR_CLRFIFO(stype)	\
+	((stype) == PCM_TX ? PSC_AC97PCR_TC : PSC_AC97PCR_RC)
+
+#define AC97STAT_BUSY(stype)	\
+	((stype) == PCM_TX ? PSC_AC97STAT_TB : PSC_AC97STAT_RB)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* instance data. There can be only one, MacLeod!!!! */
 static struct au1xpsc_audio_data *au1xpsc_ac97_workdata;
@@ -215,7 +226,11 @@ static int au1xpsc_ac97_hw_params(struct snd_pcm_substream *substream,
 {
 	struct au1xpsc_audio_data *pscdata = snd_soc_dai_get_drvdata(dai);
 	unsigned long r, ro, stat;
+<<<<<<< HEAD
 	int chans, t, stype = substream->stream;
+=======
+	int chans, t, stype = SUBSTREAM_TYPE(substream);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	chans = params_channels(params);
 
@@ -235,7 +250,11 @@ static int au1xpsc_ac97_hw_params(struct snd_pcm_substream *substream,
 		r |= PSC_AC97CFG_SET_LEN(params->msbits);
 
 		/* channels: enable slots for front L/R channel */
+<<<<<<< HEAD
 		if (stype == SNDRV_PCM_STREAM_PLAYBACK) {
+=======
+		if (stype == PCM_TX) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			r &= ~PSC_AC97CFG_TXSLOT_MASK;
 			r |= PSC_AC97CFG_TXSLOT_ENA(3);
 			r |= PSC_AC97CFG_TXSLOT_ENA(4);
@@ -294,7 +313,11 @@ static int au1xpsc_ac97_trigger(struct snd_pcm_substream *substream,
 				int cmd, struct snd_soc_dai *dai)
 {
 	struct au1xpsc_audio_data *pscdata = snd_soc_dai_get_drvdata(dai);
+<<<<<<< HEAD
 	int ret, stype = substream->stream;
+=======
+	int ret, stype = SUBSTREAM_TYPE(substream);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = 0;
 
@@ -324,6 +347,7 @@ static int au1xpsc_ac97_trigger(struct snd_pcm_substream *substream,
 	return ret;
 }
 
+<<<<<<< HEAD
 static int au1xpsc_ac97_startup(struct snd_pcm_substream *substream,
 				struct snd_soc_dai *dai)
 {
@@ -332,13 +356,19 @@ static int au1xpsc_ac97_startup(struct snd_pcm_substream *substream,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int au1xpsc_ac97_probe(struct snd_soc_dai *dai)
 {
 	return au1xpsc_ac97_workdata ? 0 : -ENODEV;
 }
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops au1xpsc_ac97_dai_ops = {
 	.startup	= au1xpsc_ac97_startup,
+=======
+static struct snd_soc_dai_ops au1xpsc_ac97_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.trigger	= au1xpsc_ac97_trigger,
 	.hw_params	= au1xpsc_ac97_hw_params,
 };
@@ -364,17 +394,26 @@ static const struct snd_soc_dai_driver au1xpsc_ac97_dai_template = {
 static int __devinit au1xpsc_ac97_drvprobe(struct platform_device *pdev)
 {
 	int ret;
+<<<<<<< HEAD
 	struct resource *iores, *dmares;
 	unsigned long sel;
 	struct au1xpsc_audio_data *wd;
 
 	wd = devm_kzalloc(&pdev->dev, sizeof(struct au1xpsc_audio_data),
 			  GFP_KERNEL);
+=======
+	struct resource *r;
+	unsigned long sel;
+	struct au1xpsc_audio_data *wd;
+
+	wd = kzalloc(sizeof(struct au1xpsc_audio_data), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!wd)
 		return -ENOMEM;
 
 	mutex_init(&wd->lock);
 
+<<<<<<< HEAD
 	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	if (!iores)
 		return -ENODEV;
@@ -398,6 +437,21 @@ static int __devinit au1xpsc_ac97_drvprobe(struct platform_device *pdev)
 	if (!dmares)
 		return -EBUSY;
 	wd->dmaids[SNDRV_PCM_STREAM_CAPTURE] = dmares->start;
+=======
+	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	if (!r) {
+		ret = -ENODEV;
+		goto out0;
+	}
+
+	ret = -EBUSY;
+	if (!request_mem_region(r->start, resource_size(r), pdev->name))
+		goto out0;
+
+	wd->mmio = ioremap(r->start, resource_size(r));
+	if (!wd->mmio)
+		goto out1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* configuration: max dma trigger threshold, enable ac97 */
 	wd->cfg = PSC_AC97CFG_RT_FIFO8 | PSC_AC97CFG_TT_FIFO8 |
@@ -421,15 +475,39 @@ static int __devinit au1xpsc_ac97_drvprobe(struct platform_device *pdev)
 
 	ret = snd_soc_register_dai(&pdev->dev, &wd->dai_drv);
 	if (ret)
+<<<<<<< HEAD
 		return ret;
 
 	au1xpsc_ac97_workdata = wd;
 	return 0;
+=======
+		goto out1;
+
+	wd->dmapd = au1xpsc_pcm_add(pdev);
+	if (wd->dmapd) {
+		au1xpsc_ac97_workdata = wd;
+		return 0;
+	}
+
+	snd_soc_unregister_dai(&pdev->dev);
+out1:
+	release_mem_region(r->start, resource_size(r));
+out0:
+	kfree(wd);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __devexit au1xpsc_ac97_drvremove(struct platform_device *pdev)
 {
 	struct au1xpsc_audio_data *wd = platform_get_drvdata(pdev);
+<<<<<<< HEAD
+=======
+	struct resource *r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+
+	if (wd->dmapd)
+		au1xpsc_pcm_destroy(wd->dmapd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	snd_soc_unregister_dai(&pdev->dev);
 
@@ -439,6 +517,13 @@ static int __devexit au1xpsc_ac97_drvremove(struct platform_device *pdev)
 	au_writel(PSC_CTRL_DISABLE, PSC_CTRL(wd));
 	au_sync();
 
+<<<<<<< HEAD
+=======
+	iounmap(wd->mmio);
+	release_mem_region(r->start, resource_size(r));
+	kfree(wd);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	au1xpsc_ac97_workdata = NULL;	/* MDEV */
 
 	return 0;

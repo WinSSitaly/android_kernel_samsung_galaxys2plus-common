@@ -38,13 +38,22 @@
 #include <linux/delay.h>
 #include <linux/uio.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ioport.h>
 #include <linux/wait.h>
 #include <linux/slab.h>
 
+<<<<<<< HEAD
 #include <asm/io.h>
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <asm/io.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <asm/string.h>
 #include <asm/byteorder.h>

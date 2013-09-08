@@ -12,7 +12,11 @@
  * For more information about Generic Hardware Error Source, please
  * refer to ACPI Specification version 4.0, section 17.3.2.6
  *
+<<<<<<< HEAD
  * Copyright 2010,2011 Intel Corp.
+=======
+ * Copyright 2010 Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *   Author: Huang Ying <ying.huang@intel.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -33,7 +37,10 @@
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/acpi.h>
+<<<<<<< HEAD
 #include <linux/acpi_io.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 #include <linux/interrupt.h>
 #include <linux/timer.h>
@@ -43,6 +50,7 @@
 #include <linux/mutex.h>
 #include <linux/ratelimit.h>
 #include <linux/vmalloc.h>
+<<<<<<< HEAD
 #include <linux/irq_work.h>
 #include <linux/llist.h>
 #include <linux/genalloc.h>
@@ -53,12 +61,20 @@
 #include <asm/mce.h>
 #include <asm/tlbflush.h>
 #include <asm/nmi.h>
+=======
+#include <acpi/apei.h>
+#include <acpi/atomicio.h>
+#include <acpi/hed.h>
+#include <asm/mce.h>
+#include <asm/tlbflush.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "apei-internal.h"
 
 #define GHES_PFX	"GHES: "
 
 #define GHES_ESTATUS_MAX_SIZE		65536
+<<<<<<< HEAD
 #define GHES_ESOURCE_PREALLOC_MAX_SIZE	65536
 
 #define GHES_ESTATUS_POOL_MIN_ALLOC_ORDER 3
@@ -83,6 +99,8 @@
 #define GHES_ESTATUS_FROM_NODE(estatus_node)				\
 	((struct acpi_hest_generic_status *)				\
 	 ((struct ghes_estatus_node *)(estatus_node) + 1))
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * One struct ghes is created for each generic hardware error source.
@@ -107,6 +125,7 @@ struct ghes {
 	};
 };
 
+<<<<<<< HEAD
 struct ghes_estatus_node {
 	struct llist_node llnode;
 	struct acpi_hest_generic *generic;
@@ -123,6 +142,8 @@ struct ghes_estatus_cache {
 bool ghes_disable;
 module_param_named(disable, ghes_disable, bool, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ghes_panic_timeout	__read_mostly = 30;
 
 /*
@@ -167,6 +188,7 @@ static struct vm_struct *ghes_ioremap_area;
 static DEFINE_RAW_SPINLOCK(ghes_ioremap_lock_nmi);
 static DEFINE_SPINLOCK(ghes_ioremap_lock_irq);
 
+<<<<<<< HEAD
 /*
  * printk is not safe in NMI context.  So in NMI handler, we allocate
  * required memory from lock-less memory allocator
@@ -183,6 +205,8 @@ static struct irq_work ghes_proc_irq_work;
 struct ghes_estatus_cache *ghes_estatus_caches[GHES_ESTATUS_CACHES_SIZE];
 static atomic_t ghes_estatus_cache_alloced;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ghes_ioremap_init(void)
 {
 	ghes_ioremap_area = __get_vm_area(PAGE_SIZE * GHES_IOREMAP_PAGES,
@@ -242,6 +266,7 @@ static void ghes_iounmap_irq(void __iomem *vaddr_ptr)
 	__flush_tlb_one(vaddr);
 }
 
+<<<<<<< HEAD
 static int ghes_estatus_pool_init(void)
 {
 	ghes_estatus_pool = gen_pool_create(GHES_ESTATUS_POOL_MIN_ALLOC_ORDER, -1);
@@ -291,6 +316,8 @@ static void ghes_estatus_pool_shrink(unsigned long len)
 	ghes_estatus_pool_size_request -= PAGE_ALIGN(len);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct ghes *ghes_new(struct acpi_hest_generic *generic)
 {
 	struct ghes *ghes;
@@ -301,7 +328,11 @@ static struct ghes *ghes_new(struct acpi_hest_generic *generic)
 	if (!ghes)
 		return ERR_PTR(-ENOMEM);
 	ghes->generic = generic;
+<<<<<<< HEAD
 	rc = apei_map_generic_address(&generic->error_status_address);
+=======
+	rc = acpi_pre_map_gar(&generic->error_status_address);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc)
 		goto err_free;
 	error_block_length = generic->error_block_length;
@@ -321,7 +352,11 @@ static struct ghes *ghes_new(struct acpi_hest_generic *generic)
 	return ghes;
 
 err_unmap:
+<<<<<<< HEAD
 	apei_unmap_generic_address(&generic->error_status_address);
+=======
+	acpi_post_unmap_gar(&generic->error_status_address);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_free:
 	kfree(ghes);
 	return ERR_PTR(rc);
@@ -330,7 +365,11 @@ err_free:
 static void ghes_fini(struct ghes *ghes)
 {
 	kfree(ghes->estatus);
+<<<<<<< HEAD
 	apei_unmap_generic_address(&ghes->generic->error_status_address);
+=======
+	acpi_post_unmap_gar(&ghes->generic->error_status_address);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 enum {
@@ -401,7 +440,11 @@ static int ghes_read_estatus(struct ghes *ghes, int silent)
 	u32 len;
 	int rc;
 
+<<<<<<< HEAD
 	rc = apei_read(&buf_paddr, &g->error_status_address);
+=======
+	rc = acpi_atomic_read(&buf_paddr, &g->error_status_address);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc) {
 		if (!silent && printk_ratelimit())
 			pr_warning(FW_WARN GHES_PFX
@@ -452,6 +495,7 @@ static void ghes_clear_estatus(struct ghes *ghes)
 	ghes->flags &= ~GHES_TO_CLEAR;
 }
 
+<<<<<<< HEAD
 static void ghes_do_proc(const struct acpi_hest_generic_status *estatus)
 {
 	int sev, sec_sev;
@@ -497,11 +541,28 @@ static void ghes_do_proc(const struct acpi_hest_generic_status *estatus)
 						  devfn, aer_severity);
 			}
 
+=======
+static void ghes_do_proc(struct ghes *ghes)
+{
+	int sev, processed = 0;
+	struct acpi_hest_generic_data *gdata;
+
+	sev = ghes_severity(ghes->estatus->error_severity);
+	apei_estatus_for_each_section(ghes->estatus, gdata) {
+#ifdef CONFIG_X86_MCE
+		if (!uuid_le_cmp(*(uuid_le *)gdata->section_type,
+				 CPER_SEC_PLATFORM_MEM)) {
+			apei_mce_report_mem_error(
+				sev == GHES_SEV_CORRECTED,
+				(struct cper_sec_mem_err *)(gdata+1));
+			processed = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 #endif
 	}
 }
 
+<<<<<<< HEAD
 static void __ghes_print_estatus(const char *pfx,
 				 const struct acpi_hest_generic *generic,
 				 const struct acpi_hest_generic_status *estatus)
@@ -669,6 +730,26 @@ static void ghes_estatus_cache_add(
 	} else
 		ghes_estatus_cache_free(new_cache);
 	rcu_read_unlock();
+=======
+static void ghes_print_estatus(const char *pfx, struct ghes *ghes)
+{
+	/* Not more than 2 messages every 5 seconds */
+	static DEFINE_RATELIMIT_STATE(ratelimit, 5*HZ, 2);
+
+	if (pfx == NULL) {
+		if (ghes_severity(ghes->estatus->error_severity) <=
+		    GHES_SEV_CORRECTED)
+			pfx = KERN_WARNING HW_ERR;
+		else
+			pfx = KERN_ERR HW_ERR;
+	}
+	if (__ratelimit(&ratelimit)) {
+		printk(
+	"%s""Hardware error from APEI Generic Hardware Error Source: %d\n",
+	pfx, ghes->generic->header.source_id);
+		apei_estatus_print(pfx, ghes->estatus);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ghes_proc(struct ghes *ghes)
@@ -678,11 +759,17 @@ static int ghes_proc(struct ghes *ghes)
 	rc = ghes_read_estatus(ghes, 0);
 	if (rc)
 		goto out;
+<<<<<<< HEAD
 	if (!ghes_estatus_cached(ghes->estatus)) {
 		if (ghes_print_estatus(NULL, ghes->generic, ghes->estatus))
 			ghes_estatus_cache_add(ghes->generic, ghes->estatus);
 	}
 	ghes_do_proc(ghes->estatus);
+=======
+	ghes_print_estatus(NULL, ghes);
+	ghes_do_proc(ghes);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	ghes_clear_estatus(ghes);
 	return 0;
@@ -740,6 +827,7 @@ static int ghes_notify_sci(struct notifier_block *this,
 	return ret;
 }
 
+<<<<<<< HEAD
 static struct llist_node *llist_nodes_reverse(struct llist_node *llnode)
 {
 	struct llist_node *next, *tail = NULL;
@@ -818,6 +906,17 @@ static int ghes_notify_nmi(unsigned int cmd, struct pt_regs *regs)
 	struct ghes *ghes, *ghes_global = NULL;
 	int sev, sev_global = -1;
 	int ret = NMI_DONE;
+=======
+static int ghes_notify_nmi(struct notifier_block *this,
+				  unsigned long cmd, void *data)
+{
+	struct ghes *ghes, *ghes_global = NULL;
+	int sev, sev_global = -1;
+	int ret = NOTIFY_DONE;
+
+	if (cmd != DIE_NMI)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	raw_spin_lock(&ghes_nmi_lock);
 	list_for_each_entry_rcu(ghes, &ghes_nmi, list) {
@@ -830,17 +929,28 @@ static int ghes_notify_nmi(unsigned int cmd, struct pt_regs *regs)
 			sev_global = sev;
 			ghes_global = ghes;
 		}
+<<<<<<< HEAD
 		ret = NMI_HANDLED;
 	}
 
 	if (ret == NMI_DONE)
+=======
+		ret = NOTIFY_STOP;
+	}
+
+	if (ret == NOTIFY_DONE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	if (sev_global >= GHES_SEV_PANIC) {
 		oops_begin();
+<<<<<<< HEAD
 		ghes_print_queued_estatus();
 		__ghes_print_estatus(KERN_EMERG, ghes_global->generic,
 				     ghes_global->estatus);
+=======
+		ghes_print_estatus(KERN_EMERG HW_ERR, ghes_global);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* reboot to log the error! */
 		if (panic_timeout == 0)
 			panic_timeout = ghes_panic_timeout;
@@ -848,6 +958,7 @@ static int ghes_notify_nmi(unsigned int cmd, struct pt_regs *regs)
 	}
 
 	list_for_each_entry_rcu(ghes, &ghes_nmi, list) {
+<<<<<<< HEAD
 #ifdef CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG
 		u32 len, node_len;
 		struct ghes_estatus_node *estatus_node;
@@ -876,6 +987,14 @@ next:
 #ifdef CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG
 	irq_work_queue(&ghes_proc_irq_work);
 #endif
+=======
+		if (!(ghes->flags & GHES_TO_CLEAR))
+			continue;
+		/* Do not print estatus because printk is not NMI safe */
+		ghes_do_proc(ghes);
+		ghes_clear_estatus(ghes);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	raw_spin_unlock(&ghes_nmi_lock);
@@ -886,6 +1005,7 @@ static struct notifier_block ghes_notifier_sci = {
 	.notifier_call = ghes_notify_sci,
 };
 
+<<<<<<< HEAD
 static unsigned long ghes_esource_prealloc_size(
 	const struct acpi_hest_generic *generic)
 {
@@ -900,12 +1020,20 @@ static unsigned long ghes_esource_prealloc_size(
 
 	return prealloc_size;
 }
+=======
+static struct notifier_block ghes_notifier_nmi = {
+	.notifier_call = ghes_notify_nmi,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __devinit ghes_probe(struct platform_device *ghes_dev)
 {
 	struct acpi_hest_generic *generic;
 	struct ghes *ghes = NULL;
+<<<<<<< HEAD
 	unsigned long len;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rc = -EINVAL;
 
 	generic = *(struct acpi_hest_generic **)ghes_dev->dev.platform_data;
@@ -971,12 +1099,18 @@ static int __devinit ghes_probe(struct platform_device *ghes_dev)
 		mutex_unlock(&ghes_list_mutex);
 		break;
 	case ACPI_HEST_NOTIFY_NMI:
+<<<<<<< HEAD
 		len = ghes_esource_prealloc_size(generic);
 		ghes_estatus_pool_expand(len);
 		mutex_lock(&ghes_list_mutex);
 		if (list_empty(&ghes_nmi))
 			register_nmi_handler(NMI_LOCAL, ghes_notify_nmi, 0,
 						"ghes");
+=======
+		mutex_lock(&ghes_list_mutex);
+		if (list_empty(&ghes_nmi))
+			register_die_notifier(&ghes_notifier_nmi);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_add_rcu(&ghes->list, &ghes_nmi);
 		mutex_unlock(&ghes_list_mutex);
 		break;
@@ -998,7 +1132,10 @@ static int __devexit ghes_remove(struct platform_device *ghes_dev)
 {
 	struct ghes *ghes;
 	struct acpi_hest_generic *generic;
+<<<<<<< HEAD
 	unsigned long len;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ghes = platform_get_drvdata(ghes_dev);
 	generic = ghes->generic;
@@ -1022,15 +1159,22 @@ static int __devexit ghes_remove(struct platform_device *ghes_dev)
 		mutex_lock(&ghes_list_mutex);
 		list_del_rcu(&ghes->list);
 		if (list_empty(&ghes_nmi))
+<<<<<<< HEAD
 			unregister_nmi_handler(NMI_LOCAL, "ghes");
+=======
+			unregister_die_notifier(&ghes_notifier_nmi);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mutex_unlock(&ghes_list_mutex);
 		/*
 		 * To synchronize with NMI handler, ghes can only be
 		 * freed after NMI handler finishes.
 		 */
 		synchronize_rcu();
+<<<<<<< HEAD
 		len = ghes_esource_prealloc_size(generic);
 		ghes_estatus_pool_shrink(len);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		BUG();
@@ -1066,6 +1210,7 @@ static int __init ghes_init(void)
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	if (ghes_disable) {
 		pr_info(GHES_PFX "GHES is not enabled!\n");
 		return -EINVAL;
@@ -1073,10 +1218,13 @@ static int __init ghes_init(void)
 
 	init_irq_work(&ghes_proc_irq_work, ghes_proc_in_irq);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = ghes_ioremap_init();
 	if (rc)
 		goto err;
 
+<<<<<<< HEAD
 	rc = ghes_estatus_pool_init();
 	if (rc)
 		goto err_ioremap_exit;
@@ -1103,6 +1251,13 @@ static int __init ghes_init(void)
 	return 0;
 err_pool_exit:
 	ghes_estatus_pool_exit();
+=======
+	rc = platform_driver_register(&ghes_platform_driver);
+	if (rc)
+		goto err_ioremap_exit;
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_ioremap_exit:
 	ghes_ioremap_exit();
 err:
@@ -1112,7 +1267,10 @@ err:
 static void __exit ghes_exit(void)
 {
 	platform_driver_unregister(&ghes_platform_driver);
+<<<<<<< HEAD
 	ghes_estatus_pool_exit();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ghes_ioremap_exit();
 }
 

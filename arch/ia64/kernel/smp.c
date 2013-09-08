@@ -32,7 +32,11 @@
 #include <linux/bitops.h>
 #include <linux/kexec.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/current.h>
 #include <asm/delay.h>
 #include <asm/machvec.h>
@@ -44,6 +48,10 @@
 #include <asm/processor.h>
 #include <asm/ptrace.h>
 #include <asm/sal.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/tlbflush.h>
 #include <asm/unistd.h>
 #include <asm/mca.h>
@@ -76,7 +84,11 @@ stop_this_cpu(void)
 	/*
 	 * Remove this CPU:
 	 */
+<<<<<<< HEAD
 	set_cpu_online(smp_processor_id(), false);
+=======
+	cpu_clear(smp_processor_id(), cpu_online_map);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	max_xtp();
 	local_irq_disable();
 	cpu_halt();

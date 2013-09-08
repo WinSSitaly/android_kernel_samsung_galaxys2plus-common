@@ -92,6 +92,7 @@ static void __init mp900c_init(void)
 
 /* Maintainer - Michael Petchkovsky <mkpetch@internode.on.net> */
 MACHINE_START(NEC_MP900, "MobilePro900/C")
+<<<<<<< HEAD
 	.atag_offset	= 0x220100,
 	.timer		= &pxa_timer,
 	.map_io		= pxa25x_map_io,
@@ -100,5 +101,12 @@ MACHINE_START(NEC_MP900, "MobilePro900/C")
 	.handle_irq	= pxa25x_handle_irq,
 	.init_machine	= mp900c_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params	= 0xa0220100,
+	.timer		= &pxa_timer,
+	.map_io		= pxa25x_map_io,
+	.init_irq	= pxa25x_init_irq,
+	.init_machine	= mp900c_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 

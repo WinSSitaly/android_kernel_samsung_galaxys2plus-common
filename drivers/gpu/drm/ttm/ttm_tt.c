@@ -28,8 +28,11 @@
  * Authors: Thomas Hellstrom <thellstrom-at-vmware-dot-com>
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) "[TTM] " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/highmem.h>
 #include <linux/pagemap.h>
@@ -37,7 +40,10 @@
 #include <linux/file.h>
 #include <linux/swap.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drm_cache.h"
 #include "drm_mem_util.h"
 #include "ttm/ttm_module.h"
@@ -45,11 +51,17 @@
 #include "ttm/ttm_placement.h"
 #include "ttm/ttm_page_alloc.h"
 
+<<<<<<< HEAD
+=======
+static int ttm_tt_swapin(struct ttm_tt *ttm);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * Allocates storage for pointers to the pages that back the ttm.
  */
 static void ttm_tt_alloc_page_directory(struct ttm_tt *ttm)
 {
+<<<<<<< HEAD
 	ttm->pages = drm_calloc_large(ttm->num_pages, sizeof(void*));
 }
 
@@ -60,6 +72,135 @@ static void ttm_dma_tt_alloc_page_directory(struct ttm_dma_tt *ttm)
 					    sizeof(*ttm->dma_address));
 }
 
+=======
+	ttm->pages = drm_calloc_large(ttm->num_pages, sizeof(*ttm->pages));
+	ttm->dma_address = drm_calloc_large(ttm->num_pages,
+					    sizeof(*ttm->dma_address));
+}
+
+static void ttm_tt_free_page_directory(struct ttm_tt *ttm)
+{
+	drm_free_large(ttm->pages);
+	ttm->pages = NULL;
+	drm_free_large(ttm->dma_address);
+	ttm->dma_address = NULL;
+}
+
+static void ttm_tt_free_user_pages(struct ttm_tt *ttm)
+{
+	int write;
+	int dirty;
+	struct page *page;
+	int i;
+	struct ttm_backend *be = ttm->be;
+
+	BUG_ON(!(ttm->page_flags & TTM_PAGE_FLAG_USER));
+	write = ((ttm->page_flags & TTM_PAGE_FLAG_WRITE) != 0);
+	dirty = ((ttm->page_flags & TTM_PAGE_FLAG_USER_DIRTY) != 0);
+
+	if (be)
+		be->func->clear(be);
+
+	for (i = 0; i < ttm->num_pages; ++i) {
+		page = ttm->pages[i];
+		if (page == NULL)
+			continue;
+
+		if (page == ttm->dummy_read_page) {
+			BUG_ON(write);
+			continue;
+		}
+
+		if (write && dirty && !PageReserved(page))
+			set_page_dirty_lock(page);
+
+		ttm->pages[i] = NULL;
+		ttm_mem_global_free(ttm->glob->mem_glob, PAGE_SIZE);
+		put_page(page);
+	}
+	ttm->state = tt_unpopulated;
+	ttm->first_himem_page = ttm->num_pages;
+	ttm->last_lomem_page = -1;
+}
+
+static struct page *__ttm_tt_get_page(struct ttm_tt *ttm, int index)
+{
+	struct page *p;
+	struct list_head h;
+	struct ttm_mem_global *mem_glob = ttm->glob->mem_glob;
+	int ret;
+
+	while (NULL == (p = ttm->pages[index])) {
+
+		INIT_LIST_HEAD(&h);
+
+		ret = ttm_get_pages(&h, ttm->page_flags, ttm->caching_state, 1,
+				    &ttm->dma_address[index]);
+
+		if (ret != 0)
+			return NULL;
+
+		p = list_first_entry(&h, struct page, lru);
+
+		ret = ttm_mem_global_alloc_page(mem_glob, p, false, false);
+		if (unlikely(ret != 0))
+			goto out_err;
+
+		if (PageHighMem(p))
+			ttm->pages[--ttm->first_himem_page] = p;
+		else
+			ttm->pages[++ttm->last_lomem_page] = p;
+	}
+	return p;
+out_err:
+	put_page(p);
+	return NULL;
+}
+
+struct page *ttm_tt_get_page(struct ttm_tt *ttm, int index)
+{
+	int ret;
+
+	if (unlikely(ttm->page_flags & TTM_PAGE_FLAG_SWAPPED)) {
+		ret = ttm_tt_swapin(ttm);
+		if (unlikely(ret != 0))
+			return NULL;
+	}
+	return __ttm_tt_get_page(ttm, index);
+}
+
+int ttm_tt_populate(struct ttm_tt *ttm)
+{
+	struct page *page;
+	unsigned long i;
+	struct ttm_backend *be;
+	int ret;
+
+	if (ttm->state != tt_unpopulated)
+		return 0;
+
+	if (unlikely(ttm->page_flags & TTM_PAGE_FLAG_SWAPPED)) {
+		ret = ttm_tt_swapin(ttm);
+		if (unlikely(ret != 0))
+			return ret;
+	}
+
+	be = ttm->be;
+
+	for (i = 0; i < ttm->num_pages; ++i) {
+		page = __ttm_tt_get_page(ttm, i);
+		if (!page)
+			return -ENOMEM;
+	}
+
+	be->func->populate(be, ttm->num_pages, ttm->pages,
+			   ttm->dummy_read_page, ttm->dma_address);
+	ttm->state = tt_unbound;
+	return 0;
+}
+EXPORT_SYMBOL(ttm_tt_populate);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_X86
 static inline int ttm_tt_set_page_caching(struct page *p,
 					  enum ttm_caching_state c_old,
@@ -161,6 +302,7 @@ int ttm_tt_set_placement_caching(struct ttm_tt *ttm, uint32_t placement)
 }
 EXPORT_SYMBOL(ttm_tt_set_placement_caching);
 
+<<<<<<< HEAD
 void ttm_tt_destroy(struct ttm_tt *ttm)
 {
 	if (unlikely(ttm == NULL))
@@ -172,12 +314,69 @@ void ttm_tt_destroy(struct ttm_tt *ttm)
 
 	if (ttm->state == tt_unbound) {
 		ttm->bdev->driver->ttm_tt_unpopulate(ttm);
+=======
+static void ttm_tt_free_alloced_pages(struct ttm_tt *ttm)
+{
+	int i;
+	unsigned count = 0;
+	struct list_head h;
+	struct page *cur_page;
+	struct ttm_backend *be = ttm->be;
+
+	INIT_LIST_HEAD(&h);
+
+	if (be)
+		be->func->clear(be);
+	for (i = 0; i < ttm->num_pages; ++i) {
+
+		cur_page = ttm->pages[i];
+		ttm->pages[i] = NULL;
+		if (cur_page) {
+			if (page_count(cur_page) != 1)
+				printk(KERN_ERR TTM_PFX
+				       "Erroneous page count. "
+				       "Leaking pages.\n");
+			ttm_mem_global_free_page(ttm->glob->mem_glob,
+						 cur_page);
+			list_add(&cur_page->lru, &h);
+			count++;
+		}
+	}
+	ttm_put_pages(&h, count, ttm->page_flags, ttm->caching_state,
+		      ttm->dma_address);
+	ttm->state = tt_unpopulated;
+	ttm->first_himem_page = ttm->num_pages;
+	ttm->last_lomem_page = -1;
+}
+
+void ttm_tt_destroy(struct ttm_tt *ttm)
+{
+	struct ttm_backend *be;
+
+	if (unlikely(ttm == NULL))
+		return;
+
+	be = ttm->be;
+	if (likely(be != NULL)) {
+		be->func->destroy(be);
+		ttm->be = NULL;
+	}
+
+	if (likely(ttm->pages != NULL)) {
+		if (ttm->page_flags & TTM_PAGE_FLAG_USER)
+			ttm_tt_free_user_pages(ttm);
+		else
+			ttm_tt_free_alloced_pages(ttm);
+
+		ttm_tt_free_page_directory(ttm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (!(ttm->page_flags & TTM_PAGE_FLAG_PERSISTENT_SWAP) &&
 	    ttm->swap_storage)
 		fput(ttm->swap_storage);
 
+<<<<<<< HEAD
 	ttm->swap_storage = NULL;
 	ttm->func->destroy(ttm);
 }
@@ -248,13 +447,101 @@ void ttm_dma_tt_fini(struct ttm_dma_tt *ttm_dma)
 	ttm_dma->dma_address = NULL;
 }
 EXPORT_SYMBOL(ttm_dma_tt_fini);
+=======
+	kfree(ttm);
+}
+
+int ttm_tt_set_user(struct ttm_tt *ttm,
+		    struct task_struct *tsk,
+		    unsigned long start, unsigned long num_pages)
+{
+	struct mm_struct *mm = tsk->mm;
+	int ret;
+	int write = (ttm->page_flags & TTM_PAGE_FLAG_WRITE) != 0;
+	struct ttm_mem_global *mem_glob = ttm->glob->mem_glob;
+
+	BUG_ON(num_pages != ttm->num_pages);
+	BUG_ON((ttm->page_flags & TTM_PAGE_FLAG_USER) == 0);
+
+	/**
+	 * Account user pages as lowmem pages for now.
+	 */
+
+	ret = ttm_mem_global_alloc(mem_glob, num_pages * PAGE_SIZE,
+				   false, false);
+	if (unlikely(ret != 0))
+		return ret;
+
+	down_read(&mm->mmap_sem);
+	ret = get_user_pages(tsk, mm, start, num_pages,
+			     write, 0, ttm->pages, NULL);
+	up_read(&mm->mmap_sem);
+
+	if (ret != num_pages && write) {
+		ttm_tt_free_user_pages(ttm);
+		ttm_mem_global_free(mem_glob, num_pages * PAGE_SIZE);
+		return -ENOMEM;
+	}
+
+	ttm->tsk = tsk;
+	ttm->start = start;
+	ttm->state = tt_unbound;
+
+	return 0;
+}
+
+struct ttm_tt *ttm_tt_create(struct ttm_bo_device *bdev, unsigned long size,
+			     uint32_t page_flags, struct page *dummy_read_page)
+{
+	struct ttm_bo_driver *bo_driver = bdev->driver;
+	struct ttm_tt *ttm;
+
+	if (!bo_driver)
+		return NULL;
+
+	ttm = kzalloc(sizeof(*ttm), GFP_KERNEL);
+	if (!ttm)
+		return NULL;
+
+	ttm->glob = bdev->glob;
+	ttm->num_pages = (size + PAGE_SIZE - 1) >> PAGE_SHIFT;
+	ttm->first_himem_page = ttm->num_pages;
+	ttm->last_lomem_page = -1;
+	ttm->caching_state = tt_cached;
+	ttm->page_flags = page_flags;
+
+	ttm->dummy_read_page = dummy_read_page;
+
+	ttm_tt_alloc_page_directory(ttm);
+	if (!ttm->pages) {
+		ttm_tt_destroy(ttm);
+		printk(KERN_ERR TTM_PFX "Failed allocating page table\n");
+		return NULL;
+	}
+	ttm->be = bo_driver->create_ttm_backend_entry(bdev);
+	if (!ttm->be) {
+		ttm_tt_destroy(ttm);
+		printk(KERN_ERR TTM_PFX "Failed creating ttm backend entry\n");
+		return NULL;
+	}
+	ttm->state = tt_unpopulated;
+	return ttm;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void ttm_tt_unbind(struct ttm_tt *ttm)
 {
 	int ret;
+<<<<<<< HEAD
 
 	if (ttm->state == tt_bound) {
 		ret = ttm->func->unbind(ttm);
+=======
+	struct ttm_backend *be = ttm->be;
+
+	if (ttm->state == tt_bound) {
+		ret = be->func->unbind(be);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		BUG_ON(ret);
 		ttm->state = tt_unbound;
 	}
@@ -263,6 +550,10 @@ void ttm_tt_unbind(struct ttm_tt *ttm)
 int ttm_tt_bind(struct ttm_tt *ttm, struct ttm_mem_reg *bo_mem)
 {
 	int ret = 0;
+<<<<<<< HEAD
+=======
+	struct ttm_backend *be;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!ttm)
 		return -EINVAL;
@@ -270,21 +561,40 @@ int ttm_tt_bind(struct ttm_tt *ttm, struct ttm_mem_reg *bo_mem)
 	if (ttm->state == tt_bound)
 		return 0;
 
+<<<<<<< HEAD
 	ret = ttm->bdev->driver->ttm_tt_populate(ttm);
 	if (ret)
 		return ret;
 
 	ret = ttm->func->bind(ttm, bo_mem);
+=======
+	be = ttm->be;
+
+	ret = ttm_tt_populate(ttm);
+	if (ret)
+		return ret;
+
+	ret = be->func->bind(be, bo_mem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(ret != 0))
 		return ret;
 
 	ttm->state = tt_bound;
 
+<<<<<<< HEAD
+=======
+	if (ttm->page_flags & TTM_PAGE_FLAG_USER)
+		ttm->page_flags |= TTM_PAGE_FLAG_USER_DIRTY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL(ttm_tt_bind);
 
+<<<<<<< HEAD
 int ttm_tt_swapin(struct ttm_tt *ttm)
+=======
+static int ttm_tt_swapin(struct ttm_tt *ttm)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct address_space *swap_space;
 	struct file *swap_storage;
@@ -295,6 +605,19 @@ int ttm_tt_swapin(struct ttm_tt *ttm)
 	int i;
 	int ret = -ENOMEM;
 
+<<<<<<< HEAD
+=======
+	if (ttm->page_flags & TTM_PAGE_FLAG_USER) {
+		ret = ttm_tt_set_user(ttm, ttm->tsk, ttm->start,
+				      ttm->num_pages);
+		if (unlikely(ret != 0))
+			return ret;
+
+		ttm->page_flags &= ~TTM_PAGE_FLAG_SWAPPED;
+		return 0;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	swap_storage = ttm->swap_storage;
 	BUG_ON(swap_storage == NULL);
 
@@ -306,16 +629,28 @@ int ttm_tt_swapin(struct ttm_tt *ttm)
 			ret = PTR_ERR(from_page);
 			goto out_err;
 		}
+<<<<<<< HEAD
 		to_page = ttm->pages[i];
+=======
+		to_page = __ttm_tt_get_page(ttm, i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (unlikely(to_page == NULL))
 			goto out_err;
 
 		preempt_disable();
+<<<<<<< HEAD
 		from_virtual = kmap_atomic(from_page);
 		to_virtual = kmap_atomic(to_page);
 		memcpy(to_virtual, from_virtual, PAGE_SIZE);
 		kunmap_atomic(to_virtual);
 		kunmap_atomic(from_virtual);
+=======
+		from_virtual = kmap_atomic(from_page, KM_USER0);
+		to_virtual = kmap_atomic(to_page, KM_USER1);
+		memcpy(to_virtual, from_virtual, PAGE_SIZE);
+		kunmap_atomic(to_virtual, KM_USER1);
+		kunmap_atomic(from_virtual, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		preempt_enable();
 		page_cache_release(from_page);
 	}
@@ -327,6 +662,10 @@ int ttm_tt_swapin(struct ttm_tt *ttm)
 
 	return 0;
 out_err:
+<<<<<<< HEAD
+=======
+	ttm_tt_free_alloced_pages(ttm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -344,12 +683,31 @@ int ttm_tt_swapout(struct ttm_tt *ttm, struct file *persistent_swap_storage)
 	BUG_ON(ttm->state != tt_unbound && ttm->state != tt_unpopulated);
 	BUG_ON(ttm->caching_state != tt_cached);
 
+<<<<<<< HEAD
+=======
+	/*
+	 * For user buffers, just unpin the pages, as there should be
+	 * vma references.
+	 */
+
+	if (ttm->page_flags & TTM_PAGE_FLAG_USER) {
+		ttm_tt_free_user_pages(ttm);
+		ttm->page_flags |= TTM_PAGE_FLAG_SWAPPED;
+		ttm->swap_storage = NULL;
+		return 0;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!persistent_swap_storage) {
 		swap_storage = shmem_file_setup("ttm swap",
 						ttm->num_pages << PAGE_SHIFT,
 						0);
 		if (unlikely(IS_ERR(swap_storage))) {
+<<<<<<< HEAD
 			pr_err("Failed allocating swap storage\n");
+=======
+			printk(KERN_ERR "Failed allocating swap storage.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return PTR_ERR(swap_storage);
 		}
 	} else
@@ -367,18 +725,30 @@ int ttm_tt_swapout(struct ttm_tt *ttm, struct file *persistent_swap_storage)
 			goto out_err;
 		}
 		preempt_disable();
+<<<<<<< HEAD
 		from_virtual = kmap_atomic(from_page);
 		to_virtual = kmap_atomic(to_page);
 		memcpy(to_virtual, from_virtual, PAGE_SIZE);
 		kunmap_atomic(to_virtual);
 		kunmap_atomic(from_virtual);
+=======
+		from_virtual = kmap_atomic(from_page, KM_USER0);
+		to_virtual = kmap_atomic(to_page, KM_USER1);
+		memcpy(to_virtual, from_virtual, PAGE_SIZE);
+		kunmap_atomic(to_virtual, KM_USER1);
+		kunmap_atomic(from_virtual, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		preempt_enable();
 		set_page_dirty(to_page);
 		mark_page_accessed(to_page);
 		page_cache_release(to_page);
 	}
 
+<<<<<<< HEAD
 	ttm->bdev->driver->ttm_tt_unpopulate(ttm);
+=======
+	ttm_tt_free_alloced_pages(ttm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ttm->swap_storage = swap_storage;
 	ttm->page_flags |= TTM_PAGE_FLAG_SWAPPED;
 	if (persistent_swap_storage)

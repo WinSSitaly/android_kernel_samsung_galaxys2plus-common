@@ -17,7 +17,10 @@
 #include <asm/trace.h>
 #include <asm/fixed_code.h>
 #include <asm/pseudo_instructions.h>
+<<<<<<< HEAD
 #include <asm/pda.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_KGDB
 # include <linux/kgdb.h>

@@ -41,7 +41,10 @@ static const struct key_entry topstar_keymap[] = {
 	{ KE_KEY, 0x8c, { KEY_MEDIA } },
 
 	/* Known non hotkey events don't handled or that we don't care yet */
+<<<<<<< HEAD
 	{ KE_IGNORE, 0x82, }, /* backlight event */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ KE_IGNORE, 0x8e, },
 	{ KE_IGNORE, 0x8f, },
 	{ KE_IGNORE, 0x90, },

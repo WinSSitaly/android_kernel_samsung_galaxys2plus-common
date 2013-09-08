@@ -49,11 +49,19 @@ obj-$(CONFIG_IP_NF_SECURITY) += iptable_security.o
 
 # matches
 obj-$(CONFIG_IP_NF_MATCH_AH) += ipt_ah.o
+<<<<<<< HEAD
 obj-$(CONFIG_IP_NF_MATCH_RPFILTER) += ipt_rpfilter.o
+=======
+obj-$(CONFIG_IP_NF_MATCH_ECN) += ipt_ecn.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # targets
 obj-$(CONFIG_IP_NF_TARGET_CLUSTERIP) += ipt_CLUSTERIP.o
 obj-$(CONFIG_IP_NF_TARGET_ECN) += ipt_ECN.o
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_IP_NF_TARGET_LOG) += ipt_LOG.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_IP_NF_TARGET_MASQUERADE) += ipt_MASQUERADE.o
 obj-$(CONFIG_IP_NF_TARGET_NETMAP) += ipt_NETMAP.o
 obj-$(CONFIG_IP_NF_TARGET_REDIRECT) += ipt_REDIRECT.o

@@ -113,6 +113,7 @@ Supported chips:
     Prefix: 'w83l771'
     Addresses scanned: I2C 0x4c
     Datasheet: Not publicly available, can be requested from Nuvoton
+<<<<<<< HEAD
   * Philips/NXP SA56004X
     Prefix: 'sa56004'
     Addresses scanned: I2C 0x48 through 0x4F
@@ -122,6 +123,9 @@ Supported chips:
     Prefix: 'g781'
     Addresses scanned: I2C 0x4c, 0x4d
     Datasheet: Not publicly available from GMT
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 Author: Jean Delvare <khali@linux-fr.org>
 
@@ -201,9 +205,12 @@ W83L771AWG/ASG
   * The AWG and ASG variants only differ in package format.
   * Diode ideality factor configuration (remote sensor) at 0xE3
 
+<<<<<<< HEAD
 SA56004X:
   * Better local resolution
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 All temperature values are given in degrees Celsius. Resolution
 is 1.0 degree for the local temperature, 0.125 degree for the remote
 temperature, except for the MAX6657, MAX6658 and MAX6659 which have a

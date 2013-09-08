@@ -14,7 +14,10 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "ath9k.h"
 #include "ar9003_mac.h"
 
@@ -40,7 +43,10 @@ static inline bool ath_ant_div_comb_alt_check(u8 div_group, int alt_ratio,
 			result = true;
 		break;
 	case 1:
+<<<<<<< HEAD
 	case 2:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if ((((curr_main_set == ATH_ANT_DIV_COMB_LNA2) &&
 			(curr_alt_set == ATH_ANT_DIV_COMB_LNA1) &&
 				(alt_rssi_avg >= (main_rssi_avg - 5))) ||
@@ -78,6 +84,11 @@ static void ath_rx_buf_link(struct ath_softc *sc, struct ath_buf *bf)
 	struct ath_desc *ds;
 	struct sk_buff *skb;
 
+<<<<<<< HEAD
+=======
+	ATH_RXBUF_RESET(bf);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ds = bf->bf_desc;
 	ds->ds_link = 0; /* link to null */
 	ds->ds_data = bf->bf_buf_addr;
@@ -104,6 +115,7 @@ static void ath_rx_buf_link(struct ath_softc *sc, struct ath_buf *bf)
 	sc->rx.rxlink = &ds->ds_link;
 }
 
+<<<<<<< HEAD
 static void ath_rx_buf_relink(struct ath_softc *sc, struct ath_buf *bf)
 {
 	if (sc->rx.buf_hold)
@@ -112,6 +124,8 @@ static void ath_rx_buf_relink(struct ath_softc *sc, struct ath_buf *bf)
 	sc->rx.buf_hold = bf;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ath_setdefantenna(struct ath_softc *sc, u32 antenna)
 {
 	/* XXX block beacon interrupts */
@@ -159,6 +173,10 @@ static bool ath_rx_edma_buf_link(struct ath_softc *sc,
 
 	skb = bf->bf_mpdu;
 
+<<<<<<< HEAD
+=======
+	ATH_RXBUF_RESET(bf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(skb->data, 0, ah->caps.rx_status_len);
 	dma_sync_single_for_device(sc->dev, bf->bf_buf_addr,
 				ah->caps.rx_status_len, DMA_TO_DEVICE);
@@ -174,6 +192,7 @@ static void ath_rx_addbuffer_edma(struct ath_softc *sc,
 				  enum ath9k_rx_qtype qtype, int size)
 {
 	struct ath_common *common = ath9k_hw_common(sc->sc_ah);
+<<<<<<< HEAD
 	struct ath_buf *bf, *tbf;
 
 	if (list_empty(&sc->rx.rxbuf)) {
@@ -185,6 +204,24 @@ static void ath_rx_addbuffer_edma(struct ath_softc *sc,
 		if (!ath_rx_edma_buf_link(sc, qtype))
 			break;
 
+=======
+	u32 nbuf = 0;
+
+	if (list_empty(&sc->rx.rxbuf)) {
+		ath_dbg(common, ATH_DBG_QUEUE, "No free rx buf available\n");
+		return;
+	}
+
+	while (!list_empty(&sc->rx.rxbuf)) {
+		nbuf++;
+
+		if (!ath_rx_edma_buf_link(sc, qtype))
+			break;
+
+		if (nbuf >= size)
+			break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void ath_rx_remove_buffer(struct ath_softc *sc,
@@ -205,14 +242,18 @@ static void ath_rx_remove_buffer(struct ath_softc *sc,
 
 static void ath_rx_edma_cleanup(struct ath_softc *sc)
 {
+<<<<<<< HEAD
 	struct ath_hw *ah = sc->sc_ah;
 	struct ath_common *common = ath9k_hw_common(ah);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ath_buf *bf;
 
 	ath_rx_remove_buffer(sc, ATH9K_RX_QUEUE_LP);
 	ath_rx_remove_buffer(sc, ATH9K_RX_QUEUE_HP);
 
 	list_for_each_entry(bf, &sc->rx.rxbuf, list) {
+<<<<<<< HEAD
 		if (bf->bf_mpdu) {
 			dma_unmap_single(sc->dev, bf->bf_buf_addr,
 					common->rx_bufsize,
@@ -221,6 +262,10 @@ static void ath_rx_edma_cleanup(struct ath_softc *sc)
 			bf->bf_buf_addr = 0;
 			bf->bf_mpdu = NULL;
 		}
+=======
+		if (bf->bf_mpdu)
+			dev_kfree_skb_any(bf->bf_mpdu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	INIT_LIST_HEAD(&sc->rx.rxbuf);
@@ -232,6 +277,10 @@ static void ath_rx_edma_cleanup(struct ath_softc *sc)
 static void ath_rx_edma_init_queue(struct ath_rx_edma *rx_edma, int size)
 {
 	skb_queue_head_init(&rx_edma->rx_fifo);
+<<<<<<< HEAD
+=======
+	skb_queue_head_init(&rx_edma->rx_buffers);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rx_edma->rx_fifo_hwsize = size;
 }
 
@@ -336,7 +385,11 @@ int ath_rx_init(struct ath_softc *sc, int nbufs)
 	if (sc->sc_ah->caps.hw_caps & ATH9K_HW_CAP_EDMA) {
 		return ath_rx_edma_init(sc, nbufs);
 	} else {
+<<<<<<< HEAD
 		ath_dbg(common, CONFIG, "cachelsz %u rxbufsize %u\n",
+=======
+		ath_dbg(common, ATH_DBG_CONFIG, "cachelsz %u rxbufsize %u\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			common->cachelsz, common->rx_bufsize);
 
 		/* Initialize rx descriptors */
@@ -474,6 +527,10 @@ u32 ath_calcrxfilter(struct ath_softc *sc)
 
 	return rfilt;
 
+<<<<<<< HEAD
+=======
+#undef RX_FILTER_PRESERVE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int ath_startrecv(struct ath_softc *sc)
@@ -490,7 +547,10 @@ int ath_startrecv(struct ath_softc *sc)
 	if (list_empty(&sc->rx.rxbuf))
 		goto start_recv;
 
+<<<<<<< HEAD
 	sc->rx.buf_hold = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sc->rx.rxlink = NULL;
 	list_for_each_entry_safe(bf, tbf, &sc->rx.rxbuf, list) {
 		ath_rx_buf_link(sc, bf);
@@ -582,18 +642,42 @@ static bool ath_beacon_dtim_pending_cab(struct sk_buff *skb)
 
 static void ath_rx_ps_beacon(struct ath_softc *sc, struct sk_buff *skb)
 {
+<<<<<<< HEAD
+=======
+	struct ieee80211_mgmt *mgmt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ath_common *common = ath9k_hw_common(sc->sc_ah);
 
 	if (skb->len < 24 + 8 + 2 + 2)
 		return;
 
+<<<<<<< HEAD
+=======
+	mgmt = (struct ieee80211_mgmt *)skb->data;
+	if (memcmp(common->curbssid, mgmt->bssid, ETH_ALEN) != 0) {
+		/* TODO:  This doesn't work well if you have stations
+		 * associated to two different APs because curbssid
+		 * is just the last AP that any of the stations associated
+		 * with.
+		 */
+		return; /* not from our current AP */
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sc->ps_flags &= ~PS_WAIT_FOR_BEACON;
 
 	if (sc->ps_flags & PS_BEACON_SYNC) {
 		sc->ps_flags &= ~PS_BEACON_SYNC;
+<<<<<<< HEAD
 		ath_dbg(common, PS,
 			"Reconfigure Beacon timers based on timestamp from the AP\n");
 		ath_set_beacon(sc);
+=======
+		ath_dbg(common, ATH_DBG_PS,
+			"Reconfigure Beacon timers based on timestamp from the AP\n");
+		ath_set_beacon(sc);
+		sc->ps_flags &= ~PS_TSFOOR_SYNC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (ath_beacon_dtim_pending_cab(skb)) {
@@ -604,7 +688,11 @@ static void ath_rx_ps_beacon(struct ath_softc *sc, struct sk_buff *skb)
 		 * a backup trigger for returning into NETWORK SLEEP state,
 		 * so we are waiting for it as well.
 		 */
+<<<<<<< HEAD
 		ath_dbg(common, PS,
+=======
+		ath_dbg(common, ATH_DBG_PS,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"Received DTIM beacon indicating buffered broadcast/multicast frame(s)\n");
 		sc->ps_flags |= PS_WAIT_FOR_CAB | PS_WAIT_FOR_BEACON;
 		return;
@@ -617,11 +705,20 @@ static void ath_rx_ps_beacon(struct ath_softc *sc, struct sk_buff *skb)
 		 * been delivered.
 		 */
 		sc->ps_flags &= ~PS_WAIT_FOR_CAB;
+<<<<<<< HEAD
 		ath_dbg(common, PS, "PS wait for CAB frames timed out\n");
 	}
 }
 
 static void ath_rx_ps(struct ath_softc *sc, struct sk_buff *skb, bool mybeacon)
+=======
+		ath_dbg(common, ATH_DBG_PS,
+			"PS wait for CAB frames timed out\n");
+	}
+}
+
+static void ath_rx_ps(struct ath_softc *sc, struct sk_buff *skb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ieee80211_hdr *hdr;
 	struct ath_common *common = ath9k_hw_common(sc->sc_ah);
@@ -630,7 +727,11 @@ static void ath_rx_ps(struct ath_softc *sc, struct sk_buff *skb, bool mybeacon)
 
 	/* Process Beacon and CAB receive in PS state */
 	if (((sc->ps_flags & PS_WAIT_FOR_BEACON) || ath9k_check_auto_sleep(sc))
+<<<<<<< HEAD
 	    && mybeacon)
+=======
+	    && ieee80211_is_beacon(hdr->frame_control))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ath_rx_ps_beacon(sc, skb);
 	else if ((sc->ps_flags & PS_WAIT_FOR_CAB) &&
 		 (ieee80211_is_data(hdr->frame_control) ||
@@ -642,13 +743,21 @@ static void ath_rx_ps(struct ath_softc *sc, struct sk_buff *skb, bool mybeacon)
 		 * point.
 		 */
 		sc->ps_flags &= ~(PS_WAIT_FOR_CAB | PS_WAIT_FOR_BEACON);
+<<<<<<< HEAD
 		ath_dbg(common, PS,
+=======
+		ath_dbg(common, ATH_DBG_PS,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"All PS CAB frames received, back to sleep\n");
 	} else if ((sc->ps_flags & PS_WAIT_FOR_PSPOLL_DATA) &&
 		   !is_multicast_ether_addr(hdr->addr1) &&
 		   !ieee80211_has_morefrags(hdr->frame_control)) {
 		sc->ps_flags &= ~PS_WAIT_FOR_PSPOLL_DATA;
+<<<<<<< HEAD
 		ath_dbg(common, PS,
+=======
+		ath_dbg(common, ATH_DBG_PS,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"Going back to sleep after having received PS-Poll data (0x%lx)\n",
 			sc->ps_flags & (PS_WAIT_FOR_BEACON |
 					PS_WAIT_FOR_CAB |
@@ -658,9 +767,13 @@ static void ath_rx_ps(struct ath_softc *sc, struct sk_buff *skb, bool mybeacon)
 }
 
 static bool ath_edma_get_buffers(struct ath_softc *sc,
+<<<<<<< HEAD
 				 enum ath9k_rx_qtype qtype,
 				 struct ath_rx_status *rs,
 				 struct ath_buf **dest)
+=======
+				 enum ath9k_rx_qtype qtype)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath_rx_edma *rx_edma = &sc->rx.rx_edma[qtype];
 	struct ath_hw *ah = sc->sc_ah;
@@ -679,7 +792,11 @@ static bool ath_edma_get_buffers(struct ath_softc *sc,
 	dma_sync_single_for_cpu(sc->dev, bf->bf_buf_addr,
 				common->rx_bufsize, DMA_FROM_DEVICE);
 
+<<<<<<< HEAD
 	ret = ath9k_hw_process_rxdesc_edma(ah, rs, skb->data);
+=======
+	ret = ath9k_hw_process_rxdesc_edma(ah, NULL, skb->data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret == -EINPROGRESS) {
 		/*let device gain the buffer again*/
 		dma_sync_single_for_device(sc->dev, bf->bf_buf_addr,
@@ -692,6 +809,7 @@ static bool ath_edma_get_buffers(struct ath_softc *sc,
 		/* corrupt descriptor, skip this one and the following one */
 		list_add_tail(&bf->list, &sc->rx.rxbuf);
 		ath_rx_edma_buf_link(sc, qtype);
+<<<<<<< HEAD
 
 		skb = skb_peek(&rx_edma->rx_fifo);
 		if (skb) {
@@ -707,6 +825,22 @@ static bool ath_edma_get_buffers(struct ath_softc *sc,
 	}
 
 	*dest = bf;
+=======
+		skb = skb_peek(&rx_edma->rx_fifo);
+		if (!skb)
+			return true;
+
+		bf = SKB_CB_ATHBUF(skb);
+		BUG_ON(!bf);
+
+		__skb_unlink(skb, &rx_edma->rx_fifo);
+		list_add_tail(&bf->list, &sc->rx.rxbuf);
+		ath_rx_edma_buf_link(sc, qtype);
+		return true;
+	}
+	skb_queue_tail(&rx_edma->rx_buffers, skb);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return true;
 }
 
@@ -714,6 +848,7 @@ static struct ath_buf *ath_edma_get_next_rx_buf(struct ath_softc *sc,
 						struct ath_rx_status *rs,
 						enum ath9k_rx_qtype qtype)
 {
+<<<<<<< HEAD
 	struct ath_buf *bf = NULL;
 
 	while (ath_edma_get_buffers(sc, qtype, rs, &bf)) {
@@ -723,6 +858,20 @@ static struct ath_buf *ath_edma_get_next_rx_buf(struct ath_softc *sc,
 		return bf;
 	}
 	return NULL;
+=======
+	struct ath_rx_edma *rx_edma = &sc->rx.rx_edma[qtype];
+	struct sk_buff *skb;
+	struct ath_buf *bf;
+
+	while (ath_edma_get_buffers(sc, qtype));
+	skb = __skb_dequeue(&rx_edma->rx_buffers);
+	if (!skb)
+		return NULL;
+
+	bf = SKB_CB_ATHBUF(skb);
+	ath9k_hw_process_rxdesc_edma(sc->sc_ah, rs, skb->data);
+	return bf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct ath_buf *ath_get_next_rx_buf(struct ath_softc *sc,
@@ -740,9 +889,12 @@ static struct ath_buf *ath_get_next_rx_buf(struct ath_softc *sc,
 	}
 
 	bf = list_first_entry(&sc->rx.rxbuf, struct ath_buf, list);
+<<<<<<< HEAD
 	if (bf == sc->rx.buf_hold)
 		return NULL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ds = bf->bf_desc;
 
 	/*
@@ -756,7 +908,11 @@ static struct ath_buf *ath_get_next_rx_buf(struct ath_softc *sc,
 	 * on.  All this is necessary because of our use of
 	 * a self-linked list to avoid rx overruns.
 	 */
+<<<<<<< HEAD
 	ret = ath9k_hw_rxprocdesc(ah, ds, rs);
+=======
+	ret = ath9k_hw_rxprocdesc(ah, ds, rs, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret == -EINPROGRESS) {
 		struct ath_rx_status trs;
 		struct ath_buf *tbf;
@@ -782,12 +938,19 @@ static struct ath_buf *ath_get_next_rx_buf(struct ath_softc *sc,
 		 */
 
 		tds = tbf->bf_desc;
+<<<<<<< HEAD
 		ret = ath9k_hw_rxprocdesc(ah, tds, &trs);
+=======
+		ret = ath9k_hw_rxprocdesc(ah, tds, &trs, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret == -EINPROGRESS)
 			return NULL;
 	}
 
+<<<<<<< HEAD
 	list_del(&bf->list);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!bf->bf_mpdu)
 		return bf;
 
@@ -810,14 +973,22 @@ static bool ath9k_rx_accept(struct ath_common *common,
 			    struct ath_rx_status *rx_stats,
 			    bool *decrypt_error)
 {
+<<<<<<< HEAD
 	struct ath_softc *sc = (struct ath_softc *) common->priv;
 	bool is_mc, is_valid_tkip, strip_mic, mic_error;
+=======
+#define is_mc_or_valid_tkip_keyix ((is_mc ||			\
+		(rx_stats->rs_keyix != ATH9K_RXKEYIX_INVALID && \
+		test_bit(rx_stats->rs_keyix, common->tkip_keymap))))
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ath_hw *ah = common->ah;
 	__le16 fc;
 	u8 rx_status_len = ah->caps.rx_status_len;
 
 	fc = hdr->frame_control;
 
+<<<<<<< HEAD
 	is_mc = !!is_multicast_ether_addr(hdr->addr1);
 	is_valid_tkip = rx_stats->rs_keyix != ATH9K_RXKEYIX_INVALID &&
 		test_bit(rx_stats->rs_keyix, common->tkip_keymap);
@@ -835,6 +1006,8 @@ static bool ath9k_rx_accept(struct ath_common *common,
 	    !test_bit(rx_stats->rs_keyix, common->ccmp_keymap))
 		rx_stats->rs_status &= ~ATH9K_RXERR_KEYMISS;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!rx_stats->rs_datalen)
 		return false;
         /*
@@ -849,11 +1022,14 @@ static bool ath9k_rx_accept(struct ath_common *common,
 	if (rx_stats->rs_more)
 		return true;
 
+<<<<<<< HEAD
 	mic_error = is_valid_tkip && !ieee80211_is_ctl(fc) &&
 		!ieee80211_has_morefrags(fc) &&
 		!(le16_to_cpu(hdr->seq_ctrl) & IEEE80211_SCTL_FRAG) &&
 		(rx_stats->rs_status & ATH9K_RXERR_MIC);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * The rx_stats->rs_status will not be set until the end of the
 	 * chained descriptors so it can be ignored if rs_more is set. The
@@ -861,6 +1037,7 @@ static bool ath9k_rx_accept(struct ath_common *common,
 	 * descriptors.
 	 */
 	if (rx_stats->rs_status != 0) {
+<<<<<<< HEAD
 		u8 status_mask;
 
 		if (rx_stats->rs_status & ATH9K_RXERR_CRC) {
@@ -876,11 +1053,38 @@ static bool ath9k_rx_accept(struct ath_common *common,
 			mic_error = false;
 		}
 
+=======
+		if (rx_stats->rs_status & ATH9K_RXERR_CRC)
+			rxs->flag |= RX_FLAG_FAILED_FCS_CRC;
+		if (rx_stats->rs_status & ATH9K_RXERR_PHY)
+			return false;
+
+		if (rx_stats->rs_status & ATH9K_RXERR_DECRYPT) {
+			*decrypt_error = true;
+		} else if (rx_stats->rs_status & ATH9K_RXERR_MIC) {
+			bool is_mc;
+			/*
+			 * The MIC error bit is only valid if the frame
+			 * is not a control frame or fragment, and it was
+			 * decrypted using a valid TKIP key.
+			 */
+			is_mc = !!is_multicast_ether_addr(hdr->addr1);
+
+			if (!ieee80211_is_ctl(fc) &&
+			    !ieee80211_has_morefrags(fc) &&
+			    !(le16_to_cpu(hdr->seq_ctrl) & IEEE80211_SCTL_FRAG) &&
+			    is_mc_or_valid_tkip_keyix)
+				rxs->flag |= RX_FLAG_MMIC_ERROR;
+			else
+				rx_stats->rs_status &= ~ATH9K_RXERR_MIC;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Reject error frames with the exception of
 		 * decryption and MIC failures. For monitor mode,
 		 * we also ignore the CRC error.
 		 */
+<<<<<<< HEAD
 		status_mask = ATH9K_RXERR_DECRYPT | ATH9K_RXERR_MIC |
 			      ATH9K_RXERR_KEYMISS;
 
@@ -902,6 +1106,20 @@ static bool ath9k_rx_accept(struct ath_common *common,
 	else if (is_mc && mic_error)
 		rxs->flag |= RX_FLAG_MMIC_ERROR;
 
+=======
+		if (ah->is_monitoring) {
+			if (rx_stats->rs_status &
+			    ~(ATH9K_RXERR_DECRYPT | ATH9K_RXERR_MIC |
+			      ATH9K_RXERR_CRC))
+				return false;
+		} else {
+			if (rx_stats->rs_status &
+			    ~(ATH9K_RXERR_DECRYPT | ATH9K_RXERR_MIC)) {
+				return false;
+			}
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return true;
 }
 
@@ -944,7 +1162,11 @@ static int ath9k_process_rate(struct ath_common *common,
 	 * No valid hardware bitrate found -- we should not get here
 	 * because hardware has already validated this frame as OK.
 	 */
+<<<<<<< HEAD
 	ath_dbg(common, ANY,
+=======
+	ath_dbg(common, ATH_DBG_XMIT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"unsupported hw bitrate detected 0x%02x using 1 Mbit\n",
 		rx_stats->rs_rate);
 
@@ -959,6 +1181,7 @@ static void ath9k_process_rssi(struct ath_common *common,
 	struct ath_softc *sc = hw->priv;
 	struct ath_hw *ah = common->ah;
 	int last_rssi;
+<<<<<<< HEAD
 	int rssi = rx_stats->rs_rssi;
 
 	if (!rx_stats->is_mybeacon ||
@@ -966,17 +1189,46 @@ static void ath9k_process_rssi(struct ath_common *common,
 	     (ah->opmode != NL80211_IFTYPE_ADHOC)))
 		return;
 
+=======
+	__le16 fc;
+
+	if ((ah->opmode != NL80211_IFTYPE_STATION) &&
+	    (ah->opmode != NL80211_IFTYPE_ADHOC))
+		return;
+
+	fc = hdr->frame_control;
+	if (!ieee80211_is_beacon(fc) ||
+	    compare_ether_addr(hdr->addr3, common->curbssid)) {
+		/* TODO:  This doesn't work well if you have stations
+		 * associated to two different APs because curbssid
+		 * is just the last AP that any of the stations associated
+		 * with.
+		 */
+		return;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rx_stats->rs_rssi != ATH9K_RSSI_BAD && !rx_stats->rs_moreaggr)
 		ATH_RSSI_LPF(sc->last_rssi, rx_stats->rs_rssi);
 
 	last_rssi = sc->last_rssi;
 	if (likely(last_rssi != ATH_RSSI_DUMMY_MARKER))
+<<<<<<< HEAD
 		rssi = ATH_EP_RND(last_rssi, ATH_RSSI_EP_MULTIPLIER);
 	if (rssi < 0)
 		rssi = 0;
 
 	/* Update Beacon RSSI, this is used by ANI. */
 	ah->stats.avgbrssi = rssi;
+=======
+		rx_stats->rs_rssi = ATH_EP_RND(last_rssi,
+					      ATH_RSSI_EP_MULTIPLIER);
+	if (rx_stats->rs_rssi < 0)
+		rx_stats->rs_rssi = 0;
+
+	/* Update Beacon RSSI, this is used by ANI. */
+	ah->stats.avgbrssi = rx_stats->rs_rssi;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -991,7 +1243,11 @@ static int ath9k_rx_skb_preprocess(struct ath_common *common,
 				   struct ieee80211_rx_status *rx_status,
 				   bool *decrypt_error)
 {
+<<<<<<< HEAD
 	struct ath_hw *ah = common->ah;
+=======
+	memset(rx_status, 0, sizeof(struct ieee80211_rx_status));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * everything but the rate is checked here, the rate check is done
@@ -1011,11 +1267,17 @@ static int ath9k_rx_skb_preprocess(struct ath_common *common,
 
 	rx_status->band = hw->conf.channel->band;
 	rx_status->freq = hw->conf.channel->center_freq;
+<<<<<<< HEAD
 	rx_status->signal = ah->noise + rx_stats->rs_rssi;
 	rx_status->antenna = rx_stats->rs_antenna;
 	rx_status->flag |= RX_FLAG_MACTIME_MPDU;
 	if (rx_stats->rs_moreaggr)
 		rx_status->flag |= RX_FLAG_NO_SIGNAL_VAL;
+=======
+	rx_status->signal = ATH_DEFAULT_NOISE_FLOOR + rx_stats->rs_rssi;
+	rx_status->antenna = rx_stats->rs_antenna;
+	rx_status->flag |= RX_FLAG_MACTIME_MPDU;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1083,39 +1345,63 @@ static void ath_lnaconf_alt_good_scan(struct ath_ant_comb *antcomb,
 		antcomb->rssi_lna1 = main_rssi_avg;
 
 	switch ((ant_conf.main_lna_conf << 4) | ant_conf.alt_lna_conf) {
+<<<<<<< HEAD
 	case 0x10: /* LNA2 A-B */
+=======
+	case (0x10): /* LNA2 A-B */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		antcomb->main_conf = ATH_ANT_DIV_COMB_LNA1_MINUS_LNA2;
 		antcomb->first_quick_scan_conf =
 			ATH_ANT_DIV_COMB_LNA1_PLUS_LNA2;
 		antcomb->second_quick_scan_conf = ATH_ANT_DIV_COMB_LNA1;
 		break;
+<<<<<<< HEAD
 	case 0x20: /* LNA1 A-B */
+=======
+	case (0x20): /* LNA1 A-B */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		antcomb->main_conf = ATH_ANT_DIV_COMB_LNA1_MINUS_LNA2;
 		antcomb->first_quick_scan_conf =
 			ATH_ANT_DIV_COMB_LNA1_PLUS_LNA2;
 		antcomb->second_quick_scan_conf = ATH_ANT_DIV_COMB_LNA2;
 		break;
+<<<<<<< HEAD
 	case 0x21: /* LNA1 LNA2 */
+=======
+	case (0x21): /* LNA1 LNA2 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		antcomb->main_conf = ATH_ANT_DIV_COMB_LNA2;
 		antcomb->first_quick_scan_conf =
 			ATH_ANT_DIV_COMB_LNA1_MINUS_LNA2;
 		antcomb->second_quick_scan_conf =
 			ATH_ANT_DIV_COMB_LNA1_PLUS_LNA2;
 		break;
+<<<<<<< HEAD
 	case 0x12: /* LNA2 LNA1 */
+=======
+	case (0x12): /* LNA2 LNA1 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		antcomb->main_conf = ATH_ANT_DIV_COMB_LNA1;
 		antcomb->first_quick_scan_conf =
 			ATH_ANT_DIV_COMB_LNA1_MINUS_LNA2;
 		antcomb->second_quick_scan_conf =
 			ATH_ANT_DIV_COMB_LNA1_PLUS_LNA2;
 		break;
+<<<<<<< HEAD
 	case 0x13: /* LNA2 A+B */
+=======
+	case (0x13): /* LNA2 A+B */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		antcomb->main_conf = ATH_ANT_DIV_COMB_LNA1_PLUS_LNA2;
 		antcomb->first_quick_scan_conf =
 			ATH_ANT_DIV_COMB_LNA1_MINUS_LNA2;
 		antcomb->second_quick_scan_conf = ATH_ANT_DIV_COMB_LNA1;
 		break;
+<<<<<<< HEAD
 	case 0x23: /* LNA1 A+B */
+=======
+	case (0x23): /* LNA1 A+B */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		antcomb->main_conf = ATH_ANT_DIV_COMB_LNA1_PLUS_LNA2;
 		antcomb->first_quick_scan_conf =
 			ATH_ANT_DIV_COMB_LNA1_MINUS_LNA2;
@@ -1332,6 +1618,7 @@ static void ath_ant_div_conf_fast_divbias(struct ath_hw_antcomb_conf *ant_conf,
 		/* Adjust the fast_div_bias based on main and alt lna conf */
 		switch ((ant_conf->main_lna_conf << 4) |
 				ant_conf->alt_lna_conf) {
+<<<<<<< HEAD
 		case 0x01: /* A-B LNA2 */
 			ant_conf->fast_div_bias = 0x3b;
 			break;
@@ -1366,11 +1653,48 @@ static void ath_ant_div_conf_fast_divbias(struct ath_hw_antcomb_conf *ant_conf,
 			ant_conf->fast_div_bias = 0x3b;
 			break;
 		case 0x32: /* A+B LNA1 */
+=======
+		case (0x01): /* A-B LNA2 */
+			ant_conf->fast_div_bias = 0x3b;
+			break;
+		case (0x02): /* A-B LNA1 */
+			ant_conf->fast_div_bias = 0x3d;
+			break;
+		case (0x03): /* A-B A+B */
+			ant_conf->fast_div_bias = 0x1;
+			break;
+		case (0x10): /* LNA2 A-B */
+			ant_conf->fast_div_bias = 0x7;
+			break;
+		case (0x12): /* LNA2 LNA1 */
+			ant_conf->fast_div_bias = 0x2;
+			break;
+		case (0x13): /* LNA2 A+B */
+			ant_conf->fast_div_bias = 0x7;
+			break;
+		case (0x20): /* LNA1 A-B */
+			ant_conf->fast_div_bias = 0x6;
+			break;
+		case (0x21): /* LNA1 LNA2 */
+			ant_conf->fast_div_bias = 0x0;
+			break;
+		case (0x23): /* LNA1 A+B */
+			ant_conf->fast_div_bias = 0x6;
+			break;
+		case (0x30): /* A+B A-B */
+			ant_conf->fast_div_bias = 0x1;
+			break;
+		case (0x31): /* A+B LNA2 */
+			ant_conf->fast_div_bias = 0x3b;
+			break;
+		case (0x32): /* A+B LNA1 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ant_conf->fast_div_bias = 0x3d;
 			break;
 		default:
 			break;
 		}
+<<<<<<< HEAD
 	} else if (ant_conf->div_group == 1) {
 		/* Adjust the fast_div_bias based on main and alt_lna_conf */
 		switch ((ant_conf->main_lna_conf << 4) |
@@ -1454,26 +1778,44 @@ static void ath_ant_div_conf_fast_divbias(struct ath_hw_antcomb_conf *ant_conf,
 		default:
 			break;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (ant_conf->div_group == 2) {
 		/* Adjust the fast_div_bias based on main and alt_lna_conf */
 		switch ((ant_conf->main_lna_conf << 4) |
 				ant_conf->alt_lna_conf) {
+<<<<<<< HEAD
 		case 0x01: /* A-B LNA2 */
+=======
+		case (0x01): /* A-B LNA2 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ant_conf->fast_div_bias = 0x1;
 			ant_conf->main_gaintb = 0;
 			ant_conf->alt_gaintb = 0;
 			break;
+<<<<<<< HEAD
 		case 0x02: /* A-B LNA1 */
+=======
+		case (0x02): /* A-B LNA1 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ant_conf->fast_div_bias = 0x1;
 			ant_conf->main_gaintb = 0;
 			ant_conf->alt_gaintb = 0;
 			break;
+<<<<<<< HEAD
 		case 0x03: /* A-B A+B */
+=======
+		case (0x03): /* A-B A+B */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ant_conf->fast_div_bias = 0x1;
 			ant_conf->main_gaintb = 0;
 			ant_conf->alt_gaintb = 0;
 			break;
+<<<<<<< HEAD
 		case 0x10: /* LNA2 A-B */
+=======
+		case (0x10): /* LNA2 A-B */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!(antcomb->scan) &&
 				(alt_ratio > ATH_ANT_DIV_COMB_ALT_ANT_RATIO))
 				ant_conf->fast_div_bias = 0x1;
@@ -1482,12 +1824,20 @@ static void ath_ant_div_conf_fast_divbias(struct ath_hw_antcomb_conf *ant_conf,
 			ant_conf->main_gaintb = 0;
 			ant_conf->alt_gaintb = 0;
 			break;
+<<<<<<< HEAD
 		case 0x12: /* LNA2 LNA1 */
+=======
+		case (0x12): /* LNA2 LNA1 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ant_conf->fast_div_bias = 0x1;
 			ant_conf->main_gaintb = 0;
 			ant_conf->alt_gaintb = 0;
 			break;
+<<<<<<< HEAD
 		case 0x13: /* LNA2 A+B */
+=======
+		case (0x13): /* LNA2 A+B */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!(antcomb->scan) &&
 				(alt_ratio > ATH_ANT_DIV_COMB_ALT_ANT_RATIO))
 				ant_conf->fast_div_bias = 0x1;
@@ -1496,7 +1846,11 @@ static void ath_ant_div_conf_fast_divbias(struct ath_hw_antcomb_conf *ant_conf,
 			ant_conf->main_gaintb = 0;
 			ant_conf->alt_gaintb = 0;
 			break;
+<<<<<<< HEAD
 		case 0x20: /* LNA1 A-B */
+=======
+		case (0x20): /* LNA1 A-B */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!(antcomb->scan) &&
 				(alt_ratio > ATH_ANT_DIV_COMB_ALT_ANT_RATIO))
 				ant_conf->fast_div_bias = 0x1;
@@ -1505,12 +1859,20 @@ static void ath_ant_div_conf_fast_divbias(struct ath_hw_antcomb_conf *ant_conf,
 			ant_conf->main_gaintb = 0;
 			ant_conf->alt_gaintb = 0;
 			break;
+<<<<<<< HEAD
 		case 0x21: /* LNA1 LNA2 */
+=======
+		case (0x21): /* LNA1 LNA2 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ant_conf->fast_div_bias = 0x1;
 			ant_conf->main_gaintb = 0;
 			ant_conf->alt_gaintb = 0;
 			break;
+<<<<<<< HEAD
 		case 0x23: /* LNA1 A+B */
+=======
+		case (0x23): /* LNA1 A+B */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!(antcomb->scan) &&
 				(alt_ratio > ATH_ANT_DIV_COMB_ALT_ANT_RATIO))
 				ant_conf->fast_div_bias = 0x1;
@@ -1519,17 +1881,29 @@ static void ath_ant_div_conf_fast_divbias(struct ath_hw_antcomb_conf *ant_conf,
 			ant_conf->main_gaintb = 0;
 			ant_conf->alt_gaintb = 0;
 			break;
+<<<<<<< HEAD
 		case 0x30: /* A+B A-B */
+=======
+		case (0x30): /* A+B A-B */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ant_conf->fast_div_bias = 0x1;
 			ant_conf->main_gaintb = 0;
 			ant_conf->alt_gaintb = 0;
 			break;
+<<<<<<< HEAD
 		case 0x31: /* A+B LNA2 */
+=======
+		case (0x31): /* A+B LNA2 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ant_conf->fast_div_bias = 0x1;
 			ant_conf->main_gaintb = 0;
 			ant_conf->alt_gaintb = 0;
 			break;
+<<<<<<< HEAD
 		case 0x32: /* A+B LNA1 */
+=======
+		case (0x32): /* A+B LNA1 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ant_conf->fast_div_bias = 0x1;
 			ant_conf->main_gaintb = 0;
 			ant_conf->alt_gaintb = 0;
@@ -1537,7 +1911,13 @@ static void ath_ant_div_conf_fast_divbias(struct ath_hw_antcomb_conf *ant_conf,
 		default:
 			break;
 		}
+<<<<<<< HEAD
 	}
+=======
+
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Antenna diversity and combining */
@@ -1781,9 +2161,21 @@ int ath_rx_tasklet(struct ath_softc *sc, int flush, bool hp)
 	struct ieee80211_rx_status *rxs;
 	struct ath_hw *ah = sc->sc_ah;
 	struct ath_common *common = ath9k_hw_common(ah);
+<<<<<<< HEAD
 	struct ieee80211_hw *hw = sc->hw;
 	struct ieee80211_hdr *hdr;
 	int retval;
+=======
+	/*
+	 * The hw can technically differ from common->hw when using ath9k
+	 * virtual wiphy so to account for that we iterate over the active
+	 * wiphys and find the appropriate wiphy and therefore hw.
+	 */
+	struct ieee80211_hw *hw = sc->hw;
+	struct ieee80211_hdr *hdr;
+	int retval;
+	bool decrypt_error = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ath_rx_status rs;
 	enum ath9k_rx_qtype qtype;
 	bool edma = !!(ah->caps.hw_caps & ATH9K_HW_CAP_EDMA);
@@ -1805,7 +2197,10 @@ int ath_rx_tasklet(struct ath_softc *sc, int flush, bool hp)
 	tsf_lower = tsf & 0xffffffff;
 
 	do {
+<<<<<<< HEAD
 		bool decrypt_error = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* If handling rx interrupt and flush is in progress => exit */
 		if ((sc->sc_flags & SC_OP_RXFLUSH) && (flush == 0))
 			break;
@@ -1834,12 +2229,15 @@ int ath_rx_tasklet(struct ath_softc *sc, int flush, bool hp)
 
 		hdr = (struct ieee80211_hdr *) (hdr_skb->data + rx_status_len);
 		rxs = IEEE80211_SKB_RXCB(hdr_skb);
+<<<<<<< HEAD
 		if (ieee80211_is_beacon(hdr->frame_control) &&
 		    !is_zero_ether_addr(common->curbssid) &&
 		    !compare_ether_addr(hdr->addr3, common->curbssid))
 			rs.is_mybeacon = true;
 		else
 			rs.is_mybeacon = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ath_debug_stat_rx(sc, &rs);
 
@@ -1847,10 +2245,20 @@ int ath_rx_tasklet(struct ath_softc *sc, int flush, bool hp)
 		 * If we're asked to flush receive queue, directly
 		 * chain it back at the queue without processing it.
 		 */
+<<<<<<< HEAD
 		if (sc->sc_flags & SC_OP_RXFLUSH)
 			goto requeue_drop_frag;
 
 		memset(rxs, 0, sizeof(struct ieee80211_rx_status));
+=======
+		if (flush)
+			goto requeue_drop_frag;
+
+		retval = ath9k_rx_skb_preprocess(common, hw, hdr, &rs,
+						 rxs, &decrypt_error);
+		if (retval)
+			goto requeue_drop_frag;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		rxs->mactime = (tsf & ~0xffffffffULL) | rs.rs_tstamp;
 		if (rs.rs_tstamp > tsf_lower &&
@@ -1861,11 +2269,14 @@ int ath_rx_tasklet(struct ath_softc *sc, int flush, bool hp)
 		    unlikely(tsf_lower - rs.rs_tstamp > 0x10000000))
 			rxs->mactime += 0x100000000ULL;
 
+<<<<<<< HEAD
 		retval = ath9k_rx_skb_preprocess(common, hw, hdr, &rs,
 						 rxs, &decrypt_error);
 		if (retval)
 			goto requeue_drop_frag;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Ensure we always have an skb to requeue once we are done
 		 * processing the current buffer's skb */
 		requeue_skb = ath_rxbuf_alloc(common, common->rx_bufsize, GFP_ATOMIC);
@@ -1924,19 +2335,28 @@ int ath_rx_tasklet(struct ath_softc *sc, int flush, bool hp)
 		if (sc->rx.frag) {
 			int space = skb->len - skb_tailroom(hdr_skb);
 
+<<<<<<< HEAD
+=======
+			sc->rx.frag = NULL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (pskb_expand_head(hdr_skb, 0, space, GFP_ATOMIC) < 0) {
 				dev_kfree_skb(skb);
 				goto requeue_drop_frag;
 			}
 
+<<<<<<< HEAD
 			sc->rx.frag = NULL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			skb_copy_from_linear_data(skb, skb_put(hdr_skb, skb->len),
 						  skb->len);
 			dev_kfree_skb_any(skb);
 			skb = hdr_skb;
 		}
 
+<<<<<<< HEAD
 
 		if (ah->caps.hw_caps & ATH9K_HW_CAP_ANT_DIV_COMB) {
 
@@ -1966,6 +2386,29 @@ int ath_rx_tasklet(struct ath_softc *sc, int flush, bool hp)
 		spin_unlock_irqrestore(&sc->sc_pm_lock, flags);
 
 		if ((ah->caps.hw_caps & ATH9K_HW_CAP_ANT_DIV_COMB) && sc->ant_rx == 3)
+=======
+		/*
+		 * change the default rx antenna if rx diversity chooses the
+		 * other antenna 3 times in a row.
+		 */
+		if (sc->rx.defant != rs.rs_antenna) {
+			if (++sc->rx.rxotherant >= 3)
+				ath_setdefantenna(sc, rs.rs_antenna);
+		} else {
+			sc->rx.rxotherant = 0;
+		}
+
+		spin_lock_irqsave(&sc->sc_pm_lock, flags);
+
+		if ((sc->ps_flags & (PS_WAIT_FOR_BEACON |
+					      PS_WAIT_FOR_CAB |
+					      PS_WAIT_FOR_PSPOLL_DATA)) ||
+						ath9k_check_auto_sleep(sc))
+			ath_rx_ps(sc, skb);
+		spin_unlock_irqrestore(&sc->sc_pm_lock, flags);
+
+		if (ah->caps.hw_caps & ATH9K_HW_CAP_ANT_DIV_COMB)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ath_ant_comb_scan(sc, &rs);
 
 		ieee80211_rx(hw, skb);
@@ -1976,6 +2419,7 @@ requeue_drop_frag:
 			sc->rx.frag = NULL;
 		}
 requeue:
+<<<<<<< HEAD
 		list_add_tail(&bf->list, &sc->rx.rxbuf);
 		if (flush)
 			continue;
@@ -1984,16 +2428,27 @@ requeue:
 			ath_rx_edma_buf_link(sc, qtype);
 		} else {
 			ath_rx_buf_relink(sc, bf);
+=======
+		if (edma) {
+			list_add_tail(&bf->list, &sc->rx.rxbuf);
+			ath_rx_edma_buf_link(sc, qtype);
+		} else {
+			list_move_tail(&bf->list, &sc->rx.rxbuf);
+			ath_rx_buf_link(sc, bf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ath9k_hw_rxena(ah);
 		}
 	} while (1);
 
 	spin_unlock_bh(&sc->rx.rxbuflock);
 
+<<<<<<< HEAD
 	if (!(ah->imask & ATH9K_INT_RXEOL)) {
 		ah->imask |= (ATH9K_INT_RXEOL | ATH9K_INT_RXORN);
 		ath9k_hw_set_interrupts(ah);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }

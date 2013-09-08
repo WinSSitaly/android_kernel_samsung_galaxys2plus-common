@@ -22,7 +22,11 @@
 #define EQL_DEFAULT_SLAVE_PRIORITY 28800
 #define EQL_DEFAULT_MAX_SLAVES     4
 #define EQL_DEFAULT_MTU            576
+<<<<<<< HEAD
 #define EQL_DEFAULT_RESCHED_IVAL   HZ
+=======
+#define EQL_DEFAULT_RESCHED_IVAL   100
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define EQL_ENSLAVE     (SIOCDEVPRIVATE)
 #define EQL_EMANCIPATE  (SIOCDEVPRIVATE + 1)

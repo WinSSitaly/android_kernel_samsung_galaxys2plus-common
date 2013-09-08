@@ -1,6 +1,11 @@
 #ifndef __ASM_ARM_DMA_H
 #define __ASM_ARM_DMA_H
 
+<<<<<<< HEAD
+=======
+#include <asm/memory.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This is the maximum virtual address which can be DMA'd from.
  */
@@ -19,6 +24,10 @@
  * It should not be re-used except for that purpose.
  */
 #include <linux/spinlock.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/scatterlist.h>
 
 #include <mach/isa-dma.h>
@@ -33,18 +42,30 @@
 #define DMA_MODE_CASCADE 0xc0
 #define DMA_AUTOINIT	 0x10
 
+<<<<<<< HEAD
 extern raw_spinlock_t  dma_spin_lock;
+=======
+extern spinlock_t  dma_spin_lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline unsigned long claim_dma_lock(void)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&dma_spin_lock, flags);
+=======
+	spin_lock_irqsave(&dma_spin_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return flags;
 }
 
 static inline void release_dma_lock(unsigned long flags)
 {
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&dma_spin_lock, flags);
+=======
+	spin_unlock_irqrestore(&dma_spin_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Clear the 'DMA Pointer Flip Flop'.

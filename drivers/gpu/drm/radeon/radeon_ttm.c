@@ -114,6 +114,27 @@ static void radeon_ttm_global_fini(struct radeon_device *rdev)
 	}
 }
 
+<<<<<<< HEAD
+=======
+struct ttm_backend *radeon_ttm_backend_create(struct radeon_device *rdev);
+
+static struct ttm_backend*
+radeon_create_ttm_backend_entry(struct ttm_bo_device *bdev)
+{
+	struct radeon_device *rdev;
+
+	rdev = radeon_get_rdev(bdev);
+#if __OS_HAS_AGP
+	if (rdev->flags & RADEON_IS_AGP) {
+		return ttm_agp_backend_init(bdev, rdev->ddev->agp->bridge);
+	} else
+#endif
+	{
+		return radeon_ttm_backend_create(rdev);
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int radeon_invalidate_caches(struct ttm_bo_device *bdev, uint32_t flags)
 {
 	return 0;
@@ -188,7 +209,11 @@ static void radeon_evict_flags(struct ttm_buffer_object *bo,
 	rbo = container_of(bo, struct radeon_bo, tbo);
 	switch (bo->mem.mem_type) {
 	case TTM_PL_VRAM:
+<<<<<<< HEAD
 		if (rbo->rdev->ring[RADEON_RING_TYPE_GFX_INDEX].ready == false)
+=======
+		if (rbo->rdev->cp.ready == false)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			radeon_ttm_placement_from_domain(rbo, RADEON_GEM_DOMAIN_CPU);
 		else
 			radeon_ttm_placement_from_domain(rbo, RADEON_GEM_DOMAIN_GTT);
@@ -223,10 +248,17 @@ static int radeon_move_blit(struct ttm_buffer_object *bo,
 	struct radeon_device *rdev;
 	uint64_t old_start, new_start;
 	struct radeon_fence *fence;
+<<<<<<< HEAD
 	int r, i;
 
 	rdev = radeon_get_rdev(bo->bdev);
 	r = radeon_fence_create(rdev, &fence, radeon_copy_ring_index(rdev));
+=======
+	int r;
+
+	rdev = radeon_get_rdev(bo->bdev);
+	r = radeon_fence_create(rdev, &fence);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(r)) {
 		return r;
 	}
@@ -255,13 +287,19 @@ static int radeon_move_blit(struct ttm_buffer_object *bo,
 		DRM_ERROR("Unknown placement %d\n", old_mem->mem_type);
 		return -EINVAL;
 	}
+<<<<<<< HEAD
 	if (!rdev->ring[radeon_copy_ring_index(rdev)].ready) {
 		DRM_ERROR("Trying to move memory with ring turned off.\n");
+=======
+	if (!rdev->cp.ready) {
+		DRM_ERROR("Trying to move memory with CP turned off.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
 	BUILD_BUG_ON((PAGE_SIZE % RADEON_GPU_PAGE_SIZE) != 0);
 
+<<<<<<< HEAD
 	/* sync other rings */
 	if (rdev->family >= CHIP_R600) {
 		for (i = 0; i < RADEON_NUM_RINGS; ++i) {
@@ -292,6 +330,8 @@ static int radeon_move_blit(struct ttm_buffer_object *bo,
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = radeon_copy(rdev, old_start, new_start,
 			new_mem->num_pages * (PAGE_SIZE / RADEON_GPU_PAGE_SIZE), /* GPU pages */
 			fence);
@@ -410,8 +450,12 @@ static int radeon_bo_move(struct ttm_buffer_object *bo,
 		radeon_move_null(bo, new_mem);
 		return 0;
 	}
+<<<<<<< HEAD
 	if (!rdev->ring[radeon_copy_ring_index(rdev)].ready ||
 	    rdev->asic->copy.copy == NULL) {
+=======
+	if (!rdev->cp.ready || rdev->asic->copy == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* use memcpy */
 		goto memcpy;
 	}
@@ -468,6 +512,7 @@ static int radeon_ttm_io_mem_reserve(struct ttm_bo_device *bdev, struct ttm_mem_
 			return -EINVAL;
 		mem->bus.base = rdev->mc.aper_base;
 		mem->bus.is_iomem = true;
+<<<<<<< HEAD
 #ifdef __alpha__
 		/*
 		 * Alpha: use bus.addr to hold the ioremap() return,
@@ -491,6 +536,8 @@ static int radeon_ttm_io_mem_reserve(struct ttm_bo_device *bdev, struct ttm_mem_
 		mem->bus.base = (mem->bus.base & 0x0ffffffffUL) +
 			rdev->ddev->hose->dense_mem_base;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		return -EINVAL;
@@ -528,6 +575,7 @@ static bool radeon_sync_obj_signaled(void *sync_obj, void *sync_arg)
 	return radeon_fence_signaled((struct radeon_fence *)sync_obj);
 }
 
+<<<<<<< HEAD
 /*
  * TTM backend functions.
  */
@@ -688,6 +736,10 @@ static struct ttm_bo_driver radeon_bo_driver = {
 	.ttm_tt_create = &radeon_ttm_tt_create,
 	.ttm_tt_populate = &radeon_ttm_tt_populate,
 	.ttm_tt_unpopulate = &radeon_ttm_tt_unpopulate,
+=======
+static struct ttm_bo_driver radeon_bo_driver = {
+	.create_ttm_backend_entry = &radeon_create_ttm_backend_entry,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.invalidate_caches = &radeon_invalidate_caches,
 	.init_mem_type = &radeon_init_mem_type,
 	.evict_flags = &radeon_evict_flags,
@@ -744,7 +796,11 @@ int radeon_ttm_init(struct radeon_device *rdev)
 		return r;
 	}
 	DRM_INFO("radeon: %uM of VRAM memory ready\n",
+<<<<<<< HEAD
 		 (unsigned) (rdev->mc.real_vram_size / (1024 * 1024)));
+=======
+		 (unsigned)rdev->mc.real_vram_size / (1024 * 1024));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = ttm_bo_init_mm(&rdev->mman.bdev, TTM_PL_TT,
 				rdev->mc.gtt_size >> PAGE_SHIFT);
 	if (r) {
@@ -851,6 +907,127 @@ int radeon_mmap(struct file *filp, struct vm_area_struct *vma)
 }
 
 
+<<<<<<< HEAD
+=======
+/*
+ * TTM backend functions.
+ */
+struct radeon_ttm_backend {
+	struct ttm_backend		backend;
+	struct radeon_device		*rdev;
+	unsigned long			num_pages;
+	struct page			**pages;
+	struct page			*dummy_read_page;
+	dma_addr_t			*dma_addrs;
+	bool				populated;
+	bool				bound;
+	unsigned			offset;
+};
+
+static int radeon_ttm_backend_populate(struct ttm_backend *backend,
+				       unsigned long num_pages,
+				       struct page **pages,
+				       struct page *dummy_read_page,
+				       dma_addr_t *dma_addrs)
+{
+	struct radeon_ttm_backend *gtt;
+
+	gtt = container_of(backend, struct radeon_ttm_backend, backend);
+	gtt->pages = pages;
+	gtt->dma_addrs = dma_addrs;
+	gtt->num_pages = num_pages;
+	gtt->dummy_read_page = dummy_read_page;
+	gtt->populated = true;
+	return 0;
+}
+
+static void radeon_ttm_backend_clear(struct ttm_backend *backend)
+{
+	struct radeon_ttm_backend *gtt;
+
+	gtt = container_of(backend, struct radeon_ttm_backend, backend);
+	gtt->pages = NULL;
+	gtt->dma_addrs = NULL;
+	gtt->num_pages = 0;
+	gtt->dummy_read_page = NULL;
+	gtt->populated = false;
+	gtt->bound = false;
+}
+
+
+static int radeon_ttm_backend_bind(struct ttm_backend *backend,
+				   struct ttm_mem_reg *bo_mem)
+{
+	struct radeon_ttm_backend *gtt;
+	int r;
+
+	gtt = container_of(backend, struct radeon_ttm_backend, backend);
+	gtt->offset = bo_mem->start << PAGE_SHIFT;
+	if (!gtt->num_pages) {
+		WARN(1, "nothing to bind %lu pages for mreg %p back %p!\n",
+		     gtt->num_pages, bo_mem, backend);
+	}
+	r = radeon_gart_bind(gtt->rdev, gtt->offset,
+			     gtt->num_pages, gtt->pages, gtt->dma_addrs);
+	if (r) {
+		DRM_ERROR("failed to bind %lu pages at 0x%08X\n",
+			  gtt->num_pages, gtt->offset);
+		return r;
+	}
+	gtt->bound = true;
+	return 0;
+}
+
+static int radeon_ttm_backend_unbind(struct ttm_backend *backend)
+{
+	struct radeon_ttm_backend *gtt;
+
+	gtt = container_of(backend, struct radeon_ttm_backend, backend);
+	radeon_gart_unbind(gtt->rdev, gtt->offset, gtt->num_pages);
+	gtt->bound = false;
+	return 0;
+}
+
+static void radeon_ttm_backend_destroy(struct ttm_backend *backend)
+{
+	struct radeon_ttm_backend *gtt;
+
+	gtt = container_of(backend, struct radeon_ttm_backend, backend);
+	if (gtt->bound) {
+		radeon_ttm_backend_unbind(backend);
+	}
+	kfree(gtt);
+}
+
+static struct ttm_backend_func radeon_backend_func = {
+	.populate = &radeon_ttm_backend_populate,
+	.clear = &radeon_ttm_backend_clear,
+	.bind = &radeon_ttm_backend_bind,
+	.unbind = &radeon_ttm_backend_unbind,
+	.destroy = &radeon_ttm_backend_destroy,
+};
+
+struct ttm_backend *radeon_ttm_backend_create(struct radeon_device *rdev)
+{
+	struct radeon_ttm_backend *gtt;
+
+	gtt = kzalloc(sizeof(struct radeon_ttm_backend), GFP_KERNEL);
+	if (gtt == NULL) {
+		return NULL;
+	}
+	gtt->backend.bdev = &rdev->mman.bdev;
+	gtt->backend.flags = 0;
+	gtt->backend.func = &radeon_backend_func;
+	gtt->rdev = rdev;
+	gtt->pages = NULL;
+	gtt->num_pages = 0;
+	gtt->dummy_read_page = NULL;
+	gtt->populated = false;
+	gtt->bound = false;
+	return &gtt->backend;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define RADEON_DEBUGFS_MEM_TYPES 2
 
 #if defined(CONFIG_DEBUG_FS)
@@ -873,8 +1050,13 @@ static int radeon_mm_dump_table(struct seq_file *m, void *data)
 static int radeon_ttm_debugfs_init(struct radeon_device *rdev)
 {
 #if defined(CONFIG_DEBUG_FS)
+<<<<<<< HEAD
 	static struct drm_info_list radeon_mem_types_list[RADEON_DEBUGFS_MEM_TYPES+2];
 	static char radeon_mem_types_names[RADEON_DEBUGFS_MEM_TYPES+2][32];
+=======
+	static struct drm_info_list radeon_mem_types_list[RADEON_DEBUGFS_MEM_TYPES+1];
+	static char radeon_mem_types_names[RADEON_DEBUGFS_MEM_TYPES+1][32];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned i;
 
 	for (i = 0; i < RADEON_DEBUGFS_MEM_TYPES; i++) {
@@ -896,6 +1078,7 @@ static int radeon_ttm_debugfs_init(struct radeon_device *rdev)
 	radeon_mem_types_list[i].name = radeon_mem_types_names[i];
 	radeon_mem_types_list[i].show = &ttm_page_alloc_debugfs;
 	radeon_mem_types_list[i].driver_features = 0;
+<<<<<<< HEAD
 	radeon_mem_types_list[i++].data = NULL;
 #ifdef CONFIG_SWIOTLB
 	if (swiotlb_nr_tbl()) {
@@ -907,6 +1090,10 @@ static int radeon_ttm_debugfs_init(struct radeon_device *rdev)
 	}
 #endif
 	return radeon_debugfs_add_files(rdev, radeon_mem_types_list, i);
+=======
+	radeon_mem_types_list[i].data = NULL;
+	return radeon_debugfs_add_files(rdev, radeon_mem_types_list, RADEON_DEBUGFS_MEM_TYPES+1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif
 	return 0;

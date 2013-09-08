@@ -78,8 +78,11 @@
 #include <linux/kernel.h>
 #include <linux/slab.h>
 #include <linux/wimax/i2400m.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/moduleparam.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 #define D_SUBMODULE control

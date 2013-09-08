@@ -72,6 +72,7 @@ Default is to monitor all CPUS.
 
 -p <pid>::
 --pid=<pid>::
+<<<<<<< HEAD
 	Profile events on existing Process ID (comma separated list).
 
 -t <tid>::
@@ -81,6 +82,13 @@ Default is to monitor all CPUS.
 -u::
 --uid=::
         Record events in threads owned by uid. Name or number.
+=======
+	Profile events on existing Process ID.
+
+-t <tid>::
+--tid=<tid>::
+        Profile events on existing thread ID.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 -r <priority>::
 --realtime=<priority>::
@@ -110,6 +118,7 @@ Default is to monitor all CPUS.
 --zero::
 	Zero history across display updates.
 
+<<<<<<< HEAD
 -s::
 --sort::
 	Sort by key(s): pid, comm, dso, symbol, parent
@@ -155,6 +164,8 @@ Default is to monitor all CPUS.
 
 	Default: fractal,0.5,callee.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 INTERACTIVE PROMPTING KEYS
 --------------------------
 
@@ -179,6 +190,12 @@ INTERACTIVE PROMPTING KEYS
 [S]::
 	Stop annotation, return to full profile display.
 
+<<<<<<< HEAD
+=======
+[w]::
+	Toggle between weighted sum and individual count[E]r profile.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 [z]::
 	Toggle event count zeroing across display updates.
 

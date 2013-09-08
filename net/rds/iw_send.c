@@ -34,7 +34,10 @@
 #include <linux/in.h>
 #include <linux/device.h>
 #include <linux/dmapool.h>
+<<<<<<< HEAD
 #include <linux/ratelimit.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "rds.h"
 #include "iw.h"
@@ -259,7 +262,12 @@ void rds_iw_send_cq_comp_handler(struct ib_cq *cq, void *context)
 				 * when the SEND completes. */
 				break;
 			default:
+<<<<<<< HEAD
 				printk_ratelimited(KERN_NOTICE
+=======
+				if (printk_ratelimit())
+					printk(KERN_NOTICE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						"RDS/IW: %s: unexpected opcode 0x%x in WR!\n",
 						__func__, send->s_wr.opcode);
 				break;

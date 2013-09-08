@@ -4,6 +4,7 @@ menu "Core Netfilter Configuration"
 config NETFILTER_NETLINK
 	tristate
 
+<<<<<<< HEAD
 config NETFILTER_NETLINK_ACCT
 tristate "Netfilter NFACCT over NFNETLINK interface"
 	depends on NETFILTER_ADVANCED
@@ -12,6 +13,8 @@ tristate "Netfilter NFACCT over NFNETLINK interface"
 	  If this option is enabled, the kernel will include support
 	  for extended accounting via NFNETLINK.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config NETFILTER_NETLINK_QUEUE
 	tristate "Netfilter NFQUEUE over NFNETLINK interface"
 	depends on NETFILTER_ADVANCED
@@ -83,6 +86,7 @@ config NF_CONNTRACK_ZONES
 
 	  If unsure, say `N'.
 
+<<<<<<< HEAD
 config NF_CONNTRACK_PROCFS
 	bool "Supply CT list in procfs (OBSOLETE)"
 	default y
@@ -93,6 +97,8 @@ config NF_CONNTRACK_PROCFS
 	is considered obsolete in favor of using the conntrack(8)
 	tool which uses Netlink.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config NF_CONNTRACK_EVENTS
 	bool "Connection tracking events"
 	depends on NETFILTER_ADVANCED
@@ -103,6 +109,7 @@ config NF_CONNTRACK_EVENTS
 
 	  If unsure, say `N'.
 
+<<<<<<< HEAD
 config NF_CONNTRACK_TIMEOUT
 	bool  'Connection tracking timeout'
 	depends on NETFILTER_ADVANCED
@@ -113,6 +120,8 @@ config NF_CONNTRACK_TIMEOUT
 
 	  If unsure, say `N'.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config NF_CONNTRACK_TIMESTAMP
 	bool  'Connection tracking timestamping'
 	depends on NETFILTER_ADVANCED
@@ -229,6 +238,10 @@ config NF_CONNTRACK_BROADCAST
 
 config NF_CONNTRACK_NETBIOS_NS
 	tristate "NetBIOS name service protocol support"
+<<<<<<< HEAD
+=======
+	depends on NETFILTER_ADVANCED
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select NF_CONNTRACK_BROADCAST
 	help
 	  NetBIOS name service requests are sent as broadcast messages from an
@@ -324,6 +337,7 @@ config NF_CT_NETLINK
 	help
 	  This option enables support for a netlink-based userspace interface
 
+<<<<<<< HEAD
 config NF_CT_NETLINK_TIMEOUT
 	tristate  'Connection tracking timeout tuning via Netlink'
 	select NETFILTER_NETLINK
@@ -335,6 +349,8 @@ config NF_CT_NETLINK_TIMEOUT
 
 	  If unsure, say `N'.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endif # NF_CONNTRACK
 
 # transparent proxy support
@@ -543,6 +559,7 @@ config NETFILTER_XT_TARGET_LED
 	    echo netfilter-ssh > /sys/class/leds/<ledname>/trigger
 
 	  For more information on the LEDs available on your system, see
+<<<<<<< HEAD
 	  Documentation/leds/leds-class.txt
 
 config NETFILTER_XT_TARGET_LOG
@@ -553,6 +570,9 @@ config NETFILTER_XT_TARGET_LOG
 	  any iptables table which records the packet header to the syslog.
 
 	  To compile it as a module, choose M here.  If unsure, say N.
+=======
+	  Documentation/leds-class.txt
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config NETFILTER_XT_TARGET_MARK
 	tristate '"MARK" target support'
@@ -589,6 +609,10 @@ config NETFILTER_XT_TARGET_NOTRACK
 	tristate  '"NOTRACK" target support'
 	depends on IP_NF_RAW || IP6_NF_RAW
 	depends on NF_CONNTRACK
+<<<<<<< HEAD
+=======
+	depends on NETFILTER_ADVANCED
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  The NOTRACK target allows a select rule to specify
 	  which packets *not* to enter the conntrack/NAT
@@ -818,6 +842,7 @@ config NETFILTER_XT_MATCH_DSCP
 
 	  To compile it as a module, choose M here.  If unsure, say N.
 
+<<<<<<< HEAD
 config NETFILTER_XT_MATCH_ECN
 	tristate '"ecn" match support'
 	depends on NETFILTER_ADVANCED
@@ -827,6 +852,8 @@ config NETFILTER_XT_MATCH_ECN
 
 	To compile it as a module, choose M here. If unsure, say N.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config NETFILTER_XT_MATCH_ESP
 	tristate '"esp" match support'
 	depends on NETFILTER_ADVANCED
@@ -936,6 +963,7 @@ config NETFILTER_XT_MATCH_MULTIPORT
 
 	  To compile it as a module, choose M here.  If unsure, say N.
 
+<<<<<<< HEAD
 config NETFILTER_XT_MATCH_NFACCT
 	tristate '"nfacct" match support'
 	depends on NETFILTER_ADVANCED
@@ -946,6 +974,8 @@ config NETFILTER_XT_MATCH_NFACCT
 
 	  To compile it as a module, choose M here.  If unsure, say N.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config NETFILTER_XT_MATCH_OSF
 	tristate '"osf" Passive OS fingerprint match'
 	depends on NETFILTER_ADVANCED && NETFILTER_NETLINK
@@ -967,6 +997,11 @@ config NETFILTER_XT_MATCH_OWNER
 	based on who created the socket: the user or group. It is also
 	possible to check whether a socket actually exists.
 
+<<<<<<< HEAD
+=======
+	Conflicts with '"quota, tag, uid" match'
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config NETFILTER_XT_MATCH_POLICY
 	tristate 'IPsec "policy" match support'
 	depends on XFRM
@@ -1000,6 +1035,25 @@ config NETFILTER_XT_MATCH_PKTTYPE
 
 	  To compile it as a module, choose M here.  If unsure, say N.
 
+<<<<<<< HEAD
+=======
+config NETFILTER_XT_MATCH_QTAGUID
+	bool '"quota, tag, owner" match and stats support'
+        depends on NETFILTER_XT_MATCH_SOCKET
+	depends on NETFILTER_XT_MATCH_OWNER=n
+	help
+	  This option replaces the `owner' match. In addition to matching
+	  on uid, it keeps stats based on a tag assigned to a socket.
+	  The full tag is comprised of a UID and an accounting tag.
+	  The tags are assignable to sockets from user space (e.g. a download
+	  manager can assign the socket to another UID for accounting).
+	  Stats and control are done via /proc/net/xt_qtaguid/.
+	  It replaces owner as it takes the same arguments, but should
+	  really be recognized by the iptables tool.
+
+	  If unsure, say `N'.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config NETFILTER_XT_MATCH_QUOTA
 	tristate '"quota" match support'
 	depends on NETFILTER_ADVANCED
@@ -1010,6 +1064,33 @@ config NETFILTER_XT_MATCH_QUOTA
 	  If you want to compile it as a module, say M here and read
 	  <file:Documentation/kbuild/modules.txt>.  If unsure, say `N'.
 
+<<<<<<< HEAD
+=======
+config NETFILTER_XT_MATCH_QUOTA2
+	tristate '"quota2" match support'
+	depends on NETFILTER_ADVANCED
+	help
+	  This option adds a `quota2' match, which allows to match on a
+	  byte counter correctly and not per CPU.
+	  It allows naming the quotas.
+	  This is based on http://xtables-addons.git.sourceforge.net
+
+	  If you want to compile it as a module, say M here and read
+	  <file:Documentation/kbuild/modules.txt>.  If unsure, say `N'.
+
+config NETFILTER_XT_MATCH_QUOTA2_LOG
+	bool '"quota2" Netfilter LOG support'
+	depends on NETFILTER_XT_MATCH_QUOTA2
+	depends on IP_NF_TARGET_ULOG=n    # not yes, not module, just no
+	default n
+	help
+	  This option allows `quota2' to log ONCE when a quota limit
+	  is passed. It logs via NETLINK using the NETLINK_NFLOG family.
+	  It logs similarly to how ipt_ULOG would without data.
+
+	  If unsure, say `N'.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config NETFILTER_XT_MATCH_RATEEST
 	tristate '"rateest" match support'
 	depends on NETFILTER_ADVANCED

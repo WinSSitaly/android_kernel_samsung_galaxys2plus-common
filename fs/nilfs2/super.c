@@ -175,6 +175,11 @@ static void nilfs_i_callback(struct rcu_head *head)
 	struct inode *inode = container_of(head, struct inode, i_rcu);
 	struct nilfs_mdt_info *mdi = NILFS_MDT(inode);
 
+<<<<<<< HEAD
+=======
+	INIT_LIST_HEAD(&inode->i_dentry);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (mdi) {
 		kfree(mdi->mi_bgl); /* kfree(NULL) is safe */
 		kfree(mdi);
@@ -648,11 +653,19 @@ static int nilfs_statfs(struct dentry *dentry, struct kstatfs *buf)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int nilfs_show_options(struct seq_file *seq, struct dentry *dentry)
 {
 	struct super_block *sb = dentry->d_sb;
 	struct the_nilfs *nilfs = sb->s_fs_info;
 	struct nilfs_root *root = NILFS_I(dentry->d_inode)->i_root;
+=======
+static int nilfs_show_options(struct seq_file *seq, struct vfsmount *vfs)
+{
+	struct super_block *sb = vfs->mnt_sb;
+	struct the_nilfs *nilfs = sb->s_fs_info;
+	struct nilfs_root *root = NILFS_I(vfs->mnt_root->d_inode)->i_root;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!nilfs_test_opt(nilfs, BARRIER))
 		seq_puts(seq, ",nobarrier");
@@ -917,8 +930,14 @@ static int nilfs_get_root_dentry(struct super_block *sb,
 	if (root->cno == NILFS_CPTREE_CURRENT_CNO) {
 		dentry = d_find_alias(inode);
 		if (!dentry) {
+<<<<<<< HEAD
 			dentry = d_make_root(inode);
 			if (!dentry) {
+=======
+			dentry = d_alloc_root(inode);
+			if (!dentry) {
+				iput(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ret = -ENOMEM;
 				goto failed_dentry;
 			}
@@ -948,8 +967,11 @@ static int nilfs_attach_snapshot(struct super_block *s, __u64 cno,
 	struct nilfs_root *root;
 	int ret;
 
+<<<<<<< HEAD
 	mutex_lock(&nilfs->ns_snapshot_mount_mutex);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	down_read(&nilfs->ns_segctor_sem);
 	ret = nilfs_cpfile_is_snapshot(nilfs->ns_cpfile, cno);
 	up_read(&nilfs->ns_segctor_sem);
@@ -974,7 +996,10 @@ static int nilfs_attach_snapshot(struct super_block *s, __u64 cno,
 	ret = nilfs_get_root_dentry(s, root, root_dentry);
 	nilfs_put_root(root);
  out:
+<<<<<<< HEAD
 	mutex_unlock(&nilfs->ns_snapshot_mount_mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1061,7 +1086,10 @@ nilfs_fill_super(struct super_block *sb, void *data, int silent)
 	sb->s_export_op = &nilfs_export_ops;
 	sb->s_root = NULL;
 	sb->s_time_gran = 1;
+<<<<<<< HEAD
 	sb->s_max_links = NILFS_LINK_MAX;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bdi = sb->s_bdev->bd_inode->i_mapping->backing_dev_info;
 	sb->s_bdi = bdi ? : &default_backing_dev_info;

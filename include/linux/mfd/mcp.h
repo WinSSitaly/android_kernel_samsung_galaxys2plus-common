@@ -10,6 +10,11 @@
 #ifndef MCP_H
 #define MCP_H
 
+<<<<<<< HEAD
+=======
+#include <mach/dma.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct mcp_ops;
 
 struct mcp {
@@ -19,7 +24,16 @@ struct mcp {
 	int		use_count;
 	unsigned int	sclk_rate;
 	unsigned int	rw_timeout;
+<<<<<<< HEAD
 	struct device	attached_device;
+=======
+	dma_device_t	dma_audio_rd;
+	dma_device_t	dma_audio_wr;
+	dma_device_t	dma_telco_rd;
+	dma_device_t	dma_telco_wr;
+	struct device	attached_device;
+	int		gpio_base;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct mcp_ops {
@@ -40,14 +54,24 @@ void mcp_disable(struct mcp *);
 #define mcp_get_sclk_rate(mcp)	((mcp)->sclk_rate)
 
 struct mcp *mcp_host_alloc(struct device *, size_t);
+<<<<<<< HEAD
 int mcp_host_add(struct mcp *, void *);
 void mcp_host_del(struct mcp *);
 void mcp_host_free(struct mcp *);
+=======
+int mcp_host_register(struct mcp *);
+void mcp_host_unregister(struct mcp *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct mcp_driver {
 	struct device_driver drv;
 	int (*probe)(struct mcp *);
 	void (*remove)(struct mcp *);
+<<<<<<< HEAD
+=======
+	int (*suspend)(struct mcp *, pm_message_t);
+	int (*resume)(struct mcp *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int mcp_driver_register(struct mcp_driver *);
@@ -56,9 +80,13 @@ void mcp_driver_unregister(struct mcp_driver *);
 #define mcp_get_drvdata(mcp)	dev_get_drvdata(&(mcp)->attached_device)
 #define mcp_set_drvdata(mcp,d)	dev_set_drvdata(&(mcp)->attached_device, d)
 
+<<<<<<< HEAD
 static inline void *mcp_priv(struct mcp *mcp)
 {
 	return mcp + 1;
 }
+=======
+#define mcp_priv(mcp)		((void *)((mcp)+1))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

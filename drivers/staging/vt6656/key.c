@@ -223,7 +223,11 @@ BOOL KeybSetKey(
     PSKeyManagement pTable,
     PBYTE           pbyBSSID,
     DWORD           dwKeyIndex,
+<<<<<<< HEAD
 	u32 uKeyLength,
+=======
+    unsigned long           uKeyLength,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     PQWORD          pKeyRSC,
     PBYTE           pbyKey,
     BYTE            byKeyDecMode
@@ -235,8 +239,12 @@ BOOL KeybSetKey(
     PSKeyItem   pKey;
     unsigned int        uKeyIdx;
 
+<<<<<<< HEAD
 	DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO
 		"Enter KeybSetKey: %X\n", dwKeyIndex);
+=======
+    DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"Enter KeybSetKey: %lX\n", dwKeyIndex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
     j = (MAX_KEY_TABLE-1);
     for (i=0;i<(MAX_KEY_TABLE-1);i++) {
@@ -262,9 +270,13 @@ BOOL KeybSetKey(
                 if ((dwKeyIndex & TRANSMIT_KEY) != 0)  {
                     // Group transmit key
                     pTable->KeyTable[i].dwGTKeyIndex = dwKeyIndex;
+<<<<<<< HEAD
 			DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO
 				"Group transmit key(R)[%X]: %d\n",
 					pTable->KeyTable[i].dwGTKeyIndex, i);
+=======
+                    DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"Group transmit key(R)[%lX]: %d\n", pTable->KeyTable[i].dwGTKeyIndex, i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
                 }
                 pTable->KeyTable[i].wKeyCtl &= 0xFF0F;          // clear group key control filed
                 pTable->KeyTable[i].wKeyCtl |= (byKeyDecMode << 4);
@@ -305,12 +317,18 @@ BOOL KeybSetKey(
             }
             DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"\n");
 
+<<<<<<< HEAD
 		DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->dwTSC47_16: %x\n ",
 			pKey->dwTSC47_16);
 		DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->wTSC15_0: %x\n ",
 			pKey->wTSC15_0);
 		DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->dwKeyIndex: %x\n ",
 			pKey->dwKeyIndex);
+=======
+            DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->dwTSC47_16: %lx\n ", pKey->dwTSC47_16);
+            DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->wTSC15_0: %x\n ", pKey->wTSC15_0);
+            DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->dwKeyIndex: %lx\n ", pKey->dwKeyIndex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
             return (TRUE);
         }
@@ -332,9 +350,13 @@ BOOL KeybSetKey(
             if ((dwKeyIndex & TRANSMIT_KEY) != 0)  {
                 // Group transmit key
                 pTable->KeyTable[j].dwGTKeyIndex = dwKeyIndex;
+<<<<<<< HEAD
 		DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO
 			"Group transmit key(N)[%X]: %d\n",
 				pTable->KeyTable[j].dwGTKeyIndex, j);
+=======
+                DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"Group transmit key(N)[%lX]: %d\n", pTable->KeyTable[j].dwGTKeyIndex, j);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
             }
             pTable->KeyTable[j].wKeyCtl &= 0xFF0F;          // clear group key control filed
             pTable->KeyTable[j].wKeyCtl |= (byKeyDecMode << 4);
@@ -375,11 +397,17 @@ BOOL KeybSetKey(
         }
         DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"\n");
 
+<<<<<<< HEAD
 	DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->dwTSC47_16: %x\n ",
 		pKey->dwTSC47_16);
         DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->wTSC15_0: %x\n ", pKey->wTSC15_0);
 	DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->dwKeyIndex: %x\n ",
 		pKey->dwKeyIndex);
+=======
+        DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->dwTSC47_16: %lx\n ", pKey->dwTSC47_16);
+        DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->wTSC15_0: %x\n ", pKey->wTSC15_0);
+        DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->dwKeyIndex: %lx\n ", pKey->dwKeyIndex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
         return (TRUE);
     }
@@ -607,8 +635,12 @@ BOOL KeybGetTransmitKey(PSKeyManagement pTable, PBYTE pbyBSSID, DWORD dwKeyType,
                             DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"%x ", pTable->KeyTable[i].abyBSSID[ii]);
                         }
                         DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"\n");
+<<<<<<< HEAD
 			DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"dwGTKeyIndex: %X\n",
 				pTable->KeyTable[i].dwGTKeyIndex);
+=======
+                        DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"dwGTKeyIndex: %lX\n", pTable->KeyTable[i].dwGTKeyIndex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
                     return (TRUE);
                 }
@@ -675,7 +707,11 @@ BOOL KeybSetDefaultKey(
     void *pDeviceHandler,
     PSKeyManagement pTable,
     DWORD           dwKeyIndex,
+<<<<<<< HEAD
 	u32 uKeyLength,
+=======
+    unsigned long           uKeyLength,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     PQWORD          pKeyRSC,
     PBYTE           pbyKey,
     BYTE            byKeyDecMode
@@ -695,9 +731,12 @@ BOOL KeybSetDefaultKey(
         return (FALSE);
     }
 
+<<<<<<< HEAD
     if (uKeyLength > MAX_KEY_LEN)
 	    return false;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     pTable->KeyTable[MAX_KEY_TABLE-1].bInUse = TRUE;
     for (ii = 0; ii < ETH_ALEN; ii++)
         pTable->KeyTable[MAX_KEY_TABLE-1].abyBSSID[ii] = 0xFF;
@@ -707,10 +746,14 @@ BOOL KeybSetDefaultKey(
     if ((dwKeyIndex & TRANSMIT_KEY) != 0)  {
         // Group transmit key
         pTable->KeyTable[MAX_KEY_TABLE-1].dwGTKeyIndex = dwKeyIndex;
+<<<<<<< HEAD
 		DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO
 		"Group transmit key(R)[%X]: %d\n",
 		pTable->KeyTable[MAX_KEY_TABLE-1].dwGTKeyIndex,
 		MAX_KEY_TABLE-1);
+=======
+        DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"Group transmit key(R)[%lX]: %d\n", pTable->KeyTable[MAX_KEY_TABLE-1].dwGTKeyIndex, MAX_KEY_TABLE-1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
     }
     pTable->KeyTable[MAX_KEY_TABLE-1].wKeyCtl &= 0x7F00;          // clear all key control filed
@@ -761,11 +804,17 @@ BOOL KeybSetDefaultKey(
     }
     DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"\n");
 
+<<<<<<< HEAD
 	DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->dwTSC47_16: %x\n",
 		pKey->dwTSC47_16);
     DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->wTSC15_0: %x\n", pKey->wTSC15_0);
 	DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->dwKeyIndex: %x\n",
 		pKey->dwKeyIndex);
+=======
+    DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->dwTSC47_16: %lx\n", pKey->dwTSC47_16);
+    DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->wTSC15_0: %x\n", pKey->wTSC15_0);
+    DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"pKey->dwKeyIndex: %lx\n", pKey->dwKeyIndex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
     return (TRUE);
 }
@@ -791,7 +840,11 @@ BOOL KeybSetAllGroupKey(
     void *pDeviceHandler,
     PSKeyManagement pTable,
     DWORD           dwKeyIndex,
+<<<<<<< HEAD
 	u32 uKeyLength,
+=======
+    unsigned long           uKeyLength,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     PQWORD          pKeyRSC,
     PBYTE           pbyKey,
     BYTE            byKeyDecMode
@@ -803,8 +856,12 @@ BOOL KeybSetAllGroupKey(
     PSKeyItem   pKey;
     unsigned int        uKeyIdx;
 
+<<<<<<< HEAD
 	DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"Enter KeybSetAllGroupKey: %X\n",
 		dwKeyIndex);
+=======
+    DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"Enter KeybSetAllGroupKey: %lX\n", dwKeyIndex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
     if ((dwKeyIndex & PAIRWISE_KEY) != 0) {                  // Pairwise key
@@ -821,9 +878,13 @@ BOOL KeybSetAllGroupKey(
             if ((dwKeyIndex & TRANSMIT_KEY) != 0)  {
                 // Group transmit key
                 pTable->KeyTable[i].dwGTKeyIndex = dwKeyIndex;
+<<<<<<< HEAD
 		DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO
 			"Group transmit key(R)[%X]: %d\n",
 			pTable->KeyTable[i].dwGTKeyIndex, i);
+=======
+                DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"Group transmit key(R)[%lX]: %d\n", pTable->KeyTable[i].dwGTKeyIndex, i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
             }
             pTable->KeyTable[i].wKeyCtl &= 0xFF0F;          // clear group key control filed

@@ -60,6 +60,7 @@ kvmppc_resume_\intno:
 
 #else  /*__ASSEMBLY__ */
 
+<<<<<<< HEAD
 /*
  * This struct goes in the PACA on 64-bit processors.  It is used
  * to store host state that needs to be saved when we enter a guest
@@ -92,6 +93,8 @@ struct kvmppc_host_state {
 #endif
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct kvmppc_book3s_shadow_vcpu {
 	ulong gpr[14];
 	u32 cr;
@@ -105,12 +108,26 @@ struct kvmppc_book3s_shadow_vcpu {
 	ulong shadow_srr1;
 	ulong fault_dar;
 
+<<<<<<< HEAD
 #ifdef CONFIG_PPC_BOOK3S_32
 	u32     sr[16];			/* Guest SRs */
 
 	struct kvmppc_host_state hstate;
 #endif
 
+=======
+	ulong host_r1;
+	ulong host_r2;
+	ulong handler;
+	ulong scratch0;
+	ulong scratch1;
+	ulong vmhandler;
+	u8 in_guest;
+
+#ifdef CONFIG_PPC_BOOK3S_32
+	u32     sr[16];			/* Guest SRs */
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PPC_BOOK3S_64
 	u8 slb_max;			/* highest used guest slb entry */
 	struct  {

@@ -92,7 +92,10 @@ extern int pci_mmap_page_range(struct pci_dev *dev, struct vm_area_struct *vma,
 #include <asm/scatterlist.h>
 #include <linux/string.h>
 #include <asm/io.h>
+<<<<<<< HEAD
 #include <asm-generic/pci-bridge.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct pci_dev;
 
@@ -113,6 +116,15 @@ static inline void pci_dma_burst_advice(struct pci_dev *pdev,
 }
 #endif
 
+<<<<<<< HEAD
+=======
+extern void pcibios_resource_to_bus(struct pci_dev *dev,
+	struct pci_bus_region *region, struct resource *res);
+
+extern void pcibios_bus_to_resource(struct pci_dev *dev, struct resource *res,
+				    struct pci_bus_region *region);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define pci_domain_nr(bus) ((struct pci_controller *)(bus)->sysdata)->index
 
 static inline int pci_proc_domain(struct pci_bus *bus)
@@ -140,6 +152,11 @@ static inline int pci_get_legacy_ide_irq(struct pci_dev *dev, int channel)
 #define arch_setup_msi_irqs arch_setup_msi_irqs
 #endif
 
+<<<<<<< HEAD
+=======
+extern int pci_probe_only;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern char * (*pcibios_plat_setup)(char *str);
 
 #endif /* _ASM_PCI_H */

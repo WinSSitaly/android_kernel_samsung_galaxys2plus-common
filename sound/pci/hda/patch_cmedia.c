@@ -25,7 +25,10 @@
 #include <linux/delay.h>
 #include <linux/slab.h>
 #include <linux/pci.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include "hda_codec.h"
 #include "hda_local.h"
@@ -328,9 +331,13 @@ static int cmi9880_build_controls(struct hda_codec *codec)
 			return err;
 	}
 	if (spec->multiout.dig_out_nid) {
+<<<<<<< HEAD
 		err = snd_hda_create_spdif_out_ctls(codec,
 						    spec->multiout.dig_out_nid,
 						    spec->multiout.dig_out_nid);
+=======
+		err = snd_hda_create_spdif_out_ctls(codec, spec->multiout.dig_out_nid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err < 0)
 			return err;
 		err = snd_hda_create_spdif_share_sw(codec,
@@ -399,11 +406,19 @@ static int cmi9880_fill_multi_init(struct hda_codec *codec, const struct auto_pi
 {
 	struct cmi_spec *spec = codec->spec;
 	hda_nid_t nid;
+<<<<<<< HEAD
 	int i, j, k;
+=======
+	int i, j, k, len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* clear the table, only one c-media dac assumed here */
 	memset(spec->multi_init, 0, sizeof(spec->multi_init));
 	for (j = 0, i = 0; i < cfg->line_outs; i++) {
+<<<<<<< HEAD
+=======
+		hda_nid_t conn[4];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nid = cfg->line_out_pins[i];
 		/* set as output */
 		spec->multi_init[j].nid = nid;
@@ -416,10 +431,19 @@ static int cmi9880_fill_multi_init(struct hda_codec *codec, const struct auto_pi
 			spec->multi_init[j].verb = AC_VERB_SET_CONNECT_SEL;
 			spec->multi_init[j].param = 0;
 			/* find the index in connect list */
+<<<<<<< HEAD
 			k = snd_hda_get_conn_index(codec, nid,
 						   spec->dac_nids[i], 0);
 			if (k >= 0)
 				spec->multi_init[j].param = k;
+=======
+			len = snd_hda_get_connections(codec, nid, conn, 4);
+			for (k = 0; k < len; k++)
+				if (conn[k] == spec->dac_nids[i]) {
+					spec->multi_init[j].param = k;
+					break;
+				}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			j++;
 		}
 	}

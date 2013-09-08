@@ -19,6 +19,10 @@
 #include <linux/of_platform.h>
 #include <linux/memblock.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/time.h>
 #include <asm/machdep.h>
 #include <asm/pci-bridge.h>
@@ -31,6 +35,7 @@
 #include <sysdev/fsl_soc.h>
 #include <sysdev/fsl_pci.h>
 
+<<<<<<< HEAD
 #include "mpc85xx.h"
 
 void __init mpc8536_ds_pic_init(void)
@@ -38,6 +43,33 @@ void __init mpc8536_ds_pic_init(void)
 	struct mpic *mpic = mpic_alloc(NULL, 0, MPIC_BIG_ENDIAN,
 			0, 256, " OpenPIC  ");
 	BUG_ON(mpic == NULL);
+=======
+void __init mpc8536_ds_pic_init(void)
+{
+	struct mpic *mpic;
+	struct resource r;
+	struct device_node *np;
+
+	np = of_find_node_by_type(NULL, "open-pic");
+	if (np == NULL) {
+		printk(KERN_ERR "Could not find open-pic node\n");
+		return;
+	}
+
+	if (of_address_to_resource(np, 0, &r)) {
+		printk(KERN_ERR "Failed to map mpic register space\n");
+		of_node_put(np);
+		return;
+	}
+
+	mpic = mpic_alloc(np, r.start,
+			  MPIC_PRIMARY | MPIC_WANTS_RESET |
+			  MPIC_BIG_ENDIAN | MPIC_BROKEN_FRR_NIRQS,
+			0, 256, " OpenPIC  ");
+	BUG_ON(mpic == NULL);
+	of_node_put(np);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mpic_init(mpic);
 }
 
@@ -85,7 +117,23 @@ static void __init mpc8536_ds_setup_arch(void)
 	printk("MPC8536 DS board from Freescale Semiconductor\n");
 }
 
+<<<<<<< HEAD
 machine_device_initcall(mpc8536_ds, mpc85xx_common_publish_devices);
+=======
+static struct of_device_id __initdata mpc8536_ds_ids[] = {
+	{ .type = "soc", },
+	{ .compatible = "soc", },
+	{ .compatible = "simple-bus", },
+	{ .compatible = "gianfar", },
+	{},
+};
+
+static int __init mpc8536_ds_publish_devices(void)
+{
+	return of_platform_bus_probe(NULL, mpc8536_ds_ids, NULL);
+}
+machine_device_initcall(mpc8536_ds, mpc8536_ds_publish_devices);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 machine_arch_initcall(mpc8536_ds, swiotlb_setup_bus_notifier);
 

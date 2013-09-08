@@ -26,16 +26,84 @@
 #include <linux/file.h>
 #include <linux/mount.h>
 #include <linux/buffer_head.h>
+<<<<<<< HEAD
 #include <linux/seq_file.h>
 #include "md.h"
 #include "bitmap.h"
 
+=======
+#include "md.h"
+#include "bitmap.h"
+
+#include <linux/dm-dirty-log.h>
+/* debug macros */
+
+#define DEBUG 0
+
+#if DEBUG
+/* these are for debugging purposes only! */
+
+/* define one and only one of these */
+#define INJECT_FAULTS_1 0 /* cause bitmap_alloc_page to fail always */
+#define INJECT_FAULTS_2 0 /* cause bitmap file to be kicked when first bit set*/
+#define INJECT_FAULTS_3 0 /* treat bitmap file as kicked at init time */
+#define INJECT_FAULTS_4 0 /* undef */
+#define INJECT_FAULTS_5 0 /* undef */
+#define INJECT_FAULTS_6 0
+
+/* if these are defined, the driver will fail! debug only */
+#define INJECT_FATAL_FAULT_1 0 /* fail kmalloc, causing bitmap_create to fail */
+#define INJECT_FATAL_FAULT_2 0 /* undef */
+#define INJECT_FATAL_FAULT_3 0 /* undef */
+#endif
+
+#ifndef PRINTK
+#  if DEBUG > 0
+#    define PRINTK(x...) printk(KERN_DEBUG x)
+#  else
+#    define PRINTK(x...)
+#  endif
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline char *bmname(struct bitmap *bitmap)
 {
 	return bitmap->mddev ? mdname(bitmap->mddev) : "mdX";
 }
 
 /*
+<<<<<<< HEAD
+=======
+ * just a placeholder - calls kmalloc for bitmap pages
+ */
+static unsigned char *bitmap_alloc_page(struct bitmap *bitmap)
+{
+	unsigned char *page;
+
+#ifdef INJECT_FAULTS_1
+	page = NULL;
+#else
+	page = kzalloc(PAGE_SIZE, GFP_NOIO);
+#endif
+	if (!page)
+		printk("%s: bitmap_alloc_page FAILED\n", bmname(bitmap));
+	else
+		PRINTK("%s: bitmap_alloc_page: allocated page at %p\n",
+			bmname(bitmap), page);
+	return page;
+}
+
+/*
+ * for now just a placeholder -- just calls kfree for bitmap pages
+ */
+static void bitmap_free_page(struct bitmap *bitmap, unsigned char *page)
+{
+	PRINTK("%s: bitmap_free_page: free page %p\n", bmname(bitmap), page);
+	kfree(page);
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * check a page and, if necessary, allocate it (or hijack it if the alloc fails)
  *
  * 1) check to see if this page is allocated, if it's not then try to alloc
@@ -72,12 +140,21 @@ __acquires(bitmap->lock)
 	/* this page has not been allocated yet */
 
 	spin_unlock_irq(&bitmap->lock);
+<<<<<<< HEAD
 	mappage = kzalloc(PAGE_SIZE, GFP_NOIO);
 	spin_lock_irq(&bitmap->lock);
 
 	if (mappage == NULL) {
 		pr_debug("%s: bitmap map page allocation failed, hijacking\n",
 			 bmname(bitmap));
+=======
+	mappage = bitmap_alloc_page(bitmap);
+	spin_lock_irq(&bitmap->lock);
+
+	if (mappage == NULL) {
+		PRINTK("%s: bitmap map page allocation failed, hijacking\n",
+			bmname(bitmap));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* failed - set the hijacked flag so that we can use the
 		 * pointer as a counter */
 		if (!bitmap->bp[page].map)
@@ -85,7 +162,11 @@ __acquires(bitmap->lock)
 	} else if (bitmap->bp[page].map ||
 		   bitmap->bp[page].hijacked) {
 		/* somebody beat us to getting the page */
+<<<<<<< HEAD
 		kfree(mappage);
+=======
+		bitmap_free_page(bitmap, mappage);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	} else {
 
@@ -117,7 +198,11 @@ static void bitmap_checkfree(struct bitmap *bitmap, unsigned long page)
 		ptr = bitmap->bp[page].map;
 		bitmap->bp[page].map = NULL;
 		bitmap->missing_pages++;
+<<<<<<< HEAD
 		kfree(ptr);
+=======
+		bitmap_free_page(bitmap, ptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -130,13 +215,21 @@ static void bitmap_checkfree(struct bitmap *bitmap, unsigned long page)
  */
 
 /* IO operations when bitmap is stored near all superblocks */
+<<<<<<< HEAD
 static struct page *read_sb_page(struct mddev *mddev, loff_t offset,
+=======
+static struct page *read_sb_page(mddev_t *mddev, loff_t offset,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 struct page *page,
 				 unsigned long index, int size)
 {
 	/* choose a good rdev and read the page from there */
 
+<<<<<<< HEAD
 	struct md_rdev *rdev;
+=======
+	mdk_rdev_t *rdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sector_t target;
 	int did_alloc = 0;
 
@@ -147,7 +240,11 @@ static struct page *read_sb_page(struct mddev *mddev, loff_t offset,
 		did_alloc = 1;
 	}
 
+<<<<<<< HEAD
 	rdev_for_each(rdev, mddev) {
+=======
+	list_for_each_entry(rdev, &mddev->disks, same_set) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (! test_bit(In_sync, &rdev->flags)
 		    || test_bit(Faulty, &rdev->flags))
 			continue;
@@ -169,7 +266,11 @@ static struct page *read_sb_page(struct mddev *mddev, loff_t offset,
 
 }
 
+<<<<<<< HEAD
 static struct md_rdev *next_active_rdev(struct md_rdev *rdev, struct mddev *mddev)
+=======
+static mdk_rdev_t *next_active_rdev(mdk_rdev_t *rdev, mddev_t *mddev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Iterate the disks of an mddev, using rcu to protect access to the
 	 * linked list, and raising the refcount of devices we return to ensure
@@ -190,7 +291,11 @@ static struct md_rdev *next_active_rdev(struct md_rdev *rdev, struct mddev *mdde
 		pos = &rdev->same_set;
 	}
 	list_for_each_continue_rcu(pos, &mddev->disks) {
+<<<<<<< HEAD
 		rdev = list_entry(pos, struct md_rdev, same_set);
+=======
+		rdev = list_entry(pos, mdk_rdev_t, same_set);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rdev->raid_disk >= 0 &&
 		    !test_bit(Faulty, &rdev->flags)) {
 			/* this is a usable devices */
@@ -205,9 +310,15 @@ static struct md_rdev *next_active_rdev(struct md_rdev *rdev, struct mddev *mdde
 
 static int write_sb_page(struct bitmap *bitmap, struct page *page, int wait)
 {
+<<<<<<< HEAD
 	struct md_rdev *rdev = NULL;
 	struct block_device *bdev;
 	struct mddev *mddev = bitmap->mddev;
+=======
+	mdk_rdev_t *rdev = NULL;
+	struct block_device *bdev;
+	mddev_t *mddev = bitmap->mddev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while ((rdev = next_active_rdev(rdev, mddev)) != NULL) {
 		int size = PAGE_SIZE;
@@ -352,8 +463,13 @@ static struct page *read_page(struct file *file, unsigned long index,
 	struct buffer_head *bh;
 	sector_t block;
 
+<<<<<<< HEAD
 	pr_debug("read bitmap file (%dB @ %llu)\n", (int)PAGE_SIZE,
 		 (unsigned long long)index << PAGE_SHIFT);
+=======
+	PRINTK("read bitmap file (%dB @ %llu)\n", (int)PAGE_SIZE,
+			(unsigned long long)index << PAGE_SHIFT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	page = alloc_page(GFP_KERNEL);
 	if (!page)
@@ -421,14 +537,28 @@ out:
 void bitmap_update_sb(struct bitmap *bitmap)
 {
 	bitmap_super_t *sb;
+<<<<<<< HEAD
+=======
+	unsigned long flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!bitmap || !bitmap->mddev) /* no bitmap for this array */
 		return;
 	if (bitmap->mddev->bitmap_info.external)
 		return;
+<<<<<<< HEAD
 	if (!bitmap->sb_page) /* no superblock */
 		return;
 	sb = kmap_atomic(bitmap->sb_page);
+=======
+	spin_lock_irqsave(&bitmap->lock, flags);
+	if (!bitmap->sb_page) { /* no superblock */
+		spin_unlock_irqrestore(&bitmap->lock, flags);
+		return;
+	}
+	spin_unlock_irqrestore(&bitmap->lock, flags);
+	sb = kmap_atomic(bitmap->sb_page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sb->events = cpu_to_le64(bitmap->mddev->events);
 	if (bitmap->mddev->events < bitmap->events_cleared)
 		/* rocking back to read-only */
@@ -438,7 +568,11 @@ void bitmap_update_sb(struct bitmap *bitmap)
 	/* Just in case these have been changed via sysfs: */
 	sb->daemon_sleep = cpu_to_le32(bitmap->mddev->bitmap_info.daemon_sleep/HZ);
 	sb->write_behind = cpu_to_le32(bitmap->mddev->bitmap_info.max_write_behind);
+<<<<<<< HEAD
 	kunmap_atomic(sb);
+=======
+	kunmap_atomic(sb, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	write_page(bitmap, bitmap->sb_page, 1);
 }
 
@@ -449,7 +583,11 @@ void bitmap_print_sb(struct bitmap *bitmap)
 
 	if (!bitmap || !bitmap->sb_page)
 		return;
+<<<<<<< HEAD
 	sb = kmap_atomic(bitmap->sb_page);
+=======
+	sb = kmap_atomic(bitmap->sb_page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk(KERN_DEBUG "%s: bitmap file superblock:\n", bmname(bitmap));
 	printk(KERN_DEBUG "         magic: %08x\n", le32_to_cpu(sb->magic));
 	printk(KERN_DEBUG "       version: %d\n", le32_to_cpu(sb->version));
@@ -468,7 +606,11 @@ void bitmap_print_sb(struct bitmap *bitmap)
 	printk(KERN_DEBUG "     sync size: %llu KB\n",
 			(unsigned long long)le64_to_cpu(sb->sync_size)/2);
 	printk(KERN_DEBUG "max write behind: %d\n", le32_to_cpu(sb->write_behind));
+<<<<<<< HEAD
 	kunmap_atomic(sb);
+=======
+	kunmap_atomic(sb, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -496,7 +638,11 @@ static int bitmap_new_disk_sb(struct bitmap *bitmap)
 	}
 	bitmap->sb_page->index = 0;
 
+<<<<<<< HEAD
 	sb = kmap_atomic(bitmap->sb_page);
+=======
+	sb = kmap_atomic(bitmap->sb_page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sb->magic = cpu_to_le32(BITMAP_MAGIC);
 	sb->version = cpu_to_le32(BITMAP_MAJOR_HI);
@@ -504,7 +650,11 @@ static int bitmap_new_disk_sb(struct bitmap *bitmap)
 	chunksize = bitmap->mddev->bitmap_info.chunksize;
 	BUG_ON(!chunksize);
 	if (!is_power_of_2(chunksize)) {
+<<<<<<< HEAD
 		kunmap_atomic(sb);
+=======
+		kunmap_atomic(sb, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR "bitmap chunksize not a power of 2\n");
 		return -EINVAL;
 	}
@@ -539,7 +689,14 @@ static int bitmap_new_disk_sb(struct bitmap *bitmap)
 	bitmap->events_cleared = bitmap->mddev->events;
 	sb->events_cleared = cpu_to_le64(bitmap->mddev->events);
 
+<<<<<<< HEAD
 	kunmap_atomic(sb);
+=======
+	bitmap->flags |= BITMAP_HOSTENDIAN;
+	sb->version = cpu_to_le32(BITMAP_MAJOR_HOSTENDIAN);
+
+	kunmap_atomic(sb, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -571,7 +728,11 @@ static int bitmap_read_sb(struct bitmap *bitmap)
 		return err;
 	}
 
+<<<<<<< HEAD
 	sb = kmap_atomic(bitmap->sb_page);
+=======
+	sb = kmap_atomic(bitmap->sb_page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	chunksize = le32_to_cpu(sb->chunksize);
 	daemon_sleep = le32_to_cpu(sb->daemon_sleep) * HZ;
@@ -600,6 +761,7 @@ static int bitmap_read_sb(struct bitmap *bitmap)
 	/* keep the array size field of the bitmap superblock up to date */
 	sb->sync_size = cpu_to_le64(bitmap->mddev->resync_max_sectors);
 
+<<<<<<< HEAD
 	if (bitmap->mddev->persistent) {
 		/*
 		 * We have a persistent array superblock, so compare the
@@ -622,6 +784,28 @@ static int bitmap_read_sb(struct bitmap *bitmap)
 		}
 	}
 
+=======
+	if (!bitmap->mddev->persistent)
+		goto success;
+
+	/*
+	 * if we have a persistent array superblock, compare the
+	 * bitmap's UUID and event counter to the mddev's
+	 */
+	if (memcmp(sb->uuid, bitmap->mddev->uuid, 16)) {
+		printk(KERN_INFO "%s: bitmap superblock UUID mismatch\n",
+			bmname(bitmap));
+		goto out;
+	}
+	events = le64_to_cpu(sb->events);
+	if (events < bitmap->mddev->events) {
+		printk(KERN_INFO "%s: bitmap file is out of date (%llu < %llu) "
+			"-- forcing full recovery\n", bmname(bitmap), events,
+			(unsigned long long) bitmap->mddev->events);
+		sb->state |= cpu_to_le32(BITMAP_STALE);
+	}
+success:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* assign fields using values from superblock */
 	bitmap->mddev->bitmap_info.chunksize = chunksize;
 	bitmap->mddev->bitmap_info.daemon_sleep = daemon_sleep;
@@ -634,7 +818,11 @@ static int bitmap_read_sb(struct bitmap *bitmap)
 		bitmap->events_cleared = bitmap->mddev->events;
 	err = 0;
 out:
+<<<<<<< HEAD
 	kunmap_atomic(sb);
+=======
+	kunmap_atomic(sb, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		bitmap_print_sb(bitmap);
 	return err;
@@ -650,11 +838,24 @@ static int bitmap_mask_state(struct bitmap *bitmap, enum bitmap_state bits,
 			     enum bitmap_mask_op op)
 {
 	bitmap_super_t *sb;
+<<<<<<< HEAD
 	int old;
 
 	if (!bitmap->sb_page) /* can't set the state */
 		return 0;
 	sb = kmap_atomic(bitmap->sb_page);
+=======
+	unsigned long flags;
+	int old;
+
+	spin_lock_irqsave(&bitmap->lock, flags);
+	if (!bitmap->sb_page) { /* can't set the state */
+		spin_unlock_irqrestore(&bitmap->lock, flags);
+		return 0;
+	}
+	spin_unlock_irqrestore(&bitmap->lock, flags);
+	sb = kmap_atomic(bitmap->sb_page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	old = le32_to_cpu(sb->state) & bits;
 	switch (op) {
 	case MASK_SET:
@@ -668,7 +869,11 @@ static int bitmap_mask_state(struct bitmap *bitmap, enum bitmap_state bits,
 	default:
 		BUG();
 	}
+<<<<<<< HEAD
 	kunmap_atomic(sb);
+=======
+	kunmap_atomic(sb, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return old;
 }
 
@@ -706,8 +911,15 @@ static inline unsigned long file_page_offset(struct bitmap *bitmap, unsigned lon
  * 0 or page 1
  */
 static inline struct page *filemap_get_page(struct bitmap *bitmap,
+<<<<<<< HEAD
 					    unsigned long chunk)
 {
+=======
+					unsigned long chunk)
+{
+	if (bitmap->filemap == NULL)
+		return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (file_page_index(bitmap, chunk) >= bitmap->file_pages)
 		return NULL;
 	return bitmap->filemap[file_page_index(bitmap, chunk)
@@ -800,27 +1012,52 @@ static void bitmap_file_kick(struct bitmap *bitmap)
 
 enum bitmap_page_attr {
 	BITMAP_PAGE_DIRTY = 0,     /* there are set bits that need to be synced */
+<<<<<<< HEAD
 	BITMAP_PAGE_PENDING = 1,   /* there are bits that are being cleaned.
 				    * i.e. counter is 1 or 2. */
+=======
+	BITMAP_PAGE_CLEAN = 1,     /* there are bits that might need to be cleared */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BITMAP_PAGE_NEEDWRITE = 2, /* there are cleared bits that need to be synced */
 };
 
 static inline void set_page_attr(struct bitmap *bitmap, struct page *page,
 				enum bitmap_page_attr attr)
 {
+<<<<<<< HEAD
 	__set_bit((page->index<<2) + attr, bitmap->filemap_attr);
+=======
+	if (page)
+		__set_bit((page->index<<2) + attr, bitmap->filemap_attr);
+	else
+		__set_bit(attr, &bitmap->logattrs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void clear_page_attr(struct bitmap *bitmap, struct page *page,
 				enum bitmap_page_attr attr)
 {
+<<<<<<< HEAD
 	__clear_bit((page->index<<2) + attr, bitmap->filemap_attr);
+=======
+	if (page)
+		__clear_bit((page->index<<2) + attr, bitmap->filemap_attr);
+	else
+		__clear_bit(attr, &bitmap->logattrs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline unsigned long test_page_attr(struct bitmap *bitmap, struct page *page,
 					   enum bitmap_page_attr attr)
 {
+<<<<<<< HEAD
 	return test_bit((page->index<<2) + attr, bitmap->filemap_attr);
+=======
+	if (page)
+		return test_bit((page->index<<2) + attr, bitmap->filemap_attr);
+	else
+		return test_bit(attr, &bitmap->logattrs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -833,6 +1070,7 @@ static inline unsigned long test_page_attr(struct bitmap *bitmap, struct page *p
 static void bitmap_file_set_bit(struct bitmap *bitmap, sector_t block)
 {
 	unsigned long bit;
+<<<<<<< HEAD
 	struct page *page;
 	void *kaddr;
 	unsigned long chunk = block >> bitmap->chunkshift;
@@ -853,6 +1091,32 @@ static void bitmap_file_set_bit(struct bitmap *bitmap, sector_t block)
 		__set_bit_le(bit, kaddr);
 	kunmap_atomic(kaddr);
 	pr_debug("set file bit %lu page %lu\n", bit, page->index);
+=======
+	struct page *page = NULL;
+	void *kaddr;
+	unsigned long chunk = block >> CHUNK_BLOCK_SHIFT(bitmap);
+
+	if (!bitmap->filemap) {
+		struct dm_dirty_log *log = bitmap->mddev->bitmap_info.log;
+		if (log)
+			log->type->mark_region(log, chunk);
+	} else {
+
+		page = filemap_get_page(bitmap, chunk);
+		if (!page)
+			return;
+		bit = file_page_offset(bitmap, chunk);
+
+		/* set the bit */
+		kaddr = kmap_atomic(page, KM_USER0);
+		if (bitmap->flags & BITMAP_HOSTENDIAN)
+			set_bit(bit, kaddr);
+		else
+			__test_and_set_bit_le(bit, kaddr);
+		kunmap_atomic(kaddr, KM_USER0);
+		PRINTK("set file bit %lu page %lu\n", bit, page->index);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* record page number so it gets flushed to disk when unplug occurs */
 	set_page_attr(bitmap, page, BITMAP_PAGE_DIRTY);
 }
@@ -869,6 +1133,19 @@ void bitmap_unplug(struct bitmap *bitmap)
 
 	if (!bitmap)
 		return;
+<<<<<<< HEAD
+=======
+	if (!bitmap->filemap) {
+		/* Must be using a dirty_log */
+		struct dm_dirty_log *log = bitmap->mddev->bitmap_info.log;
+		dirty = test_and_clear_bit(BITMAP_PAGE_DIRTY, &bitmap->logattrs);
+		need_write = test_and_clear_bit(BITMAP_PAGE_NEEDWRITE, &bitmap->logattrs);
+		if (dirty || need_write)
+			if (log->type->flush(log))
+				bitmap->flags |= BITMAP_WRITE_ERROR;
+		goto out;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* look at each page to see if there are any set bits that need to be
 	 * flushed out to disk */
@@ -897,6 +1174,10 @@ void bitmap_unplug(struct bitmap *bitmap)
 		else
 			md_super_wait(bitmap->mddev);
 	}
+<<<<<<< HEAD
+=======
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (bitmap->flags & BITMAP_WRITE_ERROR)
 		bitmap_file_kick(bitmap);
 }
@@ -930,7 +1211,15 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
 
 	BUG_ON(!file && !bitmap->mddev->bitmap_info.offset);
 
+<<<<<<< HEAD
 	outofdate = bitmap->flags & BITMAP_STALE;
+=======
+#ifdef INJECT_FAULTS_3
+	outofdate = 1;
+#else
+	outofdate = bitmap->flags & BITMAP_STALE;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (outofdate)
 		printk(KERN_INFO "%s: bitmap file is out of date, doing full "
 			"recovery\n", bmname(bitmap));
@@ -1015,10 +1304,17 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
 				 * if bitmap is out of date, dirty the
 				 * whole page and write it out
 				 */
+<<<<<<< HEAD
 				paddr = kmap_atomic(page);
 				memset(paddr + offset, 0xff,
 				       PAGE_SIZE - offset);
 				kunmap_atomic(paddr);
+=======
+				paddr = kmap_atomic(page, KM_USER0);
+				memset(paddr + offset, 0xff,
+				       PAGE_SIZE - offset);
+				kunmap_atomic(paddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				write_page(bitmap, page, 1);
 
 				ret = -EIO;
@@ -1026,11 +1322,16 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
 					goto err;
 			}
 		}
+<<<<<<< HEAD
 		paddr = kmap_atomic(page);
+=======
+		paddr = kmap_atomic(page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (bitmap->flags & BITMAP_HOSTENDIAN)
 			b = test_bit(bit, paddr);
 		else
 			b = test_bit_le(bit, paddr);
+<<<<<<< HEAD
 		kunmap_atomic(paddr);
 		if (b) {
 			/* if the disk bit is set, set the memory bit */
@@ -1040,6 +1341,18 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
 					       (sector_t)i << bitmap->chunkshift,
 					       needed);
 			bit_cnt++;
+=======
+		kunmap_atomic(paddr, KM_USER0);
+		if (b) {
+			/* if the disk bit is set, set the memory bit */
+			int needed = ((sector_t)(i+1) << (CHUNK_BLOCK_SHIFT(bitmap))
+				      >= start);
+			bitmap_set_memory_bits(bitmap,
+					       (sector_t)i << CHUNK_BLOCK_SHIFT(bitmap),
+					       needed);
+			bit_cnt++;
+			set_page_attr(bitmap, page, BITMAP_PAGE_CLEAN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -1071,17 +1384,27 @@ void bitmap_write_all(struct bitmap *bitmap)
 	 */
 	int i;
 
+<<<<<<< HEAD
 	spin_lock_irq(&bitmap->lock);
 	for (i = 0; i < bitmap->file_pages; i++)
 		set_page_attr(bitmap, bitmap->filemap[i],
 			      BITMAP_PAGE_NEEDWRITE);
 	bitmap->allclean = 0;
 	spin_unlock_irq(&bitmap->lock);
+=======
+	for (i = 0; i < bitmap->file_pages; i++)
+		set_page_attr(bitmap, bitmap->filemap[i],
+			      BITMAP_PAGE_NEEDWRITE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void bitmap_count_page(struct bitmap *bitmap, sector_t offset, int inc)
 {
+<<<<<<< HEAD
 	sector_t chunk = offset >> bitmap->chunkshift;
+=======
+	sector_t chunk = offset >> CHUNK_BLOCK_SHIFT(bitmap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long page = chunk >> PAGE_COUNTER_SHIFT;
 	bitmap->bp[page].count += inc;
 	bitmap_checkfree(bitmap, page);
@@ -1095,7 +1418,11 @@ static bitmap_counter_t *bitmap_get_counter(struct bitmap *bitmap,
  *			out to disk
  */
 
+<<<<<<< HEAD
 void bitmap_daemon_work(struct mddev *mddev)
+=======
+void bitmap_daemon_work(mddev_t *mddev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bitmap *bitmap;
 	unsigned long j;
@@ -1103,6 +1430,10 @@ void bitmap_daemon_work(struct mddev *mddev)
 	struct page *page = NULL, *lastpage = NULL;
 	sector_t blocks;
 	void *paddr;
+<<<<<<< HEAD
+=======
+	struct dm_dirty_log *log = mddev->bitmap_info.log;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Use a mutex to guard daemon_work against
 	 * bitmap_destroy.
@@ -1114,12 +1445,20 @@ void bitmap_daemon_work(struct mddev *mddev)
 		return;
 	}
 	if (time_before(jiffies, bitmap->daemon_lastrun
+<<<<<<< HEAD
 			+ mddev->bitmap_info.daemon_sleep))
+=======
+			+ bitmap->mddev->bitmap_info.daemon_sleep))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto done;
 
 	bitmap->daemon_lastrun = jiffies;
 	if (bitmap->allclean) {
+<<<<<<< HEAD
 		mddev->thread->timeout = MAX_SCHEDULE_TIMEOUT;
+=======
+		bitmap->mddev->thread->timeout = MAX_SCHEDULE_TIMEOUT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto done;
 	}
 	bitmap->allclean = 1;
@@ -1127,6 +1466,7 @@ void bitmap_daemon_work(struct mddev *mddev)
 	spin_lock_irqsave(&bitmap->lock, flags);
 	for (j = 0; j < bitmap->chunks; j++) {
 		bitmap_counter_t *bmc;
+<<<<<<< HEAD
 		if (!bitmap->filemap)
 			/* error or shutdown */
 			break;
@@ -1136,14 +1476,33 @@ void bitmap_daemon_work(struct mddev *mddev)
 		if (page != lastpage) {
 			/* skip this page unless it's marked as needing cleaning */
 			if (!test_page_attr(bitmap, page, BITMAP_PAGE_PENDING)) {
+=======
+		if (!bitmap->filemap) {
+			if (!log)
+				/* error or shutdown */
+				break;
+		} else
+			page = filemap_get_page(bitmap, j);
+
+		if (page != lastpage) {
+			/* skip this page unless it's marked as needing cleaning */
+			if (!test_page_attr(bitmap, page, BITMAP_PAGE_CLEAN)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				int need_write = test_page_attr(bitmap, page,
 								BITMAP_PAGE_NEEDWRITE);
 				if (need_write)
 					clear_page_attr(bitmap, page, BITMAP_PAGE_NEEDWRITE);
 
 				spin_unlock_irqrestore(&bitmap->lock, flags);
+<<<<<<< HEAD
 				if (need_write)
 					write_page(bitmap, page, 0);
+=======
+				if (need_write) {
+					write_page(bitmap, page, 0);
+					bitmap->allclean = 0;
+				}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				spin_lock_irqsave(&bitmap->lock, flags);
 				j |= (PAGE_BITS - 1);
 				continue;
@@ -1151,6 +1510,7 @@ void bitmap_daemon_work(struct mddev *mddev)
 
 			/* grab the new page, sync and release the old */
 			if (lastpage != NULL) {
+<<<<<<< HEAD
 				if (test_page_attr(bitmap, lastpage,
 						   BITMAP_PAGE_NEEDWRITE)) {
 					clear_page_attr(bitmap, lastpage,
@@ -1161,6 +1521,14 @@ void bitmap_daemon_work(struct mddev *mddev)
 					set_page_attr(bitmap, lastpage,
 						      BITMAP_PAGE_NEEDWRITE);
 					bitmap->allclean = 0;
+=======
+				if (test_page_attr(bitmap, lastpage, BITMAP_PAGE_NEEDWRITE)) {
+					clear_page_attr(bitmap, lastpage, BITMAP_PAGE_NEEDWRITE);
+					spin_unlock_irqrestore(&bitmap->lock, flags);
+					write_page(bitmap, lastpage, 0);
+				} else {
+					set_page_attr(bitmap, lastpage, BITMAP_PAGE_NEEDWRITE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					spin_unlock_irqrestore(&bitmap->lock, flags);
 				}
 			} else
@@ -1171,6 +1539,7 @@ void bitmap_daemon_work(struct mddev *mddev)
 			 * sure that events_cleared is up-to-date.
 			 */
 			if (bitmap->need_sync &&
+<<<<<<< HEAD
 			    mddev->bitmap_info.external == 0) {
 				bitmap_super_t *sb;
 				bitmap->need_sync = 0;
@@ -1178,10 +1547,20 @@ void bitmap_daemon_work(struct mddev *mddev)
 				sb->events_cleared =
 					cpu_to_le64(bitmap->events_cleared);
 				kunmap_atomic(sb);
+=======
+			    bitmap->mddev->bitmap_info.external == 0) {
+				bitmap_super_t *sb;
+				bitmap->need_sync = 0;
+				sb = kmap_atomic(bitmap->sb_page, KM_USER0);
+				sb->events_cleared =
+					cpu_to_le64(bitmap->events_cleared);
+				kunmap_atomic(sb, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				write_page(bitmap, bitmap->sb_page, 1);
 			}
 			spin_lock_irqsave(&bitmap->lock, flags);
 			if (!bitmap->need_sync)
+<<<<<<< HEAD
 				clear_page_attr(bitmap, page, BITMAP_PAGE_PENDING);
 			else
 				bitmap->allclean = 0;
@@ -1216,27 +1595,82 @@ void bitmap_daemon_work(struct mddev *mddev)
 				bitmap->allclean = 0;
 			}
 		}
+=======
+				clear_page_attr(bitmap, page, BITMAP_PAGE_CLEAN);
+		}
+		bmc = bitmap_get_counter(bitmap,
+					 (sector_t)j << CHUNK_BLOCK_SHIFT(bitmap),
+					 &blocks, 0);
+		if (bmc) {
+			if (*bmc)
+				bitmap->allclean = 0;
+
+			if (*bmc == 2) {
+				*bmc = 1; /* maybe clear the bit next time */
+				set_page_attr(bitmap, page, BITMAP_PAGE_CLEAN);
+			} else if (*bmc == 1 && !bitmap->need_sync) {
+				/* we can clear the bit */
+				*bmc = 0;
+				bitmap_count_page(bitmap,
+						  (sector_t)j << CHUNK_BLOCK_SHIFT(bitmap),
+						  -1);
+
+				/* clear the bit */
+				if (page) {
+					paddr = kmap_atomic(page, KM_USER0);
+					if (bitmap->flags & BITMAP_HOSTENDIAN)
+						clear_bit(file_page_offset(bitmap, j),
+							  paddr);
+					else
+						__test_and_clear_bit_le(file_page_offset(bitmap, j),
+							       paddr);
+					kunmap_atomic(paddr, KM_USER0);
+				} else
+					log->type->clear_region(log, j);
+			}
+		} else
+			j |= PAGE_COUNTER_MASK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	spin_unlock_irqrestore(&bitmap->lock, flags);
 
 	/* now sync the final page */
+<<<<<<< HEAD
 	if (lastpage != NULL) {
+=======
+	if (lastpage != NULL || log != NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_lock_irqsave(&bitmap->lock, flags);
 		if (test_page_attr(bitmap, lastpage, BITMAP_PAGE_NEEDWRITE)) {
 			clear_page_attr(bitmap, lastpage, BITMAP_PAGE_NEEDWRITE);
 			spin_unlock_irqrestore(&bitmap->lock, flags);
+<<<<<<< HEAD
 			write_page(bitmap, lastpage, 0);
 		} else {
 			set_page_attr(bitmap, lastpage, BITMAP_PAGE_NEEDWRITE);
 			bitmap->allclean = 0;
+=======
+			if (lastpage)
+				write_page(bitmap, lastpage, 0);
+			else
+				if (log->type->flush(log))
+					bitmap->flags |= BITMAP_WRITE_ERROR;
+		} else {
+			set_page_attr(bitmap, lastpage, BITMAP_PAGE_NEEDWRITE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			spin_unlock_irqrestore(&bitmap->lock, flags);
 		}
 	}
 
  done:
 	if (bitmap->allclean == 0)
+<<<<<<< HEAD
 		mddev->thread->timeout =
 			mddev->bitmap_info.daemon_sleep;
+=======
+		bitmap->mddev->thread->timeout =
+			bitmap->mddev->bitmap_info.daemon_sleep;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&mddev->bitmap_info.mutex);
 }
 
@@ -1250,7 +1684,11 @@ __acquires(bitmap->lock)
 	 * The lock must have been taken with interrupts enabled.
 	 * If !create, we don't release the lock.
 	 */
+<<<<<<< HEAD
 	sector_t chunk = offset >> bitmap->chunkshift;
+=======
+	sector_t chunk = offset >> CHUNK_BLOCK_SHIFT(bitmap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long page = chunk >> PAGE_COUNTER_SHIFT;
 	unsigned long pageoff = (chunk & PAGE_COUNTER_MASK) << COUNTER_BYTE_SHIFT;
 	sector_t csize;
@@ -1260,10 +1698,17 @@ __acquires(bitmap->lock)
 
 	if (bitmap->bp[page].hijacked ||
 	    bitmap->bp[page].map == NULL)
+<<<<<<< HEAD
 		csize = ((sector_t)1) << (bitmap->chunkshift +
 					  PAGE_COUNTER_SHIFT - 1);
 	else
 		csize = ((sector_t)1) << bitmap->chunkshift;
+=======
+		csize = ((sector_t)1) << (CHUNK_BLOCK_SHIFT(bitmap) +
+					  PAGE_COUNTER_SHIFT - 1);
+	else
+		csize = ((sector_t)1) << (CHUNK_BLOCK_SHIFT(bitmap));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*blocks = csize - (offset & (csize - 1));
 
 	if (err < 0)
@@ -1294,8 +1739,13 @@ int bitmap_startwrite(struct bitmap *bitmap, sector_t offset, unsigned long sect
 		if (bw > bitmap->behind_writes_used)
 			bitmap->behind_writes_used = bw;
 
+<<<<<<< HEAD
 		pr_debug("inc write-behind count %d/%lu\n",
 			 bw, bitmap->mddev->bitmap_info.max_write_behind);
+=======
+		PRINTK(KERN_DEBUG "inc write-behind count %d/%d\n",
+		       bw, bitmap->max_write_behind);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	while (sectors) {
@@ -1342,6 +1792,10 @@ int bitmap_startwrite(struct bitmap *bitmap, sector_t offset, unsigned long sect
 		else
 			sectors = 0;
 	}
+<<<<<<< HEAD
+=======
+	bitmap->allclean = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL(bitmap_startwrite);
@@ -1354,10 +1808,19 @@ void bitmap_endwrite(struct bitmap *bitmap, sector_t offset, unsigned long secto
 	if (behind) {
 		if (atomic_dec_and_test(&bitmap->behind_writes))
 			wake_up(&bitmap->behind_wait);
+<<<<<<< HEAD
 		pr_debug("dec write-behind count %d/%lu\n",
 			 atomic_read(&bitmap->behind_writes),
 			 bitmap->mddev->bitmap_info.max_write_behind);
 	}
+=======
+		PRINTK(KERN_DEBUG "dec write-behind count %d/%d\n",
+		  atomic_read(&bitmap->behind_writes), bitmap->max_write_behind);
+	}
+	if (bitmap->mddev->degraded)
+		/* Never clear bits or update events_cleared when degraded */
+		success = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (sectors) {
 		sector_t blocks;
@@ -1371,7 +1834,11 @@ void bitmap_endwrite(struct bitmap *bitmap, sector_t offset, unsigned long secto
 			return;
 		}
 
+<<<<<<< HEAD
 		if (success && !bitmap->mddev->degraded &&
+=======
+		if (success &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    bitmap->events_cleared < bitmap->mddev->events) {
 			bitmap->events_cleared = bitmap->mddev->events;
 			bitmap->need_sync = 1;
@@ -1385,6 +1852,7 @@ void bitmap_endwrite(struct bitmap *bitmap, sector_t offset, unsigned long secto
 			wake_up(&bitmap->overflow_wait);
 
 		(*bmc)--;
+<<<<<<< HEAD
 		if (*bmc <= 2) {
 			set_page_attr(bitmap,
 				      filemap_get_page(
@@ -1393,6 +1861,15 @@ void bitmap_endwrite(struct bitmap *bitmap, sector_t offset, unsigned long secto
 				      BITMAP_PAGE_PENDING);
 			bitmap->allclean = 0;
 		}
+=======
+		if (*bmc <= 2)
+			set_page_attr(bitmap,
+				      filemap_get_page(
+					      bitmap,
+					      offset >> CHUNK_BLOCK_SHIFT(bitmap)),
+				      BITMAP_PAGE_CLEAN);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock_irqrestore(&bitmap->lock, flags);
 		offset += blocks;
 		if (sectors > blocks)
@@ -1428,6 +1905,10 @@ static int __bitmap_start_sync(struct bitmap *bitmap, sector_t offset, sector_t 
 		}
 	}
 	spin_unlock_irq(&bitmap->lock);
+<<<<<<< HEAD
+=======
+	bitmap->allclean = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rv;
 }
 
@@ -1475,16 +1956,27 @@ void bitmap_end_sync(struct bitmap *bitmap, sector_t offset, sector_t *blocks, i
 		if (!NEEDED(*bmc) && aborted)
 			*bmc |= NEEDED_MASK;
 		else {
+<<<<<<< HEAD
 			if (*bmc <= 2) {
 				set_page_attr(bitmap,
 					      filemap_get_page(bitmap, offset >> bitmap->chunkshift),
 					      BITMAP_PAGE_PENDING);
 				bitmap->allclean = 0;
 			}
+=======
+			if (*bmc <= 2)
+				set_page_attr(bitmap,
+					      filemap_get_page(bitmap, offset >> CHUNK_BLOCK_SHIFT(bitmap)),
+					      BITMAP_PAGE_CLEAN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
  unlock:
 	spin_unlock_irqrestore(&bitmap->lock, flags);
+<<<<<<< HEAD
+=======
+	bitmap->allclean = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(bitmap_end_sync);
 
@@ -1524,7 +2016,11 @@ void bitmap_cond_end_sync(struct bitmap *bitmap, sector_t sector)
 
 	bitmap->mddev->curr_resync_completed = sector;
 	set_bit(MD_CHANGE_CLEAN, &bitmap->mddev->flags);
+<<<<<<< HEAD
 	sector &= ~((1ULL << bitmap->chunkshift) - 1);
+=======
+	sector &= ~((1ULL << CHUNK_BLOCK_SHIFT(bitmap)) - 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	s = 0;
 	while (s < sector && s < bitmap->mddev->resync_max_sectors) {
 		bitmap_end_sync(bitmap, s, &blocks, 0);
@@ -1552,6 +2048,7 @@ static void bitmap_set_memory_bits(struct bitmap *bitmap, sector_t offset, int n
 	}
 	if (!*bmc) {
 		struct page *page;
+<<<<<<< HEAD
 		*bmc = 2 | (needed ? NEEDED_MASK : 0);
 		bitmap_count_page(bitmap, offset, 1);
 		page = filemap_get_page(bitmap, offset >> bitmap->chunkshift);
@@ -1559,6 +2056,15 @@ static void bitmap_set_memory_bits(struct bitmap *bitmap, sector_t offset, int n
 		bitmap->allclean = 0;
 	}
 	spin_unlock_irq(&bitmap->lock);
+=======
+		*bmc = 1 | (needed ? NEEDED_MASK : 0);
+		bitmap_count_page(bitmap, offset, 1);
+		page = filemap_get_page(bitmap, offset >> CHUNK_BLOCK_SHIFT(bitmap));
+		set_page_attr(bitmap, page, BITMAP_PAGE_CLEAN);
+	}
+	spin_unlock_irq(&bitmap->lock);
+	bitmap->allclean = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* dirty the memory and file bits for bitmap chunks "s" to "e" */
@@ -1567,11 +2073,17 @@ void bitmap_dirty_bits(struct bitmap *bitmap, unsigned long s, unsigned long e)
 	unsigned long chunk;
 
 	for (chunk = s; chunk <= e; chunk++) {
+<<<<<<< HEAD
 		sector_t sec = (sector_t)chunk << bitmap->chunkshift;
 		bitmap_set_memory_bits(bitmap, sec, 1);
 		spin_lock_irq(&bitmap->lock);
 		bitmap_file_set_bit(bitmap, sec);
 		spin_unlock_irq(&bitmap->lock);
+=======
+		sector_t sec = (sector_t)chunk << CHUNK_BLOCK_SHIFT(bitmap);
+		bitmap_set_memory_bits(bitmap, sec, 1);
+		bitmap_file_set_bit(bitmap, sec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (sec < bitmap->mddev->recovery_cp)
 			/* We are asserting that the array is dirty,
 			 * so move the recovery_cp address back so
@@ -1584,7 +2096,11 @@ void bitmap_dirty_bits(struct bitmap *bitmap, unsigned long s, unsigned long e)
 /*
  * flush out any pending updates
  */
+<<<<<<< HEAD
 void bitmap_flush(struct mddev *mddev)
+=======
+void bitmap_flush(mddev_t *mddev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bitmap *bitmap = mddev->bitmap;
 	long sleep;
@@ -1632,7 +2148,11 @@ static void bitmap_free(struct bitmap *bitmap)
 	kfree(bitmap);
 }
 
+<<<<<<< HEAD
 void bitmap_destroy(struct mddev *mddev)
+=======
+void bitmap_destroy(mddev_t *mddev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bitmap *bitmap = mddev->bitmap;
 
@@ -1655,7 +2175,11 @@ void bitmap_destroy(struct mddev *mddev)
  * initialize the bitmap structure
  * if this returns an error, bitmap_destroy must be called to do clean up
  */
+<<<<<<< HEAD
 int bitmap_create(struct mddev *mddev)
+=======
+int bitmap_create(mddev_t *mddev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bitmap *bitmap;
 	sector_t blocks = mddev->resync_max_sectors;
@@ -1668,10 +2192,19 @@ int bitmap_create(struct mddev *mddev)
 	BUILD_BUG_ON(sizeof(bitmap_super_t) != 256);
 
 	if (!file
+<<<<<<< HEAD
 	    && !mddev->bitmap_info.offset) /* bitmap disabled, nothing to do */
 		return 0;
 
 	BUG_ON(file && mddev->bitmap_info.offset);
+=======
+	    && !mddev->bitmap_info.offset
+	    && !mddev->bitmap_info.log) /* bitmap disabled, nothing to do */
+		return 0;
+
+	BUG_ON(file && mddev->bitmap_info.offset);
+	BUG_ON(mddev->bitmap_info.offset && mddev->bitmap_info.log);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bitmap = kzalloc(sizeof(*bitmap), GFP_KERNEL);
 	if (!bitmap)
@@ -1724,11 +2257,19 @@ int bitmap_create(struct mddev *mddev)
 		goto error;
 
 	bitmap->daemon_lastrun = jiffies;
+<<<<<<< HEAD
 	bitmap->chunkshift = (ffz(~mddev->bitmap_info.chunksize)
 			      - BITMAP_BLOCK_SHIFT);
 
 	chunks = (blocks + (1 << bitmap->chunkshift) - 1) >>
 			bitmap->chunkshift;
+=======
+	bitmap->chunkshift = ffz(~mddev->bitmap_info.chunksize);
+
+	/* now that chunksize and chunkshift are set, we can use these macros */
+	chunks = (blocks + CHUNK_BLOCK_RATIO(bitmap) - 1) >>
+			CHUNK_BLOCK_SHIFT(bitmap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pages = (chunks + PAGE_COUNTER_RATIO - 1) / PAGE_COUNTER_RATIO;
 
 	BUG_ON(!pages);
@@ -1737,8 +2278,16 @@ int bitmap_create(struct mddev *mddev)
 	bitmap->pages = pages;
 	bitmap->missing_pages = pages;
 
+<<<<<<< HEAD
 	bitmap->bp = kzalloc(pages * sizeof(*bitmap->bp), GFP_KERNEL);
 
+=======
+#ifdef INJECT_FATAL_FAULT_1
+	bitmap->bp = NULL;
+#else
+	bitmap->bp = kzalloc(pages * sizeof(*bitmap->bp), GFP_KERNEL);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = -ENOMEM;
 	if (!bitmap->bp)
 		goto error;
@@ -1756,10 +2305,16 @@ int bitmap_create(struct mddev *mddev)
 	return err;
 }
 
+<<<<<<< HEAD
 int bitmap_load(struct mddev *mddev)
 {
 	int err = 0;
 	sector_t start = 0;
+=======
+int bitmap_load(mddev_t *mddev)
+{
+	int err = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sector_t sector = 0;
 	struct bitmap *bitmap = mddev->bitmap;
 
@@ -1778,6 +2333,7 @@ int bitmap_load(struct mddev *mddev)
 	}
 	bitmap_close_sync(bitmap);
 
+<<<<<<< HEAD
 	if (mddev->degraded == 0
 	    || bitmap->events_cleared == mddev->events)
 		/* no need to keep dirty bits to optimise a
@@ -1788,6 +2344,28 @@ int bitmap_load(struct mddev *mddev)
 	err = bitmap_init_from_disk(bitmap, start);
 	mutex_unlock(&mddev->bitmap_info.mutex);
 
+=======
+	if (mddev->bitmap_info.log) {
+		unsigned long i;
+		struct dm_dirty_log *log = mddev->bitmap_info.log;
+		for (i = 0; i < bitmap->chunks; i++)
+			if (!log->type->in_sync(log, i, 1))
+				bitmap_set_memory_bits(bitmap,
+						       (sector_t)i << CHUNK_BLOCK_SHIFT(bitmap),
+						       1);
+	} else {
+		sector_t start = 0;
+		if (mddev->degraded == 0
+		    || bitmap->events_cleared == mddev->events)
+			/* no need to keep dirty bits to optimise a
+			 * re-add of a missing device */
+			start = mddev->recovery_cp;
+
+		mutex_lock(&mddev->bitmap_info.mutex);
+		err = bitmap_init_from_disk(bitmap, start);
+		mutex_unlock(&mddev->bitmap_info.mutex);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		goto out;
 
@@ -1803,6 +2381,7 @@ out:
 }
 EXPORT_SYMBOL_GPL(bitmap_load);
 
+<<<<<<< HEAD
 void bitmap_status(struct seq_file *seq, struct bitmap *bitmap)
 {
 	unsigned long chunk_kb;
@@ -1832,6 +2411,10 @@ void bitmap_status(struct seq_file *seq, struct bitmap *bitmap)
 
 static ssize_t
 location_show(struct mddev *mddev, char *page)
+=======
+static ssize_t
+location_show(mddev_t *mddev, char *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	ssize_t len;
 	if (mddev->bitmap_info.file)
@@ -1845,7 +2428,11 @@ location_show(struct mddev *mddev, char *page)
 }
 
 static ssize_t
+<<<<<<< HEAD
 location_store(struct mddev *mddev, const char *buf, size_t len)
+=======
+location_store(mddev_t *mddev, const char *buf, size_t len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 
 	if (mddev->pers) {
@@ -1924,7 +2511,11 @@ static struct md_sysfs_entry bitmap_location =
 __ATTR(location, S_IRUGO|S_IWUSR, location_show, location_store);
 
 static ssize_t
+<<<<<<< HEAD
 timeout_show(struct mddev *mddev, char *page)
+=======
+timeout_show(mddev_t *mddev, char *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	ssize_t len;
 	unsigned long secs = mddev->bitmap_info.daemon_sleep / HZ;
@@ -1938,7 +2529,11 @@ timeout_show(struct mddev *mddev, char *page)
 }
 
 static ssize_t
+<<<<<<< HEAD
 timeout_store(struct mddev *mddev, const char *buf, size_t len)
+=======
+timeout_store(mddev_t *mddev, const char *buf, size_t len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* timeout can be set at any time */
 	unsigned long timeout;
@@ -1974,13 +2569,21 @@ static struct md_sysfs_entry bitmap_timeout =
 __ATTR(time_base, S_IRUGO|S_IWUSR, timeout_show, timeout_store);
 
 static ssize_t
+<<<<<<< HEAD
 backlog_show(struct mddev *mddev, char *page)
+=======
+backlog_show(mddev_t *mddev, char *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return sprintf(page, "%lu\n", mddev->bitmap_info.max_write_behind);
 }
 
 static ssize_t
+<<<<<<< HEAD
 backlog_store(struct mddev *mddev, const char *buf, size_t len)
+=======
+backlog_store(mddev_t *mddev, const char *buf, size_t len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long backlog;
 	int rv = strict_strtoul(buf, 10, &backlog);
@@ -1996,13 +2599,21 @@ static struct md_sysfs_entry bitmap_backlog =
 __ATTR(backlog, S_IRUGO|S_IWUSR, backlog_show, backlog_store);
 
 static ssize_t
+<<<<<<< HEAD
 chunksize_show(struct mddev *mddev, char *page)
+=======
+chunksize_show(mddev_t *mddev, char *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return sprintf(page, "%lu\n", mddev->bitmap_info.chunksize);
 }
 
 static ssize_t
+<<<<<<< HEAD
 chunksize_store(struct mddev *mddev, const char *buf, size_t len)
+=======
+chunksize_store(mddev_t *mddev, const char *buf, size_t len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Can only be changed when no bitmap is active */
 	int rv;
@@ -2022,13 +2633,21 @@ chunksize_store(struct mddev *mddev, const char *buf, size_t len)
 static struct md_sysfs_entry bitmap_chunksize =
 __ATTR(chunksize, S_IRUGO|S_IWUSR, chunksize_show, chunksize_store);
 
+<<<<<<< HEAD
 static ssize_t metadata_show(struct mddev *mddev, char *page)
+=======
+static ssize_t metadata_show(mddev_t *mddev, char *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return sprintf(page, "%s\n", (mddev->bitmap_info.external
 				      ? "external" : "internal"));
 }
 
+<<<<<<< HEAD
 static ssize_t metadata_store(struct mddev *mddev, const char *buf, size_t len)
+=======
+static ssize_t metadata_store(mddev_t *mddev, const char *buf, size_t len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (mddev->bitmap ||
 	    mddev->bitmap_info.file ||
@@ -2046,7 +2665,11 @@ static ssize_t metadata_store(struct mddev *mddev, const char *buf, size_t len)
 static struct md_sysfs_entry bitmap_metadata =
 __ATTR(metadata, S_IRUGO|S_IWUSR, metadata_show, metadata_store);
 
+<<<<<<< HEAD
 static ssize_t can_clear_show(struct mddev *mddev, char *page)
+=======
+static ssize_t can_clear_show(mddev_t *mddev, char *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int len;
 	if (mddev->bitmap)
@@ -2057,7 +2680,11 @@ static ssize_t can_clear_show(struct mddev *mddev, char *page)
 	return len;
 }
 
+<<<<<<< HEAD
 static ssize_t can_clear_store(struct mddev *mddev, const char *buf, size_t len)
+=======
+static ssize_t can_clear_store(mddev_t *mddev, const char *buf, size_t len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (mddev->bitmap == NULL)
 		return -ENOENT;
@@ -2076,7 +2703,11 @@ static struct md_sysfs_entry bitmap_can_clear =
 __ATTR(can_clear, S_IRUGO|S_IWUSR, can_clear_show, can_clear_store);
 
 static ssize_t
+<<<<<<< HEAD
 behind_writes_used_show(struct mddev *mddev, char *page)
+=======
+behind_writes_used_show(mddev_t *mddev, char *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (mddev->bitmap == NULL)
 		return sprintf(page, "0\n");
@@ -2085,7 +2716,11 @@ behind_writes_used_show(struct mddev *mddev, char *page)
 }
 
 static ssize_t
+<<<<<<< HEAD
 behind_writes_used_reset(struct mddev *mddev, const char *buf, size_t len)
+=======
+behind_writes_used_reset(mddev_t *mddev, const char *buf, size_t len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (mddev->bitmap)
 		mddev->bitmap->behind_writes_used = 0;

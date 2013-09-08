@@ -11,7 +11,10 @@
 #include <linux/init.h>
 #include <linux/skbuff.h>
 #include <linux/bitops.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/sock.h>		/* for sock_no_* */
 
 #include "resources.h"		/* devs and vccs */
@@ -95,7 +98,10 @@ static int pvc_getname(struct socket *sock, struct sockaddr *sockaddr,
 		return -ENOTCONN;
 	*sockaddr_len = sizeof(struct sockaddr_atmpvc);
 	addr = (struct sockaddr_atmpvc *)sockaddr;
+<<<<<<< HEAD
 	memset(addr, 0, sizeof(*addr));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	addr->sap_family = AF_ATMPVC;
 	addr->sap_addr.itf = vcc->dev->number;
 	addr->sap_addr.vpi = vcc->vpi;

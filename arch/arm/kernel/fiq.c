@@ -42,9 +42,15 @@
 #include <linux/seq_file.h>
 
 #include <asm/cacheflush.h>
+<<<<<<< HEAD
 #include <asm/cp15.h>
 #include <asm/fiq.h>
 #include <asm/irq.h>
+=======
+#include <asm/fiq.h>
+#include <asm/irq.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/traps.h>
 
 static unsigned long no_fiq_insn;

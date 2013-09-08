@@ -20,7 +20,11 @@
 #include <linux/videodev2.h>
 #include <linux/vmalloc.h>
 #include <linux/wait.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "uvcvideo.h"
 
@@ -878,6 +882,7 @@ static int uvc_ctrl_populate_cache(struct uvc_video_chain *chain,
 				     chain->dev->intfnum, ctrl->info.selector,
 				     uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES),
 				     ctrl->info.size);
+<<<<<<< HEAD
 		if (ret < 0) {
 			if (UVC_ENTITY_TYPE(ctrl->entity) !=
 			    UVC_VC_EXTENSION_UNIT)
@@ -893,6 +898,10 @@ static int uvc_ctrl_populate_cache(struct uvc_video_chain *chain,
 			memset(uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES), 0,
 			       ctrl->info.size);
 		}
+=======
+		if (ret < 0)
+			return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ctrl->cached = 1;
@@ -1029,8 +1038,12 @@ int uvc_query_v4l2_menu(struct uvc_video_chain *chain,
 
 	menu_info = &mapping->menu_info[query_menu->index];
 
+<<<<<<< HEAD
 	if (mapping->data_type == UVC_CTRL_DATA_TYPE_BITMASK &&
 	    (ctrl->info.flags & UVC_CTRL_FLAG_GET_RES)) {
+=======
+	if (ctrl->info.flags & UVC_CTRL_FLAG_GET_RES) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		s32 bitmap;
 
 		if (!ctrl->cached) {
@@ -1239,8 +1252,12 @@ int uvc_ctrl_set(struct uvc_video_chain *chain,
 		/* Valid menu indices are reported by the GET_RES request for
 		 * UVC controls that support it.
 		 */
+<<<<<<< HEAD
 		if (mapping->data_type == UVC_CTRL_DATA_TYPE_BITMASK &&
 		    (ctrl->info.flags & UVC_CTRL_FLAG_GET_RES)) {
+=======
+		if (ctrl->info.flags & UVC_CTRL_FLAG_GET_RES) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!ctrl->cached) {
 				ret = uvc_ctrl_populate_cache(chain, ctrl);
 				if (ret < 0)
@@ -1679,8 +1696,13 @@ int uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	/* Search for the matching (GUID/CS) control on the current chain */
 	list_for_each_entry(entity, &chain->entities, chain) {
+=======
+	/* Search for the matching (GUID/CS) control in the given device */
+	list_for_each_entry(entity, &dev->entities, list) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned int i;
 
 		if (UVC_ENTITY_TYPE(entity) != UVC_VC_EXTENSION_UNIT ||
@@ -1874,7 +1896,11 @@ int uvc_ctrl_init_device(struct uvc_device *dev)
 		if (ncontrols == 0)
 			continue;
 
+<<<<<<< HEAD
 		entity->controls = kcalloc(ncontrols, sizeof(*ctrl),
+=======
+		entity->controls = kzalloc(ncontrols * sizeof(*ctrl),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					   GFP_KERNEL);
 		if (entity->controls == NULL)
 			return -ENOMEM;

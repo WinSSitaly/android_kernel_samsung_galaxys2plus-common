@@ -20,6 +20,7 @@
 #include <linux/usb/otg.h>
 #include <linux/spi/spi.h>
 #include <linux/i2c/twl.h>
+<<<<<<< HEAD
 #include <linux/mfd/twl6040.h>
 #include <linux/gpio_keys.h>
 #include <linux/regulator/machine.h>
@@ -30,16 +31,30 @@
 
 #include <mach/hardware.h>
 #include <asm/hardware/gic.h>
+=======
+#include <linux/gpio_keys.h>
+#include <linux/regulator/machine.h>
+#include <linux/leds.h>
+#include <linux/leds_pwm.h>
+
+#include <mach/hardware.h>
+#include <mach/omap4-common.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 
 #include <plat/board.h>
+<<<<<<< HEAD
 #include "common.h"
+=======
+#include <plat/common.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/usb.h>
 #include <plat/mmc.h>
 #include <plat/omap4-keypad.h>
 #include <video/omapdss.h>
+<<<<<<< HEAD
 #include <video/omap-panel-nokia-dsi.h>
 #include <video/omap-panel-picodlp.h>
 #include <linux/wl12xx.h>
@@ -47,6 +62,12 @@
 
 #include "mux.h"
 #include "hsmmc.h"
+=======
+
+#include "mux.h"
+#include "hsmmc.h"
+#include "timer-gp.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "control.h"
 #include "common-board-devices.h"
 
@@ -58,11 +79,14 @@
 #define HDMI_GPIO_CT_CP_HPD 60 /* HPD mode enable/disable */
 #define HDMI_GPIO_LS_OE 41 /* Level shifter for HDMI */
 #define HDMI_GPIO_HPD  63 /* Hotplug detect */
+<<<<<<< HEAD
 #define DISPLAY_SEL_GPIO	59	/* LCD2/PicoDLP switch */
 #define DLP_POWER_ON_GPIO	40
 
 #define GPIO_WIFI_PMENA		54
 #define GPIO_WIFI_IRQ		53
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const int sdp4430_keymap[] = {
 	KEY(0, 0, KEY_E),
@@ -137,6 +161,7 @@ static const int sdp4430_keymap[] = {
 	KEY(7, 6, KEY_OK),
 	KEY(7, 7, KEY_DOWN),
 };
+<<<<<<< HEAD
 static struct omap_device_pad keypad_pads[] = {
 	{	.name   = "kpd_col1.kpd_col1",
 		.enable = OMAP_WAKEUP_EN | OMAP_MUX_MODE1,
@@ -195,6 +220,8 @@ static struct omap_device_pad keypad_pads[] = {
 			OMAP_MUX_MODE1 | OMAP_INPUT_EN,
 	},
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct matrix_keymap_data sdp4430_keymap_data = {
 	.keymap			= sdp4430_keymap,
@@ -206,6 +233,7 @@ static struct omap4_keypad_platform_data sdp4430_keypad_data = {
 	.rows			= 8,
 	.cols			= 8,
 };
+<<<<<<< HEAD
 
 static struct omap_board_data keypad_data = {
 	.id	    		= 1,
@@ -213,6 +241,8 @@ static struct omap_board_data keypad_data = {
 	.pads_cnt       	= ARRAY_SIZE(keypad_pads),
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct gpio_led sdp4430_gpio_leds[] = {
 	{
 		.name	= "omap4:green:debug0",
@@ -325,10 +355,14 @@ static struct spi_board_info sdp4430_spi_board_info[] __initdata = {
 		.bus_num                = 1,
 		.chip_select            = 0,
 		.max_speed_hz           = 24000000,
+<<<<<<< HEAD
 		/*
 		 * .irq is set to gpio_to_irq(ETH_KS8851_IRQ)
 		 * in omap_4430sdp_init
 		 */
+=======
+		.irq                    = ETH_KS8851_IRQ,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 
@@ -351,6 +385,7 @@ static int __init omap_ethernet_init(void)
 	return status;
 }
 
+<<<<<<< HEAD
 static struct regulator_consumer_supply sdp4430_vbat_supply[] = {
 	REGULATOR_SUPPLY("vddvibl", "twl6040-vibra"),
 	REGULATOR_SUPPLY("vddvibr", "twl6040-vibra"),
@@ -419,6 +454,36 @@ static struct platform_device *sdp4430_devices[] __initdata = {
 	&sdp4430_dmic_codec,
 	&sdp4430_abe_audio,
 };
+=======
+static struct platform_device sdp4430_lcd_device = {
+	.name		= "sdp4430_lcd",
+	.id		= -1,
+};
+
+static struct platform_device *sdp4430_devices[] __initdata = {
+	&sdp4430_lcd_device,
+	&sdp4430_gpio_keys_device,
+	&sdp4430_leds_gpio,
+	&sdp4430_leds_pwm,
+};
+
+static struct omap_lcd_config sdp4430_lcd_config __initdata = {
+	.ctrl_name	= "internal",
+};
+
+static struct omap_board_config_kernel sdp4430_config[] __initdata = {
+	{ OMAP_TAG_LCD,		&sdp4430_lcd_config },
+};
+
+static void __init omap_4430sdp_init_early(void)
+{
+	omap2_init_common_infrastructure();
+	omap2_init_common_devices(NULL, NULL);
+#ifdef CONFIG_OMAP_32K_TIMER
+	omap2_gp_clockevent_set_gptimer(1);
+#endif
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct omap_musb_board_data musb_board_data = {
 	.interface_type		= MUSB_INTERFACE_UTMI,
@@ -426,6 +491,17 @@ static struct omap_musb_board_data musb_board_data = {
 	.power			= 100,
 };
 
+<<<<<<< HEAD
+=======
+static struct twl4030_usb_data omap4_usbphy_data = {
+	.phy_init	= omap4430_phy_init,
+	.phy_exit	= omap4430_phy_exit,
+	.phy_power	= omap4430_phy_power,
+	.phy_set_clock	= omap4430_phy_set_clk,
+	.phy_suspend	= omap4430_phy_suspend,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct omap2_hsmmc_info mmc[] = {
 	{
 		.mmc		= 2,
@@ -439,6 +515,7 @@ static struct omap2_hsmmc_info mmc[] = {
 	{
 		.mmc		= 1,
 		.caps		= MMC_CAP_4_BIT_DATA | MMC_CAP_8_BIT_DATA,
+<<<<<<< HEAD
 		.gpio_cd	= -EINVAL,
 		.gpio_wp	= -EINVAL,
 	},
@@ -451,10 +528,15 @@ static struct omap2_hsmmc_info mmc[] = {
 		.ocr_mask	= MMC_VDD_165_195,
 		.nonremovable	= true,
 	},
+=======
+		.gpio_wp	= -EINVAL,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{}	/* Terminator */
 };
 
 static struct regulator_consumer_supply sdp4430_vaux_supply[] = {
+<<<<<<< HEAD
 	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.1"),
 };
 
@@ -486,18 +568,34 @@ static struct platform_device omap_vwlan_device = {
 	.id		= 1,
 	.dev = {
 		.platform_data = &sdp4430_vwlan,
+=======
+	{
+		.supply = "vmmc",
+		.dev_name = "omap_hsmmc.1",
+	},
+};
+static struct regulator_consumer_supply sdp4430_vmmc_supply[] = {
+	{
+		.supply = "vmmc",
+		.dev_name = "omap_hsmmc.0",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 
 static int omap4_twl6030_hsmmc_late_init(struct device *dev)
 {
+<<<<<<< HEAD
 	int irq = 0;
+=======
+	int ret = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct platform_device *pdev = container_of(dev,
 				struct platform_device, dev);
 	struct omap_mmc_platform_data *pdata = dev->platform_data;
 
 	/* Setting MMC1 Card detect Irq */
 	if (pdev->id == 0) {
+<<<<<<< HEAD
 		irq = twl6030_mmc_card_detect_config();
 		if (irq < 0) {
 			pr_err("Failed configuring MMC1 card detect\n");
@@ -507,6 +605,16 @@ static int omap4_twl6030_hsmmc_late_init(struct device *dev)
 		pdata->slots[0].card_detect = twl6030_mmc_card_detect;
 	}
 	return 0;
+=======
+		ret = twl6030_mmc_card_detect_config();
+		if (ret)
+			pr_err("Failed configuring MMC1 card detect\n");
+		pdata->slots[0].card_detect_irq = TWL6030_IRQ_BASE +
+						MMCDETECT_INTR_OFFSET;
+		pdata->slots[0].card_detect = twl6030_mmc_card_detect;
+	}
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static __init void omap4_twl6030_hsmmc_set_late_init(struct device *dev)
@@ -526,9 +634,15 @@ static int __init omap4_twl6030_hsmmc_init(struct omap2_hsmmc_info *controllers)
 {
 	struct omap2_hsmmc_info *c;
 
+<<<<<<< HEAD
 	omap_hsmmc_init(controllers);
 	for (c = controllers; c->mmc; c++)
 		omap4_twl6030_hsmmc_set_late_init(&c->pdev->dev);
+=======
+	omap2_hsmmc_init(controllers);
+	for (c = controllers; c->mmc; c++)
+		omap4_twl6030_hsmmc_set_late_init(c->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -544,10 +658,72 @@ static struct regulator_init_data sdp4430_vaux1 = {
 					| REGULATOR_CHANGE_MODE
 					| REGULATOR_CHANGE_STATUS,
 	},
+<<<<<<< HEAD
 	.num_consumer_supplies  = ARRAY_SIZE(sdp4430_vaux_supply),
 	.consumer_supplies      = sdp4430_vaux_supply,
 };
 
+=======
+	.num_consumer_supplies  = 1,
+	.consumer_supplies      = sdp4430_vaux_supply,
+};
+
+static struct regulator_init_data sdp4430_vaux2 = {
+	.constraints = {
+		.min_uV			= 1200000,
+		.max_uV			= 2800000,
+		.apply_uV		= true,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask	 = REGULATOR_CHANGE_VOLTAGE
+					| REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+};
+
+static struct regulator_init_data sdp4430_vaux3 = {
+	.constraints = {
+		.min_uV			= 1000000,
+		.max_uV			= 3000000,
+		.apply_uV		= true,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask	 = REGULATOR_CHANGE_VOLTAGE
+					| REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+};
+
+/* VMMC1 for MMC1 card */
+static struct regulator_init_data sdp4430_vmmc = {
+	.constraints = {
+		.min_uV			= 1200000,
+		.max_uV			= 3000000,
+		.apply_uV		= true,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask	 = REGULATOR_CHANGE_VOLTAGE
+					| REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies  = 1,
+	.consumer_supplies      = sdp4430_vmmc_supply,
+};
+
+static struct regulator_init_data sdp4430_vpp = {
+	.constraints = {
+		.min_uV			= 1800000,
+		.max_uV			= 2500000,
+		.apply_uV		= true,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask	 = REGULATOR_CHANGE_VOLTAGE
+					| REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct regulator_init_data sdp4430_vusim = {
 	.constraints = {
 		.min_uV			= 1200000,
@@ -561,6 +737,7 @@ static struct regulator_init_data sdp4430_vusim = {
 	},
 };
 
+<<<<<<< HEAD
 static struct twl6040_codec_data twl6040_codec = {
 	/* single-step ramp for headset and handsfree */
 	.hs_left_step	= 0x0f,
@@ -589,6 +766,76 @@ static struct twl4030_platform_data sdp4430_twldata = {
 	/* Regulators */
 	.vusim		= &sdp4430_vusim,
 	.vaux1		= &sdp4430_vaux1,
+=======
+static struct regulator_init_data sdp4430_vana = {
+	.constraints = {
+		.min_uV			= 2100000,
+		.max_uV			= 2100000,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask	 = REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+};
+
+static struct regulator_init_data sdp4430_vcxio = {
+	.constraints = {
+		.min_uV			= 1800000,
+		.max_uV			= 1800000,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask	 = REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+};
+
+static struct regulator_init_data sdp4430_vdac = {
+	.constraints = {
+		.min_uV			= 1800000,
+		.max_uV			= 1800000,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask	 = REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+};
+
+static struct regulator_init_data sdp4430_vusb = {
+	.constraints = {
+		.min_uV			= 3300000,
+		.max_uV			= 3300000,
+		.apply_uV		= true,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask	 =	REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+};
+
+static struct regulator_init_data sdp4430_clk32kg = {
+	.constraints = {
+		.valid_ops_mask		= REGULATOR_CHANGE_STATUS,
+	},
+};
+
+static struct twl4030_platform_data sdp4430_twldata = {
+	.irq_base	= TWL6030_IRQ_BASE,
+	.irq_end	= TWL6030_IRQ_END,
+
+	/* Regulators */
+	.vmmc		= &sdp4430_vmmc,
+	.vpp		= &sdp4430_vpp,
+	.vusim		= &sdp4430_vusim,
+	.vana		= &sdp4430_vana,
+	.vcxio		= &sdp4430_vcxio,
+	.vdac		= &sdp4430_vdac,
+	.vusb		= &sdp4430_vusb,
+	.vaux1		= &sdp4430_vaux1,
+	.vaux2		= &sdp4430_vaux2,
+	.vaux3		= &sdp4430_vaux3,
+	.clk32kg	= &sdp4430_clk32kg,
+	.usb		= &omap4_usbphy_data
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct i2c_board_info __initdata sdp4430_i2c_3_boardinfo[] = {
@@ -606,6 +853,7 @@ static struct i2c_board_info __initdata sdp4430_i2c_4_boardinfo[] = {
 };
 static int __init omap4_i2c_init(void)
 {
+<<<<<<< HEAD
 	omap4_pmic_get_config(&sdp4430_twldata, TWL_COMMON_PDATA_USB,
 			TWL_COMMON_REGULATOR_VDAC |
 			TWL_COMMON_REGULATOR_VAUX2 |
@@ -618,6 +866,9 @@ static int __init omap4_i2c_init(void)
 			TWL_COMMON_REGULATOR_CLK32KG);
 	omap4_pmic_init("twl6030", &sdp4430_twldata,
 			&twl6040_data, OMAP44XX_IRQ_SYS_2N);
+=======
+	omap4_pmic_init("twl6030", &sdp4430_twldata);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap_register_i2c_bus(2, 400, NULL, 0);
 	omap_register_i2c_bus(3, 400, sdp4430_i2c_3_boardinfo,
 				ARRAY_SIZE(sdp4430_i2c_3_boardinfo));
@@ -637,6 +888,19 @@ static void __init omap_sfh7741prox_init(void)
 			__func__, OMAP4_SFH7741_ENABLE_GPIO, error);
 }
 
+<<<<<<< HEAD
+=======
+static void sdp4430_hdmi_mux_init(void)
+{
+	omap_mux_init_signal("hdmi_cec",
+			OMAP_PIN_INPUT_PULLUP);
+	omap_mux_init_signal("hdmi_ddc_scl",
+			OMAP_PIN_INPUT_PULLUP);
+	omap_mux_init_signal("hdmi_ddc_sda",
+			OMAP_PIN_INPUT_PULLUP);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct gpio sdp4430_hdmi_gpios[] = {
 	{ HDMI_GPIO_CT_CP_HPD, GPIOF_OUT_INIT_HIGH, "hdmi_gpio_ct_cp_hpd" },
 	{ HDMI_GPIO_LS_OE,	GPIOF_OUT_INIT_HIGH,	"hdmi_gpio_ls_oe" },
@@ -660,6 +924,7 @@ static void sdp4430_panel_disable_hdmi(struct omap_dss_device *dssdev)
 	gpio_free_array(sdp4430_hdmi_gpios, ARRAY_SIZE(sdp4430_hdmi_gpios));
 }
 
+<<<<<<< HEAD
 static struct nokia_dsi_panel_data dsi1_panel = {
 		.name		= "taal",
 		.reset_gpio	= 102,
@@ -773,6 +1038,8 @@ static void sdp4430_lcd_init(void)
 		pr_err("%s: Could not get lcd2_reset_gpio\n", __func__);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct omap_dss_hdmi_data sdp4430_hdmi_data = {
 	.hpd_gpio = HDMI_GPIO_HPD,
 };
@@ -787,6 +1054,7 @@ static struct omap_dss_device sdp4430_hdmi_device = {
 	.data = &sdp4430_hdmi_data,
 };
 
+<<<<<<< HEAD
 static struct picodlp_panel_data sdp4430_picodlp_pdata = {
 	.picodlp_adapter_id	= 2,
 	.emu_done_gpio		= 44,
@@ -840,11 +1108,16 @@ static struct omap_dss_device *sdp4430_dss_devices[] = {
 	&sdp4430_lcd2_device,
 	&sdp4430_hdmi_device,
 	&sdp4430_picodlp_device,
+=======
+static struct omap_dss_device *sdp4430_dss_devices[] = {
+	&sdp4430_hdmi_device,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct omap_dss_board_info sdp4430_dss_data = {
 	.num_devices	= ARRAY_SIZE(sdp4430_dss_devices),
 	.devices	= sdp4430_dss_devices,
+<<<<<<< HEAD
 	.default_device	= &sdp4430_lcd_device,
 };
 
@@ -869,6 +1142,15 @@ static void __init omap_4430sdp_display_init(void)
 		omap_hdmi_init(OMAP_HDMI_SDA_SCL_EXTERNAL_PULLUP);
 	else
 		omap_hdmi_init(0);
+=======
+	.default_device	= &sdp4430_hdmi_device,
+};
+
+void omap_4430sdp_display_init(void)
+{
+	sdp4430_hdmi_mux_init();
+	omap_display_init(&sdp4430_dss_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	omap_mux_init_gpio(HDMI_GPIO_LS_OE, OMAP_PIN_OUTPUT);
 	omap_mux_init_gpio(HDMI_GPIO_CT_CP_HPD, OMAP_PIN_OUTPUT);
@@ -881,6 +1163,7 @@ static struct omap_board_mux board_mux[] __initdata = {
 	{ .reg_offset = OMAP_MUX_TERMINATOR },
 };
 
+<<<<<<< HEAD
 #else
 #define board_mux	NULL
  #endif
@@ -924,6 +1207,77 @@ static void __init omap4_sdp4430_wifi_init(void)
 	if (ret)
 		pr_err("Error registering wl12xx device: %d\n", ret);
 }
+=======
+static struct omap_device_pad serial2_pads[] __initdata = {
+	OMAP_MUX_STATIC("uart2_cts.uart2_cts",
+			 OMAP_PIN_INPUT_PULLUP | OMAP_MUX_MODE0),
+	OMAP_MUX_STATIC("uart2_rts.uart2_rts",
+			 OMAP_PIN_OUTPUT | OMAP_MUX_MODE0),
+	OMAP_MUX_STATIC("uart2_rx.uart2_rx",
+			 OMAP_PIN_INPUT_PULLUP | OMAP_MUX_MODE0),
+	OMAP_MUX_STATIC("uart2_tx.uart2_tx",
+			 OMAP_PIN_OUTPUT | OMAP_MUX_MODE0),
+};
+
+static struct omap_device_pad serial3_pads[] __initdata = {
+	OMAP_MUX_STATIC("uart3_cts_rctx.uart3_cts_rctx",
+			 OMAP_PIN_INPUT_PULLUP | OMAP_MUX_MODE0),
+	OMAP_MUX_STATIC("uart3_rts_sd.uart3_rts_sd",
+			 OMAP_PIN_OUTPUT | OMAP_MUX_MODE0),
+	OMAP_MUX_STATIC("uart3_rx_irrx.uart3_rx_irrx",
+			 OMAP_PIN_INPUT | OMAP_MUX_MODE0),
+	OMAP_MUX_STATIC("uart3_tx_irtx.uart3_tx_irtx",
+			 OMAP_PIN_OUTPUT | OMAP_MUX_MODE0),
+};
+
+static struct omap_device_pad serial4_pads[] __initdata = {
+	OMAP_MUX_STATIC("uart4_rx.uart4_rx",
+			 OMAP_PIN_INPUT | OMAP_MUX_MODE0),
+	OMAP_MUX_STATIC("uart4_tx.uart4_tx",
+			 OMAP_PIN_OUTPUT | OMAP_MUX_MODE0),
+};
+
+static struct omap_board_data serial2_data __initdata = {
+	.id		= 1,
+	.pads		= serial2_pads,
+	.pads_cnt	= ARRAY_SIZE(serial2_pads),
+};
+
+static struct omap_board_data serial3_data __initdata = {
+	.id		= 2,
+	.pads		= serial3_pads,
+	.pads_cnt	= ARRAY_SIZE(serial3_pads),
+};
+
+static struct omap_board_data serial4_data __initdata = {
+	.id		= 3,
+	.pads		= serial4_pads,
+	.pads_cnt	= ARRAY_SIZE(serial4_pads),
+};
+
+static inline void board_serial_init(void)
+{
+	struct omap_board_data bdata;
+	bdata.flags	= 0;
+	bdata.pads	= NULL;
+	bdata.pads_cnt	= 0;
+	bdata.id	= 0;
+	/* pass dummy data for UART1 */
+	omap_serial_init_port(&bdata);
+
+	omap_serial_init_port(&serial2_data);
+	omap_serial_init_port(&serial3_data);
+	omap_serial_init_port(&serial4_data);
+}
+#else
+#define board_mux	NULL
+
+static inline void board_serial_init(void)
+{
+	omap_serial_init();
+}
+ #endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void __init omap_4430sdp_init(void)
 {
@@ -934,12 +1288,22 @@ static void __init omap_4430sdp_init(void)
 		package = OMAP_PACKAGE_CBL;
 	omap4_mux_init(board_mux, NULL, package);
 
+<<<<<<< HEAD
 	omap4_i2c_init();
 	omap_sfh7741prox_init();
 	platform_add_devices(sdp4430_devices, ARRAY_SIZE(sdp4430_devices));
 	omap_serial_init();
 	omap_sdrc_init(NULL, NULL);
 	omap4_sdp4430_wifi_init();
+=======
+	omap_board_config = sdp4430_config;
+	omap_board_config_size = ARRAY_SIZE(sdp4430_config);
+
+	omap4_i2c_init();
+	omap_sfh7741prox_init();
+	platform_add_devices(sdp4430_devices, ARRAY_SIZE(sdp4430_devices));
+	board_serial_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap4_twl6030_hsmmc_init(mmc);
 
 	usb_musb_init(&musb_board_data);
@@ -953,13 +1317,18 @@ static void __init omap_4430sdp_init(void)
 				ARRAY_SIZE(sdp4430_spi_board_info));
 	}
 
+<<<<<<< HEAD
 	status = omap4_keyboard_init(&sdp4430_keypad_data, &keypad_data);
+=======
+	status = omap4_keyboard_init(&sdp4430_keypad_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (status)
 		pr_err("Keypad initialization failed: %d\n", status);
 
 	omap_4430sdp_display_init();
 }
 
+<<<<<<< HEAD
 MACHINE_START(OMAP_4430SDP, "OMAP4430 4430SDP board")
 	/* Maintainer: Santosh Shilimkar - Texas Instruments Inc */
 	.atag_offset	= 0x100,
@@ -971,4 +1340,21 @@ MACHINE_START(OMAP_4430SDP, "OMAP4430 4430SDP board")
 	.init_machine	= omap_4430sdp_init,
 	.timer		= &omap4_timer,
 	.restart	= omap_prcm_restart,
+=======
+static void __init omap_4430sdp_map_io(void)
+{
+	omap2_set_globals_443x();
+	omap44xx_map_common_io();
+}
+
+MACHINE_START(OMAP_4430SDP, "OMAP4430 4430SDP board")
+	/* Maintainer: Santosh Shilimkar - Texas Instruments Inc */
+	.boot_params	= 0x80000100,
+	.reserve	= omap_reserve,
+	.map_io		= omap_4430sdp_map_io,
+	.init_early	= omap_4430sdp_init_early,
+	.init_irq	= gic_init_irq,
+	.init_machine	= omap_4430sdp_init,
+	.timer		= &omap_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

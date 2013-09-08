@@ -9,6 +9,10 @@
 #ifndef __ASSEMBLY__
 
 #include <asm/ptrace-abi.h>
+<<<<<<< HEAD
+=======
+#include <asm/user.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "sysdep/ptrace.h"
 
 struct pt_regs {
@@ -22,10 +26,23 @@ struct pt_regs {
 #define PT_REGS_IP(r) UPT_IP(&(r)->regs)
 #define PT_REGS_SP(r) UPT_SP(&(r)->regs)
 
+<<<<<<< HEAD
+=======
+#define PT_REG(r, reg) UPT_REG(&(r)->regs, reg)
+#define PT_REGS_SET(r, reg, val) UPT_SET(&(r)->regs, reg, val)
+
+#define PT_REGS_SET_SYSCALL_RETURN(r, res) \
+	UPT_SET_SYSCALL_RETURN(&(r)->regs, res)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PT_REGS_RESTART_SYSCALL(r) UPT_RESTART_SYSCALL(&(r)->regs)
 
 #define PT_REGS_SYSCALL_NR(r) UPT_SYSCALL_NR(&(r)->regs)
 
+<<<<<<< HEAD
+=======
+#define PT_REGS_SC(r) UPT_SC(&(r)->regs)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define instruction_pointer(regs) PT_REGS_IP(regs)
 
 struct task_struct;
@@ -34,6 +51,15 @@ extern long subarch_ptrace(struct task_struct *child, long request,
 	unsigned long addr, unsigned long data);
 extern unsigned long getreg(struct task_struct *child, int regno);
 extern int putreg(struct task_struct *child, int regno, unsigned long value);
+<<<<<<< HEAD
+=======
+extern int get_fpregs(struct user_i387_struct __user *buf,
+		      struct task_struct *child);
+extern int set_fpregs(struct user_i387_struct __user *buf,
+		      struct task_struct *child);
+
+extern void show_regs(struct pt_regs *regs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int arch_copy_tls(struct task_struct *new);
 extern void clear_flushed_tls(struct task_struct *task);

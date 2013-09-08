@@ -21,6 +21,20 @@
 #define NO_IRQ_IGNORE		((unsigned int)-1)
 
 /*
+<<<<<<< HEAD
+=======
+ * Convert back and forth between INTEVT and IRQ values.
+ */
+#ifdef CONFIG_CPU_HAS_INTEVT
+#define evt2irq(evt)		(((evt) >> 5) - 16)
+#define irq2evt(irq)		(((irq) + 16) << 5)
+#else
+#define evt2irq(evt)		(evt)
+#define irq2evt(irq)		(irq)
+#endif
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Simple Mask Register Support
  */
 extern void make_maskreg_irq(unsigned int irq);

@@ -27,7 +27,10 @@
 #ifndef _VMXNET3_INT_H
 #define _VMXNET3_INT_H
 
+<<<<<<< HEAD
 #include <linux/bitops.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ethtool.h>
 #include <linux/delay.h>
 #include <linux/netdevice.h>
@@ -317,7 +320,11 @@ struct vmxnet3_intr {
 struct vmxnet3_adapter {
 	struct vmxnet3_tx_queue		tx_queue[VMXNET3_DEVICE_MAX_TX_QUEUES];
 	struct vmxnet3_rx_queue		rx_queue[VMXNET3_DEVICE_MAX_RX_QUEUES];
+<<<<<<< HEAD
 	unsigned long			active_vlans[BITS_TO_LONGS(VLAN_N_VID)];
+=======
+	struct vlan_group		*vlan_grp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct vmxnet3_intr		intr;
 	spinlock_t			cmd_lock;
 	struct Vmxnet3_DriverShared	*shared;
@@ -325,6 +332,10 @@ struct vmxnet3_adapter {
 	struct Vmxnet3_TxQueueDesc	*tqd_start;     /* all tx queue desc */
 	struct Vmxnet3_RxQueueDesc	*rqd_start;	/* all rx queue desc */
 	struct net_device		*netdev;
+<<<<<<< HEAD
+=======
+	struct net_device_stats		net_stats;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pci_dev			*pdev;
 
 	u8			__iomem *hw_addr0; /* for BAR 0 */
@@ -401,16 +412,24 @@ void
 vmxnet3_rq_destroy_all(struct vmxnet3_adapter *adapter);
 
 int
+<<<<<<< HEAD
 vmxnet3_set_features(struct net_device *netdev, netdev_features_t features);
+=======
+vmxnet3_set_features(struct net_device *netdev, u32 features);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int
 vmxnet3_create_queues(struct vmxnet3_adapter *adapter,
 		      u32 tx_ring_size, u32 rx_ring_size, u32 rx_ring2_size);
 
 extern void vmxnet3_set_ethtool_ops(struct net_device *netdev);
+<<<<<<< HEAD
 
 extern struct rtnl_link_stats64 *
 vmxnet3_get_stats64(struct net_device *dev, struct rtnl_link_stats64 *stats);
+=======
+extern struct net_device_stats *vmxnet3_get_stats(struct net_device *netdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern char vmxnet3_driver_name[];
 #endif

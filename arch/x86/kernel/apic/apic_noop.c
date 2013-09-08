@@ -124,7 +124,10 @@ struct apic apic_noop = {
 	.probe				= noop_probe,
 	.acpi_madt_oem_check		= NULL,
 
+<<<<<<< HEAD
 	.apic_id_valid			= default_apic_id_valid,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.apic_id_registered		= noop_apic_id_registered,
 
 	.irq_delivery_mode		= dest_LowestPrio,

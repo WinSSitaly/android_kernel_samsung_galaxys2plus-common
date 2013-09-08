@@ -20,7 +20,10 @@
 #ifndef _FC_ENCODE_H_
 #define _FC_ENCODE_H_
 #include <asm/unaligned.h>
+<<<<<<< HEAD
 #include <linux/utsname.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * F_CTL values for simple requests and responses.
@@ -44,10 +47,13 @@ struct fc_ct_req {
 		struct fc_ns_fid fid;
 		struct fc_ns_rsnn snn;
 		struct fc_ns_rspn spn;
+<<<<<<< HEAD
 		struct fc_fdmi_rhba rhba;
 		struct fc_fdmi_rpa  rpa;
 		struct fc_fdmi_dprt dprt;
 		struct fc_fdmi_dhba dhba;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} payload;
 };
 
@@ -102,9 +108,13 @@ static inline void fc_adisc_fill(struct fc_lport *lport, struct fc_frame *fp)
  * returns pointer to ct request.
  */
 static inline struct fc_ct_req *fc_ct_hdr_fill(const struct fc_frame *fp,
+<<<<<<< HEAD
 					       unsigned int op, size_t req_size,
 					       enum fc_ct_fs_type fs_type,
 					       u8 subtype)
+=======
+					       unsigned int op, size_t req_size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct fc_ct_req *ct;
 	size_t ct_plen;
@@ -113,14 +123,23 @@ static inline struct fc_ct_req *fc_ct_hdr_fill(const struct fc_frame *fp,
 	ct = fc_frame_payload_get(fp, ct_plen);
 	memset(ct, 0, ct_plen);
 	ct->hdr.ct_rev = FC_CT_REV;
+<<<<<<< HEAD
 	ct->hdr.ct_fs_type = fs_type;
 	ct->hdr.ct_fs_subtype = subtype;
+=======
+	ct->hdr.ct_fs_type = FC_FST_DIR;
+	ct->hdr.ct_fs_subtype = FC_NS_SUBTYPE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ct->hdr.ct_cmd = htons((u16) op);
 	return ct;
 }
 
 /**
+<<<<<<< HEAD
  * fc_ct_ns_fill() - Fill in a name service request frame
+=======
+ * fc_ct_fill() - Fill in a name service request frame
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @lport: local port.
  * @fc_id: FC_ID of non-destination rport for GPN_ID and similar inquiries.
  * @fp: frame to contain payload.
@@ -128,7 +147,11 @@ static inline struct fc_ct_req *fc_ct_hdr_fill(const struct fc_frame *fp,
  * @r_ctl: pointer to FC header R_CTL.
  * @fh_type: pointer to FC-4 type.
  */
+<<<<<<< HEAD
 static inline int fc_ct_ns_fill(struct fc_lport *lport,
+=======
+static inline int fc_ct_fill(struct fc_lport *lport,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      u32 fc_id, struct fc_frame *fp,
 		      unsigned int op, enum fc_rctl *r_ctl,
 		      enum fc_fh_type *fh_type)
@@ -138,28 +161,44 @@ static inline int fc_ct_ns_fill(struct fc_lport *lport,
 
 	switch (op) {
 	case FC_NS_GPN_FT:
+<<<<<<< HEAD
 		ct = fc_ct_hdr_fill(fp, op, sizeof(struct fc_ns_gid_ft),
 				    FC_FST_DIR, FC_NS_SUBTYPE);
+=======
+		ct = fc_ct_hdr_fill(fp, op, sizeof(struct fc_ns_gid_ft));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ct->payload.gid.fn_fc4_type = FC_TYPE_FCP;
 		break;
 
 	case FC_NS_GPN_ID:
+<<<<<<< HEAD
 		ct = fc_ct_hdr_fill(fp, op, sizeof(struct fc_ns_fid),
 				    FC_FST_DIR, FC_NS_SUBTYPE);
 		ct->payload.gid.fn_fc4_type = FC_TYPE_FCP;
+=======
+		ct = fc_ct_hdr_fill(fp, op, sizeof(struct fc_ns_fid));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hton24(ct->payload.fid.fp_fid, fc_id);
 		break;
 
 	case FC_NS_RFT_ID:
+<<<<<<< HEAD
 		ct = fc_ct_hdr_fill(fp, op, sizeof(struct fc_ns_rft),
 				    FC_FST_DIR, FC_NS_SUBTYPE);
+=======
+		ct = fc_ct_hdr_fill(fp, op, sizeof(struct fc_ns_rft));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hton24(ct->payload.rft.fid.fp_fid, lport->port_id);
 		ct->payload.rft.fts = lport->fcts;
 		break;
 
 	case FC_NS_RFF_ID:
+<<<<<<< HEAD
 		ct = fc_ct_hdr_fill(fp, op, sizeof(struct fc_ns_rff_id),
 				    FC_FST_DIR, FC_NS_SUBTYPE);
+=======
+		ct = fc_ct_hdr_fill(fp, op, sizeof(struct fc_ns_rff_id));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hton24(ct->payload.rff.fr_fid.fp_fid, lport->port_id);
 		ct->payload.rff.fr_type = FC_TYPE_FCP;
 		if (lport->service_params & FCP_SPPF_INIT_FCN)
@@ -169,16 +208,24 @@ static inline int fc_ct_ns_fill(struct fc_lport *lport,
 		break;
 
 	case FC_NS_RNN_ID:
+<<<<<<< HEAD
 		ct = fc_ct_hdr_fill(fp, op, sizeof(struct fc_ns_rn_id),
 				    FC_FST_DIR, FC_NS_SUBTYPE);
+=======
+		ct = fc_ct_hdr_fill(fp, op, sizeof(struct fc_ns_rn_id));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hton24(ct->payload.rn.fr_fid.fp_fid, lport->port_id);
 		put_unaligned_be64(lport->wwnn, &ct->payload.rn.fr_wwn);
 		break;
 
 	case FC_NS_RSPN_ID:
 		len = strnlen(fc_host_symbolic_name(lport->host), 255);
+<<<<<<< HEAD
 		ct = fc_ct_hdr_fill(fp, op, sizeof(struct fc_ns_rspn) + len,
 				    FC_FST_DIR, FC_NS_SUBTYPE);
+=======
+		ct = fc_ct_hdr_fill(fp, op, sizeof(struct fc_ns_rspn) + len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hton24(ct->payload.spn.fr_fid.fp_fid, lport->port_id);
 		strncpy(ct->payload.spn.fr_name,
 			fc_host_symbolic_name(lport->host), len);
@@ -187,8 +234,12 @@ static inline int fc_ct_ns_fill(struct fc_lport *lport,
 
 	case FC_NS_RSNN_NN:
 		len = strnlen(fc_host_symbolic_name(lport->host), 255);
+<<<<<<< HEAD
 		ct = fc_ct_hdr_fill(fp, op, sizeof(struct fc_ns_rsnn) + len,
 				    FC_FST_DIR, FC_NS_SUBTYPE);
+=======
+		ct = fc_ct_hdr_fill(fp, op, sizeof(struct fc_ns_rsnn) + len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		put_unaligned_be64(lport->wwnn, &ct->payload.snn.fr_wwn);
 		strncpy(ct->payload.snn.fr_name,
 			fc_host_symbolic_name(lport->host), len);
@@ -204,6 +255,7 @@ static inline int fc_ct_ns_fill(struct fc_lport *lport,
 }
 
 /**
+<<<<<<< HEAD
  * fc_ct_ms_fill() - Fill in a mgmt service request frame
  * @lport: local port.
  * @fc_id: FC_ID of non-destination rport for GPN_ID and similar inquiries.
@@ -528,6 +580,8 @@ static inline int fc_ct_fill(struct fc_lport *lport,
 	return rc;
 }
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * fc_plogi_fill - Fill in plogi request frame
  */
 static inline void fc_plogi_fill(struct fc_lport *lport, struct fc_frame *fp,

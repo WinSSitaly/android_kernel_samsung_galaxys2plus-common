@@ -46,8 +46,11 @@ struct qdesfmt0 {
 	u32	 : 16;
 } __attribute__ ((packed));
 
+<<<<<<< HEAD
 #define QDR_AC_MULTI_BUFFER_ENABLE 0x01
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct qdr - queue description record (QDR)
  * @qfmt: queue format
@@ -125,6 +128,7 @@ struct slibe {
 };
 
 /**
+<<<<<<< HEAD
  * struct qaob - queue asynchronous operation block
  * @res0: reserved parameters
  * @res1: reserved parameter
@@ -159,6 +163,8 @@ struct qaob {
 } __attribute__ ((packed, aligned(256)));
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * struct slib - storage list information block (SLIB)
  * @nsliba: next SLIB address (if any)
  * @sla: SL address
@@ -258,6 +264,7 @@ struct slsb {
 	u8 val[QDIO_MAX_BUFFERS_PER_Q];
 } __attribute__ ((packed, aligned(256)));
 
+<<<<<<< HEAD
 #define CHSC_AC2_MULTI_BUFFER_AVAILABLE	0x0080
 #define CHSC_AC2_MULTI_BUFFER_ENABLED	0x0040
 #define CHSC_AC2_DATA_DIV_AVAILABLE	0x0010
@@ -298,6 +305,11 @@ struct qdio_outbuf_state {
 
 #define CHSC_AC3_FORMAT2_CQ_AVAILABLE	0x8000
 
+=======
+#define CHSC_AC2_DATA_DIV_AVAILABLE	0x0010
+#define CHSC_AC2_DATA_DIV_ENABLED	0x0002
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct qdio_ssqd_desc {
 	u8 flags;
 	u8:8;
@@ -316,7 +328,12 @@ struct qdio_ssqd_desc {
 	u64 sch_token;
 	u8 mro;
 	u8 mri;
+<<<<<<< HEAD
 	u16 qdioac3;
+=======
+	u8:8;
+	u8 sbalic;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16:16;
 	u8:8;
 	u8 mmwc;
@@ -352,16 +369,25 @@ typedef void qdio_handler_t(struct ccw_device *, unsigned int, int,
  * @no_output_qs: number of output queues
  * @input_handler: handler to be called for input queues
  * @output_handler: handler to be called for output queues
+<<<<<<< HEAD
  * @queue_start_poll_array: polling handlers (one per input queue or NULL)
  * @int_parm: interruption parameter
  * @input_sbal_addr_array:  address of no_input_qs * 128 pointers
  * @output_sbal_addr_array: address of no_output_qs * 128 pointers
  * @output_sbal_state_array: no_output_qs * 128 state info (for CQ or NULL)
+=======
+ * @int_parm: interruption parameter
+ * @input_sbal_addr_array:  address of no_input_qs * 128 pointers
+ * @output_sbal_addr_array: address of no_output_qs * 128 pointers
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct qdio_initialize {
 	struct ccw_device *cdev;
 	unsigned char q_format;
+<<<<<<< HEAD
 	unsigned char qdr_ac;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char adapter_name[8];
 	unsigned int qib_param_field_format;
 	unsigned char *qib_param_field;
@@ -372,13 +398,20 @@ struct qdio_initialize {
 	unsigned int no_output_qs;
 	qdio_handler_t *input_handler;
 	qdio_handler_t *output_handler;
+<<<<<<< HEAD
 	void (**queue_start_poll_array) (struct ccw_device *, int,
 					  unsigned long);
+=======
+	void (*queue_start_poll) (struct ccw_device *, int, unsigned long);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int scan_threshold;
 	unsigned long int_parm;
 	void **input_sbal_addr_array;
 	void **output_sbal_addr_array;
+<<<<<<< HEAD
 	struct qdio_outbuf_state *output_sbal_state_array;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define QDIO_STATE_INACTIVE		0x00000002 /* after qdio_cleanup */
@@ -393,7 +426,10 @@ struct qdio_initialize {
 extern int qdio_allocate(struct qdio_initialize *);
 extern int qdio_establish(struct qdio_initialize *);
 extern int qdio_activate(struct ccw_device *);
+<<<<<<< HEAD
 extern void qdio_release_aob(struct qaob *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int do_QDIO(struct ccw_device *, unsigned int, int, unsigned int,
 		   unsigned int);
 extern int qdio_start_irq(struct ccw_device *, int);

@@ -37,7 +37,11 @@
 
 #define DRV_NAME		"fnic"
 #define DRV_DESCRIPTION		"Cisco FCoE HBA Driver"
+<<<<<<< HEAD
 #define DRV_VERSION		"1.5.0.2"
+=======
+#define DRV_VERSION		"1.5.0.1"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PFX			DRV_NAME ": "
 #define DFX                     DRV_NAME "%d: "
 

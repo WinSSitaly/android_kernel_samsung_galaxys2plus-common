@@ -55,7 +55,10 @@
 #include <linux/mmc/sdio_func.h>
 #include "i2400m-sdio.h"
 #include <linux/wimax/i2400m.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define D_SUBMODULE main
 #include "sdio-debug-levels.h"

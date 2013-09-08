@@ -32,8 +32,12 @@
 #  else
 #    error "could not determine byte order"
 #  endif
+<<<<<<< HEAD
 #else
 #if defined(__BYTE_ORDER)
+=======
+#elif defined(__BYTE_ORDER)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #  if __BYTE_ORDER == __BIG_ENDIAN
 #    define _PATCHKEY(id) (0xfd00|id)
 #  elif __BYTE_ORDER == __LITTLE_ENDIAN
@@ -42,6 +46,9 @@
 #    error "could not determine byte order"
 #  endif
 #endif
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* _LINUX_PATCHKEY_H */

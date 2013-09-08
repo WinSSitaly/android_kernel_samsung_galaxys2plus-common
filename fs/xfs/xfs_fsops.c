@@ -194,10 +194,13 @@ xfs_growfs_data_private(
 		bp = xfs_buf_get(mp->m_ddev_targp,
 				 XFS_AG_DADDR(mp, agno, XFS_AGF_DADDR(mp)),
 				 XFS_FSS_TO_BB(mp, 1), XBF_LOCK | XBF_MAPPED);
+<<<<<<< HEAD
 		if (!bp) {
 			error = ENOMEM;
 			goto error0;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		agf = XFS_BUF_TO_AGF(bp);
 		memset(agf, 0, mp->m_sb.sb_sectsize);
 		agf->agf_magicnum = cpu_to_be32(XFS_AGF_MAGIC);
@@ -220,21 +223,31 @@ xfs_growfs_data_private(
 		tmpsize = agsize - XFS_PREALLOC_BLOCKS(mp);
 		agf->agf_freeblks = cpu_to_be32(tmpsize);
 		agf->agf_longest = cpu_to_be32(tmpsize);
+<<<<<<< HEAD
 		error = xfs_bwrite(bp);
 		xfs_buf_relse(bp);
 		if (error)
 			goto error0;
 
+=======
+		error = xfs_bwrite(mp, bp);
+		if (error) {
+			goto error0;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * AG inode header block
 		 */
 		bp = xfs_buf_get(mp->m_ddev_targp,
 				 XFS_AG_DADDR(mp, agno, XFS_AGI_DADDR(mp)),
 				 XFS_FSS_TO_BB(mp, 1), XBF_LOCK | XBF_MAPPED);
+<<<<<<< HEAD
 		if (!bp) {
 			error = ENOMEM;
 			goto error0;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		agi = XFS_BUF_TO_AGI(bp);
 		memset(agi, 0, mp->m_sb.sb_sectsize);
 		agi->agi_magicnum = cpu_to_be32(XFS_AGI_MAGIC);
@@ -249,11 +262,18 @@ xfs_growfs_data_private(
 		agi->agi_dirino = cpu_to_be32(NULLAGINO);
 		for (bucket = 0; bucket < XFS_AGI_UNLINKED_BUCKETS; bucket++)
 			agi->agi_unlinked[bucket] = cpu_to_be32(NULLAGINO);
+<<<<<<< HEAD
 		error = xfs_bwrite(bp);
 		xfs_buf_relse(bp);
 		if (error)
 			goto error0;
 
+=======
+		error = xfs_bwrite(mp, bp);
+		if (error) {
+			goto error0;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * BNO btree root block
 		 */
@@ -261,10 +281,13 @@ xfs_growfs_data_private(
 				 XFS_AGB_TO_DADDR(mp, agno, XFS_BNO_BLOCK(mp)),
 				 BTOBB(mp->m_sb.sb_blocksize),
 				 XBF_LOCK | XBF_MAPPED);
+<<<<<<< HEAD
 		if (!bp) {
 			error = ENOMEM;
 			goto error0;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		block = XFS_BUF_TO_BLOCK(bp);
 		memset(block, 0, mp->m_sb.sb_blocksize);
 		block->bb_magic = cpu_to_be32(XFS_ABTB_MAGIC);
@@ -276,11 +299,18 @@ xfs_growfs_data_private(
 		arec->ar_startblock = cpu_to_be32(XFS_PREALLOC_BLOCKS(mp));
 		arec->ar_blockcount = cpu_to_be32(
 			agsize - be32_to_cpu(arec->ar_startblock));
+<<<<<<< HEAD
 		error = xfs_bwrite(bp);
 		xfs_buf_relse(bp);
 		if (error)
 			goto error0;
 
+=======
+		error = xfs_bwrite(mp, bp);
+		if (error) {
+			goto error0;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * CNT btree root block
 		 */
@@ -288,10 +318,13 @@ xfs_growfs_data_private(
 				 XFS_AGB_TO_DADDR(mp, agno, XFS_CNT_BLOCK(mp)),
 				 BTOBB(mp->m_sb.sb_blocksize),
 				 XBF_LOCK | XBF_MAPPED);
+<<<<<<< HEAD
 		if (!bp) {
 			error = ENOMEM;
 			goto error0;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		block = XFS_BUF_TO_BLOCK(bp);
 		memset(block, 0, mp->m_sb.sb_blocksize);
 		block->bb_magic = cpu_to_be32(XFS_ABTC_MAGIC);
@@ -304,11 +337,18 @@ xfs_growfs_data_private(
 		arec->ar_blockcount = cpu_to_be32(
 			agsize - be32_to_cpu(arec->ar_startblock));
 		nfree += be32_to_cpu(arec->ar_blockcount);
+<<<<<<< HEAD
 		error = xfs_bwrite(bp);
 		xfs_buf_relse(bp);
 		if (error)
 			goto error0;
 
+=======
+		error = xfs_bwrite(mp, bp);
+		if (error) {
+			goto error0;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * INO btree root block
 		 */
@@ -316,10 +356,13 @@ xfs_growfs_data_private(
 				 XFS_AGB_TO_DADDR(mp, agno, XFS_IBT_BLOCK(mp)),
 				 BTOBB(mp->m_sb.sb_blocksize),
 				 XBF_LOCK | XBF_MAPPED);
+<<<<<<< HEAD
 		if (!bp) {
 			error = ENOMEM;
 			goto error0;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		block = XFS_BUF_TO_BLOCK(bp);
 		memset(block, 0, mp->m_sb.sb_blocksize);
 		block->bb_magic = cpu_to_be32(XFS_IBT_MAGIC);
@@ -327,10 +370,17 @@ xfs_growfs_data_private(
 		block->bb_numrecs = 0;
 		block->bb_u.s.bb_leftsib = cpu_to_be32(NULLAGBLOCK);
 		block->bb_u.s.bb_rightsib = cpu_to_be32(NULLAGBLOCK);
+<<<<<<< HEAD
 		error = xfs_bwrite(bp);
 		xfs_buf_relse(bp);
 		if (error)
 			goto error0;
+=======
+		error = xfs_bwrite(mp, bp);
+		if (error) {
+			goto error0;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	xfs_trans_agblocks_delta(tp, nfree);
 	/*
@@ -420,9 +470,15 @@ xfs_growfs_data_private(
 		 * just issue a warning and continue.  The real work is
 		 * already done and committed.
 		 */
+<<<<<<< HEAD
 		error = xfs_bwrite(bp);
 		xfs_buf_relse(bp);
 		if (error) {
+=======
+		if (!(error = xfs_bwrite(mp, bp))) {
+			continue;
+		} else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			xfs_warn(mp,
 		"write error %d updating secondary superblock for ag %d",
 				error, agno);

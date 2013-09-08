@@ -41,18 +41,52 @@
 #define AGP_TYPE 1
 
 
+<<<<<<< HEAD
 struct sis_memblock {
 	struct drm_mm_node mm_node;
 	struct sis_memreq req;
 	struct list_head owner_list;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_FB_SIS) || defined(CONFIG_FB_SIS_MODULE)
 /* fb management via fb device */
 
 #define SIS_MM_ALIGN_SHIFT 0
 #define SIS_MM_ALIGN_MASK 0
 
+<<<<<<< HEAD
+=======
+static void *sis_sman_mm_allocate(void *private, unsigned long size,
+				  unsigned alignment)
+{
+	struct sis_memreq req;
+
+	req.size = size;
+	sis_malloc(&req);
+	if (req.size == 0)
+		return NULL;
+	else
+		return (void *)(unsigned long)~req.offset;
+}
+
+static void sis_sman_mm_free(void *private, void *ref)
+{
+	sis_free(~((unsigned long)ref));
+}
+
+static void sis_sman_mm_destroy(void *private)
+{
+	;
+}
+
+static unsigned long sis_sman_mm_offset(void *private, void *ref)
+{
+	return ~((unsigned long)ref);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else /* CONFIG_FB_SIS[_MODULE] */
 
 #define SIS_MM_ALIGN_SHIFT 4
@@ -64,11 +98,38 @@ static int sis_fb_init(struct drm_device *dev, void *data, struct drm_file *file
 {
 	drm_sis_private_t *dev_priv = dev->dev_private;
 	drm_sis_fb_t *fb = data;
+<<<<<<< HEAD
 
 	mutex_lock(&dev->struct_mutex);
 	/* Unconditionally init the drm_mm, even though we don't use it when the
 	 * fb sis driver is available - make cleanup easier. */
 	drm_mm_init(&dev_priv->vram_mm, 0, fb->size >> SIS_MM_ALIGN_SHIFT);
+=======
+	int ret;
+
+	mutex_lock(&dev->struct_mutex);
+#if defined(CONFIG_FB_SIS) || defined(CONFIG_FB_SIS_MODULE)
+	{
+		struct drm_sman_mm sman_mm;
+		sman_mm.private = (void *)0xFFFFFFFF;
+		sman_mm.allocate = sis_sman_mm_allocate;
+		sman_mm.free = sis_sman_mm_free;
+		sman_mm.destroy = sis_sman_mm_destroy;
+		sman_mm.offset = sis_sman_mm_offset;
+		ret =
+		    drm_sman_set_manager(&dev_priv->sman, VIDEO_TYPE, &sman_mm);
+	}
+#else
+	ret = drm_sman_set_range(&dev_priv->sman, VIDEO_TYPE, 0,
+				 fb->size >> SIS_MM_ALIGN_SHIFT);
+#endif
+
+	if (ret) {
+		DRM_ERROR("VRAM memory manager initialisation error\n");
+		mutex_unlock(&dev->struct_mutex);
+		return ret;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_priv->vram_initialized = 1;
 	dev_priv->vram_offset = fb->offset;
@@ -79,15 +140,24 @@ static int sis_fb_init(struct drm_device *dev, void *data, struct drm_file *file
 	return 0;
 }
 
+<<<<<<< HEAD
 static int sis_drm_alloc(struct drm_device *dev, struct drm_file *file,
+=======
+static int sis_drm_alloc(struct drm_device *dev, struct drm_file *file_priv,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 void *data, int pool)
 {
 	drm_sis_private_t *dev_priv = dev->dev_private;
 	drm_sis_mem_t *mem = data;
+<<<<<<< HEAD
 	int retval = 0, user_key;
 	struct sis_memblock *item;
 	struct sis_file_private *file_priv = file->driver_priv;
 	unsigned long offset;
+=======
+	int retval = 0;
+	struct drm_memblock_item *item;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&dev->struct_mutex);
 
@@ -99,6 +169,7 @@ static int sis_drm_alloc(struct drm_device *dev, struct drm_file *file,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	item = kzalloc(sizeof(*item), GFP_KERNEL);
 	if (!item) {
 		retval = -ENOMEM;
@@ -161,6 +232,27 @@ fail_alloc:
 	mem->size = 0;
 	mem->free = 0;
 
+=======
+	mem->size = (mem->size + SIS_MM_ALIGN_MASK) >> SIS_MM_ALIGN_SHIFT;
+	item = drm_sman_alloc(&dev_priv->sman, pool, mem->size, 0,
+			      (unsigned long)file_priv);
+
+	mutex_unlock(&dev->struct_mutex);
+	if (item) {
+		mem->offset = ((pool == 0) ?
+			      dev_priv->vram_offset : dev_priv->agp_offset) +
+		    (item->mm->
+		     offset(item->mm, item->mm_info) << SIS_MM_ALIGN_SHIFT);
+		mem->free = item->user_hash.key;
+		mem->size = mem->size << SIS_MM_ALIGN_SHIFT;
+	} else {
+		mem->offset = 0;
+		mem->size = 0;
+		mem->free = 0;
+		retval = -ENOMEM;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DRM_DEBUG("alloc %d, size = %d, offset = %d\n", pool, mem->size,
 		  mem->offset);
 
@@ -171,6 +263,7 @@ static int sis_drm_free(struct drm_device *dev, void *data, struct drm_file *fil
 {
 	drm_sis_private_t *dev_priv = dev->dev_private;
 	drm_sis_mem_t *mem = data;
+<<<<<<< HEAD
 	struct sis_memblock *obj;
 
 	mutex_lock(&dev->struct_mutex);
@@ -193,6 +286,16 @@ static int sis_drm_free(struct drm_device *dev, void *data, struct drm_file *fil
 	DRM_DEBUG("free = 0x%lx\n", mem->free);
 
 	return 0;
+=======
+	int ret;
+
+	mutex_lock(&dev->struct_mutex);
+	ret = drm_sman_free_key(&dev_priv->sman, mem->free);
+	mutex_unlock(&dev->struct_mutex);
+	DRM_DEBUG("free = 0x%lx\n", mem->free);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int sis_fb_alloc(struct drm_device *dev, void *data,
@@ -206,10 +309,25 @@ static int sis_ioctl_agp_init(struct drm_device *dev, void *data,
 {
 	drm_sis_private_t *dev_priv = dev->dev_private;
 	drm_sis_agp_t *agp = data;
+<<<<<<< HEAD
 	dev_priv = dev->dev_private;
 
 	mutex_lock(&dev->struct_mutex);
 	drm_mm_init(&dev_priv->agp_mm, 0, agp->size >> SIS_MM_ALIGN_SHIFT);
+=======
+	int ret;
+	dev_priv = dev->dev_private;
+
+	mutex_lock(&dev->struct_mutex);
+	ret = drm_sman_set_range(&dev_priv->sman, AGP_TYPE, 0,
+				 agp->size >> SIS_MM_ALIGN_SHIFT);
+
+	if (ret) {
+		DRM_ERROR("AGP memory manager initialisation error\n");
+		mutex_unlock(&dev->struct_mutex);
+		return ret;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_priv->agp_initialized = 1;
 	dev_priv->agp_offset = agp->offset;
@@ -303,6 +421,7 @@ void sis_lastclose(struct drm_device *dev)
 		return;
 
 	mutex_lock(&dev->struct_mutex);
+<<<<<<< HEAD
 	if (dev_priv->vram_initialized) {
 		drm_mm_takedown(&dev_priv->vram_mm);
 		dev_priv->vram_initialized = 0;
@@ -311,11 +430,17 @@ void sis_lastclose(struct drm_device *dev)
 		drm_mm_takedown(&dev_priv->agp_mm);
 		dev_priv->agp_initialized = 0;
 	}
+=======
+	drm_sman_cleanup(&dev_priv->sman);
+	dev_priv->vram_initialized = 0;
+	dev_priv->agp_initialized = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_priv->mmio = NULL;
 	mutex_unlock(&dev->struct_mutex);
 }
 
 void sis_reclaim_buffers_locked(struct drm_device *dev,
+<<<<<<< HEAD
 				struct drm_file *file)
 {
 	struct sis_file_private *file_priv = file->driver_priv;
@@ -323,6 +448,14 @@ void sis_reclaim_buffers_locked(struct drm_device *dev,
 
 	mutex_lock(&dev->struct_mutex);
 	if (list_empty(&file_priv->obj_list)) {
+=======
+				struct drm_file *file_priv)
+{
+	drm_sis_private_t *dev_priv = dev->dev_private;
+
+	mutex_lock(&dev->struct_mutex);
+	if (drm_sman_owner_clean(&dev_priv->sman, (unsigned long)file_priv)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mutex_unlock(&dev->struct_mutex);
 		return;
 	}
@@ -330,6 +463,7 @@ void sis_reclaim_buffers_locked(struct drm_device *dev,
 	if (dev->driver->dma_quiescent)
 		dev->driver->dma_quiescent(dev);
 
+<<<<<<< HEAD
 
 	list_for_each_entry_safe(entry, next, &file_priv->obj_list,
 				 owner_list) {
@@ -342,6 +476,9 @@ void sis_reclaim_buffers_locked(struct drm_device *dev,
 #endif
 		kfree(entry);
 	}
+=======
+	drm_sman_owner_cleanup(&dev_priv->sman, (unsigned long)file_priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&dev->struct_mutex);
 	return;
 }

@@ -6,9 +6,15 @@
  * GPLv2
  */
 
+<<<<<<< HEAD
 #include <asm/iommu.h>
 #include <linux/irq.h>
 #include <linux/sched.h>
+=======
+#include <asm/system.h>
+#include <asm/iommu.h>
+#include <linux/irq.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/interrupt.h>
 
 void do_after_copyback(void)

@@ -81,11 +81,15 @@ enum {
 	IB_USER_VERBS_CMD_MODIFY_SRQ,
 	IB_USER_VERBS_CMD_QUERY_SRQ,
 	IB_USER_VERBS_CMD_DESTROY_SRQ,
+<<<<<<< HEAD
 	IB_USER_VERBS_CMD_POST_SRQ_RECV,
 	IB_USER_VERBS_CMD_OPEN_XRCD,
 	IB_USER_VERBS_CMD_CLOSE_XRCD,
 	IB_USER_VERBS_CMD_CREATE_XSRQ,
 	IB_USER_VERBS_CMD_OPEN_QP
+=======
+	IB_USER_VERBS_CMD_POST_SRQ_RECV
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -226,6 +230,7 @@ struct ib_uverbs_dealloc_pd {
 	__u32 pd_handle;
 };
 
+<<<<<<< HEAD
 struct ib_uverbs_open_xrcd {
 	__u64 response;
 	__u32 fd;
@@ -241,6 +246,8 @@ struct ib_uverbs_close_xrcd {
 	__u32 xrcd_handle;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ib_uverbs_reg_mr {
 	__u64 response;
 	__u64 start;
@@ -423,6 +430,7 @@ struct ib_uverbs_create_qp {
 	__u64 driver_data[0];
 };
 
+<<<<<<< HEAD
 struct ib_uverbs_open_qp {
 	__u64 response;
 	__u64 user_handle;
@@ -434,6 +442,8 @@ struct ib_uverbs_open_qp {
 };
 
 /* also used for open response */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ib_uverbs_create_qp_resp {
 	__u32 qp_handle;
 	__u32 qpn;
@@ -678,6 +688,7 @@ struct ib_uverbs_create_srq {
 	__u64 driver_data[0];
 };
 
+<<<<<<< HEAD
 struct ib_uverbs_create_xsrq {
 	__u64 response;
 	__u64 user_handle;
@@ -692,11 +703,17 @@ struct ib_uverbs_create_xsrq {
 	__u64 driver_data[0];
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ib_uverbs_create_srq_resp {
 	__u32 srq_handle;
 	__u32 max_wr;
 	__u32 max_sge;
+<<<<<<< HEAD
 	__u32 srqn;
+=======
+	__u32 reserved;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct ib_uverbs_modify_srq {

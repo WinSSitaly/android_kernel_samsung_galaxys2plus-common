@@ -35,7 +35,10 @@
 #include <asm/uaccess.h>
 #include <asm/param.h>
 #include <asm/page.h>
+<<<<<<< HEAD
 #include <asm/exec.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int load_elf_binary(struct linux_binprm *bprm, struct pt_regs *regs);
 static int load_elf_library(struct file *);
@@ -82,7 +85,13 @@ static int set_brk(unsigned long start, unsigned long end)
 	end = ELF_PAGEALIGN(end);
 	if (end > start) {
 		unsigned long addr;
+<<<<<<< HEAD
 		addr = vm_brk(start, end - start);
+=======
+		down_write(&current->mm->mmap_sem);
+		addr = do_brk(start, end - start);
+		up_write(&current->mm->mmap_sem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (BAD_ADDR(addr))
 			return addr;
 	}
@@ -512,7 +521,13 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
 		elf_bss = ELF_PAGESTART(elf_bss + ELF_MIN_ALIGN - 1);
 
 		/* Map the last of the bss segment */
+<<<<<<< HEAD
 		error = vm_brk(elf_bss, last_bss - elf_bss);
+=======
+		down_write(&current->mm->mmap_sem);
+		error = do_brk(elf_bss, last_bss - elf_bss);
+		up_write(&current->mm->mmap_sem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (BAD_ADDR(error))
 			goto out_close;
 	}
@@ -665,7 +680,12 @@ static int load_elf_binary(struct linux_binprm *bprm, struct pt_regs *regs)
 			 * mm->dumpable = 0 regardless of the interpreter's
 			 * permissions.
 			 */
+<<<<<<< HEAD
 			would_dump(bprm, interpreter);
+=======
+			if (file_permission(interpreter, MAY_READ) < 0)
+				bprm->interp_flags |= BINPRM_FLAGS_ENFORCE_NONDUMP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			retval = kernel_read(interpreter, 0, bprm->buf,
 					     BINPRM_BUF_SIZE);
@@ -709,6 +729,10 @@ static int load_elf_binary(struct linux_binprm *bprm, struct pt_regs *regs)
 		goto out_free_dentry;
 
 	/* OK, This is the point of no return */
+<<<<<<< HEAD
+=======
+	current->flags &= ~PF_FORKNOEXEC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	current->mm->def_flags = def_flags;
 
 	/* Do this immediately, since STACK_TOP as used in setup_arg_pages
@@ -790,7 +814,11 @@ static int load_elf_binary(struct linux_binprm *bprm, struct pt_regs *regs)
 			 * default mmap base, as well as whatever program they
 			 * might try to exec.  This is because the brk will
 			 * follow the loader, and is not movable.  */
+<<<<<<< HEAD
 #ifdef CONFIG_ARCH_BINFMT_ELF_RANDOMIZE_PIE
+=======
+#if defined(CONFIG_X86) || defined(CONFIG_ARM)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Memory randomization might have been switched off
 			 * in runtime via sysctl.
 			 * If that is the case, retain the original non-zero
@@ -930,6 +958,10 @@ static int load_elf_binary(struct linux_binprm *bprm, struct pt_regs *regs)
 #endif /* ARCH_HAS_SETUP_ADDITIONAL_PAGES */
 
 	install_exec_creds(bprm);
+<<<<<<< HEAD
+=======
+	current->flags &= ~PF_FORKNOEXEC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	retval = create_elf_tables(bprm, &loc->elf_ex,
 			  load_addr, interp_load_addr);
 	if (retval < 0) {
@@ -958,8 +990,15 @@ static int load_elf_binary(struct linux_binprm *bprm, struct pt_regs *regs)
 		   and some applications "depend" upon this behavior.
 		   Since we do not have the power to recompile these, we
 		   emulate the SVr4 behavior. Sigh. */
+<<<<<<< HEAD
 		error = vm_mmap(NULL, 0, PAGE_SIZE, PROT_READ | PROT_EXEC,
 				MAP_FIXED | MAP_PRIVATE, 0);
+=======
+		down_write(&current->mm->mmap_sem);
+		error = do_mmap(NULL, 0, PAGE_SIZE, PROT_READ | PROT_EXEC,
+				MAP_FIXED | MAP_PRIVATE, 0);
+		up_write(&current->mm->mmap_sem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 #ifdef ELF_PLAT_INIT
@@ -1044,7 +1083,12 @@ static int load_elf_library(struct file *file)
 		eppnt++;
 
 	/* Now use mmap to map the library into memory. */
+<<<<<<< HEAD
 	error = vm_mmap(file,
+=======
+	down_write(&current->mm->mmap_sem);
+	error = do_mmap(file,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ELF_PAGESTART(eppnt->p_vaddr),
 			(eppnt->p_filesz +
 			 ELF_PAGEOFFSET(eppnt->p_vaddr)),
@@ -1052,6 +1096,10 @@ static int load_elf_library(struct file *file)
 			MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE,
 			(eppnt->p_offset -
 			 ELF_PAGEOFFSET(eppnt->p_vaddr)));
+<<<<<<< HEAD
+=======
+	up_write(&current->mm->mmap_sem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error != ELF_PAGESTART(eppnt->p_vaddr))
 		goto out_free_ph;
 
@@ -1064,8 +1112,16 @@ static int load_elf_library(struct file *file)
 	len = ELF_PAGESTART(eppnt->p_filesz + eppnt->p_vaddr +
 			    ELF_MIN_ALIGN - 1);
 	bss = eppnt->p_memsz + eppnt->p_vaddr;
+<<<<<<< HEAD
 	if (bss > len)
 		vm_brk(len, bss - len);
+=======
+	if (bss > len) {
+		down_write(&current->mm->mmap_sem);
+		do_brk(len, bss - len);
+		up_write(&current->mm->mmap_sem);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	error = 0;
 
 out_free_ph:
@@ -1083,6 +1139,7 @@ out:
  */
 
 /*
+<<<<<<< HEAD
  * The purpose of always_dump_vma() is to make sure that special kernel mappings
  * that are useful for post-mortem analysis are included in every core dump.
  * In that way we ensure that the core dump is fully interpretable later
@@ -1106,6 +1163,8 @@ static bool always_dump_vma(struct vm_area_struct *vma)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Decide what to dump of a segment, part, all or none.
  */
 static unsigned long vma_dump_size(struct vm_area_struct *vma,
@@ -1113,6 +1172,7 @@ static unsigned long vma_dump_size(struct vm_area_struct *vma,
 {
 #define FILTER(type)	(mm_flags & (1UL << MMF_DUMP_##type))
 
+<<<<<<< HEAD
 	/* always dump the vdso and vsyscall sections */
 	if (always_dump_vma(vma))
 		goto whole;
@@ -1120,6 +1180,12 @@ static unsigned long vma_dump_size(struct vm_area_struct *vma,
 	if (vma->vm_flags & VM_NODUMP)
 		return 0;
 
+=======
+	/* The vma can be set up to tell us the answer directly.  */
+	if (vma->vm_flags & VM_ALWAYSDUMP)
+		goto whole;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Hugetlb memory check */
 	if (vma->vm_flags & VM_HUGETLB) {
 		if ((vma->vm_flags & VM_SHARED) && FILTER(HUGETLB_SHARED))
@@ -1404,6 +1470,7 @@ static void do_thread_regset_writeback(struct task_struct *task,
 		regset->writeback(task, regset, 1);
 }
 
+<<<<<<< HEAD
 #ifndef PR_REG_SIZE
 #define PR_REG_SIZE(S) sizeof(S)
 #endif
@@ -1420,6 +1487,8 @@ static void do_thread_regset_writeback(struct task_struct *task,
 #define SET_PR_FPVALID(S, V) ((S)->pr_fpvalid = (V))
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int fill_thread_core_info(struct elf_thread_core_info *t,
 				 const struct user_regset_view *view,
 				 long signr, size_t *total)
@@ -1434,11 +1503,19 @@ static int fill_thread_core_info(struct elf_thread_core_info *t,
 	 */
 	fill_prstatus(&t->prstatus, t->task, signr);
 	(void) view->regsets[0].get(t->task, &view->regsets[0],
+<<<<<<< HEAD
 				    0, PR_REG_SIZE(t->prstatus.pr_reg),
 				    PR_REG_PTR(&t->prstatus), NULL);
 
 	fill_note(&t->notes[0], "CORE", NT_PRSTATUS,
 		  PRSTATUS_SIZE(t->prstatus), &t->prstatus);
+=======
+				    0, sizeof(t->prstatus.pr_reg),
+				    &t->prstatus.pr_reg, NULL);
+
+	fill_note(&t->notes[0], "CORE", NT_PRSTATUS,
+		  sizeof(t->prstatus), &t->prstatus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*total += notesize(&t->notes[0]);
 
 	do_thread_regset_writeback(t->task, &view->regsets[0]);
@@ -1468,7 +1545,11 @@ static int fill_thread_core_info(struct elf_thread_core_info *t,
 						  regset->core_note_type,
 						  size, data);
 				else {
+<<<<<<< HEAD
 					SET_PR_FPVALID(&t->prstatus, 1);
+=======
+					t->prstatus.pr_fpvalid = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					fill_note(&t->notes[i], "CORE",
 						  NT_PRFPREG, size, data);
 				}
@@ -1698,6 +1779,7 @@ static int elf_note_info_init(struct elf_note_info *info)
 		return 0;
 	info->psinfo = kmalloc(sizeof(*info->psinfo), GFP_KERNEL);
 	if (!info->psinfo)
+<<<<<<< HEAD
 		return 0;
 	info->prstatus = kmalloc(sizeof(*info->prstatus), GFP_KERNEL);
 	if (!info->prstatus)
@@ -1711,6 +1793,32 @@ static int elf_note_info_init(struct elf_note_info *info)
 		return 0;
 #endif
 	return 1;
+=======
+		goto notes_free;
+	info->prstatus = kmalloc(sizeof(*info->prstatus), GFP_KERNEL);
+	if (!info->prstatus)
+		goto psinfo_free;
+	info->fpu = kmalloc(sizeof(*info->fpu), GFP_KERNEL);
+	if (!info->fpu)
+		goto prstatus_free;
+#ifdef ELF_CORE_COPY_XFPREGS
+	info->xfpu = kmalloc(sizeof(*info->xfpu), GFP_KERNEL);
+	if (!info->xfpu)
+		goto fpu_free;
+#endif
+	return 1;
+#ifdef ELF_CORE_COPY_XFPREGS
+ fpu_free:
+	kfree(info->fpu);
+#endif
+ prstatus_free:
+	kfree(info->prstatus);
+ psinfo_free:
+	kfree(info->psinfo);
+ notes_free:
+	kfree(info->notes);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int fill_note_info(struct elfhdr *elf, int phdrs,
@@ -2096,8 +2204,12 @@ out:
 
 static int __init init_elf_binfmt(void)
 {
+<<<<<<< HEAD
 	register_binfmt(&elf_format);
 	return 0;
+=======
+	return register_binfmt(&elf_format);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit exit_elf_binfmt(void)

@@ -1,6 +1,10 @@
 config PPC64
 	bool "64-bit kernel"
 	default n
+<<<<<<< HEAD
+=======
+	select PPC_HAVE_PMU_SUPPORT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  This option selects whether a 32-bit or a 64-bit kernel
 	  will be built.
@@ -68,8 +72,11 @@ choice
 config PPC_BOOK3S_64
 	bool "Server processors"
 	select PPC_FPU
+<<<<<<< HEAD
 	select PPC_HAVE_PMU_SUPPORT
 	select SYS_SUPPORTS_HUGETLBFS
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config PPC_BOOK3E_64
 	bool "Embedded processors"
@@ -181,7 +188,10 @@ config PPC_FSL_BOOK3E
 	bool
 	select FSL_EMB_PERFMON
 	select PPC_SMP_MUXED_IPI
+<<<<<<< HEAD
 	select SYS_SUPPORTS_HUGETLBFS if PHYS_64BIT || PPC64
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default y if FSL_BOOKE
 
 config PTE_64BIT
@@ -236,7 +246,11 @@ config VSX
 
 config PPC_ICSWX
 	bool "Support for PowerPC icswx coprocessor instruction"
+<<<<<<< HEAD
 	depends on POWER4 || PPC_A2
+=======
+	depends on POWER4
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default n
 	---help---
 
@@ -252,6 +266,7 @@ config PPC_ICSWX
 
 	  If in doubt, say N here.
 
+<<<<<<< HEAD
 config PPC_ICSWX_PID
 	bool "icswx requires direct PID management"
 	depends on PPC_ICSWX && POWER4
@@ -271,6 +286,8 @@ config PPC_ICSWX_USE_SIGILL
 
 	  If in doubt, say N here.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config SPE
 	bool "SPE Support"
 	depends on E200 || (E500 && !PPC_E500MC)
@@ -303,13 +320,28 @@ config PPC_MMU_NOHASH
 	def_bool y
 	depends on !PPC_STD_MMU
 
+<<<<<<< HEAD
+=======
+config PPC_MMU_NOHASH_32
+	def_bool y
+	depends on PPC_MMU_NOHASH && PPC32
+
+config PPC_MMU_NOHASH_64
+	def_bool y
+	depends on PPC_MMU_NOHASH && PPC64
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config PPC_BOOK3E_MMU
 	def_bool y
 	depends on FSL_BOOKE || PPC_BOOK3E
 
 config PPC_MM_SLICES
 	bool
+<<<<<<< HEAD
 	default y if (!PPC_FSL_BOOK3E && PPC64 && HUGETLB_PAGE) || (PPC_STD_MMU_64 && PPC_64K_PAGES)
+=======
+	default y if HUGETLB_PAGE || (PPC_STD_MMU_64 && PPC_64K_PAGES)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default n
 
 config VIRT_CPU_ACCOUNTING

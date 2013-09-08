@@ -6,6 +6,7 @@
 
 OBJS		=
 
+<<<<<<< HEAD
 # Ensure that MMCIF loader code appears early in the image
 # to minimise that number of bocks that have to be read in
 # order to load it.
@@ -19,6 +20,15 @@ endif
 ifeq ($(CONFIG_ZBOOT_ROM_SH_MOBILE_SDHI),y)
 OBJS		+= sdhi-shmobile.o
 OBJS		+= sdhi-sh7372.o
+=======
+# Ensure that mmcif loader code appears early in the image
+# to minimise that number of bocks that have to be read in
+# order to load it.
+ifeq ($(CONFIG_ZBOOT_ROM_MMCIF),y)
+ifeq ($(CONFIG_ARCH_SH7372),y)
+OBJS		+= mmcif-sh7372.o
+endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endif
 
 AFLAGS_head.o += -DTEXT_OFFSET=$(TEXT_OFFSET)
@@ -26,10 +36,13 @@ HEAD	= head.o
 OBJS	+= misc.o decompress.o
 FONTC	= $(srctree)/drivers/video/console/font_acorn_8x8.c
 
+<<<<<<< HEAD
 # string library code (-Os is enforced to keep it much smaller)
 OBJS		+= string.o
 CFLAGS_string.o	:= -Os
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #
 # Architecture dependencies
 #
@@ -92,6 +105,7 @@ SEDFLAGS	= s/TEXT_START/$(ZTEXTADDR)/;s/BSS_START/$(ZBSSADDR)/
 suffix_$(CONFIG_KERNEL_GZIP) = gzip
 suffix_$(CONFIG_KERNEL_LZO)  = lzo
 suffix_$(CONFIG_KERNEL_LZMA) = lzma
+<<<<<<< HEAD
 suffix_$(CONFIG_KERNEL_XZ)   = xzkern
 
 # Borrowed libfdt files for the ATAG compatibility mode
@@ -119,12 +133,22 @@ targets       := vmlinux vmlinux.lds \
 # Make sure files are removed during clean
 extra-y       += piggy.gzip piggy.lzo piggy.lzma piggy.xzkern \
 		 lib1funcs.S ashldi3.S $(libfdt) $(libfdt_hdrs)
+=======
+
+targets       := vmlinux vmlinux.lds \
+		 piggy.$(suffix_y) piggy.$(suffix_y).o \
+		 font.o font.c head.o misc.o $(OBJS)
+
+# Make sure files are removed during clean
+extra-y       += piggy.gzip piggy.lzo piggy.lzma lib1funcs.S
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 ifeq ($(CONFIG_FUNCTION_TRACER),y)
 ORIG_CFLAGS := $(KBUILD_CFLAGS)
 KBUILD_CFLAGS = $(subst -pg, , $(ORIG_CFLAGS))
 endif
 
+<<<<<<< HEAD
 ccflags-y := -fpic -fno-builtin -I$(obj)
 asflags-y := -Wa,-march=all
 
@@ -132,6 +156,11 @@ asflags-y := -Wa,-march=all
 KBSS_SZ = $(shell $(CROSS_COMPILE)size $(obj)/../../../../vmlinux | \
 		awk 'END{print $$3}')
 LDFLAGS_vmlinux = --defsym _kernel_bss_size=$(KBSS_SZ)
+=======
+ccflags-y := -fpic -fno-builtin
+asflags-y := -Wa,-march=all
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # Supply ZRELADDR to the decompressor via a linker symbol.
 ifneq ($(CONFIG_AUTO_ZRELADDR),y)
 LDFLAGS_vmlinux += --defsym zreladdr=$(ZRELADDR)
@@ -149,6 +178,7 @@ LDFLAGS_vmlinux += -X
 LDFLAGS_vmlinux += -T
 
 # For __aeabi_uidivmod
+<<<<<<< HEAD
 lib1funcs = $(obj)/lib1funcs.o
 
 $(obj)/lib1funcs.S: $(srctree)/arch/$(SRCARCH)/lib/lib1funcs.S
@@ -158,6 +188,11 @@ $(obj)/lib1funcs.S: $(srctree)/arch/$(SRCARCH)/lib/lib1funcs.S
 ashldi3 = $(obj)/ashldi3.o
 
 $(obj)/ashldi3.S: $(srctree)/arch/$(SRCARCH)/lib/ashldi3.S
+=======
+lib1funcs = $(obj)/lib1funcs.o $(obj)/divdi3.o
+
+$(obj)/lib1funcs.S: $(srctree)/arch/$(SRCARCH)/lib/lib1funcs.S FORCE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	$(call cmd,shipped)
 
 # We need to prevent any GOTOFF relocs being used with references
@@ -173,6 +208,7 @@ bad_syms=$$($(CROSS_COMPILE)nm $@ | sed -n 's/^.\{8\} [bc] \(.*\)/\1/p') && \
   ( echo "following symbols must have non local/private scope:" >&2; \
     echo "$$bad_syms" >&2; rm -f $@; false )
 
+<<<<<<< HEAD
 check_for_multiple_zreladdr = \
 if [ $(words $(ZRELADDR)) -gt 1 -a "$(CONFIG_AUTO_ZRELADDR)" = "" ]; then \
 	echo 'multiple zreladdrs: $(ZRELADDR)'; \
@@ -183,6 +219,16 @@ fi
 $(obj)/vmlinux: $(obj)/vmlinux.lds $(obj)/$(HEAD) $(obj)/piggy.$(suffix_y).o \
 		$(addprefix $(obj)/, $(OBJS)) $(lib1funcs) $(ashldi3) FORCE
 	@$(check_for_multiple_zreladdr)
+=======
+$(obj)/longlong.h: $(srctree)/arch/$(SRCARCH)/lib/longlong.h FORCE
+	$(call cmd,shipped)
+
+$(obj)/divdi3.c: $(srctree)/arch/$(SRCARCH)/lib/divdi3.c $(obj)/longlong.h FORCE
+	$(call cmd,shipped)
+
+$(obj)/vmlinux: $(obj)/vmlinux.lds $(obj)/$(HEAD) $(obj)/piggy.$(suffix_y).o \
+	 	$(addprefix $(obj)/, $(OBJS)) $(lib1funcs) FORCE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	$(call if_changed,ld)
 	@$(check_for_bad_syms)
 

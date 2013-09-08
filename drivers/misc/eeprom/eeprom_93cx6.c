@@ -63,7 +63,10 @@ static void eeprom_93cx6_startup(struct eeprom_93cx6 *eeprom)
 	eeprom->reg_data_out = 0;
 	eeprom->reg_data_clock = 0;
 	eeprom->reg_chip_select = 1;
+<<<<<<< HEAD
 	eeprom->drive_data = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	eeprom->register_write(eeprom);
 
 	/*
@@ -102,7 +105,10 @@ static void eeprom_93cx6_write_bits(struct eeprom_93cx6 *eeprom,
 	 */
 	eeprom->reg_data_in = 0;
 	eeprom->reg_data_out = 0;
+<<<<<<< HEAD
 	eeprom->drive_data = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Start writing all bits.
@@ -142,7 +148,10 @@ static void eeprom_93cx6_read_bits(struct eeprom_93cx6 *eeprom,
 	 */
 	eeprom->reg_data_in = 0;
 	eeprom->reg_data_out = 0;
+<<<<<<< HEAD
 	eeprom->drive_data = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Start reading all bits.
@@ -234,6 +243,7 @@ void eeprom_93cx6_multiread(struct eeprom_93cx6 *eeprom, const u8 word,
 }
 EXPORT_SYMBOL_GPL(eeprom_93cx6_multiread);
 
+<<<<<<< HEAD
 /**
  * eeprom_93cx6_wren - set the write enable state
  * @eeprom: Pointer to eeprom structure
@@ -319,3 +329,5 @@ void eeprom_93cx6_write(struct eeprom_93cx6 *eeprom, u8 addr, u16 data)
 	eeprom_93cx6_cleanup(eeprom);
 }
 EXPORT_SYMBOL_GPL(eeprom_93cx6_write);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

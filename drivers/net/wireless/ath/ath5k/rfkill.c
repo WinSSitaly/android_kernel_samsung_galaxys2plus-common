@@ -33,6 +33,7 @@
  * THE POSSIBILITY OF SUCH DAMAGES.
  */
 
+<<<<<<< HEAD
 #include "ath5k.h"
 
 
@@ -60,32 +61,80 @@ static inline void ath5k_rfkill_set_intr(struct ath5k_hw *ah, bool enable)
 	ath5k_hw_set_gpio_input(ah, ah->rf_kill.gpio);
 	curval = ath5k_hw_get_gpio(ah, ah->rf_kill.gpio);
 	ath5k_hw_set_gpio_intr(ah, ah->rf_kill.gpio, enable ?
+=======
+#include "base.h"
+
+
+static inline void ath5k_rfkill_disable(struct ath5k_softc *sc)
+{
+	ATH5K_DBG(sc, ATH5K_DEBUG_ANY, "rfkill disable (gpio:%d polarity:%d)\n",
+		sc->rf_kill.gpio, sc->rf_kill.polarity);
+	ath5k_hw_set_gpio_output(sc->ah, sc->rf_kill.gpio);
+	ath5k_hw_set_gpio(sc->ah, sc->rf_kill.gpio, !sc->rf_kill.polarity);
+}
+
+
+static inline void ath5k_rfkill_enable(struct ath5k_softc *sc)
+{
+	ATH5K_DBG(sc, ATH5K_DEBUG_ANY, "rfkill enable (gpio:%d polarity:%d)\n",
+		sc->rf_kill.gpio, sc->rf_kill.polarity);
+	ath5k_hw_set_gpio_output(sc->ah, sc->rf_kill.gpio);
+	ath5k_hw_set_gpio(sc->ah, sc->rf_kill.gpio, sc->rf_kill.polarity);
+}
+
+static inline void ath5k_rfkill_set_intr(struct ath5k_softc *sc, bool enable)
+{
+	struct ath5k_hw *ah = sc->ah;
+	u32 curval;
+
+	ath5k_hw_set_gpio_input(ah, sc->rf_kill.gpio);
+	curval = ath5k_hw_get_gpio(ah, sc->rf_kill.gpio);
+	ath5k_hw_set_gpio_intr(ah, sc->rf_kill.gpio, enable ?
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					!!curval : !curval);
 }
 
 static bool
+<<<<<<< HEAD
 ath5k_is_rfkill_set(struct ath5k_hw *ah)
 {
 	/* configuring GPIO for input for some reason disables rfkill */
 	/*ath5k_hw_set_gpio_input(ah, ah->rf_kill.gpio);*/
 	return ath5k_hw_get_gpio(ah, ah->rf_kill.gpio) ==
 							ah->rf_kill.polarity;
+=======
+ath5k_is_rfkill_set(struct ath5k_softc *sc)
+{
+	/* configuring GPIO for input for some reason disables rfkill */
+	/*ath5k_hw_set_gpio_input(sc->ah, sc->rf_kill.gpio);*/
+	return ath5k_hw_get_gpio(sc->ah, sc->rf_kill.gpio) ==
+							sc->rf_kill.polarity;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
 ath5k_tasklet_rfkill_toggle(unsigned long data)
 {
+<<<<<<< HEAD
 	struct ath5k_hw *ah = (void *)data;
 	bool blocked;
 
 	blocked = ath5k_is_rfkill_set(ah);
 	wiphy_rfkill_set_hw_state(ah->hw->wiphy, blocked);
+=======
+	struct ath5k_softc *sc = (void *)data;
+	bool blocked;
+
+	blocked = ath5k_is_rfkill_set(sc);
+	wiphy_rfkill_set_hw_state(sc->hw->wiphy, blocked);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
 void
 ath5k_rfkill_hw_start(struct ath5k_hw *ah)
 {
+<<<<<<< HEAD
 	/* read rfkill GPIO configuration from EEPROM header */
 	ah->rf_kill.gpio = ah->ah_capabilities.cap_eeprom.ee_rfkill_pin;
 	ah->rf_kill.polarity = ah->ah_capabilities.cap_eeprom.ee_rfkill_pol;
@@ -98,12 +147,29 @@ ath5k_rfkill_hw_start(struct ath5k_hw *ah)
 	/* enable interrupt for rfkill switch */
 	if (AR5K_EEPROM_HDR_RFKILL(ah->ah_capabilities.cap_eeprom.ee_header))
 		ath5k_rfkill_set_intr(ah, true);
+=======
+	struct ath5k_softc *sc = ah->ah_sc;
+
+	/* read rfkill GPIO configuration from EEPROM header */
+	sc->rf_kill.gpio = ah->ah_capabilities.cap_eeprom.ee_rfkill_pin;
+	sc->rf_kill.polarity = ah->ah_capabilities.cap_eeprom.ee_rfkill_pol;
+
+	tasklet_init(&sc->rf_kill.toggleq, ath5k_tasklet_rfkill_toggle,
+		(unsigned long)sc);
+
+	ath5k_rfkill_disable(sc);
+
+	/* enable interrupt for rfkill switch */
+	if (AR5K_EEPROM_HDR_RFKILL(ah->ah_capabilities.cap_eeprom.ee_header))
+		ath5k_rfkill_set_intr(sc, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
 void
 ath5k_rfkill_hw_stop(struct ath5k_hw *ah)
 {
+<<<<<<< HEAD
 	/* disable interrupt for rfkill switch */
 	if (AR5K_EEPROM_HDR_RFKILL(ah->ah_capabilities.cap_eeprom.ee_header))
 		ath5k_rfkill_set_intr(ah, false);
@@ -112,5 +178,17 @@ ath5k_rfkill_hw_stop(struct ath5k_hw *ah)
 
 	/* enable RFKILL when stopping HW so Wifi LED is turned off */
 	ath5k_rfkill_enable(ah);
+=======
+	struct ath5k_softc *sc = ah->ah_sc;
+
+	/* disable interrupt for rfkill switch */
+	if (AR5K_EEPROM_HDR_RFKILL(ah->ah_capabilities.cap_eeprom.ee_header))
+		ath5k_rfkill_set_intr(sc, false);
+
+	tasklet_kill(&sc->rf_kill.toggleq);
+
+	/* enable RFKILL when stopping HW so Wifi LED is turned off */
+	ath5k_rfkill_enable(sc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 

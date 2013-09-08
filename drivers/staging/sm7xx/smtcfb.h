@@ -38,7 +38,11 @@
 #define dac_reg	(0x3c8)
 #define dac_val	(0x3c9)
 
+<<<<<<< HEAD
 extern char __iomem *smtc_RegBaseAddress;
+=======
+extern char *smtc_RegBaseAddress;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define smtc_mmiowb(dat, reg)	writeb(dat, smtc_RegBaseAddress + reg)
 #define smtc_mmioww(dat, reg)	writew(dat, smtc_RegBaseAddress + reg)
 #define smtc_mmiowl(dat, reg)	writel(dat, smtc_RegBaseAddress + reg)

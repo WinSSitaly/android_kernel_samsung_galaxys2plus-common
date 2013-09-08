@@ -576,7 +576,11 @@ xpnet_init(void)
 	 * report an error if the data is not retrievable and the
 	 * packet will be dropped.
 	 */
+<<<<<<< HEAD
 	xpnet_device->features = NETIF_F_HW_CSUM;
+=======
+	xpnet_device->features = NETIF_F_NO_CSUM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	result = register_netdev(xpnet_device);
 	if (result != 0) {

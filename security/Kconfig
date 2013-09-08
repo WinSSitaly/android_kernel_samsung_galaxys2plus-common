@@ -38,9 +38,13 @@ config TRUSTED_KEYS
 
 config ENCRYPTED_KEYS
 	tristate "ENCRYPTED KEYS"
+<<<<<<< HEAD
 	depends on KEYS
 	select CRYPTO
 	select CRYPTO_HMAC
+=======
+	depends on KEYS && TRUSTED_KEYS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select CRYPTO_AES
 	select CRYPTO_CBC
 	select CRYPTO_SHA256
@@ -187,9 +191,14 @@ source security/selinux/Kconfig
 source security/smack/Kconfig
 source security/tomoyo/Kconfig
 source security/apparmor/Kconfig
+<<<<<<< HEAD
 source security/yama/Kconfig
 
 source security/integrity/Kconfig
+=======
+
+source security/integrity/ima/Kconfig
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 choice
 	prompt "Default security module"
@@ -197,7 +206,10 @@ choice
 	default DEFAULT_SECURITY_SMACK if SECURITY_SMACK
 	default DEFAULT_SECURITY_TOMOYO if SECURITY_TOMOYO
 	default DEFAULT_SECURITY_APPARMOR if SECURITY_APPARMOR
+<<<<<<< HEAD
 	default DEFAULT_SECURITY_YAMA if SECURITY_YAMA
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default DEFAULT_SECURITY_DAC
 
 	help
@@ -216,9 +228,12 @@ choice
 	config DEFAULT_SECURITY_APPARMOR
 		bool "AppArmor" if SECURITY_APPARMOR=y
 
+<<<<<<< HEAD
 	config DEFAULT_SECURITY_YAMA
 		bool "Yama" if SECURITY_YAMA=y
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	config DEFAULT_SECURITY_DAC
 		bool "Unix Discretionary Access Controls"
 
@@ -230,7 +245,10 @@ config DEFAULT_SECURITY
 	default "smack" if DEFAULT_SECURITY_SMACK
 	default "tomoyo" if DEFAULT_SECURITY_TOMOYO
 	default "apparmor" if DEFAULT_SECURITY_APPARMOR
+<<<<<<< HEAD
 	default "yama" if DEFAULT_SECURITY_YAMA
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default "" if DEFAULT_SECURITY_DAC
 
 endmenu

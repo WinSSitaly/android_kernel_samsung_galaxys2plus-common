@@ -23,12 +23,16 @@
  */
 
 #include <linux/firmware.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "drmP.h"
 
 #include "nouveau_drv.h"
 #include "nouveau_mm.h"
+<<<<<<< HEAD
 
 #include "nvc0_graph.h"
 #include "nvc0_grhub.fuc.h"
@@ -57,6 +61,9 @@ nvc0_graph_ctxctl_debug(struct drm_device *dev)
 	for (gpc = 0; gpc < gpcnr; gpc++)
 		nvc0_graph_ctxctl_debug_unit(dev, 0x502000 + (gpc * 0x8000));
 }
+=======
+#include "nvc0_graph.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int
 nvc0_graph_load_context(struct nouveau_channel *chan)
@@ -100,6 +107,7 @@ nvc0_graph_construct_context(struct nouveau_channel *chan)
 	if (!ctx)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	if (!nouveau_ctxfw) {
 		nv_wr32(dev, 0x409840, 0x80000000);
 		nv_wr32(dev, 0x409500, 0x80000000 | chan->ramin->vinst >> 12);
@@ -138,6 +146,26 @@ nvc0_graph_construct_context(struct nouveau_channel *chan)
 		ret = nvc0_graph_unload_context_to(dev, chan->ramin->vinst);
 		if (ret)
 			goto err;
+=======
+	nvc0_graph_load_context(chan);
+
+	nv_wo32(grch->grctx, 0x1c, 1);
+	nv_wo32(grch->grctx, 0x20, 0);
+	nv_wo32(grch->grctx, 0x28, 0);
+	nv_wo32(grch->grctx, 0x2c, 0);
+	dev_priv->engine.instmem.flush(dev);
+
+	ret = nvc0_grctx_generate(chan);
+	if (ret) {
+		kfree(ctx);
+		return ret;
+	}
+
+	ret = nvc0_graph_unload_context_to(dev, chan->ramin->vinst);
+	if (ret) {
+		kfree(ctx);
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	for (i = 0; i < priv->grctx_size; i += 4)
@@ -145,10 +173,13 @@ nvc0_graph_construct_context(struct nouveau_channel *chan)
 
 	priv->grctx_vals = ctx;
 	return 0;
+<<<<<<< HEAD
 
 err:
 	kfree(ctx);
 	return ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -157,52 +188,89 @@ nvc0_graph_create_context_mmio_list(struct nouveau_channel *chan)
 	struct nvc0_graph_priv *priv = nv_engine(chan->dev, NVOBJ_ENGINE_GR);
 	struct nvc0_graph_chan *grch = chan->engctx[NVOBJ_ENGINE_GR];
 	struct drm_device *dev = chan->dev;
+<<<<<<< HEAD
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	int i = 0, gpc, tp, ret;
 
 	ret = nouveau_gpuobj_new(dev, chan, 0x2000, 256, NVOBJ_FLAG_VM,
+=======
+	int i = 0, gpc, tp, ret;
+	u32 magic;
+
+	ret = nouveau_gpuobj_new(dev, NULL, 0x2000, 256, NVOBJ_FLAG_VM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 &grch->unk408004);
 	if (ret)
 		return ret;
 
+<<<<<<< HEAD
 	ret = nouveau_gpuobj_new(dev, chan, 0x8000, 256, NVOBJ_FLAG_VM,
+=======
+	ret = nouveau_gpuobj_new(dev, NULL, 0x8000, 256, NVOBJ_FLAG_VM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 &grch->unk40800c);
 	if (ret)
 		return ret;
 
+<<<<<<< HEAD
 	ret = nouveau_gpuobj_new(dev, chan, 384 * 1024, 4096,
+=======
+	ret = nouveau_gpuobj_new(dev, NULL, 384 * 1024, 4096,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 NVOBJ_FLAG_VM | NVOBJ_FLAG_VM_USER,
 				 &grch->unk418810);
 	if (ret)
 		return ret;
 
+<<<<<<< HEAD
 	ret = nouveau_gpuobj_new(dev, chan, 0x1000, 0, NVOBJ_FLAG_VM,
+=======
+	ret = nouveau_gpuobj_new(dev, NULL, 0x1000, 0, NVOBJ_FLAG_VM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 &grch->mmio);
 	if (ret)
 		return ret;
 
 
 	nv_wo32(grch->mmio, i++ * 4, 0x00408004);
+<<<<<<< HEAD
 	nv_wo32(grch->mmio, i++ * 4, grch->unk408004->linst >> 8);
+=======
+	nv_wo32(grch->mmio, i++ * 4, grch->unk408004->vinst >> 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nv_wo32(grch->mmio, i++ * 4, 0x00408008);
 	nv_wo32(grch->mmio, i++ * 4, 0x80000018);
 
 	nv_wo32(grch->mmio, i++ * 4, 0x0040800c);
+<<<<<<< HEAD
 	nv_wo32(grch->mmio, i++ * 4, grch->unk40800c->linst >> 8);
+=======
+	nv_wo32(grch->mmio, i++ * 4, grch->unk40800c->vinst >> 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nv_wo32(grch->mmio, i++ * 4, 0x00408010);
 	nv_wo32(grch->mmio, i++ * 4, 0x80000000);
 
 	nv_wo32(grch->mmio, i++ * 4, 0x00418810);
+<<<<<<< HEAD
 	nv_wo32(grch->mmio, i++ * 4, 0x80000000 | grch->unk418810->linst >> 12);
 	nv_wo32(grch->mmio, i++ * 4, 0x00419848);
 	nv_wo32(grch->mmio, i++ * 4, 0x10000000 | grch->unk418810->linst >> 12);
 
 	nv_wo32(grch->mmio, i++ * 4, 0x00419004);
 	nv_wo32(grch->mmio, i++ * 4, grch->unk40800c->linst >> 8);
+=======
+	nv_wo32(grch->mmio, i++ * 4, 0x80000000 | grch->unk418810->vinst >> 12);
+	nv_wo32(grch->mmio, i++ * 4, 0x00419848);
+	nv_wo32(grch->mmio, i++ * 4, 0x10000000 | grch->unk418810->vinst >> 12);
+
+	nv_wo32(grch->mmio, i++ * 4, 0x00419004);
+	nv_wo32(grch->mmio, i++ * 4, grch->unk40800c->vinst >> 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nv_wo32(grch->mmio, i++ * 4, 0x00419008);
 	nv_wo32(grch->mmio, i++ * 4, 0x00000000);
 
 	nv_wo32(grch->mmio, i++ * 4, 0x00418808);
+<<<<<<< HEAD
 	nv_wo32(grch->mmio, i++ * 4, grch->unk408004->linst >> 8);
 	nv_wo32(grch->mmio, i++ * 4, 0x0041880c);
 	nv_wo32(grch->mmio, i++ * 4, 0x80000018);
@@ -238,6 +306,20 @@ nvc0_graph_create_context_mmio_list(struct nouveau_channel *chan)
 				nv_wo32(grch->mmio, i++ * 4, magic);
 				magic += 0x0324;
 			}
+=======
+	nv_wo32(grch->mmio, i++ * 4, grch->unk408004->vinst >> 8);
+	nv_wo32(grch->mmio, i++ * 4, 0x0041880c);
+	nv_wo32(grch->mmio, i++ * 4, 0x80000018);
+
+	magic = 0x02180000;
+	nv_wo32(grch->mmio, i++ * 4, 0x00405830);
+	nv_wo32(grch->mmio, i++ * 4, magic);
+	for (gpc = 0; gpc < priv->gpc_nr; gpc++) {
+		for (tp = 0; tp < priv->tp_nr[gpc]; tp++, magic += 0x02fc) {
+			u32 reg = 0x504520 + (gpc * 0x8000) + (tp * 0x0800);
+			nv_wo32(grch->mmio, i++ * 4, reg);
+			nv_wo32(grch->mmio, i++ * 4, magic);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -261,7 +343,11 @@ nvc0_graph_context_new(struct nouveau_channel *chan, int engine)
 		return -ENOMEM;
 	chan->engctx[NVOBJ_ENGINE_GR] = grch;
 
+<<<<<<< HEAD
 	ret = nouveau_gpuobj_new(dev, chan, priv->grctx_size, 256,
+=======
+	ret = nouveau_gpuobj_new(dev, NULL, priv->grctx_size, 256,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 NVOBJ_FLAG_VM | NVOBJ_FLAG_ZERO_ALLOC,
 				 &grch->grctx);
 	if (ret)
@@ -272,8 +358,13 @@ nvc0_graph_context_new(struct nouveau_channel *chan, int engine)
 	if (ret)
 		goto error;
 
+<<<<<<< HEAD
 	nv_wo32(chan->ramin, 0x0210, lower_32_bits(grctx->linst) | 4);
 	nv_wo32(chan->ramin, 0x0214, upper_32_bits(grctx->linst));
+=======
+	nv_wo32(chan->ramin, 0x0210, lower_32_bits(grctx->vinst) | 4);
+	nv_wo32(chan->ramin, 0x0214, upper_32_bits(grctx->vinst));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pinstmem->flush(dev);
 
 	if (!priv->grctx_vals) {
@@ -285,6 +376,7 @@ nvc0_graph_context_new(struct nouveau_channel *chan, int engine)
 	for (i = 0; i < priv->grctx_size; i += 4)
 		nv_wo32(grctx, i, priv->grctx_vals[i / 4]);
 
+<<<<<<< HEAD
 	if (!nouveau_ctxfw) {
 		nv_wo32(grctx, 0x00, grch->mmio_nr);
 		nv_wo32(grctx, 0x04, grch->mmio->linst >> 8);
@@ -299,6 +391,17 @@ nvc0_graph_context_new(struct nouveau_channel *chan, int engine)
 		nv_wo32(grctx, 0x28, 0);
 		nv_wo32(grctx, 0x2c, 0);
 	}
+=======
+	nv_wo32(grctx, 0xf4, 0);
+	nv_wo32(grctx, 0xf8, 0);
+	nv_wo32(grctx, 0x10, grch->mmio_nr);
+	nv_wo32(grctx, 0x14, lower_32_bits(grch->mmio->vinst));
+	nv_wo32(grctx, 0x18, upper_32_bits(grch->mmio->vinst));
+	nv_wo32(grctx, 0x1c, 1);
+	nv_wo32(grctx, 0x20, 0);
+	nv_wo32(grctx, 0x28, 0);
+	nv_wo32(grctx, 0x2c, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pinstmem->flush(dev);
 	return 0;
 
@@ -328,8 +431,21 @@ nvc0_graph_object_new(struct nouveau_channel *chan, int engine,
 }
 
 static int
+<<<<<<< HEAD
 nvc0_graph_fini(struct drm_device *dev, int engine, bool suspend)
 {
+=======
+nvc0_graph_fini(struct drm_device *dev, int engine)
+{
+	return 0;
+}
+
+static int
+nvc0_graph_mthd_page_flip(struct nouveau_channel *chan,
+			  u32 class, u32 mthd, u32 data)
+{
+	nouveau_finish_page_flip(chan, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -368,13 +484,19 @@ static void
 nvc0_graph_init_gpc_0(struct drm_device *dev)
 {
 	struct nvc0_graph_priv *priv = nv_engine(dev, NVOBJ_ENGINE_GR);
+<<<<<<< HEAD
 	const u32 magicgpc918 = DIV_ROUND_UP(0x00800000, priv->tp_total);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 data[TP_MAX / 8];
 	u8  tpnr[GPC_MAX];
 	int i, gpc, tpc;
 
+<<<<<<< HEAD
 	nv_wr32(dev, TP_UNIT(0, 0, 0x5c), 1); /* affects TFB offset queries */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 *      TP      ROP UNKVAL(magic_not_rop_nr)
 	 * 450: 4/0/0/0 2        3
@@ -382,6 +504,16 @@ nvc0_graph_init_gpc_0(struct drm_device *dev)
 	 * 465: 3/4/4/0 4        7
 	 * 470: 3/3/4/4 5        5
 	 * 480: 3/4/4/4 6        6
+<<<<<<< HEAD
+=======
+	 *
+	 * magicgpc918
+	 * 450: 00200000 00000000001000000000000000000000
+	 * 460: 00124925 00000000000100100100100100100101
+	 * 465: 000ba2e9 00000000000010111010001011101001
+	 * 470: 00092493 00000000000010010010010010010011
+	 * 480: 00088889 00000000000010001000100010001001
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 
 	memset(data, 0x00, sizeof(data));
@@ -404,11 +536,19 @@ nvc0_graph_init_gpc_0(struct drm_device *dev)
 		nv_wr32(dev, GPC_UNIT(gpc, 0x0914), priv->magic_not_rop_nr << 8 |
 						  priv->tp_nr[gpc]);
 		nv_wr32(dev, GPC_UNIT(gpc, 0x0910), 0x00040000 | priv->tp_total);
+<<<<<<< HEAD
 		nv_wr32(dev, GPC_UNIT(gpc, 0x0918), magicgpc918);
 	}
 
 	nv_wr32(dev, GPC_BCAST(0x1bd4), magicgpc918);
 	nv_wr32(dev, GPC_BCAST(0x08ac), nv_rd32(dev, 0x100800));
+=======
+		nv_wr32(dev, GPC_UNIT(gpc, 0x0918), priv->magicgpc918);
+	}
+
+	nv_wr32(dev, GPC_BCAST(0x1bd4), priv->magicgpc918);
+	nv_wr32(dev, GPC_BCAST(0x08ac), priv->rop_nr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -487,6 +627,7 @@ nvc0_graph_init_fuc(struct drm_device *dev, u32 fuc_base,
 static int
 nvc0_graph_init_ctxctl(struct drm_device *dev)
 {
+<<<<<<< HEAD
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct nvc0_graph_priv *priv = nv_engine(dev, NVOBJ_ENGINE_GR);
 	u32 r000260;
@@ -532,6 +673,10 @@ nvc0_graph_init_ctxctl(struct drm_device *dev)
 		priv->grctx_size = nv_rd32(dev, 0x409804);
 		return 0;
 	}
+=======
+	struct nvc0_graph_priv *priv = nv_engine(dev, NVOBJ_ENGINE_GR);
+	u32 r000260;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* load fuc microcode */
 	r000260 = nv_mask(dev, 0x000260, 0x00000001, 0x00000000);
@@ -639,6 +784,7 @@ nvc0_graph_isr_chid(struct drm_device *dev, u64 inst)
 }
 
 static void
+<<<<<<< HEAD
 nvc0_graph_ctxctl_isr(struct drm_device *dev)
 {
 	u32 ustat = nv_rd32(dev, 0x409c18);
@@ -655,6 +801,8 @@ nvc0_graph_ctxctl_isr(struct drm_device *dev)
 }
 
 static void
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 nvc0_graph_isr(struct drm_device *dev)
 {
 	u64 inst = (u64)(nv_rd32(dev, 0x409b00) & 0x0fffffff) << 12;
@@ -705,7 +853,15 @@ nvc0_graph_isr(struct drm_device *dev)
 	}
 
 	if (stat & 0x00080000) {
+<<<<<<< HEAD
 		nvc0_graph_ctxctl_isr(dev);
+=======
+		u32 ustat = nv_rd32(dev, 0x409c18);
+
+		NV_INFO(dev, "PGRAPH: CTXCTRL ustat 0x%08x\n", ustat);
+
+		nv_wr32(dev, 0x409c20, ustat);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nv_wr32(dev, 0x400100, 0x00080000);
 		stat &= ~0x00080000;
 	}
@@ -718,6 +874,25 @@ nvc0_graph_isr(struct drm_device *dev)
 	nv_wr32(dev, 0x400500, 0x00010001);
 }
 
+<<<<<<< HEAD
+=======
+static void
+nvc0_runk140_isr(struct drm_device *dev)
+{
+	u32 units = nv_rd32(dev, 0x00017c) & 0x1f;
+
+	while (units) {
+		u32 unit = ffs(units) - 1;
+		u32 reg = 0x140000 + unit * 0x2000;
+		u32 st0 = nv_mask(dev, reg + 0x1020, 0, 0);
+		u32 st1 = nv_mask(dev, reg + 0x1420, 0, 0);
+
+		NV_INFO(dev, "PRUNK140: %d 0x%08x 0x%08x\n", unit, st0, st1);
+		units &= ~(1 << unit);
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int
 nvc0_graph_create_fw(struct drm_device *dev, const char *fwname,
 		     struct nvc0_graph_fuc *fuc)
@@ -758,6 +933,7 @@ nvc0_graph_destroy(struct drm_device *dev, int engine)
 {
 	struct nvc0_graph_priv *priv = nv_engine(dev, engine);
 
+<<<<<<< HEAD
 	if (nouveau_ctxfw) {
 		nvc0_graph_destroy_fw(&priv->fuc409c);
 		nvc0_graph_destroy_fw(&priv->fuc409d);
@@ -766,6 +942,15 @@ nvc0_graph_destroy(struct drm_device *dev, int engine)
 	}
 
 	nouveau_irq_unregister(dev, 12);
+=======
+	nvc0_graph_destroy_fw(&priv->fuc409c);
+	nvc0_graph_destroy_fw(&priv->fuc409d);
+	nvc0_graph_destroy_fw(&priv->fuc41ac);
+	nvc0_graph_destroy_fw(&priv->fuc41ad);
+
+	nouveau_irq_unregister(dev, 12);
+	nouveau_irq_unregister(dev, 25);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nouveau_gpuobj_ref(NULL, &priv->unk4188b8);
 	nouveau_gpuobj_ref(NULL, &priv->unk4188b4);
@@ -783,10 +968,20 @@ nvc0_graph_create(struct drm_device *dev)
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct nvc0_graph_priv *priv;
 	int ret, gpc, i;
+<<<<<<< HEAD
 	u32 fermi;
 
 	fermi = nvc0_graph_class(dev);
 	if (!fermi) {
+=======
+
+	switch (dev_priv->chipset) {
+	case 0xc0:
+	case 0xc3:
+	case 0xc4:
+		break;
+	default:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		NV_ERROR(dev, "PGRAPH: unsupported chipset, please report!\n");
 		return 0;
 	}
@@ -804,6 +999,7 @@ nvc0_graph_create(struct drm_device *dev)
 
 	NVOBJ_ENGINE_ADD(dev, GR, &priv->base);
 	nouveau_irq_register(dev, 12, nvc0_graph_isr);
+<<<<<<< HEAD
 
 	if (nouveau_ctxfw) {
 		NV_INFO(dev, "PGRAPH: using external firmware\n");
@@ -816,6 +1012,19 @@ nvc0_graph_create(struct drm_device *dev)
 		}
 	}
 
+=======
+	nouveau_irq_register(dev, 25, nvc0_runk140_isr);
+
+	if (nvc0_graph_create_fw(dev, "fuc409c", &priv->fuc409c) ||
+	    nvc0_graph_create_fw(dev, "fuc409d", &priv->fuc409d) ||
+	    nvc0_graph_create_fw(dev, "fuc41ac", &priv->fuc41ac) ||
+	    nvc0_graph_create_fw(dev, "fuc41ad", &priv->fuc41ad)) {
+		ret = 0;
+		goto error;
+	}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = nouveau_gpuobj_new(dev, NULL, 0x1000, 256, 0, &priv->unk4188b4);
 	if (ret)
 		goto error;
@@ -841,16 +1050,30 @@ nvc0_graph_create(struct drm_device *dev)
 	case 0xc0:
 		if (priv->tp_total == 11) { /* 465, 3/4/4/0, 4 */
 			priv->magic_not_rop_nr = 0x07;
+<<<<<<< HEAD
 		} else
 		if (priv->tp_total == 14) { /* 470, 3/3/4/4, 5 */
 			priv->magic_not_rop_nr = 0x05;
 		} else
 		if (priv->tp_total == 15) { /* 480, 3/4/4/4, 6 */
 			priv->magic_not_rop_nr = 0x06;
+=======
+			/* filled values up to tp_total, the rest 0 */
+			priv->magicgpc918      = 0x000ba2e9;
+		} else
+		if (priv->tp_total == 14) { /* 470, 3/3/4/4, 5 */
+			priv->magic_not_rop_nr = 0x05;
+			priv->magicgpc918      = 0x00092493;
+		} else
+		if (priv->tp_total == 15) { /* 480, 3/4/4/4, 6 */
+			priv->magic_not_rop_nr = 0x06;
+			priv->magicgpc918      = 0x00088889;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		break;
 	case 0xc3: /* 450, 4/0/0/0, 2 */
 		priv->magic_not_rop_nr = 0x03;
+<<<<<<< HEAD
 		break;
 	case 0xc4: /* 460, 3/4/0/0, 4 */
 		priv->magic_not_rop_nr = 0x01;
@@ -869,6 +1092,13 @@ nvc0_graph_create(struct drm_device *dev)
 		break;
 	case 0xd9: /* 1/0/0/0, 1 */
 		priv->magic_not_rop_nr = 0x01;
+=======
+		priv->magicgpc918      = 0x00200000;
+		break;
+	case 0xc4: /* 460, 3/4/0/0, 4 */
+		priv->magic_not_rop_nr = 0x01;
+		priv->magicgpc918      = 0x00124925;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -876,16 +1106,27 @@ nvc0_graph_create(struct drm_device *dev)
 		NV_ERROR(dev, "PGRAPH: unknown config: %d/%d/%d/%d, %d\n",
 			 priv->tp_nr[0], priv->tp_nr[1], priv->tp_nr[2],
 			 priv->tp_nr[3], priv->rop_nr);
+<<<<<<< HEAD
 		priv->magic_not_rop_nr = 0x00;
+=======
+		/* use 0xc3's values... */
+		priv->magic_not_rop_nr = 0x03;
+		priv->magicgpc918      = 0x00200000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	NVOBJ_CLASS(dev, 0x902d, GR); /* 2D */
 	NVOBJ_CLASS(dev, 0x9039, GR); /* M2MF */
+<<<<<<< HEAD
 	NVOBJ_CLASS(dev, 0x9097, GR); /* 3D */
 	if (fermi >= 0x9197)
 		NVOBJ_CLASS(dev, 0x9197, GR); /* 3D (NVC1-) */
 	if (fermi >= 0x9297)
 		NVOBJ_CLASS(dev, 0x9297, GR); /* 3D (NVC8-) */
+=======
+	NVOBJ_MTHD (dev, 0x9039, 0x0500, nvc0_graph_mthd_page_flip);
+	NVOBJ_CLASS(dev, 0x9097, GR); /* 3D */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NVOBJ_CLASS(dev, 0x90c0, GR); /* COMPUTE */
 	return 0;
 
@@ -893,3 +1134,23 @@ error:
 	nvc0_graph_destroy(dev, NVOBJ_ENGINE_GR);
 	return ret;
 }
+<<<<<<< HEAD
+=======
+
+MODULE_FIRMWARE("nouveau/nvc0_fuc409c");
+MODULE_FIRMWARE("nouveau/nvc0_fuc409d");
+MODULE_FIRMWARE("nouveau/nvc0_fuc41ac");
+MODULE_FIRMWARE("nouveau/nvc0_fuc41ad");
+MODULE_FIRMWARE("nouveau/nvc3_fuc409c");
+MODULE_FIRMWARE("nouveau/nvc3_fuc409d");
+MODULE_FIRMWARE("nouveau/nvc3_fuc41ac");
+MODULE_FIRMWARE("nouveau/nvc3_fuc41ad");
+MODULE_FIRMWARE("nouveau/nvc4_fuc409c");
+MODULE_FIRMWARE("nouveau/nvc4_fuc409d");
+MODULE_FIRMWARE("nouveau/nvc4_fuc41ac");
+MODULE_FIRMWARE("nouveau/nvc4_fuc41ad");
+MODULE_FIRMWARE("nouveau/fuc409c");
+MODULE_FIRMWARE("nouveau/fuc409d");
+MODULE_FIRMWARE("nouveau/fuc41ac");
+MODULE_FIRMWARE("nouveau/fuc41ad");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

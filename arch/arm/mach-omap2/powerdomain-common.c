@@ -1,8 +1,16 @@
 /*
+<<<<<<< HEAD
  * Common powerdomain framework functions
  *
  * Copyright (C) 2010-2011 Texas Instruments, Inc.
  * Copyright (C) 2010 Nokia Corporation
+=======
+ *  linux/arch/arm/mach-omap2/powerdomain-common.c
+ *  Contains common powerdomain framework functions
+ *
+ *  Copyright (C) 2010 Texas Instruments, Inc.
+ *  Copyright (C) 2010 Nokia Corporation
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Derived from mach-omap2/powerdomain.c written by Paul Walmsley
  *
@@ -13,7 +21,10 @@
 
 #include <linux/errno.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "pm.h"
 #include "cm.h"
 #include "cm-regbits-34xx.h"

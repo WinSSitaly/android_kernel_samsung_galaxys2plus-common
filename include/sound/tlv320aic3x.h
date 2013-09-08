@@ -1,7 +1,11 @@
 /*
  * Platform data for Texas Instruments TLV320AIC3x codec
  *
+<<<<<<< HEAD
  * Author: Jarkko Nikula <jarkko.nikula@bitmer.com>
+=======
+ * Author: Jarkko Nikula <jhnikula@gmail.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as

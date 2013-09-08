@@ -12,5 +12,9 @@ line6usb-y := 		\
 		playback.o	\
 		pod.o		\
 		toneport.o	\
+<<<<<<< HEAD
 		variax.o	\
 		podhd.o
+=======
+		variax.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

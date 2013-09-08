@@ -291,7 +291,11 @@ static int nuc900_ac97_remove(struct snd_soc_dai *dai)
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops nuc900_ac97_dai_ops = {
+=======
+static struct snd_soc_dai_ops nuc900_ac97_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.trigger	= nuc900_ac97_trigger,
 };
 
@@ -356,7 +360,11 @@ static int __devinit nuc900_ac97_drvprobe(struct platform_device *pdev)
 	nuc900_audio->irq_num = platform_get_irq(pdev, 0);
 	if (!nuc900_audio->irq_num) {
 		ret = -EBUSY;
+<<<<<<< HEAD
 		goto out3;
+=======
+		goto out2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	nuc900_ac97_data = nuc900_audio;
@@ -365,8 +373,12 @@ static int __devinit nuc900_ac97_drvprobe(struct platform_device *pdev)
 	if (ret)
 		goto out3;
 
+<<<<<<< HEAD
 	/* enbale ac97 multifunction pin */
 	mfp_set_groupg(nuc900_audio->dev, NULL);
+=======
+	mfp_set_groupg(nuc900_audio->dev); /* enbale ac97 multifunction pin*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
@@ -406,7 +418,22 @@ static struct platform_driver nuc900_ac97_driver = {
 	.remove		= __devexit_p(nuc900_ac97_drvremove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(nuc900_ac97_driver);
+=======
+static int __init nuc900_ac97_init(void)
+{
+	return platform_driver_register(&nuc900_ac97_driver);
+}
+
+static void __exit nuc900_ac97_exit(void)
+{
+	platform_driver_unregister(&nuc900_ac97_driver);
+}
+
+module_init(nuc900_ac97_init);
+module_exit(nuc900_ac97_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Wan ZongShun <mcuos.com@gmail.com>");
 MODULE_DESCRIPTION("NUC900 AC97 SoC driver!");

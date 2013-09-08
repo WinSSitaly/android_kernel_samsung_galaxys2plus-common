@@ -11,6 +11,10 @@
 #include <string.h>
 #include <stdbool.h>
 
+<<<<<<< HEAD
+=======
+#define LKC_DIRECT_LINK
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "lkc.h"
 
 #define printd(mask, fmt...) if (cdebug & (mask)) printf(fmt)
@@ -24,12 +28,23 @@ extern int zconflex(void);
 static void zconfprint(const char *err, ...);
 static void zconf_error(const char *err, ...);
 static void zconferror(const char *err);
+<<<<<<< HEAD
 static bool zconf_endtoken(const struct kconf_id *id, int starttoken, int endtoken);
+=======
+static bool zconf_endtoken(struct kconf_id *id, int starttoken, int endtoken);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct symbol *symbol_hash[SYMBOL_HASHSIZE];
 
 static struct menu *current_menu, *current_entry;
 
+<<<<<<< HEAD
+=======
+#define YYDEBUG 0
+#if YYDEBUG
+#define YYERROR_VERBOSE
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 %}
 %expect 30
 
@@ -40,7 +55,11 @@ static struct menu *current_menu, *current_entry;
 	struct symbol *symbol;
 	struct expr *expr;
 	struct menu *menu;
+<<<<<<< HEAD
 	const struct kconf_id *id;
+=======
+	struct kconf_id *id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 %token <id>T_MAINMENU
@@ -224,7 +243,11 @@ symbol_option_list:
 	  /* empty */
 	| symbol_option_list T_WORD symbol_option_arg
 {
+<<<<<<< HEAD
 	const struct kconf_id *id = kconf_id_lookup($2, strlen($2));
+=======
+	struct kconf_id *id = kconf_id_lookup($2, strlen($2));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (id && id->flags & TF_OPTION)
 		menu_add_option(id->token, $3);
 	else
@@ -498,8 +521,15 @@ void conf_parse(const char *name)
 	modules_sym->flags |= SYMBOL_AUTO;
 	rootmenu.prompt = menu_add_prompt(P_MENU, "Linux Kernel Configuration", NULL);
 
+<<<<<<< HEAD
 	if (getenv("ZCONF_DEBUG"))
 		zconfdebug = 1;
+=======
+#if YYDEBUG
+	if (getenv("ZCONF_DEBUG"))
+		zconfdebug = 1;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	zconfparse();
 	if (zconfnerrs)
 		exit(1);
@@ -538,7 +568,11 @@ static const char *zconf_tokenname(int token)
 	return "<token>";
 }
 
+<<<<<<< HEAD
 static bool zconf_endtoken(const struct kconf_id *id, int starttoken, int endtoken)
+=======
+static bool zconf_endtoken(struct kconf_id *id, int starttoken, int endtoken)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (id->token != endtoken) {
 		zconf_error("unexpected '%s' within %s block",
@@ -583,7 +617,13 @@ static void zconf_error(const char *err, ...)
 
 static void zconferror(const char *err)
 {
+<<<<<<< HEAD
 	fprintf(stderr, "%s:%d: %s\n", zconf_curname(), zconf_lineno() + 1, err);
+=======
+#if YYDEBUG
+	fprintf(stderr, "%s:%d: %s\n", zconf_curname(), zconf_lineno() + 1, err);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void print_quoted_string(FILE *out, const char *str)
@@ -732,7 +772,11 @@ void zconfdump(FILE *out)
 	}
 }
 
+<<<<<<< HEAD
 #include "zconf.lex.c"
+=======
+#include "lex.zconf.c"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "util.c"
 #include "confdata.c"
 #include "expr.c"

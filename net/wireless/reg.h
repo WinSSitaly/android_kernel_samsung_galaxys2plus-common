@@ -1,5 +1,6 @@
 #ifndef __NET_WIRELESS_REG_H
 #define __NET_WIRELESS_REG_H
+<<<<<<< HEAD
 /*
  * Copyright 2008-2011	Luis R. Rodriguez <mcgrof@qca.qualcomm.com>
  *
@@ -15,12 +16,17 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern const struct ieee80211_regdomain *cfg80211_regdomain;
 
 bool is_world_regdom(const char *alpha2);
 bool reg_is_valid_request(const char *alpha2);
+<<<<<<< HEAD
 bool reg_supported_dfs_region(u8 dfs_region);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int regulatory_hint_user(const char *alpha2);
 
@@ -32,8 +38,11 @@ void regulatory_exit(void);
 
 int set_regdom(const struct ieee80211_regdomain *rd);
 
+<<<<<<< HEAD
 void regulatory_update(struct wiphy *wiphy, enum nl80211_reg_initiator setby);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * regulatory_hint_found_beacon - hints a beacon was found on a channel
  * @wiphy: the wireless device where the beacon was found on

@@ -31,6 +31,11 @@
  */
 
 #include <linux/module.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <linux/dma-mapping.h>
 #include <linux/miscdevice.h>
@@ -676,7 +681,11 @@ pxa3xx_gcu_probe(struct platform_device *dev)
 	}
 
 	ret = request_irq(irq, pxa3xx_gcu_handle_irq,
+<<<<<<< HEAD
 			  0, DRV_NAME, priv);
+=======
+			  IRQF_DISABLED, DRV_NAME, priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret) {
 		dev_err(&dev->dev, "request_irq failed\n");
 		ret = -EBUSY;
@@ -747,7 +756,24 @@ static struct platform_driver pxa3xx_gcu_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(pxa3xx_gcu_driver);
+=======
+static int __init
+pxa3xx_gcu_init(void)
+{
+	return platform_driver_register(&pxa3xx_gcu_driver);
+}
+
+static void __exit
+pxa3xx_gcu_exit(void)
+{
+	platform_driver_unregister(&pxa3xx_gcu_driver);
+}
+
+module_init(pxa3xx_gcu_init);
+module_exit(pxa3xx_gcu_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("PXA3xx graphics controller unit driver");
 MODULE_LICENSE("GPL");

@@ -9,7 +9,10 @@
 #include <linux/input.h>	/* BUS_SPI */
 #include <linux/pm.h>
 #include <linux/spi/spi.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "ad7879.h"
 
@@ -22,6 +25,33 @@
 #define AD7879_WRITECMD(reg) (AD7879_CMD(reg))
 #define AD7879_READCMD(reg)  (AD7879_CMD(reg) | AD7879_CMD_READ)
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_PM_SLEEP
+static int ad7879_spi_suspend(struct device *dev)
+{
+	struct spi_device *spi = to_spi_device(dev);
+	struct ad7879 *ts = spi_get_drvdata(spi);
+
+	ad7879_suspend(ts);
+
+	return 0;
+}
+
+static int ad7879_spi_resume(struct device *dev)
+{
+	struct spi_device *spi = to_spi_device(dev);
+	struct ad7879 *ts = spi_get_drvdata(spi);
+
+	ad7879_resume(ts);
+
+	return 0;
+}
+#endif
+
+static SIMPLE_DEV_PM_OPS(ad7879_spi_pm, ad7879_spi_suspend, ad7879_spi_resume);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * ad7879_read/write are only used for initial setup and for sysfs controls.
  * The main traffic is done in ad7879_collect().
@@ -150,14 +180,34 @@ static int __devexit ad7879_spi_remove(struct spi_device *spi)
 static struct spi_driver ad7879_spi_driver = {
 	.driver = {
 		.name	= "ad7879",
+<<<<<<< HEAD
 		.owner	= THIS_MODULE,
 		.pm	= &ad7879_pm_ops,
+=======
+		.bus	= &spi_bus_type,
+		.owner	= THIS_MODULE,
+		.pm	= &ad7879_spi_pm,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe		= ad7879_spi_probe,
 	.remove		= __devexit_p(ad7879_spi_remove),
 };
 
+<<<<<<< HEAD
 module_spi_driver(ad7879_spi_driver);
+=======
+static int __init ad7879_spi_init(void)
+{
+	return spi_register_driver(&ad7879_spi_driver);
+}
+module_init(ad7879_spi_init);
+
+static void __exit ad7879_spi_exit(void)
+{
+	spi_unregister_driver(&ad7879_spi_driver);
+}
+module_exit(ad7879_spi_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Michael Hennerich <hennerich@blackfin.uclinux.org>");
 MODULE_DESCRIPTION("AD7879(-1) touchscreen SPI bus driver");

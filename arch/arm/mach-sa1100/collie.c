@@ -22,18 +22,27 @@
 #include <linux/tty.h>
 #include <linux/delay.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/mfd/ucb1x00.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/partitions.h>
 #include <linux/timer.h>
 #include <linux/gpio.h>
 #include <linux/pda_power.h>
 
+<<<<<<< HEAD
 #include <video/sa1100fb.h>
 
 #include <mach/hardware.h>
 #include <asm/mach-types.h>
 #include <asm/page.h>
+=======
+#include <mach/hardware.h>
+#include <asm/mach-types.h>
+#include <asm/irq.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/setup.h>
 #include <mach/collie.h>
 
@@ -46,12 +55,23 @@
 #include <asm/mach/sharpsl_param.h>
 #include <asm/hardware/locomo.h>
 #include <mach/mcp.h>
+<<<<<<< HEAD
 #include <mach/irqs.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "generic.h"
 
 static struct resource collie_scoop_resources[] = {
+<<<<<<< HEAD
 	[0] = DEFINE_RES_MEM(0x40800000, SZ_4K),
+=======
+	[0] = {
+		.start		= 0x40800000,
+		.end		= 0x40800fff,
+		.flags		= IORESOURCE_MEM,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct scoop_config collie_scoop_setup = {
@@ -84,6 +104,7 @@ static struct scoop_pcmcia_config collie_pcmcia_config = {
 	.num_devs	= 1,
 };
 
+<<<<<<< HEAD
 static struct ucb1x00_plat_data collie_ucb1x00_data = {
 	.gpio_base	= COLLIE_TC35143_GPIO_BASE,
 };
@@ -92,6 +113,12 @@ static struct mcp_plat_data collie_mcp_data = {
 	.mccr0		= MCCR0_ADM | MCCR0_ExtClk,
 	.sclk_rate	= 9216000,
 	.codec_pdata	= &collie_ucb1x00_data,
+=======
+static struct mcp_plat_data collie_mcp_data = {
+	.mccr0		= MCCR0_ADM | MCCR0_ExtClk,
+	.sclk_rate	= 9216000,
+	.gpio_base	= COLLIE_TC35143_GPIO_BASE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -141,6 +168,11 @@ static struct pda_power_pdata collie_power_data = {
 static struct resource collie_power_resource[] = {
 	{
 		.name		= "ac",
+<<<<<<< HEAD
+=======
+		.start		= gpio_to_irq(COLLIE_GPIO_AC_IN),
+		.end		= gpio_to_irq(COLLIE_GPIO_AC_IN),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags		= IORESOURCE_IRQ |
 				  IORESOURCE_IRQ_HIGHEDGE |
 				  IORESOURCE_IRQ_LOWEDGE,
@@ -224,8 +256,21 @@ device_initcall(collie_uart_init);
 
 
 static struct resource locomo_resources[] = {
+<<<<<<< HEAD
 	[0] = DEFINE_RES_MEM(0x40000000, SZ_8K),
 	[1] = DEFINE_RES_IRQ(IRQ_GPIO25),
+=======
+	[0] = {
+		.start		= 0x40000000,
+		.end		= 0x40001fff,
+		.flags		= IORESOURCE_MEM,
+	},
+	[1] = {
+		.start		= IRQ_GPIO25,
+		.end		= IRQ_GPIO25,
+		.flags		= IORESOURCE_IRQ,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct locomo_platform_data locomo_info = {
@@ -298,6 +343,7 @@ static struct flash_platform_data collie_flash_data = {
 };
 
 static struct resource collie_flash_resources[] = {
+<<<<<<< HEAD
 	DEFINE_RES_MEM(SA1100_CS0_PHYS, SZ_32M),
 };
 
@@ -317,6 +363,13 @@ static struct sa1100fb_mach_info collie_lcd_info = {
 #ifdef CONFIG_BACKLIGHT_LOCOMO
 	.lcd_power	= locomolcd_power
 #endif
+=======
+	{
+		.start	= SA1100_CS0_PHYS,
+		.end	= SA1100_CS0_PHYS + SZ_32M - 1,
+		.flags	= IORESOURCE_MEM,
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void __init collie_init(void)
@@ -348,11 +401,14 @@ static void __init collie_init(void)
 
 	GPSR |= _COLLIE_GPIO_UCB1x00_RESET;
 
+<<<<<<< HEAD
 	collie_power_resource[0].start = gpio_to_irq(COLLIE_GPIO_AC_IN);
 	collie_power_resource[0].end = gpio_to_irq(COLLIE_GPIO_AC_IN);
 
 	sa11x0_ppc_configure_mcp();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	platform_scoop_config = &collie_pcmcia_config;
 
@@ -361,7 +417,10 @@ static void __init collie_init(void)
 		printk(KERN_WARNING "collie: Unable to register LoCoMo device\n");
 	}
 
+<<<<<<< HEAD
 	sa11x0_register_lcd(&collie_lcd_info);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sa11x0_register_mtd(&collie_flash_data, collie_flash_resources,
 			    ARRAY_SIZE(collie_flash_resources));
 	sa11x0_register_mcp(&collie_mcp_data);
@@ -397,9 +456,15 @@ static void __init collie_map_io(void)
 
 MACHINE_START(COLLIE, "Sharp-Collie")
 	.map_io		= collie_map_io,
+<<<<<<< HEAD
 	.nr_irqs	= SA1100_NR_IRQS,
 	.init_irq	= sa1100_init_irq,
 	.timer		= &sa1100_timer,
 	.init_machine	= collie_init,
 	.restart	= sa11x0_restart,
+=======
+	.init_irq	= sa1100_init_irq,
+	.timer		= &sa1100_timer,
+	.init_machine	= collie_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

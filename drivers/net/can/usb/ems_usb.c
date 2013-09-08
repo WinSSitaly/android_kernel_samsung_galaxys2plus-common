@@ -288,7 +288,12 @@ static void ems_usb_read_interrupt_callback(struct urb *urb)
 		return;
 
 	default:
+<<<<<<< HEAD
 		netdev_info(netdev, "Rx interrupt aborted %d\n", urb->status);
+=======
+		dev_info(netdev->dev.parent, "Rx interrupt aborted %d\n",
+			 urb->status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -297,7 +302,12 @@ static void ems_usb_read_interrupt_callback(struct urb *urb)
 	if (err == -ENODEV)
 		netif_device_detach(netdev);
 	else if (err)
+<<<<<<< HEAD
 		netdev_err(netdev, "failed resubmitting intr urb: %d\n", err);
+=======
+		dev_err(netdev->dev.parent,
+			"failed resubmitting intr urb: %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void ems_usb_rx_can_msg(struct ems_usb *dev, struct ems_cpc_msg *msg)
@@ -429,7 +439,12 @@ static void ems_usb_read_bulk_callback(struct urb *urb)
 		return;
 
 	default:
+<<<<<<< HEAD
 		netdev_info(netdev, "Rx URB aborted (%d)\n", urb->status);
+=======
+		dev_info(netdev->dev.parent, "Rx URB aborted (%d)\n",
+			 urb->status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto resubmit_urb;
 	}
 
@@ -474,7 +489,11 @@ static void ems_usb_read_bulk_callback(struct urb *urb)
 			msg_count--;
 
 			if (start > urb->transfer_buffer_length) {
+<<<<<<< HEAD
 				netdev_err(netdev, "format error\n");
+=======
+				dev_err(netdev->dev.parent, "format error\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 			}
 		}
@@ -490,8 +509,13 @@ resubmit_urb:
 	if (retval == -ENODEV)
 		netif_device_detach(netdev);
 	else if (retval)
+<<<<<<< HEAD
 		netdev_err(netdev,
 			   "failed resubmitting read bulk urb: %d\n", retval);
+=======
+		dev_err(netdev->dev.parent,
+			"failed resubmitting read bulk urb: %d\n", retval);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -518,7 +542,12 @@ static void ems_usb_write_bulk_callback(struct urb *urb)
 		return;
 
 	if (urb->status)
+<<<<<<< HEAD
 		netdev_info(netdev, "Tx URB aborted (%d)\n", urb->status);
+=======
+		dev_info(netdev->dev.parent, "Tx URB aborted (%d)\n",
+			 urb->status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	netdev->trans_start = jiffies;
 
@@ -601,18 +630,31 @@ static int ems_usb_start(struct ems_usb *dev)
 		/* create a URB, and a buffer for it */
 		urb = usb_alloc_urb(0, GFP_KERNEL);
 		if (!urb) {
+<<<<<<< HEAD
 			netdev_err(netdev, "No memory left for URBs\n");
 			err = -ENOMEM;
 			break;
+=======
+			dev_err(netdev->dev.parent,
+				"No memory left for URBs\n");
+			return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		buf = usb_alloc_coherent(dev->udev, RX_BUFFER_SIZE, GFP_KERNEL,
 					 &urb->transfer_dma);
 		if (!buf) {
+<<<<<<< HEAD
 			netdev_err(netdev, "No memory left for USB buffer\n");
 			usb_free_urb(urb);
 			err = -ENOMEM;
 			break;
+=======
+			dev_err(netdev->dev.parent,
+				"No memory left for USB buffer\n");
+			usb_free_urb(urb);
+			return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		usb_fill_bulk_urb(urb, dev->udev, usb_rcvbulkpipe(dev->udev, 2),
@@ -623,6 +665,12 @@ static int ems_usb_start(struct ems_usb *dev)
 
 		err = usb_submit_urb(urb, GFP_KERNEL);
 		if (err) {
+<<<<<<< HEAD
+=======
+			if (err == -ENODEV)
+				netif_device_detach(dev->netdev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			usb_unanchor_urb(urb);
 			usb_free_coherent(dev->udev, RX_BUFFER_SIZE, buf,
 					  urb->transfer_dma);
@@ -635,13 +683,21 @@ static int ems_usb_start(struct ems_usb *dev)
 
 	/* Did we submit any URBs */
 	if (i == 0) {
+<<<<<<< HEAD
 		netdev_warn(netdev, "couldn't setup read URBs\n");
+=======
+		dev_warn(netdev->dev.parent, "couldn't setup read URBs\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 	}
 
 	/* Warn if we've couldn't transmit all the URBs */
 	if (i < MAX_RX_URBS)
+<<<<<<< HEAD
 		netdev_warn(netdev, "rx performance may be slow\n");
+=======
+		dev_warn(netdev->dev.parent, "rx performance may be slow\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Setup and start interrupt URB */
 	usb_fill_int_urb(dev->intr_urb, dev->udev,
@@ -652,7 +708,15 @@ static int ems_usb_start(struct ems_usb *dev)
 
 	err = usb_submit_urb(dev->intr_urb, GFP_KERNEL);
 	if (err) {
+<<<<<<< HEAD
 		netdev_warn(netdev, "intr URB submit failed: %d\n", err);
+=======
+		if (err == -ENODEV)
+			netif_device_detach(dev->netdev);
+
+		dev_warn(netdev->dev.parent, "intr URB submit failed: %d\n",
+			 err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		return err;
 	}
@@ -681,7 +745,14 @@ static int ems_usb_start(struct ems_usb *dev)
 	return 0;
 
 failed:
+<<<<<<< HEAD
 	netdev_warn(netdev, "couldn't submit control: %d\n", err);
+=======
+	if (err == -ENODEV)
+		netif_device_detach(dev->netdev);
+
+	dev_warn(netdev->dev.parent, "couldn't submit control: %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }
@@ -721,7 +792,12 @@ static int ems_usb_open(struct net_device *netdev)
 		if (err == -ENODEV)
 			netif_device_detach(dev->netdev);
 
+<<<<<<< HEAD
 		netdev_warn(netdev, "couldn't start device: %d\n", err);
+=======
+		dev_warn(netdev->dev.parent, "couldn't start device: %d\n",
+			 err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		close_candev(netdev);
 
@@ -754,13 +830,21 @@ static netdev_tx_t ems_usb_start_xmit(struct sk_buff *skb, struct net_device *ne
 	/* create a URB, and a buffer for it, and copy the data to the URB */
 	urb = usb_alloc_urb(0, GFP_ATOMIC);
 	if (!urb) {
+<<<<<<< HEAD
 		netdev_err(netdev, "No memory left for URBs\n");
+=======
+		dev_err(netdev->dev.parent, "No memory left for URBs\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto nomem;
 	}
 
 	buf = usb_alloc_coherent(dev->udev, size, GFP_ATOMIC, &urb->transfer_dma);
 	if (!buf) {
+<<<<<<< HEAD
 		netdev_err(netdev, "No memory left for USB buffer\n");
+=======
+		dev_err(netdev->dev.parent, "No memory left for USB buffer\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		usb_free_urb(urb);
 		goto nomem;
 	}
@@ -803,7 +887,11 @@ static netdev_tx_t ems_usb_start_xmit(struct sk_buff *skb, struct net_device *ne
 		usb_unanchor_urb(urb);
 		usb_free_coherent(dev->udev, size, buf, urb->transfer_dma);
 
+<<<<<<< HEAD
 		netdev_warn(netdev, "couldn't find free context\n");
+=======
+		dev_warn(netdev->dev.parent, "couldn't find free context\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		return NETDEV_TX_BUSY;
 	}
@@ -834,7 +922,11 @@ static netdev_tx_t ems_usb_start_xmit(struct sk_buff *skb, struct net_device *ne
 		if (err == -ENODEV) {
 			netif_device_detach(netdev);
 		} else {
+<<<<<<< HEAD
 			netdev_warn(netdev, "failed tx_urb %d\n", err);
+=======
+			dev_warn(netdev->dev.parent, "failed tx_urb %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			stats->tx_dropped++;
 		}
@@ -874,7 +966,11 @@ static int ems_usb_close(struct net_device *netdev)
 
 	/* Set CAN controller to reset mode */
 	if (ems_usb_write_mode(dev, SJA1000_MOD_RM))
+<<<<<<< HEAD
 		netdev_warn(netdev, "couldn't stop device");
+=======
+		dev_warn(netdev->dev.parent, "couldn't stop device");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	close_candev(netdev);
 
@@ -911,7 +1007,11 @@ static int ems_usb_set_mode(struct net_device *netdev, enum can_mode mode)
 	switch (mode) {
 	case CAN_MODE_START:
 		if (ems_usb_write_mode(dev, SJA1000_MOD_NORMAL))
+<<<<<<< HEAD
 			netdev_warn(netdev, "couldn't start device");
+=======
+			dev_warn(netdev->dev.parent, "couldn't start device");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (netif_queue_stopped(netdev))
 			netif_wake_queue(netdev);
@@ -936,7 +1036,12 @@ static int ems_usb_set_bittiming(struct net_device *netdev)
 	if (dev->can.ctrlmode & CAN_CTRLMODE_3_SAMPLES)
 		btr1 |= 0x80;
 
+<<<<<<< HEAD
 	netdev_info(netdev, "setting BTR0=0x%02x BTR1=0x%02x\n", btr0, btr1);
+=======
+	dev_info(netdev->dev.parent, "setting BTR0=0x%02x BTR1=0x%02x\n",
+		 btr0, btr1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev->active_params.msg.can_params.cc_params.sja1000.btr0 = btr0;
 	dev->active_params.msg.can_params.cc_params.sja1000.btr1 = btr1;
@@ -1041,13 +1146,23 @@ static int ems_usb_probe(struct usb_interface *intf,
 
 	err = ems_usb_command_msg(dev, &dev->active_params);
 	if (err) {
+<<<<<<< HEAD
 		netdev_err(netdev, "couldn't initialize controller: %d\n", err);
+=======
+		dev_err(netdev->dev.parent,
+			"couldn't initialize controller: %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto cleanup_tx_msg_buffer;
 	}
 
 	err = register_candev(netdev);
 	if (err) {
+<<<<<<< HEAD
 		netdev_err(netdev, "couldn't register CAN device: %d\n", err);
+=======
+		dev_err(netdev->dev.parent,
+			"couldn't register CAN device: %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto cleanup_tx_msg_buffer;
 	}
 
@@ -1097,4 +1212,32 @@ static struct usb_driver ems_usb_driver = {
 	.id_table = ems_usb_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(ems_usb_driver);
+=======
+static int __init ems_usb_init(void)
+{
+	int err;
+
+	printk(KERN_INFO "CPC-USB kernel driver loaded\n");
+
+	/* register this driver with the USB subsystem */
+	err = usb_register(&ems_usb_driver);
+
+	if (err) {
+		err("usb_register failed. Error number %d\n", err);
+		return err;
+	}
+
+	return 0;
+}
+
+static void __exit ems_usb_exit(void)
+{
+	/* deregister this driver with the USB subsystem */
+	usb_deregister(&ems_usb_driver);
+}
+
+module_init(ems_usb_init);
+module_exit(ems_usb_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

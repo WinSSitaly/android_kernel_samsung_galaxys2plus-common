@@ -4,10 +4,13 @@
 
 menu "File systems"
 
+<<<<<<< HEAD
 # Use unaligned word dcache accesses
 config DCACHE_WORD_ACCESS
        bool
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 if BLOCK
 
 source "fs/ext2/Kconfig"
@@ -113,7 +116,11 @@ source "fs/proc/Kconfig"
 source "fs/sysfs/Kconfig"
 
 config TMPFS
+<<<<<<< HEAD
 	bool "Tmpfs virtual memory file system support (former shm fs)"
+=======
+	bool "Virtual memory file system support (former shm fs)"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	depends on SHMEM
 	help
 	  Tmpfs is a file system which keeps all files in virtual memory.
@@ -131,6 +138,7 @@ config TMPFS_POSIX_ACL
 	select TMPFS_XATTR
 	select GENERIC_ACL
 	help
+<<<<<<< HEAD
 	  POSIX Access Control Lists (ACLs) support additional access rights
 	  for users and groups beyond the standard owner/group/world scheme,
 	  and this option selects support for ACLs specifically for tmpfs
@@ -142,10 +150,19 @@ config TMPFS_POSIX_ACL
 	  For example, some distros need this feature for ALSA-related /dev
 	  files for sound to work properly.  In short, if you're not sure,
 	  say Y.
+=======
+	  POSIX Access Control Lists (ACLs) support permissions for users and
+	  groups beyond the owner/group/world scheme.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	  To learn more about Access Control Lists, visit the POSIX ACLs for
 	  Linux website <http://acl.bestbits.at/>.
 
+<<<<<<< HEAD
+=======
+	  If you don't know what Access Control Lists are, say N.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TMPFS_XATTR
 	bool "Tmpfs extended attributes"
 	depends on TMPFS
@@ -198,11 +215,22 @@ if MISC_FILESYSTEMS
 source "fs/adfs/Kconfig"
 source "fs/affs/Kconfig"
 source "fs/ecryptfs/Kconfig"
+<<<<<<< HEAD
+=======
+source "fs/sdcardfs/Kconfig"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 source "fs/hfs/Kconfig"
 source "fs/hfsplus/Kconfig"
 source "fs/befs/Kconfig"
 source "fs/bfs/Kconfig"
 source "fs/efs/Kconfig"
+<<<<<<< HEAD
+=======
+
+# Patched by YAFFS
+source "fs/yaffs2/Kconfig"
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 source "fs/jffs2/Kconfig"
 # UBIFS File system configuration
 source "fs/ubifs/Kconfig"
@@ -214,7 +242,10 @@ source "fs/minix/Kconfig"
 source "fs/omfs/Kconfig"
 source "fs/hpfs/Kconfig"
 source "fs/qnx4/Kconfig"
+<<<<<<< HEAD
 source "fs/qnx6/Kconfig"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 source "fs/romfs/Kconfig"
 source "fs/pstore/Kconfig"
 source "fs/sysv/Kconfig"
@@ -223,8 +254,11 @@ source "fs/exofs/Kconfig"
 
 endif # MISC_FILESYSTEMS
 
+<<<<<<< HEAD
 source "fs/exofs/Kconfig.ore"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 menuconfig NETWORK_FILESYSTEMS
 	bool "Network File Systems"
 	default y
@@ -273,6 +307,17 @@ source "fs/9p/Kconfig"
 
 endif # NETWORK_FILESYSTEMS
 
+<<<<<<< HEAD
+=======
+if BLOCK
+menu "Partition Types"
+
+source "fs/partitions/Kconfig"
+
+endmenu
+endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 source "fs/nls/Kconfig"
 source "fs/dlm/Kconfig"
 

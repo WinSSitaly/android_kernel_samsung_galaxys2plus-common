@@ -17,7 +17,13 @@
 #include <linux/init.h>
 #include <linux/device.h>
 #include <linux/dma-mapping.h>
+<<<<<<< HEAD
 #include <linux/highmem.h>
+=======
+#include <linux/dma-contiguous.h>
+#include <linux/highmem.h>
+#include <linux/memblock.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 
 #include <asm/memory.h>
@@ -25,7 +31,13 @@
 #include <asm/cacheflush.h>
 #include <asm/tlbflush.h>
 #include <asm/sizes.h>
+<<<<<<< HEAD
 #include <asm/mach/arch.h>
+=======
+#include <asm/mach/map.h>
+#include <asm/mach/arch.h>
+#include <asm/dma-contiguous.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "mm.h"
 
@@ -56,6 +68,22 @@ static u64 get_coherent_dma_mask(struct device *dev)
 	return mask;
 }
 
+<<<<<<< HEAD
+=======
+static void __dma_clear_buffer(struct page *page, size_t size)
+{
+	void *ptr;
+	/*
+	 * Ensure that the allocated pages are zeroed, and that any data
+	 * lurking in the kernel direct-mapped region is invalidated.
+	 */
+	ptr = page_address(page);
+	memset(ptr, 0, size);
+	dmac_flush_range(ptr, ptr + size);
+	outer_flush_range(__pa(ptr), __pa(ptr) + size);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Allocate a DMA buffer for 'dev' of size 'size' using the
  * specified gfp mask.  Note that 'size' must be page aligned.
@@ -64,6 +92,7 @@ static struct page *__dma_alloc_buffer(struct device *dev, size_t size, gfp_t gf
 {
 	unsigned long order = get_order(size);
 	struct page *page, *p, *e;
+<<<<<<< HEAD
 	void *ptr;
 	u64 mask = get_coherent_dma_mask(dev);
 
@@ -81,6 +110,8 @@ static struct page *__dma_alloc_buffer(struct device *dev, size_t size, gfp_t gf
 
 	if (mask < 0xffffffffULL)
 		gfp |= GFP_DMA;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	page = alloc_pages(gfp, order);
 	if (!page)
@@ -93,6 +124,7 @@ static struct page *__dma_alloc_buffer(struct device *dev, size_t size, gfp_t gf
 	for (p = page + (size >> PAGE_SHIFT), e = page + (1 << order); p < e; p++)
 		__free_page(p);
 
+<<<<<<< HEAD
 	/*
 	 * Ensure that the allocated pages are zeroed, and that any data
 	 * lurking in the kernel direct-mapped region is invalidated.
@@ -101,6 +133,9 @@ static struct page *__dma_alloc_buffer(struct device *dev, size_t size, gfp_t gf
 	memset(ptr, 0, size);
 	dmac_flush_range(ptr, ptr + size);
 	outer_flush_range(__pa(ptr), __pa(ptr) + size);
+=======
+	__dma_clear_buffer(page, size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return page;
 }
@@ -120,15 +155,29 @@ static void __dma_free_buffer(struct page *page, size_t size)
 
 #ifdef CONFIG_MMU
 
+<<<<<<< HEAD
 #define CONSISTENT_OFFSET(x)	(((unsigned long)(x) - consistent_base) >> PAGE_SHIFT)
 #define CONSISTENT_PTE_INDEX(x) (((unsigned long)(x) - consistent_base) >> PMD_SHIFT)
+=======
+
+#define CONSISTENT_OFFSET(x)	(((unsigned long)(x) - consistent_base) >> PAGE_SHIFT)
+#define CONSISTENT_PTE_INDEX(x) (((unsigned long)(x) - consistent_base) >> PGDIR_SHIFT)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * These are the page tables (2MB each) covering uncached, DMA consistent allocations
  */
 static pte_t **consistent_pte;
 
+<<<<<<< HEAD
 #define DEFAULT_CONSISTENT_DMA_SIZE SZ_2M
+=======
+#ifdef CONSISTENT_DMA_SIZE
+#define DEFAULT_CONSISTENT_DMA_SIZE CONSISTENT_DMA_SIZE
+#else
+#define DEFAULT_CONSISTENT_DMA_SIZE SZ_2M
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unsigned long consistent_base = CONSISTENT_END - DEFAULT_CONSISTENT_DMA_SIZE;
 
@@ -168,7 +217,14 @@ static int __init consistent_init(void)
 	pte_t *pte;
 	int i = 0;
 	unsigned long base = consistent_base;
+<<<<<<< HEAD
 	unsigned long num_ptes = (CONSISTENT_END - base) >> PMD_SHIFT;
+=======
+	unsigned long num_ptes = (CONSISTENT_END - base) >> PGDIR_SHIFT;
+
+	if (cpu_architecture() >= CPU_ARCH_ARMv6)
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	consistent_pte = kmalloc(num_ptes * sizeof(pte_t), GFP_KERNEL);
 	if (!consistent_pte) {
@@ -205,17 +261,121 @@ static int __init consistent_init(void)
 		}
 
 		consistent_pte[i++] = pte;
+<<<<<<< HEAD
 		base += PMD_SIZE;
+=======
+		base += (1 << PGDIR_SHIFT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} while (base < CONSISTENT_END);
 
 	return ret;
 }
+<<<<<<< HEAD
 
 core_initcall(consistent_init);
 
 static void *
 __dma_alloc_remap(struct page *page, size_t size, gfp_t gfp, pgprot_t prot,
 	const void *caller)
+=======
+core_initcall(consistent_init);
+
+static void *__alloc_from_contiguous(struct device *dev, size_t size,
+				     pgprot_t prot, struct page **ret_page);
+
+static struct arm_vmregion_head coherent_head = {
+	.vm_lock	= __SPIN_LOCK_UNLOCKED(&coherent_head.vm_lock),
+	.vm_list	= LIST_HEAD_INIT(coherent_head.vm_list),
+};
+
+size_t coherent_pool_size = DEFAULT_CONSISTENT_DMA_SIZE / 8;
+
+static int __init early_coherent_pool(char *p)
+{
+	coherent_pool_size = memparse(p, &p);
+	return 0;
+}
+early_param("coherent_pool", early_coherent_pool);
+
+/*
+ * Initialise the coherent pool for atomic allocations.
+ */
+static int __init coherent_init(void)
+{
+	pgprot_t prot = pgprot_dmacoherent(pgprot_kernel);
+	size_t size = coherent_pool_size;
+	struct page *page;
+	void *ptr;
+
+	if (cpu_architecture() < CPU_ARCH_ARMv6)
+		return 0;
+
+	ptr = __alloc_from_contiguous(NULL, size, prot, &page);
+	if (ptr) {
+		coherent_head.vm_start = (unsigned long) ptr;
+		coherent_head.vm_end = (unsigned long) ptr + size;
+		printk(KERN_INFO "DMA: preallocated %u KiB pool for atomic coherent allocations\n",
+		       (unsigned)size / 1024);
+		return 0;
+	}
+	printk(KERN_ERR "DMA: failed to allocate %u KiB pool for atomic coherent allocation\n",
+	       (unsigned)size / 1024);
+	return -ENOMEM;
+}
+/*
+ * CMA is activated by core_initcall, so we must be called after it
+ */
+postcore_initcall(coherent_init);
+
+struct dma_contig_early_reserve {
+	phys_addr_t base;
+	unsigned long size;
+};
+
+static struct dma_contig_early_reserve dma_mmu_remap[MAX_CMA_AREAS] __initdata;
+
+static int dma_mmu_remap_num __initdata;
+
+void __init dma_contiguous_early_fixup(phys_addr_t base, unsigned long size)
+{
+	dma_mmu_remap[dma_mmu_remap_num].base = base;
+	dma_mmu_remap[dma_mmu_remap_num].size = size;
+	dma_mmu_remap_num++;
+}
+
+void __init dma_contiguous_remap(void)
+{
+	int i;
+	for (i = 0; i < dma_mmu_remap_num; i++) {
+		phys_addr_t start = dma_mmu_remap[i].base;
+		phys_addr_t end = start + dma_mmu_remap[i].size;
+		struct map_desc map;
+		unsigned long addr;
+
+		if (end > arm_lowmem_limit)
+			end = arm_lowmem_limit;
+		if (start >= end)
+			continue;
+
+		map.pfn = __phys_to_pfn(start);
+		map.virtual = __phys_to_virt(start);
+		map.length = end - start;
+		map.type = MT_MEMORY_DMA_READY;
+
+		/*
+		 * Clear previous low-memory mapping
+		 */
+		for (addr = __phys_to_virt(start); addr < __phys_to_virt(end);
+		     addr += PGDIR_SIZE)
+			pmd_clear(pmd_off_k(addr));
+
+		iotable_init(&map, 1);
+	}
+}
+
+static void *
+__dma_alloc_remap(struct page *page, size_t size, gfp_t gfp, pgprot_t prot)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct arm_vmregion *c;
 	size_t align;
@@ -242,7 +402,11 @@ __dma_alloc_remap(struct page *page, size_t size, gfp_t gfp, pgprot_t prot,
 	 * Allocate a virtual address in the consistent mapping region.
 	 */
 	c = arm_vmregion_alloc(&consistent_head, align, size,
+<<<<<<< HEAD
 			    gfp & ~(__GFP_DMA | __GFP_HIGHMEM), caller);
+=======
+			    gfp & ~(__GFP_DMA | __GFP_HIGHMEM));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (c) {
 		pte_t *pte;
 		int idx = CONSISTENT_PTE_INDEX(c->vm_start);
@@ -319,6 +483,7 @@ static void __dma_free_remap(void *cpu_addr, size_t size)
 	arm_vmregion_free(&consistent_head, c);
 }
 
+<<<<<<< HEAD
 #else	/* !CONFIG_MMU */
 
 #define __dma_alloc_remap(page, size, gfp, prot, c)	page_address(page)
@@ -345,14 +510,192 @@ __dma_alloc(struct device *dev, size_t size, dma_addr_t *handle, gfp_t gfp,
 	*handle = ~0;
 	size = PAGE_ALIGN(size);
 
+=======
+static int __dma_update_pte(pte_t *pte, pgtable_t token, unsigned long addr,
+			    void *data)
+{
+	struct page *page = virt_to_page(addr);
+	pgprot_t prot = *(pgprot_t *)data;
+
+	set_pte_ext(pte, mk_pte(page, prot), 0);
+	return 0;
+}
+
+static void __dma_remap(struct page *page, size_t size, pgprot_t prot)
+{
+	unsigned long start = (unsigned long) page_address(page);
+	unsigned end = start + size;
+
+	apply_to_page_range(&init_mm, start, size, __dma_update_pte, &prot);
+	dsb();
+	flush_tlb_kernel_range(start, end);
+}
+
+static void *__alloc_remap_buffer(struct device *dev, size_t size, gfp_t gfp,
+				 pgprot_t prot, struct page **ret_page)
+{
+	struct page *page;
+	void *ptr;
 	page = __dma_alloc_buffer(dev, size, gfp);
 	if (!page)
 		return NULL;
 
+	ptr = __dma_alloc_remap(page, size, gfp, prot);
+	if (!ptr) {
+		__dma_free_buffer(page, size);
+		return NULL;
+	}
+
+	*ret_page = page;
+	return ptr;
+}
+
+static void *__alloc_from_pool(struct device *dev, size_t size,
+			       struct page **ret_page)
+{
+	struct arm_vmregion *c;
+	size_t align;
+
+	if (!coherent_head.vm_start) {
+		printk(KERN_ERR "%s: coherent pool not initialised!\n",
+		       __func__);
+		dump_stack();
+		return NULL;
+	}
+
+	/*
+	 * Align the region allocation - allocations from pool are rather
+	 * small, so align them to their order in pages, minimum is a page
+	 * size. This helps reduce fragmentation of the DMA space.
+	 */
+	align = PAGE_SIZE << get_order(size);
+	c = arm_vmregion_alloc(&coherent_head, align, size, 0);
+	if (c) {
+		void *ptr = (void *)c->vm_start;
+		struct page *page = virt_to_page(ptr);
+		*ret_page = page;
+		return ptr;
+	}
+	return NULL;
+}
+
+static int __free_from_pool(void *cpu_addr, size_t size)
+{
+	unsigned long start = (unsigned long)cpu_addr;
+	unsigned long end = start + size;
+	struct arm_vmregion *c;
+
+	if (start < coherent_head.vm_start || end > coherent_head.vm_end)
+		return 0;
+
+	c = arm_vmregion_find_remove(&coherent_head, (unsigned long)start);
+
+	if ((c->vm_end - c->vm_start) != size) {
+		printk(KERN_ERR "%s: freeing wrong coherent size (%ld != %d)\n",
+		       __func__, c->vm_end - c->vm_start, size);
+		dump_stack();
+		size = c->vm_end - c->vm_start;
+	}
+
+	arm_vmregion_free(&coherent_head, c);
+	return 1;
+}
+
+static void *__alloc_from_contiguous(struct device *dev, size_t size,
+				     pgprot_t prot, struct page **ret_page)
+{
+	unsigned long order = get_order(size);
+	size_t count = size >> PAGE_SHIFT;
+	struct page *page;
+
+	page = dma_alloc_from_contiguous(dev, count, order);
+	if (!page)
+		return NULL;
+
+	__dma_clear_buffer(page, size);
+	__dma_remap(page, size, prot);
+
+	*ret_page = page;
+	return page_address(page);
+}
+
+static void __free_from_contiguous(struct device *dev, struct page *page,
+				   size_t size)
+{
+	__dma_remap(page, size, pgprot_kernel);
+	dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT);
+}
+
+#define nommu() 0
+
+#else	/* !CONFIG_MMU */
+
+#define nommu() 1
+
+#define __alloc_remap_buffer(dev, size, gfp, prot, ret)	NULL
+#define __alloc_from_pool(dev, size, ret_page)		NULL
+#define __alloc_from_contiguous(dev, size, prot, ret)	NULL
+#define __free_from_pool(cpu_addr, size)		0
+#define __free_from_contiguous(dev, page, size)		do { } while (0)
+#define __dma_free_remap(cpu_addr, size)		do { } while (0)
+
+#endif	/* CONFIG_MMU */
+
+static void *__alloc_simple_buffer(struct device *dev, size_t size, gfp_t gfp,
+				   struct page **ret_page)
+{
+	struct page *page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+	page = __dma_alloc_buffer(dev, size, gfp);
+	if (!page)
+		return NULL;
+
+<<<<<<< HEAD
 	if (!arch_is_coherent())
 		addr = __dma_alloc_remap(page, size, gfp, prot, caller);
 	else
 		addr = page_address(page);
+=======
+	*ret_page = page;
+	return page_address(page);
+}
+
+
+
+static void *__dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
+			 gfp_t gfp, pgprot_t prot)
+{
+	u64 mask = get_coherent_dma_mask(dev);
+	struct page *page;
+	void *addr;
+
+#ifdef CONFIG_DMA_API_DEBUG
+	u64 limit = (mask + 1) & ~mask;
+	if (limit && size >= limit) {
+		dev_warn(dev, "coherent allocation too big (requested %#x mask %#llx)\n",
+			size, mask);
+		return NULL;
+	}
+#endif
+
+	if (!mask)
+		return NULL;
+
+	if (mask < 0xffffffffULL)
+		gfp |= GFP_DMA;
+
+	*handle = ~0;
+	size = PAGE_ALIGN(size);
+
+	if (arch_is_coherent() || nommu())
+		addr = __alloc_simple_buffer(dev, size, gfp, &page);
+	else if (cpu_architecture() < CPU_ARCH_ARMv6)
+		addr = __alloc_remap_buffer(dev, size, gfp, prot, &page);
+	else if (gfp & GFP_ATOMIC)
+		addr = __alloc_from_pool(dev, size, &page);
+	else
+		addr = __alloc_from_contiguous(dev, size, prot, &page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (addr)
 		*handle = pfn_to_dma(dev, page_to_pfn(page));
@@ -366,8 +709,13 @@ __dma_alloc(struct device *dev, size_t size, dma_addr_t *handle, gfp_t gfp,
  * Allocate DMA-coherent memory space and return both the kernel remapped
  * virtual and bus address for that space.
  */
+<<<<<<< HEAD
 void *
 dma_alloc_coherent(struct device *dev, size_t size, dma_addr_t *handle, gfp_t gfp)
+=======
+void *dma_alloc_coherent(struct device *dev, size_t size, dma_addr_t *handle,
+			 gfp_t gfp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	void *memory;
 
@@ -375,8 +723,12 @@ dma_alloc_coherent(struct device *dev, size_t size, dma_addr_t *handle, gfp_t gf
 		return memory;
 
 	return __dma_alloc(dev, size, handle, gfp,
+<<<<<<< HEAD
 			   pgprot_dmacoherent(pgprot_kernel),
 			   __builtin_return_address(0));
+=======
+			   pgprot_dmacoherent(pgprot_kernel));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(dma_alloc_coherent);
 
@@ -388,8 +740,12 @@ void *
 dma_alloc_writecombine(struct device *dev, size_t size, dma_addr_t *handle, gfp_t gfp)
 {
 	return __dma_alloc(dev, size, handle, gfp,
+<<<<<<< HEAD
 			   pgprot_writecombine(pgprot_kernel),
 			   __builtin_return_address(0));
+=======
+			   pgprot_writecombine(pgprot_kernel));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(dma_alloc_writecombine);
 
@@ -398,6 +754,7 @@ static int dma_mmap(struct device *dev, struct vm_area_struct *vma,
 {
 	int ret = -ENXIO;
 #ifdef CONFIG_MMU
+<<<<<<< HEAD
 	unsigned long user_size, kern_size;
 	struct arm_vmregion *c;
 
@@ -417,6 +774,13 @@ static int dma_mmap(struct device *dev, struct vm_area_struct *vma,
 					      vma->vm_page_prot);
 		}
 	}
+=======
+	unsigned long pfn = dma_to_pfn(dev, dma_addr);
+	ret = remap_pfn_range(vma, vma->vm_start,
+			      pfn + vma->vm_pgoff,
+			      vma->vm_end - vma->vm_start,
+			      vma->vm_page_prot);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* CONFIG_MMU */
 
 	return ret;
@@ -438,6 +802,7 @@ int dma_mmap_writecombine(struct device *dev, struct vm_area_struct *vma,
 }
 EXPORT_SYMBOL(dma_mmap_writecombine);
 
+<<<<<<< HEAD
 /*
  * free a page as defined by the above mapping.
  * Must not be called with IRQs disabled.
@@ -445,16 +810,42 @@ EXPORT_SYMBOL(dma_mmap_writecombine);
 void dma_free_coherent(struct device *dev, size_t size, void *cpu_addr, dma_addr_t handle)
 {
 	WARN_ON(irqs_disabled());
+=======
+
+/*
+ * Free a buffer as defined by the above mapping.
+ */
+void dma_free_coherent(struct device *dev, size_t size, void *cpu_addr, dma_addr_t handle)
+{
+	struct page *page = pfn_to_page(dma_to_pfn(dev, handle));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dma_release_from_coherent(dev, get_order(size), cpu_addr))
 		return;
 
 	size = PAGE_ALIGN(size);
 
+<<<<<<< HEAD
 	if (!arch_is_coherent())
 		__dma_free_remap(cpu_addr, size);
 
 	__dma_free_buffer(pfn_to_page(dma_to_pfn(dev, handle)), size);
+=======
+	if (arch_is_coherent() || nommu()) {
+		__dma_free_buffer(page, size);
+	} else if (cpu_architecture() < CPU_ARCH_ARMv6) {
+		__dma_free_remap(cpu_addr, size);
+		__dma_free_buffer(page, size);
+	} else {
+		if (__free_from_pool(cpu_addr, size))
+			return;
+		/*
+		 * Non-atomic allocations cannot be freed with IRQs disabled
+		 */
+		WARN_ON(irqs_disabled());
+		__free_from_contiguous(dev, page, size);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(dma_free_coherent);
 
@@ -503,6 +894,10 @@ static void dma_cache_maint_page(struct page *page, unsigned long offset,
 	size_t size, enum dma_data_direction dir,
 	void (*op)(const void *, size_t, int))
 {
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long pfn;
 	size_t left = size;
 
@@ -515,15 +910,26 @@ static void dma_cache_maint_page(struct page *page, unsigned long offset,
 	 * If highmem is not configured then the bulk of this loop gets
 	 * optimized out.
 	 */
+<<<<<<< HEAD
 	do {
 		size_t len = left;
 		void *vaddr;
 
+=======
+
+	do {
+		size_t len = left;
+		void *vaddr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		page = pfn_to_page(pfn);
 
 		if (PageHighMem(page)) {
 			if (len + offset > PAGE_SIZE)
+<<<<<<< HEAD
 				len = PAGE_SIZE - offset;
+=======
+			    len = PAGE_SIZE - offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			vaddr = kmap_high_get(page);
 			if (vaddr) {
 				vaddr += offset;
@@ -728,9 +1134,12 @@ EXPORT_SYMBOL(dma_set_mask);
 
 static int __init dma_debug_do_init(void)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_MMU
 	arm_vmregion_create_proc("dma-mappings", &consistent_head);
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dma_debug_init(PREALLOC_DMA_DEBUG_ENTRIES);
 	return 0;
 }

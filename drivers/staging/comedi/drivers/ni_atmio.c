@@ -268,9 +268,14 @@ static const struct ni_board_struct ni_boards[] = {
 	 }
 };
 
+<<<<<<< HEAD
 static const int ni_irqpin[] = {
 	-1, -1, -1, 0, 1, 2, -1, 3, -1, -1, 4, 5, 6, -1, -1, 7
 };
+=======
+static const int ni_irqpin[] =
+    { -1, -1, -1, 0, 1, 2, -1, 3, -1, -1, 4, 5, 6, -1, -1, 7 };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define interrupt_pin(a)	(ni_irqpin[(a)])
 
@@ -280,10 +285,14 @@ static const int ni_irqpin[] = {
 
 struct ni_private {
 	struct pnp_dev *isapnp_dev;
+<<<<<<< HEAD
 	NI_PRIVATE_COMMON
 
 };
 
+=======
+ NI_PRIVATE_COMMON};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define devpriv ((struct ni_private *)dev->private)
 
 /* How we access registers */

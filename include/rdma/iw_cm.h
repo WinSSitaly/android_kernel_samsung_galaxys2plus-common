@@ -52,10 +52,15 @@ struct iw_cm_event {
 	struct sockaddr_in local_addr;
 	struct sockaddr_in remote_addr;
 	void *private_data;
+<<<<<<< HEAD
 	void *provider_data;
 	u8 private_data_len;
 	u8 ord;
 	u8 ird;
+=======
+	u8 private_data_len;
+	void *provider_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**

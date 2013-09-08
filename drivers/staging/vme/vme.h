@@ -10,6 +10,10 @@ enum vme_resource_type {
 };
 
 /* VME Address Spaces */
+<<<<<<< HEAD
+=======
+typedef u32 vme_address_t;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define VME_A16		0x1
 #define VME_A24		0x2
 #define	VME_A32		0x4
@@ -28,6 +32,10 @@ enum vme_resource_type {
 
 
 /* VME Cycle Types */
+<<<<<<< HEAD
+=======
+typedef u32 vme_cycle_t;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define VME_SCT		0x1
 #define VME_BLT		0x2
 #define VME_MBLT	0x4
@@ -45,23 +53,43 @@ enum vme_resource_type {
 #define	VME_DATA	0x8000
 
 /* VME Data Widths */
+<<<<<<< HEAD
+=======
+typedef u32 vme_width_t;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define VME_D8		0x1
 #define VME_D16		0x2
 #define VME_D32		0x4
 #define VME_D64		0x8
 
 /* Arbitration Scheduling Modes */
+<<<<<<< HEAD
 #define VME_R_ROBIN_MODE	0x1
 #define VME_PRIORITY_MODE	0x2
 
+=======
+typedef u32 vme_arbitration_t;
+#define VME_R_ROBIN_MODE	0x1
+#define VME_PRIORITY_MODE	0x2
+
+typedef u32 vme_dma_t;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define VME_DMA_PATTERN			(1<<0)
 #define VME_DMA_PCI			(1<<1)
 #define VME_DMA_VME			(1<<2)
 
+<<<<<<< HEAD
+=======
+typedef u32 vme_pattern_t;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define VME_DMA_PATTERN_BYTE		(1<<0)
 #define VME_DMA_PATTERN_WORD		(1<<1)
 #define VME_DMA_PATTERN_INCREMENT	(1<<2)
 
+<<<<<<< HEAD
+=======
+typedef u32 vme_dma_route_t;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define VME_DMA_VME_TO_MEM		(1<<0)
 #define VME_DMA_MEM_TO_VME		(1<<1)
 #define VME_DMA_VME_TO_VME		(1<<2)
@@ -70,7 +98,11 @@ enum vme_resource_type {
 #define VME_DMA_PATTERN_TO_MEM		(1<<5)
 
 struct vme_dma_attr {
+<<<<<<< HEAD
 	u32 type;
+=======
+	vme_dma_t type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *private;
 };
 
@@ -81,6 +113,7 @@ struct vme_resource {
 
 extern struct bus_type vme_bus_type;
 
+<<<<<<< HEAD
 /* VME_MAX_BRIDGES comes from the type of vme_bus_numbers */
 #define VME_MAX_BRIDGES		(sizeof(unsigned int)*8)
 #define VME_MAX_SLOTS		32
@@ -102,10 +135,19 @@ struct vme_dev {
 	struct device dev;
 	struct list_head drv_list;
 	struct list_head bridge_list;
+=======
+#define VME_SLOT_CURRENT	-1
+#define VME_SLOT_ALL		-2
+
+struct vme_device_id {
+	int bus;
+	int slot;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct vme_driver {
 	struct list_head node;
+<<<<<<< HEAD
 	const char *name;
 	int (*match)(struct vme_dev *);
 	int (*probe)(struct vme_dev *);
@@ -113,6 +155,14 @@ struct vme_driver {
 	void (*shutdown)(void);
 	struct device_driver driver;
 	struct list_head devices;
+=======
+	char *name;
+	const struct vme_device_id *bind_table;
+	int (*probe)  (struct device *, int, int);
+	int (*remove) (struct device *, int, int);
+	void (*shutdown) (void);
+	struct device_driver    driver;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void *vme_alloc_consistent(struct vme_resource *, size_t, dma_addr_t *);
@@ -121,6 +171,7 @@ void vme_free_consistent(struct vme_resource *, size_t,  void *,
 
 size_t vme_get_size(struct vme_resource *);
 
+<<<<<<< HEAD
 struct vme_resource *vme_slave_request(struct vme_dev *, u32, u32);
 int vme_slave_set(struct vme_resource *, int, unsigned long long,
 	unsigned long long, dma_addr_t, u32, u32);
@@ -133,17 +184,42 @@ int vme_master_set(struct vme_resource *, int, unsigned long long,
 	unsigned long long, u32, u32, u32);
 int vme_master_get(struct vme_resource *, int *, unsigned long long *,
 	unsigned long long *, u32 *, u32 *, u32 *);
+=======
+struct vme_resource *vme_slave_request(struct device *, vme_address_t,
+	vme_cycle_t);
+int vme_slave_set(struct vme_resource *, int, unsigned long long,
+	unsigned long long, dma_addr_t, vme_address_t, vme_cycle_t);
+int vme_slave_get(struct vme_resource *, int *, unsigned long long *,
+	unsigned long long *, dma_addr_t *, vme_address_t *, vme_cycle_t *);
+void vme_slave_free(struct vme_resource *);
+
+struct vme_resource *vme_master_request(struct device *, vme_address_t,
+	vme_cycle_t, vme_width_t);
+int vme_master_set(struct vme_resource *, int, unsigned long long,
+	unsigned long long, vme_address_t, vme_cycle_t, vme_width_t);
+int vme_master_get(struct vme_resource *, int *, unsigned long long *,
+	unsigned long long *, vme_address_t *, vme_cycle_t *, vme_width_t *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ssize_t vme_master_read(struct vme_resource *, void *, size_t, loff_t);
 ssize_t vme_master_write(struct vme_resource *, void *, size_t, loff_t);
 unsigned int vme_master_rmw(struct vme_resource *, unsigned int, unsigned int,
 	unsigned int, loff_t);
 void vme_master_free(struct vme_resource *);
 
+<<<<<<< HEAD
 struct vme_resource *vme_dma_request(struct vme_dev *, u32);
 struct vme_dma_list *vme_new_dma_list(struct vme_resource *);
 struct vme_dma_attr *vme_dma_pattern_attribute(u32, u32);
 struct vme_dma_attr *vme_dma_pci_attribute(dma_addr_t);
 struct vme_dma_attr *vme_dma_vme_attribute(unsigned long long, u32, u32, u32);
+=======
+struct vme_resource *vme_dma_request(struct device *, vme_dma_route_t);
+struct vme_dma_list *vme_new_dma_list(struct vme_resource *);
+struct vme_dma_attr *vme_dma_pattern_attribute(u32, vme_pattern_t);
+struct vme_dma_attr *vme_dma_pci_attribute(dma_addr_t);
+struct vme_dma_attr *vme_dma_vme_attribute(unsigned long long, vme_address_t,
+	vme_cycle_t, vme_width_t);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void vme_dma_free_attribute(struct vme_dma_attr *);
 int vme_dma_list_add(struct vme_dma_list *, struct vme_dma_attr *,
 	struct vme_dma_attr *, size_t);
@@ -151,6 +227,7 @@ int vme_dma_list_exec(struct vme_dma_list *);
 int vme_dma_list_free(struct vme_dma_list *);
 int vme_dma_free(struct vme_resource *);
 
+<<<<<<< HEAD
 int vme_irq_request(struct vme_dev *, int, int,
 	void (*callback)(int, int, void *), void *);
 void vme_irq_free(struct vme_dev *, int, int);
@@ -160,13 +237,32 @@ struct vme_resource *vme_lm_request(struct vme_dev *);
 int vme_lm_count(struct vme_resource *);
 int vme_lm_set(struct vme_resource *, unsigned long long, u32, u32);
 int vme_lm_get(struct vme_resource *, unsigned long long *, u32 *, u32 *);
+=======
+int vme_irq_request(struct device *, int, int,
+	void (*callback)(int, int, void *), void *);
+void vme_irq_free(struct device *, int, int);
+int vme_irq_generate(struct device *, int, int);
+
+struct vme_resource * vme_lm_request(struct device *);
+int vme_lm_count(struct vme_resource *);
+int vme_lm_set(struct vme_resource *, unsigned long long, vme_address_t,
+	vme_cycle_t);
+int vme_lm_get(struct vme_resource *, unsigned long long *, vme_address_t *,
+	vme_cycle_t *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int vme_lm_attach(struct vme_resource *, int, void (*callback)(int));
 int vme_lm_detach(struct vme_resource *, int);
 void vme_lm_free(struct vme_resource *);
 
+<<<<<<< HEAD
 int vme_slot_get(struct vme_dev *);
 
 int vme_register_driver(struct vme_driver *, unsigned int);
+=======
+int vme_slot_get(struct device *);
+
+int vme_register_driver(struct vme_driver *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void vme_unregister_driver(struct vme_driver *);
 
 

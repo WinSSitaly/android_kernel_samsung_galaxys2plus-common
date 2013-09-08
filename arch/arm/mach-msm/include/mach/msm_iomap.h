@@ -37,6 +37,15 @@
  *
  */
 
+<<<<<<< HEAD
+=======
+#ifdef __ASSEMBLY__
+#define IOMEM(x)	x
+#else
+#define IOMEM(x)	((void __force __iomem *)(x))
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_ARCH_MSM7X30)
 #include "msm_iomap-7x30.h"
 #elif defined(CONFIG_ARCH_QSD8X50)
@@ -49,6 +58,7 @@
 
 #include "msm_iomap-8960.h"
 
+<<<<<<< HEAD
 #define MSM_DEBUG_UART_SIZE	SZ_4K
 #if defined(CONFIG_DEBUG_MSM_UART1)
 #define MSM_DEBUG_UART_BASE	0xE1000000
@@ -61,13 +71,18 @@
 #define MSM_DEBUG_UART_PHYS	MSM_UART3_PHYS
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Virtual addresses shared across all MSM targets. */
 #define MSM_CSR_BASE		IOMEM(0xE0001000)
 #define MSM_QGIC_DIST_BASE	IOMEM(0xF0000000)
 #define MSM_QGIC_CPU_BASE	IOMEM(0xF0001000)
 #define MSM_TMR_BASE		IOMEM(0xF0200000)
 #define MSM_TMR0_BASE		IOMEM(0xF0201000)
+<<<<<<< HEAD
 #define MSM_GPIO1_BASE		IOMEM(0xE0003000)
 #define MSM_GPIO2_BASE		IOMEM(0xE0004000)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

@@ -7,7 +7,11 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/string.h>
 #include <linux/cryptohash.h>
@@ -18,6 +22,10 @@
 #include <linux/io.h>
 
 #include <asm/checksum.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/ftrace.h>
 
 /*
@@ -45,9 +53,20 @@ extern void __aeabi_lmul(void);
 extern void __aeabi_uidiv(void);
 extern void __aeabi_uidivmod(void);
 extern void __aeabi_ulcmp(void);
+<<<<<<< HEAD
 
 extern void fpundefinstr(void);
 
+=======
+extern void __aeabi_ldivmod(void);  // added for uldivmod in DWC OTG USB driver
+extern void __aeabi_uldivmod(void); // added for uldivmod in DWC OTG USB driver
+
+extern void fpundefinstr(void);
+
+
+EXPORT_SYMBOL(__backtrace);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* platform dependent support */
 EXPORT_SYMBOL(__udelay);
 EXPORT_SYMBOL(__const_udelay);
@@ -108,6 +127,12 @@ EXPORT_SYMBOL(__put_user_4);
 EXPORT_SYMBOL(__put_user_8);
 #endif
 
+<<<<<<< HEAD
+=======
+	/* crypto hash */
+EXPORT_SYMBOL(sha_transform);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* gcc lib functions */
 EXPORT_SYMBOL(__ashldi3);
 EXPORT_SYMBOL(__ashrdi3);
@@ -130,6 +155,11 @@ EXPORT_SYMBOL(__aeabi_lmul);
 EXPORT_SYMBOL(__aeabi_uidiv);
 EXPORT_SYMBOL(__aeabi_uidivmod);
 EXPORT_SYMBOL(__aeabi_ulcmp);
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL(__aeabi_ldivmod);  // added for uldivmod in DWC OTG USB driver
+EXPORT_SYMBOL(__aeabi_uldivmod); // added for uldivmod in DWC OTG USB driver
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	/* bitops */

@@ -8,7 +8,11 @@
 #define DEFAULT_RATELIMIT_BURST		10
 
 struct ratelimit_state {
+<<<<<<< HEAD
 	raw_spinlock_t	lock;		/* protect the state */
+=======
+	spinlock_t	lock;		/* protect the state */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int		interval;
 	int		burst;
@@ -20,7 +24,11 @@ struct ratelimit_state {
 #define DEFINE_RATELIMIT_STATE(name, interval_init, burst_init)		\
 									\
 	struct ratelimit_state name = {					\
+<<<<<<< HEAD
 		.lock		= __RAW_SPIN_LOCK_UNLOCKED(name.lock),	\
+=======
+		.lock		= __SPIN_LOCK_UNLOCKED(name.lock),	\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.interval	= interval_init,			\
 		.burst		= burst_init,				\
 	}
@@ -28,7 +36,11 @@ struct ratelimit_state {
 static inline void ratelimit_state_init(struct ratelimit_state *rs,
 					int interval, int burst)
 {
+<<<<<<< HEAD
 	raw_spin_lock_init(&rs->lock);
+=======
+	spin_lock_init(&rs->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rs->interval = interval;
 	rs->burst = burst;
 	rs->printed = 0;

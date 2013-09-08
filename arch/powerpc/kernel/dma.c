@@ -10,7 +10,10 @@
 #include <linux/dma-debug.h>
 #include <linux/gfp.h>
 #include <linux/memblock.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/bug.h>
 #include <asm/abs_addr.h>
 #include <asm/machdep.h>
@@ -26,8 +29,12 @@
 
 
 void *dma_direct_alloc_coherent(struct device *dev, size_t size,
+<<<<<<< HEAD
 				dma_addr_t *dma_handle, gfp_t flag,
 				struct dma_attrs *attrs)
+=======
+				dma_addr_t *dma_handle, gfp_t flag)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	void *ret;
 #ifdef CONFIG_NOT_COHERENT_CACHE
@@ -55,8 +62,12 @@ void *dma_direct_alloc_coherent(struct device *dev, size_t size,
 }
 
 void dma_direct_free_coherent(struct device *dev, size_t size,
+<<<<<<< HEAD
 			      void *vaddr, dma_addr_t dma_handle,
 			      struct dma_attrs *attrs)
+=======
+			      void *vaddr, dma_addr_t dma_handle)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 #ifdef CONFIG_NOT_COHERENT_CACHE
 	__dma_free_coherent(size, vaddr);
@@ -99,6 +110,7 @@ static int dma_direct_dma_supported(struct device *dev, u64 mask)
 #endif
 }
 
+<<<<<<< HEAD
 static u64 dma_direct_get_required_mask(struct device *dev)
 {
 	u64 end, mask;
@@ -111,6 +123,8 @@ static u64 dma_direct_get_required_mask(struct device *dev)
 	return mask;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline dma_addr_t dma_direct_map_page(struct device *dev,
 					     struct page *page,
 					     unsigned long offset,
@@ -152,6 +166,7 @@ static inline void dma_direct_sync_single(struct device *dev,
 #endif
 
 struct dma_map_ops dma_direct_ops = {
+<<<<<<< HEAD
 	.alloc				= dma_direct_alloc_coherent,
 	.free				= dma_direct_free_coherent,
 	.map_sg				= dma_direct_map_sg,
@@ -160,6 +175,15 @@ struct dma_map_ops dma_direct_ops = {
 	.map_page			= dma_direct_map_page,
 	.unmap_page			= dma_direct_unmap_page,
 	.get_required_mask		= dma_direct_get_required_mask,
+=======
+	.alloc_coherent	= dma_direct_alloc_coherent,
+	.free_coherent	= dma_direct_free_coherent,
+	.map_sg		= dma_direct_map_sg,
+	.unmap_sg	= dma_direct_unmap_sg,
+	.dma_supported	= dma_direct_dma_supported,
+	.map_page	= dma_direct_map_page,
+	.unmap_page	= dma_direct_unmap_page,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_NOT_COHERENT_CACHE
 	.sync_single_for_cpu 		= dma_direct_sync_single,
 	.sync_single_for_device 	= dma_direct_sync_single,
@@ -177,7 +201,13 @@ int dma_set_mask(struct device *dev, u64 dma_mask)
 
 	if (ppc_md.dma_set_mask)
 		return ppc_md.dma_set_mask(dev, dma_mask);
+<<<<<<< HEAD
 	if ((dma_ops != NULL) && (dma_ops->set_dma_mask != NULL))
+=======
+	if (unlikely(dma_ops == NULL))
+		return -EIO;
+	if (dma_ops->set_dma_mask != NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return dma_ops->set_dma_mask(dev, dma_mask);
 	if (!dev->dma_mask || !dma_supported(dev, dma_mask))
 		return -EIO;
@@ -186,6 +216,7 @@ int dma_set_mask(struct device *dev, u64 dma_mask)
 }
 EXPORT_SYMBOL(dma_set_mask);
 
+<<<<<<< HEAD
 u64 dma_get_required_mask(struct device *dev)
 {
 	struct dma_map_ops *dma_ops = get_dma_ops(dev);
@@ -203,6 +234,8 @@ u64 dma_get_required_mask(struct device *dev)
 }
 EXPORT_SYMBOL_GPL(dma_get_required_mask);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init dma_init(void)
 {
        dma_debug_init(PREALLOC_DMA_DEBUG_ENTRIES);

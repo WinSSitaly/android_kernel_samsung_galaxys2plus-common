@@ -51,4 +51,10 @@
 	.macro  test_for_ipi, irqnr, irqstat, base, tmp
 	.endm
 
+<<<<<<< HEAD
+=======
+	.macro  test_for_ltirq, irqnr, irqstat, base, tmp
+	.endm
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	arch_irq_handler shmobile_handle_irq_intc

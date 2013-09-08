@@ -20,7 +20,10 @@
 
 #include <linux/types.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/page.h>
 
@@ -28,7 +31,11 @@
  * The io_mapping mechanism provides an abstraction for mapping
  * individual pages from an io device to the CPU in an efficient fashion.
  *
+<<<<<<< HEAD
  * See Documentation/io-mapping.txt
+=======
+ * See Documentation/io_mapping.txt
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #ifdef CONFIG_HAVE_ATOMIC_IOMAP

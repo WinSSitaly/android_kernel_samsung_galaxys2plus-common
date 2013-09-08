@@ -335,7 +335,11 @@ int minix_make_empty(struct inode *inode, struct inode *dir)
 		goto fail;
 	}
 
+<<<<<<< HEAD
 	kaddr = kmap_atomic(page);
+=======
+	kaddr = kmap_atomic(page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(kaddr, 0, PAGE_CACHE_SIZE);
 
 	if (sbi->s_version == MINIX_V3) {
@@ -355,7 +359,11 @@ int minix_make_empty(struct inode *inode, struct inode *dir)
 		de->inode = dir->i_ino;
 		strcpy(de->name, "..");
 	}
+<<<<<<< HEAD
 	kunmap_atomic(kaddr);
+=======
+	kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = dir_commit_chunk(page, 0, 2 * sbi->s_dirsize);
 fail:

@@ -27,7 +27,11 @@
 #include <linux/uaccess.h>	/* copy_from_user(), copy_to_user() */
 #include <linux/vmalloc.h>
 #include <linux/compat.h>	/* compat_ptr() */
+<<<<<<< HEAD
 #include <linux/mount.h>	/* mnt_want_write_file(), mnt_drop_write_file() */
+=======
+#include <linux/mount.h>	/* mnt_want_write(), mnt_drop_write() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/buffer_head.h>
 #include <linux/nilfs2_fs.h>
 #include "nilfs.h"
@@ -119,7 +123,11 @@ static int nilfs_ioctl_setflags(struct inode *inode, struct file *filp,
 	if (get_user(flags, (int __user *)argp))
 		return -EFAULT;
 
+<<<<<<< HEAD
 	ret = mnt_want_write_file(filp);
+=======
+	ret = mnt_want_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -154,7 +162,11 @@ static int nilfs_ioctl_setflags(struct inode *inode, struct file *filp,
 	ret = nilfs_transaction_commit(inode->i_sb);
 out:
 	mutex_unlock(&inode->i_mutex);
+<<<<<<< HEAD
 	mnt_drop_write_file(filp);
+=======
+	mnt_drop_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -174,7 +186,11 @@ static int nilfs_ioctl_change_cpmode(struct inode *inode, struct file *filp,
 	if (!capable(CAP_SYS_ADMIN))
 		return -EPERM;
 
+<<<<<<< HEAD
 	ret = mnt_want_write_file(filp);
+=======
+	ret = mnt_want_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -182,7 +198,11 @@ static int nilfs_ioctl_change_cpmode(struct inode *inode, struct file *filp,
 	if (copy_from_user(&cpmode, argp, sizeof(cpmode)))
 		goto out;
 
+<<<<<<< HEAD
 	mutex_lock(&nilfs->ns_snapshot_mount_mutex);
+=======
+	down_read(&inode->i_sb->s_umount);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nilfs_transaction_begin(inode->i_sb, &ti, 0);
 	ret = nilfs_cpfile_change_cpmode(
@@ -192,9 +212,15 @@ static int nilfs_ioctl_change_cpmode(struct inode *inode, struct file *filp,
 	else
 		nilfs_transaction_commit(inode->i_sb); /* never fails */
 
+<<<<<<< HEAD
 	mutex_unlock(&nilfs->ns_snapshot_mount_mutex);
 out:
 	mnt_drop_write_file(filp);
+=======
+	up_read(&inode->i_sb->s_umount);
+out:
+	mnt_drop_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -210,7 +236,11 @@ nilfs_ioctl_delete_checkpoint(struct inode *inode, struct file *filp,
 	if (!capable(CAP_SYS_ADMIN))
 		return -EPERM;
 
+<<<<<<< HEAD
 	ret = mnt_want_write_file(filp);
+=======
+	ret = mnt_want_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -225,7 +255,11 @@ nilfs_ioctl_delete_checkpoint(struct inode *inode, struct file *filp,
 	else
 		nilfs_transaction_commit(inode->i_sb); /* never fails */
 out:
+<<<<<<< HEAD
 	mnt_drop_write_file(filp);
+=======
+	mnt_drop_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -591,7 +625,11 @@ static int nilfs_ioctl_clean_segments(struct inode *inode, struct file *filp,
 	if (!capable(CAP_SYS_ADMIN))
 		return -EPERM;
 
+<<<<<<< HEAD
 	ret = mnt_want_write_file(filp);
+=======
+	ret = mnt_want_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -603,8 +641,11 @@ static int nilfs_ioctl_clean_segments(struct inode *inode, struct file *filp,
 	nsegs = argv[4].v_nmembs;
 	if (argv[4].v_size != argsz[4])
 		goto out;
+<<<<<<< HEAD
 	if (nsegs > UINT_MAX / sizeof(__u64))
 		goto out;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * argv[4] points to segment numbers this ioctl cleans.  We
@@ -627,9 +668,12 @@ static int nilfs_ioctl_clean_segments(struct inode *inode, struct file *filp,
 		if (argv[n].v_nmembs > nsegs * nilfs->ns_blocks_per_segment)
 			goto out_free;
 
+<<<<<<< HEAD
 		if (argv[n].v_nmembs >= UINT_MAX / argv[n].v_size)
 			goto out_free;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		len = argv[n].v_size * argv[n].v_nmembs;
 		base = (void __user *)(unsigned long)argv[n].v_base;
 		if (len == 0) {
@@ -666,11 +710,16 @@ static int nilfs_ioctl_clean_segments(struct inode *inode, struct file *filp,
 	if (ret < 0)
 		printk(KERN_ERR "NILFS: GC failed during preparation: "
 			"cannot read source blocks: err=%d\n", ret);
+<<<<<<< HEAD
 	else {
 		if (nilfs_sb_need_update(nilfs))
 			set_nilfs_discontinued(nilfs);
 		ret = nilfs_clean_segments(inode->i_sb, argv, kbufs);
 	}
+=======
+	else
+		ret = nilfs_clean_segments(inode->i_sb, argv, kbufs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nilfs_remove_all_gcinodes(nilfs);
 	clear_nilfs_gc_running(nilfs);
@@ -680,7 +729,11 @@ out_free:
 		vfree(kbufs[n]);
 	kfree(kbufs[4]);
 out:
+<<<<<<< HEAD
 	mnt_drop_write_file(filp);
+=======
+	mnt_drop_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -715,7 +768,11 @@ static int nilfs_ioctl_resize(struct inode *inode, struct file *filp,
 	if (!capable(CAP_SYS_ADMIN))
 		goto out;
 
+<<<<<<< HEAD
 	ret = mnt_want_write_file(filp);
+=======
+	ret = mnt_want_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto out;
 
@@ -726,7 +783,11 @@ static int nilfs_ioctl_resize(struct inode *inode, struct file *filp,
 	ret = nilfs_resize_fs(inode->i_sb, newsize);
 
 out_drop_write:
+<<<<<<< HEAD
 	mnt_drop_write_file(filp);
+=======
+	mnt_drop_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return ret;
 }

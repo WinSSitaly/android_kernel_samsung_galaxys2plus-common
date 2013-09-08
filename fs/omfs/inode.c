@@ -28,7 +28,11 @@ struct buffer_head *omfs_bread(struct super_block *sb, sector_t block)
 	return sb_bread(sb, clus_to_blk(sbi, block));
 }
 
+<<<<<<< HEAD
 struct inode *omfs_new_inode(struct inode *dir, umode_t mode)
+=======
+struct inode *omfs_new_inode(struct inode *dir, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inode *inode;
 	u64 new_block;
@@ -539,9 +543,17 @@ static int omfs_fill_super(struct super_block *sb, void *data, int silent)
 		goto out_brelse_bh2;
 	}
 
+<<<<<<< HEAD
 	sb->s_root = d_make_root(root);
 	if (!sb->s_root)
 		goto out_brelse_bh2;
+=======
+	sb->s_root = d_alloc_root(root);
+	if (!sb->s_root) {
+		iput(root);
+		goto out_brelse_bh2;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk(KERN_DEBUG "omfs: Mounted volume %s\n", omfs_rb->r_name);
 
 	ret = 0;

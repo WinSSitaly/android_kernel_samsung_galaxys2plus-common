@@ -19,8 +19,14 @@
 #ifndef __PLAT_MXC_IRQ_COMMON_H__
 #define __PLAT_MXC_IRQ_COMMON_H__
 
+<<<<<<< HEAD
 struct mxc_extra_irq
 {
+=======
+struct mxc_irq_chip
+{
+	struct irq_chip	base;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*set_priority)(unsigned char irq, unsigned char prio);
 	int (*set_irq_fiq)(unsigned int irq, unsigned int type);
 };

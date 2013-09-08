@@ -782,6 +782,10 @@ int ocfs2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
 	cpos = map_start >> osb->s_clustersize_bits;
 	mapping_end = ocfs2_clusters_for_bytes(inode->i_sb,
 					       map_start + map_len);
+<<<<<<< HEAD
+=======
+	mapping_end -= cpos;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	is_last = 0;
 	while (cpos < mapping_end && !is_last) {
 		u32 fe_flags;
@@ -790,7 +794,11 @@ int ocfs2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
 						 &hole_size, &rec, &is_last);
 		if (ret) {
 			mlog_errno(ret);
+<<<<<<< HEAD
 			goto out_unlock;
+=======
+			goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (rec.e_blkno == 0ULL) {
@@ -831,6 +839,7 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int ocfs2_seek_data_hole_offset(struct file *file, loff_t *offset, int origin)
 {
 	struct inode *inode = file->f_mapping->host;
@@ -927,6 +936,8 @@ out:
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int ocfs2_read_virt_blocks(struct inode *inode, u64 v_block, int nr,
 			   struct buffer_head *bhs[], int flags,
 			   int (*validate)(struct super_block *sb,

@@ -36,13 +36,20 @@
 #include <linux/seq_file.h>
 #include <linux/slab.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/of.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/iomap.h>
 #include <sound/core.h>
 #include <sound/pcm.h>
 #include <sound/pcm_params.h>
 #include <sound/soc.h>
 
+<<<<<<< HEAD
+=======
+#include "tegra_das.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "tegra_i2s.h"
 
 #define DRV_NAME "tegra-i2s"
@@ -79,15 +86,21 @@ static int tegra_i2s_show(struct seq_file *s, void *unused)
 	struct tegra_i2s *i2s = s->private;
 	int i;
 
+<<<<<<< HEAD
 	clk_enable(i2s->clk_i2s);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < ARRAY_SIZE(regs); i++) {
 		u32 val = tegra_i2s_read(i2s, regs[i].offset);
 		seq_printf(s, "%s = %08x\n", regs[i].name, val);
 	}
 
+<<<<<<< HEAD
 	clk_disable(i2s->clk_i2s);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -103,11 +116,21 @@ static const struct file_operations tegra_i2s_debug_fops = {
 	.release = single_release,
 };
 
+<<<<<<< HEAD
 static void tegra_i2s_debug_add(struct tegra_i2s *i2s)
 {
 	i2s->debug = debugfs_create_file(i2s->dai.name, S_IRUGO,
 					 snd_soc_debugfs_root, i2s,
 					 &tegra_i2s_debug_fops);
+=======
+static void tegra_i2s_debug_add(struct tegra_i2s *i2s, int id)
+{
+	char name[] = DRV_NAME ".0";
+
+	snprintf(name, sizeof(name), DRV_NAME".%1d", id);
+	i2s->debug = debugfs_create_file(name, S_IRUGO, snd_soc_debugfs_root,
+						i2s, &tegra_i2s_debug_fops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void tegra_i2s_debug_remove(struct tegra_i2s *i2s)
@@ -116,7 +139,11 @@ static void tegra_i2s_debug_remove(struct tegra_i2s *i2s)
 		debugfs_remove(i2s->debug);
 }
 #else
+<<<<<<< HEAD
 static inline void tegra_i2s_debug_add(struct tegra_i2s *i2s)
+=======
+static inline void tegra_i2s_debug_add(struct tegra_i2s *i2s, int id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 }
 
@@ -308,12 +335,17 @@ static int tegra_i2s_probe(struct snd_soc_dai *dai)
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops tegra_i2s_dai_ops = {
+=======
+static struct snd_soc_dai_ops tegra_i2s_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.set_fmt	= tegra_i2s_set_fmt,
 	.hw_params	= tegra_i2s_hw_params,
 	.trigger	= tegra_i2s_trigger,
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_driver tegra_i2s_dai_template = {
 	.probe = tegra_i2s_probe,
 	.playback = {
@@ -330,11 +362,51 @@ static const struct snd_soc_dai_driver tegra_i2s_dai_template = {
 	},
 	.ops = &tegra_i2s_dai_ops,
 	.symmetric_rates = 1,
+=======
+struct snd_soc_dai_driver tegra_i2s_dai[] = {
+	{
+		.name = DRV_NAME ".0",
+		.probe = tegra_i2s_probe,
+		.playback = {
+			.channels_min = 2,
+			.channels_max = 2,
+			.rates = SNDRV_PCM_RATE_8000_96000,
+			.formats = SNDRV_PCM_FMTBIT_S16_LE,
+		},
+		.capture = {
+			.channels_min = 2,
+			.channels_max = 2,
+			.rates = SNDRV_PCM_RATE_8000_96000,
+			.formats = SNDRV_PCM_FMTBIT_S16_LE,
+		},
+		.ops = &tegra_i2s_dai_ops,
+		.symmetric_rates = 1,
+	},
+	{
+		.name = DRV_NAME ".1",
+		.probe = tegra_i2s_probe,
+		.playback = {
+			.channels_min = 2,
+			.channels_max = 2,
+			.rates = SNDRV_PCM_RATE_8000_96000,
+			.formats = SNDRV_PCM_FMTBIT_S16_LE,
+		},
+		.capture = {
+			.channels_min = 2,
+			.channels_max = 2,
+			.rates = SNDRV_PCM_RATE_8000_96000,
+			.formats = SNDRV_PCM_FMTBIT_S16_LE,
+		},
+		.ops = &tegra_i2s_dai_ops,
+		.symmetric_rates = 1,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static __devinit int tegra_i2s_platform_probe(struct platform_device *pdev)
 {
 	struct tegra_i2s * i2s;
+<<<<<<< HEAD
 	struct resource *mem, *memregion, *dmareq;
 	u32 of_dma[2];
 	u32 dma_ch;
@@ -356,6 +428,49 @@ static __devinit int tegra_i2s_platform_probe(struct platform_device *pdev)
 		dev_err(&pdev->dev, "Can't retrieve i2s clock\n");
 		ret = PTR_ERR(i2s->clk_i2s);
 		goto err;
+=======
+	char clk_name[12]; /* tegra-i2s.0 */
+	struct resource *mem, *memregion, *dmareq;
+	int ret;
+
+	if ((pdev->id < 0) ||
+		(pdev->id >= ARRAY_SIZE(tegra_i2s_dai))) {
+		dev_err(&pdev->dev, "ID %d out of range\n", pdev->id);
+		return -EINVAL;
+	}
+
+	/*
+	 * FIXME: Until a codec driver exists for the tegra DAS, hard-code a
+	 * 1:1 mapping between audio controllers and audio ports.
+	 */
+	ret = tegra_das_connect_dap_to_dac(TEGRA_DAS_DAP_ID_1 + pdev->id,
+					TEGRA_DAS_DAP_SEL_DAC1 + pdev->id);
+	if (ret) {
+		dev_err(&pdev->dev, "Can't set up DAP connection\n");
+		return ret;
+	}
+	ret = tegra_das_connect_dac_to_dap(TEGRA_DAS_DAC_ID_1 + pdev->id,
+					TEGRA_DAS_DAC_SEL_DAP1 + pdev->id);
+	if (ret) {
+		dev_err(&pdev->dev, "Can't set up DAC connection\n");
+		return ret;
+	}
+
+	i2s = kzalloc(sizeof(struct tegra_i2s), GFP_KERNEL);
+	if (!i2s) {
+		dev_err(&pdev->dev, "Can't allocate tegra_i2s\n");
+		ret = -ENOMEM;
+		goto exit;
+	}
+	dev_set_drvdata(&pdev->dev, i2s);
+
+	snprintf(clk_name, sizeof(clk_name), DRV_NAME ".%d", pdev->id);
+	i2s->clk_i2s = clk_get_sys(clk_name, NULL);
+	if (IS_ERR(i2s->clk_i2s)) {
+		dev_err(&pdev->dev, "Can't retrieve i2s clock\n");
+		ret = PTR_ERR(i2s->clk_i2s);
+		goto err_free;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
@@ -367,6 +482,7 @@ static __devinit int tegra_i2s_platform_probe(struct platform_device *pdev)
 
 	dmareq = platform_get_resource(pdev, IORESOURCE_DMA, 0);
 	if (!dmareq) {
+<<<<<<< HEAD
 		if (of_property_read_u32_array(pdev->dev.of_node,
 					"nvidia,dma-request-selector",
 					of_dma, 2) < 0) {
@@ -381,27 +497,49 @@ static __devinit int tegra_i2s_platform_probe(struct platform_device *pdev)
 
 	memregion = devm_request_mem_region(&pdev->dev, mem->start,
 					    resource_size(mem), DRV_NAME);
+=======
+		dev_err(&pdev->dev, "No DMA resource\n");
+		ret = -ENODEV;
+		goto err_clk_put;
+	}
+
+	memregion = request_mem_region(mem->start, resource_size(mem),
+					DRV_NAME);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!memregion) {
 		dev_err(&pdev->dev, "Memory region already claimed\n");
 		ret = -EBUSY;
 		goto err_clk_put;
 	}
 
+<<<<<<< HEAD
 	i2s->regs = devm_ioremap(&pdev->dev, mem->start, resource_size(mem));
 	if (!i2s->regs) {
 		dev_err(&pdev->dev, "ioremap failed\n");
 		ret = -ENOMEM;
 		goto err_clk_put;
+=======
+	i2s->regs = ioremap(mem->start, resource_size(mem));
+	if (!i2s->regs) {
+		dev_err(&pdev->dev, "ioremap failed\n");
+		ret = -ENOMEM;
+		goto err_release;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	i2s->capture_dma_data.addr = mem->start + TEGRA_I2S_FIFO2;
 	i2s->capture_dma_data.wrap = 4;
 	i2s->capture_dma_data.width = 32;
+<<<<<<< HEAD
 	i2s->capture_dma_data.req_sel = dma_ch;
+=======
+	i2s->capture_dma_data.req_sel = dmareq->start;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	i2s->playback_dma_data.addr = mem->start + TEGRA_I2S_FIFO1;
 	i2s->playback_dma_data.wrap = 4;
 	i2s->playback_dma_data.width = 32;
+<<<<<<< HEAD
 	i2s->playback_dma_data.req_sel = dma_ch;
 
 	i2s->reg_ctrl = TEGRA_I2S_CTRL_FIFO_FORMAT_PACKED;
@@ -420,17 +558,48 @@ static __devinit int tegra_i2s_platform_probe(struct platform_device *pdev)
 err_clk_put:
 	clk_put(i2s->clk_i2s);
 err:
+=======
+	i2s->playback_dma_data.req_sel = dmareq->start;
+
+	i2s->reg_ctrl = TEGRA_I2S_CTRL_FIFO_FORMAT_PACKED;
+
+	ret = snd_soc_register_dai(&pdev->dev, &tegra_i2s_dai[pdev->id]);
+	if (ret) {
+		dev_err(&pdev->dev, "Could not register DAI: %d\n", ret);
+		ret = -ENOMEM;
+		goto err_unmap;
+	}
+
+	tegra_i2s_debug_add(i2s, pdev->id);
+
+	return 0;
+
+err_unmap:
+	iounmap(i2s->regs);
+err_release:
+	release_mem_region(mem->start, resource_size(mem));
+err_clk_put:
+	clk_put(i2s->clk_i2s);
+err_free:
+	kfree(i2s);
+exit:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devexit tegra_i2s_platform_remove(struct platform_device *pdev)
 {
 	struct tegra_i2s *i2s = dev_get_drvdata(&pdev->dev);
+<<<<<<< HEAD
+=======
+	struct resource *res;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	snd_soc_unregister_dai(&pdev->dev);
 
 	tegra_i2s_debug_remove(i2s);
 
+<<<<<<< HEAD
 	clk_put(i2s->clk_i2s);
 
 	return 0;
@@ -441,19 +610,54 @@ static const struct of_device_id tegra_i2s_of_match[] __devinitconst = {
 	{},
 };
 
+=======
+	iounmap(i2s->regs);
+
+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	release_mem_region(res->start, resource_size(res));
+
+	clk_put(i2s->clk_i2s);
+
+	kfree(i2s);
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver tegra_i2s_driver = {
 	.driver = {
 		.name = DRV_NAME,
 		.owner = THIS_MODULE,
+<<<<<<< HEAD
 		.of_match_table = tegra_i2s_of_match,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe = tegra_i2s_platform_probe,
 	.remove = __devexit_p(tegra_i2s_platform_remove),
 };
+<<<<<<< HEAD
 module_platform_driver(tegra_i2s_driver);
+=======
+
+static int __init snd_tegra_i2s_init(void)
+{
+	return platform_driver_register(&tegra_i2s_driver);
+}
+module_init(snd_tegra_i2s_init);
+
+static void __exit snd_tegra_i2s_exit(void)
+{
+	platform_driver_unregister(&tegra_i2s_driver);
+}
+module_exit(snd_tegra_i2s_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Stephen Warren <swarren@nvidia.com>");
 MODULE_DESCRIPTION("Tegra I2S ASoC driver");
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:" DRV_NAME);
+<<<<<<< HEAD
 MODULE_DEVICE_TABLE(of, tegra_i2s_of_match);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

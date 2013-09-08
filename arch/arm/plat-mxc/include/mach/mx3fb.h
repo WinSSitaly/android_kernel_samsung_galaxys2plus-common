@@ -22,6 +22,7 @@
 #define FB_SYNC_SWAP_RGB	0x04000000
 #define FB_SYNC_CLK_SEL_EN	0x02000000
 
+<<<<<<< HEAD
 /*
  * Specify the way your display is connected. The IPU can arbitrarily
  * map the internal colors to the external data lines. We only support
@@ -36,6 +37,8 @@ enum disp_data_mapping {
 	IPU_DISP_DATA_MAPPING_RGB888,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct mx3fb_platform_data - mx3fb platform data
  *
@@ -47,7 +50,10 @@ struct mx3fb_platform_data {
 	const char			*name;
 	const struct fb_videomode	*mode;
 	int				num_modes;
+<<<<<<< HEAD
 	enum disp_data_mapping		disp_data_fmt;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif

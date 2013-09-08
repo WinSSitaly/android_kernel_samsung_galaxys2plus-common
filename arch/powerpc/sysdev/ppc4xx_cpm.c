@@ -179,12 +179,21 @@ static struct kobj_attribute cpm_idle_attr =
 
 static void cpm_idle_config_sysfs(void)
 {
+<<<<<<< HEAD
 	struct device *dev;
 	unsigned long ret;
 
 	dev = get_cpu_device(0);
 
 	ret = sysfs_create_file(&dev->kobj,
+=======
+	struct sys_device *sys_dev;
+	unsigned long ret;
+
+	sys_dev = get_cpu_sysdev(0);
+
+	ret = sysfs_create_file(&sys_dev->kobj,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				&cpm_idle_attr.attr);
 	if (ret)
 		printk(KERN_WARNING

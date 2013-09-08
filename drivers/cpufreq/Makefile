@@ -2,6 +2,11 @@
 obj-$(CONFIG_CPU_FREQ)			+= cpufreq.o
 # CPUfreq stats
 obj-$(CONFIG_CPU_FREQ_STAT)             += cpufreq_stats.o
+<<<<<<< HEAD
+=======
+# CPUfreq profiler
+obj-$(CONFIG_CPU_FREQ_PROFILE)          += cpufreq_profile.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # CPUfreq governors 
 obj-$(CONFIG_CPU_FREQ_GOV_PERFORMANCE)	+= cpufreq_performance.o
@@ -9,11 +14,19 @@ obj-$(CONFIG_CPU_FREQ_GOV_POWERSAVE)	+= cpufreq_powersave.o
 obj-$(CONFIG_CPU_FREQ_GOV_USERSPACE)	+= cpufreq_userspace.o
 obj-$(CONFIG_CPU_FREQ_GOV_ONDEMAND)	+= cpufreq_ondemand.o
 obj-$(CONFIG_CPU_FREQ_GOV_CONSERVATIVE)	+= cpufreq_conservative.o
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_CPU_FREQ_GOV_INTERACTIVE)	+= cpufreq_interactive.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # CPUfreq cross-arch helpers
 obj-$(CONFIG_CPU_FREQ_TABLE)		+= freq_table.o
 
+<<<<<<< HEAD
 ##################################################################################
+=======
+##################################################################################d
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # x86 drivers.
 # Link order matters. K8 is preferred to ACPI because of firmware bugs in early
 # K8 systems. ACPI is preferred to all other hardware-specific drivers.
@@ -37,6 +50,7 @@ obj-$(CONFIG_X86_SPEEDSTEP_CENTRINO)	+= speedstep-centrino.o
 obj-$(CONFIG_X86_P4_CLOCKMOD)		+= p4-clockmod.o
 obj-$(CONFIG_X86_CPUFREQ_NFORCE2)	+= cpufreq-nforce2.o
 
+<<<<<<< HEAD
 ##################################################################################
 # ARM SoC drivers
 obj-$(CONFIG_UX500_SOC_DB8500)		+= db8500-cpufreq.o
@@ -52,3 +66,9 @@ obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)     += omap-cpufreq.o
 ##################################################################################
 # PowerPC platform drivers
 obj-$(CONFIG_CPU_FREQ_MAPLE)		+= maple-cpufreq.o
+=======
+##################################################################################d
+
+# ARM SoC drivers
+obj-$(CONFIG_UX500_SOC_DB8500)		+= db8500-cpufreq.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

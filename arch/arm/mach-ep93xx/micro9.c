@@ -18,11 +18,17 @@
 
 #include <mach/hardware.h>
 
+<<<<<<< HEAD
 #include <asm/hardware/vic.h>
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 
 #include "soc.h"
+=======
+#include <asm/mach-types.h>
+#include <asm/mach/arch.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*************************************************************************
  * Micro9 NOR Flash
@@ -79,6 +85,7 @@ static void __init micro9_init_machine(void)
 #ifdef CONFIG_MACH_MICRO9H
 MACHINE_START(MICRO9, "Contec Micro9-High")
 	/* Maintainer: Hubert Feurstein <hubert.feurstein@contec.at> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= ep93xx_map_io,
 	.init_irq	= ep93xx_init_irq,
@@ -86,12 +93,20 @@ MACHINE_START(MICRO9, "Contec Micro9-High")
 	.timer		= &ep93xx_timer,
 	.init_machine	= micro9_init_machine,
 	.restart	= ep93xx_restart,
+=======
+	.boot_params	= EP93XX_SDCE3_PHYS_BASE_SYNC + 0x100,
+	.map_io		= ep93xx_map_io,
+	.init_irq	= ep93xx_init_irq,
+	.timer		= &ep93xx_timer,
+	.init_machine	= micro9_init_machine,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 
 #ifdef CONFIG_MACH_MICRO9M
 MACHINE_START(MICRO9M, "Contec Micro9-Mid")
 	/* Maintainer: Hubert Feurstein <hubert.feurstein@contec.at> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= ep93xx_map_io,
 	.init_irq	= ep93xx_init_irq,
@@ -99,12 +114,20 @@ MACHINE_START(MICRO9M, "Contec Micro9-Mid")
 	.timer		= &ep93xx_timer,
 	.init_machine	= micro9_init_machine,
 	.restart	= ep93xx_restart,
+=======
+	.boot_params	= EP93XX_SDCE3_PHYS_BASE_ASYNC + 0x100,
+	.map_io		= ep93xx_map_io,
+	.init_irq	= ep93xx_init_irq,
+	.timer		= &ep93xx_timer,
+	.init_machine	= micro9_init_machine,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 
 #ifdef CONFIG_MACH_MICRO9L
 MACHINE_START(MICRO9L, "Contec Micro9-Lite")
 	/* Maintainer: Hubert Feurstein <hubert.feurstein@contec.at> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= ep93xx_map_io,
 	.init_irq	= ep93xx_init_irq,
@@ -112,12 +135,20 @@ MACHINE_START(MICRO9L, "Contec Micro9-Lite")
 	.timer		= &ep93xx_timer,
 	.init_machine	= micro9_init_machine,
 	.restart	= ep93xx_restart,
+=======
+	.boot_params	= EP93XX_SDCE3_PHYS_BASE_SYNC + 0x100,
+	.map_io		= ep93xx_map_io,
+	.init_irq	= ep93xx_init_irq,
+	.timer		= &ep93xx_timer,
+	.init_machine	= micro9_init_machine,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 
 #ifdef CONFIG_MACH_MICRO9S
 MACHINE_START(MICRO9S, "Contec Micro9-Slim")
 	/* Maintainer: Hubert Feurstein <hubert.feurstein@contec.at> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= ep93xx_map_io,
 	.init_irq	= ep93xx_init_irq,
@@ -125,5 +156,12 @@ MACHINE_START(MICRO9S, "Contec Micro9-Slim")
 	.timer		= &ep93xx_timer,
 	.init_machine	= micro9_init_machine,
 	.restart	= ep93xx_restart,
+=======
+	.boot_params	= EP93XX_SDCE3_PHYS_BASE_ASYNC + 0x100,
+	.map_io		= ep93xx_map_io,
+	.init_irq	= ep93xx_init_irq,
+	.timer		= &ep93xx_timer,
+	.init_machine	= micro9_init_machine,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif

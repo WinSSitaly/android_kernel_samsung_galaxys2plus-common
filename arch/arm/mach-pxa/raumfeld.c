@@ -43,12 +43,22 @@
 #include <linux/regulator/consumer.h>
 #include <linux/delay.h>
 
+<<<<<<< HEAD
 #include <asm/system_info.h>
 
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 
 #include <mach/pxa300.h>
+=======
+#include <asm/mach-types.h>
+#include <asm/mach/arch.h>
+
+#include <mach/hardware.h>
+#include <mach/pxa3xx-regs.h>
+#include <mach/mfp-pxa3xx.h>
+#include <mach/mfp-pxa300.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/ohci.h>
 #include <mach/pxafb.h>
 #include <mach/mmc.h>
@@ -294,8 +304,13 @@ static struct resource smc91x_resources[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 	{
+<<<<<<< HEAD
 		.start	= PXA_GPIO_TO_IRQ(GPIO_ETH_IRQ),
 		.end	= PXA_GPIO_TO_IRQ(GPIO_ETH_IRQ),
+=======
+		.start	= gpio_to_irq(GPIO_ETH_IRQ),
+		.end	= gpio_to_irq(GPIO_ETH_IRQ),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_IRQ | IRQF_TRIGGER_FALLING,
 	}
 };
@@ -348,9 +363,14 @@ static struct mtd_partition raumfeld_nand_partitions[] = {
 static struct pxa3xx_nand_platform_data raumfeld_nand_info = {
 	.enable_arbiter	= 1,
 	.keep_config	= 1,
+<<<<<<< HEAD
 	.num_cs		= 1,
 	.parts[0]	= raumfeld_nand_partitions,
 	.nr_parts[0]	= ARRAY_SIZE(raumfeld_nand_partitions),
+=======
+	.parts		= raumfeld_nand_partitions,
+	.nr_parts	= ARRAY_SIZE(raumfeld_nand_partitions),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -674,7 +694,11 @@ static struct lis3lv02d_platform_data lis3_pdata = {
 	.chip_select	= 1,			\
 	.controller_data = (void *) GPIO_ACCEL_CS,	\
 	.platform_data	= &lis3_pdata,		\
+<<<<<<< HEAD
 	.irq		= PXA_GPIO_TO_IRQ(GPIO_ACCEL_IRQ),	\
+=======
+	.irq		= gpio_to_irq(GPIO_ACCEL_IRQ),	\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #define SPI_DAC7512	\
@@ -953,12 +977,19 @@ static struct i2c_board_info raumfeld_connector_i2c_board_info __initdata = {
 
 static struct eeti_ts_platform_data eeti_ts_pdata = {
 	.irq_active_high = 1,
+<<<<<<< HEAD
 	.irq_gpio = GPIO_TOUCH_IRQ,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct i2c_board_info raumfeld_controller_i2c_board_info __initdata = {
 	.type	= "eeti_ts",
 	.addr	= 0x0a,
+<<<<<<< HEAD
+=======
+	.irq	= gpio_to_irq(GPIO_TOUCH_IRQ),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.platform_data = &eeti_ts_pdata,
 };
 
@@ -1089,6 +1120,7 @@ static void __init raumfeld_speaker_init(void)
 
 #ifdef CONFIG_MACH_RAUMFELD_RC
 MACHINE_START(RAUMFELD_RC, "Raumfeld Controller")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.init_machine	= raumfeld_controller_init,
 	.map_io		= pxa3xx_map_io,
@@ -1097,11 +1129,19 @@ MACHINE_START(RAUMFELD_RC, "Raumfeld Controller")
 	.handle_irq	= pxa3xx_handle_irq,
 	.timer		= &pxa_timer,
 	.restart	= pxa_restart,
+=======
+	.boot_params	= RAUMFELD_SDRAM_BASE + 0x100,
+	.init_machine	= raumfeld_controller_init,
+	.map_io		= pxa3xx_map_io,
+	.init_irq	= pxa3xx_init_irq,
+	.timer		= &pxa_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 
 #ifdef CONFIG_MACH_RAUMFELD_CONNECTOR
 MACHINE_START(RAUMFELD_CONNECTOR, "Raumfeld Connector")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.init_machine	= raumfeld_connector_init,
 	.map_io		= pxa3xx_map_io,
@@ -1110,11 +1150,19 @@ MACHINE_START(RAUMFELD_CONNECTOR, "Raumfeld Connector")
 	.handle_irq	= pxa3xx_handle_irq,
 	.timer		= &pxa_timer,
 	.restart	= pxa_restart,
+=======
+	.boot_params	= RAUMFELD_SDRAM_BASE + 0x100,
+	.init_machine	= raumfeld_connector_init,
+	.map_io		= pxa3xx_map_io,
+	.init_irq	= pxa3xx_init_irq,
+	.timer		= &pxa_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 
 #ifdef CONFIG_MACH_RAUMFELD_SPEAKER
 MACHINE_START(RAUMFELD_SPEAKER, "Raumfeld Speaker")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.init_machine	= raumfeld_speaker_init,
 	.map_io		= pxa3xx_map_io,
@@ -1123,5 +1171,12 @@ MACHINE_START(RAUMFELD_SPEAKER, "Raumfeld Speaker")
 	.handle_irq	= pxa3xx_handle_irq,
 	.timer		= &pxa_timer,
 	.restart	= pxa_restart,
+=======
+	.boot_params	= RAUMFELD_SDRAM_BASE + 0x100,
+	.init_machine	= raumfeld_speaker_init,
+	.map_io		= pxa3xx_map_io,
+	.init_irq	= pxa3xx_init_irq,
+	.timer		= &pxa_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif

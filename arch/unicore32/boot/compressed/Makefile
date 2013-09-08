@@ -10,8 +10,13 @@
 # Copyright (C) 2001~2010 GUAN Xue-tao
 #
 
+<<<<<<< HEAD
 ccflags-y	:= -fpic -fno-builtin
 asflags-y	:= -Wa,-march=all
+=======
+EXTRA_CFLAGS	:= -fpic -fno-builtin
+EXTRA_AFLAGS	:= -Wa,-march=all
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 OBJS		:= misc.o
 

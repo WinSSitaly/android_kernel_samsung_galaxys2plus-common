@@ -38,7 +38,10 @@
 #include <linux/io.h>
 #include <linux/list.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/usb.h>
 #include <linux/usb/c67x00.h>
 
@@ -225,10 +228,30 @@ static struct platform_driver c67x00_driver = {
 		.name = "c67x00",
 	},
 };
+<<<<<<< HEAD
 
 module_platform_driver(c67x00_driver);
+=======
+MODULE_ALIAS("platform:c67x00");
+
+static int __init c67x00_init(void)
+{
+	return platform_driver_register(&c67x00_driver);
+}
+
+static void __exit c67x00_exit(void)
+{
+	platform_driver_unregister(&c67x00_driver);
+}
+
+module_init(c67x00_init);
+module_exit(c67x00_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Peter Korsgaard, Jan Veldeman, Grant Likely");
 MODULE_DESCRIPTION("Cypress C67X00 USB Controller Driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_ALIAS("platform:c67x00");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

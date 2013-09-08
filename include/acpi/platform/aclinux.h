@@ -55,9 +55,17 @@
 
 #include <linux/string.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/ctype.h>
 #include <linux/sched.h>
 #include <linux/atomic.h>
+=======
+#include <linux/module.h>
+#include <linux/ctype.h>
+#include <linux/sched.h>
+#include <asm/system.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/div64.h>
 #include <asm/acpi.h>
 #include <linux/slab.h>

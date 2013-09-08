@@ -7,8 +7,12 @@
  */
 
 #include <linux/rational.h>
+<<<<<<< HEAD
 #include <linux/compiler.h>
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * calculate best rational approximation for a given fraction

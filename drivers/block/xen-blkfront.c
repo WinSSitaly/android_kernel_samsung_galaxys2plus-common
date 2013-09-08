@@ -43,7 +43,10 @@
 #include <linux/slab.h>
 #include <linux/mutex.h>
 #include <linux/scatterlist.h>
+<<<<<<< HEAD
 #include <linux/bitmap.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <xen/xen.h>
 #include <xen/xenbus.h>
@@ -82,7 +85,10 @@ static const struct block_device_operations xlvbd_block_fops;
  */
 struct blkfront_info
 {
+<<<<<<< HEAD
 	spinlock_t io_lock;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mutex mutex;
 	struct xenbus_device *xbdev;
 	struct gendisk *gd;
@@ -100,6 +106,7 @@ struct blkfront_info
 	unsigned long shadow_free;
 	unsigned int feature_flush;
 	unsigned int flush_op;
+<<<<<<< HEAD
 	unsigned int feature_discard:1;
 	unsigned int feature_secdiscard:1;
 	unsigned int discard_granularity;
@@ -107,6 +114,13 @@ struct blkfront_info
 	int is_ready;
 };
 
+=======
+	int is_ready;
+};
+
+static DEFINE_SPINLOCK(blkif_io_lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned int nr_minors;
 static unsigned long *minors;
 static DEFINE_SPINLOCK(minor_lock);
@@ -136,15 +150,24 @@ static int get_id_from_freelist(struct blkfront_info *info)
 {
 	unsigned long free = info->shadow_free;
 	BUG_ON(free >= BLK_RING_SIZE);
+<<<<<<< HEAD
 	info->shadow_free = info->shadow[free].req.u.rw.id;
 	info->shadow[free].req.u.rw.id = 0x0fffffee; /* debug */
+=======
+	info->shadow_free = info->shadow[free].req.id;
+	info->shadow[free].req.id = 0x0fffffee; /* debug */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return free;
 }
 
 static void add_id_to_freelist(struct blkfront_info *info,
 			       unsigned long id)
 {
+<<<<<<< HEAD
 	info->shadow[id].req.u.rw.id  = info->shadow_free;
+=======
+	info->shadow[id].req.id  = info->shadow_free;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info->shadow[id].request = NULL;
 	info->shadow_free = id;
 }
@@ -157,7 +180,11 @@ static int xlbd_reserve_minors(unsigned int minor, unsigned int nr)
 	if (end > nr_minors) {
 		unsigned long *bitmap, *old;
 
+<<<<<<< HEAD
 		bitmap = kcalloc(BITS_TO_LONGS(end), sizeof(*bitmap),
+=======
+		bitmap = kzalloc(BITS_TO_LONGS(end) * sizeof(*bitmap),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 GFP_KERNEL);
 		if (bitmap == NULL)
 			return -ENOMEM;
@@ -177,7 +204,12 @@ static int xlbd_reserve_minors(unsigned int minor, unsigned int nr)
 
 	spin_lock(&minor_lock);
 	if (find_next_bit(minors, end, minor) >= end) {
+<<<<<<< HEAD
 		bitmap_set(minors, minor, nr);
+=======
+		for (; minor < end; ++minor)
+			__set_bit(minor, minors);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = 0;
 	} else
 		rc = -EBUSY;
@@ -192,7 +224,12 @@ static void xlbd_release_minors(unsigned int minor, unsigned int nr)
 
 	BUG_ON(end > nr_minors);
 	spin_lock(&minor_lock);
+<<<<<<< HEAD
 	bitmap_clear(minors,  minor, nr);
+=======
+	for (; minor < end; ++minor)
+		__clear_bit(minor, minors);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&minor_lock);
 }
 
@@ -286,9 +323,15 @@ static int blkif_queue_request(struct request *req)
 	id = get_id_from_freelist(info);
 	info->shadow[id].request = req;
 
+<<<<<<< HEAD
 	ring_req->u.rw.id = id;
 	ring_req->u.rw.sector_number = (blkif_sector_t)blk_rq_pos(req);
 	ring_req->u.rw.handle = info->handle;
+=======
+	ring_req->id = id;
+	ring_req->u.rw.sector_number = (blkif_sector_t)blk_rq_pos(req);
+	ring_req->handle = info->handle;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ring_req->operation = rq_data_dir(req) ?
 		BLKIF_OP_WRITE : BLKIF_OP_READ;
@@ -304,6 +347,7 @@ static int blkif_queue_request(struct request *req)
 		ring_req->operation = info->flush_op;
 	}
 
+<<<<<<< HEAD
 	if (unlikely(req->cmd_flags & (REQ_DISCARD | REQ_SECURE))) {
 		/* id, sector_number and handle are set above. */
 		ring_req->operation = BLKIF_OP_DISCARD;
@@ -339,6 +383,31 @@ static int blkif_queue_request(struct request *req)
 						.first_sect = fsect,
 						.last_sect  = lsect };
 		}
+=======
+	ring_req->nr_segments = blk_rq_map_sg(req->q, req, info->sg);
+	BUG_ON(ring_req->nr_segments > BLKIF_MAX_SEGMENTS_PER_REQUEST);
+
+	for_each_sg(info->sg, sg, ring_req->nr_segments, i) {
+		buffer_mfn = pfn_to_mfn(page_to_pfn(sg_page(sg)));
+		fsect = sg->offset >> 9;
+		lsect = fsect + (sg->length >> 9) - 1;
+		/* install a grant reference. */
+		ref = gnttab_claim_grant_reference(&gref_head);
+		BUG_ON(ref == -ENOSPC);
+
+		gnttab_grant_foreign_access_ref(
+				ref,
+				info->xbdev->otherend_id,
+				buffer_mfn,
+				rq_data_dir(req) );
+
+		info->shadow[id].frame[i] = mfn_to_pfn(buffer_mfn);
+		ring_req->u.rw.seg[i] =
+				(struct blkif_request_segment) {
+					.gref       = ref,
+					.first_sect = fsect,
+					.last_sect  = lsect };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	info->ring.req_prod_pvt++;
@@ -384,9 +453,13 @@ static void do_blkif_request(struct request_queue *rq)
 
 		blk_start_request(req);
 
+<<<<<<< HEAD
 		if ((req->cmd_type != REQ_TYPE_FS) ||
 		    ((req->cmd_flags & (REQ_FLUSH | REQ_FUA)) &&
 		    !info->flush_op)) {
+=======
+		if (req->cmd_type != REQ_TYPE_FS) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			__blk_end_request_all(req, -EIO);
 			continue;
 		}
@@ -415,14 +488,20 @@ wait:
 static int xlvbd_init_blk_queue(struct gendisk *gd, u16 sector_size)
 {
 	struct request_queue *rq;
+<<<<<<< HEAD
 	struct blkfront_info *info = gd->private_data;
 
 	rq = blk_init_queue(do_blkif_request, &info->io_lock);
+=======
+
+	rq = blk_init_queue(do_blkif_request, &blkif_io_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rq == NULL)
 		return -1;
 
 	queue_flag_set_unlocked(QUEUE_FLAG_VIRT, rq);
 
+<<<<<<< HEAD
 	if (info->feature_discard) {
 		queue_flag_set_unlocked(QUEUE_FLAG_DISCARD, rq);
 		blk_queue_max_discard_sectors(rq, get_capacity(gd));
@@ -432,6 +511,8 @@ static int xlvbd_init_blk_queue(struct gendisk *gd, u16 sector_size)
 			queue_flag_set_unlocked(QUEUE_FLAG_SECDISCARD, rq);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Hard sector size and max sectors impersonate the equiv. hardware. */
 	blk_queue_logical_block_size(rq, sector_size);
 	blk_queue_max_hw_sectors(rq, 512);
@@ -634,14 +715,22 @@ static void xlvbd_release_gendisk(struct blkfront_info *info)
 	if (info->rq == NULL)
 		return;
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&info->io_lock, flags);
+=======
+	spin_lock_irqsave(&blkif_io_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* No more blkif_request(). */
 	blk_stop_queue(info->rq);
 
 	/* No more gnttab callback work. */
 	gnttab_cancel_free_callback(&info->callback);
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&info->io_lock, flags);
+=======
+	spin_unlock_irqrestore(&blkif_io_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Flush gnttab callback work. Must be done with no locks held. */
 	flush_work_sync(&info->work);
@@ -673,16 +762,27 @@ static void blkif_restart_queue(struct work_struct *work)
 {
 	struct blkfront_info *info = container_of(work, struct blkfront_info, work);
 
+<<<<<<< HEAD
 	spin_lock_irq(&info->io_lock);
 	if (info->connected == BLKIF_STATE_CONNECTED)
 		kick_pending_request_queues(info);
 	spin_unlock_irq(&info->io_lock);
+=======
+	spin_lock_irq(&blkif_io_lock);
+	if (info->connected == BLKIF_STATE_CONNECTED)
+		kick_pending_request_queues(info);
+	spin_unlock_irq(&blkif_io_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void blkif_free(struct blkfront_info *info, int suspend)
 {
 	/* Prevent new requests being issued until we fix things up. */
+<<<<<<< HEAD
 	spin_lock_irq(&info->io_lock);
+=======
+	spin_lock_irq(&blkif_io_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info->connected = suspend ?
 		BLKIF_STATE_SUSPENDED : BLKIF_STATE_DISCONNECTED;
 	/* No more blkif_request(). */
@@ -690,7 +790,11 @@ static void blkif_free(struct blkfront_info *info, int suspend)
 		blk_stop_queue(info->rq);
 	/* No more gnttab callback work. */
 	gnttab_cancel_free_callback(&info->callback);
+<<<<<<< HEAD
 	spin_unlock_irq(&info->io_lock);
+=======
+	spin_unlock_irq(&blkif_io_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Flush gnttab callback work. Must be done with no locks held. */
 	flush_work_sync(&info->work);
@@ -711,9 +815,13 @@ static void blkif_free(struct blkfront_info *info, int suspend)
 static void blkif_completion(struct blk_shadow *s)
 {
 	int i;
+<<<<<<< HEAD
 	/* Do not let BLKIF_OP_DISCARD as nr_segment is in the same place
 	 * flag. */
 	for (i = 0; i < s->req.u.rw.nr_segments; i++)
+=======
+	for (i = 0; i < s->req.nr_segments; i++)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gnttab_end_foreign_access(s->req.u.rw.seg[i].gref, 0, 0UL);
 }
 
@@ -726,10 +834,17 @@ static irqreturn_t blkif_interrupt(int irq, void *dev_id)
 	struct blkfront_info *info = (struct blkfront_info *)dev_id;
 	int error;
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&info->io_lock, flags);
 
 	if (unlikely(info->connected != BLKIF_STATE_CONNECTED)) {
 		spin_unlock_irqrestore(&info->io_lock, flags);
+=======
+	spin_lock_irqsave(&blkif_io_lock, flags);
+
+	if (unlikely(info->connected != BLKIF_STATE_CONNECTED)) {
+		spin_unlock_irqrestore(&blkif_io_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return IRQ_HANDLED;
 	}
 
@@ -744,13 +859,18 @@ static irqreturn_t blkif_interrupt(int irq, void *dev_id)
 		id   = bret->id;
 		req  = info->shadow[id].request;
 
+<<<<<<< HEAD
 		if (bret->operation != BLKIF_OP_DISCARD)
 			blkif_completion(&info->shadow[id]);
+=======
+		blkif_completion(&info->shadow[id]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		add_id_to_freelist(info, id);
 
 		error = (bret->status == BLKIF_RSP_OKAY) ? 0 : -EIO;
 		switch (bret->operation) {
+<<<<<<< HEAD
 		case BLKIF_OP_DISCARD:
 			if (unlikely(bret->status == BLKIF_RSP_EOPNOTSUPP)) {
 				struct request_queue *rq = info->rq;
@@ -764,6 +884,8 @@ static irqreturn_t blkif_interrupt(int irq, void *dev_id)
 			}
 			__blk_end_request_all(req, error);
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case BLKIF_OP_FLUSH_DISKCACHE:
 		case BLKIF_OP_WRITE_BARRIER:
 			if (unlikely(bret->status == BLKIF_RSP_EOPNOTSUPP)) {
@@ -774,7 +896,11 @@ static irqreturn_t blkif_interrupt(int irq, void *dev_id)
 				error = -EOPNOTSUPP;
 			}
 			if (unlikely(bret->status == BLKIF_RSP_ERROR &&
+<<<<<<< HEAD
 				     info->shadow[id].req.u.rw.nr_segments == 0)) {
+=======
+				     info->shadow[id].req.nr_segments == 0)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				printk(KERN_WARNING "blkfront: %s: empty write %s op failed\n",
 				       info->flush_op == BLKIF_OP_WRITE_BARRIER ?
 				       "barrier" :  "flush disk cache",
@@ -814,7 +940,11 @@ static irqreturn_t blkif_interrupt(int irq, void *dev_id)
 
 	kick_pending_request_queues(info);
 
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&info->io_lock, flags);
+=======
+	spin_unlock_irqrestore(&blkif_io_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return IRQ_HANDLED;
 }
@@ -989,15 +1119,23 @@ static int blkfront_probe(struct xenbus_device *dev,
 	}
 
 	mutex_init(&info->mutex);
+<<<<<<< HEAD
 	spin_lock_init(&info->io_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info->xbdev = dev;
 	info->vdevice = vdevice;
 	info->connected = BLKIF_STATE_DISCONNECTED;
 	INIT_WORK(&info->work, blkif_restart_queue);
 
 	for (i = 0; i < BLK_RING_SIZE; i++)
+<<<<<<< HEAD
 		info->shadow[i].req.u.rw.id = i+1;
 	info->shadow[BLK_RING_SIZE-1].req.u.rw.id = 0x0fffffff;
+=======
+		info->shadow[i].req.id = i+1;
+	info->shadow[BLK_RING_SIZE-1].req.id = 0x0fffffff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Front end dir is a number, which is used as the id. */
 	info->handle = simple_strtoul(strrchr(dev->nodename, '/')+1, NULL, 0);
@@ -1031,9 +1169,15 @@ static int blkif_recover(struct blkfront_info *info)
 	/* Stage 2: Set up free list. */
 	memset(&info->shadow, 0, sizeof(info->shadow));
 	for (i = 0; i < BLK_RING_SIZE; i++)
+<<<<<<< HEAD
 		info->shadow[i].req.u.rw.id = i+1;
 	info->shadow_free = info->ring.req_prod_pvt;
 	info->shadow[BLK_RING_SIZE-1].req.u.rw.id = 0x0fffffff;
+=======
+		info->shadow[i].req.id = i+1;
+	info->shadow_free = info->ring.req_prod_pvt;
+	info->shadow[BLK_RING_SIZE-1].req.id = 0x0fffffff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Stage 3: Find pending requests and requeue them. */
 	for (i = 0; i < BLK_RING_SIZE; i++) {
@@ -1046,6 +1190,7 @@ static int blkif_recover(struct blkfront_info *info)
 		*req = copy[i].req;
 
 		/* We get a new request id, and must reset the shadow state. */
+<<<<<<< HEAD
 		req->u.rw.id = get_id_from_freelist(info);
 		memcpy(&info->shadow[req->u.rw.id], &copy[i], sizeof(copy[i]));
 
@@ -1059,6 +1204,19 @@ static int blkif_recover(struct blkfront_info *info)
 					rq_data_dir(info->shadow[req->u.rw.id].request));
 		}
 		info->shadow[req->u.rw.id].req = *req;
+=======
+		req->id = get_id_from_freelist(info);
+		memcpy(&info->shadow[req->id], &copy[i], sizeof(copy[i]));
+
+		/* Rewrite any grant references invalidated by susp/resume. */
+		for (j = 0; j < req->nr_segments; j++)
+			gnttab_grant_foreign_access_ref(
+				req->u.rw.seg[j].gref,
+				info->xbdev->otherend_id,
+				pfn_to_mfn(info->shadow[req->id].frame[j]),
+				rq_data_dir(info->shadow[req->id].request));
+		info->shadow[req->id].req = *req;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		info->ring.req_prod_pvt++;
 	}
@@ -1067,7 +1225,11 @@ static int blkif_recover(struct blkfront_info *info)
 
 	xenbus_switch_state(info->xbdev, XenbusStateConnected);
 
+<<<<<<< HEAD
 	spin_lock_irq(&info->io_lock);
+=======
+	spin_lock_irq(&blkif_io_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Now safe for us to use the shared ring */
 	info->connected = BLKIF_STATE_CONNECTED;
@@ -1078,7 +1240,11 @@ static int blkif_recover(struct blkfront_info *info)
 	/* Kick any other new requests queued since we resumed */
 	kick_pending_request_queues(info);
 
+<<<<<<< HEAD
 	spin_unlock_irq(&info->io_lock);
+=======
+	spin_unlock_irq(&blkif_io_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1143,6 +1309,7 @@ blkfront_closing(struct blkfront_info *info)
 	bdput(bdev);
 }
 
+<<<<<<< HEAD
 static void blkfront_setup_discard(struct blkfront_info *info)
 {
 	int err;
@@ -1178,6 +1345,8 @@ static void blkfront_setup_discard(struct blkfront_info *info)
 	kfree(type);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Invoked when the backend is finally 'ready' (and has told produced
  * the details about the physical device - #sectors, size, etc).
@@ -1188,7 +1357,11 @@ static void blkfront_connect(struct blkfront_info *info)
 	unsigned long sector_size;
 	unsigned int binfo;
 	int err;
+<<<<<<< HEAD
 	int barrier, flush, discard;
+=======
+	int barrier, flush;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (info->connected) {
 	case BLKIF_STATE_CONNECTED:
@@ -1258,6 +1431,7 @@ static void blkfront_connect(struct blkfront_info *info)
 		info->feature_flush = REQ_FLUSH;
 		info->flush_op = BLKIF_OP_FLUSH_DISKCACHE;
 	}
+<<<<<<< HEAD
 
 	err = xenbus_gather(XBT_NIL, info->xbdev->otherend,
 			    "feature-discard", "%d", &discard,
@@ -1266,6 +1440,9 @@ static void blkfront_connect(struct blkfront_info *info)
 	if (!err && discard)
 		blkfront_setup_discard(info);
 
+=======
+		
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = xlvbd_alloc_gendisk(sectors, info, binfo, sector_size);
 	if (err) {
 		xenbus_dev_fatal(info->xbdev, err, "xlvbd_add at %s",
@@ -1276,10 +1453,17 @@ static void blkfront_connect(struct blkfront_info *info)
 	xenbus_switch_state(info->xbdev, XenbusStateConnected);
 
 	/* Kick pending requests. */
+<<<<<<< HEAD
 	spin_lock_irq(&info->io_lock);
 	info->connected = BLKIF_STATE_CONNECTED;
 	kick_pending_request_queues(info);
 	spin_unlock_irq(&info->io_lock);
+=======
+	spin_lock_irq(&blkif_io_lock);
+	info->connected = BLKIF_STATE_CONNECTED;
+	kick_pending_request_queues(info);
+	spin_unlock_irq(&blkif_io_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	add_disk(info->gd);
 
@@ -1409,6 +1593,10 @@ static int blkif_release(struct gendisk *disk, fmode_t mode)
 	mutex_lock(&blkfront_mutex);
 
 	bdev = bdget_disk(disk, 0);
+<<<<<<< HEAD
+=======
+	bdput(bdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (bdev->bd_openers)
 		goto out;
@@ -1439,7 +1627,10 @@ static int blkif_release(struct gendisk *disk, fmode_t mode)
 	}
 
 out:
+<<<<<<< HEAD
 	bdput(bdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&blkfront_mutex);
 	return 0;
 }
@@ -1459,12 +1650,20 @@ static const struct xenbus_device_id blkfront_ids[] = {
 	{ "" }
 };
 
+<<<<<<< HEAD
 static DEFINE_XENBUS_DRIVER(blkfront, ,
+=======
+static struct xenbus_driver blkfront = {
+	.name = "vbd",
+	.owner = THIS_MODULE,
+	.ids = blkfront_ids,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.probe = blkfront_probe,
 	.remove = blkfront_remove,
 	.resume = blkfront_resume,
 	.otherend_changed = blkback_changed,
 	.is_ready = blkfront_is_ready,
+<<<<<<< HEAD
 );
 
 static int __init xlblk_init(void)
@@ -1477,12 +1676,22 @@ static int __init xlblk_init(void)
 	if (xen_hvm_domain() && !xen_platform_pci_unplug)
 		return -ENODEV;
 
+=======
+};
+
+static int __init xlblk_init(void)
+{
+	if (!xen_domain())
+		return -ENODEV;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (register_blkdev(XENVBD_MAJOR, DEV_NAME)) {
 		printk(KERN_WARNING "xen_blk: can't get major %d with name %s\n",
 		       XENVBD_MAJOR, DEV_NAME);
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	ret = xenbus_register_frontend(&blkfront_driver);
 	if (ret) {
 		unregister_blkdev(XENVBD_MAJOR, DEV_NAME);
@@ -1490,13 +1699,20 @@ static int __init xlblk_init(void)
 	}
 
 	return 0;
+=======
+	return xenbus_register_frontend(&blkfront);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 module_init(xlblk_init);
 
 
 static void __exit xlblk_exit(void)
 {
+<<<<<<< HEAD
 	return xenbus_unregister_driver(&blkfront_driver);
+=======
+	return xenbus_unregister_driver(&blkfront);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 module_exit(xlblk_exit);
 

@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2006-2010 Freescale Semicondutor, Inc. All rights reserved.
+=======
+ * Copyright (C) 2006 Freescale Semicondutor, Inc. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Authors: 	Shlomi Gridish <gridish@freescale.com>
  * 		Li Yang <leoli@freescale.com>
@@ -216,7 +220,11 @@ int qe_setbrg(enum qe_clock brg, unsigned int rate, unsigned int multiplier)
 	/* Errata QE_General4, which affects some MPC832x and MPC836x SOCs, says
 	   that the BRG divisor must be even if you're not using divide-by-16
 	   mode. */
+<<<<<<< HEAD
 	if (!div16 && (divisor & 1) && (divisor > 3))
+=======
+	if (!div16 && (divisor & 1))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		divisor++;
 
 	tempval = ((divisor - 1) << QE_BRGC_DIVISOR_SHIFT) |
@@ -266,6 +274,7 @@ EXPORT_SYMBOL(qe_clock_source);
 static void qe_snums_init(void)
 {
 	int i;
+<<<<<<< HEAD
 	static const u8 snum_init_76[] = {
 		0x04, 0x05, 0x0C, 0x0D, 0x14, 0x15, 0x1C, 0x1D,
 		0x24, 0x25, 0x2C, 0x2D, 0x34, 0x35, 0x88, 0x89,
@@ -279,6 +288,9 @@ static void qe_snums_init(void)
 		0xF4, 0xF5, 0xFC, 0xFD,
 	};
 	static const u8 snum_init_46[] = {
+=======
+	static const u8 snum_init[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		0x04, 0x05, 0x0C, 0x0D, 0x14, 0x15, 0x1C, 0x1D,
 		0x24, 0x25, 0x2C, 0x2D, 0x34, 0x35, 0x88, 0x89,
 		0x98, 0x99, 0xA8, 0xA9, 0xB8, 0xB9, 0xC8, 0xC9,
@@ -286,6 +298,7 @@ static void qe_snums_init(void)
 		0x28, 0x29, 0x38, 0x39, 0x48, 0x49, 0x58, 0x59,
 		0x68, 0x69, 0x78, 0x79, 0x80, 0x81,
 	};
+<<<<<<< HEAD
 	static const u8 *snum_init;
 
 	qe_num_of_snum = qe_get_num_of_snums();
@@ -295,6 +308,11 @@ static void qe_snums_init(void)
 	else
 		snum_init = snum_init_46;
 
+=======
+
+	qe_num_of_snum = qe_get_num_of_snums();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < qe_num_of_snum; i++) {
 		snums[i].num = snum_init[i];
 		snums[i].state = QE_SNUM_STATE_FREE;
@@ -400,7 +418,11 @@ static void qe_upload_microcode(const void *base,
 /*
  * Upload a microcode to the I-RAM at a specific address.
  *
+<<<<<<< HEAD
  * See Documentation/powerpc/qe_firmware.txt for information on QE microcode
+=======
+ * See Documentation/powerpc/qe-firmware.txt for information on QE microcode
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * uploading.
  *
  * Currently, only version 1 is supported, so the 'version' field must be

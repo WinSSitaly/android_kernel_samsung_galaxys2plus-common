@@ -42,7 +42,10 @@
 #include <linux/ieee80211.h>
 #include <linux/sched.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/moduleparam.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "iwm.h"
 #include "bus.h"

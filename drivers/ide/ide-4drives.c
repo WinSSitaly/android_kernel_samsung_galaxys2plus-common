@@ -6,7 +6,11 @@
 
 #define DRV_NAME "ide-4drives"
 
+<<<<<<< HEAD
 static bool probe_4drives;
+=======
+static int probe_4drives;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_named(probe, probe_4drives, bool, 0);
 MODULE_PARM_DESC(probe, "probe for generic IDE chipset with 4 drives/port");

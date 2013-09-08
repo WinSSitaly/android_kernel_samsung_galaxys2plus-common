@@ -24,7 +24,10 @@
 #include <linux/kthread.h>
 #include <linux/mutex.h>
 #include <linux/freezer.h>
+<<<<<<< HEAD
 #include <linux/random.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/uaccess.h>
 #include <asm/byteorder.h>
@@ -63,8 +66,11 @@ struct usb_hub {
 							resumed */
 	unsigned long		removed_bits[1]; /* ports with a "removed"
 							device present */
+<<<<<<< HEAD
 	unsigned long		wakeup_bits[1];	/* ports that have signaled
 							remote wakeup */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if USB_MAXCHILDREN > 31 /* 8*sizeof(unsigned long) - 1 */
 #error event_bits[] is too short!
 #endif
@@ -87,7 +93,11 @@ struct usb_hub {
 
 static inline int hub_is_superspeed(struct usb_device *hdev)
 {
+<<<<<<< HEAD
 	return (hdev->descriptor.bDeviceProtocol == USB_HUB_PR_SS);
+=======
+	return (hdev->descriptor.bDeviceProtocol == 3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Protect struct usb_device->state and ->children members
@@ -105,7 +115,11 @@ static DECLARE_WAIT_QUEUE_HEAD(khubd_wait);
 static struct task_struct *khubd_task;
 
 /* cycle leds on hubs that aren't blinking for attention */
+<<<<<<< HEAD
 static bool blinkenlights = 0;
+=======
+static int blinkenlights = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param (blinkenlights, bool, S_IRUGO);
 MODULE_PARM_DESC (blinkenlights, "true to cycle leds on hubs");
 
@@ -134,12 +148,20 @@ MODULE_PARM_DESC(initial_descriptor_timeout,
  * otherwise the new scheme is used.  If that fails and "use_both_schemes"
  * is set, then the driver will make another attempt, using the other scheme.
  */
+<<<<<<< HEAD
 static bool old_scheme_first = 0;
+=======
+static int old_scheme_first = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(old_scheme_first, bool, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(old_scheme_first,
 		 "start with the old device initialization scheme");
 
+<<<<<<< HEAD
 static bool use_both_schemes = 1;
+=======
+static int use_both_schemes = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(use_both_schemes, bool, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(use_both_schemes,
 		"try the other device initialization scheme if the "
@@ -414,6 +436,7 @@ void usb_kick_khubd(struct usb_device *hdev)
 		kick_khubd(hub);
 }
 
+<<<<<<< HEAD
 /*
  * Let the USB core know that a USB 3.0 device has sent a Function Wake Device
  * Notification, which indicates it had initiated remote wakeup.
@@ -437,6 +460,8 @@ void usb_wakeup_notification(struct usb_device *hdev,
 	}
 }
 EXPORT_SYMBOL_GPL(usb_wakeup_notification);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* completion function, fires on port status changes and various faults */
 static void hub_irq(struct urb *urb)
@@ -457,6 +482,10 @@ static void hub_irq(struct urb *urb)
 		dev_dbg (hub->intfdev, "transfer --> %d\n", status);
 		if ((++hub->nerrors < 10) || hub->error)
 			goto resubmit;
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hub->error = status;
 		/* FALL THROUGH */
 
@@ -488,6 +517,7 @@ resubmit:
 static inline int
 hub_clear_tt_buffer (struct usb_device *hdev, u16 devinfo, u16 tt)
 {
+<<<<<<< HEAD
 	/* Need to clear both directions for control ep */
 	if (((devinfo >> 11) & USB_ENDPOINT_XFERTYPE_MASK) ==
 			USB_ENDPOINT_XFER_CONTROL) {
@@ -497,6 +527,8 @@ hub_clear_tt_buffer (struct usb_device *hdev, u16 devinfo, u16 tt)
 		if (status)
 			return status;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return usb_control_msg(hdev, usb_sndctrlpipe(hdev, 0),
 			       HUB_CLEAR_TT_BUFFER, USB_RT_PORT, devinfo,
 			       tt, NULL, 0, 1000);
@@ -516,16 +548,23 @@ static void hub_tt_work(struct work_struct *work)
 	int			limit = 100;
 
 	spin_lock_irqsave (&hub->tt.lock, flags);
+<<<<<<< HEAD
 	while (!list_empty(&hub->tt.clear_list)) {
+=======
+	while (--limit && !list_empty (&hub->tt.clear_list)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct list_head	*next;
 		struct usb_tt_clear	*clear;
 		struct usb_device	*hdev = hub->hdev;
 		const struct hc_driver	*drv;
 		int			status;
 
+<<<<<<< HEAD
 		if (!hub->quiescing && --limit < 0)
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		next = hub->tt.clear_list.next;
 		clear = list_entry (next, struct usb_tt_clear, clear_list);
 		list_del (&clear->clear_list);
@@ -653,6 +692,7 @@ static int hub_hub_status(struct usb_hub *hub,
 	return ret;
 }
 
+<<<<<<< HEAD
 static int hub_set_port_link_state(struct usb_hub *hub, int port1,
 			unsigned int link_status)
 {
@@ -707,6 +747,8 @@ static int hub_usb3_port_disable(struct usb_hub *hub, int port1)
 	return hub_set_port_link_state(hub, port1, USB_SS_PORT_LS_RX_DETECT);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int hub_port_disable(struct usb_hub *hub, int port1, int set_state)
 {
 	struct usb_device *hdev = hub->hdev;
@@ -715,6 +757,7 @@ static int hub_port_disable(struct usb_hub *hub, int port1, int set_state)
 	if (hdev->children[port1-1] && set_state)
 		usb_set_device_state(hdev->children[port1-1],
 				USB_STATE_NOTATTACHED);
+<<<<<<< HEAD
 	if (!hub->error) {
 		if (hub_is_superspeed(hub->hdev))
 			ret = hub_usb3_port_disable(hub, port1);
@@ -722,6 +765,10 @@ static int hub_port_disable(struct usb_hub *hub, int port1, int set_state)
 			ret = clear_port_feature(hdev, port1,
 					USB_PORT_FEAT_ENABLE);
 	}
+=======
+	if (!hub->error && !hub_is_superspeed(hub->hdev))
+		ret = clear_port_feature(hdev, port1, USB_PORT_FEAT_ENABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		dev_err(hub->intfdev, "cannot disable port %d (err = %d)\n",
 				port1, ret);
@@ -920,6 +967,15 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
 			clear_port_feature(hub->hdev, port1,
 					USB_PORT_FEAT_C_ENABLE);
 		}
+<<<<<<< HEAD
+=======
+		if (portchange & USB_PORT_STAT_C_LINK_STATE) {
+			need_debounce_delay = true;
+			clear_port_feature(hub->hdev, port1,
+					USB_PORT_FEAT_C_PORT_LINK_STATE);
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if ((portchange & USB_PORT_STAT_C_BH_RESET) &&
 				hub_is_superspeed(hub->hdev)) {
 			need_debounce_delay = true;
@@ -941,6 +997,7 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
 				set_bit(port1, hub->change_bits);
 
 		} else if (portstatus & USB_PORT_STAT_ENABLE) {
+<<<<<<< HEAD
 			bool port_resumed = (portstatus &
 					USB_PORT_STAT_LINK_STATE) ==
 				USB_SS_PORT_LS_U0;
@@ -954,6 +1011,14 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
 			 */
 			if (portchange || (hub_is_superspeed(hub->hdev) &&
 						port_resumed))
+=======
+			/* The power session apparently survived the resume.
+			 * If there was an overcurrent or suspend change
+			 * (i.e., remote wakeup request), have khubd
+			 * take care of it.
+			 */
+			if (portchange)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				set_bit(port1, hub->change_bits);
 
 		} else if (udev->persist_enabled) {
@@ -1049,7 +1114,11 @@ static void hub_quiesce(struct usb_hub *hub, enum hub_quiescing_type type)
 	if (hub->has_indicators)
 		cancel_delayed_work_sync(&hub->leds);
 	if (hub->tt.hub)
+<<<<<<< HEAD
 		flush_work_sync(&hub->tt.clear_work);
+=======
+		cancel_work_sync(&hub->tt.clear_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* caller has locked the hub device */
@@ -1119,10 +1188,15 @@ static int hub_configure(struct usb_hub *hub,
 	dev_info (hub_dev, "%d port%s detected\n", hdev->maxchild,
 		(hdev->maxchild == 1) ? "" : "s");
 
+<<<<<<< HEAD
 	hdev->children = kzalloc(hdev->maxchild *
 				sizeof(struct usb_device *), GFP_KERNEL);
 	hub->port_owners = kzalloc(hdev->maxchild * sizeof(void *), GFP_KERNEL);
 	if (!hdev->children || !hub->port_owners) {
+=======
+	hub->port_owners = kzalloc(hdev->maxchild * sizeof(void *), GFP_KERNEL);
+	if (!hub->port_owners) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENOMEM;
 		goto fail;
 	}
@@ -1145,6 +1219,7 @@ static int hub_configure(struct usb_hub *hub,
 		dev_dbg(hub_dev, "standalone hub\n");
 
 	switch (wHubCharacteristics & HUB_CHAR_LPSM) {
+<<<<<<< HEAD
 	case HUB_CHAR_COMMON_LPSM:
 		dev_dbg(hub_dev, "ganged power switching\n");
 		break;
@@ -1168,12 +1243,38 @@ static int hub_configure(struct usb_hub *hub,
 	case HUB_CHAR_OCPM:
 		dev_dbg(hub_dev, "no over-current protection\n");
 		break;
+=======
+		case 0x00:
+			dev_dbg(hub_dev, "ganged power switching\n");
+			break;
+		case 0x01:
+			dev_dbg(hub_dev, "individual port power switching\n");
+			break;
+		case 0x02:
+		case 0x03:
+			dev_dbg(hub_dev, "no power switching (usb 1.0)\n");
+			break;
+	}
+
+	switch (wHubCharacteristics & HUB_CHAR_OCPM) {
+		case 0x00:
+			dev_dbg(hub_dev, "global over-current protection\n");
+			break;
+		case 0x08:
+			dev_dbg(hub_dev, "individual port over-current protection\n");
+			break;
+		case 0x10:
+		case 0x18:
+			dev_dbg(hub_dev, "no over-current protection\n");
+                        break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	spin_lock_init (&hub->tt.lock);
 	INIT_LIST_HEAD (&hub->tt.clear_list);
 	INIT_WORK(&hub->tt.clear_work, hub_tt_work);
 	switch (hdev->descriptor.bDeviceProtocol) {
+<<<<<<< HEAD
 	case USB_HUB_PR_FS:
 		break;
 	case USB_HUB_PR_HS_SINGLE_TT:
@@ -1197,6 +1298,36 @@ static int hub_configure(struct usb_hub *hub,
 		dev_dbg(hub_dev, "Unrecognized hub protocol %d\n",
 			hdev->descriptor.bDeviceProtocol);
 		break;
+=======
+		case 0:
+                        //CGG
+                        dev_dbg(hub_dev, "TT with no hub-specific protocol - "
+                                "no TT\n");
+			break;
+		case 1:
+			dev_dbg(hub_dev, "Single TT\n");
+			hub->tt.hub = hdev;
+			break;
+		case 2:
+			ret = usb_set_interface(hdev, 0, 1);
+			if (ret == 0) {
+				dev_dbg(hub_dev, "TT per port\n");
+				hub->tt.multi = 1;
+			} else
+				dev_err(hub_dev, "Using single TT (err %d)\n",
+					ret);
+			hub->tt.hub = hdev;
+			break;
+		case 3:
+                        //CGG
+                        dev_dbg(hub_dev, "USB 3.0 hub - no TT\n");
+			/* USB 3.0 hubs don't have a TT */
+			break;
+		default:
+			dev_dbg(hub_dev, "Unrecognized hub protocol %d\n",
+				hdev->descriptor.bDeviceProtocol);
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Note 8 FS bit times == (8 bits / 12000000 bps) ~= 666ns */
@@ -1353,8 +1484,12 @@ static unsigned highspeed_hubs;
 
 static void hub_disconnect(struct usb_interface *intf)
 {
+<<<<<<< HEAD
 	struct usb_hub *hub = usb_get_intfdata(intf);
 	struct usb_device *hdev = interface_to_usbdev(intf);
+=======
+	struct usb_hub *hub = usb_get_intfdata (intf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Take the hub off the event list and don't let it be added again */
 	spin_lock_irq(&hub_event_lock);
@@ -1376,7 +1511,10 @@ static void hub_disconnect(struct usb_interface *intf)
 		highspeed_hubs--;
 
 	usb_free_urb(hub->urb);
+<<<<<<< HEAD
 	kfree(hdev->children);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(hub->port_owners);
 	kfree(hub->descriptor);
 	kfree(hub->status);
@@ -1395,8 +1533,19 @@ static int hub_probe(struct usb_interface *intf, const struct usb_device_id *id)
 	desc = intf->cur_altsetting;
 	hdev = interface_to_usbdev(intf);
 
+<<<<<<< HEAD
 	/* Hubs have proper suspend/resume support. */
 	usb_enable_autosuspend(hdev);
+=======
+	/* Hubs have proper suspend/resume support.  USB 3.0 device suspend is
+	 * different from USB 2.0/1.1 device suspend, and unfortunately we
+	 * don't support it yet.  So leave autosuspend disabled for USB 3.0
+	 * external hubs for now.  Enable autosuspend for USB 3.0 roothubs,
+	 * since that isn't a "real" hub.
+	 */
+	if (!hub_is_superspeed(hdev) || !hdev->parent)
+		usb_enable_autosuspend(hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (hdev->level == MAX_TOPO_LEVEL) {
 		dev_err(&intf->dev,
@@ -1460,6 +1609,10 @@ descriptor_error:
 	return -ENODEV;
 }
 
+<<<<<<< HEAD
+=======
+/* No BKL needed */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int
 hub_ioctl(struct usb_interface *intf, unsigned int code, void *user_data)
 {
@@ -1739,6 +1892,20 @@ void usb_disconnect(struct usb_device **pdev)
 {
 	struct usb_device	*udev = *pdev;
 	int			i;
+<<<<<<< HEAD
+=======
+	/* Removed for coverity */
+	/* struct usb_hcd		*hcd; */
+
+	if (!udev) {
+		pr_debug ("%s nodev\n", __func__);
+		return;
+	}
+
+	/* Coverity REVERSE_INULL fix */
+	/* Unused var */
+	/* hcd = bus_to_hcd(udev->bus); */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* mark the device as inactive, so any further urb submissions for
 	 * this device (and any of its children) will fail immediately.
@@ -1748,10 +1915,25 @@ void usb_disconnect(struct usb_device **pdev)
 	dev_info(&udev->dev, "USB disconnect, device number %d\n",
 			udev->devnum);
 
+<<<<<<< HEAD
 	usb_lock_device(udev);
 
 	/* Free up all the children before we remove this device */
 	for (i = 0; i < udev->maxchild; i++) {
+=======
+#ifdef CONFIG_USB_OTG
+	if (udev->bus->hnp_support && udev->portnum == udev->bus->otg_port) {
+		cancel_delayed_work_sync(&udev->bus->hnp_polling);
+		cancel_delayed_work_sync(&udev->bus->maint_conf_session_for_td);
+		udev->bus->hnp_support = 0;
+	}
+#endif
+
+	usb_lock_device(udev);
+
+	/* Free up all the children before we remove this device */
+	for (i = 0; i < USB_MAXCHILDREN; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (udev->children[i])
 			usb_disconnect(&udev->children[i]);
 	}
@@ -1815,6 +1997,20 @@ static inline void announce_device(struct usb_device *udev) { }
 #endif
 
 #ifdef	CONFIG_USB_OTG
+<<<<<<< HEAD
+=======
+
+#ifdef CONFIG_USB_OTG_WHITELIST
+static int enable_whitelist = 1;
+#else
+static int enable_whitelist = 0;
+#endif
+
+module_param(enable_whitelist, bool, S_IRUGO | S_IWUSR);
+MODULE_PARM_DESC(enable_whitelist,
+		 "only recognize devices in OTG whitelist if true");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "otg_whitelist.h"
 #endif
 
@@ -1852,6 +2048,7 @@ static int usb_enumerate_device_otg(struct usb_device *udev)
 					(port1 == bus->otg_port)
 						? "" : "non-");
 
+<<<<<<< HEAD
 				/* enable HNP before suspend, it's simpler */
 				if (port1 == bus->otg_port)
 					bus->b_hnp_enable = 1;
@@ -1861,6 +2058,33 @@ static int usb_enumerate_device_otg(struct usb_device *udev)
 					bus->b_hnp_enable
 						? USB_DEVICE_B_HNP_ENABLE
 						: USB_DEVICE_A_ALT_HNP_SUPPORT,
+=======
+				/* a_alt_hnp_support is obsoleted */
+				if (port1 != bus->otg_port)
+					goto fail;
+
+				bus->hnp_support = 1;
+
+				/* a_hnp_support is not required for devices
+				 * compliant to revision 2.0 or subsequent
+				 * versions.
+				 */
+				if (desc->bLength == sizeof(*desc) &&
+						le16_to_cpu(desc->bcdOTG) >= 0x200)
+						goto out;
+
+				/* Legacy B-device i.e. compliant to spec
+				 * revision 1.3 expect A-device to set
+				 * a_hnp_support or b_hnp_enable before
+				 * selecting configuration. b_hnp_enable
+				 * is set before suspending the port.
+				 */
+
+				err = usb_control_msg(udev,
+					usb_sndctrlpipe(udev, 0),
+					USB_REQ_SET_FEATURE, 0,
+					USB_DEVICE_A_HNP_SUPPORT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					0, NULL, 0, USB_CTRL_SET_TIMEOUT);
 				if (err < 0) {
 					/* OTG MESSAGE: report errors here,
@@ -1869,17 +2093,32 @@ static int usb_enumerate_device_otg(struct usb_device *udev)
 					dev_info(&udev->dev,
 						"can't set HNP mode: %d\n",
 						err);
+<<<<<<< HEAD
 					bus->b_hnp_enable = 0;
+=======
+                                        dev_printk(KERN_CRIT, &udev->dev, "Device Not Connected/Responding\n");
+
+					bus->hnp_support = 0;
+				}
+				else {
+					dev_info(&udev->dev,
+						"HNP Not Supported\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				}
 			}
 		}
 	}
 
+<<<<<<< HEAD
+=======
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!is_targeted(udev)) {
 
 		/* Maybe it can talk to us, though we can't talk to it.
 		 * (Includes HNP test device.)
 		 */
+<<<<<<< HEAD
 		if (udev->bus->b_hnp_enable || udev->bus->is_b_host) {
 			err = usb_port_suspend(udev, PMSG_SUSPEND);
 			if (err < 0)
@@ -1887,6 +2126,23 @@ static int usb_enumerate_device_otg(struct usb_device *udev)
 		}
 		err = -ENOTSUPP;
 		goto fail;
+=======
+		if (udev->bus->hnp_support) {
+			err = usb_port_suspend(udev, PMSG_SUSPEND);
+			if (err < 0)
+				dev_dbg(&udev->dev, "HNP fail, %d\n", err);
+              }
+		err = -ENOTSUPP;
+	} else if (udev->bus->hnp_support &&
+					udev->portnum == udev->bus->otg_port) {
+		/* HNP polling is introduced in OTG supplement Rev 2.0
+		* and older devices does not support. Work is not
+		* re-armed if device returns STALL. B-Host also performs
+		* HNP polling.
+		*/
+		schedule_delayed_work(&udev->bus->hnp_polling,
+				msecs_to_jiffies(THOST_REQ_POLL));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 fail:
 #endif
@@ -1935,6 +2191,7 @@ fail:
 	return err;
 }
 
+<<<<<<< HEAD
 static void set_usb_port_removable(struct usb_device *udev)
 {
 	struct usb_device *hdev = udev->parent;
@@ -1966,6 +2223,8 @@ static void set_usb_port_removable(struct usb_device *udev)
 	else
 		udev->removable = USB_DEVICE_FIXED;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * usb_new_device - perform initial device setup (usbcore-internal)
@@ -2013,6 +2272,10 @@ int usb_new_device(struct usb_device *udev)
 	err = usb_enumerate_device(udev);	/* Read descriptors */
 	if (err < 0)
 		goto fail;
+<<<<<<< HEAD
+=======
+	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_dbg(&udev->dev, "udev %d, busnum %d, minor = %d\n",
 			udev->devnum, udev->bus->busnum,
 			(((udev->bus->busnum-1) * 128) + (udev->devnum-1)));
@@ -2023,6 +2286,7 @@ int usb_new_device(struct usb_device *udev)
 	/* Tell the world! */
 	announce_device(udev);
 
+<<<<<<< HEAD
 	if (udev->serial)
 		add_device_randomness(udev->serial, strlen(udev->serial));
 	if (udev->product)
@@ -2041,6 +2305,9 @@ int usb_new_device(struct usb_device *udev)
 	if (udev->parent)
 		set_usb_port_removable(udev);
 
+=======
+	device_enable_async_suspend(&udev->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Register the device.  The device driver is responsible
 	 * for configuring the device and invoking the add-device
 	 * notifier chain (used by usbfs and possibly others).
@@ -2050,6 +2317,10 @@ int usb_new_device(struct usb_device *udev)
 		dev_err(&udev->dev, "can't device_add, error %d\n", err);
 		goto fail;
 	}
+<<<<<<< HEAD
+=======
+	printk("USBD][%s] USB Host Enumeration & Registration Success\n",__func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	(void) usb_create_ep_devs(&udev->dev, &udev->ep0, udev);
 	usb_mark_last_busy(udev);
@@ -2107,6 +2378,10 @@ int usb_authorize_device(struct usb_device *usb_dev)
 	if (usb_dev->authorized == 1)
 		goto out_authorized;
 
+<<<<<<< HEAD
+=======
+	/* Coverity 'Unchecked Return Value' ignored */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	result = usb_autoresume_device(usb_dev);
 	if (result < 0) {
 		dev_err(&usb_dev->dev,
@@ -2171,6 +2446,7 @@ static unsigned hub_is_wusb(struct usb_hub *hub)
 #define SET_ADDRESS_TRIES	2
 #define GET_DESCRIPTOR_TRIES	2
 #define SET_CONFIG_TRIES	(2 * (use_both_schemes + 1))
+<<<<<<< HEAD
 #define USE_NEW_SCHEME(i)	((i) / 2 == (int)old_scheme_first)
 
 #define HUB_ROOT_RESET_TIME	50	/* times are in msec */
@@ -2196,6 +2472,17 @@ static bool hub_port_warm_reset_required(struct usb_hub *hub, u16 portstatus)
 
 static int hub_port_wait_reset(struct usb_hub *hub, int port1,
 			struct usb_device *udev, unsigned int delay, bool warm)
+=======
+#define USE_NEW_SCHEME(i)	((i) / 2 == old_scheme_first)
+
+#define HUB_ROOT_RESET_TIME	50	/* times are in msec */
+#define HUB_SHORT_RESET_TIME	10
+#define HUB_LONG_RESET_TIME	200
+#define HUB_RESET_TIMEOUT	500
+
+static int hub_port_wait_reset(struct usb_hub *hub, int port1,
+				struct usb_device *udev, unsigned int delay)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int delay_time, ret;
 	u16 portstatus;
@@ -2212,6 +2499,7 @@ static int hub_port_wait_reset(struct usb_hub *hub, int port1,
 		if (ret < 0)
 			return ret;
 
+<<<<<<< HEAD
 		/* The port state is unknown until the reset completes. */
 		if ((portstatus & USB_PORT_STAT_RESET))
 			goto delay;
@@ -2219,10 +2507,13 @@ static int hub_port_wait_reset(struct usb_hub *hub, int port1,
 		if (hub_port_warm_reset_required(hub, portstatus))
 			return -ENOTCONN;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Device went away? */
 		if (!(portstatus & USB_PORT_STAT_CONNECTION))
 			return -ENOTCONN;
 
+<<<<<<< HEAD
 		/* bomb out completely if the connection bounced.  A USB 3.0
 		 * connection may bounce if multiple warm resets were issued,
 		 * but the device may have successfully re-connected. Ignore it.
@@ -2235,6 +2526,15 @@ static int hub_port_wait_reset(struct usb_hub *hub, int port1,
 			if (!udev)
 				return 0;
 
+=======
+		/* bomb out completely if the connection bounced */
+		if ((portchange & USB_PORT_STAT_C_CONNECTION))
+			return -ENOTCONN;
+
+		/* if we`ve finished resetting, then break out of the loop */
+		if (!(portstatus & USB_PORT_STAT_RESET) &&
+		    (portstatus & USB_PORT_STAT_ENABLE)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (hub_is_wusb(hub))
 				udev->speed = USB_SPEED_WIRELESS;
 			else if (hub_is_superspeed(hub->hdev))
@@ -2248,19 +2548,28 @@ static int hub_port_wait_reset(struct usb_hub *hub, int port1,
 			return 0;
 		}
 
+<<<<<<< HEAD
 delay:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* switch to the long delay after two short delay failures */
 		if (delay_time >= 2 * HUB_SHORT_RESET_TIME)
 			delay = HUB_LONG_RESET_TIME;
 
 		dev_dbg (hub->intfdev,
+<<<<<<< HEAD
 			"port %d not %sreset yet, waiting %dms\n",
 			port1, warm ? "warm " : "", delay);
+=======
+			"port %d not reset yet, waiting %dms\n",
+			port1, delay);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return -EBUSY;
 }
 
+<<<<<<< HEAD
 static void hub_port_finish_reset(struct usb_hub *hub, int port1,
 			struct usb_device *udev, int *status)
 {
@@ -2342,12 +2651,37 @@ static int hub_port_reset(struct usb_hub *hub, int port1,
 		} else {
 			status = hub_port_wait_reset(hub, port1, udev, delay,
 								warm);
+=======
+static int hub_port_reset(struct usb_hub *hub, int port1,
+				struct usb_device *udev, unsigned int delay)
+{
+	int i, status;
+	struct usb_hcd *hcd;
+
+	hcd = bus_to_hcd(udev->bus);
+	/* Block EHCI CF initialization during the port reset.
+	 * Some companion controllers don't like it when they mix.
+	 */
+	down_read(&ehci_cf_port_reset_rwsem);
+
+	/* Reset the port */
+	for (i = 0; i < PORT_RESET_TRIES; i++) {
+		status = set_port_feature(hub->hdev,
+				port1, USB_PORT_FEAT_RESET);
+		if (status)
+			dev_err(hub->intfdev,
+					"cannot reset port %d (err = %d)\n",
+					port1, status);
+		else {
+			status = hub_port_wait_reset(hub, port1, udev, delay);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (status && status != -ENOTCONN)
 				dev_dbg(hub->intfdev,
 						"port_wait_reset: err = %d\n",
 						status);
 		}
 
+<<<<<<< HEAD
 		/* Check for disconnect or reset */
 		if (status == 0 || status == -ENOTCONN || status == -ENODEV) {
 			hub_port_finish_reset(hub, port1, udev, &status);
@@ -2380,6 +2714,37 @@ static int hub_port_reset(struct usb_hub *hub, int port1,
 		dev_dbg (hub->intfdev,
 			"port %d not enabled, trying %sreset again...\n",
 			port1, warm ? "warm " : "");
+=======
+		/* return on disconnect or reset */
+		switch (status) {
+		case 0:
+			/* TRSTRCY = 10 ms; plus some extra */
+			msleep(10 + 40);
+			update_devnum(udev, 0);
+			if (hcd->driver->reset_device) {
+				status = hcd->driver->reset_device(hcd, udev);
+				if (status < 0) {
+					dev_err(&udev->dev, "Cannot reset "
+							"HCD device state\n");
+					break;
+				}
+			}
+			/* FALL THROUGH */
+		case -ENOTCONN:
+		case -ENODEV:
+			clear_port_feature(hub->hdev,
+				port1, USB_PORT_FEAT_C_RESET);
+			/* FIXME need disconnect() for NOTATTACHED device */
+			usb_set_device_state(udev, status
+					? USB_STATE_NOTATTACHED
+					: USB_STATE_DEFAULT);
+			goto done;
+		}
+
+		dev_dbg (hub->intfdev,
+			"port %d not enabled, trying reset again...\n",
+			port1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		delay = HUB_LONG_RESET_TIME;
 	}
 
@@ -2387,6 +2752,7 @@ static int hub_port_reset(struct usb_hub *hub, int port1,
 		"Cannot enable port %i.  Maybe the USB cable is bad?\n",
 		port1);
 
+<<<<<<< HEAD
 done:
 	if (!hub_is_superspeed(hub->hdev))
 		up_read(&ehci_cf_port_reset_rwsem);
@@ -2394,6 +2760,49 @@ done:
 	return status;
 }
 
+=======
+ done:
+	up_read(&ehci_cf_port_reset_rwsem);
+	return status;
+}
+
+/* Warm reset a USB3 protocol port */
+static int hub_port_warm_reset(struct usb_hub *hub, int port)
+{
+	int ret;
+	u16 portstatus, portchange;
+
+	if (!hub_is_superspeed(hub->hdev)) {
+		dev_err(hub->intfdev, "only USB3 hub support warm reset\n");
+		return -EINVAL;
+	}
+
+	/* Warm reset the port */
+	ret = set_port_feature(hub->hdev,
+				port, USB_PORT_FEAT_BH_PORT_RESET);
+	if (ret) {
+		dev_err(hub->intfdev, "cannot warm reset port %d\n", port);
+		return ret;
+	}
+
+	msleep(20);
+	ret = hub_port_status(hub, port, &portstatus, &portchange);
+
+	if (portchange & USB_PORT_STAT_C_RESET)
+		clear_port_feature(hub->hdev, port, USB_PORT_FEAT_C_RESET);
+
+	if (portchange & USB_PORT_STAT_C_BH_RESET)
+		clear_port_feature(hub->hdev, port,
+					USB_PORT_FEAT_C_BH_PORT_RESET);
+
+	if (portchange & USB_PORT_STAT_C_LINK_STATE)
+		clear_port_feature(hub->hdev, port,
+					USB_PORT_FEAT_C_PORT_LINK_STATE);
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Check if a port is power on */
 static int port_is_power_on(struct usb_hub *hub, unsigned portstatus)
 {
@@ -2473,6 +2882,7 @@ static int check_port_resume_type(struct usb_device *udev,
 }
 
 #ifdef	CONFIG_USB_SUSPEND
+<<<<<<< HEAD
 /*
  * usb_disable_function_remotewakeup - disable usb3.0
  * device's function remote wakeup
@@ -2490,6 +2900,8 @@ static int usb_disable_function_remotewakeup(struct usb_device *udev)
 				USB_INTRF_FUNC_SUSPEND,	0, NULL, 0,
 				USB_CTRL_SET_TIMEOUT);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * usb_port_suspend - suspend a usb device's upstream port
@@ -2542,6 +2954,13 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
 	struct usb_hub	*hub = hdev_to_hub(udev->parent);
 	int		port1 = udev->portnum;
 	int		status;
+<<<<<<< HEAD
+=======
+	char *hnp_en_err[2] = {"USB_HOST_HNP_ENABLED=FALSE", NULL};
+	char **uevent_envp = NULL;
+
+	// dev_dbg(hub->intfdev, "suspend port %d\n", port1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* enable remote wakeup when appropriate; this lets the device
 	 * wake up the upstream hub (including maybe the root hub).
@@ -2550,6 +2969,7 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
 	 * we don't explicitly enable it here.
 	 */
 	if (udev->do_remote_wakeup) {
+<<<<<<< HEAD
 		if (!hub_is_superspeed(hub->hdev)) {
 			status = usb_control_msg(udev, usb_sndctrlpipe(udev, 0),
 					USB_REQ_SET_FEATURE, USB_RECIP_DEVICE,
@@ -2571,18 +2991,54 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
 					NULL, 0,
 					USB_CTRL_SET_TIMEOUT);
 		}
+=======
+		status = usb_control_msg(udev, usb_sndctrlpipe(udev, 0),
+				USB_REQ_SET_FEATURE, USB_RECIP_DEVICE,
+				USB_DEVICE_REMOTE_WAKEUP, 0,
+				NULL, 0,
+				USB_CTRL_SET_TIMEOUT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (status) {
 			dev_dbg(&udev->dev, "won't remote wakeup, status %d\n",
 					status);
 			/* bail if autosuspend is requested */
+<<<<<<< HEAD
 			if (PMSG_IS_AUTO(msg))
+=======
+			if (msg.event & PM_EVENT_AUTO)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return status;
 		}
 	}
 
+<<<<<<< HEAD
 	/* disable USB2 hardware LPM */
 	if (udev->usb2_hw_lpm_enabled == 1)
 		usb_set_usb2_hardware_lpm(udev, 0);
+=======
+#ifdef CONFIG_USB_OTG
+	if (!udev->bus->is_b_host && udev->bus->hnp_support &&
+					udev->portnum == udev->bus->otg_port) {
+		status = usb_control_msg(udev, usb_sndctrlpipe(udev, 0),
+						USB_REQ_SET_FEATURE, 0,
+						USB_DEVICE_B_HNP_ENABLE,
+						0, NULL, 0, USB_CTRL_SET_TIMEOUT);
+		if (status < 0) {
+			uevent_envp = hnp_en_err;
+			if (kobject_uevent_env(&udev->dev.kobj,
+				    KOBJ_CHANGE, uevent_envp)) {
+				dev_warn(&udev->dev, "Failed to send uevent for HNP failure\n");
+			}
+
+
+			dev_warn(&udev->dev, "can't enable HNP on port %d, "
+							"status %d\n", port1, status);
+		} else
+			udev->bus->b_hnp_enable = 1;
+	}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* see 7.1.7.6 */
 	if (hub_is_superspeed(hub->hdev))
@@ -2596,6 +3052,7 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
 		dev_dbg(hub->intfdev, "can't suspend port %d, status %d\n",
 				port1, status);
 		/* paranoia:  "should not happen" */
+<<<<<<< HEAD
 		if (udev->do_remote_wakeup) {
 			if (!hub_is_superspeed(hub->hdev)) {
 				(void) usb_control_msg(udev,
@@ -2622,6 +3079,22 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
 		dev_dbg(&udev->dev, "usb %ssuspend, wakeup %d\n",
 				(PMSG_IS_AUTO(msg) ? "auto-" : ""),
 				udev->do_remote_wakeup);
+=======
+		if (udev->do_remote_wakeup)
+			(void) usb_control_msg(udev, usb_sndctrlpipe(udev, 0),
+				USB_REQ_CLEAR_FEATURE, USB_RECIP_DEVICE,
+				USB_DEVICE_REMOTE_WAKEUP, 0,
+				NULL, 0,
+				USB_CTRL_SET_TIMEOUT);
+
+		/* System sleep transitions should never fail */
+		if (!(msg.event & PM_EVENT_AUTO))
+			status = 0;
+	} else {
+		/* device has up to 10 msec to fully suspend */
+//		dev_dbg(&udev->dev, "usb %ssuspend\n",
+//				(msg.event & PM_EVENT_AUTO ? "auto-" : ""));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		usb_set_device_state(udev, USB_STATE_SUSPENDED);
 		msleep(10);
 	}
@@ -2643,7 +3116,11 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
 static int finish_port_resume(struct usb_device *udev)
 {
 	int	status = 0;
+<<<<<<< HEAD
 	u16	devstatus = 0;
+=======
+	u16	devstatus;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* caller owns the udev device lock */
 	dev_dbg(&udev->dev, "%s\n",
@@ -2688,6 +3165,7 @@ static int finish_port_resume(struct usb_device *udev)
 	if (status) {
 		dev_dbg(&udev->dev, "gone after usb resume? status %d\n",
 				status);
+<<<<<<< HEAD
 	/*
 	 * There are a few quirky devices which violate the standard
 	 * by claiming to have remote wakeup enabled after a reset,
@@ -2719,6 +3197,23 @@ static int finish_port_resume(struct usb_device *udev)
 			dev_dbg(&udev->dev,
 				"disable remote wakeup, status %d\n",
 				status);
+=======
+	} else if (udev->actconfig) {
+		le16_to_cpus(&devstatus);
+		if (devstatus & (1 << USB_DEVICE_REMOTE_WAKEUP)) {
+			status = usb_control_msg(udev,
+					usb_sndctrlpipe(udev, 0),
+					USB_REQ_CLEAR_FEATURE,
+						USB_RECIP_DEVICE,
+					USB_DEVICE_REMOTE_WAKEUP, 0,
+					NULL, 0,
+					USB_CTRL_SET_TIMEOUT);
+			if (status)
+				dev_dbg(&udev->dev,
+					"disable remote wakeup, status %d\n",
+					status);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		status = 0;
 	}
 	return status;
@@ -2765,6 +3260,15 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
 	int		status;
 	u16		portchange, portstatus;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_OTG
+	if (!udev->bus->is_b_host && udev->bus->hnp_support &&
+					udev->portnum == udev->bus->otg_port)
+		udev->bus->b_hnp_enable = 0;
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Skip the initial Clear-Suspend step for a remote wakeup */
 	status = hub_port_status(hub, port1, &portstatus, &portchange);
 	if (status == 0 && !port_is_suspended(hub, portstatus))
@@ -2788,7 +3292,11 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
 	} else {
 		/* drive resume for at least 20 msec */
 		dev_dbg(&udev->dev, "usb %sresume\n",
+<<<<<<< HEAD
 				(PMSG_IS_AUTO(msg) ? "auto-" : ""));
+=======
+				(msg.event & PM_EVENT_AUTO ? "auto-" : ""));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		msleep(25);
 
 		/* Virtual root hubs can trigger on GET_PORT_STATUS to
@@ -2823,12 +3331,16 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
 	if (status < 0) {
 		dev_dbg(&udev->dev, "can't resume, status %d\n", status);
 		hub_port_logical_disconnect(hub, port1);
+<<<<<<< HEAD
 	} else  {
 		/* Try to enable USB2 hardware LPM */
 		if (udev->usb2_hw_lpm_capable == 1)
 			usb_set_usb2_hardware_lpm(udev, 1);
 	}
 
+=======
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return status;
 }
 
@@ -2887,7 +3399,10 @@ static int hub_suspend(struct usb_interface *intf, pm_message_t msg)
 	struct usb_hub		*hub = usb_get_intfdata (intf);
 	struct usb_device	*hdev = hub->hdev;
 	unsigned		port1;
+<<<<<<< HEAD
 	int			status;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Warn if children aren't already suspended */
 	for (port1 = 1; port1 <= hdev->maxchild; port1++) {
@@ -2896,6 +3411,7 @@ static int hub_suspend(struct usb_interface *intf, pm_message_t msg)
 		udev = hdev->children [port1-1];
 		if (udev && udev->can_submit) {
 			dev_warn(&intf->dev, "port %d nyet suspended\n", port1);
+<<<<<<< HEAD
 			if (PMSG_IS_AUTO(msg))
 				return -EBUSY;
 		}
@@ -2911,6 +3427,12 @@ static int hub_suspend(struct usb_interface *intf, pm_message_t msg)
 					USB_PORT_FEAT_REMOTE_WAKE_MASK);
 		}
 	}
+=======
+			if (msg.event & PM_EVENT_AUTO)
+				return -EBUSY;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_dbg(&intf->dev, "%s\n", __func__);
 
@@ -3080,7 +3602,11 @@ hub_port_init (struct usb_hub *hub, struct usb_device *udev, int port1,
 	int			i, j, retval;
 	unsigned		delay = HUB_SHORT_RESET_TIME;
 	enum usb_device_speed	oldspeed = udev->speed;
+<<<<<<< HEAD
 	const char		*speed;
+=======
+	char 			*speed, *type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			devnum = udev->devnum;
 
 	/* root hub ports have a slightly longer reset period
@@ -3101,7 +3627,11 @@ hub_port_init (struct usb_hub *hub, struct usb_device *udev, int port1,
 
 	/* Reset the device; full speed may morph to high speed */
 	/* FIXME a USB 2.0 device may morph into SuperSpeed on reset. */
+<<<<<<< HEAD
 	retval = hub_port_reset(hub, port1, udev, delay, false);
+=======
+	retval = hub_port_reset(hub, port1, udev, delay);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval < 0)		/* error or disconnect */
 		goto fail;
 	/* success, speed is known */
@@ -3140,6 +3670,7 @@ hub_port_init (struct usb_hub *hub, struct usb_device *udev, int port1,
 	default:
 		goto fail;
 	}
+<<<<<<< HEAD
 
 	if (udev->speed == USB_SPEED_WIRELESS)
 		speed = "variable speed Wireless";
@@ -3150,6 +3681,27 @@ hub_port_init (struct usb_hub *hub, struct usb_device *udev, int port1,
 		dev_info(&udev->dev,
 				"%s %s USB device number %d using %s\n",
 				(udev->config) ? "reset" : "new", speed,
+=======
+ 
+	type = "";
+	switch (udev->speed) {
+	case USB_SPEED_LOW:	speed = "low";	break;
+	case USB_SPEED_FULL:	speed = "full";	break;
+	case USB_SPEED_HIGH:	speed = "high";	break;
+	case USB_SPEED_SUPER:
+				speed = "super";
+				break;
+	case USB_SPEED_WIRELESS:
+				speed = "variable";
+				type = "Wireless ";
+				break;
+	default: 		speed = "?";	break;
+	}
+	if (udev->speed != USB_SPEED_SUPER)
+		dev_info(&udev->dev,
+				"%s %s speed %sUSB device number %d using %s\n",
+				(udev->config) ? "reset" : "new", speed, type,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				devnum, udev->bus->controller->driver->name);
 
 	/* Set up TT records, if needed  */
@@ -3199,7 +3751,13 @@ hub_port_init (struct usb_hub *hub, struct usb_device *udev, int port1,
 				buf->bMaxPacketSize0 = 0;
 				r = usb_control_msg(udev, usb_rcvaddr0pipe(),
 					USB_REQ_GET_DESCRIPTOR, USB_DIR_IN,
+<<<<<<< HEAD
 					USB_DT_DEVICE << 8, 0,
+=======
+                                        USB_DT_DEVICE << 8,
+                                        //USB_DT_DEVICE << 64, // DWC patch suggestion!
+                                        0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					buf, GET_DESCRIPTOR_BUFSIZE,
 					initial_descriptor_timeout);
 				switch (buf->bMaxPacketSize0) {
@@ -3222,7 +3780,11 @@ hub_port_init (struct usb_hub *hub, struct usb_device *udev, int port1,
 					buf->bMaxPacketSize0;
 			kfree(buf);
 
+<<<<<<< HEAD
 			retval = hub_port_reset(hub, port1, udev, delay, false);
+=======
+			retval = hub_port_reset(hub, port1, udev, delay);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (retval < 0)		/* error or disconnect */
 				goto fail;
 			if (oldspeed != udev->speed) {
@@ -3291,6 +3853,7 @@ hub_port_init (struct usb_hub *hub, struct usb_device *udev, int port1,
 	if (retval)
 		goto fail;
 
+<<<<<<< HEAD
 	/*
 	 * Some superspeed devices have finished the link training process
 	 * and attached to a superspeed hub port, but the device descriptor
@@ -3307,12 +3870,18 @@ hub_port_init (struct usb_hub *hub, struct usb_device *udev, int port1,
 		goto fail;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (udev->descriptor.bMaxPacketSize0 == 0xff ||
 			udev->speed == USB_SPEED_SUPER)
 		i = 512;
 	else
 		i = udev->descriptor.bMaxPacketSize0;
+<<<<<<< HEAD
 	if (usb_endpoint_maxp(&udev->ep0.desc) != i) {
+=======
+	if (le16_to_cpu(udev->ep0.desc.wMaxPacketSize) != i) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (udev->speed == USB_SPEED_LOW ||
 				!(i == 8 || i == 16 || i == 32 || i == 64)) {
 			dev_err(&udev->dev, "Invalid ep0 maxpacket: %d\n", i);
@@ -3336,6 +3905,7 @@ hub_port_init (struct usb_hub *hub, struct usb_device *udev, int port1,
 		goto fail;
 	}
 
+<<<<<<< HEAD
 	if (udev->wusb == 0 && le16_to_cpu(udev->descriptor.bcdUSB) >= 0x0201) {
 		retval = usb_get_bos_descriptor(udev);
 		if (!retval) {
@@ -3345,6 +3915,8 @@ hub_port_init (struct usb_hub *hub, struct usb_device *udev, int port1,
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	retval = 0;
 	/* notify HCD that we have a device connected and addressed */
 	if (hcd->driver->update_device)
@@ -3474,9 +4046,15 @@ static void hub_port_connect_change(struct usb_hub *hub, int port1,
 			status = usb_remote_wakeup(udev);
 #endif
 
+<<<<<<< HEAD
 		} else {
 			status = -ENODEV;	/* Don't resuscitate */
 		}
+=======
+		} else
+			status = -ENODEV;	/* Don't resuscitate */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		usb_unlock_device(udev);
 
 		if (status == 0) {
@@ -3639,14 +4217,26 @@ static void hub_port_connect_change(struct usb_hub *hub, int port1,
 		return;
 
 loop_disable:
+<<<<<<< HEAD
 		hub_port_disable(hub, port1, 1);
+=======
+		if (status != -ECONNREFUSED)
+			hub_port_disable(hub, port1, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 loop:
 		usb_ep0_reinit(udev);
 		release_devnum(udev);
 		hub_free_dev(udev);
 		usb_put_dev(udev);
+<<<<<<< HEAD
 		if ((status == -ENOTCONN) || (status == -ENOTSUPP))
 			break;
+=======
+		if (status == -ENOTCONN || status == -ENOTSUPP ||
+			status == -ECONNREFUSED)
+			// break; //DWC patch
+			return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (hub->hdev->parent ||
 			!hcd->driver->port_handed_over ||
@@ -3660,6 +4250,7 @@ done:
 		hcd->driver->relinquish_port(hcd, port1);
 }
 
+<<<<<<< HEAD
 /* Returns 1 if there was a remote wakeup and a connect status change. */
 static int hub_handle_remote_wakeup(struct usb_hub *hub, unsigned int port,
 		u16 portstatus, u16 portchange)
@@ -3700,6 +4291,8 @@ static int hub_handle_remote_wakeup(struct usb_hub *hub, unsigned int port,
 	return connect_change;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void hub_events(void)
 {
 	struct list_head *tmp;
@@ -3712,7 +4305,11 @@ static void hub_events(void)
 	u16 portstatus;
 	u16 portchange;
 	int i, ret;
+<<<<<<< HEAD
 	int connect_change, wakeup_change;
+=======
+	int connect_change;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 *  We restart the list every time to avoid a deadlock with
@@ -3791,9 +4388,14 @@ static void hub_events(void)
 			if (test_bit(i, hub->busy_bits))
 				continue;
 			connect_change = test_bit(i, hub->change_bits);
+<<<<<<< HEAD
 			wakeup_change = test_and_clear_bit(i, hub->wakeup_bits);
 			if (!test_and_clear_bit(i, hub->event_bits) &&
 					!connect_change && !wakeup_change)
+=======
+			if (!test_and_clear_bit(i, hub->event_bits) &&
+					!connect_change)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				continue;
 
 			ret = hub_port_status(hub, i,
@@ -3834,10 +4436,38 @@ static void hub_events(void)
 				}
 			}
 
+<<<<<<< HEAD
 			if (hub_handle_remote_wakeup(hub, i,
 						portstatus, portchange))
 				connect_change = 1;
 
+=======
+			if (portchange & USB_PORT_STAT_C_SUSPEND) {
+				struct usb_device *udev;
+
+				clear_port_feature(hdev, i,
+					USB_PORT_FEAT_C_SUSPEND);
+				udev = hdev->children[i-1];
+				if (udev) {
+					/* TRSMRCY = 10 msec */
+					msleep(10);
+
+					usb_lock_device(udev);
+					ret = usb_remote_wakeup(hdev->
+							children[i-1]);
+					usb_unlock_device(udev);
+					if (ret < 0)
+						connect_change = 1;
+				} else {
+					ret = -ENODEV;
+					hub_port_disable(hub, i, 1);
+				}
+				dev_dbg (hub_dev,
+					"resume on port %d, status %d\n",
+					i, ret);
+			}
+			
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (portchange & USB_PORT_STAT_C_OVERCURRENT) {
 				u16 status = 0;
 				u16 unused;
@@ -3884,6 +4514,7 @@ static void hub_events(void)
 			/* Warm reset a USB3 protocol port if it's in
 			 * SS.Inactive state.
 			 */
+<<<<<<< HEAD
 			if (hub_port_warm_reset_required(hub, portstatus)) {
 				int status;
 				struct usb_device *udev =
@@ -3903,6 +4534,13 @@ static void hub_events(void)
 					usb_unlock_device(udev);
 					connect_change = 0;
 				}
+=======
+			if (hub_is_superspeed(hub->hdev) &&
+				(portstatus & USB_PORT_STAT_LINK_STATE)
+					== USB_SS_PORT_LS_SS_INACTIVE) {
+				dev_dbg(hub_dev, "warm reset port %d\n", i);
+				hub_port_warm_reset(hub, i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 
 			if (connect_change)
@@ -4090,9 +4728,20 @@ static int descriptors_changed(struct usb_device *udev,
 	}
 
 	if (!changed && serial_len) {
+<<<<<<< HEAD
 		length = usb_string(udev, udev->descriptor.iSerialNumber,
 				buf, serial_len);
 		if (length + 1 != serial_len) {
+=======
+		/* Coverity NEGATIVE_RETURNS. If length is negative, below
+		 * if statement will always be true, since serial_len is
+		 * greater than zero.
+		 */
+		length = usb_string(udev, udev->descriptor.iSerialNumber,
+				buf, serial_len);
+		if ((length < 0) ||
+			    (length + 1 != serial_len)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev_dbg(&udev->dev, "serial string error %d\n",
 					length);
 			changed = 1;

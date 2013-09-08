@@ -769,9 +769,12 @@ BYTE    byPwr = pDevice->byCCKPwr;
         return TRUE;
     }
 
+<<<<<<< HEAD
 	if (uCH == 0)
 		return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     switch (uRATE) {
     case RATE_1M:
     case RATE_2M:

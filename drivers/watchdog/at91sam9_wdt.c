@@ -15,8 +15,11 @@
  * bootloader doesn't write to this register.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/errno.h>
 #include <linux/fs.h>
 #include <linux/init.h>
@@ -33,6 +36,7 @@
 #include <linux/bitops.h>
 #include <linux/uaccess.h>
 
+<<<<<<< HEAD
 #include "at91sam9_wdt.h"
 
 #define DRV_NAME "AT91SAM9 Watchdog"
@@ -42,6 +46,12 @@
 #define wdt_write(field, val) \
 	__raw_writel((val), at91wdt_private.base + field)
 
+=======
+#include <mach/at91_wdt.h>
+
+#define DRV_NAME "AT91SAM9 Watchdog"
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* AT91SAM9 watchdog runs a 12bit counter @ 256Hz,
  * use this to convert a watchdog
  * value from/to milliseconds.
@@ -62,15 +72,23 @@ module_param(heartbeat, int, 0);
 MODULE_PARM_DESC(heartbeat, "Watchdog heartbeats in seconds. "
 	"(default = " __MODULE_STRING(WDT_HEARTBEAT) ")");
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 module_param(nowayout, bool, 0);
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started "
 	"(default=" __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
 
 static void at91_ping(unsigned long data);
 
 static struct {
+<<<<<<< HEAD
 	void __iomem *base;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long next_heartbeat;	/* the next_heartbeat for the timer */
 	unsigned long open;
 	char expect_close;
@@ -85,7 +103,11 @@ static struct {
  */
 static inline void at91_wdt_reset(void)
 {
+<<<<<<< HEAD
 	wdt_write(AT91_WDT_CR, AT91_WDT_KEY | AT91_WDT_WDRSTT);
+=======
+	at91_sys_write(AT91_WDT_CR, AT91_WDT_KEY | AT91_WDT_WDRSTT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -98,7 +120,11 @@ static void at91_ping(unsigned long data)
 		at91_wdt_reset();
 		mod_timer(&at91wdt_private.timer, jiffies + WDT_TIMEOUT);
 	} else
+<<<<<<< HEAD
 		pr_crit("I will reset your machine !\n");
+=======
+		printk(KERN_CRIT DRV_NAME": I will reset your machine !\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -140,9 +166,15 @@ static int at91_wdt_settimeout(unsigned int timeout)
 	unsigned int mr;
 
 	/* Check if disabled */
+<<<<<<< HEAD
 	mr = wdt_read(AT91_WDT_MR);
 	if (mr & AT91_WDT_WDDIS) {
 		pr_err("sorry, watchdog is disabled\n");
+=======
+	mr = at91_sys_read(AT91_WDT_MR);
+	if (mr & AT91_WDT_WDDIS) {
+		printk(KERN_ERR DRV_NAME": sorry, watchdog is disabled\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	}
 
@@ -157,7 +189,11 @@ static int at91_wdt_settimeout(unsigned int timeout)
 		| AT91_WDT_WDDBGHLT	/* disabled in debug mode */
 		| AT91_WDT_WDD		/* restart at any time */
 		| (timeout & AT91_WDT_WDV);  /* timer value */
+<<<<<<< HEAD
 	wdt_write(AT91_WDT_MR, reg);
+=======
+	at91_sys_write(AT91_WDT_MR, reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -256,13 +292,17 @@ static struct miscdevice at91wdt_miscdev = {
 
 static int __init at91wdt_probe(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct resource	*r;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int res;
 
 	if (at91wdt_miscdev.parent)
 		return -EBUSY;
 	at91wdt_miscdev.parent = &pdev->dev;
 
+<<<<<<< HEAD
 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	if (!r)
 		return -ENODEV;
@@ -272,6 +312,8 @@ static int __init at91wdt_probe(struct platform_device *pdev)
 		return -ENOMEM;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Set watchdog */
 	res = at91_wdt_settimeout(ms_to_ticks(WDT_HW_TIMEOUT * 1000));
 	if (res)
@@ -285,7 +327,11 @@ static int __init at91wdt_probe(struct platform_device *pdev)
 	setup_timer(&at91wdt_private.timer, at91_ping, 0);
 	mod_timer(&at91wdt_private.timer, jiffies + WDT_TIMEOUT);
 
+<<<<<<< HEAD
 	pr_info("enabled (heartbeat=%d sec, nowayout=%d)\n",
+=======
+	printk(KERN_INFO DRV_NAME " enabled (heartbeat=%d sec, nowayout=%d)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		heartbeat, nowayout);
 
 	return 0;
@@ -302,8 +348,32 @@ static int __exit at91wdt_remove(struct platform_device *pdev)
 	return res;
 }
 
+<<<<<<< HEAD
 static struct platform_driver at91wdt_driver = {
 	.remove		= __exit_p(at91wdt_remove),
+=======
+#ifdef CONFIG_PM
+
+static int at91wdt_suspend(struct platform_device *pdev, pm_message_t message)
+{
+	return 0;
+}
+
+static int at91wdt_resume(struct platform_device *pdev)
+{
+	return 0;
+}
+
+#else
+#define at91wdt_suspend	NULL
+#define at91wdt_resume	NULL
+#endif
+
+static struct platform_driver at91wdt_driver = {
+	.remove		= __exit_p(at91wdt_remove),
+	.suspend	= at91wdt_suspend,
+	.resume		= at91wdt_resume,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.driver		= {
 		.name	= "at91_wdt",
 		.owner	= THIS_MODULE,

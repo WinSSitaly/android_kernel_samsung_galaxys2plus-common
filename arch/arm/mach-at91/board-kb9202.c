@@ -20,7 +20,10 @@
  */
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/mm.h>
 #include <linux/module.h>
@@ -36,9 +39,15 @@
 #include <asm/mach/irq.h>
 
 #include <mach/board.h>
+<<<<<<< HEAD
 #include <mach/cpu.h>
 #include <mach/at91rm9200_mc.h>
 #include <mach/at91_ramc.h>
+=======
+#include <mach/gpio.h>
+#include <mach/cpu.h>
+#include <mach/at91rm9200_mc.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "generic.h"
 
@@ -49,7 +58,11 @@ static void __init kb9202_init_early(void)
 	at91rm9200_set_type(ARCH_REVISON_9200_PQFP);
 
 	/* Initialize processor: 10 MHz crystal */
+<<<<<<< HEAD
 	at91_initialize(10000000);
+=======
+	at91rm9200_initialize(10000000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Set up the LEDs */
 	at91_init_leds(AT91_PIN_PC19, AT91_PIN_PC18);
@@ -70,15 +83,27 @@ static void __init kb9202_init_early(void)
 	at91_set_serial_console(0);
 }
 
+<<<<<<< HEAD
 static struct macb_platform_data __initdata kb9202_eth_data = {
+=======
+static void __init kb9202_init_irq(void)
+{
+	at91rm9200_init_interrupts(NULL);
+}
+
+static struct at91_eth_data __initdata kb9202_eth_data = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.phy_irq_pin	= AT91_PIN_PB29,
 	.is_rmii	= 0,
 };
 
 static struct at91_usbh_data __initdata kb9202_usbh_data = {
 	.ports		= 1,
+<<<<<<< HEAD
 	.vbus_pin	= {-EINVAL, -EINVAL},
 	.overcurrent_pin= {-EINVAL, -EINVAL},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct at91_udc_data __initdata kb9202_udc_data = {
@@ -90,8 +115,11 @@ static struct at91_mmc_data __initdata kb9202_mmc_data = {
 	.det_pin	= AT91_PIN_PB2,
 	.slot_b		= 0,
 	.wire4		= 1,
+<<<<<<< HEAD
 	.wp_pin		= -EINVAL,
 	.vcc_pin	= -EINVAL,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct mtd_partition __initdata kb9202_nand_partition[] = {
@@ -102,6 +130,7 @@ static struct mtd_partition __initdata kb9202_nand_partition[] = {
 	},
 };
 
+<<<<<<< HEAD
 static struct atmel_nand_data __initdata kb9202_nand_data = {
 	.ale		= 22,
 	.cle		= 21,
@@ -111,6 +140,21 @@ static struct atmel_nand_data __initdata kb9202_nand_data = {
 	.ecc_mode	= NAND_ECC_SOFT,
 	.parts		= kb9202_nand_partition,
 	.num_parts	= ARRAY_SIZE(kb9202_nand_partition),
+=======
+static struct mtd_partition * __init nand_partitions(int size, int *num_partitions)
+{
+	*num_partitions = ARRAY_SIZE(kb9202_nand_partition);
+	return kb9202_nand_partition;
+}
+
+static struct atmel_nand_data __initdata kb9202_nand_data = {
+	.ale		= 22,
+	.cle		= 21,
+	// .det_pin	= ... not there
+	.rdy_pin	= AT91_PIN_PC29,
+	.enable_pin	= AT91_PIN_PC28,
+	.partition_info	= nand_partitions,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void __init kb9202_board_init(void)
@@ -136,8 +180,14 @@ static void __init kb9202_board_init(void)
 MACHINE_START(KB9200, "KB920x")
 	/* Maintainer: KwikByte, Inc. */
 	.timer		= &at91rm9200_timer,
+<<<<<<< HEAD
 	.map_io		= at91_map_io,
 	.init_early	= kb9202_init_early,
 	.init_irq	= at91_init_irq_default,
+=======
+	.map_io		= at91rm9200_map_io,
+	.init_early	= kb9202_init_early,
+	.init_irq	= kb9202_init_irq,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= kb9202_board_init,
 MACHINE_END

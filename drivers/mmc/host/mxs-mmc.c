@@ -37,11 +37,18 @@
 #include <linux/mmc/sdio.h>
 #include <linux/gpio.h>
 #include <linux/regulator/consumer.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/fsl/mxs-dma.h>
 
 #include <mach/mxs.h>
 #include <mach/common.h>
+=======
+
+#include <mach/mxs.h>
+#include <mach/common.h>
+#include <mach/dma.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/mmc.h>
 
 #define DRIVER_NAME	"mxs-mmc"
@@ -154,7 +161,10 @@ struct mxs_mmc_host {
 	struct dma_chan         	*dmach;
 	struct mxs_dma_data		dma_data;
 	unsigned int			dma_dir;
+<<<<<<< HEAD
 	enum dma_transfer_direction	slave_dirn;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32				ssp_pio_words[SSP_PIO_NUM];
 
 	unsigned int			version;
@@ -280,11 +290,19 @@ static irqreturn_t mxs_mmc_irq_handler(int irq, void *dev_id)
 	writel(stat & MXS_MMC_IRQ_BITS,
 	       host->base + HW_SSP_CTRL1 + MXS_CLR_ADDR);
 
+<<<<<<< HEAD
 	spin_unlock(&host->lock);
 
 	if ((stat & BM_SSP_CTRL1_SDIO_IRQ) && (stat & BM_SSP_CTRL1_SDIO_IRQ_EN))
 		mmc_signal_sdio_irq(host->mmc);
 
+=======
+	if ((stat & BM_SSP_CTRL1_SDIO_IRQ) && (stat & BM_SSP_CTRL1_SDIO_IRQ_EN))
+		mmc_signal_sdio_irq(host->mmc);
+
+	spin_unlock(&host->lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (stat & BM_SSP_CTRL1_RESP_TIMEOUT_IRQ)
 		cmd->error = -ETIMEDOUT;
 	else if (stat & BM_SSP_CTRL1_RESP_ERR_IRQ)
@@ -305,7 +323,11 @@ static irqreturn_t mxs_mmc_irq_handler(int irq, void *dev_id)
 }
 
 static struct dma_async_tx_descriptor *mxs_mmc_prep_dma(
+<<<<<<< HEAD
 	struct mxs_mmc_host *host, unsigned long flags)
+=======
+	struct mxs_mmc_host *host, unsigned int append)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dma_async_tx_descriptor *desc;
 	struct mmc_data *data = host->data;
@@ -324,8 +346,13 @@ static struct dma_async_tx_descriptor *mxs_mmc_prep_dma(
 		sg_len = SSP_PIO_NUM;
 	}
 
+<<<<<<< HEAD
 	desc = dmaengine_prep_slave_sg(host->dmach,
 				sgl, sg_len, host->slave_dirn, flags);
+=======
+	desc = host->dmach->device->device_prep_slave_sg(host->dmach,
+				sgl, sg_len, host->dma_dir, append);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (desc) {
 		desc->callback = mxs_mmc_dma_irq_callback;
 		desc->callback_param = host;
@@ -357,13 +384,20 @@ static void mxs_mmc_bc(struct mxs_mmc_host *host)
 	host->ssp_pio_words[1] = cmd0;
 	host->ssp_pio_words[2] = cmd1;
 	host->dma_dir = DMA_NONE;
+<<<<<<< HEAD
 	host->slave_dirn = DMA_TRANS_NONE;
 	desc = mxs_mmc_prep_dma(host, DMA_CTRL_ACK);
+=======
+	desc = mxs_mmc_prep_dma(host, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!desc)
 		goto out;
 
 	dmaengine_submit(desc);
+<<<<<<< HEAD
 	dma_async_issue_pending(host->dmach);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 
 out:
@@ -398,13 +432,20 @@ static void mxs_mmc_ac(struct mxs_mmc_host *host)
 	host->ssp_pio_words[1] = cmd0;
 	host->ssp_pio_words[2] = cmd1;
 	host->dma_dir = DMA_NONE;
+<<<<<<< HEAD
 	host->slave_dirn = DMA_TRANS_NONE;
 	desc = mxs_mmc_prep_dma(host, DMA_CTRL_ACK);
+=======
+	desc = mxs_mmc_prep_dma(host, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!desc)
 		goto out;
 
 	dmaengine_submit(desc);
+<<<<<<< HEAD
 	dma_async_issue_pending(host->dmach);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 
 out:
@@ -438,7 +479,10 @@ static void mxs_mmc_adtc(struct mxs_mmc_host *host)
 	int i;
 
 	unsigned short dma_data_dir, timeout;
+<<<<<<< HEAD
 	enum dma_transfer_direction slave_dirn;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int data_size = 0, log2_blksz;
 	unsigned int blocks = data->blocks;
 
@@ -454,11 +498,17 @@ static void mxs_mmc_adtc(struct mxs_mmc_host *host)
 
 	if (data->flags & MMC_DATA_WRITE) {
 		dma_data_dir = DMA_TO_DEVICE;
+<<<<<<< HEAD
 		slave_dirn = DMA_MEM_TO_DEV;
 		read = 0;
 	} else {
 		dma_data_dir = DMA_FROM_DEVICE;
 		slave_dirn = DMA_DEV_TO_MEM;
+=======
+		read = 0;
+	} else {
+		dma_data_dir = DMA_FROM_DEVICE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		read = BM_SSP_CTRL0_READ;
 	}
 
@@ -518,7 +568,10 @@ static void mxs_mmc_adtc(struct mxs_mmc_host *host)
 	host->ssp_pio_words[1] = cmd0;
 	host->ssp_pio_words[2] = cmd1;
 	host->dma_dir = DMA_NONE;
+<<<<<<< HEAD
 	host->slave_dirn = DMA_TRANS_NONE;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	desc = mxs_mmc_prep_dma(host, 0);
 	if (!desc)
 		goto out;
@@ -527,13 +580,20 @@ static void mxs_mmc_adtc(struct mxs_mmc_host *host)
 	WARN_ON(host->data != NULL);
 	host->data = data;
 	host->dma_dir = dma_data_dir;
+<<<<<<< HEAD
 	host->slave_dirn = slave_dirn;
 	desc = mxs_mmc_prep_dma(host, DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+=======
+	desc = mxs_mmc_prep_dma(host, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!desc)
 		goto out;
 
 	dmaengine_submit(desc);
+<<<<<<< HEAD
 	dma_async_issue_pending(host->dmach);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 out:
 	dev_warn(mmc_dev(host->mmc),
@@ -724,7 +784,11 @@ static int mxs_mmc_probe(struct platform_device *pdev)
 		ret = PTR_ERR(host->clk);
 		goto out_iounmap;
 	}
+<<<<<<< HEAD
 	clk_prepare_enable(host->clk);
+=======
+	clk_enable(host->clk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mxs_mmc_reset(host);
 
@@ -783,7 +847,11 @@ out_free_dma:
 	if (host->dmach)
 		dma_release_channel(host->dmach);
 out_clk_put:
+<<<<<<< HEAD
 	clk_disable_unprepare(host->clk);
+=======
+	clk_disable(host->clk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clk_put(host->clk);
 out_iounmap:
 	iounmap(host->base);
@@ -809,7 +877,11 @@ static int mxs_mmc_remove(struct platform_device *pdev)
 	if (host->dmach)
 		dma_release_channel(host->dmach);
 
+<<<<<<< HEAD
 	clk_disable_unprepare(host->clk);
+=======
+	clk_disable(host->clk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clk_put(host->clk);
 
 	iounmap(host->base);
@@ -830,7 +902,11 @@ static int mxs_mmc_suspend(struct device *dev)
 
 	ret = mmc_suspend_host(mmc);
 
+<<<<<<< HEAD
 	clk_disable_unprepare(host->clk);
+=======
+	clk_disable(host->clk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -841,7 +917,11 @@ static int mxs_mmc_resume(struct device *dev)
 	struct mxs_mmc_host *host = mmc_priv(mmc);
 	int ret = 0;
 
+<<<<<<< HEAD
 	clk_prepare_enable(host->clk);
+=======
+	clk_enable(host->clk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = mmc_resume_host(mmc);
 
@@ -866,7 +946,22 @@ static struct platform_driver mxs_mmc_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(mxs_mmc_driver);
+=======
+static int __init mxs_mmc_init(void)
+{
+	return platform_driver_register(&mxs_mmc_driver);
+}
+
+static void __exit mxs_mmc_exit(void)
+{
+	platform_driver_unregister(&mxs_mmc_driver);
+}
+
+module_init(mxs_mmc_init);
+module_exit(mxs_mmc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("FREESCALE MXS MMC peripheral");
 MODULE_AUTHOR("Freescale Semiconductor");

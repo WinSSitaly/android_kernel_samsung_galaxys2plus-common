@@ -8,8 +8,11 @@
  * kexec bits:
  * Copyright (C) 2002-2003 Eric Biederman  <ebiederm@xmission.com>
  * GameCube/ppc32 port Copyright (C) 2004 Albert Herranz
+<<<<<<< HEAD
  * PPC44x port. Copyright (C) 2011,  IBM Corporation
  * 		Author: Suzuki Poulose <suzuki@in.ibm.com>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -738,6 +741,7 @@ relocate_new_kernel:
 	mr      r5, r31
 
 	li	r0, 0
+<<<<<<< HEAD
 #elif defined(CONFIG_44x)  && !defined(CONFIG_PPC_47x)
 
 /*
@@ -907,6 +911,8 @@ next_tlb:
 	mr	r5, r31
 
 	li	r0, 0
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 	li	r0, 0
 

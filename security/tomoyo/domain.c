@@ -1,7 +1,13 @@
 /*
  * security/tomoyo/domain.c
  *
+<<<<<<< HEAD
  * Copyright (C) 2005-2011  NTT DATA CORPORATION
+=======
+ * Domain transition functions for TOMOYO.
+ *
+ * Copyright (C) 2005-2010  NTT DATA CORPORATION
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include "common.h"
@@ -18,7 +24,12 @@ struct tomoyo_domain_info tomoyo_kernel_domain;
  *
  * @new_entry:       Pointer to "struct tomoyo_acl_info".
  * @size:            Size of @new_entry in bytes.
+<<<<<<< HEAD
  * @param:           Pointer to "struct tomoyo_acl_param".
+=======
+ * @is_delete:       True if it is a delete request.
+ * @list:            Pointer to "struct list_head".
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @check_duplicate: Callback function to find duplicated entry.
  *
  * Returns 0 on success, negative value otherwise.
@@ -26,19 +37,29 @@ struct tomoyo_domain_info tomoyo_kernel_domain;
  * Caller holds tomoyo_read_lock().
  */
 int tomoyo_update_policy(struct tomoyo_acl_head *new_entry, const int size,
+<<<<<<< HEAD
 			 struct tomoyo_acl_param *param,
+=======
+			 bool is_delete, struct list_head *list,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 bool (*check_duplicate) (const struct tomoyo_acl_head
 						  *,
 						  const struct tomoyo_acl_head
 						  *))
 {
+<<<<<<< HEAD
 	int error = param->is_delete ? -ENOENT : -ENOMEM;
 	struct tomoyo_acl_head *entry;
 	struct list_head *list = param->list;
+=======
+	int error = is_delete ? -ENOENT : -ENOMEM;
+	struct tomoyo_acl_head *entry;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mutex_lock_interruptible(&tomoyo_policy_lock))
 		return -ENOMEM;
 	list_for_each_entry_rcu(entry, list, list) {
+<<<<<<< HEAD
 		if (entry->is_deleted == TOMOYO_GC_IN_PROGRESS)
 			continue;
 		if (!check_duplicate(entry, new_entry))
@@ -48,6 +69,15 @@ int tomoyo_update_policy(struct tomoyo_acl_head *new_entry, const int size,
 		break;
 	}
 	if (error && !param->is_delete) {
+=======
+		if (!check_duplicate(entry, new_entry))
+			continue;
+		entry->is_deleted = is_delete;
+		error = 0;
+		break;
+	}
+	if (error && !is_delete) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		entry = tomoyo_commit_ok(new_entry, size);
 		if (entry) {
 			list_add_tail_rcu(&entry->list, list);
@@ -59,6 +89,7 @@ int tomoyo_update_policy(struct tomoyo_acl_head *new_entry, const int size,
 }
 
 /**
+<<<<<<< HEAD
  * tomoyo_same_acl_head - Check for duplicated "struct tomoyo_acl_info" entry.
  *
  * @a: Pointer to "struct tomoyo_acl_info".
@@ -73,11 +104,18 @@ static inline bool tomoyo_same_acl_head(const struct tomoyo_acl_info *a,
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * tomoyo_update_domain - Update an entry for domain policy.
  *
  * @new_entry:       Pointer to "struct tomoyo_acl_info".
  * @size:            Size of @new_entry in bytes.
+<<<<<<< HEAD
  * @param:           Pointer to "struct tomoyo_acl_param".
+=======
+ * @is_delete:       True if it is a delete request.
+ * @domain:          Pointer to "struct tomoyo_domain_info".
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @check_duplicate: Callback function to find duplicated entry.
  * @merge_duplicate: Callback function to merge duplicated entry.
  *
@@ -86,7 +124,11 @@ static inline bool tomoyo_same_acl_head(const struct tomoyo_acl_info *a,
  * Caller holds tomoyo_read_lock().
  */
 int tomoyo_update_domain(struct tomoyo_acl_info *new_entry, const int size,
+<<<<<<< HEAD
 			 struct tomoyo_acl_param *param,
+=======
+			 bool is_delete, struct tomoyo_domain_info *domain,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 bool (*check_duplicate) (const struct tomoyo_acl_info
 						  *,
 						  const struct tomoyo_acl_info
@@ -95,6 +137,7 @@ int tomoyo_update_domain(struct tomoyo_acl_info *new_entry, const int size,
 						  struct tomoyo_acl_info *,
 						  const bool))
 {
+<<<<<<< HEAD
 	const bool is_delete = param->is_delete;
 	int error = is_delete ? -ENOENT : -ENOMEM;
 	struct tomoyo_acl_info *entry;
@@ -121,6 +164,15 @@ int tomoyo_update_domain(struct tomoyo_acl_info *new_entry, const int size,
 			continue;
 		if (!tomoyo_same_acl_head(entry, new_entry) ||
 		    !check_duplicate(entry, new_entry))
+=======
+	int error = is_delete ? -ENOENT : -ENOMEM;
+	struct tomoyo_acl_info *entry;
+
+	if (mutex_lock_interruptible(&tomoyo_policy_lock))
+		return error;
+	list_for_each_entry_rcu(entry, &domain->acl_info_list, list) {
+		if (!check_duplicate(entry, new_entry))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		if (merge_duplicate)
 			entry->is_deleted = merge_duplicate(entry, new_entry,
@@ -133,11 +185,16 @@ int tomoyo_update_domain(struct tomoyo_acl_info *new_entry, const int size,
 	if (error && !is_delete) {
 		entry = tomoyo_commit_ok(new_entry, size);
 		if (entry) {
+<<<<<<< HEAD
 			list_add_tail_rcu(&entry->list, list);
+=======
+			list_add_tail_rcu(&entry->list, &domain->acl_info_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			error = 0;
 		}
 	}
 	mutex_unlock(&tomoyo_policy_lock);
+<<<<<<< HEAD
 out:
 	tomoyo_put_condition(new_entry->cond);
 	return error;
@@ -153,12 +210,18 @@ out:
  *
  * Caller holds tomoyo_read_lock().
  */
+=======
+	return error;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void tomoyo_check_acl(struct tomoyo_request_info *r,
 		      bool (*check_entry) (struct tomoyo_request_info *,
 					   const struct tomoyo_acl_info *))
 {
 	const struct tomoyo_domain_info *domain = r->domain;
 	struct tomoyo_acl_info *ptr;
+<<<<<<< HEAD
 	bool retried = false;
 	const struct list_head *list = &domain->acl_info_list;
 
@@ -178,6 +241,16 @@ retry:
 		retried = true;
 		list = &domain->ns->acl_group[domain->group];
 		goto retry;
+=======
+
+	list_for_each_entry_rcu(ptr, &domain->acl_info_list, list) {
+		if (ptr->is_deleted || ptr->type != r->param_type)
+			continue;
+		if (check_entry(r, ptr)) {
+			r->granted = true;
+			return;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	r->granted = false;
 }
@@ -185,15 +258,26 @@ retry:
 /* The list for "struct tomoyo_domain_info". */
 LIST_HEAD(tomoyo_domain_list);
 
+<<<<<<< HEAD
 /**
  * tomoyo_last_word - Get last component of a domainname.
  *
  * @name: Domainname to check.
+=======
+struct list_head tomoyo_policy_list[TOMOYO_MAX_POLICY];
+struct list_head tomoyo_group_list[TOMOYO_MAX_GROUP];
+
+/**
+ * tomoyo_last_word - Get last component of a domainname.
+ *
+ * @domainname: Domainname to check.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Returns the last word of @domainname.
  */
 static const char *tomoyo_last_word(const char *name)
 {
+<<<<<<< HEAD
 	const char *cp = strrchr(name, ' ');
 	if (cp)
 		return cp + 1;
@@ -208,6 +292,14 @@ static const char *tomoyo_last_word(const char *name)
  *
  * Returns true if @a == @b, false otherwise.
  */
+=======
+        const char *cp = strrchr(name, ' ');
+        if (cp)
+                return cp + 1;
+        return name;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static bool tomoyo_same_transition_control(const struct tomoyo_acl_head *a,
 					   const struct tomoyo_acl_head *b)
 {
@@ -223,6 +315,7 @@ static bool tomoyo_same_transition_control(const struct tomoyo_acl_head *a,
 }
 
 /**
+<<<<<<< HEAD
  * tomoyo_write_transition_control - Write "struct tomoyo_transition_control" list.
  *
  * @param: Pointer to "struct tomoyo_acl_param".
@@ -246,13 +339,36 @@ int tomoyo_write_transition_control(struct tomoyo_acl_param *param,
 		program = NULL;
 	}
 	if (program && strcmp(program, "any")) {
+=======
+ * tomoyo_update_transition_control_entry - Update "struct tomoyo_transition_control" list.
+ *
+ * @domainname: The name of domain. Maybe NULL.
+ * @program:    The name of program. Maybe NULL.
+ * @type:       Type of transition.
+ * @is_delete:  True if it is a delete request.
+ *
+ * Returns 0 on success, negative value otherwise.
+ */
+static int tomoyo_update_transition_control_entry(const char *domainname,
+						  const char *program,
+						  const u8 type,
+						  const bool is_delete)
+{
+	struct tomoyo_transition_control e = { .type = type };
+	int error = is_delete ? -ENOENT : -ENOMEM;
+	if (program) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!tomoyo_correct_path(program))
 			return -EINVAL;
 		e.program = tomoyo_get_name(program);
 		if (!e.program)
 			goto out;
 	}
+<<<<<<< HEAD
 	if (domainname && strcmp(domainname, "any")) {
+=======
+	if (domainname) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!tomoyo_correct_domain(domainname)) {
 			if (!tomoyo_correct_path(domainname))
 				goto out;
@@ -262,16 +378,25 @@ int tomoyo_write_transition_control(struct tomoyo_acl_param *param,
 		if (!e.domainname)
 			goto out;
 	}
+<<<<<<< HEAD
 	param->list = &param->ns->policy_list[TOMOYO_ID_TRANSITION_CONTROL];
 	error = tomoyo_update_policy(&e.head, sizeof(e), param,
 				     tomoyo_same_transition_control);
 out:
+=======
+	error = tomoyo_update_policy(&e.head, sizeof(e), is_delete,
+				     &tomoyo_policy_list
+				     [TOMOYO_ID_TRANSITION_CONTROL],
+				     tomoyo_same_transition_control);
+ out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tomoyo_put_name(e.domainname);
 	tomoyo_put_name(e.program);
 	return error;
 }
 
 /**
+<<<<<<< HEAD
  * tomoyo_scan_transition - Try to find specific domain transition type.
  *
  * @list:       Pointer to "struct list_head".
@@ -311,11 +436,36 @@ static inline bool tomoyo_scan_transition
 		return true;
 	}
 	return false;
+=======
+ * tomoyo_write_transition_control - Write "struct tomoyo_transition_control" list.
+ *
+ * @data:      String to parse.
+ * @is_delete: True if it is a delete request.
+ * @type:      Type of this entry.
+ *
+ * Returns 0 on success, negative value otherwise.
+ */
+int tomoyo_write_transition_control(char *data, const bool is_delete,
+				    const u8 type)
+{
+	char *domainname = strstr(data, " from ");
+	if (domainname) {
+		*domainname = '\0';
+		domainname += 6;
+	} else if (type == TOMOYO_TRANSITION_CONTROL_NO_KEEP ||
+		   type == TOMOYO_TRANSITION_CONTROL_KEEP) {
+		domainname = data;
+		data = NULL;
+	}
+	return tomoyo_update_transition_control_entry(domainname, data, type,
+						      is_delete);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
  * tomoyo_transition_type - Get domain transition type.
  *
+<<<<<<< HEAD
  * @ns:         Pointer to "struct tomoyo_policy_namespace".
  * @domainname: The name of current domain.
  * @program:    The name of requested program.
@@ -372,19 +522,89 @@ static bool tomoyo_same_aggregator(const struct tomoyo_acl_head *a,
 							  head);
 	const struct tomoyo_aggregator *p2 = container_of(b, typeof(*p2),
 							  head);
+=======
+ * @domainname: The name of domain.
+ * @program:    The name of program.
+ *
+ * Returns TOMOYO_TRANSITION_CONTROL_INITIALIZE if executing @program
+ * reinitializes domain transition, TOMOYO_TRANSITION_CONTROL_KEEP if executing
+ * @program suppresses domain transition, others otherwise.
+ *
+ * Caller holds tomoyo_read_lock().
+ */
+static u8 tomoyo_transition_type(const struct tomoyo_path_info *domainname,
+				 const struct tomoyo_path_info *program)
+{
+	const struct tomoyo_transition_control *ptr;
+	const char *last_name = tomoyo_last_word(domainname->name);
+	u8 type;
+	for (type = 0; type < TOMOYO_MAX_TRANSITION_TYPE; type++) {
+ next:
+		list_for_each_entry_rcu(ptr, &tomoyo_policy_list
+					[TOMOYO_ID_TRANSITION_CONTROL],
+					head.list) {
+			if (ptr->head.is_deleted || ptr->type != type)
+				continue;
+			if (ptr->domainname) {
+				if (!ptr->is_last_name) {
+					if (ptr->domainname != domainname)
+						continue;
+				} else {
+					/*
+					 * Use direct strcmp() since this is
+					 * unlikely used.
+					 */
+					if (strcmp(ptr->domainname->name,
+						   last_name))
+						continue;
+				}
+			}
+			if (ptr->program &&
+			    tomoyo_pathcmp(ptr->program, program))
+				continue;
+			if (type == TOMOYO_TRANSITION_CONTROL_NO_INITIALIZE) {
+				/*
+				 * Do not check for initialize_domain if
+				 * no_initialize_domain matched.
+				 */
+				type = TOMOYO_TRANSITION_CONTROL_NO_KEEP;
+				goto next;
+			}
+			goto done;
+		}
+	}
+ done:
+	return type;
+}
+
+static bool tomoyo_same_aggregator(const struct tomoyo_acl_head *a,
+				   const struct tomoyo_acl_head *b)
+{
+	const struct tomoyo_aggregator *p1 = container_of(a, typeof(*p1), head);
+	const struct tomoyo_aggregator *p2 = container_of(b, typeof(*p2), head);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return p1->original_name == p2->original_name &&
 		p1->aggregated_name == p2->aggregated_name;
 }
 
 /**
+<<<<<<< HEAD
  * tomoyo_write_aggregator - Write "struct tomoyo_aggregator" list.
  *
  * @param: Pointer to "struct tomoyo_acl_param".
+=======
+ * tomoyo_update_aggregator_entry - Update "struct tomoyo_aggregator" list.
+ *
+ * @original_name:   The original program's name.
+ * @aggregated_name: The program name to use.
+ * @is_delete:       True if it is a delete request.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Returns 0 on success, negative value otherwise.
  *
  * Caller holds tomoyo_read_lock().
  */
+<<<<<<< HEAD
 int tomoyo_write_aggregator(struct tomoyo_acl_param *param)
 {
 	struct tomoyo_aggregator e = { };
@@ -392,6 +612,16 @@ int tomoyo_write_aggregator(struct tomoyo_acl_param *param)
 	const char *original_name = tomoyo_read_token(param);
 	const char *aggregated_name = tomoyo_read_token(param);
 	if (!tomoyo_correct_word(original_name) ||
+=======
+static int tomoyo_update_aggregator_entry(const char *original_name,
+					  const char *aggregated_name,
+					  const bool is_delete)
+{
+	struct tomoyo_aggregator e = { };
+	int error = is_delete ? -ENOENT : -ENOMEM;
+
+	if (!tomoyo_correct_path(original_name) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    !tomoyo_correct_path(aggregated_name))
 		return -EINVAL;
 	e.original_name = tomoyo_get_name(original_name);
@@ -399,16 +629,24 @@ int tomoyo_write_aggregator(struct tomoyo_acl_param *param)
 	if (!e.original_name || !e.aggregated_name ||
 	    e.aggregated_name->is_patterned) /* No patterns allowed. */
 		goto out;
+<<<<<<< HEAD
 	param->list = &param->ns->policy_list[TOMOYO_ID_AGGREGATOR];
 	error = tomoyo_update_policy(&e.head, sizeof(e), param,
 				     tomoyo_same_aggregator);
 out:
+=======
+	error = tomoyo_update_policy(&e.head, sizeof(e), is_delete,
+				     &tomoyo_policy_list[TOMOYO_ID_AGGREGATOR],
+				     tomoyo_same_aggregator);
+ out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tomoyo_put_name(e.original_name);
 	tomoyo_put_name(e.aggregated_name);
 	return error;
 }
 
 /**
+<<<<<<< HEAD
  * tomoyo_find_namespace - Find specified namespace.
  *
  * @name: Name of namespace to find.
@@ -496,12 +734,39 @@ static bool tomoyo_namespace_jump(const char *domainname)
  *
  * @domainname: The name of domain.
  * @transit:    True if transit to domain found or created.
+=======
+ * tomoyo_write_aggregator - Write "struct tomoyo_aggregator" list.
+ *
+ * @data:      String to parse.
+ * @is_delete: True if it is a delete request.
+ *
+ * Returns 0 on success, negative value otherwise.
+ *
+ * Caller holds tomoyo_read_lock().
+ */
+int tomoyo_write_aggregator(char *data, const bool is_delete)
+{
+	char *cp = strchr(data, ' ');
+
+	if (!cp)
+		return -EINVAL;
+	*cp++ = '\0';
+	return tomoyo_update_aggregator_entry(data, cp, is_delete);
+}
+
+/**
+ * tomoyo_assign_domain - Create a domain.
+ *
+ * @domainname: The name of domain.
+ * @profile:    Profile number to assign if the domain was newly created.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Returns pointer to "struct tomoyo_domain_info" on success, NULL otherwise.
  *
  * Caller holds tomoyo_read_lock().
  */
 struct tomoyo_domain_info *tomoyo_assign_domain(const char *domainname,
+<<<<<<< HEAD
 						const bool transit)
 {
 	struct tomoyo_domain_info e = { };
@@ -662,6 +927,45 @@ out:
 	kfree(env_page.data);
 	kfree(arg_ptr);
 	return error;
+=======
+						const u8 profile)
+{
+	struct tomoyo_domain_info *entry;
+	struct tomoyo_domain_info *domain = NULL;
+	const struct tomoyo_path_info *saved_domainname;
+	bool found = false;
+
+	if (!tomoyo_correct_domain(domainname))
+		return NULL;
+	saved_domainname = tomoyo_get_name(domainname);
+	if (!saved_domainname)
+		return NULL;
+	entry = kzalloc(sizeof(*entry), GFP_NOFS);
+	if (mutex_lock_interruptible(&tomoyo_policy_lock))
+		goto out;
+	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list) {
+		if (domain->is_deleted ||
+		    tomoyo_pathcmp(saved_domainname, domain->domainname))
+			continue;
+		found = true;
+		break;
+	}
+	if (!found && tomoyo_memory_ok(entry)) {
+		INIT_LIST_HEAD(&entry->acl_info_list);
+		entry->domainname = saved_domainname;
+		saved_domainname = NULL;
+		entry->profile = profile;
+		list_add_tail_rcu(&entry->list, &tomoyo_domain_list);
+		domain = entry;
+		entry = NULL;
+		found = true;
+	}
+	mutex_unlock(&tomoyo_policy_lock);
+ out:
+	tomoyo_put_name(saved_domainname);
+	kfree(entry);
+	return found ? domain : NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -675,6 +979,7 @@ out:
  */
 int tomoyo_find_next_domain(struct linux_binprm *bprm)
 {
+<<<<<<< HEAD
 	struct tomoyo_domain_info *old_domain = tomoyo_domain();
 	struct tomoyo_domain_info *domain = NULL;
 	const char *original_name = bprm->filename;
@@ -717,12 +1022,60 @@ retry:
 							 ptr->original_name))
 				continue;
 			candidate = ptr->aggregated_name;
+=======
+	struct tomoyo_request_info r;
+	char *tmp = kzalloc(TOMOYO_EXEC_TMPSIZE, GFP_NOFS);
+	struct tomoyo_domain_info *old_domain = tomoyo_domain();
+	struct tomoyo_domain_info *domain = NULL;
+	const char *original_name = bprm->filename;
+	u8 mode;
+	bool is_enforce;
+	int retval = -ENOMEM;
+	bool need_kfree = false;
+	struct tomoyo_path_info rn = { }; /* real name */
+
+	mode = tomoyo_init_request_info(&r, NULL, TOMOYO_MAC_FILE_EXECUTE);
+	is_enforce = (mode == TOMOYO_CONFIG_ENFORCING);
+	if (!tmp)
+		goto out;
+
+ retry:
+	if (need_kfree) {
+		kfree(rn.name);
+		need_kfree = false;
+	}
+	/* Get symlink's pathname of program. */
+	retval = -ENOENT;
+	rn.name = tomoyo_realpath_nofollow(original_name);
+	if (!rn.name)
+		goto out;
+	tomoyo_fill_path_info(&rn);
+	need_kfree = true;
+
+	/* Check 'aggregator' directive. */
+	{
+		struct tomoyo_aggregator *ptr;
+		list_for_each_entry_rcu(ptr, &tomoyo_policy_list
+					[TOMOYO_ID_AGGREGATOR], head.list) {
+			if (ptr->head.is_deleted ||
+			    !tomoyo_path_matches_pattern(&rn,
+							 ptr->original_name))
+				continue;
+			kfree(rn.name);
+			need_kfree = false;
+			/* This is OK because it is read only. */
+			rn = *ptr->aggregated_name;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	}
 
 	/* Check execute permission. */
+<<<<<<< HEAD
 	retval = tomoyo_execute_permission(&ee->r, candidate);
+=======
+	retval = tomoyo_path_permission(&r, TOMOYO_TYPE_EXECUTE, &rn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval == TOMOYO_RETRY_REQUEST)
 		goto retry;
 	if (retval < 0)
@@ -733,6 +1086,7 @@ retry:
 	 * wildcard) rather than the pathname passed to execve()
 	 * (which never contains wildcard).
 	 */
+<<<<<<< HEAD
 	if (ee->r.param.path.matched_path)
 		candidate = ee->r.param.path.matched_path;
 
@@ -792,6 +1146,24 @@ force_initialize_domain:
 		break;
 	case TOMOYO_TRANSITION_CONTROL_KEEP:
 force_keep_domain:
+=======
+	if (r.param.path.matched_path) {
+		if (need_kfree)
+			kfree(rn.name);
+		need_kfree = false;
+		/* This is OK because it is read only. */
+		rn = *r.param.path.matched_path;
+	}
+
+	/* Calculate domain to transit to. */
+	switch (tomoyo_transition_type(old_domain->domainname, &rn)) {
+	case TOMOYO_TRANSITION_CONTROL_INITIALIZE:
+		/* Transit to the child of tomoyo_kernel_domain domain. */
+		snprintf(tmp, TOMOYO_EXEC_TMPSIZE - 1, TOMOYO_ROOT_NAME " "
+			 "%s", rn.name);
+		break;
+	case TOMOYO_TRANSITION_CONTROL_KEEP:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Keep current domain. */
 		domain = old_domain;
 		break;
@@ -805,6 +1177,7 @@ force_keep_domain:
 			 * before /sbin/init.
 			 */
 			domain = old_domain;
+<<<<<<< HEAD
 			break;
 		}
 force_child_domain:
@@ -835,12 +1208,44 @@ force_jump_domain:
 			       "ERROR: Domain '%s' not defined.\n", ee->tmp);
 		}
 	}
+=======
+		} else {
+			/* Normal domain transition. */
+			snprintf(tmp, TOMOYO_EXEC_TMPSIZE - 1, "%s %s",
+				 old_domain->domainname->name, rn.name);
+		}
+		break;
+	}
+	if (domain || strlen(tmp) >= TOMOYO_EXEC_TMPSIZE - 10)
+		goto done;
+	domain = tomoyo_find_domain(tmp);
+	if (domain)
+		goto done;
+	if (is_enforce) {
+		int error = tomoyo_supervisor(&r, "# wants to create domain\n"
+					      "%s\n", tmp);
+		if (error == TOMOYO_RETRY_REQUEST)
+			goto retry;
+		if (error < 0)
+			goto done;
+	}
+	domain = tomoyo_assign_domain(tmp, old_domain->profile);
+ done:
+	if (domain)
+		goto out;
+	printk(KERN_WARNING "TOMOYO-ERROR: Domain '%s' not defined.\n", tmp);
+	if (is_enforce)
+		retval = -EPERM;
+	else
+		old_domain->transition_failed = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  out:
 	if (!domain)
 		domain = old_domain;
 	/* Update reference count on "struct tomoyo_domain_info". */
 	atomic_inc(&domain->users);
 	bprm->cred->security = domain;
+<<<<<<< HEAD
 	kfree(exename.name);
 	if (!retval) {
 		ee->r.domain = domain;
@@ -899,3 +1304,10 @@ bool tomoyo_dump_page(struct linux_binprm *bprm, unsigned long pos,
 #endif
 	return true;
 }
+=======
+	if (need_kfree)
+		kfree(rn.name);
+	kfree(tmp);
+	return retval;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

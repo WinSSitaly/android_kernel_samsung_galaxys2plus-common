@@ -106,6 +106,10 @@
 #include <net/net_namespace.h>
 
 #include <asm/io.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "olympic.h"
 
@@ -200,7 +204,11 @@ static const struct net_device_ops olympic_netdev_ops = {
 	.ndo_stop		= olympic_close,
 	.ndo_start_xmit		= olympic_xmit,
 	.ndo_change_mtu		= olympic_change_mtu,
+<<<<<<< HEAD
 	.ndo_set_rx_mode	= olympic_set_rx_mode,
+=======
+	.ndo_set_multicast_list	= olympic_set_rx_mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ndo_set_mac_address	= olympic_set_mac_address,
 };
 

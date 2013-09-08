@@ -81,6 +81,7 @@ static int rackmeter_ignore_nice;
  */
 static inline cputime64_t get_cpu_idle_time(unsigned int cpu)
 {
+<<<<<<< HEAD
 	u64 retval;
 
 	retval = kcpustat_cpu(cpu).cpustat[CPUTIME_IDLE] +
@@ -88,6 +89,15 @@ static inline cputime64_t get_cpu_idle_time(unsigned int cpu)
 
 	if (rackmeter_ignore_nice)
 		retval += kcpustat_cpu(cpu).cpustat[CPUTIME_NICE];
+=======
+	cputime64_t retval;
+
+	retval = cputime64_add(kstat_cpu(cpu).cpustat.idle,
+			kstat_cpu(cpu).cpustat.iowait);
+
+	if (rackmeter_ignore_nice)
+		retval = cputime64_add(retval, kstat_cpu(cpu).cpustat.nice);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return retval;
 }
@@ -220,11 +230,21 @@ static void rackmeter_do_timer(struct work_struct *work)
 	int i, offset, load, cumm, pause;
 
 	cur_jiffies = jiffies64_to_cputime64(get_jiffies_64());
+<<<<<<< HEAD
 	total_ticks = (unsigned int) (cur_jiffies - rcpu->prev_wall);
 	rcpu->prev_wall = cur_jiffies;
 
 	total_idle_ticks = get_cpu_idle_time(cpu);
 	idle_ticks = (unsigned int) (total_idle_ticks - rcpu->prev_idle);
+=======
+	total_ticks = (unsigned int)cputime64_sub(cur_jiffies,
+						  rcpu->prev_wall);
+	rcpu->prev_wall = cur_jiffies;
+
+	total_idle_ticks = get_cpu_idle_time(cpu);
+	idle_ticks = (unsigned int) cputime64_sub(total_idle_ticks,
+				rcpu->prev_idle);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rcpu->prev_idle = total_idle_ticks;
 
 	/* We do a very dumb calculation to update the LEDs for now,

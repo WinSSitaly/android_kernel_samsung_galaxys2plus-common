@@ -9,7 +9,11 @@
 #include <linux/sched.h>
 #include <linux/node.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/page.h>
 
 struct notifier_block;
@@ -21,9 +25,12 @@ struct bio;
 #define SWAP_FLAG_PRIO_SHIFT	0
 #define SWAP_FLAG_DISCARD	0x10000 /* discard swap cluster after use */
 
+<<<<<<< HEAD
 #define SWAP_FLAGS_VALID	(SWAP_FLAG_PRIO_MASK | SWAP_FLAG_PREFER | \
 				 SWAP_FLAG_DISCARD)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int current_is_kswapd(void)
 {
 	return current->flags & PF_KSWAPD;
@@ -210,7 +217,10 @@ struct swap_list_t {
 /* linux/mm/page_alloc.c */
 extern unsigned long totalram_pages;
 extern unsigned long totalreserve_pages;
+<<<<<<< HEAD
 extern unsigned long dirty_balance_reserve;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern unsigned int nr_free_buffer_pages(void);
 extern unsigned int nr_free_pagecache_pages(void);
 
@@ -226,7 +236,10 @@ extern void lru_add_page_tail(struct zone* zone,
 extern void activate_page(struct page *);
 extern void mark_page_accessed(struct page *);
 extern void lru_add_drain(void);
+<<<<<<< HEAD
 extern void lru_add_drain_cpu(int cpu);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int lru_add_drain_all(void);
 extern void rotate_reclaimable_page(struct page *page);
 extern void deactivate_page(struct page *page);
@@ -248,6 +261,7 @@ static inline void lru_cache_add_file(struct page *page)
 	__lru_cache_add(page, LRU_INACTIVE_FILE);
 }
 
+<<<<<<< HEAD
 /* linux/mm/vmscan.c */
 extern unsigned long try_to_free_pages(struct zonelist *zonelist, int order,
 					gfp_t gfp_mask, nodemask_t *mask);
@@ -258,6 +272,30 @@ extern unsigned long mem_cgroup_shrink_node_zone(struct mem_cgroup *mem,
 						gfp_t gfp_mask, bool noswap,
 						struct zone *zone,
 						unsigned long *nr_scanned);
+=======
+/* LRU Isolation modes. */
+#define ISOLATE_INACTIVE 0	/* Isolate inactive pages. */
+#define ISOLATE_ACTIVE 1	/* Isolate active pages. */
+#define ISOLATE_BOTH 2		/* Isolate both active and inactive pages. */
+#ifdef CONFIG_CMA
+#define ISOLATE_CMA 4		/* Isolate CMA pages */
+#else
+#define ISOLATE_CMA 0
+#endif
+
+/* linux/mm/vmscan.c */
+extern unsigned long try_to_free_pages(struct zonelist *zonelist, int order,
+					gfp_t gfp_mask, nodemask_t *mask);
+extern unsigned long try_to_free_mem_cgroup_pages(struct mem_cgroup *mem,
+						  gfp_t gfp_mask, bool noswap,
+						  unsigned int swappiness);
+extern unsigned long mem_cgroup_shrink_node_zone(struct mem_cgroup *mem,
+						gfp_t gfp_mask, bool noswap,
+						unsigned int swappiness,
+						struct zone *zone,
+						unsigned long *nr_scanned);
+extern int __isolate_lru_page(struct page *page, int mode, int file);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern unsigned long shrink_all_memory(unsigned long nr_pages);
 extern int vm_swappiness;
 extern int remove_mapping(struct address_space *mapping, struct page *page);
@@ -277,7 +315,11 @@ static inline int zone_reclaim(struct zone *z, gfp_t mask, unsigned int order)
 #endif
 
 extern int page_evictable(struct page *page, struct vm_area_struct *vma);
+<<<<<<< HEAD
 extern void check_move_unevictable_pages(struct page **, int nr_pages);
+=======
+extern void scan_mapping_unevictable_pages(struct address_space *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern unsigned long scan_unevictable_pages;
 extern int scan_unevictable_handler(struct ctl_table *, int,
@@ -297,6 +339,7 @@ static inline void scan_unevictable_unregister_node(struct node *node)
 
 extern int kswapd_run(int nid);
 extern void kswapd_stop(int nid);
+<<<<<<< HEAD
 #ifdef CONFIG_CGROUP_MEM_RES_CTLR
 extern int mem_cgroup_swappiness(struct mem_cgroup *mem);
 #else
@@ -312,6 +355,9 @@ static inline void mem_cgroup_uncharge_swap(swp_entry_t ent)
 {
 }
 #endif
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SWAP
 /* linux/mm/page_io.c */
 extern int swap_readpage(struct page *);
@@ -340,6 +386,10 @@ extern long total_swap_pages;
 extern void si_swapinfo(struct sysinfo *);
 extern swp_entry_t get_swap_page(void);
 extern swp_entry_t get_swap_page_of_type(int);
+<<<<<<< HEAD
+=======
+extern int valid_swaphandles(swp_entry_t, unsigned long *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int add_swap_count_continuation(swp_entry_t, gfp_t);
 extern void swap_shmem_alloc(swp_entry_t);
 extern int swap_duplicate(swp_entry_t);
@@ -382,6 +432,16 @@ mem_cgroup_uncharge_swapcache(struct page *page, swp_entry_t ent, bool swapout)
 {
 }
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_CGROUP_MEM_RES_CTLR_SWAP
+extern void mem_cgroup_uncharge_swap(swp_entry_t ent);
+#else
+static inline void mem_cgroup_uncharge_swap(swp_entry_t ent)
+{
+}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #else /* CONFIG_SWAP */
 

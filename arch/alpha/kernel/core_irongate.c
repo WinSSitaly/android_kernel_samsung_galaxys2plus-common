@@ -303,7 +303,10 @@ irongate_init_arch(void)
 #include <linux/vmalloc.h>
 #include <linux/agp_backend.h>
 #include <linux/agpgart.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/pgalloc.h>
 
 #define GET_PAGE_DIR_OFF(addr) (addr >> 22)

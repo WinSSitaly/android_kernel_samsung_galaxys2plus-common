@@ -13,8 +13,11 @@
 #ifndef ASM_ARCH_MAINSTONE_H
 #define ASM_ARCH_MAINSTONE_H
 
+<<<<<<< HEAD
 #include <mach/irqs.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MST_ETH_PHYS		PXA_CS4_PHYS
 
 #define MST_FPGA_PHYS		PXA_CS2_PHYS

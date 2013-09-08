@@ -26,7 +26,10 @@
  */
 
 #include <linux/pci.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/pci-bridge.h>
 #include <asm/ppc-pci.h>
 #include <asm/firmware.h>
@@ -84,7 +87,11 @@ void pcibios_remove_pci_devices(struct pci_bus *bus)
 	list_for_each_entry_safe(dev, tmp, &bus->devices, bus_list) {
 		pr_debug("     * Removing %s...\n", pci_name(dev));
 		eeh_remove_bus_device(dev);
+<<<<<<< HEAD
  		pci_stop_and_remove_bus_device(dev);
+=======
+ 		pci_remove_bus_device(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  	}
 }
 EXPORT_SYMBOL_GPL(pcibios_remove_pci_devices);
@@ -147,9 +154,12 @@ struct pci_controller * __devinit init_phb_dynamic(struct device_node *dn)
 
 	pci_devs_phb_init_dynamic(phb);
 
+<<<<<<< HEAD
 	/* Create EEH devices for the PHB */
 	eeh_dev_phb_init_dynamic(phb);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dn->child)
 		eeh_add_device_tree_early(dn);
 

@@ -677,7 +677,11 @@ mem2hex(char *buf, unsigned char *mem, int count)
                 /* Valid mem address. */
 		for (i = 0; i < count; i++) {
 			ch = *mem++;
+<<<<<<< HEAD
 			buf = hex_byte_pack(buf, ch);
+=======
+			buf = pack_hex_byte(buf, ch);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
         }
         /* Terminate properly. */
@@ -695,7 +699,11 @@ mem2hex_nbo(char *buf, unsigned char *mem, int count)
 	mem += count - 1;
 	for (i = 0; i < count; i++) {
 		ch = *mem--;
+<<<<<<< HEAD
 		buf = hex_byte_pack(buf, ch);
+=======
+		buf = pack_hex_byte(buf, ch);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         }
 
         /* Terminate properly. */
@@ -880,7 +888,11 @@ stub_is_stopped(int sigval)
 	/* Send trap type (converted to signal) */
 
 	*ptr++ = 'T';
+<<<<<<< HEAD
 	ptr = hex_byte_pack(ptr, sigval);
+=======
+	ptr = pack_hex_byte(ptr, sigval);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (((reg.exs & 0xff00) >> 8) == 0xc) {
 
@@ -988,26 +1000,42 @@ stub_is_stopped(int sigval)
 	}
 	/* Only send PC, frame and stack pointer. */
 	read_register(PC, &reg_cont);
+<<<<<<< HEAD
 	ptr = hex_byte_pack(ptr, PC);
+=======
+	ptr = pack_hex_byte(ptr, PC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*ptr++ = ':';
 	ptr = mem2hex(ptr, (unsigned char *)&reg_cont, register_size[PC]);
 	*ptr++ = ';';
 
 	read_register(R8, &reg_cont);
+<<<<<<< HEAD
 	ptr = hex_byte_pack(ptr, R8);
+=======
+	ptr = pack_hex_byte(ptr, R8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*ptr++ = ':';
 	ptr = mem2hex(ptr, (unsigned char *)&reg_cont, register_size[R8]);
 	*ptr++ = ';';
 
 	read_register(SP, &reg_cont);
+<<<<<<< HEAD
 	ptr = hex_byte_pack(ptr, SP);
+=======
+	ptr = pack_hex_byte(ptr, SP);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*ptr++ = ':';
 	ptr = mem2hex(ptr, (unsigned char *)&reg_cont, register_size[SP]);
 	*ptr++ = ';';
 
 	/* Send ERP as well; this will save us an entire register fetch in some cases. */
         read_register(ERP, &reg_cont);
+<<<<<<< HEAD
 	ptr = hex_byte_pack(ptr, ERP);
+=======
+	ptr = pack_hex_byte(ptr, ERP);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         *ptr++ = ':';
         ptr = mem2hex(ptr, (unsigned char *)&reg_cont, register_size[ERP]);
         *ptr++ = ';';

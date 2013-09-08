@@ -269,7 +269,11 @@ struct cmd_join {
 	u8 bss_type;
 	u8 channel;
 	u8 ssid_len;
+<<<<<<< HEAD
 	u8 ssid[IEEE80211_MAX_SSID_LEN];
+=======
+	u8 ssid[IW_ESSID_MAX_SIZE];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 ctrl; /* JOIN_CMD_CTRL_* */
 	u8 tx_mgt_frame_rate; /* OBSOLETE */
 	u8 tx_mgt_frame_mod;  /* OBSOLETE */

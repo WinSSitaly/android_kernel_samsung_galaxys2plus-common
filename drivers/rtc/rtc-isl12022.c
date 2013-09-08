@@ -15,7 +15,10 @@
 #include <linux/bcd.h>
 #include <linux/rtc.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRV_VERSION "0.1"
 
@@ -309,7 +312,22 @@ static struct i2c_driver isl12022_driver = {
 	.id_table	= isl12022_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(isl12022_driver);
+=======
+static int __init isl12022_init(void)
+{
+	return i2c_add_driver(&isl12022_driver);
+}
+
+static void __exit isl12022_exit(void)
+{
+	i2c_del_driver(&isl12022_driver);
+}
+
+module_init(isl12022_init);
+module_exit(isl12022_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("roman.fietze@telemotive.de");
 MODULE_DESCRIPTION("ISL 12022 RTC driver");

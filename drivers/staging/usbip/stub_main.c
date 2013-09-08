@@ -18,7 +18,10 @@
  */
 
 #include <linux/string.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "usbip_common.h"
 #include "stub.h"
@@ -26,7 +29,13 @@
 #define DRIVER_AUTHOR "Takahiro Hirofuchi"
 #define DRIVER_DESC "USB/IP Host Driver"
 
+<<<<<<< HEAD
 struct kmem_cache *stub_priv_cache;
+=======
+/* stub_priv is allocated from stub_priv_cache */
+struct kmem_cache *stub_priv_cache;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * busid_tables defines matching busids that usbip can grab. A user can change
  * dynamically what device is locally used and what device is exported to a
@@ -36,6 +45,7 @@ struct kmem_cache *stub_priv_cache;
 static struct bus_id_priv busid_table[MAX_BUSID];
 static spinlock_t busid_table_lock;
 
+<<<<<<< HEAD
 static void init_busid_table(void)
 {
 	int i;
@@ -55,10 +65,37 @@ static int get_busid_idx(const char *busid)
 {
 	int i;
 	int idx = -1;
+=======
+int match_busid(const char *busid)
+{
+	int i;
+
+	spin_lock(&busid_table_lock);
 
 	for (i = 0; i < MAX_BUSID; i++)
 		if (busid_table[i].name[0])
 			if (!strncmp(busid_table[i].name, busid, BUSID_SIZE)) {
+				/* already registerd */
+				spin_unlock(&busid_table_lock);
+				return 0;
+			}
+
+	spin_unlock(&busid_table_lock);
+
+	return 1;
+}
+
+struct bus_id_priv *get_busid_priv(const char *busid)
+{
+	int i;
+
+	spin_lock(&busid_table_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+
+	for (i = 0; i < MAX_BUSID; i++)
+		if (busid_table[i].name[0])
+			if (!strncmp(busid_table[i].name, busid, BUSID_SIZE)) {
+<<<<<<< HEAD
 				idx = i;
 				break;
 			}
@@ -77,11 +114,40 @@ struct bus_id_priv *get_busid_priv(const char *busid)
 	spin_unlock(&busid_table_lock);
 
 	return bid;
+=======
+				/* already registerd */
+				spin_unlock(&busid_table_lock);
+				return &(busid_table[i]);
+			}
+
+	spin_unlock(&busid_table_lock);
+
+	return NULL;
+}
+
+static ssize_t show_match_busid(struct device_driver *drv, char *buf)
+{
+	int i;
+	char *out = buf;
+
+	spin_lock(&busid_table_lock);
+
+	for (i = 0; i < MAX_BUSID; i++)
+		if (busid_table[i].name[0])
+			out += sprintf(out, "%s ", busid_table[i].name);
+
+	spin_unlock(&busid_table_lock);
+
+	out += sprintf(out, "\n");
+
+	return out - buf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int add_match_busid(char *busid)
 {
 	int i;
+<<<<<<< HEAD
 	int ret = -1;
 
 	spin_lock(&busid_table_lock);
@@ -90,6 +156,13 @@ static int add_match_busid(char *busid)
 		ret = 0;
 		goto out;
 	}
+=======
+
+	if (!match_busid(busid))
+		return 0;
+
+	spin_lock(&busid_table_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < MAX_BUSID; i++)
 		if (!busid_table[i].name[0]) {
@@ -97,6 +170,7 @@ static int add_match_busid(char *busid)
 			if ((busid_table[i].status != STUB_BUSID_ALLOC) &&
 			    (busid_table[i].status != STUB_BUSID_REMOV))
 				busid_table[i].status = STUB_BUSID_ADDED;
+<<<<<<< HEAD
 			ret = 0;
 			break;
 		}
@@ -105,10 +179,20 @@ out:
 	spin_unlock(&busid_table_lock);
 
 	return ret;
+=======
+			spin_unlock(&busid_table_lock);
+			return 0;
+		}
+
+	spin_unlock(&busid_table_lock);
+
+	return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int del_match_busid(char *busid)
 {
+<<<<<<< HEAD
 	int idx;
 	int ret = -1;
 
@@ -146,6 +230,43 @@ static ssize_t show_match_busid(struct device_driver *drv, char *buf)
 	out += sprintf(out, "\n");
 
 	return out - buf;
+=======
+	int i;
+
+	spin_lock(&busid_table_lock);
+
+	for (i = 0; i < MAX_BUSID; i++)
+		if (!strncmp(busid_table[i].name, busid, BUSID_SIZE)) {
+			/* found */
+			if (busid_table[i].status == STUB_BUSID_OTHER)
+				memset(busid_table[i].name, 0, BUSID_SIZE);
+			if ((busid_table[i].status != STUB_BUSID_OTHER) &&
+			    (busid_table[i].status != STUB_BUSID_ADDED)) {
+				busid_table[i].status = STUB_BUSID_REMOV;
+			}
+			spin_unlock(&busid_table_lock);
+			return 0;
+		}
+
+	spin_unlock(&busid_table_lock);
+
+	return -1;
+}
+
+static void init_busid_table(void)
+{
+	int i;
+
+	for (i = 0; i < MAX_BUSID; i++) {
+		memset(busid_table[i].name, 0, BUSID_SIZE);
+		busid_table[i].status = STUB_BUSID_OTHER;
+		busid_table[i].interf_count = 0;
+		busid_table[i].sdev = NULL;
+		busid_table[i].shutdown_busid = 0;
+	}
+
+	spin_lock_init(&busid_table_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t store_match_busid(struct device_driver *dev, const char *buf,
@@ -167,13 +288,20 @@ static ssize_t store_match_busid(struct device_driver *dev, const char *buf,
 	strncpy(busid, buf + 4, BUSID_SIZE);
 
 	if (!strncmp(buf, "add ", 4)) {
+<<<<<<< HEAD
 		if (add_match_busid(busid) < 0) {
 			return -ENOMEM;
 		} else {
+=======
+		if (add_match_busid(busid) < 0)
+			return -ENOMEM;
+		else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pr_debug("add busid %s\n", busid);
 			return count;
 		}
 	} else if (!strncmp(buf, "del ", 4)) {
+<<<<<<< HEAD
 		if (del_match_busid(busid) < 0) {
 			return -ENODEV;
 		} else {
@@ -185,6 +313,18 @@ static ssize_t store_match_busid(struct device_driver *dev, const char *buf,
 	}
 }
 static DRIVER_ATTR(match_busid, S_IRUSR | S_IWUSR, show_match_busid,
+=======
+		if (del_match_busid(busid) < 0)
+			return -ENODEV;
+		else {
+			pr_debug("del busid %s\n", busid);
+			return count;
+		}
+	} else
+		return -EINVAL;
+}
+static DRIVER_ATTR(match_busid, S_IRUSR|S_IWUSR, show_match_busid,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   store_match_busid);
 
 static struct stub_priv *stub_priv_pop_from_listhead(struct list_head *listhead)
@@ -207,6 +347,7 @@ static struct stub_priv *stub_priv_pop(struct stub_device *sdev)
 	spin_lock_irqsave(&sdev->priv_lock, flags);
 
 	priv = stub_priv_pop_from_listhead(&sdev->priv_init);
+<<<<<<< HEAD
 	if (priv)
 		goto done;
 
@@ -220,17 +361,46 @@ done:
 	spin_unlock_irqrestore(&sdev->priv_lock, flags);
 
 	return priv;
+=======
+	if (priv) {
+		spin_unlock_irqrestore(&sdev->priv_lock, flags);
+		return priv;
+	}
+
+	priv = stub_priv_pop_from_listhead(&sdev->priv_tx);
+	if (priv) {
+		spin_unlock_irqrestore(&sdev->priv_lock, flags);
+		return priv;
+	}
+
+	priv = stub_priv_pop_from_listhead(&sdev->priv_free);
+	if (priv) {
+		spin_unlock_irqrestore(&sdev->priv_lock, flags);
+		return priv;
+	}
+
+	spin_unlock_irqrestore(&sdev->priv_lock, flags);
+	return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void stub_device_cleanup_urbs(struct stub_device *sdev)
 {
 	struct stub_priv *priv;
+<<<<<<< HEAD
 	struct urb *urb;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_dbg(&sdev->udev->dev, "free sdev %p\n", sdev);
 
 	while ((priv = stub_priv_pop(sdev))) {
+<<<<<<< HEAD
 		urb = priv->urb;
+=======
+		struct urb *urb = priv->urb;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_dbg(&sdev->udev->dev, "free urb %p\n", urb);
 		usb_kill_urb(urb);
 
@@ -238,10 +408,15 @@ void stub_device_cleanup_urbs(struct stub_device *sdev)
 
 		kfree(urb->transfer_buffer);
 		kfree(urb->setup_packet);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		usb_free_urb(urb);
 	}
 }
 
+<<<<<<< HEAD
 static int __init usbip_host_init(void)
 {
 	int ret;
@@ -251,10 +426,23 @@ static int __init usbip_host_init(void)
 	stub_priv_cache = KMEM_CACHE(stub_priv, SLAB_HWCACHE_ALIGN);
 	if (!stub_priv_cache) {
 		pr_err("kmem_cache_create failed\n");
+=======
+static int __init usb_stub_init(void)
+{
+	int ret;
+
+	stub_priv_cache = kmem_cache_create("stub_priv",
+					    sizeof(struct stub_priv), 0,
+					    SLAB_HWCACHE_ALIGN, NULL);
+
+	if (!stub_priv_cache) {
+		pr_err("create stub_priv_cache error\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 
 	ret = usb_register(&stub_driver);
+<<<<<<< HEAD
 	if (ret < 0) {
 		pr_err("usb_register failed %d\n", ret);
 		goto err_usb_register;
@@ -273,11 +461,38 @@ static int __init usbip_host_init(void)
 err_create_file:
 	usb_deregister(&stub_driver);
 err_usb_register:
+=======
+	if (ret) {
+		pr_err("usb_register failed %d\n", ret);
+		goto error_usb_register;
+	}
+
+	pr_info(DRIVER_DESC " " USBIP_VERSION "\n");
+
+	init_busid_table();
+
+	ret = driver_create_file(&stub_driver.drvwrap.driver,
+				 &driver_attr_match_busid);
+
+	if (ret) {
+		pr_err("create driver sysfs\n");
+		goto error_create_file;
+	}
+
+	return ret;
+error_create_file:
+	usb_deregister(&stub_driver);
+error_usb_register:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kmem_cache_destroy(stub_priv_cache);
 	return ret;
 }
 
+<<<<<<< HEAD
 static void __exit usbip_host_exit(void)
+=======
+static void __exit usb_stub_exit(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	driver_remove_file(&stub_driver.drvwrap.driver,
 			   &driver_attr_match_busid);
@@ -291,8 +506,13 @@ static void __exit usbip_host_exit(void)
 	kmem_cache_destroy(stub_priv_cache);
 }
 
+<<<<<<< HEAD
 module_init(usbip_host_init);
 module_exit(usbip_host_exit);
+=======
+module_init(usb_stub_init);
+module_exit(usb_stub_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR(DRIVER_AUTHOR);
 MODULE_DESCRIPTION(DRIVER_DESC);

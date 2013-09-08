@@ -10,7 +10,11 @@
 #include <linux/init.h>
 #include <linux/percpu.h>
 #include <linux/nmi.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kprobes.h>
 #include <linux/kernel_stat.h>
 #include <linux/reboot.h>
@@ -22,7 +26,10 @@
 #include <asm/perf_event.h>
 #include <asm/ptrace.h>
 #include <asm/pcr.h>
+<<<<<<< HEAD
 #include <asm/perfctr.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "kstack.h"
 

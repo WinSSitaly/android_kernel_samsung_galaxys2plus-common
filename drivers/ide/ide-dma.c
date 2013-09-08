@@ -31,7 +31,10 @@
 #include <linux/types.h>
 #include <linux/gfp.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ide.h>
 #include <linux/scatterlist.h>
 #include <linux/dma-mapping.h>

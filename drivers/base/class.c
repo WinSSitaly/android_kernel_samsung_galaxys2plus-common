@@ -47,6 +47,7 @@ static ssize_t class_attr_store(struct kobject *kobj, struct attribute *attr,
 	return ret;
 }
 
+<<<<<<< HEAD
 static const void *class_attr_namespace(struct kobject *kobj,
 					const struct attribute *attr)
 {
@@ -59,6 +60,8 @@ static const void *class_attr_namespace(struct kobject *kobj,
 	return ns;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void class_release(struct kobject *kobj)
 {
 	struct subsys_private *cp = to_subsys_private(kobj);
@@ -84,9 +87,14 @@ static const struct kobj_ns_type_operations *class_child_ns_type(struct kobject 
 }
 
 static const struct sysfs_ops class_sysfs_ops = {
+<<<<<<< HEAD
 	.show	   = class_attr_show,
 	.store	   = class_attr_store,
 	.namespace = class_attr_namespace,
+=======
+	.show	= class_attr_show,
+	.store	= class_attr_store,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct kobj_type class_ktype = {
@@ -184,9 +192,15 @@ int __class_register(struct class *cls, struct lock_class_key *key)
 	if (!cp)
 		return -ENOMEM;
 	klist_init(&cp->klist_devices, klist_class_dev_get, klist_class_dev_put);
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&cp->interfaces);
 	kset_init(&cp->glue_dirs);
 	__mutex_init(&cp->mutex, "subsys mutex", key);
+=======
+	INIT_LIST_HEAD(&cp->class_interfaces);
+	kset_init(&cp->glue_dirs);
+	__mutex_init(&cp->class_mutex, "struct class mutex", key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	error = kobject_set_name(&cp->subsys.kobj, "%s", cls->name);
 	if (error) {
 		kfree(cp);
@@ -460,15 +474,24 @@ int class_interface_register(struct class_interface *class_intf)
 	if (!parent)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	mutex_lock(&parent->p->mutex);
 	list_add_tail(&class_intf->node, &parent->p->interfaces);
+=======
+	mutex_lock(&parent->p->class_mutex);
+	list_add_tail(&class_intf->node, &parent->p->class_interfaces);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (class_intf->add_dev) {
 		class_dev_iter_init(&iter, parent, NULL, NULL);
 		while ((dev = class_dev_iter_next(&iter)))
 			class_intf->add_dev(dev, class_intf);
 		class_dev_iter_exit(&iter);
 	}
+<<<<<<< HEAD
 	mutex_unlock(&parent->p->mutex);
+=======
+	mutex_unlock(&parent->p->class_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -482,7 +505,11 @@ void class_interface_unregister(struct class_interface *class_intf)
 	if (!parent)
 		return;
 
+<<<<<<< HEAD
 	mutex_lock(&parent->p->mutex);
+=======
+	mutex_lock(&parent->p->class_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_del_init(&class_intf->node);
 	if (class_intf->remove_dev) {
 		class_dev_iter_init(&iter, parent, NULL, NULL);
@@ -490,7 +517,11 @@ void class_interface_unregister(struct class_interface *class_intf)
 			class_intf->remove_dev(dev, class_intf);
 		class_dev_iter_exit(&iter);
 	}
+<<<<<<< HEAD
 	mutex_unlock(&parent->p->mutex);
+=======
+	mutex_unlock(&parent->p->class_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	class_put(parent);
 }

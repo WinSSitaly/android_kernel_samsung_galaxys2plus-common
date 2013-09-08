@@ -2,10 +2,16 @@
 #define S390_DEVICE_H
 
 #include <asm/ccwdev.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
 #include <linux/wait.h>
 #include <linux/notifier.h>
 #include <linux/kernel_stat.h>
+=======
+#include <asm/atomic.h>
+#include <linux/wait.h>
+#include <linux/notifier.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "io_sch.h"
 
 /*
@@ -57,6 +63,7 @@ extern fsm_func_t *dev_jumptable[NR_DEV_STATES][NR_DEV_EVENTS];
 static inline void
 dev_fsm_event(struct ccw_device *cdev, enum dev_event dev_event)
 {
+<<<<<<< HEAD
 	int state = cdev->private->state;
 
 	if (dev_event == DEV_EVENT_INTERRUPT) {
@@ -68,6 +75,9 @@ dev_fsm_event(struct ccw_device *cdev, enum dev_event dev_event)
 			kstat_cpu(smp_processor_id()).irqs[IOINT_CIO]++;
 	}
 	dev_jumptable[state][dev_event](cdev, dev_event);
+=======
+	dev_jumptable[cdev->private->state][dev_event](cdev, dev_event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*

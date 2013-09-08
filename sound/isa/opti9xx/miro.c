@@ -28,7 +28,11 @@
 #include <linux/pnp.h>
 #include <linux/delay.h>
 #include <linux/ioport.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/dma.h>
 #include <sound/core.h>
@@ -61,7 +65,11 @@ static int dma2 = SNDRV_DEFAULT_DMA1;		/* 0,1,3 */
 static int wss;
 static int ide;
 #ifdef CONFIG_PNP
+<<<<<<< HEAD
 static bool isapnp = 1;				/* Enable ISA PnP detection */
+=======
+static int isapnp = 1;				/* Enable ISA PnP detection */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 module_param(index, int, 0444);
@@ -1377,7 +1385,12 @@ static int __devinit snd_miro_probe(struct snd_card *card)
 		rmidi = NULL;
 	else {
 		error = snd_mpu401_uart_new(card, 0, MPU401_HW_MPU401,
+<<<<<<< HEAD
 				mpu_port, 0, miro->mpu_irq, &rmidi);
+=======
+				mpu_port, 0, miro->mpu_irq, IRQF_DISABLED,
+				&rmidi);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (error < 0)
 			snd_printk(KERN_WARNING "no MPU-401 device at 0x%lx?\n",
 				   mpu_port);

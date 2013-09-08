@@ -26,7 +26,11 @@
 #include <asm/io.h>
 #include <mach/hardware.h>
 #include <asm/sizes.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/board-ams-delta.h>
 
 /*
@@ -34,6 +38,11 @@
  */
 static struct mtd_info *ams_delta_mtd = NULL;
 
+<<<<<<< HEAD
+=======
+#define NAND_MASK (AMS_DELTA_LATCH2_NAND_NRE | AMS_DELTA_LATCH2_NAND_NWE | AMS_DELTA_LATCH2_NAND_CLE | AMS_DELTA_LATCH2_NAND_ALE | AMS_DELTA_LATCH2_NAND_NCE | AMS_DELTA_LATCH2_NAND_NWP)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Define partitions for flash devices
  */
@@ -66,9 +75,16 @@ static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
 
 	writew(0, io_base + OMAP_MPUIO_IO_CNTL);
 	writew(byte, this->IO_ADDR_W);
+<<<<<<< HEAD
 	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NWE, 0);
 	ndelay(40);
 	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NWE, 1);
+=======
+	ams_delta_latch2_write(AMS_DELTA_LATCH2_NAND_NWE, 0);
+	ndelay(40);
+	ams_delta_latch2_write(AMS_DELTA_LATCH2_NAND_NWE,
+			       AMS_DELTA_LATCH2_NAND_NWE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static u_char ams_delta_read_byte(struct mtd_info *mtd)
@@ -77,11 +93,20 @@ static u_char ams_delta_read_byte(struct mtd_info *mtd)
 	struct nand_chip *this = mtd->priv;
 	void __iomem *io_base = this->priv;
 
+<<<<<<< HEAD
 	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NRE, 0);
 	ndelay(40);
 	writew(~0, io_base + OMAP_MPUIO_IO_CNTL);
 	res = readw(this->IO_ADDR_R);
 	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NRE, 1);
+=======
+	ams_delta_latch2_write(AMS_DELTA_LATCH2_NAND_NRE, 0);
+	ndelay(40);
+	writew(~0, io_base + OMAP_MPUIO_IO_CNTL);
+	res = readw(this->IO_ADDR_R);
+	ams_delta_latch2_write(AMS_DELTA_LATCH2_NAND_NRE,
+			       AMS_DELTA_LATCH2_NAND_NRE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return res;
 }
@@ -128,12 +153,24 @@ static void ams_delta_hwcontrol(struct mtd_info *mtd, int cmd,
 {
 
 	if (ctrl & NAND_CTRL_CHANGE) {
+<<<<<<< HEAD
 		gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NCE,
 				(ctrl & NAND_NCE) == 0);
 		gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_CLE,
 				(ctrl & NAND_CLE) != 0);
 		gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_ALE,
 				(ctrl & NAND_ALE) != 0);
+=======
+		unsigned long bits;
+
+		bits = (~ctrl & NAND_NCE) ? AMS_DELTA_LATCH2_NAND_NCE : 0;
+		bits |= (ctrl & NAND_CLE) ? AMS_DELTA_LATCH2_NAND_CLE : 0;
+		bits |= (ctrl & NAND_ALE) ? AMS_DELTA_LATCH2_NAND_ALE : 0;
+
+		ams_delta_latch2_write(AMS_DELTA_LATCH2_NAND_CLE |
+				AMS_DELTA_LATCH2_NAND_ALE |
+				AMS_DELTA_LATCH2_NAND_NCE, bits);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (cmd != NAND_CMD_NONE)
@@ -145,6 +182,7 @@ static int ams_delta_nand_ready(struct mtd_info *mtd)
 	return gpio_get_value(AMS_DELTA_GPIO_PIN_NAND_RB);
 }
 
+<<<<<<< HEAD
 static const struct gpio _mandatory_gpio[] = {
 	{
 		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NCE,
@@ -178,6 +216,8 @@ static const struct gpio _mandatory_gpio[] = {
 	},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Main initialization routine
  */
@@ -212,17 +252,30 @@ static int __devinit ams_delta_init(struct platform_device *pdev)
 	/* Link the private data with the MTD structure */
 	ams_delta_mtd->priv = this;
 
+<<<<<<< HEAD
 	/*
 	 * Don't try to request the memory region from here,
 	 * it should have been already requested from the
 	 * gpio-omap driver and requesting it again would fail.
 	 */
+=======
+	if (!request_mem_region(res->start, resource_size(res),
+			dev_name(&pdev->dev))) {
+		dev_err(&pdev->dev, "request_mem_region failed\n");
+		err = -EBUSY;
+		goto out_free;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	io_base = ioremap(res->start, resource_size(res));
 	if (io_base == NULL) {
 		dev_err(&pdev->dev, "ioremap failed\n");
 		err = -EIO;
+<<<<<<< HEAD
 		goto out_free;
+=======
+		goto out_release_io;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	this->priv = io_base;
@@ -248,9 +301,16 @@ static int __devinit ams_delta_init(struct platform_device *pdev)
 	platform_set_drvdata(pdev, io_base);
 
 	/* Set chip enabled, but  */
+<<<<<<< HEAD
 	err = gpio_request_array(_mandatory_gpio, ARRAY_SIZE(_mandatory_gpio));
 	if (err)
 		goto out_gpio;
+=======
+	ams_delta_latch2_write(NAND_MASK, AMS_DELTA_LATCH2_NAND_NRE |
+					  AMS_DELTA_LATCH2_NAND_NWE |
+					  AMS_DELTA_LATCH2_NAND_NCE |
+					  AMS_DELTA_LATCH2_NAND_NWP);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Scan to find existence of the device */
 	if (nand_scan(ams_delta_mtd, 1)) {
@@ -265,11 +325,18 @@ static int __devinit ams_delta_init(struct platform_device *pdev)
 	goto out;
 
  out_mtd:
+<<<<<<< HEAD
 	gpio_free_array(_mandatory_gpio, ARRAY_SIZE(_mandatory_gpio));
 out_gpio:
 	platform_set_drvdata(pdev, NULL);
 	gpio_free(AMS_DELTA_GPIO_PIN_NAND_RB);
 	iounmap(io_base);
+=======
+	platform_set_drvdata(pdev, NULL);
+	iounmap(io_base);
+out_release_io:
+	release_mem_region(res->start, resource_size(res));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_free:
 	kfree(ams_delta_mtd);
  out:
@@ -282,13 +349,22 @@ out_free:
 static int __devexit ams_delta_cleanup(struct platform_device *pdev)
 {
 	void __iomem *io_base = platform_get_drvdata(pdev);
+<<<<<<< HEAD
+=======
+	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Release resources, unregister device */
 	nand_release(ams_delta_mtd);
 
+<<<<<<< HEAD
 	gpio_free_array(_mandatory_gpio, ARRAY_SIZE(_mandatory_gpio));
 	gpio_free(AMS_DELTA_GPIO_PIN_NAND_RB);
 	iounmap(io_base);
+=======
+	iounmap(io_base);
+	release_mem_region(res->start, resource_size(res));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Free the MTD device structure */
 	kfree(ams_delta_mtd);
@@ -305,7 +381,21 @@ static struct platform_driver ams_delta_nand_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(ams_delta_nand_driver);
+=======
+static int __init ams_delta_nand_init(void)
+{
+	return platform_driver_register(&ams_delta_nand_driver);
+}
+module_init(ams_delta_nand_init);
+
+static void __exit ams_delta_nand_exit(void)
+{
+	platform_driver_unregister(&ams_delta_nand_driver);
+}
+module_exit(ams_delta_nand_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Jonathan McDowell <noodles@earth.li>");

@@ -137,6 +137,7 @@ static void cryptd_queue_worker(struct work_struct *work)
 	struct crypto_async_request *req, *backlog;
 
 	cpu_queue = container_of(work, struct cryptd_cpu_queue, work);
+<<<<<<< HEAD
 	/*
 	 * Only handle one request at a time to avoid hogging crypto workqueue.
 	 * preempt_disable/enable is used to prevent being preempted by
@@ -144,11 +145,19 @@ static void cryptd_queue_worker(struct work_struct *work)
 	 * cryptd_enqueue_request() being accessed from software interrupts.
 	 */
 	local_bh_disable();
+=======
+	/* Only handle one request at a time to avoid hogging crypto
+	 * workqueue. preempt_disable/enable is used to prevent
+	 * being preempted by cryptd_enqueue_request() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	preempt_disable();
 	backlog = crypto_get_backlog(&cpu_queue->queue);
 	req = crypto_dequeue_request(&cpu_queue->queue);
 	preempt_enable();
+<<<<<<< HEAD
 	local_bh_enable();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!req)
 		return;

@@ -6,7 +6,11 @@
  * hermes registers, as well as the COR register.
  *
  * Current maintainers are:
+<<<<<<< HEAD
  *	Pavel Roskin <proski AT gnu.org>
+=======
+ * 	Pavel Roskin <proski AT gnu.org>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * and	David Gibson <hermes AT gibson.dropbear.id.au>
  *
  * Some of this code is borrowed from orinoco_plx.c
@@ -81,7 +85,11 @@
  */
 static int orinoco_pci_cor_reset(struct orinoco_private *priv)
 {
+<<<<<<< HEAD
 	struct hermes *hw = &priv->hw;
+=======
+	hermes_t *hw = &priv->hw;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long timeout;
 	u16 reg;
 

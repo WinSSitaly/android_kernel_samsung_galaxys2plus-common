@@ -18,7 +18,11 @@
 #include <linux/list.h>
 #include <linux/err.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/pm_qos.h>
+=======
+#include <linux/pm_qos_params.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mutex.h>
 #include <linux/clk.h>
 #include <linux/string.h>

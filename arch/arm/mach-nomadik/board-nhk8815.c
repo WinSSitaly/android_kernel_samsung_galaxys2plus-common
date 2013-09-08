@@ -21,12 +21,16 @@
 #include <linux/mtd/onenand.h>
 #include <linux/mtd/partitions.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <asm/hardware/vic.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/sizes.h>
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 #include <asm/mach/irq.h>
 #include <asm/mach/flash.h>
+<<<<<<< HEAD
 #include <asm/mach/time.h>
 
 #include <plat/gpio-nomadik.h>
@@ -37,6 +41,15 @@
 
 #include "cpu-8815.h"
 
+=======
+
+#include <plat/mtu.h>
+
+#include <mach/setup.h>
+#include <mach/nand.h>
+#include <mach/fsmc.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Initial value for SRC control register: all timers use MXTAL/8 source */
 #define SRC_CR_INIT_MASK	0x00007fff
 #define SRC_CR_INIT_VAL		0x2aaa8000
@@ -185,11 +198,28 @@ static void __init nhk8815_onenand_init(void)
 #endif
 }
 
+<<<<<<< HEAD
 static AMBA_APB_DEVICE(uart0, "uart0", 0, NOMADIK_UART0_BASE,
 	{ IRQ_UART0 }, NULL);
 
 static AMBA_APB_DEVICE(uart1, "uart1", 0, NOMADIK_UART1_BASE,
 	{ IRQ_UART1 }, NULL);
+=======
+#define __MEM_4K_RESOURCE(x) \
+	.res = {.start = (x), .end = (x) + SZ_4K - 1, .flags = IORESOURCE_MEM}
+
+static struct amba_device uart0_device = {
+	.dev = { .init_name = "uart0" },
+	__MEM_4K_RESOURCE(NOMADIK_UART0_BASE),
+	.irq = {IRQ_UART0, NO_IRQ},
+};
+
+static struct amba_device uart1_device = {
+	.dev = { .init_name = "uart1" },
+	__MEM_4K_RESOURCE(NOMADIK_UART1_BASE),
+	.irq = {IRQ_UART1, NO_IRQ},
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct amba_device *amba_devs[] __initdata = {
 	&uart0_device,
@@ -246,7 +276,14 @@ static void __init nomadik_timer_init(void)
 	src_cr |= SRC_CR_INIT_VAL;
 	writel(src_cr, io_p2v(NOMADIK_SRC_BASE));
 
+<<<<<<< HEAD
 	nmdk_timer_init(io_p2v(NOMADIK_MTU0_BASE));
+=======
+	/* Save global pointer to mtu, used by platform timer code */
+	mtu_base = io_p2v(NOMADIK_MTU0_BASE);
+
+	nmdk_timer_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct sys_timer nomadik_timer = {
@@ -268,6 +305,7 @@ static void __init nhk8815_platform_init(void)
 
 MACHINE_START(NOMADIK, "NHK8815")
 	/* Maintainer: ST MicroElectronics */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= cpu8815_map_io,
 	.init_irq	= cpu8815_init_irq,
@@ -275,4 +313,11 @@ MACHINE_START(NOMADIK, "NHK8815")
 	.timer		= &nomadik_timer,
 	.init_machine	= nhk8815_platform_init,
 	.restart	= cpu8815_restart,
+=======
+	.boot_params	= 0x100,
+	.map_io		= cpu8815_map_io,
+	.init_irq	= cpu8815_init_irq,
+	.timer		= &nomadik_timer,
+	.init_machine	= nhk8815_platform_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

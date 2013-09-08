@@ -39,7 +39,10 @@
 #include <asm/pgtable.h>
 #include <asm/processor.h>
 #include <asm/mca.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/tlbflush.h>
 
 #define EFI_DEBUG	0
@@ -157,7 +160,11 @@ prefix##_get_next_variable (unsigned long *name_size, efi_char16_t *name,      \
 #define STUB_SET_VARIABLE(prefix, adjust_arg)				       \
 static efi_status_t							       \
 prefix##_set_variable (efi_char16_t *name, efi_guid_t *vendor,		       \
+<<<<<<< HEAD
 		       u32 attr, unsigned long data_size,		       \
+=======
+		       unsigned long attr, unsigned long data_size,	       \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       void *data)					       \
 {									       \
 	struct ia64_fpreg fr[6];					       \

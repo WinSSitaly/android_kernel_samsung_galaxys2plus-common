@@ -3,14 +3,21 @@
  * Broadcom Gigabit Ethernet core driver
  *
  * Copyright 2008, Broadcom Corporation
+<<<<<<< HEAD
  * Copyright 2008, Michael Buesch <m@bues.ch>
+=======
+ * Copyright 2008, Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Licensed under the GNU/GPL. See COPYING for details.
  */
 
 #include <linux/ssb/ssb.h>
 #include <linux/ssb/ssb_driver_gige.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pci.h>
 #include <linux/pci_regs.h>
 #include <linux/slab.h>
@@ -107,9 +114,14 @@ void gige_pcicfg_write32(struct ssb_gige *dev,
 	gige_write32(dev, SSB_GIGE_PCICFG + offset, value);
 }
 
+<<<<<<< HEAD
 static int __devinit ssb_gige_pci_read_config(struct pci_bus *bus,
 					      unsigned int devfn, int reg,
 					      int size, u32 *val)
+=======
+static int ssb_gige_pci_read_config(struct pci_bus *bus, unsigned int devfn,
+				    int reg, int size, u32 *val)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ssb_gige *dev = container_of(bus->ops, struct ssb_gige, pci_ops);
 	unsigned long flags;
@@ -138,9 +150,14 @@ static int __devinit ssb_gige_pci_read_config(struct pci_bus *bus,
 	return PCIBIOS_SUCCESSFUL;
 }
 
+<<<<<<< HEAD
 static int __devinit ssb_gige_pci_write_config(struct pci_bus *bus,
 					       unsigned int devfn, int reg,
 					       int size, u32 val)
+=======
+static int ssb_gige_pci_write_config(struct pci_bus *bus, unsigned int devfn,
+				     int reg, int size, u32 val)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ssb_gige *dev = container_of(bus->ops, struct ssb_gige, pci_ops);
 	unsigned long flags;
@@ -169,8 +186,12 @@ static int __devinit ssb_gige_pci_write_config(struct pci_bus *bus,
 	return PCIBIOS_SUCCESSFUL;
 }
 
+<<<<<<< HEAD
 static int __devinit ssb_gige_probe(struct ssb_device *sdev,
 				    const struct ssb_device_id *id)
+=======
+static int ssb_gige_probe(struct ssb_device *sdev, const struct ssb_device_id *id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ssb_gige *dev;
 	u32 base, tmslow, tmshigh;

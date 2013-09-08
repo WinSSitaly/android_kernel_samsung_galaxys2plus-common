@@ -2,11 +2,19 @@
  * Copyright (C) 2005-2007 Takahiro Hirofuchi
  */
 
+<<<<<<< HEAD
 #include "usbip_common.h"
 #include "vhci_driver.h"
 
 #undef  PROGNAME
 #define PROGNAME "libusbip"
+=======
+
+#include "usbip.h"
+
+
+static const char vhci_driver_name[] = "vhci_hcd";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct usbip_vhci_driver *vhci_driver;
 
@@ -16,19 +24,30 @@ static struct usbip_imported_device *imported_device_init(struct usbip_imported_
 
 	sudev = sysfs_open_device("usb", busid);
 	if (!sudev) {
+<<<<<<< HEAD
 		dbg("sysfs_open_device failed: %s", busid);
+=======
+		err("sysfs_open_device %s", busid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err;
 	}
 	read_usb_device(sudev, &idev->udev);
 	sysfs_close_device(sudev);
 
 	/* add class devices of this imported device */
+<<<<<<< HEAD
 	struct usbip_class_device *cdev;
 	dlist_for_each_data(vhci_driver->cdev_list, cdev,
 			    struct usbip_class_device) {
 		if (!strncmp(cdev->dev_path, idev->udev.path,
 			     strlen(idev->udev.path))) {
 			struct usbip_class_device *new_cdev;
+=======
+	struct class_device *cdev;
+	dlist_for_each_data(vhci_driver->cdev_list, cdev, struct class_device) {
+		if (!strncmp(cdev->devpath, idev->udev.path, strlen(idev->udev.path))) {
+			struct class_device *new_cdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* alloc and copy because dlist is linked from only one list */
 			new_cdev = calloc(1, sizeof(*new_cdev));
@@ -55,7 +74,11 @@ static int parse_status(char *value)
 
 
 	for (int i = 0; i < vhci_driver->nports; i++)
+<<<<<<< HEAD
 		memset(&vhci_driver->idev[i], 0, sizeof(vhci_driver->idev[i]));
+=======
+		bzero(&vhci_driver->idev[i], sizeof(struct usbip_imported_device));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 	/* skip a header line */
@@ -71,7 +94,11 @@ static int parse_status(char *value)
 				&devid, &socket, lbusid);
 
 		if (ret < 5) {
+<<<<<<< HEAD
 			dbg("sscanf failed: %d", ret);
+=======
+			err("scanf %d", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			BUG();
 		}
 
@@ -92,16 +119,26 @@ static int parse_status(char *value)
 			idev->busnum	= (devid >> 16);
 			idev->devnum	= (devid & 0x0000ffff);
 
+<<<<<<< HEAD
 			idev->cdev_list = dlist_new(sizeof(struct usbip_class_device));
 			if (!idev->cdev_list) {
 				dbg("dlist_new failed");
+=======
+			idev->cdev_list = dlist_new(sizeof(struct class_device));
+			if (!idev->cdev_list) {
+				err("init new device");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return -1;
 			}
 
 			if (idev->status != VDEV_ST_NULL && idev->status != VDEV_ST_NOTASSIGNED) {
 				idev = imported_device_init(idev, lbusid);
 				if (!idev) {
+<<<<<<< HEAD
 					dbg("imported_device_init failed");
+=======
+					err("init new device");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					return -1;
 				}
 			}
@@ -120,6 +157,7 @@ static int parse_status(char *value)
 
 static int check_usbip_device(struct sysfs_class_device *cdev)
 {
+<<<<<<< HEAD
 	char class_path[SYSFS_PATH_MAX]; /* /sys/class/video4linux/video0/device */
 	char dev_path[SYSFS_PATH_MAX];	 /* /sys/devices/platform/vhci_hcd/usb6/6-1:1.1 */
 	int ret;
@@ -143,6 +181,31 @@ static int check_usbip_device(struct sysfs_class_device *cdev)
 			strncpy(usbip_cdev->dev_path, dev_path,
 				sizeof(usbip_cdev->dev_path));
 			dbg("found: %s %s", class_path, dev_path);
+=======
+	char clspath[SYSFS_PATH_MAX];	/* /sys/class/video4linux/video0/device     */
+	char devpath[SYSFS_PATH_MAX];	/* /sys/devices/platform/vhci_hcd/usb6/6-1:1.1  */
+
+	int ret;
+
+	snprintf(clspath, sizeof(clspath), "%s/device", cdev->path);
+
+	ret = sysfs_get_link(clspath, devpath, SYSFS_PATH_MAX);
+	if (!ret) {
+		if (!strncmp(devpath, vhci_driver->hc_device->path,
+					strlen(vhci_driver->hc_device->path))) {
+			/* found usbip device */
+			struct class_device *cdev;
+
+			cdev = calloc(1, sizeof(*cdev));
+			if (!cdev) {
+				err("calloc cdev");
+				return -1;
+			}
+			dlist_unshift(vhci_driver->cdev_list, (void*) cdev);
+			strncpy(cdev->clspath, clspath, sizeof(cdev->clspath));
+			strncpy(cdev->devpath, devpath, sizeof(cdev->clspath));
+			dbg("  found %s %s", clspath, devpath);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -159,11 +222,19 @@ static int search_class_for_usbip_device(char *cname)
 
 	class = sysfs_open_class(cname);
 	if (!class) {
+<<<<<<< HEAD
 		dbg("sysfs_open_class failed");
 		return -1;
 	}
 
 	dbg("class: %s", class->name);
+=======
+		err("open class");
+		return -1;
+	}
+
+	dbg("class %s", class->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cdev_list = sysfs_get_class_devices(class);
 	if (!cdev_list)
@@ -171,7 +242,11 @@ static int search_class_for_usbip_device(char *cname)
 		goto out;
 
 	dlist_for_each_data(cdev_list, cdev, struct sysfs_class_device) {
+<<<<<<< HEAD
 		dbg("cdev: %s", cdev->name);
+=======
+		dbg("   cdev %s", cdev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = check_usbip_device(cdev);
 		if (ret < 0)
 			goto out;
@@ -189,6 +264,7 @@ static int refresh_class_device_list(void)
 	int ret;
 	struct dlist *cname_list;
 	char *cname;
+<<<<<<< HEAD
 	char sysfs_mntpath[SYSFS_PATH_MAX];
 	char class_path[SYSFS_PATH_MAX];
 
@@ -205,6 +281,13 @@ static int refresh_class_device_list(void)
 	cname_list = sysfs_open_directory_list(class_path);
 	if (!cname_list) {
 		dbg("sysfs_open_directory failed");
+=======
+
+	/* search under /sys/class */
+	cname_list = sysfs_open_directory_list("/sys/class");
+	if (!cname_list) {
+		err("open class directory");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
@@ -234,6 +317,7 @@ static int refresh_imported_device_list(void)
 
 	attr_status = sysfs_get_device_attr(vhci_driver->hc_device, "status");
 	if (!attr_status) {
+<<<<<<< HEAD
 		dbg("sysfs_get_device_attr(\"status\") failed: %s",
 		    vhci_driver->hc_device->name);
 		return -1;
@@ -242,18 +326,32 @@ static int refresh_imported_device_list(void)
 	dbg("name: %s  path: %s  len: %d  method: %d  value: %s",
 	    attr_status->name, attr_status->path, attr_status->len,
 	    attr_status->method, attr_status->value);
+=======
+		err("get attr %s of %s", "status", vhci_driver->hc_device->name);
+		return -1;
+	}
+
+	dbg("name %s, path %s, len %d, method %d\n", attr_status->name,
+			attr_status->path, attr_status->len, attr_status->method);
+
+	dbg("%s", attr_status->value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return parse_status(attr_status->value);
 }
 
 static int get_nports(void)
 {
+<<<<<<< HEAD
 	char *c;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int nports = 0;
 	struct sysfs_attribute *attr_status;
 
 	attr_status = sysfs_get_device_attr(vhci_driver->hc_device, "status");
 	if (!attr_status) {
+<<<<<<< HEAD
 		dbg("sysfs_get_device_attr(\"status\") failed: %s",
 		    vhci_driver->hc_device->name);
 		return -1;
@@ -270,6 +368,28 @@ static int get_nports(void)
 		/* go to the next line */
 		c = strchr(c, '\n') + 1;
 		nports += 1;
+=======
+		err("get attr %s of %s", "status", vhci_driver->hc_device->name);
+		return -1;
+	}
+
+	dbg("name %s, path %s, len %d, method %d\n", attr_status->name,
+			attr_status->path, attr_status->len, attr_status->method);
+
+	dbg("%s", attr_status->value);
+
+	{
+		char *c;
+
+		/* skip a header line */
+		c = strchr(attr_status->value, '\n') + 1;
+
+		while (*c != '\0') {
+			/* go to the next line */
+			c = strchr(c, '\n') + 1;
+			nports += 1;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return nports;
@@ -285,6 +405,7 @@ static int get_hc_busid(char *sysfs_mntpath, char *hc_busid)
 
 	int found = 0;
 
+<<<<<<< HEAD
         snprintf(sdriver_path, SYSFS_PATH_MAX, "%s/%s/%s/%s/%s", sysfs_mntpath,
 		 SYSFS_BUS_NAME, USBIP_VHCI_BUS_TYPE, SYSFS_DRIVERS_NAME,
 		 USBIP_VHCI_DRV_NAME);
@@ -294,12 +415,26 @@ static int get_hc_busid(char *sysfs_mntpath, char *hc_busid)
 		dbg("sysfs_open_driver_path failed: %s", sdriver_path);
                 dbg("make sure " USBIP_CORE_MOD_NAME ".ko and "
 		    USBIP_VHCI_DRV_NAME ".ko are loaded!");
+=======
+        snprintf(sdriver_path, SYSFS_PATH_MAX, "%s/%s/platform/%s/%s",
+                                sysfs_mntpath, SYSFS_BUS_NAME, SYSFS_DRIVERS_NAME,
+                                vhci_driver_name);
+
+        sdriver = sysfs_open_driver_path(sdriver_path);
+        if (!sdriver) {
+		info("%s is not found", sdriver_path);
+                info("load usbip-core.ko and vhci-hcd.ko !");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
                 return -1;
         }
 
 	hc_devs = sysfs_get_driver_devices(sdriver);
 	if (!hc_devs) {
+<<<<<<< HEAD
 		dbg("sysfs_get_driver failed");
+=======
+		err("get hc list");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err;
 	}
 
@@ -315,7 +450,11 @@ err:
 	if (found)
 		return 0;
 
+<<<<<<< HEAD
 	dbg("%s not found", hc_busid);
+=======
+	err("not found usbip hc");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -1;
 }
 
@@ -329,13 +468,21 @@ int usbip_vhci_driver_open(void)
 
 	vhci_driver = (struct usbip_vhci_driver *) calloc(1, sizeof(*vhci_driver));
 	if (!vhci_driver) {
+<<<<<<< HEAD
 		dbg("calloc failed");
+=======
+		err("alloc vhci_driver");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
 	ret = sysfs_get_mnt_path(vhci_driver->sysfs_mntpath, SYSFS_PATH_MAX);
 	if (ret < 0) {
+<<<<<<< HEAD
 		dbg("sysfs_get_mnt_path failed");
+=======
+		err("sysfs must be mounted");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err;
 	}
 
@@ -344,18 +491,30 @@ int usbip_vhci_driver_open(void)
 		goto err;
 
 	/* will be freed in usbip_driver_close() */
+<<<<<<< HEAD
 	vhci_driver->hc_device = sysfs_open_device(USBIP_VHCI_BUS_TYPE,
 						   hc_busid);
 	if (!vhci_driver->hc_device) {
 		dbg("sysfs_open_device failed");
+=======
+	vhci_driver->hc_device = sysfs_open_device("platform", hc_busid);
+	if (!vhci_driver->hc_device) {
+		err("get sysfs vhci_driver");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err;
 	}
 
 	vhci_driver->nports = get_nports();
 
+<<<<<<< HEAD
 	dbg("available ports: %d", vhci_driver->nports);
 
 	vhci_driver->cdev_list = dlist_new(sizeof(struct usbip_class_device));
+=======
+	info("%d ports available\n", vhci_driver->nports);
+
+	vhci_driver->cdev_list = dlist_new(sizeof(struct class_device));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!vhci_driver->cdev_list)
 		goto err;
 
@@ -414,7 +573,11 @@ int usbip_vhci_refresh_device_list(void)
 			dlist_destroy(vhci_driver->idev[i].cdev_list);
 	}
 
+<<<<<<< HEAD
 	vhci_driver->cdev_list = dlist_new(sizeof(struct usbip_class_device));
+=======
+	vhci_driver->cdev_list = dlist_new(sizeof(struct class_device));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!vhci_driver->cdev_list)
 		goto err;
 
@@ -434,7 +597,11 @@ err:
 			dlist_destroy(vhci_driver->idev[i].cdev_list);
 	}
 
+<<<<<<< HEAD
 	dbg("failed to refresh device list");
+=======
+	err("refresh device list");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -1;
 }
 
@@ -457,8 +624,12 @@ int usbip_vhci_attach_device2(uint8_t port, int sockfd, uint32_t devid,
 
 	attr_attach = sysfs_get_device_attr(vhci_driver->hc_device, "attach");
 	if (!attr_attach) {
+<<<<<<< HEAD
 		dbg("sysfs_get_device_attr(\"attach\") failed: %s",
 		    vhci_driver->hc_device->name);
+=======
+		err("get attach");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
@@ -468,11 +639,19 @@ int usbip_vhci_attach_device2(uint8_t port, int sockfd, uint32_t devid,
 
 	ret = sysfs_write_attribute(attr_attach, buff, strlen(buff));
 	if (ret < 0) {
+<<<<<<< HEAD
 		dbg("sysfs_write_attribute failed");
 		return -1;
 	}
 
 	dbg("attached port: %d", port);
+=======
+		err("write to attach failed");
+		return -1;
+	}
+
+	info("port %d attached", port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -499,21 +678,37 @@ int usbip_vhci_detach_device(uint8_t port)
 
 	attr_detach = sysfs_get_device_attr(vhci_driver->hc_device, "detach");
 	if (!attr_detach) {
+<<<<<<< HEAD
 		dbg("sysfs_get_device_attr(\"detach\") failed: %s",
 		    vhci_driver->hc_device->name);
+=======
+		err("get detach");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
 	snprintf(buff, sizeof(buff), "%u", port);
+<<<<<<< HEAD
+=======
+	dbg("writing to detach");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dbg("writing: %s", buff);
 
 	ret = sysfs_write_attribute(attr_detach, buff, strlen(buff));
 	if (ret < 0) {
+<<<<<<< HEAD
 		dbg("sysfs_write_attribute failed");
 		return -1;
 	}
 
 	dbg("detached port: %d", port);
+=======
+		err("write to detach failed");
+		return -1;
+	}
+
+	info("port %d detached", port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

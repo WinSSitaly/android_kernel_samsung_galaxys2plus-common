@@ -44,6 +44,7 @@
 #include <linux/module.h>
 #include <linux/types.h>
 
+<<<<<<< HEAD
 asmlinkage void twofish_enc_blk(struct twofish_ctx *ctx, u8 *dst,
 				const u8 *src);
 EXPORT_SYMBOL_GPL(twofish_enc_blk);
@@ -54,11 +55,23 @@ EXPORT_SYMBOL_GPL(twofish_dec_blk);
 static void twofish_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
 {
 	twofish_enc_blk(crypto_tfm_ctx(tfm), dst, src);
+=======
+asmlinkage void twofish_enc_blk(struct crypto_tfm *tfm, u8 *dst, const u8 *src);
+asmlinkage void twofish_dec_blk(struct crypto_tfm *tfm, u8 *dst, const u8 *src);
+
+static void twofish_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
+{
+	twofish_enc_blk(tfm, dst, src);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void twofish_decrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
 {
+<<<<<<< HEAD
 	twofish_dec_blk(crypto_tfm_ctx(tfm), dst, src);
+=======
+	twofish_dec_blk(tfm, dst, src);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct crypto_alg alg = {
@@ -68,7 +81,11 @@ static struct crypto_alg alg = {
 	.cra_flags		=	CRYPTO_ALG_TYPE_CIPHER,
 	.cra_blocksize		=	TF_BLOCK_SIZE,
 	.cra_ctxsize		=	sizeof(struct twofish_ctx),
+<<<<<<< HEAD
 	.cra_alignmask		=	0,
+=======
+	.cra_alignmask		=	3,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.cra_module		=	THIS_MODULE,
 	.cra_list		=	LIST_HEAD_INIT(alg.cra_list),
 	.cra_u			=	{

@@ -114,6 +114,7 @@ static int f10_read_dct_pci_cfg(struct amd64_pvt *pvt, int addr, u32 *val,
 	return __amd64_read_pci_cfg_dword(pvt->F2, addr, val, func);
 }
 
+<<<<<<< HEAD
 /*
  * Select DCT to which PCI cfg accesses are routed
  */
@@ -130,6 +131,12 @@ static void f15h_select_dct(struct amd64_pvt *pvt, u8 dct)
 static int f15_read_dct_pci_cfg(struct amd64_pvt *pvt, int addr, u32 *val,
 				 const char *func)
 {
+=======
+static int f15_read_dct_pci_cfg(struct amd64_pvt *pvt, int addr, u32 *val,
+				 const char *func)
+{
+	u32 reg = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 dct  = 0;
 
 	if (addr >= 0x140 && addr <= 0x1a0) {
@@ -137,7 +144,14 @@ static int f15_read_dct_pci_cfg(struct amd64_pvt *pvt, int addr, u32 *val,
 		addr -= 0x100;
 	}
 
+<<<<<<< HEAD
 	f15h_select_dct(pvt, dct);
+=======
+	amd64_read_pci_cfg(pvt->F1, DCT_CFG_SEL, &reg);
+	reg &= 0xfffffffe;
+	reg |= dct;
+	amd64_write_pci_cfg(pvt->F1, DCT_CFG_SEL, reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return __amd64_read_pci_cfg_dword(pvt->F2, addr, val, func);
 }
@@ -170,11 +184,16 @@ static int __amd64_set_scrub_rate(struct pci_dev *ctl, u32 new_bw, u32 min_rate)
 	 * memory controller and apply to register. Search for the first
 	 * bandwidth entry that is greater or equal than the setting requested
 	 * and program that. If at last entry, turn off DRAM scrubbing.
+<<<<<<< HEAD
 	 *
 	 * If no suitable bandwidth is found, turn off DRAM scrubbing entirely
 	 * by falling back to the last element in scrubrates[].
 	 */
 	for (i = 0; i < ARRAY_SIZE(scrubrates) - 1; i++) {
+=======
+	 */
+	for (i = 0; i < ARRAY_SIZE(scrubrates); i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * skip scrub rates which aren't recommended
 		 * (see F10 BKDG, F3x58)
@@ -184,6 +203,15 @@ static int __amd64_set_scrub_rate(struct pci_dev *ctl, u32 new_bw, u32 min_rate)
 
 		if (scrubrates[i].bandwidth <= new_bw)
 			break;
+<<<<<<< HEAD
+=======
+
+		/*
+		 * if no suitable bandwidth found, turn off DRAM scrubbing
+		 * entirely by falling back to the last element in the
+		 * scrubrates array.
+		 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	scrubval = scrubrates[i].scrubval;
@@ -204,10 +232,13 @@ static int amd64_set_scrub_rate(struct mem_ctl_info *mci, u32 bw)
 	if (boot_cpu_data.x86 == 0xf)
 		min_scrubrate = 0x0;
 
+<<<<<<< HEAD
 	/* F15h Erratum #505 */
 	if (boot_cpu_data.x86 == 0x15)
 		f15h_select_dct(pvt, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return __amd64_set_scrub_rate(pvt->F3, bw, min_scrubrate);
 }
 
@@ -217,10 +248,13 @@ static int amd64_get_scrub_rate(struct mem_ctl_info *mci)
 	u32 scrubval = 0;
 	int i, retval = -EINVAL;
 
+<<<<<<< HEAD
 	/* F15h Erratum #505 */
 	if (boot_cpu_data.x86 == 0x15)
 		f15h_select_dct(pvt, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	amd64_read_pci_cfg(pvt->F3, SCRCTRL, &scrubval);
 
 	scrubval = scrubval & 0x001F;
@@ -765,10 +799,17 @@ static int get_channel_from_ecc_syndrome(struct mem_ctl_info *, u16);
  * Determine if the DIMMs have ECC enabled. ECC is enabled ONLY if all the DIMMs
  * are ECC capable.
  */
+<<<<<<< HEAD
 static unsigned long amd64_determine_edac_cap(struct amd64_pvt *pvt)
 {
 	u8 bit;
 	unsigned long edac_cap = EDAC_FLAG_NONE;
+=======
+static enum edac_type amd64_determine_edac_cap(struct amd64_pvt *pvt)
+{
+	u8 bit;
+	enum dev_type edac_cap = EDAC_FLAG_NONE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bit = (boot_cpu_data.x86 > 0xf || pvt->ext_model >= K8_REV_F)
 		? 19
@@ -1129,6 +1170,7 @@ static int k8_dbam_to_chip_select(struct amd64_pvt *pvt, u8 dct,
 		return ddr2_cs_size(cs_mode, dclr & WIDTH_128);
 	}
 	else if (pvt->ext_model >= K8_REV_D) {
+<<<<<<< HEAD
 		unsigned diff;
 		WARN_ON(cs_mode > 10);
 
@@ -1159,6 +1201,14 @@ static int k8_dbam_to_chip_select(struct amd64_pvt *pvt, u8 dct,
 		diff = cs_mode/3 + (unsigned)(cs_mode > 5);
 
 		return 32 << (cs_mode - diff);
+=======
+		WARN_ON(cs_mode > 10);
+
+		if (cs_mode == 3 || cs_mode == 8)
+			return 32 << (cs_mode - 1);
+		else
+			return 32 << cs_mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	else {
 		WARN_ON(cs_mode > 6);
@@ -1991,9 +2041,17 @@ static inline void __amd64_decode_bus_error(struct mem_ctl_info *mci,
 		amd64_handle_ue(mci, m);
 }
 
+<<<<<<< HEAD
 void amd64_decode_bus_error(int node_id, struct mce *m)
 {
 	__amd64_decode_bus_error(mcis[node_id], m);
+=======
+void amd64_decode_bus_error(int node_id, struct mce *m, u32 nbcfg)
+{
+	struct mem_ctl_info *mci = mcis[node_id];
+
+	__amd64_decode_bus_error(mci, m);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2154,7 +2212,10 @@ static void read_mc_regs(struct amd64_pvt *pvt)
 static u32 amd64_csrow_nr_pages(struct amd64_pvt *pvt, u8 dct, int csrow_nr)
 {
 	u32 cs_mode, nr_pages;
+<<<<<<< HEAD
 	u32 dbam = dct ? pvt->dbam1 : pvt->dbam0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * The math on this doesn't look right on the surface because x/2*4 can
@@ -2163,10 +2224,23 @@ static u32 amd64_csrow_nr_pages(struct amd64_pvt *pvt, u8 dct, int csrow_nr)
 	 * number of bits to shift the DBAM register to extract the proper CSROW
 	 * field.
 	 */
+<<<<<<< HEAD
 	cs_mode =  (dbam >> ((csrow_nr / 2) * 4)) & 0xF;
 
 	nr_pages = pvt->ops->dbam_to_cs(pvt, dct, cs_mode) << (20 - PAGE_SHIFT);
 
+=======
+	cs_mode = (pvt->dbam0 >> ((csrow_nr / 2) * 4)) & 0xF;
+
+	nr_pages = pvt->ops->dbam_to_cs(pvt, dct, cs_mode) << (20 - PAGE_SHIFT);
+
+	/*
+	 * If dual channel then double the memory size of single channel.
+	 * Channel count is 1 or 2
+	 */
+	nr_pages <<= (pvt->channel_count - 1);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	debugf0("  (csrow=%d) DBAM map index= %d\n", csrow_nr, cs_mode);
 	debugf0("    nr_pages= %u  channel-count = %d\n",
 		nr_pages, pvt->channel_count);
@@ -2197,7 +2271,11 @@ static int init_csrows(struct mem_ctl_info *mci)
 	for_each_chip_select(i, 0, pvt) {
 		csrow = &mci->csrows[i];
 
+<<<<<<< HEAD
 		if (!csrow_enabled(i, 0, pvt) && !csrow_enabled(i, 1, pvt)) {
+=======
+		if (!csrow_enabled(i, 0, pvt)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			debugf1("----CSROW %d EMPTY for node %d\n", i,
 				pvt->mc_node_id);
 			continue;
@@ -2207,10 +2285,14 @@ static int init_csrows(struct mem_ctl_info *mci)
 			i, pvt->mc_node_id);
 
 		empty = 0;
+<<<<<<< HEAD
 		if (csrow_enabled(i, 0, pvt))
 			csrow->nr_pages = amd64_csrow_nr_pages(pvt, 0, i);
 		if (csrow_enabled(i, 1, pvt))
 			csrow->nr_pages += amd64_csrow_nr_pages(pvt, 1, i);
+=======
+		csrow->nr_pages = amd64_csrow_nr_pages(pvt, 0, i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		find_csrow_limits(mci, i, &input_addr_min, &input_addr_max);
 		sys_addr = input_addr_to_sys_addr(mci, input_addr_min);
 		csrow->first_page = (u32) (sys_addr >> PAGE_SHIFT);
@@ -2704,7 +2786,11 @@ static void __devexit amd64_remove_one_instance(struct pci_dev *pdev)
  * PCI core identifies what devices are on a system during boot, and then
  * inquiry this table to see if this driver is for a given device found.
  */
+<<<<<<< HEAD
 static DEFINE_PCI_DEVICE_TABLE(amd64_pci_table) = {
+=======
+static const struct pci_device_id amd64_pci_table[] __devinitdata = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.vendor		= PCI_VENDOR_ID_AMD,
 		.device		= PCI_DEVICE_ID_AMD_K8_NB_MEMCTL,

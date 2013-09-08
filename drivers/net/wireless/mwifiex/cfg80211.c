@@ -24,6 +24,7 @@
  * This function maps the nl802.11 channel type into driver channel type.
  *
  * The mapping is as follows -
+<<<<<<< HEAD
  *      NL80211_CHAN_NO_HT     -> IEEE80211_HT_PARAM_CHA_SEC_NONE
  *      NL80211_CHAN_HT20      -> IEEE80211_HT_PARAM_CHA_SEC_NONE
  *      NL80211_CHAN_HT40PLUS  -> IEEE80211_HT_PARAM_CHA_SEC_ABOVE
@@ -33,10 +34,22 @@
 static u8
 mwifiex_cfg80211_channel_type_to_sec_chan_offset(enum nl80211_channel_type
 						 channel_type)
+=======
+ *      NL80211_CHAN_NO_HT     -> NO_SEC_CHANNEL
+ *      NL80211_CHAN_HT20      -> NO_SEC_CHANNEL
+ *      NL80211_CHAN_HT40PLUS  -> SEC_CHANNEL_ABOVE
+ *      NL80211_CHAN_HT40MINUS -> SEC_CHANNEL_BELOW
+ *      Others                 -> NO_SEC_CHANNEL
+ */
+static int
+mwifiex_cfg80211_channel_type_to_mwifiex_channels(enum nl80211_channel_type
+						  channel_type)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	switch (channel_type) {
 	case NL80211_CHAN_NO_HT:
 	case NL80211_CHAN_HT20:
+<<<<<<< HEAD
 		return IEEE80211_HT_PARAM_CHA_SEC_NONE;
 	case NL80211_CHAN_HT40PLUS:
 		return IEEE80211_HT_PARAM_CHA_SEC_ABOVE;
@@ -44,6 +57,39 @@ mwifiex_cfg80211_channel_type_to_sec_chan_offset(enum nl80211_channel_type
 		return IEEE80211_HT_PARAM_CHA_SEC_BELOW;
 	default:
 		return IEEE80211_HT_PARAM_CHA_SEC_NONE;
+=======
+		return NO_SEC_CHANNEL;
+	case NL80211_CHAN_HT40PLUS:
+		return SEC_CHANNEL_ABOVE;
+	case NL80211_CHAN_HT40MINUS:
+		return SEC_CHANNEL_BELOW;
+	default:
+		return NO_SEC_CHANNEL;
+	}
+}
+
+/*
+ * This function maps the driver channel type into nl802.11 channel type.
+ *
+ * The mapping is as follows -
+ *      NO_SEC_CHANNEL      -> NL80211_CHAN_HT20
+ *      SEC_CHANNEL_ABOVE   -> NL80211_CHAN_HT40PLUS
+ *      SEC_CHANNEL_BELOW   -> NL80211_CHAN_HT40MINUS
+ *      Others              -> NL80211_CHAN_HT20
+ */
+static enum nl80211_channel_type
+mwifiex_channels_to_cfg80211_channel_type(int channel_type)
+{
+	switch (channel_type) {
+	case NO_SEC_CHANNEL:
+		return NL80211_CHAN_HT20;
+	case SEC_CHANNEL_ABOVE:
+		return NL80211_CHAN_HT40PLUS;
+	case SEC_CHANNEL_BELOW:
+		return NL80211_CHAN_HT40MINUS;
+	default:
+		return NL80211_CHAN_HT20;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -79,7 +125,11 @@ static int
 mwifiex_cfg80211_del_key(struct wiphy *wiphy, struct net_device *netdev,
 			 u8 key_index, bool pairwise, const u8 *mac_addr)
 {
+<<<<<<< HEAD
 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(netdev);
+=======
+	struct mwifiex_private *priv = mwifiex_cfg80211_get_priv(wiphy);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mwifiex_set_encode(priv, NULL, 0, key_index, 1)) {
 		wiphy_err(wiphy, "deleting the crypto keys\n");
@@ -96,11 +146,18 @@ mwifiex_cfg80211_del_key(struct wiphy *wiphy, struct net_device *netdev,
 static int
 mwifiex_cfg80211_set_tx_power(struct wiphy *wiphy,
 			      enum nl80211_tx_power_setting type,
+<<<<<<< HEAD
 			      int mbm)
 {
 	struct mwifiex_private *priv = mwifiex_cfg80211_get_priv(wiphy);
 	struct mwifiex_power_cfg power_cfg;
 	int dbm = MBM_TO_DBM(mbm);
+=======
+			      int dbm)
+{
+	struct mwifiex_private *priv = mwifiex_cfg80211_get_priv(wiphy);
+	struct mwifiex_power_cfg power_cfg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (type == NL80211_TX_POWER_FIXED) {
 		power_cfg.is_power_auto = 0;
@@ -122,12 +179,21 @@ mwifiex_cfg80211_set_power_mgmt(struct wiphy *wiphy,
 				struct net_device *dev,
 				bool enabled, int timeout)
 {
+<<<<<<< HEAD
 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(dev);
+=======
+	struct mwifiex_private *priv = mwifiex_cfg80211_get_priv(wiphy);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 ps_mode;
 
 	if (timeout)
 		wiphy_dbg(wiphy,
+<<<<<<< HEAD
 			  "info: ignore timeout value for IEEE Power Save\n");
+=======
+			"info: ignoring the timeout value"
+			" for IEEE power save\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ps_mode = enabled;
 
@@ -142,10 +208,17 @@ mwifiex_cfg80211_set_default_key(struct wiphy *wiphy, struct net_device *netdev,
 				 u8 key_index, bool unicast,
 				 bool multicast)
 {
+<<<<<<< HEAD
 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(netdev);
 
 	/* Return if WEP key not configured */
 	if (!priv->sec_info.wep_enabled)
+=======
+	struct mwifiex_private *priv = mwifiex_cfg80211_get_priv(wiphy);
+
+	/* Return if WEP key not configured */
+	if (priv->sec_info.wep_status == MWIFIEX_802_11_WEP_DISABLED)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	if (mwifiex_set_encode(priv, NULL, 0, key_index, 0)) {
@@ -164,10 +237,17 @@ mwifiex_cfg80211_add_key(struct wiphy *wiphy, struct net_device *netdev,
 			 u8 key_index, bool pairwise, const u8 *mac_addr,
 			 struct key_params *params)
 {
+<<<<<<< HEAD
 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(netdev);
 
 	if (mwifiex_set_encode(priv, params->key, params->key_len,
 			       key_index, 0)) {
+=======
+	struct mwifiex_private *priv = mwifiex_cfg80211_get_priv(wiphy);
+
+	if (mwifiex_set_encode(priv, params->key, params->key_len,
+							key_index, 0)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wiphy_err(wiphy, "crypto keys added\n");
 		return -EFAULT;
 	}
@@ -224,7 +304,11 @@ static int mwifiex_send_domain_info_cmd_fw(struct wiphy *wiphy)
 		}
 
 		if (ch->hw_value == next_chan + 1 &&
+<<<<<<< HEAD
 		    ch->max_power == max_pwr) {
+=======
+				ch->max_power == max_pwr) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			next_chan++;
 			no_of_parsed_chan++;
 		} else {
@@ -251,7 +335,11 @@ static int mwifiex_send_domain_info_cmd_fw(struct wiphy *wiphy)
 	domain_info->no_of_triplet = no_of_triplet;
 
 	if (mwifiex_send_cmd_async(priv, HostCmd_CMD_802_11D_DOMAIN_INFO,
+<<<<<<< HEAD
 				   HostCmd_ACT_GEN_SET, 0, NULL)) {
+=======
+				     HostCmd_ACT_GEN_SET, 0, NULL)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wiphy_err(wiphy, "11D: setting domain info in FW\n");
 		return -1;
 	}
@@ -270,7 +358,11 @@ static int mwifiex_send_domain_info_cmd_fw(struct wiphy *wiphy)
  *      - Set bt Country IE
  */
 static int mwifiex_reg_notifier(struct wiphy *wiphy,
+<<<<<<< HEAD
 				struct regulatory_request *request)
+=======
+		struct regulatory_request *request)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct mwifiex_private *priv = mwifiex_cfg80211_get_priv(wiphy);
 
@@ -306,6 +398,7 @@ mwifiex_set_rf_channel(struct mwifiex_private *priv,
 		       enum nl80211_channel_type channel_type)
 {
 	struct mwifiex_chan_freq_power cfp;
+<<<<<<< HEAD
 	u32 config_bands = 0;
 	struct wiphy *wiphy = priv->wdev->wiphy;
 	struct mwifiex_adapter *adapter = priv->adapter;
@@ -345,12 +438,45 @@ mwifiex_set_rf_channel(struct mwifiex_private *priv,
 			mwifiex_cfg80211_channel_type_to_sec_chan_offset
 			(channel_type);
 		adapter->channel_type = channel_type;
+=======
+	struct mwifiex_ds_band_cfg band_cfg;
+	u32 config_bands = 0;
+	struct wiphy *wiphy = priv->wdev->wiphy;
+
+	if (chan) {
+		memset(&band_cfg, 0, sizeof(band_cfg));
+		/* Set appropriate bands */
+		if (chan->band == IEEE80211_BAND_2GHZ)
+			config_bands = BAND_B | BAND_G | BAND_GN;
+		else
+			config_bands = BAND_AN | BAND_A;
+		if (priv->bss_mode == NL80211_IFTYPE_STATION
+		    || priv->bss_mode == NL80211_IFTYPE_UNSPECIFIED) {
+			band_cfg.config_bands = config_bands;
+		} else if (priv->bss_mode == NL80211_IFTYPE_ADHOC) {
+			band_cfg.config_bands = config_bands;
+			band_cfg.adhoc_start_band = config_bands;
+		}
+
+		band_cfg.sec_chan_offset =
+			mwifiex_cfg80211_channel_type_to_mwifiex_channels
+			(channel_type);
+
+		if (mwifiex_set_radio_band_cfg(priv, &band_cfg))
+			return -EFAULT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		mwifiex_send_domain_info_cmd_fw(wiphy);
 	}
 
+<<<<<<< HEAD
 	wiphy_dbg(wiphy, "info: setting band %d, chan offset %d, mode %d\n",
 		  config_bands, adapter->sec_chan_offset, priv->bss_mode);
+=======
+	wiphy_dbg(wiphy, "info: setting band %d, channel offset %d and "
+		"mode %d\n", config_bands, band_cfg.sec_chan_offset,
+		priv->bss_mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!chan)
 		return 0;
 
@@ -374,12 +500,16 @@ mwifiex_cfg80211_set_channel(struct wiphy *wiphy, struct net_device *dev,
 			     struct ieee80211_channel *chan,
 			     enum nl80211_channel_type channel_type)
 {
+<<<<<<< HEAD
 	struct mwifiex_private *priv;
 
 	if (dev)
 		priv = mwifiex_netdev_get_priv(dev);
 	else
 		priv = mwifiex_cfg80211_get_priv(wiphy);
+=======
+	struct mwifiex_private *priv = mwifiex_cfg80211_get_priv(wiphy);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (priv->media_connected) {
 		wiphy_err(wiphy, "This setting is valid only when station "
@@ -401,8 +531,13 @@ mwifiex_set_frag(struct mwifiex_private *priv, u32 frag_thr)
 {
 	int ret;
 
+<<<<<<< HEAD
 	if (frag_thr < MWIFIEX_FRAG_MIN_VALUE ||
 	    frag_thr > MWIFIEX_FRAG_MAX_VALUE)
+=======
+	if (frag_thr < MWIFIEX_FRAG_MIN_VALUE
+	    || frag_thr > MWIFIEX_FRAG_MAX_VALUE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	/* Send request to firmware */
@@ -537,6 +672,7 @@ mwifiex_dump_station_info(struct mwifiex_private *priv,
 		ret = -EFAULT;
 	}
 
+<<<<<<< HEAD
 	/* Get DTIM period information from firmware */
 	mwifiex_send_cmd_sync(priv, HostCmd_CMD_802_11_SNMP_MIB,
 			      HostCmd_ACT_GEN_GET, DTIM_PERIOD_I,
@@ -557,10 +693,13 @@ mwifiex_dump_station_info(struct mwifiex_private *priv,
 			sinfo->txrate.flags |= RATE_INFO_FLAGS_SHORT_GI;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sinfo->rx_bytes = priv->stats.rx_bytes;
 	sinfo->tx_bytes = priv->stats.tx_bytes;
 	sinfo->rx_packets = priv->stats.rx_packets;
 	sinfo->tx_packets = priv->stats.tx_packets;
+<<<<<<< HEAD
 	sinfo->signal = priv->qual_level;
 	/* bit rate is in 500 kb/s units. Convert it to 100kb/s units */
 	sinfo->txrate.legacy = rate.rate * 5;
@@ -580,6 +719,10 @@ mwifiex_dump_station_info(struct mwifiex_private *priv,
 		sinfo->bss_param.beacon_interval =
 			priv->curr_bss_params.bss_descriptor.beacon_period;
 	}
+=======
+	sinfo->signal = priv->w_stats.qual.level;
+	sinfo->txrate.legacy = rate.rate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -596,6 +739,11 @@ mwifiex_cfg80211_get_station(struct wiphy *wiphy, struct net_device *dev,
 {
 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(dev);
 
+<<<<<<< HEAD
+=======
+	mwifiex_dump_station_info(priv, sinfo);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!priv->media_connected)
 		return -ENOENT;
 	if (memcmp(mac, priv->cfg_bssid, ETH_ALEN))
@@ -611,6 +759,10 @@ static struct ieee80211_rate mwifiex_rates[] = {
 	{.bitrate = 20, .hw_value = 4, },
 	{.bitrate = 55, .hw_value = 11, },
 	{.bitrate = 110, .hw_value = 22, },
+<<<<<<< HEAD
+=======
+	{.bitrate = 220, .hw_value = 44, },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{.bitrate = 60, .hw_value = 12, },
 	{.bitrate = 90, .hw_value = 18, },
 	{.bitrate = 120, .hw_value = 24, },
@@ -619,6 +771,10 @@ static struct ieee80211_rate mwifiex_rates[] = {
 	{.bitrate = 360, .hw_value = 72, },
 	{.bitrate = 480, .hw_value = 96, },
 	{.bitrate = 540, .hw_value = 108, },
+<<<<<<< HEAD
+=======
+	{.bitrate = 720, .hw_value = 144, },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Channel definitions to be advertised to cfg80211 */
@@ -644,7 +800,11 @@ static struct ieee80211_supported_band mwifiex_band_2ghz = {
 	.channels = mwifiex_channels_2ghz,
 	.n_channels = ARRAY_SIZE(mwifiex_channels_2ghz),
 	.bitrates = mwifiex_rates,
+<<<<<<< HEAD
 	.n_bitrates = ARRAY_SIZE(mwifiex_rates),
+=======
+	.n_bitrates = 14,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct ieee80211_channel mwifiex_channels_5ghz[] = {
@@ -684,8 +844,13 @@ static struct ieee80211_channel mwifiex_channels_5ghz[] = {
 static struct ieee80211_supported_band mwifiex_band_5ghz = {
 	.channels = mwifiex_channels_5ghz,
 	.n_channels = ARRAY_SIZE(mwifiex_channels_5ghz),
+<<<<<<< HEAD
 	.bitrates = mwifiex_rates + 4,
 	.n_bitrates = ARRAY_SIZE(mwifiex_rates) - 4,
+=======
+	.bitrates = mwifiex_rates - 4,
+	.n_bitrates = ARRAY_SIZE(mwifiex_rates) + 4,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -699,6 +864,7 @@ static const u32 mwifiex_cipher_suites[] = {
 };
 
 /*
+<<<<<<< HEAD
  * CFG802.11 operation handler for setting bit rates.
  *
  * Function selects legacy bang B/G/BG from corresponding bitrates selection.
@@ -750,6 +916,8 @@ static int mwifiex_cfg80211_set_bitrate_mask(struct wiphy *wiphy,
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * CFG802.11 operation handler for disconnection request.
  *
  * This function does not work when there is already a disconnection
@@ -761,13 +929,24 @@ mwifiex_cfg80211_disconnect(struct wiphy *wiphy, struct net_device *dev,
 {
 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(dev);
 
+<<<<<<< HEAD
+=======
+	if (priv->disconnect)
+		return -EBUSY;
+
+	priv->disconnect = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (mwifiex_deauthenticate(priv, NULL))
 		return -EFAULT;
 
 	wiphy_dbg(wiphy, "info: successfully disconnected from %pM:"
 		" reason code %d\n", priv->cfg_bssid, reason_code);
 
+<<<<<<< HEAD
 	memset(priv->cfg_bssid, 0, ETH_ALEN);
+=======
+	queue_work(priv->workqueue, &priv->cfg_workqueue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -787,10 +966,15 @@ static int mwifiex_cfg80211_inform_ibss_bss(struct mwifiex_private *priv)
 {
 	struct ieee80211_channel *chan;
 	struct mwifiex_bss_info bss_info;
+<<<<<<< HEAD
 	struct cfg80211_bss *bss;
 	int ie_len;
 	u8 ie_buf[IEEE80211_MAX_SSID_LEN + sizeof(struct ieee_types_header)];
 	enum ieee80211_band band;
+=======
+	int ie_len;
+	u8 ie_buf[IEEE80211_MAX_SSID_LEN + sizeof(struct ieee_types_header)];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mwifiex_get_bss_info(priv, &bss_info))
 		return -1;
@@ -799,6 +983,7 @@ static int mwifiex_cfg80211_inform_ibss_bss(struct mwifiex_private *priv)
 	ie_buf[1] = bss_info.ssid.ssid_len;
 
 	memcpy(&ie_buf[sizeof(struct ieee_types_header)],
+<<<<<<< HEAD
 	       &bss_info.ssid.ssid, bss_info.ssid.ssid_len);
 	ie_len = ie_buf[1] + sizeof(struct ieee_types_header);
 
@@ -811,12 +996,161 @@ static int mwifiex_cfg80211_inform_ibss_bss(struct mwifiex_private *priv)
 				  bss_info.bssid, 0, WLAN_CAPABILITY_IBSS,
 				  0, ie_buf, ie_len, 0, GFP_KERNEL);
 	cfg80211_put_bss(bss);
+=======
+			&bss_info.ssid.ssid,
+			bss_info.ssid.ssid_len);
+	ie_len = ie_buf[1] + sizeof(struct ieee_types_header);
+
+	chan = __ieee80211_get_channel(priv->wdev->wiphy,
+			ieee80211_channel_to_frequency(bss_info.bss_chan,
+						priv->curr_bss_params.band));
+
+	cfg80211_inform_bss(priv->wdev->wiphy, chan,
+		bss_info.bssid, 0, WLAN_CAPABILITY_IBSS,
+		0, ie_buf, ie_len, 0, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy(priv->cfg_bssid, bss_info.bssid, ETH_ALEN);
 
 	return 0;
 }
 
 /*
+<<<<<<< HEAD
+=======
+ * This function informs the CFG802.11 subsystem of a new BSS connection.
+ *
+ * The following information are sent to the CFG802.11 subsystem
+ * to register the new BSS connection. If we do not register the new BSS,
+ * a kernel panic will result.
+ *      - MAC address
+ *      - Capabilities
+ *      - Beacon period
+ *      - RSSI value
+ *      - Channel
+ *      - Supported rates IE
+ *      - Extended capabilities IE
+ *      - DS parameter set IE
+ *      - HT Capability IE
+ *      - Vendor Specific IE (221)
+ *      - WPA IE
+ *      - RSN IE
+ */
+static int mwifiex_inform_bss_from_scan_result(struct mwifiex_private *priv,
+					       struct mwifiex_802_11_ssid *ssid)
+{
+	struct mwifiex_bssdescriptor *scan_table;
+	int i, j;
+	struct ieee80211_channel *chan;
+	u8 *ie, *ie_buf;
+	u32 ie_len;
+	u8 *beacon;
+	int beacon_size;
+	u8 element_id, element_len;
+
+#define MAX_IE_BUF	2048
+	ie_buf = kzalloc(MAX_IE_BUF, GFP_KERNEL);
+	if (!ie_buf) {
+		dev_err(priv->adapter->dev, "%s: failed to alloc ie_buf\n",
+						__func__);
+		return -ENOMEM;
+	}
+
+	scan_table = priv->adapter->scan_table;
+	for (i = 0; i < priv->adapter->num_in_scan_table; i++) {
+		if (ssid) {
+			/* Inform specific BSS only */
+			if (memcmp(ssid->ssid, scan_table[i].ssid.ssid,
+					   ssid->ssid_len))
+				continue;
+		}
+		memset(ie_buf, 0, MAX_IE_BUF);
+		ie_buf[0] = WLAN_EID_SSID;
+		ie_buf[1] = scan_table[i].ssid.ssid_len;
+		memcpy(&ie_buf[sizeof(struct ieee_types_header)],
+		       scan_table[i].ssid.ssid, ie_buf[1]);
+
+		ie = ie_buf + ie_buf[1] + sizeof(struct ieee_types_header);
+		ie_len = ie_buf[1] + sizeof(struct ieee_types_header);
+
+		ie[0] = WLAN_EID_SUPP_RATES;
+
+		for (j = 0; j < sizeof(scan_table[i].supported_rates); j++) {
+			if (!scan_table[i].supported_rates[j])
+				break;
+			else
+				ie[j + sizeof(struct ieee_types_header)] =
+					scan_table[i].supported_rates[j];
+		}
+
+		ie[1] = j;
+		ie_len += ie[1] + sizeof(struct ieee_types_header);
+
+		beacon = scan_table[i].beacon_buf;
+		beacon_size = scan_table[i].beacon_buf_size;
+
+		/* Skip time stamp, beacon interval and capability */
+
+		if (beacon) {
+			beacon += sizeof(scan_table[i].beacon_period)
+				+ sizeof(scan_table[i].time_stamp) +
+				+sizeof(scan_table[i].cap_info_bitmap);
+
+			beacon_size -= sizeof(scan_table[i].beacon_period)
+				+ sizeof(scan_table[i].time_stamp)
+				+ sizeof(scan_table[i].cap_info_bitmap);
+		}
+
+		while (beacon_size >= sizeof(struct ieee_types_header)) {
+			ie = ie_buf + ie_len;
+			element_id = *beacon;
+			element_len = *(beacon + 1);
+			if (beacon_size < (int) element_len +
+			    sizeof(struct ieee_types_header)) {
+				dev_err(priv->adapter->dev, "%s: in processing"
+					" IE, bytes left < IE length\n",
+					__func__);
+				break;
+			}
+			switch (element_id) {
+			case WLAN_EID_EXT_CAPABILITY:
+			case WLAN_EID_DS_PARAMS:
+			case WLAN_EID_HT_CAPABILITY:
+			case WLAN_EID_VENDOR_SPECIFIC:
+			case WLAN_EID_RSN:
+			case WLAN_EID_BSS_AC_ACCESS_DELAY:
+				ie[0] = element_id;
+				ie[1] = element_len;
+				memcpy(&ie[sizeof(struct ieee_types_header)],
+				       (u8 *) beacon
+				       + sizeof(struct ieee_types_header),
+				       element_len);
+				ie_len += ie[1] +
+					sizeof(struct ieee_types_header);
+				break;
+			default:
+				break;
+			}
+			beacon += element_len +
+					sizeof(struct ieee_types_header);
+			beacon_size -= element_len +
+					sizeof(struct ieee_types_header);
+		}
+		chan = ieee80211_get_channel(priv->wdev->wiphy,
+						scan_table[i].freq);
+		cfg80211_inform_bss(priv->wdev->wiphy, chan,
+					scan_table[i].mac_address,
+					0, scan_table[i].cap_info_bitmap,
+					scan_table[i].beacon_period,
+					ie_buf, ie_len,
+					scan_table[i].rssi, GFP_KERNEL);
+	}
+
+	kfree(ie_buf);
+	return 0;
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This function connects with a BSS.
  *
  * This function handles both Infra and Ad-Hoc modes. It also performs
@@ -828,19 +1162,33 @@ static int mwifiex_cfg80211_inform_ibss_bss(struct mwifiex_private *priv)
  * For Infra mode, the function returns failure if the specified SSID
  * is not found in scan table. However, for Ad-Hoc mode, it can create
  * the IBSS if it does not exist. On successful completion in either case,
+<<<<<<< HEAD
  * the function notifies the CFG802.11 subsystem of the new BSS connection.
+=======
+ * the function notifies the CFG802.11 subsystem of the new BSS connection,
+ * otherwise the kernel will panic.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int
 mwifiex_cfg80211_assoc(struct mwifiex_private *priv, size_t ssid_len, u8 *ssid,
 		       u8 *bssid, int mode, struct ieee80211_channel *channel,
 		       struct cfg80211_connect_params *sme, bool privacy)
 {
+<<<<<<< HEAD
 	struct cfg80211_ssid req_ssid;
 	int ret, auth_type = 0;
 	struct cfg80211_bss *bss = NULL;
 	u8 is_scanning_required = 0;
 
 	memset(&req_ssid, 0, sizeof(struct cfg80211_ssid));
+=======
+	struct mwifiex_802_11_ssid req_ssid;
+	struct mwifiex_ssid_bssid ssid_bssid;
+	int ret, auth_type = 0;
+
+	memset(&req_ssid, 0, sizeof(struct mwifiex_802_11_ssid));
+	memset(&ssid_bssid, 0, sizeof(struct mwifiex_ssid_bssid));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	req_ssid.ssid_len = ssid_len;
 	if (ssid_len > IEEE80211_MAX_SSID_LEN) {
@@ -859,6 +1207,7 @@ mwifiex_cfg80211_assoc(struct mwifiex_private *priv, size_t ssid_len, u8 *ssid,
 
 	if (channel)
 		ret = mwifiex_set_rf_channel(priv, channel,
+<<<<<<< HEAD
 						priv->adapter->channel_type);
 
 	/* As this is new association, clear locally stored
@@ -869,6 +1218,12 @@ mwifiex_cfg80211_assoc(struct mwifiex_private *priv, size_t ssid_len, u8 *ssid,
 	priv->sec_info.encryption_mode = 0;
 	priv->sec_info.is_authtype_auto = 0;
 	ret = mwifiex_set_encode(priv, NULL, 0, 0, 1);
+=======
+				mwifiex_channels_to_cfg80211_channel_type
+				(priv->adapter->chan_offset));
+
+	ret = mwifiex_set_encode(priv, NULL, 0, 0, 1);	/* Disable keys */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mode == NL80211_IFTYPE_ADHOC) {
 		/* "privacy" is set only for ad-hoc mode */
@@ -889,12 +1244,20 @@ mwifiex_cfg80211_assoc(struct mwifiex_private *priv, size_t ssid_len, u8 *ssid,
 	}
 
 	/* Now handle infra mode. "sme" is valid for infra mode only */
+<<<<<<< HEAD
 	if (sme->auth_type == NL80211_AUTHTYPE_AUTOMATIC) {
 		auth_type = NL80211_AUTHTYPE_OPEN_SYSTEM;
 		priv->sec_info.is_authtype_auto = 1;
 	} else {
 		auth_type = sme->auth_type;
 	}
+=======
+	if (sme->auth_type == NL80211_AUTHTYPE_AUTOMATIC
+			|| sme->auth_type == NL80211_AUTHTYPE_OPEN_SYSTEM)
+		auth_type = NL80211_AUTHTYPE_OPEN_SYSTEM;
+	else if (sme->auth_type == NL80211_AUTHTYPE_SHARED_KEY)
+		auth_type = NL80211_AUTHTYPE_SHARED_KEY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (sme->crypto.n_ciphers_pairwise) {
 		priv->sec_info.encryption_mode =
@@ -910,16 +1273,24 @@ mwifiex_cfg80211_assoc(struct mwifiex_private *priv, size_t ssid_len, u8 *ssid,
 		ret = mwifiex_set_gen_ie(priv, sme->ie, sme->ie_len);
 
 	if (sme->key) {
+<<<<<<< HEAD
 		if (mwifiex_is_alg_wep(priv->sec_info.encryption_mode)) {
 			dev_dbg(priv->adapter->dev,
 				"info: setting wep encryption"
 				" with key len %d\n", sme->key_len);
 			priv->wep_key_curr_index = sme->key_idx;
+=======
+		if (mwifiex_is_alg_wep(0) | mwifiex_is_alg_wep(0)) {
+			dev_dbg(priv->adapter->dev,
+				"info: setting wep encryption"
+				" with key len %d\n", sme->key_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = mwifiex_set_encode(priv, sme->key, sme->key_len,
 							sme->key_idx, 0);
 		}
 	}
 done:
+<<<<<<< HEAD
 	/*
 	 * Scan entries are valid for some time (15 sec). So we can save one
 	 * active scan time if we just try cfg80211_get_bss first. If it fails
@@ -963,6 +1334,38 @@ done:
 	}
 
 	if (mwifiex_bss_start(priv, bss, &req_ssid))
+=======
+	/* Do specific SSID scanning */
+	if (mwifiex_request_scan(priv, &req_ssid)) {
+		dev_err(priv->adapter->dev, "scan error\n");
+		return -EFAULT;
+	}
+
+
+	memcpy(&ssid_bssid.ssid, &req_ssid, sizeof(struct mwifiex_802_11_ssid));
+
+	if (mode != NL80211_IFTYPE_ADHOC) {
+		if (mwifiex_find_best_bss(priv, &ssid_bssid))
+			return -EFAULT;
+		/* Inform the BSS information to kernel, otherwise
+		 * kernel will give a panic after successful assoc */
+		if (mwifiex_inform_bss_from_scan_result(priv, &req_ssid))
+			return -EFAULT;
+	}
+
+	dev_dbg(priv->adapter->dev, "info: trying to associate to %s and bssid %pM\n",
+	       (char *) req_ssid.ssid, ssid_bssid.bssid);
+
+	memcpy(&priv->cfg_bssid, ssid_bssid.bssid, 6);
+
+	/* Connect to BSS by ESSID */
+	memset(&ssid_bssid.bssid, 0, ETH_ALEN);
+
+	if (!netif_queue_stopped(priv->netdev))
+		netif_stop_queue(priv->netdev);
+
+	if (mwifiex_bss_start(priv, &ssid_bssid))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EFAULT;
 
 	if (mode == NL80211_IFTYPE_ADHOC) {
@@ -989,12 +1392,19 @@ mwifiex_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(dev);
 	int ret = 0;
 
+<<<<<<< HEAD
+=======
+	if (priv->assoc_request)
+		return -EBUSY;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (priv->bss_mode == NL80211_IFTYPE_ADHOC) {
 		wiphy_err(wiphy, "received infra assoc request "
 				"when station is in ibss mode\n");
 		goto done;
 	}
 
+<<<<<<< HEAD
 	wiphy_dbg(wiphy, "info: Trying to associate to %s and bssid %pM\n",
 		  (char *) sme->ssid, sme->bssid);
 
@@ -1015,6 +1425,20 @@ done:
 		memset(priv->cfg_bssid, 0, ETH_ALEN);
 	}
 
+=======
+	priv->assoc_request = -EINPROGRESS;
+
+	wiphy_dbg(wiphy, "info: Trying to associate to %s and bssid %pM\n",
+	       (char *) sme->ssid, sme->bssid);
+
+	ret = mwifiex_cfg80211_assoc(priv, sme->ssid_len, sme->ssid, sme->bssid,
+				     priv->bss_mode, sme->channel, sme, 0);
+
+	priv->assoc_request = 1;
+done:
+	priv->assoc_result = ret;
+	queue_work(priv->workqueue, &priv->cfg_workqueue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1028,15 +1452,25 @@ static int
 mwifiex_cfg80211_join_ibss(struct wiphy *wiphy, struct net_device *dev,
 			   struct cfg80211_ibss_params *params)
 {
+<<<<<<< HEAD
 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(dev);
 	int ret = 0;
 
+=======
+	struct mwifiex_private *priv = mwifiex_cfg80211_get_priv(wiphy);
+	int ret = 0;
+
+	if (priv->ibss_join_request)
+		return -EBUSY;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (priv->bss_mode != NL80211_IFTYPE_ADHOC) {
 		wiphy_err(wiphy, "request to join ibss received "
 				"when station is not in ibss mode\n");
 		goto done;
 	}
 
+<<<<<<< HEAD
 	wiphy_dbg(wiphy, "info: trying to join to %s and bssid %pM\n",
 		  (char *) params->ssid, params->bssid);
 
@@ -1054,6 +1488,21 @@ done:
 			"info: failed creating/joining adhoc network\n");
 	}
 
+=======
+	priv->ibss_join_request = -EINPROGRESS;
+
+	wiphy_dbg(wiphy, "info: trying to join to %s and bssid %pM\n",
+	       (char *) params->ssid, params->bssid);
+
+	ret = mwifiex_cfg80211_assoc(priv, params->ssid_len, params->ssid,
+				params->bssid, priv->bss_mode,
+				params->channel, NULL, params->privacy);
+
+	priv->ibss_join_request = 1;
+done:
+	priv->ibss_join_result = ret;
+	queue_work(priv->workqueue, &priv->cfg_workqueue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1066,6 +1515,7 @@ done:
 static int
 mwifiex_cfg80211_leave_ibss(struct wiphy *wiphy, struct net_device *dev)
 {
+<<<<<<< HEAD
 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(dev);
 
 	wiphy_dbg(wiphy, "info: disconnecting from essid %pM\n",
@@ -1074,6 +1524,21 @@ mwifiex_cfg80211_leave_ibss(struct wiphy *wiphy, struct net_device *dev)
 		return -EFAULT;
 
 	memset(priv->cfg_bssid, 0, ETH_ALEN);
+=======
+	struct mwifiex_private *priv = mwifiex_cfg80211_get_priv(wiphy);
+
+	if (priv->disconnect)
+		return -EBUSY;
+
+	priv->disconnect = 1;
+
+	wiphy_dbg(wiphy, "info: disconnecting from essid %pM\n",
+			priv->cfg_bssid);
+	if (mwifiex_deauthenticate(priv, NULL))
+		return -EFAULT;
+
+	queue_work(priv->workqueue, &priv->cfg_workqueue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1090,6 +1555,7 @@ mwifiex_cfg80211_scan(struct wiphy *wiphy, struct net_device *dev,
 		      struct cfg80211_scan_request *request)
 {
 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(dev);
+<<<<<<< HEAD
 	int i;
 	struct ieee80211_channel *chan;
 
@@ -1124,6 +1590,17 @@ mwifiex_cfg80211_scan(struct wiphy *wiphy, struct net_device *dev,
 	if (mwifiex_set_user_scan_ioctl(priv, priv->user_scan_cfg))
 		return -EFAULT;
 
+=======
+
+	wiphy_dbg(wiphy, "info: received scan request on %s\n", dev->name);
+
+	if (priv->scan_request && priv->scan_request != request)
+		return -EBUSY;
+
+	priv->scan_request = request;
+
+	queue_work(priv->workqueue, &priv->cfg_workqueue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1188,9 +1665,15 @@ mwifiex_setup_ht_caps(struct ieee80211_sta_ht_cap *ht_info,
 	memset(mcs, 0xff, rx_mcs_supp);
 	/* Clear all the other values */
 	memset(&mcs[rx_mcs_supp], 0,
+<<<<<<< HEAD
 	       sizeof(struct ieee80211_mcs_info) - rx_mcs_supp);
 	if (priv->bss_mode == NL80211_IFTYPE_STATION ||
 	    ISSUPP_CHANWIDTH40(adapter->hw_dot_11n_dev_cap))
+=======
+			sizeof(struct ieee80211_mcs_info) - rx_mcs_supp);
+	if (priv->bss_mode == NL80211_IFTYPE_STATION ||
+			ISSUPP_CHANWIDTH40(adapter->hw_dot_11n_dev_cap))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Set MCS32 for infra mode or ad-hoc mode with 40MHz support */
 		SETHT_MCS32(mcs_set.rx_mask);
 
@@ -1199,6 +1682,7 @@ mwifiex_setup_ht_caps(struct ieee80211_sta_ht_cap *ht_info,
 	ht_info->mcs.tx_params = IEEE80211_HT_MCS_TX_DEFINED;
 }
 
+<<<<<<< HEAD
 /*
  *  create a new virtual interface with the given name
  */
@@ -1332,6 +1816,10 @@ EXPORT_SYMBOL_GPL(mwifiex_del_virtual_intf);
 static struct cfg80211_ops mwifiex_cfg80211_ops = {
 	.add_virtual_intf = mwifiex_add_virtual_intf,
 	.del_virtual_intf = mwifiex_del_virtual_intf,
+=======
+/* station cfg80211 operations */
+static struct cfg80211_ops mwifiex_cfg80211_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.change_virtual_intf = mwifiex_cfg80211_change_virtual_intf,
 	.scan = mwifiex_cfg80211_scan,
 	.connect = mwifiex_cfg80211_connect,
@@ -1346,7 +1834,10 @@ static struct cfg80211_ops mwifiex_cfg80211_ops = {
 	.set_default_key = mwifiex_cfg80211_set_default_key,
 	.set_power_mgmt = mwifiex_cfg80211_set_power_mgmt,
 	.set_tx_power = mwifiex_cfg80211_set_tx_power,
+<<<<<<< HEAD
 	.set_bitrate_mask = mwifiex_cfg80211_set_bitrate_mask,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -1356,17 +1847,29 @@ static struct cfg80211_ops mwifiex_cfg80211_ops = {
  * default parameters and handler function pointers, and finally
  * registers the device.
  */
+<<<<<<< HEAD
 int mwifiex_register_cfg80211(struct mwifiex_private *priv)
+=======
+int mwifiex_register_cfg80211(struct net_device *dev, u8 *mac,
+			      struct mwifiex_private *priv)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 	void *wdev_priv;
 	struct wireless_dev *wdev;
+<<<<<<< HEAD
 	struct ieee80211_sta_ht_cap *ht_info;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wdev = kzalloc(sizeof(struct wireless_dev), GFP_KERNEL);
 	if (!wdev) {
 		dev_err(priv->adapter->dev, "%s: allocating wireless device\n",
+<<<<<<< HEAD
 			__func__);
+=======
+						__func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 	wdev->wiphy =
@@ -1378,6 +1881,7 @@ int mwifiex_register_cfg80211(struct mwifiex_private *priv)
 	}
 	wdev->iftype = NL80211_IFTYPE_STATION;
 	wdev->wiphy->max_scan_ssids = 10;
+<<<<<<< HEAD
 	wdev->wiphy->interface_modes = BIT(NL80211_IFTYPE_STATION) |
 				       BIT(NL80211_IFTYPE_ADHOC);
 
@@ -1389,6 +1893,19 @@ int mwifiex_register_cfg80211(struct mwifiex_private *priv)
 		wdev->wiphy->bands[IEEE80211_BAND_5GHZ] = &mwifiex_band_5ghz;
 		ht_info = &wdev->wiphy->bands[IEEE80211_BAND_5GHZ]->ht_cap;
 		mwifiex_setup_ht_caps(ht_info, priv);
+=======
+	wdev->wiphy->interface_modes =
+		BIT(NL80211_IFTYPE_STATION) | BIT(NL80211_IFTYPE_ADHOC);
+
+	wdev->wiphy->bands[IEEE80211_BAND_2GHZ] = &mwifiex_band_2ghz;
+	mwifiex_setup_ht_caps(
+		&wdev->wiphy->bands[IEEE80211_BAND_2GHZ]->ht_cap, priv);
+
+	if (priv->adapter->config_bands & BAND_A) {
+		wdev->wiphy->bands[IEEE80211_BAND_5GHZ] = &mwifiex_band_5ghz;
+		mwifiex_setup_ht_caps(
+			&wdev->wiphy->bands[IEEE80211_BAND_5GHZ]->ht_cap, priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		wdev->wiphy->bands[IEEE80211_BAND_5GHZ] = NULL;
 	}
@@ -1397,11 +1914,19 @@ int mwifiex_register_cfg80211(struct mwifiex_private *priv)
 	wdev->wiphy->cipher_suites = mwifiex_cipher_suites;
 	wdev->wiphy->n_cipher_suites = ARRAY_SIZE(mwifiex_cipher_suites);
 
+<<<<<<< HEAD
 	memcpy(wdev->wiphy->perm_addr, priv->curr_addr, ETH_ALEN);
 	wdev->wiphy->signal_type = CFG80211_SIGNAL_TYPE_MBM;
 
 	/* Reserve space for bss band information */
 	wdev->wiphy->bss_priv_size = sizeof(u8);
+=======
+	memcpy(wdev->wiphy->perm_addr, mac, 6);
+	wdev->wiphy->signal_type = CFG80211_SIGNAL_TYPE_MBM;
+
+	/* We are using custom domains */
+	wdev->wiphy->flags |= WIPHY_FLAG_CUSTOM_REGULATORY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wdev->wiphy->reg_notifier = mwifiex_reg_notifier;
 
@@ -1415,12 +1940,17 @@ int mwifiex_register_cfg80211(struct mwifiex_private *priv)
 	ret = wiphy_register(wdev->wiphy);
 	if (ret < 0) {
 		dev_err(priv->adapter->dev, "%s: registering cfg80211 device\n",
+<<<<<<< HEAD
 			__func__);
+=======
+						__func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wiphy_free(wdev->wiphy);
 		kfree(wdev);
 		return ret;
 	} else {
 		dev_dbg(priv->adapter->dev,
+<<<<<<< HEAD
 			"info: successfully registered wiphy device\n");
 	}
 
@@ -1428,3 +1958,123 @@ int mwifiex_register_cfg80211(struct mwifiex_private *priv)
 
 	return ret;
 }
+=======
+				"info: successfully registered wiphy device\n");
+	}
+
+	dev_net_set(dev, wiphy_net(wdev->wiphy));
+	dev->ieee80211_ptr = wdev;
+	memcpy(dev->dev_addr, wdev->wiphy->perm_addr, 6);
+	memcpy(dev->perm_addr, wdev->wiphy->perm_addr, 6);
+	SET_NETDEV_DEV(dev, wiphy_dev(wdev->wiphy));
+	priv->wdev = wdev;
+
+	dev->flags |= IFF_BROADCAST | IFF_MULTICAST;
+	dev->watchdog_timeo = MWIFIEX_DEFAULT_WATCHDOG_TIMEOUT;
+	dev->hard_header_len += MWIFIEX_MIN_DATA_HEADER_LEN;
+
+	return ret;
+}
+
+/*
+ * This function handles the result of different pending network operations.
+ *
+ * The following operations are handled and CFG802.11 subsystem is
+ * notified accordingly -
+ *      - Scan request completion
+ *      - Association request completion
+ *      - IBSS join request completion
+ *      - Disconnect request completion
+ */
+void
+mwifiex_cfg80211_results(struct work_struct *work)
+{
+	struct mwifiex_private *priv =
+		container_of(work, struct mwifiex_private, cfg_workqueue);
+	struct mwifiex_user_scan_cfg *scan_req;
+	int ret = 0, i;
+	struct ieee80211_channel *chan;
+
+	if (priv->scan_request) {
+		scan_req = kzalloc(sizeof(struct mwifiex_user_scan_cfg),
+				   GFP_KERNEL);
+		if (!scan_req) {
+			dev_err(priv->adapter->dev, "failed to alloc "
+						    "scan_req\n");
+			return;
+		}
+		for (i = 0; i < priv->scan_request->n_ssids; i++) {
+			memcpy(scan_req->ssid_list[i].ssid,
+					priv->scan_request->ssids[i].ssid,
+					priv->scan_request->ssids[i].ssid_len);
+			scan_req->ssid_list[i].max_len =
+					priv->scan_request->ssids[i].ssid_len;
+		}
+		for (i = 0; i < priv->scan_request->n_channels; i++) {
+			chan = priv->scan_request->channels[i];
+			scan_req->chan_list[i].chan_number = chan->hw_value;
+			scan_req->chan_list[i].radio_type = chan->band;
+			if (chan->flags & IEEE80211_CHAN_DISABLED)
+				scan_req->chan_list[i].scan_type =
+					MWIFIEX_SCAN_TYPE_PASSIVE;
+			else
+				scan_req->chan_list[i].scan_type =
+					MWIFIEX_SCAN_TYPE_ACTIVE;
+			scan_req->chan_list[i].scan_time = 0;
+		}
+		if (mwifiex_set_user_scan_ioctl(priv, scan_req)) {
+			ret = -EFAULT;
+			goto done;
+		}
+		if (mwifiex_inform_bss_from_scan_result(priv, NULL))
+			ret = -EFAULT;
+done:
+		priv->scan_result_status = ret;
+		dev_dbg(priv->adapter->dev, "info: %s: sending scan results\n",
+							__func__);
+		cfg80211_scan_done(priv->scan_request,
+				(priv->scan_result_status < 0));
+		priv->scan_request = NULL;
+		kfree(scan_req);
+	}
+
+	if (priv->assoc_request == 1) {
+		if (!priv->assoc_result) {
+			cfg80211_connect_result(priv->netdev, priv->cfg_bssid,
+						NULL, 0, NULL, 0,
+						WLAN_STATUS_SUCCESS,
+						GFP_KERNEL);
+			dev_dbg(priv->adapter->dev,
+				"info: associated to bssid %pM successfully\n",
+			       priv->cfg_bssid);
+		} else {
+			dev_dbg(priv->adapter->dev,
+				"info: association to bssid %pM failed\n",
+			       priv->cfg_bssid);
+			memset(priv->cfg_bssid, 0, ETH_ALEN);
+		}
+		priv->assoc_request = 0;
+		priv->assoc_result = 0;
+	}
+
+	if (priv->ibss_join_request == 1) {
+		if (!priv->ibss_join_result) {
+			cfg80211_ibss_joined(priv->netdev, priv->cfg_bssid,
+					     GFP_KERNEL);
+			dev_dbg(priv->adapter->dev,
+				"info: joined/created adhoc network with bssid"
+					" %pM successfully\n", priv->cfg_bssid);
+		} else {
+			dev_dbg(priv->adapter->dev,
+				"info: failed creating/joining adhoc network\n");
+		}
+		priv->ibss_join_request = 0;
+		priv->ibss_join_result = 0;
+	}
+
+	if (priv->disconnect) {
+		memset(priv->cfg_bssid, 0, ETH_ALEN);
+		priv->disconnect = 0;
+	}
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

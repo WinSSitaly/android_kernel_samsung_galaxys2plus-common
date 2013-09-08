@@ -28,6 +28,7 @@
 
 #define _RTL8712_CMD_C_
 
+<<<<<<< HEAD
 #include <linux/compiler.h>
 #include <linux/kernel.h>
 #include <linux/errno.h>
@@ -46,6 +47,8 @@
 #include <linux/semaphore.h>
 #include <linux/rtnetlink.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "osdep_service.h"
 #include "drv_types.h"
 #include "recv_osdep.h"

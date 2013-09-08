@@ -2,6 +2,7 @@
  * Copyright 2002-2005, Instant802 Networks, Inc.
  * Copyright 2005-2006, Devicescape Software, Inc.
  * Copyright 2007	Johannes Berg <johannes@sipsolutions.net>
+<<<<<<< HEAD
  * Copyright 2008-2011	Luis R. Rodriguez <mcgrof@qca.qualcomm.com>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -18,6 +19,15 @@
  */
 
 
+=======
+ * Copyright 2008	Luis R. Rodriguez <lrodriguz@atheros.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * DOC: Wireless regulatory infrastructure
  *
@@ -45,14 +55,20 @@
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/list.h>
 #include <linux/random.h>
 #include <linux/ctype.h>
 #include <linux/nl80211.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/moduleparam.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/cfg80211.h>
 #include "core.h"
 #include "reg.h"
@@ -60,8 +76,15 @@
 #include "nl80211.h"
 
 #ifdef CONFIG_CFG80211_REG_DEBUG
+<<<<<<< HEAD
 #define REG_DBG_PRINT(format, args...)			\
 	printk(KERN_DEBUG pr_fmt(format), ##args)
+=======
+#define REG_DBG_PRINT(format, args...) \
+	do { \
+		printk(KERN_DEBUG pr_fmt(format), ##args);	\
+	} while (0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 #define REG_DBG_PRINT(args...)
 #endif
@@ -134,8 +157,14 @@ static const struct ieee80211_regdomain world_regdom = {
 	.reg_rules = {
 		/* IEEE 802.11b/g, channels 1..11 */
 		REG_RULE(2412-10, 2462+10, 40, 6, 20, 0),
+<<<<<<< HEAD
 		/* IEEE 802.11b/g, channels 12..13. */
 		REG_RULE(2467-10, 2472+10, 40, 6, 20,
+=======
+		/* IEEE 802.11b/g, channels 12..13. No HT40
+		 * channel fits here. */
+		REG_RULE(2467-10, 2472+10, 20, 6, 20,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			NL80211_RRF_PASSIVE_SCAN |
 			NL80211_RRF_NO_IBSS),
 		/* IEEE 802.11 channel 14 - Only JP enables
@@ -339,9 +368,12 @@ static void reg_regdb_search(struct work_struct *work)
 	struct reg_regdb_search_request *request;
 	const struct ieee80211_regdomain *curdom, *regdom;
 	int i, r;
+<<<<<<< HEAD
 	bool set_reg = false;
 
 	mutex_lock(&cfg80211_mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&reg_regdb_search_mutex);
 	while (!list_empty(&reg_regdb_search_list)) {
@@ -357,7 +389,13 @@ static void reg_regdb_search(struct work_struct *work)
 				r = reg_copy_regd(&regdom, curdom);
 				if (r)
 					break;
+<<<<<<< HEAD
 				set_reg = true;
+=======
+				mutex_lock(&cfg80211_mutex);
+				set_regdom(regdom);
+				mutex_unlock(&cfg80211_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 			}
 		}
@@ -365,11 +403,14 @@ static void reg_regdb_search(struct work_struct *work)
 		kfree(request);
 	}
 	mutex_unlock(&reg_regdb_search_mutex);
+<<<<<<< HEAD
 
 	if (set_reg)
 		set_regdom(regdom);
 
 	mutex_unlock(&cfg80211_mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static DECLARE_WORK(reg_regdb_work, reg_regdb_search);
@@ -393,6 +434,7 @@ static void reg_regdb_query(const char *alpha2)
 
 	schedule_work(&reg_regdb_work);
 }
+<<<<<<< HEAD
 
 /* Feel free to add any other sanity checks here */
 static void reg_regdb_size_check(void)
@@ -402,6 +444,9 @@ static void reg_regdb_size_check(void)
 }
 #else
 static inline void reg_regdb_size_check(void) {}
+=======
+#else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void reg_regdb_query(const char *alpha2) {}
 #endif /* CONFIG_CFG80211_INTERNAL_REGDB */
 
@@ -791,10 +836,16 @@ static void chan_reg_rule_print_dbg(struct ieee80211_channel *chan,
 		      chan->center_freq,
 		      KHZ_TO_MHZ(desired_bw_khz));
 
+<<<<<<< HEAD
 	REG_DBG_PRINT("%d KHz - %d KHz @ %d KHz), (%s mBi, %d mBm)\n",
 		      freq_range->start_freq_khz,
 		      freq_range->end_freq_khz,
 		      freq_range->max_bandwidth_khz,
+=======
+	REG_DBG_PRINT("%d KHz - %d KHz @  KHz), (%s mBi, %d mBm)\n",
+		      freq_range->start_freq_khz,
+		      freq_range->end_freq_khz,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      max_antenna_gain,
 		      power_rule->max_eirp);
 }
@@ -862,7 +913,11 @@ static void handle_channel(struct wiphy *wiphy,
 			return;
 
 		REG_DBG_PRINT("Disabling freq %d MHz\n", chan->center_freq);
+<<<<<<< HEAD
 		chan->flags |= IEEE80211_CHAN_DISABLED;
+=======
+		chan->flags = IEEE80211_CHAN_DISABLED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -895,6 +950,7 @@ static void handle_channel(struct wiphy *wiphy,
 	chan->flags = flags | bw_flags | map_regdom_flags(reg_rule->flags);
 	chan->max_antenna_gain = min(chan->orig_mag,
 		(int) MBI_TO_DBI(power_rule->max_antenna_gain));
+<<<<<<< HEAD
 	chan->max_reg_power = (int) MBM_TO_DBM(power_rule->max_eirp);
 	if (chan->orig_mpwr) {
 		/*
@@ -911,6 +967,13 @@ static void handle_channel(struct wiphy *wiphy,
 					      chan->max_reg_power);
 	} else
 		chan->max_power = chan->max_reg_power;
+=======
+	if (chan->orig_mpwr)
+		chan->max_power = min(chan->orig_mpwr,
+			(int) MBM_TO_DBM(power_rule->max_eirp));
+	else
+		chan->max_power = (int) MBM_TO_DBM(power_rule->max_eirp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void handle_band(struct wiphy *wiphy,
@@ -941,7 +1004,11 @@ static bool ignore_reg_update(struct wiphy *wiphy,
 	    wiphy->flags & WIPHY_FLAG_CUSTOM_REGULATORY) {
 		REG_DBG_PRINT("Ignoring regulatory request %s "
 			      "since the driver uses its own custom "
+<<<<<<< HEAD
 			      "regulatory domain\n",
+=======
+			      "regulatory domain ",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      reg_initiator_name(initiator));
 		return true;
 	}
@@ -954,8 +1021,13 @@ static bool ignore_reg_update(struct wiphy *wiphy,
 	    initiator != NL80211_REGDOM_SET_BY_COUNTRY_IE &&
 	    !is_world_regdom(last_request->alpha2)) {
 		REG_DBG_PRINT("Ignoring regulatory request %s "
+<<<<<<< HEAD
 			      "since the driver requires its own regulatory "
 			      "domain to be set first\n",
+=======
+			      "since the driver requires its own regulaotry "
+			      "domain to be set first",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      reg_initiator_name(initiator));
 		return true;
 	}
@@ -963,6 +1035,17 @@ static bool ignore_reg_update(struct wiphy *wiphy,
 	return false;
 }
 
+<<<<<<< HEAD
+=======
+static void update_all_wiphy_regulatory(enum nl80211_reg_initiator initiator)
+{
+	struct cfg80211_registered_device *rdev;
+
+	list_for_each_entry(rdev, &cfg80211_rdev_list, list)
+		wiphy_update_regulatory(&rdev->wiphy, initiator);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void handle_reg_beacon(struct wiphy *wiphy,
 			      unsigned int chan_idx,
 			      struct reg_beacon *reg_beacon)
@@ -1162,6 +1245,7 @@ static void reg_process_ht_flags(struct wiphy *wiphy)
 
 }
 
+<<<<<<< HEAD
 static void wiphy_update_regulatory(struct wiphy *wiphy,
 				    enum nl80211_reg_initiator initiator)
 {
@@ -1174,6 +1258,16 @@ static void wiphy_update_regulatory(struct wiphy *wiphy,
 
 	last_request->dfs_region = cfg80211_regdomain->dfs_region;
 
+=======
+void wiphy_update_regulatory(struct wiphy *wiphy,
+			     enum nl80211_reg_initiator initiator)
+{
+	enum ieee80211_band band;
+
+	if (ignore_reg_update(wiphy, initiator))
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (band = 0; band < IEEE80211_NUM_BANDS; band++) {
 		if (wiphy->bands[band])
 			handle_band(wiphy, band, initiator);
@@ -1185,6 +1279,7 @@ static void wiphy_update_regulatory(struct wiphy *wiphy,
 		wiphy->reg_notifier(wiphy, last_request);
 }
 
+<<<<<<< HEAD
 void regulatory_update(struct wiphy *wiphy,
 		       enum nl80211_reg_initiator setby)
 {
@@ -1213,6 +1308,8 @@ static void update_all_wiphy_regulatory(enum nl80211_reg_initiator initiator)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void handle_channel_custom(struct wiphy *wiphy,
 				  enum ieee80211_band band,
 				  unsigned int chan_idx,
@@ -1408,7 +1505,11 @@ static void reg_set_request_processed(void)
 	spin_unlock(&reg_requests_lock);
 
 	if (last_request->initiator == NL80211_REGDOM_SET_BY_USER)
+<<<<<<< HEAD
 		cancel_delayed_work(&reg_timeout);
+=======
+		cancel_delayed_work_sync(&reg_timeout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (need_more_processing)
 		schedule_work(&reg_work);
@@ -1501,18 +1602,30 @@ new_request:
 }
 
 /* This processes *all* regulatory hints */
+<<<<<<< HEAD
 static void reg_process_hint(struct regulatory_request *reg_request,
 			     enum nl80211_reg_initiator reg_initiator)
 {
 	int r = 0;
 	struct wiphy *wiphy = NULL;
+=======
+static void reg_process_hint(struct regulatory_request *reg_request)
+{
+	int r = 0;
+	struct wiphy *wiphy = NULL;
+	enum nl80211_reg_initiator initiator = reg_request->initiator;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BUG_ON(!reg_request->alpha2);
 
 	if (wiphy_idx_valid(reg_request->wiphy_idx))
 		wiphy = wiphy_idx_to_wiphy(reg_request->wiphy_idx);
 
+<<<<<<< HEAD
 	if (reg_initiator == NL80211_REGDOM_SET_BY_DRIVER &&
+=======
+	if (reg_request->initiator == NL80211_REGDOM_SET_BY_DRIVER &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    !wiphy) {
 		kfree(reg_request);
 		return;
@@ -1522,7 +1635,11 @@ static void reg_process_hint(struct regulatory_request *reg_request,
 	/* This is required so that the orig_* parameters are saved */
 	if (r == -EALREADY && wiphy &&
 	    wiphy->flags & WIPHY_FLAG_STRICT_REGULATORY) {
+<<<<<<< HEAD
 		wiphy_update_regulatory(wiphy, reg_initiator);
+=======
+		wiphy_update_regulatory(wiphy, initiator);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -1531,7 +1648,11 @@ static void reg_process_hint(struct regulatory_request *reg_request,
 	 * source of bogus requests.
 	 */
 	if (r != -EALREADY &&
+<<<<<<< HEAD
 	    reg_initiator == NL80211_REGDOM_SET_BY_USER)
+=======
+	    reg_request->initiator == NL80211_REGDOM_SET_BY_USER)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		schedule_delayed_work(&reg_timeout, msecs_to_jiffies(3142));
 }
 
@@ -1550,7 +1671,11 @@ static void reg_process_pending_hints(void)
 	/* When last_request->processed becomes true this will be rescheduled */
 	if (last_request && !last_request->processed) {
 		REG_DBG_PRINT("Pending regulatory request, waiting "
+<<<<<<< HEAD
 			      "for it to be processed...\n");
+=======
+			      "for it to be processed...");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
@@ -1568,7 +1693,11 @@ static void reg_process_pending_hints(void)
 
 	spin_unlock(&reg_requests_lock);
 
+<<<<<<< HEAD
 	reg_process_hint(reg_request, reg_request->initiator);
+=======
+	reg_process_hint(reg_request);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	mutex_unlock(&reg_mutex);
@@ -1813,6 +1942,7 @@ static void restore_alpha2(char *alpha2, bool reset_user)
 		REG_DBG_PRINT("Restoring regulatory settings\n");
 }
 
+<<<<<<< HEAD
 static void restore_custom_reg_settings(struct wiphy *wiphy)
 {
 	struct ieee80211_supported_band *sband;
@@ -1833,6 +1963,8 @@ static void restore_custom_reg_settings(struct wiphy *wiphy)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Restoring regulatory settings involves ingoring any
  * possibly stale country IE information and user regulatory
@@ -1855,7 +1987,10 @@ static void restore_regulatory_settings(bool reset_user)
 	struct reg_beacon *reg_beacon, *btmp;
 	struct regulatory_request *reg_request, *tmp;
 	LIST_HEAD(tmp_reg_req_list);
+<<<<<<< HEAD
 	struct cfg80211_registered_device *rdev;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&cfg80211_mutex);
 	mutex_lock(&reg_mutex);
@@ -1906,11 +2041,14 @@ static void restore_regulatory_settings(bool reset_user)
 	world_alpha2[0] = cfg80211_regdomain->alpha2[0];
 	world_alpha2[1] = cfg80211_regdomain->alpha2[1];
 
+<<<<<<< HEAD
 	list_for_each_entry(rdev, &cfg80211_rdev_list, list) {
 		if (rdev->wiphy.flags & WIPHY_FLAG_CUSTOM_REGULATORY)
 			restore_custom_reg_settings(&rdev->wiphy);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&reg_mutex);
 	mutex_unlock(&cfg80211_mutex);
 
@@ -2011,7 +2149,11 @@ static void print_rd_rules(const struct ieee80211_regdomain *rd)
 	const struct ieee80211_freq_range *freq_range = NULL;
 	const struct ieee80211_power_rule *power_rule = NULL;
 
+<<<<<<< HEAD
 	pr_info("  (start_freq - end_freq @ bandwidth), (max_antenna_gain, max_eirp)\n");
+=======
+	pr_info("    (start_freq - end_freq @ bandwidth), (max_antenna_gain, max_eirp)\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < rd->n_reg_rules; i++) {
 		reg_rule = &rd->reg_rules[i];
@@ -2023,14 +2165,22 @@ static void print_rd_rules(const struct ieee80211_regdomain *rd)
 		 * in certain regions
 		 */
 		if (power_rule->max_antenna_gain)
+<<<<<<< HEAD
 			pr_info("  (%d KHz - %d KHz @ %d KHz), (%d mBi, %d mBm)\n",
+=======
+			pr_info("    (%d KHz - %d KHz @ %d KHz), (%d mBi, %d mBm)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				freq_range->start_freq_khz,
 				freq_range->end_freq_khz,
 				freq_range->max_bandwidth_khz,
 				power_rule->max_antenna_gain,
 				power_rule->max_eirp);
 		else
+<<<<<<< HEAD
 			pr_info("  (%d KHz - %d KHz @ %d KHz), (N/A, %d mBm)\n",
+=======
+			pr_info("    (%d KHz - %d KHz @ %d KHz), (N/A, %d mBm)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				freq_range->start_freq_khz,
 				freq_range->end_freq_khz,
 				freq_range->max_bandwidth_khz,
@@ -2038,6 +2188,7 @@ static void print_rd_rules(const struct ieee80211_regdomain *rd)
 	}
 }
 
+<<<<<<< HEAD
 bool reg_supported_dfs_region(u8 dfs_region)
 {
 	switch (dfs_region) {
@@ -2074,6 +2225,8 @@ static void print_dfs_region(u8 dfs_region)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void print_regdomain(const struct ieee80211_regdomain *rd)
 {
 
@@ -2101,7 +2254,10 @@ static void print_regdomain(const struct ieee80211_regdomain *rd)
 			pr_info("Regulatory domain changed to country: %c%c\n",
 				rd->alpha2[0], rd->alpha2[1]);
 	}
+<<<<<<< HEAD
 	print_dfs_region(rd->dfs_region);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	print_rd_rules(rd);
 }
 
@@ -2332,7 +2488,11 @@ out:
 static void reg_timeout_work(struct work_struct *work)
 {
 	REG_DBG_PRINT("Timeout while waiting for CRDA to reply, "
+<<<<<<< HEAD
 		      "restoring regulatory settings\n");
+=======
+		      "restoring regulatory settings");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	restore_regulatory_settings(true);
 }
 
@@ -2349,8 +2509,11 @@ int __init regulatory_init(void)
 	spin_lock_init(&reg_requests_lock);
 	spin_lock_init(&reg_pending_beacons_lock);
 
+<<<<<<< HEAD
 	reg_regdb_size_check();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cfg80211_regdomain = cfg80211_world_regdom;
 
 	user_alpha2[0] = '9';

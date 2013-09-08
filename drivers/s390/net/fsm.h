@@ -8,7 +8,11 @@
 #include <linux/slab.h>
 #include <linux/sched.h>
 #include <linux/string.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * Define this to get debugging messages.

@@ -244,7 +244,11 @@ static int ttm_copy_io_ttm_page(struct ttm_tt *ttm, void *src,
 				unsigned long page,
 				pgprot_t prot)
 {
+<<<<<<< HEAD
 	struct page *d = ttm->pages[page];
+=======
+	struct page *d = ttm_tt_get_page(ttm, page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *dst;
 
 	if (!d)
@@ -281,7 +285,11 @@ static int ttm_copy_ttm_io_page(struct ttm_tt *ttm, void *dst,
 				unsigned long page,
 				pgprot_t prot)
 {
+<<<<<<< HEAD
 	struct page *s = ttm->pages[page];
+=======
+	struct page *s = ttm_tt_get_page(ttm, page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *src;
 
 	if (!s)
@@ -321,7 +329,11 @@ int ttm_bo_move_memcpy(struct ttm_buffer_object *bo,
 	struct ttm_mem_type_manager *man = &bdev->man[new_mem->mem_type];
 	struct ttm_tt *ttm = bo->ttm;
 	struct ttm_mem_reg *old_mem = &bo->mem;
+<<<<<<< HEAD
 	struct ttm_mem_reg old_copy = *old_mem;
+=======
+	struct ttm_mem_reg old_copy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *old_iomap;
 	void *new_iomap;
 	int ret;
@@ -342,12 +354,15 @@ int ttm_bo_move_memcpy(struct ttm_buffer_object *bo,
 	if (old_iomap == NULL && ttm == NULL)
 		goto out2;
 
+<<<<<<< HEAD
 	if (ttm->state == tt_unpopulated) {
 		ret = ttm->bdev->driver->ttm_tt_populate(ttm);
 		if (ret)
 			goto out1;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	add = 0;
 	dir = 1;
 
@@ -445,7 +460,10 @@ static int ttm_buffer_object_transfer(struct ttm_buffer_object *bo,
 	kref_init(&fbo->list_kref);
 	kref_init(&fbo->kref);
 	fbo->destroy = &ttm_transfered_destroy;
+<<<<<<< HEAD
 	fbo->acc_size = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	*new_obj = fbo;
 	return 0;
@@ -509,6 +527,7 @@ static int ttm_bo_kmap_ttm(struct ttm_buffer_object *bo,
 {
 	struct ttm_mem_reg *mem = &bo->mem; pgprot_t prot;
 	struct ttm_tt *ttm = bo->ttm;
+<<<<<<< HEAD
 	int ret;
 
 	BUG_ON(!ttm);
@@ -519,6 +538,12 @@ static int ttm_bo_kmap_ttm(struct ttm_buffer_object *bo,
 			return ret;
 	}
 
+=======
+	struct page *d;
+	int i;
+
+	BUG_ON(!ttm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (num_pages == 1 && (mem->placement & TTM_PL_FLAG_CACHED)) {
 		/*
 		 * We're mapping a single page, and the desired
@@ -526,9 +551,24 @@ static int ttm_bo_kmap_ttm(struct ttm_buffer_object *bo,
 		 */
 
 		map->bo_kmap_type = ttm_bo_map_kmap;
+<<<<<<< HEAD
 		map->page = ttm->pages[start_page];
 		map->virtual = kmap(map->page);
 	} else {
+=======
+		map->page = ttm_tt_get_page(ttm, start_page);
+		map->virtual = kmap(map->page);
+	} else {
+	    /*
+	     * Populate the part we're mapping;
+	     */
+		for (i = start_page; i < start_page + num_pages; ++i) {
+			d = ttm_tt_get_page(ttm, i);
+			if (!d)
+				return -ENOMEM;
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * We need to use vmap to get the desired page protection
 		 * or to make the buffer object look contiguous.

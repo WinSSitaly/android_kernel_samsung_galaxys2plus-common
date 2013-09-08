@@ -75,6 +75,35 @@ int radeon_gem_object_create(struct radeon_device *rdev, int size,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+int radeon_gem_object_pin(struct drm_gem_object *obj, uint32_t pin_domain,
+			  uint64_t *gpu_addr)
+{
+	struct radeon_bo *robj = gem_to_radeon_bo(obj);
+	int r;
+
+	r = radeon_bo_reserve(robj, false);
+	if (unlikely(r != 0))
+		return r;
+	r = radeon_bo_pin(robj, pin_domain, gpu_addr);
+	radeon_bo_unreserve(robj);
+	return r;
+}
+
+void radeon_gem_object_unpin(struct drm_gem_object *obj)
+{
+	struct radeon_bo *robj = gem_to_radeon_bo(obj);
+	int r;
+
+	r = radeon_bo_reserve(robj, false);
+	if (likely(r == 0)) {
+		radeon_bo_unpin(robj);
+		radeon_bo_unreserve(robj);
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int radeon_gem_set_domain(struct drm_gem_object *gobj,
 			  uint32_t rdomain, uint32_t wdomain)
 {
@@ -116,6 +145,7 @@ void radeon_gem_fini(struct radeon_device *rdev)
 	radeon_bo_force_delete(rdev);
 }
 
+<<<<<<< HEAD
 /*
  * Call from drm_gem_handle_create which appear in both new and open ioctl
  * case.
@@ -154,6 +184,8 @@ void radeon_gem_object_close(struct drm_gem_object *obj,
 	radeon_bo_unreserve(rbo);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * GEM ioctls.
@@ -164,7 +196,10 @@ int radeon_gem_info_ioctl(struct drm_device *dev, void *data,
 	struct radeon_device *rdev = dev->dev_private;
 	struct drm_radeon_gem_info *args = data;
 	struct ttm_mem_type_manager *man;
+<<<<<<< HEAD
 	unsigned i;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	man = &rdev->mman.bdev.man[TTM_PL_VRAM];
 
@@ -173,9 +208,14 @@ int radeon_gem_info_ioctl(struct drm_device *dev, void *data,
 	if (rdev->stollen_vga_memory)
 		args->vram_visible -= radeon_bo_size(rdev->stollen_vga_memory);
 	args->vram_visible -= radeon_fbdev_total_size(rdev);
+<<<<<<< HEAD
 	args->gart_size = rdev->mc.gtt_size - 4096 - RADEON_IB_POOL_SIZE*64*1024;
 	for(i = 0; i < RADEON_NUM_RINGS; ++i)
 		args->gart_size -= rdev->ring[i].ring_size;
+=======
+	args->gart_size = rdev->mc.gtt_size - rdev->cp.ring_size - 4096 -
+		RADEON_IB_POOL_SIZE*64*1024;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -366,6 +406,7 @@ out:
 	return r;
 }
 
+<<<<<<< HEAD
 int radeon_gem_va_ioctl(struct drm_device *dev, void *data,
 			  struct drm_file *filp)
 {
@@ -469,6 +510,8 @@ out:
 	return r;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int radeon_mode_dumb_create(struct drm_file *file_priv,
 			    struct drm_device *dev,
 			    struct drm_mode_create_dumb *args)

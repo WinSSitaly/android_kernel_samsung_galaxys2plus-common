@@ -1,6 +1,10 @@
 #include <linux/module.h>
 #include <linux/dma-mapping.h>
 #include <asm/machvec.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_IA64_GENERIC
 

@@ -19,6 +19,7 @@
 #include <linux/io.h>
 
 #include <mach/map.h>
+<<<<<<< HEAD
 #include <plat/cpu.h>
 #include <plat/irq-vic-timer.h>
 #include <plat/regs-timer.h>
@@ -31,6 +32,14 @@ static void s3c_irq_demux_vic_timer(unsigned int irq, struct irq_desc *desc)
 	chained_irq_enter(chip, desc);
 	generic_handle_irq((int)desc->irq_data.handler_data);
 	chained_irq_exit(chip, desc);
+=======
+#include <plat/irq-vic-timer.h>
+#include <plat/regs-timer.h>
+
+static void s3c_irq_demux_vic_timer(unsigned int irq, struct irq_desc *desc)
+{
+	generic_handle_irq((int)desc->irq_data.handler_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* We assume the IRQ_TIMER0..IRQ_TIMER4 range is continuous. */
@@ -58,6 +67,7 @@ void __init s3c_init_vic_timer_irq(unsigned int num, unsigned int timer_irq)
 	struct irq_chip_type *ct;
 	unsigned int i;
 
+<<<<<<< HEAD
 #ifdef CONFIG_ARCH_EXYNOS
 	if (soc_is_exynos5250()) {
 		pirq[0] = EXYNOS5_IRQ_TIMER0_VIC;
@@ -73,6 +83,8 @@ void __init s3c_init_vic_timer_irq(unsigned int num, unsigned int timer_irq)
 		pirq[4] = EXYNOS4_IRQ_TIMER4_VIC;
 	}
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	s3c_tgc = irq_alloc_generic_chip("s3c-timer", 1, timer_irq,
 					 S3C64XX_TINT_CSTAT, handle_level_irq);
 

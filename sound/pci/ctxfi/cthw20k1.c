@@ -1777,6 +1777,7 @@ static int hw_adc_init(struct hw *hw, const struct adc_conf *info)
 		return adc_init_SBx(hw, info->input, info->mic20db);
 }
 
+<<<<<<< HEAD
 static struct capabilities hw_capabilities(struct hw *hw)
 {
 	struct capabilities cap;
@@ -1788,6 +1789,12 @@ static struct capabilities hw_capabilities(struct hw *hw)
 	cap.mic_source_switch = 0;
 
 	return cap;
+=======
+static int hw_have_digit_io_switch(struct hw *hw)
+{
+	/* SB073x and Vista compatible cards have no digit IO switch */
+	return !(hw->model == CTSB073X || hw->model == CTUAA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #define CTLBITS(a, b, c, d)	(((a) << 24) | ((b) << 16) | ((c) << 8) | (d))
@@ -1940,7 +1947,11 @@ static int hw_card_start(struct hw *hw)
 
 	if (hw->irq < 0) {
 		err = request_irq(pci->irq, ct_20k1_interrupt, IRQF_SHARED,
+<<<<<<< HEAD
 				  KBUILD_MODNAME, hw);
+=======
+				  "ctxfi", hw);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err < 0) {
 			printk(KERN_ERR "XFi: Cannot get irq %d\n", pci->irq);
 			goto error2;
@@ -2179,7 +2190,11 @@ static struct hw ct20k1_preset __devinitdata = {
 	.pll_init = hw_pll_init,
 	.is_adc_source_selected = hw_is_adc_input_selected,
 	.select_adc_source = hw_adc_input_select,
+<<<<<<< HEAD
 	.capabilities = hw_capabilities,
+=======
+	.have_digit_io_switch = hw_have_digit_io_switch,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PM
 	.suspend = hw_suspend,
 	.resume = hw_resume,

@@ -30,7 +30,10 @@
 #include <asm/fixed_code.h>
 #include <asm/early_printk.h>
 #include <asm/irq_handler.h>
+<<<<<<< HEAD
 #include <asm/pda.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 u16 _bfin_swrst;
 EXPORT_SYMBOL(_bfin_swrst);
@@ -55,7 +58,12 @@ EXPORT_SYMBOL(mtd_size);
 #endif
 
 char __initdata command_line[COMMAND_LINE_SIZE];
+<<<<<<< HEAD
 struct blackfin_initial_pda __initdata initial_pda;
+=======
+void __initdata *init_retx, *init_saved_retx, *init_saved_seqstat,
+	*init_saved_icplb_fault_addr, *init_saved_dcplb_fault_addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* boot memmap, for parsing "memmap=" */
 #define BFIN_MEMMAP_MAX		128 /* number of entries in bfin_memmap */
@@ -550,7 +558,10 @@ static __init void memory_setup(void)
 {
 #ifdef CONFIG_MTD_UCLINUX
 	unsigned long mtd_phys = 0;
+<<<<<<< HEAD
 	unsigned long n;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	unsigned long max_mem;
 
@@ -594,9 +605,15 @@ static __init void memory_setup(void)
 	mtd_size = PAGE_ALIGN(*((unsigned long *)(mtd_phys + 8)));
 
 # if defined(CONFIG_EXT2_FS) || defined(CONFIG_EXT3_FS)
+<<<<<<< HEAD
 	n = ext2_image_size((void *)(mtd_phys + 0x400));
 	if (n)
 		mtd_size = PAGE_ALIGN(n * 1024);
+=======
+	if (*((unsigned short *)(mtd_phys + 0x438)) == EXT2_SUPER_MAGIC)
+		mtd_size =
+		    PAGE_ALIGN(*((unsigned long *)(mtd_phys + 0x404)) << 10);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # endif
 
 # if defined(CONFIG_CRAMFS)
@@ -830,6 +847,7 @@ static inline int __init get_mem_size(void)
 	u32 ddrctl = bfin_read_EBIU_DDRCTL1();
 	int ret = 0;
 	switch (ddrctl & 0xc0000) {
+<<<<<<< HEAD
 	case DEVSZ_64:
 		ret = 64 / 8;
 		break;
@@ -842,6 +860,12 @@ static inline int __init get_mem_size(void)
 	case DEVSZ_512:
 		ret = 512 / 8;
 		break;
+=======
+		case DEVSZ_64:  ret = 64 / 8;
+		case DEVSZ_128: ret = 128 / 8;
+		case DEVSZ_256: ret = 256 / 8;
+		case DEVSZ_512: ret = 512 / 8;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	switch (ddrctl & 0x30000) {
 		case DEVWD_4:  ret *= 2;
@@ -966,6 +990,7 @@ void __init setup_arch(char **cmdline_p)
 		printk(KERN_EMERG "Recovering from DOUBLE FAULT event\n");
 #ifdef CONFIG_DEBUG_DOUBLEFAULT
 		/* We assume the crashing kernel, and the current symbol table match */
+<<<<<<< HEAD
 		printk(KERN_EMERG " While handling exception (EXCAUSE = %#x) at %pF\n",
 			initial_pda.seqstat_doublefault & SEQSTAT_EXCAUSE,
 			initial_pda.retx_doublefault);
@@ -976,6 +1001,15 @@ void __init setup_arch(char **cmdline_p)
 #endif
 		printk(KERN_NOTICE " The instruction at %pF caused a double exception\n",
 			initial_pda.retx);
+=======
+		printk(KERN_EMERG " While handling exception (EXCAUSE = 0x%x) at %pF\n",
+			(int)init_saved_seqstat & SEQSTAT_EXCAUSE, init_saved_retx);
+		printk(KERN_NOTICE "   DCPLB_FAULT_ADDR: %pF\n", init_saved_dcplb_fault_addr);
+		printk(KERN_NOTICE "   ICPLB_FAULT_ADDR: %pF\n", init_saved_icplb_fault_addr);
+#endif
+		printk(KERN_NOTICE " The instruction at %pF caused a double exception\n",
+			init_retx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (_bfin_swrst & RESET_WDOG)
 		printk(KERN_INFO "Recovering from Watchdog event\n");
 	else if (_bfin_swrst & RESET_SOFTWARE)

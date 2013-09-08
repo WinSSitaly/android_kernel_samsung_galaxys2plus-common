@@ -3,12 +3,19 @@
  * Embedded systems support code
  *
  * Copyright 2005-2008, Broadcom Corporation
+<<<<<<< HEAD
  * Copyright 2006-2008, Michael Buesch <m@bues.ch>
+=======
+ * Copyright 2006-2008, Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Licensed under the GNU/GPL. See COPYING for details.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ssb/ssb.h>
 #include <linux/ssb/ssb_embedded.h>
 #include <linux/ssb/ssb_driver_pci.h>

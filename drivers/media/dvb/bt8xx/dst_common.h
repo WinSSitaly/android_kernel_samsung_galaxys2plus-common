@@ -124,7 +124,11 @@ struct dst_state {
 	u16 decode_snr;
 	unsigned long cur_jiff;
 	u8 k22;
+<<<<<<< HEAD
 	u32 bandwidth;
+=======
+	fe_bandwidth_t bandwidth;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 dst_hw_cap;
 	u8 dst_fw_version;
 	fe_sec_mini_cmd_t minicmd;

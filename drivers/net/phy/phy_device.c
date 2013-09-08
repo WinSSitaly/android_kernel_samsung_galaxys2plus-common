@@ -213,7 +213,11 @@ int get_phy_id(struct mii_bus *bus, int addr, u32 *phy_id)
 
 	/* Grab the bits from PHYIR1, and put them
 	 * in the upper half */
+<<<<<<< HEAD
 	phy_reg = mdiobus_read(bus, addr, MII_PHYSID1);
+=======
+	phy_reg = bus->read(bus, addr, MII_PHYSID1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (phy_reg < 0)
 		return -EIO;
@@ -221,7 +225,11 @@ int get_phy_id(struct mii_bus *bus, int addr, u32 *phy_id)
 	*phy_id = (phy_reg & 0xffff) << 16;
 
 	/* Grab the bits from PHYIR2, and put them in the lower half */
+<<<<<<< HEAD
 	phy_reg = mdiobus_read(bus, addr, MII_PHYSID2);
+=======
+	phy_reg = bus->read(bus, addr, MII_PHYSID2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (phy_reg < 0)
 		return -EIO;
@@ -563,9 +571,26 @@ static int genphy_config_advert(struct phy_device *phydev)
 	if (adv < 0)
 		return adv;
 
+<<<<<<< HEAD
 	adv &= ~(ADVERTISE_ALL | ADVERTISE_100BASE4 | ADVERTISE_PAUSE_CAP |
 		 ADVERTISE_PAUSE_ASYM);
 	adv |= ethtool_adv_to_mii_adv_t(advertise);
+=======
+	adv &= ~(ADVERTISE_ALL | ADVERTISE_100BASE4 | ADVERTISE_PAUSE_CAP | 
+		 ADVERTISE_PAUSE_ASYM);
+	if (advertise & ADVERTISED_10baseT_Half)
+		adv |= ADVERTISE_10HALF;
+	if (advertise & ADVERTISED_10baseT_Full)
+		adv |= ADVERTISE_10FULL;
+	if (advertise & ADVERTISED_100baseT_Half)
+		adv |= ADVERTISE_100HALF;
+	if (advertise & ADVERTISED_100baseT_Full)
+		adv |= ADVERTISE_100FULL;
+	if (advertise & ADVERTISED_Pause)
+		adv |= ADVERTISE_PAUSE_CAP;
+	if (advertise & ADVERTISED_Asym_Pause)
+		adv |= ADVERTISE_PAUSE_ASYM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (adv != oldadv) {
 		err = phy_write(phydev, MII_ADVERTISE, adv);
@@ -584,7 +609,14 @@ static int genphy_config_advert(struct phy_device *phydev)
 			return adv;
 
 		adv &= ~(ADVERTISE_1000FULL | ADVERTISE_1000HALF);
+<<<<<<< HEAD
 		adv |= ethtool_adv_to_mii_ctrl1000_t(advertise);
+=======
+		if (advertise & SUPPORTED_1000baseT_Half)
+			adv |= ADVERTISE_1000HALF;
+		if (advertise & SUPPORTED_1000baseT_Full)
+			adv |= ADVERTISE_1000FULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (adv != oldadv) {
 			err = phy_write(phydev, MII_CTRL1000, adv);
@@ -915,7 +947,13 @@ static int phy_probe(struct device *dev)
 
 	phydev = to_phy_device(dev);
 
+<<<<<<< HEAD
 	drv = phydev->dev.driver;
+=======
+	/* Make sure the driver is held.
+	 * XXX -- Is this correct? */
+	drv = get_driver(phydev->dev.driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	phydrv = to_phy_driver(drv);
 	phydev->drv = phydrv;
 
@@ -955,6 +993,11 @@ static int phy_remove(struct device *dev)
 
 	if (phydev->drv->remove)
 		phydev->drv->remove(phydev);
+<<<<<<< HEAD
+=======
+
+	put_driver(dev->driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	phydev->drv = NULL;
 
 	return 0;

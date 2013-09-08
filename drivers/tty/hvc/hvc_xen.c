@@ -23,6 +23,7 @@
 #include <linux/err.h>
 #include <linux/init.h>
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/list.h>
 
 #include <asm/io.h>
@@ -32,16 +33,26 @@
 #include <xen/interface/xen.h>
 #include <xen/hvm.h>
 #include <xen/grant_table.h>
+=======
+
+#include <asm/xen/hypervisor.h>
+
+#include <xen/xen.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <xen/page.h>
 #include <xen/events.h>
 #include <xen/interface/io/console.h>
 #include <xen/hvc-console.h>
+<<<<<<< HEAD
 #include <xen/xenbus.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "hvc_console.h"
 
 #define HVC_COOKIE   0x58656e /* "Xen" in hex */
 
+<<<<<<< HEAD
 struct xencons_info {
 	struct list_head list;
 	struct xenbus_device *xbdev;
@@ -91,6 +102,33 @@ static int __write_console(struct xencons_info *xencons,
 {
 	XENCONS_RING_IDX cons, prod;
 	struct xencons_interface *intf = xencons->intf;
+=======
+static struct hvc_struct *hvc;
+static int xencons_irq;
+
+/* ------------------------------------------------------------------ */
+
+static unsigned long console_pfn = ~0ul;
+
+static inline struct xencons_interface *xencons_interface(void)
+{
+	if (console_pfn == ~0ul)
+		return mfn_to_virt(xen_start_info->console.domU.mfn);
+	else
+		return __va(console_pfn << PAGE_SHIFT);
+}
+
+static inline void notify_daemon(void)
+{
+	/* Use evtchn: this is called early, before irq is set up. */
+	notify_remote_via_evtchn(xen_start_info->console.domU.evtchn);
+}
+
+static int __write_console(const char *data, int len)
+{
+	struct xencons_interface *intf = xencons_interface();
+	XENCONS_RING_IDX cons, prod;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int sent = 0;
 
 	cons = intf->out_cons;
@@ -105,16 +143,23 @@ static int __write_console(struct xencons_info *xencons,
 	intf->out_prod = prod;
 
 	if (sent)
+<<<<<<< HEAD
 		notify_daemon(xencons);
+=======
+		notify_daemon();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return sent;
 }
 
 static int domU_write_console(uint32_t vtermno, const char *data, int len)
 {
 	int ret = len;
+<<<<<<< HEAD
 	struct xencons_info *cons = vtermno_to_xencons(vtermno);
 	if (cons == NULL)
 		return -EINVAL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Make sure the whole buffer is emitted, polling if
@@ -123,7 +168,11 @@ static int domU_write_console(uint32_t vtermno, const char *data, int len)
 	 * kernel is crippled.
 	 */
 	while (len) {
+<<<<<<< HEAD
 		int sent = __write_console(cons, data, len);
+=======
+		int sent = __write_console(data, len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		
 		data += sent;
 		len -= sent;
@@ -137,6 +186,7 @@ static int domU_write_console(uint32_t vtermno, const char *data, int len)
 
 static int domU_read_console(uint32_t vtermno, char *buf, int len)
 {
+<<<<<<< HEAD
 	struct xencons_interface *intf;
 	XENCONS_RING_IDX cons, prod;
 	int recv = 0;
@@ -144,6 +194,11 @@ static int domU_read_console(uint32_t vtermno, char *buf, int len)
 	if (xencons == NULL)
 		return -EINVAL;
 	intf = xencons->intf;
+=======
+	struct xencons_interface *intf = xencons_interface();
+	XENCONS_RING_IDX cons, prod;
+	int recv = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cons = intf->in_cons;
 	prod = intf->in_prod;
@@ -156,7 +211,11 @@ static int domU_read_console(uint32_t vtermno, char *buf, int len)
 	mb();			/* read ring before consuming */
 	intf->in_cons = cons;
 
+<<<<<<< HEAD
 	notify_daemon(xencons);
+=======
+	notify_daemon();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return recv;
 }
 
@@ -194,6 +253,7 @@ static struct hv_ops dom0_hvc_ops = {
 	.notifier_hangup = notifier_hangup_irq,
 };
 
+<<<<<<< HEAD
 static int xen_hvm_console_init(void)
 {
 	int r;
@@ -247,10 +307,17 @@ err:
 static int xen_pv_console_init(void)
 {
 	struct xencons_info *info;
+=======
+static int __init xen_hvc_init(void)
+{
+	struct hvc_struct *hp;
+	struct hv_ops *ops;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!xen_pv_domain())
 		return -ENODEV;
 
+<<<<<<< HEAD
 	if (!xen_start_info->console.domU.evtchn)
 		return -ENODEV;
 
@@ -558,10 +625,43 @@ static int __init xen_hvc_init(void)
 	r = xenbus_register_frontend(&xencons_driver);
 #endif
 	return r;
+=======
+	if (xen_initial_domain()) {
+		ops = &dom0_hvc_ops;
+		xencons_irq = bind_virq_to_irq(VIRQ_CONSOLE, 0);
+	} else {
+		if (!xen_start_info->console.domU.evtchn)
+			return -ENODEV;
+
+		ops = &domU_hvc_ops;
+		xencons_irq = bind_evtchn_to_irq(xen_start_info->console.domU.evtchn);
+	}
+	if (xencons_irq < 0)
+		xencons_irq = 0; /* NO_IRQ */
+	else
+		irq_set_noprobe(xencons_irq);
+
+	hp = hvc_alloc(HVC_COOKIE, xencons_irq, ops, 256);
+	if (IS_ERR(hp))
+		return PTR_ERR(hp);
+
+	hvc = hp;
+
+	console_pfn = mfn_to_pfn(xen_start_info->console.domU.mfn);
+
+	return 0;
+}
+
+void xen_console_resume(void)
+{
+	if (xencons_irq)
+		rebind_evtchn_irq(xen_start_info->console.domU.evtchn, xencons_irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit xen_hvc_fini(void)
 {
+<<<<<<< HEAD
 	struct xencons_info *entry, *next;
 
 	if (list_empty(&xenconsoles))
@@ -570,17 +670,28 @@ static void __exit xen_hvc_fini(void)
 	list_for_each_entry_safe(entry, next, &xenconsoles, list) {
 		xen_console_remove(entry);
 	}
+=======
+	if (hvc)
+		hvc_remove(hvc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int xen_cons_init(void)
 {
+<<<<<<< HEAD
 	const struct hv_ops *ops;
 
 	if (!xen_domain())
+=======
+	struct hv_ops *ops;
+
+	if (!xen_pv_domain())
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	if (xen_initial_domain())
 		ops = &dom0_hvc_ops;
+<<<<<<< HEAD
 	else {
 		int r;
 		ops = &domU_hvc_ops;
@@ -593,11 +704,19 @@ static int xen_cons_init(void)
 			return r;
 	}
 
+=======
+	else
+		ops = &domU_hvc_ops;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hvc_instantiate(HVC_COOKIE, 0, ops);
 	return 0;
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_init(xen_hvc_init);
 module_exit(xen_hvc_fini);
 console_initcall(xen_cons_init);
@@ -609,9 +728,12 @@ static void xenboot_write_console(struct console *console, const char *string,
 	unsigned int linelen, off = 0;
 	const char *pos;
 
+<<<<<<< HEAD
 	if (!xen_pv_domain())
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dom0_write_console(0, string, len);
 
 	if (xen_initial_domain())

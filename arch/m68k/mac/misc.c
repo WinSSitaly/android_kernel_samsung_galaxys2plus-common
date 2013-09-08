@@ -19,6 +19,10 @@
 #include <asm/uaccess.h>
 #include <asm/io.h>
 #include <asm/rtc.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/segment.h>
 #include <asm/setup.h>
 #include <asm/macintosh.h>
@@ -303,6 +307,7 @@ static void via_write_pram(int offset, __u8 data)
 static long via_read_time(void)
 {
 	union {
+<<<<<<< HEAD
 		__u8 cdata[4];
 		long idata;
 	} result, last_result;
@@ -312,12 +317,19 @@ static long via_read_time(void)
 	via_pram_command(0x85, &last_result.cdata[2]);
 	via_pram_command(0x89, &last_result.cdata[1]);
 	via_pram_command(0x8D, &last_result.cdata[0]);
+=======
+		__u8  cdata[4];
+		long  idata;
+	} result, last_result;
+	int	ct;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * The NetBSD guys say to loop until you get the same reading
 	 * twice in a row.
 	 */
 
+<<<<<<< HEAD
 	while (1) {
 		via_pram_command(0x81, &result.cdata[3]);
 		via_pram_command(0x85, &result.cdata[2]);
@@ -338,6 +350,27 @@ static long via_read_time(void)
 	       last_result.idata, result.idata);
 
 	return 0;
+=======
+	ct = 0;
+	do {
+		if (++ct > 10) {
+			printk("via_read_time: couldn't get valid time, "
+			       "last read = 0x%08lx and 0x%08lx\n",
+			       last_result.idata, result.idata);
+			break;
+		}
+
+		last_result.idata = result.idata;
+		result.idata = 0;
+
+		via_pram_command(0x81, &result.cdata[3]);
+		via_pram_command(0x85, &result.cdata[2]);
+		via_pram_command(0x89, &result.cdata[1]);
+		via_pram_command(0x8D, &result.cdata[0]);
+	} while (result.idata != last_result.idata);
+
+	return result.idata - RTC_OFFSET;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*

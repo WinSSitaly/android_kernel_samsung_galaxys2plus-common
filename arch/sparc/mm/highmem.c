@@ -24,13 +24,20 @@
  */
 #include <linux/mm.h>
 #include <linux/highmem.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/pgalloc.h>
 #include <asm/cacheflush.h>
 #include <asm/tlbflush.h>
 #include <asm/fixmap.h>
 
+<<<<<<< HEAD
 void *kmap_atomic(struct page *page)
+=======
+void *__kmap_atomic(struct page *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long vaddr;
 	long idx, type;
@@ -64,7 +71,11 @@ void *kmap_atomic(struct page *page)
 
 	return (void*) vaddr;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(kmap_atomic);
+=======
+EXPORT_SYMBOL(__kmap_atomic);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void __kunmap_atomic(void *kvaddr)
 {

@@ -12,8 +12,11 @@
  * published by the Free Software Foundation.
  */
 
+<<<<<<< HEAD
 #include <linux/io.h>
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/platform_device.h>
 #include <linux/slab.h>
@@ -513,7 +516,11 @@ static void sh_sir_tx(struct sh_sir_self *self, int phase)
 
 static int sh_sir_read_data(struct sh_sir_self *self)
 {
+<<<<<<< HEAD
 	u16 val = 0;
+=======
+	u16 val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int timeout = 1024;
 
 	while (timeout--) {
@@ -808,7 +815,22 @@ static struct platform_driver sh_sir_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(sh_sir_driver);
+=======
+static int __init sh_sir_init(void)
+{
+	return platform_driver_register(&sh_sir_driver);
+}
+
+static void __exit sh_sir_exit(void)
+{
+	platform_driver_unregister(&sh_sir_driver);
+}
+
+module_init(sh_sir_init);
+module_exit(sh_sir_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Kuninori Morimoto <morimoto.kuninori@renesas.com>");
 MODULE_DESCRIPTION("SuperH IrDA driver");

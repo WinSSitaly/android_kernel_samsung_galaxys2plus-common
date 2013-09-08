@@ -27,6 +27,7 @@
 #define TEGRA_POWERGATE_VDEC	4
 #define TEGRA_POWERGATE_L2	5
 #define TEGRA_POWERGATE_MPE	6
+<<<<<<< HEAD
 #define TEGRA_POWERGATE_HEG	7
 #define TEGRA_POWERGATE_SATA	8
 #define TEGRA_POWERGATE_CPU1	9
@@ -44,6 +45,13 @@ int tegra_cpu_powergate_id(int cpuid);
 int tegra_powergate_is_powered(int id);
 int tegra_powergate_power_on(int id);
 int tegra_powergate_power_off(int id);
+=======
+#define TEGRA_NUM_POWERGATE	7
+
+int tegra_powergate_power_on(int id);
+int tegra_powergate_power_off(int id);
+bool tegra_powergate_is_powered(int id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int tegra_powergate_remove_clamping(int id);
 
 /* Must be called with clk disabled, and returns with clk enabled */

@@ -10,7 +10,13 @@
 #include <sys/socket.h>
 #include <sys/uio.h>
 #include <sys/un.h>
+<<<<<<< HEAD
 #include "mconsole.h"
+=======
+#include "kern_constants.h"
+#include "mconsole.h"
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct mconsole_command commands[] = {
 	/*

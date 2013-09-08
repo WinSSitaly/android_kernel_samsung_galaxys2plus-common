@@ -208,4 +208,19 @@ static struct i2c_driver tda9840_driver = {
 	.id_table	= tda9840_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(tda9840_driver);
+=======
+static __init int init_tda9840(void)
+{
+	return i2c_add_driver(&tda9840_driver);
+}
+
+static __exit void exit_tda9840(void)
+{
+	i2c_del_driver(&tda9840_driver);
+}
+
+module_init(init_tda9840);
+module_exit(exit_tda9840);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

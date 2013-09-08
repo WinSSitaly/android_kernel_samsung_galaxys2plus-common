@@ -19,11 +19,17 @@
 
 #include "hw.h"
 
+<<<<<<< HEAD
 #define AR_PHY_CCA_FILTERWINDOW_LENGTH          5
 
 /* Internal noise floor can vary by about 6db depending on the frequency */
 #define ATH9K_NF_CAL_NOISE_THRESH		6
 
+=======
+#define AR_PHY_CCA_FILTERWINDOW_LENGTH_INIT     3
+#define AR_PHY_CCA_FILTERWINDOW_LENGTH          5
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NUM_NF_READINGS       6
 #define ATH9K_NF_CAL_HIST_MAX 5
 
@@ -110,7 +116,10 @@ void ath9k_init_nfcal_hist_buffer(struct ath_hw *ah,
 void ath9k_hw_bstuck_nfcal(struct ath_hw *ah);
 void ath9k_hw_reset_calibration(struct ath_hw *ah,
 				struct ath9k_cal_list *currCal);
+<<<<<<< HEAD
 s16 ath9k_hw_getchan_noise(struct ath_hw *ah, struct ath9k_channel *chan);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 #endif /* CALIB_H */

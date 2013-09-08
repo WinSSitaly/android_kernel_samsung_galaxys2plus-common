@@ -19,7 +19,10 @@
  */
 
 #include <media/rc-map.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct rc_map_table digitalnow_tinytwin[] = {
 	{ 0x0000, KEY_MUTE },            /* [symbol speaker] */

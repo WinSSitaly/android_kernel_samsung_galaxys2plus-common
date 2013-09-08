@@ -6,7 +6,11 @@
 #include <linux/mm.h>
 #include <linux/mmzone.h>
 #include <linux/vm_event_item.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int sysctl_stat_interval;
 

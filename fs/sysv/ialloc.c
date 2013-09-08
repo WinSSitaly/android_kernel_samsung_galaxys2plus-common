@@ -132,7 +132,11 @@ void sysv_free_inode(struct inode * inode)
 	brelse(bh);
 }
 
+<<<<<<< HEAD
 struct inode * sysv_new_inode(const struct inode * dir, umode_t mode)
+=======
+struct inode * sysv_new_inode(const struct inode * dir, mode_t mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct super_block *sb = dir->i_sb;
 	struct sysv_sb_info *sbi = SYSV_SB(sb);

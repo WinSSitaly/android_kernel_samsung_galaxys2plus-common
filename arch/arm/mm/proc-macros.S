@@ -91,9 +91,14 @@
 #if L_PTE_SHARED != PTE_EXT_SHARED
 #error PTE shared bit mismatch
 #endif
+<<<<<<< HEAD
 #if !defined (CONFIG_ARM_LPAE) && \
 	(L_PTE_XN+L_PTE_USER+L_PTE_RDONLY+L_PTE_DIRTY+L_PTE_YOUNG+\
 	 L_PTE_FILE+L_PTE_PRESENT) > L_PTE_SHARED
+=======
+#if (L_PTE_XN+L_PTE_USER+L_PTE_RDONLY+L_PTE_DIRTY+L_PTE_YOUNG+\
+     L_PTE_FILE+L_PTE_PRESENT) > L_PTE_SHARED
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #error Invalid Linux PTE bit settings
 #endif
 #endif	/* CONFIG_MMU */
@@ -255,6 +260,7 @@
 	mcr	p15, 0, r0, c7, c10, 1		@ clean L1 D line
 	mcr	p15, 0, ip, c7, c10, 4		@ data write barrier
 	.endm
+<<<<<<< HEAD
 
 .macro define_processor_functions name:req, dabort:req, pabort:req, nommu=0, suspend=0
 	.type	\name\()_processor_functions, #object
@@ -323,3 +329,5 @@ ENTRY(\name\()_tlb_fns)
 	.endif
 	.size	\name\()_tlb_fns, . - \name\()_tlb_fns
 .endm
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

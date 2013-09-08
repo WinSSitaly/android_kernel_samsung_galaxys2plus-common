@@ -191,7 +191,21 @@ static struct platform_driver picoxcell_trng_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(picoxcell_trng_driver);
+=======
+static int __init picoxcell_trng_init(void)
+{
+	return platform_driver_register(&picoxcell_trng_driver);
+}
+module_init(picoxcell_trng_init);
+
+static void __exit picoxcell_trng_exit(void)
+{
+	platform_driver_unregister(&picoxcell_trng_driver);
+}
+module_exit(picoxcell_trng_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Jamie Iles");

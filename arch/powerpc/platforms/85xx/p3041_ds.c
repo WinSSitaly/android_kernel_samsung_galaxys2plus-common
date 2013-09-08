@@ -18,6 +18,10 @@
 #include <linux/interrupt.h>
 #include <linux/phy.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/time.h>
 #include <asm/machdep.h>
 #include <asm/pci-bridge.h>
@@ -29,7 +33,10 @@
 #include <linux/of_platform.h>
 #include <sysdev/fsl_soc.h>
 #include <sysdev/fsl_pci.h>
+<<<<<<< HEAD
 #include <asm/ehv_pic.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "corenet_ds.h"
 
@@ -39,6 +46,7 @@
 static int __init p3041_ds_probe(void)
 {
 	unsigned long root = of_get_flat_dt_root();
+<<<<<<< HEAD
 #ifdef CONFIG_SMP
 	extern struct smp_ops_t smp_85xx_ops;
 #endif
@@ -65,6 +73,10 @@ static int __init p3041_ds_probe(void)
 	}
 
 	return 0;
+=======
+
+	return of_flat_dt_is_compatible(root, "fsl,P3041DS");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 define_machine(p3041_ds) {
@@ -79,7 +91,10 @@ define_machine(p3041_ds) {
 	.restart		= fsl_rstcr_restart,
 	.calibrate_decr		= generic_calibrate_decr,
 	.progress		= udbg_progress,
+<<<<<<< HEAD
 	.power_save		= e500_idle,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 machine_device_initcall(p3041_ds, corenet_ds_publish_devices);

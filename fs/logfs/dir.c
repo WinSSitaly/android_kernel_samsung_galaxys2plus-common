@@ -71,7 +71,11 @@ static int write_dir(struct inode *dir, struct logfs_disk_dentry *dd,
 
 static int write_inode(struct inode *inode)
 {
+<<<<<<< HEAD
 	return __logfs_write_inode(inode, NULL, WF_LOCK);
+=======
+	return __logfs_write_inode(inode, WF_LOCK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static s64 dir_seek_data(struct inode *inode, s64 pos)
@@ -177,17 +181,29 @@ static struct page *logfs_get_dd_page(struct inode *dir, struct dentry *dentry)
 				(filler_t *)logfs_readpage, NULL);
 		if (IS_ERR(page))
 			return page;
+<<<<<<< HEAD
 		dd = kmap_atomic(page);
+=======
+		dd = kmap_atomic(page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		BUG_ON(dd->namelen == 0);
 
 		if (name->len != be16_to_cpu(dd->namelen) ||
 				memcmp(name->name, dd->name, name->len)) {
+<<<<<<< HEAD
 			kunmap_atomic(dd);
+=======
+			kunmap_atomic(dd, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			page_cache_release(page);
 			continue;
 		}
 
+<<<<<<< HEAD
 		kunmap_atomic(dd);
+=======
+		kunmap_atomic(dd, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return page;
 	}
 	return NULL;
@@ -197,7 +213,11 @@ static int logfs_remove_inode(struct inode *inode)
 {
 	int ret;
 
+<<<<<<< HEAD
 	drop_nlink(inode);
+=======
+	inode->i_nlink--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = write_inode(inode);
 	LOGFS_BUG_ON(ret, inode->i_sb);
 	return ret;
@@ -365,6 +385,7 @@ static struct dentry *logfs_lookup(struct inode *dir, struct dentry *dentry,
 		return NULL;
 	}
 	index = page->index;
+<<<<<<< HEAD
 	dd = kmap_atomic(page);
 	ino = be64_to_cpu(dd->ino);
 	kunmap_atomic(dd);
@@ -374,6 +395,19 @@ static struct dentry *logfs_lookup(struct inode *dir, struct dentry *dentry,
 	if (IS_ERR(inode))
 		printk(KERN_ERR"LogFS: Cannot read inode #%llx for dentry (%lx, %lx)n",
 				ino, dir->i_ino, index);
+=======
+	dd = kmap_atomic(page, KM_USER0);
+	ino = be64_to_cpu(dd->ino);
+	kunmap_atomic(dd, KM_USER0);
+	page_cache_release(page);
+
+	inode = logfs_iget(dir->i_sb, ino);
+	if (IS_ERR(inode)) {
+		printk(KERN_ERR"LogFS: Cannot read inode #%llx for dentry (%lx, %lx)n",
+				ino, dir->i_ino, index);
+		return ERR_CAST(inode);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return d_splice_alias(inode, dentry);
 }
 
@@ -402,12 +436,20 @@ static int logfs_write_dir(struct inode *dir, struct dentry *dentry,
 		if (!page)
 			return -ENOMEM;
 
+<<<<<<< HEAD
 		dd = kmap_atomic(page);
+=======
+		dd = kmap_atomic(page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		memset(dd, 0, sizeof(*dd));
 		dd->ino = cpu_to_be64(inode->i_ino);
 		dd->type = logfs_type(inode);
 		logfs_set_name(dd, &dentry->d_name);
+<<<<<<< HEAD
 		kunmap_atomic(dd);
+=======
+		kunmap_atomic(dd, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		err = logfs_write_buf(dir, page, WF_LOCK);
 		unlock_page(page);
@@ -433,7 +475,11 @@ static int __logfs_create(struct inode *dir, struct dentry *dentry,
 
 	ta = kzalloc(sizeof(*ta), GFP_KERNEL);
 	if (!ta) {
+<<<<<<< HEAD
 		drop_nlink(inode);
+=======
+		inode->i_nlink--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iput(inode);
 		return -ENOMEM;
 	}
@@ -456,7 +502,11 @@ static int __logfs_create(struct inode *dir, struct dentry *dentry,
 		abort_transaction(inode, ta);
 		li->li_flags |= LOGFS_IF_STILLBORN;
 		/* FIXME: truncate symlink */
+<<<<<<< HEAD
 		drop_nlink(inode);
+=======
+		inode->i_nlink--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iput(inode);
 		goto out;
 	}
@@ -482,7 +532,11 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int logfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+=======
+static int logfs_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inode *inode;
 
@@ -501,7 +555,11 @@ static int logfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
 	return __logfs_create(dir, dentry, inode, NULL, 0);
 }
 
+<<<<<<< HEAD
 static int logfs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+=======
+static int logfs_create(struct inode *dir, struct dentry *dentry, int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct nameidata *nd)
 {
 	struct inode *inode;
@@ -517,7 +575,11 @@ static int logfs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
 	return __logfs_create(dir, dentry, inode, NULL, 0);
 }
 
+<<<<<<< HEAD
 static int logfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode,
+=======
+static int logfs_mknod(struct inode *dir, struct dentry *dentry, int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_t rdev)
 {
 	struct inode *inode;
@@ -558,9 +620,18 @@ static int logfs_link(struct dentry *old_dentry, struct inode *dir,
 {
 	struct inode *inode = old_dentry->d_inode;
 
+<<<<<<< HEAD
 	inode->i_ctime = dir->i_ctime = dir->i_mtime = CURRENT_TIME;
 	ihold(inode);
 	inc_nlink(inode);
+=======
+	if (inode->i_nlink >= LOGFS_LINK_MAX)
+		return -EMLINK;
+
+	inode->i_ctime = dir->i_ctime = dir->i_mtime = CURRENT_TIME;
+	ihold(inode);
+	inode->i_nlink++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mark_inode_dirty_sync(inode);
 
 	return __logfs_create(dir, dentry, inode, NULL, 0);
@@ -576,9 +647,15 @@ static int logfs_get_dd(struct inode *dir, struct dentry *dentry,
 	if (IS_ERR(page))
 		return PTR_ERR(page);
 	*pos = page->index;
+<<<<<<< HEAD
 	map = kmap_atomic(page);
 	memcpy(dd, map, sizeof(*dd));
 	kunmap_atomic(map);
+=======
+	map = kmap_atomic(page, KM_USER0);
+	memcpy(dd, map, sizeof(*dd));
+	kunmap_atomic(map, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	page_cache_release(page);
 	return 0;
 }

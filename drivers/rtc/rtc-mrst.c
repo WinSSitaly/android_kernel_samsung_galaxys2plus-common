@@ -76,6 +76,7 @@ static inline unsigned char vrtc_is_updating(void)
 /*
  * rtc_time's year contains the increment over 1900, but vRTC's YEAR
  * register can't be programmed to value larger than 0x64, so vRTC
+<<<<<<< HEAD
  * driver chose to use 1972 (1970 is UNIX time start point) as the base,
  * and does the translation at read/write time.
  *
@@ -85,6 +86,14 @@ static inline unsigned char vrtc_is_updating(void)
  * 1960, for a device's first use, its YEAR register is 0 and the system
  * year will be parsed as 1960 which is not a valid UNIX time and will
  * cause many applications to fail mysteriously.
+=======
+ * driver chose to use 1960 (1970 is UNIX time start point) as the base,
+ * and does the translation at read/write time.
+ *
+ * Why not just use 1970 as the offset? it's because using 1960 will
+ * make it consistent in leap year setting for both vrtc and low-level
+ * physical rtc devices.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int mrst_read_time(struct device *dev, struct rtc_time *time)
 {
@@ -102,10 +111,17 @@ static int mrst_read_time(struct device *dev, struct rtc_time *time)
 	time->tm_year = vrtc_cmos_read(RTC_YEAR);
 	spin_unlock_irqrestore(&rtc_lock, flags);
 
+<<<<<<< HEAD
 	/* Adjust for the 1972/1900 */
 	time->tm_year += 72;
 	time->tm_mon--;
 	return rtc_valid_tm(time);
+=======
+	/* Adjust for the 1960/1900 */
+	time->tm_year += 60;
+	time->tm_mon--;
+	return RTC_24H;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int mrst_set_time(struct device *dev, struct rtc_time *time)
@@ -122,9 +138,15 @@ static int mrst_set_time(struct device *dev, struct rtc_time *time)
 	min = time->tm_min;
 	sec = time->tm_sec;
 
+<<<<<<< HEAD
 	if (yrs < 72 || yrs > 138)
 		return -EINVAL;
 	yrs -= 72;
+=======
+	if (yrs < 70 || yrs > 138)
+		return -EINVAL;
+	yrs -= 60;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&rtc_lock, flags);
 
@@ -335,8 +357,14 @@ vrtc_mrst_do_probe(struct device *dev, struct resource *iomem, int rtc_irq)
 	if (!iomem)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	iomem = request_mem_region(iomem->start, resource_size(iomem),
 				   driver_name);
+=======
+	iomem = request_mem_region(iomem->start,
+			iomem->end + 1 - iomem->start,
+			driver_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!iomem) {
 		dev_dbg(dev, "i/o mem already in use.\n");
 		return -EBUSY;
@@ -366,7 +394,11 @@ vrtc_mrst_do_probe(struct device *dev, struct resource *iomem, int rtc_irq)
 
 	if (rtc_irq) {
 		retval = request_irq(rtc_irq, mrst_rtc_irq,
+<<<<<<< HEAD
 				0, dev_name(&mrst_rtc.rtc->dev),
+=======
+				IRQF_DISABLED, dev_name(&mrst_rtc.rtc->dev),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				mrst_rtc.rtc);
 		if (retval < 0) {
 			dev_dbg(dev, "IRQ %d is already in use, err %d\n",
@@ -537,7 +569,22 @@ static struct platform_driver vrtc_mrst_platform_driver = {
 	}
 };
 
+<<<<<<< HEAD
 module_platform_driver(vrtc_mrst_platform_driver);
+=======
+static int __init vrtc_mrst_init(void)
+{
+	return platform_driver_register(&vrtc_mrst_platform_driver);
+}
+
+static void __exit vrtc_mrst_exit(void)
+{
+	platform_driver_unregister(&vrtc_mrst_platform_driver);
+}
+
+module_init(vrtc_mrst_init);
+module_exit(vrtc_mrst_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Jacob Pan; Feng Tang");
 MODULE_DESCRIPTION("Driver for Moorestown virtual RTC");

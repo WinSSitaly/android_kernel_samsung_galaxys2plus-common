@@ -70,8 +70,11 @@ struct dib7000p_state {
 	u8 i2c_write_buffer[4];
 	u8 i2c_read_buffer[2];
 	struct mutex i2c_buffer_lock;
+<<<<<<< HEAD
 
 	u8 input_mode_mpeg;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum dib7000p_power_mode {
@@ -80,11 +83,16 @@ enum dib7000p_power_mode {
 	DIB7000P_POWER_INTERFACE_ONLY,
 };
 
+<<<<<<< HEAD
 /* dib7090 specific fonctions */
 static int dib7090_set_output_mode(struct dvb_frontend *fe, int mode);
 static int dib7090_set_diversity_in(struct dvb_frontend *fe, int onoff);
 static void dib7090_setDibTxMux(struct dib7000p_state *state, int mode);
 static void dib7090_setHostBusMux(struct dib7000p_state *state, int mode);
+=======
+static int dib7090_set_output_mode(struct dvb_frontend *fe, int mode);
+static int dib7090_set_diversity_in(struct dvb_frontend *fe, int onoff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static u16 dib7000p_read_word(struct dib7000p_state *state, u16 reg)
 {
@@ -281,15 +289,21 @@ static int dib7000p_set_power_mode(struct dib7000p_state *state, enum dib7000p_p
 	dib7000p_write_word(state, 774, reg_774);
 	dib7000p_write_word(state, 775, reg_775);
 	dib7000p_write_word(state, 776, reg_776);
+<<<<<<< HEAD
 	dib7000p_write_word(state, 1280, reg_1280);
 	if (state->version != SOC7090)
 		dib7000p_write_word(state, 899, reg_899);
+=======
+	dib7000p_write_word(state, 899, reg_899);
+	dib7000p_write_word(state, 1280, reg_1280);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 static void dib7000p_set_adc_state(struct dib7000p_state *state, enum dibx000_adc_states no)
 {
+<<<<<<< HEAD
 	u16 reg_908 = 0, reg_909 = 0;
 	u16 reg;
 
@@ -298,6 +312,11 @@ static void dib7000p_set_adc_state(struct dib7000p_state *state, enum dibx000_ad
 		reg_909 = dib7000p_read_word(state, 909);
 	}
 
+=======
+	u16 reg_908 = dib7000p_read_word(state, 908), reg_909 = dib7000p_read_word(state, 909);
+	u16 reg;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (no) {
 	case DIBX000_SLOW_ADC_ON:
 		if (state->version == SOC7090) {
@@ -353,10 +372,15 @@ static void dib7000p_set_adc_state(struct dib7000p_state *state, enum dibx000_ad
 	reg_909 |= (state->cfg.disable_sample_and_hold & 1) << 4;
 	reg_908 |= (state->cfg.enable_current_mirror & 1) << 7;
 
+<<<<<<< HEAD
 	if (state->version != SOC7090) {
 		dib7000p_write_word(state, 908, reg_908);
 		dib7000p_write_word(state, 909, reg_909);
 	}
+=======
+	dib7000p_write_word(state, 908, reg_908);
+	dib7000p_write_word(state, 909, reg_909);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int dib7000p_set_bandwidth(struct dib7000p_state *state, u32 bw)
@@ -411,6 +435,7 @@ int dib7000p_set_wbd_ref(struct dvb_frontend *demod, u16 value)
 }
 EXPORT_SYMBOL(dib7000p_set_wbd_ref);
 
+<<<<<<< HEAD
 int dib7000p_get_agc_values(struct dvb_frontend *fe,
 		u16 *agc_global, u16 *agc1, u16 *agc2, u16 *wbd)
 {
@@ -429,6 +454,8 @@ int dib7000p_get_agc_values(struct dvb_frontend *fe,
 }
 EXPORT_SYMBOL(dib7000p_get_agc_values);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void dib7000p_reset_pll(struct dib7000p_state *state)
 {
 	struct dibx000_bandwidth_config *bw = &state->cfg.bw[0];
@@ -550,7 +577,11 @@ static u16 dib7000p_defaults[] = {
 	// auto search configuration
 	3, 2,
 	0x0004,
+<<<<<<< HEAD
 	(1<<3)|(1<<11)|(1<<12)|(1<<13),
+=======
+	0x1000,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	0x0814,			/* Equal Lock */
 
 	12, 6,
@@ -626,6 +657,16 @@ static u16 dib7000p_defaults[] = {
 	1, 235,
 	0x0062,
 
+<<<<<<< HEAD
+=======
+	2, 901,
+	0x0006,
+	(3 << 10) | (1 << 6),
+
+	1, 905,
+	0x2c8e,
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	0,
 };
 
@@ -642,11 +683,16 @@ static int dib7000p_demod_reset(struct dib7000p_state *state)
 	dib7000p_write_word(state, 770, 0xffff);
 	dib7000p_write_word(state, 771, 0xffff);
 	dib7000p_write_word(state, 772, 0x001f);
+<<<<<<< HEAD
+=======
+	dib7000p_write_word(state, 898, 0x0003);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dib7000p_write_word(state, 1280, 0x001f - ((1 << 4) | (1 << 3)));
 
 	dib7000p_write_word(state, 770, 0);
 	dib7000p_write_word(state, 771, 0);
 	dib7000p_write_word(state, 772, 0);
+<<<<<<< HEAD
 	dib7000p_write_word(state, 1280, 0);
 
 	if (state->version != SOC7090) {
@@ -654,6 +700,11 @@ static int dib7000p_demod_reset(struct dib7000p_state *state)
 		dib7000p_write_word(state,  898, 0);
 	}
 
+=======
+	dib7000p_write_word(state, 898, 0);
+	dib7000p_write_word(state, 1280, 0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* default */
 	dib7000p_reset_pll(state);
 
@@ -667,7 +718,11 @@ static int dib7000p_demod_reset(struct dib7000p_state *state)
 		dib7000p_write_word(state, 42, (1<<5) | 3); /* P_iqc_thsat_ipc = 1 ; P_iqc_win2 = 3 */
 		dib7000p_write_word(state, 43, 0x2d4); /*-300 fag P_iqc_dect_min = -280 */
 		dib7000p_write_word(state, 44, 300); /* 300 fag P_iqc_dect_min = +280 */
+<<<<<<< HEAD
 		dib7000p_write_word(state, 273, (0<<6) | 30);
+=======
+		dib7000p_write_word(state, 273, (1<<6) | 30);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (dib7000p_set_output_mode(state, OUTMODE_HIGH_Z) != 0)
 		dprintk("OUTPUT_MODE could not be reset.");
@@ -682,7 +737,11 @@ static int dib7000p_demod_reset(struct dib7000p_state *state)
 	dib7000p_set_bandwidth(state, 8000);
 
 	if (state->version == SOC7090) {
+<<<<<<< HEAD
 		dib7000p_write_word(state, 36, 0x0755);/* P_iqc_impnc_on =1 & P_iqc_corr_inh = 1 for impulsive noise */
+=======
+		dib7000p_write_word(state, 36, 0x5755);/* P_iqc_impnc_on =1 & P_iqc_corr_inh = 1 for impulsive noise */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		if (state->cfg.tuner_is_baseband)
 			dib7000p_write_word(state, 36, 0x0755);
@@ -691,11 +750,14 @@ static int dib7000p_demod_reset(struct dib7000p_state *state)
 	}
 
 	dib7000p_write_tab(state, dib7000p_defaults);
+<<<<<<< HEAD
 	if (state->version != SOC7090) {
 		dib7000p_write_word(state, 901, 0x0006);
 		dib7000p_write_word(state, 902, (3 << 10) | (1 << 6));
 		dib7000p_write_word(state, 905, 0x2c8e);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dib7000p_set_power_mode(state, DIB7000P_POWER_INTERFACE_ONLY);
 
@@ -812,9 +874,14 @@ static void dib7000p_set_dds(struct dib7000p_state *state, s32 offset_khz)
 	}
 }
 
+<<<<<<< HEAD
 static int dib7000p_agc_startup(struct dvb_frontend *demod)
 {
 	struct dtv_frontend_properties *ch = &demod->dtv_property_cache;
+=======
+static int dib7000p_agc_startup(struct dvb_frontend *demod, struct dvb_frontend_parameters *ch)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dib7000p_state *state = demod->demodulator_priv;
 	int ret = -1;
 	u8 *agc_state = &state->agc_state;
@@ -937,6 +1004,7 @@ u32 dib7000p_ctrl_timf(struct dvb_frontend *fe, u8 op, u32 timf)
 }
 EXPORT_SYMBOL(dib7000p_ctrl_timf);
 
+<<<<<<< HEAD
 static void dib7000p_set_channel(struct dib7000p_state *state,
 				 struct dtv_frontend_properties *ch, u8 seq)
 {
@@ -947,6 +1015,17 @@ static void dib7000p_set_channel(struct dib7000p_state *state,
 	/* nfft, guard, qam, alpha */
 	value = 0;
 	switch (ch->transmission_mode) {
+=======
+static void dib7000p_set_channel(struct dib7000p_state *state, struct dvb_frontend_parameters *ch, u8 seq)
+{
+	u16 value, est[4];
+
+	dib7000p_set_bandwidth(state, BANDWIDTH_TO_KHZ(ch->u.ofdm.bandwidth));
+
+	/* nfft, guard, qam, alpha */
+	value = 0;
+	switch (ch->u.ofdm.transmission_mode) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case TRANSMISSION_MODE_2K:
 		value |= (0 << 7);
 		break;
@@ -958,7 +1037,11 @@ static void dib7000p_set_channel(struct dib7000p_state *state,
 		value |= (1 << 7);
 		break;
 	}
+<<<<<<< HEAD
 	switch (ch->guard_interval) {
+=======
+	switch (ch->u.ofdm.guard_interval) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case GUARD_INTERVAL_1_32:
 		value |= (0 << 5);
 		break;
@@ -973,7 +1056,11 @@ static void dib7000p_set_channel(struct dib7000p_state *state,
 		value |= (2 << 5);
 		break;
 	}
+<<<<<<< HEAD
 	switch (ch->modulation) {
+=======
+	switch (ch->u.ofdm.constellation) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case QPSK:
 		value |= (0 << 3);
 		break;
@@ -1004,11 +1091,19 @@ static void dib7000p_set_channel(struct dib7000p_state *state,
 	value = 0;
 	if (1 != 0)
 		value |= (1 << 6);
+<<<<<<< HEAD
 	if (ch->hierarchy == 1)
 		value |= (1 << 4);
 	if (1 == 1)
 		value |= 1;
 	switch ((ch->hierarchy == 0 || 1 == 1) ? ch->code_rate_HP : ch->code_rate_LP) {
+=======
+	if (ch->u.ofdm.hierarchy_information == 1)
+		value |= (1 << 4);
+	if (1 == 1)
+		value |= 1;
+	switch ((ch->u.ofdm.hierarchy_information == 0 || 1 == 1) ? ch->u.ofdm.code_rate_HP : ch->u.ofdm.code_rate_LP) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case FEC_2_3:
 		value |= (2 << 1);
 		break;
@@ -1035,7 +1130,11 @@ static void dib7000p_set_channel(struct dib7000p_state *state,
 	dib7000p_write_word(state, 33, 0x0005);
 
 	/* P_dvsy_sync_wait */
+<<<<<<< HEAD
 	switch (ch->transmission_mode) {
+=======
+	switch (ch->u.ofdm.transmission_mode) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case TRANSMISSION_MODE_8K:
 		value = 256;
 		break;
@@ -1047,7 +1146,11 @@ static void dib7000p_set_channel(struct dib7000p_state *state,
 		value = 64;
 		break;
 	}
+<<<<<<< HEAD
 	switch (ch->guard_interval) {
+=======
+	switch (ch->u.ofdm.guard_interval) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case GUARD_INTERVAL_1_16:
 		value *= 2;
 		break;
@@ -1068,11 +1171,19 @@ static void dib7000p_set_channel(struct dib7000p_state *state,
 		state->div_sync_wait = (value * 3) / 2 + state->cfg.diversity_delay;
 
 	/* deactive the possibility of diversity reception if extended interleaver */
+<<<<<<< HEAD
 	state->div_force_off = !1 && ch->transmission_mode != TRANSMISSION_MODE_8K;
 	dib7000p_set_diversity_in(&state->demod, state->div_state);
 
 	/* channel estimation fine configuration */
 	switch (ch->modulation) {
+=======
+	state->div_force_off = !1 && ch->u.ofdm.transmission_mode != TRANSMISSION_MODE_8K;
+	dib7000p_set_diversity_in(&state->demod, state->div_state);
+
+	/* channel estimation fine configuration */
+	switch (ch->u.ofdm.constellation) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case QAM_64:
 		est[0] = 0x0148;	/* P_adp_regul_cnt 0.04 */
 		est[1] = 0xfff0;	/* P_adp_noise_cnt -0.002 */
@@ -1096,15 +1207,23 @@ static void dib7000p_set_channel(struct dib7000p_state *state,
 		dib7000p_write_word(state, 187 + value, est[value]);
 }
 
+<<<<<<< HEAD
 static int dib7000p_autosearch_start(struct dvb_frontend *demod)
 {
 	struct dtv_frontend_properties *ch = &demod->dtv_property_cache;
 	struct dib7000p_state *state = demod->demodulator_priv;
 	struct dtv_frontend_properties schan;
+=======
+static int dib7000p_autosearch_start(struct dvb_frontend *demod, struct dvb_frontend_parameters *ch)
+{
+	struct dib7000p_state *state = demod->demodulator_priv;
+	struct dvb_frontend_parameters schan;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 value, factor;
 	u32 internal = dib7000p_get_internal_freq(state);
 
 	schan = *ch;
+<<<<<<< HEAD
 	schan.modulation = QAM_64;
 	schan.guard_interval = GUARD_INTERVAL_1_32;
 	schan.transmission_mode = TRANSMISSION_MODE_8K;
@@ -1121,6 +1240,21 @@ static int dib7000p_autosearch_start(struct dvb_frontend *demod)
 		else
 			factor = 1;
 	} else
+=======
+	schan.u.ofdm.constellation = QAM_64;
+	schan.u.ofdm.guard_interval = GUARD_INTERVAL_1_32;
+	schan.u.ofdm.transmission_mode = TRANSMISSION_MODE_8K;
+	schan.u.ofdm.code_rate_HP = FEC_2_3;
+	schan.u.ofdm.code_rate_LP = FEC_3_4;
+	schan.u.ofdm.hierarchy_information = 0;
+
+	dib7000p_set_channel(state, &schan, 7);
+
+	factor = BANDWIDTH_TO_KHZ(ch->u.ofdm.bandwidth);
+	if (factor >= 5000)
+		factor = 1;
+	else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		factor = 6;
 
 	value = 30 * internal * factor;
@@ -1243,9 +1377,14 @@ static void dib7000p_spur_protect(struct dib7000p_state *state, u32 rf_khz, u32 
 	dib7000p_write_word(state, 143, 0);
 }
 
+<<<<<<< HEAD
 static int dib7000p_tune(struct dvb_frontend *demod)
 {
 	struct dtv_frontend_properties *ch = &demod->dtv_property_cache;
+=======
+static int dib7000p_tune(struct dvb_frontend *demod, struct dvb_frontend_parameters *ch)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dib7000p_state *state = demod->demodulator_priv;
 	u16 tmp = 0;
 
@@ -1278,7 +1417,11 @@ static int dib7000p_tune(struct dvb_frontend *demod)
 
 	/* P_timf_alpha, P_corm_alpha=6, P_corm_thres=0x80 */
 	tmp = (6 << 8) | 0x80;
+<<<<<<< HEAD
 	switch (ch->transmission_mode) {
+=======
+	switch (ch->u.ofdm.transmission_mode) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case TRANSMISSION_MODE_2K:
 		tmp |= (2 << 12);
 		break;
@@ -1294,7 +1437,11 @@ static int dib7000p_tune(struct dvb_frontend *demod)
 
 	/* P_ctrl_freeze_pha_shift=0, P_ctrl_pha_off_max */
 	tmp = (0 << 4);
+<<<<<<< HEAD
 	switch (ch->transmission_mode) {
+=======
+	switch (ch->u.ofdm.transmission_mode) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case TRANSMISSION_MODE_2K:
 		tmp |= 0x6;
 		break;
@@ -1310,7 +1457,11 @@ static int dib7000p_tune(struct dvb_frontend *demod)
 
 	/* P_ctrl_sfreq_inh=0, P_ctrl_sfreq_step */
 	tmp = (0 << 4);
+<<<<<<< HEAD
 	switch (ch->transmission_mode) {
+=======
+	switch (ch->u.ofdm.transmission_mode) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case TRANSMISSION_MODE_2K:
 		tmp |= 0x6;
 		break;
@@ -1342,9 +1493,15 @@ static int dib7000p_tune(struct dvb_frontend *demod)
 	}
 
 	if (state->cfg.spur_protect)
+<<<<<<< HEAD
 		dib7000p_spur_protect(state, ch->frequency / 1000, BANDWIDTH_TO_KHZ(ch->bandwidth_hz));
 
 	dib7000p_set_bandwidth(state, BANDWIDTH_TO_KHZ(ch->bandwidth_hz));
+=======
+		dib7000p_spur_protect(state, ch->frequency / 1000, BANDWIDTH_TO_KHZ(ch->u.ofdm.bandwidth));
+
+	dib7000p_set_bandwidth(state, BANDWIDTH_TO_KHZ(ch->u.ofdm.bandwidth));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1362,7 +1519,11 @@ static int dib7000p_sleep(struct dvb_frontend *demod)
 {
 	struct dib7000p_state *state = demod->demodulator_priv;
 	if (state->version == SOC7090)
+<<<<<<< HEAD
 		return dib7000p_set_power_mode(state, DIB7000P_POWER_INTERFACE_ONLY);
+=======
+		return dib7090_set_output_mode(demod, OUTMODE_HIGH_Z) | dib7000p_set_power_mode(state, DIB7000P_POWER_INTERFACE_ONLY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return dib7000p_set_output_mode(state, OUTMODE_HIGH_Z) | dib7000p_set_power_mode(state, DIB7000P_POWER_INTERFACE_ONLY);
 }
 
@@ -1384,14 +1545,20 @@ static int dib7000p_identify(struct dib7000p_state *st)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int dib7000p_get_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *fep = &fe->dtv_property_cache;
+=======
+static int dib7000p_get_frontend(struct dvb_frontend *fe, struct dvb_frontend_parameters *fep)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dib7000p_state *state = fe->demodulator_priv;
 	u16 tps = dib7000p_read_word(state, 463);
 
 	fep->inversion = INVERSION_AUTO;
 
+<<<<<<< HEAD
 	fep->bandwidth_hz = BANDWIDTH_TO_HZ(state->current_bandwidth);
 
 	switch ((tps >> 8) & 0x3) {
@@ -1402,10 +1569,23 @@ static int dib7000p_get_frontend(struct dvb_frontend *fe)
 		fep->transmission_mode = TRANSMISSION_MODE_8K;
 		break;
 	/* case 2: fep->transmission_mode = TRANSMISSION_MODE_4K; break; */
+=======
+	fep->u.ofdm.bandwidth = BANDWIDTH_TO_INDEX(state->current_bandwidth);
+
+	switch ((tps >> 8) & 0x3) {
+	case 0:
+		fep->u.ofdm.transmission_mode = TRANSMISSION_MODE_2K;
+		break;
+	case 1:
+		fep->u.ofdm.transmission_mode = TRANSMISSION_MODE_8K;
+		break;
+	/* case 2: fep->u.ofdm.transmission_mode = TRANSMISSION_MODE_4K; break; */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	switch (tps & 0x3) {
 	case 0:
+<<<<<<< HEAD
 		fep->guard_interval = GUARD_INTERVAL_1_32;
 		break;
 	case 1:
@@ -1416,11 +1596,24 @@ static int dib7000p_get_frontend(struct dvb_frontend *fe)
 		break;
 	case 3:
 		fep->guard_interval = GUARD_INTERVAL_1_4;
+=======
+		fep->u.ofdm.guard_interval = GUARD_INTERVAL_1_32;
+		break;
+	case 1:
+		fep->u.ofdm.guard_interval = GUARD_INTERVAL_1_16;
+		break;
+	case 2:
+		fep->u.ofdm.guard_interval = GUARD_INTERVAL_1_8;
+		break;
+	case 3:
+		fep->u.ofdm.guard_interval = GUARD_INTERVAL_1_4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
 	switch ((tps >> 14) & 0x3) {
 	case 0:
+<<<<<<< HEAD
 		fep->modulation = QPSK;
 		break;
 	case 1:
@@ -1429,12 +1622,23 @@ static int dib7000p_get_frontend(struct dvb_frontend *fe)
 	case 2:
 	default:
 		fep->modulation = QAM_64;
+=======
+		fep->u.ofdm.constellation = QPSK;
+		break;
+	case 1:
+		fep->u.ofdm.constellation = QAM_16;
+		break;
+	case 2:
+	default:
+		fep->u.ofdm.constellation = QAM_64;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
 	/* as long as the frontend_param structure is fixed for hierarchical transmission I refuse to use it */
 	/* (tps >> 13) & 0x1 == hrch is used, (tps >> 10) & 0x7 == alpha */
 
+<<<<<<< HEAD
 	fep->hierarchy = HIERARCHY_NONE;
 	switch ((tps >> 5) & 0x7) {
 	case 1:
@@ -1452,12 +1656,32 @@ static int dib7000p_get_frontend(struct dvb_frontend *fe)
 	case 7:
 	default:
 		fep->code_rate_HP = FEC_7_8;
+=======
+	fep->u.ofdm.hierarchy_information = HIERARCHY_NONE;
+	switch ((tps >> 5) & 0x7) {
+	case 1:
+		fep->u.ofdm.code_rate_HP = FEC_1_2;
+		break;
+	case 2:
+		fep->u.ofdm.code_rate_HP = FEC_2_3;
+		break;
+	case 3:
+		fep->u.ofdm.code_rate_HP = FEC_3_4;
+		break;
+	case 5:
+		fep->u.ofdm.code_rate_HP = FEC_5_6;
+		break;
+	case 7:
+	default:
+		fep->u.ofdm.code_rate_HP = FEC_7_8;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	}
 
 	switch ((tps >> 2) & 0x7) {
 	case 1:
+<<<<<<< HEAD
 		fep->code_rate_LP = FEC_1_2;
 		break;
 	case 2:
@@ -1472,6 +1696,22 @@ static int dib7000p_get_frontend(struct dvb_frontend *fe)
 	case 7:
 	default:
 		fep->code_rate_LP = FEC_7_8;
+=======
+		fep->u.ofdm.code_rate_LP = FEC_1_2;
+		break;
+	case 2:
+		fep->u.ofdm.code_rate_LP = FEC_2_3;
+		break;
+	case 3:
+		fep->u.ofdm.code_rate_LP = FEC_3_4;
+		break;
+	case 5:
+		fep->u.ofdm.code_rate_LP = FEC_5_6;
+		break;
+	case 7:
+	default:
+		fep->u.ofdm.code_rate_LP = FEC_7_8;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -1480,6 +1720,7 @@ static int dib7000p_get_frontend(struct dvb_frontend *fe)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int dib7000p_set_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *fep = &fe->dtv_property_cache;
@@ -1489,27 +1730,54 @@ static int dib7000p_set_frontend(struct dvb_frontend *fe)
 	if (state->version == SOC7090)
 		dib7090_set_diversity_in(fe, 0);
 	else
+=======
+static int dib7000p_set_frontend(struct dvb_frontend *fe, struct dvb_frontend_parameters *fep)
+{
+	struct dib7000p_state *state = fe->demodulator_priv;
+	int time, ret;
+
+	if (state->version == SOC7090) {
+		dib7090_set_diversity_in(fe, 0);
+		dib7090_set_output_mode(fe, OUTMODE_HIGH_Z);
+	} else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dib7000p_set_output_mode(state, OUTMODE_HIGH_Z);
 
 	/* maybe the parameter has been changed */
 	state->sfn_workaround_active = buggy_sfn_workaround;
 
 	if (fe->ops.tuner_ops.set_params)
+<<<<<<< HEAD
 		fe->ops.tuner_ops.set_params(fe);
+=======
+		fe->ops.tuner_ops.set_params(fe, fep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* start up the AGC */
 	state->agc_state = 0;
 	do {
+<<<<<<< HEAD
 		time = dib7000p_agc_startup(fe);
+=======
+		time = dib7000p_agc_startup(fe, fep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (time != -1)
 			msleep(time);
 	} while (time != -1);
 
+<<<<<<< HEAD
 	if (fep->transmission_mode == TRANSMISSION_MODE_AUTO ||
 		fep->guard_interval == GUARD_INTERVAL_AUTO || fep->modulation == QAM_AUTO || fep->code_rate_HP == FEC_AUTO) {
 		int i = 800, found;
 
 		dib7000p_autosearch_start(fe);
+=======
+	if (fep->u.ofdm.transmission_mode == TRANSMISSION_MODE_AUTO ||
+		fep->u.ofdm.guard_interval == GUARD_INTERVAL_AUTO || fep->u.ofdm.constellation == QAM_AUTO || fep->u.ofdm.code_rate_HP == FEC_AUTO) {
+		int i = 800, found;
+
+		dib7000p_autosearch_start(fe, fep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		do {
 			msleep(1);
 			found = dib7000p_autosearch_is_irq(fe);
@@ -1519,6 +1787,7 @@ static int dib7000p_set_frontend(struct dvb_frontend *fe)
 		if (found == 0 || found == 1)
 			return 0;
 
+<<<<<<< HEAD
 		dib7000p_get_frontend(fe);
 	}
 
@@ -1532,6 +1801,17 @@ static int dib7000p_set_frontend(struct dvb_frontend *fe)
 			dib7090_setHostBusMux(state, DIBTX_ON_HOSTBUS);
 		}
 	} else
+=======
+		dib7000p_get_frontend(fe, fep);
+	}
+
+	ret = dib7000p_tune(fe, fep);
+
+	/* make this a config parameter */
+	if (state->version == SOC7090)
+		dib7090_set_output_mode(fe, state->cfg.output_mode);
+	else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dib7000p_set_output_mode(state, state->cfg.output_mode);
 
 	return ret;
@@ -1642,8 +1922,13 @@ int dib7000pc_detection(struct i2c_adapter *i2c_adap)
 		return -ENOMEM;
 	rx = kzalloc(2*sizeof(u8), GFP_KERNEL);
 	if (!rx) {
+<<<<<<< HEAD
 		ret = -ENOMEM;
 		goto rx_memory_error;
+=======
+		goto rx_memory_error;
+		ret = -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	msg[0].buf = tx;
@@ -1875,8 +2160,12 @@ static int w7090p_tuner_rw_serpar(struct i2c_adapter *i2c_adap, struct i2c_msg m
 	return num;
 }
 
+<<<<<<< HEAD
 static int dib7090p_rw_on_apb(struct i2c_adapter *i2c_adap,
 		struct i2c_msg msg[], int num, u16 apb_address)
+=======
+int dib7090p_rw_on_apb(struct i2c_adapter *i2c_adap, struct i2c_msg msg[], int num, u16 apb_address)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dib7000p_state *state = i2c_get_adapdata(i2c_adap);
 	u16 word;
@@ -1978,10 +2267,17 @@ static int dib7090_tuner_xfer(struct i2c_adapter *i2c_adap, struct i2c_msg msg[]
 		apb_address = 915;
 		break;
 	case 0x27:
+<<<<<<< HEAD
 		apb_address = 917;
 		break;
 	case 0x28:
 		apb_address = 916;
+=======
+		apb_address = 916;
+		break;
+	case 0x28:
+		apb_address = 917;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case 0x1d:
 		i = ((dib7000p_read_word(state, 72) >> 12) & 0x3);
@@ -2076,7 +2372,16 @@ static u32 dib7090_calcSyncFreq(u32 P_Kin, u32 P_Kout, u32 insertExtSynchro, u32
 
 static int dib7090_cfg_DibTx(struct dib7000p_state *state, u32 P_Kin, u32 P_Kout, u32 insertExtSynchro, u32 synchroMode, u32 syncWord, u32 syncSize)
 {
+<<<<<<< HEAD
 	dprintk("Configure DibStream Tx");
+=======
+	u8 index_buf;
+	u16 rx_copy_buf[22];
+
+	dprintk("Configure DibStream Tx");
+	for (index_buf = 0; index_buf < 22; index_buf++)
+		rx_copy_buf[index_buf] = dib7000p_read_word(state, 1536+index_buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dib7000p_write_word(state, 1615, 1);
 	dib7000p_write_word(state, 1603, P_Kin);
@@ -2088,6 +2393,12 @@ static int dib7090_cfg_DibTx(struct dib7000p_state *state, u32 P_Kin, u32 P_Kout
 	dib7000p_write_word(state, 1612, syncSize);
 	dib7000p_write_word(state, 1615, 0);
 
+<<<<<<< HEAD
+=======
+	for (index_buf = 0; index_buf < 22; index_buf++)
+		dib7000p_write_word(state, 1536+index_buf, rx_copy_buf[index_buf]);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -2114,6 +2425,7 @@ static int dib7090_cfg_DibRx(struct dib7000p_state *state, u32 P_Kin, u32 P_Kout
 	return 0;
 }
 
+<<<<<<< HEAD
 static void dib7090_enMpegMux(struct dib7000p_state *state, int onoff)
 {
 	u16 reg_1287 = dib7000p_read_word(state, 1287);
@@ -2229,6 +2541,111 @@ int dib7090_set_diversity_in(struct dvb_frontend *fe, int onoff)
 	}
 
 	dib7000p_set_diversity_in(&state->demod, onoff);
+=======
+static int dib7090_enDivOnHostBus(struct dib7000p_state *state)
+{
+	u16 reg;
+
+	dprintk("Enable Diversity on host bus");
+	reg = (1 << 8) | (1 << 5);
+	dib7000p_write_word(state, 1288, reg);
+
+	return dib7090_cfg_DibTx(state, 5, 5, 0, 0, 0, 0);
+}
+
+static int dib7090_enAdcOnHostBus(struct dib7000p_state *state)
+{
+	u16 reg;
+
+	dprintk("Enable ADC on host bus");
+	reg = (1 << 7) | (1 << 5);
+	dib7000p_write_word(state, 1288, reg);
+
+	return dib7090_cfg_DibTx(state, 20, 5, 10, 0, 0, 0);
+}
+
+static int dib7090_enMpegOnHostBus(struct dib7000p_state *state)
+{
+	u16 reg;
+
+	dprintk("Enable Mpeg on host bus");
+	reg = (1 << 9) | (1 << 5);
+	dib7000p_write_word(state, 1288, reg);
+
+	return dib7090_cfg_DibTx(state, 8, 5, 0, 0, 0, 0);
+}
+
+static int dib7090_enMpegInput(struct dib7000p_state *state)
+{
+	dprintk("Enable Mpeg input");
+	return dib7090_cfg_DibRx(state, 8, 5, 0, 0, 0, 8, 0);	/*outputRate = 8 */
+}
+
+static int dib7090_enMpegMux(struct dib7000p_state *state, u16 pulseWidth, u16 enSerialMode, u16 enSerialClkDiv2)
+{
+	u16 reg = (1 << 7) | ((pulseWidth & 0x1f) << 2) | ((enSerialMode & 0x1) << 1) | (enSerialClkDiv2 & 0x1);
+
+	dprintk("Enable Mpeg mux");
+	dib7000p_write_word(state, 1287, reg);
+
+	reg &= ~(1 << 7);
+	dib7000p_write_word(state, 1287, reg);
+
+	reg = (1 << 4);
+	dib7000p_write_word(state, 1288, reg);
+
+	return 0;
+}
+
+static int dib7090_disableMpegMux(struct dib7000p_state *state)
+{
+	u16 reg;
+
+	dprintk("Disable Mpeg mux");
+	dib7000p_write_word(state, 1288, 0);
+
+	reg = dib7000p_read_word(state, 1287);
+	reg &= ~(1 << 7);
+	dib7000p_write_word(state, 1287, reg);
+
+	return 0;
+}
+
+static int dib7090_set_input_mode(struct dvb_frontend *fe, int mode)
+{
+	struct dib7000p_state *state = fe->demodulator_priv;
+
+	switch (mode) {
+	case INPUT_MODE_DIVERSITY:
+			dprintk("Enable diversity INPUT");
+			dib7090_cfg_DibRx(state, 5, 5, 0, 0, 0, 0, 0);
+			break;
+	case INPUT_MODE_MPEG:
+			dprintk("Enable Mpeg INPUT");
+			dib7090_cfg_DibRx(state, 8, 5, 0, 0, 0, 8, 0); /*outputRate = 8 */
+			break;
+	case INPUT_MODE_OFF:
+	default:
+			dprintk("Disable INPUT");
+			dib7090_cfg_DibRx(state, 0, 0, 0, 0, 0, 0, 0);
+			break;
+	}
+	return 0;
+}
+
+static int dib7090_set_diversity_in(struct dvb_frontend *fe, int onoff)
+{
+	switch (onoff) {
+	case 0:		/* only use the internal way - not the diversity input */
+		dib7090_set_input_mode(fe, INPUT_MODE_MPEG);
+		break;
+	case 1:		/* both ways */
+	case 2:		/* only the diversity input */
+		dib7090_set_input_mode(fe, INPUT_MODE_DIVERSITY);
+		break;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -2253,6 +2670,7 @@ static int dib7090_set_output_mode(struct dvb_frontend *fe, int mode)
 
 	case OUTMODE_MPEG2_SERIAL:
 		if (prefer_mpeg_mux_use) {
+<<<<<<< HEAD
 			dprintk("setting output mode TS_SERIAL using Mpeg Mux");
 			dib7090_configMpegMux(state, 3, 1, 1);
 			dib7090_setHostBusMux(state, MPEG_ON_HOSTBUS);
@@ -2260,11 +2678,25 @@ static int dib7090_set_output_mode(struct dvb_frontend *fe, int mode)
 			dprintk("setting output mode TS_SERIAL using Smooth bloc");
 			dib7090_setHostBusMux(state, DEMOUT_ON_HOSTBUS);
 			outreg |= (2<<6) | (0 << 1);
+=======
+			dprintk("Sip 7090P setting output mode TS_SERIAL using Mpeg Mux");
+			dib7090_enMpegOnHostBus(state);
+			dib7090_enMpegInput(state);
+			if (state->cfg.enMpegOutput == 1)
+				dib7090_enMpegMux(state, 3, 1, 1);
+
+		} else {	/* Use Smooth block */
+			dprintk("Sip 7090P setting output mode TS_SERIAL using Smooth bloc");
+			dib7090_disableMpegMux(state);
+			dib7000p_write_word(state, 1288, (1 << 6));
+			outreg |= (2 << 6) | (0 << 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		break;
 
 	case OUTMODE_MPEG2_PAR_GATED_CLK:
 		if (prefer_mpeg_mux_use) {
+<<<<<<< HEAD
 			dprintk("setting output mode TS_PARALLEL_GATED using Mpeg Mux");
 			dib7090_configMpegMux(state, 2, 0, 0);
 			dib7090_setHostBusMux(state, MPEG_ON_HOSTBUS);
@@ -2272,10 +2704,23 @@ static int dib7090_set_output_mode(struct dvb_frontend *fe, int mode)
 			dprintk("setting output mode TS_PARALLEL_GATED using Smooth block");
 			dib7090_setHostBusMux(state, DEMOUT_ON_HOSTBUS);
 			outreg |= (0<<6);
+=======
+			dprintk("Sip 7090P setting output mode TS_PARALLEL_GATED using Mpeg Mux");
+			dib7090_enMpegOnHostBus(state);
+			dib7090_enMpegInput(state);
+			if (state->cfg.enMpegOutput == 1)
+				dib7090_enMpegMux(state, 2, 0, 0);
+		} else {	/* Use Smooth block */
+			dprintk("Sip 7090P setting output mode TS_PARALLEL_GATED using Smooth block");
+			dib7090_disableMpegMux(state);
+			dib7000p_write_word(state, 1288, (1 << 6));
+			outreg |= (0 << 6);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		break;
 
 	case OUTMODE_MPEG2_PAR_CONT_CLK:	/* Using Smooth block only */
+<<<<<<< HEAD
 		dprintk("setting output mode TS_PARALLEL_CONT using Smooth block");
 		dib7090_setHostBusMux(state, DEMOUT_ON_HOSTBUS);
 		outreg |= (1<<6);
@@ -2285,11 +2730,25 @@ static int dib7090_set_output_mode(struct dvb_frontend *fe, int mode)
 		dprintk("setting output mode TS_FIFO using Smooth block");
 		dib7090_setHostBusMux(state, DEMOUT_ON_HOSTBUS);
 		outreg |= (5<<6);
+=======
+		dprintk("Sip 7090P setting output mode TS_PARALLEL_CONT using Smooth block");
+		dib7090_disableMpegMux(state);
+		dib7000p_write_word(state, 1288, (1 << 6));
+		outreg |= (1 << 6);
+		break;
+
+	case OUTMODE_MPEG2_FIFO:	/* Using Smooth block because not supported by new Mpeg Mux bloc */
+		dprintk("Sip 7090P setting output mode TS_FIFO using Smooth block");
+		dib7090_disableMpegMux(state);
+		dib7000p_write_word(state, 1288, (1 << 6));
+		outreg |= (5 << 6);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		smo_mode |= (3 << 1);
 		fifo_threshold = 512;
 		break;
 
 	case OUTMODE_DIVERSITY:
+<<<<<<< HEAD
 		dprintk("setting output mode MODE_DIVERSITY");
 		dib7090_setDibTxMux(state, DIV_ON_DIBTX);
 		dib7090_setHostBusMux(state, DIBTX_ON_HOSTBUS);
@@ -2303,13 +2762,29 @@ static int dib7090_set_output_mode(struct dvb_frontend *fe, int mode)
 	}
 	if (mode != OUTMODE_HIGH_Z)
 		outreg |= (1 << 10);
+=======
+		dprintk("Sip 7090P setting output mode MODE_DIVERSITY");
+		dib7090_disableMpegMux(state);
+		dib7090_enDivOnHostBus(state);
+		break;
+
+	case OUTMODE_ANALOG_ADC:
+		dprintk("Sip 7090P setting output mode MODE_ANALOG_ADC");
+		dib7090_enAdcOnHostBus(state);
+		break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (state->cfg.output_mpeg2_in_188_bytes)
 		smo_mode |= (1 << 5);
 
 	ret |= dib7000p_write_word(state, 235, smo_mode);
 	ret |= dib7000p_write_word(state, 236, fifo_threshold);	/* synchronous fread */
+<<<<<<< HEAD
 	ret |= dib7000p_write_word(state, 1286, outreg);
+=======
+	ret |= dib7000p_write_word(state, 1286, outreg | (1 << 10));	/* allways set Dout active = 1 !!! */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -2339,6 +2814,16 @@ int dib7090_tuner_sleep(struct dvb_frontend *fe, int onoff)
 }
 EXPORT_SYMBOL(dib7090_tuner_sleep);
 
+<<<<<<< HEAD
+=======
+int dib7090_agc_restart(struct dvb_frontend *fe, u8 restart)
+{
+	dprintk("AGC restart callback: %d", restart);
+	return 0;
+}
+EXPORT_SYMBOL(dib7090_agc_restart);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int dib7090_get_adc_power(struct dvb_frontend *fe)
 {
 	return dib7000p_get_adc_power(fe);
@@ -2396,11 +2881,14 @@ struct dvb_frontend *dib7000p_attach(struct i2c_adapter *i2c_adap, u8 i2c_addr, 
 	   more common) */
 	st->i2c_master.gated_tuner_i2c_adap.dev.parent = i2c_adap->dev.parent;
 
+<<<<<<< HEAD
 	/* FIXME: make sure the dev.parent field is initialized, or else
 	   request_firmware() will hit an OOPS (this should be moved somewhere
 	   more common) */
 	st->i2c_master.gated_tuner_i2c_adap.dev.parent = i2c_adap->dev.parent;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dibx000_init_i2c_master(&st->i2c_master, DIB7000P, st->i2c_adap, st->i2c_addr);
 
 	/* init 7090 tuner adapter */
@@ -2427,9 +2915,15 @@ error:
 EXPORT_SYMBOL(dib7000p_attach);
 
 static struct dvb_frontend_ops dib7000p_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_DVBT },
 	.info = {
 		 .name = "DiBcom 7000PC",
+=======
+	.info = {
+		 .name = "DiBcom 7000PC",
+		 .type = FE_OFDM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 .frequency_min = 44250000,
 		 .frequency_max = 867250000,
 		 .frequency_stepsize = 62500,

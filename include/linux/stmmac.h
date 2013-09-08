@@ -28,6 +28,7 @@
 
 #include <linux/platform_device.h>
 
+<<<<<<< HEAD
 /* Platfrom data for platform device structure's platform_data field */
 
 struct stmmac_mdio_bus_data {
@@ -43,6 +44,13 @@ struct plat_stmmacenet_data {
 	int phy_addr;
 	int interface;
 	struct stmmac_mdio_bus_data *mdio_bus_data;
+=======
+/* platform data for platform device structure's platform_data field */
+
+/* Private data for the STM on-board ethernet driver */
+struct plat_stmmacenet_data {
+	int bus_id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int pbl;
 	int clk_csr;
 	int has_gmac;
@@ -50,7 +58,10 @@ struct plat_stmmacenet_data {
 	int tx_coe;
 	int bugged_jumbo;
 	int pmt;
+<<<<<<< HEAD
 	int force_sf_dma_mode;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void (*fix_mac_speed)(void *priv, unsigned int speed);
 	void (*bus_setup)(void __iomem *ioaddr);
 	int (*init)(struct platform_device *pdev);
@@ -58,4 +69,18 @@ struct plat_stmmacenet_data {
 	void *custom_cfg;
 	void *bsp_priv;
 };
+<<<<<<< HEAD
 #endif
+=======
+
+struct plat_stmmacphy_data {
+	int bus_id;
+	int phy_addr;
+	unsigned int phy_mask;
+	int interface;
+	int (*phy_reset)(void *priv);
+	void *priv;
+};
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

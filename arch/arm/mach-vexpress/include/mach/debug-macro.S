@@ -10,6 +10,7 @@
  * published by the Free Software Foundation.
  */
 
+<<<<<<< HEAD
 #define DEBUG_LL_PHYS_BASE		0x10000000
 #define DEBUG_LL_UART_OFFSET		0x00009000
 
@@ -38,6 +39,14 @@
 		orrne	\rv, \rp, #DEBUG_LL_VIRT_BASE
 		orrne	\rp, \rp, #DEBUG_LL_PHYS_BASE_RS1
 
+=======
+#define DEBUG_LL_UART_OFFSET	0x00009000
+
+		.macro	addruart,rp,rv
+		mov	\rp, #DEBUG_LL_UART_OFFSET
+		orr	\rv, \rp, #0xf8000000	@ virtual base
+		orr	\rp, \rp, #0x10000000	@ physical base
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.endm
 
 #include <asm/hardware/debug-pl01x.S>

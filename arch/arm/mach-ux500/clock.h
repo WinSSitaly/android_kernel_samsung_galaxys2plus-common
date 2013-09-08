@@ -21,7 +21,10 @@ struct clkops {
 	void (*enable) (struct clk *);
 	void (*disable) (struct clk *);
 	unsigned long (*get_rate) (struct clk *);
+<<<<<<< HEAD
 	int (*set_parent)(struct clk *, struct clk *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**

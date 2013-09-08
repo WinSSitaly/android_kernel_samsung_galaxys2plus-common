@@ -25,13 +25,21 @@ static int oprofile_perf_enabled;
 static DEFINE_MUTEX(oprofile_perf_mutex);
 
 static struct op_counter_config *counter_config;
+<<<<<<< HEAD
 static struct perf_event **perf_events[NR_CPUS];
+=======
+static struct perf_event **perf_events[nr_cpumask_bits];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int num_counters;
 
 /*
  * Overflow callback for oprofile.
  */
+<<<<<<< HEAD
 static void op_overflow_handler(struct perf_event *event,
+=======
+static void op_overflow_handler(struct perf_event *event, int unused,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			struct perf_sample_data *data, struct pt_regs *regs)
 {
 	int id;
@@ -79,7 +87,11 @@ static int op_create_counter(int cpu, int event)
 
 	pevent = perf_event_create_kernel_counter(&counter_config[event].attr,
 						  cpu, NULL,
+<<<<<<< HEAD
 						  op_overflow_handler, NULL);
+=======
+						  op_overflow_handler);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (IS_ERR(pevent))
 		return PTR_ERR(pevent);
@@ -160,9 +172,15 @@ static int oprofile_perf_create_files(struct super_block *sb, struct dentry *roo
 
 static int oprofile_perf_setup(void)
 {
+<<<<<<< HEAD
 	raw_spin_lock(&oprofilefs_lock);
 	op_perf_setup();
 	raw_spin_unlock(&oprofilefs_lock);
+=======
+	spin_lock(&oprofilefs_lock);
+	op_perf_setup();
+	spin_unlock(&oprofilefs_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

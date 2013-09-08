@@ -36,8 +36,11 @@ do {								\
 #endif /* !CONFIG_BUG */
 
 #include <asm-generic/bug.h>
+<<<<<<< HEAD
 
 
 extern void show_regs_common(void);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _ASM_X86_BUG_H */

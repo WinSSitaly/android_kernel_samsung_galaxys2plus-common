@@ -60,12 +60,20 @@ typedef enum _CARD_OP_MODE {
 
 /*---------------------  Export Functions  --------------------------*/
 
+<<<<<<< HEAD
 void CARDbSetMediaChannel(void *pDeviceHandler,
+=======
+BOOL CARDbSetMediaChannel(void *pDeviceHandler,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  unsigned int uConnectionChannel);
 void CARDvSetRSPINF(void *pDeviceHandler, BYTE byBBType);
 void vUpdateIFS(void *pDeviceHandler);
 void CARDvUpdateBasicTopRate(void *pDeviceHandler);
+<<<<<<< HEAD
 void CARDbAddBasicRate(void *pDeviceHandler, WORD wRateIdx);
+=======
+BOOL CARDbAddBasicRate(void *pDeviceHandler, WORD wRateIdx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 BOOL CARDbIsOFDMinBasicRate(void *pDeviceHandler);
 void CARDvAdjustTSF(void *pDeviceHandler, BYTE byRxRate,
 		    QWORD qwBSSTimestamp, QWORD qwLocalTSF);

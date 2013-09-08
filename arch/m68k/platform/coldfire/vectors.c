@@ -33,13 +33,30 @@ asmlinkage void dbginterrupt_c(struct frame *fp)
 
 /***************************************************************************/
 
+<<<<<<< HEAD
+=======
+extern e_vector	*_ramvec;
+
+void set_evector(int vecnum, void (*handler)(void))
+{
+	if (vecnum >= 0 && vecnum <= 255)
+		_ramvec[vecnum] = handler;
+}
+
+/***************************************************************************/
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Assembler routines */
 asmlinkage void buserr(void);
 asmlinkage void trap(void);
 asmlinkage void system_call(void);
 asmlinkage void inthandler(void);
 
+<<<<<<< HEAD
 void __init trap_init(void)
+=======
+void __init init_vectors(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 

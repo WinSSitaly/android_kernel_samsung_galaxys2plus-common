@@ -22,7 +22,11 @@
 
 #include <net/netfilter/ipv4/nf_defrag_ipv4.h>
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
+=======
+#if defined(CONFIG_IP6_NF_IPTABLES) || defined(CONFIG_IP6_NF_IPTABLES_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define XT_TPROXY_HAVE_IPV6 1
 #include <net/if_inet6.h>
 #include <net/addrconf.h>

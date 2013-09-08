@@ -22,6 +22,10 @@
 #include <linux/module.h>
 #include <linux/bug.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/irq.h>
 #include <asm/traps.h>
 #include <asm/page.h>

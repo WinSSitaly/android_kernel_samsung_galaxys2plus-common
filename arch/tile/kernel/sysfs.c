@@ -14,11 +14,18 @@
  * /sys entry support.
  */
 
+<<<<<<< HEAD
 #include <linux/device.h>
 #include <linux/cpu.h>
 #include <linux/slab.h>
 #include <linux/smp.h>
 #include <linux/stat.h>
+=======
+#include <linux/sysdev.h>
+#include <linux/cpu.h>
+#include <linux/slab.h>
+#include <linux/smp.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <hv/hypervisor.h>
 
 /* Return a string queried from the hypervisor, truncated to page size. */
@@ -32,55 +39,101 @@ static ssize_t get_hv_confstr(char *page, int query)
 	return n;
 }
 
+<<<<<<< HEAD
 static ssize_t chip_width_show(struct device *dev,
 			       struct device_attribute *attr,
+=======
+static ssize_t chip_width_show(struct sysdev_class *dev,
+			       struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       char *page)
 {
 	return sprintf(page, "%u\n", smp_width);
 }
+<<<<<<< HEAD
 static DEVICE_ATTR(chip_width, 0444, chip_width_show, NULL);
 
 static ssize_t chip_height_show(struct device *dev,
 				struct device_attribute *attr,
+=======
+static SYSDEV_CLASS_ATTR(chip_width, 0444, chip_width_show, NULL);
+
+static ssize_t chip_height_show(struct sysdev_class *dev,
+				struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				char *page)
 {
 	return sprintf(page, "%u\n", smp_height);
 }
+<<<<<<< HEAD
 static DEVICE_ATTR(chip_height, 0444, chip_height_show, NULL);
 
 static ssize_t chip_serial_show(struct device *dev,
 				struct device_attribute *attr,
+=======
+static SYSDEV_CLASS_ATTR(chip_height, 0444, chip_height_show, NULL);
+
+static ssize_t chip_serial_show(struct sysdev_class *dev,
+				struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				char *page)
 {
 	return get_hv_confstr(page, HV_CONFSTR_CHIP_SERIAL_NUM);
 }
+<<<<<<< HEAD
 static DEVICE_ATTR(chip_serial, 0444, chip_serial_show, NULL);
 
 static ssize_t chip_revision_show(struct device *dev,
 				  struct device_attribute *attr,
+=======
+static SYSDEV_CLASS_ATTR(chip_serial, 0444, chip_serial_show, NULL);
+
+static ssize_t chip_revision_show(struct sysdev_class *dev,
+				  struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  char *page)
 {
 	return get_hv_confstr(page, HV_CONFSTR_CHIP_REV);
 }
+<<<<<<< HEAD
 static DEVICE_ATTR(chip_revision, 0444, chip_revision_show, NULL);
 
 
 static ssize_t type_show(struct device *dev,
 			    struct device_attribute *attr,
+=======
+static SYSDEV_CLASS_ATTR(chip_revision, 0444, chip_revision_show, NULL);
+
+
+static ssize_t type_show(struct sysdev_class *dev,
+			    struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    char *page)
 {
 	return sprintf(page, "tilera\n");
 }
+<<<<<<< HEAD
 static DEVICE_ATTR(type, 0444, type_show, NULL);
 
 #define HV_CONF_ATTR(name, conf)					\
 	static ssize_t name ## _show(struct device *dev,		\
 				     struct device_attribute *attr, \
+=======
+static SYSDEV_CLASS_ATTR(type, 0444, type_show, NULL);
+
+#define HV_CONF_ATTR(name, conf)					\
+	static ssize_t name ## _show(struct sysdev_class *dev,		\
+				     struct sysdev_class_attribute *attr, \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     char *page)			\
 	{								\
 		return get_hv_confstr(page, conf);			\
 	}								\
+<<<<<<< HEAD
 	static DEVICE_ATTR(name, 0444, name ## _show, NULL);
+=======
+	static SYSDEV_CLASS_ATTR(name, 0444, name ## _show, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 HV_CONF_ATTR(version,		HV_CONFSTR_HV_SW_VER)
 HV_CONF_ATTR(config_version,	HV_CONFSTR_HV_CONFIG_VER)
@@ -96,6 +149,7 @@ HV_CONF_ATTR(mezz_description,	HV_CONFSTR_MEZZ_DESC)
 HV_CONF_ATTR(switch_control,	HV_CONFSTR_SWITCH_CONTROL)
 
 static struct attribute *board_attrs[] = {
+<<<<<<< HEAD
 	&dev_attr_board_part.attr,
 	&dev_attr_board_serial.attr,
 	&dev_attr_board_revision.attr,
@@ -105,6 +159,17 @@ static struct attribute *board_attrs[] = {
 	&dev_attr_mezz_revision.attr,
 	&dev_attr_mezz_description.attr,
 	&dev_attr_switch_control.attr,
+=======
+	&attr_board_part.attr,
+	&attr_board_serial.attr,
+	&attr_board_revision.attr,
+	&attr_board_description.attr,
+	&attr_mezz_part.attr,
+	&attr_mezz_serial.attr,
+	&attr_mezz_revision.attr,
+	&attr_mezz_description.attr,
+	&attr_switch_control.attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL
 };
 
@@ -151,11 +216,19 @@ hvconfig_bin_read(struct file *filp, struct kobject *kobj,
 
 static int __init create_sysfs_entries(void)
 {
+<<<<<<< HEAD
+=======
+	struct sysdev_class *cls = &cpu_sysdev_class;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err = 0;
 
 #define create_cpu_attr(name)						\
 	if (!err)							\
+<<<<<<< HEAD
 		err = device_create_file(cpu_subsys.dev_root, &dev_attr_##name);
+=======
+		err = sysfs_create_file(&cls->kset.kobj, &attr_##name.attr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	create_cpu_attr(chip_width);
 	create_cpu_attr(chip_height);
 	create_cpu_attr(chip_serial);
@@ -163,7 +236,11 @@ static int __init create_sysfs_entries(void)
 
 #define create_hv_attr(name)						\
 	if (!err)							\
+<<<<<<< HEAD
 		err = sysfs_create_file(hypervisor_kobj, &dev_attr_##name.attr);
+=======
+		err = sysfs_create_file(hypervisor_kobj, &attr_##name.attr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	create_hv_attr(type);
 	create_hv_attr(version);
 	create_hv_attr(config_version);

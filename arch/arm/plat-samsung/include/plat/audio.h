@@ -44,7 +44,10 @@ struct samsung_i2s {
 	 * Also corresponds to clocks of I2SMOD[10]
 	 */
 	const char **src_clk;
+<<<<<<< HEAD
 	dma_addr_t idma_addr;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**

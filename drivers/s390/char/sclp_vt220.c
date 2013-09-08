@@ -685,6 +685,10 @@ static int __init sclp_vt220_tty_init(void)
 	if (rc)
 		goto out_driver;
 
+<<<<<<< HEAD
+=======
+	driver->owner = THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	driver->driver_name = SCLP_VT220_DRIVER_NAME;
 	driver->name = SCLP_VT220_DEVICE_NAME;
 	driver->major = SCLP_VT220_MAJOR;

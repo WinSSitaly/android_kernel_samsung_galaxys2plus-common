@@ -4,6 +4,10 @@
  * Header file for Xtables timer target module.
  *
  * Copyright (C) 2004, 2010 Nokia Corporation
+<<<<<<< HEAD
+=======
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Written by Timo Teras <ext-timo.teras@nokia.com>
  *
  * Converted to x_tables and forward-ported to 2.6.34
@@ -32,12 +36,25 @@
 #include <linux/types.h>
 
 #define MAX_IDLETIMER_LABEL_SIZE 28
+<<<<<<< HEAD
+=======
+#define NLMSG_MAX_SIZE 64
+
+#define NL_EVENT_TYPE_INACTIVE 0
+#define NL_EVENT_TYPE_ACTIVE 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct idletimer_tg_info {
 	__u32 timeout;
 
 	char label[MAX_IDLETIMER_LABEL_SIZE];
 
+<<<<<<< HEAD
+=======
+	/* Use netlink messages for notification in addition to sysfs */
+	__u8 send_nl_msg;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* for kernel module internal use only */
 	struct idletimer_tg *timer __attribute__((aligned(8)));
 };

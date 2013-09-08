@@ -43,11 +43,22 @@
 #endif
 
 struct alt_instr {
+<<<<<<< HEAD
 	s32 instr_offset;	/* original instruction */
 	s32 repl_offset;	/* offset to replacement instruction */
 	u16 cpuid;		/* cpuid bit set for replacement */
 	u8  instrlen;		/* length of original instruction */
 	u8  replacementlen;	/* length of new instruction, <= instrlen */
+=======
+	u8 *instr;		/* original instruction */
+	u8 *replacement;
+	u16 cpuid;		/* cpuid bit set for replacement */
+	u8  instrlen;		/* length of original instruction */
+	u8  replacementlen;	/* length of new instruction, <= instrlen */
+#ifdef CONFIG_X86_64
+	u32 pad2;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 extern void alternative_instructions(void);
@@ -80,8 +91,14 @@ static inline int alternatives_text_reserved(void *start, void *end)
 									\
       "661:\n\t" oldinstr "\n662:\n"					\
       ".section .altinstructions,\"a\"\n"				\
+<<<<<<< HEAD
       "	 .long 661b - .\n"			/* label           */	\
       "	 .long 663f - .\n"			/* new instruction */	\
+=======
+      _ASM_ALIGN "\n"							\
+      _ASM_PTR "661b\n"				/* label           */	\
+      _ASM_PTR "663f\n"				/* new instruction */	\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
       "	 .word " __stringify(feature) "\n"	/* feature bit     */	\
       "	 .byte 662b-661b\n"			/* sourcelen       */	\
       "	 .byte 664f-663f\n"			/* replacementlen  */	\
@@ -145,12 +162,15 @@ static inline int alternatives_text_reserved(void *start, void *end)
  */
 #define ASM_OUTPUT2(a...) a
 
+<<<<<<< HEAD
 /*
  * use this macro if you need clobbers but no inputs in
  * alternative_{input,io,call}()
  */
 #define ASM_NO_INPUT_CLOBBER(clbr...) "i" (0) : clbr
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct paravirt_patch_site;
 #ifdef CONFIG_PARAVIRT
 void apply_paravirt(struct paravirt_patch_site *start,

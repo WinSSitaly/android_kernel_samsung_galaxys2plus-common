@@ -27,7 +27,11 @@
 #include <linux/init.h>
 #include <linux/interrupt.h>
 #include <linux/pci.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <sound/core.h>
 #include <sound/info.h>
@@ -53,7 +57,11 @@ MODULE_SUPPORTED_DEVICE("{{RME,Digi96},"
 
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;	/* Index 0-MAX */
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;	/* ID for this card */
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;	/* Enable this card */
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;	/* Enable this card */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_array(index, int, NULL, 0444);
 MODULE_PARM_DESC(index, "Index value for RME Digi96 soundcard.");
@@ -1561,7 +1569,11 @@ snd_rme96_create(struct rme96 *rme96)
 	}
 
 	if (request_irq(pci->irq, snd_rme96_interrupt, IRQF_SHARED,
+<<<<<<< HEAD
 			KBUILD_MODNAME, rme96)) {
+=======
+			"RME96", rme96)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printk(KERN_ERR "unable to grab IRQ %d\n", pci->irq);
 		return -EBUSY;
 	}
@@ -2396,7 +2408,11 @@ static void __devexit snd_rme96_remove(struct pci_dev *pci)
 }
 
 static struct pci_driver driver = {
+<<<<<<< HEAD
 	.name = KBUILD_MODNAME,
+=======
+	.name = "RME Digi96",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table = snd_rme96_ids,
 	.probe = snd_rme96_probe,
 	.remove = __devexit_p(snd_rme96_remove),

@@ -30,7 +30,10 @@
 #include <asm/mach-types.h>
 #include <mach/hardware.h>
 #include <linux/gpio.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/mcbsp.h>
 
 #include "omap-mcbsp.h"
@@ -56,8 +59,34 @@ static int osk_hw_params(struct snd_pcm_substream *substream,
 {
 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+<<<<<<< HEAD
 	int err;
 
+=======
+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+	int err;
+
+	/* Set codec DAI configuration */
+	err = snd_soc_dai_set_fmt(codec_dai,
+				  SND_SOC_DAIFMT_DSP_B |
+				  SND_SOC_DAIFMT_NB_NF |
+				  SND_SOC_DAIFMT_CBM_CFM);
+	if (err < 0) {
+		printk(KERN_ERR "can't set codec DAI configuration\n");
+		return err;
+	}
+
+	/* Set cpu DAI configuration */
+	err = snd_soc_dai_set_fmt(cpu_dai,
+				  SND_SOC_DAIFMT_DSP_B |
+				  SND_SOC_DAIFMT_NB_NF |
+				  SND_SOC_DAIFMT_CBM_CFM);
+	if (err < 0) {
+		printk(KERN_ERR "can't set cpu DAI configuration\n");
+		return err;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Set the codec system clock for DAC and ADC */
 	err =
 	    snd_soc_dai_set_sysclk(codec_dai, 0, CODEC_CLOCK, SND_SOC_CLOCK_IN);
@@ -92,22 +121,55 @@ static const struct snd_soc_dapm_route audio_map[] = {
 	{"MICIN", NULL, "Mic Jack"},
 };
 
+<<<<<<< HEAD
+=======
+static int osk_tlv320aic23_init(struct snd_soc_pcm_runtime *rtd)
+{
+	struct snd_soc_codec *codec = rtd->codec;
+	struct snd_soc_dapm_context *dapm = &codec->dapm;
+
+	/* Add osk5912 specific widgets */
+	snd_soc_dapm_new_controls(dapm, tlv320aic23_dapm_widgets,
+				  ARRAY_SIZE(tlv320aic23_dapm_widgets));
+
+	/* Set up osk5912 specific audio path audio_map */
+	snd_soc_dapm_add_routes(dapm, audio_map, ARRAY_SIZE(audio_map));
+
+	snd_soc_dapm_enable_pin(dapm, "Headphone Jack");
+	snd_soc_dapm_enable_pin(dapm, "Line In");
+	snd_soc_dapm_enable_pin(dapm, "Mic Jack");
+
+	snd_soc_dapm_sync(dapm);
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Digital audio interface glue - connects codec <--> CPU */
 static struct snd_soc_dai_link osk_dai = {
 	.name = "TLV320AIC23",
 	.stream_name = "AIC23",
+<<<<<<< HEAD
 	.cpu_dai_name = "omap-mcbsp.1",
 	.codec_dai_name = "tlv320aic23-hifi",
 	.platform_name = "omap-pcm-audio",
 	.codec_name = "tlv320aic23-codec",
 	.dai_fmt = SND_SOC_DAIFMT_DSP_B | SND_SOC_DAIFMT_NB_NF |
 		   SND_SOC_DAIFMT_CBM_CFM,
+=======
+	.cpu_dai_name = "omap-mcbsp-dai.0",
+	.codec_dai_name = "tlv320aic23-hifi",
+	.platform_name = "omap-pcm-audio",
+	.codec_name = "tlv320aic23-codec",
+	.init = osk_tlv320aic23_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ops = &osk_ops,
 };
 
 /* Audio machine driver */
 static struct snd_soc_card snd_soc_card_osk = {
 	.name = "OSK5912",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
 	.dai_link = &osk_dai,
 	.num_links = 1,
@@ -116,6 +178,10 @@ static struct snd_soc_card snd_soc_card_osk = {
 	.num_dapm_widgets = ARRAY_SIZE(tlv320aic23_dapm_widgets),
 	.dapm_routes = audio_map,
 	.num_dapm_routes = ARRAY_SIZE(audio_map),
+=======
+	.dai_link = &osk_dai,
+	.num_links = 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device *osk_snd_device;

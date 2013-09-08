@@ -16,7 +16,10 @@
 #include "include/context.h"
 #include "include/policy.h"
 #include "include/domain.h"
+<<<<<<< HEAD
 #include "include/procattr.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /**

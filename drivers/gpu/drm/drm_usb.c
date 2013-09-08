@@ -1,7 +1,12 @@
 #include "drmP.h"
 #include <linux/usb.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 
+=======
+
+#ifdef CONFIG_USB
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int drm_get_usb_dev(struct usb_interface *interface,
 		    const struct usb_device_id *id,
 		    struct drm_driver *driver)
@@ -18,7 +23,11 @@ int drm_get_usb_dev(struct usb_interface *interface,
 
 	usbdev = interface_to_usbdev(interface);
 	dev->usbdev = usbdev;
+<<<<<<< HEAD
 	dev->dev = &interface->dev;
+=======
+	dev->dev = &usbdev->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&drm_global_mutex);
 
@@ -114,7 +123,11 @@ void drm_usb_exit(struct drm_driver *driver,
 	usb_deregister(udriver);
 }
 EXPORT_SYMBOL(drm_usb_exit);
+<<<<<<< HEAD
 
 MODULE_AUTHOR("David Airlie");
 MODULE_DESCRIPTION("USB DRM support");
 MODULE_LICENSE("GPL and additional rights");
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

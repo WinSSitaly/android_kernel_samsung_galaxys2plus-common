@@ -28,12 +28,19 @@
 #include <linux/delay.h>
 #include <linux/i2c.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/v4l2-mediabus.h>
 #include <linux/module.h>
 
 #include <media/soc_camera.h>
 #include <media/v4l2-chip-ident.h>
 #include <media/v4l2-ctrls.h>
+=======
+
+#include <media/soc_camera.h>
+#include <media/v4l2-chip-ident.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Register definitions */
 #define REG_GAIN		0x00	/* range 00 - 3F */
@@ -179,6 +186,7 @@ struct ov6650_reg {
 
 struct ov6650 {
 	struct v4l2_subdev	subdev;
+<<<<<<< HEAD
 	struct v4l2_ctrl_handler hdl;
 	struct {
 		/* exposure/autoexposure cluster */
@@ -196,6 +204,22 @@ struct ov6650 {
 		struct v4l2_ctrl *blue;
 		struct v4l2_ctrl *red;
 	};
+=======
+
+	int			gain;
+	int			blue;
+	int			red;
+	int			saturation;
+	int			hue;
+	int			brightness;
+	int			exposure;
+	int			gamma;
+	int			aec;
+	bool			vflip;
+	bool			hflip;
+	bool			awb;
+	bool			agc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool			half_scale;	/* scale down output by 2 */
 	struct v4l2_rect	rect;		/* sensor cropping window */
 	unsigned long		pclk_limit;	/* from host */
@@ -215,6 +239,129 @@ static enum v4l2_mbus_pixelcode ov6650_codes[] = {
 	V4L2_MBUS_FMT_Y8_1X8,
 };
 
+<<<<<<< HEAD
+=======
+static const struct v4l2_queryctrl ov6650_controls[] = {
+	{
+		.id		= V4L2_CID_AUTOGAIN,
+		.type		= V4L2_CTRL_TYPE_BOOLEAN,
+		.name		= "AGC",
+		.minimum	= 0,
+		.maximum	= 1,
+		.step		= 1,
+		.default_value	= 1,
+	},
+	{
+		.id		= V4L2_CID_GAIN,
+		.type		= V4L2_CTRL_TYPE_INTEGER,
+		.name		= "Gain",
+		.minimum	= 0,
+		.maximum	= 0x3f,
+		.step		= 1,
+		.default_value	= DEF_GAIN,
+	},
+	{
+		.id		= V4L2_CID_AUTO_WHITE_BALANCE,
+		.type		= V4L2_CTRL_TYPE_BOOLEAN,
+		.name		= "AWB",
+		.minimum	= 0,
+		.maximum	= 1,
+		.step		= 1,
+		.default_value	= 1,
+	},
+	{
+		.id		= V4L2_CID_BLUE_BALANCE,
+		.type		= V4L2_CTRL_TYPE_INTEGER,
+		.name		= "Blue",
+		.minimum	= 0,
+		.maximum	= 0xff,
+		.step		= 1,
+		.default_value	= DEF_BLUE,
+	},
+	{
+		.id		= V4L2_CID_RED_BALANCE,
+		.type		= V4L2_CTRL_TYPE_INTEGER,
+		.name		= "Red",
+		.minimum	= 0,
+		.maximum	= 0xff,
+		.step		= 1,
+		.default_value	= DEF_RED,
+	},
+	{
+		.id		= V4L2_CID_SATURATION,
+		.type		= V4L2_CTRL_TYPE_INTEGER,
+		.name		= "Saturation",
+		.minimum	= 0,
+		.maximum	= 0xf,
+		.step		= 1,
+		.default_value	= 0x8,
+	},
+	{
+		.id		= V4L2_CID_HUE,
+		.type		= V4L2_CTRL_TYPE_INTEGER,
+		.name		= "Hue",
+		.minimum	= 0,
+		.maximum	= HUE_MASK,
+		.step		= 1,
+		.default_value	= DEF_HUE,
+	},
+	{
+		.id		= V4L2_CID_BRIGHTNESS,
+		.type		= V4L2_CTRL_TYPE_INTEGER,
+		.name		= "Brightness",
+		.minimum	= 0,
+		.maximum	= 0xff,
+		.step		= 1,
+		.default_value	= 0x80,
+	},
+	{
+		.id		= V4L2_CID_EXPOSURE_AUTO,
+		.type		= V4L2_CTRL_TYPE_INTEGER,
+		.name		= "AEC",
+		.minimum	= 0,
+		.maximum	= 3,
+		.step		= 1,
+		.default_value	= 0,
+	},
+	{
+		.id		= V4L2_CID_EXPOSURE,
+		.type		= V4L2_CTRL_TYPE_INTEGER,
+		.name		= "Exposure",
+		.minimum	= 0,
+		.maximum	= 0xff,
+		.step		= 1,
+		.default_value	= DEF_AECH,
+	},
+	{
+		.id		= V4L2_CID_GAMMA,
+		.type		= V4L2_CTRL_TYPE_INTEGER,
+		.name		= "Gamma",
+		.minimum	= 0,
+		.maximum	= 0xff,
+		.step		= 1,
+		.default_value	= 0x12,
+	},
+	{
+		.id		= V4L2_CID_VFLIP,
+		.type		= V4L2_CTRL_TYPE_BOOLEAN,
+		.name		= "Flip Vertically",
+		.minimum	= 0,
+		.maximum	= 1,
+		.step		= 1,
+		.default_value	= 0,
+	},
+	{
+		.id		= V4L2_CID_HFLIP,
+		.type		= V4L2_CTRL_TYPE_BOOLEAN,
+		.name		= "Flip Horizontally",
+		.minimum	= 0,
+		.maximum	= 1,
+		.step		= 1,
+		.default_value	= 0,
+	},
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* read a register */
 static int ov6650_reg_read(struct i2c_client *client, u8 reg, u8 *val)
 {
@@ -304,6 +451,7 @@ static int ov6650_s_stream(struct v4l2_subdev *sd, int enable)
 	return 0;
 }
 
+<<<<<<< HEAD
 /* Get status of additional camera capabilities */
 static int ov6550_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
 {
@@ -344,10 +492,137 @@ static int ov6550_s_ctrl(struct v4l2_ctrl *ctrl)
 	struct v4l2_subdev *sd = &priv->subdev;
 	struct i2c_client *client = v4l2_get_subdevdata(sd);
 	int ret;
+=======
+/* Alter bus settings on camera side */
+static int ov6650_set_bus_param(struct soc_camera_device *icd,
+				unsigned long flags)
+{
+	struct soc_camera_link *icl = to_soc_camera_link(icd);
+	struct i2c_client *client = to_i2c_client(to_soc_camera_control(icd));
+	int ret;
+
+	flags = soc_camera_apply_sensor_flags(icl, flags);
+
+	if (flags & SOCAM_PCLK_SAMPLE_RISING)
+		ret = ov6650_reg_rmw(client, REG_COMJ, COMJ_PCLK_RISING, 0);
+	else
+		ret = ov6650_reg_rmw(client, REG_COMJ, 0, COMJ_PCLK_RISING);
+	if (ret)
+		return ret;
+
+	if (flags & SOCAM_HSYNC_ACTIVE_LOW)
+		ret = ov6650_reg_rmw(client, REG_COMF, COMF_HREF_LOW, 0);
+	else
+		ret = ov6650_reg_rmw(client, REG_COMF, 0, COMF_HREF_LOW);
+	if (ret)
+		return ret;
+
+	if (flags & SOCAM_VSYNC_ACTIVE_HIGH)
+		ret = ov6650_reg_rmw(client, REG_COMJ, COMJ_VSYNC_HIGH, 0);
+	else
+		ret = ov6650_reg_rmw(client, REG_COMJ, 0, COMJ_VSYNC_HIGH);
+
+	return ret;
+}
+
+/* Request bus settings on camera side */
+static unsigned long ov6650_query_bus_param(struct soc_camera_device *icd)
+{
+	struct soc_camera_link *icl = to_soc_camera_link(icd);
+
+	unsigned long flags = SOCAM_MASTER |
+		SOCAM_PCLK_SAMPLE_RISING | SOCAM_PCLK_SAMPLE_FALLING |
+		SOCAM_HSYNC_ACTIVE_HIGH | SOCAM_HSYNC_ACTIVE_LOW |
+		SOCAM_VSYNC_ACTIVE_HIGH | SOCAM_VSYNC_ACTIVE_LOW |
+		SOCAM_DATA_ACTIVE_HIGH | SOCAM_DATAWIDTH_8;
+
+	return soc_camera_apply_sensor_flags(icl, flags);
+}
+
+/* Get status of additional camera capabilities */
+static int ov6650_g_ctrl(struct v4l2_subdev *sd, struct v4l2_control *ctrl)
+{
+	struct i2c_client *client = v4l2_get_subdevdata(sd);
+	struct ov6650 *priv = to_ov6650(client);
+	uint8_t reg;
+	int ret = 0;
+
+	switch (ctrl->id) {
+	case V4L2_CID_AUTOGAIN:
+		ctrl->value = priv->agc;
+		break;
+	case V4L2_CID_GAIN:
+		if (priv->agc) {
+			ret = ov6650_reg_read(client, REG_GAIN, &reg);
+			ctrl->value = reg;
+		} else {
+			ctrl->value = priv->gain;
+		}
+		break;
+	case V4L2_CID_AUTO_WHITE_BALANCE:
+		ctrl->value = priv->awb;
+		break;
+	case V4L2_CID_BLUE_BALANCE:
+		if (priv->awb) {
+			ret = ov6650_reg_read(client, REG_BLUE, &reg);
+			ctrl->value = reg;
+		} else {
+			ctrl->value = priv->blue;
+		}
+		break;
+	case V4L2_CID_RED_BALANCE:
+		if (priv->awb) {
+			ret = ov6650_reg_read(client, REG_RED, &reg);
+			ctrl->value = reg;
+		} else {
+			ctrl->value = priv->red;
+		}
+		break;
+	case V4L2_CID_SATURATION:
+		ctrl->value = priv->saturation;
+		break;
+	case V4L2_CID_HUE:
+		ctrl->value = priv->hue;
+		break;
+	case V4L2_CID_BRIGHTNESS:
+		ctrl->value = priv->brightness;
+		break;
+	case V4L2_CID_EXPOSURE_AUTO:
+		ctrl->value = priv->aec;
+		break;
+	case V4L2_CID_EXPOSURE:
+		if (priv->aec) {
+			ret = ov6650_reg_read(client, REG_AECH, &reg);
+			ctrl->value = reg;
+		} else {
+			ctrl->value = priv->exposure;
+		}
+		break;
+	case V4L2_CID_GAMMA:
+		ctrl->value = priv->gamma;
+		break;
+	case V4L2_CID_VFLIP:
+		ctrl->value = priv->vflip;
+		break;
+	case V4L2_CID_HFLIP:
+		ctrl->value = priv->hflip;
+		break;
+	}
+	return ret;
+}
+
+/* Set status of additional camera capabilities */
+static int ov6650_s_ctrl(struct v4l2_subdev *sd, struct v4l2_control *ctrl)
+{
+	struct i2c_client *client = v4l2_get_subdevdata(sd);
+	struct ov6650 *priv = to_ov6650(client);
+	int ret = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (ctrl->id) {
 	case V4L2_CID_AUTOGAIN:
 		ret = ov6650_reg_rmw(client, REG_COMB,
+<<<<<<< HEAD
 				ctrl->val ? COMB_AGC : 0, COMB_AGC);
 		if (!ret && !ctrl->val)
 			ret = ov6650_reg_write(client, REG_GAIN, priv->gain->val);
@@ -388,6 +663,87 @@ static int ov6550_s_ctrl(struct v4l2_ctrl *ctrl)
 	}
 
 	return -EINVAL;
+=======
+				ctrl->value ? COMB_AGC : 0, COMB_AGC);
+		if (!ret)
+			priv->agc = ctrl->value;
+		break;
+	case V4L2_CID_GAIN:
+		ret = ov6650_reg_write(client, REG_GAIN, ctrl->value);
+		if (!ret)
+			priv->gain = ctrl->value;
+		break;
+	case V4L2_CID_AUTO_WHITE_BALANCE:
+		ret = ov6650_reg_rmw(client, REG_COMB,
+				ctrl->value ? COMB_AWB : 0, COMB_AWB);
+		if (!ret)
+			priv->awb = ctrl->value;
+		break;
+	case V4L2_CID_BLUE_BALANCE:
+		ret = ov6650_reg_write(client, REG_BLUE, ctrl->value);
+		if (!ret)
+			priv->blue = ctrl->value;
+		break;
+	case V4L2_CID_RED_BALANCE:
+		ret = ov6650_reg_write(client, REG_RED, ctrl->value);
+		if (!ret)
+			priv->red = ctrl->value;
+		break;
+	case V4L2_CID_SATURATION:
+		ret = ov6650_reg_rmw(client, REG_SAT, SET_SAT(ctrl->value),
+				SAT_MASK);
+		if (!ret)
+			priv->saturation = ctrl->value;
+		break;
+	case V4L2_CID_HUE:
+		ret = ov6650_reg_rmw(client, REG_HUE, SET_HUE(ctrl->value),
+				HUE_MASK);
+		if (!ret)
+			priv->hue = ctrl->value;
+		break;
+	case V4L2_CID_BRIGHTNESS:
+		ret = ov6650_reg_write(client, REG_BRT, ctrl->value);
+		if (!ret)
+			priv->brightness = ctrl->value;
+		break;
+	case V4L2_CID_EXPOSURE_AUTO:
+		switch (ctrl->value) {
+		case V4L2_EXPOSURE_AUTO:
+			ret = ov6650_reg_rmw(client, REG_COMB, COMB_AEC, 0);
+			break;
+		default:
+			ret = ov6650_reg_rmw(client, REG_COMB, 0, COMB_AEC);
+			break;
+		}
+		if (!ret)
+			priv->aec = ctrl->value;
+		break;
+	case V4L2_CID_EXPOSURE:
+		ret = ov6650_reg_write(client, REG_AECH, ctrl->value);
+		if (!ret)
+			priv->exposure = ctrl->value;
+		break;
+	case V4L2_CID_GAMMA:
+		ret = ov6650_reg_write(client, REG_GAM1, ctrl->value);
+		if (!ret)
+			priv->gamma = ctrl->value;
+		break;
+	case V4L2_CID_VFLIP:
+		ret = ov6650_reg_rmw(client, REG_COMB,
+				ctrl->value ? COMB_FLIP_V : 0, COMB_FLIP_V);
+		if (!ret)
+			priv->vflip = ctrl->value;
+		break;
+	case V4L2_CID_HFLIP:
+		ret = ov6650_reg_rmw(client, REG_COMB,
+				ctrl->value ? COMB_FLIP_H : 0, COMB_FLIP_H);
+		if (!ret)
+			priv->hflip = ctrl->value;
+		break;
+	}
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Get chip identification */
@@ -540,7 +896,11 @@ static u8 to_clkrc(struct v4l2_fract *timeperframe,
 static int ov6650_s_fmt(struct v4l2_subdev *sd, struct v4l2_mbus_framefmt *mf)
 {
 	struct i2c_client *client = v4l2_get_subdevdata(sd);
+<<<<<<< HEAD
 	struct soc_camera_device *icd = v4l2_get_subdev_hostdata(sd);
+=======
+	struct soc_camera_device *icd = client->dev.platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct soc_camera_sense *sense = icd->sense;
 	struct ov6650 *priv = to_ov6650(client);
 	bool half_scale = !is_unscaled_ok(mf->width, mf->height, &priv->rect);
@@ -649,7 +1009,11 @@ static int ov6650_s_fmt(struct v4l2_subdev *sd, struct v4l2_mbus_framefmt *mf)
 			clkrc = CLKRC_24MHz;
 		} else {
 			dev_err(&client->dev,
+<<<<<<< HEAD
 				"unsupported input clock, check platform data\n");
+=======
+				"unspported input clock, check platform data\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EINVAL;
 		}
 		mclk = sense->master_clock;
@@ -819,7 +1183,12 @@ static int ov6650_prog_dflt(struct i2c_client *client)
 	return ret;
 }
 
+<<<<<<< HEAD
 static int ov6650_video_probe(struct i2c_client *client)
+=======
+static int ov6650_video_probe(struct soc_camera_device *icd,
+				struct i2c_client *client)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u8		pidh, pidl, midh, midl;
 	int		ret = 0;
@@ -855,12 +1224,25 @@ static int ov6650_video_probe(struct i2c_client *client)
 	return ret;
 }
 
+<<<<<<< HEAD
 static const struct v4l2_ctrl_ops ov6550_ctrl_ops = {
 	.g_volatile_ctrl = ov6550_g_volatile_ctrl,
 	.s_ctrl = ov6550_s_ctrl,
 };
 
 static struct v4l2_subdev_core_ops ov6650_core_ops = {
+=======
+static struct soc_camera_ops ov6650_ops = {
+	.set_bus_param		= ov6650_set_bus_param,
+	.query_bus_param	= ov6650_query_bus_param,
+	.controls		= ov6650_controls,
+	.num_controls		= ARRAY_SIZE(ov6650_controls),
+};
+
+static struct v4l2_subdev_core_ops ov6650_core_ops = {
+	.g_ctrl			= ov6650_g_ctrl,
+	.s_ctrl			= ov6650_s_ctrl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.g_chip_ident		= ov6650_g_chip_ident,
 #ifdef CONFIG_VIDEO_ADV_DEBUG
 	.g_register		= ov6650_get_register,
@@ -868,6 +1250,7 @@ static struct v4l2_subdev_core_ops ov6650_core_ops = {
 #endif
 };
 
+<<<<<<< HEAD
 /* Request bus settings on camera side */
 static int ov6650_g_mbus_config(struct v4l2_subdev *sd,
 				struct v4l2_mbus_config *cfg)
@@ -917,6 +1300,8 @@ static int ov6650_s_mbus_config(struct v4l2_subdev *sd,
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct v4l2_subdev_video_ops ov6650_video_ops = {
 	.s_stream	= ov6650_s_stream,
 	.g_mbus_fmt	= ov6650_g_fmt,
@@ -928,8 +1313,11 @@ static struct v4l2_subdev_video_ops ov6650_video_ops = {
 	.s_crop		= ov6650_s_crop,
 	.g_parm		= ov6650_g_parm,
 	.s_parm		= ov6650_s_parm,
+<<<<<<< HEAD
 	.g_mbus_config	= ov6650_g_mbus_config,
 	.s_mbus_config	= ov6650_s_mbus_config,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct v4l2_subdev_ops ov6650_subdev_ops = {
@@ -944,9 +1332,22 @@ static int ov6650_probe(struct i2c_client *client,
 			const struct i2c_device_id *did)
 {
 	struct ov6650 *priv;
+<<<<<<< HEAD
 	struct soc_camera_link *icl = soc_camera_i2c_to_link(client);
 	int ret;
 
+=======
+	struct soc_camera_device *icd = client->dev.platform_data;
+	struct soc_camera_link *icl;
+	int ret;
+
+	if (!icd) {
+		dev_err(&client->dev, "Missing soc-camera data!\n");
+		return -EINVAL;
+	}
+
+	icl = to_soc_camera_link(icd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!icl) {
 		dev_err(&client->dev, "Missing platform_data for driver\n");
 		return -EINVAL;
@@ -960,6 +1361,7 @@ static int ov6650_probe(struct i2c_client *client,
 	}
 
 	v4l2_i2c_subdev_init(&priv->subdev, client, &ov6650_subdev_ops);
+<<<<<<< HEAD
 	v4l2_ctrl_handler_init(&priv->hdl, 13);
 	v4l2_ctrl_new_std(&priv->hdl, &ov6550_ctrl_ops,
 			V4L2_CID_VFLIP, 0, 1, 1, 0);
@@ -1000,6 +1402,10 @@ static int ov6650_probe(struct i2c_client *client,
 	v4l2_ctrl_auto_cluster(3, &priv->autowb, 0, true);
 	v4l2_ctrl_auto_cluster(2, &priv->autoexposure,
 				V4L2_EXPOSURE_MANUAL, true);
+=======
+
+	icd->ops = &ov6650_ops;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	priv->rect.left	  = DEF_HSTRT << 1;
 	priv->rect.top	  = DEF_VSTRT << 1;
@@ -1009,12 +1415,19 @@ static int ov6650_probe(struct i2c_client *client,
 	priv->code	  = V4L2_MBUS_FMT_YUYV8_2X8;
 	priv->colorspace  = V4L2_COLORSPACE_JPEG;
 
+<<<<<<< HEAD
 	ret = ov6650_video_probe(client);
 	if (!ret)
 		ret = v4l2_ctrl_handler_setup(&priv->hdl);
 
 	if (ret) {
 		v4l2_ctrl_handler_free(&priv->hdl);
+=======
+	ret = ov6650_video_probe(icd, client);
+
+	if (ret) {
+		icd->ops = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(priv);
 	}
 
@@ -1025,8 +1438,11 @@ static int ov6650_remove(struct i2c_client *client)
 {
 	struct ov6650 *priv = to_ov6650(client);
 
+<<<<<<< HEAD
 	v4l2_device_unregister_subdev(&priv->subdev);
 	v4l2_ctrl_handler_free(&priv->hdl);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(priv);
 	return 0;
 }
@@ -1046,7 +1462,22 @@ static struct i2c_driver ov6650_i2c_driver = {
 	.id_table = ov6650_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(ov6650_i2c_driver);
+=======
+static int __init ov6650_module_init(void)
+{
+	return i2c_add_driver(&ov6650_i2c_driver);
+}
+
+static void __exit ov6650_module_exit(void)
+{
+	i2c_del_driver(&ov6650_i2c_driver);
+}
+
+module_init(ov6650_module_init);
+module_exit(ov6650_module_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("SoC Camera driver for OmniVision OV6650");
 MODULE_AUTHOR("Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>");

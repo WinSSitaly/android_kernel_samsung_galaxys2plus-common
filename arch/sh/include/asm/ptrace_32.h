@@ -76,10 +76,14 @@ struct pt_dspregs {
 #ifdef __KERNEL__
 
 #define MAX_REG_OFFSET		offsetof(struct pt_regs, tra)
+<<<<<<< HEAD
 static inline long regs_return_value(struct pt_regs *regs)
 {
 	return regs->regs[0];
 }
+=======
+#define regs_return_value(_regs)	((_regs)->regs[0])
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __KERNEL__ */
 

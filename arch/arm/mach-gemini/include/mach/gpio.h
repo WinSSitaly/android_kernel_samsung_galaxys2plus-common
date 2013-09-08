@@ -13,6 +13,14 @@
 #define __MACH_GPIO_H__
 
 #include <mach/irqs.h>
+<<<<<<< HEAD
+=======
+#include <asm-generic/gpio.h>
+
+#define gpio_get_value	__gpio_get_value
+#define gpio_set_value	__gpio_set_value
+#define gpio_cansleep	__gpio_cansleep
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define gpio_to_irq(x)	((x) + GPIO_IRQ_BASE)
 #define irq_to_gpio(x)	((x) - GPIO_IRQ_BASE)

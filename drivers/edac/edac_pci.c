@@ -19,6 +19,10 @@
 #include <linux/slab.h>
 #include <linux/spinlock.h>
 #include <linux/list.h>
+<<<<<<< HEAD
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ctype.h>
 #include <linux/workqueue.h>
 #include <asm/uaccess.h>

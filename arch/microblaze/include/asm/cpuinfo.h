@@ -38,7 +38,10 @@ struct cpuinfo {
 	u32 use_exc;
 	u32 ver_code;
 	u32 mmu;
+<<<<<<< HEAD
 	u32 mmu_privins;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 endian;
 
 	/* CPU caches */

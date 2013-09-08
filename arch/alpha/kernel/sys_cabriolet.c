@@ -18,6 +18,10 @@
 #include <linux/bitops.h>
 
 #include <asm/ptrace.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/dma.h>
 #include <asm/irq.h>
 #include <asm/mmu_context.h>
@@ -174,7 +178,11 @@ pc164_init_irq(void)
  */
 
 static inline int __init
+<<<<<<< HEAD
 eb66p_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+eb66p_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static char irq_tab[5][5] __initdata = {
 		/*INT  INTA  INTB  INTC   INTD */
@@ -204,7 +212,11 @@ eb66p_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
  */
 
 static inline int __init
+<<<<<<< HEAD
 cabriolet_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+cabriolet_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static char irq_tab[5][5] __initdata = {
 		/*INT   INTA  INTB  INTC   INTD */
@@ -288,7 +300,11 @@ cia_cab_init_pci(void)
  */
 
 static inline int __init
+<<<<<<< HEAD
 alphapc164_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+alphapc164_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static char irq_tab[7][5] __initdata = {
 		/*INT   INTA  INTB   INTC   INTD */

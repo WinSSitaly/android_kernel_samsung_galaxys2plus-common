@@ -1,13 +1,19 @@
 config IUCV
+<<<<<<< HEAD
 	depends on S390
 	def_tristate y if S390
 	prompt "IUCV support (S390 - z/VM only)"
+=======
+	tristate "IUCV support (S390 - z/VM only)"
+	depends on S390
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Select this option if you want to use inter-user communication
 	  under VM or VIF. If you run on z/VM, say "Y" to enable a fast
 	  communication link between VM guests.
 
 config AFIUCV
+<<<<<<< HEAD
 	depends on S390
 	def_tristate m if QETH_L3 || IUCV
 	prompt "AF_IUCV Socket support (S390 - z/VM and HiperSockets transport)"
@@ -15,3 +21,11 @@ config AFIUCV
 	  Select this option if you want to use AF_IUCV socket applications
 	  based on z/VM inter-user communication vehicle or based on
 	  HiperSockets.
+=======
+	tristate "AF_IUCV support (S390 - z/VM only)"
+	depends on IUCV
+	help
+	  Select this option if you want to use inter-user communication under
+	  VM or VIF sockets. If you run on z/VM, say "Y" to enable a fast
+	  communication link between VM guests.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

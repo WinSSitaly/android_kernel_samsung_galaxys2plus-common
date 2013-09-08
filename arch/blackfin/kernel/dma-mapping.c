@@ -12,7 +12,10 @@
 #include <linux/spinlock.h>
 #include <linux/dma-mapping.h>
 #include <linux/scatterlist.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static spinlock_t dma_page_lock;
 static unsigned long *dma_page;

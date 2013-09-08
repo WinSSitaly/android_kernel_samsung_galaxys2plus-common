@@ -30,7 +30,11 @@ Possible options for midisynth module:
 #include <linux/slab.h>
 #include <linux/errno.h>
 #include <linux/string.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mutex.h>
 #include <sound/core.h>
 #include <sound/rawmidi.h>

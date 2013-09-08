@@ -32,6 +32,7 @@ while (<FD>) {
 	next if (!/\s+R_/);
 
 	# These relocations are okay
+<<<<<<< HEAD
 	# On PPC64:
 	# 	R_PPC64_RELATIVE, R_PPC64_NONE, R_PPC64_ADDR64
 	# On PPC:
@@ -44,6 +45,10 @@ while (<FD>) {
 	next if (/\bR_PPC_ADDR16_LO\b/ or /\bR_PPC_ADDR16_HI\b/ or
 		 /\bR_PPC_ADDR16_HA\b/ or /\bR_PPC_RELATIVE\b/ or
 		 /\bR_PPC_NONE\b/);
+=======
+	next if (/R_PPC64_RELATIVE/ or /R_PPC64_NONE/ or
+	         /R_PPC64_ADDR64\s+mach_/);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	# If we see this type of relcoation it's an idication that
 	# we /may/ be using an old version of binutils.

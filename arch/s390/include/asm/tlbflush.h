@@ -59,7 +59,10 @@ static inline void __tlb_flush_full(struct mm_struct *mm)
 }
 #else
 #define __tlb_flush_full(mm)	__tlb_flush_local()
+<<<<<<< HEAD
 #define __tlb_flush_global()	__tlb_flush_local()
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /*
@@ -74,12 +77,21 @@ static inline void __tlb_flush_idte(unsigned long asce)
 
 static inline void __tlb_flush_mm(struct mm_struct * mm)
 {
+<<<<<<< HEAD
+=======
+	if (unlikely(cpumask_empty(mm_cpumask(mm))))
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * If the machine has IDTE we prefer to do a per mm flush
 	 * on all cpus instead of doing a local flush if the mm
 	 * only ran on the local cpu.
 	 */
+<<<<<<< HEAD
 	if (MACHINE_HAS_IDTE && list_empty(&mm->context.gmap_list))
+=======
+	if (MACHINE_HAS_IDTE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__tlb_flush_idte((unsigned long) mm->pgd |
 				 mm->context.asce_bits);
 	else

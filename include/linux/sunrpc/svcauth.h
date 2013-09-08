@@ -135,9 +135,12 @@ extern void svcauth_unix_purge(void);
 extern void svcauth_unix_info_release(struct svc_xprt *xpt);
 extern int svcauth_unix_set_client(struct svc_rqst *rqstp);
 
+<<<<<<< HEAD
 extern int unix_gid_cache_create(struct net *net);
 extern void unix_gid_cache_destroy(struct net *net);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline unsigned long hash_str(char *name, int bits)
 {
 	unsigned long hash = 0;

@@ -17,11 +17,17 @@
 #include <linux/delay.h>
 #include <linux/gpio.h>
 #include <linux/highmem.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/interrupt.h>
 #include <linux/irq.h>
 #include <linux/platform_device.h>
 #include <linux/pm.h>
+=======
+#include <linux/interrupt.h>
+#include <linux/irq.h>
+#include <linux/platform_device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/mmc/host.h>
 #include <linux/mmc/sdhci-spear.h>
@@ -179,6 +185,11 @@ static int __devinit sdhci_probe(struct platform_device *pdev)
 					sdhci->data->card_power_gpio);
 			goto err_pgpio_direction;
 		}
+<<<<<<< HEAD
+=======
+
+		gpio_set_value(sdhci->data->card_power_gpio, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (sdhci->data->card_int_gpio >= 0) {
@@ -272,6 +283,7 @@ static int __devexit sdhci_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 static int sdhci_suspend(struct device *dev)
 {
@@ -304,17 +316,36 @@ static int sdhci_resume(struct device *dev)
 
 static SIMPLE_DEV_PM_OPS(sdhci_pm_ops, sdhci_suspend, sdhci_resume);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver sdhci_driver = {
 	.driver = {
 		.name	= "sdhci",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.pm	= &sdhci_pm_ops,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe		= sdhci_probe,
 	.remove		= __devexit_p(sdhci_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(sdhci_driver);
+=======
+static int __init sdhci_init(void)
+{
+	return platform_driver_register(&sdhci_driver);
+}
+module_init(sdhci_init);
+
+static void __exit sdhci_exit(void)
+{
+	platform_driver_unregister(&sdhci_driver);
+}
+module_exit(sdhci_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("SPEAr Secure Digital Host Controller Interface driver");
 MODULE_AUTHOR("Viresh Kumar <viresh.kumar@st.com>");

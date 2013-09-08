@@ -48,7 +48,11 @@ static u8 adhoc_rates_bg[BG_SUPPORTED_RATES] = { 0x82, 0x84, 0x8b, 0x96,
 
 static u8 adhoc_rates_a[A_SUPPORTED_RATES] = { 0x8c, 0x12, 0x98, 0x24,
 					       0xb0, 0x48, 0x60, 0x6c, 0 };
+<<<<<<< HEAD
 static u8 supported_rates_a[A_SUPPORTED_RATES] = { 0x0c, 0x12, 0x18, 0x24,
+=======
+u8 supported_rates_a[A_SUPPORTED_RATES] = { 0x0c, 0x12, 0x18, 0x24,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					0xb0, 0x48, 0x60, 0x6c, 0 };
 static u16 mwifiex_data_rates[MWIFIEX_SUPPORTED_RATES_EXT] = { 0x02, 0x04,
 					0x0B, 0x16, 0x00, 0x0C, 0x12, 0x18,
@@ -57,24 +61,38 @@ static u16 mwifiex_data_rates[MWIFIEX_SUPPORTED_RATES_EXT] = { 0x02, 0x04,
 					0x75, 0x82, 0x0C, 0x1B, 0x36, 0x51,
 					0x6C, 0xA2, 0xD8, 0xF3, 0x10E, 0x00 };
 
+<<<<<<< HEAD
 static u8 supported_rates_b[B_SUPPORTED_RATES] = { 0x02, 0x04, 0x0b, 0x16, 0 };
 
 static u8 supported_rates_g[G_SUPPORTED_RATES] = { 0x0c, 0x12, 0x18, 0x24,
 					0x30, 0x48, 0x60, 0x6c, 0 };
 
 static u8 supported_rates_bg[BG_SUPPORTED_RATES] = { 0x02, 0x04, 0x0b, 0x0c,
+=======
+u8 supported_rates_b[B_SUPPORTED_RATES] = { 0x02, 0x04, 0x0b, 0x16, 0 };
+
+u8 supported_rates_g[G_SUPPORTED_RATES] = { 0x0c, 0x12, 0x18, 0x24,
+					0x30, 0x48, 0x60, 0x6c, 0 };
+
+u8 supported_rates_bg[BG_SUPPORTED_RATES] = { 0x02, 0x04, 0x0b, 0x0c,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					0x12, 0x16, 0x18, 0x24, 0x30, 0x48,
 					0x60, 0x6c, 0 };
 
 u16 region_code_index[MWIFIEX_MAX_REGION_CODE] = { 0x10, 0x20, 0x30,
 						0x32, 0x40, 0x41, 0xff };
 
+<<<<<<< HEAD
 static u8 supported_rates_n[N_SUPPORTED_RATES] = { 0x02, 0x04, 0 };
+=======
+u8 supported_rates_n[N_SUPPORTED_RATES] = { 0x02, 0x04, 0 };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * This function maps an index in supported rates table into
  * the corresponding data rate.
  */
+<<<<<<< HEAD
 u32 mwifiex_index_to_data_rate(struct mwifiex_private *priv, u8 index,
 							u8 ht_info)
 {
@@ -101,6 +119,20 @@ u32 mwifiex_index_to_data_rate(struct mwifiex_private *priv, u8 index,
 	};
 	u32 mcs_num_supp =
 		(priv->adapter->hw_dev_mcs_support == HT_STREAM_2X2) ? 16 : 8;
+=======
+u32 mwifiex_index_to_data_rate(u8 index, u8 ht_info)
+{
+	u16 mcs_rate[4][8] = {
+		{0x1b, 0x36, 0x51, 0x6c, 0xa2, 0xd8, 0xf3, 0x10e}
+	,			/* LG 40M */
+	{0x1e, 0x3c, 0x5a, 0x78, 0xb4, 0xf0, 0x10e, 0x12c}
+	,			/* SG 40M */
+	{0x0d, 0x1a, 0x27, 0x34, 0x4e, 0x68, 0x75, 0x82}
+	,			/* LG 20M */
+	{0x0e, 0x1c, 0x2b, 0x39, 0x56, 0x73, 0x82, 0x90}
+	};			/* SG 20M */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 rate;
 
 	if (ht_info & BIT(0)) {
@@ -109,7 +141,11 @@ u32 mwifiex_index_to_data_rate(struct mwifiex_private *priv, u8 index,
 				rate = 0x0D;	/* MCS 32 SGI rate */
 			else
 				rate = 0x0C;	/* MCS 32 LGI rate */
+<<<<<<< HEAD
 		} else if (index < mcs_num_supp) {
+=======
+		} else if (index < 8) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ht_info & BIT(1)) {
 				if (ht_info & BIT(2))
 					/* SGI, 40M */
@@ -163,12 +199,18 @@ u32 mwifiex_get_active_data_rates(struct mwifiex_private *priv, u8 *rates)
 		return mwifiex_get_supported_rates(priv, rates);
 	else
 		return mwifiex_copy_rates(rates, 0,
+<<<<<<< HEAD
 					  priv->curr_bss_params.data_rates,
 					  priv->curr_bss_params.num_of_rates);
+=======
+				       priv->curr_bss_params.data_rates,
+				       priv->curr_bss_params.num_of_rates);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * This function locates the Channel-Frequency-Power triplet based upon
+<<<<<<< HEAD
  * band and channel/frequency parameters.
  */
 struct mwifiex_chan_freq_power *
@@ -182,19 +224,38 @@ mwifiex_get_cfp(struct mwifiex_private *priv, u8 band, u16 channel, u32 freq)
 	if (!channel && !freq)
 		return cfp;
 
+=======
+ * band and channel parameters.
+ */
+struct mwifiex_chan_freq_power *
+mwifiex_get_cfp_by_band_and_channel_from_cfg80211(struct mwifiex_private
+						  *priv, u8 band, u16 channel)
+{
+	struct mwifiex_chan_freq_power *cfp = NULL;
+	struct ieee80211_supported_band *sband;
+	struct ieee80211_channel *ch;
+	int i;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (mwifiex_band_to_radio_type(band) == HostCmd_SCAN_RADIO_TYPE_BG)
 		sband = priv->wdev->wiphy->bands[IEEE80211_BAND_2GHZ];
 	else
 		sband = priv->wdev->wiphy->bands[IEEE80211_BAND_5GHZ];
 
 	if (!sband) {
+<<<<<<< HEAD
 		dev_err(priv->adapter->dev, "%s: cannot find cfp by band %d\n",
 			__func__, band);
+=======
+		dev_err(priv->adapter->dev, "%s: cannot find cfp by band %d"
+				" & channel %d\n", __func__, band, channel);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return cfp;
 	}
 
 	for (i = 0; i < sband->n_channels; i++) {
 		ch = &sband->channels[i];
+<<<<<<< HEAD
 
 		if (ch->flags & IEEE80211_CHAN_DISABLED)
 			continue;
@@ -222,6 +283,63 @@ mwifiex_get_cfp(struct mwifiex_private *priv, u8 band, u16 channel, u32 freq)
 		priv->cfp.max_tx_power = ch->max_power;
 		cfp = &priv->cfp;
 	}
+=======
+		if (((ch->hw_value == channel) ||
+			(channel == FIRST_VALID_CHANNEL))
+			&& !(ch->flags & IEEE80211_CHAN_DISABLED)) {
+			priv->cfp.channel = channel;
+			priv->cfp.freq = ch->center_freq;
+			priv->cfp.max_tx_power = ch->max_power;
+			cfp = &priv->cfp;
+			break;
+		}
+	}
+	if (i == sband->n_channels)
+		dev_err(priv->adapter->dev, "%s: cannot find cfp by band %d"
+				" & channel %d\n", __func__, band, channel);
+
+	return cfp;
+}
+
+/*
+ * This function locates the Channel-Frequency-Power triplet based upon
+ * band and frequency parameters.
+ */
+struct mwifiex_chan_freq_power *
+mwifiex_get_cfp_by_band_and_freq_from_cfg80211(struct mwifiex_private *priv,
+					       u8 band, u32 freq)
+{
+	struct mwifiex_chan_freq_power *cfp = NULL;
+	struct ieee80211_supported_band *sband;
+	struct ieee80211_channel *ch;
+	int i;
+
+	if (mwifiex_band_to_radio_type(band) == HostCmd_SCAN_RADIO_TYPE_BG)
+		sband = priv->wdev->wiphy->bands[IEEE80211_BAND_2GHZ];
+	else
+		sband = priv->wdev->wiphy->bands[IEEE80211_BAND_5GHZ];
+
+	if (!sband) {
+		dev_err(priv->adapter->dev, "%s: cannot find cfp by band %d"
+				" & freq %d\n", __func__, band, freq);
+		return cfp;
+	}
+
+	for (i = 0; i < sband->n_channels; i++) {
+		ch = &sband->channels[i];
+		if ((ch->center_freq == freq) &&
+			!(ch->flags & IEEE80211_CHAN_DISABLED)) {
+			priv->cfp.channel = ch->hw_value;
+			priv->cfp.freq = freq;
+			priv->cfp.max_tx_power = ch->max_power;
+			cfp = &priv->cfp;
+			break;
+		}
+	}
+	if (i == sband->n_channels)
+		dev_err(priv->adapter->dev, "%s: cannot find cfp by band %d"
+				" & freq %d\n", __func__, band, freq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return cfp;
 }

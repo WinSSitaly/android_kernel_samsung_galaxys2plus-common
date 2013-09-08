@@ -185,6 +185,7 @@ static int __init ppc4xx_parse_dma_ranges(struct pci_controller *hose,
  out:
 	dma_offset_set = 1;
 	pci_dram_offset = res->start;
+<<<<<<< HEAD
 	hose->dma_window_base_cur = res->start;
 	hose->dma_window_size = resource_size(res);
 
@@ -194,6 +195,11 @@ static int __init ppc4xx_parse_dma_ranges(struct pci_controller *hose,
 	       (unsigned long long)hose->dma_window_base_cur);
 	printk(KERN_INFO "DMA window size 0x%016llx\n",
 	       (unsigned long long)hose->dma_window_size);
+=======
+
+	printk(KERN_INFO "4xx PCI DMA offset set to 0x%08lx\n",
+	       pci_dram_offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -271,7 +277,11 @@ static void __init ppc4xx_configure_pci_PMMs(struct pci_controller *hose,
 		if (ppc4xx_setup_one_pci_PMM(hose, reg,
 					     res->start,
 					     res->start - hose->pci_mem_offset,
+<<<<<<< HEAD
 					     resource_size(res),
+=======
+					     res->end + 1 - res->start,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					     res->flags,
 					     j) == 0) {
 			j++;
@@ -296,7 +306,11 @@ static void __init ppc4xx_configure_pci_PTMs(struct pci_controller *hose,
 					     void __iomem *reg,
 					     const struct resource *res)
 {
+<<<<<<< HEAD
 	resource_size_t size = resource_size(res);
+=======
+	resource_size_t size = res->end - res->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 sa;
 
 	/* Calculate window size */
@@ -355,7 +369,11 @@ static void __init ppc4xx_probe_pci_bridge(struct device_node *np)
 	bus_range = of_get_property(np, "bus-range", NULL);
 
 	/* Map registers */
+<<<<<<< HEAD
 	reg = ioremap(rsrc_reg.start, resource_size(&rsrc_reg));
+=======
+	reg = ioremap(rsrc_reg.start, rsrc_reg.end + 1 - rsrc_reg.start);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (reg == NULL) {
 		printk(KERN_ERR "%s: Can't map registers !", np->full_name);
 		goto fail;
@@ -471,7 +489,11 @@ static void __init ppc4xx_configure_pcix_POMs(struct pci_controller *hose,
 		if (ppc4xx_setup_one_pcix_POM(hose, reg,
 					      res->start,
 					      res->start - hose->pci_mem_offset,
+<<<<<<< HEAD
 					      resource_size(res),
+=======
+					      res->end + 1 - res->start,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					      res->flags,
 					      j) == 0) {
 			j++;
@@ -498,7 +520,11 @@ static void __init ppc4xx_configure_pcix_PIMs(struct pci_controller *hose,
 					      int big_pim,
 					      int enable_msi_hole)
 {
+<<<<<<< HEAD
 	resource_size_t size = resource_size(res);
+=======
+	resource_size_t size = res->end - res->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 sa;
 
 	/* RAM is always at 0 */
@@ -561,7 +587,11 @@ static void __init ppc4xx_probe_pcix_bridge(struct device_node *np)
 	bus_range = of_get_property(np, "bus-range", NULL);
 
 	/* Map registers */
+<<<<<<< HEAD
 	reg = ioremap(rsrc_reg.start, resource_size(&rsrc_reg));
+=======
+	reg = ioremap(rsrc_reg.start, rsrc_reg.end + 1 - rsrc_reg.start);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (reg == NULL) {
 		printk(KERN_ERR "%s: Can't map registers !", np->full_name);
 		goto fail;
@@ -653,15 +683,22 @@ static unsigned int ppc4xx_pciex_port_count;
 
 struct ppc4xx_pciex_hwops
 {
+<<<<<<< HEAD
 	bool want_sdr;
 	int (*core_init)(struct device_node *np);
 	int (*port_init_hw)(struct ppc4xx_pciex_port *port);
 	int (*setup_utl)(struct ppc4xx_pciex_port *port);
 	void (*check_link)(struct ppc4xx_pciex_port *port);
+=======
+	int (*core_init)(struct device_node *np);
+	int (*port_init_hw)(struct ppc4xx_pciex_port *port);
+	int (*setup_utl)(struct ppc4xx_pciex_port *port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct ppc4xx_pciex_hwops *ppc4xx_pciex_hwops;
 
+<<<<<<< HEAD
 static int __init ppc4xx_pciex_wait_on_sdr(struct ppc4xx_pciex_port *port,
 					   unsigned int sdr_offset,
 					   unsigned int mask,
@@ -724,6 +761,8 @@ static void __init ppc4xx_pciex_check_link_sdr(struct ppc4xx_pciex_port *port)
 		printk(KERN_INFO "PCIE%d: No device detected.\n", port->index);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_44x
 
 /* Check various reset bits of the 440SPe PCIe core */
@@ -841,7 +880,11 @@ static int __init ppc440spe_pciex_core_init(struct device_node *np)
 	return 3;
 }
 
+<<<<<<< HEAD
 static int __init ppc440spe_pciex_init_port_hw(struct ppc4xx_pciex_port *port)
+=======
+static int ppc440spe_pciex_init_port_hw(struct ppc4xx_pciex_port *port)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 val = 1 << 24;
 
@@ -876,15 +919,26 @@ static int __init ppc440spe_pciex_init_port_hw(struct ppc4xx_pciex_port *port)
 	dcri_clrset(SDR0, port->sdr_base + PESDRn_RCSSET,
 			(1 << 24) | (1 << 16), 1 << 12);
 
+<<<<<<< HEAD
 	return ppc4xx_pciex_port_reset_sdr(port);
 }
 
 static int __init ppc440speA_pciex_init_port_hw(struct ppc4xx_pciex_port *port)
+=======
+	return 0;
+}
+
+static int ppc440speA_pciex_init_port_hw(struct ppc4xx_pciex_port *port)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return ppc440spe_pciex_init_port_hw(port);
 }
 
+<<<<<<< HEAD
 static int __init ppc440speB_pciex_init_port_hw(struct ppc4xx_pciex_port *port)
+=======
+static int ppc440speB_pciex_init_port_hw(struct ppc4xx_pciex_port *port)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int rc = ppc440spe_pciex_init_port_hw(port);
 
@@ -923,20 +977,32 @@ static int ppc440speB_pciex_init_utl(struct ppc4xx_pciex_port *port)
 
 static struct ppc4xx_pciex_hwops ppc440speA_pcie_hwops __initdata =
 {
+<<<<<<< HEAD
 	.want_sdr	= true,
 	.core_init	= ppc440spe_pciex_core_init,
 	.port_init_hw	= ppc440speA_pciex_init_port_hw,
 	.setup_utl	= ppc440speA_pciex_init_utl,
 	.check_link	= ppc4xx_pciex_check_link_sdr,
+=======
+	.core_init	= ppc440spe_pciex_core_init,
+	.port_init_hw	= ppc440speA_pciex_init_port_hw,
+	.setup_utl	= ppc440speA_pciex_init_utl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct ppc4xx_pciex_hwops ppc440speB_pcie_hwops __initdata =
 {
+<<<<<<< HEAD
 	.want_sdr	= true,
 	.core_init	= ppc440spe_pciex_core_init,
 	.port_init_hw	= ppc440speB_pciex_init_port_hw,
 	.setup_utl	= ppc440speB_pciex_init_utl,
 	.check_link	= ppc4xx_pciex_check_link_sdr,
+=======
+	.core_init	= ppc440spe_pciex_core_init,
+	.port_init_hw	= ppc440speB_pciex_init_port_hw,
+	.setup_utl	= ppc440speB_pciex_init_utl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init ppc460ex_pciex_core_init(struct device_node *np)
@@ -945,7 +1011,11 @@ static int __init ppc460ex_pciex_core_init(struct device_node *np)
 	return 2;
 }
 
+<<<<<<< HEAD
 static int __init ppc460ex_pciex_init_port_hw(struct ppc4xx_pciex_port *port)
+=======
+static int ppc460ex_pciex_init_port_hw(struct ppc4xx_pciex_port *port)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 val;
 	u32 utlset1;
@@ -1018,7 +1088,11 @@ static int __init ppc460ex_pciex_init_port_hw(struct ppc4xx_pciex_port *port)
 
 	port->has_ibpre = 1;
 
+<<<<<<< HEAD
 	return ppc4xx_pciex_port_reset_sdr(port);
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ppc460ex_pciex_init_utl(struct ppc4xx_pciex_port *port)
@@ -1043,6 +1117,7 @@ static int ppc460ex_pciex_init_utl(struct ppc4xx_pciex_port *port)
 
 static struct ppc4xx_pciex_hwops ppc460ex_pcie_hwops __initdata =
 {
+<<<<<<< HEAD
 	.want_sdr	= true,
 	.core_init	= ppc460ex_pciex_core_init,
 	.port_init_hw	= ppc460ex_pciex_init_port_hw,
@@ -1116,6 +1191,11 @@ static struct ppc4xx_pciex_hwops apm821xx_pcie_hwops __initdata = {
 	.port_init_hw	= apm821xx_pciex_init_port_hw,
 	.setup_utl	= ppc460ex_pciex_init_utl,
 	.check_link = ppc4xx_pciex_check_link_sdr,
+=======
+	.core_init	= ppc460ex_pciex_core_init,
+	.port_init_hw	= ppc460ex_pciex_init_port_hw,
+	.setup_utl	= ppc460ex_pciex_init_utl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init ppc460sx_pciex_core_init(struct device_node *np)
@@ -1170,10 +1250,13 @@ static int __init ppc460sx_pciex_core_init(struct device_node *np)
 	mtdcri(SDR0, PESDR1_460SX_HSSSLEW, 0xFFFF0000);
 	mtdcri(SDR0, PESDR2_460SX_HSSSLEW, 0xFFFF0000);
 
+<<<<<<< HEAD
 	/* Set HSS PRBS enabled */
 	mtdcri(SDR0, PESDR0_460SX_HSSCTLSET, 0x00001130);
 	mtdcri(SDR0, PESDR2_460SX_HSSCTLSET, 0x00001130);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	udelay(100);
 
 	/* De-assert PLLRESET */
@@ -1204,7 +1287,11 @@ static int __init ppc460sx_pciex_core_init(struct device_node *np)
 	return 2;
 }
 
+<<<<<<< HEAD
 static int __init ppc460sx_pciex_init_port_hw(struct ppc4xx_pciex_port *port)
+=======
+static int ppc460sx_pciex_init_port_hw(struct ppc4xx_pciex_port *port)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 
 	if (port->endpoint)
@@ -1214,19 +1301,30 @@ static int __init ppc460sx_pciex_init_port_hw(struct ppc4xx_pciex_port *port)
 		dcri_clrset(SDR0, port->sdr_base + PESDRn_UTLSET2,
 				0, 0x01000000);
 
+<<<<<<< HEAD
+=======
+	/*Gen-1*/
+	mtdcri(SDR0, port->sdr_base + PESDRn_460SX_RCEI, 0x08000000);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dcri_clrset(SDR0, port->sdr_base + PESDRn_RCSSET,
 			(PESDRx_RCSSET_RSTGU | PESDRx_RCSSET_RSTDL),
 			PESDRx_RCSSET_RSTPYN);
 
 	port->has_ibpre = 1;
 
+<<<<<<< HEAD
 	return ppc4xx_pciex_port_reset_sdr(port);
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ppc460sx_pciex_init_utl(struct ppc4xx_pciex_port *port)
 {
 	/* Max 128 Bytes */
 	out_be32 (port->utl_base + PEUTL_PBBSZ,   0x00000000);
+<<<<<<< HEAD
 	/* Assert VRB and TXE - per datasheet turn off addr validation */
 	out_be32(port->utl_base + PEUTL_PCTL,  0x80800000);
 	return 0;
@@ -1264,6 +1362,15 @@ static struct ppc4xx_pciex_hwops ppc460sx_pcie_hwops __initdata = {
 	.port_init_hw	= ppc460sx_pciex_init_port_hw,
 	.setup_utl	= ppc460sx_pciex_init_utl,
 	.check_link	= ppc460sx_pciex_check_link,
+=======
+	return 0;
+}
+
+static struct ppc4xx_pciex_hwops ppc460sx_pcie_hwops __initdata = {
+	.core_init	= ppc460sx_pciex_core_init,
+	.port_init_hw	= ppc460sx_pciex_init_port_hw,
+	.setup_utl	= ppc460sx_pciex_init_utl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif /* CONFIG_44x */
@@ -1297,7 +1404,11 @@ static void ppc405ex_pcie_phy_reset(struct ppc4xx_pciex_port *port)
 	mtdcri(SDR0, port->sdr_base + PESDRn_RCSSET, 0x00101000);
 }
 
+<<<<<<< HEAD
 static int __init ppc405ex_pciex_init_port_hw(struct ppc4xx_pciex_port *port)
+=======
+static int ppc405ex_pciex_init_port_hw(struct ppc4xx_pciex_port *port)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 val;
 
@@ -1329,7 +1440,11 @@ static int __init ppc405ex_pciex_init_port_hw(struct ppc4xx_pciex_port *port)
 
 	port->has_ibpre = 1;
 
+<<<<<<< HEAD
 	return ppc4xx_pciex_port_reset_sdr(port);
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ppc405ex_pciex_init_utl(struct ppc4xx_pciex_port *port)
@@ -1355,15 +1470,22 @@ static int ppc405ex_pciex_init_utl(struct ppc4xx_pciex_port *port)
 
 static struct ppc4xx_pciex_hwops ppc405ex_pcie_hwops __initdata =
 {
+<<<<<<< HEAD
 	.want_sdr	= true,
 	.core_init	= ppc405ex_pciex_core_init,
 	.port_init_hw	= ppc405ex_pciex_init_port_hw,
 	.setup_utl	= ppc405ex_pciex_init_utl,
 	.check_link	= ppc4xx_pciex_check_link_sdr,
+=======
+	.core_init	= ppc405ex_pciex_core_init,
+	.port_init_hw	= ppc405ex_pciex_init_port_hw,
+	.setup_utl	= ppc405ex_pciex_init_utl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif /* CONFIG_40x */
 
+<<<<<<< HEAD
 #ifdef CONFIG_476FPE
 static int __init ppc_476fpe_pciex_core_init(struct device_node *np)
 {
@@ -1409,6 +1531,8 @@ static struct ppc4xx_pciex_hwops ppc_476fpe_pcie_hwops __initdata =
 	.check_link	= ppc_476fpe_pciex_check_link,
 };
 #endif /* CONFIG_476FPE */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Check that the core has been initied and if not, do it */
 static int __init ppc4xx_pciex_check_core_init(struct device_node *np)
@@ -1430,17 +1554,23 @@ static int __init ppc4xx_pciex_check_core_init(struct device_node *np)
 		ppc4xx_pciex_hwops = &ppc460ex_pcie_hwops;
 	if (of_device_is_compatible(np, "ibm,plb-pciex-460sx"))
 		ppc4xx_pciex_hwops = &ppc460sx_pcie_hwops;
+<<<<<<< HEAD
 	if (of_device_is_compatible(np, "ibm,plb-pciex-apm821xx"))
 		ppc4xx_pciex_hwops = &apm821xx_pcie_hwops;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_44x    */
 #ifdef CONFIG_40x
 	if (of_device_is_compatible(np, "ibm,plb-pciex-405ex"))
 		ppc4xx_pciex_hwops = &ppc405ex_pcie_hwops;
 #endif
+<<<<<<< HEAD
 #ifdef CONFIG_476FPE
 	if (of_device_is_compatible(np, "ibm,plb-pciex-476fpe"))
 		ppc4xx_pciex_hwops = &ppc_476fpe_pcie_hwops;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ppc4xx_pciex_hwops == NULL) {
 		printk(KERN_WARNING "PCIE: unknown host type %s\n",
 		       np->full_name);
@@ -1489,6 +1619,29 @@ static void __init ppc4xx_pciex_port_init_mapping(struct ppc4xx_pciex_port *port
 	dcr_write(port->dcrs, DCRO_PEGPL_MSGMSK, 0);
 }
 
+<<<<<<< HEAD
+=======
+static int __init ppc4xx_pciex_wait_on_sdr(struct ppc4xx_pciex_port *port,
+					   unsigned int sdr_offset,
+					   unsigned int mask,
+					   unsigned int value,
+					   int timeout_ms)
+{
+	u32 val;
+
+	while(timeout_ms--) {
+		val = mfdcri(SDR0, port->sdr_base + sdr_offset);
+		if ((val & mask) == value) {
+			pr_debug("PCIE%d: Wait on SDR %x success with tm %d (%08x)\n",
+				 port->index, sdr_offset, timeout_ms, val);
+			return 0;
+		}
+		msleep(1);
+	}
+	return -1;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init ppc4xx_pciex_port_init(struct ppc4xx_pciex_port *port)
 {
 	int rc = 0;
@@ -1499,15 +1652,56 @@ static int __init ppc4xx_pciex_port_init(struct ppc4xx_pciex_port *port)
 	if (rc != 0)
 		return rc;
 
+<<<<<<< HEAD
+=======
+	printk(KERN_INFO "PCIE%d: Checking link...\n",
+	       port->index);
+
+	/* Wait for reset to complete */
+	if (ppc4xx_pciex_wait_on_sdr(port, PESDRn_RCSSTS, 1 << 20, 0, 10)) {
+		printk(KERN_WARNING "PCIE%d: PGRST failed\n",
+		       port->index);
+		return -1;
+	}
+
+	/* Check for card presence detect if supported, if not, just wait for
+	 * link unconditionally.
+	 *
+	 * note that we don't fail if there is no link, we just filter out
+	 * config space accesses. That way, it will be easier to implement
+	 * hotplug later on.
+	 */
+	if (!port->has_ibpre ||
+	    !ppc4xx_pciex_wait_on_sdr(port, PESDRn_LOOP,
+				      1 << 28, 1 << 28, 100)) {
+		printk(KERN_INFO
+		       "PCIE%d: Device detected, waiting for link...\n",
+		       port->index);
+		if (ppc4xx_pciex_wait_on_sdr(port, PESDRn_LOOP,
+					     0x1000, 0x1000, 2000))
+			printk(KERN_WARNING
+			       "PCIE%d: Link up failed\n", port->index);
+		else {
+			printk(KERN_INFO
+			       "PCIE%d: link is up !\n", port->index);
+			port->link = 1;
+		}
+	} else
+		printk(KERN_INFO "PCIE%d: No device detected.\n", port->index);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Initialize mapping: disable all regions and configure
 	 * CFG and REG regions based on resources in the device tree
 	 */
 	ppc4xx_pciex_port_init_mapping(port);
 
+<<<<<<< HEAD
 	if (ppc4xx_pciex_hwops->check_link)
 		ppc4xx_pciex_hwops->check_link(port);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Map UTL
 	 */
@@ -1521,6 +1715,7 @@ static int __init ppc4xx_pciex_port_init(struct ppc4xx_pciex_port *port)
 		ppc4xx_pciex_hwops->setup_utl(port);
 
 	/*
+<<<<<<< HEAD
 	 * Check for VC0 active or PLL Locked and assert RDY.
 	 */
 	if (port->sdr_base) {
@@ -1544,6 +1739,18 @@ static int __init ppc4xx_pciex_port_init(struct ppc4xx_pciex_port *port)
 		dcri_clrset(SDR0, port->sdr_base + PESDRn_RCSSET, 0, 1 << 20);
 	}
 
+=======
+	 * Check for VC0 active and assert RDY.
+	 */
+	if (port->link &&
+	    ppc4xx_pciex_wait_on_sdr(port, PESDRn_RCSSTS,
+				     1 << 16, 1 << 16, 5000)) {
+		printk(KERN_INFO "PCIE%d: VC0 not active\n", port->index);
+		port->link = 0;
+	}
+
+	dcri_clrset(SDR0, port->sdr_base + PESDRn_RCSSET, 0, 1 << 20);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	msleep(100);
 
 	return 0;
@@ -1744,6 +1951,7 @@ static int __init ppc4xx_setup_one_pciex_POM(struct ppc4xx_pciex_port	*port,
 		dcr_write(port->dcrs, DCRO_PEGPL_OMR1BAH, lah);
 		dcr_write(port->dcrs, DCRO_PEGPL_OMR1BAL, lal);
 		dcr_write(port->dcrs, DCRO_PEGPL_OMR1MSKH, 0x7fffffff);
+<<<<<<< HEAD
 		/*Enabled and single region */
 		if (of_device_is_compatible(port->node, "ibm,plb-pciex-460sx"))
 			dcr_write(port->dcrs, DCRO_PEGPL_OMR1MSKL,
@@ -1757,6 +1965,10 @@ static int __init ppc4xx_setup_one_pciex_POM(struct ppc4xx_pciex_port	*port,
 			dcr_write(port->dcrs, DCRO_PEGPL_OMR1MSKL,
 				sa | DCRO_PEGPL_OMR1MSKL_UOT
 					| DCRO_PEGPL_OMRxMSKL_VAL);
+=======
+		/* Note that 3 here means enabled | single region */
+		dcr_write(port->dcrs, DCRO_PEGPL_OMR1MSKL, sa | 3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case 1:
 		out_le32(mbase + PECFG_POM1LAH, pciah);
@@ -1764,8 +1976,13 @@ static int __init ppc4xx_setup_one_pciex_POM(struct ppc4xx_pciex_port	*port,
 		dcr_write(port->dcrs, DCRO_PEGPL_OMR2BAH, lah);
 		dcr_write(port->dcrs, DCRO_PEGPL_OMR2BAL, lal);
 		dcr_write(port->dcrs, DCRO_PEGPL_OMR2MSKH, 0x7fffffff);
+<<<<<<< HEAD
 		dcr_write(port->dcrs, DCRO_PEGPL_OMR2MSKL,
 				sa | DCRO_PEGPL_OMRxMSKL_VAL);
+=======
+		/* Note that 3 here means enabled | single region */
+		dcr_write(port->dcrs, DCRO_PEGPL_OMR2MSKL, sa | 3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case 2:
 		out_le32(mbase + PECFG_POM2LAH, pciah);
@@ -1774,9 +1991,13 @@ static int __init ppc4xx_setup_one_pciex_POM(struct ppc4xx_pciex_port	*port,
 		dcr_write(port->dcrs, DCRO_PEGPL_OMR3BAL, lal);
 		dcr_write(port->dcrs, DCRO_PEGPL_OMR3MSKH, 0x7fffffff);
 		/* Note that 3 here means enabled | IO space !!! */
+<<<<<<< HEAD
 		dcr_write(port->dcrs, DCRO_PEGPL_OMR3MSKL,
 				sa | DCRO_PEGPL_OMR3MSKL_IO
 					| DCRO_PEGPL_OMRxMSKL_VAL);
+=======
+		dcr_write(port->dcrs, DCRO_PEGPL_OMR3MSKL, sa | 3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -1806,7 +2027,11 @@ static void __init ppc4xx_configure_pciex_POMs(struct ppc4xx_pciex_port *port,
 		if (ppc4xx_setup_one_pciex_POM(port, hose, mbase,
 					       res->start,
 					       res->start - hose->pci_mem_offset,
+<<<<<<< HEAD
 					       resource_size(res),
+=======
+					       res->end + 1 - res->start,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					       res->flags,
 					       j) == 0) {
 			j++;
@@ -1841,7 +2066,11 @@ static void __init ppc4xx_configure_pciex_PIMs(struct ppc4xx_pciex_port *port,
 					       void __iomem *mbase,
 					       struct resource *res)
 {
+<<<<<<< HEAD
 	resource_size_t size = resource_size(res);
+=======
+	resource_size_t size = res->end - res->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64 sa;
 
 	if (port->endpoint) {
@@ -1875,11 +2104,15 @@ static void __init ppc4xx_configure_pciex_PIMs(struct ppc4xx_pciex_port *port,
 		/* Calculate window size */
 		sa = (0xffffffffffffffffull << ilog2(size));
 		if (res->flags & IORESOURCE_PREFETCH)
+<<<<<<< HEAD
 			sa |= PCI_BASE_ADDRESS_MEM_PREFETCH;
 
 		if (of_device_is_compatible(port->node, "ibm,plb-pciex-460sx") ||
 		    of_device_is_compatible(port->node, "ibm,plb-pciex-476fpe"))
 			sa |= PCI_BASE_ADDRESS_MEM_TYPE_64;
+=======
+			sa |= 0x8;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		out_le32(mbase + PECFG_BAR0HMPA, RES_TO_U32_HIGH(sa));
 		out_le32(mbase + PECFG_BAR0LMPA, RES_TO_U32_LOW(sa));
@@ -2042,10 +2275,13 @@ static void __init ppc4xx_pciex_port_setup_hose(struct ppc4xx_pciex_port *port)
 	}
 	out_le16(mbase + 0x202, val);
 
+<<<<<<< HEAD
 	/* Enable Bus master, memory, and io space */
 	if (of_device_is_compatible(port->node, "ibm,plb-pciex-460sx"))
 		out_le16(mbase + 0x204, 0x7);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!port->endpoint) {
 		/* Set Class Code to PCI-PCI bridge and Revision Id to 1 */
 		out_le32(mbase + 0x208, 0x06040001);
@@ -2109,6 +2345,7 @@ static void __init ppc4xx_probe_pciex_bridge(struct device_node *np)
 	}
 
 	port->node = of_node_get(np);
+<<<<<<< HEAD
 	if (ppc4xx_pciex_hwops->want_sdr) {
 		pval = of_get_property(np, "sdr-base", NULL);
 		if (pval == NULL) {
@@ -2118,6 +2355,15 @@ static void __init ppc4xx_probe_pciex_bridge(struct device_node *np)
 		}
 		port->sdr_base = *pval;
 	}
+=======
+	pval = of_get_property(np, "sdr-base", NULL);
+	if (pval == NULL) {
+		printk(KERN_ERR "PCIE: missing sdr-base for %s\n",
+		       np->full_name);
+		return;
+	}
+	port->sdr_base = *pval;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Check if device_type property is set to "pci" or "pci-endpoint".
 	 * Resulting from this setup this PCIe port will be configured
@@ -2172,7 +2418,11 @@ static int __init ppc4xx_pci_find_bridges(void)
 {
 	struct device_node *np;
 
+<<<<<<< HEAD
 	pci_add_flags(PCI_ENABLE_PROC_DOMAINS | PCI_COMPAT_DOMAIN_0);
+=======
+	ppc_pci_flags |= PPC_PCI_ENABLE_PROC_DOMAINS | PPC_PCI_COMPAT_DOMAIN_0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_PPC4xx_PCI_EXPRESS
 	for_each_compatible_node(np, NULL, "ibm,plb-pciex")

@@ -31,7 +31,11 @@ static inline bool is_quota_modification(struct inode *inode, struct iattr *ia)
 #define quota_error(sb, fmt, args...) \
 	__quota_error((sb), __func__, fmt , ## args)
 
+<<<<<<< HEAD
 extern __printf(3, 4)
+=======
+extern __attribute__((format (printf, 3, 4)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __quota_error(struct super_block *sb, const char *func,
 		   const char *fmt, ...);
 

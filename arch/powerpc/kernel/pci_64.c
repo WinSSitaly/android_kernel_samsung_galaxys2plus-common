@@ -18,7 +18,10 @@
 #include <linux/string.h>
 #include <linux/init.h>
 #include <linux/bootmem.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mm.h>
 #include <linux/list.h>
 #include <linux/syscalls.h>
@@ -33,6 +36,11 @@
 #include <asm/machdep.h>
 #include <asm/ppc-pci.h>
 
+<<<<<<< HEAD
+=======
+unsigned long pci_probe_only = 1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* pci_io_base -- the base address from which io bars are offsets.
  * This is the lowest I/O base address (so bar values are always positive),
  * and it *must* be the start of ISA space if an ISA bus exists because
@@ -53,10 +61,20 @@ static int __init pcibios_init(void)
 	 */
 	ppc_md.phys_mem_access_prot = pci_phys_mem_access_prot;
 
+<<<<<<< HEAD
 	/* On ppc64, we always enable PCI domains and we keep domain 0
 	 * backward compatible in /proc for video cards
 	 */
 	pci_add_flags(PCI_ENABLE_PROC_DOMAINS | PCI_COMPAT_DOMAIN_0);
+=======
+	if (pci_probe_only)
+		ppc_pci_flags |= PPC_PCI_PROBE_ONLY;
+
+	/* On ppc64, we always enable PCI domains and we keep domain 0
+	 * backward compatible in /proc for video cards
+	 */
+	ppc_pci_flags |= PPC_PCI_ENABLE_PROC_DOMAINS | PPC_PCI_COMPAT_DOMAIN_0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Scan all of the recorded PCI controllers.  */
 	list_for_each_entry_safe(hose, tmp, &hose_list, list_node) {
@@ -126,13 +144,38 @@ EXPORT_SYMBOL_GPL(pcibios_unmap_io_space);
 
 #endif /* CONFIG_HOTPLUG */
 
+<<<<<<< HEAD
 static int __devinit pcibios_map_phb_io_space(struct pci_controller *hose)
+=======
+int __devinit pcibios_map_io_space(struct pci_bus *bus)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct vm_struct *area;
 	unsigned long phys_page;
 	unsigned long size_page;
 	unsigned long io_virt_offset;
+<<<<<<< HEAD
 
+=======
+	struct pci_controller *hose;
+
+	WARN_ON(bus == NULL);
+
+	/* If this not a PHB, nothing to do, page tables still exist and
+	 * thus HPTEs will be faulted in when needed
+	 */
+	if (bus->self) {
+		pr_debug("IO mapping for PCI-PCI bridge %s\n",
+			 pci_name(bus->self));
+		pr_debug("  virt=0x%016llx...0x%016llx\n",
+			 bus->resource[0]->start + _IO_BASE,
+			 bus->resource[0]->end + _IO_BASE);
+		return 0;
+	}
+
+	/* Get the host bridge */
+	hose = pci_bus_to_host(bus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	phys_page = _ALIGN_DOWN(hose->io_base_phys, PAGE_SIZE);
 	size_page = _ALIGN_UP(hose->pci_io_size, PAGE_SIZE);
 
@@ -168,7 +211,11 @@ static int __devinit pcibios_map_phb_io_space(struct pci_controller *hose)
 		return -ENOMEM;
 
 	/* Fixup hose IO resource */
+<<<<<<< HEAD
 	io_virt_offset = pcibios_io_space_offset(hose);
+=======
+	io_virt_offset = (unsigned long)hose->io_base_virt - _IO_BASE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hose->io_resource.start += io_virt_offset;
 	hose->io_resource.end += io_virt_offset;
 
@@ -176,6 +223,7 @@ static int __devinit pcibios_map_phb_io_space(struct pci_controller *hose)
 
 	return 0;
 }
+<<<<<<< HEAD
 
 int __devinit pcibios_map_io_space(struct pci_bus *bus)
 {
@@ -195,11 +243,17 @@ int __devinit pcibios_map_io_space(struct pci_bus *bus)
 
 	return pcibios_map_phb_io_space(pci_bus_to_host(bus));
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL_GPL(pcibios_map_io_space);
 
 void __devinit pcibios_setup_phb_io_space(struct pci_controller *hose)
 {
+<<<<<<< HEAD
 	pcibios_map_phb_io_space(hose);
+=======
+	pcibios_map_io_space(hose->bus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #define IOBASE_BRIDGE_NUMBER	0

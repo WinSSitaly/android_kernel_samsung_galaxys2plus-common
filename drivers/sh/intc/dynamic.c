@@ -14,7 +14,10 @@
 #include <linux/irq.h>
 #include <linux/bitmap.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "internals.h" /* only for activate_irq() damage.. */
 
 /*

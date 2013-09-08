@@ -171,6 +171,11 @@ void __init init_IRQ(void)
 {
 	int irq, eirq;
 
+<<<<<<< HEAD
+=======
+	init_vectors();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Mask all interrupt sources */
 	__raw_writeb(0xff, MCFINTC0_SIMR);
 	if (MCFINTC1_SIMR)

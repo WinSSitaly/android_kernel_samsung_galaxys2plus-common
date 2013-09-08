@@ -27,7 +27,11 @@
 #include <linux/io.h>
 #include <linux/spinlock.h>
 
+<<<<<<< HEAD
 #include <mach/hardware.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <plat/mux.h>
 

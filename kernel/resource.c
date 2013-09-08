@@ -7,7 +7,11 @@
  * Arbitrary resource management.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/errno.h>
 #include <linux/ioport.h>
 #include <linux/init.h>
@@ -419,9 +423,12 @@ static int __find_resource(struct resource *root, struct resource *old,
 		else
 			tmp.end = root->end;
 
+<<<<<<< HEAD
 		if (tmp.end < tmp.start)
 			goto next;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		resource_clip(&tmp, constraint->min, constraint->max);
 		arch_remove_reservations(&tmp);
 
@@ -439,10 +446,15 @@ static int __find_resource(struct resource *root, struct resource *old,
 				return 0;
 			}
 		}
+<<<<<<< HEAD
 
 next:		if (!this || this->end == root->end)
 			break;
 
+=======
+		if (!this)
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (this != old)
 			tmp.start = this->end + 1;
 		this = this->sibling;
@@ -558,6 +570,7 @@ int allocate_resource(struct resource *root, struct resource *new,
 
 EXPORT_SYMBOL(allocate_resource);
 
+<<<<<<< HEAD
 /**
  * lookup_resource - find an existing resource by a resource start address
  * @root: root resource descriptor
@@ -579,6 +592,8 @@ struct resource *lookup_resource(struct resource *root, resource_size_t start)
 	return res;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Insert a resource into the resource tree. If successful, return NULL,
  * otherwise return the conflicting resource (compare to __request_resource())
@@ -749,7 +764,10 @@ int adjust_resource(struct resource *res, resource_size_t start, resource_size_t
 	write_unlock(&resource_lock);
 	return result;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(adjust_resource);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void __init __reserve_region_with_split(struct resource *root,
 		resource_size_t start, resource_size_t end,
@@ -758,7 +776,10 @@ static void __init __reserve_region_with_split(struct resource *root,
 	struct resource *parent = root;
 	struct resource *conflict;
 	struct resource *res = kzalloc(sizeof(*res), GFP_ATOMIC);
+<<<<<<< HEAD
 	struct resource *next_res = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!res)
 		return;
@@ -768,6 +789,7 @@ static void __init __reserve_region_with_split(struct resource *root,
 	res->end = end;
 	res->flags = IORESOURCE_BUSY;
 
+<<<<<<< HEAD
 	while (1) {
 
 		conflict = __request_resource(parent, res);
@@ -808,6 +830,23 @@ static void __init __reserve_region_with_split(struct resource *root,
 		}
 	}
 
+=======
+	conflict = __request_resource(parent, res);
+	if (!conflict)
+		return;
+
+	/* failed, split and try again */
+	kfree(res);
+
+	/* conflict covered whole area */
+	if (conflict->start <= start && conflict->end >= end)
+		return;
+
+	if (conflict->start > start)
+		__reserve_region_with_split(root, start, conflict->start-1, name);
+	if (conflict->end < end)
+		__reserve_region_with_split(root, conflict->end+1, end, name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __init reserve_region_with_split(struct resource *root,
@@ -819,6 +858,11 @@ void __init reserve_region_with_split(struct resource *root,
 	write_unlock(&resource_lock);
 }
 
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL(adjust_resource);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * resource_alignment - calculate resource's alignment
  * @res: resource pointer

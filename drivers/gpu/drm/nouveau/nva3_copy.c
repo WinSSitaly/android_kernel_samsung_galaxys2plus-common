@@ -140,7 +140,11 @@ nva3_copy_init(struct drm_device *dev, int engine)
 }
 
 static int
+<<<<<<< HEAD
 nva3_copy_fini(struct drm_device *dev, int engine, bool suspend)
+=======
+nva3_copy_fini(struct drm_device *dev, int engine)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	nv_mask(dev, 0x104048, 0x00000003, 0x00000000);
 

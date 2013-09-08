@@ -22,6 +22,10 @@
 #include <linux/pm.h>
 #include <linux/i2c.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
+=======
+#include <linux/platform_device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/pcm.h>
 #include <sound/pcm_params.h>
@@ -39,6 +43,11 @@ MODULE_PARM_DESC(caps_charge, "ALC5623 cap charge time (msecs)");
 /* codec private data */
 struct alc5623_priv {
 	enum snd_soc_control_type control_type;
+<<<<<<< HEAD
+=======
+	void *control_data;
+	struct mutex mutex;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 id;
 	unsigned int sysclk;
 	u16 reg_cache[ALC5623_VENDOR_ID2+2];
@@ -52,10 +61,15 @@ static void alc5623_fill_cache(struct snd_soc_codec *codec)
 	u16 *cache = codec->reg_cache;
 
 	/* not really efficient ... */
+<<<<<<< HEAD
 	codec->cache_bypass = 1;
 	for (i = 0 ; i < codec->driver->reg_cache_size ; i += step)
 		cache[i] = snd_soc_read(codec, i);
 	codec->cache_bypass = 0;
+=======
+	for (i = 0 ; i < codec->driver->reg_cache_size ; i += step)
+		cache[i] = codec->hw_read(codec, i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int alc5623_reset(struct snd_soc_codec *codec)
@@ -99,7 +113,11 @@ static const unsigned int boost_tlv[] = {
 };
 static const DECLARE_TLV_DB_SCALE(dig_tlv, 0, 600, 0);
 
+<<<<<<< HEAD
 static const struct snd_kcontrol_new alc5621_vol_snd_controls[] = {
+=======
+static const struct snd_kcontrol_new rt5621_vol_snd_controls[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	SOC_DOUBLE_TLV("Speaker Playback Volume",
 			ALC5623_SPK_OUT_VOL, 8, 0, 31, 1, hp_tlv),
 	SOC_DOUBLE("Speaker Playback Switch",
@@ -110,7 +128,11 @@ static const struct snd_kcontrol_new alc5621_vol_snd_controls[] = {
 			ALC5623_HP_OUT_VOL, 15, 7, 1, 1),
 };
 
+<<<<<<< HEAD
 static const struct snd_kcontrol_new alc5622_vol_snd_controls[] = {
+=======
+static const struct snd_kcontrol_new rt5622_vol_snd_controls[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	SOC_DOUBLE_TLV("Speaker Playback Volume",
 			ALC5623_SPK_OUT_VOL, 8, 0, 31, 1, hp_tlv),
 	SOC_DOUBLE("Speaker Playback Switch",
@@ -838,7 +860,11 @@ static int alc5623_set_bias_level(struct snd_soc_codec *codec,
 			| SNDRV_PCM_FMTBIT_S24_LE \
 			| SNDRV_PCM_FMTBIT_S32_LE)
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops alc5623_dai_ops = {
+=======
+static struct snd_soc_dai_ops alc5623_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.hw_params = alc5623_pcm_hw_params,
 		.digital_mute = alc5623_mute,
 		.set_fmt = alc5623_set_dai_fmt,
@@ -868,7 +894,11 @@ static struct snd_soc_dai_driver alc5623_dai = {
 	.ops = &alc5623_dai_ops,
 };
 
+<<<<<<< HEAD
 static int alc5623_suspend(struct snd_soc_codec *codec)
+=======
+static int alc5623_suspend(struct snd_soc_codec *codec, pm_message_t mesg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	alc5623_set_bias_level(codec, SND_SOC_BIAS_OFF);
 	return 0;
@@ -925,6 +955,7 @@ static int alc5623_probe(struct snd_soc_codec *codec)
 
 	switch (alc5623->id) {
 	case 0x21:
+<<<<<<< HEAD
 		snd_soc_add_codec_controls(codec, alc5621_vol_snd_controls,
 			ARRAY_SIZE(alc5621_vol_snd_controls));
 		break;
@@ -934,13 +965,28 @@ static int alc5623_probe(struct snd_soc_codec *codec)
 		break;
 	case 0x23:
 		snd_soc_add_codec_controls(codec, alc5623_vol_snd_controls,
+=======
+		snd_soc_add_controls(codec, rt5621_vol_snd_controls,
+			ARRAY_SIZE(rt5621_vol_snd_controls));
+		break;
+	case 0x22:
+		snd_soc_add_controls(codec, rt5622_vol_snd_controls,
+			ARRAY_SIZE(rt5622_vol_snd_controls));
+		break;
+	case 0x23:
+		snd_soc_add_controls(codec, alc5623_vol_snd_controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ARRAY_SIZE(alc5623_vol_snd_controls));
 		break;
 	default:
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	snd_soc_add_codec_controls(codec, alc5623_snd_controls,
+=======
+	snd_soc_add_controls(codec, alc5623_snd_controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ARRAY_SIZE(alc5623_snd_controls));
 
 	snd_soc_dapm_new_controls(dapm, alc5623_dapm_widgets,
@@ -992,7 +1038,11 @@ static struct snd_soc_codec_driver soc_codec_device_alc5623 = {
  *    low  = 0x1a
  *    high = 0x1b
  */
+<<<<<<< HEAD
 static __devinit int alc5623_i2c_probe(struct i2c_client *client,
+=======
+static int alc5623_i2c_probe(struct i2c_client *client,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				const struct i2c_device_id *id)
 {
 	struct alc5623_platform_data *pdata;
@@ -1022,8 +1072,12 @@ static __devinit int alc5623_i2c_probe(struct i2c_client *client,
 
 	dev_dbg(&client->dev, "Found codec id : alc56%02x\n", vid2);
 
+<<<<<<< HEAD
 	alc5623 = devm_kzalloc(&client->dev, sizeof(struct alc5623_priv),
 			       GFP_KERNEL);
+=======
+	alc5623 = kzalloc(sizeof(struct alc5623_priv), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (alc5623 == NULL)
 		return -ENOMEM;
 
@@ -1045,23 +1099,49 @@ static __devinit int alc5623_i2c_probe(struct i2c_client *client,
 		alc5623_dai.name = "alc5623-hifi";
 		break;
 	default:
+<<<<<<< HEAD
+=======
+		kfree(alc5623);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
 	i2c_set_clientdata(client, alc5623);
+<<<<<<< HEAD
 	alc5623->control_type = SND_SOC_I2C;
 
 	ret =  snd_soc_register_codec(&client->dev,
 		&soc_codec_device_alc5623, &alc5623_dai, 1);
 	if (ret != 0)
 		dev_err(&client->dev, "Failed to register codec: %d\n", ret);
+=======
+	alc5623->control_data = client;
+	alc5623->control_type = SND_SOC_I2C;
+	mutex_init(&alc5623->mutex);
+
+	ret =  snd_soc_register_codec(&client->dev,
+		&soc_codec_device_alc5623, &alc5623_dai, 1);
+	if (ret != 0) {
+		dev_err(&client->dev, "Failed to register codec: %d\n", ret);
+		kfree(alc5623);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
 
+<<<<<<< HEAD
 static __devexit int alc5623_i2c_remove(struct i2c_client *client)
 {
 	snd_soc_unregister_codec(&client->dev);
+=======
+static int alc5623_i2c_remove(struct i2c_client *client)
+{
+	struct alc5623_priv *alc5623 = i2c_get_clientdata(client);
+
+	snd_soc_unregister_codec(&client->dev);
+	kfree(alc5623);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

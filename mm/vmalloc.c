@@ -26,7 +26,11 @@
 #include <linux/rcupdate.h>
 #include <linux/pfn.h>
 #include <linux/kmemleak.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <asm/tlbflush.h>
 #include <asm/shmparam.h>
@@ -256,7 +260,11 @@ struct vmap_area {
 	struct rb_node rb_node;		/* address sorted rbtree */
 	struct list_head list;		/* address sorted list */
 	struct list_head purge_list;	/* "lazy purge" list */
+<<<<<<< HEAD
 	struct vm_struct *vm;
+=======
+	void *private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct rcu_head rcu_head;
 };
 
@@ -452,6 +460,16 @@ overflow:
 	return ERR_PTR(-EBUSY);
 }
 
+<<<<<<< HEAD
+=======
+static void rcu_free_va(struct rcu_head *head)
+{
+	struct vmap_area *va = container_of(head, struct vmap_area, rcu_head);
+
+	kfree(va);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __free_vmap_area(struct vmap_area *va)
 {
 	BUG_ON(RB_EMPTY_NODE(&va->rb_node));
@@ -484,7 +502,11 @@ static void __free_vmap_area(struct vmap_area *va)
 	if (va->va_end > VMALLOC_START && va->va_end <= VMALLOC_END)
 		vmap_area_pcpu_hole = max(vmap_area_pcpu_hole, va->va_end);
 
+<<<<<<< HEAD
 	kfree_rcu(va, rcu_head);
+=======
+	call_rcu(&va->rcu_head, rcu_free_va);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -831,6 +853,16 @@ static struct vmap_block *new_vmap_block(gfp_t gfp_mask)
 	return vb;
 }
 
+<<<<<<< HEAD
+=======
+static void rcu_free_vb(struct rcu_head *head)
+{
+	struct vmap_block *vb = container_of(head, struct vmap_block, rcu_head);
+
+	kfree(vb);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void free_vmap_block(struct vmap_block *vb)
 {
 	struct vmap_block *tmp;
@@ -843,7 +875,11 @@ static void free_vmap_block(struct vmap_block *vb)
 	BUG_ON(tmp != vb);
 
 	free_vmap_area_noflush(vb->va);
+<<<<<<< HEAD
 	kfree_rcu(vb, rcu_head);
+=======
+	call_rcu(&vb->rcu_head, rcu_free_vb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void purge_fragmented_blocks(int cpu)
@@ -1118,6 +1154,7 @@ void *vm_map_ram(struct page **pages, unsigned int count, int node, pgprot_t pro
 EXPORT_SYMBOL(vm_map_ram);
 
 /**
+<<<<<<< HEAD
  * vm_area_add_early - add vmap area early during boot
  * @vm: vm_struct to add
  *
@@ -1144,6 +1181,8 @@ void __init vm_area_add_early(struct vm_struct *vm)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * vm_area_register_early - register vmap area early during boot
  * @vm: vm_struct to register
  * @align: requested alignment
@@ -1165,7 +1204,12 @@ void __init vm_area_register_early(struct vm_struct *vm, size_t align)
 
 	vm->addr = (void *)addr;
 
+<<<<<<< HEAD
 	vm_area_add_early(vm);
+=======
+	vm->next = vmlist;
+	vmlist = vm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __init vmalloc_init(void)
@@ -1185,10 +1229,16 @@ void __init vmalloc_init(void)
 	/* Import existing vmlist entries. */
 	for (tmp = vmlist; tmp; tmp = tmp->next) {
 		va = kzalloc(sizeof(struct vmap_area), GFP_NOWAIT);
+<<<<<<< HEAD
 		va->flags = VM_VM_AREA;
 		va->va_start = (unsigned long)tmp->addr;
 		va->va_end = va->va_start + tmp->size;
 		va->vm = tmp;
+=======
+		va->flags = tmp->flags | VM_VM_AREA;
+		va->va_start = (unsigned long)tmp->addr;
+		va->va_end = va->va_start + tmp->size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__insert_vmap_area(va);
 	}
 
@@ -1286,7 +1336,11 @@ static void setup_vmalloc_vm(struct vm_struct *vm, struct vmap_area *va,
 	vm->addr = (void *)va->va_start;
 	vm->size = va->va_end - va->va_start;
 	vm->caller = caller;
+<<<<<<< HEAD
 	va->vm = vm;
+=======
+	va->private = vm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	va->flags |= VM_VM_AREA;
 }
 
@@ -1316,7 +1370,11 @@ static struct vm_struct *__get_vm_area_node(unsigned long size,
 		unsigned long align, unsigned long flags, unsigned long start,
 		unsigned long end, int node, gfp_t gfp_mask, void *caller)
 {
+<<<<<<< HEAD
 	struct vmap_area *va;
+=======
+	static struct vmap_area *va;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct vm_struct *area;
 
 	BUG_ON(in_interrupt());
@@ -1409,7 +1467,11 @@ static struct vm_struct *find_vm_area(const void *addr)
 
 	va = find_vmap_area((unsigned long)addr);
 	if (va && va->flags & VM_VM_AREA)
+<<<<<<< HEAD
 		return va->vm;
+=======
+		return va->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return NULL;
 }
@@ -1428,7 +1490,11 @@ struct vm_struct *remove_vm_area(const void *addr)
 
 	va = find_vmap_area((unsigned long)addr);
 	if (va && va->flags & VM_VM_AREA) {
+<<<<<<< HEAD
 		struct vm_struct *vm = va->vm;
+=======
+		struct vm_struct *vm = va->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (!(vm->flags & VM_UNLIST)) {
 			struct vm_struct *tmp, **p;
@@ -1619,8 +1685,13 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
 	return area->addr;
 
 fail:
+<<<<<<< HEAD
 	warn_alloc_failed(gfp_mask, order,
 			  "vmalloc: allocation failure, allocated %ld of %ld bytes\n",
+=======
+	warn_alloc_failed(gfp_mask, order, "vmalloc: allocation failure, "
+			  "allocated %ld of %ld bytes\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  (area->nr_pages*PAGE_SIZE), area->size);
 	vfree(area->addr);
 	return NULL;
@@ -1651,12 +1722,22 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
 
 	size = PAGE_ALIGN(size);
 	if (!size || (size >> PAGE_SHIFT) > totalram_pages)
+<<<<<<< HEAD
 		goto fail;
 
 	area = __get_vm_area_node(size, align, VM_ALLOC | VM_UNLIST,
 				  start, end, node, gfp_mask, caller);
 	if (!area)
 		goto fail;
+=======
+		return NULL;
+
+	area = __get_vm_area_node(size, align, VM_ALLOC | VM_UNLIST,
+				  start, end, node, gfp_mask, caller);
+
+	if (!area)
+		return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	addr = __vmalloc_area_node(area, gfp_mask, prot, node, caller);
 	if (!addr)
@@ -1676,12 +1757,15 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
 	kmemleak_alloc(addr, real_size, 3, gfp_mask);
 
 	return addr;
+<<<<<<< HEAD
 
 fail:
 	warn_alloc_failed(gfp_mask, 0,
 			  "vmalloc: allocation failure: %lu bytes\n",
 			  real_size);
 	return NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1907,9 +1991,15 @@ static int aligned_vread(char *buf, char *addr, unsigned long count)
 			 * we can expect USER0 is not used (see vread/vwrite's
 			 * function description)
 			 */
+<<<<<<< HEAD
 			void *map = kmap_atomic(p);
 			memcpy(buf, map + offset, length);
 			kunmap_atomic(map);
+=======
+			void *map = kmap_atomic(p, KM_USER0);
+			memcpy(buf, map + offset, length);
+			kunmap_atomic(map, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else
 			memset(buf, 0, length);
 
@@ -1946,9 +2036,15 @@ static int aligned_vwrite(char *buf, char *addr, unsigned long count)
 			 * we can expect USER0 is not used (see vread/vwrite's
 			 * function description)
 			 */
+<<<<<<< HEAD
 			void *map = kmap_atomic(p);
 			memcpy(map + offset, buf, length);
 			kunmap_atomic(map);
+=======
+			void *map = kmap_atomic(p, KM_USER0);
+			memcpy(map + offset, buf, length);
+			kunmap_atomic(map, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		addr += length;
 		buf += length;
@@ -2169,30 +2265,45 @@ void  __attribute__((weak)) vmalloc_sync_all(void)
 
 static int f(pte_t *pte, pgtable_t table, unsigned long addr, void *data)
 {
+<<<<<<< HEAD
 	pte_t ***p = data;
 
 	if (p) {
 		*(*p) = pte;
 		(*p)++;
 	}
+=======
+	/* apply_to_page_range() does all the hard work. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 /**
  *	alloc_vm_area - allocate a range of kernel address space
  *	@size:		size of the area
+<<<<<<< HEAD
  *	@ptes:		returns the PTEs for the address space
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *	Returns:	NULL on failure, vm_struct on success
  *
  *	This function reserves a range of kernel address space, and
  *	allocates pagetables to map that range.  No actual mappings
+<<<<<<< HEAD
  *	are created.
  *
  *	If @ptes is non-NULL, pointers to the PTEs (in init_mm)
  *	allocated for the VM area are returned.
  */
 struct vm_struct *alloc_vm_area(size_t size, pte_t **ptes)
+=======
+ *	are created.  If the kernel address space is not shared
+ *	between processes, it syncs the pagetable across all
+ *	processes.
+ */
+struct vm_struct *alloc_vm_area(size_t size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct vm_struct *area;
 
@@ -2206,11 +2317,26 @@ struct vm_struct *alloc_vm_area(size_t size, pte_t **ptes)
 	 * of kernel virtual address space and mapped into init_mm.
 	 */
 	if (apply_to_page_range(&init_mm, (unsigned long)area->addr,
+<<<<<<< HEAD
 				size, f, ptes ? &ptes : NULL)) {
+=======
+				area->size, f, NULL)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		free_vm_area(area);
 		return NULL;
 	}
 
+<<<<<<< HEAD
+=======
+	/*
+	 * If the allocated address space is passed to a hypercall
+	 * before being used then we cannot rely on a page fault to
+	 * trigger an update of the page tables.  So sync all the page
+	 * tables here.
+	 */
+	vmalloc_sync_all();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return area;
 }
 EXPORT_SYMBOL_GPL(alloc_vm_area);
@@ -2379,7 +2505,11 @@ struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
 	vms = kzalloc(sizeof(vms[0]) * nr_vms, GFP_KERNEL);
 	vas = kzalloc(sizeof(vas[0]) * nr_vms, GFP_KERNEL);
 	if (!vas || !vms)
+<<<<<<< HEAD
 		goto err_free2;
+=======
+		goto err_free;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (area = 0; area < nr_vms; area++) {
 		vas[area] = kzalloc(sizeof(struct vmap_area), GFP_KERNEL);
@@ -2477,10 +2607,18 @@ found:
 
 err_free:
 	for (area = 0; area < nr_vms; area++) {
+<<<<<<< HEAD
 		kfree(vas[area]);
 		kfree(vms[area]);
 	}
 err_free2:
+=======
+		if (vas)
+			kfree(vas[area]);
+		if (vms)
+			kfree(vms[area]);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(vas);
 	kfree(vms);
 	return NULL;

@@ -9,7 +9,11 @@ mac80211-y := \
 	scan.o offchannel.o \
 	ht.o agg-tx.o agg-rx.o \
 	ibss.o \
+<<<<<<< HEAD
 	work.o \
+=======
+	mlme.o work.o \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iface.o \
 	rate.o \
 	michael.o \
@@ -24,8 +28,12 @@ mac80211-y := \
 	util.o \
 	wme.o \
 	event.o \
+<<<<<<< HEAD
 	chan.o \
 	driver-trace.o mlme.o
+=======
+	chan.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 mac80211-$(CONFIG_MAC80211_LEDS) += led.o
 mac80211-$(CONFIG_MAC80211_DEBUGFS) += \
@@ -42,6 +50,10 @@ mac80211-$(CONFIG_MAC80211_MESH) += \
 
 mac80211-$(CONFIG_PM) += pm.o
 
+<<<<<<< HEAD
+=======
+mac80211-$(CONFIG_MAC80211_DRIVER_API_TRACER) += driver-trace.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 CFLAGS_driver-trace.o := -I$(src)
 
 # objects for PID algorithm

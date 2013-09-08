@@ -47,7 +47,11 @@
 /* name size which is used for entries in pcihpfs */
 #define SLOT_NAME_SIZE  21              /* {_SUN} */
 
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int acpiphp_debug;
 
 /* local variables */

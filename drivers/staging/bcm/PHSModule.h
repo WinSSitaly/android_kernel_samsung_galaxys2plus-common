@@ -9,7 +9,11 @@ int PHSTransmit(PMINI_ADAPTER Adapter,
 					 PUINT PacketLen,
 					 UCHAR bEthCSSupport);
 
+<<<<<<< HEAD
 int PHSReceive(PMINI_ADAPTER Adapter,
+=======
+int PHSRecieve(PMINI_ADAPTER Adapter,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					USHORT usVcid,
 					struct sk_buff *packet,
 					UINT *punPacketLen,

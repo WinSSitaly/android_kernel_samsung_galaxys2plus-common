@@ -1,7 +1,11 @@
 /*
  * OMAP2/3 PRM module functions
  *
+<<<<<<< HEAD
  * Copyright (C) 2010-2011 Texas Instruments, Inc.
+=======
+ * Copyright (C) 2010 Texas Instruments, Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (C) 2010 Nokia Corporation
  * Benoît Cousson
  * Paul Walmsley
@@ -16,18 +20,25 @@
 #include <linux/err.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
 #include "common.h"
 #include <plat/cpu.h>
 #include <plat/prcm.h>
 #include <plat/irqs.h>
 
 #include "vp.h"
+=======
+#include <plat/common.h>
+#include <plat/cpu.h>
+#include <plat/prcm.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "prm2xxx_3xxx.h"
 #include "cm2xxx_3xxx.h"
 #include "prm-regbits-24xx.h"
 #include "prm-regbits-34xx.h"
 
+<<<<<<< HEAD
 static const struct omap_prcm_irq omap3_prcm_irqs[] = {
 	OMAP_PRCM_IRQ("wkup",	0,	0),
 	OMAP_PRCM_IRQ("io",	9,	1),
@@ -46,6 +57,8 @@ static struct omap_prcm_irq_setup omap3_prcm_irq_setup = {
 	.restore_irqen		= &omap3xxx_prm_restore_irqen,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u32 omap2_prm_read_mod_reg(s16 module, u16 idx)
 {
 	return __raw_readl(prm_base + module + idx);
@@ -177,6 +190,7 @@ int omap2_prm_deassert_hardreset(s16 prm_mod, u8 rst_shift, u8 st_shift)
 
 	return (c == MAX_MODULE_HARDRESET_WAIT) ? -EBUSY : 0;
 }
+<<<<<<< HEAD
 
 /* PRM VP */
 
@@ -308,3 +322,5 @@ static int __init omap3xxx_prcm_init(void)
 	return 0;
 }
 subsys_initcall(omap3xxx_prcm_init);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

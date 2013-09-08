@@ -30,7 +30,10 @@
 struct nouveau_framebuffer {
 	struct drm_framebuffer base;
 	struct nouveau_bo *nvbo;
+<<<<<<< HEAD
 	struct nouveau_vma vma;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 r_dma;
 	u32 r_format;
 	u32 r_pitch;
@@ -42,6 +45,13 @@ nouveau_framebuffer(struct drm_framebuffer *fb)
 	return container_of(fb, struct nouveau_framebuffer, base);
 }
 
+<<<<<<< HEAD
 int nouveau_framebuffer_init(struct drm_device *dev, struct nouveau_framebuffer *nouveau_fb,
 			     struct drm_mode_fb_cmd2 *mode_cmd, struct nouveau_bo *nvbo);
+=======
+extern const struct drm_mode_config_funcs nouveau_mode_config_funcs;
+
+int nouveau_framebuffer_init(struct drm_device *dev, struct nouveau_framebuffer *nouveau_fb,
+			     struct drm_mode_fb_cmd *mode_cmd, struct nouveau_bo *nvbo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __NOUVEAU_FB_H__ */

@@ -42,7 +42,11 @@ static irqreturn_t sni_isa_irq_handler(int dummy, void *p)
 struct irqaction sni_isa_irq = {
 	.handler = sni_isa_irq_handler,
 	.name = "ISA",
+<<<<<<< HEAD
 	.flags = IRQF_SHARED
+=======
+	.flags = IRQF_SHARED | IRQF_DISABLED
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*

@@ -25,8 +25,11 @@
 
 #include <mach/serial.h>
 
+<<<<<<< HEAD
 #define IOMEM(x)	((void __force __iomem *)(x))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u32 *uart;
 
 /* PORT_16C550A, in polled non-fifo mode */
@@ -45,12 +48,16 @@ static inline void flush(void)
 
 static inline void set_uart_info(u32 phys, void * __iomem virt)
 {
+<<<<<<< HEAD
 	/*
 	 * Get address of some.bss variable and round it down
 	 * a la CONFIG_AUTO_ZRELADDR.
 	 */
 	u32 ram_start = (u32)&uart & 0xf8000000;
 	u32 *uart_info = (u32 *)(ram_start + DAVINCI_UART_INFO_OFS);
+=======
+	u32 *uart_info = (u32 *)(DAVINCI_UART_INFO);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	uart = (u32 *)phys;
 	uart_info[0] = phys;

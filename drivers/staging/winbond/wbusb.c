@@ -11,7 +11,10 @@
  */
 #include <net/mac80211.h>
 #include <linux/usb.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "core.h"
 #include "mds_f.h"
@@ -25,7 +28,11 @@ MODULE_DESCRIPTION("IS89C35 802.11bg WLAN USB Driver");
 MODULE_LICENSE("GPL");
 MODULE_VERSION("0.1");
 
+<<<<<<< HEAD
 static const struct usb_device_id wb35_table[] = {
+=======
+static const struct usb_device_id wb35_table[] __devinitconst = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ USB_DEVICE(0x0416, 0x0035) },
 	{ USB_DEVICE(0x18E8, 0x6201) },
 	{ USB_DEVICE(0x18E8, 0x6206) },
@@ -278,7 +285,11 @@ static int wbsoft_config(struct ieee80211_hw *dev, u32 changed)
 	return 0;
 }
 
+<<<<<<< HEAD
 static u64 wbsoft_get_tsf(struct ieee80211_hw *dev, struct ieee80211_vif *vif)
+=======
+static u64 wbsoft_get_tsf(struct ieee80211_hw *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	printk("wbsoft_get_tsf called\n");
 	return 0;
@@ -865,4 +876,19 @@ static struct usb_driver wb35_driver = {
 	.disconnect	= wb35_disconnect,
 };
 
+<<<<<<< HEAD
 module_usb_driver(wb35_driver);
+=======
+static int __init wb35_init(void)
+{
+	return usb_register(&wb35_driver);
+}
+
+static void __exit wb35_exit(void)
+{
+	usb_deregister(&wb35_driver);
+}
+
+module_init(wb35_init);
+module_exit(wb35_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

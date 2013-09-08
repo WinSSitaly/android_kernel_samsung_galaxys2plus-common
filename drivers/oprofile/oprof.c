@@ -246,6 +246,7 @@ static int __init oprofile_init(void)
 	int err;
 
 	/* always init architecture to setup backtrace support */
+<<<<<<< HEAD
 	timer_mode = 0;
 	err = oprofile_arch_init(&oprofile_ops);
 	if (!err) {
@@ -258,19 +259,47 @@ static int __init oprofile_init(void)
 	timer_mode = 1;
 	/* no nmi timer mode if oprofile.timer is set */
 	if (timer || op_nmi_timer_init(&oprofile_ops)) {
+=======
+	err = oprofile_arch_init(&oprofile_ops);
+
+	timer_mode = err || timer;	/* fall back to timer mode on errors */
+	if (timer_mode) {
+		if (!err)
+			oprofile_arch_exit();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = oprofile_timer_init(&oprofile_ops);
 		if (err)
 			return err;
 	}
 
+<<<<<<< HEAD
 	return oprofilefs_register();
+=======
+	err = oprofilefs_register();
+	if (!err)
+		return 0;
+
+	/* failed */
+	if (timer_mode)
+		oprofile_timer_exit();
+	else
+		oprofile_arch_exit();
+
+	return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
 static void __exit oprofile_exit(void)
 {
 	oprofilefs_unregister();
+<<<<<<< HEAD
 	if (!timer_mode)
+=======
+	if (timer_mode)
+		oprofile_timer_exit();
+	else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		oprofile_arch_exit();
 }
 

@@ -50,6 +50,10 @@
 static const struct file_operations default_file_operations;
 static struct vfsmount *usbfs_mount;
 static int usbfs_mount_count;	/* = 0 */
+<<<<<<< HEAD
+=======
+static int ignore_mount = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct dentry *devices_usbfs_dentry;
 static int num_buses;	/* = 0 */
@@ -64,7 +68,11 @@ static umode_t devmode = USBFS_DEFAULT_DEVMODE;
 static umode_t busmode = USBFS_DEFAULT_BUSMODE;
 static umode_t listmode = USBFS_DEFAULT_LISTMODE;
 
+<<<<<<< HEAD
 static int usbfs_show_options(struct seq_file *seq, struct dentry *root)
+=======
+static int usbfs_show_options(struct seq_file *seq, struct vfsmount *mnt)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (devuid != 0)
 		seq_printf(seq, ",devuid=%u", devuid);
@@ -255,7 +263,11 @@ static int remount(struct super_block *sb, int *flags, char *data)
 	 * i.e. it's a simple_pin_fs from create_special_files,
 	 * then ignore it.
 	 */
+<<<<<<< HEAD
 	if (*flags & MS_KERNMOUNT)
+=======
+	if (ignore_mount)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	if (parse_options(sb, data)) {
@@ -263,19 +275,33 @@ static int remount(struct super_block *sb, int *flags, char *data)
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	if (usbfs_mount)
+=======
+	if (usbfs_mount && usbfs_mount->mnt_sb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		update_sb(usbfs_mount->mnt_sb);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct inode *usbfs_get_inode (struct super_block *sb, umode_t mode, dev_t dev)
+=======
+static struct inode *usbfs_get_inode (struct super_block *sb, int mode, dev_t dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inode *inode = new_inode(sb);
 
 	if (inode) {
 		inode->i_ino = get_next_ino();
+<<<<<<< HEAD
 		inode_init_owner(inode, NULL, mode);
+=======
+		inode->i_mode = mode;
+		inode->i_uid = current_fsuid();
+		inode->i_gid = current_fsgid();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		inode->i_atime = inode->i_mtime = inode->i_ctime = CURRENT_TIME;
 		switch (mode & S_IFMT) {
 		default:
@@ -297,7 +323,11 @@ static struct inode *usbfs_get_inode (struct super_block *sb, umode_t mode, dev_
 }
 
 /* SMP-safe */
+<<<<<<< HEAD
 static int usbfs_mknod (struct inode *dir, struct dentry *dentry, umode_t mode,
+=======
+static int usbfs_mknod (struct inode *dir, struct dentry *dentry, int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev_t dev)
 {
 	struct inode *inode = usbfs_get_inode(dir->i_sb, mode, dev);
@@ -314,7 +344,11 @@ static int usbfs_mknod (struct inode *dir, struct dentry *dentry, umode_t mode,
 	return error;
 }
 
+<<<<<<< HEAD
 static int usbfs_mkdir (struct inode *dir, struct dentry *dentry, umode_t mode)
+=======
+static int usbfs_mkdir (struct inode *dir, struct dentry *dentry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int res;
 
@@ -325,7 +359,11 @@ static int usbfs_mkdir (struct inode *dir, struct dentry *dentry, umode_t mode)
 	return res;
 }
 
+<<<<<<< HEAD
 static int usbfs_create (struct inode *dir, struct dentry *dentry, umode_t mode)
+=======
+static int usbfs_create (struct inode *dir, struct dentry *dentry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	mode = (mode & S_IALLUGO) | S_IFREG;
 	return usbfs_mknod (dir, dentry, mode, 0);
@@ -428,10 +466,25 @@ static loff_t default_file_lseek (struct file *file, loff_t offset, int orig)
 	return retval;
 }
 
+<<<<<<< HEAD
 static const struct file_operations default_file_operations = {
 	.read =		default_read_file,
 	.write =	default_write_file,
 	.open =		simple_open,
+=======
+static int default_open (struct inode *inode, struct file *file)
+{
+	if (inode->i_private)
+		file->private_data = inode->i_private;
+
+	return 0;
+}
+
+static const struct file_operations default_file_operations = {
+	.read =		default_read_file,
+	.write =	default_write_file,
+	.open =		default_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek =	default_file_lseek,
 };
 
@@ -445,6 +498,10 @@ static const struct super_operations usbfs_ops = {
 static int usbfs_fill_super(struct super_block *sb, void *data, int silent)
 {
 	struct inode *inode;
+<<<<<<< HEAD
+=======
+	struct dentry *root;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sb->s_blocksize = PAGE_CACHE_SIZE;
 	sb->s_blocksize_bits = PAGE_CACHE_SHIFT;
@@ -452,11 +509,27 @@ static int usbfs_fill_super(struct super_block *sb, void *data, int silent)
 	sb->s_op = &usbfs_ops;
 	sb->s_time_gran = 1;
 	inode = usbfs_get_inode(sb, S_IFDIR | 0755, 0);
+<<<<<<< HEAD
 	sb->s_root = d_make_root(inode);
 	if (!sb->s_root) {
 		dbg("%s: could not get root dentry!",__func__);
 		return -ENOMEM;
 	}
+=======
+
+	if (!inode) {
+		dbg("%s: could not get inode!",__func__);
+		return -ENOMEM;
+	}
+
+	root = d_alloc_root(inode);
+	if (!root) {
+		dbg("%s: could not get root dentry!",__func__);
+		iput(inode);
+		return -ENOMEM;
+	}
+	sb->s_root = root;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -469,7 +542,11 @@ static int usbfs_fill_super(struct super_block *sb, void *data, int silent)
  *
  * This function handles both regular files and directories.
  */
+<<<<<<< HEAD
 static int fs_create_by_name (const char *name, umode_t mode,
+=======
+static int fs_create_by_name (const char *name, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      struct dentry *parent, struct dentry **dentry)
 {
 	int error = 0;
@@ -480,8 +557,14 @@ static int fs_create_by_name (const char *name, umode_t mode,
 	 * have around.
 	 */
 	if (!parent ) {
+<<<<<<< HEAD
 		if (usbfs_mount)
 			parent = usbfs_mount->mnt_root;
+=======
+		if (usbfs_mount && usbfs_mount->mnt_sb) {
+			parent = usbfs_mount->mnt_sb->s_root;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (!parent) {
@@ -493,7 +576,11 @@ static int fs_create_by_name (const char *name, umode_t mode,
 	mutex_lock(&parent->d_inode->i_mutex);
 	*dentry = lookup_one_len(name, parent, strlen(name));
 	if (!IS_ERR(*dentry)) {
+<<<<<<< HEAD
 		if (S_ISDIR(mode))
+=======
+		if ((mode & S_IFMT) == S_IFDIR)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			error = usbfs_mkdir (parent->d_inode, *dentry, mode);
 		else 
 			error = usbfs_create (parent->d_inode, *dentry, mode);
@@ -504,7 +591,11 @@ static int fs_create_by_name (const char *name, umode_t mode,
 	return error;
 }
 
+<<<<<<< HEAD
 static struct dentry *fs_create_file (const char *name, umode_t mode,
+=======
+static struct dentry *fs_create_file (const char *name, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      struct dentry *parent, void *data,
 				      const struct file_operations *fops,
 				      uid_t uid, gid_t gid)
@@ -573,6 +664,14 @@ static int create_special_files (void)
 	struct dentry *parent;
 	int retval;
 
+<<<<<<< HEAD
+=======
+	/* the simple_pin_fs calls will call remount with no options
+	 * without this flag that would overwrite the real mount options (if any)
+	 */
+	ignore_mount = 1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* create the devices special file */
 	retval = simple_pin_fs(&usb_fs_type, &usbfs_mount, &usbfs_mount_count);
 	if (retval) {
@@ -580,7 +679,13 @@ static int create_special_files (void)
 		goto exit;
 	}
 
+<<<<<<< HEAD
 	parent = usbfs_mount->mnt_root;
+=======
+	ignore_mount = 0;
+
+	parent = usbfs_mount->mnt_sb->s_root;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	devices_usbfs_dentry = fs_create_file ("devices",
 					       listmode | S_IFREG, parent,
 					       NULL, &usbfs_devices_fops,
@@ -634,7 +739,11 @@ static void usbfs_add_bus(struct usb_bus *bus)
 
 	sprintf (name, "%03d", bus->busnum);
 
+<<<<<<< HEAD
 	parent = usbfs_mount->mnt_root;
+=======
+	parent = usbfs_mount->mnt_sb->s_root;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bus->usbfs_dentry = fs_create_file (name, busmode | S_IFDIR, parent,
 					    bus, NULL, busuid, busgid);
 	if (bus->usbfs_dentry == NULL) {

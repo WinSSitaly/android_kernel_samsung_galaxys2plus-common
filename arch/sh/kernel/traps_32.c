@@ -27,11 +27,18 @@
 #include <linux/sysfs.h>
 #include <linux/uaccess.h>
 #include <linux/perf_event.h>
+<<<<<<< HEAD
 #include <asm/alignment.h>
 #include <asm/fpu.h>
 #include <asm/kprobes.h>
 #include <asm/traps.h>
 #include <asm/bl_bit.h>
+=======
+#include <asm/system.h>
+#include <asm/alignment.h>
+#include <asm/fpu.h>
+#include <asm/kprobes.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_CPU_SH2
 # define TRAP_RESERVED_INST	4
@@ -317,6 +324,7 @@ static int handle_unaligned_ins(insn_size_t instruction, struct pt_regs *regs,
 			break;
 		}
 		break;
+<<<<<<< HEAD
 
 	case 9: /* mov.w @(disp,PC),Rn */
 		srcu = (unsigned char __user *)regs->pc;
@@ -346,6 +354,8 @@ static int handle_unaligned_ins(insn_size_t instruction, struct pt_regs *regs,
 			goto fetch_fault;
 		ret = 0;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return ret;
 
@@ -423,7 +433,11 @@ int handle_unaligned_access(insn_size_t instruction, struct pt_regs *regs,
 	 */
 	if (!expected) {
 		unaligned_fixups_notify(current, instruction, regs);
+<<<<<<< HEAD
 		perf_sw_event(PERF_COUNT_SW_ALIGNMENT_FAULTS, 1,
+=======
+		perf_sw_event(PERF_COUNT_SW_ALIGNMENT_FAULTS, 1, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      regs, address);
 	}
 
@@ -496,7 +510,10 @@ int handle_unaligned_access(insn_size_t instruction, struct pt_regs *regs,
 		case 0x0500: /* mov.w @(disp,Rm),R0 */
 			goto simple;
 		case 0x0B00: /* bf   lab - no delayslot*/
+<<<<<<< HEAD
 			ret = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case 0x0F00: /* bf/s lab */
 			ret = handle_delayslot(regs, instruction, ma);
@@ -510,7 +527,10 @@ int handle_unaligned_access(insn_size_t instruction, struct pt_regs *regs,
 			}
 			break;
 		case 0x0900: /* bt   lab - no delayslot */
+<<<<<<< HEAD
 			ret = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case 0x0D00: /* bt/s lab */
 			ret = handle_delayslot(regs, instruction, ma);
@@ -526,9 +546,12 @@ int handle_unaligned_access(insn_size_t instruction, struct pt_regs *regs,
 		}
 		break;
 
+<<<<<<< HEAD
 	case 0x9000: /* mov.w @(disp,Rm),Rn */
 		goto simple;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case 0xA000: /* bra label */
 		ret = handle_delayslot(regs, instruction, ma);
 		if (ret==0)
@@ -542,9 +565,12 @@ int handle_unaligned_access(insn_size_t instruction, struct pt_regs *regs,
 			regs->pc += SH_PC_12BIT_OFFSET(instruction);
 		}
 		break;
+<<<<<<< HEAD
 
 	case 0xD000: /* mov.l @(disp,Rm),Rn */
 		goto simple;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return ret;
 

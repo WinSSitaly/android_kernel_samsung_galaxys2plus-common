@@ -113,7 +113,11 @@ int mthca_reset(struct mthca_dev *mdev)
 	}
 
 	hca_pcix_cap = pci_find_capability(mdev->pdev, PCI_CAP_ID_PCIX);
+<<<<<<< HEAD
 	hca_pcie_cap = pci_pcie_cap(mdev->pdev);
+=======
+	hca_pcie_cap = pci_find_capability(mdev->pdev, PCI_CAP_ID_EXP);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (bridge) {
 		bridge_header = kmalloc(256, GFP_KERNEL);

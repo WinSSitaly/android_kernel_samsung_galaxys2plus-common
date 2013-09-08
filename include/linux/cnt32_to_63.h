@@ -16,6 +16,10 @@
 #include <linux/compiler.h>
 #include <linux/types.h>
 #include <asm/byteorder.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* this is used only to give gcc a clue about good code generation */
 union cnt32_to_63 {

@@ -14,6 +14,10 @@
 #include <linux/moduleparam.h>
 #include <linux/blkpg.h>
 #include <linux/bio.h>
+<<<<<<< HEAD
+=======
+#include <linux/buffer_head.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mempool.h>
 #include <linux/slab.h>
 #include <linux/idr.h>
@@ -24,6 +28,7 @@
 
 #define DM_MSG_PREFIX "core"
 
+<<<<<<< HEAD
 #ifdef CONFIG_PRINTK
 /*
  * ratelimit state to be used in DMXXX_LIMIT().
@@ -34,6 +39,8 @@ DEFINE_RATELIMIT_STATE(dm_ratelimit_state,
 EXPORT_SYMBOL(dm_ratelimit_state);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Cookies are numeric values sent with CHANGE and REMOVE
  * uevents while resuming, removing or renaming the device.
@@ -120,7 +127,10 @@ EXPORT_SYMBOL_GPL(dm_get_rq_mapinfo);
 #define DMF_FREEING 3
 #define DMF_DELETING 4
 #define DMF_NOFLUSH_SUSPENDING 5
+<<<<<<< HEAD
 #define DMF_MERGE_IS_OPTIONAL 6
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Work processed by per-device workqueue.
@@ -139,8 +149,11 @@ struct mapped_device {
 	/* Protect queue and type against concurrent access. */
 	struct mutex type_lock;
 
+<<<<<<< HEAD
 	struct target_type *immutable_target_type;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct gendisk *disk;
 	char name[16];
 
@@ -191,6 +204,12 @@ struct mapped_device {
 	/* forced geometry settings */
 	struct hd_geometry geometry;
 
+<<<<<<< HEAD
+=======
+	/* For saving the address of __make_request for request based dm */
+	make_request_fn *saved_make_request_fn;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* sysfs handle */
 	struct kobject kobj;
 
@@ -754,6 +773,7 @@ static void rq_completed(struct mapped_device *md, int rw, int run_queue)
 	if (!md_in_flight(md))
 		wake_up(&md->wait);
 
+<<<<<<< HEAD
 	/*
 	 * Run this off this callpath, as drivers could invoke end_io while
 	 * inside their request_fn (and holding the queue lock). Calling
@@ -762,6 +782,10 @@ static void rq_completed(struct mapped_device *md, int rw, int run_queue)
 	 */
 	if (run_queue)
 		blk_run_queue_async(md->queue);
+=======
+	if (run_queue)
+		blk_run_queue(md->queue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * dm_put() must be at the end of this function. See the comment above
@@ -871,6 +895,7 @@ static void dm_done(struct request *clone, int error, bool mapped)
 {
 	int r = error;
 	struct dm_rq_target_io *tio = clone->end_io_data;
+<<<<<<< HEAD
 	dm_request_endio_fn rq_end_io = NULL;
 
 	if (tio->ti) {
@@ -879,6 +904,12 @@ static void dm_done(struct request *clone, int error, bool mapped)
 		if (mapped && rq_end_io)
 			r = rq_end_io(tio->ti, clone, error, &tio->info);
 	}
+=======
+	dm_request_endio_fn rq_end_io = tio->ti->type->rq_end_io;
+
+	if (mapped && rq_end_io)
+		r = rq_end_io(tio->ti, clone, error, &tio->info);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (r <= 0)
 		/* The target wants to complete the I/O */
@@ -1026,7 +1057,10 @@ static void __map_bio(struct dm_target *ti, struct bio *clone,
 		/*
 		 * Store bio_set for cleanup.
 		 */
+<<<<<<< HEAD
 		clone->bi_end_io = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		clone->bi_private = md->bs;
 		bio_put(clone);
 		free_tio(md, tio);
@@ -1199,8 +1233,12 @@ static int __clone_and_map_discard(struct clone_info *ci)
 
 		/*
 		 * Even though the device advertised discard support,
+<<<<<<< HEAD
 		 * that does not mean every target supports it, and
 		 * reconfiguration might also have changed that since the
+=======
+		 * reconfiguration might have changed that since the
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * check was performed.
 		 */
 		if (!ti->num_discard_requests)
@@ -1410,7 +1448,11 @@ out:
  * The request function that just remaps the bio built up by
  * dm_merge_bvec.
  */
+<<<<<<< HEAD
 static void _dm_request(struct request_queue *q, struct bio *bio)
+=======
+static int _dm_request(struct request_queue *q, struct bio *bio)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int rw = bio_data_dir(bio);
 	struct mapped_device *md = q->queuedata;
@@ -1431,12 +1473,27 @@ static void _dm_request(struct request_queue *q, struct bio *bio)
 			queue_io(md, bio);
 		else
 			bio_io_error(bio);
+<<<<<<< HEAD
 		return;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	__split_and_process_bio(md, bio);
 	up_read(&md->io_lock);
+<<<<<<< HEAD
 	return;
+=======
+	return 0;
+}
+
+static int dm_make_request(struct request_queue *q, struct bio *bio)
+{
+	struct mapped_device *md = q->queuedata;
+
+	return md->saved_make_request_fn(q, bio); /* call __make_request() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int dm_request_based(struct mapped_device *md)
@@ -1444,14 +1501,24 @@ static int dm_request_based(struct mapped_device *md)
 	return blk_queue_stackable(md->queue);
 }
 
+<<<<<<< HEAD
 static void dm_request(struct request_queue *q, struct bio *bio)
+=======
+static int dm_request(struct request_queue *q, struct bio *bio)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct mapped_device *md = q->queuedata;
 
 	if (dm_request_based(md))
+<<<<<<< HEAD
 		blk_queue_bio(q, bio);
 	else
 		_dm_request(q, bio);
+=======
+		return dm_make_request(q, bio);
+
+	return _dm_request(q, bio);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void dm_dispatch_request(struct request *rq)
@@ -1576,6 +1643,18 @@ static int map_request(struct dm_target *ti, struct request *clone,
 	int r, requeued = 0;
 	struct dm_rq_target_io *tio = clone->end_io_data;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * Hold the md reference here for the in-flight I/O.
+	 * We can't rely on the reference count by device opener,
+	 * because the device may be closed during the request completion
+	 * when all bios are completed.
+	 * See the comment in rq_completed() too.
+	 */
+	dm_get(md);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tio->ti = ti;
 	r = ti->type->map_rq(ti, clone, &tio->info);
 	switch (r) {
@@ -1607,6 +1686,7 @@ static int map_request(struct dm_target *ti, struct request *clone,
 	return requeued;
 }
 
+<<<<<<< HEAD
 static struct request *dm_start_request(struct mapped_device *md, struct request *orig)
 {
 	struct request *clone;
@@ -1627,6 +1707,8 @@ static struct request *dm_start_request(struct mapped_device *md, struct request
 	return clone;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * q->request_fn for request-based dm.
  * Called with the queue lock held.
@@ -1656,6 +1738,7 @@ static void dm_request_fn(struct request_queue *q)
 			pos = blk_rq_pos(rq);
 
 		ti = dm_table_find_target(map, pos);
+<<<<<<< HEAD
 		if (!dm_target_is_valid(ti)) {
 			/*
 			 * Must perform setup, that dm_done() requires,
@@ -1666,11 +1749,20 @@ static void dm_request_fn(struct request_queue *q)
 			dm_kill_unmapped_request(clone, -EIO);
 			continue;
 		}
+=======
+		BUG_ON(!dm_target_is_valid(ti));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (ti->type->busy && ti->type->busy(ti))
 			goto delay_and_out;
 
+<<<<<<< HEAD
 		clone = dm_start_request(md, rq);
+=======
+		blk_start_request(rq);
+		clone = rq->special;
+		atomic_inc(&md->pending[rq_data_dir(clone)]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		spin_unlock(q->queue_lock);
 		if (map_request(ti, clone, md))
@@ -1690,6 +1782,11 @@ delay_and_out:
 	blk_delay_queue(q, HZ / 10);
 out:
 	dm_table_put(map);
+<<<<<<< HEAD
+=======
+
+	return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int dm_underlying_device_busy(struct request_queue *q)
@@ -1836,6 +1933,10 @@ static void dm_init_md_queue(struct mapped_device *md)
 	blk_queue_make_request(md->queue, dm_request);
 	blk_queue_bounce_limit(md->queue, BLK_BOUNCE_ANY);
 	blk_queue_merge_bvec(md->queue, dm_merge_bvec);
+<<<<<<< HEAD
+=======
+	blk_queue_flush(md->queue, REQ_FLUSH | REQ_FUA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2021,6 +2122,7 @@ static void __set_size(struct mapped_device *md, sector_t size)
 }
 
 /*
+<<<<<<< HEAD
  * Return 1 if the queue has a compulsory merge_bvec_fn function.
  *
  * If this function returns 0, then the device is either a non-dm
@@ -2074,6 +2176,8 @@ static int dm_table_merge_is_optional(struct dm_table *table)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Returns old map, which caller must destroy.
  */
 static struct dm_table *__bind(struct mapped_device *md, struct dm_table *t,
@@ -2083,7 +2187,10 @@ static struct dm_table *__bind(struct mapped_device *md, struct dm_table *t,
 	struct request_queue *q = md->queue;
 	sector_t size;
 	unsigned long flags;
+<<<<<<< HEAD
 	int merge_is_optional;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	size = dm_table_get_size(t);
 
@@ -2109,6 +2216,7 @@ static struct dm_table *__bind(struct mapped_device *md, struct dm_table *t,
 
 	__bind_mempools(md, t);
 
+<<<<<<< HEAD
 	merge_is_optional = dm_table_merge_is_optional(t);
 
 	write_lock_irqsave(&md->map_lock, flags);
@@ -2121,6 +2229,12 @@ static struct dm_table *__bind(struct mapped_device *md, struct dm_table *t,
 		set_bit(DMF_MERGE_IS_OPTIONAL, &md->flags);
 	else
 		clear_bit(DMF_MERGE_IS_OPTIONAL, &md->flags);
+=======
+	write_lock_irqsave(&md->map_lock, flags);
+	old_map = md->map;
+	md->map = t;
+	dm_table_set_restrictions(t, q, limits);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	write_unlock_irqrestore(&md->map_lock, flags);
 
 	return old_map;
@@ -2186,11 +2300,14 @@ unsigned dm_get_md_type(struct mapped_device *md)
 	return md->type;
 }
 
+<<<<<<< HEAD
 struct target_type *dm_get_immutable_target_type(struct mapped_device *md)
 {
 	return md->immutable_target_type;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Fully initialize a request-based queue (->elevator, ->request_fn, etc).
  */
@@ -2207,6 +2324,10 @@ static int dm_init_request_based_queue(struct mapped_device *md)
 		return 0;
 
 	md->queue = q;
+<<<<<<< HEAD
+=======
+	md->saved_make_request_fn = md->queue->make_request_fn;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dm_init_md_queue(md);
 	blk_queue_softirq_done(md->queue, dm_softirq_done);
 	blk_queue_prep_rq(md->queue, dm_prep_fn);
@@ -2265,7 +2386,10 @@ struct mapped_device *dm_get_md(dev_t dev)
 
 	return md;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(dm_get_md);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void *dm_get_mdptr(struct mapped_device *md)
 {
@@ -2351,6 +2475,10 @@ static int dm_wait_for_completion(struct mapped_device *md, int interruptible)
 	while (1) {
 		set_current_state(interruptible);
 
+<<<<<<< HEAD
+=======
+		smp_mb();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!md_in_flight(md))
 			break;
 

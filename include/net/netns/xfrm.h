@@ -56,7 +56,11 @@ struct netns_xfrm {
 #endif
 
 	struct dst_ops		xfrm4_dst_ops;
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dst_ops		xfrm6_dst_ops;
 #endif
 };

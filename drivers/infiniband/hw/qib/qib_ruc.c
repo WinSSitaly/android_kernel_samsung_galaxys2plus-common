@@ -260,15 +260,22 @@ static int gid_ok(union ib_gid *gid, __be64 gid_prefix, __be64 id)
 
 /*
  *
+<<<<<<< HEAD
  * This should be called with the QP r_lock held.
  *
  * The s_lock will be acquired around the qib_migrate_qp() call.
+=======
+ * This should be called with the QP s_lock held.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int qib_ruc_check_hdr(struct qib_ibport *ibp, struct qib_ib_header *hdr,
 		      int has_grh, struct qib_qp *qp, u32 bth0)
 {
 	__be64 guid;
+<<<<<<< HEAD
 	unsigned long flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (qp->s_mig_state == IB_MIG_ARMED && (bth0 & IB_BTH_MIG_REQ)) {
 		if (!has_grh) {
@@ -298,9 +305,13 @@ int qib_ruc_check_hdr(struct qib_ibport *ibp, struct qib_ib_header *hdr,
 		if (be16_to_cpu(hdr->lrh[3]) != qp->alt_ah_attr.dlid ||
 		    ppd_from_ibp(ibp)->port != qp->alt_ah_attr.port_num)
 			goto err;
+<<<<<<< HEAD
 		spin_lock_irqsave(&qp->s_lock, flags);
 		qib_migrate_qp(qp);
 		spin_unlock_irqrestore(&qp->s_lock, flags);
+=======
+		qib_migrate_qp(qp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		if (!has_grh) {
 			if (qp->remote_ah_attr.ah_flags & IB_AH_GRH)

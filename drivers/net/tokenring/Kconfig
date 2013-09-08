@@ -4,9 +4,16 @@
 
 # So far, we only have PCI, ISA, and MCA token ring devices
 menuconfig TR
+<<<<<<< HEAD
 	bool "Token Ring driver support"
 	depends on NETDEVICES && !UML
 	depends on (PCI || ISA || MCA || CCW || PCMCIA)
+=======
+	tristate "Token Ring driver support"
+	depends on NETDEVICES && !UML
+	depends on (PCI || ISA || MCA || CCW)
+	select LLC
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Token Ring is IBM's way of communication on a local network; the
 	  rest of the world uses Ethernet. To participate on a Token Ring
@@ -19,6 +26,7 @@ menuconfig TR
 
 if TR
 
+<<<<<<< HEAD
 config WANT_LLC
 	def_bool y
 	select LLC
@@ -34,6 +42,8 @@ config PCMCIA_IBMTR
 	  To compile this driver as a module, choose M here: the module will be
 	  called ibmtr_cs.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config IBMTR
 	tristate "IBM Tropic chipset based adapter support"
 	depends on ISA || MCA

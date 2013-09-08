@@ -3,7 +3,11 @@
  *
  * Copyright (C) 2009  Renesas Solutions Corp.
  *
+<<<<<<< HEAD
  * Author : Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+=======
+ * Author : Yoshihiro Shimoda <shimoda.yoshihiro@renesas.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +35,12 @@ struct r8a66597_platdata {
 	/* This callback can control port power instead of DVSTCTR register. */
 	void (*port_power)(int port, int power);
 
+<<<<<<< HEAD
 	/* This parameter is for BUSWAIT */
 	u16		buswait;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* set one = on chip controller, set zero = external controller */
 	unsigned	on_chip:1;
 
@@ -45,12 +52,15 @@ struct r8a66597_platdata {
 
 	/* set one = big endian, set zero = little endian */
 	unsigned	endian:1;
+<<<<<<< HEAD
 
 	/* (external controller only) set one = WR0_N shorted to WR1_N */
 	unsigned	wr0_shorted_to_wr1:1;
 
 	/* set one = using SUDMAC */
 	unsigned	sudmac:1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Register definitions */
@@ -420,6 +430,7 @@ struct r8a66597_platdata {
 #define	USBSPD		0x00C0
 #define	RTPORT		0x0001
 
+<<<<<<< HEAD
 /* SUDMAC registers */
 #define CH0CFG		0x00
 #define CH1CFG		0x04
@@ -477,5 +488,7 @@ struct r8a66597_platdata {
 #define CH1ENDC		0x0002 /* b2: Ch1 DMA Transfer End Int Stat Clear */
 #define CH0ENDC		0x0001 /* b1: Ch0 DMA Transfer End Int Stat Clear */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __LINUX_USB_R8A66597_H */
 

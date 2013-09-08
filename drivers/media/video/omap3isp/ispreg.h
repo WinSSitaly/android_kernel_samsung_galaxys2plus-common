@@ -402,6 +402,12 @@
 #define ISPPRV_YENH_TABLE_ADDR		0x1000
 #define ISPPRV_CFA_TABLE_ADDR		0x1400
 
+<<<<<<< HEAD
+=======
+#define ISPPRV_MAXOUTPUT_WIDTH		1280
+#define ISPPRV_MAXOUTPUT_WIDTH_ES2	3300
+#define ISPPRV_MAXOUTPUT_WIDTH_3630	4096
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ISPRSZ_MIN_OUTPUT		64
 #define ISPRSZ_MAX_OUTPUT		3312
 

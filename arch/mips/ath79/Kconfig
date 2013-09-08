@@ -2,6 +2,7 @@ if ATH79
 
 menu "Atheros AR71XX/AR724X/AR913X machine selection"
 
+<<<<<<< HEAD
 config ATH79_MACH_AP121
 	bool "Atheros AP121 reference board"
 	select SOC_AR933X
@@ -22,6 +23,15 @@ config ATH79_MACH_AP81
 	select ATH79_DEV_SPI
 	select ATH79_DEV_USB
 	select ATH79_DEV_WMAC
+=======
+config ATH79_MACH_AP81
+	bool "Atheros AP81 reference board"
+	select SOC_AR913X
+	select ATH79_DEV_AR913X_WMAC
+	select ATH79_DEV_GPIO_BUTTONS
+	select ATH79_DEV_LEDS_GPIO
+	select ATH79_DEV_SPI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Say 'Y' here if you want your kernel to support the
 	  Atheros AP81 reference board.
@@ -32,11 +42,15 @@ config ATH79_MACH_PB44
 	select ATH79_DEV_GPIO_BUTTONS
 	select ATH79_DEV_LEDS_GPIO
 	select ATH79_DEV_SPI
+<<<<<<< HEAD
 	select ATH79_DEV_USB
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Say 'Y' here if you want your kernel to support the
 	  Atheros PB44 reference board.
 
+<<<<<<< HEAD
 config ATH79_MACH_UBNT_XM
 	bool "Ubiquiti Networks XM (rev 1.0) board"
 	select SOC_AR724X
@@ -47,6 +61,8 @@ config ATH79_MACH_UBNT_XM
 	  Say 'Y' here if you want your kernel to support the
 	  Ubiquiti Networks XM (rev 1.0) board.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endmenu
 
 config SOC_AR71XX
@@ -57,15 +73,23 @@ config SOC_AR71XX
 config SOC_AR724X
 	select USB_ARCH_HAS_EHCI
 	select USB_ARCH_HAS_OHCI
+<<<<<<< HEAD
 	select HW_HAS_PCI
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	def_bool n
 
 config SOC_AR913X
 	select USB_ARCH_HAS_EHCI
 	def_bool n
 
+<<<<<<< HEAD
 config SOC_AR933X
 	select USB_ARCH_HAS_EHCI
+=======
+config ATH79_DEV_AR913X_WMAC
+	depends on SOC_AR913X
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	def_bool n
 
 config ATH79_DEV_GPIO_BUTTONS
@@ -77,6 +101,7 @@ config ATH79_DEV_LEDS_GPIO
 config ATH79_DEV_SPI
 	def_bool n
 
+<<<<<<< HEAD
 config ATH79_DEV_USB
 	def_bool n
 
@@ -84,4 +109,6 @@ config ATH79_DEV_WMAC
 	depends on (SOC_AR913X || SOC_AR933X)
 	def_bool n
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endif

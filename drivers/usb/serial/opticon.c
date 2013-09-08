@@ -32,7 +32,11 @@
  * an examples of 1D barcode types are EAN, UPC, Code39, IATA etc.. */
 #define DRIVER_DESC	"Opticon USB barcode to serial driver (1D)"
 
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const struct usb_device_id id_table[] = {
 	{ USB_DEVICE(0x065a, 0x0009) },
@@ -160,11 +164,15 @@ static int send_control_msg(struct usb_serial_port *port, u8 requesttype,
 {
 	struct usb_serial *serial = port->serial;
 	int retval;
+<<<<<<< HEAD
 	u8 *buffer;
 
 	buffer = kzalloc(1, GFP_KERNEL);
 	if (!buffer)
 		return -ENOMEM;
+=======
+	u8 buffer[2];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	buffer[0] = val;
 	/* Send the message to the vendor control endpoint
@@ -173,7 +181,10 @@ static int send_control_msg(struct usb_serial_port *port, u8 requesttype,
 				requesttype,
 				USB_DIR_OUT|USB_TYPE_VENDOR|USB_RECIP_INTERFACE,
 				0, 0, buffer, 1, 0);
+<<<<<<< HEAD
 	kfree(buffer);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return retval;
 }
@@ -297,7 +308,11 @@ static int opticon_write(struct tty_struct *tty, struct usb_serial_port *port,
 	if (!dr) {
 		dev_err(&port->dev, "out of memory\n");
 		count = -ENOMEM;
+<<<<<<< HEAD
 		goto error_no_dr;
+=======
+		goto error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	dr->bRequestType = USB_TYPE_VENDOR | USB_RECIP_INTERFACE | USB_DIR_OUT;
@@ -327,8 +342,11 @@ static int opticon_write(struct tty_struct *tty, struct usb_serial_port *port,
 
 	return count;
 error:
+<<<<<<< HEAD
 	kfree(dr);
 error_no_dr:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usb_free_urb(urb);
 error_no_urb:
 	kfree(buffer);
@@ -391,6 +409,10 @@ static void opticon_unthrottle(struct tty_struct *tty)
 	priv->actually_throttled = false;
 	spin_unlock_irqrestore(&priv->lock, flags);
 
+<<<<<<< HEAD
+=======
+	priv->bulk_read_urb->dev = port->serial->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (was_throttled) {
 		result = usb_submit_urb(priv->bulk_read_urb, GFP_ATOMIC);
 		if (result)
@@ -529,7 +551,11 @@ static int opticon_startup(struct usb_serial *serial)
 			goto error;
 		}
 
+<<<<<<< HEAD
 		priv->buffer_size = usb_endpoint_maxp(endpoint) * 2;
+=======
+		priv->buffer_size = le16_to_cpu(endpoint->wMaxPacketSize) * 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		priv->bulk_in_buffer = kmalloc(priv->buffer_size, GFP_KERNEL);
 		if (!priv->bulk_in_buffer) {
 			dev_err(&priv->udev->dev, "out of memory\n");
@@ -611,6 +637,10 @@ static struct usb_driver opticon_driver = {
 	.suspend =	opticon_suspend,
 	.resume =	opticon_resume,
 	.id_table =	id_table,
+<<<<<<< HEAD
+=======
+	.no_dynamic_id = 	1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct usb_serial_driver opticon_device = {
@@ -619,6 +649,10 @@ static struct usb_serial_driver opticon_device = {
 		.name =		"opticon",
 	},
 	.id_table =		id_table,
+<<<<<<< HEAD
+=======
+	.usb_driver = 		&opticon_driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.num_ports =		1,
 	.attach =		opticon_startup,
 	.open =			opticon_open,
@@ -634,12 +668,36 @@ static struct usb_serial_driver opticon_device = {
 	.tiocmset =		opticon_tiocmset,
 };
 
+<<<<<<< HEAD
 static struct usb_serial_driver * const serial_drivers[] = {
 	&opticon_device, NULL
 };
 
 module_usb_serial_driver(opticon_driver, serial_drivers);
 
+=======
+static int __init opticon_init(void)
+{
+	int retval;
+
+	retval = usb_serial_register(&opticon_device);
+	if (retval)
+		return retval;
+	retval = usb_register(&opticon_driver);
+	if (retval)
+		usb_serial_deregister(&opticon_device);
+	return retval;
+}
+
+static void __exit opticon_exit(void)
+{
+	usb_deregister(&opticon_driver);
+	usb_serial_deregister(&opticon_device);
+}
+
+module_init(opticon_init);
+module_exit(opticon_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION(DRIVER_DESC);
 MODULE_LICENSE("GPL");
 

@@ -63,7 +63,10 @@
 
 #include <asm/io.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
 #include <asm/ebcdic.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <net/iucv/iucv.h>
 #include "fsm.h"
@@ -76,7 +79,11 @@ MODULE_DESCRIPTION ("Linux for S/390 IUCV network driver");
  * Debug Facility stuff
  */
 #define IUCV_DBF_SETUP_NAME "iucv_setup"
+<<<<<<< HEAD
 #define IUCV_DBF_SETUP_LEN 64
+=======
+#define IUCV_DBF_SETUP_LEN 32
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define IUCV_DBF_SETUP_PAGES 2
 #define IUCV_DBF_SETUP_NR_AREAS 1
 #define IUCV_DBF_SETUP_LEVEL 3
@@ -227,7 +234,10 @@ struct iucv_connection {
 	struct net_device         *netdev;
 	struct connection_profile prof;
 	char                      userid[9];
+<<<<<<< HEAD
 	char			  userdata[17];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -265,7 +275,11 @@ struct ll_header {
 };
 
 #define NETIUCV_HDRLEN		 (sizeof(struct ll_header))
+<<<<<<< HEAD
 #define NETIUCV_BUFSIZE_MAX	 65537
+=======
+#define NETIUCV_BUFSIZE_MAX      32768
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NETIUCV_BUFSIZE_DEFAULT  NETIUCV_BUFSIZE_MAX
 #define NETIUCV_MTU_MAX          (NETIUCV_BUFSIZE_MAX - NETIUCV_HDRLEN)
 #define NETIUCV_MTU_DEFAULT      9216
@@ -290,12 +304,16 @@ static inline int netiucv_test_and_set_busy(struct net_device *dev)
 	return test_and_set_bit(0, &priv->tbusy);
 }
 
+<<<<<<< HEAD
 static u8 iucvMagic_ascii[16] = {
 	0x30, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
 	0x30, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
 };
 
 static u8 iucvMagic_ebcdic[16] = {
+=======
+static u8 iucvMagic[16] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	0xF0, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40,
 	0xF0, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40
 };
@@ -308,6 +326,7 @@ static u8 iucvMagic_ebcdic[16] = {
  *
  * @returns The printable string (static data!!)
  */
+<<<<<<< HEAD
 static char *netiucv_printname(char *name, int len)
 {
 	static char tmp[17];
@@ -315,11 +334,21 @@ static char *netiucv_printname(char *name, int len)
 	memcpy(tmp, name, len);
 	tmp[len] = '\0';
 	while (*p && ((p - tmp) < len) && (!isspace(*p)))
+=======
+static char *netiucv_printname(char *name)
+{
+	static char tmp[9];
+	char *p = tmp;
+	memcpy(tmp, name, 8);
+	tmp[8] = '\0';
+	while (*p && (!isspace(*p)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		p++;
 	*p = '\0';
 	return tmp;
 }
 
+<<<<<<< HEAD
 static char *netiucv_printuser(struct iucv_connection *conn)
 {
 	static char tmp_uid[9];
@@ -340,6 +369,8 @@ static char *netiucv_printuser(struct iucv_connection *conn)
 		return netiucv_printname(conn->userid, 8);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * States of the interface statemachine.
  */
@@ -590,6 +621,7 @@ static int netiucv_callback_connreq(struct iucv_path *path,
 {
 	struct iucv_connection *conn = path->private;
 	struct iucv_event ev;
+<<<<<<< HEAD
 	static char tmp_user[9];
 	static char tmp_udat[17];
 	int rc;
@@ -602,6 +634,17 @@ static int netiucv_callback_connreq(struct iucv_path *path,
 	list_for_each_entry(conn, &iucv_connection_list, list) {
 		if (strncmp(ipvmid, conn->userid, 8) ||
 		    strncmp(ipuser, conn->userdata, 16))
+=======
+	int rc;
+
+	if (memcmp(iucvMagic, ipuser, 16))
+		/* ipuser must match iucvMagic. */
+		return -EINVAL;
+	rc = -EINVAL;
+	read_lock_bh(&iucv_connection_rwlock);
+	list_for_each_entry(conn, &iucv_connection_list, list) {
+		if (strncmp(ipvmid, conn->userid, 8))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		/* Found a matching connection for this path. */
 		conn->path = path;
@@ -610,8 +653,11 @@ static int netiucv_callback_connreq(struct iucv_path *path,
 		fsm_event(conn->fsm, CONN_EVENT_CONN_REQ, &ev);
 		rc = 0;
 	}
+<<<<<<< HEAD
 	IUCV_DBF_TEXT_(setup, 2, "Connection requested for %s.%s\n",
 		       tmp_user, netiucv_printname(tmp_udat, 16));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	read_unlock_bh(&iucv_connection_rwlock);
 	return rc;
 }
@@ -848,7 +894,11 @@ static void conn_action_connaccept(fsm_instance *fi, int event, void *arg)
 	conn->path = path;
 	path->msglim = NETIUCV_QUEUELEN_DEFAULT;
 	path->flags = 0;
+<<<<<<< HEAD
 	rc = iucv_path_accept(path, &netiucv_handler, conn->userdata , conn);
+=======
+	rc = iucv_path_accept(path, &netiucv_handler, NULL, conn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc) {
 		IUCV_DBF_TEXT_(setup, 2, "rc %d from iucv_accept", rc);
 		return;
@@ -886,7 +936,11 @@ static void conn_action_conntimsev(fsm_instance *fi, int event, void *arg)
 
 	IUCV_DBF_TEXT(trace, 3, __func__);
 	fsm_deltimer(&conn->timer);
+<<<<<<< HEAD
 	iucv_path_sever(conn->path, conn->userdata);
+=======
+	iucv_path_sever(conn->path, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fsm_newstate(fi, CONN_STATE_STARTWAIT);
 }
 
@@ -899,9 +953,15 @@ static void conn_action_connsever(fsm_instance *fi, int event, void *arg)
 	IUCV_DBF_TEXT(trace, 3, __func__);
 
 	fsm_deltimer(&conn->timer);
+<<<<<<< HEAD
 	iucv_path_sever(conn->path, conn->userdata);
 	dev_info(privptr->dev, "The peer z/VM guest %s has closed the "
 			       "connection\n", netiucv_printuser(conn));
+=======
+	iucv_path_sever(conn->path, NULL);
+	dev_info(privptr->dev, "The peer interface of the IUCV device"
+		" has closed the connection\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	IUCV_DBF_TEXT(data, 2,
 		      "conn_action_connsever: Remote dropped connection\n");
 	fsm_newstate(fi, CONN_STATE_STARTWAIT);
@@ -918,6 +978,11 @@ static void conn_action_start(fsm_instance *fi, int event, void *arg)
 	IUCV_DBF_TEXT(trace, 3, __func__);
 
 	fsm_newstate(fi, CONN_STATE_STARTWAIT);
+<<<<<<< HEAD
+=======
+	IUCV_DBF_TEXT_(setup, 2, "%s('%s'): connecting ...\n",
+		netdev->name, conn->userid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * We must set the state before calling iucv_connect because the
@@ -927,11 +992,16 @@ static void conn_action_start(fsm_instance *fi, int event, void *arg)
 
 	fsm_newstate(fi, CONN_STATE_SETUPWAIT);
 	conn->path = iucv_path_alloc(NETIUCV_QUEUELEN_DEFAULT, 0, GFP_KERNEL);
+<<<<<<< HEAD
 	IUCV_DBF_TEXT_(setup, 2, "%s: connecting to %s ...\n",
 		netdev->name, netiucv_printuser(conn));
 
 	rc = iucv_path_connect(conn->path, &netiucv_handler, conn->userid,
 			       NULL, conn->userdata, conn);
+=======
+	rc = iucv_path_connect(conn->path, &netiucv_handler, conn->userid,
+			       NULL, iucvMagic, conn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (rc) {
 	case 0:
 		netdev->tx_queue_len = conn->path->msglim;
@@ -941,13 +1011,21 @@ static void conn_action_start(fsm_instance *fi, int event, void *arg)
 	case 11:
 		dev_warn(privptr->dev,
 			"The IUCV device failed to connect to z/VM guest %s\n",
+<<<<<<< HEAD
 			netiucv_printname(conn->userid, 8));
+=======
+			netiucv_printname(conn->userid));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fsm_newstate(fi, CONN_STATE_STARTWAIT);
 		break;
 	case 12:
 		dev_warn(privptr->dev,
 			"The IUCV device failed to connect to the peer on z/VM"
+<<<<<<< HEAD
 			" guest %s\n", netiucv_printname(conn->userid, 8));
+=======
+			" guest %s\n", netiucv_printname(conn->userid));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fsm_newstate(fi, CONN_STATE_STARTWAIT);
 		break;
 	case 13:
@@ -960,7 +1038,11 @@ static void conn_action_start(fsm_instance *fi, int event, void *arg)
 		dev_err(privptr->dev,
 			"z/VM guest %s has too many IUCV connections"
 			" to connect with the IUCV device\n",
+<<<<<<< HEAD
 			netiucv_printname(conn->userid, 8));
+=======
+			netiucv_printname(conn->userid));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fsm_newstate(fi, CONN_STATE_CONNERR);
 		break;
 	case 15:
@@ -1005,7 +1087,11 @@ static void conn_action_stop(fsm_instance *fi, int event, void *arg)
 	netiucv_purge_skb_queue(&conn->collect_queue);
 	if (conn->path) {
 		IUCV_DBF_TEXT(trace, 5, "calling iucv_path_sever\n");
+<<<<<<< HEAD
 		iucv_path_sever(conn->path, conn->userdata);
+=======
+		iucv_path_sever(conn->path, iucvMagic);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(conn->path);
 		conn->path = NULL;
 	}
@@ -1123,8 +1209,12 @@ dev_action_connup(fsm_instance *fi, int event, void *arg)
 			fsm_newstate(fi, DEV_STATE_RUNNING);
 			dev_info(privptr->dev,
 				"The IUCV device has been connected"
+<<<<<<< HEAD
 				" successfully to %s\n",
 				netiucv_printuser(privptr->conn));
+=======
+				" successfully to %s\n", privptr->conn->userid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			IUCV_DBF_TEXT(setup, 3,
 				"connection is up and running\n");
 			break;
@@ -1486,6 +1576,7 @@ static ssize_t user_show(struct device *dev, struct device_attribute *attr,
 	struct netiucv_priv *priv = dev_get_drvdata(dev);
 
 	IUCV_DBF_TEXT(trace, 5, __func__);
+<<<<<<< HEAD
 	return sprintf(buf, "%s\n", netiucv_printuser(priv->conn));
 }
 
@@ -1514,12 +1605,48 @@ static int netiucv_check_user(const char *buf, size_t count, char *username,
 			break;
 		IUCV_DBF_TEXT_(setup, 2,
 			       "conn_write: invalid character %02x\n", *p);
+=======
+	return sprintf(buf, "%s\n", netiucv_printname(priv->conn->userid));
+}
+
+static ssize_t user_write(struct device *dev, struct device_attribute *attr,
+			  const char *buf, size_t count)
+{
+	struct netiucv_priv *priv = dev_get_drvdata(dev);
+	struct net_device *ndev = priv->conn->netdev;
+	char    *p;
+	char    *tmp;
+	char 	username[9];
+	int 	i;
+	struct iucv_connection *cp;
+
+	IUCV_DBF_TEXT(trace, 3, __func__);
+	if (count > 9) {
+		IUCV_DBF_TEXT_(setup, 2,
+			       "%d is length of username\n", (int) count);
+		return -EINVAL;
+	}
+
+	tmp = strsep((char **) &buf, "\n");
+	for (i = 0, p = tmp; i < 8 && *p; i++, p++) {
+		if (isalnum(*p) || (*p == '$')) {
+			username[i]= toupper(*p);
+			continue;
+		}
+		if (*p == '\n') {
+			/* trailing lf, grr */
+			break;
+		}
+		IUCV_DBF_TEXT_(setup, 2,
+			       "username: invalid character %c\n", *p);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 	while (i < 8)
 		username[i++] = ' ';
 	username[8] = '\0';
 
+<<<<<<< HEAD
 	if (*p == '.') {
 		p++;
 		for (i = 0; i < 16 && *p; i++, p++) {
@@ -1552,6 +1679,8 @@ static ssize_t user_write(struct device *dev, struct device_attribute *attr,
 	if (rc)
 		return rc;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (memcmp(username, priv->conn->userid, 9) &&
 	    (ndev->flags & (IFF_UP | IFF_RUNNING))) {
 		/* username changed while the interface is active. */
@@ -1560,17 +1689,27 @@ static ssize_t user_write(struct device *dev, struct device_attribute *attr,
 	}
 	read_lock_bh(&iucv_connection_rwlock);
 	list_for_each_entry(cp, &iucv_connection_list, list) {
+<<<<<<< HEAD
 		if (!strncmp(username, cp->userid, 9) &&
 		   !strncmp(userdata, cp->userdata, 17) && cp->netdev != ndev) {
 			read_unlock_bh(&iucv_connection_rwlock);
 			IUCV_DBF_TEXT_(setup, 2, "user_write: Connection to %s "
 				"already exists\n", netiucv_printuser(cp));
+=======
+		if (!strncmp(username, cp->userid, 9) && cp->netdev != ndev) {
+			read_unlock_bh(&iucv_connection_rwlock);
+			IUCV_DBF_TEXT_(setup, 2, "user_write: Connection "
+				"to %s already exists\n", username);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EEXIST;
 		}
 	}
 	read_unlock_bh(&iucv_connection_rwlock);
 	memcpy(priv->conn->userid, username, 9);
+<<<<<<< HEAD
 	memcpy(priv->conn->userdata, userdata, 17);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return count;
 }
 
@@ -1600,8 +1739,12 @@ static ssize_t buffer_write (struct device *dev, struct device_attribute *attr,
 	bs1 = simple_strtoul(buf, &e, 0);
 
 	if (e && (!isspace(*e))) {
+<<<<<<< HEAD
 		IUCV_DBF_TEXT_(setup, 2, "buffer_write: invalid char %02x\n",
 			*e);
+=======
+		IUCV_DBF_TEXT_(setup, 2, "buffer_write: invalid char %c\n", *e);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 	if (bs1 > NETIUCV_BUFSIZE_MAX) {
@@ -1928,8 +2071,12 @@ static void netiucv_unregister_device(struct device *dev)
  * Add it to the list of netiucv connections;
  */
 static struct iucv_connection *netiucv_new_connection(struct net_device *dev,
+<<<<<<< HEAD
 						      char *username,
 						      char *userdata)
+=======
+						      char *username)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct iucv_connection *conn;
 
@@ -1958,8 +2105,11 @@ static struct iucv_connection *netiucv_new_connection(struct net_device *dev,
 	fsm_settimer(conn->fsm, &conn->timer);
 	fsm_newstate(conn->fsm, CONN_STATE_INVALID);
 
+<<<<<<< HEAD
 	if (userdata)
 		memcpy(conn->userdata, userdata, 17);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (username) {
 		memcpy(conn->userid, username, 9);
 		fsm_newstate(conn->fsm, CONN_STATE_STOPPED);
@@ -1986,7 +2136,10 @@ out:
  */
 static void netiucv_remove_connection(struct iucv_connection *conn)
 {
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	IUCV_DBF_TEXT(trace, 3, __func__);
 	write_lock_bh(&iucv_connection_rwlock);
 	list_del_init(&conn->list);
@@ -1994,7 +2147,11 @@ static void netiucv_remove_connection(struct iucv_connection *conn)
 	fsm_deltimer(&conn->timer);
 	netiucv_purge_skb_queue(&conn->collect_queue);
 	if (conn->path) {
+<<<<<<< HEAD
 		iucv_path_sever(conn->path, conn->userdata);
+=======
+		iucv_path_sever(conn->path, iucvMagic);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(conn->path);
 		conn->path = NULL;
 	}
@@ -2053,7 +2210,11 @@ static void netiucv_setup_netdevice(struct net_device *dev)
 /**
  * Allocate and initialize everything of a net device.
  */
+<<<<<<< HEAD
 static struct net_device *netiucv_init_netdevice(char *username, char *userdata)
+=======
+static struct net_device *netiucv_init_netdevice(char *username)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct netiucv_priv *privptr;
 	struct net_device *dev;
@@ -2062,8 +2223,11 @@ static struct net_device *netiucv_init_netdevice(char *username, char *userdata)
 			   netiucv_setup_netdevice);
 	if (!dev)
 		return NULL;
+<<<<<<< HEAD
 	if (dev_alloc_name(dev, dev->name) < 0)
 		goto out_netdev;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	privptr = netdev_priv(dev);
 	privptr->fsm = init_fsm("netiucvdev", dev_state_names,
@@ -2072,7 +2236,11 @@ static struct net_device *netiucv_init_netdevice(char *username, char *userdata)
 	if (!privptr->fsm)
 		goto out_netdev;
 
+<<<<<<< HEAD
 	privptr->conn = netiucv_new_connection(dev, username, userdata);
+=======
+	privptr->conn = netiucv_new_connection(dev, username);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!privptr->conn) {
 		IUCV_DBF_TEXT(setup, 2, "NULL from netiucv_new_connection\n");
 		goto out_fsm;
@@ -2090,14 +2258,21 @@ out_netdev:
 static ssize_t conn_write(struct device_driver *drv,
 			  const char *buf, size_t count)
 {
+<<<<<<< HEAD
 	char username[9];
 	char userdata[17];
 	int rc;
+=======
+	const char *p;
+	char username[9];
+	int i, rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct net_device *dev;
 	struct netiucv_priv *priv;
 	struct iucv_connection *cp;
 
 	IUCV_DBF_TEXT(trace, 3, __func__);
+<<<<<<< HEAD
 	rc = netiucv_check_user(buf, count, username, userdata);
 	if (rc)
 		return rc;
@@ -2109,12 +2284,45 @@ static ssize_t conn_write(struct device_driver *drv,
 			read_unlock_bh(&iucv_connection_rwlock);
 			IUCV_DBF_TEXT_(setup, 2, "conn_write: Connection to %s "
 				"already exists\n", netiucv_printuser(cp));
+=======
+	if (count>9) {
+		IUCV_DBF_TEXT(setup, 2, "conn_write: too long\n");
+		return -EINVAL;
+	}
+
+	for (i = 0, p = buf; i < 8 && *p; i++, p++) {
+		if (isalnum(*p) || *p == '$') {
+			username[i] = toupper(*p);
+			continue;
+		}
+		if (*p == '\n')
+			/* trailing lf, grr */
+			break;
+		IUCV_DBF_TEXT_(setup, 2,
+			       "conn_write: invalid character %c\n", *p);
+		return -EINVAL;
+	}
+	while (i < 8)
+		username[i++] = ' ';
+	username[8] = '\0';
+
+	read_lock_bh(&iucv_connection_rwlock);
+	list_for_each_entry(cp, &iucv_connection_list, list) {
+		if (!strncmp(username, cp->userid, 9)) {
+			read_unlock_bh(&iucv_connection_rwlock);
+			IUCV_DBF_TEXT_(setup, 2, "conn_write: Connection "
+				"to %s already exists\n", username);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EEXIST;
 		}
 	}
 	read_unlock_bh(&iucv_connection_rwlock);
 
+<<<<<<< HEAD
 	dev = netiucv_init_netdevice(username, userdata);
+=======
+	dev = netiucv_init_netdevice(username);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!dev) {
 		IUCV_DBF_TEXT(setup, 2, "NULL from netiucv_init_netdevice\n");
 		return -ENODEV;
@@ -2135,9 +2343,14 @@ static ssize_t conn_write(struct device_driver *drv,
 	if (rc)
 		goto out_unreg;
 
+<<<<<<< HEAD
 	dev_info(priv->dev, "The IUCV interface to %s has been established "
 			    "successfully\n",
 		netiucv_printuser(priv->conn));
+=======
+	dev_info(priv->dev, "The IUCV interface to %s has been"
+		" established successfully\n", netiucv_printname(username));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return count;
 

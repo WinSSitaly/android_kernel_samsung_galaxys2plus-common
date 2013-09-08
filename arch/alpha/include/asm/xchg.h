@@ -1,10 +1,18 @@
+<<<<<<< HEAD
 #ifndef _ALPHA_CMPXCHG_H
+=======
+#ifndef __ALPHA_SYSTEM_H
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #error Do not include xchg.h directly!
 #else
 /*
  * xchg/xchg_local and cmpxchg/cmpxchg_local share the same code
  * except that local version do not have the expensive memory barrier.
+<<<<<<< HEAD
  * So this file is included twice from asm/cmpxchg.h.
+=======
+ * So this file is included twice from asm/system.h.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 /*

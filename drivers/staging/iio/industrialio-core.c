@@ -68,6 +68,10 @@ static const char * const iio_chan_type_name_spec[] = {
 	[IIO_ANGL] = "angl",
 	[IIO_TIMESTAMP] = "timestamp",
 	[IIO_CAPACITANCE] = "capacitance",
+<<<<<<< HEAD
+=======
+	[IIO_QUATERNION] = "quaternion",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const char * const iio_modifier_names[] = {
@@ -76,6 +80,10 @@ static const char * const iio_modifier_names[] = {
 	[IIO_MOD_Z] = "z",
 	[IIO_MOD_LIGHT_BOTH] = "both",
 	[IIO_MOD_LIGHT_IR] = "ir",
+<<<<<<< HEAD
+=======
+	[IIO_MOD_R]  = "r",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* relies on pairs of these shared then separate */

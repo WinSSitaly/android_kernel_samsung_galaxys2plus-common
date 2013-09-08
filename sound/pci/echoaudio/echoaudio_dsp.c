@@ -475,7 +475,11 @@ static int load_firmware(struct echoaudio *chip)
 	const struct firmware *fw;
 	int box_type, err;
 
+<<<<<<< HEAD
 	if (snd_BUG_ON(!chip->comm_page))
+=======
+	if (snd_BUG_ON(!chip->dsp_code_to_load || !chip->comm_page))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EPERM;
 
 	/* See if the ASIC is present and working - only if the DSP is already loaded */

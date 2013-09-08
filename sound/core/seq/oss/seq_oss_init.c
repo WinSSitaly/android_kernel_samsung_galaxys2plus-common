@@ -28,7 +28,10 @@
 #include "seq_oss_timer.h"
 #include "seq_oss_event.h"
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/moduleparam.h>
 #include <linux/slab.h>
 

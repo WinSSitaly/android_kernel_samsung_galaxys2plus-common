@@ -34,6 +34,11 @@
 #include "../codecs/wm9712.h"
 #include "pxa2xx-ac97.h"
 
+<<<<<<< HEAD
+=======
+static struct snd_soc_card tosa;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define TOSA_HP        0
 #define TOSA_MIC_INT   1
 #define TOSA_HEADSET   2
@@ -197,7 +202,11 @@ static int tosa_ac97_init(struct snd_soc_pcm_runtime *rtd)
 	snd_soc_dapm_nc_pin(dapm, "MONOOUT");
 
 	/* add tosa specific controls */
+<<<<<<< HEAD
 	err = snd_soc_add_codec_controls(codec, tosa_controls,
+=======
+	err = snd_soc_add_controls(codec, tosa_controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ARRAY_SIZE(tosa_controls));
 	if (err < 0)
 		return err;
@@ -209,6 +218,10 @@ static int tosa_ac97_init(struct snd_soc_pcm_runtime *rtd)
 	/* set up tosa specific audio path audio_map */
 	snd_soc_dapm_add_routes(dapm, audio_map, ARRAY_SIZE(audio_map));
 
+<<<<<<< HEAD
+=======
+	snd_soc_dapm_sync(dapm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -234,6 +247,7 @@ static struct snd_soc_dai_link tosa_dai[] = {
 },
 };
 
+<<<<<<< HEAD
 static struct snd_soc_card tosa = {
 	.name = "Tosa",
 	.owner = THIS_MODULE,
@@ -281,9 +295,76 @@ static struct platform_driver tosa_driver = {
 };
 
 module_platform_driver(tosa_driver);
+=======
+static int tosa_probe(struct snd_soc_card *card)
+{
+	int ret;
+
+	ret = gpio_request(TOSA_GPIO_L_MUTE, "Headphone Jack");
+	if (ret)
+		return ret;
+	ret = gpio_direction_output(TOSA_GPIO_L_MUTE, 0);
+	if (ret)
+		gpio_free(TOSA_GPIO_L_MUTE);
+
+	return ret;
+}
+
+static int tosa_remove(struct snd_soc_card *card)
+{
+	gpio_free(TOSA_GPIO_L_MUTE);
+	return 0;
+}
+
+static struct snd_soc_card tosa = {
+	.name = "Tosa",
+	.dai_link = tosa_dai,
+	.num_links = ARRAY_SIZE(tosa_dai),
+	.probe = tosa_probe,
+	.remove = tosa_remove,
+};
+
+static struct platform_device *tosa_snd_device;
+
+static int __init tosa_init(void)
+{
+	int ret;
+
+	if (!machine_is_tosa())
+		return -ENODEV;
+
+	tosa_snd_device = platform_device_alloc("soc-audio", -1);
+	if (!tosa_snd_device) {
+		ret = -ENOMEM;
+		goto err_alloc;
+	}
+
+	platform_set_drvdata(tosa_snd_device, &tosa);
+	ret = platform_device_add(tosa_snd_device);
+
+	if (!ret)
+		return 0;
+
+	platform_device_put(tosa_snd_device);
+
+err_alloc:
+	return ret;
+}
+
+static void __exit tosa_exit(void)
+{
+	platform_device_unregister(tosa_snd_device);
+}
+
+module_init(tosa_init);
+module_exit(tosa_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Module information */
 MODULE_AUTHOR("Richard Purdie");
 MODULE_DESCRIPTION("ALSA SoC Tosa");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_ALIAS("platform:tosa-audio");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

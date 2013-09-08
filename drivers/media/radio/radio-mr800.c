@@ -63,17 +63,29 @@
 #include <media/v4l2-device.h>
 #include <media/v4l2-ioctl.h>
 #include <linux/usb.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>	/* for KERNEL_VERSION MACRO */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mutex.h>
 
 /* driver and module definitions */
 #define DRIVER_AUTHOR "Alexey Klimov <klimov.linux@gmail.com>"
 #define DRIVER_DESC "AverMedia MR 800 USB FM radio driver"
+<<<<<<< HEAD
 #define DRIVER_VERSION "0.1.2"
+=======
+#define DRIVER_VERSION "0.11"
+#define RADIO_VERSION KERNEL_VERSION(0, 1, 1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR(DRIVER_AUTHOR);
 MODULE_DESCRIPTION(DRIVER_DESC);
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_VERSION(DRIVER_VERSION);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define USB_AMRADIO_VENDOR 0x07ca
 #define USB_AMRADIO_PRODUCT 0xb800
@@ -300,6 +312,10 @@ static int vidioc_querycap(struct file *file, void *priv,
 	strlcpy(v->driver, "radio-mr800", sizeof(v->driver));
 	strlcpy(v->card, "AverMedia MR 800 USB FM Radio", sizeof(v->card));
 	usb_make_path(radio->usbdev, v->bus_info, sizeof(v->bus_info));
+<<<<<<< HEAD
+=======
+	v->version = RADIO_VERSION;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	v->capabilities = V4L2_CAP_TUNER;
 	return 0;
 }
@@ -659,4 +675,29 @@ err:
 	return retval;
 }
 
+<<<<<<< HEAD
 module_usb_driver(usb_amradio_driver);
+=======
+static int __init amradio_init(void)
+{
+	int retval = usb_register(&usb_amradio_driver);
+
+	pr_info(KBUILD_MODNAME
+		": version " DRIVER_VERSION " " DRIVER_DESC "\n");
+
+	if (retval)
+		pr_err(KBUILD_MODNAME
+			": usb_register failed. Error number %d\n", retval);
+
+	return retval;
+}
+
+static void __exit amradio_exit(void)
+{
+	usb_deregister(&usb_amradio_driver);
+}
+
+module_init(amradio_init);
+module_exit(amradio_exit);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

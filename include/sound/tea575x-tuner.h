@@ -23,9 +23,14 @@
  */
 
 #include <linux/videodev2.h>
+<<<<<<< HEAD
 #include <media/v4l2-ctrls.h>
 #include <media/v4l2-dev.h>
 #include <media/v4l2-device.h>
+=======
+#include <media/v4l2-dev.h>
+#include <media/v4l2-ioctl.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define TEA575X_FMIF	10700
 
@@ -43,23 +48,36 @@ struct snd_tea575x_ops {
 };
 
 struct snd_tea575x {
+<<<<<<< HEAD
 	struct v4l2_device *v4l2_dev;
 	struct video_device vd;		/* video device */
 	int radio_nr;			/* radio_nr */
 	bool tea5759;			/* 5759 chip is present */
 	bool cannot_read_data;		/* Device cannot read the data pin */
+=======
+	struct video_device *vd;	/* video device */
+	bool tea5759;			/* 5759 chip is present */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool mute;			/* Device is muted? */
 	bool stereo;			/* receiving stereo */
 	bool tuned;			/* tuned to a station */
 	unsigned int val;		/* hw value */
+<<<<<<< HEAD
 	u32 freq;			/* frequency */
 	struct mutex mutex;
+=======
+	unsigned long freq;		/* frequency */
+	unsigned long in_use;		/* set if the device is in use */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct snd_tea575x_ops *ops;
 	void *private_data;
 	u8 card[32];
 	u8 bus_info[32];
+<<<<<<< HEAD
 	struct v4l2_ctrl_handler ctrl_handler;
 	int (*ext_init)(struct snd_tea575x *tea);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int snd_tea575x_init(struct snd_tea575x *tea);

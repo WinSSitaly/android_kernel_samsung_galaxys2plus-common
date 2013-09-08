@@ -19,7 +19,11 @@
 #include <linux/videodev2.h>
 #include <linux/vmalloc.h>
 #include <linux/wait.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/unaligned.h>
 
 #include <media/v4l2-common.h>
@@ -351,12 +355,18 @@ done:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int uvc_commit_video(struct uvc_streaming *stream,
 			    struct uvc_streaming_control *probe)
+=======
+int uvc_commit_video(struct uvc_streaming *stream,
+	struct uvc_streaming_control *probe)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return uvc_set_video_ctrl(stream, probe, 0);
 }
 
+<<<<<<< HEAD
 /* -----------------------------------------------------------------------------
  * Clocks and timestamps
  */
@@ -907,10 +917,25 @@ static void uvc_video_stats_stop(struct uvc_streaming *stream)
 	ktime_get_ts(&stream->stats.stream.stop_ts);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* ------------------------------------------------------------------------
  * Video codecs
  */
 
+<<<<<<< HEAD
+=======
+/* Values for bmHeaderInfo (Video and Still Image Payload Headers, 2.4.3.3) */
+#define UVC_STREAM_EOH	(1 << 7)
+#define UVC_STREAM_ERR	(1 << 6)
+#define UVC_STREAM_STI	(1 << 5)
+#define UVC_STREAM_RES	(1 << 4)
+#define UVC_STREAM_SCR	(1 << 3)
+#define UVC_STREAM_PTS	(1 << 2)
+#define UVC_STREAM_EOF	(1 << 1)
+#define UVC_STREAM_FID	(1 << 0)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Video payload decoding is handled by uvc_video_decode_start(),
  * uvc_video_decode_data() and uvc_video_decode_end().
  *
@@ -956,9 +981,20 @@ static int uvc_video_decode_start(struct uvc_streaming *stream,
 	 * - bHeaderLength value must be at least 2 bytes (see above)
 	 * - bHeaderLength value can't be larger than the packet size.
 	 */
+<<<<<<< HEAD
 	if (len < 2 || data[0] < 2 || data[0] > len) {
 		stream->stats.frame.nb_invalid++;
 		return -EINVAL;
+=======
+	if (len < 2 || data[0] < 2 || data[0] > len)
+		return -EINVAL;
+
+	/* Skip payloads marked with the error bit ("error frames"). */
+	if (data[1] & UVC_STREAM_ERR) {
+		uvc_trace(UVC_TRACE_FRAME, "Dropping payload (error bit "
+			  "set).\n");
+		return -ENODATA;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	fid = data[1] & UVC_STREAM_FID;
@@ -966,6 +1002,7 @@ static int uvc_video_decode_start(struct uvc_streaming *stream,
 	/* Increase the sequence number regardless of any buffer states, so
 	 * that discontinuous sequence numbers always indicate lost frames.
 	 */
+<<<<<<< HEAD
 	if (stream->last_fid != fid) {
 		stream->sequence++;
 		if (stream->sequence)
@@ -974,6 +1011,10 @@ static int uvc_video_decode_start(struct uvc_streaming *stream,
 
 	uvc_video_clock_decode(stream, buf, data, len);
 	uvc_video_stats_decode(stream, data, len);
+=======
+	if (stream->last_fid != fid)
+		stream->sequence++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Store the payload FID bit and return immediately when the buffer is
 	 * NULL.
@@ -983,6 +1024,7 @@ static int uvc_video_decode_start(struct uvc_streaming *stream,
 		return -ENODATA;
 	}
 
+<<<<<<< HEAD
 	/* Mark the buffer as bad if the error bit is set. */
 	if (data[1] & UVC_STREAM_ERR) {
 		uvc_trace(UVC_TRACE_FRAME, "Marking buffer as bad (error bit "
@@ -990,6 +1032,8 @@ static int uvc_video_decode_start(struct uvc_streaming *stream,
 		buf->error = 1;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Synchronize to the input stream by waiting for the FID bit to be
 	 * toggled when the the buffer state is not UVC_BUF_STATE_ACTIVE.
 	 * stream->last_fid is initialized to -1, so the first isochronous
@@ -1015,10 +1059,16 @@ static int uvc_video_decode_start(struct uvc_streaming *stream,
 		else
 			ktime_get_real_ts(&ts);
 
+<<<<<<< HEAD
 		buf->buf.v4l2_buf.sequence = stream->sequence;
 		buf->buf.v4l2_buf.timestamp.tv_sec = ts.tv_sec;
 		buf->buf.v4l2_buf.timestamp.tv_usec =
 			ts.tv_nsec / NSEC_PER_USEC;
+=======
+		buf->buf.sequence = stream->sequence;
+		buf->buf.timestamp.tv_sec = ts.tv_sec;
+		buf->buf.timestamp.tv_usec = ts.tv_nsec / NSEC_PER_USEC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* TODO: Handle PTS and SCR. */
 		buf->state = UVC_BUF_STATE_ACTIVE;
@@ -1039,7 +1089,11 @@ static int uvc_video_decode_start(struct uvc_streaming *stream,
 	 * avoids detecting end of frame conditions at FID toggling if the
 	 * previous payload had the EOF bit set.
 	 */
+<<<<<<< HEAD
 	if (fid != stream->last_fid && buf->bytesused != 0) {
+=======
+	if (fid != stream->last_fid && buf->buf.bytesused != 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		uvc_trace(UVC_TRACE_FRAME, "Frame complete (FID bit "
 				"toggled).\n");
 		buf->state = UVC_BUF_STATE_READY;
@@ -1054,6 +1108,10 @@ static int uvc_video_decode_start(struct uvc_streaming *stream,
 static void uvc_video_decode_data(struct uvc_streaming *stream,
 		struct uvc_buffer *buf, const __u8 *data, int len)
 {
+<<<<<<< HEAD
+=======
+	struct uvc_video_queue *queue = &stream->queue;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int maxlen, nbytes;
 	void *mem;
 
@@ -1061,11 +1119,19 @@ static void uvc_video_decode_data(struct uvc_streaming *stream,
 		return;
 
 	/* Copy the video data to the buffer. */
+<<<<<<< HEAD
 	maxlen = buf->length - buf->bytesused;
 	mem = buf->mem + buf->bytesused;
 	nbytes = min((unsigned int)len, maxlen);
 	memcpy(mem, data, nbytes);
 	buf->bytesused += nbytes;
+=======
+	maxlen = buf->buf.length - buf->buf.bytesused;
+	mem = queue->mem + buf->buf.m.offset + buf->buf.bytesused;
+	nbytes = min((unsigned int)len, maxlen);
+	memcpy(mem, data, nbytes);
+	buf->buf.bytesused += nbytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Complete the current frame if the buffer size was exceeded. */
 	if (len > maxlen) {
@@ -1078,7 +1144,11 @@ static void uvc_video_decode_end(struct uvc_streaming *stream,
 		struct uvc_buffer *buf, const __u8 *data, int len)
 {
 	/* Mark the buffer as done if the EOF marker is set. */
+<<<<<<< HEAD
 	if (data[1] & UVC_STREAM_EOF && buf->bytesused != 0) {
+=======
+	if (data[1] & UVC_STREAM_EOF && buf->buf.bytesused != 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		uvc_trace(UVC_TRACE_FRAME, "Frame complete (EOF found).\n");
 		if (data[0] == len)
 			uvc_trace(UVC_TRACE_FRAME, "EOF in empty payload.\n");
@@ -1116,8 +1186,13 @@ static int uvc_video_encode_data(struct uvc_streaming *stream,
 	void *mem;
 
 	/* Copy video data to the URB buffer. */
+<<<<<<< HEAD
 	mem = buf->mem + queue->buf_used;
 	nbytes = min((unsigned int)len, buf->bytesused - queue->buf_used);
+=======
+	mem = queue->mem + buf->buf.m.offset + queue->buf_used;
+	nbytes = min((unsigned int)len, buf->buf.bytesused - queue->buf_used);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nbytes = min(stream->bulk.max_payload_size - stream->bulk.payload_size,
 			nbytes);
 	memcpy(data, mem, nbytes);
@@ -1172,7 +1247,11 @@ static void uvc_video_decode_isoc(struct urb *urb, struct uvc_streaming *stream,
 			urb->iso_frame_desc[i].actual_length);
 
 		if (buf->state == UVC_BUF_STATE_READY) {
+<<<<<<< HEAD
 			if (buf->length != buf->bytesused &&
+=======
+			if (buf->buf.length != buf->buf.bytesused &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    !(stream->cur_format->flags &
 			      UVC_FMT_FLAG_COMPRESSED))
 				buf->error = 1;
@@ -1272,12 +1351,21 @@ static void uvc_video_encode_bulk(struct urb *urb, struct uvc_streaming *stream,
 	stream->bulk.payload_size += ret;
 	len -= ret;
 
+<<<<<<< HEAD
 	if (buf->bytesused == stream->queue.buf_used ||
 	    stream->bulk.payload_size == stream->bulk.max_payload_size) {
 		if (buf->bytesused == stream->queue.buf_used) {
 			stream->queue.buf_used = 0;
 			buf->state = UVC_BUF_STATE_READY;
 			buf->buf.v4l2_buf.sequence = ++stream->sequence;
+=======
+	if (buf->buf.bytesused == stream->queue.buf_used ||
+	    stream->bulk.payload_size == stream->bulk.max_payload_size) {
+		if (buf->buf.bytesused == stream->queue.buf_used) {
+			stream->queue.buf_used = 0;
+			buf->state = UVC_BUF_STATE_READY;
+			buf->buf.sequence = ++stream->sequence;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			uvc_queue_next_buffer(&stream->queue, buf);
 			stream->last_fid ^= UVC_STREAM_FID;
 		}
@@ -1338,12 +1426,17 @@ static void uvc_free_urb_buffers(struct uvc_streaming *stream)
 
 	for (i = 0; i < UVC_URBS; ++i) {
 		if (stream->urb_buffer[i]) {
+<<<<<<< HEAD
 #ifndef CONFIG_DMA_NONCOHERENT
 			usb_free_coherent(stream->dev->udev, stream->urb_size,
 				stream->urb_buffer[i], stream->urb_dma[i]);
 #else
 			kfree(stream->urb_buffer[i]);
 #endif
+=======
+			usb_free_coherent(stream->dev->udev, stream->urb_size,
+				stream->urb_buffer[i], stream->urb_dma[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			stream->urb_buffer[i] = NULL;
 		}
 	}
@@ -1383,6 +1476,7 @@ static int uvc_alloc_urb_buffers(struct uvc_streaming *stream,
 	for (; npackets > 1; npackets /= 2) {
 		for (i = 0; i < UVC_URBS; ++i) {
 			stream->urb_size = psize * npackets;
+<<<<<<< HEAD
 #ifndef CONFIG_DMA_NONCOHERENT
 			stream->urb_buffer[i] = usb_alloc_coherent(
 				stream->dev->udev, stream->urb_size,
@@ -1391,6 +1485,11 @@ static int uvc_alloc_urb_buffers(struct uvc_streaming *stream,
 			stream->urb_buffer[i] =
 			    kmalloc(stream->urb_size, gfp_flags | __GFP_NOWARN);
 #endif
+=======
+			stream->urb_buffer[i] = usb_alloc_coherent(
+				stream->dev->udev, stream->urb_size,
+				gfp_flags | __GFP_NOWARN, &stream->urb_dma[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!stream->urb_buffer[i]) {
 				uvc_free_urb_buffers(stream);
 				break;
@@ -1418,8 +1517,11 @@ static void uvc_uninit_video(struct uvc_streaming *stream, int free_buffers)
 	struct urb *urb;
 	unsigned int i;
 
+<<<<<<< HEAD
 	uvc_video_stats_stop(stream);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < UVC_URBS; ++i) {
 		urb = stream->urb[i];
 		if (urb == NULL)
@@ -1467,6 +1569,7 @@ static int uvc_init_video_isoc(struct uvc_streaming *stream,
 		urb->context = stream;
 		urb->pipe = usb_rcvisocpipe(stream->dev->udev,
 				ep->desc.bEndpointAddress);
+<<<<<<< HEAD
 #ifndef CONFIG_DMA_NONCOHERENT
 		urb->transfer_flags = URB_ISO_ASAP | URB_NO_TRANSFER_DMA_MAP;
 		urb->transfer_dma = stream->urb_dma[i];
@@ -1475,6 +1578,12 @@ static int uvc_init_video_isoc(struct uvc_streaming *stream,
 #endif
 		urb->interval = ep->desc.bInterval;
 		urb->transfer_buffer = stream->urb_buffer[i];
+=======
+		urb->transfer_flags = URB_ISO_ASAP | URB_NO_TRANSFER_DMA_MAP;
+		urb->interval = ep->desc.bInterval;
+		urb->transfer_buffer = stream->urb_buffer[i];
+		urb->transfer_dma = stream->urb_dma[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		urb->complete = uvc_video_complete;
 		urb->number_of_packets = npackets;
 		urb->transfer_buffer_length = size;
@@ -1532,10 +1641,15 @@ static int uvc_init_video_bulk(struct uvc_streaming *stream,
 		usb_fill_bulk_urb(urb, stream->dev->udev, pipe,
 			stream->urb_buffer[i], size, uvc_video_complete,
 			stream);
+<<<<<<< HEAD
 #ifndef CONFIG_DMA_NONCOHERENT
 		urb->transfer_flags = URB_NO_TRANSFER_DMA_MAP;
 		urb->transfer_dma = stream->urb_dma[i];
 #endif
+=======
+		urb->transfer_flags = URB_NO_TRANSFER_DMA_MAP;
+		urb->transfer_dma = stream->urb_dma[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		stream->urb[i] = urb;
 	}
@@ -1559,8 +1673,11 @@ static int uvc_init_video(struct uvc_streaming *stream, gfp_t gfp_flags)
 	stream->bulk.skip_payload = 0;
 	stream->bulk.payload_size = 0;
 
+<<<<<<< HEAD
 	uvc_video_stats_start(stream);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (intf->num_altsetting > 1) {
 		struct usb_host_endpoint *best_ep = NULL;
 		unsigned int best_psize = 3 * 1024;
@@ -1685,8 +1802,11 @@ int uvc_video_resume(struct uvc_streaming *stream, int reset)
 
 	stream->frozen = 0;
 
+<<<<<<< HEAD
 	uvc_video_clock_reset(stream);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = uvc_commit_video(stream, &stream->ctrl);
 	if (ret < 0) {
 		uvc_queue_enable(&stream->queue, 0);
@@ -1823,6 +1943,7 @@ int uvc_video_enable(struct uvc_streaming *stream, int enable)
 		uvc_uninit_video(stream, 1);
 		usb_set_interface(stream->dev->udev, stream->intfnum, 0);
 		uvc_queue_enable(&stream->queue, 0);
+<<<<<<< HEAD
 		uvc_video_clock_cleanup(stream);
 		return 0;
 	}
@@ -1855,3 +1976,22 @@ error_queue:
 
 	return ret;
 }
+=======
+		return 0;
+	}
+
+	ret = uvc_queue_enable(&stream->queue, 1);
+	if (ret < 0)
+		return ret;
+
+	/* Commit the streaming parameters. */
+	ret = uvc_commit_video(stream, &stream->ctrl);
+	if (ret < 0) {
+		uvc_queue_enable(&stream->queue, 0);
+		return ret;
+	}
+
+	return uvc_init_video(stream, GFP_KERNEL);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

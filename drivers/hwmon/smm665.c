@@ -124,9 +124,15 @@ enum chips { smm465, smm665, smm665c, smm764, smm766 };
 #define SMM665_AIN_ADC_TO_VOLTS(adc)   ((adc) * vref / 512)
 
 /* Temp Sensor */
+<<<<<<< HEAD
 #define SMM665_TEMP_ADC_TO_CELSIUS(adc) (((adc) <= 511) ?		   \
 					 ((int)(adc) * 1000 / 4) :	   \
 					 (((int)(adc) - 0x400) * 1000 / 4))
+=======
+#define SMM665_TEMP_ADC_TO_CELSIUS(adc) ((adc) <= 511) ?		   \
+					 ((int)(adc) * 1000 / 4) :	   \
+					 (((int)(adc) - 0x400) * 1000 / 4)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define SMM665_NUM_ADC		11
 
@@ -214,26 +220,51 @@ static int smm665_read_adc(struct smm665_data *data, int adc)
 	 *
 	 * Neither i2c_smbus_read_byte() nor
 	 * i2c_smbus_read_block_data() worked here,
+<<<<<<< HEAD
 	 * so use i2c_smbus_read_word_swapped() instead.
 	 * We could also try to use i2c_master_recv(),
 	 * but that is not always supported.
 	 */
 	rv = i2c_smbus_read_word_swapped(client, 0);
+=======
+	 * so use i2c_smbus_read_word_data() instead.
+	 * We could also try to use i2c_master_recv(),
+	 * but that is not always supported.
+	 */
+	rv = i2c_smbus_read_word_data(client, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rv < 0) {
 		dev_dbg(&client->dev, "Failed to read ADC value: error %d", rv);
 		return -1;
 	}
 	/*
 	 * Validate/verify readback adc channel (in bit 11..14).
+<<<<<<< HEAD
 	 */
 	radc = (rv >> 11) & 0x0f;
+=======
+	 * High byte is in lower 8 bit of rv, so only shift by 3.
+	 */
+	radc = (rv >> 3) & 0x0f;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (radc != adc) {
 		dev_dbg(&client->dev, "Unexpected RADC: Expected %d got %d",
 			adc, radc);
 		return -EIO;
 	}
+<<<<<<< HEAD
 
 	return rv & SMM665_ADC_MASK;
+=======
+	/*
+	 * Chip replies with H/L, while SMBus expects L/H.
+	 * Thus, byte order is reversed, and we have to swap
+	 * the result.
+	 */
+	rv = swab16(rv) & SMM665_ADC_MASK;
+
+	return rv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct smm665_data *smm665_update_device(struct device *dev)
@@ -376,7 +407,11 @@ static ssize_t smm665_show_input(struct device *dev,
 }
 
 #define SMM665_SHOW(what) \
+<<<<<<< HEAD
 static ssize_t smm665_show_##what(struct device *dev, \
+=======
+  static ssize_t smm665_show_##what(struct device *dev, \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    struct device_attribute *da, char *buf) \
 { \
 	struct sensor_device_attribute *attr = to_sensor_dev_attr(da); \
@@ -389,8 +424,12 @@ SMM665_SHOW(max);
 SMM665_SHOW(lcrit);
 SMM665_SHOW(crit);
 
+<<<<<<< HEAD
 /*
  * These macros are used below in constructing device attribute objects
+=======
+/* These macros are used below in constructing device attribute objects
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * for use with sysfs_create_group() to make a sysfs device file
  * for each register.
  */
@@ -584,9 +623,16 @@ static int smm665_probe(struct i2c_client *client,
 	if (i2c_smbus_read_byte_data(client, SMM665_ADOC_ENABLE) < 0)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
 	if (!data)
 		return -ENOMEM;
+=======
+	ret = -ENOMEM;
+	data = kzalloc(sizeof(*data), GFP_KERNEL);
+	if (!data)
+		goto out_return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	i2c_set_clientdata(client, data);
 	mutex_init(&data->update_lock);
@@ -595,7 +641,11 @@ static int smm665_probe(struct i2c_client *client,
 	data->cmdreg = i2c_new_dummy(adapter, (client->addr & ~SMM665_REGMASK)
 				     | SMM665_CMDREG_BASE);
 	if (!data->cmdreg)
+<<<<<<< HEAD
 		return -ENOMEM;
+=======
+		goto out_kfree;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (data->type) {
 	case smm465:
@@ -678,6 +728,12 @@ out_remove_group:
 	sysfs_remove_group(&client->dev.kobj, &smm665_group);
 out_unregister:
 	i2c_unregister_device(data->cmdreg);
+<<<<<<< HEAD
+=======
+out_kfree:
+	kfree(data);
+out_return:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -689,6 +745,11 @@ static int smm665_remove(struct i2c_client *client)
 	hwmon_device_unregister(data->hwmon_dev);
 	sysfs_remove_group(&client->dev.kobj, &smm665_group);
 
+<<<<<<< HEAD
+=======
+	kfree(data);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -713,8 +774,26 @@ static struct i2c_driver smm665_driver = {
 	.id_table = smm665_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(smm665_driver);
+=======
+static int __init smm665_init(void)
+{
+	return i2c_add_driver(&smm665_driver);
+}
+
+static void __exit smm665_exit(void)
+{
+	i2c_del_driver(&smm665_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Guenter Roeck");
 MODULE_DESCRIPTION("SMM665 driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(smm665_init);
+module_exit(smm665_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

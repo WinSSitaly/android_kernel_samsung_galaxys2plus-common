@@ -155,7 +155,10 @@ SECTIONS
 		SECURITY_INITCALL
 		INIT_RAM_FS
 
+<<<<<<< HEAD
 		. = ALIGN(PAGE_SIZE);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		___per_cpu_load = .;
 		PERCPU_INPUT(32)
 

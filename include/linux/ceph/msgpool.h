@@ -11,11 +11,18 @@
 struct ceph_msgpool {
 	const char *name;
 	mempool_t *pool;
+<<<<<<< HEAD
 	int type;               /* preallocated message type */
 	int front_len;          /* preallocated payload size */
 };
 
 extern int ceph_msgpool_init(struct ceph_msgpool *pool, int type,
+=======
+	int front_len;          /* preallocated payload size */
+};
+
+extern int ceph_msgpool_init(struct ceph_msgpool *pool,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     int front_len, int size, bool blocking,
 			     const char *name);
 extern void ceph_msgpool_destroy(struct ceph_msgpool *pool);

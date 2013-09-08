@@ -24,6 +24,10 @@
 
 #include <asm/pgtable.h>
 #include <asm/page.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <asm/ptrace.h>
 #include <asm/elf.h>
@@ -333,7 +337,12 @@ void do_syscall_trace_enter(struct pt_regs *regs)
 		do_syscall_trace();
 
 #if 0
+<<<<<<< HEAD
 	audit_syscall_entry(current, AUDIT_ARCH_XTENSA..);
+=======
+	if (unlikely(current->audit_context))
+		audit_syscall_entry(current, AUDIT_ARCH_XTENSA..);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }
 

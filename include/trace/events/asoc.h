@@ -9,7 +9,10 @@
 
 struct snd_soc_jack;
 struct snd_soc_codec;
+<<<<<<< HEAD
 struct snd_soc_platform;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct snd_soc_card;
 struct snd_soc_dapm_widget;
 
@@ -60,6 +63,7 @@ DEFINE_EVENT(snd_soc_reg, snd_soc_reg_read,
 
 );
 
+<<<<<<< HEAD
 DECLARE_EVENT_CLASS(snd_soc_preg,
 
 	TP_PROTO(struct snd_soc_platform *platform, unsigned int reg,
@@ -104,6 +108,8 @@ DEFINE_EVENT(snd_soc_preg, snd_soc_preg_read,
 
 );
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 DECLARE_EVENT_CLASS(snd_soc_card,
 
 	TP_PROTO(struct snd_soc_card *card, int val),
@@ -216,6 +222,7 @@ DEFINE_EVENT(snd_soc_dapm_widget, snd_soc_dapm_widget_event_done,
 
 );
 
+<<<<<<< HEAD
 TRACE_EVENT(snd_soc_dapm_walk_done,
 
 	TP_PROTO(struct snd_soc_card *card),
@@ -241,6 +248,8 @@ TRACE_EVENT(snd_soc_dapm_walk_done,
 		  (int)__entry->path_checks, (int)__entry->neighbour_checks)
 );
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 TRACE_EVENT(snd_soc_jack_irq,
 
 	TP_PROTO(const char *name),

@@ -38,7 +38,11 @@ Status: in development
 #include <linux/sched.h>
 #include <linux/slab.h>
 
+<<<<<<< HEAD
 #include <linux/termios.h>
+=======
+#include <asm/termios.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/ioctls.h>
 #include <linux/serial.h>
 #include <linux/poll.h>
@@ -192,8 +196,14 @@ static int tty_read(struct file *f, int timeout)
 				elapsed =
 				    (1000000 * (now.tv_sec - start.tv_sec) +
 				     now.tv_usec - start.tv_usec);
+<<<<<<< HEAD
 				if (elapsed > timeout)
 					break;
+=======
+				if (elapsed > timeout) {
+					break;
+				}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				set_current_state(TASK_INTERRUPTIBLE);
 				schedule_timeout(((timeout -
 						   elapsed) * HZ) / 10000);
@@ -203,8 +213,14 @@ static int tty_read(struct file *f, int timeout)
 				unsigned char ch;
 
 				f->f_pos = 0;
+<<<<<<< HEAD
 				if (f->f_op->read(f, &ch, 1, &f->f_pos) == 1)
 					result = ch;
+=======
+				if (f->f_op->read(f, &ch, 1, &f->f_pos) == 1) {
+					result = ch;
+				}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		} else {
 			/* Device does not support poll, busy wait */
@@ -213,8 +229,14 @@ static int tty_read(struct file *f, int timeout)
 				unsigned char ch;
 
 				retries++;
+<<<<<<< HEAD
 				if (retries >= timeout)
 					break;
+=======
+				if (retries >= timeout) {
+					break;
+				}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				f->f_pos = 0;
 				if (f->f_op->read(f, &ch, 1, &f->f_pos) == 1) {
@@ -326,7 +348,11 @@ static struct serial_data serial_read(struct file *f, int timeout)
 
 		length++;
 		if (data < 0) {
+<<<<<<< HEAD
 			printk(KERN_ERR "serial2002 error\n");
+=======
+			printk("serial2002 error\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		} else if (data & 0x80) {
 			result.value = (result.value << 7) | (data & 0x7f);
@@ -399,7 +425,11 @@ static int serial_2002_open(struct comedi_device *dev)
 	devpriv->tty = filp_open(port, O_RDWR, 0);
 	if (IS_ERR(devpriv->tty)) {
 		result = (int)PTR_ERR(devpriv->tty);
+<<<<<<< HEAD
 		printk(KERN_ERR "serial_2002: file open error = %d\n", result);
+=======
+		printk("serial_2002: file open error = %d\n", result);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		struct config_t {
 
@@ -513,8 +543,14 @@ static int serial_2002_open(struct comedi_device *dev)
 								}
 								break;
 							}
+<<<<<<< HEAD
 							if (sign)
 								min = -min;
+=======
+							if (sign) {
+								min = -min;
+							}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 							cur_config[channel].min
 							    = min;
 						}
@@ -553,8 +589,14 @@ static int serial_2002_open(struct comedi_device *dev)
 								}
 								break;
 							}
+<<<<<<< HEAD
 							if (sign)
 								max = -max;
+=======
+							if (sign) {
+								max = -max;
+							}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 							cur_config[channel].max
 							    = max;
 						}
@@ -617,8 +659,14 @@ static int serial_2002_open(struct comedi_device *dev)
 				int j, chan;
 
 				for (chan = 0, j = 0; j < 32; j++) {
+<<<<<<< HEAD
 					if (c[j].kind == kind)
 						chan++;
+=======
+					if (c[j].kind == kind) {
+						chan++;
+					}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				}
 				s = &dev->subdevices[i];
 				s->n_chan = chan;
@@ -643,8 +691,14 @@ static int serial_2002_open(struct comedi_device *dev)
 				}
 				for (chan = 0, j = 0; j < 32; j++) {
 					if (c[j].kind == kind) {
+<<<<<<< HEAD
 						if (mapping)
 							mapping[chan] = j;
+=======
+						if (mapping) {
+							mapping[chan] = j;
+						}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						if (range) {
 							range[j].length = 1;
 							range[j].range.min =
@@ -697,8 +751,14 @@ err_alloc_configs:
 
 static void serial_2002_close(struct comedi_device *dev)
 {
+<<<<<<< HEAD
 	if (!IS_ERR(devpriv->tty) && (devpriv->tty != 0))
 		filp_close(devpriv->tty, 0);
+=======
+	if (!IS_ERR(devpriv->tty) && (devpriv->tty != 0)) {
+		filp_close(devpriv->tty, 0);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int serial2002_di_rinsn(struct comedi_device *dev,
@@ -715,8 +775,14 @@ static int serial2002_di_rinsn(struct comedi_device *dev,
 		poll_digital(devpriv->tty, chan);
 		while (1) {
 			read = serial_read(devpriv->tty, 1000);
+<<<<<<< HEAD
 			if (read.kind != is_digital || read.index == chan)
 				break;
+=======
+			if (read.kind != is_digital || read.index == chan) {
+				break;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		data[n] = read.value;
 	}
@@ -756,8 +822,14 @@ static int serial2002_ai_rinsn(struct comedi_device *dev,
 		poll_channel(devpriv->tty, chan);
 		while (1) {
 			read = serial_read(devpriv->tty, 1000);
+<<<<<<< HEAD
 			if (read.kind != is_channel || read.index == chan)
 				break;
+=======
+			if (read.kind != is_channel || read.index == chan) {
+				break;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		data[n] = read.value;
 	}
@@ -791,8 +863,14 @@ static int serial2002_ao_rinsn(struct comedi_device *dev,
 	int n;
 	int chan = CR_CHAN(insn->chanspec);
 
+<<<<<<< HEAD
 	for (n = 0; n < insn->n; n++)
 		data[n] = devpriv->ao_readback[chan];
+=======
+	for (n = 0; n < insn->n; n++) {
+		data[n] = devpriv->ao_readback[chan];
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return n;
 }
@@ -811,8 +889,14 @@ static int serial2002_ei_rinsn(struct comedi_device *dev,
 		poll_channel(devpriv->tty, chan);
 		while (1) {
 			read = serial_read(devpriv->tty, 1000);
+<<<<<<< HEAD
 			if (read.kind != is_channel || read.index == chan)
 				break;
+=======
+			if (read.kind != is_channel || read.index == chan) {
+				break;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		data[n] = read.value;
 	}
@@ -824,16 +908,28 @@ static int serial2002_attach(struct comedi_device *dev,
 {
 	struct comedi_subdevice *s;
 
+<<<<<<< HEAD
 	dev_dbg(dev->hw_dev, "comedi%d: attached\n", dev->minor);
 	dev->board_name = thisboard->name;
 	if (alloc_private(dev, sizeof(struct serial2002_private)) < 0)
 		return -ENOMEM;
+=======
+	printk("comedi%d: serial2002: ", dev->minor);
+	dev->board_name = thisboard->name;
+	if (alloc_private(dev, sizeof(struct serial2002_private)) < 0) {
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->open = serial_2002_open;
 	dev->close = serial_2002_close;
 	devpriv->port = it->options[0];
 	devpriv->speed = it->options[1];
+<<<<<<< HEAD
 	dev_dbg(dev->hw_dev, "/dev/ttyS%d @ %d\n", devpriv->port,
 		devpriv->speed);
+=======
+	printk("/dev/ttyS%d @ %d\n", devpriv->port, devpriv->speed);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (alloc_subdevices(dev, 5) < 0)
 		return -ENOMEM;
@@ -892,7 +988,11 @@ static int serial2002_detach(struct comedi_device *dev)
 	struct comedi_subdevice *s;
 	int i;
 
+<<<<<<< HEAD
 	dev_dbg(dev->hw_dev, "comedi%d: remove\n", dev->minor);
+=======
+	printk("comedi%d: serial2002: remove\n", dev->minor);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < 5; i++) {
 		s = &dev->subdevices[i];
 		kfree(s->maxdata_list);

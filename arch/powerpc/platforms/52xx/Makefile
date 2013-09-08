@@ -14,4 +14,8 @@ ifeq ($(CONFIG_PPC_LITE5200),y)
 	obj-$(CONFIG_PM)	+= lite5200_sleep.o lite5200_pm.o
 endif
 
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_PPC_MPC5200_GPIO)	+= mpc52xx_gpio.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_PPC_MPC5200_LPBFIFO)	+= mpc52xx_lpbfifo.o

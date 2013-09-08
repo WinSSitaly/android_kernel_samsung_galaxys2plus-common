@@ -234,7 +234,11 @@ static int pci1723_insn_read_ao(struct comedi_device *dev,
 	int n, chan;
 
 	chan = CR_CHAN(insn->chanspec);
+<<<<<<< HEAD
 	DPRINTK(" adv_PCI1723 DEBUG: pci1723_insn_read_ao() -----\n");
+=======
+	DPRINTK(" adv_PCI1723 DEBUG: pci1723_insn_read_ao() ----- \n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (n = 0; n < insn->n; n++)
 		data[n] = devpriv->ao_data[chan];
 

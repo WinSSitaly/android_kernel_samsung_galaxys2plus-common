@@ -16,6 +16,7 @@ struct xt_ct_target_info {
 	struct nf_conn	*ct __attribute__((aligned(8)));
 };
 
+<<<<<<< HEAD
 struct xt_ct_target_info_v1 {
 	__u16 flags;
 	__u16 zone;
@@ -28,4 +29,6 @@ struct xt_ct_target_info_v1 {
 	struct nf_conn	*ct __attribute__((aligned(8)));
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _XT_CT_H */

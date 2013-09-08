@@ -3,18 +3,25 @@
 #
 
 VDSO64-$(CONFIG_X86_64)		:= y
+<<<<<<< HEAD
 VDSOX32-$(CONFIG_X86_X32_ABI)	:= y
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 VDSO32-$(CONFIG_X86_32)		:= y
 VDSO32-$(CONFIG_COMPAT)		:= y
 
 vdso-install-$(VDSO64-y)	+= vdso.so
+<<<<<<< HEAD
 vdso-install-$(VDSOX32-y)	+= vdsox32.so
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 vdso-install-$(VDSO32-y)	+= $(vdso32-images)
 
 
 # files to link into the vdso
 vobjs-y := vdso-note.o vclock_gettime.o vgetcpu.o
 
+<<<<<<< HEAD
 vobjs-$(VDSOX32-y) += $(vobjx32s-compat)
 
 # Filter out x32 objects.
@@ -26,6 +33,13 @@ obj-$(VDSOX32-y)		+= vdsox32.o
 obj-$(VDSO32-y)			+= vdso32.o vdso32-setup.o
 
 vobjs := $(foreach F,$(vobj64s),$(obj)/$F)
+=======
+# files to link into kernel
+obj-$(VDSO64-y)			+= vma.o vdso.o
+obj-$(VDSO32-y)			+= vdso32.o vdso32-setup.o
+
+vobjs := $(foreach F,$(vobjs-y),$(obj)/$F)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 $(obj)/vdso.o: $(obj)/vdso.so
 
@@ -34,7 +48,10 @@ targets += vdso.so vdso.so.dbg vdso.lds $(vobjs-y)
 export CPPFLAGS_vdso.lds += -P -C
 
 VDSO_LDFLAGS_vdso.lds = -m64 -Wl,-soname=linux-vdso.so.1 \
+<<<<<<< HEAD
 			-Wl,--no-undefined \
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      	-Wl,-z,max-page-size=4096 -Wl,-z,common-page-size=4096
 
 $(obj)/vdso.o: $(src)/vdso.S $(obj)/vdso.so
@@ -81,6 +98,7 @@ $(obj)/%-syms.lds: $(obj)/%.so.dbg FORCE
 	$(call if_changed,vdsosym)
 
 #
+<<<<<<< HEAD
 # X32 processes use x32 vDSO to access 64bit kernel data.
 #
 # Build x32 vDSO image:
@@ -117,6 +135,8 @@ $(obj)/vdsox32.so.dbg: $(src)/vdsox32.lds $(vobjx32s) FORCE
 	$(call if_changed,vdso)
 
 #
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # Build multiple 32-bit vDSO images to choose from at boot time.
 #
 obj-$(VDSO32-y)			+= vdso32-syms.lds

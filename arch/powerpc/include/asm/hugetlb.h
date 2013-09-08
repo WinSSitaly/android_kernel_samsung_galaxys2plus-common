@@ -1,6 +1,7 @@
 #ifndef _ASM_POWERPC_HUGETLB_H
 #define _ASM_POWERPC_HUGETLB_H
 
+<<<<<<< HEAD
 #ifdef CONFIG_HUGETLB_PAGE
 #include <asm/page.h>
 
@@ -35,11 +36,16 @@ static inline pte_t *hugepte_offset(hugepd_t *hpdp, unsigned long addr,
 	return dir + idx;
 }
 
+=======
+#include <asm/page.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 pte_t *huge_pte_offset_and_shift(struct mm_struct *mm,
 				 unsigned long addr, unsigned *shift);
 
 void flush_dcache_icache_hugepage(struct page *page);
 
+<<<<<<< HEAD
 #if defined(CONFIG_PPC_MM_SLICES) || defined(CONFIG_PPC_SUBPAGE_PROT)
 int is_hugepage_only_range(struct mm_struct *mm, unsigned long addr,
 			   unsigned long len);
@@ -55,6 +61,10 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
 void book3e_hugetlb_preload(struct vm_area_struct *vma, unsigned long ea,
 			    pte_t pte);
 void flush_hugetlb_page(struct vm_area_struct *vma, unsigned long vmaddr);
+=======
+int is_hugepage_only_range(struct mm_struct *mm, unsigned long addr,
+			   unsigned long len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
 			    unsigned long end, unsigned long floor,
@@ -95,11 +105,16 @@ static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
 static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
 					    unsigned long addr, pte_t *ptep)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_PPC64
 	return __pte(pte_update(mm, addr, ptep, ~0UL, 1));
 #else
 	return __pte(pte_update(ptep, ~0UL, 0));
 #endif
+=======
+	unsigned long old = pte_update(mm, addr, ptep, ~0UL, 1);
+	return __pte(old);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
@@ -124,6 +139,7 @@ static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
 					     unsigned long addr, pte_t *ptep,
 					     pte_t pte, int dirty)
 {
+<<<<<<< HEAD
 #ifdef HUGETLB_NEED_PRELOAD
 	/*
 	 * The "return 1" forces a call of update_mmu_cache, which will write a
@@ -135,6 +151,9 @@ static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
 #else
 	return ptep_set_access_flags(vma, addr, ptep, pte, dirty);
 #endif
+=======
+	return ptep_set_access_flags(vma, addr, ptep, pte, dirty);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline pte_t huge_ptep_get(pte_t *ptep)
@@ -151,6 +170,7 @@ static inline void arch_release_hugepage(struct page *page)
 {
 }
 
+<<<<<<< HEAD
 #else /* ! CONFIG_HUGETLB_PAGE */
 static inline void flush_hugetlb_page(struct vm_area_struct *vma,
 				      unsigned long vmaddr)
@@ -172,4 +192,6 @@ static inline void reserve_hugetlb_gpages(void)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _ASM_POWERPC_HUGETLB_H */

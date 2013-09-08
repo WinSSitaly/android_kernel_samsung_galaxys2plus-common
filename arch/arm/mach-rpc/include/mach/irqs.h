@@ -42,4 +42,9 @@
  */
 #define FIQ_START		64
 
+<<<<<<< HEAD
+=======
+#define IRQ_TIMER		IRQ_TIMER0
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NR_IRQS			128

@@ -15,6 +15,10 @@
 #include <linux/list.h>
 #include <linux/spinlock.h>
 #include <linux/device.h>
+<<<<<<< HEAD
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/timer.h>
 #include <linux/err.h>
 #include <linux/ctype.h>
@@ -110,6 +114,53 @@ static void led_timer_function(unsigned long data)
 	mod_timer(&led_cdev->blink_timer, jiffies + msecs_to_jiffies(delay));
 }
 
+<<<<<<< HEAD
+=======
+static void led_stop_software_blink(struct led_classdev *led_cdev)
+{
+	/* deactivate previous settings */
+	del_timer_sync(&led_cdev->blink_timer);
+	led_cdev->blink_delay_on = 0;
+	led_cdev->blink_delay_off = 0;
+}
+
+static void led_set_software_blink(struct led_classdev *led_cdev,
+				   unsigned long delay_on,
+				   unsigned long delay_off)
+{
+	int current_brightness;
+
+	current_brightness = led_get_brightness(led_cdev);
+	if (current_brightness)
+		led_cdev->blink_brightness = current_brightness;
+	if (!led_cdev->blink_brightness)
+		led_cdev->blink_brightness = led_cdev->max_brightness;
+
+	if (led_get_trigger_data(led_cdev) &&
+	    delay_on == led_cdev->blink_delay_on &&
+	    delay_off == led_cdev->blink_delay_off)
+		return;
+
+	led_stop_software_blink(led_cdev);
+
+	led_cdev->blink_delay_on = delay_on;
+	led_cdev->blink_delay_off = delay_off;
+
+	/* never on - don't blink */
+	if (!delay_on)
+		return;
+
+	/* never off - just set to brightness */
+	if (!delay_off) {
+		led_set_brightness(led_cdev, led_cdev->blink_brightness);
+		return;
+	}
+
+	mod_timer(&led_cdev->blink_timer, jiffies + 1);
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * led_classdev_suspend - suspend an led_classdev.
  * @led_cdev: the led_classdev to suspend.
@@ -218,6 +269,35 @@ void led_classdev_unregister(struct led_classdev *led_cdev)
 }
 EXPORT_SYMBOL_GPL(led_classdev_unregister);
 
+<<<<<<< HEAD
+=======
+void led_blink_set(struct led_classdev *led_cdev,
+		   unsigned long *delay_on,
+		   unsigned long *delay_off)
+{
+	del_timer_sync(&led_cdev->blink_timer);
+
+	if (led_cdev->blink_set &&
+	    !led_cdev->blink_set(led_cdev, delay_on, delay_off))
+		return;
+
+	/* blink with 1 Hz as default if nothing specified */
+	if (!*delay_on && !*delay_off)
+		*delay_on = *delay_off = 500;
+
+	led_set_software_blink(led_cdev, *delay_on, *delay_off);
+}
+EXPORT_SYMBOL(led_blink_set);
+
+void led_brightness_set(struct led_classdev *led_cdev,
+			enum led_brightness brightness)
+{
+	led_stop_software_blink(led_cdev);
+	led_cdev->brightness_set(led_cdev, brightness);
+}
+EXPORT_SYMBOL(led_brightness_set);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init leds_init(void)
 {
 	leds_class = class_create(THIS_MODULE, "leds");

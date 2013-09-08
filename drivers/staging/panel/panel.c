@@ -51,6 +51,10 @@
 #include <linux/kernel.h>
 #include <linux/ctype.h>
 #include <linux/parport.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/list.h>
 #include <linux/notifier.h>
 #include <linux/reboot.h>
@@ -58,6 +62,10 @@
 
 #include <linux/io.h>
 #include <linux/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define LCD_MINOR		156
 #define KEYPAD_MINOR		185
@@ -1178,6 +1186,7 @@ static inline int handle_lcd_special_code(void)
 			break;
 
 		while (*esc) {
+<<<<<<< HEAD
 			if (*esc == 'x') {
 				esc++;
 				if (kstrtoul(esc, 10, &lcd_addr_x) < 0)
@@ -1186,6 +1195,18 @@ static inline int handle_lcd_special_code(void)
 				esc++;
 				if (kstrtoul(esc, 10, &lcd_addr_y) < 0)
 					break;
+=======
+			char *endp;
+
+			if (*esc == 'x') {
+				esc++;
+				lcd_addr_x = simple_strtoul(esc, &endp, 10);
+				esc = endp;
+			} else if (*esc == 'y') {
+				esc++;
+				lcd_addr_y = simple_strtoul(esc, &endp, 10);
+				esc = endp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else
 				break;
 		}

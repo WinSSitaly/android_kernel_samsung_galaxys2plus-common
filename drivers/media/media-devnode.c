@@ -40,6 +40,10 @@
 #include <linux/string.h>
 #include <linux/types.h>
 #include <linux/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <media/media-devnode.h>
 
@@ -311,7 +315,11 @@ static void __exit media_devnode_exit(void)
 	unregister_chrdev_region(media_dev_t, MEDIA_NUM_DEVICES);
 }
 
+<<<<<<< HEAD
 subsys_initcall(media_devnode_init);
+=======
+module_init(media_devnode_init)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_exit(media_devnode_exit)
 
 MODULE_AUTHOR("Laurent Pinchart <laurent.pinchart@ideasonboard.com>");

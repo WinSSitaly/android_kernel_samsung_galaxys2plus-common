@@ -74,7 +74,11 @@ config SPI_ATMEL
 	  This selects a driver for the Atmel SPI Controller, present on
 	  many AT32 (AVR32) and AT91 (ARM) chips.
 
+<<<<<<< HEAD
 config SPI_BFIN5XX
+=======
+config SPI_BFIN
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tristate "SPI controller driver for ADI Blackfin5xx"
 	depends on BLACKFIN
 	help
@@ -86,6 +90,7 @@ config SPI_BFIN_SPORT
 	help
 	  Enable support for a SPI bus via the Blackfin SPORT peripheral.
 
+<<<<<<< HEAD
 config SPI_AU1550
 	tristate "Au1550/Au1200/Au1300 SPI Controller"
 	depends on MIPS_ALCHEMY && EXPERIMENTAL
@@ -99,6 +104,21 @@ config SPI_BCM63XX
 	depends on BCM63XX
 	help
           Enable support for the SPI controller on the Broadcom BCM63xx SoCs.
+=======
+	  This driver can also be built as a module.  If so, the module
+	  will be called spi_bfin_sport.
+
+config SPI_AU1550
+	tristate "Au1550/Au12x0 SPI Controller"
+	depends on (SOC_AU1550 || SOC_AU1200) && EXPERIMENTAL
+	select SPI_BITBANG
+	help
+	  If you say yes to this option, support will be included for the
+	  Au1550 SPI controller (may also work with Au1200,Au1210,Au1250).
+
+	  This driver can also be built as a module.  If so, the module
+	  will be called au1550_spi.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config SPI_BITBANG
 	tristate "Utilities for Bitbanging SPI masters"
@@ -130,13 +150,28 @@ config SPI_COLDFIRE_QSPI
 	  This enables support for the Coldfire QSPI controller in master
 	  mode.
 
+<<<<<<< HEAD
 config SPI_DAVINCI
 	tristate "Texas Instruments DaVinci/DA8x/OMAP-L/AM1x SoC SPI controller"
 	depends on ARCH_DAVINCI
+=======
+	  This driver can also be built as a module.  If so, the module
+	  will be called coldfire_qspi.
+
+config SPI_DAVINCI
+	tristate "Texas Instruments DaVinci/DA8x/OMAP-L/AM1x SoC SPI controller"
+	depends on SPI_MASTER && ARCH_DAVINCI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select SPI_BITBANG
 	help
 	  SPI master controller for DaVinci/DA8x/OMAP-L/AM1x SPI modules.
 
+<<<<<<< HEAD
+=======
+	  This driver can also be built as a module. The module will be called
+	  davinci_spi.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config SPI_EP93XX
 	tristate "Cirrus Logic EP93xx SPI controller"
 	depends on ARCH_EP93XX
@@ -144,6 +179,12 @@ config SPI_EP93XX
 	  This enables using the Cirrus EP93xx SPI controller in master
 	  mode.
 
+<<<<<<< HEAD
+=======
+	  To compile this driver as a module, choose M here. The module will be
+	  called ep93xx_spi.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config SPI_GPIO
 	tristate "GPIO-based bitbanging SPI Master"
 	depends on GENERIC_GPIO
@@ -160,6 +201,24 @@ config SPI_GPIO
 	  GPIO operations, you should be able to leverage that for better
 	  speed with a custom version of this driver; see the source code.
 
+<<<<<<< HEAD
+=======
+config SPI_IMX_VER_IMX1
+	def_bool y if SOC_IMX1
+
+config SPI_IMX_VER_0_0
+	def_bool y if SOC_IMX21 || SOC_IMX27
+
+config SPI_IMX_VER_0_4
+	def_bool y if SOC_IMX31
+
+config SPI_IMX_VER_0_7
+	def_bool y if ARCH_MX25 || SOC_IMX35 || SOC_IMX51 || SOC_IMX53
+
+config SPI_IMX_VER_2_3
+	def_bool y if SOC_IMX51 || SOC_IMX53
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config SPI_IMX
 	tristate "Freescale i.MX SPI controllers"
 	depends on ARCH_MXC
@@ -169,6 +228,17 @@ config SPI_IMX
 	  This enables using the Freescale i.MX SPI controllers in master
 	  mode.
 
+<<<<<<< HEAD
+=======
+config SPI_SSPI_KONA
+	tristate "Broadcom KONA SSPI based SPI controller"
+	depends on ARCH_KONA
+	help
+	  This enables using the Broadcom SPI controller based on KONA
+	  SSPI module in master mode.
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config SPI_LM70_LLP
 	tristate "Parallel port adapter for LM70 eval board (DEVELOPMENT)"
 	depends on PARPORT && EXPERIMENTAL
@@ -180,7 +250,12 @@ config SPI_LM70_LLP
 
 config SPI_MPC52xx
 	tristate "Freescale MPC52xx SPI (non-PSC) controller support"
+<<<<<<< HEAD
 	depends on PPC_MPC52xx
+=======
+	depends on PPC_MPC52xx && SPI
+	select SPI_MASTER_OF
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  This drivers supports the MPC52xx SPI controller in master SPI
 	  mode.
@@ -194,7 +269,11 @@ config SPI_MPC52xx_PSC
 
 config SPI_MPC512x_PSC
 	tristate "Freescale MPC512x PSC SPI controller"
+<<<<<<< HEAD
 	depends on PPC_MPC512x
+=======
+	depends on SPI_MASTER && PPC_MPC512x
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  This enables using the Freescale MPC5121 Programmable Serial
 	  Controller in SPI master mode.
@@ -204,7 +283,11 @@ config SPI_FSL_LIB
 	depends on FSL_SOC
 
 config SPI_FSL_SPI
+<<<<<<< HEAD
 	bool "Freescale SPI controller"
+=======
+	tristate "Freescale SPI controller"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	depends on FSL_SOC
 	select SPI_FSL_LIB
 	help
@@ -213,7 +296,11 @@ config SPI_FSL_SPI
 	  MPC8569 uses the controller in QE mode, MPC8610 in cpu mode.
 
 config SPI_FSL_ESPI
+<<<<<<< HEAD
 	bool "Freescale eSPI controller"
+=======
+	tristate "Freescale eSPI controller"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	depends on FSL_SOC
 	select SPI_FSL_LIB
 	help
@@ -244,7 +331,11 @@ config SPI_OMAP24XX
 
 config SPI_OMAP_100K
 	tristate "OMAP SPI 100K"
+<<<<<<< HEAD
 	depends on ARCH_OMAP850 || ARCH_OMAP730
+=======
+	depends on SPI_MASTER && (ARCH_OMAP850 || ARCH_OMAP730)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  OMAP SPI 100K master controller for omap7xx boards.
 
@@ -268,7 +359,11 @@ config SPI_PL022
 
 config SPI_PPC4xx
 	tristate "PPC4xx SPI Controller"
+<<<<<<< HEAD
 	depends on PPC32 && 4xx
+=======
+	depends on PPC32 && 4xx && SPI_MASTER
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select SPI_BITBANG
 	help
 	  This selects a driver for the PPC4xx SPI Controller.
@@ -285,6 +380,7 @@ config SPI_PXA2XX
 config SPI_PXA2XX_PCI
 	def_bool SPI_PXA2XX && X86_32 && PCI
 
+<<<<<<< HEAD
 config SPI_RSPI
 	tristate "Renesas RSPI controller"
 	depends on SUPERH
@@ -294,6 +390,11 @@ config SPI_RSPI
 config SPI_S3C24XX
 	tristate "Samsung S3C24XX series SPI"
 	depends on ARCH_S3C24XX && EXPERIMENTAL
+=======
+config SPI_S3C24XX
+	tristate "Samsung S3C24XX series SPI"
+	depends on ARCH_S3C2410 && EXPERIMENTAL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select SPI_BITBANG
 	help
 	  SPI driver for Samsung S3C24XX series ARM SoCs
@@ -309,9 +410,25 @@ config SPI_S3C24XX_FIQ
 	  no free DMA channels, or when doing transfers that required both
 	  TX and RX data paths.
 
+<<<<<<< HEAD
 config SPI_S3C64XX
 	tristate "Samsung S3C64XX series type SPI"
 	depends on (ARCH_S3C64XX || ARCH_S5P64X0 || ARCH_EXYNOS)
+=======
+config SPI_S3C24XX_GPIO
+	tristate "Samsung S3C24XX series SPI by GPIO"
+	depends on ARCH_S3C2410 && EXPERIMENTAL
+	select SPI_BITBANG
+	help
+	  SPI driver for Samsung S3C24XX series ARM SoCs using
+	  GPIO lines to provide the SPI bus. This can be used where
+	  the inbuilt hardware cannot provide the transfer mode, or
+	  where the board is using non hardware connected pins.
+
+config SPI_S3C64XX
+	tristate "Samsung S3C64XX series type SPI"
+	depends on (ARCH_S3C64XX || ARCH_S5P64X0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select S3C64XX_DMA if ARCH_S3C64XX
 	help
 	  SPI driver for Samsung S3C64XX and newer SoCs.
@@ -336,6 +453,7 @@ config SPI_SH_SCI
 	help
 	  SPI driver for SuperH SCI blocks.
 
+<<<<<<< HEAD
 config SPI_SH_HSPI
 	tristate "SuperH HSPI controller"
 	depends on ARCH_SHMOBILE
@@ -352,12 +470,22 @@ config SPI_SIRF
 config SPI_STMP3XXX
 	tristate "Freescale STMP37xx/378x SPI/SSP controller"
 	depends on ARCH_STMP3XXX
+=======
+config SPI_STMP3XXX
+	tristate "Freescale STMP37xx/378x SPI/SSP controller"
+	depends on ARCH_STMP3XXX && SPI_MASTER
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  SPI driver for Freescale STMP37xx/378x SoC SSP interface
 
 config SPI_TEGRA
 	tristate "Nvidia Tegra SPI controller"
+<<<<<<< HEAD
 	depends on ARCH_TEGRA && TEGRA_SYSTEM_DMA
+=======
+	depends on ARCH_TEGRA
+	select TEGRA_SYSTEM_DMA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  SPI driver for NVidia Tegra SoCs
 
@@ -368,16 +496,27 @@ config SPI_TI_SSP
 	  This selects an SPI master implementation using a TI sequencer
 	  serial port.
 
+<<<<<<< HEAD
 config SPI_TOPCLIFF_PCH
 	tristate "Intel EG20T PCH/LAPIS Semicon IOH(ML7213/ML7223/ML7831) SPI"
+=======
+	  To compile this driver as a module, choose M here: the
+	  module will be called ti-ssp-spi.
+
+config SPI_TOPCLIFF_PCH
+	tristate "Topcliff PCH SPI Controller"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	depends on PCI
 	help
 	  SPI driver for the Topcliff PCH (Platform Controller Hub) SPI bus
 	  used in some x86 embedded processors.
 
+<<<<<<< HEAD
 	  This driver also supports the ML7213/ML7223/ML7831, a companion chip
 	  for the Atom E6xx series and compatible with the Intel EG20T PCH.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config SPI_TXX9
 	tristate "Toshiba TXx9 SPI controller"
 	depends on GENERIC_GPIO && CPU_TX49XX
@@ -409,6 +548,10 @@ config SPI_NUC900
 
 config SPI_DESIGNWARE
 	tristate "DesignWare SPI controller core support"
+<<<<<<< HEAD
+=======
+	depends on SPI_MASTER
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  general driver for SPI controller core from DesignWare
 

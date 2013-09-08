@@ -23,12 +23,16 @@
 #include <linux/clk.h>
 #include <linux/gpio.h>
 #include <linux/pwm_backlight.h>
+<<<<<<< HEAD
 #include <linux/fb.h>
 #include <linux/mmc/host.h>
 
 #include <video/platform_lcd.h>
 
 #include <asm/hardware/vic.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 #include <asm/irq.h>
@@ -42,6 +46,10 @@
 
 #include <plat/regs-serial.h>
 #include <plat/gpio-cfg.h>
+<<<<<<< HEAD
+=======
+#include <plat/s5p6450.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/clock.h>
 #include <plat/devs.h>
 #include <plat/cpu.h>
@@ -50,12 +58,15 @@
 #include <plat/adc.h>
 #include <plat/ts.h>
 #include <plat/s5p-time.h>
+<<<<<<< HEAD
 #include <plat/backlight.h>
 #include <plat/fb.h>
 #include <plat/regs-fb.h>
 #include <plat/sdhci.h>
 
 #include "common.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define SMDK6450_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
 				S3C2410_UCON_RXILEVEL |		\
@@ -119,6 +130,7 @@ static struct s3c2410_uartcfg smdk6450_uartcfgs[] __initdata = {
 #endif
 };
 
+<<<<<<< HEAD
 /* Frame Buffer */
 static struct s3c_fb_pd_win smdk6450_fb_win0 = {
 	.win_mode	= {
@@ -170,6 +182,45 @@ static struct platform_device smdk6450_lcd_lte480wv = {
 	.name			= "platform-lcd",
 	.dev.parent		= &s3c_device_fb.dev,
 	.dev.platform_data	= &smdk6450_lcd_power_data,
+=======
+static int smdk6450_backlight_init(struct device *dev)
+{
+	int ret;
+
+	ret = gpio_request(S5P6450_GPF(15), "Backlight");
+	if (ret) {
+		printk(KERN_ERR "failed to request GPF for PWM-OUT1\n");
+		return ret;
+	}
+
+	/* Configure GPIO pin with S5P6450_GPF15_PWM_TOUT1 */
+	s3c_gpio_cfgpin(S5P6450_GPF(15), S3C_GPIO_SFN(2));
+
+	return 0;
+}
+
+static void smdk6450_backlight_exit(struct device *dev)
+{
+	s3c_gpio_cfgpin(S5P6450_GPF(15), S3C_GPIO_OUTPUT);
+	gpio_free(S5P6450_GPF(15));
+}
+
+static struct platform_pwm_backlight_data smdk6450_backlight_data = {
+	.pwm_id		= 1,
+	.max_brightness	= 255,
+	.dft_brightness	= 255,
+	.pwm_period_ns	= 78770,
+	.init		= smdk6450_backlight_init,
+	.exit		= smdk6450_backlight_exit,
+};
+
+static struct platform_device smdk6450_backlight_device = {
+	.name		= "pwm-backlight",
+	.dev		= {
+		.parent		= &s3c_device_timer[1].dev,
+		.platform_data	= &smdk6450_backlight_data,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device *smdk6450_devices[] __initdata = {
@@ -181,6 +232,7 @@ static struct platform_device *smdk6450_devices[] __initdata = {
 	&s3c_device_wdt,
 	&samsung_asoc_dma,
 	&s5p6450_device_iis0,
+<<<<<<< HEAD
 	&s3c_device_fb,
 	&smdk6450_lcd_lte480wv,
 	&s3c_device_hsmmc0,
@@ -205,6 +257,13 @@ static struct s3c_sdhci_platdata smdk6450_hsmmc2_pdata __initdata = {
 	.cd_type	= S3C_SDHCI_CD_NONE,
 };
 
+=======
+	&s3c_device_timer[1],
+	&smdk6450_backlight_device,
+	/* s5p6450_device_spi0 will be added */
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct s3c2410_platform_i2c s5p6450_i2c0_data __initdata = {
 	.flags		= 0,
 	.slave_addr	= 0x10,
@@ -231,6 +290,7 @@ static struct i2c_board_info smdk6450_i2c_devs1[] __initdata = {
 	{ I2C_BOARD_INFO("24c128", 0x57), },/* Samsung S524AD0XD1 EEPROM */
 };
 
+<<<<<<< HEAD
 /* LCD Backlight data */
 static struct samsung_bl_gpio_info smdk6450_bl_gpio_info = {
 	.no = S5P6450_GPF(15),
@@ -239,16 +299,27 @@ static struct samsung_bl_gpio_info smdk6450_bl_gpio_info = {
 
 static struct platform_pwm_backlight_data smdk6450_bl_data = {
 	.pwm_id = 1,
+=======
+static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
+	.delay			= 10000,
+	.presc			= 49,
+	.oversampling_shift	= 2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void __init smdk6450_map_io(void)
 {
+<<<<<<< HEAD
 	s5p64x0_init_io(NULL, 0);
+=======
+	s5p_init_io(NULL, 0, S5P64X0_SYS_ID);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	s3c24xx_init_clocks(19200000);
 	s3c24xx_init_uarts(smdk6450_uartcfgs, ARRAY_SIZE(smdk6450_uartcfgs));
 	s5p_set_timer_source(S5P_PWM3, S5P_PWM4);
 }
 
+<<<<<<< HEAD
 static void s5p6450_set_lcd_interface(void)
 {
 	unsigned int cfg;
@@ -263,6 +334,11 @@ static void s5p6450_set_lcd_interface(void)
 static void __init smdk6450_machine_init(void)
 {
 	s3c24xx_ts_set_platdata(NULL);
+=======
+static void __init smdk6450_machine_init(void)
+{
+	s3c24xx_ts_set_platdata(&s3c_ts_platform);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	s3c_i2c0_set_platdata(&s5p6450_i2c0_data);
 	s3c_i2c1_set_platdata(&s5p6450_i2c1_data);
@@ -271,6 +347,7 @@ static void __init smdk6450_machine_init(void)
 	i2c_register_board_info(1, smdk6450_i2c_devs1,
 			ARRAY_SIZE(smdk6450_i2c_devs1));
 
+<<<<<<< HEAD
 	samsung_bl_set(&smdk6450_bl_gpio_info, &smdk6450_bl_data);
 
 	s5p6450_set_lcd_interface();
@@ -280,11 +357,14 @@ static void __init smdk6450_machine_init(void)
 	s3c_sdhci1_set_platdata(&smdk6450_hsmmc1_pdata);
 	s3c_sdhci2_set_platdata(&smdk6450_hsmmc2_pdata);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_add_devices(smdk6450_devices, ARRAY_SIZE(smdk6450_devices));
 }
 
 MACHINE_START(SMDK6450, "SMDK6450")
 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 
 	.init_irq	= s5p6450_init_irq,
@@ -293,4 +373,12 @@ MACHINE_START(SMDK6450, "SMDK6450")
 	.init_machine	= smdk6450_machine_init,
 	.timer		= &s5p_timer,
 	.restart	= s5p64x0_restart,
+=======
+	.boot_params	= S5P64X0_PA_SDRAM + 0x100,
+
+	.init_irq	= s5p6450_init_irq,
+	.map_io		= smdk6450_map_io,
+	.init_machine	= smdk6450_machine_init,
+	.timer		= &s5p_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

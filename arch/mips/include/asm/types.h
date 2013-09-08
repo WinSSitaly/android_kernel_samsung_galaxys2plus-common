@@ -15,6 +15,7 @@
  * We don't use int-l64.h for the kernel anymore but still use it for
  * userspace to avoid code changes.
  */
+<<<<<<< HEAD
 #ifdef __KERNEL__
 # include <asm-generic/int-ll64.h>
 #else
@@ -25,6 +26,20 @@
 # endif
 #endif
 
+=======
+#if (_MIPS_SZLONG == 64) && !defined(__KERNEL__)
+# include <asm-generic/int-l64.h>
+#else
+# include <asm-generic/int-ll64.h>
+#endif
+
+#ifndef __ASSEMBLY__
+
+typedef unsigned short umode_t;
+
+#endif /* __ASSEMBLY__ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * These aren't exported outside the kernel to avoid name space clashes
  */

@@ -6,7 +6,11 @@
  * system manages static and dynamic label mappings for network protocols such
  * as CIPSO and RIPSO.
  *
+<<<<<<< HEAD
  * Author: Paul Moore <paul@paul-moore.com>
+=======
+ * Author: Paul Moore <paul.moore@hp.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  */
 
@@ -133,7 +137,11 @@ static inline void netlbl_af4list_audit_addr(struct audit_buffer *audit_buf,
 }
 #endif
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define __af6list_entry(ptr) container_of(ptr, struct netlbl_af6list, list)
 

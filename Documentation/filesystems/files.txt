@@ -113,8 +113,13 @@ the fdtable structure -
 	if (fd >= 0) {
 		/* locate_fd() may have expanded fdtable, load the ptr */
 		fdt = files_fdtable(files);
+<<<<<<< HEAD
 		__set_open_fd(fd, fdt);
 		__clear_close_on_exec(fd, fdt);
+=======
+		FD_SET(fd, fdt->open_fds);
+		FD_CLR(fd, fdt->close_on_exec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock(&files->file_lock);
 	.....
 

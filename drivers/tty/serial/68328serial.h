@@ -158,6 +158,10 @@ struct m68k_serial {
 	int			xmit_head;
 	int			xmit_tail;
 	int			xmit_cnt;
+<<<<<<< HEAD
+=======
+	struct work_struct	tqueue;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wait_queue_head_t	open_wait;
 	wait_queue_head_t	close_wait;
 };

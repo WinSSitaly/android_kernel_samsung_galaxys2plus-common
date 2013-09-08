@@ -18,7 +18,10 @@
 #include <linux/slab.h>
 #include <linux/vfs.h>
 #include <linux/fs.h>
+<<<<<<< HEAD
 #include <linux/inet.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "cifsglob.h"
 #include "cifsproto.h"
 #include "cifsfs.h"
@@ -142,17 +145,28 @@ char *cifs_compose_mount_options(const char *sb_mountdata,
 
 	rc = dns_resolve_server_name_to_ip(*devname, &srvIP);
 	if (rc < 0) {
+<<<<<<< HEAD
 		cFYI(1, "%s: Failed to resolve server part of %s to IP: %d",
 			__func__, *devname, rc);
 		goto compose_mount_options_err;
 	}
 
+=======
+		cERROR(1, "%s: Failed to resolve server part of %s to IP: %d",
+			  __func__, *devname, rc);
+		goto compose_mount_options_err;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* md_len = strlen(...) + 12 for 'sep+prefixpath='
 	 * assuming that we have 'unc=' and 'ip=' in
 	 * the original sb_mountdata
 	 */
+<<<<<<< HEAD
 	md_len = strlen(sb_mountdata) + rc + strlen(ref->node_name) + 12 +
 			INET6_ADDRSTRLEN;
+=======
+	md_len = strlen(sb_mountdata) + rc + strlen(ref->node_name) + 12;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mountdata = kzalloc(md_len+1, GFP_KERNEL);
 	if (mountdata == NULL) {
 		rc = -ENOMEM;
@@ -228,8 +242,11 @@ compose_mount_options_out:
 compose_mount_options_err:
 	kfree(mountdata);
 	mountdata = ERR_PTR(rc);
+<<<<<<< HEAD
 	kfree(*devname);
 	*devname = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	goto compose_mount_options_out;
 }
 

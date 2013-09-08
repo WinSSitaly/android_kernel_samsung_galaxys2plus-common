@@ -27,8 +27,11 @@
  *      Includes, defines, variables, module parameters, ...
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/types.h>
 #include <linux/kernel.h>
@@ -46,6 +49,10 @@
 #define ESB_VERSION "0.05"
 #define ESB_MODULE_NAME "i6300ESB timer"
 #define ESB_DRIVER_NAME ESB_MODULE_NAME ", v" ESB_VERSION
+<<<<<<< HEAD
+=======
+#define PFX ESB_MODULE_NAME ": "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* PCI configuration registers */
 #define ESB_CONFIG_REG  0x60            /* Config register                   */
@@ -95,8 +102,13 @@ MODULE_PARM_DESC(heartbeat,
 		"Watchdog heartbeat in seconds. (1<heartbeat<2046, default="
 				__MODULE_STRING(WATCHDOG_HEARTBEAT) ")");
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 module_param(nowayout, bool, 0);
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout,
 		"Watchdog cannot be stopped once started (default="
 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
@@ -214,7 +226,12 @@ static int esb_release(struct inode *inode, struct file *file)
 	if (esb_expect_close == 42)
 		esb_timer_stop();
 	else {
+<<<<<<< HEAD
 		pr_crit("Unexpected close, not stopping watchdog!\n");
+=======
+		printk(KERN_CRIT PFX
+				"Unexpected close, not stopping watchdog!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		esb_timer_keepalive();
 	}
 	clear_bit(0, &timer_alive);
@@ -347,19 +364,31 @@ MODULE_DEVICE_TABLE(pci, esb_pci_tbl);
 static unsigned char __devinit esb_getdevice(struct pci_dev *pdev)
 {
 	if (pci_enable_device(pdev)) {
+<<<<<<< HEAD
 		pr_err("failed to enable device\n");
+=======
+		printk(KERN_ERR PFX "failed to enable device\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_devput;
 	}
 
 	if (pci_request_region(pdev, 0, ESB_MODULE_NAME)) {
+<<<<<<< HEAD
 		pr_err("failed to request region\n");
+=======
+		printk(KERN_ERR PFX "failed to request region\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_disable;
 	}
 
 	BASEADDR = pci_ioremap_bar(pdev, 0);
 	if (BASEADDR == NULL) {
 		/* Something's wrong here, BASEADDR has to be set */
+<<<<<<< HEAD
 		pr_err("failed to get BASEADDR\n");
+=======
+		printk(KERN_ERR PFX "failed to get BASEADDR\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_release;
 	}
 
@@ -397,7 +426,11 @@ static void __devinit esb_initdevice(void)
 	/* Check that the WDT isn't already locked */
 	pci_read_config_byte(esb_pci, ESB_LOCK_REG, &val1);
 	if (val1 & ESB_WDT_LOCK)
+<<<<<<< HEAD
 		pr_warn("nowayout already set\n");
+=======
+		printk(KERN_WARNING PFX "nowayout already set\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Set the timer to watchdog mode and disable it for now */
 	pci_write_config_byte(esb_pci, ESB_LOCK_REG, 0x00);
@@ -423,11 +456,19 @@ static int __devinit esb_probe(struct pci_dev *pdev,
 
 	cards_found++;
 	if (cards_found == 1)
+<<<<<<< HEAD
 		pr_info("Intel 6300ESB WatchDog Timer Driver v%s\n",
 			ESB_VERSION);
 
 	if (cards_found > 1) {
 		pr_err("This driver only supports 1 device\n");
+=======
+		printk(KERN_INFO PFX "Intel 6300ESB WatchDog Timer Driver v%s\n",
+			ESB_VERSION);
+
+	if (cards_found > 1) {
+		printk(KERN_ERR PFX "This driver only supports 1 device\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
@@ -439,8 +480,14 @@ static int __devinit esb_probe(struct pci_dev *pdev,
 	   if not reset to the default */
 	if (heartbeat < 0x1 || heartbeat > 2 * 0x03ff) {
 		heartbeat = WATCHDOG_HEARTBEAT;
+<<<<<<< HEAD
 		pr_info("heartbeat value must be 1<heartbeat<2046, using %d\n",
 			heartbeat);
+=======
+		printk(KERN_INFO PFX
+			"heartbeat value must be 1<heartbeat<2046, using %d\n",
+								heartbeat);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Initialize the watchdog and make sure it does not run */
@@ -449,12 +496,23 @@ static int __devinit esb_probe(struct pci_dev *pdev,
 	/* Register the watchdog so that userspace has access to it */
 	ret = misc_register(&esb_miscdev);
 	if (ret != 0) {
+<<<<<<< HEAD
 		pr_err("cannot register miscdev on minor=%d (err=%d)\n",
 		       WATCHDOG_MINOR, ret);
 		goto err_unmap;
 	}
 	pr_info("initialized (0x%p). heartbeat=%d sec (nowayout=%d)\n",
 		BASEADDR, heartbeat, nowayout);
+=======
+		printk(KERN_ERR PFX
+			"cannot register miscdev on minor=%d (err=%d)\n",
+							WATCHDOG_MINOR, ret);
+		goto err_unmap;
+	}
+	printk(KERN_INFO PFX
+		"initialized (0x%p). heartbeat=%d sec (nowayout=%d)\n",
+						BASEADDR, heartbeat, nowayout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 err_unmap:
@@ -500,7 +558,11 @@ static int __init watchdog_init(void)
 static void __exit watchdog_cleanup(void)
 {
 	pci_unregister_driver(&esb_driver);
+<<<<<<< HEAD
 	pr_info("Watchdog Module Unloaded\n");
+=======
+	printk(KERN_INFO PFX "Watchdog Module Unloaded.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(watchdog_init);

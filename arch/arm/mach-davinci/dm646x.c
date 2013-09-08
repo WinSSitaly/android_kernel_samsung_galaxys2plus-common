@@ -8,14 +8,25 @@
  * is licensed "as is" without any warranty of any kind, whether express
  * or implied.
  */
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/clk.h>
 #include <linux/serial_8250.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 
 #include <asm/mach/map.h>
 
+=======
+#include <linux/gpio.h>
+
+#include <asm/mach/map.h>
+
+#include <mach/dm646x.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/cputype.h>
 #include <mach/edma.h>
 #include <mach/irqs.h>
@@ -25,13 +36,22 @@
 #include <mach/serial.h>
 #include <mach/common.h>
 #include <mach/asp.h>
+<<<<<<< HEAD
 #include <mach/gpio-davinci.h>
 
 #include "davinci.h"
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "clock.h"
 #include "mux.h"
 
 #define DAVINCI_VPIF_BASE       (0x01C12000)
+<<<<<<< HEAD
+=======
+#define VDD3P3V_PWDN_OFFSET	(0x48)
+#define VSCLKDIS_OFFSET		(0x6C)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define VDD3P3V_VID_MASK	(BIT_MASK(3) | BIT_MASK(2) | BIT_MASK(1) |\
 					BIT_MASK(0))
@@ -41,6 +61,7 @@
 /*
  * Device specific clocks
  */
+<<<<<<< HEAD
 #define DM646X_REF_FREQ		27000000
 #define DM646X_AUX_FREQ		24000000
 
@@ -51,6 +72,10 @@
 #define DM646X_EMAC_CNTRL_RAM_OFFSET	0x2000
 #define DM646X_EMAC_CNTRL_RAM_SIZE	0x2000
 
+=======
+#define DM646X_AUX_FREQ		24000000
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct pll_data pll1_data = {
 	.num       = 1,
 	.phys_base = DAVINCI_PLL1_BASE,
@@ -63,8 +88,11 @@ static struct pll_data pll2_data = {
 
 static struct clk ref_clk = {
 	.name = "ref_clk",
+<<<<<<< HEAD
 	.rate = DM646X_REF_FREQ,
 	.set_rate = davinci_simple_set_rate,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct clk aux_clkin = {
@@ -166,6 +194,10 @@ static struct clk dsp_clk = {
 	.name = "dsp",
 	.parent = &pll1_sysclk1,
 	.lpsc = DM646X_LPSC_C64X_CPU,
+<<<<<<< HEAD
+=======
+	.flags = PSC_DSP,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.usecount = 1,			/* REVISIT how to disable? */
 };
 
@@ -559,7 +591,10 @@ static struct edma_soc_info edma_cc0_info = {
 	.n_cc			= 1,
 	.queue_tc_mapping	= dm646x_queue_tc_mapping,
 	.queue_priority_mapping	= dm646x_queue_priority_mapping,
+<<<<<<< HEAD
 	.default_queue		= EVENTQ_1,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct edma_soc_info *dm646x_edma_info[EDMA_MAX_CC] = {
@@ -859,6 +894,10 @@ static struct davinci_soc_info davinci_soc_info_dm646x = {
 	.emac_pdata		= &dm646x_emac_pdata,
 	.sram_dma		= 0x10010000,
 	.sram_len		= SZ_32K,
+<<<<<<< HEAD
+=======
+	.reset_device		= &davinci_wdt_device,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void __init dm646x_init_mcasp0(struct snd_platform_data *pdata)
@@ -878,6 +917,7 @@ void dm646x_setup_vpif(struct vpif_display_config *display_config,
 		       struct vpif_capture_config *capture_config)
 {
 	unsigned int value;
+<<<<<<< HEAD
 
 	value = __raw_readl(DAVINCI_SYSMOD_VIRT(SYSMOD_VSCLKDIS));
 	value &= ~VSCLKDIS_MASK;
@@ -886,6 +926,17 @@ void dm646x_setup_vpif(struct vpif_display_config *display_config,
 	value = __raw_readl(DAVINCI_SYSMOD_VIRT(SYSMOD_VDD3P3VPWDN));
 	value &= ~VDD3P3V_VID_MASK;
 	__raw_writel(value, DAVINCI_SYSMOD_VIRT(SYSMOD_VDD3P3VPWDN));
+=======
+	void __iomem *base = IO_ADDRESS(DAVINCI_SYSTEM_MODULE_BASE);
+
+	value = __raw_readl(base + VSCLKDIS_OFFSET);
+	value &= ~VSCLKDIS_MASK;
+	__raw_writel(value, base + VSCLKDIS_OFFSET);
+
+	value = __raw_readl(base + VDD3P3V_PWDN_OFFSET);
+	value &= ~VDD3P3V_VID_MASK;
+	__raw_writel(value, base + VDD3P3V_PWDN_OFFSET);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	davinci_cfg_reg(DM646X_STSOMUX_DISABLE);
 	davinci_cfg_reg(DM646X_STSIMUX_DISABLE);
@@ -908,8 +959,13 @@ int __init dm646x_init_edma(struct edma_rsv_info *rsv)
 
 void __init dm646x_init(void)
 {
+<<<<<<< HEAD
 	davinci_common_init(&davinci_soc_info_dm646x);
 	davinci_map_sysmod();
+=======
+	dm646x_board_setup_refclk(&ref_clk);
+	davinci_common_init(&davinci_soc_info_dm646x);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __init dm646x_init_devices(void)

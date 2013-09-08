@@ -10,6 +10,10 @@
 #include <linux/suspend.h>
 #include <linux/bootmem.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/page.h>
 #include <asm/pgtable.h>
 #include <asm/mmzone.h>
@@ -129,6 +133,11 @@ static int resume_physical_mapping_init(pgd_t *pgd_base)
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	resume_map_numa_kva(pgd_base);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

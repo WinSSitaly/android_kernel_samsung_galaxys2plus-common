@@ -127,19 +127,29 @@ static int __devinit sunfire_led_generic_probe(struct platform_device *pdev,
 					       struct led_type *types)
 {
 	struct sunfire_drvdata *p;
+<<<<<<< HEAD
 	int i, err;
+=======
+	int i, err = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (pdev->num_resources != 1) {
 		printk(KERN_ERR PFX "Wrong number of resources %d, should be 1\n",
 		       pdev->num_resources);
+<<<<<<< HEAD
 		err = -EINVAL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
 	p = kzalloc(sizeof(*p), GFP_KERNEL);
 	if (!p) {
 		printk(KERN_ERR PFX "Could not allocate struct sunfire_drvdata\n");
+<<<<<<< HEAD
 		err = -ENOMEM;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
@@ -162,14 +172,24 @@ static int __devinit sunfire_led_generic_probe(struct platform_device *pdev,
 
 	dev_set_drvdata(&pdev->dev, p);
 
+<<<<<<< HEAD
 	return 0;
+=======
+	err = 0;
+out:
+	return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out_unregister_led_cdevs:
 	for (i--; i >= 0; i--)
 		led_classdev_unregister(&p->leds[i].led_cdev);
+<<<<<<< HEAD
 	kfree(p);
 out:
 	return err;
+=======
+	goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __devexit sunfire_led_generic_remove(struct platform_device *pdev)

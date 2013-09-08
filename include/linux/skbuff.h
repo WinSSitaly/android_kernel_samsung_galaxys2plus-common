@@ -18,10 +18,16 @@
 #include <linux/kmemcheck.h>
 #include <linux/compiler.h>
 #include <linux/time.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
 #include <linux/cache.h>
 
 #include <linux/atomic.h>
+=======
+#include <linux/cache.h>
+
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/types.h>
 #include <linux/spinlock.h>
 #include <linux/net.h>
@@ -30,8 +36,11 @@
 #include <linux/rcupdate.h>
 #include <linux/dmaengine.h>
 #include <linux/hrtimer.h>
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
 #include <linux/netdev_features.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Don't change this without changing skb_csum_unnecessary! */
 #define CHECKSUM_NONE 0
@@ -48,11 +57,24 @@
 #define SKB_MAX_HEAD(X)		(SKB_MAX_ORDER((X), 0))
 #define SKB_MAX_ALLOC		(SKB_MAX_ORDER(0, 2))
 
+<<<<<<< HEAD
 /* return minimum truesize of one skb containing X bytes of data */
 #define SKB_TRUESIZE(X) ((X) +						\
 			 SKB_DATA_ALIGN(sizeof(struct sk_buff)) +	\
 			 SKB_DATA_ALIGN(sizeof(struct skb_shared_info)))
 
+=======
+#define SKB_NETPOLL_SIGNATURE				0x12345678
+#ifdef CONFIG_USB_ETH_SKB_ALLOC_OPTIMIZATION
+#define SKB_UETH_RX_PRE_ALLOC_MEM_SIG	0xfedcba98
+#define SKB_UETH_RX_THRESHOLD_SIG	0x789ABCDE
+
+extern unsigned short ueth_rx_skb_size(void);
+extern void ueth_recycle_rx_skb_data(unsigned char *data, gfp_t gfp_flags);
+extern struct sk_buff *alloc_skb_uether_rx(unsigned int size,
+		unsigned char *data, gfp_t gfp_mask);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* A. Checksumming of received packets by device.
  *
  *	NONE: device failed to checksum this packet.
@@ -89,12 +111,17 @@
  *	at device setup time.
  *	NETIF_F_HW_CSUM	- it is clever device, it is able to checksum
  *			  everything.
+<<<<<<< HEAD
+=======
+ *	NETIF_F_NO_CSUM - loopback or reliable single hop media.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	NETIF_F_IP_CSUM - device is dumb. It is able to csum only
  *			  TCP/UDP over IPv4. Sigh. Vendors like this
  *			  way by an unknown reason. Though, see comment above
  *			  about CHECKSUM_UNNECESSARY. 8)
  *	NETIF_F_IPV6_CSUM about as dumb as the last one but does IPv6 instead.
  *
+<<<<<<< HEAD
  *	UNNECESSARY: device will do per protocol specific csum. Protocol drivers
  *	that do not want net to perform the checksum calculation should use
  *	this flag in their outgoing skbs.
@@ -102,6 +129,8 @@
  *			  offload. Correspondingly, the FCoE protocol driver
  *			  stack should use CHECKSUM_UNNECESSARY.
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	Any questions? No questions, good. 		--ANK
  */
 
@@ -136,6 +165,7 @@ struct sk_buff_head {
 
 struct sk_buff;
 
+<<<<<<< HEAD
 /* To allow 64K frame to be packed as single skb without frag_list we
  * require 64K/PAGE_SIZE pages plus 1 additional page to allow for
  * buffers which do not start on a page boundary.
@@ -147,14 +177,27 @@ struct sk_buff;
 #define MAX_SKB_FRAGS 16UL
 #else
 #define MAX_SKB_FRAGS (65536/PAGE_SIZE + 1)
+=======
+/* To allow 64K frame to be packed as single skb without frag_list. Since
+ * GRO uses frags we allocate at least 16 regardless of page size.
+ */
+#if (65536/PAGE_SIZE + 2) < 16
+#define MAX_SKB_FRAGS 16UL
+#else
+#define MAX_SKB_FRAGS (65536/PAGE_SIZE + 2)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 typedef struct skb_frag_struct skb_frag_t;
 
 struct skb_frag_struct {
+<<<<<<< HEAD
 	struct {
 		struct page *p;
 	} page;
+=======
+	struct page *page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if (BITS_PER_LONG > 32) || (PAGE_SIZE >= 65536)
 	__u32 page_offset;
 	__u32 size;
@@ -164,6 +207,7 @@ struct skb_frag_struct {
 #endif
 };
 
+<<<<<<< HEAD
 static inline unsigned int skb_frag_size(const skb_frag_t *frag)
 {
 	return frag->size;
@@ -184,6 +228,8 @@ static inline void skb_frag_size_sub(skb_frag_t *frag, int delta)
 	frag->size -= delta;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define HAVE_HW_TIME_STAMP
 
 /**
@@ -225,6 +271,7 @@ enum {
 	/* device driver is going to provide hardware time stamp */
 	SKBTX_IN_PROGRESS = 1 << 2,
 
+<<<<<<< HEAD
 	/* device driver supports TX zero-copy buffers */
 	SKBTX_DEV_ZEROCOPY = 1 << 3,
 
@@ -242,21 +289,36 @@ struct ubuf_info {
 	void (*callback)(struct ubuf_info *);
 	void *ctx;
 	unsigned long desc;
+=======
+	/* ensure the originating sk reference is available on driver level */
+	SKBTX_DRV_NEEDS_SK_REF = 1 << 3,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* This data is invariant across clones and lives at
  * the end of the header data, ie. at skb->end.
  */
 struct skb_shared_info {
+<<<<<<< HEAD
 	unsigned char	nr_frags;
 	__u8		tx_flags;
+=======
+	unsigned short	nr_frags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned short	gso_size;
 	/* Warning: this field is not always filled in (UFO)! */
 	unsigned short	gso_segs;
 	unsigned short  gso_type;
+<<<<<<< HEAD
 	struct sk_buff	*frag_list;
 	struct skb_shared_hwtstamps hwtstamps;
 	__be32          ip6_frag_id;
+=======
+	__be32          ip6_frag_id;
+	__u8		tx_flags;
+	struct sk_buff	*frag_list;
+	struct skb_shared_hwtstamps hwtstamps;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Warning : all fields before dataref are cleared in __alloc_skb()
@@ -266,7 +328,10 @@ struct skb_shared_info {
 	/* Intermediate layers must ensure that destructor_arg
 	 * remains valid until skb destructor */
 	void *		destructor_arg;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* must be last field, see pskb_expand_head() */
 	skb_frag_t	frags[MAX_SKB_FRAGS];
 };
@@ -326,12 +391,24 @@ typedef unsigned char *sk_buff_data_t;
  *	struct sk_buff - socket buffer
  *	@next: Next buffer in list
  *	@prev: Previous buffer in list
+<<<<<<< HEAD
  *	@tstamp: Time we arrived
  *	@sk: Socket we are owned by
  *	@dev: Device we arrived on/are leaving by
  *	@cb: Control buffer. Free for use by every layer. Put private vars here
  *	@_skb_refdst: destination entry (with norefcount bit)
  *	@sp: the security path, used for xfrm
+=======
+ *	@sk: Socket we are owned by
+ *	@tstamp: Time we arrived
+ *	@dev: Device we arrived on/are leaving by
+ *	@transport_header: Transport layer header
+ *	@network_header: Network layer header
+ *	@mac_header: Link layer header
+ *	@_skb_refdst: destination entry (with norefcount bit)
+ *	@sp: the security path, used for xfrm
+ *	@cb: Control buffer. Free for use by every layer. Put private vars here
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	@len: Length of actual data
  *	@data_len: Data length
  *	@mac_len: Length of link layer header
@@ -339,6 +416,7 @@ typedef unsigned char *sk_buff_data_t;
  *	@csum: Checksum (must include start/offset pair)
  *	@csum_start: Offset from skb->head where checksumming should start
  *	@csum_offset: Offset from csum_start where checksum should be stored
+<<<<<<< HEAD
  *	@priority: Packet queueing priority
  *	@local_df: allow local fragmentation
  *	@cloned: Head may be cloned (check refcnt to be sure)
@@ -347,10 +425,30 @@ typedef unsigned char *sk_buff_data_t;
  *	@nfctinfo: Relationship of this skb to the connection
  *	@pkt_type: Packet class
  *	@fclone: skbuff clone status
+=======
+ *	@local_df: allow local fragmentation
+ *	@cloned: Head may be cloned (check refcnt to be sure)
+ *	@nohdr: Payload reference only, must not modify header
+ *	@pkt_type: Packet class
+ *	@fclone: skbuff clone status
+ *	@ip_summed: Driver fed us an IP checksum
+ *	@priority: Packet queueing priority
+ *	@users: User count - see {datagram,tcp}.c
+ *	@protocol: Packet protocol from driver
+ *	@truesize: Buffer size 
+ *	@head: Head of buffer
+ *	@data: Data head pointer
+ *	@tail: Tail pointer
+ *	@end: End pointer
+ *	@destructor: Destruct function
+ *	@mark: Generic packet mark
+ *	@nfct: Associated connection, if any
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	@ipvs_property: skbuff is owned by ipvs
  *	@peeked: this packet has been seen already, so stats have been
  *		done for it, don't do them again
  *	@nf_trace: netfilter packet trace flag
+<<<<<<< HEAD
  *	@protocol: Packet protocol from driver
  *	@destructor: Destruct function
  *	@nfct: Associated connection, if any
@@ -383,6 +481,21 @@ typedef unsigned char *sk_buff_data_t;
  *	@data: Data head pointer
  *	@truesize: Buffer size
  *	@users: User count - see {datagram,tcp}.c
+=======
+ *	@nfctinfo: Relationship of this skb to the connection
+ *	@nfct_reasm: netfilter conntrack re-assembly pointer
+ *	@nf_bridge: Saved data about a bridged frame - see br_netfilter.c
+ *	@skb_iif: ifindex of device we arrived on
+ *	@rxhash: the packet hash computed on receive
+ *	@queue_mapping: Queue mapping for multiqueue devices
+ *	@tc_index: Traffic control index
+ *	@tc_verd: traffic control verdict
+ *	@ndisc_nodetype: router type (from link layer)
+ *	@dma_cookie: a cookie to one of several possible DMA operations
+ *		done by skb DMA functions
+ *	@secmark: security marking
+ *	@vlan_tci: vlan tag control information
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 struct sk_buff {
@@ -445,11 +558,14 @@ struct sk_buff {
 #endif
 
 	int			skb_iif;
+<<<<<<< HEAD
 
 	__u32			rxhash;
 
 	__u16			vlan_tci;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_NET_SCHED
 	__u16			tc_index;	/* traffic control index */
 #ifdef CONFIG_NET_CLS_ACT
@@ -457,12 +573,18 @@ struct sk_buff {
 #endif
 #endif
 
+<<<<<<< HEAD
+=======
+	__u32			rxhash;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__u16			queue_mapping;
 	kmemcheck_bitfield_begin(flags2);
 #ifdef CONFIG_IPV6_NDISC_NODETYPE
 	__u8			ndisc_nodetype:2;
 #endif
 	__u8			ooo_okay:1;
+<<<<<<< HEAD
 	__u8			l4_rxhash:1;
 	__u8			wifi_acked_valid:1;
 	__u8			wifi_acked:1;
@@ -470,6 +592,12 @@ struct sk_buff {
 	/* 9/11 bit hole (depending on ndisc_nodetype presence) */
 	kmemcheck_bitfield_end(flags2);
 
+=======
+	kmemcheck_bitfield_end(flags2);
+
+	/* 0/13 bit hole */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_NET_DMA
 	dma_cookie_t		dma_cookie;
 #endif
@@ -479,12 +607,23 @@ struct sk_buff {
 	union {
 		__u32		mark;
 		__u32		dropcount;
+<<<<<<< HEAD
 		__u32		reserved_tailroom;
 	};
 
 	sk_buff_data_t		transport_header;
 	sk_buff_data_t		network_header;
 	sk_buff_data_t		mac_header;
+=======
+	};
+
+	__u16			vlan_tci;
+
+	sk_buff_data_t		transport_header;
+	sk_buff_data_t		network_header;
+	sk_buff_data_t		mac_header;
+	unsigned int			signature;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* These elements must be at the end, see alloc_skb() for details.  */
 	sk_buff_data_t		tail;
 	sk_buff_data_t		end;
@@ -492,7 +631,11 @@ struct sk_buff {
 				*data;
 	unsigned int		truesize;
 	atomic_t		users;
+<<<<<<< HEAD
 };
+=======
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef __KERNEL__
 /*
@@ -500,6 +643,10 @@ struct sk_buff {
  */
 #include <linux/slab.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * skb might have a dst pointer attached, refcounted or not.
@@ -559,7 +706,10 @@ extern void consume_skb(struct sk_buff *skb);
 extern void	       __kfree_skb(struct sk_buff *skb);
 extern struct sk_buff *__alloc_skb(unsigned int size,
 				   gfp_t priority, int fclone, int node);
+<<<<<<< HEAD
 extern struct sk_buff *build_skb(void *data);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline struct sk_buff *alloc_skb(unsigned int size,
 					gfp_t priority)
 {
@@ -572,18 +722,29 @@ static inline struct sk_buff *alloc_skb_fclone(unsigned int size,
 	return __alloc_skb(size, priority, 1, NUMA_NO_NODE);
 }
 
+<<<<<<< HEAD
 extern void skb_recycle(struct sk_buff *skb);
 extern bool skb_recycle_check(struct sk_buff *skb, int skb_size);
 
 extern struct sk_buff *skb_morph(struct sk_buff *dst, struct sk_buff *src);
 extern int skb_copy_ubufs(struct sk_buff *skb, gfp_t gfp_mask);
+=======
+extern bool skb_recycle_check(struct sk_buff *skb, int skb_size);
+
+extern struct sk_buff *skb_morph(struct sk_buff *dst, struct sk_buff *src);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct sk_buff *skb_clone(struct sk_buff *skb,
 				 gfp_t priority);
 extern struct sk_buff *skb_copy(const struct sk_buff *skb,
 				gfp_t priority);
+<<<<<<< HEAD
 extern struct sk_buff *__pskb_copy(struct sk_buff *skb,
 				 int headroom, gfp_t gfp_mask);
 
+=======
+extern struct sk_buff *pskb_copy(struct sk_buff *skb,
+				 gfp_t gfp_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int	       pskb_expand_head(struct sk_buff *skb,
 					int nhead, int ntail,
 					gfp_t gfp_mask);
@@ -626,11 +787,19 @@ extern unsigned int   skb_find_text(struct sk_buff *skb, unsigned int from,
 				    unsigned int to, struct ts_config *config,
 				    struct ts_state *state);
 
+<<<<<<< HEAD
 extern void __skb_get_rxhash(struct sk_buff *skb);
 static inline __u32 skb_get_rxhash(struct sk_buff *skb)
 {
 	if (!skb->rxhash)
 		__skb_get_rxhash(skb);
+=======
+extern __u32 __skb_get_rxhash(struct sk_buff *skb);
+static inline __u32 skb_get_rxhash(struct sk_buff *skb)
+{
+	if (!skb->rxhash)
+		skb->rxhash = __skb_get_rxhash(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return skb->rxhash;
 }
@@ -876,15 +1045,22 @@ static inline struct sk_buff *skb_unshare(struct sk_buff *skb,
  *	The reference count is not incremented and the reference is therefore
  *	volatile. Use with caution.
  */
+<<<<<<< HEAD
 static inline struct sk_buff *skb_peek(const struct sk_buff_head *list_)
 {
 	struct sk_buff *list = ((const struct sk_buff *)list_)->next;
+=======
+static inline struct sk_buff *skb_peek(struct sk_buff_head *list_)
+{
+	struct sk_buff *list = ((struct sk_buff *)list_)->next;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (list == (struct sk_buff *)list_)
 		list = NULL;
 	return list;
 }
 
 /**
+<<<<<<< HEAD
  *	skb_peek_next - peek skb following the given one from a queue
  *	@skb: skb to start from
  *	@list_: list to peek at
@@ -903,6 +1079,8 @@ static inline struct sk_buff *skb_peek_next(struct sk_buff *skb,
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	skb_peek_tail - peek at the tail of an &sk_buff_head
  *	@list_: list to peek at
  *
@@ -915,9 +1093,15 @@ static inline struct sk_buff *skb_peek_next(struct sk_buff *skb,
  *	The reference count is not incremented and the reference is therefore
  *	volatile. Use with caution.
  */
+<<<<<<< HEAD
 static inline struct sk_buff *skb_peek_tail(const struct sk_buff_head *list_)
 {
 	struct sk_buff *list = ((const struct sk_buff *)list_)->prev;
+=======
+static inline struct sk_buff *skb_peek_tail(struct sk_buff_head *list_)
+{
+	struct sk_buff *list = ((struct sk_buff *)list_)->prev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (list == (struct sk_buff *)list_)
 		list = NULL;
 	return list;
@@ -1017,7 +1201,11 @@ static inline void skb_queue_splice(const struct sk_buff_head *list,
 }
 
 /**
+<<<<<<< HEAD
  *	skb_queue_splice_init - join two skb lists and reinitialise the emptied list
+=======
+ *	skb_queue_splice - join two skb lists and reinitialise the emptied list
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	@list: the new list to add
  *	@head: the place to add it in the first list
  *
@@ -1048,7 +1236,11 @@ static inline void skb_queue_splice_tail(const struct sk_buff_head *list,
 }
 
 /**
+<<<<<<< HEAD
  *	skb_queue_splice_tail_init - join two skb lists and reinitialise the emptied list
+=======
+ *	skb_queue_splice_tail - join two skb lists and reinitialise the emptied list
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	@list: the new list to add
  *	@head: the place to add it in the first list
  *
@@ -1179,7 +1371,11 @@ static inline struct sk_buff *__skb_dequeue_tail(struct sk_buff_head *list)
 }
 
 
+<<<<<<< HEAD
 static inline bool skb_is_nonlinear(const struct sk_buff *skb)
+=======
+static inline int skb_is_nonlinear(const struct sk_buff *skb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return skb->data_len;
 }
@@ -1194,6 +1390,7 @@ static inline int skb_pagelen(const struct sk_buff *skb)
 	int i, len = 0;
 
 	for (i = (int)skb_shinfo(skb)->nr_frags - 1; i >= 0; i--)
+<<<<<<< HEAD
 		len += skb_frag_size(&skb_shinfo(skb)->frags[i]);
 	return len + skb_headlen(skb);
 }
@@ -1239,11 +1436,29 @@ static inline void skb_fill_page_desc(struct sk_buff *skb, int i,
 				      struct page *page, int off, int size)
 {
 	__skb_fill_page_desc(skb, i, page, off, size);
+=======
+		len += skb_shinfo(skb)->frags[i].size;
+	return len + skb_headlen(skb);
+}
+
+static inline void skb_fill_page_desc(struct sk_buff *skb, int i,
+				      struct page *page, int off, int size)
+{
+	skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
+
+	frag->page		  = page;
+	frag->page_offset	  = off;
+	frag->size		  = size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skb_shinfo(skb)->nr_frags = i + 1;
 }
 
 extern void skb_add_rx_frag(struct sk_buff *skb, int i, struct page *page,
+<<<<<<< HEAD
 			    int off, int size, unsigned int truesize);
+=======
+			    int off, int size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define SKB_PAGE_ASSERT(skb) 	BUG_ON(skb_shinfo(skb)->nr_frags)
 #define SKB_FRAG_ASSERT(skb) 	BUG_ON(skb_has_frag_list(skb))
@@ -1365,6 +1580,7 @@ static inline int skb_tailroom(const struct sk_buff *skb)
 }
 
 /**
+<<<<<<< HEAD
  *	skb_availroom - bytes at buffer end
  *	@skb: buffer to check
  *
@@ -1380,6 +1596,8 @@ static inline int skb_availroom(const struct sk_buff *skb)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	skb_reserve - adjust headroom
  *	@skb: buffer to alter
  *	@len: bytes to move
@@ -1562,6 +1780,15 @@ static inline int pskb_network_may_pull(struct sk_buff *skb, unsigned int len)
  * Since this trade off varies between architectures, we allow NET_IP_ALIGN
  * to be overridden.
  */
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_ETH_SKB_ALLOC_OPTIMIZATION
+#ifdef NET_IP_ALIGN
+#undef NET_IP_ALIGN
+#endif
+#define NET_IP_ALIGN	0
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef NET_IP_ALIGN
 #define NET_IP_ALIGN	2
 #endif
@@ -1709,16 +1936,24 @@ static inline struct sk_buff *netdev_alloc_skb(struct net_device *dev,
 	return __netdev_alloc_skb(dev, length, GFP_ATOMIC);
 }
 
+<<<<<<< HEAD
 static inline struct sk_buff *__netdev_alloc_skb_ip_align(struct net_device *dev,
 		unsigned int length, gfp_t gfp)
 {
 	struct sk_buff *skb = __netdev_alloc_skb(dev, length + NET_IP_ALIGN, gfp);
+=======
+static inline struct sk_buff *netdev_alloc_skb_ip_align(struct net_device *dev,
+		unsigned int length)
+{
+	struct sk_buff *skb = netdev_alloc_skb(dev, length + NET_IP_ALIGN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (NET_IP_ALIGN && skb)
 		skb_reserve(skb, NET_IP_ALIGN);
 	return skb;
 }
 
+<<<<<<< HEAD
 static inline struct sk_buff *netdev_alloc_skb_ip_align(struct net_device *dev,
 		unsigned int length)
 {
@@ -1860,6 +2095,38 @@ static inline struct sk_buff *pskb_copy(struct sk_buff *skb,
 					gfp_t gfp_mask)
 {
 	return __pskb_copy(skb, skb_headroom(skb), gfp_mask);
+=======
+/**
+ *	__netdev_alloc_page - allocate a page for ps-rx on a specific device
+ *	@dev: network device to receive on
+ *	@gfp_mask: alloc_pages_node mask
+ *
+ * 	Allocate a new page. dev currently unused.
+ *
+ * 	%NULL is returned if there is no free memory.
+ */
+static inline struct page *__netdev_alloc_page(struct net_device *dev, gfp_t gfp_mask)
+{
+	return alloc_pages_node(NUMA_NO_NODE, gfp_mask, 0);
+}
+
+/**
+ *	netdev_alloc_page - allocate a page for ps-rx on a specific device
+ *	@dev: network device to receive on
+ *
+ * 	Allocate a new page. dev currently unused.
+ *
+ * 	%NULL is returned if there is no free memory.
+ */
+static inline struct page *netdev_alloc_page(struct net_device *dev)
+{
+	return __netdev_alloc_page(dev, GFP_ATOMIC);
+}
+
+static inline void netdev_free_page(struct net_device *dev, struct page *page)
+{
+	__free_page(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1870,7 +2137,11 @@ static inline struct sk_buff *pskb_copy(struct sk_buff *skb,
  *	Returns true if modifying the header part of the cloned buffer
  *	does not requires the data to be copied.
  */
+<<<<<<< HEAD
 static inline int skb_clone_writable(const struct sk_buff *skb, unsigned int len)
+=======
+static inline int skb_clone_writable(struct sk_buff *skb, unsigned int len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return !skb_header_cloned(skb) &&
 	       skb_headroom(skb) + len <= skb->hdr_len;
@@ -1881,6 +2152,11 @@ static inline int __skb_cow(struct sk_buff *skb, unsigned int headroom,
 {
 	int delta = 0;
 
+<<<<<<< HEAD
+=======
+	if (headroom < NET_SKB_PAD)
+		headroom = NET_SKB_PAD;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (headroom > skb_headroom(skb))
 		delta = headroom - skb_headroom(skb);
 
@@ -1962,6 +2238,7 @@ static inline int skb_add_data(struct sk_buff *skb,
 }
 
 static inline int skb_can_coalesce(struct sk_buff *skb, int i,
+<<<<<<< HEAD
 				   const struct page *page, int off)
 {
 	if (i) {
@@ -1969,6 +2246,15 @@ static inline int skb_can_coalesce(struct sk_buff *skb, int i,
 
 		return page == skb_frag_page(frag) &&
 		       off == frag->page_offset + skb_frag_size(frag);
+=======
+				   struct page *page, int off)
+{
+	if (i) {
+		struct skb_frag_struct *frag = &skb_shinfo(skb)->frags[i - 1];
+
+		return page == frag->page &&
+		       off == frag->page_offset + frag->size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }
@@ -2095,7 +2381,11 @@ static inline void skb_frag_add_head(struct sk_buff *skb, struct sk_buff *frag)
 	for (iter = skb_shinfo(skb)->frag_list; iter; iter = iter->next)
 
 extern struct sk_buff *__skb_recv_datagram(struct sock *sk, unsigned flags,
+<<<<<<< HEAD
 					   int *peeked, int *off, int *err);
+=======
+					   int *peeked, int *err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct sk_buff *skb_recv_datagram(struct sock *sk, unsigned flags,
 					 int noblock, int *err);
 extern unsigned int    datagram_poll(struct file *file, struct socket *sock,
@@ -2141,8 +2431,12 @@ extern void	       skb_split(struct sk_buff *skb,
 extern int	       skb_shift(struct sk_buff *tgt, struct sk_buff *skb,
 				 int shiftlen);
 
+<<<<<<< HEAD
 extern struct sk_buff *skb_segment(struct sk_buff *skb,
 				   netdev_features_t features);
+=======
+extern struct sk_buff *skb_segment(struct sk_buff *skb, u32 features);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void *skb_header_pointer(const struct sk_buff *skb, int offset,
 				       int len, void *buffer)
@@ -2290,7 +2584,12 @@ static inline void sw_tx_timestamp(struct sk_buff *skb)
  * skb_tx_timestamp() - Driver hook for transmit timestamping
  *
  * Ethernet MAC Drivers should call this function in their hard_xmit()
+<<<<<<< HEAD
  * function immediately before giving the sk_buff to the MAC hardware.
+=======
+ * function as soon as possible after giving the sk_buff to the MAC
+ * hardware, but before freeing the sk_buff.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * @skb: A socket buffer.
  */
@@ -2300,6 +2599,7 @@ static inline void skb_tx_timestamp(struct sk_buff *skb)
 	sw_tx_timestamp(skb);
 }
 
+<<<<<<< HEAD
 /**
  * skb_complete_wifi_ack - deliver skb with wifi status
  *
@@ -2309,6 +2609,8 @@ static inline void skb_tx_timestamp(struct sk_buff *skb)
  */
 void skb_complete_wifi_ack(struct sk_buff *skb, bool acked);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern __sum16 __skb_checksum_complete_head(struct sk_buff *skb, int len);
 extern __sum16 __skb_checksum_complete(struct sk_buff *skb);
 
@@ -2392,6 +2694,7 @@ static inline void nf_reset(struct sk_buff *skb)
 #endif
 }
 
+<<<<<<< HEAD
 static inline void nf_reset_trace(struct sk_buff *skb)
 {
 #if IS_ENABLED(CONFIG_NETFILTER_XT_TARGET_TRACE)
@@ -2399,6 +2702,8 @@ static inline void nf_reset_trace(struct sk_buff *skb)
 #endif
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Note: This doesn't put any conntrack and bridge info in dst. */
 static inline void __nf_copy(struct sk_buff *dst, const struct sk_buff *src)
 {
@@ -2495,12 +2800,20 @@ static inline struct sec_path *skb_sec_path(struct sk_buff *skb)
 }
 #endif
 
+<<<<<<< HEAD
 static inline bool skb_is_gso(const struct sk_buff *skb)
+=======
+static inline int skb_is_gso(const struct sk_buff *skb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return skb_shinfo(skb)->gso_size;
 }
 
+<<<<<<< HEAD
 static inline bool skb_is_gso_v6(const struct sk_buff *skb)
+=======
+static inline int skb_is_gso_v6(const struct sk_buff *skb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return skb_shinfo(skb)->gso_type & SKB_GSO_TCPV6;
 }
@@ -2511,8 +2824,12 @@ static inline bool skb_warn_if_lro(const struct sk_buff *skb)
 {
 	/* LRO sets gso_size but not gso_type, whereas if GSO is really
 	 * wanted then gso_type will be set. */
+<<<<<<< HEAD
 	const struct skb_shared_info *shinfo = skb_shinfo(skb);
 
+=======
+	struct skb_shared_info *shinfo = skb_shinfo(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (skb_is_nonlinear(skb) && shinfo->gso_size != 0 &&
 	    unlikely(shinfo->gso_type == 0)) {
 		__skb_warn_lro_forwarding(skb);
@@ -2536,7 +2853,11 @@ static inline void skb_forward_csum(struct sk_buff *skb)
  * Instead of forcing ip_summed to CHECKSUM_NONE, we can
  * use this helper, to document places where we make this assertion.
  */
+<<<<<<< HEAD
 static inline void skb_checksum_none_assert(const struct sk_buff *skb)
+=======
+static inline void skb_checksum_none_assert(struct sk_buff *skb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 #ifdef DEBUG
 	BUG_ON(skb->ip_summed != CHECKSUM_NONE);
@@ -2544,6 +2865,7 @@ static inline void skb_checksum_none_assert(const struct sk_buff *skb)
 }
 
 bool skb_partial_csum_set(struct sk_buff *skb, u16 start, u16 off);
+<<<<<<< HEAD
 
 static inline bool skb_is_recycleable(const struct sk_buff *skb, int skb_size)
 {
@@ -2565,5 +2887,7 @@ static inline bool skb_is_recycleable(const struct sk_buff *skb, int skb_size)
 
 	return true;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* __KERNEL__ */
 #endif	/* _LINUX_SKBUFF_H */

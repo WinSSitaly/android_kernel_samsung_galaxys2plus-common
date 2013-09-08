@@ -94,7 +94,11 @@ static int apsh4ad0a_clk_init(void)
 	int ret;
 
 	clk = clk_get(NULL, "extal");
+<<<<<<< HEAD
 	if (IS_ERR(clk))
+=======
+	if (!clk || IS_ERR(clk))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return PTR_ERR(clk);
 	ret = clk_set_rate(clk, 33333000);
 	clk_put(clk);

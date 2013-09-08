@@ -20,7 +20,11 @@
 
 #include <linux/init.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include "seq_clientmgr.h"
 #include <sound/initval.h>
@@ -46,7 +50,11 @@
 
   The number of ports to be created can be specified via the module
   parameter "ports".  For example, to create four ports, add the
+<<<<<<< HEAD
   following option in a configuration file under /etc/modprobe.d/:
+=======
+  following option in /etc/modprobe.conf:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	option snd-seq-dummy ports=4
 
@@ -65,7 +73,11 @@ MODULE_LICENSE("GPL");
 MODULE_ALIAS("snd-seq-client-" __stringify(SNDRV_SEQ_CLIENT_DUMMY));
 
 static int ports = 1;
+<<<<<<< HEAD
 static bool duplex;
+=======
+static int duplex;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(ports, int, 0444);
 MODULE_PARM_DESC(ports, "number of ports to be created");

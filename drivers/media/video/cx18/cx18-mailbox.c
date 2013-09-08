@@ -196,7 +196,11 @@ static void cx18_mdl_send_to_videobuf(struct cx18_stream *s,
 	}
 
 	/* If we've filled the buffer as per the callers res then dispatch it */
+<<<<<<< HEAD
 	if (vb_buf->bytes_used >= s->vb_bytes_per_frame) {
+=======
+	if (vb_buf->bytes_used >= (vb_buf->vb.width * vb_buf->vb.height * 2)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dispatch = 1;
 		vb_buf->bytes_used = 0;
 	}

@@ -180,7 +180,11 @@ static int input_handle_abs_event(struct input_dev *dev,
 		return INPUT_IGNORE_EVENT;
 	}
 
+<<<<<<< HEAD
 	is_mt_event = input_is_mt_value(code);
+=======
+	is_mt_event = code >= ABS_MT_FIRST && code <= ABS_MT_LAST;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!is_mt_event) {
 		pold = &dev->absinfo[code].value;
@@ -344,11 +348,24 @@ static void input_handle_event(struct input_dev *dev,
  * to 'seed' initial state of a switch or initial position of absolute
  * axis, etc.
  */
+<<<<<<< HEAD
+=======
+#if defined (CONFIG_SEC_DEBUG)
+	extern void sec_debug_check_crash_key(unsigned int code, int value);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void input_event(struct input_dev *dev,
 		 unsigned int type, unsigned int code, int value)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 
+=======
+#if defined (CONFIG_SEC_DEBUG)
+	sec_debug_check_crash_key(code ,value);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (is_event_supported(type, dev->evbit, EV_MAX)) {
 
 		spin_lock_irqsave(&dev->event_lock, flags);
@@ -1624,7 +1641,11 @@ static struct device_type input_dev_type = {
 #endif
 };
 
+<<<<<<< HEAD
 static char *input_devnode(struct device *dev, umode_t *mode)
+=======
+static char *input_devnode(struct device *dev, mode_t *mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return kasprintf(GFP_KERNEL, "input/%s", dev_name(dev));
 }

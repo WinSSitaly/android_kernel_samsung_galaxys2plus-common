@@ -21,6 +21,10 @@
 #define KDB_CMD_SS	(-1003)
 #define KDB_CMD_SSB	(-1004)
 #define KDB_CMD_KGDB (-1005)
+<<<<<<< HEAD
+=======
+#define KDB_CMD_KGDB2 (-1006)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Internal debug flags */
 #define KDB_DEBUG_FLAG_BP	0x0002	/* Breakpoint subsystem debug */
@@ -145,6 +149,10 @@ extern int kdb_state;
 						 * keyboard on this cpu */
 #define KDB_STATE_KEXEC		0x00040000	/* kexec issued */
 #define KDB_STATE_DOING_KGDB	0x00080000	/* kgdb enter now issued */
+<<<<<<< HEAD
+=======
+#define KDB_STATE_DOING_KGDB2	0x00100000	/* kgdb enter now issued */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define KDB_STATE_KGDB_TRANS	0x00200000	/* Transition to kgdb */
 #define KDB_STATE_ARCH		0xff000000	/* Reserved for arch
 						 * specific use */
@@ -216,7 +224,10 @@ extern void kdb_print_nameval(const char *name, unsigned long val);
 extern void kdb_send_sig_info(struct task_struct *p, struct siginfo *info);
 extern void kdb_meminfo_proc_show(void);
 extern char *kdb_getstr(char *, size_t, char *);
+<<<<<<< HEAD
 extern void kdb_gdb_state_pass(char *buf);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Defines for kdb_symbol_print */
 #define KDB_SP_SPACEB	0x0001		/* Space before string */
@@ -246,6 +257,7 @@ extern void debug_kusage(void);
 
 extern void kdb_set_current_task(struct task_struct *);
 extern struct task_struct *kdb_current_task;
+<<<<<<< HEAD
 
 #ifdef CONFIG_KDB_KEYBOARD
 extern void kdb_kbd_cleanup_state(void);
@@ -253,6 +265,8 @@ extern void kdb_kbd_cleanup_state(void);
 #define kdb_kbd_cleanup_state()
 #endif /* ! CONFIG_KDB_KEYBOARD */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_MODULES
 extern struct list_head *kdb_modules;
 #endif /* CONFIG_MODULES */

@@ -5699,7 +5699,11 @@ int ocfs2_remove_btree_range(struct inode *inode,
 					   OCFS2_JOURNAL_ACCESS_WRITE);
 	if (ret) {
 		mlog_errno(ret);
+<<<<<<< HEAD
 		goto out_commit;
+=======
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	dquot_free_space_nodirty(inode,

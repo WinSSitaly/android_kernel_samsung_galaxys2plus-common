@@ -15,6 +15,7 @@
 #ifndef __LINUX_USB_GADGET_H
 #define __LINUX_USB_GADGET_H
 
+<<<<<<< HEAD
 #include <linux/device.h>
 #include <linux/errno.h>
 #include <linux/init.h>
@@ -23,6 +24,9 @@
 #include <linux/scatterlist.h>
 #include <linux/types.h>
 #include <linux/usb/ch9.h>
+=======
+#include <linux/slab.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct usb_ep;
 
@@ -33,11 +37,15 @@ struct usb_ep;
  * @dma: DMA address corresponding to 'buf'.  If you don't set this
  *	field, and the usb controller needs one, it is responsible
  *	for mapping and unmapping the buffer.
+<<<<<<< HEAD
  * @sg: a scatterlist for SG-capable controllers.
  * @num_sgs: number of SG entries
  * @num_mapped_sgs: number of SG entries mapped to DMA (internal)
  * @length: Length of that data
  * @stream_id: The stream id, when USB3.0 bulk streams are being used
+=======
+ * @length: Length of that data
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @no_interrupt: If true, hints that no completion irq is needed.
  *	Helpful sometimes with deep request queues that are handled
  *	directly by DMA controllers.
@@ -92,11 +100,14 @@ struct usb_request {
 	unsigned		length;
 	dma_addr_t		dma;
 
+<<<<<<< HEAD
 	struct scatterlist	*sg;
 	unsigned		num_sgs;
 	unsigned		num_mapped_sgs;
 
 	unsigned		stream_id:16;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned		no_interrupt:1;
 	unsigned		zero:1;
 	unsigned		short_not_ok:1;
@@ -147,6 +158,7 @@ struct usb_ep_ops {
  * @maxpacket:The maximum packet size used on this endpoint.  The initial
  *	value can sometimes be reduced (hardware allowing), according to
  *      the endpoint descriptor used to configure the endpoint.
+<<<<<<< HEAD
  * @max_streams: The maximum number of streams supported
  *	by this EP (0 - 16, actual number is 2^n)
  * @mult: multiplier, 'mult' value for SS Isoc EPs
@@ -158,6 +170,10 @@ struct usb_ep_ops {
  *	enabled and remains valid until the endpoint is disabled.
  * @comp_desc: In case of SuperSpeed support, this is the endpoint companion
  *	descriptor that is used to configure the endpoint
+=======
+ * @driver_data:for use by the gadget driver.  all other fields are
+ *	read-only to gadget drivers.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * the bus controller driver lists all the general purpose endpoints in
  * gadget->ep_list.  the control endpoint (gadget->ep0) is not in that list,
@@ -170,12 +186,15 @@ struct usb_ep {
 	const struct usb_ep_ops	*ops;
 	struct list_head	ep_list;
 	unsigned		maxpacket:16;
+<<<<<<< HEAD
 	unsigned		max_streams:16;
 	unsigned		mult:2;
 	unsigned		maxburst:5;
 	u8			address;
 	const struct usb_endpoint_descriptor	*desc;
 	const struct usb_ss_ep_comp_descriptor	*comp_desc;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*-------------------------------------------------------------------------*/
@@ -184,8 +203,16 @@ struct usb_ep {
  * usb_ep_enable - configure endpoint, making it usable
  * @ep:the endpoint being configured.  may not be the endpoint named "ep0".
  *	drivers discover endpoints through the ep_list of a usb_gadget.
+<<<<<<< HEAD
  *
  * When configurations are set, or when interface settings change, the driver
+=======
+ * @desc:descriptor for desired behavior.  caller guarantees this pointer
+ *	remains valid until the endpoint is disabled; the data byte order
+ *	is little-endian (usb-standard).
+ *
+ * when configurations are set, or when interface settings change, the driver
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * will enable or disable the relevant endpoints.  while it is enabled, an
  * endpoint may be used for i/o until the driver receives a disconnect() from
  * the host or until the endpoint is disabled.
@@ -200,9 +227,16 @@ struct usb_ep {
  *
  * returns zero, or a negative error code.
  */
+<<<<<<< HEAD
 static inline int usb_ep_enable(struct usb_ep *ep)
 {
 	return ep->ops->enable(ep, ep->desc);
+=======
+static inline int usb_ep_enable(struct usb_ep *ep,
+				const struct usb_endpoint_descriptor *desc)
+{
+	return ep->ops->enable(ep, desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -443,6 +477,7 @@ static inline void usb_ep_fifo_flush(struct usb_ep *ep)
 
 /*-------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 struct usb_dcd_config_params {
 	__u8  bU1devExitLat;	/* U1 Device exit Latency */
 #define USB_DEFAULT_U1_DEV_EXIT_LAT	0x01	/* Less then 1 microsec */
@@ -453,6 +488,9 @@ struct usb_dcd_config_params {
 
 struct usb_gadget;
 struct usb_gadget_driver;
+=======
+struct usb_gadget;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* the rest of the api to the controller hardware: device operations,
  * which don't involve endpoints (or i/o).
@@ -466,6 +504,7 @@ struct usb_gadget_ops {
 	int	(*pullup) (struct usb_gadget *, int is_on);
 	int	(*ioctl)(struct usb_gadget *,
 				unsigned code, unsigned long param);
+<<<<<<< HEAD
 	void	(*get_config_params)(struct usb_dcd_config_params *);
 	int	(*udc_start)(struct usb_gadget *,
 			struct usb_gadget_driver *);
@@ -476,6 +515,13 @@ struct usb_gadget_ops {
 	int	(*start)(struct usb_gadget_driver *,
 			int (*bind)(struct usb_gadget *));
 	int	(*stop)(struct usb_gadget_driver *);
+=======
+	int	(*lpm_support)(struct usb_gadget *);
+#ifdef CONFIG_USB_PCD_SETTINGS
+	int	(*pcd_start_clean) (struct usb_gadget *, int is_start);
+#endif
+	bool (*is_rid_c)(struct usb_gadget *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -485,9 +531,14 @@ struct usb_gadget_ops {
  *	driver setup() requests
  * @ep_list: List of other endpoints supported by the device.
  * @speed: Speed of current connection to USB host.
+<<<<<<< HEAD
  * @max_speed: Maximal speed the UDC can handle.  UDC must support this
  *      and all slower speeds.
  * @sg_supported: true if we can handle scatter-gather
+=======
+ * @is_dualspeed: True if the controller supports both high and full speed
+ *	operation.  If it does, the gadget driver must also support both.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @is_otg: True if the USB device port uses a Mini-AB jack, so that the
  *	gadget driver must provide a USB OTG descriptor.
  * @is_a_peripheral: False unless is_otg, the "A" end of a USB cable
@@ -527,13 +578,26 @@ struct usb_gadget {
 	struct usb_ep			*ep0;
 	struct list_head		ep_list;	/* of usb_ep */
 	enum usb_device_speed		speed;
+<<<<<<< HEAD
 	enum usb_device_speed		max_speed;
 	unsigned			sg_supported:1;
 	unsigned			is_otg:1;
+=======
+	unsigned			is_dualspeed:1;
+	unsigned			is_otg:1;
+	unsigned			is_lpm:1;
+	u16				otg_version;
+#define UDC_OTG1 0x0000
+#define UDC_OTG2 0x0001
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned			is_a_peripheral:1;
 	unsigned			b_hnp_enable:1;
 	unsigned			a_hnp_support:1;
 	unsigned			a_alt_hnp_support:1;
+<<<<<<< HEAD
+=======
+	unsigned 			host_request:1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const char			*name;
 	struct device			dev;
 };
@@ -559,7 +623,11 @@ static inline struct usb_gadget *dev_to_usb_gadget(struct device *dev)
 static inline int gadget_is_dualspeed(struct usb_gadget *g)
 {
 #ifdef CONFIG_USB_GADGET_DUALSPEED
+<<<<<<< HEAD
 	/* runtime test would check "g->max_speed" ... that might be
+=======
+	/* runtime test would check "g->is_dualspeed" ... that might be
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * useful to work around hardware bugs, but is mostly pointless
 	 */
 	return 1;
@@ -569,6 +637,7 @@ static inline int gadget_is_dualspeed(struct usb_gadget *g)
 }
 
 /**
+<<<<<<< HEAD
  * gadget_is_superspeed() - return true if the hardware handles
  * supperspeed
  * @g: controller that might support supper speed
@@ -581,12 +650,7 @@ static inline int gadget_is_superspeed(struct usb_gadget *g)
 	 * useful to work around hardware bugs, but is mostly pointless
 	 */
 	return 1;
-#else
-	return 0;
-#endif
-}
-
-/**
+=======
  * gadget_is_otg - return true iff the hardware is OTG-ready
  * @g: controller that might have a Mini-AB connector
  *
@@ -597,12 +661,70 @@ static inline int gadget_is_otg(struct usb_gadget *g)
 {
 #ifdef CONFIG_USB_OTG
 	return g->is_otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 	return 0;
 #endif
 }
 
 /**
+<<<<<<< HEAD
+ * gadget_is_otg - return true iff the hardware is OTG-ready
+ * @g: controller that might have a Mini-AB connector
+ *
+ * This is a runtime test, since kernels with a USB-OTG stack sometimes
+ * run on boards which only have a Mini-B (or Mini-A) connector.
+ */
+static inline int gadget_is_otg(struct usb_gadget *g)
+{
+#ifdef CONFIG_USB_OTG
+	return g->is_otg;
+=======
+ * gadget_is_lpm - return true iff the hardware is LPM-ready
+ * @g: controller that might have LPM capability
+ *
+ * This is a runtime test, since kernels with a USB stack sometimes
+ * run on boards which don't support LPM
+ */
+static inline int gadget_is_lpm(struct usb_gadget *g)
+{
+#ifdef CONFIG_USB_LPM
+	return g->is_lpm;
+#else
+	return 0;
+#endif
+}
+
+/**
+ * gadget_is_otg2 - return true if UDC is compliant to OTG 2.0
+ * @g: controller that might have a Mini-AB/Micro-AB connector
+ *
+ */
+static inline int gadget_is_otg2(struct usb_gadget *g)
+{
+#ifdef CONFIG_USB_OTG
+	return g->otg_version && UDC_OTG2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+#else
+	return 0;
+#endif
+}
+
+/**
+<<<<<<< HEAD
+=======
+ * gadget_is_rid_c - return true if BC1.2 detects RID C condition
+ */
+static inline int gadget_is_rid_c(struct usb_gadget *g)
+{
+	if (g->ops->is_rid_c)
+		return g->ops->is_rid_c(g);
+	else
+		return 0;
+}
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * usb_gadget_frame_number - returns the current frame number
  * @gadget: controller that reports the frame number
  *
@@ -764,13 +886,52 @@ static inline int usb_gadget_disconnect(struct usb_gadget *gadget)
 	return gadget->ops->pullup(gadget, 0);
 }
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_PCD_SETTINGS
+/**
+ * usb_pcd_enable - enable pcd and initialize endps
+ *
+ * Returns zero on success, else negative errno.
+ */
+static inline int usb_pcd_enable(struct usb_gadget *gadget)
+{
+	if (!gadget->ops->pcd_start_clean)
+		return -EOPNOTSUPP;
+	return gadget->ops->pcd_start_clean(gadget, 1);
+}
+
+/**
+ * usb_pcd_disable - disable pcd and clean up endps
+ *
+ * Returns zero on success, else negative errno.
+ */
+static inline int usb_pcd_disable(struct usb_gadget *gadget)
+{
+	if (!gadget->ops->pcd_start_clean)
+		return -EOPNOTSUPP;
+	return gadget->ops->pcd_start_clean(gadget, 0);
+}
+#endif
+
+static inline int usb_gadget_test_lpm_support(struct usb_gadget *gadget)
+{
+	if (!gadget->ops->lpm_support)
+		return -EOPNOTSUPP;
+	return gadget->ops->lpm_support(gadget);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*-------------------------------------------------------------------------*/
 
 /**
  * struct usb_gadget_driver - driver for usb 'slave' devices
  * @function: String describing the gadget's function
+<<<<<<< HEAD
  * @max_speed: Highest speed the driver handles.
+=======
+ * @speed: Highest speed the driver handles.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @setup: Invoked for ep0 control requests that aren't handled by
  *	the hardware level driver. Most calls must be handled by
  *	the gadget driver, including descriptor and configuration
@@ -834,14 +995,21 @@ static inline int usb_gadget_disconnect(struct usb_gadget *gadget)
  */
 struct usb_gadget_driver {
 	char			*function;
+<<<<<<< HEAD
 	enum usb_device_speed	max_speed;
+=======
+	enum usb_device_speed	speed;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void			(*unbind)(struct usb_gadget *);
 	int			(*setup)(struct usb_gadget *,
 					const struct usb_ctrlrequest *);
 	void			(*disconnect)(struct usb_gadget *);
 	void			(*suspend)(struct usb_gadget *);
 	void			(*resume)(struct usb_gadget *);
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* FIXME support safe rmmod */
 	struct device_driver	driver;
 };
@@ -887,9 +1055,12 @@ int usb_gadget_probe_driver(struct usb_gadget_driver *driver,
  */
 int usb_gadget_unregister_driver(struct usb_gadget_driver *driver);
 
+<<<<<<< HEAD
 extern int usb_add_gadget_udc(struct device *parent, struct usb_gadget *gadget);
 extern void usb_del_gadget_udc(struct usb_gadget *gadget);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*-------------------------------------------------------------------------*/
 
 /* utility to simplify dealing with string descriptors */
@@ -939,6 +1110,15 @@ int usb_gadget_config_buf(const struct usb_config_descriptor *config,
 struct usb_descriptor_header **usb_copy_descriptors(
 		struct usb_descriptor_header **);
 
+<<<<<<< HEAD
+=======
+/* return copy of endpoint descriptor given original descriptor set */
+struct usb_endpoint_descriptor *usb_find_endpoint(
+	struct usb_descriptor_header **src,
+	struct usb_descriptor_header **copy,
+	struct usb_endpoint_descriptor *match);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * usb_free_descriptors - free descriptors returned by usb_copy_descriptors()
  * @v: vector of descriptors
@@ -950,6 +1130,7 @@ static inline void usb_free_descriptors(struct usb_descriptor_header **v)
 
 /*-------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 /* utility to simplify map/unmap of usb_requests to/from DMA */
 
 extern int usb_gadget_map_request(struct usb_gadget *gadget,
@@ -960,16 +1141,21 @@ extern void usb_gadget_unmap_request(struct usb_gadget *gadget,
 
 /*-------------------------------------------------------------------------*/
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* utility wrapping a simple endpoint selection policy */
 
 extern struct usb_ep *usb_ep_autoconfig(struct usb_gadget *,
 			struct usb_endpoint_descriptor *);
 
+<<<<<<< HEAD
 
 extern struct usb_ep *usb_ep_autoconfig_ss(struct usb_gadget *,
 			struct usb_endpoint_descriptor *,
 			struct usb_ss_ep_comp_descriptor *);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void usb_ep_autoconfig_reset(struct usb_gadget *);
 
 #endif /* __LINUX_USB_GADGET_H */

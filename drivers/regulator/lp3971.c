@@ -16,7 +16,10 @@
 #include <linux/err.h>
 #include <linux/i2c.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/regulator/driver.h>
 #include <linux/regulator/lp3971.h>
 #include <linux/slab.h>
@@ -451,7 +454,11 @@ static int __devinit setup_regulators(struct lp3971 *lp3971,
 	for (i = 0; i < pdata->num_regulators; i++) {
 		struct lp3971_regulator_subdev *reg = &pdata->regulators[i];
 		lp3971->rdev[i] = regulator_register(&regulators[reg->id],
+<<<<<<< HEAD
 				lp3971->dev, reg->initdata, lp3971, NULL);
+=======
+					lp3971->dev, reg->initdata, lp3971);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (IS_ERR(lp3971->rdev[i])) {
 			err = PTR_ERR(lp3971->rdev[i]);

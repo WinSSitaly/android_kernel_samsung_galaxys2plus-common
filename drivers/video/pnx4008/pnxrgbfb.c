@@ -193,6 +193,21 @@ static struct platform_driver rgbfb_driver = {
 	.remove = rgbfb_remove,
 };
 
+<<<<<<< HEAD
 module_platform_driver(rgbfb_driver);
+=======
+static int __init rgbfb_init(void)
+{
+	return platform_driver_register(&rgbfb_driver);
+}
+
+static void __exit rgbfb_exit(void)
+{
+	platform_driver_unregister(&rgbfb_driver);
+}
+
+module_init(rgbfb_init);
+module_exit(rgbfb_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");

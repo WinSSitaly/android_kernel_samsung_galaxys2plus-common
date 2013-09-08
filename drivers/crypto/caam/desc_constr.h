@@ -9,7 +9,11 @@
 #define IMMEDIATE (1 << 23)
 #define CAAM_CMD_SZ sizeof(u32)
 #define CAAM_PTR_SZ sizeof(dma_addr_t)
+<<<<<<< HEAD
 #define CAAM_DESC_BYTES_MAX (CAAM_CMD_SZ * MAX_CAAM_DESCSIZE)
+=======
+#define CAAM_DESC_BYTES_MAX (CAAM_CMD_SZ * 64)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef DEBUG
 #define PRINT_POS do { printk(KERN_DEBUG "%02d: %s\n", desc_len(desc),\
@@ -18,10 +22,13 @@
 #define PRINT_POS
 #endif
 
+<<<<<<< HEAD
 #define SET_OK_NO_PROP_ERRORS (IMMEDIATE | LDST_CLASS_DECO | \
 			       LDST_SRCDST_WORD_DECOCTRL | \
 			       (LDOFF_CHG_SHARE_OK_NO_PROP << \
 				LDST_OFFSET_SHIFT))
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DISABLE_AUTO_INFO_FIFO (IMMEDIATE | LDST_CLASS_DECO | \
 				LDST_SRCDST_WORD_DECOCTRL | \
 				(LDOFF_DISABLE_AUTO_NFIFO << LDST_OFFSET_SHIFT))
@@ -207,6 +214,7 @@ static inline void append_##cmd##_imm_##type(u32 *desc, type immediate, \
 	append_cmd(desc, immediate); \
 }
 APPEND_CMD_RAW_IMM(load, LOAD, u32);
+<<<<<<< HEAD
 
 /*
  * Append math command. Only the last part of destination and source need to
@@ -260,3 +268,5 @@ do { \
 	APPEND_MATH_IMM_u32(LSHIFT, desc, dest, src0, src1, data)
 #define append_math_rshift_imm_u32(desc, dest, src0, src1, data) \
 	APPEND_MATH_IMM_u32(RSHIFT, desc, dest, src0, src1, data)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

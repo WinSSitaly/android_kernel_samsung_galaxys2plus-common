@@ -43,7 +43,11 @@
 
 #define CYBERJACK_LOCAL_BUF_SIZE 32
 
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Version Information
@@ -82,6 +86,10 @@ static struct usb_driver cyberjack_driver = {
 	.probe =	usb_serial_probe,
 	.disconnect =	usb_serial_disconnect,
 	.id_table =	id_table,
+<<<<<<< HEAD
+=======
+	.no_dynamic_id = 	1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct usb_serial_driver cyberjack_device = {
@@ -90,6 +98,10 @@ static struct usb_serial_driver cyberjack_device = {
 		.name =		"cyberjack",
 	},
 	.description =		"Reiner SCT Cyberjack USB card reader",
+<<<<<<< HEAD
+=======
+	.usb_driver = 		&cyberjack_driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table =		id_table,
 	.num_ports =		1,
 	.attach =		cyberjack_startup,
@@ -104,10 +116,13 @@ static struct usb_serial_driver cyberjack_device = {
 	.write_bulk_callback =	cyberjack_write_bulk_callback,
 };
 
+<<<<<<< HEAD
 static struct usb_serial_driver * const serial_drivers[] = {
 	&cyberjack_device, NULL
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct cyberjack_private {
 	spinlock_t	lock;		/* Lock for SMP */
 	short		rdtodo;		/* Bytes still to read */
@@ -140,6 +155,10 @@ static int cyberjack_startup(struct usb_serial *serial)
 
 	for (i = 0; i < serial->num_ports; ++i) {
 		int result;
+<<<<<<< HEAD
+=======
+		serial->port[i]->interrupt_in_urb->dev = serial->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		result = usb_submit_urb(serial->port[i]->interrupt_in_urb,
 					GFP_KERNEL);
 		if (result)
@@ -209,6 +228,10 @@ static void cyberjack_close(struct usb_serial_port *port)
 static int cyberjack_write(struct tty_struct *tty,
 	struct usb_serial_port *port, const unsigned char *buf, int count)
 {
+<<<<<<< HEAD
+=======
+	struct usb_serial *serial = port->serial;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct cyberjack_private *priv = usb_get_serial_port_data(port);
 	unsigned long flags;
 	int result;
@@ -221,18 +244,34 @@ static int cyberjack_write(struct tty_struct *tty,
 		return 0;
 	}
 
+<<<<<<< HEAD
 	if (!test_and_clear_bit(0, &port->write_urbs_free)) {
 		dbg("%s - already writing", __func__);
 		return 0;
 	}
+=======
+	spin_lock_bh(&port->lock);
+	if (port->write_urb_busy) {
+		spin_unlock_bh(&port->lock);
+		dbg("%s - already writing", __func__);
+		return 0;
+	}
+	port->write_urb_busy = 1;
+	spin_unlock_bh(&port->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&priv->lock, flags);
 
 	if (count+priv->wrfilled > sizeof(priv->wrbuf)) {
 		/* To much data for buffer. Reset buffer. */
 		priv->wrfilled = 0;
+<<<<<<< HEAD
 		spin_unlock_irqrestore(&priv->lock, flags);
 		set_bit(0, &port->write_urbs_free);
+=======
+		port->write_urb_busy = 0;
+		spin_unlock_irqrestore(&priv->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
@@ -261,7 +300,17 @@ static int cyberjack_write(struct tty_struct *tty,
 		priv->wrsent = length;
 
 		/* set up our urb */
+<<<<<<< HEAD
 		port->write_urb->transfer_buffer_length = length;
+=======
+		usb_fill_bulk_urb(port->write_urb, serial->dev,
+			      usb_sndbulkpipe(serial->dev, port->bulk_out_endpointAddress),
+			      port->write_urb->transfer_buffer, length,
+			      ((serial->type->write_bulk_callback) ?
+			       serial->type->write_bulk_callback :
+			       cyberjack_write_bulk_callback),
+			      port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* send the data out the bulk port */
 		result = usb_submit_urb(port->write_urb, GFP_ATOMIC);
@@ -273,7 +322,11 @@ static int cyberjack_write(struct tty_struct *tty,
 			priv->wrfilled = 0;
 			priv->wrsent = 0;
 			spin_unlock_irqrestore(&priv->lock, flags);
+<<<<<<< HEAD
 			set_bit(0, &port->write_urbs_free);
+=======
+			port->write_urb_busy = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 0;
 		}
 
@@ -341,6 +394,10 @@ static void cyberjack_read_int_callback(struct urb *urb)
 		spin_unlock(&priv->lock);
 
 		if (!old_rdtodo) {
+<<<<<<< HEAD
+=======
+			port->read_urb->dev = port->serial->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			result = usb_submit_urb(port->read_urb, GFP_ATOMIC);
 			if (result)
 				dev_err(&port->dev, "%s - failed resubmitting "
@@ -351,6 +408,10 @@ static void cyberjack_read_int_callback(struct urb *urb)
 	}
 
 resubmit:
+<<<<<<< HEAD
+=======
+	port->interrupt_in_urb->dev = port->serial->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	result = usb_submit_urb(port->interrupt_in_urb, GFP_ATOMIC);
 	if (result)
 		dev_err(&port->dev, "usb_submit_urb(read int) failed\n");
@@ -403,6 +464,10 @@ static void cyberjack_read_bulk_callback(struct urb *urb)
 
 	/* Continue to read if we have still urbs to do. */
 	if (todo /* || (urb->actual_length==port->bulk_in_endpointAddress)*/) {
+<<<<<<< HEAD
+=======
+		port->read_urb->dev = port->serial->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		result = usb_submit_urb(port->read_urb, GFP_ATOMIC);
 		if (result)
 			dev_err(&port->dev, "%s - failed resubmitting read "
@@ -419,7 +484,11 @@ static void cyberjack_write_bulk_callback(struct urb *urb)
 
 	dbg("%s - port %d", __func__, port->number);
 
+<<<<<<< HEAD
 	set_bit(0, &port->write_urbs_free);
+=======
+	port->write_urb_busy = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (status) {
 		dbg("%s - nonzero write bulk status received: %d",
 		    __func__, status);
@@ -442,7 +511,17 @@ static void cyberjack_write_bulk_callback(struct urb *urb)
 		priv->wrsent += length;
 
 		/* set up our urb */
+<<<<<<< HEAD
 		port->write_urb->transfer_buffer_length = length;
+=======
+		usb_fill_bulk_urb(port->write_urb, port->serial->dev,
+			      usb_sndbulkpipe(port->serial->dev, port->bulk_out_endpointAddress),
+			      port->write_urb->transfer_buffer, length,
+			      ((port->serial->type->write_bulk_callback) ?
+			       port->serial->type->write_bulk_callback :
+			       cyberjack_write_bulk_callback),
+			      port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* send the data out the bulk port */
 		result = usb_submit_urb(port->write_urb, GFP_ATOMIC);
@@ -475,7 +554,39 @@ exit:
 	usb_serial_port_softint(port);
 }
 
+<<<<<<< HEAD
 module_usb_serial_driver(cyberjack_driver, serial_drivers);
+=======
+static int __init cyberjack_init(void)
+{
+	int retval;
+	retval  = usb_serial_register(&cyberjack_device);
+	if (retval)
+		goto failed_usb_serial_register;
+	retval = usb_register(&cyberjack_driver);
+	if (retval)
+		goto failed_usb_register;
+
+	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_VERSION " "
+	       DRIVER_AUTHOR "\n");
+	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_DESC "\n");
+
+	return 0;
+failed_usb_register:
+	usb_serial_deregister(&cyberjack_device);
+failed_usb_serial_register:
+	return retval;
+}
+
+static void __exit cyberjack_exit(void)
+{
+	usb_deregister(&cyberjack_driver);
+	usb_serial_deregister(&cyberjack_device);
+}
+
+module_init(cyberjack_init);
+module_exit(cyberjack_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR(DRIVER_AUTHOR);
 MODULE_DESCRIPTION(DRIVER_DESC);

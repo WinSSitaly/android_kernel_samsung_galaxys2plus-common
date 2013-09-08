@@ -22,8 +22,12 @@
 #if defined(CONFIG_PPC_BOOK3S_64)
 
 #define GET_SHADOW_VCPU(reg)    \
+<<<<<<< HEAD
 	mr	reg, r13
 #define MTMSR_EERI(reg)		mtmsrd	(reg),1
+=======
+	addi    reg, r13, PACA_KVM_SVCPU
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #elif defined(CONFIG_PPC_BOOK3S_32)
 
@@ -31,7 +35,10 @@
 	tophys(reg, r2);       			\
 	lwz     reg, (THREAD + THREAD_KVM_SVCPU)(reg);	\
 	tophys(reg, reg)
+<<<<<<< HEAD
 #define MTMSR_EERI(reg)		mtmsr	(reg)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif
 
@@ -59,12 +66,19 @@ kvmppc_handler_trampoline_enter:
 	/* Required state:
 	 *
 	 * MSR = ~IR|DR
+<<<<<<< HEAD
 	 * R1 = host R1
 	 * R2 = host R2
 	 * R4 = guest shadow MSR
 	 * R5 = normal host MSR
 	 * R6 = current host MSR (EE, IR, DR off)
 	 * LR = highmem guest exit code
+=======
+	 * R13 = PACA
+	 * R1 = host R1
+	 * R2 = host R2
+	 * R10 = guest MSR
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * all other volatile GPRS = free
 	 * SVCPU[CR] = guest CR
 	 * SVCPU[XER] = guest XER
@@ -75,6 +89,7 @@ kvmppc_handler_trampoline_enter:
 	/* r3 = shadow vcpu */
 	GET_SHADOW_VCPU(r3)
 
+<<<<<<< HEAD
 	/* Save guest exit handler address and MSR */
 	mflr	r0
 	PPC_STL	r0, HSTATE_VMHANDLER(r3)
@@ -87,10 +102,21 @@ kvmppc_handler_trampoline_enter:
 	/* Activate guest mode, so faults get handled by KVM */
 	li	r11, KVM_GUEST_MODE_GUEST
 	stb	r11, HSTATE_IN_GUEST(r3)
+=======
+	/* Move SRR0 and SRR1 into the respective regs */
+	PPC_LL  r9, SVCPU_PC(r3)
+	mtsrr0	r9
+	mtsrr1	r10
+
+	/* Activate guest mode, so faults get handled by KVM */
+	li	r11, KVM_GUEST_MODE_GUEST
+	stb	r11, SVCPU_IN_GUEST(r3)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Switch to guest segment. This is subarch specific. */
 	LOAD_GUEST_SEGMENTS
 
+<<<<<<< HEAD
 #ifdef CONFIG_PPC_BOOK3S_64
 	/* Some guests may need to have dcbz set to 32 byte length.
 	 *
@@ -145,6 +171,33 @@ no_dcbz32_on:
 	PPC_LL	r11, SVCPU_R11(r3)
 	PPC_LL	r12, SVCPU_R12(r3)
 	PPC_LL	r13, SVCPU_R13(r3)
+=======
+	/* Enter guest */
+
+	PPC_LL	r4, (SVCPU_CTR)(r3)
+	PPC_LL	r5, (SVCPU_LR)(r3)
+	lwz	r6, (SVCPU_CR)(r3)
+	lwz	r7, (SVCPU_XER)(r3)
+
+	mtctr	r4
+	mtlr	r5
+	mtcr	r6
+	mtxer	r7
+
+	PPC_LL	r0, (SVCPU_R0)(r3)
+	PPC_LL	r1, (SVCPU_R1)(r3)
+	PPC_LL	r2, (SVCPU_R2)(r3)
+	PPC_LL	r4, (SVCPU_R4)(r3)
+	PPC_LL	r5, (SVCPU_R5)(r3)
+	PPC_LL	r6, (SVCPU_R6)(r3)
+	PPC_LL	r7, (SVCPU_R7)(r3)
+	PPC_LL	r8, (SVCPU_R8)(r3)
+	PPC_LL	r9, (SVCPU_R9)(r3)
+	PPC_LL	r10, (SVCPU_R10)(r3)
+	PPC_LL	r11, (SVCPU_R11)(r3)
+	PPC_LL	r12, (SVCPU_R12)(r3)
+	PPC_LL	r13, (SVCPU_R13)(r3)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	PPC_LL	r3, (SVCPU_R3)(r3)
 
@@ -162,21 +215,31 @@ kvmppc_handler_trampoline_enter_end:
 .global kvmppc_handler_trampoline_exit
 kvmppc_handler_trampoline_exit:
 
+<<<<<<< HEAD
 .global kvmppc_interrupt
 kvmppc_interrupt:
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Register usage at this point:
 	 *
 	 * SPRG_SCRATCH0  = guest R13
 	 * R12            = exit handler id
+<<<<<<< HEAD
 	 * R13            = shadow vcpu (32-bit) or PACA (64-bit)
 	 * HSTATE.SCRATCH0 = guest R12
 	 * HSTATE.SCRATCH1 = guest CR
+=======
+	 * R13            = shadow vcpu - SHADOW_VCPU_OFF [=PACA on PPC64]
+	 * SVCPU.SCRATCH0 = guest R12
+	 * SVCPU.SCRATCH1 = guest CR
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 *
 	 */
 
 	/* Save registers */
 
+<<<<<<< HEAD
 	PPC_STL	r0, SVCPU_R0(r13)
 	PPC_STL	r1, SVCPU_R1(r13)
 	PPC_STL	r2, SVCPU_R2(r13)
@@ -199,11 +262,33 @@ kvmppc_interrupt:
 BEGIN_FTR_SECTION
 	andi.	r0, r12, 0x2
 	cmpwi	cr1, r0, 0
+=======
+	PPC_STL	r0, (SHADOW_VCPU_OFF + SVCPU_R0)(r13)
+	PPC_STL	r1, (SHADOW_VCPU_OFF + SVCPU_R1)(r13)
+	PPC_STL	r2, (SHADOW_VCPU_OFF + SVCPU_R2)(r13)
+	PPC_STL	r3, (SHADOW_VCPU_OFF + SVCPU_R3)(r13)
+	PPC_STL	r4, (SHADOW_VCPU_OFF + SVCPU_R4)(r13)
+	PPC_STL	r5, (SHADOW_VCPU_OFF + SVCPU_R5)(r13)
+	PPC_STL	r6, (SHADOW_VCPU_OFF + SVCPU_R6)(r13)
+	PPC_STL	r7, (SHADOW_VCPU_OFF + SVCPU_R7)(r13)
+	PPC_STL	r8, (SHADOW_VCPU_OFF + SVCPU_R8)(r13)
+	PPC_STL	r9, (SHADOW_VCPU_OFF + SVCPU_R9)(r13)
+	PPC_STL	r10, (SHADOW_VCPU_OFF + SVCPU_R10)(r13)
+	PPC_STL	r11, (SHADOW_VCPU_OFF + SVCPU_R11)(r13)
+
+	/* Restore R1/R2 so we can handle faults */
+	PPC_LL	r1, (SHADOW_VCPU_OFF + SVCPU_HOST_R1)(r13)
+	PPC_LL	r2, (SHADOW_VCPU_OFF + SVCPU_HOST_R2)(r13)
+
+	/* Save guest PC and MSR */
+	andi.	r0,r12,0x2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	beq	1f
 	mfspr	r3,SPRN_HSRR0
 	mfspr	r4,SPRN_HSRR1
 	andi.	r12,r12,0x3ffd
 	b	2f
+<<<<<<< HEAD
 END_FTR_SECTION_IFSET(CPU_FTR_HVMODE)
 #endif
 1:	mfsrr0	r3
@@ -220,6 +305,22 @@ END_FTR_SECTION_IFSET(CPU_FTR_HVMODE)
 	PPC_STL	r9, SVCPU_R13(r13)
 	PPC_STL	r8, SVCPU_R12(r13)
 	stw	r7, SVCPU_CR(r13)
+=======
+1:	mfsrr0	r3
+	mfsrr1	r4
+2:
+	PPC_STL	r3, (SHADOW_VCPU_OFF + SVCPU_PC)(r13)
+	PPC_STL	r4, (SHADOW_VCPU_OFF + SVCPU_SHADOW_SRR1)(r13)
+
+	/* Get scratch'ed off registers */
+	GET_SCRATCH0(r9)
+	PPC_LL	r8, (SHADOW_VCPU_OFF + SVCPU_SCRATCH0)(r13)
+	lwz	r7, (SHADOW_VCPU_OFF + SVCPU_SCRATCH1)(r13)
+
+	PPC_STL	r9, (SHADOW_VCPU_OFF + SVCPU_R13)(r13)
+	PPC_STL	r8, (SHADOW_VCPU_OFF + SVCPU_R12)(r13)
+	stw	r7, (SHADOW_VCPU_OFF + SVCPU_CR)(r13)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Save more register state  */
 
@@ -229,11 +330,19 @@ END_FTR_SECTION_IFSET(CPU_FTR_HVMODE)
 	mfctr	r8
 	mflr	r9
 
+<<<<<<< HEAD
 	stw	r5, SVCPU_XER(r13)
 	PPC_STL	r6, SVCPU_FAULT_DAR(r13)
 	stw	r7, SVCPU_FAULT_DSISR(r13)
 	PPC_STL	r8, SVCPU_CTR(r13)
 	PPC_STL	r9, SVCPU_LR(r13)
+=======
+	stw	r5, (SHADOW_VCPU_OFF + SVCPU_XER)(r13)
+	PPC_STL	r6, (SHADOW_VCPU_OFF + SVCPU_FAULT_DAR)(r13)
+	stw	r7, (SHADOW_VCPU_OFF + SVCPU_FAULT_DSISR)(r13)
+	PPC_STL	r8, (SHADOW_VCPU_OFF + SVCPU_CTR)(r13)
+	PPC_STL	r9, (SHADOW_VCPU_OFF + SVCPU_LR)(r13)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * In order for us to easily get the last instruction,
@@ -247,6 +356,7 @@ END_FTR_SECTION_IFSET(CPU_FTR_HVMODE)
 	beq	ld_last_inst
 	cmpwi	r12, BOOK3S_INTERRUPT_PROGRAM
 	beq	ld_last_inst
+<<<<<<< HEAD
 	cmpwi	r12, BOOK3S_INTERRUPT_SYSCALL
 	beq	ld_last_prev_inst
 	cmpwi	r12, BOOK3S_INTERRUPT_ALIGNMENT
@@ -263,6 +373,13 @@ END_FTR_SECTION_IFSET(CPU_FTR_HVMODE)
 ld_last_prev_inst:
 	addi	r3, r3, -4
 
+=======
+	cmpwi	r12, BOOK3S_INTERRUPT_ALIGNMENT
+	beq-	ld_last_inst
+
+	b	no_ld_last_inst
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ld_last_inst:
 	/* Save off the guest instruction we're at */
 
@@ -274,7 +391,11 @@ ld_last_inst:
 	/* Set guest mode to 'jump over instruction' so if lwz faults
 	 * we'll just continue at the next IP. */
 	li	r9, KVM_GUEST_MODE_SKIP
+<<<<<<< HEAD
 	stb	r9, HSTATE_IN_GUEST(r13)
+=======
+	stb	r9, (SHADOW_VCPU_OFF + SVCPU_IN_GUEST)(r13)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*    1) enable paging for data */
 	mfmsr	r9
@@ -288,17 +409,26 @@ ld_last_inst:
 	sync
 
 #endif
+<<<<<<< HEAD
 	stw	r0, SVCPU_LAST_INST(r13)
+=======
+	stw	r0, (SHADOW_VCPU_OFF + SVCPU_LAST_INST)(r13)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 no_ld_last_inst:
 
 	/* Unset guest mode */
 	li	r9, KVM_GUEST_MODE_NONE
+<<<<<<< HEAD
 	stb	r9, HSTATE_IN_GUEST(r13)
+=======
+	stb	r9, (SHADOW_VCPU_OFF + SVCPU_IN_GUEST)(r13)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Switch back to host MMU */
 	LOAD_HOST_SEGMENTS
 
+<<<<<<< HEAD
 #ifdef CONFIG_PPC_BOOK3S_64
 
 	lbz	r5, HSTATE_RESTORE_HID5(r13)
@@ -329,17 +459,25 @@ no_dcbz32_off:
 	 * get us back to where we want to continue.
 	 */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Register usage at this point:
 	 *
 	 * R1       = host R1
 	 * R2       = host R2
+<<<<<<< HEAD
 	 * R10      = raw exit handler id
 	 * R12      = exit handler id
 	 * R13      = shadow vcpu (32-bit) or PACA (64-bit)
+=======
+	 * R12      = exit handler id
+	 * R13      = shadow vcpu - SHADOW_VCPU_OFF [=PACA on PPC64]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * SVCPU.*  = guest *
 	 *
 	 */
 
+<<<<<<< HEAD
 	PPC_LL	r6, HSTATE_HOST_MSR(r13)
 	PPC_LL	r8, HSTATE_VMHANDLER(r13)
 
@@ -363,5 +501,15 @@ END_FTR_SECTION_IFSET(CPU_FTR_HVMODE)
 	cmpwi	r12, BOOK3S_INTERRUPT_PERFMON
 	beqa	BOOK3S_INTERRUPT_PERFMON
 
+=======
+	/* RFI into the highmem handler */
+	mfmsr	r7
+	ori	r7, r7, MSR_IR|MSR_DR|MSR_RI|MSR_ME	/* Enable paging */
+	mtsrr1	r7
+	/* Load highmem handler address */
+	PPC_LL	r8, (SHADOW_VCPU_OFF + SVCPU_VMHANDLER)(r13)
+	mtsrr0	r8
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	RFI
 kvmppc_handler_trampoline_exit_end:

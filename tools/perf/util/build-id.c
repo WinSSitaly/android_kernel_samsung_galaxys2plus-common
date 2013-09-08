@@ -13,6 +13,7 @@
 #include "symbol.h"
 #include <linux/kernel.h>
 #include "debug.h"
+<<<<<<< HEAD
 #include "session.h"
 #include "tool.h"
 
@@ -25,6 +26,17 @@ static int build_id__mark_dso_hit(struct perf_tool *tool __used,
 	struct addr_location al;
 	u8 cpumode = event->header.misc & PERF_RECORD_MISC_CPUMODE_MASK;
 	struct thread *thread = machine__findnew_thread(machine, event->ip.pid);
+=======
+
+static int build_id__mark_dso_hit(union perf_event *event,
+				  struct perf_sample *sample __used,
+				  struct perf_evsel *evsel __used,
+				  struct perf_session *session)
+{
+	struct addr_location al;
+	u8 cpumode = event->header.misc & PERF_RECORD_MISC_CPUMODE_MASK;
+	struct thread *thread = perf_session__findnew(session, event->ip.pid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (thread == NULL) {
 		pr_err("problem processing %d event, skipping it.\n",
@@ -32,8 +44,13 @@ static int build_id__mark_dso_hit(struct perf_tool *tool __used,
 		return -1;
 	}
 
+<<<<<<< HEAD
 	thread__find_addr_map(thread, machine, cpumode, MAP__FUNCTION,
 			      event->ip.ip, &al);
+=======
+	thread__find_addr_map(thread, session, cpumode, MAP__FUNCTION,
+			      event->ip.pid, event->ip.ip, &al);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (al.map != NULL)
 		al.map->dso->hit = 1;
@@ -41,26 +58,43 @@ static int build_id__mark_dso_hit(struct perf_tool *tool __used,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int perf_event__exit_del_thread(struct perf_tool *tool __used,
 				       union perf_event *event,
 				       struct perf_sample *sample __used,
 				       struct machine *machine)
 {
 	struct thread *thread = machine__findnew_thread(machine, event->fork.tid);
+=======
+static int perf_event__exit_del_thread(union perf_event *event,
+				       struct perf_sample *sample __used,
+				       struct perf_session *session)
+{
+	struct thread *thread = perf_session__findnew(session, event->fork.tid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dump_printf("(%d:%d):(%d:%d)\n", event->fork.pid, event->fork.tid,
 		    event->fork.ppid, event->fork.ptid);
 
 	if (thread) {
+<<<<<<< HEAD
 		rb_erase(&thread->rb_node, &machine->threads);
 		machine->last_match = NULL;
+=======
+		rb_erase(&thread->rb_node, &session->threads);
+		session->last_match = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		thread__delete(thread);
 	}
 
 	return 0;
 }
 
+<<<<<<< HEAD
 struct perf_tool build_id__mark_dso_hit_ops = {
+=======
+struct perf_event_ops build_id__mark_dso_hit_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.sample	= build_id__mark_dso_hit,
 	.mmap	= perf_event__process_mmap,
 	.fork	= perf_event__process_task,

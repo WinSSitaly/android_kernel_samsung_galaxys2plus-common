@@ -38,6 +38,7 @@
 #include <asm/pgtable.h>
 #include <asm/mmu.h>
 #include <asm/mmu_context.h>
+<<<<<<< HEAD
 #include <asm/uaccess.h>
 #include <asm/tlbflush.h>
 #include <asm/siginfo.h>
@@ -46,6 +47,14 @@
 
 #include "icswx.h"
 
+=======
+#include <asm/system.h>
+#include <asm/uaccess.h>
+#include <asm/tlbflush.h>
+#include <asm/siginfo.h>
+#include <mm/mmu_decl.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_KPROBES
 static inline int notify_page_fault(struct pt_regs *regs)
 {
@@ -105,6 +114,7 @@ static int store_updates_sp(struct pt_regs *regs)
 	}
 	return 0;
 }
+<<<<<<< HEAD
 /*
  * do_page_fault error handling helpers
  */
@@ -181,6 +191,8 @@ static int mm_fault_error(struct pt_regs *regs, unsigned long addr, int fault)
 	BUG();
 	return MM_FAULT_CONTINUE;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * For 600- and 800-family processors, the error_code parameter is DSISR
@@ -200,12 +212,20 @@ int __kprobes do_page_fault(struct pt_regs *regs, unsigned long address,
 {
 	struct vm_area_struct * vma;
 	struct mm_struct *mm = current->mm;
+<<<<<<< HEAD
 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
 	int code = SEGV_MAPERR;
 	int is_write = 0;
 	int trap = TRAP(regs);
  	int is_exec = trap == 0x400;
 	int fault;
+=======
+	siginfo_t info;
+	int code = SEGV_MAPERR;
+	int is_write = 0, ret;
+	int trap = TRAP(regs);
+ 	int is_exec = trap == 0x400;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if !(defined(CONFIG_4xx) || defined(CONFIG_BOOKE))
 	/*
@@ -222,6 +242,7 @@ int __kprobes do_page_fault(struct pt_regs *regs, unsigned long address,
 	is_write = error_code & ESR_DST;
 #endif /* CONFIG_4xx || CONFIG_BOOKE */
 
+<<<<<<< HEAD
 	if (is_write)
 		flags |= FAULT_FLAG_WRITE;
 
@@ -238,6 +259,8 @@ int __kprobes do_page_fault(struct pt_regs *regs, unsigned long address,
 	}
 #endif /* CONFIG_PPC_ICSWX */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (notify_page_fault(regs))
 		return 0;
 
@@ -257,10 +280,13 @@ int __kprobes do_page_fault(struct pt_regs *regs, unsigned long address,
 	}
 #endif
 
+<<<<<<< HEAD
 	/* We restore the interrupt state now */
 	if (!arch_irq_disabled_regs(regs))
 		local_irq_enable();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (in_atomic() || mm == NULL) {
 		if (!user_mode(regs))
 			return SIGSEGV;
@@ -273,7 +299,11 @@ int __kprobes do_page_fault(struct pt_regs *regs, unsigned long address,
 		die("Weird page fault", regs, SIGSEGV);
 	}
 
+<<<<<<< HEAD
 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
+=======
+	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, 0, regs, address);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* When running in the kernel we expect faults to occur only to
 	 * addresses in user space.  All other faults represent errors in the
@@ -294,6 +324,7 @@ int __kprobes do_page_fault(struct pt_regs *regs, unsigned long address,
 		if (!user_mode(regs) && !search_exception_tables(regs->nip))
 			goto bad_area_nosemaphore;
 
+<<<<<<< HEAD
 retry:
 		down_read(&mm->mmap_sem);
 	} else {
@@ -303,6 +334,9 @@ retry:
 		 * down_read():
 		 */
 		might_sleep();
+=======
+		down_read(&mm->mmap_sem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	vma = find_vma(mm, address);
@@ -417,6 +451,7 @@ good_area:
 	 * make sure we exit gracefully rather than endlessly redo
 	 * the fault.
 	 */
+<<<<<<< HEAD
 	fault = handle_mm_fault(mm, vma, address, flags);
 	if (unlikely(fault & (VM_FAULT_RETRY|VM_FAULT_ERROR))) {
 		int rc = mm_fault_error(regs, address, fault);
@@ -454,6 +489,32 @@ good_area:
 		}
 	}
 
+=======
+	ret = handle_mm_fault(mm, vma, address, is_write ? FAULT_FLAG_WRITE : 0);
+	if (unlikely(ret & VM_FAULT_ERROR)) {
+		if (ret & VM_FAULT_OOM)
+			goto out_of_memory;
+		else if (ret & VM_FAULT_SIGBUS)
+			goto do_sigbus;
+		BUG();
+	}
+	if (ret & VM_FAULT_MAJOR) {
+		current->maj_flt++;
+		perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS_MAJ, 1, 0,
+				     regs, address);
+#ifdef CONFIG_PPC_SMLPAR
+		if (firmware_has_feature(FW_FEATURE_CMO)) {
+			preempt_disable();
+			get_lppaca()->page_ins += (1 << PAGE_FACTOR);
+			preempt_enable();
+		}
+#endif
+	} else {
+		current->min_flt++;
+		perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS_MIN, 1, 0,
+				     regs, address);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	up_read(&mm->mmap_sem);
 	return 0;
 
@@ -474,6 +535,31 @@ bad_area_nosemaphore:
 
 	return SIGSEGV;
 
+<<<<<<< HEAD
+=======
+/*
+ * We ran out of memory, or some other thing happened to us that made
+ * us unable to handle the page fault gracefully.
+ */
+out_of_memory:
+	up_read(&mm->mmap_sem);
+	if (!user_mode(regs))
+		return SIGKILL;
+	pagefault_out_of_memory();
+	return 0;
+
+do_sigbus:
+	up_read(&mm->mmap_sem);
+	if (user_mode(regs)) {
+		info.si_signo = SIGBUS;
+		info.si_errno = 0;
+		info.si_code = BUS_ADRERR;
+		info.si_addr = (void __user *)address;
+		force_sig_info(SIGBUS, &info, current);
+		return 0;
+	}
+	return SIGBUS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*

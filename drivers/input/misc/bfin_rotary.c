@@ -6,6 +6,10 @@
  */
 
 #include <linux/module.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/interrupt.h>
 #include <linux/irq.h>
@@ -264,7 +268,22 @@ static struct platform_driver bfin_rotary_device_driver = {
 #endif
 	},
 };
+<<<<<<< HEAD
 module_platform_driver(bfin_rotary_device_driver);
+=======
+
+static int __init bfin_rotary_init(void)
+{
+	return platform_driver_register(&bfin_rotary_device_driver);
+}
+module_init(bfin_rotary_init);
+
+static void __exit bfin_rotary_exit(void)
+{
+	platform_driver_unregister(&bfin_rotary_device_driver);
+}
+module_exit(bfin_rotary_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Michael Hennerich <hennerich@blackfin.uclinux.org>");

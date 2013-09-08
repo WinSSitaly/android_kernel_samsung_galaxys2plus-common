@@ -16,7 +16,10 @@ extern struct platform_device pxa_device_ficp;
 extern struct platform_device sa1100_device_rtc;
 extern struct platform_device pxa_device_rtc;
 extern struct platform_device pxa_device_ac97;
+<<<<<<< HEAD
 extern struct platform_device pxa_device_gpio;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern struct platform_device pxa27x_device_i2c_power;
 extern struct platform_device pxa27x_device_ohci;

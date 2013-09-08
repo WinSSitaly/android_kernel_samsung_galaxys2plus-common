@@ -1076,7 +1076,11 @@ int
 lpfc_vport_symbolic_node_name(struct lpfc_vport *vport, char *symbol,
 	size_t size)
 {
+<<<<<<< HEAD
 	char fwrev[FW_REV_STR_SIZE];
+=======
+	char fwrev[16];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int n;
 
 	lpfc_decode_firmware_rev(vport->phba, fwrev, 0);
@@ -1834,7 +1838,11 @@ lpfc_decode_firmware_rev(struct lpfc_hba *phba, char *fwrevision, int flag)
 	uint8_t *fwname;
 
 	if (phba->sli_rev == LPFC_SLI_REV4)
+<<<<<<< HEAD
 		snprintf(fwrevision, FW_REV_STR_SIZE, "%s", vp->rev.opFwName);
+=======
+		sprintf(fwrevision, "%s", vp->rev.opFwName);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else if (vp->rev.rBit) {
 		if (psli->sli_flag & LPFC_SLI_ACTIVE)
 			rev = vp->rev.sli2FwRev;
@@ -1856,9 +1864,12 @@ lpfc_decode_firmware_rev(struct lpfc_hba *phba, char *fwrevision, int flag)
 		case 2:
 			c = 'B';
 			break;
+<<<<<<< HEAD
 		case 3:
 			c = 'X';
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			c = 0;
 			break;

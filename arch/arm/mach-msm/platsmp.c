@@ -18,9 +18,13 @@
 
 #include <asm/hardware/gic.h>
 #include <asm/cacheflush.h>
+<<<<<<< HEAD
 #include <asm/cputype.h>
 #include <asm/mach-types.h>
 #include <asm/smp_plat.h>
+=======
+#include <asm/mach-types.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/msm_iomap.h>
 
@@ -42,12 +46,15 @@ volatile int pen_release = -1;
 
 static DEFINE_SPINLOCK(boot_lock);
 
+<<<<<<< HEAD
 static inline int get_core_count(void)
 {
 	/* 1 + the PART[1:0] field of MIDR */
 	return ((read_cpuid_id() >> 4) & 3) + 1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __cpuinit platform_secondary_init(unsigned int cpu)
 {
 	/* Configure edge-triggered PPIs */
@@ -80,7 +87,11 @@ static __cpuinit void prepare_cold_cpu(unsigned int cpu)
 	ret = scm_set_boot_addr(virt_to_phys(msm_secondary_startup),
 				SCM_FLAG_COLDBOOT_CPU1);
 	if (ret == 0) {
+<<<<<<< HEAD
 		void __iomem *sc1_base_ptr;
+=======
+		void *sc1_base_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sc1_base_ptr = ioremap_nocache(0x00902000, SZ_4K*2);
 		if (sc1_base_ptr) {
 			writel(0, sc1_base_ptr + VDD_SC1_ARRAY_CLAMP_GFS_CTL);
@@ -118,7 +129,11 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
 	 * Note that "pen_release" is the hardware CPU ID, whereas
 	 * "cpu" is Linux's internal ID.
 	 */
+<<<<<<< HEAD
 	pen_release = cpu_logical_map(cpu);
+=======
+	pen_release = cpu;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__cpuc_flush_dcache_area((void *)&pen_release, sizeof(pen_release));
 	outer_clean_range(__pa(&pen_release), __pa(&pen_release + 1));
 
@@ -155,6 +170,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
  */
 void __init smp_init_cpus(void)
 {
+<<<<<<< HEAD
 	unsigned int i, ncores = get_core_count();
 
 	if (ncores > nr_cpu_ids) {
@@ -164,6 +180,11 @@ void __init smp_init_cpus(void)
 	}
 
 	for (i = 0; i < ncores; i++)
+=======
+	unsigned int i;
+
+	for (i = 0; i < NR_CPUS; i++)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_cpu_possible(i, true);
 
         set_smp_cross_call(gic_raise_softirq);
@@ -171,4 +192,15 @@ void __init smp_init_cpus(void)
 
 void __init platform_smp_prepare_cpus(unsigned int max_cpus)
 {
+<<<<<<< HEAD
+=======
+	int i;
+
+	/*
+	 * Initialise the present map, which describes the set of CPUs
+	 * actually populated at the present time.
+	 */
+	for (i = 0; i < max_cpus; i++)
+		set_cpu_present(i, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

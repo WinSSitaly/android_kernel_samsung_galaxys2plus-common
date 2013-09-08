@@ -9,7 +9,11 @@ static u8 xec_mask	 = 0xf;
 static u8 nb_err_cpumask = 0xf;
 
 static bool report_gart_errors;
+<<<<<<< HEAD
 static void (*nb_bus_decoder)(int node_id, struct mce *m);
+=======
+static void (*nb_bus_decoder)(int node_id, struct mce *m, u32 nbcfg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void amd_report_gart_errors(bool v)
 {
@@ -17,13 +21,21 @@ void amd_report_gart_errors(bool v)
 }
 EXPORT_SYMBOL_GPL(amd_report_gart_errors);
 
+<<<<<<< HEAD
 void amd_register_ecc_decoder(void (*f)(int, struct mce *))
+=======
+void amd_register_ecc_decoder(void (*f)(int, struct mce *, u32))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	nb_bus_decoder = f;
 }
 EXPORT_SYMBOL_GPL(amd_register_ecc_decoder);
 
+<<<<<<< HEAD
 void amd_unregister_ecc_decoder(void (*f)(int, struct mce *))
+=======
+void amd_unregister_ecc_decoder(void (*f)(int, struct mce *, u32))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (nb_bus_decoder) {
 		WARN_ON(nb_bus_decoder != f);
@@ -39,6 +51,7 @@ EXPORT_SYMBOL_GPL(amd_unregister_ecc_decoder);
  */
 
 /* transaction type */
+<<<<<<< HEAD
 const char * const tt_msgs[] = { "INSN", "DATA", "GEN", "RESV" };
 EXPORT_SYMBOL_GPL(tt_msgs);
 
@@ -48,11 +61,23 @@ EXPORT_SYMBOL_GPL(ll_msgs);
 
 /* memory transaction type */
 const char * const rrrr_msgs[] = {
+=======
+const char *tt_msgs[] = { "INSN", "DATA", "GEN", "RESV" };
+EXPORT_SYMBOL_GPL(tt_msgs);
+
+/* cache level */
+const char *ll_msgs[] = { "RESV", "L1", "L2", "L3/GEN" };
+EXPORT_SYMBOL_GPL(ll_msgs);
+
+/* memory transaction type */
+const char *rrrr_msgs[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
        "GEN", "RD", "WR", "DRD", "DWR", "IRD", "PRF", "EV", "SNP"
 };
 EXPORT_SYMBOL_GPL(rrrr_msgs);
 
 /* participating processor */
+<<<<<<< HEAD
 const char * const pp_msgs[] = { "SRC", "RES", "OBS", "GEN" };
 EXPORT_SYMBOL_GPL(pp_msgs);
 
@@ -64,6 +89,30 @@ EXPORT_SYMBOL_GPL(to_msgs);
 const char * const ii_msgs[] = { "MEM", "RESV", "IO", "GEN" };
 EXPORT_SYMBOL_GPL(ii_msgs);
 
+=======
+const char *pp_msgs[] = { "SRC", "RES", "OBS", "GEN" };
+EXPORT_SYMBOL_GPL(pp_msgs);
+
+/* request timeout */
+const char *to_msgs[] = { "no timeout",	"timed out" };
+EXPORT_SYMBOL_GPL(to_msgs);
+
+/* memory or i/o */
+const char *ii_msgs[] = { "MEM", "RESV", "IO", "GEN" };
+EXPORT_SYMBOL_GPL(ii_msgs);
+
+static const char *f10h_nb_mce_desc[] = {
+	"HT link data error",
+	"Protocol error (link, L3, probe filter, etc.)",
+	"Parity error in NB-internal arrays",
+	"Link Retry due to IO link transmission error",
+	"L3 ECC data cache error",
+	"ECC error in L3 cache tag",
+	"L3 LRU parity bits error",
+	"ECC Error in the Probe Filter directory"
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const char * const f15h_ic_mce_desc[] = {
 	"UC during a demand linefill from L2",
 	"Parity error during data load from IC",
@@ -77,7 +126,11 @@ static const char * const f15h_ic_mce_desc[] = {
 	"Parity error for IC probe tag valid bit",
 	"PFB non-cacheable bit parity error",
 	"PFB valid bit parity error",			/* xec = 0xd */
+<<<<<<< HEAD
 	"Microcode Patch Buffer",			/* xec = 010 */
+=======
+	"patch RAM",					/* xec = 010 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"uop queue",
 	"insn buffer",
 	"predecode buffer",
@@ -93,7 +146,11 @@ static const char * const f15h_cu_mce_desc[] = {
 	"WCC Tag ECC error",
 	"WCC Data ECC error",
 	"WCB Data parity error",
+<<<<<<< HEAD
 	"VB Data ECC or parity error",
+=======
+	"VB Data/ECC error",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"L2 Tag ECC error",				/* xec = 0x10 */
 	"Hard L2 Tag ECC error",
 	"Multiple hits on L2 tag",
@@ -101,6 +158,7 @@ static const char * const f15h_cu_mce_desc[] = {
 	"PRB address parity error"
 };
 
+<<<<<<< HEAD
 static const char * const nb_mce_desc[] = {
 	"DRAM ECC error detected on the NB",
 	"CRC error detected on HT link",
@@ -123,6 +181,8 @@ static const char * const nb_mce_desc[] = {
 	"ECC Error in the Probe Filter directory"
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const char * const fr_ex_mce_desc[] = {
 	"CPU Watchdog timer expire",
 	"Wakeup array dest tag",
@@ -136,7 +196,11 @@ static const char * const fr_ex_mce_desc[] = {
 	"Physical register file AG0 port",
 	"Physical register file AG1 port",
 	"Flag register file",
+<<<<<<< HEAD
 	"DE error occurred"
+=======
+	"DE correctable error could not be corrected"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static bool f12h_dc_mce(u16 ec, u8 xec)
@@ -266,9 +330,16 @@ static bool f15h_dc_mce(u16 ec, u8 xec)
 	} else if (BUS_ERROR(ec)) {
 
 		if (!xec)
+<<<<<<< HEAD
 			pr_cont("System Read Data Error.\n");
 		else
 			pr_cont(" Internal error condition type %d.\n", xec);
+=======
+			pr_cont("during system linefill.\n");
+		else
+			pr_cont(" Internal %s condition.\n",
+				((xec == 1) ? "livelock" : "deadlock"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		ret = false;
 
@@ -365,11 +436,15 @@ static bool f15h_ic_mce(u16 ec, u8 xec)
 		pr_cont("%s.\n", f15h_ic_mce_desc[xec-2]);
 		break;
 
+<<<<<<< HEAD
 	case 0x10:
 		pr_cont("%s.\n", f15h_ic_mce_desc[xec-4]);
 		break;
 
 	case 0x11 ... 0x14:
+=======
+	case 0x10 ... 0x14:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_cont("Decoder %s parity error.\n", f15h_ic_mce_desc[xec-4]);
 		break;
 
@@ -510,6 +585,7 @@ wrong_ls_mce:
 	pr_emerg(HW_ERR "Corrupted LS MCE info?\n");
 }
 
+<<<<<<< HEAD
 void amd_decode_nb_mce(struct mce *m)
 {
 	struct cpuinfo_x86 *c = &boot_cpu_data;
@@ -535,6 +611,60 @@ void amd_decode_nb_mce(struct mce *m)
 				nb_bus_decoder(node_id, m);
 			return;
 		}
+=======
+static bool k8_nb_mce(u16 ec, u8 xec)
+{
+	bool ret = true;
+
+	switch (xec) {
+	case 0x1:
+		pr_cont("CRC error detected on HT link.\n");
+		break;
+
+	case 0x5:
+		pr_cont("Invalid GART PTE entry during GART table walk.\n");
+		break;
+
+	case 0x6:
+		pr_cont("Unsupported atomic RMW received from an IO link.\n");
+		break;
+
+	case 0x0:
+	case 0x8:
+		if (boot_cpu_data.x86 == 0x11)
+			return false;
+
+		pr_cont("DRAM ECC error detected on the NB.\n");
+		break;
+
+	case 0xd:
+		pr_cont("Parity error on the DRAM addr/ctl signals.\n");
+		break;
+
+	default:
+		ret = false;
+		break;
+	}
+
+	return ret;
+}
+
+static bool f10h_nb_mce(u16 ec, u8 xec)
+{
+	bool ret = true;
+	u8 offset = 0;
+
+	if (k8_nb_mce(ec, xec))
+		return true;
+
+	switch(xec) {
+	case 0xa ... 0xc:
+		offset = 10;
+		break;
+
+	case 0xe:
+		offset = 11;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case 0xf:
@@ -543,13 +673,21 @@ void amd_decode_nb_mce(struct mce *m)
 		else if (BUS_ERROR(ec))
 			pr_cont("DMA Exclusion Vector Table Walk error.\n");
 		else
+<<<<<<< HEAD
 			goto wrong_nb_mce;
 		return;
+=======
+			ret = false;
+
+		goto out;
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	case 0x19:
 		if (boot_cpu_data.x86 == 0x15)
 			pr_cont("Compute Unit Data Error.\n");
 		else
+<<<<<<< HEAD
 			goto wrong_nb_mce;
 		return;
 
@@ -562,6 +700,93 @@ void amd_decode_nb_mce(struct mce *m)
 	}
 
 	pr_cont("%s.\n", nb_mce_desc[xec - offset]);
+=======
+			ret = false;
+
+		goto out;
+		break;
+
+	case 0x1c ... 0x1f:
+		offset = 24;
+		break;
+
+	default:
+		ret = false;
+
+		goto out;
+		break;
+	}
+
+	pr_cont("%s.\n", f10h_nb_mce_desc[xec - offset]);
+
+out:
+	return ret;
+}
+
+static bool nb_noop_mce(u16 ec, u8 xec)
+{
+	return false;
+}
+
+void amd_decode_nb_mce(int node_id, struct mce *m, u32 nbcfg)
+{
+	struct cpuinfo_x86 *c = &boot_cpu_data;
+	u16 ec   = EC(m->status);
+	u8 xec   = XEC(m->status, 0x1f);
+	u32 nbsh = (u32)(m->status >> 32);
+	int core = -1;
+
+	pr_emerg(HW_ERR "Northbridge Error (node %d", node_id);
+
+	/* F10h, revD can disable ErrCpu[3:0] through ErrCpuVal */
+	if (c->x86 == 0x10 && c->x86_model > 7) {
+		if (nbsh & NBSH_ERR_CPU_VAL)
+			core = nbsh & nb_err_cpumask;
+	} else {
+		u8 assoc_cpus = nbsh & nb_err_cpumask;
+
+		if (assoc_cpus > 0)
+			core = fls(assoc_cpus) - 1;
+	}
+
+	if (core >= 0)
+		pr_cont(", core %d): ", core);
+	else
+		pr_cont("): ");
+
+	switch (xec) {
+	case 0x2:
+		pr_cont("Sync error (sync packets on HT link detected).\n");
+		return;
+
+	case 0x3:
+		pr_cont("HT Master abort.\n");
+		return;
+
+	case 0x4:
+		pr_cont("HT Target abort.\n");
+		return;
+
+	case 0x7:
+		pr_cont("NB Watchdog timeout.\n");
+		return;
+
+	case 0x9:
+		pr_cont("SVM DMA Exclusion Vector error.\n");
+		return;
+
+	default:
+		break;
+	}
+
+	if (!fam_ops->nb_mce(ec, xec))
+		goto wrong_nb_mce;
+
+	if (c->x86 == 0xf || c->x86 == 0x10 || c->x86 == 0x15)
+		if ((xec == 0x8 || xec == 0x0) && nb_bus_decoder)
+			nb_bus_decoder(node_id, m, nbcfg);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 
 wrong_nb_mce:
@@ -577,6 +802,12 @@ static void amd_decode_fr_mce(struct mce *m)
 	if (c->x86 == 0xf || c->x86 == 0x11)
 		goto wrong_fr_mce;
 
+<<<<<<< HEAD
+=======
+	if (c->x86 != 0x15 && xec != 0x0)
+		goto wrong_fr_mce;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pr_emerg(HW_ERR "%s Error: ",
 		 (c->x86 == 0x15 ? "Execution Unit" : "FIROB"));
 
@@ -673,13 +904,22 @@ int amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
 {
 	struct mce *m = (struct mce *)data;
 	struct cpuinfo_x86 *c = &boot_cpu_data;
+<<<<<<< HEAD
 	int ecc;
+=======
+	int node, ecc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (amd_filter_mce(m))
 		return NOTIFY_STOP;
 
+<<<<<<< HEAD
 	pr_emerg(HW_ERR "CPU:%d\tMC%d_STATUS[%s|%s|%s|%s|%s",
 		m->extcpu, m->bank,
+=======
+	pr_emerg(HW_ERR "MC%d_STATUS[%s|%s|%s|%s|%s",
+		m->bank,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		((m->status & MCI_STATUS_OVER)	? "Over"  : "-"),
 		((m->status & MCI_STATUS_UC)	? "UE"	  : "CE"),
 		((m->status & MCI_STATUS_MISCV)	? "MiscV" : "-"),
@@ -698,8 +938,11 @@ int amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
 
 	pr_cont("]: 0x%016llx\n", m->status);
 
+<<<<<<< HEAD
 	if (m->status & MCI_STATUS_ADDRV)
 		pr_emerg(HW_ERR "\tMC%d_ADDR: 0x%016llx\n", m->bank, m->addr);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (m->bank) {
 	case 0:
@@ -722,7 +965,12 @@ int amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
 		break;
 
 	case 4:
+<<<<<<< HEAD
 		amd_decode_nb_mce(m);
+=======
+		node = amd_get_nb_id(m->extcpu);
+		amd_decode_nb_mce(node, m, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case 5:
@@ -754,7 +1002,13 @@ static int __init mce_amd_init(void)
 	if (c->x86_vendor != X86_VENDOR_AMD)
 		return 0;
 
+<<<<<<< HEAD
 	if (c->x86 < 0xf || c->x86 > 0x15)
+=======
+	if ((c->x86 < 0xf || c->x86 > 0x12) &&
+	    (c->x86 != 0x14 || c->x86_model > 0xf) &&
+	    (c->x86 != 0x15 || c->x86_model > 0xf))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	fam_ops = kzalloc(sizeof(struct amd_decoder_ops), GFP_KERNEL);
@@ -765,44 +1019,76 @@ static int __init mce_amd_init(void)
 	case 0xf:
 		fam_ops->dc_mce = k8_dc_mce;
 		fam_ops->ic_mce = k8_ic_mce;
+<<<<<<< HEAD
+=======
+		fam_ops->nb_mce = k8_nb_mce;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case 0x10:
 		fam_ops->dc_mce = f10h_dc_mce;
 		fam_ops->ic_mce = k8_ic_mce;
+<<<<<<< HEAD
+=======
+		fam_ops->nb_mce = f10h_nb_mce;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case 0x11:
 		fam_ops->dc_mce = k8_dc_mce;
 		fam_ops->ic_mce = k8_ic_mce;
+<<<<<<< HEAD
+=======
+		fam_ops->nb_mce = f10h_nb_mce;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case 0x12:
 		fam_ops->dc_mce = f12h_dc_mce;
 		fam_ops->ic_mce = k8_ic_mce;
+<<<<<<< HEAD
+=======
+		fam_ops->nb_mce = nb_noop_mce;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case 0x14:
 		nb_err_cpumask  = 0x3;
 		fam_ops->dc_mce = f14h_dc_mce;
 		fam_ops->ic_mce = f14h_ic_mce;
+<<<<<<< HEAD
+=======
+		fam_ops->nb_mce = nb_noop_mce;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case 0x15:
 		xec_mask = 0x1f;
 		fam_ops->dc_mce = f15h_dc_mce;
 		fam_ops->ic_mce = f15h_ic_mce;
+<<<<<<< HEAD
 		break;
 
 	default:
 		printk(KERN_WARNING "Huh? What family is it: 0x%x?!\n", c->x86);
+=======
+		fam_ops->nb_mce = f10h_nb_mce;
+		break;
+
+	default:
+		printk(KERN_WARNING "Huh? What family is that: %d?!\n", c->x86);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(fam_ops);
 		return -EINVAL;
 	}
 
 	pr_info("MCE: In-kernel MCE decoding enabled.\n");
 
+<<<<<<< HEAD
 	mce_register_decode_chain(&amd_mce_dec_nb);
+=======
+	atomic_notifier_chain_register(&x86_mce_decoder_chain, &amd_mce_dec_nb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -811,7 +1097,11 @@ early_initcall(mce_amd_init);
 #ifdef MODULE
 static void __exit mce_amd_exit(void)
 {
+<<<<<<< HEAD
 	mce_unregister_decode_chain(&amd_mce_dec_nb);
+=======
+	atomic_notifier_chain_unregister(&x86_mce_decoder_chain, &amd_mce_dec_nb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(fam_ops);
 }
 

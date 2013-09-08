@@ -85,6 +85,10 @@ static inline struct thread_info *current_thread_info(void)
 #define TIF_RESTORE_SIGMASK	7	/* restore signal mask in do_signal */
 #define TIF_CPU_GOING_TO_SLEEP	8	/* CPU is entering sleep 0 mode */
 #define TIF_NOTIFY_RESUME	9	/* callback before returning to user */
+<<<<<<< HEAD
+=======
+#define TIF_FREEZE		29
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define TIF_DEBUG		30	/* debugging enabled */
 #define TIF_USERSPACE		31      /* true if FS sets userspace */
 
@@ -97,6 +101,10 @@ static inline struct thread_info *current_thread_info(void)
 #define _TIF_RESTORE_SIGMASK	(1 << TIF_RESTORE_SIGMASK)
 #define _TIF_CPU_GOING_TO_SLEEP (1 << TIF_CPU_GOING_TO_SLEEP)
 #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+<<<<<<< HEAD
+=======
+#define _TIF_FREEZE		(1 << TIF_FREEZE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Note: The masks below must never span more than 16 bits! */
 

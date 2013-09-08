@@ -23,6 +23,12 @@
 /*  ----------------------------------- DSP/BIOS Bridge */
 #include <dspbridge/dbdefs.h>
 
+<<<<<<< HEAD
+=======
+/*  ----------------------------------- Trace & Debug */
+#include <dspbridge/dbc.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*  ----------------------------------- Platform Manager */
 #include <dspbridge/drv.h>
 #include <dspbridge/dev.h>
@@ -99,6 +105,11 @@ func_cont:
 	} else {
 		dev_dbg(bridge, "%s: Failed\n", __func__);
 	}			/* End api_init_complete2 */
+<<<<<<< HEAD
+=======
+	DBC_ENSURE((!status && drv_obj != NULL) ||
+		   (status && drv_obj == NULL));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*init_status = status;
 	/* Return the Driver Object */
 	return (u32) drv_obj;

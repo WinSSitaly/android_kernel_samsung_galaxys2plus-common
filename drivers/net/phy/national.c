@@ -25,9 +25,14 @@
 /* DP83865 phy identifier values */
 #define DP83865_PHY_ID	0x20005c7a
 
+<<<<<<< HEAD
 #define DP83865_INT_STATUS	0x14
 #define DP83865_INT_MASK	0x15
 #define DP83865_INT_CLEAR	0x17
+=======
+#define DP83865_INT_MASK_REG 0x15
+#define DP83865_INT_MASK_STATUS 0x14
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DP83865_INT_REMOTE_FAULT 0x0008
 #define DP83865_INT_ANE_COMPLETED 0x0010
@@ -69,16 +74,24 @@ static int ns_config_intr(struct phy_device *phydev)
 	int err;
 
 	if (phydev->interrupts == PHY_INTERRUPT_ENABLED)
+<<<<<<< HEAD
 		err = phy_write(phydev, DP83865_INT_MASK,
 				DP83865_INT_MASK_DEFAULT);
 	else
 		err = phy_write(phydev, DP83865_INT_MASK, 0);
+=======
+		err = phy_write(phydev, DP83865_INT_MASK_REG,
+				DP83865_INT_MASK_DEFAULT);
+	else
+		err = phy_write(phydev, DP83865_INT_MASK_REG, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }
 
 static int ns_ack_interrupt(struct phy_device *phydev)
 {
+<<<<<<< HEAD
 	int ret = phy_read(phydev, DP83865_INT_STATUS);
 	if (ret < 0)
 		return ret;
@@ -88,6 +101,13 @@ static int ns_ack_interrupt(struct phy_device *phydev)
 	ret = phy_write(phydev, DP83865_INT_CLEAR, ret & ~0x7);
 
 	return ret;
+=======
+	int ret = phy_read(phydev, DP83865_INT_MASK_STATUS);
+	if (ret < 0)
+		return ret;
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void ns_giga_speed_fallback(struct phy_device *phydev, int mode)

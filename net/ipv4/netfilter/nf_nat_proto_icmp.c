@@ -8,7 +8,10 @@
 
 #include <linux/types.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ip.h>
 #include <linux/icmp.h>
 
@@ -30,7 +33,11 @@ icmp_in_range(const struct nf_conntrack_tuple *tuple,
 
 static void
 icmp_unique_tuple(struct nf_conntrack_tuple *tuple,
+<<<<<<< HEAD
 		  const struct nf_nat_ipv4_range *range,
+=======
+		  const struct nf_nat_range *range,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  enum nf_nat_manip_type maniptype,
 		  const struct nf_conn *ct)
 {
@@ -40,7 +47,11 @@ icmp_unique_tuple(struct nf_conntrack_tuple *tuple,
 
 	range_size = ntohs(range->max.icmp.id) - ntohs(range->min.icmp.id) + 1;
 	/* If no range specified... */
+<<<<<<< HEAD
 	if (!(range->flags & NF_NAT_RANGE_PROTO_SPECIFIED))
+=======
+	if (!(range->flags & IP_NAT_RANGE_PROTO_SPECIFIED))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		range_size = 0xFFFF;
 
 	for (i = 0; ; ++id) {
@@ -74,10 +85,18 @@ icmp_manip_pkt(struct sk_buff *skb,
 
 const struct nf_nat_protocol nf_nat_protocol_icmp = {
 	.protonum		= IPPROTO_ICMP,
+<<<<<<< HEAD
+=======
+	.me			= THIS_MODULE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.manip_pkt		= icmp_manip_pkt,
 	.in_range		= icmp_in_range,
 	.unique_tuple		= icmp_unique_tuple,
 #if defined(CONFIG_NF_CT_NETLINK) || defined(CONFIG_NF_CT_NETLINK_MODULE)
+<<<<<<< HEAD
+=======
+	.range_to_nlattr	= nf_nat_proto_range_to_nlattr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.nlattr_to_range	= nf_nat_proto_nlattr_to_range,
 #endif
 };

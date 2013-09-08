@@ -117,7 +117,11 @@ struct hfsplus_vh {
 	__be32 write_count;
 	__be64 encodings_bmp;
 
+<<<<<<< HEAD
 	u32 finder_info[8];
+=======
+	u8 finder_info[32];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct hfsplus_fork_raw alloc_file;
 	struct hfsplus_fork_raw ext_file;

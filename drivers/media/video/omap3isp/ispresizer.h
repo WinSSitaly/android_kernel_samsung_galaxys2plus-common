@@ -107,6 +107,10 @@ struct isp_res_device {
 	enum resizer_input_entity input;
 	struct isp_video video_in;
 	struct isp_video video_out;
+<<<<<<< HEAD
+=======
+	unsigned int error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	u32 addr_base;   /* stored source buffer address in memory mode */
 	u32 crop_offset; /* additional offset for crop in memory mode */

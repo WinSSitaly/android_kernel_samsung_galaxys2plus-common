@@ -43,6 +43,10 @@
 #include <asm/pdc.h>
 #include <asm/pdcpat.h>
 #include <asm/page.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/ropes.h>
 #include <asm/hardware.h>	/* for register_parisc_driver() stuff */
@@ -634,6 +638,10 @@ lba_fixup_bus(struct pci_bus *bus)
 	u16 status;
 #endif
 	struct lba_device *ldev = LBA_DEV(parisc_walk_tree(bus->bridge));
+<<<<<<< HEAD
+=======
+	int lba_portbase = HBA_PORT_BASE(ldev->hba.hba_num);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	DBG("lba_fixup_bus(0x%p) bus %d platform_data 0x%p\n",
 		bus, bus->secondary, bus->bridge->platform_data);
@@ -651,7 +659,11 @@ lba_fixup_bus(struct pci_bus *bus)
 		}
 	} else {
 		/* Host-PCI Bridge */
+<<<<<<< HEAD
 		int err;
+=======
+		int err, i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		DBG("lba_fixup_bus() %s [%lx/%lx]/%lx\n",
 			ldev->hba.io_space.name,
@@ -667,6 +679,12 @@ lba_fixup_bus(struct pci_bus *bus)
 			lba_dump_res(&ioport_resource, 2);
 			BUG();
 		}
+<<<<<<< HEAD
+=======
+		/* advertize Host bridge resources to PCI bus */
+		bus->resource[0] = &(ldev->hba.io_space);
+		i = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (ldev->hba.elmmio_space.start) {
 			err = request_resource(&iomem_resource,
@@ -680,17 +698,46 @@ lba_fixup_bus(struct pci_bus *bus)
 
 				/* lba_dump_res(&iomem_resource, 2); */
 				/* BUG(); */
+<<<<<<< HEAD
 			}
 		}
 
 		if (ldev->hba.lmmio_space.flags) {
+=======
+			} else
+				bus->resource[i++] = &(ldev->hba.elmmio_space);
+		}
+
+
+		/*   Overlaps with elmmio can (and should) fail here.
+		 *   We will prune (or ignore) the distributed range.
+		 *
+		 *   FIXME: SBA code should register all elmmio ranges first.
+		 *      that would take care of elmmio ranges routed
+		 *	to a different rope (already discovered) from
+		 *	getting registered *after* LBA code has already
+		 *	registered it's distributed lmmio range.
+		 */
+		if (truncate_pat_collision(&iomem_resource,
+				       	&(ldev->hba.lmmio_space))) {
+
+			printk(KERN_WARNING "LBA: lmmio_space [%lx/%lx] duplicate!\n",
+					(long)ldev->hba.lmmio_space.start,
+					(long)ldev->hba.lmmio_space.end);
+		} else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			err = request_resource(&iomem_resource, &(ldev->hba.lmmio_space));
 			if (err < 0) {
 				printk(KERN_ERR "FAILED: lba_fixup_bus() request for "
 					"lmmio_space [%lx/%lx]\n",
 					(long)ldev->hba.lmmio_space.start,
 					(long)ldev->hba.lmmio_space.end);
+<<<<<<< HEAD
 			}
+=======
+			} else
+				bus->resource[i++] = &(ldev->hba.lmmio_space);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 #ifdef CONFIG_64BIT
@@ -705,6 +752,10 @@ lba_fixup_bus(struct pci_bus *bus)
 				lba_dump_res(&iomem_resource, 2);
 				BUG();
 			}
+<<<<<<< HEAD
+=======
+			bus->resource[i++] = &(ldev->hba.gmmio_space);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 #endif
 
@@ -724,6 +775,30 @@ lba_fixup_bus(struct pci_bus *bus)
 			if (!res->start)
 				continue;
 
+<<<<<<< HEAD
+=======
+			if (res->flags & IORESOURCE_IO) {
+				DBG("lba_fixup_bus() I/O Ports [%lx/%lx] -> ",
+					res->start, res->end);
+				res->start |= lba_portbase;
+				res->end   |= lba_portbase;
+				DBG("[%lx/%lx]\n", res->start, res->end);
+			} else if (res->flags & IORESOURCE_MEM) {
+				/*
+				** Convert PCI (IO_VIEW) addresses to
+				** processor (PA_VIEW) addresses
+				 */
+				DBG("lba_fixup_bus() MMIO [%lx/%lx] -> ",
+					res->start, res->end);
+				res->start = PCI_HOST_ADDR(HBA_DATA(ldev), res->start);
+				res->end   = PCI_HOST_ADDR(HBA_DATA(ldev), res->end);
+				DBG("[%lx/%lx]\n", res->start, res->end);
+			} else {
+				DBG("lba_fixup_bus() WTF? 0x%lx [%lx/%lx] XXX",
+					res->flags, res->start, res->end);
+			}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			** FIXME: this will result in whinging for devices
 			** that share expansion ROMs (think quad tulip), but
@@ -1359,7 +1434,10 @@ static int __init
 lba_driver_probe(struct parisc_device *dev)
 {
 	struct lba_device *lba_dev;
+<<<<<<< HEAD
 	LIST_HEAD(resources);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pci_bus *lba_bus;
 	struct pci_ops *cfg_ops;
 	u32 func_class;
@@ -1474,6 +1552,7 @@ lba_driver_probe(struct parisc_device *dev)
 	if (lba_dev->hba.bus_num.start < lba_next_bus)
 		lba_dev->hba.bus_num.start = lba_next_bus;
 
+<<<<<<< HEAD
 	/*   Overlaps with elmmio can (and should) fail here.
 	 *   We will prune (or ignore) the distributed range.
 	 *
@@ -1512,6 +1591,12 @@ lba_driver_probe(struct parisc_device *dev)
 	}
 
 	lba_bus->subordinate = pci_scan_child_bus(lba_bus);
+=======
+	dev->dev.platform_data = lba_dev;
+	lba_bus = lba_dev->hba.hba_bus =
+		pci_scan_bus_parented(&dev->dev, lba_dev->hba.bus_num.start,
+				cfg_ops, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* This is in lieu of calling pci_assign_unassigned_resources() */
 	if (is_pdc_pat()) {
@@ -1541,8 +1626,15 @@ lba_driver_probe(struct parisc_device *dev)
 		lba_dev->flags |= LBA_FLAG_SKIP_PROBE;
 	}
 
+<<<<<<< HEAD
 	lba_next_bus = lba_bus->subordinate + 1;
 	pci_bus_add_devices(lba_bus);
+=======
+	if (lba_bus) {
+		lba_next_bus = lba_bus->subordinate + 1;
+		pci_bus_add_devices(lba_bus);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Whew! Finally done! Tell services we got this one covered. */
 	return 0;

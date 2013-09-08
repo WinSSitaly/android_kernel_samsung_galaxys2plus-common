@@ -23,7 +23,10 @@
 #include <linux/rcupdate.h>
 #include <linux/kthread.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/ratelimit.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "compat.h"
 #include "hash.h"
 #include "ctree.h"
@@ -34,17 +37,27 @@
 #include "locking.h"
 #include "free-space-cache.h"
 
+<<<<<<< HEAD
 /*
  * control flags for do_chunk_alloc's force field
  * CHUNK_ALLOC_NO_FORCE means to only allocate a chunk
  * if we really need one.
  *
+=======
+/* control flags for do_chunk_alloc's force field
+ * CHUNK_ALLOC_NO_FORCE means to only allocate a chunk
+ * if we really need one.
+ *
+ * CHUNK_ALLOC_FORCE means it must try to allocate one
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * CHUNK_ALLOC_LIMITED means to only try and allocate one
  * if we have very few chunks already allocated.  This is
  * used as part of the clustering code to help make sure
  * we have a good pool of storage to cluster in, without
  * filling the FS with empty chunks
  *
+<<<<<<< HEAD
  * CHUNK_ALLOC_FORCE means it must try to allocate one
  *
  */
@@ -67,6 +80,13 @@ enum {
 	RESERVE_FREE = 0,
 	RESERVE_ALLOC = 1,
 	RESERVE_ALLOC_NO_ACCOUNT = 2,
+=======
+ */
+enum {
+	CHUNK_ALLOC_NO_FORCE = 0,
+	CHUNK_ALLOC_FORCE = 1,
+	CHUNK_ALLOC_LIMITED = 2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int update_block_group(struct btrfs_trans_handle *trans,
@@ -98,8 +118,11 @@ static int find_next_key(struct btrfs_path *path, int level,
 			 struct btrfs_key *key);
 static void dump_space_info(struct btrfs_space_info *info, u64 bytes,
 			    int dump_block_groups);
+<<<<<<< HEAD
 static int btrfs_update_reserved_bytes(struct btrfs_block_group_cache *cache,
 				       u64 num_bytes, int reserve);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static noinline int
 block_group_cache_done(struct btrfs_block_group_cache *cache)
@@ -123,6 +146,10 @@ void btrfs_put_block_group(struct btrfs_block_group_cache *cache)
 	if (atomic_dec_and_test(&cache->count)) {
 		WARN_ON(cache->pinned > 0);
 		WARN_ON(cache->reserved > 0);
+<<<<<<< HEAD
+=======
+		WARN_ON(cache->reserved_pinned > 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(cache->free_space_ctl);
 		kfree(cache);
 	}
@@ -245,7 +272,11 @@ static int exclude_super_stripes(struct btrfs_root *root,
 		cache->bytes_super += stripe_len;
 		ret = add_excluded_extent(root, cache->key.objectid,
 					  stripe_len);
+<<<<<<< HEAD
 		BUG_ON(ret); /* -ENOMEM */
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	for (i = 0; i < BTRFS_SUPER_MIRROR_MAX; i++) {
@@ -253,13 +284,21 @@ static int exclude_super_stripes(struct btrfs_root *root,
 		ret = btrfs_rmap_block(&root->fs_info->mapping_tree,
 				       cache->key.objectid, bytenr,
 				       0, &logical, &nr, &stripe_len);
+<<<<<<< HEAD
 		BUG_ON(ret); /* -ENOMEM */
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		while (nr--) {
 			cache->bytes_super += stripe_len;
 			ret = add_excluded_extent(root, logical[nr],
 						  stripe_len);
+<<<<<<< HEAD
 			BUG_ON(ret); /* -ENOMEM */
+=======
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		kfree(logical);
@@ -321,7 +360,11 @@ static u64 add_new_free_space(struct btrfs_block_group_cache *block_group,
 			total_added += size;
 			ret = btrfs_add_free_space(block_group, start,
 						   size);
+<<<<<<< HEAD
 			BUG_ON(ret); /* -ENOMEM or logic error */
+=======
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			start = extent_end + 1;
 		} else {
 			break;
@@ -332,18 +375,31 @@ static u64 add_new_free_space(struct btrfs_block_group_cache *block_group,
 		size = end - start;
 		total_added += size;
 		ret = btrfs_add_free_space(block_group, start, size);
+<<<<<<< HEAD
 		BUG_ON(ret); /* -ENOMEM or logic error */
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return total_added;
 }
 
+<<<<<<< HEAD
 static noinline void caching_thread(struct btrfs_work *work)
 {
 	struct btrfs_block_group_cache *block_group;
 	struct btrfs_fs_info *fs_info;
 	struct btrfs_caching_control *caching_ctl;
 	struct btrfs_root *extent_root;
+=======
+static int caching_kthread(void *data)
+{
+	struct btrfs_block_group_cache *block_group = data;
+	struct btrfs_fs_info *fs_info = block_group->fs_info;
+	struct btrfs_caching_control *caching_ctl = block_group->caching_ctl;
+	struct btrfs_root *extent_root = fs_info->extent_root;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct btrfs_path *path;
 	struct extent_buffer *leaf;
 	struct btrfs_key key;
@@ -352,6 +408,7 @@ static noinline void caching_thread(struct btrfs_work *work)
 	u32 nritems;
 	int ret = 0;
 
+<<<<<<< HEAD
 	caching_ctl = container_of(work, struct btrfs_caching_control, work);
 	block_group = caching_ctl->block_group;
 	fs_info = block_group->fs_info;
@@ -360,6 +417,11 @@ static noinline void caching_thread(struct btrfs_work *work)
 	path = btrfs_alloc_path();
 	if (!path)
 		goto out;
+=======
+	path = btrfs_alloc_path();
+	if (!path)
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	last = max_t(u64, block_group->key.objectid, BTRFS_SUPER_INFO_OFFSET);
 
@@ -456,11 +518,21 @@ err:
 	free_excluded_extents(extent_root, block_group);
 
 	mutex_unlock(&caching_ctl->mutex);
+<<<<<<< HEAD
 out:
 	wake_up(&caching_ctl->wait);
 
 	put_caching_control(caching_ctl);
 	btrfs_put_block_group(block_group);
+=======
+	wake_up(&caching_ctl->wait);
+
+	put_caching_control(caching_ctl);
+	atomic_dec(&block_group->space_info->caching_threads);
+	btrfs_put_block_group(block_group);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int cache_block_group(struct btrfs_block_group_cache *cache,
@@ -468,6 +540,7 @@ static int cache_block_group(struct btrfs_block_group_cache *cache,
 			     struct btrfs_root *root,
 			     int load_cache_only)
 {
+<<<<<<< HEAD
 	DEFINE_WAIT(wait);
 	struct btrfs_fs_info *fs_info = cache->fs_info;
 	struct btrfs_caching_control *caching_ctl;
@@ -522,6 +595,16 @@ static int cache_block_group(struct btrfs_block_group_cache *cache,
 	cache->caching_ctl = caching_ctl;
 	cache->cached = BTRFS_CACHE_FAST;
 	spin_unlock(&cache->lock);
+=======
+	struct btrfs_fs_info *fs_info = cache->fs_info;
+	struct btrfs_caching_control *caching_ctl;
+	struct task_struct *tsk;
+	int ret = 0;
+
+	smp_mb();
+	if (cache->cached != BTRFS_CACHE_NO)
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * We can't do the read from on-disk cache during a commit since we need
@@ -529,11 +612,25 @@ static int cache_block_group(struct btrfs_block_group_cache *cache,
 	 * allocate blocks for the tree root we can't do the fast caching since
 	 * we likely hold important locks.
 	 */
+<<<<<<< HEAD
 	if (fs_info->mount_opt & BTRFS_MOUNT_SPACE_CACHE) {
+=======
+	if (trans && (!trans->transaction->in_commit) &&
+	    (root && root != root->fs_info->tree_root)) {
+		spin_lock(&cache->lock);
+		if (cache->cached != BTRFS_CACHE_NO) {
+			spin_unlock(&cache->lock);
+			return 0;
+		}
+		cache->cached = BTRFS_CACHE_STARTED;
+		spin_unlock(&cache->lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = load_free_space_cache(fs_info, cache);
 
 		spin_lock(&cache->lock);
 		if (ret == 1) {
+<<<<<<< HEAD
 			cache->caching_ctl = NULL;
 			cache->cached = BTRFS_CACHE_FINISHED;
 			cache->last_byte_to_unpin = (u64)-1;
@@ -581,6 +678,58 @@ static int cache_block_group(struct btrfs_block_group_cache *cache,
 	btrfs_get_block_group(cache);
 
 	btrfs_queue_worker(&fs_info->caching_workers, &caching_ctl->work);
+=======
+			cache->cached = BTRFS_CACHE_FINISHED;
+			cache->last_byte_to_unpin = (u64)-1;
+		} else {
+			cache->cached = BTRFS_CACHE_NO;
+		}
+		spin_unlock(&cache->lock);
+		if (ret == 1) {
+			free_excluded_extents(fs_info->extent_root, cache);
+			return 0;
+		}
+	}
+
+	if (load_cache_only)
+		return 0;
+
+	caching_ctl = kzalloc(sizeof(*caching_ctl), GFP_NOFS);
+	BUG_ON(!caching_ctl);
+
+	INIT_LIST_HEAD(&caching_ctl->list);
+	mutex_init(&caching_ctl->mutex);
+	init_waitqueue_head(&caching_ctl->wait);
+	caching_ctl->block_group = cache;
+	caching_ctl->progress = cache->key.objectid;
+	/* one for caching kthread, one for caching block group list */
+	atomic_set(&caching_ctl->count, 2);
+
+	spin_lock(&cache->lock);
+	if (cache->cached != BTRFS_CACHE_NO) {
+		spin_unlock(&cache->lock);
+		kfree(caching_ctl);
+		return 0;
+	}
+	cache->caching_ctl = caching_ctl;
+	cache->cached = BTRFS_CACHE_STARTED;
+	spin_unlock(&cache->lock);
+
+	down_write(&fs_info->extent_commit_sem);
+	list_add_tail(&caching_ctl->list, &fs_info->caching_block_groups);
+	up_write(&fs_info->extent_commit_sem);
+
+	atomic_inc(&cache->space_info->caching_threads);
+	btrfs_get_block_group(cache);
+
+	tsk = kthread_run(caching_kthread, cache, "btrfs-cache-%llu\n",
+			  cache->key.objectid);
+	if (IS_ERR(tsk)) {
+		ret = PTR_ERR(tsk);
+		printk(KERN_ERR "error running thread %d\n", ret);
+		BUG();
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -618,7 +767,12 @@ static struct btrfs_space_info *__find_space_info(struct btrfs_fs_info *info,
 	struct list_head *head = &info->space_info;
 	struct btrfs_space_info *found;
 
+<<<<<<< HEAD
 	flags &= BTRFS_BLOCK_GROUP_TYPE_MASK;
+=======
+	flags &= BTRFS_BLOCK_GROUP_DATA | BTRFS_BLOCK_GROUP_SYSTEM |
+		 BTRFS_BLOCK_GROUP_METADATA;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rcu_read_lock();
 	list_for_each_entry_rcu(found, head, list) {
@@ -721,9 +875,13 @@ int btrfs_lookup_extent(struct btrfs_root *root, u64 start, u64 len)
 	struct btrfs_path *path;
 
 	path = btrfs_alloc_path();
+<<<<<<< HEAD
 	if (!path)
 		return -ENOMEM;
 
+=======
+	BUG_ON(!path);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	key.objectid = start;
 	key.offset = len;
 	btrfs_set_key_type(&key, BTRFS_EXTENT_ITEM_KEY);
@@ -981,7 +1139,11 @@ static int convert_extent_item_v0(struct btrfs_trans_handle *trans,
 				ret = btrfs_next_leaf(root, path);
 				if (ret < 0)
 					return ret;
+<<<<<<< HEAD
 				BUG_ON(ret > 0); /* Corruption */
+=======
+				BUG_ON(ret > 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				leaf = path->nodes[0];
 			}
 			btrfs_item_key_to_cpu(leaf, &found_key,
@@ -1007,9 +1169,15 @@ static int convert_extent_item_v0(struct btrfs_trans_handle *trans,
 				new_size + extra_size, 1);
 	if (ret < 0)
 		return ret;
+<<<<<<< HEAD
 	BUG_ON(ret); /* Corruption */
 
 	btrfs_extend_item(trans, root, path, new_size);
+=======
+	BUG_ON(ret);
+
+	ret = btrfs_extend_item(trans, root, path, new_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	leaf = path->nodes[0];
 	item = btrfs_item_ptr(leaf, path->slots[0], struct btrfs_extent_item);
@@ -1477,11 +1645,15 @@ int lookup_inline_extent_backref(struct btrfs_trans_handle *trans,
 		err = ret;
 		goto out;
 	}
+<<<<<<< HEAD
 	if (ret && !insert) {
 		err = -ENOENT;
 		goto out;
 	}
 	BUG_ON(ret); /* Corruption */
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	leaf = path->nodes[0];
 	item_size = btrfs_item_size_nr(leaf, path->slots[0]);
@@ -1595,6 +1767,7 @@ out:
  * helper to add new inline back ref
  */
 static noinline_for_stack
+<<<<<<< HEAD
 void setup_inline_extent_backref(struct btrfs_trans_handle *trans,
 				 struct btrfs_root *root,
 				 struct btrfs_path *path,
@@ -1602,6 +1775,15 @@ void setup_inline_extent_backref(struct btrfs_trans_handle *trans,
 				 u64 parent, u64 root_objectid,
 				 u64 owner, u64 offset, int refs_to_add,
 				 struct btrfs_delayed_extent_op *extent_op)
+=======
+int setup_inline_extent_backref(struct btrfs_trans_handle *trans,
+				struct btrfs_root *root,
+				struct btrfs_path *path,
+				struct btrfs_extent_inline_ref *iref,
+				u64 parent, u64 root_objectid,
+				u64 owner, u64 offset, int refs_to_add,
+				struct btrfs_delayed_extent_op *extent_op)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct extent_buffer *leaf;
 	struct btrfs_extent_item *ei;
@@ -1611,6 +1793,10 @@ void setup_inline_extent_backref(struct btrfs_trans_handle *trans,
 	u64 refs;
 	int size;
 	int type;
+<<<<<<< HEAD
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	leaf = path->nodes[0];
 	ei = btrfs_item_ptr(leaf, path->slots[0], struct btrfs_extent_item);
@@ -1619,7 +1805,11 @@ void setup_inline_extent_backref(struct btrfs_trans_handle *trans,
 	type = extent_ref_type(parent, owner);
 	size = btrfs_extent_inline_ref_size(type);
 
+<<<<<<< HEAD
 	btrfs_extend_item(trans, root, path, size);
+=======
+	ret = btrfs_extend_item(trans, root, path, size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ei = btrfs_item_ptr(leaf, path->slots[0], struct btrfs_extent_item);
 	refs = btrfs_extent_refs(leaf, ei);
@@ -1654,6 +1844,10 @@ void setup_inline_extent_backref(struct btrfs_trans_handle *trans,
 		btrfs_set_extent_inline_ref_offset(leaf, iref, root_objectid);
 	}
 	btrfs_mark_buffer_dirty(leaf);
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int lookup_extent_backref(struct btrfs_trans_handle *trans,
@@ -1688,12 +1882,21 @@ static int lookup_extent_backref(struct btrfs_trans_handle *trans,
  * helper to update/remove inline back ref
  */
 static noinline_for_stack
+<<<<<<< HEAD
 void update_inline_extent_backref(struct btrfs_trans_handle *trans,
 				  struct btrfs_root *root,
 				  struct btrfs_path *path,
 				  struct btrfs_extent_inline_ref *iref,
 				  int refs_to_mod,
 				  struct btrfs_delayed_extent_op *extent_op)
+=======
+int update_inline_extent_backref(struct btrfs_trans_handle *trans,
+				 struct btrfs_root *root,
+				 struct btrfs_path *path,
+				 struct btrfs_extent_inline_ref *iref,
+				 int refs_to_mod,
+				 struct btrfs_delayed_extent_op *extent_op)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct extent_buffer *leaf;
 	struct btrfs_extent_item *ei;
@@ -1704,6 +1907,10 @@ void update_inline_extent_backref(struct btrfs_trans_handle *trans,
 	u32 item_size;
 	int size;
 	int type;
+<<<<<<< HEAD
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64 refs;
 
 	leaf = path->nodes[0];
@@ -1745,9 +1952,16 @@ void update_inline_extent_backref(struct btrfs_trans_handle *trans,
 			memmove_extent_buffer(leaf, ptr, ptr + size,
 					      end - ptr - size);
 		item_size -= size;
+<<<<<<< HEAD
 		btrfs_truncate_item(trans, root, path, item_size, 1);
 	}
 	btrfs_mark_buffer_dirty(leaf);
+=======
+		ret = btrfs_truncate_item(trans, root, path, item_size, 1);
+	}
+	btrfs_mark_buffer_dirty(leaf);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static noinline_for_stack
@@ -1767,6 +1981,7 @@ int insert_inline_extent_backref(struct btrfs_trans_handle *trans,
 					   root_objectid, owner, offset, 1);
 	if (ret == 0) {
 		BUG_ON(owner < BTRFS_FIRST_FREE_OBJECTID);
+<<<<<<< HEAD
 		update_inline_extent_backref(trans, root, path, iref,
 					     refs_to_add, extent_op);
 	} else if (ret == -ENOENT) {
@@ -1774,6 +1989,15 @@ int insert_inline_extent_backref(struct btrfs_trans_handle *trans,
 					    root_objectid, owner, offset,
 					    refs_to_add, extent_op);
 		ret = 0;
+=======
+		ret = update_inline_extent_backref(trans, root, path, iref,
+						   refs_to_add, extent_op);
+	} else if (ret == -ENOENT) {
+		ret = setup_inline_extent_backref(trans, root, path, iref,
+						  parent, root_objectid,
+						  owner, offset, refs_to_add,
+						  extent_op);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return ret;
 }
@@ -1803,12 +2027,21 @@ static int remove_extent_backref(struct btrfs_trans_handle *trans,
 				 struct btrfs_extent_inline_ref *iref,
 				 int refs_to_drop, int is_data)
 {
+<<<<<<< HEAD
 	int ret = 0;
 
 	BUG_ON(!is_data && refs_to_drop != 1);
 	if (iref) {
 		update_inline_extent_backref(trans, root, path, iref,
 					     -refs_to_drop, NULL);
+=======
+	int ret;
+
+	BUG_ON(!is_data && refs_to_drop != 1);
+	if (iref) {
+		ret = update_inline_extent_backref(trans, root, path, iref,
+						   -refs_to_drop, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (is_data) {
 		ret = remove_extent_data_ref(trans, root, path, refs_to_drop);
 	} else {
@@ -1828,11 +2061,16 @@ static int btrfs_discard_extent(struct btrfs_root *root, u64 bytenr,
 {
 	int ret;
 	u64 discarded_bytes = 0;
+<<<<<<< HEAD
 	struct btrfs_bio *bbio = NULL;
+=======
+	struct btrfs_multi_bio *multi = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 	/* Tell the block device(s) that the sectors can be discarded */
 	ret = btrfs_map_block(&root->fs_info->mapping_tree, REQ_DISCARD,
+<<<<<<< HEAD
 			      bytenr, &num_bytes, &bbio, 0);
 	/* Error condition is -ENOMEM */
 	if (!ret) {
@@ -1841,6 +2079,15 @@ static int btrfs_discard_extent(struct btrfs_root *root, u64 bytenr,
 
 
 		for (i = 0; i < bbio->num_stripes; i++, stripe++) {
+=======
+			      bytenr, &num_bytes, &multi, 0);
+	if (!ret) {
+		struct btrfs_bio_stripe *stripe = multi->stripes;
+		int i;
+
+
+		for (i = 0; i < multi->num_stripes; i++, stripe++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!stripe->dev->can_discard)
 				continue;
 
@@ -1850,7 +2097,11 @@ static int btrfs_discard_extent(struct btrfs_root *root, u64 bytenr,
 			if (!ret)
 				discarded_bytes += stripe->length;
 			else if (ret != -EOPNOTSUPP)
+<<<<<<< HEAD
 				break; /* Logic errors or -ENOMEM, or -EIO but I don't know how that could happen JDM */
+=======
+				break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/*
 			 * Just in case we get back EOPNOTSUPP for some reason,
@@ -1859,7 +2110,11 @@ static int btrfs_discard_extent(struct btrfs_root *root, u64 bytenr,
 			 */
 			ret = 0;
 		}
+<<<<<<< HEAD
 		kfree(bbio);
+=======
+		kfree(multi);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (actual_bytes)
@@ -1869,6 +2124,7 @@ static int btrfs_discard_extent(struct btrfs_root *root, u64 bytenr,
 	return ret;
 }
 
+<<<<<<< HEAD
 /* Can return -ENOMEM */
 int btrfs_inc_extent_ref(struct btrfs_trans_handle *trans,
 			 struct btrfs_root *root,
@@ -1878,10 +2134,19 @@ int btrfs_inc_extent_ref(struct btrfs_trans_handle *trans,
 	int ret;
 	struct btrfs_fs_info *fs_info = root->fs_info;
 
+=======
+int btrfs_inc_extent_ref(struct btrfs_trans_handle *trans,
+			 struct btrfs_root *root,
+			 u64 bytenr, u64 num_bytes, u64 parent,
+			 u64 root_objectid, u64 owner, u64 offset)
+{
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BUG_ON(owner < BTRFS_FIRST_FREE_OBJECTID &&
 	       root_objectid == BTRFS_TREE_LOG_OBJECTID);
 
 	if (owner < BTRFS_FIRST_FREE_OBJECTID) {
+<<<<<<< HEAD
 		ret = btrfs_add_delayed_tree_ref(fs_info, trans, bytenr,
 					num_bytes,
 					parent, root_objectid, (int)owner,
@@ -1891,6 +2156,15 @@ int btrfs_inc_extent_ref(struct btrfs_trans_handle *trans,
 					num_bytes,
 					parent, root_objectid, owner, offset,
 					BTRFS_ADD_DELAYED_REF, NULL, for_cow);
+=======
+		ret = btrfs_add_delayed_tree_ref(trans, bytenr, num_bytes,
+					parent, root_objectid, (int)owner,
+					BTRFS_ADD_DELAYED_REF, NULL);
+	} else {
+		ret = btrfs_add_delayed_data_ref(trans, bytenr, num_bytes,
+					parent, root_objectid, owner, offset,
+					BTRFS_ADD_DELAYED_REF, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return ret;
 }
@@ -1945,8 +2219,12 @@ static int __btrfs_inc_extent_ref(struct btrfs_trans_handle *trans,
 	ret = insert_extent_backref(trans, root->fs_info->extent_root,
 				    path, bytenr, parent, root_objectid,
 				    owner, offset, refs_to_add);
+<<<<<<< HEAD
 	if (ret)
 		btrfs_abort_transaction(trans, root, ret);
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	btrfs_free_path(path);
 	return err;
@@ -2033,9 +2311,12 @@ static int run_delayed_extent_op(struct btrfs_trans_handle *trans,
 	int ret;
 	int err = 0;
 
+<<<<<<< HEAD
 	if (trans->aborted)
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	path = btrfs_alloc_path();
 	if (!path)
 		return -ENOMEM;
@@ -2133,11 +2414,15 @@ static int run_one_delayed_ref(struct btrfs_trans_handle *trans,
 			       struct btrfs_delayed_extent_op *extent_op,
 			       int insert_reserved)
 {
+<<<<<<< HEAD
 	int ret = 0;
 
 	if (trans->aborted)
 		return 0;
 
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (btrfs_delayed_ref_is_head(node)) {
 		struct btrfs_delayed_ref_head *head;
 		/*
@@ -2155,10 +2440,18 @@ static int run_one_delayed_ref(struct btrfs_trans_handle *trans,
 				ret = btrfs_del_csums(trans, root,
 						      node->bytenr,
 						      node->num_bytes);
+<<<<<<< HEAD
 			}
 		}
 		mutex_unlock(&head->mutex);
 		return ret;
+=======
+				BUG_ON(ret);
+			}
+		}
+		mutex_unlock(&head->mutex);
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (node->type == BTRFS_TREE_BLOCK_REF_KEY ||
@@ -2205,10 +2498,13 @@ again:
 	return NULL;
 }
 
+<<<<<<< HEAD
 /*
  * Returns 0 on success or if called with an already aborted transaction.
  * Returns -ENOMEM or -EIO on failure and will abort the transaction.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static noinline int run_clustered_refs(struct btrfs_trans_handle *trans,
 				       struct btrfs_root *root,
 				       struct list_head *cluster)
@@ -2249,6 +2545,7 @@ static noinline int run_clustered_refs(struct btrfs_trans_handle *trans,
 		}
 
 		/*
+<<<<<<< HEAD
 		 * locked_ref is the head node, so we have to go one
 		 * node back for any delayed ref updates
 		 */
@@ -2271,6 +2568,8 @@ static noinline int run_clustered_refs(struct btrfs_trans_handle *trans,
 		}
 
 		/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * record the must insert reserved flag before we
 		 * drop the spin lock.
 		 */
@@ -2280,6 +2579,14 @@ static noinline int run_clustered_refs(struct btrfs_trans_handle *trans,
 		extent_op = locked_ref->extent_op;
 		locked_ref->extent_op = NULL;
 
+<<<<<<< HEAD
+=======
+		/*
+		 * locked_ref is the head node, so we have to go one
+		 * node back for any delayed ref updates
+		 */
+		ref = select_delayed_ref(locked_ref);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!ref) {
 			/* All delayed refs have been processed, Go ahead
 			 * and send the head node to run_one_delayed_ref,
@@ -2297,6 +2604,7 @@ static noinline int run_clustered_refs(struct btrfs_trans_handle *trans,
 
 				ret = run_delayed_extent_op(trans, root,
 							    ref, extent_op);
+<<<<<<< HEAD
 				kfree(extent_op);
 
 				if (ret) {
@@ -2306,6 +2614,14 @@ static noinline int run_clustered_refs(struct btrfs_trans_handle *trans,
 				}
 
 				goto next;
+=======
+				BUG_ON(ret);
+				kfree(extent_op);
+
+				cond_resched();
+				spin_lock(&delayed_refs->lock);
+				continue;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 
 			list_del_init(&locked_ref->cluster);
@@ -2315,21 +2631,30 @@ static noinline int run_clustered_refs(struct btrfs_trans_handle *trans,
 		ref->in_tree = 0;
 		rb_erase(&ref->rb_node, &delayed_refs->root);
 		delayed_refs->num_entries--;
+<<<<<<< HEAD
 		/*
 		 * we modified num_entries, but as we're currently running
 		 * delayed refs, skip
 		 *     wake_up(&delayed_refs->seq_wait);
 		 * here.
 		 */
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock(&delayed_refs->lock);
 
 		ret = run_one_delayed_ref(trans, root, ref, extent_op,
 					  must_insert_reserved);
+<<<<<<< HEAD
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		btrfs_put_delayed_ref(ref);
 		kfree(extent_op);
 		count++;
 
+<<<<<<< HEAD
 		if (ret) {
 			printk(KERN_DEBUG "btrfs: run_one_delayed_ref returned %d\n", ret);
 			spin_lock(&delayed_refs->lock);
@@ -2341,12 +2666,15 @@ next:
 			       2 * 1024 * 1024,
 			       btrfs_get_alloc_profile(root, 0),
 			       CHUNK_ALLOC_NO_FORCE);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cond_resched();
 		spin_lock(&delayed_refs->lock);
 	}
 	return count;
 }
 
+<<<<<<< HEAD
 
 static void wait_for_more_refs(struct btrfs_delayed_ref_root *delayed_refs,
 			unsigned long num_refs)
@@ -2364,15 +2692,20 @@ static void wait_for_more_refs(struct btrfs_delayed_ref_root *delayed_refs,
 	spin_lock(&delayed_refs->lock);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * this starts processing the delayed reference count updates and
  * extent insertions we have queued up so far.  count can be
  * 0, which means to process everything in the tree at the start
  * of the run (but not newly added entries), or it can be some target
  * number you'd like to process.
+<<<<<<< HEAD
  *
  * Returns 0 on success or if called with an aborted transaction
  * Returns <0 on error and aborts the transaction
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int btrfs_run_delayed_refs(struct btrfs_trans_handle *trans,
 			   struct btrfs_root *root, unsigned long count)
@@ -2382,6 +2715,7 @@ int btrfs_run_delayed_refs(struct btrfs_trans_handle *trans,
 	struct btrfs_delayed_ref_node *ref;
 	struct list_head cluster;
 	int ret;
+<<<<<<< HEAD
 	u64 delayed_start;
 	int run_all = count == (unsigned long)-1;
 	int run_most = 0;
@@ -2391,10 +2725,15 @@ int btrfs_run_delayed_refs(struct btrfs_trans_handle *trans,
 	/* We'll clean this up in btrfs_cleanup_transaction */
 	if (trans->aborted)
 		return 0;
+=======
+	int run_all = count == (unsigned long)-1;
+	int run_most = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (root == root->fs_info->extent_root)
 		root = root->fs_info->tree_root;
 
+<<<<<<< HEAD
 	do_chunk_alloc(trans, root->fs_info->extent_root,
 		       2 * 1024 * 1024, btrfs_get_alloc_profile(root, 0),
 		       CHUNK_ALLOC_NO_FORCE);
@@ -2403,6 +2742,11 @@ int btrfs_run_delayed_refs(struct btrfs_trans_handle *trans,
 	INIT_LIST_HEAD(&cluster);
 again:
 	consider_waiting = 0;
+=======
+	delayed_refs = &trans->transaction->delayed_refs;
+	INIT_LIST_HEAD(&cluster);
+again:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&delayed_refs->lock);
 	if (count == 0) {
 		count = delayed_refs->num_entries * 2;
@@ -2419,12 +2763,16 @@ again:
 		 * of refs to process starting at the first one we are able to
 		 * lock
 		 */
+<<<<<<< HEAD
 		delayed_start = delayed_refs->run_delayed_start;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = btrfs_find_ref_cluster(trans, &cluster,
 					     delayed_refs->run_delayed_start);
 		if (ret)
 			break;
 
+<<<<<<< HEAD
 		if (delayed_start >= delayed_refs->run_delayed_start) {
 			if (consider_waiting == 0) {
 				/*
@@ -2454,16 +2802,23 @@ again:
 			btrfs_abort_transaction(trans, root, ret);
 			return ret;
 		}
+=======
+		ret = run_clustered_refs(trans, root, &cluster);
+		BUG_ON(ret < 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		count -= min_t(unsigned long, ret, count);
 
 		if (count == 0)
 			break;
+<<<<<<< HEAD
 
 		if (ret || delayed_refs->run_delayed_start == 0) {
 			/* refs were run, let's reset staleness detection */
 			consider_waiting = 0;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (run_all) {
@@ -2521,8 +2876,12 @@ int btrfs_set_disk_extent_flags(struct btrfs_trans_handle *trans,
 	extent_op->update_key = 0;
 	extent_op->is_data = is_data ? 1 : 0;
 
+<<<<<<< HEAD
 	ret = btrfs_add_delayed_extent_op(root->fs_info, trans, bytenr,
 					  num_bytes, extent_op);
+=======
+	ret = btrfs_add_delayed_extent_op(trans, bytenr, num_bytes, extent_op);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		kfree(extent_op);
 	return ret;
@@ -2618,7 +2977,11 @@ static noinline int check_committed_ref(struct btrfs_trans_handle *trans,
 	ret = btrfs_search_slot(NULL, extent_root, &key, path, 0, 0);
 	if (ret < 0)
 		goto out;
+<<<<<<< HEAD
 	BUG_ON(ret == 0); /* Corruption */
+=======
+	BUG_ON(ret == 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = -ENOENT;
 	if (path->slots[0] == 0)
@@ -2707,7 +3070,11 @@ out:
 static int __btrfs_mod_ref(struct btrfs_trans_handle *trans,
 			   struct btrfs_root *root,
 			   struct extent_buffer *buf,
+<<<<<<< HEAD
 			   int full_backref, int inc, int for_cow)
+=======
+			   int full_backref, int inc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u64 bytenr;
 	u64 num_bytes;
@@ -2720,7 +3087,11 @@ static int __btrfs_mod_ref(struct btrfs_trans_handle *trans,
 	int level;
 	int ret = 0;
 	int (*process_func)(struct btrfs_trans_handle *, struct btrfs_root *,
+<<<<<<< HEAD
 			    u64, u64, u64, u64, u64, u64, int);
+=======
+			    u64, u64, u64, u64, u64, u64);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ref_root = btrfs_header_owner(buf);
 	nritems = btrfs_header_nritems(buf);
@@ -2757,25 +3128,38 @@ static int __btrfs_mod_ref(struct btrfs_trans_handle *trans,
 			key.offset -= btrfs_file_extent_offset(buf, fi);
 			ret = process_func(trans, root, bytenr, num_bytes,
 					   parent, ref_root, key.objectid,
+<<<<<<< HEAD
 					   key.offset, for_cow);
+=======
+					   key.offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret)
 				goto fail;
 		} else {
 			bytenr = btrfs_node_blockptr(buf, i);
 			num_bytes = btrfs_level_size(root, level - 1);
 			ret = process_func(trans, root, bytenr, num_bytes,
+<<<<<<< HEAD
 					   parent, ref_root, level - 1, 0,
 					   for_cow);
+=======
+					   parent, ref_root, level - 1, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret)
 				goto fail;
 		}
 	}
 	return 0;
 fail:
+<<<<<<< HEAD
+=======
+	BUG();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 int btrfs_inc_ref(struct btrfs_trans_handle *trans, struct btrfs_root *root,
+<<<<<<< HEAD
 		  struct extent_buffer *buf, int full_backref, int for_cow)
 {
 	return __btrfs_mod_ref(trans, root, buf, full_backref, 1, for_cow);
@@ -2785,6 +3169,17 @@ int btrfs_dec_ref(struct btrfs_trans_handle *trans, struct btrfs_root *root,
 		  struct extent_buffer *buf, int full_backref, int for_cow)
 {
 	return __btrfs_mod_ref(trans, root, buf, full_backref, 0, for_cow);
+=======
+		  struct extent_buffer *buf, int full_backref)
+{
+	return __btrfs_mod_ref(trans, root, buf, full_backref, 1);
+}
+
+int btrfs_dec_ref(struct btrfs_trans_handle *trans, struct btrfs_root *root,
+		  struct extent_buffer *buf, int full_backref)
+{
+	return __btrfs_mod_ref(trans, root, buf, full_backref, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int write_one_cache_group(struct btrfs_trans_handle *trans,
@@ -2800,7 +3195,11 @@ static int write_one_cache_group(struct btrfs_trans_handle *trans,
 	ret = btrfs_search_slot(trans, extent_root, &cache->key, path, 0, 1);
 	if (ret < 0)
 		goto fail;
+<<<<<<< HEAD
 	BUG_ON(ret); /* Corruption */
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	leaf = path->nodes[0];
 	bi = btrfs_item_ptr_offset(leaf, path->slots[0]);
@@ -2808,10 +3207,15 @@ static int write_one_cache_group(struct btrfs_trans_handle *trans,
 	btrfs_mark_buffer_dirty(leaf);
 	btrfs_release_path(path);
 fail:
+<<<<<<< HEAD
 	if (ret) {
 		btrfs_abort_transaction(trans, root, ret);
 		return ret;
 	}
+=======
+	if (ret)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 }
@@ -2878,6 +3282,7 @@ again:
 		goto again;
 	}
 
+<<<<<<< HEAD
 	/* We've already setup this transaction, go ahead and exit */
 	if (block_group->cache_generation == trans->transid &&
 	    i_size_read(inode)) {
@@ -2885,6 +3290,8 @@ again:
 		goto out_put;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * We want to set the generation to 0, that way if anything goes wrong
 	 * from here on out we know not to trust this cache when we load up next
@@ -2934,15 +3341,21 @@ again:
 	if (!ret)
 		dcs = BTRFS_DC_SETUP;
 	btrfs_free_reserved_data_space(inode, num_pages);
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_put:
 	iput(inode);
 out_free:
 	btrfs_release_path(path);
 out:
 	spin_lock(&block_group->lock);
+<<<<<<< HEAD
 	if (!ret && dcs == BTRFS_DC_SETUP)
 		block_group->cache_generation = trans->transid;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	block_group->disk_cache_state = dcs;
 	spin_unlock(&block_group->lock);
 
@@ -2984,8 +3397,12 @@ again:
 		if (last == 0) {
 			err = btrfs_run_delayed_refs(trans, root,
 						     (unsigned long)-1);
+<<<<<<< HEAD
 			if (err) /* File system offline */
 				goto out;
+=======
+			BUG_ON(err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		cache = btrfs_lookup_first_block_group(root->fs_info, last);
@@ -3012,9 +3429,13 @@ again:
 		last = cache->key.objectid + cache->key.offset;
 
 		err = write_one_cache_group(trans, root, path, cache);
+<<<<<<< HEAD
 		if (err) /* File system offline */
 			goto out;
 
+=======
+		BUG_ON(err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		btrfs_put_block_group(cache);
 	}
 
@@ -3027,8 +3448,12 @@ again:
 		if (last == 0) {
 			err = btrfs_run_delayed_refs(trans, root,
 						     (unsigned long)-1);
+<<<<<<< HEAD
 			if (err) /* File system offline */
 				goto out;
+=======
+			BUG_ON(err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		cache = btrfs_lookup_first_block_group(root->fs_info, last);
@@ -3053,21 +3478,35 @@ again:
 			continue;
 		}
 
+<<<<<<< HEAD
 		err = btrfs_write_out_cache(root, trans, cache, path);
+=======
+		btrfs_write_out_cache(root, trans, cache, path);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * If we didn't have an error then the cache state is still
 		 * NEED_WRITE, so we can set it to WRITTEN.
 		 */
+<<<<<<< HEAD
 		if (!err && cache->disk_cache_state == BTRFS_DC_NEED_WRITE)
+=======
+		if (cache->disk_cache_state == BTRFS_DC_NEED_WRITE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cache->disk_cache_state = BTRFS_DC_WRITTEN;
 		last = cache->key.objectid + cache->key.offset;
 		btrfs_put_block_group(cache);
 	}
+<<<<<<< HEAD
 out:
 
 	btrfs_free_path(path);
 	return err;
+=======
+
+	btrfs_free_path(path);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int btrfs_extent_readonly(struct btrfs_root *root, u64 bytenr)
@@ -3117,7 +3556,13 @@ static int update_space_info(struct btrfs_fs_info *info, u64 flags,
 		INIT_LIST_HEAD(&found->block_groups[i]);
 	init_rwsem(&found->groups_sem);
 	spin_lock_init(&found->lock);
+<<<<<<< HEAD
 	found->flags = flags & BTRFS_BLOCK_GROUP_TYPE_MASK;
+=======
+	found->flags = flags & (BTRFS_BLOCK_GROUP_DATA |
+				BTRFS_BLOCK_GROUP_SYSTEM |
+				BTRFS_BLOCK_GROUP_METADATA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	found->total_bytes = total_bytes;
 	found->disk_total = total_bytes * factor;
 	found->bytes_used = bytes_used;
@@ -3129,15 +3574,22 @@ static int update_space_info(struct btrfs_fs_info *info, u64 flags,
 	found->full = 0;
 	found->force_alloc = CHUNK_ALLOC_NO_FORCE;
 	found->chunk_alloc = 0;
+<<<<<<< HEAD
 	found->flush = 0;
 	init_waitqueue_head(&found->wait);
 	*space_info = found;
 	list_add_rcu(&found->list, &info->space_info);
+=======
+	*space_info = found;
+	list_add_rcu(&found->list, &info->space_info);
+	atomic_set(&found->caching_threads, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static void set_avail_alloc_bits(struct btrfs_fs_info *fs_info, u64 flags)
 {
+<<<<<<< HEAD
 	u64 extra_flags = chunk_to_extended(flags) &
 				BTRFS_EXTENDED_PROFILE_MASK;
 
@@ -3184,6 +3636,22 @@ static u64 get_restripe_target(struct btrfs_fs_info *fs_info, u64 flags)
  * progress (either running or paused) picks the target profile (if it's
  * already available), otherwise falls back to plain reducing.
  */
+=======
+	u64 extra_flags = flags & (BTRFS_BLOCK_GROUP_RAID0 |
+				   BTRFS_BLOCK_GROUP_RAID1 |
+				   BTRFS_BLOCK_GROUP_RAID10 |
+				   BTRFS_BLOCK_GROUP_DUP);
+	if (extra_flags) {
+		if (flags & BTRFS_BLOCK_GROUP_DATA)
+			fs_info->avail_data_alloc_bits |= extra_flags;
+		if (flags & BTRFS_BLOCK_GROUP_METADATA)
+			fs_info->avail_metadata_alloc_bits |= extra_flags;
+		if (flags & BTRFS_BLOCK_GROUP_SYSTEM)
+			fs_info->avail_system_alloc_bits |= extra_flags;
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u64 btrfs_reduce_alloc_profile(struct btrfs_root *root, u64 flags)
 {
 	/*
@@ -3193,6 +3661,7 @@ u64 btrfs_reduce_alloc_profile(struct btrfs_root *root, u64 flags)
 	 */
 	u64 num_devices = root->fs_info->fs_devices->rw_devices +
 		root->fs_info->fs_devices->missing_devices;
+<<<<<<< HEAD
 	u64 target;
 
 	/*
@@ -3209,6 +3678,8 @@ u64 btrfs_reduce_alloc_profile(struct btrfs_root *root, u64 flags)
 		}
 	}
 	spin_unlock(&root->fs_info->balance_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (num_devices == 1)
 		flags &= ~(BTRFS_BLOCK_GROUP_RAID1 | BTRFS_BLOCK_GROUP_RAID0);
@@ -3229,22 +3700,39 @@ u64 btrfs_reduce_alloc_profile(struct btrfs_root *root, u64 flags)
 	if ((flags & BTRFS_BLOCK_GROUP_RAID0) &&
 	    ((flags & BTRFS_BLOCK_GROUP_RAID1) |
 	     (flags & BTRFS_BLOCK_GROUP_RAID10) |
+<<<<<<< HEAD
 	     (flags & BTRFS_BLOCK_GROUP_DUP))) {
 		flags &= ~BTRFS_BLOCK_GROUP_RAID0;
 	}
 
 	return extended_to_chunk(flags);
+=======
+	     (flags & BTRFS_BLOCK_GROUP_DUP)))
+		flags &= ~BTRFS_BLOCK_GROUP_RAID0;
+	return flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static u64 get_alloc_profile(struct btrfs_root *root, u64 flags)
 {
 	if (flags & BTRFS_BLOCK_GROUP_DATA)
+<<<<<<< HEAD
 		flags |= root->fs_info->avail_data_alloc_bits;
 	else if (flags & BTRFS_BLOCK_GROUP_SYSTEM)
 		flags |= root->fs_info->avail_system_alloc_bits;
 	else if (flags & BTRFS_BLOCK_GROUP_METADATA)
 		flags |= root->fs_info->avail_metadata_alloc_bits;
 
+=======
+		flags |= root->fs_info->avail_data_alloc_bits &
+			 root->fs_info->data_alloc_profile;
+	else if (flags & BTRFS_BLOCK_GROUP_SYSTEM)
+		flags |= root->fs_info->avail_system_alloc_bits &
+			 root->fs_info->system_alloc_profile;
+	else if (flags & BTRFS_BLOCK_GROUP_METADATA)
+		flags |= root->fs_info->avail_metadata_alloc_bits &
+			 root->fs_info->metadata_alloc_profile;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return btrfs_reduce_alloc_profile(root, flags);
 }
 
@@ -3361,15 +3849,25 @@ commit_trans:
 		return -ENOSPC;
 	}
 	data_sinfo->bytes_may_use += bytes;
+<<<<<<< HEAD
 	trace_btrfs_space_reservation(root->fs_info, "space_info",
 				      data_sinfo->flags, bytes, 1);
+=======
+	BTRFS_I(inode)->reserved_bytes += bytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&data_sinfo->lock);
 
 	return 0;
 }
 
 /*
+<<<<<<< HEAD
  * Called if we need to clear a data reservation for this inode.
+=======
+ * called when we are clearing an delalloc extent from the
+ * inode's io_tree or there was an error for whatever reason
+ * after calling btrfs_check_data_free_space
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void btrfs_free_reserved_data_space(struct inode *inode, u64 bytes)
 {
@@ -3382,8 +3880,12 @@ void btrfs_free_reserved_data_space(struct inode *inode, u64 bytes)
 	data_sinfo = BTRFS_I(inode)->space_info;
 	spin_lock(&data_sinfo->lock);
 	data_sinfo->bytes_may_use -= bytes;
+<<<<<<< HEAD
 	trace_btrfs_space_reservation(root->fs_info, "space_info",
 				      data_sinfo->flags, bytes, 0);
+=======
+	BTRFS_I(inode)->reserved_bytes -= bytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&data_sinfo->lock);
 }
 
@@ -3404,7 +3906,10 @@ static int should_alloc_chunk(struct btrfs_root *root,
 			      struct btrfs_space_info *sinfo, u64 alloc_bytes,
 			      int force)
 {
+<<<<<<< HEAD
 	struct btrfs_block_rsv *global_rsv = &root->fs_info->global_block_rsv;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64 num_bytes = sinfo->total_bytes - sinfo->bytes_readonly;
 	u64 num_allocated = sinfo->bytes_used + sinfo->bytes_reserved;
 	u64 thresh;
@@ -3413,6 +3918,7 @@ static int should_alloc_chunk(struct btrfs_root *root,
 		return 1;
 
 	/*
+<<<<<<< HEAD
 	 * We need to take into account the global rsv because for all intents
 	 * and purposes it's used space.  Don't worry about locking the
 	 * global_rsv, it doesn't change except when the transaction commits.
@@ -3420,17 +3926,24 @@ static int should_alloc_chunk(struct btrfs_root *root,
 	num_allocated += global_rsv->size;
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * in limited mode, we want to have some free space up to
 	 * about 1% of the FS size.
 	 */
 	if (force == CHUNK_ALLOC_LIMITED) {
+<<<<<<< HEAD
 		thresh = btrfs_super_total_bytes(root->fs_info->super_copy);
+=======
+		thresh = btrfs_super_total_bytes(&root->fs_info->super_copy);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		thresh = max_t(u64, 64 * 1024 * 1024,
 			       div_factor_fine(thresh, 1));
 
 		if (num_bytes - num_allocated < thresh)
 			return 1;
 	}
+<<<<<<< HEAD
 	thresh = btrfs_super_total_bytes(root->fs_info->super_copy);
 
 	/* 256MB or 2% of the FS */
@@ -3486,6 +3999,31 @@ static void check_system_chunk(struct btrfs_trans_handle *trans,
 		flags = btrfs_get_alloc_profile(root->fs_info->chunk_root, 0);
 		btrfs_alloc_chunk(trans, root, flags);
 	}
+=======
+
+	/*
+	 * we have two similar checks here, one based on percentage
+	 * and once based on a hard number of 256MB.  The idea
+	 * is that if we have a good amount of free
+	 * room, don't allocate a chunk.  A good mount is
+	 * less than 80% utilized of the chunks we have allocated,
+	 * or more than 256MB free
+	 */
+	if (num_allocated + alloc_bytes + 256 * 1024 * 1024 < num_bytes)
+		return 0;
+
+	if (num_allocated + alloc_bytes < div_factor(num_bytes, 8))
+		return 0;
+
+	thresh = btrfs_super_total_bytes(&root->fs_info->super_copy);
+
+	/* 256MB or 5% of the FS */
+	thresh = max_t(u64, 256 * 1024 * 1024, div_factor_fine(thresh, 5));
+
+	if (num_bytes > thresh && sinfo->bytes_used < div_factor(num_bytes, 3))
+		return 0;
+	return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int do_chunk_alloc(struct btrfs_trans_handle *trans,
@@ -3497,10 +4035,16 @@ static int do_chunk_alloc(struct btrfs_trans_handle *trans,
 	int wait_for_alloc = 0;
 	int ret = 0;
 
+<<<<<<< HEAD
+=======
+	flags = btrfs_reduce_alloc_profile(extent_root, flags);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	space_info = __find_space_info(extent_root->fs_info, flags);
 	if (!space_info) {
 		ret = update_space_info(extent_root->fs_info, flags,
 					0, 0, &space_info);
+<<<<<<< HEAD
 		BUG_ON(ret); /* -ENOMEM */
 	}
 	BUG_ON(!space_info); /* Logic error */
@@ -3508,6 +4052,15 @@ static int do_chunk_alloc(struct btrfs_trans_handle *trans,
 again:
 	spin_lock(&space_info->lock);
 	if (force < space_info->force_alloc)
+=======
+		BUG_ON(ret);
+	}
+	BUG_ON(!space_info);
+
+again:
+	spin_lock(&space_info->lock);
+	if (space_info->force_alloc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		force = space_info->force_alloc;
 	if (space_info->full) {
 		spin_unlock(&space_info->lock);
@@ -3558,6 +4111,7 @@ again:
 			force_metadata_allocation(fs_info);
 	}
 
+<<<<<<< HEAD
 	/*
 	 * Check if we have enough space in SYSTEM chunk because we may need
 	 * to update devices.
@@ -3568,6 +4122,9 @@ again:
 	if (ret < 0 && ret != -ENOSPC)
 		goto out;
 
+=======
+	ret = btrfs_alloc_chunk(trans, extent_root, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&space_info->lock);
 	if (ret)
 		space_info->full = 1;
@@ -3577,7 +4134,10 @@ again:
 	space_info->force_alloc = CHUNK_ALLOC_NO_FORCE;
 	space_info->chunk_alloc = 0;
 	spin_unlock(&space_info->lock);
+<<<<<<< HEAD
 out:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&extent_root->fs_info->chunk_mutex);
 	return ret;
 }
@@ -3585,31 +4145,51 @@ out:
 /*
  * shrink metadata reservation for delalloc
  */
+<<<<<<< HEAD
 static int shrink_delalloc(struct btrfs_root *root, u64 to_reclaim,
 			   bool wait_ordered)
 {
 	struct btrfs_block_rsv *block_rsv;
 	struct btrfs_space_info *space_info;
 	struct btrfs_trans_handle *trans;
+=======
+static int shrink_delalloc(struct btrfs_trans_handle *trans,
+			   struct btrfs_root *root, u64 to_reclaim, int sync)
+{
+	struct btrfs_block_rsv *block_rsv;
+	struct btrfs_space_info *space_info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64 reserved;
 	u64 max_reclaim;
 	u64 reclaimed = 0;
 	long time_left;
+<<<<<<< HEAD
 	unsigned long nr_pages = (2 * 1024 * 1024) >> PAGE_CACHE_SHIFT;
 	int loops = 0;
 	unsigned long progress;
 
 	trans = (struct btrfs_trans_handle *)current->journal_info;
+=======
+	int nr_pages = (2 * 1024 * 1024) >> PAGE_CACHE_SHIFT;
+	int loops = 0;
+	unsigned long progress;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	block_rsv = &root->fs_info->delalloc_block_rsv;
 	space_info = block_rsv->space_info;
 
 	smp_mb();
+<<<<<<< HEAD
 	reserved = space_info->bytes_may_use;
+=======
+	reserved = space_info->bytes_reserved;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	progress = space_info->reservation_progress;
 
 	if (reserved == 0)
 		return 0;
 
+<<<<<<< HEAD
 	smp_mb();
 	if (root->fs_info->delalloc_bytes == 0) {
 		if (trans)
@@ -3621,11 +4201,16 @@ static int shrink_delalloc(struct btrfs_root *root, u64 to_reclaim,
 	max_reclaim = min(reserved, to_reclaim);
 	nr_pages = max_t(unsigned long, nr_pages,
 			 max_reclaim >> PAGE_CACHE_SHIFT);
+=======
+	max_reclaim = min(reserved, to_reclaim);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (loops < 1024) {
 		/* have the flusher threads jump in and do some IO */
 		smp_mb();
 		nr_pages = min_t(unsigned long, nr_pages,
 		       root->fs_info->delalloc_bytes >> PAGE_CACHE_SHIFT);
+<<<<<<< HEAD
 		writeback_inodes_sb_nr_if_idle(root->fs_info->sb, nr_pages,
 						WB_REASON_FS_FREE_SPACE);
 
@@ -3633,6 +4218,14 @@ static int shrink_delalloc(struct btrfs_root *root, u64 to_reclaim,
 		if (reserved > space_info->bytes_may_use)
 			reclaimed += reserved - space_info->bytes_may_use;
 		reserved = space_info->bytes_may_use;
+=======
+		writeback_inodes_sb_nr_if_idle(root->fs_info->sb, nr_pages);
+
+		spin_lock(&space_info->lock);
+		if (reserved > space_info->bytes_reserved)
+			reclaimed += reserved - space_info->bytes_reserved;
+		reserved = space_info->bytes_reserved;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock(&space_info->lock);
 
 		loops++;
@@ -3643,6 +4236,7 @@ static int shrink_delalloc(struct btrfs_root *root, u64 to_reclaim,
 		if (trans && trans->transaction->blocked)
 			return -EAGAIN;
 
+<<<<<<< HEAD
 		if (wait_ordered && !trans) {
 			btrfs_wait_ordered_extents(root, 0, 0);
 		} else {
@@ -3652,6 +4246,13 @@ static int shrink_delalloc(struct btrfs_root *root, u64 to_reclaim,
 			if (time_left)
 				break;
 		}
+=======
+		time_left = schedule_timeout_interruptible(1);
+
+		/* We were interrupted, exit */
+		if (time_left)
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* we've kicked the IO a few times, if anything has been freed,
 		 * exit.  There is no sense in looping here for a long time
@@ -3666,6 +4267,7 @@ static int shrink_delalloc(struct btrfs_root *root, u64 to_reclaim,
 		}
 
 	}
+<<<<<<< HEAD
 
 	return reclaimed >= to_reclaim;
 }
@@ -3742,10 +4344,29 @@ commit:
  * space already.
  */
 static int reserve_metadata_bytes(struct btrfs_root *root,
+=======
+	return reclaimed >= to_reclaim;
+}
+
+/*
+ * Retries tells us how many times we've called reserve_metadata_bytes.  The
+ * idea is if this is the first call (retries == 0) then we will add to our
+ * reserved count if we can't make the allocation in order to hold our place
+ * while we go and try and free up space.  That way for retries > 1 we don't try
+ * and add space, we just check to see if the amount of unused space is >= the
+ * total space, meaning that our reservation is valid.
+ *
+ * However if we don't intend to retry this reservation, pass -1 as retries so
+ * that it short circuits this logic.
+ */
+static int reserve_metadata_bytes(struct btrfs_trans_handle *trans,
+				  struct btrfs_root *root,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  struct btrfs_block_rsv *block_rsv,
 				  u64 orig_bytes, int flush)
 {
 	struct btrfs_space_info *space_info = block_rsv->space_info;
+<<<<<<< HEAD
 	u64 used;
 	u64 num_bytes = orig_bytes;
 	int retries = 0;
@@ -3783,6 +4404,24 @@ again:
 	used = space_info->bytes_used + space_info->bytes_reserved +
 		space_info->bytes_pinned + space_info->bytes_readonly +
 		space_info->bytes_may_use;
+=======
+	u64 unused;
+	u64 num_bytes = orig_bytes;
+	int retries = 0;
+	int ret = 0;
+	bool reserved = false;
+	bool committed = false;
+
+again:
+	ret = -ENOSPC;
+	if (reserved)
+		num_bytes = 0;
+
+	spin_lock(&space_info->lock);
+	unused = space_info->bytes_used + space_info->bytes_reserved +
+		 space_info->bytes_pinned + space_info->bytes_readonly +
+		 space_info->bytes_may_use;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * The idea here is that we've not already over-reserved the block group
@@ -3791,11 +4430,19 @@ again:
 	 * lets start flushing stuff first and then come back and try to make
 	 * our reservation.
 	 */
+<<<<<<< HEAD
 	if (used <= space_info->total_bytes) {
 		if (used + orig_bytes <= space_info->total_bytes) {
 			space_info->bytes_may_use += orig_bytes;
 			trace_btrfs_space_reservation(root->fs_info,
 				"space_info", space_info->flags, orig_bytes, 1);
+=======
+	if (unused <= space_info->total_bytes) {
+		unused = space_info->total_bytes - unused;
+		if (unused >= num_bytes) {
+			if (!reserved)
+				space_info->bytes_reserved += orig_bytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = 0;
 		} else {
 			/*
@@ -3811,6 +4458,7 @@ again:
 		 * amount plus the amount of bytes that we need for this
 		 * reservation.
 		 */
+<<<<<<< HEAD
 		wait_ordered = true;
 		num_bytes = used - space_info->total_bytes +
 			(orig_bytes * (retries + 1));
@@ -3871,53 +4519,110 @@ again:
 		}
 	}
 
+=======
+		num_bytes = unused - space_info->total_bytes +
+			(orig_bytes * (retries + 1));
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Couldn't make our reservation, save our place so while we're trying
 	 * to reclaim space we can actually use it instead of somebody else
 	 * stealing it from us.
 	 */
+<<<<<<< HEAD
 	if (ret && flush) {
 		flushing = true;
 		space_info->flush = 1;
+=======
+	if (ret && !reserved) {
+		space_info->bytes_reserved += orig_bytes;
+		reserved = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	spin_unlock(&space_info->lock);
 
+<<<<<<< HEAD
 	if (!ret || !flush)
+=======
+	if (!ret)
+		return 0;
+
+	if (!flush)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	/*
 	 * We do synchronous shrinking since we don't actually unreserve
 	 * metadata until after the IO is completed.
 	 */
+<<<<<<< HEAD
 	ret = shrink_delalloc(root, num_bytes, wait_ordered);
 	if (ret < 0)
 		goto out;
 
 	ret = 0;
 
+=======
+	ret = shrink_delalloc(trans, root, num_bytes, 1);
+	if (ret > 0)
+		return 0;
+	else if (ret < 0)
+		goto out;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * So if we were overcommitted it's possible that somebody else flushed
 	 * out enough space and we simply didn't have enough space to reclaim,
 	 * so go back around and try again.
 	 */
 	if (retries < 2) {
+<<<<<<< HEAD
 		wait_ordered = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		retries++;
 		goto again;
 	}
 
+<<<<<<< HEAD
 	ret = -ENOSPC;
 	if (committed)
 		goto out;
 
 	ret = may_commit_transaction(root, space_info, orig_bytes, 0);
 	if (!ret) {
+=======
+	spin_lock(&space_info->lock);
+	/*
+	 * Not enough space to be reclaimed, don't bother committing the
+	 * transaction.
+	 */
+	if (space_info->bytes_pinned < orig_bytes)
+		ret = -ENOSPC;
+	spin_unlock(&space_info->lock);
+	if (ret)
+		goto out;
+
+	ret = -EAGAIN;
+	if (trans || committed)
+		goto out;
+
+	ret = -ENOSPC;
+	trans = btrfs_join_transaction(root);
+	if (IS_ERR(trans))
+		goto out;
+	ret = btrfs_commit_transaction(trans, root);
+	if (!ret) {
+		trans = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		committed = true;
 		goto again;
 	}
 
 out:
+<<<<<<< HEAD
 	if (flushing) {
 		spin_lock(&space_info->lock);
 		space_info->flush = 0;
@@ -3937,6 +4642,24 @@ static struct btrfs_block_rsv *get_block_rsv(
 		block_rsv = trans->block_rsv;
 
 	if (!block_rsv)
+=======
+	if (reserved) {
+		spin_lock(&space_info->lock);
+		space_info->bytes_reserved -= orig_bytes;
+		spin_unlock(&space_info->lock);
+	}
+
+	return ret;
+}
+
+static struct btrfs_block_rsv *get_block_rsv(struct btrfs_trans_handle *trans,
+					     struct btrfs_root *root)
+{
+	struct btrfs_block_rsv *block_rsv;
+	if (root->ref_cows)
+		block_rsv = trans->block_rsv;
+	else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		block_rsv = root->block_rsv;
 
 	if (!block_rsv)
@@ -3972,8 +4695,12 @@ static void block_rsv_add_bytes(struct btrfs_block_rsv *block_rsv,
 	spin_unlock(&block_rsv->lock);
 }
 
+<<<<<<< HEAD
 static void block_rsv_release_bytes(struct btrfs_fs_info *fs_info,
 				    struct btrfs_block_rsv *block_rsv,
+=======
+static void block_rsv_release_bytes(struct btrfs_block_rsv *block_rsv,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    struct btrfs_block_rsv *dest, u64 num_bytes)
 {
 	struct btrfs_space_info *space_info = block_rsv->space_info;
@@ -4008,9 +4735,13 @@ static void block_rsv_release_bytes(struct btrfs_fs_info *fs_info,
 		}
 		if (num_bytes) {
 			spin_lock(&space_info->lock);
+<<<<<<< HEAD
 			space_info->bytes_may_use -= num_bytes;
 			trace_btrfs_space_reservation(fs_info, "space_info",
 					space_info->flags, num_bytes, 0);
+=======
+			space_info->bytes_reserved -= num_bytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			space_info->reservation_progress++;
 			spin_unlock(&space_info->lock);
 		}
@@ -4034,6 +4765,12 @@ void btrfs_init_block_rsv(struct btrfs_block_rsv *rsv)
 {
 	memset(rsv, 0, sizeof(*rsv));
 	spin_lock_init(&rsv->lock);
+<<<<<<< HEAD
+=======
+	atomic_set(&rsv->usage, 1);
+	rsv->priority = 6;
+	INIT_LIST_HEAD(&rsv->list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct btrfs_block_rsv *btrfs_alloc_block_rsv(struct btrfs_root *root)
@@ -4054,6 +4791,7 @@ struct btrfs_block_rsv *btrfs_alloc_block_rsv(struct btrfs_root *root)
 void btrfs_free_block_rsv(struct btrfs_root *root,
 			  struct btrfs_block_rsv *rsv)
 {
+<<<<<<< HEAD
 	btrfs_block_rsv_release(root, rsv, (u64)-1);
 	kfree(rsv);
 }
@@ -4061,13 +4799,44 @@ void btrfs_free_block_rsv(struct btrfs_root *root,
 static inline int __block_rsv_add(struct btrfs_root *root,
 				  struct btrfs_block_rsv *block_rsv,
 				  u64 num_bytes, int flush)
+=======
+	if (rsv && atomic_dec_and_test(&rsv->usage)) {
+		btrfs_block_rsv_release(root, rsv, (u64)-1);
+		if (!rsv->durable)
+			kfree(rsv);
+	}
+}
+
+/*
+ * make the block_rsv struct be able to capture freed space.
+ * the captured space will re-add to the the block_rsv struct
+ * after transaction commit
+ */
+void btrfs_add_durable_block_rsv(struct btrfs_fs_info *fs_info,
+				 struct btrfs_block_rsv *block_rsv)
+{
+	block_rsv->durable = 1;
+	mutex_lock(&fs_info->durable_block_rsv_mutex);
+	list_add_tail(&block_rsv->list, &fs_info->durable_block_rsv_list);
+	mutex_unlock(&fs_info->durable_block_rsv_mutex);
+}
+
+int btrfs_block_rsv_add(struct btrfs_trans_handle *trans,
+			struct btrfs_root *root,
+			struct btrfs_block_rsv *block_rsv,
+			u64 num_bytes)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 
 	if (num_bytes == 0)
 		return 0;
 
+<<<<<<< HEAD
 	ret = reserve_metadata_bytes(root, block_rsv, num_bytes, flush);
+=======
+	ret = reserve_metadata_bytes(trans, root, block_rsv, num_bytes, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ret) {
 		block_rsv_add_bytes(block_rsv, num_bytes, 1);
 		return 0;
@@ -4076,6 +4845,7 @@ static inline int __block_rsv_add(struct btrfs_root *root,
 	return ret;
 }
 
+<<<<<<< HEAD
 int btrfs_block_rsv_add(struct btrfs_root *root,
 			struct btrfs_block_rsv *block_rsv,
 			u64 num_bytes)
@@ -4094,12 +4864,22 @@ int btrfs_block_rsv_check(struct btrfs_root *root,
 			  struct btrfs_block_rsv *block_rsv, int min_factor)
 {
 	u64 num_bytes = 0;
+=======
+int btrfs_block_rsv_check(struct btrfs_trans_handle *trans,
+			  struct btrfs_root *root,
+			  struct btrfs_block_rsv *block_rsv,
+			  u64 min_reserved, int min_factor)
+{
+	u64 num_bytes = 0;
+	int commit_trans = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = -ENOSPC;
 
 	if (!block_rsv)
 		return 0;
 
 	spin_lock(&block_rsv->lock);
+<<<<<<< HEAD
 	num_bytes = div_factor(block_rsv->size, min_factor);
 	if (block_rsv->reserved >= num_bytes)
 		ret = 0;
@@ -4150,6 +4930,45 @@ int btrfs_block_rsv_refill_noflush(struct btrfs_root *root,
 				   u64 min_reserved)
 {
 	return __btrfs_block_rsv_refill(root, block_rsv, min_reserved, 0);
+=======
+	if (min_factor > 0)
+		num_bytes = div_factor(block_rsv->size, min_factor);
+	if (min_reserved > num_bytes)
+		num_bytes = min_reserved;
+
+	if (block_rsv->reserved >= num_bytes) {
+		ret = 0;
+	} else {
+		num_bytes -= block_rsv->reserved;
+		if (block_rsv->durable &&
+		    block_rsv->freed[0] + block_rsv->freed[1] >= num_bytes)
+			commit_trans = 1;
+	}
+	spin_unlock(&block_rsv->lock);
+	if (!ret)
+		return 0;
+
+	if (block_rsv->refill_used) {
+		ret = reserve_metadata_bytes(trans, root, block_rsv,
+					     num_bytes, 0);
+		if (!ret) {
+			block_rsv_add_bytes(block_rsv, num_bytes, 0);
+			return 0;
+		}
+	}
+
+	if (commit_trans) {
+		if (trans)
+			return -EAGAIN;
+
+		trans = btrfs_join_transaction(root);
+		BUG_ON(IS_ERR(trans));
+		ret = btrfs_commit_transaction(trans, root);
+		return 0;
+	}
+
+	return -ENOSPC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int btrfs_block_rsv_migrate(struct btrfs_block_rsv *src_rsv,
@@ -4167,8 +4986,12 @@ void btrfs_block_rsv_release(struct btrfs_root *root,
 	if (global_rsv->full || global_rsv == block_rsv ||
 	    block_rsv->space_info != global_rsv->space_info)
 		global_rsv = NULL;
+<<<<<<< HEAD
 	block_rsv_release_bytes(root->fs_info, block_rsv, global_rsv,
 				num_bytes);
+=======
+	block_rsv_release_bytes(block_rsv, global_rsv, num_bytes);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -4182,7 +5005,11 @@ static u64 calc_global_metadata_size(struct btrfs_fs_info *fs_info)
 	u64 num_bytes;
 	u64 meta_used;
 	u64 data_used;
+<<<<<<< HEAD
 	int csum_size = btrfs_super_csum_size(fs_info->super_copy);
+=======
+	int csum_size = btrfs_super_csum_size(&fs_info->super_copy);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sinfo = __find_space_info(fs_info, BTRFS_BLOCK_GROUP_DATA);
 	spin_lock(&sinfo->lock);
@@ -4214,10 +5041,17 @@ static void update_global_block_rsv(struct btrfs_fs_info *fs_info)
 
 	num_bytes = calc_global_metadata_size(fs_info);
 
+<<<<<<< HEAD
 	spin_lock(&sinfo->lock);
 	spin_lock(&block_rsv->lock);
 
 	block_rsv->size = min_t(u64, num_bytes, 512 * 1024 * 1024);
+=======
+	spin_lock(&block_rsv->lock);
+	spin_lock(&sinfo->lock);
+
+	block_rsv->size = num_bytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	num_bytes = sinfo->bytes_used + sinfo->bytes_pinned +
 		    sinfo->bytes_reserved + sinfo->bytes_readonly +
@@ -4226,23 +5060,36 @@ static void update_global_block_rsv(struct btrfs_fs_info *fs_info)
 	if (sinfo->total_bytes > num_bytes) {
 		num_bytes = sinfo->total_bytes - num_bytes;
 		block_rsv->reserved += num_bytes;
+<<<<<<< HEAD
 		sinfo->bytes_may_use += num_bytes;
 		trace_btrfs_space_reservation(fs_info, "space_info",
 				      sinfo->flags, num_bytes, 1);
+=======
+		sinfo->bytes_reserved += num_bytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (block_rsv->reserved >= block_rsv->size) {
 		num_bytes = block_rsv->reserved - block_rsv->size;
+<<<<<<< HEAD
 		sinfo->bytes_may_use -= num_bytes;
 		trace_btrfs_space_reservation(fs_info, "space_info",
 				      sinfo->flags, num_bytes, 0);
+=======
+		sinfo->bytes_reserved -= num_bytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sinfo->reservation_progress++;
 		block_rsv->reserved = block_rsv->size;
 		block_rsv->full = 1;
 	}
 
+<<<<<<< HEAD
 	spin_unlock(&block_rsv->lock);
 	spin_unlock(&sinfo->lock);
+=======
+	spin_unlock(&sinfo->lock);
+	spin_unlock(&block_rsv->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void init_global_block_rsv(struct btrfs_fs_info *fs_info)
@@ -4251,6 +5098,7 @@ static void init_global_block_rsv(struct btrfs_fs_info *fs_info)
 
 	space_info = __find_space_info(fs_info, BTRFS_BLOCK_GROUP_SYSTEM);
 	fs_info->chunk_block_rsv.space_info = space_info;
+<<<<<<< HEAD
 
 	space_info = __find_space_info(fs_info, BTRFS_BLOCK_GROUP_METADATA);
 	fs_info->global_block_rsv.space_info = space_info;
@@ -4258,6 +5106,18 @@ static void init_global_block_rsv(struct btrfs_fs_info *fs_info)
 	fs_info->trans_block_rsv.space_info = space_info;
 	fs_info->empty_block_rsv.space_info = space_info;
 	fs_info->delayed_block_rsv.space_info = space_info;
+=======
+	fs_info->chunk_block_rsv.priority = 10;
+
+	space_info = __find_space_info(fs_info, BTRFS_BLOCK_GROUP_METADATA);
+	fs_info->global_block_rsv.space_info = space_info;
+	fs_info->global_block_rsv.priority = 10;
+	fs_info->global_block_rsv.refill_used = 1;
+	fs_info->delalloc_block_rsv.space_info = space_info;
+	fs_info->trans_block_rsv.space_info = space_info;
+	fs_info->empty_block_rsv.space_info = space_info;
+	fs_info->empty_block_rsv.priority = 10;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fs_info->extent_root->block_rsv = &fs_info->global_block_rsv;
 	fs_info->csum_root->block_rsv = &fs_info->global_block_rsv;
@@ -4265,21 +5125,86 @@ static void init_global_block_rsv(struct btrfs_fs_info *fs_info)
 	fs_info->tree_root->block_rsv = &fs_info->global_block_rsv;
 	fs_info->chunk_root->block_rsv = &fs_info->chunk_block_rsv;
 
+<<<<<<< HEAD
+=======
+	btrfs_add_durable_block_rsv(fs_info, &fs_info->global_block_rsv);
+
+	btrfs_add_durable_block_rsv(fs_info, &fs_info->delalloc_block_rsv);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	update_global_block_rsv(fs_info);
 }
 
 static void release_global_block_rsv(struct btrfs_fs_info *fs_info)
 {
+<<<<<<< HEAD
 	block_rsv_release_bytes(fs_info, &fs_info->global_block_rsv, NULL,
 				(u64)-1);
+=======
+	block_rsv_release_bytes(&fs_info->global_block_rsv, NULL, (u64)-1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	WARN_ON(fs_info->delalloc_block_rsv.size > 0);
 	WARN_ON(fs_info->delalloc_block_rsv.reserved > 0);
 	WARN_ON(fs_info->trans_block_rsv.size > 0);
 	WARN_ON(fs_info->trans_block_rsv.reserved > 0);
 	WARN_ON(fs_info->chunk_block_rsv.size > 0);
 	WARN_ON(fs_info->chunk_block_rsv.reserved > 0);
+<<<<<<< HEAD
 	WARN_ON(fs_info->delayed_block_rsv.size > 0);
 	WARN_ON(fs_info->delayed_block_rsv.reserved > 0);
+=======
+}
+
+int btrfs_truncate_reserve_metadata(struct btrfs_trans_handle *trans,
+				    struct btrfs_root *root,
+				    struct btrfs_block_rsv *rsv)
+{
+	struct btrfs_block_rsv *trans_rsv = &root->fs_info->trans_block_rsv;
+	u64 num_bytes;
+	int ret;
+
+	/*
+	 * Truncate should be freeing data, but give us 2 items just in case it
+	 * needs to use some space.  We may want to be smarter about this in the
+	 * future.
+	 */
+	num_bytes = btrfs_calc_trans_metadata_size(root, 2);
+
+	/* We already have enough bytes, just return */
+	if (rsv->reserved >= num_bytes)
+		return 0;
+
+	num_bytes -= rsv->reserved;
+
+	/*
+	 * You should have reserved enough space before hand to do this, so this
+	 * should not fail.
+	 */
+	ret = block_rsv_migrate_bytes(trans_rsv, rsv, num_bytes);
+	BUG_ON(ret);
+
+	return 0;
+}
+
+int btrfs_trans_reserve_metadata(struct btrfs_trans_handle *trans,
+				 struct btrfs_root *root,
+				 int num_items)
+{
+	u64 num_bytes;
+	int ret;
+
+	if (num_items == 0 || root->fs_info->chunk_root == root)
+		return 0;
+
+	num_bytes = btrfs_calc_trans_metadata_size(root, num_items);
+	ret = btrfs_block_rsv_add(trans, root, &root->fs_info->trans_block_rsv,
+				  num_bytes);
+	if (!ret) {
+		trans->bytes_reserved += num_bytes;
+		trans->block_rsv = &root->fs_info->trans_block_rsv;
+	}
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void btrfs_trans_release_metadata(struct btrfs_trans_handle *trans,
@@ -4288,6 +5213,7 @@ void btrfs_trans_release_metadata(struct btrfs_trans_handle *trans,
 	if (!trans->bytes_reserved)
 		return;
 
+<<<<<<< HEAD
 	trace_btrfs_space_reservation(root->fs_info, "transaction",
 				      trans->transid, trans->bytes_reserved, 0);
 	btrfs_block_rsv_release(root, trans->block_rsv, trans->bytes_reserved);
@@ -4295,6 +5221,14 @@ void btrfs_trans_release_metadata(struct btrfs_trans_handle *trans,
 }
 
 /* Can only return 0 or -ENOSPC */
+=======
+	BUG_ON(trans->block_rsv != &root->fs_info->trans_block_rsv);
+	btrfs_block_rsv_release(root, trans->block_rsv,
+				trans->bytes_reserved);
+	trans->bytes_reserved = 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int btrfs_orphan_reserve_metadata(struct btrfs_trans_handle *trans,
 				  struct inode *inode)
 {
@@ -4308,8 +5242,11 @@ int btrfs_orphan_reserve_metadata(struct btrfs_trans_handle *trans,
 	 * when we are truly done with the orphan item.
 	 */
 	u64 num_bytes = btrfs_calc_trans_metadata_size(root, 1);
+<<<<<<< HEAD
 	trace_btrfs_space_reservation(root->fs_info, "orphan",
 				      btrfs_ino(inode), num_bytes, 1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return block_rsv_migrate_bytes(src_rsv, dst_rsv, num_bytes);
 }
 
@@ -4317,8 +5254,11 @@ void btrfs_orphan_release_metadata(struct inode *inode)
 {
 	struct btrfs_root *root = BTRFS_I(inode)->root;
 	u64 num_bytes = btrfs_calc_trans_metadata_size(root, 1);
+<<<<<<< HEAD
 	trace_btrfs_space_reservation(root->fs_info, "orphan",
 				      btrfs_ino(inode), num_bytes, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_block_rsv_release(root, root->orphan_block_rsv, num_bytes);
 }
 
@@ -4337,6 +5277,7 @@ int btrfs_snap_reserve_metadata(struct btrfs_trans_handle *trans,
 	return block_rsv_migrate_bytes(src_rsv, dst_rsv, num_bytes);
 }
 
+<<<<<<< HEAD
 /**
  * drop_outstanding_extent - drop an outstanding extent
  * @inode: the inode we're dropping the extent for
@@ -4430,12 +5371,18 @@ static u64 calc_csum_metadata_size(struct inode *inode, u64 num_bytes,
 						      num_csums - old_csums);
 
 	return btrfs_calc_trans_metadata_size(root, old_csums - num_csums);
+=======
+static u64 calc_csum_metadata_size(struct inode *inode, u64 num_bytes)
+{
+	return num_bytes >>= 3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int btrfs_delalloc_reserve_metadata(struct inode *inode, u64 num_bytes)
 {
 	struct btrfs_root *root = BTRFS_I(inode)->root;
 	struct btrfs_block_rsv *block_rsv = &root->fs_info->delalloc_block_rsv;
+<<<<<<< HEAD
 	u64 to_reserve = 0;
 	u64 csum_bytes;
 	unsigned nr_extents = 0;
@@ -4587,10 +5534,84 @@ void btrfs_delalloc_release_metadata(struct inode *inode, u64 num_bytes)
 
 	trace_btrfs_space_reservation(root->fs_info, "delalloc",
 				      btrfs_ino(inode), to_free, 0);
+=======
+	u64 to_reserve;
+	int nr_extents;
+	int reserved_extents;
+	int ret;
+
+	if (btrfs_transaction_in_commit(root->fs_info))
+		schedule_timeout(1);
+
+	num_bytes = ALIGN(num_bytes, root->sectorsize);
+
+	nr_extents = atomic_read(&BTRFS_I(inode)->outstanding_extents) + 1;
+	reserved_extents = atomic_read(&BTRFS_I(inode)->reserved_extents);
+
+	if (nr_extents > reserved_extents) {
+		nr_extents -= reserved_extents;
+		to_reserve = btrfs_calc_trans_metadata_size(root, nr_extents);
+	} else {
+		nr_extents = 0;
+		to_reserve = 0;
+	}
+
+	to_reserve += calc_csum_metadata_size(inode, num_bytes);
+	ret = reserve_metadata_bytes(NULL, root, block_rsv, to_reserve, 1);
+	if (ret)
+		return ret;
+
+	atomic_add(nr_extents, &BTRFS_I(inode)->reserved_extents);
+	atomic_inc(&BTRFS_I(inode)->outstanding_extents);
+
+	block_rsv_add_bytes(block_rsv, to_reserve, 1);
+
+	if (block_rsv->size > 512 * 1024 * 1024)
+		shrink_delalloc(NULL, root, to_reserve, 0);
+
+	return 0;
+}
+
+void btrfs_delalloc_release_metadata(struct inode *inode, u64 num_bytes)
+{
+	struct btrfs_root *root = BTRFS_I(inode)->root;
+	u64 to_free;
+	int nr_extents;
+	int reserved_extents;
+
+	num_bytes = ALIGN(num_bytes, root->sectorsize);
+	atomic_dec(&BTRFS_I(inode)->outstanding_extents);
+	WARN_ON(atomic_read(&BTRFS_I(inode)->outstanding_extents) < 0);
+
+	reserved_extents = atomic_read(&BTRFS_I(inode)->reserved_extents);
+	do {
+		int old, new;
+
+		nr_extents = atomic_read(&BTRFS_I(inode)->outstanding_extents);
+		if (nr_extents >= reserved_extents) {
+			nr_extents = 0;
+			break;
+		}
+		old = reserved_extents;
+		nr_extents = reserved_extents - nr_extents;
+		new = reserved_extents - nr_extents;
+		old = atomic_cmpxchg(&BTRFS_I(inode)->reserved_extents,
+				     reserved_extents, new);
+		if (likely(old == reserved_extents))
+			break;
+		reserved_extents = old;
+	} while (1);
+
+	to_free = calc_csum_metadata_size(inode, num_bytes);
+	if (nr_extents > 0)
+		to_free += btrfs_calc_trans_metadata_size(root, nr_extents);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_block_rsv_release(root, &root->fs_info->delalloc_block_rsv,
 				to_free);
 }
 
+<<<<<<< HEAD
 /**
  * btrfs_delalloc_reserve_space - reserve data and metadata space for delalloc
  * @inode: inode we're writing to
@@ -4606,6 +5627,8 @@ void btrfs_delalloc_release_metadata(struct inode *inode, u64 num_bytes)
  *
  * This will return 0 for success and -ENOSPC if there is no space left.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int btrfs_delalloc_reserve_space(struct inode *inode, u64 num_bytes)
 {
 	int ret;
@@ -4623,6 +5646,7 @@ int btrfs_delalloc_reserve_space(struct inode *inode, u64 num_bytes)
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * btrfs_delalloc_release_space - release data and metadata space for delalloc
  * @inode: inode we're releasing space for
@@ -4636,6 +5660,8 @@ int btrfs_delalloc_reserve_space(struct inode *inode, u64 num_bytes)
  * decrement ->delalloc_bytes and remove it from the fs_info delalloc_inodes
  * list if there are no delalloc bytes left.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void btrfs_delalloc_release_space(struct inode *inode, u64 num_bytes)
 {
 	btrfs_delalloc_release_metadata(inode, num_bytes);
@@ -4655,18 +5681,30 @@ static int update_block_group(struct btrfs_trans_handle *trans,
 
 	/* block accounting for super block */
 	spin_lock(&info->delalloc_lock);
+<<<<<<< HEAD
 	old_val = btrfs_super_bytes_used(info->super_copy);
+=======
+	old_val = btrfs_super_bytes_used(&info->super_copy);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (alloc)
 		old_val += num_bytes;
 	else
 		old_val -= num_bytes;
+<<<<<<< HEAD
 	btrfs_set_super_bytes_used(info->super_copy, old_val);
+=======
+	btrfs_set_super_bytes_used(&info->super_copy, old_val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&info->delalloc_lock);
 
 	while (total) {
 		cache = btrfs_lookup_block_group(info, bytenr);
 		if (!cache)
+<<<<<<< HEAD
 			return -ENOENT;
+=======
+			return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (cache->flags & (BTRFS_BLOCK_GROUP_DUP |
 				    BTRFS_BLOCK_GROUP_RAID1 |
 				    BTRFS_BLOCK_GROUP_RAID10))
@@ -4688,7 +5726,11 @@ static int update_block_group(struct btrfs_trans_handle *trans,
 		spin_lock(&cache->space_info->lock);
 		spin_lock(&cache->lock);
 
+<<<<<<< HEAD
 		if (btrfs_test_opt(root, SPACE_CACHE) &&
+=======
+		if (btrfs_super_cache_generation(&info->super_copy) != 0 &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    cache->disk_cache_state < BTRFS_DC_CLEAR)
 			cache->disk_cache_state = BTRFS_DC_CLEAR;
 
@@ -4700,6 +5742,10 @@ static int update_block_group(struct btrfs_trans_handle *trans,
 			btrfs_set_block_group_used(&cache->item, old_val);
 			cache->reserved -= num_bytes;
 			cache->space_info->bytes_reserved -= num_bytes;
+<<<<<<< HEAD
+=======
+			cache->space_info->reservation_progress++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cache->space_info->bytes_used += num_bytes;
 			cache->space_info->disk_used += num_bytes * factor;
 			spin_unlock(&cache->lock);
@@ -4751,6 +5797,10 @@ static int pin_down_extent(struct btrfs_root *root,
 	if (reserved) {
 		cache->reserved -= num_bytes;
 		cache->space_info->bytes_reserved -= num_bytes;
+<<<<<<< HEAD
+=======
+		cache->space_info->reservation_progress++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	spin_unlock(&cache->lock);
 	spin_unlock(&cache->space_info->lock);
@@ -4769,7 +5819,11 @@ int btrfs_pin_extent(struct btrfs_root *root,
 	struct btrfs_block_group_cache *cache;
 
 	cache = btrfs_lookup_block_group(root->fs_info, bytenr);
+<<<<<<< HEAD
 	BUG_ON(!cache); /* Logic error */
+=======
+	BUG_ON(!cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pin_down_extent(root, cache, bytenr, num_bytes, reserved);
 
@@ -4778,6 +5832,7 @@ int btrfs_pin_extent(struct btrfs_root *root,
 }
 
 /*
+<<<<<<< HEAD
  * this function must be called within transaction
  */
 int btrfs_pin_extent_for_log_replay(struct btrfs_trans_handle *trans,
@@ -4861,6 +5916,51 @@ static int btrfs_update_reserved_bytes(struct btrfs_block_group_cache *cache,
 }
 
 void btrfs_prepare_extent_commit(struct btrfs_trans_handle *trans,
+=======
+ * update size of reserved extents. this function may return -EAGAIN
+ * if 'reserve' is true or 'sinfo' is false.
+ */
+int btrfs_update_reserved_bytes(struct btrfs_block_group_cache *cache,
+				u64 num_bytes, int reserve, int sinfo)
+{
+	int ret = 0;
+	if (sinfo) {
+		struct btrfs_space_info *space_info = cache->space_info;
+		spin_lock(&space_info->lock);
+		spin_lock(&cache->lock);
+		if (reserve) {
+			if (cache->ro) {
+				ret = -EAGAIN;
+			} else {
+				cache->reserved += num_bytes;
+				space_info->bytes_reserved += num_bytes;
+			}
+		} else {
+			if (cache->ro)
+				space_info->bytes_readonly += num_bytes;
+			cache->reserved -= num_bytes;
+			space_info->bytes_reserved -= num_bytes;
+			space_info->reservation_progress++;
+		}
+		spin_unlock(&cache->lock);
+		spin_unlock(&space_info->lock);
+	} else {
+		spin_lock(&cache->lock);
+		if (cache->ro) {
+			ret = -EAGAIN;
+		} else {
+			if (reserve)
+				cache->reserved += num_bytes;
+			else
+				cache->reserved -= num_bytes;
+		}
+		spin_unlock(&cache->lock);
+	}
+	return ret;
+}
+
+int btrfs_prepare_extent_commit(struct btrfs_trans_handle *trans,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				struct btrfs_root *root)
 {
 	struct btrfs_fs_info *fs_info = root->fs_info;
@@ -4890,6 +5990,10 @@ void btrfs_prepare_extent_commit(struct btrfs_trans_handle *trans,
 	up_write(&fs_info->extent_commit_sem);
 
 	update_global_block_rsv(fs_info);
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int unpin_extent_range(struct btrfs_root *root, u64 start, u64 end)
@@ -4904,7 +6008,11 @@ static int unpin_extent_range(struct btrfs_root *root, u64 start, u64 end)
 			if (cache)
 				btrfs_put_block_group(cache);
 			cache = btrfs_lookup_block_group(fs_info, start);
+<<<<<<< HEAD
 			BUG_ON(!cache); /* Logic error */
+=======
+			BUG_ON(!cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		len = cache->key.objectid + cache->key.offset - start;
@@ -4921,8 +6029,18 @@ static int unpin_extent_range(struct btrfs_root *root, u64 start, u64 end)
 		spin_lock(&cache->lock);
 		cache->pinned -= len;
 		cache->space_info->bytes_pinned -= len;
+<<<<<<< HEAD
 		if (cache->ro)
 			cache->space_info->bytes_readonly += len;
+=======
+		if (cache->ro) {
+			cache->space_info->bytes_readonly += len;
+		} else if (cache->reserved_pinned > 0) {
+			len = min(len, cache->reserved_pinned);
+			cache->reserved_pinned -= len;
+			cache->space_info->bytes_reserved += len;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock(&cache->lock);
 		spin_unlock(&cache->space_info->lock);
 	}
@@ -4937,6 +6055,7 @@ int btrfs_finish_extent_commit(struct btrfs_trans_handle *trans,
 {
 	struct btrfs_fs_info *fs_info = root->fs_info;
 	struct extent_io_tree *unpin;
+<<<<<<< HEAD
 	u64 start;
 	u64 end;
 	int ret;
@@ -4944,6 +6063,15 @@ int btrfs_finish_extent_commit(struct btrfs_trans_handle *trans,
 	if (trans->aborted)
 		return 0;
 
+=======
+	struct btrfs_block_rsv *block_rsv;
+	struct btrfs_block_rsv *next_rsv;
+	u64 start;
+	u64 end;
+	int idx;
+	int ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (fs_info->pinned_extents == &fs_info->freed_extents[0])
 		unpin = &fs_info->freed_extents[1];
 	else
@@ -4964,6 +6092,33 @@ int btrfs_finish_extent_commit(struct btrfs_trans_handle *trans,
 		cond_resched();
 	}
 
+<<<<<<< HEAD
+=======
+	mutex_lock(&fs_info->durable_block_rsv_mutex);
+	list_for_each_entry_safe(block_rsv, next_rsv,
+				 &fs_info->durable_block_rsv_list, list) {
+
+		idx = trans->transid & 0x1;
+		if (block_rsv->freed[idx] > 0) {
+			block_rsv_add_bytes(block_rsv,
+					    block_rsv->freed[idx], 0);
+			block_rsv->freed[idx] = 0;
+		}
+		if (atomic_read(&block_rsv->usage) == 0) {
+			btrfs_block_rsv_release(root, block_rsv, (u64)-1);
+
+			if (block_rsv->freed[0] == 0 &&
+			    block_rsv->freed[1] == 0) {
+				list_del_init(&block_rsv->list);
+				kfree(block_rsv);
+			}
+		} else {
+			btrfs_block_rsv_release(root, block_rsv, 0);
+		}
+	}
+	mutex_unlock(&fs_info->durable_block_rsv_mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -5029,8 +6184,12 @@ static int __btrfs_free_extent(struct btrfs_trans_handle *trans,
 			ret = remove_extent_backref(trans, extent_root, path,
 						    NULL, refs_to_drop,
 						    is_data);
+<<<<<<< HEAD
 			if (ret)
 				goto abort;
+=======
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			btrfs_release_path(path);
 			path->leave_spinning = 1;
 
@@ -5044,6 +6203,7 @@ static int __btrfs_free_extent(struct btrfs_trans_handle *trans,
 				printk(KERN_ERR "umm, got %d back from search"
 				       ", was looking for %llu\n", ret,
 				       (unsigned long long)bytenr);
+<<<<<<< HEAD
 				if (ret > 0)
 					btrfs_print_leaf(extent_root,
 							 path->nodes[0]);
@@ -5053,6 +6213,14 @@ static int __btrfs_free_extent(struct btrfs_trans_handle *trans,
 			extent_slot = path->slots[0];
 		}
 	} else if (ret == -ENOENT) {
+=======
+				btrfs_print_leaf(extent_root, path->nodes[0]);
+			}
+			BUG_ON(ret);
+			extent_slot = path->slots[0];
+		}
+	} else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		btrfs_print_leaf(extent_root, path->nodes[0]);
 		WARN_ON(1);
 		printk(KERN_ERR "btrfs unable to find ref byte nr %llu "
@@ -5062,8 +6230,11 @@ static int __btrfs_free_extent(struct btrfs_trans_handle *trans,
 		       (unsigned long long)root_objectid,
 		       (unsigned long long)owner_objectid,
 		       (unsigned long long)owner_offset);
+<<<<<<< HEAD
 	} else {
 		goto abort;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	leaf = path->nodes[0];
@@ -5073,8 +6244,12 @@ static int __btrfs_free_extent(struct btrfs_trans_handle *trans,
 		BUG_ON(found_extent || extent_slot != path->slots[0]);
 		ret = convert_extent_item_v0(trans, extent_root, path,
 					     owner_objectid, 0);
+<<<<<<< HEAD
 		if (ret < 0)
 			goto abort;
+=======
+		BUG_ON(ret < 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		btrfs_release_path(path);
 		path->leave_spinning = 1;
@@ -5091,8 +6266,12 @@ static int __btrfs_free_extent(struct btrfs_trans_handle *trans,
 			       (unsigned long long)bytenr);
 			btrfs_print_leaf(extent_root, path->nodes[0]);
 		}
+<<<<<<< HEAD
 		if (ret < 0)
 			goto abort;
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		extent_slot = path->slots[0];
 		leaf = path->nodes[0];
 		item_size = btrfs_item_size_nr(leaf, extent_slot);
@@ -5129,8 +6308,12 @@ static int __btrfs_free_extent(struct btrfs_trans_handle *trans,
 			ret = remove_extent_backref(trans, extent_root, path,
 						    iref, refs_to_drop,
 						    is_data);
+<<<<<<< HEAD
 			if (ret)
 				goto abort;
+=======
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		if (found_extent) {
@@ -5147,12 +6330,17 @@ static int __btrfs_free_extent(struct btrfs_trans_handle *trans,
 
 		ret = btrfs_del_items(trans, extent_root, path, path->slots[0],
 				      num_to_del);
+<<<<<<< HEAD
 		if (ret)
 			goto abort;
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		btrfs_release_path(path);
 
 		if (is_data) {
 			ret = btrfs_del_csums(trans, root, bytenr, num_bytes);
+<<<<<<< HEAD
 			if (ret)
 				goto abort;
 		}
@@ -5168,6 +6356,20 @@ out:
 abort:
 	btrfs_abort_transaction(trans, extent_root, ret);
 	goto out;
+=======
+			BUG_ON(ret);
+		} else {
+			invalidate_mapping_pages(info->btree_inode->i_mapping,
+			     bytenr >> PAGE_CACHE_SHIFT,
+			     (bytenr + num_bytes - 1) >> PAGE_CACHE_SHIFT);
+		}
+
+		ret = update_block_group(trans, root, bytenr, num_bytes, 0);
+		BUG_ON(ret);
+	}
+	btrfs_free_path(path);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -5223,8 +6425,11 @@ static noinline int check_ref_cleanup(struct btrfs_trans_handle *trans,
 	rb_erase(&head->node.rb_node, &delayed_refs->root);
 
 	delayed_refs->num_entries--;
+<<<<<<< HEAD
 	if (waitqueue_active(&delayed_refs->seq_wait))
 		wake_up(&delayed_refs->seq_wait);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * we don't take a ref on the node because we're removing it from the
@@ -5252,41 +6457,111 @@ out:
 void btrfs_free_tree_block(struct btrfs_trans_handle *trans,
 			   struct btrfs_root *root,
 			   struct extent_buffer *buf,
+<<<<<<< HEAD
 			   u64 parent, int last_ref, int for_cow)
 {
+=======
+			   u64 parent, int last_ref)
+{
+	struct btrfs_block_rsv *block_rsv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct btrfs_block_group_cache *cache = NULL;
 	int ret;
 
 	if (root->root_key.objectid != BTRFS_TREE_LOG_OBJECTID) {
+<<<<<<< HEAD
 		ret = btrfs_add_delayed_tree_ref(root->fs_info, trans,
 					buf->start, buf->len,
 					parent, root->root_key.objectid,
 					btrfs_header_level(buf),
 					BTRFS_DROP_DELAYED_REF, NULL, for_cow);
 		BUG_ON(ret); /* -ENOMEM */
+=======
+		ret = btrfs_add_delayed_tree_ref(trans, buf->start, buf->len,
+						parent, root->root_key.objectid,
+						btrfs_header_level(buf),
+						BTRFS_DROP_DELAYED_REF, NULL);
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (!last_ref)
 		return;
 
+<<<<<<< HEAD
 	cache = btrfs_lookup_block_group(root->fs_info, buf->start);
+=======
+	block_rsv = get_block_rsv(trans, root);
+	cache = btrfs_lookup_block_group(root->fs_info, buf->start);
+	if (block_rsv->space_info != cache->space_info)
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (btrfs_header_generation(buf) == trans->transid) {
 		if (root->root_key.objectid != BTRFS_TREE_LOG_OBJECTID) {
 			ret = check_ref_cleanup(trans, root, buf->start);
 			if (!ret)
+<<<<<<< HEAD
 				goto out;
+=======
+				goto pin;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (btrfs_header_flag(buf, BTRFS_HEADER_FLAG_WRITTEN)) {
 			pin_down_extent(root, cache, buf->start, buf->len, 1);
+<<<<<<< HEAD
 			goto out;
+=======
+			goto pin;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		WARN_ON(test_bit(EXTENT_BUFFER_DIRTY, &buf->bflags));
 
 		btrfs_add_free_space(cache, buf->start, buf->len);
+<<<<<<< HEAD
 		btrfs_update_reserved_bytes(cache, buf->len, RESERVE_FREE);
+=======
+		ret = btrfs_update_reserved_bytes(cache, buf->len, 0, 0);
+		if (ret == -EAGAIN) {
+			/* block group became read-only */
+			btrfs_update_reserved_bytes(cache, buf->len, 0, 1);
+			goto out;
+		}
+
+		ret = 1;
+		spin_lock(&block_rsv->lock);
+		if (block_rsv->reserved < block_rsv->size) {
+			block_rsv->reserved += buf->len;
+			ret = 0;
+		}
+		spin_unlock(&block_rsv->lock);
+
+		if (ret) {
+			spin_lock(&cache->space_info->lock);
+			cache->space_info->bytes_reserved -= buf->len;
+			cache->space_info->reservation_progress++;
+			spin_unlock(&cache->space_info->lock);
+		}
+		goto out;
+	}
+pin:
+	if (block_rsv->durable && !cache->ro) {
+		ret = 0;
+		spin_lock(&cache->lock);
+		if (!cache->ro) {
+			cache->reserved_pinned += buf->len;
+			ret = 1;
+		}
+		spin_unlock(&cache->lock);
+
+		if (ret) {
+			spin_lock(&block_rsv->lock);
+			block_rsv->freed[trans->transid & 0x1] += buf->len;
+			spin_unlock(&block_rsv->lock);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 out:
 	/*
@@ -5297,6 +6572,7 @@ out:
 	btrfs_put_block_group(cache);
 }
 
+<<<<<<< HEAD
 /* Can return -ENOMEM */
 int btrfs_free_extent(struct btrfs_trans_handle *trans, struct btrfs_root *root,
 		      u64 bytenr, u64 num_bytes, u64 parent, u64 root_objectid,
@@ -5304,6 +6580,14 @@ int btrfs_free_extent(struct btrfs_trans_handle *trans, struct btrfs_root *root,
 {
 	int ret;
 	struct btrfs_fs_info *fs_info = root->fs_info;
+=======
+int btrfs_free_extent(struct btrfs_trans_handle *trans,
+		      struct btrfs_root *root,
+		      u64 bytenr, u64 num_bytes, u64 parent,
+		      u64 root_objectid, u64 owner, u64 offset)
+{
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * tree log blocks never actually go into the extent allocation
@@ -5315,6 +6599,7 @@ int btrfs_free_extent(struct btrfs_trans_handle *trans, struct btrfs_root *root,
 		btrfs_pin_extent(root, bytenr, num_bytes, 1);
 		ret = 0;
 	} else if (owner < BTRFS_FIRST_FREE_OBJECTID) {
+<<<<<<< HEAD
 		ret = btrfs_add_delayed_tree_ref(fs_info, trans, bytenr,
 					num_bytes,
 					parent, root_objectid, (int)owner,
@@ -5325,6 +6610,17 @@ int btrfs_free_extent(struct btrfs_trans_handle *trans, struct btrfs_root *root,
 						parent, root_objectid, owner,
 						offset, BTRFS_DROP_DELAYED_REF,
 						NULL, for_cow);
+=======
+		ret = btrfs_add_delayed_tree_ref(trans, bytenr, num_bytes,
+					parent, root_objectid, (int)owner,
+					BTRFS_DROP_DELAYED_REF, NULL);
+		BUG_ON(ret);
+	} else {
+		ret = btrfs_add_delayed_data_ref(trans, bytenr, num_bytes,
+					parent, root_objectid, owner,
+					offset, BTRFS_DROP_DELAYED_REF, NULL);
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return ret;
 }
@@ -5381,6 +6677,7 @@ wait_block_group_cache_done(struct btrfs_block_group_cache *cache)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int __get_block_group_index(u64 flags)
 {
 	int index;
@@ -5409,6 +6706,30 @@ enum btrfs_loop_type {
 	LOOP_CACHING_WAIT = 1,
 	LOOP_ALLOC_CHUNK = 2,
 	LOOP_NO_EMPTY_SIZE = 3,
+=======
+static int get_block_group_index(struct btrfs_block_group_cache *cache)
+{
+	int index;
+	if (cache->flags & BTRFS_BLOCK_GROUP_RAID10)
+		index = 0;
+	else if (cache->flags & BTRFS_BLOCK_GROUP_RAID1)
+		index = 1;
+	else if (cache->flags & BTRFS_BLOCK_GROUP_DUP)
+		index = 2;
+	else if (cache->flags & BTRFS_BLOCK_GROUP_RAID0)
+		index = 3;
+	else
+		index = 4;
+	return index;
+}
+
+enum btrfs_loop_type {
+	LOOP_FIND_IDEAL = 0,
+	LOOP_CACHING_NOWAIT = 1,
+	LOOP_CACHING_WAIT = 2,
+	LOOP_ALLOC_CHUNK = 3,
+	LOOP_NO_EMPTY_SIZE = 4,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -5422,6 +6743,10 @@ enum btrfs_loop_type {
 static noinline int find_free_extent(struct btrfs_trans_handle *trans,
 				     struct btrfs_root *orig_root,
 				     u64 num_bytes, u64 empty_size,
+<<<<<<< HEAD
+=======
+				     u64 search_start, u64 search_end,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     u64 hint_byte, struct btrfs_key *ins,
 				     u64 data)
 {
@@ -5429,29 +6754,46 @@ static noinline int find_free_extent(struct btrfs_trans_handle *trans,
 	struct btrfs_root *root = orig_root->fs_info->extent_root;
 	struct btrfs_free_cluster *last_ptr = NULL;
 	struct btrfs_block_group_cache *block_group = NULL;
+<<<<<<< HEAD
 	struct btrfs_block_group_cache *used_block_group;
 	u64 search_start = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int empty_cluster = 2 * 1024 * 1024;
 	int allowed_chunk_alloc = 0;
 	int done_chunk_alloc = 0;
 	struct btrfs_space_info *space_info;
+<<<<<<< HEAD
 	int loop = 0;
 	int index = 0;
 	int alloc_type = (data & BTRFS_BLOCK_GROUP_DATA) ?
 		RESERVE_ALLOC_NO_ACCOUNT : RESERVE_ALLOC;
+=======
+	int last_ptr_loop = 0;
+	int loop = 0;
+	int index = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool found_uncached_bg = false;
 	bool failed_cluster_refill = false;
 	bool failed_alloc = false;
 	bool use_cluster = true;
+<<<<<<< HEAD
 	bool have_caching_bg = false;
+=======
+	u64 ideal_cache_percent = 0;
+	u64 ideal_cache_offset = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	WARN_ON(num_bytes < root->sectorsize);
 	btrfs_set_key_type(ins, BTRFS_EXTENT_ITEM_KEY);
 	ins->objectid = 0;
 	ins->offset = 0;
 
+<<<<<<< HEAD
 	trace_find_free_extent(orig_root, num_bytes, empty_size, data);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	space_info = __find_space_info(root->fs_info, data);
 	if (!space_info) {
 		printk(KERN_ERR "No space info for %llu\n", data);
@@ -5493,9 +6835,15 @@ static noinline int find_free_extent(struct btrfs_trans_handle *trans,
 		empty_cluster = 0;
 
 	if (search_start == hint_byte) {
+<<<<<<< HEAD
 		block_group = btrfs_lookup_block_group(root->fs_info,
 						       search_start);
 		used_block_group = block_group;
+=======
+ideal_cache:
+		block_group = btrfs_lookup_block_group(root->fs_info,
+						       search_start);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * we don't want to use the block group if it doesn't match our
 		 * allocation bits, or if its not cached.
@@ -5504,7 +6852,12 @@ static noinline int find_free_extent(struct btrfs_trans_handle *trans,
 		 * picked out then we don't care that the block group is cached.
 		 */
 		if (block_group && block_group_bits(block_group, data) &&
+<<<<<<< HEAD
 		    block_group->cached != BTRFS_CACHE_NO) {
+=======
+		    (block_group->cached != BTRFS_CACHE_NO ||
+		     search_start == ideal_cache_offset)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			down_read(&space_info->groups_sem);
 			if (list_empty(&block_group->list) ||
 			    block_group->ro) {
@@ -5525,14 +6878,20 @@ static noinline int find_free_extent(struct btrfs_trans_handle *trans,
 		}
 	}
 search:
+<<<<<<< HEAD
 	have_caching_bg = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	down_read(&space_info->groups_sem);
 	list_for_each_entry(block_group, &space_info->block_groups[index],
 			    list) {
 		u64 offset;
 		int cached;
 
+<<<<<<< HEAD
 		used_block_group = block_group;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		btrfs_get_block_group(block_group);
 		search_start = block_group->key.objectid;
 
@@ -5556,6 +6915,7 @@ search:
 		}
 
 have_block_group:
+<<<<<<< HEAD
 		cached = block_group_cache_done(block_group);
 		if (unlikely(!cached)) {
 			found_uncached_bg = true;
@@ -5573,11 +6933,82 @@ have_block_group:
 		 * lets look there
 		 */
 		if (last_ptr) {
+=======
+		if (unlikely(block_group->cached == BTRFS_CACHE_NO)) {
+			u64 free_percent;
+
+			ret = cache_block_group(block_group, trans,
+						orig_root, 1);
+			if (block_group->cached == BTRFS_CACHE_FINISHED)
+				goto have_block_group;
+
+			free_percent = btrfs_block_group_used(&block_group->item);
+			free_percent *= 100;
+			free_percent = div64_u64(free_percent,
+						 block_group->key.offset);
+			free_percent = 100 - free_percent;
+			if (free_percent > ideal_cache_percent &&
+			    likely(!block_group->ro)) {
+				ideal_cache_offset = block_group->key.objectid;
+				ideal_cache_percent = free_percent;
+			}
+
+			/*
+			 * We only want to start kthread caching if we are at
+			 * the point where we will wait for caching to make
+			 * progress, or if our ideal search is over and we've
+			 * found somebody to start caching.
+			 */
+			if (loop > LOOP_CACHING_NOWAIT ||
+			    (loop > LOOP_FIND_IDEAL &&
+			     atomic_read(&space_info->caching_threads) < 2)) {
+				ret = cache_block_group(block_group, trans,
+							orig_root, 0);
+				BUG_ON(ret);
+			}
+			found_uncached_bg = true;
+
+			/*
+			 * If loop is set for cached only, try the next block
+			 * group.
+			 */
+			if (loop == LOOP_FIND_IDEAL)
+				goto loop;
+		}
+
+		cached = block_group_cache_done(block_group);
+		if (unlikely(!cached))
+			found_uncached_bg = true;
+
+		if (unlikely(block_group->ro))
+			goto loop;
+
+		spin_lock(&block_group->free_space_ctl->tree_lock);
+		if (cached &&
+		    block_group->free_space_ctl->free_space <
+		    num_bytes + empty_size) {
+			spin_unlock(&block_group->free_space_ctl->tree_lock);
+			goto loop;
+		}
+		spin_unlock(&block_group->free_space_ctl->tree_lock);
+
+		/*
+		 * Ok we want to try and use the cluster allocator, so lets look
+		 * there, unless we are on LOOP_NO_EMPTY_SIZE, since we will
+		 * have tried the cluster allocator plenty of times at this
+		 * point and not have found anything, so we are likely way too
+		 * fragmented for the clustering stuff to find anything, so lets
+		 * just skip it and let the allocator find whatever block it can
+		 * find
+		 */
+		if (last_ptr && loop < LOOP_NO_EMPTY_SIZE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * the refill lock keeps out other
 			 * people trying to start a new cluster
 			 */
 			spin_lock(&last_ptr->refill_lock);
+<<<<<<< HEAD
 			used_block_group = last_ptr->block_group;
 			if (used_block_group != block_group &&
 			    (!used_block_group ||
@@ -5628,21 +7059,74 @@ refill_cluster:
 				goto unclustered_alloc;
 			}
 
+=======
+			if (last_ptr->block_group &&
+			    (last_ptr->block_group->ro ||
+			    !block_group_bits(last_ptr->block_group, data))) {
+				offset = 0;
+				goto refill_cluster;
+			}
+
+			offset = btrfs_alloc_from_cluster(block_group, last_ptr,
+						 num_bytes, search_start);
+			if (offset) {
+				/* we have a block, we're done */
+				spin_unlock(&last_ptr->refill_lock);
+				goto checks;
+			}
+
+			spin_lock(&last_ptr->lock);
+			/*
+			 * whoops, this cluster doesn't actually point to
+			 * this block group.  Get a ref on the block
+			 * group is does point to and try again
+			 */
+			if (!last_ptr_loop && last_ptr->block_group &&
+			    last_ptr->block_group != block_group) {
+
+				btrfs_put_block_group(block_group);
+				block_group = last_ptr->block_group;
+				btrfs_get_block_group(block_group);
+				spin_unlock(&last_ptr->lock);
+				spin_unlock(&last_ptr->refill_lock);
+
+				last_ptr_loop = 1;
+				search_start = block_group->key.objectid;
+				/*
+				 * we know this block group is properly
+				 * in the list because
+				 * btrfs_remove_block_group, drops the
+				 * cluster before it removes the block
+				 * group from the list
+				 */
+				goto have_block_group;
+			}
+			spin_unlock(&last_ptr->lock);
+refill_cluster:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * this cluster didn't work out, free it and
 			 * start over
 			 */
 			btrfs_return_cluster_to_free_space(NULL, last_ptr);
 
+<<<<<<< HEAD
 			if (loop >= LOOP_NO_EMPTY_SIZE) {
 				spin_unlock(&last_ptr->refill_lock);
 				goto unclustered_alloc;
 			}
+=======
+			last_ptr_loop = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* allocate a cluster in this block group */
 			ret = btrfs_find_space_cluster(trans, root,
 					       block_group, last_ptr,
+<<<<<<< HEAD
 					       search_start, num_bytes,
+=======
+					       offset, num_bytes,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					       empty_cluster + empty_size);
 			if (ret == 0) {
 				/*
@@ -5655,9 +7139,12 @@ refill_cluster:
 				if (offset) {
 					/* we found one, proceed */
 					spin_unlock(&last_ptr->refill_lock);
+<<<<<<< HEAD
 					trace_btrfs_reserve_extent_cluster(root,
 						block_group, search_start,
 						num_bytes);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					goto checks;
 				}
 			} else if (!cached && loop > LOOP_CACHING_NOWAIT
@@ -5681,6 +7168,7 @@ refill_cluster:
 			goto loop;
 		}
 
+<<<<<<< HEAD
 unclustered_alloc:
 		spin_lock(&block_group->free_space_ctl->tree_lock);
 		if (cached &&
@@ -5691,6 +7179,8 @@ unclustered_alloc:
 		}
 		spin_unlock(&block_group->free_space_ctl->tree_lock);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		offset = btrfs_find_space_for_alloc(block_group, search_start,
 						    num_bytes, empty_size);
 		/*
@@ -5709,12 +7199,16 @@ unclustered_alloc:
 			failed_alloc = true;
 			goto have_block_group;
 		} else if (!offset) {
+<<<<<<< HEAD
 			if (!cached)
 				have_caching_bg = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto loop;
 		}
 checks:
 		search_start = stripe_align(root, offset);
+<<<<<<< HEAD
 
 		/* move on to the next group */
 		if (search_start + num_bytes >
@@ -5732,6 +7226,33 @@ checks:
 						  alloc_type);
 		if (ret == -EAGAIN) {
 			btrfs_add_free_space(used_block_group, offset, num_bytes);
+=======
+		/* move on to the next group */
+		if (search_start + num_bytes >= search_end) {
+			btrfs_add_free_space(block_group, offset, num_bytes);
+			goto loop;
+		}
+
+		/* move on to the next group */
+		if (search_start + num_bytes >
+		    block_group->key.objectid + block_group->key.offset) {
+			btrfs_add_free_space(block_group, offset, num_bytes);
+			goto loop;
+		}
+
+		ins->objectid = search_start;
+		ins->offset = num_bytes;
+
+		if (offset < search_start)
+			btrfs_add_free_space(block_group, offset,
+					     search_start - offset);
+		BUG_ON(offset > search_start);
+
+		ret = btrfs_update_reserved_bytes(block_group, num_bytes, 1,
+					    (data & BTRFS_BLOCK_GROUP_DATA));
+		if (ret == -EAGAIN) {
+			btrfs_add_free_space(block_group, offset, num_bytes);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto loop;
 		}
 
@@ -5739,6 +7260,7 @@ checks:
 		ins->objectid = search_start;
 		ins->offset = num_bytes;
 
+<<<<<<< HEAD
 		trace_btrfs_reserve_extent(orig_root, block_group,
 					   search_start, num_bytes);
 		if (offset < search_start)
@@ -5747,18 +7269,28 @@ checks:
 		BUG_ON(offset > search_start);
 		if (used_block_group != block_group)
 			btrfs_put_block_group(used_block_group);
+=======
+		if (offset < search_start)
+			btrfs_add_free_space(block_group, offset,
+					     search_start - offset);
+		BUG_ON(offset > search_start);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		btrfs_put_block_group(block_group);
 		break;
 loop:
 		failed_cluster_refill = false;
 		failed_alloc = false;
 		BUG_ON(index != get_block_group_index(block_group));
+<<<<<<< HEAD
 		if (used_block_group != block_group)
 			btrfs_put_block_group(used_block_group);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		btrfs_put_block_group(block_group);
 	}
 	up_read(&space_info->groups_sem);
 
+<<<<<<< HEAD
 	if (!ins->objectid && loop >= LOOP_CACHING_WAIT && have_caching_bg)
 		goto search;
 
@@ -5766,6 +7298,14 @@ loop:
 		goto search;
 
 	/*
+=======
+	if (!ins->objectid && ++index < BTRFS_NR_RAID_TYPES)
+		goto search;
+
+	/* LOOP_FIND_IDEAL, only search caching/cached bg's, and don't wait for
+	 *			for them to make caching progress.  Also
+	 *			determine the best possible bg to cache
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * LOOP_CACHING_NOWAIT, search partially cached block groups, kicking
 	 *			caching kthreads as we move along
 	 * LOOP_CACHING_WAIT, search everything, and wait if our bg is caching
@@ -5775,17 +7315,63 @@ loop:
 	 */
 	if (!ins->objectid && loop < LOOP_NO_EMPTY_SIZE) {
 		index = 0;
+<<<<<<< HEAD
 		loop++;
+=======
+		if (loop == LOOP_FIND_IDEAL && found_uncached_bg) {
+			found_uncached_bg = false;
+			loop++;
+			if (!ideal_cache_percent &&
+			    atomic_read(&space_info->caching_threads))
+				goto search;
+
+			/*
+			 * 1 of the following 2 things have happened so far
+			 *
+			 * 1) We found an ideal block group for caching that
+			 * is mostly full and will cache quickly, so we might
+			 * as well wait for it.
+			 *
+			 * 2) We searched for cached only and we didn't find
+			 * anything, and we didn't start any caching kthreads
+			 * either, so chances are we will loop through and
+			 * start a couple caching kthreads, and then come back
+			 * around and just wait for them.  This will be slower
+			 * because we will have 2 caching kthreads reading at
+			 * the same time when we could have just started one
+			 * and waited for it to get far enough to give us an
+			 * allocation, so go ahead and go to the wait caching
+			 * loop.
+			 */
+			loop = LOOP_CACHING_WAIT;
+			search_start = ideal_cache_offset;
+			ideal_cache_percent = 0;
+			goto ideal_cache;
+		} else if (loop == LOOP_FIND_IDEAL) {
+			/*
+			 * Didn't find a uncached bg, wait on anything we find
+			 * next.
+			 */
+			loop = LOOP_CACHING_WAIT;
+			goto search;
+		}
+
+		loop++;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (loop == LOOP_ALLOC_CHUNK) {
 		       if (allowed_chunk_alloc) {
 				ret = do_chunk_alloc(trans, root, num_bytes +
 						     2 * 1024 * 1024, data,
 						     CHUNK_ALLOC_LIMITED);
+<<<<<<< HEAD
 				if (ret < 0) {
 					btrfs_abort_transaction(trans,
 								root, ret);
 					goto out;
 				}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				allowed_chunk_alloc = 0;
 				if (ret == 1)
 					done_chunk_alloc = 1;
@@ -5814,7 +7400,10 @@ loop:
 	} else if (ins->objectid) {
 		ret = 0;
 	}
+<<<<<<< HEAD
 out:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -5826,8 +7415,12 @@ static void dump_space_info(struct btrfs_space_info *info, u64 bytes,
 	int index = 0;
 
 	spin_lock(&info->lock);
+<<<<<<< HEAD
 	printk(KERN_INFO "space_info %llu has %llu free, is %sfull\n",
 	       (unsigned long long)info->flags,
+=======
+	printk(KERN_INFO "space_info has %llu free, is %sfull\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       (unsigned long long)(info->total_bytes - info->bytes_used -
 				    info->bytes_pinned - info->bytes_reserved -
 				    info->bytes_readonly),
@@ -5868,10 +7461,18 @@ int btrfs_reserve_extent(struct btrfs_trans_handle *trans,
 			 struct btrfs_root *root,
 			 u64 num_bytes, u64 min_alloc_size,
 			 u64 empty_size, u64 hint_byte,
+<<<<<<< HEAD
 			 struct btrfs_key *ins, u64 data)
 {
 	bool final_tried = false;
 	int ret;
+=======
+			 u64 search_end, struct btrfs_key *ins,
+			 u64 data)
+{
+	int ret;
+	u64 search_start = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	data = btrfs_get_alloc_profile(root, data);
 again:
@@ -5879,6 +7480,7 @@ again:
 	 * the only place that sets empty_size is btrfs_realloc_node, which
 	 * is not called recursively on allocations
 	 */
+<<<<<<< HEAD
 	if (empty_size || root->ref_cows) {
 		ret = do_chunk_alloc(trans, root->fs_info->extent_root,
 				     num_bytes + 2 * 1024 * 1024, data,
@@ -5917,6 +7519,34 @@ again:
 			if (sinfo)
 				dump_space_info(sinfo, num_bytes, 1);
 		}
+=======
+	if (empty_size || root->ref_cows)
+		ret = do_chunk_alloc(trans, root->fs_info->extent_root,
+				     num_bytes + 2 * 1024 * 1024, data,
+				     CHUNK_ALLOC_NO_FORCE);
+
+	WARN_ON(num_bytes < root->sectorsize);
+	ret = find_free_extent(trans, root, num_bytes, empty_size,
+			       search_start, search_end, hint_byte,
+			       ins, data);
+
+	if (ret == -ENOSPC && num_bytes > min_alloc_size) {
+		num_bytes = num_bytes >> 1;
+		num_bytes = num_bytes & ~(root->sectorsize - 1);
+		num_bytes = max(num_bytes, min_alloc_size);
+		do_chunk_alloc(trans, root->fs_info->extent_root,
+			       num_bytes, data, CHUNK_ALLOC_FORCE);
+		goto again;
+	}
+	if (ret == -ENOSPC && btrfs_test_opt(root, ENOSPC_DEBUG)) {
+		struct btrfs_space_info *sinfo;
+
+		sinfo = __find_space_info(root->fs_info, data);
+		printk(KERN_ERR "btrfs allocation failed flags %llu, "
+		       "wanted %llu\n", (unsigned long long)data,
+		       (unsigned long long)num_bytes);
+		dump_space_info(sinfo, num_bytes, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	trace_btrfs_reserved_extent_alloc(root, ins->objectid, ins->offset);
@@ -5924,8 +7554,12 @@ again:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int __btrfs_free_reserved_extent(struct btrfs_root *root,
 					u64 start, u64 len, int pin)
+=======
+int btrfs_free_reserved_extent(struct btrfs_root *root, u64 start, u64 len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct btrfs_block_group_cache *cache;
 	int ret = 0;
@@ -5940,12 +7574,17 @@ static int __btrfs_free_reserved_extent(struct btrfs_root *root,
 	if (btrfs_test_opt(root, DISCARD))
 		ret = btrfs_discard_extent(root, start, len, NULL);
 
+<<<<<<< HEAD
 	if (pin)
 		pin_down_extent(root, cache, start, len, 1);
 	else {
 		btrfs_add_free_space(cache, start, len);
 		btrfs_update_reserved_bytes(cache, len, RESERVE_FREE);
 	}
+=======
+	btrfs_add_free_space(cache, start, len);
+	btrfs_update_reserved_bytes(cache, len, 0, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_put_block_group(cache);
 
 	trace_btrfs_reserved_extent_free(root, start, len);
@@ -5953,6 +7592,7 @@ static int __btrfs_free_reserved_extent(struct btrfs_root *root,
 	return ret;
 }
 
+<<<<<<< HEAD
 int btrfs_free_reserved_extent(struct btrfs_root *root,
 					u64 start, u64 len)
 {
@@ -5965,6 +7605,8 @@ int btrfs_free_and_pin_reserved_extent(struct btrfs_root *root,
 	return __btrfs_free_reserved_extent(root, start, len, 1);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int alloc_reserved_file_extent(struct btrfs_trans_handle *trans,
 				      struct btrfs_root *root,
 				      u64 parent, u64 root_objectid,
@@ -5994,10 +7636,14 @@ static int alloc_reserved_file_extent(struct btrfs_trans_handle *trans,
 	path->leave_spinning = 1;
 	ret = btrfs_insert_empty_item(trans, fs_info->extent_root, path,
 				      ins, size);
+<<<<<<< HEAD
 	if (ret) {
 		btrfs_free_path(path);
 		return ret;
 	}
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	leaf = path->nodes[0];
 	extent_item = btrfs_item_ptr(leaf, path->slots[0],
@@ -6027,7 +7673,11 @@ static int alloc_reserved_file_extent(struct btrfs_trans_handle *trans,
 	btrfs_free_path(path);
 
 	ret = update_block_group(trans, root, ins->objectid, ins->offset, 1);
+<<<<<<< HEAD
 	if (ret) { /* -ENOENT, logic error */
+=======
+	if (ret) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR "btrfs update block group failed for %llu "
 		       "%llu\n", (unsigned long long)ins->objectid,
 		       (unsigned long long)ins->offset);
@@ -6052,16 +7702,24 @@ static int alloc_reserved_tree_block(struct btrfs_trans_handle *trans,
 	u32 size = sizeof(*extent_item) + sizeof(*block_info) + sizeof(*iref);
 
 	path = btrfs_alloc_path();
+<<<<<<< HEAD
 	if (!path)
 		return -ENOMEM;
+=======
+	BUG_ON(!path);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	path->leave_spinning = 1;
 	ret = btrfs_insert_empty_item(trans, fs_info->extent_root, path,
 				      ins, size);
+<<<<<<< HEAD
 	if (ret) {
 		btrfs_free_path(path);
 		return ret;
 	}
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	leaf = path->nodes[0];
 	extent_item = btrfs_item_ptr(leaf, path->slots[0],
@@ -6091,7 +7749,11 @@ static int alloc_reserved_tree_block(struct btrfs_trans_handle *trans,
 	btrfs_free_path(path);
 
 	ret = update_block_group(trans, root, ins->objectid, ins->offset, 1);
+<<<<<<< HEAD
 	if (ret) { /* -ENOENT, logic error */
+=======
+	if (ret) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR "btrfs update block group failed for %llu "
 		       "%llu\n", (unsigned long long)ins->objectid,
 		       (unsigned long long)ins->offset);
@@ -6109,10 +7771,16 @@ int btrfs_alloc_reserved_file_extent(struct btrfs_trans_handle *trans,
 
 	BUG_ON(root_objectid == BTRFS_TREE_LOG_OBJECTID);
 
+<<<<<<< HEAD
 	ret = btrfs_add_delayed_data_ref(root->fs_info, trans, ins->objectid,
 					 ins->offset, 0,
 					 root_objectid, owner, offset,
 					 BTRFS_ADD_DELAYED_EXTENT, NULL, 0);
+=======
+	ret = btrfs_add_delayed_data_ref(trans, ins->objectid, ins->offset,
+					 0, root_objectid, owner, offset,
+					 BTRFS_ADD_DELAYED_EXTENT, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -6139,37 +7807,62 @@ int btrfs_alloc_logged_file_extent(struct btrfs_trans_handle *trans,
 	if (!caching_ctl) {
 		BUG_ON(!block_group_cache_done(block_group));
 		ret = btrfs_remove_free_space(block_group, start, num_bytes);
+<<<<<<< HEAD
 		BUG_ON(ret); /* -ENOMEM */
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		mutex_lock(&caching_ctl->mutex);
 
 		if (start >= caching_ctl->progress) {
 			ret = add_excluded_extent(root, start, num_bytes);
+<<<<<<< HEAD
 			BUG_ON(ret); /* -ENOMEM */
 		} else if (start + num_bytes <= caching_ctl->progress) {
 			ret = btrfs_remove_free_space(block_group,
 						      start, num_bytes);
 			BUG_ON(ret); /* -ENOMEM */
+=======
+			BUG_ON(ret);
+		} else if (start + num_bytes <= caching_ctl->progress) {
+			ret = btrfs_remove_free_space(block_group,
+						      start, num_bytes);
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			num_bytes = caching_ctl->progress - start;
 			ret = btrfs_remove_free_space(block_group,
 						      start, num_bytes);
+<<<<<<< HEAD
 			BUG_ON(ret); /* -ENOMEM */
+=======
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			start = caching_ctl->progress;
 			num_bytes = ins->objectid + ins->offset -
 				    caching_ctl->progress;
 			ret = add_excluded_extent(root, start, num_bytes);
+<<<<<<< HEAD
 			BUG_ON(ret); /* -ENOMEM */
+=======
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		mutex_unlock(&caching_ctl->mutex);
 		put_caching_control(caching_ctl);
 	}
 
+<<<<<<< HEAD
 	ret = btrfs_update_reserved_bytes(block_group, ins->offset,
 					  RESERVE_ALLOC_NO_ACCOUNT);
 	BUG_ON(ret); /* logic error */
+=======
+	ret = btrfs_update_reserved_bytes(block_group, ins->offset, 1, 1);
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_put_block_group(block_group);
 	ret = alloc_reserved_file_extent(trans, root, 0, root_objectid,
 					 0, owner, offset, ins, 1);
@@ -6187,10 +7880,16 @@ struct extent_buffer *btrfs_init_new_buffer(struct btrfs_trans_handle *trans,
 	if (!buf)
 		return ERR_PTR(-ENOMEM);
 	btrfs_set_header_generation(buf, trans->transid);
+<<<<<<< HEAD
 	btrfs_set_buffer_lockdep_class(root->root_key.objectid, buf, level);
 	btrfs_tree_lock(buf);
 	clean_tree_block(trans, root, buf);
 	clear_bit(EXTENT_BUFFER_STALE, &buf->bflags);
+=======
+	btrfs_set_buffer_lockdep_class(buf, level);
+	btrfs_tree_lock(buf);
+	clean_tree_block(trans, root, buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	btrfs_set_lock_blocking(buf);
 	btrfs_set_buffer_uptodate(buf);
@@ -6226,7 +7925,12 @@ use_block_rsv(struct btrfs_trans_handle *trans,
 	block_rsv = get_block_rsv(trans, root);
 
 	if (block_rsv->size == 0) {
+<<<<<<< HEAD
 		ret = reserve_metadata_bytes(root, block_rsv, blocksize, 0);
+=======
+		ret = reserve_metadata_bytes(trans, root, block_rsv,
+					     blocksize, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * If we couldn't reserve metadata bytes try and use some from
 		 * the global reserve.
@@ -6246,6 +7950,7 @@ use_block_rsv(struct btrfs_trans_handle *trans,
 	if (!ret)
 		return block_rsv;
 	if (ret) {
+<<<<<<< HEAD
 		static DEFINE_RATELIMIT_STATE(_rs,
 				DEFAULT_RATELIMIT_INTERVAL,
 				/*DEFAULT_RATELIMIT_BURST*/ 2);
@@ -6255,6 +7960,15 @@ use_block_rsv(struct btrfs_trans_handle *trans,
 		}
 		ret = reserve_metadata_bytes(root, block_rsv, blocksize, 0);
 		if (!ret) {
+=======
+		WARN_ON(1);
+		ret = reserve_metadata_bytes(trans, root, block_rsv, blocksize,
+					     0);
+		if (!ret) {
+			spin_lock(&block_rsv->lock);
+			block_rsv->size += blocksize;
+			spin_unlock(&block_rsv->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return block_rsv;
 		} else if (ret && block_rsv != global_rsv) {
 			ret = block_rsv_use_bytes(global_rsv, blocksize);
@@ -6266,11 +7980,18 @@ use_block_rsv(struct btrfs_trans_handle *trans,
 	return ERR_PTR(-ENOSPC);
 }
 
+<<<<<<< HEAD
 static void unuse_block_rsv(struct btrfs_fs_info *fs_info,
 			    struct btrfs_block_rsv *block_rsv, u32 blocksize)
 {
 	block_rsv_add_bytes(block_rsv, blocksize, 0);
 	block_rsv_release_bytes(fs_info, block_rsv, NULL, 0);
+=======
+static void unuse_block_rsv(struct btrfs_block_rsv *block_rsv, u32 blocksize)
+{
+	block_rsv_add_bytes(block_rsv, blocksize, 0);
+	block_rsv_release_bytes(block_rsv, NULL, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -6284,7 +8005,11 @@ struct extent_buffer *btrfs_alloc_free_block(struct btrfs_trans_handle *trans,
 					struct btrfs_root *root, u32 blocksize,
 					u64 parent, u64 root_objectid,
 					struct btrfs_disk_key *key, int level,
+<<<<<<< HEAD
 					u64 hint, u64 empty_size, int for_cow)
+=======
+					u64 hint, u64 empty_size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct btrfs_key ins;
 	struct btrfs_block_rsv *block_rsv;
@@ -6298,15 +8023,25 @@ struct extent_buffer *btrfs_alloc_free_block(struct btrfs_trans_handle *trans,
 		return ERR_CAST(block_rsv);
 
 	ret = btrfs_reserve_extent(trans, root, blocksize, blocksize,
+<<<<<<< HEAD
 				   empty_size, hint, &ins, 0);
 	if (ret) {
 		unuse_block_rsv(root->fs_info, block_rsv, blocksize);
+=======
+				   empty_size, hint, (u64)-1, &ins, 0);
+	if (ret) {
+		unuse_block_rsv(block_rsv, blocksize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ERR_PTR(ret);
 	}
 
 	buf = btrfs_init_new_buffer(trans, root, ins.objectid,
 				    blocksize, level);
+<<<<<<< HEAD
 	BUG_ON(IS_ERR(buf)); /* -ENOMEM */
+=======
+	BUG_ON(IS_ERR(buf));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (root_objectid == BTRFS_TREE_RELOC_OBJECTID) {
 		if (parent == 0)
@@ -6318,7 +8053,11 @@ struct extent_buffer *btrfs_alloc_free_block(struct btrfs_trans_handle *trans,
 	if (root_objectid != BTRFS_TREE_LOG_OBJECTID) {
 		struct btrfs_delayed_extent_op *extent_op;
 		extent_op = kmalloc(sizeof(*extent_op), GFP_NOFS);
+<<<<<<< HEAD
 		BUG_ON(!extent_op); /* -ENOMEM */
+=======
+		BUG_ON(!extent_op);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (key)
 			memcpy(&extent_op->key, key, sizeof(extent_op->key));
 		else
@@ -6328,12 +8067,20 @@ struct extent_buffer *btrfs_alloc_free_block(struct btrfs_trans_handle *trans,
 		extent_op->update_flags = 1;
 		extent_op->is_data = 0;
 
+<<<<<<< HEAD
 		ret = btrfs_add_delayed_tree_ref(root->fs_info, trans,
 					ins.objectid,
 					ins.offset, parent, root_objectid,
 					level, BTRFS_ADD_DELAYED_EXTENT,
 					extent_op, for_cow);
 		BUG_ON(ret); /* -ENOMEM */
+=======
+		ret = btrfs_add_delayed_tree_ref(trans, ins.objectid,
+					ins.offset, parent, root_objectid,
+					level, BTRFS_ADD_DELAYED_EXTENT,
+					extent_op);
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return buf;
 }
@@ -6349,7 +8096,10 @@ struct walk_control {
 	int keep_locks;
 	int reada_slot;
 	int reada_count;
+<<<<<<< HEAD
 	int for_reloc;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define DROP_REFERENCE	1
@@ -6403,9 +8153,13 @@ static noinline void reada_walk_down(struct btrfs_trans_handle *trans,
 		/* We don't lock the tree block, it's OK to be racy here */
 		ret = btrfs_lookup_extent_info(trans, root, bytenr, blocksize,
 					       &refs, &flags);
+<<<<<<< HEAD
 		/* We don't care about errors in readahead. */
 		if (ret < 0)
 			continue;
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		BUG_ON(refs == 0);
 
 		if (wc->stage == DROP_REFERENCE) {
@@ -6472,9 +8226,13 @@ static noinline int walk_down_proc(struct btrfs_trans_handle *trans,
 					       eb->start, eb->len,
 					       &wc->refs[level],
 					       &wc->flags[level]);
+<<<<<<< HEAD
 		BUG_ON(ret == -ENOMEM);
 		if (ret)
 			return ret;
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		BUG_ON(wc->refs[level] == 0);
 	}
 
@@ -6483,7 +8241,11 @@ static noinline int walk_down_proc(struct btrfs_trans_handle *trans,
 			return 1;
 
 		if (path->locks[level] && !wc->keep_locks) {
+<<<<<<< HEAD
 			btrfs_tree_unlock_rw(eb, path->locks[level]);
+=======
+			btrfs_tree_unlock(eb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			path->locks[level] = 0;
 		}
 		return 0;
@@ -6492,6 +8254,7 @@ static noinline int walk_down_proc(struct btrfs_trans_handle *trans,
 	/* wc->stage == UPDATE_BACKREF */
 	if (!(wc->flags[level] & flag)) {
 		BUG_ON(!path->locks[level]);
+<<<<<<< HEAD
 		ret = btrfs_inc_ref(trans, root, eb, 1, wc->for_reloc);
 		BUG_ON(ret); /* -ENOMEM */
 		ret = btrfs_dec_ref(trans, root, eb, 0, wc->for_reloc);
@@ -6499,6 +8262,15 @@ static noinline int walk_down_proc(struct btrfs_trans_handle *trans,
 		ret = btrfs_set_disk_extent_flags(trans, root, eb->start,
 						  eb->len, flag, 0);
 		BUG_ON(ret); /* -ENOMEM */
+=======
+		ret = btrfs_inc_ref(trans, root, eb, 1);
+		BUG_ON(ret);
+		ret = btrfs_dec_ref(trans, root, eb, 0);
+		BUG_ON(ret);
+		ret = btrfs_set_disk_extent_flags(trans, root, eb->start,
+						  eb->len, flag, 0);
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wc->flags[level] |= flag;
 	}
 
@@ -6507,7 +8279,11 @@ static noinline int walk_down_proc(struct btrfs_trans_handle *trans,
 	 * keep the tree lock
 	 */
 	if (path->locks[level] && level > 0) {
+<<<<<<< HEAD
 		btrfs_tree_unlock_rw(eb, path->locks[level]);
+=======
+		btrfs_tree_unlock(eb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		path->locks[level] = 0;
 	}
 	return 0;
@@ -6570,11 +8346,15 @@ static noinline int do_walk_down(struct btrfs_trans_handle *trans,
 	ret = btrfs_lookup_extent_info(trans, root, bytenr, blocksize,
 				       &wc->refs[level - 1],
 				       &wc->flags[level - 1]);
+<<<<<<< HEAD
 	if (ret < 0) {
 		btrfs_tree_unlock(next);
 		return ret;
 	}
 
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BUG_ON(wc->refs[level - 1] == 0);
 	*lookup_info = 0;
 
@@ -6603,7 +8383,11 @@ static noinline int do_walk_down(struct btrfs_trans_handle *trans,
 			goto skip;
 	}
 
+<<<<<<< HEAD
 	if (!btrfs_buffer_uptodate(next, generation, 0)) {
+=======
+	if (!btrfs_buffer_uptodate(next, generation)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		btrfs_tree_unlock(next);
 		free_extent_buffer(next);
 		next = NULL;
@@ -6624,7 +8408,11 @@ static noinline int do_walk_down(struct btrfs_trans_handle *trans,
 	BUG_ON(level != btrfs_header_level(next));
 	path->nodes[level] = next;
 	path->slots[level] = 0;
+<<<<<<< HEAD
 	path->locks[level] = BTRFS_WRITE_LOCK_BLOCKING;
+=======
+	path->locks[level] = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wc->level = level;
 	if (wc->level == 1)
 		wc->reada_slot = 0;
@@ -6642,8 +8430,13 @@ skip:
 		}
 
 		ret = btrfs_free_extent(trans, root, bytenr, blocksize, parent,
+<<<<<<< HEAD
 				root->root_key.objectid, level - 1, 0, 0);
 		BUG_ON(ret); /* -ENOMEM */
+=======
+					root->root_key.objectid, level - 1, 0);
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	btrfs_tree_unlock(next);
 	free_extent_buffer(next);
@@ -6695,12 +8488,17 @@ static noinline int walk_up_proc(struct btrfs_trans_handle *trans,
 			BUG_ON(level == 0);
 			btrfs_tree_lock(eb);
 			btrfs_set_lock_blocking(eb);
+<<<<<<< HEAD
 			path->locks[level] = BTRFS_WRITE_LOCK_BLOCKING;
+=======
+			path->locks[level] = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			ret = btrfs_lookup_extent_info(trans, root,
 						       eb->start, eb->len,
 						       &wc->refs[level],
 						       &wc->flags[level]);
+<<<<<<< HEAD
 			if (ret < 0) {
 				btrfs_tree_unlock_rw(eb, path->locks[level]);
 				return ret;
@@ -6708,6 +8506,13 @@ static noinline int walk_up_proc(struct btrfs_trans_handle *trans,
 			BUG_ON(wc->refs[level] == 0);
 			if (wc->refs[level] == 1) {
 				btrfs_tree_unlock_rw(eb, path->locks[level]);
+=======
+			BUG_ON(ret);
+			BUG_ON(wc->refs[level] == 0);
+			if (wc->refs[level] == 1) {
+				btrfs_tree_unlock(eb);
+				path->locks[level] = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return 1;
 			}
 		}
@@ -6719,19 +8524,30 @@ static noinline int walk_up_proc(struct btrfs_trans_handle *trans,
 	if (wc->refs[level] == 1) {
 		if (level == 0) {
 			if (wc->flags[level] & BTRFS_BLOCK_FLAG_FULL_BACKREF)
+<<<<<<< HEAD
 				ret = btrfs_dec_ref(trans, root, eb, 1,
 						    wc->for_reloc);
 			else
 				ret = btrfs_dec_ref(trans, root, eb, 0,
 						    wc->for_reloc);
 			BUG_ON(ret); /* -ENOMEM */
+=======
+				ret = btrfs_dec_ref(trans, root, eb, 1);
+			else
+				ret = btrfs_dec_ref(trans, root, eb, 0);
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		/* make block locked assertion in clean_tree_block happy */
 		if (!path->locks[level] &&
 		    btrfs_header_generation(eb) == trans->transid) {
 			btrfs_tree_lock(eb);
 			btrfs_set_lock_blocking(eb);
+<<<<<<< HEAD
 			path->locks[level] = BTRFS_WRITE_LOCK_BLOCKING;
+=======
+			path->locks[level] = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		clean_tree_block(trans, root, eb);
 	}
@@ -6750,7 +8566,11 @@ static noinline int walk_up_proc(struct btrfs_trans_handle *trans,
 			       btrfs_header_owner(path->nodes[level + 1]));
 	}
 
+<<<<<<< HEAD
 	btrfs_free_tree_block(trans, root, eb, parent, wc->refs[level] == 1, 0);
+=======
+	btrfs_free_tree_block(trans, root, eb, parent, wc->refs[level] == 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	wc->refs[level] = 0;
 	wc->flags[level] = 0;
@@ -6810,8 +8630,12 @@ static noinline int walk_up_tree(struct btrfs_trans_handle *trans,
 				return 0;
 
 			if (path->locks[level]) {
+<<<<<<< HEAD
 				btrfs_tree_unlock_rw(path->nodes[level],
 						     path->locks[level]);
+=======
+				btrfs_tree_unlock(path->nodes[level]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				path->locks[level] = 0;
 			}
 			free_extent_buffer(path->nodes[level]);
@@ -6834,8 +8658,12 @@ static noinline int walk_up_tree(struct btrfs_trans_handle *trans,
  * blocks are properly updated.
  */
 int btrfs_drop_snapshot(struct btrfs_root *root,
+<<<<<<< HEAD
 			 struct btrfs_block_rsv *block_rsv, int update_ref,
 			 int for_reloc)
+=======
+			struct btrfs_block_rsv *block_rsv, int update_ref)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct btrfs_path *path;
 	struct btrfs_trans_handle *trans;
@@ -6846,6 +8674,7 @@ int btrfs_drop_snapshot(struct btrfs_root *root,
 	int err = 0;
 	int ret;
 	int level;
+<<<<<<< HEAD
 	bool root_dropped = false;
 
 	path = btrfs_alloc_path();
@@ -6866,6 +8695,17 @@ int btrfs_drop_snapshot(struct btrfs_root *root,
 		err = PTR_ERR(trans);
 		goto out_free;
 	}
+=======
+
+	path = btrfs_alloc_path();
+	BUG_ON(!path);
+
+	wc = kzalloc(sizeof(*wc), GFP_NOFS);
+	BUG_ON(!wc);
+
+	trans = btrfs_start_transaction(tree_root, 0);
+	BUG_ON(IS_ERR(trans));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (block_rsv)
 		trans->block_rsv = block_rsv;
@@ -6875,7 +8715,11 @@ int btrfs_drop_snapshot(struct btrfs_root *root,
 		path->nodes[level] = btrfs_lock_root_node(root);
 		btrfs_set_lock_blocking(path->nodes[level]);
 		path->slots[level] = 0;
+<<<<<<< HEAD
 		path->locks[level] = BTRFS_WRITE_LOCK_BLOCKING;
+=======
+		path->locks[level] = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		memset(&wc->update_progress, 0,
 		       sizeof(wc->update_progress));
 	} else {
@@ -6890,7 +8734,11 @@ int btrfs_drop_snapshot(struct btrfs_root *root,
 		path->lowest_level = 0;
 		if (ret < 0) {
 			err = ret;
+<<<<<<< HEAD
 			goto out_end_trans;
+=======
+			goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		WARN_ON(ret > 0);
 
@@ -6904,24 +8752,34 @@ int btrfs_drop_snapshot(struct btrfs_root *root,
 		while (1) {
 			btrfs_tree_lock(path->nodes[level]);
 			btrfs_set_lock_blocking(path->nodes[level]);
+<<<<<<< HEAD
 			path->locks[level] = BTRFS_WRITE_LOCK_BLOCKING;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			ret = btrfs_lookup_extent_info(trans, root,
 						path->nodes[level]->start,
 						path->nodes[level]->len,
 						&wc->refs[level],
 						&wc->flags[level]);
+<<<<<<< HEAD
 			if (ret < 0) {
 				err = ret;
 				goto out_end_trans;
 			}
+=======
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			BUG_ON(wc->refs[level] == 0);
 
 			if (level == root_item->drop_level)
 				break;
 
 			btrfs_tree_unlock(path->nodes[level]);
+<<<<<<< HEAD
 			path->locks[level] = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			WARN_ON(wc->refs[level] != 1);
 			level--;
 		}
@@ -6932,7 +8790,10 @@ int btrfs_drop_snapshot(struct btrfs_root *root,
 	wc->stage = DROP_REFERENCE;
 	wc->update_ref = update_ref;
 	wc->keep_locks = 0;
+<<<<<<< HEAD
 	wc->for_reloc = for_reloc;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wc->reada_count = BTRFS_NODEPTRS_PER_BLOCK(root);
 
 	while (1) {
@@ -6966,6 +8827,7 @@ int btrfs_drop_snapshot(struct btrfs_root *root,
 			ret = btrfs_update_root(trans, tree_root,
 						&root->root_key,
 						root_item);
+<<<<<<< HEAD
 			if (ret) {
 				btrfs_abort_transaction(trans, tree_root, ret);
 				err = ret;
@@ -6978,11 +8840,19 @@ int btrfs_drop_snapshot(struct btrfs_root *root,
 				err = PTR_ERR(trans);
 				goto out_free;
 			}
+=======
+			BUG_ON(ret);
+
+			btrfs_end_transaction_throttle(trans, tree_root);
+			trans = btrfs_start_transaction(tree_root, 0);
+			BUG_ON(IS_ERR(trans));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (block_rsv)
 				trans->block_rsv = block_rsv;
 		}
 	}
 	btrfs_release_path(path);
+<<<<<<< HEAD
 	if (err)
 		goto out_end_trans;
 
@@ -6991,15 +8861,26 @@ int btrfs_drop_snapshot(struct btrfs_root *root,
 		btrfs_abort_transaction(trans, tree_root, ret);
 		goto out_end_trans;
 	}
+=======
+	BUG_ON(err);
+
+	ret = btrfs_del_root(trans, tree_root, &root->root_key);
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (root->root_key.objectid != BTRFS_TREE_RELOC_OBJECTID) {
 		ret = btrfs_find_last_root(tree_root, root->root_key.objectid,
 					   NULL, NULL);
+<<<<<<< HEAD
 		if (ret < 0) {
 			btrfs_abort_transaction(trans, tree_root, ret);
 			err = ret;
 			goto out_end_trans;
 		} else if (ret > 0) {
+=======
+		BUG_ON(ret < 0);
+		if (ret > 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* if we fail to delete the orphan item this time
 			 * around, it'll get picked up the next time.
 			 *
@@ -7017,6 +8898,7 @@ int btrfs_drop_snapshot(struct btrfs_root *root,
 		free_extent_buffer(root->commit_root);
 		kfree(root);
 	}
+<<<<<<< HEAD
 	root_dropped = true;
 out_end_trans:
 	btrfs_end_transaction_throttle(trans, tree_root);
@@ -7035,6 +8917,12 @@ out:
 		btrfs_add_dead_root(root);
 	if (err)
 		btrfs_std_error(root->fs_info, err);
+=======
+out:
+	btrfs_end_transaction_throttle(trans, tree_root);
+	kfree(wc);
+	btrfs_free_path(path);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -7042,7 +8930,10 @@ out:
  * drop subtree rooted at tree block 'node'.
  *
  * NOTE: this function will unlock and release tree block 'node'
+<<<<<<< HEAD
  * only used by relocation code
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int btrfs_drop_subtree(struct btrfs_trans_handle *trans,
 			struct btrfs_root *root,
@@ -7078,7 +8969,11 @@ int btrfs_drop_subtree(struct btrfs_trans_handle *trans,
 	level = btrfs_header_level(node);
 	path->nodes[level] = node;
 	path->slots[level] = 0;
+<<<<<<< HEAD
 	path->locks[level] = BTRFS_WRITE_LOCK_BLOCKING;
+=======
+	path->locks[level] = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wc->refs[parent_level] = 1;
 	wc->flags[parent_level] = BTRFS_BLOCK_FLAG_FULL_BACKREF;
@@ -7087,7 +8982,10 @@ int btrfs_drop_subtree(struct btrfs_trans_handle *trans,
 	wc->stage = DROP_REFERENCE;
 	wc->update_ref = 0;
 	wc->keep_locks = 1;
+<<<<<<< HEAD
 	wc->for_reloc = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wc->reada_count = BTRFS_NODEPTRS_PER_BLOCK(root);
 
 	while (1) {
@@ -7112,6 +9010,7 @@ int btrfs_drop_subtree(struct btrfs_trans_handle *trans,
 static u64 update_block_group_flags(struct btrfs_root *root, u64 flags)
 {
 	u64 num_devices;
+<<<<<<< HEAD
 	u64 stripped;
 
 	/*
@@ -7121,6 +9020,10 @@ static u64 update_block_group_flags(struct btrfs_root *root, u64 flags)
 	stripped = get_restripe_target(root->fs_info, flags);
 	if (stripped)
 		return extended_to_chunk(stripped);
+=======
+	u64 stripped = BTRFS_BLOCK_GROUP_RAID0 |
+		BTRFS_BLOCK_GROUP_RAID1 | BTRFS_BLOCK_GROUP_RAID10;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * we add in the count of missing devices because we want
@@ -7130,9 +9033,12 @@ static u64 update_block_group_flags(struct btrfs_root *root, u64 flags)
 	num_devices = root->fs_info->fs_devices->rw_devices +
 		root->fs_info->fs_devices->missing_devices;
 
+<<<<<<< HEAD
 	stripped = BTRFS_BLOCK_GROUP_RAID0 |
 		BTRFS_BLOCK_GROUP_RAID1 | BTRFS_BLOCK_GROUP_RAID10;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (num_devices == 1) {
 		stripped |= BTRFS_BLOCK_GROUP_DUP;
 		stripped = flags & ~stripped;
@@ -7145,6 +9051,10 @@ static u64 update_block_group_flags(struct btrfs_root *root, u64 flags)
 		if (flags & (BTRFS_BLOCK_GROUP_RAID1 |
 			     BTRFS_BLOCK_GROUP_RAID10))
 			return stripped | BTRFS_BLOCK_GROUP_DUP;
+<<<<<<< HEAD
+=======
+		return flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		/* they already had raid on here, just return */
 		if (flags & stripped)
@@ -7157,6 +9067,7 @@ static u64 update_block_group_flags(struct btrfs_root *root, u64 flags)
 		if (flags & BTRFS_BLOCK_GROUP_DUP)
 			return stripped | BTRFS_BLOCK_GROUP_RAID1;
 
+<<<<<<< HEAD
 		/* this is drive concat, leave it alone */
 	}
 
@@ -7191,10 +9102,30 @@ static int set_block_group_ro(struct btrfs_block_group_cache *cache, int force)
 		goto out;
 	}
 
+=======
+		/* turn single device chunks into raid0 */
+		return stripped | BTRFS_BLOCK_GROUP_RAID0;
+	}
+	return flags;
+}
+
+static int set_block_group_ro(struct btrfs_block_group_cache *cache)
+{
+	struct btrfs_space_info *sinfo = cache->space_info;
+	u64 num_bytes;
+	int ret = -ENOSPC;
+
+	if (cache->ro)
+		return 0;
+
+	spin_lock(&sinfo->lock);
+	spin_lock(&cache->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	num_bytes = cache->key.offset - cache->reserved - cache->pinned -
 		    cache->bytes_super - btrfs_block_group_used(&cache->item);
 
 	if (sinfo->bytes_used + sinfo->bytes_reserved + sinfo->bytes_pinned +
+<<<<<<< HEAD
 	    sinfo->bytes_may_use + sinfo->bytes_readonly + num_bytes +
 	    min_allocable_bytes <= sinfo->total_bytes) {
 		sinfo->bytes_readonly += num_bytes;
@@ -7202,6 +9133,17 @@ static int set_block_group_ro(struct btrfs_block_group_cache *cache, int force)
 		ret = 0;
 	}
 out:
+=======
+	    sinfo->bytes_may_use + sinfo->bytes_readonly +
+	    cache->reserved_pinned + num_bytes <= sinfo->total_bytes) {
+		sinfo->bytes_readonly += num_bytes;
+		sinfo->bytes_reserved += cache->reserved_pinned;
+		cache->reserved_pinned = 0;
+		cache->ro = 1;
+		ret = 0;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&cache->lock);
 	spin_unlock(&sinfo->lock);
 	return ret;
@@ -7218,6 +9160,7 @@ int btrfs_set_block_group_ro(struct btrfs_root *root,
 	BUG_ON(cache->ro);
 
 	trans = btrfs_join_transaction(root);
+<<<<<<< HEAD
 	if (IS_ERR(trans))
 		return PTR_ERR(trans);
 
@@ -7230,6 +9173,16 @@ int btrfs_set_block_group_ro(struct btrfs_root *root,
 	}
 
 	ret = set_block_group_ro(cache, 0);
+=======
+	BUG_ON(IS_ERR(trans));
+
+	alloc_flags = update_block_group_flags(root, cache->flags);
+	if (alloc_flags != cache->flags)
+		do_chunk_alloc(trans, root, 2 * 1024 * 1024, alloc_flags,
+			       CHUNK_ALLOC_FORCE);
+
+	ret = set_block_group_ro(cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ret)
 		goto out;
 	alloc_flags = get_alloc_profile(root, cache->space_info->flags);
@@ -7237,7 +9190,11 @@ int btrfs_set_block_group_ro(struct btrfs_root *root,
 			     CHUNK_ALLOC_FORCE);
 	if (ret < 0)
 		goto out;
+<<<<<<< HEAD
 	ret = set_block_group_ro(cache, 0);
+=======
+	ret = set_block_group_ro(cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	btrfs_end_transaction(trans, root);
 	return ret;
@@ -7307,7 +9264,11 @@ u64 btrfs_account_ro_block_groups_free_space(struct btrfs_space_info *sinfo)
 	return free_bytes;
 }
 
+<<<<<<< HEAD
 void btrfs_set_block_group_rw(struct btrfs_root *root,
+=======
+int btrfs_set_block_group_rw(struct btrfs_root *root,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      struct btrfs_block_group_cache *cache)
 {
 	struct btrfs_space_info *sinfo = cache->space_info;
@@ -7323,6 +9284,10 @@ void btrfs_set_block_group_rw(struct btrfs_root *root,
 	cache->ro = 0;
 	spin_unlock(&cache->lock);
 	spin_unlock(&sinfo->lock);
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -7337,11 +9302,14 @@ int btrfs_can_relocate(struct btrfs_root *root, u64 bytenr)
 	struct btrfs_space_info *space_info;
 	struct btrfs_fs_devices *fs_devices = root->fs_info->fs_devices;
 	struct btrfs_device *device;
+<<<<<<< HEAD
 	u64 min_free;
 	u64 dev_min = 1;
 	u64 dev_nr = 0;
 	u64 target;
 	int index;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int full = 0;
 	int ret = 0;
 
@@ -7351,10 +9319,15 @@ int btrfs_can_relocate(struct btrfs_root *root, u64 bytenr)
 	if (!block_group)
 		return -1;
 
+<<<<<<< HEAD
 	min_free = btrfs_block_group_used(&block_group->item);
 
 	/* no bytes used, we're good */
 	if (!min_free)
+=======
+	/* no bytes used, we're good */
+	if (!btrfs_block_group_used(&block_group->item))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	space_info = block_group->space_info;
@@ -7370,9 +9343,16 @@ int btrfs_can_relocate(struct btrfs_root *root, u64 bytenr)
 	 * all of the extents from this block group.  If we can, we're good
 	 */
 	if ((space_info->total_bytes != block_group->key.offset) &&
+<<<<<<< HEAD
 	    (space_info->bytes_used + space_info->bytes_reserved +
 	     space_info->bytes_pinned + space_info->bytes_readonly +
 	     min_free < space_info->total_bytes)) {
+=======
+	   (space_info->bytes_used + space_info->bytes_reserved +
+	    space_info->bytes_pinned + space_info->bytes_readonly +
+	    btrfs_block_group_used(&block_group->item) <
+	    space_info->total_bytes)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock(&space_info->lock);
 		goto out;
 	}
@@ -7381,6 +9361,7 @@ int btrfs_can_relocate(struct btrfs_root *root, u64 bytenr)
 	/*
 	 * ok we don't have enough space, but maybe we have free space on our
 	 * devices to allocate new chunks for relocation, so loop through our
+<<<<<<< HEAD
 	 * alloc devices and guess if we have enough space.  if this block
 	 * group is going to be restriped, run checks against the target
 	 * profile instead of the current one.
@@ -7425,6 +9406,19 @@ int btrfs_can_relocate(struct btrfs_root *root, u64 bytenr)
 
 	mutex_lock(&root->fs_info->chunk_mutex);
 	list_for_each_entry(device, &fs_devices->alloc_list, dev_alloc_list) {
+=======
+	 * alloc devices and guess if we have enough space.  However, if we
+	 * were marked as full, then we know there aren't enough chunks, and we
+	 * can just return.
+	 */
+	ret = -1;
+	if (full)
+		goto out;
+
+	mutex_lock(&root->fs_info->chunk_mutex);
+	list_for_each_entry(device, &fs_devices->alloc_list, dev_alloc_list) {
+		u64 min_free = btrfs_block_group_used(&block_group->item);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u64 dev_offset;
 
 		/*
@@ -7432,6 +9426,7 @@ int btrfs_can_relocate(struct btrfs_root *root, u64 bytenr)
 		 * space to fit our block group in.
 		 */
 		if (device->total_bytes > device->bytes_used + min_free) {
+<<<<<<< HEAD
 			ret = find_free_dev_extent(device, min_free,
 						   &dev_offset, NULL);
 			if (!ret)
@@ -7440,6 +9435,12 @@ int btrfs_can_relocate(struct btrfs_root *root, u64 bytenr)
 			if (dev_nr >= dev_min)
 				break;
 
+=======
+			ret = find_free_dev_extent(NULL, device, min_free,
+						   &dev_offset, NULL);
+			if (!ret)
+				break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = -1;
 		}
 	}
@@ -7579,8 +9580,12 @@ int btrfs_free_block_groups(struct btrfs_fs_info *info)
 					struct btrfs_space_info,
 					list);
 		if (space_info->bytes_pinned > 0 ||
+<<<<<<< HEAD
 		    space_info->bytes_reserved > 0 ||
 		    space_info->bytes_may_use > 0) {
+=======
+		    space_info->bytes_reserved > 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			WARN_ON(1);
 			dump_space_info(space_info, 0, 0);
 		}
@@ -7622,12 +9627,23 @@ int btrfs_read_block_groups(struct btrfs_root *root)
 		return -ENOMEM;
 	path->reada = 1;
 
+<<<<<<< HEAD
 	cache_gen = btrfs_super_cache_generation(root->fs_info->super_copy);
 	if (btrfs_test_opt(root, SPACE_CACHE) &&
 	    btrfs_super_generation(root->fs_info->super_copy) != cache_gen)
 		need_clear = 1;
 	if (btrfs_test_opt(root, CLEAR_CACHE))
 		need_clear = 1;
+=======
+	cache_gen = btrfs_super_cache_generation(&root->fs_info->super_copy);
+	if (cache_gen != 0 &&
+	    btrfs_super_generation(&root->fs_info->super_copy) != cache_gen)
+		need_clear = 1;
+	if (btrfs_test_opt(root, CLEAR_CACHE))
+		need_clear = 1;
+	if (!btrfs_test_opt(root, SPACE_CACHE) && cache_gen)
+		printk(KERN_INFO "btrfs: disk space caching is enabled\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (1) {
 		ret = find_first_block_group(root, path, &key);
@@ -7702,7 +9718,11 @@ int btrfs_read_block_groups(struct btrfs_root *root)
 		ret = update_space_info(info, cache->flags, found_key.offset,
 					btrfs_block_group_used(&cache->item),
 					&space_info);
+<<<<<<< HEAD
 		BUG_ON(ret); /* -ENOMEM */
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cache->space_info = space_info;
 		spin_lock(&cache->space_info->lock);
 		cache->space_info->bytes_readonly += cache->bytes_super;
@@ -7711,11 +9731,19 @@ int btrfs_read_block_groups(struct btrfs_root *root)
 		__link_block_group(space_info, cache);
 
 		ret = btrfs_add_block_group_cache(root->fs_info, cache);
+<<<<<<< HEAD
 		BUG_ON(ret); /* Logic error */
 
 		set_avail_alloc_bits(root->fs_info, cache->flags);
 		if (btrfs_chunk_readonly(root, cache->key.objectid))
 			set_block_group_ro(cache, 1);
+=======
+		BUG_ON(ret);
+
+		set_avail_alloc_bits(root->fs_info, cache->flags);
+		if (btrfs_chunk_readonly(root, cache->key.objectid))
+			set_block_group_ro(cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	list_for_each_entry_rcu(space_info, &root->fs_info->space_info, list) {
@@ -7729,9 +9757,15 @@ int btrfs_read_block_groups(struct btrfs_root *root)
 		 * mirrored block groups.
 		 */
 		list_for_each_entry(cache, &space_info->block_groups[3], list)
+<<<<<<< HEAD
 			set_block_group_ro(cache, 1);
 		list_for_each_entry(cache, &space_info->block_groups[4], list)
 			set_block_group_ro(cache, 1);
+=======
+			set_block_group_ro(cache);
+		list_for_each_entry(cache, &space_info->block_groups[4], list)
+			set_block_group_ro(cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	init_global_block_rsv(info);
@@ -7793,8 +9827,12 @@ int btrfs_make_block_group(struct btrfs_trans_handle *trans,
 
 	ret = update_space_info(root->fs_info, cache->flags, size, bytes_used,
 				&cache->space_info);
+<<<<<<< HEAD
 	BUG_ON(ret); /* -ENOMEM */
 	update_global_block_rsv(root->fs_info);
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock(&cache->space_info->lock);
 	cache->space_info->bytes_readonly += cache->bytes_super;
@@ -7803,6 +9841,7 @@ int btrfs_make_block_group(struct btrfs_trans_handle *trans,
 	__link_block_group(cache->space_info, cache);
 
 	ret = btrfs_add_block_group_cache(root->fs_info, cache);
+<<<<<<< HEAD
 	BUG_ON(ret); /* Logic error */
 
 	ret = btrfs_insert_item(trans, extent_root, &cache->key, &cache->item,
@@ -7811,12 +9850,20 @@ int btrfs_make_block_group(struct btrfs_trans_handle *trans,
 		btrfs_abort_transaction(trans, extent_root, ret);
 		return ret;
 	}
+=======
+	BUG_ON(ret);
+
+	ret = btrfs_insert_item(trans, extent_root, &cache->key, &cache->item,
+				sizeof(cache->item));
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	set_avail_alloc_bits(extent_root->fs_info, type);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static void clear_avail_alloc_bits(struct btrfs_fs_info *fs_info, u64 flags)
 {
 	u64 extra_flags = chunk_to_extended(flags) &
@@ -7830,6 +9877,8 @@ static void clear_avail_alloc_bits(struct btrfs_fs_info *fs_info, u64 flags)
 		fs_info->avail_system_alloc_bits &= ~extra_flags;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int btrfs_remove_block_group(struct btrfs_trans_handle *trans,
 			     struct btrfs_root *root, u64 group_start)
 {
@@ -7840,7 +9889,10 @@ int btrfs_remove_block_group(struct btrfs_trans_handle *trans,
 	struct btrfs_key key;
 	struct inode *inode;
 	int ret;
+<<<<<<< HEAD
 	int index;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int factor;
 
 	root = root->fs_info->extent_root;
@@ -7856,7 +9908,10 @@ int btrfs_remove_block_group(struct btrfs_trans_handle *trans,
 	free_excluded_extents(root, block_group);
 
 	memcpy(&key, &block_group->key, sizeof(key));
+<<<<<<< HEAD
 	index = get_block_group_index(block_group);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (block_group->flags & (BTRFS_BLOCK_GROUP_DUP |
 				  BTRFS_BLOCK_GROUP_RAID1 |
 				  BTRFS_BLOCK_GROUP_RAID10))
@@ -7880,6 +9935,7 @@ int btrfs_remove_block_group(struct btrfs_trans_handle *trans,
 	spin_unlock(&cluster->refill_lock);
 
 	path = btrfs_alloc_path();
+<<<<<<< HEAD
 	if (!path) {
 		ret = -ENOMEM;
 		goto out;
@@ -7892,6 +9948,13 @@ int btrfs_remove_block_group(struct btrfs_trans_handle *trans,
 			btrfs_add_delayed_iput(inode);
 			goto out;
 		}
+=======
+	BUG_ON(!path);
+
+	inode = lookup_free_space_inode(root, block_group, path);
+	if (!IS_ERR(inode)) {
+		btrfs_orphan_add(trans, inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		clear_nlink(inode);
 		/* One for the block groups ref */
 		spin_lock(&block_group->lock);
@@ -7904,7 +9967,11 @@ int btrfs_remove_block_group(struct btrfs_trans_handle *trans,
 			spin_unlock(&block_group->lock);
 		}
 		/* One for our lookup ref */
+<<<<<<< HEAD
 		btrfs_add_delayed_iput(inode);
+=======
+		iput(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	key.objectid = BTRFS_FREE_SPACE_OBJECTID;
@@ -7934,8 +10001,11 @@ int btrfs_remove_block_group(struct btrfs_trans_handle *trans,
 	 * are still on the list after taking the semaphore
 	 */
 	list_del_init(&block_group->list);
+<<<<<<< HEAD
 	if (list_empty(&block_group->space_info->block_groups[index]))
 		clear_avail_alloc_bits(root->fs_info, block_group->flags);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	up_write(&block_group->space_info->groups_sem);
 
 	if (block_group->cached == BTRFS_CACHE_STARTED)
@@ -7977,7 +10047,11 @@ int btrfs_init_space_info(struct btrfs_fs_info *fs_info)
 	int mixed = 0;
 	int ret;
 
+<<<<<<< HEAD
 	disk_super = fs_info->super_copy;
+=======
+	disk_super = &fs_info->super_copy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!btrfs_super_root(disk_super))
 		return 1;
 
@@ -8025,6 +10099,7 @@ int btrfs_trim_fs(struct btrfs_root *root, struct fstrim_range *range)
 	u64 start;
 	u64 end;
 	u64 trimmed = 0;
+<<<<<<< HEAD
 	u64 total_bytes = btrfs_super_total_bytes(fs_info->super_copy);
 	int ret = 0;
 
@@ -8035,6 +10110,11 @@ int btrfs_trim_fs(struct btrfs_root *root, struct fstrim_range *range)
 		cache = btrfs_lookup_first_block_group(fs_info, range->start);
 	else
 		cache = btrfs_lookup_block_group(fs_info, range->start);
+=======
+	int ret = 0;
+
+	cache = btrfs_lookup_block_group(fs_info, range->start);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (cache) {
 		if (cache->key.objectid >= (range->start + range->len)) {

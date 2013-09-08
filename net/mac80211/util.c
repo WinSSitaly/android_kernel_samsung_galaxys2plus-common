@@ -13,7 +13,10 @@
 
 #include <net/mac80211.h>
 #include <linux/netdevice.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/types.h>
 #include <linux/slab.h>
 #include <linux/skbuff.h>
@@ -97,6 +100,7 @@ u8 *ieee80211_get_bssid(struct ieee80211_hdr *hdr, size_t len,
 
 void ieee80211_tx_set_protected(struct ieee80211_tx_data *tx)
 {
+<<<<<<< HEAD
 	struct sk_buff *skb;
 	struct ieee80211_hdr *hdr;
 
@@ -104,6 +108,15 @@ void ieee80211_tx_set_protected(struct ieee80211_tx_data *tx)
 		hdr = (struct ieee80211_hdr *) skb->data;
 		hdr->frame_control |= cpu_to_le16(IEEE80211_FCTL_PROTECTED);
 	}
+=======
+	struct sk_buff *skb = tx->skb;
+	struct ieee80211_hdr *hdr;
+
+	do {
+		hdr = (struct ieee80211_hdr *) skb->data;
+		hdr->frame_control |= cpu_to_le16(IEEE80211_FCTL_PROTECTED);
+	} while ((skb = skb->next));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int ieee80211_frame_duration(struct ieee80211_local *local, size_t len,
@@ -369,14 +382,24 @@ void ieee80211_add_pending_skb(struct ieee80211_local *local,
 	spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
 }
 
+<<<<<<< HEAD
 void ieee80211_add_pending_skbs_fn(struct ieee80211_local *local,
 				   struct sk_buff_head *skbs,
 				   void (*fn)(void *data), void *data)
+=======
+int ieee80211_add_pending_skbs_fn(struct ieee80211_local *local,
+				  struct sk_buff_head *skbs,
+				  void (*fn)(void *data), void *data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ieee80211_hw *hw = &local->hw;
 	struct sk_buff *skb;
 	unsigned long flags;
+<<<<<<< HEAD
 	int queue, i;
+=======
+	int queue, ret = 0, i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&local->queue_stop_reason_lock, flags);
 	for (i = 0; i < hw->queues; i++)
@@ -391,6 +414,10 @@ void ieee80211_add_pending_skbs_fn(struct ieee80211_local *local,
 			continue;
 		}
 
+<<<<<<< HEAD
+=======
+		ret++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		queue = skb_get_queue_mapping(skb);
 		__skb_queue_tail(&local->pending[queue], skb);
 	}
@@ -402,12 +429,23 @@ void ieee80211_add_pending_skbs_fn(struct ieee80211_local *local,
 		__ieee80211_wake_queue(hw, i,
 			IEEE80211_QUEUE_STOP_REASON_SKB_ADD);
 	spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
+<<<<<<< HEAD
 }
 
 void ieee80211_add_pending_skbs(struct ieee80211_local *local,
 				struct sk_buff_head *skbs)
 {
 	ieee80211_add_pending_skbs_fn(local, skbs, NULL, NULL);
+=======
+
+	return ret;
+}
+
+int ieee80211_add_pending_skbs(struct ieee80211_local *local,
+			       struct sk_buff_head *skbs)
+{
+	return ieee80211_add_pending_skbs_fn(local, skbs, NULL, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void ieee80211_stop_queues_by_reason(struct ieee80211_hw *hw,
@@ -565,6 +603,15 @@ void ieee80211_queue_delayed_work(struct ieee80211_hw *hw,
 }
 EXPORT_SYMBOL(ieee80211_queue_delayed_work);
 
+<<<<<<< HEAD
+=======
+void ieee802_11_parse_elems(u8 *start, size_t len,
+			    struct ieee802_11_elems *elems)
+{
+	ieee802_11_parse_elems_crc(start, len, elems, 0, 0);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u32 ieee802_11_parse_elems_crc(u8 *start, size_t len,
 			       struct ieee802_11_elems *elems,
 			       u64 filter, u32 crc)
@@ -572,21 +619,29 @@ u32 ieee802_11_parse_elems_crc(u8 *start, size_t len,
 	size_t left = len;
 	u8 *pos = start;
 	bool calc_crc = filter != 0;
+<<<<<<< HEAD
 	DECLARE_BITMAP(seen_elems, 256);
 
 	bitmap_zero(seen_elems, 256);
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(elems, 0, sizeof(*elems));
 	elems->ie_start = start;
 	elems->total_len = len;
 
 	while (left >= 2) {
 		u8 id, elen;
+<<<<<<< HEAD
 		bool elem_parse_failed;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		id = *pos++;
 		elen = *pos++;
 		left -= 2;
 
+<<<<<<< HEAD
 		if (elen > left) {
 			elems->parse_error = true;
 			break;
@@ -625,12 +680,19 @@ u32 ieee802_11_parse_elems_crc(u8 *start, size_t len,
 			}
 			break;
 		}
+=======
+		if (elen > left)
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (calc_crc && id < 64 && (filter & (1ULL << id)))
 			crc = crc32_be(crc, pos - 2, elen + 2);
 
+<<<<<<< HEAD
 		elem_parse_failed = false;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		switch (id) {
 		case WLAN_EID_SSID:
 			elems->ssid = pos;
@@ -656,8 +718,12 @@ u32 ieee802_11_parse_elems_crc(u8 *start, size_t len,
 			if (elen >= sizeof(struct ieee80211_tim_ie)) {
 				elems->tim = (void *)pos;
 				elems->tim_len = elen;
+<<<<<<< HEAD
 			} else
 				elem_parse_failed = true;
+=======
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case WLAN_EID_IBSS_PARAMS:
 			elems->ibss_params = pos;
@@ -706,14 +772,20 @@ u32 ieee802_11_parse_elems_crc(u8 *start, size_t len,
 		case WLAN_EID_HT_CAPABILITY:
 			if (elen >= sizeof(struct ieee80211_ht_cap))
 				elems->ht_cap_elem = (void *)pos;
+<<<<<<< HEAD
 			else
 				elem_parse_failed = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case WLAN_EID_HT_INFORMATION:
 			if (elen >= sizeof(struct ieee80211_ht_info))
 				elems->ht_info_elem = (void *)pos;
+<<<<<<< HEAD
 			else
 				elem_parse_failed = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case WLAN_EID_MESH_ID:
 			elems->mesh_id = pos;
@@ -722,12 +794,19 @@ u32 ieee802_11_parse_elems_crc(u8 *start, size_t len,
 		case WLAN_EID_MESH_CONFIG:
 			if (elen >= sizeof(struct ieee80211_meshconf_ie))
 				elems->mesh_config = (void *)pos;
+<<<<<<< HEAD
 			else
 				elem_parse_failed = true;
 			break;
 		case WLAN_EID_PEER_MGMT:
 			elems->peering = pos;
 			elems->peering_len = elen;
+=======
+			break;
+		case WLAN_EID_PEER_LINK:
+			elems->peer_link = pos;
+			elems->peer_link_len = elen;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case WLAN_EID_PREQ:
 			elems->preq = pos;
@@ -744,8 +823,11 @@ u32 ieee802_11_parse_elems_crc(u8 *start, size_t len,
 		case WLAN_EID_RANN:
 			if (elen >= sizeof(struct ieee80211_rann_ie))
 				elems->rann = (void *)pos;
+<<<<<<< HEAD
 			else
 				elem_parse_failed = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case WLAN_EID_CHANNEL_SWITCH:
 			elems->ch_switch_elem = pos;
@@ -774,15 +856,19 @@ u32 ieee802_11_parse_elems_crc(u8 *start, size_t len,
 			break;
 		}
 
+<<<<<<< HEAD
 		if (elem_parse_failed)
 			elems->parse_error = true;
 		else
 			set_bit(id, seen_elems);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		left -= elen;
 		pos += elen;
 	}
 
+<<<<<<< HEAD
 	if (left != 0)
 		elems->parse_error = true;
 
@@ -797,6 +883,12 @@ void ieee802_11_parse_elems(u8 *start, size_t len,
 
 void ieee80211_set_wmm_default(struct ieee80211_sub_if_data *sdata,
 			       bool bss_notify)
+=======
+	return crc;
+}
+
+void ieee80211_set_wmm_default(struct ieee80211_sub_if_data *sdata)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ieee80211_local *local = sdata->local;
 	struct ieee80211_tx_queue_params qparam;
@@ -812,7 +904,11 @@ void ieee80211_set_wmm_default(struct ieee80211_sub_if_data *sdata,
 	use_11b = (local->hw.conf.channel->band == IEEE80211_BAND_2GHZ) &&
 		 !(sdata->flags & IEEE80211_SDATA_OPERATING_GMODE);
 
+<<<<<<< HEAD
 	for (queue = 0; queue < local->hw.queues; queue++) {
+=======
+	for (queue = 0; queue < local_to_hw(local)->queues; queue++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Set defaults according to 802.11-2007 Table 7-37 */
 		aCWmax = 1023;
 		if (use_11b)
@@ -856,8 +952,12 @@ void ieee80211_set_wmm_default(struct ieee80211_sub_if_data *sdata,
 
 		qparam.uapsd = false;
 
+<<<<<<< HEAD
 		sdata->tx_conf[queue] = qparam;
 		drv_conf_tx(local, sdata, queue, &qparam);
+=======
+		drv_conf_tx(local, queue, &qparam);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* after reinitialize QoS TX queues setting to default,
@@ -866,9 +966,13 @@ void ieee80211_set_wmm_default(struct ieee80211_sub_if_data *sdata,
 	if (sdata->vif.type != NL80211_IFTYPE_MONITOR) {
 		sdata->vif.bss_conf.qos =
 			sdata->vif.type != NL80211_IFTYPE_STATION;
+<<<<<<< HEAD
 		if (bss_notify)
 			ieee80211_bss_info_change_notify(sdata,
 							 BSS_CHANGED_QOS);
+=======
+		ieee80211_bss_info_change_notify(sdata, BSS_CHANGED_QOS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -890,7 +994,11 @@ void ieee80211_sta_def_wmm_params(struct ieee80211_sub_if_data *sdata,
 	else
 		sdata->flags &= ~IEEE80211_SDATA_OPERATING_GMODE;
 
+<<<<<<< HEAD
 	ieee80211_set_wmm_default(sdata, true);
+=======
+	ieee80211_set_wmm_default(sdata);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 u32 ieee80211_mandatory_rates(struct ieee80211_local *local,
@@ -923,8 +1031,13 @@ u32 ieee80211_mandatory_rates(struct ieee80211_local *local,
 
 void ieee80211_send_auth(struct ieee80211_sub_if_data *sdata,
 			 u16 transaction, u16 auth_alg,
+<<<<<<< HEAD
 			 u8 *extra, size_t extra_len, const u8 *da,
 			 const u8 *bssid, const u8 *key, u8 key_len, u8 key_idx)
+=======
+			 u8 *extra, size_t extra_len, const u8 *bssid,
+			 const u8 *key, u8 key_len, u8 key_idx)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ieee80211_local *local = sdata->local;
 	struct sk_buff *skb;
@@ -933,16 +1046,28 @@ void ieee80211_send_auth(struct ieee80211_sub_if_data *sdata,
 
 	skb = dev_alloc_skb(local->hw.extra_tx_headroom +
 			    sizeof(*mgmt) + 6 + extra_len);
+<<<<<<< HEAD
 	if (!skb)
 		return;
 
+=======
+	if (!skb) {
+		printk(KERN_DEBUG "%s: failed to allocate buffer for auth "
+		       "frame\n", sdata->name);
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skb_reserve(skb, local->hw.extra_tx_headroom);
 
 	mgmt = (struct ieee80211_mgmt *) skb_put(skb, 24 + 6);
 	memset(mgmt, 0, 24 + 6);
 	mgmt->frame_control = cpu_to_le16(IEEE80211_FTYPE_MGMT |
 					  IEEE80211_STYPE_AUTH);
+<<<<<<< HEAD
 	memcpy(mgmt->da, da, ETH_ALEN);
+=======
+	memcpy(mgmt->da, bssid, ETH_ALEN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy(mgmt->sa, sdata->vif.addr, ETH_ALEN);
 	memcpy(mgmt->bssid, bssid, ETH_ALEN);
 	mgmt->u.auth.auth_alg = cpu_to_le16(auth_alg);
@@ -1040,9 +1165,29 @@ int ieee80211_build_preq_ies(struct ieee80211_local *local, u8 *buffer,
 		offset = noffset;
 	}
 
+<<<<<<< HEAD
 	if (sband->ht_cap.ht_supported)
 		pos = ieee80211_ie_build_ht_cap(pos, &sband->ht_cap,
 						sband->ht_cap.cap);
+=======
+	if (sband->ht_cap.ht_supported) {
+		u16 cap = sband->ht_cap.cap;
+		__le16 tmp;
+
+		*pos++ = WLAN_EID_HT_CAPABILITY;
+		*pos++ = sizeof(struct ieee80211_ht_cap);
+		memset(pos, 0, sizeof(struct ieee80211_ht_cap));
+		tmp = cpu_to_le16(cap);
+		memcpy(pos, &tmp, sizeof(u16));
+		pos += sizeof(u16);
+		*pos++ = sband->ht_cap.ampdu_factor |
+			 (sband->ht_cap.ampdu_density <<
+				IEEE80211_HT_AMPDU_PARM_DENSITY_SHIFT);
+		memcpy(pos, &sband->ht_cap.mcs, sizeof(sband->ht_cap.mcs));
+		pos += sizeof(sband->ht_cap.mcs);
+		pos += 2 + 4 + 1; /* ext info, BF cap, antsel */
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If adding more here, adjust code in main.c
@@ -1060,10 +1205,16 @@ int ieee80211_build_preq_ies(struct ieee80211_local *local, u8 *buffer,
 }
 
 struct sk_buff *ieee80211_build_probe_req(struct ieee80211_sub_if_data *sdata,
+<<<<<<< HEAD
 					  u8 *dst, u32 ratemask,
 					  const u8 *ssid, size_t ssid_len,
 					  const u8 *ie, size_t ie_len,
 					  bool directed)
+=======
+					  u8 *dst,
+					  const u8 *ssid, size_t ssid_len,
+					  const u8 *ie, size_t ie_len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ieee80211_local *local = sdata->local;
 	struct sk_buff *skb;
@@ -1074,6 +1225,7 @@ struct sk_buff *ieee80211_build_probe_req(struct ieee80211_sub_if_data *sdata,
 
 	/* FIXME: come up with a proper value */
 	buf = kmalloc(200 + ie_len, GFP_KERNEL);
+<<<<<<< HEAD
 	if (!buf)
 		return NULL;
 
@@ -1091,6 +1243,22 @@ struct sk_buff *ieee80211_build_probe_req(struct ieee80211_sub_if_data *sdata,
 	buf_len = ieee80211_build_preq_ies(local, buf, ie, ie_len,
 					   local->hw.conf.channel->band,
 					   ratemask, chan);
+=======
+	if (!buf) {
+		printk(KERN_DEBUG "%s: failed to allocate temporary IE "
+		       "buffer\n", sdata->name);
+		return NULL;
+	}
+
+	chan = ieee80211_frequency_to_channel(
+		local->hw.conf.channel->center_freq);
+
+	buf_len = ieee80211_build_preq_ies(local, buf, ie, ie_len,
+					   local->hw.conf.channel->band,
+					   sdata->rc_rateidx_mask
+					   [local->hw.conf.channel->band],
+					   chan);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	skb = ieee80211_probereq_get(&local->hw, &sdata->vif,
 				     ssid, ssid_len,
@@ -1114,6 +1282,7 @@ struct sk_buff *ieee80211_build_probe_req(struct ieee80211_sub_if_data *sdata,
 
 void ieee80211_send_probe_req(struct ieee80211_sub_if_data *sdata, u8 *dst,
 			      const u8 *ssid, size_t ssid_len,
+<<<<<<< HEAD
 			      const u8 *ie, size_t ie_len,
 			      u32 ratemask, bool directed, bool no_cck)
 {
@@ -1127,6 +1296,15 @@ void ieee80211_send_probe_req(struct ieee80211_sub_if_data *sdata, u8 *dst,
 				IEEE80211_TX_CTL_NO_CCK_RATE;
 		ieee80211_tx_skb(sdata, skb);
 	}
+=======
+			      const u8 *ie, size_t ie_len)
+{
+	struct sk_buff *skb;
+
+	skb = ieee80211_build_probe_req(sdata, dst, ssid, ssid_len, ie, ie_len);
+	if (skb)
+		ieee80211_tx_skb(sdata, skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 u32 ieee80211_sta_get_rates(struct ieee80211_local *local,
@@ -1181,7 +1359,11 @@ int ieee80211_reconfig(struct ieee80211_local *local)
 	struct ieee80211_hw *hw = &local->hw;
 	struct ieee80211_sub_if_data *sdata;
 	struct sta_info *sta;
+<<<<<<< HEAD
 	int res, i;
+=======
+	int res;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_PM
 	if (local->suspended)
@@ -1203,6 +1385,7 @@ int ieee80211_reconfig(struct ieee80211_local *local)
 		 */
 	}
 #endif
+<<<<<<< HEAD
 	/* everything else happens only if HW was up & running */
 	if (!local->open_count)
 		goto wake_up;
@@ -1233,29 +1416,67 @@ int ieee80211_reconfig(struct ieee80211_local *local)
 	ieee80211_led_radio(local, true);
 	ieee80211_mod_tpt_led_trig(local,
 				   IEEE80211_TPT_LEDTRIG_FL_RADIO, 0);
+=======
+
+	/* restart hardware */
+	if (local->open_count) {
+		/*
+		 * Upon resume hardware can sometimes be goofy due to
+		 * various platform / driver / bus issues, so restarting
+		 * the device may at times not work immediately. Propagate
+		 * the error.
+		 */
+		res = drv_start(local);
+		if (res) {
+			WARN(local->suspended, "Hardware became unavailable "
+			     "upon resume. This could be a software issue "
+			     "prior to suspend or a hardware issue.\n");
+			return res;
+		}
+
+		ieee80211_led_radio(local, true);
+		ieee80211_mod_tpt_led_trig(local,
+					   IEEE80211_TPT_LEDTRIG_FL_RADIO, 0);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* add interfaces */
 	list_for_each_entry(sdata, &local->interfaces, list) {
 		if (sdata->vif.type != NL80211_IFTYPE_AP_VLAN &&
 		    sdata->vif.type != NL80211_IFTYPE_MONITOR &&
 		    ieee80211_sdata_running(sdata))
+<<<<<<< HEAD
 			res = drv_add_interface(local, sdata);
+=======
+			res = drv_add_interface(local, &sdata->vif);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* add STAs back */
 	mutex_lock(&local->sta_mtx);
 	list_for_each_entry(sta, &local->sta_list, list) {
 		if (sta->uploaded) {
+<<<<<<< HEAD
 			enum ieee80211_sta_state state;
 
 			for (state = IEEE80211_STA_NOTEXIST;
 			     state < sta->sta_state; state++)
 				WARN_ON(drv_sta_state(local, sta->sdata, sta,
 						      state, state + 1));
+=======
+			sdata = sta->sdata;
+			if (sdata->vif.type == NL80211_IFTYPE_AP_VLAN)
+				sdata = container_of(sdata->bss,
+					     struct ieee80211_sub_if_data,
+					     u.ap);
+
+			WARN_ON(drv_sta_add(local, sdata, &sta->sta));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	mutex_unlock(&local->sta_mtx);
 
+<<<<<<< HEAD
 	/* reconfigure tx conf */
 	list_for_each_entry(sdata, &local->interfaces, list) {
 		if (sdata->vif.type == NL80211_IFTYPE_AP_VLAN ||
@@ -1266,6 +1487,13 @@ int ieee80211_reconfig(struct ieee80211_local *local)
 		for (i = 0; i < hw->queues; i++)
 			drv_conf_tx(local, sdata, i, &sdata->tx_conf[i]);
 	}
+=======
+	/* setup fragmentation threshold */
+	drv_set_frag_threshold(local, hw->wiphy->frag_threshold);
+
+	/* setup RTS threshold */
+	drv_set_rts_threshold(local, hw->wiphy->rts_threshold);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* reconfigure hardware */
 	ieee80211_hw_config(local, ~0);
@@ -1288,6 +1516,7 @@ int ieee80211_reconfig(struct ieee80211_local *local)
 			  BSS_CHANGED_BEACON_INT |
 			  BSS_CHANGED_BSSID |
 			  BSS_CHANGED_CQM |
+<<<<<<< HEAD
 			  BSS_CHANGED_QOS |
 			  BSS_CHANGED_IDLE;
 
@@ -1295,6 +1524,13 @@ int ieee80211_reconfig(struct ieee80211_local *local)
 		case NL80211_IFTYPE_STATION:
 			changed |= BSS_CHANGED_ASSOC |
 				   BSS_CHANGED_ARP_FILTER;
+=======
+			  BSS_CHANGED_QOS;
+
+		switch (sdata->vif.type) {
+		case NL80211_IFTYPE_STATION:
+			changed |= BSS_CHANGED_ASSOC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mutex_lock(&sdata->u.mgd.mtx);
 			ieee80211_bss_info_change_notify(sdata, changed);
 			mutex_unlock(&sdata->u.mgd.mtx);
@@ -1303,12 +1539,15 @@ int ieee80211_reconfig(struct ieee80211_local *local)
 			changed |= BSS_CHANGED_IBSS;
 			/* fall through */
 		case NL80211_IFTYPE_AP:
+<<<<<<< HEAD
 			changed |= BSS_CHANGED_SSID;
 
 			if (sdata->vif.type == NL80211_IFTYPE_AP)
 				changed |= BSS_CHANGED_AP_PROBE_RESP;
 
 			/* fall through */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case NL80211_IFTYPE_MESH_POINT:
 			changed |= BSS_CHANGED_BEACON |
 				   BSS_CHANGED_BEACON_ENABLED;
@@ -1329,6 +1568,7 @@ int ieee80211_reconfig(struct ieee80211_local *local)
 		}
 	}
 
+<<<<<<< HEAD
 	ieee80211_recalc_ps(local, -1);
 
 	/*
@@ -1354,6 +1594,8 @@ int ieee80211_reconfig(struct ieee80211_local *local)
 			ieee80211_enable_keys(sdata);
 
  wake_up:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Clear the WLAN_STA_BLOCK_BA flag so new aggregation
 	 * sessions can be established after a resume.
@@ -1369,12 +1611,25 @@ int ieee80211_reconfig(struct ieee80211_local *local)
 
 		list_for_each_entry(sta, &local->sta_list, list) {
 			ieee80211_sta_tear_down_BA_sessions(sta, true);
+<<<<<<< HEAD
 			clear_sta_flag(sta, WLAN_STA_BLOCK_BA);
+=======
+			clear_sta_flags(sta, WLAN_STA_BLOCK_BA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		mutex_unlock(&local->sta_mtx);
 	}
 
+<<<<<<< HEAD
+=======
+	/* add back keys */
+	list_for_each_entry(sdata, &local->interfaces, list)
+		if (ieee80211_sdata_running(sdata))
+			ieee80211_enable_keys(sdata);
+
+ wake_up:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ieee80211_wake_queues_by_reason(hw,
 			IEEE80211_QUEUE_STOP_REASON_SUSPEND);
 
@@ -1419,6 +1674,7 @@ int ieee80211_reconfig(struct ieee80211_local *local)
 	return 0;
 }
 
+<<<<<<< HEAD
 void ieee80211_resume_disconnect(struct ieee80211_vif *vif)
 {
 	struct ieee80211_sub_if_data *sdata;
@@ -1446,6 +1702,8 @@ void ieee80211_resume_disconnect(struct ieee80211_vif *vif)
 }
 EXPORT_SYMBOL_GPL(ieee80211_resume_disconnect);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int check_mgd_smps(struct ieee80211_if_managed *ifmgd,
 			  enum ieee80211_smps_mode *smps_mode)
 {
@@ -1562,6 +1820,7 @@ size_t ieee80211_ie_split_vendor(const u8 *ies, size_t ielen, size_t offset)
 
 	return pos;
 }
+<<<<<<< HEAD
 
 static void _ieee80211_enable_rssi_reports(struct ieee80211_sub_if_data *sdata,
 					    int rssi_min_thold,
@@ -1761,3 +2020,5 @@ int ieee80211_add_ext_srates_ie(struct ieee80211_vif *vif, struct sk_buff *skb)
 	}
 	return 0;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

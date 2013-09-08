@@ -22,7 +22,10 @@
  *
  * Authors: Dave Airlie
  *          Alex Deucher
+<<<<<<< HEAD
  *          Jerome Glisse
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 #include "drmP.h"
 #include "radeon_drm.h"
@@ -45,6 +48,7 @@ static char *pre_emph_names[] = {
 };
 
 /***** radeon AUX functions *****/
+<<<<<<< HEAD
 
 /* Atom needs data in little endian format
  * so swap as appropriate when copying data to
@@ -80,6 +84,8 @@ void radeon_atom_copy_swap(u8 *dst, u8 *src, u8 num_bytes, bool to_le)
 #endif
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 union aux_channel_transaction {
 	PROCESS_AUX_CHANNEL_TRANSACTION_PS_ALLOCATION v1;
 	PROCESS_AUX_CHANNEL_TRANSACTION_PARAMETERS_V2 v2;
@@ -99,12 +105,21 @@ static int radeon_process_aux_ch(struct radeon_i2c_chan *chan,
 
 	memset(&args, 0, sizeof(args));
 
+<<<<<<< HEAD
 	base = (unsigned char *)(rdev->mode_info.atom_context->scratch + 1);
 
 	radeon_atom_copy_swap(base, send, send_bytes, true);
 
 	args.v1.lpAuxRequest = cpu_to_le16((u16)(0 + 4));
 	args.v1.lpDataOut = cpu_to_le16((u16)(16 + 4));
+=======
+	base = (unsigned char *)rdev->mode_info.atom_context->scratch;
+
+	memcpy(base, send, send_bytes);
+
+	args.v1.lpAuxRequest = 0;
+	args.v1.lpDataOut = 16;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	args.v1.ucDataOutLen = 0;
 	args.v1.ucChannelID = chan->rec.i2c_id;
 	args.v1.ucDelay = delay / 10;
@@ -138,7 +153,11 @@ static int radeon_process_aux_ch(struct radeon_i2c_chan *chan,
 		recv_bytes = recv_size;
 
 	if (recv && recv_size)
+<<<<<<< HEAD
 		radeon_atom_copy_swap(recv, base + 16, recv_bytes, false);
+=======
+		memcpy(recv, base + 16, recv_bytes);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return recv_bytes;
 }
@@ -441,13 +460,19 @@ static void dp_get_adjust_train(u8 link_status[DP_LINK_STATUS_SIZE],
 /* get bpc from the EDID */
 static int convert_bpc_to_bpp(int bpc)
 {
+<<<<<<< HEAD
 #if 0
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (bpc == 0)
 		return 24;
 	else
 		return bpc * 3;
+<<<<<<< HEAD
 #endif
 	return 24;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* get the max pix clock supported by the link rate and lane num */
@@ -521,8 +546,12 @@ static int radeon_dp_get_dp_link_clock(struct drm_connector *connector,
 	int bpp = convert_bpc_to_bpp(connector->display_info.bpc);
 	int lane_num, max_pix_clock;
 
+<<<<<<< HEAD
 	if (radeon_connector_encoder_get_dp_bridge_encoder_id(connector) ==
 	    ENCODER_OBJECT_ID_NUTMEG)
+=======
+	if (radeon_connector_encoder_is_dp_bridge(connector))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 270000;
 
 	lane_num = radeon_dp_get_dp_lane_number(connector, dpcd, pix_clock);
@@ -588,8 +617,13 @@ bool radeon_dp_getdpcd(struct radeon_connector *radeon_connector)
 	return false;
 }
 
+<<<<<<< HEAD
 int radeon_dp_get_panel_mode(struct drm_encoder *encoder,
 			     struct drm_connector *connector)
+=======
+static void radeon_dp_set_panel_mode(struct drm_encoder *encoder,
+				     struct drm_connector *connector)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_device *dev = encoder->dev;
 	struct radeon_device *rdev = dev->dev_private;
@@ -597,6 +631,7 @@ int radeon_dp_get_panel_mode(struct drm_encoder *encoder,
 	int panel_mode = DP_PANEL_MODE_EXTERNAL_DP_MODE;
 
 	if (!ASIC_IS_DCE4(rdev))
+<<<<<<< HEAD
 		return panel_mode;
 
 	if (radeon_connector_encoder_get_dp_bridge_encoder_id(connector) ==
@@ -618,12 +653,30 @@ int radeon_dp_get_panel_mode(struct drm_encoder *encoder,
 		else
 			panel_mode = DP_PANEL_MODE_INTERNAL_DP2_MODE;
 	} else if (connector->connector_type == DRM_MODE_CONNECTOR_eDP) {
+=======
+		return;
+
+	if (radeon_connector_encoder_is_dp_bridge(connector))
+		panel_mode = DP_PANEL_MODE_INTERNAL_DP1_MODE;
+	else if (connector->connector_type == DRM_MODE_CONNECTOR_eDP) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u8 tmp = radeon_read_dpcd_reg(radeon_connector, DP_EDP_CONFIGURATION_CAP);
 		if (tmp & 1)
 			panel_mode = DP_PANEL_MODE_INTERNAL_DP2_MODE;
 	}
 
+<<<<<<< HEAD
 	return panel_mode;
+=======
+	atombios_dig_encoder_setup(encoder,
+				   ATOM_ENCODER_CMD_SETUP_PANEL_MODE,
+				   panel_mode);
+
+	if ((connector->connector_type == DRM_MODE_CONNECTOR_eDP) &&
+	    (panel_mode == DP_PANEL_MODE_INTERNAL_DP2_MODE)) {
+		radeon_write_dpcd_reg(radeon_connector, DP_EDP_CONFIGURATION_SET, 1);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void radeon_dp_set_link_config(struct drm_connector *connector,
@@ -673,6 +726,10 @@ static bool radeon_dp_get_link_status(struct radeon_connector *radeon_connector,
 	ret = radeon_dp_aux_native_read(radeon_connector, DP_LANE0_1_STATUS,
 					link_status, DP_LINK_STATUS_SIZE, 100);
 	if (ret <= 0) {
+<<<<<<< HEAD
+=======
+		DRM_ERROR("displayport link status failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return false;
 	}
 
@@ -760,8 +817,11 @@ static void radeon_dp_set_tp(struct radeon_dp_link_train_info *dp_info, int tp)
 
 static int radeon_dp_link_train_init(struct radeon_dp_link_train_info *dp_info)
 {
+<<<<<<< HEAD
 	struct radeon_encoder *radeon_encoder = to_radeon_encoder(dp_info->encoder);
 	struct radeon_encoder_atom_dig *dig = radeon_encoder->enc_priv;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 tmp;
 
 	/* power up the sink */
@@ -777,6 +837,7 @@ static int radeon_dp_link_train_init(struct radeon_dp_link_train_info *dp_info)
 		radeon_write_dpcd_reg(dp_info->radeon_connector,
 				      DP_DOWNSPREAD_CTRL, 0);
 
+<<<<<<< HEAD
 	if ((dp_info->connector->connector_type == DRM_MODE_CONNECTOR_eDP) &&
 	    (dig->panel_mode == DP_PANEL_MODE_INTERNAL_DP2_MODE)) {
 		radeon_write_dpcd_reg(dp_info->radeon_connector, DP_EDP_CONFIGURATION_SET, 1);
@@ -786,6 +847,13 @@ static int radeon_dp_link_train_init(struct radeon_dp_link_train_info *dp_info)
 	tmp = dp_info->dp_lane_count;
 	if (dp_info->dpcd[DP_DPCD_REV] >= 0x11 &&
 	    dp_info->dpcd[DP_MAX_LANE_COUNT] & DP_ENHANCED_FRAME_CAP)
+=======
+	radeon_dp_set_panel_mode(dp_info->encoder, dp_info->connector);
+
+	/* set the lane count on the sink */
+	tmp = dp_info->dp_lane_count;
+	if (dp_info->dpcd[0] >= 0x11)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tmp |= DP_LANE_COUNT_ENHANCED_FRAME_EN;
 	radeon_write_dpcd_reg(dp_info->radeon_connector, DP_LANE_COUNT_SET, tmp);
 
@@ -851,10 +919,15 @@ static int radeon_dp_link_train_cr(struct radeon_dp_link_train_info *dp_info)
 		else
 			mdelay(dp_info->rd_interval * 4);
 
+<<<<<<< HEAD
 		if (!radeon_dp_get_link_status(dp_info->radeon_connector, dp_info->link_status)) {
 			DRM_ERROR("displayport link status failed\n");
 			break;
 		}
+=======
+		if (!radeon_dp_get_link_status(dp_info->radeon_connector, dp_info->link_status))
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (dp_clock_recovery_ok(dp_info->link_status, dp_info->dp_lane_count)) {
 			clock_recovery = true;
@@ -916,10 +989,15 @@ static int radeon_dp_link_train_ce(struct radeon_dp_link_train_info *dp_info)
 		else
 			mdelay(dp_info->rd_interval * 4);
 
+<<<<<<< HEAD
 		if (!radeon_dp_get_link_status(dp_info->radeon_connector, dp_info->link_status)) {
 			DRM_ERROR("displayport link status failed\n");
 			break;
 		}
+=======
+		if (!radeon_dp_get_link_status(dp_info->radeon_connector, dp_info->link_status))
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (dp_channel_eq_ok(dp_info->link_status, dp_info->dp_lane_count)) {
 			channel_eq = true;

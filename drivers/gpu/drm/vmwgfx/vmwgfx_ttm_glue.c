@@ -34,8 +34,14 @@ int vmw_mmap(struct file *filp, struct vm_area_struct *vma)
 	struct vmw_private *dev_priv;
 
 	if (unlikely(vma->vm_pgoff < VMWGFX_FILE_PAGE_OFFSET)) {
+<<<<<<< HEAD
 		DRM_ERROR("Illegal attempt to mmap old fifo space.\n");
 		return -EINVAL;
+=======
+		if (vmw_fifo_mmap(filp, vma) == 0)
+			return 0;
+		return drm_mmap(filp, vma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	file_priv = filp->private_data;

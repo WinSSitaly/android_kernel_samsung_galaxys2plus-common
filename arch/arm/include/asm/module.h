@@ -31,7 +31,15 @@ struct mod_arch_specific {
 
 /* Add __virt_to_phys patching state as well */
 #ifdef CONFIG_ARM_PATCH_PHYS_VIRT
+<<<<<<< HEAD
 #define MODULE_ARCH_VERMAGIC_P2V "p2v8 "
+=======
+#ifdef CONFIG_ARM_PATCH_PHYS_VIRT_16BIT
+#define MODULE_ARCH_VERMAGIC_P2V "p2v16 "
+#else
+#define MODULE_ARCH_VERMAGIC_P2V "p2v8 "
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 #define MODULE_ARCH_VERMAGIC_P2V ""
 #endif

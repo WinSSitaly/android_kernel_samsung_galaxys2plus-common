@@ -30,6 +30,10 @@
 #include <net/netfilter/nf_nat_helper.h>
 #include <net/netfilter/nf_conntrack_helper.h>
 #include <net/netfilter/nf_conntrack_l3proto.h>
+<<<<<<< HEAD
+=======
+#include <net/netfilter/nf_conntrack_l4proto.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/netfilter/nf_conntrack_zones.h>
 
 static DEFINE_SPINLOCK(nf_nat_lock);
@@ -56,7 +60,11 @@ hash_by_src(const struct net *net, u16 zone,
 	/* Original src, to ensure we map it consistently if poss. */
 	hash = jhash_3words((__force u32)tuple->src.u3.ip,
 			    (__force u32)tuple->src.u.all ^ zone,
+<<<<<<< HEAD
 			    tuple->dst.protonum, nf_conntrack_hash_rnd);
+=======
+			    tuple->dst.protonum, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ((u64)hash * net->ipv4.nat_htable_size) >> 32;
 }
 
@@ -81,14 +89,22 @@ EXPORT_SYMBOL(nf_nat_used_tuple);
  * that meet the constraints of range. */
 static int
 in_range(const struct nf_conntrack_tuple *tuple,
+<<<<<<< HEAD
 	 const struct nf_nat_ipv4_range *range)
+=======
+	 const struct nf_nat_range *range)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const struct nf_nat_protocol *proto;
 	int ret = 0;
 
 	/* If we are supposed to map IPs, then we must be in the
 	   range specified, otherwise let this drag us onto a new src IP. */
+<<<<<<< HEAD
 	if (range->flags & NF_NAT_RANGE_MAP_IPS) {
+=======
+	if (range->flags & IP_NAT_RANGE_MAP_IPS) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ntohl(tuple->src.u3.ip) < ntohl(range->min_ip) ||
 		    ntohl(tuple->src.u3.ip) > ntohl(range->max_ip))
 			return 0;
@@ -96,8 +112,13 @@ in_range(const struct nf_conntrack_tuple *tuple,
 
 	rcu_read_lock();
 	proto = __nf_nat_proto_find(tuple->dst.protonum);
+<<<<<<< HEAD
 	if (!(range->flags & NF_NAT_RANGE_PROTO_SPECIFIED) ||
 	    proto->in_range(tuple, NF_NAT_MANIP_SRC,
+=======
+	if (!(range->flags & IP_NAT_RANGE_PROTO_SPECIFIED) ||
+	    proto->in_range(tuple, IP_NAT_MANIP_SRC,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    &range->min, &range->max))
 		ret = 1;
 	rcu_read_unlock();
@@ -122,7 +143,11 @@ static int
 find_appropriate_src(struct net *net, u16 zone,
 		     const struct nf_conntrack_tuple *tuple,
 		     struct nf_conntrack_tuple *result,
+<<<<<<< HEAD
 		     const struct nf_nat_ipv4_range *range)
+=======
+		     const struct nf_nat_range *range)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int h = hash_by_src(net, zone, tuple);
 	const struct nf_conn_nat *nat;
@@ -156,7 +181,11 @@ find_appropriate_src(struct net *net, u16 zone,
 */
 static void
 find_best_ips_proto(u16 zone, struct nf_conntrack_tuple *tuple,
+<<<<<<< HEAD
 		    const struct nf_nat_ipv4_range *range,
+=======
+		    const struct nf_nat_range *range,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    const struct nf_conn *ct,
 		    enum nf_nat_manip_type maniptype)
 {
@@ -165,10 +194,17 @@ find_best_ips_proto(u16 zone, struct nf_conntrack_tuple *tuple,
 	u_int32_t minip, maxip, j;
 
 	/* No IP mapping?  Do nothing. */
+<<<<<<< HEAD
 	if (!(range->flags & NF_NAT_RANGE_MAP_IPS))
 		return;
 
 	if (maniptype == NF_NAT_MANIP_SRC)
+=======
+	if (!(range->flags & IP_NAT_RANGE_MAP_IPS))
+		return;
+
+	if (maniptype == IP_NAT_MANIP_SRC)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		var_ipp = &tuple->src.u3.ip;
 	else
 		var_ipp = &tuple->dst.u3.ip;
@@ -188,7 +224,11 @@ find_best_ips_proto(u16 zone, struct nf_conntrack_tuple *tuple,
 	minip = ntohl(range->min_ip);
 	maxip = ntohl(range->max_ip);
 	j = jhash_2words((__force u32)tuple->src.u3.ip,
+<<<<<<< HEAD
 			 range->flags & NF_NAT_RANGE_PERSISTENT ?
+=======
+			 range->flags & IP_NAT_RANGE_PERSISTENT ?
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				0 : (__force u32)tuple->dst.u3.ip ^ zone, 0);
 	j = ((u64)j * (maxip - minip + 1)) >> 32;
 	*var_ipp = htonl(minip + j);
@@ -203,7 +243,11 @@ find_best_ips_proto(u16 zone, struct nf_conntrack_tuple *tuple,
 static void
 get_unique_tuple(struct nf_conntrack_tuple *tuple,
 		 const struct nf_conntrack_tuple *orig_tuple,
+<<<<<<< HEAD
 		 const struct nf_nat_ipv4_range *range,
+=======
+		 const struct nf_nat_range *range,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 struct nf_conn *ct,
 		 enum nf_nat_manip_type maniptype)
 {
@@ -218,8 +262,13 @@ get_unique_tuple(struct nf_conntrack_tuple *tuple,
 	   This is only required for source (ie. NAT/masq) mappings.
 	   So far, we don't do local source mappings, so multiple
 	   manips not an issue.  */
+<<<<<<< HEAD
 	if (maniptype == NF_NAT_MANIP_SRC &&
 	    !(range->flags & NF_NAT_RANGE_PROTO_RANDOM)) {
+=======
+	if (maniptype == IP_NAT_MANIP_SRC &&
+	    !(range->flags & IP_NAT_RANGE_PROTO_RANDOM)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* try the original tuple first */
 		if (in_range(orig_tuple, range)) {
 			if (!nf_nat_used_tuple(orig_tuple, ct)) {
@@ -246,8 +295,13 @@ get_unique_tuple(struct nf_conntrack_tuple *tuple,
 	proto = __nf_nat_proto_find(orig_tuple->dst.protonum);
 
 	/* Only bother mapping if it's not already in range and unique */
+<<<<<<< HEAD
 	if (!(range->flags & NF_NAT_RANGE_PROTO_RANDOM)) {
 		if (range->flags & NF_NAT_RANGE_PROTO_SPECIFIED) {
+=======
+	if (!(range->flags & IP_NAT_RANGE_PROTO_RANDOM)) {
+		if (range->flags & IP_NAT_RANGE_PROTO_SPECIFIED) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (proto->in_range(tuple, maniptype, &range->min,
 					    &range->max) &&
 			    (range->min.all == range->max.all ||
@@ -266,7 +320,11 @@ out:
 
 unsigned int
 nf_nat_setup_info(struct nf_conn *ct,
+<<<<<<< HEAD
 		  const struct nf_nat_ipv4_range *range,
+=======
+		  const struct nf_nat_range *range,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  enum nf_nat_manip_type maniptype)
 {
 	struct net *net = nf_ct_net(ct);
@@ -283,8 +341,13 @@ nf_nat_setup_info(struct nf_conn *ct,
 		}
 	}
 
+<<<<<<< HEAD
 	NF_CT_ASSERT(maniptype == NF_NAT_MANIP_SRC ||
 		     maniptype == NF_NAT_MANIP_DST);
+=======
+	NF_CT_ASSERT(maniptype == IP_NAT_MANIP_SRC ||
+		     maniptype == IP_NAT_MANIP_DST);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BUG_ON(nf_nat_initialized(ct, maniptype));
 
 	/* What we've got will look like inverse of reply. Normally
@@ -305,19 +368,31 @@ nf_nat_setup_info(struct nf_conn *ct,
 		nf_conntrack_alter_reply(ct, &reply);
 
 		/* Non-atomic: we own this at the moment. */
+<<<<<<< HEAD
 		if (maniptype == NF_NAT_MANIP_SRC)
+=======
+		if (maniptype == IP_NAT_MANIP_SRC)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ct->status |= IPS_SRC_NAT;
 		else
 			ct->status |= IPS_DST_NAT;
 	}
 
+<<<<<<< HEAD
 	if (maniptype == NF_NAT_MANIP_SRC) {
+=======
+	if (maniptype == IP_NAT_MANIP_SRC) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned int srchash;
 
 		srchash = hash_by_src(net, nf_ct_zone(ct),
 				      &ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple);
 		spin_lock_bh(&nf_nat_lock);
+<<<<<<< HEAD
 		/* nf_conntrack_alter_reply might re-allocate extension area */
+=======
+		/* nf_conntrack_alter_reply might re-allocate exntension aera */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nat = nfct_nat(ct);
 		nat->ct = ct;
 		hlist_add_head_rcu(&nat->bysource,
@@ -326,7 +401,11 @@ nf_nat_setup_info(struct nf_conn *ct,
 	}
 
 	/* It's done. */
+<<<<<<< HEAD
 	if (maniptype == NF_NAT_MANIP_DST)
+=======
+	if (maniptype == IP_NAT_MANIP_DST)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ct->status |= IPS_DST_NAT_DONE;
 	else
 		ct->status |= IPS_SRC_NAT_DONE;
@@ -360,7 +439,11 @@ manip_pkt(u_int16_t proto,
 
 	iph = (void *)skb->data + iphdroff;
 
+<<<<<<< HEAD
 	if (maniptype == NF_NAT_MANIP_SRC) {
+=======
+	if (maniptype == IP_NAT_MANIP_SRC) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		csum_replace4(&iph->check, iph->saddr, target->src.u3.ip);
 		iph->saddr = target->src.u3.ip;
 	} else {
@@ -380,7 +463,11 @@ unsigned int nf_nat_packet(struct nf_conn *ct,
 	unsigned long statusbit;
 	enum nf_nat_manip_type mtype = HOOK2MANIP(hooknum);
 
+<<<<<<< HEAD
 	if (mtype == NF_NAT_MANIP_SRC)
+=======
+	if (mtype == IP_NAT_MANIP_SRC)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		statusbit = IPS_SRC_NAT;
 	else
 		statusbit = IPS_DST_NAT;
@@ -413,7 +500,12 @@ int nf_nat_icmp_reply_translation(struct nf_conn *ct,
 		struct icmphdr icmp;
 		struct iphdr ip;
 	} *inside;
+<<<<<<< HEAD
 	struct nf_conntrack_tuple target;
+=======
+	const struct nf_conntrack_l4proto *l4proto;
+	struct nf_conntrack_tuple inner, target;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int hdrlen = ip_hdrlen(skb);
 	enum ip_conntrack_dir dir = CTINFO2DIR(ctinfo);
 	unsigned long statusbit;
@@ -445,7 +537,11 @@ int nf_nat_icmp_reply_translation(struct nf_conn *ct,
 			return 0;
 	}
 
+<<<<<<< HEAD
 	if (manip == NF_NAT_MANIP_SRC)
+=======
+	if (manip == IP_NAT_MANIP_SRC)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		statusbit = IPS_SRC_NAT;
 	else
 		statusbit = IPS_DST_NAT;
@@ -461,6 +557,19 @@ int nf_nat_icmp_reply_translation(struct nf_conn *ct,
 		 "dir %s\n", skb, manip,
 		 dir == IP_CT_DIR_ORIGINAL ? "ORIG" : "REPLY");
 
+<<<<<<< HEAD
+=======
+	/* rcu_read_lock()ed by nf_hook_slow */
+	l4proto = __nf_ct_l4proto_find(PF_INET, inside->ip.protocol);
+
+	if (!nf_ct_get_tuple(skb, hdrlen + sizeof(struct icmphdr),
+			     (hdrlen +
+			      sizeof(struct icmphdr) + inside->ip.ihl * 4),
+			     (u_int16_t)AF_INET, inside->ip.protocol,
+			     &inner, l3proto, l4proto))
+		return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Change inner back to look like incoming packet.  We do the
 	   opposite manip on this hook to normal, because it might not
 	   pass all hooks (locally-generated ICMP).  Consider incoming
@@ -502,7 +611,11 @@ int nf_nat_protocol_register(const struct nf_nat_protocol *proto)
 		ret = -EBUSY;
 		goto out;
 	}
+<<<<<<< HEAD
 	RCU_INIT_POINTER(nf_nat_protos[proto->protonum], proto);
+=======
+	rcu_assign_pointer(nf_nat_protos[proto->protonum], proto);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  out:
 	spin_unlock_bh(&nf_nat_lock);
 	return ret;
@@ -513,7 +626,11 @@ EXPORT_SYMBOL(nf_nat_protocol_register);
 void nf_nat_protocol_unregister(const struct nf_nat_protocol *proto)
 {
 	spin_lock_bh(&nf_nat_lock);
+<<<<<<< HEAD
 	RCU_INIT_POINTER(nf_nat_protos[proto->protonum],
+=======
+	rcu_assign_pointer(nf_nat_protos[proto->protonum],
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   &nf_nat_unknown_protocol);
 	spin_unlock_bh(&nf_nat_lock);
 	synchronize_rcu();
@@ -563,6 +680,29 @@ static struct nf_ct_ext_type nat_extend __read_mostly = {
 #include <linux/netfilter/nfnetlink.h>
 #include <linux/netfilter/nfnetlink_conntrack.h>
 
+<<<<<<< HEAD
+=======
+static const struct nf_nat_protocol *
+nf_nat_proto_find_get(u_int8_t protonum)
+{
+	const struct nf_nat_protocol *p;
+
+	rcu_read_lock();
+	p = __nf_nat_proto_find(protonum);
+	if (!try_module_get(p->me))
+		p = &nf_nat_unknown_protocol;
+	rcu_read_unlock();
+
+	return p;
+}
+
+static void
+nf_nat_proto_put(const struct nf_nat_protocol *p)
+{
+	module_put(p->me);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct nla_policy protonat_nla_policy[CTA_PROTONAT_MAX+1] = {
 	[CTA_PROTONAT_PORT_MIN]	= { .type = NLA_U16 },
 	[CTA_PROTONAT_PORT_MAX]	= { .type = NLA_U16 },
@@ -570,7 +710,11 @@ static const struct nla_policy protonat_nla_policy[CTA_PROTONAT_MAX+1] = {
 
 static int nfnetlink_parse_nat_proto(struct nlattr *attr,
 				     const struct nf_conn *ct,
+<<<<<<< HEAD
 				     struct nf_nat_ipv4_range *range)
+=======
+				     struct nf_nat_range *range)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct nlattr *tb[CTA_PROTONAT_MAX+1];
 	const struct nf_nat_protocol *npt;
@@ -580,23 +724,37 @@ static int nfnetlink_parse_nat_proto(struct nlattr *attr,
 	if (err < 0)
 		return err;
 
+<<<<<<< HEAD
 	rcu_read_lock();
 	npt = __nf_nat_proto_find(nf_ct_protonum(ct));
 	if (npt->nlattr_to_range)
 		err = npt->nlattr_to_range(tb, range);
 	rcu_read_unlock();
+=======
+	npt = nf_nat_proto_find_get(nf_ct_protonum(ct));
+	if (npt->nlattr_to_range)
+		err = npt->nlattr_to_range(tb, range);
+	nf_nat_proto_put(npt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
 static const struct nla_policy nat_nla_policy[CTA_NAT_MAX+1] = {
 	[CTA_NAT_MINIP]		= { .type = NLA_U32 },
 	[CTA_NAT_MAXIP]		= { .type = NLA_U32 },
+<<<<<<< HEAD
 	[CTA_NAT_PROTO]		= { .type = NLA_NESTED },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int
 nfnetlink_parse_nat(const struct nlattr *nat,
+<<<<<<< HEAD
 		    const struct nf_conn *ct, struct nf_nat_ipv4_range *range)
+=======
+		    const struct nf_conn *ct, struct nf_nat_range *range)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct nlattr *tb[CTA_NAT_MAX+1];
 	int err;
@@ -616,7 +774,11 @@ nfnetlink_parse_nat(const struct nlattr *nat,
 		range->max_ip = nla_get_be32(tb[CTA_NAT_MAXIP]);
 
 	if (range->min_ip)
+<<<<<<< HEAD
 		range->flags |= NF_NAT_RANGE_MAP_IPS;
+=======
+		range->flags |= IP_NAT_RANGE_MAP_IPS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!tb[CTA_NAT_PROTO])
 		return 0;
@@ -633,7 +795,11 @@ nfnetlink_parse_nat_setup(struct nf_conn *ct,
 			  enum nf_nat_manip_type manip,
 			  const struct nlattr *attr)
 {
+<<<<<<< HEAD
 	struct nf_nat_ipv4_range range;
+=======
+	struct nf_nat_range range;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (nfnetlink_parse_nat(attr, ct, &range) < 0)
 		return -EINVAL;
@@ -686,11 +852,14 @@ static struct pernet_operations nf_nat_net_ops = {
 	.exit = nf_nat_net_exit,
 };
 
+<<<<<<< HEAD
 static struct nf_ct_helper_expectfn follow_master_nat = {
 	.name		= "nat-follow-master",
 	.expectfn	= nf_nat_follow_master,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init nf_nat_init(void)
 {
 	size_t i;
@@ -711,10 +880,17 @@ static int __init nf_nat_init(void)
 	/* Sew in builtin protocols. */
 	spin_lock_bh(&nf_nat_lock);
 	for (i = 0; i < MAX_IP_NAT_PROTO; i++)
+<<<<<<< HEAD
 		RCU_INIT_POINTER(nf_nat_protos[i], &nf_nat_unknown_protocol);
 	RCU_INIT_POINTER(nf_nat_protos[IPPROTO_TCP], &nf_nat_protocol_tcp);
 	RCU_INIT_POINTER(nf_nat_protos[IPPROTO_UDP], &nf_nat_protocol_udp);
 	RCU_INIT_POINTER(nf_nat_protos[IPPROTO_ICMP], &nf_nat_protocol_icmp);
+=======
+		rcu_assign_pointer(nf_nat_protos[i], &nf_nat_unknown_protocol);
+	rcu_assign_pointer(nf_nat_protos[IPPROTO_TCP], &nf_nat_protocol_tcp);
+	rcu_assign_pointer(nf_nat_protos[IPPROTO_UDP], &nf_nat_protocol_udp);
+	rcu_assign_pointer(nf_nat_protos[IPPROTO_ICMP], &nf_nat_protocol_icmp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_bh(&nf_nat_lock);
 
 	/* Initialize fake conntrack so that NAT will skip it */
@@ -722,6 +898,7 @@ static int __init nf_nat_init(void)
 
 	l3proto = nf_ct_l3proto_find_get((u_int16_t)AF_INET);
 
+<<<<<<< HEAD
 	nf_ct_helper_expectfn_register(&follow_master_nat);
 
 	BUG_ON(nf_nat_seq_adjust_hook != NULL);
@@ -731,6 +908,15 @@ static int __init nf_nat_init(void)
 			   nfnetlink_parse_nat_setup);
 	BUG_ON(nf_ct_nat_offset != NULL);
 	RCU_INIT_POINTER(nf_ct_nat_offset, nf_nat_get_offset);
+=======
+	BUG_ON(nf_nat_seq_adjust_hook != NULL);
+	rcu_assign_pointer(nf_nat_seq_adjust_hook, nf_nat_seq_adjust);
+	BUG_ON(nfnetlink_parse_nat_setup_hook != NULL);
+	rcu_assign_pointer(nfnetlink_parse_nat_setup_hook,
+			   nfnetlink_parse_nat_setup);
+	BUG_ON(nf_ct_nat_offset != NULL);
+	rcu_assign_pointer(nf_ct_nat_offset, nf_nat_get_offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
  cleanup_extend:
@@ -743,10 +929,16 @@ static void __exit nf_nat_cleanup(void)
 	unregister_pernet_subsys(&nf_nat_net_ops);
 	nf_ct_l3proto_put(l3proto);
 	nf_ct_extend_unregister(&nat_extend);
+<<<<<<< HEAD
 	nf_ct_helper_expectfn_unregister(&follow_master_nat);
 	RCU_INIT_POINTER(nf_nat_seq_adjust_hook, NULL);
 	RCU_INIT_POINTER(nfnetlink_parse_nat_setup_hook, NULL);
 	RCU_INIT_POINTER(nf_ct_nat_offset, NULL);
+=======
+	rcu_assign_pointer(nf_nat_seq_adjust_hook, NULL);
+	rcu_assign_pointer(nfnetlink_parse_nat_setup_hook, NULL);
+	rcu_assign_pointer(nf_ct_nat_offset, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	synchronize_net();
 }
 

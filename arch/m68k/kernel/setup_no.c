@@ -31,13 +31,19 @@
 #include <linux/init.h>
 #include <linux/initrd.h>
 #include <linux/root_dev.h>
+<<<<<<< HEAD
 #include <linux/rtc.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/setup.h>
 #include <asm/irq.h>
 #include <asm/machdep.h>
 #include <asm/pgtable.h>
+<<<<<<< HEAD
 #include <asm/sections.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unsigned long memory_start;
 unsigned long memory_end;
@@ -48,9 +54,14 @@ EXPORT_SYMBOL(memory_end);
 char __initdata command_line[COMMAND_LINE_SIZE];
 
 /* machine dependent timer functions */
+<<<<<<< HEAD
 void (*mach_sched_init)(irq_handler_t handler) __initdata = NULL;
 int (*mach_set_clock_mmss)(unsigned long);
 int (*mach_hwclk) (int, struct rtc_time*);
+=======
+void (*mach_gettod)(int*, int*, int*, int*, int*, int*);
+int (*mach_set_clock_mmss)(unsigned long);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* machine dependent reboot functions */
 void (*mach_reset)(void);
@@ -83,6 +94,12 @@ void (*mach_power_off)(void);
 #define	CPU_INSTR_PER_JIFFY	16
 #endif
 
+<<<<<<< HEAD
+=======
+extern int _stext, _etext, _sdata, _edata, _sbss, _ebss, _end;
+extern int _ramstart, _ramend;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_UBOOT)
 /*
  * parse_uboot_commandline

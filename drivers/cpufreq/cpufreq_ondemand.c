@@ -119,6 +119,7 @@ static struct dbs_tuners {
 	.powersave_bias = 0,
 };
 
+<<<<<<< HEAD
 static inline u64 get_cpu_idle_time_jiffy(unsigned int cpu, u64 *wall)
 {
 	u64 idle_time;
@@ -139,16 +140,46 @@ static inline u64 get_cpu_idle_time_jiffy(unsigned int cpu, u64 *wall)
 		*wall = jiffies_to_usecs(cur_wall_time);
 
 	return jiffies_to_usecs(idle_time);
+=======
+static inline cputime64_t get_cpu_idle_time_jiffy(unsigned int cpu,
+							cputime64_t *wall)
+{
+	cputime64_t idle_time;
+	cputime64_t cur_wall_time;
+	cputime64_t busy_time;
+
+	cur_wall_time = jiffies64_to_cputime64(get_jiffies_64());
+	busy_time = cputime64_add(kstat_cpu(cpu).cpustat.user,
+			kstat_cpu(cpu).cpustat.system);
+
+	busy_time = cputime64_add(busy_time, kstat_cpu(cpu).cpustat.irq);
+	busy_time = cputime64_add(busy_time, kstat_cpu(cpu).cpustat.softirq);
+	busy_time = cputime64_add(busy_time, kstat_cpu(cpu).cpustat.steal);
+	busy_time = cputime64_add(busy_time, kstat_cpu(cpu).cpustat.nice);
+
+	idle_time = cputime64_sub(cur_wall_time, busy_time);
+	if (wall)
+		*wall = (cputime64_t)jiffies_to_usecs(cur_wall_time);
+
+	return (cputime64_t)jiffies_to_usecs(idle_time);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline cputime64_t get_cpu_idle_time(unsigned int cpu, cputime64_t *wall)
 {
+<<<<<<< HEAD
 	u64 idle_time = get_cpu_idle_time_us(cpu, NULL);
 
 	if (idle_time == -1ULL)
 		return get_cpu_idle_time_jiffy(cpu, wall);
 	else
 		idle_time += get_cpu_iowait_time_us(cpu, wall);
+=======
+	u64 idle_time = get_cpu_idle_time_us(cpu, wall);
+
+	if (idle_time == -1ULL)
+		return get_cpu_idle_time_jiffy(cpu, wall);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return idle_time;
 }
@@ -257,6 +288,7 @@ show_one(sampling_down_factor, sampling_down_factor);
 show_one(ignore_nice_load, ignore_nice);
 show_one(powersave_bias, powersave_bias);
 
+<<<<<<< HEAD
 /**
  * update_sampling_rate - update sampling rate effective immediately if needed.
  * @new_rate: new sampling rate
@@ -313,6 +345,8 @@ static void update_sampling_rate(unsigned int new_rate)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t store_sampling_rate(struct kobject *a, struct attribute *b,
 				   const char *buf, size_t count)
 {
@@ -321,7 +355,11 @@ static ssize_t store_sampling_rate(struct kobject *a, struct attribute *b,
 	ret = sscanf(buf, "%u", &input);
 	if (ret != 1)
 		return -EINVAL;
+<<<<<<< HEAD
 	update_sampling_rate(input);
+=======
+	dbs_tuners_ins.sampling_rate = max(input, min_sampling_rate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return count;
 }
 
@@ -400,7 +438,11 @@ static ssize_t store_ignore_nice_load(struct kobject *a, struct attribute *b,
 		dbs_info->prev_cpu_idle = get_cpu_idle_time(j,
 						&dbs_info->prev_cpu_wall);
 		if (dbs_tuners_ins.ignore_nice)
+<<<<<<< HEAD
 			dbs_info->prev_cpu_nice = kcpustat_cpu(j).cpustat[CPUTIME_NICE];
+=======
+			dbs_info->prev_cpu_nice = kstat_cpu(j).cpustat.nice;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	}
 	return count;
@@ -497,6 +539,7 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 		cur_idle_time = get_cpu_idle_time(j, &cur_wall_time);
 		cur_iowait_time = get_cpu_iowait_time(j, &cur_wall_time);
 
+<<<<<<< HEAD
 		wall_time = (unsigned int)
 			(cur_wall_time - j_dbs_info->prev_cpu_wall);
 		j_dbs_info->prev_cpu_wall = cur_wall_time;
@@ -515,6 +558,26 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 
 			cur_nice = kcpustat_cpu(j).cpustat[CPUTIME_NICE] -
 					 j_dbs_info->prev_cpu_nice;
+=======
+		wall_time = (unsigned int) cputime64_sub(cur_wall_time,
+				j_dbs_info->prev_cpu_wall);
+		j_dbs_info->prev_cpu_wall = cur_wall_time;
+
+		idle_time = (unsigned int) cputime64_sub(cur_idle_time,
+				j_dbs_info->prev_cpu_idle);
+		j_dbs_info->prev_cpu_idle = cur_idle_time;
+
+		iowait_time = (unsigned int) cputime64_sub(cur_iowait_time,
+				j_dbs_info->prev_cpu_iowait);
+		j_dbs_info->prev_cpu_iowait = cur_iowait_time;
+
+		if (dbs_tuners_ins.ignore_nice) {
+			cputime64_t cur_nice;
+			unsigned long cur_nice_jiffies;
+
+			cur_nice = cputime64_sub(kstat_cpu(j).cpustat.nice,
+					 j_dbs_info->prev_cpu_nice);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * Assumption: nice time between sampling periods will
 			 * be less than 2^32 jiffies for 32 bit sys
@@ -522,7 +585,11 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 			cur_nice_jiffies = (unsigned long)
 					cputime64_to_jiffies64(cur_nice);
 
+<<<<<<< HEAD
 			j_dbs_info->prev_cpu_nice = kcpustat_cpu(j).cpustat[CPUTIME_NICE];
+=======
+			j_dbs_info->prev_cpu_nice = kstat_cpu(j).cpustat.nice;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			idle_time += jiffies_to_usecs(cur_nice_jiffies);
 		}
 
@@ -701,9 +768,16 @@ static int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 
 			j_dbs_info->prev_cpu_idle = get_cpu_idle_time(j,
 						&j_dbs_info->prev_cpu_wall);
+<<<<<<< HEAD
 			if (dbs_tuners_ins.ignore_nice)
 				j_dbs_info->prev_cpu_nice =
 						kcpustat_cpu(j).cpustat[CPUTIME_NICE];
+=======
+			if (dbs_tuners_ins.ignore_nice) {
+				j_dbs_info->prev_cpu_nice =
+						kstat_cpu(j).cpustat.nice;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		this_dbs_info->cpu = cpu;
 		this_dbs_info->rate_mult = 1;
@@ -769,10 +843,18 @@ static int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 
 static int __init cpufreq_gov_dbs_init(void)
 {
+<<<<<<< HEAD
 	u64 idle_time;
 	int cpu = get_cpu();
 
 	idle_time = get_cpu_idle_time_us(cpu, NULL);
+=======
+	cputime64_t wall;
+	u64 idle_time;
+	int cpu = get_cpu();
+
+	idle_time = get_cpu_idle_time_us(cpu, &wall);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	put_cpu();
 	if (idle_time != -1ULL) {
 		/* Idle micro accounting is supported. Use finer thresholds */
@@ -780,7 +862,11 @@ static int __init cpufreq_gov_dbs_init(void)
 		dbs_tuners_ins.down_differential =
 					MICRO_FREQUENCY_DOWN_DIFFERENTIAL;
 		/*
+<<<<<<< HEAD
 		 * In nohz/micro accounting case we set the minimum frequency
+=======
+		 * In no_hz/micro accounting case we set the minimum frequency
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * not depending on HZ, but fixed (very low). The deferred
 		 * timer might skip some samples if idle/sleeping as needed.
 		*/

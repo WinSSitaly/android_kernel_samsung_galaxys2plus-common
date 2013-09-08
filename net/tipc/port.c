@@ -80,7 +80,11 @@ int tipc_multicast(u32 ref, struct tipc_name_seq const *seq,
 	struct tipc_msg *hdr;
 	struct sk_buff *buf;
 	struct sk_buff *ibuf = NULL;
+<<<<<<< HEAD
 	struct tipc_port_list dports = {0, NULL, };
+=======
+	struct port_list dports = {0, NULL, };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct tipc_port *oport = tipc_port_deref(ref);
 	int ext_targets;
 	int res;
@@ -116,13 +120,21 @@ int tipc_multicast(u32 ref, struct tipc_name_seq const *seq,
 			ibuf = skb_copy(buf, GFP_ATOMIC);
 			if (ibuf == NULL) {
 				tipc_port_list_free(&dports);
+<<<<<<< HEAD
 				kfree_skb(buf);
+=======
+				buf_discard(buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return -ENOMEM;
 			}
 		}
 		res = tipc_bclink_send_msg(buf);
 		if ((res < 0) && (dports.count != 0))
+<<<<<<< HEAD
 			kfree_skb(ibuf);
+=======
+			buf_discard(ibuf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		ibuf = buf;
 	}
@@ -142,11 +154,19 @@ int tipc_multicast(u32 ref, struct tipc_name_seq const *seq,
  * If there is no port list, perform a lookup to create one
  */
 
+<<<<<<< HEAD
 void tipc_port_recv_mcast(struct sk_buff *buf, struct tipc_port_list *dp)
 {
 	struct tipc_msg *msg;
 	struct tipc_port_list dports = {0, NULL, };
 	struct tipc_port_list *item = dp;
+=======
+void tipc_port_recv_mcast(struct sk_buff *buf, struct port_list *dp)
+{
+	struct tipc_msg *msg;
+	struct port_list dports = {0, NULL, };
+	struct port_list *item = dp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int cnt = 0;
 
 	msg = buf_msg(buf);
@@ -187,7 +207,11 @@ void tipc_port_recv_mcast(struct sk_buff *buf, struct tipc_port_list *dp)
 		}
 	}
 exit:
+<<<<<<< HEAD
 	kfree_skb(buf);
+=======
+	buf_discard(buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tipc_port_list_free(dp);
 }
 
@@ -222,7 +246,11 @@ struct tipc_port *tipc_createport_raw(void *usr_handle,
 	p_ptr->max_pkt = MAX_PKT_DEFAULT;
 	p_ptr->ref = ref;
 	msg = &p_ptr->phdr;
+<<<<<<< HEAD
 	tipc_msg_init(msg, importance, TIPC_NAMED_MSG, NAMED_H_SIZE, 0);
+=======
+	tipc_msg_init(msg, importance, TIPC_NAMED_MSG, LONG_H_SIZE, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	msg_set_origport(msg, ref);
 	INIT_LIST_HEAD(&p_ptr->wait_list);
 	INIT_LIST_HEAD(&p_ptr->subscription.nodesub_list);
@@ -327,16 +355,28 @@ int tipc_set_portunreturnable(u32 ref, unsigned int isunrejectable)
 }
 
 /*
+<<<<<<< HEAD
  * port_build_proto_msg(): create connection protocol message for port
  *
  * On entry the port must be locked and connected.
  */
 static struct sk_buff *port_build_proto_msg(struct tipc_port *p_ptr,
 					    u32 type, u32 ack)
+=======
+ * port_build_proto_msg(): build a port level protocol
+ * or a connection abortion message. Called with
+ * tipc_port lock on.
+ */
+static struct sk_buff *port_build_proto_msg(u32 destport, u32 destnode,
+					    u32 origport, u32 orignode,
+					    u32 usr, u32 type, u32 err,
+					    u32 ack)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sk_buff *buf;
 	struct tipc_msg *msg;
 
+<<<<<<< HEAD
 	buf = tipc_buf_acquire(INT_H_SIZE);
 	if (buf) {
 		msg = buf_msg(buf);
@@ -344,6 +384,16 @@ static struct sk_buff *port_build_proto_msg(struct tipc_port *p_ptr,
 			      port_peernode(p_ptr));
 		msg_set_destport(msg, port_peerport(p_ptr));
 		msg_set_origport(msg, p_ptr->ref);
+=======
+	buf = tipc_buf_acquire(LONG_H_SIZE);
+	if (buf) {
+		msg = buf_msg(buf);
+		tipc_msg_init(msg, usr, type, LONG_H_SIZE, destnode);
+		msg_set_errcode(msg, err);
+		msg_set_destport(msg, destport);
+		msg_set_origport(msg, origport);
+		msg_set_orignode(msg, orignode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		msg_set_msgcnt(msg, ack);
 	}
 	return buf;
@@ -355,6 +405,7 @@ int tipc_reject_msg(struct sk_buff *buf, u32 err)
 	struct sk_buff *rbuf;
 	struct tipc_msg *rmsg;
 	int hdr_sz;
+<<<<<<< HEAD
 	u32 imp;
 	u32 data_sz = msg_data_sz(msg);
 	u32 src_node;
@@ -421,6 +472,64 @@ int tipc_reject_msg(struct sk_buff *buf, u32 err)
 		tipc_link_send(rbuf, src_node, msg_link_selector(rmsg));
 exit:
 	kfree_skb(buf);
+=======
+	u32 imp = msg_importance(msg);
+	u32 data_sz = msg_data_sz(msg);
+
+	if (data_sz > MAX_REJECT_SIZE)
+		data_sz = MAX_REJECT_SIZE;
+	if (msg_connected(msg) && (imp < TIPC_CRITICAL_IMPORTANCE))
+		imp++;
+
+	/* discard rejected message if it shouldn't be returned to sender */
+	if (msg_errcode(msg) || msg_dest_droppable(msg)) {
+		buf_discard(buf);
+		return data_sz;
+	}
+
+	/* construct rejected message */
+	if (msg_mcast(msg))
+		hdr_sz = MCAST_H_SIZE;
+	else
+		hdr_sz = LONG_H_SIZE;
+	rbuf = tipc_buf_acquire(data_sz + hdr_sz);
+	if (rbuf == NULL) {
+		buf_discard(buf);
+		return data_sz;
+	}
+	rmsg = buf_msg(rbuf);
+	tipc_msg_init(rmsg, imp, msg_type(msg), hdr_sz, msg_orignode(msg));
+	msg_set_errcode(rmsg, err);
+	msg_set_destport(rmsg, msg_origport(msg));
+	msg_set_origport(rmsg, msg_destport(msg));
+	if (msg_short(msg)) {
+		msg_set_orignode(rmsg, tipc_own_addr);
+		/* leave name type & instance as zeroes */
+	} else {
+		msg_set_orignode(rmsg, msg_destnode(msg));
+		msg_set_nametype(rmsg, msg_nametype(msg));
+		msg_set_nameinst(rmsg, msg_nameinst(msg));
+	}
+	msg_set_size(rmsg, data_sz + hdr_sz);
+	skb_copy_to_linear_data_offset(rbuf, hdr_sz, msg_data(msg), data_sz);
+
+	/* send self-abort message when rejecting on a connected port */
+	if (msg_connected(msg)) {
+		struct sk_buff *abuf = NULL;
+		struct tipc_port *p_ptr = tipc_port_lock(msg_destport(msg));
+
+		if (p_ptr) {
+			if (p_ptr->connected)
+				abuf = port_build_self_abort_msg(p_ptr, err);
+			tipc_port_unlock(p_ptr);
+		}
+		tipc_net_route_msg(abuf);
+	}
+
+	/* send rejected message */
+	buf_discard(buf);
+	tipc_net_route_msg(rbuf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return data_sz;
 }
 
@@ -456,7 +565,18 @@ static void port_timeout(unsigned long ref)
 	if (p_ptr->probing_state == PROBING) {
 		buf = port_build_self_abort_msg(p_ptr, TIPC_ERR_NO_PORT);
 	} else {
+<<<<<<< HEAD
 		buf = port_build_proto_msg(p_ptr, CONN_PROBE, 0);
+=======
+		buf = port_build_proto_msg(port_peerport(p_ptr),
+					   port_peernode(p_ptr),
+					   p_ptr->ref,
+					   tipc_own_addr,
+					   CONN_MANAGER,
+					   CONN_PROBE,
+					   TIPC_OK,
+					   0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		p_ptr->probing_state = PROBING;
 		k_start_timer(&p_ptr->timer, p_ptr->probing_interval);
 	}
@@ -480,6 +600,7 @@ static void port_handle_node_down(unsigned long ref)
 
 static struct sk_buff *port_build_self_abort_msg(struct tipc_port *p_ptr, u32 err)
 {
+<<<<<<< HEAD
 	struct sk_buff *buf = port_build_peer_abort_msg(p_ptr, err);
 
 	if (buf) {
@@ -488,11 +609,28 @@ static struct sk_buff *port_build_self_abort_msg(struct tipc_port *p_ptr, u32 er
 		msg_swap_words(msg, 6, 7);
 	}
 	return buf;
+=======
+	u32 imp = msg_importance(&p_ptr->phdr);
+
+	if (!p_ptr->connected)
+		return NULL;
+	if (imp < TIPC_CRITICAL_IMPORTANCE)
+		imp++;
+	return port_build_proto_msg(p_ptr->ref,
+				    tipc_own_addr,
+				    port_peerport(p_ptr),
+				    port_peernode(p_ptr),
+				    imp,
+				    TIPC_CONN_MSG,
+				    err,
+				    0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
 static struct sk_buff *port_build_peer_abort_msg(struct tipc_port *p_ptr, u32 err)
 {
+<<<<<<< HEAD
 	struct sk_buff *buf;
 	struct tipc_msg *msg;
 	u32 imp;
@@ -512,11 +650,28 @@ static struct sk_buff *port_build_peer_abort_msg(struct tipc_port *p_ptr, u32 er
 		msg_set_errcode(msg, err);
 	}
 	return buf;
+=======
+	u32 imp = msg_importance(&p_ptr->phdr);
+
+	if (!p_ptr->connected)
+		return NULL;
+	if (imp < TIPC_CRITICAL_IMPORTANCE)
+		imp++;
+	return port_build_proto_msg(port_peerport(p_ptr),
+				    port_peernode(p_ptr),
+				    p_ptr->ref,
+				    tipc_own_addr,
+				    imp,
+				    TIPC_CONN_MSG,
+				    err,
+				    0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void tipc_port_recv_proto_msg(struct sk_buff *buf)
 {
 	struct tipc_msg *msg = buf_msg(buf);
+<<<<<<< HEAD
 	struct tipc_port *p_ptr;
 	struct sk_buff *r_buf = NULL;
 	u32 orignode = msg_orignode(msg);
@@ -569,6 +724,65 @@ void tipc_port_recv_proto_msg(struct sk_buff *buf)
 exit:
 	tipc_net_route_msg(r_buf);
 	kfree_skb(buf);
+=======
+	struct tipc_port *p_ptr = tipc_port_lock(msg_destport(msg));
+	u32 err = TIPC_OK;
+	struct sk_buff *r_buf = NULL;
+	struct sk_buff *abort_buf = NULL;
+
+	if (!p_ptr) {
+		err = TIPC_ERR_NO_PORT;
+	} else if (p_ptr->connected) {
+		if ((port_peernode(p_ptr) != msg_orignode(msg)) ||
+		    (port_peerport(p_ptr) != msg_origport(msg))) {
+			err = TIPC_ERR_NO_PORT;
+		} else if (msg_type(msg) == CONN_ACK) {
+			int wakeup = tipc_port_congested(p_ptr) &&
+				     p_ptr->congested &&
+				     p_ptr->wakeup;
+			p_ptr->acked += msg_msgcnt(msg);
+			if (tipc_port_congested(p_ptr))
+				goto exit;
+			p_ptr->congested = 0;
+			if (!wakeup)
+				goto exit;
+			p_ptr->wakeup(p_ptr);
+			goto exit;
+		}
+	} else if (p_ptr->published) {
+		err = TIPC_ERR_NO_PORT;
+	}
+	if (err) {
+		r_buf = port_build_proto_msg(msg_origport(msg),
+					     msg_orignode(msg),
+					     msg_destport(msg),
+					     tipc_own_addr,
+					     TIPC_HIGH_IMPORTANCE,
+					     TIPC_CONN_MSG,
+					     err,
+					     0);
+		goto exit;
+	}
+
+	/* All is fine */
+	if (msg_type(msg) == CONN_PROBE) {
+		r_buf = port_build_proto_msg(msg_origport(msg),
+					     msg_orignode(msg),
+					     msg_destport(msg),
+					     tipc_own_addr,
+					     CONN_MANAGER,
+					     CONN_PROBE_REPLY,
+					     TIPC_OK,
+					     0);
+	}
+	p_ptr->probing_state = CONFIRMED;
+exit:
+	if (p_ptr)
+		tipc_port_unlock(p_ptr);
+	tipc_net_route_msg(r_buf);
+	tipc_net_route_msg(abort_buf);
+	buf_discard(buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void port_print(struct tipc_port *p_ptr, struct print_buf *buf, int full_id)
@@ -759,7 +973,11 @@ static void port_dispatcher_sigh(void *dummy)
 			}
 		}
 		if (buf)
+<<<<<<< HEAD
 			kfree_skb(buf);
+=======
+			buf_discard(buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		buf = next;
 		continue;
 err:
@@ -813,7 +1031,11 @@ err:
 			}
 		}
 		if (buf)
+<<<<<<< HEAD
 			kfree_skb(buf);
+=======
+			buf_discard(buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		buf = next;
 		continue;
 reject:
@@ -883,7 +1105,18 @@ void tipc_acknowledge(u32 ref, u32 ack)
 		return;
 	if (p_ptr->connected) {
 		p_ptr->conn_unacked -= ack;
+<<<<<<< HEAD
 		buf = port_build_proto_msg(p_ptr, CONN_ACK, ack);
+=======
+		buf = port_build_proto_msg(port_peerport(p_ptr),
+					   port_peernode(p_ptr),
+					   ref,
+					   tipc_own_addr,
+					   CONN_MANAGER,
+					   CONN_ACK,
+					   TIPC_OK,
+					   ack);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	tipc_port_unlock(p_ptr);
 	tipc_net_route_msg(buf);
@@ -1054,6 +1287,11 @@ int tipc_connect2port(u32 ref, struct tipc_portid const *peer)
 	msg = &p_ptr->phdr;
 	msg_set_destnode(msg, peer->node);
 	msg_set_destport(msg, peer->ref);
+<<<<<<< HEAD
+=======
+	msg_set_orignode(msg, tipc_own_addr);
+	msg_set_origport(msg, p_ptr->ref);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	msg_set_type(msg, TIPC_CONN_MSG);
 	msg_set_lookup_scope(msg, 0);
 	msg_set_hdr_sz(msg, SHORT_H_SIZE);
@@ -1125,12 +1363,29 @@ int tipc_shutdown(u32 ref)
 	if (!p_ptr)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	buf = port_build_peer_abort_msg(p_ptr, TIPC_CONN_SHUTDOWN);
+=======
+	if (p_ptr->connected) {
+		u32 imp = msg_importance(&p_ptr->phdr);
+		if (imp < TIPC_CRITICAL_IMPORTANCE)
+			imp++;
+		buf = port_build_proto_msg(port_peerport(p_ptr),
+					   port_peernode(p_ptr),
+					   ref,
+					   tipc_own_addr,
+					   imp,
+					   TIPC_CONN_MSG,
+					   TIPC_CONN_SHUTDOWN,
+					   0);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tipc_port_unlock(p_ptr);
 	tipc_net_route_msg(buf);
 	return tipc_disconnect(ref);
 }
 
+<<<<<<< HEAD
 /**
  * tipc_port_recv_msg - receive message from lower layer and deliver to port user
  */
@@ -1174,6 +1429,8 @@ reject:
 	return tipc_reject_msg(buf, err);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *  tipc_port_recv_sections(): Concatenate and deliver sectioned
  *                        message for this node.
@@ -1252,7 +1509,13 @@ int tipc_send2name(u32 ref, struct tipc_name const *name, unsigned int domain,
 
 	msg = &p_ptr->phdr;
 	msg_set_type(msg, TIPC_NAMED_MSG);
+<<<<<<< HEAD
 	msg_set_hdr_sz(msg, NAMED_H_SIZE);
+=======
+	msg_set_orignode(msg, tipc_own_addr);
+	msg_set_origport(msg, ref);
+	msg_set_hdr_sz(msg, LONG_H_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	msg_set_nametype(msg, name->type);
 	msg_set_nameinst(msg, name->instance);
 	msg_set_lookup_scope(msg, tipc_addr_scope(domain));
@@ -1260,7 +1523,11 @@ int tipc_send2name(u32 ref, struct tipc_name const *name, unsigned int domain,
 	msg_set_destnode(msg, destnode);
 	msg_set_destport(msg, destport);
 
+<<<<<<< HEAD
 	if (likely(destport || destnode)) {
+=======
+	if (likely(destport)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (likely(destnode == tipc_own_addr))
 			res = tipc_port_recv_sections(p_ptr, num_sect,
 						      msg_sect, total_len);
@@ -1301,9 +1568,17 @@ int tipc_send2port(u32 ref, struct tipc_portid const *dest,
 	msg = &p_ptr->phdr;
 	msg_set_type(msg, TIPC_DIRECT_MSG);
 	msg_set_lookup_scope(msg, 0);
+<<<<<<< HEAD
 	msg_set_destnode(msg, dest->node);
 	msg_set_destport(msg, dest->ref);
 	msg_set_hdr_sz(msg, BASIC_H_SIZE);
+=======
+	msg_set_orignode(msg, tipc_own_addr);
+	msg_set_origport(msg, ref);
+	msg_set_destnode(msg, dest->node);
+	msg_set_destport(msg, dest->ref);
+	msg_set_hdr_sz(msg, DIR_MSG_H_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dest->node == tipc_own_addr)
 		res =  tipc_port_recv_sections(p_ptr, num_sect, msg_sect,
@@ -1339,6 +1614,7 @@ int tipc_send_buf2port(u32 ref, struct tipc_portid const *dest,
 
 	msg = &p_ptr->phdr;
 	msg_set_type(msg, TIPC_DIRECT_MSG);
+<<<<<<< HEAD
 	msg_set_destnode(msg, dest->node);
 	msg_set_destport(msg, dest->ref);
 	msg_set_hdr_sz(msg, BASIC_H_SIZE);
@@ -1348,6 +1624,19 @@ int tipc_send_buf2port(u32 ref, struct tipc_portid const *dest,
 
 	skb_push(buf, BASIC_H_SIZE);
 	skb_copy_to_linear_data(buf, msg, BASIC_H_SIZE);
+=======
+	msg_set_orignode(msg, tipc_own_addr);
+	msg_set_origport(msg, ref);
+	msg_set_destnode(msg, dest->node);
+	msg_set_destport(msg, dest->ref);
+	msg_set_hdr_sz(msg, DIR_MSG_H_SIZE);
+	msg_set_size(msg, DIR_MSG_H_SIZE + dsz);
+	if (skb_cow(buf, DIR_MSG_H_SIZE))
+		return -ENOMEM;
+
+	skb_push(buf, DIR_MSG_H_SIZE);
+	skb_copy_to_linear_data(buf, msg, DIR_MSG_H_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dest->node == tipc_own_addr)
 		res = tipc_port_recv_msg(buf);

@@ -5,7 +5,11 @@
 #include <asm/cacheflush.h>
 #include <asm/scatterlist.h>
 
+<<<<<<< HEAD
 /* See Documentation/DMA-API-HOWTO.txt */
+=======
+/* See Documentation/PCI/PCI-DMA-mapping.txt */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct hppa_dma_ops {
 	int  (*dma_supported)(struct device *dev, u64 mask);
 	void *(*alloc_consistent)(struct device *dev, size_t size, dma_addr_t *iova, gfp_t flag);
@@ -210,7 +214,11 @@ parisc_walk_tree(struct device *dev)
 	return dev->platform_data;
 }
 		
+<<<<<<< HEAD
 #define GET_IOC(dev) (HBA_DATA(parisc_walk_tree(dev))->iommu)
+=======
+#define GET_IOC(dev) (HBA_DATA(parisc_walk_tree(dev))->iommu);	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	
 
 #ifdef CONFIG_IOMMU_CCIO

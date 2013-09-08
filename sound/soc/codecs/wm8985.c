@@ -19,7 +19,10 @@
 #include <linux/delay.h>
 #include <linux/pm.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/regmap.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/regulator/consumer.h>
 #include <linux/spi/spi.h>
 #include <linux/slab.h>
@@ -40,6 +43,7 @@ static const char *wm8985_supply_names[WM8985_NUM_SUPPLIES] = {
 	"AVDD2"
 };
 
+<<<<<<< HEAD
 static const struct reg_default wm8985_reg_defaults[] = {
 	{ 1,  0x0000 },     /* R1  - Power management 1 */
 	{ 2,  0x0000 },     /* R2  - Power management 2 */
@@ -161,6 +165,75 @@ static bool wm8985_writeable(struct device *dev, unsigned int reg)
 	}
 }
 
+=======
+static const u16 wm8985_reg_defs[] = {
+	0x0000,     /* R0  - Software Reset */
+	0x0000,     /* R1  - Power management 1 */
+	0x0000,     /* R2  - Power management 2 */
+	0x0000,     /* R3  - Power management 3 */
+	0x0050,     /* R4  - Audio Interface */
+	0x0000,     /* R5  - Companding control */
+	0x0140,     /* R6  - Clock Gen control */
+	0x0000,     /* R7  - Additional control */
+	0x0000,     /* R8  - GPIO Control */
+	0x0000,     /* R9  - Jack Detect Control 1 */
+	0x0000,     /* R10 - DAC Control */
+	0x00FF,     /* R11 - Left DAC digital Vol */
+	0x00FF,     /* R12 - Right DAC digital vol */
+	0x0000,     /* R13 - Jack Detect Control 2 */
+	0x0100,     /* R14 - ADC Control */
+	0x00FF,     /* R15 - Left ADC Digital Vol */
+	0x00FF,     /* R16 - Right ADC Digital Vol */
+	0x0000,     /* R17 */
+	0x012C,     /* R18 - EQ1 - low shelf */
+	0x002C,     /* R19 - EQ2 - peak 1 */
+	0x002C,     /* R20 - EQ3 - peak 2 */
+	0x002C,     /* R21 - EQ4 - peak 3 */
+	0x002C,     /* R22 - EQ5 - high shelf */
+	0x0000,     /* R23 */
+	0x0032,     /* R24 - DAC Limiter 1 */
+	0x0000,     /* R25 - DAC Limiter 2 */
+	0x0000,     /* R26 */
+	0x0000,     /* R27 - Notch Filter 1 */
+	0x0000,     /* R28 - Notch Filter 2 */
+	0x0000,     /* R29 - Notch Filter 3 */
+	0x0000,     /* R30 - Notch Filter 4 */
+	0x0000,     /* R31 */
+	0x0038,     /* R32 - ALC control 1 */
+	0x000B,     /* R33 - ALC control 2 */
+	0x0032,     /* R34 - ALC control 3 */
+	0x0000,     /* R35 - Noise Gate */
+	0x0008,     /* R36 - PLL N */
+	0x000C,     /* R37 - PLL K 1 */
+	0x0093,     /* R38 - PLL K 2 */
+	0x00E9,     /* R39 - PLL K 3 */
+	0x0000,     /* R40 */
+	0x0000,     /* R41 - 3D control */
+	0x0000,     /* R42 - OUT4 to ADC */
+	0x0000,     /* R43 - Beep control */
+	0x0033,     /* R44 - Input ctrl */
+	0x0010,     /* R45 - Left INP PGA gain ctrl */
+	0x0010,     /* R46 - Right INP PGA gain ctrl */
+	0x0100,     /* R47 - Left ADC BOOST ctrl */
+	0x0100,     /* R48 - Right ADC BOOST ctrl */
+	0x0002,     /* R49 - Output ctrl */
+	0x0001,     /* R50 - Left mixer ctrl */
+	0x0001,     /* R51 - Right mixer ctrl */
+	0x0039,     /* R52 - LOUT1 (HP) volume ctrl */
+	0x0039,     /* R53 - ROUT1 (HP) volume ctrl */
+	0x0039,     /* R54 - LOUT2 (SPK) volume ctrl */
+	0x0039,     /* R55 - ROUT2 (SPK) volume ctrl */
+	0x0001,     /* R56 - OUT3 mixer ctrl */
+	0x0001,     /* R57 - OUT4 (MONO) mix ctrl */
+	0x0001,     /* R58 */
+	0x0000,     /* R59 */
+	0x0004,     /* R60 - OUTPUT ctrl */
+	0x0000,     /* R61 - BIAS CTRL */
+	0x0180,     /* R62 */
+	0x0000      /* R63 */
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * latch bit 8 of these registers to ensure instant
  * volume updates
@@ -179,7 +252,11 @@ static const int volume_update_regs[] = {
 };
 
 struct wm8985_priv {
+<<<<<<< HEAD
 	struct regmap *regmap;
+=======
+	enum snd_soc_control_type control_type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct regulator_bulk_data supplies[WM8985_NUM_SUPPLIES];
 	unsigned int sysclk;
 	unsigned int bclk;
@@ -466,8 +543,12 @@ static const struct snd_soc_dapm_widget wm8985_dapm_widgets[] = {
 	SND_SOC_DAPM_PGA("Right Speaker Out", WM8985_POWER_MANAGEMENT_3,
 		6, 0, NULL, 0),
 
+<<<<<<< HEAD
 	SND_SOC_DAPM_SUPPLY("Mic Bias", WM8985_POWER_MANAGEMENT_1, 4, 0,
 			    NULL, 0),
+=======
+	SND_SOC_DAPM_MICBIAS("Mic Bias", WM8985_POWER_MANAGEMENT_1, 4, 0),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	SND_SOC_DAPM_INPUT("LIN"),
 	SND_SOC_DAPM_INPUT("LIP"),
@@ -483,7 +564,11 @@ static const struct snd_soc_dapm_widget wm8985_dapm_widgets[] = {
 	SND_SOC_DAPM_OUTPUT("SPKR")
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dapm_route wm8985_dapm_routes[] = {
+=======
+static const struct snd_soc_dapm_route audio_map[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ "Right Output Mixer", "PCM Switch", "Right DAC" },
 	{ "Right Output Mixer", "Aux Switch", "AUXR" },
 	{ "Right Output Mixer", "Line Switch", "Right Boost Mixer" },
@@ -586,6 +671,20 @@ static int eqmode_put(struct snd_kcontrol *kcontrol,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int wm8985_add_widgets(struct snd_soc_codec *codec)
+{
+	struct snd_soc_dapm_context *dapm = &codec->dapm;
+
+	snd_soc_dapm_new_controls(dapm, wm8985_dapm_widgets,
+				  ARRAY_SIZE(wm8985_dapm_widgets));
+	snd_soc_dapm_add_routes(dapm, audio_map,
+				ARRAY_SIZE(audio_map));
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int wm8985_reset(struct snd_soc_codec *codec)
 {
 	return snd_soc_write(codec, WM8985_SOFTWARE_RESET, 0x0);
@@ -889,6 +988,28 @@ static int wm8985_set_sysclk(struct snd_soc_dai *dai,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void wm8985_sync_cache(struct snd_soc_codec *codec)
+{
+	short i;
+	u16 *cache;
+
+	if (!codec->cache_sync)
+		return;
+	codec->cache_only = 0;
+	/* restore cache */
+	cache = codec->reg_cache;
+	for (i = 0; i < codec->driver->reg_cache_size; i++) {
+		if (i == WM8985_SOFTWARE_RESET
+				|| cache[i] == wm8985_reg_defs[i])
+			continue;
+		snd_soc_write(codec, i, cache[i]);
+	}
+	codec->cache_sync = 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int wm8985_set_bias_level(struct snd_soc_codec *codec,
 				 enum snd_soc_bias_level level)
 {
@@ -915,7 +1036,11 @@ static int wm8985_set_bias_level(struct snd_soc_codec *codec,
 				return ret;
 			}
 
+<<<<<<< HEAD
 			regcache_sync(wm8985->regmap);
+=======
+			wm8985_sync_cache(codec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* enable anti-pop features */
 			snd_soc_update_bits(codec, WM8985_OUT4_TO_ADC,
@@ -958,7 +1083,11 @@ static int wm8985_set_bias_level(struct snd_soc_codec *codec,
 		snd_soc_write(codec, WM8985_POWER_MANAGEMENT_2, 0);
 		snd_soc_write(codec, WM8985_POWER_MANAGEMENT_3, 0);
 
+<<<<<<< HEAD
 		regcache_mark_dirty(wm8985->regmap);
+=======
+		codec->cache_sync = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		regulator_bulk_disable(ARRAY_SIZE(wm8985->supplies),
 				       wm8985->supplies);
@@ -970,7 +1099,11 @@ static int wm8985_set_bias_level(struct snd_soc_codec *codec,
 }
 
 #ifdef CONFIG_PM
+<<<<<<< HEAD
 static int wm8985_suspend(struct snd_soc_codec *codec)
+=======
+static int wm8985_suspend(struct snd_soc_codec *codec, pm_message_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	wm8985_set_bias_level(codec, SND_SOC_BIAS_OFF);
 	return 0;
@@ -1001,11 +1134,19 @@ static int wm8985_probe(struct snd_soc_codec *codec)
 	size_t i;
 	struct wm8985_priv *wm8985;
 	int ret;
+<<<<<<< HEAD
 
 	wm8985 = snd_soc_codec_get_drvdata(codec);
 	codec->control_data = wm8985->regmap;
 
 	ret = snd_soc_codec_set_cache_io(codec, 7, 9, SND_SOC_REGMAP);
+=======
+	u16 *cache;
+
+	wm8985 = snd_soc_codec_get_drvdata(codec);
+
+	ret = snd_soc_codec_set_cache_io(codec, 7, 9, wm8985->control_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		dev_err(codec->dev, "Failed to set cache i/o: %d\n", ret);
 		return ret;
@@ -1034,6 +1175,7 @@ static int wm8985_probe(struct snd_soc_codec *codec)
 		goto err_reg_enable;
 	}
 
+<<<<<<< HEAD
 	/* latch volume update bits */
 	for (i = 0; i < ARRAY_SIZE(volume_update_regs); ++i)
 		snd_soc_update_bits(codec, volume_update_regs[i],
@@ -1041,6 +1183,19 @@ static int wm8985_probe(struct snd_soc_codec *codec)
 	/* enable BIASCUT */
 	snd_soc_update_bits(codec, WM8985_BIAS_CTRL, WM8985_BIASCUT,
 			    WM8985_BIASCUT);
+=======
+	cache = codec->reg_cache;
+	/* latch volume update bits */
+	for (i = 0; i < ARRAY_SIZE(volume_update_regs); ++i)
+		cache[volume_update_regs[i]] |= 0x100;
+	/* enable BIASCUT */
+	cache[WM8985_BIAS_CTRL] |= WM8985_BIASCUT;
+	codec->cache_sync = 1;
+
+	snd_soc_add_controls(codec, wm8985_snd_controls,
+			     ARRAY_SIZE(wm8985_snd_controls));
+	wm8985_add_widgets(codec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wm8985_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
 	return 0;
@@ -1052,7 +1207,11 @@ err_reg_get:
 	return ret;
 }
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops wm8985_dai_ops = {
+=======
+static struct snd_soc_dai_ops wm8985_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.digital_mute = wm8985_dac_mute,
 	.hw_params = wm8985_hw_params,
 	.set_fmt = wm8985_set_fmt,
@@ -1089,6 +1248,7 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8985 = {
 	.suspend = wm8985_suspend,
 	.resume = wm8985_resume,
 	.set_bias_level = wm8985_set_bias_level,
+<<<<<<< HEAD
 
 	.controls = wm8985_snd_controls,
 	.num_controls = ARRAY_SIZE(wm8985_snd_controls),
@@ -1108,6 +1268,11 @@ static const struct regmap_config wm8985_regmap = {
 	.cache_type = REGCACHE_RBTREE,
 	.reg_defaults = wm8985_reg_defaults,
 	.num_reg_defaults = ARRAY_SIZE(wm8985_reg_defaults),
+=======
+	.reg_cache_size = ARRAY_SIZE(wm8985_reg_defs),
+	.reg_word_size = sizeof(u16),
+	.reg_cache_default = wm8985_reg_defs
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #if defined(CONFIG_SPI_MASTER)
@@ -1116,6 +1281,7 @@ static int __devinit wm8985_spi_probe(struct spi_device *spi)
 	struct wm8985_priv *wm8985;
 	int ret;
 
+<<<<<<< HEAD
 	wm8985 = devm_kzalloc(&spi->dev, sizeof *wm8985, GFP_KERNEL);
 	if (!wm8985)
 		return -ENOMEM;
@@ -1139,16 +1305,34 @@ static int __devinit wm8985_spi_probe(struct spi_device *spi)
 
 err:
 	regmap_exit(wm8985->regmap);
+=======
+	wm8985 = kzalloc(sizeof *wm8985, GFP_KERNEL);
+	if (!wm8985)
+		return -ENOMEM;
+
+	wm8985->control_type = SND_SOC_SPI;
+	spi_set_drvdata(spi, wm8985);
+
+	ret = snd_soc_register_codec(&spi->dev,
+				     &soc_codec_dev_wm8985, &wm8985_dai, 1);
+	if (ret < 0)
+		kfree(wm8985);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devexit wm8985_spi_remove(struct spi_device *spi)
 {
+<<<<<<< HEAD
 	struct wm8985_priv *wm8985 = spi_get_drvdata(spi);
 
 	snd_soc_unregister_codec(&spi->dev);
 	regmap_exit(wm8985->regmap);
 
+=======
+	snd_soc_unregister_codec(&spi->dev);
+	kfree(spi_get_drvdata(spi));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1169,6 +1353,7 @@ static __devinit int wm8985_i2c_probe(struct i2c_client *i2c,
 	struct wm8985_priv *wm8985;
 	int ret;
 
+<<<<<<< HEAD
 	wm8985 = devm_kzalloc(&i2c->dev, sizeof *wm8985, GFP_KERNEL);
 	if (!wm8985)
 		return -ENOMEM;
@@ -1202,6 +1387,26 @@ static __devexit int wm8985_i2c_remove(struct i2c_client *i2c)
 	snd_soc_unregister_codec(&i2c->dev);
 	regmap_exit(wm8985->regmap);
 
+=======
+	wm8985 = kzalloc(sizeof *wm8985, GFP_KERNEL);
+	if (!wm8985)
+		return -ENOMEM;
+
+	wm8985->control_type = SND_SOC_I2C;
+	i2c_set_clientdata(i2c, wm8985);
+
+	ret = snd_soc_register_codec(&i2c->dev,
+				     &soc_codec_dev_wm8985, &wm8985_dai, 1);
+	if (ret < 0)
+		kfree(wm8985);
+	return ret;
+}
+
+static __devexit int wm8985_i2c_remove(struct i2c_client *client)
+{
+	snd_soc_unregister_codec(&client->dev);
+	kfree(i2c_get_clientdata(client));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

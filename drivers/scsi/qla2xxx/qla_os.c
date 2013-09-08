@@ -35,10 +35,13 @@ static struct kmem_cache *srb_cachep;
  * CT6 CTX allocation cache
  */
 static struct kmem_cache *ctx_cachep;
+<<<<<<< HEAD
 /*
  * error level for logging
  */
 int ql_errlev = ql_log_all;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int ql2xlogintimeout = 20;
 module_param(ql2xlogintimeout, int, S_IRUGO);
@@ -73,6 +76,7 @@ MODULE_PARM_DESC(ql2xallocfwdump,
 int ql2xextended_error_logging;
 module_param(ql2xextended_error_logging, int, S_IRUGO|S_IWUSR);
 MODULE_PARM_DESC(ql2xextended_error_logging,
+<<<<<<< HEAD
 		"Option to enable extended error logging,\n"
 		"\t\tDefault is 0 - no logging.  0x40000000 - Module Init & Probe.\n"
 		"\t\t0x20000000 - Mailbox Cmnds. 0x10000000 - Device Discovery.\n"
@@ -87,6 +91,10 @@ MODULE_PARM_DESC(ql2xextended_error_logging,
 		"debug information (equivalent to old "
 		"ql2xextended_error_logging=1).\n"
 		"\t\tDo LOGICAL OR of the value to enable more than one level");
+=======
+		"Option to enable extended error logging, "
+		"Default is 0 - no logging. 1 - log errors.");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int ql2xshiftctondsd = 6;
 module_param(ql2xshiftctondsd, int, S_IRUGO);
@@ -109,6 +117,7 @@ MODULE_PARM_DESC(ql2xmaxqdepth,
 		"Maximum queue depth to report for target devices.");
 
 /* Do not change the value of this after module load */
+<<<<<<< HEAD
 int ql2xenabledif = 0;
 module_param(ql2xenabledif, int, S_IRUGO|S_IWUSR);
 MODULE_PARM_DESC(ql2xenabledif,
@@ -124,6 +133,19 @@ MODULE_PARM_DESC(ql2xenablehba_err_chk,
 		"  0 -- Error isolation disabled\n"
 		"  1 -- Error isolation enabled only for DIX Type 0\n"
 		"  2 -- Error isolation enabled for all Types\n");
+=======
+int ql2xenabledif = 1;
+module_param(ql2xenabledif, int, S_IRUGO|S_IWUSR);
+MODULE_PARM_DESC(ql2xenabledif,
+		" Enable T10-CRC-DIF "
+		" Default is 0 - No DIF Support. 1 - Enable it");
+
+int ql2xenablehba_err_chk;
+module_param(ql2xenablehba_err_chk, int, S_IRUGO|S_IWUSR);
+MODULE_PARM_DESC(ql2xenablehba_err_chk,
+		" Enable T10-CRC-DIF Error isolation by HBA"
+		" Default is 0 - Error isolation disabled, 1 - Enable it");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int ql2xiidmaenable=1;
 module_param(ql2xiidmaenable, int, S_IRUGO);
@@ -146,10 +168,17 @@ MODULE_PARM_DESC(ql2xmultique_tag,
 		"Set it to 1 to turn on the cpu affinity.");
 
 int ql2xfwloadbin;
+<<<<<<< HEAD
 module_param(ql2xfwloadbin, int, S_IRUGO|S_IWUSR);
 MODULE_PARM_DESC(ql2xfwloadbin,
 		"Option to specify location from which to load ISP firmware:.\n"
 		" 2 -- load firmware via the request_firmware() (hotplug).\n"
+=======
+module_param(ql2xfwloadbin, int, S_IRUGO);
+MODULE_PARM_DESC(ql2xfwloadbin,
+		"Option to specify location from which to load ISP firmware:\n"
+		" 2 -- load firmware via the request_firmware() (hotplug)\n"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"      interface.\n"
 		" 1 -- load firmware from flash.\n"
 		" 0 -- use default semantics.\n");
@@ -161,11 +190,19 @@ MODULE_PARM_DESC(ql2xetsenable,
 		"Default is 0 - skip ETS enablement.");
 
 int ql2xdbwr = 1;
+<<<<<<< HEAD
 module_param(ql2xdbwr, int, S_IRUGO|S_IWUSR);
 MODULE_PARM_DESC(ql2xdbwr,
 		"Option to specify scheme for request queue posting.\n"
 		" 0 -- Regular doorbell.\n"
 		" 1 -- CAMRAM doorbell (faster).\n");
+=======
+module_param(ql2xdbwr, int, S_IRUGO);
+MODULE_PARM_DESC(ql2xdbwr,
+	"Option to specify scheme for request queue posting\n"
+	" 0 -- Regular doorbell.\n"
+	" 1 -- CAMRAM doorbell (faster).\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int ql2xtargetreset = 1;
 module_param(ql2xtargetreset, int, S_IRUGO);
@@ -186,11 +223,19 @@ MODULE_PARM_DESC(ql2xasynctmfenable,
 		"Default is 0 - Issue TM IOCBs via mailbox mechanism.");
 
 int ql2xdontresethba;
+<<<<<<< HEAD
 module_param(ql2xdontresethba, int, S_IRUGO|S_IWUSR);
 MODULE_PARM_DESC(ql2xdontresethba,
 		"Option to specify reset behaviour.\n"
 		" 0 (Default) -- Reset on failure.\n"
 		" 1 -- Do not reset on failure.\n");
+=======
+module_param(ql2xdontresethba, int, S_IRUGO);
+MODULE_PARM_DESC(ql2xdontresethba,
+	"Option to specify reset behaviour\n"
+	" 0 (Default) -- Reset on failure.\n"
+	" 1 -- Do not reset on failure.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 uint ql2xmaxlun = MAX_LUNS;
 module_param(ql2xmaxlun, uint, S_IRUGO);
@@ -198,6 +243,7 @@ MODULE_PARM_DESC(ql2xmaxlun,
 		"Defines the maximum LU number to register with the SCSI "
 		"midlayer. Default is 65535.");
 
+<<<<<<< HEAD
 int ql2xmdcapmask = 0x1F;
 module_param(ql2xmdcapmask, int, S_IRUGO);
 MODULE_PARM_DESC(ql2xmdcapmask,
@@ -211,6 +257,8 @@ MODULE_PARM_DESC(ql2xmdenable,
 		"0 - MiniDump disabled. "
 		"1 (Default) - MiniDump enabled.");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * SCSI host template entry points
  */
@@ -280,11 +328,16 @@ static inline void
 qla2x00_restart_timer(scsi_qla_host_t *vha, unsigned long interval)
 {
 	/* Currently used for 82XX only. */
+<<<<<<< HEAD
 	if (vha->device_flags & DFLG_DEV_FAILED) {
 		ql_dbg(ql_dbg_timer, vha, 0x600d,
 		    "Device in a failed state, returning.\n");
 		return;
 	}
+=======
+	if (vha->device_flags & DFLG_DEV_FAILED)
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mod_timer(&vha->timer, jiffies + interval * HZ);
 }
@@ -304,24 +357,41 @@ static int qla2x00_mem_alloc(struct qla_hw_data *, uint16_t, uint16_t,
 	struct req_que **, struct rsp_que **);
 static void qla2x00_free_fw_dump(struct qla_hw_data *);
 static void qla2x00_mem_free(struct qla_hw_data *);
+<<<<<<< HEAD
+=======
+static void qla2x00_sp_free_dma(srb_t *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* -------------------------------------------------------------------------- */
 static int qla2x00_alloc_queues(struct qla_hw_data *ha)
 {
+<<<<<<< HEAD
 	scsi_qla_host_t *vha = pci_get_drvdata(ha->pdev);
 	ha->req_q_map = kzalloc(sizeof(struct req_que *) * ha->max_req_queues,
 				GFP_KERNEL);
 	if (!ha->req_q_map) {
 		ql_log(ql_log_fatal, vha, 0x003b,
 		    "Unable to allocate memory for request queue ptrs.\n");
+=======
+	ha->req_q_map = kzalloc(sizeof(struct req_que *) * ha->max_req_queues,
+				GFP_KERNEL);
+	if (!ha->req_q_map) {
+		qla_printk(KERN_WARNING, ha,
+			"Unable to allocate memory for request queue ptrs\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto fail_req_map;
 	}
 
 	ha->rsp_q_map = kzalloc(sizeof(struct rsp_que *) * ha->max_rsp_queues,
 				GFP_KERNEL);
 	if (!ha->rsp_q_map) {
+<<<<<<< HEAD
 		ql_log(ql_log_fatal, vha, 0x003c,
 		    "Unable to allocate memory for response queue ptrs.\n");
+=======
+		qla_printk(KERN_WARNING, ha,
+			"Unable to allocate memory for response queue ptrs\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto fail_rsp_map;
 	}
 	set_bit(0, ha->rsp_qid_map);
@@ -385,8 +455,13 @@ static int qla25xx_setup_mode(struct scsi_qla_host *vha)
 	struct qla_hw_data *ha = vha->hw;
 
 	if (!(ha->fw_attributes & BIT_6)) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0x00d8,
 		    "Firmware is not multi-queue capable.\n");
+=======
+		qla_printk(KERN_INFO, ha,
+			"Firmware is not multi-queue capable\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto fail;
 	}
 	if (ql2xmultique_tag) {
@@ -395,8 +470,13 @@ static int qla25xx_setup_mode(struct scsi_qla_host *vha)
 		req = qla25xx_create_req_que(ha, options, 0, 0, -1,
 			QLA_DEFAULT_QUE_QOS);
 		if (!req) {
+<<<<<<< HEAD
 			ql_log(ql_log_warn, vha, 0x00e0,
 			    "Failed to create request queue.\n");
+=======
+			qla_printk(KERN_WARNING, ha,
+				"Can't create request queue\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto fail;
 		}
 		ha->wq = alloc_workqueue("qla2xxx_wq", WQ_MEM_RECLAIM, 1);
@@ -405,12 +485,18 @@ static int qla25xx_setup_mode(struct scsi_qla_host *vha)
 		for (ques = 1; ques < ha->max_rsp_queues; ques++) {
 			ret = qla25xx_create_rsp_que(ha, options, 0, 0, req);
 			if (!ret) {
+<<<<<<< HEAD
 				ql_log(ql_log_warn, vha, 0x00e8,
 				    "Failed to create response queue.\n");
+=======
+				qla_printk(KERN_WARNING, ha,
+					"Response Queue create failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto fail2;
 			}
 		}
 		ha->flags.cpu_affinity_enabled = 1;
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_multiq, vha, 0xc007,
 		    "CPU affinity mode enalbed, "
 		    "no. of response queues:%d no. of request queues:%d.\n",
@@ -419,13 +505,23 @@ static int qla25xx_setup_mode(struct scsi_qla_host *vha)
 		    "CPU affinity mode enalbed, "
 		    "no. of response queues:%d no. of request queues:%d.\n",
 		    ha->max_rsp_queues, ha->max_req_queues);
+=======
+
+		DEBUG2(qla_printk(KERN_INFO, ha,
+			"CPU affinity mode enabled, no. of response"
+			" queues:%d, no. of request queues:%d\n",
+			ha->max_rsp_queues, ha->max_req_queues));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 fail2:
 	qla25xx_delete_queues(vha);
 	destroy_workqueue(ha->wq);
 	ha->wq = NULL;
+<<<<<<< HEAD
 	vha->req = ha->req_q_map[0];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 fail:
 	ha->mqenable = 0;
 	kfree(ha->req_q_map);
@@ -558,6 +654,7 @@ qla24xx_fw_version_str(struct scsi_qla_host *vha, char *str)
 	return str;
 }
 
+<<<<<<< HEAD
 void
 qla2x00_sp_free_dma(void *vha, void *ptr)
 {
@@ -627,6 +724,27 @@ qla2x00_sp_compl(void *data, void *ptr, int res)
 
 	qla2x00_sp_free_dma(ha, sp);
 	cmd->scsi_done(cmd);
+=======
+static inline srb_t *
+qla2x00_get_new_sp(scsi_qla_host_t *vha, fc_port_t *fcport,
+	struct scsi_cmnd *cmd)
+{
+	srb_t *sp;
+	struct qla_hw_data *ha = vha->hw;
+
+	sp = mempool_alloc(ha->srb_mempool, GFP_ATOMIC);
+	if (!sp)
+		return sp;
+
+	atomic_set(&sp->ref_count, 1);
+	sp->fcport = fcport;
+	sp->cmd = cmd;
+	sp->flags = 0;
+	CMD_SP(cmd) = (void *)sp;
+	sp->ctx = NULL;
+
+	return sp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -641,6 +759,7 @@ qla2xxx_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
 	int rval;
 
 	if (ha->flags.eeh_busy) {
+<<<<<<< HEAD
 		if (ha->flags.pci_channel_io_perm_failure) {
 			ql_dbg(ql_dbg_io, vha, 0x3001,
 			    "PCI Channel IO permanent failure, exiting "
@@ -651,20 +770,30 @@ qla2xxx_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
 			    "EEH_Busy, Requeuing the cmd=%p.\n", cmd);
 			cmd->result = DID_REQUEUE << 16;
 		}
+=======
+		if (ha->flags.pci_channel_io_perm_failure)
+			cmd->result = DID_NO_CONNECT << 16;
+		else
+			cmd->result = DID_REQUEUE << 16;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto qc24_fail_command;
 	}
 
 	rval = fc_remote_port_chkready(rport);
 	if (rval) {
 		cmd->result = rval;
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_io, vha, 0x3003,
 		    "fc_remote_port_chkready failed for cmd=%p, rval=0x%x.\n",
 		    cmd, rval);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto qc24_fail_command;
 	}
 
 	if (!vha->flags.difdix_supported &&
 		scsi_get_prot_op(cmd) != SCSI_PROT_NORMAL) {
+<<<<<<< HEAD
 			ql_dbg(ql_dbg_io, vha, 0x3004,
 			    "DIF Cap not reg, fail DIF capable cmd's:%p.\n",
 			    cmd);
@@ -684,12 +813,24 @@ qla2xxx_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
 			    "Returning DNC, fcport_state=%d loop_state=%d.\n",
 			    atomic_read(&fcport->state),
 			    atomic_read(&base_vha->loop_state));
+=======
+			DEBUG2(qla_printk(KERN_ERR, ha,
+			    "DIF Cap Not Reg, fail DIF capable cmd's:%x\n",
+			    cmd->cmnd[0]));
+			cmd->result = DID_NO_CONNECT << 16;
+			goto qc24_fail_command;
+	}
+	if (atomic_read(&fcport->state) != FCS_ONLINE) {
+		if (atomic_read(&fcport->state) == FCS_DEVICE_DEAD ||
+			atomic_read(&base_vha->loop_state) == LOOP_DEAD) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cmd->result = DID_NO_CONNECT << 16;
 			goto qc24_fail_command;
 		}
 		goto qc24_target_busy;
 	}
 
+<<<<<<< HEAD
 	sp = qla2x00_get_sp(base_vha, fcport, GFP_ATOMIC);
 	if (!sp)
 		goto qc24_host_busy;
@@ -707,11 +848,25 @@ qla2xxx_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
 		    "Start scsi failed rval=%d for cmd=%p.\n", rval, cmd);
 		goto qc24_host_busy_free_sp;
 	}
+=======
+	sp = qla2x00_get_new_sp(base_vha, fcport, cmd);
+	if (!sp)
+		goto qc24_host_busy;
+
+	rval = ha->isp_ops->start_scsi(sp);
+	if (rval != QLA_SUCCESS)
+		goto qc24_host_busy_free_sp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
 qc24_host_busy_free_sp:
+<<<<<<< HEAD
 	qla2x00_sp_free_dma(ha, sp);
+=======
+	qla2x00_sp_free_dma(sp);
+	mempool_free(sp, ha->srb_mempool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 qc24_host_busy:
 	return SCSI_MLQUEUE_HOST_BUSY;
@@ -748,8 +903,12 @@ qla2x00_eh_wait_on_command(struct scsi_cmnd *cmd)
 	int ret = QLA_SUCCESS;
 
 	if (unlikely(pci_channel_offline(ha->pdev)) || ha->flags.eeh_busy) {
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_taskm, vha, 0x8005,
 		    "Return:eh_wait.\n");
+=======
+		DEBUG17(qla_printk(KERN_WARNING, ha, "return:eh_wait\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 
@@ -842,8 +1001,12 @@ qla2x00_wait_for_reset_ready(scsi_qla_host_t *vha)
 	else
 		return_status = QLA_FUNCTION_FAILED;
 
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_taskm, vha, 0x8019,
 	    "%s return status=%d.\n", __func__, return_status);
+=======
+	DEBUG2(printk("%s return_status=%d\n", __func__, return_status));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return return_status;
 }
@@ -876,6 +1039,52 @@ qla2x00_wait_for_chip_reset(scsi_qla_host_t *vha)
 	return return_status;
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * qla2x00_wait_for_loop_ready
+ *    Wait for MAX_LOOP_TIMEOUT(5 min) value for loop
+ *    to be in LOOP_READY state.
+ * Input:
+ *     ha - pointer to host adapter structure
+ *
+ * Note:
+ *    Does context switching-Release SPIN_LOCK
+ *    (if any) before calling this routine.
+ *
+ *
+ * Return:
+ *    Success (LOOP_READY) : 0
+ *    Failed  (LOOP_NOT_READY) : 1
+ */
+static inline int
+qla2x00_wait_for_loop_ready(scsi_qla_host_t *vha)
+{
+	int 	 return_status = QLA_SUCCESS;
+	unsigned long loop_timeout ;
+	struct qla_hw_data *ha = vha->hw;
+	scsi_qla_host_t *base_vha = pci_get_drvdata(ha->pdev);
+
+	/* wait for 5 min at the max for loop to be ready */
+	loop_timeout = jiffies + (MAX_LOOP_TIMEOUT * HZ);
+
+	while ((!atomic_read(&base_vha->loop_down_timer) &&
+	    atomic_read(&base_vha->loop_state) == LOOP_DOWN) ||
+	    atomic_read(&base_vha->loop_state) != LOOP_READY) {
+		if (atomic_read(&base_vha->loop_state) == LOOP_DEAD) {
+			return_status = QLA_FUNCTION_FAILED;
+			break;
+		}
+		msleep(1000);
+		if (time_after_eq(jiffies, loop_timeout)) {
+			return_status = QLA_FUNCTION_FAILED;
+			break;
+		}
+	}
+	return (return_status);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 sp_get(struct srb *sp)
 {
@@ -926,15 +1135,21 @@ qla2xxx_eh_abort(struct scsi_cmnd *cmd)
 		return SUCCESS;
 	}
 
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_taskm, vha, 0x8002,
 	    "Aborting from RISC nexus=%ld:%d:%d sp=%p cmd=%p\n",
 	    vha->host_no, id, lun, sp, cmd);
+=======
+	DEBUG2(printk("%s(%ld): aborting sp %p from RISC.",
+	    __func__, vha->host_no, sp));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Get a reference to the sp and drop the lock.*/
 	sp_get(sp);
 
 	spin_unlock_irqrestore(&ha->hardware_lock, flags);
 	if (ha->isp_ops->abort_command(sp)) {
+<<<<<<< HEAD
 		ret = FAILED;
 		ql_dbg(ql_dbg_taskm, vha, 0x8003,
 		    "Abort command mbx failed cmd=%p.\n", cmd);
@@ -951,18 +1166,40 @@ qla2xxx_eh_abort(struct scsi_cmnd *cmd)
 	/* Did the command return during mailbox execution? */
 	if (ret == FAILED && !CMD_SP(cmd))
 		ret = SUCCESS;
+=======
+		DEBUG2(printk("%s(%ld): abort_command "
+		"mbx failed.\n", __func__, vha->host_no));
+		ret = FAILED;
+	} else {
+		DEBUG3(printk("%s(%ld): abort_command "
+		"mbx success.\n", __func__, vha->host_no));
+		wait = 1;
+	}
+	qla2x00_sp_compl(ha, sp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Wait for the command to be returned. */
 	if (wait) {
 		if (qla2x00_eh_wait_on_command(cmd) != QLA_SUCCESS) {
+<<<<<<< HEAD
 			ql_log(ql_log_warn, vha, 0x8006,
 			    "Abort handler timed out cmd=%p.\n", cmd);
+=======
+			qla_printk(KERN_ERR, ha,
+			    "scsi(%ld:%d:%d): Abort handler timed out -- %x.\n",
+			    vha->host_no, id, lun, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = FAILED;
 		}
 	}
 
+<<<<<<< HEAD
 	ql_log(ql_log_info, vha, 0x801c,
 	    "Abort command issued nexus=%ld:%d:%d --  %d %x.\n",
+=======
+	qla_printk(KERN_INFO, ha,
+	    "scsi(%ld:%d:%d): Abort command issued -- %d %x.\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    vha->host_no, id, lun, wait, ret);
 
 	return ret;
@@ -977,7 +1214,10 @@ qla2x00_eh_wait_for_pending_commands(scsi_qla_host_t *vha, unsigned int t,
 	struct qla_hw_data *ha = vha->hw;
 	struct req_que *req;
 	srb_t *sp;
+<<<<<<< HEAD
 	struct scsi_cmnd *cmd;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	status = QLA_SUCCESS;
 
@@ -988,29 +1228,48 @@ qla2x00_eh_wait_for_pending_commands(scsi_qla_host_t *vha, unsigned int t,
 		sp = req->outstanding_cmds[cnt];
 		if (!sp)
 			continue;
+<<<<<<< HEAD
 		if (sp->type != SRB_SCSI_CMD)
+=======
+		if ((sp->ctx) && !IS_PROT_IO(sp))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		if (vha->vp_idx != sp->fcport->vha->vp_idx)
 			continue;
 		match = 0;
+<<<<<<< HEAD
 		cmd = GET_CMD_SP(sp);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		switch (type) {
 		case WAIT_HOST:
 			match = 1;
 			break;
 		case WAIT_TARGET:
+<<<<<<< HEAD
 			match = cmd->device->id == t;
 			break;
 		case WAIT_LUN:
 			match = (cmd->device->id == t &&
 				cmd->device->lun == l);
+=======
+			match = sp->cmd->device->id == t;
+			break;
+		case WAIT_LUN:
+			match = (sp->cmd->device->id == t &&
+				sp->cmd->device->lun == l);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 		if (!match)
 			continue;
 
 		spin_unlock_irqrestore(&ha->hardware_lock, flags);
+<<<<<<< HEAD
 		status = qla2x00_eh_wait_on_command(cmd);
+=======
+		status = qla2x00_eh_wait_on_command(sp->cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_lock_irqsave(&ha->hardware_lock, flags);
 	}
 	spin_unlock_irqrestore(&ha->hardware_lock, flags);
@@ -1033,14 +1292,20 @@ __qla2xxx_eh_generic_reset(char *name, enum nexus_wait_type type,
 	fc_port_t *fcport = (struct fc_port *) cmd->device->hostdata;
 	int err;
 
+<<<<<<< HEAD
 	if (!fcport) {
 		return FAILED;
 	}
+=======
+	if (!fcport)
+		return FAILED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = fc_block_scsi_eh(cmd);
 	if (err != 0)
 		return err;
 
+<<<<<<< HEAD
 	ql_log(ql_log_info, vha, 0x8009,
 	    "%s RESET ISSUED nexus=%ld:%d:%d cmd=%p.\n", name, vha->host_no,
 	    cmd->device->id, cmd->device->lun, cmd);
@@ -1069,14 +1334,42 @@ __qla2xxx_eh_generic_reset(char *name, enum nexus_wait_type type,
 	ql_log(ql_log_info, vha, 0x800e,
 	    "%s RESET SUCCEEDED nexus:%ld:%d:%d cmd=%p.\n", name,
 	    vha->host_no, cmd->device->id, cmd->device->lun, cmd);
+=======
+	qla_printk(KERN_INFO, vha->hw, "scsi(%ld:%d:%d): %s RESET ISSUED.\n",
+	    vha->host_no, cmd->device->id, cmd->device->lun, name);
+
+	err = 0;
+	if (qla2x00_wait_for_hba_online(vha) != QLA_SUCCESS)
+		goto eh_reset_failed;
+	err = 1;
+	if (qla2x00_wait_for_loop_ready(vha) != QLA_SUCCESS)
+		goto eh_reset_failed;
+	err = 2;
+	if (do_reset(fcport, cmd->device->lun, cmd->request->cpu + 1)
+		!= QLA_SUCCESS)
+		goto eh_reset_failed;
+	err = 3;
+	if (qla2x00_eh_wait_for_pending_commands(vha, cmd->device->id,
+	    cmd->device->lun, type) != QLA_SUCCESS)
+		goto eh_reset_failed;
+
+	qla_printk(KERN_INFO, vha->hw, "scsi(%ld:%d:%d): %s RESET SUCCEEDED.\n",
+	    vha->host_no, cmd->device->id, cmd->device->lun, name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return SUCCESS;
 
 eh_reset_failed:
+<<<<<<< HEAD
 	ql_log(ql_log_info, vha, 0x800f,
 	    "%s RESET FAILED: %s nexus=%ld:%d:%d cmd=%p.\n", name,
 	    reset_errors[err], vha->host_no, cmd->device->id, cmd->device->lun,
 	    cmd);
+=======
+	qla_printk(KERN_INFO, vha->hw, "scsi(%ld:%d:%d): %s RESET FAILED: %s.\n"
+	    , vha->host_no, cmd->device->id, cmd->device->lun, name,
+	    reset_errors[err]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return FAILED;
 }
 
@@ -1126,15 +1419,21 @@ qla2xxx_eh_bus_reset(struct scsi_cmnd *cmd)
 	id = cmd->device->id;
 	lun = cmd->device->lun;
 
+<<<<<<< HEAD
 	if (!fcport) {
 		return ret;
 	}
+=======
+	if (!fcport)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = fc_block_scsi_eh(cmd);
 	if (ret != 0)
 		return ret;
 	ret = FAILED;
 
+<<<<<<< HEAD
 	ql_log(ql_log_info, vha, 0x8012,
 	    "BUS RESET ISSUED nexus=%ld:%d%d.\n", vha->host_no, id, lun);
 
@@ -1147,11 +1446,26 @@ qla2xxx_eh_bus_reset(struct scsi_cmnd *cmd)
 	if (qla2x00_loop_reset(vha) == QLA_SUCCESS)
 		ret = SUCCESS;
 
+=======
+	qla_printk(KERN_INFO, vha->hw,
+	    "scsi(%ld:%d:%d): BUS RESET ISSUED.\n", vha->host_no, id, lun);
+
+	if (qla2x00_wait_for_hba_online(vha) != QLA_SUCCESS) {
+		DEBUG2(printk("%s failed:board disabled\n",__func__));
+		goto eh_bus_reset_done;
+	}
+
+	if (qla2x00_wait_for_loop_ready(vha) == QLA_SUCCESS) {
+		if (qla2x00_loop_reset(vha) == QLA_SUCCESS)
+			ret = SUCCESS;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret == FAILED)
 		goto eh_bus_reset_done;
 
 	/* Flush outstanding commands. */
 	if (qla2x00_eh_wait_for_pending_commands(vha, 0, 0, WAIT_HOST) !=
+<<<<<<< HEAD
 	    QLA_SUCCESS) {
 		ql_log(ql_log_warn, vha, 0x8014,
 		    "Wait for pending commands failed.\n");
@@ -1162,6 +1476,14 @@ eh_bus_reset_done:
 	ql_log(ql_log_warn, vha, 0x802b,
 	    "BUS RESET %s nexus=%ld:%d:%d.\n",
 	    (ret == FAILED) ? "FAILED" : "SUCCEDED", vha->host_no, id, lun);
+=======
+	    QLA_SUCCESS)
+		ret = FAILED;
+
+eh_bus_reset_done:
+	qla_printk(KERN_INFO, vha->hw, "%s: reset %s\n", __func__,
+	    (ret == FAILED) ? "failed" : "succeeded");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -1185,6 +1507,10 @@ static int
 qla2xxx_eh_host_reset(struct scsi_cmnd *cmd)
 {
 	scsi_qla_host_t *vha = shost_priv(cmd->device->host);
+<<<<<<< HEAD
+=======
+	fc_port_t *fcport = (struct fc_port *) cmd->device->hostdata;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct qla_hw_data *ha = vha->hw;
 	int ret = FAILED;
 	unsigned int id, lun;
@@ -1193,12 +1519,37 @@ qla2xxx_eh_host_reset(struct scsi_cmnd *cmd)
 	id = cmd->device->id;
 	lun = cmd->device->lun;
 
+<<<<<<< HEAD
 	ql_log(ql_log_info, vha, 0x8018,
 	    "ADAPTER RESET ISSUED nexus=%ld:%d:%d.\n", vha->host_no, id, lun);
+=======
+	if (!fcport)
+		return ret;
+
+	ret = fc_block_scsi_eh(cmd);
+	if (ret != 0)
+		return ret;
+	ret = FAILED;
+
+	qla_printk(KERN_INFO, ha,
+	    "scsi(%ld:%d:%d): ADAPTER RESET ISSUED.\n", vha->host_no, id, lun);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (qla2x00_wait_for_reset_ready(vha) != QLA_SUCCESS)
 		goto eh_host_reset_lock;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * Fixme-may be dpc thread is active and processing
+	 * loop_resync,so wait a while for it to
+	 * be completed and then issue big hammer.Otherwise
+	 * it may cause I/O failure as big hammer marks the
+	 * devices as lost kicking of the port_down_timer
+	 * while dpc is stuck for the mailbox to complete.
+	 */
+	qla2x00_wait_for_loop_ready(vha);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (vha != base_vha) {
 		if (qla2x00_vp_abort_isp(vha))
 			goto eh_host_reset_lock;
@@ -1220,11 +1571,16 @@ qla2xxx_eh_host_reset(struct scsi_cmnd *cmd)
 			/* failed. schedule dpc to try */
 			set_bit(ISP_ABORT_NEEDED, &base_vha->dpc_flags);
 
+<<<<<<< HEAD
 			if (qla2x00_wait_for_hba_online(vha) != QLA_SUCCESS) {
 				ql_log(ql_log_warn, vha, 0x802a,
 				    "wait for hba online failed.\n");
 				goto eh_host_reset_lock;
 			}
+=======
+			if (qla2x00_wait_for_hba_online(vha) != QLA_SUCCESS)
+				goto eh_host_reset_lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		clear_bit(ABORT_ISP_ACTIVE, &base_vha->dpc_flags);
 	}
@@ -1235,9 +1591,14 @@ qla2xxx_eh_host_reset(struct scsi_cmnd *cmd)
 		ret = SUCCESS;
 
 eh_host_reset_lock:
+<<<<<<< HEAD
 	ql_log(ql_log_info, vha, 0x8017,
 	    "ADAPTER RESET %s nexus=%ld:%d:%d.\n",
 	    (ret == FAILED) ? "FAILED" : "SUCCEEDED", vha->host_no, id, lun);
+=======
+	qla_printk(KERN_INFO, ha, "%s: reset %s\n", __func__,
+	    (ret == FAILED) ? "failed" : "succeeded");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -1266,29 +1627,56 @@ qla2x00_loop_reset(scsi_qla_host_t *vha)
 
 			ret = ha->isp_ops->target_reset(fcport, 0, 0);
 			if (ret != QLA_SUCCESS) {
+<<<<<<< HEAD
 				ql_dbg(ql_dbg_taskm, vha, 0x802c,
 				    "Bus Reset failed: Target Reset=%d "
 				    "d_id=%x.\n", ret, fcport->d_id.b24);
+=======
+				DEBUG2_3(printk("%s(%ld): bus_reset failed: "
+				    "target_reset=%d d_id=%x.\n", __func__,
+				    vha->host_no, ret, fcport->d_id.b24));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 	}
 
+<<<<<<< HEAD
 	if (ha->flags.enable_lip_full_login && !IS_CNA_CAPABLE(ha)) {
 		ret = qla2x00_full_login_lip(vha);
 		if (ret != QLA_SUCCESS) {
 			ql_dbg(ql_dbg_taskm, vha, 0x802d,
 			    "full_login_lip=%d.\n", ret);
+=======
+	if (ha->flags.enable_lip_full_login && !IS_QLA8XXX_TYPE(ha)) {
+		ret = qla2x00_full_login_lip(vha);
+		if (ret != QLA_SUCCESS) {
+			DEBUG2_3(printk("%s(%ld): failed: "
+			    "full_login_lip=%d.\n", __func__, vha->host_no,
+			    ret));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		atomic_set(&vha->loop_state, LOOP_DOWN);
 		atomic_set(&vha->loop_down_timer, LOOP_DOWN_TIME);
 		qla2x00_mark_all_devices_lost(vha, 0);
+<<<<<<< HEAD
+=======
+		qla2x00_wait_for_loop_ready(vha);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (ha->flags.enable_lip_reset) {
 		ret = qla2x00_lip_reset(vha);
+<<<<<<< HEAD
 		if (ret != QLA_SUCCESS)
 			ql_dbg(ql_dbg_taskm, vha, 0x802e,
 			    "lip_reset failed (%d).\n", ret);
+=======
+		if (ret != QLA_SUCCESS) {
+			DEBUG2_3(printk("%s(%ld): failed: "
+			    "lip_reset=%d.\n", __func__, vha->host_no, ret));
+		} else
+			qla2x00_wait_for_loop_ready(vha);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Issue marker command only when we are going to start the I/O */
@@ -1303,6 +1691,10 @@ qla2x00_abort_all_cmds(scsi_qla_host_t *vha, int res)
 	int que, cnt;
 	unsigned long flags;
 	srb_t *sp;
+<<<<<<< HEAD
+=======
+	struct srb_ctx *ctx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct qla_hw_data *ha = vha->hw;
 	struct req_que *req;
 
@@ -1315,7 +1707,35 @@ qla2x00_abort_all_cmds(scsi_qla_host_t *vha, int res)
 			sp = req->outstanding_cmds[cnt];
 			if (sp) {
 				req->outstanding_cmds[cnt] = NULL;
+<<<<<<< HEAD
 				sp->done(vha, sp, res);
+=======
+				if (!sp->ctx ||
+					(sp->flags & SRB_FCP_CMND_DMA_VALID) ||
+					IS_PROT_IO(sp)) {
+					sp->cmd->result = res;
+					qla2x00_sp_compl(ha, sp);
+				} else {
+					ctx = sp->ctx;
+					if (ctx->type == SRB_ELS_CMD_RPT ||
+					    ctx->type == SRB_ELS_CMD_HST ||
+					    ctx->type == SRB_CT_CMD) {
+						struct fc_bsg_job *bsg_job =
+						    ctx->u.bsg_job;
+						if (bsg_job->request->msgcode
+						    == FC_BSG_HST_CT)
+							kfree(sp->fcport);
+						bsg_job->req->errors = 0;
+						bsg_job->reply->result = res;
+						bsg_job->job_done(bsg_job);
+						kfree(sp->ctx);
+						mempool_free(sp,
+							ha->srb_mempool);
+					} else {
+						ctx->u.iocb_cmd->free(sp);
+					}
+				}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 	}
@@ -1361,15 +1781,26 @@ static void qla2x00_handle_queue_full(struct scsi_device *sdev, int qdepth)
 	if (!scsi_track_queue_full(sdev, qdepth))
 		return;
 
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_io, fcport->vha, 0x3029,
 	    "Queue depth adjusted-down to %d for nexus=%ld:%d:%d.\n",
 	    sdev->queue_depth, fcport->vha->host_no, sdev->id, sdev->lun);
+=======
+	DEBUG2(qla_printk(KERN_INFO, fcport->vha->hw,
+		"scsi(%ld:%d:%d:%d): Queue depth adjusted-down to %d.\n",
+		fcport->vha->host_no, sdev->channel, sdev->id, sdev->lun,
+		sdev->queue_depth));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void qla2x00_adjust_sdev_qdepth_up(struct scsi_device *sdev, int qdepth)
 {
 	fc_port_t *fcport = sdev->hostdata;
 	struct scsi_qla_host *vha = fcport->vha;
+<<<<<<< HEAD
+=======
+	struct qla_hw_data *ha = vha->hw;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct req_que *req = NULL;
 
 	req = vha->req;
@@ -1384,9 +1815,16 @@ static void qla2x00_adjust_sdev_qdepth_up(struct scsi_device *sdev, int qdepth)
 	else
 		scsi_adjust_queue_depth(sdev, MSG_SIMPLE_TAG, qdepth);
 
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_io, vha, 0x302a,
 	    "Queue depth adjusted-up to %d for nexus=%ld:%d:%d.\n",
 	    sdev->queue_depth, fcport->vha->host_no, sdev->id, sdev->lun);
+=======
+	DEBUG2(qla_printk(KERN_INFO, ha,
+	       "scsi(%ld:%d:%d:%d): Queue depth adjusted-up to %d.\n",
+	       fcport->vha->host_no, sdev->channel, sdev->id, sdev->lun,
+	       sdev->queue_depth));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -1510,6 +1948,7 @@ qla24xx_disable_intrs(struct qla_hw_data *ha)
 	spin_unlock_irqrestore(&ha->hardware_lock, flags);
 }
 
+<<<<<<< HEAD
 static int
 qla2x00_iospace_config(struct qla_hw_data *ha)
 {
@@ -1709,6 +2148,8 @@ iospace_error_exit:
 	return -ENOMEM;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct isp_operations qla2100_isp_ops = {
 	.pci_config		= qla2100_pci_config,
 	.reset_chip		= qla2x00_reset_chip,
@@ -1743,7 +2184,10 @@ static struct isp_operations qla2100_isp_ops = {
 	.get_flash_version	= qla2x00_get_flash_version,
 	.start_scsi		= qla2x00_start_scsi,
 	.abort_isp		= qla2x00_abort_isp,
+<<<<<<< HEAD
 	.iospace_config     	= qla2x00_iospace_config,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct isp_operations qla2300_isp_ops = {
@@ -1780,7 +2224,10 @@ static struct isp_operations qla2300_isp_ops = {
 	.get_flash_version	= qla2x00_get_flash_version,
 	.start_scsi		= qla2x00_start_scsi,
 	.abort_isp		= qla2x00_abort_isp,
+<<<<<<< HEAD
 	.iospace_config     	= qla2x00_iospace_config,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct isp_operations qla24xx_isp_ops = {
@@ -1817,7 +2264,10 @@ static struct isp_operations qla24xx_isp_ops = {
 	.get_flash_version	= qla24xx_get_flash_version,
 	.start_scsi		= qla24xx_start_scsi,
 	.abort_isp		= qla2x00_abort_isp,
+<<<<<<< HEAD
 	.iospace_config     	= qla2x00_iospace_config,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct isp_operations qla25xx_isp_ops = {
@@ -1854,7 +2304,10 @@ static struct isp_operations qla25xx_isp_ops = {
 	.get_flash_version	= qla24xx_get_flash_version,
 	.start_scsi		= qla24xx_dif_start_scsi,
 	.abort_isp		= qla2x00_abort_isp,
+<<<<<<< HEAD
 	.iospace_config     	= qla2x00_iospace_config,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct isp_operations qla81xx_isp_ops = {
@@ -1885,13 +2338,20 @@ static struct isp_operations qla81xx_isp_ops = {
 	.fw_dump		= qla81xx_fw_dump,
 	.beacon_on		= qla24xx_beacon_on,
 	.beacon_off		= qla24xx_beacon_off,
+<<<<<<< HEAD
 	.beacon_blink		= qla83xx_beacon_blink,
+=======
+	.beacon_blink		= qla24xx_beacon_blink,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.read_optrom		= qla25xx_read_optrom_data,
 	.write_optrom		= qla24xx_write_optrom_data,
 	.get_flash_version	= qla24xx_get_flash_version,
 	.start_scsi		= qla24xx_dif_start_scsi,
 	.abort_isp		= qla2x00_abort_isp,
+<<<<<<< HEAD
 	.iospace_config     	= qla2x00_iospace_config,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct isp_operations qla82xx_isp_ops = {
@@ -1920,14 +2380,21 @@ static struct isp_operations qla82xx_isp_ops = {
 	.read_nvram		= qla24xx_read_nvram_data,
 	.write_nvram		= qla24xx_write_nvram_data,
 	.fw_dump		= qla24xx_fw_dump,
+<<<<<<< HEAD
 	.beacon_on		= qla82xx_beacon_on,
 	.beacon_off		= qla82xx_beacon_off,
 	.beacon_blink		= NULL,
+=======
+	.beacon_on		= qla24xx_beacon_on,
+	.beacon_off		= qla24xx_beacon_off,
+	.beacon_blink		= qla24xx_beacon_blink,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.read_optrom		= qla82xx_read_optrom_data,
 	.write_optrom		= qla82xx_write_optrom_data,
 	.get_flash_version	= qla24xx_get_flash_version,
 	.start_scsi             = qla82xx_start_scsi,
 	.abort_isp		= qla82xx_abort_isp,
+<<<<<<< HEAD
 	.iospace_config     	= qla82xx_iospace_config,
 };
 
@@ -1966,6 +2433,8 @@ static struct isp_operations qla83xx_isp_ops = {
 	.start_scsi		= qla24xx_dif_start_scsi,
 	.abort_isp		= qla2x00_abort_isp,
 	.iospace_config		= qla83xx_iospace_config,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline void
@@ -2062,6 +2531,7 @@ qla2x00_set_isp_flags(struct qla_hw_data *ha)
 		/* Initialize 82XX ISP flags */
 		qla82xx_init_flags(ha);
 		break;
+<<<<<<< HEAD
 	case PCI_DEVICE_ID_QLOGIC_ISP2031:
 		ha->device_type |= DT_ISP2031;
 		ha->device_type |= DT_ZIO_SUPPORTED;
@@ -2078,6 +2548,8 @@ qla2x00_set_isp_flags(struct qla_hw_data *ha)
 		ha->device_type |= DT_T10_PI;
 		ha->fw_srisc_address = RISC_START_ADDRESS_2400;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (IS_QLA82XX(ha))
@@ -2090,9 +2562,112 @@ qla2x00_set_isp_flags(struct qla_hw_data *ha)
 		ha->flags.port0 = 1;
 	else
 		ha->flags.port0 = 0;
+<<<<<<< HEAD
 	ql_dbg_pci(ql_dbg_init, ha->pdev, 0x000b,
 	    "device_type=0x%x port=%d fw_srisc_address=0x%x.\n",
 	    ha->device_type, ha->flags.port0, ha->fw_srisc_address);
+=======
+}
+
+static int
+qla2x00_iospace_config(struct qla_hw_data *ha)
+{
+	resource_size_t pio;
+	uint16_t msix;
+	int cpus;
+
+	if (IS_QLA82XX(ha))
+		return qla82xx_iospace_config(ha);
+
+	if (pci_request_selected_regions(ha->pdev, ha->bars,
+	    QLA2XXX_DRIVER_NAME)) {
+		qla_printk(KERN_WARNING, ha,
+		    "Failed to reserve PIO/MMIO regions (%s)\n",
+		    pci_name(ha->pdev));
+
+		goto iospace_error_exit;
+	}
+	if (!(ha->bars & 1))
+		goto skip_pio;
+
+	/* We only need PIO for Flash operations on ISP2312 v2 chips. */
+	pio = pci_resource_start(ha->pdev, 0);
+	if (pci_resource_flags(ha->pdev, 0) & IORESOURCE_IO) {
+		if (pci_resource_len(ha->pdev, 0) < MIN_IOBASE_LEN) {
+			qla_printk(KERN_WARNING, ha,
+			    "Invalid PCI I/O region size (%s)...\n",
+				pci_name(ha->pdev));
+			pio = 0;
+		}
+	} else {
+		qla_printk(KERN_WARNING, ha,
+		    "region #0 not a PIO resource (%s)...\n",
+		    pci_name(ha->pdev));
+		pio = 0;
+	}
+	ha->pio_address = pio;
+
+skip_pio:
+	/* Use MMIO operations for all accesses. */
+	if (!(pci_resource_flags(ha->pdev, 1) & IORESOURCE_MEM)) {
+		qla_printk(KERN_ERR, ha,
+		    "region #1 not an MMIO resource (%s), aborting\n",
+		    pci_name(ha->pdev));
+		goto iospace_error_exit;
+	}
+	if (pci_resource_len(ha->pdev, 1) < MIN_IOBASE_LEN) {
+		qla_printk(KERN_ERR, ha,
+		    "Invalid PCI mem region size (%s), aborting\n",
+			pci_name(ha->pdev));
+		goto iospace_error_exit;
+	}
+
+	ha->iobase = ioremap(pci_resource_start(ha->pdev, 1), MIN_IOBASE_LEN);
+	if (!ha->iobase) {
+		qla_printk(KERN_ERR, ha,
+		    "cannot remap MMIO (%s), aborting\n", pci_name(ha->pdev));
+
+		goto iospace_error_exit;
+	}
+
+	/* Determine queue resources */
+	ha->max_req_queues = ha->max_rsp_queues = 1;
+	if ((ql2xmaxqueues <= 1 && !ql2xmultique_tag) ||
+		(ql2xmaxqueues > 1 && ql2xmultique_tag) ||
+		(!IS_QLA25XX(ha) && !IS_QLA81XX(ha)))
+		goto mqiobase_exit;
+
+	ha->mqiobase = ioremap(pci_resource_start(ha->pdev, 3),
+			pci_resource_len(ha->pdev, 3));
+	if (ha->mqiobase) {
+		/* Read MSIX vector size of the board */
+		pci_read_config_word(ha->pdev, QLA_PCI_MSIX_CONTROL, &msix);
+		ha->msix_count = msix;
+		/* Max queues are bounded by available msix vectors */
+		/* queue 0 uses two msix vectors */
+		if (ql2xmultique_tag) {
+			cpus = num_online_cpus();
+			ha->max_rsp_queues = (ha->msix_count - 1 > cpus) ?
+				(cpus + 1) : (ha->msix_count - 1);
+			ha->max_req_queues = 2;
+		} else if (ql2xmaxqueues > 1) {
+			ha->max_req_queues = ql2xmaxqueues > QLA_MQ_SIZE ?
+						QLA_MQ_SIZE : ql2xmaxqueues;
+			DEBUG2(qla_printk(KERN_INFO, ha, "QoS mode set, max no"
+			" of request queues:%d\n", ha->max_req_queues));
+		}
+		qla_printk(KERN_INFO, ha,
+			"MSI-X vector count: %d\n", msix);
+	} else
+		qla_printk(KERN_INFO, ha, "BAR 3 not enabled\n");
+
+mqiobase_exit:
+	ha->msix_count = ha->max_rsp_queues + 1;
+	return (0);
+
+iospace_error_exit:
+	return (-ENOMEM);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -2135,7 +2710,11 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 	char pci_info[30];
 	char fw_str[30];
 	struct scsi_host_template *sht;
+<<<<<<< HEAD
 	int bars, mem_only = 0;
+=======
+	int bars, max_id, mem_only = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint16_t req_length = 0, rsp_length = 0;
 	struct req_que *req = NULL;
 	struct rsp_que *rsp = NULL;
@@ -2149,6 +2728,7 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 	    pdev->device == PCI_DEVICE_ID_QLOGIC_ISP5432 ||
 	    pdev->device == PCI_DEVICE_ID_QLOGIC_ISP2532 ||
 	    pdev->device == PCI_DEVICE_ID_QLOGIC_ISP8001 ||
+<<<<<<< HEAD
 	    pdev->device == PCI_DEVICE_ID_QLOGIC_ISP8021 ||
 	    pdev->device == PCI_DEVICE_ID_QLOGIC_ISP2031 ||
 	    pdev->device == PCI_DEVICE_ID_QLOGIC_ISP8031) {
@@ -2159,6 +2739,12 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 	}
 	ql_dbg_pci(ql_dbg_init, pdev, 0x0008,
 	    "Bars=%d.\n", bars);
+=======
+	    pdev->device == PCI_DEVICE_ID_QLOGIC_ISP8021) {
+		bars = pci_select_bars(pdev, IORESOURCE_MEM);
+		mem_only = 1;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mem_only) {
 		if (pci_enable_device_mem(pdev))
@@ -2173,12 +2759,18 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 
 	ha = kzalloc(sizeof(struct qla_hw_data), GFP_KERNEL);
 	if (!ha) {
+<<<<<<< HEAD
 		ql_log_pci(ql_log_fatal, pdev, 0x0009,
 		    "Unable to allocate memory for ha.\n");
 		goto probe_out;
 	}
 	ql_dbg_pci(ql_dbg_init, pdev, 0x000a,
 	    "Memory allocated for ha=%p.\n", ha);
+=======
+		DEBUG(printk("Unable to allocate memory for ha\n"));
+		goto probe_out;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ha->pdev = pdev;
 
 	/* Clear our data area */
@@ -2191,8 +2783,23 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 	qla2x00_set_isp_flags(ha);
 
 	/* Set EEH reset type to fundamental if required by hba */
+<<<<<<< HEAD
 	if (IS_QLA24XX(ha) || IS_QLA25XX(ha) || IS_QLA81XX(ha))
 		pdev->needs_freset = 1;
+=======
+	if ( IS_QLA24XX(ha) || IS_QLA25XX(ha) || IS_QLA81XX(ha)) {
+		pdev->needs_freset = 1;
+	}
+
+	/* Configure PCI I/O space */
+	ret = qla2x00_iospace_config(ha);
+	if (ret)
+		goto probe_hw_failed;
+
+	qla_printk(KERN_INFO, ha,
+	    "Found an ISP%04X, irq %d, iobase 0x%p\n", pdev->device, pdev->irq,
+	    ha->iobase);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ha->prev_topology = 0;
 	ha->init_cb_size = sizeof(init_cb_t);
@@ -2200,8 +2807,14 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 	ha->optrom_size = OPTROM_SIZE_2300;
 
 	/* Assign ISP specific operations. */
+<<<<<<< HEAD
 	if (IS_QLA2100(ha)) {
 		ha->max_fibre_devices = MAX_FIBRE_DEVICES_2100;
+=======
+	max_id = MAX_TARGETS_2200;
+	if (IS_QLA2100(ha)) {
+		max_id = MAX_TARGETS_2100;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ha->mbx_count = MAILBOX_REGISTER_COUNT_2100;
 		req_length = REQUEST_ENTRY_CNT_2100;
 		rsp_length = RESPONSE_ENTRY_CNT_2100;
@@ -2213,8 +2826,12 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 		ha->nvram_data_off = ~0;
 		ha->isp_ops = &qla2100_isp_ops;
 	} else if (IS_QLA2200(ha)) {
+<<<<<<< HEAD
 		ha->max_fibre_devices = MAX_FIBRE_DEVICES_2100;
 		ha->mbx_count = MAILBOX_REGISTER_COUNT_2200;
+=======
+		ha->mbx_count = MAILBOX_REGISTER_COUNT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		req_length = REQUEST_ENTRY_CNT_2200;
 		rsp_length = RESPONSE_ENTRY_CNT_2100;
 		ha->max_loop_id = SNS_LAST_LOOP_ID_2100;
@@ -2225,7 +2842,10 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 		ha->nvram_data_off = ~0;
 		ha->isp_ops = &qla2100_isp_ops;
 	} else if (IS_QLA23XX(ha)) {
+<<<<<<< HEAD
 		ha->max_fibre_devices = MAX_FIBRE_DEVICES_2100;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ha->mbx_count = MAILBOX_REGISTER_COUNT;
 		req_length = REQUEST_ENTRY_CNT_2200;
 		rsp_length = RESPONSE_ENTRY_CNT_2300;
@@ -2239,7 +2859,10 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 		ha->nvram_data_off = ~0;
 		ha->isp_ops = &qla2300_isp_ops;
 	} else if (IS_QLA24XX_TYPE(ha)) {
+<<<<<<< HEAD
 		ha->max_fibre_devices = MAX_FIBRE_DEVICES_2400;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ha->mbx_count = MAILBOX_REGISTER_COUNT;
 		req_length = REQUEST_ENTRY_CNT_24XX;
 		rsp_length = RESPONSE_ENTRY_CNT_2300;
@@ -2254,7 +2877,10 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 		ha->nvram_conf_off = FARX_ACCESS_NVRAM_CONF;
 		ha->nvram_data_off = FARX_ACCESS_NVRAM_DATA;
 	} else if (IS_QLA25XX(ha)) {
+<<<<<<< HEAD
 		ha->max_fibre_devices = MAX_FIBRE_DEVICES_2400;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ha->mbx_count = MAILBOX_REGISTER_COUNT;
 		req_length = REQUEST_ENTRY_CNT_24XX;
 		rsp_length = RESPONSE_ENTRY_CNT_2300;
@@ -2269,7 +2895,10 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 		ha->nvram_conf_off = FARX_ACCESS_NVRAM_CONF;
 		ha->nvram_data_off = FARX_ACCESS_NVRAM_DATA;
 	} else if (IS_QLA81XX(ha)) {
+<<<<<<< HEAD
 		ha->max_fibre_devices = MAX_FIBRE_DEVICES_2400;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ha->mbx_count = MAILBOX_REGISTER_COUNT;
 		req_length = REQUEST_ENTRY_CNT_24XX;
 		rsp_length = RESPONSE_ENTRY_CNT_2300;
@@ -2284,7 +2913,10 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 		ha->nvram_conf_off = ~0;
 		ha->nvram_data_off = ~0;
 	} else if (IS_QLA82XX(ha)) {
+<<<<<<< HEAD
 		ha->max_fibre_devices = MAX_FIBRE_DEVICES_2400;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ha->mbx_count = MAILBOX_REGISTER_COUNT;
 		req_length = REQUEST_ENTRY_CNT_82XX;
 		rsp_length = RESPONSE_ENTRY_CNT_82XX;
@@ -2298,6 +2930,7 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 		ha->flash_data_off = FARX_ACCESS_FLASH_DATA;
 		ha->nvram_conf_off = FARX_ACCESS_NVRAM_CONF;
 		ha->nvram_data_off = FARX_ACCESS_NVRAM_DATA;
+<<<<<<< HEAD
 	} else if (IS_QLA83XX(ha)) {
 		ha->max_fibre_devices = MAX_FIBRE_DEVICES_2400;
 		ha->mbx_count = MAILBOX_REGISTER_COUNT;
@@ -2337,6 +2970,10 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 	ql_log_pci(ql_log_info, pdev, 0x001d,
 	    "Found an ISP%04X irq %d iobase 0x%p.\n",
 	    pdev->device, pdev->irq, ha->iobase);
+=======
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_init(&ha->vport_lock);
 	init_completion(&ha->mbx_cmd_comp);
 	complete(&ha->mbx_cmd_comp);
@@ -2346,6 +2983,7 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 	set_bit(0, (unsigned long *) ha->vp_idx_map);
 
 	qla2x00_config_dma_addressing(ha);
+<<<<<<< HEAD
 	ql_dbg_pci(ql_dbg_init, pdev, 0x0020,
 	    "64 Bit addressing is %s.\n",
 	    ha->flags.enable_64bit_addressing ? "enable" :
@@ -2354,6 +2992,12 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 	if (!ret) {
 		ql_log_pci(ql_log_fatal, pdev, 0x0031,
 		    "Failed to allocate memory for adapter, aborting.\n");
+=======
+	ret = qla2x00_mem_alloc(ha, req_length, rsp_length, &req, &rsp);
+	if (!ret) {
+		qla_printk(KERN_WARNING, ha,
+		    "[ERROR] Failed to allocate memory for adapter\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		goto probe_hw_failed;
 	}
@@ -2365,6 +3009,12 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 
 	base_vha = qla2x00_create_host(sht, ha);
 	if (!base_vha) {
+<<<<<<< HEAD
+=======
+		qla_printk(KERN_WARNING, ha,
+		    "[ERROR] Failed to allocate memory for scsi_host\n");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENOMEM;
 		qla2x00_mem_free(ha);
 		qla2x00_free_req_que(ha, req);
@@ -2391,6 +3041,7 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 		if (!IS_QLA82XX(ha))
 			host->sg_tablesize = QLA_SG_ALL;
 	}
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_init, base_vha, 0x0032,
 	    "can_queue=%d, req=%p, "
 	    "mgmt_svr_loop_id=%d, sg_tablesize=%d.\n",
@@ -2401,6 +3052,14 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 	host->cmd_per_lun = 3;
 	host->unique_id = host->host_no;
 	if (IS_T10_PI_CAPABLE(ha) && ql2xenabledif)
+=======
+
+	host->max_id = max_id;
+	host->this_id = 255;
+	host->cmd_per_lun = 3;
+	host->unique_id = host->host_no;
+	if ((IS_QLA25XX(ha) || IS_QLA81XX(ha)) && ql2xenabledif)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		host->max_cmd_len = 32;
 	else
 		host->max_cmd_len = MAX_CMDSZ;
@@ -2409,6 +3068,7 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 	host->transportt = qla2xxx_transport_template;
 	sht->vendor_id = (SCSI_NL_VID_TYPE_PCI | PCI_VENDOR_ID_QLOGIC);
 
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_init, base_vha, 0x0033,
 	    "max_id=%d this_id=%d "
 	    "cmd_per_len=%d unique_id=%d max_cmd_len=%d max_channel=%d "
@@ -2417,6 +3077,8 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 	    host->max_cmd_len, host->max_channel, host->max_lun,
 	    host->transportt, sht->vendor_id);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Set up the irqs */
 	ret = qla2x00_request_irqs(ha, rsp);
 	if (ret)
@@ -2427,8 +3089,14 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 	/* Alloc arrays of request and response ring ptrs */
 que_init:
 	if (!qla2x00_alloc_queues(ha)) {
+<<<<<<< HEAD
 		ql_log(ql_log_fatal, base_vha, 0x003d,
 		    "Failed to allocate memory for queue pointers.. aborting.\n");
+=======
+		qla_printk(KERN_WARNING, ha,
+		"[ERROR] Failed to allocate memory for queue"
+		" pointers\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto probe_init_failed;
 	}
 
@@ -2443,7 +3111,11 @@ que_init:
 	req->req_q_out = &ha->iobase->isp24.req_q_out;
 	rsp->rsp_q_in = &ha->iobase->isp24.rsp_q_in;
 	rsp->rsp_q_out = &ha->iobase->isp24.rsp_q_out;
+<<<<<<< HEAD
 	if (ha->mqenable || IS_QLA83XX(ha)) {
+=======
+	if (ha->mqenable) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		req->req_q_in = &ha->mqiobase->isp25mq.req_q_in;
 		req->req_q_out = &ha->mqiobase->isp25mq.req_q_out;
 		rsp->rsp_q_in = &ha->mqiobase->isp25mq.rsp_q_in;
@@ -2456,6 +3128,7 @@ que_init:
 		rsp->rsp_q_out = &ha->iobase->isp82.rsp_q_out[0];
 	}
 
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_multiq, base_vha, 0xc009,
 	    "rsp_q_map=%p req_q_map=%p rsp->req=%p req->rsp=%p.\n",
 	    ha->rsp_q_map, ha->req_q_map, rsp->req, req->rsp);
@@ -2475,14 +3148,27 @@ que_init:
 		ql_log(ql_log_fatal, base_vha, 0x00d6,
 		    "Failed to initialize adapter - Adapter flags %x.\n",
 		    base_vha->device_flags);
+=======
+	if (qla2x00_initialize_adapter(base_vha)) {
+		qla_printk(KERN_WARNING, ha,
+		    "Failed to initialize adapter\n");
+
+		DEBUG2(printk("scsi(%ld): Failed to initialize adapter - "
+		    "Adapter flags %x.\n",
+		    base_vha->host_no, base_vha->device_flags));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (IS_QLA82XX(ha)) {
 			qla82xx_idc_lock(ha);
 			qla82xx_wr_32(ha, QLA82XX_CRB_DEV_STATE,
 				QLA82XX_DEV_FAILED);
 			qla82xx_idc_unlock(ha);
+<<<<<<< HEAD
 			ql_log(ql_log_fatal, base_vha, 0x00d7,
 			    "HW State: FAILED.\n");
+=======
+			qla_printk(KERN_INFO, ha, "HW State: FAILED\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		ret = -ENODEV;
@@ -2491,8 +3177,14 @@ que_init:
 
 	if (ha->mqenable) {
 		if (qla25xx_setup_mode(base_vha)) {
+<<<<<<< HEAD
 			ql_log(ql_log_warn, base_vha, 0x00ec,
 			    "Failed to create queues, falling back to single queue mode.\n");
+=======
+			qla_printk(KERN_WARNING, ha,
+				"Can't create queues, falling back to single"
+				" queue mode\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto que_init;
 		}
 	}
@@ -2504,6 +3196,7 @@ que_init:
 	 * Startup the kernel thread for this host adapter
 	 */
 	ha->dpc_thread = kthread_create(qla2x00_do_dpc, ha,
+<<<<<<< HEAD
 	    "%s_dpc", base_vha->host_str);
 	if (IS_ERR(ha->dpc_thread)) {
 		ql_log(ql_log_fatal, base_vha, 0x00ed,
@@ -2513,6 +3206,15 @@ que_init:
 	}
 	ql_dbg(ql_dbg_init, base_vha, 0x00ee,
 	    "DPC thread started successfully.\n");
+=======
+			"%s_dpc", base_vha->host_str);
+	if (IS_ERR(ha->dpc_thread)) {
+		qla_printk(KERN_WARNING, ha,
+		    "Unable to start DPC thread!\n");
+		ret = PTR_ERR(ha->dpc_thread);
+		goto probe_failed;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 skip_dpc:
 	list_add_tail(&base_vha->list, &ha->vp_list);
@@ -2520,6 +3222,7 @@ skip_dpc:
 
 	/* Initialized the timer */
 	qla2x00_start_timer(base_vha, qla2x00_timer, WATCH_INTERVAL);
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_init, base_vha, 0x00ef,
 	    "Started qla2x00_timer with "
 	    "interval=%d.\n", WATCH_INTERVAL);
@@ -2537,6 +3240,20 @@ skip_dpc:
 				prot = SHOST_DIX_TYPE0_PROTECTION;
 			scsi_host_set_prot(host,
 			    prot | SHOST_DIF_TYPE1_PROTECTION
+=======
+
+	DEBUG2(printk("DEBUG: detect hba %ld at address = %p\n",
+	    base_vha->host_no, ha));
+
+	if ((IS_QLA25XX(ha) || IS_QLA81XX(ha)) && ql2xenabledif) {
+		if (ha->fw_attributes & BIT_4) {
+			base_vha->flags.difdix_supported = 1;
+			DEBUG18(qla_printk(KERN_INFO, ha,
+			    "Registering for DIF/DIX type 1 and 3"
+			    " protection.\n"));
+			scsi_host_set_prot(host,
+			    SHOST_DIF_TYPE1_PROTECTION
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    | SHOST_DIF_TYPE2_PROTECTION
 			    | SHOST_DIF_TYPE3_PROTECTION
 			    | SHOST_DIX_TYPE1_PROTECTION
@@ -2556,9 +3273,12 @@ skip_dpc:
 	base_vha->flags.init_done = 1;
 	base_vha->flags.online = 1;
 
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_init, base_vha, 0x00f2,
 	    "Init done and hba is online.\n");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	scsi_scan_host(host);
 
 	qla2x00_alloc_sysfs_attr(base_vha);
@@ -2567,6 +3287,7 @@ skip_dpc:
 
 	qla2x00_dfs_setup(base_vha);
 
+<<<<<<< HEAD
 	ql_log(ql_log_info, base_vha, 0x00fb,
 	    "QLogic %s - %s.\n",
 	    ha->model_number, ha->model_desc ? ha->model_desc : "");
@@ -2575,6 +3296,16 @@ skip_dpc:
 	    pdev->device, ha->isp_ops->pci_info_str(base_vha, pci_info),
 	    pci_name(pdev), ha->flags.enable_64bit_addressing ? '+' : '-',
 	    base_vha->host_no,
+=======
+	qla_printk(KERN_INFO, ha, "\n"
+	    " QLogic Fibre Channel HBA Driver: %s\n"
+	    "  QLogic %s - %s\n"
+	    "  ISP%04X: %s @ %s hdma%c, host#=%ld, fw=%s\n",
+	    qla2x00_version_str, ha->model_number,
+	    ha->model_desc ? ha->model_desc : "", pdev->device,
+	    ha->isp_ops->pci_info_str(base_vha, pci_info), pci_name(pdev),
+	    ha->flags.enable_64bit_addressing ? '+' : '-', base_vha->host_no,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    ha->isp_ops->fw_version_str(base_vha, fw_str));
 
 	return 0;
@@ -2744,9 +3475,12 @@ qla2x00_remove_one(struct pci_dev *pdev)
 
 		if (ha->mqiobase)
 			iounmap(ha->mqiobase);
+<<<<<<< HEAD
 
 		if (IS_QLA83XX(ha) && ha->msixbase)
 			iounmap(ha->msixbase);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	pci_release_selected_regions(ha->pdev, ha->bars);
@@ -2807,8 +3541,11 @@ qla2x00_free_device(scsi_qla_host_t *vha)
 
 	qla2x00_mem_free(ha);
 
+<<<<<<< HEAD
 	qla82xx_md_free(vha);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	qla2x00_free_queues(ha);
 }
 
@@ -2877,6 +3614,7 @@ void qla2x00_mark_device_lost(scsi_qla_host_t *vha, fc_port_t *fcport,
 		fcport->login_retry = vha->hw->login_retry_count;
 		set_bit(RELOGIN_NEEDED, &vha->dpc_flags);
 
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_disc, vha, 0x2067,
 		    "Port login retry "
 		    "%02x%02x%02x%02x%02x%02x%02x%02x, "
@@ -2886,6 +3624,22 @@ void qla2x00_mark_device_lost(scsi_qla_host_t *vha, fc_port_t *fcport,
 		    fcport->port_name[4], fcport->port_name[5],
 		    fcport->port_name[6], fcport->port_name[7],
 		    fcport->loop_id, fcport->login_retry);
+=======
+		DEBUG(printk("scsi(%ld): Port login retry: "
+		    "%02x%02x%02x%02x%02x%02x%02x%02x, "
+		    "id = 0x%04x retry cnt=%d\n",
+		    vha->host_no,
+		    fcport->port_name[0],
+		    fcport->port_name[1],
+		    fcport->port_name[2],
+		    fcport->port_name[3],
+		    fcport->port_name[4],
+		    fcport->port_name[5],
+		    fcport->port_name[6],
+		    fcport->port_name[7],
+		    fcport->loop_id,
+		    fcport->login_retry));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -2946,8 +3700,13 @@ qla2x00_mem_alloc(struct qla_hw_data *ha, uint16_t req_len, uint16_t rsp_len,
 	if (!ha->init_cb)
 		goto fail;
 
+<<<<<<< HEAD
 	ha->gid_list = dma_alloc_coherent(&ha->pdev->dev,
 		qla2x00_gid_list_size(ha), &ha->gid_list_dma, GFP_KERNEL);
+=======
+	ha->gid_list = dma_alloc_coherent(&ha->pdev->dev, GID_LIST_SIZE,
+		&ha->gid_list_dma, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ha->gid_list)
 		goto fail_free_init_cb;
 
@@ -2968,9 +3727,12 @@ qla2x00_mem_alloc(struct qla_hw_data *ha, uint16_t req_len, uint16_t rsp_len,
 			ctx_cachep);
 		if (!ha->ctx_mempool)
 			goto fail_free_srb_mempool;
+<<<<<<< HEAD
 		ql_dbg_pci(ql_dbg_init, ha->pdev, 0x0021,
 		    "ctx_cachep=%p ctx_mempool=%p.\n",
 		    ctx_cachep, ha->ctx_mempool);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Get memory for cached NVRAM */
@@ -2985,22 +3747,31 @@ qla2x00_mem_alloc(struct qla_hw_data *ha, uint16_t req_len, uint16_t rsp_len,
 	if (!ha->s_dma_pool)
 		goto fail_free_nvram;
 
+<<<<<<< HEAD
 	ql_dbg_pci(ql_dbg_init, ha->pdev, 0x0022,
 	    "init_cb=%p gid_list=%p, srb_mempool=%p s_dma_pool=%p.\n",
 	    ha->init_cb, ha->gid_list, ha->srb_mempool, ha->s_dma_pool);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_QLA82XX(ha) || ql2xenabledif) {
 		ha->dl_dma_pool = dma_pool_create(name, &ha->pdev->dev,
 			DSD_LIST_DMA_POOL_SIZE, 8, 0);
 		if (!ha->dl_dma_pool) {
+<<<<<<< HEAD
 			ql_log_pci(ql_log_fatal, ha->pdev, 0x0023,
 			    "Failed to allocate memory for dl_dma_pool.\n");
+=======
+			qla_printk(KERN_WARNING, ha,
+			    "Memory Allocation failed - dl_dma_pool\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto fail_s_dma_pool;
 		}
 
 		ha->fcp_cmnd_dma_pool = dma_pool_create(name, &ha->pdev->dev,
 			FCP_CMND_DMA_POOL_SIZE, 8, 0);
 		if (!ha->fcp_cmnd_dma_pool) {
+<<<<<<< HEAD
 			ql_log_pci(ql_log_fatal, ha->pdev, 0x0024,
 			    "Failed to allocate memory for fcp_cmnd_dma_pool.\n");
 			goto fail_dl_dma_pool;
@@ -3008,6 +3779,12 @@ qla2x00_mem_alloc(struct qla_hw_data *ha, uint16_t req_len, uint16_t rsp_len,
 		ql_dbg_pci(ql_dbg_init, ha->pdev, 0x0025,
 		    "dl_dma_pool=%p fcp_cmnd_dma_pool=%p.\n",
 		    ha->dl_dma_pool, ha->fcp_cmnd_dma_pool);
+=======
+			qla_printk(KERN_WARNING, ha,
+			    "Memory Allocation failed - fcp_cmnd_dma_pool\n");
+			goto fail_dl_dma_pool;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Allocate memory for SNS commands */
@@ -3017,8 +3794,11 @@ qla2x00_mem_alloc(struct qla_hw_data *ha, uint16_t req_len, uint16_t rsp_len,
 		sizeof(struct sns_cmd_pkt), &ha->sns_cmd_dma, GFP_KERNEL);
 		if (!ha->sns_cmd)
 			goto fail_dma_pool;
+<<<<<<< HEAD
 		ql_dbg_pci(ql_dbg_init, ha->pdev, 0x0026,
 		    "sns_cmd: %p.\n", ha->sns_cmd);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 	/* Get consistent memory allocated for MS IOCB */
 		ha->ms_iocb = dma_pool_alloc(ha->s_dma_pool, GFP_KERNEL,
@@ -3030,16 +3810,23 @@ qla2x00_mem_alloc(struct qla_hw_data *ha, uint16_t req_len, uint16_t rsp_len,
 			sizeof(struct ct_sns_pkt), &ha->ct_sns_dma, GFP_KERNEL);
 		if (!ha->ct_sns)
 			goto fail_free_ms_iocb;
+<<<<<<< HEAD
 		ql_dbg_pci(ql_dbg_init, ha->pdev, 0x0027,
 		    "ms_iocb=%p ct_sns=%p.\n",
 		    ha->ms_iocb, ha->ct_sns);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Allocate memory for request ring */
 	*req = kzalloc(sizeof(struct req_que), GFP_KERNEL);
 	if (!*req) {
+<<<<<<< HEAD
 		ql_log_pci(ql_log_fatal, ha->pdev, 0x0028,
 		    "Failed to allocate memory for req.\n");
+=======
+		DEBUG(printk("Unable to allocate memory for req\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto fail_req;
 	}
 	(*req)->length = req_len;
@@ -3047,15 +3834,24 @@ qla2x00_mem_alloc(struct qla_hw_data *ha, uint16_t req_len, uint16_t rsp_len,
 		((*req)->length + 1) * sizeof(request_t),
 		&(*req)->dma, GFP_KERNEL);
 	if (!(*req)->ring) {
+<<<<<<< HEAD
 		ql_log_pci(ql_log_fatal, ha->pdev, 0x0029,
 		    "Failed to allocate memory for req_ring.\n");
+=======
+		DEBUG(printk("Unable to allocate memory for req_ring\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto fail_req_ring;
 	}
 	/* Allocate memory for response ring */
 	*rsp = kzalloc(sizeof(struct rsp_que), GFP_KERNEL);
 	if (!*rsp) {
+<<<<<<< HEAD
 		ql_log_pci(ql_log_fatal, ha->pdev, 0x002a,
 		    "Failed to allocate memory for rsp.\n");
+=======
+		qla_printk(KERN_WARNING, ha,
+			"Unable to allocate memory for rsp\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto fail_rsp;
 	}
 	(*rsp)->hw = ha;
@@ -3064,12 +3860,18 @@ qla2x00_mem_alloc(struct qla_hw_data *ha, uint16_t req_len, uint16_t rsp_len,
 		((*rsp)->length + 1) * sizeof(response_t),
 		&(*rsp)->dma, GFP_KERNEL);
 	if (!(*rsp)->ring) {
+<<<<<<< HEAD
 		ql_log_pci(ql_log_fatal, ha->pdev, 0x002b,
 		    "Failed to allocate memory for rsp_ring.\n");
+=======
+		qla_printk(KERN_WARNING, ha,
+			"Unable to allocate memory for rsp_ring\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto fail_rsp_ring;
 	}
 	(*req)->rsp = *rsp;
 	(*rsp)->req = *req;
+<<<<<<< HEAD
 	ql_dbg_pci(ql_dbg_init, ha->pdev, 0x002c,
 	    "req=%p req->length=%d req->ring=%p rsp=%p "
 	    "rsp->length=%d rsp->ring=%p.\n",
@@ -3082,19 +3884,35 @@ qla2x00_mem_alloc(struct qla_hw_data *ha, uint16_t req_len, uint16_t rsp_len,
 		if (!ha->npiv_info) {
 			ql_log_pci(ql_log_fatal, ha->pdev, 0x002d,
 			    "Failed to allocate memory for npiv_info.\n");
+=======
+	/* Allocate memory for NVRAM data for vports */
+	if (ha->nvram_npiv_size) {
+		ha->npiv_info = kzalloc(sizeof(struct qla_npiv_entry) *
+					ha->nvram_npiv_size, GFP_KERNEL);
+		if (!ha->npiv_info) {
+			qla_printk(KERN_WARNING, ha,
+				"Unable to allocate memory for npiv info\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto fail_npiv_info;
 		}
 	} else
 		ha->npiv_info = NULL;
 
 	/* Get consistent memory allocated for EX-INIT-CB. */
+<<<<<<< HEAD
 	if (IS_CNA_CAPABLE(ha) || IS_QLA2031(ha)) {
+=======
+	if (IS_QLA8XXX_TYPE(ha)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ha->ex_init_cb = dma_pool_alloc(ha->s_dma_pool, GFP_KERNEL,
 		    &ha->ex_init_cb_dma);
 		if (!ha->ex_init_cb)
 			goto fail_ex_init_cb;
+<<<<<<< HEAD
 		ql_dbg_pci(ql_dbg_init, ha->pdev, 0x002e,
 		    "ex_init_cb=%p.\n", ha->ex_init_cb);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	INIT_LIST_HEAD(&ha->gbl_dsd_list);
@@ -3105,8 +3923,11 @@ qla2x00_mem_alloc(struct qla_hw_data *ha, uint16_t req_len, uint16_t rsp_len,
 			&ha->async_pd_dma);
 		if (!ha->async_pd)
 			goto fail_async_pd;
+<<<<<<< HEAD
 		ql_dbg_pci(ql_dbg_init, ha->pdev, 0x002f,
 		    "async_pd=%p.\n", ha->async_pd);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	INIT_LIST_HEAD(&ha->vp_list);
@@ -3162,8 +3983,12 @@ fail_free_srb_mempool:
 	mempool_destroy(ha->srb_mempool);
 	ha->srb_mempool = NULL;
 fail_free_gid_list:
+<<<<<<< HEAD
 	dma_free_coherent(&ha->pdev->dev, qla2x00_gid_list_size(ha),
 	ha->gid_list,
+=======
+	dma_free_coherent(&ha->pdev->dev, GID_LIST_SIZE, ha->gid_list,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ha->gid_list_dma);
 	ha->gid_list = NULL;
 	ha->gid_list_dma = 0;
@@ -3173,8 +3998,12 @@ fail_free_init_cb:
 	ha->init_cb = NULL;
 	ha->init_cb_dma = 0;
 fail:
+<<<<<<< HEAD
 	ql_log(ql_log_fatal, NULL, 0x0030,
 	    "Memory allocation failure.\n");
+=======
+	DEBUG(printk("%s: Memory allocation failure\n", __func__));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -ENOMEM;
 }
 
@@ -3241,6 +4070,12 @@ qla2x00_mem_free(struct qla_hw_data *ha)
 	if (ha->sfp_data)
 		dma_pool_free(ha->s_dma_pool, ha->sfp_data, ha->sfp_data_dma);
 
+<<<<<<< HEAD
+=======
+	if (ha->edc_data)
+		dma_pool_free(ha->s_dma_pool, ha->edc_data, ha->edc_data_dma);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ha->ms_iocb)
 		dma_pool_free(ha->s_dma_pool, ha->ms_iocb, ha->ms_iocb_dma);
 
@@ -3255,8 +4090,13 @@ qla2x00_mem_free(struct qla_hw_data *ha)
 		dma_pool_destroy(ha->s_dma_pool);
 
 	if (ha->gid_list)
+<<<<<<< HEAD
 		dma_free_coherent(&ha->pdev->dev, qla2x00_gid_list_size(ha),
 		ha->gid_list, ha->gid_list_dma);
+=======
+		dma_free_coherent(&ha->pdev->dev, GID_LIST_SIZE, ha->gid_list,
+		ha->gid_list_dma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (IS_QLA82XX(ha)) {
 		if (!list_empty(&ha->gbl_dsd_list)) {
@@ -3288,7 +4128,10 @@ qla2x00_mem_free(struct qla_hw_data *ha)
 	vfree(ha->optrom_buffer);
 	kfree(ha->nvram);
 	kfree(ha->npiv_info);
+<<<<<<< HEAD
 	kfree(ha->swl);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ha->srb_mempool = NULL;
 	ha->ctx_mempool = NULL;
@@ -3321,8 +4164,13 @@ struct scsi_qla_host *qla2x00_create_host(struct scsi_host_template *sht,
 
 	host = scsi_host_alloc(sht, sizeof(scsi_qla_host_t));
 	if (host == NULL) {
+<<<<<<< HEAD
 		ql_log_pci(ql_log_fatal, ha->pdev, 0x0107,
 		    "Failed to allocate host from the scsi layer, aborting.\n");
+=======
+		printk(KERN_WARNING
+		"qla2xxx: Couldn't allocate host from scsi layer!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto fail;
 	}
 
@@ -3341,11 +4189,14 @@ struct scsi_qla_host *qla2x00_create_host(struct scsi_host_template *sht,
 	spin_lock_init(&vha->work_lock);
 
 	sprintf(vha->host_str, "%s_%ld", QLA2XXX_DRIVER_NAME, vha->host_no);
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_init, vha, 0x0041,
 	    "Allocated the host=%p hw=%p vha=%p dev_name=%s",
 	    vha->host, vha->hw, vha,
 	    dev_name(&(ha->pdev->dev)));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return vha;
 
 fail:
@@ -3577,6 +4428,7 @@ void qla2x00_relogin(struct scsi_qla_host *vha)
 						continue;
 					/* Attempt a retry. */
 					status = 1;
+<<<<<<< HEAD
 				} else {
 					status = qla2x00_fabric_login(vha,
 					    fcport, &next_loopid);
@@ -3596,6 +4448,11 @@ void qla2x00_relogin(struct scsi_qla_host *vha)
 							status = 1;
 					}
 				}
+=======
+				} else
+					status = qla2x00_fabric_login(vha,
+					    fcport, &next_loopid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else
 				status = qla2x00_local_device_login(vha,
 								fcport);
@@ -3603,18 +4460,30 @@ void qla2x00_relogin(struct scsi_qla_host *vha)
 			if (status == QLA_SUCCESS) {
 				fcport->old_loop_id = fcport->loop_id;
 
+<<<<<<< HEAD
 				ql_dbg(ql_dbg_disc, vha, 0x2003,
 				    "Port login OK: logged in ID 0x%x.\n",
 				    fcport->loop_id);
+=======
+				DEBUG(printk("scsi(%ld): port login OK: logged "
+				"in ID 0x%x\n", vha->host_no, fcport->loop_id));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				qla2x00_update_fcport(vha, fcport);
 
 			} else if (status == 1) {
 				set_bit(RELOGIN_NEEDED, &vha->dpc_flags);
 				/* retry the login again */
+<<<<<<< HEAD
 				ql_dbg(ql_dbg_disc, vha, 0x2007,
 				    "Retrying %d login again loop_id 0x%x.\n",
 				    fcport->login_retry, fcport->loop_id);
+=======
+				DEBUG(printk("scsi(%ld): Retrying"
+				" %d login again loop_id 0x%x\n",
+				vha->host_no, fcport->login_retry,
+						fcport->loop_id));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else {
 				fcport->login_retry = 0;
 			}
@@ -3654,12 +4523,17 @@ qla2x00_do_dpc(void *data)
 
 	set_current_state(TASK_INTERRUPTIBLE);
 	while (!kthread_should_stop()) {
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_dpc, base_vha, 0x4000,
 		    "DPC handler sleeping.\n");
+=======
+		DEBUG3(printk("qla2x00: DPC handler sleeping\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		schedule();
 		__set_current_state(TASK_RUNNING);
 
+<<<<<<< HEAD
 		if (!base_vha->flags.init_done || ha->flags.mbox_busy)
 			goto end_loop;
 
@@ -3675,6 +4549,29 @@ qla2x00_do_dpc(void *data)
 		    "DPC handler waking up.\n");
 		ql_dbg(ql_dbg_dpc, base_vha, 0x4002,
 		    "dpc_flags=0x%lx.\n", base_vha->dpc_flags);
+=======
+		DEBUG3(printk("qla2x00: DPC handler waking up\n"));
+
+		/* Initialization not yet finished. Don't do anything yet. */
+		if (!base_vha->flags.init_done)
+			continue;
+
+		if (ha->flags.eeh_busy) {
+			DEBUG17(qla_printk(KERN_WARNING, ha,
+			    "qla2x00_do_dpc: dpc_flags: %lx\n",
+			    base_vha->dpc_flags));
+			continue;
+		}
+
+		DEBUG3(printk("scsi(%ld): DPC handler\n", base_vha->host_no));
+
+		ha->dpc_active = 1;
+
+		if (ha->flags.mbox_busy) {
+			ha->dpc_active = 0;
+			continue;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		qla2x00_do_work(base_vha);
 
@@ -3685,8 +4582,13 @@ qla2x00_do_dpc(void *data)
 				qla82xx_wr_32(ha, QLA82XX_CRB_DEV_STATE,
 					QLA82XX_DEV_FAILED);
 				qla82xx_idc_unlock(ha);
+<<<<<<< HEAD
 				ql_log(ql_log_info, base_vha, 0x4004,
 				    "HW State: FAILED.\n");
+=======
+				qla_printk(KERN_INFO, ha,
+					"HW State: FAILED\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				qla82xx_device_state_handler(base_vha);
 				continue;
 			}
@@ -3694,8 +4596,15 @@ qla2x00_do_dpc(void *data)
 			if (test_and_clear_bit(FCOE_CTX_RESET_NEEDED,
 				&base_vha->dpc_flags)) {
 
+<<<<<<< HEAD
 				ql_dbg(ql_dbg_dpc, base_vha, 0x4005,
 				    "FCoE context reset scheduled.\n");
+=======
+				DEBUG(printk(KERN_INFO
+					"scsi(%ld): dpc: sched "
+					"qla82xx_fcoe_ctx_reset ha = %p\n",
+					base_vha->host_no, ha));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				if (!(test_and_set_bit(ABORT_ISP_ACTIVE,
 					&base_vha->dpc_flags))) {
 					if (qla82xx_fcoe_ctx_reset(base_vha)) {
@@ -3709,16 +4618,28 @@ qla2x00_do_dpc(void *data)
 						&base_vha->dpc_flags);
 				}
 
+<<<<<<< HEAD
 				ql_dbg(ql_dbg_dpc, base_vha, 0x4006,
 				    "FCoE context reset end.\n");
+=======
+				DEBUG(printk("scsi(%ld): dpc:"
+					" qla82xx_fcoe_ctx_reset end\n",
+					base_vha->host_no));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
 		if (test_and_clear_bit(ISP_ABORT_NEEDED,
 						&base_vha->dpc_flags)) {
 
+<<<<<<< HEAD
 			ql_dbg(ql_dbg_dpc, base_vha, 0x4007,
 			    "ISP abort scheduled.\n");
+=======
+			DEBUG(printk("scsi(%ld): dpc: sched "
+			    "qla2x00_abort_isp ha = %p\n",
+			    base_vha->host_no, ha));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!(test_and_set_bit(ABORT_ISP_ACTIVE,
 			    &base_vha->dpc_flags))) {
 
@@ -3731,6 +4652,7 @@ qla2x00_do_dpc(void *data)
 						&base_vha->dpc_flags);
 			}
 
+<<<<<<< HEAD
 			ql_dbg(ql_dbg_dpc, base_vha, 0x4008,
 			    "ISP abort end.\n");
 		}
@@ -3743,6 +4665,21 @@ qla2x00_do_dpc(void *data)
 		if (test_bit(ISP_QUIESCE_NEEDED, &base_vha->dpc_flags)) {
 			ql_dbg(ql_dbg_dpc, base_vha, 0x4009,
 			    "Quiescence mode scheduled.\n");
+=======
+			DEBUG(printk("scsi(%ld): dpc: qla2x00_abort_isp end\n",
+			    base_vha->host_no));
+		}
+
+		if (test_bit(FCPORT_UPDATE_NEEDED, &base_vha->dpc_flags)) {
+			qla2x00_update_fcports(base_vha);
+			clear_bit(FCPORT_UPDATE_NEEDED, &base_vha->dpc_flags);
+		}
+
+		if (test_bit(ISP_QUIESCE_NEEDED, &base_vha->dpc_flags)) {
+			DEBUG(printk(KERN_INFO "scsi(%ld): dpc: sched "
+			    "qla2x00_quiesce_needed ha = %p\n",
+			    base_vha->host_no, ha));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			qla82xx_device_state_handler(base_vha);
 			clear_bit(ISP_QUIESCE_NEEDED, &base_vha->dpc_flags);
 			if (!ha->flags.quiesce_owner) {
@@ -3752,20 +4689,31 @@ qla2x00_do_dpc(void *data)
 				qla82xx_clear_qsnt_ready(base_vha);
 				qla82xx_idc_unlock(ha);
 			}
+<<<<<<< HEAD
 			ql_dbg(ql_dbg_dpc, base_vha, 0x400a,
 			    "Quiescence mode end.\n");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (test_and_clear_bit(RESET_MARKER_NEEDED,
 							&base_vha->dpc_flags) &&
 		    (!(test_and_set_bit(RESET_ACTIVE, &base_vha->dpc_flags)))) {
 
+<<<<<<< HEAD
 			ql_dbg(ql_dbg_dpc, base_vha, 0x400b,
 			    "Reset marker scheduled.\n");
 			qla2x00_rst_aen(base_vha);
 			clear_bit(RESET_ACTIVE, &base_vha->dpc_flags);
 			ql_dbg(ql_dbg_dpc, base_vha, 0x400c,
 			    "Reset marker end.\n");
+=======
+			DEBUG(printk("scsi(%ld): qla2x00_reset_marker()\n",
+			    base_vha->host_no));
+
+			qla2x00_rst_aen(base_vha);
+			clear_bit(RESET_ACTIVE, &base_vha->dpc_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/* Retry each device up to login retry count */
@@ -3774,18 +4722,32 @@ qla2x00_do_dpc(void *data)
 		    !test_bit(LOOP_RESYNC_NEEDED, &base_vha->dpc_flags) &&
 		    atomic_read(&base_vha->loop_state) != LOOP_DOWN) {
 
+<<<<<<< HEAD
 			ql_dbg(ql_dbg_dpc, base_vha, 0x400d,
 			    "Relogin scheduled.\n");
 			qla2x00_relogin(base_vha);
 			ql_dbg(ql_dbg_dpc, base_vha, 0x400e,
 			    "Relogin end.\n");
+=======
+			DEBUG(printk("scsi(%ld): qla2x00_port_login()\n",
+					base_vha->host_no));
+			qla2x00_relogin(base_vha);
+
+			DEBUG(printk("scsi(%ld): qla2x00_port_login - end\n",
+			    base_vha->host_no));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (test_and_clear_bit(LOOP_RESYNC_NEEDED,
 							&base_vha->dpc_flags)) {
 
+<<<<<<< HEAD
 			ql_dbg(ql_dbg_dpc, base_vha, 0x400f,
 			    "Loop resync scheduled.\n");
+=======
+			DEBUG(printk("scsi(%ld): qla2x00_loop_resync()\n",
+				base_vha->host_no));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (!(test_and_set_bit(LOOP_RESYNC_ACTIVE,
 			    &base_vha->dpc_flags))) {
@@ -3796,8 +4758,13 @@ qla2x00_do_dpc(void *data)
 						&base_vha->dpc_flags);
 			}
 
+<<<<<<< HEAD
 			ql_dbg(ql_dbg_dpc, base_vha, 0x4010,
 			    "Loop resync end.\n");
+=======
+			DEBUG(printk("scsi(%ld): qla2x00_loop_resync - end\n",
+			    base_vha->host_no));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (test_bit(NPIV_CONFIG_NEEDED, &base_vha->dpc_flags) &&
@@ -3816,13 +4783,20 @@ qla2x00_do_dpc(void *data)
 		qla2x00_do_dpc_all_vps(base_vha);
 
 		ha->dpc_active = 0;
+<<<<<<< HEAD
 end_loop:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_current_state(TASK_INTERRUPTIBLE);
 	} /* End of while(1) */
 	__set_current_state(TASK_RUNNING);
 
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_dpc, base_vha, 0x4011,
 	    "DPC handler exiting.\n");
+=======
+	DEBUG(printk("scsi(%ld): DPC handler exiting\n", base_vha->host_no));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Make sure that nobody tries to wake us up again.
@@ -3871,6 +4845,77 @@ qla2x00_rst_aen(scsi_qla_host_t *vha)
 	}
 }
 
+<<<<<<< HEAD
+=======
+static void
+qla2x00_sp_free_dma(srb_t *sp)
+{
+	struct scsi_cmnd *cmd = sp->cmd;
+	struct qla_hw_data *ha = sp->fcport->vha->hw;
+
+	if (sp->flags & SRB_DMA_VALID) {
+		scsi_dma_unmap(cmd);
+		sp->flags &= ~SRB_DMA_VALID;
+	}
+
+	if (sp->flags & SRB_CRC_PROT_DMA_VALID) {
+		dma_unmap_sg(&ha->pdev->dev, scsi_prot_sglist(cmd),
+		    scsi_prot_sg_count(cmd), cmd->sc_data_direction);
+		sp->flags &= ~SRB_CRC_PROT_DMA_VALID;
+	}
+
+	if (sp->flags & SRB_CRC_CTX_DSD_VALID) {
+		/* List assured to be having elements */
+		qla2x00_clean_dsd_pool(ha, sp);
+		sp->flags &= ~SRB_CRC_CTX_DSD_VALID;
+	}
+
+	if (sp->flags & SRB_CRC_CTX_DMA_VALID) {
+		dma_pool_free(ha->dl_dma_pool, sp->ctx,
+		    ((struct crc_context *)sp->ctx)->crc_ctx_dma);
+		sp->flags &= ~SRB_CRC_CTX_DMA_VALID;
+	}
+
+	CMD_SP(cmd) = NULL;
+}
+
+static void
+qla2x00_sp_final_compl(struct qla_hw_data *ha, srb_t *sp)
+{
+	struct scsi_cmnd *cmd = sp->cmd;
+
+	qla2x00_sp_free_dma(sp);
+
+	if (sp->flags & SRB_FCP_CMND_DMA_VALID) {
+		struct ct6_dsd *ctx = sp->ctx;
+		dma_pool_free(ha->fcp_cmnd_dma_pool, ctx->fcp_cmnd,
+			ctx->fcp_cmnd_dma);
+		list_splice(&ctx->dsd_list, &ha->gbl_dsd_list);
+		ha->gbl_dsd_inuse -= ctx->dsd_use_cnt;
+		ha->gbl_dsd_avail += ctx->dsd_use_cnt;
+		mempool_free(sp->ctx, ha->ctx_mempool);
+		sp->ctx = NULL;
+	}
+
+	mempool_free(sp, ha->srb_mempool);
+	cmd->scsi_done(cmd);
+}
+
+void
+qla2x00_sp_compl(struct qla_hw_data *ha, srb_t *sp)
+{
+	if (atomic_read(&sp->ref_count) == 0) {
+		DEBUG2(qla_printk(KERN_WARNING, ha,
+		    "SP reference-count to ZERO -- sp=%p\n", sp));
+		DEBUG2(BUG());
+		return;
+	}
+	if (!atomic_dec_and_test(&sp->ref_count))
+		return;
+	qla2x00_sp_final_compl(ha, sp);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**************************************************************************
 *   qla2x00_timer
 *
@@ -3891,9 +4936,12 @@ qla2x00_timer(scsi_qla_host_t *vha)
 	struct req_que *req;
 
 	if (ha->flags.eeh_busy) {
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_timer, vha, 0x6000,
 		    "EEH = %d, restarting timer.\n",
 		    ha->flags.eeh_busy);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		qla2x00_restart_timer(vha, WATCH_INTERVAL);
 		return;
 	}
@@ -3918,8 +4966,14 @@ qla2x00_timer(scsi_qla_host_t *vha)
 		if (atomic_read(&vha->loop_down_timer) ==
 		    vha->loop_down_abort_time) {
 
+<<<<<<< HEAD
 			ql_log(ql_log_info, vha, 0x6008,
 			    "Loop down - aborting the queues before time expires.\n");
+=======
+			DEBUG(printk("scsi(%ld): Loop Down - aborting the "
+			    "queues before time expire\n",
+			    vha->host_no));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (!IS_QLA2100(ha) && vha->link_down_timeout)
 				atomic_set(&vha->loop_state, LOOP_DEAD);
@@ -3941,7 +4995,11 @@ qla2x00_timer(scsi_qla_host_t *vha)
 					sp = req->outstanding_cmds[index];
 					if (!sp)
 						continue;
+<<<<<<< HEAD
 					if (sp->type != SRB_SCSI_CMD)
+=======
+					if (sp->ctx && !IS_PROT_IO(sp))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						continue;
 					sfcp = sp->fcport;
 					if (!(sfcp->flags & FCF_FCP2_DEVICE))
@@ -3964,7 +5022,14 @@ qla2x00_timer(scsi_qla_host_t *vha)
 		/* if the loop has been down for 4 minutes, reinit adapter */
 		if (atomic_dec_and_test(&vha->loop_down_timer) != 0) {
 			if (!(vha->device_flags & DFLG_NO_CABLE)) {
+<<<<<<< HEAD
 				ql_log(ql_log_warn, vha, 0x6009,
+=======
+				DEBUG(printk("scsi(%ld): Loop down - "
+				    "aborting ISP.\n",
+				    vha->host_no));
+				qla_printk(KERN_WARNING, ha,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    "Loop down - aborting ISP.\n");
 
 				if (IS_QLA82XX(ha))
@@ -3975,18 +5040,29 @@ qla2x00_timer(scsi_qla_host_t *vha)
 						&vha->dpc_flags);
 			}
 		}
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_timer, vha, 0x600a,
 		    "Loop down - seconds remaining %d.\n",
 		    atomic_read(&vha->loop_down_timer));
+=======
+		DEBUG3(printk("scsi(%ld): Loop Down - seconds remaining %d\n",
+		    vha->host_no,
+		    atomic_read(&vha->loop_down_timer)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Check if beacon LED needs to be blinked for physical host only */
 	if (!vha->vp_idx && (ha->beacon_blink_led == 1)) {
+<<<<<<< HEAD
 		/* There is no beacon_blink function for ISP82xx */
 		if (!IS_QLA82XX(ha)) {
 			set_bit(BEACON_BLINK_NEEDED, &vha->dpc_flags);
 			start_dpc++;
 		}
+=======
+		set_bit(BEACON_BLINK_NEEDED, &vha->dpc_flags);
+		start_dpc++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Process any deferred work. */
@@ -4003,6 +5079,7 @@ qla2x00_timer(scsi_qla_host_t *vha)
 	    test_bit(ISP_UNRECOVERABLE, &vha->dpc_flags) ||
 	    test_bit(FCOE_CTX_RESET_NEEDED, &vha->dpc_flags) ||
 	    test_bit(VP_DPC_NEEDED, &vha->dpc_flags) ||
+<<<<<<< HEAD
 	    test_bit(RELOGIN_NEEDED, &vha->dpc_flags))) {
 		ql_dbg(ql_dbg_timer, vha, 0x600b,
 		    "isp_abort_needed=%d loop_resync_needed=%d "
@@ -4024,13 +5101,21 @@ qla2x00_timer(scsi_qla_host_t *vha)
 		    test_bit(RELOGIN_NEEDED, &vha->dpc_flags));
 		qla2xxx_wake_dpc(vha);
 	}
+=======
+	    test_bit(RELOGIN_NEEDED, &vha->dpc_flags)))
+		qla2xxx_wake_dpc(vha);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	qla2x00_restart_timer(vha, WATCH_INTERVAL);
 }
 
 /* Firmware interface routines. */
 
+<<<<<<< HEAD
 #define FW_BLOBS	10
+=======
+#define FW_BLOBS	8
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define FW_ISP21XX	0
 #define FW_ISP22XX	1
 #define FW_ISP2300	2
@@ -4039,8 +5124,11 @@ qla2x00_timer(scsi_qla_host_t *vha)
 #define FW_ISP25XX	5
 #define FW_ISP81XX	6
 #define FW_ISP82XX	7
+<<<<<<< HEAD
 #define FW_ISP2031	8
 #define FW_ISP8031	9
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define FW_FILE_ISP21XX	"ql2100_fw.bin"
 #define FW_FILE_ISP22XX	"ql2200_fw.bin"
@@ -4050,8 +5138,11 @@ qla2x00_timer(scsi_qla_host_t *vha)
 #define FW_FILE_ISP25XX	"ql2500_fw.bin"
 #define FW_FILE_ISP81XX	"ql8100_fw.bin"
 #define FW_FILE_ISP82XX	"ql8200_fw.bin"
+<<<<<<< HEAD
 #define FW_FILE_ISP2031	"ql2600_fw.bin"
 #define FW_FILE_ISP8031	"ql8300_fw.bin"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static DEFINE_MUTEX(qla_fw_lock);
 
@@ -4064,8 +5155,11 @@ static struct fw_blob qla_fw_blobs[FW_BLOBS] = {
 	{ .name = FW_FILE_ISP25XX, },
 	{ .name = FW_FILE_ISP81XX, },
 	{ .name = FW_FILE_ISP82XX, },
+<<<<<<< HEAD
 	{ .name = FW_FILE_ISP2031, },
 	{ .name = FW_FILE_ISP8031, },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct fw_blob *
@@ -4074,6 +5168,10 @@ qla2x00_request_firmware(scsi_qla_host_t *vha)
 	struct qla_hw_data *ha = vha->hw;
 	struct fw_blob *blob;
 
+<<<<<<< HEAD
+=======
+	blob = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_QLA2100(ha)) {
 		blob = &qla_fw_blobs[FW_ISP21XX];
 	} else if (IS_QLA2200(ha)) {
@@ -4090,12 +5188,15 @@ qla2x00_request_firmware(scsi_qla_host_t *vha)
 		blob = &qla_fw_blobs[FW_ISP81XX];
 	} else if (IS_QLA82XX(ha)) {
 		blob = &qla_fw_blobs[FW_ISP82XX];
+<<<<<<< HEAD
 	} else if (IS_QLA2031(ha)) {
 		blob = &qla_fw_blobs[FW_ISP2031];
 	} else if (IS_QLA8031(ha)) {
 		blob = &qla_fw_blobs[FW_ISP8031];
 	} else {
 		return NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	mutex_lock(&qla_fw_lock);
@@ -4103,8 +5204,13 @@ qla2x00_request_firmware(scsi_qla_host_t *vha)
 		goto out;
 
 	if (request_firmware(&blob->fw, blob->name, &ha->pdev->dev)) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0x0063,
 		    "Failed to load firmware image (%s).\n", blob->name);
+=======
+		DEBUG2(printk("scsi(%ld): Failed to load firmware image "
+		    "(%s).\n", vha->host_no, blob->name));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		blob->fw = NULL;
 		blob = NULL;
 		goto out;
@@ -4133,8 +5239,13 @@ qla2xxx_pci_error_detected(struct pci_dev *pdev, pci_channel_state_t state)
 	scsi_qla_host_t *vha = pci_get_drvdata(pdev);
 	struct qla_hw_data *ha = vha->hw;
 
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_aer, vha, 0x9000,
 	    "PCI error detected, state %x.\n", state);
+=======
+	DEBUG2(qla_printk(KERN_WARNING, ha, "error_detected:state %x\n",
+	    state));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (state) {
 	case pci_channel_io_normal:
@@ -4145,8 +5256,18 @@ qla2xxx_pci_error_detected(struct pci_dev *pdev, pci_channel_state_t state)
 		/* For ISP82XX complete any pending mailbox cmd */
 		if (IS_QLA82XX(ha)) {
 			ha->flags.isp82xx_fw_hung = 1;
+<<<<<<< HEAD
 			ql_dbg(ql_dbg_aer, vha, 0x9001, "Pci channel io frozen\n");
 			qla82xx_clear_pending_mbx(vha);
+=======
+			if (ha->flags.mbox_busy) {
+				ha->flags.mbox_int = 1;
+				DEBUG2(qla_printk(KERN_ERR, ha,
+					"Due to pci channel io frozen, doing premature "
+					"completion of mbx command\n"));
+				complete(&ha->mbx_intr_comp);
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		qla2x00_free_irqs(vha);
 		pci_disable_device(pdev);
@@ -4192,8 +5313,13 @@ qla2xxx_pci_mmio_enabled(struct pci_dev *pdev)
 	spin_unlock_irqrestore(&ha->hardware_lock, flags);
 
 	if (risc_paused) {
+<<<<<<< HEAD
 		ql_log(ql_log_info, base_vha, 0x9003,
 		    "RISC paused -- mmio_enabled, Dumping firmware.\n");
+=======
+		qla_printk(KERN_INFO, ha, "RISC paused -- mmio_enabled, "
+		    "Dumping firmware!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ha->isp_ops->fw_dump(base_vha, 0);
 
 		return PCI_ERS_RESULT_NEED_RESET;
@@ -4209,8 +5335,13 @@ uint32_t qla82xx_error_recovery(scsi_qla_host_t *base_vha)
 	int fn;
 	struct pci_dev *other_pdev = NULL;
 
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_aer, base_vha, 0x9006,
 	    "Entered %s.\n", __func__);
+=======
+	DEBUG17(qla_printk(KERN_INFO, ha,
+	    "scsi(%ld): In qla82xx_error_recovery\n", base_vha->host_no));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	set_bit(ABORT_ISP_ACTIVE, &base_vha->dpc_flags);
 
@@ -4224,8 +5355,13 @@ uint32_t qla82xx_error_recovery(scsi_qla_host_t *base_vha)
 	fn = PCI_FUNC(ha->pdev->devfn);
 	while (fn > 0) {
 		fn--;
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_aer, base_vha, 0x9007,
 		    "Finding pci device at function = 0x%x.\n", fn);
+=======
+		DEBUG17(qla_printk(KERN_INFO, ha,
+		    "Finding pci device at function = 0x%x\n", fn));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		other_pdev =
 		    pci_get_domain_bus_and_slot(pci_domain_nr(ha->pdev->bus),
 		    ha->pdev->bus->number, PCI_DEVFN(PCI_SLOT(ha->pdev->devfn),
@@ -4234,9 +5370,15 @@ uint32_t qla82xx_error_recovery(scsi_qla_host_t *base_vha)
 		if (!other_pdev)
 			continue;
 		if (atomic_read(&other_pdev->enable_cnt)) {
+<<<<<<< HEAD
 			ql_dbg(ql_dbg_aer, base_vha, 0x9008,
 			    "Found PCI func available and enable at 0x%x.\n",
 			    fn);
+=======
+			DEBUG17(qla_printk(KERN_INFO, ha,
+			    "Found PCI func available and enabled at 0x%x\n",
+			    fn));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pci_dev_put(other_pdev);
 			break;
 		}
@@ -4245,9 +5387,14 @@ uint32_t qla82xx_error_recovery(scsi_qla_host_t *base_vha)
 
 	if (!fn) {
 		/* Reset owner */
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_aer, base_vha, 0x9009,
 		    "This devfn is reset owner = 0x%x.\n",
 		    ha->pdev->devfn);
+=======
+		DEBUG17(qla_printk(KERN_INFO, ha,
+		    "This devfn is reset owner = 0x%x\n", ha->pdev->devfn));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		qla82xx_idc_lock(ha);
 
 		qla82xx_wr_32(ha, QLA82XX_CRB_DEV_STATE,
@@ -4257,8 +5404,13 @@ uint32_t qla82xx_error_recovery(scsi_qla_host_t *base_vha)
 		    QLA82XX_IDC_VERSION);
 
 		drv_active = qla82xx_rd_32(ha, QLA82XX_CRB_DRV_ACTIVE);
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_aer, base_vha, 0x900a,
 		    "drv_active = 0x%x.\n", drv_active);
+=======
+		DEBUG17(qla_printk(KERN_INFO, ha,
+		    "drv_active = 0x%x\n", drv_active));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		qla82xx_idc_unlock(ha);
 		/* Reset if device is not already reset
@@ -4271,14 +5423,22 @@ uint32_t qla82xx_error_recovery(scsi_qla_host_t *base_vha)
 		qla82xx_idc_lock(ha);
 
 		if (rval != QLA_SUCCESS) {
+<<<<<<< HEAD
 			ql_log(ql_log_info, base_vha, 0x900b,
 			    "HW State: FAILED.\n");
+=======
+			qla_printk(KERN_INFO, ha, "HW State: FAILED\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			qla82xx_clear_drv_active(ha);
 			qla82xx_wr_32(ha, QLA82XX_CRB_DEV_STATE,
 			    QLA82XX_DEV_FAILED);
 		} else {
+<<<<<<< HEAD
 			ql_log(ql_log_info, base_vha, 0x900c,
 			    "HW State: READY.\n");
+=======
+			qla_printk(KERN_INFO, ha, "HW State: READY\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			qla82xx_wr_32(ha, QLA82XX_CRB_DEV_STATE,
 			    QLA82XX_DEV_READY);
 			qla82xx_idc_unlock(ha);
@@ -4291,9 +5451,14 @@ uint32_t qla82xx_error_recovery(scsi_qla_host_t *base_vha)
 		}
 		qla82xx_idc_unlock(ha);
 	} else {
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_aer, base_vha, 0x900d,
 		    "This devfn is not reset owner = 0x%x.\n",
 		    ha->pdev->devfn);
+=======
+		DEBUG17(qla_printk(KERN_INFO, ha,
+		    "This devfn is not reset owner = 0x%x\n", ha->pdev->devfn));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if ((qla82xx_rd_32(ha, QLA82XX_CRB_DEV_STATE) ==
 		    QLA82XX_DEV_READY)) {
 			ha->flags.isp82xx_fw_hung = 0;
@@ -4317,8 +5482,12 @@ qla2xxx_pci_slot_reset(struct pci_dev *pdev)
 	struct rsp_que *rsp;
 	int rc, retries = 10;
 
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_aer, base_vha, 0x9004,
 	    "Slot Reset.\n");
+=======
+	DEBUG17(qla_printk(KERN_WARNING, ha, "slot_reset\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Workaround: qla2xxx driver which access hardware earlier
 	 * needs error state to be pci_channel_io_online.
@@ -4339,7 +5508,11 @@ qla2xxx_pci_slot_reset(struct pci_dev *pdev)
 		rc = pci_enable_device(pdev);
 
 	if (rc) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, base_vha, 0x9005,
+=======
+		qla_printk(KERN_WARNING, ha,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    "Can't re-enable PCI device after reset.\n");
 		goto exit_slot_reset;
 	}
@@ -4369,8 +5542,13 @@ qla2xxx_pci_slot_reset(struct pci_dev *pdev)
 
 
 exit_slot_reset:
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_aer, base_vha, 0x900e,
 	    "slot_reset return %x.\n", ret);
+=======
+	DEBUG17(qla_printk(KERN_WARNING, ha,
+	    "slot_reset-return:ret=%x\n", ret));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -4382,6 +5560,7 @@ qla2xxx_pci_resume(struct pci_dev *pdev)
 	struct qla_hw_data *ha = base_vha->hw;
 	int ret;
 
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_aer, base_vha, 0x900f,
 	    "pci_resume.\n");
 
@@ -4389,6 +5568,15 @@ qla2xxx_pci_resume(struct pci_dev *pdev)
 	if (ret != QLA_SUCCESS) {
 		ql_log(ql_log_fatal, base_vha, 0x9002,
 		    "The device failed to resume I/O from slot/link_reset.\n");
+=======
+	DEBUG17(qla_printk(KERN_WARNING, ha, "pci_resume\n"));
+
+	ret = qla2x00_wait_for_hba_online(base_vha);
+	if (ret != QLA_SUCCESS) {
+		qla_printk(KERN_ERR, ha,
+		    "the device failed to resume I/O "
+		    "from slot/link_reset");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	pci_cleanup_aer_uncorrect_error_status(pdev);
@@ -4417,7 +5605,10 @@ static struct pci_device_id qla2xxx_pci_tbl[] = {
 	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP5422) },
 	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP5432) },
 	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2532) },
+<<<<<<< HEAD
 	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2031) },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP8001) },
 	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP8021) },
 	{ 0 },
@@ -4453,8 +5644,13 @@ qla2x00_module_init(void)
 	srb_cachep = kmem_cache_create("qla2xxx_srbs", sizeof(srb_t), 0,
 	    SLAB_HWCACHE_ALIGN, NULL);
 	if (srb_cachep == NULL) {
+<<<<<<< HEAD
 		ql_log(ql_log_fatal, NULL, 0x0001,
 		    "Unable to allocate SRB cache...Failing load!.\n");
+=======
+		printk(KERN_ERR
+		    "qla2xxx: Unable to allocate SRB cache...Failing load!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 
@@ -4467,15 +5663,23 @@ qla2x00_module_init(void)
 	    fc_attach_transport(&qla2xxx_transport_functions);
 	if (!qla2xxx_transport_template) {
 		kmem_cache_destroy(srb_cachep);
+<<<<<<< HEAD
 		ql_log(ql_log_fatal, NULL, 0x0002,
 		    "fc_attach_transport failed...Failing load!.\n");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
 	apidev_major = register_chrdev(0, QLA2XXX_APIDEV, &apidev_fops);
 	if (apidev_major < 0) {
+<<<<<<< HEAD
 		ql_log(ql_log_fatal, NULL, 0x0003,
 		    "Unable to register char device %s.\n", QLA2XXX_APIDEV);
+=======
+		printk(KERN_WARNING "qla2xxx: Unable to register char device "
+		    "%s\n", QLA2XXX_APIDEV);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	qla2xxx_transport_vport_template =
@@ -4483,21 +5687,31 @@ qla2x00_module_init(void)
 	if (!qla2xxx_transport_vport_template) {
 		kmem_cache_destroy(srb_cachep);
 		fc_release_transport(qla2xxx_transport_template);
+<<<<<<< HEAD
 		ql_log(ql_log_fatal, NULL, 0x0004,
 		    "fc_attach_transport vport failed...Failing load!.\n");
 		return -ENODEV;
 	}
 	ql_log(ql_log_info, NULL, 0x0005,
 	    "QLogic Fibre Channel HBA Driver: %s.\n",
+=======
+		return -ENODEV;
+	}
+
+	printk(KERN_INFO "QLogic Fibre Channel HBA Driver: %s\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    qla2x00_version_str);
 	ret = pci_register_driver(&qla2xxx_pci_driver);
 	if (ret) {
 		kmem_cache_destroy(srb_cachep);
 		fc_release_transport(qla2xxx_transport_template);
 		fc_release_transport(qla2xxx_transport_vport_template);
+<<<<<<< HEAD
 		ql_log(ql_log_fatal, NULL, 0x0006,
 		    "pci_register_driver failed...ret=%d Failing load!.\n",
 		    ret);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return ret;
 }

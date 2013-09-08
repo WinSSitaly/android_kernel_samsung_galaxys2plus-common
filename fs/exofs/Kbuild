@@ -12,9 +12,13 @@
 # Kbuild - Gets included from the Kernels Makefile and build system
 #
 
+<<<<<<< HEAD
 # ore module library
 libore-y := ore.o ore_raid.o
 obj-$(CONFIG_ORE) += libore.o
 
 exofs-y := inode.o file.o symlink.o namei.o dir.o super.o
+=======
+exofs-y := ios.o inode.o file.o symlink.o namei.o dir.o super.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_EXOFS_FS) += exofs.o

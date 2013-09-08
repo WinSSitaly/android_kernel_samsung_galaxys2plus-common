@@ -37,6 +37,10 @@
 #include <asm/oplib.h>
 #include <asm/timex.h>
 #include <asm/timer.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/irq.h>
 #include <asm/io.h>
 #include <asm/idprom.h>

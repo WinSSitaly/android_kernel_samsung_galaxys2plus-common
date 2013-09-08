@@ -53,7 +53,10 @@ struct tda18271_std_map {
 	struct tda18271_std_map_item dvbt_7;
 	struct tda18271_std_map_item dvbt_8;
 	struct tda18271_std_map_item qam_6;
+<<<<<<< HEAD
 	struct tda18271_std_map_item qam_7;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct tda18271_std_map_item qam_8;
 };
 

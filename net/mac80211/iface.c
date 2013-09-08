@@ -188,6 +188,7 @@ static int ieee80211_do_open(struct net_device *dev, bool coming_up)
 		if (!is_valid_ether_addr(sdata->u.wds.remote_addr))
 			return -ENOLINK;
 		break;
+<<<<<<< HEAD
 	case NL80211_IFTYPE_AP_VLAN: {
 		struct ieee80211_sub_if_data *master;
 
@@ -204,6 +205,13 @@ static int ieee80211_do_open(struct net_device *dev, bool coming_up)
 			master->control_port_no_encrypt;
 		break;
 		}
+=======
+	case NL80211_IFTYPE_AP_VLAN:
+		if (!sdata->bss)
+			return -ENOLINK;
+		list_add(&sdata->u.vlan.list, &sdata->bss->vlans);
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case NL80211_IFTYPE_AP:
 		sdata->bss = &sdata->u.ap;
 		break;
@@ -276,7 +284,11 @@ static int ieee80211_do_open(struct net_device *dev, bool coming_up)
 		break;
 	default:
 		if (coming_up) {
+<<<<<<< HEAD
 			res = drv_add_interface(local, sdata);
+=======
+			res = drv_add_interface(local, &sdata->vif);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (res)
 				goto err_stop;
 		}
@@ -293,6 +305,7 @@ static int ieee80211_do_open(struct net_device *dev, bool coming_up)
 		changed |= ieee80211_reset_erp_info(sdata);
 		ieee80211_bss_info_change_notify(sdata, changed);
 
+<<<<<<< HEAD
 		if (sdata->vif.type == NL80211_IFTYPE_STATION ||
 		    sdata->vif.type == NL80211_IFTYPE_ADHOC)
 			netif_carrier_off(dev);
@@ -305,6 +318,12 @@ static int ieee80211_do_open(struct net_device *dev, bool coming_up)
 		 * doesn't start up with sane defaults
 		 */
 		ieee80211_set_wmm_default(sdata, true);
+=======
+		if (sdata->vif.type == NL80211_IFTYPE_STATION)
+			netif_carrier_off(dev);
+		else
+			netif_carrier_on(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	set_bit(SDATA_STATE_RUNNING, &sdata->state);
@@ -318,9 +337,14 @@ static int ieee80211_do_open(struct net_device *dev, bool coming_up)
 			goto err_del_interface;
 		}
 
+<<<<<<< HEAD
 		sta_info_pre_move_state(sta, IEEE80211_STA_AUTH);
 		sta_info_pre_move_state(sta, IEEE80211_STA_ASSOC);
 		sta_info_pre_move_state(sta, IEEE80211_STA_AUTHORIZED);
+=======
+		/* no locking required since STA is not live yet */
+		sta->flags |= WLAN_STA_AUTHORIZED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		res = sta_info_insert(sta);
 		if (res) {
@@ -349,8 +373,20 @@ static int ieee80211_do_open(struct net_device *dev, bool coming_up)
 	if (coming_up)
 		local->open_count++;
 
+<<<<<<< HEAD
 	if (hw_reconf_flags)
 		ieee80211_hw_config(local, hw_reconf_flags);
+=======
+	if (hw_reconf_flags) {
+		ieee80211_hw_config(local, hw_reconf_flags);
+		/*
+		 * set default queue parameters so drivers don't
+		 * need to initialise the hardware if the hardware
+		 * doesn't start up with sane defaults
+		 */
+		ieee80211_set_wmm_default(sdata);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ieee80211_recalc_ps(local, -1);
 
@@ -358,7 +394,11 @@ static int ieee80211_do_open(struct net_device *dev, bool coming_up)
 
 	return 0;
  err_del_interface:
+<<<<<<< HEAD
 	drv_remove_interface(local, sdata);
+=======
+	drv_remove_interface(local, &sdata->vif);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  err_stop:
 	if (!local->open_count)
 		drv_stop(local);
@@ -376,7 +416,12 @@ static int ieee80211_open(struct net_device *dev)
 	int err;
 
 	/* fail early if user set an invalid address */
+<<<<<<< HEAD
 	if (!is_valid_ether_addr(dev->dev_addr))
+=======
+	if (!is_zero_ether_addr(dev->dev_addr) &&
+	    !is_valid_ether_addr(dev->dev_addr))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EADDRNOTAVAIL;
 
 	err = ieee80211_check_concurrent_iface(sdata, sdata->vif.type);
@@ -463,31 +508,50 @@ static void ieee80211_do_stop(struct ieee80211_sub_if_data *sdata,
 		struct ieee80211_sub_if_data *vlan, *tmpsdata;
 		struct beacon_data *old_beacon =
 			rtnl_dereference(sdata->u.ap.beacon);
+<<<<<<< HEAD
 		struct sk_buff *old_probe_resp =
 			rtnl_dereference(sdata->u.ap.probe_resp);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* sdata_running will return false, so this will disable */
 		ieee80211_bss_info_change_notify(sdata,
 						 BSS_CHANGED_BEACON_ENABLED);
 
+<<<<<<< HEAD
 		/* remove beacon and probe response */
 		RCU_INIT_POINTER(sdata->u.ap.beacon, NULL);
 		RCU_INIT_POINTER(sdata->u.ap.probe_resp, NULL);
 		synchronize_rcu();
 		kfree(old_beacon);
 		kfree_skb(old_probe_resp);
+=======
+		/* remove beacon */
+		rcu_assign_pointer(sdata->u.ap.beacon, NULL);
+		synchronize_rcu();
+		kfree(old_beacon);
+
+		/* free all potentially still buffered bcast frames */
+		while ((skb = skb_dequeue(&sdata->u.ap.ps_bc_buf))) {
+			local->total_ps_buffered--;
+			dev_kfree_skb(skb);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* down all dependent devices, that is VLANs */
 		list_for_each_entry_safe(vlan, tmpsdata, &sdata->u.ap.vlans,
 					 u.vlan.list)
 			dev_close(vlan->dev);
 		WARN_ON(!list_empty(&sdata->u.ap.vlans));
+<<<<<<< HEAD
 
 		/* free all potentially still buffered bcast frames */
 		local->total_ps_buffered -= skb_queue_len(&sdata->u.ap.ps_bc_buf);
 		skb_queue_purge(&sdata->u.ap.ps_bc_buf);
 	} else if (sdata->vif.type == NL80211_IFTYPE_STATION) {
 		ieee80211_mgd_stop(sdata);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (going_down)
@@ -514,6 +578,7 @@ static void ieee80211_do_stop(struct ieee80211_sub_if_data *sdata,
 		ieee80211_configure_filter(local);
 		break;
 	default:
+<<<<<<< HEAD
 		mutex_lock(&local->mtx);
 		if (local->hw_roc_dev == sdata->dev &&
 		    local->hw_roc_channel) {
@@ -526,6 +591,8 @@ static void ieee80211_do_stop(struct ieee80211_sub_if_data *sdata,
 		flush_work(&local->hw_roc_start);
 		flush_work(&local->hw_roc_done);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		flush_work(&sdata->work);
 		/*
 		 * When we get here, the interface is marked down.
@@ -551,7 +618,11 @@ static void ieee80211_do_stop(struct ieee80211_sub_if_data *sdata,
 		ieee80211_free_keys(sdata);
 
 		if (going_down)
+<<<<<<< HEAD
 			drv_remove_interface(local, sdata);
+=======
+			drv_remove_interface(local, &sdata->vif);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	sdata->bss = NULL;
@@ -674,7 +745,11 @@ static const struct net_device_ops ieee80211_dataif_ops = {
 	.ndo_stop		= ieee80211_stop,
 	.ndo_uninit		= ieee80211_teardown_sdata,
 	.ndo_start_xmit		= ieee80211_subif_start_xmit,
+<<<<<<< HEAD
 	.ndo_set_rx_mode	= ieee80211_set_multicast_list,
+=======
+	.ndo_set_multicast_list = ieee80211_set_multicast_list,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ndo_change_mtu 	= ieee80211_change_mtu,
 	.ndo_set_mac_address 	= ieee80211_change_mac,
 	.ndo_select_queue	= ieee80211_netdev_select_queue,
@@ -687,6 +762,10 @@ static u16 ieee80211_monitor_select_queue(struct net_device *dev,
 	struct ieee80211_local *local = sdata->local;
 	struct ieee80211_hdr *hdr;
 	struct ieee80211_radiotap_header *rtap = (void *)skb->data;
+<<<<<<< HEAD
+=======
+	u8 *p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (local->hw.queues < 4)
 		return 0;
@@ -697,7 +776,23 @@ static u16 ieee80211_monitor_select_queue(struct net_device *dev,
 
 	hdr = (void *)((u8 *)skb->data + le16_to_cpu(rtap->it_len));
 
+<<<<<<< HEAD
 	return ieee80211_select_queue_80211(local, skb, hdr);
+=======
+	if (!ieee80211_is_data(hdr->frame_control)) {
+		skb->priority = 7;
+		return ieee802_1d_to_ac[skb->priority];
+	}
+	if (!ieee80211_is_data_qos(hdr->frame_control)) {
+		skb->priority = 0;
+		return ieee802_1d_to_ac[skb->priority];
+	}
+
+	p = ieee80211_get_qos_ctl(hdr);
+	skb->priority = *p & IEEE80211_QOS_CTL_TAG1D_MASK;
+
+	return ieee80211_downgrade_queue(local, skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct net_device_ops ieee80211_monitorif_ops = {
@@ -705,7 +800,11 @@ static const struct net_device_ops ieee80211_monitorif_ops = {
 	.ndo_stop		= ieee80211_stop,
 	.ndo_uninit		= ieee80211_teardown_sdata,
 	.ndo_start_xmit		= ieee80211_monitor_start_xmit,
+<<<<<<< HEAD
 	.ndo_set_rx_mode	= ieee80211_set_multicast_list,
+=======
+	.ndo_set_multicast_list = ieee80211_set_multicast_list,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ndo_change_mtu 	= ieee80211_change_mtu,
 	.ndo_set_mac_address 	= eth_mac_addr,
 	.ndo_select_queue	= ieee80211_monitor_select_queue,
@@ -868,8 +967,11 @@ static void ieee80211_setup_sdata(struct ieee80211_sub_if_data *sdata,
 	sdata->control_port_protocol = cpu_to_be16(ETH_P_PAE);
 	sdata->control_port_no_encrypt = false;
 
+<<<<<<< HEAD
 	sdata->noack_map = 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* only monitor differs */
 	sdata->dev->type = ARPHRD_ETHER;
 
@@ -1148,8 +1250,13 @@ int ieee80211_if_add(struct ieee80211_local *local, const char *name,
 
 	ASSERT_RTNL();
 
+<<<<<<< HEAD
 	ndev = alloc_netdev_mqs(sizeof(*sdata) + local->hw.vif_data_size,
 				name, ieee80211_if_setup, local->hw.queues, 1);
+=======
+	ndev = alloc_netdev_mq(sizeof(*sdata) + local->hw.vif_data_size,
+			       name, ieee80211_if_setup, local->hw.queues);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ndev)
 		return -ENOMEM;
 	dev_net_set(ndev, wiphy_net(local->hw.wiphy));
@@ -1195,6 +1302,7 @@ int ieee80211_if_add(struct ieee80211_local *local, const char *name,
 		sband = local->hw.wiphy->bands[i];
 		sdata->rc_rateidx_mask[i] =
 			sband ? (1 << sband->n_bitrates) - 1 : 0;
+<<<<<<< HEAD
 		if (sband)
 			memcpy(sdata->rc_rateidx_mcs_mask[i],
 			       sband->ht_cap.mcs.rx_mask,
@@ -1202,6 +1310,8 @@ int ieee80211_if_add(struct ieee80211_local *local, const char *name,
 		else
 			memset(sdata->rc_rateidx_mcs_mask[i], 0,
 			       sizeof(sdata->rc_rateidx_mcs_mask[i]));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* setup type-dependent data */
@@ -1239,9 +1349,12 @@ void ieee80211_if_remove(struct ieee80211_sub_if_data *sdata)
 	list_del_rcu(&sdata->list);
 	mutex_unlock(&sdata->local->iflist_mtx);
 
+<<<<<<< HEAD
 	if (ieee80211_vif_is_mesh(&sdata->vif))
 		mesh_path_flush_by_iface(sdata);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	synchronize_rcu();
 	unregister_netdevice(sdata->dev);
 }
@@ -1257,6 +1370,7 @@ void ieee80211_remove_interfaces(struct ieee80211_local *local)
 
 	ASSERT_RTNL();
 
+<<<<<<< HEAD
 	/*
 	 * Close all AP_VLAN interfaces first, as otherwise they
 	 * might be closed while the AP interface they belong to
@@ -1266,13 +1380,18 @@ void ieee80211_remove_interfaces(struct ieee80211_local *local)
 		if (sdata->vif.type == NL80211_IFTYPE_AP_VLAN)
 			dev_close(sdata->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&local->iflist_mtx);
 	list_for_each_entry_safe(sdata, tmp, &local->interfaces, list) {
 		list_del(&sdata->list);
 
+<<<<<<< HEAD
 		if (ieee80211_vif_is_mesh(&sdata->vif))
 			mesh_path_flush_by_iface(sdata);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unregister_netdevice_queue(sdata->dev, &unreg_list);
 	}
 	mutex_unlock(&local->iflist_mtx);
@@ -1333,9 +1452,13 @@ u32 __ieee80211_recalc_idle(struct ieee80211_local *local)
 
 		/* do not count disabled managed interfaces */
 		if (sdata->vif.type == NL80211_IFTYPE_STATION &&
+<<<<<<< HEAD
 		    !sdata->u.mgd.associated &&
 		    !sdata->u.mgd.auth_data &&
 		    !sdata->u.mgd.assoc_data) {
+=======
+		    !sdata->u.mgd.associated) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sdata->vif.bss_conf.idle = true;
 			continue;
 		}
@@ -1346,7 +1469,10 @@ u32 __ieee80211_recalc_idle(struct ieee80211_local *local)
 			continue;
 		}
 		/* count everything else */
+<<<<<<< HEAD
 		sdata->vif.bss_conf.idle = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		count++;
 	}
 
@@ -1355,8 +1481,12 @@ u32 __ieee80211_recalc_idle(struct ieee80211_local *local)
 		wk->sdata->vif.bss_conf.idle = false;
 	}
 
+<<<<<<< HEAD
 	if (local->scan_sdata &&
 	    !(local->hw.flags & IEEE80211_HW_SCAN_WHILE_IDLE)) {
+=======
+	if (local->scan_sdata) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		scanning = true;
 		local->scan_sdata->vif.bss_conf.idle = false;
 	}
@@ -1365,9 +1495,12 @@ u32 __ieee80211_recalc_idle(struct ieee80211_local *local)
 		hw_roc = true;
 
 	list_for_each_entry(sdata, &local->interfaces, list) {
+<<<<<<< HEAD
 		if (sdata->vif.type == NL80211_IFTYPE_MONITOR ||
 		    sdata->vif.type == NL80211_IFTYPE_AP_VLAN)
 			continue;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (sdata->old_idle == sdata->vif.bss_conf.idle)
 			continue;
 		if (!ieee80211_sdata_running(sdata))

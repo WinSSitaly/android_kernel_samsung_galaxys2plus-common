@@ -7,6 +7,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+<<<<<<< HEAD
+=======
+#define LKC_DIRECT_LINK
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "lkc.h"
 
 static char *escape(const char* text, char *bf, int len)

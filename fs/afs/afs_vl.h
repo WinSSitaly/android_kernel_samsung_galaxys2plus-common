@@ -49,7 +49,11 @@ enum AFSVL_Errors {
 	AFSVL_BADVOLOPER 	= 363542,	/* Bad volume operation code */
 	AFSVL_BADRELLOCKTYPE 	= 363543,	/* Bad release lock type */
 	AFSVL_RERELEASE 	= 363544,	/* Status report: last release was aborted */
+<<<<<<< HEAD
 	AFSVL_BADSERVERFLAG 	= 363545,	/* Invalid replication site server flag */
+=======
+	AFSVL_BADSERVERFLAG 	= 363545,	/* Invalid replication site server °ag */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	AFSVL_PERM 		= 363546,	/* No permission access */
 	AFSVL_NOMEM 		= 363547,	/* malloc/realloc failed to alloc enough memory */
 };

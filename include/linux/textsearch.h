@@ -4,11 +4,18 @@
 #include <linux/types.h>
 #include <linux/list.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/err.h>
 #include <linux/slab.h>
 
 struct module;
 
+=======
+#include <linux/module.h>
+#include <linux/err.h>
+#include <linux/slab.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ts_config;
 
 #define TS_AUTOLOAD	1 /* Automatically load textsearch modules when needed */

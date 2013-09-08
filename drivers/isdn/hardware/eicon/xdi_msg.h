@@ -80,7 +80,11 @@
 
 /*
   Set untranslated protocol code features
+<<<<<<< HEAD
 */
+=======
+  */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DIVA_XDI_UM_CMD_SET_PROTOCOL_FEATURES	11
 
 typedef struct _diva_xdi_um_cfg_cmd_data_set_features {

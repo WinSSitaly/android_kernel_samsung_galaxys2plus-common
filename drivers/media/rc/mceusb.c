@@ -1,7 +1,11 @@
 /*
  * Driver for USB Windows Media Center Ed. eHome Infrared Transceivers
  *
+<<<<<<< HEAD
  * Copyright (c) 2010-2011, Jarod Wilson <jarod@redhat.com>
+=======
+ * Copyright (c) 2010 by Jarod Wilson <jarod@redhat.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Based on the original lirc_mceusb and lirc_mceusb2 drivers, by Dan
  * Conti, Martin Blatter and Daniel Melander, the latter of which was
@@ -15,11 +19,14 @@
  * Jon Smirl, which included enhancements and simplifications to the
  * incoming IR buffer parsing routines.
  *
+<<<<<<< HEAD
  * Updated in July of 2011 with the aid of Microsoft's official
  * remote/transceiver requirements and specification document, found at
  * download.microsoft.com, title
  * Windows-Media-Center-RC-IR-Collection-Green-Button-Specification-03-08-2011-V2.pdf
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,11 +49,18 @@
 #include <linux/slab.h>
 #include <linux/usb.h>
 #include <linux/usb/input.h>
+<<<<<<< HEAD
 #include <linux/pm_wakeup.h>
 #include <media/rc-core.h>
 
 #define DRIVER_VERSION	"1.92"
 #define DRIVER_AUTHOR	"Jarod Wilson <jarod@redhat.com>"
+=======
+#include <media/rc-core.h>
+
+#define DRIVER_VERSION	"1.91"
+#define DRIVER_AUTHOR	"Jarod Wilson <jarod@wilsonet.com>"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DRIVER_DESC	"Windows Media Center Ed. eHome Infrared Transceiver " \
 			"device driver"
 #define DRIVER_NAME	"mceusb"
@@ -69,6 +83,7 @@
 #define MCE_PULSE_MASK		0x7f /* Pulse mask */
 #define MCE_MAX_PULSE_LENGTH	0x7f /* Longest transmittable pulse symbol */
 
+<<<<<<< HEAD
 /*
  * The interface between the host and the IR hardware is command-response
  * based. All commands and responses have a consistent format, where a lead
@@ -136,10 +151,23 @@
 #define MCE_RSP_TX_TIMEOUT	0x81	/* tx timed out, 2 bytes */
 
 /* Misc commands/responses not defined in the MCE remote/transceiver spec */
+=======
+#define MCE_HW_CMD_HEADER	0xff	/* MCE hardware command header */
+#define MCE_COMMAND_HEADER	0x9f	/* MCE command header */
+#define MCE_COMMAND_MASK	0xe0	/* Mask out command bits */
+#define MCE_COMMAND_NULL	0x00	/* These show up various places... */
+/* if buf[i] & MCE_COMMAND_MASK == 0x80 and buf[i] != MCE_COMMAND_HEADER,
+ * then we're looking at a raw IR data sample */
+#define MCE_COMMAND_IRDATA	0x80
+#define MCE_PACKET_LENGTH_MASK	0x1f /* Packet length mask */
+
+/* Sub-commands, which follow MCE_COMMAND_HEADER or MCE_HW_CMD_HEADER */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MCE_CMD_SIG_END		0x01	/* End of signal */
 #define MCE_CMD_PING		0x03	/* Ping device */
 #define MCE_CMD_UNKNOWN		0x04	/* Unknown */
 #define MCE_CMD_UNKNOWN2	0x05	/* Unknown */
+<<<<<<< HEAD
 #define MCE_CMD_UNKNOWN3	0x09	/* Unknown */
 #define MCE_CMD_UNKNOWN4	0x0a	/* Unknown */
 #define MCE_CMD_G_REVISION	0x0b	/* Get hw/sw revision */
@@ -159,6 +187,37 @@
 static bool debug = 1;
 #else
 static bool debug;
+=======
+#define MCE_CMD_S_CARRIER	0x06	/* Set TX carrier frequency */
+#define MCE_CMD_G_CARRIER	0x07	/* Get TX carrier frequency */
+#define MCE_CMD_S_TXMASK	0x08	/* Set TX port bitmask */
+#define MCE_CMD_UNKNOWN3	0x09	/* Unknown */
+#define MCE_CMD_UNKNOWN4	0x0a	/* Unknown */
+#define MCE_CMD_G_REVISION	0x0b	/* Get hw/sw revision */
+#define MCE_CMD_S_TIMEOUT	0x0c	/* Set RX timeout value */
+#define MCE_CMD_G_TIMEOUT	0x0d	/* Get RX timeout value */
+#define MCE_CMD_UNKNOWN5	0x0e	/* Unknown */
+#define MCE_CMD_UNKNOWN6	0x0f	/* Unknown */
+#define MCE_CMD_G_RXPORTSTS	0x11	/* Get RX port status */
+#define MCE_CMD_G_TXMASK	0x13	/* Set TX port bitmask */
+#define MCE_CMD_S_RXSENSOR	0x14	/* Set RX sensor (std/learning) */
+#define MCE_CMD_G_RXSENSOR	0x15	/* Get RX sensor (std/learning) */
+#define MCE_RSP_PULSE_COUNT	0x15	/* RX pulse count (only if learning) */
+#define MCE_CMD_TX_PORTS	0x16	/* Get number of TX ports */
+#define MCE_CMD_G_WAKESRC	0x17	/* Get wake source */
+#define MCE_CMD_UNKNOWN7	0x18	/* Unknown */
+#define MCE_CMD_UNKNOWN8	0x19	/* Unknown */
+#define MCE_CMD_UNKNOWN9	0x1b	/* Unknown */
+#define MCE_CMD_DEVICE_RESET	0xaa	/* Reset the hardware */
+#define MCE_RSP_CMD_INVALID	0xfe	/* Invalid command issued */
+
+
+/* module parameters */
+#ifdef CONFIG_USB_DEBUG
+static int debug = 1;
+#else
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #define mce_dbg(dev, fmt, ...)					\
@@ -361,8 +420,11 @@ static struct usb_device_id mceusb_dev_table[] = {
 	{ USB_DEVICE(VENDOR_FORMOSA, 0xe03c) },
 	/* Formosa Industrial Computing */
 	{ USB_DEVICE(VENDOR_FORMOSA, 0xe03e) },
+<<<<<<< HEAD
 	/* Formosa Industrial Computing */
 	{ USB_DEVICE(VENDOR_FORMOSA, 0xe042) },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Fintek eHome Infrared Transceiver (HP branded) */
 	{ USB_DEVICE(VENDOR_FINTEK, 0x5168) },
 	/* Fintek eHome Infrared Transceiver */
@@ -443,6 +505,7 @@ struct mceusb_dev {
 	char name[128];
 	char phys[64];
 	enum mceusb_model_type model;
+<<<<<<< HEAD
 
 	bool need_reset;	/* flag to issue a device resume cmd */
 	u8 emver;		/* emulator interface version */
@@ -474,6 +537,50 @@ static char SET_RX_TIMEOUT[]	= {MCE_CMD_PORT_IR,
 				   MCE_CMD_SETIRTIMEOUT, 0x00, 0x00};
 static char SET_RX_SENSOR[]	= {MCE_CMD_PORT_IR,
 				   MCE_RSP_EQIRRXPORTEN, 0x00};
+=======
+};
+
+/*
+ * MCE Device Command Strings
+ * Device command responses vary from device to device...
+ * - DEVICE_RESET resets the hardware to its default state
+ * - GET_REVISION fetches the hardware/software revision, common
+ *   replies are ff 0b 45 ff 1b 08 and ff 0b 50 ff 1b 42
+ * - GET_CARRIER_FREQ gets the carrier mode and frequency of the
+ *   device, with replies in the form of 9f 06 MM FF, where MM is 0-3,
+ *   meaning clk of 10000000, 2500000, 625000 or 156250, and FF is
+ *   ((clk / frequency) - 1)
+ * - GET_RX_TIMEOUT fetches the receiver timeout in units of 50us,
+ *   response in the form of 9f 0c msb lsb
+ * - GET_TX_BITMASK fetches the transmitter bitmask, replies in
+ *   the form of 9f 08 bm, where bm is the bitmask
+ * - GET_RX_SENSOR fetches the RX sensor setting -- long-range
+ *   general use one or short-range learning one, in the form of
+ *   9f 14 ss, where ss is either 01 for long-range or 02 for short
+ * - SET_CARRIER_FREQ sets a new carrier mode and frequency
+ * - SET_TX_BITMASK sets the transmitter bitmask
+ * - SET_RX_TIMEOUT sets the receiver timeout
+ * - SET_RX_SENSOR sets which receiver sensor to use
+ */
+static char DEVICE_RESET[]	= {MCE_COMMAND_NULL, MCE_HW_CMD_HEADER,
+				   MCE_CMD_DEVICE_RESET};
+static char GET_REVISION[]	= {MCE_HW_CMD_HEADER, MCE_CMD_G_REVISION};
+static char GET_UNKNOWN[]	= {MCE_HW_CMD_HEADER, MCE_CMD_UNKNOWN7};
+static char GET_UNKNOWN2[]	= {MCE_COMMAND_HEADER, MCE_CMD_UNKNOWN2};
+static char GET_CARRIER_FREQ[]	= {MCE_COMMAND_HEADER, MCE_CMD_G_CARRIER};
+static char GET_RX_TIMEOUT[]	= {MCE_COMMAND_HEADER, MCE_CMD_G_TIMEOUT};
+static char GET_TX_BITMASK[]	= {MCE_COMMAND_HEADER, MCE_CMD_G_TXMASK};
+static char GET_RX_SENSOR[]	= {MCE_COMMAND_HEADER, MCE_CMD_G_RXSENSOR};
+/* sub in desired values in lower byte or bytes for full command */
+/* FIXME: make use of these for transmit.
+static char SET_CARRIER_FREQ[]	= {MCE_COMMAND_HEADER,
+				   MCE_CMD_S_CARRIER, 0x00, 0x00};
+static char SET_TX_BITMASK[]	= {MCE_COMMAND_HEADER, MCE_CMD_S_TXMASK, 0x00};
+static char SET_RX_TIMEOUT[]	= {MCE_COMMAND_HEADER,
+				   MCE_CMD_S_TIMEOUT, 0x00, 0x00};
+static char SET_RX_SENSOR[]	= {MCE_COMMAND_HEADER,
+				   MCE_CMD_S_RXSENSOR, 0x00};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 */
 
 static int mceusb_cmdsize(u8 cmd, u8 subcmd)
@@ -481,6 +588,7 @@ static int mceusb_cmdsize(u8 cmd, u8 subcmd)
 	int datasize = 0;
 
 	switch (cmd) {
+<<<<<<< HEAD
 	case MCE_CMD_NULL:
 		if (subcmd == MCE_CMD_PORT_SYS)
 			datasize = 1;
@@ -508,6 +616,29 @@ static int mceusb_cmdsize(u8 cmd, u8 subcmd)
 		case MCE_CMD_SIG_END:
 		case MCE_RSP_EQIRTXPORTS:
 		case MCE_RSP_EQIRRXPORTEN:
+=======
+	case MCE_COMMAND_NULL:
+		if (subcmd == MCE_HW_CMD_HEADER)
+			datasize = 1;
+		break;
+	case MCE_HW_CMD_HEADER:
+		switch (subcmd) {
+		case MCE_CMD_G_REVISION:
+			datasize = 2;
+			break;
+		}
+	case MCE_COMMAND_HEADER:
+		switch (subcmd) {
+		case MCE_CMD_UNKNOWN:
+		case MCE_CMD_S_CARRIER:
+		case MCE_CMD_S_TIMEOUT:
+		case MCE_RSP_PULSE_COUNT:
+			datasize = 2;
+			break;
+		case MCE_CMD_SIG_END:
+		case MCE_CMD_S_TXMASK:
+		case MCE_CMD_S_RXSENSOR:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			datasize = 1;
 			break;
 		}
@@ -520,10 +651,16 @@ static void mceusb_dev_printdata(struct mceusb_dev *ir, char *buf,
 {
 	char codes[USB_BUFLEN * 3 + 1];
 	char inout[9];
+<<<<<<< HEAD
 	u8 cmd, subcmd, data1, data2, data3, data4, data5;
 	struct device *dev = ir->dev;
 	int i, start, skip = 0;
 	u32 carrier, period;
+=======
+	u8 cmd, subcmd, data1, data2;
+	struct device *dev = ir->dev;
+	int i, start, skip = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!debug)
 		return;
@@ -551,6 +688,7 @@ static void mceusb_dev_printdata(struct mceusb_dev *ir, char *buf,
 	subcmd = buf[start + 1] & 0xff;
 	data1  = buf[start + 2] & 0xff;
 	data2  = buf[start + 3] & 0xff;
+<<<<<<< HEAD
 	data3  = buf[start + 4] & 0xff;
 	data4  = buf[start + 5] & 0xff;
 	data5  = buf[start + 6] & 0xff;
@@ -562,10 +700,19 @@ static void mceusb_dev_printdata(struct mceusb_dev *ir, char *buf,
 		if ((subcmd == MCE_CMD_PORT_SYS) &&
 		    (data1 == MCE_CMD_RESUME))
 			dev_info(dev, "Device resume requested\n");
+=======
+
+	switch (cmd) {
+	case MCE_COMMAND_NULL:
+		if ((subcmd == MCE_HW_CMD_HEADER) &&
+		    (data1 == MCE_CMD_DEVICE_RESET))
+			dev_info(dev, "Device reset requested\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		else
 			dev_info(dev, "Unknown command 0x%02x 0x%02x\n",
 				 cmd, subcmd);
 		break;
+<<<<<<< HEAD
 	case MCE_CMD_PORT_SYS:
 		switch (subcmd) {
 		case MCE_RSP_EQEMVER:
@@ -573,6 +720,10 @@ static void mceusb_dev_printdata(struct mceusb_dev *ir, char *buf,
 				dev_info(dev, "Emulator interface version %x\n",
 					 data1);
 			break;
+=======
+	case MCE_HW_CMD_HEADER:
+		switch (subcmd) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case MCE_CMD_G_REVISION:
 			if (len == 2)
 				dev_info(dev, "Get hw/sw rev?\n");
@@ -581,6 +732,7 @@ static void mceusb_dev_printdata(struct mceusb_dev *ir, char *buf,
 					 "0x%02x 0x%02x\n", data1, data2,
 					 buf[start + 4], buf[start + 5]);
 			break;
+<<<<<<< HEAD
 		case MCE_CMD_RESUME:
 			dev_info(dev, "Device resume requested\n");
 			break;
@@ -603,13 +755,27 @@ static void mceusb_dev_printdata(struct mceusb_dev *ir, char *buf,
 		case MCE_CMD_FLASHLED:
 			dev_info(dev, "Attempting to flash LED\n");
 			break;
+=======
+		case MCE_CMD_DEVICE_RESET:
+			dev_info(dev, "Device reset requested\n");
+			break;
+		case MCE_RSP_CMD_INVALID:
+			dev_info(dev, "Previous command not supported\n");
+			break;
+		case MCE_CMD_UNKNOWN7:
+		case MCE_CMD_UNKNOWN9:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			dev_info(dev, "Unknown command 0x%02x 0x%02x\n",
 				 cmd, subcmd);
 			break;
 		}
 		break;
+<<<<<<< HEAD
 	case MCE_CMD_PORT_IR:
+=======
+	case MCE_COMMAND_HEADER:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		switch (subcmd) {
 		case MCE_CMD_SIG_END:
 			dev_info(dev, "End of signal\n");
@@ -621,6 +787,7 @@ static void mceusb_dev_printdata(struct mceusb_dev *ir, char *buf,
 			dev_info(dev, "Resp to 9f 05 of 0x%02x 0x%02x\n",
 				 data1, data2);
 			break;
+<<<<<<< HEAD
 		case MCE_RSP_EQIRCFS:
 			period = DIV_ROUND_CLOSEST(
 					(1 << data1 * 2) * (data2 + 1), 10);
@@ -655,12 +822,44 @@ static void mceusb_dev_printdata(struct mceusb_dev *ir, char *buf,
 			break;
 		case MCE_CMD_GETIRRXPORTEN:
 		/* aka MCE_RSP_EQIRRXCFCNT */
+=======
+		case MCE_CMD_S_CARRIER:
+			dev_info(dev, "%s carrier mode and freq of "
+				 "0x%02x 0x%02x\n", inout, data1, data2);
+			break;
+		case MCE_CMD_G_CARRIER:
+			dev_info(dev, "Get carrier mode and freq\n");
+			break;
+		case MCE_CMD_S_TXMASK:
+			dev_info(dev, "%s transmit blaster mask of 0x%02x\n",
+				 inout, data1);
+			break;
+		case MCE_CMD_S_TIMEOUT:
+			/* value is in units of 50us, so x*50/1000 ms */
+			dev_info(dev, "%s receive timeout of %d ms\n",
+				 inout,
+				 ((data1 << 8) | data2) * MCE_TIME_UNIT / 1000);
+			break;
+		case MCE_CMD_G_TIMEOUT:
+			dev_info(dev, "Get receive timeout\n");
+			break;
+		case MCE_CMD_G_TXMASK:
+			dev_info(dev, "Get transmit blaster mask\n");
+			break;
+		case MCE_CMD_S_RXSENSOR:
+			dev_info(dev, "%s %s-range receive sensor in use\n",
+				 inout, data1 == 0x02 ? "short" : "long");
+			break;
+		case MCE_CMD_G_RXSENSOR:
+		/* aka MCE_RSP_PULSE_COUNT */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (out)
 				dev_info(dev, "Get receive sensor\n");
 			else if (ir->learning_enabled)
 				dev_info(dev, "RX pulse count: %d\n",
 					 ((data1 << 8) | data2));
 			break;
+<<<<<<< HEAD
 		case MCE_RSP_EQIRNUMPORTS:
 			if (out)
 				break;
@@ -670,6 +869,14 @@ static void mceusb_dev_printdata(struct mceusb_dev *ir, char *buf,
 		case MCE_RSP_CMD_ILLEGAL:
 			dev_info(dev, "Illegal PORT_IR command\n");
 			break;
+=======
+		case MCE_RSP_CMD_INVALID:
+			dev_info(dev, "Error! Hardware is likely wedged...\n");
+			break;
+		case MCE_CMD_UNKNOWN2:
+		case MCE_CMD_UNKNOWN3:
+		case MCE_CMD_UNKNOWN5:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			dev_info(dev, "Unknown command 0x%02x 0x%02x\n",
 				 cmd, subcmd);
@@ -682,8 +889,13 @@ static void mceusb_dev_printdata(struct mceusb_dev *ir, char *buf,
 
 	if (cmd == MCE_IRDATA_TRAILER)
 		dev_info(dev, "End of raw IR data\n");
+<<<<<<< HEAD
 	else if ((cmd != MCE_CMD_PORT_IR) &&
 		 ((cmd & MCE_PORT_MASK) == MCE_COMMAND_IRDATA))
+=======
+	else if ((cmd != MCE_COMMAND_HEADER) &&
+		 ((cmd & MCE_COMMAND_MASK) == MCE_COMMAND_IRDATA))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_info(dev, "Raw IR data, %d pulse/space samples\n", ir->rem);
 }
 
@@ -699,6 +911,12 @@ static void mce_async_callback(struct urb *urb, struct pt_regs *regs)
 	if (ir) {
 		len = urb->actual_length;
 
+<<<<<<< HEAD
+=======
+		mce_dbg(ir->dev, "callback called (status=%d len=%d)\n",
+			urb->status, len);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mceusb_dev_printdata(ir, urb->transfer_buffer, 0, len, true);
 	}
 
@@ -763,6 +981,7 @@ static void mce_request_packet(struct mceusb_dev *ir, unsigned char *data,
 
 static void mce_async_out(struct mceusb_dev *ir, unsigned char *data, int size)
 {
+<<<<<<< HEAD
 	int rsize = sizeof(DEVICE_RESUME);
 
 	if (ir->need_reset) {
@@ -773,6 +992,9 @@ static void mce_async_out(struct mceusb_dev *ir, unsigned char *data, int size)
 
 	mce_request_packet(ir, data, size, MCEUSB_TX);
 	msleep(10);
+=======
+	mce_request_packet(ir, data, size, MCEUSB_TX);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void mce_flush_rx_buffer(struct mceusb_dev *ir, int size)
@@ -781,24 +1003,43 @@ static void mce_flush_rx_buffer(struct mceusb_dev *ir, int size)
 }
 
 /* Send data out the IR blaster port(s) */
+<<<<<<< HEAD
 static int mceusb_tx_ir(struct rc_dev *dev, unsigned *txbuf, unsigned count)
 {
 	struct mceusb_dev *ir = dev->priv;
 	int i, ret = 0;
 	int cmdcount = 0;
+=======
+static int mceusb_tx_ir(struct rc_dev *dev, int *txbuf, u32 n)
+{
+	struct mceusb_dev *ir = dev->priv;
+	int i, ret = 0;
+	int count, cmdcount = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char *cmdbuf; /* MCE command buffer */
 	long signal_duration = 0; /* Singnal length in us */
 	struct timeval start_time, end_time;
 
 	do_gettimeofday(&start_time);
 
+<<<<<<< HEAD
 	cmdbuf = kzalloc(sizeof(unsigned) * MCE_CMDBUF_SIZE, GFP_KERNEL);
+=======
+	count = n / sizeof(int);
+
+	cmdbuf = kzalloc(sizeof(int) * MCE_CMDBUF_SIZE, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!cmdbuf)
 		return -ENOMEM;
 
 	/* MCE tx init header */
+<<<<<<< HEAD
 	cmdbuf[cmdcount++] = MCE_CMD_PORT_IR;
 	cmdbuf[cmdcount++] = MCE_CMD_SETIRTXPORTS;
+=======
+	cmdbuf[cmdcount++] = MCE_COMMAND_HEADER;
+	cmdbuf[cmdcount++] = MCE_CMD_S_TXMASK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmdbuf[cmdcount++] = ir->tx_mask;
 
 	/* Generate mce packet data */
@@ -861,7 +1102,11 @@ static int mceusb_tx_ir(struct rc_dev *dev, unsigned *txbuf, unsigned count)
 
 out:
 	kfree(cmdbuf);
+<<<<<<< HEAD
 	return ret ? ret : count;
+=======
+	return ret ? ret : n;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Sets active IR outputs -- mce devices typically have two */
@@ -884,8 +1129,13 @@ static int mceusb_set_tx_carrier(struct rc_dev *dev, u32 carrier)
 	struct mceusb_dev *ir = dev->priv;
 	int clk = 10000000;
 	int prescaler = 0, divisor = 0;
+<<<<<<< HEAD
 	unsigned char cmdbuf[4] = { MCE_CMD_PORT_IR,
 				    MCE_CMD_SETIRCFS, 0x00, 0x00 };
+=======
+	unsigned char cmdbuf[4] = { MCE_COMMAND_HEADER,
+				    MCE_CMD_S_CARRIER, 0x00, 0x00 };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Carrier has changed */
 	if (ir->carrier != carrier) {
@@ -933,6 +1183,7 @@ static void mceusb_handle_command(struct mceusb_dev *ir, int index)
 	u8 lo = ir->buf_in[index + 2] & 0xff;
 
 	switch (ir->buf_in[index]) {
+<<<<<<< HEAD
 	/* the one and only 5-byte return value command */
 	case MCE_RSP_GETPORTSTATUS:
 		if ((ir->buf_in[index + 4] & 0xff) == 0x00)
@@ -961,6 +1212,19 @@ static void mceusb_handle_command(struct mceusb_dev *ir, int index)
 		break;
 	case MCE_RSP_CMD_ILLEGAL:
 		ir->need_reset = true;
+=======
+	/* 2-byte return value commands */
+	case MCE_CMD_S_TIMEOUT:
+		ir->rc->timeout = US_TO_NS((hi << 8 | lo) * MCE_TIME_UNIT);
+		break;
+
+	/* 1-byte return value commands */
+	case MCE_CMD_S_TXMASK:
+		ir->tx_mask = hi;
+		break;
+	case MCE_CMD_S_RXSENSOR:
+		ir->learning_enabled = (hi == 0x02);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		break;
@@ -1009,8 +1273,13 @@ static void mceusb_process_ir_data(struct mceusb_dev *ir, int buf_len)
 			/* decode mce packets of the form (84),AA,BB,CC,DD */
 			/* IR data packets can span USB messages - rem */
 			ir->cmd = ir->buf_in[i];
+<<<<<<< HEAD
 			if ((ir->cmd == MCE_CMD_PORT_IR) ||
 			    ((ir->cmd & MCE_PORT_MASK) !=
+=======
+			if ((ir->cmd == MCE_COMMAND_HEADER) ||
+			    ((ir->cmd & MCE_COMMAND_MASK) !=
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     MCE_COMMAND_IRDATA)) {
 				ir->parser_state = SUBCMD;
 				continue;
@@ -1075,6 +1344,7 @@ static void mceusb_dev_recv(struct urb *urb, struct pt_regs *regs)
 	usb_submit_urb(urb, GFP_ATOMIC);
 }
 
+<<<<<<< HEAD
 static void mceusb_get_emulator_version(struct mceusb_dev *ir)
 {
 	/* If we get no reply or an illegal command reply, its ver 1, says MS */
@@ -1082,6 +1352,8 @@ static void mceusb_get_emulator_version(struct mceusb_dev *ir)
 	mce_async_out(ir, GET_EMVER, sizeof(GET_EMVER));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void mceusb_gen1_init(struct mceusb_dev *ir)
 {
 	int ret;
@@ -1124,8 +1396,13 @@ static void mceusb_gen1_init(struct mceusb_dev *ir)
 			      0x0000, 0x0100, NULL, 0, HZ * 3);
 	mce_dbg(dev, "%s - retC = %d\n", __func__, ret);
 
+<<<<<<< HEAD
 	/* device resume */
 	mce_async_out(ir, DEVICE_RESUME, sizeof(DEVICE_RESUME));
+=======
+	/* device reset */
+	mce_async_out(ir, DEVICE_RESET, sizeof(DEVICE_RESET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* get hw/sw revision? */
 	mce_async_out(ir, GET_REVISION, sizeof(GET_REVISION));
@@ -1135,21 +1412,32 @@ static void mceusb_gen1_init(struct mceusb_dev *ir)
 
 static void mceusb_gen2_init(struct mceusb_dev *ir)
 {
+<<<<<<< HEAD
 	/* device resume */
 	mce_async_out(ir, DEVICE_RESUME, sizeof(DEVICE_RESUME));
+=======
+	/* device reset */
+	mce_async_out(ir, DEVICE_RESET, sizeof(DEVICE_RESET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* get hw/sw revision? */
 	mce_async_out(ir, GET_REVISION, sizeof(GET_REVISION));
 
+<<<<<<< HEAD
 	/* get wake version (protocol, key, address) */
 	mce_async_out(ir, GET_WAKEVERSION, sizeof(GET_WAKEVERSION));
 
 	/* unknown what this one actually returns... */
+=======
+	/* unknown what the next two actually return... */
+	mce_async_out(ir, GET_UNKNOWN, sizeof(GET_UNKNOWN));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mce_async_out(ir, GET_UNKNOWN2, sizeof(GET_UNKNOWN2));
 }
 
 static void mceusb_get_parameters(struct mceusb_dev *ir)
 {
+<<<<<<< HEAD
 	int i;
 	unsigned char cmdbuf[3] = { MCE_CMD_PORT_SYS,
 				    MCE_CMD_GETPORTSTATUS, 0x00 };
@@ -1165,6 +1453,12 @@ static void mceusb_get_parameters(struct mceusb_dev *ir)
 	mce_async_out(ir, GET_CARRIER_FREQ, sizeof(GET_CARRIER_FREQ));
 
 	if (ir->num_txports && !ir->flags.no_tx)
+=======
+	/* get the carrier and frequency */
+	mce_async_out(ir, GET_CARRIER_FREQ, sizeof(GET_CARRIER_FREQ));
+
+	if (!ir->flags.no_tx)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* get the transmitter bitmask */
 		mce_async_out(ir, GET_TX_BITMASK, sizeof(GET_TX_BITMASK));
 
@@ -1173,6 +1467,7 @@ static void mceusb_get_parameters(struct mceusb_dev *ir)
 
 	/* get receiver sensor setting */
 	mce_async_out(ir, GET_RX_SENSOR, sizeof(GET_RX_SENSOR));
+<<<<<<< HEAD
 
 	for (i = 0; i < ir->num_txports; i++) {
 		cmdbuf[2] = i;
@@ -1186,6 +1481,8 @@ static void mceusb_flash_led(struct mceusb_dev *ir)
 		return;
 
 	mce_async_out(ir, FLASH_LED, sizeof(FLASH_LED));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct rc_dev *mceusb_init_rc_dev(struct mceusb_dev *ir)
@@ -1359,9 +1656,12 @@ static int __devinit mceusb_dev_probe(struct usb_interface *intf,
 	mce_dbg(&intf->dev, "Flushing receive buffers\n");
 	mce_flush_rx_buffer(ir, maxp);
 
+<<<<<<< HEAD
 	/* figure out which firmware/emulator version this hardware has */
 	mceusb_get_emulator_version(ir);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* initialize device */
 	if (ir->flags.microsoft_gen1)
 		mceusb_gen1_init(ir);
@@ -1370,13 +1670,17 @@ static int __devinit mceusb_dev_probe(struct usb_interface *intf,
 
 	mceusb_get_parameters(ir);
 
+<<<<<<< HEAD
 	mceusb_flash_led(ir);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ir->flags.no_tx)
 		mceusb_set_tx_mask(ir->rc, MCE_DEFAULT_TX_MASK);
 
 	usb_set_intfdata(intf, ir);
 
+<<<<<<< HEAD
 	/* enable wake via this device */
 	device_set_wakeup_capable(ir->dev, true);
 	device_set_wakeup_enable(ir->dev, true);
@@ -1387,6 +1691,10 @@ static int __devinit mceusb_dev_probe(struct usb_interface *intf,
 		 "%x rx sensors (0x%x active)\n",
 		 ir->num_txports, ir->txports_cabled,
 		 ir->num_rxports, ir->rxports_active);
+=======
+	dev_info(&intf->dev, "Registered %s on usb%d:%d\n", name,
+		 dev->bus->busnum, dev->devnum);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
@@ -1450,7 +1758,29 @@ static struct usb_driver mceusb_dev_driver = {
 	.id_table =	mceusb_dev_table
 };
 
+<<<<<<< HEAD
 module_usb_driver(mceusb_dev_driver);
+=======
+static int __init mceusb_dev_init(void)
+{
+	int ret;
+
+	ret = usb_register(&mceusb_dev_driver);
+	if (ret < 0)
+		printk(KERN_ERR DRIVER_NAME
+		       ": usb register failed, result = %d\n", ret);
+
+	return ret;
+}
+
+static void __exit mceusb_dev_exit(void)
+{
+	usb_deregister(&mceusb_dev_driver);
+}
+
+module_init(mceusb_dev_init);
+module_exit(mceusb_dev_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION(DRIVER_DESC);
 MODULE_AUTHOR(DRIVER_AUTHOR);

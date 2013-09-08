@@ -6,8 +6,11 @@
  * Copyright (C) 1998 Paul Mackerras.
  */
 
+<<<<<<< HEAD
 #ifndef _LINUX_PMU_H
 #define _LINUX_PMU_H
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PMU_DRIVER_VERSION	2
 
@@ -209,5 +212,8 @@ extern int pmu_sys_suspended;
 #endif
 
 #endif	/* __KERNEL__ */
+<<<<<<< HEAD
 
 #endif /* _LINUX_PMU_H */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

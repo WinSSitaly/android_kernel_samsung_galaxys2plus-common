@@ -17,7 +17,11 @@
 #define NMI_REASON_CLEAR_IOCHK	0x08
 #define NMI_REASON_CLEAR_MASK	0x0f
 
+<<<<<<< HEAD
 static inline unsigned char default_get_nmi_reason(void)
+=======
+static inline unsigned char get_nmi_reason(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return inb(NMI_REASON_PORT);
 }

@@ -277,11 +277,16 @@ implement g_volatile_ctrl like this:
 	{
 		switch (ctrl->id) {
 		case V4L2_CID_BRIGHTNESS:
+<<<<<<< HEAD
 			ctrl->val = read_reg(0x123);
+=======
+			ctrl->cur.val = read_reg(0x123);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	}
 
+<<<<<<< HEAD
 Note that you use the 'new value' union as well in g_volatile_ctrl. In general
 controls that need to implement g_volatile_ctrl are read-only controls.
 
@@ -290,6 +295,19 @@ To mark a control as volatile you have to set V4L2_CTRL_FLAG_VOLATILE:
 	ctrl = v4l2_ctrl_new_std(&sd->ctrl_handler, ...);
 	if (ctrl)
 		ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
+=======
+The 'new value' union is not used in g_volatile_ctrl. In general controls
+that need to implement g_volatile_ctrl are read-only controls.
+
+Note that if one or more controls in a control cluster are marked as volatile,
+then all the controls in the cluster are seen as volatile.
+
+To mark a control as volatile you have to set the is_volatile flag:
+
+	ctrl = v4l2_ctrl_new_std(&sd->ctrl_handler, ...);
+	if (ctrl)
+		ctrl->is_volatile = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 For try/s_ctrl the new values (i.e. as passed by the user) are filled in and
 you can modify them in try_ctrl or set them in s_ctrl. The 'cur' union
@@ -367,7 +385,12 @@ Driver specific controls can be created using v4l2_ctrl_new_custom():
 The last argument is the priv pointer which can be set to driver-specific
 private data.
 
+<<<<<<< HEAD
 The v4l2_ctrl_config struct also has a field to set the is_private flag.
+=======
+The v4l2_ctrl_config struct also has fields to set the is_private and is_volatile
+flags.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 If the name field is not set, then the framework will assume this is a standard
 control and will fill in the name, type and flags fields accordingly.
@@ -449,6 +472,7 @@ In the example above the following are equivalent for the VOLUME case:
 	ctrl == ctrl->cluster[AUDIO_CL_VOLUME] == state->audio_cluster[AUDIO_CL_VOLUME]
 	ctrl->cluster[AUDIO_CL_MUTE] == state->audio_cluster[AUDIO_CL_MUTE]
 
+<<<<<<< HEAD
 In practice using cluster arrays like this becomes very tiresome. So instead
 the following equivalent method is used:
 
@@ -468,6 +492,8 @@ array with two control pointers. So you can just do:
 
 And in foo_s_ctrl you can use these pointers directly: state->mute->val.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Note that controls in a cluster may be NULL. For example, if for some
 reason mute was never added (because the hardware doesn't support that
 particular feature), then mute will be NULL. So in that case we have a
@@ -490,6 +516,7 @@ controls, then the 'is_new' flag would be 1 for both controls.
 The 'is_new' flag is always 1 when called from v4l2_ctrl_handler_setup().
 
 
+<<<<<<< HEAD
 Handling autogain/gain-type Controls with Auto Clusters
 =======================================================
 
@@ -533,6 +560,8 @@ Using this function will ensure that you don't need to handle all the complex
 flag and volatile handling.
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 VIDIOC_LOG_STATUS Support
 =========================
 
@@ -666,6 +695,42 @@ a control of this type whenever the first control belonging to a new control
 class is added.
 
 
+<<<<<<< HEAD
+=======
+Differences from the Spec
+=========================
+
+There are a few places where the framework acts slightly differently from the
+V4L2 Specification. Those differences are described in this section. We will
+have to see whether we need to adjust the spec or not.
+
+1) It is no longer required to have all controls contained in a
+v4l2_ext_control array be from the same control class. The framework will be
+able to handle any type of control in the array. You need to set ctrl_class
+to 0 in order to enable this. If ctrl_class is non-zero, then it will still
+check that all controls belong to that control class.
+
+If you set ctrl_class to 0 and count to 0, then it will only return an error
+if there are no controls at all.
+
+2) Clarified the way error_idx works. For get and set it will be equal to
+count if nothing was done yet. If it is less than count then only the controls
+up to error_idx-1 were successfully applied.
+
+3) When attempting to read a button control the framework will return -EACCES
+instead of -EINVAL as stated in the spec. It seems to make more sense since
+button controls are write-only controls.
+
+4) Attempting to write to a read-only control will return -EACCES instead of
+-EINVAL as the spec says.
+
+5) The spec does not mention what should happen when you try to set/get a
+control class controls. ivtv currently returns -EINVAL (indicating that the
+control ID does not exist) while the framework will return -EACCES, which
+makes more sense.
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Proposals for Extensions
 ========================
 
@@ -677,3 +742,12 @@ decimal. Useful for e.g. video_mute_yuv.
 2) It is possible to mark in the controls array which controls have been
 successfully written and which failed by for example adding a bit to the
 control ID. Not sure if it is worth the effort, though.
+<<<<<<< HEAD
+=======
+
+3) Trying to set volatile inactive controls should result in -EACCESS.
+
+4) Add a new flag to mark volatile controls. Any application that wants
+to store the state of the controls can then skip volatile inactive controls.
+Currently it is not possible to detect such controls.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

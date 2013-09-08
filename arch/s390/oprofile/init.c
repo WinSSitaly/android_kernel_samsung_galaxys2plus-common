@@ -2,11 +2,18 @@
  * arch/s390/oprofile/init.c
  *
  * S390 Version
+<<<<<<< HEAD
  *   Copyright (C) 2002-2011 IBM Deutschland Entwicklung GmbH, IBM Corporation
  *   Author(s): Thomas Spatzier (tspat@de.ibm.com)
  *   Author(s): Mahesh Salgaonkar (mahesh@linux.vnet.ibm.com)
  *   Author(s): Heinz Graalfs (graalfs@linux.vnet.ibm.com)
  *   Author(s): Andreas Krebbel (krebbel@linux.vnet.ibm.com)
+=======
+ *   Copyright (C) 2003 IBM Deutschland Entwicklung GmbH, IBM Corporation
+ *   Author(s): Thomas Spatzier (tspat@de.ibm.com)
+ *   Author(s): Mahesh Salgaonkar (mahesh@linux.vnet.ibm.com)
+ *   Author(s): Heinz Graalfs (graalfs@linux.vnet.ibm.com)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * @remark Copyright 2002-2011 OProfile authors
  */
@@ -14,9 +21,15 @@
 #include <linux/oprofile.h>
 #include <linux/init.h>
 #include <linux/errno.h>
+<<<<<<< HEAD
 #include <linux/fs.h>
 #include <linux/module.h>
 #include <asm/processor.h>
+=======
+#include <linux/oprofile.h>
+#include <linux/errno.h>
+#include <linux/fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "../../../drivers/oprofile/oprof.h"
 
@@ -25,7 +38,10 @@ extern void s390_backtrace(struct pt_regs * const regs, unsigned int depth);
 #ifdef CONFIG_64BIT
 
 #include "hwsampler.h"
+<<<<<<< HEAD
 #include "op_counter.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DEFAULT_INTERVAL	4127518
 
@@ -39,6 +55,7 @@ static unsigned long oprofile_max_interval;
 static unsigned long oprofile_sdbt_blocks = DEFAULT_SDBT_BLOCKS;
 static unsigned long oprofile_sdb_blocks = DEFAULT_SDB_BLOCKS;
 
+<<<<<<< HEAD
 static int hwsampler_enabled;
 static int hwsampler_running;	/* start_mutex must be held to change */
 static int hwsampler_available;
@@ -69,11 +86,22 @@ module_param_call(cpu_type, set_cpu_type, NULL, NULL, 0);
 MODULE_PARM_DESC(cpu_type, "Force legacy basic mode sampling"
 		           "(report cpu_type \"timer\"");
 
+=======
+static int hwsampler_file;
+static int hwsampler_running;	/* start_mutex must be held to change */
+
+static struct oprofile_operations timer_ops;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int oprofile_hwsampler_start(void)
 {
 	int retval;
 
+<<<<<<< HEAD
 	hwsampler_running = hwsampler_enabled;
+=======
+	hwsampler_running = hwsampler_file;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!hwsampler_running)
 		return timer_ops.start();
@@ -101,6 +129,7 @@ static void oprofile_hwsampler_stop(void)
 	return;
 }
 
+<<<<<<< HEAD
 /*
  * File ops used for:
  * /dev/oprofile/0/enabled
@@ -111,6 +140,12 @@ static ssize_t hwsampler_read(struct file *file, char __user *buf,
 		size_t count, loff_t *offset)
 {
 	return oprofilefs_ulong_to_user(hwsampler_enabled, buf, count, offset);
+=======
+static ssize_t hwsampler_read(struct file *file, char __user *buf,
+		size_t count, loff_t *offset)
+{
+	return oprofilefs_ulong_to_user(hwsampler_file, buf, count, offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t hwsampler_write(struct file *file, char const __user *buf,
@@ -126,9 +161,12 @@ static ssize_t hwsampler_write(struct file *file, char const __user *buf,
 	if (retval <= 0)
 		return retval;
 
+<<<<<<< HEAD
 	if (val != 0 && val != 1)
 		return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (oprofile_started)
 		/*
 		 * save to do without locking as we set
@@ -137,7 +175,11 @@ static ssize_t hwsampler_write(struct file *file, char const __user *buf,
 		 */
 		return -EBUSY;
 
+<<<<<<< HEAD
 	hwsampler_enabled = val;
+=======
+	hwsampler_file = val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return count;
 }
@@ -147,6 +189,7 @@ static const struct file_operations hwsampler_fops = {
 	.write		= hwsampler_write,
 };
 
+<<<<<<< HEAD
 /*
  * File ops used for:
  * /dev/oprofile/0/count
@@ -413,11 +456,36 @@ static int oprofile_create_hwsampling_files(struct super_block *sb,
 		oprofilefs_create_ulong(sb, dir, "hw_sdbt_blocks",
 					&oprofile_sdbt_blocks);
 	}
+=======
+static int oprofile_create_hwsampling_files(struct super_block *sb,
+						struct dentry *root)
+{
+	struct dentry *hw_dir;
+
+	/* reinitialize default values */
+	hwsampler_file = 1;
+
+	hw_dir = oprofilefs_mkdir(sb, root, "hwsampling");
+	if (!hw_dir)
+		return -EINVAL;
+
+	oprofilefs_create_file(sb, hw_dir, "hwsampler", &hwsampler_fops);
+	oprofilefs_create_ulong(sb, hw_dir, "hw_interval",
+				&oprofile_hw_interval);
+	oprofilefs_create_ro_ulong(sb, hw_dir, "hw_min_interval",
+				&oprofile_min_interval);
+	oprofilefs_create_ro_ulong(sb, hw_dir, "hw_max_interval",
+				&oprofile_max_interval);
+	oprofilefs_create_ulong(sb, hw_dir, "hw_sdbt_blocks",
+				&oprofile_sdbt_blocks);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int oprofile_hwsampler_init(struct oprofile_operations *ops)
 {
+<<<<<<< HEAD
 	/*
 	 * Initialize the timer mode infrastructure as well in order
 	 * to be able to switch back dynamically.  oprofile_timer_init
@@ -446,12 +514,18 @@ static int oprofile_hwsampler_init(struct oprofile_operations *ops)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (hwsampler_setup())
 		return -ENODEV;
 
 	/*
+<<<<<<< HEAD
 	 * Query the range for the sampling interval from the
 	 * hardware.
+=======
+	 * create hwsampler files only if hwsampler_setup() succeeds.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	oprofile_min_interval = hwsampler_query_min_interval();
 	if (oprofile_min_interval == 0)
@@ -466,17 +540,34 @@ static int oprofile_hwsampler_init(struct oprofile_operations *ops)
 	if (oprofile_hw_interval > oprofile_max_interval)
 		oprofile_hw_interval = oprofile_max_interval;
 
+<<<<<<< HEAD
 	printk(KERN_INFO "oprofile: System z hardware sampling "
 	       "facility found.\n");
 
 	ops->start = oprofile_hwsampler_start;
 	ops->stop = oprofile_hwsampler_stop;
+=======
+	if (oprofile_timer_init(ops))
+		return -ENODEV;
+
+	printk(KERN_INFO "oprofile: using hardware sampling\n");
+
+	memcpy(&timer_ops, ops, sizeof(timer_ops));
+
+	ops->start = oprofile_hwsampler_start;
+	ops->stop = oprofile_hwsampler_stop;
+	ops->create_files = oprofile_create_hwsampling_files;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 static void oprofile_hwsampler_exit(void)
 {
+<<<<<<< HEAD
+=======
+	oprofile_timer_exit();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hwsampler_shutdown();
 }
 
@@ -487,6 +578,7 @@ int __init oprofile_arch_init(struct oprofile_operations *ops)
 	ops->backtrace = s390_backtrace;
 
 #ifdef CONFIG_64BIT
+<<<<<<< HEAD
 
 	/*
 	 * -ENODEV is not reported to the caller.  The module itself
@@ -496,6 +588,9 @@ int __init oprofile_arch_init(struct oprofile_operations *ops)
 	hwsampler_available = oprofile_hwsampler_init(ops) == 0;
 
 	return 0;
+=======
+	return oprofile_hwsampler_init(ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 	return -ENODEV;
 #endif

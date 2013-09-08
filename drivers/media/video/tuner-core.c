@@ -39,7 +39,10 @@
 #include "tda9887.h"
 #include "xc5000.h"
 #include "tda18271.h"
+<<<<<<< HEAD
 #include "xc4000.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define UNSET (-1U)
 
@@ -326,7 +329,10 @@ static void set_type(struct i2c_client *c, unsigned int type,
 		t->mode_mask = T_RADIO;
 		break;
 	case TUNER_PHILIPS_FMD1216ME_MK3:
+<<<<<<< HEAD
 	case TUNER_PHILIPS_FMD1216MEX_MK3:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		buffer[0] = 0x0b;
 		buffer[1] = 0xdc;
 		buffer[2] = 0x9c;
@@ -380,6 +386,7 @@ static void set_type(struct i2c_client *c, unsigned int type,
 		tune_now = 0;
 		break;
 	}
+<<<<<<< HEAD
 	case TUNER_XC5000C:
 	{
 		struct xc5000_config xc5000c_cfg = {
@@ -395,6 +402,8 @@ static void set_type(struct i2c_client *c, unsigned int type,
 		tune_now = 0;
 		break;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case TUNER_NXP_TDA18271:
 	{
 		struct tda18271_config cfg = {
@@ -408,6 +417,7 @@ static void set_type(struct i2c_client *c, unsigned int type,
 		tune_now = 0;
 		break;
 	}
+<<<<<<< HEAD
 	case TUNER_XC4000:
 	{
 		struct xc4000_config xc4000_cfg = {
@@ -425,6 +435,8 @@ static void set_type(struct i2c_client *c, unsigned int type,
 		tune_now = 0;
 		break;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		if (!dvb_attach(simple_tuner_attach, &t->fe,
 				t->i2c->adapter, t->i2c->addr, t->type))
@@ -1329,7 +1341,22 @@ static struct i2c_driver tuner_driver = {
 	.id_table	= tuner_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(tuner_driver);
+=======
+static __init int init_tuner(void)
+{
+	return i2c_add_driver(&tuner_driver);
+}
+
+static __exit void exit_tuner(void)
+{
+	i2c_del_driver(&tuner_driver);
+}
+
+module_init(init_tuner);
+module_exit(exit_tuner);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("device driver for various TV and TV+FM radio tuners");
 MODULE_AUTHOR("Ralph Metzler, Gerd Knorr, Gunther Mayer");

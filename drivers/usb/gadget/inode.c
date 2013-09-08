@@ -8,6 +8,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 
@@ -823,16 +835,24 @@ ep_config (struct file *fd, const char __user *buf, size_t len, loff_t *ptr)
 	switch (data->dev->gadget->speed) {
 	case USB_SPEED_LOW:
 	case USB_SPEED_FULL:
+<<<<<<< HEAD
 		ep->desc = &data->desc;
 		value = usb_ep_enable(ep);
+=======
+		value = usb_ep_enable (ep, &data->desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (value == 0)
 			data->state = STATE_EP_ENABLED;
 		break;
 #ifdef	CONFIG_USB_GADGET_DUALSPEED
 	case USB_SPEED_HIGH:
 		/* fails if caller didn't provide that descriptor... */
+<<<<<<< HEAD
 		ep->desc = &data->hs_desc;
 		value = usb_ep_enable(ep);
+=======
+		value = usb_ep_enable (ep, &data->hs_desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (value == 0)
 			data->state = STATE_EP_ENABLED;
 		break;
@@ -1340,7 +1360,11 @@ static void make_qualifier (struct dev_data *dev)
 	qual.bDeviceProtocol = desc->bDeviceProtocol;
 
 	/* assumes ep0 uses the same value for both speeds ... */
+<<<<<<< HEAD
 	qual.bMaxPacketSize0 = dev->gadget->ep0->maxpacket;
+=======
+	qual.bMaxPacketSize0 = desc->bMaxPacketSize0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	qual.bNumConfigurations = 1;
 	qual.bRESERVED = 0;
@@ -1397,6 +1421,10 @@ gadgetfs_setup (struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 		}
 
 		dev->state = STATE_DEV_CONNECTED;
+<<<<<<< HEAD
+=======
+		dev->dev->bMaxPacketSize0 = gadget->ep0->maxpacket;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		INFO (dev, "connected\n");
 		event = next_event (dev, GADGETFS_CONNECT);
@@ -1424,7 +1452,10 @@ gadgetfs_setup (struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 
 		case USB_DT_DEVICE:
 			value = min (w_length, (u16) sizeof *dev->dev);
+<<<<<<< HEAD
 			dev->dev->bMaxPacketSize0 = dev->gadget->ep0->maxpacket;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			req->buf = dev->dev;
 			break;
 #ifdef	CONFIG_USB_GADGET_DUALSPEED
@@ -1571,17 +1602,32 @@ delegate:
 
 static void destroy_ep_files (struct dev_data *dev)
 {
+<<<<<<< HEAD
 	DBG (dev, "%s %d\n", __func__, dev->state);
 
 	/* dev->state must prevent interference */
 	spin_lock_irq (&dev->lock);
 	while (!list_empty(&dev->epfiles)) {
+=======
+	struct list_head	*entry, *tmp;
+
+	DBG (dev, "%s %d\n", __func__, dev->state);
+
+	/* dev->state must prevent interference */
+restart:
+	spin_lock_irq (&dev->lock);
+	list_for_each_safe (entry, tmp, &dev->epfiles) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct ep_data	*ep;
 		struct inode	*parent;
 		struct dentry	*dentry;
 
 		/* break link to FS */
+<<<<<<< HEAD
 		ep = list_first_entry (&dev->epfiles, struct ep_data, epfiles);
+=======
+		ep = list_entry (entry, struct ep_data, epfiles);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_del_init (&ep->epfiles);
 		dentry = ep->dentry;
 		ep->dentry = NULL;
@@ -1604,7 +1650,12 @@ static void destroy_ep_files (struct dev_data *dev)
 		dput (dentry);
 		mutex_unlock (&parent->i_mutex);
 
+<<<<<<< HEAD
 		spin_lock_irq (&dev->lock);
+=======
+		/* fds may still be open */
+		goto restart;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	spin_unlock_irq (&dev->lock);
 }
@@ -1701,6 +1752,10 @@ gadgetfs_bind (struct usb_gadget *gadget)
 	set_gadget_data (gadget, dev);
 	dev->gadget = gadget;
 	gadget->ep0->driver_data = dev;
+<<<<<<< HEAD
+=======
+	dev->dev->bMaxPacketSize0 = gadget->ep0->maxpacket;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* preallocate control response and buffer */
 	dev->req = usb_ep_alloc_request (gadget->ep0, GFP_KERNEL);
@@ -1728,9 +1783,14 @@ static void
 gadgetfs_disconnect (struct usb_gadget *gadget)
 {
 	struct dev_data		*dev = get_gadget_data (gadget);
+<<<<<<< HEAD
 	unsigned long		flags;
 
 	spin_lock_irqsave (&dev->lock, flags);
+=======
+
+	spin_lock (&dev->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dev->state == STATE_DEV_UNCONNECTED)
 		goto exit;
 	dev->state = STATE_DEV_UNCONNECTED;
@@ -1739,7 +1799,11 @@ gadgetfs_disconnect (struct usb_gadget *gadget)
 	next_event (dev, GADGETFS_DISCONNECT);
 	ep0_readable (dev);
 exit:
+<<<<<<< HEAD
 	spin_unlock_irqrestore (&dev->lock, flags);
+=======
+	spin_unlock (&dev->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -1764,9 +1828,15 @@ gadgetfs_suspend (struct usb_gadget *gadget)
 
 static struct usb_gadget_driver gadgetfs_driver = {
 #ifdef	CONFIG_USB_GADGET_DUALSPEED
+<<<<<<< HEAD
 	.max_speed	= USB_SPEED_HIGH,
 #else
 	.max_speed	= USB_SPEED_FULL,
+=======
+	.speed		= USB_SPEED_HIGH,
+#else
+	.speed		= USB_SPEED_FULL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	.function	= (char *) driver_desc,
 	.unbind		= gadgetfs_unbind,
@@ -1790,7 +1860,11 @@ static int gadgetfs_probe (struct usb_gadget *gadget)
 }
 
 static struct usb_gadget_driver probe_driver = {
+<<<<<<< HEAD
 	.max_speed	= USB_SPEED_HIGH,
+=======
+	.speed		= USB_SPEED_HIGH,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.unbind		= gadgetfs_nop,
 	.setup		= (void *)gadgetfs_nop,
 	.disconnect	= gadgetfs_nop,
@@ -2033,6 +2107,10 @@ static int
 gadgetfs_fill_super (struct super_block *sb, void *opts, int silent)
 {
 	struct inode	*inode;
+<<<<<<< HEAD
+=======
+	struct dentry	*d;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dev_data	*dev;
 
 	if (the_device)
@@ -2055,25 +2133,42 @@ gadgetfs_fill_super (struct super_block *sb, void *opts, int silent)
 			NULL, &simple_dir_operations,
 			S_IFDIR | S_IRUGO | S_IXUGO);
 	if (!inode)
+<<<<<<< HEAD
 		goto Enomem;
 	inode->i_op = &simple_dir_inode_operations;
 	if (!(sb->s_root = d_make_root (inode)))
 		goto Enomem;
+=======
+		goto enomem0;
+	inode->i_op = &simple_dir_inode_operations;
+	if (!(d = d_alloc_root (inode)))
+		goto enomem1;
+	sb->s_root = d;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* the ep0 file is named after the controller we expect;
 	 * user mode code can use it for sanity checks, like we do.
 	 */
 	dev = dev_new ();
 	if (!dev)
+<<<<<<< HEAD
 		goto Enomem;
+=======
+		goto enomem2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev->sb = sb;
 	if (!gadgetfs_create_file (sb, CHIP,
 				dev, &dev_init_operations,
+<<<<<<< HEAD
 				&dev->dentry)) {
 		put_dev(dev);
 		goto Enomem;
 	}
+=======
+				&dev->dentry))
+		goto enomem3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* other endpoint files are available after hardware setup,
 	 * from binding to a controller.
@@ -2081,7 +2176,17 @@ gadgetfs_fill_super (struct super_block *sb, void *opts, int silent)
 	the_device = dev;
 	return 0;
 
+<<<<<<< HEAD
 Enomem:
+=======
+enomem3:
+	put_dev (dev);
+enomem2:
+	dput (d);
+enomem1:
+	iput (inode);
+enomem0:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -ENOMEM;
 }
 

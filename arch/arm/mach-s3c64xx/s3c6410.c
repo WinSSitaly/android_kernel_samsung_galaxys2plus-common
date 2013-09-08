@@ -18,7 +18,11 @@
 #include <linux/init.h>
 #include <linux/clk.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/serial_core.h>
 #include <linux/platform_device.h>
 
@@ -41,8 +45,13 @@
 #include <plat/adc-core.h>
 #include <plat/iic-core.h>
 #include <plat/onenand-core.h>
+<<<<<<< HEAD
 
 #include "common.h"
+=======
+#include <mach/s3c6400.h>
+#include <mach/s3c6410.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void __init s3c6410_map_io(void)
 {
@@ -66,7 +75,11 @@ void __init s3c6410_init_clocks(int xtal)
 {
 	printk(KERN_DEBUG "%s: initialising clocks\n", __func__);
 	s3c64xx_register_clocks(xtal, S3C6410_CLKDIV0_ARM_MASK);
+<<<<<<< HEAD
 	s3c64xx_setup_clocks();
+=======
+	s3c6400_setup_clocks();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __init s3c6410_init_irq(void)
@@ -75,6 +88,7 @@ void __init s3c6410_init_irq(void)
 	s3c64xx_init_irq(~0 & ~(1 << 7), ~0);
 }
 
+<<<<<<< HEAD
 struct bus_type s3c6410_subsys = {
 	.name		= "s3c6410-core",
 	.dev_name	= "s3c6410-core",
@@ -82,11 +96,23 @@ struct bus_type s3c6410_subsys = {
 
 static struct device s3c6410_dev = {
 	.bus	= &s3c6410_subsys,
+=======
+struct sysdev_class s3c6410_sysclass = {
+	.name	= "s3c6410-core",
+};
+
+static struct sys_device s3c6410_sysdev = {
+	.cls	= &s3c6410_sysclass,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init s3c6410_core_init(void)
 {
+<<<<<<< HEAD
 	return subsys_system_register(&s3c6410_subsys, NULL);
+=======
+	return sysdev_class_register(&s3c6410_sysclass);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 core_initcall(s3c6410_core_init);
@@ -95,5 +121,9 @@ int __init s3c6410_init(void)
 {
 	printk("S3C6410: Initialising architecture\n");
 
+<<<<<<< HEAD
 	return device_register(&s3c6410_dev);
+=======
+	return sysdev_register(&s3c6410_sysdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

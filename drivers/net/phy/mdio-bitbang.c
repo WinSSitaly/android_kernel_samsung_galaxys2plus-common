@@ -202,6 +202,7 @@ static int mdiobb_write(struct mii_bus *bus, int phy, int reg, u16 val)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int mdiobb_reset(struct mii_bus *bus)
 {
 	struct mdiobb_ctrl *ctrl = bus->priv;
@@ -210,6 +211,8 @@ static int mdiobb_reset(struct mii_bus *bus)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct mii_bus *alloc_mdio_bitbang(struct mdiobb_ctrl *ctrl)
 {
 	struct mii_bus *bus;
@@ -222,7 +225,10 @@ struct mii_bus *alloc_mdio_bitbang(struct mdiobb_ctrl *ctrl)
 
 	bus->read = mdiobb_read;
 	bus->write = mdiobb_write;
+<<<<<<< HEAD
 	bus->reset = mdiobb_reset;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bus->priv = ctrl;
 
 	return bus;

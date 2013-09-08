@@ -24,9 +24,12 @@
 #define OMAP1610_GPIO4_BASE		0xfffbbc00
 #define OMAP1_MPUIO_VBASE		OMAP1_MPUIO_BASE
 
+<<<<<<< HEAD
 /* smart idle, enable wakeup */
 #define SYSCONFIG_WORD			0x14
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* mpu gpio */
 static struct __initdata resource omap16xx_mpu_gpio_resources[] = {
 	{
@@ -40,6 +43,7 @@ static struct __initdata resource omap16xx_mpu_gpio_resources[] = {
 	},
 };
 
+<<<<<<< HEAD
 static struct omap_gpio_reg_offs omap16xx_mpuio_regs = {
 	.revision       = USHRT_MAX,
 	.direction	= OMAP_MPUIO_IO_CNTL,
@@ -57,6 +61,13 @@ static struct __initdata omap_gpio_platform_data omap16xx_mpu_gpio_config = {
 	.bank_width		= 16,
 	.bank_stride		= 1,
 	.regs                   = &omap16xx_mpuio_regs,
+=======
+static struct __initdata omap_gpio_platform_data omap16xx_mpu_gpio_config = {
+	.virtual_irq_start	= IH_MPUIO_BASE,
+	.bank_type		= METHOD_MPUIO,
+	.bank_width		= 16,
+	.bank_stride		= 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device omap16xx_mpu_gpio = {
@@ -82,6 +93,7 @@ static struct __initdata resource omap16xx_gpio1_resources[] = {
 	},
 };
 
+<<<<<<< HEAD
 static struct omap_gpio_reg_offs omap16xx_gpio_regs = {
 	.revision       = OMAP1610_GPIO_REVISION,
 	.direction	= OMAP1610_GPIO_DIRECTION,
@@ -102,6 +114,12 @@ static struct __initdata omap_gpio_platform_data omap16xx_gpio1_config = {
 	.virtual_irq_start	= IH_GPIO_BASE,
 	.bank_width		= 16,
 	.regs                   = &omap16xx_gpio_regs,
+=======
+static struct __initdata omap_gpio_platform_data omap16xx_gpio1_config = {
+	.virtual_irq_start	= IH_GPIO_BASE,
+	.bank_type		= METHOD_GPIO_1610,
+	.bank_width		= 16,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device omap16xx_gpio1 = {
@@ -129,8 +147,13 @@ static struct __initdata resource omap16xx_gpio2_resources[] = {
 
 static struct __initdata omap_gpio_platform_data omap16xx_gpio2_config = {
 	.virtual_irq_start	= IH_GPIO_BASE + 16,
+<<<<<<< HEAD
 	.bank_width		= 16,
 	.regs                   = &omap16xx_gpio_regs,
+=======
+	.bank_type		= METHOD_GPIO_1610,
+	.bank_width		= 16,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device omap16xx_gpio2 = {
@@ -158,8 +181,13 @@ static struct __initdata resource omap16xx_gpio3_resources[] = {
 
 static struct __initdata omap_gpio_platform_data omap16xx_gpio3_config = {
 	.virtual_irq_start	= IH_GPIO_BASE + 32,
+<<<<<<< HEAD
 	.bank_width		= 16,
 	.regs                   = &omap16xx_gpio_regs,
+=======
+	.bank_type		= METHOD_GPIO_1610,
+	.bank_width		= 16,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device omap16xx_gpio3 = {
@@ -187,8 +215,13 @@ static struct __initdata resource omap16xx_gpio4_resources[] = {
 
 static struct __initdata omap_gpio_platform_data omap16xx_gpio4_config = {
 	.virtual_irq_start	= IH_GPIO_BASE + 48,
+<<<<<<< HEAD
 	.bank_width		= 16,
 	.regs                   = &omap16xx_gpio_regs,
+=======
+	.bank_type		= METHOD_GPIO_1610,
+	.bank_width		= 16,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device omap16xx_gpio4 = {
@@ -217,14 +250,18 @@ static struct __initdata platform_device * omap16xx_gpio_dev[] = {
 static int __init omap16xx_gpio_init(void)
 {
 	int i;
+<<<<<<< HEAD
 	void __iomem *base;
 	struct resource *res;
 	struct platform_device *pdev;
 	struct omap_gpio_platform_data *pdata;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!cpu_is_omap16xx())
 		return -EINVAL;
 
+<<<<<<< HEAD
 	/*
 	 * Enable system clock for GPIO module.
 	 * The CAM_CLK_CTRL *is* really the right place.
@@ -253,6 +290,12 @@ static int __init omap16xx_gpio_init(void)
 
 		platform_device_register(omap16xx_gpio_dev[i]);
 	}
+=======
+	for (i = 0; i < ARRAY_SIZE(omap16xx_gpio_dev); i++)
+		platform_device_register(omap16xx_gpio_dev[i]);
+
+	gpio_bank_count = ARRAY_SIZE(omap16xx_gpio_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

@@ -30,8 +30,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/pnp.h>
@@ -120,6 +123,7 @@ static int ene_hw_detect(struct ene_device *dev)
 			dev->pll_freq == ENE_DEFAULT_PLL_FREQ ? 2 : 4;
 
 	if (hw_revision == 0xFF) {
+<<<<<<< HEAD
 		pr_warn("device seems to be disabled\n");
 		pr_warn("send a mail to lirc-list@lists.sourceforge.net\n");
 		pr_warn("please attach output of acpidump and dmidecode\n");
@@ -133,11 +137,27 @@ static int ene_hw_detect(struct ene_device *dev)
 
 	if (chip_major == 0x33) {
 		pr_warn("chips 0x33xx aren't supported\n");
+=======
+		ene_warn("device seems to be disabled");
+		ene_warn("send a mail to lirc-list@lists.sourceforge.net");
+		ene_warn("please attach output of acpidump and dmidecode");
+		return -ENODEV;
+	}
+
+	ene_notice("chip is 0x%02x%02x - kbver = 0x%02x, rev = 0x%02x",
+		chip_major, chip_minor, old_ver, hw_revision);
+
+	ene_notice("PLL freq = %d", dev->pll_freq);
+
+	if (chip_major == 0x33) {
+		ene_warn("chips 0x33xx aren't supported");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
 	if (chip_major == 0x39 && chip_minor == 0x26 && hw_revision == 0xC0) {
 		dev->hw_revision = ENE_HW_C;
+<<<<<<< HEAD
 		pr_notice("KB3926C detected\n");
 	} else if (old_ver == 0x24 && hw_revision == 0xC0) {
 		dev->hw_revision = ENE_HW_B;
@@ -145,6 +165,15 @@ static int ene_hw_detect(struct ene_device *dev)
 	} else {
 		dev->hw_revision = ENE_HW_D;
 		pr_notice("KB3926D or higher detected\n");
+=======
+		ene_notice("KB3926C detected");
+	} else if (old_ver == 0x24 && hw_revision == 0xC0) {
+		dev->hw_revision = ENE_HW_B;
+		ene_notice("KB3926B detected");
+	} else {
+		dev->hw_revision = ENE_HW_D;
+		ene_notice("KB3926D or higher detected");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* detect features hardware supports */
@@ -154,7 +183,11 @@ static int ene_hw_detect(struct ene_device *dev)
 	fw_reg1 = ene_read_reg(dev, ENE_FW1);
 	fw_reg2 = ene_read_reg(dev, ENE_FW2);
 
+<<<<<<< HEAD
 	pr_notice("Firmware regs: %02x %02x\n", fw_reg1, fw_reg2);
+=======
+	ene_notice("Firmware regs: %02x %02x", fw_reg1, fw_reg2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev->hw_use_gpio_0a = !!(fw_reg2 & ENE_FW2_GP0A);
 	dev->hw_learning_and_tx_capable = !!(fw_reg2 & ENE_FW2_LEARNING);
@@ -163,6 +196,7 @@ static int ene_hw_detect(struct ene_device *dev)
 	if (dev->hw_learning_and_tx_capable)
 		dev->hw_fan_input = !!(fw_reg2 & ENE_FW2_FAN_INPUT);
 
+<<<<<<< HEAD
 	pr_notice("Hardware features:\n");
 
 	if (dev->hw_learning_and_tx_capable) {
@@ -186,6 +220,32 @@ static int ene_hw_detect(struct ene_device *dev)
 
 	if (dev->hw_extra_buffer)
 		pr_notice("* Uses new style input buffer\n");
+=======
+	ene_notice("Hardware features:");
+
+	if (dev->hw_learning_and_tx_capable) {
+		ene_notice("* Supports transmitting & learning mode");
+		ene_notice("   This feature is rare and therefore,");
+		ene_notice("   you are welcome to test it,");
+		ene_notice("   and/or contact the author via:");
+		ene_notice("   lirc-list@lists.sourceforge.net");
+		ene_notice("   or maximlevitsky@gmail.com");
+
+		ene_notice("* Uses GPIO %s for IR raw input",
+			dev->hw_use_gpio_0a ? "40" : "0A");
+
+		if (dev->hw_fan_input)
+			ene_notice("* Uses unused fan feedback input as source"
+					" of demodulated IR data");
+	}
+
+	if (!dev->hw_fan_input)
+		ene_notice("* Uses GPIO %s for IR demodulated input",
+			dev->hw_use_gpio_0a ? "0A" : "40");
+
+	if (dev->hw_extra_buffer)
+		ene_notice("* Uses new style input buffer");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -216,6 +276,7 @@ static void ene_rx_setup_hw_buffer(struct ene_device *dev)
 
 	dev->buffer_len = dev->extra_buf1_len + dev->extra_buf2_len + 8;
 
+<<<<<<< HEAD
 	pr_notice("Hardware uses 2 extended buffers:\n");
 	pr_notice("  0x%04x - len : %d\n",
 		  dev->extra_buf1_address, dev->extra_buf1_len);
@@ -223,6 +284,15 @@ static void ene_rx_setup_hw_buffer(struct ene_device *dev)
 		  dev->extra_buf2_address, dev->extra_buf2_len);
 
 	pr_notice("Total buffer len = %d\n", dev->buffer_len);
+=======
+	ene_notice("Hardware uses 2 extended buffers:");
+	ene_notice("  0x%04x - len : %d", dev->extra_buf1_address,
+						dev->extra_buf1_len);
+	ene_notice("  0x%04x - len : %d", dev->extra_buf2_address,
+						dev->extra_buf2_len);
+
+	ene_notice("Total buffer len = %d", dev->buffer_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dev->buffer_len > 64 || dev->buffer_len < 16)
 		goto error;
@@ -241,7 +311,11 @@ static void ene_rx_setup_hw_buffer(struct ene_device *dev)
 	ene_set_reg_mask(dev, ENE_FW1, ENE_FW1_EXTRA_BUF_HND);
 	return;
 error:
+<<<<<<< HEAD
 	pr_warn("Error validating extra buffers, device probably won't work\n");
+=======
+	ene_warn("Error validating extra buffers, device probably won't work");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->hw_extra_buffer = false;
 	ene_clear_reg_mask(dev, ENE_FW1, ENE_FW1_EXTRA_BUF_HND);
 }
@@ -324,7 +398,11 @@ static int ene_rx_get_sample_reg(struct ene_device *dev)
 		return dev->extra_buf2_address + r_pointer;
 	}
 
+<<<<<<< HEAD
 	dbg("attempt to read beyond ring buffer end");
+=======
+	dbg("attempt to read beyong ring bufer end");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -589,7 +667,11 @@ static void ene_tx_enable(struct ene_device *dev)
 		dbg("TX: Transmitter #2 is connected");
 
 	if (!(fwreg2 & (ENE_FW2_EMMITER1_CONN | ENE_FW2_EMMITER2_CONN)))
+<<<<<<< HEAD
 		pr_warn("TX: transmitter cable isn't connected!\n");
+=======
+		ene_warn("TX: transmitter cable isn't connected!");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* disable receive on revc */
 	if (dev->hw_revision == ENE_HW_C)
@@ -616,7 +698,11 @@ static void ene_tx_sample(struct ene_device *dev)
 	bool pulse = dev->tx_sample_pulse;
 
 	if (!dev->tx_buffer) {
+<<<<<<< HEAD
 		pr_warn("TX: BUG: attempt to transmit NULL buffer\n");
+=======
+		ene_warn("TX: BUG: attempt to transmit NULL buffer");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -954,13 +1040,21 @@ static void ene_set_idle(struct rc_dev *rdev, bool idle)
 }
 
 /* outside interface: transmit */
+<<<<<<< HEAD
 static int ene_transmit(struct rc_dev *rdev, unsigned *buf, unsigned n)
+=======
+static int ene_transmit(struct rc_dev *rdev, int *buf, u32 n)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ene_device *dev = rdev->priv;
 	unsigned long flags;
 
 	dev->tx_buffer = buf;
+<<<<<<< HEAD
 	dev->tx_len = n;
+=======
+	dev->tx_len = n / sizeof(int);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->tx_pos = 0;
 	dev->tx_reg = 0;
 	dev->tx_done = 0;
@@ -1018,7 +1112,25 @@ static int ene_probe(struct pnp_dev *pnp_dev, const struct pnp_device_id *id)
 
 	spin_lock_init(&dev->hw_lock);
 
+<<<<<<< HEAD
 	dev->hw_io = pnp_port_start(pnp_dev, 0);
+=======
+	/* claim the resources */
+	error = -EBUSY;
+	dev->hw_io = pnp_port_start(pnp_dev, 0);
+	if (!request_region(dev->hw_io, ENE_IO_SIZE, ENE_DRIVER_NAME)) {
+		dev->hw_io = -1;
+		dev->irq = -1;
+		goto error;
+	}
+
+	dev->irq = pnp_irq(pnp_dev, 0);
+	if (request_irq(dev->irq, ene_isr,
+			IRQF_SHARED, ENE_DRIVER_NAME, (void *)dev)) {
+		dev->irq = -1;
+		goto error;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pnp_set_drvdata(pnp_dev, dev);
 	dev->pnp_dev = pnp_dev;
@@ -1036,7 +1148,11 @@ static int ene_probe(struct pnp_dev *pnp_dev, const struct pnp_device_id *id)
 		dev->hw_learning_and_tx_capable = true;
 		setup_timer(&dev->tx_sim_timer, ene_tx_irqsim,
 						(long unsigned int)dev);
+<<<<<<< HEAD
 		pr_warn("Simulation of TX activated\n");
+=======
+		ene_warn("Simulation of TX activated");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (!dev->hw_learning_and_tx_capable)
@@ -1072,6 +1188,7 @@ static int ene_probe(struct pnp_dev *pnp_dev, const struct pnp_device_id *id)
 	device_set_wakeup_capable(&pnp_dev->dev, true);
 	device_set_wakeup_enable(&pnp_dev->dev, true);
 
+<<<<<<< HEAD
 	/* claim the resources */
 	error = -EBUSY;
 	if (!request_region(dev->hw_io, ENE_IO_SIZE, ENE_DRIVER_NAME)) {
@@ -1087,11 +1204,17 @@ static int ene_probe(struct pnp_dev *pnp_dev, const struct pnp_device_id *id)
 		goto error;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	error = rc_register_device(rdev);
 	if (error < 0)
 		goto error;
 
+<<<<<<< HEAD
 	pr_notice("driver has been successfully loaded\n");
+=======
+	ene_notice("driver has been successfully loaded");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 error:
 	if (dev && dev->irq >= 0)

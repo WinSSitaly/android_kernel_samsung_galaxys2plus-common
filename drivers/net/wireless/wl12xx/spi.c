@@ -21,13 +21,19 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/irq.h>
 #include <linux/module.h>
 #include <linux/crc7.h>
 #include <linux/spi/spi.h>
 #include <linux/wl12xx.h>
+<<<<<<< HEAD
 #include <linux/platform_device.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 
 #include "wl12xx.h"
@@ -70,6 +76,7 @@
 
 #define WSPI_MAX_NUM_OF_CHUNKS (WL1271_AGGR_BUFFER_SIZE / WSPI_MAX_CHUNK_SIZE)
 
+<<<<<<< HEAD
 struct wl12xx_spi_glue {
 	struct device *dev;
 	struct platform_device *core;
@@ -78,14 +85,42 @@ struct wl12xx_spi_glue {
 static void wl12xx_spi_reset(struct device *child)
 {
 	struct wl12xx_spi_glue *glue = dev_get_drvdata(child->parent);
+=======
+static inline struct spi_device *wl_to_spi(struct wl1271 *wl)
+{
+	return wl->if_priv;
+}
+
+static struct device *wl1271_spi_wl_to_dev(struct wl1271 *wl)
+{
+	return &(wl_to_spi(wl)->dev);
+}
+
+static void wl1271_spi_disable_interrupts(struct wl1271 *wl)
+{
+	disable_irq(wl->irq);
+}
+
+static void wl1271_spi_enable_interrupts(struct wl1271 *wl)
+{
+	enable_irq(wl->irq);
+}
+
+static void wl1271_spi_reset(struct wl1271 *wl)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 *cmd;
 	struct spi_transfer t;
 	struct spi_message m;
 
 	cmd = kzalloc(WSPI_INIT_CMD_LEN, GFP_KERNEL);
 	if (!cmd) {
+<<<<<<< HEAD
 		dev_err(child->parent,
 			"could not allocate cmd for spi reset\n");
+=======
+		wl1271_error("could not allocate cmd for spi reset");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -98,6 +133,7 @@ static void wl12xx_spi_reset(struct device *child)
 	t.len = WSPI_INIT_CMD_LEN;
 	spi_message_add_tail(&t, &m);
 
+<<<<<<< HEAD
 	spi_sync(to_spi_device(glue->dev), &m);
 
 	kfree(cmd);
@@ -106,14 +142,28 @@ static void wl12xx_spi_reset(struct device *child)
 static void wl12xx_spi_init(struct device *child)
 {
 	struct wl12xx_spi_glue *glue = dev_get_drvdata(child->parent);
+=======
+	spi_sync(wl_to_spi(wl), &m);
+
+	wl1271_dump(DEBUG_SPI, "spi reset -> ", cmd, WSPI_INIT_CMD_LEN);
+	kfree(cmd);
+}
+
+static void wl1271_spi_init(struct wl1271 *wl)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 crc[WSPI_INIT_CMD_CRC_LEN], *cmd;
 	struct spi_transfer t;
 	struct spi_message m;
 
 	cmd = kzalloc(WSPI_INIT_CMD_LEN, GFP_KERNEL);
 	if (!cmd) {
+<<<<<<< HEAD
 		dev_err(child->parent,
 			"could not allocate cmd for spi init\n");
+=======
+		wl1271_error("could not allocate cmd for spi init");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -154,16 +204,26 @@ static void wl12xx_spi_init(struct device *child)
 	t.len = WSPI_INIT_CMD_LEN;
 	spi_message_add_tail(&t, &m);
 
+<<<<<<< HEAD
 	spi_sync(to_spi_device(glue->dev), &m);
+=======
+	spi_sync(wl_to_spi(wl), &m);
+	wl1271_dump(DEBUG_SPI, "spi init -> ", cmd, WSPI_INIT_CMD_LEN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(cmd);
 }
 
 #define WL1271_BUSY_WORD_TIMEOUT 1000
 
+<<<<<<< HEAD
 static int wl12xx_spi_read_busy(struct device *child)
 {
 	struct wl12xx_spi_glue *glue = dev_get_drvdata(child->parent);
 	struct wl1271 *wl = dev_get_drvdata(child);
+=======
+static int wl1271_spi_read_busy(struct wl1271 *wl)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct spi_transfer t[1];
 	struct spi_message m;
 	u32 *busy_buf;
@@ -184,13 +244,18 @@ static int wl12xx_spi_read_busy(struct device *child)
 		t[0].len = sizeof(u32);
 		t[0].cs_change = true;
 		spi_message_add_tail(&t[0], &m);
+<<<<<<< HEAD
 		spi_sync(to_spi_device(glue->dev), &m);
+=======
+		spi_sync(wl_to_spi(wl), &m);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (*busy_buf & 0x1)
 			return 0;
 	}
 
 	/* The SPI bus is unresponsive, the read failed. */
+<<<<<<< HEAD
 	dev_err(child->parent, "SPI read busy-word timeout!\n");
 	return -ETIMEDOUT;
 }
@@ -200,6 +265,15 @@ static void wl12xx_spi_raw_read(struct device *child, int addr, void *buf,
 {
 	struct wl12xx_spi_glue *glue = dev_get_drvdata(child->parent);
 	struct wl1271 *wl = dev_get_drvdata(child);
+=======
+	wl1271_error("SPI read busy-word timeout!\n");
+	return -ETIMEDOUT;
+}
+
+static void wl1271_spi_raw_read(struct wl1271 *wl, int addr, void *buf,
+				size_t len, bool fixed)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct spi_transfer t[2];
 	struct spi_message m;
 	u32 *busy_buf;
@@ -235,10 +309,17 @@ static void wl12xx_spi_raw_read(struct device *child, int addr, void *buf,
 		t[1].cs_change = true;
 		spi_message_add_tail(&t[1], &m);
 
+<<<<<<< HEAD
 		spi_sync(to_spi_device(glue->dev), &m);
 
 		if (!(busy_buf[WL1271_BUSY_WORD_CNT - 1] & 0x1) &&
 		    wl12xx_spi_read_busy(child)) {
+=======
+		spi_sync(wl_to_spi(wl), &m);
+
+		if (!(busy_buf[WL1271_BUSY_WORD_CNT - 1] & 0x1) &&
+		    wl1271_spi_read_busy(wl)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			memset(buf, 0, chunk_len);
 			return;
 		}
@@ -251,7 +332,14 @@ static void wl12xx_spi_raw_read(struct device *child, int addr, void *buf,
 		t[0].cs_change = true;
 		spi_message_add_tail(&t[0], &m);
 
+<<<<<<< HEAD
 		spi_sync(to_spi_device(glue->dev), &m);
+=======
+		spi_sync(wl_to_spi(wl), &m);
+
+		wl1271_dump(DEBUG_SPI, "spi_read cmd -> ", cmd, sizeof(*cmd));
+		wl1271_dump(DEBUG_SPI, "spi_read buf <- ", buf, chunk_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (!fixed)
 			addr += chunk_len;
@@ -260,10 +348,16 @@ static void wl12xx_spi_raw_read(struct device *child, int addr, void *buf,
 	}
 }
 
+<<<<<<< HEAD
 static void wl12xx_spi_raw_write(struct device *child, int addr, void *buf,
 				 size_t len, bool fixed)
 {
 	struct wl12xx_spi_glue *glue = dev_get_drvdata(child->parent);
+=======
+static void wl1271_spi_raw_write(struct wl1271 *wl, int addr, void *buf,
+			  size_t len, bool fixed)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct spi_transfer t[2 * WSPI_MAX_NUM_OF_CHUNKS];
 	struct spi_message m;
 	u32 commands[WSPI_MAX_NUM_OF_CHUNKS];
@@ -298,6 +392,12 @@ static void wl12xx_spi_raw_write(struct device *child, int addr, void *buf,
 		t[i].len = chunk_len;
 		spi_message_add_tail(&t[i++], &m);
 
+<<<<<<< HEAD
+=======
+		wl1271_dump(DEBUG_SPI, "spi_write cmd -> ", cmd, sizeof(*cmd));
+		wl1271_dump(DEBUG_SPI, "spi_write buf -> ", buf, chunk_len);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!fixed)
 			addr += chunk_len;
 		buf += chunk_len;
@@ -305,6 +405,7 @@ static void wl12xx_spi_raw_write(struct device *child, int addr, void *buf,
 		cmd++;
 	}
 
+<<<<<<< HEAD
 	spi_sync(to_spi_device(glue->dev), &m);
 }
 
@@ -313,11 +414,53 @@ static struct wl1271_if_operations spi_ops = {
 	.write		= wl12xx_spi_raw_write,
 	.reset		= wl12xx_spi_reset,
 	.init		= wl12xx_spi_init,
+=======
+	spi_sync(wl_to_spi(wl), &m);
+}
+
+static irqreturn_t wl1271_hardirq(int irq, void *cookie)
+{
+	struct wl1271 *wl = cookie;
+	unsigned long flags;
+
+	wl1271_debug(DEBUG_IRQ, "IRQ");
+
+	/* complete the ELP completion */
+	spin_lock_irqsave(&wl->wl_lock, flags);
+	set_bit(WL1271_FLAG_IRQ_RUNNING, &wl->flags);
+	if (wl->elp_compl) {
+		complete(wl->elp_compl);
+		wl->elp_compl = NULL;
+	}
+	spin_unlock_irqrestore(&wl->wl_lock, flags);
+
+	return IRQ_WAKE_THREAD;
+}
+
+static int wl1271_spi_set_power(struct wl1271 *wl, bool enable)
+{
+	if (wl->set_power)
+		wl->set_power(enable);
+
+	return 0;
+}
+
+static struct wl1271_if_operations spi_ops = {
+	.read		= wl1271_spi_raw_read,
+	.write		= wl1271_spi_raw_write,
+	.reset		= wl1271_spi_reset,
+	.init		= wl1271_spi_init,
+	.power		= wl1271_spi_set_power,
+	.dev		= wl1271_spi_wl_to_dev,
+	.enable_irq	= wl1271_spi_enable_interrupts,
+	.disable_irq	= wl1271_spi_disable_interrupts,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.set_block_size = NULL,
 };
 
 static int __devinit wl1271_probe(struct spi_device *spi)
 {
+<<<<<<< HEAD
 	struct wl12xx_spi_glue *glue;
 	struct wl12xx_platform_data *pdata;
 	struct resource res[1];
@@ -340,6 +483,30 @@ static int __devinit wl1271_probe(struct spi_device *spi)
 	glue->dev = &spi->dev;
 
 	spi_set_drvdata(spi, glue);
+=======
+	struct wl12xx_platform_data *pdata;
+	struct ieee80211_hw *hw;
+	struct wl1271 *wl;
+	unsigned long irqflags;
+	int ret;
+
+	pdata = spi->dev.platform_data;
+	if (!pdata) {
+		wl1271_error("no platform data");
+		return -ENODEV;
+	}
+
+	hw = wl1271_alloc_hw();
+	if (IS_ERR(hw))
+		return PTR_ERR(hw);
+
+	wl = hw->priv;
+
+	dev_set_drvdata(&spi->dev, wl);
+	wl->if_priv = spi;
+
+	wl->if_ops = &spi_ops;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* This is the only SPI value that we need to set here, the rest
 	 * comes from the board-peripherals file */
@@ -347,6 +514,7 @@ static int __devinit wl1271_probe(struct spi_device *spi)
 
 	ret = spi_setup(spi);
 	if (ret < 0) {
+<<<<<<< HEAD
 		dev_err(glue->dev, "spi_setup failed\n");
 		goto out_free_glue;
 	}
@@ -392,16 +560,81 @@ out_dev_put:
 out_free_glue:
 	kfree(glue);
 out:
+=======
+		wl1271_error("spi_setup failed");
+		goto out_free;
+	}
+
+	wl->set_power = pdata->set_power;
+	if (!wl->set_power) {
+		wl1271_error("set power function missing in platform data");
+		ret = -ENODEV;
+		goto out_free;
+	}
+
+	wl->ref_clock = pdata->board_ref_clock;
+	wl->tcxo_clock = pdata->board_tcxo_clock;
+	wl->platform_quirks = pdata->platform_quirks;
+
+	if (wl->platform_quirks & WL12XX_PLATFORM_QUIRK_EDGE_IRQ)
+		irqflags = IRQF_TRIGGER_RISING;
+	else
+		irqflags = IRQF_TRIGGER_HIGH | IRQF_ONESHOT;
+
+	wl->irq = spi->irq;
+	if (wl->irq < 0) {
+		wl1271_error("irq missing in platform data");
+		ret = -ENODEV;
+		goto out_free;
+	}
+
+	ret = request_threaded_irq(wl->irq, wl1271_hardirq, wl1271_irq,
+				   irqflags,
+				   DRIVER_NAME, wl);
+	if (ret < 0) {
+		wl1271_error("request_irq() failed: %d", ret);
+		goto out_free;
+	}
+
+	disable_irq(wl->irq);
+
+	ret = wl1271_init_ieee80211(wl);
+	if (ret)
+		goto out_irq;
+
+	ret = wl1271_register_hw(wl);
+	if (ret)
+		goto out_irq;
+
+	wl1271_notice("initialized");
+
+	return 0;
+
+ out_irq:
+	free_irq(wl->irq, wl);
+
+ out_free:
+	wl1271_free_hw(wl);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devexit wl1271_remove(struct spi_device *spi)
 {
+<<<<<<< HEAD
 	struct wl12xx_spi_glue *glue = spi_get_drvdata(spi);
 
 	platform_device_del(glue->core);
 	platform_device_put(glue->core);
 	kfree(glue);
+=======
+	struct wl1271 *wl = dev_get_drvdata(&spi->dev);
+
+	wl1271_unregister_hw(wl);
+	free_irq(wl->irq, wl);
+	wl1271_free_hw(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -410,6 +643,10 @@ static int __devexit wl1271_remove(struct spi_device *spi)
 static struct spi_driver wl1271_spi_driver = {
 	.driver = {
 		.name		= "wl1271_spi",
+<<<<<<< HEAD
+=======
+		.bus		= &spi_bus_type,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.owner		= THIS_MODULE,
 	},
 
@@ -419,12 +656,30 @@ static struct spi_driver wl1271_spi_driver = {
 
 static int __init wl1271_init(void)
 {
+<<<<<<< HEAD
 	return spi_register_driver(&wl1271_spi_driver);
+=======
+	int ret;
+
+	ret = spi_register_driver(&wl1271_spi_driver);
+	if (ret < 0) {
+		wl1271_error("failed to register spi driver: %d", ret);
+		goto out;
+	}
+
+out:
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit wl1271_exit(void)
 {
 	spi_unregister_driver(&wl1271_spi_driver);
+<<<<<<< HEAD
+=======
+
+	wl1271_notice("unloaded");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(wl1271_init);
@@ -433,10 +688,17 @@ module_exit(wl1271_exit);
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Luciano Coelho <coelho@ti.com>");
 MODULE_AUTHOR("Juuso Oikarinen <juuso.oikarinen@nokia.com>");
+<<<<<<< HEAD
 MODULE_FIRMWARE(WL127X_FW_NAME_SINGLE);
 MODULE_FIRMWARE(WL127X_FW_NAME_MULTI);
 MODULE_FIRMWARE(WL127X_PLT_FW_NAME);
 MODULE_FIRMWARE(WL128X_FW_NAME_SINGLE);
 MODULE_FIRMWARE(WL128X_FW_NAME_MULTI);
 MODULE_FIRMWARE(WL128X_PLT_FW_NAME);
+=======
+MODULE_FIRMWARE(WL1271_FW_NAME);
+MODULE_FIRMWARE(WL128X_FW_NAME);
+MODULE_FIRMWARE(WL127X_AP_FW_NAME);
+MODULE_FIRMWARE(WL128X_AP_FW_NAME);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_ALIAS("spi:wl1271");

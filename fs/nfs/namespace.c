@@ -37,7 +37,10 @@ static struct vfsmount *nfs_do_submount(struct dentry *dentry,
  * @dentry - pointer to dentry
  * @buffer - result buffer
  * @buflen - length of buffer
+<<<<<<< HEAD
  * @flags - options (see below)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Helper function for constructing the server pathname
  * by arbitrary hashed dentry.
@@ -45,6 +48,7 @@ static struct vfsmount *nfs_do_submount(struct dentry *dentry,
  * This is mainly for use in figuring out the path on the
  * server side when automounting on top of an existing partition
  * and in generating /proc/mounts and friends.
+<<<<<<< HEAD
  *
  * Supported flags:
  * NFS_PATH_CANONICAL: ensure there is exactly one slash after
@@ -53,6 +57,10 @@ static struct vfsmount *nfs_do_submount(struct dentry *dentry,
  */
 char *nfs_path(char **p, struct dentry *dentry, char *buffer, ssize_t buflen,
 	       unsigned flags)
+=======
+ */
+char *nfs_path(char **p, struct dentry *dentry, char *buffer, ssize_t buflen)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	char *end;
 	int namelen;
@@ -85,7 +93,11 @@ rename_retry:
 		rcu_read_unlock();
 		goto rename_retry;
 	}
+<<<<<<< HEAD
 	if ((flags & NFS_PATH_CANONICAL) && *end != '/') {
+=======
+	if (*end != '/') {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (--buflen < 0) {
 			spin_unlock(&dentry->d_lock);
 			rcu_read_unlock();
@@ -102,11 +114,17 @@ rename_retry:
 		return end;
 	}
 	namelen = strlen(base);
+<<<<<<< HEAD
 	if (flags & NFS_PATH_CANONICAL) {
 		/* Strip off excess slashes in base string */
 		while (namelen > 0 && base[namelen - 1] == '/')
 			namelen--;
 	}
+=======
+	/* Strip off excess slashes in base string */
+	while (namelen > 0 && base[namelen - 1] == '/')
+		namelen--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	buflen -= namelen;
 	if (buflen < 0) {
 		spin_unlock(&dentry->d_lock);
@@ -128,7 +146,11 @@ Elong:
 }
 
 #ifdef CONFIG_NFS_V4
+<<<<<<< HEAD
 rpc_authflavor_t nfs_find_best_sec(struct nfs4_secinfo_flavors *flavors)
+=======
+static rpc_authflavor_t nfs_find_best_sec(struct nfs4_secinfo_flavors *flavors)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct gss_api_mech *mech;
 	struct xdr_netobj oid;
@@ -157,6 +179,7 @@ rpc_authflavor_t nfs_find_best_sec(struct nfs4_secinfo_flavors *flavors)
 	return pseudoflavor;
 }
 
+<<<<<<< HEAD
 static struct rpc_clnt *nfs_lookup_mountpoint(struct inode *dir,
 					      struct qstr *name,
 					      struct nfs_fh *fh,
@@ -182,6 +205,68 @@ static inline struct rpc_clnt *nfs_lookup_mountpoint(struct inode *dir,
 	if (err)
 		return ERR_PTR(err);
 	return rpc_clone_client(NFS_SERVER(dir)->client);
+=======
+static int nfs_negotiate_security(const struct dentry *parent,
+				  const struct dentry *dentry,
+				  rpc_authflavor_t *flavor)
+{
+	struct page *page;
+	struct nfs4_secinfo_flavors *flavors;
+	int (*secinfo)(struct inode *, const struct qstr *, struct nfs4_secinfo_flavors *);
+	int ret = -EPERM;
+
+	secinfo = NFS_PROTO(parent->d_inode)->secinfo;
+	if (secinfo != NULL) {
+		page = alloc_page(GFP_KERNEL);
+		if (!page) {
+			ret = -ENOMEM;
+			goto out;
+		}
+		flavors = page_address(page);
+		ret = secinfo(parent->d_inode, &dentry->d_name, flavors);
+		*flavor = nfs_find_best_sec(flavors);
+		put_page(page);
+	}
+
+out:
+	return ret;
+}
+
+static int nfs_lookup_with_sec(struct nfs_server *server, struct dentry *parent,
+			       struct dentry *dentry, struct path *path,
+			       struct nfs_fh *fh, struct nfs_fattr *fattr,
+			       rpc_authflavor_t *flavor)
+{
+	struct rpc_clnt *clone;
+	struct rpc_auth *auth;
+	int err;
+
+	err = nfs_negotiate_security(parent, path->dentry, flavor);
+	if (err < 0)
+		goto out;
+	clone  = rpc_clone_client(server->client);
+	auth   = rpcauth_create(*flavor, clone);
+	if (!auth) {
+		err = -EIO;
+		goto out_shutdown;
+	}
+	err = server->nfs_client->rpc_ops->lookup(clone, parent->d_inode,
+						  &path->dentry->d_name,
+						  fh, fattr);
+out_shutdown:
+	rpc_shutdown_client(clone);
+out:
+	return err;
+}
+#else /* CONFIG_NFS_V4 */
+static inline int nfs_lookup_with_sec(struct nfs_server *server,
+				      struct dentry *parent, struct dentry *dentry,
+				      struct path *path, struct nfs_fh *fh,
+				      struct nfs_fattr *fattr,
+				      rpc_authflavor_t *flavor)
+{
+	return -EPERM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif /* CONFIG_NFS_V4 */
 
@@ -200,10 +285,19 @@ static inline struct rpc_clnt *nfs_lookup_mountpoint(struct inode *dir,
 struct vfsmount *nfs_d_automount(struct path *path)
 {
 	struct vfsmount *mnt;
+<<<<<<< HEAD
 	struct dentry *parent;
 	struct nfs_fh *fh = NULL;
 	struct nfs_fattr *fattr = NULL;
 	struct rpc_clnt *client;
+=======
+	struct nfs_server *server = NFS_SERVER(path->dentry->d_inode);
+	struct dentry *parent;
+	struct nfs_fh *fh = NULL;
+	struct nfs_fattr *fattr = NULL;
+	int err;
+	rpc_authflavor_t flavor = RPC_AUTH_UNIX;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dprintk("--> nfs_d_automount()\n");
 
@@ -221,19 +315,36 @@ struct vfsmount *nfs_d_automount(struct path *path)
 
 	/* Look it up again to get its attributes */
 	parent = dget_parent(path->dentry);
+<<<<<<< HEAD
 	client = nfs_lookup_mountpoint(parent->d_inode, &path->dentry->d_name, fh, fattr);
 	dput(parent);
 	if (IS_ERR(client)) {
 		mnt = ERR_CAST(client);
+=======
+	err = server->nfs_client->rpc_ops->lookup(server->client, parent->d_inode,
+						  &path->dentry->d_name,
+						  fh, fattr);
+	if (err == -EPERM && NFS_PROTO(parent->d_inode)->secinfo != NULL)
+		err = nfs_lookup_with_sec(server, parent, path->dentry, path, fh, fattr, &flavor);
+	dput(parent);
+	if (err != 0) {
+		mnt = ERR_PTR(err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
 	if (fattr->valid & NFS_ATTR_FATTR_V4_REFERRAL)
+<<<<<<< HEAD
 		mnt = nfs_do_refmount(client, path->dentry);
 	else
 		mnt = nfs_do_submount(path->dentry, fh, fattr, client->cl_auth->au_flavor);
 	rpc_shutdown_client(client);
 
+=======
+		mnt = nfs_do_refmount(path->dentry);
+	else
+		mnt = nfs_do_submount(path->dentry, fh, fattr, flavor);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(mnt))
 		goto out;
 
@@ -246,6 +357,7 @@ out:
 	nfs_free_fattr(fattr);
 	nfs_free_fhandle(fh);
 out_nofree:
+<<<<<<< HEAD
 	if (IS_ERR(mnt))
 		dprintk("<-- %s(): error %ld\n", __func__, PTR_ERR(mnt));
 	else
@@ -278,6 +390,17 @@ const struct inode_operations nfs_mountpoint_inode_operations = {
 const struct inode_operations nfs_referral_inode_operations = {
 	.getattr	= nfs_namespace_getattr,
 	.setattr	= nfs_namespace_setattr,
+=======
+	dprintk("<-- nfs_follow_mountpoint() = %p\n", mnt);
+	return mnt;
+}
+
+const struct inode_operations nfs_mountpoint_inode_operations = {
+	.getattr	= nfs_getattr,
+};
+
+const struct inode_operations nfs_referral_inode_operations = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void nfs_expire_automounts(struct work_struct *work)

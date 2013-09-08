@@ -12,7 +12,10 @@
 #include <linux/platform_device.h>
 #include <linux/err.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mc146818rtc.h>
 
 #include <asm/prom.h>

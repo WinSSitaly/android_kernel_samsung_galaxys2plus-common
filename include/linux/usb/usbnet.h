@@ -191,8 +191,12 @@ extern void usbnet_cdc_status(struct usbnet *, struct urb *);
 enum skb_state {
 	illegal = 0,
 	tx_start, tx_done,
+<<<<<<< HEAD
 	rx_start, rx_done, rx_cleanup,
 	unlink_start
+=======
+	rx_start, rx_done, rx_cleanup
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct skb_data {	/* skb->cb is one of these */

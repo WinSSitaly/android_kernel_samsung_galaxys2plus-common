@@ -104,6 +104,10 @@ struct isci_orom *isci_request_oprom(struct pci_dev *pdev)
 
 	if (i >= len) {
 		dev_err(&pdev->dev, "oprom parse error\n");
+<<<<<<< HEAD
+=======
+		devm_kfree(&pdev->dev, rom);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rom = NULL;
 	}
 	pci_unmap_biosrom(oprom);
@@ -146,7 +150,11 @@ struct isci_orom *isci_request_firmware(struct pci_dev *pdev, const struct firmw
 
 	memcpy(orom, fw->data, fw->size);
 
+<<<<<<< HEAD
 	if (is_c0(pdev) || is_c1(pdev))
+=======
+	if (is_c0(pdev))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	/*

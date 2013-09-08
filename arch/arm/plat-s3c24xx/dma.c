@@ -27,6 +27,10 @@
 #include <linux/errno.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/irq.h>
 #include <mach/hardware.h>
 #include <mach/dma.h>
@@ -430,7 +434,11 @@ s3c2410_dma_canload(struct s3c2410_dma_chan *chan)
  * when necessary.
 */
 
+<<<<<<< HEAD
 int s3c2410_dma_enqueue(enum dma_ch channel, void *id,
+=======
+int s3c2410_dma_enqueue(unsigned int channel, void *id,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dma_addr_t data, int size)
 {
 	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
@@ -1093,14 +1101,23 @@ EXPORT_SYMBOL(s3c2410_dma_config);
  *
  * configure the dma source/destination hardware type and address
  *
+<<<<<<< HEAD
  * source:    DMA_FROM_DEVICE: source is hardware
  *            DMA_TO_DEVICE: source is memory
+=======
+ * source:    S3C2410_DMASRC_HW: source is hardware
+ *            S3C2410_DMASRC_MEM: source is memory
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * devaddr:   physical address of the source
 */
 
 int s3c2410_dma_devconfig(enum dma_ch channel,
+<<<<<<< HEAD
 			  enum dma_data_direction source,
+=======
+			  enum s3c2410_dmasrc source,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  unsigned long devaddr)
 {
 	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
@@ -1130,7 +1147,11 @@ int s3c2410_dma_devconfig(enum dma_ch channel,
 	 hwcfg |= S3C2410_DISRCC_INC;
 
 	switch (source) {
+<<<<<<< HEAD
 	case DMA_FROM_DEVICE:
+=======
+	case S3C2410_DMASRC_HW:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* source is hardware */
 		pr_debug("%s: hw source, devaddr=%08lx, hwcfg=%d\n",
 			 __func__, devaddr, hwcfg);
@@ -1141,7 +1162,11 @@ int s3c2410_dma_devconfig(enum dma_ch channel,
 		chan->addr_reg = dma_regaddr(chan, S3C2410_DMA_DIDST);
 		break;
 
+<<<<<<< HEAD
 	case DMA_TO_DEVICE:
+=======
+	case S3C2410_DMASRC_MEM:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* source is memory */
 		pr_debug("%s: mem source, devaddr=%08lx, hwcfg=%d\n",
 			 __func__, devaddr, hwcfg);
@@ -1436,10 +1461,18 @@ int __init s3c24xx_dma_init_map(struct s3c24xx_dma_selection *sel)
 	size_t map_sz = sizeof(*nmap) * sel->map_size;
 	int ptr;
 
+<<<<<<< HEAD
 	nmap = kmemdup(sel->map, map_sz, GFP_KERNEL);
 	if (nmap == NULL)
 		return -ENOMEM;
 
+=======
+	nmap = kmalloc(map_sz, GFP_KERNEL);
+	if (nmap == NULL)
+		return -ENOMEM;
+
+	memcpy(nmap, sel->map, map_sz);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy(&dma_sel, sel, sizeof(*sel));
 
 	dma_sel.map = nmap;

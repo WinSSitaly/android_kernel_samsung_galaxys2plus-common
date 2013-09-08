@@ -23,6 +23,7 @@
 
 	soc5200@f0000000 {
 		timer@600 {	// General Purpose Timer
+<<<<<<< HEAD
 			#gpio-cells = <2>;
 			fsl,has-wdt;
 			gpio-controller;
@@ -43,6 +44,21 @@
 				spi-max-frequency = <32000>;
 				reg = <0>;
 			};
+=======
+			fsl,has-wdt;
+		};
+
+		rtc@800 {
+			status = "disabled";
+		};
+
+		can@900 {
+			status = "disabled";
+		};
+
+		can@980 {
+			status = "disabled";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		};
 
 		psc@2000 {		// PSC1
@@ -80,16 +96,23 @@
 		};
 
 		i2c@3d00 {
+<<<<<<< HEAD
 			eeprom@50 {
+=======
+			rtc@50 {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				compatible = "at,24c08";
 				reg = <0x50>;
 			};
 
+<<<<<<< HEAD
 			rtc@56 {
 				compatible = "mc,rv3029c2";
 				reg = <0x56>;
 			};
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rtc@68 {
 				compatible = "dallas,ds1339";
 				reg = <0x68>;
@@ -102,6 +125,7 @@
 	};
 
 	pci@f0000d00 {
+<<<<<<< HEAD
 		interrupt-map-mask = <0xf800 0 0 7>;
 		interrupt-map = <0xc000 0 0 1 &mpc5200_pic 0 0 3
 				 0xc000 0 0 2 &mpc5200_pic 0 0 3
@@ -118,6 +142,13 @@
 	localbus {
 		ranges = <0 0 0xff000000 0x1000000
 			  4 0 0x60000000 0x0001000>;
+=======
+		status = "disabled";
+	};
+
+	localbus {
+		ranges = <0 0 0xff000000 0x1000000>;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		// 16-bit flash device at LocalPlus Bus CS0
 		flash@0,0 {
@@ -145,6 +176,7 @@
 				reg = <0x00f00000 0x100000>;
 			};
 		};
+<<<<<<< HEAD
 
 		can@4,0 {
 			compatible = "nxp,sja1000";
@@ -165,5 +197,7 @@
 			reg = <4 0x200 0x10>;
 			interrupts = <1 3 3>;
 		};
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	};
 };

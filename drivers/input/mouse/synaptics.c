@@ -45,6 +45,7 @@
 #define YMIN_NOMINAL 1408
 #define YMAX_NOMINAL 4448
 
+<<<<<<< HEAD
 /*
  * Synaptics touchpads report the y coordinate from bottom to top, which is
  * opposite from what userspace expects.
@@ -55,6 +56,8 @@ static int synaptics_invert_y(int y)
 	return YMAX_NOMINAL + YMIN_NOMINAL - y;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*****************************************************************************
  *	Stuff we need even when we do not want native Synaptics support
@@ -168,8 +171,13 @@ static int synaptics_capability(struct psmouse *psmouse)
 
 	if (SYN_EXT_CAP_REQUESTS(priv->capabilities) >= 1) {
 		if (synaptics_send_cmd(psmouse, SYN_QUE_EXT_CAPAB, cap)) {
+<<<<<<< HEAD
 			psmouse_warn(psmouse,
 				     "device claims to have extended capabilities, but I'm not able to read them.\n");
+=======
+			printk(KERN_ERR "Synaptics claims to have extended capabilities,"
+			       " but I'm not able to read them.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			priv->ext_cap = (cap[0] << 16) | (cap[1] << 8) | cap[2];
 
@@ -184,8 +192,13 @@ static int synaptics_capability(struct psmouse *psmouse)
 
 	if (SYN_EXT_CAP_REQUESTS(priv->capabilities) >= 4) {
 		if (synaptics_send_cmd(psmouse, SYN_QUE_EXT_CAPAB_0C, cap)) {
+<<<<<<< HEAD
 			psmouse_warn(psmouse,
 				     "device claims to have extended capability 0x0c, but I'm not able to read it.\n");
+=======
+			printk(KERN_ERR "Synaptics claims to have extended capability 0x0c,"
+			       " but I'm not able to read it.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			priv->ext_cap_0c = (cap[0] << 16) | (cap[1] << 8) | cap[2];
 		}
@@ -218,20 +231,33 @@ static int synaptics_identify(struct psmouse *psmouse)
 static int synaptics_resolution(struct psmouse *psmouse)
 {
 	struct synaptics_data *priv = psmouse->private;
+<<<<<<< HEAD
 	unsigned char resp[3];
+=======
+	unsigned char res[3];
+	unsigned char max[3];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (SYN_ID_MAJOR(priv->identity) < 4)
 		return 0;
 
+<<<<<<< HEAD
 	if (synaptics_send_cmd(psmouse, SYN_QUE_RESOLUTION, resp) == 0) {
 		if (resp[0] != 0 && (resp[1] & 0x80) && resp[2] != 0) {
 			priv->x_res = resp[0]; /* x resolution in units/mm */
 			priv->y_res = resp[2]; /* y resolution in units/mm */
+=======
+	if (synaptics_send_cmd(psmouse, SYN_QUE_RESOLUTION, res) == 0) {
+		if (res[0] != 0 && (res[1] & 0x80) && res[2] != 0) {
+			priv->x_res = res[0]; /* x resolution in units/mm */
+			priv->y_res = res[2]; /* y resolution in units/mm */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
 	if (SYN_EXT_CAP_REQUESTS(priv->capabilities) >= 5 &&
 	    SYN_CAP_MAX_DIMENSIONS(priv->ext_cap_0c)) {
+<<<<<<< HEAD
 		if (synaptics_send_cmd(psmouse, SYN_QUE_EXT_MAX_COORDS, resp)) {
 			psmouse_warn(psmouse,
 				     "device claims to have max coordinates query, but I'm not able to read it.\n");
@@ -249,6 +275,14 @@ static int synaptics_resolution(struct psmouse *psmouse)
 		} else {
 			priv->x_min = (resp[0] << 5) | ((resp[1] & 0x0f) << 1);
 			priv->y_min = (resp[2] << 5) | ((resp[1] & 0xf0) >> 3);
+=======
+		if (synaptics_send_cmd(psmouse, SYN_QUE_EXT_DIMENSIONS, max)) {
+			printk(KERN_ERR "Synaptics claims to have dimensions query,"
+			       " but I'm not able to read it.\n");
+		} else {
+			priv->x_max = (max[0] << 5) | ((max[1] & 0x0f) << 1);
+			priv->y_max = (max[2] << 5) | ((max[1] & 0xf0) >> 3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -269,6 +303,7 @@ static int synaptics_query_hardware(struct psmouse *psmouse)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int synaptics_set_advanced_gesture_mode(struct psmouse *psmouse)
 {
 	static unsigned char param = 0xc8;
@@ -301,18 +336,30 @@ static int synaptics_set_mode(struct psmouse *psmouse)
 		priv->mode |= SYN_BIT_DISABLE_GESTURE;
 	if (psmouse->rate >= 80)
 		priv->mode |= SYN_BIT_HIGH_RATE;
+=======
+static int synaptics_set_absolute_mode(struct psmouse *psmouse)
+{
+	struct synaptics_data *priv = psmouse->private;
+
+	priv->mode = SYN_BIT_ABSOLUTE_MODE;
+	if (SYN_ID_MAJOR(priv->identity) >= 4)
+		priv->mode |= SYN_BIT_DISABLE_GESTURE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (SYN_CAP_EXTENDED(priv->capabilities))
 		priv->mode |= SYN_BIT_W_MODE;
 
 	if (synaptics_mode_cmd(psmouse, priv->mode))
 		return -1;
 
+<<<<<<< HEAD
 	if (priv->absolute_mode &&
 	    synaptics_set_advanced_gesture_mode(psmouse)) {
 		psmouse_err(psmouse, "Advanced gesture mode init failed.\n");
 		return -1;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -331,6 +378,28 @@ static void synaptics_set_rate(struct psmouse *psmouse, unsigned int rate)
 	synaptics_mode_cmd(psmouse, priv->mode);
 }
 
+<<<<<<< HEAD
+=======
+static int synaptics_set_advanced_gesture_mode(struct psmouse *psmouse)
+{
+	static unsigned char param = 0xc8;
+	struct synaptics_data *priv = psmouse->private;
+
+	if (!SYN_CAP_ADV_GESTURE(priv->ext_cap_0c))
+		return 0;
+
+	if (psmouse_sliced_command(psmouse, SYN_QUE_MODEL))
+		return -1;
+	if (ps2_command(&psmouse->ps2dev, &param, PSMOUSE_CMD_SETRATE))
+		return -1;
+
+	/* Advanced gesture mode also sends multi finger data */
+	priv->capabilities |= BIT(1);
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*****************************************************************************
  *	Synaptics pass-through PS/2 port support
  ****************************************************************************/
@@ -400,8 +469,12 @@ static void synaptics_pt_activate(struct psmouse *psmouse)
 			priv->mode &= ~SYN_BIT_FOUR_BYTE_CLIENT;
 
 		if (synaptics_mode_cmd(psmouse, priv->mode))
+<<<<<<< HEAD
 			psmouse_warn(psmouse,
 				     "failed to switch guest protocol\n");
+=======
+			printk(KERN_INFO "synaptics: failed to switch guest protocol\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -411,8 +484,12 @@ static void synaptics_pt_create(struct psmouse *psmouse)
 
 	serio = kzalloc(sizeof(struct serio), GFP_KERNEL);
 	if (!serio) {
+<<<<<<< HEAD
 		psmouse_err(psmouse,
 			    "not enough memory for pass-through port\n");
+=======
+		printk(KERN_ERR "synaptics: not enough memory to allocate pass-through port\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -426,8 +503,12 @@ static void synaptics_pt_create(struct psmouse *psmouse)
 
 	psmouse->pt_activate = synaptics_pt_activate;
 
+<<<<<<< HEAD
 	psmouse_info(psmouse, "serio: %s port at %s\n",
 		     serio->name, psmouse->phys);
+=======
+	printk(KERN_INFO "serio: %s port at %s\n", serio->name, psmouse->phys);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	serio_register_port(serio);
 }
 
@@ -435,6 +516,7 @@ static void synaptics_pt_create(struct psmouse *psmouse)
  *	Functions to interpret the absolute mode packets
  ****************************************************************************/
 
+<<<<<<< HEAD
 static void synaptics_mt_state_set(struct synaptics_mt_state *state, int count,
 				   int sgm, int agm)
 {
@@ -473,6 +555,8 @@ static void synaptics_parse_agm(const unsigned char buf[],
 	priv->agm_pending = true;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int synaptics_parse_hw_state(const unsigned char buf[],
 				    struct synaptics_data *priv,
 				    struct synaptics_hw_state *hw)
@@ -480,10 +564,32 @@ static int synaptics_parse_hw_state(const unsigned char buf[],
 	memset(hw, 0, sizeof(struct synaptics_hw_state));
 
 	if (SYN_MODEL_NEWABS(priv->model_id)) {
+<<<<<<< HEAD
+=======
+		hw->x = (((buf[3] & 0x10) << 8) |
+			 ((buf[1] & 0x0f) << 8) |
+			 buf[4]);
+		hw->y = (((buf[3] & 0x20) << 7) |
+			 ((buf[1] & 0xf0) << 4) |
+			 buf[5]);
+
+		hw->z = buf[2];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hw->w = (((buf[0] & 0x30) >> 2) |
 			 ((buf[0] & 0x04) >> 1) |
 			 ((buf[3] & 0x04) >> 2));
 
+<<<<<<< HEAD
+=======
+		if (SYN_CAP_ADV_GESTURE(priv->ext_cap_0c) && hw->w == 2) {
+			/* Gesture packet: (x, y, z) at half resolution */
+			priv->mt.x = (((buf[4] & 0x0f) << 8) | buf[1]) << 1;
+			priv->mt.y = (((buf[4] & 0xf0) << 4) | buf[2]) << 1;
+			priv->mt.z = ((buf[3] & 0x30) | (buf[5] & 0x0f)) << 1;
+			return 1;
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hw->left  = (buf[0] & 0x01) ? 1 : 0;
 		hw->right = (buf[0] & 0x02) ? 1 : 0;
 
@@ -506,6 +612,7 @@ static int synaptics_parse_hw_state(const unsigned char buf[],
 			hw->down = ((buf[0] ^ buf[3]) & 0x02) ? 1 : 0;
 		}
 
+<<<<<<< HEAD
 		if ((SYN_CAP_ADV_GESTURE(priv->ext_cap_0c) ||
 			SYN_CAP_IMAGE_SENSOR(priv->ext_cap_0c)) &&
 		    hw->w == 2) {
@@ -521,6 +628,8 @@ static int synaptics_parse_hw_state(const unsigned char buf[],
 			 buf[5]);
 		hw->z = buf[2];
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (SYN_CAP_MULTI_BUTTON_NO(priv->ext_cap) &&
 		    ((buf[0] ^ buf[3]) & 0x02)) {
 			switch (SYN_CAP_MULTI_BUTTON_NO(priv->ext_cap) & ~0x01) {
@@ -558,14 +667,23 @@ static int synaptics_parse_hw_state(const unsigned char buf[],
 	return 0;
 }
 
+<<<<<<< HEAD
 static void synaptics_report_semi_mt_slot(struct input_dev *dev, int slot,
 					  bool active, int x, int y)
+=======
+static void set_slot(struct input_dev *dev, int slot, bool active, int x, int y)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	input_mt_slot(dev, slot);
 	input_mt_report_slot_state(dev, MT_TOOL_FINGER, active);
 	if (active) {
 		input_report_abs(dev, ABS_MT_POSITION_X, x);
+<<<<<<< HEAD
 		input_report_abs(dev, ABS_MT_POSITION_Y, synaptics_invert_y(y));
+=======
+		input_report_abs(dev, ABS_MT_POSITION_Y,
+				 YMAX_NOMINAL + YMIN_NOMINAL - y);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -575,6 +693,7 @@ static void synaptics_report_semi_mt_data(struct input_dev *dev,
 					  int num_fingers)
 {
 	if (num_fingers >= 2) {
+<<<<<<< HEAD
 		synaptics_report_semi_mt_slot(dev, 0, true, min(a->x, b->x),
 					      min(a->y, b->y));
 		synaptics_report_semi_mt_slot(dev, 1, true, max(a->x, b->x),
@@ -968,6 +1087,17 @@ static void synaptics_image_sensor_process(struct psmouse *psmouse,
 	/* Store updated mt_state */
 	priv->mt_state = agm->mt_state = mt_state;
 	priv->agm_pending = false;
+=======
+		set_slot(dev, 0, true, min(a->x, b->x), min(a->y, b->y));
+		set_slot(dev, 1, true, max(a->x, b->x), max(a->y, b->y));
+	} else if (num_fingers == 1) {
+		set_slot(dev, 0, true, a->x, a->y);
+		set_slot(dev, 1, false, 0, 0);
+	} else {
+		set_slot(dev, 0, false, 0, 0);
+		set_slot(dev, 1, false, 0, 0);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -980,15 +1110,22 @@ static void synaptics_process_packet(struct psmouse *psmouse)
 	struct synaptics_hw_state hw;
 	int num_fingers;
 	int finger_width;
+<<<<<<< HEAD
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (synaptics_parse_hw_state(psmouse->packet, priv, &hw))
 		return;
 
+<<<<<<< HEAD
 	if (SYN_CAP_IMAGE_SENSOR(priv->ext_cap_0c)) {
 		synaptics_image_sensor_process(psmouse, &hw);
 		return;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (hw.scroll) {
 		priv->scroll += hw.scroll;
 
@@ -1034,8 +1171,12 @@ static void synaptics_process_packet(struct psmouse *psmouse)
 	}
 
 	if (SYN_CAP_ADV_GESTURE(priv->ext_cap_0c))
+<<<<<<< HEAD
 		synaptics_report_semi_mt_data(dev, &hw, &priv->agm,
 					      num_fingers);
+=======
+		synaptics_report_semi_mt_data(dev, &hw, &priv->mt, num_fingers);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Post events
 	 * BTN_TOUCH has to be first as mousedev relies on it when doing
@@ -1046,7 +1187,11 @@ static void synaptics_process_packet(struct psmouse *psmouse)
 
 	if (num_fingers > 0) {
 		input_report_abs(dev, ABS_X, hw.x);
+<<<<<<< HEAD
 		input_report_abs(dev, ABS_Y, synaptics_invert_y(hw.y));
+=======
+		input_report_abs(dev, ABS_Y, YMAX_NOMINAL + YMIN_NOMINAL - hw.y);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	input_report_abs(dev, ABS_PRESSURE, hw.z);
 
@@ -1054,25 +1199,51 @@ static void synaptics_process_packet(struct psmouse *psmouse)
 		input_report_abs(dev, ABS_TOOL_WIDTH, finger_width);
 
 	input_report_key(dev, BTN_TOOL_FINGER, num_fingers == 1);
+<<<<<<< HEAD
+=======
+	input_report_key(dev, BTN_LEFT, hw.left);
+	input_report_key(dev, BTN_RIGHT, hw.right);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (SYN_CAP_MULTIFINGER(priv->capabilities)) {
 		input_report_key(dev, BTN_TOOL_DOUBLETAP, num_fingers == 2);
 		input_report_key(dev, BTN_TOOL_TRIPLETAP, num_fingers == 3);
 	}
 
+<<<<<<< HEAD
 	synaptics_report_buttons(psmouse, &hw);
+=======
+	if (SYN_CAP_MIDDLE_BUTTON(priv->capabilities))
+		input_report_key(dev, BTN_MIDDLE, hw.middle);
+
+	if (SYN_CAP_FOUR_BUTTON(priv->capabilities)) {
+		input_report_key(dev, BTN_FORWARD, hw.up);
+		input_report_key(dev, BTN_BACK, hw.down);
+	}
+
+	for (i = 0; i < SYN_CAP_MULTI_BUTTON_NO(priv->ext_cap); i++)
+		input_report_key(dev, BTN_0 + i, hw.ext_buttons & (1 << i));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	input_sync(dev);
 }
 
+<<<<<<< HEAD
 static int synaptics_validate_byte(struct psmouse *psmouse,
 				   int idx, unsigned char pkt_type)
+=======
+static int synaptics_validate_byte(unsigned char packet[], int idx, unsigned char pkt_type)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static const unsigned char newabs_mask[]	= { 0xC8, 0x00, 0x00, 0xC8, 0x00 };
 	static const unsigned char newabs_rel_mask[]	= { 0xC0, 0x00, 0x00, 0xC0, 0x00 };
 	static const unsigned char newabs_rslt[]	= { 0x80, 0x00, 0x00, 0xC0, 0x00 };
 	static const unsigned char oldabs_mask[]	= { 0xC0, 0x60, 0x00, 0xC0, 0x60 };
 	static const unsigned char oldabs_rslt[]	= { 0xC0, 0x00, 0x00, 0x80, 0x00 };
+<<<<<<< HEAD
 	const char *packet = psmouse->packet;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (idx < 0 || idx > 4)
 		return 0;
@@ -1090,7 +1261,11 @@ static int synaptics_validate_byte(struct psmouse *psmouse,
 		return (packet[idx] & oldabs_mask[idx]) == oldabs_rslt[idx];
 
 	default:
+<<<<<<< HEAD
 		psmouse_err(psmouse, "unknown packet type %d\n", pkt_type);
+=======
+		printk(KERN_ERR "synaptics: unknown packet type %d\n", pkt_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 }
@@ -1100,8 +1275,13 @@ static unsigned char synaptics_detect_pkt_type(struct psmouse *psmouse)
 	int i;
 
 	for (i = 0; i < 5; i++)
+<<<<<<< HEAD
 		if (!synaptics_validate_byte(psmouse, i, SYN_NEWABS_STRICT)) {
 			psmouse_info(psmouse, "using relaxed packet validation\n");
+=======
+		if (!synaptics_validate_byte(psmouse->packet, i, SYN_NEWABS_STRICT)) {
+			printk(KERN_INFO "synaptics: using relaxed packet validation\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return SYN_NEWABS_RELAXED;
 		}
 
@@ -1126,13 +1306,18 @@ static psmouse_ret_t synaptics_process_byte(struct psmouse *psmouse)
 		return PSMOUSE_FULL_PACKET;
 	}
 
+<<<<<<< HEAD
 	return synaptics_validate_byte(psmouse, psmouse->pktcnt - 1, priv->pkt_type) ?
+=======
+	return synaptics_validate_byte(psmouse->packet, psmouse->pktcnt - 1, priv->pkt_type) ?
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		PSMOUSE_GOOD_DATA : PSMOUSE_BAD_DATA;
 }
 
 /*****************************************************************************
  *	Driver initialization/cleanup functions
  ****************************************************************************/
+<<<<<<< HEAD
 static void set_abs_position_params(struct input_dev *dev,
 				    struct synaptics_data *priv, int x_code,
 				    int y_code)
@@ -1150,10 +1335,13 @@ static void set_abs_position_params(struct input_dev *dev,
 	input_abs_set_res(dev, y_code, priv->y_res);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void set_input_params(struct input_dev *dev, struct synaptics_data *priv)
 {
 	int i;
 
+<<<<<<< HEAD
 	/* Things that apply to both modes */
 	__set_bit(INPUT_PROP_POINTER, dev->propbit);
 	__set_bit(EV_KEY, dev->evbit);
@@ -1192,19 +1380,51 @@ static void set_input_params(struct input_dev *dev, struct synaptics_data *priv)
 		input_mt_init_slots(dev, 2);
 		set_abs_position_params(dev, priv, ABS_MT_POSITION_X,
 					ABS_MT_POSITION_Y);
+=======
+	__set_bit(INPUT_PROP_POINTER, dev->propbit);
+
+	__set_bit(EV_ABS, dev->evbit);
+	input_set_abs_params(dev, ABS_X,
+			     XMIN_NOMINAL, priv->x_max ?: XMAX_NOMINAL, 0, 0);
+	input_set_abs_params(dev, ABS_Y,
+			     YMIN_NOMINAL, priv->y_max ?: YMAX_NOMINAL, 0, 0);
+	input_set_abs_params(dev, ABS_PRESSURE, 0, 255, 0, 0);
+
+	if (SYN_CAP_ADV_GESTURE(priv->ext_cap_0c)) {
+		__set_bit(INPUT_PROP_SEMI_MT, dev->propbit);
+		input_mt_init_slots(dev, 2);
+		input_set_abs_params(dev, ABS_MT_POSITION_X, XMIN_NOMINAL,
+				     priv->x_max ?: XMAX_NOMINAL, 0, 0);
+		input_set_abs_params(dev, ABS_MT_POSITION_Y, YMIN_NOMINAL,
+				     priv->y_max ?: YMAX_NOMINAL, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (SYN_CAP_PALMDETECT(priv->capabilities))
 		input_set_abs_params(dev, ABS_TOOL_WIDTH, 0, 15, 0, 0);
 
+<<<<<<< HEAD
 	__set_bit(BTN_TOUCH, dev->keybit);
 	__set_bit(BTN_TOOL_FINGER, dev->keybit);
+=======
+	__set_bit(EV_KEY, dev->evbit);
+	__set_bit(BTN_TOUCH, dev->keybit);
+	__set_bit(BTN_TOOL_FINGER, dev->keybit);
+	__set_bit(BTN_LEFT, dev->keybit);
+	__set_bit(BTN_RIGHT, dev->keybit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (SYN_CAP_MULTIFINGER(priv->capabilities)) {
 		__set_bit(BTN_TOOL_DOUBLETAP, dev->keybit);
 		__set_bit(BTN_TOOL_TRIPLETAP, dev->keybit);
 	}
 
+<<<<<<< HEAD
+=======
+	if (SYN_CAP_MIDDLE_BUTTON(priv->capabilities))
+		__set_bit(BTN_MIDDLE, dev->keybit);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (SYN_CAP_FOUR_BUTTON(priv->capabilities) ||
 	    SYN_CAP_MIDDLE_BUTTON(priv->capabilities)) {
 		__set_bit(BTN_FORWARD, dev->keybit);
@@ -1218,6 +1438,12 @@ static void set_input_params(struct input_dev *dev, struct synaptics_data *priv)
 	__clear_bit(REL_X, dev->relbit);
 	__clear_bit(REL_Y, dev->relbit);
 
+<<<<<<< HEAD
+=======
+	input_abs_set_res(dev, ABS_X, priv->x_res);
+	input_abs_set_res(dev, ABS_Y, priv->y_res);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (SYN_CAP_CLICKPAD(priv->ext_cap_0c)) {
 		__set_bit(INPUT_PROP_BUTTONPAD, dev->propbit);
 		/* Clickpads report only left button */
@@ -1226,6 +1452,7 @@ static void set_input_params(struct input_dev *dev, struct synaptics_data *priv)
 	}
 }
 
+<<<<<<< HEAD
 static ssize_t synaptics_show_disable_gesture(struct psmouse *psmouse,
 					      void *data, char *buf)
 {
@@ -1278,6 +1505,12 @@ static void synaptics_disconnect(struct psmouse *psmouse)
 
 	synaptics_reset(psmouse);
 	kfree(priv);
+=======
+static void synaptics_disconnect(struct psmouse *psmouse)
+{
+	synaptics_reset(psmouse);
+	kfree(psmouse->private);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	psmouse->private = NULL;
 }
 
@@ -1307,6 +1540,7 @@ static int synaptics_reconnect(struct psmouse *psmouse)
 		return -1;
 
 	if (retry > 1)
+<<<<<<< HEAD
 		psmouse_dbg(psmouse, "reconnected after %d tries\n", retry);
 
 	if (synaptics_query_hardware(psmouse)) {
@@ -1316,6 +1550,23 @@ static int synaptics_reconnect(struct psmouse *psmouse)
 
 	if (synaptics_set_mode(psmouse)) {
 		psmouse_err(psmouse, "Unable to initialize device.\n");
+=======
+		printk(KERN_DEBUG "Synaptics reconnected after %d tries\n",
+			retry);
+
+	if (synaptics_query_hardware(psmouse)) {
+		printk(KERN_ERR "Unable to query Synaptics hardware.\n");
+		return -1;
+	}
+
+	if (synaptics_set_absolute_mode(psmouse)) {
+		printk(KERN_ERR "Unable to initialize Synaptics hardware.\n");
+		return -1;
+	}
+
+	if (synaptics_set_advanced_gesture_mode(psmouse)) {
+		printk(KERN_ERR "Advanced gesture mode reconnect failed.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
@@ -1323,12 +1574,21 @@ static int synaptics_reconnect(struct psmouse *psmouse)
 	    old_priv.model_id != priv->model_id ||
 	    old_priv.capabilities != priv->capabilities ||
 	    old_priv.ext_cap != priv->ext_cap) {
+<<<<<<< HEAD
 		psmouse_err(psmouse,
 			    "hardware appears to be different: id(%ld-%ld), model(%ld-%ld), caps(%lx-%lx), ext(%lx-%lx).\n",
 			    old_priv.identity, priv->identity,
 			    old_priv.model_id, priv->model_id,
 			    old_priv.capabilities, priv->capabilities,
 			    old_priv.ext_cap, priv->ext_cap);
+=======
+		printk(KERN_ERR "Synaptics hardware appears to be different: "
+			"id(%ld-%ld), model(%ld-%ld), caps(%lx-%lx), ext(%lx-%lx).\n",
+			old_priv.identity, priv->identity,
+			old_priv.model_id, priv->model_id,
+			old_priv.capabilities, priv->capabilities,
+			old_priv.ext_cap, priv->ext_cap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
@@ -1395,6 +1655,7 @@ void __init synaptics_module_init(void)
 	broken_olpc_ec = dmi_check_system(olpc_dmi_table);
 }
 
+<<<<<<< HEAD
 static int __synaptics_init(struct psmouse *psmouse, bool absolute_mode)
 {
 	struct synaptics_data *priv;
@@ -1409,6 +1670,23 @@ static int __synaptics_init(struct psmouse *psmouse, bool absolute_mode)
 	if (absolute_mode && broken_olpc_ec) {
 		psmouse_info(psmouse,
 			     "OLPC XO detected, not enabling Synaptics protocol.\n");
+=======
+int synaptics_init(struct psmouse *psmouse)
+{
+	struct synaptics_data *priv;
+
+	/*
+	 * The OLPC XO has issues with Synaptics' absolute mode; similarly to
+	 * the HGPK, it quickly degrades and the hardware becomes jumpy and
+	 * overly sensitive.  Not only that, but the constant packet spew
+	 * (even at a lowered 40pps rate) overloads the EC such that key
+	 * presses on the keyboard are missed.  Given all of that, don't
+	 * even attempt to use Synaptics mode.  Relative mode seems to work
+	 * just fine.
+	 */
+	if (broken_olpc_ec) {
+		printk(KERN_INFO "synaptics: OLPC XO detected, not enabling Synaptics protocol.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
@@ -1419,6 +1697,7 @@ static int __synaptics_init(struct psmouse *psmouse, bool absolute_mode)
 	psmouse_reset(psmouse);
 
 	if (synaptics_query_hardware(psmouse)) {
+<<<<<<< HEAD
 		psmouse_err(psmouse, "Unable to query device.\n");
 		goto init_fail;
 	}
@@ -1429,17 +1708,37 @@ static int __synaptics_init(struct psmouse *psmouse, bool absolute_mode)
 
 	if (synaptics_set_mode(psmouse)) {
 		psmouse_err(psmouse, "Unable to initialize device.\n");
+=======
+		printk(KERN_ERR "Unable to query Synaptics hardware.\n");
+		goto init_fail;
+	}
+
+	if (synaptics_set_absolute_mode(psmouse)) {
+		printk(KERN_ERR "Unable to initialize Synaptics hardware.\n");
+		goto init_fail;
+	}
+
+	if (synaptics_set_advanced_gesture_mode(psmouse)) {
+		printk(KERN_ERR "Advanced gesture mode init failed.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto init_fail;
 	}
 
 	priv->pkt_type = SYN_MODEL_NEWABS(priv->model_id) ? SYN_NEWABS : SYN_OLDABS;
 
+<<<<<<< HEAD
 	psmouse_info(psmouse,
 		     "Touchpad model: %ld, fw: %ld.%ld, id: %#lx, caps: %#lx/%#lx/%#lx\n",
 		     SYN_ID_MODEL(priv->identity),
 		     SYN_ID_MAJOR(priv->identity), SYN_ID_MINOR(priv->identity),
 		     priv->model_id,
 		     priv->capabilities, priv->ext_cap, priv->ext_cap_0c);
+=======
+	printk(KERN_INFO "Synaptics Touchpad, model: %ld, fw: %ld.%ld, id: %#lx, caps: %#lx/%#lx/%#lx\n",
+		SYN_ID_MODEL(priv->identity),
+		SYN_ID_MAJOR(priv->identity), SYN_ID_MINOR(priv->identity),
+		priv->model_id, priv->capabilities, priv->ext_cap, priv->ext_cap_0c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	set_input_params(psmouse->dev, priv);
 
@@ -1453,6 +1752,7 @@ static int __synaptics_init(struct psmouse *psmouse, bool absolute_mode)
 	psmouse->model = ((priv->model_id & 0x00ff0000) >> 8) |
 			  (priv->model_id & 0x000000ff);
 
+<<<<<<< HEAD
 	if (absolute_mode) {
 		psmouse->protocol_handler = synaptics_process_byte;
 		psmouse->pktsize = 6;
@@ -1462,10 +1762,17 @@ static int __synaptics_init(struct psmouse *psmouse, bool absolute_mode)
 		psmouse->pktsize = 3;
 	}
 
+=======
+	psmouse->protocol_handler = synaptics_process_byte;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	psmouse->set_rate = synaptics_set_rate;
 	psmouse->disconnect = synaptics_disconnect;
 	psmouse->reconnect = synaptics_reconnect;
 	psmouse->cleanup = synaptics_reset;
+<<<<<<< HEAD
+=======
+	psmouse->pktsize = 6;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Synaptics can usually stay in sync without extra help */
 	psmouse->resync_time = 0;
 
@@ -1478,6 +1785,7 @@ static int __synaptics_init(struct psmouse *psmouse, bool absolute_mode)
 	 * the same rate as a standard PS/2 mouse).
 	 */
 	if (psmouse->rate >= 80 && impaired_toshiba_kbc) {
+<<<<<<< HEAD
 		psmouse_info(psmouse,
 			     "Toshiba %s detected, limiting rate to 40pps.\n",
 			     dmi_get_system_info(DMI_PRODUCT_NAME));
@@ -1495,10 +1803,18 @@ static int __synaptics_init(struct psmouse *psmouse, bool absolute_mode)
 		}
 	}
 
+=======
+		printk(KERN_INFO "synaptics: Toshiba %s detected, limiting rate to 40pps.\n",
+			dmi_get_system_info(DMI_PRODUCT_NAME));
+		psmouse->rate = 40;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
  init_fail:
 	kfree(priv);
+<<<<<<< HEAD
 	return err;
 }
 
@@ -1510,6 +1826,9 @@ int synaptics_init(struct psmouse *psmouse)
 int synaptics_init_relative(struct psmouse *psmouse)
 {
 	return __synaptics_init(psmouse, false);
+=======
+	return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 bool synaptics_supported(void)
@@ -1534,3 +1853,7 @@ bool synaptics_supported(void)
 }
 
 #endif /* CONFIG_MOUSE_PS2_SYNAPTICS */
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

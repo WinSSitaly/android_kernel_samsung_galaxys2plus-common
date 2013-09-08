@@ -511,6 +511,12 @@ static __init void pnpacpi_parse_dma_option(struct pnp_dev *dev,
 	int i;
 	unsigned char map = 0, flags;
 
+<<<<<<< HEAD
+=======
+	if (p->channel_count == 0)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < p->channel_count; i++)
 		map |= 1 << p->channels[i];
 
@@ -526,6 +532,12 @@ static __init void pnpacpi_parse_irq_option(struct pnp_dev *dev,
 	pnp_irq_mask_t map;
 	unsigned char flags;
 
+<<<<<<< HEAD
+=======
+	if (p->interrupt_count == 0)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bitmap_zero(map.bits, PNP_IRQ_NR);
 	for (i = 0; i < p->interrupt_count; i++)
 		if (p->interrupts[i])
@@ -543,6 +555,12 @@ static __init void pnpacpi_parse_ext_irq_option(struct pnp_dev *dev,
 	pnp_irq_mask_t map;
 	unsigned char flags;
 
+<<<<<<< HEAD
+=======
+	if (p->interrupt_count == 0)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bitmap_zero(map.bits, PNP_IRQ_NR);
 	for (i = 0; i < p->interrupt_count; i++) {
 		if (p->interrupts[i]) {
@@ -565,6 +583,12 @@ static __init void pnpacpi_parse_port_option(struct pnp_dev *dev,
 {
 	unsigned char flags = 0;
 
+<<<<<<< HEAD
+=======
+	if (io->address_length == 0)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (io->io_decode == ACPI_DECODE_16)
 		flags = IORESOURCE_IO_16BIT_ADDR;
 	pnp_register_port_resource(dev, option_flags, io->minimum, io->maximum,
@@ -575,6 +599,12 @@ static __init void pnpacpi_parse_fixed_port_option(struct pnp_dev *dev,
 					unsigned int option_flags,
 					struct acpi_resource_fixed_io *io)
 {
+<<<<<<< HEAD
+=======
+	if (io->address_length == 0)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pnp_register_port_resource(dev, option_flags, io->address, io->address,
 				   0, io->address_length, IORESOURCE_IO_FIXED);
 }
@@ -585,6 +615,12 @@ static __init void pnpacpi_parse_mem24_option(struct pnp_dev *dev,
 {
 	unsigned char flags = 0;
 
+<<<<<<< HEAD
+=======
+	if (p->address_length == 0)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (p->write_protect == ACPI_READ_WRITE_MEMORY)
 		flags = IORESOURCE_MEM_WRITEABLE;
 	pnp_register_mem_resource(dev, option_flags, p->minimum, p->maximum,
@@ -597,6 +633,12 @@ static __init void pnpacpi_parse_mem32_option(struct pnp_dev *dev,
 {
 	unsigned char flags = 0;
 
+<<<<<<< HEAD
+=======
+	if (p->address_length == 0)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (p->write_protect == ACPI_READ_WRITE_MEMORY)
 		flags = IORESOURCE_MEM_WRITEABLE;
 	pnp_register_mem_resource(dev, option_flags, p->minimum, p->maximum,
@@ -609,6 +651,12 @@ static __init void pnpacpi_parse_fixed_mem32_option(struct pnp_dev *dev,
 {
 	unsigned char flags = 0;
 
+<<<<<<< HEAD
+=======
+	if (p->address_length == 0)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (p->write_protect == ACPI_READ_WRITE_MEMORY)
 		flags = IORESOURCE_MEM_WRITEABLE;
 	pnp_register_mem_resource(dev, option_flags, p->address, p->address,
@@ -630,6 +678,12 @@ static __init void pnpacpi_parse_address_option(struct pnp_dev *dev,
 		return;
 	}
 
+<<<<<<< HEAD
+=======
+	if (p->address_length == 0)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (p->resource_type == ACPI_MEMORY_RANGE) {
 		if (p->info.mem.write_protect == ACPI_READ_WRITE_MEMORY)
 			flags = IORESOURCE_MEM_WRITEABLE;
@@ -649,6 +703,12 @@ static __init void pnpacpi_parse_ext_address_option(struct pnp_dev *dev,
 	struct acpi_resource_extended_address64 *p = &r->data.ext_address64;
 	unsigned char flags = 0;
 
+<<<<<<< HEAD
+=======
+	if (p->address_length == 0)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (p->resource_type == ACPI_MEMORY_RANGE) {
 		if (p->info.mem.write_protect == ACPI_READ_WRITE_MEMORY)
 			flags = IORESOURCE_MEM_WRITEABLE;
@@ -988,7 +1048,11 @@ static void pnpacpi_encode_io(struct pnp_dev *dev,
 		io->minimum = p->start;
 		io->maximum = p->end;
 		io->alignment = 0;	/* Correct? */
+<<<<<<< HEAD
 		io->address_length = resource_size(p);
+=======
+		io->address_length = p->end - p->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		io->minimum = 0;
 		io->address_length = 0;
@@ -1006,7 +1070,11 @@ static void pnpacpi_encode_fixed_io(struct pnp_dev *dev,
 
 	if (pnp_resource_enabled(p)) {
 		fixed_io->address = p->start;
+<<<<<<< HEAD
 		fixed_io->address_length = resource_size(p);
+=======
+		fixed_io->address_length = p->end - p->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		fixed_io->address = 0;
 		fixed_io->address_length = 0;
@@ -1029,7 +1097,11 @@ static void pnpacpi_encode_mem24(struct pnp_dev *dev,
 		memory24->minimum = p->start;
 		memory24->maximum = p->end;
 		memory24->alignment = 0;
+<<<<<<< HEAD
 		memory24->address_length = resource_size(p);
+=======
+		memory24->address_length = p->end - p->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		memory24->minimum = 0;
 		memory24->address_length = 0;
@@ -1053,7 +1125,11 @@ static void pnpacpi_encode_mem32(struct pnp_dev *dev,
 		memory32->minimum = p->start;
 		memory32->maximum = p->end;
 		memory32->alignment = 0;
+<<<<<<< HEAD
 		memory32->address_length = resource_size(p);
+=======
+		memory32->address_length = p->end - p->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		memory32->minimum = 0;
 		memory32->alignment = 0;
@@ -1076,7 +1152,11 @@ static void pnpacpi_encode_fixed_mem32(struct pnp_dev *dev,
 		    p->flags & IORESOURCE_MEM_WRITEABLE ?
 		    ACPI_READ_WRITE_MEMORY : ACPI_READ_ONLY_MEMORY;
 		fixed_memory32->address = p->start;
+<<<<<<< HEAD
 		fixed_memory32->address_length = resource_size(p);
+=======
+		fixed_memory32->address_length = p->end - p->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		fixed_memory32->address = 0;
 		fixed_memory32->address_length = 0;

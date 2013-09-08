@@ -918,7 +918,14 @@ static struct vio_driver ibmvstgt_driver = {
 	.id_table = ibmvstgt_device_table,
 	.probe = ibmvstgt_probe,
 	.remove = ibmvstgt_remove,
+<<<<<<< HEAD
 	.name = "ibmvscsis",
+=======
+	.driver = {
+		.name = "ibmvscsis",
+		.owner = THIS_MODULE,
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int get_system_info(void)

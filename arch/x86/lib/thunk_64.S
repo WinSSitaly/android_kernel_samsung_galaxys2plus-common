@@ -5,6 +5,7 @@
  * Added trace_hardirqs callers - Copyright 2007 Steven Rostedt, Red Hat, Inc.
  * Subject to the GNU public license, v.2. No warranty of any kind.
  */
+<<<<<<< HEAD
 #include <linux/linkage.h>
 #include <asm/dwarf2.h>
 #include <asm/calling.h>
@@ -22,12 +23,27 @@
 	movq_cfi_restore 9*8, rdi
 	.endif
 
+=======
+
+	#include <linux/linkage.h>
+	#include <asm/dwarf2.h>
+	#include <asm/calling.h>			
+	#include <asm/rwlock.h>
+		
+	/* rdi:	arg1 ... normal C conventions. rax is saved/restored. */ 	
+	.macro thunk name,func
+	.globl \name
+\name:	
+	CFI_STARTPROC
+	SAVE_ARGS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	call \func
 	jmp  restore
 	CFI_ENDPROC
 	.endm
 
 #ifdef CONFIG_TRACE_IRQFLAGS
+<<<<<<< HEAD
 	THUNK trace_hardirqs_on_thunk,trace_hardirqs_on_caller,1
 	THUNK trace_hardirqs_off_thunk,trace_hardirqs_off_caller,1
 #endif
@@ -36,10 +52,38 @@
 	THUNK lockdep_sys_exit_thunk,lockdep_sys_exit
 #endif
 
+=======
+	/* put return address in rdi (arg1) */
+	.macro thunk_ra name,func
+	.globl \name
+\name:
+	CFI_STARTPROC
+	SAVE_ARGS
+	/* SAVE_ARGS pushs 9 elements */
+	/* the next element would be the rip */
+	movq 9*8(%rsp), %rdi
+	call \func
+	jmp  restore
+	CFI_ENDPROC
+	.endm
+
+	thunk_ra trace_hardirqs_on_thunk,trace_hardirqs_on_caller
+	thunk_ra trace_hardirqs_off_thunk,trace_hardirqs_off_caller
+#endif
+
+#ifdef CONFIG_DEBUG_LOCK_ALLOC
+	thunk lockdep_sys_exit_thunk,lockdep_sys_exit
+#endif
+	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* SAVE_ARGS below is used only for the .cfi directives it contains. */
 	CFI_STARTPROC
 	SAVE_ARGS
 restore:
 	RESTORE_ARGS
+<<<<<<< HEAD
 	ret
+=======
+	ret	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CFI_ENDPROC

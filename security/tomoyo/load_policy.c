@@ -1,11 +1,18 @@
 /*
  * security/tomoyo/load_policy.c
  *
+<<<<<<< HEAD
  * Copyright (C) 2005-2011  NTT DATA CORPORATION
+=======
+ * Policy loader launcher for TOMOYO.
+ *
+ * Copyright (C) 2005-2010  NTT DATA CORPORATION
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include "common.h"
 
+<<<<<<< HEAD
 #ifndef CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER
 
 /*
@@ -27,6 +34,10 @@ static int __init tomoyo_loader_setup(char *str)
 }
 
 __setup("TOMOYO_loader=", tomoyo_loader_setup);
+=======
+/* path to policy loader */
+static const char *tomoyo_loader = "/sbin/tomoyo-init";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * tomoyo_policy_loader_exists - Check whether /sbin/tomoyo-init exists.
@@ -35,18 +46,34 @@ __setup("TOMOYO_loader=", tomoyo_loader_setup);
  */
 static bool tomoyo_policy_loader_exists(void)
 {
+<<<<<<< HEAD
 	struct path path;
 	if (!tomoyo_loader)
 		tomoyo_loader = CONFIG_SECURITY_TOMOYO_POLICY_LOADER;
 	if (kern_path(tomoyo_loader, LOOKUP_FOLLOW, &path)) {
 		printk(KERN_INFO "Not activating Mandatory Access Control "
 		       "as %s does not exist.\n", tomoyo_loader);
+=======
+	/*
+	 * Don't activate MAC if the policy loader doesn't exist.
+	 * If the initrd includes /sbin/init but real-root-dev has not
+	 * mounted on / yet, activating MAC will block the system since
+	 * policies are not loaded yet.
+	 * Thus, let do_execve() call this function every time.
+	 */
+	struct path path;
+
+	if (kern_path(tomoyo_loader, LOOKUP_FOLLOW, &path)) {
+		printk(KERN_INFO "Not activating Mandatory Access Control now "
+		       "since %s doesn't exist.\n", tomoyo_loader);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return false;
 	}
 	path_put(&path);
 	return true;
 }
 
+<<<<<<< HEAD
 /*
  * Path to the trigger. (default = CONFIG_SECURITY_TOMOYO_ACTIVATION_TRIGGER)
  */
@@ -67,6 +94,8 @@ static int __init tomoyo_trigger_setup(char *str)
 
 __setup("TOMOYO_trigger=", tomoyo_trigger_setup);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * tomoyo_load_policy - Run external policy loader to load policy.
  *
@@ -82,6 +111,7 @@ __setup("TOMOYO_trigger=", tomoyo_trigger_setup);
  */
 void tomoyo_load_policy(const char *filename)
 {
+<<<<<<< HEAD
 	static bool done;
 	char *argv[2];
 	char *envp[3];
@@ -95,6 +125,26 @@ void tomoyo_load_policy(const char *filename)
 	if (!tomoyo_policy_loader_exists())
 		return;
 	done = true;
+=======
+	char *argv[2];
+	char *envp[3];
+
+	if (tomoyo_policy_loaded)
+		return;
+	/*
+	 * Check filename is /sbin/init or /sbin/tomoyo-start.
+	 * /sbin/tomoyo-start is a dummy filename in case where /sbin/init can't
+	 * be passed.
+	 * You can create /sbin/tomoyo-start by
+	 * "ln -s /bin/true /sbin/tomoyo-start".
+	 */
+	if (strcmp(filename, "/sbin/init") &&
+	    strcmp(filename, "/sbin/tomoyo-start"))
+		return;
+	if (!tomoyo_policy_loader_exists())
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk(KERN_INFO "Calling %s to load policy. Please wait.\n",
 	       tomoyo_loader);
 	argv[0] = (char *) tomoyo_loader;
@@ -102,8 +152,14 @@ void tomoyo_load_policy(const char *filename)
 	envp[0] = "HOME=/";
 	envp[1] = "PATH=/sbin:/bin:/usr/sbin:/usr/bin";
 	envp[2] = NULL;
+<<<<<<< HEAD
 	call_usermodehelper(argv[0], argv, envp, UMH_WAIT_PROC);
 	tomoyo_check_profile();
 }
 
 #endif
+=======
+	call_usermodehelper(argv[0], argv, envp, 1);
+	tomoyo_check_profile();
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

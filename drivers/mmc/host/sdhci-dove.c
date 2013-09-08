@@ -20,9 +20,15 @@
  */
 
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/mmc/host.h>
 
+=======
+#include <linux/mmc/host.h>
+
+#include "sdhci.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "sdhci-pltfm.h"
 
 static u16 sdhci_dove_readw(struct sdhci_host *host, int reg)
@@ -61,13 +67,18 @@ static struct sdhci_ops sdhci_dove_ops = {
 	.read_l	= sdhci_dove_readl,
 };
 
+<<<<<<< HEAD
 static struct sdhci_pltfm_data sdhci_dove_pdata = {
+=======
+struct sdhci_pltfm_data sdhci_dove_pdata = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ops	= &sdhci_dove_ops,
 	.quirks	= SDHCI_QUIRK_NO_SIMULT_VDD_AND_POWER |
 		  SDHCI_QUIRK_NO_BUSY_IRQ |
 		  SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
 		  SDHCI_QUIRK_FORCE_DMA,
 };
+<<<<<<< HEAD
 
 static int __devinit sdhci_dove_probe(struct platform_device *pdev)
 {
@@ -95,3 +106,5 @@ MODULE_DESCRIPTION("SDHCI driver for Dove");
 MODULE_AUTHOR("Saeed Bishara <saeed@marvell.com>, "
 	      "Mike Rapoport <mike@compulab.co.il>");
 MODULE_LICENSE("GPL v2");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

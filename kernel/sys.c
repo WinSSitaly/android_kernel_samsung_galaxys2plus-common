@@ -4,15 +4,26 @@
  *  Copyright (C) 1991, 1992  Linus Torvalds
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/mm.h>
 #include <linux/utsname.h>
 #include <linux/mman.h>
+=======
+#include <linux/module.h>
+#include <linux/mm.h>
+#include <linux/utsname.h>
+#include <linux/mman.h>
+#include <linux/notifier.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/reboot.h>
 #include <linux/prctl.h>
 #include <linux/highuid.h>
 #include <linux/fs.h>
+<<<<<<< HEAD
 #include <linux/kmod.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/perf_event.h>
 #include <linux/resource.h>
 #include <linux/kernel.h>
@@ -320,6 +331,7 @@ void kernel_restart_prepare(char *cmd)
 	system_state = SYSTEM_RESTART;
 	usermodehelper_disable();
 	device_shutdown();
+<<<<<<< HEAD
 }
 
 /**
@@ -374,6 +386,9 @@ static void migrate_to_reboot_cpu(void)
 
 	/* Make certain I only run on the appropriate processor */
 	set_cpus_allowed_ptr(current, cpumask_of(cpu));
+=======
+	syscore_shutdown();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -387,8 +402,11 @@ static void migrate_to_reboot_cpu(void)
 void kernel_restart(char *cmd)
 {
 	kernel_restart_prepare(cmd);
+<<<<<<< HEAD
 	migrate_to_reboot_cpu();
 	syscore_shutdown();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!cmd)
 		printk(KERN_EMERG "Restarting system.\n");
 	else
@@ -414,7 +432,10 @@ static void kernel_shutdown_prepare(enum system_states state)
 void kernel_halt(void)
 {
 	kernel_shutdown_prepare(SYSTEM_HALT);
+<<<<<<< HEAD
 	migrate_to_reboot_cpu();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	syscore_shutdown();
 	printk(KERN_EMERG "System halted.\n");
 	kmsg_dump(KMSG_DUMP_HALT);
@@ -433,7 +454,11 @@ void kernel_power_off(void)
 	kernel_shutdown_prepare(SYSTEM_POWER_OFF);
 	if (pm_power_off_prepare)
 		pm_power_off_prepare();
+<<<<<<< HEAD
 	migrate_to_reboot_cpu();
+=======
+	disable_nonboot_cpus();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	syscore_shutdown();
 	printk(KERN_EMERG "Power down.\n");
 	kmsg_dump(KMSG_DUMP_POWEROFF);
@@ -469,6 +494,7 @@ SYSCALL_DEFINE4(reboot, int, magic1, int, magic2, unsigned int, cmd,
 	                magic2 != LINUX_REBOOT_MAGIC2C))
 		return -EINVAL;
 
+<<<<<<< HEAD
 	/*
 	 * If pid namespaces are enabled and the current task is in a child
 	 * pid_namespace, the command is handled by reboot_pid_ns() which will
@@ -478,6 +504,8 @@ SYSCALL_DEFINE4(reboot, int, magic1, int, magic2, unsigned int, cmd,
 	if (ret)
 		return ret;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Instead of trying to make the power_off code look like
 	 * halt when pm_power_off is not set do it the easy way.
 	 */
@@ -660,6 +688,7 @@ static int set_user(struct cred *new)
 	if (!new_user)
 		return -EAGAIN;
 
+<<<<<<< HEAD
 	/*
 	 * We don't fail in case of NPROC limit excess here because too many
 	 * poorly written programs don't check set*uid() return code, assuming
@@ -672,6 +701,13 @@ static int set_user(struct cred *new)
 		current->flags |= PF_NPROC_EXCEEDED;
 	else
 		current->flags &= ~PF_NPROC_EXCEEDED;
+=======
+	if (atomic_read(&new_user->processes) >= rlimit(RLIMIT_NPROC) &&
+			new_user != INIT_USER) {
+		free_uid(new_user);
+		return -EAGAIN;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	free_uid(new->user);
 	new->user = new_user;
@@ -1323,7 +1359,10 @@ SYSCALL_DEFINE2(sethostname, char __user *, name, int, len)
 		memset(u->nodename + len, 0, sizeof(u->nodename) - len);
 		errno = 0;
 	}
+<<<<<<< HEAD
 	uts_proc_notify(UTS_PROC_HOSTNAME);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	up_write(&uts_sem);
 	return errno;
 }
@@ -1374,7 +1413,10 @@ SYSCALL_DEFINE2(setdomainname, char __user *, name, int, len)
 		memset(u->domainname + len, 0, sizeof(u->domainname) - len);
 		errno = 0;
 	}
+<<<<<<< HEAD
 	uts_proc_notify(UTS_PROC_DOMAINNAME);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	up_write(&uts_sem);
 	return errno;
 }
@@ -1641,7 +1683,11 @@ static void k_getrusage(struct task_struct *p, int who, struct rusage *r)
 	unsigned long maxrss = 0;
 
 	memset((char *) r, 0, sizeof *r);
+<<<<<<< HEAD
 	utime = stime = 0;
+=======
+	utime = stime = cputime_zero;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (who == RUSAGE_THREAD) {
 		task_times(current, &utime, &stime);
@@ -1671,8 +1717,13 @@ static void k_getrusage(struct task_struct *p, int who, struct rusage *r)
 
 		case RUSAGE_SELF:
 			thread_group_times(p, &tgutime, &tgstime);
+<<<<<<< HEAD
 			utime += tgutime;
 			stime += tgstime;
+=======
+			utime = cputime_add(utime, tgutime);
+			stime = cputime_add(stime, tgstime);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			r->ru_nvcsw += p->signal->nvcsw;
 			r->ru_nivcsw += p->signal->nivcsw;
 			r->ru_minflt += p->signal->min_flt;
@@ -1728,6 +1779,7 @@ SYSCALL_DEFINE1(umask, int, mask)
 	return mask;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_CHECKPOINT_RESTORE
 static int prctl_set_mm(int opt, unsigned long addr,
 			unsigned long arg4, unsigned long arg5)
@@ -1846,6 +1898,8 @@ static int prctl_set_mm(int opt, unsigned long addr,
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
 		unsigned long, arg4, unsigned long, arg5)
 {
@@ -1916,7 +1970,10 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
 					      sizeof(me->comm) - 1) < 0)
 				return -EFAULT;
 			set_task_comm(me, comm);
+<<<<<<< HEAD
 			proc_comm_connector(me);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 0;
 		case PR_GET_NAME:
 			get_task_comm(comm, me);
@@ -1995,6 +2052,7 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
 			else
 				error = PR_MCE_KILL_DEFAULT;
 			break;
+<<<<<<< HEAD
 		case PR_SET_MM:
 			error = prctl_set_mm(arg2, arg3, arg4, arg5);
 			break;
@@ -2006,6 +2064,8 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
 			error = put_user(me->signal->is_child_subreaper,
 					 (int __user *) arg2);
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			error = -EINVAL;
 			break;

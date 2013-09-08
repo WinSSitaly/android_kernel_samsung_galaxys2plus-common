@@ -41,6 +41,7 @@
 
 #include "rbd_types.h"
 
+<<<<<<< HEAD
 /*
  * The basic unit of block I/O is a sector.  It is interpreted in a
  * number of contexts in Linux (blk, bio, genhd), but the default is
@@ -56,12 +57,21 @@
 #define RBD_MINORS_PER_MAJOR	256		/* max minors per blkdev */
 
 #define RBD_MAX_MD_NAME_LEN	(RBD_MAX_OBJ_NAME_LEN + sizeof(RBD_SUFFIX))
+=======
+#define DRV_NAME "rbd"
+#define DRV_NAME_LONG "rbd (rados block device)"
+
+#define RBD_MINORS_PER_MAJOR	256		/* max minors per blkdev */
+
+#define RBD_MAX_MD_NAME_LEN	(96 + sizeof(RBD_SUFFIX))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define RBD_MAX_POOL_NAME_LEN	64
 #define RBD_MAX_SNAP_NAME_LEN	32
 #define RBD_MAX_OPT_LEN		1024
 
 #define RBD_SNAP_HEAD_NAME	"-"
 
+<<<<<<< HEAD
 /*
  * An RBD device name will be "rbd#", where the "rbd" comes from
  * RBD_DRV_NAME above, and # is a unique integer identifier.
@@ -72,6 +82,11 @@
 #define MAX_INT_FORMAT_WIDTH	((5 * sizeof (int)) / 2 + 1)
 
 #define RBD_READ_ONLY_DEFAULT		false
+=======
+#define DEV_NAME_LEN		32
+
+#define RBD_NOTIFY_TIMEOUT_DEFAULT 10
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * block device image metadata (in-memory version)
@@ -82,6 +97,10 @@ struct rbd_image_header {
 	__u8 obj_order;
 	__u8 crypt_type;
 	__u8 comp_type;
+<<<<<<< HEAD
+=======
+	struct rw_semaphore snap_rwsem;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ceph_snap_context *snapc;
 	size_t snap_names_len;
 	u64 snap_seq;
@@ -94,11 +113,19 @@ struct rbd_image_header {
 };
 
 struct rbd_options {
+<<<<<<< HEAD
 	bool	read_only;
 };
 
 /*
  * an instance of the client.  multiple devices may share an rbd client.
+=======
+	int	notify_timeout;
+};
+
+/*
+ * an instance of the client.  multiple devices may share a client.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct rbd_client {
 	struct ceph_client	*client;
@@ -107,9 +134,26 @@ struct rbd_client {
 	struct list_head	node;
 };
 
+<<<<<<< HEAD
 /*
  * a request completion status
  */
+=======
+struct rbd_req_coll;
+
+/*
+ * a single io request
+ */
+struct rbd_request {
+	struct request		*rq;		/* blk layer request */
+	struct bio		*bio;		/* cloned bio */
+	struct page		**pages;	/* list of used pages */
+	u64			len;
+	int			coll_index;
+	struct rbd_req_coll	*coll;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct rbd_req_status {
 	int done;
 	int rc;
@@ -126,6 +170,7 @@ struct rbd_req_coll {
 	struct rbd_req_status	status[0];
 };
 
+<<<<<<< HEAD
 /*
  * a single io request
  */
@@ -138,6 +183,8 @@ struct rbd_request {
 	struct rbd_req_coll	*coll;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct rbd_snap {
 	struct	device		dev;
 	const char		*name;
@@ -156,6 +203,10 @@ struct rbd_device {
 	struct gendisk		*disk;		/* blkdev's gendisk and rq */
 	struct request_queue	*q;
 
+<<<<<<< HEAD
+=======
+	struct ceph_client	*client;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct rbd_client	*rbd_client;
 
 	char			name[DEV_NAME_LEN]; /* blkdev name, e.g. rbd3 */
@@ -172,6 +223,7 @@ struct rbd_device {
 	struct ceph_osd_event   *watch_event;
 	struct ceph_osd_request *watch_request;
 
+<<<<<<< HEAD
 	/* protects updating the header */
 	struct rw_semaphore     header_rwsem;
 	/* name of the snapshot this device reads from */
@@ -181,6 +233,12 @@ struct rbd_device {
 	/* whether the snap_id this device reads from still exists */
 	bool                    snap_exists;
 	bool			read_only;
+=======
+	char                    snap_name[RBD_MAX_SNAP_NAME_LEN];
+	u32 cur_snap;	/* index+1 of current snapshot within snap context
+			   0 - for the head */
+	int read_only;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct list_head	node;
 
@@ -189,6 +247,7 @@ struct rbd_device {
 
 	/* sysfs related */
 	struct device		dev;
+<<<<<<< HEAD
 	unsigned long		open_count;
 };
 
@@ -231,6 +290,39 @@ static struct device rbd_root_dev = {
 };
 
 
+=======
+};
+
+static struct bus_type rbd_bus_type = {
+	.name		= "rbd",
+};
+
+static spinlock_t node_lock;      /* protects client get/put */
+
+static DEFINE_MUTEX(ctl_mutex);	  /* Serialize open/close/setup/teardown */
+static LIST_HEAD(rbd_dev_list);    /* devices */
+static LIST_HEAD(rbd_client_list);      /* clients */
+
+static int __rbd_init_snaps_header(struct rbd_device *rbd_dev);
+static void rbd_dev_release(struct device *dev);
+static ssize_t rbd_snap_rollback(struct device *dev,
+				 struct device_attribute *attr,
+				 const char *buf,
+				 size_t size);
+static ssize_t rbd_snap_add(struct device *dev,
+			    struct device_attribute *attr,
+			    const char *buf,
+			    size_t count);
+static void __rbd_remove_snap_dev(struct rbd_device *rbd_dev,
+				  struct rbd_snap *snap);;
+
+
+static struct rbd_device *dev_to_rbd(struct device *dev)
+{
+	return container_of(dev, struct rbd_device, dev);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct device *rbd_get_dev(struct rbd_device *rbd_dev)
 {
 	return get_device(&rbd_dev->dev);
@@ -245,6 +337,7 @@ static int __rbd_update_snaps(struct rbd_device *rbd_dev);
 
 static int rbd_open(struct block_device *bdev, fmode_t mode)
 {
+<<<<<<< HEAD
 	struct rbd_device *rbd_dev = bdev->bd_disk->private_data;
 
 	if ((mode & FMODE_WRITE) && rbd_dev->read_only)
@@ -255,6 +348,17 @@ static int rbd_open(struct block_device *bdev, fmode_t mode)
 	set_device_ro(bdev, rbd_dev->read_only);
 	rbd_dev->open_count++;
 	mutex_unlock(&ctl_mutex);
+=======
+	struct gendisk *disk = bdev->bd_disk;
+	struct rbd_device *rbd_dev = disk->private_data;
+
+	rbd_get_dev(rbd_dev);
+
+	set_device_ro(bdev, rbd_dev->read_only);
+
+	if ((mode & FMODE_WRITE) && rbd_dev->read_only)
+		return -EROFS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -263,11 +367,15 @@ static int rbd_release(struct gendisk *disk, fmode_t mode)
 {
 	struct rbd_device *rbd_dev = disk->private_data;
 
+<<<<<<< HEAD
 	mutex_lock_nested(&ctl_mutex, SINGLE_DEPTH_NESTING);
 	BUG_ON(!rbd_dev->open_count);
 	rbd_dev->open_count--;
 	rbd_put_dev(rbd_dev);
 	mutex_unlock(&ctl_mutex);
+=======
+	rbd_put_dev(rbd_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -296,11 +404,17 @@ static struct rbd_client *rbd_client_create(struct ceph_options *opt,
 	kref_init(&rbdc->kref);
 	INIT_LIST_HEAD(&rbdc->node);
 
+<<<<<<< HEAD
 	mutex_lock_nested(&ctl_mutex, SINGLE_DEPTH_NESTING);
 
 	rbdc->client = ceph_create_client(opt, rbdc, 0, 0);
 	if (IS_ERR(rbdc->client))
 		goto out_mutex;
+=======
+	rbdc->client = ceph_create_client(opt, rbdc);
+	if (IS_ERR(rbdc->client))
+		goto out_rbdc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	opt = NULL; /* Now rbdc->client is responsible for opt */
 
 	ret = ceph_open_session(rbdc->client);
@@ -309,19 +423,29 @@ static struct rbd_client *rbd_client_create(struct ceph_options *opt,
 
 	rbdc->rbd_opts = rbd_opts;
 
+<<<<<<< HEAD
 	spin_lock(&rbd_client_list_lock);
 	list_add_tail(&rbdc->node, &rbd_client_list);
 	spin_unlock(&rbd_client_list_lock);
 
 	mutex_unlock(&ctl_mutex);
+=======
+	spin_lock(&node_lock);
+	list_add_tail(&rbdc->node, &rbd_client_list);
+	spin_unlock(&node_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dout("rbd_client_create created %p\n", rbdc);
 	return rbdc;
 
 out_err:
 	ceph_destroy_client(rbdc->client);
+<<<<<<< HEAD
 out_mutex:
 	mutex_unlock(&ctl_mutex);
+=======
+out_rbdc:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(rbdc);
 out_opt:
 	if (opt)
@@ -349,10 +473,15 @@ static struct rbd_client *__rbd_client_find(struct ceph_options *opt)
  * mount options
  */
 enum {
+<<<<<<< HEAD
+=======
+	Opt_notify_timeout,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	Opt_last_int,
 	/* int args above */
 	Opt_last_string,
 	/* string args above */
+<<<<<<< HEAD
 	Opt_read_only,
 	Opt_read_write,
 	/* Boolean args above */
@@ -367,6 +496,14 @@ static match_table_t rbdopt_tokens = {
 	{Opt_read_write, "read_write"},
 	{Opt_read_write, "rw"},		/* Alternate spelling */
 	/* Boolean args above */
+=======
+};
+
+static match_table_t rbdopt_tokens = {
+	{Opt_notify_timeout, "notify_timeout=%d"},
+	/* int args above */
+	/* string args above */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{-1, NULL}
 };
 
@@ -376,7 +513,11 @@ static int parse_rbd_opts_token(char *c, void *private)
 	substring_t argstr[MAX_OPT_ARGS];
 	int token, intval, ret;
 
+<<<<<<< HEAD
 	token = match_token(c, rbdopt_tokens, argstr);
+=======
+	token = match_token((char *)c, rbdopt_tokens, argstr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (token < 0)
 		return -EINVAL;
 
@@ -391,18 +532,26 @@ static int parse_rbd_opts_token(char *c, void *private)
 	} else if (token > Opt_last_int && token < Opt_last_string) {
 		dout("got string token %d val %s\n", token,
 		     argstr[0].from);
+<<<<<<< HEAD
 	} else if (token > Opt_last_string && token < Opt_last_bool) {
 		dout("got Boolean token %d\n", token);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		dout("got token %d\n", token);
 	}
 
 	switch (token) {
+<<<<<<< HEAD
 	case Opt_read_only:
 		rbdopt->read_only = true;
 		break;
 	case Opt_read_write:
 		rbdopt->read_only = false;
+=======
+	case Opt_notify_timeout:
+		rbdopt->notify_timeout = intval;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		BUG_ON(token);
@@ -414,16 +563,26 @@ static int parse_rbd_opts_token(char *c, void *private)
  * Get a ceph client with specific addr and configuration, if one does
  * not exist create it.
  */
+<<<<<<< HEAD
 static struct rbd_client *rbd_get_client(const char *mon_addr,
 					 size_t mon_addr_len,
 					 char *options)
 {
 	struct rbd_client *rbdc;
 	struct ceph_options *opt;
+=======
+static int rbd_get_client(struct rbd_device *rbd_dev, const char *mon_addr,
+			  char *options)
+{
+	struct rbd_client *rbdc;
+	struct ceph_options *opt;
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct rbd_options *rbd_opts;
 
 	rbd_opts = kzalloc(sizeof(*rbd_opts), GFP_KERNEL);
 	if (!rbd_opts)
+<<<<<<< HEAD
 		return ERR_PTR(-ENOMEM);
 
 	rbd_opts->read_only = RBD_READ_ONLY_DEFAULT;
@@ -456,21 +615,67 @@ static struct rbd_client *rbd_get_client(const char *mon_addr,
 		kfree(rbd_opts);
 
 	return rbdc;
+=======
+		return -ENOMEM;
+
+	rbd_opts->notify_timeout = RBD_NOTIFY_TIMEOUT_DEFAULT;
+
+	ret = ceph_parse_options(&opt, options, mon_addr,
+				 mon_addr + strlen(mon_addr), parse_rbd_opts_token, rbd_opts);
+	if (ret < 0)
+		goto done_err;
+
+	spin_lock(&node_lock);
+	rbdc = __rbd_client_find(opt);
+	if (rbdc) {
+		ceph_destroy_options(opt);
+
+		/* using an existing client */
+		kref_get(&rbdc->kref);
+		rbd_dev->rbd_client = rbdc;
+		rbd_dev->client = rbdc->client;
+		spin_unlock(&node_lock);
+		return 0;
+	}
+	spin_unlock(&node_lock);
+
+	rbdc = rbd_client_create(opt, rbd_opts);
+	if (IS_ERR(rbdc)) {
+		ret = PTR_ERR(rbdc);
+		goto done_err;
+	}
+
+	rbd_dev->rbd_client = rbdc;
+	rbd_dev->client = rbdc->client;
+	return 0;
+done_err:
+	kfree(rbd_opts);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * Destroy ceph client
+<<<<<<< HEAD
  *
  * Caller must hold rbd_client_list_lock.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void rbd_client_release(struct kref *kref)
 {
 	struct rbd_client *rbdc = container_of(kref, struct rbd_client, kref);
 
 	dout("rbd_release_client %p\n", rbdc);
+<<<<<<< HEAD
 	spin_lock(&rbd_client_list_lock);
 	list_del(&rbdc->node);
 	spin_unlock(&rbd_client_list_lock);
+=======
+	spin_lock(&node_lock);
+	list_del(&rbdc->node);
+	spin_unlock(&node_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ceph_destroy_client(rbdc->client);
 	kfree(rbdc->rbd_opts);
@@ -485,6 +690,10 @@ static void rbd_put_client(struct rbd_device *rbd_dev)
 {
 	kref_put(&rbd_dev->rbd_client->kref, rbd_client_release);
 	rbd_dev->rbd_client = NULL;
+<<<<<<< HEAD
+=======
+	rbd_dev->client = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -509,6 +718,7 @@ static int rbd_header_from_disk(struct rbd_image_header *header,
 				 gfp_t gfp_flags)
 {
 	int i;
+<<<<<<< HEAD
 	u32 snap_count;
 
 	if (memcmp(ondisk, RBD_HEADER_TEXT, sizeof(RBD_HEADER_TEXT)))
@@ -522,6 +732,19 @@ static int rbd_header_from_disk(struct rbd_image_header *header,
 		return -ENOMEM;
 
 	header->snap_names_len = le64_to_cpu(ondisk->snap_names_len);
+=======
+	u32 snap_count = le32_to_cpu(ondisk->snap_count);
+	int ret = -ENOMEM;
+
+	init_rwsem(&header->snap_rwsem);
+	header->snap_names_len = le64_to_cpu(ondisk->snap_names_len);
+	header->snapc = kmalloc(sizeof(struct ceph_snap_context) +
+				snap_count *
+				 sizeof(struct rbd_image_snap_ondisk),
+				gfp_flags);
+	if (!header->snapc)
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (snap_count) {
 		header->snap_names = kmalloc(header->snap_names_len,
 					     GFP_KERNEL);
@@ -548,7 +771,12 @@ static int rbd_header_from_disk(struct rbd_image_header *header,
 	header->snapc->num_snaps = snap_count;
 	header->total_snaps = snap_count;
 
+<<<<<<< HEAD
 	if (snap_count && allocated_snaps == snap_count) {
+=======
+	if (snap_count &&
+	    allocated_snaps == snap_count) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (i = 0; i < snap_count; i++) {
 			header->snapc->snaps[i] =
 				le64_to_cpu(ondisk->snaps[i].id);
@@ -567,7 +795,26 @@ err_names:
 	kfree(header->snap_names);
 err_snapc:
 	kfree(header->snapc);
+<<<<<<< HEAD
 	return -ENOMEM;
+=======
+	return ret;
+}
+
+static int snap_index(struct rbd_image_header *header, int snap_num)
+{
+	return header->total_snaps - snap_num;
+}
+
+static u64 cur_snap_id(struct rbd_device *rbd_dev)
+{
+	struct rbd_image_header *header = &rbd_dev->header;
+
+	if (!rbd_dev->cur_snap)
+		return 0;
+
+	return header->snapc->snaps[snap_index(header, rbd_dev->cur_snap)];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int snap_by_name(struct rbd_image_header *header, const char *snap_name,
@@ -576,6 +823,7 @@ static int snap_by_name(struct rbd_image_header *header, const char *snap_name,
 	int i;
 	char *p = header->snap_names;
 
+<<<<<<< HEAD
 	for (i = 0; i < header->total_snaps; i++) {
 		if (!strcmp(snap_name, p)) {
 
@@ -593,21 +841,51 @@ static int snap_by_name(struct rbd_image_header *header, const char *snap_name,
 }
 
 static int rbd_header_set_snap(struct rbd_device *dev, u64 *size)
+=======
+	for (i = 0; i < header->total_snaps; i++, p += strlen(p) + 1) {
+		if (strcmp(snap_name, p) == 0)
+			break;
+	}
+	if (i == header->total_snaps)
+		return -ENOENT;
+	if (seq)
+		*seq = header->snapc->snaps[i];
+
+	if (size)
+		*size = header->snap_sizes[i];
+
+	return i;
+}
+
+static int rbd_header_set_snap(struct rbd_device *dev,
+			       const char *snap_name,
+			       u64 *size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct rbd_image_header *header = &dev->header;
 	struct ceph_snap_context *snapc = header->snapc;
 	int ret = -ENOENT;
 
+<<<<<<< HEAD
 	BUILD_BUG_ON(sizeof (dev->snap_name) < sizeof (RBD_SNAP_HEAD_NAME));
 
 	down_write(&dev->header_rwsem);
 
 	if (!memcmp(dev->snap_name, RBD_SNAP_HEAD_NAME,
 		    sizeof (RBD_SNAP_HEAD_NAME))) {
+=======
+	down_write(&header->snap_rwsem);
+
+	if (!snap_name ||
+	    !*snap_name ||
+	    strcmp(snap_name, "-") == 0 ||
+	    strcmp(snap_name, RBD_SNAP_HEAD_NAME) == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (header->total_snaps)
 			snapc->seq = header->snap_seq;
 		else
 			snapc->seq = 0;
+<<<<<<< HEAD
 		dev->snap_id = CEPH_NOSNAP;
 		dev->snap_exists = false;
 		dev->read_only = dev->rbd_client->rbd_opts->read_only;
@@ -620,17 +898,38 @@ static int rbd_header_set_snap(struct rbd_device *dev, u64 *size)
 		dev->snap_id = snapc->seq;
 		dev->snap_exists = true;
 		dev->read_only = true;	/* No choice for snapshots */
+=======
+		dev->cur_snap = 0;
+		dev->read_only = 0;
+		if (size)
+			*size = header->image_size;
+	} else {
+		ret = snap_by_name(header, snap_name, &snapc->seq, size);
+		if (ret < 0)
+			goto done;
+
+		dev->cur_snap = header->total_snaps - ret;
+		dev->read_only = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ret = 0;
 done:
+<<<<<<< HEAD
 	up_write(&dev->header_rwsem);
+=======
+	up_write(&header->snap_rwsem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static void rbd_header_free(struct rbd_image_header *header)
 {
+<<<<<<< HEAD
 	ceph_put_snap_context(header->snapc);
+=======
+	kfree(header->snapc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(header->snap_names);
 	kfree(header->snap_sizes);
 }
@@ -667,6 +966,7 @@ static int rbd_get_num_segments(struct rbd_image_header *header,
 }
 
 /*
+<<<<<<< HEAD
  * returns the size of an object in the image
  */
 static u64 rbd_obj_bytes(struct rbd_image_header *header)
@@ -675,6 +975,8 @@ static u64 rbd_obj_bytes(struct rbd_image_header *header)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * bio helpers
  */
 
@@ -751,7 +1053,11 @@ static struct bio *bio_chain_clone(struct bio **old, struct bio **next,
 
 			/* split the bio. We'll release it either in the next
 			   call, or it will have to be released outside */
+<<<<<<< HEAD
 			bp = bio_split(old_chain, (len - total) / SECTOR_SIZE);
+=======
+			bp = bio_split(old_chain, (len - total) / 512ULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!bp)
 				goto err_out;
 
@@ -891,7 +1197,11 @@ static int rbd_do_request(struct request *rq,
 	struct timespec mtime = CURRENT_TIME;
 	struct rbd_request *req_data;
 	struct ceph_osd_request_head *reqhead;
+<<<<<<< HEAD
 	struct ceph_osd_client *osdc;
+=======
+	struct rbd_image_header *header = &dev->header;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	req_data = kzalloc(sizeof(*req_data), GFP_NOIO);
 	if (!req_data) {
@@ -908,10 +1218,22 @@ static int rbd_do_request(struct request *rq,
 
 	dout("rbd_do_request obj=%s ofs=%lld len=%lld\n", obj, len, ofs);
 
+<<<<<<< HEAD
 	osdc = &dev->rbd_client->client->osdc;
 	req = ceph_osdc_alloc_request(osdc, flags, snapc, ops,
 					false, GFP_NOIO, pages, bio);
 	if (!req) {
+=======
+	down_read(&header->snap_rwsem);
+
+	req = ceph_osdc_alloc_request(&dev->client->osdc, flags,
+				      snapc,
+				      ops,
+				      false,
+				      GFP_NOIO, pages, bio);
+	if (!req) {
+		up_read(&header->snap_rwsem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENOMEM;
 		goto done_pages;
 	}
@@ -938,15 +1260,21 @@ static int rbd_do_request(struct request *rq,
 	layout->fl_object_size = cpu_to_le32(1 << RBD_MAX_OBJ_ORDER);
 	layout->fl_pg_preferred = cpu_to_le32(-1);
 	layout->fl_pg_pool = cpu_to_le32(dev->poolid);
+<<<<<<< HEAD
 	ret = ceph_calc_raw_layout(osdc, layout, snapid, ofs, &len, &bno,
 				   req, ops);
 	BUG_ON(ret != 0);
+=======
+	ceph_calc_raw_layout(&dev->client->osdc, layout, snapid,
+			     ofs, &len, &bno, req, ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ceph_osdc_build_request(req, ofs, &len,
 				ops,
 				snapc,
 				&mtime,
 				req->r_oid, req->r_oid_len);
+<<<<<<< HEAD
 
 	if (linger_req) {
 		ceph_osdc_set_request_linger(osdc, req);
@@ -954,11 +1282,25 @@ static int rbd_do_request(struct request *rq,
 	}
 
 	ret = ceph_osdc_start_request(osdc, req, false);
+=======
+	up_read(&header->snap_rwsem);
+
+	if (linger_req) {
+		ceph_osdc_set_request_linger(&dev->client->osdc, req);
+		*linger_req = req;
+	}
+
+	ret = ceph_osdc_start_request(&dev->client->osdc, req, false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		goto done_err;
 
 	if (!rbd_cb) {
+<<<<<<< HEAD
 		ret = ceph_osdc_wait_request(osdc, req);
+=======
+		ret = ceph_osdc_wait_request(&dev->client->osdc, req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ver)
 			*ver = le64_to_cpu(req->r_reassert_version.version);
 		dout("reassert_ver=%lld\n",
@@ -1211,7 +1553,11 @@ static int rbd_req_sync_notify_ack(struct rbd_device *dev,
 	if (ret < 0)
 		return ret;
 
+<<<<<<< HEAD
 	ops[0].watch.ver = cpu_to_le64(ver);
+=======
+	ops[0].watch.ver = cpu_to_le64(dev->header.obj_version);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ops[0].watch.cookie = notify_id;
 	ops[0].watch.flag = 0;
 
@@ -1231,7 +1577,10 @@ static int rbd_req_sync_notify_ack(struct rbd_device *dev,
 static void rbd_watch_cb(u64 ver, u64 notify_id, u8 opcode, void *data)
 {
 	struct rbd_device *dev = (struct rbd_device *)data;
+<<<<<<< HEAD
 	u64 hver;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rc;
 
 	if (!dev)
@@ -1241,6 +1590,7 @@ static void rbd_watch_cb(u64 ver, u64 notify_id, u8 opcode, void *data)
 		notify_id, (int)opcode);
 	mutex_lock_nested(&ctl_mutex, SINGLE_DEPTH_NESTING);
 	rc = __rbd_update_snaps(dev);
+<<<<<<< HEAD
 	hver = dev->header.obj_version;
 	mutex_unlock(&ctl_mutex);
 	if (rc)
@@ -1248,6 +1598,14 @@ static void rbd_watch_cb(u64 ver, u64 notify_id, u8 opcode, void *data)
 			   " update snaps: %d\n", dev->major, rc);
 
 	rbd_req_sync_notify_ack(dev, hver, notify_id, dev->obj_md_name);
+=======
+	mutex_unlock(&ctl_mutex);
+	if (rc)
+		pr_warning(DRV_NAME "%d got notification but failed to update"
+			   " snaps: %d\n", dev->major, rc);
+
+	rbd_req_sync_notify_ack(dev, ver, notify_id, dev->obj_md_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1258,7 +1616,11 @@ static int rbd_req_sync_watch(struct rbd_device *dev,
 			      u64 ver)
 {
 	struct ceph_osd_req_op *ops;
+<<<<<<< HEAD
 	struct ceph_osd_client *osdc = &dev->rbd_client->client->osdc;
+=======
+	struct ceph_osd_client *osdc = &dev->client->osdc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int ret = rbd_create_rw_ops(&ops, 1, CEPH_OSD_OP_WATCH, 0);
 	if (ret < 0)
@@ -1295,6 +1657,7 @@ fail:
 	return ret;
 }
 
+<<<<<<< HEAD
 /*
  * Request sync osd unwatch
  */
@@ -1325,6 +1688,99 @@ static int rbd_req_sync_unwatch(struct rbd_device *dev,
 }
 
 #if 0
+=======
+struct rbd_notify_info {
+	struct rbd_device *dev;
+};
+
+static void rbd_notify_cb(u64 ver, u64 notify_id, u8 opcode, void *data)
+{
+	struct rbd_device *dev = (struct rbd_device *)data;
+	if (!dev)
+		return;
+
+	dout("rbd_notify_cb %s notify_id=%lld opcode=%d\n", dev->obj_md_name,
+		notify_id, (int)opcode);
+}
+
+/*
+ * Request sync osd notify
+ */
+static int rbd_req_sync_notify(struct rbd_device *dev,
+		          const char *obj)
+{
+	struct ceph_osd_req_op *ops;
+	struct ceph_osd_client *osdc = &dev->client->osdc;
+	struct ceph_osd_event *event;
+	struct rbd_notify_info info;
+	int payload_len = sizeof(u32) + sizeof(u32);
+	int ret;
+
+	ret = rbd_create_rw_ops(&ops, 1, CEPH_OSD_OP_NOTIFY, payload_len);
+	if (ret < 0)
+		return ret;
+
+	info.dev = dev;
+
+	ret = ceph_osdc_create_event(osdc, rbd_notify_cb, 1,
+				     (void *)&info, &event);
+	if (ret < 0)
+		goto fail;
+
+	ops[0].watch.ver = 1;
+	ops[0].watch.flag = 1;
+	ops[0].watch.cookie = event->cookie;
+	ops[0].watch.prot_ver = RADOS_NOTIFY_VER;
+	ops[0].watch.timeout = 12;
+
+	ret = rbd_req_sync_op(dev, NULL,
+			       CEPH_NOSNAP,
+			       0,
+			       CEPH_OSD_FLAG_WRITE | CEPH_OSD_FLAG_ONDISK,
+			       ops,
+			       1, obj, 0, 0, NULL, NULL, NULL);
+	if (ret < 0)
+		goto fail_event;
+
+	ret = ceph_osdc_wait_event(event, CEPH_OSD_TIMEOUT_DEFAULT);
+	dout("ceph_osdc_wait_event returned %d\n", ret);
+	rbd_destroy_ops(ops);
+	return 0;
+
+fail_event:
+	ceph_osdc_cancel_event(event);
+fail:
+	rbd_destroy_ops(ops);
+	return ret;
+}
+
+/*
+ * Request sync osd rollback
+ */
+static int rbd_req_sync_rollback_obj(struct rbd_device *dev,
+				     u64 snapid,
+				     const char *obj)
+{
+	struct ceph_osd_req_op *ops;
+	int ret = rbd_create_rw_ops(&ops, 1, CEPH_OSD_OP_ROLLBACK, 0);
+	if (ret < 0)
+		return ret;
+
+	ops[0].snap.snapid = snapid;
+
+	ret = rbd_req_sync_op(dev, NULL,
+			       CEPH_NOSNAP,
+			       0,
+			       CEPH_OSD_FLAG_WRITE | CEPH_OSD_FLAG_ONDISK,
+			       ops,
+			       1, obj, 0, 0, NULL, NULL, NULL);
+
+	rbd_destroy_ops(ops);
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Request sync osd read
  */
@@ -1364,7 +1820,10 @@ static int rbd_req_sync_exec(struct rbd_device *dev,
 	dout("cls_exec returned %d\n", ret);
 	return ret;
 }
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct rbd_req_coll *rbd_alloc_coll(int num_reqs)
 {
@@ -1389,7 +1848,13 @@ static void rbd_rq_fn(struct request_queue *q)
 	struct request *rq;
 	struct bio_pair *bp = NULL;
 
+<<<<<<< HEAD
 	while ((rq = blk_fetch_request(q))) {
+=======
+	rq = blk_fetch_request(q);
+
+	while (1) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct bio *bio;
 		struct bio *rq_bio, *next_bio = NULL;
 		bool do_write;
@@ -1397,7 +1862,10 @@ static void rbd_rq_fn(struct request_queue *q)
 		u64 ofs;
 		int num_segs, cur_seg = 0;
 		struct rbd_req_coll *coll;
+<<<<<<< HEAD
 		struct ceph_snap_context *snapc;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* peek at request from block layer */
 		if (!rq)
@@ -1408,22 +1876,35 @@ static void rbd_rq_fn(struct request_queue *q)
 		/* filter out block requests we don't understand */
 		if ((rq->cmd_type != REQ_TYPE_FS)) {
 			__blk_end_request_all(rq, 0);
+<<<<<<< HEAD
 			continue;
+=======
+			goto next;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/* deduce our operation (read, write) */
 		do_write = (rq_data_dir(rq) == WRITE);
 
 		size = blk_rq_bytes(rq);
+<<<<<<< HEAD
 		ofs = blk_rq_pos(rq) * SECTOR_SIZE;
 		rq_bio = rq->bio;
 		if (do_write && rbd_dev->read_only) {
 			__blk_end_request_all(rq, -EROFS);
 			continue;
+=======
+		ofs = blk_rq_pos(rq) * 512ULL;
+		rq_bio = rq->bio;
+		if (do_write && rbd_dev->read_only) {
+			__blk_end_request_all(rq, -EROFS);
+			goto next;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		spin_unlock_irq(q->queue_lock);
 
+<<<<<<< HEAD
 		down_read(&rbd_dev->header_rwsem);
 
 		if (rbd_dev->snap_id != CEPH_NOSNAP && !rbd_dev->snap_exists) {
@@ -1441,14 +1922,23 @@ static void rbd_rq_fn(struct request_queue *q)
 		dout("%s 0x%x bytes at 0x%llx\n",
 		     do_write ? "write" : "read",
 		     size, blk_rq_pos(rq) * SECTOR_SIZE);
+=======
+		dout("%s 0x%x bytes at 0x%llx\n",
+		     do_write ? "write" : "read",
+		     size, blk_rq_pos(rq) * 512ULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		num_segs = rbd_get_num_segments(&rbd_dev->header, ofs, size);
 		coll = rbd_alloc_coll(num_segs);
 		if (!coll) {
 			spin_lock_irq(q->queue_lock);
 			__blk_end_request_all(rq, -ENOMEM);
+<<<<<<< HEAD
 			ceph_put_snap_context(snapc);
 			continue;
+=======
+			goto next;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		do {
@@ -1471,13 +1961,21 @@ static void rbd_rq_fn(struct request_queue *q)
 			/* init OSD command: write or read */
 			if (do_write)
 				rbd_req_write(rq, rbd_dev,
+<<<<<<< HEAD
 					      snapc,
+=======
+					      rbd_dev->header.snapc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					      ofs,
 					      op_size, bio,
 					      coll, cur_seg);
 			else
 				rbd_req_read(rq, rbd_dev,
+<<<<<<< HEAD
 					     rbd_dev->snap_id,
+=======
+					     cur_snap_id(rbd_dev),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					     ofs,
 					     op_size, bio,
 					     coll, cur_seg);
@@ -1494,8 +1992,13 @@ next_seg:
 		if (bp)
 			bio_pair_release(bp);
 		spin_lock_irq(q->queue_lock);
+<<<<<<< HEAD
 
 		ceph_put_snap_context(snapc);
+=======
+next:
+		rq = blk_fetch_request(q);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1508,6 +2011,7 @@ static int rbd_merge_bvec(struct request_queue *q, struct bvec_merge_data *bmd,
 			  struct bio_vec *bvec)
 {
 	struct rbd_device *rbd_dev = q->queuedata;
+<<<<<<< HEAD
 	unsigned int chunk_sectors;
 	sector_t sector;
 	unsigned int bio_sectors;
@@ -1519,6 +2023,15 @@ static int rbd_merge_bvec(struct request_queue *q, struct bvec_merge_data *bmd,
 
 	max =  (chunk_sectors - ((sector & (chunk_sectors - 1))
 				 + bio_sectors)) << SECTOR_SHIFT;
+=======
+	unsigned int chunk_sectors = 1 << (rbd_dev->header.obj_order - 9);
+	sector_t sector = bmd->bi_sector + get_start_sect(bmd->bi_bdev);
+	unsigned int bio_sectors = bmd->bi_size >> 9;
+	int max;
+
+	max =  (chunk_sectors - ((sector & (chunk_sectors - 1))
+				 + bio_sectors)) << 9;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (max < 0)
 		max = 0; /* bio_add cannot handle a negative return */
 	if (max <= bvec->bv_len && bio_sectors == 0)
@@ -1551,6 +2064,7 @@ static int rbd_read_header(struct rbd_device *rbd_dev,
 	ssize_t rc;
 	struct rbd_image_header_ondisk *dh;
 	int snap_count = 0;
+<<<<<<< HEAD
 	u64 ver;
 	size_t len;
 
@@ -1561,6 +2075,17 @@ static int rbd_read_header(struct rbd_device *rbd_dev,
 	 */
 	len = sizeof (*dh);
 	while (1) {
+=======
+	u64 snap_names_len = 0;
+	u64 ver;
+
+	while (1) {
+		int len = sizeof(*dh) +
+			  snap_count * sizeof(struct rbd_image_snap_ondisk) +
+			  snap_names_len;
+
+		rc = -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dh = kmalloc(len, GFP_KERNEL);
 		if (!dh)
 			return -ENOMEM;
@@ -1574,6 +2099,7 @@ static int rbd_read_header(struct rbd_device *rbd_dev,
 			goto out_dh;
 
 		rc = rbd_header_from_disk(header, dh, snap_count, GFP_KERNEL);
+<<<<<<< HEAD
 		if (rc < 0) {
 			if (rc == -ENXIO)
 				pr_warning("unrecognized header format"
@@ -1591,6 +2117,19 @@ static int rbd_read_header(struct rbd_device *rbd_dev,
 
 		rbd_header_free(header);
 		kfree(dh);
+=======
+		if (rc < 0)
+			goto out_dh;
+
+		if (snap_count != header->total_snaps) {
+			snap_count = header->total_snaps;
+			snap_names_len = header->snap_names_len;
+			rbd_header_free(header);
+			kfree(dh);
+			continue;
+		}
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	header->obj_version = ver;
 
@@ -1599,6 +2138,57 @@ out_dh:
 	return rc;
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * create a snapshot
+ */
+static int rbd_header_add_snap(struct rbd_device *dev,
+			       const char *snap_name,
+			       gfp_t gfp_flags)
+{
+	int name_len = strlen(snap_name);
+	u64 new_snapid;
+	int ret;
+	void *data, *p, *e;
+	u64 ver;
+
+	/* we should create a snapshot only if we're pointing at the head */
+	if (dev->cur_snap)
+		return -EINVAL;
+
+	ret = ceph_monc_create_snapid(&dev->client->monc, dev->poolid,
+				      &new_snapid);
+	dout("created snapid=%lld\n", new_snapid);
+	if (ret < 0)
+		return ret;
+
+	data = kmalloc(name_len + 16, gfp_flags);
+	if (!data)
+		return -ENOMEM;
+
+	p = data;
+	e = data + name_len + 16;
+
+	ceph_encode_string_safe(&p, e, snap_name, name_len, bad);
+	ceph_encode_64_safe(&p, e, new_snapid, bad);
+
+	ret = rbd_req_sync_exec(dev, dev->obj_md_name, "rbd", "snap_add",
+				data, p - data, &ver);
+
+	kfree(data);
+
+	if (ret < 0)
+		return ret;
+
+	dev->header.snapc->seq =  new_snapid;
+
+	return 0;
+bad:
+	return -ERANGE;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __rbd_remove_all_snaps(struct rbd_device *rbd_dev)
 {
 	struct rbd_snap *snap;
@@ -1623,6 +2213,7 @@ static int __rbd_update_snaps(struct rbd_device *rbd_dev)
 	if (ret < 0)
 		return ret;
 
+<<<<<<< HEAD
 	down_write(&rbd_dev->header_rwsem);
 
 	/* resized? */
@@ -1632,6 +2223,12 @@ static int __rbd_update_snaps(struct rbd_device *rbd_dev)
 		dout("setting size to %llu sectors", (unsigned long long) size);
 		set_capacity(rbd_dev->disk, size);
 	}
+=======
+	/* resized? */
+	set_capacity(rbd_dev->disk, h.image_size / 512ULL);
+
+	down_write(&rbd_dev->header.snap_rwsem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	snap_seq = rbd_dev->header.snapc->seq;
 	if (rbd_dev->header.total_snaps &&
@@ -1640,12 +2237,19 @@ static int __rbd_update_snaps(struct rbd_device *rbd_dev)
 		   if head moves */
 		follow_seq = 1;
 
+<<<<<<< HEAD
 	ceph_put_snap_context(rbd_dev->header.snapc);
 	kfree(rbd_dev->header.snap_names);
 	kfree(rbd_dev->header.snap_sizes);
 
 	rbd_dev->header.obj_version = h.obj_version;
 	rbd_dev->header.image_size = h.image_size;
+=======
+	kfree(rbd_dev->header.snapc);
+	kfree(rbd_dev->header.snap_names);
+	kfree(rbd_dev->header.snap_sizes);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rbd_dev->header.total_snaps = h.total_snaps;
 	rbd_dev->header.snapc = h.snapc;
 	rbd_dev->header.snap_names = h.snap_names;
@@ -1658,7 +2262,11 @@ static int __rbd_update_snaps(struct rbd_device *rbd_dev)
 
 	ret = __rbd_init_snaps_header(rbd_dev);
 
+<<<<<<< HEAD
 	up_write(&rbd_dev->header_rwsem);
+=======
+	up_write(&rbd_dev->header.snap_rwsem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -1668,7 +2276,10 @@ static int rbd_init_disk(struct rbd_device *rbd_dev)
 	struct gendisk *disk;
 	struct request_queue *q;
 	int rc;
+<<<<<<< HEAD
 	u64 segment_size;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64 total_size = 0;
 
 	/* contact OSD, request size info about the object being mapped */
@@ -1681,7 +2292,11 @@ static int rbd_init_disk(struct rbd_device *rbd_dev)
 	if (rc)
 		return rc;
 
+<<<<<<< HEAD
 	rc = rbd_header_set_snap(rbd_dev, &total_size);
+=======
+	rc = rbd_header_set_snap(rbd_dev, rbd_dev->snap_name, &total_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc)
 		return rc;
 
@@ -1691,7 +2306,11 @@ static int rbd_init_disk(struct rbd_device *rbd_dev)
 	if (!disk)
 		goto out;
 
+<<<<<<< HEAD
 	snprintf(disk->disk_name, sizeof(disk->disk_name), RBD_DRV_NAME "%d",
+=======
+	snprintf(disk->disk_name, sizeof(disk->disk_name), DRV_NAME "%d",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 rbd_dev->id);
 	disk->major = rbd_dev->major;
 	disk->first_minor = 0;
@@ -1703,6 +2322,7 @@ static int rbd_init_disk(struct rbd_device *rbd_dev)
 	q = blk_init_queue(rbd_rq_fn, &rbd_dev->lock);
 	if (!q)
 		goto out_disk;
+<<<<<<< HEAD
 
 	/* We use the default size, but let's be explicit about it. */
 	blk_queue_physical_block_size(q, SECTOR_SIZE);
@@ -1714,6 +2334,8 @@ static int rbd_init_disk(struct rbd_device *rbd_dev)
 	blk_queue_io_min(q, segment_size);
 	blk_queue_io_opt(q, segment_size);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	blk_queue_merge_bvec(q, rbd_merge_bvec);
 	disk->queue = q;
 
@@ -1723,7 +2345,11 @@ static int rbd_init_disk(struct rbd_device *rbd_dev)
 	rbd_dev->q = q;
 
 	/* finally, announce the disk to the world */
+<<<<<<< HEAD
 	set_capacity(disk, total_size / SECTOR_SIZE);
+=======
+	set_capacity(disk, total_size / 512ULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	add_disk(disk);
 
 	pr_info("%s: added with size 0x%llx\n",
@@ -1740,6 +2366,7 @@ out:
   sysfs
 */
 
+<<<<<<< HEAD
 static struct rbd_device *dev_to_rbd_dev(struct device *dev)
 {
 	return container_of(dev, struct rbd_device, dev);
@@ -1756,12 +2383,24 @@ static ssize_t rbd_size_show(struct device *dev,
 	up_read(&rbd_dev->header_rwsem);
 
 	return sprintf(buf, "%llu\n", (unsigned long long) size * SECTOR_SIZE);
+=======
+static ssize_t rbd_size_show(struct device *dev,
+			     struct device_attribute *attr, char *buf)
+{
+	struct rbd_device *rbd_dev = dev_to_rbd(dev);
+
+	return sprintf(buf, "%llu\n", (unsigned long long)rbd_dev->header.image_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t rbd_major_show(struct device *dev,
 			      struct device_attribute *attr, char *buf)
 {
+<<<<<<< HEAD
 	struct rbd_device *rbd_dev = dev_to_rbd_dev(dev);
+=======
+	struct rbd_device *rbd_dev = dev_to_rbd(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return sprintf(buf, "%d\n", rbd_dev->major);
 }
@@ -1769,16 +2408,26 @@ static ssize_t rbd_major_show(struct device *dev,
 static ssize_t rbd_client_id_show(struct device *dev,
 				  struct device_attribute *attr, char *buf)
 {
+<<<<<<< HEAD
 	struct rbd_device *rbd_dev = dev_to_rbd_dev(dev);
 
 	return sprintf(buf, "client%lld\n",
 			ceph_client_id(rbd_dev->rbd_client->client));
+=======
+	struct rbd_device *rbd_dev = dev_to_rbd(dev);
+
+	return sprintf(buf, "client%lld\n", ceph_client_id(rbd_dev->client));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t rbd_pool_show(struct device *dev,
 			     struct device_attribute *attr, char *buf)
 {
+<<<<<<< HEAD
 	struct rbd_device *rbd_dev = dev_to_rbd_dev(dev);
+=======
+	struct rbd_device *rbd_dev = dev_to_rbd(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return sprintf(buf, "%s\n", rbd_dev->pool_name);
 }
@@ -1786,7 +2435,11 @@ static ssize_t rbd_pool_show(struct device *dev,
 static ssize_t rbd_name_show(struct device *dev,
 			     struct device_attribute *attr, char *buf)
 {
+<<<<<<< HEAD
 	struct rbd_device *rbd_dev = dev_to_rbd_dev(dev);
+=======
+	struct rbd_device *rbd_dev = dev_to_rbd(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return sprintf(buf, "%s\n", rbd_dev->obj);
 }
@@ -1795,7 +2448,11 @@ static ssize_t rbd_snap_show(struct device *dev,
 			     struct device_attribute *attr,
 			     char *buf)
 {
+<<<<<<< HEAD
 	struct rbd_device *rbd_dev = dev_to_rbd_dev(dev);
+=======
+	struct rbd_device *rbd_dev = dev_to_rbd(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return sprintf(buf, "%s\n", rbd_dev->snap_name);
 }
@@ -1805,7 +2462,11 @@ static ssize_t rbd_image_refresh(struct device *dev,
 				 const char *buf,
 				 size_t size)
 {
+<<<<<<< HEAD
 	struct rbd_device *rbd_dev = dev_to_rbd_dev(dev);
+=======
+	struct rbd_device *rbd_dev = dev_to_rbd(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rc;
 	int ret = size;
 
@@ -1826,6 +2487,11 @@ static DEVICE_ATTR(pool, S_IRUGO, rbd_pool_show, NULL);
 static DEVICE_ATTR(name, S_IRUGO, rbd_name_show, NULL);
 static DEVICE_ATTR(refresh, S_IWUSR, NULL, rbd_image_refresh);
 static DEVICE_ATTR(current_snap, S_IRUGO, rbd_snap_show, NULL);
+<<<<<<< HEAD
+=======
+static DEVICE_ATTR(create_snap, S_IWUSR, NULL, rbd_snap_add);
+static DEVICE_ATTR(rollback_snap, S_IWUSR, NULL, rbd_snap_rollback);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct attribute *rbd_attrs[] = {
 	&dev_attr_size.attr,
@@ -1835,6 +2501,11 @@ static struct attribute *rbd_attrs[] = {
 	&dev_attr_name.attr,
 	&dev_attr_current_snap.attr,
 	&dev_attr_refresh.attr,
+<<<<<<< HEAD
+=======
+	&dev_attr_create_snap.attr,
+	&dev_attr_rollback_snap.attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL
 };
 
@@ -1868,7 +2539,11 @@ static ssize_t rbd_snap_size_show(struct device *dev,
 {
 	struct rbd_snap *snap = container_of(dev, struct rbd_snap, dev);
 
+<<<<<<< HEAD
 	return sprintf(buf, "%zd\n", snap->size);
+=======
+	return sprintf(buf, "%lld\n", (long long)snap->size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t rbd_snap_id_show(struct device *dev,
@@ -1877,7 +2552,11 @@ static ssize_t rbd_snap_id_show(struct device *dev,
 {
 	struct rbd_snap *snap = container_of(dev, struct rbd_snap, dev);
 
+<<<<<<< HEAD
 	return sprintf(buf, "%llu\n", (unsigned long long) snap->id);
+=======
+	return sprintf(buf, "%lld\n", (long long)snap->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static DEVICE_ATTR(snap_size, S_IRUGO, rbd_snap_size_show, NULL);
@@ -2003,6 +2682,7 @@ static int __rbd_init_snaps_header(struct rbd_device *rbd_dev)
 			cur_id = rbd_dev->header.snapc->snaps[i - 1];
 
 		if (!i || old_snap->id < cur_id) {
+<<<<<<< HEAD
 			/*
 			 * old_snap->id was skipped, thus was
 			 * removed.  If this rbd_dev is mapped to
@@ -2011,6 +2691,9 @@ static int __rbd_init_snaps_header(struct rbd_device *rbd_dev)
 			 */
 			if (rbd_dev->snap_id == old_snap->id)
 				rbd_dev->snap_exists = false;
+=======
+			/* old_snap->id was skipped, thus was removed */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			__rbd_remove_snap_dev(rbd_dev, old_snap);
 			continue;
 		}
@@ -2056,9 +2739,25 @@ static int __rbd_init_snaps_header(struct rbd_device *rbd_dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int rbd_bus_add_dev(struct rbd_device *rbd_dev)
 {
 	int ret;
+=======
+
+static void rbd_root_dev_release(struct device *dev)
+{
+}
+
+static struct device rbd_root_dev = {
+	.init_name =    "rbd",
+	.release =      rbd_root_dev_release,
+};
+
+static int rbd_bus_add_dev(struct rbd_device *rbd_dev)
+{
+	int ret = -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct device *dev;
 	struct rbd_snap *snap;
 
@@ -2072,7 +2771,11 @@ static int rbd_bus_add_dev(struct rbd_device *rbd_dev)
 	dev_set_name(dev, "%d", rbd_dev->id);
 	ret = device_register(dev);
 	if (ret < 0)
+<<<<<<< HEAD
 		goto out;
+=======
+		goto done_free;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_for_each_entry(snap, &rbd_dev->snaps, node) {
 		ret = rbd_register_snap_dev(rbd_dev, snap,
@@ -2080,7 +2783,14 @@ static int rbd_bus_add_dev(struct rbd_device *rbd_dev)
 		if (ret < 0)
 			break;
 	}
+<<<<<<< HEAD
 out:
+=======
+
+	mutex_unlock(&ctl_mutex);
+	return 0;
+done_free:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&ctl_mutex);
 	return ret;
 }
@@ -2109,6 +2819,7 @@ static int rbd_init_watch_dev(struct rbd_device *rbd_dev)
 	return ret;
 }
 
+<<<<<<< HEAD
 static atomic64_t rbd_id_max = ATOMIC64_INIT(0);
 
 /*
@@ -2280,31 +2991,59 @@ static int rbd_add_parse_args(struct rbd_device *rbd_dev,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t rbd_add(struct bus_type *bus,
 		       const char *buf,
 		       size_t count)
 {
+<<<<<<< HEAD
 	struct rbd_device *rbd_dev;
 	const char *mon_addrs = NULL;
 	size_t mon_addrs_size = 0;
 	char *options = NULL;
 	struct ceph_osd_client *osdc;
 	int rc = -ENOMEM;
+=======
+	struct ceph_osd_client *osdc;
+	struct rbd_device *rbd_dev;
+	ssize_t rc = -ENOMEM;
+	int irc, new_id = 0;
+	struct list_head *tmp;
+	char *mon_dev_name;
+	char *options;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!try_module_get(THIS_MODULE))
 		return -ENODEV;
 
+<<<<<<< HEAD
 	rbd_dev = kzalloc(sizeof(*rbd_dev), GFP_KERNEL);
 	if (!rbd_dev)
 		goto err_nomem;
 	options = kmalloc(count, GFP_KERNEL);
 	if (!options)
 		goto err_nomem;
+=======
+	mon_dev_name = kmalloc(RBD_MAX_OPT_LEN, GFP_KERNEL);
+	if (!mon_dev_name)
+		goto err_out_mod;
+
+	options = kmalloc(RBD_MAX_OPT_LEN, GFP_KERNEL);
+	if (!options)
+		goto err_mon_dev;
+
+	/* new rbd_device object */
+	rbd_dev = kzalloc(sizeof(*rbd_dev), GFP_KERNEL);
+	if (!rbd_dev)
+		goto err_out_opt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* static rbd_device initialization */
 	spin_lock_init(&rbd_dev->lock);
 	INIT_LIST_HEAD(&rbd_dev->node);
 	INIT_LIST_HEAD(&rbd_dev->snaps);
+<<<<<<< HEAD
 	init_rwsem(&rbd_dev->header_rwsem);
 
 	init_rwsem(&rbd_dev->header_rwsem);
@@ -2332,27 +3071,88 @@ static ssize_t rbd_add(struct bus_type *bus,
 
 	/* pick the pool */
 	osdc = &rbd_dev->rbd_client->client->osdc;
+=======
+
+	/* generate unique id: find highest unique id, add one */
+	mutex_lock_nested(&ctl_mutex, SINGLE_DEPTH_NESTING);
+
+	list_for_each(tmp, &rbd_dev_list) {
+		struct rbd_device *rbd_dev;
+
+		rbd_dev = list_entry(tmp, struct rbd_device, node);
+		if (rbd_dev->id >= new_id)
+			new_id = rbd_dev->id + 1;
+	}
+
+	rbd_dev->id = new_id;
+
+	/* add to global list */
+	list_add_tail(&rbd_dev->node, &rbd_dev_list);
+
+	/* parse add command */
+	if (sscanf(buf, "%" __stringify(RBD_MAX_OPT_LEN) "s "
+		   "%" __stringify(RBD_MAX_OPT_LEN) "s "
+		   "%" __stringify(RBD_MAX_POOL_NAME_LEN) "s "
+		   "%" __stringify(RBD_MAX_OBJ_NAME_LEN) "s"
+		   "%" __stringify(RBD_MAX_SNAP_NAME_LEN) "s",
+		   mon_dev_name, options, rbd_dev->pool_name,
+		   rbd_dev->obj, rbd_dev->snap_name) < 4) {
+		rc = -EINVAL;
+		goto err_out_slot;
+	}
+
+	if (rbd_dev->snap_name[0] == 0)
+		rbd_dev->snap_name[0] = '-';
+
+	rbd_dev->obj_len = strlen(rbd_dev->obj);
+	snprintf(rbd_dev->obj_md_name, sizeof(rbd_dev->obj_md_name), "%s%s",
+		 rbd_dev->obj, RBD_SUFFIX);
+
+	/* initialize rest of new object */
+	snprintf(rbd_dev->name, DEV_NAME_LEN, DRV_NAME "%d", rbd_dev->id);
+	rc = rbd_get_client(rbd_dev, mon_dev_name, options);
+	if (rc < 0)
+		goto err_out_slot;
+
+	mutex_unlock(&ctl_mutex);
+
+	/* pick the pool */
+	osdc = &rbd_dev->client->osdc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = ceph_pg_poolid_by_name(osdc->osdmap, rbd_dev->pool_name);
 	if (rc < 0)
 		goto err_out_client;
 	rbd_dev->poolid = rc;
 
 	/* register our block device */
+<<<<<<< HEAD
 	rc = register_blkdev(0, rbd_dev->name);
 	if (rc < 0)
 		goto err_out_client;
 	rbd_dev->major = rc;
+=======
+	irc = register_blkdev(0, rbd_dev->name);
+	if (irc < 0) {
+		rc = irc;
+		goto err_out_client;
+	}
+	rbd_dev->major = irc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rc = rbd_bus_add_dev(rbd_dev);
 	if (rc)
 		goto err_out_blkdev;
 
+<<<<<<< HEAD
 	/*
 	 * At this point cleanup in the event of an error is the job
 	 * of the sysfs code (initiated by rbd_bus_del_dev()).
 	 *
 	 * Set up and announce blkdev mapping.
 	 */
+=======
+	/* set up and announce blkdev mapping */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = rbd_init_disk(rbd_dev);
 	if (rc)
 		goto err_out_bus;
@@ -2364,16 +3164,28 @@ static ssize_t rbd_add(struct bus_type *bus,
 	return count;
 
 err_out_bus:
+<<<<<<< HEAD
+=======
+	mutex_lock_nested(&ctl_mutex, SINGLE_DEPTH_NESTING);
+	list_del_init(&rbd_dev->node);
+	mutex_unlock(&ctl_mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* this will also clean up rest of rbd_dev stuff */
 
 	rbd_bus_del_dev(rbd_dev);
 	kfree(options);
+<<<<<<< HEAD
+=======
+	kfree(mon_dev_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 
 err_out_blkdev:
 	unregister_blkdev(rbd_dev->major, rbd_dev->name);
 err_out_client:
 	rbd_put_client(rbd_dev);
+<<<<<<< HEAD
 err_put_id:
 	rbd_id_put(rbd_dev);
 err_nomem:
@@ -2384,6 +3196,22 @@ err_nomem:
 	module_put(THIS_MODULE);
 
 	return (ssize_t) rc;
+=======
+	mutex_lock_nested(&ctl_mutex, SINGLE_DEPTH_NESTING);
+err_out_slot:
+	list_del_init(&rbd_dev->node);
+	mutex_unlock(&ctl_mutex);
+
+	kfree(rbd_dev);
+err_out_opt:
+	kfree(options);
+err_mon_dev:
+	kfree(mon_dev_name);
+err_out_mod:
+	dout("Error adding device %s\n", buf);
+	module_put(THIS_MODULE);
+	return rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct rbd_device *__rbd_get_dev(unsigned long id)
@@ -2391,6 +3219,7 @@ static struct rbd_device *__rbd_get_dev(unsigned long id)
 	struct list_head *tmp;
 	struct rbd_device *rbd_dev;
 
+<<<<<<< HEAD
 	spin_lock(&rbd_dev_list_lock);
 	list_for_each(tmp, &rbd_dev_list) {
 		rbd_dev = list_entry(tmp, struct rbd_device, node);
@@ -2400,11 +3229,19 @@ static struct rbd_device *__rbd_get_dev(unsigned long id)
 		}
 	}
 	spin_unlock(&rbd_dev_list_lock);
+=======
+	list_for_each(tmp, &rbd_dev_list) {
+		rbd_dev = list_entry(tmp, struct rbd_device, node);
+		if (rbd_dev->id == id)
+			return rbd_dev;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NULL;
 }
 
 static void rbd_dev_release(struct device *dev)
 {
+<<<<<<< HEAD
 	struct rbd_device *rbd_dev = dev_to_rbd_dev(dev);
 
 	if (rbd_dev->watch_request) {
@@ -2415,15 +3252,28 @@ static void rbd_dev_release(struct device *dev)
 	}
 	if (rbd_dev->watch_event)
 		rbd_req_sync_unwatch(rbd_dev, rbd_dev->obj_md_name);
+=======
+	struct rbd_device *rbd_dev =
+			container_of(dev, struct rbd_device, dev);
+
+	if (rbd_dev->watch_request)
+		ceph_osdc_unregister_linger_request(&rbd_dev->client->osdc,
+						    rbd_dev->watch_request);
+	if (rbd_dev->watch_event)
+		ceph_osdc_cancel_event(rbd_dev->watch_event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rbd_put_client(rbd_dev);
 
 	/* clean up and free blkdev */
 	rbd_free_disk(rbd_dev);
 	unregister_blkdev(rbd_dev->major, rbd_dev->name);
+<<<<<<< HEAD
 
 	/* done with the id, and with the rbd_dev */
 	rbd_id_put(rbd_dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(rbd_dev);
 
 	/* release module ref */
@@ -2456,10 +3306,14 @@ static ssize_t rbd_remove(struct bus_type *bus,
 		goto done;
 	}
 
+<<<<<<< HEAD
 	if (rbd_dev->open_count) {
 		ret = -EBUSY;
 		goto done;
 	}
+=======
+	list_del_init(&rbd_dev->node);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	__rbd_remove_all_snaps(rbd_dev);
 	rbd_bus_del_dev(rbd_dev);
@@ -2469,6 +3323,114 @@ done:
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+static ssize_t rbd_snap_add(struct device *dev,
+			    struct device_attribute *attr,
+			    const char *buf,
+			    size_t count)
+{
+	struct rbd_device *rbd_dev = dev_to_rbd(dev);
+	int ret;
+	char *name = kmalloc(count + 1, GFP_KERNEL);
+	if (!name)
+		return -ENOMEM;
+
+	snprintf(name, count, "%s", buf);
+
+	mutex_lock_nested(&ctl_mutex, SINGLE_DEPTH_NESTING);
+
+	ret = rbd_header_add_snap(rbd_dev,
+				  name, GFP_KERNEL);
+	if (ret < 0)
+		goto err_unlock;
+
+	ret = __rbd_update_snaps(rbd_dev);
+	if (ret < 0)
+		goto err_unlock;
+
+	/* shouldn't hold ctl_mutex when notifying.. notify might
+	   trigger a watch callback that would need to get that mutex */
+	mutex_unlock(&ctl_mutex);
+
+	/* make a best effort, don't error if failed */
+	rbd_req_sync_notify(rbd_dev, rbd_dev->obj_md_name);
+
+	ret = count;
+	kfree(name);
+	return ret;
+
+err_unlock:
+	mutex_unlock(&ctl_mutex);
+	kfree(name);
+	return ret;
+}
+
+static ssize_t rbd_snap_rollback(struct device *dev,
+				 struct device_attribute *attr,
+				 const char *buf,
+				 size_t count)
+{
+	struct rbd_device *rbd_dev = dev_to_rbd(dev);
+	int ret;
+	u64 snapid;
+	u64 cur_ofs;
+	char *seg_name = NULL;
+	char *snap_name = kmalloc(count + 1, GFP_KERNEL);
+	ret = -ENOMEM;
+	if (!snap_name)
+		return ret;
+
+	/* parse snaps add command */
+	snprintf(snap_name, count, "%s", buf);
+	seg_name = kmalloc(RBD_MAX_SEG_NAME_LEN + 1, GFP_NOIO);
+	if (!seg_name)
+		goto done;
+
+	mutex_lock_nested(&ctl_mutex, SINGLE_DEPTH_NESTING);
+
+	ret = snap_by_name(&rbd_dev->header, snap_name, &snapid, NULL);
+	if (ret < 0)
+		goto done_unlock;
+
+	dout("snapid=%lld\n", snapid);
+
+	cur_ofs = 0;
+	while (cur_ofs < rbd_dev->header.image_size) {
+		cur_ofs += rbd_get_segment(&rbd_dev->header,
+					   rbd_dev->obj,
+					   cur_ofs, (u64)-1,
+					   seg_name, NULL);
+		dout("seg_name=%s\n", seg_name);
+
+		ret = rbd_req_sync_rollback_obj(rbd_dev, snapid, seg_name);
+		if (ret < 0)
+			pr_warning("could not roll back obj %s err=%d\n",
+				   seg_name, ret);
+	}
+
+	ret = __rbd_update_snaps(rbd_dev);
+	if (ret < 0)
+		goto done_unlock;
+
+	ret = count;
+
+done_unlock:
+	mutex_unlock(&ctl_mutex);
+done:
+	kfree(seg_name);
+	kfree(snap_name);
+
+	return ret;
+}
+
+static struct bus_attribute rbd_bus_attrs[] = {
+	__ATTR(add, S_IWUSR, NULL, rbd_add),
+	__ATTR(remove, S_IWUSR, NULL, rbd_remove),
+	__ATTR_NULL
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * create control files in sysfs
  * /sys/bus/rbd/...
@@ -2477,6 +3439,7 @@ static int rbd_sysfs_init(void)
 {
 	int ret;
 
+<<<<<<< HEAD
 	ret = device_register(&rbd_root_dev);
 	if (ret < 0)
 		return ret;
@@ -2484,14 +3447,28 @@ static int rbd_sysfs_init(void)
 	ret = bus_register(&rbd_bus_type);
 	if (ret < 0)
 		device_unregister(&rbd_root_dev);
+=======
+	rbd_bus_type.bus_attrs = rbd_bus_attrs;
+
+	ret = bus_register(&rbd_bus_type);
+	 if (ret < 0)
+		return ret;
+
+	ret = device_register(&rbd_root_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
 
 static void rbd_sysfs_cleanup(void)
 {
+<<<<<<< HEAD
 	bus_unregister(&rbd_bus_type);
 	device_unregister(&rbd_root_dev);
+=======
+	device_unregister(&rbd_root_dev);
+	bus_unregister(&rbd_bus_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int __init rbd_init(void)
@@ -2501,7 +3478,12 @@ int __init rbd_init(void)
 	rc = rbd_sysfs_init();
 	if (rc)
 		return rc;
+<<<<<<< HEAD
 	pr_info("loaded " RBD_DRV_NAME_LONG "\n");
+=======
+	spin_lock_init(&node_lock);
+	pr_info("loaded " DRV_NAME_LONG "\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

@@ -93,7 +93,11 @@ static inline int cx231xx_isoc_vbi_copy(struct cx231xx *dev, struct urb *urb)
 	if (!dev)
 		return 0;
 
+<<<<<<< HEAD
 	if (dev->state & DEV_DISCONNECTED)
+=======
+	if ((dev->state & DEV_DISCONNECTED) || (dev->state & DEV_MISCONFIGURED))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	if (urb->status < 0) {

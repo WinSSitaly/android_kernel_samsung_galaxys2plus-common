@@ -171,7 +171,11 @@ static int agp_backend_initialize(struct agp_bridge_data *bridge)
 	}
 	got_gatt = 1;
 
+<<<<<<< HEAD
 	bridge->key_list = vzalloc(PAGE_SIZE * 4);
+=======
+	bridge->key_list = vmalloc(PAGE_SIZE * 4);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (bridge->key_list == NULL) {
 		dev_err(&bridge->dev->dev,
 			"can't allocate memory for key lists\n");
@@ -181,6 +185,10 @@ static int agp_backend_initialize(struct agp_bridge_data *bridge)
 	got_keylist = 1;
 
 	/* FIXME vmalloc'd memory not guaranteed contiguous */
+<<<<<<< HEAD
+=======
+	memset(bridge->key_list, 0, PAGE_SIZE * 4);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (bridge->driver->configure()) {
 		dev_err(&bridge->dev->dev, "error configuring host chipset\n");
@@ -194,10 +202,17 @@ static int agp_backend_initialize(struct agp_bridge_data *bridge)
 
 err_out:
 	if (bridge->driver->needs_scratch_page) {
+<<<<<<< HEAD
 		struct page *page = bridge->scratch_page_page;
 
 		bridge->driver->agp_destroy_page(page, AGP_PAGE_DESTROY_UNMAP);
 		bridge->driver->agp_destroy_page(page, AGP_PAGE_DESTROY_FREE);
+=======
+		void *va = page_address(bridge->scratch_page_page);
+
+		bridge->driver->agp_destroy_page(va, AGP_PAGE_DESTROY_UNMAP);
+		bridge->driver->agp_destroy_page(va, AGP_PAGE_DESTROY_FREE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (got_gatt)
 		bridge->driver->free_gatt_table(bridge);
@@ -221,10 +236,17 @@ static void agp_backend_cleanup(struct agp_bridge_data *bridge)
 
 	if (bridge->driver->agp_destroy_page &&
 	    bridge->driver->needs_scratch_page) {
+<<<<<<< HEAD
 		struct page *page = bridge->scratch_page_page;
 
 		bridge->driver->agp_destroy_page(page, AGP_PAGE_DESTROY_UNMAP);
 		bridge->driver->agp_destroy_page(page, AGP_PAGE_DESTROY_FREE);
+=======
+		void *va = page_address(bridge->scratch_page_page);
+
+		bridge->driver->agp_destroy_page(va, AGP_PAGE_DESTROY_UNMAP);
+		bridge->driver->agp_destroy_page(va, AGP_PAGE_DESTROY_FREE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 

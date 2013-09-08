@@ -26,6 +26,11 @@ extern unsigned int __nongpreldata pci_probe;
 
 /* pci-frv.c */
 
+<<<<<<< HEAD
+=======
+extern unsigned int pcibios_max_latency;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void pcibios_resource_survey(void);
 
 /* pci-vdk.c */

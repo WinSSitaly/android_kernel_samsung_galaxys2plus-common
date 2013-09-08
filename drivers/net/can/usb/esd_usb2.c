@@ -470,7 +470,12 @@ static void esd_usb2_write_bulk_callback(struct urb *urb)
 		return;
 
 	if (urb->status)
+<<<<<<< HEAD
 		netdev_info(netdev, "Tx URB aborted (%d)\n", urb->status);
+=======
+		dev_info(netdev->dev.parent, "Tx URB aborted (%d)\n",
+			 urb->status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	netdev->trans_start = jiffies;
 }
@@ -650,7 +655,11 @@ failed:
 	if (err == -ENODEV)
 		netif_device_detach(netdev);
 
+<<<<<<< HEAD
 	netdev_err(netdev, "couldn't start device: %d\n", err);
+=======
+	dev_err(netdev->dev.parent, "couldn't start device: %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }
@@ -686,7 +695,12 @@ static int esd_usb2_open(struct net_device *netdev)
 	/* finally start device */
 	err = esd_usb2_start(priv);
 	if (err) {
+<<<<<<< HEAD
 		netdev_warn(netdev, "couldn't start device: %d\n", err);
+=======
+		dev_warn(netdev->dev.parent,
+			 "couldn't start device: %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		close_candev(netdev);
 		return err;
 	}
@@ -719,7 +733,11 @@ static netdev_tx_t esd_usb2_start_xmit(struct sk_buff *skb,
 	/* create a URB, and a buffer for it, and copy the data to the URB */
 	urb = usb_alloc_urb(0, GFP_ATOMIC);
 	if (!urb) {
+<<<<<<< HEAD
 		netdev_err(netdev, "No memory left for URBs\n");
+=======
+		dev_err(netdev->dev.parent, "No memory left for URBs\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		stats->tx_dropped++;
 		dev_kfree_skb(skb);
 		goto nourbmem;
@@ -728,7 +746,11 @@ static netdev_tx_t esd_usb2_start_xmit(struct sk_buff *skb,
 	buf = usb_alloc_coherent(dev->udev, size, GFP_ATOMIC,
 				 &urb->transfer_dma);
 	if (!buf) {
+<<<<<<< HEAD
 		netdev_err(netdev, "No memory left for USB buffer\n");
+=======
+		dev_err(netdev->dev.parent, "No memory left for USB buffer\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		stats->tx_dropped++;
 		dev_kfree_skb(skb);
 		goto nobufmem;
@@ -764,7 +786,11 @@ static netdev_tx_t esd_usb2_start_xmit(struct sk_buff *skb,
 	 * This may never happen.
 	 */
 	if (!context) {
+<<<<<<< HEAD
 		netdev_warn(netdev, "couldn't find free context\n");
+=======
+		dev_warn(netdev->dev.parent, "couldn't find free context\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = NETDEV_TX_BUSY;
 		goto releasebuf;
 	}
@@ -804,7 +830,11 @@ static netdev_tx_t esd_usb2_start_xmit(struct sk_buff *skb,
 		if (err == -ENODEV)
 			netif_device_detach(netdev);
 		else
+<<<<<<< HEAD
 			netdev_warn(netdev, "failed tx_urb %d\n", err);
+=======
+			dev_warn(netdev->dev.parent, "failed tx_urb %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		goto releasebuf;
 	}
@@ -843,7 +873,11 @@ static int esd_usb2_close(struct net_device *netdev)
 	for (i = 0; i <= ESD_MAX_ID_SEGMENT; i++)
 		msg.msg.filter.mask[i] = 0;
 	if (esd_usb2_send_msg(priv->usb2, &msg) < 0)
+<<<<<<< HEAD
 		netdev_err(netdev, "sending idadd message failed\n");
+=======
+		dev_err(netdev->dev.parent, "sending idadd message failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* set CAN controller to reset mode */
 	msg.msg.hdr.len = 2;
@@ -852,7 +886,11 @@ static int esd_usb2_close(struct net_device *netdev)
 	msg.msg.setbaud.rsvd = 0;
 	msg.msg.setbaud.baud = cpu_to_le32(ESD_USB2_NO_BAUDRATE);
 	if (esd_usb2_send_msg(priv->usb2, &msg) < 0)
+<<<<<<< HEAD
 		netdev_err(netdev, "sending setbaud message failed\n");
+=======
+		dev_err(netdev->dev.parent, "sending setbaud message failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	priv->can.state = CAN_STATE_STOPPED;
 
@@ -908,7 +946,11 @@ static int esd_usb2_set_bittiming(struct net_device *netdev)
 	msg.msg.setbaud.rsvd = 0;
 	msg.msg.setbaud.baud = cpu_to_le32(canbtr);
 
+<<<<<<< HEAD
 	netdev_info(netdev, "setting BTR=%#x\n", canbtr);
+=======
+	dev_info(netdev->dev.parent, "setting BTR=%#x\n", canbtr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return esd_usb2_send_msg(priv->usb2, &msg);
 }
@@ -986,14 +1028,23 @@ static int esd_usb2_probe_one_net(struct usb_interface *intf, int index)
 
 	err = register_candev(netdev);
 	if (err) {
+<<<<<<< HEAD
 		dev_err(&intf->dev, "couldn't register CAN device: %d\n", err);
+=======
+		dev_err(&intf->dev,
+			"couldn't register CAN device: %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		free_candev(netdev);
 		err = -ENOMEM;
 		goto done;
 	}
 
 	dev->nets[index] = priv;
+<<<<<<< HEAD
 	netdev_info(netdev, "device %s registered\n", netdev->name);
+=======
+	dev_info(netdev->dev.parent, "device %s registered\n", netdev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 done:
 	return err;
@@ -1105,4 +1156,29 @@ static struct usb_driver esd_usb2_driver = {
 	.id_table = esd_usb2_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(esd_usb2_driver);
+=======
+static int __init esd_usb2_init(void)
+{
+	int err;
+
+	/* register this driver with the USB subsystem */
+	err = usb_register(&esd_usb2_driver);
+
+	if (err) {
+		err("usb_register failed. Error number %d\n", err);
+		return err;
+	}
+
+	return 0;
+}
+module_init(esd_usb2_init);
+
+static void __exit esd_usb2_exit(void)
+{
+	/* deregister this driver with the USB subsystem */
+	usb_deregister(&esd_usb2_driver);
+}
+module_exit(esd_usb2_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

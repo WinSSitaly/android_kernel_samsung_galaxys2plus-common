@@ -42,7 +42,11 @@ fqs_holdoff	Holdoff time (in microseconds) between consecutive calls
 fqs_stutter	Wait time (in seconds) between consecutive bursts
 		of calls to force_quiescent_state().
 
+<<<<<<< HEAD
 irqreader	Says to invoke RCU readers from irq level.  This is currently
+=======
+irqreaders	Says to invoke RCU readers from irq level.  This is currently
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		done via timers.  Defaults to "1" for variants of RCU that
 		permit this.  (Or, more accurately, variants of RCU that do
 		-not- permit this know to ignore this variable.)
@@ -61,6 +65,7 @@ nreaders	This is the number of RCU reading threads supported.
 		To properly exercise RCU implementations with preemptible
 		read-side critical sections.
 
+<<<<<<< HEAD
 onoff_interval
 		The number of seconds between each attempt to execute a
 		randomly selected CPU-hotplug operation.  Defaults to
@@ -76,11 +81,14 @@ onoff_holdoff	The number of seconds to wait until starting CPU-hotplug
 		in order to avoid confusing boot-time code with CPUs
 		coming and going.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 shuffle_interval
 		The number of seconds to keep the test threads affinitied
 		to a particular subset of the CPUs, defaults to 3 seconds.
 		Used in conjunction with test_no_idle_hz.
 
+<<<<<<< HEAD
 shutdown_secs	The number of seconds to run the test before terminating
 		the test and powering off the system.  The default is
 		zero, which disables test termination and system shutdown.
@@ -104,6 +112,8 @@ stall_cpu_holdoff
 		The number of seconds to wait after rcutorture starts
 		before stalling a CPU.  Defaults to 10 seconds.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 stat_interval	The number of seconds between output of torture
 		statistics (via printk()).  Regardless of the interval,
 		statistics are printed when the module is unloaded.
@@ -117,6 +127,7 @@ stutter		The length of time to run the test before pausing for this
 		Specifying "stutter=0" causes the test to run continuously
 		without pausing, which is the old default behavior.
 
+<<<<<<< HEAD
 test_boost	Whether or not to test the ability of RCU to do priority
 		boosting.  Defaults to "test_boost=1", which performs
 		RCU priority-inversion testing only if the selected
@@ -139,11 +150,14 @@ test_boost_duration
 		within any given "test_boost_interval".  Defaults to
 		"test_boost_duration=4".
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 test_no_idle_hz	Whether or not to test the ability of RCU to operate in
 		a kernel that disables the scheduling-clock interrupt to
 		idle CPUs.  Boolean parameter, "1" to test, "0" otherwise.
 		Defaults to omitting this test.
 
+<<<<<<< HEAD
 torture_type	The type of RCU to test, with string values as follows:
 
 		"rcu":  rcu_read_lock(), rcu_read_unlock() and call_rcu().
@@ -179,6 +193,16 @@ torture_type	The type of RCU to test, with string values as follows:
 			synchronize_sched_expedited().
 
 		Defaults to "rcu".
+=======
+torture_type	The type of RCU to test: "rcu" for the rcu_read_lock() API,
+		"rcu_sync" for rcu_read_lock() with synchronous reclamation,
+		"rcu_bh" for the rcu_read_lock_bh() API, "rcu_bh_sync" for
+		rcu_read_lock_bh() with synchronous reclamation, "srcu" for
+		the "srcu_read_lock()" API, "sched" for the use of
+		preempt_disable() together with synchronize_sched(),
+		and "sched_expedited" for the use of preempt_disable()
+		with synchronize_sched_expedited().
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 verbose		Enable debug printk()s.  Default is disabled.
 
@@ -187,12 +211,21 @@ OUTPUT
 
 The statistics output is as follows:
 
+<<<<<<< HEAD
 	rcu-torture:--- Start of test: nreaders=16 nfakewriters=4 stat_interval=30 verbose=0 test_no_idle_hz=1 shuffle_interval=3 stutter=5 irqreader=1 fqs_duration=0 fqs_holdoff=0 fqs_stutter=3 test_boost=1/0 test_boost_interval=7 test_boost_duration=4
 	rcu-torture: rtc:           (null) ver: 155441 tfle: 0 rta: 155441 rtaf: 8884 rtf: 155440 rtmbe: 0 rtbke: 0 rtbre: 0 rtbf: 0 rtb: 0 nt: 3055767
 	rcu-torture: Reader Pipe:  727860534 34213 0 0 0 0 0 0 0 0 0
 	rcu-torture: Reader Batch:  727877838 17003 0 0 0 0 0 0 0 0 0
 	rcu-torture: Free-Block Circulation:  155440 155440 155440 155440 155440 155440 155440 155440 155440 155440 0
 	rcu-torture:--- End of test: SUCCESS: nreaders=16 nfakewriters=4 stat_interval=30 verbose=0 test_no_idle_hz=1 shuffle_interval=3 stutter=5 irqreader=1 fqs_duration=0 fqs_holdoff=0 fqs_stutter=3 test_boost=1/0 test_boost_interval=7 test_boost_duration=4
+=======
+	rcu-torture: --- Start of test: nreaders=16 stat_interval=0 verbose=0
+	rcu-torture: rtc: 0000000000000000 ver: 1916 tfle: 0 rta: 1916 rtaf: 0 rtf: 1915
+	rcu-torture: Reader Pipe:  1466408 9747 0 0 0 0 0 0 0 0 0
+	rcu-torture: Reader Batch:  1464477 11678 0 0 0 0 0 0 0 0
+	rcu-torture: Free-Block Circulation:  1915 1915 1915 1915 1915 1915 1915 1915 1915 1915 0
+	rcu-torture: --- End of test
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 The command "dmesg | grep torture:" will extract this information on
 most systems.  On more esoteric configurations, it may be necessary to
@@ -200,26 +233,38 @@ use other commands to access the output of the printk()s used by
 the RCU torture test.  The printk()s use KERN_ALERT, so they should
 be evident.  ;-)
 
+<<<<<<< HEAD
 The first and last lines show the rcutorture module parameters, and the
 last line shows either "SUCCESS" or "FAILURE", based on rcutorture's
 automatic determination as to whether RCU operated correctly.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 The entries are as follows:
 
 o	"rtc": The hexadecimal address of the structure currently visible
 	to readers.
 
+<<<<<<< HEAD
 o	"ver": The number of times since boot that the RCU writer task
 	has changed the structure visible to readers.
 
 o	"tfle": If non-zero, indicates that the "torture freelist"
 	containing structures to be placed into the "rtc" area is empty.
+=======
+o	"ver": The number of times since boot that the rcutw writer task
+	has changed the structure visible to readers.
+
+o	"tfle": If non-zero, indicates that the "torture freelist"
+	containing structure to be placed into the "rtc" area is empty.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	This condition is important, since it can fool you into thinking
 	that RCU is working when it is not.  :-/
 
 o	"rta": Number of structures allocated from the torture freelist.
 
 o	"rtaf": Number of allocations from the torture freelist that have
+<<<<<<< HEAD
 	failed due to the list being empty.  It is not unusual for this
 	to be non-zero, but it is bad for it to be a large fraction of
 	the value indicated by "rta".
@@ -249,6 +294,12 @@ o	"nt": The number of times rcutorture ran RCU read-side code from
 	within a timer handler.  This value should be non-zero only
 	if you specified the "irqreader" module parameter.
 
+=======
+	failed due to the list being empty.
+
+o	"rtf": Number of frees into the torture freelist.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 o	"Reader Pipe": Histogram of "ages" of structures seen by readers.
 	If any entries past the first two are non-zero, RCU is broken.
 	And rcutorture prints the error flag string "!!!" to make sure
@@ -278,6 +329,7 @@ o	"Free-Block Circulation": Shows the number of torture structures
 	somehow gets incremented farther than it should.
 
 Different implementations of RCU can provide implementation-specific
+<<<<<<< HEAD
 additional information.  For example, SRCU provides the following
 additional line:
 
@@ -287,6 +339,28 @@ This line shows the per-CPU counter state.  The numbers in parentheses are
 the values of the "old" and "current" counters for the corresponding CPU.
 The "idx" value maps the "old" and "current" values to the underlying
 array, and is useful for debugging.
+=======
+additional information.  For example, SRCU provides the following:
+
+	srcu-torture: rtc: f8cf46a8 ver: 355 tfle: 0 rta: 356 rtaf: 0 rtf: 346 rtmbe: 0
+	srcu-torture: Reader Pipe:  559738 939 0 0 0 0 0 0 0 0 0
+	srcu-torture: Reader Batch:  560434 243 0 0 0 0 0 0 0 0
+	srcu-torture: Free-Block Circulation:  355 354 353 352 351 350 349 348 347 346 0
+	srcu-torture: per-CPU(idx=1): 0(0,1) 1(0,1) 2(0,0) 3(0,1)
+
+The first four lines are similar to those for RCU.  The last line shows
+the per-CPU counter state.  The numbers in parentheses are the values
+of the "old" and "current" counters for the corresponding CPU.  The
+"idx" value maps the "old" and "current" values to the underlying array,
+and is useful for debugging.
+
+Similarly, sched_expedited RCU provides the following:
+
+	sched_expedited-torture: rtc: d0000000016c1880 ver: 1090796 tfle: 0 rta: 1090796 rtaf: 0 rtf: 1090787 rtmbe: 0 nt: 27713319
+	sched_expedited-torture: Reader Pipe:  12660320201 95875 0 0 0 0 0 0 0 0 0
+	sched_expedited-torture: Reader Batch:  12660424885 0 0 0 0 0 0 0 0 0 0
+	sched_expedited-torture: Free-Block Circulation:  1090795 1090795 1090794 1090793 1090792 1090791 1090790 1090789 1090788 1090787 0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 USAGE
@@ -296,13 +370,22 @@ The following script may be used to torture RCU:
 	#!/bin/sh
 
 	modprobe rcutorture
+<<<<<<< HEAD
 	sleep 3600
+=======
+	sleep 100
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rmmod rcutorture
 	dmesg | grep torture:
 
 The output can be manually inspected for the error flag of "!!!".
 One could of course create a more elaborate script that automatically
+<<<<<<< HEAD
 checked for such errors.  The "rmmod" command forces a "SUCCESS",
 "FAILURE", or "RCU_HOTPLUG" indication to be printk()ed.  The first
 two are self-explanatory, while the last indicates that while there
 were no RCU failures, CPU-hotplug problems were detected.
+=======
+checked for such errors.  The "rmmod" command forces a "SUCCESS" or
+"FAILURE" indication to be printk()ed.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -211,7 +211,10 @@ int em28xx_write_reg(struct em28xx *dev, u16 reg, u8 val)
 {
 	return em28xx_write_regs(dev, reg, &val, 1);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(em28xx_write_reg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * em28xx_write_reg_bits()
@@ -287,7 +290,10 @@ int em28xx_read_ac97(struct em28xx *dev, u8 reg)
 		return ret;
 	return le16_to_cpu(val);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(em28xx_read_ac97);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * em28xx_write_ac97()
@@ -315,14 +321,23 @@ int em28xx_write_ac97(struct em28xx *dev, u8 reg, u16 val)
 
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(em28xx_write_ac97);
 
 struct em28xx_vol_itable {
+=======
+
+struct em28xx_vol_table {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	enum em28xx_amux mux;
 	u8		 reg;
 };
 
+<<<<<<< HEAD
 static struct em28xx_vol_itable inputs[] = {
+=======
+static struct em28xx_vol_table inputs[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ EM28XX_AMUX_VIDEO, 	AC97_VIDEO_VOL   },
 	{ EM28XX_AMUX_LINE_IN,	AC97_LINEIN_VOL  },
 	{ EM28XX_AMUX_PHONE,	AC97_PHONE_VOL   },
@@ -406,12 +421,16 @@ static int em28xx_set_audio_source(struct em28xx *dev)
 	return ret;
 }
 
+<<<<<<< HEAD
 struct em28xx_vol_otable {
 	enum em28xx_aout mux;
 	u8		 reg;
 };
 
 static const struct em28xx_vol_otable outputs[] = {
+=======
+static const struct em28xx_vol_table outputs[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ EM28XX_AOUT_MASTER, AC97_MASTER_VOL      },
 	{ EM28XX_AOUT_LINE,   AC97_LINE_LEVEL_VOL  },
 	{ EM28XX_AOUT_MONO,   AC97_MASTER_MONO_VOL },
@@ -500,6 +519,7 @@ int em28xx_audio_setup(struct em28xx *dev)
 	if (dev->chip_id == CHIP_ID_EM2870 || dev->chip_id == CHIP_ID_EM2874
 		|| dev->chip_id == CHIP_ID_EM28174) {
 		/* Digital only device - don't load any alsa module */
+<<<<<<< HEAD
 		dev->audio_mode.has_audio = false;
 		dev->has_audio_class = false;
 		dev->has_alsa_audio = false;
@@ -507,6 +527,19 @@ int em28xx_audio_setup(struct em28xx *dev)
 	}
 
 	dev->audio_mode.has_audio = true;
+=======
+		dev->audio_mode.has_audio = 0;
+		dev->has_audio_class = 0;
+		dev->has_alsa_audio = 0;
+		return 0;
+	}
+
+	/* If device doesn't support Usb Audio Class, use vendor class */
+	if (!dev->has_audio_class)
+		dev->has_alsa_audio = 1;
+
+	dev->audio_mode.has_audio = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* See how this device is configured */
 	cfg = em28xx_read_reg(dev, EM28XX_R00_CHIPCFG);
@@ -516,8 +549,13 @@ int em28xx_audio_setup(struct em28xx *dev)
 		cfg = EM28XX_CHIPCFG_AC97; /* Be conservative */
 	} else if ((cfg & EM28XX_CHIPCFG_AUDIOMASK) == 0x00) {
 		/* The device doesn't have vendor audio at all */
+<<<<<<< HEAD
 		dev->has_alsa_audio = false;
 		dev->audio_mode.has_audio = false;
+=======
+		dev->has_alsa_audio = 0;
+		dev->audio_mode.has_audio = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	} else if ((cfg & EM28XX_CHIPCFG_AUDIOMASK) ==
 		   EM28XX_CHIPCFG_I2S_3_SAMPRATES) {
@@ -546,8 +584,13 @@ int em28xx_audio_setup(struct em28xx *dev)
 		 */
 		em28xx_warn("AC97 chip type couldn't be determined\n");
 		dev->audio_mode.ac97 = EM28XX_NO_AC97;
+<<<<<<< HEAD
 		dev->has_alsa_audio = false;
 		dev->audio_mode.has_audio = false;
+=======
+		dev->has_alsa_audio = 0;
+		dev->audio_mode.has_audio = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto init_audio;
 	}
 
@@ -568,7 +611,11 @@ int em28xx_audio_setup(struct em28xx *dev)
 	em28xx_warn("AC97 features = 0x%04x\n", feat);
 
 	/* Try to identify what audio processor we have */
+<<<<<<< HEAD
 	if (((vid == 0xffffffff) || (vid == 0x83847650)) && (feat == 0x6a90))
+=======
+	if ((vid == 0xffffffff) && (feat == 0x6a90))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev->audio_mode.ac97 = EM28XX_AC97_EM202;
 	else if ((vid >> 8) == 0x838476)
 		dev->audio_mode.ac97 = EM28XX_AC97_SIGMATEL;
@@ -619,9 +666,13 @@ int em28xx_capture_start(struct em28xx *dev, int start)
 {
 	int rc;
 
+<<<<<<< HEAD
 	if (dev->chip_id == CHIP_ID_EM2874 ||
 	    dev->chip_id == CHIP_ID_EM2884 ||
 	    dev->chip_id == CHIP_ID_EM28174) {
+=======
+	if (dev->chip_id == CHIP_ID_EM2874 || dev->chip_id == CHIP_ID_EM28174) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* The Transport Stream Enable Register moved in em2874 */
 		if (!start) {
 			rc = em28xx_write_reg_bits(dev, EM2874_R5F_TS_ENABLE,
@@ -666,7 +717,10 @@ int em28xx_capture_start(struct em28xx *dev, int start)
 
 	return rc;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(em28xx_capture_start);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int em28xx_vbi_supported(struct em28xx *dev)
 {
@@ -891,7 +945,10 @@ int em28xx_gpio_set(struct em28xx *dev, struct em28xx_reg_seq *gpio)
 	}
 	return rc;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(em28xx_gpio_set);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int em28xx_set_mode(struct em28xx *dev, enum em28xx_mode set_mode)
 {
@@ -925,7 +982,11 @@ EXPORT_SYMBOL_GPL(em28xx_set_mode);
 static void em28xx_irq_callback(struct urb *urb)
 {
 	struct em28xx *dev = urb->context;
+<<<<<<< HEAD
 	int i;
+=======
+	int rc, i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (urb->status) {
 	case 0:             /* success */
@@ -942,7 +1003,11 @@ static void em28xx_irq_callback(struct urb *urb)
 
 	/* Copy data from URB */
 	spin_lock(&dev->slock);
+<<<<<<< HEAD
 	dev->isoc_ctl.isoc_copy(dev, urb);
+=======
+	rc = dev->isoc_ctl.isoc_copy(dev, urb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&dev->slock);
 
 	/* Reset urb buffers */
@@ -962,6 +1027,7 @@ static void em28xx_irq_callback(struct urb *urb)
 /*
  * Stop and Deallocate URBs
  */
+<<<<<<< HEAD
 void em28xx_uninit_isoc(struct em28xx *dev, enum em28xx_mode mode)
 {
 	struct urb *urb;
@@ -978,12 +1044,25 @@ void em28xx_uninit_isoc(struct em28xx *dev, enum em28xx_mode mode)
 	dev->isoc_ctl.nfields = -1;
 	for (i = 0; i < isoc_bufs->num_bufs; i++) {
 		urb = isoc_bufs->urb[i];
+=======
+void em28xx_uninit_isoc(struct em28xx *dev)
+{
+	struct urb *urb;
+	int i;
+
+	em28xx_isocdbg("em28xx: called em28xx_uninit_isoc\n");
+
+	dev->isoc_ctl.nfields = -1;
+	for (i = 0; i < dev->isoc_ctl.num_bufs; i++) {
+		urb = dev->isoc_ctl.urb[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (urb) {
 			if (!irqs_disabled())
 				usb_kill_urb(urb);
 			else
 				usb_unlink_urb(urb);
 
+<<<<<<< HEAD
 			if (isoc_bufs->transfer_buffer[i]) {
 				usb_free_coherent(dev->udev,
 					urb->transfer_buffer_length,
@@ -1002,22 +1081,54 @@ void em28xx_uninit_isoc(struct em28xx *dev, enum em28xx_mode mode)
 	isoc_bufs->urb = NULL;
 	isoc_bufs->transfer_buffer = NULL;
 	isoc_bufs->num_bufs = 0;
+=======
+			if (dev->isoc_ctl.transfer_buffer[i]) {
+				usb_free_coherent(dev->udev,
+					urb->transfer_buffer_length,
+					dev->isoc_ctl.transfer_buffer[i],
+					urb->transfer_dma);
+			}
+			usb_free_urb(urb);
+			dev->isoc_ctl.urb[i] = NULL;
+		}
+		dev->isoc_ctl.transfer_buffer[i] = NULL;
+	}
+
+	kfree(dev->isoc_ctl.urb);
+	kfree(dev->isoc_ctl.transfer_buffer);
+
+	dev->isoc_ctl.urb = NULL;
+	dev->isoc_ctl.transfer_buffer = NULL;
+	dev->isoc_ctl.num_bufs = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	em28xx_capture_start(dev, 0);
 }
 EXPORT_SYMBOL_GPL(em28xx_uninit_isoc);
 
 /*
+<<<<<<< HEAD
  * Allocate URBs
  */
 int em28xx_alloc_isoc(struct em28xx *dev, enum em28xx_mode mode,
 		      int max_packets, int num_bufs, int max_pkt_size)
 {
 	struct em28xx_usb_isoc_bufs *isoc_bufs;
+=======
+ * Allocate URBs and start IRQ
+ */
+int em28xx_init_isoc(struct em28xx *dev, int max_packets,
+		     int num_bufs, int max_pkt_size,
+		     int (*isoc_copy) (struct em28xx *dev, struct urb *urb))
+{
+	struct em28xx_dmaqueue *dma_q = &dev->vidq;
+	struct em28xx_dmaqueue *vbi_dma_q = &dev->vbiq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 	int sb_size, pipe;
 	struct urb *urb;
 	int j, k;
+<<<<<<< HEAD
 
 	em28xx_isocdbg("em28xx: called em28xx_alloc_isoc in mode %d\n", mode);
 
@@ -1033,10 +1144,25 @@ int em28xx_alloc_isoc(struct em28xx *dev, enum em28xx_mode mode,
 
 	isoc_bufs->urb = kzalloc(sizeof(void *)*num_bufs,  GFP_KERNEL);
 	if (!isoc_bufs->urb) {
+=======
+	int rc;
+
+	em28xx_isocdbg("em28xx: called em28xx_prepare_isoc\n");
+
+	/* De-allocates all pending stuff */
+	em28xx_uninit_isoc(dev);
+
+	dev->isoc_ctl.isoc_copy = isoc_copy;
+	dev->isoc_ctl.num_bufs = num_bufs;
+
+	dev->isoc_ctl.urb = kzalloc(sizeof(void *)*num_bufs,  GFP_KERNEL);
+	if (!dev->isoc_ctl.urb) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		em28xx_errdev("cannot alloc memory for usb buffers\n");
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	isoc_bufs->transfer_buffer = kzalloc(sizeof(void *)*num_bufs,
 					     GFP_KERNEL);
 	if (!isoc_bufs->transfer_buffer) {
@@ -1065,20 +1191,57 @@ int em28xx_alloc_isoc(struct em28xx *dev, enum em28xx_mode mode,
 		isoc_bufs->transfer_buffer[i] = usb_alloc_coherent(dev->udev,
 			sb_size, GFP_KERNEL, &urb->transfer_dma);
 		if (!isoc_bufs->transfer_buffer[i]) {
+=======
+	dev->isoc_ctl.transfer_buffer = kzalloc(sizeof(void *)*num_bufs,
+					      GFP_KERNEL);
+	if (!dev->isoc_ctl.transfer_buffer) {
+		em28xx_errdev("cannot allocate memory for usb transfer\n");
+		kfree(dev->isoc_ctl.urb);
+		return -ENOMEM;
+	}
+
+	dev->isoc_ctl.max_pkt_size = max_pkt_size;
+	dev->isoc_ctl.vid_buf = NULL;
+	dev->isoc_ctl.vbi_buf = NULL;
+
+	sb_size = max_packets * dev->isoc_ctl.max_pkt_size;
+
+	/* allocate urbs and transfer buffers */
+	for (i = 0; i < dev->isoc_ctl.num_bufs; i++) {
+		urb = usb_alloc_urb(max_packets, GFP_KERNEL);
+		if (!urb) {
+			em28xx_err("cannot alloc isoc_ctl.urb %i\n", i);
+			em28xx_uninit_isoc(dev);
+			return -ENOMEM;
+		}
+		dev->isoc_ctl.urb[i] = urb;
+
+		dev->isoc_ctl.transfer_buffer[i] = usb_alloc_coherent(dev->udev,
+			sb_size, GFP_KERNEL, &urb->transfer_dma);
+		if (!dev->isoc_ctl.transfer_buffer[i]) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			em28xx_err("unable to allocate %i bytes for transfer"
 					" buffer %i%s\n",
 					sb_size, i,
 					in_interrupt() ? " while in int" : "");
+<<<<<<< HEAD
 			em28xx_uninit_isoc(dev, mode);
 			return -ENOMEM;
 		}
 		memset(isoc_bufs->transfer_buffer[i], 0, sb_size);
+=======
+			em28xx_uninit_isoc(dev);
+			return -ENOMEM;
+		}
+		memset(dev->isoc_ctl.transfer_buffer[i], 0, sb_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* FIXME: this is a hack - should be
 			'desc.bEndpointAddress & USB_ENDPOINT_NUMBER_MASK'
 			should also be using 'desc.bInterval'
 		 */
 		pipe = usb_rcvisocpipe(dev->udev,
+<<<<<<< HEAD
 				       mode == EM28XX_ANALOG_MODE ?
 				       EM28XX_EP_ANALOG : EM28XX_EP_DIGITAL);
 
@@ -1136,18 +1299,47 @@ int em28xx_init_isoc(struct em28xx *dev, enum em28xx_mode mode,
 			return rc;
 	}
 
+=======
+			dev->mode == EM28XX_ANALOG_MODE ? 0x82 : 0x84);
+
+		usb_fill_int_urb(urb, dev->udev, pipe,
+				 dev->isoc_ctl.transfer_buffer[i], sb_size,
+				 em28xx_irq_callback, dev, 1);
+
+		urb->number_of_packets = max_packets;
+		urb->transfer_flags = URB_ISO_ASAP | URB_NO_TRANSFER_DMA_MAP;
+
+		k = 0;
+		for (j = 0; j < max_packets; j++) {
+			urb->iso_frame_desc[j].offset = k;
+			urb->iso_frame_desc[j].length =
+						dev->isoc_ctl.max_pkt_size;
+			k += dev->isoc_ctl.max_pkt_size;
+		}
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	init_waitqueue_head(&dma_q->wq);
 	init_waitqueue_head(&vbi_dma_q->wq);
 
 	em28xx_capture_start(dev, 1);
 
 	/* submit urbs and enables IRQ */
+<<<<<<< HEAD
 	for (i = 0; i < isoc_bufs->num_bufs; i++) {
 		rc = usb_submit_urb(isoc_bufs->urb[i], GFP_ATOMIC);
 		if (rc) {
 			em28xx_err("submit of urb %i failed (error=%i)\n", i,
 				   rc);
 			em28xx_uninit_isoc(dev, mode);
+=======
+	for (i = 0; i < dev->isoc_ctl.num_bufs; i++) {
+		rc = usb_submit_urb(dev->isoc_ctl.urb[i], GFP_ATOMIC);
+		if (rc) {
+			em28xx_err("submit of urb %i failed (error=%i)\n", i,
+				   rc);
+			em28xx_uninit_isoc(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return rc;
 		}
 	}
@@ -1156,6 +1348,48 @@ int em28xx_init_isoc(struct em28xx *dev, enum em28xx_mode mode,
 }
 EXPORT_SYMBOL_GPL(em28xx_init_isoc);
 
+<<<<<<< HEAD
+=======
+/* Determine the packet size for the DVB stream for the given device
+   (underlying value programmed into the eeprom) */
+int em28xx_isoc_dvb_max_packetsize(struct em28xx *dev)
+{
+	unsigned int chip_cfg2;
+	unsigned int packet_size = 564;
+
+	if (dev->chip_id == CHIP_ID_EM2874) {
+		/* FIXME - for now assume 564 like it was before, but the
+		   em2874 code should be added to return the proper value... */
+		packet_size = 564;
+	} else if (dev->chip_id == CHIP_ID_EM28174) {
+		/* FIXME same as em2874. 564 was enough for 22 Mbit DVB-T
+		   but too much for 44 Mbit DVB-C. */
+		packet_size = 752;
+	} else {
+		/* TS max packet size stored in bits 1-0 of R01 */
+		chip_cfg2 = em28xx_read_reg(dev, EM28XX_R01_CHIPCFG2);
+		switch (chip_cfg2 & EM28XX_CHIPCFG2_TS_PACKETSIZE_MASK) {
+		case EM28XX_CHIPCFG2_TS_PACKETSIZE_188:
+			packet_size = 188;
+			break;
+		case EM28XX_CHIPCFG2_TS_PACKETSIZE_376:
+			packet_size = 376;
+			break;
+		case EM28XX_CHIPCFG2_TS_PACKETSIZE_564:
+			packet_size = 564;
+			break;
+		case EM28XX_CHIPCFG2_TS_PACKETSIZE_752:
+			packet_size = 752;
+			break;
+		}
+	}
+
+	em28xx_coredbg("dvb max packet size=%d\n", packet_size);
+	return packet_size;
+}
+EXPORT_SYMBOL_GPL(em28xx_isoc_dvb_max_packetsize);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * em28xx_wake_i2c()
  * configure i2c attached devices
@@ -1176,6 +1410,28 @@ static LIST_HEAD(em28xx_devlist);
 static DEFINE_MUTEX(em28xx_devlist_mutex);
 
 /*
+<<<<<<< HEAD
+=======
+ * em28xx_realease_resources()
+ * unregisters the v4l2,i2c and usb devices
+ * called when the device gets disconected or at module unload
+*/
+void em28xx_remove_from_devlist(struct em28xx *dev)
+{
+	mutex_lock(&em28xx_devlist_mutex);
+	list_del(&dev->devlist);
+	mutex_unlock(&em28xx_devlist_mutex);
+};
+
+void em28xx_add_into_devlist(struct em28xx *dev)
+{
+	mutex_lock(&em28xx_devlist_mutex);
+	list_add_tail(&dev->devlist, &em28xx_devlist);
+	mutex_unlock(&em28xx_devlist_mutex);
+};
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Extension interface
  */
 
@@ -1190,8 +1446,13 @@ int em28xx_register_extension(struct em28xx_ops *ops)
 	list_for_each_entry(dev, &em28xx_devlist, devlist) {
 		ops->init(dev);
 	}
+<<<<<<< HEAD
 	mutex_unlock(&em28xx_devlist_mutex);
 	printk(KERN_INFO "Em28xx: Initialized (%s) extension\n", ops->name);
+=======
+	printk(KERN_INFO "Em28xx: Initialized (%s) extension\n", ops->name);
+	mutex_unlock(&em28xx_devlist_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL(em28xx_register_extension);
@@ -1204,14 +1465,21 @@ void em28xx_unregister_extension(struct em28xx_ops *ops)
 	list_for_each_entry(dev, &em28xx_devlist, devlist) {
 		ops->fini(dev);
 	}
+<<<<<<< HEAD
 	list_del(&ops->next);
 	mutex_unlock(&em28xx_devlist_mutex);
 	printk(KERN_INFO "Em28xx: Removed (%s) extension\n", ops->name);
+=======
+	printk(KERN_INFO "Em28xx: Removed (%s) extension\n", ops->name);
+	list_del(&ops->next);
+	mutex_unlock(&em28xx_devlist_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(em28xx_unregister_extension);
 
 void em28xx_init_extension(struct em28xx *dev)
 {
+<<<<<<< HEAD
 	const struct em28xx_ops *ops = NULL;
 
 	mutex_lock(&em28xx_devlist_mutex);
@@ -1219,12 +1487,23 @@ void em28xx_init_extension(struct em28xx *dev)
 	list_for_each_entry(ops, &em28xx_extension_devlist, next) {
 		if (ops->init)
 			ops->init(dev);
+=======
+	struct em28xx_ops *ops = NULL;
+
+	mutex_lock(&em28xx_devlist_mutex);
+	if (!list_empty(&em28xx_extension_devlist)) {
+		list_for_each_entry(ops, &em28xx_extension_devlist, next) {
+			if (ops->init)
+				ops->init(dev);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	mutex_unlock(&em28xx_devlist_mutex);
 }
 
 void em28xx_close_extension(struct em28xx *dev)
 {
+<<<<<<< HEAD
 	const struct em28xx_ops *ops = NULL;
 
 	mutex_lock(&em28xx_devlist_mutex);
@@ -1233,5 +1512,16 @@ void em28xx_close_extension(struct em28xx *dev)
 			ops->fini(dev);
 	}
 	list_del(&dev->devlist);
+=======
+	struct em28xx_ops *ops = NULL;
+
+	mutex_lock(&em28xx_devlist_mutex);
+	if (!list_empty(&em28xx_extension_devlist)) {
+		list_for_each_entry(ops, &em28xx_extension_devlist, next) {
+			if (ops->fini)
+				ops->fini(dev);
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&em28xx_devlist_mutex);
 }

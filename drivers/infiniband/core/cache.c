@@ -302,8 +302,12 @@ static void ib_cache_event(struct ib_event_handler *handler,
 	    event->event == IB_EVENT_LID_CHANGE  ||
 	    event->event == IB_EVENT_PKEY_CHANGE ||
 	    event->event == IB_EVENT_SM_CHANGE   ||
+<<<<<<< HEAD
 	    event->event == IB_EVENT_CLIENT_REREGISTER ||
 	    event->event == IB_EVENT_GID_CHANGE) {
+=======
+	    event->event == IB_EVENT_CLIENT_REREGISTER) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		work = kmalloc(sizeof *work, GFP_ATOMIC);
 		if (work) {
 			INIT_WORK(&work->work, ib_cache_task);

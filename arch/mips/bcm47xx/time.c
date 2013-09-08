@@ -30,7 +30,11 @@
 
 void __init plat_time_init(void)
 {
+<<<<<<< HEAD
 	unsigned long hz = 0;
+=======
+	unsigned long hz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Use deterministic values for initial counter interrupt
@@ -39,6 +43,7 @@ void __init plat_time_init(void)
 	write_c0_count(0);
 	write_c0_compare(0xffff);
 
+<<<<<<< HEAD
 	switch (bcm47xx_bus_type) {
 #ifdef CONFIG_BCM47XX_SSB
 	case BCM47XX_BUS_TYPE_SSB:
@@ -52,6 +57,9 @@ void __init plat_time_init(void)
 #endif
 	}
 
+=======
+	hz = ssb_cpu_clock(&ssb_bcm47xx.mipscore) / 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!hz)
 		hz = 100000000;
 

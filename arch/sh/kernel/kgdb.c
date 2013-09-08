@@ -14,7 +14,10 @@
 #include <linux/irq.h>
 #include <linux/io.h>
 #include <asm/cacheflush.h>
+<<<<<<< HEAD
 #include <asm/traps.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Macros for single step instruction identification */
 #define OPCODE_BT(op)		(((op) & 0xff00) == 0x8900)

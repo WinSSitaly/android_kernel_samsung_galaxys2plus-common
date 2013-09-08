@@ -12,6 +12,62 @@
  *
  * See Documentation/usb/usb-serial.txt for more information on using this
  * driver
+<<<<<<< HEAD
+=======
+ *
+ * (09/07/2001) gkh
+ *	cleaned up the Xircom support.  Added ids for Entregra device which is
+ *	the same as the Xircom device.  Enabled the code to be compiled for
+ *	either Xircom or Keyspan devices.
+ *
+ * (08/11/2001) Cristian M. Craciunescu
+ *	support for Xircom PGSDB9
+ *
+ * (05/31/2001) gkh
+ *	switched from using spinlock to a semaphore, which fixes lots of
+ *	problems.
+ *
+ * (04/08/2001) gb
+ *	Identify version on module load.
+ *
+ * (11/01/2000) Adam J. Richter
+ *	usb_device_id table support
+ *
+ * (10/05/2000) gkh
+ *	Fixed bug with urb->dev not being set properly, now that the usb
+ *	core needs it.
+ *
+ * (08/28/2000) gkh
+ *	Added locks for SMP safeness.
+ *	Fixed MOD_INC and MOD_DEC logic and the ability to open a port more
+ *	than once.
+ *
+ * (07/20/2000) borchers
+ *	- keyspan_pda_write no longer sleeps if it is called on interrupt time;
+ *	  PPP and the line discipline with stty echo on can call write on
+ *	  interrupt time and this would cause an oops if write slept
+ *	- if keyspan_pda_write is in an interrupt, it will not call
+ *	  usb_control_msg (which sleeps) to query the room in the device
+ *	  buffer, it simply uses the current room value it has
+ *	- if the urb is busy or if it is throttled keyspan_pda_write just
+ *	  returns 0, rather than sleeping to wait for this to change; the
+ *	  write_chan code in n_tty.c will sleep if needed before calling
+ *	  keyspan_pda_write again
+ *	- if the device needs to be unthrottled, write now queues up the
+ *	  call to usb_control_msg (which sleeps) to unthrottle the device
+ *	- the wakeups from keyspan_pda_write_bulk_callback are queued rather
+ *	  than done directly from the callback to avoid the race in write_chan
+ *	- keyspan_pda_chars_in_buffer also indicates its buffer is full if the
+ *	  urb status is -EINPROGRESS, meaning it cannot write at the moment
+ *
+ * (07/19/2000) gkh
+ *	Added module_init and module_exit functions to handle the fact that this
+ *	driver is a loadable module now.
+ *
+ * (03/26/2000) gkh
+ *	Split driver up into device specific pieces.
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 
@@ -31,7 +87,11 @@
 #include <linux/usb.h>
 #include <linux/usb/serial.h>
 
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* make a simple define to handle if we are compiling keyspan_pda or xircom support */
 #if defined(CONFIG_USB_SERIAL_KEYSPAN_PDA) || defined(CONFIG_USB_SERIAL_KEYSPAN_PDA_MODULE)
@@ -91,6 +151,10 @@ static struct usb_driver keyspan_pda_driver = {
 	.probe =	usb_serial_probe,
 	.disconnect =	usb_serial_disconnect,
 	.id_table =	id_table_combined,
+<<<<<<< HEAD
+=======
+	.no_dynamic_id = 	1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct usb_device_id id_table_std[] = {
@@ -236,6 +300,10 @@ static void keyspan_pda_rx_unthrottle(struct tty_struct *tty)
 	struct usb_serial_port *port = tty->driver_data;
 	/* just restart the receive interrupt URB */
 	dbg("keyspan_pda_rx_unthrottle port %d", port->number);
+<<<<<<< HEAD
+=======
+	port->interrupt_in_urb->dev = port->serial->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (usb_submit_urb(port->interrupt_in_urb, GFP_KERNEL))
 		dbg(" usb_submit_urb(read urb) failed");
 }
@@ -477,11 +545,19 @@ static int keyspan_pda_write(struct tty_struct *tty,
 	   the device is full (wait until it says there is room)
 	*/
 	spin_lock_bh(&port->lock);
+<<<<<<< HEAD
 	if (!test_bit(0, &port->write_urbs_free) || priv->tx_throttled) {
 		spin_unlock_bh(&port->lock);
 		return 0;
 	}
 	clear_bit(0, &port->write_urbs_free);
+=======
+	if (port->write_urb_busy || priv->tx_throttled) {
+		spin_unlock_bh(&port->lock);
+		return 0;
+	}
+	port->write_urb_busy = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_bh(&port->lock);
 
 	/* At this point the URB is in our control, nobody else can submit it
@@ -543,6 +619,10 @@ static int keyspan_pda_write(struct tty_struct *tty,
 
 		priv->tx_room -= count;
 
+<<<<<<< HEAD
+=======
+		port->write_urb->dev = port->serial->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = usb_submit_urb(port->write_urb, GFP_ATOMIC);
 		if (rc) {
 			dbg(" usb_submit_urb(write bulk) failed");
@@ -562,7 +642,11 @@ static int keyspan_pda_write(struct tty_struct *tty,
 	rc = count;
 exit:
 	if (rc < 0)
+<<<<<<< HEAD
 		set_bit(0, &port->write_urbs_free);
+=======
+		port->write_urb_busy = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -572,7 +656,11 @@ static void keyspan_pda_write_bulk_callback(struct urb *urb)
 	struct usb_serial_port *port = urb->context;
 	struct keyspan_pda_private *priv;
 
+<<<<<<< HEAD
 	set_bit(0, &port->write_urbs_free);
+=======
+	port->write_urb_busy = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	priv = usb_get_serial_port_data(port);
 
 	/* queue up a wakeup at scheduler time */
@@ -605,7 +693,11 @@ static int keyspan_pda_chars_in_buffer(struct tty_struct *tty)
 	   n_tty.c:normal_poll() ) that we're not writeable. */
 
 	spin_lock_irqsave(&port->lock, flags);
+<<<<<<< HEAD
 	if (!test_bit(0, &port->write_urbs_free) || priv->tx_throttled)
+=======
+	if (port->write_urb_busy || priv->tx_throttled)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = 256;
 	spin_unlock_irqrestore(&port->lock, flags);
 	return ret;
@@ -661,6 +753,10 @@ static int keyspan_pda_open(struct tty_struct *tty,
 	priv->tx_throttled = *room ? 0 : 1;
 
 	/*Start reading from the device*/
+<<<<<<< HEAD
+=======
+	port->interrupt_in_urb->dev = serial->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = usb_submit_urb(port->interrupt_in_urb, GFP_KERNEL);
 	if (rc) {
 		dbg("%s - usb_submit_urb(read int) failed", __func__);
@@ -778,6 +874,10 @@ static struct usb_serial_driver keyspan_pda_fake_device = {
 		.name =		"keyspan_pda_pre",
 	},
 	.description =		"Keyspan PDA - (prerenumeration)",
+<<<<<<< HEAD
+=======
+	.usb_driver = 		&keyspan_pda_driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table =		id_table_fake,
 	.num_ports =		1,
 	.attach =		keyspan_pda_fake_startup,
@@ -791,6 +891,10 @@ static struct usb_serial_driver xircom_pgs_fake_device = {
 		.name =		"xircom_no_firm",
 	},
 	.description =		"Xircom / Entregra PGS - (prerenumeration)",
+<<<<<<< HEAD
+=======
+	.usb_driver = 		&keyspan_pda_driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table =		id_table_fake_xircom,
 	.num_ports =		1,
 	.attach =		keyspan_pda_fake_startup,
@@ -803,6 +907,10 @@ static struct usb_serial_driver keyspan_pda_device = {
 		.name =		"keyspan_pda",
 	},
 	.description =		"Keyspan PDA",
+<<<<<<< HEAD
+=======
+	.usb_driver = 		&keyspan_pda_driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table =		id_table_std,
 	.num_ports =		1,
 	.dtr_rts =		keyspan_pda_dtr_rts,
@@ -823,6 +931,7 @@ static struct usb_serial_driver keyspan_pda_device = {
 	.release =		keyspan_pda_release,
 };
 
+<<<<<<< HEAD
 static struct usb_serial_driver * const serial_drivers[] = {
 	&keyspan_pda_device,
 #ifdef KEYSPAN
@@ -835,6 +944,63 @@ static struct usb_serial_driver * const serial_drivers[] = {
 };
 
 module_usb_serial_driver(keyspan_pda_driver, serial_drivers);
+=======
+
+static int __init keyspan_pda_init(void)
+{
+	int retval;
+	retval = usb_serial_register(&keyspan_pda_device);
+	if (retval)
+		goto failed_pda_register;
+#ifdef KEYSPAN
+	retval = usb_serial_register(&keyspan_pda_fake_device);
+	if (retval)
+		goto failed_pda_fake_register;
+#endif
+#ifdef XIRCOM
+	retval = usb_serial_register(&xircom_pgs_fake_device);
+	if (retval)
+		goto failed_xircom_register;
+#endif
+	retval = usb_register(&keyspan_pda_driver);
+	if (retval)
+		goto failed_usb_register;
+	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_VERSION ":"
+	       DRIVER_DESC "\n");
+	return 0;
+failed_usb_register:
+#ifdef XIRCOM
+	usb_serial_deregister(&xircom_pgs_fake_device);
+failed_xircom_register:
+#endif /* XIRCOM */
+#ifdef KEYSPAN
+	usb_serial_deregister(&keyspan_pda_fake_device);
+#endif
+#ifdef KEYSPAN
+failed_pda_fake_register:
+#endif
+	usb_serial_deregister(&keyspan_pda_device);
+failed_pda_register:
+	return retval;
+}
+
+
+static void __exit keyspan_pda_exit(void)
+{
+	usb_deregister(&keyspan_pda_driver);
+	usb_serial_deregister(&keyspan_pda_device);
+#ifdef KEYSPAN
+	usb_serial_deregister(&keyspan_pda_fake_device);
+#endif
+#ifdef XIRCOM
+	usb_serial_deregister(&xircom_pgs_fake_device);
+#endif
+}
+
+
+module_init(keyspan_pda_init);
+module_exit(keyspan_pda_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR(DRIVER_AUTHOR);
 MODULE_DESCRIPTION(DRIVER_DESC);
@@ -842,3 +1008,7 @@ MODULE_LICENSE("GPL");
 
 module_param(debug, bool, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(debug, "Debug enabled or not");
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -54,9 +54,15 @@ typedef struct IsdnCardState	IsdnCardState_t;
 typedef struct IsdnCard		IsdnCard_t;
 
 struct IsdnCard {
+<<<<<<< HEAD
 	int typ;
 	int protocol;	/* EDSS1, 1TR6 or NI1 */
 	unsigned long para[4];
+=======
+	int		typ;
+	int 		protocol;	/* EDSS1, 1TR6 or NI1 */
+	unsigned long	para[4];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	IsdnCardState_t	*cs;
 };
 

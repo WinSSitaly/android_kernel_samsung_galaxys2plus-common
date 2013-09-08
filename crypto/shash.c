@@ -17,8 +17,11 @@
 #include <linux/module.h>
 #include <linux/slab.h>
 #include <linux/seq_file.h>
+<<<<<<< HEAD
 #include <linux/cryptouser.h>
 #include <net/netlink.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "internal.h"
 
@@ -281,10 +284,17 @@ int shash_ahash_digest(struct ahash_request *req, struct shash_desc *desc)
 	if (nbytes < min(sg->length, ((unsigned int)(PAGE_SIZE)) - offset)) {
 		void *data;
 
+<<<<<<< HEAD
 		data = kmap_atomic(sg_page(sg));
 		err = crypto_shash_digest(desc, data + offset, nbytes,
 					  req->result);
 		kunmap_atomic(data);
+=======
+		data = crypto_kmap(sg_page(sg), 0);
+		err = crypto_shash_digest(desc, data + offset, nbytes,
+					  req->result);
+		crypto_kunmap(data, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		crypto_yield(desc->flags);
 	} else
 		err = crypto_shash_init(desc) ?:
@@ -420,9 +430,15 @@ static int shash_compat_digest(struct hash_desc *hdesc, struct scatterlist *sg,
 
 		desc->flags = hdesc->flags;
 
+<<<<<<< HEAD
 		data = kmap_atomic(sg_page(sg));
 		err = crypto_shash_digest(desc, data + offset, nbytes, out);
 		kunmap_atomic(data);
+=======
+		data = crypto_kmap(sg_page(sg), 0);
+		err = crypto_shash_digest(desc, data + offset, nbytes, out);
+		crypto_kunmap(data, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		crypto_yield(desc->flags);
 		goto out;
 	}
@@ -524,6 +540,7 @@ static unsigned int crypto_shash_extsize(struct crypto_alg *alg)
 	return alg->cra_ctxsize;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_NET
 static int crypto_shash_report(struct sk_buff *skb, struct crypto_alg *alg)
 {
@@ -550,6 +567,8 @@ static int crypto_shash_report(struct sk_buff *skb, struct crypto_alg *alg)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void crypto_shash_show(struct seq_file *m, struct crypto_alg *alg)
 	__attribute__ ((unused));
 static void crypto_shash_show(struct seq_file *m, struct crypto_alg *alg)
@@ -569,7 +588,10 @@ static const struct crypto_type crypto_shash_type = {
 #ifdef CONFIG_PROC_FS
 	.show = crypto_shash_show,
 #endif
+<<<<<<< HEAD
 	.report = crypto_shash_report,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.maskclear = ~CRYPTO_ALG_TYPE_MASK,
 	.maskset = CRYPTO_ALG_TYPE_MASK,
 	.type = CRYPTO_ALG_TYPE_SHASH,

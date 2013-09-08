@@ -78,6 +78,7 @@ static void rfc2863_policy(struct net_device *dev)
 
 static bool linkwatch_urgent_event(struct net_device *dev)
 {
+<<<<<<< HEAD
 	if (!netif_running(dev))
 		return false;
 
@@ -85,6 +86,10 @@ static bool linkwatch_urgent_event(struct net_device *dev)
 		return true;
 
 	return netif_carrier_ok(dev) &&	qdisc_tx_changing(dev);
+=======
+	return netif_running(dev) && netif_carrier_ok(dev) &&
+		qdisc_tx_changing(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2010 Realtek Corporation. All rights reserved.
@@ -23,6 +24,8 @@
  * Larry Finger <Larry.Finger@lwfinger.net>
  *
  ******************************************************************************/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __RTL871X_MLME_H_
 #define __RTL871X_MLME_H_
 
@@ -95,7 +98,10 @@ struct mlme_priv {
 	struct  __queue scanned_queue;
 	u8 *free_bss_buf;
 	unsigned long num_of_scanned;
+<<<<<<< HEAD
 	u8 passive_mode; /*add for Android's SCAN-ACTIVE/SCAN-PASSIVE */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ndis_802_11_ssid	assoc_ssid;
 	u8 assoc_bssid[6];
 	struct wlan_network cur_network;
@@ -227,6 +233,11 @@ void r8712_joinbss_reset(struct _adapter *padapter);
 unsigned int r8712_restructure_ht_ie(struct _adapter *padapter, u8 *in_ie,
 				     u8 *out_ie, uint in_len, uint *pout_len);
 void r8712_issue_addbareq_cmd(struct _adapter *padapter, int priority);
+<<<<<<< HEAD
+=======
+unsigned int r8712_add_ht_addt_info(struct _adapter *padapter, u8 *in_ie,
+				    u8 *out_ie, uint in_len, uint *pout_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int r8712_is_same_ibss(struct _adapter *adapter, struct wlan_network *pnetwork);
 
 #endif /*__RTL871X_MLME_H_*/

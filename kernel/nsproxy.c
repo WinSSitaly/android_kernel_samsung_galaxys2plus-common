@@ -14,7 +14,11 @@
  */
 
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/nsproxy.h>
 #include <linux/init_task.h>
 #include <linux/mnt_namespace.h>
@@ -271,8 +275,17 @@ out:
 	return err;
 }
 
+<<<<<<< HEAD
 int __init nsproxy_cache_init(void)
+=======
+static int __init nsproxy_cache_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	nsproxy_cachep = KMEM_CACHE(nsproxy, SLAB_PANIC);
 	return 0;
 }
+<<<<<<< HEAD
+=======
+
+module_init(nsproxy_cache_init);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

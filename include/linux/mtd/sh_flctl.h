@@ -23,7 +23,10 @@
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/nand.h>
 #include <linux/mtd/partitions.h>
+<<<<<<< HEAD
 #include <linux/pm_qos.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* FLCTL registers */
 #define FLCMNCR(f)		(f->reg + 0x0)
@@ -39,7 +42,10 @@
 #define FLDTFIFO(f)		(f->reg + 0x24)
 #define FLECFIFO(f)		(f->reg + 0x28)
 #define FLTRCR(f)		(f->reg + 0x2C)
+<<<<<<< HEAD
 #define FLHOLDCR(f)		(f->reg + 0x38)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define	FL4ECCRESULT0(f)	(f->reg + 0x80)
 #define	FL4ECCRESULT1(f)	(f->reg + 0x84)
 #define	FL4ECCRESULT2(f)	(f->reg + 0x88)
@@ -69,6 +75,7 @@
 #define	CE0_ENABLE	(0x1 << 3)	/* Chip Enable 0 */
 #define	TYPESEL_SET	(0x1 << 0)
 
+<<<<<<< HEAD
 /*
  * Clock settings using the PULSEx registers from FLCMNCR
  *
@@ -93,6 +100,8 @@
 #define CLK_16B_9L_3H			(PULSE0 | PULSE1 | PULSE2)
 #define CLK_16B_12L_4H			(PULSE0 | PULSE2)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* FLCMDCR control bits */
 #define ADRCNT2_E	(0x1 << 31)	/* 5byte address enable */
 #define ADRMD_E		(0x1 << 26)	/* Sector address access */
@@ -111,6 +120,7 @@
 #define TRSTRT		(0x1 << 0)	/* translation start */
 #define TREND		(0x1 << 1)	/* translation end */
 
+<<<<<<< HEAD
 /*
  * FLHOLDCR control bits
  *
@@ -120,6 +130,8 @@
  */
 #define HOLDEN		(0x1 << 0)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* FL4ECCCR control bits */
 #define	_4ECCFA		(0x1 << 2)	/* 4 symbols correct fault */
 #define	_4ECCEND	(0x1 << 1)	/* 4 symbols end */
@@ -132,7 +144,10 @@ struct sh_flctl {
 	struct mtd_info		mtd;
 	struct nand_chip	chip;
 	struct platform_device	*pdev;
+<<<<<<< HEAD
 	struct dev_pm_qos_request pm_qos;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void __iomem		*reg;
 
 	uint8_t	done_buff[2048 + 64];	/* max size 2048 + 64 */
@@ -144,14 +159,20 @@ struct sh_flctl {
 	int	erase1_page_addr;	/* page_addr in ERASE1 cmd */
 	uint32_t erase_ADRCNT;		/* bits of FLCMDCR in ERASE1 cmd */
 	uint32_t rw_ADRCNT;	/* bits of FLCMDCR in READ WRITE cmd */
+<<<<<<< HEAD
 	uint32_t flcmncr_base;	/* base value of FLCMNCR */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int	hwecc_cant_correct[4];
 
 	unsigned page_size:1;	/* NAND page size (0 = 512, 1 = 2048) */
 	unsigned hwecc:1;	/* Hardware ECC (0 = disabled, 1 = enabled) */
+<<<<<<< HEAD
 	unsigned holden:1;	/* Hardware has FLHOLDCR and HOLDEN is set */
 	unsigned qos_request:1;	/* QoS request to prevent deep power shutdown */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct sh_flctl_platform_data {
@@ -160,7 +181,10 @@ struct sh_flctl_platform_data {
 	unsigned long		flcmncr_val;
 
 	unsigned has_hwecc:1;
+<<<<<<< HEAD
 	unsigned use_holden:1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline struct sh_flctl *mtd_to_flctl(struct mtd_info *mtdinfo)

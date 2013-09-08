@@ -105,6 +105,12 @@ fp_fetoxm1(struct fp_ext *dest, struct fp_ext *src)
 
 	fp_monadic_check(dest, src);
 
+<<<<<<< HEAD
+=======
+	if (IS_ZERO(dest))
+		return dest;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return dest;
 }
 

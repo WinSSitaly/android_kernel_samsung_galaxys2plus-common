@@ -37,7 +37,10 @@
 struct file_operations;
 
 #include <linux/debugfs.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "ipoib.h"
 
@@ -213,15 +216,27 @@ static int ipoib_path_seq_show(struct seq_file *file, void *iter_ptr)
 		   gid_buf, path.pathrec.dlid ? "yes" : "no");
 
 	if (path.pathrec.dlid) {
+<<<<<<< HEAD
 		rate = ib_rate_to_mbps(path.pathrec.rate);
+=======
+		rate = ib_rate_to_mult(path.pathrec.rate) * 25;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		seq_printf(file,
 			   "  DLID:     0x%04x\n"
 			   "  SL: %12d\n"
+<<<<<<< HEAD
 			   "  rate: %8d.%d Gb/sec\n",
 			   be16_to_cpu(path.pathrec.dlid),
 			   path.pathrec.sl,
 			   rate / 1000, rate % 1000);
+=======
+			   "  rate: %*d%s Gb/sec\n",
+			   be16_to_cpu(path.pathrec.dlid),
+			   path.pathrec.sl,
+			   10 - ((rate % 10) ? 2 : 0),
+			   rate / 10, rate % 10 ? ".5" : "");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	seq_putc(file, '\n');

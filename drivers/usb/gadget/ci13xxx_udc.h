@@ -127,7 +127,11 @@ struct ci13xxx {
 	struct ci13xxx_ep          ci13xxx_ep[ENDPT_MAX]; /* extended endpts */
 	u32                        ep0_dir;    /* ep0 direction */
 #define ep0out ci13xxx_ep[0]
+<<<<<<< HEAD
 #define ep0in  ci13xxx_ep[hw_ep_max / 2]
+=======
+#define ep0in  ci13xxx_ep[16]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8                         remote_wakeup; /* Is remote wakeup feature
 							enabled by the host? */
 	u8                         suspended;  /* suspended by the host */
@@ -136,7 +140,11 @@ struct ci13xxx {
 	struct usb_gadget_driver  *driver;     /* 3rd party gadget driver */
 	struct ci13xxx_udc_driver *udc_driver; /* device controller driver */
 	int                        vbus_active; /* is VBUS active */
+<<<<<<< HEAD
 	struct usb_phy            *transceiver; /* Transceiver struct */
+=======
+	struct otg_transceiver    *transceiver; /* Transceiver struct */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /******************************************************************************

@@ -15,7 +15,10 @@
 #include <linux/timer.h>
 #include <linux/wait.h>
 #include <linux/list.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/fs.h>
 #include <linux/poll.h>
 #include <linux/kref.h>
@@ -145,7 +148,11 @@ struct rchan_callbacks
 	 */
 	struct dentry *(*create_buf_file)(const char *filename,
 					  struct dentry *parent,
+<<<<<<< HEAD
 					  umode_t mode,
+=======
+					  int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					  struct rchan_buf *buf,
 					  int *is_global);
 

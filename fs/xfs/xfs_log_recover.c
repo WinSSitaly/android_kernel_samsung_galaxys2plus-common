@@ -91,8 +91,11 @@ xlog_get_bp(
 	xlog_t		*log,
 	int		nbblks)
 {
+<<<<<<< HEAD
 	struct xfs_buf	*bp;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!xlog_buf_bbcount_valid(log, nbblks)) {
 		xfs_warn(log->l_mp, "Invalid block length (0x%x) for buffer",
 			nbblks);
@@ -120,10 +123,15 @@ xlog_get_bp(
 		nbblks += log->l_sectBBsize;
 	nbblks = round_up(nbblks, log->l_sectBBsize);
 
+<<<<<<< HEAD
 	bp = xfs_buf_get_uncached(log->l_mp->m_logdev_targp, BBTOB(nbblks), 0);
 	if (bp)
 		xfs_buf_unlock(bp);
 	return bp;
+=======
+	return xfs_buf_get_uncached(log->l_mp->m_logdev_targp,
+					BBTOB(nbblks), 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 STATIC void
@@ -147,7 +155,11 @@ xlog_align(
 	xfs_daddr_t	offset = blk_no & ((xfs_daddr_t)log->l_sectBBsize - 1);
 
 	ASSERT(BBTOB(offset + nbblks) <= XFS_BUF_SIZE(bp));
+<<<<<<< HEAD
 	return bp->b_addr + BBTOB(offset);
+=======
+	return XFS_BUF_PTR(bp) + BBTOB(offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -178,12 +190,23 @@ xlog_bread_noalign(
 
 	XFS_BUF_SET_ADDR(bp, log->l_logBBstart + blk_no);
 	XFS_BUF_READ(bp);
+<<<<<<< HEAD
 	XFS_BUF_SET_COUNT(bp, BBTOB(nbblks));
+=======
+	XFS_BUF_BUSY(bp);
+	XFS_BUF_SET_COUNT(bp, BBTOB(nbblks));
+	XFS_BUF_SET_TARGET(bp, log->l_mp->m_logdev_targp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	xfsbdstrat(log->l_mp, bp);
 	error = xfs_buf_iowait(bp);
 	if (error)
+<<<<<<< HEAD
 		xfs_buf_ioerror_alert(bp, __func__);
+=======
+		xfs_ioerror_alert("xlog_bread", log->l_mp,
+				  bp, XFS_BUF_ADDR(bp));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error;
 }
 
@@ -217,18 +240,30 @@ xlog_bread_offset(
 	xfs_buf_t	*bp,
 	xfs_caddr_t	offset)
 {
+<<<<<<< HEAD
 	xfs_caddr_t	orig_offset = bp->b_addr;
 	int		orig_len = bp->b_buffer_length;
 	int		error, error2;
 
 	error = xfs_buf_associate_memory(bp, offset, BBTOB(nbblks));
+=======
+	xfs_caddr_t	orig_offset = XFS_BUF_PTR(bp);
+	int		orig_len = bp->b_buffer_length;
+	int		error, error2;
+
+	error = XFS_BUF_SET_PTR(bp, offset, BBTOB(nbblks));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error)
 		return error;
 
 	error = xlog_bread_noalign(log, blk_no, nbblks, bp);
 
 	/* must reset buffer pointer even on error */
+<<<<<<< HEAD
 	error2 = xfs_buf_associate_memory(bp, orig_offset, orig_len);
+=======
+	error2 = XFS_BUF_SET_PTR(bp, orig_offset, orig_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error)
 		return error;
 	return error2;
@@ -263,6 +298,7 @@ xlog_bwrite(
 
 	XFS_BUF_SET_ADDR(bp, log->l_logBBstart + blk_no);
 	XFS_BUF_ZEROFLAGS(bp);
+<<<<<<< HEAD
 	xfs_buf_hold(bp);
 	xfs_buf_lock(bp);
 	XFS_BUF_SET_COUNT(bp, BBTOB(nbblks));
@@ -271,6 +307,17 @@ xlog_bwrite(
 	if (error)
 		xfs_buf_ioerror_alert(bp, __func__);
 	xfs_buf_relse(bp);
+=======
+	XFS_BUF_BUSY(bp);
+	XFS_BUF_HOLD(bp);
+	XFS_BUF_PSEMA(bp, PRIBIO);
+	XFS_BUF_SET_COUNT(bp, BBTOB(nbblks));
+	XFS_BUF_SET_TARGET(bp, log->l_mp->m_logdev_targp);
+
+	if ((error = xfs_bwrite(log->l_mp, bp)))
+		xfs_ioerror_alert("xlog_bwrite", log->l_mp,
+				  bp, XFS_BUF_ADDR(bp));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error;
 }
 
@@ -300,14 +347,22 @@ xlog_header_check_recover(
 	xfs_mount_t		*mp,
 	xlog_rec_header_t	*head)
 {
+<<<<<<< HEAD
 	ASSERT(head->h_magicno == cpu_to_be32(XLOG_HEADER_MAGIC_NUM));
+=======
+	ASSERT(be32_to_cpu(head->h_magicno) == XLOG_HEADER_MAGIC_NUM);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * IRIX doesn't write the h_fmt field and leaves it zeroed
 	 * (XLOG_FMT_UNKNOWN). This stops us from trying to recover
 	 * a dirty log created in IRIX.
 	 */
+<<<<<<< HEAD
 	if (unlikely(head->h_fmt != cpu_to_be32(XLOG_FMT))) {
+=======
+	if (unlikely(be32_to_cpu(head->h_fmt) != XLOG_FMT)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		xfs_warn(mp,
 	"dirty log written in incompatible format - can't recover");
 		xlog_header_check_dump(mp, head);
@@ -333,7 +388,11 @@ xlog_header_check_mount(
 	xfs_mount_t		*mp,
 	xlog_rec_header_t	*head)
 {
+<<<<<<< HEAD
 	ASSERT(head->h_magicno == cpu_to_be32(XLOG_HEADER_MAGIC_NUM));
+=======
+	ASSERT(be32_to_cpu(head->h_magicno) == XLOG_HEADER_MAGIC_NUM);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (uuid_is_nil(&head->h_fs_uuid)) {
 		/*
@@ -356,16 +415,30 @@ STATIC void
 xlog_recover_iodone(
 	struct xfs_buf	*bp)
 {
+<<<<<<< HEAD
 	if (bp->b_error) {
+=======
+	if (XFS_BUF_GETERROR(bp)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * We're not going to bother about retrying
 		 * this during recovery. One strike!
 		 */
+<<<<<<< HEAD
 		xfs_buf_ioerror_alert(bp, __func__);
 		xfs_force_shutdown(bp->b_target->bt_mount,
 					SHUTDOWN_META_IO_ERROR);
 	}
 	bp->b_iodone = NULL;
+=======
+		xfs_ioerror_alert("xlog_recover_iodone",
+					bp->b_target->bt_mount, bp,
+					XFS_BUF_ADDR(bp));
+		xfs_force_shutdown(bp->b_target->bt_mount,
+					SHUTDOWN_META_IO_ERROR);
+	}
+	XFS_BUF_CLR_IODONE_FUNC(bp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	xfs_buf_ioend(bp, 0);
 }
 
@@ -532,7 +605,11 @@ xlog_find_verify_log_record(
 
 		head = (xlog_rec_header_t *)offset;
 
+<<<<<<< HEAD
 		if (head->h_magicno == cpu_to_be32(XLOG_HEADER_MAGIC_NUM))
+=======
+		if (XLOG_HEADER_MAGIC_NUM == be32_to_cpu(head->h_magicno))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		if (!smallmem)
@@ -914,7 +991,11 @@ xlog_find_tail(
 		if (error)
 			goto done;
 
+<<<<<<< HEAD
 		if (*(__be32 *)offset == cpu_to_be32(XLOG_HEADER_MAGIC_NUM)) {
+=======
+		if (XLOG_HEADER_MAGIC_NUM == be32_to_cpu(*(__be32 *)offset)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			found = 1;
 			break;
 		}
@@ -931,8 +1012,13 @@ xlog_find_tail(
 			if (error)
 				goto done;
 
+<<<<<<< HEAD
 			if (*(__be32 *)offset ==
 			    cpu_to_be32(XLOG_HEADER_MAGIC_NUM)) {
+=======
+			if (XLOG_HEADER_MAGIC_NUM ==
+			    be32_to_cpu(*(__be32 *)offset)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				found = 2;
 				break;
 			}
@@ -965,9 +1051,15 @@ xlog_find_tail(
 		log->l_curr_cycle++;
 	atomic64_set(&log->l_tail_lsn, be64_to_cpu(rhead->h_tail_lsn));
 	atomic64_set(&log->l_last_sync_lsn, be64_to_cpu(rhead->h_lsn));
+<<<<<<< HEAD
 	xlog_assign_grant_head(&log->l_reserve_head.grant, log->l_curr_cycle,
 					BBTOB(log->l_curr_block));
 	xlog_assign_grant_head(&log->l_write_head.grant, log->l_curr_cycle,
+=======
+	xlog_assign_grant_head(&log->l_grant_reserve_head, log->l_curr_cycle,
+					BBTOB(log->l_curr_block));
+	xlog_assign_grant_head(&log->l_grant_write_head, log->l_curr_cycle,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					BBTOB(log->l_curr_block));
 
 	/*
@@ -1256,7 +1348,11 @@ xlog_write_log_records(
 		 */
 		ealign = round_down(end_block, sectbb);
 		if (j == 0 && (start_block + endcount > ealign)) {
+<<<<<<< HEAD
 			offset = bp->b_addr + BBTOB(ealign - start_block);
+=======
+			offset = XFS_BUF_PTR(bp) + BBTOB(ealign - start_block);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			error = xlog_bread_offset(log, ealign, sectbb,
 							bp, offset);
 			if (error)
@@ -1489,7 +1585,11 @@ xlog_recover_add_to_cont_trans(
 	old_ptr = item->ri_buf[item->ri_cnt-1].i_addr;
 	old_len = item->ri_buf[item->ri_cnt-1].i_len;
 
+<<<<<<< HEAD
 	ptr = kmem_realloc(old_ptr, len+old_len, old_len, KM_SLEEP);
+=======
+	ptr = kmem_realloc(old_ptr, len+old_len, old_len, 0u);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy(&ptr[old_len], dp, len); /* d, s, l */
 	item->ri_buf[item->ri_cnt-1].i_len += len;
 	item->ri_buf[item->ri_cnt-1].i_addr = ptr;
@@ -1945,7 +2045,11 @@ xfs_qm_dqcheck(
 	 * This is all fine; things are still consistent, and we haven't lost
 	 * any quota information. Just don't complain about bad dquot blks.
 	 */
+<<<<<<< HEAD
 	if (ddq->d_magic != cpu_to_be16(XFS_DQUOT_MAGIC)) {
+=======
+	if (be16_to_cpu(ddq->d_magic) != XFS_DQUOT_MAGIC) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (flags & XFS_QMOPT_DOWARN)
 			xfs_alert(mp,
 			"%s : XFS dquot ID 0x%x, magic 0x%x != 0x%x",
@@ -1981,7 +2085,11 @@ xfs_qm_dqcheck(
 
 	if (!errs && ddq->d_id) {
 		if (ddq->d_blk_softlimit &&
+<<<<<<< HEAD
 		    be64_to_cpu(ddq->d_bcount) >
+=======
+		    be64_to_cpu(ddq->d_bcount) >=
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				be64_to_cpu(ddq->d_blk_softlimit)) {
 			if (!ddq->d_btimer) {
 				if (flags & XFS_QMOPT_DOWARN)
@@ -1992,7 +2100,11 @@ xfs_qm_dqcheck(
 			}
 		}
 		if (ddq->d_ino_softlimit &&
+<<<<<<< HEAD
 		    be64_to_cpu(ddq->d_icount) >
+=======
+		    be64_to_cpu(ddq->d_icount) >=
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				be64_to_cpu(ddq->d_ino_softlimit)) {
 			if (!ddq->d_itimer) {
 				if (flags & XFS_QMOPT_DOWARN)
@@ -2003,7 +2115,11 @@ xfs_qm_dqcheck(
 			}
 		}
 		if (ddq->d_rtb_softlimit &&
+<<<<<<< HEAD
 		    be64_to_cpu(ddq->d_rtbcount) >
+=======
+		    be64_to_cpu(ddq->d_rtbcount) >=
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				be64_to_cpu(ddq->d_rtb_softlimit)) {
 			if (!ddq->d_rtbtimer) {
 				if (flags & XFS_QMOPT_DOWARN)
@@ -2129,15 +2245,26 @@ xlog_recover_buffer_pass2(
 
 	bp = xfs_buf_read(mp->m_ddev_targp, buf_f->blf_blkno, buf_f->blf_len,
 			  buf_flags);
+<<<<<<< HEAD
 	if (!bp)
 		return XFS_ERROR(ENOMEM);
 	error = bp->b_error;
 	if (error) {
 		xfs_buf_ioerror_alert(bp, "xlog_recover_do..(read#1)");
+=======
+	if (XFS_BUF_ISERROR(bp)) {
+		xfs_ioerror_alert("xlog_recover_do..(read#1)", mp,
+				  bp, buf_f->blf_blkno);
+		error = XFS_BUF_GETERROR(bp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		xfs_buf_relse(bp);
 		return error;
 	}
 
+<<<<<<< HEAD
+=======
+	error = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (buf_f->blf_flags & XFS_BLF_INODE_BUF) {
 		error = xlog_recover_do_inode_buffer(mp, item, bp, buf_f);
 	} else if (buf_f->blf_flags &
@@ -2168,6 +2295,7 @@ xlog_recover_buffer_pass2(
 	    be16_to_cpu(*((__be16 *)xfs_buf_offset(bp, 0))) &&
 	    (XFS_BUF_COUNT(bp) != MAX(log->l_mp->m_sb.sb_blocksize,
 			(__uint32_t)XFS_INODE_CLUSTER_SIZE(log->l_mp)))) {
+<<<<<<< HEAD
 		xfs_buf_stale(bp);
 		error = xfs_bwrite(bp);
 	} else {
@@ -2178,6 +2306,17 @@ xlog_recover_buffer_pass2(
 
 	xfs_buf_relse(bp);
 	return error;
+=======
+		XFS_BUF_STALE(bp);
+		error = xfs_bwrite(mp, bp);
+	} else {
+		ASSERT(bp->b_target->bt_mount == mp);
+		XFS_BUF_SET_IODONE_FUNC(bp, xlog_recover_iodone);
+		xfs_bdwrite(mp, bp);
+	}
+
+	return (error);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 STATIC int
@@ -2222,6 +2361,7 @@ xlog_recover_inode_pass2(
 
 	bp = xfs_buf_read(mp->m_ddev_targp, in_f->ilf_blkno, in_f->ilf_len,
 			  XBF_LOCK);
+<<<<<<< HEAD
 	if (!bp) {
 		error = ENOMEM;
 		goto error;
@@ -2232,6 +2372,16 @@ xlog_recover_inode_pass2(
 		xfs_buf_relse(bp);
 		goto error;
 	}
+=======
+	if (XFS_BUF_ISERROR(bp)) {
+		xfs_ioerror_alert("xlog_recover_do..(read#2)", mp,
+				  bp, in_f->ilf_blkno);
+		error = XFS_BUF_GETERROR(bp);
+		xfs_buf_relse(bp);
+		goto error;
+	}
+	error = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ASSERT(in_f->ilf_fields & XFS_ILOG_CORE);
 	dip = (xfs_dinode_t *)xfs_buf_offset(bp, in_f->ilf_boffset);
 
@@ -2239,7 +2389,11 @@ xlog_recover_inode_pass2(
 	 * Make sure the place we're flushing out to really looks
 	 * like an inode!
 	 */
+<<<<<<< HEAD
 	if (unlikely(dip->di_magic != cpu_to_be16(XFS_DINODE_MAGIC))) {
+=======
+	if (unlikely(be16_to_cpu(dip->di_magic) != XFS_DINODE_MAGIC)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		xfs_buf_relse(bp);
 		xfs_alert(mp,
 	"%s: Bad inode magic number, dip = 0x%p, dino bp = 0x%p, ino = %Ld",
@@ -2280,7 +2434,11 @@ xlog_recover_inode_pass2(
 	/* Take the opportunity to reset the flush iteration count */
 	dicp->di_flushiter = 0;
 
+<<<<<<< HEAD
 	if (unlikely(S_ISREG(dicp->di_mode))) {
+=======
+	if (unlikely((dicp->di_mode & S_IFMT) == S_IFREG)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if ((dicp->di_format != XFS_DINODE_FMT_EXTENTS) &&
 		    (dicp->di_format != XFS_DINODE_FMT_BTREE)) {
 			XFS_CORRUPTION_ERROR("xlog_recover_inode_pass2(3)",
@@ -2293,7 +2451,11 @@ xlog_recover_inode_pass2(
 			error = EFSCORRUPTED;
 			goto error;
 		}
+<<<<<<< HEAD
 	} else if (unlikely(S_ISDIR(dicp->di_mode))) {
+=======
+	} else if (unlikely((dicp->di_mode & S_IFMT) == S_IFDIR)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if ((dicp->di_format != XFS_DINODE_FMT_EXTENTS) &&
 		    (dicp->di_format != XFS_DINODE_FMT_BTREE) &&
 		    (dicp->di_format != XFS_DINODE_FMT_LOCAL)) {
@@ -2435,9 +2597,14 @@ xlog_recover_inode_pass2(
 
 write_inode_buffer:
 	ASSERT(bp->b_target->bt_mount == mp);
+<<<<<<< HEAD
 	bp->b_iodone = xlog_recover_iodone;
 	xfs_buf_delwri_queue(bp);
 	xfs_buf_relse(bp);
+=======
+	XFS_BUF_SET_IODONE_FUNC(bp, xlog_recover_iodone);
+	xfs_bdwrite(mp, bp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 error:
 	if (need_free)
 		kmem_free(in_f);
@@ -2535,7 +2702,12 @@ xlog_recover_dquot_pass2(
 			     XFS_FSB_TO_BB(mp, dq_f->qlf_len),
 			     0, &bp);
 	if (error) {
+<<<<<<< HEAD
 		xfs_buf_ioerror_alert(bp, "xlog_recover_do..(read#3)");
+=======
+		xfs_ioerror_alert("xlog_recover_do..(read#3)", mp,
+				  bp, dq_f->qlf_blkno);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return error;
 	}
 	ASSERT(bp);
@@ -2557,9 +2729,14 @@ xlog_recover_dquot_pass2(
 
 	ASSERT(dq_f->qlf_size == 2);
 	ASSERT(bp->b_target->bt_mount == mp);
+<<<<<<< HEAD
 	bp->b_iodone = xlog_recover_iodone;
 	xfs_buf_delwri_queue(bp);
 	xfs_buf_relse(bp);
+=======
+	XFS_BUF_SET_IODONE_FUNC(bp, xlog_recover_iodone);
+	xfs_bdwrite(mp, bp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return (0);
 }
@@ -3286,7 +3463,11 @@ xlog_valid_rec_header(
 {
 	int			hlen;
 
+<<<<<<< HEAD
 	if (unlikely(rhead->h_magicno != cpu_to_be32(XLOG_HEADER_MAGIC_NUM))) {
+=======
+	if (unlikely(be32_to_cpu(rhead->h_magicno) != XLOG_HEADER_MAGIC_NUM)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		XFS_ERROR_REPORT("xlog_valid_rec_header(1)",
 				XFS_ERRLEVEL_LOW, log->l_mp);
 		return XFS_ERROR(EFSCORRUPTED);
@@ -3424,7 +3605,11 @@ xlog_do_recovery_pass(
 			/*
 			 * Check for header wrapping around physical end-of-log
 			 */
+<<<<<<< HEAD
 			offset = hbp->b_addr;
+=======
+			offset = XFS_BUF_PTR(hbp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			split_hblks = 0;
 			wrapped_hblks = 0;
 			if (blk_no + hblks <= log->l_logBBsize) {
@@ -3484,7 +3669,11 @@ xlog_do_recovery_pass(
 			} else {
 				/* This log record is split across the
 				 * physical end of log */
+<<<<<<< HEAD
 				offset = dbp->b_addr;
+=======
+				offset = XFS_BUF_PTR(dbp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				split_bblks = 0;
 				if (blk_no != log->l_logBBsize) {
 					/* some data is before the physical
@@ -3514,7 +3703,11 @@ xlog_do_recovery_pass(
 				 *   - order is important.
 				 */
 				error = xlog_bread_offset(log, 0,
+<<<<<<< HEAD
 						bblks - split_bblks, dbp,
+=======
+						bblks - split_bblks, hbp,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						offset + BBTOB(split_bblks));
 				if (error)
 					goto bread_err2;
@@ -3643,7 +3836,11 @@ xlog_do_recover(
 		return error;
 	}
 
+<<<<<<< HEAD
 	xfs_flush_buftarg(log->l_mp->m_ddev_targp, 1);
+=======
+	XFS_bflush(log->l_mp->m_ddev_targp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If IO errors happened during recovery, bail out.
@@ -3676,7 +3873,12 @@ xlog_do_recover(
 	xfsbdstrat(log->l_mp, bp);
 	error = xfs_buf_iowait(bp);
 	if (error) {
+<<<<<<< HEAD
 		xfs_buf_ioerror_alert(bp, __func__);
+=======
+		xfs_ioerror_alert("xlog_do_recover",
+				  log->l_mp, bp, XFS_BUF_ADDR(bp));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ASSERT(0);
 		xfs_buf_relse(bp);
 		return error;
@@ -3684,7 +3886,11 @@ xlog_do_recover(
 
 	/* Convert superblock from on-disk format */
 	sbp = &log->l_mp->m_sb;
+<<<<<<< HEAD
 	xfs_sb_from_disk(log->l_mp, XFS_BUF_TO_SBP(bp));
+=======
+	xfs_sb_from_disk(sbp, XFS_BUF_TO_SBP(bp));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ASSERT(sbp->sb_magicnum == XFS_SB_MAGIC);
 	ASSERT(xfs_sb_good_version(sbp));
 	xfs_buf_relse(bp);

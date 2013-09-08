@@ -13,23 +13,30 @@
 #include <linux/sysctl.h>
 #include <linux/init.h>
 #include <linux/fs.h>
+<<<<<<< HEAD
 
 #include <asm/setup.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "trace.h"
 
 #define STACK_TRACE_ENTRIES 500
 
+<<<<<<< HEAD
 #ifdef CC_USING_FENTRY
 # define fentry		1
 #else
 # define fentry		0
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned long stack_dump_trace[STACK_TRACE_ENTRIES+1] =
 	 { [0 ... (STACK_TRACE_ENTRIES)] = ULONG_MAX };
 static unsigned stack_dump_index[STACK_TRACE_ENTRIES];
 
+<<<<<<< HEAD
 /*
  * Reserve one entry for the passed in ip. This will allow
  * us to remove most or all of the stack size overhead
@@ -38,6 +45,11 @@ static unsigned stack_dump_index[STACK_TRACE_ENTRIES];
 static struct stack_trace max_stack_trace = {
 	.max_entries		= STACK_TRACE_ENTRIES - 1,
 	.entries		= &stack_dump_trace[1],
+=======
+static struct stack_trace max_stack_trace = {
+	.max_entries		= STACK_TRACE_ENTRIES,
+	.entries		= stack_dump_trace,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static unsigned long max_stack_size;
@@ -51,6 +63,7 @@ static DEFINE_MUTEX(stack_sysctl_mutex);
 int stack_tracer_enabled;
 static int last_stack_tracer_enabled;
 
+<<<<<<< HEAD
 static inline void
 check_stack(unsigned long ip, unsigned long *stack)
 {
@@ -64,21 +77,38 @@ check_stack(unsigned long ip, unsigned long *stack)
 	this_size = THREAD_SIZE - this_size;
 	/* Remove the frame of the tracer */
 	this_size -= frame_size;
+=======
+static inline void check_stack(void)
+{
+	unsigned long this_size, flags;
+	unsigned long *p, *top, *start;
+	int i;
+
+	this_size = ((unsigned long)&this_size) & (THREAD_SIZE-1);
+	this_size = THREAD_SIZE - this_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (this_size <= max_stack_size)
 		return;
 
 	/* we do not handle interrupt stacks yet */
+<<<<<<< HEAD
 	if (!object_is_on_stack(stack))
+=======
+	if (!object_is_on_stack(&this_size))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	local_irq_save(flags);
 	arch_spin_lock(&max_stack_lock);
 
+<<<<<<< HEAD
 	/* In case another CPU set the tracer_frame on us */
 	if (unlikely(!frame_size))
 		this_size -= tracer_frame;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* a race could have already updated it */
 	if (this_size <= max_stack_size)
 		goto out;
@@ -91,6 +121,7 @@ check_stack(unsigned long ip, unsigned long *stack)
 	save_stack_trace(&max_stack_trace);
 
 	/*
+<<<<<<< HEAD
 	 * Add the passed in ip from the function tracer.
 	 * Searching for this on the stack will skip over
 	 * most of the overhead from the stack tracer itself.
@@ -103,6 +134,12 @@ check_stack(unsigned long ip, unsigned long *stack)
 	 */
 	i = 0;
 	start = stack;
+=======
+	 * Now find where in the stack these are.
+	 */
+	i = 0;
+	start = &this_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	top = (unsigned long *)
 		(((unsigned long)start & ~(THREAD_SIZE-1)) + THREAD_SIZE);
 
@@ -126,6 +163,7 @@ check_stack(unsigned long ip, unsigned long *stack)
 				found = 1;
 				/* Start the search from here */
 				start = p + 1;
+<<<<<<< HEAD
 				/*
 				 * We do not want to show the overhead
 				 * of the stack tracer stack in the
@@ -138,6 +176,8 @@ check_stack(unsigned long ip, unsigned long *stack)
 						sizeof(unsigned long);
 					max_stack_size -= tracer_frame;
 				}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
@@ -153,7 +193,10 @@ check_stack(unsigned long ip, unsigned long *stack)
 static void
 stack_trace_call(unsigned long ip, unsigned long parent_ip)
 {
+<<<<<<< HEAD
 	unsigned long stack;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int cpu;
 
 	if (unlikely(!ftrace_enabled || stack_trace_disabled))
@@ -166,6 +209,7 @@ stack_trace_call(unsigned long ip, unsigned long parent_ip)
 	if (per_cpu(trace_active, cpu)++ != 0)
 		goto out;
 
+<<<<<<< HEAD
 	/*
 	 * When fentry is used, the traced function does not get
 	 * its stack frame set up, and we lose the parent.
@@ -186,6 +230,9 @@ stack_trace_call(unsigned long ip, unsigned long parent_ip)
 		ip += MCOUNT_INSN_SIZE;
 
 	check_stack(ip, &stack);
+=======
+	check_stack();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
  out:
 	per_cpu(trace_active, cpu)--;
@@ -196,6 +243,10 @@ stack_trace_call(unsigned long ip, unsigned long parent_ip)
 static struct ftrace_ops trace_ops __read_mostly =
 {
 	.func = stack_trace_call,
+<<<<<<< HEAD
+=======
+	.flags = FTRACE_OPS_FL_GLOBAL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static ssize_t
@@ -218,11 +269,28 @@ stack_max_size_write(struct file *filp, const char __user *ubuf,
 {
 	long *ptr = filp->private_data;
 	unsigned long val, flags;
+<<<<<<< HEAD
 	int ret;
 	int cpu;
 
 	ret = kstrtoul_from_user(ubuf, count, 10, &val);
 	if (ret)
+=======
+	char buf[64];
+	int ret;
+	int cpu;
+
+	if (count >= sizeof(buf))
+		return -EINVAL;
+
+	if (copy_from_user(&buf, ubuf, count))
+		return -EFAULT;
+
+	buf[count] = 0;
+
+	ret = strict_strtoul(buf, 10, &val);
+	if (ret < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 
 	local_irq_save(flags);
@@ -373,6 +441,7 @@ static const struct file_operations stack_trace_fops = {
 	.release	= seq_release,
 };
 
+<<<<<<< HEAD
 static int
 stack_trace_filter_open(struct inode *inode, struct file *file)
 {
@@ -388,6 +457,8 @@ static const struct file_operations stack_trace_filter_fops = {
 	.release = ftrace_regex_release,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int
 stack_trace_sysctl(struct ctl_table *table, int write,
 		   void __user *buffer, size_t *lenp,
@@ -415,6 +486,7 @@ stack_trace_sysctl(struct ctl_table *table, int write,
 	return ret;
 }
 
+<<<<<<< HEAD
 static char stack_trace_filter_buf[COMMAND_LINE_SIZE+1] __initdata;
 
 static __init int enable_stacktrace(char *str)
@@ -422,6 +494,10 @@ static __init int enable_stacktrace(char *str)
 	if (strncmp(str, "_filter=", 8) == 0)
 		strncpy(stack_trace_filter_buf, str+8, COMMAND_LINE_SIZE);
 
+=======
+static __init int enable_stacktrace(char *str)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	stack_tracer_enabled = 1;
 	last_stack_tracer_enabled = 1;
 	return 1;
@@ -433,8 +509,11 @@ static __init int stack_trace_init(void)
 	struct dentry *d_tracer;
 
 	d_tracer = tracing_init_dentry();
+<<<<<<< HEAD
 	if (!d_tracer)
 		return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	trace_create_file("stack_max_size", 0644, d_tracer,
 			&max_stack_size, &stack_max_size_fops);
@@ -442,12 +521,15 @@ static __init int stack_trace_init(void)
 	trace_create_file("stack_trace", 0444, d_tracer,
 			NULL, &stack_trace_fops);
 
+<<<<<<< HEAD
 	trace_create_file("stack_trace_filter", 0444, d_tracer,
 			NULL, &stack_trace_filter_fops);
 
 	if (stack_trace_filter_buf[0])
 		ftrace_set_early_filter(&trace_ops, stack_trace_filter_buf, 1);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (stack_tracer_enabled)
 		register_ftrace_function(&trace_ops);
 

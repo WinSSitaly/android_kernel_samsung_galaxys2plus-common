@@ -6,15 +6,22 @@
 #include <linux/amba/mmci.h>
 #include <linux/io.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/of_address.h>
 #include <linux/of_fdt.h>
 #include <linux/of_irq.h>
 #include <linux/of_platform.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <linux/ata_platform.h>
 #include <linux/smsc911x.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/usb/isp1760.h>
 #include <linux/clkdev.h>
 #include <linux/mtd/physmap.h>
@@ -25,11 +32,16 @@
 #include <asm/mach/map.h>
 #include <asm/mach/time.h>
 #include <asm/hardware/arm_timer.h>
+<<<<<<< HEAD
 #include <asm/hardware/cache-l2x0.h>
 #include <asm/hardware/gic.h>
 #include <asm/hardware/timer-sp.h>
 #include <asm/hardware/sp810.h>
 #include <asm/hardware/gic.h>
+=======
+#include <asm/hardware/timer-sp.h>
+#include <asm/hardware/sp810.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/ct-ca9x4.h>
 #include <mach/motherboard.h>
@@ -46,13 +58,18 @@
 
 static struct map_desc v2m_io_desc[] __initdata = {
 	{
+<<<<<<< HEAD
 		.virtual	= V2M_PERIPH,
+=======
+		.virtual	= __MMIO_P2V(V2M_PA_CS7),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.pfn		= __phys_to_pfn(V2M_PA_CS7),
 		.length		= SZ_128K,
 		.type		= MT_DEVICE,
 	},
 };
 
+<<<<<<< HEAD
 static void __iomem *v2m_sysreg_base;
 
 static void __init v2m_sysctl_init(void __iomem *base)
@@ -85,6 +102,24 @@ static void __init v2m_timer_init(void)
 {
 	v2m_sysctl_init(ioremap(V2M_SYSCTL, SZ_4K));
 	v2m_sp804_init(ioremap(V2M_TIMER01, SZ_4K), IRQ_V2M_TIMER0);
+=======
+static void __init v2m_timer_init(void)
+{
+	u32 scctrl;
+
+	/* Select 1MHz TIMCLK as the reference clock for SP804 timers */
+	scctrl = readl(MMIO_P2V(V2M_SYSCTL + SCCTRL));
+	scctrl |= SCCTRL_TIMEREN0SEL_TIMCLK;
+	scctrl |= SCCTRL_TIMEREN1SEL_TIMCLK;
+	writel(scctrl, MMIO_P2V(V2M_SYSCTL + SCCTRL));
+
+	writel(0, MMIO_P2V(V2M_TIMER0) + TIMER_CTRL);
+	writel(0, MMIO_P2V(V2M_TIMER1) + TIMER_CTRL);
+
+	sp804_clocksource_init(MMIO_P2V(V2M_TIMER1), "v2m-timer1");
+	sp804_clockevents_init(MMIO_P2V(V2M_TIMER0), IRQ_V2M_TIMER0,
+		"v2m-timer0");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct sys_timer v2m_timer = {
@@ -104,6 +139,7 @@ int v2m_cfg_write(u32 devfn, u32 data)
 	devfn |= SYS_CFG_START | SYS_CFG_WRITE;
 
 	spin_lock(&v2m_cfg_lock);
+<<<<<<< HEAD
 	val = readl(v2m_sysreg_base + V2M_SYS_CFGSTAT);
 	writel(val & ~SYS_CFG_COMPLETE, v2m_sysreg_base + V2M_SYS_CFGSTAT);
 
@@ -112,6 +148,16 @@ int v2m_cfg_write(u32 devfn, u32 data)
 
 	do {
 		val = readl(v2m_sysreg_base + V2M_SYS_CFGSTAT);
+=======
+	val = readl(MMIO_P2V(V2M_SYS_CFGSTAT));
+	writel(val & ~SYS_CFG_COMPLETE, MMIO_P2V(V2M_SYS_CFGSTAT));
+
+	writel(data, MMIO_P2V(V2M_SYS_CFGDATA));
+	writel(devfn, MMIO_P2V(V2M_SYS_CFGCTRL));
+
+	do {
+		val = readl(MMIO_P2V(V2M_SYS_CFGSTAT));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} while (val == 0);
 	spin_unlock(&v2m_cfg_lock);
 
@@ -125,28 +171,43 @@ int v2m_cfg_read(u32 devfn, u32 *data)
 	devfn |= SYS_CFG_START;
 
 	spin_lock(&v2m_cfg_lock);
+<<<<<<< HEAD
 	writel(0, v2m_sysreg_base + V2M_SYS_CFGSTAT);
 	writel(devfn, v2m_sysreg_base + V2M_SYS_CFGCTRL);
+=======
+	writel(0, MMIO_P2V(V2M_SYS_CFGSTAT));
+	writel(devfn, MMIO_P2V(V2M_SYS_CFGCTRL));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mb();
 
 	do {
 		cpu_relax();
+<<<<<<< HEAD
 		val = readl(v2m_sysreg_base + V2M_SYS_CFGSTAT);
 	} while (val == 0);
 
 	*data = readl(v2m_sysreg_base + V2M_SYS_CFGDATA);
+=======
+		val = readl(MMIO_P2V(V2M_SYS_CFGSTAT));
+	} while (val == 0);
+
+	*data = readl(MMIO_P2V(V2M_SYS_CFGDATA));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&v2m_cfg_lock);
 
 	return !!(val & SYS_CFG_ERR);
 }
 
+<<<<<<< HEAD
 void __init v2m_flags_set(u32 data)
 {
 	writel(~0, v2m_sysreg_base + V2M_SYS_FLAGSCLR);
 	writel(data, v2m_sysreg_base + V2M_SYS_FLAGSSET);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct resource v2m_pcie_i2c_resource = {
 	.start	= V2M_SERIAL_BUS_PCI,
@@ -232,7 +293,11 @@ static struct platform_device v2m_usb_device = {
 
 static void v2m_flash_set_vpp(struct platform_device *pdev, int on)
 {
+<<<<<<< HEAD
 	writel(on != 0, v2m_sysreg_base + V2M_SYS_FLASH);
+=======
+	writel(on != 0, MMIO_P2V(V2M_SYS_FLASH));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct physmap_flash_data v2m_flash_data = {
@@ -286,7 +351,11 @@ static struct platform_device v2m_cf_device = {
 
 static unsigned int v2m_mmci_status(struct device *dev)
 {
+<<<<<<< HEAD
 	return readl(v2m_sysreg_base + V2M_SYS_MCI) & (1 << 0);
+=======
+	return readl(MMIO_P2V(V2M_SYS_MCI)) & (1 << 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct mmci_platform_data v2m_mmci_data = {
@@ -294,6 +363,7 @@ static struct mmci_platform_data v2m_mmci_data = {
 	.status		= v2m_mmci_status,
 };
 
+<<<<<<< HEAD
 static AMBA_APB_DEVICE(aaci,  "mb:aaci",  0, V2M_AACI, IRQ_V2M_AACI, NULL);
 static AMBA_APB_DEVICE(mmci,  "mb:mmci",  0, V2M_MMCI, IRQ_V2M_MMCI, &v2m_mmci_data);
 static AMBA_APB_DEVICE(kmi0,  "mb:kmi0",  0, V2M_KMI0, IRQ_V2M_KMI0, NULL);
@@ -304,6 +374,18 @@ static AMBA_APB_DEVICE(uart2, "mb:uart2", 0, V2M_UART2, IRQ_V2M_UART2, NULL);
 static AMBA_APB_DEVICE(uart3, "mb:uart3", 0, V2M_UART3, IRQ_V2M_UART3, NULL);
 static AMBA_APB_DEVICE(wdt,   "mb:wdt",   0, V2M_WDT, IRQ_V2M_WDT, NULL);
 static AMBA_APB_DEVICE(rtc,   "mb:rtc",   0, V2M_RTC, IRQ_V2M_RTC, NULL);
+=======
+static AMBA_DEVICE(aaci,  "mb:aaci",  V2M_AACI, NULL);
+static AMBA_DEVICE(mmci,  "mb:mmci",  V2M_MMCI, &v2m_mmci_data);
+static AMBA_DEVICE(kmi0,  "mb:kmi0",  V2M_KMI0, NULL);
+static AMBA_DEVICE(kmi1,  "mb:kmi1",  V2M_KMI1, NULL);
+static AMBA_DEVICE(uart0, "mb:uart0", V2M_UART0, NULL);
+static AMBA_DEVICE(uart1, "mb:uart1", V2M_UART1, NULL);
+static AMBA_DEVICE(uart2, "mb:uart2", V2M_UART2, NULL);
+static AMBA_DEVICE(uart3, "mb:uart3", V2M_UART3, NULL);
+static AMBA_DEVICE(wdt,   "mb:wdt",   V2M_WDT, NULL);
+static AMBA_DEVICE(rtc,   "mb:rtc",   V2M_RTC, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct amba_device *v2m_amba_devs[] __initdata = {
 	&aaci_device,
@@ -347,10 +429,13 @@ static struct clk v2m_sp804_clk = {
 	.rate	= 1000000,
 };
 
+<<<<<<< HEAD
 static struct clk v2m_ref_clk = {
 	.rate   = 32768,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct clk dummy_apb_pclk;
 
 static struct clk_lookup v2m_lookups[] = {
@@ -381,9 +466,12 @@ static struct clk_lookup v2m_lookups[] = {
 	}, {	/* CLCD */
 		.dev_id		= "mb:clcd",
 		.clk		= &osc1_clk,
+<<<<<<< HEAD
 	}, {	/* SP805 WDT */
 		.dev_id		= "mb:wdt",
 		.clk		= &v2m_ref_clk,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}, {	/* SP804 timers */
 		.dev_id		= "sp804",
 		.con_id		= "v2m-timer0",
@@ -399,7 +487,11 @@ static void __init v2m_init_early(void)
 {
 	ct_desc->init_early();
 	clkdev_add_table(v2m_lookups, ARRAY_SIZE(v2m_lookups));
+<<<<<<< HEAD
 	versatile_sched_clock_init(v2m_sysreg_base + V2M_SYS_24MHZ, 24000000);
+=======
+	versatile_sched_clock_init(MMIO_P2V(V2M_SYS_24MHZ), 24000000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void v2m_power_off(void)
@@ -428,23 +520,35 @@ static void __init v2m_populate_ct_desc(void)
 	u32 current_tile_id;
 
 	ct_desc = NULL;
+<<<<<<< HEAD
 	current_tile_id = readl(v2m_sysreg_base + V2M_SYS_PROCID0)
 				& V2M_CT_ID_MASK;
+=======
+	current_tile_id = readl(MMIO_P2V(V2M_SYS_PROCID0)) & V2M_CT_ID_MASK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < ARRAY_SIZE(ct_descs) && !ct_desc; ++i)
 		if (ct_descs[i]->id == current_tile_id)
 			ct_desc = ct_descs[i];
 
 	if (!ct_desc)
+<<<<<<< HEAD
 		panic("vexpress: this kernel does not support core tile ID 0x%08x when booting via ATAGs.\n"
 		      "You may need a device tree blob or a different kernel to boot on this board.\n",
 		      current_tile_id);
+=======
+		panic("vexpress: failed to populate core tile description "
+		      "for tile ID 0x%8x\n", current_tile_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __init v2m_map_io(void)
 {
 	iotable_init(v2m_io_desc, ARRAY_SIZE(v2m_io_desc));
+<<<<<<< HEAD
 	v2m_sysreg_base = ioremap(V2M_SYSREGS, SZ_4K);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	v2m_populate_ct_desc();
 	ct_desc->map_io();
 }
@@ -469,16 +573,25 @@ static void __init v2m_init(void)
 		amba_device_register(v2m_amba_devs[i], &iomem_resource);
 
 	pm_power_off = v2m_power_off;
+<<<<<<< HEAD
+=======
+	arm_pm_restart = v2m_restart;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ct_desc->init_tile();
 }
 
 MACHINE_START(VEXPRESS, "ARM-Versatile Express")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= PLAT_PHYS_OFFSET + 0x00000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io		= v2m_map_io,
 	.init_early	= v2m_init_early,
 	.init_irq	= v2m_init_irq,
 	.timer		= &v2m_timer,
+<<<<<<< HEAD
 	.handle_irq	= gic_handle_irq,
 	.init_machine	= v2m_init,
 	.restart	= v2m_restart,
@@ -685,3 +798,7 @@ DT_MACHINE_START(VEXPRESS_DT, "ARM-Versatile Express")
 MACHINE_END
 
 #endif
+=======
+	.init_machine	= v2m_init,
+MACHINE_END
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

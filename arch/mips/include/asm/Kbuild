@@ -1,5 +1,9 @@
 include include/asm-generic/Kbuild.asm
 
+<<<<<<< HEAD
 header-y += cachectl.h
 header-y += sgidefs.h
 header-y += sysmips.h
+=======
+header-y += cachectl.h sgidefs.h sysmips.h
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

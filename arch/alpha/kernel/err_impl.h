@@ -7,8 +7,11 @@
  * 	implementations.
  */
 
+<<<<<<< HEAD
 #include <asm/mce.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 union el_timestamp;
 struct el_subpacket;
 struct ev7_lf_subpackets;

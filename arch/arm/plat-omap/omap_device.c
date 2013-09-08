@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * omap_device implementation
  *
@@ -79,7 +82,10 @@
 #undef DEBUG
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 #include <linux/err.h>
@@ -87,8 +93,11 @@
 #include <linux/clk.h>
 #include <linux/clkdev.h>
 #include <linux/pm_runtime.h>
+<<<<<<< HEAD
 #include <linux/of.h>
 #include <linux/notifier.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <plat/omap_device.h>
 #include <plat/omap_hwmod.h>
@@ -98,6 +107,7 @@
 #define USE_WAKEUP_LAT			0
 #define IGNORE_WAKEUP_LAT		1
 
+<<<<<<< HEAD
 static int omap_early_device_register(struct platform_device *pdev);
 
 static struct omap_device_pm_latency omap_default_latency[] = {
@@ -108,6 +118,8 @@ static struct omap_device_pm_latency omap_default_latency[] = {
 	}
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Private functions */
 
 /**
@@ -128,7 +140,11 @@ static int _omap_device_activate(struct omap_device *od, u8 ignore_lat)
 {
 	struct timespec a, b, c;
 
+<<<<<<< HEAD
 	dev_dbg(&od->pdev->dev, "omap_device: activating\n");
+=======
+	pr_debug("omap_device: %s: activating\n", od->pdev.name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (od->pm_lat_level > 0) {
 		struct omap_device_pm_latency *odpl;
@@ -152,14 +168,21 @@ static int _omap_device_activate(struct omap_device *od, u8 ignore_lat)
 		c = timespec_sub(b, a);
 		act_lat = timespec_to_ns(&c);
 
+<<<<<<< HEAD
 		dev_dbg(&od->pdev->dev,
 			"omap_device: pm_lat %d: activate: elapsed time "
 			"%llu nsec\n", od->pm_lat_level, act_lat);
+=======
+		pr_debug("omap_device: %s: pm_lat %d: activate: elapsed time "
+			 "%llu nsec\n", od->pdev.name, od->pm_lat_level,
+			 act_lat);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (act_lat > odpl->activate_lat) {
 			odpl->activate_lat_worst = act_lat;
 			if (odpl->flags & OMAP_DEVICE_LATENCY_AUTO_ADJUST) {
 				odpl->activate_lat = act_lat;
+<<<<<<< HEAD
 				dev_dbg(&od->pdev->dev,
 					"new worst case activate latency "
 					"%d: %llu\n",
@@ -170,6 +193,19 @@ static int _omap_device_activate(struct omap_device *od, u8 ignore_lat)
 					 "higher than exptected. (%llu > %d)\n",
 					 od->pm_lat_level, act_lat,
 					 odpl->activate_lat);
+=======
+				pr_warning("omap_device: %s.%d: new worst case "
+					   "activate latency %d: %llu\n",
+					   od->pdev.name, od->pdev.id,
+					   od->pm_lat_level, act_lat);
+			} else
+				pr_warning("omap_device: %s.%d: activate "
+					   "latency %d higher than exptected. "
+					   "(%llu > %d)\n",
+					   od->pdev.name, od->pdev.id,
+					   od->pm_lat_level, act_lat,
+					   odpl->activate_lat);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		od->dev_wakeup_lat -= odpl->activate_lat;
@@ -196,7 +232,11 @@ static int _omap_device_deactivate(struct omap_device *od, u8 ignore_lat)
 {
 	struct timespec a, b, c;
 
+<<<<<<< HEAD
 	dev_dbg(&od->pdev->dev, "omap_device: deactivating\n");
+=======
+	pr_debug("omap_device: %s: deactivating\n", od->pdev.name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (od->pm_lat_level < od->pm_lats_cnt) {
 		struct omap_device_pm_latency *odpl;
@@ -219,14 +259,21 @@ static int _omap_device_deactivate(struct omap_device *od, u8 ignore_lat)
 		c = timespec_sub(b, a);
 		deact_lat = timespec_to_ns(&c);
 
+<<<<<<< HEAD
 		dev_dbg(&od->pdev->dev,
 			"omap_device: pm_lat %d: deactivate: elapsed time "
 			"%llu nsec\n", od->pm_lat_level, deact_lat);
+=======
+		pr_debug("omap_device: %s: pm_lat %d: deactivate: elapsed time "
+			 "%llu nsec\n", od->pdev.name, od->pm_lat_level,
+			 deact_lat);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (deact_lat > odpl->deactivate_lat) {
 			odpl->deactivate_lat_worst = deact_lat;
 			if (odpl->flags & OMAP_DEVICE_LATENCY_AUTO_ADJUST) {
 				odpl->deactivate_lat = deact_lat;
+<<<<<<< HEAD
 				dev_dbg(&od->pdev->dev,
 					"new worst case deactivate latency "
 					"%d: %llu\n",
@@ -239,6 +286,22 @@ static int _omap_device_deactivate(struct omap_device *od, u8 ignore_lat)
 					 odpl->deactivate_lat);
 		}
 
+=======
+				pr_warning("omap_device: %s.%d: new worst case "
+					   "deactivate latency %d: %llu\n",
+					   od->pdev.name, od->pdev.id,
+					   od->pm_lat_level, deact_lat);
+			} else
+				pr_warning("omap_device: %s.%d: deactivate "
+					   "latency %d higher than exptected. "
+					   "(%llu > %d)\n",
+					   od->pdev.name, od->pdev.id,
+					   od->pm_lat_level, deact_lat,
+					   odpl->deactivate_lat);
+		}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		od->dev_wakeup_lat += odpl->activate_lat;
 
 		od->pm_lat_level++;
@@ -247,6 +310,7 @@ static int _omap_device_deactivate(struct omap_device *od, u8 ignore_lat)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void _add_clkdev(struct omap_device *od, const char *clk_alias,
 		       const char *clk_name)
 {
@@ -292,12 +356,27 @@ static void _add_clkdev(struct omap_device *od, const char *clk_alias,
  * For the main clock and every optional clock present per hwmod per
  * omap_device, this function adds an entry in the clkdev table of the
  * form <dev-id=dev_name, con-id=role> if it does not exist already.
+=======
+static inline struct omap_device *_find_by_pdev(struct platform_device *pdev)
+{
+	return container_of(pdev, struct omap_device, pdev);
+}
+
+/**
+ * _add_optional_clock_clkdev - Add clkdev entry for hwmod optional clocks
+ * @od: struct omap_device *od
+ *
+ * For every optional clock present per hwmod per omap_device, this function
+ * adds an entry in the clkdev table of the form <dev-id=dev_name, con-id=role>
+ * if it does not exist already.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * The function is called from inside omap_device_build_ss(), after
  * omap_device_register.
  *
  * This allows drivers to get a pointer to its optional clocks based on its role
  * by calling clk_get(<dev*>, <role>).
+<<<<<<< HEAD
  * In the case of the main clock, a "fck" alias is used.
  *
  * No return value.
@@ -399,6 +478,45 @@ static int _omap_device_notifier_call(struct notifier_block *nb,
 	}
 
 	return NOTIFY_DONE;
+=======
+ *
+ * No return value.
+ */
+static void _add_optional_clock_clkdev(struct omap_device *od,
+				      struct omap_hwmod *oh)
+{
+	int i;
+
+	for (i = 0; i < oh->opt_clks_cnt; i++) {
+		struct omap_hwmod_opt_clk *oc;
+		struct clk *r;
+		struct clk_lookup *l;
+
+		oc = &oh->opt_clks[i];
+
+		if (!oc->_clk)
+			continue;
+
+		r = clk_get_sys(dev_name(&od->pdev.dev), oc->role);
+		if (!IS_ERR(r))
+			continue; /* clkdev entry exists */
+
+		r = omap_clk_get_by_name((char *)oc->clk);
+		if (IS_ERR(r)) {
+			pr_err("omap_device: %s: omap_clk_get_by_name for %s failed\n",
+			       dev_name(&od->pdev.dev), oc->clk);
+			continue;
+		}
+
+		l = clkdev_alloc(r, oc->role, dev_name(&od->pdev.dev));
+		if (!l) {
+			pr_err("omap_device: %s: clkdev_alloc for %s failed\n",
+			       dev_name(&od->pdev.dev), oc->role);
+			return;
+		}
+		clkdev_add(l);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -419,12 +537,20 @@ static int _omap_device_notifier_call(struct notifier_block *nb,
  * return the context loss counter for that hwmod, otherwise return
  * zero.
  */
+<<<<<<< HEAD
 int omap_device_get_context_loss_count(struct platform_device *pdev)
+=======
+u32 omap_device_get_context_loss_count(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct omap_device *od;
 	u32 ret = 0;
 
+<<<<<<< HEAD
 	od = to_omap_device(pdev);
+=======
+	od = _find_by_pdev(pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (od->hwmods_cnt)
 		ret = omap_hwmod_get_context_loss_count(od->hwmods[0]);
@@ -441,7 +567,11 @@ int omap_device_get_context_loss_count(struct platform_device *pdev)
  * much memory to allocate before calling
  * omap_device_fill_resources().  Returns the count.
  */
+<<<<<<< HEAD
 static int omap_device_count_resources(struct omap_device *od)
+=======
+int omap_device_count_resources(struct omap_device *od)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int c = 0;
 	int i;
@@ -450,7 +580,11 @@ static int omap_device_count_resources(struct omap_device *od)
 		c += omap_hwmod_count_resources(od->hwmods[i]);
 
 	pr_debug("omap_device: %s: counted %d total resources across %d "
+<<<<<<< HEAD
 		 "hwmods\n", od->pdev->name, c, od->hwmods_cnt);
+=======
+		 "hwmods\n", od->pdev.name, c, od->hwmods_cnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return c;
 }
@@ -472,8 +606,12 @@ static int omap_device_count_resources(struct omap_device *od)
  * functions to get device resources.  Hacking around the existing
  * platform_device code wastes memory.  Returns 0.
  */
+<<<<<<< HEAD
 static int omap_device_fill_resources(struct omap_device *od,
 				      struct resource *res)
+=======
+int omap_device_fill_resources(struct omap_device *od, struct resource *res)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int c = 0;
 	int i, r;
@@ -488,6 +626,7 @@ static int omap_device_fill_resources(struct omap_device *od,
 }
 
 /**
+<<<<<<< HEAD
  * omap_device_alloc - allocate an omap_device
  * @pdev: platform_device that will be included in this omap_device
  * @oh: ptr to the single omap_hwmod that backs this omap_device
@@ -595,6 +734,8 @@ void omap_device_delete(struct omap_device *od)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * omap_device_build - build and register an omap_device with one omap_hwmod
  * @pdev_name: name of the platform_device driver to use
  * @pdev_id: this platform_device's connection ID
@@ -611,7 +752,11 @@ void omap_device_delete(struct omap_device *od)
  * information.  Returns ERR_PTR(-EINVAL) if @oh is NULL; otherwise,
  * passes along the return value of omap_device_build_ss().
  */
+<<<<<<< HEAD
 struct platform_device __init *omap_device_build(const char *pdev_name, int pdev_id,
+=======
+struct omap_device *omap_device_build(const char *pdev_name, int pdev_id,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      struct omap_hwmod *oh, void *pdata,
 				      int pdata_len,
 				      struct omap_device_pm_latency *pm_lats,
@@ -644,15 +789,27 @@ struct platform_device __init *omap_device_build(const char *pdev_name, int pdev
  * platform_device record.  Returns an ERR_PTR() on error, or passes
  * along the return value of omap_device_register().
  */
+<<<<<<< HEAD
 struct platform_device __init *omap_device_build_ss(const char *pdev_name, int pdev_id,
+=======
+struct omap_device *omap_device_build_ss(const char *pdev_name, int pdev_id,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					 struct omap_hwmod **ohs, int oh_cnt,
 					 void *pdata, int pdata_len,
 					 struct omap_device_pm_latency *pm_lats,
 					 int pm_lats_cnt, int is_early_device)
 {
 	int ret = -ENOMEM;
+<<<<<<< HEAD
 	struct platform_device *pdev;
 	struct omap_device *od;
+=======
+	struct omap_device *od;
+	char *pdev_name2;
+	struct resource *res = NULL;
+	int i, res_count;
+	struct omap_hwmod **hwmods;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!ohs || oh_cnt == 0 || !pdev_name)
 		return ERR_PTR(-EINVAL);
@@ -660,6 +817,7 @@ struct platform_device __init *omap_device_build_ss(const char *pdev_name, int p
 	if (!pdata && pdata_len > 0)
 		return ERR_PTR(-EINVAL);
 
+<<<<<<< HEAD
 	pdev = platform_device_alloc(pdev_name, pdev_id);
 	if (!pdev) {
 		ret = -ENOMEM;
@@ -694,6 +852,74 @@ odbs_exit2:
 odbs_exit1:
 	platform_device_put(pdev);
 odbs_exit:
+=======
+	pr_debug("omap_device: %s: building with %d hwmods\n", pdev_name,
+		 oh_cnt);
+
+	od = kzalloc(sizeof(struct omap_device), GFP_KERNEL);
+	if (!od)
+		return ERR_PTR(-ENOMEM);
+
+	od->hwmods_cnt = oh_cnt;
+
+	hwmods = kzalloc(sizeof(struct omap_hwmod *) * oh_cnt,
+			 GFP_KERNEL);
+	if (!hwmods)
+		goto odbs_exit1;
+
+	memcpy(hwmods, ohs, sizeof(struct omap_hwmod *) * oh_cnt);
+	od->hwmods = hwmods;
+
+	pdev_name2 = kzalloc(strlen(pdev_name) + 1, GFP_KERNEL);
+	if (!pdev_name2)
+		goto odbs_exit2;
+	strcpy(pdev_name2, pdev_name);
+
+	od->pdev.name = pdev_name2;
+	od->pdev.id = pdev_id;
+
+	res_count = omap_device_count_resources(od);
+	if (res_count > 0) {
+		res = kzalloc(sizeof(struct resource) * res_count, GFP_KERNEL);
+		if (!res)
+			goto odbs_exit3;
+	}
+	omap_device_fill_resources(od, res);
+
+	od->pdev.num_resources = res_count;
+	od->pdev.resource = res;
+
+	ret = platform_device_add_data(&od->pdev, pdata, pdata_len);
+	if (ret)
+		goto odbs_exit4;
+
+	od->pm_lats = pm_lats;
+	od->pm_lats_cnt = pm_lats_cnt;
+
+	if (is_early_device)
+		ret = omap_early_device_register(od);
+	else
+		ret = omap_device_register(od);
+
+	for (i = 0; i < oh_cnt; i++) {
+		hwmods[i]->od = od;
+		_add_optional_clock_clkdev(od, hwmods[i]);
+	}
+
+	if (ret)
+		goto odbs_exit4;
+
+	return od;
+
+odbs_exit4:
+	kfree(res);
+odbs_exit3:
+	kfree(pdev_name2);
+odbs_exit2:
+	kfree(hwmods);
+odbs_exit1:
+	kfree(od);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pr_err("omap_device: %s: build failed (%d)\n", pdev_name, ret);
 
@@ -709,16 +935,27 @@ odbs_exit:
  * platform_early_add_device() on the underlying platform_device.
  * Returns 0 by default.
  */
+<<<<<<< HEAD
 static int __init omap_early_device_register(struct platform_device *pdev)
 {
 	struct platform_device *devices[1];
 
 	devices[0] = pdev;
+=======
+int omap_early_device_register(struct omap_device *od)
+{
+	struct platform_device *devices[1];
+
+	devices[0] = &(od->pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	early_platform_add_devices(devices, 1);
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM_RUNTIME
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int _od_runtime_suspend(struct device *dev)
 {
 	struct platform_device *pdev = to_platform_device(dev);
@@ -745,6 +982,7 @@ static int _od_runtime_resume(struct device *dev)
 
 	return pm_generic_runtime_resume(dev);
 }
+<<<<<<< HEAD
 #endif
 
 #ifdef CONFIG_SUSPEND
@@ -794,6 +1032,15 @@ struct dev_pm_domain omap_device_pm_domain = {
 		USE_PLATFORM_PM_SLEEP_OPS
 		.suspend_noirq = _od_suspend_noirq,
 		.resume_noirq = _od_resume_noirq,
+=======
+
+static struct dev_power_domain omap_device_power_domain = {
+	.ops = {
+		.runtime_suspend = _od_runtime_suspend,
+		.runtime_idle = _od_runtime_idle,
+		.runtime_resume = _od_runtime_resume,
+		USE_PLATFORM_PM_SLEEP_OPS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 };
 
@@ -805,12 +1052,22 @@ struct dev_pm_domain omap_device_pm_domain = {
  * platform_device_register() on the underlying platform_device.
  * Returns the return value of platform_device_register().
  */
+<<<<<<< HEAD
 int omap_device_register(struct platform_device *pdev)
 {
 	pr_debug("omap_device: %s: registering\n", pdev->name);
 
 	pdev->dev.pm_domain = &omap_device_pm_domain;
 	return platform_device_add(pdev);
+=======
+int omap_device_register(struct omap_device *od)
+{
+	pr_debug("omap_device: %s: registering\n", od->pdev.name);
+
+	od->pdev.dev.parent = &omap_device_parent;
+	od->pdev.dev.pwr_domain = &omap_device_power_domain;
+	return platform_device_register(&od->pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -834,12 +1091,20 @@ int omap_device_enable(struct platform_device *pdev)
 	int ret;
 	struct omap_device *od;
 
+<<<<<<< HEAD
 	od = to_omap_device(pdev);
 
 	if (od->_state == OMAP_DEVICE_STATE_ENABLED) {
 		dev_warn(&pdev->dev,
 			 "omap_device: %s() called from invalid state %d\n",
 			 __func__, od->_state);
+=======
+	od = _find_by_pdev(pdev);
+
+	if (od->_state == OMAP_DEVICE_STATE_ENABLED) {
+		WARN(1, "omap_device: %s.%d: %s() called from invalid state %d\n",
+		     od->pdev.name, od->pdev.id, __func__, od->_state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -874,12 +1139,20 @@ int omap_device_idle(struct platform_device *pdev)
 	int ret;
 	struct omap_device *od;
 
+<<<<<<< HEAD
 	od = to_omap_device(pdev);
 
 	if (od->_state != OMAP_DEVICE_STATE_ENABLED) {
 		dev_warn(&pdev->dev,
 			 "omap_device: %s() called from invalid state %d\n",
 			 __func__, od->_state);
+=======
+	od = _find_by_pdev(pdev);
+
+	if (od->_state != OMAP_DEVICE_STATE_ENABLED) {
+		WARN(1, "omap_device: %s.%d: %s() called from invalid state %d\n",
+		     od->pdev.name, od->pdev.id, __func__, od->_state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -906,6 +1179,7 @@ int omap_device_shutdown(struct platform_device *pdev)
 	int ret, i;
 	struct omap_device *od;
 
+<<<<<<< HEAD
 	od = to_omap_device(pdev);
 
 	if (od->_state != OMAP_DEVICE_STATE_ENABLED &&
@@ -913,6 +1187,14 @@ int omap_device_shutdown(struct platform_device *pdev)
 		dev_warn(&pdev->dev,
 			 "omap_device: %s() called from invalid state %d\n",
 			 __func__, od->_state);
+=======
+	od = _find_by_pdev(pdev);
+
+	if (od->_state != OMAP_DEVICE_STATE_ENABLED &&
+	    od->_state != OMAP_DEVICE_STATE_IDLE) {
+		WARN(1, "omap_device: %s.%d: %s() called from invalid state %d\n",
+		     od->pdev.name, od->pdev.id, __func__, od->_state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -948,7 +1230,11 @@ int omap_device_align_pm_lat(struct platform_device *pdev,
 	int ret = -EINVAL;
 	struct omap_device *od;
 
+<<<<<<< HEAD
 	od = to_omap_device(pdev);
+=======
+	od = _find_by_pdev(pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (new_wakeup_lat_limit == od->dev_wakeup_lat)
 		return 0;
@@ -1006,6 +1292,7 @@ void __iomem *omap_device_get_rt_va(struct omap_device *od)
 	return omap_hwmod_get_mpu_rt_va(od->hwmods[0]);
 }
 
+<<<<<<< HEAD
 /**
  * omap_device_get_by_hwmod_name() - convert a hwmod name to
  * device pointer.
@@ -1042,6 +1329,8 @@ struct device *omap_device_get_by_hwmod_name(const char *oh_name)
 }
 EXPORT_SYMBOL(omap_device_get_by_hwmod_name);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Public functions intended for use in omap_device_pm_latency
  * .activate_func and .deactivate_func function pointers
@@ -1117,13 +1406,23 @@ int omap_device_enable_clocks(struct omap_device *od)
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct notifier_block platform_nb = {
 	.notifier_call = _omap_device_notifier_call,
+=======
+struct device omap_device_parent = {
+	.init_name	= "omap",
+	.parent         = &platform_bus,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init omap_device_init(void)
 {
+<<<<<<< HEAD
 	bus_register_notifier(&platform_bus_type, &platform_nb);
 	return 0;
+=======
+	return device_register(&omap_device_parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 core_initcall(omap_device_init);

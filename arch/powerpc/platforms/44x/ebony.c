@@ -54,7 +54,11 @@ static int __init ebony_probe(void)
 	if (!of_flat_dt_is_compatible(root, "ibm,ebony"))
 		return 0;
 
+<<<<<<< HEAD
 	pci_set_flags(PCI_REASSIGN_ALL_RSRC);
+=======
+	ppc_pci_set_flags(PPC_PCI_REASSIGN_ALL_RSRC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 1;
 }

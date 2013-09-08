@@ -25,7 +25,10 @@
 
 #include <asm/div64.h>
 
+<<<<<<< HEAD
 #include "soc.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct clk {
 	struct clk	*parent;

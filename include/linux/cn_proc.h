@@ -53,8 +53,11 @@ struct proc_event {
 		PROC_EVENT_UID  = 0x00000004,
 		PROC_EVENT_GID  = 0x00000040,
 		PROC_EVENT_SID  = 0x00000080,
+<<<<<<< HEAD
 		PROC_EVENT_PTRACE = 0x00000100,
 		PROC_EVENT_COMM = 0x00000200,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* "next" should be 0x00000400 */
 		/* "last" is the last process event: exit */
 		PROC_EVENT_EXIT = 0x80000000
@@ -97,6 +100,7 @@ struct proc_event {
 			__kernel_pid_t process_tgid;
 		} sid;
 
+<<<<<<< HEAD
 		struct ptrace_proc_event {
 			__kernel_pid_t process_pid;
 			__kernel_pid_t process_tgid;
@@ -110,6 +114,8 @@ struct proc_event {
 			char           comm[16];
 		} comm;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct exit_proc_event {
 			__kernel_pid_t process_pid;
 			__kernel_pid_t process_tgid;
@@ -124,8 +130,11 @@ void proc_fork_connector(struct task_struct *task);
 void proc_exec_connector(struct task_struct *task);
 void proc_id_connector(struct task_struct *task, int which_id);
 void proc_sid_connector(struct task_struct *task);
+<<<<<<< HEAD
 void proc_ptrace_connector(struct task_struct *task, int which_id);
 void proc_comm_connector(struct task_struct *task);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void proc_exit_connector(struct task_struct *task);
 #else
 static inline void proc_fork_connector(struct task_struct *task)
@@ -141,6 +150,7 @@ static inline void proc_id_connector(struct task_struct *task,
 static inline void proc_sid_connector(struct task_struct *task)
 {}
 
+<<<<<<< HEAD
 static inline void proc_comm_connector(struct task_struct *task)
 {}
 
@@ -148,6 +158,8 @@ static inline void proc_ptrace_connector(struct task_struct *task,
 					 int ptrace_id)
 {}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void proc_exit_connector(struct task_struct *task)
 {}
 #endif	/* CONFIG_PROC_EVENTS */

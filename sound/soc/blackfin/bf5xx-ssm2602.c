@@ -49,6 +49,10 @@ static int bf5xx_ssm2602_hw_params(struct snd_pcm_substream *substream,
 {
 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+<<<<<<< HEAD
+=======
+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int clk = 0;
 	int ret = 0;
 
@@ -74,6 +78,24 @@ static int bf5xx_ssm2602_hw_params(struct snd_pcm_substream *substream,
 		break;
 	}
 
+<<<<<<< HEAD
+=======
+	/*
+	 * CODEC is master for BCLK and LRC in this configuration.
+	 */
+
+	/* set codec DAI configuration */
+	ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_I2S |
+		SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_CBM_CFM);
+	if (ret < 0)
+		return ret;
+	/* set cpu DAI configuration */
+	ret = snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_I2S |
+		SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_CBM_CFM);
+	if (ret < 0)
+		return ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = snd_soc_dai_set_sysclk(codec_dai, SSM2602_SYSCLK, clk,
 		SND_SOC_CLOCK_IN);
 	if (ret < 0)
@@ -86,10 +108,13 @@ static struct snd_soc_ops bf5xx_ssm2602_ops = {
 	.hw_params = bf5xx_ssm2602_hw_params,
 };
 
+<<<<<<< HEAD
 /* CODEC is master for BCLK and LRC in this configuration. */
 #define BF5XX_SSM2602_DAIFMT (SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF | \
 				SND_SOC_DAIFMT_CBM_CFM)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct snd_soc_dai_link bf5xx_ssm2602_dai[] = {
 	{
 		.name = "ssm2602",
@@ -99,7 +124,10 @@ static struct snd_soc_dai_link bf5xx_ssm2602_dai[] = {
 		.platform_name = "bfin-i2s-pcm-audio",
 		.codec_name = "ssm2602.0-001b",
 		.ops = &bf5xx_ssm2602_ops,
+<<<<<<< HEAD
 		.dai_fmt = BF5XX_SSM2602_DAIFMT,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "ssm2602",
@@ -109,13 +137,19 @@ static struct snd_soc_dai_link bf5xx_ssm2602_dai[] = {
 		.platform_name = "bfin-i2s-pcm-audio",
 		.codec_name = "ssm2602.0-001b",
 		.ops = &bf5xx_ssm2602_ops,
+<<<<<<< HEAD
 		.dai_fmt = BF5XX_SSM2602_DAIFMT,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 
 static struct snd_soc_card bf5xx_ssm2602 = {
 	.name = "bfin-ssm2602",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link = &bf5xx_ssm2602_dai[CONFIG_SND_BF5XX_SPORT_NUM],
 	.num_links = 1,
 };

@@ -41,6 +41,9 @@ static inline void s3c_pm_arch_update_uart(void __iomem *regs,
 {
 	/* nothing here yet */
 }
+<<<<<<< HEAD
 
 static inline void s3c_pm_restored_gpios(void) { }
 static inline void samsung_pm_saved_gpios(void) { }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

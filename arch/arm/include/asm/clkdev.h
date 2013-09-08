@@ -14,12 +14,16 @@
 
 #include <linux/slab.h>
 
+<<<<<<< HEAD
 #ifdef CONFIG_HAVE_MACH_CLKDEV
 #include <mach/clkdev.h>
 #else
 #define __clk_get(clk)	({ 1; })
 #define __clk_put(clk)	do { } while (0)
 #endif
+=======
+#include <mach/clkdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline struct clk_lookup_alloc *__clkdev_alloc(size_t size)
 {

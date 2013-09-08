@@ -97,6 +97,10 @@ struct mt2060_priv {
 	struct i2c_adapter   *i2c;
 
 	u32 frequency;
+<<<<<<< HEAD
+=======
+	u32 bandwidth;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 if1_freq;
 	u8  fmfreq;
 };

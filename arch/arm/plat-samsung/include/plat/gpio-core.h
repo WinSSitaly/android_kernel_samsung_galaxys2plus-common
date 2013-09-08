@@ -25,6 +25,7 @@
  * specific code.
 */
 
+<<<<<<< HEAD
 struct samsung_gpio_chip;
 
 /**
@@ -41,6 +42,24 @@ struct samsung_gpio_cfg;
 
 /**
  * struct samsung_gpio_chip - wrapper for specific implementation of gpio
+=======
+struct s3c_gpio_chip;
+
+/**
+ * struct s3c_gpio_pm - power management (suspend/resume) information
+ * @save: Routine to save the state of the GPIO block
+ * @resume: Routine to resume the GPIO block.
+ */
+struct s3c_gpio_pm {
+	void (*save)(struct s3c_gpio_chip *chip);
+	void (*resume)(struct s3c_gpio_chip *chip);
+};
+
+struct s3c_gpio_cfg;
+
+/**
+ * struct s3c_gpio_chip - wrapper for specific implementation of gpio
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @chip: The chip structure to be exported via gpiolib.
  * @base: The base pointer to the gpio configuration registers.
  * @group: The group register number for gpio interrupt support.
@@ -60,10 +79,17 @@ struct samsung_gpio_cfg;
  * CPU cores trying to get one lock for different GPIO banks, where each
  * bank of GPIO has its own register space and configuration registers.
  */
+<<<<<<< HEAD
 struct samsung_gpio_chip {
 	struct gpio_chip	chip;
 	struct samsung_gpio_cfg	*config;
 	struct samsung_gpio_pm	*pm;
+=======
+struct s3c_gpio_chip {
+	struct gpio_chip	chip;
+	struct s3c_gpio_cfg	*config;
+	struct s3c_gpio_pm	*pm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void __iomem		*base;
 	int			irq_base;
 	int			group;
@@ -73,11 +99,66 @@ struct samsung_gpio_chip {
 #endif
 };
 
+<<<<<<< HEAD
 static inline struct samsung_gpio_chip *to_samsung_gpio(struct gpio_chip *gpc)
 {
 	return container_of(gpc, struct samsung_gpio_chip, chip);
 }
 
+=======
+static inline struct s3c_gpio_chip *to_s3c_gpio(struct gpio_chip *gpc)
+{
+	return container_of(gpc, struct s3c_gpio_chip, chip);
+}
+
+/** s3c_gpiolib_add() - add the s3c specific version of a gpio_chip.
+ * @chip: The chip to register
+ *
+ * This is a wrapper to gpiochip_add() that takes our specific gpio chip
+ * information and makes the necessary alterations for the platform and
+ * notes the information for use with the configuration systems and any
+ * other parts of the system.
+ */
+extern void s3c_gpiolib_add(struct s3c_gpio_chip *chip);
+
+/* CONFIG_S3C_GPIO_TRACK enables the tracking of the s3c specific gpios
+ * for use with the configuration calls, and other parts of the s3c gpiolib
+ * support code.
+ *
+ * Not all s3c support code will need this, as some configurations of cpu
+ * may only support one or two different configuration options and have an
+ * easy gpio to s3c_gpio_chip mapping function. If this is the case, then
+ * the machine support file should provide its own s3c_gpiolib_getchip()
+ * and any other necessary functions.
+ */
+
+/**
+ * samsung_gpiolib_add_4bit_chips - 4bit single register GPIO config.
+ * @chip: The gpio chip that is being configured.
+ * @nr_chips: The no of chips (gpio ports) for the GPIO being configured.
+ *
+ * This helper deal with the GPIO cases where the control register has 4 bits
+ * of control per GPIO, generally in the form of:
+ * 0000 = Input
+ * 0001 = Output
+ * others = Special functions (dependent on bank)
+ *
+ * Note, since the code to deal with the case where there are two control
+ * registers instead of one, we do not have a separate set of function
+ * (samsung_gpiolib_add_4bit2_chips)for each case.
+ */
+extern void samsung_gpiolib_add_4bit_chips(struct s3c_gpio_chip *chip,
+					   int nr_chips);
+extern void samsung_gpiolib_add_4bit2_chips(struct s3c_gpio_chip *chip,
+					    int nr_chips);
+extern void samsung_gpiolib_add_2bit_chips(struct s3c_gpio_chip *chip,
+					   int nr_chips);
+
+extern void samsung_gpiolib_add_4bit(struct s3c_gpio_chip *chip);
+extern void samsung_gpiolib_add_4bit2(struct s3c_gpio_chip *chip);
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * samsung_gpiolib_to_irq - convert gpio pin to irq number
  * @chip: The gpio chip that the pin belongs to.
@@ -89,16 +170,26 @@ static inline struct samsung_gpio_chip *to_samsung_gpio(struct gpio_chip *gpc)
 extern int samsung_gpiolib_to_irq(struct gpio_chip *chip, unsigned int offset);
 
 /* exported for core SoC support to change */
+<<<<<<< HEAD
 extern struct samsung_gpio_cfg s3c24xx_gpiocfg_default;
 
 #ifdef CONFIG_S3C_GPIO_TRACK
 extern struct samsung_gpio_chip *s3c_gpios[S3C_GPIO_END];
 
 static inline struct samsung_gpio_chip *samsung_gpiolib_getchip(unsigned int chip)
+=======
+extern struct s3c_gpio_cfg s3c24xx_gpiocfg_default;
+
+#ifdef CONFIG_S3C_GPIO_TRACK
+extern struct s3c_gpio_chip *s3c_gpios[S3C_GPIO_END];
+
+static inline struct s3c_gpio_chip *s3c_gpiolib_getchip(unsigned int chip)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return (chip < S3C_GPIO_END) ? s3c_gpios[chip] : NULL;
 }
 #else
+<<<<<<< HEAD
 /* machine specific code should provide samsung_gpiolib_getchip */
 
 #include <mach/gpio-track.h>
@@ -115,10 +206,33 @@ extern struct samsung_gpio_pm samsung_gpio_pm_4bit;
 #define samsung_gpio_pm_1bit NULL
 #define samsung_gpio_pm_2bit NULL
 #define samsung_gpio_pm_4bit NULL
+=======
+/* machine specific code should provide s3c_gpiolib_getchip */
+
+#include <mach/gpio-track.h>
+
+static inline void s3c_gpiolib_track(struct s3c_gpio_chip *chip) { }
+#endif
+
+#ifdef CONFIG_PM
+extern struct s3c_gpio_pm s3c_gpio_pm_1bit;
+extern struct s3c_gpio_pm s3c_gpio_pm_2bit;
+extern struct s3c_gpio_pm s3c_gpio_pm_4bit;
+#define __gpio_pm(x) x
+#else
+#define s3c_gpio_pm_1bit NULL
+#define s3c_gpio_pm_2bit NULL
+#define s3c_gpio_pm_4bit NULL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define __gpio_pm(x) NULL
 
 #endif /* CONFIG_PM */
 
 /* locking wrappers to deal with multiple access to the same gpio bank */
+<<<<<<< HEAD
 #define samsung_gpio_lock(_oc, _fl) spin_lock_irqsave(&(_oc)->lock, _fl)
 #define samsung_gpio_unlock(_oc, _fl) spin_unlock_irqrestore(&(_oc)->lock, _fl)
+=======
+#define s3c_gpio_lock(_oc, _fl) spin_lock_irqsave(&(_oc)->lock, _fl)
+#define s3c_gpio_unlock(_oc, _fl) spin_unlock_irqrestore(&(_oc)->lock, _fl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

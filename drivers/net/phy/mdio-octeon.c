@@ -118,8 +118,12 @@ static int __devinit octeon_mdiobus_probe(struct platform_device *pdev)
 	bus->mii_bus->priv = bus;
 	bus->mii_bus->irq = bus->phy_irq;
 	bus->mii_bus->name = "mdio-octeon";
+<<<<<<< HEAD
 	snprintf(bus->mii_bus->id, MII_BUS_ID_SIZE, "%s-%x",
 		bus->mii_bus->name, bus->unit);
+=======
+	snprintf(bus->mii_bus->id, MII_BUS_ID_SIZE, "%x", bus->unit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bus->mii_bus->parent = &pdev->dev;
 
 	bus->mii_bus->read = octeon_mdiobus_read;

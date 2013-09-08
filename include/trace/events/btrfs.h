@@ -6,7 +6,10 @@
 
 #include <linux/writeback.h>
 #include <linux/tracepoint.h>
+<<<<<<< HEAD
 #include <trace/events/gfpflags.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct btrfs_root;
 struct btrfs_fs_info;
@@ -17,8 +20,11 @@ struct btrfs_delayed_ref_node;
 struct btrfs_delayed_tree_ref;
 struct btrfs_delayed_data_ref;
 struct btrfs_delayed_ref_head;
+<<<<<<< HEAD
 struct btrfs_block_group_cache;
 struct btrfs_free_cluster;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct map_lookup;
 struct extent_buffer;
 
@@ -47,6 +53,7 @@ struct extent_buffer;
 	obj, ((obj >= BTRFS_DATA_RELOC_TREE_OBJECTID) ||		\
 	      (obj <= BTRFS_CSUM_TREE_OBJECTID )) ? __show_root_type(obj) : "-"
 
+<<<<<<< HEAD
 #define BTRFS_GROUP_FLAGS	\
 	{ BTRFS_BLOCK_GROUP_DATA,	"DATA"}, \
 	{ BTRFS_BLOCK_GROUP_SYSTEM,	"SYSTEM"}, \
@@ -58,6 +65,8 @@ struct extent_buffer;
 
 #define BTRFS_UUID_SIZE 16
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 TRACE_EVENT(btrfs_transaction_commit,
 
 	TP_PROTO(struct btrfs_root *root),
@@ -298,6 +307,10 @@ DECLARE_EVENT_CLASS(btrfs__writepage,
 		__field(	long,   pages_skipped		)
 		__field(	loff_t, range_start		)
 		__field(	loff_t, range_end		)
+<<<<<<< HEAD
+=======
+		__field(	char,   nonblocking		)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__field(	char,   for_kupdate		)
 		__field(	char,   for_reclaim		)
 		__field(	char,   range_cyclic		)
@@ -312,6 +325,10 @@ DECLARE_EVENT_CLASS(btrfs__writepage,
 		__entry->pages_skipped	= wbc->pages_skipped;
 		__entry->range_start	= wbc->range_start;
 		__entry->range_end	= wbc->range_end;
+<<<<<<< HEAD
+=======
+		__entry->nonblocking	= wbc->nonblocking;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__entry->for_kupdate	= wbc->for_kupdate;
 		__entry->for_reclaim	= wbc->for_reclaim;
 		__entry->range_cyclic	= wbc->range_cyclic;
@@ -322,13 +339,21 @@ DECLARE_EVENT_CLASS(btrfs__writepage,
 
 	TP_printk("root = %llu(%s), ino = %lu, page_index = %lu, "
 		  "nr_to_write = %ld, pages_skipped = %ld, range_start = %llu, "
+<<<<<<< HEAD
 		  "range_end = %llu, for_kupdate = %d, "
+=======
+		  "range_end = %llu, nonblocking = %d, for_kupdate = %d, "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  "for_reclaim = %d, range_cyclic = %d, writeback_index = %lu",
 		  show_root_type(__entry->root_objectid),
 		  (unsigned long)__entry->ino, __entry->index,
 		  __entry->nr_to_write, __entry->pages_skipped,
 		  __entry->range_start, __entry->range_end,
+<<<<<<< HEAD
 		  __entry->for_kupdate,
+=======
+		  __entry->nonblocking, __entry->for_kupdate,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  __entry->for_reclaim, __entry->range_cyclic,
 		  (unsigned long)__entry->writeback_index)
 );
@@ -635,6 +660,7 @@ TRACE_EVENT(btrfs_cow_block,
 		  __entry->cow_level)
 );
 
+<<<<<<< HEAD
 TRACE_EVENT(btrfs_space_reservation,
 
 	TP_PROTO(struct btrfs_fs_info *fs_info, char *type, u64 val,
@@ -663,6 +689,8 @@ TRACE_EVENT(btrfs_space_reservation,
 		  __entry->bytes)
 );
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 DECLARE_EVENT_CLASS(btrfs__reserved_extent,
 
 	TP_PROTO(struct btrfs_root *root, u64 start, u64 len),
@@ -701,6 +729,7 @@ DEFINE_EVENT(btrfs__reserved_extent,  btrfs_reserved_extent_free,
 	TP_ARGS(root, start, len)
 );
 
+<<<<<<< HEAD
 TRACE_EVENT(find_free_extent,
 
 	TP_PROTO(struct btrfs_root *root, u64 num_bytes, u64 empty_size,
@@ -906,6 +935,8 @@ TRACE_EVENT(free_extent_state,
 		  (void *)__entry->ip)
 );
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _TRACE_BTRFS_H */
 
 /* This part must be outside protection */

@@ -43,7 +43,11 @@ static int wm8994_ldo_enable(struct regulator_dev *rdev)
 	if (!ldo->enable)
 		return 0;
 
+<<<<<<< HEAD
 	gpio_set_value_cansleep(ldo->enable, 1);
+=======
+	gpio_set_value(ldo->enable, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ldo->is_enabled = true;
 
 	return 0;
@@ -57,7 +61,11 @@ static int wm8994_ldo_disable(struct regulator_dev *rdev)
 	if (!ldo->enable)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	gpio_set_value_cansleep(ldo->enable, 0);
+=======
+	gpio_set_value(ldo->enable, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ldo->is_enabled = false;
 
 	return 0;
@@ -140,6 +148,7 @@ static int wm8994_ldo2_list_voltage(struct regulator_dev *rdev,
 		return (selector * 100000) + 900000;
 	case WM8958:
 		return (selector * 100000) + 1000000;
+<<<<<<< HEAD
 	case WM1811:
 		switch (selector) {
 		case 0:
@@ -148,6 +157,8 @@ static int wm8994_ldo2_list_voltage(struct regulator_dev *rdev,
 			return (selector * 100000) + 950000;
 		}
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return -EINVAL;
 	}
@@ -178,11 +189,14 @@ static int wm8994_ldo2_set_voltage(struct regulator_dev *rdev,
 	case WM8958:
 		selector = (min_uV - 1000000) / 100000;
 		break;
+<<<<<<< HEAD
 	case WM1811:
 		selector = (min_uV - 950000) / 100000;
 		if (selector == 0)
 			selector = 1;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return -EINVAL;
 	}
@@ -241,7 +255,11 @@ static __devinit int wm8994_ldo_probe(struct platform_device *pdev)
 	if (!pdata)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	ldo = devm_kzalloc(&pdev->dev, sizeof(struct wm8994_ldo), GFP_KERNEL);
+=======
+	ldo = kzalloc(sizeof(struct wm8994_ldo), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ldo == NULL) {
 		dev_err(&pdev->dev, "Unable to allocate private data\n");
 		return -ENOMEM;
@@ -269,7 +287,11 @@ static __devinit int wm8994_ldo_probe(struct platform_device *pdev)
 		ldo->is_enabled = true;
 
 	ldo->regulator = regulator_register(&wm8994_ldo_desc[id], &pdev->dev,
+<<<<<<< HEAD
 					     pdata->ldo[id].init_data, ldo, NULL);
+=======
+					     pdata->ldo[id].init_data, ldo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(ldo->regulator)) {
 		ret = PTR_ERR(ldo->regulator);
 		dev_err(wm8994->dev, "Failed to register LDO%d: %d\n",
@@ -285,6 +307,10 @@ err_gpio:
 	if (gpio_is_valid(ldo->enable))
 		gpio_free(ldo->enable);
 err:
+<<<<<<< HEAD
+=======
+	kfree(ldo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -297,6 +323,10 @@ static __devexit int wm8994_ldo_remove(struct platform_device *pdev)
 	regulator_unregister(ldo->regulator);
 	if (gpio_is_valid(ldo->enable))
 		gpio_free(ldo->enable);
+<<<<<<< HEAD
+=======
+	kfree(ldo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

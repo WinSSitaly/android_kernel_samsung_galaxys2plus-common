@@ -67,8 +67,11 @@ extern int viafb_lcd_dsp_method;
 extern int viafb_lcd_mode;
 
 extern int viafb_CRT_ON;
+<<<<<<< HEAD
 extern unsigned int viafb_second_xres;
 extern unsigned int viafb_second_yres;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int viafb_hotplug_Xres;
 extern int viafb_hotplug_Yres;
 extern int viafb_hotplug_bpp;

@@ -10,7 +10,11 @@
 
 #include <mach/orion5x.h>
 
+<<<<<<< HEAD
 	.macro  addruart, rp, rv, tmp
+=======
+	.macro  addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ldr	\rp, =ORION5X_REGS_PHYS_BASE
 	ldr	\rv, =ORION5X_REGS_VIRT_BASE
 	orr	\rp, \rp, #0x00012000

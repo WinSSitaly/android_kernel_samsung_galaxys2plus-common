@@ -14,6 +14,7 @@
 #ifndef _LINUX_NFSD_FH_H
 #define _LINUX_NFSD_FH_H
 
+<<<<<<< HEAD
 #include <linux/types.h>
 #include <linux/nfs.h>
 #include <linux/nfs2.h>
@@ -22,6 +23,13 @@
 #ifdef __KERNEL__
 # include <linux/sunrpc/svc.h>
 #endif
+=======
+# include <linux/types.h>
+#ifdef __KERNEL__
+# include <linux/sunrpc/svc.h>
+#endif
+#include <linux/nfsd/const.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * This is the old "dentry style" Linux NFSv2 file handle.

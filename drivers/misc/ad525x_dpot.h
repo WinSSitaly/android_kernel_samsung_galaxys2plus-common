@@ -100,7 +100,11 @@ enum dpot_devid {
 	AD5293_ID = DPOT_CONF(F_RDACS_RW | F_SPI_16BIT, BRDAC0, 10, 27),
 	AD7376_ID = DPOT_CONF(F_RDACS_WONLY | F_AD_APPDATA | F_SPI_8BIT,
 			BRDAC0, 7, 28),
+<<<<<<< HEAD
 	AD8400_ID = DPOT_CONF(F_RDACS_WONLY | F_AD_APPDATA | F_SPI_16BIT,
+=======
+	AD8400_ID = DPOT_CONF(F_RDACS_WONLY | F_AD_APPDATA | F_SPI_8BIT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			BRDAC0, 8, 29),
 	AD8402_ID = DPOT_CONF(F_RDACS_WONLY | F_AD_APPDATA | F_SPI_16BIT,
 			BRDAC0 | BRDAC1, 8, 30),
@@ -208,8 +212,17 @@ struct ad_dpot_bus_data {
 	const struct ad_dpot_bus_ops *bops;
 };
 
+<<<<<<< HEAD
 int ad_dpot_probe(struct device *dev, struct ad_dpot_bus_data *bdata,
 		  unsigned long devid, const char *name);
+=======
+struct ad_dpot_id {
+	char *name;
+	unsigned long devid;
+};
+
+int ad_dpot_probe(struct device *dev, struct ad_dpot_bus_data *bdata, const struct ad_dpot_id *id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int ad_dpot_remove(struct device *dev);
 
 #endif

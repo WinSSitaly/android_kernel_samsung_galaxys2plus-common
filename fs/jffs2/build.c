@@ -10,8 +10,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/sched.h>
 #include <linux/slab.h>
@@ -309,8 +312,13 @@ static void jffs2_calc_trigger_levels(struct jffs2_sb_info *c)
 	   trying to GC to make more space. It'll be a fruitless task */
 	c->nospc_dirty_size = c->sector_size + (c->flash_size / 100);
 
+<<<<<<< HEAD
 	dbg_fsbuild("trigger levels (size %d KiB, block size %d KiB, %d blocks)\n",
 		    c->flash_size / 1024, c->sector_size / 1024, c->nr_blocks);
+=======
+	dbg_fsbuild("JFFS2 trigger levels (size %d KiB, block size %d KiB, %d blocks)\n",
+		  c->flash_size / 1024, c->sector_size / 1024, c->nr_blocks);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dbg_fsbuild("Blocks required to allow deletion:    %d (%d KiB)\n",
 		  c->resv_blocks_deletion, c->resv_blocks_deletion*c->sector_size/1024);
 	dbg_fsbuild("Blocks required to allow writes:      %d (%d KiB)\n",

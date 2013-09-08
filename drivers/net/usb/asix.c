@@ -35,10 +35,16 @@
 #include <linux/crc32.h>
 #include <linux/usb/usbnet.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/if_vlan.h>
 
 #define DRIVER_VERSION "22-Dec-2011"
 #define DRIVER_NAME "asix"
+=======
+
+#define DRIVER_VERSION "14-Jun-2006"
+static const char driver_name [] = "asix";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* ASIX AX8817X based USB 2.0 Ethernet Devices */
 
@@ -116,11 +122,16 @@
 #define AX88178_MEDIUM_DEFAULT	\
 	(AX_MEDIUM_PS | AX_MEDIUM_FD | AX_MEDIUM_AC | \
 	 AX_MEDIUM_RFC | AX_MEDIUM_TFC | AX_MEDIUM_JFE | \
+<<<<<<< HEAD
 	 AX_MEDIUM_RE)
+=======
+	 AX_MEDIUM_RE )
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AX88772_MEDIUM_DEFAULT	\
 	(AX_MEDIUM_FD | AX_MEDIUM_RFC | \
 	 AX_MEDIUM_TFC | AX_MEDIUM_PS | \
+<<<<<<< HEAD
 	 AX_MEDIUM_AC | AX_MEDIUM_RE)
 
 /* AX88772 & AX88178 RX_CTL values */
@@ -137,6 +148,25 @@
 #define AX_RX_CTL_MFB_16384	0x0300
 
 #define AX_DEFAULT_RX_CTL	(AX_RX_CTL_SO | AX_RX_CTL_AB)
+=======
+	 AX_MEDIUM_AC | AX_MEDIUM_RE )
+
+/* AX88772 & AX88178 RX_CTL values */
+#define AX_RX_CTL_SO			0x0080
+#define AX_RX_CTL_AP			0x0020
+#define AX_RX_CTL_AM			0x0010
+#define AX_RX_CTL_AB			0x0008
+#define AX_RX_CTL_SEP			0x0004
+#define AX_RX_CTL_AMALL			0x0002
+#define AX_RX_CTL_PRO			0x0001
+#define AX_RX_CTL_MFB_2048		0x0000
+#define AX_RX_CTL_MFB_4096		0x0100
+#define AX_RX_CTL_MFB_8192		0x0200
+#define AX_RX_CTL_MFB_16384		0x0300
+
+#define AX_DEFAULT_RX_CTL	\
+	(AX_RX_CTL_SO | AX_RX_CTL_AB )
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* GPIO 0 .. 2 toggles */
 #define AX_GPIO_GPO0EN		0x01	/* GPIO0 Output enable */
@@ -164,8 +194,11 @@
 #define MARVELL_CTRL_TXDELAY	0x0002
 #define MARVELL_CTRL_RXDELAY	0x0080
 
+<<<<<<< HEAD
 #define	PHY_MODE_RTL8211CL	0x000C
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* This structure cannot exceed sizeof(unsigned long [5]) AKA 20 bytes */
 struct asix_data {
 	u8 multi_filter[AX_MCAST_FILTER_SIZE];
@@ -270,15 +303,23 @@ asix_write_cmd_async(struct usbnet *dev, u8 cmd, u16 value, u16 index,
 
 	netdev_dbg(dev->net, "asix_write_cmd_async() cmd=0x%02x value=0x%04x index=0x%04x size=%d\n",
 		   cmd, value, index, size);
+<<<<<<< HEAD
 
 	urb = usb_alloc_urb(0, GFP_ATOMIC);
 	if (!urb) {
+=======
+	if ((urb = usb_alloc_urb(0, GFP_ATOMIC)) == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		netdev_err(dev->net, "Error allocating URB in write_cmd_async!\n");
 		return;
 	}
 
+<<<<<<< HEAD
 	req = kmalloc(sizeof(struct usb_ctrlrequest), GFP_ATOMIC);
 	if (!req) {
+=======
+	if ((req = kmalloc(sizeof(struct usb_ctrlrequest), GFP_ATOMIC)) == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		netdev_err(dev->net, "Failed to allocate memory for control request\n");
 		usb_free_urb(urb);
 		return;
@@ -295,8 +336,12 @@ asix_write_cmd_async(struct usbnet *dev, u8 cmd, u16 value, u16 index,
 			     (void *)req, data, size,
 			     asix_async_cmd_callback, req);
 
+<<<<<<< HEAD
 	status = usb_submit_urb(urb, GFP_ATOMIC);
 	if (status < 0) {
+=======
+	if((status = usb_submit_urb(urb, GFP_ATOMIC)) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		netdev_err(dev->net, "Error submitting the control message: status=%d\n",
 			   status);
 		kfree(req);
@@ -306,6 +351,7 @@ asix_write_cmd_async(struct usbnet *dev, u8 cmd, u16 value, u16 index,
 
 static int asix_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
 {
+<<<<<<< HEAD
 	int offset = 0;
 
 	while (offset + sizeof(u32) < skb->len) {
@@ -324,10 +370,57 @@ static int asix_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
 
 		if ((size > dev->net->mtu + ETH_HLEN + VLAN_HLEN) ||
 		    (size + offset > skb->len)) {
+=======
+	u8  *head;
+	u32  header;
+	char *packet;
+	struct sk_buff *ax_skb;
+	u16 size;
+
+	head = (u8 *) skb->data;
+	memcpy(&header, head, sizeof(header));
+	le32_to_cpus(&header);
+	packet = head + sizeof(header);
+
+	skb_pull(skb, 4);
+
+	while (skb->len > 0) {
+		if ((header & 0x07ff) != ((~header >> 16) & 0x07ff))
+			netdev_err(dev->net, "asix_rx_fixup() Bad Header Length\n");
+
+		/* get the packet length */
+		size = (u16) (header & 0x000007ff);
+
+		if ((skb->len) - ((size + 1) & 0xfffe) == 0) {
+			u8 alignment = (unsigned long)skb->data & 0x3;
+			if (alignment != 0x2) {
+				/*
+				 * not 16bit aligned so use the room provided by
+				 * the 32 bit header to align the data
+				 *
+				 * note we want 16bit alignment as MAC header is
+				 * 14bytes thus ip header will be aligned on
+				 * 32bit boundary so accessing ipheader elements
+				 * using a cast to struct ip header wont cause
+				 * an unaligned accesses.
+				 */
+				u8 realignment = (alignment + 2) & 0x3;
+				memmove(skb->data - realignment,
+					skb->data,
+					size);
+				skb->data -= realignment;
+				skb_set_tail_pointer(skb, size);
+			}
+			return 2;
+		}
+
+		if (size > dev->net->mtu + ETH_HLEN) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			netdev_err(dev->net, "asix_rx_fixup() Bad RX Length %d\n",
 				   size);
 			return 0;
 		}
+<<<<<<< HEAD
 		ax_skb = netdev_alloc_skb_ip_align(dev->net, size);
 		if (!ax_skb)
 			return 0;
@@ -340,6 +433,42 @@ static int asix_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
 	}
 
 	if (skb->len != offset) {
+=======
+		ax_skb = skb_clone(skb, GFP_ATOMIC);
+		if (ax_skb) {
+			u8 alignment = (unsigned long)packet & 0x3;
+			ax_skb->len = size;
+
+			if (alignment != 0x2) {
+				/*
+				 * not 16bit aligned use the room provided by
+				 * the 32 bit header to align the data
+				 */
+				u8 realignment = (alignment + 2) & 0x3;
+				memmove(packet - realignment, packet, size);
+				packet -= realignment;
+			}
+			ax_skb->data = packet;
+			skb_set_tail_pointer(ax_skb, size);
+			usbnet_skb_return(dev, ax_skb);
+		} else {
+			return 0;
+		}
+
+		skb_pull(skb, (size + 1) & 0xfffe);
+
+		if (skb->len < sizeof(header))
+			break;
+
+		head = (u8 *) skb->data;
+		memcpy(&header, head, sizeof(header));
+		le32_to_cpus(&header);
+		packet = head + sizeof(header);
+		skb_pull(skb, 4);
+	}
+
+	if (skb->len < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		netdev_err(dev->net, "asix_rx_fixup() Bad SKB Length %d\n",
 			   skb->len);
 		return 0;
@@ -356,11 +485,23 @@ static struct sk_buff *asix_tx_fixup(struct usbnet *dev, struct sk_buff *skb,
 	u32 packet_len;
 	u32 padbytes = 0xffff0000;
 
+<<<<<<< HEAD
 	padlen = ((skb->len + 4) & (dev->maxpacket - 1)) ? 0 : 4;
 
 	if ((!skb_cloned(skb)) &&
 	    ((headroom + tailroom) >= (4 + padlen))) {
 		if ((headroom < 4) || (tailroom < padlen)) {
+=======
+	padlen = ((skb->len + 4) % 512) ? 0 : 4;
+
+	if ((!skb_cloned(skb))
+	    && ((headroom + tailroom) >= (4 + padlen))) {
+		if ((headroom < 4) || (tailroom < padlen)
+#ifdef CONFIG_ARCH_KONA
+			||  ((u32)(skb->data) & 0x3)
+#endif
+		) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			skb->data = memmove(skb->head + 4, skb->data, skb->len);
 			skb_set_tail_pointer(skb, skb->len);
 		}
@@ -378,7 +519,11 @@ static struct sk_buff *asix_tx_fixup(struct usbnet *dev, struct sk_buff *skb,
 	cpu_to_le32s(&packet_len);
 	skb_copy_to_linear_data(skb, &packet_len, sizeof(packet_len));
 
+<<<<<<< HEAD
 	if (padlen) {
+=======
+	if ((skb->len % 512) == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cpu_to_le32s(&padbytes);
 		memcpy(skb_tail_pointer(skb), &padbytes, sizeof(padbytes));
 		skb_put(skb, sizeof(padbytes));
@@ -489,11 +634,19 @@ static u16 asix_read_medium_status(struct usbnet *dev)
 	if (ret < 0) {
 		netdev_err(dev->net, "Error reading Medium Status register: %02x\n",
 			   ret);
+<<<<<<< HEAD
 		return ret;	/* TODO: callers not checking for error ret */
 	}
 
 	return le16_to_cpu(v);
 
+=======
+		goto out;
+	}
+	ret = le16_to_cpu(v);
+out:
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int asix_write_medium_mode(struct usbnet *dev, u16 mode)
@@ -605,6 +758,7 @@ static u32 asix_get_phyid(struct usbnet *dev)
 {
 	int phy_reg;
 	u32 phy_id;
+<<<<<<< HEAD
 	int i;
 
 	/* Poll for the rare case the FW or phy isn't ready yet.  */
@@ -616,6 +770,11 @@ static u32 asix_get_phyid(struct usbnet *dev)
 	}
 
 	if (phy_reg <= 0 || phy_reg == 0xFFFF)
+=======
+
+	phy_reg = asix_mdio_read(dev->net, dev->mii.phy_id, MII_PHYSID1);
+	if (phy_reg < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	phy_id = (phy_reg & 0xffff) << 16;
@@ -642,10 +801,19 @@ asix_get_wol(struct net_device *net, struct ethtool_wolinfo *wolinfo)
 	}
 	wolinfo->supported = WAKE_PHY | WAKE_MAGIC;
 	wolinfo->wolopts = 0;
+<<<<<<< HEAD
 	if (opt & AX_MONITOR_LINK)
 		wolinfo->wolopts |= WAKE_PHY;
 	if (opt & AX_MONITOR_MAGIC)
 		wolinfo->wolopts |= WAKE_MAGIC;
+=======
+	if (opt & AX_MONITOR_MODE) {
+		if (opt & AX_MONITOR_LINK)
+			wolinfo->wolopts |= WAKE_PHY;
+		if (opt & AX_MONITOR_MAGIC)
+			wolinfo->wolopts |= WAKE_MAGIC;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -658,6 +826,11 @@ asix_set_wol(struct net_device *net, struct ethtool_wolinfo *wolinfo)
 		opt |= AX_MONITOR_LINK;
 	if (wolinfo->wolopts & WAKE_MAGIC)
 		opt |= AX_MONITOR_MAGIC;
+<<<<<<< HEAD
+=======
+	if (opt != 0)
+		opt |= AX_MONITOR_MODE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (asix_write_cmd(dev, AX_CMD_WRITE_MONITOR_MODE,
 			      opt, 0, 0, NULL) < 0)
@@ -706,7 +879,11 @@ static void asix_get_drvinfo (struct net_device *net,
 
 	/* Inherit standard device info */
 	usbnet_get_drvinfo(net, info);
+<<<<<<< HEAD
 	strncpy (info->driver, DRIVER_NAME, sizeof info->driver);
+=======
+	strncpy (info->driver, driver_name, sizeof info->driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	strncpy (info->version, DRIVER_VERSION, sizeof info->version);
 	info->eedump_len = data->eeprom_len;
 }
@@ -834,7 +1011,11 @@ static const struct net_device_ops ax88172_netdev_ops = {
 	.ndo_set_mac_address 	= eth_mac_addr,
 	.ndo_validate_addr	= eth_validate_addr,
 	.ndo_do_ioctl		= asix_ioctl,
+<<<<<<< HEAD
 	.ndo_set_rx_mode	= ax88172_set_multicast,
+=======
+	.ndo_set_multicast_list = ax88172_set_multicast,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int ax88172_bind(struct usbnet *dev, struct usb_interface *intf)
@@ -851,13 +1032,20 @@ static int ax88172_bind(struct usbnet *dev, struct usb_interface *intf)
 
 	/* Toggle the GPIOs in a manufacturer/model specific way */
 	for (i = 2; i >= 0; i--) {
+<<<<<<< HEAD
 		ret = asix_write_cmd(dev, AX_CMD_WRITE_GPIOS,
 				(gpio_bits >> (i * 8)) & 0xff, 0, 0, NULL);
 		if (ret < 0)
+=======
+		if ((ret = asix_write_cmd(dev, AX_CMD_WRITE_GPIOS,
+					(gpio_bits >> (i * 8)) & 0xff, 0, 0,
+					NULL)) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out;
 		msleep(5);
 	}
 
+<<<<<<< HEAD
 	ret = asix_write_rx_ctl(dev, 0x80);
 	if (ret < 0)
 		goto out;
@@ -865,6 +1053,14 @@ static int ax88172_bind(struct usbnet *dev, struct usb_interface *intf)
 	/* Get the MAC address */
 	ret = asix_read_cmd(dev, AX88172_CMD_READ_NODE_ID, 0, 0, ETH_ALEN, buf);
 	if (ret < 0) {
+=======
+	if ((ret = asix_write_rx_ctl(dev, 0x80)) < 0)
+		goto out;
+
+	/* Get the MAC address */
+	if ((ret = asix_read_cmd(dev, AX88172_CMD_READ_NODE_ID,
+				0, 0, ETH_ALEN, buf)) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dbg("read AX_CMD_READ_NODE_ID failed: %d", ret);
 		goto out;
 	}
@@ -929,6 +1125,7 @@ static int ax88772_link_reset(struct usbnet *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int ax88772_reset(struct usbnet *dev)
 {
 	struct asix_data *data = (struct asix_data *)&dev->data;
@@ -944,10 +1141,45 @@ static int ax88772_reset(struct usbnet *dev)
 
 	ret = asix_write_cmd(dev, AX_CMD_SW_PHY_SELECT, embd_phy, 0, 0, NULL);
 	if (ret < 0) {
+=======
+static const struct net_device_ops ax88772_netdev_ops = {
+	.ndo_open		= usbnet_open,
+	.ndo_stop		= usbnet_stop,
+	.ndo_start_xmit		= usbnet_start_xmit,
+	.ndo_tx_timeout		= usbnet_tx_timeout,
+	.ndo_change_mtu		= usbnet_change_mtu,
+	.ndo_set_mac_address 	= asix_set_mac_address,
+	.ndo_validate_addr	= eth_validate_addr,
+	.ndo_do_ioctl		= asix_ioctl,
+	.ndo_set_multicast_list = asix_set_multicast,
+};
+
+static int ax88772_bind(struct usbnet *dev, struct usb_interface *intf)
+{
+	int ret, embd_phy;
+	u16 rx_ctl;
+	struct asix_data *data = (struct asix_data *)&dev->data;
+	u8 buf[ETH_ALEN];
+	u32 phyid;
+
+	data->eeprom_len = AX88772_EEPROM_LEN;
+
+	usbnet_get_endpoints(dev,intf);
+
+	if ((ret = asix_write_gpio(dev,
+			AX_GPIO_RSE | AX_GPIO_GPO_2 | AX_GPIO_GPO2EN, 5)) < 0)
+		goto out;
+
+	/* 0x10 is the phy id of the embedded 10/100 ethernet phy */
+	embd_phy = ((asix_get_phy_addr(dev) & 0x1f) == 0x10 ? 1 : 0);
+	if ((ret = asix_write_cmd(dev, AX_CMD_SW_PHY_SELECT,
+				embd_phy, 0, 0, NULL)) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dbg("Select PHY #1 failed: %d", ret);
 		goto out;
 	}
 
+<<<<<<< HEAD
 	ret = asix_sw_reset(dev, AX_SWRESET_IPPD | AX_SWRESET_PRL);
 	if (ret < 0)
 		goto out;
@@ -967,36 +1199,90 @@ static int ax88772_reset(struct usbnet *dev)
 	} else {
 		ret = asix_sw_reset(dev, AX_SWRESET_PRTE);
 		if (ret < 0)
+=======
+	if ((ret = asix_sw_reset(dev, AX_SWRESET_IPPD | AX_SWRESET_PRL)) < 0)
+		goto out;
+
+	msleep(150);
+	if ((ret = asix_sw_reset(dev, AX_SWRESET_CLEAR)) < 0)
+		goto out;
+
+	msleep(150);
+	if (embd_phy) {
+		if ((ret = asix_sw_reset(dev, AX_SWRESET_IPRL)) < 0)
+			goto out;
+	}
+	else {
+		if ((ret = asix_sw_reset(dev, AX_SWRESET_PRTE)) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out;
 	}
 
 	msleep(150);
 	rx_ctl = asix_read_rx_ctl(dev);
 	dbg("RX_CTL is 0x%04x after software reset", rx_ctl);
+<<<<<<< HEAD
 	ret = asix_write_rx_ctl(dev, 0x0000);
 	if (ret < 0)
+=======
+	if ((ret = asix_write_rx_ctl(dev, 0x0000)) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	rx_ctl = asix_read_rx_ctl(dev);
 	dbg("RX_CTL is 0x%04x setting to 0x0000", rx_ctl);
 
+<<<<<<< HEAD
 	ret = asix_sw_reset(dev, AX_SWRESET_PRL);
 	if (ret < 0)
+=======
+	/* Get the MAC address */
+	if ((ret = asix_read_cmd(dev, AX_CMD_READ_NODE_ID,
+				0, 0, ETH_ALEN, buf)) < 0) {
+		dbg("Failed to read MAC address: %d", ret);
+		goto out;
+	}
+	memcpy(dev->net->dev_addr, buf, ETH_ALEN);
+
+	/* Initialize MII structure */
+	dev->mii.dev = dev->net;
+	dev->mii.mdio_read = asix_mdio_read;
+	dev->mii.mdio_write = asix_mdio_write;
+	dev->mii.phy_id_mask = 0x1f;
+	dev->mii.reg_num_mask = 0x1f;
+	dev->mii.phy_id = asix_get_phy_addr(dev);
+
+	phyid = asix_get_phyid(dev);
+	dbg("PHYID=0x%08x", phyid);
+
+	if ((ret = asix_sw_reset(dev, AX_SWRESET_PRL)) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	msleep(150);
 
+<<<<<<< HEAD
 	ret = asix_sw_reset(dev, AX_SWRESET_IPRL | AX_SWRESET_PRL);
 	if (ret < 0)
+=======
+	if ((ret = asix_sw_reset(dev, AX_SWRESET_IPRL | AX_SWRESET_PRL)) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	msleep(150);
 
+<<<<<<< HEAD
+=======
+	dev->net->netdev_ops = &ax88772_netdev_ops;
+	dev->net->ethtool_ops = &ax88772_ethtool_ops;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	asix_mdio_write(dev->net, dev->mii.phy_id, MII_BMCR, BMCR_RESET);
 	asix_mdio_write(dev->net, dev->mii.phy_id, MII_ADVERTISE,
 			ADVERTISE_ALL | ADVERTISE_CSMA);
 	mii_nway_restart(&dev->mii);
 
+<<<<<<< HEAD
 	ret = asix_write_medium_mode(dev, AX88772_MEDIUM_DEFAULT);
 	if (ret < 0)
 		goto out;
@@ -1005,10 +1291,19 @@ static int ax88772_reset(struct usbnet *dev)
 				AX88772_IPG0_DEFAULT | AX88772_IPG1_DEFAULT,
 				AX88772_IPG2_DEFAULT, 0, NULL);
 	if (ret < 0) {
+=======
+	if ((ret = asix_write_medium_mode(dev, AX88772_MEDIUM_DEFAULT)) < 0)
+		goto out;
+
+	if ((ret = asix_write_cmd(dev, AX_CMD_WRITE_IPG0,
+				AX88772_IPG0_DEFAULT | AX88772_IPG1_DEFAULT,
+				AX88772_IPG2_DEFAULT, 0, NULL)) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dbg("Write IPG,IPG1,IPG2 failed: %d", ret);
 		goto out;
 	}
 
+<<<<<<< HEAD
 	/* Rewrite MAC address */
 	memcpy(data->mac_addr, dev->net->dev_addr, ETH_ALEN);
 	ret = asix_write_cmd(dev, AX_CMD_WRITE_NODE_ID, 0, 0, ETH_ALEN,
@@ -1019,6 +1314,10 @@ static int ax88772_reset(struct usbnet *dev)
 	/* Set RX_CTL to default values with 2k buffer, and enable cactus */
 	ret = asix_write_rx_ctl(dev, AX_DEFAULT_RX_CTL);
 	if (ret < 0)
+=======
+	/* Set RX_CTL to default values with 2k buffer, and enable cactus */
+	if ((ret = asix_write_rx_ctl(dev, AX_DEFAULT_RX_CTL)) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	rx_ctl = asix_read_rx_ctl(dev);
@@ -1027,6 +1326,7 @@ static int ax88772_reset(struct usbnet *dev)
 	rx_ctl = asix_read_medium_status(dev);
 	dbg("Medium Status is 0x%04x after all initializations", rx_ctl);
 
+<<<<<<< HEAD
 	return 0;
 
 out:
@@ -1103,17 +1403,29 @@ static int ax88772_bind(struct usbnet *dev, struct usb_interface *intf)
 	phyid = asix_get_phyid(dev);
 	dbg("PHYID=0x%08x", phyid);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Asix framing packs multiple eth frames into a 2K usb bulk transfer */
 	if (dev->driver_info->flags & FLAG_FRAMING_AX) {
 		/* hard_mtu  is still the default - the device does not support
 		   jumbo eth frames */
 		dev->rx_urb_size = 2048;
 	}
+<<<<<<< HEAD
 
 	return 0;
 }
 
 static const struct ethtool_ops ax88178_ethtool_ops = {
+=======
+	return 0;
+
+out:
+	return ret;
+}
+
+static struct ethtool_ops ax88178_ethtool_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.get_drvinfo		= asix_get_drvinfo,
 	.get_link		= asix_get_link,
 	.get_msglevel		= usbnet_get_msglevel,
@@ -1159,6 +1471,7 @@ static int marvell_phy_init(struct usbnet *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int rtl8211cl_phy_init(struct usbnet *dev)
 {
 	struct asix_data *data = (struct asix_data *)&dev->data;
@@ -1180,6 +1493,8 @@ static int rtl8211cl_phy_init(struct usbnet *dev)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int marvell_led_status(struct usbnet *dev, u16 speed)
 {
 	u16 reg = asix_mdio_read(dev->net, dev->mii.phy_id, MARVELL_LED_MANUAL);
@@ -1206,6 +1521,7 @@ static int marvell_led_status(struct usbnet *dev, u16 speed)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int ax88178_reset(struct usbnet *dev)
 {
 	struct asix_data *data = (struct asix_data *)&dev->data;
@@ -1295,6 +1611,8 @@ static int ax88178_reset(struct usbnet *dev)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ax88178_link_reset(struct usbnet *dev)
 {
 	u16 mode;
@@ -1396,13 +1714,18 @@ static const struct net_device_ops ax88178_netdev_ops = {
 	.ndo_tx_timeout		= usbnet_tx_timeout,
 	.ndo_set_mac_address 	= asix_set_mac_address,
 	.ndo_validate_addr	= eth_validate_addr,
+<<<<<<< HEAD
 	.ndo_set_rx_mode	= asix_set_multicast,
+=======
+	.ndo_set_multicast_list = asix_set_multicast,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ndo_do_ioctl 		= asix_ioctl,
 	.ndo_change_mtu 	= ax88178_change_mtu,
 };
 
 static int ax88178_bind(struct usbnet *dev, struct usb_interface *intf)
 {
+<<<<<<< HEAD
 	int ret;
 	u8 buf[ETH_ALEN];
 	struct asix_data *data = (struct asix_data *)&dev->data;
@@ -1416,6 +1739,62 @@ static int ax88178_bind(struct usbnet *dev, struct usb_interface *intf)
 	if (ret < 0) {
 		dbg("Failed to read MAC address: %d", ret);
 		return ret;
+=======
+	struct asix_data *data = (struct asix_data *)&dev->data;
+	int ret;
+	u8 buf[ETH_ALEN];
+	__le16 eeprom;
+	u8 status;
+	int gpio0 = 0;
+	u32 phyid;
+
+	usbnet_get_endpoints(dev,intf);
+
+	asix_read_cmd(dev, AX_CMD_READ_GPIOS, 0, 0, 1, &status);
+	dbg("GPIO Status: 0x%04x", status);
+
+	asix_write_cmd(dev, AX_CMD_WRITE_ENABLE, 0, 0, 0, NULL);
+	asix_read_cmd(dev, AX_CMD_READ_EEPROM, 0x0017, 0, 2, &eeprom);
+	asix_write_cmd(dev, AX_CMD_WRITE_DISABLE, 0, 0, 0, NULL);
+
+	dbg("EEPROM index 0x17 is 0x%04x", eeprom);
+
+	if (eeprom == cpu_to_le16(0xffff)) {
+		data->phymode = PHY_MODE_MARVELL;
+		data->ledmode = 0;
+		gpio0 = 1;
+	} else {
+		data->phymode = le16_to_cpu(eeprom) & 7;
+		data->ledmode = le16_to_cpu(eeprom) >> 8;
+		gpio0 = (le16_to_cpu(eeprom) & 0x80) ? 0 : 1;
+	}
+	dbg("GPIO0: %d, PhyMode: %d", gpio0, data->phymode);
+
+	asix_write_gpio(dev, AX_GPIO_RSE | AX_GPIO_GPO_1 | AX_GPIO_GPO1EN, 40);
+	if ((le16_to_cpu(eeprom) >> 8) != 1) {
+		asix_write_gpio(dev, 0x003c, 30);
+		asix_write_gpio(dev, 0x001c, 300);
+		asix_write_gpio(dev, 0x003c, 30);
+	} else {
+		dbg("gpio phymode == 1 path");
+		asix_write_gpio(dev, AX_GPIO_GPO1EN, 30);
+		asix_write_gpio(dev, AX_GPIO_GPO1EN | AX_GPIO_GPO_1, 30);
+	}
+
+	asix_sw_reset(dev, 0);
+	msleep(150);
+
+	asix_sw_reset(dev, AX_SWRESET_PRL | AX_SWRESET_IPPD);
+	msleep(150);
+
+	asix_write_rx_ctl(dev, 0);
+
+	/* Get the MAC address */
+	if ((ret = asix_read_cmd(dev, AX_CMD_READ_NODE_ID,
+				0, 0, ETH_ALEN, buf)) < 0) {
+		dbg("Failed to read MAC address: %d", ret);
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	memcpy(dev->net->dev_addr, buf, ETH_ALEN);
 
@@ -1431,12 +1810,37 @@ static int ax88178_bind(struct usbnet *dev, struct usb_interface *intf)
 	dev->net->netdev_ops = &ax88178_netdev_ops;
 	dev->net->ethtool_ops = &ax88178_ethtool_ops;
 
+<<<<<<< HEAD
 	/* Blink LEDS so users know driver saw dongle */
 	asix_sw_reset(dev, 0);
 	msleep(150);
 
 	asix_sw_reset(dev, AX_SWRESET_PRL | AX_SWRESET_IPPD);
 	msleep(150);
+=======
+	phyid = asix_get_phyid(dev);
+	dbg("PHYID=0x%08x", phyid);
+
+	if (data->phymode == PHY_MODE_MARVELL) {
+		marvell_phy_init(dev);
+		msleep(60);
+	}
+
+	asix_mdio_write(dev->net, dev->mii.phy_id, MII_BMCR,
+			BMCR_RESET | BMCR_ANENABLE);
+	asix_mdio_write(dev->net, dev->mii.phy_id, MII_ADVERTISE,
+			ADVERTISE_ALL | ADVERTISE_CSMA | ADVERTISE_PAUSE_CAP);
+	asix_mdio_write(dev->net, dev->mii.phy_id, MII_CTRL1000,
+			ADVERTISE_1000FULL);
+
+	mii_nway_restart(&dev->mii);
+
+	if ((ret = asix_write_medium_mode(dev, AX88178_MEDIUM_DEFAULT)) < 0)
+		goto out;
+
+	if ((ret = asix_write_rx_ctl(dev, AX_DEFAULT_RX_CTL)) < 0)
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Asix framing packs multiple eth frames into a 2K usb bulk transfer */
 	if (dev->driver_info->flags & FLAG_FRAMING_AX) {
@@ -1444,8 +1848,15 @@ static int ax88178_bind(struct usbnet *dev, struct usb_interface *intf)
 		   jumbo eth frames */
 		dev->rx_urb_size = 2048;
 	}
+<<<<<<< HEAD
 
 	return 0;
+=======
+	return 0;
+
+out:
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct driver_info ax8817x_info = {
@@ -1493,8 +1904,13 @@ static const struct driver_info ax88772_info = {
 	.bind = ax88772_bind,
 	.status = asix_status,
 	.link_reset = ax88772_link_reset,
+<<<<<<< HEAD
 	.reset = ax88772_reset,
 	.flags = FLAG_ETHER | FLAG_FRAMING_AX | FLAG_LINK_INTR | FLAG_MULTI_PACKET,
+=======
+	.reset = ax88772_link_reset,
+	.flags = FLAG_ETHER | FLAG_FRAMING_AX | FLAG_LINK_INTR,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.rx_fixup = asix_rx_fixup,
 	.tx_fixup = asix_tx_fixup,
 };
@@ -1504,7 +1920,11 @@ static const struct driver_info ax88178_info = {
 	.bind = ax88178_bind,
 	.status = asix_status,
 	.link_reset = ax88178_link_reset,
+<<<<<<< HEAD
 	.reset = ax88178_reset,
+=======
+	.reset = ax88178_link_reset,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.flags = FLAG_ETHER | FLAG_FRAMING_AX | FLAG_LINK_INTR,
 	.rx_fixup = asix_rx_fixup,
 	.tx_fixup = asix_tx_fixup,
@@ -1604,10 +2024,13 @@ static const struct usb_device_id	products [] = {
 	USB_DEVICE (0x2001, 0x3c05),
 	.driver_info = (unsigned long) &ax88772_info,
 }, {
+<<<<<<< HEAD
        // DLink DUB-E100 H/W Ver C1
        USB_DEVICE (0x2001, 0x1a02),
        .driver_info = (unsigned long) &ax88772_info,
 }, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	// Linksys USB1000
 	USB_DEVICE (0x1737, 0x0039),
 	.driver_info = (unsigned long) &ax88178_info,
@@ -1645,7 +2068,11 @@ static const struct usb_device_id	products [] = {
 MODULE_DEVICE_TABLE(usb, products);
 
 static struct usb_driver asix_driver = {
+<<<<<<< HEAD
 	.name =		DRIVER_NAME,
+=======
+	.name =		"asix",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table =	products,
 	.probe =	usbnet_probe,
 	.suspend =	usbnet_suspend,
@@ -1654,10 +2081,26 @@ static struct usb_driver asix_driver = {
 	.supports_autosuspend = 1,
 };
 
+<<<<<<< HEAD
 module_usb_driver(asix_driver);
 
 MODULE_AUTHOR("David Hollis");
 MODULE_VERSION(DRIVER_VERSION);
+=======
+static int __init asix_init(void)
+{
+ 	return usb_register(&asix_driver);
+}
+module_init(asix_init);
+
+static void __exit asix_exit(void)
+{
+ 	usb_deregister(&asix_driver);
+}
+module_exit(asix_exit);
+
+MODULE_AUTHOR("David Hollis");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("ASIX AX8817X based USB 2.0 Ethernet Devices");
 MODULE_LICENSE("GPL");
 

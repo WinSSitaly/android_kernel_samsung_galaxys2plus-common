@@ -99,6 +99,10 @@ struct qt1010_priv {
 	u8 reg25_init_val;
 
 	u32 frequency;
+<<<<<<< HEAD
+=======
+	u32 bandwidth;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif

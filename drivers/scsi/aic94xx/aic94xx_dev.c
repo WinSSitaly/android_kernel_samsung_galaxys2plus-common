@@ -109,6 +109,7 @@ static int asd_init_sata_tag_ddb(struct domain_device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 void asd_set_dmamode(struct domain_device *dev)
 {
 	struct asd_ha_struct *asd_ha = dev->port->ha->lldd_ha;
@@ -119,10 +120,29 @@ void asd_set_dmamode(struct domain_device *dev)
 	if (dev->dev_type == SATA_DEV || dev->dev_type == SATA_PM_PORT) {
 		if (ata_id_has_ncq(ata_dev->id))
 			qdepth = ata_id_queue_depth(ata_dev->id);
+=======
+static int asd_init_sata(struct domain_device *dev)
+{
+	struct asd_ha_struct *asd_ha = dev->port->ha->lldd_ha;
+	int ddb = (int) (unsigned long) dev->lldd_dev;
+	u32 qdepth = 0;
+	int res = 0;
+
+	asd_ddbsite_write_word(asd_ha, ddb, ATA_CMD_SCBPTR, 0xFFFF);
+	if ((dev->dev_type == SATA_DEV || dev->dev_type == SATA_PM_PORT) &&
+	    dev->sata_dev.identify_device &&
+	    dev->sata_dev.identify_device[10] != 0) {
+		u16 w75 = le16_to_cpu(dev->sata_dev.identify_device[75]);
+		u16 w76 = le16_to_cpu(dev->sata_dev.identify_device[76]);
+
+		if (w76 & 0x100) /* NCQ? */
+			qdepth = (w75 & 0x1F) + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		asd_ddbsite_write_dword(asd_ha, ddb, SATA_TAG_ALLOC_MASK,
 					(1ULL<<qdepth)-1);
 		asd_ddbsite_write_byte(asd_ha, ddb, NUM_SATA_TAGS, qdepth);
 	}
+<<<<<<< HEAD
 
 	if (qdepth > 0)
 		if (asd_init_sata_tag_ddb(dev) != 0) {
@@ -140,6 +160,8 @@ static int asd_init_sata(struct domain_device *dev)
 	int ddb = (int) (unsigned long) dev->lldd_dev;
 
 	asd_ddbsite_write_word(asd_ha, ddb, ATA_CMD_SCBPTR, 0xFFFF);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dev->dev_type == SATA_DEV || dev->dev_type == SATA_PM ||
 	    dev->dev_type == SATA_PM_PORT) {
 		struct dev_to_host_fis *fis = (struct dev_to_host_fis *)
@@ -147,8 +169,14 @@ static int asd_init_sata(struct domain_device *dev)
 		asd_ddbsite_write_byte(asd_ha, ddb, SATA_STATUS, fis->status);
 	}
 	asd_ddbsite_write_word(asd_ha, ddb, NCQ_DATA_SCB_PTR, 0xFFFF);
+<<<<<<< HEAD
 
 	return 0;
+=======
+	if (qdepth > 0)
+		res = asd_init_sata_tag_ddb(dev);
+	return res;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int asd_init_target_ddb(struct domain_device *dev)

@@ -62,11 +62,17 @@
 /*
  * Local functions
  */
+<<<<<<< HEAD
 static void	 xprt_init(struct rpc_xprt *xprt, struct net *net);
 static void	xprt_request_init(struct rpc_task *, struct rpc_xprt *);
 static void	xprt_connect_status(struct rpc_task *task);
 static int      __xprt_get_cong(struct rpc_xprt *, struct rpc_task *);
 static void	 xprt_destroy(struct rpc_xprt *xprt);
+=======
+static void	xprt_request_init(struct rpc_task *, struct rpc_xprt *);
+static void	xprt_connect_status(struct rpc_task *task);
+static int      __xprt_get_cong(struct rpc_xprt *, struct rpc_task *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static DEFINE_SPINLOCK(xprt_list_lock);
 static LIST_HEAD(xprt_list);
@@ -188,16 +194,26 @@ EXPORT_SYMBOL_GPL(xprt_load_transport);
 /**
  * xprt_reserve_xprt - serialize write access to transports
  * @task: task that is requesting access to the transport
+<<<<<<< HEAD
  * @xprt: pointer to the target transport
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This prevents mixing the payload of separate requests, and prevents
  * transport connects from colliding with writes.  No congestion control
  * is provided.
  */
+<<<<<<< HEAD
 int xprt_reserve_xprt(struct rpc_xprt *xprt, struct rpc_task *task)
 {
 	struct rpc_rqst *req = task->tk_rqstp;
 	int priority;
+=======
+int xprt_reserve_xprt(struct rpc_task *task)
+{
+	struct rpc_rqst *req = task->tk_rqstp;
+	struct rpc_xprt	*xprt = req->rq_xprt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (test_and_set_bit(XPRT_LOCKED, &xprt->state)) {
 		if (task == xprt->snd_task)
@@ -205,10 +221,15 @@ int xprt_reserve_xprt(struct rpc_xprt *xprt, struct rpc_task *task)
 		goto out_sleep;
 	}
 	xprt->snd_task = task;
+<<<<<<< HEAD
 	if (req != NULL) {
 		req->rq_bytes_sent = 0;
 		req->rq_ntrans++;
 	}
+=======
+	req->rq_bytes_sent = 0;
+	req->rq_ntrans++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 1;
 
@@ -217,6 +238,7 @@ out_sleep:
 			task->tk_pid, xprt);
 	task->tk_timeout = 0;
 	task->tk_status = -EAGAIN;
+<<<<<<< HEAD
 	if (req == NULL)
 		priority = RPC_PRIORITY_LOW;
 	else if (!req->rq_ntrans)
@@ -224,6 +246,12 @@ out_sleep:
 	else
 		priority = RPC_PRIORITY_HIGH;
 	rpc_sleep_on_priority(&xprt->sending, task, NULL, priority);
+=======
+	if (req->rq_ntrans)
+		rpc_sleep_on(&xprt->resend, task, NULL);
+	else
+		rpc_sleep_on(&xprt->sending, task, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL_GPL(xprt_reserve_xprt);
@@ -247,16 +275,24 @@ static void xprt_clear_locked(struct rpc_xprt *xprt)
  * integrated into the decision of whether a request is allowed to be
  * woken up and given access to the transport.
  */
+<<<<<<< HEAD
 int xprt_reserve_xprt_cong(struct rpc_xprt *xprt, struct rpc_task *task)
 {
 	struct rpc_rqst *req = task->tk_rqstp;
 	int priority;
+=======
+int xprt_reserve_xprt_cong(struct rpc_task *task)
+{
+	struct rpc_xprt	*xprt = task->tk_xprt;
+	struct rpc_rqst *req = task->tk_rqstp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (test_and_set_bit(XPRT_LOCKED, &xprt->state)) {
 		if (task == xprt->snd_task)
 			return 1;
 		goto out_sleep;
 	}
+<<<<<<< HEAD
 	if (req == NULL) {
 		xprt->snd_task = task;
 		return 1;
@@ -265,6 +301,14 @@ int xprt_reserve_xprt_cong(struct rpc_xprt *xprt, struct rpc_task *task)
 		xprt->snd_task = task;
 		req->rq_bytes_sent = 0;
 		req->rq_ntrans++;
+=======
+	if (__xprt_get_cong(xprt, task)) {
+		xprt->snd_task = task;
+		if (req) {
+			req->rq_bytes_sent = 0;
+			req->rq_ntrans++;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 	}
 	xprt_clear_locked(xprt);
@@ -272,6 +316,7 @@ out_sleep:
 	dprintk("RPC: %5u failed to lock transport %p\n", task->tk_pid, xprt);
 	task->tk_timeout = 0;
 	task->tk_status = -EAGAIN;
+<<<<<<< HEAD
 	if (req == NULL)
 		priority = RPC_PRIORITY_LOW;
 	else if (!req->rq_ntrans)
@@ -279,6 +324,12 @@ out_sleep:
 	else
 		priority = RPC_PRIORITY_HIGH;
 	rpc_sleep_on_priority(&xprt->sending, task, NULL, priority);
+=======
+	if (req && req->rq_ntrans)
+		rpc_sleep_on(&xprt->resend, task, NULL);
+	else
+		rpc_sleep_on(&xprt->sending, task, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL_GPL(xprt_reserve_xprt_cong);
@@ -288,11 +339,16 @@ static inline int xprt_lock_write(struct rpc_xprt *xprt, struct rpc_task *task)
 	int retval;
 
 	spin_lock_bh(&xprt->transport_lock);
+<<<<<<< HEAD
 	retval = xprt->ops->reserve_xprt(xprt, task);
+=======
+	retval = xprt->ops->reserve_xprt(task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_bh(&xprt->transport_lock);
 	return retval;
 }
 
+<<<<<<< HEAD
 static bool __xprt_lock_write_func(struct rpc_task *task, void *data)
 {
 	struct rpc_xprt *xprt = data;
@@ -334,16 +390,66 @@ static bool __xprt_lock_write_cong_func(struct rpc_task *task, void *data)
 		return true;
 	}
 	return false;
+=======
+static void __xprt_lock_write_next(struct rpc_xprt *xprt)
+{
+	struct rpc_task *task;
+	struct rpc_rqst *req;
+
+	if (test_and_set_bit(XPRT_LOCKED, &xprt->state))
+		return;
+
+	task = rpc_wake_up_next(&xprt->resend);
+	if (!task) {
+		task = rpc_wake_up_next(&xprt->sending);
+		if (!task)
+			goto out_unlock;
+	}
+
+	req = task->tk_rqstp;
+	xprt->snd_task = task;
+	if (req) {
+		req->rq_bytes_sent = 0;
+		req->rq_ntrans++;
+	}
+	return;
+
+out_unlock:
+	xprt_clear_locked(xprt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __xprt_lock_write_next_cong(struct rpc_xprt *xprt)
 {
+<<<<<<< HEAD
+=======
+	struct rpc_task *task;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (test_and_set_bit(XPRT_LOCKED, &xprt->state))
 		return;
 	if (RPCXPRT_CONGESTED(xprt))
 		goto out_unlock;
+<<<<<<< HEAD
 	if (rpc_wake_up_first(&xprt->sending, __xprt_lock_write_cong_func, xprt))
 		return;
+=======
+	task = rpc_wake_up_next(&xprt->resend);
+	if (!task) {
+		task = rpc_wake_up_next(&xprt->sending);
+		if (!task)
+			goto out_unlock;
+	}
+	if (__xprt_get_cong(xprt, task)) {
+		struct rpc_rqst *req = task->tk_rqstp;
+		xprt->snd_task = task;
+		if (req) {
+			req->rq_bytes_sent = 0;
+			req->rq_ntrans++;
+		}
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_unlock:
 	xprt_clear_locked(xprt);
 }
@@ -485,17 +591,24 @@ EXPORT_SYMBOL_GPL(xprt_wake_pending_tasks);
  * xprt_wait_for_buffer_space - wait for transport output buffer to clear
  * @task: task to be put to sleep
  * @action: function pointer to be executed after wait
+<<<<<<< HEAD
  *
  * Note that we only set the timer for the case of RPC_IS_SOFT(), since
  * we don't in general want to force a socket disconnection due to
  * an incomplete RPC call transmission.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void xprt_wait_for_buffer_space(struct rpc_task *task, rpc_action action)
 {
 	struct rpc_rqst *req = task->tk_rqstp;
 	struct rpc_xprt *xprt = req->rq_xprt;
 
+<<<<<<< HEAD
 	task->tk_timeout = RPC_IS_SOFT(task) ? req->rq_timeout : 0;
+=======
+	task->tk_timeout = req->rq_timeout;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rpc_sleep_on(&xprt->pending, task, action);
 }
 EXPORT_SYMBOL_GPL(xprt_wait_for_buffer_space);
@@ -720,7 +833,13 @@ void xprt_connect(struct rpc_task *task)
 	if (xprt_connected(xprt))
 		xprt_release_write(xprt, task);
 	else {
+<<<<<<< HEAD
 		task->tk_rqstp->rq_bytes_sent = 0;
+=======
+		if (task->tk_rqstp)
+			task->tk_rqstp->rq_bytes_sent = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		task->tk_timeout = task->tk_rqstp->rq_timeout;
 		rpc_sleep_on(&xprt->pending, task, xprt_connect_status);
 
@@ -756,7 +875,11 @@ static void xprt_connect_status(struct rpc_task *task)
 	default:
 		dprintk("RPC: %5u xprt_connect_status: error %d connecting to "
 				"server %s\n", task->tk_pid, -task->tk_status,
+<<<<<<< HEAD
 				xprt->servername);
+=======
+				task->tk_client->cl_server);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		xprt_release_write(xprt, task);
 		task->tk_status = -EIO;
 	}
@@ -868,7 +991,11 @@ int xprt_prepare_transmit(struct rpc_task *task)
 		err = req->rq_reply_bytes_recvd;
 		goto out_unlock;
 	}
+<<<<<<< HEAD
 	if (!xprt->ops->reserve_xprt(xprt, task))
+=======
+	if (!xprt->ops->reserve_xprt(task))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = -EAGAIN;
 out_unlock:
 	spin_unlock_bh(&xprt->transport_lock);
@@ -890,7 +1017,11 @@ void xprt_transmit(struct rpc_task *task)
 {
 	struct rpc_rqst	*req = task->tk_rqstp;
 	struct rpc_xprt	*xprt = req->rq_xprt;
+<<<<<<< HEAD
 	int status, numreqs;
+=======
+	int status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dprintk("RPC: %5u xprt_transmit(%u)\n", task->tk_pid, req->rq_slen);
 
@@ -927,6 +1058,7 @@ void xprt_transmit(struct rpc_task *task)
 
 	xprt->ops->set_retrans_timeout(task);
 
+<<<<<<< HEAD
 	numreqs = atomic_read(&xprt->num_reqs);
 	if (numreqs > xprt->stat.max_slots)
 		xprt->stat.max_slots = numreqs;
@@ -935,6 +1067,11 @@ void xprt_transmit(struct rpc_task *task)
 	xprt->stat.bklog_u += xprt->backlog.qlen;
 	xprt->stat.sending_u += xprt->sending.qlen;
 	xprt->stat.pending_u += xprt->pending.qlen;
+=======
+	xprt->stat.sends++;
+	xprt->stat.req_u += xprt->stat.sends - xprt->stat.recvs;
+	xprt->stat.bklog_u += xprt->backlog.qlen;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Don't race with disconnect */
 	if (!xprt_connected(xprt))
@@ -949,6 +1086,7 @@ void xprt_transmit(struct rpc_task *task)
 	spin_unlock_bh(&xprt->transport_lock);
 }
 
+<<<<<<< HEAD
 static struct rpc_rqst *xprt_dynamic_alloc_slot(struct rpc_xprt *xprt, gfp_t gfp_flags)
 {
 	struct rpc_rqst *req = ERR_PTR(-EAGAIN);
@@ -1029,10 +1167,39 @@ static void xprt_free_slot(struct rpc_xprt *xprt, struct rpc_rqst *req)
 		memset(req, 0, sizeof(*req));	/* mark unused */
 		list_add(&req->rq_list, &xprt->free);
 	}
+=======
+static void xprt_alloc_slot(struct rpc_task *task)
+{
+	struct rpc_xprt	*xprt = task->tk_xprt;
+
+	task->tk_status = 0;
+	if (task->tk_rqstp)
+		return;
+	if (!list_empty(&xprt->free)) {
+		struct rpc_rqst	*req = list_entry(xprt->free.next, struct rpc_rqst, rq_list);
+		list_del_init(&req->rq_list);
+		task->tk_rqstp = req;
+		xprt_request_init(task, xprt);
+		return;
+	}
+	dprintk("RPC:       waiting for request slot\n");
+	task->tk_status = -EAGAIN;
+	task->tk_timeout = 0;
+	rpc_sleep_on(&xprt->backlog, task, NULL);
+}
+
+static void xprt_free_slot(struct rpc_xprt *xprt, struct rpc_rqst *req)
+{
+	memset(req, 0, sizeof(*req));	/* mark unused */
+
+	spin_lock(&xprt->reserve_lock);
+	list_add(&req->rq_list, &xprt->free);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rpc_wake_up_next(&xprt->backlog);
 	spin_unlock(&xprt->reserve_lock);
 }
 
+<<<<<<< HEAD
 static void xprt_free_all_slots(struct rpc_xprt *xprt)
 {
 	struct rpc_rqst *req;
@@ -1050,10 +1217,16 @@ struct rpc_xprt *xprt_alloc(struct net *net, size_t size,
 	struct rpc_xprt *xprt;
 	struct rpc_rqst *req;
 	int i;
+=======
+struct rpc_xprt *xprt_alloc(struct net *net, int size, int max_req)
+{
+	struct rpc_xprt *xprt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	xprt = kzalloc(size, GFP_KERNEL);
 	if (xprt == NULL)
 		goto out;
+<<<<<<< HEAD
 
 	xprt_init(xprt, net);
 
@@ -1076,6 +1249,20 @@ struct rpc_xprt *xprt_alloc(struct net *net, size_t size,
 
 out_free:
 	xprt_free(xprt);
+=======
+	atomic_set(&xprt->count, 1);
+
+	xprt->max_reqs = max_req;
+	xprt->slot = kcalloc(max_req, sizeof(struct rpc_rqst), GFP_KERNEL);
+	if (xprt->slot == NULL)
+		goto out_free;
+
+	xprt->xprt_net = get_net(net);
+	return xprt;
+
+out_free:
+	kfree(xprt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return NULL;
 }
@@ -1084,7 +1271,11 @@ EXPORT_SYMBOL_GPL(xprt_alloc);
 void xprt_free(struct rpc_xprt *xprt)
 {
 	put_net(xprt->xprt_net);
+<<<<<<< HEAD
 	xprt_free_all_slots(xprt);
+=======
+	kfree(xprt->slot);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(xprt);
 }
 EXPORT_SYMBOL_GPL(xprt_free);
@@ -1100,6 +1291,7 @@ void xprt_reserve(struct rpc_task *task)
 {
 	struct rpc_xprt	*xprt = task->tk_xprt;
 
+<<<<<<< HEAD
 	task->tk_status = 0;
 	if (task->tk_rqstp != NULL)
 		return;
@@ -1107,6 +1299,12 @@ void xprt_reserve(struct rpc_task *task)
 	task->tk_timeout = 0;
 	task->tk_status = -EAGAIN;
 	xprt->ops->alloc_slot(xprt, task);
+=======
+	task->tk_status = -EIO;
+	spin_lock(&xprt->reserve_lock);
+	xprt_alloc_slot(task);
+	spin_unlock(&xprt->reserve_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline __be32 xprt_alloc_xid(struct rpc_xprt *xprt)
@@ -1123,7 +1321,10 @@ static void xprt_request_init(struct rpc_task *task, struct rpc_xprt *xprt)
 {
 	struct rpc_rqst	*req = task->tk_rqstp;
 
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&req->rq_list);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	req->rq_timeout = task->tk_client->cl_timeout->to_initval;
 	req->rq_task	= task;
 	req->rq_xprt    = xprt;
@@ -1143,6 +1344,7 @@ static void xprt_request_init(struct rpc_task *task, struct rpc_xprt *xprt)
 void xprt_release(struct rpc_task *task)
 {
 	struct rpc_xprt	*xprt;
+<<<<<<< HEAD
 	struct rpc_rqst	*req = task->tk_rqstp;
 
 	if (req == NULL) {
@@ -1161,6 +1363,15 @@ void xprt_release(struct rpc_task *task)
 		task->tk_ops->rpc_count_stats(task, task->tk_calldata);
 	else if (task->tk_client)
 		rpc_count_iostats(task, task->tk_client->cl_metrics);
+=======
+	struct rpc_rqst	*req;
+
+	if (!(req = task->tk_rqstp))
+		return;
+
+	xprt = req->rq_xprt;
+	rpc_count_iostats(task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_bh(&xprt->transport_lock);
 	xprt->ops->release_xprt(xprt, task);
 	if (xprt->ops->release_request)
@@ -1187,6 +1398,7 @@ void xprt_release(struct rpc_task *task)
 		xprt_free_bc_request(req);
 }
 
+<<<<<<< HEAD
 static void xprt_init(struct rpc_xprt *xprt, struct net *net)
 {
 	atomic_set(&xprt->count, 1);
@@ -1215,6 +1427,8 @@ static void xprt_init(struct rpc_xprt *xprt, struct net *net)
 	xprt->xprt_net = get_net(net);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * xprt_create_transport - create an RPC transport
  * @args: rpc transport creation arguments
@@ -1223,6 +1437,10 @@ static void xprt_init(struct rpc_xprt *xprt, struct net *net)
 struct rpc_xprt *xprt_create_transport(struct xprt_create *args)
 {
 	struct rpc_xprt	*xprt;
+<<<<<<< HEAD
+=======
+	struct rpc_rqst	*req;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct xprt_class *t;
 
 	spin_lock(&xprt_list_lock);
@@ -1241,14 +1459,34 @@ found:
 	if (IS_ERR(xprt)) {
 		dprintk("RPC:       xprt_create_transport: failed, %ld\n",
 				-PTR_ERR(xprt));
+<<<<<<< HEAD
 		goto out;
 	}
+=======
+		return xprt;
+	}
+	if (test_and_set_bit(XPRT_INITIALIZED, &xprt->state))
+		/* ->setup returned a pre-initialized xprt: */
+		return xprt;
+
+	spin_lock_init(&xprt->transport_lock);
+	spin_lock_init(&xprt->reserve_lock);
+
+	INIT_LIST_HEAD(&xprt->free);
+	INIT_LIST_HEAD(&xprt->recv);
+#if defined(CONFIG_NFS_V4_1)
+	spin_lock_init(&xprt->bc_pa_lock);
+	INIT_LIST_HEAD(&xprt->bc_pa_list);
+#endif /* CONFIG_NFS_V4_1 */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_WORK(&xprt->task_cleanup, xprt_autoclose);
 	if (xprt_has_timer(xprt))
 		setup_timer(&xprt->timer, xprt_init_autodisconnect,
 			    (unsigned long)xprt);
 	else
 		init_timer(&xprt->timer);
+<<<<<<< HEAD
 
 	if (strlen(args->servername) > RPC_MAXNETNAMELEN) {
 		xprt_destroy(xprt);
@@ -1263,6 +1501,26 @@ found:
 	dprintk("RPC:       created transport %p with %u slots\n", xprt,
 			xprt->max_reqs);
 out:
+=======
+	xprt->last_used = jiffies;
+	xprt->cwnd = RPC_INITCWND;
+	xprt->bind_index = 0;
+
+	rpc_init_wait_queue(&xprt->binding, "xprt_binding");
+	rpc_init_wait_queue(&xprt->pending, "xprt_pending");
+	rpc_init_wait_queue(&xprt->sending, "xprt_sending");
+	rpc_init_wait_queue(&xprt->resend, "xprt_resend");
+	rpc_init_priority_wait_queue(&xprt->backlog, "xprt_backlog");
+
+	/* initialize free list */
+	for (req = &xprt->slot[xprt->max_reqs-1]; req >= &xprt->slot[0]; req--)
+		list_add(&req->rq_list, &xprt->free);
+
+	xprt_init_xid(xprt);
+
+	dprintk("RPC:       created transport %p with %u slots\n", xprt,
+			xprt->max_reqs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return xprt;
 }
 
@@ -1280,9 +1538,15 @@ static void xprt_destroy(struct rpc_xprt *xprt)
 	rpc_destroy_wait_queue(&xprt->binding);
 	rpc_destroy_wait_queue(&xprt->pending);
 	rpc_destroy_wait_queue(&xprt->sending);
+<<<<<<< HEAD
 	rpc_destroy_wait_queue(&xprt->backlog);
 	cancel_work_sync(&xprt->task_cleanup);
 	kfree(xprt->servername);
+=======
+	rpc_destroy_wait_queue(&xprt->resend);
+	rpc_destroy_wait_queue(&xprt->backlog);
+	cancel_work_sync(&xprt->task_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Tear down transport state and free the rpc_xprt
 	 */

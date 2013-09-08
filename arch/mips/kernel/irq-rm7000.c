@@ -16,6 +16,10 @@
 
 #include <asm/irq_cpu.h>
 #include <asm/mipsregs.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void unmask_rm7k_irq(struct irq_data *d)
 {

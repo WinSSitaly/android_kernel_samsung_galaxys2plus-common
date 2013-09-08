@@ -23,7 +23,10 @@
 #include <linux/spinlock.h>
 #include <linux/virtio.h>
 #include <linux/virtio_rng.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct virtqueue *vq;
 static unsigned int data_avail;
@@ -47,7 +50,11 @@ static void register_buffer(u8 *buf, size_t size)
 	sg_init_one(&sg, buf, size);
 
 	/* There should always be room for one buffer. */
+<<<<<<< HEAD
 	if (virtqueue_add_buf(vq, &sg, 0, 1, buf, GFP_KERNEL) < 0)
+=======
+	if (virtqueue_add_buf(vq, &sg, 0, 1, buf) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		BUG();
 
 	virtqueue_kick(vq);
@@ -89,6 +96,7 @@ static int virtrng_probe(struct virtio_device *vdev)
 {
 	int err;
 
+<<<<<<< HEAD
 	if (vq) {
 		/* We only support one device for now */
 		return -EBUSY;
@@ -100,11 +108,20 @@ static int virtrng_probe(struct virtio_device *vdev)
 		vq = NULL;
 		return err;
 	}
+=======
+	/* We expect a single virtqueue. */
+	vq = virtio_find_single_vq(vdev, random_recv_done, "input");
+	if (IS_ERR(vq))
+		return PTR_ERR(vq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = hwrng_register(&virtio_hwrng);
 	if (err) {
 		vdev->config->del_vqs(vdev);
+<<<<<<< HEAD
 		vq = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 	}
 
@@ -116,7 +133,10 @@ static void __devexit virtrng_remove(struct virtio_device *vdev)
 	vdev->config->reset(vdev);
 	hwrng_unregister(&virtio_hwrng);
 	vdev->config->del_vqs(vdev);
+<<<<<<< HEAD
 	vq = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct virtio_device_id id_table[] = {

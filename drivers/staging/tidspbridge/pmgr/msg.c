@@ -23,6 +23,12 @@
 /*  ----------------------------------- DSP/BIOS Bridge */
 #include <dspbridge/dbdefs.h>
 
+<<<<<<< HEAD
+=======
+/*  ----------------------------------- Trace & Debug */
+#include <dspbridge/dbc.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*  ----------------------------------- Bridge Driver */
 #include <dspbridge/dspdefs.h>
 
@@ -33,6 +39,12 @@
 #include <msgobj.h>
 #include <dspbridge/msg.h>
 
+<<<<<<< HEAD
+=======
+/*  ----------------------------------- Globals */
+static u32 refs;		/* module reference count */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *  ======== msg_create ========
  *  Purpose:
@@ -47,6 +59,14 @@ int msg_create(struct msg_mgr **msg_man,
 	struct msg_mgr *hmsg_mgr;
 	int status = 0;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+	DBC_REQUIRE(msg_man != NULL);
+	DBC_REQUIRE(msg_callback != NULL);
+	DBC_REQUIRE(hdev_obj != NULL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*msg_man = NULL;
 
 	dev_get_intf_fxns(hdev_obj, &intf_fxns);
@@ -79,6 +99,11 @@ void msg_delete(struct msg_mgr *hmsg_mgr)
 	struct msg_mgr_ *msg_mgr_obj = (struct msg_mgr_ *)hmsg_mgr;
 	struct bridge_drv_interface *intf_fxns;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (msg_mgr_obj) {
 		intf_fxns = msg_mgr_obj->intf_fxns;
 
@@ -89,3 +114,31 @@ void msg_delete(struct msg_mgr *hmsg_mgr)
 			__func__, hmsg_mgr);
 	}
 }
+<<<<<<< HEAD
+=======
+
+/*
+ *  ======== msg_exit ========
+ */
+void msg_exit(void)
+{
+	DBC_REQUIRE(refs > 0);
+	refs--;
+
+	DBC_ENSURE(refs >= 0);
+}
+
+/*
+ *  ======== msg_mod_init ========
+ */
+bool msg_mod_init(void)
+{
+	DBC_REQUIRE(refs >= 0);
+
+	refs++;
+
+	DBC_ENSURE(refs >= 0);
+
+	return true;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

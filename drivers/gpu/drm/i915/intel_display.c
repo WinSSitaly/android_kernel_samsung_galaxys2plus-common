@@ -24,31 +24,47 @@
  *	Eric Anholt <eric@anholt.net>
  */
 
+<<<<<<< HEAD
 #include <linux/cpufreq.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/input.h>
 #include <linux/i2c.h>
 #include <linux/kernel.h>
 #include <linux/slab.h>
 #include <linux/vgaarb.h>
+<<<<<<< HEAD
 #include <drm/drm_edid.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drmP.h"
 #include "intel_drv.h"
 #include "i915_drm.h"
 #include "i915_drv.h"
 #include "i915_trace.h"
 #include "drm_dp_helper.h"
+<<<<<<< HEAD
 #include "drm_crtc_helper.h"
 #include <linux/dma_remapping.h>
 
 #define HAS_eDP (intel_pipe_has_type(crtc, INTEL_OUTPUT_EDP))
 
 bool intel_pipe_has_type(struct drm_crtc *crtc, int type);
+=======
+
+#include "drm_crtc_helper.h"
+
+#define HAS_eDP (intel_pipe_has_type(crtc, INTEL_OUTPUT_EDP))
+
+bool intel_pipe_has_type (struct drm_crtc *crtc, int type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void intel_update_watermarks(struct drm_device *dev);
 static void intel_increase_pllclock(struct drm_crtc *crtc);
 static void intel_crtc_update_cursor(struct drm_crtc *crtc, bool on);
 
 typedef struct {
+<<<<<<< HEAD
 	/* given values */
 	int n;
 	int m1, m2;
@@ -67,15 +83,42 @@ typedef struct {
 typedef struct {
 	int	dot_limit;
 	int	p2_slow, p2_fast;
+=======
+    /* given values */
+    int n;
+    int m1, m2;
+    int p1, p2;
+    /* derived values */
+    int	dot;
+    int	vco;
+    int	m;
+    int	p;
+} intel_clock_t;
+
+typedef struct {
+    int	min, max;
+} intel_range_t;
+
+typedef struct {
+    int	dot_limit;
+    int	p2_slow, p2_fast;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } intel_p2_t;
 
 #define INTEL_P2_NUM		      2
 typedef struct intel_limit intel_limit_t;
 struct intel_limit {
+<<<<<<< HEAD
 	intel_range_t   dot, vco, n, m, m1, m2, p, p1;
 	intel_p2_t	    p2;
 	bool (* find_pll)(const intel_limit_t *, struct drm_crtc *,
 			int, int, intel_clock_t *, intel_clock_t *);
+=======
+    intel_range_t   dot, vco, n, m, m1, m2, p, p1;
+    intel_p2_t	    p2;
+    bool (* find_pll)(const intel_limit_t *, struct drm_crtc *,
+		      int, int, intel_clock_t *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* FDI */
@@ -83,6 +126,7 @@ struct intel_limit {
 
 static bool
 intel_find_best_PLL(const intel_limit_t *limit, struct drm_crtc *crtc,
+<<<<<<< HEAD
 		    int target, int refclk, intel_clock_t *match_clock,
 		    intel_clock_t *best_clock);
 static bool
@@ -98,6 +142,19 @@ static bool
 intel_find_pll_ironlake_dp(const intel_limit_t *, struct drm_crtc *crtc,
 			   int target, int refclk, intel_clock_t *match_clock,
 			   intel_clock_t *best_clock);
+=======
+		    int target, int refclk, intel_clock_t *best_clock);
+static bool
+intel_g4x_find_best_PLL(const intel_limit_t *limit, struct drm_crtc *crtc,
+			int target, int refclk, intel_clock_t *best_clock);
+
+static bool
+intel_find_pll_g4x_dp(const intel_limit_t *, struct drm_crtc *crtc,
+		      int target, int refclk, intel_clock_t *best_clock);
+static bool
+intel_find_pll_ironlake_dp(const intel_limit_t *, struct drm_crtc *crtc,
+			   int target, int refclk, intel_clock_t *best_clock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline u32 /* units of 100MHz */
 intel_fdi_link_freq(struct drm_device *dev)
@@ -110,6 +167,7 @@ intel_fdi_link_freq(struct drm_device *dev)
 }
 
 static const intel_limit_t intel_limits_i8xx_dvo = {
+<<<<<<< HEAD
 	.dot = { .min = 25000, .max = 350000 },
 	.vco = { .min = 930000, .max = 1400000 },
 	.n = { .min = 3, .max = 16 },
@@ -118,12 +176,23 @@ static const intel_limit_t intel_limits_i8xx_dvo = {
 	.m2 = { .min = 6, .max = 16 },
 	.p = { .min = 4, .max = 128 },
 	.p1 = { .min = 2, .max = 33 },
+=======
+        .dot = { .min = 25000, .max = 350000 },
+        .vco = { .min = 930000, .max = 1400000 },
+        .n = { .min = 3, .max = 16 },
+        .m = { .min = 96, .max = 140 },
+        .m1 = { .min = 18, .max = 26 },
+        .m2 = { .min = 6, .max = 16 },
+        .p = { .min = 4, .max = 128 },
+        .p1 = { .min = 2, .max = 33 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.p2 = { .dot_limit = 165000,
 		.p2_slow = 4, .p2_fast = 2 },
 	.find_pll = intel_find_best_PLL,
 };
 
 static const intel_limit_t intel_limits_i8xx_lvds = {
+<<<<<<< HEAD
 	.dot = { .min = 25000, .max = 350000 },
 	.vco = { .min = 930000, .max = 1400000 },
 	.n = { .min = 3, .max = 16 },
@@ -132,12 +201,23 @@ static const intel_limit_t intel_limits_i8xx_lvds = {
 	.m2 = { .min = 6, .max = 16 },
 	.p = { .min = 4, .max = 128 },
 	.p1 = { .min = 1, .max = 6 },
+=======
+        .dot = { .min = 25000, .max = 350000 },
+        .vco = { .min = 930000, .max = 1400000 },
+        .n = { .min = 3, .max = 16 },
+        .m = { .min = 96, .max = 140 },
+        .m1 = { .min = 18, .max = 26 },
+        .m2 = { .min = 6, .max = 16 },
+        .p = { .min = 4, .max = 128 },
+        .p1 = { .min = 1, .max = 6 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.p2 = { .dot_limit = 165000,
 		.p2_slow = 14, .p2_fast = 7 },
 	.find_pll = intel_find_best_PLL,
 };
 
 static const intel_limit_t intel_limits_i9xx_sdvo = {
+<<<<<<< HEAD
 	.dot = { .min = 20000, .max = 400000 },
 	.vco = { .min = 1400000, .max = 2800000 },
 	.n = { .min = 1, .max = 6 },
@@ -146,12 +226,23 @@ static const intel_limit_t intel_limits_i9xx_sdvo = {
 	.m2 = { .min = 3, .max = 7 },
 	.p = { .min = 5, .max = 80 },
 	.p1 = { .min = 1, .max = 8 },
+=======
+        .dot = { .min = 20000, .max = 400000 },
+        .vco = { .min = 1400000, .max = 2800000 },
+        .n = { .min = 1, .max = 6 },
+        .m = { .min = 70, .max = 120 },
+        .m1 = { .min = 10, .max = 22 },
+        .m2 = { .min = 5, .max = 9 },
+        .p = { .min = 5, .max = 80 },
+        .p1 = { .min = 1, .max = 8 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.p2 = { .dot_limit = 200000,
 		.p2_slow = 10, .p2_fast = 5 },
 	.find_pll = intel_find_best_PLL,
 };
 
 static const intel_limit_t intel_limits_i9xx_lvds = {
+<<<<<<< HEAD
 	.dot = { .min = 20000, .max = 400000 },
 	.vco = { .min = 1400000, .max = 2800000 },
 	.n = { .min = 1, .max = 6 },
@@ -160,6 +251,16 @@ static const intel_limit_t intel_limits_i9xx_lvds = {
 	.m2 = { .min = 5, .max = 9 },
 	.p = { .min = 7, .max = 98 },
 	.p1 = { .min = 1, .max = 8 },
+=======
+        .dot = { .min = 20000, .max = 400000 },
+        .vco = { .min = 1400000, .max = 2800000 },
+        .n = { .min = 1, .max = 6 },
+        .m = { .min = 70, .max = 120 },
+        .m1 = { .min = 10, .max = 22 },
+        .m2 = { .min = 5, .max = 9 },
+        .p = { .min = 7, .max = 98 },
+        .p1 = { .min = 1, .max = 8 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.p2 = { .dot_limit = 112000,
 		.p2_slow = 14, .p2_fast = 7 },
 	.find_pll = intel_find_best_PLL,
@@ -227,6 +328,7 @@ static const intel_limit_t intel_limits_g4x_dual_channel_lvds = {
 };
 
 static const intel_limit_t intel_limits_g4x_display_port = {
+<<<<<<< HEAD
 	.dot = { .min = 161670, .max = 227000 },
 	.vco = { .min = 1750000, .max = 3500000},
 	.n = { .min = 1, .max = 2 },
@@ -251,12 +353,39 @@ static const intel_limit_t intel_limits_pineview_sdvo = {
 	.m2 = { .min = 0, .max = 254 },
 	.p = { .min = 5, .max = 80 },
 	.p1 = { .min = 1, .max = 8 },
+=======
+        .dot = { .min = 161670, .max = 227000 },
+        .vco = { .min = 1750000, .max = 3500000},
+        .n = { .min = 1, .max = 2 },
+        .m = { .min = 97, .max = 108 },
+        .m1 = { .min = 0x10, .max = 0x12 },
+        .m2 = { .min = 0x05, .max = 0x06 },
+        .p = { .min = 10, .max = 20 },
+        .p1 = { .min = 1, .max = 2},
+        .p2 = { .dot_limit = 0,
+		.p2_slow = 10, .p2_fast = 10 },
+        .find_pll = intel_find_pll_g4x_dp,
+};
+
+static const intel_limit_t intel_limits_pineview_sdvo = {
+        .dot = { .min = 20000, .max = 400000},
+        .vco = { .min = 1700000, .max = 3500000 },
+	/* Pineview's Ncounter is a ring counter */
+        .n = { .min = 3, .max = 6 },
+        .m = { .min = 2, .max = 256 },
+	/* Pineview only has one combined m divider, which we treat as m2. */
+        .m1 = { .min = 0, .max = 0 },
+        .m2 = { .min = 0, .max = 254 },
+        .p = { .min = 5, .max = 80 },
+        .p1 = { .min = 1, .max = 8 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.p2 = { .dot_limit = 200000,
 		.p2_slow = 10, .p2_fast = 5 },
 	.find_pll = intel_find_best_PLL,
 };
 
 static const intel_limit_t intel_limits_pineview_lvds = {
+<<<<<<< HEAD
 	.dot = { .min = 20000, .max = 400000 },
 	.vco = { .min = 1700000, .max = 3500000 },
 	.n = { .min = 3, .max = 6 },
@@ -265,6 +394,16 @@ static const intel_limit_t intel_limits_pineview_lvds = {
 	.m2 = { .min = 0, .max = 254 },
 	.p = { .min = 7, .max = 112 },
 	.p1 = { .min = 1, .max = 8 },
+=======
+        .dot = { .min = 20000, .max = 400000 },
+        .vco = { .min = 1700000, .max = 3500000 },
+        .n = { .min = 3, .max = 6 },
+        .m = { .min = 2, .max = 256 },
+        .m1 = { .min = 0, .max = 0 },
+        .m2 = { .min = 0, .max = 254 },
+        .p = { .min = 7, .max = 112 },
+        .p1 = { .min = 1, .max = 8 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.p2 = { .dot_limit = 112000,
 		.p2_slow = 14, .p2_fast = 14 },
 	.find_pll = intel_find_best_PLL,
@@ -326,7 +465,11 @@ static const intel_limit_t intel_limits_ironlake_single_lvds_100m = {
 	.m1 = { .min = 12, .max = 22 },
 	.m2 = { .min = 5, .max = 9 },
 	.p = { .min = 28, .max = 112 },
+<<<<<<< HEAD
 	.p1 = { .min = 2, .max = 8 },
+=======
+	.p1 = { .min = 2,.max = 8 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.p2 = { .dot_limit = 225000,
 		.p2_slow = 14, .p2_fast = 14 },
 	.find_pll = intel_g4x_find_best_PLL,
@@ -340,13 +483,18 @@ static const intel_limit_t intel_limits_ironlake_dual_lvds_100m = {
 	.m1 = { .min = 12, .max = 22 },
 	.m2 = { .min = 5, .max = 9 },
 	.p = { .min = 14, .max = 42 },
+<<<<<<< HEAD
 	.p1 = { .min = 2, .max = 6 },
+=======
+	.p1 = { .min = 2,.max = 6 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.p2 = { .dot_limit = 225000,
 		.p2_slow = 7, .p2_fast = 7 },
 	.find_pll = intel_g4x_find_best_PLL,
 };
 
 static const intel_limit_t intel_limits_ironlake_display_port = {
+<<<<<<< HEAD
 	.dot = { .min = 25000, .max = 350000 },
 	.vco = { .min = 1760000, .max = 3510000},
 	.n = { .min = 1, .max = 2 },
@@ -381,6 +529,21 @@ static bool is_dual_link_lvds(struct drm_i915_private *dev_priv,
 	return (val & LVDS_CLKB_POWER_MASK) == LVDS_CLKB_POWER_UP;
 }
 
+=======
+        .dot = { .min = 25000, .max = 350000 },
+        .vco = { .min = 1760000, .max = 3510000},
+        .n = { .min = 1, .max = 2 },
+        .m = { .min = 81, .max = 90 },
+        .m1 = { .min = 12, .max = 22 },
+        .m2 = { .min = 5, .max = 9 },
+        .p = { .min = 10, .max = 20 },
+        .p1 = { .min = 1, .max = 2},
+        .p2 = { .dot_limit = 0,
+		.p2_slow = 10, .p2_fast = 10 },
+        .find_pll = intel_find_pll_ironlake_dp,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const intel_limit_t *intel_ironlake_limit(struct drm_crtc *crtc,
 						int refclk)
 {
@@ -389,7 +552,12 @@ static const intel_limit_t *intel_ironlake_limit(struct drm_crtc *crtc,
 	const intel_limit_t *limit;
 
 	if (intel_pipe_has_type(crtc, INTEL_OUTPUT_LVDS)) {
+<<<<<<< HEAD
 		if (is_dual_link_lvds(dev_priv, PCH_LVDS)) {
+=======
+		if ((I915_READ(PCH_LVDS) & LVDS_CLKB_POWER_MASK) ==
+		    LVDS_CLKB_POWER_UP) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* LVDS dual channel */
 			if (refclk == 100000)
 				limit = &intel_limits_ironlake_dual_lvds_100m;
@@ -417,7 +585,12 @@ static const intel_limit_t *intel_g4x_limit(struct drm_crtc *crtc)
 	const intel_limit_t *limit;
 
 	if (intel_pipe_has_type(crtc, INTEL_OUTPUT_LVDS)) {
+<<<<<<< HEAD
 		if (is_dual_link_lvds(dev_priv, LVDS))
+=======
+		if ((I915_READ(LVDS) & LVDS_CLKB_POWER_MASK) ==
+		    LVDS_CLKB_POWER_UP)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* LVDS with dual channel */
 			limit = &intel_limits_g4x_dual_channel_lvds;
 		else
@@ -428,7 +601,11 @@ static const intel_limit_t *intel_g4x_limit(struct drm_crtc *crtc)
 		limit = &intel_limits_g4x_hdmi;
 	} else if (intel_pipe_has_type(crtc, INTEL_OUTPUT_SDVO)) {
 		limit = &intel_limits_g4x_sdvo;
+<<<<<<< HEAD
 	} else if (intel_pipe_has_type(crtc, INTEL_OUTPUT_DISPLAYPORT)) {
+=======
+	} else if (intel_pipe_has_type (crtc, INTEL_OUTPUT_DISPLAYPORT)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		limit = &intel_limits_g4x_display_port;
 	} else /* The option is for other outputs */
 		limit = &intel_limits_i9xx_sdvo;
@@ -512,6 +689,7 @@ static bool intel_PLL_is_valid(struct drm_device *dev,
 			       const intel_clock_t *clock)
 {
 	if (clock->p1  < limit->p1.min  || limit->p1.max  < clock->p1)
+<<<<<<< HEAD
 		INTELPllInvalid("p1 out of range\n");
 	if (clock->p   < limit->p.min   || limit->p.max   < clock->p)
 		INTELPllInvalid("p out of range\n");
@@ -527,19 +705,44 @@ static bool intel_PLL_is_valid(struct drm_device *dev,
 		INTELPllInvalid("n out of range\n");
 	if (clock->vco < limit->vco.min || limit->vco.max < clock->vco)
 		INTELPllInvalid("vco out of range\n");
+=======
+		INTELPllInvalid ("p1 out of range\n");
+	if (clock->p   < limit->p.min   || limit->p.max   < clock->p)
+		INTELPllInvalid ("p out of range\n");
+	if (clock->m2  < limit->m2.min  || limit->m2.max  < clock->m2)
+		INTELPllInvalid ("m2 out of range\n");
+	if (clock->m1  < limit->m1.min  || limit->m1.max  < clock->m1)
+		INTELPllInvalid ("m1 out of range\n");
+	if (clock->m1 <= clock->m2 && !IS_PINEVIEW(dev))
+		INTELPllInvalid ("m1 <= m2\n");
+	if (clock->m   < limit->m.min   || limit->m.max   < clock->m)
+		INTELPllInvalid ("m out of range\n");
+	if (clock->n   < limit->n.min   || limit->n.max   < clock->n)
+		INTELPllInvalid ("n out of range\n");
+	if (clock->vco < limit->vco.min || limit->vco.max < clock->vco)
+		INTELPllInvalid ("vco out of range\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* XXX: We may need to be checking "Dot clock" depending on the multiplier,
 	 * connector, etc., rather than just a single range.
 	 */
 	if (clock->dot < limit->dot.min || limit->dot.max < clock->dot)
+<<<<<<< HEAD
 		INTELPllInvalid("dot out of range\n");
+=======
+		INTELPllInvalid ("dot out of range\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return true;
 }
 
 static bool
 intel_find_best_PLL(const intel_limit_t *limit, struct drm_crtc *crtc,
+<<<<<<< HEAD
 		    int target, int refclk, intel_clock_t *match_clock,
 		    intel_clock_t *best_clock)
+=======
+		    int target, int refclk, intel_clock_t *best_clock)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 {
 	struct drm_device *dev = crtc->dev;
@@ -555,7 +758,12 @@ intel_find_best_PLL(const intel_limit_t *limit, struct drm_crtc *crtc,
 		 * reliably set up different single/dual channel state, if we
 		 * even can.
 		 */
+<<<<<<< HEAD
 		if (is_dual_link_lvds(dev_priv, LVDS))
+=======
+		if ((I915_READ(LVDS) & LVDS_CLKB_POWER_MASK) ==
+		    LVDS_CLKB_POWER_UP)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			clock.p2 = limit->p2.p2_fast;
 		else
 			clock.p2 = limit->p2.p2_slow;
@@ -566,7 +774,11 @@ intel_find_best_PLL(const intel_limit_t *limit, struct drm_crtc *crtc,
 			clock.p2 = limit->p2.p2_fast;
 	}
 
+<<<<<<< HEAD
 	memset(best_clock, 0, sizeof(*best_clock));
+=======
+	memset (best_clock, 0, sizeof (*best_clock));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (clock.m1 = limit->m1.min; clock.m1 <= limit->m1.max;
 	     clock.m1++) {
@@ -585,9 +797,12 @@ intel_find_best_PLL(const intel_limit_t *limit, struct drm_crtc *crtc,
 					if (!intel_PLL_is_valid(dev, limit,
 								&clock))
 						continue;
+<<<<<<< HEAD
 					if (match_clock &&
 					    clock.p != match_clock->p)
 						continue;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 					this_err = abs(clock.dot - target);
 					if (this_err < err) {
@@ -604,8 +819,12 @@ intel_find_best_PLL(const intel_limit_t *limit, struct drm_crtc *crtc,
 
 static bool
 intel_g4x_find_best_PLL(const intel_limit_t *limit, struct drm_crtc *crtc,
+<<<<<<< HEAD
 			int target, int refclk, intel_clock_t *match_clock,
 			intel_clock_t *best_clock)
+=======
+			int target, int refclk, intel_clock_t *best_clock)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_device *dev = crtc->dev;
 	struct drm_i915_private *dev_priv = dev->dev_private;
@@ -652,9 +871,12 @@ intel_g4x_find_best_PLL(const intel_limit_t *limit, struct drm_crtc *crtc,
 					if (!intel_PLL_is_valid(dev, limit,
 								&clock))
 						continue;
+<<<<<<< HEAD
 					if (match_clock &&
 					    clock.p != match_clock->p)
 						continue;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 					this_err = abs(clock.dot - target);
 					if (this_err < err_most) {
@@ -672,8 +894,12 @@ intel_g4x_find_best_PLL(const intel_limit_t *limit, struct drm_crtc *crtc,
 
 static bool
 intel_find_pll_ironlake_dp(const intel_limit_t *limit, struct drm_crtc *crtc,
+<<<<<<< HEAD
 			   int target, int refclk, intel_clock_t *match_clock,
 			   intel_clock_t *best_clock)
+=======
+			   int target, int refclk, intel_clock_t *best_clock)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_device *dev = crtc->dev;
 	intel_clock_t clock;
@@ -699,8 +925,12 @@ intel_find_pll_ironlake_dp(const intel_limit_t *limit, struct drm_crtc *crtc,
 /* DisplayPort has only two frequencies, 162MHz and 270MHz */
 static bool
 intel_find_pll_g4x_dp(const intel_limit_t *limit, struct drm_crtc *crtc,
+<<<<<<< HEAD
 		      int target, int refclk, intel_clock_t *match_clock,
 		      intel_clock_t *best_clock)
+=======
+		      int target, int refclk, intel_clock_t *best_clock)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	intel_clock_t clock;
 	if (target < 200000) {
@@ -835,6 +1065,7 @@ static void assert_pch_pll(struct drm_i915_private *dev_priv,
 	u32 val;
 	bool cur_state;
 
+<<<<<<< HEAD
 	if (HAS_PCH_CPT(dev_priv->dev)) {
 		u32 pch_dpll;
 
@@ -848,6 +1079,8 @@ static void assert_pch_pll(struct drm_i915_private *dev_priv,
 		pipe = (pch_dpll >> (4 * pipe)) & 1;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	reg = PCH_DPLL(pipe);
 	val = I915_READ(reg);
 	cur_state = !!(val & DPLL_VCO_ENABLE);
@@ -924,7 +1157,11 @@ static void assert_panel_unlocked(struct drm_i915_private *dev_priv,
 	int pp_reg, lvds_reg;
 	u32 val;
 	enum pipe panel_pipe = PIPE_A;
+<<<<<<< HEAD
 	bool locked = true;
+=======
+	bool locked = locked;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (HAS_PCH_SPLIT(dev_priv->dev)) {
 		pp_reg = PCH_PP_CONTROL;
@@ -947,17 +1184,25 @@ static void assert_panel_unlocked(struct drm_i915_private *dev_priv,
 	     pipe_name(pipe));
 }
 
+<<<<<<< HEAD
 void assert_pipe(struct drm_i915_private *dev_priv,
 		 enum pipe pipe, bool state)
+=======
+static void assert_pipe(struct drm_i915_private *dev_priv,
+			enum pipe pipe, bool state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int reg;
 	u32 val;
 	bool cur_state;
 
+<<<<<<< HEAD
 	/* if we need the pipe A quirk it must be always on */
 	if (pipe == PIPE_A && dev_priv->quirks & QUIRK_PIPEA_FORCE)
 		state = true;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	reg = PIPECONF(pipe);
 	val = I915_READ(reg);
 	cur_state = !!(val & PIPECONF_ENABLE);
@@ -965,6 +1210,7 @@ void assert_pipe(struct drm_i915_private *dev_priv,
 	     "pipe %c assertion failure (expected %s, current %s)\n",
 	     pipe_name(pipe), state_string(state), state_string(cur_state));
 }
+<<<<<<< HEAD
 
 static void assert_plane(struct drm_i915_private *dev_priv,
 			 enum plane plane, bool state)
@@ -984,6 +1230,24 @@ static void assert_plane(struct drm_i915_private *dev_priv,
 #define assert_plane_enabled(d, p) assert_plane(d, p, true)
 #define assert_plane_disabled(d, p) assert_plane(d, p, false)
 
+=======
+#define assert_pipe_enabled(d, p) assert_pipe(d, p, true)
+#define assert_pipe_disabled(d, p) assert_pipe(d, p, false)
+
+static void assert_plane_enabled(struct drm_i915_private *dev_priv,
+				 enum plane plane)
+{
+	int reg;
+	u32 val;
+
+	reg = DSPCNTR(plane);
+	val = I915_READ(reg);
+	WARN(!(val & DISPLAY_PLANE_ENABLE),
+	     "plane %c assertion failure, should be active but is disabled\n",
+	     plane_name(plane));
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void assert_planes_disabled(struct drm_i915_private *dev_priv,
 				   enum pipe pipe)
 {
@@ -992,6 +1256,7 @@ static void assert_planes_disabled(struct drm_i915_private *dev_priv,
 	int cur_pipe;
 
 	/* Planes are fixed to pipes on ILK+ */
+<<<<<<< HEAD
 	if (HAS_PCH_SPLIT(dev_priv->dev)) {
 		reg = DSPCNTR(pipe);
 		val = I915_READ(reg);
@@ -1000,6 +1265,10 @@ static void assert_planes_disabled(struct drm_i915_private *dev_priv,
 		     plane_name(pipe));
 		return;
 	}
+=======
+	if (HAS_PCH_SPLIT(dev_priv->dev))
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Need to check both planes against the pipe */
 	for (i = 0; i < 2; i++) {
@@ -1039,6 +1308,7 @@ static void assert_transcoder_disabled(struct drm_i915_private *dev_priv,
 	     pipe_name(pipe));
 }
 
+<<<<<<< HEAD
 static bool dp_pipe_enabled(struct drm_i915_private *dev_priv,
 			    enum pipe pipe, u32 port_sel, u32 val)
 {
@@ -1109,6 +1379,13 @@ static void assert_pch_dp_disabled(struct drm_i915_private *dev_priv,
 {
 	u32 val = I915_READ(reg);
 	WARN(dp_pipe_enabled(dev_priv, pipe, port_sel, val),
+=======
+static void assert_pch_dp_disabled(struct drm_i915_private *dev_priv,
+				   enum pipe pipe, int reg)
+{
+	u32 val = I915_READ(reg);
+	WARN(DP_PIPE_ENABLED(val, pipe),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	     "PCH DP (0x%08x) enabled on transcoder %c, should be disabled\n",
 	     reg, pipe_name(pipe));
 }
@@ -1117,8 +1394,13 @@ static void assert_pch_hdmi_disabled(struct drm_i915_private *dev_priv,
 				     enum pipe pipe, int reg)
 {
 	u32 val = I915_READ(reg);
+<<<<<<< HEAD
 	WARN(hdmi_pipe_enabled(dev_priv, pipe, val),
 	     "PCH HDMI (0x%08x) enabled on transcoder %c, should be disabled\n",
+=======
+	WARN(HDMI_PIPE_ENABLED(val, pipe),
+	     "PCH DP (0x%08x) enabled on transcoder %c, should be disabled\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	     reg, pipe_name(pipe));
 }
 
@@ -1128,6 +1410,7 @@ static void assert_pch_ports_disabled(struct drm_i915_private *dev_priv,
 	int reg;
 	u32 val;
 
+<<<<<<< HEAD
 	assert_pch_dp_disabled(dev_priv, pipe, PCH_DP_B, TRANS_DP_PORT_SEL_B);
 	assert_pch_dp_disabled(dev_priv, pipe, PCH_DP_C, TRANS_DP_PORT_SEL_C);
 	assert_pch_dp_disabled(dev_priv, pipe, PCH_DP_D, TRANS_DP_PORT_SEL_D);
@@ -1135,12 +1418,25 @@ static void assert_pch_ports_disabled(struct drm_i915_private *dev_priv,
 	reg = PCH_ADPA;
 	val = I915_READ(reg);
 	WARN(adpa_pipe_enabled(dev_priv, pipe, val),
+=======
+	assert_pch_dp_disabled(dev_priv, pipe, PCH_DP_B);
+	assert_pch_dp_disabled(dev_priv, pipe, PCH_DP_C);
+	assert_pch_dp_disabled(dev_priv, pipe, PCH_DP_D);
+
+	reg = PCH_ADPA;
+	val = I915_READ(reg);
+	WARN(ADPA_PIPE_ENABLED(val, pipe),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	     "PCH VGA enabled on transcoder %c, should be disabled\n",
 	     pipe_name(pipe));
 
 	reg = PCH_LVDS;
 	val = I915_READ(reg);
+<<<<<<< HEAD
 	WARN(lvds_pipe_enabled(dev_priv, pipe, val),
+=======
+	WARN(LVDS_PIPE_ENABLED(val, pipe),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	     "PCH LVDS enabled on transcoder %c, should be disabled\n",
 	     pipe_name(pipe));
 
@@ -1230,9 +1526,12 @@ static void intel_enable_pch_pll(struct drm_i915_private *dev_priv,
 	int reg;
 	u32 val;
 
+<<<<<<< HEAD
 	if (pipe > 1)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* PCH only available on ILK+ */
 	BUG_ON(dev_priv->info->gen < 5);
 
@@ -1251,11 +1550,15 @@ static void intel_disable_pch_pll(struct drm_i915_private *dev_priv,
 				  enum pipe pipe)
 {
 	int reg;
+<<<<<<< HEAD
 	u32 val, pll_mask = TRANSC_DPLL_ENABLE | TRANSC_DPLLB_SEL,
 		pll_sel = TRANSC_DPLL_ENABLE;
 
 	if (pipe > 1)
 		return;
+=======
+	u32 val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* PCH only available on ILK+ */
 	BUG_ON(dev_priv->info->gen < 5);
@@ -1263,6 +1566,7 @@ static void intel_disable_pch_pll(struct drm_i915_private *dev_priv,
 	/* Make sure transcoder isn't still depending on us */
 	assert_transcoder_disabled(dev_priv, pipe);
 
+<<<<<<< HEAD
 	if (pipe == 0)
 		pll_sel |= TRANSC_DPLLA_SEL;
 	else if (pipe == 1)
@@ -1272,6 +1576,8 @@ static void intel_disable_pch_pll(struct drm_i915_private *dev_priv,
 	if ((I915_READ(PCH_DPLL_SEL) & pll_mask) == pll_sel)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	reg = PCH_DPLL(pipe);
 	val = I915_READ(reg);
 	val &= ~DPLL_VCO_ENABLE;
@@ -1284,8 +1590,12 @@ static void intel_enable_transcoder(struct drm_i915_private *dev_priv,
 				    enum pipe pipe)
 {
 	int reg;
+<<<<<<< HEAD
 	u32 val, pipeconf_val;
 	struct drm_crtc *crtc = dev_priv->pipe_to_crtc_mapping[pipe];
+=======
+	u32 val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* PCH only available on ILK+ */
 	BUG_ON(dev_priv->info->gen < 5);
@@ -1299,6 +1609,7 @@ static void intel_enable_transcoder(struct drm_i915_private *dev_priv,
 
 	reg = TRANSCONF(pipe);
 	val = I915_READ(reg);
+<<<<<<< HEAD
 	pipeconf_val = I915_READ(PIPECONF(pipe));
 
 	if (HAS_PCH_IBX(dev_priv->dev)) {
@@ -1320,6 +1631,14 @@ static void intel_enable_transcoder(struct drm_i915_private *dev_priv,
 	else
 		val |= TRANS_PROGRESSIVE;
 
+=======
+	/*
+	 * make the BPC in transcoder be consistent with
+	 * that in pipeconf reg.
+	 */
+	val &= ~PIPE_BPC_MASK;
+	val |= I915_READ(PIPECONF(pipe)) & PIPE_BPC_MASK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	I915_WRITE(reg, val | TRANS_ENABLE);
 	if (wait_for(I915_READ(reg) & TRANS_STATE_ENABLE, 100))
 		DRM_ERROR("failed to enable transcoder %d\n", pipe);
@@ -1344,7 +1663,11 @@ static void intel_disable_transcoder(struct drm_i915_private *dev_priv,
 	I915_WRITE(reg, val);
 	/* wait for PCH transcoder off, transcoder state */
 	if (wait_for((I915_READ(reg) & TRANS_STATE_ENABLE) == 0, 50))
+<<<<<<< HEAD
 		DRM_ERROR("failed to disable transcoder %d\n", pipe);
+=======
+		DRM_ERROR("failed to disable transcoder\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1429,6 +1752,7 @@ static void intel_disable_pipe(struct drm_i915_private *dev_priv,
 	intel_wait_for_pipe_off(dev_priv->dev, pipe);
 }
 
+<<<<<<< HEAD
 /*
  * Plane regs are double buffered, going from enabled->disabled needs a
  * trigger in order to latch.  The display address reg provides this.
@@ -1440,6 +1764,8 @@ static void intel_flush_display_plane(struct drm_i915_private *dev_priv,
 	I915_WRITE(DSPSURF(plane), I915_READ(DSPSURF(plane)));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * intel_enable_plane - enable a display plane on a given pipe
  * @dev_priv: i915 private structure
@@ -1463,10 +1789,27 @@ static void intel_enable_plane(struct drm_i915_private *dev_priv,
 		return;
 
 	I915_WRITE(reg, val | DISPLAY_PLANE_ENABLE);
+<<<<<<< HEAD
 	intel_flush_display_plane(dev_priv, plane);
 	intel_wait_for_vblank(dev_priv->dev, pipe);
 }
 
+=======
+	intel_wait_for_vblank(dev_priv->dev, pipe);
+}
+
+/*
+ * Plane regs are double buffered, going from enabled->disabled needs a
+ * trigger in order to latch.  The display address reg provides this.
+ */
+static void intel_flush_display_plane(struct drm_i915_private *dev_priv,
+				      enum plane plane)
+{
+	u32 reg = DSPADDR(plane);
+	I915_WRITE(reg, I915_READ(reg));
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * intel_disable_plane - disable a display plane
  * @dev_priv: i915 private structure
@@ -1492,6 +1835,7 @@ static void intel_disable_plane(struct drm_i915_private *dev_priv,
 }
 
 static void disable_pch_dp(struct drm_i915_private *dev_priv,
+<<<<<<< HEAD
 			   enum pipe pipe, int reg, u32 port_sel)
 {
 	u32 val = I915_READ(reg);
@@ -1499,17 +1843,29 @@ static void disable_pch_dp(struct drm_i915_private *dev_priv,
 		DRM_DEBUG_KMS("Disabling pch dp %x on pipe %d\n", reg, pipe);
 		I915_WRITE(reg, val & ~DP_PORT_EN);
 	}
+=======
+			   enum pipe pipe, int reg)
+{
+	u32 val = I915_READ(reg);
+	if (DP_PIPE_ENABLED(val, pipe))
+		I915_WRITE(reg, val & ~DP_PORT_EN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void disable_pch_hdmi(struct drm_i915_private *dev_priv,
 			     enum pipe pipe, int reg)
 {
 	u32 val = I915_READ(reg);
+<<<<<<< HEAD
 	if (hdmi_pipe_enabled(dev_priv, pipe, val)) {
 		DRM_DEBUG_KMS("Disabling pch HDMI %x on pipe %d\n",
 			      reg, pipe);
 		I915_WRITE(reg, val & ~PORT_ENABLE);
 	}
+=======
+	if (HDMI_PIPE_ENABLED(val, pipe))
+		I915_WRITE(reg, val & ~PORT_ENABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Disable any ports connected to this transcoder */
@@ -1521,6 +1877,7 @@ static void intel_disable_pch_ports(struct drm_i915_private *dev_priv,
 	val = I915_READ(PCH_PP_CONTROL);
 	I915_WRITE(PCH_PP_CONTROL, val | PANEL_UNLOCK_REGS);
 
+<<<<<<< HEAD
 	disable_pch_dp(dev_priv, pipe, PCH_DP_B, TRANS_DP_PORT_SEL_B);
 	disable_pch_dp(dev_priv, pipe, PCH_DP_C, TRANS_DP_PORT_SEL_C);
 	disable_pch_dp(dev_priv, pipe, PCH_DP_D, TRANS_DP_PORT_SEL_D);
@@ -1528,12 +1885,25 @@ static void intel_disable_pch_ports(struct drm_i915_private *dev_priv,
 	reg = PCH_ADPA;
 	val = I915_READ(reg);
 	if (adpa_pipe_enabled(dev_priv, pipe, val))
+=======
+	disable_pch_dp(dev_priv, pipe, PCH_DP_B);
+	disable_pch_dp(dev_priv, pipe, PCH_DP_C);
+	disable_pch_dp(dev_priv, pipe, PCH_DP_D);
+
+	reg = PCH_ADPA;
+	val = I915_READ(reg);
+	if (ADPA_PIPE_ENABLED(val, pipe))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		I915_WRITE(reg, val & ~ADPA_DAC_ENABLE);
 
 	reg = PCH_LVDS;
 	val = I915_READ(reg);
+<<<<<<< HEAD
 	if (lvds_pipe_enabled(dev_priv, pipe, val)) {
 		DRM_DEBUG_KMS("disable lvds on pipe %d val 0x%08x\n", pipe, val);
+=======
+	if (LVDS_PIPE_ENABLED(val, pipe)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		I915_WRITE(reg, val & ~LVDS_PORT_EN);
 		POSTING_READ(reg);
 		udelay(100);
@@ -1544,6 +1914,7 @@ static void intel_disable_pch_ports(struct drm_i915_private *dev_priv,
 	disable_pch_hdmi(dev_priv, pipe, HDMID);
 }
 
+<<<<<<< HEAD
 static void i8xx_disable_fbc(struct drm_device *dev)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
@@ -1566,6 +1937,8 @@ static void i8xx_disable_fbc(struct drm_device *dev)
 	DRM_DEBUG_KMS("disabled FBC\n");
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void i8xx_enable_fbc(struct drm_crtc *crtc, unsigned long interval)
 {
 	struct drm_device *dev = crtc->dev;
@@ -1574,6 +1947,7 @@ static void i8xx_enable_fbc(struct drm_crtc *crtc, unsigned long interval)
 	struct intel_framebuffer *intel_fb = to_intel_framebuffer(fb);
 	struct drm_i915_gem_object *obj = intel_fb->obj;
 	struct intel_crtc *intel_crtc = to_intel_crtc(crtc);
+<<<<<<< HEAD
 	int cfb_pitch;
 	int plane, i;
 	u32 fbc_ctl, fbc_ctl2;
@@ -1585,14 +1959,43 @@ static void i8xx_enable_fbc(struct drm_crtc *crtc, unsigned long interval)
 	/* FBC_CTL wants 64B units */
 	cfb_pitch = (cfb_pitch / 64) - 1;
 	plane = intel_crtc->plane == 0 ? FBC_CTL_PLANEA : FBC_CTL_PLANEB;
+=======
+	int plane, i;
+	u32 fbc_ctl, fbc_ctl2;
+
+	if (fb->pitch == dev_priv->cfb_pitch &&
+	    obj->fence_reg == dev_priv->cfb_fence &&
+	    intel_crtc->plane == dev_priv->cfb_plane &&
+	    I915_READ(FBC_CONTROL) & FBC_CTL_EN)
+		return;
+
+	i8xx_disable_fbc(dev);
+
+	dev_priv->cfb_pitch = dev_priv->cfb_size / FBC_LL_SIZE;
+
+	if (fb->pitch < dev_priv->cfb_pitch)
+		dev_priv->cfb_pitch = fb->pitch;
+
+	/* FBC_CTL wants 64B units */
+	dev_priv->cfb_pitch = (dev_priv->cfb_pitch / 64) - 1;
+	dev_priv->cfb_fence = obj->fence_reg;
+	dev_priv->cfb_plane = intel_crtc->plane;
+	plane = dev_priv->cfb_plane == 0 ? FBC_CTL_PLANEA : FBC_CTL_PLANEB;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Clear old tags */
 	for (i = 0; i < (FBC_LL_SIZE / 32) + 1; i++)
 		I915_WRITE(FBC_TAG + (i * 4), 0);
 
 	/* Set it up... */
+<<<<<<< HEAD
 	fbc_ctl2 = FBC_CTL_FENCE_DBL | FBC_CTL_IDLE_IMM | FBC_CTL_CPU_FENCE;
 	fbc_ctl2 |= plane;
+=======
+	fbc_ctl2 = FBC_CTL_FENCE_DBL | FBC_CTL_IDLE_IMM | plane;
+	if (obj->tiling_mode != I915_TILING_NONE)
+		fbc_ctl2 |= FBC_CTL_CPU_FENCE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	I915_WRITE(FBC_CONTROL2, fbc_ctl2);
 	I915_WRITE(FBC_FENCE_OFF, crtc->y);
 
@@ -1600,6 +2003,7 @@ static void i8xx_enable_fbc(struct drm_crtc *crtc, unsigned long interval)
 	fbc_ctl = FBC_CTL_EN | FBC_CTL_PERIODIC;
 	if (IS_I945GM(dev))
 		fbc_ctl |= FBC_CTL_C3_IDLE; /* 945 needs special SR handling */
+<<<<<<< HEAD
 	fbc_ctl |= (cfb_pitch & 0xff) << FBC_CTL_STRIDE_SHIFT;
 	fbc_ctl |= (interval & 0x2fff) << FBC_CTL_INTERVAL_SHIFT;
 	fbc_ctl |= obj->fence_reg;
@@ -1607,6 +2011,38 @@ static void i8xx_enable_fbc(struct drm_crtc *crtc, unsigned long interval)
 
 	DRM_DEBUG_KMS("enabled FBC, pitch %d, yoff %d, plane %d, ",
 		      cfb_pitch, crtc->y, intel_crtc->plane);
+=======
+	fbc_ctl |= (dev_priv->cfb_pitch & 0xff) << FBC_CTL_STRIDE_SHIFT;
+	fbc_ctl |= (interval & 0x2fff) << FBC_CTL_INTERVAL_SHIFT;
+	if (obj->tiling_mode != I915_TILING_NONE)
+		fbc_ctl |= dev_priv->cfb_fence;
+	I915_WRITE(FBC_CONTROL, fbc_ctl);
+
+	DRM_DEBUG_KMS("enabled FBC, pitch %ld, yoff %d, plane %d, ",
+		      dev_priv->cfb_pitch, crtc->y, dev_priv->cfb_plane);
+}
+
+void i8xx_disable_fbc(struct drm_device *dev)
+{
+	struct drm_i915_private *dev_priv = dev->dev_private;
+	u32 fbc_ctl;
+
+	/* Disable compression */
+	fbc_ctl = I915_READ(FBC_CONTROL);
+	if ((fbc_ctl & FBC_CTL_EN) == 0)
+		return;
+
+	fbc_ctl &= ~FBC_CTL_EN;
+	I915_WRITE(FBC_CONTROL, fbc_ctl);
+
+	/* Wait for compressing bit to clear */
+	if (wait_for((I915_READ(FBC_STATUS) & FBC_STAT_COMPRESSING) == 0, 10)) {
+		DRM_DEBUG_KMS("FBC idle timed out\n");
+		return;
+	}
+
+	DRM_DEBUG_KMS("disabled FBC\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static bool i8xx_fbc_enabled(struct drm_device *dev)
@@ -1628,9 +2064,36 @@ static void g4x_enable_fbc(struct drm_crtc *crtc, unsigned long interval)
 	unsigned long stall_watermark = 200;
 	u32 dpfc_ctl;
 
+<<<<<<< HEAD
 	dpfc_ctl = plane | DPFC_SR_EN | DPFC_CTL_LIMIT_1X;
 	dpfc_ctl |= DPFC_CTL_FENCE_EN | obj->fence_reg;
 	I915_WRITE(DPFC_CHICKEN, DPFC_HT_MODIFY);
+=======
+	dpfc_ctl = I915_READ(DPFC_CONTROL);
+	if (dpfc_ctl & DPFC_CTL_EN) {
+		if (dev_priv->cfb_pitch == dev_priv->cfb_pitch / 64 - 1 &&
+		    dev_priv->cfb_fence == obj->fence_reg &&
+		    dev_priv->cfb_plane == intel_crtc->plane &&
+		    dev_priv->cfb_y == crtc->y)
+			return;
+
+		I915_WRITE(DPFC_CONTROL, dpfc_ctl & ~DPFC_CTL_EN);
+		intel_wait_for_vblank(dev, intel_crtc->pipe);
+	}
+
+	dev_priv->cfb_pitch = (dev_priv->cfb_pitch / 64) - 1;
+	dev_priv->cfb_fence = obj->fence_reg;
+	dev_priv->cfb_plane = intel_crtc->plane;
+	dev_priv->cfb_y = crtc->y;
+
+	dpfc_ctl = plane | DPFC_SR_EN | DPFC_CTL_LIMIT_1X;
+	if (obj->tiling_mode != I915_TILING_NONE) {
+		dpfc_ctl |= DPFC_CTL_FENCE_EN | dev_priv->cfb_fence;
+		I915_WRITE(DPFC_CHICKEN, DPFC_HT_MODIFY);
+	} else {
+		I915_WRITE(DPFC_CHICKEN, ~DPFC_HT_MODIFY);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	I915_WRITE(DPFC_RECOMP_CTL, DPFC_RECOMP_STALL_EN |
 		   (stall_watermark << DPFC_RECOMP_STALL_WM_SHIFT) |
@@ -1643,7 +2106,11 @@ static void g4x_enable_fbc(struct drm_crtc *crtc, unsigned long interval)
 	DRM_DEBUG_KMS("enabled fbc on plane %d\n", intel_crtc->plane);
 }
 
+<<<<<<< HEAD
 static void g4x_disable_fbc(struct drm_device *dev)
+=======
+void g4x_disable_fbc(struct drm_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
 	u32 dpfc_ctl;
@@ -1698,12 +2165,41 @@ static void ironlake_enable_fbc(struct drm_crtc *crtc, unsigned long interval)
 	u32 dpfc_ctl;
 
 	dpfc_ctl = I915_READ(ILK_DPFC_CONTROL);
+<<<<<<< HEAD
 	dpfc_ctl &= DPFC_RESERVED;
 	dpfc_ctl |= (plane | DPFC_CTL_LIMIT_1X);
 	/* Set persistent mode for front-buffer rendering, ala X. */
 	dpfc_ctl |= DPFC_CTL_PERSISTENT_MODE;
 	dpfc_ctl |= (DPFC_CTL_FENCE_EN | obj->fence_reg);
 	I915_WRITE(ILK_DPFC_CHICKEN, DPFC_HT_MODIFY);
+=======
+	if (dpfc_ctl & DPFC_CTL_EN) {
+		if (dev_priv->cfb_pitch == dev_priv->cfb_pitch / 64 - 1 &&
+		    dev_priv->cfb_fence == obj->fence_reg &&
+		    dev_priv->cfb_plane == intel_crtc->plane &&
+		    dev_priv->cfb_offset == obj->gtt_offset &&
+		    dev_priv->cfb_y == crtc->y)
+			return;
+
+		I915_WRITE(ILK_DPFC_CONTROL, dpfc_ctl & ~DPFC_CTL_EN);
+		intel_wait_for_vblank(dev, intel_crtc->pipe);
+	}
+
+	dev_priv->cfb_pitch = (dev_priv->cfb_pitch / 64) - 1;
+	dev_priv->cfb_fence = obj->fence_reg;
+	dev_priv->cfb_plane = intel_crtc->plane;
+	dev_priv->cfb_offset = obj->gtt_offset;
+	dev_priv->cfb_y = crtc->y;
+
+	dpfc_ctl &= DPFC_RESERVED;
+	dpfc_ctl |= (plane | DPFC_CTL_LIMIT_1X);
+	if (obj->tiling_mode != I915_TILING_NONE) {
+		dpfc_ctl |= (DPFC_CTL_FENCE_EN | dev_priv->cfb_fence);
+		I915_WRITE(ILK_DPFC_CHICKEN, DPFC_HT_MODIFY);
+	} else {
+		I915_WRITE(ILK_DPFC_CHICKEN, ~DPFC_HT_MODIFY);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	I915_WRITE(ILK_DPFC_RECOMP_CTL, DPFC_RECOMP_STALL_EN |
 		   (stall_watermark << DPFC_RECOMP_STALL_WM_SHIFT) |
@@ -1715,7 +2211,11 @@ static void ironlake_enable_fbc(struct drm_crtc *crtc, unsigned long interval)
 
 	if (IS_GEN6(dev)) {
 		I915_WRITE(SNB_DPFC_CTL_SA,
+<<<<<<< HEAD
 			   SNB_CPU_FENCE_ENABLE | obj->fence_reg);
+=======
+			   SNB_CPU_FENCE_ENABLE | dev_priv->cfb_fence);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		I915_WRITE(DPFC_CPU_FENCE_OFFSET, crtc->y);
 		sandybridge_blit_fbc_update(dev);
 	}
@@ -1723,7 +2223,11 @@ static void ironlake_enable_fbc(struct drm_crtc *crtc, unsigned long interval)
 	DRM_DEBUG_KMS("enabled fbc on plane %d\n", intel_crtc->plane);
 }
 
+<<<<<<< HEAD
 static void ironlake_disable_fbc(struct drm_device *dev)
+=======
+void ironlake_disable_fbc(struct drm_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
 	u32 dpfc_ctl;
@@ -1755,6 +2259,7 @@ bool intel_fbc_enabled(struct drm_device *dev)
 	return dev_priv->display.fbc_enabled(dev);
 }
 
+<<<<<<< HEAD
 static void intel_fbc_work_fn(struct work_struct *__work)
 {
 	struct intel_fbc_work *work =
@@ -1812,10 +2317,16 @@ static void intel_enable_fbc(struct drm_crtc *crtc, unsigned long interval)
 	struct intel_fbc_work *work;
 	struct drm_device *dev = crtc->dev;
 	struct drm_i915_private *dev_priv = dev->dev_private;
+=======
+void intel_enable_fbc(struct drm_crtc *crtc, unsigned long interval)
+{
+	struct drm_i915_private *dev_priv = crtc->dev->dev_private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!dev_priv->display.enable_fbc)
 		return;
 
+<<<<<<< HEAD
 	intel_cancel_fbc_work(dev_priv);
 
 	work = kzalloc(sizeof *work, GFP_KERNEL);
@@ -1845,19 +2356,28 @@ static void intel_enable_fbc(struct drm_crtc *crtc, unsigned long interval)
 	 * waiting synchronously upon the vblank.
 	 */
 	schedule_delayed_work(&work->work, msecs_to_jiffies(50));
+=======
+	dev_priv->display.enable_fbc(crtc, interval);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void intel_disable_fbc(struct drm_device *dev)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
 
+<<<<<<< HEAD
 	intel_cancel_fbc_work(dev_priv);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!dev_priv->display.disable_fbc)
 		return;
 
 	dev_priv->display.disable_fbc(dev);
+<<<<<<< HEAD
 	dev_priv->cfb_plane = -1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1887,7 +2407,10 @@ static void intel_update_fbc(struct drm_device *dev)
 	struct drm_framebuffer *fb;
 	struct intel_framebuffer *intel_fb;
 	struct drm_i915_gem_object *obj;
+<<<<<<< HEAD
 	int enable_fbc;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	DRM_DEBUG_KMS("\n");
 
@@ -1928,6 +2451,7 @@ static void intel_update_fbc(struct drm_device *dev)
 	intel_fb = to_intel_framebuffer(fb);
 	obj = intel_fb->obj;
 
+<<<<<<< HEAD
 	enable_fbc = i915_enable_fbc;
 	if (enable_fbc < 0) {
 		DRM_DEBUG_KMS("fbc set to per-chip default\n");
@@ -1937,6 +2461,10 @@ static void intel_update_fbc(struct drm_device *dev)
 	}
 	if (!enable_fbc) {
 		DRM_DEBUG_KMS("fbc disabled per module param\n");
+=======
+	if (!i915_enable_fbc) {
+		DRM_DEBUG_KMS("fbc disabled per module param (default off)\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_priv->no_fbc_reason = FBC_MODULE_PARAM;
 		goto out_disable;
 	}
@@ -1964,6 +2492,7 @@ static void intel_update_fbc(struct drm_device *dev)
 		dev_priv->no_fbc_reason = FBC_BAD_PLANE;
 		goto out_disable;
 	}
+<<<<<<< HEAD
 
 	/* The use of a CPU fence is mandatory in order to detect writes
 	 * by the CPU to the scanout and trigger updates to the FBC.
@@ -1971,6 +2500,10 @@ static void intel_update_fbc(struct drm_device *dev)
 	if (obj->tiling_mode != I915_TILING_X ||
 	    obj->fence_reg == I915_FENCE_REG_NONE) {
 		DRM_DEBUG_KMS("framebuffer not tiled or fenced, disabling compression\n");
+=======
+	if (obj->tiling_mode != I915_TILING_X) {
+		DRM_DEBUG_KMS("framebuffer not tiled, disabling compression\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_priv->no_fbc_reason = FBC_NOT_TILED;
 		goto out_disable;
 	}
@@ -1979,6 +2512,7 @@ static void intel_update_fbc(struct drm_device *dev)
 	if (in_dbg_master())
 		goto out_disable;
 
+<<<<<<< HEAD
 	/* If the scanout has not changed, don't modify the FBC settings.
 	 * Note that we make the fundamental assumption that the fb->obj
 	 * cannot be unpinned (and have its GTT offset and fence revoked)
@@ -2017,6 +2551,8 @@ static void intel_update_fbc(struct drm_device *dev)
 		intel_disable_fbc(dev);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	intel_enable_fbc(crtc, 500);
 	return;
 
@@ -2059,10 +2595,21 @@ intel_pin_and_fence_fb_obj(struct drm_device *dev,
 	}
 
 	dev_priv->mm.interruptible = false;
+<<<<<<< HEAD
 	ret = i915_gem_object_pin_to_display_plane(obj, alignment, pipelined);
 	if (ret)
 		goto err_interruptible;
 
+=======
+	ret = i915_gem_object_pin(obj, alignment, true);
+	if (ret)
+		goto err_interruptible;
+
+	ret = i915_gem_object_set_to_display_plane(obj, pipelined);
+	if (ret)
+		goto err_unpin;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Install a fence for tiled scan-out. Pre-i965 always needs a
 	 * fence, whereas 965+ only requires a fence if using
 	 * framebuffer compression.  For simplicity, we always install
@@ -2072,8 +2619,11 @@ intel_pin_and_fence_fb_obj(struct drm_device *dev,
 		ret = i915_gem_object_get_fence(obj, pipelined);
 		if (ret)
 			goto err_unpin;
+<<<<<<< HEAD
 
 		i915_gem_object_pin_fence(obj);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	dev_priv->mm.interruptible = true;
@@ -2086,6 +2636,7 @@ err_interruptible:
 	return ret;
 }
 
+<<<<<<< HEAD
 void intel_unpin_fb_obj(struct drm_i915_gem_object *obj)
 {
 	i915_gem_object_unpin_fence(obj);
@@ -2094,6 +2645,12 @@ void intel_unpin_fb_obj(struct drm_i915_gem_object *obj)
 
 static int i9xx_update_plane(struct drm_crtc *crtc, struct drm_framebuffer *fb,
 			     int x, int y)
+=======
+/* Assume fb object is pinned & idle & fenced and just update base pointers */
+static int
+intel_pipe_set_base_atomic(struct drm_crtc *crtc, struct drm_framebuffer *fb,
+			   int x, int y, enum mode_set_atomic state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_device *dev = crtc->dev;
 	struct drm_i915_private *dev_priv = dev->dev_private;
@@ -2136,7 +2693,11 @@ static int i9xx_update_plane(struct drm_crtc *crtc, struct drm_framebuffer *fb,
 		dspcntr |= DISPPLANE_32BPP_NO_ALPHA;
 		break;
 	default:
+<<<<<<< HEAD
 		DRM_ERROR("Unknown color depth %d\n", fb->bits_per_pixel);
+=======
+		DRM_ERROR("Unknown color depth\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 	if (INTEL_INFO(dev)->gen >= 4) {
@@ -2146,6 +2707,7 @@ static int i9xx_update_plane(struct drm_crtc *crtc, struct drm_framebuffer *fb,
 			dspcntr &= ~DISPPLANE_TILED;
 	}
 
+<<<<<<< HEAD
 	I915_WRITE(reg, dspcntr);
 
 	Start = obj->gtt_offset;
@@ -2154,6 +2716,20 @@ static int i9xx_update_plane(struct drm_crtc *crtc, struct drm_framebuffer *fb,
 	DRM_DEBUG_KMS("Writing base %08lX %08lX %d %d %d\n",
 		      Start, Offset, x, y, fb->pitches[0]);
 	I915_WRITE(DSPSTRIDE(plane), fb->pitches[0]);
+=======
+	if (HAS_PCH_SPLIT(dev))
+		/* must disable */
+		dspcntr |= DISPPLANE_TRICKLE_FEED_DISABLE;
+
+	I915_WRITE(reg, dspcntr);
+
+	Start = obj->gtt_offset;
+	Offset = y * fb->pitch + x * (fb->bits_per_pixel / 8);
+
+	DRM_DEBUG_KMS("Writing base %08lX %08lX %d %d %d\n",
+		      Start, Offset, x, y, fb->pitch);
+	I915_WRITE(DSPSTRIDE(plane), fb->pitch);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (INTEL_INFO(dev)->gen >= 4) {
 		I915_WRITE(DSPSURF(plane), Start);
 		I915_WRITE(DSPTILEOFF(plane), (y << 16) | x);
@@ -2162,6 +2738,7 @@ static int i9xx_update_plane(struct drm_crtc *crtc, struct drm_framebuffer *fb,
 		I915_WRITE(DSPADDR(plane), Start + Offset);
 	POSTING_READ(reg);
 
+<<<<<<< HEAD
 	return 0;
 }
 
@@ -2256,6 +2833,8 @@ intel_pipe_set_base_atomic(struct drm_crtc *crtc, struct drm_framebuffer *fb,
 	if (ret)
 		return ret;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	intel_update_fbc(dev);
 	intel_increase_pllclock(crtc);
 
@@ -2263,6 +2842,7 @@ intel_pipe_set_base_atomic(struct drm_crtc *crtc, struct drm_framebuffer *fb,
 }
 
 static int
+<<<<<<< HEAD
 intel_finish_fb(struct drm_framebuffer *old_fb)
 {
 	struct drm_i915_gem_object *obj = to_intel_framebuffer(old_fb)->obj;
@@ -2290,6 +2870,8 @@ intel_finish_fb(struct drm_framebuffer *old_fb)
 }
 
 static int
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 intel_pipe_set_base(struct drm_crtc *crtc, int x, int y,
 		    struct drm_framebuffer *old_fb)
 {
@@ -2300,7 +2882,11 @@ intel_pipe_set_base(struct drm_crtc *crtc, int x, int y,
 
 	/* no fb bound */
 	if (!crtc->fb) {
+<<<<<<< HEAD
 		DRM_ERROR("No FB bound\n");
+=======
+		DRM_DEBUG_KMS("No FB bound\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
@@ -2308,12 +2894,16 @@ intel_pipe_set_base(struct drm_crtc *crtc, int x, int y,
 	case 0:
 	case 1:
 		break;
+<<<<<<< HEAD
 	case 2:
 		if (IS_IVYBRIDGE(dev))
 			break;
 		/* fall through otherwise */
 	default:
 		DRM_ERROR("no plane for crtc\n");
+=======
+	default:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -2323,25 +2913,59 @@ intel_pipe_set_base(struct drm_crtc *crtc, int x, int y,
 					 NULL);
 	if (ret != 0) {
 		mutex_unlock(&dev->struct_mutex);
+<<<<<<< HEAD
 		DRM_ERROR("pin & fence failed\n");
 		return ret;
 	}
 
 	if (old_fb)
 		intel_finish_fb(old_fb);
+=======
+		return ret;
+	}
+
+	if (old_fb) {
+		struct drm_i915_private *dev_priv = dev->dev_private;
+		struct drm_i915_gem_object *obj = to_intel_framebuffer(old_fb)->obj;
+
+		wait_event(dev_priv->pending_flip_queue,
+			   atomic_read(&dev_priv->mm.wedged) ||
+			   atomic_read(&obj->pending_flip) == 0);
+
+		/* Big Hammer, we also need to ensure that any pending
+		 * MI_WAIT_FOR_EVENT inside a user batch buffer on the
+		 * current scanout is retired before unpinning the old
+		 * framebuffer.
+		 *
+		 * This should only fail upon a hung GPU, in which case we
+		 * can safely continue.
+		 */
+		ret = i915_gem_object_flush_gpu(obj);
+		(void) ret;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = intel_pipe_set_base_atomic(crtc, crtc->fb, x, y,
 					 LEAVE_ATOMIC_MODE_SET);
 	if (ret) {
+<<<<<<< HEAD
 		intel_unpin_fb_obj(to_intel_framebuffer(crtc->fb)->obj);
 		mutex_unlock(&dev->struct_mutex);
 		DRM_ERROR("failed to update base address\n");
+=======
+		i915_gem_object_unpin(to_intel_framebuffer(crtc->fb)->obj);
+		mutex_unlock(&dev->struct_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 
 	if (old_fb) {
 		intel_wait_for_vblank(dev, intel_crtc->pipe);
+<<<<<<< HEAD
 		intel_unpin_fb_obj(to_intel_framebuffer(old_fb)->obj);
+=======
+		i915_gem_object_unpin(to_intel_framebuffer(old_fb)->obj);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	mutex_unlock(&dev->struct_mutex);
@@ -2539,7 +3163,11 @@ static void ironlake_fdi_link_train(struct drm_crtc *crtc)
 
 }
 
+<<<<<<< HEAD
 static const int snb_b_fdi_train_param[] = {
+=======
+static const int snb_b_fdi_train_param [] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	FDI_LINK_TRAIN_400MV_0DB_SNB_B,
 	FDI_LINK_TRAIN_400MV_6DB_SNB_B,
 	FDI_LINK_TRAIN_600MV_3_5DB_SNB_B,
@@ -2592,7 +3220,11 @@ static void gen6_fdi_link_train(struct drm_crtc *crtc)
 	POSTING_READ(reg);
 	udelay(150);
 
+<<<<<<< HEAD
 	for (i = 0; i < 4; i++) {
+=======
+	for (i = 0; i < 4; i++ ) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reg = FDI_TX_CTL(pipe);
 		temp = I915_READ(reg);
 		temp &= ~FDI_LINK_TRAIN_VOL_EMP_MASK;
@@ -2641,7 +3273,11 @@ static void gen6_fdi_link_train(struct drm_crtc *crtc)
 	POSTING_READ(reg);
 	udelay(150);
 
+<<<<<<< HEAD
 	for (i = 0; i < 4; i++) {
+=======
+	for (i = 0; i < 4; i++ ) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reg = FDI_TX_CTL(pipe);
 		temp = I915_READ(reg);
 		temp &= ~FDI_LINK_TRAIN_VOL_EMP_MASK;
@@ -2710,7 +3346,11 @@ static void ivb_manual_fdi_link_train(struct drm_crtc *crtc)
 	POSTING_READ(reg);
 	udelay(150);
 
+<<<<<<< HEAD
 	for (i = 0; i < 4; i++) {
+=======
+	for (i = 0; i < 4; i++ ) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reg = FDI_TX_CTL(pipe);
 		temp = I915_READ(reg);
 		temp &= ~FDI_LINK_TRAIN_VOL_EMP_MASK;
@@ -2752,7 +3392,11 @@ static void ivb_manual_fdi_link_train(struct drm_crtc *crtc)
 	POSTING_READ(reg);
 	udelay(150);
 
+<<<<<<< HEAD
 	for (i = 0; i < 4; i++) {
+=======
+	for (i = 0; i < 4; i++ ) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reg = FDI_TX_CTL(pipe);
 		temp = I915_READ(reg);
 		temp &= ~FDI_LINK_TRAIN_VOL_EMP_MASK;
@@ -2895,6 +3539,7 @@ static void intel_clear_scanline_wait(struct drm_device *dev)
 		I915_WRITE_CTL(ring, tmp);
 }
 
+<<<<<<< HEAD
 static bool intel_crtc_has_pending_flip(struct drm_crtc *crtc)
 {
 	struct drm_device *dev = crtc->dev;
@@ -2916,16 +3561,29 @@ static void intel_crtc_wait_for_pending_flips(struct drm_crtc *crtc)
 {
 	struct drm_device *dev = crtc->dev;
 	struct drm_i915_private *dev_priv = dev->dev_private;
+=======
+static void intel_crtc_wait_for_pending_flips(struct drm_crtc *crtc)
+{
+	struct drm_i915_gem_object *obj;
+	struct drm_i915_private *dev_priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (crtc->fb == NULL)
 		return;
 
+<<<<<<< HEAD
 	wait_event(dev_priv->pending_flip_queue,
 		   !intel_crtc_has_pending_flip(crtc));
 
 	mutex_lock(&dev->struct_mutex);
 	intel_finish_fb(crtc->fb);
 	mutex_unlock(&dev->struct_mutex);
+=======
+	obj = to_intel_framebuffer(crtc->fb)->obj;
+	dev_priv = crtc->dev->dev_private;
+	wait_event(dev_priv->pending_flip_queue,
+		   atomic_read(&obj->pending_flip) == 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static bool intel_crtc_driving_pch(struct drm_crtc *crtc)
@@ -2967,7 +3625,11 @@ static void ironlake_pch_enable(struct drm_crtc *crtc)
 	struct drm_i915_private *dev_priv = dev->dev_private;
 	struct intel_crtc *intel_crtc = to_intel_crtc(crtc);
 	int pipe = intel_crtc->pipe;
+<<<<<<< HEAD
 	u32 reg, temp, transc_sel;
+=======
+	u32 reg, temp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* For PCH output, training FDI link */
 	dev_priv->display.fdi_link_train(crtc);
@@ -2975,6 +3637,7 @@ static void ironlake_pch_enable(struct drm_crtc *crtc)
 	intel_enable_pch_pll(dev_priv, pipe);
 
 	if (HAS_PCH_CPT(dev)) {
+<<<<<<< HEAD
 		transc_sel = intel_crtc->use_pll_a ? TRANSC_DPLLA_SEL :
 			TRANSC_DPLLB_SEL;
 
@@ -2990,6 +3653,14 @@ static void ironlake_pch_enable(struct drm_crtc *crtc)
 			temp &= ~(TRANSC_DPLLB_SEL);
 			temp |= (TRANSC_DPLL_ENABLE | transc_sel);
 		}
+=======
+		/* Be sure PCH DPLL SEL is set */
+		temp = I915_READ(PCH_DPLL_SEL);
+		if (pipe == 0 && (temp & TRANSA_DPLL_ENABLE) == 0)
+			temp |= (TRANSA_DPLL_ENABLE | TRANSA_DPLLA_SEL);
+		else if (pipe == 1 && (temp & TRANSB_DPLL_ENABLE) == 0)
+			temp |= (TRANSB_DPLL_ENABLE | TRANSB_DPLLB_SEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		I915_WRITE(PCH_DPLL_SEL, temp);
 	}
 
@@ -3002,15 +3673,22 @@ static void ironlake_pch_enable(struct drm_crtc *crtc)
 	I915_WRITE(TRANS_VTOTAL(pipe), I915_READ(VTOTAL(pipe)));
 	I915_WRITE(TRANS_VBLANK(pipe), I915_READ(VBLANK(pipe)));
 	I915_WRITE(TRANS_VSYNC(pipe),  I915_READ(VSYNC(pipe)));
+<<<<<<< HEAD
 	I915_WRITE(TRANS_VSYNCSHIFT(pipe),  I915_READ(VSYNCSHIFT(pipe)));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	intel_fdi_normal_train(crtc);
 
 	/* For PCH DP, enable TRANS_DP_CTL */
 	if (HAS_PCH_CPT(dev) &&
+<<<<<<< HEAD
 	    (intel_pipe_has_type(crtc, INTEL_OUTPUT_DISPLAYPORT) ||
 	     intel_pipe_has_type(crtc, INTEL_OUTPUT_EDP))) {
 		u32 bpc = (I915_READ(PIPECONF(pipe)) & PIPE_BPC_MASK) >> 5;
+=======
+	    intel_pipe_has_type(crtc, INTEL_OUTPUT_DISPLAYPORT)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reg = TRANS_DP_CTL(pipe);
 		temp = I915_READ(reg);
 		temp &= ~(TRANS_DP_PORT_SEL_MASK |
@@ -3018,7 +3696,11 @@ static void ironlake_pch_enable(struct drm_crtc *crtc)
 			  TRANS_DP_BPC_MASK);
 		temp |= (TRANS_DP_OUTPUT_ENABLE |
 			 TRANS_DP_ENH_FRAMING);
+<<<<<<< HEAD
 		temp |= bpc << 9; /* same format but at 11:9 */
+=======
+		temp |= TRANS_DP_8BPC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (crtc->mode.flags & DRM_MODE_FLAG_PHSYNC)
 			temp |= TRANS_DP_HSYNC_ACTIVE_HIGH;
@@ -3047,6 +3729,7 @@ static void ironlake_pch_enable(struct drm_crtc *crtc)
 	intel_enable_transcoder(dev_priv, pipe);
 }
 
+<<<<<<< HEAD
 void intel_cpt_verify_modeset(struct drm_device *dev, int pipe)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
@@ -3065,6 +3748,8 @@ void intel_cpt_verify_modeset(struct drm_device *dev, int pipe)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ironlake_crtc_enable(struct drm_crtc *crtc)
 {
 	struct drm_device *dev = crtc->dev;
@@ -3101,11 +3786,15 @@ static void ironlake_crtc_enable(struct drm_crtc *crtc)
 		 * as some pre-programmed values are broken,
 		 * e.g. x201.
 		 */
+<<<<<<< HEAD
 		if (IS_IVYBRIDGE(dev))
 			I915_WRITE(PF_CTL(pipe), PF_ENABLE | PF_FILTER_MED_3x3 |
 						 PF_PIPE_SEL_IVB(pipe));
 		else
 			I915_WRITE(PF_CTL(pipe), PF_ENABLE | PF_FILTER_MED_3x3);
+=======
+		I915_WRITE(PF_CTL(pipe), PF_ENABLE | PF_FILTER_MED_3x3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		I915_WRITE(PF_WIN_POS(pipe), dev_priv->pch_pf_pos);
 		I915_WRITE(PF_WIN_SZ(pipe), dev_priv->pch_pf_size);
 	}
@@ -3147,8 +3836,14 @@ static void ironlake_crtc_disable(struct drm_crtc *crtc)
 
 	intel_disable_plane(dev_priv, plane, pipe);
 
+<<<<<<< HEAD
 	if (dev_priv->cfb_plane == plane)
 		intel_disable_fbc(dev);
+=======
+	if (dev_priv->cfb_plane == plane &&
+	    dev_priv->display.disable_fbc)
+		dev_priv->display.disable_fbc(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	intel_disable_pipe(dev_priv, pipe);
 
@@ -3179,13 +3874,21 @@ static void ironlake_crtc_disable(struct drm_crtc *crtc)
 		temp = I915_READ(PCH_DPLL_SEL);
 		switch (pipe) {
 		case 0:
+<<<<<<< HEAD
 			temp &= ~(TRANSA_DPLL_ENABLE | TRANSA_DPLLB_SEL);
+=======
+			temp &= ~(TRANSA_DPLL_ENABLE | TRANSA_DPLLA_SEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case 1:
 			temp &= ~(TRANSB_DPLL_ENABLE | TRANSB_DPLLB_SEL);
 			break;
 		case 2:
+<<<<<<< HEAD
 			/* C shares PLL A or B */
+=======
+			/* FIXME: manage transcoder PLLs? */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			temp &= ~(TRANSC_DPLL_ENABLE | TRANSC_DPLLB_SEL);
 			break;
 		default:
@@ -3195,8 +3898,12 @@ static void ironlake_crtc_disable(struct drm_crtc *crtc)
 	}
 
 	/* disable PCH DPLL */
+<<<<<<< HEAD
 	if (!intel_crtc->no_pll)
 		intel_disable_pch_pll(dev_priv, pipe);
+=======
+	intel_disable_pch_pll(dev_priv, pipe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Switch from PCDclk to Rawclk */
 	reg = FDI_RX_CTL(pipe);
@@ -3303,7 +4010,10 @@ static void i9xx_crtc_disable(struct drm_crtc *crtc)
 	struct intel_crtc *intel_crtc = to_intel_crtc(crtc);
 	int pipe = intel_crtc->pipe;
 	int plane = intel_crtc->plane;
+<<<<<<< HEAD
 	u32 pctl;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!intel_crtc->active)
 		return;
@@ -3314,6 +4024,7 @@ static void i9xx_crtc_disable(struct drm_crtc *crtc)
 	intel_crtc_dpms_overlay(intel_crtc, false);
 	intel_crtc_update_cursor(crtc, false);
 
+<<<<<<< HEAD
 	if (dev_priv->cfb_plane == plane)
 		intel_disable_fbc(dev);
 
@@ -3326,6 +4037,14 @@ static void i9xx_crtc_disable(struct drm_crtc *crtc)
 	    ((pctl & PFIT_PIPE_MASK) >> PFIT_PIPE_SHIFT) == pipe)
 		I915_WRITE(PFIT_CONTROL, 0);
 
+=======
+	if (dev_priv->cfb_plane == plane &&
+	    dev_priv->display.disable_fbc)
+		dev_priv->display.disable_fbc(dev);
+
+	intel_disable_plane(dev_priv, plane, pipe);
+	intel_disable_pipe(dev_priv, pipe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	intel_disable_pll(dev_priv, pipe);
 
 	intel_crtc->active = false;
@@ -3400,12 +4119,19 @@ static void intel_crtc_disable(struct drm_crtc *crtc)
 	struct drm_device *dev = crtc->dev;
 
 	crtc_funcs->dpms(crtc, DRM_MODE_DPMS_OFF);
+<<<<<<< HEAD
 	assert_plane_disabled(dev->dev_private, to_intel_crtc(crtc)->plane);
 	assert_pipe_disabled(dev->dev_private, to_intel_crtc(crtc)->pipe);
 
 	if (crtc->fb) {
 		mutex_lock(&dev->struct_mutex);
 		intel_unpin_fb_obj(to_intel_framebuffer(crtc->fb)->obj);
+=======
+
+	if (crtc->fb) {
+		mutex_lock(&dev->struct_mutex);
+		i915_gem_object_unpin(to_intel_framebuffer(crtc->fb)->obj);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mutex_unlock(&dev->struct_mutex);
 	}
 }
@@ -3438,13 +4164,18 @@ static void ironlake_crtc_commit(struct drm_crtc *crtc)
 	ironlake_crtc_enable(crtc);
 }
 
+<<<<<<< HEAD
 void intel_encoder_prepare(struct drm_encoder *encoder)
+=======
+void intel_encoder_prepare (struct drm_encoder *encoder)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_encoder_helper_funcs *encoder_funcs = encoder->helper_private;
 	/* lvds has its own version of prepare see intel_lvds_prepare */
 	encoder_funcs->dpms(encoder, DRM_MODE_DPMS_OFF);
 }
 
+<<<<<<< HEAD
 void intel_encoder_commit(struct drm_encoder *encoder)
 {
 	struct drm_encoder_helper_funcs *encoder_funcs = encoder->helper_private;
@@ -3457,6 +4188,13 @@ void intel_encoder_commit(struct drm_encoder *encoder)
 
 	if (HAS_PCH_CPT(dev))
 		intel_cpt_verify_modeset(dev, intel_crtc->pipe);
+=======
+void intel_encoder_commit (struct drm_encoder *encoder)
+{
+	struct drm_encoder_helper_funcs *encoder_funcs = encoder->helper_private;
+	/* lvds has its own version of commit see intel_lvds_commit */
+	encoder_funcs->dpms(encoder, DRM_MODE_DPMS_ON);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void intel_encoder_destroy(struct drm_encoder *encoder)
@@ -3479,10 +4217,17 @@ static bool intel_crtc_mode_fixup(struct drm_crtc *crtc,
 			return false;
 	}
 
+<<<<<<< HEAD
 	/* All interlaced capable intel hw wants timings in frames. Note though
 	 * that intel_lvds_mode_fixup does some funny tricks with the crtc
 	 * timings, so we need to be careful not to clobber these.*/
 	if (!(adjusted_mode->private_flags & INTEL_MODE_CRTC_TIMINGS_SET))
+=======
+	/* XXX some encoders set the crtcinfo, others don't.
+	 * Obviously we need some form of conflict resolution here...
+	 */
+	if (adjusted_mode->crtc_htotal == 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		drm_mode_set_crtcinfo(adjusted_mode, 0);
 
 	return true;
@@ -4598,11 +5343,18 @@ static void ironlake_update_wm(struct drm_device *dev)
 	 */
 }
 
+<<<<<<< HEAD
 void sandybridge_update_wm(struct drm_device *dev)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
 	int latency = SNB_READ_WM0_LATENCY() * 100;	/* In unit 0.1us */
 	u32 val;
+=======
+static void sandybridge_update_wm(struct drm_device *dev)
+{
+	struct drm_i915_private *dev_priv = dev->dev_private;
+	int latency = SNB_READ_WM0_LATENCY() * 100;	/* In unit 0.1us */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int fbc_wm, plane_wm, cursor_wm;
 	unsigned int enabled;
 
@@ -4611,10 +5363,15 @@ void sandybridge_update_wm(struct drm_device *dev)
 			    &sandybridge_display_wm_info, latency,
 			    &sandybridge_cursor_wm_info, latency,
 			    &plane_wm, &cursor_wm)) {
+<<<<<<< HEAD
 		val = I915_READ(WM0_PIPEA_ILK);
 		val &= ~(WM0_PIPE_PLANE_MASK | WM0_PIPE_CURSOR_MASK);
 		I915_WRITE(WM0_PIPEA_ILK, val |
 			   ((plane_wm << WM0_PIPE_PLANE_SHIFT) | cursor_wm));
+=======
+		I915_WRITE(WM0_PIPEA_ILK,
+			   (plane_wm << WM0_PIPE_PLANE_SHIFT) | cursor_wm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		DRM_DEBUG_KMS("FIFO watermarks For pipe A -"
 			      " plane %d, " "cursor: %d\n",
 			      plane_wm, cursor_wm);
@@ -4625,16 +5382,22 @@ void sandybridge_update_wm(struct drm_device *dev)
 			    &sandybridge_display_wm_info, latency,
 			    &sandybridge_cursor_wm_info, latency,
 			    &plane_wm, &cursor_wm)) {
+<<<<<<< HEAD
 		val = I915_READ(WM0_PIPEB_ILK);
 		val &= ~(WM0_PIPE_PLANE_MASK | WM0_PIPE_CURSOR_MASK);
 		I915_WRITE(WM0_PIPEB_ILK, val |
 			   ((plane_wm << WM0_PIPE_PLANE_SHIFT) | cursor_wm));
+=======
+		I915_WRITE(WM0_PIPEB_ILK,
+			   (plane_wm << WM0_PIPE_PLANE_SHIFT) | cursor_wm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		DRM_DEBUG_KMS("FIFO watermarks For pipe B -"
 			      " plane %d, cursor: %d\n",
 			      plane_wm, cursor_wm);
 		enabled |= 2;
 	}
 
+<<<<<<< HEAD
 	/* IVB has 3 pipes */
 	if (IS_IVYBRIDGE(dev) &&
 	    g4x_compute_wm0(dev, 2,
@@ -4651,6 +5414,8 @@ void sandybridge_update_wm(struct drm_device *dev)
 		enabled |= 3;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Calculate and update the self-refresh watermark only when one
 	 * display plane is used.
@@ -4665,8 +5430,12 @@ void sandybridge_update_wm(struct drm_device *dev)
 	I915_WRITE(WM2_LP_ILK, 0);
 	I915_WRITE(WM1_LP_ILK, 0);
 
+<<<<<<< HEAD
 	if (!single_plane_enabled(enabled) ||
 	    dev_priv->sprite_scaling_enabled)
+=======
+	if (!single_plane_enabled(enabled))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	enabled = ffs(enabled) - 1;
 
@@ -4716,6 +5485,7 @@ void sandybridge_update_wm(struct drm_device *dev)
 		   cursor_wm);
 }
 
+<<<<<<< HEAD
 static bool
 sandybridge_compute_sprite_wm(struct drm_device *dev, int plane,
 			      uint32_t sprite_width, int pixel_size,
@@ -4871,6 +5641,8 @@ static void sandybridge_update_sprite_wm(struct drm_device *dev, int pipe,
 	I915_WRITE(WM3S_LP_IVB, sprite_wm);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * intel_update_watermarks - update FIFO watermark values based on current modes
  *
@@ -4911,6 +5683,7 @@ static void intel_update_watermarks(struct drm_device *dev)
 		dev_priv->display.update_wm(dev);
 }
 
+<<<<<<< HEAD
 void intel_update_sprite_watermarks(struct drm_device *dev, int pipe,
 				    uint32_t sprite_width, int pixel_size)
 {
@@ -5149,6 +5922,19 @@ static int i9xx_crtc_mode_set(struct drm_crtc *crtc,
 			      struct drm_display_mode *adjusted_mode,
 			      int x, int y,
 			      struct drm_framebuffer *old_fb)
+=======
+static inline bool intel_panel_use_ssc(struct drm_i915_private *dev_priv)
+{
+	return dev_priv->lvds_use_ssc && i915_panel_use_ssc
+		&& !(dev_priv->quirks & QUIRK_LVDS_SSC_DISABLE);
+}
+
+static int i9xx_crtc_mode_set(struct drm_crtc *crtc,
+			      struct drm_display_mode *mode,
+			      struct drm_display_mode *adjusted_mode,
+			      int x, int y,
+			      struct drm_framebuffer *old_fb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_device *dev = crtc->dev;
 	struct drm_i915_private *dev_priv = dev->dev_private;
@@ -5157,7 +5943,11 @@ static int i9xx_crtc_mode_set(struct drm_crtc *crtc,
 	int plane = intel_crtc->plane;
 	int refclk, num_connectors = 0;
 	intel_clock_t clock, reduced_clock;
+<<<<<<< HEAD
 	u32 dpll, dspcntr, pipeconf, vsyncshift;
+=======
+	u32 dpll, fp = 0, fp2 = 0, dspcntr, pipeconf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool ok, has_reduced_clock = false, is_sdvo = false, is_dvo = false;
 	bool is_crt = false, is_lvds = false, is_tv = false, is_dp = false;
 	struct drm_mode_config *mode_config = &dev->mode_config;
@@ -5198,7 +5988,19 @@ static int i9xx_crtc_mode_set(struct drm_crtc *crtc,
 		num_connectors++;
 	}
 
+<<<<<<< HEAD
 	refclk = i9xx_get_refclk(crtc, num_connectors);
+=======
+	if (is_lvds && intel_panel_use_ssc(dev_priv) && num_connectors < 2) {
+		refclk = dev_priv->lvds_ssc_freq * 1000;
+		DRM_DEBUG_KMS("using SSC reference clock of %d MHz\n",
+			      refclk / 1000);
+	} else if (!IS_GEN2(dev)) {
+		refclk = 96000;
+	} else {
+		refclk = 48000;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Returns a set of divisors for the desired target clock with the given
@@ -5206,8 +6008,12 @@ static int i9xx_crtc_mode_set(struct drm_crtc *crtc,
 	 * reflck * (5 * (m1 + 2) + (m2 + 2)) / (n + 2) / p1 / p2.
 	 */
 	limit = intel_limit(crtc, refclk);
+<<<<<<< HEAD
 	ok = limit->find_pll(limit, crtc, adjusted_mode->clock, refclk, NULL,
 			     &clock);
+=======
+	ok = limit->find_pll(limit, crtc, adjusted_mode->clock, refclk, &clock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ok) {
 		DRM_ERROR("Couldn't find PLL settings for mode!\n");
 		return -EINVAL;
@@ -5217,6 +6023,7 @@ static int i9xx_crtc_mode_set(struct drm_crtc *crtc,
 	intel_crtc_update_cursor(crtc, true);
 
 	if (is_lvds && dev_priv->lvds_downclock_avail) {
+<<<<<<< HEAD
 		/*
 		 * Ensure we match the reduced clock's P to the target clock.
 		 * If the clocks don't match, we can't switch the display clock
@@ -5235,6 +6042,55 @@ static int i9xx_crtc_mode_set(struct drm_crtc *crtc,
 
 	i9xx_update_pll_dividers(crtc, &clock, has_reduced_clock ?
 				 &reduced_clock : NULL);
+=======
+		has_reduced_clock = limit->find_pll(limit, crtc,
+						    dev_priv->lvds_downclock,
+						    refclk,
+						    &reduced_clock);
+		if (has_reduced_clock && (clock.p != reduced_clock.p)) {
+			/*
+			 * If the different P is found, it means that we can't
+			 * switch the display clock by using the FP0/FP1.
+			 * In such case we will disable the LVDS downclock
+			 * feature.
+			 */
+			DRM_DEBUG_KMS("Different P is found for "
+				      "LVDS clock/downclock\n");
+			has_reduced_clock = 0;
+		}
+	}
+	/* SDVO TV has fixed PLL values depend on its clock range,
+	   this mirrors vbios setting. */
+	if (is_sdvo && is_tv) {
+		if (adjusted_mode->clock >= 100000
+		    && adjusted_mode->clock < 140500) {
+			clock.p1 = 2;
+			clock.p2 = 10;
+			clock.n = 3;
+			clock.m1 = 16;
+			clock.m2 = 8;
+		} else if (adjusted_mode->clock >= 140500
+			   && adjusted_mode->clock <= 200000) {
+			clock.p1 = 1;
+			clock.p2 = 10;
+			clock.n = 6;
+			clock.m1 = 12;
+			clock.m2 = 8;
+		}
+	}
+
+	if (IS_PINEVIEW(dev)) {
+		fp = (1 << clock.n) << 16 | clock.m1 << 8 | clock.m2;
+		if (has_reduced_clock)
+			fp2 = (1 << reduced_clock.n) << 16 |
+				reduced_clock.m1 << 8 | reduced_clock.m2;
+	} else {
+		fp = clock.n << 16 | clock.m1 << 8 | clock.m2;
+		if (has_reduced_clock)
+			fp2 = reduced_clock.n << 16 | reduced_clock.m1 << 8 |
+				reduced_clock.m2;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dpll = DPLL_VGA_MODE_DIS;
 
@@ -5308,6 +6164,11 @@ static int i9xx_crtc_mode_set(struct drm_crtc *crtc,
 	/* Set up the display plane register */
 	dspcntr = DISPPLANE_GAMMA_ENABLE;
 
+<<<<<<< HEAD
+=======
+	/* Ironlake's plane is forced to pipe, bit 24 is to
+	   enable color space conversion */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pipe == 0)
 		dspcntr &= ~DISPPLANE_SEL_PIPE_MASK;
 	else
@@ -5327,6 +6188,7 @@ static int i9xx_crtc_mode_set(struct drm_crtc *crtc,
 			pipeconf &= ~PIPECONF_DOUBLE_WIDE;
 	}
 
+<<<<<<< HEAD
 	/* default to 8bpc */
 	pipeconf &= ~(PIPECONF_BPP_MASK | PIPECONF_DITHER_EN);
 	if (is_dp) {
@@ -5337,11 +6199,17 @@ static int i9xx_crtc_mode_set(struct drm_crtc *crtc,
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dpll |= DPLL_VCO_ENABLE;
 
 	DRM_DEBUG_KMS("Mode for pipe %c:\n", pipe == 0 ? 'A' : 'B');
 	drm_mode_debug_printmodeline(mode);
 
+<<<<<<< HEAD
+=======
+	I915_WRITE(FP0(pipe), fp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	I915_WRITE(DPLL(pipe), dpll & ~DPLL_VCO_ENABLE);
 
 	POSTING_READ(DPLL(pipe));
@@ -5428,16 +6296,31 @@ static int i9xx_crtc_mode_set(struct drm_crtc *crtc,
 		I915_WRITE(DPLL(pipe), dpll);
 	}
 
+<<<<<<< HEAD
 	if (HAS_PIPE_CXSR(dev)) {
 		if (intel_crtc->lowfreq_avail) {
 			DRM_DEBUG_KMS("enabling CxSR downclocking\n");
 			pipeconf |= PIPECONF_CXSR_DOWNCLOCK;
 		} else {
+=======
+	intel_crtc->lowfreq_avail = false;
+	if (is_lvds && has_reduced_clock && i915_powersave) {
+		I915_WRITE(FP1(pipe), fp2);
+		intel_crtc->lowfreq_avail = true;
+		if (HAS_PIPE_CXSR(dev)) {
+			DRM_DEBUG_KMS("enabling CxSR downclocking\n");
+			pipeconf |= PIPECONF_CXSR_DOWNCLOCK;
+		}
+	} else {
+		I915_WRITE(FP1(pipe), fp);
+		if (HAS_PIPE_CXSR(dev)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			DRM_DEBUG_KMS("disabling CxSR downclocking\n");
 			pipeconf &= ~PIPECONF_CXSR_DOWNCLOCK;
 		}
 	}
 
+<<<<<<< HEAD
 	pipeconf &= ~PIPECONF_INTERLACE_MASK;
 	if (!IS_GEN2(dev) &&
 	    adjusted_mode->flags & DRM_MODE_FLAG_INTERLACE) {
@@ -5454,6 +6337,19 @@ static int i9xx_crtc_mode_set(struct drm_crtc *crtc,
 
 	if (!IS_GEN3(dev))
 		I915_WRITE(VSYNCSHIFT(pipe), vsyncshift);
+=======
+	if (adjusted_mode->flags & DRM_MODE_FLAG_INTERLACE) {
+		pipeconf |= PIPECONF_INTERLACE_W_FIELD_INDICATION;
+		/* the chip adds 2 halflines automatically */
+		adjusted_mode->crtc_vdisplay -= 1;
+		adjusted_mode->crtc_vtotal -= 1;
+		adjusted_mode->crtc_vblank_start -= 1;
+		adjusted_mode->crtc_vblank_end -= 1;
+		adjusted_mode->crtc_vsync_end -= 1;
+		adjusted_mode->crtc_vsync_start -= 1;
+	} else
+		pipeconf &= ~PIPECONF_INTERLACE_W_FIELD_INDICATION; /* progressive */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	I915_WRITE(HTOTAL(pipe),
 		   (adjusted_mode->crtc_hdisplay - 1) |
@@ -5502,6 +6398,7 @@ static int i9xx_crtc_mode_set(struct drm_crtc *crtc,
 	return ret;
 }
 
+<<<<<<< HEAD
 /*
  * Initialize reference clocks when the driver loads
  */
@@ -5653,6 +6550,8 @@ static int ironlake_get_refclk(struct drm_crtc *crtc)
 	return 120000;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 				  struct drm_display_mode *mode,
 				  struct drm_display_mode *adjusted_mode,
@@ -5677,9 +6576,13 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 	struct fdi_m_n m_n = {0};
 	u32 temp;
 	u32 lvds_sync = 0;
+<<<<<<< HEAD
 	int target_clock, pixel_multiplier, lane, link_bw, factor;
 	unsigned int pipe_bpp;
 	bool dither;
+=======
+	int target_clock, pixel_multiplier, lane, link_bw, bpp, factor;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_for_each_entry(encoder, &mode_config->encoder_list, base.head) {
 		if (encoder->base.crtc != crtc)
@@ -5712,7 +6615,20 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 		num_connectors++;
 	}
 
+<<<<<<< HEAD
 	refclk = ironlake_get_refclk(crtc);
+=======
+	if (is_lvds && intel_panel_use_ssc(dev_priv) && num_connectors < 2) {
+		refclk = dev_priv->lvds_ssc_freq * 1000;
+		DRM_DEBUG_KMS("using SSC reference clock of %d MHz\n",
+			      refclk / 1000);
+	} else {
+		refclk = 96000;
+		if (!has_edp_encoder ||
+		    intel_encoder_is_pch_edp(&has_edp_encoder->base))
+			refclk = 120000; /* 120Mhz refclk */
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Returns a set of divisors for the desired target clock with the given
@@ -5720,8 +6636,12 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 	 * reflck * (5 * (m1 + 2) + (m2 + 2)) / (n + 2) / p1 / p2.
 	 */
 	limit = intel_limit(crtc, refclk);
+<<<<<<< HEAD
 	ok = limit->find_pll(limit, crtc, adjusted_mode->clock, refclk, NULL,
 			     &clock);
+=======
+	ok = limit->find_pll(limit, crtc, adjusted_mode->clock, refclk, &clock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ok) {
 		DRM_ERROR("Couldn't find PLL settings for mode!\n");
 		return -EINVAL;
@@ -5731,6 +6651,7 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 	intel_crtc_update_cursor(crtc, true);
 
 	if (is_lvds && dev_priv->lvds_downclock_avail) {
+<<<<<<< HEAD
 		/*
 		 * Ensure we match the reduced clock's P to the target clock.
 		 * If the clocks don't match, we can't switch the display clock
@@ -5742,6 +6663,23 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 						    refclk,
 						    &clock,
 						    &reduced_clock);
+=======
+		has_reduced_clock = limit->find_pll(limit, crtc,
+						    dev_priv->lvds_downclock,
+						    refclk,
+						    &reduced_clock);
+		if (has_reduced_clock && (clock.p != reduced_clock.p)) {
+			/*
+			 * If the different P is found, it means that we can't
+			 * switch the display clock by using the FP0/FP1.
+			 * In such case we will disable the LVDS downclock
+			 * feature.
+			 */
+			DRM_DEBUG_KMS("Different P is found for "
+				      "LVDS clock/downclock\n");
+			has_reduced_clock = 0;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	/* SDVO TV has fixed PLL values depend on its clock range,
 	   this mirrors vbios setting. */
@@ -5794,6 +6732,7 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 	/* determine panel color depth */
 	temp = I915_READ(PIPECONF(pipe));
 	temp &= ~PIPE_BPC_MASK;
+<<<<<<< HEAD
 	dither = intel_choose_pipe_bpp_dither(crtc, &pipe_bpp, adjusted_mode);
 	switch (pipe_bpp) {
 	case 18:
@@ -5819,12 +6758,58 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 	intel_crtc->bpp = pipe_bpp;
 	I915_WRITE(PIPECONF(pipe), temp);
 
+=======
+	if (is_lvds) {
+		/* the BPC will be 6 if it is 18-bit LVDS panel */
+		if ((I915_READ(PCH_LVDS) & LVDS_A3_POWER_MASK) == LVDS_A3_POWER_UP)
+			temp |= PIPE_8BPC;
+		else
+			temp |= PIPE_6BPC;
+	} else if (has_edp_encoder) {
+		switch (dev_priv->edp.bpp/3) {
+		case 8:
+			temp |= PIPE_8BPC;
+			break;
+		case 10:
+			temp |= PIPE_10BPC;
+			break;
+		case 6:
+			temp |= PIPE_6BPC;
+			break;
+		case 12:
+			temp |= PIPE_12BPC;
+			break;
+		}
+	} else
+		temp |= PIPE_8BPC;
+	I915_WRITE(PIPECONF(pipe), temp);
+
+	switch (temp & PIPE_BPC_MASK) {
+	case PIPE_8BPC:
+		bpp = 24;
+		break;
+	case PIPE_10BPC:
+		bpp = 30;
+		break;
+	case PIPE_6BPC:
+		bpp = 18;
+		break;
+	case PIPE_12BPC:
+		bpp = 36;
+		break;
+	default:
+		DRM_ERROR("unknown pipe bpc value\n");
+		bpp = 24;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!lane) {
 		/*
 		 * Account for spread spectrum to avoid
 		 * oversubscribing the link. Max center spread
 		 * is 2.5%; use 5% for safety's sake.
 		 */
+<<<<<<< HEAD
 		u32 bps = target_clock * intel_crtc->bpp * 21 / 20;
 		lane = bps / (link_bw * 8) + 1;
 	}
@@ -5836,6 +6821,62 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 	ironlake_compute_m_n(intel_crtc->bpp, lane, target_clock, link_bw,
 			     &m_n);
 
+=======
+		u32 bps = target_clock * bpp * 21 / 20;
+		lane = bps / (link_bw * 8) + 1;
+	}
+
+	intel_crtc->fdi_lanes = lane;
+
+	if (pixel_multiplier > 1)
+		link_bw *= pixel_multiplier;
+	ironlake_compute_m_n(bpp, lane, target_clock, link_bw, &m_n);
+
+	/* Ironlake: try to setup display ref clock before DPLL
+	 * enabling. This is only under driver's control after
+	 * PCH B stepping, previous chipset stepping should be
+	 * ignoring this setting.
+	 */
+	temp = I915_READ(PCH_DREF_CONTROL);
+	/* Always enable nonspread source */
+	temp &= ~DREF_NONSPREAD_SOURCE_MASK;
+	temp |= DREF_NONSPREAD_SOURCE_ENABLE;
+	temp &= ~DREF_SSC_SOURCE_MASK;
+	temp |= DREF_SSC_SOURCE_ENABLE;
+	I915_WRITE(PCH_DREF_CONTROL, temp);
+
+	POSTING_READ(PCH_DREF_CONTROL);
+	udelay(200);
+
+	if (has_edp_encoder) {
+		if (intel_panel_use_ssc(dev_priv)) {
+			temp |= DREF_SSC1_ENABLE;
+			I915_WRITE(PCH_DREF_CONTROL, temp);
+
+			POSTING_READ(PCH_DREF_CONTROL);
+			udelay(200);
+		}
+		temp &= ~DREF_CPU_SOURCE_OUTPUT_MASK;
+
+		/* Enable CPU source on CPU attached eDP */
+		if (!intel_encoder_is_pch_edp(&has_edp_encoder->base)) {
+			if (intel_panel_use_ssc(dev_priv))
+				temp |= DREF_CPU_SOURCE_OUTPUT_DOWNSPREAD;
+			else
+				temp |= DREF_CPU_SOURCE_OUTPUT_NONSPREAD;
+		} else {
+			/* Enable SSC on PCH eDP if needed */
+			if (intel_panel_use_ssc(dev_priv)) {
+				DRM_ERROR("enabling SSC on PCH\n");
+				temp |= DREF_SUPERSPREAD_SOURCE_ENABLE;
+			}
+		}
+		I915_WRITE(PCH_DREF_CONTROL, temp);
+		POSTING_READ(PCH_DREF_CONTROL);
+		udelay(200);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fp = clock.n << 16 | clock.m1 << 8 | clock.m2;
 	if (has_reduced_clock)
 		fp2 = reduced_clock.n << 16 | reduced_clock.m1 << 8 |
@@ -5907,6 +6948,7 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 	/* Set up the display plane register */
 	dspcntr = DISPPLANE_GAMMA_ENABLE;
 
+<<<<<<< HEAD
 	DRM_DEBUG_KMS("Mode for pipe %d:\n", pipe);
 	drm_mode_debug_printmodeline(mode);
 
@@ -5933,6 +6975,41 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 			DRM_DEBUG_KMS("no matching PLL configuration for pipe 2\n");
 			return -EINVAL;
 		}
+=======
+	DRM_DEBUG_KMS("Mode for pipe %c:\n", pipe == 0 ? 'A' : 'B');
+	drm_mode_debug_printmodeline(mode);
+
+	/* PCH eDP needs FDI, but CPU eDP does not */
+	if (!has_edp_encoder || intel_encoder_is_pch_edp(&has_edp_encoder->base)) {
+		I915_WRITE(PCH_FP0(pipe), fp);
+		I915_WRITE(PCH_DPLL(pipe), dpll & ~DPLL_VCO_ENABLE);
+
+		POSTING_READ(PCH_DPLL(pipe));
+		udelay(150);
+	}
+
+	/* enable transcoder DPLL */
+	if (HAS_PCH_CPT(dev)) {
+		temp = I915_READ(PCH_DPLL_SEL);
+		switch (pipe) {
+		case 0:
+			temp |= TRANSA_DPLL_ENABLE | TRANSA_DPLLA_SEL;
+			break;
+		case 1:
+			temp |=	TRANSB_DPLL_ENABLE | TRANSB_DPLLB_SEL;
+			break;
+		case 2:
+			/* FIXME: manage transcoder PLLs? */
+			temp |= TRANSC_DPLL_ENABLE | TRANSC_DPLLB_SEL;
+			break;
+		default:
+			BUG();
+		}
+		I915_WRITE(PCH_DPLL_SEL, temp);
+
+		POSTING_READ(PCH_DPLL_SEL);
+		udelay(150);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* The LVDS pin pair needs to be on before the DPLLs are enabled.
@@ -5942,6 +7019,7 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 	if (is_lvds) {
 		temp = I915_READ(PCH_LVDS);
 		temp |= LVDS_PORT_EN | LVDS_A0A2_CLKA_POWER_UP;
+<<<<<<< HEAD
 		if (HAS_PCH_CPT(dev)) {
 			temp &= ~PORT_TRANS_SEL_MASK;
 			temp |= PORT_TRANS_SEL_CPT(pipe);
@@ -5952,6 +7030,19 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 				temp &= ~LVDS_PIPEB_SELECT;
 		}
 
+=======
+		if (pipe == 1) {
+			if (HAS_PCH_CPT(dev))
+				temp |= PORT_TRANS_B_SEL_CPT;
+			else
+				temp |= LVDS_PIPEB_SELECT;
+		} else {
+			if (HAS_PCH_CPT(dev))
+				temp &= ~PORT_TRANS_SEL_MASK;
+			else
+				temp &= ~LVDS_PIPEB_SELECT;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* set the corresponsding LVDS_BORDER bit */
 		temp |= dev_priv->lvds_border_bits;
 		/* Set the B0-B3 data pairs corresponding to whether we're going to
@@ -5985,12 +7076,23 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 		I915_WRITE(PCH_LVDS, temp);
 	}
 
+<<<<<<< HEAD
 	pipeconf &= ~PIPECONF_DITHER_EN;
 	pipeconf &= ~PIPECONF_DITHER_TYPE_MASK;
 	if ((is_lvds && dev_priv->lvds_dither) || dither) {
 		pipeconf |= PIPECONF_DITHER_EN;
 		pipeconf |= PIPECONF_DITHER_TYPE_SP;
 	}
+=======
+	/* set the dithering flag and clear for anything other than a panel. */
+	pipeconf &= ~PIPECONF_DITHER_EN;
+	pipeconf &= ~PIPECONF_DITHER_TYPE_MASK;
+	if (dev_priv->lvds_dither && (is_lvds || has_edp_encoder)) {
+		pipeconf |= PIPECONF_DITHER_EN;
+		pipeconf |= PIPECONF_DITHER_TYPE_ST1;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (is_dp || intel_encoder_is_pch_edp(&has_edp_encoder->base)) {
 		intel_dp_set_m_n(crtc, mode, adjusted_mode);
 	} else {
@@ -6001,9 +7103,14 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 		I915_WRITE(TRANSDPLINK_N1(pipe), 0);
 	}
 
+<<<<<<< HEAD
 	if (!intel_crtc->no_pll &&
 	    (!has_edp_encoder ||
 	     intel_encoder_is_pch_edp(&has_edp_encoder->base))) {
+=======
+	if (!has_edp_encoder ||
+	    intel_encoder_is_pch_edp(&has_edp_encoder->base)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		I915_WRITE(PCH_DPLL(pipe), dpll);
 
 		/* Wait for the clocks to stabilize. */
@@ -6019,6 +7126,7 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 	}
 
 	intel_crtc->lowfreq_avail = false;
+<<<<<<< HEAD
 	if (!intel_crtc->no_pll) {
 		if (is_lvds && has_reduced_clock && i915_powersave) {
 			I915_WRITE(PCH_FP1(pipe), fp2);
@@ -6049,6 +7157,34 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 		pipeconf |= PIPECONF_PROGRESSIVE;
 		I915_WRITE(VSYNCSHIFT(pipe), 0);
 	}
+=======
+	if (is_lvds && has_reduced_clock && i915_powersave) {
+		I915_WRITE(PCH_FP1(pipe), fp2);
+		intel_crtc->lowfreq_avail = true;
+		if (HAS_PIPE_CXSR(dev)) {
+			DRM_DEBUG_KMS("enabling CxSR downclocking\n");
+			pipeconf |= PIPECONF_CXSR_DOWNCLOCK;
+		}
+	} else {
+		I915_WRITE(PCH_FP1(pipe), fp);
+		if (HAS_PIPE_CXSR(dev)) {
+			DRM_DEBUG_KMS("disabling CxSR downclocking\n");
+			pipeconf &= ~PIPECONF_CXSR_DOWNCLOCK;
+		}
+	}
+
+	if (adjusted_mode->flags & DRM_MODE_FLAG_INTERLACE) {
+		pipeconf |= PIPECONF_INTERLACE_W_FIELD_INDICATION;
+		/* the chip adds 2 halflines automatically */
+		adjusted_mode->crtc_vdisplay -= 1;
+		adjusted_mode->crtc_vtotal -= 1;
+		adjusted_mode->crtc_vblank_start -= 1;
+		adjusted_mode->crtc_vblank_end -= 1;
+		adjusted_mode->crtc_vsync_end -= 1;
+		adjusted_mode->crtc_vsync_start -= 1;
+	} else
+		pipeconf &= ~PIPECONF_INTERLACE_W_FIELD_INDICATION; /* progressive */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	I915_WRITE(HTOTAL(pipe),
 		   (adjusted_mode->crtc_hdisplay - 1) |
@@ -6091,6 +7227,15 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 
 	intel_wait_for_vblank(dev, pipe);
 
+<<<<<<< HEAD
+=======
+	if (IS_GEN5(dev)) {
+		/* enable address swizzle for tiling buffer */
+		temp = I915_READ(DISP_ARB_CTL);
+		I915_WRITE(DISP_ARB_CTL, temp | DISP_TILE_SURFACE_SWIZZLING);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	I915_WRITE(DSPCNTR(plane), dspcntr);
 	POSTING_READ(DSPCNTR(plane));
 
@@ -6117,16 +7262,22 @@ static int intel_crtc_mode_set(struct drm_crtc *crtc,
 
 	ret = dev_priv->display.crtc_mode_set(crtc, mode, adjusted_mode,
 					      x, y, old_fb);
+<<<<<<< HEAD
 	drm_vblank_post_modeset(dev, pipe);
 
 	if (ret)
 		intel_crtc->dpms_mode = DRM_MODE_DPMS_OFF;
 	else
 		intel_crtc->dpms_mode = DRM_MODE_DPMS_ON;
+=======
+
+	drm_vblank_post_modeset(dev, pipe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
 
+<<<<<<< HEAD
 static bool intel_eld_uptodate(struct drm_connector *connector,
 			       int reg_eldv, uint32_t bits_eldv,
 			       int reg_elda, uint32_t bits_elda,
@@ -6299,6 +7450,8 @@ void intel_write_eld(struct drm_encoder *encoder,
 		dev_priv->display.write_eld(connector, crtc);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /** Loads the palette/gamma unit for the CRTC with the prepared values */
 void intel_crtc_load_lut(struct drm_crtc *crtc)
 {
@@ -6515,6 +7668,7 @@ static int intel_crtc_cursor_set(struct drm_crtc *crtc,
 			goto fail_locked;
 		}
 
+<<<<<<< HEAD
 		ret = i915_gem_object_pin_to_display_plane(obj, 0, NULL);
 		if (ret) {
 			DRM_ERROR("failed to move cursor bo into the GTT\n");
@@ -6524,6 +7678,23 @@ static int intel_crtc_cursor_set(struct drm_crtc *crtc,
 		ret = i915_gem_object_put_fence(obj);
 		if (ret) {
 			DRM_ERROR("failed to release fence for cursor");
+=======
+		ret = i915_gem_object_pin(obj, PAGE_SIZE, true);
+		if (ret) {
+			DRM_ERROR("failed to pin cursor bo\n");
+			goto fail_locked;
+		}
+
+		ret = i915_gem_object_set_to_gtt_domain(obj, 0);
+		if (ret) {
+			DRM_ERROR("failed to move cursor bo into the GTT\n");
+			goto fail_unpin;
+		}
+
+		ret = i915_gem_object_put_fence(obj);
+		if (ret) {
+			DRM_ERROR("failed to move cursor bo into the GTT\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto fail_unpin;
 		}
 
@@ -6642,7 +7813,11 @@ static struct drm_display_mode load_detect_mode = {
 
 static struct drm_framebuffer *
 intel_framebuffer_create(struct drm_device *dev,
+<<<<<<< HEAD
 			 struct drm_mode_fb_cmd2 *mode_cmd,
+=======
+			 struct drm_mode_fb_cmd *mode_cmd,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 struct drm_i915_gem_object *obj)
 {
 	struct intel_framebuffer *intel_fb;
@@ -6684,7 +7859,11 @@ intel_framebuffer_create_for_mode(struct drm_device *dev,
 				  int depth, int bpp)
 {
 	struct drm_i915_gem_object *obj;
+<<<<<<< HEAD
 	struct drm_mode_fb_cmd2 mode_cmd;
+=======
+	struct drm_mode_fb_cmd mode_cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	obj = i915_gem_alloc_object(dev,
 				    intel_framebuffer_size_for_mode(mode, bpp));
@@ -6693,9 +7872,15 @@ intel_framebuffer_create_for_mode(struct drm_device *dev,
 
 	mode_cmd.width = mode->hdisplay;
 	mode_cmd.height = mode->vdisplay;
+<<<<<<< HEAD
 	mode_cmd.pitches[0] = intel_framebuffer_pitch_for_width(mode_cmd.width,
 								bpp);
 	mode_cmd.pixel_format = drm_mode_legacy_fb_format(bpp, depth);
+=======
+	mode_cmd.depth = depth;
+	mode_cmd.bpp = bpp;
+	mode_cmd.pitch = intel_framebuffer_pitch_for_width(mode_cmd.width, bpp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return intel_framebuffer_create(dev, &mode_cmd, obj);
 }
@@ -6716,11 +7901,19 @@ mode_fits_in_fbdev(struct drm_device *dev,
 		return NULL;
 
 	fb = &dev_priv->fbdev->ifb.base;
+<<<<<<< HEAD
 	if (fb->pitches[0] < intel_framebuffer_pitch_for_width(mode->hdisplay,
 							       fb->bits_per_pixel))
 		return NULL;
 
 	if (obj->base.size < mode->vdisplay * fb->pitches[0])
+=======
+	if (fb->pitch < intel_framebuffer_pitch_for_width(mode->hdisplay,
+							  fb->bits_per_pixel))
+		return NULL;
+
+	if (obj->base.size < mode->vdisplay * fb->pitch)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 
 	return fb;
@@ -7052,7 +8245,13 @@ static void intel_increase_pllclock(struct drm_crtc *crtc)
 	if (!HAS_PIPE_CXSR(dev) && (dpll & DISPLAY_RATE_SELECT_FPA1)) {
 		DRM_DEBUG_DRIVER("upclocking LVDS\n");
 
+<<<<<<< HEAD
 		assert_panel_unlocked(dev_priv, pipe);
+=======
+		/* Unlock panel regs */
+		I915_WRITE(PP_CONTROL,
+			   I915_READ(PP_CONTROL) | PANEL_UNLOCK_REGS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		dpll &= ~DISPLAY_RATE_SELECT_FPA1;
 		I915_WRITE(dpll_reg, dpll);
@@ -7061,6 +8260,12 @@ static void intel_increase_pllclock(struct drm_crtc *crtc)
 		dpll = I915_READ(dpll_reg);
 		if (dpll & DISPLAY_RATE_SELECT_FPA1)
 			DRM_DEBUG_DRIVER("failed to upclock LVDS!\n");
+<<<<<<< HEAD
+=======
+
+		/* ...and lock them again */
+		I915_WRITE(PP_CONTROL, I915_READ(PP_CONTROL) & 0x3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Schedule downclock */
@@ -7073,6 +8278,12 @@ static void intel_decrease_pllclock(struct drm_crtc *crtc)
 	struct drm_device *dev = crtc->dev;
 	drm_i915_private_t *dev_priv = dev->dev_private;
 	struct intel_crtc *intel_crtc = to_intel_crtc(crtc);
+<<<<<<< HEAD
+=======
+	int pipe = intel_crtc->pipe;
+	int dpll_reg = DPLL(pipe);
+	int dpll = I915_READ(dpll_reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (HAS_PCH_SPLIT(dev))
 		return;
@@ -7085,6 +8296,7 @@ static void intel_decrease_pllclock(struct drm_crtc *crtc)
 	 * the manual case.
 	 */
 	if (!HAS_PIPE_CXSR(dev) && intel_crtc->lowfreq_avail) {
+<<<<<<< HEAD
 		int pipe = intel_crtc->pipe;
 		int dpll_reg = DPLL(pipe);
 		u32 dpll;
@@ -7094,13 +8306,29 @@ static void intel_decrease_pllclock(struct drm_crtc *crtc)
 		assert_panel_unlocked(dev_priv, pipe);
 
 		dpll = I915_READ(dpll_reg);
+=======
+		DRM_DEBUG_DRIVER("downclocking LVDS\n");
+
+		/* Unlock panel regs */
+		I915_WRITE(PP_CONTROL, I915_READ(PP_CONTROL) |
+			   PANEL_UNLOCK_REGS);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dpll |= DISPLAY_RATE_SELECT_FPA1;
 		I915_WRITE(dpll_reg, dpll);
 		intel_wait_for_vblank(dev, pipe);
 		dpll = I915_READ(dpll_reg);
 		if (!(dpll & DISPLAY_RATE_SELECT_FPA1))
 			DRM_DEBUG_DRIVER("failed to downclock LVDS!\n");
+<<<<<<< HEAD
 	}
+=======
+
+		/* ...and lock them again */
+		I915_WRITE(PP_CONTROL, I915_READ(PP_CONTROL) & 0x3);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -7213,11 +8441,18 @@ static void intel_unpin_work_fn(struct work_struct *__work)
 		container_of(__work, struct intel_unpin_work, work);
 
 	mutex_lock(&work->dev->struct_mutex);
+<<<<<<< HEAD
 	intel_unpin_fb_obj(work->old_fb_obj);
 	drm_gem_object_unreference(&work->pending_flip_obj->base);
 	drm_gem_object_unreference(&work->old_fb_obj->base);
 
 	intel_update_fbc(work->dev);
+=======
+	i915_gem_object_unpin(work->old_fb_obj);
+	drm_gem_object_unreference(&work->pending_flip_obj->base);
+	drm_gem_object_unreference(&work->old_fb_obj->base);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&work->dev->struct_mutex);
 	kfree(work);
 }
@@ -7287,8 +8522,14 @@ static void do_intel_finish_page_flip(struct drm_device *dev,
 
 	atomic_clear_mask(1 << intel_crtc->plane,
 			  &obj->pending_flip.counter);
+<<<<<<< HEAD
 
 	wake_up(&dev_priv->pending_flip_queue);
+=======
+	if (atomic_read(&obj->pending_flip) == 0)
+		wake_up(&dev_priv->pending_flip_queue);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	schedule_work(&work->work);
 
 	trace_i915_flip_complete(intel_crtc->plane, work->pending_flip_obj);
@@ -7340,6 +8581,7 @@ static int intel_gen2_queue_flip(struct drm_device *dev,
 
 	ret = intel_pin_and_fence_fb_obj(dev, obj, LP_RING(dev_priv));
 	if (ret)
+<<<<<<< HEAD
 		goto err;
 
 	/* Offset into the new buffer for cases of shared fbs between CRTCs */
@@ -7348,6 +8590,16 @@ static int intel_gen2_queue_flip(struct drm_device *dev,
 	ret = BEGIN_LP_RING(6);
 	if (ret)
 		goto err_unpin;
+=======
+		goto out;
+
+	/* Offset into the new buffer for cases of shared fbs between CRTCs */
+	offset = crtc->y * fb->pitch + crtc->x * fb->bits_per_pixel/8;
+
+	ret = BEGIN_LP_RING(6);
+	if (ret)
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Can't queue multiple flips, so wait for the previous
 	 * one to finish before executing the next.
@@ -7360,6 +8612,7 @@ static int intel_gen2_queue_flip(struct drm_device *dev,
 	OUT_RING(MI_NOOP);
 	OUT_RING(MI_DISPLAY_FLIP |
 		 MI_DISPLAY_FLIP_PLANE(intel_crtc->plane));
+<<<<<<< HEAD
 	OUT_RING(fb->pitches[0]);
 	OUT_RING(obj->gtt_offset + offset);
 	OUT_RING(0); /* aux display base address, unused */
@@ -7369,6 +8622,13 @@ static int intel_gen2_queue_flip(struct drm_device *dev,
 err_unpin:
 	intel_unpin_fb_obj(obj);
 err:
+=======
+	OUT_RING(fb->pitch);
+	OUT_RING(obj->gtt_offset + offset);
+	OUT_RING(MI_NOOP);
+	ADVANCE_LP_RING();
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -7385,6 +8645,7 @@ static int intel_gen3_queue_flip(struct drm_device *dev,
 
 	ret = intel_pin_and_fence_fb_obj(dev, obj, LP_RING(dev_priv));
 	if (ret)
+<<<<<<< HEAD
 		goto err;
 
 	/* Offset into the new buffer for cases of shared fbs between CRTCs */
@@ -7393,6 +8654,16 @@ static int intel_gen3_queue_flip(struct drm_device *dev,
 	ret = BEGIN_LP_RING(6);
 	if (ret)
 		goto err_unpin;
+=======
+		goto out;
+
+	/* Offset into the new buffer for cases of shared fbs between CRTCs */
+	offset = crtc->y * fb->pitch + crtc->x * fb->bits_per_pixel/8;
+
+	ret = BEGIN_LP_RING(6);
+	if (ret)
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (intel_crtc->plane)
 		flip_mask = MI_WAIT_FOR_PLANE_B_FLIP;
@@ -7402,16 +8673,24 @@ static int intel_gen3_queue_flip(struct drm_device *dev,
 	OUT_RING(MI_NOOP);
 	OUT_RING(MI_DISPLAY_FLIP_I915 |
 		 MI_DISPLAY_FLIP_PLANE(intel_crtc->plane));
+<<<<<<< HEAD
 	OUT_RING(fb->pitches[0]);
+=======
+	OUT_RING(fb->pitch);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	OUT_RING(obj->gtt_offset + offset);
 	OUT_RING(MI_NOOP);
 
 	ADVANCE_LP_RING();
+<<<<<<< HEAD
 	return 0;
 
 err_unpin:
 	intel_unpin_fb_obj(obj);
 err:
+=======
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -7427,11 +8706,19 @@ static int intel_gen4_queue_flip(struct drm_device *dev,
 
 	ret = intel_pin_and_fence_fb_obj(dev, obj, LP_RING(dev_priv));
 	if (ret)
+<<<<<<< HEAD
 		goto err;
 
 	ret = BEGIN_LP_RING(4);
 	if (ret)
 		goto err_unpin;
+=======
+		goto out;
+
+	ret = BEGIN_LP_RING(4);
+	if (ret)
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* i965+ uses the linear or tiled offsets from the
 	 * Display Registers (which do not change across a page-flip)
@@ -7439,7 +8726,11 @@ static int intel_gen4_queue_flip(struct drm_device *dev,
 	 */
 	OUT_RING(MI_DISPLAY_FLIP |
 		 MI_DISPLAY_FLIP_PLANE(intel_crtc->plane));
+<<<<<<< HEAD
 	OUT_RING(fb->pitches[0]);
+=======
+	OUT_RING(fb->pitch);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	OUT_RING(obj->gtt_offset | obj->tiling_mode);
 
 	/* XXX Enabling the panel-fitter across page-flip is so far
@@ -7450,11 +8741,15 @@ static int intel_gen4_queue_flip(struct drm_device *dev,
 	pipesrc = I915_READ(PIPESRC(intel_crtc->pipe)) & 0x0fff0fff;
 	OUT_RING(pf | pipesrc);
 	ADVANCE_LP_RING();
+<<<<<<< HEAD
 	return 0;
 
 err_unpin:
 	intel_unpin_fb_obj(obj);
 err:
+=======
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -7470,6 +8765,7 @@ static int intel_gen6_queue_flip(struct drm_device *dev,
 
 	ret = intel_pin_and_fence_fb_obj(dev, obj, LP_RING(dev_priv));
 	if (ret)
+<<<<<<< HEAD
 		goto err;
 
 	ret = BEGIN_LP_RING(4);
@@ -7496,6 +8792,24 @@ static int intel_gen6_queue_flip(struct drm_device *dev,
 err_unpin:
 	intel_unpin_fb_obj(obj);
 err:
+=======
+		goto out;
+
+	ret = BEGIN_LP_RING(4);
+	if (ret)
+		goto out;
+
+	OUT_RING(MI_DISPLAY_FLIP |
+		 MI_DISPLAY_FLIP_PLANE(intel_crtc->plane));
+	OUT_RING(fb->pitch | obj->tiling_mode);
+	OUT_RING(obj->gtt_offset);
+
+	pf = I915_READ(PF_CTL(intel_crtc->pipe)) & PF_ENABLE;
+	pipesrc = I915_READ(PIPESRC(intel_crtc->pipe)) & 0x0fff0fff;
+	OUT_RING(pf | pipesrc);
+	ADVANCE_LP_RING();
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -7513,11 +8827,15 @@ static int intel_gen7_queue_flip(struct drm_device *dev,
 	struct drm_i915_private *dev_priv = dev->dev_private;
 	struct intel_crtc *intel_crtc = to_intel_crtc(crtc);
 	struct intel_ring_buffer *ring = &dev_priv->ring[BCS];
+<<<<<<< HEAD
 	uint32_t plane_bit = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	ret = intel_pin_and_fence_fb_obj(dev, obj, ring);
 	if (ret)
+<<<<<<< HEAD
 		goto err;
 
 	switch(intel_crtc->plane) {
@@ -7550,6 +8868,20 @@ static int intel_gen7_queue_flip(struct drm_device *dev,
 err_unpin:
 	intel_unpin_fb_obj(obj);
 err:
+=======
+		goto out;
+
+	ret = intel_ring_begin(ring, 4);
+	if (ret)
+		goto out;
+
+	intel_ring_emit(ring, MI_DISPLAY_FLIP_I915 | (intel_crtc->plane << 19));
+	intel_ring_emit(ring, (fb->pitch | obj->tiling_mode));
+	intel_ring_emit(ring, (obj->gtt_offset));
+	intel_ring_emit(ring, (MI_NOOP));
+	intel_ring_advance(ring);
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -7567,8 +8899,13 @@ static int intel_crtc_page_flip(struct drm_crtc *crtc,
 {
 	struct drm_device *dev = crtc->dev;
 	struct drm_i915_private *dev_priv = dev->dev_private;
+<<<<<<< HEAD
 	struct drm_framebuffer *old_fb = crtc->fb;
 	struct drm_i915_gem_object *obj = to_intel_framebuffer(fb)->obj;
+=======
+	struct intel_framebuffer *intel_fb;
+	struct drm_i915_gem_object *obj;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct intel_crtc *intel_crtc = to_intel_crtc(crtc);
 	struct intel_unpin_work *work;
 	unsigned long flags;
@@ -7580,6 +8917,7 @@ static int intel_crtc_page_flip(struct drm_crtc *crtc,
 
 	work->event = event;
 	work->dev = crtc->dev;
+<<<<<<< HEAD
 	work->old_fb_obj = to_intel_framebuffer(old_fb)->obj;
 	INIT_WORK(&work->work, intel_unpin_work_fn);
 
@@ -7587,12 +8925,21 @@ static int intel_crtc_page_flip(struct drm_crtc *crtc,
 	if (ret)
 		goto free_work;
 
+=======
+	intel_fb = to_intel_framebuffer(crtc->fb);
+	work->old_fb_obj = intel_fb->obj;
+	INIT_WORK(&work->work, intel_unpin_work_fn);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* We borrow the event spin lock for protecting unpin_work */
 	spin_lock_irqsave(&dev->event_lock, flags);
 	if (intel_crtc->unpin_work) {
 		spin_unlock_irqrestore(&dev->event_lock, flags);
 		kfree(work);
+<<<<<<< HEAD
 		drm_vblank_put(dev, intel_crtc->pipe);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		DRM_DEBUG_DRIVER("flip queue: crtc already busy\n");
 		return -EBUSY;
@@ -7600,6 +8947,12 @@ static int intel_crtc_page_flip(struct drm_crtc *crtc,
 	intel_crtc->unpin_work = work;
 	spin_unlock_irqrestore(&dev->event_lock, flags);
 
+<<<<<<< HEAD
+=======
+	intel_fb = to_intel_framebuffer(fb);
+	obj = intel_fb->obj;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&dev->struct_mutex);
 
 	/* Reference the objects for the scheduled work. */
@@ -7608,6 +8961,13 @@ static int intel_crtc_page_flip(struct drm_crtc *crtc,
 
 	crtc->fb = fb;
 
+<<<<<<< HEAD
+=======
+	ret = drm_vblank_get(dev, intel_crtc->pipe);
+	if (ret)
+		goto cleanup_objs;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	work->pending_flip_obj = obj;
 
 	work->enable_stall_check = true;
@@ -7621,7 +8981,10 @@ static int intel_crtc_page_flip(struct drm_crtc *crtc,
 	if (ret)
 		goto cleanup_pending;
 
+<<<<<<< HEAD
 	intel_disable_fbc(dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&dev->struct_mutex);
 
 	trace_i915_flip_request(intel_crtc->plane, obj);
@@ -7630,7 +8993,11 @@ static int intel_crtc_page_flip(struct drm_crtc *crtc,
 
 cleanup_pending:
 	atomic_sub(1 << intel_crtc->plane, &work->old_fb_obj->pending_flip);
+<<<<<<< HEAD
 	crtc->fb = old_fb;
+=======
+cleanup_objs:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	drm_gem_object_unreference(&work->old_fb_obj->base);
 	drm_gem_object_unreference(&obj->base);
 	mutex_unlock(&dev->struct_mutex);
@@ -7639,8 +9006,11 @@ cleanup_pending:
 	intel_crtc->unpin_work = NULL;
 	spin_unlock_irqrestore(&dev->event_lock, flags);
 
+<<<<<<< HEAD
 	drm_vblank_put(dev, intel_crtc->pipe);
 free_work:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(work);
 
 	return ret;
@@ -7651,11 +9021,18 @@ static void intel_sanitize_modesetting(struct drm_device *dev,
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
 	u32 reg, val;
+<<<<<<< HEAD
 	int i;
 
 	/* Clear any frame start delays used for debugging left by the BIOS */
 	for_each_pipe(i) {
 		reg = PIPECONF(i);
+=======
+
+	/* Clear any frame start delays used for debugging left by the BIOS */
+	for_each_pipe(pipe) {
+		reg = PIPECONF(pipe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		I915_WRITE(reg, I915_READ(reg) & ~PIPECONF_FRAME_START_DELAY_MASK);
 	}
 
@@ -7759,11 +9136,16 @@ static void intel_crtc_init(struct drm_device *dev, int pipe)
 
 	intel_crtc_reset(&intel_crtc->base);
 	intel_crtc->active = true; /* force the pipe off on setup_init_config */
+<<<<<<< HEAD
 	intel_crtc->bpp = 24; /* default for pre-Ironlake */
 
 	if (HAS_PCH_SPLIT(dev)) {
 		if (pipe == 2 && IS_IVYBRIDGE(dev))
 			intel_crtc->no_pll = true;
+=======
+
+	if (HAS_PCH_SPLIT(dev)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		intel_helper_funcs.prepare = ironlake_crtc_prepare;
 		intel_helper_funcs.commit = ironlake_crtc_commit;
 	} else {
@@ -7843,9 +9225,16 @@ static void intel_setup_outputs(struct drm_device *dev)
 	struct drm_i915_private *dev_priv = dev->dev_private;
 	struct intel_encoder *encoder;
 	bool dpd_is_edp = false;
+<<<<<<< HEAD
 	bool has_lvds;
 
 	has_lvds = intel_lvds_init(dev);
+=======
+	bool has_lvds = false;
+
+	if (IS_MOBILE(dev) && !IS_I830(dev))
+		has_lvds = intel_lvds_init(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!has_lvds && !HAS_PCH_SPLIT(dev)) {
 		/* disable the panel fitter on everything but LVDS */
 		I915_WRITE(PFIT_CONTROL, 0);
@@ -7940,11 +9329,18 @@ static void intel_setup_outputs(struct drm_device *dev)
 			intel_encoder_clones(dev, encoder->clone_mask);
 	}
 
+<<<<<<< HEAD
 	/* disable all the possible outputs/crtcs before entering KMS mode */
 	drm_helper_disable_unused_functions(dev);
 
 	if (HAS_PCH_SPLIT(dev))
 		ironlake_init_pch_refclk(dev);
+=======
+	intel_panel_setup_backlight(dev);
+
+	/* disable all the possible outputs/crtcs before entering KMS mode */
+	drm_helper_disable_unused_functions(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void intel_user_framebuffer_destroy(struct drm_framebuffer *fb)
@@ -7974,7 +9370,11 @@ static const struct drm_framebuffer_funcs intel_fb_funcs = {
 
 int intel_framebuffer_init(struct drm_device *dev,
 			   struct intel_framebuffer *intel_fb,
+<<<<<<< HEAD
 			   struct drm_mode_fb_cmd2 *mode_cmd,
+=======
+			   struct drm_mode_fb_cmd *mode_cmd,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   struct drm_i915_gem_object *obj)
 {
 	int ret;
@@ -7982,6 +9382,7 @@ int intel_framebuffer_init(struct drm_device *dev,
 	if (obj->tiling_mode == I915_TILING_Y)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	if (mode_cmd->pitches[0] & 63)
 		return -EINVAL;
 
@@ -8003,6 +9404,18 @@ int intel_framebuffer_init(struct drm_device *dev,
 	default:
 		DRM_DEBUG_KMS("unsupported pixel format %u\n",
 				mode_cmd->pixel_format);
+=======
+	if (mode_cmd->pitch & 63)
+		return -EINVAL;
+
+	switch (mode_cmd->bpp) {
+	case 8:
+	case 16:
+	case 24:
+	case 32:
+		break;
+	default:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -8020,12 +9433,20 @@ int intel_framebuffer_init(struct drm_device *dev,
 static struct drm_framebuffer *
 intel_user_framebuffer_create(struct drm_device *dev,
 			      struct drm_file *filp,
+<<<<<<< HEAD
 			      struct drm_mode_fb_cmd2 *mode_cmd)
 {
 	struct drm_i915_gem_object *obj;
 
 	obj = to_intel_bo(drm_gem_object_lookup(dev, filp,
 						mode_cmd->handles[0]));
+=======
+			      struct drm_mode_fb_cmd *mode_cmd)
+{
+	struct drm_i915_gem_object *obj;
+
+	obj = to_intel_bo(drm_gem_object_lookup(dev, filp, mode_cmd->handle));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (&obj->base == NULL)
 		return ERR_PTR(-ENOENT);
 
@@ -8196,10 +9617,13 @@ void gen6_disable_rps(struct drm_device *dev)
 	I915_WRITE(GEN6_RPNSWREQ, 1 << 31);
 	I915_WRITE(GEN6_PMINTRMSK, 0xffffffff);
 	I915_WRITE(GEN6_PMIER, 0);
+<<<<<<< HEAD
 	/* Complete PM interrupt masking here doesn't race with the rps work
 	 * item again unmasking PM interrupts because that is using a different
 	 * register (PMIMR) to mask PM interrupts. The only risk is in leaving
 	 * stale bits in PMIIR and PMIMR which gen6_enable_rps will clean up. */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irq(&dev_priv->rps_lock);
 	dev_priv->pm_iir = 0;
@@ -8294,6 +9718,7 @@ void intel_init_emon(struct drm_device *dev)
 	dev_priv->corr = (lcfuse & LCFUSE_HIV_MASK);
 }
 
+<<<<<<< HEAD
 static int intel_enable_rc6(struct drm_device *dev)
 {
 	/*
@@ -8319,14 +9744,20 @@ static int intel_enable_rc6(struct drm_device *dev)
 	return (INTEL_RC6_ENABLE | INTEL_RC6p_ENABLE);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void gen6_enable_rps(struct drm_i915_private *dev_priv)
 {
 	u32 rp_state_cap = I915_READ(GEN6_RP_STATE_CAP);
 	u32 gt_perf_status = I915_READ(GEN6_GT_PERF_STATUS);
 	u32 pcu_mbox, rc6_mask = 0;
+<<<<<<< HEAD
 	u32 gtfifodbg;
 	int cur_freq, min_freq, max_freq;
 	int rc6_mode;
+=======
+	int cur_freq, min_freq, max_freq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	/* Here begins a magic sequence of register writes to enable
@@ -8337,6 +9768,7 @@ void gen6_enable_rps(struct drm_i915_private *dev_priv)
 	 */
 	I915_WRITE(GEN6_RC_STATE, 0);
 	mutex_lock(&dev_priv->dev->struct_mutex);
+<<<<<<< HEAD
 
 	/* Clear the DBG now so we don't confuse earlier errors */
 	if ((gtfifodbg = I915_READ(GTFIFODBG))) {
@@ -8344,6 +9776,8 @@ void gen6_enable_rps(struct drm_i915_private *dev_priv)
 		I915_WRITE(GTFIFODBG, gtfifodbg);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gen6_gt_force_wake_get(dev_priv);
 
 	/* disable the counters and set deterministic thresholds */
@@ -8361,6 +9795,7 @@ void gen6_enable_rps(struct drm_i915_private *dev_priv)
 	I915_WRITE(GEN6_RC_SLEEP, 0);
 	I915_WRITE(GEN6_RC1e_THRESHOLD, 1000);
 	I915_WRITE(GEN6_RC6_THRESHOLD, 50000);
+<<<<<<< HEAD
 	I915_WRITE(GEN6_RC6p_THRESHOLD, 150000);
 	I915_WRITE(GEN6_RC6pp_THRESHOLD, 64000); /* unused */
 
@@ -8378,6 +9813,14 @@ void gen6_enable_rps(struct drm_i915_private *dev_priv)
 			(rc6_mode & INTEL_RC6_ENABLE) ? "on" : "off",
 			(rc6_mode & INTEL_RC6p_ENABLE) ? "on" : "off",
 			(rc6_mode & INTEL_RC6pp_ENABLE) ? "on" : "off");
+=======
+	I915_WRITE(GEN6_RC6p_THRESHOLD, 100000);
+	I915_WRITE(GEN6_RC6pp_THRESHOLD, 64000); /* unused */
+
+	if (i915_enable_rc6)
+		rc6_mask = GEN6_RC_CTL_RC6p_ENABLE |
+			GEN6_RC_CTL_RC6_ENABLE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	I915_WRITE(GEN6_RC_CONTROL,
 		   rc6_mask |
@@ -8402,7 +9845,11 @@ void gen6_enable_rps(struct drm_i915_private *dev_priv)
 	I915_WRITE(GEN6_RP_IDLE_HYSTERSIS, 10);
 	I915_WRITE(GEN6_RP_CONTROL,
 		   GEN6_RP_MEDIA_TURBO |
+<<<<<<< HEAD
 		   GEN6_RP_MEDIA_HW_NORMAL_MODE |
+=======
+		   GEN6_RP_USE_NORMAL_FREQ |
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   GEN6_RP_MEDIA_IS_GFX |
 		   GEN6_RP_ENABLE |
 		   GEN6_RP_UP_BUSY_AVG |
@@ -8463,6 +9910,7 @@ void gen6_enable_rps(struct drm_i915_private *dev_priv)
 	mutex_unlock(&dev_priv->dev->struct_mutex);
 }
 
+<<<<<<< HEAD
 void gen6_update_ring_freq(struct drm_i915_private *dev_priv)
 {
 	int min_freq = 15;
@@ -8516,6 +9964,8 @@ void gen6_update_ring_freq(struct drm_i915_private *dev_priv)
 	mutex_unlock(&dev_priv->dev->struct_mutex);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ironlake_init_clock_gating(struct drm_device *dev)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
@@ -8597,18 +10047,24 @@ static void gen6_init_clock_gating(struct drm_device *dev)
 		   I915_READ(ILK_DISPLAY_CHICKEN2) |
 		   ILK_ELPIN_409_SELECT);
 
+<<<<<<< HEAD
 	/* WaDisableHiZPlanesWhenMSAAEnabled */
 	I915_WRITE(_3D_CHICKEN,
 		   _MASKED_BIT_ENABLE(_3D_CHICKEN_HIZ_PLANE_DISABLE_MSAA_4X_SNB));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	I915_WRITE(WM3_LP_ILK, 0);
 	I915_WRITE(WM2_LP_ILK, 0);
 	I915_WRITE(WM1_LP_ILK, 0);
 
+<<<<<<< HEAD
 	I915_WRITE(GEN6_UCGCTL1,
 		   I915_READ(GEN6_UCGCTL1) |
 		   GEN6_BLBUNIT_CLOCK_GATE_DISABLE);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* According to the BSpec vol1g, bit 12 (RCPBUNIT) clock
 	 * gating disable must be set.  Failure to set it results in
 	 * flickering pixels due to Z write ordering failures after
@@ -8643,6 +10099,7 @@ static void gen6_init_clock_gating(struct drm_device *dev)
 		   ILK_DPARB_CLK_GATE  |
 		   ILK_DPFD_CLK_GATE);
 
+<<<<<<< HEAD
 	for_each_pipe(pipe) {
 		I915_WRITE(DSPCNTR(pipe),
 			   I915_READ(DSPCNTR(pipe)) |
@@ -8666,6 +10123,12 @@ static void gen7_setup_fixed_func_scheduler(struct drm_i915_private *dev_priv)
 	reg |= GEN7_FF_DS_SCHED_HW;
 
 	I915_WRITE(GEN7_FF_THREAD_MODE, reg);
+=======
+	for_each_pipe(pipe)
+		I915_WRITE(DSPCNTR(pipe),
+			   I915_READ(DSPCNTR(pipe)) |
+			   DISPPLANE_TRICKLE_FEED_DISABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void ivybridge_init_clock_gating(struct drm_device *dev)
@@ -8687,10 +10150,13 @@ static void ivybridge_init_clock_gating(struct drm_device *dev)
 
 	I915_WRITE(ILK_DSPCLK_GATE, IVB_VRHUNIT_CLK_GATE);
 
+<<<<<<< HEAD
 	I915_WRITE(IVB_CHICKEN3,
 		   CHICKEN3_DGMG_REQ_OUT_FIX_DISABLE |
 		   CHICKEN3_DGMG_DONE_FIX_DISABLE);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Apply the WaDisableRHWOOptimizationForRenderHang workaround. */
 	I915_WRITE(GEN7_COMMON_SLICE_CHICKEN1,
 		   GEN7_CSC1_RHWO_OPT_DISABLE_IN_RCC);
@@ -8706,6 +10172,7 @@ static void ivybridge_init_clock_gating(struct drm_device *dev)
 			I915_READ(GEN7_SQ_CHICKEN_MBCUNIT_CONFIG) |
 			GEN7_SQ_CHICKEN_MBCUNIT_SQINTMOB);
 
+<<<<<<< HEAD
 	for_each_pipe(pipe) {
 		I915_WRITE(DSPCNTR(pipe),
 			   I915_READ(DSPCNTR(pipe)) |
@@ -8714,6 +10181,12 @@ static void ivybridge_init_clock_gating(struct drm_device *dev)
 	}
 
 	gen7_setup_fixed_func_scheduler(dev_priv);
+=======
+	for_each_pipe(pipe)
+		I915_WRITE(DSPCNTR(pipe),
+			   I915_READ(DSPCNTR(pipe)) |
+			   DISPPLANE_TRICKLE_FEED_DISABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void g4x_init_clock_gating(struct drm_device *dev)
@@ -8796,7 +10269,10 @@ static void ibx_init_clock_gating(struct drm_device *dev)
 static void cpt_init_clock_gating(struct drm_device *dev)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
+<<<<<<< HEAD
 	int pipe;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * On Ibex Peak and Cougar Point, we need to disable clock
@@ -8806,9 +10282,12 @@ static void cpt_init_clock_gating(struct drm_device *dev)
 	I915_WRITE(SOUTH_DSPCLK_GATE_D, PCH_DPLSUNIT_CLOCK_GATE_DISABLE);
 	I915_WRITE(SOUTH_CHICKEN2, I915_READ(SOUTH_CHICKEN2) |
 		   DPLS_EDP_PPS_FIX_DIS);
+<<<<<<< HEAD
 	/* Without this, mode sets may fail silently on FDI */
 	for_each_pipe(pipe)
 		I915_WRITE(TRANS_CHICKEN2(pipe), TRANS_AUTOTRAIN_GEN_STALL_DIS);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void ironlake_teardown_rc6(struct drm_device *dev)
@@ -8875,7 +10354,11 @@ void ironlake_enable_rc6(struct drm_device *dev)
 	/* rc6 disabled by default due to repeated reports of hanging during
 	 * boot and resume.
 	 */
+<<<<<<< HEAD
 	if (!intel_enable_rc6(dev))
+=======
+	if (!i915_enable_rc6)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	mutex_lock(&dev->struct_mutex);
@@ -8945,11 +10428,17 @@ static void intel_init_display(struct drm_device *dev)
 	if (HAS_PCH_SPLIT(dev)) {
 		dev_priv->display.dpms = ironlake_crtc_dpms;
 		dev_priv->display.crtc_mode_set = ironlake_crtc_mode_set;
+<<<<<<< HEAD
 		dev_priv->display.update_plane = ironlake_update_plane;
 	} else {
 		dev_priv->display.dpms = i9xx_crtc_dpms;
 		dev_priv->display.crtc_mode_set = i9xx_crtc_mode_set;
 		dev_priv->display.update_plane = i9xx_update_plane;
+=======
+	} else {
+		dev_priv->display.dpms = i9xx_crtc_dpms;
+		dev_priv->display.crtc_mode_set = i9xx_crtc_mode_set;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (I915_HAS_FBC(dev)) {
@@ -8970,7 +10459,11 @@ static void intel_init_display(struct drm_device *dev)
 	}
 
 	/* Returns the core display clock speed */
+<<<<<<< HEAD
 	if (IS_I945G(dev) || (IS_G33(dev) && !IS_PINEVIEW_M(dev)))
+=======
+	if (IS_I945G(dev) || (IS_G33(dev) && ! IS_PINEVIEW_M(dev)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_priv->display.get_display_clock_speed =
 			i945_get_display_clock_speed;
 	else if (IS_I915G(dev))
@@ -8994,6 +10487,7 @@ static void intel_init_display(struct drm_device *dev)
 
 	/* For FIFO watermark updates */
 	if (HAS_PCH_SPLIT(dev)) {
+<<<<<<< HEAD
 		dev_priv->display.force_wake_get = __gen6_gt_force_wake_get;
 		dev_priv->display.force_wake_put = __gen6_gt_force_wake_put;
 
@@ -9022,6 +10516,8 @@ static void intel_init_display(struct drm_device *dev)
 			}
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (HAS_PCH_IBX(dev))
 			dev_priv->display.init_pch_clock_gating = ibx_init_clock_gating;
 		else if (HAS_PCH_CPT(dev))
@@ -9037,11 +10533,17 @@ static void intel_init_display(struct drm_device *dev)
 			}
 			dev_priv->display.fdi_link_train = ironlake_fdi_link_train;
 			dev_priv->display.init_clock_gating = ironlake_init_clock_gating;
+<<<<<<< HEAD
 			dev_priv->display.write_eld = ironlake_write_eld;
 		} else if (IS_GEN6(dev)) {
 			if (SNB_READ_WM0_LATENCY()) {
 				dev_priv->display.update_wm = sandybridge_update_wm;
 				dev_priv->display.update_sprite_wm = sandybridge_update_sprite_wm;
+=======
+		} else if (IS_GEN6(dev)) {
+			if (SNB_READ_WM0_LATENCY()) {
+				dev_priv->display.update_wm = sandybridge_update_wm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else {
 				DRM_DEBUG_KMS("Failed to read display plane latency. "
 					      "Disable CxSR\n");
@@ -9049,20 +10551,30 @@ static void intel_init_display(struct drm_device *dev)
 			}
 			dev_priv->display.fdi_link_train = gen6_fdi_link_train;
 			dev_priv->display.init_clock_gating = gen6_init_clock_gating;
+<<<<<<< HEAD
 			dev_priv->display.write_eld = ironlake_write_eld;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else if (IS_IVYBRIDGE(dev)) {
 			/* FIXME: detect B0+ stepping and use auto training */
 			dev_priv->display.fdi_link_train = ivb_manual_fdi_link_train;
 			if (SNB_READ_WM0_LATENCY()) {
 				dev_priv->display.update_wm = sandybridge_update_wm;
+<<<<<<< HEAD
 				dev_priv->display.update_sprite_wm = sandybridge_update_sprite_wm;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else {
 				DRM_DEBUG_KMS("Failed to read display plane latency. "
 					      "Disable CxSR\n");
 				dev_priv->display.update_wm = NULL;
 			}
 			dev_priv->display.init_clock_gating = ivybridge_init_clock_gating;
+<<<<<<< HEAD
 			dev_priv->display.write_eld = ironlake_write_eld;
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else
 			dev_priv->display.update_wm = NULL;
 	} else if (IS_PINEVIEW(dev)) {
@@ -9073,7 +10585,11 @@ static void intel_init_display(struct drm_device *dev)
 			DRM_INFO("failed to find known CxSR latency "
 				 "(found ddr%s fsb freq %d, mem freq %d), "
 				 "disabling CxSR\n",
+<<<<<<< HEAD
 				 (dev_priv->is_ddr3 == 1) ? "3" : "2",
+=======
+				 (dev_priv->is_ddr3 == 1) ? "3": "2",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 dev_priv->fsb_freq, dev_priv->mem_freq);
 			/* Disable CxSR and never update its watermark again */
 			pineview_disable_cxsr(dev);
@@ -9082,7 +10598,10 @@ static void intel_init_display(struct drm_device *dev)
 			dev_priv->display.update_wm = pineview_update_wm;
 		dev_priv->display.init_clock_gating = gen3_init_clock_gating;
 	} else if (IS_G4X(dev)) {
+<<<<<<< HEAD
 		dev_priv->display.write_eld = g4x_write_eld;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_priv->display.update_wm = g4x_update_wm;
 		dev_priv->display.init_clock_gating = g4x_init_clock_gating;
 	} else if (IS_GEN4(dev)) {
@@ -9143,7 +10662,11 @@ static void intel_init_display(struct drm_device *dev)
  * resume, or other times.  This quirk makes sure that's the case for
  * affected systems.
  */
+<<<<<<< HEAD
 static void quirk_pipea_force(struct drm_device *dev)
+=======
+static void quirk_pipea_force (struct drm_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
 
@@ -9160,6 +10683,7 @@ static void quirk_ssc_force_disable(struct drm_device *dev)
 	dev_priv->quirks |= QUIRK_LVDS_SSC_DISABLE;
 }
 
+<<<<<<< HEAD
 /*
  * Some machines (Dell XPS13) suffer broken backlight controls if
  * BLM_PCH_PWM_ENABLE is set.
@@ -9171,6 +10695,8 @@ static void quirk_no_pcm_pwm_enable(struct drm_device *dev)
 	DRM_INFO("applying no-PCH_PWM_ENABLE quirk\n");
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct intel_quirk {
 	int device;
 	int subsystem_vendor;
@@ -9179,8 +10705,15 @@ struct intel_quirk {
 };
 
 struct intel_quirk intel_quirks[] = {
+<<<<<<< HEAD
 	/* HP Mini needs pipe A force quirk (LP: #322104) */
 	{ 0x27ae, 0x103c, 0x361a, quirk_pipea_force },
+=======
+	/* HP Compaq 2730p needs pipe A force quirk (LP: #291555) */
+	{ 0x2a42, 0x103c, 0x30eb, quirk_pipea_force },
+	/* HP Mini needs pipe A force quirk (LP: #322104) */
+	{ 0x27ae,0x103c, 0x361a, quirk_pipea_force },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Thinkpad R31 needs pipe A force quirk */
 	{ 0x3577, 0x1014, 0x0505, quirk_pipea_force },
@@ -9200,6 +10733,7 @@ struct intel_quirk intel_quirks[] = {
 
 	/* Lenovo U160 cannot use SSC on LVDS */
 	{ 0x0046, 0x17aa, 0x3920, quirk_ssc_force_disable },
+<<<<<<< HEAD
 
 	/* Sony Vaio Y cannot use SSC on LVDS */
 	{ 0x0046, 0x104d, 0x9076, quirk_ssc_force_disable },
@@ -9208,6 +10742,8 @@ struct intel_quirk intel_quirks[] = {
 	{ 0x0116, 0x1028, 0x052e, quirk_no_pcm_pwm_enable },
 	/* Dell XPS13 HD and XPS13 FHD Ivy Bridge */
 	{ 0x0166, 0x1028, 0x058b, quirk_no_pcm_pwm_enable },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void intel_init_quirks(struct drm_device *dev)
@@ -9253,16 +10789,23 @@ static void i915_disable_vga(struct drm_device *dev)
 void intel_modeset_init(struct drm_device *dev)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
+<<<<<<< HEAD
 	int i, ret;
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	drm_mode_config_init(dev);
 
 	dev->mode_config.min_width = 0;
 	dev->mode_config.min_height = 0;
 
+<<<<<<< HEAD
 	dev->mode_config.preferred_depth = 24;
 	dev->mode_config.prefer_shadow = 1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->mode_config.funcs = (void *)&intel_mode_funcs;
 
 	intel_init_quirks(dev);
@@ -9286,9 +10829,12 @@ void intel_modeset_init(struct drm_device *dev)
 
 	for (i = 0; i < dev_priv->num_pipe; i++) {
 		intel_crtc_init(dev, i);
+<<<<<<< HEAD
 		ret = intel_plane_init(dev, i);
 		if (ret)
 			DRM_DEBUG_KMS("plane %d init failed: %d\n", i, ret);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Just disable it once at startup */
@@ -9302,10 +10848,15 @@ void intel_modeset_init(struct drm_device *dev)
 		intel_init_emon(dev);
 	}
 
+<<<<<<< HEAD
 	if (IS_GEN6(dev) || IS_GEN7(dev)) {
 		gen6_enable_rps(dev_priv);
 		gen6_update_ring_freq(dev_priv);
 	}
+=======
+	if (IS_GEN6(dev) || IS_GEN7(dev))
+		gen6_enable_rps(dev_priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	INIT_WORK(&dev_priv->idle_work, intel_idle_update);
 	setup_timer(&dev_priv->idle_timer, intel_gpu_idle_timer,
@@ -9341,7 +10892,12 @@ void intel_modeset_cleanup(struct drm_device *dev)
 		intel_increase_pllclock(crtc);
 	}
 
+<<<<<<< HEAD
 	intel_disable_fbc(dev);
+=======
+	if (dev_priv->display.disable_fbc)
+		dev_priv->display.disable_fbc(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (IS_IRONLAKE_M(dev))
 		ironlake_disable_drps(dev);
@@ -9357,10 +10913,13 @@ void intel_modeset_cleanup(struct drm_device *dev)
 	 * enqueue unpin/hotplug work. */
 	drm_irq_uninstall(dev);
 	cancel_work_sync(&dev_priv->hotplug_work);
+<<<<<<< HEAD
 	cancel_work_sync(&dev_priv->rps_work);
 
 	/* flush any delayed tasks or pending work */
 	flush_scheduled_work();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Shut off idle work before the crtcs get freed. */
 	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
@@ -9443,7 +11002,11 @@ struct intel_display_error_state {
 struct intel_display_error_state *
 intel_display_capture_error_state(struct drm_device *dev)
 {
+<<<<<<< HEAD
 	drm_i915_private_t *dev_priv = dev->dev_private;
+=======
+        drm_i915_private_t *dev_priv = dev->dev_private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct intel_display_error_state *error;
 	int i;
 
@@ -9459,7 +11022,11 @@ intel_display_capture_error_state(struct drm_device *dev)
 		error->plane[i].control = I915_READ(DSPCNTR(i));
 		error->plane[i].stride = I915_READ(DSPSTRIDE(i));
 		error->plane[i].size = I915_READ(DSPSIZE(i));
+<<<<<<< HEAD
 		error->plane[i].pos = I915_READ(DSPPOS(i));
+=======
+		error->plane[i].pos= I915_READ(DSPPOS(i));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		error->plane[i].addr = I915_READ(DSPADDR(i));
 		if (INTEL_INFO(dev)->gen >= 4) {
 			error->plane[i].surface = I915_READ(DSPSURF(i));

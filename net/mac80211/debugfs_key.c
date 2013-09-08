@@ -30,7 +30,11 @@ static ssize_t key_##name##_read(struct file *file,			\
 #define KEY_OPS(name)							\
 static const struct file_operations key_ ##name## _ops = {		\
 	.read = key_##name##_read,					\
+<<<<<<< HEAD
 	.open = simple_open,						\
+=======
+	.open = mac80211_open_file_generic,				\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek = generic_file_llseek,					\
 }
 
@@ -45,7 +49,11 @@ static const struct file_operations key_ ##name## _ops = {		\
 #define KEY_CONF_OPS(name)						\
 static const struct file_operations key_ ##name## _ops = {		\
 	.read = key_conf_##name##_read,					\
+<<<<<<< HEAD
 	.open = simple_open,						\
+=======
+	.open = mac80211_open_file_generic,				\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek = generic_file_llseek,					\
 }
 
@@ -78,7 +86,11 @@ KEY_OPS(algorithm);
 static ssize_t key_tx_spec_read(struct file *file, char __user *userbuf,
 				size_t count, loff_t *ppos)
 {
+<<<<<<< HEAD
 	u64 pn;
+=======
+	const u8 *tpn;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char buf[20];
 	int len;
 	struct ieee80211_key *key = file->private_data;
@@ -94,6 +106,7 @@ static ssize_t key_tx_spec_read(struct file *file, char __user *userbuf,
 				key->u.tkip.tx.iv16);
 		break;
 	case WLAN_CIPHER_SUITE_CCMP:
+<<<<<<< HEAD
 		pn = atomic64_read(&key->u.ccmp.tx_pn);
 		len = scnprintf(buf, sizeof(buf), "%02x%02x%02x%02x%02x%02x\n",
 				(u8)(pn >> 40), (u8)(pn >> 32), (u8)(pn >> 24),
@@ -104,6 +117,17 @@ static ssize_t key_tx_spec_read(struct file *file, char __user *userbuf,
 		len = scnprintf(buf, sizeof(buf), "%02x%02x%02x%02x%02x%02x\n",
 				(u8)(pn >> 40), (u8)(pn >> 32), (u8)(pn >> 24),
 				(u8)(pn >> 16), (u8)(pn >> 8), (u8)pn);
+=======
+		tpn = key->u.ccmp.tx_pn;
+		len = scnprintf(buf, sizeof(buf), "%02x%02x%02x%02x%02x%02x\n",
+				tpn[0], tpn[1], tpn[2], tpn[3], tpn[4], tpn[5]);
+		break;
+	case WLAN_CIPHER_SUITE_AES_CMAC:
+		tpn = key->u.aes_cmac.tx_pn;
+		len = scnprintf(buf, sizeof(buf), "%02x%02x%02x%02x%02x%02x\n",
+				tpn[0], tpn[1], tpn[2], tpn[3], tpn[4],
+				tpn[5]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		return 0;
@@ -225,9 +249,15 @@ KEY_OPS(key);
 			    key, &key_##name##_ops);
 
 void ieee80211_debugfs_key_add(struct ieee80211_key *key)
+<<<<<<< HEAD
 {
 	static int keycount;
 	char buf[100];
+=======
+  {
+	static int keycount;
+	char buf[50];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sta_info *sta;
 
 	if (!key->local->debugfs.keys)
@@ -244,8 +274,12 @@ void ieee80211_debugfs_key_add(struct ieee80211_key *key)
 
 	sta = key->sta;
 	if (sta) {
+<<<<<<< HEAD
 		sprintf(buf, "../../netdev:%s/stations/%pM",
 			sta->sdata->name, sta->sta.addr);
+=======
+		sprintf(buf, "../../stations/%pM", sta->sta.addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		key->debugfs.stalink =
 			debugfs_create_symlink("station", key->debugfs.dir, buf);
 	}

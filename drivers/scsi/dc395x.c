@@ -546,7 +546,11 @@ static struct ParameterData __devinitdata cfg_data[] = {
  * command line overrides will be used. If set to 1 then safe and
  * slow settings will be used.
  */
+<<<<<<< HEAD
 static bool use_safe_settings = 0;
+=======
+static int use_safe_settings = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(safe, use_safe_settings, bool, 0);
 MODULE_PARM_DESC(safe, "Use safe and slow settings only. Default: false");
 
@@ -3747,13 +3751,20 @@ static struct DeviceCtlBlk *device_alloc(struct AdapterCtlBlk *acb,
 	dcb->max_command = 1;
 	dcb->target_id = target;
 	dcb->target_lun = lun;
+<<<<<<< HEAD
 	dcb->dev_mode = eeprom->target[target].cfg0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef DC395x_NO_DISCONNECT
 	dcb->identify_msg =
 	    IDENTIFY(dcb->dev_mode & NTC_DO_DISCONNECT, lun);
 #else
 	dcb->identify_msg = IDENTIFY(0, lun);
 #endif
+<<<<<<< HEAD
+=======
+	dcb->dev_mode = eeprom->target[target].cfg0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dcb->inquiry7 = 0;
 	dcb->sync_mode = 0;
 	dcb->min_nego_period = clock_period[period_index];

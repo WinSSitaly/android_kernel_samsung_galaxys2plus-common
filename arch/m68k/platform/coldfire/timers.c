@@ -47,6 +47,7 @@ void coldfire_profile_init(void);
 static u32 mcftmr_cycles_per_jiffy;
 static u32 mcftmr_cnt;
 
+<<<<<<< HEAD
 static irq_handler_t timer_interrupt;
 
 /***************************************************************************/
@@ -68,6 +69,8 @@ static void init_timer_irq(void)
 #endif /* MCFSIM_ICR_AUTOVEC */
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /***************************************************************************/
 
 static irqreturn_t mcftmr_tick(int irq, void *dummy)
@@ -76,7 +79,11 @@ static irqreturn_t mcftmr_tick(int irq, void *dummy)
 	__raw_writeb(MCFTIMER_TER_CAP | MCFTIMER_TER_REF, TA(MCFTIMER_TER));
 
 	mcftmr_cnt += mcftmr_cycles_per_jiffy;
+<<<<<<< HEAD
 	return timer_interrupt(irq, dummy);
+=======
+	return arch_timer_interrupt(irq, dummy);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /***************************************************************************/
@@ -109,13 +116,21 @@ static struct clocksource mcftmr_clk = {
 	.name	= "tmr",
 	.rating	= 250,
 	.read	= mcftmr_read_clk,
+<<<<<<< HEAD
+=======
+	.shift	= 20,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.mask	= CLOCKSOURCE_MASK(32),
 	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
 };
 
 /***************************************************************************/
 
+<<<<<<< HEAD
 void hw_timer_init(irq_handler_t handler)
+=======
+void hw_timer_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	__raw_writew(MCFTIMER_TMR_DISABLE, TA(MCFTIMER_TMR));
 	mcftmr_cycles_per_jiffy = FREQ / HZ;
@@ -129,10 +144,16 @@ void hw_timer_init(irq_handler_t handler)
 	__raw_writew(MCFTIMER_TMR_ENORI | MCFTIMER_TMR_CLK16 |
 		MCFTIMER_TMR_RESTART | MCFTIMER_TMR_ENABLE, TA(MCFTIMER_TMR));
 
+<<<<<<< HEAD
 	clocksource_register_hz(&mcftmr_clk, FREQ);
 
 	timer_interrupt = handler;
 	init_timer_irq();
+=======
+	mcftmr_clk.mult = clocksource_hz2mult(FREQ, mcftmr_clk.shift);
+	clocksource_register(&mcftmr_clk);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	setup_irq(MCF_IRQ_TIMER, &mcftmr_timer_irq);
 
 #ifdef CONFIG_HIGHPROFILE

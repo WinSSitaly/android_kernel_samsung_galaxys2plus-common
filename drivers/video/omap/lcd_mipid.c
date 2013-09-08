@@ -23,7 +23,10 @@
 #include <linux/slab.h>
 #include <linux/workqueue.h>
 #include <linux/spi/spi.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <plat/lcd_mipid.h>
 
@@ -603,13 +606,33 @@ static int mipid_spi_remove(struct spi_device *spi)
 static struct spi_driver mipid_spi_driver = {
 	.driver = {
 		.name	= MIPID_MODULE_NAME,
+<<<<<<< HEAD
+=======
+		.bus	= &spi_bus_type,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.owner	= THIS_MODULE,
 	},
 	.probe	= mipid_spi_probe,
 	.remove	= __devexit_p(mipid_spi_remove),
 };
 
+<<<<<<< HEAD
 module_spi_driver(mipid_spi_driver);
+=======
+static int __init mipid_drv_init(void)
+{
+	spi_register_driver(&mipid_spi_driver);
+
+	return 0;
+}
+module_init(mipid_drv_init);
+
+static void __exit mipid_drv_cleanup(void)
+{
+	spi_unregister_driver(&mipid_spi_driver);
+}
+module_exit(mipid_drv_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("MIPI display driver");
 MODULE_LICENSE("GPL");

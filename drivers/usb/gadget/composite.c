@@ -7,6 +7,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 /* #define VERBOSE_DEBUG */
@@ -14,12 +26,22 @@
 #include <linux/kallsyms.h>
 #include <linux/kernel.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/device.h>
 #include <linux/utsname.h>
 
 #include <linux/usb/composite.h>
+<<<<<<< HEAD
 #include <asm/unaligned.h>
+=======
+
+#ifdef CONFIG_USB_G_ANDROID_SAMSUNG_COMPOSITE
+#include "multi_config.h"
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * The code in this file is utility code, used to build a gadget driver
@@ -29,11 +51,63 @@
  */
 
 /* big enough to hold our biggest descriptor */
+<<<<<<< HEAD
 #define USB_BUFSIZ	1024
+=======
+#define USB_BUFSIZ						1024
+#define USB_PRE_CONFIG_CURRENT		100
+#define USB_OTG_PRE_CONFIG_CURRENT	2
+
+#ifdef CONFIG_USB_OTG
+static struct usb_otg_descriptor otg_descriptor = {
+	.bLength =		sizeof otg_descriptor,
+	.bDescriptorType =	USB_DT_OTG,
+	.bmAttributes =	USB_OTG_SRP | USB_OTG_HNP,
+};
+
+static const struct usb_descriptor_header *otg_desc[] = {
+	(struct usb_descriptor_header *) &otg_descriptor,
+	NULL,
+};
+#endif
+
+#ifdef CONFIG_USB_LPM
+#define USB_DEVICE_CAPABILITY_20_EXTENSION	0x02
+#define USB_20_EXT_LPM				0x02
+struct usb_dev_cap_20_ext_desc {
+	__u8 bLength;
+	__u8 bDescriptorType;
+	__u8 bDevCapabilityType;
+	__le32 bmAttributes;
+} __attribute__ ((__packed__)) usb_dev_cap_20_ext_desc_t;
+
+static struct usb_bos_20_ext_desc {
+	struct usb_bos_descriptor bos_desc;
+	struct usb_dev_cap_20_ext_desc dev_cap_20_ext_desc;
+} __attribute__ ((__packed__)) bos_20_ext_desc = {
+	{
+		.bLength =		sizeof(struct usb_bos_descriptor),
+		.bDescriptorType =	USB_DT_BOS,
+		.wTotalLength =	sizeof(struct usb_bos_20_ext_desc),
+		.bNumDeviceCaps = 1,
+	},
+	{
+		.bLength =		sizeof(struct usb_dev_cap_20_ext_desc),
+		.bDescriptorType =	USB_DT_DEVICE_CAPABILITY,
+		.bDevCapabilityType =	USB_DEVICE_CAPABILITY_20_EXTENSION,
+		.bmAttributes =	USB_20_EXT_LPM,
+	},
+};
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct usb_composite_driver *composite;
 static int (*composite_gadget_bind)(struct usb_composite_dev *cdev);
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Some systems will need runtime overrides for the  product identifiers
  * published in the device descriptor, either numbers or strings or both.
  * String parameters are in UTF-8 (superset of ASCII's 7 bit characters).
@@ -66,6 +140,7 @@ MODULE_PARM_DESC(iSerialNumber, "SerialNumber string");
 static char composite_manufacturer[50];
 
 /*-------------------------------------------------------------------------*/
+<<<<<<< HEAD
 /**
  * next_ep_desc() - advance to the next EP descriptor
  * @t: currect pointer within descriptor array
@@ -189,6 +264,8 @@ ep_found:
 	}
 	return 0;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * usb_add_function() - add a function to a configuration
@@ -238,8 +315,11 @@ int usb_add_function(struct usb_configuration *config,
 		config->fullspeed = true;
 	if (!config->highspeed && function->hs_descriptors)
 		config->highspeed = true;
+<<<<<<< HEAD
 	if (!config->superspeed && function->ss_descriptors)
 		config->superspeed = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 done:
 	if (value)
@@ -364,7 +444,15 @@ static int config_buf(struct usb_configuration *config,
 	c->bDescriptorType = type;
 	/* wTotalLength is written later */
 	c->bNumInterfaces = config->next_interface_id;
+<<<<<<< HEAD
 	c->bConfigurationValue = config->bConfigurationValue;
+=======
+#ifdef CONFIG_USB_G_ANDROID_SAMSUNG_COMPOSITE
+	c->bConfigurationValue = get_config_number() + 1;
+#else
+	c->bConfigurationValue = config->bConfigurationValue;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	c->iConfiguration = config->iConfiguration;
 	c->bmAttributes = USB_CONFIG_ATT_ONE | config->bmAttributes;
 	c->bMaxPower = config->bMaxPower ? : (CONFIG_USB_GADGET_VBUS_DRAW / 2);
@@ -383,6 +471,7 @@ static int config_buf(struct usb_configuration *config,
 	list_for_each_entry(f, &config->functions, list) {
 		struct usb_descriptor_header **descriptors;
 
+<<<<<<< HEAD
 		switch (speed) {
 		case USB_SPEED_SUPER:
 			descriptors = f->ss_descriptors;
@@ -394,16 +483,46 @@ static int config_buf(struct usb_configuration *config,
 			descriptors = f->descriptors;
 		}
 
+=======
+#ifdef CONFIG_USB_G_ANDROID_SAMSUNG_COMPOSITE
+		if (!is_available_function(f->name)) {
+			USB_DBG("skip f->%s\n", f->name);
+			continue;
+		} else {
+			USB_DBG("f->%s\n", f->name);
+		}
+#endif
+		if (speed == USB_SPEED_HIGH)
+			descriptors = f->hs_descriptors;
+		else
+			descriptors = f->descriptors;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!descriptors)
 			continue;
 		status = usb_descriptor_fillbuf(next, len,
 			(const struct usb_descriptor_header **) descriptors);
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_G_ANDROID_SAMSUNG_COMPOSITE
+		if (change_conf(f, next, len, config, speed) < 0) {
+		printk("failed to change configuration\n");
+			return -EINVAL;
+		}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (status < 0)
 			return status;
 		len -= status;
 		next += status;
 	}
+<<<<<<< HEAD
 
+=======
+#ifdef CONFIG_USB_G_ANDROID_SAMSUNG_COMPOSITE
+	set_interface_count(config, c);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	len = next - buf;
 	c->wTotalLength = cpu_to_le16(len);
 	return len;
@@ -416,10 +535,16 @@ static int config_desc(struct usb_composite_dev *cdev, unsigned w_value)
 	u8				type = w_value >> 8;
 	enum usb_device_speed		speed = USB_SPEED_UNKNOWN;
 
+<<<<<<< HEAD
 	if (gadget->speed == USB_SPEED_SUPER)
 		speed = gadget->speed;
 	else if (gadget_is_dualspeed(gadget)) {
 		int	hs = 0;
+=======
+	if (gadget_is_dualspeed(gadget)) {
+		int			hs = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (gadget->speed == USB_SPEED_HIGH)
 			hs = 1;
 		if (type == USB_DT_OTHER_SPEED_CONFIG)
@@ -431,6 +556,7 @@ static int config_desc(struct usb_composite_dev *cdev, unsigned w_value)
 
 	/* This is a lookup by config *INDEX* */
 	w_value &= 0xff;
+<<<<<<< HEAD
 	list_for_each_entry(c, &cdev->configs, list) {
 		/* ignore configs that won't work at this speed */
 		switch (speed) {
@@ -449,33 +575,87 @@ static int config_desc(struct usb_composite_dev *cdev, unsigned w_value)
 
 		if (w_value == 0)
 			return config_buf(c, speed, cdev->req->buf, type);
+=======
+#ifdef CONFIG_USB_G_ANDROID_SAMSUNG_COMPOSITE
+	w_value = set_config_number(w_value);
+#endif
+	list_for_each_entry(c, &cdev->configs, list) {
+		/* ignore configs that won't work at this speed */
+		if (speed == USB_SPEED_HIGH) {
+			if (!c->highspeed)
+				continue;
+		} else {
+			if (!c->fullspeed)
+				continue;
+		}
+		if (w_value == 0) {
+			if (gadget_is_otg(gadget)) {
+				/* ACA C Detection compliance
+				requires 100mA max power */
+				if (gadget_is_rid_c(gadget))
+					c->bMaxPower = 50;
+				else
+					c->bMaxPower =
+					(CONFIG_USB_GADGET_VBUS_DRAW / 2);
+			}
+			return config_buf(c, speed, cdev->req->buf, type);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		w_value--;
 	}
 	return -EINVAL;
 }
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_OTG
+static int fill_otg_desc(struct usb_composite_dev *cdev)
+{
+	struct usb_configuration	*c = list_first_entry(&cdev->configs,
+				struct usb_configuration, list);
+
+	if (c->descriptors && cdev->req && cdev->req->buf) {
+		memcpy(cdev->req->buf, *c->descriptors, USB_BUFSIZ);
+		return (*c->descriptors)->bLength;
+	}
+
+	return -EINVAL;
+}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int count_configs(struct usb_composite_dev *cdev, unsigned type)
 {
 	struct usb_gadget		*gadget = cdev->gadget;
 	struct usb_configuration	*c;
 	unsigned			count = 0;
 	int				hs = 0;
+<<<<<<< HEAD
 	int				ss = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (gadget_is_dualspeed(gadget)) {
 		if (gadget->speed == USB_SPEED_HIGH)
 			hs = 1;
+<<<<<<< HEAD
 		if (gadget->speed == USB_SPEED_SUPER)
 			ss = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (type == USB_DT_DEVICE_QUALIFIER)
 			hs = !hs;
 	}
 	list_for_each_entry(c, &cdev->configs, list) {
 		/* ignore configs that won't work at this speed */
+<<<<<<< HEAD
 		if (ss) {
 			if (!c->superspeed)
 				continue;
 		} else if (hs) {
+=======
+		if (hs) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!c->highspeed)
 				continue;
 		} else {
@@ -483,10 +663,17 @@ static int count_configs(struct usb_composite_dev *cdev, unsigned type)
 				continue;
 		}
 		count++;
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_G_ANDROID_SAMSUNG_COMPOSITE
+		count = count_multi_config(c, count);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return count;
 }
 
+<<<<<<< HEAD
 /**
  * bos_desc() - prepares the BOS descriptor.
  * @cdev: pointer to usb_composite device to generate the bos
@@ -552,6 +739,8 @@ static int bos_desc(struct usb_composite_dev *cdev)
 	return le16_to_cpu(bos->wTotalLength);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void device_qual(struct usb_composite_dev *cdev)
 {
 	struct usb_qualifier_descriptor	*qual = cdev->req->buf;
@@ -564,7 +753,11 @@ static void device_qual(struct usb_composite_dev *cdev)
 	qual->bDeviceSubClass = cdev->desc.bDeviceSubClass;
 	qual->bDeviceProtocol = cdev->desc.bDeviceProtocol;
 	/* ASSUME same EP0 fifo size at both speeds */
+<<<<<<< HEAD
 	qual->bMaxPacketSize0 = cdev->gadget->ep0->maxpacket;
+=======
+	qual->bMaxPacketSize0 = cdev->desc.bMaxPacketSize0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	qual->bNumConfigurations = count_configs(cdev, USB_DT_DEVICE_QUALIFIER);
 	qual->bRESERVED = 0;
 }
@@ -595,6 +788,7 @@ static int set_config(struct usb_composite_dev *cdev,
 	unsigned		power = gadget_is_otg(gadget) ? 8 : 100;
 	int			tmp;
 
+<<<<<<< HEAD
 	if (number) {
 		list_for_each_entry(c, &cdev->configs, list) {
 			if (c->bConfigurationValue == number) {
@@ -605,12 +799,27 @@ static int set_config(struct usb_composite_dev *cdev,
 				 */
 				if (cdev->config)
 					reset_config(cdev);
+=======
+	if (cdev->config)
+		reset_config(cdev);
+
+	if (number) {
+		list_for_each_entry(c, &cdev->configs, list) {
+#ifdef CONFIG_USB_G_ANDROID_SAMSUNG_COMPOSITE
+			if (c->bConfigurationValue == number ||
+					check_config(number)) {
+#else
+			if (c->bConfigurationValue == number) {
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				result = 0;
 				break;
 			}
 		}
 		if (result < 0)
 			goto done;
+<<<<<<< HEAD
 	} else { /* Zero configuration value - need to reset the config */
 		if (cdev->config)
 			reset_config(cdev);
@@ -620,6 +829,27 @@ static int set_config(struct usb_composite_dev *cdev,
 	INFO(cdev, "%s config #%d: %s\n",
 	     usb_speed_string(gadget->speed),
 	     number, c ? c->label : "unconfigured");
+=======
+	} else
+		result = 0;
+
+	INFO(cdev, "%s speed config #%d: %s\n",
+		({ char *speed;
+		switch (gadget->speed) {
+		case USB_SPEED_LOW:
+			speed = "low";
+			break;
+		case USB_SPEED_FULL:
+			speed = "full";
+			break;
+		case USB_SPEED_HIGH:
+			speed = "high";
+			break;
+		default:
+			speed = "?";
+			break;
+		} ; speed; }), number, c ? c->label : "unconfigured");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!c)
 		goto done;
@@ -640,6 +870,7 @@ static int set_config(struct usb_composite_dev *cdev,
 		 * function's setup callback instead of the current
 		 * configuration's setup callback.
 		 */
+<<<<<<< HEAD
 		switch (gadget->speed) {
 		case USB_SPEED_SUPER:
 			descriptors = f->ss_descriptors;
@@ -650,6 +881,12 @@ static int set_config(struct usb_composite_dev *cdev,
 		default:
 			descriptors = f->descriptors;
 		}
+=======
+		if (gadget->speed == USB_SPEED_HIGH)
+			descriptors = f->hs_descriptors;
+		else
+			descriptors = f->descriptors;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		for (; *descriptors; ++descriptors) {
 			struct usb_endpoint_descriptor *ep;
@@ -672,7 +909,11 @@ static int set_config(struct usb_composite_dev *cdev,
 			reset_config(cdev);
 			goto done;
 		}
+<<<<<<< HEAD
 
+=======
+                printk("USBD][%s] %s interface is configured\n",__func__,f->name);	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (result == USB_GADGET_DELAYED_STATUS) {
 			DBG(cdev,
 			 "%s: interface %d (%s) requested delayed status\n",
@@ -687,8 +928,16 @@ static int set_config(struct usb_composite_dev *cdev,
 	power = c->bMaxPower ? (2 * c->bMaxPower) : CONFIG_USB_GADGET_VBUS_DRAW;
 done:
 	usb_gadget_vbus_draw(gadget, power);
+<<<<<<< HEAD
 	if (result >= 0 && cdev->delayed_status)
 		result = USB_GADGET_DELAYED_STATUS;
+=======
+
+	if (result >= 0 && cdev->delayed_status)
+		result = USB_GADGET_DELAYED_STATUS;
+		//USB_LOG
+	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return result;
 }
 
@@ -730,10 +979,37 @@ int usb_add_config(struct usb_composite_dev *cdev,
 	}
 
 	config->cdev = cdev;
+<<<<<<< HEAD
 	list_add_tail(&config->list, &cdev->configs);
 
 	INIT_LIST_HEAD(&config->functions);
 	config->next_interface_id = 0;
+=======
+
+	list_add_tail(&config->list, &cdev->configs);
+
+#ifdef CONFIG_USB_OTG
+	if (gadget_is_otg(cdev->gadget)) {
+
+		config->descriptors = otg_desc;
+		config->bmAttributes |= USB_CONFIG_ATT_WAKEUP;
+
+		if (gadget_is_otg2(cdev->gadget)) {
+			otg_descriptor.bcdOTG = __constant_cpu_to_le16(0x0200);
+			otg_descriptor.bmAttributes |= USB_OTG_ADP;
+		}
+	}
+#endif
+
+#ifdef CONFIG_USB_LPM
+	if (gadget_is_lpm(cdev->gadget))
+		config->bmAttributes |= USB_CONFIG_ATT_WAKEUP;
+#endif
+
+	INIT_LIST_HEAD(&config->functions);
+	config->next_interface_id = 0;
+	memset(config->interface, '\0', sizeof(config->interface));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	status = bind(config);
 	if (status < 0) {
@@ -742,9 +1018,14 @@ int usb_add_config(struct usb_composite_dev *cdev,
 	} else {
 		unsigned	i;
 
+<<<<<<< HEAD
 		DBG(cdev, "cfg %d/%p speeds:%s%s%s\n",
 			config->bConfigurationValue, config,
 			config->superspeed ? " super" : "",
+=======
+		DBG(cdev, "cfg %d/%p speeds:%s%s\n",
+			config->bConfigurationValue, config,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			config->highspeed ? " high" : "",
 			config->fullspeed
 				? (gadget_is_dualspeed(cdev->gadget)
@@ -774,6 +1055,49 @@ done:
 	return status;
 }
 
+<<<<<<< HEAD
+=======
+static int unbind_config(struct usb_composite_dev *cdev,
+			      struct usb_configuration *config)
+{
+	while (!list_empty(&config->functions)) {
+		struct usb_function		*f;
+
+		f = list_first_entry(&config->functions,
+				struct usb_function, list);
+		list_del(&f->list);
+		if (f->unbind) {
+			DBG(cdev, "unbind function '%s'/%p\n", f->name, f);
+			f->unbind(config, f);
+			/* may free memory for "f" */
+		}
+	}
+	if (config->unbind) {
+		DBG(cdev, "unbind config '%s'/%p\n", config->label, config);
+		config->unbind(config);
+			/* may free memory for "c" */
+	}
+	return 0;
+}
+
+int usb_remove_config(struct usb_composite_dev *cdev,
+		      struct usb_configuration *config)
+{
+	unsigned long flags;
+
+	spin_lock_irqsave(&cdev->lock, flags);
+
+	if (cdev->config == config)
+		reset_config(cdev);
+
+	list_del(&config->list);
+
+	spin_unlock_irqrestore(&cdev->lock, flags);
+
+	return unbind_config(cdev, config);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*-------------------------------------------------------------------------*/
 
 /* We support strings in multiple languages ... string descriptor zero
@@ -853,6 +1177,17 @@ static int get_string(struct usb_composite_dev *cdev,
 				collect_langs(sp, s->wData);
 
 			list_for_each_entry(f, &c->functions, list) {
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_G_ANDROID_SAMSUNG_COMPOSITE
+				if (!is_available_function(f->name)) {
+					USB_DBG("skip f->%s\n", f->name);
+					continue;
+				} else {
+					USB_DBG("f->%s\n", f->name);
+				}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				sp = f->strings;
 				if (sp)
 					collect_langs(sp, s->wData);
@@ -881,9 +1216,19 @@ static int get_string(struct usb_composite_dev *cdev,
 	else
 		str = NULL;
 	if (str) {
+<<<<<<< HEAD
 		struct usb_gadget_strings strings = {
 			.language = language,
 			.strings  = &(struct usb_string) { 0xff, str }
+=======
+		/* Init with NULL str in last element */
+		struct usb_string language_string_array[2] = {
+			{ 0xff, str}, {0xff, NULL}
+	    };
+		struct usb_gadget_strings strings = {
+			.language = language,
+			.strings  = language_string_array
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		};
 		return usb_gadget_get_string(&strings, 0xff, buf);
 	}
@@ -1021,9 +1366,14 @@ static int
 composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 {
 	struct usb_composite_dev	*cdev = get_gadget_data(gadget);
+<<<<<<< HEAD
 	struct usb_request		*req = cdev->req;
 	int				value = -EOPNOTSUPP;
 	int				status = 0;
+=======
+	struct usb_request		*req;
+	int				value = -EOPNOTSUPP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16				w_index = le16_to_cpu(ctrl->wIndex);
 	u8				intf = w_index & 0xFF;
 	u16				w_value = le16_to_cpu(ctrl->wValue);
@@ -1031,6 +1381,14 @@ composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 	struct usb_function		*f = NULL;
 	u8				endp;
 
+<<<<<<< HEAD
+=======
+	if (!cdev) {
+		pr_err("usb composite setup invalid device handle\n");
+		return -EINVAL;
+	}
+	req = cdev->req;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* partial re-init of the response message; the function or the
 	 * gadget might need to intercept e.g. a control-OUT completion
 	 * when we delegate to it.
@@ -1049,6 +1407,7 @@ composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 		switch (w_value >> 8) {
 
 		case USB_DT_DEVICE:
+<<<<<<< HEAD
 			cdev->desc.bNumConfigurations =
 				count_configs(cdev, USB_DT_DEVICE);
 			cdev->desc.bMaxPacketSize0 =
@@ -1062,20 +1421,38 @@ composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 				}
 			}
 
+=======
+			if (gadget_is_lpm(gadget)) {
+				/* LPM needs support for BOS descriptor
+				 * so need to use 2.01 or later */
+				cdev->desc.bcdUSB = 0x201;
+			}
+
+			cdev->desc.bNumConfigurations =
+				count_configs(cdev, USB_DT_DEVICE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			value = min(w_length, (u16) sizeof cdev->desc);
 			memcpy(req->buf, &cdev->desc, value);
 			break;
 		case USB_DT_DEVICE_QUALIFIER:
+<<<<<<< HEAD
 			if (!gadget_is_dualspeed(gadget) ||
 			    gadget->speed >= USB_SPEED_SUPER)
+=======
+			if (!gadget_is_dualspeed(gadget))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 			device_qual(cdev);
 			value = min_t(int, w_length,
 				sizeof(struct usb_qualifier_descriptor));
 			break;
 		case USB_DT_OTHER_SPEED_CONFIG:
+<<<<<<< HEAD
 			if (!gadget_is_dualspeed(gadget) ||
 			    gadget->speed >= USB_SPEED_SUPER)
+=======
+			if (!gadget_is_dualspeed(gadget))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 			/* FALLTHROUGH */
 		case USB_DT_CONFIG:
@@ -1084,17 +1461,50 @@ composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 				value = min(w_length, (u16) value);
 			break;
 		case USB_DT_STRING:
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_G_ANDROID_SAMSUNG_COMPOSITE
+			set_string_mode(w_length);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			value = get_string(cdev, req->buf,
 					w_index, w_value & 0xff);
 			if (value >= 0)
 				value = min(w_length, (u16) value);
 			break;
+<<<<<<< HEAD
 		case USB_DT_BOS:
 			if (gadget_is_superspeed(gadget)) {
 				value = bos_desc(cdev);
 				value = min(w_length, (u16) value);
 			}
 			break;
+=======
+#ifdef CONFIG_USB_OTG
+		case USB_DT_OTG:
+			if (!gadget_is_otg(gadget))
+				break;
+
+			value = fill_otg_desc(cdev);
+			if (value >= 0)
+				value = min(w_length, (u16) value);
+			break;
+#endif
+
+#ifdef CONFIG_USB_LPM
+		case USB_DT_BOS:
+			if (usb_gadget_test_lpm_support(gadget))
+				bos_20_ext_desc.dev_cap_20_ext_desc.
+				  bmAttributes |= USB_20_EXT_LPM;
+			else
+				bos_20_ext_desc.dev_cap_20_ext_desc.
+				  bmAttributes &= ~USB_20_EXT_LPM;
+
+			value = min(w_length, (u16)sizeof bos_20_ext_desc);
+			memcpy(req->buf, &bos_20_ext_desc, value);
+			break;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		break;
 
@@ -1117,9 +1527,19 @@ composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 	case USB_REQ_GET_CONFIGURATION:
 		if (ctrl->bRequestType != USB_DIR_IN)
 			goto unknown;
+<<<<<<< HEAD
 		if (cdev->config)
 			*(u8 *)req->buf = cdev->config->bConfigurationValue;
 		else
+=======
+		if (cdev->config){
+#ifdef CONFIG_USB_G_ANDROID_SAMSUNG_COMPOSITE
+			*(u8 *)req->buf = get_config_number() + 1;
+#else
+			*(u8 *)req->buf = cdev->config->bConfigurationValue;
+#endif
+		}else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			*(u8 *)req->buf = 0;
 		value = min(w_length, (u16) 1);
 		break;
@@ -1162,6 +1582,7 @@ composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 		*((u8 *)req->buf) = value;
 		value = min(w_length, (u16) 1);
 		break;
+<<<<<<< HEAD
 
 	/*
 	 * USB 3.0 additions:
@@ -1217,6 +1638,8 @@ composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 			break;
 		}
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 unknown:
 		VDBG(cdev,
@@ -1288,6 +1711,22 @@ static void composite_disconnect(struct usb_gadget *gadget)
 {
 	struct usb_composite_dev	*cdev = get_gadget_data(gadget);
 	unsigned long			flags;
+<<<<<<< HEAD
+=======
+	//USB_LOG
+
+	if (!cdev) {
+		pr_err("usb composite disconnect invalid device handle\n");
+		return;
+	}
+#ifdef CONFIG_USB_OTG
+	gadget->host_request = 0;
+#endif
+
+#ifdef CONFIG_USB_G_ANDROID_SAMSUNG_COMPOSITE
+	set_string_mode(0);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* REVISIT:  should we have config and device level
 	 * disconnect callbacks?
@@ -1298,6 +1737,16 @@ static void composite_disconnect(struct usb_gadget *gadget)
 	if (composite->disconnect)
 		composite->disconnect(cdev);
 	spin_unlock_irqrestore(&cdev->lock, flags);
+<<<<<<< HEAD
+=======
+
+
+	usb_gadget_vbus_draw(gadget,
+		gadget_is_otg(gadget) ?
+		    USB_OTG_PRE_CONFIG_CURRENT :
+		    USB_PRE_CONFIG_CURRENT);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*-------------------------------------------------------------------------*/
@@ -1314,6 +1763,25 @@ static ssize_t composite_show_suspended(struct device *dev,
 
 static DEVICE_ATTR(suspended, 0444, composite_show_suspended, NULL);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_OTG
+static ssize_t composite_set_host_request(struct device *dev,
+	struct device_attribute *attr, const char *buf, size_t count)
+{
+	struct usb_gadget *gadget = dev_to_usb_gadget(dev);
+	int value;
+
+	if (sscanf(buf, "%d", &value) != 1)
+		return -EINVAL;
+
+	gadget->host_request = !!value;
+	return count;
+}
+static DEVICE_ATTR(host_request, S_IWUSR, NULL, composite_set_host_request);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 composite_unbind(struct usb_gadget *gadget)
 {
@@ -1328,6 +1796,7 @@ composite_unbind(struct usb_gadget *gadget)
 
 	while (!list_empty(&cdev->configs)) {
 		struct usb_configuration	*c;
+<<<<<<< HEAD
 
 		c = list_first_entry(&cdev->configs,
 				struct usb_configuration, list);
@@ -1350,6 +1819,12 @@ composite_unbind(struct usb_gadget *gadget)
 			c->unbind(c);
 			/* may free memory for "c" */
 		}
+=======
+		c = list_first_entry(&cdev->configs,
+				struct usb_configuration, list);
+		list_del(&c->list);
+		unbind_config(cdev, c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (composite->unbind)
 		composite->unbind(cdev);
@@ -1358,6 +1833,13 @@ composite_unbind(struct usb_gadget *gadget)
 		kfree(cdev->req->buf);
 		usb_ep_free_request(gadget->ep0, cdev->req);
 	}
+<<<<<<< HEAD
+=======
+
+#ifdef CONFIG_USB_OTG
+	device_remove_file(&gadget->dev, &dev_attr_host_request);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	device_remove_file(&gadget->dev, &dev_attr_suspended);
 	kfree(cdev);
 	set_gadget_data(gadget, NULL);
@@ -1427,6 +1909,10 @@ static int composite_bind(struct usb_gadget *gadget)
 		goto fail;
 
 	cdev->desc = *composite->dev;
+<<<<<<< HEAD
+=======
+	cdev->desc.bMaxPacketSize0 = gadget->ep0->maxpacket;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* standardized runtime overrides for device ID data */
 	if (idVendor)
@@ -1468,6 +1954,15 @@ static int composite_bind(struct usb_gadget *gadget)
 	if (status)
 		goto fail;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_OTG
+	status = device_create_file(&gadget->dev, &dev_attr_host_request);
+	if (status)
+		goto fail;
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INFO(cdev, "%s ready\n", composite->name);
 	return 0;
 
@@ -1484,6 +1979,13 @@ composite_suspend(struct usb_gadget *gadget)
 	struct usb_composite_dev	*cdev = get_gadget_data(gadget);
 	struct usb_function		*f;
 
+<<<<<<< HEAD
+=======
+	if (!cdev) {
+		pr_err("usb composite suspend invalid device handle\n");
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* REVISIT:  should we have config level
 	 * suspend/resume callbacks?
 	 */
@@ -1509,6 +2011,13 @@ composite_resume(struct usb_gadget *gadget)
 	struct usb_function		*f;
 	u8				maxpower;
 
+<<<<<<< HEAD
+=======
+	if (!cdev) {
+		pr_err("usb composite resume invalid device handle\n");
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* REVISIT:  should we have config level
 	 * suspend/resume callbacks?
 	 */
@@ -1533,11 +2042,15 @@ composite_resume(struct usb_gadget *gadget)
 /*-------------------------------------------------------------------------*/
 
 static struct usb_gadget_driver composite_driver = {
+<<<<<<< HEAD
 #ifdef CONFIG_USB_GADGET_SUPERSPEED
 	.max_speed	= USB_SPEED_SUPER,
 #else
 	.max_speed	= USB_SPEED_HIGH,
 #endif
+=======
+	.speed		= USB_SPEED_HIGH,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.unbind		= composite_unbind,
 
@@ -1583,8 +2096,11 @@ int usb_composite_probe(struct usb_composite_driver *driver,
 		driver->iProduct = driver->name;
 	composite_driver.function =  (char *) driver->name;
 	composite_driver.driver.name = driver->name;
+<<<<<<< HEAD
 	composite_driver.max_speed =
 		min_t(u8, composite_driver.max_speed, driver->max_speed);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	composite = driver;
 	composite_gadget_bind = bind;
 
@@ -1641,3 +2157,7 @@ void usb_composite_setup_continue(struct usb_composite_dev *cdev)
 	spin_unlock_irqrestore(&cdev->lock, flags);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

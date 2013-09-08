@@ -33,7 +33,10 @@
 #include <linux/list.h>
 #include <linux/notifier.h>
 #include <linux/smp.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/percpu.h>
 #include <linux/spinlock.h>
 #include <linux/rcupdate.h>
@@ -182,7 +185,11 @@ struct kretprobe {
 	int nmissed;
 	size_t data_size;
 	struct hlist_head free_instances;
+<<<<<<< HEAD
 	raw_spinlock_t lock;
+=======
+	spinlock_t lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct kretprobe_instance {

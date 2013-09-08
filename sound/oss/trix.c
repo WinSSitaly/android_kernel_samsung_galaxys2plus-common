@@ -31,7 +31,11 @@
 
 static int mpu;
 
+<<<<<<< HEAD
 static bool joystick;
+=======
+static int joystick;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static unsigned char trix_read(int addr)
 {

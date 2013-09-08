@@ -6,6 +6,7 @@ config VME_USER
 	  If you say Y here you want to be able to access a limited number of
 	  VME windows in a manner at least semi-compatible with the interface
 	  provided with the original driver at http://vmelinux.org/.
+<<<<<<< HEAD
 
 config VME_PIO2
 	tristate "GE PIO2 VME"
@@ -19,3 +20,5 @@ config VME_PIO2
 	  To compile this driver as a module, choose M here. The module will
 	  be called vme_pio2. If unsure, say N.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

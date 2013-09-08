@@ -11,6 +11,7 @@
 #include <linux/types.h>
 #include <linux/mount.h>
 
+<<<<<<< HEAD
 #include <linux/nfs.h>
 #include <linux/nfs2.h>
 #include <linux/nfs3.h>
@@ -21,10 +22,16 @@
 #include <linux/nfsd/export.h>
 #include <linux/nfsd/stats.h>
 
+=======
+#include <linux/nfsd/debug.h>
+#include <linux/nfsd/export.h>
+#include <linux/nfsd/stats.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * nfsd version
  */
 #define NFSD_SUPPORTED_MINOR_VERSION	1
+<<<<<<< HEAD
 /*
  * Maximum blocksizes supported by daemon under various circumstances.
  */
@@ -44,6 +51,8 @@
  * size is rounded up to a page size when allocating space.
  */
 #define NFSD_BUFSIZE            ((RPC_MAX_HEADER_WITH_AUTH+26)*XDR_UNIT + NFSSVC_MAXBLKSIZE)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct readdir_cd {
 	__be32			err;	/* 0, nfserr, or nfserr_eof */
@@ -73,6 +82,7 @@ int		nfsd_nrpools(void);
 int		nfsd_get_nrthreads(int n, int *);
 int		nfsd_set_nrthreads(int n, int *);
 
+<<<<<<< HEAD
 static inline void nfsd_destroy(struct net *net)
 {
 	int destroy = (nfsd_serv->sv_nrthreads == 1);
@@ -84,6 +94,8 @@ static inline void nfsd_destroy(struct net *net)
 		nfsd_serv = NULL;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_NFSD_V2_ACL) || defined(CONFIG_NFSD_V3_ACL)
 #ifdef CONFIG_NFSD_V2_ACL
 extern struct svc_version nfsd_acl_version2;
@@ -115,16 +127,24 @@ static inline int nfsd_v4client(struct svc_rqst *rq)
  */
 #ifdef CONFIG_NFSD_V4
 extern unsigned int max_delegations;
+<<<<<<< HEAD
 void nfs4_state_init(void);
 int nfsd4_init_slabs(void);
+=======
+int nfs4_state_init(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void nfsd4_free_slabs(void);
 int nfs4_state_start(void);
 void nfs4_state_shutdown(void);
 void nfs4_reset_lease(time_t leasetime);
 int nfs4_reset_recoverydir(char *recdir);
 #else
+<<<<<<< HEAD
 static inline void nfs4_state_init(void) { }
 static inline int nfsd4_init_slabs(void) { return 0; }
+=======
+static inline int nfs4_state_init(void) { return 0; }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void nfsd4_free_slabs(void) { }
 static inline int nfs4_state_start(void) { return 0; }
 static inline void nfs4_state_shutdown(void) { }
@@ -351,6 +371,7 @@ static inline u32 nfsd_suppattrs2(u32 minorversion)
 }
 
 /* These will return ERR_INVAL if specified in GETATTR or READDIR. */
+<<<<<<< HEAD
 #define NFSD_WRITEONLY_ATTRS_WORD1 \
 	(FATTR4_WORD1_TIME_ACCESS_SET   | FATTR4_WORD1_TIME_MODIFY_SET)
 
@@ -360,6 +381,17 @@ static inline u32 nfsd_suppattrs2(u32 minorversion)
 #define NFSD_WRITEABLE_ATTRS_WORD1 \
 	(FATTR4_WORD1_MODE | FATTR4_WORD1_OWNER | FATTR4_WORD1_OWNER_GROUP \
 	| FATTR4_WORD1_TIME_ACCESS_SET | FATTR4_WORD1_TIME_MODIFY_SET)
+=======
+#define NFSD_WRITEONLY_ATTRS_WORD1							    \
+(FATTR4_WORD1_TIME_ACCESS_SET   | FATTR4_WORD1_TIME_MODIFY_SET)
+
+/* These are the only attrs allowed in CREATE/OPEN/SETATTR. */
+#define NFSD_WRITEABLE_ATTRS_WORD0                                                          \
+(FATTR4_WORD0_SIZE              | FATTR4_WORD0_ACL                                         )
+#define NFSD_WRITEABLE_ATTRS_WORD1                                                          \
+(FATTR4_WORD1_MODE              | FATTR4_WORD1_OWNER         | FATTR4_WORD1_OWNER_GROUP     \
+ | FATTR4_WORD1_TIME_ACCESS_SET | FATTR4_WORD1_TIME_MODIFY_SET)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NFSD_WRITEABLE_ATTRS_WORD2 0
 
 #define NFSD_SUPPATTR_EXCLCREAT_WORD0 \
@@ -374,6 +406,7 @@ static inline u32 nfsd_suppattrs2(u32 minorversion)
 #define NFSD_SUPPATTR_EXCLCREAT_WORD2 \
 	NFSD_WRITEABLE_ATTRS_WORD2
 
+<<<<<<< HEAD
 extern int nfsd4_is_junction(struct dentry *dentry);
 extern int register_cld_notifier(void);
 extern void unregister_cld_notifier(void);
@@ -386,6 +419,8 @@ static inline int nfsd4_is_junction(struct dentry *dentry)
 #define register_cld_notifier() 0
 #define unregister_cld_notifier() do { } while(0)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_NFSD_V4 */
 
 #endif /* LINUX_NFSD_NFSD_H */

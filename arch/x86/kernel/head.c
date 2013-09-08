@@ -5,6 +5,11 @@
 #include <asm/setup.h>
 #include <asm/bios_ebda.h>
 
+<<<<<<< HEAD
+=======
+#define BIOS_LOWMEM_KILOBYTES 0x413
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The BIOS places the EBDA/XBDA at the top of conventional
  * memory, and usually decreases the reported amount of
@@ -14,6 +19,7 @@
  * chipset: reserve a page before VGA to prevent PCI prefetch
  * into it (errata #56). Usually the page is reserved anyways,
  * unless you have no PS/2 mouse plugged in.
+<<<<<<< HEAD
  *
  * This functions is deliberately very conservative.  Losing
  * memory in the bottom megabyte is rarely a problem, as long
@@ -26,10 +32,14 @@
 #define LOWMEM_CAP		0x9f000U	/* Absolute maximum */
 #define INSANE_CUTOFF		0x20000U	/* Less than this = insane */
 
+=======
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init reserve_ebda_region(void)
 {
 	unsigned int lowmem, ebda_addr;
 
+<<<<<<< HEAD
 	/*
 	 * To determine the position of the EBDA and the
 	 * end of conventional memory, we need to look at
@@ -38,6 +48,14 @@ void __init reserve_ebda_region(void)
 	 * that the paravirt case can handle memory setup
 	 * correctly, without our help.
 	 */
+=======
+	/* To determine the position of the EBDA and the */
+	/* end of conventional memory, we need to look at */
+	/* the BIOS data area. In a paravirtual environment */
+	/* that area is absent. We'll just have to assume */
+	/* that the paravirt case can handle memory setup */
+	/* correctly, without our help. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (paravirt_enabled())
 		return;
 
@@ -48,6 +66,7 @@ void __init reserve_ebda_region(void)
 	/* start of EBDA area */
 	ebda_addr = get_bios_ebda();
 
+<<<<<<< HEAD
 	/*
 	 * Note: some old Dells seem to need 4k EBDA without
 	 * reporting so, so just consider the memory above 0x9f000
@@ -68,4 +87,22 @@ void __init reserve_ebda_region(void)
 
 	/* reserve all memory between lowmem and the 1MB mark */
 	memblock_reserve(lowmem, 0x100000 - lowmem);
+=======
+	/* Fixup: bios puts an EBDA in the top 64K segment */
+	/* of conventional memory, but does not adjust lowmem. */
+	if ((lowmem - ebda_addr) <= 0x10000)
+		lowmem = ebda_addr;
+
+	/* Fixup: bios does not report an EBDA at all. */
+	/* Some old Dells seem to need 4k anyhow (bugzilla 2990) */
+	if ((ebda_addr == 0) && (lowmem >= 0x9f000))
+		lowmem = 0x9f000;
+
+	/* Paranoia: should never happen, but... */
+	if ((lowmem == 0) || (lowmem >= 0x100000))
+		lowmem = 0x9f000;
+
+	/* reserve all memory between lowmem and the 1MB mark */
+	memblock_x86_reserve_range(lowmem, 0x100000, "* BIOS reserved");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

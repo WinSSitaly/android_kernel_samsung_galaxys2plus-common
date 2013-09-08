@@ -22,6 +22,7 @@
 #define AMBA_UART_CR(base)	(*(volatile unsigned char *)((base) + 0x30))
 #define AMBA_UART_FR(base)	(*(volatile unsigned char *)((base) + 0x18))
 
+<<<<<<< HEAD
 #define UART_BASE	0x10009000
 #define UART_BASE_RS1	0x1c090000
 
@@ -43,6 +44,9 @@ static unsigned long get_uart_base(void)
 	else
 		return UART_BASE_RS1;
 }
+=======
+#define get_uart_base()	(0x10000000 + 0x00009000)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * This does not append a newline

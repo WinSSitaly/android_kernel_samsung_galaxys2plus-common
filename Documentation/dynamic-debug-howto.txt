@@ -12,7 +12,11 @@ dynamically enabled per-callsite.
 Dynamic debug has even more useful features:
 
  * Simple query language allows turning on and off debugging statements by
+<<<<<<< HEAD
    matching any combination of 0 or 1 of:
+=======
+   matching any combination of:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
    - source filename
    - function name
@@ -79,12 +83,19 @@ Command Language Reference
 ==========================
 
 At the lexical level, a command comprises a sequence of words separated
+<<<<<<< HEAD
 by spaces or tabs.  So these are all equivalent:
+=======
+by whitespace characters.  Note that newlines are treated as word
+separators and do *not* end a command or allow multiple commands to
+be done together.  So these are all equivalent:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 nullarbor:~ # echo -c 'file svcsock.c line 1603 +p' >
 				<debugfs>/dynamic_debug/control
 nullarbor:~ # echo -c '  file   svcsock.c     line  1603 +p  ' >
 				<debugfs>/dynamic_debug/control
+<<<<<<< HEAD
 nullarbor:~ # echo -n 'file svcsock.c line 1603 +p' >
 				<debugfs>/dynamic_debug/control
 
@@ -97,6 +108,25 @@ Multiple commands can be written together, separated by ';' or '\n'.
 If your query set is big, you can batch them too:
 
   ~# cat query-batch-file > <debugfs>/dynamic_debug/control
+=======
+nullarbor:~ # echo -c 'file svcsock.c\nline 1603 +p' >
+				<debugfs>/dynamic_debug/control
+nullarbor:~ # echo -n 'file svcsock.c line 1603 +p' >
+				<debugfs>/dynamic_debug/control
+
+Commands are bounded by a write() system call.  If you want to do
+multiple commands you need to do a separate "echo" for each, like:
+
+nullarbor:~ # echo 'file svcsock.c line 1603 +p' > /proc/dprintk ;\
+> echo 'file svcsock.c line 1563 +p' > /proc/dprintk
+
+or even like:
+
+nullarbor:~ # (
+> echo 'file svcsock.c line 1603 +p' ;\
+> echo 'file svcsock.c line 1563 +p' ;\
+> ) > /proc/dprintk
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 At the syntactical level, a command comprises a sequence of match
 specifications, followed by a flags change specification.
@@ -137,12 +167,20 @@ func
     func svc_tcp_accept
 
 file
+<<<<<<< HEAD
     The given string is compared against either the full pathname, the
     src-root relative pathname, or the basename of the source file of
     each callsite.  Examples:
 
     file svcsock.c
     file kernel/freezer.c
+=======
+    The given string is compared against either the full
+    pathname or the basename of the source file of each
+    callsite.  Examples:
+
+    file svcsock.c
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     file /usr/src/packages/BUILD/sgi-enhancednfs-1.4/default/net/sunrpc/svcsock.c
 
 module

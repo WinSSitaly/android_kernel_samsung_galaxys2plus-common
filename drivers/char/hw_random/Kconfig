@@ -60,6 +60,7 @@ config HW_RANDOM_AMD
 
 	  If unsure, say Y.
 
+<<<<<<< HEAD
 config HW_RANDOM_ATMEL
 	tristate "Atmel Random Number Generator support"
 	depends on HW_RANDOM && ARCH_AT91SAM9G45
@@ -73,6 +74,8 @@ config HW_RANDOM_ATMEL
 
 	  If unsure, say Y.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config HW_RANDOM_GEODE
 	tristate "AMD Geode HW Random Number Generator support"
 	depends on HW_RANDOM && X86_32 && PCI
@@ -175,6 +178,18 @@ config HW_RANDOM_VIRTIO
 	  To compile this driver as a module, choose M here: the
 	  module will be called virtio-rng.  If unsure, say N.
 
+<<<<<<< HEAD
+=======
+config HW_RANDOM_KONA
+	tristate "KONA Random Number Generator support"
+	depends on HW_RANDOM && ARCH_KONA
+	---help---
+	  This driver provides kernel-side support for the Random Number
+	  Generator hardware found on the KONA platform.
+
+	  To compile this driver as a module, choose M here. If unsure, say N.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config HW_RANDOM_TX4939
 	tristate "TX4939 Random Number Generator support"
 	depends on HW_RANDOM && SOC_TX4939
@@ -223,6 +238,7 @@ config HW_RANDOM_PICOXCELL
 	  module will be called picoxcell-rng.
 
 	  If unsure, say Y.
+<<<<<<< HEAD
 
 config HW_RANDOM_PPC4XX
 	tristate "PowerPC 4xx generic true random number generator support"
@@ -250,3 +266,5 @@ config UML_RANDOM
 	  (check your distro, or download from
 	  http://sourceforge.net/projects/gkernel/).  rngd periodically reads
 	  /dev/hwrng and injects the entropy into /dev/random.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -152,9 +152,12 @@ enum {
 	/* Device IDs */
 	USB_DEVICE_ID_I6050 = 0x0186,
 	USB_DEVICE_ID_I6050_2 = 0x0188,
+<<<<<<< HEAD
 	USB_DEVICE_ID_I6150 = 0x07d6,
 	USB_DEVICE_ID_I6150_2 = 0x07d7,
 	USB_DEVICE_ID_I6150_3 = 0x07d9,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	USB_DEVICE_ID_I6250 = 0x0187,
 };
 

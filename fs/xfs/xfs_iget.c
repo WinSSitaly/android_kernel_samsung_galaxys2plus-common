@@ -38,6 +38,10 @@
 #include "xfs_trans_priv.h"
 #include "xfs_inode_item.h"
 #include "xfs_bmap.h"
+<<<<<<< HEAD
+=======
+#include "xfs_btree_trace.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "xfs_trace.h"
 
 
@@ -75,9 +79,16 @@ xfs_inode_alloc(
 		return NULL;
 	}
 
+<<<<<<< HEAD
 	ASSERT(atomic_read(&ip->i_pincount) == 0);
 	ASSERT(!spin_is_locked(&ip->i_flags_lock));
 	ASSERT(!xfs_isiflocked(ip));
+=======
+	ASSERT(atomic_read(&ip->i_iocount) == 0);
+	ASSERT(atomic_read(&ip->i_pincount) == 0);
+	ASSERT(!spin_is_locked(&ip->i_flags_lock));
+	ASSERT(completion_done(&ip->i_flush));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ASSERT(ip->i_ino == 0);
 
 	mrlock_init(&ip->i_iolock, MRLOCK_BARRIER, "xfsio", ip->i_ino);
@@ -91,8 +102,16 @@ xfs_inode_alloc(
 	ip->i_afp = NULL;
 	memset(&ip->i_df, 0, sizeof(xfs_ifork_t));
 	ip->i_flags = 0;
+<<<<<<< HEAD
 	ip->i_delayed_blks = 0;
 	memset(&ip->i_d, 0, sizeof(xfs_icdinode_t));
+=======
+	ip->i_update_core = 0;
+	ip->i_delayed_blks = 0;
+	memset(&ip->i_d, 0, sizeof(xfs_icdinode_t));
+	ip->i_size = 0;
+	ip->i_new_size = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ip;
 }
@@ -104,6 +123,10 @@ xfs_inode_free_callback(
 	struct inode		*inode = container_of(head, struct inode, i_rcu);
 	struct xfs_inode	*ip = XFS_I(inode);
 
+<<<<<<< HEAD
+=======
+	INIT_LIST_HEAD(&inode->i_dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kmem_zone_free(xfs_inode_zone, ip);
 }
 
@@ -145,9 +168,16 @@ xfs_inode_free(
 	}
 
 	/* asserts to verify all state is correct here */
+<<<<<<< HEAD
 	ASSERT(atomic_read(&ip->i_pincount) == 0);
 	ASSERT(!spin_is_locked(&ip->i_flags_lock));
 	ASSERT(!xfs_isiflocked(ip));
+=======
+	ASSERT(atomic_read(&ip->i_iocount) == 0);
+	ASSERT(atomic_read(&ip->i_pincount) == 0);
+	ASSERT(!spin_is_locked(&ip->i_flags_lock));
+	ASSERT(completion_done(&ip->i_flush));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Because we use RCU freeing we need to ensure the inode always
@@ -289,7 +319,11 @@ xfs_iget_cache_hit(
 	if (lock_flags != 0)
 		xfs_ilock(ip, lock_flags);
 
+<<<<<<< HEAD
 	xfs_iflags_clear(ip, XFS_ISTALE | XFS_IDONTCACHE);
+=======
+	xfs_iflags_clear(ip, XFS_ISTALE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	XFS_STATS_INC(xs_ig_found);
 
 	return 0;
@@ -314,7 +348,10 @@ xfs_iget_cache_miss(
 	struct xfs_inode	*ip;
 	int			error;
 	xfs_agino_t		agino = XFS_INO_TO_AGINO(mp, ino);
+<<<<<<< HEAD
 	int			iflags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ip = xfs_inode_alloc(mp, ino);
 	if (!ip)
@@ -359,11 +396,16 @@ xfs_iget_cache_miss(
 	 * memory barrier that ensures this detection works correctly at lookup
 	 * time.
 	 */
+<<<<<<< HEAD
 	iflags = XFS_INEW;
 	if (flags & XFS_IGET_DONTCACHE)
 		iflags |= XFS_IDONTCACHE;
 	ip->i_udquot = ip->i_gdquot = NULL;
 	xfs_iflags_set(ip, iflags);
+=======
+	ip->i_udquot = ip->i_gdquot = NULL;
+	xfs_iflags_set(ip, XFS_INEW);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* insert the new inode */
 	spin_lock(&pag->pag_ici_lock);
@@ -427,6 +469,7 @@ xfs_iget(
 	xfs_perag_t	*pag;
 	xfs_agino_t	agino;
 
+<<<<<<< HEAD
 	/*
 	 * xfs_reclaim_inode() uses the ILOCK to ensure an inode
 	 * doesn't get freed while it's being referenced during a
@@ -436,6 +479,8 @@ xfs_iget(
 	 */
 	ASSERT((lock_flags & (XFS_IOLOCK_EXCL | XFS_IOLOCK_SHARED)) == 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* reject inode numbers outside existing AGs */
 	if (!ino || XFS_INO_TO_AGNO(mp, ino) >= mp->m_sb.sb_agcount)
 		return EINVAL;
@@ -466,6 +511,11 @@ again:
 
 	*ipp = ip;
 
+<<<<<<< HEAD
+=======
+	ASSERT(ip->i_df.if_ext_max ==
+	       XFS_IFORK_DSIZE(ip) / sizeof(xfs_bmbt_rec_t));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * If we have a real type for an on-disk inode, we can set ops(&unlock)
 	 * now.	 If it's a new inode being created, xfs_ialloc will handle it.
@@ -660,7 +710,12 @@ xfs_iunlock(
 	       (XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL));
 	ASSERT((lock_flags & (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL)) !=
 	       (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL));
+<<<<<<< HEAD
 	ASSERT((lock_flags & ~(XFS_LOCK_MASK | XFS_LOCK_DEP_MASK)) == 0);
+=======
+	ASSERT((lock_flags & ~(XFS_LOCK_MASK | XFS_IUNLOCK_NONOTIFY |
+			XFS_LOCK_DEP_MASK)) == 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ASSERT(lock_flags != 0);
 
 	if (lock_flags & XFS_IOLOCK_EXCL)
@@ -673,6 +728,19 @@ xfs_iunlock(
 	else if (lock_flags & XFS_ILOCK_SHARED)
 		mrunlock_shared(&ip->i_lock);
 
+<<<<<<< HEAD
+=======
+	if ((lock_flags & (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL)) &&
+	    !(lock_flags & XFS_IUNLOCK_NONOTIFY) && ip->i_itemp) {
+		/*
+		 * Let the AIL know that this item has been unlocked in case
+		 * it is in the AIL and anyone is waiting on it.  Don't do
+		 * this if the caller has asked us not to.
+		 */
+		xfs_trans_unlocked_item(ip->i_itemp->ili_item.li_ailp,
+					(xfs_log_item_t*)(ip->i_itemp));
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_xfs_iunlock(ip, lock_flags, _RET_IP_);
 }
 
@@ -718,6 +786,7 @@ xfs_isilocked(
 	return 0;
 }
 #endif
+<<<<<<< HEAD
 
 void
 __xfs_iflock(
@@ -734,3 +803,5 @@ __xfs_iflock(
 
 	finish_wait(wq, &wait.wait);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -27,9 +27,23 @@
 #ifdef CONFIG_MTD_UBI_DEBUG
 
 #include "ubi.h"
+<<<<<<< HEAD
 #include <linux/debugfs.h>
 #include <linux/uaccess.h>
 #include <linux/module.h>
+=======
+#include <linux/module.h>
+#include <linux/moduleparam.h>
+
+unsigned int ubi_chk_flags;
+unsigned int ubi_tst_flags;
+
+module_param_named(debug_chks, ubi_chk_flags, uint, S_IRUGO | S_IWUSR);
+module_param_named(debug_tsts, ubi_chk_flags, uint, S_IRUGO | S_IWUSR);
+
+MODULE_PARM_DESC(debug_chks, "Debug check flags");
+MODULE_PARM_DESC(debug_tsts, "Debug special test flags");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * ubi_dbg_dump_ec_hdr - dump an erase counter header.
@@ -216,7 +230,11 @@ void ubi_dbg_dump_flash(struct ubi_device *ubi, int pnum, int offset, int len)
 	buf = vmalloc(len);
 	if (!buf)
 		return;
+<<<<<<< HEAD
 	err = mtd_read(ubi->mtd, addr, len, &read, buf);
+=======
+	err = ubi->mtd->read(ubi->mtd, addr, len, &read, buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err && err != -EUCLEAN) {
 		ubi_err("error %d while reading %d bytes from PEB %d:%d, "
 			"read %zd bytes", err, len, pnum, offset, read);
@@ -231,6 +249,7 @@ out:
 	return;
 }
 
+<<<<<<< HEAD
 /**
  * ubi_debugging_init_dev - initialize debugging for an UBI device.
  * @ubi: UBI device description object
@@ -480,4 +499,6 @@ void ubi_debugfs_exit_dev(struct ubi_device *ubi)
 	debugfs_remove_recursive(ubi->dbg->dfs_dir);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_MTD_UBI_DEBUG */

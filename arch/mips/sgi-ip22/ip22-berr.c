@@ -9,6 +9,10 @@
 #include <linux/sched.h>
 
 #include <asm/addrspace.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/traps.h>
 #include <asm/branch.h>
 #include <asm/irq_regs.h>

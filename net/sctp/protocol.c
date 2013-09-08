@@ -503,9 +503,13 @@ static void sctp_v4_get_dst(struct sctp_transport *t, union sctp_addr *saddr,
 		sctp_v4_dst_saddr(&dst_saddr, fl4, htons(bp->port));
 		rcu_read_lock();
 		list_for_each_entry_rcu(laddr, &bp->address_list, list) {
+<<<<<<< HEAD
 			if (!laddr->valid || (laddr->state == SCTP_ADDR_DEL) ||
 			    (laddr->state != SCTP_ADDR_SRC &&
 			    !asoc->src_out_of_asoc_ok))
+=======
+			if (!laddr->valid || (laddr->state != SCTP_ADDR_SRC))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				continue;
 			if (sctp_v4_cmp_addr(&dst_saddr, &laddr->a))
 				goto out_unlock;
@@ -625,6 +629,7 @@ static void sctp_v4_ecn_capable(struct sock *sk)
 	INET_ECN_xmit(sk);
 }
 
+<<<<<<< HEAD
 void sctp_addr_wq_timeout_handler(unsigned long arg)
 {
 	struct sctp_sockaddr_entry *addrw, *temp;
@@ -762,6 +767,8 @@ void sctp_addr_wq_mgmt(struct sctp_sockaddr_entry *addr, int cmd)
 	spin_unlock_bh(&sctp_addr_wq_lock);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Event handler for inet address addition/deletion events.
  * The sctp_local_addr_list needs to be protocted by a spin lock since
  * multiple notifiers (say IPv4 and IPv6) may be running at the same
@@ -789,7 +796,10 @@ static int sctp_inetaddr_event(struct notifier_block *this, unsigned long ev,
 			addr->valid = 1;
 			spin_lock_bh(&sctp_local_addr_lock);
 			list_add_tail_rcu(&addr->list, &sctp_local_addr_list);
+<<<<<<< HEAD
 			sctp_addr_wq_mgmt(addr, SCTP_ADDR_NEW);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			spin_unlock_bh(&sctp_local_addr_lock);
 		}
 		break;
@@ -800,7 +810,10 @@ static int sctp_inetaddr_event(struct notifier_block *this, unsigned long ev,
 			if (addr->a.sa.sa_family == AF_INET &&
 					addr->a.v4.sin_addr.s_addr ==
 					ifa->ifa_local) {
+<<<<<<< HEAD
 				sctp_addr_wq_mgmt(addr, SCTP_ADDR_DEL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				found = 1;
 				addr->valid = 0;
 				list_del_rcu(&addr->list);
@@ -1302,7 +1315,11 @@ SCTP_STATIC __init int sctp_init(void)
 	max_share = min(4UL*1024*1024, limit);
 
 	sysctl_sctp_rmem[0] = SK_MEM_QUANTUM; /* give each asoc 1 page min */
+<<<<<<< HEAD
 	sysctl_sctp_rmem[1] = 1500 * SKB_TRUESIZE(1);
+=======
+	sysctl_sctp_rmem[1] = (1500 *(sizeof(struct sk_buff) + 1));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sysctl_sctp_rmem[2] = max(sysctl_sctp_rmem[1], max_share);
 
 	sysctl_sctp_wmem[0] = SK_MEM_QUANTUM;
@@ -1377,7 +1394,10 @@ SCTP_STATIC __init int sctp_init(void)
 	/* Disable ADDIP by default. */
 	sctp_addip_enable = 0;
 	sctp_addip_noauth = 0;
+<<<<<<< HEAD
 	sctp_default_auto_asconf = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Enable PR-SCTP by default. */
 	sctp_prsctp_enable = 1;
@@ -1402,6 +1422,7 @@ SCTP_STATIC __init int sctp_init(void)
 	spin_lock_init(&sctp_local_addr_lock);
 	sctp_get_local_addr_list();
 
+<<<<<<< HEAD
 	/* Initialize the address event list */
 	INIT_LIST_HEAD(&sctp_addr_waitq);
 	INIT_LIST_HEAD(&sctp_auto_asconf_splist);
@@ -1409,6 +1430,8 @@ SCTP_STATIC __init int sctp_init(void)
 	sctp_addr_wq_timer.expires = 0;
 	setup_timer(&sctp_addr_wq_timer, sctp_addr_wq_timeout_handler, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = sctp_v4_protosw_init();
 
 	if (status)
@@ -1480,7 +1503,10 @@ SCTP_STATIC __exit void sctp_exit(void)
 	/* Unregister with inet6/inet layers. */
 	sctp_v6_del_protocol();
 	sctp_v4_del_protocol();
+<<<<<<< HEAD
 	sctp_free_addr_wq();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Free the control endpoint.  */
 	inet_ctl_sock_destroy(sctp_ctl_sock);

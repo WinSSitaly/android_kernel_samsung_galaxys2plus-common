@@ -15,7 +15,11 @@
 
 #define CALIBRATE_TIME_MSEC 30 /* 30 msecs */
 #define CALIBRATE_LATCH	\
+<<<<<<< HEAD
 	((PIT_TICK_RATE * CALIBRATE_TIME_MSEC + 1000/2)/1000)
+=======
+	((CLOCK_TICK_RATE * CALIBRATE_TIME_MSEC + 1000/2)/1000)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void mach_prepare_counter(void)
 {

@@ -48,7 +48,10 @@
 #include <linux/unistd.h>
 #include <linux/kallsyms.h>
 #include <linux/uaccess.h>
+<<<<<<< HEAD
 #include <linux/rcupdate.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/io.h>
 #include <asm/asm-offsets.h>
@@ -70,11 +73,19 @@ void cpu_idle(void)
 
 	/* endless idle loop with no priority at all */
 	while (1) {
+<<<<<<< HEAD
 		rcu_idle_enter();
 		while (!need_resched())
 			barrier();
 		rcu_idle_exit();
 		schedule_preempt_disabled();
+=======
+		while (!need_resched())
+			barrier();
+		preempt_enable_no_resched();
+		schedule();
+		preempt_disable();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		check_pgt_cache();
 	}
 }
@@ -193,6 +204,10 @@ void flush_thread(void)
 	/* Only needs to handle fpu stuff or perf monitors.
 	** REVISIT: several arches implement a "lazy fpu state".
 	*/
+<<<<<<< HEAD
+=======
+	set_fs(USER_DS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void release_thread(struct task_struct *dead_task)

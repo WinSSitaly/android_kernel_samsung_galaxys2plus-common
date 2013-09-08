@@ -36,12 +36,20 @@ static int rfkill_regulator_set_block(void *data, bool blocked)
 	if (blocked) {
 		if (rfkill_data->reg_enabled) {
 			regulator_disable(rfkill_data->vcc);
+<<<<<<< HEAD
 			rfkill_data->reg_enabled = false;
+=======
+			rfkill_data->reg_enabled = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		if (!rfkill_data->reg_enabled) {
 			regulator_enable(rfkill_data->vcc);
+<<<<<<< HEAD
 			rfkill_data->reg_enabled = true;
+=======
+			rfkill_data->reg_enabled = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -90,13 +98,21 @@ static int __devinit rfkill_regulator_probe(struct platform_device *pdev)
 				pdata->type,
 				&rfkill_regulator_ops, rfkill_data);
 	if (rf_kill == NULL) {
+<<<<<<< HEAD
+=======
+		dev_err(&pdev->dev, "Cannot alloc rfkill device\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENOMEM;
 		goto err_rfkill_alloc;
 	}
 
 	if (regulator_is_enabled(vcc)) {
 		dev_dbg(&pdev->dev, "Regulator already enabled\n");
+<<<<<<< HEAD
 		rfkill_data->reg_enabled = true;
+=======
+		rfkill_data->reg_enabled = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	rfkill_data->vcc = vcc;
 	rfkill_data->rf_kill = rf_kill;
@@ -144,7 +160,21 @@ static struct platform_driver rfkill_regulator_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(rfkill_regulator_driver);
+=======
+static int __init rfkill_regulator_init(void)
+{
+	return platform_driver_register(&rfkill_regulator_driver);
+}
+module_init(rfkill_regulator_init);
+
+static void __exit rfkill_regulator_exit(void)
+{
+	platform_driver_unregister(&rfkill_regulator_driver);
+}
+module_exit(rfkill_regulator_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Guiming Zhuo <gmzhuo@gmail.com>");
 MODULE_AUTHOR("Antonio Ospite <ospite@studenti.unina.it>");

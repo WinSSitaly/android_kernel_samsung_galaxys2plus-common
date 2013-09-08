@@ -29,6 +29,7 @@
 #include "share.h"
 #include "debug.h"
 
+<<<<<<< HEAD
 
 void via_set_primary_timing(const struct display_timing *timing)
 {
@@ -133,6 +134,8 @@ void via_set_secondary_timing(const struct display_timing *timing)
 		| (raw.ver_sync_start >> (8 - 5) & 0xE0));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void via_set_primary_address(u32 addr)
 {
 	DEBUG_MSG(KERN_DEBUG "via_set_primary_address(0x%08X)\n", addr);

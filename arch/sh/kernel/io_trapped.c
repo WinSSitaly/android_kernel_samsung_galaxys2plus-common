@@ -15,6 +15,10 @@
 #include <linux/vmalloc.h>
 #include <linux/module.h>
 #include <linux/init.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mmu_context.h>
 #include <asm/uaccess.h>
 #include <asm/io.h>
@@ -57,7 +61,11 @@ int register_trapped_io(struct trapped_io *tiop)
 
 	for (k = 0; k < tiop->num_resources; k++) {
 		res = tiop->resource + k;
+<<<<<<< HEAD
 		len += roundup(resource_size(res), PAGE_SIZE);
+=======
+		len += roundup((res->end - res->start) + 1, PAGE_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		flags |= res->flags;
 	}
 
@@ -84,7 +92,11 @@ int register_trapped_io(struct trapped_io *tiop)
 		       (unsigned long)(tiop->virt_base + len),
 		       res->flags & IORESOURCE_IO ? "io" : "mmio",
 		       (unsigned long)res->start);
+<<<<<<< HEAD
 		len += roundup(resource_size(res), PAGE_SIZE);
+=======
+		len += roundup((res->end - res->start) + 1, PAGE_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	tiop->magic = IO_TRAPPED_MAGIC;
@@ -127,7 +139,11 @@ void __iomem *match_trapped_io_handler(struct list_head *list,
 				return tiop->virt_base + voffs;
 			}
 
+<<<<<<< HEAD
 			len = resource_size(res);
+=======
+			len = (res->end - res->start) + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			voffs += roundup(len, PAGE_SIZE);
 		}
 	}
@@ -172,7 +188,11 @@ static unsigned long lookup_address(struct trapped_io *tiop,
 
 	for (k = 0; k < tiop->num_resources; k++) {
 		res = tiop->resource + k;
+<<<<<<< HEAD
 		len = roundup(resource_size(res), PAGE_SIZE);
+=======
+		len = roundup((res->end - res->start) + 1, PAGE_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (address < (vaddr + len))
 			return res->start + (address - vaddr);
 		vaddr += len;

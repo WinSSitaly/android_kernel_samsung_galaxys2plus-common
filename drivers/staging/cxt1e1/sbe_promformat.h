@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+/*
+ * $Id: sbe_promformat.h,v 2.2 2005/09/28 00:10:09 rickd PMCC4_3_1B $
+ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef _INC_SBE_PROMFORMAT_H_
 #define _INC_SBE_PROMFORMAT_H_
 
@@ -20,6 +27,22 @@
  * SBE, Inc.  San Ramon, California  U.S.A.
  *
  *-----------------------------------------------------------------------------
+<<<<<<< HEAD
+=======
+ * RCS info:
+ * RCS revision: $Revision: 2.2 $
+ * Last changed on $Date: 2005/09/28 00:10:09 $
+ * Changed by $Author: rickd $
+ *-----------------------------------------------------------------------------
+ * $Log: sbe_promformat.h,v $
+ * Revision 2.2  2005/09/28 00:10:09  rickd
+ * Add EEPROM sample from C4T1E1 board.
+ *
+ * Revision 2.1  2005/05/04 17:18:24  rickd
+ * Initial CI.
+ *
+ *-----------------------------------------------------------------------------
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 
@@ -68,6 +91,15 @@
  *
  */
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+extern      "C"
+{
+#endif
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define STRUCT_OFFSET(type, symbol)  ((long)&(((type *)0)->symbol))
 
 /*------------------------------------------------------------------------
@@ -127,4 +159,11 @@
         FLD_TYPE2   fldType2;
     }           PROMFORMAT;
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif                          /*** _INC_SBE_PROMFORMAT_H_ ***/

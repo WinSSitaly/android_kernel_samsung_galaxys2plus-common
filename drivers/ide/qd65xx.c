@@ -29,6 +29,10 @@
 #include <linux/blkdev.h>
 #include <linux/ide.h>
 #include <linux/init.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 
 #define DRV_NAME "qd65xx"
@@ -416,7 +420,11 @@ static int __init qd_probe(int base)
 	return rc;
 }
 
+<<<<<<< HEAD
 static bool probe_qd65xx;
+=======
+static int probe_qd65xx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_named(probe, probe_qd65xx, bool, 0);
 MODULE_PARM_DESC(probe, "probe for QD65xx chipsets");

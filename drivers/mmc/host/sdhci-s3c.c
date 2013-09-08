@@ -19,11 +19,14 @@
 #include <linux/clk.h>
 #include <linux/io.h>
 #include <linux/gpio.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/of.h>
 #include <linux/of_gpio.h>
 #include <linux/pm.h>
 #include <linux/pm_runtime.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/mmc/host.h>
 
@@ -57,6 +60,7 @@ struct sdhci_s3c {
 	struct clk		*clk_bus[MAX_BUS_CLK];
 };
 
+<<<<<<< HEAD
 /**
  * struct sdhci_s3c_driver_data - S3C SDHCI platform specific driver data
  * @sdhci_quirks: sdhci host specific quirks.
@@ -69,6 +73,8 @@ struct sdhci_s3c_drv_data {
 	unsigned int	sdhci_quirks;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline struct sdhci_s3c *to_s3c(struct sdhci_host *host)
 {
 	return sdhci_priv(host);
@@ -96,7 +102,11 @@ static void sdhci_s3c_check_sclk(struct sdhci_host *host)
 
 		tmp &= ~S3C_SDHCI_CTRL2_SELBASECLK_MASK;
 		tmp |= ourhost->cur_clk << S3C_SDHCI_CTRL2_SELBASECLK_SHIFT;
+<<<<<<< HEAD
 		writel(tmp, host->ioaddr + S3C_SDHCI_CONTROL2);
+=======
+		writel(tmp, host->ioaddr + 0x80);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -148,10 +158,17 @@ static unsigned int sdhci_s3c_consider_clock(struct sdhci_s3c *ourhost,
 		return UINT_MAX;
 
 	/*
+<<<<<<< HEAD
 	 * If controller uses a non-standard clock division, find the best clock
 	 * speed possible with selected clock source and skip the division.
 	 */
 	if (ourhost->host->quirks & SDHCI_QUIRK_NONSTANDARD_CLOCK) {
+=======
+	 * Clock divider's step is different as 1 from that of host controller
+	 * when 'clk_type' is S3C_SDHCI_CLK_DIV_EXTERNAL.
+	 */
+	if (ourhost->pdata->clk_type) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rate = clk_round_rate(clksrc, wanted);
 		return wanted - rate;
 	}
@@ -219,6 +236,7 @@ static void sdhci_s3c_set_clock(struct sdhci_host *host, unsigned int clock)
 		writel(ctrl, host->ioaddr + S3C_SDHCI_CONTROL2);
 	}
 
+<<<<<<< HEAD
 	/* reprogram default hardware configuration */
 	writel(S3C64XX_SDHCI_CONTROL4_DRIVE_9mA,
 		host->ioaddr + S3C64XX_SDHCI_CONTROL4);
@@ -236,6 +254,19 @@ static void sdhci_s3c_set_clock(struct sdhci_host *host, unsigned int clock)
 	if (clock < 25 * 1000000)
 		ctrl |= (S3C_SDHCI_CTRL3_FCSEL3 | S3C_SDHCI_CTRL3_FCSEL2);
 	writel(ctrl, host->ioaddr + S3C_SDHCI_CONTROL3);
+=======
+	/* reconfigure the hardware for new clock rate */
+
+	{
+		struct mmc_ios ios;
+
+		ios.clock = clock;
+
+		if (ourhost->pdata->cfg_card)
+			(ourhost->pdata->cfg_card)(ourhost->pdev, host->ioaddr,
+						   &ios, NULL);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -288,8 +319,11 @@ static unsigned int sdhci_cmu_get_min_clock(struct sdhci_host *host)
 static void sdhci_cmu_set_clock(struct sdhci_host *host, unsigned int clock)
 {
 	struct sdhci_s3c *ourhost = to_s3c(host);
+<<<<<<< HEAD
 	unsigned long timeout;
 	u16 clk = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* don't bother if the clock is going off */
 	if (clock == 0)
@@ -300,6 +334,7 @@ static void sdhci_cmu_set_clock(struct sdhci_host *host, unsigned int clock)
 	clk_set_rate(ourhost->clk_bus[ourhost->cur_clk], clock);
 
 	host->clock = clock;
+<<<<<<< HEAD
 
 	clk = SDHCI_CLOCK_INT_EN;
 	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
@@ -319,6 +354,8 @@ static void sdhci_cmu_set_clock(struct sdhci_host *host, unsigned int clock)
 
 	clk |= SDHCI_CLOCK_CARD_EN;
 	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -419,6 +456,7 @@ static void sdhci_s3c_setup_card_detect_gpio(struct sdhci_s3c *sc)
 	}
 }
 
+<<<<<<< HEAD
 static inline struct sdhci_s3c_drv_data *sdhci_s3c_get_driver_data(
 			struct platform_device *pdev)
 {
@@ -430,13 +468,22 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
 {
 	struct s3c_sdhci_platdata *pdata;
 	struct sdhci_s3c_drv_data *drv_data;
+=======
+static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+{
+	struct s3c_sdhci_platdata *pdata = pdev->dev.platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct device *dev = &pdev->dev;
 	struct sdhci_host *host;
 	struct sdhci_s3c *sc;
 	struct resource *res;
 	int ret, irq, ptr, clks;
 
+<<<<<<< HEAD
 	if (!pdev->dev.platform_data) {
+=======
+	if (!pdata) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_err(dev, "no device data specified\n");
 		return -ENOENT;
 	}
@@ -447,12 +494,22 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
 		return irq;
 	}
 
+<<<<<<< HEAD
+=======
+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	if (!res) {
+		dev_err(dev, "no memory specified\n");
+		return -ENOENT;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	host = sdhci_alloc_host(dev, sizeof(struct sdhci_s3c));
 	if (IS_ERR(host)) {
 		dev_err(dev, "sdhci_alloc_host() failed\n");
 		return PTR_ERR(host);
 	}
 
+<<<<<<< HEAD
 	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
 	if (!pdata) {
 		ret = -ENOMEM;
@@ -461,6 +518,8 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
 	memcpy(pdata, pdev->dev.platform_data, sizeof(*pdata));
 
 	drv_data = sdhci_s3c_get_driver_data(pdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sc = sdhci_priv(host);
 
 	sc->host = host;
@@ -482,11 +541,22 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
 
 	for (clks = 0, ptr = 0; ptr < MAX_BUS_CLK; ptr++) {
 		struct clk *clk;
+<<<<<<< HEAD
 		char name[14];
 
 		snprintf(name, 14, "mmc_busclk.%d", ptr);
 		clk = clk_get(dev, name);
 		if (IS_ERR(clk)) {
+=======
+		char *name = pdata->clocks[ptr];
+
+		if (name == NULL)
+			continue;
+
+		clk = clk_get(dev, name);
+		if (IS_ERR(clk)) {
+			dev_err(dev, "failed to get clock %s\n", name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 
@@ -511,8 +581,20 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
 		goto err_no_busclks;
 	}
 
+<<<<<<< HEAD
 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	host->ioaddr = devm_request_and_ioremap(&pdev->dev, res);
+=======
+	sc->ioarea = request_mem_region(res->start, resource_size(res),
+					mmc_hostname(host->mmc));
+	if (!sc->ioarea) {
+		dev_err(dev, "failed to reserve register area\n");
+		ret = -ENXIO;
+		goto err_req_regs;
+	}
+
+	host->ioaddr = ioremap_nocache(res->start, resource_size(res));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!host->ioaddr) {
 		dev_err(dev, "failed to map registers\n");
 		ret = -ENXIO;
@@ -531,8 +613,11 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
 	/* Setup quirks for the controller */
 	host->quirks |= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC;
 	host->quirks |= SDHCI_QUIRK_NO_HISPD_BIT;
+<<<<<<< HEAD
 	if (drv_data)
 		host->quirks |= drv_data->sdhci_quirks;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifndef CONFIG_MMC_SDHCI_S3C_DMA
 
@@ -550,9 +635,12 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
 	/* This host supports the Auto CMD12 */
 	host->quirks |= SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12;
 
+<<<<<<< HEAD
 	/* Samsung SoCs need BROKEN_ADMA_ZEROLEN_DESC */
 	host->quirks |= SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pdata->cd_type == S3C_SDHCI_CD_NONE ||
 	    pdata->cd_type == S3C_SDHCI_CD_PERMANENT)
 		host->quirks |= SDHCI_QUIRK_BROKEN_CARD_DETECTION;
@@ -560,6 +648,7 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
 	if (pdata->cd_type == S3C_SDHCI_CD_PERMANENT)
 		host->mmc->caps = MMC_CAP_NONREMOVABLE;
 
+<<<<<<< HEAD
 	switch (pdata->max_width) {
 	case 8:
 		host->mmc->caps |= MMC_CAP_8_BIT_DATA;
@@ -570,6 +659,10 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
 
 	if (pdata->pm_caps)
 		host->mmc->pm_caps |= pdata->pm_caps;
+=======
+	if (pdata->host_caps)
+		host->mmc->caps |= pdata->host_caps;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	host->quirks |= (SDHCI_QUIRK_32BIT_DMA_ADDR |
 			 SDHCI_QUIRK_32BIT_DMA_SIZE);
@@ -581,7 +674,11 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
 	 * If controller does not have internal clock divider,
 	 * we can use overriding functions instead of default.
 	 */
+<<<<<<< HEAD
 	if (host->quirks & SDHCI_QUIRK_NONSTANDARD_CLOCK) {
+=======
+	if (pdata->clk_type) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sdhci_s3c_ops.set_clock = sdhci_cmu_set_clock;
 		sdhci_s3c_ops.get_min_clock = sdhci_cmu_get_min_clock;
 		sdhci_s3c_ops.get_max_clock = sdhci_cmu_get_max_clock;
@@ -591,6 +688,7 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
 	if (pdata->host_caps)
 		host->mmc->caps |= pdata->host_caps;
 
+<<<<<<< HEAD
 	if (pdata->host_caps2)
 		host->mmc->caps2 |= pdata->host_caps2;
 
@@ -605,6 +703,12 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
 		pm_runtime_forbid(&pdev->dev);
 		pm_runtime_get_noresume(&pdev->dev);
 		goto err_req_regs;
+=======
+	ret = sdhci_add_host(host);
+	if (ret) {
+		dev_err(dev, "sdhci_add_host() failed\n");
+		goto err_add_host;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* The following two methods of card detection might call
@@ -618,12 +722,23 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
 
 	return 0;
 
+<<<<<<< HEAD
  err_req_regs:
 	for (ptr = 0; ptr < MAX_BUS_CLK; ptr++) {
 		if (sc->clk_bus[ptr]) {
 			clk_disable(sc->clk_bus[ptr]);
 			clk_put(sc->clk_bus[ptr]);
 		}
+=======
+ err_add_host:
+	release_resource(sc->ioarea);
+	kfree(sc->ioarea);
+
+ err_req_regs:
+	for (ptr = 0; ptr < MAX_BUS_CLK; ptr++) {
+		clk_disable(sc->clk_bus[ptr]);
+		clk_put(sc->clk_bus[ptr]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
  err_no_busclks:
@@ -654,9 +769,13 @@ static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
 
 	sdhci_remove_host(host, 1);
 
+<<<<<<< HEAD
 	pm_runtime_disable(&pdev->dev);
 
 	for (ptr = 0; ptr < MAX_BUS_CLK; ptr++) {
+=======
+	for (ptr = 0; ptr < 3; ptr++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (sc->clk_bus[ptr]) {
 			clk_disable(sc->clk_bus[ptr]);
 			clk_put(sc->clk_bus[ptr]);
@@ -665,12 +784,20 @@ static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
 	clk_disable(sc->clk_io);
 	clk_put(sc->clk_io);
 
+<<<<<<< HEAD
+=======
+	iounmap(host->ioaddr);
+	release_resource(sc->ioarea);
+	kfree(sc->ioarea);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sdhci_free_host(host);
 	platform_set_drvdata(pdev, NULL);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM_SLEEP
 static int sdhci_s3c_suspend(struct device *dev)
 {
@@ -749,6 +876,54 @@ static struct platform_driver sdhci_s3c_driver = {
 };
 
 module_platform_driver(sdhci_s3c_driver);
+=======
+#ifdef CONFIG_PM
+
+static int sdhci_s3c_suspend(struct platform_device *dev, pm_message_t pm)
+{
+	struct sdhci_host *host = platform_get_drvdata(dev);
+
+	sdhci_suspend_host(host, pm);
+	return 0;
+}
+
+static int sdhci_s3c_resume(struct platform_device *dev)
+{
+	struct sdhci_host *host = platform_get_drvdata(dev);
+
+	sdhci_resume_host(host);
+	return 0;
+}
+
+#else
+#define sdhci_s3c_suspend NULL
+#define sdhci_s3c_resume NULL
+#endif
+
+static struct platform_driver sdhci_s3c_driver = {
+	.probe		= sdhci_s3c_probe,
+	.remove		= __devexit_p(sdhci_s3c_remove),
+	.suspend	= sdhci_s3c_suspend,
+	.resume	        = sdhci_s3c_resume,
+	.driver		= {
+		.owner	= THIS_MODULE,
+		.name	= "s3c-sdhci",
+	},
+};
+
+static int __init sdhci_s3c_init(void)
+{
+	return platform_driver_register(&sdhci_s3c_driver);
+}
+
+static void __exit sdhci_s3c_exit(void)
+{
+	platform_driver_unregister(&sdhci_s3c_driver);
+}
+
+module_init(sdhci_s3c_init);
+module_exit(sdhci_s3c_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Samsung SDHCI (HSMMC) glue");
 MODULE_AUTHOR("Ben Dooks, <ben@simtec.co.uk>");

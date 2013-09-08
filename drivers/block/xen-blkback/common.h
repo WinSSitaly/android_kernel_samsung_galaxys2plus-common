@@ -27,6 +27,10 @@
 #ifndef __XEN_BLKIF__BACKEND__COMMON_H__
 #define __XEN_BLKIF__BACKEND__COMMON_H__
 
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/interrupt.h>
 #include <linux/slab.h>
@@ -45,7 +49,11 @@
 
 #define DRV_PFX "xen-blkback:"
 #define DPRINTK(fmt, args...)				\
+<<<<<<< HEAD
 	pr_debug(DRV_PFX "(%s:%d) " fmt ".\n",		\
+=======
+	pr_debug(DRV_PFX "(%s:%d) " fmt ".\n",	\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 __func__, __LINE__, ##args)
 
 
@@ -60,12 +68,20 @@ struct blkif_common_response {
 	char dummy;
 };
 
+<<<<<<< HEAD
 struct blkif_x86_32_request_rw {
+=======
+/* i386 protocol version */
+#pragma pack(push, 4)
+struct blkif_x86_32_request {
+	uint8_t        operation;    /* BLKIF_OP_???                         */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint8_t        nr_segments;  /* number of segments                   */
 	blkif_vdev_t   handle;       /* only for read/write requests         */
 	uint64_t       id;           /* private guest value, echoed in resp  */
 	blkif_sector_t sector_number;/* start sector idx on disk (r/w only)  */
 	struct blkif_request_segment seg[BLKIF_MAX_SEGMENTS_PER_REQUEST];
+<<<<<<< HEAD
 } __attribute__((__packed__));
 
 struct blkif_x86_32_request_discard {
@@ -93,12 +109,16 @@ struct blkif_x86_32_request {
 
 /* i386 protocol version */
 #pragma pack(push, 4)
+=======
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct blkif_x86_32_response {
 	uint64_t        id;              /* copied from request */
 	uint8_t         operation;       /* copied from request */
 	int16_t         status;          /* BLKIF_RSP_???       */
 };
 #pragma pack(pop)
+<<<<<<< HEAD
 /* x86_64 protocol version */
 
 struct blkif_x86_64_request_rw {
@@ -135,6 +155,18 @@ struct blkif_x86_64_request {
 	} u;
 } __attribute__((__packed__));
 
+=======
+
+/* x86_64 protocol version */
+struct blkif_x86_64_request {
+	uint8_t        operation;    /* BLKIF_OP_???                         */
+	uint8_t        nr_segments;  /* number of segments                   */
+	blkif_vdev_t   handle;       /* only for read/write requests         */
+	uint64_t       __attribute__((__aligned__(8))) id;
+	blkif_sector_t sector_number;/* start sector idx on disk (r/w only)  */
+	struct blkif_request_segment seg[BLKIF_MAX_SEGMENTS_PER_REQUEST];
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct blkif_x86_64_response {
 	uint64_t       __attribute__((__aligned__(8))) id;
 	uint8_t         operation;       /* copied from request */
@@ -174,7 +206,10 @@ struct xen_vbd {
 	/* Cached size parameter. */
 	sector_t		size;
 	bool			flush_support;
+<<<<<<< HEAD
 	bool			discard_secure;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct backend_info;
@@ -188,7 +223,11 @@ struct xen_blkif {
 	/* Comms information. */
 	enum blkif_protocol	blk_protocol;
 	union blkif_back_rings	blk_rings;
+<<<<<<< HEAD
 	void			*blk_ring;
+=======
+	struct vm_struct	*blk_ring_area;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* The VBD attached to this interface. */
 	struct xen_vbd		vbd;
 	/* Back pointer to the backend_info. */
@@ -198,9 +237,12 @@ struct xen_blkif {
 	atomic_t		refcnt;
 
 	wait_queue_head_t	wq;
+<<<<<<< HEAD
 	/* for barrier (drain) requests */
 	struct completion	drain_complete;
 	atomic_t		drain;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* One thread per one blkif. */
 	struct task_struct	*xenblkd;
 	unsigned int		waiting_reqs;
@@ -211,11 +253,20 @@ struct xen_blkif {
 	int			st_wr_req;
 	int			st_oo_req;
 	int			st_f_req;
+<<<<<<< HEAD
 	int			st_ds_req;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			st_rd_sect;
 	int			st_wr_sect;
 
 	wait_queue_head_t	waiting_to_free;
+<<<<<<< HEAD
+=======
+
+	grant_handle_t		shmem_handle;
+	grant_ref_t		shmem_ref;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -232,7 +283,11 @@ struct xen_blkif {
 
 struct phys_req {
 	unsigned short		dev;
+<<<<<<< HEAD
 	blkif_sector_t		nr_sects;
+=======
+	unsigned short		nr_sects;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct block_device	*bdev;
 	blkif_sector_t		sector_number;
 };
@@ -246,8 +301,11 @@ int xen_blkif_schedule(void *arg);
 int xen_blkbk_flush_diskcache(struct xenbus_transaction xbt,
 			      struct backend_info *be, int state);
 
+<<<<<<< HEAD
 int xen_blkbk_barrier(struct xenbus_transaction xbt,
 		      struct backend_info *be, int state);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct xenbus_device *xen_blkbk_xenbus(struct backend_info *be);
 
 static inline void blkif_get_x86_32_req(struct blkif_request *dst,
@@ -255,6 +313,7 @@ static inline void blkif_get_x86_32_req(struct blkif_request *dst,
 {
 	int i, n = BLKIF_MAX_SEGMENTS_PER_REQUEST;
 	dst->operation = src->operation;
+<<<<<<< HEAD
 	switch (src->operation) {
 	case BLKIF_OP_READ:
 	case BLKIF_OP_WRITE:
@@ -284,6 +343,17 @@ static inline void blkif_get_x86_32_req(struct blkif_request *dst,
 		dst->u.other.id = src->u.other.id;
 		break;
 	}
+=======
+	dst->nr_segments = src->nr_segments;
+	dst->handle = src->handle;
+	dst->id = src->id;
+	dst->u.rw.sector_number = src->sector_number;
+	barrier();
+	if (n > dst->nr_segments)
+		n = dst->nr_segments;
+	for (i = 0; i < n; i++)
+		dst->u.rw.seg[i] = src->seg[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void blkif_get_x86_64_req(struct blkif_request *dst,
@@ -291,6 +361,7 @@ static inline void blkif_get_x86_64_req(struct blkif_request *dst,
 {
 	int i, n = BLKIF_MAX_SEGMENTS_PER_REQUEST;
 	dst->operation = src->operation;
+<<<<<<< HEAD
 	switch (src->operation) {
 	case BLKIF_OP_READ:
 	case BLKIF_OP_WRITE:
@@ -320,6 +391,17 @@ static inline void blkif_get_x86_64_req(struct blkif_request *dst,
 		dst->u.other.id = src->u.other.id;
 		break;
 	}
+=======
+	dst->nr_segments = src->nr_segments;
+	dst->handle = src->handle;
+	dst->id = src->id;
+	dst->u.rw.sector_number = src->sector_number;
+	barrier();
+	if (n > dst->nr_segments)
+		n = dst->nr_segments;
+	for (i = 0; i < n; i++)
+		dst->u.rw.seg[i] = src->seg[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #endif /* __XEN_BLKIF__BACKEND__COMMON_H__ */

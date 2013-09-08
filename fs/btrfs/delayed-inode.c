@@ -115,7 +115,10 @@ static struct btrfs_delayed_node *btrfs_get_delayed_node(struct inode *inode)
 	return NULL;
 }
 
+<<<<<<< HEAD
 /* Will return either the node or PTR_ERR(-ENOMEM) */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct btrfs_delayed_node *btrfs_get_or_create_delayed_node(
 							struct inode *inode)
 {
@@ -592,6 +595,7 @@ static int btrfs_delayed_item_reserve_metadata(struct btrfs_trans_handle *trans,
 		return 0;
 
 	src_rsv = trans->block_rsv;
+<<<<<<< HEAD
 	dst_rsv = &root->fs_info->delayed_block_rsv;
 
 	num_bytes = btrfs_calc_trans_metadata_size(root, 1);
@@ -602,6 +606,14 @@ static int btrfs_delayed_item_reserve_metadata(struct btrfs_trans_handle *trans,
 					      num_bytes, 1);
 		item->bytes_reserved = num_bytes;
 	}
+=======
+	dst_rsv = &root->fs_info->global_block_rsv;
+
+	num_bytes = btrfs_calc_trans_metadata_size(root, 1);
+	ret = btrfs_block_rsv_migrate(src_rsv, dst_rsv, num_bytes);
+	if (!ret)
+		item->bytes_reserved = num_bytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -614,10 +626,14 @@ static void btrfs_delayed_item_release_metadata(struct btrfs_root *root,
 	if (!item->bytes_reserved)
 		return;
 
+<<<<<<< HEAD
 	rsv = &root->fs_info->delayed_block_rsv;
 	trace_btrfs_space_reservation(root->fs_info, "delayed_item",
 				      item->key.objectid, item->bytes_reserved,
 				      0);
+=======
+	rsv = &root->fs_info->global_block_rsv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_block_rsv_release(root, rsv,
 				item->bytes_reserved);
 }
@@ -625,13 +641,17 @@ static void btrfs_delayed_item_release_metadata(struct btrfs_root *root,
 static int btrfs_delayed_inode_reserve_metadata(
 					struct btrfs_trans_handle *trans,
 					struct btrfs_root *root,
+<<<<<<< HEAD
 					struct inode *inode,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					struct btrfs_delayed_node *node)
 {
 	struct btrfs_block_rsv *src_rsv;
 	struct btrfs_block_rsv *dst_rsv;
 	u64 num_bytes;
 	int ret;
+<<<<<<< HEAD
 	bool release = false;
 
 	src_rsv = trans->block_rsv;
@@ -731,6 +751,19 @@ out:
 					      btrfs_ino(inode), num_bytes, 0);
 		btrfs_block_rsv_release(root, src_rsv, num_bytes);
 	}
+=======
+
+	if (!trans->bytes_reserved)
+		return 0;
+
+	src_rsv = trans->block_rsv;
+	dst_rsv = &root->fs_info->global_block_rsv;
+
+	num_bytes = btrfs_calc_trans_metadata_size(root, 1);
+	ret = btrfs_block_rsv_migrate(src_rsv, dst_rsv, num_bytes);
+	if (!ret)
+		node->bytes_reserved = num_bytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -743,9 +776,13 @@ static void btrfs_delayed_inode_release_metadata(struct btrfs_root *root,
 	if (!node->bytes_reserved)
 		return;
 
+<<<<<<< HEAD
 	rsv = &root->fs_info->delayed_block_rsv;
 	trace_btrfs_space_reservation(root->fs_info, "delayed_inode",
 				      node->inode_id, node->bytes_reserved, 0);
+=======
+	rsv = &root->fs_info->global_block_rsv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_block_rsv_release(root, rsv,
 				node->bytes_reserved);
 	node->bytes_reserved = 0;
@@ -834,11 +871,21 @@ static int btrfs_batch_insert_items(struct btrfs_trans_handle *trans,
 	}
 
 	/* reset all the locked nodes in the patch to spinning locks. */
+<<<<<<< HEAD
 	btrfs_clear_path_blocking(path, NULL, 0);
 
 	/* insert the keys of the items */
 	setup_items_for_insert(trans, root, path, keys, data_size,
 			       total_data_size, total_size, nitems);
+=======
+	btrfs_clear_path_blocking(path, NULL);
+
+	/* insert the keys of the items */
+	ret = setup_items_for_insert(trans, root, path, keys, data_size,
+				     total_data_size, total_size, nitems);
+	if (ret)
+		goto error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* insert the dir index items */
 	slot = path->slots[0];
@@ -1107,6 +1154,7 @@ static int btrfs_update_delayed_inode(struct btrfs_trans_handle *trans,
 	return 0;
 }
 
+<<<<<<< HEAD
 /*
  * Called when committing the transaction.
  * Returns 0 on success.
@@ -1117,27 +1165,41 @@ int btrfs_run_delayed_items(struct btrfs_trans_handle *trans,
 			    struct btrfs_root *root)
 {
 	struct btrfs_root *curr_root = root;
+=======
+/* Called when committing the transaction. */
+int btrfs_run_delayed_items(struct btrfs_trans_handle *trans,
+			    struct btrfs_root *root)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct btrfs_delayed_root *delayed_root;
 	struct btrfs_delayed_node *curr_node, *prev_node;
 	struct btrfs_path *path;
 	struct btrfs_block_rsv *block_rsv;
 	int ret = 0;
 
+<<<<<<< HEAD
 	if (trans->aborted)
 		return -EIO;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	path = btrfs_alloc_path();
 	if (!path)
 		return -ENOMEM;
 	path->leave_spinning = 1;
 
 	block_rsv = trans->block_rsv;
+<<<<<<< HEAD
 	trans->block_rsv = &root->fs_info->delayed_block_rsv;
+=======
+	trans->block_rsv = &root->fs_info->global_block_rsv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	delayed_root = btrfs_get_delayed_root(root);
 
 	curr_node = btrfs_first_delayed_node(delayed_root);
 	while (curr_node) {
+<<<<<<< HEAD
 		curr_root = curr_node->root;
 		ret = btrfs_insert_delayed_items(trans, path, curr_root,
 						 curr_node);
@@ -1150,6 +1212,19 @@ int btrfs_run_delayed_items(struct btrfs_trans_handle *trans,
 		if (ret) {
 			btrfs_release_delayed_node(curr_node);
 			btrfs_abort_transaction(trans, root, ret);
+=======
+		root = curr_node->root;
+		ret = btrfs_insert_delayed_items(trans, path, root,
+						 curr_node);
+		if (!ret)
+			ret = btrfs_delete_delayed_items(trans, path, root,
+							 curr_node);
+		if (!ret)
+			ret = btrfs_update_delayed_inode(trans, root, path,
+							 curr_node);
+		if (ret) {
+			btrfs_release_delayed_node(curr_node);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 
@@ -1160,7 +1235,10 @@ int btrfs_run_delayed_items(struct btrfs_trans_handle *trans,
 
 	btrfs_free_path(path);
 	trans->block_rsv = block_rsv;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1177,7 +1255,11 @@ static int __btrfs_commit_inode_delayed_items(struct btrfs_trans_handle *trans,
 	path->leave_spinning = 1;
 
 	block_rsv = trans->block_rsv;
+<<<<<<< HEAD
 	trans->block_rsv = &node->root->fs_info->delayed_block_rsv;
+=======
+	trans->block_rsv = &node->root->fs_info->global_block_rsv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = btrfs_insert_delayed_items(trans, path, node->root, node);
 	if (!ret)
@@ -1257,7 +1339,11 @@ static void btrfs_async_run_delayed_node_done(struct btrfs_work *work)
 		goto free_path;
 
 	block_rsv = trans->block_rsv;
+<<<<<<< HEAD
 	trans->block_rsv = &root->fs_info->delayed_block_rsv;
+=======
+	trans->block_rsv = &root->fs_info->global_block_rsv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = btrfs_insert_delayed_items(trans, path, root, delayed_node);
 	if (!ret)
@@ -1381,7 +1467,10 @@ void btrfs_balance_delayed_items(struct btrfs_root *root)
 	btrfs_wq_run_delayed_node(delayed_root, root, 0);
 }
 
+<<<<<<< HEAD
 /* Will return 0 or -ENOMEM */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int btrfs_insert_delayed_dir_index(struct btrfs_trans_handle *trans,
 				   struct btrfs_root *root, const char *name,
 				   int name_len, struct inode *dir,
@@ -1403,6 +1492,16 @@ int btrfs_insert_delayed_dir_index(struct btrfs_trans_handle *trans,
 		goto release_node;
 	}
 
+<<<<<<< HEAD
+=======
+	ret = btrfs_delayed_item_reserve_metadata(trans, root, delayed_item);
+	/*
+	 * we have reserved enough space when we start a new transaction,
+	 * so reserving metadata failure is impossible
+	 */
+	BUG_ON(ret);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	delayed_item->key.objectid = btrfs_ino(dir);
 	btrfs_set_key_type(&delayed_item->key, BTRFS_DIR_INDEX_KEY);
 	delayed_item->key.offset = index;
@@ -1415,6 +1514,7 @@ int btrfs_insert_delayed_dir_index(struct btrfs_trans_handle *trans,
 	dir_item->type = type;
 	memcpy((char *)(dir_item + 1), name, name_len);
 
+<<<<<<< HEAD
 	ret = btrfs_delayed_item_reserve_metadata(trans, root, delayed_item);
 	/*
 	 * we have reserved enough space when we start a new transaction,
@@ -1423,6 +1523,8 @@ int btrfs_insert_delayed_dir_index(struct btrfs_trans_handle *trans,
 	BUG_ON(ret);
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&delayed_node->mutex);
 	ret = __btrfs_add_delayed_insertion_item(delayed_node, delayed_item);
 	if (unlikely(ret)) {
@@ -1751,7 +1853,11 @@ int btrfs_fill_inode(struct inode *inode, u32 *rdev)
 	inode->i_gid = btrfs_stack_inode_gid(inode_item);
 	btrfs_i_size_write(inode, btrfs_stack_inode_size(inode_item));
 	inode->i_mode = btrfs_stack_inode_mode(inode_item);
+<<<<<<< HEAD
 	set_nlink(inode, btrfs_stack_inode_nlink(inode_item));
+=======
+	inode->i_nlink = btrfs_stack_inode_nlink(inode_item);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	inode_set_bytes(inode, btrfs_stack_inode_nbytes(inode_item));
 	BTRFS_I(inode)->generation = btrfs_stack_inode_generation(inode_item);
 	BTRFS_I(inode)->sequence = btrfs_stack_inode_sequence(inode_item);
@@ -1795,10 +1901,19 @@ int btrfs_delayed_update_inode(struct btrfs_trans_handle *trans,
 		goto release_node;
 	}
 
+<<<<<<< HEAD
 	ret = btrfs_delayed_inode_reserve_metadata(trans, root, inode,
 						   delayed_node);
 	if (ret)
 		goto release_node;
+=======
+	ret = btrfs_delayed_inode_reserve_metadata(trans, root, delayed_node);
+	/*
+	 * we must reserve enough space when we start a new transaction,
+	 * so reserving metadata failure is impossible
+	 */
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fill_stack_inode_item(trans, &delayed_node->inode_item, inode);
 	delayed_node->inode_dirty = 1;

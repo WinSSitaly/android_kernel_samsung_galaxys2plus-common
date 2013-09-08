@@ -14,6 +14,7 @@
 #include <linux/module.h>
 #include <linux/slab.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
 #include <linux/of_gpio.h>
 #include <linux/of_i2c.h>
@@ -23,6 +24,10 @@ struct i2c_gpio_private_data {
 	struct i2c_algo_bit_data bit_data;
 	struct i2c_gpio_platform_data pdata;
 };
+=======
+
+#include <asm/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Toggle SDA by changing the direction of the pin */
 static void i2c_gpio_setsda_dir(void *data, int state)
@@ -85,6 +90,7 @@ static int i2c_gpio_getscl(void *data)
 	return gpio_get_value(pdata->scl_pin);
 }
 
+<<<<<<< HEAD
 static int __devinit of_i2c_gpio_probe(struct device_node *np,
 			     struct i2c_gpio_platform_data *pdata)
 {
@@ -120,11 +126,16 @@ static int __devinit of_i2c_gpio_probe(struct device_node *np,
 static int __devinit i2c_gpio_probe(struct platform_device *pdev)
 {
 	struct i2c_gpio_private_data *priv;
+=======
+static int __devinit i2c_gpio_probe(struct platform_device *pdev)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct i2c_gpio_platform_data *pdata;
 	struct i2c_algo_bit_data *bit_data;
 	struct i2c_adapter *adap;
 	int ret;
 
+<<<<<<< HEAD
 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
 	if (!priv)
 		return -ENOMEM;
@@ -141,6 +152,19 @@ static int __devinit i2c_gpio_probe(struct platform_device *pdev)
 			return -ENXIO;
 		memcpy(pdata, pdev->dev.platform_data, sizeof(*pdata));
 	}
+=======
+	pdata = pdev->dev.platform_data;
+	if (!pdata)
+		return -ENXIO;
+
+	ret = -ENOMEM;
+	adap = kzalloc(sizeof(struct i2c_adapter), GFP_KERNEL);
+	if (!adap)
+		goto err_alloc_adap;
+	bit_data = kzalloc(sizeof(struct i2c_algo_bit_data), GFP_KERNEL);
+	if (!bit_data)
+		goto err_alloc_bit_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = gpio_request(pdata->sda_pin, "sda");
 	if (ret)
@@ -188,7 +212,10 @@ static int __devinit i2c_gpio_probe(struct platform_device *pdev)
 	adap->algo_data = bit_data;
 	adap->class = I2C_CLASS_HWMON | I2C_CLASS_SPD;
 	adap->dev.parent = &pdev->dev;
+<<<<<<< HEAD
 	adap->dev.of_node = pdev->dev.of_node;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If "dev->id" is negative we consider it as zero.
@@ -200,9 +227,13 @@ static int __devinit i2c_gpio_probe(struct platform_device *pdev)
 	if (ret)
 		goto err_add_bus;
 
+<<<<<<< HEAD
 	of_i2c_register_devices(adap);
 
 	platform_set_drvdata(pdev, priv);
+=======
+	platform_set_drvdata(pdev, adap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_info(&pdev->dev, "using pins %u (SDA) and %u (SCL%s)\n",
 		 pdata->sda_pin, pdata->scl_pin,
@@ -216,11 +247,19 @@ err_add_bus:
 err_request_scl:
 	gpio_free(pdata->sda_pin);
 err_request_sda:
+<<<<<<< HEAD
+=======
+	kfree(bit_data);
+err_alloc_bit_data:
+	kfree(adap);
+err_alloc_adap:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devexit i2c_gpio_remove(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct i2c_gpio_private_data *priv;
 	struct i2c_gpio_platform_data *pdata;
 	struct i2c_adapter *adap;
@@ -228,14 +267,27 @@ static int __devexit i2c_gpio_remove(struct platform_device *pdev)
 	priv = platform_get_drvdata(pdev);
 	adap = &priv->adap;
 	pdata = &priv->pdata;
+=======
+	struct i2c_gpio_platform_data *pdata;
+	struct i2c_adapter *adap;
+
+	adap = platform_get_drvdata(pdev);
+	pdata = pdev->dev.platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	i2c_del_adapter(adap);
 	gpio_free(pdata->scl_pin);
 	gpio_free(pdata->sda_pin);
+<<<<<<< HEAD
+=======
+	kfree(adap->algo_data);
+	kfree(adap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 #if defined(CONFIG_OF)
 static const struct of_device_id i2c_gpio_dt_ids[] = {
 	{ .compatible = "i2c-gpio", },
@@ -245,11 +297,16 @@ static const struct of_device_id i2c_gpio_dt_ids[] = {
 MODULE_DEVICE_TABLE(of, i2c_gpio_dt_ids);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver i2c_gpio_driver = {
 	.driver		= {
 		.name	= "i2c-gpio",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.of_match_table	= of_match_ptr(i2c_gpio_dt_ids),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe		= i2c_gpio_probe,
 	.remove		= __devexit_p(i2c_gpio_remove),

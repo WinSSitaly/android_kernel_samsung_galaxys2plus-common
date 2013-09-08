@@ -21,7 +21,11 @@
 #include <linux/mm.h>
 #include <linux/in.h>
 #include <linux/ip.h>
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
+=======
+#if defined(CONFIG_IP6_NF_IPTABLES) || defined(CONFIG_IP6_NF_IPTABLES_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ipv6.h>
 #include <net/ipv6.h>
 #endif
@@ -64,7 +68,11 @@ struct dsthash_dst {
 			__be32 src;
 			__be32 dst;
 		} ip;
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
+=======
+#if defined(CONFIG_IP6_NF_IPTABLES) || defined(CONFIG_IP6_NF_IPTABLES_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct {
 			__be32 src[4];
 			__be32 dst[4];
@@ -176,7 +184,14 @@ dsthash_alloc_init(struct xt_hashlimit_htable *ht,
 		ent = NULL;
 	} else
 		ent = kmem_cache_alloc(hashlimit_cachep, GFP_ATOMIC);
+<<<<<<< HEAD
 	if (ent) {
+=======
+	if (!ent) {
+		if (net_ratelimit())
+			pr_err("cannot allocate dsthash_ent\n");
+	} else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		memcpy(&ent->dst, dst, sizeof(ent->dst));
 		spin_lock_init(&ent->lock);
 
@@ -389,7 +404,12 @@ static void htable_put(struct xt_hashlimit_htable *hinfo)
 #define CREDITS_PER_JIFFY POW2_BELOW32(MAX_CPJ)
 
 /* Precision saver. */
+<<<<<<< HEAD
 static u32 user2credits(u32 user)
+=======
+static inline u_int32_t
+user2credits(u_int32_t user)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* If multiplying would overflow... */
 	if (user > 0xFFFFFFFF / (HZ*CREDITS_PER_JIFFY))
@@ -399,7 +419,11 @@ static u32 user2credits(u32 user)
 	return (user * HZ * CREDITS_PER_JIFFY) / XT_HASHLIMIT_SCALE;
 }
 
+<<<<<<< HEAD
 static void rateinfo_recalc(struct dsthash_ent *dh, unsigned long now)
+=======
+static inline void rateinfo_recalc(struct dsthash_ent *dh, unsigned long now)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	dh->rateinfo.credit += (now - dh->rateinfo.prev) * CREDITS_PER_JIFFY;
 	if (dh->rateinfo.credit > dh->rateinfo.credit_cap)
@@ -412,7 +436,11 @@ static inline __be32 maskl(__be32 a, unsigned int l)
 	return l ? htonl(ntohl(a) & ~0 << (32 - l)) : 0;
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
+=======
+#if defined(CONFIG_IP6_NF_IPTABLES) || defined(CONFIG_IP6_NF_IPTABLES_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void hashlimit_ipv6_mask(__be32 *i, unsigned int p)
 {
 	switch (p) {
@@ -462,11 +490,16 @@ hashlimit_init_dst(const struct xt_hashlimit_htable *hinfo,
 			return 0;
 		nexthdr = ip_hdr(skb)->protocol;
 		break;
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
 	case NFPROTO_IPV6:
 	{
 		__be16 frag_off;
 
+=======
+#if defined(CONFIG_IP6_NF_IPTABLES) || defined(CONFIG_IP6_NF_IPTABLES_MODULE)
+	case NFPROTO_IPV6:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (hinfo->cfg.mode & XT_HASHLIMIT_HASH_DIP) {
 			memcpy(&dst->ip6.dst, &ipv6_hdr(skb)->daddr,
 			       sizeof(dst->ip6.dst));
@@ -482,11 +515,18 @@ hashlimit_init_dst(const struct xt_hashlimit_htable *hinfo,
 		      (XT_HASHLIMIT_HASH_DPT | XT_HASHLIMIT_HASH_SPT)))
 			return 0;
 		nexthdr = ipv6_hdr(skb)->nexthdr;
+<<<<<<< HEAD
 		protoff = ipv6_skip_exthdr(skb, sizeof(struct ipv6hdr), &nexthdr, &frag_off);
 		if ((int)protoff < 0)
 			return -1;
 		break;
 	}
+=======
+		protoff = ipv6_skip_exthdr(skb, sizeof(struct ipv6hdr), &nexthdr);
+		if ((int)protoff < 0)
+			return -1;
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	default:
 		BUG();
@@ -534,7 +574,12 @@ hashlimit_mt(const struct sk_buff *skb, struct xt_action_param *par)
 		dh->rateinfo.prev = jiffies;
 		dh->rateinfo.credit = user2credits(hinfo->cfg.avg *
 		                      hinfo->cfg.burst);
+<<<<<<< HEAD
 		dh->rateinfo.credit_cap = dh->rateinfo.credit;
+=======
+		dh->rateinfo.credit_cap = user2credits(hinfo->cfg.avg *
+		                          hinfo->cfg.burst);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dh->rateinfo.cost = user2credits(hinfo->cfg.avg);
 	} else {
 		/* update expiration timeout */
@@ -617,7 +662,11 @@ static struct xt_match hashlimit_mt_reg[] __read_mostly = {
 		.destroy        = hashlimit_mt_destroy,
 		.me             = THIS_MODULE,
 	},
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
+=======
+#if defined(CONFIG_IP6_NF_IPTABLES) || defined(CONFIG_IP6_NF_IPTABLES_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.name           = "hashlimit",
 		.revision       = 1,
@@ -694,7 +743,11 @@ static int dl_seq_real_show(struct dsthash_ent *ent, u_int8_t family,
 				 ent->rateinfo.credit, ent->rateinfo.credit_cap,
 				 ent->rateinfo.cost);
 		break;
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
+=======
+#if defined(CONFIG_IP6_NF_IPTABLES) || defined(CONFIG_IP6_NF_IPTABLES_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case NFPROTO_IPV6:
 		res = seq_printf(s, "%ld %pI6:%u->%pI6:%u %u %u %u\n",
 				 (long)(ent->expires - jiffies)/HZ,
@@ -762,7 +815,11 @@ static int __net_init hashlimit_proc_net_init(struct net *net)
 	hashlimit_net->ipt_hashlimit = proc_mkdir("ipt_hashlimit", net->proc_net);
 	if (!hashlimit_net->ipt_hashlimit)
 		return -ENOMEM;
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
+=======
+#if defined(CONFIG_IP6_NF_IPTABLES) || defined(CONFIG_IP6_NF_IPTABLES_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hashlimit_net->ip6t_hashlimit = proc_mkdir("ip6t_hashlimit", net->proc_net);
 	if (!hashlimit_net->ip6t_hashlimit) {
 		proc_net_remove(net, "ipt_hashlimit");
@@ -775,7 +832,11 @@ static int __net_init hashlimit_proc_net_init(struct net *net)
 static void __net_exit hashlimit_proc_net_exit(struct net *net)
 {
 	proc_net_remove(net, "ipt_hashlimit");
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
+=======
+#if defined(CONFIG_IP6_NF_IPTABLES) || defined(CONFIG_IP6_NF_IPTABLES_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	proc_net_remove(net, "ip6t_hashlimit");
 #endif
 }

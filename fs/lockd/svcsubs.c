@@ -403,7 +403,11 @@ nlmsvc_match_sb(void *datap, struct nlm_file *file)
 {
 	struct super_block *sb = datap;
 
+<<<<<<< HEAD
 	return sb == file->f_file->f_path.dentry->d_sb;
+=======
+	return sb == file->f_file->f_path.mnt->mnt_sb;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**

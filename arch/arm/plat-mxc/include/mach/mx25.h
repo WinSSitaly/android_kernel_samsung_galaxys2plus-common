@@ -41,7 +41,10 @@
 #define MX25_SSI2_BASE_ADDR		0x50014000
 #define MX25_SSI1_BASE_ADDR		0x50034000
 #define MX25_NFC_BASE_ADDR		0xbb000000
+<<<<<<< HEAD
 #define MX25_IIM_BASE_ADDR		0x53ff0000
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MX25_DRYICE_BASE_ADDR		0x53ffc000
 #define MX25_ESDHC1_BASE_ADDR		0x53fb4000
 #define MX25_ESDHC2_BASE_ADDR		0x53fb8000
@@ -105,8 +108,11 @@
 #define MX25_DMA_REQ_SSI1_RX0	28
 #define MX25_DMA_REQ_SSI1_TX0	29
 
+<<<<<<< HEAD
 #ifndef __ASSEMBLY__
 extern int mx25_revision(void);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* ifndef __MACH_MX25_H__ */

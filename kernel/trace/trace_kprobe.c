@@ -343,6 +343,7 @@ DEFINE_BASIC_FETCH_FUNCS(deref)
 DEFINE_FETCH_deref(string)
 DEFINE_FETCH_deref(string_size)
 
+<<<<<<< HEAD
 static __kprobes void update_deref_fetch_param(struct deref_fetch_param *data)
 {
 	if (CHECK_FETCH_FUNCS(deref, data->orig.fn))
@@ -351,6 +352,8 @@ static __kprobes void update_deref_fetch_param(struct deref_fetch_param *data)
 		update_symbol_cache(data->orig.data);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __kprobes void free_deref_fetch_param(struct deref_fetch_param *data)
 {
 	if (CHECK_FETCH_FUNCS(deref, data->orig.fn))
@@ -385,6 +388,7 @@ DEFINE_BASIC_FETCH_FUNCS(bitfield)
 #define fetch_bitfield_string_size NULL
 
 static __kprobes void
+<<<<<<< HEAD
 update_bitfield_fetch_param(struct bitfield_fetch_param *data)
 {
 	/*
@@ -398,6 +402,8 @@ update_bitfield_fetch_param(struct bitfield_fetch_param *data)
 }
 
 static __kprobes void
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 free_bitfield_fetch_param(struct bitfield_fetch_param *data)
 {
 	/*
@@ -410,7 +416,10 @@ free_bitfield_fetch_param(struct bitfield_fetch_param *data)
 		free_symbol_cache(data->orig.data);
 	kfree(data);
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Default (unsigned long) fetch type */
 #define __DEFAULT_FETCH_TYPE(t) u##t
 #define _DEFAULT_FETCH_TYPE(t) __DEFAULT_FETCH_TYPE(t)
@@ -558,7 +567,10 @@ struct probe_arg {
 /* Flags for trace_probe */
 #define TP_FLAG_TRACE	1
 #define TP_FLAG_PROFILE	2
+<<<<<<< HEAD
 #define TP_FLAG_REGISTERED 4
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct trace_probe {
 	struct list_head	list;
@@ -578,16 +590,25 @@ struct trace_probe {
 	(sizeof(struct probe_arg) * (n)))
 
 
+<<<<<<< HEAD
 static __kprobes int trace_probe_is_return(struct trace_probe *tp)
+=======
+static __kprobes int probe_is_return(struct trace_probe *tp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return tp->rp.handler != NULL;
 }
 
+<<<<<<< HEAD
 static __kprobes const char *trace_probe_symbol(struct trace_probe *tp)
+=======
+static __kprobes const char *probe_symbol(struct trace_probe *tp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return tp->symbol ? tp->symbol : "unknown";
 }
 
+<<<<<<< HEAD
 static __kprobes unsigned long trace_probe_offset(struct trace_probe *tp)
 {
 	return tp->rp.kp.offset;
@@ -621,6 +642,8 @@ static __kprobes bool trace_probe_is_on_module(struct trace_probe *tp)
 	return !!strchr(trace_probe_symbol(tp), ':');
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int register_probe_event(struct trace_probe *tp);
 static void unregister_probe_event(struct trace_probe *tp);
 
@@ -702,6 +725,7 @@ error:
 	return ERR_PTR(ret);
 }
 
+<<<<<<< HEAD
 static void update_probe_arg(struct probe_arg *arg)
 {
 	if (CHECK_FETCH_FUNCS(bitfield, arg->fetch.fn))
@@ -712,6 +736,8 @@ static void update_probe_arg(struct probe_arg *arg)
 		update_symbol_cache(arg->fetch.data);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void free_probe_arg(struct probe_arg *arg)
 {
 	if (CHECK_FETCH_FUNCS(bitfield, arg->fetch.fn))
@@ -737,7 +763,11 @@ static void free_trace_probe(struct trace_probe *tp)
 	kfree(tp);
 }
 
+<<<<<<< HEAD
 static struct trace_probe *find_trace_probe(const char *event,
+=======
+static struct trace_probe *find_probe_event(const char *event,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					    const char *group)
 {
 	struct trace_probe *tp;
@@ -749,6 +779,7 @@ static struct trace_probe *find_trace_probe(const char *event,
 	return NULL;
 }
 
+<<<<<<< HEAD
 /* Enable trace_probe - @flag must be TP_FLAG_TRACE or TP_FLAG_PROFILE */
 static int enable_trace_probe(struct trace_probe *tp, int flag)
 {
@@ -847,6 +878,17 @@ static int unregister_trace_probe(struct trace_probe *tp)
 	unregister_probe_event(tp);
 
 	return 0;
+=======
+/* Unregister a trace_probe and probe_event: call with locking probe_lock */
+static void unregister_trace_probe(struct trace_probe *tp)
+{
+	if (probe_is_return(tp))
+		unregister_kretprobe(&tp->rp);
+	else
+		unregister_kprobe(&tp->rp.kp);
+	list_del(&tp->list);
+	unregister_probe_event(tp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Register a trace_probe and probe_event */
@@ -857,6 +899,7 @@ static int register_trace_probe(struct trace_probe *tp)
 
 	mutex_lock(&probe_lock);
 
+<<<<<<< HEAD
 	/* Delete old (same name) event if exist */
 	old_tp = find_trace_probe(tp->call.name, tp->call.class->system);
 	if (old_tp) {
@@ -867,12 +910,22 @@ static int register_trace_probe(struct trace_probe *tp)
 	}
 
 	/* Register new event */
+=======
+	/* register as an event */
+	old_tp = find_probe_event(tp->call.name, tp->call.class->system);
+	if (old_tp) {
+		/* delete old event */
+		unregister_trace_probe(old_tp);
+		free_trace_probe(old_tp);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = register_probe_event(tp);
 	if (ret) {
 		pr_warning("Failed to register probe event(%d)\n", ret);
 		goto end;
 	}
 
+<<<<<<< HEAD
 	/* Register k*probe */
 	ret = __register_trace_probe(tp);
 	if (ret < 0)
@@ -880,11 +933,31 @@ static int register_trace_probe(struct trace_probe *tp)
 	else
 		list_add_tail(&tp->list, &probe_list);
 
+=======
+	tp->rp.kp.flags |= KPROBE_FLAG_DISABLED;
+	if (probe_is_return(tp))
+		ret = register_kretprobe(&tp->rp);
+	else
+		ret = register_kprobe(&tp->rp.kp);
+
+	if (ret) {
+		pr_warning("Could not insert probe(%d)\n", ret);
+		if (ret == -EILSEQ) {
+			pr_warning("Probing address(0x%p) is not an "
+				   "instruction boundary.\n",
+				   tp->rp.kp.addr);
+			ret = -EINVAL;
+		}
+		unregister_probe_event(tp);
+	} else
+		list_add_tail(&tp->list, &probe_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 end:
 	mutex_unlock(&probe_lock);
 	return ret;
 }
 
+<<<<<<< HEAD
 /* Module notifier call back, checking event on the module */
 static int trace_probe_module_callback(struct notifier_block *nb,
 				       unsigned long val, void *data)
@@ -919,6 +992,8 @@ static struct notifier_block trace_probe_module_nb = {
 	.priority = 1	/* Invoked after kprobe module callback */
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Split symbol and offset. */
 static int split_symbol_offset(char *symbol, unsigned long *offset)
 {
@@ -1144,8 +1219,13 @@ static int create_trace_probe(int argc, char **argv)
 {
 	/*
 	 * Argument syntax:
+<<<<<<< HEAD
 	 *  - Add kprobe: p[:[GRP/]EVENT] [MOD:]KSYM[+OFFS]|KADDR [FETCHARGS]
 	 *  - Add kretprobe: r[:[GRP/]EVENT] [MOD:]KSYM[+0] [FETCHARGS]
+=======
+	 *  - Add kprobe: p[:[GRP/]EVENT] KSYM[+OFFS]|KADDR [FETCHARGS]
+	 *  - Add kretprobe: r[:[GRP/]EVENT] KSYM[+0] [FETCHARGS]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Fetch args:
 	 *  $retval	: fetch return value
 	 *  $stack	: fetch stack address
@@ -1207,18 +1287,29 @@ static int create_trace_probe(int argc, char **argv)
 			return -EINVAL;
 		}
 		mutex_lock(&probe_lock);
+<<<<<<< HEAD
 		tp = find_trace_probe(event, group);
+=======
+		tp = find_probe_event(event, group);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!tp) {
 			mutex_unlock(&probe_lock);
 			pr_info("Event %s/%s doesn't exist.\n", group, event);
 			return -ENOENT;
 		}
 		/* delete an event */
+<<<<<<< HEAD
 		ret = unregister_trace_probe(tp);
 		if (ret == 0)
 			free_trace_probe(tp);
 		mutex_unlock(&probe_lock);
 		return ret;
+=======
+		unregister_trace_probe(tp);
+		free_trace_probe(tp);
+		mutex_unlock(&probe_lock);
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (argc < 2) {
@@ -1327,6 +1418,7 @@ error:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int release_all_trace_probes(void)
 {
 	struct trace_probe *tp;
@@ -1339,12 +1431,20 @@ static int release_all_trace_probes(void)
 			ret = -EBUSY;
 			goto end;
 		}
+=======
+static void cleanup_all_probes(void)
+{
+	struct trace_probe *tp;
+
+	mutex_lock(&probe_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* TODO: Use batch unregistration */
 	while (!list_empty(&probe_list)) {
 		tp = list_entry(probe_list.next, struct trace_probe, list);
 		unregister_trace_probe(tp);
 		free_trace_probe(tp);
 	}
+<<<<<<< HEAD
 
 end:
 	mutex_unlock(&probe_lock);
@@ -1352,6 +1452,12 @@ end:
 	return ret;
 }
 
+=======
+	mutex_unlock(&probe_lock);
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Probes listing interfaces */
 static void *probes_seq_start(struct seq_file *m, loff_t *pos)
 {
@@ -1374,16 +1480,26 @@ static int probes_seq_show(struct seq_file *m, void *v)
 	struct trace_probe *tp = v;
 	int i;
 
+<<<<<<< HEAD
 	seq_printf(m, "%c", trace_probe_is_return(tp) ? 'r' : 'p');
+=======
+	seq_printf(m, "%c", probe_is_return(tp) ? 'r' : 'p');
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	seq_printf(m, ":%s/%s", tp->call.class->system, tp->call.name);
 
 	if (!tp->symbol)
 		seq_printf(m, " 0x%p", tp->rp.kp.addr);
 	else if (tp->rp.kp.offset)
+<<<<<<< HEAD
 		seq_printf(m, " %s+%u", trace_probe_symbol(tp),
 			   tp->rp.kp.offset);
 	else
 		seq_printf(m, " %s", trace_probe_symbol(tp));
+=======
+		seq_printf(m, " %s+%u", probe_symbol(tp), tp->rp.kp.offset);
+	else
+		seq_printf(m, " %s", probe_symbol(tp));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < tp->nr_args; i++)
 		seq_printf(m, " %s=%s", tp->args[i].name, tp->args[i].comm);
@@ -1401,6 +1517,7 @@ static const struct seq_operations probes_seq_op = {
 
 static int probes_open(struct inode *inode, struct file *file)
 {
+<<<<<<< HEAD
 	int ret;
 
 	if ((file->f_mode & FMODE_WRITE) && (file->f_flags & O_TRUNC)) {
@@ -1408,6 +1525,11 @@ static int probes_open(struct inode *inode, struct file *file)
 		if (ret < 0)
 			return ret;
 	}
+=======
+	if ((file->f_mode & FMODE_WRITE) &&
+	    (file->f_flags & O_TRUNC))
+		cleanup_all_probes();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return seq_open(file, &probes_seq_op);
 }
@@ -1595,8 +1717,12 @@ static __kprobes void kprobe_trace_func(struct kprobe *kp, struct pt_regs *regs)
 	store_trace_args(sizeof(*entry), tp, regs, (u8 *)&entry[1], dsize);
 
 	if (!filter_current_check_discard(buffer, call, entry, event))
+<<<<<<< HEAD
 		trace_nowake_buffer_unlock_commit_regs(buffer, event,
 						       irq_flags, pc, regs);
+=======
+		trace_nowake_buffer_unlock_commit(buffer, event, irq_flags, pc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Kretprobe handler */
@@ -1628,8 +1754,12 @@ static __kprobes void kretprobe_trace_func(struct kretprobe_instance *ri,
 	store_trace_args(sizeof(*entry), tp, regs, (u8 *)&entry[1], dsize);
 
 	if (!filter_current_check_discard(buffer, call, entry, event))
+<<<<<<< HEAD
 		trace_nowake_buffer_unlock_commit_regs(buffer, event,
 						       irq_flags, pc, regs);
+=======
+		trace_nowake_buffer_unlock_commit(buffer, event, irq_flags, pc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Event entry printers */
@@ -1711,6 +1841,33 @@ partial:
 	return TRACE_TYPE_PARTIAL_LINE;
 }
 
+<<<<<<< HEAD
+=======
+static int probe_event_enable(struct ftrace_event_call *call)
+{
+	struct trace_probe *tp = (struct trace_probe *)call->data;
+
+	tp->flags |= TP_FLAG_TRACE;
+	if (probe_is_return(tp))
+		return enable_kretprobe(&tp->rp);
+	else
+		return enable_kprobe(&tp->rp.kp);
+}
+
+static void probe_event_disable(struct ftrace_event_call *call)
+{
+	struct trace_probe *tp = (struct trace_probe *)call->data;
+
+	tp->flags &= ~TP_FLAG_TRACE;
+	if (!(tp->flags & (TP_FLAG_TRACE | TP_FLAG_PROFILE))) {
+		if (probe_is_return(tp))
+			disable_kretprobe(&tp->rp);
+		else
+			disable_kprobe(&tp->rp.kp);
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #undef DEFINE_FIELD
 #define DEFINE_FIELD(type, item, name, is_signed)			\
 	do {								\
@@ -1772,7 +1929,11 @@ static int __set_print_fmt(struct trace_probe *tp, char *buf, int len)
 
 	const char *fmt, *arg;
 
+<<<<<<< HEAD
 	if (!trace_probe_is_return(tp)) {
+=======
+	if (!probe_is_return(tp)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fmt = "(%lx)";
 		arg = "REC->" FIELD_STRING_IP;
 	} else {
@@ -1889,6 +2050,7 @@ static __kprobes void kretprobe_perf_func(struct kretprobe_instance *ri,
 	head = this_cpu_ptr(call->perf_events);
 	perf_trace_buf_submit(entry, size, rctx, entry->ret_ip, 1, regs, head);
 }
+<<<<<<< HEAD
 #endif	/* CONFIG_PERF_EVENTS */
 
 static __kprobes
@@ -1902,10 +2064,49 @@ int kprobe_register(struct ftrace_event_call *event,
 		return enable_trace_probe(tp, TP_FLAG_TRACE);
 	case TRACE_REG_UNREGISTER:
 		disable_trace_probe(tp, TP_FLAG_TRACE);
+=======
+
+static int probe_perf_enable(struct ftrace_event_call *call)
+{
+	struct trace_probe *tp = (struct trace_probe *)call->data;
+
+	tp->flags |= TP_FLAG_PROFILE;
+
+	if (probe_is_return(tp))
+		return enable_kretprobe(&tp->rp);
+	else
+		return enable_kprobe(&tp->rp.kp);
+}
+
+static void probe_perf_disable(struct ftrace_event_call *call)
+{
+	struct trace_probe *tp = (struct trace_probe *)call->data;
+
+	tp->flags &= ~TP_FLAG_PROFILE;
+
+	if (!(tp->flags & TP_FLAG_TRACE)) {
+		if (probe_is_return(tp))
+			disable_kretprobe(&tp->rp);
+		else
+			disable_kprobe(&tp->rp.kp);
+	}
+}
+#endif	/* CONFIG_PERF_EVENTS */
+
+static __kprobes
+int kprobe_register(struct ftrace_event_call *event, enum trace_reg type)
+{
+	switch (type) {
+	case TRACE_REG_REGISTER:
+		return probe_event_enable(event);
+	case TRACE_REG_UNREGISTER:
+		probe_event_disable(event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 #ifdef CONFIG_PERF_EVENTS
 	case TRACE_REG_PERF_REGISTER:
+<<<<<<< HEAD
 		return enable_trace_probe(tp, TP_FLAG_PROFILE);
 	case TRACE_REG_PERF_UNREGISTER:
 		disable_trace_probe(tp, TP_FLAG_PROFILE);
@@ -1914,6 +2115,11 @@ int kprobe_register(struct ftrace_event_call *event,
 	case TRACE_REG_PERF_CLOSE:
 	case TRACE_REG_PERF_ADD:
 	case TRACE_REG_PERF_DEL:
+=======
+		return probe_perf_enable(event);
+	case TRACE_REG_PERF_UNREGISTER:
+		probe_perf_disable(event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 #endif
 	}
@@ -1963,7 +2169,11 @@ static int register_probe_event(struct trace_probe *tp)
 
 	/* Initialize ftrace_event_call */
 	INIT_LIST_HEAD(&call->class->fields);
+<<<<<<< HEAD
 	if (trace_probe_is_return(tp)) {
+=======
+	if (probe_is_return(tp)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		call->event.funcs = &kretprobe_funcs;
 		call->class->define_fields = kretprobe_event_define_fields;
 	} else {
@@ -2002,9 +2212,12 @@ static __init int init_kprobe_trace(void)
 	struct dentry *d_tracer;
 	struct dentry *entry;
 
+<<<<<<< HEAD
 	if (register_module_notifier(&trace_probe_module_nb))
 		return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	d_tracer = tracing_init_dentry();
 	if (!d_tracer)
 		return 0;
@@ -2058,12 +2271,20 @@ static __init int kprobe_trace_self_tests_init(void)
 		warn++;
 	} else {
 		/* Enable trace point */
+<<<<<<< HEAD
 		tp = find_trace_probe("testprobe", KPROBE_EVENT_SYSTEM);
+=======
+		tp = find_probe_event("testprobe", KPROBE_EVENT_SYSTEM);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (WARN_ON_ONCE(tp == NULL)) {
 			pr_warning("error on getting new probe.\n");
 			warn++;
 		} else
+<<<<<<< HEAD
 			enable_trace_probe(tp, TP_FLAG_TRACE);
+=======
+			probe_event_enable(&tp->call);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ret = command_trace_probe("r:testprobe2 kprobe_trace_selftest_target "
@@ -2073,12 +2294,20 @@ static __init int kprobe_trace_self_tests_init(void)
 		warn++;
 	} else {
 		/* Enable trace point */
+<<<<<<< HEAD
 		tp = find_trace_probe("testprobe2", KPROBE_EVENT_SYSTEM);
+=======
+		tp = find_probe_event("testprobe2", KPROBE_EVENT_SYSTEM);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (WARN_ON_ONCE(tp == NULL)) {
 			pr_warning("error on getting new probe.\n");
 			warn++;
 		} else
+<<<<<<< HEAD
 			enable_trace_probe(tp, TP_FLAG_TRACE);
+=======
+			probe_event_enable(&tp->call);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (warn)
@@ -2086,6 +2315,7 @@ static __init int kprobe_trace_self_tests_init(void)
 
 	ret = target(1, 2, 3, 4, 5, 6);
 
+<<<<<<< HEAD
 	/* Disable trace points before removing it */
 	tp = find_trace_probe("testprobe", KPROBE_EVENT_SYSTEM);
 	if (WARN_ON_ONCE(tp == NULL)) {
@@ -2101,6 +2331,8 @@ static __init int kprobe_trace_self_tests_init(void)
 	} else
 		disable_trace_probe(tp, TP_FLAG_TRACE);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = command_trace_probe("-:testprobe");
 	if (WARN_ON_ONCE(ret)) {
 		pr_warning("error on deleting a probe.\n");
@@ -2114,7 +2346,11 @@ static __init int kprobe_trace_self_tests_init(void)
 	}
 
 end:
+<<<<<<< HEAD
 	release_all_trace_probes();
+=======
+	cleanup_all_probes();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (warn)
 		pr_cont("NG: Some tests are failed. Please check them.\n");
 	else

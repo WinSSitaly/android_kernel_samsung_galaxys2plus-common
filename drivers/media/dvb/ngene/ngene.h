@@ -641,11 +641,16 @@ struct ngene_channel {
 	int                   mode;
 	bool                  has_adapter;
 	bool                  has_demux;
+<<<<<<< HEAD
 	int                   demod_type;
 	int (*gate_ctrl)(struct dvb_frontend *, int);
 
 	struct dvb_frontend  *fe;
 	struct dvb_frontend  *fe2;
+=======
+
+	struct dvb_frontend  *fe;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dmxdev         dmxdev;
 	struct dvb_demux      demux;
 	struct dvb_net        dvbnet;
@@ -789,8 +794,11 @@ struct ngene {
 	u8                    uart_rbuf[UART_RBUF_LEN];
 	int                   uart_rp, uart_wp;
 
+<<<<<<< HEAD
 #define TS_FILLER  0x6f
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8                   *tsout_buf;
 #define TSOUT_BUF_SIZE (512*188*8)
 	struct dvb_ringbuffer tsout_rbuf;
@@ -857,7 +865,11 @@ struct ngene_info {
 };
 
 #ifdef NGENE_V4L
+<<<<<<< HEAD
 struct ngene_format {
+=======
+struct ngene_format{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *name;
 	int   fourcc;          /* video4linux 2      */
 	int   btformat;        /* BT848_COLOR_FMT_*  */

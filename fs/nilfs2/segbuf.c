@@ -227,9 +227,15 @@ static void nilfs_segbuf_fill_in_data_crc(struct nilfs_segment_buffer *segbuf,
 		crc = crc32_le(crc, bh->b_data, bh->b_size);
 	}
 	list_for_each_entry(bh, &segbuf->sb_payload_buffers, b_assoc_buffers) {
+<<<<<<< HEAD
 		kaddr = kmap_atomic(bh->b_page);
 		crc = crc32_le(crc, kaddr + bh_offset(bh), bh->b_size);
 		kunmap_atomic(kaddr);
+=======
+		kaddr = kmap_atomic(bh->b_page, KM_USER0);
+		crc = crc32_le(crc, kaddr + bh_offset(bh), bh->b_size);
+		kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	raw_sum->ss_datasum = cpu_to_le32(crc);
 }
@@ -345,7 +351,12 @@ static void nilfs_end_bio_write(struct bio *bio, int err)
 
 	if (err == -EOPNOTSUPP) {
 		set_bit(BIO_EOPNOTSUPP, &bio->bi_flags);
+<<<<<<< HEAD
 		/* to be detected by nilfs_segbuf_submit_bio() */
+=======
+		bio_put(bio);
+		/* to be detected by submit_seg_bio() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (!uptodate)
@@ -376,12 +387,19 @@ static int nilfs_segbuf_submit_bio(struct nilfs_segment_buffer *segbuf,
 	bio->bi_private = segbuf;
 	bio_get(bio);
 	submit_bio(mode, bio);
+<<<<<<< HEAD
 	segbuf->sb_nbio++;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (bio_flagged(bio, BIO_EOPNOTSUPP)) {
 		bio_put(bio);
 		err = -EOPNOTSUPP;
 		goto failed;
 	}
+<<<<<<< HEAD
+=======
+	segbuf->sb_nbio++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bio_put(bio);
 
 	wi->bio = NULL;

@@ -17,7 +17,11 @@
 
 #include "bfad_drv.h"
 #include "bfa_modules.h"
+<<<<<<< HEAD
 #include "bfi_reg.h"
+=======
+#include "bfi_ctreg.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 BFA_TRC_FILE(HAL, CORE);
 
@@ -25,15 +29,22 @@ BFA_TRC_FILE(HAL, CORE);
  * BFA module list terminated by NULL
  */
 static struct bfa_module_s *hal_mods[] = {
+<<<<<<< HEAD
 	&hal_mod_fcdiag,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&hal_mod_sgpg,
 	&hal_mod_fcport,
 	&hal_mod_fcxp,
 	&hal_mod_lps,
 	&hal_mod_uf,
 	&hal_mod_rport,
+<<<<<<< HEAD
 	&hal_mod_fcp,
 	&hal_mod_dconf,
+=======
+	&hal_mod_fcpim,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL
 };
 
@@ -43,7 +54,11 @@ static struct bfa_module_s *hal_mods[] = {
 static bfa_isr_func_t  bfa_isrs[BFI_MC_MAX] = {
 	bfa_isr_unhandled,	/* NONE */
 	bfa_isr_unhandled,	/* BFI_MC_IOC */
+<<<<<<< HEAD
 	bfa_fcdiag_intr,	/* BFI_MC_DIAG */
+=======
+	bfa_isr_unhandled,	/* BFI_MC_DIAG */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_isr_unhandled,	/* BFI_MC_FLASH */
 	bfa_isr_unhandled,	/* BFI_MC_CEE */
 	bfa_fcport_isr,		/* BFI_MC_FCPORT */
@@ -53,7 +68,11 @@ static bfa_isr_func_t  bfa_isrs[BFI_MC_MAX] = {
 	bfa_fcxp_isr,		/* BFI_MC_FCXP */
 	bfa_lps_isr,		/* BFI_MC_LPS */
 	bfa_rport_isr,		/* BFI_MC_RPORT */
+<<<<<<< HEAD
 	bfa_itn_isr,		/* BFI_MC_ITN */
+=======
+	bfa_itnim_isr,		/* BFI_MC_ITNIM */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_isr_unhandled,	/* BFI_MC_IOIM_READ */
 	bfa_isr_unhandled,	/* BFI_MC_IOIM_WRITE */
 	bfa_isr_unhandled,	/* BFI_MC_IOIM_IO */
@@ -91,6 +110,7 @@ static bfa_ioc_mbox_mcfunc_t  bfa_mbox_isrs[BFI_MC_MAX] = {
 
 
 static void
+<<<<<<< HEAD
 bfa_com_port_attach(struct bfa_s *bfa)
 {
 	struct bfa_port_s	*port = &bfa->modules.port;
@@ -163,6 +183,25 @@ bfa_com_phy_attach(struct bfa_s *bfa, bfa_boolean_t mincfg)
 
 	bfa_phy_attach(phy, &bfa->ioc, bfa, bfa->trcmod, mincfg);
 	bfa_phy_memclaim(phy, phy_dma->kva_curp, phy_dma->dma_curp, mincfg);
+=======
+bfa_com_port_attach(struct bfa_s *bfa, struct bfa_meminfo_s *mi)
+{
+	struct bfa_port_s	*port = &bfa->modules.port;
+	u32			dm_len;
+	u8			*dm_kva;
+	u64			dm_pa;
+
+	dm_len = bfa_port_meminfo();
+	dm_kva = bfa_meminfo_dma_virt(mi);
+	dm_pa  = bfa_meminfo_dma_phys(mi);
+
+	memset(port, 0, sizeof(struct bfa_port_s));
+	bfa_port_attach(port, &bfa->ioc, bfa, bfa->trcmod);
+	bfa_port_mem_claim(port, dm_kva, dm_pa);
+
+	bfa_meminfo_dma_virt(mi) = dm_kva + dm_len;
+	bfa_meminfo_dma_phys(mi) = dm_pa + dm_len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -179,7 +218,10 @@ enum {
 	BFA_IOCFC_ACT_INIT	= 1,
 	BFA_IOCFC_ACT_STOP	= 2,
 	BFA_IOCFC_ACT_DISABLE	= 3,
+<<<<<<< HEAD
 	BFA_IOCFC_ACT_ENABLE	= 4,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define DEF_CFG_NUM_FABRICS		1
@@ -200,6 +242,7 @@ enum {
 #define DEF_CFG_NUM_SBOOT_LUNS		16
 
 /*
+<<<<<<< HEAD
  * IOCFC state machine definitions/declarations
  */
 bfa_fsm_state_decl(bfa_iocfc, stopped, struct bfa_iocfc_s, enum iocfc_event);
@@ -228,11 +271,16 @@ bfa_fsm_state_decl(bfa_iocfc, init_failed,
 static void bfa_iocfc_start_submod(struct bfa_s *bfa);
 static void bfa_iocfc_disable_submod(struct bfa_s *bfa);
 static void bfa_iocfc_send_cfg(void *bfa_arg);
+=======
+ * forward declaration for IOC FC functions
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void bfa_iocfc_enable_cbfn(void *bfa_arg, enum bfa_status status);
 static void bfa_iocfc_disable_cbfn(void *bfa_arg);
 static void bfa_iocfc_hbfail_cbfn(void *bfa_arg);
 static void bfa_iocfc_reset_cbfn(void *bfa_arg);
 static struct bfa_ioc_cbfn_s bfa_iocfc_cbfn;
+<<<<<<< HEAD
 static void bfa_iocfc_init_cb(void *bfa_arg, bfa_boolean_t complete);
 static void bfa_iocfc_stop_cb(void *bfa_arg, bfa_boolean_t compl);
 static void bfa_iocfc_enable_cb(void *bfa_arg, bfa_boolean_t compl);
@@ -625,6 +673,8 @@ bfa_iocfc_sm_init_failed(struct bfa_iocfc_s *iocfc, enum iocfc_event event)
 		break;
 	}
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * BFA Interrupt handling functions
@@ -649,6 +699,7 @@ bfa_reqq_resume(struct bfa_s *bfa, int qid)
 	}
 }
 
+<<<<<<< HEAD
 bfa_boolean_t
 bfa_isr_rspq(struct bfa_s *bfa, int qid)
 {
@@ -736,6 +787,12 @@ bfa_msix_all(struct bfa_s *bfa, int vec)
 		return;
 
 	bfa_msix_lpu_err(bfa, intr);
+=======
+void
+bfa_msix_all(struct bfa_s *bfa, int vec)
+{
+	bfa_intx(bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 bfa_boolean_t
@@ -743,6 +800,7 @@ bfa_intx(struct bfa_s *bfa)
 {
 	u32 intr, qintr;
 	int queue;
+<<<<<<< HEAD
 	bfa_boolean_t rspq_comp = BFA_FALSE;
 
 	intr = readl(bfa->iocfc.bfa_regs.intr_status);
@@ -762,14 +820,42 @@ bfa_intx(struct bfa_s *bfa)
 
 	if (!intr)
 		return (qintr | rspq_comp) ? BFA_TRUE : BFA_FALSE;
+=======
+
+	intr = readl(bfa->iocfc.bfa_regs.intr_status);
+	if (!intr)
+		return BFA_FALSE;
+
+	/*
+	 * RME completion queue interrupt
+	 */
+	qintr = intr & __HFN_INT_RME_MASK;
+	writel(qintr, bfa->iocfc.bfa_regs.intr_status);
+
+	for (queue = 0; queue < BFI_IOC_MAX_CQS_ASIC; queue++) {
+		if (intr & (__HFN_INT_RME_Q0 << queue))
+			bfa_msix_rspq(bfa, queue & (BFI_IOC_MAX_CQS - 1));
+	}
+	intr &= ~qintr;
+	if (!intr)
+		return BFA_TRUE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * CPE completion queue interrupt
 	 */
 	qintr = intr & __HFN_INT_CPE_MASK;
+<<<<<<< HEAD
 	if (qintr && bfa->queue_process) {
 		for (queue = 0; queue < BFI_IOC_MAX_CQS; queue++)
 			bfa_isr_reqq(bfa, queue);
+=======
+	writel(qintr, bfa->iocfc.bfa_regs.intr_status);
+
+	for (queue = 0; queue < BFI_IOC_MAX_CQS_ASIC; queue++) {
+		if (intr & (__HFN_INT_CPE_Q0 << queue))
+			bfa_msix_reqq(bfa, queue & (BFI_IOC_MAX_CQS - 1));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	intr &= ~qintr;
 	if (!intr)
@@ -783,11 +869,16 @@ bfa_intx(struct bfa_s *bfa)
 void
 bfa_isr_enable(struct bfa_s *bfa)
 {
+<<<<<<< HEAD
 	u32 umsk;
+=======
+	u32 intr_unmask;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int pci_func = bfa_ioc_pcifn(&bfa->ioc);
 
 	bfa_trc(bfa, pci_func);
 
+<<<<<<< HEAD
 	bfa_msix_ctrl_install(bfa);
 
 	if (bfa_asic_id_ct2(bfa->ioc.pcidev.device_id)) {
@@ -802,6 +893,29 @@ bfa_isr_enable(struct bfa_s *bfa)
 	writel(umsk, bfa->iocfc.bfa_regs.intr_status);
 	writel(~umsk, bfa->iocfc.bfa_regs.intr_mask);
 	bfa->iocfc.intr_mask = ~umsk;
+=======
+	bfa_msix_install(bfa);
+	intr_unmask = (__HFN_INT_ERR_EMC | __HFN_INT_ERR_LPU0 |
+		       __HFN_INT_ERR_LPU1 | __HFN_INT_ERR_PSS |
+		       __HFN_INT_LL_HALT);
+
+	if (pci_func == 0)
+		intr_unmask |= (__HFN_INT_CPE_Q0 | __HFN_INT_CPE_Q1 |
+				__HFN_INT_CPE_Q2 | __HFN_INT_CPE_Q3 |
+				__HFN_INT_RME_Q0 | __HFN_INT_RME_Q1 |
+				__HFN_INT_RME_Q2 | __HFN_INT_RME_Q3 |
+				__HFN_INT_MBOX_LPU0);
+	else
+		intr_unmask |= (__HFN_INT_CPE_Q4 | __HFN_INT_CPE_Q5 |
+				__HFN_INT_CPE_Q6 | __HFN_INT_CPE_Q7 |
+				__HFN_INT_RME_Q4 | __HFN_INT_RME_Q5 |
+				__HFN_INT_RME_Q6 | __HFN_INT_RME_Q7 |
+				__HFN_INT_MBOX_LPU1);
+
+	writel(intr_unmask, bfa->iocfc.bfa_regs.intr_status);
+	writel(~intr_unmask, bfa->iocfc.bfa_regs.intr_mask);
+	bfa->iocfc.intr_mask = ~intr_unmask;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_isr_mode_set(bfa, bfa->msix.nvecs != 0);
 }
 
@@ -814,9 +928,26 @@ bfa_isr_disable(struct bfa_s *bfa)
 }
 
 void
+<<<<<<< HEAD
 bfa_msix_reqq(struct bfa_s *bfa, int vec)
 {
 	bfa_isr_reqq(bfa, vec - bfa->iocfc.hwif.cpe_vec_q0);
+=======
+bfa_msix_reqq(struct bfa_s *bfa, int qid)
+{
+	struct list_head *waitq;
+
+	qid &= (BFI_IOC_MAX_CQS - 1);
+
+	bfa->iocfc.hwif.hw_reqq_ack(bfa, qid);
+
+	/*
+	 * Resume any pending requests in the corresponding reqq.
+	 */
+	waitq = bfa_reqq(bfa, qid);
+	if (!list_empty(waitq))
+		bfa_reqq_resume(bfa, qid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void
@@ -830,15 +961,53 @@ bfa_isr_unhandled(struct bfa_s *bfa, struct bfi_msg_s *m)
 }
 
 void
+<<<<<<< HEAD
 bfa_msix_rspq(struct bfa_s *bfa, int vec)
 {
 	bfa_isr_rspq(bfa, vec - bfa->iocfc.hwif.rme_vec_q0);
+=======
+bfa_msix_rspq(struct bfa_s *bfa, int qid)
+{
+	struct bfi_msg_s *m;
+	u32 pi, ci;
+	struct list_head *waitq;
+
+	qid &= (BFI_IOC_MAX_CQS - 1);
+
+	bfa->iocfc.hwif.hw_rspq_ack(bfa, qid);
+
+	ci = bfa_rspq_ci(bfa, qid);
+	pi = bfa_rspq_pi(bfa, qid);
+
+	if (bfa->rme_process) {
+		while (ci != pi) {
+			m = bfa_rspq_elem(bfa, qid, ci);
+			bfa_isrs[m->mhdr.msg_class] (bfa, m);
+			CQ_INCR(ci, bfa->iocfc.cfg.drvcfg.num_rspq_elems);
+		}
+	}
+
+	/*
+	 * update CI
+	 */
+	bfa_rspq_ci(bfa, qid) = pi;
+	writel(pi, bfa->iocfc.bfa_regs.rme_q_ci[qid]);
+	mmiowb();
+
+	/*
+	 * Resume any pending requests in the corresponding reqq.
+	 */
+	waitq = bfa_reqq(bfa, qid);
+	if (!list_empty(waitq))
+		bfa_reqq_resume(bfa, qid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void
 bfa_msix_lpu_err(struct bfa_s *bfa, int vec)
 {
 	u32 intr, curr_value;
+<<<<<<< HEAD
 	bfa_boolean_t lpu_isr, halt_isr, pss_isr;
 
 	intr = readl(bfa->iocfc.bfa_regs.intr_status);
@@ -862,6 +1031,19 @@ bfa_msix_lpu_err(struct bfa_s *bfa, int vec)
 
 	if (intr) {
 		if (halt_isr) {
+=======
+
+	intr = readl(bfa->iocfc.bfa_regs.intr_status);
+
+	if (intr & (__HFN_INT_MBOX_LPU0 | __HFN_INT_MBOX_LPU1))
+		bfa_ioc_mbox_isr(&bfa->ioc);
+
+	intr &= (__HFN_INT_ERR_EMC | __HFN_INT_ERR_LPU0 |
+		__HFN_INT_ERR_LPU1 | __HFN_INT_ERR_PSS | __HFN_INT_LL_HALT);
+
+	if (intr) {
+		if (intr & __HFN_INT_LL_HALT) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * If LL_HALT bit is set then FW Init Halt LL Port
 			 * Register needs to be cleared as well so Interrupt
@@ -872,7 +1054,11 @@ bfa_msix_lpu_err(struct bfa_s *bfa, int vec)
 			writel(curr_value, bfa->ioc.ioc_regs.ll_halt);
 		}
 
+<<<<<<< HEAD
 		if (pss_isr) {
+=======
+		if (intr & __HFN_INT_ERR_PSS) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * ERR_PSS bit needs to be cleared as well in case
 			 * interrups are shared so driver's interrupt handler is
@@ -880,6 +1066,10 @@ bfa_msix_lpu_err(struct bfa_s *bfa, int vec)
 			 */
 			curr_value = readl(
 					bfa->ioc.ioc_regs.pss_err_status_reg);
+<<<<<<< HEAD
+=======
+			curr_value &= __PSS_ERR_STATUS_SET;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			writel(curr_value,
 				bfa->ioc.ioc_regs.pss_err_status_reg);
 		}
@@ -897,6 +1087,44 @@ bfa_msix_lpu_err(struct bfa_s *bfa, int vec)
  *  BFA IOC private functions
  */
 
+<<<<<<< HEAD
+=======
+static void
+bfa_iocfc_cqs_sz(struct bfa_iocfc_cfg_s *cfg, u32 *dm_len)
+{
+	int		i, per_reqq_sz, per_rspq_sz;
+
+	per_reqq_sz = BFA_ROUNDUP((cfg->drvcfg.num_reqq_elems * BFI_LMSG_SZ),
+				  BFA_DMA_ALIGN_SZ);
+	per_rspq_sz = BFA_ROUNDUP((cfg->drvcfg.num_rspq_elems * BFI_LMSG_SZ),
+				  BFA_DMA_ALIGN_SZ);
+
+	/*
+	 * Calculate CQ size
+	 */
+	for (i = 0; i < cfg->fwcfg.num_cqs; i++) {
+		*dm_len = *dm_len + per_reqq_sz;
+		*dm_len = *dm_len + per_rspq_sz;
+	}
+
+	/*
+	 * Calculate Shadow CI/PI size
+	 */
+	for (i = 0; i < cfg->fwcfg.num_cqs; i++)
+		*dm_len += (2 * BFA_CACHELINE_SZ);
+}
+
+static void
+bfa_iocfc_fw_cfg_sz(struct bfa_iocfc_cfg_s *cfg, u32 *dm_len)
+{
+	*dm_len +=
+		BFA_ROUNDUP(sizeof(struct bfi_iocfc_cfg_s), BFA_CACHELINE_SZ);
+	*dm_len +=
+		BFA_ROUNDUP(sizeof(struct bfi_iocfc_cfgrsp_s),
+			    BFA_CACHELINE_SZ);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Use the Mailbox interface to send BFI_IOCFC_H2I_CFG_REQ
  */
@@ -918,6 +1146,7 @@ bfa_iocfc_send_cfg(void *bfa_arg)
 	/*
 	 * initialize IOC configuration info
 	 */
+<<<<<<< HEAD
 	cfg_info->single_msix_vec = 0;
 	if (bfa->msix.nvecs == 1)
 		cfg_info->single_msix_vec = 1;
@@ -925,6 +1154,10 @@ bfa_iocfc_send_cfg(void *bfa_arg)
 	cfg_info->num_cqs = cfg->fwcfg.num_cqs;
 	cfg_info->num_ioim_reqs = cpu_to_be16(cfg->fwcfg.num_ioim_reqs);
 	cfg_info->num_fwtio_reqs = cpu_to_be16(cfg->fwcfg.num_fwtio_reqs);
+=======
+	cfg_info->endian_sig = BFI_IOC_ENDIAN_SIG;
+	cfg_info->num_cqs = cfg->fwcfg.num_cqs;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bfa_dma_be_addr_set(cfg_info->cfgrsp_addr, iocfc->cfgrsp_dma.pa);
 	/*
@@ -950,14 +1183,26 @@ bfa_iocfc_send_cfg(void *bfa_arg)
 	 * Enable interrupt coalescing if it is driver init path
 	 * and not ioc disable/enable path.
 	 */
+<<<<<<< HEAD
 	if (bfa_fsm_cmp_state(iocfc, bfa_iocfc_sm_init_cfg_wait))
 		cfg_info->intr_attr.coalesce = BFA_TRUE;
 
+=======
+	if (!iocfc->cfgdone)
+		cfg_info->intr_attr.coalesce = BFA_TRUE;
+
+	iocfc->cfgdone = BFA_FALSE;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * dma map IOC configuration itself
 	 */
 	bfi_h2i_set(cfg_req.mh, BFI_MC_IOCFC, BFI_IOCFC_H2I_CFG_REQ,
+<<<<<<< HEAD
 		    bfa_fn_lpu(bfa));
+=======
+		    bfa_lpuid(bfa));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_dma_be_addr_set(cfg_req.ioc_cfg_dma_addr, iocfc->cfg_info.pa);
 
 	bfa_ioc_mbox_send(&bfa->ioc, &cfg_req,
@@ -972,22 +1217,36 @@ bfa_iocfc_init_mem(struct bfa_s *bfa, void *bfad, struct bfa_iocfc_cfg_s *cfg,
 
 	bfa->bfad = bfad;
 	iocfc->bfa = bfa;
+<<<<<<< HEAD
+=======
+	iocfc->action = BFA_IOCFC_ACT_NONE;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iocfc->cfg = *cfg;
 
 	/*
 	 * Initialize chip specific handlers.
 	 */
+<<<<<<< HEAD
 	if (bfa_asic_id_ctc(bfa_ioc_devid(&bfa->ioc))) {
+=======
+	if (bfa_asic_id_ct(bfa_ioc_devid(&bfa->ioc))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iocfc->hwif.hw_reginit = bfa_hwct_reginit;
 		iocfc->hwif.hw_reqq_ack = bfa_hwct_reqq_ack;
 		iocfc->hwif.hw_rspq_ack = bfa_hwct_rspq_ack;
 		iocfc->hwif.hw_msix_init = bfa_hwct_msix_init;
+<<<<<<< HEAD
 		iocfc->hwif.hw_msix_ctrl_install = bfa_hwct_msix_ctrl_install;
 		iocfc->hwif.hw_msix_queue_install = bfa_hwct_msix_queue_install;
+=======
+		iocfc->hwif.hw_msix_install = bfa_hwct_msix_install;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iocfc->hwif.hw_msix_uninstall = bfa_hwct_msix_uninstall;
 		iocfc->hwif.hw_isr_mode_set = bfa_hwct_isr_mode_set;
 		iocfc->hwif.hw_msix_getvecs = bfa_hwct_msix_getvecs;
 		iocfc->hwif.hw_msix_get_rme_range = bfa_hwct_msix_get_rme_range;
+<<<<<<< HEAD
 		iocfc->hwif.rme_vec_q0 = BFI_MSIX_RME_QMIN_CT;
 		iocfc->hwif.cpe_vec_q0 = BFI_MSIX_CPE_QMIN_CT;
 	} else {
@@ -997,10 +1256,19 @@ bfa_iocfc_init_mem(struct bfa_s *bfa, void *bfad, struct bfa_iocfc_cfg_s *cfg,
 		iocfc->hwif.hw_msix_init = bfa_hwcb_msix_init;
 		iocfc->hwif.hw_msix_ctrl_install = bfa_hwcb_msix_ctrl_install;
 		iocfc->hwif.hw_msix_queue_install = bfa_hwcb_msix_queue_install;
+=======
+	} else {
+		iocfc->hwif.hw_reginit = bfa_hwcb_reginit;
+		iocfc->hwif.hw_reqq_ack = bfa_hwcb_reqq_ack;
+		iocfc->hwif.hw_rspq_ack = bfa_hwcb_rspq_ack;
+		iocfc->hwif.hw_msix_init = bfa_hwcb_msix_init;
+		iocfc->hwif.hw_msix_install = bfa_hwcb_msix_install;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iocfc->hwif.hw_msix_uninstall = bfa_hwcb_msix_uninstall;
 		iocfc->hwif.hw_isr_mode_set = bfa_hwcb_isr_mode_set;
 		iocfc->hwif.hw_msix_getvecs = bfa_hwcb_msix_getvecs;
 		iocfc->hwif.hw_msix_get_rme_range = bfa_hwcb_msix_get_rme_range;
+<<<<<<< HEAD
 		iocfc->hwif.rme_vec_q0 = BFI_MSIX_RME_QMIN_CB +
 			bfa_ioc_pcifn(&bfa->ioc) * BFI_IOC_MAX_CQS;
 		iocfc->hwif.cpe_vec_q0 = BFI_MSIX_CPE_QMIN_CB +
@@ -1011,6 +1279,8 @@ bfa_iocfc_init_mem(struct bfa_s *bfa, void *bfad, struct bfa_iocfc_cfg_s *cfg,
 		iocfc->hwif.hw_reginit = bfa_hwct2_reginit;
 		iocfc->hwif.hw_isr_mode_set = NULL;
 		iocfc->hwif.hw_rspq_ack = bfa_hwct2_rspq_ack;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	iocfc->hwif.hw_reginit(bfa);
@@ -1018,6 +1288,7 @@ bfa_iocfc_init_mem(struct bfa_s *bfa, void *bfad, struct bfa_iocfc_cfg_s *cfg,
 }
 
 static void
+<<<<<<< HEAD
 bfa_iocfc_mem_claim(struct bfa_s *bfa, struct bfa_iocfc_cfg_s *cfg)
 {
 	u8	*dm_kva = NULL;
@@ -1054,6 +1325,50 @@ bfa_iocfc_mem_claim(struct bfa_s *bfa, struct bfa_iocfc_cfg_s *cfg)
 	dm_kva = bfa_mem_dma_virt(iocfc_dma);
 	dm_pa  = bfa_mem_dma_phys(iocfc_dma);
 
+=======
+bfa_iocfc_mem_claim(struct bfa_s *bfa, struct bfa_iocfc_cfg_s *cfg,
+		    struct bfa_meminfo_s *meminfo)
+{
+	u8	       *dm_kva;
+	u64	dm_pa;
+	int		i, per_reqq_sz, per_rspq_sz;
+	struct bfa_iocfc_s  *iocfc = &bfa->iocfc;
+	int		dbgsz;
+
+	dm_kva = bfa_meminfo_dma_virt(meminfo);
+	dm_pa = bfa_meminfo_dma_phys(meminfo);
+
+	/*
+	 * First allocate dma memory for IOC.
+	 */
+	bfa_ioc_mem_claim(&bfa->ioc, dm_kva, dm_pa);
+	dm_kva += BFA_ROUNDUP(sizeof(struct bfi_ioc_attr_s), BFA_DMA_ALIGN_SZ);
+	dm_pa  += BFA_ROUNDUP(sizeof(struct bfi_ioc_attr_s), BFA_DMA_ALIGN_SZ);
+
+	/*
+	 * Claim DMA-able memory for the request/response queues and for shadow
+	 * ci/pi registers
+	 */
+	per_reqq_sz = BFA_ROUNDUP((cfg->drvcfg.num_reqq_elems * BFI_LMSG_SZ),
+				  BFA_DMA_ALIGN_SZ);
+	per_rspq_sz = BFA_ROUNDUP((cfg->drvcfg.num_rspq_elems * BFI_LMSG_SZ),
+				  BFA_DMA_ALIGN_SZ);
+
+	for (i = 0; i < cfg->fwcfg.num_cqs; i++) {
+		iocfc->req_cq_ba[i].kva = dm_kva;
+		iocfc->req_cq_ba[i].pa = dm_pa;
+		memset(dm_kva, 0, per_reqq_sz);
+		dm_kva += per_reqq_sz;
+		dm_pa += per_reqq_sz;
+
+		iocfc->rsp_cq_ba[i].kva = dm_kva;
+		iocfc->rsp_cq_ba[i].pa = dm_pa;
+		memset(dm_kva, 0, per_rspq_sz);
+		dm_kva += per_rspq_sz;
+		dm_pa += per_rspq_sz;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < cfg->fwcfg.num_cqs; i++) {
 		iocfc->req_cq_shadow_ci[i].kva = dm_kva;
 		iocfc->req_cq_shadow_ci[i].pa = dm_pa;
@@ -1066,13 +1381,20 @@ bfa_iocfc_mem_claim(struct bfa_s *bfa, struct bfa_iocfc_cfg_s *cfg)
 		dm_pa += BFA_CACHELINE_SZ;
 	}
 
+<<<<<<< HEAD
 	/* Claim IOCFC dma memory - for the config info page */
+=======
+	/*
+	 * Claim DMA-able memory for the config info page
+	 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa->iocfc.cfg_info.kva = dm_kva;
 	bfa->iocfc.cfg_info.pa = dm_pa;
 	bfa->iocfc.cfginfo = (struct bfi_iocfc_cfg_s *) dm_kva;
 	dm_kva += BFA_ROUNDUP(sizeof(struct bfi_iocfc_cfg_s), BFA_CACHELINE_SZ);
 	dm_pa += BFA_ROUNDUP(sizeof(struct bfi_iocfc_cfg_s), BFA_CACHELINE_SZ);
 
+<<<<<<< HEAD
 	/* Claim IOCFC dma memory - for the config response */
 	bfa->iocfc.cfgrsp_dma.kva = dm_kva;
 	bfa->iocfc.cfgrsp_dma.pa = dm_pa;
@@ -1087,6 +1409,29 @@ bfa_iocfc_mem_claim(struct bfa_s *bfa, struct bfa_iocfc_cfg_s *cfg)
 	if (dbgsz > 0) {
 		bfa_ioc_debug_memclaim(&bfa->ioc, bfa_mem_kva_curp(iocfc));
 		bfa_mem_kva_curp(iocfc) += dbgsz;
+=======
+	/*
+	 * Claim DMA-able memory for the config response
+	 */
+	bfa->iocfc.cfgrsp_dma.kva = dm_kva;
+	bfa->iocfc.cfgrsp_dma.pa = dm_pa;
+	bfa->iocfc.cfgrsp = (struct bfi_iocfc_cfgrsp_s *) dm_kva;
+
+	dm_kva +=
+		BFA_ROUNDUP(sizeof(struct bfi_iocfc_cfgrsp_s),
+			    BFA_CACHELINE_SZ);
+	dm_pa += BFA_ROUNDUP(sizeof(struct bfi_iocfc_cfgrsp_s),
+			     BFA_CACHELINE_SZ);
+
+
+	bfa_meminfo_dma_virt(meminfo) = dm_kva;
+	bfa_meminfo_dma_phys(meminfo) = dm_pa;
+
+	dbgsz = (bfa_auto_recover) ? BFA_DBG_FWTRC_LEN : 0;
+	if (dbgsz > 0) {
+		bfa_ioc_debug_memclaim(&bfa->ioc, bfa_meminfo_kva(meminfo));
+		bfa_meminfo_kva(meminfo) += dbgsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1098,6 +1443,7 @@ bfa_iocfc_start_submod(struct bfa_s *bfa)
 {
 	int		i;
 
+<<<<<<< HEAD
 	bfa->queue_process = BFA_TRUE;
 	for (i = 0; i < BFI_IOC_MAX_CQS; i++)
 		bfa_isr_rspq_ack(bfa, i, bfa_rspq_ci(bfa, i));
@@ -1106,6 +1452,12 @@ bfa_iocfc_start_submod(struct bfa_s *bfa)
 		hal_mods[i]->start(bfa);
 
 	bfa->iocfc.submod_enabled = BFA_TRUE;
+=======
+	bfa->rme_process = BFA_TRUE;
+
+	for (i = 0; hal_mods[i]; i++)
+		hal_mods[i]->start(bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1116,6 +1468,7 @@ bfa_iocfc_disable_submod(struct bfa_s *bfa)
 {
 	int		i;
 
+<<<<<<< HEAD
 	if (bfa->iocfc.submod_enabled == BFA_FALSE)
 		return;
 
@@ -1123,6 +1476,10 @@ bfa_iocfc_disable_submod(struct bfa_s *bfa)
 		hal_mods[i]->iocdisable(bfa);
 
 	bfa->iocfc.submod_enabled = BFA_FALSE;
+=======
+	for (i = 0; hal_mods[i]; i++)
+		hal_mods[i]->iocdisable(bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -1130,8 +1487,20 @@ bfa_iocfc_init_cb(void *bfa_arg, bfa_boolean_t complete)
 {
 	struct bfa_s	*bfa = bfa_arg;
 
+<<<<<<< HEAD
 	if (complete)
 		bfa_cb_init(bfa->bfad, bfa->iocfc.op_status);
+=======
+	if (complete) {
+		if (bfa->iocfc.cfgdone)
+			bfa_cb_init(bfa->bfad, BFA_STATUS_OK);
+		else
+			bfa_cb_init(bfa->bfad, BFA_STATUS_FAILED);
+	} else {
+		if (bfa->iocfc.cfgdone)
+			bfa->iocfc.action = BFA_IOCFC_ACT_NONE;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -1142,6 +1511,7 @@ bfa_iocfc_stop_cb(void *bfa_arg, bfa_boolean_t compl)
 
 	if (compl)
 		complete(&bfad->comp);
+<<<<<<< HEAD
 }
 
 static void
@@ -1152,6 +1522,10 @@ bfa_iocfc_enable_cb(void *bfa_arg, bfa_boolean_t compl)
 
 	if (compl)
 		complete(&bfad->enable_comp);
+=======
+	else
+		bfa->iocfc.action = BFA_IOCFC_ACT_NONE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -1164,6 +1538,7 @@ bfa_iocfc_disable_cb(void *bfa_arg, bfa_boolean_t compl)
 		complete(&bfad->disable_comp);
 }
 
+<<<<<<< HEAD
 /**
  * configure queue registers from firmware response
  */
@@ -1195,6 +1570,8 @@ bfa_iocfc_res_recfg(struct bfa_s *bfa, struct bfa_iocfc_fwcfg_s *fwcfg)
 	bfa_tskim_res_recfg(bfa, fwcfg->num_tskim_reqs);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Update BFA configuration from firmware configuration.
  */
@@ -1207,12 +1584,16 @@ bfa_iocfc_cfgrsp(struct bfa_s *bfa)
 
 	fwcfg->num_cqs	      = fwcfg->num_cqs;
 	fwcfg->num_ioim_reqs  = be16_to_cpu(fwcfg->num_ioim_reqs);
+<<<<<<< HEAD
 	fwcfg->num_fwtio_reqs = be16_to_cpu(fwcfg->num_fwtio_reqs);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fwcfg->num_tskim_reqs = be16_to_cpu(fwcfg->num_tskim_reqs);
 	fwcfg->num_fcxp_reqs  = be16_to_cpu(fwcfg->num_fcxp_reqs);
 	fwcfg->num_uf_bufs    = be16_to_cpu(fwcfg->num_uf_bufs);
 	fwcfg->num_rports     = be16_to_cpu(fwcfg->num_rports);
 
+<<<<<<< HEAD
 	/*
 	 * configure queue register offsets as learnt from firmware
 	 */
@@ -1235,6 +1616,20 @@ bfa_iocfc_cfgrsp(struct bfa_s *bfa)
 	}
 }
 
+=======
+	iocfc->cfgdone = BFA_TRUE;
+
+	/*
+	 * Configuration is complete - initialize/start submodules
+	 */
+	bfa_fcport_init(bfa);
+
+	if (iocfc->action == BFA_IOCFC_ACT_INIT)
+		bfa_cb_queue(bfa, &iocfc->init_hcb_qe, bfa_iocfc_init_cb, bfa);
+	else
+		bfa_iocfc_start_submod(bfa);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void
 bfa_iocfc_reset_queues(struct bfa_s *bfa)
 {
@@ -1249,6 +1644,7 @@ bfa_iocfc_reset_queues(struct bfa_s *bfa)
 }
 
 /*
+<<<<<<< HEAD
  *	Process FAA pwwn msg from fw.
  */
 static void
@@ -1338,6 +1734,8 @@ bfa_faa_query_reply(struct bfa_iocfc_s *iocfc,
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * IOC enable request is complete
  */
 static void
@@ -1345,10 +1743,22 @@ bfa_iocfc_enable_cbfn(void *bfa_arg, enum bfa_status status)
 {
 	struct bfa_s	*bfa = bfa_arg;
 
+<<<<<<< HEAD
 	if (status == BFA_STATUS_OK)
 		bfa_fsm_send_event(&bfa->iocfc, IOCFC_E_IOC_ENABLED);
 	else
 		bfa_fsm_send_event(&bfa->iocfc, IOCFC_E_IOC_FAILED);
+=======
+	if (status != BFA_STATUS_OK) {
+		bfa_isr_disable(bfa);
+		if (bfa->iocfc.action == BFA_IOCFC_ACT_INIT)
+			bfa_cb_queue(bfa, &bfa->iocfc.init_hcb_qe,
+				     bfa_iocfc_init_cb, bfa);
+		return;
+	}
+
+	bfa_iocfc_send_cfg(bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1359,7 +1769,21 @@ bfa_iocfc_disable_cbfn(void *bfa_arg)
 {
 	struct bfa_s	*bfa = bfa_arg;
 
+<<<<<<< HEAD
 	bfa_fsm_send_event(&bfa->iocfc, IOCFC_E_IOC_DISABLED);
+=======
+	bfa_isr_disable(bfa);
+	bfa_iocfc_disable_submod(bfa);
+
+	if (bfa->iocfc.action == BFA_IOCFC_ACT_STOP)
+		bfa_cb_queue(bfa, &bfa->iocfc.stop_hcb_qe, bfa_iocfc_stop_cb,
+			     bfa);
+	else {
+		WARN_ON(bfa->iocfc.action != BFA_IOCFC_ACT_DISABLE);
+		bfa_cb_queue(bfa, &bfa->iocfc.dis_hcb_qe, bfa_iocfc_disable_cb,
+			     bfa);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1370,8 +1794,19 @@ bfa_iocfc_hbfail_cbfn(void *bfa_arg)
 {
 	struct bfa_s	*bfa = bfa_arg;
 
+<<<<<<< HEAD
 	bfa->queue_process = BFA_FALSE;
 	bfa_fsm_send_event(&bfa->iocfc, IOCFC_E_IOC_FAILED);
+=======
+	bfa->rme_process = BFA_FALSE;
+
+	bfa_isr_disable(bfa);
+	bfa_iocfc_disable_submod(bfa);
+
+	if (bfa->iocfc.action == BFA_IOCFC_ACT_INIT)
+		bfa_cb_queue(bfa, &bfa->iocfc.init_hcb_qe, bfa_iocfc_init_cb,
+			     bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1386,10 +1821,15 @@ bfa_iocfc_reset_cbfn(void *bfa_arg)
 	bfa_isr_enable(bfa);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Query IOC memory requirement information.
  */
 void
+<<<<<<< HEAD
 bfa_iocfc_meminfo(struct bfa_iocfc_cfg_s *cfg, struct bfa_meminfo_s *meminfo,
 		  struct bfa_s *bfa)
 {
@@ -1431,6 +1871,17 @@ bfa_iocfc_meminfo(struct bfa_iocfc_cfg_s *cfg, struct bfa_meminfo_s *meminfo,
 	/* kva memory setup for IOCFC */
 	bfa_mem_kva_setup(meminfo, iocfc_kva,
 			((bfa_auto_recover) ? BFA_DBG_FWTRC_LEN : 0));
+=======
+bfa_iocfc_meminfo(struct bfa_iocfc_cfg_s *cfg, u32 *km_len,
+		  u32 *dm_len)
+{
+	/* dma memory for IOC */
+	*dm_len += BFA_ROUNDUP(sizeof(struct bfi_ioc_attr_s), BFA_DMA_ALIGN_SZ);
+
+	bfa_iocfc_fw_cfg_sz(cfg, dm_len);
+	bfa_iocfc_cqs_sz(cfg, dm_len);
+	*km_len += (bfa_auto_recover) ? BFA_DBG_FWTRC_LEN : 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1438,7 +1889,11 @@ bfa_iocfc_meminfo(struct bfa_iocfc_cfg_s *cfg, struct bfa_meminfo_s *meminfo,
  */
 void
 bfa_iocfc_attach(struct bfa_s *bfa, void *bfad, struct bfa_iocfc_cfg_s *cfg,
+<<<<<<< HEAD
 		 struct bfa_pcidev_s *pcidev)
+=======
+		 struct bfa_meminfo_s *meminfo, struct bfa_pcidev_s *pcidev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int		i;
 	struct bfa_ioc_s *ioc = &bfa->ioc;
@@ -1451,22 +1906,39 @@ bfa_iocfc_attach(struct bfa_s *bfa, void *bfad, struct bfa_iocfc_cfg_s *cfg,
 	ioc->trcmod = bfa->trcmod;
 	bfa_ioc_attach(&bfa->ioc, bfa, &bfa_iocfc_cbfn, &bfa->timer_mod);
 
+<<<<<<< HEAD
 	bfa_ioc_pci_init(&bfa->ioc, pcidev, BFI_PCIFN_CLASS_FC);
 	bfa_ioc_mbox_register(&bfa->ioc, bfa_mbox_isrs);
 
 	bfa_iocfc_init_mem(bfa, bfad, cfg, pcidev);
 	bfa_iocfc_mem_claim(bfa, cfg);
+=======
+	/*
+	 * Set FC mode for BFA_PCI_DEVICE_ID_CT_FC.
+	 */
+	if (pcidev->device_id == BFA_PCI_DEVICE_ID_CT_FC)
+		bfa_ioc_set_fcmode(&bfa->ioc);
+
+	bfa_ioc_pci_init(&bfa->ioc, pcidev, BFI_MC_IOCFC);
+	bfa_ioc_mbox_register(&bfa->ioc, bfa_mbox_isrs);
+
+	bfa_iocfc_init_mem(bfa, bfad, cfg, pcidev);
+	bfa_iocfc_mem_claim(bfa, cfg, meminfo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_LIST_HEAD(&bfa->timer_mod.timer_q);
 
 	INIT_LIST_HEAD(&bfa->comp_q);
 	for (i = 0; i < BFI_IOC_MAX_CQS; i++)
 		INIT_LIST_HEAD(&bfa->reqq_waitq[i]);
+<<<<<<< HEAD
 
 	bfa->iocfc.cb_reqd = BFA_FALSE;
 	bfa->iocfc.op_status = BFA_STATUS_OK;
 	bfa->iocfc.submod_enabled = BFA_FALSE;
 
 	bfa_fsm_set_state(&bfa->iocfc, bfa_iocfc_sm_stopped);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1475,7 +1947,12 @@ bfa_iocfc_attach(struct bfa_s *bfa, void *bfad, struct bfa_iocfc_cfg_s *cfg,
 void
 bfa_iocfc_init(struct bfa_s *bfa)
 {
+<<<<<<< HEAD
 	bfa_fsm_send_event(&bfa->iocfc, IOCFC_E_INIT);
+=======
+	bfa->iocfc.action = BFA_IOCFC_ACT_INIT;
+	bfa_ioc_enable(&bfa->ioc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1485,7 +1962,12 @@ bfa_iocfc_init(struct bfa_s *bfa)
 void
 bfa_iocfc_start(struct bfa_s *bfa)
 {
+<<<<<<< HEAD
 	bfa_fsm_send_event(&bfa->iocfc, IOCFC_E_START);
+=======
+	if (bfa->iocfc.cfgdone)
+		bfa_iocfc_start_submod(bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1495,8 +1977,15 @@ bfa_iocfc_start(struct bfa_s *bfa)
 void
 bfa_iocfc_stop(struct bfa_s *bfa)
 {
+<<<<<<< HEAD
 	bfa->queue_process = BFA_FALSE;
 	bfa_fsm_send_event(&bfa->iocfc, IOCFC_E_STOP);
+=======
+	bfa->iocfc.action = BFA_IOCFC_ACT_STOP;
+
+	bfa->rme_process = BFA_FALSE;
+	bfa_ioc_disable(&bfa->ioc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void
@@ -1511,11 +2000,16 @@ bfa_iocfc_isr(void *bfaarg, struct bfi_mbmsg_s *m)
 
 	switch (msg->mh.msg_id) {
 	case BFI_IOCFC_I2H_CFG_REPLY:
+<<<<<<< HEAD
+=======
+		iocfc->cfg_reply = &msg->cfg_reply;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bfa_iocfc_cfgrsp(bfa);
 		break;
 	case BFI_IOCFC_I2H_UPDATEQ_RSP:
 		iocfc->updateq_cbfn(iocfc->updateq_cbarg, BFA_STATUS_OK);
 		break;
+<<<<<<< HEAD
 	case BFI_IOCFC_I2H_ADDR_MSG:
 		bfa_iocfc_process_faa_addr(bfa,
 				(struct bfi_faa_addr_msg_s *)msg);
@@ -1523,6 +2017,8 @@ bfa_iocfc_isr(void *bfaarg, struct bfi_mbmsg_s *m)
 	case BFI_IOCFC_I2H_FAA_QUERY_RSP:
 		bfa_faa_query_reply(iocfc, (bfi_faa_query_rsp_t *)msg);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		WARN_ON(1);
 	}
@@ -1564,7 +2060,11 @@ bfa_iocfc_israttr_set(struct bfa_s *bfa, struct bfa_iocfc_intr_attr_s *attr)
 		return BFA_STATUS_DEVBUSY;
 
 	bfi_h2i_set(m->mh, BFI_MC_IOCFC, BFI_IOCFC_H2I_SET_INTR_REQ,
+<<<<<<< HEAD
 		    bfa_fn_lpu(bfa));
+=======
+		    bfa_lpuid(bfa));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	m->coalesce = iocfc->cfginfo->intr_attr.coalesce;
 	m->delay    = iocfc->cfginfo->intr_attr.delay;
 	m->latency  = iocfc->cfginfo->intr_attr.latency;
@@ -1572,17 +2072,29 @@ bfa_iocfc_israttr_set(struct bfa_s *bfa, struct bfa_iocfc_intr_attr_s *attr)
 	bfa_trc(bfa, attr->delay);
 	bfa_trc(bfa, attr->latency);
 
+<<<<<<< HEAD
 	bfa_reqq_produce(bfa, BFA_REQQ_IOC, m->mh);
+=======
+	bfa_reqq_produce(bfa, BFA_REQQ_IOC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return BFA_STATUS_OK;
 }
 
 void
+<<<<<<< HEAD
 bfa_iocfc_set_snsbase(struct bfa_s *bfa, int seg_no, u64 snsbase_pa)
+=======
+bfa_iocfc_set_snsbase(struct bfa_s *bfa, u64 snsbase_pa)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bfa_iocfc_s	*iocfc = &bfa->iocfc;
 
 	iocfc->cfginfo->sense_buf_len = (BFI_IOIM_SNSLEN - 1);
+<<<<<<< HEAD
 	bfa_dma_be_addr_set(iocfc->cfginfo->ioim_snsbase[seg_no], snsbase_pa);
+=======
+	bfa_dma_be_addr_set(iocfc->cfginfo->ioim_snsbase, snsbase_pa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 /*
  * Enable IOC after it is disabled.
@@ -1592,8 +2104,12 @@ bfa_iocfc_enable(struct bfa_s *bfa)
 {
 	bfa_plog_str(bfa->plog, BFA_PL_MID_HAL, BFA_PL_EID_MISC, 0,
 		     "IOC Enable");
+<<<<<<< HEAD
 	bfa->iocfc.cb_reqd = BFA_TRUE;
 	bfa_fsm_send_event(&bfa->iocfc, IOCFC_E_ENABLE);
+=======
+	bfa_ioc_enable(&bfa->ioc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void
@@ -1601,6 +2117,7 @@ bfa_iocfc_disable(struct bfa_s *bfa)
 {
 	bfa_plog_str(bfa->plog, BFA_PL_MID_HAL, BFA_PL_EID_MISC, 0,
 		     "IOC Disable");
+<<<<<<< HEAD
 
 	bfa->queue_process = BFA_FALSE;
 	bfa_fsm_send_event(&bfa->iocfc, IOCFC_E_DISABLE);
@@ -1611,6 +2128,19 @@ bfa_iocfc_is_operational(struct bfa_s *bfa)
 {
 	return bfa_ioc_is_operational(&bfa->ioc) &&
 		bfa_fsm_cmp_state(&bfa->iocfc, bfa_iocfc_sm_operational);
+=======
+	bfa->iocfc.action = BFA_IOCFC_ACT_DISABLE;
+
+	bfa->rme_process = BFA_FALSE;
+	bfa_ioc_disable(&bfa->ioc);
+}
+
+
+bfa_boolean_t
+bfa_iocfc_is_operational(struct bfa_s *bfa)
+{
+	return bfa_ioc_is_operational(&bfa->ioc) && bfa->iocfc.cfgdone;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1671,14 +2201,18 @@ bfa_iocfc_get_pbc_vports(struct bfa_s *bfa, struct bfi_pbc_vport_s *pbc_vport)
  *			starting address for each block and provide the same
  *			structure as input parameter to bfa_attach() call.
  *
+<<<<<<< HEAD
  * @param[in] bfa -	pointer to the bfa structure, used while fetching the
  *			dma, kva memory information of the bfa sub-modules.
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @return void
  *
  * Special Considerations: @note
  */
 void
+<<<<<<< HEAD
 bfa_cfg_get_meminfo(struct bfa_iocfc_cfg_s *cfg, struct bfa_meminfo_s *meminfo,
 		struct bfa_s *bfa)
 {
@@ -1690,10 +2224,17 @@ bfa_cfg_get_meminfo(struct bfa_iocfc_cfg_s *cfg, struct bfa_meminfo_s *meminfo,
 	struct bfa_mem_dma_s *flash_dma = BFA_MEM_FLASH_DMA(bfa);
 	struct bfa_mem_dma_s *diag_dma = BFA_MEM_DIAG_DMA(bfa);
 	struct bfa_mem_dma_s *phy_dma = BFA_MEM_PHY_DMA(bfa);
+=======
+bfa_cfg_get_meminfo(struct bfa_iocfc_cfg_s *cfg, struct bfa_meminfo_s *meminfo)
+{
+	int		i;
+	u32	km_len = 0, dm_len = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	WARN_ON((cfg == NULL) || (meminfo == NULL));
 
 	memset((void *)meminfo, 0, sizeof(struct bfa_meminfo_s));
+<<<<<<< HEAD
 
 	/* Initialize the DMA & KVA meminfo queues */
 	INIT_LIST_HEAD(&meminfo->dma_info.qe);
@@ -1714,6 +2255,22 @@ bfa_cfg_get_meminfo(struct bfa_iocfc_cfg_s *cfg, struct bfa_meminfo_s *meminfo,
 	bfa_mem_dma_setup(meminfo, diag_dma, bfa_diag_meminfo());
 	bfa_mem_dma_setup(meminfo, phy_dma,
 			  bfa_phy_meminfo(cfg->drvcfg.min_cfg));
+=======
+	meminfo->meminfo[BFA_MEM_TYPE_KVA - 1].mem_type =
+		BFA_MEM_TYPE_KVA;
+	meminfo->meminfo[BFA_MEM_TYPE_DMA - 1].mem_type =
+		BFA_MEM_TYPE_DMA;
+
+	bfa_iocfc_meminfo(cfg, &km_len, &dm_len);
+
+	for (i = 0; hal_mods[i]; i++)
+		hal_mods[i]->meminfo(cfg, &km_len, &dm_len);
+
+	dm_len += bfa_port_meminfo();
+
+	meminfo->meminfo[BFA_MEM_TYPE_KVA - 1].mem_len = km_len;
+	meminfo->meminfo[BFA_MEM_TYPE_DMA - 1].mem_len = dm_len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1746,15 +2303,21 @@ void
 bfa_attach(struct bfa_s *bfa, void *bfad, struct bfa_iocfc_cfg_s *cfg,
 	       struct bfa_meminfo_s *meminfo, struct bfa_pcidev_s *pcidev)
 {
+<<<<<<< HEAD
 	int	i;
 	struct bfa_mem_dma_s *dma_info, *dma_elem;
 	struct bfa_mem_kva_s *kva_info, *kva_elem;
 	struct list_head *dm_qe, *km_qe;
+=======
+	int			i;
+	struct bfa_mem_elem_s	*melem;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bfa->fcs = BFA_FALSE;
 
 	WARN_ON((cfg == NULL) || (meminfo == NULL));
 
+<<<<<<< HEAD
 	/* Initialize memory pointers for iterative allocation */
 	dma_info = &meminfo->dma_info;
 	dma_info->kva_curp = dma_info->kva;
@@ -1786,6 +2349,23 @@ bfa_attach(struct bfa_s *bfa, void *bfad, struct bfa_iocfc_cfg_s *cfg,
 	bfa_com_flash_attach(bfa, cfg->drvcfg.min_cfg);
 	bfa_com_diag_attach(bfa);
 	bfa_com_phy_attach(bfa, cfg->drvcfg.min_cfg);
+=======
+	/*
+	 * initialize all memory pointers for iterative allocation
+	 */
+	for (i = 0; i < BFA_MEM_TYPE_MAX; i++) {
+		melem = meminfo->meminfo + i;
+		melem->kva_curp = melem->kva;
+		melem->dma_curp = melem->dma;
+	}
+
+	bfa_iocfc_attach(bfa, bfad, cfg, meminfo, pcidev);
+
+	for (i = 0; hal_mods[i]; i++)
+		hal_mods[i]->attach(bfa, bfad, cfg, meminfo, pcidev);
+
+	bfa_com_port_attach(bfa, meminfo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1824,6 +2404,7 @@ bfa_comp_process(struct bfa_s *bfa, struct list_head *comp_q)
 	struct list_head		*qe;
 	struct list_head		*qen;
 	struct bfa_cb_qe_s	*hcb_qe;
+<<<<<<< HEAD
 	bfa_cb_cbfn_status_t	cbfn;
 
 	list_for_each_safe(qe, qen, comp_q) {
@@ -1835,6 +2416,12 @@ bfa_comp_process(struct bfa_s *bfa, struct list_head *comp_q)
 			cbfn(hcb_qe->cbarg, hcb_qe->fw_status);
 		} else
 			hcb_qe->cbfn(hcb_qe->cbarg, BFA_TRUE);
+=======
+
+	list_for_each_safe(qe, qen, comp_q) {
+		hcb_qe = (struct bfa_cb_qe_s *) qe;
+		hcb_qe->cbfn(hcb_qe->cbarg, BFA_TRUE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1847,11 +2434,18 @@ bfa_comp_free(struct bfa_s *bfa, struct list_head *comp_q)
 	while (!list_empty(comp_q)) {
 		bfa_q_deq(comp_q, &qe);
 		hcb_qe = (struct bfa_cb_qe_s *) qe;
+<<<<<<< HEAD
 		WARN_ON(hcb_qe->pre_rmv);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hcb_qe->cbfn(hcb_qe->cbarg, BFA_FALSE);
 	}
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Return the list of PCI vendor/device id lists supported by this
  * BFA instance.
@@ -1894,7 +2488,10 @@ bfa_cfg_get_default(struct bfa_iocfc_cfg_s *cfg)
 	cfg->fwcfg.num_fcxp_reqs = DEF_CFG_NUM_FCXP_REQS;
 	cfg->fwcfg.num_uf_bufs = DEF_CFG_NUM_UF_BUFS;
 	cfg->fwcfg.num_cqs = DEF_CFG_NUM_CQS;
+<<<<<<< HEAD
 	cfg->fwcfg.num_fwtio_reqs = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cfg->drvcfg.num_reqq_elems = DEF_CFG_NUM_REQQ_ELEMS;
 	cfg->drvcfg.num_rspq_elems = DEF_CFG_NUM_RSPQ_ELEMS;
@@ -1916,7 +2513,10 @@ bfa_cfg_get_min(struct bfa_iocfc_cfg_s *cfg)
 	cfg->fwcfg.num_fcxp_reqs   = BFA_FCXP_MIN;
 	cfg->fwcfg.num_uf_bufs     = BFA_UF_MIN;
 	cfg->fwcfg.num_rports      = BFA_RPORT_MIN;
+<<<<<<< HEAD
 	cfg->fwcfg.num_fwtio_reqs = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cfg->drvcfg.num_sgpgs      = BFA_SGPG_MIN;
 	cfg->drvcfg.num_reqq_elems = BFA_REQQ_NELEMS_MIN;

@@ -14,7 +14,11 @@
 #include <linux/kernel_stat.h>
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* May be overridden by platform code */
 int __weak nmi_enable(void)

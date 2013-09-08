@@ -15,7 +15,11 @@
  */
 
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/compiler.h>
 #include <linux/spinlock.h>
@@ -23,7 +27,10 @@
 #include <linux/io.h>
 #include <linux/of.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/sched.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <linux/interrupt.h>
 #include <linux/mod_devicetable.h>
@@ -328,6 +335,7 @@ static int __devinit fsl_lbc_ctrl_probe(struct platform_device *dev)
 err:
 	iounmap(fsl_lbc_ctrl_dev->regs);
 	kfree(fsl_lbc_ctrl_dev);
+<<<<<<< HEAD
 	fsl_lbc_ctrl_dev = NULL;
 	return ret;
 }
@@ -364,6 +372,11 @@ static int fsl_lbc_resume(struct platform_device *pdev)
 }
 #endif /* CONFIG_SUSPEND */
 
+=======
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct of_device_id fsl_lbc_match[] = {
 	{ .compatible = "fsl,elbc", },
 	{ .compatible = "fsl,pq3-localbus", },
@@ -378,10 +391,13 @@ static struct platform_driver fsl_lbc_ctrl_driver = {
 		.of_match_table = fsl_lbc_match,
 	},
 	.probe = fsl_lbc_ctrl_probe,
+<<<<<<< HEAD
 #ifdef CONFIG_SUSPEND
 	.suspend     = fsl_lbc_suspend,
 	.resume      = fsl_lbc_resume,
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init fsl_lbc_init(void)

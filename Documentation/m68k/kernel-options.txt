@@ -129,6 +129,7 @@ decimal 11 is the major of SCSI CD-ROMs, and the minor 0 stands for
 the first of these. You can find out all valid major numbers by
 looking into include/linux/major.h.
 
+<<<<<<< HEAD
 In addition to major and minor numbers, if the device containing your
 root partition uses a partition table format with unique partition
 identifiers, then you may use them.  For instance,
@@ -143,6 +144,8 @@ follows:
 Authoritative information can be found in
 "Documentation/kernel-parameters.txt".
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 2.2) ro, rw
 -----------

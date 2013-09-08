@@ -1,6 +1,10 @@
 config BT_BNEP
 	tristate "BNEP protocol support"
+<<<<<<< HEAD
 	depends on BT
+=======
+	depends on BT && BT_L2CAP
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select CRC32
 	help
 	  BNEP (Bluetooth Network Encapsulation Protocol) is Ethernet

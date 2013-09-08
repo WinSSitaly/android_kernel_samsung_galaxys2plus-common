@@ -20,7 +20,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 #ifndef BEAT_HCALL
+<<<<<<< HEAD
 #include <linux/string.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "beat_syscall.h"
 
 /* defined in hvCall.S */

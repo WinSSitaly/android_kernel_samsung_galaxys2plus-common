@@ -121,7 +121,11 @@ static struct platform_device net2272_bfin_device = {
 };
 #endif
 
+<<<<<<< HEAD
 #if defined(CONFIG_SPI_BFIN5XX) || defined(CONFIG_SPI_BFIN5XX_MODULE)
+=======
+#if defined(CONFIG_SPI_BFIN) || defined(CONFIG_SPI_BFIN_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* all SPI peripherals info goes here */
 
 #if defined(CONFIG_MTD_M25P80) \
@@ -159,12 +163,20 @@ static struct flash_platform_data bfin_spi_flash_data = {
 /* SPI flash chip (m25p64) */
 static struct bfin5xx_spi_chip spi_flash_chip_info = {
 	.enable_dma = 0,         /* use dma transfer with this chip*/
+<<<<<<< HEAD
+=======
+	.bits_per_word = 8,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #endif
 
 #if defined(CONFIG_MMC_SPI) || defined(CONFIG_MMC_SPI_MODULE)
 static struct bfin5xx_spi_chip mmc_spi_chip_info = {
 	.enable_dma = 0,
+<<<<<<< HEAD
+=======
+	.bits_per_word = 8,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #endif
 
@@ -240,6 +252,7 @@ static struct resource bfin_uart0_resources[] = {
 		.flags = IORESOURCE_MEM,
 	},
 	{
+<<<<<<< HEAD
 		.start = IRQ_UART0_TX,
 		.end = IRQ_UART0_TX,
 		.flags = IORESOURCE_IRQ,
@@ -247,6 +260,10 @@ static struct resource bfin_uart0_resources[] = {
 	{
 		.start = IRQ_UART0_RX,
 		.end = IRQ_UART0_RX,
+=======
+		.start = IRQ_UART0_RX,
+		.end = IRQ_UART0_RX+1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags = IORESOURCE_IRQ,
 	},
 	{
@@ -288,6 +305,7 @@ static struct resource bfin_uart1_resources[] = {
 		.flags = IORESOURCE_MEM,
 	},
 	{
+<<<<<<< HEAD
 		.start = IRQ_UART1_TX,
 		.end = IRQ_UART1_TX,
 		.flags = IORESOURCE_IRQ,
@@ -295,6 +313,10 @@ static struct resource bfin_uart1_resources[] = {
 	{
 		.start = IRQ_UART1_RX,
 		.end = IRQ_UART1_RX,
+=======
+		.start = IRQ_UART1_RX,
+		.end = IRQ_UART1_RX+1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags = IORESOURCE_IRQ,
 	},
 	{
@@ -496,7 +518,11 @@ static struct platform_device *minotaur_devices[] __initdata = {
 	&net2272_bfin_device,
 #endif
 
+<<<<<<< HEAD
 #if defined(CONFIG_SPI_BFIN5XX) || defined(CONFIG_SPI_BFIN5XX_MODULE)
+=======
+#if defined(CONFIG_SPI_BFIN) || defined(CONFIG_SPI_BFIN_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&bfin_spi0_device,
 #endif
 
@@ -537,7 +563,11 @@ static int __init minotaur_init(void)
 {
 	printk(KERN_INFO "%s(): registering device resources\n", __func__);
 	platform_add_devices(minotaur_devices, ARRAY_SIZE(minotaur_devices));
+<<<<<<< HEAD
 #if defined(CONFIG_SPI_BFIN5XX) || defined(CONFIG_SPI_BFIN5XX_MODULE)
+=======
+#if defined(CONFIG_SPI_BFIN) || defined(CONFIG_SPI_BFIN_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spi_register_board_info(bfin_spi_board_info,
 				ARRAY_SIZE(bfin_spi_board_info));
 #endif

@@ -31,6 +31,9 @@ config TCM_PSCSI
 
 source "drivers/target/loopback/Kconfig"
 source "drivers/target/tcm_fc/Kconfig"
+<<<<<<< HEAD
 source "drivers/target/iscsi/Kconfig"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 endif

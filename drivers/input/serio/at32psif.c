@@ -98,9 +98,15 @@ struct psif {
 	struct serio		*io;
 	void __iomem		*regs;
 	unsigned int		irq;
+<<<<<<< HEAD
 	/* Prevent concurrent writes to PSIF THR. */
 	spinlock_t		lock;
 	bool			open;
+=======
+	unsigned int		open;
+	/* Prevent concurrent writes to PSIF THR. */
+	spinlock_t		lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static irqreturn_t psif_interrupt(int irq, void *_ptr)
@@ -164,7 +170,11 @@ static int psif_open(struct serio *io)
 	psif_writel(psif, CR, PSIF_BIT(CR_TXEN) | PSIF_BIT(CR_RXEN));
 	psif_writel(psif, IER, PSIF_BIT(RXRDY));
 
+<<<<<<< HEAD
 	psif->open = true;
+=======
+	psif->open = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return retval;
 }
@@ -173,7 +183,11 @@ static void psif_close(struct serio *io)
 {
 	struct psif *psif = io->port_data;
 
+<<<<<<< HEAD
 	psif->open = false;
+=======
+	psif->open = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	psif_writel(psif, IDR, ~0UL);
 	psif_writel(psif, CR, PSIF_BIT(CR_TXDIS) | PSIF_BIT(CR_RXDIS));
@@ -319,10 +333,16 @@ static int __exit psif_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM_SLEEP
 static int psif_suspend(struct device *dev)
 {
 	struct platform_device *pdev = to_platform_device(dev);
+=======
+#ifdef CONFIG_PM
+static int psif_suspend(struct platform_device *pdev, pm_message_t state)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct psif *psif = platform_get_drvdata(pdev);
 
 	if (psif->open) {
@@ -333,9 +353,14 @@ static int psif_suspend(struct device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int psif_resume(struct device *dev)
 {
 	struct platform_device *pdev = to_platform_device(dev);
+=======
+static int psif_resume(struct platform_device *pdev)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct psif *psif = platform_get_drvdata(pdev);
 
 	if (psif->open) {
@@ -346,17 +371,31 @@ static int psif_resume(struct device *dev)
 
 	return 0;
 }
+<<<<<<< HEAD
 #endif
 
 static SIMPLE_DEV_PM_OPS(psif_pm_ops, psif_suspend, psif_resume);
 
+=======
+#else
+#define psif_suspend	NULL
+#define psif_resume	NULL
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver psif_driver = {
 	.remove		= __exit_p(psif_remove),
 	.driver		= {
 		.name	= "atmel_psif",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.pm	= &psif_pm_ops,
 	},
+=======
+	},
+	.suspend	= psif_suspend,
+	.resume		= psif_resume,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init psif_init(void)
@@ -372,6 +411,10 @@ static void __exit psif_exit(void)
 module_init(psif_init);
 module_exit(psif_exit);
 
+<<<<<<< HEAD
 MODULE_AUTHOR("Hans-Christian Egtvedt <egtvedt@samfundet.no>");
+=======
+MODULE_AUTHOR("Hans-Christian Egtvedt <hans-christian.egtvedt@atmel.com>");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("Atmel AVR32 PSIF PS/2 driver");
 MODULE_LICENSE("GPL");

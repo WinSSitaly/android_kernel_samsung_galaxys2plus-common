@@ -17,8 +17,11 @@
  * based on softdog.c by Alan Cox <alan@redhat.com>
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/types.h>
@@ -32,6 +35,10 @@
 #include <linux/init.h>
 #include <asm/mach-pnx833x/pnx833x.h>
 
+<<<<<<< HEAD
+=======
+#define PFX "pnx833x: "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define WATCHDOG_TIMEOUT 30		/* 30 sec Maximum timeout */
 #define WATCHDOG_COUNT_FREQUENCY 68000000U /* Watchdog counts at 68MHZ. */
 #define	PNX_WATCHDOG_TIMEOUT	(WATCHDOG_TIMEOUT * WATCHDOG_COUNT_FREQUENCY)
@@ -55,8 +62,13 @@ module_param(pnx833x_wdt_timeout, int, 0);
 MODULE_PARM_DESC(timeout, "Watchdog timeout in Mhz. (68Mhz clock), default="
 			__MODULE_STRING(PNX_TIMEOUT_VALUE) "(30 seconds).");
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 module_param(nowayout, bool, 0);
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
 					__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
 
@@ -77,7 +89,11 @@ static void pnx833x_wdt_start(void)
 	PNX833X_REG(PNX833X_CONFIG +
 				PNX833X_CONFIG_CPU_COUNTERS_CONTROL) |= 0x1;
 
+<<<<<<< HEAD
 	pr_info("Started watchdog timer\n");
+=======
+	printk(KERN_INFO PFX "Started watchdog timer.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void pnx833x_wdt_stop(void)
@@ -88,7 +104,11 @@ static void pnx833x_wdt_stop(void)
 	PNX833X_REG(PNX833X_CONFIG +
 			PNX833X_CONFIG_CPU_COUNTERS_CONTROL) &= 0xFFFFFFFE;
 
+<<<<<<< HEAD
 	pr_info("Stopped watchdog timer\n");
+=======
+	printk(KERN_INFO PFX "Stopped watchdog timer.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void pnx833x_wdt_ping(void)
@@ -114,7 +134,11 @@ static int pnx833x_wdt_open(struct inode *inode, struct file *file)
 
 	pnx833x_wdt_ping();
 
+<<<<<<< HEAD
 	pr_info("Started watchdog timer\n");
+=======
+	printk(KERN_INFO "Started watchdog timer.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return nonseekable_open(inode, file);
 }
@@ -233,6 +257,12 @@ static struct notifier_block pnx833x_wdt_notifier = {
 	.notifier_call = pnx833x_wdt_notify_sys,
 };
 
+<<<<<<< HEAD
+=======
+static char banner[] __initdata =
+	KERN_INFO PFX "Hardware Watchdog Timer for PNX833x: Version 0.1\n";
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init watchdog_init(void)
 {
 	int ret, cause;
@@ -241,25 +271,45 @@ static int __init watchdog_init(void)
 	cause = PNX833X_REG(PNX833X_RESET);
 	/*If bit 31 is set then watchdog was cause of reset.*/
 	if (cause & 0x80000000) {
+<<<<<<< HEAD
 		pr_info("The system was previously reset due to the watchdog firing - please investigate...\n");
+=======
+		printk(KERN_INFO PFX "The system was previously reset due to "
+			"the watchdog firing - please investigate...\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ret = register_reboot_notifier(&pnx833x_wdt_notifier);
 	if (ret) {
+<<<<<<< HEAD
 		pr_err("cannot register reboot notifier (err=%d)\n", ret);
+=======
+		printk(KERN_ERR PFX
+			"cannot register reboot notifier (err=%d)\n", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 
 	ret = misc_register(&pnx833x_wdt_miscdev);
 	if (ret) {
+<<<<<<< HEAD
 		pr_err("cannot register miscdev on minor=%d (err=%d)\n",
 		       WATCHDOG_MINOR, ret);
+=======
+		printk(KERN_ERR PFX
+			"cannot register miscdev on minor=%d (err=%d)\n",
+			WATCHDOG_MINOR, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unregister_reboot_notifier(&pnx833x_wdt_notifier);
 		return ret;
 	}
 
+<<<<<<< HEAD
 	pr_info("Hardware Watchdog Timer for PNX833x: Version 0.1\n");
 
+=======
+	printk(banner);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (start_enabled)
 		pnx833x_wdt_start();
 

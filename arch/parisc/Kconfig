@@ -14,9 +14,13 @@ config PARISC
 	select GENERIC_ATOMIC64 if !64BIT
 	select HAVE_GENERIC_HARDIRQS
 	select GENERIC_IRQ_PROBE
+<<<<<<< HEAD
 	select GENERIC_PCI_IOMAP
 	select IRQ_PER_CPU
 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
+=======
+	select IRQ_PER_CPU
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	help
 	  The PA-RISC microprocessor is designed by Hewlett-Packard and used
@@ -170,7 +174,13 @@ config 64BIT
 
 choice
 	prompt "Kernel page size"
+<<<<<<< HEAD
 	default PARISC_PAGE_SIZE_4KB
+=======
+	default PARISC_PAGE_SIZE_4KB  if !64BIT
+	default PARISC_PAGE_SIZE_4KB  if 64BIT
+#	default PARISC_PAGE_SIZE_16KB if 64BIT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config PARISC_PAGE_SIZE_4KB
 	bool "4KB"

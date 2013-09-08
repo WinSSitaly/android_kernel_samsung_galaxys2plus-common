@@ -52,6 +52,7 @@
  * Payload-to-userspace:
  *	A single string containing all the argv arguments separated by ' 's
  * Payload-to-kernel:
+<<<<<<< HEAD
  *	A NUL-terminated string that is the name of the device that is used
  *	as the backing store for the log data.  'dm_get_device' will be called
  *	on this device.  ('dm_put_device' will be called on this device
@@ -66,6 +67,17 @@
  * dm_ulog_request to the kernel - setting the 'error' field, filling the
  * data field with the log device if necessary, and setting 'data_size'
  * appropriately.
+=======
+ *	None.  ('data_size' in the dm_ulog_request struct should be 0.)
+ *
+ * The UUID contained in the dm_ulog_request structure is the reference that
+ * will be used by all request types to a specific log.  The constructor must
+ * record this assotiation with instance created.
+ *
+ * When the request has been processed, user-space must return the
+ * dm_ulog_request to the kernel - setting the 'error' field and
+ * 'data_size' appropriately.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 #define DM_ULOG_CTR                    1
 
@@ -382,11 +394,16 @@
  * dm_ulog_request or a change in the way requests are
  * issued/handled.  Changes are outlined here:
  *	version 1:  Initial implementation
+<<<<<<< HEAD
  *	version 2:  DM_ULOG_CTR allowed to return a string containing a
  *	            device name that is to be registered with DM via
  *	            'dm_get_device'.
  */
 #define DM_ULOG_REQUEST_VERSION 2
+=======
+ */
+#define DM_ULOG_REQUEST_VERSION 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct dm_ulog_request {
 	/*

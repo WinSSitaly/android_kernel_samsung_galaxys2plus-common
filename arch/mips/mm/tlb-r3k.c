@@ -19,7 +19,11 @@
 #include <asm/page.h>
 #include <asm/pgtable.h>
 #include <asm/mmu_context.h>
+<<<<<<< HEAD
 #include <asm/tlbmisc.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/isadep.h>
 #include <asm/io.h>
 #include <asm/bootinfo.h>
@@ -223,8 +227,13 @@ void __update_tlb(struct vm_area_struct *vma, unsigned long address, pte_t pte)
 	local_irq_restore(flags);
 }
 
+<<<<<<< HEAD
 void add_wired_entry(unsigned long entrylo0, unsigned long entrylo1,
 		     unsigned long entryhi, unsigned long pagemask)
+=======
+void __init add_wired_entry(unsigned long entrylo0, unsigned long entrylo1,
+			    unsigned long entryhi, unsigned long pagemask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags;
 	unsigned long old_ctx;

@@ -61,14 +61,24 @@
 #define EXC_HV	H
 #define EXC_STD
 
+<<<<<<< HEAD
 #define __EXCEPTION_PROLOG_1(area, extra, vec)				\
 	GET_PACA(r13);							\
 	std	r9,area+EX_R9(r13);	/* save r9 - r12 */		\
 	std	r10,area+EX_R10(r13);					\
+=======
+#define EXCEPTION_PROLOG_1(area)					\
+	GET_PACA(r13);							\
+	std	r9,area+EX_R9(r13);	/* save r9 - r12 */		\
+	std	r10,area+EX_R10(r13);					\
+	std	r11,area+EX_R11(r13);					\
+	std	r12,area+EX_R12(r13);					\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BEGIN_FTR_SECTION_NESTED(66);					\
 	mfspr	r10,SPRN_CFAR;						\
 	std	r10,area+EX_CFAR(r13);					\
 	END_FTR_SECTION_NESTED(CPU_FTR_CFAR, CPU_FTR_CFAR, 66);		\
+<<<<<<< HEAD
 	mfcr	r9;							\
 	extra(vec);							\
 	std	r11,area+EX_R11(r13);					\
@@ -77,6 +87,11 @@
 	std	r10,area+EX_R13(r13)
 #define EXCEPTION_PROLOG_1(area, extra, vec)				\
 	__EXCEPTION_PROLOG_1(area, extra, vec)
+=======
+	GET_SCRATCH0(r9);						\
+	std	r9,area+EX_R13(r13);					\
+	mfcr	r9
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define __EXCEPTION_PROLOG_PSERIES_1(label, h)				\
 	ld	r12,PACAKBASE(r13);	/* get high part of &label */	\
@@ -88,6 +103,7 @@
 	mtspr	SPRN_##h##SRR1,r10;					\
 	h##rfid;							\
 	b	.	/* prevent speculative execution */
+<<<<<<< HEAD
 #define EXCEPTION_PROLOG_PSERIES_1(label, h)				\
 	__EXCEPTION_PROLOG_PSERIES_1(label, h)
 
@@ -147,6 +163,15 @@ do_kvm_##n:								\
 
 #define NOTEST(n)
 
+=======
+#define EXCEPTION_PROLOG_PSERIES_1(label, h) \
+	__EXCEPTION_PROLOG_PSERIES_1(label, h)
+
+#define EXCEPTION_PROLOG_PSERIES(area, label, h)			\
+	EXCEPTION_PROLOG_1(area);					\
+	EXCEPTION_PROLOG_PSERIES_1(label, h);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The common exception prolog is used for all except a few exceptions
  * such as a segment miss on a kernel address.  We have to be prepared
@@ -219,15 +244,22 @@ do_kvm_##n:								\
 	.globl label##_pSeries;				\
 label##_pSeries:					\
 	HMT_MEDIUM;					\
+<<<<<<< HEAD
 	SET_SCRATCH0(r13);		/* save r13 */		\
 	EXCEPTION_PROLOG_PSERIES(PACA_EXGEN, label##_common,	\
 				 EXC_STD, KVMTEST_PR, vec)
+=======
+	DO_KVM	vec;					\
+	SET_SCRATCH0(r13);		/* save r13 */		\
+	EXCEPTION_PROLOG_PSERIES(PACA_EXGEN, label##_common, EXC_STD)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define STD_EXCEPTION_HV(loc, vec, label)		\
 	. = loc;					\
 	.globl label##_hv;				\
 label##_hv:						\
 	HMT_MEDIUM;					\
+<<<<<<< HEAD
 	SET_SCRATCH0(r13);	/* save r13 */			\
 	EXCEPTION_PROLOG_PSERIES(PACA_EXGEN, label##_common,	\
 				 EXC_HV, KVMTEST, vec)
@@ -264,18 +296,55 @@ label##_hv:						\
 	EXCEPTION_PROLOG_PSERIES_1(label##_common, h);
 #define _MASKABLE_EXCEPTION_PSERIES(vec, label, h, extra)		\
 	__MASKABLE_EXCEPTION_PSERIES(vec, label, h, extra)
+=======
+	DO_KVM	vec;					\
+	SET_SCRATCH0(r13);	/* save r13 */		\
+	EXCEPTION_PROLOG_PSERIES(PACA_EXGEN, label##_common, EXC_HV)
+
+#define __MASKABLE_EXCEPTION_PSERIES(vec, label, h)			\
+	HMT_MEDIUM;							\
+	DO_KVM	vec;							\
+	SET_SCRATCH0(r13);    /* save r13 */				\
+	GET_PACA(r13);							\
+	std	r9,PACA_EXGEN+EX_R9(r13);	/* save r9, r10 */	\
+	std	r10,PACA_EXGEN+EX_R10(r13);				\
+	lbz	r10,PACASOFTIRQEN(r13);					\
+	mfcr	r9;							\
+	cmpwi	r10,0;							\
+	beq	masked_##h##interrupt;					\
+	GET_SCRATCH0(r10);						\
+	std	r10,PACA_EXGEN+EX_R13(r13);				\
+	std	r11,PACA_EXGEN+EX_R11(r13);				\
+	std	r12,PACA_EXGEN+EX_R12(r13);				\
+	ld	r12,PACAKBASE(r13);	/* get high part of &label */	\
+	ld	r10,PACAKMSR(r13);	/* get MSR value for kernel */	\
+	mfspr	r11,SPRN_##h##SRR0;	/* save SRR0 */			\
+	LOAD_HANDLER(r12,label##_common)				\
+	mtspr	SPRN_##h##SRR0,r12;					\
+	mfspr	r12,SPRN_##h##SRR1;	/* and SRR1 */			\
+	mtspr	SPRN_##h##SRR1,r10;					\
+	h##rfid;							\
+	b	.	/* prevent speculative execution */
+#define _MASKABLE_EXCEPTION_PSERIES(vec, label, h)			\
+	__MASKABLE_EXCEPTION_PSERIES(vec, label, h)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MASKABLE_EXCEPTION_PSERIES(loc, vec, label)			\
 	. = loc;							\
 	.globl label##_pSeries;						\
 label##_pSeries:							\
+<<<<<<< HEAD
 	_MASKABLE_EXCEPTION_PSERIES(vec, label,				\
 				    EXC_STD, SOFTEN_TEST_PR)
+=======
+	_MASKABLE_EXCEPTION_PSERIES(vec, label, EXC_STD)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MASKABLE_EXCEPTION_HV(loc, vec, label)				\
 	. = loc;							\
 	.globl label##_hv;						\
 label##_hv:								\
+<<<<<<< HEAD
 	_MASKABLE_EXCEPTION_PSERIES(vec, label,				\
 				    EXC_HV, SOFTEN_TEST_HV)
 
@@ -321,6 +390,77 @@ label##_common:							\
 #define STD_EXCEPTION_COMMON_ASYNC(trap, label, hdlr)		  \
 	EXCEPTION_COMMON(trap, label, hdlr, ret_from_except_lite, \
 			 FINISH_NAP;DISABLE_INTS;RUNLATCH_ON)
+=======
+	_MASKABLE_EXCEPTION_PSERIES(vec, label, EXC_HV)
+
+#ifdef CONFIG_PPC_ISERIES
+#define DISABLE_INTS				\
+	li	r11,0;				\
+	stb	r11,PACASOFTIRQEN(r13);		\
+BEGIN_FW_FTR_SECTION;				\
+	stb	r11,PACAHARDIRQEN(r13);		\
+END_FW_FTR_SECTION_IFCLR(FW_FEATURE_ISERIES);	\
+	TRACE_DISABLE_INTS;			\
+BEGIN_FW_FTR_SECTION;				\
+	mfmsr	r10;				\
+	ori	r10,r10,MSR_EE;			\
+	mtmsrd	r10,1;				\
+END_FW_FTR_SECTION_IFSET(FW_FEATURE_ISERIES)
+#else
+#define DISABLE_INTS				\
+	li	r11,0;				\
+	stb	r11,PACASOFTIRQEN(r13);		\
+	stb	r11,PACAHARDIRQEN(r13);		\
+	TRACE_DISABLE_INTS
+#endif /* CONFIG_PPC_ISERIES */
+
+#define ENABLE_INTS				\
+	ld	r12,_MSR(r1);			\
+	mfmsr	r11;				\
+	rlwimi	r11,r12,0,MSR_EE;		\
+	mtmsrd	r11,1
+
+#define STD_EXCEPTION_COMMON(trap, label, hdlr)		\
+	.align	7;					\
+	.globl label##_common;				\
+label##_common:						\
+	EXCEPTION_PROLOG_COMMON(trap, PACA_EXGEN);	\
+	DISABLE_INTS;					\
+	bl	.save_nvgprs;				\
+	addi	r3,r1,STACK_FRAME_OVERHEAD;		\
+	bl	hdlr;					\
+	b	.ret_from_except
+
+/*
+ * Like STD_EXCEPTION_COMMON, but for exceptions that can occur
+ * in the idle task and therefore need the special idle handling.
+ */
+#define STD_EXCEPTION_COMMON_IDLE(trap, label, hdlr)	\
+	.align	7;					\
+	.globl label##_common;				\
+label##_common:						\
+	EXCEPTION_PROLOG_COMMON(trap, PACA_EXGEN);	\
+	FINISH_NAP;					\
+	DISABLE_INTS;					\
+	bl	.save_nvgprs;				\
+	addi	r3,r1,STACK_FRAME_OVERHEAD;		\
+	bl	hdlr;					\
+	b	.ret_from_except
+
+#define STD_EXCEPTION_COMMON_LITE(trap, label, hdlr)	\
+	.align	7;					\
+	.globl label##_common;				\
+label##_common:						\
+	EXCEPTION_PROLOG_COMMON(trap, PACA_EXGEN);	\
+	FINISH_NAP;					\
+	DISABLE_INTS;					\
+BEGIN_FTR_SECTION					\
+	bl	.ppc64_runlatch_on;			\
+END_FTR_SECTION_IFSET(CPU_FTR_CTRL)			\
+	addi	r3,r1,STACK_FRAME_OVERHEAD;		\
+	bl	hdlr;					\
+	b	.ret_from_except_lite
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * When the idle code in power4_idle puts the CPU into NAP mode,

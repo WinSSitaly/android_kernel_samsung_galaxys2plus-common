@@ -11,7 +11,11 @@
 #include <linux/pagemap.h>
 #include <linux/bootmem.h>
 #include <linux/compiler.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pagevec.h>
 #include <linux/writeback.h>
 #include <linux/slab.h>
@@ -34,6 +38,7 @@
 
 #include "internal.h"
 
+<<<<<<< HEAD
 /*
  * online_page_callback contains pointer to current page onlining function.
  * Initially it is generic_online_page(). If it is required it could be
@@ -45,6 +50,8 @@ static void generic_online_page(struct page *page);
 
 static online_page_callback_t online_page_callback = generic_online_page;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 DEFINE_MUTEX(mem_hotplug_mutex);
 
 void lock_memory_hotplug(void)
@@ -127,6 +134,12 @@ static void register_page_bootmem_info_section(unsigned long start_pfn)
 	struct mem_section *ms;
 	struct page *page, *memmap;
 
+<<<<<<< HEAD
+=======
+	if (!pfn_valid(start_pfn))
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	section_nr = pfn_to_section_nr(start_pfn);
 	ms = __nr_to_section(section_nr);
 
@@ -185,6 +198,7 @@ void register_page_bootmem_info_node(struct pglist_data *pgdat)
 	end_pfn = pfn + pgdat->node_spanned_pages;
 
 	/* register_section info */
+<<<<<<< HEAD
 	for (; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
 		/*
 		 * Some platforms can assign the same pfn to multiple nodes - on
@@ -195,6 +209,11 @@ void register_page_bootmem_info_node(struct pglist_data *pgdat)
 		if (pfn_valid(pfn) && (pfn_to_nid(pfn) == node))
 			register_page_bootmem_info_section(pfn);
 	}
+=======
+	for (; pfn < end_pfn; pfn += PAGES_PER_SECTION)
+		register_page_bootmem_info_section(pfn);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif /* !CONFIG_SPARSEMEM_VMEMMAP */
 
@@ -376,6 +395,7 @@ int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
 }
 EXPORT_SYMBOL_GPL(__remove_pages);
 
+<<<<<<< HEAD
 int set_online_page_callback(online_page_callback_t callback)
 {
 	int rc = -EINVAL;
@@ -422,20 +442,34 @@ EXPORT_SYMBOL_GPL(__online_page_set_limits);
 void __online_page_increment_counters(struct page *page)
 {
 	totalram_pages++;
+=======
+void online_page(struct page *page)
+{
+	unsigned long pfn = page_to_pfn(page);
+
+	totalram_pages++;
+	if (pfn >= num_physpages)
+		num_physpages = pfn + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_HIGHMEM
 	if (PageHighMem(page))
 		totalhigh_pages++;
 #endif
+<<<<<<< HEAD
 }
 EXPORT_SYMBOL_GPL(__online_page_increment_counters);
 
 void __online_page_free(struct page *page)
 {
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ClearPageReserved(page);
 	init_page_count(page);
 	__free_page(page);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(__online_page_free);
 
 static void generic_online_page(struct page *page)
@@ -444,6 +478,8 @@ static void generic_online_page(struct page *page)
 	__online_page_increment_counters(page);
 	__online_page_free(page);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
 			void *arg)
@@ -454,7 +490,11 @@ static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
 	if (PageReserved(pfn_to_page(start_pfn)))
 		for (i = 0; i < nr_pages; i++) {
 			page = pfn_to_page(start_pfn + i);
+<<<<<<< HEAD
 			(*online_page_callback)(page);
+=======
+			online_page(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			onlined_pages++;
 		}
 	*(unsigned long *)arg = onlined_pages;
@@ -813,7 +853,11 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
 		}
 		/* this function returns # of failed pages */
 		ret = migrate_pages(&source, hotremove_migrate_alloc, 0,
+<<<<<<< HEAD
 							true, MIGRATE_SYNC);
+=======
+								true, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret)
 			putback_lru_pages(&source);
 	}
@@ -895,7 +939,11 @@ static int __ref offline_pages(unsigned long start_pfn,
 	nr_pages = end_pfn - start_pfn;
 
 	/* set above range as isolated */
+<<<<<<< HEAD
 	ret = start_isolate_page_range(start_pfn, end_pfn);
+=======
+	ret = start_isolate_page_range(start_pfn, end_pfn, MIGRATE_MOVABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto out;
 
@@ -960,7 +1008,11 @@ repeat:
 	   We cannot do rollback at this point. */
 	offline_isolated_pages(start_pfn, end_pfn);
 	/* reset pagetype flags and makes migrate type to be MOVABLE */
+<<<<<<< HEAD
 	undo_isolate_page_range(start_pfn, end_pfn);
+=======
+	undo_isolate_page_range(start_pfn, end_pfn, MIGRATE_MOVABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* removal success */
 	zone->present_pages -= offlined_pages;
 	zone->zone_pgdat->node_present_pages -= offlined_pages;
@@ -985,7 +1037,11 @@ failed_removal:
 		start_pfn, end_pfn);
 	memory_notify(MEM_CANCEL_OFFLINE, &arg);
 	/* pushback to free area */
+<<<<<<< HEAD
 	undo_isolate_page_range(start_pfn, end_pfn);
+=======
+	undo_isolate_page_range(start_pfn, end_pfn, MIGRATE_MOVABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	unlock_memory_hotplug();

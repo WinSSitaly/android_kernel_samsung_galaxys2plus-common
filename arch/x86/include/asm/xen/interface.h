@@ -55,8 +55,11 @@ DEFINE_GUEST_HANDLE(char);
 DEFINE_GUEST_HANDLE(int);
 DEFINE_GUEST_HANDLE(long);
 DEFINE_GUEST_HANDLE(void);
+<<<<<<< HEAD
 DEFINE_GUEST_HANDLE(uint64_t);
 DEFINE_GUEST_HANDLE(uint32_t);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifndef HYPERVISOR_VIRT_START

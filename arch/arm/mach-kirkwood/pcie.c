@@ -11,12 +11,19 @@
 #include <linux/kernel.h>
 #include <linux/pci.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <video/vga.h>
+=======
+#include <linux/mbus.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/irq.h>
 #include <asm/mach/pci.h>
 #include <plat/pcie.h>
 #include <mach/bridge-regs.h>
+<<<<<<< HEAD
 #include <plat/addr-map.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "common.h"
 
 void kirkwood_enable_pcie(void)
@@ -198,20 +205,32 @@ static int __init kirkwood_pcie_setup(int nr, struct pci_sys_data *sys)
 	if (request_resource(&iomem_resource, &pp->res[1]))
 		panic("Request PCIe%d Memory resource failed\n", index);
 
+<<<<<<< HEAD
 	sys->io_offset = 0;
 	pci_add_resource_offset(&sys->resources, &pp->res[0], sys->io_offset);
 	pci_add_resource_offset(&sys->resources, &pp->res[1], sys->mem_offset);
+=======
+	sys->resource[0] = &pp->res[0];
+	sys->resource[1] = &pp->res[1];
+	sys->resource[2] = NULL;
+	sys->io_offset = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Generic PCIe unit setup.
 	 */
 	orion_pcie_set_local_bus_nr(pp->base, sys->busnr);
 
+<<<<<<< HEAD
 	orion_pcie_setup(pp->base);
+=======
+	orion_pcie_setup(pp->base, &kirkwood_mbus_dram_info);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 1;
 }
 
+<<<<<<< HEAD
 /*
  * The root complex has a hardwired class of PCI_CLASS_MEMORY_OTHER, when it
  * is operating as a root complex this needs to be switched to
@@ -225,6 +244,16 @@ static void __devinit rc_pci_fixup(struct pci_dev *dev)
 
 		dev->class &= 0xff;
 		dev->class |= PCI_CLASS_BRIDGE_HOST << 8;
+=======
+static void __devinit rc_pci_fixup(struct pci_dev *dev)
+{
+	/*
+	 * Prevent enumeration of root complex.
+	 */
+	if (dev->bus->parent == NULL && dev->devfn == 0) {
+		int i;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (i = 0; i < DEVICE_COUNT_RESOURCE; i++) {
 			dev->resource[i].start = 0;
 			dev->resource[i].end   = 0;
@@ -240,8 +269,12 @@ kirkwood_pcie_scan_bus(int nr, struct pci_sys_data *sys)
 	struct pci_bus *bus;
 
 	if (nr < num_pcie_ports) {
+<<<<<<< HEAD
 		bus = pci_scan_root_bus(NULL, sys->busnr, &pcie_ops, sys,
 					&sys->resources);
+=======
+		bus = pci_scan_bus(sys->busnr, &pcie_ops, sys);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		bus = NULL;
 		BUG();
@@ -250,8 +283,12 @@ kirkwood_pcie_scan_bus(int nr, struct pci_sys_data *sys)
 	return bus;
 }
 
+<<<<<<< HEAD
 static int __init kirkwood_pcie_map_irq(const struct pci_dev *dev, u8 slot,
 	u8 pin)
+=======
+static int __init kirkwood_pcie_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct pcie_port *pp = bus_to_port(dev->bus);
 
@@ -278,8 +315,11 @@ static void __init add_pcie_port(int index, unsigned long base)
 
 void __init kirkwood_pcie_init(unsigned int portmask)
 {
+<<<<<<< HEAD
 	vga_base = KIRKWOOD_PCIE_MEM_PHYS_BASE;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (portmask & KW_PCIE0)
 		add_pcie_port(0, PCIE_VIRT_BASE);
 

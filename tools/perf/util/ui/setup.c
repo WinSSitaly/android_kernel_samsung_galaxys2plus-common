@@ -7,6 +7,7 @@
 #include "browser.h"
 #include "helpline.h"
 #include "ui.h"
+<<<<<<< HEAD
 #include "util.h"
 #include "libslang.h"
 #include "keysyms.h"
@@ -86,6 +87,11 @@ int ui__getch(int delay_secs)
 	return SLkp_getkey();
 }
 
+=======
+
+pthread_mutex_t ui__lock = PTHREAD_MUTEX_INITIALIZER;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void newt_suspend(void *d __used)
 {
 	newtSuspend();
@@ -93,6 +99,7 @@ static void newt_suspend(void *d __used)
 	newtResume();
 }
 
+<<<<<<< HEAD
 static int ui__init(void)
 {
 	int err = SLkp_init();
@@ -120,6 +127,8 @@ static void ui__signal(int sig)
 	exit(0);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void setup_browser(bool fallback_to_pager)
 {
 	if (!isatty(1) || !use_browser || dump_trace) {
@@ -131,6 +140,7 @@ void setup_browser(bool fallback_to_pager)
 
 	use_browser = 1;
 	newtInit();
+<<<<<<< HEAD
 	ui__init();
 	newtSetSuspendCallback(newt_suspend, NULL);
 	ui_helpline__init();
@@ -141,15 +151,29 @@ void setup_browser(bool fallback_to_pager)
 	signal(SIGINT, ui__signal);
 	signal(SIGQUIT, ui__signal);
 	signal(SIGTERM, ui__signal);
+=======
+	newtCls();
+	newtSetSuspendCallback(newt_suspend, NULL);
+	ui_helpline__init();
+	ui_browser__init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void exit_browser(bool wait_for_ok)
 {
 	if (use_browser > 0) {
+<<<<<<< HEAD
 		if (wait_for_ok)
 			ui__question_window("Fatal Error",
 					    ui_helpline__last_msg,
 					    "Press any key...", 0);
 		ui__exit();
+=======
+		if (wait_for_ok) {
+			char title[] = "Fatal Error", ok[] = "Ok";
+			newtWinMessage(title, ok, ui_helpline__last_msg);
+		}
+		newtFinished();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }

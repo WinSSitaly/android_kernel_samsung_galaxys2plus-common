@@ -49,8 +49,14 @@ static struct btrfs_dir_item *insert_with_overflow(struct btrfs_trans_handle
 		di = btrfs_match_dir_item_name(root, path, name, name_len);
 		if (di)
 			return ERR_PTR(-EEXIST);
+<<<<<<< HEAD
 		btrfs_extend_item(trans, root, path, data_size);
 	} else if (ret < 0)
+=======
+		ret = btrfs_extend_item(trans, root, path, data_size);
+	}
+	if (ret < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ERR_PTR(ret);
 	WARN_ON(ret > 0);
 	leaf = path->nodes[0];
@@ -88,8 +94,18 @@ int btrfs_insert_xattr_item(struct btrfs_trans_handle *trans,
 	data_size = sizeof(*dir_item) + name_len + data_len;
 	dir_item = insert_with_overflow(trans, root, path, &key, data_size,
 					name, name_len);
+<<<<<<< HEAD
 	if (IS_ERR(dir_item))
 		return PTR_ERR(dir_item);
+=======
+	/*
+	 * FIXME: at some point we should handle xattr's that are larger than
+	 * what we can fit in our leaf.  We set location to NULL b/c we arent
+	 * pointing at anything else, that will change if we store the xattr
+	 * data in a separate inode.
+	 */
+	BUG_ON(IS_ERR(dir_item));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(&location, 0, sizeof(location));
 
 	leaf = path->nodes[0];
@@ -115,7 +131,10 @@ int btrfs_insert_xattr_item(struct btrfs_trans_handle *trans,
  * 'location' is the key to stuff into the directory item, 'type' is the
  * type of the inode we're pointing to, and 'index' is the sequence number
  * to use for the second index (if one is created).
+<<<<<<< HEAD
  * Will return 0 or -ENOMEM
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int btrfs_insert_dir_item(struct btrfs_trans_handle *trans, struct btrfs_root
 			  *root, const char *name, int name_len,
@@ -198,6 +217,11 @@ struct btrfs_dir_item *btrfs_lookup_dir_item(struct btrfs_trans_handle *trans,
 	struct btrfs_key key;
 	int ins_len = mod < 0 ? -1 : 0;
 	int cow = mod != 0;
+<<<<<<< HEAD
+=======
+	struct btrfs_key found_key;
+	struct extent_buffer *leaf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	key.objectid = dir;
 	btrfs_set_key_type(&key, BTRFS_DIR_ITEM_KEY);
@@ -207,7 +231,22 @@ struct btrfs_dir_item *btrfs_lookup_dir_item(struct btrfs_trans_handle *trans,
 	ret = btrfs_search_slot(trans, root, &key, path, ins_len, cow);
 	if (ret < 0)
 		return ERR_PTR(ret);
+<<<<<<< HEAD
 	if (ret > 0)
+=======
+	if (ret > 0) {
+		if (path->slots[0] == 0)
+			return NULL;
+		path->slots[0]--;
+	}
+
+	leaf = path->nodes[0];
+	btrfs_item_key_to_cpu(leaf, &found_key, path->slots[0]);
+
+	if (found_key.objectid != dir ||
+	    btrfs_key_type(&found_key) != BTRFS_DIR_ITEM_KEY ||
+	    found_key.offset != key.offset)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 
 	return btrfs_match_dir_item_name(root, path, name, name_len);
@@ -302,6 +341,11 @@ struct btrfs_dir_item *btrfs_lookup_xattr(struct btrfs_trans_handle *trans,
 	struct btrfs_key key;
 	int ins_len = mod < 0 ? -1 : 0;
 	int cow = mod != 0;
+<<<<<<< HEAD
+=======
+	struct btrfs_key found_key;
+	struct extent_buffer *leaf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	key.objectid = dir;
 	btrfs_set_key_type(&key, BTRFS_XATTR_ITEM_KEY);
@@ -309,7 +353,22 @@ struct btrfs_dir_item *btrfs_lookup_xattr(struct btrfs_trans_handle *trans,
 	ret = btrfs_search_slot(trans, root, &key, path, ins_len, cow);
 	if (ret < 0)
 		return ERR_PTR(ret);
+<<<<<<< HEAD
 	if (ret > 0)
+=======
+	if (ret > 0) {
+		if (path->slots[0] == 0)
+			return NULL;
+		path->slots[0]--;
+	}
+
+	leaf = path->nodes[0];
+	btrfs_item_key_to_cpu(leaf, &found_key, path->slots[0]);
+
+	if (found_key.objectid != dir ||
+	    btrfs_key_type(&found_key) != BTRFS_XATTR_ITEM_KEY ||
+	    found_key.offset != key.offset)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 
 	return btrfs_match_dir_item_name(root, path, name, name_len);
@@ -383,8 +442,13 @@ int btrfs_delete_one_dir_name(struct btrfs_trans_handle *trans,
 		start = btrfs_item_ptr_offset(leaf, path->slots[0]);
 		memmove_extent_buffer(leaf, ptr, ptr + sub_item_len,
 			item_len - (ptr + sub_item_len - start));
+<<<<<<< HEAD
 		btrfs_truncate_item(trans, root, path,
 				    item_len - sub_item_len, 1);
+=======
+		ret = btrfs_truncate_item(trans, root, path,
+					  item_len - sub_item_len, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return ret;
 }

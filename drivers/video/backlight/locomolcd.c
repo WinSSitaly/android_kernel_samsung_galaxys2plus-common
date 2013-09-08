@@ -229,7 +229,18 @@ static struct locomo_driver poodle_lcd_driver = {
 
 static int __init locomolcd_init(void)
 {
+<<<<<<< HEAD
 	return locomo_driver_register(&poodle_lcd_driver);
+=======
+	int ret = locomo_driver_register(&poodle_lcd_driver);
+	if (ret)
+		return ret;
+
+#ifdef CONFIG_SA1100_COLLIE
+	sa1100fb_lcd_power = locomolcd_power;
+#endif
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit locomolcd_exit(void)

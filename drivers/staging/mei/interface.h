@@ -1,7 +1,11 @@
 /*
  *
  * Intel Management Engine Interface (Intel MEI) Linux driver
+<<<<<<< HEAD
  * Copyright (c) 2003-2012, Intel Corporation.
+=======
+ * Copyright (c) 2003-2011, Intel Corporation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -23,9 +27,13 @@
 #include "mei_dev.h"
 
 
+<<<<<<< HEAD
 #define AMT_WD_DEFAULT_TIMEOUT 120	/* seconds */
 #define AMT_WD_MIN_TIMEOUT 120	/* seconds */
 #define AMT_WD_MAX_TIMEOUT 65535	/* seconds */
+=======
+#define AMT_WD_VALUE 120	/* seconds */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MEI_WATCHDOG_DATA_SIZE         16
 #define MEI_START_WD_DATA_SIZE         20
@@ -33,8 +41,12 @@
 
 
 void mei_read_slots(struct mei_device *dev,
+<<<<<<< HEAD
 		     unsigned char *buffer,
 		     unsigned long buffer_length);
+=======
+		     unsigned char *buffer, unsigned long buffer_length);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int mei_write_message(struct mei_device *dev,
 			     struct mei_msg_hdr *header,
@@ -51,6 +63,7 @@ int mei_flow_ctrl_creds(struct mei_device *dev, struct mei_cl *cl);
 
 int mei_wd_send(struct mei_device *dev);
 int mei_wd_stop(struct mei_device *dev, bool preserve);
+<<<<<<< HEAD
 bool mei_wd_host_init(struct mei_device *dev);
 void mei_wd_set_start_timeout(struct mei_device *dev, u16 timeout);
 /*
@@ -64,6 +77,10 @@ void mei_watchdog_register(struct mei_device *dev);
  * @dev - mei device
  */
 void mei_watchdog_unregister(struct mei_device *dev);
+=======
+void mei_wd_host_init(struct mei_device *dev);
+void mei_wd_start_setup(struct mei_device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int mei_flow_ctrl_reduce(struct mei_device *dev, struct mei_cl *cl);
 

@@ -25,7 +25,11 @@
 #include <linux/err.h>
 #include <linux/slab.h>
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <linux/static_key.h>
+=======
+#include <linux/jump_label.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern struct tracepoint * const __start___tracepoints_ptrs[];
 extern struct tracepoint * const __stop___tracepoints_ptrs[];
@@ -34,6 +38,7 @@ extern struct tracepoint * const __stop___tracepoints_ptrs[];
 static const int tracepoint_debug;
 
 /*
+<<<<<<< HEAD
  * Tracepoints mutex protects the builtin and module tracepoints and the hash
  * table, as well as the local module list.
  */
@@ -44,6 +49,13 @@ static DEFINE_MUTEX(tracepoints_mutex);
 static LIST_HEAD(tracepoint_module_list);
 #endif /* CONFIG_MODULES */
 
+=======
+ * tracepoints_mutex nests inside module_mutex. Tracepoints mutex protects the
+ * builtin and module tracepoints and the hash table.
+ */
+static DEFINE_MUTEX(tracepoints_mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Tracepoint hash table, containing the active tracepoints.
  * Protected by tracepoints_mutex.
@@ -256,9 +268,15 @@ static void set_tracepoint(struct tracepoint_entry **entry,
 {
 	WARN_ON(strcmp((*entry)->name, elem->name) != 0);
 
+<<<<<<< HEAD
 	if (elem->regfunc && !static_key_enabled(&elem->key) && active)
 		elem->regfunc();
 	else if (elem->unregfunc && static_key_enabled(&elem->key) && !active)
+=======
+	if (elem->regfunc && !jump_label_enabled(&elem->key) && active)
+		elem->regfunc();
+	else if (elem->unregfunc && jump_label_enabled(&elem->key) && !active)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		elem->unregfunc();
 
 	/*
@@ -269,10 +287,17 @@ static void set_tracepoint(struct tracepoint_entry **entry,
 	 * is used.
 	 */
 	rcu_assign_pointer(elem->funcs, (*entry)->funcs);
+<<<<<<< HEAD
 	if (active && !static_key_enabled(&elem->key))
 		static_key_slow_inc(&elem->key);
 	else if (!active && static_key_enabled(&elem->key))
 		static_key_slow_dec(&elem->key);
+=======
+	if (active && !jump_label_enabled(&elem->key))
+		jump_label_inc(&elem->key);
+	else if (!active && jump_label_enabled(&elem->key))
+		jump_label_dec(&elem->key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -283,11 +308,19 @@ static void set_tracepoint(struct tracepoint_entry **entry,
  */
 static void disable_tracepoint(struct tracepoint *elem)
 {
+<<<<<<< HEAD
 	if (elem->unregfunc && static_key_enabled(&elem->key))
 		elem->unregfunc();
 
 	if (static_key_enabled(&elem->key))
 		static_key_slow_dec(&elem->key);
+=======
+	if (elem->unregfunc && jump_label_enabled(&elem->key))
+		elem->unregfunc();
+
+	if (jump_label_enabled(&elem->key))
+		jump_label_dec(&elem->key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rcu_assign_pointer(elem->funcs, NULL);
 }
 
@@ -297,10 +330,16 @@ static void disable_tracepoint(struct tracepoint *elem)
  * @end: end of the range
  *
  * Updates the probe callback corresponding to a range of tracepoints.
+<<<<<<< HEAD
  * Called with tracepoints_mutex held.
  */
 static void tracepoint_update_probe_range(struct tracepoint * const *begin,
 					  struct tracepoint * const *end)
+=======
+ */
+void tracepoint_update_probe_range(struct tracepoint * const *begin,
+				   struct tracepoint * const *end)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tracepoint * const *iter;
 	struct tracepoint_entry *mark_entry;
@@ -308,6 +347,10 @@ static void tracepoint_update_probe_range(struct tracepoint * const *begin,
 	if (!begin)
 		return;
 
+<<<<<<< HEAD
+=======
+	mutex_lock(&tracepoints_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (iter = begin; iter < end; iter++) {
 		mark_entry = get_tracepoint((*iter)->name);
 		if (mark_entry) {
@@ -317,6 +360,7 @@ static void tracepoint_update_probe_range(struct tracepoint * const *begin,
 			disable_tracepoint(*iter);
 		}
 	}
+<<<<<<< HEAD
 }
 
 #ifdef CONFIG_MODULES
@@ -338,6 +382,13 @@ void module_update_tracepoints(void)
 /*
  * Update probes, removing the faulty probes.
  * Called with tracepoints_mutex held.
+=======
+	mutex_unlock(&tracepoints_mutex);
+}
+
+/*
+ * Update probes, removing the faulty probes.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void tracepoint_update_probes(void)
 {
@@ -380,12 +431,20 @@ int tracepoint_probe_register(const char *name, void *probe, void *data)
 
 	mutex_lock(&tracepoints_mutex);
 	old = tracepoint_add_probe(name, probe, data);
+<<<<<<< HEAD
 	if (IS_ERR(old)) {
 		mutex_unlock(&tracepoints_mutex);
 		return PTR_ERR(old);
 	}
 	tracepoint_update_probes();		/* may update entry */
 	mutex_unlock(&tracepoints_mutex);
+=======
+	mutex_unlock(&tracepoints_mutex);
+	if (IS_ERR(old))
+		return PTR_ERR(old);
+
+	tracepoint_update_probes();		/* may update entry */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	release_probes(old);
 	return 0;
 }
@@ -424,12 +483,20 @@ int tracepoint_probe_unregister(const char *name, void *probe, void *data)
 
 	mutex_lock(&tracepoints_mutex);
 	old = tracepoint_remove_probe(name, probe, data);
+<<<<<<< HEAD
 	if (IS_ERR(old)) {
 		mutex_unlock(&tracepoints_mutex);
 		return PTR_ERR(old);
 	}
 	tracepoint_update_probes();		/* may update entry */
 	mutex_unlock(&tracepoints_mutex);
+=======
+	mutex_unlock(&tracepoints_mutex);
+	if (IS_ERR(old))
+		return PTR_ERR(old);
+
+	tracepoint_update_probes();		/* may update entry */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	release_probes(old);
 	return 0;
 }
@@ -512,8 +579,14 @@ void tracepoint_probe_update_all(void)
 	if (!list_empty(&old_probes))
 		list_replace_init(&old_probes, &release_probes);
 	need_update = 0;
+<<<<<<< HEAD
 	tracepoint_update_probes();
 	mutex_unlock(&tracepoints_mutex);
+=======
+	mutex_unlock(&tracepoints_mutex);
+
+	tracepoint_update_probes();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry_safe(pos, next, &release_probes, u.list) {
 		list_del(&pos->u.list);
 		call_rcu_sched(&pos->u.rcu, rcu_free_old_probes);
@@ -531,7 +604,11 @@ EXPORT_SYMBOL_GPL(tracepoint_probe_update_all);
  * Will return the first tracepoint in the range if the input tracepoint is
  * NULL.
  */
+<<<<<<< HEAD
 static int tracepoint_get_iter_range(struct tracepoint * const **tracepoint,
+=======
+int tracepoint_get_iter_range(struct tracepoint * const **tracepoint,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct tracepoint * const *begin, struct tracepoint * const *end)
 {
 	if (!*tracepoint && begin != end) {
@@ -542,12 +619,20 @@ static int tracepoint_get_iter_range(struct tracepoint * const **tracepoint,
 		return 1;
 	return 0;
 }
+<<<<<<< HEAD
 
 #ifdef CONFIG_MODULES
 static void tracepoint_get_iter(struct tracepoint_iter *iter)
 {
 	int found = 0;
 	struct tp_module *iter_mod;
+=======
+EXPORT_SYMBOL_GPL(tracepoint_get_iter_range);
+
+static void tracepoint_get_iter(struct tracepoint_iter *iter)
+{
+	int found = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Core kernel tracepoints */
 	if (!iter->module) {
@@ -557,6 +642,7 @@ static void tracepoint_get_iter(struct tracepoint_iter *iter)
 		if (found)
 			goto end;
 	}
+<<<<<<< HEAD
 	/* Tracepoints in modules */
 	mutex_lock(&tracepoints_mutex);
 	list_for_each_entry(iter_mod, &tracepoint_module_list, list) {
@@ -577,10 +663,15 @@ static void tracepoint_get_iter(struct tracepoint_iter *iter)
 		}
 	}
 	mutex_unlock(&tracepoints_mutex);
+=======
+	/* tracepoints in modules. */
+	found = module_get_iter_tracepoints(iter);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 end:
 	if (!found)
 		tracepoint_iter_reset(iter);
 }
+<<<<<<< HEAD
 #else /* CONFIG_MODULES */
 static void tracepoint_get_iter(struct tracepoint_iter *iter)
 {
@@ -594,6 +685,8 @@ static void tracepoint_get_iter(struct tracepoint_iter *iter)
 		tracepoint_iter_reset(iter);
 }
 #endif /* CONFIG_MODULES */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void tracepoint_iter_start(struct tracepoint_iter *iter)
 {
@@ -620,14 +713,19 @@ EXPORT_SYMBOL_GPL(tracepoint_iter_stop);
 
 void tracepoint_iter_reset(struct tracepoint_iter *iter)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_MODULES
 	iter->module = NULL;
 #endif /* CONFIG_MODULES */
+=======
+	iter->module = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iter->tracepoint = NULL;
 }
 EXPORT_SYMBOL_GPL(tracepoint_iter_reset);
 
 #ifdef CONFIG_MODULES
+<<<<<<< HEAD
 static int tracepoint_module_coming(struct module *mod)
 {
 	struct tp_module *tp_mod, *iter;
@@ -695,11 +793,14 @@ static int tracepoint_module_going(struct module *mod)
 	mutex_unlock(&tracepoints_mutex);
 	return 0;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int tracepoint_module_notify(struct notifier_block *self,
 			     unsigned long val, void *data)
 {
 	struct module *mod = data;
+<<<<<<< HEAD
 	int ret = 0;
 
 	switch (val) {
@@ -713,6 +814,17 @@ int tracepoint_module_notify(struct notifier_block *self,
 		break;
 	}
 	return ret;
+=======
+
+	switch (val) {
+	case MODULE_STATE_COMING:
+	case MODULE_STATE_GOING:
+		tracepoint_update_probe_range(mod->tracepoints_ptrs,
+			mod->tracepoints_ptrs + mod->num_tracepoints);
+		break;
+	}
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct notifier_block tracepoint_module_nb = {
@@ -725,6 +837,10 @@ static int init_tracepoints(void)
 	return register_module_notifier(&tracepoint_module_nb);
 }
 __initcall(init_tracepoints);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_MODULES */
 
 #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS

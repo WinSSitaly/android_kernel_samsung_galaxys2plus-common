@@ -107,6 +107,10 @@ static inline void bictcp_reset(struct bictcp *ca)
 {
 	ca->cnt = 0;
 	ca->last_max_cwnd = 0;
+<<<<<<< HEAD
+=======
+	ca->loss_cwnd = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ca->last_cwnd = 0;
 	ca->last_time = 0;
 	ca->bic_origin_point = 0;
@@ -141,10 +145,14 @@ static inline void bictcp_hystart_reset(struct sock *sk)
 
 static void bictcp_init(struct sock *sk)
 {
+<<<<<<< HEAD
 	struct bictcp *ca = inet_csk_ca(sk);
 
 	bictcp_reset(ca);
 	ca->loss_cwnd = 0;
+=======
+	bictcp_reset(inet_csk_ca(sk));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (hystart)
 		bictcp_hystart_reset(sk);
@@ -206,8 +214,13 @@ static u32 cubic_root(u64 a)
  */
 static inline void bictcp_update(struct bictcp *ca, u32 cwnd)
 {
+<<<<<<< HEAD
 	u32 delta, bic_target, max_cnt;
 	u64 offs, t;
+=======
+	u64 offs;
+	u32 delta, t, bic_target, max_cnt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ca->ack_cnt++;	/* count the number of ACKs */
 
@@ -250,11 +263,17 @@ static inline void bictcp_update(struct bictcp *ca, u32 cwnd)
 	 * if the cwnd < 1 million packets !!!
 	 */
 
+<<<<<<< HEAD
 	t = (s32)(tcp_time_stamp - ca->epoch_start);
 	t += msecs_to_jiffies(ca->delay_min >> 3);
 	/* change the unit from HZ to bictcp_HZ */
 	t <<= BICTCP_HZ;
 	do_div(t, HZ);
+=======
+	/* change the unit from HZ to bictcp_HZ */
+	t = ((tcp_time_stamp + msecs_to_jiffies(ca->delay_min>>3)
+	      - ca->epoch_start) << BICTCP_HZ) / HZ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (t < ca->bic_K)		/* t - K */
 		offs = ca->bic_K - t;
@@ -279,7 +298,11 @@ static inline void bictcp_update(struct bictcp *ca, u32 cwnd)
 	 * The initial growth of cubic function may be too conservative
 	 * when the available bandwidth is still unknown.
 	 */
+<<<<<<< HEAD
 	if (ca->last_max_cwnd == 0 && ca->cnt > 20)
+=======
+	if (ca->loss_cwnd == 0 && ca->cnt > 20)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ca->cnt = 20;	/* increase cwnd 5% per RTT */
 
 	/* TCP Friendly */
@@ -346,7 +369,11 @@ static u32 bictcp_undo_cwnd(struct sock *sk)
 {
 	struct bictcp *ca = inet_csk_ca(sk);
 
+<<<<<<< HEAD
 	return max(tcp_sk(sk)->snd_cwnd, ca->loss_cwnd);
+=======
+	return max(tcp_sk(sk)->snd_cwnd, ca->last_max_cwnd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void bictcp_state(struct sock *sk, u8 new_state)
@@ -416,7 +443,11 @@ static void bictcp_acked(struct sock *sk, u32 cnt, s32 rtt_us)
 		return;
 
 	/* Discard delay samples right after fast recovery */
+<<<<<<< HEAD
 	if (ca->epoch_start && (s32)(tcp_time_stamp - ca->epoch_start) < HZ)
+=======
+	if ((s32)(tcp_time_stamp - ca->epoch_start) < HZ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	delay = (rtt_us << 3) / USEC_PER_MSEC;

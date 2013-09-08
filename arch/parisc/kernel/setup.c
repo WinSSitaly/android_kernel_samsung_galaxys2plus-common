@@ -35,7 +35,10 @@
 #include <linux/pci.h>
 #undef PCI_DEBUG
 #include <linux/proc_fs.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/processor.h>
 #include <asm/pdc.h>

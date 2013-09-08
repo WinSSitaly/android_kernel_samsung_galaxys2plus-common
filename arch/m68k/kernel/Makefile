@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #
 # Makefile for the linux kernel.
 #
@@ -23,3 +24,10 @@ ifndef CONFIG_MMU_SUN3
 obj-y	+= dma.o
 endif
 
+=======
+ifdef CONFIG_MMU
+include arch/m68k/kernel/Makefile_mm
+else
+include arch/m68k/kernel/Makefile_no
+endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

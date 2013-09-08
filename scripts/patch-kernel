@@ -116,10 +116,13 @@ findFile () {
 		ext=".bz2"
 		name="bzip2"
 		uncomp="bunzip2 -dc"
+<<<<<<< HEAD
   elif [ -r ${filebase}.xz ]; then
                 ext=".xz"
                 name="xz"
                 uncomp="xz -dc"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   elif [ -r ${filebase}.zip ]; then
 		ext=".zip"
 		name="zip"

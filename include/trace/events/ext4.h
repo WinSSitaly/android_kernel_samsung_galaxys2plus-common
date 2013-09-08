@@ -9,12 +9,18 @@
 
 struct ext4_allocation_context;
 struct ext4_allocation_request;
+<<<<<<< HEAD
 struct ext4_extent;
 struct ext4_prealloc_space;
 struct ext4_inode_info;
 struct mpage_da_data;
 struct ext4_map_blocks;
 struct ext4_extent;
+=======
+struct ext4_prealloc_space;
+struct ext4_inode_info;
+struct mpage_da_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define EXT4_I(inode) (container_of(inode, struct ext4_inode_info, vfs_inode))
 
@@ -26,7 +32,11 @@ TRACE_EVENT(ext4_free_inode,
 	TP_STRUCT__entry(
 		__field(	dev_t,	dev			)
 		__field(	ino_t,	ino			)
+<<<<<<< HEAD
 		__field(	__u16, mode			)
+=======
+		__field(	umode_t, mode			)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__field(	uid_t,	uid			)
 		__field(	gid_t,	gid			)
 		__field(	__u64, blocks			)
@@ -55,7 +65,11 @@ TRACE_EVENT(ext4_request_inode,
 	TP_STRUCT__entry(
 		__field(	dev_t,	dev			)
 		__field(	ino_t,	dir			)
+<<<<<<< HEAD
 		__field(	__u16, mode			)
+=======
+		__field(	umode_t, mode			)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	),
 
 	TP_fast_assign(
@@ -78,7 +92,11 @@ TRACE_EVENT(ext4_allocate_inode,
 		__field(	dev_t,	dev			)
 		__field(	ino_t,	ino			)
 		__field(	ino_t,	dir			)
+<<<<<<< HEAD
 		__field(	__u16,	mode			)
+=======
+		__field(	umode_t, mode			)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	),
 
 	TP_fast_assign(
@@ -383,6 +401,10 @@ TRACE_EVENT(ext4_da_writepages_result,
 		__field(	int,	pages_written		)
 		__field(	long,	pages_skipped		)
 		__field(	int,	sync_mode		)
+<<<<<<< HEAD
+=======
+		__field(	char,	more_io			)	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__field(       pgoff_t,	writeback_index		)
 	),
 
@@ -393,15 +415,27 @@ TRACE_EVENT(ext4_da_writepages_result,
 		__entry->pages_written	= pages_written;
 		__entry->pages_skipped	= wbc->pages_skipped;
 		__entry->sync_mode	= wbc->sync_mode;
+<<<<<<< HEAD
+=======
+		__entry->more_io	= wbc->more_io;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__entry->writeback_index = inode->i_mapping->writeback_index;
 	),
 
 	TP_printk("dev %d,%d ino %lu ret %d pages_written %d pages_skipped %ld "
+<<<<<<< HEAD
 		  "sync_mode %d writeback_index %lu",
 		  MAJOR(__entry->dev), MINOR(__entry->dev),
 		  (unsigned long) __entry->ino, __entry->ret,
 		  __entry->pages_written, __entry->pages_skipped,
 		  __entry->sync_mode,
+=======
+		  " more_io %d sync_mode %d writeback_index %lu",
+		  MAJOR(__entry->dev), MINOR(__entry->dev),
+		  (unsigned long) __entry->ino, __entry->ret,
+		  __entry->pages_written, __entry->pages_skipped,
+		  __entry->more_io, __entry->sync_mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  (unsigned long) __entry->writeback_index)
 );
 
@@ -573,9 +607,15 @@ TRACE_EVENT(ext4_mb_release_inode_pa,
 );
 
 TRACE_EVENT(ext4_mb_release_group_pa,
+<<<<<<< HEAD
 	TP_PROTO(struct super_block *sb, struct ext4_prealloc_space *pa),
 
 	TP_ARGS(sb, pa),
+=======
+	TP_PROTO(struct ext4_prealloc_space *pa),
+
+	TP_ARGS(pa),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	TP_STRUCT__entry(
 		__field(	dev_t,	dev			)
@@ -585,7 +625,11 @@ TRACE_EVENT(ext4_mb_release_group_pa,
 	),
 
 	TP_fast_assign(
+<<<<<<< HEAD
 		__entry->dev		= sb->s_dev;
+=======
+		__entry->dev		= pa->pa_inode->i_sb->s_dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__entry->pa_pstart	= pa->pa_pstart;
 		__entry->pa_len		= pa->pa_len;
 	),
@@ -728,7 +772,11 @@ TRACE_EVENT(ext4_free_blocks,
 	TP_STRUCT__entry(
 		__field(	dev_t,	dev			)
 		__field(	ino_t,	ino			)
+<<<<<<< HEAD
 		__field(	__u16,	mode			)
+=======
+		__field(	umode_t, mode			)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__field(	__u64,	block			)
 		__field(	unsigned long,	count		)
 		__field(	int,	flags			)
@@ -1015,7 +1063,11 @@ TRACE_EVENT(ext4_forget,
 	TP_STRUCT__entry(
 		__field(	dev_t,	dev			)
 		__field(	ino_t,	ino			)
+<<<<<<< HEAD
 		__field(	__u16,	mode			)
+=======
+		__field(	umode_t, mode			)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__field(	int,	is_metadata		)
 		__field(	__u64,	block			)
 	),
@@ -1035,20 +1087,33 @@ TRACE_EVENT(ext4_forget,
 );
 
 TRACE_EVENT(ext4_da_update_reserve_space,
+<<<<<<< HEAD
 	TP_PROTO(struct inode *inode, int used_blocks, int quota_claim),
 
 	TP_ARGS(inode, used_blocks, quota_claim),
+=======
+	TP_PROTO(struct inode *inode, int used_blocks),
+
+	TP_ARGS(inode, used_blocks),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	TP_STRUCT__entry(
 		__field(	dev_t,	dev			)
 		__field(	ino_t,	ino			)
+<<<<<<< HEAD
 		__field(	__u16,	mode			)
+=======
+		__field(	umode_t, mode			)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__field(	__u64,	i_blocks		)
 		__field(	int,	used_blocks		)
 		__field(	int,	reserved_data_blocks	)
 		__field(	int,	reserved_meta_blocks	)
 		__field(	int,	allocated_meta_blocks	)
+<<<<<<< HEAD
 		__field(	int,	quota_claim		)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	),
 
 	TP_fast_assign(
@@ -1057,6 +1122,7 @@ TRACE_EVENT(ext4_da_update_reserve_space,
 		__entry->mode	= inode->i_mode;
 		__entry->i_blocks = inode->i_blocks;
 		__entry->used_blocks = used_blocks;
+<<<<<<< HEAD
 		__entry->reserved_data_blocks =
 				EXT4_I(inode)->i_reserved_data_blocks;
 		__entry->reserved_meta_blocks =
@@ -1064,17 +1130,30 @@ TRACE_EVENT(ext4_da_update_reserve_space,
 		__entry->allocated_meta_blocks =
 				EXT4_I(inode)->i_allocated_meta_blocks;
 		__entry->quota_claim = quota_claim;
+=======
+		__entry->reserved_data_blocks = EXT4_I(inode)->i_reserved_data_blocks;
+		__entry->reserved_meta_blocks = EXT4_I(inode)->i_reserved_meta_blocks;
+		__entry->allocated_meta_blocks = EXT4_I(inode)->i_allocated_meta_blocks;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	),
 
 	TP_printk("dev %d,%d ino %lu mode 0%o i_blocks %llu used_blocks %d "
 		  "reserved_data_blocks %d reserved_meta_blocks %d "
+<<<<<<< HEAD
 		  "allocated_meta_blocks %d quota_claim %d",
+=======
+		  "allocated_meta_blocks %d",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  MAJOR(__entry->dev), MINOR(__entry->dev),
 		  (unsigned long) __entry->ino,
 		  __entry->mode, __entry->i_blocks,
 		  __entry->used_blocks, __entry->reserved_data_blocks,
+<<<<<<< HEAD
 		  __entry->reserved_meta_blocks, __entry->allocated_meta_blocks,
 		  __entry->quota_claim)
+=======
+		  __entry->reserved_meta_blocks, __entry->allocated_meta_blocks)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 TRACE_EVENT(ext4_da_reserve_space,
@@ -1085,7 +1164,11 @@ TRACE_EVENT(ext4_da_reserve_space,
 	TP_STRUCT__entry(
 		__field(	dev_t,	dev			)
 		__field(	ino_t,	ino			)
+<<<<<<< HEAD
 		__field(	__u16,  mode			)
+=======
+		__field(	umode_t, mode			)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__field(	__u64,	i_blocks		)
 		__field(	int,	md_needed		)
 		__field(	int,	reserved_data_blocks	)
@@ -1119,7 +1202,11 @@ TRACE_EVENT(ext4_da_release_space,
 	TP_STRUCT__entry(
 		__field(	dev_t,	dev			)
 		__field(	ino_t,	ino			)
+<<<<<<< HEAD
 		__field(	__u16,  mode			)
+=======
+		__field(	umode_t, mode			)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__field(	__u64,	i_blocks		)
 		__field(	int,	freed_blocks		)
 		__field(	int,	reserved_data_blocks	)
@@ -1395,6 +1482,7 @@ DEFINE_EVENT(ext4__truncate, ext4_truncate_exit,
 	TP_ARGS(inode)
 );
 
+<<<<<<< HEAD
 /* 'ux' is the uninitialized extent. */
 TRACE_EVENT(ext4_ext_convert_to_initialized_enter,
 	TP_PROTO(struct inode *inode, struct ext4_map_blocks *map,
@@ -1476,6 +1564,8 @@ TRACE_EVENT(ext4_ext_convert_to_initialized_fastpath,
 		  __entry->i_lblk, __entry->i_len, __entry->i_pblk)
 );
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 DECLARE_EVENT_CLASS(ext4__map_blocks_enter,
 	TP_PROTO(struct inode *inode, ext4_lblk_t lblk,
 		 unsigned int len, unsigned int flags),
@@ -1608,6 +1698,7 @@ TRACE_EVENT(ext4_load_inode,
 		  (unsigned long) __entry->ino)
 );
 
+<<<<<<< HEAD
 TRACE_EVENT(ext4_journal_start,
 	TP_PROTO(struct super_block *sb, int nblocks, unsigned long IP),
 
@@ -2055,6 +2146,8 @@ TRACE_EVENT(ext4_ext_remove_space_done,
 		  (unsigned short) __entry->eh_entries)
 );
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _TRACE_EXT4_H */
 
 /* This part must be outside protection */

@@ -21,6 +21,10 @@
 #include <linux/mmzone.h>
 #include <linux/bootmem.h>
 #include <linux/highmem.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/spinlock.h>
 #include <linux/vmalloc.h>

@@ -66,7 +66,10 @@
 #include <linux/ioport.h>
 #include <linux/string.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <asm/io.h>
 #include <linux/hdlcdrv.h>

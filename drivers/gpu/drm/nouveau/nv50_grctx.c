@@ -40,12 +40,15 @@
 #define CP_FLAG_UNK0B                 ((0 * 32) + 0xb)
 #define CP_FLAG_UNK0B_CLEAR           0
 #define CP_FLAG_UNK0B_SET             1
+<<<<<<< HEAD
 #define CP_FLAG_XFER_SWITCH           ((0 * 32) + 0xe)
 #define CP_FLAG_XFER_SWITCH_DISABLE   0
 #define CP_FLAG_XFER_SWITCH_ENABLE    1
 #define CP_FLAG_STATE                 ((0 * 32) + 0x1c)
 #define CP_FLAG_STATE_STOPPED         0
 #define CP_FLAG_STATE_RUNNING         1
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define CP_FLAG_UNK1D                 ((0 * 32) + 0x1d)
 #define CP_FLAG_UNK1D_CLEAR           0
 #define CP_FLAG_UNK1D_SET             1
@@ -200,9 +203,12 @@ nv50_grctx_init(struct nouveau_grctx *ctx)
 				   "the devs.\n");
 		return -ENOSYS;
 	}
+<<<<<<< HEAD
 
 	cp_set (ctx, STATE, RUNNING);
 	cp_set (ctx, XFER_SWITCH, ENABLE);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* decide whether we're loading/unloading the context */
 	cp_bra (ctx, AUTO_SAVE, PENDING, cp_setup_save);
 	cp_bra (ctx, USER_SAVE, PENDING, cp_setup_save);
@@ -269,8 +275,11 @@ nv50_grctx_init(struct nouveau_grctx *ctx)
 	cp_name(ctx, cp_exit);
 	cp_set (ctx, USER_SAVE, NOT_PENDING);
 	cp_set (ctx, USER_LOAD, NOT_PENDING);
+<<<<<<< HEAD
 	cp_set (ctx, XFER_SWITCH, DISABLE);
 	cp_set (ctx, STATE, STOPPED);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cp_out (ctx, CP_END);
 	ctx->ctxvals_pos += 0x400; /* padding... no idea why you need it */
 
@@ -601,7 +610,11 @@ nv50_graph_construct_mmio(struct nouveau_grctx *ctx)
 					gr_def(ctx, offset + 0x1c, 0x00880000);
 					break;
 				case 0x86:
+<<<<<<< HEAD
 					gr_def(ctx, offset + 0x1c, 0x018c0000);
+=======
+					gr_def(ctx, offset + 0x1c, 0x008c0000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					break;
 				case 0x92:
 				case 0x96:

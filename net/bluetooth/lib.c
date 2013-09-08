@@ -24,8 +24,11 @@
 
 /* Bluetooth kernel library. */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) "Bluetooth: " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 
 #include <linux/kernel.h>
@@ -153,6 +156,7 @@ int bt_to_errno(__u16 code)
 }
 EXPORT_SYMBOL(bt_to_errno);
 
+<<<<<<< HEAD
 int bt_info(const char *format, ...)
 {
 	struct va_format vaf;
@@ -173,6 +177,9 @@ int bt_info(const char *format, ...)
 EXPORT_SYMBOL(bt_info);
 
 int bt_err(const char *format, ...)
+=======
+int bt_printk(const char *level, const char *format, ...)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct va_format vaf;
 	va_list args;
@@ -183,10 +190,18 @@ int bt_err(const char *format, ...)
 	vaf.fmt = format;
 	vaf.va = &args;
 
+<<<<<<< HEAD
 	r = pr_err("%pV", &vaf);
+=======
+	r = printk("%sBluetooth: %pV\n", level, &vaf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	va_end(args);
 
 	return r;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(bt_err);
+=======
+EXPORT_SYMBOL(bt_printk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

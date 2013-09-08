@@ -27,6 +27,10 @@ enum iio_chan_type {
 	IIO_ANGL,
 	IIO_TIMESTAMP,
 	IIO_CAPACITANCE,
+<<<<<<< HEAD
+=======
+	IIO_QUATERNION,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum iio_modifier {
@@ -44,6 +48,10 @@ enum iio_modifier {
 	IIO_MOD_X_OR_Y_OR_Z,
 	IIO_MOD_LIGHT_BOTH,
 	IIO_MOD_LIGHT_IR,
+<<<<<<< HEAD
+=======
+	IIO_MOD_R,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define IIO_VAL_INT 1

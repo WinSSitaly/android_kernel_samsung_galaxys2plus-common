@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+/* vi: set sw = 4 ts = 4: */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*	Small bzip2 deflate implementation, by Rob Landley (rob@landley.net).
 
 	Based on bzip2 decompression code by Julian R Seward (jseward@acm.org),
@@ -690,7 +694,11 @@ STATIC int INIT bunzip2(unsigned char *buf, int len,
 		outbuf = malloc(BZIP2_IOBUF_SIZE);
 
 	if (!outbuf) {
+<<<<<<< HEAD
 		error("Could not allocate output buffer");
+=======
+		error("Could not allocate output bufer");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return RETVAL_OUT_OF_MEMORY;
 	}
 	if (buf)
@@ -698,7 +706,11 @@ STATIC int INIT bunzip2(unsigned char *buf, int len,
 	else
 		inbuf = malloc(BZIP2_IOBUF_SIZE);
 	if (!inbuf) {
+<<<<<<< HEAD
 		error("Could not allocate input buffer");
+=======
+		error("Could not allocate input bufer");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		i = RETVAL_OUT_OF_MEMORY;
 		goto exit_0;
 	}

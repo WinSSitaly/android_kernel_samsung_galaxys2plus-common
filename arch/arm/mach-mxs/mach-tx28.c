@@ -101,6 +101,17 @@ static const iomux_cfg_t tx28_stk5v3_pads[] __initconst = {
 		(MXS_PAD_8MA | MXS_PAD_3V3 | MXS_PAD_PULLUP),
 	MX28_PAD_SSP0_DATA3__SSP0_D3 |
 		(MXS_PAD_8MA | MXS_PAD_3V3 | MXS_PAD_PULLUP),
+<<<<<<< HEAD
+=======
+	MX28_PAD_SSP0_DATA4__SSP0_D4 |
+		(MXS_PAD_8MA | MXS_PAD_3V3 | MXS_PAD_PULLUP),
+	MX28_PAD_SSP0_DATA5__SSP0_D5 |
+		(MXS_PAD_8MA | MXS_PAD_3V3 | MXS_PAD_PULLUP),
+	MX28_PAD_SSP0_DATA6__SSP0_D6 |
+		(MXS_PAD_8MA | MXS_PAD_3V3 | MXS_PAD_PULLUP),
+	MX28_PAD_SSP0_DATA7__SSP0_D7 |
+		(MXS_PAD_8MA | MXS_PAD_3V3 | MXS_PAD_PULLUP),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	MX28_PAD_SSP0_CMD__SSP0_CMD |
 		(MXS_PAD_8MA | MXS_PAD_3V3 | MXS_PAD_PULLUP),
 	MX28_PAD_SSP0_DETECT__SSP0_CARD_DETECT |
@@ -109,7 +120,11 @@ static const iomux_cfg_t tx28_stk5v3_pads[] __initconst = {
 		(MXS_PAD_12MA | MXS_PAD_3V3 | MXS_PAD_NOPULL),
 };
 
+<<<<<<< HEAD
 static const struct gpio_led tx28_stk5v3_leds[] __initconst = {
+=======
+static struct gpio_led tx28_stk5v3_leds[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.name = "GPIO-LED",
 		.default_trigger = "heartbeat",
@@ -139,11 +154,14 @@ static struct i2c_board_info tx28_stk5v3_i2c_boardinfo[] __initdata = {
 	},
 };
 
+<<<<<<< HEAD
 static struct mxs_mmc_platform_data tx28_mmc0_pdata __initdata = {
        .wp_gpio = -EINVAL,
        .flags = SLOTF_4_BIT_CAPABLE,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init tx28_stk5v3_init(void)
 {
 	mxs_iomux_setup_multiple_pads(tx28_stk5v3_pads,
@@ -156,12 +174,20 @@ static void __init tx28_stk5v3_init(void)
 	/* spi via ssp will be added when available */
 	spi_register_board_info(tx28_spi_board_info,
 			ARRAY_SIZE(tx28_spi_board_info));
+<<<<<<< HEAD
 	gpio_led_register_device(0, &tx28_stk5v3_led_data);
 	mx28_add_mxs_i2c(0);
 	i2c_register_board_info(0, tx28_stk5v3_i2c_boardinfo,
 			ARRAY_SIZE(tx28_stk5v3_i2c_boardinfo));
 	mx28_add_mxs_mmc(0, &tx28_mmc0_pdata);
 	mx28_add_rtc_stmp3xxx();
+=======
+	mxs_add_platform_device("leds-gpio", 0, NULL, 0,
+			&tx28_stk5v3_led_data, sizeof(tx28_stk5v3_led_data));
+	mx28_add_mxs_i2c(0);
+	i2c_register_board_info(0, tx28_stk5v3_i2c_boardinfo,
+			ARRAY_SIZE(tx28_stk5v3_i2c_boardinfo));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __init tx28_timer_init(void)
@@ -176,7 +202,12 @@ static struct sys_timer tx28_timer = {
 MACHINE_START(TX28, "Ka-Ro electronics TX28 module")
 	.map_io = mx28_map_io,
 	.init_irq = mx28_init_irq,
+<<<<<<< HEAD
 	.timer = &tx28_timer,
 	.init_machine = tx28_stk5v3_init,
 	.restart	= mxs_restart,
+=======
+	.init_machine = tx28_stk5v3_init,
+	.timer = &tx28_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

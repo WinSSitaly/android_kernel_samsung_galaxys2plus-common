@@ -41,14 +41,21 @@
 /* Supported palette hacks */
 enum {
 	cmap_unknown,
+<<<<<<< HEAD
 	cmap_simple,		/* ATI Mach64 */
+=======
+	cmap_m64,		/* ATI Mach64 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmap_r128,		/* ATI Rage128 */
 	cmap_M3A,		/* ATI Rage Mobility M3 Head A */
 	cmap_M3B,		/* ATI Rage Mobility M3 Head B */
 	cmap_radeon,		/* ATI Radeon */
 	cmap_gxt2000,		/* IBM GXT2000 */
 	cmap_avivo,		/* ATI R5xx */
+<<<<<<< HEAD
 	cmap_qemu,		/* qemu vga */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct offb_par {
@@ -135,7 +142,11 @@ static int offb_setcolreg(u_int regno, u_int red, u_int green, u_int blue,
 		return 0;
 
 	switch (par->cmap_type) {
+<<<<<<< HEAD
 	case cmap_simple:
+=======
+	case cmap_m64:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		writeb(regno, par->cmap_adr);
 		writeb(red, par->cmap_data);
 		writeb(green, par->cmap_data);
@@ -205,7 +216,11 @@ static int offb_blank(int blank, struct fb_info *info)
 	if (blank)
 		for (i = 0; i < 256; i++) {
 			switch (par->cmap_type) {
+<<<<<<< HEAD
 			case cmap_simple:
+=======
+			case cmap_m64:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				writeb(i, par->cmap_adr);
 				for (j = 0; j < 3; j++)
 					writeb(0, par->cmap_data);
@@ -347,7 +362,11 @@ static void offb_init_palette_hacks(struct fb_info *info, struct device_node *dp
 		par->cmap_adr =
 			ioremap(base + 0x7ff000, 0x1000) + 0xcc0;
 		par->cmap_data = par->cmap_adr + 1;
+<<<<<<< HEAD
 		par->cmap_type = cmap_simple;
+=======
+		par->cmap_type = cmap_m64;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (dp && (of_device_is_compatible(dp, "pci1014,b7") ||
 			  of_device_is_compatible(dp, "pci1014,21c"))) {
 		par->cmap_adr = offb_map_reg(dp, 0, 0x6000, 0x1000);
@@ -368,6 +387,7 @@ static void offb_init_palette_hacks(struct fb_info *info, struct device_node *dp
 				par->cmap_type = cmap_avivo;
 		}
 		of_node_put(pciparent);
+<<<<<<< HEAD
 	} else if (dp && of_device_is_compatible(dp, "qemu,std-vga")) {
 		const u32 io_of_addr[3] = { 0x01000000, 0x0, 0x0 };
 		u64 io_addr = of_translate_address(dp, io_of_addr);
@@ -378,6 +398,8 @@ static void offb_init_palette_hacks(struct fb_info *info, struct device_node *dp
 				par->cmap_data = par->cmap_adr + 1;
 			}
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	info->fix.visual = (par->cmap_type != cmap_unknown) ?
 		FB_VISUAL_PSEUDOCOLOR : FB_VISUAL_STATIC_PSEUDOCOLOR;

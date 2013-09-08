@@ -57,7 +57,11 @@ MODULE_AUTHOR(  "Maxim Yevtyushkin, Kevin Thayer, Chris Kennedy, "
 		"Hans Verkuil, Mauro Carvalho Chehab");
 MODULE_LICENSE("GPL");
 
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(debug, bool, 0644);
 
 MODULE_PARM_DESC(debug, "Debug level (0-1)");
@@ -757,8 +761,13 @@ static int saa711x_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
 	switch (ctrl->id) {
 	case V4L2_CID_CHROMA_AGC:
 		/* chroma gain cluster */
+<<<<<<< HEAD
 		if (state->agc->val)
 			state->gain->val =
+=======
+		if (state->agc->cur.val)
+			state->gain->cur.val =
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				saa711x_read(sd, R_0F_CHROMA_GAIN_CNTL) & 0x7f;
 		break;
 	}
@@ -793,6 +802,10 @@ static int saa711x_s_ctrl(struct v4l2_ctrl *ctrl)
 			saa711x_write(sd, R_0F_CHROMA_GAIN_CNTL, state->gain->val);
 		else
 			saa711x_write(sd, R_0F_CHROMA_GAIN_CNTL, state->gain->val | 0x80);
+<<<<<<< HEAD
+=======
+		v4l2_ctrl_activate(state->gain, !state->agc->val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	default:
@@ -1344,6 +1357,7 @@ static int saa711x_g_vbi_data(struct v4l2_subdev *sd, struct v4l2_sliced_vbi_dat
 static int saa711x_querystd(struct v4l2_subdev *sd, v4l2_std_id *std)
 {
 	struct saa711x_state *state = to_state(sd);
+<<<<<<< HEAD
 	int reg1f, reg1e;
 
 	/*
@@ -1366,11 +1380,27 @@ static int saa711x_querystd(struct v4l2_subdev *sd, v4l2_std_id *std)
 
 	if (state->ident != V4L2_IDENT_SAA7115)
 		goto ret;
+=======
+	int reg1e;
+
+	*std = V4L2_STD_ALL;
+	if (state->ident != V4L2_IDENT_SAA7115) {
+		int reg1f = saa711x_read(sd, R_1F_STATUS_BYTE_2_VD_DEC);
+
+		if (reg1f & 0x20)
+			*std = V4L2_STD_525_60;
+		else
+			*std = V4L2_STD_625_50;
+
+		return 0;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	reg1e = saa711x_read(sd, R_1E_STATUS_BYTE_1_VD_DEC);
 
 	switch (reg1e & 0x03) {
 	case 1:
+<<<<<<< HEAD
 		*std &= V4L2_STD_NTSC;
 		break;
 	case 2:
@@ -1395,6 +1425,19 @@ static int saa711x_querystd(struct v4l2_subdev *sd, v4l2_std_id *std)
 ret:
 	v4l2_dbg(1, debug, sd, "detected std mask = %08Lx\n", *std);
 
+=======
+		*std = V4L2_STD_NTSC;
+		break;
+	case 2:
+		*std = V4L2_STD_PAL;
+		break;
+	case 3:
+		*std = V4L2_STD_SECAM;
+		break;
+	default:
+		break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1622,6 +1665,10 @@ static int saa711x_probe(struct i2c_client *client,
 			V4L2_CID_CHROMA_AGC, 0, 1, 1, 1);
 	state->gain = v4l2_ctrl_new_std(hdl, &saa711x_ctrl_ops,
 			V4L2_CID_CHROMA_GAIN, 0, 127, 1, 40);
+<<<<<<< HEAD
+=======
+	state->gain->is_volatile = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sd->ctrl_handler = hdl;
 	if (hdl->error) {
 		int err = hdl->error;
@@ -1630,7 +1677,12 @@ static int saa711x_probe(struct i2c_client *client,
 		kfree(state);
 		return err;
 	}
+<<<<<<< HEAD
 	v4l2_ctrl_auto_cluster(2, &state->agc, 0, true);
+=======
+	state->agc->flags |= V4L2_CTRL_FLAG_UPDATE;
+	v4l2_ctrl_cluster(2, &state->agc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	state->input = -1;
 	state->output = SAA7115_IPORT_ON;
@@ -1724,4 +1776,19 @@ static struct i2c_driver saa711x_driver = {
 	.id_table	= saa711x_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(saa711x_driver);
+=======
+static __init int init_saa711x(void)
+{
+	return i2c_add_driver(&saa711x_driver);
+}
+
+static __exit void exit_saa711x(void)
+{
+	i2c_del_driver(&saa711x_driver);
+}
+
+module_init(init_saa711x);
+module_exit(exit_saa711x);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

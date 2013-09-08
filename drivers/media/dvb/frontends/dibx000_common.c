@@ -1,6 +1,9 @@
 #include <linux/i2c.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "dibx000_common.h"
 

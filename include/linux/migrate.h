@@ -3,11 +3,15 @@
 
 #include <linux/mm.h>
 #include <linux/mempolicy.h>
+<<<<<<< HEAD
 #include <linux/migrate_mode.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct page *new_page_t(struct page *, unsigned long private, int **);
 
 #ifdef CONFIG_MIGRATION
+<<<<<<< HEAD
 
 extern void putback_lru_pages(struct list_head *l);
 extern int migrate_page(struct address_space *,
@@ -18,6 +22,19 @@ extern int migrate_pages(struct list_head *l, new_page_t x,
 extern int migrate_huge_pages(struct list_head *l, new_page_t x,
 			unsigned long private, bool offlining,
 			enum migrate_mode mode);
+=======
+#define PAGE_MIGRATION 1
+
+extern void putback_lru_pages(struct list_head *l);
+extern int migrate_page(struct address_space *,
+			struct page *, struct page *);
+extern int migrate_pages(struct list_head *l, new_page_t x,
+			unsigned long private, bool offlining,
+			bool sync);
+extern int migrate_huge_pages(struct list_head *l, new_page_t x,
+			unsigned long private, bool offlining,
+			bool sync);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int fail_migrate_page(struct address_space *,
 			struct page *, struct page *);
@@ -31,14 +48,25 @@ extern void migrate_page_copy(struct page *newpage, struct page *page);
 extern int migrate_huge_page_move_mapping(struct address_space *mapping,
 				  struct page *newpage, struct page *page);
 #else
+<<<<<<< HEAD
+=======
+#define PAGE_MIGRATION 0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void putback_lru_pages(struct list_head *l) {}
 static inline int migrate_pages(struct list_head *l, new_page_t x,
 		unsigned long private, bool offlining,
+<<<<<<< HEAD
 		enum migrate_mode mode) { return -ENOSYS; }
 static inline int migrate_huge_pages(struct list_head *l, new_page_t x,
 		unsigned long private, bool offlining,
 		enum migrate_mode mode) { return -ENOSYS; }
+=======
+		bool sync) { return -ENOSYS; }
+static inline int migrate_huge_pages(struct list_head *l, new_page_t x,
+		unsigned long private, bool offlining,
+		bool sync) { return -ENOSYS; }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int migrate_prep(void) { return -ENOSYS; }
 static inline int migrate_prep_local(void) { return -ENOSYS; }

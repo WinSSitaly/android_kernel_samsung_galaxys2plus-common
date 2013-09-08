@@ -13,11 +13,14 @@ config BCMA
 	  Bus driver for Broadcom specific Advanced Microcontroller Bus
 	  Architecture.
 
+<<<<<<< HEAD
 # Support for Block-I/O. SELECT this from the driver that needs it.
 config BCMA_BLOCKIO
 	bool
 	depends on BCMA
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config BCMA_HOST_PCI_POSSIBLE
 	bool
 	depends on BCMA && PCI = y
@@ -27,6 +30,7 @@ config BCMA_HOST_PCI
 	bool "Support for BCMA on PCI-host bus"
 	depends on BCMA_HOST_PCI_POSSIBLE
 
+<<<<<<< HEAD
 config BCMA_DRIVER_PCI_HOSTMODE
 	bool "Driver for PCI core working in hostmode"
 	depends on BCMA && MIPS && BCMA_HOST_PCI
@@ -46,6 +50,8 @@ config BCMA_DRIVER_MIPS
 
 	  If unsure, say N
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config BCMA_DEBUG
 	bool "BCMA debugging"
 	depends on BCMA

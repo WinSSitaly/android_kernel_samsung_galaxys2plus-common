@@ -384,16 +384,24 @@ static inline __u8 uac_processing_unit_iProcessing(struct uac_processing_unit_de
 						   int protocol)
 {
 	__u8 control_size = uac_processing_unit_bControlSize(desc, protocol);
+<<<<<<< HEAD
 	return *(uac_processing_unit_bmControls(desc, protocol)
 			+ control_size);
+=======
+	return desc->baSourceID[desc->bNrInPins + control_size];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline __u8 *uac_processing_unit_specific(struct uac_processing_unit_descriptor *desc,
 						 int protocol)
 {
 	__u8 control_size = uac_processing_unit_bControlSize(desc, protocol);
+<<<<<<< HEAD
 	return uac_processing_unit_bmControls(desc, protocol)
 			+ control_size + 1;
+=======
+	return &desc->baSourceID[desc->bNrInPins + control_size + 1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* 4.5.2 Class-Specific AS Interface Descriptor */

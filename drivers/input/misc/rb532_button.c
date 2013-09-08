@@ -100,7 +100,23 @@ static struct platform_driver rb532_button_driver = {
 		.owner = THIS_MODULE,
 	},
 };
+<<<<<<< HEAD
 module_platform_driver(rb532_button_driver);
+=======
+
+static int __init rb532_button_init(void)
+{
+	return platform_driver_register(&rb532_button_driver);
+}
+
+static void __exit rb532_button_exit(void)
+{
+	platform_driver_unregister(&rb532_button_driver);
+}
+
+module_init(rb532_button_init);
+module_exit(rb532_button_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Phil Sutter <n0-1@freewrt.org>");
 MODULE_LICENSE("GPL");

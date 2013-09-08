@@ -66,6 +66,10 @@
 #include <net/inet_common.h>
 
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  *	The ICMP socket(s). This is the most convenient way to flow control
@@ -134,12 +138,19 @@ static int is_ineligible(struct sk_buff *skb)
 	int ptr = (u8 *)(ipv6_hdr(skb) + 1) - skb->data;
 	int len = skb->len - ptr;
 	__u8 nexthdr = ipv6_hdr(skb)->nexthdr;
+<<<<<<< HEAD
 	__be16 frag_off;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (len < 0)
 		return 1;
 
+<<<<<<< HEAD
 	ptr = ipv6_skip_exthdr(skb, ptr, &nexthdr, &frag_off);
+=======
+	ptr = ipv6_skip_exthdr(skb, ptr, &nexthdr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ptr < 0)
 		return 0;
 	if (nexthdr == IPPROTO_ICMPV6) {
@@ -290,9 +301,15 @@ static void mip6_addr_swap(struct sk_buff *skb)
 		if (likely(off >= 0)) {
 			hao = (struct ipv6_destopt_hao *)
 					(skb_network_header(skb) + off);
+<<<<<<< HEAD
 			tmp = iph->saddr;
 			iph->saddr = hao->addr;
 			hao->addr = tmp;
+=======
+			ipv6_addr_copy(&tmp, &iph->saddr);
+			ipv6_addr_copy(&iph->saddr, &hao->addr);
+			ipv6_addr_copy(&hao->addr, &tmp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }
@@ -444,9 +461,15 @@ void icmpv6_send(struct sk_buff *skb, u8 type, u8 code, __u32 info)
 
 	memset(&fl6, 0, sizeof(fl6));
 	fl6.flowi6_proto = IPPROTO_ICMPV6;
+<<<<<<< HEAD
 	fl6.daddr = hdr->saddr;
 	if (saddr)
 		fl6.saddr = *saddr;
+=======
+	ipv6_addr_copy(&fl6.daddr, &hdr->saddr);
+	if (saddr)
+		ipv6_addr_copy(&fl6.saddr, saddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fl6.flowi6_oif = iif;
 	fl6.fl6_icmp_type = type;
 	fl6.fl6_icmp_code = code;
@@ -467,8 +490,11 @@ void icmpv6_send(struct sk_buff *skb, u8 type, u8 code, __u32 info)
 
 	if (!fl6.flowi6_oif && ipv6_addr_is_multicast(&fl6.daddr))
 		fl6.flowi6_oif = np->mcast_oif;
+<<<<<<< HEAD
 	else if (!fl6.flowi6_oif)
 		fl6.flowi6_oif = np->ucast_oif;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dst = icmpv6_route_lookup(net, skb, sk, &fl6);
 	if (IS_ERR(dst))
@@ -492,8 +518,12 @@ void icmpv6_send(struct sk_buff *skb, u8 type, u8 code, __u32 info)
 		goto out_dst_release;
 	}
 
+<<<<<<< HEAD
 	rcu_read_lock();
 	idev = __in6_dev_get(skb->dev);
+=======
+	idev = in6_dev_get(skb->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = ip6_append_data(sk, icmpv6_getfrag, &msg,
 			      len + sizeof(struct icmp6hdr),
@@ -503,16 +533,30 @@ void icmpv6_send(struct sk_buff *skb, u8 type, u8 code, __u32 info)
 	if (err) {
 		ICMP6_INC_STATS_BH(net, idev, ICMP6_MIB_OUTERRORS);
 		ip6_flush_pending_frames(sk);
+<<<<<<< HEAD
 	} else {
 		err = icmpv6_push_pending_frames(sk, &fl6, &tmp_hdr,
 						 len + sizeof(struct icmp6hdr));
 	}
 	rcu_read_unlock();
+=======
+		goto out_put;
+	}
+	err = icmpv6_push_pending_frames(sk, &fl6, &tmp_hdr, len + sizeof(struct icmp6hdr));
+
+out_put:
+	if (likely(idev != NULL))
+		in6_dev_put(idev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_dst_release:
 	dst_release(dst);
 out:
 	icmpv6_xmit_unlock(sk);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL(icmpv6_send);
 
 static void icmpv6_echo_reply(struct sk_buff *skb)
@@ -540,9 +584,15 @@ static void icmpv6_echo_reply(struct sk_buff *skb)
 
 	memset(&fl6, 0, sizeof(fl6));
 	fl6.flowi6_proto = IPPROTO_ICMPV6;
+<<<<<<< HEAD
 	fl6.daddr = ipv6_hdr(skb)->saddr;
 	if (saddr)
 		fl6.saddr = *saddr;
+=======
+	ipv6_addr_copy(&fl6.daddr, &ipv6_hdr(skb)->saddr);
+	if (saddr)
+		ipv6_addr_copy(&fl6.saddr, saddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fl6.flowi6_oif = skb->dev->ifindex;
 	fl6.fl6_icmp_type = ICMPV6_ECHO_REPLY;
 	security_skb_classify_flow(skb, flowi6_to_flowi(&fl6));
@@ -554,8 +604,11 @@ static void icmpv6_echo_reply(struct sk_buff *skb)
 
 	if (!fl6.flowi6_oif && ipv6_addr_is_multicast(&fl6.daddr))
 		fl6.flowi6_oif = np->mcast_oif;
+<<<<<<< HEAD
 	else if (!fl6.flowi6_oif)
 		fl6.flowi6_oif = np->ucast_oif;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = ip6_dst_lookup(sk, &dst, &fl6);
 	if (err)
@@ -571,7 +624,11 @@ static void icmpv6_echo_reply(struct sk_buff *skb)
 	if (hlimit < 0)
 		hlimit = ip6_dst_hoplimit(dst);
 
+<<<<<<< HEAD
 	idev = __in6_dev_get(skb->dev);
+=======
+	idev = in6_dev_get(skb->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	msg.skb = skb;
 	msg.offset = 0;
@@ -585,10 +642,20 @@ static void icmpv6_echo_reply(struct sk_buff *skb)
 	if (err) {
 		ICMP6_INC_STATS_BH(net, idev, ICMP6_MIB_OUTERRORS);
 		ip6_flush_pending_frames(sk);
+<<<<<<< HEAD
 	} else {
 		err = icmpv6_push_pending_frames(sk, &fl6, &tmp_hdr,
 						 skb->len + sizeof(struct icmp6hdr));
 	}
+=======
+		goto out_put;
+	}
+	err = icmpv6_push_pending_frames(sk, &fl6, &tmp_hdr, skb->len + sizeof(struct icmp6hdr));
+
+out_put:
+	if (likely(idev != NULL))
+		in6_dev_put(idev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dst_release(dst);
 out:
 	icmpv6_xmit_unlock(sk);
@@ -600,7 +667,10 @@ static void icmpv6_notify(struct sk_buff *skb, u8 type, u8 code, __be32 info)
 	int inner_offset;
 	int hash;
 	u8 nexthdr;
+<<<<<<< HEAD
 	__be16 frag_off;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!pskb_may_pull(skb, sizeof(struct ipv6hdr)))
 		return;
@@ -608,8 +678,12 @@ static void icmpv6_notify(struct sk_buff *skb, u8 type, u8 code, __be32 info)
 	nexthdr = ((struct ipv6hdr *)skb->data)->nexthdr;
 	if (ipv6_ext_hdr(nexthdr)) {
 		/* now skip over extension headers */
+<<<<<<< HEAD
 		inner_offset = ipv6_skip_exthdr(skb, sizeof(struct ipv6hdr),
 						&nexthdr, &frag_off);
+=======
+		inner_offset = ipv6_skip_exthdr(skb, sizeof(struct ipv6hdr), &nexthdr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (inner_offset<0)
 			return;
 	} else {
@@ -792,8 +866,13 @@ void icmpv6_flow_init(struct sock *sk, struct flowi6 *fl6,
 		      int oif)
 {
 	memset(fl6, 0, sizeof(*fl6));
+<<<<<<< HEAD
 	fl6->saddr = *saddr;
 	fl6->daddr = *daddr;
+=======
+	ipv6_addr_copy(&fl6->saddr, saddr);
+	ipv6_addr_copy(&fl6->daddr, daddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fl6->flowi6_proto 	= IPPROTO_ICMPV6;
 	fl6->fl6_icmp_type	= type;
 	fl6->fl6_icmp_code	= 0;
@@ -841,7 +920,12 @@ static int __net_init icmpv6_sk_init(struct net *net)
 		/* Enough space for 2 64K ICMP packets, including
 		 * sk_buff struct overhead.
 		 */
+<<<<<<< HEAD
 		sk->sk_sndbuf = 2 * SKB_TRUESIZE(64 * 1024);
+=======
+		sk->sk_sndbuf =
+			(2 * ((64 * 1024) + sizeof(struct sk_buff)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 
@@ -917,6 +1001,7 @@ static const struct icmp6_err {
 		.err	= ECONNREFUSED,
 		.fatal	= 1,
 	},
+<<<<<<< HEAD
 	{	/* POLICY_FAIL */
 		.err	= EACCES,
 		.fatal	= 1,
@@ -925,6 +1010,8 @@ static const struct icmp6_err {
 		.err	= EACCES,
 		.fatal	= 1,
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int icmpv6_err_convert(u8 type, u8 code, int *err)
@@ -936,7 +1023,11 @@ int icmpv6_err_convert(u8 type, u8 code, int *err)
 	switch (type) {
 	case ICMPV6_DEST_UNREACH:
 		fatal = 1;
+<<<<<<< HEAD
 		if (code < ARRAY_SIZE(tab_unreach)) {
+=======
+		if (code <= ICMPV6_PORT_UNREACH) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			*err  = tab_unreach[code].err;
 			fatal = tab_unreach[code].fatal;
 		}

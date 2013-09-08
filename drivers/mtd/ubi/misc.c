@@ -81,7 +81,11 @@ int ubi_check_volume(struct ubi_device *ubi, int vol_id)
 
 		err = ubi_eba_read_leb(ubi, vol, i, buf, 0, size, 1);
 		if (err) {
+<<<<<<< HEAD
 			if (mtd_is_eccerr(err))
+=======
+			if (err == -EBADMSG)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				err = 1;
 			break;
 		}

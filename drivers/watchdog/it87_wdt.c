@@ -29,8 +29,11 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/types.h>
@@ -45,9 +48,17 @@
 #include <linux/uaccess.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
 
 #define WATCHDOG_VERSION	"1.14"
 #define WATCHDOG_NAME		"IT87 WDT"
+=======
+#include <asm/system.h>
+
+#define WATCHDOG_VERSION	"1.14"
+#define WATCHDOG_NAME		"IT87 WDT"
+#define PFX			WATCHDOG_NAME ": "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DRIVER_VERSION		WATCHDOG_NAME " driver, v" WATCHDOG_VERSION "\n"
 #define WD_MAGIC		'V'
 
@@ -137,12 +148,20 @@
 
 static	unsigned int base, gpact, ciract, max_units, chip_type;
 static	unsigned long wdt_status;
+<<<<<<< HEAD
+=======
+static	DEFINE_SPINLOCK(spinlock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static	int nogameport = DEFAULT_NOGAMEPORT;
 static	int exclusive  = DEFAULT_EXCLUSIVE;
 static	int timeout    = DEFAULT_TIMEOUT;
 static	int testmode   = DEFAULT_TESTMODE;
+<<<<<<< HEAD
 static	bool nowayout   = DEFAULT_NOWAYOUT;
+=======
+static	int nowayout   = DEFAULT_NOWAYOUT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(nogameport, int, 0);
 MODULE_PARM_DESC(nogameport, "Forbid the activation of game port, default="
@@ -156,12 +175,17 @@ MODULE_PARM_DESC(timeout, "Watchdog timeout in seconds, default="
 module_param(testmode, int, 0);
 MODULE_PARM_DESC(testmode, "Watchdog test mode (1 = no reboot), default="
 		__MODULE_STRING(DEFAULT_TESTMODE));
+<<<<<<< HEAD
 module_param(nowayout, bool, 0);
+=======
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started, default="
 		__MODULE_STRING(WATCHDOG_NOWAYOUT));
 
 /* Superio Chip */
 
+<<<<<<< HEAD
 static inline int superio_enter(void)
 {
 	/*
@@ -170,18 +194,28 @@ static inline int superio_enter(void)
 	if (!request_muxed_region(REG, 2, WATCHDOG_NAME))
 		return -EBUSY;
 
+=======
+static inline void superio_enter(void)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	outb(0x87, REG);
 	outb(0x01, REG);
 	outb(0x55, REG);
 	outb(0x55, REG);
+<<<<<<< HEAD
 	return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void superio_exit(void)
 {
 	outb(0x02, REG);
 	outb(0x02, VAL);
+<<<<<<< HEAD
 	release_region(REG, 2);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void superio_select(int ldn)
@@ -262,11 +296,20 @@ static void wdt_keepalive(void)
 	set_bit(WDTS_KEEPALIVE, &wdt_status);
 }
 
+<<<<<<< HEAD
 static int wdt_start(void)
 {
 	int ret = superio_enter();
 	if (ret)
 		return ret;
+=======
+static void wdt_start(void)
+{
+	unsigned long flags;
+
+	spin_lock_irqsave(&spinlock, flags);
+	superio_enter();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	superio_select(GPIO);
 	if (test_bit(WDTS_USE_GP, &wdt_status))
@@ -276,6 +319,7 @@ static int wdt_start(void)
 	wdt_update_timeout();
 
 	superio_exit();
+<<<<<<< HEAD
 
 	return 0;
 }
@@ -285,6 +329,17 @@ static int wdt_stop(void)
 	int ret = superio_enter();
 	if (ret)
 		return ret;
+=======
+	spin_unlock_irqrestore(&spinlock, flags);
+}
+
+static void wdt_stop(void)
+{
+	unsigned long flags;
+
+	spin_lock_irqsave(&spinlock, flags);
+	superio_enter();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	superio_select(GPIO);
 	superio_outb(0x00, WDTCTRL);
@@ -294,7 +349,11 @@ static int wdt_stop(void)
 		superio_outb(0x00, WDTVALMSB);
 
 	superio_exit();
+<<<<<<< HEAD
 	return 0;
+=======
+	spin_unlock_irqrestore(&spinlock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -309,6 +368,11 @@ static int wdt_stop(void)
 
 static int wdt_set_timeout(int t)
 {
+<<<<<<< HEAD
+=======
+	unsigned long flags;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (t < 1 || t > max_units * 60)
 		return -EINVAL;
 
@@ -317,15 +381,25 @@ static int wdt_set_timeout(int t)
 	else
 		timeout = t;
 
+<<<<<<< HEAD
 	if (test_bit(WDTS_TIMER_RUN, &wdt_status)) {
 		int ret = superio_enter();
 		if (ret)
 			return ret;
 
+=======
+	spin_lock_irqsave(&spinlock, flags);
+	if (test_bit(WDTS_TIMER_RUN, &wdt_status)) {
+		superio_enter();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		superio_select(GPIO);
 		wdt_update_timeout();
 		superio_exit();
 	}
+<<<<<<< HEAD
+=======
+	spin_unlock_irqrestore(&spinlock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -344,12 +418,21 @@ static int wdt_set_timeout(int t)
 
 static int wdt_get_status(int *status)
 {
+<<<<<<< HEAD
 	*status = 0;
 	if (testmode) {
 		int ret = superio_enter();
 		if (ret)
 			return ret;
 
+=======
+	unsigned long flags;
+
+	*status = 0;
+	if (testmode) {
+		spin_lock_irqsave(&spinlock, flags);
+		superio_enter();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		superio_select(GPIO);
 		if (superio_inb(WDTCTRL) & WDT_ZERO) {
 			superio_outb(0x00, WDTCTRL);
@@ -358,6 +441,10 @@ static int wdt_get_status(int *status)
 		}
 
 		superio_exit();
+<<<<<<< HEAD
+=======
+		spin_unlock_irqrestore(&spinlock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (test_and_clear_bit(WDTS_KEEPALIVE, &wdt_status))
 		*status |= WDIOF_KEEPALIVEPING;
@@ -383,6 +470,7 @@ static int wdt_open(struct inode *inode, struct file *file)
 	if (exclusive && test_and_set_bit(WDTS_DEV_OPEN, &wdt_status))
 		return -EBUSY;
 	if (!test_and_set_bit(WDTS_TIMER_RUN, &wdt_status)) {
+<<<<<<< HEAD
 		int ret;
 		if (nowayout && !test_and_set_bit(WDTS_LOCKED, &wdt_status))
 			__module_get(THIS_MODULE);
@@ -394,6 +482,11 @@ static int wdt_open(struct inode *inode, struct file *file)
 			clear_bit(WDTS_DEV_OPEN, &wdt_status);
 			return ret;
 		}
+=======
+		if (nowayout && !test_and_set_bit(WDTS_LOCKED, &wdt_status))
+			__module_get(THIS_MODULE);
+		wdt_start();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return nonseekable_open(inode, file);
 }
@@ -415,6 +508,7 @@ static int wdt_release(struct inode *inode, struct file *file)
 {
 	if (test_bit(WDTS_TIMER_RUN, &wdt_status)) {
 		if (test_and_clear_bit(WDTS_EXPECTED, &wdt_status)) {
+<<<<<<< HEAD
 			int ret = wdt_stop();
 			if (ret) {
 				/*
@@ -429,6 +523,14 @@ static int wdt_release(struct inode *inode, struct file *file)
 		} else {
 			wdt_keepalive();
 			pr_crit("unexpected close, not stopping watchdog!\n");
+=======
+			wdt_stop();
+			clear_bit(WDTS_TIMER_RUN, &wdt_status);
+		} else {
+			wdt_keepalive();
+			printk(KERN_CRIT PFX
+			       "unexpected close, not stopping watchdog!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	clear_bit(WDTS_DEV_OPEN, &wdt_status);
@@ -504,9 +606,13 @@ static long wdt_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 				    &ident, sizeof(ident)) ? -EFAULT : 0;
 
 	case WDIOC_GETSTATUS:
+<<<<<<< HEAD
 		rc = wdt_get_status(&status);
 		if (rc)
 			return rc;
+=======
+		wdt_get_status(&status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return put_user(status, uarg.i);
 
 	case WDIOC_GETBOOTSTATUS:
@@ -522,15 +628,21 @@ static long wdt_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 
 		switch (new_options) {
 		case WDIOS_DISABLECARD:
+<<<<<<< HEAD
 			if (test_bit(WDTS_TIMER_RUN, &wdt_status)) {
 				rc = wdt_stop();
 				if (rc)
 					return rc;
 			}
+=======
+			if (test_bit(WDTS_TIMER_RUN, &wdt_status))
+				wdt_stop();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			clear_bit(WDTS_TIMER_RUN, &wdt_status);
 			return 0;
 
 		case WDIOS_ENABLECARD:
+<<<<<<< HEAD
 			if (!test_and_set_bit(WDTS_TIMER_RUN, &wdt_status)) {
 				rc = wdt_start();
 				if (rc) {
@@ -538,6 +650,10 @@ static long wdt_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 					return rc;
 				}
 			}
+=======
+			if (!test_and_set_bit(WDTS_TIMER_RUN, &wdt_status))
+				wdt_start();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 0;
 
 		default:
@@ -590,6 +706,7 @@ static int __init it87_wdt_init(void)
 	int rc = 0;
 	int try_gameport = !nogameport;
 	u8  chip_rev;
+<<<<<<< HEAD
 	int gp_rreq_fail = 0;
 
 	wdt_status = 0;
@@ -601,6 +718,18 @@ static int __init it87_wdt_init(void)
 	chip_type = superio_inw(CHIPID);
 	chip_rev  = superio_inb(CHIPREV) & 0x0f;
 	superio_exit();
+=======
+	unsigned long flags;
+
+	wdt_status = 0;
+
+	spin_lock_irqsave(&spinlock, flags);
+	superio_enter();
+	chip_type = superio_inw(CHIPID);
+	chip_rev  = superio_inb(CHIPREV) & 0x0f;
+	superio_exit();
+	spin_unlock_irqrestore(&spinlock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (chip_type) {
 	case IT8702_ID:
@@ -620,6 +749,7 @@ static int __init it87_wdt_init(void)
 		try_gameport = 0;
 		break;
 	case IT8705_ID:
+<<<<<<< HEAD
 		pr_err("Unsupported Chip found, Chip %04x Revision %02x\n",
 		       chip_type, chip_rev);
 		return -ENODEV;
@@ -628,13 +758,30 @@ static int __init it87_wdt_init(void)
 		return -ENODEV;
 	default:
 		pr_err("Unknown Chip found, Chip %04x Revision %04x\n",
+=======
+		printk(KERN_ERR PFX
+		       "Unsupported Chip found, Chip %04x Revision %02x\n",
+		       chip_type, chip_rev);
+		return -ENODEV;
+	case NO_DEV_ID:
+		printk(KERN_ERR PFX "no device\n");
+		return -ENODEV;
+	default:
+		printk(KERN_ERR PFX
+		       "Unknown Chip found, Chip %04x Revision %04x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       chip_type, chip_rev);
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	rc = superio_enter();
 	if (rc)
 		return rc;
+=======
+	spin_lock_irqsave(&spinlock, flags);
+	superio_enter();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	superio_select(GPIO);
 	superio_outb(WDT_TOV1, WDTCFG);
@@ -650,41 +797,85 @@ static int __init it87_wdt_init(void)
 		}
 		gpact = superio_inb(ACTREG);
 		superio_outb(0x01, ACTREG);
+<<<<<<< HEAD
 		if (request_region(base, 1, WATCHDOG_NAME))
 			set_bit(WDTS_USE_GP, &wdt_status);
 		else
 			gp_rreq_fail = 1;
+=======
+		superio_exit();
+		spin_unlock_irqrestore(&spinlock, flags);
+		if (request_region(base, 1, WATCHDOG_NAME))
+			set_bit(WDTS_USE_GP, &wdt_status);
+		else
+			rc = -EIO;
+	} else {
+		superio_exit();
+		spin_unlock_irqrestore(&spinlock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* If we haven't Gameport support, try to get CIR support */
 	if (!test_bit(WDTS_USE_GP, &wdt_status)) {
 		if (!request_region(CIR_BASE, 8, WATCHDOG_NAME)) {
+<<<<<<< HEAD
 			if (gp_rreq_fail)
 				pr_err("I/O Address 0x%04x and 0x%04x already in use\n",
 				       base, CIR_BASE);
 			else
 				pr_err("I/O Address 0x%04x already in use\n",
 				       CIR_BASE);
+=======
+			if (rc == -EIO)
+				printk(KERN_ERR PFX
+					"I/O Address 0x%04x and 0x%04x"
+					" already in use\n", base, CIR_BASE);
+			else
+				printk(KERN_ERR PFX
+					"I/O Address 0x%04x already in use\n",
+					CIR_BASE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rc = -EIO;
 			goto err_out;
 		}
 		base = CIR_BASE;
+<<<<<<< HEAD
+=======
+		spin_lock_irqsave(&spinlock, flags);
+		superio_enter();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		superio_select(CIR);
 		superio_outw(base, BASEREG);
 		superio_outb(0x00, CIR_ILS);
 		ciract = superio_inb(ACTREG);
 		superio_outb(0x01, ACTREG);
+<<<<<<< HEAD
 		if (gp_rreq_fail) {
 			superio_select(GAMEPORT);
 			superio_outb(gpact, ACTREG);
 		}
+=======
+		if (rc == -EIO) {
+			superio_select(GAMEPORT);
+			superio_outb(gpact, ACTREG);
+		}
+
+		superio_exit();
+		spin_unlock_irqrestore(&spinlock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (timeout < 1 || timeout > max_units * 60) {
 		timeout = DEFAULT_TIMEOUT;
+<<<<<<< HEAD
 		pr_warn("Timeout value out of range, use default %d sec\n",
 			DEFAULT_TIMEOUT);
+=======
+		printk(KERN_WARNING PFX
+		       "Timeout value out of range, use default %d sec\n",
+		       DEFAULT_TIMEOUT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (timeout > max_units)
@@ -692,14 +883,25 @@ static int __init it87_wdt_init(void)
 
 	rc = register_reboot_notifier(&wdt_notifier);
 	if (rc) {
+<<<<<<< HEAD
 		pr_err("Cannot register reboot notifier (err=%d)\n", rc);
+=======
+		printk(KERN_ERR PFX
+		       "Cannot register reboot notifier (err=%d)\n", rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_out_region;
 	}
 
 	rc = misc_register(&wdt_miscdev);
 	if (rc) {
+<<<<<<< HEAD
 		pr_err("Cannot register miscdev on minor=%d (err=%d)\n",
 		       wdt_miscdev.minor, rc);
+=======
+		printk(KERN_ERR PFX
+		       "Cannot register miscdev on minor=%d (err=%d)\n",
+			wdt_miscdev.minor, rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_out_reboot;
 	}
 
@@ -714,11 +916,19 @@ static int __init it87_wdt_init(void)
 		outb(0x09, CIR_IER(base));
 	}
 
+<<<<<<< HEAD
 	pr_info("Chip IT%04x revision %d initialized. timeout=%d sec (nowayout=%d testmode=%d exclusive=%d nogameport=%d)\n",
 		chip_type, chip_rev, timeout,
 		nowayout, testmode, exclusive, nogameport);
 
 	superio_exit();
+=======
+	printk(KERN_INFO PFX "Chip IT%04x revision %d initialized. "
+		"timeout=%d sec (nowayout=%d testmode=%d exclusive=%d "
+		"nogameport=%d)\n", chip_type, chip_rev, timeout,
+		nowayout, testmode, exclusive, nogameport);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 err_out_reboot:
@@ -726,6 +936,7 @@ err_out_reboot:
 err_out_region:
 	release_region(base, test_bit(WDTS_USE_GP, &wdt_status) ? 1 : 8);
 	if (!test_bit(WDTS_USE_GP, &wdt_status)) {
+<<<<<<< HEAD
 		superio_select(CIR);
 		superio_outb(ciract, ACTREG);
 	}
@@ -736,11 +947,31 @@ err_out:
 	}
 
 	superio_exit();
+=======
+		spin_lock_irqsave(&spinlock, flags);
+		superio_enter();
+		superio_select(CIR);
+		superio_outb(ciract, ACTREG);
+		superio_exit();
+		spin_unlock_irqrestore(&spinlock, flags);
+	}
+err_out:
+	if (try_gameport) {
+		spin_lock_irqsave(&spinlock, flags);
+		superio_enter();
+		superio_select(GAMEPORT);
+		superio_outb(gpact, ACTREG);
+		superio_exit();
+		spin_unlock_irqrestore(&spinlock, flags);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
 static void __exit it87_wdt_exit(void)
 {
+<<<<<<< HEAD
 	if (superio_enter() == 0) {
 		superio_select(GPIO);
 		superio_outb(0x00, WDTCTRL);
@@ -757,6 +988,29 @@ static void __exit it87_wdt_exit(void)
 		}
 		superio_exit();
 	}
+=======
+	unsigned long flags;
+	int nolock;
+
+	nolock = !spin_trylock_irqsave(&spinlock, flags);
+	superio_enter();
+	superio_select(GPIO);
+	superio_outb(0x00, WDTCTRL);
+	superio_outb(0x00, WDTCFG);
+	superio_outb(0x00, WDTVALLSB);
+	if (max_units > 255)
+		superio_outb(0x00, WDTVALMSB);
+	if (test_bit(WDTS_USE_GP, &wdt_status)) {
+		superio_select(GAMEPORT);
+		superio_outb(gpact, ACTREG);
+	} else {
+		superio_select(CIR);
+		superio_outb(ciract, ACTREG);
+	}
+	superio_exit();
+	if (!nolock)
+		spin_unlock_irqrestore(&spinlock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	misc_deregister(&wdt_miscdev);
 	unregister_reboot_notifier(&wdt_notifier);

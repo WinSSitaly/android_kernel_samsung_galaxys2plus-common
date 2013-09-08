@@ -4,6 +4,10 @@
 #include "util/util.h"
 #include "util/strbuf.h"
 
+<<<<<<< HEAD
+=======
+extern const char perf_version_string[];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern const char perf_usage_string[];
 extern const char perf_more_info_string[];
 

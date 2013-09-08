@@ -27,6 +27,10 @@
 #include <linux/kprobes.h>
 #include <linux/percpu.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/init.h>
 #include <linux/smp.h>

@@ -15,8 +15,11 @@
 #include <linux/mtd/partitions.h>
 #include <linux/mtd/onenand.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/i2c/pca953x.h>
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
@@ -24,6 +27,7 @@
 #include <mach/addr-map.h>
 #include <mach/mfp-pxa910.h>
 #include <mach/pxa910.h>
+<<<<<<< HEAD
 #include <mach/irqs.h>
 
 #include "common.h"
@@ -39,6 +43,12 @@
  * 24 board interrupts -- 88PM860x PMIC
  */
 #define TTCDKB_NR_IRQS		(MMP_NR_IRQS + 16 + 16 + 24)
+=======
+
+#include "common.h"
+
+#define TTCDKB_NR_IRQS		(IRQ_BOARD_START + 24)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static unsigned long ttc_dkb_pin_config[] __initdata = {
 	/* UART2 */
@@ -94,7 +104,11 @@ static struct mtd_partition ttc_dkb_onenand_partitions[] = {
 	}, {
 		.name		= "filesystem",
 		.offset		= MTDPART_OFS_APPEND,
+<<<<<<< HEAD
 		.size		= SZ_32M + SZ_16M,
+=======
+		.size		= SZ_48M,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.mask_flags	= 0,
 	}
 };
@@ -123,6 +137,7 @@ static struct platform_device ttc_dkb_device_onenand = {
 };
 
 static struct platform_device *ttc_dkb_devices[] = {
+<<<<<<< HEAD
 	&pxa910_device_gpio,
 	&pxa910_device_rtc,
 	&ttc_dkb_device_onenand,
@@ -144,6 +159,11 @@ static struct i2c_board_info ttc_dkb_i2c_info[] = {
 	},
 };
 
+=======
+	&ttc_dkb_device_onenand,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init ttc_dkb_init(void)
 {
 	mfp_config(ARRAY_AND_SIZE(ttc_dkb_pin_config));
@@ -152,7 +172,10 @@ static void __init ttc_dkb_init(void)
 	pxa910_add_uart(1);
 
 	/* off-chip devices */
+<<<<<<< HEAD
 	pxa910_add_twsi(0, NULL, ARRAY_AND_SIZE(ttc_dkb_i2c_info));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_add_devices(ARRAY_AND_SIZE(ttc_dkb_devices));
 }
 
@@ -162,5 +185,8 @@ MACHINE_START(TTC_DKB, "PXA910-based TTC_DKB Development Platform")
 	.init_irq       = pxa910_init_irq,
 	.timer          = &pxa910_timer,
 	.init_machine   = ttc_dkb_init,
+<<<<<<< HEAD
 	.restart	= mmp_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

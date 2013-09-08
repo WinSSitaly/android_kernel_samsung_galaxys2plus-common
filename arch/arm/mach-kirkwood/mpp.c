@@ -7,10 +7,19 @@
  * License version 2.  This program is licensed "as is" without any
  * warranty of any kind, whether express or implied.
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/io.h>
+=======
+
+#include <linux/kernel.h>
+#include <linux/init.h>
+#include <linux/mbus.h>
+#include <linux/io.h>
+#include <asm/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/hardware.h>
 #include <plat/mpp.h>
 #include "common.h"

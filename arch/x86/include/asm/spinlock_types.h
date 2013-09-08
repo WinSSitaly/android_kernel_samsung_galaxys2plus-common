@@ -5,6 +5,7 @@
 # error "please don't include this file directly"
 #endif
 
+<<<<<<< HEAD
 #include <linux/types.h>
 
 #if (CONFIG_NR_CPUS < 256)
@@ -29,5 +30,18 @@ typedef struct arch_spinlock {
 #define __ARCH_SPIN_LOCK_UNLOCKED	{ { 0 } }
 
 #include <asm/rwlock.h>
+=======
+typedef struct arch_spinlock {
+	unsigned int slock;
+} arch_spinlock_t;
+
+#define __ARCH_SPIN_LOCK_UNLOCKED	{ 0 }
+
+typedef struct {
+	unsigned int lock;
+} arch_rwlock_t;
+
+#define __ARCH_RW_LOCK_UNLOCKED		{ RW_LOCK_BIAS }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* _ASM_X86_SPINLOCK_TYPES_H */

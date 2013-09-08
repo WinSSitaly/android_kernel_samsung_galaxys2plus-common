@@ -166,6 +166,7 @@ out:
 	return cpus;
 }
 
+<<<<<<< HEAD
 size_t cpu_map__fprintf(struct cpu_map *map, FILE *fp)
 {
 	int i;
@@ -177,6 +178,8 @@ size_t cpu_map__fprintf(struct cpu_map *map, FILE *fp)
 	return printed + fprintf(fp, "\n");
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct cpu_map *cpu_map__dummy_new(void)
 {
 	struct cpu_map *cpus = malloc(sizeof(*cpus) + sizeof(int));

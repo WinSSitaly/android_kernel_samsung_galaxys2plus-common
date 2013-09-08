@@ -122,7 +122,10 @@ void ixp2000_map_io(void);
 void ixp2000_uart_init(void);
 void ixp2000_init_irq(void);
 void ixp2000_init_time(unsigned long);
+<<<<<<< HEAD
 void ixp2000_restart(char, const char *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 unsigned long ixp2000_gettimeoffset(void);
 
 struct pci_sys_data;

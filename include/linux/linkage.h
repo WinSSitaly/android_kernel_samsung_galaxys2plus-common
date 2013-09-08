@@ -88,4 +88,11 @@
 
 #endif
 
+<<<<<<< HEAD
+=======
+#define NORET_TYPE    /**/
+#define ATTRIB_NORET  __attribute__((noreturn))
+#define NORET_AND     noreturn,
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

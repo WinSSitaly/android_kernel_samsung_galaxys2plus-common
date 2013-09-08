@@ -173,7 +173,10 @@ int usb_hcd_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
 	struct hc_driver	*driver;
 	struct usb_hcd		*hcd;
 	int			retval;
+<<<<<<< HEAD
 	int			hcd_irq = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (usb_disabled())
 		return -ENODEV;
@@ -188,6 +191,7 @@ int usb_hcd_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
 		return -ENODEV;
 	dev->current_state = PCI_D0;
 
+<<<<<<< HEAD
 	/*
 	 * The xHCI driver has its own irq management
 	 * make sure irq setup is not touched for xhci in generic hcd code
@@ -201,6 +205,17 @@ int usb_hcd_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
 			goto disable_pci;
 		}
 		hcd_irq = dev->irq;
+=======
+	/* The xHCI driver supports MSI and MSI-X,
+	 * so don't fail if the BIOS doesn't provide a legacy IRQ.
+	 */
+	if (!dev->irq && (driver->flags & HCD_MASK) != HCD_USB3) {
+		dev_err(&dev->dev,
+			"Found HC with no IRQ.  Check BIOS/PCI %s setup!\n",
+			pci_name(dev));
+		retval = -ENODEV;
+		goto disable_pci;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	hcd = usb_create_hcd(driver, &dev->dev, pci_name(dev));
@@ -250,7 +265,11 @@ int usb_hcd_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
 
 	pci_set_master(dev);
 
+<<<<<<< HEAD
 	retval = usb_add_hcd(hcd, hcd_irq, IRQF_SHARED);
+=======
+	retval = usb_add_hcd(hcd, dev->irq, IRQF_DISABLED | IRQF_SHARED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval != 0)
 		goto unmap_registers;
 	set_hs_companion(dev, hcd);
@@ -385,7 +404,10 @@ static int check_root_hub_suspended(struct device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #if defined(CONFIG_PM_SLEEP) || defined(CONFIG_PM_RUNTIME)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int suspend_common(struct device *dev, bool do_wakeup)
 {
 	struct pci_dev		*pci_dev = to_pci_dev(dev);
@@ -462,6 +484,13 @@ static int resume_common(struct device *dev, int event)
 
 	pci_set_master(pci_dev);
 
+<<<<<<< HEAD
+=======
+	clear_bit(HCD_FLAG_SAW_IRQ, &hcd->flags);
+	if (hcd->shared_hcd)
+		clear_bit(HCD_FLAG_SAW_IRQ, &hcd->shared_hcd->flags);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (hcd->driver->pci_resume && !HCD_DEAD(hcd)) {
 		if (event != PM_EVENT_AUTO_RESUME)
 			wait_for_companions(pci_dev, hcd);
@@ -477,7 +506,10 @@ static int resume_common(struct device *dev, int event)
 	}
 	return retval;
 }
+<<<<<<< HEAD
 #endif	/* SLEEP || RUNTIME */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef	CONFIG_PM_SLEEP
 
@@ -498,6 +530,18 @@ static int hcd_pci_suspend_noirq(struct device *dev)
 
 	pci_save_state(pci_dev);
 
+<<<<<<< HEAD
+=======
+	/*
+	 * Some systems crash if an EHCI controller is in D3 during
+	 * a sleep transition.  We have to leave such controllers in D0.
+	 */
+	if (hcd->broken_pci_sleep) {
+		dev_dbg(dev, "Staying in PCI D0\n");
+		return retval;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* If the root hub is dead rather than suspended, disallow remote
 	 * wakeup.  usb_hc_died() should ensure that both hosts are marked as
 	 * dying, so we only need to check the primary roothub.

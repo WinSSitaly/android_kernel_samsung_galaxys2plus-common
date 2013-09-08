@@ -27,9 +27,15 @@ static void __exit vmic_exit(void);
 /** Base address to access FPGA register */
 static void *vmic_base;
 
+<<<<<<< HEAD
 static const char driver_name[] = "vmivme_7805";
 
 static DEFINE_PCI_DEVICE_TABLE(vmic_ids) = {
+=======
+static char driver_name[] = "vmivme_7805";
+
+static struct pci_device_id vmic_ids[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ PCI_DEVICE(PCI_VENDOR_ID_VMIC, PCI_DEVICE_ID_VTIMR) },
 	{ },
 };

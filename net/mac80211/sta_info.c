@@ -9,7 +9,10 @@
 
 #include <linux/module.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/etherdevice.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/netdevice.h>
 #include <linux/types.h>
 #include <linux/slab.h>
@@ -25,7 +28,10 @@
 #include "sta_info.h"
 #include "debugfs_sta.h"
 #include "mesh.h"
+<<<<<<< HEAD
 #include "wme.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * DOC: STA information lifetime rules
@@ -63,14 +69,22 @@
  * freed before they are done using it.
  */
 
+<<<<<<< HEAD
 /* Caller must hold local->sta_mtx */
+=======
+/* Caller must hold local->sta_lock */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int sta_info_hash_del(struct ieee80211_local *local,
 			     struct sta_info *sta)
 {
 	struct sta_info *s;
 
 	s = rcu_dereference_protected(local->sta_hash[STA_HASH(sta->sta.addr)],
+<<<<<<< HEAD
 				      lockdep_is_held(&local->sta_mtx));
+=======
+				      lockdep_is_held(&local->sta_lock));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!s)
 		return -ENOENT;
 	if (s == sta) {
@@ -82,7 +96,11 @@ static int sta_info_hash_del(struct ieee80211_local *local,
 	while (rcu_access_pointer(s->hnext) &&
 	       rcu_access_pointer(s->hnext) != sta)
 		s = rcu_dereference_protected(s->hnext,
+<<<<<<< HEAD
 					lockdep_is_held(&local->sta_mtx));
+=======
+					lockdep_is_held(&local->sta_lock));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rcu_access_pointer(s->hnext)) {
 		rcu_assign_pointer(s->hnext, sta->hnext);
 		return 0;
@@ -99,12 +117,25 @@ struct sta_info *sta_info_get(struct ieee80211_sub_if_data *sdata,
 	struct sta_info *sta;
 
 	sta = rcu_dereference_check(local->sta_hash[STA_HASH(addr)],
+<<<<<<< HEAD
 				    lockdep_is_held(&local->sta_mtx));
 	while (sta) {
 		if (sta->sdata == sdata &&
 		    compare_ether_addr(sta->sta.addr, addr) == 0)
 			break;
 		sta = rcu_dereference_check(sta->hnext,
+=======
+				    rcu_read_lock_held() ||
+				    lockdep_is_held(&local->sta_lock) ||
+				    lockdep_is_held(&local->sta_mtx));
+	while (sta) {
+		if (sta->sdata == sdata &&
+		    memcmp(sta->sta.addr, addr, ETH_ALEN) == 0)
+			break;
+		sta = rcu_dereference_check(sta->hnext,
+					    rcu_read_lock_held() ||
+					    lockdep_is_held(&local->sta_lock) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					    lockdep_is_held(&local->sta_mtx));
 	}
 	return sta;
@@ -121,13 +152,26 @@ struct sta_info *sta_info_get_bss(struct ieee80211_sub_if_data *sdata,
 	struct sta_info *sta;
 
 	sta = rcu_dereference_check(local->sta_hash[STA_HASH(addr)],
+<<<<<<< HEAD
+=======
+				    rcu_read_lock_held() ||
+				    lockdep_is_held(&local->sta_lock) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    lockdep_is_held(&local->sta_mtx));
 	while (sta) {
 		if ((sta->sdata == sdata ||
 		     (sta->sdata->bss && sta->sdata->bss == sdata->bss)) &&
+<<<<<<< HEAD
 		    compare_ether_addr(sta->sta.addr, addr) == 0)
 			break;
 		sta = rcu_dereference_check(sta->hnext,
+=======
+		    memcmp(sta->sta.addr, addr, ETH_ALEN) == 0)
+			break;
+		sta = rcu_dereference_check(sta->hnext,
+					    rcu_read_lock_held() ||
+					    lockdep_is_held(&local->sta_lock) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					    lockdep_is_held(&local->sta_mtx));
 	}
 	return sta;
@@ -154,12 +198,17 @@ struct sta_info *sta_info_get_by_idx(struct ieee80211_sub_if_data *sdata,
 }
 
 /**
+<<<<<<< HEAD
  * sta_info_free - free STA
+=======
+ * __sta_info_free - internal STA free helper
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * @local: pointer to the global information
  * @sta: STA info to free
  *
  * This function must undo everything done by sta_info_alloc()
+<<<<<<< HEAD
  * that may happen before sta_info_insert(). It may only be
  * called when sta_info_insert() has not been attempted (and
  * if that fails, the station is freed anyway.)
@@ -168,6 +217,17 @@ void sta_info_free(struct ieee80211_local *local, struct sta_info *sta)
 {
 	if (sta->rate_ctrl)
 		rate_control_free_sta(sta);
+=======
+ * that may happen before sta_info_insert().
+ */
+static void __sta_info_free(struct ieee80211_local *local,
+			    struct sta_info *sta)
+{
+	if (sta->rate_ctrl) {
+		rate_control_free_sta(sta);
+		rate_control_put(sta->rate_ctrl);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_MAC80211_VERBOSE_DEBUG
 	wiphy_debug(local->hw.wiphy, "Destroyed STA %pM\n", sta->sta.addr);
@@ -176,11 +236,18 @@ void sta_info_free(struct ieee80211_local *local, struct sta_info *sta)
 	kfree(sta);
 }
 
+<<<<<<< HEAD
 /* Caller must hold local->sta_mtx */
 static void sta_info_hash_add(struct ieee80211_local *local,
 			      struct sta_info *sta)
 {
 	lockdep_assert_held(&local->sta_mtx);
+=======
+/* Caller must hold local->sta_lock */
+static void sta_info_hash_add(struct ieee80211_local *local,
+			      struct sta_info *sta)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sta->hnext = local->sta_hash[STA_HASH(sta->sta.addr)];
 	rcu_assign_pointer(local->sta_hash[STA_HASH(sta->sta.addr)], sta);
 }
@@ -194,6 +261,7 @@ static void sta_unblock(struct work_struct *wk)
 	if (sta->dead)
 		return;
 
+<<<<<<< HEAD
 	if (!test_sta_flag(sta, WLAN_STA_PS_STA)) {
 		local_bh_disable();
 		ieee80211_sta_ps_deliver_wakeup(sta);
@@ -212,6 +280,15 @@ static void sta_unblock(struct work_struct *wk)
 		local_bh_enable();
 	} else
 		clear_sta_flag(sta, WLAN_STA_PS_DRIVER);
+=======
+	if (!test_sta_flags(sta, WLAN_STA_PS_STA))
+		ieee80211_sta_ps_deliver_wakeup(sta);
+	else if (test_and_clear_sta_flags(sta, WLAN_STA_PSPOLL)) {
+		clear_sta_flags(sta, WLAN_STA_PS_DRIVER);
+		ieee80211_sta_ps_deliver_poll_response(sta);
+	} else
+		clear_sta_flags(sta, WLAN_STA_PS_DRIVER);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int sta_prepare_rate_control(struct ieee80211_local *local,
@@ -220,17 +297,31 @@ static int sta_prepare_rate_control(struct ieee80211_local *local,
 	if (local->hw.flags & IEEE80211_HW_HAS_RATE_CONTROL)
 		return 0;
 
+<<<<<<< HEAD
 	sta->rate_ctrl = local->rate_ctrl;
 	sta->rate_ctrl_priv = rate_control_alloc_sta(sta->rate_ctrl,
 						     &sta->sta, gfp);
 	if (!sta->rate_ctrl_priv)
 		return -ENOMEM;
+=======
+	sta->rate_ctrl = rate_control_get(local->rate_ctrl);
+	sta->rate_ctrl_priv = rate_control_alloc_sta(sta->rate_ctrl,
+						     &sta->sta, gfp);
+	if (!sta->rate_ctrl_priv) {
+		rate_control_put(sta->rate_ctrl);
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 struct sta_info *sta_info_alloc(struct ieee80211_sub_if_data *sdata,
+<<<<<<< HEAD
 				const u8 *addr, gfp_t gfp)
+=======
+				u8 *addr, gfp_t gfp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ieee80211_local *local = sdata->local;
 	struct sta_info *sta;
@@ -242,6 +333,10 @@ struct sta_info *sta_info_alloc(struct ieee80211_sub_if_data *sdata,
 		return NULL;
 
 	spin_lock_init(&sta->lock);
+<<<<<<< HEAD
+=======
+	spin_lock_init(&sta->flaglock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_WORK(&sta->drv_unblock_wk, sta_unblock);
 	INIT_WORK(&sta->ampdu_mlme.work, ieee80211_ba_session_work);
 	mutex_init(&sta->ampdu_mlme.mtx);
@@ -251,8 +346,11 @@ struct sta_info *sta_info_alloc(struct ieee80211_sub_if_data *sdata,
 	sta->sdata = sdata;
 	sta->last_rx = jiffies;
 
+<<<<<<< HEAD
 	sta->sta_state = IEEE80211_STA_NONE;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do_posix_clock_monotonic_gettime(&uptime);
 	sta->last_connected = uptime.tv_sec;
 	ewma_init(&sta->avg_signal, 1024, 8);
@@ -270,10 +368,15 @@ struct sta_info *sta_info_alloc(struct ieee80211_sub_if_data *sdata,
 		 */
 		sta->timer_to_tid[i] = i;
 	}
+<<<<<<< HEAD
 	for (i = 0; i < IEEE80211_NUM_ACS; i++) {
 		skb_queue_head_init(&sta->ps_tx_buf[i]);
 		skb_queue_head_init(&sta->tx_filtered[i]);
 	}
+=======
+	skb_queue_head_init(&sta->ps_tx_buf);
+	skb_queue_head_init(&sta->tx_filtered);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < NUM_RX_DATA_QUEUES; i++)
 		sta->last_seq_ctrl[i] = cpu_to_le16(USHRT_MAX);
@@ -290,6 +393,7 @@ struct sta_info *sta_info_alloc(struct ieee80211_sub_if_data *sdata,
 	return sta;
 }
 
+<<<<<<< HEAD
 static int sta_info_insert_check(struct sta_info *sta)
 {
 	struct ieee80211_sub_if_data *sdata = sta->sdata;
@@ -305,10 +409,67 @@ static int sta_info_insert_check(struct sta_info *sta)
 	if (WARN_ON(compare_ether_addr(sta->sta.addr, sdata->vif.addr) == 0 ||
 		    is_multicast_ether_addr(sta->sta.addr)))
 		return -EINVAL;
+=======
+static int sta_info_finish_insert(struct sta_info *sta, bool async)
+{
+	struct ieee80211_local *local = sta->local;
+	struct ieee80211_sub_if_data *sdata = sta->sdata;
+	struct station_info sinfo;
+	unsigned long flags;
+	int err = 0;
+
+	lockdep_assert_held(&local->sta_mtx);
+
+	/* notify driver */
+	if (sdata->vif.type == NL80211_IFTYPE_AP_VLAN)
+		sdata = container_of(sdata->bss,
+				     struct ieee80211_sub_if_data,
+				     u.ap);
+	err = drv_sta_add(local, sdata, &sta->sta);
+	if (err) {
+		if (!async)
+			return err;
+		printk(KERN_DEBUG "%s: failed to add IBSS STA %pM to driver (%d)"
+				  " - keeping it anyway.\n",
+		       sdata->name, sta->sta.addr, err);
+	} else {
+		sta->uploaded = true;
+#ifdef CONFIG_MAC80211_VERBOSE_DEBUG
+		if (async)
+			wiphy_debug(local->hw.wiphy,
+				    "Finished adding IBSS STA %pM\n",
+				    sta->sta.addr);
+#endif
+	}
+
+	sdata = sta->sdata;
+
+	if (!async) {
+		local->num_sta++;
+		local->sta_generation++;
+		smp_mb();
+
+		/* make the station visible */
+		spin_lock_irqsave(&local->sta_lock, flags);
+		sta_info_hash_add(local, sta);
+		spin_unlock_irqrestore(&local->sta_lock, flags);
+	}
+
+	list_add(&sta->list, &local->sta_list);
+
+	ieee80211_sta_debugfs_add(sta);
+	rate_control_add_sta_debugfs(sta);
+
+	sinfo.filled = 0;
+	sinfo.generation = local->sta_generation;
+	cfg80211_new_sta(sdata->dev, sta->sta.addr, &sinfo, GFP_KERNEL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int sta_info_insert_drv_state(struct ieee80211_local *local,
 				     struct ieee80211_sub_if_data *sdata,
 				     struct sta_info *sta)
@@ -426,11 +587,154 @@ int sta_info_insert_rcu(struct sta_info *sta) __acquires(RCU)
 	err = sta_info_insert_finish(sta);
 	if (err)
 		goto out_free;
+=======
+static void sta_info_finish_pending(struct ieee80211_local *local)
+{
+	struct sta_info *sta;
+	unsigned long flags;
+
+	spin_lock_irqsave(&local->sta_lock, flags);
+	while (!list_empty(&local->sta_pending_list)) {
+		sta = list_first_entry(&local->sta_pending_list,
+				       struct sta_info, list);
+		list_del(&sta->list);
+		spin_unlock_irqrestore(&local->sta_lock, flags);
+
+		sta_info_finish_insert(sta, true);
+
+		spin_lock_irqsave(&local->sta_lock, flags);
+	}
+	spin_unlock_irqrestore(&local->sta_lock, flags);
+}
+
+static void sta_info_finish_work(struct work_struct *work)
+{
+	struct ieee80211_local *local =
+		container_of(work, struct ieee80211_local, sta_finish_work);
+
+	mutex_lock(&local->sta_mtx);
+	sta_info_finish_pending(local);
+	mutex_unlock(&local->sta_mtx);
+}
+
+int sta_info_insert_rcu(struct sta_info *sta) __acquires(RCU)
+{
+	struct ieee80211_local *local = sta->local;
+	struct ieee80211_sub_if_data *sdata = sta->sdata;
+	unsigned long flags;
+	int err = 0;
+
+	/*
+	 * Can't be a WARN_ON because it can be triggered through a race:
+	 * something inserts a STA (on one CPU) without holding the RTNL
+	 * and another CPU turns off the net device.
+	 */
+	if (unlikely(!ieee80211_sdata_running(sdata))) {
+		err = -ENETDOWN;
+		rcu_read_lock();
+		goto out_free;
+	}
+
+	if (WARN_ON(compare_ether_addr(sta->sta.addr, sdata->vif.addr) == 0 ||
+		    is_multicast_ether_addr(sta->sta.addr))) {
+		err = -EINVAL;
+		rcu_read_lock();
+		goto out_free;
+	}
+
+	/*
+	 * In ad-hoc mode, we sometimes need to insert stations
+	 * from tasklet context from the RX path. To avoid races,
+	 * always do so in that case -- see the comment below.
+	 */
+	if (sdata->vif.type == NL80211_IFTYPE_ADHOC) {
+		spin_lock_irqsave(&local->sta_lock, flags);
+		/* check if STA exists already */
+		if (sta_info_get_bss(sdata, sta->sta.addr)) {
+			spin_unlock_irqrestore(&local->sta_lock, flags);
+			rcu_read_lock();
+			err = -EEXIST;
+			goto out_free;
+		}
+
+		local->num_sta++;
+		local->sta_generation++;
+		smp_mb();
+		sta_info_hash_add(local, sta);
+
+		list_add_tail(&sta->list, &local->sta_pending_list);
+
+		rcu_read_lock();
+		spin_unlock_irqrestore(&local->sta_lock, flags);
+
+#ifdef CONFIG_MAC80211_VERBOSE_DEBUG
+		wiphy_debug(local->hw.wiphy, "Added IBSS STA %pM\n",
+			    sta->sta.addr);
+#endif /* CONFIG_MAC80211_VERBOSE_DEBUG */
+
+		ieee80211_queue_work(&local->hw, &local->sta_finish_work);
+
+		return 0;
+	}
+
+	/*
+	 * On first glance, this will look racy, because the code
+	 * below this point, which inserts a station with sleeping,
+	 * unlocks the sta_lock between checking existence in the
+	 * hash table and inserting into it.
+	 *
+	 * However, it is not racy against itself because it keeps
+	 * the mutex locked. It still seems to race against the
+	 * above code that atomically inserts the station... That,
+	 * however, is not true because the above code can only
+	 * be invoked for IBSS interfaces, and the below code will
+	 * not be -- and the two do not race against each other as
+	 * the hash table also keys off the interface.
+	 */
+
+	might_sleep();
+
+	mutex_lock(&local->sta_mtx);
+
+	spin_lock_irqsave(&local->sta_lock, flags);
+	/* check if STA exists already */
+	if (sta_info_get_bss(sdata, sta->sta.addr)) {
+		spin_unlock_irqrestore(&local->sta_lock, flags);
+		mutex_unlock(&local->sta_mtx);
+		rcu_read_lock();
+		err = -EEXIST;
+		goto out_free;
+	}
+
+	spin_unlock_irqrestore(&local->sta_lock, flags);
+
+	err = sta_info_finish_insert(sta, false);
+	if (err) {
+		mutex_unlock(&local->sta_mtx);
+		rcu_read_lock();
+		goto out_free;
+	}
+
+#ifdef CONFIG_MAC80211_VERBOSE_DEBUG
+	wiphy_debug(local->hw.wiphy, "Inserted STA %pM\n", sta->sta.addr);
+#endif /* CONFIG_MAC80211_VERBOSE_DEBUG */
+
+	/* move reference to rcu-protected */
+	rcu_read_lock();
+	mutex_unlock(&local->sta_mtx);
+
+	if (ieee80211_vif_is_mesh(&sdata->vif))
+		mesh_accept_plinks_update(sdata);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
  out_free:
 	BUG_ON(!err);
+<<<<<<< HEAD
 	sta_info_free(local, sta);
+=======
+	__sta_info_free(local, sta);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -461,6 +765,7 @@ static inline void __bss_tim_clear(struct ieee80211_if_ap *bss, u16 aid)
 	bss->tim[aid / 8] &= ~(1 << (aid % 8));
 }
 
+<<<<<<< HEAD
 static unsigned long ieee80211_tids_for_ac(int ac)
 {
 	/* If we ever support TIDs > 7, this obviously needs to be adjusted */
@@ -542,12 +847,70 @@ void sta_info_recalc_tim(struct sta_info *sta)
 }
 
 static bool sta_info_buffer_expired(struct sta_info *sta, struct sk_buff *skb)
+=======
+static void __sta_info_set_tim_bit(struct ieee80211_if_ap *bss,
+				   struct sta_info *sta)
+{
+	BUG_ON(!bss);
+
+	__bss_tim_set(bss, sta->sta.aid);
+
+	if (sta->local->ops->set_tim) {
+		sta->local->tim_in_locked_section = true;
+		drv_set_tim(sta->local, &sta->sta, true);
+		sta->local->tim_in_locked_section = false;
+	}
+}
+
+void sta_info_set_tim_bit(struct sta_info *sta)
+{
+	unsigned long flags;
+
+	BUG_ON(!sta->sdata->bss);
+
+	spin_lock_irqsave(&sta->local->sta_lock, flags);
+	__sta_info_set_tim_bit(sta->sdata->bss, sta);
+	spin_unlock_irqrestore(&sta->local->sta_lock, flags);
+}
+
+static void __sta_info_clear_tim_bit(struct ieee80211_if_ap *bss,
+				     struct sta_info *sta)
+{
+	BUG_ON(!bss);
+
+	__bss_tim_clear(bss, sta->sta.aid);
+
+	if (sta->local->ops->set_tim) {
+		sta->local->tim_in_locked_section = true;
+		drv_set_tim(sta->local, &sta->sta, false);
+		sta->local->tim_in_locked_section = false;
+	}
+}
+
+void sta_info_clear_tim_bit(struct sta_info *sta)
+{
+	unsigned long flags;
+
+	BUG_ON(!sta->sdata->bss);
+
+	spin_lock_irqsave(&sta->local->sta_lock, flags);
+	__sta_info_clear_tim_bit(sta->sdata->bss, sta);
+	spin_unlock_irqrestore(&sta->local->sta_lock, flags);
+}
+
+static int sta_info_buffer_expired(struct sta_info *sta,
+				   struct sk_buff *skb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ieee80211_tx_info *info;
 	int timeout;
 
 	if (!skb)
+<<<<<<< HEAD
 		return false;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	info = IEEE80211_SKB_CB(skb);
 
@@ -561,12 +924,18 @@ static bool sta_info_buffer_expired(struct sta_info *sta, struct sk_buff *skb)
 }
 
 
+<<<<<<< HEAD
 static bool sta_info_cleanup_expire_buffered_ac(struct ieee80211_local *local,
 						struct sta_info *sta, int ac)
+=======
+static bool sta_info_cleanup_expire_buffered(struct ieee80211_local *local,
+					     struct sta_info *sta)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags;
 	struct sk_buff *skb;
 
+<<<<<<< HEAD
 	/*
 	 * First check for frames that should expire on the filtered
 	 * queue. Frames here were rejected by the driver and are on
@@ -614,6 +983,20 @@ static bool sta_info_cleanup_expire_buffered_ac(struct ieee80211_local *local,
 		 * hasn't expired yet (or we reached the end of
 		 * the queue) we can stop testing
 		 */
+=======
+	if (skb_queue_empty(&sta->ps_tx_buf))
+		return false;
+
+	for (;;) {
+		spin_lock_irqsave(&sta->ps_tx_buf.lock, flags);
+		skb = skb_peek(&sta->ps_tx_buf);
+		if (sta_info_buffer_expired(sta, skb))
+			skb = __skb_dequeue(&sta->ps_tx_buf);
+		else
+			skb = NULL;
+		spin_unlock_irqrestore(&sta->ps_tx_buf.lock, flags);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!skb)
 			break;
 
@@ -623,6 +1006,7 @@ static bool sta_info_cleanup_expire_buffered_ac(struct ieee80211_local *local,
 		       sta->sta.addr);
 #endif
 		dev_kfree_skb(skb);
+<<<<<<< HEAD
 	}
 
 	/*
@@ -664,6 +1048,24 @@ int __must_check __sta_info_destroy(struct sta_info *sta)
 	struct ieee80211_sub_if_data *sdata;
 	int ret, i, ac;
 	struct tid_ampdu_tx *tid_tx;
+=======
+
+		if (skb_queue_empty(&sta->ps_tx_buf) &&
+		    !test_sta_flags(sta, WLAN_STA_PS_DRIVER_BUF))
+			sta_info_clear_tim_bit(sta);
+	}
+
+	return true;
+}
+
+static int __must_check __sta_info_destroy(struct sta_info *sta)
+{
+	struct ieee80211_local *local;
+	struct ieee80211_sub_if_data *sdata;
+	struct sk_buff *skb;
+	unsigned long flags;
+	int ret, i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	might_sleep();
 
@@ -673,14 +1075,18 @@ int __must_check __sta_info_destroy(struct sta_info *sta)
 	local = sta->local;
 	sdata = sta->sdata;
 
+<<<<<<< HEAD
 	lockdep_assert_held(&local->sta_mtx);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Before removing the station from the driver and
 	 * rate control, it might still start new aggregation
 	 * sessions -- block that to make sure the tear-down
 	 * will be sufficient.
 	 */
+<<<<<<< HEAD
 	set_sta_flag(sta, WLAN_STA_BLOCK_BA);
 	ieee80211_sta_tear_down_BA_sessions(sta, true);
 
@@ -690,6 +1096,20 @@ int __must_check __sta_info_destroy(struct sta_info *sta)
 
 	list_del_rcu(&sta->list);
 
+=======
+	set_sta_flags(sta, WLAN_STA_BLOCK_BA);
+	ieee80211_sta_tear_down_BA_sessions(sta, true);
+
+	spin_lock_irqsave(&local->sta_lock, flags);
+	ret = sta_info_hash_del(local, sta);
+	/* this might still be the pending list ... which is fine */
+	if (!ret)
+		list_del(&sta->list);
+	spin_unlock_irqrestore(&local->sta_lock, flags);
+	if (ret)
+		return ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&local->key_mtx);
 	for (i = 0; i < NUM_DEFAULT_KEYS; i++)
 		__ieee80211_key_free(key_mtx_dereference(local, sta->gtk[i]));
@@ -699,10 +1119,22 @@ int __must_check __sta_info_destroy(struct sta_info *sta)
 
 	sta->dead = true;
 
+<<<<<<< HEAD
+=======
+	if (test_and_clear_sta_flags(sta,
+				WLAN_STA_PS_STA | WLAN_STA_PS_DRIVER)) {
+		BUG_ON(!sdata->bss);
+
+		atomic_dec(&sdata->bss->num_sta_ps);
+		sta_info_clear_tim_bit(sta);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local->num_sta--;
 	local->sta_generation++;
 
 	if (sdata->vif.type == NL80211_IFTYPE_AP_VLAN)
+<<<<<<< HEAD
 		RCU_INIT_POINTER(sdata->u.vlan.sta, NULL);
 
 	while (sta->sta_state > IEEE80211_STA_NONE) {
@@ -717,6 +1149,17 @@ int __must_check __sta_info_destroy(struct sta_info *sta)
 		ret = drv_sta_state(local, sdata, sta, IEEE80211_STA_NONE,
 				    IEEE80211_STA_NOTEXIST);
 		WARN_ON_ONCE(ret != 0);
+=======
+		rcu_assign_pointer(sdata->u.vlan.sta, NULL);
+
+	if (sta->uploaded) {
+		if (sdata->vif.type == NL80211_IFTYPE_AP_VLAN)
+			sdata = container_of(sdata->bss,
+					     struct ieee80211_sub_if_data,
+					     u.ap);
+		drv_sta_remove(local, sdata, &sta->sta);
+		sdata = sta->sdata;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -727,6 +1170,7 @@ int __must_check __sta_info_destroy(struct sta_info *sta)
 	 */
 	synchronize_rcu();
 
+<<<<<<< HEAD
 	if (test_sta_flag(sta, WLAN_STA_PS_STA)) {
 		BUG_ON(!sdata->bss);
 
@@ -742,6 +1186,8 @@ int __must_check __sta_info_destroy(struct sta_info *sta)
 		ieee80211_purge_tx_queue(&local->hw, &sta->tx_filtered[ac]);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_MAC80211_MESH
 	if (ieee80211_vif_is_mesh(&sdata->vif))
 		mesh_accept_plinks_update(sdata);
@@ -764,6 +1210,7 @@ int __must_check __sta_info_destroy(struct sta_info *sta)
 	}
 #endif
 
+<<<<<<< HEAD
 	/*
 	 * Destroy aggregation state here. It would be nice to wait for the
 	 * driver to finish aggregation stop and then clean up, but for now
@@ -779,6 +1226,17 @@ int __must_check __sta_info_destroy(struct sta_info *sta)
 	}
 
 	sta_info_free(local, sta);
+=======
+	while ((skb = skb_dequeue(&sta->ps_tx_buf)) != NULL) {
+		local->total_ps_buffered--;
+		dev_kfree_skb_any(skb);
+	}
+
+	while ((skb = skb_dequeue(&sta->tx_filtered)) != NULL)
+		dev_kfree_skb_any(skb);
+
+	__sta_info_free(local, sta);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -834,9 +1292,17 @@ static void sta_info_cleanup(unsigned long data)
 
 void sta_info_init(struct ieee80211_local *local)
 {
+<<<<<<< HEAD
 	spin_lock_init(&local->tim_lock);
 	mutex_init(&local->sta_mtx);
 	INIT_LIST_HEAD(&local->sta_list);
+=======
+	spin_lock_init(&local->sta_lock);
+	mutex_init(&local->sta_mtx);
+	INIT_LIST_HEAD(&local->sta_list);
+	INIT_LIST_HEAD(&local->sta_pending_list);
+	INIT_WORK(&local->sta_finish_work, sta_info_finish_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	setup_timer(&local->sta_cleanup, sta_info_cleanup,
 		    (unsigned long)local);
@@ -844,7 +1310,11 @@ void sta_info_init(struct ieee80211_local *local)
 
 void sta_info_stop(struct ieee80211_local *local)
 {
+<<<<<<< HEAD
 	del_timer_sync(&local->sta_cleanup);
+=======
+	del_timer(&local->sta_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sta_info_flush(local, NULL);
 }
 
@@ -865,11 +1335,20 @@ int sta_info_flush(struct ieee80211_local *local,
 	might_sleep();
 
 	mutex_lock(&local->sta_mtx);
+<<<<<<< HEAD
 	list_for_each_entry_safe(sta, tmp, &local->sta_list, list) {
 		if (!sdata || sdata == sta->sdata) {
 			WARN_ON(__sta_info_destroy(sta));
 			ret++;
 		}
+=======
+
+	sta_info_finish_pending(local);
+
+	list_for_each_entry_safe(sta, tmp, &local->sta_list, list) {
+		if (!sdata || sdata == sta->sdata)
+			WARN_ON(__sta_info_destroy(sta));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	mutex_unlock(&local->sta_mtx);
 
@@ -883,11 +1362,15 @@ void ieee80211_sta_expire(struct ieee80211_sub_if_data *sdata,
 	struct sta_info *sta, *tmp;
 
 	mutex_lock(&local->sta_mtx);
+<<<<<<< HEAD
 
 	list_for_each_entry_safe(sta, tmp, &local->sta_list, list) {
 		if (sdata != sta->sdata)
 			continue;
 
+=======
+	list_for_each_entry_safe(sta, tmp, &local->sta_list, list)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (time_after(jiffies, sta->last_rx + exp_time)) {
 #ifdef CONFIG_MAC80211_IBSS_DEBUG
 			printk(KERN_DEBUG "%s: expiring inactive STA %pM\n",
@@ -895,8 +1378,11 @@ void ieee80211_sta_expire(struct ieee80211_sub_if_data *sdata,
 #endif
 			WARN_ON(__sta_info_destroy(sta));
 		}
+<<<<<<< HEAD
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&local->sta_mtx);
 }
 
@@ -945,11 +1431,16 @@ EXPORT_SYMBOL(ieee80211_find_sta);
 static void clear_sta_ps_flags(void *_sta)
 {
 	struct sta_info *sta = _sta;
+<<<<<<< HEAD
 	struct ieee80211_sub_if_data *sdata = sta->sdata;
 
 	clear_sta_flag(sta, WLAN_STA_PS_DRIVER);
 	if (test_and_clear_sta_flag(sta, WLAN_STA_PS_STA))
 		atomic_dec(&sdata->bss->num_sta_ps);
+=======
+
+	clear_sta_flags(sta, WLAN_STA_PS_DRIVER | WLAN_STA_PS_STA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* powersave support code */
@@ -957,6 +1448,7 @@ void ieee80211_sta_ps_deliver_wakeup(struct sta_info *sta)
 {
 	struct ieee80211_sub_if_data *sdata = sta->sdata;
 	struct ieee80211_local *local = sdata->local;
+<<<<<<< HEAD
 	struct sk_buff_head pending;
 	int filtered = 0, buffered = 0, ac;
 	unsigned long flags;
@@ -1295,6 +1787,88 @@ void ieee80211_sta_ps_deliver_uapsd(struct sta_info *sta)
 
 	ieee80211_sta_ps_deliver_response(sta, n_frames, ~delivery_enabled,
 					  IEEE80211_FRAME_RELEASE_UAPSD);
+=======
+	int sent, buffered;
+
+	clear_sta_flags(sta, WLAN_STA_PS_DRIVER_BUF);
+	if (!(local->hw.flags & IEEE80211_HW_AP_LINK_PS))
+		drv_sta_notify(local, sdata, STA_NOTIFY_AWAKE, &sta->sta);
+
+	if (!skb_queue_empty(&sta->ps_tx_buf))
+		sta_info_clear_tim_bit(sta);
+
+	/* Send all buffered frames to the station */
+	sent = ieee80211_add_pending_skbs(local, &sta->tx_filtered);
+	buffered = ieee80211_add_pending_skbs_fn(local, &sta->ps_tx_buf,
+						 clear_sta_ps_flags, sta);
+	sent += buffered;
+	local->total_ps_buffered -= buffered;
+
+#ifdef CONFIG_MAC80211_VERBOSE_PS_DEBUG
+	printk(KERN_DEBUG "%s: STA %pM aid %d sending %d filtered/%d PS frames "
+	       "since STA not sleeping anymore\n", sdata->name,
+	       sta->sta.addr, sta->sta.aid, sent - buffered, buffered);
+#endif /* CONFIG_MAC80211_VERBOSE_PS_DEBUG */
+}
+
+void ieee80211_sta_ps_deliver_poll_response(struct sta_info *sta)
+{
+	struct ieee80211_sub_if_data *sdata = sta->sdata;
+	struct ieee80211_local *local = sdata->local;
+	struct sk_buff *skb;
+	int no_pending_pkts;
+
+	skb = skb_dequeue(&sta->tx_filtered);
+	if (!skb) {
+		skb = skb_dequeue(&sta->ps_tx_buf);
+		if (skb)
+			local->total_ps_buffered--;
+	}
+	no_pending_pkts = skb_queue_empty(&sta->tx_filtered) &&
+		skb_queue_empty(&sta->ps_tx_buf);
+
+	if (skb) {
+		struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
+		struct ieee80211_hdr *hdr =
+			(struct ieee80211_hdr *) skb->data;
+
+		/*
+		 * Tell TX path to send this frame even though the STA may
+		 * still remain is PS mode after this frame exchange.
+		 */
+		info->flags |= IEEE80211_TX_CTL_PSPOLL_RESPONSE;
+
+#ifdef CONFIG_MAC80211_VERBOSE_PS_DEBUG
+		printk(KERN_DEBUG "STA %pM aid %d: PS Poll (entries after %d)\n",
+		       sta->sta.addr, sta->sta.aid,
+		       skb_queue_len(&sta->ps_tx_buf));
+#endif /* CONFIG_MAC80211_VERBOSE_PS_DEBUG */
+
+		/* Use MoreData flag to indicate whether there are more
+		 * buffered frames for this STA */
+		if (no_pending_pkts)
+			hdr->frame_control &= cpu_to_le16(~IEEE80211_FCTL_MOREDATA);
+		else
+			hdr->frame_control |= cpu_to_le16(IEEE80211_FCTL_MOREDATA);
+
+		ieee80211_add_pending_skb(local, skb);
+
+		if (no_pending_pkts)
+			sta_info_clear_tim_bit(sta);
+#ifdef CONFIG_MAC80211_VERBOSE_PS_DEBUG
+	} else {
+		/*
+		 * FIXME: This can be the result of a race condition between
+		 *	  us expiring a frame and the station polling for it.
+		 *	  Should we send it a null-func frame indicating we
+		 *	  have nothing buffered for it?
+		 */
+		printk(KERN_DEBUG "%s: STA %pM sent PS Poll even "
+		       "though there are no buffered frames for it\n",
+		       sdata->name, sta->sta.addr);
+#endif /* CONFIG_MAC80211_VERBOSE_PS_DEBUG */
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void ieee80211_sta_block_awake(struct ieee80211_hw *hw,
@@ -1305,12 +1879,18 @@ void ieee80211_sta_block_awake(struct ieee80211_hw *hw,
 	trace_api_sta_block_awake(sta->local, pubsta, block);
 
 	if (block)
+<<<<<<< HEAD
 		set_sta_flag(sta, WLAN_STA_PS_DRIVER);
 	else if (test_sta_flag(sta, WLAN_STA_PS_DRIVER))
+=======
+		set_sta_flags(sta, WLAN_STA_PS_DRIVER);
+	else if (test_sta_flags(sta, WLAN_STA_PS_DRIVER))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ieee80211_queue_work(hw, &sta->drv_unblock_wk);
 }
 EXPORT_SYMBOL(ieee80211_sta_block_awake);
 
+<<<<<<< HEAD
 void ieee80211_sta_eosp_irqsafe(struct ieee80211_sta *pubsta)
 {
 	struct sta_info *sta = container_of(pubsta, struct sta_info, sta);
@@ -1440,3 +2020,13 @@ int sta_info_move_state(struct sta_info *sta,
 
 	return 0;
 }
+=======
+void ieee80211_sta_set_tim(struct ieee80211_sta *pubsta)
+{
+	struct sta_info *sta = container_of(pubsta, struct sta_info, sta);
+
+	set_sta_flags(sta, WLAN_STA_PS_DRIVER_BUF);
+	sta_info_set_tim_bit(sta);
+}
+EXPORT_SYMBOL(ieee80211_sta_set_tim);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

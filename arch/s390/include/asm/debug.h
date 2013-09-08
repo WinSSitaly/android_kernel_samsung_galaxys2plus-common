@@ -73,7 +73,11 @@ typedef struct debug_info {
 	struct dentry* debugfs_entries[DEBUG_MAX_VIEWS];
 	struct debug_view* views[DEBUG_MAX_VIEWS];	
 	char name[DEBUG_MAX_NAME_LEN];
+<<<<<<< HEAD
 	umode_t mode;
+=======
+	mode_t mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } debug_info_t;
 
 typedef int (debug_header_proc_t) (debug_info_t* id,
@@ -124,14 +128,21 @@ debug_info_t *debug_register(const char *name, int pages, int nr_areas,
                              int buf_size);
 
 debug_info_t *debug_register_mode(const char *name, int pages, int nr_areas,
+<<<<<<< HEAD
 				  int buf_size, umode_t mode, uid_t uid,
+=======
+				  int buf_size, mode_t mode, uid_t uid,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  gid_t gid);
 
 void debug_unregister(debug_info_t* id);
 
 void debug_set_level(debug_info_t* id, int new_level);
 
+<<<<<<< HEAD
 void debug_set_critical(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void debug_stop_all(void);
 
 static inline debug_entry_t*

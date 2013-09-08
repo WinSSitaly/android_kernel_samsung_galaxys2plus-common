@@ -13,14 +13,21 @@
 #include <linux/i2c.h>
 #include <linux/init.h>
 #include <linux/serial_core.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/dm9000.h>
 #include <linux/fb.h>
 #include <linux/gpio.h>
 #include <linux/delay.h>
 #include <linux/pwm_backlight.h>
 
+<<<<<<< HEAD
 #include <asm/hardware/vic.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 #include <asm/setup.h>
@@ -30,10 +37,18 @@
 
 #include <mach/map.h>
 #include <mach/regs-clock.h>
+<<<<<<< HEAD
+=======
+#include <mach/regs-fb.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <plat/regs-serial.h>
 #include <plat/regs-srom.h>
 #include <plat/gpio-cfg.h>
+<<<<<<< HEAD
+=======
+#include <plat/s5pv210.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/devs.h>
 #include <plat/cpu.h>
 #include <plat/adc.h>
@@ -44,11 +59,14 @@
 #include <plat/pm.h>
 #include <plat/fb.h>
 #include <plat/s5p-time.h>
+<<<<<<< HEAD
 #include <plat/backlight.h>
 #include <plat/regs-fb-v4.h>
 #include <plat/mfc.h>
 
 #include "common.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Following are default values for UCON, ULCON and UFCON UART registers */
 #define SMDKV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
@@ -141,7 +159,11 @@ static struct dm9000_plat_data smdkv210_dm9000_platdata = {
 	.dev_addr	= { 0x00, 0x09, 0xc0, 0xff, 0xec, 0x48 },
 };
 
+<<<<<<< HEAD
 static struct platform_device smdkv210_dm9000 = {
+=======
+struct platform_device smdkv210_dm9000 = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name		= "dm9000",
 	.id		= -1,
 	.num_resources	= ARRAY_SIZE(smdkv210_dm9000_resources),
@@ -156,12 +178,23 @@ static void smdkv210_lte480wv_set_power(struct plat_lcd_data *pd,
 {
 	if (power) {
 #if !defined(CONFIG_BACKLIGHT_PWM)
+<<<<<<< HEAD
 		gpio_request_one(S5PV210_GPD0(3), GPIOF_OUT_INIT_HIGH, "GPD0");
+=======
+		gpio_request(S5PV210_GPD0(3), "GPD0");
+		gpio_direction_output(S5PV210_GPD0(3), 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gpio_free(S5PV210_GPD0(3));
 #endif
 
 		/* fire nRESET on power up */
+<<<<<<< HEAD
 		gpio_request_one(S5PV210_GPH0(6), GPIOF_OUT_INIT_HIGH, "GPH0");
+=======
+		gpio_request(S5PV210_GPH0(6), "GPH0");
+
+		gpio_direction_output(S5PV210_GPH0(6), 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		gpio_set_value(S5PV210_GPH0(6), 0);
 		mdelay(10);
@@ -172,7 +205,12 @@ static void smdkv210_lte480wv_set_power(struct plat_lcd_data *pd,
 		gpio_free(S5PV210_GPH0(6));
 	} else {
 #if !defined(CONFIG_BACKLIGHT_PWM)
+<<<<<<< HEAD
 		gpio_request_one(S5PV210_GPD0(3), GPIOF_OUT_INIT_LOW, "GPD0");
+=======
+		gpio_request(S5PV210_GPD0(3), "GPD0");
+		gpio_direction_output(S5PV210_GPD0(3), 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gpio_free(S5PV210_GPD0(3));
 #endif
 	}
@@ -210,6 +248,48 @@ static struct s3c_fb_platdata smdkv210_lcd0_pdata __initdata = {
 	.setup_gpio	= s5pv210_fb_gpio_setup_24bpp,
 };
 
+<<<<<<< HEAD
+=======
+static int smdkv210_backlight_init(struct device *dev)
+{
+	int ret;
+
+	ret = gpio_request(S5PV210_GPD0(3), "Backlight");
+	if (ret) {
+		printk(KERN_ERR "failed to request GPD for PWM-OUT 3\n");
+		return ret;
+	}
+
+	/* Configure GPIO pin with S5PV210_GPD_0_3_TOUT_3 */
+	s3c_gpio_cfgpin(S5PV210_GPD0(3), S3C_GPIO_SFN(2));
+
+	return 0;
+}
+
+static void smdkv210_backlight_exit(struct device *dev)
+{
+	s3c_gpio_cfgpin(S5PV210_GPD0(3), S3C_GPIO_OUTPUT);
+	gpio_free(S5PV210_GPD0(3));
+}
+
+static struct platform_pwm_backlight_data smdkv210_backlight_data = {
+	.pwm_id		= 3,
+	.max_brightness	= 255,
+	.dft_brightness	= 255,
+	.pwm_period_ns	= 78770,
+	.init		= smdkv210_backlight_init,
+	.exit		= smdkv210_backlight_exit,
+};
+
+static struct platform_device smdkv210_backlight_device = {
+	.name		= "pwm-backlight",
+	.dev		= {
+		.parent		= &s3c_device_timer[3].dev,
+		.platform_data	= &smdkv210_backlight_data,
+	},
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_device *smdkv210_devices[] __initdata = {
 	&s3c_device_adc,
 	&s3c_device_cfcon,
@@ -224,6 +304,7 @@ static struct platform_device *smdkv210_devices[] __initdata = {
 	&s3c_device_rtc,
 	&s3c_device_ts,
 	&s3c_device_wdt,
+<<<<<<< HEAD
 	&s5p_device_fimc0,
 	&s5p_device_fimc1,
 	&s5p_device_fimc2,
@@ -232,14 +313,24 @@ static struct platform_device *smdkv210_devices[] __initdata = {
 	&s5p_device_mfc,
 	&s5p_device_mfc_l,
 	&s5p_device_mfc_r,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&s5pv210_device_ac97,
 	&s5pv210_device_iis0,
 	&s5pv210_device_spdif,
 	&samsung_asoc_dma,
+<<<<<<< HEAD
 	&samsung_asoc_idma,
 	&samsung_device_keypad,
 	&smdkv210_dm9000,
 	&smdkv210_lcd_lte480wv,
+=======
+	&samsung_device_keypad,
+	&smdkv210_dm9000,
+	&smdkv210_lcd_lte480wv,
+	&s3c_device_timer[3],
+	&smdkv210_backlight_device,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void __init smdkv210_dm9000_init(void)
@@ -272,6 +363,7 @@ static struct i2c_board_info smdkv210_i2c_devs2[] __initdata = {
 	/* To Be Updated */
 };
 
+<<<<<<< HEAD
 /* LCD Backlight data */
 static struct samsung_bl_gpio_info smdkv210_bl_gpio_info = {
 	.no = S5PV210_GPD0(3),
@@ -281,21 +373,34 @@ static struct samsung_bl_gpio_info smdkv210_bl_gpio_info = {
 static struct platform_pwm_backlight_data smdkv210_bl_data = {
 	.pwm_id = 3,
 	.pwm_period_ns = 1000,
+=======
+static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
+	.delay			= 10000,
+	.presc			= 49,
+	.oversampling_shift	= 2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void __init smdkv210_map_io(void)
 {
+<<<<<<< HEAD
 	s5pv210_init_io(NULL, 0);
+=======
+	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	s3c24xx_init_clocks(24000000);
 	s3c24xx_init_uarts(smdkv210_uartcfgs, ARRAY_SIZE(smdkv210_uartcfgs));
 	s5p_set_timer_source(S5P_PWM2, S5P_PWM4);
 }
 
+<<<<<<< HEAD
 static void __init smdkv210_reserve(void)
 {
 	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init smdkv210_machine_init(void)
 {
 	s3c_pm_init();
@@ -303,7 +408,11 @@ static void __init smdkv210_machine_init(void)
 	smdkv210_dm9000_init();
 
 	samsung_keypad_set_platdata(&smdkv210_keypad_data);
+<<<<<<< HEAD
 	s3c24xx_ts_set_platdata(NULL);
+=======
+	s3c24xx_ts_set_platdata(&s3c_ts_platform);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	s3c_i2c0_set_platdata(NULL);
 	s3c_i2c1_set_platdata(NULL);
@@ -319,13 +428,17 @@ static void __init smdkv210_machine_init(void)
 
 	s3c_fb_set_platdata(&smdkv210_lcd0_pdata);
 
+<<<<<<< HEAD
 	samsung_bl_set(&smdkv210_bl_gpio_info, &smdkv210_bl_data);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_add_devices(smdkv210_devices, ARRAY_SIZE(smdkv210_devices));
 }
 
 MACHINE_START(SMDKV210, "SMDKV210")
 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.init_irq	= s5pv210_init_irq,
 	.handle_irq	= vic_handle_irq,
@@ -334,4 +447,11 @@ MACHINE_START(SMDKV210, "SMDKV210")
 	.timer		= &s5p_timer,
 	.restart	= s5pv210_restart,
 	.reserve	= &smdkv210_reserve,
+=======
+	.boot_params	= S5P_PA_SDRAM + 0x100,
+	.init_irq	= s5pv210_init_irq,
+	.map_io		= smdkv210_map_io,
+	.init_machine	= smdkv210_machine_init,
+	.timer		= &s5p_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

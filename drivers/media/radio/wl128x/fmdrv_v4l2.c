@@ -28,8 +28,11 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "fmdrv.h"
 #include "fmdrv_v4l2.h"
 #include "fmdrv_common.h"
@@ -84,17 +87,26 @@ static ssize_t fm_v4l2_fops_write(struct file *file, const char __user * buf,
 	struct fmdev *fmdev;
 
 	ret = copy_from_user(&rds, buf, sizeof(rds));
+<<<<<<< HEAD
 	rds.text[sizeof(rds.text) - 1] = '\0';
 	fmdbg("(%d)type: %d, text %s, af %d\n",
 		   ret, rds.text_type, rds.text, rds.af_freq);
 	if (ret)
 		return -EFAULT;
+=======
+	fmdbg("(%d)type: %d, text %s, af %d\n",
+		   ret, rds.text_type, rds.text, rds.af_freq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fmdev = video_drvdata(file);
 	fm_tx_set_radio_text(fmdev, rds.text, rds.text_type);
 	fm_tx_set_af(fmdev, rds.af_freq);
 
+<<<<<<< HEAD
 	return sizeof(rds);
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static u32 fm_v4l2_fops_poll(struct file *file, struct poll_table_struct *pts)
@@ -180,6 +192,10 @@ static int fm_v4l2_vidioc_querycap(struct file *file, void *priv,
 	strlcpy(capability->card, FM_DRV_CARD_SHORT_NAME,
 			sizeof(capability->card));
 	sprintf(capability->bus_info, "UART");
+<<<<<<< HEAD
+=======
+	capability->version = FM_DRV_RADIO_VERSION;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	capability->capabilities = V4L2_CAP_HW_FREQ_SEEK | V4L2_CAP_TUNER |
 		V4L2_CAP_RADIO | V4L2_CAP_MODULATOR |
 		V4L2_CAP_AUDIO | V4L2_CAP_READWRITE |
@@ -195,7 +211,11 @@ static int fm_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
 
 	switch (ctrl->id) {
 	case  V4L2_CID_TUNE_ANTENNA_CAPACITOR:
+<<<<<<< HEAD
 		ctrl->val = fm_tx_get_tune_cap_val(fmdev);
+=======
+		ctrl->cur.val = fm_tx_get_tune_cap_val(fmdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		fmwarn("%s: Unknown IOCTL: %d\n", __func__, ctrl->id);
@@ -407,7 +427,11 @@ static int fm_v4l2_vidioc_s_hw_freq_seek(struct file *file, void *priv,
 static int fm_v4l2_vidioc_g_modulator(struct file *file, void *priv,
 		struct v4l2_modulator *mod)
 {
+<<<<<<< HEAD
 	struct fmdev *fmdev = video_drvdata(file);
+=======
+	struct fmdev *fmdev = video_drvdata(file);;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mod->index != 0)
 		return -EINVAL;
@@ -562,7 +586,11 @@ int fm_v4l2_init_video_device(struct fmdev *fmdev, int radio_nr)
 			255, 1, 255);
 
 	if (ctrl)
+<<<<<<< HEAD
 		ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
+=======
+		ctrl->is_volatile = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

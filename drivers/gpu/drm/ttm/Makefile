@@ -7,8 +7,11 @@ ttm-y := ttm_agp_backend.o ttm_memory.o ttm_tt.o ttm_bo.o \
 	ttm_object.o ttm_lock.o ttm_execbuf_util.o ttm_page_alloc.o \
 	ttm_bo_manager.o
 
+<<<<<<< HEAD
 ifeq ($(CONFIG_SWIOTLB),y)
 ttm-y += ttm_page_alloc_dma.o
 endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_DRM_TTM) += ttm.o

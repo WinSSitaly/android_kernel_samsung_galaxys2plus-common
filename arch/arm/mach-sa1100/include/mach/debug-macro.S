@@ -12,7 +12,11 @@
 */
 #include <mach/hardware.h>
 
+<<<<<<< HEAD
 		.macro	addruart, rp, rv, tmp
+=======
+		.macro	addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mrc	p15, 0, \rp, c1, c0
 		tst	\rp, #1			@ MMU enabled?
 		moveq	\rp, #0x80000000	@ physical base address

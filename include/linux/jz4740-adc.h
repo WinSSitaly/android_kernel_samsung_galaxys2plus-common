@@ -2,7 +2,11 @@
 #ifndef __LINUX_JZ4740_ADC
 #define __LINUX_JZ4740_ADC
 
+<<<<<<< HEAD
 struct device;
+=======
+#include <linux/device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * jz4740_adc_set_config - Configure a JZ4740 adc device

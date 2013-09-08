@@ -122,9 +122,14 @@ static u8 mt2266_vhf[] = { 0x1d, 0xfe, 0x00, 0x00, 0xb4, 0x03, 0xa5, 0xa5,
 
 #define FREF 30000       // Quartz oscillator 30 MHz
 
+<<<<<<< HEAD
 static int mt2266_set_params(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+=======
+static int mt2266_set_params(struct dvb_frontend *fe, struct dvb_frontend_parameters *params)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mt2266_priv *priv;
 	int ret=0;
 	u32 freq;
@@ -136,16 +141,26 @@ static int mt2266_set_params(struct dvb_frontend *fe)
 
 	priv = fe->tuner_priv;
 
+<<<<<<< HEAD
 	freq = priv->frequency / 1000; /* Hz -> kHz */
 	if (freq < 470000 && freq > 230000)
 		return -EINVAL; /* Gap between VHF and UHF bands */
 
 	priv->frequency = c->frequency;
+=======
+	freq = params->frequency / 1000; // Hz -> kHz
+	if (freq < 470000 && freq > 230000)
+		return -EINVAL; /* Gap between VHF and UHF bands */
+	priv->bandwidth = (fe->ops.info.type == FE_OFDM) ? params->u.ofdm.bandwidth : 0;
+	priv->frequency = freq * 1000;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tune = 2 * freq * (8192/16) / (FREF/16);
 	band = (freq < 300000) ? MT2266_VHF : MT2266_UHF;
 	if (band == MT2266_VHF)
 		tune *= 2;
 
+<<<<<<< HEAD
 	switch (c->bandwidth_hz) {
 	case 6000000:
 		mt2266_writeregs(priv, mt2266_init_6mhz,
@@ -162,6 +177,23 @@ static int mt2266_set_params(struct dvb_frontend *fe)
 		break;
 	}
 	priv->bandwidth = c->bandwidth_hz;
+=======
+	switch (params->u.ofdm.bandwidth) {
+	case BANDWIDTH_6_MHZ:
+		mt2266_writeregs(priv, mt2266_init_6mhz,
+				 sizeof(mt2266_init_6mhz));
+		break;
+	case BANDWIDTH_7_MHZ:
+		mt2266_writeregs(priv, mt2266_init_7mhz,
+				 sizeof(mt2266_init_7mhz));
+		break;
+	case BANDWIDTH_8_MHZ:
+	default:
+		mt2266_writeregs(priv, mt2266_init_8mhz,
+				 sizeof(mt2266_init_8mhz));
+		break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (band == MT2266_VHF && priv->band == MT2266_UHF) {
 		dprintk("Switch from UHF to VHF");

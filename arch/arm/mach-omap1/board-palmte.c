@@ -16,7 +16,11 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/input.h>
@@ -27,12 +31,21 @@
 #include <linux/spi/spi.h>
 #include <linux/interrupt.h>
 #include <linux/apm-emulation.h>
+<<<<<<< HEAD
 #include <linux/omapfb.h>
 
+=======
+
+#include <mach/hardware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 
+<<<<<<< HEAD
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/flash.h>
 #include <plat/mux.h>
 #include <plat/usb.h>
@@ -41,10 +54,14 @@
 #include <plat/board.h>
 #include <plat/irda.h>
 #include <plat/keypad.h>
+<<<<<<< HEAD
 
 #include <mach/hardware.h>
 
 #include "common.h"
+=======
+#include <plat/common.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PALMTE_USBDETECT_GPIO	0
 #define PALMTE_USB_OR_DC_GPIO	1
@@ -61,6 +78,15 @@
 #define PALMTE_MMC2_GPIO	OMAP_MPUIO(7)
 #define PALMTE_MMC3_GPIO	OMAP_MPUIO(11)
 
+<<<<<<< HEAD
+=======
+static void __init omap_palmte_init_irq(void)
+{
+	omap1_init_common_hw();
+	omap_init_irq();
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const unsigned int palmte_keymap[] = {
 	KEY(0, 0, KEY_F1),		/* Calendar */
 	KEY(1, 0, KEY_F2),		/* Contacts */
@@ -212,11 +238,22 @@ static struct omap_lcd_config palmte_lcd_config __initdata = {
 	.ctrl_name	= "internal",
 };
 
+<<<<<<< HEAD
+=======
+static struct omap_board_config_kernel palmte_config[] __initdata = {
+	{ OMAP_TAG_LCD,		&palmte_lcd_config },
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct spi_board_info palmte_spi_info[] __initdata = {
 	{
 		.modalias	= "tsc2102",
 		.bus_num	= 2,	/* uWire (officially) */
 		.chip_select	= 0,	/* As opposed to 3 */
+<<<<<<< HEAD
+=======
+		.irq		= OMAP_GPIO_IRQ(PALMTE_PINTDAV_GPIO),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.max_speed_hz	= 8000000,
 	},
 };
@@ -248,14 +285,23 @@ static void __init omap_palmte_init(void)
 	omap_cfg_reg(UART3_TX);
 	omap_cfg_reg(UART3_RX);
 
+<<<<<<< HEAD
 	platform_add_devices(palmte_devices, ARRAY_SIZE(palmte_devices));
 
 	palmte_spi_info[0].irq = gpio_to_irq(PALMTE_PINTDAV_GPIO);
+=======
+	omap_board_config = palmte_config;
+	omap_board_config_size = ARRAY_SIZE(palmte_config);
+
+	platform_add_devices(palmte_devices, ARRAY_SIZE(palmte_devices));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spi_register_board_info(palmte_spi_info, ARRAY_SIZE(palmte_spi_info));
 	palmte_misc_gpio_setup();
 	omap_serial_init();
 	omap1_usb_init(&palmte_usb_config);
 	omap_register_i2c_bus(1, 100, NULL, 0);
+<<<<<<< HEAD
 
 	omapfb_set_lcd_config(&palmte_lcd_config);
 }
@@ -269,4 +315,20 @@ MACHINE_START(OMAP_PALMTE, "OMAP310 based Palm Tungsten E")
 	.init_machine	= omap_palmte_init,
 	.timer		= &omap1_timer,
 	.restart	= omap1_restart,
+=======
+}
+
+static void __init omap_palmte_map_io(void)
+{
+	omap1_map_common_io();
+}
+
+MACHINE_START(OMAP_PALMTE, "OMAP310 based Palm Tungsten E")
+	.boot_params	= 0x10000100,
+	.map_io		= omap_palmte_map_io,
+	.reserve	= omap_reserve,
+	.init_irq	= omap_palmte_init_irq,
+	.init_machine	= omap_palmte_init,
+	.timer		= &omap_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

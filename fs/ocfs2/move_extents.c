@@ -36,6 +36,10 @@
 #include "dir.h"
 #include "buffer_head_io.h"
 #include "sysfile.h"
+<<<<<<< HEAD
+=======
+#include "suballoc.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "refcounttree.h"
 #include "move_extents.h"
 
@@ -745,7 +749,11 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
 	 */
 	ocfs2_probe_alloc_group(inode, gd_bh, &goal_bit, len, move_max_hop,
 				new_phys_cpos);
+<<<<<<< HEAD
 	if (!*new_phys_cpos) {
+=======
+	if (!new_phys_cpos) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENOSPC;
 		goto out_commit;
 	}
@@ -1059,7 +1067,11 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
 	struct ocfs2_move_extents range;
 	struct ocfs2_move_extents_context *context = NULL;
 
+<<<<<<< HEAD
 	status = mnt_want_write_file(filp);
+=======
+	status = mnt_want_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (status)
 		return status;
 
@@ -1145,7 +1157,11 @@ out:
 
 	kfree(context);
 
+<<<<<<< HEAD
 	mnt_drop_write_file(filp);
+=======
+	mnt_drop_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return status;
 }

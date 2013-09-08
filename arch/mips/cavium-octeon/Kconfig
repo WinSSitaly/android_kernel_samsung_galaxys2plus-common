@@ -86,6 +86,13 @@ config ARCH_SPARSEMEM_ENABLE
 	def_bool y
 	select SPARSEMEM_STATIC
 
+<<<<<<< HEAD
+=======
+config CAVIUM_OCTEON_HELPER
+	def_bool y
+	depends on OCTEON_ETHERNET || PCI
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config IOMMU_HELPER
 	bool
 

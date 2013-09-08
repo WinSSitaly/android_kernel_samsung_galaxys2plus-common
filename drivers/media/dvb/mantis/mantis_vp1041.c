@@ -51,6 +51,10 @@ static const struct stb0899_s1_reg vp1041_stb0899_s1_init_1[] = {
 	{ STB0899_DISRX_ST0     	, 0x04 },
 	{ STB0899_DISRX_ST1     	, 0x00 },
 	{ STB0899_DISPARITY     	, 0x00 },
+<<<<<<< HEAD
+=======
+	{ STB0899_DISFIFO       	, 0x00 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ STB0899_DISSTATUS		, 0x20 },
 	{ STB0899_DISF22        	, 0x99 },
 	{ STB0899_DISF22RX      	, 0xa8 },

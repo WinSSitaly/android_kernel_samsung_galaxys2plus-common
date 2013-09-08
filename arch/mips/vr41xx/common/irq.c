@@ -22,6 +22,10 @@
 #include <linux/irq.h>
 
 #include <asm/irq_cpu.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/vr41xx/irq.h>
 
 typedef struct irq_cascade {
@@ -33,7 +37,10 @@ static irq_cascade_t irq_cascade[NR_IRQS] __cacheline_aligned;
 static struct irqaction cascade_irqaction = {
 	.handler	= no_action,
 	.name		= "cascade",
+<<<<<<< HEAD
 	.flags		= IRQF_NO_THREAD,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int cascade_irq(unsigned int irq, int (*get_irq)(unsigned int))

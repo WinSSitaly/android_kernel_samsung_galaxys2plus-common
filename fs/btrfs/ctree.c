@@ -36,7 +36,11 @@ static int balance_node_right(struct btrfs_trans_handle *trans,
 			      struct btrfs_root *root,
 			      struct extent_buffer *dst_buf,
 			      struct extent_buffer *src_buf);
+<<<<<<< HEAD
 static void del_ptr(struct btrfs_trans_handle *trans, struct btrfs_root *root,
+=======
+static int del_ptr(struct btrfs_trans_handle *trans, struct btrfs_root *root,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   struct btrfs_path *path, int level, int slot);
 
 struct btrfs_path *btrfs_alloc_path(void)
@@ -54,6 +58,7 @@ noinline void btrfs_set_path_blocking(struct btrfs_path *p)
 {
 	int i;
 	for (i = 0; i < BTRFS_MAX_LEVEL; i++) {
+<<<<<<< HEAD
 		if (!p->nodes[i] || !p->locks[i])
 			continue;
 		btrfs_set_lock_blocking_rw(p->nodes[i], p->locks[i]);
@@ -61,6 +66,10 @@ noinline void btrfs_set_path_blocking(struct btrfs_path *p)
 			p->locks[i] = BTRFS_READ_LOCK_BLOCKING;
 		else if (p->locks[i] == BTRFS_WRITE_LOCK)
 			p->locks[i] = BTRFS_WRITE_LOCK_BLOCKING;
+=======
+		if (p->nodes[i] && p->locks[i])
+			btrfs_set_lock_blocking(p->nodes[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -73,7 +82,11 @@ noinline void btrfs_set_path_blocking(struct btrfs_path *p)
  * for held
  */
 noinline void btrfs_clear_path_blocking(struct btrfs_path *p,
+<<<<<<< HEAD
 					struct extent_buffer *held, int held_rw)
+=======
+					struct extent_buffer *held)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 
@@ -84,6 +97,7 @@ noinline void btrfs_clear_path_blocking(struct btrfs_path *p,
 	 * really sure by forcing the path to blocking before we clear
 	 * the path blocking.
 	 */
+<<<<<<< HEAD
 	if (held) {
 		btrfs_set_lock_blocking_rw(held, held_rw);
 		if (held_rw == BTRFS_WRITE_LOCK)
@@ -91,10 +105,15 @@ noinline void btrfs_clear_path_blocking(struct btrfs_path *p,
 		else if (held_rw == BTRFS_READ_LOCK)
 			held_rw = BTRFS_READ_LOCK_BLOCKING;
 	}
+=======
+	if (held)
+		btrfs_set_lock_blocking(held);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_set_path_blocking(p);
 #endif
 
 	for (i = BTRFS_MAX_LEVEL - 1; i >= 0; i--) {
+<<<<<<< HEAD
 		if (p->nodes[i] && p->locks[i]) {
 			btrfs_clear_lock_blocking_rw(p->nodes[i], p->locks[i]);
 			if (p->locks[i] == BTRFS_WRITE_LOCK_BLOCKING)
@@ -102,11 +121,19 @@ noinline void btrfs_clear_path_blocking(struct btrfs_path *p,
 			else if (p->locks[i] == BTRFS_READ_LOCK_BLOCKING)
 				p->locks[i] = BTRFS_READ_LOCK;
 		}
+=======
+		if (p->nodes[i] && p->locks[i])
+			btrfs_clear_lock_blocking(p->nodes[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 #ifdef CONFIG_DEBUG_LOCK_ALLOC
 	if (held)
+<<<<<<< HEAD
 		btrfs_clear_lock_blocking_rw(held, held_rw);
+=======
+		btrfs_clear_lock_blocking(held);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }
 
@@ -134,7 +161,11 @@ noinline void btrfs_release_path(struct btrfs_path *p)
 		if (!p->nodes[i])
 			continue;
 		if (p->locks[i]) {
+<<<<<<< HEAD
 			btrfs_tree_unlock_rw(p->nodes[i], p->locks[i]);
+=======
+			btrfs_tree_unlock(p->nodes[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			p->locks[i] = 0;
 		}
 		free_extent_buffer(p->nodes[i]);
@@ -156,6 +187,7 @@ struct extent_buffer *btrfs_root_node(struct btrfs_root *root)
 {
 	struct extent_buffer *eb;
 
+<<<<<<< HEAD
 	while (1) {
 		rcu_read_lock();
 		eb = rcu_dereference(root->node);
@@ -173,6 +205,12 @@ struct extent_buffer *btrfs_root_node(struct btrfs_root *root)
 		rcu_read_unlock();
 		synchronize_rcu();
 	}
+=======
+	rcu_read_lock();
+	eb = rcu_dereference(root->node);
+	extent_buffer_get(eb);
+	rcu_read_unlock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return eb;
 }
 
@@ -195,6 +233,7 @@ struct extent_buffer *btrfs_lock_root_node(struct btrfs_root *root)
 	return eb;
 }
 
+<<<<<<< HEAD
 /* loop around taking references on and locking the root node of the
  * tree until you end up with a lock on the root.  A locked buffer
  * is returned, with a reference held.
@@ -214,18 +253,26 @@ struct extent_buffer *btrfs_read_lock_root_node(struct btrfs_root *root)
 	return eb;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* cowonly root (everything not a reference counted cow subvolume), just get
  * put onto a simple dirty list.  transaction.c walks this to make sure they
  * get properly updated on disk.
  */
 static void add_root_to_dirty_list(struct btrfs_root *root)
 {
+<<<<<<< HEAD
 	spin_lock(&root->fs_info->trans_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (root->track_dirty && list_empty(&root->dirty_list)) {
 		list_add(&root->dirty_list,
 			 &root->fs_info->dirty_cowonly_roots);
 	}
+<<<<<<< HEAD
 	spin_unlock(&root->fs_info->trans_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -255,7 +302,11 @@ int btrfs_copy_root(struct btrfs_trans_handle *trans,
 
 	cow = btrfs_alloc_free_block(trans, root, buf->len, 0,
 				     new_root_objectid, &disk_key, level,
+<<<<<<< HEAD
 				     buf->start, 0, 1);
+=======
+				     buf->start, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(cow))
 		return PTR_ERR(cow);
 
@@ -276,9 +327,15 @@ int btrfs_copy_root(struct btrfs_trans_handle *trans,
 
 	WARN_ON(btrfs_header_generation(buf) > trans->transid);
 	if (new_root_objectid == BTRFS_TREE_RELOC_OBJECTID)
+<<<<<<< HEAD
 		ret = btrfs_inc_ref(trans, root, cow, 1, 1);
 	else
 		ret = btrfs_inc_ref(trans, root, cow, 0, 1);
+=======
+		ret = btrfs_inc_ref(trans, root, cow, 1);
+	else
+		ret = btrfs_inc_ref(trans, root, cow, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ret)
 		return ret;
@@ -346,6 +403,7 @@ static noinline int update_ref_for_cow(struct btrfs_trans_handle *trans,
 	if (btrfs_block_can_be_shared(root, buf)) {
 		ret = btrfs_lookup_extent_info(trans, root, buf->start,
 					       buf->len, &refs, &flags);
+<<<<<<< HEAD
 		if (ret)
 			return ret;
 		if (refs == 0) {
@@ -353,6 +411,10 @@ static noinline int update_ref_for_cow(struct btrfs_trans_handle *trans,
 			btrfs_std_error(root->fs_info, ret);
 			return ret;
 		}
+=======
+		BUG_ON(ret);
+		BUG_ON(refs == 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		refs = 1;
 		if (root->root_key.objectid == BTRFS_TREE_RELOC_OBJECTID ||
@@ -370,6 +432,7 @@ static noinline int update_ref_for_cow(struct btrfs_trans_handle *trans,
 		if ((owner == root->root_key.objectid ||
 		     root->root_key.objectid == BTRFS_TREE_RELOC_OBJECTID) &&
 		    !(flags & BTRFS_BLOCK_FLAG_FULL_BACKREF)) {
+<<<<<<< HEAD
 			ret = btrfs_inc_ref(trans, root, buf, 1, 1);
 			BUG_ON(ret); /* -ENOMEM */
 
@@ -379,35 +442,66 @@ static noinline int update_ref_for_cow(struct btrfs_trans_handle *trans,
 				BUG_ON(ret); /* -ENOMEM */
 				ret = btrfs_inc_ref(trans, root, cow, 1, 1);
 				BUG_ON(ret); /* -ENOMEM */
+=======
+			ret = btrfs_inc_ref(trans, root, buf, 1);
+			BUG_ON(ret);
+
+			if (root->root_key.objectid ==
+			    BTRFS_TREE_RELOC_OBJECTID) {
+				ret = btrfs_dec_ref(trans, root, buf, 0);
+				BUG_ON(ret);
+				ret = btrfs_inc_ref(trans, root, cow, 1);
+				BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			new_flags |= BTRFS_BLOCK_FLAG_FULL_BACKREF;
 		} else {
 
 			if (root->root_key.objectid ==
 			    BTRFS_TREE_RELOC_OBJECTID)
+<<<<<<< HEAD
 				ret = btrfs_inc_ref(trans, root, cow, 1, 1);
 			else
 				ret = btrfs_inc_ref(trans, root, cow, 0, 1);
 			BUG_ON(ret); /* -ENOMEM */
+=======
+				ret = btrfs_inc_ref(trans, root, cow, 1);
+			else
+				ret = btrfs_inc_ref(trans, root, cow, 0);
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		if (new_flags != 0) {
 			ret = btrfs_set_disk_extent_flags(trans, root,
 							  buf->start,
 							  buf->len,
 							  new_flags, 0);
+<<<<<<< HEAD
 			if (ret)
 				return ret;
+=======
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		if (flags & BTRFS_BLOCK_FLAG_FULL_BACKREF) {
 			if (root->root_key.objectid ==
 			    BTRFS_TREE_RELOC_OBJECTID)
+<<<<<<< HEAD
 				ret = btrfs_inc_ref(trans, root, cow, 1, 1);
 			else
 				ret = btrfs_inc_ref(trans, root, cow, 0, 1);
 			BUG_ON(ret); /* -ENOMEM */
 			ret = btrfs_dec_ref(trans, root, buf, 1, 1);
 			BUG_ON(ret); /* -ENOMEM */
+=======
+				ret = btrfs_inc_ref(trans, root, cow, 1);
+			else
+				ret = btrfs_inc_ref(trans, root, cow, 0);
+			BUG_ON(ret);
+			ret = btrfs_dec_ref(trans, root, buf, 1);
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		clean_tree_block(trans, root, buf);
 		*last_ref = 1;
@@ -436,7 +530,11 @@ static noinline int __btrfs_cow_block(struct btrfs_trans_handle *trans,
 {
 	struct btrfs_disk_key disk_key;
 	struct extent_buffer *cow;
+<<<<<<< HEAD
 	int level, ret;
+=======
+	int level;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int last_ref = 0;
 	int unlock_orig = 0;
 	u64 parent_start;
@@ -467,7 +565,11 @@ static noinline int __btrfs_cow_block(struct btrfs_trans_handle *trans,
 
 	cow = btrfs_alloc_free_block(trans, root, buf->len, parent_start,
 				     root->root_key.objectid, &disk_key,
+<<<<<<< HEAD
 				     level, search_start, empty_size, 1);
+=======
+				     level, search_start, empty_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(cow))
 		return PTR_ERR(cow);
 
@@ -488,11 +590,15 @@ static noinline int __btrfs_cow_block(struct btrfs_trans_handle *trans,
 			    (unsigned long)btrfs_header_fsid(cow),
 			    BTRFS_FSID_SIZE);
 
+<<<<<<< HEAD
 	ret = update_ref_for_cow(trans, root, buf, cow, &last_ref);
 	if (ret) {
 		btrfs_abort_transaction(trans, root, ret);
 		return ret;
 	}
+=======
+	update_ref_for_cow(trans, root, buf, cow, &last_ref);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (root->ref_cows)
 		btrfs_reloc_cow_block(trans, root, buf, cow);
@@ -509,7 +615,11 @@ static noinline int __btrfs_cow_block(struct btrfs_trans_handle *trans,
 		rcu_assign_pointer(root->node, cow);
 
 		btrfs_free_tree_block(trans, root, buf, parent_start,
+<<<<<<< HEAD
 				      last_ref, 1);
+=======
+				      last_ref);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		free_extent_buffer(buf);
 		add_root_to_dirty_list(root);
 	} else {
@@ -525,11 +635,19 @@ static noinline int __btrfs_cow_block(struct btrfs_trans_handle *trans,
 					      trans->transid);
 		btrfs_mark_buffer_dirty(parent);
 		btrfs_free_tree_block(trans, root, buf, parent_start,
+<<<<<<< HEAD
 				      last_ref, 1);
 	}
 	if (unlock_orig)
 		btrfs_tree_unlock(buf);
 	free_extent_buffer_stale(buf);
+=======
+				      last_ref);
+	}
+	if (unlock_orig)
+		btrfs_tree_unlock(buf);
+	free_extent_buffer(buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_mark_buffer_dirty(cow);
 	*cow_ret = cow;
 	return 0;
@@ -539,6 +657,7 @@ static inline int should_cow_block(struct btrfs_trans_handle *trans,
 				   struct btrfs_root *root,
 				   struct extent_buffer *buf)
 {
+<<<<<<< HEAD
 	/* ensure we can see the force_cow */
 	smp_rmb();
 
@@ -558,6 +677,12 @@ static inline int should_cow_block(struct btrfs_trans_handle *trans,
 	    !(root->root_key.objectid != BTRFS_TREE_RELOC_OBJECTID &&
 	      btrfs_header_flag(buf, BTRFS_HEADER_FLAG_RELOC)) &&
 	    !root->force_cow)
+=======
+	if (btrfs_header_generation(buf) == trans->transid &&
+	    !btrfs_header_flag(buf, BTRFS_HEADER_FLAG_WRITTEN) &&
+	    !(root->root_key.objectid != BTRFS_TREE_RELOC_OBJECTID &&
+	      btrfs_header_flag(buf, BTRFS_HEADER_FLAG_RELOC)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	return 1;
 }
@@ -700,6 +825,17 @@ int btrfs_realloc_node(struct btrfs_trans_handle *trans,
 	for (i = start_slot; i < end_slot; i++) {
 		int close = 1;
 
+<<<<<<< HEAD
+=======
+		if (!parent->map_token) {
+			map_extent_buffer(parent,
+					btrfs_node_key_ptr_offset(i),
+					sizeof(struct btrfs_key_ptr),
+					&parent->map_token, &parent->kaddr,
+					&parent->map_start, &parent->map_len,
+					KM_USER1);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		btrfs_node_key(parent, &disk_key, i);
 		if (!progress_passed && comp_keys(&disk_key, progress) < 0)
 			continue;
@@ -722,10 +858,22 @@ int btrfs_realloc_node(struct btrfs_trans_handle *trans,
 			last_block = blocknr;
 			continue;
 		}
+<<<<<<< HEAD
 
 		cur = btrfs_find_tree_block(root, blocknr, blocksize);
 		if (cur)
 			uptodate = btrfs_buffer_uptodate(cur, gen, 0);
+=======
+		if (parent->map_token) {
+			unmap_extent_buffer(parent, parent->map_token,
+					    KM_USER1);
+			parent->map_token = NULL;
+		}
+
+		cur = btrfs_find_tree_block(root, blocknr, blocksize);
+		if (cur)
+			uptodate = btrfs_buffer_uptodate(cur, gen);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		else
 			uptodate = 0;
 		if (!cur || !uptodate) {
@@ -762,6 +910,14 @@ int btrfs_realloc_node(struct btrfs_trans_handle *trans,
 		btrfs_tree_unlock(cur);
 		free_extent_buffer(cur);
 	}
+<<<<<<< HEAD
+=======
+	if (parent->map_token) {
+		unmap_extent_buffer(parent, parent->map_token,
+				    KM_USER1);
+		parent->map_token = NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -802,6 +958,10 @@ static noinline int generic_bin_search(struct extent_buffer *eb,
 	struct btrfs_disk_key *tmp = NULL;
 	struct btrfs_disk_key unaligned;
 	unsigned long offset;
+<<<<<<< HEAD
+=======
+	char *map_token = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *kaddr = NULL;
 	unsigned long map_start = 0;
 	unsigned long map_len = 0;
@@ -811,6 +971,7 @@ static noinline int generic_bin_search(struct extent_buffer *eb,
 		mid = (low + high) / 2;
 		offset = p + mid * item_size;
 
+<<<<<<< HEAD
 		if (!kaddr || offset < map_start ||
 		    (offset + sizeof(struct btrfs_disk_key)) >
 		    map_start + map_len) {
@@ -818,6 +979,20 @@ static noinline int generic_bin_search(struct extent_buffer *eb,
 			err = map_private_extent_buffer(eb, offset,
 						sizeof(struct btrfs_disk_key),
 						&kaddr, &map_start, &map_len);
+=======
+		if (!map_token || offset < map_start ||
+		    (offset + sizeof(struct btrfs_disk_key)) >
+		    map_start + map_len) {
+			if (map_token) {
+				unmap_extent_buffer(eb, map_token, KM_USER0);
+				map_token = NULL;
+			}
+
+			err = map_private_extent_buffer(eb, offset,
+						sizeof(struct btrfs_disk_key),
+						&map_token, &kaddr,
+						&map_start, &map_len, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (!err) {
 				tmp = (struct btrfs_disk_key *)(kaddr + offset -
@@ -840,10 +1015,20 @@ static noinline int generic_bin_search(struct extent_buffer *eb,
 			high = mid;
 		else {
 			*slot = mid;
+<<<<<<< HEAD
+=======
+			if (map_token)
+				unmap_extent_buffer(eb, map_token, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 0;
 		}
 	}
 	*slot = low;
+<<<<<<< HEAD
+=======
+	if (map_token)
+		unmap_extent_buffer(eb, map_token, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
@@ -936,16 +1121,26 @@ static noinline int balance_level(struct btrfs_trans_handle *trans,
 
 	mid = path->nodes[level];
 
+<<<<<<< HEAD
 	WARN_ON(path->locks[level] != BTRFS_WRITE_LOCK &&
 		path->locks[level] != BTRFS_WRITE_LOCK_BLOCKING);
+=======
+	WARN_ON(!path->locks[level]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	WARN_ON(btrfs_header_generation(mid) != trans->transid);
 
 	orig_ptr = btrfs_node_blockptr(mid, orig_slot);
 
+<<<<<<< HEAD
 	if (level < BTRFS_MAX_LEVEL - 1) {
 		parent = path->nodes[level + 1];
 		pslot = path->slots[level + 1];
 	}
+=======
+	if (level < BTRFS_MAX_LEVEL - 1)
+		parent = path->nodes[level + 1];
+	pslot = path->slots[level + 1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * deal with the case where there is only one pointer in the root
@@ -959,12 +1154,16 @@ static noinline int balance_level(struct btrfs_trans_handle *trans,
 
 		/* promote the child to a root */
 		child = read_node_slot(root, mid, 0);
+<<<<<<< HEAD
 		if (!child) {
 			ret = -EROFS;
 			btrfs_std_error(root->fs_info, ret);
 			goto enospc;
 		}
 
+=======
+		BUG_ON(!child);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		btrfs_tree_lock(child);
 		btrfs_set_lock_blocking(child);
 		ret = btrfs_cow_block(trans, root, child, mid, 0, &child);
@@ -987,9 +1186,15 @@ static noinline int balance_level(struct btrfs_trans_handle *trans,
 		free_extent_buffer(mid);
 
 		root_sub_used(root, mid->len);
+<<<<<<< HEAD
 		btrfs_free_tree_block(trans, root, mid, 0, 1, 0);
 		/* once for the root ptr */
 		free_extent_buffer_stale(mid);
+=======
+		btrfs_free_tree_block(trans, root, mid, 0, 1);
+		/* once for the root ptr */
+		free_extent_buffer(mid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 	if (btrfs_header_nritems(mid) >
@@ -1040,10 +1245,20 @@ static noinline int balance_level(struct btrfs_trans_handle *trans,
 		if (btrfs_header_nritems(right) == 0) {
 			clean_tree_block(trans, root, right);
 			btrfs_tree_unlock(right);
+<<<<<<< HEAD
 			del_ptr(trans, root, path, level + 1, pslot + 1);
 			root_sub_used(root, right->len);
 			btrfs_free_tree_block(trans, root, right, 0, 1, 0);
 			free_extent_buffer_stale(right);
+=======
+			wret = del_ptr(trans, root, path, level + 1, pslot +
+				       1);
+			if (wret)
+				ret = wret;
+			root_sub_used(root, right->len);
+			btrfs_free_tree_block(trans, root, right, 0, 1);
+			free_extent_buffer(right);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			right = NULL;
 		} else {
 			struct btrfs_disk_key right_key;
@@ -1062,11 +1277,15 @@ static noinline int balance_level(struct btrfs_trans_handle *trans,
 		 * otherwise we would have pulled some pointers from the
 		 * right
 		 */
+<<<<<<< HEAD
 		if (!left) {
 			ret = -EROFS;
 			btrfs_std_error(root->fs_info, ret);
 			goto enospc;
 		}
+=======
+		BUG_ON(!left);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wret = balance_node_right(trans, root, mid, left);
 		if (wret < 0) {
 			ret = wret;
@@ -1082,10 +1301,19 @@ static noinline int balance_level(struct btrfs_trans_handle *trans,
 	if (btrfs_header_nritems(mid) == 0) {
 		clean_tree_block(trans, root, mid);
 		btrfs_tree_unlock(mid);
+<<<<<<< HEAD
 		del_ptr(trans, root, path, level + 1, pslot);
 		root_sub_used(root, mid->len);
 		btrfs_free_tree_block(trans, root, mid, 0, 1, 0);
 		free_extent_buffer_stale(mid);
+=======
+		wret = del_ptr(trans, root, path, level + 1, pslot);
+		if (wret)
+			ret = wret;
+		root_sub_used(root, mid->len);
+		btrfs_free_tree_block(trans, root, mid, 0, 1);
+		free_extent_buffer(mid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mid = NULL;
 	} else {
 		/* update the parent key to reflect our changes */
@@ -1152,10 +1380,16 @@ static noinline int push_nodes_for_insert(struct btrfs_trans_handle *trans,
 	mid = path->nodes[level];
 	WARN_ON(btrfs_header_generation(mid) != trans->transid);
 
+<<<<<<< HEAD
 	if (level < BTRFS_MAX_LEVEL - 1) {
 		parent = path->nodes[level + 1];
 		pslot = path->slots[level + 1];
 	}
+=======
+	if (level < BTRFS_MAX_LEVEL - 1)
+		parent = path->nodes[level + 1];
+	pslot = path->slots[level + 1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!parent)
 		return 1;
@@ -1281,6 +1515,10 @@ static void reada_for_search(struct btrfs_root *root,
 	u32 nr;
 	u32 blocksize;
 	u32 nscan = 0;
+<<<<<<< HEAD
+=======
+	bool map = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (level != 1)
 		return;
@@ -1302,8 +1540,24 @@ static void reada_for_search(struct btrfs_root *root,
 
 	nritems = btrfs_header_nritems(node);
 	nr = slot;
+<<<<<<< HEAD
 
 	while (1) {
+=======
+	if (node->map_token || path->skip_locking)
+		map = false;
+
+	while (1) {
+		if (map && !node->map_token) {
+			unsigned long offset = btrfs_node_key_ptr_offset(nr);
+			map_private_extent_buffer(node, offset,
+						  sizeof(struct btrfs_key_ptr),
+						  &node->map_token,
+						  &node->kaddr,
+						  &node->map_start,
+						  &node->map_len, KM_USER1);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (direction < 0) {
 			if (nr == 0)
 				break;
@@ -1322,6 +1576,14 @@ static void reada_for_search(struct btrfs_root *root,
 		if ((search <= target && target - search <= 65536) ||
 		    (search > target && search - target <= 65536)) {
 			gen = btrfs_node_ptr_generation(node, nr);
+<<<<<<< HEAD
+=======
+			if (map && node->map_token) {
+				unmap_extent_buffer(node, node->map_token,
+						    KM_USER1);
+				node->map_token = NULL;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			readahead_tree_block(root, search, blocksize, gen);
 			nread += blocksize;
 		}
@@ -1329,6 +1591,13 @@ static void reada_for_search(struct btrfs_root *root,
 		if ((nread > 65536 || nscan > 32))
 			break;
 	}
+<<<<<<< HEAD
+=======
+	if (map && node->map_token) {
+		unmap_extent_buffer(node, node->map_token, KM_USER1);
+		node->map_token = NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1360,12 +1629,16 @@ static noinline int reada_for_balance(struct btrfs_root *root,
 		block1 = btrfs_node_blockptr(parent, slot - 1);
 		gen = btrfs_node_ptr_generation(parent, slot - 1);
 		eb = btrfs_find_tree_block(root, block1, blocksize);
+<<<<<<< HEAD
 		/*
 		 * if we get -eagain from btrfs_buffer_uptodate, we
 		 * don't want to return eagain here.  That will loop
 		 * forever
 		 */
 		if (eb && btrfs_buffer_uptodate(eb, gen, 1) != 0)
+=======
+		if (eb && btrfs_buffer_uptodate(eb, gen))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			block1 = 0;
 		free_extent_buffer(eb);
 	}
@@ -1373,7 +1646,11 @@ static noinline int reada_for_balance(struct btrfs_root *root,
 		block2 = btrfs_node_blockptr(parent, slot + 1);
 		gen = btrfs_node_ptr_generation(parent, slot + 1);
 		eb = btrfs_find_tree_block(root, block2, blocksize);
+<<<<<<< HEAD
 		if (eb && btrfs_buffer_uptodate(eb, gen, 1) != 0)
+=======
+		if (eb && btrfs_buffer_uptodate(eb, gen))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			block2 = 0;
 		free_extent_buffer(eb);
 	}
@@ -1416,8 +1693,12 @@ static noinline int reada_for_balance(struct btrfs_root *root,
  * if lowest_unlock is 1, level 0 won't be unlocked
  */
 static noinline void unlock_up(struct btrfs_path *path, int level,
+<<<<<<< HEAD
 			       int lowest_unlock, int min_write_lock_level,
 			       int *write_lock_level)
+=======
+			       int lowest_unlock)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 	int skip_level = level;
@@ -1447,6 +1728,7 @@ static noinline void unlock_up(struct btrfs_path *path, int level,
 
 		t = path->nodes[i];
 		if (i >= lowest_unlock && i > skip_level && path->locks[i]) {
+<<<<<<< HEAD
 			btrfs_tree_unlock_rw(t, path->locks[i]);
 			path->locks[i] = 0;
 			if (write_lock_level &&
@@ -1454,6 +1736,10 @@ static noinline void unlock_up(struct btrfs_path *path, int level,
 			    i <= *write_lock_level) {
 				*write_lock_level = i - 1;
 			}
+=======
+			btrfs_tree_unlock(t);
+			path->locks[i] = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }
@@ -1479,7 +1765,11 @@ noinline void btrfs_unlock_up_safe(struct btrfs_path *path, int level)
 			continue;
 		if (!path->locks[i])
 			continue;
+<<<<<<< HEAD
 		btrfs_tree_unlock_rw(path->nodes[i], path->locks[i]);
+=======
+		btrfs_tree_unlock(path->nodes[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		path->locks[i] = 0;
 	}
 }
@@ -1511,9 +1801,14 @@ read_block_for_search(struct btrfs_trans_handle *trans,
 
 	tmp = btrfs_find_tree_block(root, blocknr, blocksize);
 	if (tmp) {
+<<<<<<< HEAD
 		/* first we do an atomic uptodate check */
 		if (btrfs_buffer_uptodate(tmp, 0, 1) > 0) {
 			if (btrfs_buffer_uptodate(tmp, gen, 1) > 0) {
+=======
+		if (btrfs_buffer_uptodate(tmp, 0)) {
+			if (btrfs_buffer_uptodate(tmp, gen)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/*
 				 * we found an up to date block without
 				 * sleeping, return
@@ -1529,11 +1824,16 @@ read_block_for_search(struct btrfs_trans_handle *trans,
 			 * we can trust our generation number
 			 */
 			free_extent_buffer(tmp);
+<<<<<<< HEAD
 			btrfs_set_path_blocking(p);
 
 			/* now we're allowed to do a blocking uptodate check */
 			tmp = read_tree_block(root, blocknr, blocksize, gen);
 			if (tmp && btrfs_buffer_uptodate(tmp, gen, 0) > 0) {
+=======
+			tmp = read_tree_block(root, blocknr, blocksize, gen);
+			if (tmp && btrfs_buffer_uptodate(tmp, gen)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				*eb_ret = tmp;
 				return 0;
 			}
@@ -1568,7 +1868,11 @@ read_block_for_search(struct btrfs_trans_handle *trans,
 		 * and give up so that our caller doesn't loop forever
 		 * on our EAGAINs.
 		 */
+<<<<<<< HEAD
 		if (!btrfs_buffer_uptodate(tmp, 0, 0))
+=======
+		if (!btrfs_buffer_uptodate(tmp, 0))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = -EIO;
 		free_extent_buffer(tmp);
 	}
@@ -1587,27 +1891,38 @@ read_block_for_search(struct btrfs_trans_handle *trans,
 static int
 setup_nodes_for_search(struct btrfs_trans_handle *trans,
 		       struct btrfs_root *root, struct btrfs_path *p,
+<<<<<<< HEAD
 		       struct extent_buffer *b, int level, int ins_len,
 		       int *write_lock_level)
+=======
+		       struct extent_buffer *b, int level, int ins_len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 	if ((p->search_for_split || ins_len > 0) && btrfs_header_nritems(b) >=
 	    BTRFS_NODEPTRS_PER_BLOCK(root) - 3) {
 		int sret;
 
+<<<<<<< HEAD
 		if (*write_lock_level < level + 1) {
 			*write_lock_level = level + 1;
 			btrfs_release_path(p);
 			goto again;
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sret = reada_for_balance(root, p, level);
 		if (sret)
 			goto again;
 
 		btrfs_set_path_blocking(p);
 		sret = split_node(trans, root, p, level);
+<<<<<<< HEAD
 		btrfs_clear_path_blocking(p, NULL, 0);
+=======
+		btrfs_clear_path_blocking(p, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		BUG_ON(sret > 0);
 		if (sret) {
@@ -1619,19 +1934,26 @@ setup_nodes_for_search(struct btrfs_trans_handle *trans,
 		   BTRFS_NODEPTRS_PER_BLOCK(root) / 2) {
 		int sret;
 
+<<<<<<< HEAD
 		if (*write_lock_level < level + 1) {
 			*write_lock_level = level + 1;
 			btrfs_release_path(p);
 			goto again;
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sret = reada_for_balance(root, p, level);
 		if (sret)
 			goto again;
 
 		btrfs_set_path_blocking(p);
 		sret = balance_level(trans, root, p, level);
+<<<<<<< HEAD
 		btrfs_clear_path_blocking(p, NULL, 0);
+=======
+		btrfs_clear_path_blocking(p, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (sret) {
 			ret = sret;
@@ -1675,16 +1997,21 @@ int btrfs_search_slot(struct btrfs_trans_handle *trans, struct btrfs_root
 	int err;
 	int level;
 	int lowest_unlock = 1;
+<<<<<<< HEAD
 	int root_lock;
 	/* everything at write_lock_level or lower must be write locked */
 	int write_lock_level = 0;
 	u8 lowest_level = 0;
 	int min_write_lock_level;
+=======
+	u8 lowest_level = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lowest_level = p->lowest_level;
 	WARN_ON(lowest_level && ins_len > 0);
 	WARN_ON(p->nodes[0] != NULL);
 
+<<<<<<< HEAD
 	if (ins_len < 0) {
 		lowest_unlock = 2;
 
@@ -1750,6 +2077,23 @@ again:
 	p->nodes[level] = b;
 	if (!p->skip_locking)
 		p->locks[level] = root_lock;
+=======
+	if (ins_len < 0)
+		lowest_unlock = 2;
+
+again:
+	if (p->search_commit_root) {
+		b = root->commit_root;
+		extent_buffer_get(b);
+		if (!p->skip_locking)
+			btrfs_tree_lock(b);
+	} else {
+		if (p->skip_locking)
+			b = btrfs_root_node(root);
+		else
+			b = btrfs_lock_root_node(root);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (b) {
 		level = btrfs_header_level(b);
@@ -1758,6 +2102,13 @@ again:
 		 * setup the path here so we can release it under lock
 		 * contention with the cow code
 		 */
+<<<<<<< HEAD
+=======
+		p->nodes[level] = b;
+		if (!p->skip_locking)
+			p->locks[level] = 1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (cow) {
 			/*
 			 * if we don't really need to cow this block
@@ -1769,6 +2120,7 @@ again:
 
 			btrfs_set_path_blocking(p);
 
+<<<<<<< HEAD
 			/*
 			 * must have write locks on this node and the
 			 * parent
@@ -1779,6 +2131,8 @@ again:
 				goto again;
 			}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			err = btrfs_cow_block(trans, root, b,
 					      p->nodes[level + 1],
 					      p->slots[level + 1], &b);
@@ -1791,7 +2145,14 @@ cow_done:
 		BUG_ON(!cow && ins_len);
 
 		p->nodes[level] = b;
+<<<<<<< HEAD
 		btrfs_clear_path_blocking(p, NULL, 0);
+=======
+		if (!p->skip_locking)
+			p->locks[level] = 1;
+
+		btrfs_clear_path_blocking(p, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * we have a lock on b and as long as we aren't changing
@@ -1817,7 +2178,11 @@ cow_done:
 			}
 			p->slots[level] = slot;
 			err = setup_nodes_for_search(trans, root, p, b, level,
+<<<<<<< HEAD
 					     ins_len, &write_lock_level);
+=======
+						     ins_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (err == -EAGAIN)
 				goto again;
 			if (err) {
@@ -1827,6 +2192,7 @@ cow_done:
 			b = p->nodes[level];
 			slot = p->slots[level];
 
+<<<<<<< HEAD
 			/*
 			 * slot 0 is special, if we change the key
 			 * we have to update the parent pointer
@@ -1842,6 +2208,9 @@ cow_done:
 
 			unlock_up(p, level, lowest_unlock,
 				  min_write_lock_level, &write_lock_level);
+=======
+			unlock_up(p, level, lowest_unlock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (level == lowest_level) {
 				if (dec)
@@ -1859,6 +2228,7 @@ cow_done:
 			}
 
 			if (!p->skip_locking) {
+<<<<<<< HEAD
 				level = btrfs_header_level(b);
 				if (level <= write_lock_level) {
 					err = btrfs_try_tree_write_lock(b);
@@ -1880,11 +2250,22 @@ cow_done:
 					p->locks[level] = BTRFS_READ_LOCK;
 				}
 				p->nodes[level] = b;
+=======
+				btrfs_clear_path_blocking(p, NULL);
+				err = btrfs_try_spin_lock(b);
+
+				if (!err) {
+					btrfs_set_path_blocking(p);
+					btrfs_tree_lock(b);
+					btrfs_clear_path_blocking(p, b);
+				}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		} else {
 			p->slots[level] = slot;
 			if (ins_len > 0 &&
 			    btrfs_leaf_free_space(root, b) < ins_len) {
+<<<<<<< HEAD
 				if (write_lock_level < 1) {
 					write_lock_level = 1;
 					btrfs_release_path(p);
@@ -1895,6 +2276,12 @@ cow_done:
 				err = split_leaf(trans, root, key,
 						 p, ins_len, ret == 0);
 				btrfs_clear_path_blocking(p, NULL, 0);
+=======
+				btrfs_set_path_blocking(p);
+				err = split_leaf(trans, root, key,
+						 p, ins_len, ret == 0);
+				btrfs_clear_path_blocking(p, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				BUG_ON(err > 0);
 				if (err) {
@@ -1903,8 +2290,12 @@ cow_done:
 				}
 			}
 			if (!p->search_for_split)
+<<<<<<< HEAD
 				unlock_up(p, level, lowest_unlock,
 					  min_write_lock_level, &write_lock_level);
+=======
+				unlock_up(p, level, lowest_unlock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto done;
 		}
 	}
@@ -1928,12 +2319,24 @@ done:
  * fixing up pointers when a given leaf/node is not in slot 0 of the
  * higher levels
  *
+<<<<<<< HEAD
  */
 static void fixup_low_keys(struct btrfs_trans_handle *trans,
 			   struct btrfs_root *root, struct btrfs_path *path,
 			   struct btrfs_disk_key *key, int level)
 {
 	int i;
+=======
+ * If this fails to write a tree block, it returns -1, but continues
+ * fixing up the blocks in ram so the tree is consistent.
+ */
+static int fixup_low_keys(struct btrfs_trans_handle *trans,
+			  struct btrfs_root *root, struct btrfs_path *path,
+			  struct btrfs_disk_key *key, int level)
+{
+	int i;
+	int ret = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct extent_buffer *t;
 
 	for (i = level; i < BTRFS_MAX_LEVEL; i++) {
@@ -1946,6 +2349,10 @@ static void fixup_low_keys(struct btrfs_trans_handle *trans,
 		if (tslot != 0)
 			break;
 	}
+<<<<<<< HEAD
+=======
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1954,9 +2361,15 @@ static void fixup_low_keys(struct btrfs_trans_handle *trans,
  * This function isn't completely safe. It's the caller's responsibility
  * that the new key won't break the order
  */
+<<<<<<< HEAD
 void btrfs_set_item_key_safe(struct btrfs_trans_handle *trans,
 			     struct btrfs_root *root, struct btrfs_path *path,
 			     struct btrfs_key *new_key)
+=======
+int btrfs_set_item_key_safe(struct btrfs_trans_handle *trans,
+			    struct btrfs_root *root, struct btrfs_path *path,
+			    struct btrfs_key *new_key)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct btrfs_disk_key disk_key;
 	struct extent_buffer *eb;
@@ -1966,11 +2379,21 @@ void btrfs_set_item_key_safe(struct btrfs_trans_handle *trans,
 	slot = path->slots[0];
 	if (slot > 0) {
 		btrfs_item_key(eb, &disk_key, slot - 1);
+<<<<<<< HEAD
 		BUG_ON(comp_keys(&disk_key, new_key) >= 0);
 	}
 	if (slot < btrfs_header_nritems(eb) - 1) {
 		btrfs_item_key(eb, &disk_key, slot + 1);
 		BUG_ON(comp_keys(&disk_key, new_key) <= 0);
+=======
+		if (comp_keys(&disk_key, new_key) >= 0)
+			return -1;
+	}
+	if (slot < btrfs_header_nritems(eb) - 1) {
+		btrfs_item_key(eb, &disk_key, slot + 1);
+		if (comp_keys(&disk_key, new_key) <= 0)
+			return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	btrfs_cpu_key_to_disk(&disk_key, new_key);
@@ -1978,6 +2401,10 @@ void btrfs_set_item_key_safe(struct btrfs_trans_handle *trans,
 	btrfs_mark_buffer_dirty(eb);
 	if (slot == 0)
 		fixup_low_keys(trans, root, path, &disk_key, 1);
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2129,7 +2556,11 @@ static noinline int insert_new_root(struct btrfs_trans_handle *trans,
 
 	c = btrfs_alloc_free_block(trans, root, root->nodesize, 0,
 				   root->root_key.objectid, &lower_key,
+<<<<<<< HEAD
 				   level, root->node->start, 0, 0);
+=======
+				   level, root->node->start, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(c))
 		return PTR_ERR(c);
 
@@ -2169,7 +2600,11 @@ static noinline int insert_new_root(struct btrfs_trans_handle *trans,
 	add_root_to_dirty_list(root);
 	extent_buffer_get(c);
 	path->nodes[level] = c;
+<<<<<<< HEAD
 	path->locks[level] = BTRFS_WRITE_LOCK;
+=======
+	path->locks[level] = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	path->slots[level] = 0;
 	return 0;
 }
@@ -2180,11 +2615,20 @@ static noinline int insert_new_root(struct btrfs_trans_handle *trans,
  *
  * slot and level indicate where you want the key to go, and
  * blocknr is the block the key points to.
+<<<<<<< HEAD
  */
 static void insert_ptr(struct btrfs_trans_handle *trans,
 		       struct btrfs_root *root, struct btrfs_path *path,
 		       struct btrfs_disk_key *key, u64 bytenr,
 		       int slot, int level)
+=======
+ *
+ * returns zero on success and < 0 on any error
+ */
+static int insert_ptr(struct btrfs_trans_handle *trans, struct btrfs_root
+		      *root, struct btrfs_path *path, struct btrfs_disk_key
+		      *key, u64 bytenr, int slot, int level)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct extent_buffer *lower;
 	int nritems;
@@ -2194,7 +2638,12 @@ static void insert_ptr(struct btrfs_trans_handle *trans,
 	lower = path->nodes[level];
 	nritems = btrfs_header_nritems(lower);
 	BUG_ON(slot > nritems);
+<<<<<<< HEAD
 	BUG_ON(nritems == BTRFS_NODEPTRS_PER_BLOCK(root));
+=======
+	if (nritems == BTRFS_NODEPTRS_PER_BLOCK(root))
+		BUG();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (slot != nritems) {
 		memmove_extent_buffer(lower,
 			      btrfs_node_key_ptr_offset(slot + 1),
@@ -2207,6 +2656,10 @@ static void insert_ptr(struct btrfs_trans_handle *trans,
 	btrfs_set_node_ptr_generation(lower, slot, trans->transid);
 	btrfs_set_header_nritems(lower, nritems + 1);
 	btrfs_mark_buffer_dirty(lower);
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2227,6 +2680,10 @@ static noinline int split_node(struct btrfs_trans_handle *trans,
 	struct btrfs_disk_key disk_key;
 	int mid;
 	int ret;
+<<<<<<< HEAD
+=======
+	int wret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 c_nritems;
 
 	c = path->nodes[level];
@@ -2252,7 +2709,11 @@ static noinline int split_node(struct btrfs_trans_handle *trans,
 
 	split = btrfs_alloc_free_block(trans, root, root->nodesize, 0,
 					root->root_key.objectid,
+<<<<<<< HEAD
 					&disk_key, level, c->start, 0, 0);
+=======
+					&disk_key, level, c->start, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(split))
 		return PTR_ERR(split);
 
@@ -2283,8 +2744,16 @@ static noinline int split_node(struct btrfs_trans_handle *trans,
 	btrfs_mark_buffer_dirty(c);
 	btrfs_mark_buffer_dirty(split);
 
+<<<<<<< HEAD
 	insert_ptr(trans, root, path, &disk_key, split->start,
 		   path->slots[level + 1] + 1, level + 1);
+=======
+	wret = insert_ptr(trans, root, path, &disk_key, split->start,
+			  path->slots[level + 1] + 1,
+			  level + 1);
+	if (wret)
+		ret = wret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (path->slots[level] >= mid) {
 		path->slots[level] -= mid;
@@ -2353,7 +2822,10 @@ static noinline int __push_leaf_right(struct btrfs_trans_handle *trans,
 {
 	struct extent_buffer *left = path->nodes[0];
 	struct extent_buffer *upper = path->nodes[1];
+<<<<<<< HEAD
 	struct btrfs_map_token token;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct btrfs_disk_key disk_key;
 	int slot;
 	u32 i;
@@ -2365,8 +2837,11 @@ static noinline int __push_leaf_right(struct btrfs_trans_handle *trans,
 	u32 data_end;
 	u32 this_item_size;
 
+<<<<<<< HEAD
 	btrfs_init_map_token(&token);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (empty)
 		nr = 0;
 	else
@@ -2393,6 +2868,17 @@ static noinline int __push_leaf_right(struct btrfs_trans_handle *trans,
 		if (path->slots[0] == i)
 			push_space += data_size;
 
+<<<<<<< HEAD
+=======
+		if (!left->map_token) {
+			map_extent_buffer(left, (unsigned long)item,
+					sizeof(struct btrfs_item),
+					&left->map_token, &left->kaddr,
+					&left->map_start, &left->map_len,
+					KM_USER1);
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		this_item_size = btrfs_item_size(left, item);
 		if (this_item_size + sizeof(*item) + push_space > free_space)
 			break;
@@ -2403,6 +2889,13 @@ static noinline int __push_leaf_right(struct btrfs_trans_handle *trans,
 			break;
 		i--;
 	}
+<<<<<<< HEAD
+=======
+	if (left->map_token) {
+		unmap_extent_buffer(left, left->map_token, KM_USER1);
+		left->map_token = NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (push_items == 0)
 		goto out_unlock;
@@ -2444,10 +2937,28 @@ static noinline int __push_leaf_right(struct btrfs_trans_handle *trans,
 	push_space = BTRFS_LEAF_DATA_SIZE(root);
 	for (i = 0; i < right_nritems; i++) {
 		item = btrfs_item_nr(right, i);
+<<<<<<< HEAD
 		push_space -= btrfs_token_item_size(right, item, &token);
 		btrfs_set_token_item_offset(right, item, push_space, &token);
 	}
 
+=======
+		if (!right->map_token) {
+			map_extent_buffer(right, (unsigned long)item,
+					sizeof(struct btrfs_item),
+					&right->map_token, &right->kaddr,
+					&right->map_start, &right->map_len,
+					KM_USER1);
+		}
+		push_space -= btrfs_item_size(right, item);
+		btrfs_set_item_offset(right, item, push_space);
+	}
+
+	if (right->map_token) {
+		unmap_extent_buffer(right, right->map_token, KM_USER1);
+		right->map_token = NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	left_nritems -= push_items;
 	btrfs_set_header_nritems(left, left_nritems);
 
@@ -2573,11 +3084,17 @@ static noinline int __push_leaf_left(struct btrfs_trans_handle *trans,
 	u32 old_left_nritems;
 	u32 nr;
 	int ret = 0;
+<<<<<<< HEAD
 	u32 this_item_size;
 	u32 old_left_item_size;
 	struct btrfs_map_token token;
 
 	btrfs_init_map_token(&token);
+=======
+	int wret;
+	u32 this_item_size;
+	u32 old_left_item_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (empty)
 		nr = min(right_nritems, max_slot);
@@ -2586,6 +3103,16 @@ static noinline int __push_leaf_left(struct btrfs_trans_handle *trans,
 
 	for (i = 0; i < nr; i++) {
 		item = btrfs_item_nr(right, i);
+<<<<<<< HEAD
+=======
+		if (!right->map_token) {
+			map_extent_buffer(right, (unsigned long)item,
+					sizeof(struct btrfs_item),
+					&right->map_token, &right->kaddr,
+					&right->map_start, &right->map_len,
+					KM_USER1);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (!empty && push_items > 0) {
 			if (path->slots[0] < i)
@@ -2608,6 +3135,14 @@ static noinline int __push_leaf_left(struct btrfs_trans_handle *trans,
 		push_space += this_item_size + sizeof(*item);
 	}
 
+<<<<<<< HEAD
+=======
+	if (right->map_token) {
+		unmap_extent_buffer(right, right->map_token, KM_USER1);
+		right->map_token = NULL;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (push_items == 0) {
 		ret = 1;
 		goto out;
@@ -2637,6 +3172,7 @@ static noinline int __push_leaf_left(struct btrfs_trans_handle *trans,
 		u32 ioff;
 
 		item = btrfs_item_nr(left, i);
+<<<<<<< HEAD
 
 		ioff = btrfs_token_item_offset(left, item, &token);
 		btrfs_set_token_item_offset(left, item,
@@ -2644,6 +3180,25 @@ static noinline int __push_leaf_left(struct btrfs_trans_handle *trans,
 		      &token);
 	}
 	btrfs_set_header_nritems(left, old_left_nritems + push_items);
+=======
+		if (!left->map_token) {
+			map_extent_buffer(left, (unsigned long)item,
+					sizeof(struct btrfs_item),
+					&left->map_token, &left->kaddr,
+					&left->map_start, &left->map_len,
+					KM_USER1);
+		}
+
+		ioff = btrfs_item_offset(left, item);
+		btrfs_set_item_offset(left, item,
+		      ioff - (BTRFS_LEAF_DATA_SIZE(root) - old_left_item_size));
+	}
+	btrfs_set_header_nritems(left, old_left_nritems + push_items);
+	if (left->map_token) {
+		unmap_extent_buffer(left, left->map_token, KM_USER1);
+		left->map_token = NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* fixup right node */
 	if (push_items > right_nritems) {
@@ -2671,9 +3226,26 @@ static noinline int __push_leaf_left(struct btrfs_trans_handle *trans,
 	for (i = 0; i < right_nritems; i++) {
 		item = btrfs_item_nr(right, i);
 
+<<<<<<< HEAD
 		push_space = push_space - btrfs_token_item_size(right,
 								item, &token);
 		btrfs_set_token_item_offset(right, item, push_space, &token);
+=======
+		if (!right->map_token) {
+			map_extent_buffer(right, (unsigned long)item,
+					sizeof(struct btrfs_item),
+					&right->map_token, &right->kaddr,
+					&right->map_start, &right->map_len,
+					KM_USER1);
+		}
+
+		push_space = push_space - btrfs_item_size(right, item);
+		btrfs_set_item_offset(right, item, push_space);
+	}
+	if (right->map_token) {
+		unmap_extent_buffer(right, right->map_token, KM_USER1);
+		right->map_token = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	btrfs_mark_buffer_dirty(left);
@@ -2683,7 +3255,13 @@ static noinline int __push_leaf_left(struct btrfs_trans_handle *trans,
 		clean_tree_block(trans, root, right);
 
 	btrfs_item_key(right, &disk_key, 0);
+<<<<<<< HEAD
 	fixup_low_keys(trans, root, path, &disk_key, 1);
+=======
+	wret = fixup_low_keys(trans, root, path, &disk_key, 1);
+	if (wret)
+		ret = wret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* then fixup the leaf pointer in the path */
 	if (path->slots[0] < push_items) {
@@ -2754,8 +3332,12 @@ static int push_leaf_left(struct btrfs_trans_handle *trans, struct btrfs_root
 			      path->nodes[1], slot - 1, &left);
 	if (ret) {
 		/* we hit -ENOSPC, but it isn't fatal here */
+<<<<<<< HEAD
 		if (ret == -ENOSPC)
 			ret = 1;
+=======
+		ret = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
@@ -2777,6 +3359,7 @@ out:
 /*
  * split the path's leaf in two, making sure there is at least data_size
  * available for the resulting leaf level of the path.
+<<<<<<< HEAD
  */
 static noinline void copy_for_split(struct btrfs_trans_handle *trans,
 				    struct btrfs_root *root,
@@ -2784,14 +3367,31 @@ static noinline void copy_for_split(struct btrfs_trans_handle *trans,
 				    struct extent_buffer *l,
 				    struct extent_buffer *right,
 				    int slot, int mid, int nritems)
+=======
+ *
+ * returns 0 if all went well and < 0 on failure.
+ */
+static noinline int copy_for_split(struct btrfs_trans_handle *trans,
+			       struct btrfs_root *root,
+			       struct btrfs_path *path,
+			       struct extent_buffer *l,
+			       struct extent_buffer *right,
+			       int slot, int mid, int nritems)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int data_copy_size;
 	int rt_data_off;
 	int i;
+<<<<<<< HEAD
 	struct btrfs_disk_key disk_key;
 	struct btrfs_map_token token;
 
 	btrfs_init_map_token(&token);
+=======
+	int ret = 0;
+	int wret;
+	struct btrfs_disk_key disk_key;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nritems = nritems - mid;
 	btrfs_set_header_nritems(right, nritems);
@@ -2813,6 +3413,7 @@ static noinline void copy_for_split(struct btrfs_trans_handle *trans,
 		struct btrfs_item *item = btrfs_item_nr(right, i);
 		u32 ioff;
 
+<<<<<<< HEAD
 		ioff = btrfs_token_item_offset(right, item, &token);
 		btrfs_set_token_item_offset(right, item,
 					    ioff + rt_data_off, &token);
@@ -2822,6 +3423,32 @@ static noinline void copy_for_split(struct btrfs_trans_handle *trans,
 	btrfs_item_key(right, &disk_key, 0);
 	insert_ptr(trans, root, path, &disk_key, right->start,
 		   path->slots[1] + 1, 1);
+=======
+		if (!right->map_token) {
+			map_extent_buffer(right, (unsigned long)item,
+					sizeof(struct btrfs_item),
+					&right->map_token, &right->kaddr,
+					&right->map_start, &right->map_len,
+					KM_USER1);
+		}
+
+		ioff = btrfs_item_offset(right, item);
+		btrfs_set_item_offset(right, item, ioff + rt_data_off);
+	}
+
+	if (right->map_token) {
+		unmap_extent_buffer(right, right->map_token, KM_USER1);
+		right->map_token = NULL;
+	}
+
+	btrfs_set_header_nritems(l, mid);
+	ret = 0;
+	btrfs_item_key(right, &disk_key, 0);
+	wret = insert_ptr(trans, root, path, &disk_key, right->start,
+			  path->slots[1] + 1, 1);
+	if (wret)
+		ret = wret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	btrfs_mark_buffer_dirty(right);
 	btrfs_mark_buffer_dirty(l);
@@ -2839,6 +3466,11 @@ static noinline void copy_for_split(struct btrfs_trans_handle *trans,
 	}
 
 	BUG_ON(path->slots[0] < 0);
+<<<<<<< HEAD
+=======
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -3004,7 +3636,11 @@ again:
 
 	right = btrfs_alloc_free_block(trans, root, root->leafsize, 0,
 					root->root_key.objectid,
+<<<<<<< HEAD
 					&disk_key, 0, l->start, 0, 0);
+=======
+					&disk_key, 0, l->start, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(right))
 		return PTR_ERR(right);
 
@@ -3027,8 +3663,17 @@ again:
 	if (split == 0) {
 		if (mid <= slot) {
 			btrfs_set_header_nritems(right, 0);
+<<<<<<< HEAD
 			insert_ptr(trans, root, path, &disk_key, right->start,
 				   path->slots[1] + 1, 1);
+=======
+			wret = insert_ptr(trans, root, path,
+					  &disk_key, right->start,
+					  path->slots[1] + 1, 1);
+			if (wret)
+				ret = wret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			btrfs_tree_unlock(path->nodes[0]);
 			free_extent_buffer(path->nodes[0]);
 			path->nodes[0] = right;
@@ -3036,21 +3681,44 @@ again:
 			path->slots[1] += 1;
 		} else {
 			btrfs_set_header_nritems(right, 0);
+<<<<<<< HEAD
 			insert_ptr(trans, root, path, &disk_key, right->start,
 					  path->slots[1], 1);
+=======
+			wret = insert_ptr(trans, root, path,
+					  &disk_key,
+					  right->start,
+					  path->slots[1], 1);
+			if (wret)
+				ret = wret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			btrfs_tree_unlock(path->nodes[0]);
 			free_extent_buffer(path->nodes[0]);
 			path->nodes[0] = right;
 			path->slots[0] = 0;
+<<<<<<< HEAD
 			if (path->slots[1] == 0)
 				fixup_low_keys(trans, root, path,
 					       &disk_key, 1);
+=======
+			if (path->slots[1] == 0) {
+				wret = fixup_low_keys(trans, root,
+						path, &disk_key, 1);
+				if (wret)
+					ret = wret;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		btrfs_mark_buffer_dirty(right);
 		return ret;
 	}
 
+<<<<<<< HEAD
 	copy_for_split(trans, root, path, l, right, slot, mid, nritems);
+=======
+	ret = copy_for_split(trans, root, path, l, right, slot, mid, nritems);
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (split == 2) {
 		BUG_ON(num_doubles != 0);
@@ -3058,7 +3726,11 @@ again:
 		goto again;
 	}
 
+<<<<<<< HEAD
 	return 0;
+=======
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 push_for_double:
 	push_for_double_split(trans, root, path, data_size);
@@ -3260,9 +3932,17 @@ int btrfs_duplicate_item(struct btrfs_trans_handle *trans,
 		return ret;
 
 	path->slots[0]++;
+<<<<<<< HEAD
 	setup_items_for_insert(trans, root, path, new_key, &item_size,
 			       item_size, item_size +
 			       sizeof(struct btrfs_item), 1);
+=======
+	ret = setup_items_for_insert(trans, root, path, new_key, &item_size,
+				     item_size, item_size +
+				     sizeof(struct btrfs_item), 1);
+	BUG_ON(ret);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	leaf = path->nodes[0];
 	memcpy_extent_buffer(leaf,
 			     btrfs_item_ptr_offset(leaf, path->slots[0]),
@@ -3277,10 +3957,17 @@ int btrfs_duplicate_item(struct btrfs_trans_handle *trans,
  * off the end of the item or if we shift the item to chop bytes off
  * the front.
  */
+<<<<<<< HEAD
 void btrfs_truncate_item(struct btrfs_trans_handle *trans,
 			 struct btrfs_root *root,
 			 struct btrfs_path *path,
 			 u32 new_size, int from_end)
+=======
+int btrfs_truncate_item(struct btrfs_trans_handle *trans,
+			struct btrfs_root *root,
+			struct btrfs_path *path,
+			u32 new_size, int from_end)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int slot;
 	struct extent_buffer *leaf;
@@ -3291,16 +3978,23 @@ void btrfs_truncate_item(struct btrfs_trans_handle *trans,
 	unsigned int old_size;
 	unsigned int size_diff;
 	int i;
+<<<<<<< HEAD
 	struct btrfs_map_token token;
 
 	btrfs_init_map_token(&token);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	leaf = path->nodes[0];
 	slot = path->slots[0];
 
 	old_size = btrfs_item_size_nr(leaf, slot);
 	if (old_size == new_size)
+<<<<<<< HEAD
 		return;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nritems = btrfs_header_nritems(leaf);
 	data_end = leaf_data_end(root, leaf);
@@ -3320,9 +4014,27 @@ void btrfs_truncate_item(struct btrfs_trans_handle *trans,
 		u32 ioff;
 		item = btrfs_item_nr(leaf, i);
 
+<<<<<<< HEAD
 		ioff = btrfs_token_item_offset(leaf, item, &token);
 		btrfs_set_token_item_offset(leaf, item,
 					    ioff + size_diff, &token);
+=======
+		if (!leaf->map_token) {
+			map_extent_buffer(leaf, (unsigned long)item,
+					sizeof(struct btrfs_item),
+					&leaf->map_token, &leaf->kaddr,
+					&leaf->map_start, &leaf->map_len,
+					KM_USER1);
+		}
+
+		ioff = btrfs_item_offset(leaf, item);
+		btrfs_set_item_offset(leaf, item, ioff + size_diff);
+	}
+
+	if (leaf->map_token) {
+		unmap_extent_buffer(leaf, leaf->map_token, KM_USER1);
+		leaf->map_token = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* shift the data */
@@ -3374,14 +4086,24 @@ void btrfs_truncate_item(struct btrfs_trans_handle *trans,
 		btrfs_print_leaf(root, leaf);
 		BUG();
 	}
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * make the item pointed to by the path bigger, data_size is the new size.
  */
+<<<<<<< HEAD
 void btrfs_extend_item(struct btrfs_trans_handle *trans,
 		       struct btrfs_root *root, struct btrfs_path *path,
 		       u32 data_size)
+=======
+int btrfs_extend_item(struct btrfs_trans_handle *trans,
+		      struct btrfs_root *root, struct btrfs_path *path,
+		      u32 data_size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int slot;
 	struct extent_buffer *leaf;
@@ -3391,9 +4113,12 @@ void btrfs_extend_item(struct btrfs_trans_handle *trans,
 	unsigned int old_data;
 	unsigned int old_size;
 	int i;
+<<<<<<< HEAD
 	struct btrfs_map_token token;
 
 	btrfs_init_map_token(&token);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	leaf = path->nodes[0];
 
@@ -3423,9 +4148,26 @@ void btrfs_extend_item(struct btrfs_trans_handle *trans,
 		u32 ioff;
 		item = btrfs_item_nr(leaf, i);
 
+<<<<<<< HEAD
 		ioff = btrfs_token_item_offset(leaf, item, &token);
 		btrfs_set_token_item_offset(leaf, item,
 					    ioff - data_size, &token);
+=======
+		if (!leaf->map_token) {
+			map_extent_buffer(leaf, (unsigned long)item,
+					sizeof(struct btrfs_item),
+					&leaf->map_token, &leaf->kaddr,
+					&leaf->map_start, &leaf->map_len,
+					KM_USER1);
+		}
+		ioff = btrfs_item_offset(leaf, item);
+		btrfs_set_item_offset(leaf, item, ioff - data_size);
+	}
+
+	if (leaf->map_token) {
+		unmap_extent_buffer(leaf, leaf->map_token, KM_USER1);
+		leaf->map_token = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* shift the data */
@@ -3443,6 +4185,10 @@ void btrfs_extend_item(struct btrfs_trans_handle *trans,
 		btrfs_print_leaf(root, leaf);
 		BUG();
 	}
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -3467,9 +4213,12 @@ int btrfs_insert_some_items(struct btrfs_trans_handle *trans,
 	unsigned int data_end;
 	struct btrfs_disk_key disk_key;
 	struct btrfs_key found_key;
+<<<<<<< HEAD
 	struct btrfs_map_token token;
 
 	btrfs_init_map_token(&token);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < nr; i++) {
 		if (total_size + data_size[i] + sizeof(struct btrfs_item) >
@@ -3531,14 +4280,37 @@ int btrfs_insert_some_items(struct btrfs_trans_handle *trans,
 		 * item0..itemN ... dataN.offset..dataN.size .. data0.size
 		 */
 		/* first correct the data pointers */
+<<<<<<< HEAD
+=======
+		WARN_ON(leaf->map_token);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (i = slot; i < nritems; i++) {
 			u32 ioff;
 
 			item = btrfs_item_nr(leaf, i);
+<<<<<<< HEAD
 			ioff = btrfs_token_item_offset(leaf, item, &token);
 			btrfs_set_token_item_offset(leaf, item,
 						    ioff - total_data, &token);
 		}
+=======
+			if (!leaf->map_token) {
+				map_extent_buffer(leaf, (unsigned long)item,
+					sizeof(struct btrfs_item),
+					&leaf->map_token, &leaf->kaddr,
+					&leaf->map_start, &leaf->map_len,
+					KM_USER1);
+			}
+
+			ioff = btrfs_item_offset(leaf, item);
+			btrfs_set_item_offset(leaf, item, ioff - total_data);
+		}
+		if (leaf->map_token) {
+			unmap_extent_buffer(leaf, leaf->map_token, KM_USER1);
+			leaf->map_token = NULL;
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* shift the items */
 		memmove_extent_buffer(leaf, btrfs_item_nr_offset(slot + nr),
 			      btrfs_item_nr_offset(slot),
@@ -3564,10 +4336,16 @@ int btrfs_insert_some_items(struct btrfs_trans_handle *trans,
 		btrfs_cpu_key_to_disk(&disk_key, cpu_key + i);
 		btrfs_set_item_key(leaf, &disk_key, slot + i);
 		item = btrfs_item_nr(leaf, slot + i);
+<<<<<<< HEAD
 		btrfs_set_token_item_offset(leaf, item,
 					    data_end - data_size[i], &token);
 		data_end -= data_size[i];
 		btrfs_set_token_item_size(leaf, item, data_size[i], &token);
+=======
+		btrfs_set_item_offset(leaf, item, data_end - data_size[i]);
+		data_end -= data_size[i];
+		btrfs_set_item_size(leaf, item, data_size[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	btrfs_set_header_nritems(leaf, nritems + nr);
 	btrfs_mark_buffer_dirty(leaf);
@@ -3575,7 +4353,11 @@ int btrfs_insert_some_items(struct btrfs_trans_handle *trans,
 	ret = 0;
 	if (slot == 0) {
 		btrfs_cpu_key_to_disk(&disk_key, cpu_key);
+<<<<<<< HEAD
 		fixup_low_keys(trans, root, path, &disk_key, 1);
+=======
+		ret = fixup_low_keys(trans, root, path, &disk_key, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (btrfs_leaf_free_space(root, leaf) < 0) {
@@ -3593,21 +4375,34 @@ out:
  * to save stack depth by doing the bulk of the work in a function
  * that doesn't call btrfs_search_slot
  */
+<<<<<<< HEAD
 void setup_items_for_insert(struct btrfs_trans_handle *trans,
 			    struct btrfs_root *root, struct btrfs_path *path,
 			    struct btrfs_key *cpu_key, u32 *data_size,
 			    u32 total_data, u32 total_size, int nr)
+=======
+int setup_items_for_insert(struct btrfs_trans_handle *trans,
+			   struct btrfs_root *root, struct btrfs_path *path,
+			   struct btrfs_key *cpu_key, u32 *data_size,
+			   u32 total_data, u32 total_size, int nr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct btrfs_item *item;
 	int i;
 	u32 nritems;
 	unsigned int data_end;
 	struct btrfs_disk_key disk_key;
+<<<<<<< HEAD
 	struct extent_buffer *leaf;
 	int slot;
 	struct btrfs_map_token token;
 
 	btrfs_init_map_token(&token);
+=======
+	int ret;
+	struct extent_buffer *leaf;
+	int slot;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	leaf = path->nodes[0];
 	slot = path->slots[0];
@@ -3635,14 +4430,37 @@ void setup_items_for_insert(struct btrfs_trans_handle *trans,
 		 * item0..itemN ... dataN.offset..dataN.size .. data0.size
 		 */
 		/* first correct the data pointers */
+<<<<<<< HEAD
+=======
+		WARN_ON(leaf->map_token);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (i = slot; i < nritems; i++) {
 			u32 ioff;
 
 			item = btrfs_item_nr(leaf, i);
+<<<<<<< HEAD
 			ioff = btrfs_token_item_offset(leaf, item, &token);
 			btrfs_set_token_item_offset(leaf, item,
 						    ioff - total_data, &token);
 		}
+=======
+			if (!leaf->map_token) {
+				map_extent_buffer(leaf, (unsigned long)item,
+					sizeof(struct btrfs_item),
+					&leaf->map_token, &leaf->kaddr,
+					&leaf->map_start, &leaf->map_len,
+					KM_USER1);
+			}
+
+			ioff = btrfs_item_offset(leaf, item);
+			btrfs_set_item_offset(leaf, item, ioff - total_data);
+		}
+		if (leaf->map_token) {
+			unmap_extent_buffer(leaf, leaf->map_token, KM_USER1);
+			leaf->map_token = NULL;
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* shift the items */
 		memmove_extent_buffer(leaf, btrfs_item_nr_offset(slot + nr),
 			      btrfs_item_nr_offset(slot),
@@ -3660,17 +4478,30 @@ void setup_items_for_insert(struct btrfs_trans_handle *trans,
 		btrfs_cpu_key_to_disk(&disk_key, cpu_key + i);
 		btrfs_set_item_key(leaf, &disk_key, slot + i);
 		item = btrfs_item_nr(leaf, slot + i);
+<<<<<<< HEAD
 		btrfs_set_token_item_offset(leaf, item,
 					    data_end - data_size[i], &token);
 		data_end -= data_size[i];
 		btrfs_set_token_item_size(leaf, item, data_size[i], &token);
+=======
+		btrfs_set_item_offset(leaf, item, data_end - data_size[i]);
+		data_end -= data_size[i];
+		btrfs_set_item_size(leaf, item, data_size[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	btrfs_set_header_nritems(leaf, nritems + nr);
 
+<<<<<<< HEAD
 	if (slot == 0) {
 		btrfs_cpu_key_to_disk(&disk_key, cpu_key);
 		fixup_low_keys(trans, root, path, &disk_key, 1);
+=======
+	ret = 0;
+	if (slot == 0) {
+		btrfs_cpu_key_to_disk(&disk_key, cpu_key);
+		ret = fixup_low_keys(trans, root, path, &disk_key, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	btrfs_unlock_up_safe(path, 1);
 	btrfs_mark_buffer_dirty(leaf);
@@ -3679,6 +4510,10 @@ void setup_items_for_insert(struct btrfs_trans_handle *trans,
 		btrfs_print_leaf(root, leaf);
 		BUG();
 	}
+<<<<<<< HEAD
+=======
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -3705,14 +4540,26 @@ int btrfs_insert_empty_items(struct btrfs_trans_handle *trans,
 	if (ret == 0)
 		return -EEXIST;
 	if (ret < 0)
+<<<<<<< HEAD
 		return ret;
+=======
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	slot = path->slots[0];
 	BUG_ON(slot < 0);
 
+<<<<<<< HEAD
 	setup_items_for_insert(trans, root, path, cpu_key, data_size,
 			       total_data, total_size, nr);
 	return 0;
+=======
+	ret = setup_items_for_insert(trans, root, path, cpu_key, data_size,
+			       total_data, total_size, nr);
+
+out:
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -3748,11 +4595,21 @@ int btrfs_insert_item(struct btrfs_trans_handle *trans, struct btrfs_root
  * the tree should have been previously balanced so the deletion does not
  * empty a node.
  */
+<<<<<<< HEAD
 static void del_ptr(struct btrfs_trans_handle *trans, struct btrfs_root *root,
 		    struct btrfs_path *path, int level, int slot)
 {
 	struct extent_buffer *parent = path->nodes[level];
 	u32 nritems;
+=======
+static int del_ptr(struct btrfs_trans_handle *trans, struct btrfs_root *root,
+		   struct btrfs_path *path, int level, int slot)
+{
+	struct extent_buffer *parent = path->nodes[level];
+	u32 nritems;
+	int ret = 0;
+	int wret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nritems = btrfs_header_nritems(parent);
 	if (slot != nritems - 1) {
@@ -3772,9 +4629,18 @@ static void del_ptr(struct btrfs_trans_handle *trans, struct btrfs_root *root,
 		struct btrfs_disk_key disk_key;
 
 		btrfs_node_key(parent, &disk_key, 0);
+<<<<<<< HEAD
 		fixup_low_keys(trans, root, path, &disk_key, level + 1);
 	}
 	btrfs_mark_buffer_dirty(parent);
+=======
+		wret = fixup_low_keys(trans, root, path, &disk_key, level + 1);
+		if (wret)
+			ret = wret;
+	}
+	btrfs_mark_buffer_dirty(parent);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -3787,6 +4653,7 @@ static void del_ptr(struct btrfs_trans_handle *trans, struct btrfs_root *root,
  * The path must have already been setup for deleting the leaf, including
  * all the proper balancing.  path->nodes[1] must be locked.
  */
+<<<<<<< HEAD
 static noinline void btrfs_del_leaf(struct btrfs_trans_handle *trans,
 				    struct btrfs_root *root,
 				    struct btrfs_path *path,
@@ -3794,6 +4661,19 @@ static noinline void btrfs_del_leaf(struct btrfs_trans_handle *trans,
 {
 	WARN_ON(btrfs_header_generation(leaf) != trans->transid);
 	del_ptr(trans, root, path, 1, path->slots[1]);
+=======
+static noinline int btrfs_del_leaf(struct btrfs_trans_handle *trans,
+				   struct btrfs_root *root,
+				   struct btrfs_path *path,
+				   struct extent_buffer *leaf)
+{
+	int ret;
+
+	WARN_ON(btrfs_header_generation(leaf) != trans->transid);
+	ret = del_ptr(trans, root, path, 1, path->slots[1]);
+	if (ret)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * btrfs_free_extent is expensive, we want to make sure we
@@ -3803,9 +4683,14 @@ static noinline void btrfs_del_leaf(struct btrfs_trans_handle *trans,
 
 	root_sub_used(root, leaf->len);
 
+<<<<<<< HEAD
 	extent_buffer_get(leaf);
 	btrfs_free_tree_block(trans, root, leaf, 0, 1, 0);
 	free_extent_buffer_stale(leaf);
+=======
+	btrfs_free_tree_block(trans, root, leaf, 0, 1);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 /*
  * delete the item at the leaf level in path.  If that empties
@@ -3822,9 +4707,12 @@ int btrfs_del_items(struct btrfs_trans_handle *trans, struct btrfs_root *root,
 	int wret;
 	int i;
 	u32 nritems;
+<<<<<<< HEAD
 	struct btrfs_map_token token;
 
 	btrfs_init_map_token(&token);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	leaf = path->nodes[0];
 	last_off = btrfs_item_offset_nr(leaf, slot + nr - 1);
@@ -3846,9 +4734,26 @@ int btrfs_del_items(struct btrfs_trans_handle *trans, struct btrfs_root *root,
 			u32 ioff;
 
 			item = btrfs_item_nr(leaf, i);
+<<<<<<< HEAD
 			ioff = btrfs_token_item_offset(leaf, item, &token);
 			btrfs_set_token_item_offset(leaf, item,
 						    ioff + dsize, &token);
+=======
+			if (!leaf->map_token) {
+				map_extent_buffer(leaf, (unsigned long)item,
+					sizeof(struct btrfs_item),
+					&leaf->map_token, &leaf->kaddr,
+					&leaf->map_start, &leaf->map_len,
+					KM_USER1);
+			}
+			ioff = btrfs_item_offset(leaf, item);
+			btrfs_set_item_offset(leaf, item, ioff + dsize);
+		}
+
+		if (leaf->map_token) {
+			unmap_extent_buffer(leaf, leaf->map_token, KM_USER1);
+			leaf->map_token = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		memmove_extent_buffer(leaf, btrfs_item_nr_offset(slot),
@@ -3866,7 +4771,12 @@ int btrfs_del_items(struct btrfs_trans_handle *trans, struct btrfs_root *root,
 		} else {
 			btrfs_set_path_blocking(path);
 			clean_tree_block(trans, root, leaf);
+<<<<<<< HEAD
 			btrfs_del_leaf(trans, root, path, leaf);
+=======
+			ret = btrfs_del_leaf(trans, root, path, leaf);
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		int used = leaf_space_used(leaf, 0, nritems);
@@ -3874,7 +4784,14 @@ int btrfs_del_items(struct btrfs_trans_handle *trans, struct btrfs_root *root,
 			struct btrfs_disk_key disk_key;
 
 			btrfs_item_key(leaf, &disk_key, 0);
+<<<<<<< HEAD
 			fixup_low_keys(trans, root, path, &disk_key, 1);
+=======
+			wret = fixup_low_keys(trans, root, path,
+					      &disk_key, 1);
+			if (wret)
+				ret = wret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/* delete the leaf if it is mostly empty */
@@ -3902,9 +4819,15 @@ int btrfs_del_items(struct btrfs_trans_handle *trans, struct btrfs_root *root,
 
 			if (btrfs_header_nritems(leaf) == 0) {
 				path->slots[1] = slot;
+<<<<<<< HEAD
 				btrfs_del_leaf(trans, root, path, leaf);
 				free_extent_buffer(leaf);
 				ret = 0;
+=======
+				ret = btrfs_del_leaf(trans, root, path, leaf);
+				BUG_ON(ret);
+				free_extent_buffer(leaf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else {
 				/* if we're still in the path, make sure
 				 * we're dirty.  Otherwise, one of the
@@ -3995,11 +4918,19 @@ int btrfs_search_forward(struct btrfs_root *root, struct btrfs_key *min_key,
 
 	WARN_ON(!path->keep_locks);
 again:
+<<<<<<< HEAD
 	cur = btrfs_read_lock_root_node(root);
 	level = btrfs_header_level(cur);
 	WARN_ON(path->nodes[level]);
 	path->nodes[level] = cur;
 	path->locks[level] = BTRFS_READ_LOCK;
+=======
+	cur = btrfs_lock_root_node(root);
+	level = btrfs_header_level(cur);
+	WARN_ON(path->nodes[level]);
+	path->nodes[level] = cur;
+	path->locks[level] = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (btrfs_header_generation(cur) < min_trans) {
 		ret = 1;
@@ -4052,7 +4983,11 @@ again:
 			tmp = btrfs_find_tree_block(root, blockptr,
 					    btrfs_level_size(root, level - 1));
 
+<<<<<<< HEAD
 			if (tmp && btrfs_buffer_uptodate(tmp, gen, 1) > 0) {
+=======
+			if (tmp && btrfs_buffer_uptodate(tmp, gen)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				free_extent_buffer(tmp);
 				break;
 			}
@@ -4082,11 +5017,16 @@ find_next_key:
 		path->slots[level] = slot;
 		if (level == path->lowest_level) {
 			ret = 0;
+<<<<<<< HEAD
 			unlock_up(path, level, 1, 0, NULL);
+=======
+			unlock_up(path, level, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out;
 		}
 		btrfs_set_path_blocking(path);
 		cur = read_node_slot(root, cur, slot);
+<<<<<<< HEAD
 		BUG_ON(!cur); /* -ENOMEM */
 
 		btrfs_tree_read_lock(cur);
@@ -4095,6 +5035,16 @@ find_next_key:
 		path->nodes[level - 1] = cur;
 		unlock_up(path, level, 1, 0, NULL);
 		btrfs_clear_path_blocking(path, NULL, 0);
+=======
+		BUG_ON(!cur);
+
+		btrfs_tree_lock(cur);
+
+		path->locks[level - 1] = 1;
+		path->nodes[level - 1] = cur;
+		unlock_up(path, level, 1);
+		btrfs_clear_path_blocking(path, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 out:
 	if (ret == 0)
@@ -4175,8 +5125,12 @@ next:
 				struct extent_buffer *cur;
 				cur = btrfs_find_tree_block(root, blockptr,
 					    btrfs_level_size(root, level - 1));
+<<<<<<< HEAD
 				if (!cur ||
 				    btrfs_buffer_uptodate(cur, gen, 1) <= 0) {
+=======
+				if (!cur || !btrfs_buffer_uptodate(cur, gen)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					slot++;
 					if (cur)
 						free_extent_buffer(cur);
@@ -4210,21 +5164,45 @@ int btrfs_next_leaf(struct btrfs_root *root, struct btrfs_path *path)
 	u32 nritems;
 	int ret;
 	int old_spinning = path->leave_spinning;
+<<<<<<< HEAD
 	int next_rw_lock = 0;
+=======
+	int force_blocking = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nritems = btrfs_header_nritems(path->nodes[0]);
 	if (nritems == 0)
 		return 1;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * we take the blocks in an order that upsets lockdep.  Using
+	 * blocking mode is the only way around it.
+	 */
+#ifdef CONFIG_DEBUG_LOCK_ALLOC
+	force_blocking = 1;
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_item_key_to_cpu(path->nodes[0], &key, nritems - 1);
 again:
 	level = 1;
 	next = NULL;
+<<<<<<< HEAD
 	next_rw_lock = 0;
 	btrfs_release_path(path);
 
 	path->keep_locks = 1;
 	path->leave_spinning = 1;
+=======
+	btrfs_release_path(path);
+
+	path->keep_locks = 1;
+
+	if (!force_blocking)
+		path->leave_spinning = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = btrfs_search_slot(NULL, root, &key, path, 0, 0);
 	path->keep_locks = 0;
@@ -4264,12 +5242,19 @@ again:
 		}
 
 		if (next) {
+<<<<<<< HEAD
 			btrfs_tree_unlock_rw(next, next_rw_lock);
+=======
+			btrfs_tree_unlock(next);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			free_extent_buffer(next);
 		}
 
 		next = c;
+<<<<<<< HEAD
 		next_rw_lock = path->locks[level];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = read_block_for_search(NULL, root, path, &next, level,
 					    slot, &key);
 		if (ret == -EAGAIN)
@@ -4281,6 +5266,7 @@ again:
 		}
 
 		if (!path->skip_locking) {
+<<<<<<< HEAD
 			ret = btrfs_try_tree_read_lock(next);
 			if (!ret) {
 				btrfs_set_path_blocking(path);
@@ -4289,6 +5275,17 @@ again:
 							  BTRFS_READ_LOCK);
 			}
 			next_rw_lock = BTRFS_READ_LOCK;
+=======
+			ret = btrfs_try_spin_lock(next);
+			if (!ret) {
+				btrfs_set_path_blocking(path);
+				btrfs_tree_lock(next);
+				if (!force_blocking)
+					btrfs_clear_path_blocking(path, next);
+			}
+			if (force_blocking)
+				btrfs_set_lock_blocking(next);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		break;
 	}
@@ -4297,13 +5294,22 @@ again:
 		level--;
 		c = path->nodes[level];
 		if (path->locks[level])
+<<<<<<< HEAD
 			btrfs_tree_unlock_rw(c, path->locks[level]);
+=======
+			btrfs_tree_unlock(c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		free_extent_buffer(c);
 		path->nodes[level] = next;
 		path->slots[level] = 0;
 		if (!path->skip_locking)
+<<<<<<< HEAD
 			path->locks[level] = next_rw_lock;
+=======
+			path->locks[level] = 1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!level)
 			break;
 
@@ -4318,6 +5324,7 @@ again:
 		}
 
 		if (!path->skip_locking) {
+<<<<<<< HEAD
 			ret = btrfs_try_tree_read_lock(next);
 			if (!ret) {
 				btrfs_set_path_blocking(path);
@@ -4326,11 +5333,27 @@ again:
 							  BTRFS_READ_LOCK);
 			}
 			next_rw_lock = BTRFS_READ_LOCK;
+=======
+			btrfs_assert_tree_locked(path->nodes[level]);
+			ret = btrfs_try_spin_lock(next);
+			if (!ret) {
+				btrfs_set_path_blocking(path);
+				btrfs_tree_lock(next);
+				if (!force_blocking)
+					btrfs_clear_path_blocking(path, next);
+			}
+			if (force_blocking)
+				btrfs_set_lock_blocking(next);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	ret = 0;
 done:
+<<<<<<< HEAD
 	unlock_up(path, 0, 1, 0, NULL);
+=======
+	unlock_up(path, 0, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	path->leave_spinning = old_spinning;
 	if (!old_spinning)
 		btrfs_set_path_blocking(path);

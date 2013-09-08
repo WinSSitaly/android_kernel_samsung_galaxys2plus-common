@@ -41,6 +41,10 @@
  * USA.
  */
 
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
@@ -149,7 +153,11 @@ _config_display_some_debug(struct MPT2SAS_ADAPTER *ioc, u16 smid,
 			desc = "raid_config";
 			break;
 		case MPI2_CONFIG_EXTPAGETYPE_DRIVER_MAPPING:
+<<<<<<< HEAD
 			desc = "driver_mapping";
+=======
+			desc = "driver_mappping";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 		break;
@@ -1356,9 +1364,12 @@ mpt2sas_config_get_volume_handle(struct MPT2SAS_ADAPTER *ioc, u16 pd_handle,
 	Mpi2ConfigReply_t mpi_reply;
 	int r, i, config_page_sz;
 	u16 ioc_status;
+<<<<<<< HEAD
 	int config_num;
 	u16 element_type;
 	u16 phys_disk_dev_handle;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	*volume_handle = 0;
 	memset(&mpi_request, 0, sizeof(Mpi2ConfigRequest_t));
@@ -1374,6 +1385,7 @@ mpt2sas_config_get_volume_handle(struct MPT2SAS_ADAPTER *ioc, u16 pd_handle,
 	if (r)
 		goto out;
 
+<<<<<<< HEAD
 	mpi_request.Action = MPI2_CONFIG_ACTION_PAGE_READ_CURRENT;
 	config_page_sz = (le16_to_cpu(mpi_reply.ExtPageLength) * 4);
 	config_page = kmalloc(config_page_sz, GFP_KERNEL);
@@ -1421,6 +1433,37 @@ mpt2sas_config_get_volume_handle(struct MPT2SAS_ADAPTER *ioc, u16 pd_handle,
 			}
 		}
 		config_num = config_page->ConfigNum;
+=======
+	mpi_request.PageAddress =
+	    cpu_to_le32(MPI2_RAID_PGAD_FORM_ACTIVE_CONFIG);
+	mpi_request.Action = MPI2_CONFIG_ACTION_PAGE_READ_CURRENT;
+	config_page_sz = (le16_to_cpu(mpi_reply.ExtPageLength) * 4);
+	config_page = kmalloc(config_page_sz, GFP_KERNEL);
+	if (!config_page)
+		goto out;
+	r = _config_request(ioc, &mpi_request, &mpi_reply,
+	    MPT2_CONFIG_PAGE_DEFAULT_TIMEOUT, config_page,
+	    config_page_sz);
+	if (r)
+		goto out;
+
+	r = -1;
+	ioc_status = le16_to_cpu(mpi_reply.IOCStatus) & MPI2_IOCSTATUS_MASK;
+	if (ioc_status != MPI2_IOCSTATUS_SUCCESS)
+		goto out;
+	for (i = 0; i < config_page->NumElements; i++) {
+		if ((le16_to_cpu(config_page->ConfigElement[i].ElementFlags) &
+		    MPI2_RAIDCONFIG0_EFLAGS_MASK_ELEMENT_TYPE) !=
+		    MPI2_RAIDCONFIG0_EFLAGS_VOL_PHYS_DISK_ELEMENT)
+			continue;
+		if (le16_to_cpu(config_page->ConfigElement[i].
+		    PhysDiskDevHandle) == pd_handle) {
+			*volume_handle = le16_to_cpu(config_page->
+			    ConfigElement[i].VolDevHandle);
+			r = 0;
+			goto out;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
  out:
 	kfree(config_page);

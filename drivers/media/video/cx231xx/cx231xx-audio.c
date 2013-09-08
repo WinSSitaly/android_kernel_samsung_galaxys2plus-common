@@ -111,9 +111,12 @@ static void cx231xx_audio_isocirq(struct urb *urb)
 	struct snd_pcm_substream *substream;
 	struct snd_pcm_runtime *runtime;
 
+<<<<<<< HEAD
 	if (dev->state & DEV_DISCONNECTED)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (urb->status) {
 	case 0:		/* success */
 	case -ETIMEDOUT:	/* NAK */
@@ -199,9 +202,12 @@ static void cx231xx_audio_bulkirq(struct urb *urb)
 	struct snd_pcm_substream *substream;
 	struct snd_pcm_runtime *runtime;
 
+<<<<<<< HEAD
 	if (dev->state & DEV_DISCONNECTED)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (urb->status) {
 	case 0:		/* success */
 	case -ETIMEDOUT:	/* NAK */
@@ -279,9 +285,12 @@ static int cx231xx_init_audio_isoc(struct cx231xx *dev)
 
 	cx231xx_info("%s: Starting ISO AUDIO transfers\n", __func__);
 
+<<<<<<< HEAD
 	if (dev->state & DEV_DISCONNECTED)
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sb_size = CX231XX_ISO_NUM_AUDIO_PACKETS * dev->adev.max_pkt_size;
 
 	for (i = 0; i < CX231XX_AUDIO_BUFS; i++) {
@@ -340,9 +349,12 @@ static int cx231xx_init_audio_bulk(struct cx231xx *dev)
 
 	cx231xx_info("%s: Starting BULK AUDIO transfers\n", __func__);
 
+<<<<<<< HEAD
 	if (dev->state & DEV_DISCONNECTED)
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sb_size = CX231XX_NUM_AUDIO_PACKETS * dev->adev.max_pkt_size;
 
 	for (i = 0; i < CX231XX_AUDIO_BUFS; i++) {
@@ -444,11 +456,14 @@ static int snd_cx231xx_capture_open(struct snd_pcm_substream *substream)
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	if (dev->state & DEV_DISCONNECTED) {
 		cx231xx_errdev("Can't open. the device was removed.\n");
 		return -ENODEV;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Sets volume, mute, etc */
 	dev->mute = 0;
 
@@ -588,9 +603,12 @@ static int snd_cx231xx_capture_trigger(struct snd_pcm_substream *substream,
 	struct cx231xx *dev = snd_pcm_substream_chip(substream);
 	int retval;
 
+<<<<<<< HEAD
 	if (dev->state & DEV_DISCONNECTED)
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&dev->adev.slock);
 	switch (cmd) {
 	case SNDRV_PCM_TRIGGER_START:

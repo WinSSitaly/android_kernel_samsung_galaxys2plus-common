@@ -1882,7 +1882,11 @@ static int s626_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
 	case TRIG_NONE:
 		/*  continous acquisition */
 		devpriv->ai_continous = 1;
+<<<<<<< HEAD
 		devpriv->ai_sample_count = 1;
+=======
+		devpriv->ai_sample_count = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -2370,7 +2374,11 @@ static int s626_enc_insn_config(struct comedi_device *dev,
 	/*   (data==NULL) ? (Preloadvalue=0) : (Preloadvalue=data[0]); */
 
 	k->SetMode(dev, k, Setup, TRUE);
+<<<<<<< HEAD
 	Preload(dev, k, data[0]);
+=======
+	Preload(dev, k, *(insn->data));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	k->PulseIndex(dev, k);
 	SetLatchSource(dev, k, valueSrclatch);
 	k->SetEnable(dev, k, (uint16_t) (enab != 0));

@@ -30,7 +30,11 @@ module_param(debug, int, 0644);
 			printk(KERN_DEBUG "vb2: " fmt, ## arg);		\
 	} while (0)
 
+<<<<<<< HEAD
 #define call_memop(q, op, args...)					\
+=======
+#define call_memop(q, plane, op, args...)				\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	(((q)->mem_ops->op) ?						\
 		((q)->mem_ops->op(args)) : 0)
 
@@ -38,13 +42,22 @@ module_param(debug, int, 0644);
 	(((q)->ops->op) ? ((q)->ops->op(args)) : 0)
 
 #define V4L2_BUFFER_STATE_FLAGS	(V4L2_BUF_FLAG_MAPPED | V4L2_BUF_FLAG_QUEUED | \
+<<<<<<< HEAD
 				 V4L2_BUF_FLAG_DONE | V4L2_BUF_FLAG_ERROR | \
 				 V4L2_BUF_FLAG_PREPARED)
+=======
+				 V4L2_BUF_FLAG_DONE | V4L2_BUF_FLAG_ERROR)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * __vb2_buf_mem_alloc() - allocate video memory for the given buffer
  */
+<<<<<<< HEAD
 static int __vb2_buf_mem_alloc(struct vb2_buffer *vb)
+=======
+static int __vb2_buf_mem_alloc(struct vb2_buffer *vb,
+				unsigned long *plane_sizes)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct vb2_queue *q = vb->vb2_queue;
 	void *mem_priv;
@@ -52,23 +65,37 @@ static int __vb2_buf_mem_alloc(struct vb2_buffer *vb)
 
 	/* Allocate memory for all planes in this buffer */
 	for (plane = 0; plane < vb->num_planes; ++plane) {
+<<<<<<< HEAD
 		mem_priv = call_memop(q, alloc, q->alloc_ctx[plane],
 				      q->plane_sizes[plane]);
+=======
+		mem_priv = call_memop(q, plane, alloc, q->alloc_ctx[plane],
+					plane_sizes[plane]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (IS_ERR_OR_NULL(mem_priv))
 			goto free;
 
 		/* Associate allocator private data with this plane */
 		vb->planes[plane].mem_priv = mem_priv;
+<<<<<<< HEAD
 		vb->v4l2_planes[plane].length = q->plane_sizes[plane];
+=======
+		vb->v4l2_planes[plane].length = plane_sizes[plane];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
 free:
 	/* Free already allocated memory if one of the allocations failed */
+<<<<<<< HEAD
 	for (; plane > 0; --plane) {
 		call_memop(q, put, vb->planes[plane - 1].mem_priv);
 		vb->planes[plane - 1].mem_priv = NULL;
 	}
+=======
+	for (; plane > 0; --plane)
+		call_memop(q, plane, put, vb->planes[plane - 1].mem_priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return -ENOMEM;
 }
@@ -82,10 +109,17 @@ static void __vb2_buf_mem_free(struct vb2_buffer *vb)
 	unsigned int plane;
 
 	for (plane = 0; plane < vb->num_planes; ++plane) {
+<<<<<<< HEAD
 		call_memop(q, put, vb->planes[plane].mem_priv);
 		vb->planes[plane].mem_priv = NULL;
 		dprintk(3, "Freed plane %d of buffer %d\n", plane,
 			vb->v4l2_buf.index);
+=======
+		call_memop(q, plane, put, vb->planes[plane].mem_priv);
+		vb->planes[plane].mem_priv = NULL;
+		dprintk(3, "Freed plane %d of buffer %d\n",
+				plane, vb->v4l2_buf.index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -99,9 +133,18 @@ static void __vb2_buf_userptr_put(struct vb2_buffer *vb)
 	unsigned int plane;
 
 	for (plane = 0; plane < vb->num_planes; ++plane) {
+<<<<<<< HEAD
 		if (vb->planes[plane].mem_priv)
 			call_memop(q, put_userptr, vb->planes[plane].mem_priv);
 		vb->planes[plane].mem_priv = NULL;
+=======
+		void *mem_priv = vb->planes[plane].mem_priv;
+
+		if (mem_priv) {
+			call_memop(q, plane, put_userptr, mem_priv);
+			vb->planes[plane].mem_priv = NULL;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -109,6 +152,7 @@ static void __vb2_buf_userptr_put(struct vb2_buffer *vb)
  * __setup_offsets() - setup unique offsets ("cookies") for every plane in
  * every buffer on the queue
  */
+<<<<<<< HEAD
 static void __setup_offsets(struct vb2_queue *q, unsigned int n)
 {
 	unsigned int buffer, plane;
@@ -125,12 +169,24 @@ static void __setup_offsets(struct vb2_queue *q, unsigned int n)
 	}
 
 	for (buffer = q->num_buffers; buffer < q->num_buffers + n; ++buffer) {
+=======
+static void __setup_offsets(struct vb2_queue *q)
+{
+	unsigned int buffer, plane;
+	struct vb2_buffer *vb;
+	unsigned long off = 0;
+
+	for (buffer = 0; buffer < q->num_buffers; ++buffer) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		vb = q->bufs[buffer];
 		if (!vb)
 			continue;
 
 		for (plane = 0; plane < vb->num_planes; ++plane) {
+<<<<<<< HEAD
 			vb->v4l2_planes[plane].length = q->plane_sizes[plane];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			vb->v4l2_planes[plane].m.mem_offset = off;
 
 			dprintk(3, "Buffer %d, plane %d offset 0x%08lx\n",
@@ -150,7 +206,12 @@ static void __setup_offsets(struct vb2_queue *q, unsigned int n)
  * Returns the number of buffers successfully allocated.
  */
 static int __vb2_queue_alloc(struct vb2_queue *q, enum v4l2_memory memory,
+<<<<<<< HEAD
 			     unsigned int num_buffers, unsigned int num_planes)
+=======
+			     unsigned int num_buffers, unsigned int num_planes,
+			     unsigned long plane_sizes[])
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int buffer;
 	struct vb2_buffer *vb;
@@ -171,13 +232,21 @@ static int __vb2_queue_alloc(struct vb2_queue *q, enum v4l2_memory memory,
 		vb->state = VB2_BUF_STATE_DEQUEUED;
 		vb->vb2_queue = q;
 		vb->num_planes = num_planes;
+<<<<<<< HEAD
 		vb->v4l2_buf.index = q->num_buffers + buffer;
+=======
+		vb->v4l2_buf.index = buffer;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		vb->v4l2_buf.type = q->type;
 		vb->v4l2_buf.memory = memory;
 
 		/* Allocate video buffer memory for the MMAP type */
 		if (memory == V4L2_MEMORY_MMAP) {
+<<<<<<< HEAD
 			ret = __vb2_buf_mem_alloc(vb);
+=======
+			ret = __vb2_buf_mem_alloc(vb, plane_sizes);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret) {
 				dprintk(1, "Failed allocating memory for "
 						"buffer %d\n", buffer);
@@ -199,6 +268,7 @@ static int __vb2_queue_alloc(struct vb2_queue *q, enum v4l2_memory memory,
 			}
 		}
 
+<<<<<<< HEAD
 		q->bufs[q->num_buffers + buffer] = vb;
 	}
 
@@ -206,6 +276,17 @@ static int __vb2_queue_alloc(struct vb2_queue *q, enum v4l2_memory memory,
 
 	dprintk(1, "Allocated %d buffers, %d plane(s) each\n",
 			buffer, num_planes);
+=======
+		q->bufs[buffer] = vb;
+	}
+
+	q->num_buffers = buffer;
+
+	__setup_offsets(q);
+
+	dprintk(1, "Allocated %d buffers, %d plane(s) each\n",
+			q->num_buffers, num_planes);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return buffer;
 }
@@ -213,13 +294,21 @@ static int __vb2_queue_alloc(struct vb2_queue *q, enum v4l2_memory memory,
 /**
  * __vb2_free_mem() - release all video buffer memory for a given queue
  */
+<<<<<<< HEAD
 static void __vb2_free_mem(struct vb2_queue *q, unsigned int buffers)
+=======
+static void __vb2_free_mem(struct vb2_queue *q)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int buffer;
 	struct vb2_buffer *vb;
 
+<<<<<<< HEAD
 	for (buffer = q->num_buffers - buffers; buffer < q->num_buffers;
 	     ++buffer) {
+=======
+	for (buffer = 0; buffer < q->num_buffers; ++buffer) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		vb = q->bufs[buffer];
 		if (!vb)
 			continue;
@@ -233,18 +322,30 @@ static void __vb2_free_mem(struct vb2_queue *q, unsigned int buffers)
 }
 
 /**
+<<<<<<< HEAD
  * __vb2_queue_free() - free buffers at the end of the queue - video memory and
  * related information, if no buffers are left return the queue to an
  * uninitialized state. Might be called even if the queue has already been freed.
  */
 static void __vb2_queue_free(struct vb2_queue *q, unsigned int buffers)
+=======
+ * __vb2_queue_free() - free the queue - video memory and related information
+ * and return the queue to an uninitialized state. Might be called even if the
+ * queue has already been freed.
+ */
+static void __vb2_queue_free(struct vb2_queue *q)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int buffer;
 
 	/* Call driver-provided cleanup function for each buffer, if provided */
 	if (q->ops->buf_cleanup) {
+<<<<<<< HEAD
 		for (buffer = q->num_buffers - buffers; buffer < q->num_buffers;
 		     ++buffer) {
+=======
+		for (buffer = 0; buffer < q->num_buffers; ++buffer) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (NULL == q->bufs[buffer])
 				continue;
 			q->ops->buf_cleanup(q->bufs[buffer]);
@@ -252,26 +353,42 @@ static void __vb2_queue_free(struct vb2_queue *q, unsigned int buffers)
 	}
 
 	/* Release video buffer memory */
+<<<<<<< HEAD
 	__vb2_free_mem(q, buffers);
 
 	/* Free videobuf buffers */
 	for (buffer = q->num_buffers - buffers; buffer < q->num_buffers;
 	     ++buffer) {
+=======
+	__vb2_free_mem(q);
+
+	/* Free videobuf buffers */
+	for (buffer = 0; buffer < q->num_buffers; ++buffer) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(q->bufs[buffer]);
 		q->bufs[buffer] = NULL;
 	}
 
+<<<<<<< HEAD
 	q->num_buffers -= buffers;
 	if (!q->num_buffers)
 		q->memory = 0;
 	INIT_LIST_HEAD(&q->queued_list);
+=======
+	q->num_buffers = 0;
+	q->memory = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
  * __verify_planes_array() - verify that the planes array passed in struct
  * v4l2_buffer from userspace can be safely used
  */
+<<<<<<< HEAD
 static int __verify_planes_array(struct vb2_buffer *vb, const struct v4l2_buffer *b)
+=======
+static int __verify_planes_array(struct vb2_buffer *vb, struct v4l2_buffer *b)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Is memory for copying plane information present? */
 	if (NULL == b->m.planes) {
@@ -290,6 +407,7 @@ static int __verify_planes_array(struct vb2_buffer *vb, const struct v4l2_buffer
 }
 
 /**
+<<<<<<< HEAD
  * __buffer_in_use() - return true if the buffer is in use and
  * the queue cannot be freed (by the means of REQBUFS(0)) call
  */
@@ -325,13 +443,19 @@ static bool __buffers_in_use(struct vb2_queue *q)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * __fill_v4l2_buffer() - fill in a struct v4l2_buffer with information to be
  * returned to userspace
  */
 static int __fill_v4l2_buffer(struct vb2_buffer *vb, struct v4l2_buffer *b)
 {
 	struct vb2_queue *q = vb->vb2_queue;
+<<<<<<< HEAD
 	int ret;
+=======
+	int ret = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Copy back data such as timestamp, flags, input, etc. */
 	memcpy(b, &vb->v4l2_buf, offsetof(struct v4l2_buffer, m));
@@ -378,18 +502,28 @@ static int __fill_v4l2_buffer(struct vb2_buffer *vb, struct v4l2_buffer *b)
 	case VB2_BUF_STATE_DONE:
 		b->flags |= V4L2_BUF_FLAG_DONE;
 		break;
+<<<<<<< HEAD
 	case VB2_BUF_STATE_PREPARED:
 		b->flags |= V4L2_BUF_FLAG_PREPARED;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case VB2_BUF_STATE_DEQUEUED:
 		/* nothing */
 		break;
 	}
 
+<<<<<<< HEAD
 	if (__buffer_in_use(q, vb))
 		b->flags |= V4L2_BUF_FLAG_MAPPED;
 
 	return 0;
+=======
+	if (vb->num_planes_mapped == vb->num_planes)
+		b->flags |= V4L2_BUF_FLAG_MAPPED;
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -451,6 +585,36 @@ static int __verify_mmap_ops(struct vb2_queue *q)
 }
 
 /**
+<<<<<<< HEAD
+=======
+ * __buffers_in_use() - return true if any buffers on the queue are in use and
+ * the queue cannot be freed (by the means of REQBUFS(0)) call
+ */
+static bool __buffers_in_use(struct vb2_queue *q)
+{
+	unsigned int buffer, plane;
+	struct vb2_buffer *vb;
+
+	for (buffer = 0; buffer < q->num_buffers; ++buffer) {
+		vb = q->bufs[buffer];
+		for (plane = 0; plane < vb->num_planes; ++plane) {
+			/*
+			 * If num_users() has not been provided, call_memop
+			 * will return 0, apparently nobody cares about this
+			 * case anyway. If num_users() returns more than 1,
+			 * we are not the only user of the plane's memory.
+			 */
+			if (call_memop(q, plane, num_users,
+					vb->planes[plane].mem_priv) > 1)
+				return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * vb2_reqbufs() - Initiate streaming
  * @q:		videobuf2 queue
  * @req:	struct passed from userspace to vidioc_reqbufs handler in driver
@@ -475,7 +639,12 @@ static int __verify_mmap_ops(struct vb2_queue *q)
  */
 int vb2_reqbufs(struct vb2_queue *q, struct v4l2_requestbuffers *req)
 {
+<<<<<<< HEAD
 	unsigned int num_buffers, allocated_buffers, num_planes = 0;
+=======
+	unsigned int num_buffers, num_planes;
+	unsigned long plane_sizes[VIDEO_MAX_PLANES];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	if (q->fileio) {
@@ -523,7 +692,11 @@ int vb2_reqbufs(struct vb2_queue *q, struct v4l2_requestbuffers *req)
 			return -EBUSY;
 		}
 
+<<<<<<< HEAD
 		__vb2_queue_free(q, q->num_buffers);
+=======
+		__vb2_queue_free(q);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * In case of REQBUFS(0) return immediately without calling
@@ -537,7 +710,11 @@ int vb2_reqbufs(struct vb2_queue *q, struct v4l2_requestbuffers *req)
 	 * Make sure the requested values and current defaults are sane.
 	 */
 	num_buffers = min_t(unsigned int, req->count, VIDEO_MAX_FRAME);
+<<<<<<< HEAD
 	memset(q->plane_sizes, 0, sizeof(q->plane_sizes));
+=======
+	memset(plane_sizes, 0, sizeof(plane_sizes));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(q->alloc_ctx, 0, sizeof(q->alloc_ctx));
 	q->memory = req->memory;
 
@@ -545,18 +722,29 @@ int vb2_reqbufs(struct vb2_queue *q, struct v4l2_requestbuffers *req)
 	 * Ask the driver how many buffers and planes per buffer it requires.
 	 * Driver also sets the size and allocator context for each plane.
 	 */
+<<<<<<< HEAD
 	ret = call_qop(q, queue_setup, q, NULL, &num_buffers, &num_planes,
 		       q->plane_sizes, q->alloc_ctx);
+=======
+	ret = call_qop(q, queue_setup, q, &num_buffers, &num_planes,
+		       plane_sizes, q->alloc_ctx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
 	/* Finally, allocate buffers and video memory */
+<<<<<<< HEAD
 	ret = __vb2_queue_alloc(q, req->memory, num_buffers, num_planes);
+=======
+	ret = __vb2_queue_alloc(q, req->memory, num_buffers, num_planes,
+				plane_sizes);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret == 0) {
 		dprintk(1, "Memory allocation failed\n");
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	allocated_buffers = ret;
 
 	/*
@@ -706,17 +894,52 @@ int vb2_create_bufs(struct vb2_queue *q, struct v4l2_create_buffers *create)
 	if (ret < 0) {
 		__vb2_queue_free(q, allocated_buffers);
 		return ret;
+=======
+	/*
+	 * Check if driver can handle the allocated number of buffers.
+	 */
+	if (ret < num_buffers) {
+		unsigned int orig_num_buffers;
+
+		orig_num_buffers = num_buffers = ret;
+		ret = call_qop(q, queue_setup, q, &num_buffers, &num_planes,
+			       plane_sizes, q->alloc_ctx);
+		if (ret)
+			goto free_mem;
+
+		if (orig_num_buffers < num_buffers) {
+			ret = -ENOMEM;
+			goto free_mem;
+		}
+
+		/*
+		 * Ok, driver accepted smaller number of buffers.
+		 */
+		ret = num_buffers;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
 	 * Return the number of successfully allocated buffers
 	 * to the userspace.
 	 */
+<<<<<<< HEAD
 	create->count = allocated_buffers;
 
 	return 0;
 }
 EXPORT_SYMBOL_GPL(vb2_create_bufs);
+=======
+	req->count = ret;
+
+	return 0;
+
+free_mem:
+	__vb2_queue_free(q);
+	return ret;
+}
+EXPORT_SYMBOL_GPL(vb2_reqbufs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * vb2_plane_vaddr() - Return a kernel virtual address of a given plane
@@ -730,10 +953,17 @@ void *vb2_plane_vaddr(struct vb2_buffer *vb, unsigned int plane_no)
 {
 	struct vb2_queue *q = vb->vb2_queue;
 
+<<<<<<< HEAD
 	if (plane_no > vb->num_planes || !vb->planes[plane_no].mem_priv)
 		return NULL;
 
 	return call_memop(q, vaddr, vb->planes[plane_no].mem_priv);
+=======
+	if (plane_no > vb->num_planes)
+		return NULL;
+
+	return call_memop(q, plane_no, vaddr, vb->planes[plane_no].mem_priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 }
 EXPORT_SYMBOL_GPL(vb2_plane_vaddr);
@@ -753,10 +983,17 @@ void *vb2_plane_cookie(struct vb2_buffer *vb, unsigned int plane_no)
 {
 	struct vb2_queue *q = vb->vb2_queue;
 
+<<<<<<< HEAD
 	if (plane_no > vb->num_planes || !vb->planes[plane_no].mem_priv)
 		return NULL;
 
 	return call_memop(q, cookie, vb->planes[plane_no].mem_priv);
+=======
+	if (plane_no > vb->num_planes)
+		return NULL;
+
+	return call_memop(q, plane_no, cookie, vb->planes[plane_no].mem_priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(vb2_plane_cookie);
 
@@ -802,7 +1039,11 @@ EXPORT_SYMBOL_GPL(vb2_buffer_done);
  * __fill_vb2_buffer() - fill a vb2_buffer with information provided in
  * a v4l2_buffer by the userspace
  */
+<<<<<<< HEAD
 static int __fill_vb2_buffer(struct vb2_buffer *vb, const struct v4l2_buffer *b,
+=======
+static int __fill_vb2_buffer(struct vb2_buffer *vb, struct v4l2_buffer *b,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				struct v4l2_plane *v4l2_planes)
 {
 	unsigned int plane;
@@ -866,7 +1107,11 @@ static int __fill_vb2_buffer(struct vb2_buffer *vb, const struct v4l2_buffer *b,
 /**
  * __qbuf_userptr() - handle qbuf of a USERPTR buffer
  */
+<<<<<<< HEAD
 static int __qbuf_userptr(struct vb2_buffer *vb, const struct v4l2_buffer *b)
+=======
+static int __qbuf_userptr(struct vb2_buffer *vb, struct v4l2_buffer *b)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct v4l2_plane planes[VIDEO_MAX_PLANES];
 	struct vb2_queue *q = vb->vb2_queue;
@@ -882,14 +1127,19 @@ static int __qbuf_userptr(struct vb2_buffer *vb, const struct v4l2_buffer *b)
 
 	for (plane = 0; plane < vb->num_planes; ++plane) {
 		/* Skip the plane if already verified */
+<<<<<<< HEAD
 		if (vb->v4l2_planes[plane].m.userptr &&
 		    vb->v4l2_planes[plane].m.userptr == planes[plane].m.userptr
+=======
+		if (vb->v4l2_planes[plane].m.userptr == planes[plane].m.userptr
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    && vb->v4l2_planes[plane].length == planes[plane].length)
 			continue;
 
 		dprintk(3, "qbuf: userspace address for plane %d changed, "
 				"reacquiring memory\n", plane);
 
+<<<<<<< HEAD
 		/* Check if the provided plane buffer is large enough */
 		if (planes[plane].length < q->plane_sizes[plane]) {
 			ret = -EINVAL;
@@ -915,6 +1165,29 @@ static int __qbuf_userptr(struct vb2_buffer *vb, const struct v4l2_buffer *b)
 			goto err;
 		}
 		vb->planes[plane].mem_priv = mem_priv;
+=======
+		/* Release previously acquired memory if present */
+		if (vb->planes[plane].mem_priv)
+			call_memop(q, plane, put_userptr,
+					vb->planes[plane].mem_priv);
+
+		vb->planes[plane].mem_priv = NULL;
+
+		/* Acquire each plane's memory */
+		if (q->mem_ops->get_userptr) {
+			mem_priv = q->mem_ops->get_userptr(q->alloc_ctx[plane],
+							planes[plane].m.userptr,
+							planes[plane].length,
+							write);
+			if (IS_ERR(mem_priv)) {
+				dprintk(1, "qbuf: failed acquiring userspace "
+						"memory for plane %d\n", plane);
+				ret = PTR_ERR(mem_priv);
+				goto err;
+			}
+			vb->planes[plane].mem_priv = mem_priv;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -937,12 +1210,19 @@ static int __qbuf_userptr(struct vb2_buffer *vb, const struct v4l2_buffer *b)
 	return 0;
 err:
 	/* In case of errors, release planes that were already acquired */
+<<<<<<< HEAD
 	for (plane = 0; plane < vb->num_planes; ++plane) {
 		if (vb->planes[plane].mem_priv)
 			call_memop(q, put_userptr, vb->planes[plane].mem_priv);
 		vb->planes[plane].mem_priv = NULL;
 		vb->v4l2_planes[plane].m.userptr = 0;
 		vb->v4l2_planes[plane].length = 0;
+=======
+	for (; plane > 0; --plane) {
+		call_memop(q, plane, put_userptr,
+				vb->planes[plane - 1].mem_priv);
+		vb->planes[plane - 1].mem_priv = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;
@@ -951,7 +1231,11 @@ err:
 /**
  * __qbuf_mmap() - handle qbuf of an MMAP buffer
  */
+<<<<<<< HEAD
 static int __qbuf_mmap(struct vb2_buffer *vb, const struct v4l2_buffer *b)
+=======
+static int __qbuf_mmap(struct vb2_buffer *vb, struct v4l2_buffer *b)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return __fill_vb2_buffer(vb, b, vb->v4l2_planes);
 }
@@ -968,6 +1252,7 @@ static void __enqueue_in_driver(struct vb2_buffer *vb)
 	q->ops->buf_queue(vb);
 }
 
+<<<<<<< HEAD
 static int __buf_prepare(struct vb2_buffer *vb, const struct v4l2_buffer *b)
 {
 	struct vb2_queue *q = vb->vb2_queue;
@@ -1057,6 +1342,8 @@ int vb2_prepare_buf(struct vb2_queue *q, struct v4l2_buffer *b)
 }
 EXPORT_SYMBOL_GPL(vb2_prepare_buf);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * vb2_qbuf() - Queue a buffer from userspace
  * @q:		videobuf2 queue
@@ -1066,8 +1353,13 @@ EXPORT_SYMBOL_GPL(vb2_prepare_buf);
  * Should be called from vidioc_qbuf ioctl handler of a driver.
  * This function:
  * 1) verifies the passed buffer,
+<<<<<<< HEAD
  * 2) if necessary, calls buf_prepare callback in the driver (if provided), in
  *    which driver-specific buffer initialization can be performed,
+=======
+ * 2) calls buf_prepare callback in the driver (if provided), in which
+ *    driver-specific buffer initialization can be performed,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * 3) if streaming is on, queues the buffer in driver by the means of buf_queue
  *    callback for processing.
  *
@@ -1076,6 +1368,7 @@ EXPORT_SYMBOL_GPL(vb2_prepare_buf);
  */
 int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b)
 {
+<<<<<<< HEAD
 	struct rw_semaphore *mmap_sem = NULL;
 	struct vb2_buffer *vb;
 	int ret = 0;
@@ -1107,30 +1400,51 @@ int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b)
 		dprintk(1, "qbuf: file io in progress\n");
 		ret = -EBUSY;
 		goto unlock;
+=======
+	struct vb2_buffer *vb;
+	int ret = 0;
+
+	if (q->fileio) {
+		dprintk(1, "qbuf: file io in progress\n");
+		return -EBUSY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (b->type != q->type) {
 		dprintk(1, "qbuf: invalid buffer type\n");
+<<<<<<< HEAD
 		ret = -EINVAL;
 		goto unlock;
+=======
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (b->index >= q->num_buffers) {
 		dprintk(1, "qbuf: buffer index out of range\n");
+<<<<<<< HEAD
 		ret = -EINVAL;
 		goto unlock;
+=======
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	vb = q->bufs[b->index];
 	if (NULL == vb) {
 		/* Should never happen */
 		dprintk(1, "qbuf: buffer is NULL\n");
+<<<<<<< HEAD
 		ret = -EINVAL;
 		goto unlock;
+=======
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (b->memory != q->memory) {
 		dprintk(1, "qbuf: invalid memory type\n");
+<<<<<<< HEAD
 		ret = -EINVAL;
 		goto unlock;
 	}
@@ -1146,6 +1460,32 @@ int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b)
 		dprintk(1, "qbuf: buffer already in use\n");
 		ret = -EINVAL;
 		goto unlock;
+=======
+		return -EINVAL;
+	}
+
+	if (vb->state != VB2_BUF_STATE_DEQUEUED) {
+		dprintk(1, "qbuf: buffer already in use\n");
+		return -EINVAL;
+	}
+
+	if (q->memory == V4L2_MEMORY_MMAP)
+		ret = __qbuf_mmap(vb, b);
+	else if (q->memory == V4L2_MEMORY_USERPTR)
+		ret = __qbuf_userptr(vb, b);
+	else {
+		WARN(1, "Invalid queue type\n");
+		return -EINVAL;
+	}
+
+	if (ret)
+		return ret;
+
+	ret = call_qop(q, buf_prepare, vb);
+	if (ret) {
+		dprintk(1, "qbuf: buffer preparation failed\n");
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -1162,6 +1502,7 @@ int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b)
 	if (q->streaming)
 		__enqueue_in_driver(vb);
 
+<<<<<<< HEAD
 	/* Fill buffer information for the userspace */
 	__fill_v4l2_buffer(vb, b);
 
@@ -1170,6 +1511,10 @@ unlock:
 	if (mmap_sem)
 		up_read(mmap_sem);
 	return ret;
+=======
+	dprintk(1, "qbuf of buffer %d succeeded\n", vb->v4l2_buf.index);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(vb2_qbuf);
 
@@ -1361,6 +1706,7 @@ int vb2_dqbuf(struct vb2_queue *q, struct v4l2_buffer *b, bool nonblocking)
 EXPORT_SYMBOL_GPL(vb2_dqbuf);
 
 /**
+<<<<<<< HEAD
  * __vb2_queue_cancel() - cancel and stop (pause) streaming
  *
  * Removes all queued buffers from driver's queue and all buffers queued by
@@ -1398,6 +1744,8 @@ static void __vb2_queue_cancel(struct vb2_queue *q)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * vb2_streamon - start streaming
  * @q:		videobuf2 queue
  * @type:	type argument passed from userspace to vidioc_streamon handler
@@ -1405,7 +1753,11 @@ static void __vb2_queue_cancel(struct vb2_queue *q)
  * Should be called from vidioc_streamon handler of a driver.
  * This function:
  * 1) verifies current state
+<<<<<<< HEAD
  * 2) passes any previously queued buffers to the driver and starts streaming
+=======
+ * 2) starts streaming and passes any previously queued buffers to the driver
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * The return values from this function are intended to be directly returned
  * from vidioc_streamon handler in the driver.
@@ -1431,29 +1783,96 @@ int vb2_streamon(struct vb2_queue *q, enum v4l2_buf_type type)
 	}
 
 	/*
+<<<<<<< HEAD
+	 * If any buffers were queued before streamon,
+	 * we can now pass them to driver for processing.
+	 */
+	list_for_each_entry(vb, &q->queued_list, queued_entry)
+		__enqueue_in_driver(vb);
+=======
+	 * Cannot start streaming on an OUTPUT device if no buffers have
+	 * been queued yet.
+	 */
+	if (V4L2_TYPE_IS_OUTPUT(q->type)) {
+		if (list_empty(&q->queued_list)) {
+			dprintk(1, "streamon: no output buffers queued\n");
+			return -EINVAL;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+
+	/*
+	 * Let driver notice that streaming state has been enabled.
+	 */
+<<<<<<< HEAD
+	ret = call_qop(q, start_streaming, q, atomic_read(&q->queued_count));
+	if (ret) {
+		dprintk(1, "streamon: driver refused to start streaming\n");
+		__vb2_queue_cancel(q);
+=======
+	ret = call_qop(q, start_streaming, q);
+	if (ret) {
+		dprintk(1, "streamon: driver refused to start streaming\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+		return ret;
+	}
+
+	q->streaming = 1;
+
+<<<<<<< HEAD
+=======
+	/*
 	 * If any buffers were queued before streamon,
 	 * we can now pass them to driver for processing.
 	 */
 	list_for_each_entry(vb, &q->queued_list, queued_entry)
 		__enqueue_in_driver(vb);
 
-	/*
-	 * Let driver notice that streaming state has been enabled.
-	 */
-	ret = call_qop(q, start_streaming, q, atomic_read(&q->queued_count));
-	if (ret) {
-		dprintk(1, "streamon: driver refused to start streaming\n");
-		__vb2_queue_cancel(q);
-		return ret;
-	}
-
-	q->streaming = 1;
-
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dprintk(3, "Streamon successful\n");
 	return 0;
 }
 EXPORT_SYMBOL_GPL(vb2_streamon);
 
+<<<<<<< HEAD
+=======
+/**
+ * __vb2_queue_cancel() - cancel and stop (pause) streaming
+ *
+ * Removes all queued buffers from driver's queue and all buffers queued by
+ * userspace from videobuf's queue. Returns to state after reqbufs.
+ */
+static void __vb2_queue_cancel(struct vb2_queue *q)
+{
+	unsigned int i;
+
+	/*
+	 * Tell driver to stop all transactions and release all queued
+	 * buffers.
+	 */
+	if (q->streaming)
+		call_qop(q, stop_streaming, q);
+	q->streaming = 0;
+
+	/*
+	 * Remove all buffers from videobuf's list...
+	 */
+	INIT_LIST_HEAD(&q->queued_list);
+	/*
+	 * ...and done list; userspace will not receive any buffers it
+	 * has not already dequeued before initiating cancel.
+	 */
+	INIT_LIST_HEAD(&q->done_list);
+	atomic_set(&q->queued_count, 0);
+	wake_up_all(&q->done_wq);
+
+	/*
+	 * Reinitialize all buffers for next use.
+	 */
+	for (i = 0; i < q->num_buffers; ++i)
+		q->bufs[i]->state = VB2_BUF_STATE_DEQUEUED;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * vb2_streamoff - stop streaming
@@ -1549,6 +1968,10 @@ static int __find_plane_by_offset(struct vb2_queue *q, unsigned long off,
 int vb2_mmap(struct vb2_queue *q, struct vm_area_struct *vma)
 {
 	unsigned long off = vma->vm_pgoff << PAGE_SHIFT;
+<<<<<<< HEAD
+=======
+	struct vb2_plane *vb_plane;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct vb2_buffer *vb;
 	unsigned int buffer, plane;
 	int ret;
@@ -1585,16 +2008,29 @@ int vb2_mmap(struct vb2_queue *q, struct vm_area_struct *vma)
 		return ret;
 
 	vb = q->bufs[buffer];
+<<<<<<< HEAD
 
 	ret = call_memop(q, mmap, vb->planes[plane].mem_priv, vma);
 	if (ret)
 		return ret;
 
+=======
+	vb_plane = &vb->planes[plane];
+
+	ret = q->mem_ops->mmap(vb_plane->mem_priv, vma);
+	if (ret)
+		return ret;
+
+	vb_plane->mapped = 1;
+	vb->num_planes_mapped++;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dprintk(3, "Buffer %d, plane %d successfully mapped\n", buffer, plane);
 	return 0;
 }
 EXPORT_SYMBOL_GPL(vb2_mmap);
 
+<<<<<<< HEAD
 #ifndef CONFIG_MMU
 unsigned long vb2_get_unmapped_area(struct vb2_queue *q,
 				    unsigned long addr,
@@ -1626,6 +2062,8 @@ unsigned long vb2_get_unmapped_area(struct vb2_queue *q,
 EXPORT_SYMBOL_GPL(vb2_get_unmapped_area);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __vb2_init_fileio(struct vb2_queue *q, int read);
 static int __vb2_cleanup_fileio(struct vb2_queue *q);
 
@@ -1743,7 +2181,11 @@ void vb2_queue_release(struct vb2_queue *q)
 {
 	__vb2_cleanup_fileio(q);
 	__vb2_queue_cancel(q);
+<<<<<<< HEAD
 	__vb2_queue_free(q, q->num_buffers);
+=======
+	__vb2_queue_free(q);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(vb2_queue_release);
 

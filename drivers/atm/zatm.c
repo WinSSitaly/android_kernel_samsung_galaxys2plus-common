@@ -16,7 +16,10 @@
 #include <linux/delay.h>
 #include <linux/uio.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/dma-mapping.h>
 #include <linux/atm_zatm.h>
 #include <linux/capability.h>
@@ -24,9 +27,16 @@
 #include <linux/wait.h>
 #include <linux/slab.h>
 #include <asm/byteorder.h>
+<<<<<<< HEAD
 #include <asm/string.h>
 #include <asm/io.h>
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <asm/string.h>
+#include <asm/io.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 
 #include "uPD98401.h"

@@ -80,6 +80,7 @@ available tools.
 The limit on the length of lines is 80 columns and this is a strongly
 preferred limit.
 
+<<<<<<< HEAD
 Statements longer than 80 columns will be broken into sensible chunks, unless
 exceeding 80 columns significantly increases readability and does not hide
 information. Descendants are always substantially shorter than the parent and
@@ -87,6 +88,24 @@ are placed substantially to the right. The same applies to function headers
 with a long argument list. However, never break user-visible strings such as
 printk messages, because that breaks the ability to grep for them.
 
+=======
+Statements longer than 80 columns will be broken into sensible chunks.
+Descendants are always substantially shorter than the parent and are placed
+substantially to the right. The same applies to function headers with a long
+argument list. Long strings are as well broken into shorter strings. The
+only exception to this is where exceeding 80 columns significantly increases
+readability and does not hide information.
+
+void fun(int a, int b, int c)
+{
+	if (condition)
+		printk(KERN_WARNING "Warning this is a long printk with "
+						"3 parameters a: %u b: %u "
+						"c: %u \n", a, b, c);
+	else
+		next_statement;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		Chapter 3: Placing Braces and Spaces
 
@@ -166,8 +185,13 @@ if (condition)
 else
 	do_that();
 
+<<<<<<< HEAD
 This does not apply if only one branch of a conditional statement is a single
 statement; in the latter case use braces in both branches:
+=======
+This does not apply if one branch of a conditional statement is a single
+statement. Use braces in both branches.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 if (condition) {
 	do_this();
@@ -793,6 +817,7 @@ own custom mode, or may have some other magic method for making indentation
 work correctly.
 
 
+<<<<<<< HEAD
 		Chapter 19:  Inline assembly
 
 In architecture-specific code, you may need to use inline assembly to interface
@@ -822,6 +847,8 @@ next instruction in the assembly output:
 	     : /* outputs */ : /* inputs */ : /* clobbers */);
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		Appendix I: References
 

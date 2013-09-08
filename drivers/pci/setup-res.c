@@ -18,7 +18,10 @@
 
 #include <linux/init.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pci.h>
 #include <linux/errno.h>
 #include <linux/ioport.h>
@@ -75,7 +78,12 @@ void pci_update_resource(struct pci_dev *dev, int resno)
 			resno, new, check);
 	}
 
+<<<<<<< HEAD
 	if (res->flags & IORESOURCE_MEM_64) {
+=======
+	if ((new & (PCI_BASE_ADDRESS_SPACE|PCI_BASE_ADDRESS_MEM_TYPE_MASK)) ==
+	    (PCI_BASE_ADDRESS_SPACE_MEMORY|PCI_BASE_ADDRESS_MEM_TYPE_64)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		new = region.start >> 16 >> 16;
 		pci_write_config_dword(dev, reg + 4, new);
 		pci_read_config_dword(dev, reg + 4, &check);
@@ -85,9 +93,15 @@ void pci_update_resource(struct pci_dev *dev, int resno)
 		}
 	}
 	res->flags &= ~IORESOURCE_UNSET;
+<<<<<<< HEAD
 	dev_dbg(&dev->dev, "BAR %d: set to %pR (PCI address [%#llx-%#llx])\n",
 		resno, res, (unsigned long long)region.start,
 		(unsigned long long)region.end);
+=======
+	dev_info(&dev->dev, "BAR %d: set to %pR (PCI address [%#llx-%#llx])\n",
+		 resno, res, (unsigned long long)region.start,
+		 (unsigned long long)region.end);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int pci_claim_resource(struct pci_dev *dev, int resource)
@@ -114,6 +128,10 @@ int pci_claim_resource(struct pci_dev *dev, int resource)
 }
 EXPORT_SYMBOL(pci_claim_resource);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_PCI_QUIRKS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void pci_disable_bridge_window(struct pci_dev *dev)
 {
 	dev_info(&dev->dev, "disabling bridge mem windows\n");
@@ -126,6 +144,7 @@ void pci_disable_bridge_window(struct pci_dev *dev)
 	pci_write_config_dword(dev, PCI_PREF_MEMORY_BASE, 0x0000fff0);
 	pci_write_config_dword(dev, PCI_PREF_BASE_UPPER32, 0xffffffff);
 }
+<<<<<<< HEAD
 
 static int __pci_assign_resource(struct pci_bus *bus, struct pci_dev *dev,
 		int resno, resource_size_t size, resource_size_t align)
@@ -135,6 +154,20 @@ static int __pci_assign_resource(struct pci_bus *bus, struct pci_dev *dev,
 	int ret;
 
 	min = (res->flags & IORESOURCE_IO) ? PCIBIOS_MIN_IO : PCIBIOS_MIN_MEM;
+=======
+#endif	/* CONFIG_PCI_QUIRKS */
+
+static int __pci_assign_resource(struct pci_bus *bus, struct pci_dev *dev,
+				 int resno)
+{
+	struct resource *res = dev->resource + resno;
+	resource_size_t size, min, align;
+	int ret;
+
+	size = resource_size(res);
+	min = (res->flags & IORESOURCE_IO) ? PCIBIOS_MIN_IO : PCIBIOS_MIN_MEM;
+	align = pci_resource_alignment(dev, res);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* First, try exact prefetching match.. */
 	ret = pci_bus_alloc_resource(bus, res, size, align, min,
@@ -151,6 +184,7 @@ static int __pci_assign_resource(struct pci_bus *bus, struct pci_dev *dev,
 		ret = pci_bus_alloc_resource(bus, res, size, align, min, 0,
 					     pcibios_align_resource, dev);
 	}
+<<<<<<< HEAD
 	return ret;
 }
 
@@ -186,10 +220,24 @@ static int pci_revert_fw_address(struct resource *res, struct pci_dev *dev,
 
 	root = pci_find_parent_resource(dev, res);
 	if (!root) {
+=======
+
+	if (ret < 0 && dev->fw_addr[resno]) {
+		struct resource *root, *conflict;
+		resource_size_t start, end;
+
+		/*
+		 * If we failed to assign anything, let's try the address
+		 * where firmware left it.  That at least has a chance of
+		 * working, which is better than just leaving it disabled.
+		 */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (res->flags & IORESOURCE_IO)
 			root = &ioport_resource;
 		else
 			root = &iomem_resource;
+<<<<<<< HEAD
 	}
 
 	dev_info(&dev->dev, "BAR %d: trying firmware assignment %pR\n",
@@ -209,15 +257,68 @@ static int pci_revert_fw_address(struct resource *res, struct pci_dev *dev,
 static int _pci_assign_resource(struct pci_dev *dev, int resno, int size, resource_size_t min_align)
 {
 	struct resource *res = dev->resource + resno;
+=======
+
+		start = res->start;
+		end = res->end;
+		res->start = dev->fw_addr[resno];
+		res->end = res->start + size - 1;
+		dev_info(&dev->dev, "BAR %d: trying firmware assignment %pR\n",
+			 resno, res);
+		conflict = request_resource_conflict(root, res);
+		if (conflict) {
+			dev_info(&dev->dev,
+				 "BAR %d: %pR conflicts with %s %pR\n", resno,
+				 res, conflict->name, conflict);
+			res->start = start;
+			res->end = end;
+		} else
+			ret = 0;
+	}
+
+	if (!ret) {
+		res->flags &= ~IORESOURCE_STARTALIGN;
+		dev_info(&dev->dev, "BAR %d: assigned %pR\n", resno, res);
+		if (resno < PCI_BRIDGE_RESOURCES)
+			pci_update_resource(dev, resno);
+	}
+
+	return ret;
+}
+
+int pci_assign_resource(struct pci_dev *dev, int resno)
+{
+	struct resource *res = dev->resource + resno;
+	resource_size_t align;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pci_bus *bus;
 	int ret;
 	char *type;
 
+<<<<<<< HEAD
 	bus = dev->bus;
 	while ((ret = __pci_assign_resource(bus, dev, resno, size, min_align))) {
 		if (!bus->parent || !bus->self->transparent)
 			break;
 		bus = bus->parent;
+=======
+	align = pci_resource_alignment(dev, res);
+	if (!align) {
+		dev_info(&dev->dev, "BAR %d: can't assign %pR "
+			 "(bogus alignment)\n", resno, res);
+		return -EINVAL;
+	}
+
+	bus = dev->bus;
+	while ((ret = __pci_assign_resource(bus, dev, resno))) {
+		if (bus->parent && bus->self->transparent)
+			bus = bus->parent;
+		else
+			bus = NULL;
+		if (bus)
+			continue;
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (ret) {
@@ -238,6 +339,7 @@ static int _pci_assign_resource(struct pci_dev *dev, int resno, int size, resour
 	return ret;
 }
 
+<<<<<<< HEAD
 int pci_reassign_resource(struct pci_dev *dev, int resno, resource_size_t addsize,
 			resource_size_t min_align)
 {
@@ -296,6 +398,52 @@ int pci_assign_resource(struct pci_dev *dev, int resno)
 			pci_update_resource(dev, resno);
 	}
 	return ret;
+=======
+/* Sort resources by alignment */
+void pdev_sort_resources(struct pci_dev *dev, struct resource_list *head)
+{
+	int i;
+
+	for (i = 0; i < PCI_NUM_RESOURCES; i++) {
+		struct resource *r;
+		struct resource_list *list, *tmp;
+		resource_size_t r_align;
+
+		r = &dev->resource[i];
+
+		if (r->flags & IORESOURCE_PCI_FIXED)
+			continue;
+
+		if (!(r->flags) || r->parent)
+			continue;
+
+		r_align = pci_resource_alignment(dev, r);
+		if (!r_align) {
+			dev_warn(&dev->dev, "BAR %d: %pR has bogus alignment\n",
+				 i, r);
+			continue;
+		}
+		for (list = head; ; list = list->next) {
+			resource_size_t align = 0;
+			struct resource_list *ln = list->next;
+
+			if (ln)
+				align = pci_resource_alignment(ln->dev, ln->res);
+
+			if (r_align > align) {
+				tmp = kmalloc(sizeof(*tmp), GFP_KERNEL);
+				if (!tmp)
+					panic("pdev_sort_resources(): "
+					      "kmalloc() failed!\n");
+				tmp->next = ln;
+				tmp->res = r;
+				tmp->dev = dev;
+				list->next = tmp;
+				break;
+			}
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int pci_enable_resources(struct pci_dev *dev, int mask)

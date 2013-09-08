@@ -3,7 +3,11 @@
   * global variable declaration.
   */
 #ifndef _LBS_DEB_DEFS_H_
+<<<<<<< HEAD
 #define _LBS_DEB_DEFS_H_
+=======
+#define _LBS_DEB_EFS_H_
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifndef DRV_NAME
 #define DRV_NAME "libertas_tf"

@@ -7,6 +7,10 @@
  */
 
 #include <linux/module.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/errno.h>
 #include <linux/pm.h>
@@ -146,7 +150,11 @@ static int adp8860_set_bits(struct i2c_client *client, int reg, uint8_t bit_mask
 
 	ret = adp8860_read(client, reg, &reg_val);
 
+<<<<<<< HEAD
 	if (!ret && ((reg_val & bit_mask) != bit_mask)) {
+=======
+	if (!ret && ((reg_val & bit_mask) == 0)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reg_val |= bit_mask;
 		ret = adp8860_write(client, reg, reg_val);
 	}
@@ -721,7 +729,12 @@ static int __devinit adp8860_probe(struct i2c_client *client,
 		goto out2;
 	}
 
+<<<<<<< HEAD
 	bl->props.brightness = ADP8860_MAX_BRIGHTNESS;
+=======
+	bl->props.max_brightness =
+		bl->props.brightness = ADP8860_MAX_BRIGHTNESS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	data->bl = bl;
 
@@ -791,7 +804,11 @@ static int adp8860_i2c_suspend(struct i2c_client *client, pm_message_t message)
 
 static int adp8860_i2c_resume(struct i2c_client *client)
 {
+<<<<<<< HEAD
 	adp8860_set_bits(client, ADP8860_MDCR, NSTBY | BLEN);
+=======
+	adp8860_set_bits(client, ADP8860_MDCR, NSTBY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -819,7 +836,21 @@ static struct i2c_driver adp8860_driver = {
 	.id_table = adp8860_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(adp8860_driver);
+=======
+static int __init adp8860_init(void)
+{
+	return i2c_add_driver(&adp8860_driver);
+}
+module_init(adp8860_init);
+
+static void __exit adp8860_exit(void)
+{
+	i2c_del_driver(&adp8860_driver);
+}
+module_exit(adp8860_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL v2");
 MODULE_AUTHOR("Michael Hennerich <hennerich@blackfin.uclinux.org>");

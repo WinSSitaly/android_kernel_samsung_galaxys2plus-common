@@ -21,7 +21,10 @@
 #include <linux/clk.h>
 #include <linux/interrupt.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/regulator/consumer.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <plat/regs-adc.h>
 #include <plat/adc.h>
@@ -40,11 +43,16 @@
  */
 
 enum s3c_cpu_type {
+<<<<<<< HEAD
 	TYPE_ADCV1, /* S3C24XX */
 	TYPE_ADCV11, /* S3C2443 */
 	TYPE_ADCV12, /* S3C2416, S3C2450 */
 	TYPE_ADCV2, /* S3C64XX, S5P64X0, S5PC100 */
 	TYPE_ADCV3, /* S5PV210, S5PC110, EXYNOS4210 */
+=======
+	TYPE_S3C24XX,
+	TYPE_S3C64XX
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct s3c_adc_client {
@@ -75,7 +83,10 @@ struct adc_device {
 	unsigned int		 prescale;
 
 	int			 irq;
+<<<<<<< HEAD
 	struct regulator	*vdd;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct adc_device *adc_dev;
@@ -96,6 +107,7 @@ static inline void s3c_adc_select(struct adc_device *adc,
 				  struct s3c_adc_client *client)
 {
 	unsigned con = readl(adc->regs + S3C2410_ADCCON);
+<<<<<<< HEAD
 	enum s3c_cpu_type cpu = platform_get_device_id(adc->pdev)->driver_data;
 
 	client->select_cb(client, 1);
@@ -114,6 +126,17 @@ static inline void s3c_adc_select(struct adc_device *adc,
 		else
 			con |= S3C2410_ADCCON_SELMUX(client->channel);
 	}
+=======
+
+	client->select_cb(client, 1);
+
+	con &= ~S3C2410_ADCCON_MUXMASK;
+	con &= ~S3C2410_ADCCON_STDBM;
+	con &= ~S3C2410_ADCCON_STARTMASK;
+
+	if (!client->is_ts)
+		con |= S3C2410_ADCCON_SELMUX(client->channel);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	writel(con, adc->regs + S3C2410_ADCCON);
 }
@@ -157,12 +180,19 @@ int s3c_adc_start(struct s3c_adc_client *client,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&adc->lock, flags);
 
 	if (client->is_ts && adc->ts_pend) {
 		spin_unlock_irqrestore(&adc->lock, flags);
 		return -EAGAIN;
 	}
+=======
+	if (client->is_ts && adc->ts_pend)
+		return -EAGAIN;
+
+	spin_lock_irqsave(&adc->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	client->channel = channel;
 	client->nr_samples = nr_samples;
@@ -301,6 +331,7 @@ static irqreturn_t s3c_adc_irq(int irq, void *pw)
 
 	client->nr_samples--;
 
+<<<<<<< HEAD
 	if (cpu == TYPE_ADCV1 || cpu == TYPE_ADCV11) {
 		data0 &= 0x3ff;
 		data1 &= 0x3ff;
@@ -308,6 +339,15 @@ static irqreturn_t s3c_adc_irq(int irq, void *pw)
 		/* S3C2416/S3C64XX/S5P ADC resolution is 12-bit */
 		data0 &= 0xfff;
 		data1 &= 0xfff;
+=======
+	if (cpu == TYPE_S3C64XX) {
+		/* S3C64XX ADC resolution is 12-bit */
+		data0 &= 0xfff;
+		data1 &= 0xfff;
+	} else {
+		data0 &= 0x3ff;
+		data1 &= 0x3ff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (client->convert_cb)
@@ -328,7 +368,11 @@ static irqreturn_t s3c_adc_irq(int irq, void *pw)
 	}
 
 exit:
+<<<<<<< HEAD
 	if (cpu == TYPE_ADCV2 || cpu == TYPE_ADCV3) {
+=======
+	if (cpu == TYPE_S3C64XX) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Clear ADC interrupt */
 		writel(0, adc->regs + S3C64XX_ADCCLRINT);
 	}
@@ -340,7 +384,10 @@ static int s3c_adc_probe(struct platform_device *pdev)
 	struct device *dev = &pdev->dev;
 	struct adc_device *adc;
 	struct resource *regs;
+<<<<<<< HEAD
 	enum s3c_cpu_type cpu = platform_get_device_id(pdev)->driver_data;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 	unsigned tmp;
 
@@ -355,6 +402,7 @@ static int s3c_adc_probe(struct platform_device *pdev)
 	adc->pdev = pdev;
 	adc->prescale = S3C2410_ADCCON_PRSCVL(49);
 
+<<<<<<< HEAD
 	adc->vdd = regulator_get(dev, "vdd");
 	if (IS_ERR(adc->vdd)) {
 		dev_err(dev, "operating without regulator \"vdd\" .\n");
@@ -362,17 +410,27 @@ static int s3c_adc_probe(struct platform_device *pdev)
 		goto err_alloc;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	adc->irq = platform_get_irq(pdev, 1);
 	if (adc->irq <= 0) {
 		dev_err(dev, "failed to get adc irq\n");
 		ret = -ENOENT;
+<<<<<<< HEAD
 		goto err_reg;
+=======
+		goto err_alloc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ret = request_irq(adc->irq, s3c_adc_irq, 0, dev_name(dev), adc);
 	if (ret < 0) {
 		dev_err(dev, "failed to attach adc irq\n");
+<<<<<<< HEAD
 		goto err_reg;
+=======
+		goto err_alloc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	adc->clk = clk_get(dev, "adc");
@@ -396,6 +454,7 @@ static int s3c_adc_probe(struct platform_device *pdev)
 		goto err_clk;
 	}
 
+<<<<<<< HEAD
 	ret = regulator_enable(adc->vdd);
 	if (ret)
 		goto err_ioremap;
@@ -410,6 +469,15 @@ static int s3c_adc_probe(struct platform_device *pdev)
 	if (cpu == TYPE_ADCV2 || cpu == TYPE_ADCV3)
 		tmp |= S3C64XX_ADCCON_RESSEL;
 
+=======
+	clk_enable(adc->clk);
+
+	tmp = adc->prescale | S3C2410_ADCCON_PRSCEN;
+	if (platform_get_device_id(pdev)->driver_data == TYPE_S3C64XX) {
+		/* Enable 12-bit ADC resolution */
+		tmp |= S3C64XX_ADCCON_RESSEL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writel(tmp, adc->regs + S3C2410_ADCCON);
 
 	dev_info(dev, "attached adc driver\n");
@@ -419,15 +487,22 @@ static int s3c_adc_probe(struct platform_device *pdev)
 
 	return 0;
 
+<<<<<<< HEAD
  err_ioremap:
 	iounmap(adc->regs);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  err_clk:
 	clk_put(adc->clk);
 
  err_irq:
 	free_irq(adc->irq, adc);
+<<<<<<< HEAD
  err_reg:
 	regulator_put(adc->vdd);
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  err_alloc:
 	kfree(adc);
 	return ret;
@@ -440,8 +515,11 @@ static int __devexit s3c_adc_remove(struct platform_device *pdev)
 	iounmap(adc->regs);
 	free_irq(adc->irq, adc);
 	clk_disable(adc->clk);
+<<<<<<< HEAD
 	regulator_disable(adc->vdd);
 	regulator_put(adc->vdd);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clk_put(adc->clk);
 	kfree(adc);
 
@@ -449,10 +527,15 @@ static int __devexit s3c_adc_remove(struct platform_device *pdev)
 }
 
 #ifdef CONFIG_PM
+<<<<<<< HEAD
 static int s3c_adc_suspend(struct device *dev)
 {
 	struct platform_device *pdev = container_of(dev,
 			struct platform_device, dev);
+=======
+static int s3c_adc_suspend(struct platform_device *pdev, pm_message_t state)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct adc_device *adc = platform_get_drvdata(pdev);
 	unsigned long flags;
 	u32 con;
@@ -466,11 +549,15 @@ static int s3c_adc_suspend(struct device *dev)
 	disable_irq(adc->irq);
 	spin_unlock_irqrestore(&adc->lock, flags);
 	clk_disable(adc->clk);
+<<<<<<< HEAD
 	regulator_disable(adc->vdd);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int s3c_adc_resume(struct device *dev)
 {
 	struct platform_device *pdev = container_of(dev,
@@ -495,6 +582,17 @@ static int s3c_adc_resume(struct device *dev)
 		tmp |= S3C64XX_ADCCON_RESSEL;
 
 	writel(tmp, adc->regs + S3C2410_ADCCON);
+=======
+static int s3c_adc_resume(struct platform_device *pdev)
+{
+	struct adc_device *adc = platform_get_drvdata(pdev);
+
+	clk_enable(adc->clk);
+	enable_irq(adc->irq);
+
+	writel(adc->prescale | S3C2410_ADCCON_PRSCEN,
+	       adc->regs + S3C2410_ADCCON);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -507,6 +605,7 @@ static int s3c_adc_resume(struct device *dev)
 static struct platform_device_id s3c_adc_driver_ids[] = {
 	{
 		.name           = "s3c24xx-adc",
+<<<<<<< HEAD
 		.driver_data    = TYPE_ADCV1,
 	}, {
 		.name		= "s3c2443-adc",
@@ -520,25 +619,42 @@ static struct platform_device_id s3c_adc_driver_ids[] = {
 	}, {
 		.name		= "samsung-adc-v3",
 		.driver_data	= TYPE_ADCV3,
+=======
+		.driver_data    = TYPE_S3C24XX,
+	}, {
+		.name           = "s3c64xx-adc",
+		.driver_data    = TYPE_S3C64XX,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{ }
 };
 MODULE_DEVICE_TABLE(platform, s3c_adc_driver_ids);
 
+<<<<<<< HEAD
 static const struct dev_pm_ops adc_pm_ops = {
 	.suspend	= s3c_adc_suspend,
 	.resume		= s3c_adc_resume,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver s3c_adc_driver = {
 	.id_table	= s3c_adc_driver_ids,
 	.driver		= {
 		.name	= "s3c-adc",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.pm	= &adc_pm_ops,
 	},
 	.probe		= s3c_adc_probe,
 	.remove		= __devexit_p(s3c_adc_remove),
+=======
+	},
+	.probe		= s3c_adc_probe,
+	.remove		= __devexit_p(s3c_adc_remove),
+	.suspend	= s3c_adc_suspend,
+	.resume		= s3c_adc_resume,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init adc_init(void)
@@ -552,4 +668,8 @@ static int __init adc_init(void)
 	return ret;
 }
 
+<<<<<<< HEAD
 module_init(adc_init);
+=======
+arch_initcall(adc_init);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

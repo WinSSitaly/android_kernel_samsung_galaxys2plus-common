@@ -37,8 +37,11 @@
 #include "cx23885-ioctl.h"
 #include "tuner-xc2028.h"
 
+<<<<<<< HEAD
 #include <media/cx25840.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("v4l2 driver module for cx23885 based TV cards");
 MODULE_AUTHOR("Steven Toth <stoth@linuxtv.org>");
 MODULE_LICENSE("GPL");
@@ -71,14 +74,22 @@ MODULE_PARM_DESC(vid_limit, "capture memory limit in megabytes");
 
 #define dprintk(level, fmt, arg...)\
 	do { if (video_debug >= level)\
+<<<<<<< HEAD
 		printk(KERN_DEBUG "%s: " fmt, dev->name, ## arg);\
+=======
+		printk(KERN_DEBUG "%s/0: " fmt, dev->name, ## arg);\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} while (0)
 
 /* ------------------------------------------------------------------- */
 /* static data                                                         */
 
 #define FORMAT_FLAGS_PACKED       0x01
+<<<<<<< HEAD
 #if 0
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct cx23885_fmt formats[] = {
 	{
 		.name     = "8 bpp, gray",
@@ -132,6 +143,7 @@ static struct cx23885_fmt formats[] = {
 		.flags    = FORMAT_FLAGS_PACKED,
 	},
 };
+<<<<<<< HEAD
 #else
 static struct cx23885_fmt formats[] = {
 	{
@@ -149,6 +161,8 @@ static struct cx23885_fmt formats[] = {
 	}
 };
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct cx23885_fmt *format_by_fourcc(unsigned int fourcc)
 {
@@ -158,12 +172,16 @@ static struct cx23885_fmt *format_by_fourcc(unsigned int fourcc)
 		if (formats[i].fourcc == fourcc)
 			return formats+i;
 
+<<<<<<< HEAD
 	printk(KERN_ERR "%s(%c%c%c%c) NOT FOUND\n", __func__,
 		(fourcc & 0xff),
 		((fourcc >> 8) & 0xff),
 		((fourcc >> 16) & 0xff),
 		((fourcc >> 24) & 0xff)
 		);
+=======
+	printk(KERN_ERR "%s(0x%08x) NOT FOUND\n", __func__, fourcc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NULL;
 }
 
@@ -195,7 +213,11 @@ static struct cx23885_ctrl cx23885_ctls[] = {
 			.id            = V4L2_CID_CONTRAST,
 			.name          = "Contrast",
 			.minimum       = 0,
+<<<<<<< HEAD
 			.maximum       = 0x7f,
+=======
+			.maximum       = 0xff,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.step          = 1,
 			.default_value = 0x3f,
 			.type          = V4L2_CTRL_TYPE_INTEGER,
@@ -208,10 +230,17 @@ static struct cx23885_ctrl cx23885_ctls[] = {
 		.v = {
 			.id            = V4L2_CID_HUE,
 			.name          = "Hue",
+<<<<<<< HEAD
 			.minimum       = -127,
 			.maximum       = 128,
 			.step          = 1,
 			.default_value = 0x0,
+=======
+			.minimum       = 0,
+			.maximum       = 0xff,
+			.step          = 1,
+			.default_value = 0x7f,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.type          = V4L2_CTRL_TYPE_INTEGER,
 		},
 		.off                   = 128,
@@ -226,9 +255,15 @@ static struct cx23885_ctrl cx23885_ctls[] = {
 			.id            = V4L2_CID_SATURATION,
 			.name          = "Saturation",
 			.minimum       = 0,
+<<<<<<< HEAD
 			.maximum       = 0x7f,
 			.step          = 1,
 			.default_value = 0x3f,
+=======
+			.maximum       = 0xff,
+			.step          = 1,
+			.default_value = 0x7f,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.type          = V4L2_CTRL_TYPE_INTEGER,
 		},
 		.off                   = 0,
@@ -253,9 +288,15 @@ static struct cx23885_ctrl cx23885_ctls[] = {
 			.id            = V4L2_CID_AUDIO_VOLUME,
 			.name          = "Volume",
 			.minimum       = 0,
+<<<<<<< HEAD
 			.maximum       = 65535,
 			.step          = 65535 / 100,
 			.default_value = 65535,
+=======
+			.maximum       = 0x3f,
+			.step          = 1,
+			.default_value = 0x3f,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.type          = V4L2_CTRL_TYPE_INTEGER,
 		},
 		.reg                   = PATH1_VOL_CTL,
@@ -282,8 +323,13 @@ static const u32 *ctrl_classes[] = {
 	NULL
 };
 
+<<<<<<< HEAD
 void cx23885_video_wakeup(struct cx23885_dev *dev,
 	struct cx23885_dmaqueue *q, u32 count)
+=======
+static void cx23885_video_wakeup(struct cx23885_dev *dev,
+		 struct cx23885_dmaqueue *q, u32 count)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cx23885_buffer *buf;
 	int bc;
@@ -316,7 +362,11 @@ void cx23885_video_wakeup(struct cx23885_dev *dev,
 			__func__, bc);
 }
 
+<<<<<<< HEAD
 int cx23885_set_tvnorm(struct cx23885_dev *dev, v4l2_std_id norm)
+=======
+static int cx23885_set_tvnorm(struct cx23885_dev *dev, v4l2_std_id norm)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	dprintk(1, "%s(norm = 0x%08x) name: [%s]\n",
 		__func__,
@@ -344,8 +394,13 @@ static struct video_device *cx23885_vdev_init(struct cx23885_dev *dev,
 	*vfd = *template;
 	vfd->v4l2_dev = &dev->v4l2_dev;
 	vfd->release = video_device_release;
+<<<<<<< HEAD
 	snprintf(vfd->name, sizeof(vfd->name), "%s (%s)",
 		 cx23885_boards[dev->board].name, type);
+=======
+	snprintf(vfd->name, sizeof(vfd->name), "%s %s (%s)",
+		 dev->name, type, cx23885_boards[dev->board].name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	video_set_drvdata(vfd, dev);
 	return vfd;
 }
@@ -417,6 +472,7 @@ static void res_free(struct cx23885_dev *dev, struct cx23885_fh *fh,
 	mutex_unlock(&dev->lock);
 }
 
+<<<<<<< HEAD
 static int cx23885_flatiron_write(struct cx23885_dev *dev, u8 reg, u8 data)
 {
 	/* 8 bit registers, 8 bit values */
@@ -482,6 +538,8 @@ static int cx23885_flatiron_mux(struct cx23885_dev *dev, int input)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int cx23885_video_mux(struct cx23885_dev *dev, unsigned int input)
 {
 	dprintk(1, "%s() video_mux: %d [vmux=%d, gpio=0x%x,0x%x,0x%x,0x%x]\n",
@@ -492,8 +550,12 @@ static int cx23885_video_mux(struct cx23885_dev *dev, unsigned int input)
 	dev->input = input;
 
 	if (dev->board == CX23885_BOARD_MYGICA_X8506 ||
+<<<<<<< HEAD
 		dev->board == CX23885_BOARD_MAGICPRO_PROHDTVE2 ||
 		dev->board == CX23885_BOARD_MYGICA_X8507) {
+=======
+		dev->board == CX23885_BOARD_MAGICPRO_PROHDTVE2) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Select Analog TV */
 		if (INPUT(input)->type == CX23885_VMUX_TELEVISION)
 			cx23885_gpio_clear(dev, GPIO_0);
@@ -503,6 +565,7 @@ static int cx23885_video_mux(struct cx23885_dev *dev, unsigned int input)
 	v4l2_subdev_call(dev->sd_cx25840, video, s_routing,
 			INPUT(input)->vmux, 0, 0);
 
+<<<<<<< HEAD
 	if ((dev->board == CX23885_BOARD_HAUPPAUGE_HVR1800) ||
 		(dev->board == CX23885_BOARD_MPX885) ||
 		(dev->board == CX23885_BOARD_HAUPPAUGE_HVR1850)) {
@@ -545,18 +608,38 @@ static int cx23885_audio_mux(struct cx23885_dev *dev, unsigned int input)
 }
 
 /* ------------------------------------------------------------------ */
+=======
+	return 0;
+}
+
+/* ------------------------------------------------------------------ */
+static int cx23885_set_scale(struct cx23885_dev *dev, unsigned int width,
+	unsigned int height, enum v4l2_field field)
+{
+	dprintk(1, "%s()\n", __func__);
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int cx23885_start_video_dma(struct cx23885_dev *dev,
 			   struct cx23885_dmaqueue *q,
 			   struct cx23885_buffer *buf)
 {
 	dprintk(1, "%s()\n", __func__);
 
+<<<<<<< HEAD
 	/* Stop the dma/fifo before we tamper with it's risc programs */
 	cx_clear(VID_A_DMA_CTL, 0x11);
 
 	/* setup fifo + format */
 	cx23885_sram_channel_setup(dev, &dev->sram_channels[SRAM_CH01],
 				buf->bpl, buf->risc.dma);
+=======
+	/* setup fifo + format */
+	cx23885_sram_channel_setup(dev, &dev->sram_channels[SRAM_CH01],
+				buf->bpl, buf->risc.dma);
+	cx23885_set_scale(dev, buf->vb.width, buf->vb.height, buf->vb.field);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* reset counter */
 	cx_write(VID_A_GPCNT_CTL, 3);
@@ -651,7 +734,10 @@ static int buffer_prepare(struct videobuf_queue *q, struct videobuf_buffer *vb,
 	int rc, init_buffer = 0;
 	u32 line0_offset, line1_offset;
 	struct videobuf_dmabuf *dma = videobuf_to_dma(&buf->vb);
+<<<<<<< HEAD
 	int field_tff;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BUG_ON(NULL == fh->fmt);
 	if (fh->width  < 48 || fh->width  > norm_maxw(dev->tvnorm) ||
@@ -693,6 +779,7 @@ static int buffer_prepare(struct videobuf_queue *q, struct videobuf_buffer *vb,
 					 buf->bpl, 0, buf->vb.height);
 			break;
 		case V4L2_FIELD_INTERLACED:
+<<<<<<< HEAD
 			if (dev->tvnorm & V4L2_STD_NTSC)
 				/* NTSC or  */
 				field_tff = 1;
@@ -706,12 +793,21 @@ static int buffer_prepare(struct videobuf_queue *q, struct videobuf_buffer *vb,
 			if (field_tff) {
 				/* cx25840 transmits NTSC bottom field first */
 				dprintk(1, "%s() Creating TFF/NTSC risc\n",
+=======
+			if (dev->tvnorm & V4L2_STD_NTSC) {
+				/* cx25840 transmits NTSC bottom field first */
+				dprintk(1, "%s() Creating NTSC risc\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					__func__);
 				line0_offset = buf->bpl;
 				line1_offset = 0;
 			} else {
 				/* All other formats are top field first */
+<<<<<<< HEAD
 				dprintk(1, "%s() Creating BFF/PAL/SECAM risc\n",
+=======
+				dprintk(1, "%s() Creating PAL/SECAM risc\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					__func__);
 				line0_offset = 0;
 				line1_offset = buf->bpl;
@@ -882,7 +978,11 @@ static int video_open(struct file *file)
 	fh->type     = type;
 	fh->width    = 320;
 	fh->height   = 240;
+<<<<<<< HEAD
 	fh->fmt      = format_by_fourcc(V4L2_PIX_FMT_YUYV);
+=======
+	fh->fmt      = format_by_fourcc(V4L2_PIX_FMT_BGR24);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	videobuf_queue_sg_init(&fh->vidq, &cx23885_video_qops,
 			    &dev->pci->dev, &dev->slock,
@@ -891,6 +991,7 @@ static int video_open(struct file *file)
 			    sizeof(struct cx23885_buffer),
 			    fh, NULL);
 
+<<<<<<< HEAD
 	videobuf_queue_sg_init(&fh->vbiq, &cx23885_vbi_qops,
 		&dev->pci->dev, &dev->slock,
 		V4L2_BUF_TYPE_VBI_CAPTURE,
@@ -899,6 +1000,8 @@ static int video_open(struct file *file)
 		fh, NULL);
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dprintk(1, "post videobuf_queue_init()\n");
 
 	return 0;
@@ -994,8 +1097,11 @@ static int video_release(struct file *file)
 	}
 
 	videobuf_mmap_free(&fh->vidq);
+<<<<<<< HEAD
 	videobuf_mmap_free(&fh->vbiq);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	file->private_data = NULL;
 	kfree(fh);
 
@@ -1017,7 +1123,11 @@ static int video_mmap(struct file *file, struct vm_area_struct *vma)
 /* ------------------------------------------------------------------ */
 /* VIDEO CTRL IOCTLS                                                  */
 
+<<<<<<< HEAD
 int cx23885_get_control(struct cx23885_dev *dev,
+=======
+static int cx23885_get_control(struct cx23885_dev *dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct v4l2_control *ctl)
 {
 	dprintk(1, "%s() calling cx25840(VIDIOC_G_CTRL)\n", __func__);
@@ -1025,12 +1135,20 @@ int cx23885_get_control(struct cx23885_dev *dev,
 	return 0;
 }
 
+<<<<<<< HEAD
 int cx23885_set_control(struct cx23885_dev *dev,
 	struct v4l2_control *ctl)
 {
 	dprintk(1, "%s() calling cx25840(VIDIOC_S_CTRL)\n", __func__);
 	call_all(dev, core, s_ctrl, ctl);
 
+=======
+static int cx23885_set_control(struct cx23885_dev *dev,
+	struct v4l2_control *ctl)
+{
+	dprintk(1, "%s() calling cx25840(VIDIOC_S_CTRL)"
+		" (disabled - no action)\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1145,6 +1263,10 @@ static int vidioc_querycap(struct file *file, void  *priv,
 	strlcpy(cap->card, cx23885_boards[dev->board].name,
 		sizeof(cap->card));
 	sprintf(cap->bus_info, "PCIe:%s", pci_name(dev->pci));
+<<<<<<< HEAD
+=======
+	cap->version = CX23885_VERSION_CODE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cap->capabilities =
 		V4L2_CAP_VIDEO_CAPTURE |
 		V4L2_CAP_READWRITE     |
@@ -1204,14 +1326,19 @@ static int vidioc_streamon(struct file *file, void *priv,
 	struct cx23885_dev *dev = fh->dev;
 	dprintk(1, "%s()\n", __func__);
 
+<<<<<<< HEAD
 	if ((fh->type != V4L2_BUF_TYPE_VIDEO_CAPTURE) &&
 		(fh->type != V4L2_BUF_TYPE_VBI_CAPTURE))
+=======
+	if (unlikely(fh->type != V4L2_BUF_TYPE_VIDEO_CAPTURE))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	if (unlikely(i != fh->type))
 		return -EINVAL;
 
 	if (unlikely(!res_get(dev, fh, get_resource(fh))))
 		return -EBUSY;
+<<<<<<< HEAD
 
 	/* Don't start VBI streaming unless vida streaming
 	 * has already started.
@@ -1220,6 +1347,8 @@ static int vidioc_streamon(struct file *file, void *priv,
 		((cx_read(VID_A_DMA_CTL) & 0x11) == 0))
 		return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return videobuf_streamon(get_queue(fh));
 }
 
@@ -1230,8 +1359,12 @@ static int vidioc_streamoff(struct file *file, void *priv, enum v4l2_buf_type i)
 	int err, res;
 	dprintk(1, "%s()\n", __func__);
 
+<<<<<<< HEAD
 	if ((fh->type != V4L2_BUF_TYPE_VIDEO_CAPTURE) &&
 		(fh->type != V4L2_BUF_TYPE_VBI_CAPTURE))
+=======
+	if (fh->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	if (i != fh->type)
 		return -EINVAL;
@@ -1244,6 +1377,7 @@ static int vidioc_streamoff(struct file *file, void *priv, enum v4l2_buf_type i)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int vidioc_g_std(struct file *file, void *priv, v4l2_std_id *id)
 {
 	struct cx23885_dev *dev = ((struct cx23885_fh *)priv)->dev;
@@ -1254,6 +1388,8 @@ static int vidioc_g_std(struct file *file, void *priv, v4l2_std_id *id)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int vidioc_s_std(struct file *file, void *priv, v4l2_std_id *tvnorms)
 {
 	struct cx23885_dev *dev = ((struct cx23885_fh *)priv)->dev;
@@ -1266,7 +1402,11 @@ static int vidioc_s_std(struct file *file, void *priv, v4l2_std_id *tvnorms)
 	return 0;
 }
 
+<<<<<<< HEAD
 int cx23885_enum_input(struct cx23885_dev *dev, struct v4l2_input *i)
+=======
+static int cx23885_enum_input(struct cx23885_dev *dev, struct v4l2_input *i)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static const char *iname[] = {
 		[CX23885_VMUX_COMPOSITE1] = "Composite1",
@@ -1284,7 +1424,11 @@ int cx23885_enum_input(struct cx23885_dev *dev, struct v4l2_input *i)
 	dprintk(1, "%s()\n", __func__);
 
 	n = i->index;
+<<<<<<< HEAD
 	if (n >= MAX_CX23885_INPUT)
+=======
+	if (n >= 4)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	if (0 == INPUT(n)->type)
@@ -1298,6 +1442,7 @@ int cx23885_enum_input(struct cx23885_dev *dev, struct v4l2_input *i)
 		i->type = V4L2_INPUT_TYPE_TUNER;
 		i->std = CX23885_NORMS;
 	}
+<<<<<<< HEAD
 
 	/* Two selectable audio inputs for non-tv inputs */
 	if (INPUT(n)->type != CX23885_VMUX_TELEVISION)
@@ -1312,6 +1457,8 @@ int cx23885_enum_input(struct cx23885_dev *dev, struct v4l2_input *i)
 		call_all(dev, video, g_input_status, &i->status);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1323,7 +1470,11 @@ static int vidioc_enum_input(struct file *file, void *priv,
 	return cx23885_enum_input(dev, i);
 }
 
+<<<<<<< HEAD
 int cx23885_get_input(struct file *file, void *priv, unsigned int *i)
+=======
+static int vidioc_g_input(struct file *file, void *priv, unsigned int *i)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cx23885_dev *dev = ((struct cx23885_fh *)priv)->dev;
 
@@ -1332,22 +1483,31 @@ int cx23885_get_input(struct file *file, void *priv, unsigned int *i)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int vidioc_g_input(struct file *file, void *priv, unsigned int *i)
 {
 	return cx23885_get_input(file, priv, i);
 }
 
 int cx23885_set_input(struct file *file, void *priv, unsigned int i)
+=======
+static int vidioc_s_input(struct file *file, void *priv, unsigned int i)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cx23885_dev *dev = ((struct cx23885_fh *)priv)->dev;
 
 	dprintk(1, "%s(%d)\n", __func__, i);
 
+<<<<<<< HEAD
 	if (i >= MAX_CX23885_INPUT) {
+=======
+	if (i >= 4) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dprintk(1, "%s() -EINVAL\n", __func__);
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	if (INPUT(i)->type == 0)
 		return -EINVAL;
 
@@ -1357,15 +1517,22 @@ int cx23885_set_input(struct file *file, void *priv, unsigned int i)
 	/* By default establish the default audio input for the card also */
 	/* Caller is free to use VIDIOC_S_AUDIO to override afterwards */
 	cx23885_audio_mux(dev, i);
+=======
+	mutex_lock(&dev->lock);
+	cx23885_video_mux(dev, i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&dev->lock);
 	return 0;
 }
 
+<<<<<<< HEAD
 static int vidioc_s_input(struct file *file, void *priv, unsigned int i)
 {
 	return cx23885_set_input(file, priv, i);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int vidioc_log_status(struct file *file, void *priv)
 {
 	struct cx23885_fh  *fh  = priv;
@@ -1373,6 +1540,7 @@ static int vidioc_log_status(struct file *file, void *priv)
 
 	printk(KERN_INFO
 		"%s/0: ============  START LOG STATUS  ============\n",
+<<<<<<< HEAD
 		dev->name);
 	call_all(dev, core, log_status);
 	printk(KERN_INFO
@@ -1436,6 +1604,13 @@ static int vidioc_s_audinput(struct file *file, void *priv,
 	/* Skip the audio defaults from the cards struct, caller wants
 	 * directly touch the audio mux hardware. */
 	cx23885_flatiron_mux(dev, dev->audinput + 1);
+=======
+	       dev->name);
+	call_all(dev, core, log_status);
+	printk(KERN_INFO
+		"%s/0: =============  END LOG STATUS  =============\n",
+	       dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1475,8 +1650,15 @@ static int vidioc_g_tuner(struct file *file, void *priv,
 		return -EINVAL;
 
 	strcpy(t->name, "Television");
+<<<<<<< HEAD
 
 	call_all(dev, tuner, g_tuner, t);
+=======
+	t->type       = V4L2_TUNER_ANALOG_TV;
+	t->capability = V4L2_TUNER_CAP_NORM;
+	t->rangehigh  = 0xffffffffUL;
+	t->signal = 0xffff ; /* LOCKED */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1489,9 +1671,12 @@ static int vidioc_s_tuner(struct file *file, void *priv,
 		return -EINVAL;
 	if (0 != t->index)
 		return -EINVAL;
+<<<<<<< HEAD
 	/* Update the A/V core */
 	call_all(dev, tuner, s_tuner, t);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1515,8 +1700,11 @@ static int vidioc_g_frequency(struct file *file, void *priv,
 
 static int cx23885_set_freq(struct cx23885_dev *dev, struct v4l2_frequency *f)
 {
+<<<<<<< HEAD
 	struct v4l2_control ctrl;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(UNSET == dev->tuner_type))
 		return -EINVAL;
 	if (unlikely(f->tuner != 0))
@@ -1525,6 +1713,7 @@ static int cx23885_set_freq(struct cx23885_dev *dev, struct v4l2_frequency *f)
 	mutex_lock(&dev->lock);
 	dev->freq = f->frequency;
 
+<<<<<<< HEAD
 	/* I need to mute audio here */
 	ctrl.id = V4L2_CID_AUDIO_MUTE;
 	ctrl.value = 1;
@@ -1594,12 +1783,19 @@ static int cx23885_set_freq_via_ops(struct cx23885_dev *dev,
 	/* I need to unmute audio here */
 	ctrl.value = 0;
 	cx23885_set_control(dev, &ctrl);
+=======
+	call_all(dev, tuner, s_frequency, f);
+
+	/* When changing channels it is required to reset TVAUDIO */
+	msleep(10);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_unlock(&dev->lock);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 int cx23885_set_frequency(struct file *file, void *priv,
 	struct v4l2_frequency *f)
 {
@@ -1622,6 +1818,21 @@ static int vidioc_s_frequency(struct file *file, void *priv,
 	struct v4l2_frequency *f)
 {
 	return cx23885_set_frequency(file, priv, f);
+=======
+static int vidioc_s_frequency(struct file *file, void *priv,
+				struct v4l2_frequency *f)
+{
+	struct cx23885_fh *fh = priv;
+	struct cx23885_dev *dev = fh->dev;
+
+	if (unlikely(0 == fh->radio && f->type != V4L2_TUNER_ANALOG_TV))
+		return -EINVAL;
+	if (unlikely(1 == fh->radio && f->type != V4L2_TUNER_RADIO))
+		return -EINVAL;
+
+	return
+		cx23885_set_freq(dev, f);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* ----------------------------------------------------------- */
@@ -1633,6 +1844,13 @@ static void cx23885_vid_timeout(unsigned long data)
 	struct cx23885_buffer *buf;
 	unsigned long flags;
 
+<<<<<<< HEAD
+=======
+	cx23885_sram_channel_dump(dev, &dev->sram_channels[SRAM_CH01]);
+
+	cx_clear(VID_A_DMA_CTL, 0x11);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&dev->slock, flags);
 	while (!list_empty(&q->active)) {
 		buf = list_entry(q->active.next,
@@ -1640,7 +1858,11 @@ static void cx23885_vid_timeout(unsigned long data)
 		list_del(&buf->vb.queue);
 		buf->vb.state = VIDEOBUF_ERROR;
 		wake_up(&buf->vb.done);
+<<<<<<< HEAD
 		printk(KERN_ERR "%s: [%p/%d] timeout - dma=0x%08lx\n",
+=======
+		printk(KERN_ERR "%s/0: [%p/%d] timeout - dma=0x%08lx\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev->name, buf, buf->vb.i,
 			(unsigned long)buf->risc.dma);
 	}
@@ -1656,6 +1878,7 @@ int cx23885_video_irq(struct cx23885_dev *dev, u32 status)
 	mask   = cx_read(VID_A_INT_MSK);
 	if (0 == (status & mask))
 		return handled;
+<<<<<<< HEAD
 
 	cx_write(VID_A_INT_STAT, status);
 
@@ -1686,13 +1909,33 @@ int cx23885_video_irq(struct cx23885_dev *dev, u32 status)
 
 	/* Video */
 	if (status & VID_BC_MSK_RISCI1) {
+=======
+	cx_write(VID_A_INT_STAT, status);
+
+	dprintk(2, "%s() status = 0x%08x\n", __func__, status);
+	/* risc op code error */
+	if (status & (1 << 16)) {
+		printk(KERN_WARNING "%s/0: video risc op code error\n",
+			dev->name);
+		cx_clear(VID_A_DMA_CTL, 0x11);
+		cx23885_sram_channel_dump(dev, &dev->sram_channels[SRAM_CH01]);
+	}
+
+	/* risc1 y */
+	if (status & 0x01) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_lock(&dev->slock);
 		count = cx_read(VID_A_GPCNT);
 		cx23885_video_wakeup(dev, &dev->vidq, count);
 		spin_unlock(&dev->slock);
 		handled++;
 	}
+<<<<<<< HEAD
 	if (status & VID_BC_MSK_RISCI2) {
+=======
+	/* risc2 y */
+	if (status & 0x10) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dprintk(2, "stopper video\n");
 		spin_lock(&dev->slock);
 		cx23885_restart_video_queue(dev, &dev->vidq);
@@ -1700,9 +1943,12 @@ int cx23885_video_irq(struct cx23885_dev *dev, u32 status)
 		handled++;
 	}
 
+<<<<<<< HEAD
 	/* Allow the VBI framework to process it's payload */
 	handled += cx23885_vbi_irq(dev, status);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return handled;
 }
 
@@ -1733,8 +1979,11 @@ static const struct v4l2_ioctl_ops video_ioctl_ops = {
 	.vidioc_qbuf          = vidioc_qbuf,
 	.vidioc_dqbuf         = vidioc_dqbuf,
 	.vidioc_s_std         = vidioc_s_std,
+<<<<<<< HEAD
 	.vidioc_g_std         = vidioc_g_std,
 	.vidioc_querystd      = vidioc_g_std,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.vidioc_enum_input    = vidioc_enum_input,
 	.vidioc_g_input       = vidioc_g_input,
 	.vidioc_s_input       = vidioc_s_input,
@@ -1753,9 +2002,12 @@ static const struct v4l2_ioctl_ops video_ioctl_ops = {
 	.vidioc_g_register    = cx23885_g_register,
 	.vidioc_s_register    = cx23885_s_register,
 #endif
+<<<<<<< HEAD
 	.vidioc_enumaudio     = vidioc_enum_audinput,
 	.vidioc_g_audio       = vidioc_g_audinput,
 	.vidioc_s_audio       = vidioc_s_audinput,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct video_device cx23885_vbi_template;
@@ -1780,6 +2032,7 @@ void cx23885_video_unregister(struct cx23885_dev *dev)
 	dprintk(1, "%s()\n", __func__);
 	cx23885_irq_remove(dev, 0x01);
 
+<<<<<<< HEAD
 	if (dev->vbi_dev) {
 		if (video_is_registered(dev->vbi_dev))
 			video_unregister_device(dev->vbi_dev);
@@ -1788,6 +2041,8 @@ void cx23885_video_unregister(struct cx23885_dev *dev)
 		dev->vbi_dev = NULL;
 		btcx_riscmem_free(dev->pci, &dev->vbiq.stopper);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dev->video_dev) {
 		if (video_is_registered(dev->video_dev))
 			video_unregister_device(dev->video_dev);
@@ -1797,9 +2052,12 @@ void cx23885_video_unregister(struct cx23885_dev *dev)
 
 		btcx_riscmem_free(dev->pci, &dev->vidq.stopper);
 	}
+<<<<<<< HEAD
 
 	if (dev->audio_dev)
 		cx23885_audio_unregister(dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int cx23885_video_register(struct cx23885_dev *dev)
@@ -1825,6 +2083,7 @@ int cx23885_video_register(struct cx23885_dev *dev)
 	cx23885_risc_stopper(dev->pci, &dev->vidq.stopper,
 		VID_A_DMA_CTL, 0x11, 0x00);
 
+<<<<<<< HEAD
 	/* init vbi dma queues */
 	INIT_LIST_HEAD(&dev->vbiq.active);
 	INIT_LIST_HEAD(&dev->vbiq.queued);
@@ -1833,6 +2092,9 @@ int cx23885_video_register(struct cx23885_dev *dev)
 	init_timer(&dev->vbiq.timeout);
 	cx23885_risc_stopper(dev->pci, &dev->vbiq.stopper,
 		VID_A_DMA_CTL, 0x22, 0x00);
+=======
+	/* Don't enable VBI yet */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cx23885_irq_add_enable(dev, 0x01);
 
@@ -1873,7 +2135,12 @@ int cx23885_video_register(struct cx23885_dev *dev)
 		}
 	}
 
+<<<<<<< HEAD
 	/* register Video device */
+=======
+
+	/* register v4l devices */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->video_dev = cx23885_vdev_init(dev, dev->pci,
 		&cx23885_video_template, "video");
 	err = video_register_device(dev->video_dev, VFL_TYPE_GRABBER,
@@ -1883,6 +2150,7 @@ int cx23885_video_register(struct cx23885_dev *dev)
 			dev->name);
 		goto fail_unreg;
 	}
+<<<<<<< HEAD
 	printk(KERN_INFO "%s: registered device %s [v4l2]\n",
 	       dev->name, video_device_node_name(dev->video_dev));
 
@@ -1902,12 +2170,19 @@ int cx23885_video_register(struct cx23885_dev *dev)
 	/* Register ALSA audio device */
 	dev->audio_dev = cx23885_audio_register(dev);
 
+=======
+	printk(KERN_INFO "%s/0: registered device %s [v4l2]\n",
+	       dev->name, video_device_node_name(dev->video_dev));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* initial device configuration */
 	mutex_lock(&dev->lock);
 	cx23885_set_tvnorm(dev, dev->tvnorm);
 	init_controls(dev);
 	cx23885_video_mux(dev, 0);
+<<<<<<< HEAD
 	cx23885_audio_mux(dev, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&dev->lock);
 
 	return 0;

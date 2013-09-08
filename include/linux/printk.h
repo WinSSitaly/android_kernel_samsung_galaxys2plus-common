@@ -82,19 +82,28 @@ struct va_format {
  * Dummy printk for disabled debugging statements to use whilst maintaining
  * gcc's format and side-effect checking.
  */
+<<<<<<< HEAD
 static inline __printf(1, 2)
+=======
+static inline __attribute__ ((format (printf, 1, 2)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int no_printk(const char *fmt, ...)
 {
 	return 0;
 }
 
+<<<<<<< HEAD
 extern asmlinkage __printf(1, 2)
+=======
+extern asmlinkage __attribute__ ((format (printf, 1, 2)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void early_printk(const char *fmt, ...);
 
 extern int printk_needs_cpu(int cpu);
 extern void printk_tick(void);
 
 #ifdef CONFIG_PRINTK
+<<<<<<< HEAD
 asmlinkage __printf(1, 0)
 int vprintk(const char *fmt, va_list args);
 asmlinkage __printf(1, 2) __cold
@@ -106,6 +115,14 @@ int printk(const char *fmt, ...);
 __printf(1, 2) __cold int printk_sched(const char *fmt, ...);
 
 /*
+=======
+asmlinkage __attribute__ ((format (printf, 1, 0)))
+int vprintk(const char *fmt, va_list args);
+asmlinkage __attribute__ ((format (printf, 1, 2))) __cold
+int printk(const char *fmt, ...);
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Please don't use printk_ratelimit(), because it shares ratelimiting state
  * with all other unrelated printk_ratelimit() callsites.  Instead use
  * printk_ratelimited() or plain old __ratelimit().
@@ -122,21 +139,32 @@ extern int kptr_restrict;
 void log_buf_kexec_setup(void);
 void __init setup_log_buf(int early);
 #else
+<<<<<<< HEAD
 static inline __printf(1, 0)
+=======
+static inline __attribute__ ((format (printf, 1, 0)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int vprintk(const char *s, va_list args)
 {
 	return 0;
 }
+<<<<<<< HEAD
 static inline __printf(1, 2) __cold
+=======
+static inline __attribute__ ((format (printf, 1, 2))) __cold
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int printk(const char *s, ...)
 {
 	return 0;
 }
+<<<<<<< HEAD
 static inline __printf(1, 2) __cold
 int printk_sched(const char *s, ...)
 {
 	return 0;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int printk_ratelimit(void)
 {
 	return 0;
@@ -190,6 +218,7 @@ extern void dump_stack(void) __cold;
 #endif
 
 /* If you are writing a driver, please use dev_dbg instead */
+<<<<<<< HEAD
 #if defined(CONFIG_DYNAMIC_DEBUG)
 /* dynamic_pr_debug() uses pr_fmt() internally so we don't need it here */
 #define pr_debug(fmt, ...) \
@@ -197,6 +226,15 @@ extern void dump_stack(void) __cold;
 #elif defined(DEBUG)
 #define pr_debug(fmt, ...) \
 	printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+=======
+#if defined(DEBUG)
+#define pr_debug(fmt, ...) \
+	printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+#elif defined(CONFIG_DYNAMIC_DEBUG)
+/* dynamic_pr_debug() uses pr_fmt() internally so we don't need it here */
+#define pr_debug(fmt, ...) \
+	dynamic_pr_debug(fmt, ##__VA_ARGS__)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 #define pr_debug(fmt, ...) \
 	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)

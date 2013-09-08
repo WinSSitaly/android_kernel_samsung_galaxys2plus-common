@@ -56,16 +56,20 @@ extern void
 radeon_add_legacy_encoder(struct drm_device *dev, uint32_t encoder_enum,
 			  uint32_t supported_device);
 
+<<<<<<< HEAD
 /* local */
 static int radeon_atom_get_max_vddc(struct radeon_device *rdev, u8 voltage_type,
 				    u16 voltage_id, u16 *voltage);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 union atom_supported_devices {
 	struct _ATOM_SUPPORTED_DEVICES_INFO info;
 	struct _ATOM_SUPPORTED_DEVICES_INFO_2 info_2;
 	struct _ATOM_SUPPORTED_DEVICES_INFO_2d1 info_2d1;
 };
 
+<<<<<<< HEAD
 static void radeon_lookup_i2c_gpio_quirks(struct radeon_device *rdev,
 					  ATOM_GPIO_I2C_ASSIGMENT *gpio,
 					  u8 index)
@@ -148,6 +152,9 @@ static struct radeon_i2c_bus_rec radeon_get_bus_rec_for_i2c_gpio(ATOM_GPIO_I2C_A
 }
 
 static struct radeon_i2c_bus_rec radeon_lookup_i2c_gpio(struct radeon_device *rdev,
+=======
+static inline struct radeon_i2c_bus_rec radeon_lookup_i2c_gpio(struct radeon_device *rdev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 							       uint8_t id)
 {
 	struct atom_context *ctx = rdev->mode_info.atom_context;
@@ -170,10 +177,78 @@ static struct radeon_i2c_bus_rec radeon_lookup_i2c_gpio(struct radeon_device *rd
 		for (i = 0; i < num_indices; i++) {
 			gpio = &i2c_info->asGPIO_Info[i];
 
+<<<<<<< HEAD
 			radeon_lookup_i2c_gpio_quirks(rdev, gpio, i);
 
 			if (gpio->sucI2cId.ucAccess == id) {
 				i2c = radeon_get_bus_rec_for_i2c_gpio(gpio);
+=======
+			/* r4xx mask is technically not used by the hw, so patch in the legacy mask bits */
+			if ((rdev->family == CHIP_R420) ||
+			    (rdev->family == CHIP_R423) ||
+			    (rdev->family == CHIP_RV410)) {
+				if ((le16_to_cpu(gpio->usClkMaskRegisterIndex) == 0x0018) ||
+				    (le16_to_cpu(gpio->usClkMaskRegisterIndex) == 0x0019) ||
+				    (le16_to_cpu(gpio->usClkMaskRegisterIndex) == 0x001a)) {
+					gpio->ucClkMaskShift = 0x19;
+					gpio->ucDataMaskShift = 0x18;
+				}
+			}
+
+			/* some evergreen boards have bad data for this entry */
+			if (ASIC_IS_DCE4(rdev)) {
+				if ((i == 7) &&
+				    (le16_to_cpu(gpio->usClkMaskRegisterIndex) == 0x1936) &&
+				    (gpio->sucI2cId.ucAccess == 0)) {
+					gpio->sucI2cId.ucAccess = 0x97;
+					gpio->ucDataMaskShift = 8;
+					gpio->ucDataEnShift = 8;
+					gpio->ucDataY_Shift = 8;
+					gpio->ucDataA_Shift = 8;
+				}
+			}
+
+			/* some DCE3 boards have bad data for this entry */
+			if (ASIC_IS_DCE3(rdev)) {
+				if ((i == 4) &&
+				    (le16_to_cpu(gpio->usClkMaskRegisterIndex) == 0x1fda) &&
+				    (gpio->sucI2cId.ucAccess == 0x94))
+					gpio->sucI2cId.ucAccess = 0x14;
+			}
+
+			if (gpio->sucI2cId.ucAccess == id) {
+				i2c.mask_clk_reg = le16_to_cpu(gpio->usClkMaskRegisterIndex) * 4;
+				i2c.mask_data_reg = le16_to_cpu(gpio->usDataMaskRegisterIndex) * 4;
+				i2c.en_clk_reg = le16_to_cpu(gpio->usClkEnRegisterIndex) * 4;
+				i2c.en_data_reg = le16_to_cpu(gpio->usDataEnRegisterIndex) * 4;
+				i2c.y_clk_reg = le16_to_cpu(gpio->usClkY_RegisterIndex) * 4;
+				i2c.y_data_reg = le16_to_cpu(gpio->usDataY_RegisterIndex) * 4;
+				i2c.a_clk_reg = le16_to_cpu(gpio->usClkA_RegisterIndex) * 4;
+				i2c.a_data_reg = le16_to_cpu(gpio->usDataA_RegisterIndex) * 4;
+				i2c.mask_clk_mask = (1 << gpio->ucClkMaskShift);
+				i2c.mask_data_mask = (1 << gpio->ucDataMaskShift);
+				i2c.en_clk_mask = (1 << gpio->ucClkEnShift);
+				i2c.en_data_mask = (1 << gpio->ucDataEnShift);
+				i2c.y_clk_mask = (1 << gpio->ucClkY_Shift);
+				i2c.y_data_mask = (1 << gpio->ucDataY_Shift);
+				i2c.a_clk_mask = (1 << gpio->ucClkA_Shift);
+				i2c.a_data_mask = (1 << gpio->ucDataA_Shift);
+
+				if (gpio->sucI2cId.sbfAccess.bfHW_Capable)
+					i2c.hw_capable = true;
+				else
+					i2c.hw_capable = false;
+
+				if (gpio->sucI2cId.ucAccess == 0xa0)
+					i2c.mm_i2c = true;
+				else
+					i2c.mm_i2c = false;
+
+				i2c.i2c_id = gpio->sucI2cId.ucAccess;
+
+				if (i2c.mask_clk_reg)
+					i2c.valid = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 			}
 		}
@@ -193,6 +268,11 @@ void radeon_atombios_i2c_init(struct radeon_device *rdev)
 	int i, num_indices;
 	char stmp[32];
 
+<<<<<<< HEAD
+=======
+	memset(&i2c, 0, sizeof(struct radeon_i2c_bus_rec));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (atom_parse_data_header(ctx, index, &size, NULL, NULL, &data_offset)) {
 		i2c_info = (struct _ATOM_GPIO_I2C_INFO *)(ctx->bios + data_offset);
 
@@ -201,12 +281,81 @@ void radeon_atombios_i2c_init(struct radeon_device *rdev)
 
 		for (i = 0; i < num_indices; i++) {
 			gpio = &i2c_info->asGPIO_Info[i];
+<<<<<<< HEAD
 
 			radeon_lookup_i2c_gpio_quirks(rdev, gpio, i);
 
 			i2c = radeon_get_bus_rec_for_i2c_gpio(gpio);
 
 			if (i2c.valid) {
+=======
+			i2c.valid = false;
+
+			/* r4xx mask is technically not used by the hw, so patch in the legacy mask bits */
+			if ((rdev->family == CHIP_R420) ||
+			    (rdev->family == CHIP_R423) ||
+			    (rdev->family == CHIP_RV410)) {
+				if ((le16_to_cpu(gpio->usClkMaskRegisterIndex) == 0x0018) ||
+				    (le16_to_cpu(gpio->usClkMaskRegisterIndex) == 0x0019) ||
+				    (le16_to_cpu(gpio->usClkMaskRegisterIndex) == 0x001a)) {
+					gpio->ucClkMaskShift = 0x19;
+					gpio->ucDataMaskShift = 0x18;
+				}
+			}
+
+			/* some evergreen boards have bad data for this entry */
+			if (ASIC_IS_DCE4(rdev)) {
+				if ((i == 7) &&
+				    (le16_to_cpu(gpio->usClkMaskRegisterIndex) == 0x1936) &&
+				    (gpio->sucI2cId.ucAccess == 0)) {
+					gpio->sucI2cId.ucAccess = 0x97;
+					gpio->ucDataMaskShift = 8;
+					gpio->ucDataEnShift = 8;
+					gpio->ucDataY_Shift = 8;
+					gpio->ucDataA_Shift = 8;
+				}
+			}
+
+			/* some DCE3 boards have bad data for this entry */
+			if (ASIC_IS_DCE3(rdev)) {
+				if ((i == 4) &&
+				    (le16_to_cpu(gpio->usClkMaskRegisterIndex) == 0x1fda) &&
+				    (gpio->sucI2cId.ucAccess == 0x94))
+					gpio->sucI2cId.ucAccess = 0x14;
+			}
+
+			i2c.mask_clk_reg = le16_to_cpu(gpio->usClkMaskRegisterIndex) * 4;
+			i2c.mask_data_reg = le16_to_cpu(gpio->usDataMaskRegisterIndex) * 4;
+			i2c.en_clk_reg = le16_to_cpu(gpio->usClkEnRegisterIndex) * 4;
+			i2c.en_data_reg = le16_to_cpu(gpio->usDataEnRegisterIndex) * 4;
+			i2c.y_clk_reg = le16_to_cpu(gpio->usClkY_RegisterIndex) * 4;
+			i2c.y_data_reg = le16_to_cpu(gpio->usDataY_RegisterIndex) * 4;
+			i2c.a_clk_reg = le16_to_cpu(gpio->usClkA_RegisterIndex) * 4;
+			i2c.a_data_reg = le16_to_cpu(gpio->usDataA_RegisterIndex) * 4;
+			i2c.mask_clk_mask = (1 << gpio->ucClkMaskShift);
+			i2c.mask_data_mask = (1 << gpio->ucDataMaskShift);
+			i2c.en_clk_mask = (1 << gpio->ucClkEnShift);
+			i2c.en_data_mask = (1 << gpio->ucDataEnShift);
+			i2c.y_clk_mask = (1 << gpio->ucClkY_Shift);
+			i2c.y_data_mask = (1 << gpio->ucDataY_Shift);
+			i2c.a_clk_mask = (1 << gpio->ucClkA_Shift);
+			i2c.a_data_mask = (1 << gpio->ucDataA_Shift);
+
+			if (gpio->sucI2cId.sbfAccess.bfHW_Capable)
+				i2c.hw_capable = true;
+			else
+				i2c.hw_capable = false;
+
+			if (gpio->sucI2cId.ucAccess == 0xa0)
+				i2c.mm_i2c = true;
+			else
+				i2c.mm_i2c = false;
+
+			i2c.i2c_id = gpio->sucI2cId.ucAccess;
+
+			if (i2c.mask_clk_reg) {
+				i2c.valid = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				sprintf(stmp, "0x%x", i2c.i2c_id);
 				rdev->i2c_bus[i] = radeon_i2c_create(rdev->ddev, &i2c, stmp);
 			}
@@ -214,7 +363,11 @@ void radeon_atombios_i2c_init(struct radeon_device *rdev)
 	}
 }
 
+<<<<<<< HEAD
 static struct radeon_gpio_rec radeon_lookup_gpio(struct radeon_device *rdev,
+=======
+static inline struct radeon_gpio_rec radeon_lookup_gpio(struct radeon_device *rdev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 							u8 id)
 {
 	struct atom_context *ctx = rdev->mode_info.atom_context;
@@ -257,9 +410,13 @@ static struct radeon_hpd radeon_atom_get_hpd_info_from_gpio(struct radeon_device
 
 	memset(&hpd, 0, sizeof(struct radeon_hpd));
 
+<<<<<<< HEAD
 	if (ASIC_IS_DCE6(rdev))
 		reg = SI_DC_GPIO_HPD_A;
 	else if (ASIC_IS_DCE4(rdev))
+=======
+	if (ASIC_IS_DCE4(rdev))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reg = EVERGREEN_DC_GPIO_HPD_A;
 	else
 		reg = AVIVO_DC_GPIO_HPD_A;
@@ -444,15 +601,23 @@ static bool radeon_atom_apply_quirks(struct drm_device *dev,
 	 */
 	if ((dev->pdev->device == 0x9498) &&
 	    (dev->pdev->subsystem_vendor == 0x1682) &&
+<<<<<<< HEAD
 	    (dev->pdev->subsystem_device == 0x2452) &&
 	    (i2c_bus->valid == false) &&
 	    !(supported_device & (ATOM_DEVICE_TV_SUPPORT | ATOM_DEVICE_CV_SUPPORT))) {
+=======
+	    (dev->pdev->subsystem_device == 0x2452)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct radeon_device *rdev = dev->dev_private;
 		*i2c_bus = radeon_lookup_i2c_gpio(rdev, 0x93);
 	}
 
 	/* Fujitsu D3003-S2 board lists DVI-I as DVI-D and VGA */
+<<<<<<< HEAD
 	if (((dev->pdev->device == 0x9802) || (dev->pdev->device == 0x9806)) &&
+=======
+	if ((dev->pdev->device == 0x9802) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    (dev->pdev->subsystem_vendor == 0x1734) &&
 	    (dev->pdev->subsystem_device == 0x11bd)) {
 		if (*connector_type == DRM_MODE_CONNECTOR_VGA) {
@@ -715,6 +880,7 @@ bool radeon_get_atom_connector_info_from_object_table(struct drm_device *dev)
 								(ATOM_SRC_DST_TABLE_FOR_ONE_OBJECT *)
 								(ctx->bios + data_offset +
 								 le16_to_cpu(router_obj->asObjects[k].usSrcDstTableOffset));
+<<<<<<< HEAD
 							u8 *num_dst_objs = (u8 *)
 								((u8 *)router_src_dst_table + 1 +
 								 (router_src_dst_table->ucNumberOfSrc * 2));
@@ -725,6 +891,15 @@ bool radeon_get_atom_connector_info_from_object_table(struct drm_device *dev)
 							for (enum_id = 0; enum_id < (*num_dst_objs); enum_id++) {
 								if (le16_to_cpu(path->usConnObjectId) ==
 								    le16_to_cpu(dst_objs[enum_id]))
+=======
+							int enum_id;
+
+							router.router_id = router_obj_id;
+							for (enum_id = 0; enum_id < router_src_dst_table->ucNumberOfDst;
+							     enum_id++) {
+								if (le16_to_cpu(path->usConnObjectId) ==
+								    le16_to_cpu(router_src_dst_table->usDstObjectID[enum_id]))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 									break;
 							}
 
@@ -1625,9 +1800,13 @@ struct radeon_encoder_atom_dig *radeon_atombios_get_lvds_info(struct
 								kfree(edid);
 						}
 					}
+<<<<<<< HEAD
 					record += fake_edid_record->ucFakeEDIDLength ?
 						fake_edid_record->ucFakeEDIDLength + 2 :
 						sizeof(ATOM_FAKE_EDID_PATCH_RECORD);
+=======
+					record += sizeof(ATOM_FAKE_EDID_PATCH_RECORD);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					break;
 				case LCD_PANEL_RESOLUTION_RECORD_TYPE:
 					panel_res_record = (ATOM_PANEL_RESOLUTION_PATCH_RECORD *)record;
@@ -1901,8 +2080,11 @@ static const char *pp_lib_thermal_controller_names[] = {
 	"emc2103",
 	"Sumo",
 	"Northern Islands",
+<<<<<<< HEAD
 	"Southern Islands",
 	"lm96163",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 union power_info {
@@ -1919,7 +2101,10 @@ union pplib_clock_info {
 	struct _ATOM_PPLIB_RS780_CLOCK_INFO rs780;
 	struct _ATOM_PPLIB_EVERGREEN_CLOCK_INFO evergreen;
 	struct _ATOM_PPLIB_SUMO_CLOCK_INFO sumo;
+<<<<<<< HEAD
 	struct _ATOM_PPLIB_SI_CLOCK_INFO si;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 union pplib_power_state {
@@ -2003,13 +2188,17 @@ static int radeon_atombios_parse_power_table_1_3(struct radeon_device *rdev)
 	num_modes = power_info->info.ucNumOfPowerModeEntries;
 	if (num_modes > ATOM_MAX_NUMBEROF_POWER_BLOCK)
 		num_modes = ATOM_MAX_NUMBEROF_POWER_BLOCK;
+<<<<<<< HEAD
 	if (num_modes == 0)
 		return state_index;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rdev->pm.power_state = kzalloc(sizeof(struct radeon_power_state) * num_modes, GFP_KERNEL);
 	if (!rdev->pm.power_state)
 		return state_index;
 	/* last mode is usually default, array is low to high */
 	for (i = 0; i < num_modes; i++) {
+<<<<<<< HEAD
 		rdev->pm.power_state[state_index].clock_info =
 			kzalloc(sizeof(struct radeon_pm_clock_info) * 1, GFP_KERNEL);
 		if (!rdev->pm.power_state[state_index].clock_info)
@@ -2018,6 +2207,12 @@ static int radeon_atombios_parse_power_table_1_3(struct radeon_device *rdev)
 		rdev->pm.power_state[state_index].clock_info[0].voltage.type = VOLTAGE_NONE;
 		switch (frev) {
 		case 1:
+=======
+		rdev->pm.power_state[state_index].clock_info[0].voltage.type = VOLTAGE_NONE;
+		switch (frev) {
+		case 1:
+			rdev->pm.power_state[state_index].num_clock_modes = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rdev->pm.power_state[state_index].clock_info[0].mclk =
 				le16_to_cpu(power_info->info.asPowerPlayInfo[i].usMemoryClock);
 			rdev->pm.power_state[state_index].clock_info[0].sclk =
@@ -2053,6 +2248,10 @@ static int radeon_atombios_parse_power_table_1_3(struct radeon_device *rdev)
 			state_index++;
 			break;
 		case 2:
+<<<<<<< HEAD
+=======
+			rdev->pm.power_state[state_index].num_clock_modes = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rdev->pm.power_state[state_index].clock_info[0].mclk =
 				le32_to_cpu(power_info->info_2.asPowerPlayInfo[i].ulMemoryClock);
 			rdev->pm.power_state[state_index].clock_info[0].sclk =
@@ -2089,6 +2288,10 @@ static int radeon_atombios_parse_power_table_1_3(struct radeon_device *rdev)
 			state_index++;
 			break;
 		case 3:
+<<<<<<< HEAD
+=======
+			rdev->pm.power_state[state_index].num_clock_modes = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rdev->pm.power_state[state_index].clock_info[0].mclk =
 				le32_to_cpu(power_info->info_3.asPowerPlayInfo[i].ulMemoryClock);
 			rdev->pm.power_state[state_index].clock_info[0].sclk =
@@ -2179,11 +2382,14 @@ static void radeon_atombios_add_pplib_thermal_controller(struct radeon_device *r
 				 (controller->ucFanParameters &
 				  ATOM_PP_FANPARAMETERS_NOFAN) ? "without" : "with");
 			rdev->pm.int_thermal_type = THERMAL_TYPE_NI;
+<<<<<<< HEAD
 		} else if (controller->ucType == ATOM_PP_THERMALCONTROLLER_SISLANDS) {
 			DRM_INFO("Internal thermal controller %s fan control\n",
 				 (controller->ucFanParameters &
 				  ATOM_PP_FANPARAMETERS_NOFAN) ? "without" : "with");
 			rdev->pm.int_thermal_type = THERMAL_TYPE_SI;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else if ((controller->ucType ==
 			    ATOM_PP_THERMALCONTROLLER_EXTERNAL_GPIO) ||
 			   (controller->ucType ==
@@ -2278,7 +2484,11 @@ static void radeon_atombios_parse_pplib_non_clock_info(struct radeon_device *rde
 		rdev->pm.default_power_state_index = state_index;
 		rdev->pm.power_state[state_index].default_clock_mode =
 			&rdev->pm.power_state[state_index].clock_info[mode_index - 1];
+<<<<<<< HEAD
 		if (ASIC_IS_DCE5(rdev) && !(rdev->flags & RADEON_IS_IGP)) {
+=======
+		if (ASIC_IS_DCE5(rdev)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* NI chips post without MC ucode, so default clocks are strobe mode only */
 			rdev->pm.default_sclk = rdev->pm.power_state[state_index].clock_info[0].sclk;
 			rdev->pm.default_mclk = rdev->pm.power_state[state_index].clock_info[0].mclk;
@@ -2304,7 +2514,10 @@ static bool radeon_atombios_parse_pplib_clock_info(struct radeon_device *rdev,
 						   union pplib_clock_info *clock_info)
 {
 	u32 sclk, mclk;
+<<<<<<< HEAD
 	u16 vddc;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (rdev->flags & RADEON_IS_IGP) {
 		if (rdev->family >= CHIP_PALM) {
@@ -2316,6 +2529,7 @@ static bool radeon_atombios_parse_pplib_clock_info(struct radeon_device *rdev,
 			sclk |= clock_info->rs780.ucLowEngineClockHigh << 16;
 			rdev->pm.power_state[state_index].clock_info[mode_index].sclk = sclk;
 		}
+<<<<<<< HEAD
 	} else if (ASIC_IS_DCE6(rdev)) {
 		sclk = le16_to_cpu(clock_info->si.usEngineClockLow);
 		sclk |= clock_info->si.ucEngineClockHigh << 16;
@@ -2329,6 +2543,8 @@ static bool radeon_atombios_parse_pplib_clock_info(struct radeon_device *rdev,
 			le16_to_cpu(clock_info->si.usVDDC);
 		rdev->pm.power_state[state_index].clock_info[mode_index].voltage.vddci =
 			le16_to_cpu(clock_info->si.usVDDCI);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (ASIC_IS_DCE4(rdev)) {
 		sclk = le16_to_cpu(clock_info->evergreen.usEngineClockLow);
 		sclk |= clock_info->evergreen.ucEngineClockHigh << 16;
@@ -2356,6 +2572,7 @@ static bool radeon_atombios_parse_pplib_clock_info(struct radeon_device *rdev,
 	}
 
 	/* patch up vddc if necessary */
+<<<<<<< HEAD
 	switch (rdev->pm.power_state[state_index].clock_info[mode_index].voltage.voltage) {
 	case ATOM_VIRTUAL_VOLTAGE_ID0:
 	case ATOM_VIRTUAL_VOLTAGE_ID1:
@@ -2368,6 +2585,13 @@ static bool radeon_atombios_parse_pplib_clock_info(struct radeon_device *rdev,
 		break;
 	default:
 		break;
+=======
+	if (rdev->pm.power_state[state_index].clock_info[mode_index].voltage.voltage == 0xff01) {
+		u16 vddc;
+
+		if (radeon_atom_get_max_vddc(rdev, &vddc) == 0)
+			rdev->pm.power_state[state_index].clock_info[mode_index].voltage.voltage = vddc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (rdev->flags & RADEON_IS_IGP) {
@@ -2403,8 +2627,11 @@ static int radeon_atombios_parse_power_table_4_5(struct radeon_device *rdev)
 	power_info = (union power_info *)(mode_info->atom_context->bios + data_offset);
 
 	radeon_atombios_add_pplib_thermal_controller(rdev, &power_info->pplib.sThermalController);
+<<<<<<< HEAD
 	if (power_info->pplib.ucNumStates == 0)
 		return state_index;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rdev->pm.power_state = kzalloc(sizeof(struct radeon_power_state) *
 				       power_info->pplib.ucNumStates, GFP_KERNEL);
 	if (!rdev->pm.power_state)
@@ -2421,6 +2648,7 @@ static int radeon_atombios_parse_power_table_4_5(struct radeon_device *rdev)
 			 le16_to_cpu(power_info->pplib.usNonClockInfoArrayOffset) +
 			 (power_state->v1.ucNonClockStateIndex *
 			  power_info->pplib.ucNonClockSize));
+<<<<<<< HEAD
 		rdev->pm.power_state[i].clock_info = kzalloc(sizeof(struct radeon_pm_clock_info) *
 							     ((power_info->pplib.ucStateEntrySize - 1) ?
 							      (power_info->pplib.ucStateEntrySize - 1) : 1),
@@ -2446,6 +2674,19 @@ static int radeon_atombios_parse_power_table_4_5(struct radeon_device *rdev)
 			rdev->pm.power_state[state_index].clock_info[0].sclk =
 				rdev->clock.default_sclk;
 			mode_index++;
+=======
+		for (j = 0; j < (power_info->pplib.ucStateEntrySize - 1); j++) {
+			clock_info = (union pplib_clock_info *)
+				(mode_info->atom_context->bios + data_offset +
+				 le16_to_cpu(power_info->pplib.usClockInfoArrayOffset) +
+				 (power_state->v1.ucClockStateIndices[j] *
+				  power_info->pplib.ucClockInfoSize));
+			valid = radeon_atombios_parse_pplib_clock_info(rdev,
+								       state_index, mode_index,
+								       clock_info);
+			if (valid)
+				mode_index++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		rdev->pm.power_state[state_index].num_clock_modes = mode_index;
 		if (mode_index) {
@@ -2479,15 +2720,24 @@ static int radeon_atombios_parse_power_table_6(struct radeon_device *rdev)
 	int i, j, non_clock_array_index, clock_array_index;
 	int state_index = 0, mode_index = 0;
 	union pplib_clock_info *clock_info;
+<<<<<<< HEAD
 	struct _StateArray *state_array;
 	struct _ClockInfoArray *clock_info_array;
 	struct _NonClockInfoArray *non_clock_info_array;
+=======
+	struct StateArray *state_array;
+	struct ClockInfoArray *clock_info_array;
+	struct NonClockInfoArray *non_clock_info_array;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool valid;
 	union power_info *power_info;
 	int index = GetIndexIntoMasterTable(DATA, PowerPlayInfo);
         u16 data_offset;
 	u8 frev, crev;
+<<<<<<< HEAD
 	u8 *power_state_offset;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!atom_parse_data_header(mode_info->atom_context, index, NULL,
 				   &frev, &crev, &data_offset))
@@ -2495,6 +2745,7 @@ static int radeon_atombios_parse_power_table_6(struct radeon_device *rdev)
 	power_info = (union power_info *)(mode_info->atom_context->bios + data_offset);
 
 	radeon_atombios_add_pplib_thermal_controller(rdev, &power_info->pplib.sThermalController);
+<<<<<<< HEAD
 	state_array = (struct _StateArray *)
 		(mode_info->atom_context->bios + data_offset +
 		 le16_to_cpu(power_info->pplib.usStateArrayOffset));
@@ -2506,10 +2757,22 @@ static int radeon_atombios_parse_power_table_6(struct radeon_device *rdev)
 		 le16_to_cpu(power_info->pplib.usNonClockInfoArrayOffset));
 	if (state_array->ucNumEntries == 0)
 		return state_index;
+=======
+	state_array = (struct StateArray *)
+		(mode_info->atom_context->bios + data_offset +
+		 le16_to_cpu(power_info->pplib.usStateArrayOffset));
+	clock_info_array = (struct ClockInfoArray *)
+		(mode_info->atom_context->bios + data_offset +
+		 le16_to_cpu(power_info->pplib.usClockInfoArrayOffset));
+	non_clock_info_array = (struct NonClockInfoArray *)
+		(mode_info->atom_context->bios + data_offset +
+		 le16_to_cpu(power_info->pplib.usNonClockInfoArrayOffset));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rdev->pm.power_state = kzalloc(sizeof(struct radeon_power_state) *
 				       state_array->ucNumEntries, GFP_KERNEL);
 	if (!rdev->pm.power_state)
 		return state_index;
+<<<<<<< HEAD
 	power_state_offset = (u8 *)state_array->states;
 	for (i = 0; i < state_array->ucNumEntries; i++) {
 		mode_index = 0;
@@ -2540,6 +2803,27 @@ static int radeon_atombios_parse_power_table_6(struct radeon_device *rdev)
 			rdev->pm.power_state[state_index].clock_info[0].sclk =
 				rdev->clock.default_sclk;
 			mode_index++;
+=======
+	for (i = 0; i < state_array->ucNumEntries; i++) {
+		mode_index = 0;
+		power_state = (union pplib_power_state *)&state_array->states[i];
+		/* XXX this might be an inagua bug... */
+		non_clock_array_index = i; /* power_state->v2.nonClockInfoIndex */
+		non_clock_info = (struct _ATOM_PPLIB_NONCLOCK_INFO *)
+			&non_clock_info_array->nonClockInfo[non_clock_array_index];
+		for (j = 0; j < power_state->v2.ucNumDPMLevels; j++) {
+			clock_array_index = power_state->v2.clockInfoIndex[j];
+			/* XXX this might be an inagua bug... */
+			if (clock_array_index >= clock_info_array->ucNumEntries)
+				continue;
+			clock_info = (union pplib_clock_info *)
+				&clock_info_array->clockInfo[clock_array_index];
+			valid = radeon_atombios_parse_pplib_clock_info(rdev,
+								       state_index, mode_index,
+								       clock_info);
+			if (valid)
+				mode_index++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		rdev->pm.power_state[state_index].num_clock_modes = mode_index;
 		if (mode_index) {
@@ -2547,7 +2831,10 @@ static int radeon_atombios_parse_power_table_6(struct radeon_device *rdev)
 								   non_clock_info);
 			state_index++;
 		}
+<<<<<<< HEAD
 		power_state_offset += 2 + power_state->v2.ucNumDPMLevels;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	/* if multiple clock modes, mark the lowest as no display */
 	for (i = 0; i < state_index; i++) {
@@ -2594,6 +2881,7 @@ void radeon_atombios_get_power_modes(struct radeon_device *rdev)
 		default:
 			break;
 		}
+<<<<<<< HEAD
 	}
 
 	if (state_index == 0) {
@@ -2616,6 +2904,24 @@ void radeon_atombios_get_power_modes(struct radeon_device *rdev)
 				rdev->pm.power_state[state_index].flags = 0;
 				state_index++;
 			}
+=======
+	} else {
+		rdev->pm.power_state = kzalloc(sizeof(struct radeon_power_state), GFP_KERNEL);
+		if (rdev->pm.power_state) {
+			/* add the default mode */
+			rdev->pm.power_state[state_index].type =
+				POWER_STATE_TYPE_DEFAULT;
+			rdev->pm.power_state[state_index].num_clock_modes = 1;
+			rdev->pm.power_state[state_index].clock_info[0].mclk = rdev->clock.default_mclk;
+			rdev->pm.power_state[state_index].clock_info[0].sclk = rdev->clock.default_sclk;
+			rdev->pm.power_state[state_index].default_clock_mode =
+				&rdev->pm.power_state[state_index].clock_info[0];
+			rdev->pm.power_state[state_index].clock_info[0].voltage.type = VOLTAGE_NONE;
+			rdev->pm.power_state[state_index].pcie_lanes = 16;
+			rdev->pm.default_power_state_index = state_index;
+			rdev->pm.power_state[state_index].flags = 0;
+			state_index++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -2687,7 +2993,10 @@ union set_voltage {
 	struct _SET_VOLTAGE_PS_ALLOCATION alloc;
 	struct _SET_VOLTAGE_PARAMETERS v1;
 	struct _SET_VOLTAGE_PARAMETERS_V2 v2;
+<<<<<<< HEAD
 	struct _SET_VOLTAGE_PARAMETERS_V1_3 v3;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void radeon_atom_set_voltage(struct radeon_device *rdev, u16 voltage_level, u8 voltage_type)
@@ -2714,11 +3023,14 @@ void radeon_atom_set_voltage(struct radeon_device *rdev, u16 voltage_level, u8 v
 		args.v2.ucVoltageMode = SET_ASIC_VOLTAGE_MODE_SET_VOLTAGE;
 		args.v2.usVoltageLevel = cpu_to_le16(voltage_level);
 		break;
+<<<<<<< HEAD
 	case 3:
 		args.v3.ucVoltageType = voltage_type;
 		args.v3.ucVoltageMode = ATOM_SET_VOLTAGE;
 		args.v3.usVoltageLevel = cpu_to_le16(voltage_level);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		DRM_ERROR("Unknown table version %d, %d\n", frev, crev);
 		return;
@@ -2727,8 +3039,13 @@ void radeon_atom_set_voltage(struct radeon_device *rdev, u16 voltage_level, u8 v
 	atom_execute_table(rdev->mode_info.atom_context, index, (uint32_t *)&args);
 }
 
+<<<<<<< HEAD
 static int radeon_atom_get_max_vddc(struct radeon_device *rdev, u8 voltage_type,
 				    u16 voltage_id, u16 *voltage)
+=======
+int radeon_atom_get_max_vddc(struct radeon_device *rdev,
+			     u16 *voltage)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	union set_voltage args;
 	int index = GetIndexIntoMasterTable(COMMAND, SetVoltage);
@@ -2749,6 +3066,7 @@ static int radeon_atom_get_max_vddc(struct radeon_device *rdev, u8 voltage_type,
 
 		*voltage = le16_to_cpu(args.v2.usVoltageLevel);
 		break;
+<<<<<<< HEAD
 	case 3:
 		args.v3.ucVoltageType = voltage_type;
 		args.v3.ucVoltageMode = ATOM_GET_VOLTAGE_LEVEL;
@@ -2758,6 +3076,8 @@ static int radeon_atom_get_max_vddc(struct radeon_device *rdev, u8 voltage_type,
 
 		*voltage = le16_to_cpu(args.v3.usVoltageLevel);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		DRM_ERROR("Unknown table version %d, %d\n", frev, crev);
 		return -EINVAL;
@@ -3009,6 +3329,7 @@ radeon_atombios_connected_scratch_regs(struct drm_connector *connector,
 			bios_6_scratch &= ~ATOM_S6_ACC_REQ_DFP5;
 		}
 	}
+<<<<<<< HEAD
 	if ((radeon_encoder->devices & ATOM_DEVICE_DFP6_SUPPORT) &&
 	    (radeon_connector->devices & ATOM_DEVICE_DFP6_SUPPORT)) {
 		if (connected) {
@@ -3023,6 +3344,8 @@ radeon_atombios_connected_scratch_regs(struct drm_connector *connector,
 			bios_6_scratch &= ~ATOM_S6_ACC_REQ_DFP6;
 		}
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (rdev->family >= CHIP_R600) {
 		WREG32(R600_BIOS_0_SCRATCH, bios_0_scratch);
@@ -3043,9 +3366,12 @@ radeon_atombios_encoder_crtc_scratch_regs(struct drm_encoder *encoder, int crtc)
 	struct radeon_encoder *radeon_encoder = to_radeon_encoder(encoder);
 	uint32_t bios_3_scratch;
 
+<<<<<<< HEAD
 	if (ASIC_IS_DCE4(rdev))
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rdev->family >= CHIP_R600)
 		bios_3_scratch = RREG32(R600_BIOS_3_SCRATCH);
 	else
@@ -3098,9 +3424,12 @@ radeon_atombios_encoder_dpms_scratch_regs(struct drm_encoder *encoder, bool on)
 	struct radeon_encoder *radeon_encoder = to_radeon_encoder(encoder);
 	uint32_t bios_2_scratch;
 
+<<<<<<< HEAD
 	if (ASIC_IS_DCE4(rdev))
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rdev->family >= CHIP_R600)
 		bios_2_scratch = RREG32(R600_BIOS_2_SCRATCH);
 	else

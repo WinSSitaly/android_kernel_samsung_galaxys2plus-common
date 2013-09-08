@@ -87,10 +87,13 @@ enum radeon_family {
 	CHIP_TURKS,
 	CHIP_CAICOS,
 	CHIP_CAYMAN,
+<<<<<<< HEAD
 	CHIP_ARUBA,
 	CHIP_TAHITI,
 	CHIP_PITCAIRN,
 	CHIP_VERDE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CHIP_LAST,
 };
 

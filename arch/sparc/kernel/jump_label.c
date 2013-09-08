@@ -6,8 +6,11 @@
 #include <linux/jump_label.h>
 #include <linux/memory.h>
 
+<<<<<<< HEAD
 #include <asm/cacheflush.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef HAVE_JUMP_LABEL
 
 void arch_jump_label_transform(struct jump_entry *entry,
@@ -38,4 +41,15 @@ void arch_jump_label_transform(struct jump_entry *entry,
 	put_online_cpus();
 }
 
+<<<<<<< HEAD
+=======
+void arch_jump_label_text_poke_early(jump_label_t addr)
+{
+	u32 *insn_p = (u32 *) (unsigned long) addr;
+
+	*insn_p = 0x01000000;
+	flushi(insn_p);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

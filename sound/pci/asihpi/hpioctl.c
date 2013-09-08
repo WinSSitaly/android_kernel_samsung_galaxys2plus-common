@@ -1,7 +1,11 @@
 /*******************************************************************************
 
     AudioScience HPI driver
+<<<<<<< HEAD
     Copyright (C) 1997-2011  AudioScience Inc. <support@audioscience.com>
+=======
+    Copyright (C) 1997-2010  AudioScience Inc. <support@audioscience.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of version 2 of the GNU General Public License as
@@ -21,7 +25,10 @@ Common Linux HPI ioctl and module probe/remove functions
 #define SOURCEFILE_NAME "hpioctl.c"
 
 #include "hpi_internal.h"
+<<<<<<< HEAD
 #include "hpi_version.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "hpimsginit.h"
 #include "hpidebug.h"
 #include "hpimsgx.h"
@@ -34,7 +41,10 @@ Common Linux HPI ioctl and module probe/remove functions
 #include <asm/uaccess.h>
 #include <linux/pci.h>
 #include <linux/stringify.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef MODULE_FIRMWARE
 MODULE_FIRMWARE("asihpi/dsp5000.bin");
@@ -66,7 +76,13 @@ static struct hpi_adapter adapters[HPI_MAX_ADAPTERS];
 static void hpi_send_recv_f(struct hpi_message *phm, struct hpi_response *phr,
 	struct file *file)
 {
+<<<<<<< HEAD
 	if ((phm->adapter_index >= HPI_MAX_ADAPTERS)
+=======
+	int adapter = phm->adapter_index;
+
+	if ((adapter >= HPI_MAX_ADAPTERS || adapter < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		&& (phm->object != HPI_OBJ_SUBSYSTEM))
 		phr->error = HPI_ERROR_INVALID_OBJ_INDEX;
 	else
@@ -107,6 +123,10 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 	union hpi_response_buffer_v1 *hr;
 	u16 res_max_size;
 	u32 uncopied_bytes;
+<<<<<<< HEAD
+=======
+	struct hpi_adapter *pa = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err = 0;
 
 	if (cmd != HPI_IOCTL_LINUX)
@@ -156,6 +176,14 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		goto out;
 	}
 
+<<<<<<< HEAD
+=======
+	if (hm->h.adapter_index >= HPI_MAX_ADAPTERS) {
+		err = -EINVAL;
+		goto out;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (hm->h.function) {
 	case HPI_SUBSYS_CREATE_ADAPTER:
 	case HPI_ADAPTER_DELETE:
@@ -177,6 +205,7 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 	} else {
 		u16 __user *ptr = NULL;
 		u32 size = 0;
+<<<<<<< HEAD
 		/* -1=no data 0=read from user mem, 1=write to user mem */
 		int wrflag = -1;
 		struct hpi_adapter *pa = NULL;
@@ -187,6 +216,18 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		if (!pa || !pa->adapter || !pa->adapter->type) {
 			hpi_init_response(&hr->r0, hm->h.object,
 				hm->h.function, HPI_ERROR_BAD_ADAPTER_NUMBER);
+=======
+
+		/* -1=no data 0=read from user mem, 1=write to user mem */
+		int wrflag = -1;
+		u32 adapter = hm->h.adapter_index;
+		pa = &adapters[adapter];
+
+		if ((adapter > HPI_MAX_ADAPTERS) || (!pa->type)) {
+			hpi_init_response(&hr->r0, HPI_OBJ_ADAPTER,
+				HPI_ADAPTER_OPEN,
+				HPI_ERROR_BAD_ADAPTER_NUMBER);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			uncopied_bytes =
 				copy_to_user(puhr, hr, sizeof(hr->h));
@@ -197,7 +238,11 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 			goto out;
 		}
 
+<<<<<<< HEAD
 		if (mutex_lock_interruptible(&pa->mutex)) {
+=======
+		if (mutex_lock_interruptible(&adapters[adapter].mutex)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			err = -EINTR;
 			goto out;
 		}
@@ -233,7 +278,12 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 							"stream buffer size %d\n",
 							size);
 
+<<<<<<< HEAD
 						mutex_unlock(&pa->mutex);
+=======
+						mutex_unlock(&adapters
+							[adapter].mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						err = -EINVAL;
 						goto out;
 					}
@@ -274,7 +324,11 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 					uncopied_bytes, size);
 		}
 
+<<<<<<< HEAD
 		mutex_unlock(&pa->mutex);
+=======
+		mutex_unlock(&adapters[adapter].mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* on return response size must be set */
@@ -311,7 +365,10 @@ int __devinit asihpi_adapter_probe(struct pci_dev *pci_dev,
 	const struct pci_device_id *pci_id)
 {
 	int idx, nm;
+<<<<<<< HEAD
 	int adapter_index;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int memlen;
 	struct hpi_message hm;
 	struct hpi_response hr;
@@ -340,6 +397,11 @@ int __devinit asihpi_adapter_probe(struct pci_dev *pci_dev,
 
 	hm.adapter_index = HPI_ADAPTER_INDEX_INVALID;
 
+<<<<<<< HEAD
+=======
+	adapter.pci = pci_dev;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nm = HPI_MAX_ADAPTER_MEM_SPACES;
 
 	for (idx = 0; idx < nm; idx++) {
@@ -348,16 +410,28 @@ int __devinit asihpi_adapter_probe(struct pci_dev *pci_dev,
 
 		if (pci_resource_flags(pci_dev, idx) & IORESOURCE_MEM) {
 			memlen = pci_resource_len(pci_dev, idx);
+<<<<<<< HEAD
 			pci.ap_mem_base[idx] =
 				ioremap(pci_resource_start(pci_dev, idx),
 				memlen);
 			if (!pci.ap_mem_base[idx]) {
+=======
+			adapter.ap_remapped_mem_base[idx] =
+				ioremap(pci_resource_start(pci_dev, idx),
+				memlen);
+			if (!adapter.ap_remapped_mem_base[idx]) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				HPI_DEBUG_LOG(ERROR,
 					"ioremap failed, aborting\n");
 				/* unmap previously mapped pci mem space */
 				goto err;
 			}
 		}
+<<<<<<< HEAD
+=======
+
+		pci.ap_mem_base[idx] = adapter.ap_remapped_mem_base[idx];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	pci.pci_dev = pci_dev;
@@ -369,9 +443,12 @@ int __devinit asihpi_adapter_probe(struct pci_dev *pci_dev,
 	if (hr.error)
 		goto err;
 
+<<<<<<< HEAD
 	adapter_index = hr.u.s.adapter_index;
 	adapter.adapter = hpi_find_adapter(adapter_index);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (prealloc_stream_buf) {
 		adapter.p_buffer = vmalloc(prealloc_stream_buf);
 		if (!adapter.p_buffer) {
@@ -383,14 +460,24 @@ int __devinit asihpi_adapter_probe(struct pci_dev *pci_dev,
 		}
 	}
 
+<<<<<<< HEAD
 	hpi_init_message_response(&hm, &hr, HPI_OBJ_ADAPTER,
 		HPI_ADAPTER_OPEN);
 	hm.adapter_index = adapter.adapter->index;
+=======
+	adapter.index = hr.u.s.adapter_index;
+	adapter.type = hr.u.s.adapter_type;
+
+	hpi_init_message_response(&hm, &hr, HPI_OBJ_ADAPTER,
+		HPI_ADAPTER_OPEN);
+	hm.adapter_index = adapter.index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hpi_send_recv_ex(&hm, &hr, HOWNER_KERNEL);
 
 	if (hr.error)
 		goto err;
 
+<<<<<<< HEAD
 	/* WARNING can't init mutex in 'adapter'
 	 * and then copy it to adapters[] ?!?!
 	 */
@@ -401,14 +488,33 @@ int __devinit asihpi_adapter_probe(struct pci_dev *pci_dev,
 	dev_printk(KERN_INFO, &pci_dev->dev,
 		"probe succeeded for ASI%04X HPI index %d\n",
 		adapter.adapter->type, adapter_index);
+=======
+	adapter.snd_card_asihpi = NULL;
+	/* WARNING can't init mutex in 'adapter'
+	 * and then copy it to adapters[] ?!?!
+	 */
+	adapters[adapter.index] = adapter;
+	mutex_init(&adapters[adapter.index].mutex);
+	pci_set_drvdata(pci_dev, &adapters[adapter.index]);
+
+	dev_printk(KERN_INFO, &pci_dev->dev,
+		"probe succeeded for ASI%04X HPI index %d\n", adapter.type,
+		adapter.index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
 err:
 	for (idx = 0; idx < HPI_MAX_ADAPTER_MEM_SPACES; idx++) {
+<<<<<<< HEAD
 		if (pci.ap_mem_base[idx]) {
 			iounmap(pci.ap_mem_base[idx]);
 			pci.ap_mem_base[idx] = NULL;
+=======
+		if (adapter.ap_remapped_mem_base[idx]) {
+			iounmap(adapter.ap_remapped_mem_base[idx]);
+			adapter.ap_remapped_mem_base[idx] = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -427,6 +533,7 @@ void __devexit asihpi_adapter_remove(struct pci_dev *pci_dev)
 	struct hpi_message hm;
 	struct hpi_response hr;
 	struct hpi_adapter *pa;
+<<<<<<< HEAD
 	struct hpi_pci pci;
 
 	pa = pci_get_drvdata(pci_dev);
@@ -435,12 +542,26 @@ void __devexit asihpi_adapter_remove(struct pci_dev *pci_dev)
 	hpi_init_message_response(&hm, &hr, HPI_OBJ_ADAPTER,
 		HPI_ADAPTER_DELETE);
 	hm.adapter_index = pa->adapter->index;
+=======
+	pa = pci_get_drvdata(pci_dev);
+
+	hpi_init_message_response(&hm, &hr, HPI_OBJ_ADAPTER,
+		HPI_ADAPTER_DELETE);
+	hm.adapter_index = pa->index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hpi_send_recv_ex(&hm, &hr, HOWNER_KERNEL);
 
 	/* unmap PCI memory space, mapped during device init. */
 	for (idx = 0; idx < HPI_MAX_ADAPTER_MEM_SPACES; idx++) {
+<<<<<<< HEAD
 		if (pci.ap_mem_base[idx])
 			iounmap(pci.ap_mem_base[idx]);
+=======
+		if (pa->ap_remapped_mem_base[idx]) {
+			iounmap(pa->ap_remapped_mem_base[idx]);
+			pa->ap_remapped_mem_base[idx] = NULL;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (pa->p_buffer)
@@ -452,7 +573,11 @@ void __devexit asihpi_adapter_remove(struct pci_dev *pci_dev)
 			"remove %04x:%04x,%04x:%04x,%04x," " HPI index %d.\n",
 			pci_dev->vendor, pci_dev->device,
 			pci_dev->subsystem_vendor, pci_dev->subsystem_device,
+<<<<<<< HEAD
 			pci_dev->devfn, pa->adapter->index);
+=======
+			pci_dev->devfn, pa->index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memset(pa, 0, sizeof(*pa));
 }

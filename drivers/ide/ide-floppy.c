@@ -35,6 +35,10 @@
 #include <scsi/scsi_ioctl.h>
 
 #include <asm/byteorder.h>
+<<<<<<< HEAD
+=======
+#include <linux/irq.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/uaccess.h>
 #include <linux/io.h>
 #include <asm/unaligned.h>

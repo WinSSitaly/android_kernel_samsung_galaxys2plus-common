@@ -138,7 +138,11 @@ nv84_crypt_isr(struct drm_device *dev)
 }
 
 static int
+<<<<<<< HEAD
 nv84_crypt_fini(struct drm_device *dev, int engine, bool suspend)
+=======
+nv84_crypt_fini(struct drm_device *dev, int engine)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	nv_wr32(dev, 0x102140, 0x00000000);
 	return 0;

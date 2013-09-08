@@ -20,7 +20,10 @@
 #include <linux/device.h>
 #include <linux/gpio.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/pcm.h>
 #include <sound/initval.h>
@@ -118,7 +121,11 @@ static int pcm3008_soc_remove(struct snd_soc_codec *codec)
 }
 
 #ifdef CONFIG_PM
+<<<<<<< HEAD
 static int pcm3008_soc_suspend(struct snd_soc_codec *codec)
+=======
+static int pcm3008_soc_suspend(struct snd_soc_codec *codec, pm_message_t msg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct pcm3008_setup_data *setup = codec->dev->platform_data;
 
@@ -172,7 +179,21 @@ static struct platform_driver pcm3008_codec_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(pcm3008_codec_driver);
+=======
+static int __init pcm3008_modinit(void)
+{
+	return platform_driver_register(&pcm3008_codec_driver);
+}
+module_init(pcm3008_modinit);
+
+static void __exit pcm3008_exit(void)
+{
+	platform_driver_unregister(&pcm3008_codec_driver);
+}
+module_exit(pcm3008_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Soc PCM3008 driver");
 MODULE_AUTHOR("Hugo Villeneuve");

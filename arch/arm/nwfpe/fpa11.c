@@ -28,6 +28,10 @@
 
 #include <linux/compiler.h>
 #include <linux/string.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Reset the FPA11 chip.  Called to initialize and reset the emulator. */
 static void resetFPA11(void)

@@ -5,7 +5,10 @@
 #else
 #include <asm/processor_32.h>
 #endif
+<<<<<<< HEAD
 
 #define nop() 		__asm__ __volatile__ ("nop")
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

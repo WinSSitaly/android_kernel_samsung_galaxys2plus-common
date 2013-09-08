@@ -8,6 +8,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 /* #define VERBOSE_DEBUG */
@@ -15,7 +27,10 @@
 #include <linux/slab.h>
 #include <linux/kernel.h>
 #include <linux/device.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "g_zero.h"
 #include "gadget_chips.h"
@@ -123,6 +138,7 @@ static struct usb_descriptor_header *hs_source_sink_descs[] = {
 	NULL,
 };
 
+<<<<<<< HEAD
 /* super speed support: */
 
 static struct usb_endpoint_descriptor ss_source_desc = {
@@ -166,6 +182,8 @@ static struct usb_descriptor_header *ss_source_sink_descs[] = {
 	NULL,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* function-specific strings: */
 
 static struct usb_string strings_sourcesink[] = {
@@ -222,6 +240,7 @@ autoconf_fail:
 		f->hs_descriptors = hs_source_sink_descs;
 	}
 
+<<<<<<< HEAD
 	/* support super speed hardware */
 	if (gadget_is_superspeed(c->cdev->gadget)) {
 		ss_source_desc.bEndpointAddress =
@@ -234,6 +253,10 @@ autoconf_fail:
 	DBG(cdev, "%s speed %s: IN/%s, OUT/%s\n",
 	    (gadget_is_superspeed(c->cdev->gadget) ? "super" :
 	     (gadget_is_dualspeed(c->cdev->gadget) ? "dual" : "full")),
+=======
+	DBG(cdev, "%s speed %s: IN/%s, OUT/%s\n",
+			gadget_is_dualspeed(c->cdev->gadget) ? "dual" : "full",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			f->name, ss->in_ep->name, ss->out_ep->name);
 	return 0;
 }
@@ -388,6 +411,7 @@ static int
 enable_source_sink(struct usb_composite_dev *cdev, struct f_sourcesink *ss)
 {
 	int					result = 0;
+<<<<<<< HEAD
 	struct usb_ep				*ep;
 
 	/* one endpoint writes (sources) zeroes IN (to the host) */
@@ -396,6 +420,17 @@ enable_source_sink(struct usb_composite_dev *cdev, struct f_sourcesink *ss)
 	if (result)
 		return result;
 	result = usb_ep_enable(ep);
+=======
+	const struct usb_endpoint_descriptor	*src, *sink;
+	struct usb_ep				*ep;
+
+	src = ep_choose(cdev->gadget, &hs_source_desc, &fs_source_desc);
+	sink = ep_choose(cdev->gadget, &hs_sink_desc, &fs_sink_desc);
+
+	/* one endpoint writes (sources) zeroes IN (to the host) */
+	ep = ss->in_ep;
+	result = usb_ep_enable(ep, src);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (result < 0)
 		return result;
 	ep->driver_data = ss;
@@ -411,10 +446,14 @@ fail:
 
 	/* one endpoint reads (sinks) anything OUT (from the host) */
 	ep = ss->out_ep;
+<<<<<<< HEAD
 	result = config_ep_by_speed(cdev->gadget, &(ss->function), ep);
 	if (result)
 		goto fail;
 	result = usb_ep_enable(ep);
+=======
+	result = usb_ep_enable(ep, sink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (result < 0)
 		goto fail;
 	ep->driver_data = ss;
@@ -482,8 +521,11 @@ static int sourcesink_setup(struct usb_configuration *c,
 	u16			w_value = le16_to_cpu(ctrl->wValue);
 	u16			w_length = le16_to_cpu(ctrl->wLength);
 
+<<<<<<< HEAD
 	req->length = USB_BUFSIZ;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* composite driver infrastructure handles everything except
 	 * the two control test requests.
 	 */

@@ -95,7 +95,10 @@ static struct mii_bus * __devinit mdio_gpio_bus_init(struct device *dev,
 		goto out;
 
 	bitbang->ctrl.ops = &mdio_gpio_ops;
+<<<<<<< HEAD
 	bitbang->ctrl.reset = pdata->reset;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bitbang->mdc = pdata->mdc;
 	bitbang->mdio = pdata->mdio;
 
@@ -116,7 +119,11 @@ static struct mii_bus * __devinit mdio_gpio_bus_init(struct device *dev,
 		if (!new_bus->irq[i])
 			new_bus->irq[i] = PHY_POLL;
 
+<<<<<<< HEAD
 	snprintf(new_bus->id, MII_BUS_ID_SIZE, "gpio-%x", bus_id);
+=======
+	snprintf(new_bus->id, MII_BUS_ID_SIZE, "%x", bus_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (gpio_request(bitbang->mdc, "mdc"))
 		goto out_free_bus;
@@ -255,13 +262,21 @@ static inline int __init mdio_ofgpio_init(void)
 	return platform_driver_register(&mdio_ofgpio_driver);
 }
 
+<<<<<<< HEAD
 static inline void mdio_ofgpio_exit(void)
+=======
+static inline void __exit mdio_ofgpio_exit(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	platform_driver_unregister(&mdio_ofgpio_driver);
 }
 #else
 static inline int __init mdio_ofgpio_init(void) { return 0; }
+<<<<<<< HEAD
 static inline void mdio_ofgpio_exit(void) { }
+=======
+static inline void __exit mdio_ofgpio_exit(void) { }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_OF_GPIO */
 
 static struct platform_driver mdio_gpio_driver = {

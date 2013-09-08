@@ -2,6 +2,7 @@
 config CLKDEV_LOOKUP
 	bool
 	select HAVE_CLK
+<<<<<<< HEAD
 
 config HAVE_CLK_PREPARE
 	bool
@@ -45,3 +46,5 @@ config COMMON_CLK_DEBUG
 	  clk_notifier_count.
 
 endmenu
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

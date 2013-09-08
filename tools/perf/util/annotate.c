@@ -16,8 +16,11 @@
 #include "annotate.h"
 #include <pthread.h>
 
+<<<<<<< HEAD
 const char 	*disassembler_style;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int symbol__annotate_init(struct map *map __used, struct symbol *sym)
 {
 	struct annotation *notes = symbol__annotation(sym);
@@ -25,6 +28,7 @@ int symbol__annotate_init(struct map *map __used, struct symbol *sym)
 	return 0;
 }
 
+<<<<<<< HEAD
 int symbol__alloc_hist(struct symbol *sym)
 {
 	struct annotation *notes = symbol__annotation(sym);
@@ -36,6 +40,19 @@ int symbol__alloc_hist(struct symbol *sym)
 		return -1;
 	notes->src->sizeof_sym_hist = sizeof_sym_hist;
 	notes->src->nr_histograms   = symbol_conf.nr_events;
+=======
+int symbol__alloc_hist(struct symbol *sym, int nevents)
+{
+	struct annotation *notes = symbol__annotation(sym);
+	size_t sizeof_sym_hist = (sizeof(struct sym_hist) +
+				  (sym->end - sym->start) * sizeof(u64));
+
+	notes->src = zalloc(sizeof(*notes->src) + nevents * sizeof_sym_hist);
+	if (notes->src == NULL)
+		return -1;
+	notes->src->sizeof_sym_hist = sizeof_sym_hist;
+	notes->src->nr_histograms   = nevents;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_LIST_HEAD(&notes->src->source);
 	return 0;
 }
@@ -64,8 +81,13 @@ int symbol__inc_addr_samples(struct symbol *sym, struct map *map,
 
 	pr_debug3("%s: addr=%#" PRIx64 "\n", __func__, map->unmap_ip(map, addr));
 
+<<<<<<< HEAD
 	if (addr < sym->start || addr > sym->end)
 		return -ERANGE;
+=======
+	if (addr >= sym->end)
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	offset = addr - sym->start;
 	h = annotation__histogram(notes, evidx);
@@ -310,12 +332,18 @@ fallback:
 		}
 		err = -ENOENT;
 		dso->annotate_warned = 1;
+<<<<<<< HEAD
 		pr_err("Can't annotate %s:\n\n"
 		       "No vmlinux file%s\nwas found in the path.\n\n"
 		       "Please use:\n\n"
 		       "  perf buildid-cache -av vmlinux\n\n"
 		       "or:\n\n"
 		       "  --vmlinux vmlinux\n",
+=======
+		pr_err("Can't annotate %s: No vmlinux file%s was found in the "
+		       "path.\nPlease use 'perf buildid-cache -av vmlinux' or "
+		       "--vmlinux vmlinux.\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       sym->name, build_id_msg ?: "");
 		goto out_free_filename;
 	}
@@ -328,6 +356,7 @@ fallback:
 		 dso, dso->long_name, sym, sym->name);
 
 	snprintf(command, sizeof(command),
+<<<<<<< HEAD
 		 "objdump %s%s --start-address=0x%016" PRIx64
 		 " --stop-address=0x%016" PRIx64
 		 " -d %s %s -C %s|grep -v %s|expand",
@@ -337,6 +366,12 @@ fallback:
 		 map__rip_2objdump(map, sym->end+1),
 		 symbol_conf.annotate_asm_raw ? "" : "--no-show-raw",
 		 symbol_conf.annotate_src ? "-S" : "",
+=======
+		 "objdump --start-address=0x%016" PRIx64
+		 " --stop-address=0x%016" PRIx64 " -dS -C %s|grep -v %s|expand",
+		 map__rip_2objdump(map, sym->start),
+		 map__rip_2objdump(map, sym->end),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 symfs_filename, filename);
 
 	pr_debug("Executing: %s\n", command);
@@ -408,7 +443,11 @@ static int symbol__get_source_line(struct symbol *sym, struct map *map,
 	if (!notes->src->lines)
 		return -1;
 
+<<<<<<< HEAD
 	start = map__rip_2objdump(map, sym->start);
+=======
+	start = map->unmap_ip(map, sym->start);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < len; i++) {
 		char *path = NULL;
@@ -561,12 +600,25 @@ void symbol__annotate_decay_histogram(struct symbol *sym, int evidx)
 {
 	struct annotation *notes = symbol__annotation(sym);
 	struct sym_hist *h = annotation__histogram(notes, evidx);
+<<<<<<< HEAD
 	int len = sym->end - sym->start, offset;
 
 	h->sum = 0;
 	for (offset = 0; offset < len; ++offset) {
 		h->addr[offset] = h->addr[offset] * 7 / 8;
 		h->sum += h->addr[offset];
+=======
+	struct objdump_line *pos;
+	int len = sym->end - sym->start;
+
+	h->sum = 0;
+
+	list_for_each_entry(pos, &notes->src->source, node) {
+		if (pos->offset != -1 && pos->offset < len) {
+			h->addr[pos->offset] = h->addr[pos->offset] * 7 / 8;
+			h->sum += h->addr[pos->offset];
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 

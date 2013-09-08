@@ -44,14 +44,24 @@
 #include <linux/ioport.h> /* for request_region */
 #include <linux/uio.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/capability.h>
 #include <linux/bitops.h>
 #include <linux/slab.h>
 #include <asm/byteorder.h>
+<<<<<<< HEAD
 #include <asm/string.h>
 #include <asm/io.h>
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <asm/string.h>
+#include <asm/io.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <linux/wait.h>
 

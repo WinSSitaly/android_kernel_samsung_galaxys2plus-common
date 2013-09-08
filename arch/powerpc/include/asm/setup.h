@@ -3,6 +3,7 @@
 
 #include <asm-generic/setup.h>
 
+<<<<<<< HEAD
 #ifndef __ASSEMBLY__
 extern void ppc_printk_progress(char *s, unsigned short hex);
 
@@ -29,4 +30,6 @@ extern void reloc_got2(unsigned long);
 
 #endif /* !__ASSEMBLY__ */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* _ASM_POWERPC_SETUP_H */

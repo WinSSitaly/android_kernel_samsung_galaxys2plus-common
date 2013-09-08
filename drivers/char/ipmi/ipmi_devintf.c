@@ -34,6 +34,10 @@
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/errno.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/poll.h>
 #include <linux/sched.h>
 #include <linux/spinlock.h>
@@ -837,6 +841,7 @@ static long compat_ipmi_ioctl(struct file *filep, unsigned int cmd,
 		return ipmi_ioctl(filep, cmd, arg);
 	}
 }
+<<<<<<< HEAD
 
 static long unlocked_compat_ipmi_ioctl(struct file *filep, unsigned int cmd,
 				       unsigned long arg)
@@ -849,13 +854,19 @@ static long unlocked_compat_ipmi_ioctl(struct file *filep, unsigned int cmd,
 
 	return ret;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 static const struct file_operations ipmi_fops = {
 	.owner		= THIS_MODULE,
 	.unlocked_ioctl	= ipmi_unlocked_ioctl,
 #ifdef CONFIG_COMPAT
+<<<<<<< HEAD
 	.compat_ioctl   = unlocked_compat_ipmi_ioctl,
+=======
+	.compat_ioctl   = compat_ipmi_ioctl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	.open		= ipmi_open,
 	.release	= ipmi_release,

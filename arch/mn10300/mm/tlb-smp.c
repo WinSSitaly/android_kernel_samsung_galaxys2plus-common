@@ -24,6 +24,10 @@
 #include <linux/profile.h>
 #include <linux/smp.h>
 #include <asm/tlbflush.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/bitops.h>
 #include <asm/processor.h>
 #include <asm/bug.h>

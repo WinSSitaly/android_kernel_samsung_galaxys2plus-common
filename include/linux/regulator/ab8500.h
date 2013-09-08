@@ -26,6 +26,7 @@ enum ab8500_regulator_id {
 	AB8500_NUM_REGULATORS,
 };
 
+<<<<<<< HEAD
 /* AB9450 regulators */
 enum ab9540_regulator_id {
 	AB9540_LDO_AUX1,
@@ -46,6 +47,9 @@ enum ab9540_regulator_id {
 };
 
 /* AB8500 and AB9540 register initialization */
+=======
+/* AB8500 register initialization */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ab8500_regulator_reg_init {
 	int id;
 	u8 value;
@@ -90,6 +94,7 @@ enum ab8500_regulator_reg {
 	AB8500_NUM_REGULATOR_REGISTERS,
 };
 
+<<<<<<< HEAD
 
 /* AB9540 registers */
 enum ab9540_regulator_reg {
@@ -139,4 +144,6 @@ enum ab9540_regulator_reg {
 	AB9540_NUM_REGULATOR_REGISTERS,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

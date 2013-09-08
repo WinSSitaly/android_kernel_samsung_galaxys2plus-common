@@ -23,8 +23,11 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+<<<<<<< HEAD
 #include <linux/module.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drmP.h"
 #include "savage_drm.h"
 #include "savage_drv.h"
@@ -35,6 +38,7 @@ static struct pci_device_id pciidlist[] = {
 	savage_PCI_IDS
 };
 
+<<<<<<< HEAD
 static const struct file_operations savage_driver_fops = {
 	.owner = THIS_MODULE,
 	.open = drm_open,
@@ -46,6 +50,8 @@ static const struct file_operations savage_driver_fops = {
 	.llseek = noop_llseek,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct drm_driver driver = {
 	.driver_features =
 	    DRIVER_USE_AGP | DRIVER_USE_MTRR | DRIVER_HAVE_DMA | DRIVER_PCI_DMA,
@@ -57,7 +63,21 @@ static struct drm_driver driver = {
 	.reclaim_buffers = savage_reclaim_buffers,
 	.ioctls = savage_ioctls,
 	.dma_ioctl = savage_bci_buffers,
+<<<<<<< HEAD
 	.fops = &savage_driver_fops,
+=======
+	.fops = {
+		 .owner = THIS_MODULE,
+		 .open = drm_open,
+		 .release = drm_release,
+		 .unlocked_ioctl = drm_ioctl,
+		 .mmap = drm_mmap,
+		 .poll = drm_poll,
+		 .fasync = drm_fasync,
+		 .llseek = noop_llseek,
+	},
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name = DRIVER_NAME,
 	.desc = DRIVER_DESC,
 	.date = DRIVER_DATE,

@@ -343,6 +343,10 @@ static int __devinit init_matrix_gpio(struct platform_device *pdev,
 		for (i = 0; i < pdata->num_row_gpios; i++) {
 			err = request_irq(gpio_to_irq(pdata->row_gpios[i]),
 					matrix_keypad_interrupt,
+<<<<<<< HEAD
+=======
+					IRQF_DISABLED |
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					IRQF_TRIGGER_RISING |
 					IRQF_TRIGGER_FALLING,
 					"matrix-keypad", keypad);
@@ -496,7 +500,23 @@ static struct platform_driver matrix_keypad_driver = {
 #endif
 	},
 };
+<<<<<<< HEAD
 module_platform_driver(matrix_keypad_driver);
+=======
+
+static int __init matrix_keypad_init(void)
+{
+	return platform_driver_register(&matrix_keypad_driver);
+}
+
+static void __exit matrix_keypad_exit(void)
+{
+	platform_driver_unregister(&matrix_keypad_driver);
+}
+
+module_init(matrix_keypad_init);
+module_exit(matrix_keypad_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Marek Vasut <marek.vasut@gmail.com>");
 MODULE_DESCRIPTION("GPIO Driven Matrix Keypad Driver");

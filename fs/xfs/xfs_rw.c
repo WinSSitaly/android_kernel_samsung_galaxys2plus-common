@@ -92,6 +92,27 @@ xfs_do_force_shutdown(
 }
 
 /*
+<<<<<<< HEAD
+=======
+ * Prints out an ALERT message about I/O error.
+ */
+void
+xfs_ioerror_alert(
+	char			*func,
+	struct xfs_mount	*mp,
+	xfs_buf_t		*bp,
+	xfs_daddr_t		blkno)
+{
+	xfs_alert(mp,
+		 "I/O error occurred: meta-data dev %s block 0x%llx"
+		 "       (\"%s\") error %d buf count %zd",
+		XFS_BUFTARG_NAME(XFS_BUF_TARGET(bp)),
+		(__uint64_t)blkno, func,
+		XFS_BUF_GETERROR(bp), XFS_BUF_COUNT(bp));
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This isn't an absolute requirement, but it is
  * just a good idea to call xfs_read_buf instead of
  * directly doing a read_buf call. For one, we shouldn't
@@ -119,19 +140,33 @@ xfs_read_buf(
 	bp = xfs_buf_read(target, blkno, len, flags);
 	if (!bp)
 		return XFS_ERROR(EIO);
+<<<<<<< HEAD
 	error = bp->b_error;
 	if (!error && !XFS_FORCED_SHUTDOWN(mp)) {
+=======
+	error = XFS_BUF_GETERROR(bp);
+	if (bp && !error && !XFS_FORCED_SHUTDOWN(mp)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*bpp = bp;
 	} else {
 		*bpp = NULL;
 		if (error) {
+<<<<<<< HEAD
 			xfs_buf_ioerror_alert(bp, __func__);
+=======
+			xfs_ioerror_alert("xfs_read_buf", mp, bp, XFS_BUF_ADDR(bp));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			error = XFS_ERROR(EIO);
 		}
 		if (bp) {
 			XFS_BUF_UNDONE(bp);
+<<<<<<< HEAD
 			xfs_buf_stale(bp);
+=======
+			XFS_BUF_UNDELAYWRITE(bp);
+			XFS_BUF_STALE(bp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * brelse clears B_ERROR and b_error
 			 */

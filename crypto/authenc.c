@@ -336,7 +336,11 @@ static int crypto_authenc_genicv(struct aead_request *req, u8 *iv,
 		cryptlen += ivsize;
 	}
 
+<<<<<<< HEAD
 	if (sg_is_last(assoc)) {
+=======
+	if (req->assoclen && sg_is_last(assoc)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		authenc_ahash_fn = crypto_authenc_ahash;
 		sg_init_table(asg, 2);
 		sg_set_page(asg, sg_page(assoc), assoc->length, assoc->offset);
@@ -490,7 +494,11 @@ static int crypto_authenc_iverify(struct aead_request *req, u8 *iv,
 		cryptlen += ivsize;
 	}
 
+<<<<<<< HEAD
 	if (sg_is_last(assoc)) {
+=======
+	if (req->assoclen && sg_is_last(assoc)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		authenc_ahash_fn = crypto_authenc_ahash;
 		sg_init_table(asg, 2);
 		sg_set_page(asg, sg_page(assoc), assoc->length, assoc->offset);

@@ -22,7 +22,10 @@
 #include <linux/io.h>
 #include <mach/common.h>
 #include <asm/mach/irq.h>
+<<<<<<< HEAD
 #include <asm/exception.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/hardware.h>
 
 #include "irq-common.h"
@@ -47,20 +50,30 @@
 #define AVIC_FIPNDH		0x60	/* fast int pending high */
 #define AVIC_FIPNDL		0x64	/* fast int pending low */
 
+<<<<<<< HEAD
 #define AVIC_NUM_IRQS 64
 
 void __iomem *avic_base;
 
 static u32 avic_saved_mask_reg[2];
 
+=======
+void __iomem *avic_base;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_MXC_IRQ_PRIOR
 static int avic_irq_set_priority(unsigned char irq, unsigned char prio)
 {
 	unsigned int temp;
 	unsigned int mask = 0x0F << irq % 8 * 4;
 
+<<<<<<< HEAD
 	if (irq >= AVIC_NUM_IRQS)
 		return -EINVAL;
+=======
+	if (irq >= MXC_INTERNAL_IRQS)
+		return -EINVAL;;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	temp = __raw_readl(avic_base + AVIC_NIPRIORITY(irq / 8));
 	temp &= ~mask;
@@ -77,6 +90,7 @@ static int avic_set_irq_fiq(unsigned int irq, unsigned int type)
 {
 	unsigned int irqt;
 
+<<<<<<< HEAD
 	if (irq >= AVIC_NUM_IRQS)
 		return -EINVAL;
 
@@ -85,6 +99,16 @@ static int avic_set_irq_fiq(unsigned int irq, unsigned int type)
 		__raw_writel(irqt | (!!type << irq), avic_base + AVIC_INTTYPEL);
 	} else {
 		irq -= AVIC_NUM_IRQS / 2;
+=======
+	if (irq >= MXC_INTERNAL_IRQS)
+		return -EINVAL;
+
+	if (irq < MXC_INTERNAL_IRQS / 2) {
+		irqt = __raw_readl(avic_base + AVIC_INTTYPEL) & ~(1 << irq);
+		__raw_writel(irqt | (!!type << irq), avic_base + AVIC_INTTYPEL);
+	} else {
+		irq -= MXC_INTERNAL_IRQS / 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		irqt = __raw_readl(avic_base + AVIC_INTTYPEH) & ~(1 << irq);
 		__raw_writel(irqt | (!!type << irq), avic_base + AVIC_INTTYPEH);
 	}
@@ -93,8 +117,29 @@ static int avic_set_irq_fiq(unsigned int irq, unsigned int type)
 }
 #endif /* CONFIG_FIQ */
 
+<<<<<<< HEAD
 
 static struct mxc_extra_irq avic_extra_irq = {
+=======
+/* Disable interrupt number "irq" in the AVIC */
+static void mxc_mask_irq(struct irq_data *d)
+{
+	__raw_writel(d->irq, avic_base + AVIC_INTDISNUM);
+}
+
+/* Enable interrupt number "irq" in the AVIC */
+static void mxc_unmask_irq(struct irq_data *d)
+{
+	__raw_writel(d->irq, avic_base + AVIC_INTENNUM);
+}
+
+static struct mxc_irq_chip mxc_avic_chip = {
+	.base = {
+		.irq_ack = mxc_mask_irq,
+		.irq_mask = mxc_mask_irq,
+		.irq_unmask = mxc_unmask_irq,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_MXC_IRQ_PRIOR
 	.set_priority = avic_irq_set_priority,
 #endif
@@ -103,6 +148,7 @@ static struct mxc_extra_irq avic_extra_irq = {
 #endif
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 static void avic_irq_suspend(struct irq_data *d)
 {
@@ -165,6 +211,8 @@ asmlinkage void __exception_irq_entry avic_handle_irq(struct pt_regs *regs)
 	} while (1);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This function initializes the AVIC hardware and disables all the
  * interrupts. It registers the interrupt enable and disable functions
@@ -189,9 +237,17 @@ void __init mxc_init_irq(void __iomem *irqbase)
 	/* all IRQ no FIQ */
 	__raw_writel(0, avic_base + AVIC_INTTYPEH);
 	__raw_writel(0, avic_base + AVIC_INTTYPEL);
+<<<<<<< HEAD
 
 	for (i = 0; i < AVIC_NUM_IRQS; i += 32)
 		avic_init_gc(i);
+=======
+	for (i = 0; i < MXC_INTERNAL_IRQS; i++) {
+		irq_set_chip_and_handler(i, &mxc_avic_chip.base,
+					 handle_level_irq);
+		set_irq_flags(i, IRQF_VALID);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Set default priority value (0) for all IRQ's */
 	for (i = 0; i < 8; i++)
@@ -204,3 +260,7 @@ void __init mxc_init_irq(void __iomem *irqbase)
 
 	printk(KERN_INFO "MXC IRQ initialized\n");
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

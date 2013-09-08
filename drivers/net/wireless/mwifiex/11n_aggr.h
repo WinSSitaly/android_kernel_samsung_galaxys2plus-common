@@ -21,7 +21,10 @@
 #define _MWIFIEX_11N_AGGR_H_
 
 #define PKT_TYPE_AMSDU	0xE6
+<<<<<<< HEAD
 #define MIN_NUM_AMSDU 2
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int mwifiex_11n_deaggregate_pkt(struct mwifiex_private *priv,
 				struct sk_buff *skb);

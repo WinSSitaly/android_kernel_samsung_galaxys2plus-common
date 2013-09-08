@@ -40,7 +40,11 @@ static ssize_t legacy_show(struct kobject *kobj, struct attribute *attr,
 
 static void remove_callback(void *data)
 {
+<<<<<<< HEAD
 	pci_stop_and_remove_bus_device((struct pci_dev *)data);
+=======
+	pci_remove_bus_device((struct pci_dev *)data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t legacy_store(struct kobject *kobj, struct attribute *attr,

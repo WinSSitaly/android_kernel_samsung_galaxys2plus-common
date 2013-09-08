@@ -45,7 +45,10 @@
 #include <linux/pci.h>
 #include <linux/vmalloc.h>
 #include <linux/fs.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 
 #include "ipath_kernel.h"

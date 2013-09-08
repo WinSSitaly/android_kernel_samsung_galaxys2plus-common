@@ -369,7 +369,11 @@ static void irda_getvalue_confirm(int result, __u16 obj_id,
 {
 	struct irda_sock *self;
 
+<<<<<<< HEAD
 	self = priv;
+=======
+	self = (struct irda_sock *) priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!self) {
 		IRDA_WARNING("%s: lost myself!\n", __func__);
 		return;
@@ -418,7 +422,11 @@ static void irda_selective_discovery_indication(discinfo_t *discovery,
 
 	IRDA_DEBUG(2, "%s()\n", __func__);
 
+<<<<<<< HEAD
 	self = priv;
+=======
+	self = (struct irda_sock *) priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!self) {
 		IRDA_WARNING("%s: lost myself!\n", __func__);
 		return;
@@ -1386,8 +1394,11 @@ static int irda_recvmsg_dgram(struct kiocb *iocb, struct socket *sock,
 
 	IRDA_DEBUG(4, "%s()\n", __func__);
 
+<<<<<<< HEAD
 	msg->msg_namelen = 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skb = skb_recv_datagram(sk, flags & ~MSG_DONTWAIT,
 				flags & MSG_DONTWAIT, &err);
 	if (!skb)
@@ -2560,8 +2571,13 @@ bed:
 			self->errno = 0;
 			setup_timer(&self->watchdog, irda_discovery_timeout,
 					(unsigned long)self);
+<<<<<<< HEAD
 			mod_timer(&self->watchdog,
 				  jiffies + msecs_to_jiffies(val));
+=======
+			self->watchdog.expires = jiffies + (val * HZ/1000);
+			add_timer(&(self->watchdog));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* Wait for IR-LMP to call us back */
 			__wait_event_interruptible(self->query_wait,
@@ -2586,10 +2602,15 @@ bed:
 				    NULL, NULL, NULL);
 
 		/* Check if the we got some results */
+<<<<<<< HEAD
 		if (!self->cachedaddr) {
 			err = -EAGAIN;		/* Didn't find any devices */
 			goto out;
 		}
+=======
+		if (!self->cachedaddr)
+			return -EAGAIN;		/* Didn't find any devices */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		daddr = self->cachedaddr;
 		/* Cleanup */
 		self->cachedaddr = 0;

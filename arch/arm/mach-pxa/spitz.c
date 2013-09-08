@@ -30,7 +30,10 @@
 #include <linux/input/matrix_keypad.h>
 #include <linux/regulator/machine.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/setup.h>
 #include <asm/mach-types.h>
@@ -552,7 +555,11 @@ static struct spi_board_info spitz_spi_devices[] = {
 		.chip_select		= 0,
 		.platform_data		= &spitz_ads7846_info,
 		.controller_data	= &spitz_ads7846_chip,
+<<<<<<< HEAD
 		.irq			= PXA_GPIO_TO_IRQ(SPITZ_GPIO_TP_INT),
+=======
+		.irq			= gpio_to_irq(SPITZ_GPIO_TP_INT),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}, {
 		.modalias		= "corgi-lcd",
 		.max_speed_hz		= 50000,
@@ -926,7 +933,11 @@ static inline void spitz_i2c_init(void) {}
  ******************************************************************************/
 static void spitz_poweroff(void)
 {
+<<<<<<< HEAD
 	pxa_restart('g', NULL);
+=======
+	arm_machine_restart('g', NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void spitz_restart(char mode, const char *cmd)
@@ -943,6 +954,10 @@ static void __init spitz_init(void)
 {
 	init_gpio_reset(SPITZ_GPIO_ON_RESET, 1, 0);
 	pm_power_off = spitz_poweroff;
+<<<<<<< HEAD
+=======
+	arm_pm_restart = spitz_restart;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	PMCR = 0x00;
 
@@ -970,8 +985,13 @@ static void __init spitz_init(void)
 	spitz_i2c_init();
 }
 
+<<<<<<< HEAD
 static void __init spitz_fixup(struct tag *tags, char **cmdline,
 			       struct meminfo *mi)
+=======
+static void __init spitz_fixup(struct machine_desc *desc,
+		struct tag *tags, char **cmdline, struct meminfo *mi)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	sharpsl_save_param();
 	mi->nr_banks = 1;
@@ -981,6 +1001,7 @@ static void __init spitz_fixup(struct tag *tags, char **cmdline,
 
 #ifdef CONFIG_MACH_SPITZ
 MACHINE_START(SPITZ, "SHARP Spitz")
+<<<<<<< HEAD
 	.restart_mode	= 'g',
 	.fixup		= spitz_fixup,
 	.map_io		= pxa27x_map_io,
@@ -990,11 +1011,19 @@ MACHINE_START(SPITZ, "SHARP Spitz")
 	.init_machine	= spitz_init,
 	.timer		= &pxa_timer,
 	.restart	= spitz_restart,
+=======
+	.fixup		= spitz_fixup,
+	.map_io		= pxa27x_map_io,
+	.init_irq	= pxa27x_init_irq,
+	.init_machine	= spitz_init,
+	.timer		= &pxa_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 
 #ifdef CONFIG_MACH_BORZOI
 MACHINE_START(BORZOI, "SHARP Borzoi")
+<<<<<<< HEAD
 	.restart_mode	= 'g',
 	.fixup		= spitz_fixup,
 	.map_io		= pxa27x_map_io,
@@ -1004,11 +1033,19 @@ MACHINE_START(BORZOI, "SHARP Borzoi")
 	.init_machine	= spitz_init,
 	.timer		= &pxa_timer,
 	.restart	= spitz_restart,
+=======
+	.fixup		= spitz_fixup,
+	.map_io		= pxa27x_map_io,
+	.init_irq	= pxa27x_init_irq,
+	.init_machine	= spitz_init,
+	.timer		= &pxa_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 
 #ifdef CONFIG_MACH_AKITA
 MACHINE_START(AKITA, "SHARP Akita")
+<<<<<<< HEAD
 	.restart_mode	= 'g',
 	.fixup		= spitz_fixup,
 	.map_io		= pxa27x_map_io,
@@ -1018,5 +1055,12 @@ MACHINE_START(AKITA, "SHARP Akita")
 	.init_machine	= spitz_init,
 	.timer		= &pxa_timer,
 	.restart	= spitz_restart,
+=======
+	.fixup		= spitz_fixup,
+	.map_io		= pxa27x_map_io,
+	.init_irq	= pxa27x_init_irq,
+	.init_machine	= spitz_init,
+	.timer		= &pxa_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif

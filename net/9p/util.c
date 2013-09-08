@@ -106,7 +106,11 @@ retry:
 	else if (error)
 		return -1;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_MUX, " id %d pool %p\n", i, p);
+=======
+	P9_DPRINTK(P9_DEBUG_MUX, " id %d pool %p\n", i, p);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return i;
 }
 EXPORT_SYMBOL(p9_idpool_get);
@@ -124,7 +128,11 @@ void p9_idpool_put(int id, struct p9_idpool *p)
 {
 	unsigned long flags;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_MUX, " id %d pool %p\n", id, p);
+=======
+	P9_DPRINTK(P9_DEBUG_MUX, " id %d pool %p\n", id, p);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&p->lock, flags);
 	idr_remove(&p->pool, id);

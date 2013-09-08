@@ -62,7 +62,10 @@ ENTRY(cpu_sa110_proc_fin)
  * loc: location to jump to for soft reset
  */
 	.align	5
+<<<<<<< HEAD
 	.pushsection	.idmap.text, "ax"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ENTRY(cpu_sa110_reset)
 	mov	ip, #0
 	mcr	p15, 0, ip, c7, c7, 0		@ invalidate I,D caches
@@ -75,8 +78,11 @@ ENTRY(cpu_sa110_reset)
 	bic	ip, ip, #0x1100			@ ...i...s........
 	mcr	p15, 0, ip, c1, c0, 0		@ ctrl register
 	mov	pc, r0
+<<<<<<< HEAD
 ENDPROC(cpu_sa110_reset)
 	.popsection
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * cpu_sa110_do_idle(type)
@@ -190,6 +196,7 @@ sa110_crval:
 
 	__INITDATA
 
+<<<<<<< HEAD
 	@ define struct processor (see <asm/proc-fns.h> and proc-macros.S)
 	define_processor_functions sa110, dabort=v4_early_abort, pabort=legacy_pabort
 
@@ -198,6 +205,45 @@ sa110_crval:
 	string	cpu_arch_name, "armv4"
 	string	cpu_elf_name, "v4"
 	string	cpu_sa110_name, "StrongARM-110"
+=======
+/*
+ * Purpose : Function pointers used to access above functions - all calls
+ *	     come through these
+ */
+
+	.type	sa110_processor_functions, #object
+ENTRY(sa110_processor_functions)
+	.word	v4_early_abort
+	.word	legacy_pabort
+	.word	cpu_sa110_proc_init
+	.word	cpu_sa110_proc_fin
+	.word	cpu_sa110_reset
+	.word	cpu_sa110_do_idle
+	.word	cpu_sa110_dcache_clean_area
+	.word	cpu_sa110_switch_mm
+	.word	cpu_sa110_set_pte_ext
+	.word	0
+	.word	0
+	.word	0
+	.size	sa110_processor_functions, . - sa110_processor_functions
+
+	.section ".rodata"
+
+	.type	cpu_arch_name, #object
+cpu_arch_name:
+	.asciz	"armv4"
+	.size	cpu_arch_name, . - cpu_arch_name
+
+	.type	cpu_elf_name, #object
+cpu_elf_name:
+	.asciz	"v4"
+	.size	cpu_elf_name, . - cpu_elf_name
+
+	.type	cpu_sa110_name, #object
+cpu_sa110_name:
+	.asciz	"StrongARM-110"
+	.size	cpu_sa110_name, . - cpu_sa110_name
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.align
 

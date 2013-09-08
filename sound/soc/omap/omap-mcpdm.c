@@ -1,12 +1,20 @@
 /*
  * omap-mcpdm.c  --  OMAP ALSA SoC DAI driver using McPDM port
  *
+<<<<<<< HEAD
  * Copyright (C) 2009 - 2011 Texas Instruments
  *
  * Author: Misael Lopez Cruz <misael.lopez@ti.com>
  * Contact: Jorge Eduardo Candelaria <x0107209@ti.com>
  *          Margarita Olaya <magi.olaya@ti.com>
  *          Peter Ujfalusi <peter.ujfalusi@ti.com>
+=======
+ * Copyright (C) 2009 Texas Instruments
+ *
+ * Author: Misael Lopez Cruz <x0052729@ti.com>
+ * Contact: Jorge Eduardo Candelaria <x0107209@ti.com>
+ *          Margarita Olaya <magi.olaya@ti.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +34,7 @@
 
 #include <linux/init.h>
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/platform_device.h>
 #include <linux/interrupt.h>
 #include <linux/err.h>
@@ -62,6 +71,43 @@ struct omap_mcpdm {
 
 	/* McPDM dn offsets for rx1, and 2 channels */
 	u32 dn_rx_offset;
+=======
+#include <linux/device.h>
+#include <sound/core.h>
+#include <sound/pcm.h>
+#include <sound/pcm_params.h>
+#include <sound/initval.h>
+#include <sound/soc.h>
+
+#include <plat/dma.h>
+#include <plat/mcbsp.h>
+#include "mcpdm.h"
+#include "omap-pcm.h"
+
+struct omap_mcpdm_data {
+	struct omap_mcpdm_link *links;
+	int active;
+};
+
+static struct omap_mcpdm_link omap_mcpdm_links[] = {
+	/* downlink */
+	{
+		.irq_mask = MCPDM_DN_IRQ_EMPTY | MCPDM_DN_IRQ_FULL,
+		.threshold = 1,
+		.format = PDMOUTFORMAT_LJUST,
+	},
+	/* uplink */
+	{
+		.irq_mask = MCPDM_UP_IRQ_EMPTY | MCPDM_UP_IRQ_FULL,
+		.threshold = 1,
+		.format = PDMOUTFORMAT_LJUST,
+	},
+};
+
+static struct omap_mcpdm_data mcpdm_data = {
+	.links = omap_mcpdm_links,
+	.active = 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -73,13 +119,19 @@ static struct omap_pcm_dma_data omap_mcpdm_dai_dma_params[] = {
 		.dma_req = OMAP44XX_DMA_MCPDM_DL,
 		.data_type = OMAP_DMA_DATA_TYPE_S32,
 		.sync_mode = OMAP_DMA_SYNC_PACKET,
+<<<<<<< HEAD
 		.port_addr = OMAP44XX_MCPDM_L3_BASE + MCPDM_REG_DN_DATA,
+=======
+		.packet_size = 16,
+		.port_addr = OMAP44XX_MCPDM_L3_BASE + MCPDM_DN_DATA,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "Audio capture",
 		.dma_req = OMAP44XX_DMA_MCPDM_UP,
 		.data_type = OMAP_DMA_DATA_TYPE_S32,
 		.sync_mode = OMAP_DMA_SYNC_PACKET,
+<<<<<<< HEAD
 		.port_addr = OMAP44XX_MCPDM_L3_BASE + MCPDM_REG_UP_DATA,
 	},
 };
@@ -296,12 +348,64 @@ static void omap_mcpdm_dai_shutdown(struct snd_pcm_substream *substream,
 	}
 
 	mutex_unlock(&mcpdm->mutex);
+=======
+		.packet_size = 16,
+		.port_addr = OMAP44XX_MCPDM_L3_BASE + MCPDM_UP_DATA,
+	},
+};
+
+static int omap_mcpdm_dai_startup(struct snd_pcm_substream *substream,
+				  struct snd_soc_dai *dai)
+{
+	int err = 0;
+
+	if (!dai->active)
+		err = omap_mcpdm_request();
+
+	return err;
+}
+
+static void omap_mcpdm_dai_shutdown(struct snd_pcm_substream *substream,
+				    struct snd_soc_dai *dai)
+{
+	if (!dai->active)
+		omap_mcpdm_free();
+}
+
+static int omap_mcpdm_dai_trigger(struct snd_pcm_substream *substream, int cmd,
+				  struct snd_soc_dai *dai)
+{
+	struct omap_mcpdm_data *mcpdm_priv = snd_soc_dai_get_drvdata(dai);
+	int stream = substream->stream;
+	int err = 0;
+
+	switch (cmd) {
+	case SNDRV_PCM_TRIGGER_START:
+	case SNDRV_PCM_TRIGGER_RESUME:
+	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+		if (!mcpdm_priv->active++)
+			omap_mcpdm_start(stream);
+		break;
+
+	case SNDRV_PCM_TRIGGER_STOP:
+	case SNDRV_PCM_TRIGGER_SUSPEND:
+	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+		if (!--mcpdm_priv->active)
+			omap_mcpdm_stop(stream);
+		break;
+	default:
+		err = -EINVAL;
+	}
+
+	return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int omap_mcpdm_dai_hw_params(struct snd_pcm_substream *substream,
 				    struct snd_pcm_hw_params *params,
 				    struct snd_soc_dai *dai)
 {
+<<<<<<< HEAD
 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
 	int stream = substream->stream;
 	struct omap_pcm_dma_data *dma_data;
@@ -321,6 +425,27 @@ static int omap_mcpdm_dai_hw_params(struct snd_pcm_substream *substream,
 			return -EINVAL;
 		link_mask |= 1 << 3;
 	case 3:
+=======
+	struct omap_mcpdm_data *mcpdm_priv = snd_soc_dai_get_drvdata(dai);
+	struct omap_mcpdm_link *mcpdm_links = mcpdm_priv->links;
+	int stream = substream->stream;
+	int channels, err, link_mask = 0;
+
+	snd_soc_dai_set_dma_data(dai, substream,
+				 &omap_mcpdm_dai_dma_params[stream]);
+
+	channels = params_channels(params);
+	switch (channels) {
+	case 4:
+		if (stream == SNDRV_PCM_STREAM_CAPTURE)
+			/* up to 2 channels for capture */
+			return -EINVAL;
+		link_mask |= 1 << 3;
+	case 3:
+		if (stream == SNDRV_PCM_STREAM_CAPTURE)
+			/* up to 2 channels for capture */
+			return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		link_mask |= 1 << 2;
 	case 2:
 		link_mask |= 1 << 1;
@@ -332,6 +457,7 @@ static int omap_mcpdm_dai_hw_params(struct snd_pcm_substream *substream,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	dma_data = &omap_mcpdm_dai_dma_params[stream];
 
 	/* Configure McPDM channels, and DMA packet size */
@@ -427,10 +553,70 @@ static struct snd_soc_dai_driver omap_mcpdm_dai = {
 		.rates = OMAP_MCPDM_RATES,
 		.formats = OMAP_MCPDM_FORMATS,
 		.sig_bits = 24,
+=======
+	if (stream == SNDRV_PCM_STREAM_PLAYBACK) {
+		mcpdm_links[stream].channels = link_mask << 3;
+		err = omap_mcpdm_playback_open(&mcpdm_links[stream]);
+	} else {
+		mcpdm_links[stream].channels = link_mask << 0;
+		err = omap_mcpdm_capture_open(&mcpdm_links[stream]);
+	}
+
+	return err;
+}
+
+static int omap_mcpdm_dai_hw_free(struct snd_pcm_substream *substream,
+				  struct snd_soc_dai *dai)
+{
+	struct omap_mcpdm_data *mcpdm_priv = snd_soc_dai_get_drvdata(dai);
+	struct omap_mcpdm_link *mcpdm_links = mcpdm_priv->links;
+	int stream = substream->stream;
+	int err;
+
+	if (substream->stream ==  SNDRV_PCM_STREAM_PLAYBACK)
+		err = omap_mcpdm_playback_close(&mcpdm_links[stream]);
+	else
+		err = omap_mcpdm_capture_close(&mcpdm_links[stream]);
+
+	return err;
+}
+
+static struct snd_soc_dai_ops omap_mcpdm_dai_ops = {
+	.startup	= omap_mcpdm_dai_startup,
+	.shutdown	= omap_mcpdm_dai_shutdown,
+	.trigger	= omap_mcpdm_dai_trigger,
+	.hw_params	= omap_mcpdm_dai_hw_params,
+	.hw_free	= omap_mcpdm_dai_hw_free,
+};
+
+#define OMAP_MCPDM_RATES	(SNDRV_PCM_RATE_88200 | SNDRV_PCM_RATE_96000)
+#define OMAP_MCPDM_FORMATS	(SNDRV_PCM_FMTBIT_S32_LE)
+
+static int omap_mcpdm_dai_probe(struct snd_soc_dai *dai)
+{
+	snd_soc_dai_set_drvdata(dai, &mcpdm_data);
+	return 0;
+}
+
+static struct snd_soc_dai_driver omap_mcpdm_dai = {
+	.probe = omap_mcpdm_dai_probe,
+	.playback = {
+		.channels_min = 1,
+		.channels_max = 4,
+		.rates = OMAP_MCPDM_RATES,
+		.formats = OMAP_MCPDM_FORMATS,
+	},
+	.capture = {
+		.channels_min = 1,
+		.channels_max = 2,
+		.rates = OMAP_MCPDM_RATES,
+		.formats = OMAP_MCPDM_FORMATS,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.ops = &omap_mcpdm_dai_ops,
 };
 
+<<<<<<< HEAD
 void omap_mcpdm_configure_dn_offsets(struct snd_soc_pcm_runtime *rtd,
 				    u8 rx1, u8 rx2)
 {
@@ -489,11 +675,24 @@ err_iomap:
 	release_mem_region(res->start, resource_size(res));
 err_res:
 	kfree(mcpdm);
+=======
+static __devinit int asoc_mcpdm_probe(struct platform_device *pdev)
+{
+	int ret;
+
+	ret = omap_mcpdm_probe(pdev);
+	if (ret < 0)
+		return ret;
+	ret = snd_soc_register_dai(&pdev->dev, &omap_mcpdm_dai);
+	if (ret < 0)
+		omap_mcpdm_remove(pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devexit asoc_mcpdm_remove(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct omap_mcpdm *mcpdm = platform_get_drvdata(pdev);
 	struct resource *res;
 
@@ -504,11 +703,16 @@ static int __devexit asoc_mcpdm_remove(struct platform_device *pdev)
 	release_mem_region(res->start, resource_size(res));
 
 	kfree(mcpdm);
+=======
+	snd_soc_unregister_dai(&pdev->dev);
+	omap_mcpdm_remove(pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static struct platform_driver asoc_mcpdm_driver = {
 	.driver = {
+<<<<<<< HEAD
 		.name	= "omap-mcpdm",
 		.owner	= THIS_MODULE,
 	},
@@ -520,5 +724,28 @@ static struct platform_driver asoc_mcpdm_driver = {
 module_platform_driver(asoc_mcpdm_driver);
 
 MODULE_AUTHOR("Misael Lopez Cruz <misael.lopez@ti.com>");
+=======
+			.name = "omap-mcpdm-dai",
+			.owner = THIS_MODULE,
+	},
+
+	.probe = asoc_mcpdm_probe,
+	.remove = __devexit_p(asoc_mcpdm_remove),
+};
+
+static int __init snd_omap_mcpdm_init(void)
+{
+	return platform_driver_register(&asoc_mcpdm_driver);
+}
+module_init(snd_omap_mcpdm_init);
+
+static void __exit snd_omap_mcpdm_exit(void)
+{
+	platform_driver_unregister(&asoc_mcpdm_driver);
+}
+module_exit(snd_omap_mcpdm_exit);
+
+MODULE_AUTHOR("Misael Lopez Cruz <x0052729@ti.com>");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("OMAP PDM SoC Interface");
 MODULE_LICENSE("GPL");

@@ -53,4 +53,11 @@ BUILD_INTERRUPT(thermal_interrupt,THERMAL_APIC_VECTOR)
 BUILD_INTERRUPT(threshold_interrupt,THRESHOLD_APIC_VECTOR)
 #endif
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_X86_MCE
+BUILD_INTERRUPT(mce_self_interrupt,MCE_SELF_VECTOR)
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

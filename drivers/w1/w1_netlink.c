@@ -1,7 +1,11 @@
 /*
  * w1_netlink.c
  *
+<<<<<<< HEAD
  * Copyright (c) 2003 Evgeniy Polyakov <zbr@ioremap.net>
+=======
+ * Copyright (c) 2003 Evgeniy Polyakov <johnpol@2ka.mipt.ru>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *
  * This program is free software; you can redistribute it and/or modify

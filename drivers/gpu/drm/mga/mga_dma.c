@@ -403,8 +403,11 @@ int mga_driver_load(struct drm_device *dev, unsigned long flags)
 	dev_priv->usec_timeout = MGA_DEFAULT_USEC_TIMEOUT;
 	dev_priv->chipset = flags;
 
+<<<<<<< HEAD
 	pci_set_master(dev->pdev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_priv->mmio_base = pci_resource_start(dev->pdev, 1);
 	dev_priv->mmio_size = pci_resource_len(dev->pdev, 1);
 

@@ -2,8 +2,11 @@
 	- this file (nfs-related documentation).
 Exporting
 	- explanation of how to make filesystems exportable.
+<<<<<<< HEAD
 fault_injection.txt
 	- information for using fault injection on the server
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 knfsd-stats.txt
 	- statistics which the NFS server makes available to user space.
 nfs.txt

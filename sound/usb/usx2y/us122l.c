@@ -19,7 +19,10 @@
 #include <linux/slab.h>
 #include <linux/usb.h>
 #include <linux/usb/audio.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/hwdep.h>
 #include <sound/pcm.h>
@@ -37,7 +40,11 @@ MODULE_LICENSE("GPL");
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;	/* Index 0-max */
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;	/* Id for this card */
 							/* Enable this card */
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_array(index, int, NULL, 0444);
 MODULE_PARM_DESC(index, "Index value for "NAME_ALLCAPS".");
@@ -772,4 +779,20 @@ static struct usb_driver snd_us122l_usb_driver = {
 	.supports_autosuspend = 1
 };
 
+<<<<<<< HEAD
 module_usb_driver(snd_us122l_usb_driver);
+=======
+
+static int __init snd_us122l_module_init(void)
+{
+	return usb_register(&snd_us122l_usb_driver);
+}
+
+static void __exit snd_us122l_module_exit(void)
+{
+	usb_deregister(&snd_us122l_usb_driver);
+}
+
+module_init(snd_us122l_module_init)
+module_exit(snd_us122l_module_exit)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -89,7 +89,11 @@ void fill_window(WINDOW *win, const char *text);
 int btn_dialog(WINDOW *main_window, const char *msg, int btn_num, ...);
 int dialog_inputbox(WINDOW *main_window,
 		const char *title, const char *prompt,
+<<<<<<< HEAD
 		const char *init, char **resultp, int *result_len);
+=======
+		const char *init, char *result, int result_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void refresh_all_windows(WINDOW *main_window);
 void show_scroll_win(WINDOW *main_window,
 		const char *title,

@@ -24,7 +24,10 @@
 
 
 #include <linux/list.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/v4l2-dev.h>
 #include <media/tuner.h>
 #include "usbvision.h"

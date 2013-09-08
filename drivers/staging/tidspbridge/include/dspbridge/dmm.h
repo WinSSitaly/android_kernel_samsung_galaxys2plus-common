@@ -61,6 +61,13 @@ extern int dmm_create(struct dmm_object **dmm_manager,
 			     struct dev_object *hdev_obj,
 			     const struct dmm_mgrattrs *mgr_attrts);
 
+<<<<<<< HEAD
+=======
+extern bool dmm_init(void);
+
+extern void dmm_exit(void);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int dmm_create_tables(struct dmm_object *dmm_mgr,
 				    u32 addr, u32 size);
 

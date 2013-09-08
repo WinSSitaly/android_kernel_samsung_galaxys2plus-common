@@ -19,6 +19,10 @@
 #include <linux/cache.h>
 #include <linux/irq.h>
 #include <linux/bitmap.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/irq.h>
 
 /* Bitmap of IRQ masked */

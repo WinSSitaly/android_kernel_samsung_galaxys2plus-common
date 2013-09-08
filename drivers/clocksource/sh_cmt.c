@@ -26,13 +26,19 @@
 #include <linux/clk.h>
 #include <linux/irq.h>
 #include <linux/err.h>
+<<<<<<< HEAD
 #include <linux/delay.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/clocksource.h>
 #include <linux/clockchips.h>
 #include <linux/sh_timer.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/pm_domain.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct sh_cmt_priv {
 	void __iomem *mapbase;
@@ -153,13 +159,21 @@ static void sh_cmt_start_stop_ch(struct sh_cmt_priv *p, int start)
 
 static int sh_cmt_enable(struct sh_cmt_priv *p, unsigned long *rate)
 {
+<<<<<<< HEAD
 	int k, ret;
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* enable clock */
 	ret = clk_enable(p->clk);
 	if (ret) {
 		dev_err(&p->pdev->dev, "cannot enable clock\n");
+<<<<<<< HEAD
 		goto err0;
+=======
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* make sure channel is disabled */
@@ -177,6 +191,7 @@ static int sh_cmt_enable(struct sh_cmt_priv *p, unsigned long *rate)
 	sh_cmt_write(p, CMCOR, 0xffffffff);
 	sh_cmt_write(p, CMCNT, 0);
 
+<<<<<<< HEAD
 	/*
 	 * According to the sh73a0 user's manual, as CMCNT can be operated
 	 * only by the RCLK (Pseudo 32 KHz), there's one restriction on
@@ -209,6 +224,11 @@ static int sh_cmt_enable(struct sh_cmt_priv *p, unsigned long *rate)
 
  err0:
 	return ret;
+=======
+	/* enable channel */
+	sh_cmt_start_stop_ch(p, 1);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void sh_cmt_disable(struct sh_cmt_priv *p)
@@ -690,9 +710,12 @@ static int __devinit sh_cmt_probe(struct platform_device *pdev)
 	struct sh_cmt_priv *p = platform_get_drvdata(pdev);
 	int ret;
 
+<<<<<<< HEAD
 	if (!is_early_platform_device(pdev))
 		pm_genpd_dev_always_on(&pdev->dev, true);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (p) {
 		dev_info(&pdev->dev, "kept as earlytimer\n");
 		return 0;

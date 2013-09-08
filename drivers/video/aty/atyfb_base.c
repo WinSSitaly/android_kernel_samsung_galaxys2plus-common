@@ -301,9 +301,15 @@ static struct fb_ops atyfb_ops = {
 	.fb_sync	= atyfb_sync,
 };
 
+<<<<<<< HEAD
 static bool noaccel;
 #ifdef CONFIG_MTRR
 static bool nomtrr;
+=======
+static int noaccel;
+#ifdef CONFIG_MTRR
+static int nomtrr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 static int vram;
 static int pll;
@@ -3458,10 +3464,16 @@ static int __devinit atyfb_setup_generic(struct pci_dev *pdev,
 
 	raddr = addr + 0x7ff000UL;
 	rrp = &pdev->resource[2];
+<<<<<<< HEAD
 	if ((rrp->flags & IORESOURCE_MEM) &&
 	    request_mem_region(rrp->start, resource_size(rrp), "atyfb")) {
 		par->aux_start = rrp->start;
 		par->aux_size = resource_size(rrp);
+=======
+	if ((rrp->flags & IORESOURCE_MEM) && request_mem_region(rrp->start, rrp->end - rrp->start + 1, "atyfb")) {
+		par->aux_start = rrp->start;
+		par->aux_size = rrp->end - rrp->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		raddr = rrp->start;
 		PRINTKI("using auxiliary register aperture\n");
 	}
@@ -3551,7 +3563,11 @@ static int __devinit atyfb_pci_probe(struct pci_dev *pdev,
 
 	/* Reserve space */
 	res_start = rp->start;
+<<<<<<< HEAD
 	res_size = resource_size(rp);
+=======
+	res_size = rp->end - rp->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!request_mem_region(res_start, res_size, "atyfb"))
 		return -EBUSY;
 

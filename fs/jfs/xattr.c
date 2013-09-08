@@ -693,7 +693,12 @@ static int can_set_system_xattr(struct inode *inode, const char *name,
 			return rc;
 		}
 		if (acl) {
+<<<<<<< HEAD
 			rc = posix_acl_equiv_mode(acl, &inode->i_mode);
+=======
+			mode_t mode = inode->i_mode;
+			rc = posix_acl_equiv_mode(acl, &mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			posix_acl_release(acl);
 			if (rc < 0) {
 				printk(KERN_ERR
@@ -701,6 +706,10 @@ static int can_set_system_xattr(struct inode *inode, const char *name,
 				       rc);
 				return rc;
 			}
+<<<<<<< HEAD
+=======
+			inode->i_mode = mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mark_inode_dirty(inode);
 		}
 		/*
@@ -1089,6 +1098,7 @@ int jfs_removexattr(struct dentry *dentry, const char *name)
 }
 
 #ifdef CONFIG_JFS_SECURITY
+<<<<<<< HEAD
 int jfs_initxattrs(struct inode *inode, const struct xattr *xattr_array,
 		   void *fs_info)
 {
@@ -1121,5 +1131,40 @@ int jfs_init_security(tid_t tid, struct inode *inode, struct inode *dir,
 {
 	return security_inode_init_security(inode, dir, qstr,
 					    &jfs_initxattrs, &tid);
+=======
+int jfs_init_security(tid_t tid, struct inode *inode, struct inode *dir,
+		      const struct qstr *qstr)
+{
+	int rc;
+	size_t len;
+	void *value;
+	char *suffix;
+	char *name;
+
+	rc = security_inode_init_security(inode, dir, qstr, &suffix, &value,
+					  &len);
+	if (rc) {
+		if (rc == -EOPNOTSUPP)
+			return 0;
+		return rc;
+	}
+	name = kmalloc(XATTR_SECURITY_PREFIX_LEN + 1 + strlen(suffix),
+		       GFP_NOFS);
+	if (!name) {
+		rc = -ENOMEM;
+		goto kmalloc_failed;
+	}
+	strcpy(name, XATTR_SECURITY_PREFIX);
+	strcpy(name + XATTR_SECURITY_PREFIX_LEN, suffix);
+
+	rc = __jfs_setxattr(tid, inode, name, value, len, 0);
+
+	kfree(name);
+kmalloc_failed:
+	kfree(suffix);
+	kfree(value);
+
+	return rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif

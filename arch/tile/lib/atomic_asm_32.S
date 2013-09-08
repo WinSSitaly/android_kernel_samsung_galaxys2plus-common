@@ -70,7 +70,11 @@
  */
 
 #include <linux/linkage.h>
+<<<<<<< HEAD
 #include <asm/atomic_32.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/page.h>
 #include <asm/processor.h>
 

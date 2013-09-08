@@ -1,4 +1,8 @@
 obj-y	:= clock.o
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_LOCAL_TIMERS) += localtimer.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_PLAT_VERSATILE_CLCD) += clcd.o
 obj-$(CONFIG_PLAT_VERSATILE_FPGA_IRQ) += fpga-irq.o
 obj-$(CONFIG_PLAT_VERSATILE_LEDS) += leds.o

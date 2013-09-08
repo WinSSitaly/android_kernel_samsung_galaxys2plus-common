@@ -14,7 +14,10 @@
 #include <arch/svinto.h>
 #include <asm/io.h>
 #include <arch/io_interface_mux.h>
+<<<<<<< HEAD
 #include <arch/system.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 #define DBG(s)

@@ -119,9 +119,15 @@ ad1848_port_info;
 static struct address_info cfg;
 static int nr_ad1848_devs;
 
+<<<<<<< HEAD
 static bool deskpro_xl;
 static bool deskpro_m;
 static bool soundpro;
+=======
+static int deskpro_xl;
+static int deskpro_m;
+static int soundpro;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static volatile signed char irq2dev[17] = {
 	-1, -1, -1, -1, -1, -1, -1, -1,
@@ -177,7 +183,11 @@ static struct {
 #ifdef CONFIG_PNP
 static int isapnp	= 1;
 static int isapnpjump;
+<<<<<<< HEAD
 static bool reverse;
+=======
+static int reverse;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int audio_activated;
 #else
@@ -458,7 +468,11 @@ static int ad1848_set_recmask(ad1848_info * devc, int mask)
 	return mask;
 }
 
+<<<<<<< HEAD
 static void oss_change_bits(ad1848_info *devc, unsigned char *regval,
+=======
+static void change_bits(ad1848_info * devc, unsigned char *regval,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			unsigned char *muteval, int dev, int chn, int newval)
 {
 	unsigned char mask;
@@ -516,10 +530,17 @@ static void ad1848_mixer_set_channel(ad1848_info *devc, int dev, int value, int 
 
 	if (muteregoffs != regoffs) {
 		muteval = ad_read(devc, muteregoffs);
+<<<<<<< HEAD
 		oss_change_bits(devc, &val, &muteval, dev, channel, value);
 	}
 	else
 		oss_change_bits(devc, &val, &val, dev, channel, value);
+=======
+		change_bits(devc, &val, &muteval, dev, channel, value);
+	}
+	else
+		change_bits(devc, &val, &val, dev, channel, value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&devc->lock,flags);
 	ad_write(devc, regoffs, val);

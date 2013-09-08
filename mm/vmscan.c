@@ -26,6 +26,10 @@
 #include <linux/buffer_head.h>	/* for try_to_release_page(),
 					buffer_heads_over_limit */
 #include <linux/mm_inline.h>
+<<<<<<< HEAD
+=======
+#include <linux/pagevec.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/backing-dev.h>
 #include <linux/rmap.h>
 #include <linux/topology.h>
@@ -94,6 +98,11 @@ struct scan_control {
 	/* Can pages be swapped as part of reclaim? */
 	int may_swap;
 
+<<<<<<< HEAD
+=======
+	int swappiness;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int order;
 
 	/*
@@ -102,11 +111,16 @@ struct scan_control {
 	 */
 	reclaim_mode_t reclaim_mode;
 
+<<<<<<< HEAD
 	/*
 	 * The memory cgroup that hit its limit and as a result is the
 	 * primary target of this reclaim invocation.
 	 */
 	struct mem_cgroup *target_mem_cgroup;
+=======
+	/* Which cgroup do we reclaim from */
+	struct mem_cgroup *mem_cgroup;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Nodemask of nodes allowed by the caller. If NULL, all nodes
@@ -115,11 +129,14 @@ struct scan_control {
 	nodemask_t	*nodemask;
 };
 
+<<<<<<< HEAD
 struct mem_cgroup_zone {
 	struct mem_cgroup *mem_cgroup;
 	struct zone *zone;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define lru_to_page(_head) (list_entry((_head)->prev, struct page, lru))
 
 #ifdef ARCH_HAS_PREFETCH
@@ -160,6 +177,7 @@ static LIST_HEAD(shrinker_list);
 static DECLARE_RWSEM(shrinker_rwsem);
 
 #ifdef CONFIG_CGROUP_MEM_RES_CTLR
+<<<<<<< HEAD
 static bool global_reclaim(struct scan_control *sc)
 {
 	return !sc->target_mem_cgroup;
@@ -202,12 +220,73 @@ static unsigned long zone_nr_lru_pages(struct mem_cgroup_zone *mz,
 }
 
 
+=======
+#define scanning_global_lru(sc)	(!(sc)->mem_cgroup)
+#else
+#define scanning_global_lru(sc)	(1)
+#endif
+
+static struct zone_reclaim_stat *get_reclaim_stat(struct zone *zone,
+						  struct scan_control *sc)
+{
+	if (!scanning_global_lru(sc))
+		return mem_cgroup_get_reclaim_stat(sc->mem_cgroup, zone);
+
+	return &zone->reclaim_stat;
+}
+
+static unsigned long zone_nr_lru_pages(struct zone *zone,
+				struct scan_control *sc, enum lru_list lru)
+{
+	if (!scanning_global_lru(sc))
+		return mem_cgroup_zone_nr_lru_pages(sc->mem_cgroup, zone, lru);
+
+	return zone_page_state(zone, NR_LRU_BASE + lru);
+}
+
+struct dentry *debug_file;
+
+static int debug_shrinker_show(struct seq_file *s, void *unused)
+{
+	struct shrinker *shrinker;
+	struct shrink_control sc;
+
+	sc.gfp_mask = -1;
+	sc.nr_to_scan = 0;
+
+	down_read(&shrinker_rwsem);
+	list_for_each_entry(shrinker, &shrinker_list, list) {
+		int num_objs;
+
+		num_objs = shrinker->shrink(shrinker, &sc);
+		seq_printf(s, "%pf %d\n", shrinker->shrink, num_objs);
+	}
+	up_read(&shrinker_rwsem);
+	return 0;
+}
+
+static int debug_shrinker_open(struct inode *inode, struct file *file)
+{
+        return single_open(file, debug_shrinker_show, inode->i_private);
+}
+
+static const struct file_operations debug_shrinker_fops = {
+        .open = debug_shrinker_open,
+        .read = seq_read,
+        .llseek = seq_lseek,
+        .release = single_release,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Add a shrinker callback to be called from the vm
  */
 void register_shrinker(struct shrinker *shrinker)
 {
+<<<<<<< HEAD
 	atomic_long_set(&shrinker->nr_in_batch, 0);
+=======
+	shrinker->nr = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	down_write(&shrinker_rwsem);
 	list_add_tail(&shrinker->list, &shrinker_list);
 	up_write(&shrinker_rwsem);
@@ -271,6 +350,7 @@ unsigned long shrink_slab(struct shrink_control *shrink,
 
 	list_for_each_entry(shrinker, &shrinker_list, list) {
 		unsigned long long delta;
+<<<<<<< HEAD
 		long total_scan;
 		long max_pass;
 		int shrink_ret = 0;
@@ -318,10 +398,29 @@ unsigned long shrink_slab(struct shrink_control *shrink,
 			total_scan = min(total_scan, max_pass / 2);
 
 		/*
+=======
+		unsigned long total_scan;
+		unsigned long max_pass;
+
+		max_pass = do_shrinker_shrink(shrinker, shrink, 0);
+		delta = (4 * nr_pages_scanned) / shrinker->seeks;
+		delta *= max_pass;
+		do_div(delta, lru_pages + 1);
+		shrinker->nr += delta;
+		if (shrinker->nr < 0) {
+			printk(KERN_ERR "shrink_slab: %pF negative objects to "
+			       "delete nr=%ld\n",
+			       shrinker->shrink, shrinker->nr);
+			shrinker->nr = max_pass;
+		}
+
+		/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * Avoid risking looping forever due to too large nr value:
 		 * never try to free more than twice the estimate number of
 		 * freeable entries.
 		 */
+<<<<<<< HEAD
 		if (total_scan > max_pass * 2)
 			total_scan = max_pass * 2;
 
@@ -330,21 +429,42 @@ unsigned long shrink_slab(struct shrink_control *shrink,
 					max_pass, delta, total_scan);
 
 		while (total_scan >= batch_size) {
+=======
+		if (shrinker->nr > max_pass * 2)
+			shrinker->nr = max_pass * 2;
+
+		total_scan = shrinker->nr;
+		shrinker->nr = 0;
+
+		while (total_scan >= SHRINK_BATCH) {
+			long this_scan = SHRINK_BATCH;
+			int shrink_ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			int nr_before;
 
 			nr_before = do_shrinker_shrink(shrinker, shrink, 0);
 			shrink_ret = do_shrinker_shrink(shrinker, shrink,
+<<<<<<< HEAD
 							batch_size);
+=======
+							this_scan);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (shrink_ret == -1)
 				break;
 			if (shrink_ret < nr_before)
 				ret += nr_before - shrink_ret;
+<<<<<<< HEAD
 			count_vm_events(SLABS_SCANNED, batch_size);
 			total_scan -= batch_size;
+=======
+			count_vm_events(SLABS_SCANNED, this_scan);
+			total_scan -= this_scan;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			cond_resched();
 		}
 
+<<<<<<< HEAD
 		/*
 		 * move the unused scan count back into the shrinker in a
 		 * manner that handles concurrent updates. If we exhausted the
@@ -357,6 +477,9 @@ unsigned long shrink_slab(struct shrink_control *shrink,
 			new_nr = atomic_long_read(&shrinker->nr_in_batch);
 
 		trace_mm_shrink_slab_end(shrinker, shrink_ret, nr, new_nr);
+=======
+		shrinker->nr += total_scan;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	up_read(&shrinker_rwsem);
 out:
@@ -519,6 +642,18 @@ static pageout_t pageout(struct page *page, struct address_space *mapping,
 			return PAGE_ACTIVATE;
 		}
 
+<<<<<<< HEAD
+=======
+		/*
+		 * Wait on writeback if requested to. This happens when
+		 * direct reclaiming a large contiguous area and the
+		 * first attempt to free a range of pages fails.
+		 */
+		if (PageWriteback(page) &&
+		    (sc->reclaim_mode & RECLAIM_MODE_SYNC))
+			wait_on_page_writeback(page);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!PageWriteback(page)) {
 			/* synchronous write or broken a_ops? */
 			ClearPageReclaim(page);
@@ -657,6 +792,7 @@ redo:
 		lru = LRU_UNEVICTABLE;
 		add_page_to_unevictable_list(page);
 		/*
+<<<<<<< HEAD
 		 * When racing with an mlock or AS_UNEVICTABLE clearing
 		 * (page is unlocked) make sure that if the other thread
 		 * does not observe our setting of PG_lru and fails
@@ -665,6 +801,15 @@ redo:
 		 * the page back to the evictable list.
 		 *
 		 * The other side is TestClearPageMlocked() or shmem_lock().
+=======
+		 * When racing with an mlock clearing (page is
+		 * unlocked), make sure that if the other thread does
+		 * not observe our setting of PG_lru and fails
+		 * isolation, we see PG_mlocked cleared below and move
+		 * the page back to the evictable list.
+		 *
+		 * The other side is TestClearPageMlocked().
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 */
 		smp_mb();
 	}
@@ -701,13 +846,20 @@ enum page_references {
 };
 
 static enum page_references page_check_references(struct page *page,
+<<<<<<< HEAD
 						  struct mem_cgroup_zone *mz,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						  struct scan_control *sc)
 {
 	int referenced_ptes, referenced_page;
 	unsigned long vm_flags;
 
+<<<<<<< HEAD
 	referenced_ptes = page_referenced(page, 1, mz->mem_cgroup, &vm_flags);
+=======
+	referenced_ptes = page_referenced(page, 1, sc->mem_cgroup, &vm_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	referenced_page = TestClearPageReferenced(page);
 
 	/* Lumpy reclaim - ignore references */
@@ -722,7 +874,11 @@ static enum page_references page_check_references(struct page *page,
 		return PAGEREF_RECLAIM;
 
 	if (referenced_ptes) {
+<<<<<<< HEAD
 		if (PageSwapBacked(page))
+=======
+		if (PageAnon(page))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return PAGEREF_ACTIVATE;
 		/*
 		 * All mapped pages start out with page table
@@ -740,6 +896,7 @@ static enum page_references page_check_references(struct page *page,
 		 */
 		SetPageReferenced(page);
 
+<<<<<<< HEAD
 		if (referenced_page || referenced_ptes > 1)
 			return PAGEREF_ACTIVATE;
 
@@ -747,6 +904,9 @@ static enum page_references page_check_references(struct page *page,
 		 * Activate file-backed executable pages after first usage.
 		 */
 		if (vm_flags & VM_EXEC)
+=======
+		if (referenced_page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return PAGEREF_ACTIVATE;
 
 		return PAGEREF_KEEP;
@@ -759,15 +919,41 @@ static enum page_references page_check_references(struct page *page,
 	return PAGEREF_RECLAIM;
 }
 
+<<<<<<< HEAD
+=======
+static noinline_for_stack void free_page_list(struct list_head *free_pages)
+{
+	struct pagevec freed_pvec;
+	struct page *page, *tmp;
+
+	pagevec_init(&freed_pvec, 1);
+
+	list_for_each_entry_safe(page, tmp, free_pages, lru) {
+		list_del(&page->lru);
+		if (!pagevec_add(&freed_pvec, page)) {
+			__pagevec_free(&freed_pvec);
+			pagevec_reinit(&freed_pvec);
+		}
+	}
+
+	pagevec_free(&freed_pvec);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * shrink_page_list() returns the number of reclaimed pages
  */
 static unsigned long shrink_page_list(struct list_head *page_list,
+<<<<<<< HEAD
 				      struct mem_cgroup_zone *mz,
 				      struct scan_control *sc,
 				      int priority,
 				      unsigned long *ret_nr_dirty,
 				      unsigned long *ret_nr_writeback)
+=======
+				      struct zone *zone,
+				      struct scan_control *sc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	LIST_HEAD(ret_pages);
 	LIST_HEAD(free_pages);
@@ -775,7 +961,10 @@ static unsigned long shrink_page_list(struct list_head *page_list,
 	unsigned long nr_dirty = 0;
 	unsigned long nr_congested = 0;
 	unsigned long nr_reclaimed = 0;
+<<<<<<< HEAD
 	unsigned long nr_writeback = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cond_resched();
 
@@ -794,7 +983,11 @@ static unsigned long shrink_page_list(struct list_head *page_list,
 			goto keep;
 
 		VM_BUG_ON(PageActive(page));
+<<<<<<< HEAD
 		VM_BUG_ON(page_zone(page) != mz->zone);
+=======
+		VM_BUG_ON(page_zone(page) != zone);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		sc->nr_scanned++;
 
@@ -812,12 +1005,22 @@ static unsigned long shrink_page_list(struct list_head *page_list,
 			(PageSwapCache(page) && (sc->gfp_mask & __GFP_IO));
 
 		if (PageWriteback(page)) {
+<<<<<<< HEAD
 			nr_writeback++;
 			/*
 			 * Synchronous reclaim cannot queue pages for
 			 * writeback due to the possibility of stack overflow
 			 * but if it encounters a page under writeback, wait
 			 * for the IO to complete.
+=======
+			/*
+			 * Synchronous reclaim is performed in two passes,
+			 * first an asynchronous pass over the list to
+			 * start parallel writeback, and a second synchronous
+			 * pass to wait for the IO to complete.  Wait here
+			 * for any page for which writeback has already
+			 * started.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 */
 			if ((sc->reclaim_mode & RECLAIM_MODE_SYNC) &&
 			    may_enter_fs)
@@ -828,7 +1031,11 @@ static unsigned long shrink_page_list(struct list_head *page_list,
 			}
 		}
 
+<<<<<<< HEAD
 		references = page_check_references(page, mz, sc);
+=======
+		references = page_check_references(page, sc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		switch (references) {
 		case PAGEREF_ACTIVATE:
 			goto activate_locked;
@@ -873,6 +1080,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
 		if (PageDirty(page)) {
 			nr_dirty++;
 
+<<<<<<< HEAD
 			/*
 			 * Only kswapd can writeback filesystem pages to
 			 * avoid risk of stack overflow but do not writeback
@@ -892,6 +1100,8 @@ static unsigned long shrink_page_list(struct list_head *page_list,
 				goto keep_locked;
 			}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (references == PAGEREF_RECLAIM_CLEAN)
 				goto keep_locked;
 			if (!may_enter_fs)
@@ -1019,6 +1229,7 @@ keep_lumpy:
 	 * back off and wait for congestion to clear because further reclaim
 	 * will encounter the same problem
 	 */
+<<<<<<< HEAD
 	if (nr_dirty && nr_dirty == nr_congested && global_reclaim(sc))
 		zone_set_flag(mz->zone, ZONE_CONGESTED);
 
@@ -1028,6 +1239,15 @@ keep_lumpy:
 	count_vm_events(PGACTIVATE, pgactivate);
 	*ret_nr_dirty += nr_dirty;
 	*ret_nr_writeback += nr_writeback;
+=======
+	if (nr_dirty && nr_dirty == nr_congested && scanning_global_lru(sc))
+		zone_set_flag(zone, ZONE_CONGESTED);
+
+	free_page_list(&free_pages);
+
+	list_splice(&ret_pages, page_list);
+	count_vm_events(PGACTIVATE, pgactivate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return nr_reclaimed;
 }
 
@@ -1041,27 +1261,42 @@ keep_lumpy:
  *
  * returns 0 on success, -ve errno on failure.
  */
+<<<<<<< HEAD
 int __isolate_lru_page(struct page *page, isolate_mode_t mode, int file)
 {
 	bool all_lru_mode;
+=======
+int __isolate_lru_page(struct page *page, int mode, int file)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = -EINVAL;
 
 	/* Only take pages on the LRU. */
 	if (!PageLRU(page))
 		return ret;
 
+<<<<<<< HEAD
 	all_lru_mode = (mode & (ISOLATE_ACTIVE|ISOLATE_INACTIVE)) ==
 		(ISOLATE_ACTIVE|ISOLATE_INACTIVE);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * When checking the active state, we need to be sure we are
 	 * dealing with comparible boolean values.  Take the logical not
 	 * of each.
 	 */
+<<<<<<< HEAD
 	if (!all_lru_mode && !PageActive(page) != !(mode & ISOLATE_ACTIVE))
 		return ret;
 
 	if (!all_lru_mode && !!page_is_file_cache(page) != file)
+=======
+	if (mode != ISOLATE_BOTH && (!PageActive(page) != !mode))
+		return ret;
+
+	if (mode != ISOLATE_BOTH && page_is_file_cache(page) != file)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 
 	/*
@@ -1074,6 +1309,7 @@ int __isolate_lru_page(struct page *page, isolate_mode_t mode, int file)
 
 	ret = -EBUSY;
 
+<<<<<<< HEAD
 	/*
 	 * To minimise LRU disruption, the caller can indicate that it only
 	 * wants to isolate pages it will be able to operate on without
@@ -1111,6 +1347,8 @@ int __isolate_lru_page(struct page *page, isolate_mode_t mode, int file)
 	if ((mode & ISOLATE_UNMAPPED) && page_mapped(page))
 		return ret;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (likely(get_page_unless_zero(page))) {
 		/*
 		 * Be careful not to clear PageLRU until after we're
@@ -1135,27 +1373,42 @@ int __isolate_lru_page(struct page *page, isolate_mode_t mode, int file)
  * Appropriate locks must be held before calling this function.
  *
  * @nr_to_scan:	The number of pages to look through on the list.
+<<<<<<< HEAD
  * @mz:		The mem_cgroup_zone to pull pages from.
  * @dst:	The temp list to put pages on to.
  * @nr_scanned:	The number of pages that were scanned.
  * @sc:		The scan_control struct for this reclaim session
  * @mode:	One of the LRU isolation modes
  * @active:	True [1] if isolating active pages
+=======
+ * @src:	The LRU list to pull pages off.
+ * @dst:	The temp list to put pages on to.
+ * @scanned:	The number of pages that were scanned.
+ * @order:	The caller's attempted allocation order
+ * @mode:	One of the LRU isolation modes
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @file:	True [1] if isolating file [!anon] pages
  *
  * returns how many pages were moved onto *@dst.
  */
 static unsigned long isolate_lru_pages(unsigned long nr_to_scan,
+<<<<<<< HEAD
 		struct mem_cgroup_zone *mz, struct list_head *dst,
 		unsigned long *nr_scanned, struct scan_control *sc,
 		isolate_mode_t mode, int active, int file)
 {
 	struct lruvec *lruvec;
 	struct list_head *src;
+=======
+		struct list_head *src, struct list_head *dst,
+		unsigned long *scanned, int order, int mode, int file)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long nr_taken = 0;
 	unsigned long nr_lumpy_taken = 0;
 	unsigned long nr_lumpy_dirty = 0;
 	unsigned long nr_lumpy_failed = 0;
+<<<<<<< HEAD
 	unsigned long scan;
 	int lru = LRU_BASE;
 
@@ -1168,11 +1421,28 @@ static unsigned long isolate_lru_pages(unsigned long nr_to_scan,
 
 	for (scan = 0; scan < nr_to_scan && !list_empty(src); scan++) {
 		struct page *page;
+=======
+	unsigned long nr_skipped = 0;
+	unsigned long scan;
+	bool isolate_cma = ((mode & ISOLATE_CMA) == ISOLATE_CMA);
+		struct page *page;
+	struct list_head *prev = NULL;
+
+	mode &= ~(ISOLATE_CMA);
+
+	page = lru_to_page(src);
+	for (scan = 0; scan < (nr_to_scan + nr_skipped) &&
+			!list_empty(src) &&
+			prev != src;
+			scan++, page = list_entry(prev, struct page, lru)) {
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned long pfn;
 		unsigned long end_pfn;
 		unsigned long page_pfn;
 		int zone_id;
 
+<<<<<<< HEAD
 		page = lru_to_page(src);
 		prefetchw_prev_lru_page(page, src, flags);
 
@@ -1182,19 +1452,43 @@ static unsigned long isolate_lru_pages(unsigned long nr_to_scan,
 		case 0:
 			mem_cgroup_lru_del(page);
 			list_move(&page->lru, dst);
+=======
+		prev = page->lru.prev;
+		prefetchw_prev_lru_page(page, src, flags);
+		VM_BUG_ON(!PageLRU(page));
+
+		if (!isolate_cma && PageCma(page)) {
+			nr_skipped++;
+			if (nr_skipped > nr_to_scan)
+				continue;
+		}
+
+		switch (__isolate_lru_page(page, mode, file)) {
+		case 0:
+			list_move(&page->lru, dst);
+			mem_cgroup_del_lru(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			nr_taken += hpage_nr_pages(page);
 			break;
 
 		case -EBUSY:
 			/* else it is being freed elsewhere */
 			list_move(&page->lru, src);
+<<<<<<< HEAD
+=======
+			mem_cgroup_rotate_lru_list(page, page_lru(page));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 
 		default:
 			BUG();
 		}
 
+<<<<<<< HEAD
 		if (!sc->order || !(sc->reclaim_mode & RECLAIM_MODE_LUMPYRECLAIM))
+=======
+		if (!order)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 
 		/*
@@ -1208,8 +1502,13 @@ static unsigned long isolate_lru_pages(unsigned long nr_to_scan,
 		 */
 		zone_id = page_zone_id(page);
 		page_pfn = page_to_pfn(page);
+<<<<<<< HEAD
 		pfn = page_pfn & ~((1 << sc->order) - 1);
 		end_pfn = pfn + (1 << sc->order);
+=======
+		pfn = page_pfn & ~((1 << order) - 1);
+		end_pfn = pfn + (1 << order);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (; pfn < end_pfn; pfn++) {
 			struct page *cursor_page;
 
@@ -1232,11 +1531,16 @@ static unsigned long isolate_lru_pages(unsigned long nr_to_scan,
 			 * anon page which don't already have a swap slot is
 			 * pointless.
 			 */
+<<<<<<< HEAD
 			if (nr_swap_pages <= 0 && PageSwapBacked(cursor_page) &&
+=======
+			if (nr_swap_pages <= 0 && PageAnon(cursor_page) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    !PageSwapCache(cursor_page))
 				break;
 
 			if (__isolate_lru_page(cursor_page, mode, file) == 0) {
+<<<<<<< HEAD
 				unsigned int isolated_pages;
 
 				mem_cgroup_lru_del(cursor_page);
@@ -1248,6 +1552,17 @@ static unsigned long isolate_lru_pages(unsigned long nr_to_scan,
 					nr_lumpy_dirty += isolated_pages;
 				scan++;
 				pfn += isolated_pages - 1;
+=======
+				if (prev == &cursor_page->lru)
+					prev = cursor_page->lru.prev;
+				list_move(&cursor_page->lru, dst);
+				mem_cgroup_del_lru(cursor_page);
+				nr_taken += hpage_nr_pages(page);
+				nr_lumpy_taken++;
+				if (PageDirty(cursor_page))
+					nr_lumpy_dirty++;
+				scan++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else {
 				/*
 				 * Check if the page is freed already.
@@ -1268,11 +1583,17 @@ static unsigned long isolate_lru_pages(unsigned long nr_to_scan,
 			}
 		}
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* If we break out of the loop above, lumpy reclaim failed */
 		if (pfn < end_pfn)
 			nr_lumpy_failed++;
 	}
 
+<<<<<<< HEAD
 	*nr_scanned = scan;
 
 	trace_mm_vmscan_lru_isolate(sc->order,
@@ -1283,6 +1604,62 @@ static unsigned long isolate_lru_pages(unsigned long nr_to_scan,
 	return nr_taken;
 }
 
+=======
+	*scanned = scan;
+
+	trace_mm_vmscan_lru_isolate(order,
+			nr_to_scan, scan,
+			nr_taken,
+			nr_lumpy_taken, nr_lumpy_dirty, nr_lumpy_failed,
+			mode);
+	return nr_taken;
+}
+
+static unsigned long isolate_pages_global(unsigned long nr,
+					struct list_head *dst,
+					unsigned long *scanned, int order,
+					int mode, struct zone *z,
+					int active, int file)
+{
+	int lru = LRU_BASE;
+	if (active)
+		lru += LRU_ACTIVE;
+	if (file)
+		lru += LRU_FILE;
+	return isolate_lru_pages(nr, &z->lru[lru].list, dst, scanned, order,
+								mode, file);
+}
+
+/*
+ * clear_active_flags() is a helper for shrink_active_list(), clearing
+ * any active bits from the pages in the list.
+ */
+static unsigned long clear_active_flags(struct list_head *page_list,
+					unsigned int *count)
+{
+	int nr_active = 0;
+	int lru;
+	struct page *page;
+
+	list_for_each_entry(page, page_list, lru) {
+		int numpages = hpage_nr_pages(page);
+		lru = page_lru_base_type(page);
+		if (PageActive(page)) {
+			lru += LRU_ACTIVE;
+			ClearPageActive(page);
+			nr_active += numpages;
+		}
+		if (count) {
+			count[lru] += numpages;
+			if (PageCma(page))
+				count[LRU_CMA_BASE + lru] += numpages;
+		}
+	}
+
+	return nr_active;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * isolate_lru_page - tries to isolate a page from its LRU list
  * @page: page to isolate from its LRU list
@@ -1342,7 +1719,11 @@ static int too_many_isolated(struct zone *zone, int file,
 	if (current_is_kswapd())
 		return 0;
 
+<<<<<<< HEAD
 	if (!global_reclaim(sc))
+=======
+	if (!scanning_global_lru(sc))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	if (file) {
@@ -1356,6 +1737,7 @@ static int too_many_isolated(struct zone *zone, int file,
 	return isolated > inactive;
 }
 
+<<<<<<< HEAD
 static noinline_for_stack void
 putback_inactive_pages(struct mem_cgroup_zone *mz,
 		       struct list_head *page_list)
@@ -1363,14 +1745,36 @@ putback_inactive_pages(struct mem_cgroup_zone *mz,
 	struct zone_reclaim_stat *reclaim_stat = get_reclaim_stat(mz);
 	struct zone *zone = mz->zone;
 	LIST_HEAD(pages_to_free);
+=======
+/*
+ * TODO: Try merging with migrations version of putback_lru_pages
+ */
+static noinline_for_stack void
+putback_lru_pages(struct zone *zone, struct scan_control *sc,
+				unsigned long nr_anon, unsigned long nr_file,
+				struct list_head *page_list)
+{
+	struct page *page;
+	struct pagevec pvec;
+	struct zone_reclaim_stat *reclaim_stat = get_reclaim_stat(zone, sc);
+
+	pagevec_init(&pvec, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Put back any unfreeable pages.
 	 */
+<<<<<<< HEAD
 	while (!list_empty(page_list)) {
 		struct page *page = lru_to_page(page_list);
 		int lru;
 
+=======
+	spin_lock(&zone->lru_lock);
+	while (!list_empty(page_list)) {
+		int lru;
+		page = lru_to_page(page_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		VM_BUG_ON(PageLRU(page));
 		list_del(&page->lru);
 		if (unlikely(!page_evictable(page, NULL))) {
@@ -1387,6 +1791,7 @@ putback_inactive_pages(struct mem_cgroup_zone *mz,
 			int numpages = hpage_nr_pages(page);
 			reclaim_stat->recent_rotated[file] += numpages;
 		}
+<<<<<<< HEAD
 		if (put_page_testzero(page)) {
 			__ClearPageLRU(page);
 			__ClearPageActive(page);
@@ -1434,6 +1839,32 @@ update_isolated_counts(struct mem_cgroup_zone *mz,
 	}
 
 	preempt_disable();
+=======
+		if (!pagevec_add(&pvec, page)) {
+			spin_unlock_irq(&zone->lru_lock);
+			__pagevec_release(&pvec);
+			spin_lock_irq(&zone->lru_lock);
+		}
+	}
+	__mod_zone_page_state(zone, NR_ISOLATED_ANON, -nr_anon);
+	__mod_zone_page_state(zone, NR_ISOLATED_FILE, -nr_file);
+
+	spin_unlock_irq(&zone->lru_lock);
+	pagevec_release(&pvec);
+}
+
+static noinline_for_stack void update_isolated_counts(struct zone *zone,
+					struct scan_control *sc,
+					unsigned long *nr_anon,
+					unsigned long *nr_file,
+					struct list_head *isolated_list)
+{
+	unsigned long nr_active;
+	unsigned int count[NR_LRU_LISTS_CMA] = { 0, };
+	struct zone_reclaim_stat *reclaim_stat = get_reclaim_stat(zone, sc);
+
+	nr_active = clear_active_flags(isolated_list, count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__count_vm_events(PGDEACTIVATE, nr_active);
 
 	__mod_zone_page_state(zone, NR_ACTIVE_FILE,
@@ -1444,6 +1875,7 @@ update_isolated_counts(struct mem_cgroup_zone *mz,
 			      -count[LRU_ACTIVE_ANON]);
 	__mod_zone_page_state(zone, NR_INACTIVE_ANON,
 			      -count[LRU_INACTIVE_ANON]);
+<<<<<<< HEAD
 
 	*nr_anon = count[LRU_ACTIVE_ANON] + count[LRU_INACTIVE_ANON];
 	*nr_file = count[LRU_ACTIVE_FILE] + count[LRU_INACTIVE_FILE];
@@ -1455,6 +1887,30 @@ update_isolated_counts(struct mem_cgroup_zone *mz,
 
 /*
  * Returns true if a direct reclaim should wait on pages under writeback.
+=======
+	if ((int) NR_LRU_LISTS_CMA != (int) NR_LRU_LISTS) {
+		__mod_zone_page_state(zone, NR_CMA_ACTIVE_FILE,
+			      -count[LRU_CMA_ACTIVE_FILE]);
+		__mod_zone_page_state(zone, NR_CMA_INACTIVE_FILE,
+			      -count[LRU_CMA_INACTIVE_FILE]);
+		__mod_zone_page_state(zone, NR_CMA_ACTIVE_ANON,
+			      -count[LRU_CMA_ACTIVE_ANON]);
+		__mod_zone_page_state(zone, NR_CMA_INACTIVE_ANON,
+			      -count[LRU_CMA_INACTIVE_ANON]);
+	}
+
+	*nr_anon = count[LRU_ACTIVE_ANON] + count[LRU_INACTIVE_ANON];
+	*nr_file = count[LRU_ACTIVE_FILE] + count[LRU_INACTIVE_FILE];
+	__mod_zone_page_state(zone, NR_ISOLATED_ANON, *nr_anon);
+	__mod_zone_page_state(zone, NR_ISOLATED_FILE, *nr_file);
+
+	reclaim_stat->recent_scanned[0] += *nr_anon;
+	reclaim_stat->recent_scanned[1] += *nr_file;
+}
+
+/*
+ * Returns true if the caller should wait to clean dirty/writeback pages.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * If we are direct reclaiming for contiguous pages and we do not reclaim
  * everything in the list, try again and wait for writeback IO to complete.
@@ -1476,7 +1932,11 @@ static inline bool should_reclaim_stall(unsigned long nr_taken,
 	if (sc->reclaim_mode & RECLAIM_MODE_SINGLE)
 		return false;
 
+<<<<<<< HEAD
 	/* If we have reclaimed everything on the isolated list, no stall */
+=======
+	/* If we have relaimed everything on the isolated list, no stall */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (nr_freed == nr_taken)
 		return false;
 
@@ -1499,8 +1959,13 @@ static inline bool should_reclaim_stall(unsigned long nr_taken,
  * of reclaimed pages
  */
 static noinline_for_stack unsigned long
+<<<<<<< HEAD
 shrink_inactive_list(unsigned long nr_to_scan, struct mem_cgroup_zone *mz,
 		     struct scan_control *sc, int priority, int file)
+=======
+shrink_inactive_list(unsigned long nr_to_scan, struct zone *zone,
+			struct scan_control *sc, int priority, int file)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	LIST_HEAD(page_list);
 	unsigned long nr_scanned;
@@ -1508,11 +1973,15 @@ shrink_inactive_list(unsigned long nr_to_scan, struct mem_cgroup_zone *mz,
 	unsigned long nr_taken;
 	unsigned long nr_anon;
 	unsigned long nr_file;
+<<<<<<< HEAD
 	unsigned long nr_dirty = 0;
 	unsigned long nr_writeback = 0;
 	isolate_mode_t isolate_mode = ISOLATE_INACTIVE;
 	struct zone *zone = mz->zone;
 	struct zone_reclaim_stat *reclaim_stat = get_reclaim_stat(mz);
+=======
+	int mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (unlikely(too_many_isolated(zone, file, sc))) {
 		congestion_wait(BLK_RW_ASYNC, HZ/10);
@@ -1523,6 +1992,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct mem_cgroup_zone *mz,
 	}
 
 	set_reclaim_mode(priority, sc, false);
+<<<<<<< HEAD
 	if (sc->reclaim_mode & RECLAIM_MODE_LUMPYRECLAIM)
 		isolate_mode |= ISOLATE_ACTIVE;
 
@@ -1538,6 +2008,21 @@ shrink_inactive_list(unsigned long nr_to_scan, struct mem_cgroup_zone *mz,
 	nr_taken = isolate_lru_pages(nr_to_scan, mz, &page_list, &nr_scanned,
 				     sc, isolate_mode, 0, file);
 	if (global_reclaim(sc)) {
+=======
+	mode = sc->reclaim_mode & RECLAIM_MODE_LUMPYRECLAIM ?
+				ISOLATE_BOTH : ISOLATE_INACTIVE;
+
+	if (sc->gfp_mask & __GFP_MOVABLE)
+		mode |= ISOLATE_CMA;
+
+	lru_add_drain();
+	spin_lock_irq(&zone->lru_lock);
+
+	if (scanning_global_lru(sc)) {
+		nr_taken = isolate_pages_global(nr_to_scan,
+			&page_list, &nr_scanned, sc->order,
+			mode, zone, 0, file);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		zone->pages_scanned += nr_scanned;
 		if (current_is_kswapd())
 			__count_zone_vm_events(PGSCAN_KSWAPD, zone,
@@ -1545,6 +2030,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct mem_cgroup_zone *mz,
 		else
 			__count_zone_vm_events(PGSCAN_DIRECT, zone,
 					       nr_scanned);
+<<<<<<< HEAD
 	}
 	spin_unlock_irq(&zone->lru_lock);
 
@@ -1555,10 +2041,34 @@ shrink_inactive_list(unsigned long nr_to_scan, struct mem_cgroup_zone *mz,
 
 	nr_reclaimed = shrink_page_list(&page_list, mz, sc, priority,
 						&nr_dirty, &nr_writeback);
+=======
+	} else {
+		nr_taken = mem_cgroup_isolate_pages(nr_to_scan,
+			&page_list, &nr_scanned, sc->order,
+			mode, zone, sc->mem_cgroup,
+			0, file);
+		/*
+		 * mem_cgroup_isolate_pages() keeps track of
+		 * scanned pages on its own.
+		 */
+	}
+
+	if (nr_taken == 0) {
+		spin_unlock_irq(&zone->lru_lock);
+		return 0;
+	}
+
+	update_isolated_counts(zone, sc, &nr_anon, &nr_file, &page_list);
+
+	spin_unlock_irq(&zone->lru_lock);
+
+	nr_reclaimed = shrink_page_list(&page_list, zone, sc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Check if we should syncronously wait for writeback */
 	if (should_reclaim_stall(nr_taken, nr_reclaimed, priority, sc)) {
 		set_reclaim_mode(priority, sc, true);
+<<<<<<< HEAD
 		nr_reclaimed += shrink_page_list(&page_list, mz, sc,
 					priority, &nr_dirty, &nr_writeback);
 	}
@@ -1611,6 +2121,17 @@ shrink_inactive_list(unsigned long nr_to_scan, struct mem_cgroup_zone *mz,
 	 */
 	if (nr_writeback && nr_writeback >= (nr_taken >> (DEF_PRIORITY-priority)))
 		wait_iff_congested(zone, BLK_RW_ASYNC, HZ/10);
+=======
+		nr_reclaimed += shrink_page_list(&page_list, zone, sc);
+	}
+
+	local_irq_disable();
+	if (current_is_kswapd())
+		__count_vm_events(KSWAPD_STEAL, nr_reclaimed);
+	__count_zone_vm_events(PGSTEAL, zone, nr_reclaimed);
+
+	putback_lru_pages(zone, sc, nr_anon, nr_file, &page_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	trace_mm_vmscan_lru_shrink_inactive(zone->zone_pgdat->node_id,
 		zone_idx(zone),
@@ -1640,6 +2161,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct mem_cgroup_zone *mz,
 
 static void move_active_pages_to_lru(struct zone *zone,
 				     struct list_head *list,
+<<<<<<< HEAD
 				     struct list_head *pages_to_free,
 				     enum lru_list lru)
 {
@@ -1649,11 +2171,26 @@ static void move_active_pages_to_lru(struct zone *zone,
 	while (!list_empty(list)) {
 		struct lruvec *lruvec;
 
+=======
+				     enum lru_list lru)
+{
+	unsigned long pgmoved = 0;
+#ifdef CONFIG_CMA
+	unsigned long pgmoved_cma = 0;
+#endif
+	struct pagevec pvec;
+	struct page *page;
+
+	pagevec_init(&pvec, 1);
+
+	while (!list_empty(list)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		page = lru_to_page(list);
 
 		VM_BUG_ON(PageLRU(page));
 		SetPageLRU(page);
 
+<<<<<<< HEAD
 		lruvec = mem_cgroup_lru_add_list(zone, page, lru);
 		list_move(&page->lru, &lruvec->lists[lru]);
 		pgmoved += hpage_nr_pages(page);
@@ -1672,10 +2209,32 @@ static void move_active_pages_to_lru(struct zone *zone,
 		}
 	}
 	__mod_zone_page_state(zone, NR_LRU_BASE + lru, pgmoved);
+=======
+		list_move(&page->lru, &zone->lru[lru].list);
+		mem_cgroup_add_lru_list(page, lru);
+		pgmoved += hpage_nr_pages(page);
+#ifdef CONFIG_CMA
+		if (PageCma(page))
+			pgmoved_cma += hpage_nr_pages(page);
+#endif
+		if (!pagevec_add(&pvec, page) || list_empty(list)) {
+			spin_unlock_irq(&zone->lru_lock);
+			if (buffer_heads_over_limit)
+				pagevec_strip(&pvec);
+			__pagevec_release(&pvec);
+			spin_lock_irq(&zone->lru_lock);
+		}
+	}
+	__mod_zone_page_state(zone, NR_LRU_BASE + lru, pgmoved);
+#ifdef CONFIG_CMA
+	__mod_zone_page_state(zone, NR_LRU_CMA_BASE + lru, pgmoved_cma);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!is_active_lru(lru))
 		__count_vm_events(PGDEACTIVATE, pgmoved);
 }
 
+<<<<<<< HEAD
 static void shrink_active_list(unsigned long nr_to_scan,
 			       struct mem_cgroup_zone *mz,
 			       struct scan_control *sc,
@@ -1683,11 +2242,41 @@ static void shrink_active_list(unsigned long nr_to_scan,
 {
 	unsigned long nr_taken;
 	unsigned long nr_scanned;
+=======
+#ifdef CONFIG_CMA
+static unsigned long count_cma_pages(struct list_head *head)
+{
+	unsigned long nr_cma = 0;
+	struct list_head *itr;
+	struct page *p;
+
+	list_for_each(itr, head) {
+		p = list_entry(itr, struct page, lru);
+		if (PageCma(p))
+			nr_cma++;
+	}
+
+	return nr_cma;
+}
+#else
+static unsigned long count_cma_pages(struct list_head *head)
+{
+	return 0;
+}
+#endif
+
+static void shrink_active_list(unsigned long nr_pages, struct zone *zone,
+			struct scan_control *sc, int priority, int file)
+{
+	unsigned long nr_taken;
+	unsigned long pgscanned;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long vm_flags;
 	LIST_HEAD(l_hold);	/* The pages which were snipped off */
 	LIST_HEAD(l_active);
 	LIST_HEAD(l_inactive);
 	struct page *page;
+<<<<<<< HEAD
 	struct zone_reclaim_stat *reclaim_stat = get_reclaim_stat(mz);
 	unsigned long nr_rotated = 0;
 	isolate_mode_t isolate_mode = ISOLATE_ACTIVE;
@@ -1716,6 +2305,47 @@ static void shrink_active_list(unsigned long nr_to_scan,
 		__mod_zone_page_state(zone, NR_ACTIVE_FILE, -nr_taken);
 	else
 		__mod_zone_page_state(zone, NR_ACTIVE_ANON, -nr_taken);
+=======
+	struct zone_reclaim_stat *reclaim_stat = get_reclaim_stat(zone, sc);
+	unsigned long nr_rotated = 0;
+	unsigned long nr_cma_taken = 0;
+	int mode = ISOLATE_ACTIVE;
+
+	if (sc->gfp_mask & __GFP_MOVABLE)
+		mode |= ISOLATE_CMA;
+
+	lru_add_drain();
+	spin_lock_irq(&zone->lru_lock);
+	if (scanning_global_lru(sc)) {
+		nr_taken = isolate_pages_global(nr_pages, &l_hold,
+						&pgscanned, sc->order,
+						mode, zone,
+						1, file);
+		zone->pages_scanned += pgscanned;
+	} else {
+		nr_taken = mem_cgroup_isolate_pages(nr_pages, &l_hold,
+						&pgscanned, sc->order,
+						mode, zone,
+						sc->mem_cgroup, 1, file);
+		/*
+		 * mem_cgroup_isolate_pages() keeps track of
+		 * scanned pages on its own.
+		 */
+	}
+
+	reclaim_stat->recent_scanned[file] += nr_taken;
+
+	__count_zone_vm_events(PGREFILL, zone, pgscanned);
+	nr_cma_taken = count_cma_pages(&l_hold);
+
+	if (file) {
+		__mod_zone_page_state(zone, NR_ACTIVE_FILE, -nr_taken);
+		__mod_zone_page_state(zone, NR_CMA_ACTIVE_FILE, -nr_cma_taken);
+	} else {
+		__mod_zone_page_state(zone, NR_ACTIVE_ANON, -nr_taken);
+		__mod_zone_page_state(zone, NR_CMA_ACTIVE_ANON, -nr_cma_taken);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__mod_zone_page_state(zone, NR_ISOLATED_ANON + file, nr_taken);
 	spin_unlock_irq(&zone->lru_lock);
 
@@ -1729,6 +2359,7 @@ static void shrink_active_list(unsigned long nr_to_scan,
 			continue;
 		}
 
+<<<<<<< HEAD
 		if (unlikely(buffer_heads_over_limit)) {
 			if (page_has_private(page) && trylock_page(page)) {
 				if (page_has_private(page))
@@ -1738,6 +2369,9 @@ static void shrink_active_list(unsigned long nr_to_scan,
 		}
 
 		if (page_referenced(page, 0, mz->mem_cgroup, &vm_flags)) {
+=======
+		if (page_referenced(page, 0, sc->mem_cgroup, &vm_flags)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			nr_rotated += hpage_nr_pages(page);
 			/*
 			 * Identify referenced, file-backed active pages and
@@ -1770,6 +2404,7 @@ static void shrink_active_list(unsigned long nr_to_scan,
 	 */
 	reclaim_stat->recent_rotated[file] += nr_rotated;
 
+<<<<<<< HEAD
 	move_active_pages_to_lru(zone, &l_active, &l_hold,
 						LRU_ACTIVE + file * LRU_FILE);
 	move_active_pages_to_lru(zone, &l_inactive, &l_hold,
@@ -1778,6 +2413,14 @@ static void shrink_active_list(unsigned long nr_to_scan,
 	spin_unlock_irq(&zone->lru_lock);
 
 	free_hot_cold_page_list(&l_hold, 1);
+=======
+	move_active_pages_to_lru(zone, &l_active,
+						LRU_ACTIVE + file * LRU_FILE);
+	move_active_pages_to_lru(zone, &l_inactive,
+						LRU_BASE   + file * LRU_FILE);
+	__mod_zone_page_state(zone, NR_ISOLATED_ANON + file, -nr_taken);
+	spin_unlock_irq(&zone->lru_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_SWAP
@@ -1794,6 +2437,25 @@ static int inactive_anon_is_low_global(struct zone *zone)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_CMA
+static int inactive_unmovable_anon_is_low_global(struct zone *zone)
+{
+	unsigned long active, inactive;
+
+	active = zone_page_state(zone, NR_ACTIVE_ANON) -
+			zone_page_state(zone, NR_CMA_ACTIVE_ANON);
+	inactive = zone_page_state(zone, NR_INACTIVE_ANON) -
+			zone_page_state(zone, NR_CMA_INACTIVE_ANON);
+
+	if (inactive * zone->inactive_ratio < active)
+		return 1;
+
+	return 0;
+}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * inactive_anon_is_low - check if anonymous pages need to be deactivated
  * @zone: zone to check
@@ -1802,8 +2464,15 @@ static int inactive_anon_is_low_global(struct zone *zone)
  * Returns true if the zone does not have enough inactive anon pages,
  * meaning some active anon pages need to be deactivated.
  */
+<<<<<<< HEAD
 static int inactive_anon_is_low(struct mem_cgroup_zone *mz)
 {
+=======
+static int inactive_anon_is_low(struct zone *zone, struct scan_control *sc)
+{
+	int low;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * If we don't have swap space, anonymous page deactivation
 	 * is pointless.
@@ -1811,6 +2480,7 @@ static int inactive_anon_is_low(struct mem_cgroup_zone *mz)
 	if (!total_swap_pages)
 		return 0;
 
+<<<<<<< HEAD
 	if (!scanning_global_lru(mz))
 		return mem_cgroup_inactive_anon_is_low(mz->mem_cgroup,
 						       mz->zone);
@@ -1819,6 +2489,23 @@ static int inactive_anon_is_low(struct mem_cgroup_zone *mz)
 }
 #else
 static inline int inactive_anon_is_low(struct mem_cgroup_zone *mz)
+=======
+	if (scanning_global_lru(sc)) {
+#ifdef CONFIG_CMA
+		if (!(sc->gfp_mask & __GFP_MOVABLE))
+			low = inactive_unmovable_anon_is_low_global(zone);
+	else
+#endif
+			low = inactive_anon_is_low_global(zone);
+	} else {
+		low = mem_cgroup_inactive_anon_is_low(sc->mem_cgroup);
+	}
+	return low;
+}
+#else
+static inline int inactive_anon_is_low(struct zone *zone,
+					struct scan_control *sc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
@@ -1834,9 +2521,30 @@ static int inactive_file_is_low_global(struct zone *zone)
 	return (active > inactive);
 }
 
+<<<<<<< HEAD
 /**
  * inactive_file_is_low - check if file pages need to be deactivated
  * @mz: memory cgroup and zone to check
+=======
+#ifdef CONFIG_CMA
+static int inactive_unmovable_file_is_low_global(struct zone *zone)
+{
+	unsigned long active, inactive;
+
+	active = zone_page_state(zone, NR_ACTIVE_FILE) -
+			zone_page_state(zone, NR_CMA_ACTIVE_FILE);
+	inactive = zone_page_state(zone, NR_INACTIVE_FILE) -
+			zone_page_state(zone, NR_CMA_INACTIVE_FILE);
+
+	return (active > inactive);
+}
+#endif
+
+/**
+ * inactive_file_is_low - check if file pages need to be deactivated
+ * @zone: zone to check
+ * @sc:   scan control of this context
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * When the system is doing streaming IO, memory pressure here
  * ensures that active file pages get deactivated, until more
@@ -1848,6 +2556,7 @@ static int inactive_file_is_low_global(struct zone *zone)
  * This uses a different ratio than the anonymous pages, because
  * the page cache uses a use-once replacement algorithm.
  */
+<<<<<<< HEAD
 static int inactive_file_is_low(struct mem_cgroup_zone *mz)
 {
 	if (!scanning_global_lru(mz))
@@ -1868,10 +2577,41 @@ static int inactive_list_is_low(struct mem_cgroup_zone *mz, int file)
 static unsigned long shrink_list(enum lru_list lru, unsigned long nr_to_scan,
 				 struct mem_cgroup_zone *mz,
 				 struct scan_control *sc, int priority)
+=======
+static int inactive_file_is_low(struct zone *zone, struct scan_control *sc)
+{
+	int low;
+
+	if (scanning_global_lru(sc)) {
+#ifdef CONFIG_CMA
+		if (!(sc->gfp_mask & __GFP_MOVABLE))
+			low = inactive_unmovable_file_is_low_global(zone);
+	else
+#endif
+			low = inactive_file_is_low_global(zone);
+	} else {
+		low = mem_cgroup_inactive_file_is_low(sc->mem_cgroup);
+	}
+	return low;
+}
+
+static int inactive_list_is_low(struct zone *zone, struct scan_control *sc,
+				int file)
+{
+	if (file)
+		return inactive_file_is_low(zone, sc);
+	else
+		return inactive_anon_is_low(zone, sc);
+}
+
+static unsigned long shrink_list(enum lru_list lru, unsigned long nr_to_scan,
+	struct zone *zone, struct scan_control *sc, int priority)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int file = is_file_lru(lru);
 
 	if (is_active_lru(lru)) {
+<<<<<<< HEAD
 		if (inactive_list_is_low(mz, file))
 			shrink_active_list(nr_to_scan, mz, sc, priority, file);
 		return 0;
@@ -1886,6 +2626,14 @@ static int vmscan_swappiness(struct mem_cgroup_zone *mz,
 	if (global_reclaim(sc))
 		return vm_swappiness;
 	return mem_cgroup_swappiness(mz->mem_cgroup);
+=======
+		if (inactive_list_is_low(zone, sc, file))
+		    shrink_active_list(nr_to_scan, zone, sc, priority, file);
+		return 0;
+	}
+
+	return shrink_inactive_list(nr_to_scan, zone, sc, priority, file);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1896,12 +2644,18 @@ static int vmscan_swappiness(struct mem_cgroup_zone *mz,
  *
  * nr[0] = anon pages to scan; nr[1] = file pages to scan
  */
+<<<<<<< HEAD
 static void get_scan_count(struct mem_cgroup_zone *mz, struct scan_control *sc,
 			   unsigned long *nr, int priority)
+=======
+static void get_scan_count(struct zone *zone, struct scan_control *sc,
+					unsigned long *nr, int priority)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long anon, file, free;
 	unsigned long anon_prio, file_prio;
 	unsigned long ap, fp;
+<<<<<<< HEAD
 	struct zone_reclaim_stat *reclaim_stat = get_reclaim_stat(mz);
 	u64 fraction[2], denominator;
 	enum lru_list lru;
@@ -1922,6 +2676,29 @@ static void get_scan_count(struct mem_cgroup_zone *mz, struct scan_control *sc,
 		force_scan = true;
 	if (!global_reclaim(sc))
 		force_scan = true;
+=======
+	struct zone_reclaim_stat *reclaim_stat = get_reclaim_stat(zone, sc);
+	u64 fraction[2], denominator;
+	enum lru_list l;
+	int noswap = 0;
+	int force_scan = 0;
+	unsigned long nr_force_scan[2];
+
+
+	anon  = zone_nr_lru_pages(zone, sc, LRU_ACTIVE_ANON) +
+		zone_nr_lru_pages(zone, sc, LRU_INACTIVE_ANON);
+	file  = zone_nr_lru_pages(zone, sc, LRU_ACTIVE_FILE) +
+		zone_nr_lru_pages(zone, sc, LRU_INACTIVE_FILE);
+
+	if (((anon + file) >> priority) < SWAP_CLUSTER_MAX) {
+		/* kswapd does zone balancing and need to scan this zone */
+		if (scanning_global_lru(sc) && current_is_kswapd())
+			force_scan = 1;
+		/* memcg may have small limit and need to avoid priority drop */
+		if (!scanning_global_lru(sc))
+			force_scan = 1;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* If we have no swap space, do not bother scanning anon pages. */
 	if (!sc->may_swap || (nr_swap_pages <= 0)) {
@@ -1929,6 +2706,7 @@ static void get_scan_count(struct mem_cgroup_zone *mz, struct scan_control *sc,
 		fraction[0] = 0;
 		fraction[1] = 1;
 		denominator = 1;
+<<<<<<< HEAD
 		goto out;
 	}
 
@@ -1945,6 +2723,25 @@ static void get_scan_count(struct mem_cgroup_zone *mz, struct scan_control *sc,
 			fraction[0] = 1;
 			fraction[1] = 0;
 			denominator = 1;
+=======
+		nr_force_scan[0] = 0;
+		nr_force_scan[1] = SWAP_CLUSTER_MAX;
+		goto out;
+	}
+
+	if (scanning_global_lru(sc)) {
+		free  = zone_page_state(zone, NR_FREE_PAGES);
+		if (!(sc->gfp_mask & __GFP_MOVABLE))
+			free -= zone_page_state(zone, NR_FREE_CMA_PAGES);
+		/* If we have very few page cache pages,
+		   force-scan anon pages. */
+		if (unlikely(file + free <= high_wmark_pages(zone))) {
+			fraction[0] = 1;
+			fraction[1] = 0;
+			denominator = 1;
+			nr_force_scan[0] = SWAP_CLUSTER_MAX;
+			nr_force_scan[1] = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out;
 		}
 	}
@@ -1953,8 +2750,13 @@ static void get_scan_count(struct mem_cgroup_zone *mz, struct scan_control *sc,
 	 * With swappiness at 100, anonymous and file have the same priority.
 	 * This scanning priority is essentially the inverse of IO cost.
 	 */
+<<<<<<< HEAD
 	anon_prio = vmscan_swappiness(mz, sc);
 	file_prio = 200 - vmscan_swappiness(mz, sc);
+=======
+	anon_prio = sc->swappiness;
+	file_prio = 200 - sc->swappiness;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * OK, so we have swap space and a fair amount of page cache
@@ -1967,7 +2769,11 @@ static void get_scan_count(struct mem_cgroup_zone *mz, struct scan_control *sc,
 	 *
 	 * anon in [0], file in [1]
 	 */
+<<<<<<< HEAD
 	spin_lock_irq(&mz->zone->lru_lock);
+=======
+	spin_lock_irq(&zone->lru_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(reclaim_stat->recent_scanned[0] > anon / 4)) {
 		reclaim_stat->recent_scanned[0] /= 2;
 		reclaim_stat->recent_rotated[0] /= 2;
@@ -1983,16 +2789,26 @@ static void get_scan_count(struct mem_cgroup_zone *mz, struct scan_control *sc,
 	 * proportional to the fraction of recently scanned pages on
 	 * each list that were recently referenced and in active use.
 	 */
+<<<<<<< HEAD
 	ap = anon_prio * (reclaim_stat->recent_scanned[0] + 1);
 	ap /= reclaim_stat->recent_rotated[0] + 1;
 
 	fp = file_prio * (reclaim_stat->recent_scanned[1] + 1);
 	fp /= reclaim_stat->recent_rotated[1] + 1;
 	spin_unlock_irq(&mz->zone->lru_lock);
+=======
+	ap = (anon_prio + 1) * (reclaim_stat->recent_scanned[0] + 1);
+	ap /= reclaim_stat->recent_rotated[0] + 1;
+
+	fp = (file_prio + 1) * (reclaim_stat->recent_scanned[1] + 1);
+	fp /= reclaim_stat->recent_rotated[1] + 1;
+	spin_unlock_irq(&zone->lru_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fraction[0] = ap;
 	fraction[1] = fp;
 	denominator = ap + fp + 1;
+<<<<<<< HEAD
 out:
 	for_each_evictable_lru(lru) {
 		int file = is_file_lru(lru);
@@ -2006,6 +2822,37 @@ out:
 			scan = div64_u64(scan * fraction[file], denominator);
 		}
 		nr[lru] = scan;
+=======
+	if (force_scan) {
+		unsigned long scan = SWAP_CLUSTER_MAX;
+		nr_force_scan[0] = div64_u64(scan * ap, denominator);
+		nr_force_scan[1] = div64_u64(scan * fp, denominator);
+	}
+out:
+	for_each_evictable_lru(l) {
+		int file = is_file_lru(l);
+		unsigned long scan;
+
+		scan = zone_nr_lru_pages(zone, sc, l);
+
+		if (priority || noswap) {
+			scan >>= priority;
+			scan = div64_u64(scan * fraction[file], denominator);
+		}
+
+		/*
+		 * If zone is small or memcg is small, nr[l] can be 0.
+		 * This results no-scan on this priority and priority drop down.
+		 * For global direct reclaim, it can visit next zone and tend
+		 * not to have problems. For global kswapd, it's for zone
+		 * balancing and it need to scan a small amounts. When using
+		 * memcg, priority drop can cause big latency. So, it's better
+		 * to scan small amount. See may_noscan above.
+		 */
+		if (!scan && force_scan)
+			scan = nr_force_scan[file];
+		nr[l] = scan;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -2016,7 +2863,11 @@ out:
  * back to the allocator and call try_to_compact_zone(), we ensure that
  * there are enough free pages for it to be likely successful
  */
+<<<<<<< HEAD
 static inline bool should_continue_reclaim(struct mem_cgroup_zone *mz,
+=======
+static inline bool should_continue_reclaim(struct zone *zone,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					unsigned long nr_reclaimed,
 					unsigned long nr_scanned,
 					struct scan_control *sc)
@@ -2056,15 +2907,24 @@ static inline bool should_continue_reclaim(struct mem_cgroup_zone *mz,
 	 * inactive lists are large enough, continue reclaiming
 	 */
 	pages_for_compaction = (2UL << sc->order);
+<<<<<<< HEAD
 	inactive_lru_pages = zone_nr_lru_pages(mz, LRU_INACTIVE_FILE);
 	if (nr_swap_pages > 0)
 		inactive_lru_pages += zone_nr_lru_pages(mz, LRU_INACTIVE_ANON);
+=======
+	inactive_lru_pages = zone_nr_lru_pages(zone, sc, LRU_INACTIVE_ANON) +
+				zone_nr_lru_pages(zone, sc, LRU_INACTIVE_FILE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (sc->nr_reclaimed < pages_for_compaction &&
 			inactive_lru_pages > pages_for_compaction)
 		return true;
 
 	/* If compaction would go ahead or the allocation would succeed, stop */
+<<<<<<< HEAD
 	switch (compaction_suitable(mz->zone, sc->order)) {
+=======
+	switch (compaction_suitable(zone, sc->order)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case COMPACT_PARTIAL:
 	case COMPACT_CONTINUE:
 		return false;
@@ -2076,6 +2936,7 @@ static inline bool should_continue_reclaim(struct mem_cgroup_zone *mz,
 /*
  * This is a basic per-zone page freer.  Used by both kswapd and direct reclaim.
  */
+<<<<<<< HEAD
 static void shrink_mem_cgroup_zone(int priority, struct mem_cgroup_zone *mz,
 				   struct scan_control *sc)
 {
@@ -2085,10 +2946,21 @@ static void shrink_mem_cgroup_zone(int priority, struct mem_cgroup_zone *mz,
 	unsigned long nr_reclaimed, nr_scanned;
 	unsigned long nr_to_reclaim = sc->nr_to_reclaim;
 	struct blk_plug plug;
+=======
+static void shrink_zone(int priority, struct zone *zone,
+				struct scan_control *sc)
+{
+	unsigned long nr[NR_LRU_LISTS];
+	unsigned long nr_to_scan;
+	enum lru_list l;
+	unsigned long nr_reclaimed, nr_scanned;
+	unsigned long nr_to_reclaim = sc->nr_to_reclaim;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 restart:
 	nr_reclaimed = 0;
 	nr_scanned = sc->nr_scanned;
+<<<<<<< HEAD
 	get_scan_count(mz, sc, nr, priority);
 
 	blk_start_plug(&plug);
@@ -2102,6 +2974,20 @@ restart:
 
 				nr_reclaimed += shrink_list(lru, nr_to_scan,
 							    mz, sc, priority);
+=======
+	get_scan_count(zone, sc, nr, priority);
+
+	while (nr[LRU_INACTIVE_ANON] || nr[LRU_ACTIVE_FILE] ||
+					nr[LRU_INACTIVE_FILE]) {
+		for_each_evictable_lru(l) {
+			if (nr[l]) {
+				nr_to_scan = min_t(unsigned long,
+						   nr[l], SWAP_CLUSTER_MAX);
+				nr[l] -= nr_to_scan;
+
+				nr_reclaimed += shrink_list(l, nr_to_scan,
+							    zone, sc, priority);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 		/*
@@ -2115,24 +3001,36 @@ restart:
 		if (nr_reclaimed >= nr_to_reclaim && priority < DEF_PRIORITY)
 			break;
 	}
+<<<<<<< HEAD
 	blk_finish_plug(&plug);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sc->nr_reclaimed += nr_reclaimed;
 
 	/*
 	 * Even if we did not try to evict anon pages at all, we want to
 	 * rebalance the anon lru active/inactive ratio.
 	 */
+<<<<<<< HEAD
 	if (inactive_anon_is_low(mz))
 		shrink_active_list(SWAP_CLUSTER_MAX, mz, sc, priority, 0);
 
 	/* reclaim/compaction might need reclaim to continue */
 	if (should_continue_reclaim(mz, nr_reclaimed,
+=======
+	if (inactive_anon_is_low(zone, sc))
+		shrink_active_list(SWAP_CLUSTER_MAX, zone, sc, priority, 0);
+
+	/* reclaim/compaction might need reclaim to continue */
+	if (should_continue_reclaim(zone, nr_reclaimed,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					sc->nr_scanned - nr_scanned, sc))
 		goto restart;
 
 	throttle_vm_writeout(sc->gfp_mask);
 }
 
+<<<<<<< HEAD
 static void shrink_zone(int priority, struct zone *zone,
 			struct scan_control *sc)
 {
@@ -2205,6 +3103,8 @@ static inline bool compaction_ready(struct zone *zone, struct scan_control *sc)
 	return watermark_ok;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This is the direct reclaim path, for page-allocating processes.  We only
  * try to reclaim pages from zones which will satisfy the caller's allocation
@@ -2220,6 +3120,7 @@ static inline bool compaction_ready(struct zone *zone, struct scan_control *sc)
  *
  * If a zone is deemed to be full of pinned pages then just give it a light
  * scan then give up on it.
+<<<<<<< HEAD
  *
  * This function returns true if a zone is being reclaimed for a costly
  * high-order allocation and compaction is ready to begin. This indicates to
@@ -2227,12 +3128,17 @@ static inline bool compaction_ready(struct zone *zone, struct scan_control *sc)
  * further reclaim.
  */
 static bool shrink_zones(int priority, struct zonelist *zonelist,
+=======
+ */
+static void shrink_zones(int priority, struct zonelist *zonelist,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					struct scan_control *sc)
 {
 	struct zoneref *z;
 	struct zone *zone;
 	unsigned long nr_soft_reclaimed;
 	unsigned long nr_soft_scanned;
+<<<<<<< HEAD
 	bool aborted_reclaim = false;
 
 	/*
@@ -2242,6 +3148,8 @@ static bool shrink_zones(int priority, struct zonelist *zonelist,
 	 */
 	if (buffer_heads_over_limit)
 		sc->gfp_mask |= __GFP_HIGHMEM;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for_each_zone_zonelist_nodemask(zone, z, zonelist,
 					gfp_zone(sc->gfp_mask), sc->nodemask) {
@@ -2251,11 +3159,16 @@ static bool shrink_zones(int priority, struct zonelist *zonelist,
 		 * Take care memory controller reclaiming has small influence
 		 * to global LRU.
 		 */
+<<<<<<< HEAD
 		if (global_reclaim(sc)) {
+=======
+		if (scanning_global_lru(sc)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!cpuset_zone_allowed_hardwall(zone, GFP_KERNEL))
 				continue;
 			if (zone->all_unreclaimable && priority != DEF_PRIORITY)
 				continue;	/* Let kswapd poll it */
+<<<<<<< HEAD
 			if (COMPACTION_BUILD) {
 				/*
 				 * If we already have plenty of memory free for
@@ -2271,6 +3184,8 @@ static bool shrink_zones(int priority, struct zonelist *zonelist,
 					continue;
 				}
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * This steals pages from memory cgroups over softlimit
 			 * and returns the number of reclaimed pages and
@@ -2288,8 +3203,11 @@ static bool shrink_zones(int priority, struct zonelist *zonelist,
 
 		shrink_zone(priority, zone, sc);
 	}
+<<<<<<< HEAD
 
 	return aborted_reclaim;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static bool zone_reclaimable(struct zone *zone)
@@ -2343,24 +3261,41 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
 	struct zoneref *z;
 	struct zone *zone;
 	unsigned long writeback_threshold;
+<<<<<<< HEAD
 	bool aborted_reclaim;
 
 	delayacct_freepages_start();
 
 	if (global_reclaim(sc))
+=======
+
+	get_mems_allowed();
+	delayacct_freepages_start();
+
+	if (scanning_global_lru(sc))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		count_vm_event(ALLOCSTALL);
 
 	for (priority = DEF_PRIORITY; priority >= 0; priority--) {
 		sc->nr_scanned = 0;
 		if (!priority)
+<<<<<<< HEAD
 			disable_swap_token(sc->target_mem_cgroup);
 		aborted_reclaim = shrink_zones(priority, zonelist, sc);
 
+=======
+			disable_swap_token(sc->mem_cgroup);
+		shrink_zones(priority, zonelist, sc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Don't shrink slabs when reclaiming memory from
 		 * over limit cgroups
 		 */
+<<<<<<< HEAD
 		if (global_reclaim(sc)) {
+=======
+		if (scanning_global_lru(sc)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			unsigned long lru_pages = 0;
 			for_each_zone_zonelist(zone, z, zonelist,
 					gfp_zone(sc->gfp_mask)) {
@@ -2389,8 +3324,12 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
 		 */
 		writeback_threshold = sc->nr_to_reclaim + sc->nr_to_reclaim / 2;
 		if (total_scanned > writeback_threshold) {
+<<<<<<< HEAD
 			wakeup_flusher_threads(laptop_mode ? 0 : total_scanned,
 						WB_REASON_TRY_TO_FREE_PAGES);
+=======
+			wakeup_flusher_threads(laptop_mode ? 0 : total_scanned);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sc->may_writepage = 1;
 		}
 
@@ -2408,6 +3347,10 @@ static unsigned long do_try_to_free_pages(struct zonelist *zonelist,
 
 out:
 	delayacct_freepages_end();
+<<<<<<< HEAD
+=======
+	put_mems_allowed();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (sc->nr_reclaimed)
 		return sc->nr_reclaimed;
@@ -2420,12 +3363,17 @@ out:
 	if (oom_killer_disabled)
 		return 0;
 
+<<<<<<< HEAD
 	/* Aborted reclaim to try compaction? don't OOM, then */
 	if (aborted_reclaim)
 		return 1;
 
 	/* top priority shrink_zones still had more to do? don't OOM, then */
 	if (global_reclaim(sc) && !all_unreclaimable(zonelist, sc))
+=======
+	/* top priority shrink_zones still had more to do? don't OOM, then */
+	if (scanning_global_lru(sc) && !all_unreclaimable(zonelist, sc))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 
 	return 0;
@@ -2441,8 +3389,14 @@ unsigned long try_to_free_pages(struct zonelist *zonelist, int order,
 		.nr_to_reclaim = SWAP_CLUSTER_MAX,
 		.may_unmap = 1,
 		.may_swap = 1,
+<<<<<<< HEAD
 		.order = order,
 		.target_mem_cgroup = NULL,
+=======
+		.swappiness = vm_swappiness,
+		.order = order,
+		.mem_cgroup = NULL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.nodemask = nodemask,
 	};
 	struct shrink_control shrink = {
@@ -2462,8 +3416,14 @@ unsigned long try_to_free_pages(struct zonelist *zonelist, int order,
 
 #ifdef CONFIG_CGROUP_MEM_RES_CTLR
 
+<<<<<<< HEAD
 unsigned long mem_cgroup_shrink_node_zone(struct mem_cgroup *memcg,
 						gfp_t gfp_mask, bool noswap,
+=======
+unsigned long mem_cgroup_shrink_node_zone(struct mem_cgroup *mem,
+						gfp_t gfp_mask, bool noswap,
+						unsigned int swappiness,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						struct zone *zone,
 						unsigned long *nr_scanned)
 {
@@ -2473,12 +3433,18 @@ unsigned long mem_cgroup_shrink_node_zone(struct mem_cgroup *memcg,
 		.may_writepage = !laptop_mode,
 		.may_unmap = 1,
 		.may_swap = !noswap,
+<<<<<<< HEAD
 		.order = 0,
 		.target_mem_cgroup = memcg,
 	};
 	struct mem_cgroup_zone mz = {
 		.mem_cgroup = memcg,
 		.zone = zone,
+=======
+		.swappiness = swappiness,
+		.order = 0,
+		.mem_cgroup = mem,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	};
 
 	sc.gfp_mask = (gfp_mask & GFP_RECLAIM_MASK) |
@@ -2495,7 +3461,11 @@ unsigned long mem_cgroup_shrink_node_zone(struct mem_cgroup *memcg,
 	 * will pick up pages from other mem cgroup's as well. We hack
 	 * the priority and make it zero.
 	 */
+<<<<<<< HEAD
 	shrink_mem_cgroup_zone(0, &mz, &sc);
+=======
+	shrink_zone(0, zone, &sc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	trace_mm_vmscan_memcg_softlimit_reclaim_end(sc.nr_reclaimed);
 
@@ -2503,9 +3473,16 @@ unsigned long mem_cgroup_shrink_node_zone(struct mem_cgroup *memcg,
 	return sc.nr_reclaimed;
 }
 
+<<<<<<< HEAD
 unsigned long try_to_free_mem_cgroup_pages(struct mem_cgroup *memcg,
 					   gfp_t gfp_mask,
 					   bool noswap)
+=======
+unsigned long try_to_free_mem_cgroup_pages(struct mem_cgroup *mem_cont,
+					   gfp_t gfp_mask,
+					   bool noswap,
+					   unsigned int swappiness)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct zonelist *zonelist;
 	unsigned long nr_reclaimed;
@@ -2515,8 +3492,14 @@ unsigned long try_to_free_mem_cgroup_pages(struct mem_cgroup *memcg,
 		.may_unmap = 1,
 		.may_swap = !noswap,
 		.nr_to_reclaim = SWAP_CLUSTER_MAX,
+<<<<<<< HEAD
 		.order = 0,
 		.target_mem_cgroup = memcg,
+=======
+		.swappiness = swappiness,
+		.order = 0,
+		.mem_cgroup = mem_cont,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.nodemask = NULL, /* we don't care the placement */
 		.gfp_mask = (gfp_mask & GFP_RECLAIM_MASK) |
 				(GFP_HIGHUSER_MOVABLE & ~GFP_RECLAIM_MASK),
@@ -2530,7 +3513,11 @@ unsigned long try_to_free_mem_cgroup_pages(struct mem_cgroup *memcg,
 	 * take care of from where we get pages. So the node where we start the
 	 * scan does not need to be the current node.
 	 */
+<<<<<<< HEAD
 	nid = mem_cgroup_select_victim_node(memcg);
+=======
+	nid = mem_cgroup_select_victim_node(mem_cont);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	zonelist = NODE_DATA(nid)->node_zonelists;
 
@@ -2546,6 +3533,7 @@ unsigned long try_to_free_mem_cgroup_pages(struct mem_cgroup *memcg,
 }
 #endif
 
+<<<<<<< HEAD
 static void age_active_anon(struct zone *zone, struct scan_control *sc,
 			    int priority)
 {
@@ -2569,6 +3557,8 @@ static void age_active_anon(struct zone *zone, struct scan_control *sc,
 	} while (memcg);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * pgdat_balanced is used when checking if a node is balanced for high-order
  * allocations. Only zones that meet watermarks and are in a zone allowed
@@ -2688,8 +3678,14 @@ static unsigned long balance_pgdat(pg_data_t *pgdat, int order,
 		 * we want to put equal scanning pressure on each zone.
 		 */
 		.nr_to_reclaim = ULONG_MAX,
+<<<<<<< HEAD
 		.order = order,
 		.target_mem_cgroup = NULL,
+=======
+		.swappiness = vm_swappiness,
+		.order = order,
+		.mem_cgroup = NULL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	};
 	struct shrink_control shrink = {
 		.gfp_mask = sc.gfp_mask,
@@ -2728,6 +3724,7 @@ loop_again:
 			 * Do some background aging of the anon list, to give
 			 * pages a chance to be referenced before reclaiming.
 			 */
+<<<<<<< HEAD
 			age_active_anon(zone, &sc, priority);
 
 			/*
@@ -2748,6 +3745,17 @@ loop_again:
 			} else {
 				/* If balanced, clear the congested flag */
 				zone_clear_flag(zone, ZONE_CONGESTED);
+=======
+			if (inactive_anon_is_low(zone, &sc))
+				shrink_active_list(SWAP_CLUSTER_MAX, zone,
+							&sc, priority, 0);
+
+			if (!zone_watermark_ok_safe(zone, order,
+						high_wmark_pages(zone), 0,
+						0)) {
+				end_zone = i;
+				break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 		if (i < 0)
@@ -2770,7 +3778,11 @@ loop_again:
 		 */
 		for (i = 0; i <= end_zone; i++) {
 			struct zone *zone = pgdat->node_zones + i;
+<<<<<<< HEAD
 			int nr_slab, testorder;
+=======
+			int nr_slab;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			unsigned long balance_gap;
 
 			if (!populated_zone(zone))
@@ -2803,6 +3815,7 @@ loop_again:
 				(zone->present_pages +
 					KSWAPD_ZONE_BALANCE_GAP_RATIO-1) /
 				KSWAPD_ZONE_BALANCE_GAP_RATIO);
+<<<<<<< HEAD
 			/*
 			 * Kswapd reclaims only single pages with compaction
 			 * enabled. Trying too hard to reclaim until contiguous
@@ -2818,6 +3831,9 @@ loop_again:
 
 			if ((buffer_heads_over_limit && is_highmem_idx(i)) ||
 				    !zone_watermark_ok_safe(zone, testorder,
+=======
+			if (!zone_watermark_ok_safe(zone, order,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					high_wmark_pages(zone) + balance_gap,
 					end_zone, 0)) {
 				shrink_zone(priority, zone, &sc);
@@ -2846,8 +3862,14 @@ loop_again:
 				continue;
 			}
 
+<<<<<<< HEAD
 			if (!zone_watermark_ok_safe(zone, testorder,
 					high_wmark_pages(zone), end_zone, 0)) {
+=======
+			if (!zone_watermark_ok_safe(zone, order,
+					high_wmark_pages(zone),
+					end_zone, 0)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				all_zones_ok = 0;
 				/*
 				 * We are still under min water mark.  This
@@ -2855,7 +3877,12 @@ loop_again:
 				 * failure risk. Hurry up!
 				 */
 				if (!zone_watermark_ok_safe(zone, order,
+<<<<<<< HEAD
 					    min_wmark_pages(zone), end_zone, 0))
+=======
+					    min_wmark_pages(zone),
+					    end_zone, 0))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					has_under_min_watermark_zone = 1;
 			} else {
 				/*
@@ -2934,8 +3961,11 @@ out:
 	 * and it is potentially going to sleep here.
 	 */
 	if (order) {
+<<<<<<< HEAD
 		int zones_need_compaction = 1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (i = 0; i <= end_zone; i++) {
 			struct zone *zone = pgdat->node_zones + i;
 
@@ -2945,6 +3975,7 @@ out:
 			if (zone->all_unreclaimable && priority != DEF_PRIORITY)
 				continue;
 
+<<<<<<< HEAD
 			/* Would compaction fail due to lack of free memory? */
 			if (COMPACTION_BUILD &&
 			    compaction_suitable(zone, order) == COMPACT_SKIPPED)
@@ -2953,10 +3984,17 @@ out:
 			/* Confirm the zone is balanced for order-0 */
 			if (!zone_watermark_ok(zone, 0,
 					high_wmark_pages(zone), 0, 0)) {
+=======
+			/* Confirm the zone is balanced for order-0 */
+			if (!zone_watermark_ok(zone, 0,
+					high_wmark_pages(zone), 0,
+					0)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				order = sc.order = 0;
 				goto loop_again;
 			}
 
+<<<<<<< HEAD
 			/* Check if the memory needs to be defragmented. */
 			if (zone_watermark_ok(zone, order,
 				    low_wmark_pages(zone), *classzone_idx, 0))
@@ -2968,6 +4006,11 @@ out:
 
 		if (zones_need_compaction)
 			compact_pgdat(pgdat, order);
+=======
+			/* If balanced, clear the congested flag */
+			zone_clear_flag(zone, ZONE_CONGESTED);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -3013,10 +4056,14 @@ static void kswapd_try_to_sleep(pg_data_t *pgdat, int order, int classzone_idx)
 		 * them before going back to sleep.
 		 */
 		set_pgdat_percpu_threshold(pgdat, calculate_normal_threshold);
+<<<<<<< HEAD
 
 		if (!kthread_should_stop())
 			schedule();
 
+=======
+		schedule();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_pgdat_percpu_threshold(pgdat, calculate_pressure_threshold);
 	} else {
 		if (remaining)
@@ -3043,9 +4090,13 @@ static void kswapd_try_to_sleep(pg_data_t *pgdat, int order, int classzone_idx)
 static int kswapd(void *p)
 {
 	unsigned long order, new_order;
+<<<<<<< HEAD
 	unsigned balanced_order;
 	int classzone_idx, new_classzone_idx;
 	int balanced_classzone_idx;
+=======
+	int classzone_idx, new_classzone_idx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pg_data_t *pgdat = (pg_data_t*)p;
 	struct task_struct *tsk = current;
 
@@ -3076,9 +4127,13 @@ static int kswapd(void *p)
 	set_freezable();
 
 	order = new_order = 0;
+<<<<<<< HEAD
 	balanced_order = 0;
 	classzone_idx = new_classzone_idx = pgdat->nr_zones - 1;
 	balanced_classzone_idx = classzone_idx;
+=======
+	classzone_idx = new_classzone_idx = pgdat->nr_zones - 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for ( ; ; ) {
 		int ret;
 
@@ -3087,8 +4142,12 @@ static int kswapd(void *p)
 		 * new request of a similar or harder type will succeed soon
 		 * so consider going to sleep on the basis we reclaimed at
 		 */
+<<<<<<< HEAD
 		if (balanced_classzone_idx >= new_classzone_idx &&
 					balanced_order == new_order) {
+=======
+		if (classzone_idx >= new_classzone_idx && order == new_order) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			new_order = pgdat->kswapd_max_order;
 			new_classzone_idx = pgdat->classzone_idx;
 			pgdat->kswapd_max_order =  0;
@@ -3103,12 +4162,18 @@ static int kswapd(void *p)
 			order = new_order;
 			classzone_idx = new_classzone_idx;
 		} else {
+<<<<<<< HEAD
 			kswapd_try_to_sleep(pgdat, balanced_order,
 						balanced_classzone_idx);
 			order = pgdat->kswapd_max_order;
 			classzone_idx = pgdat->classzone_idx;
 			new_order = order;
 			new_classzone_idx = classzone_idx;
+=======
+			kswapd_try_to_sleep(pgdat, order, classzone_idx);
+			order = pgdat->kswapd_max_order;
+			classzone_idx = pgdat->classzone_idx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pgdat->kswapd_max_order = 0;
 			pgdat->classzone_idx = pgdat->nr_zones - 1;
 		}
@@ -3123,6 +4188,7 @@ static int kswapd(void *p)
 		 */
 		if (!ret) {
 			trace_mm_vmscan_kswapd_wake(pgdat->node_id, order);
+<<<<<<< HEAD
 			balanced_classzone_idx = classzone_idx;
 			balanced_order = balance_pgdat(pgdat, order,
 						&balanced_classzone_idx);
@@ -3130,6 +4196,11 @@ static int kswapd(void *p)
 	}
 
 	current->reclaim_state = NULL;
+=======
+			order = balance_pgdat(pgdat, order, &classzone_idx);
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -3152,7 +4223,12 @@ void wakeup_kswapd(struct zone *zone, int order, enum zone_type classzone_idx)
 	}
 	if (!waitqueue_active(&pgdat->kswapd_wait))
 		return;
+<<<<<<< HEAD
 	if (zone_watermark_ok_safe(zone, order, low_wmark_pages(zone), 0, 0))
+=======
+	if (zone_watermark_ok_safe(zone, order, low_wmark_pages(zone),
+					0, 0))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	trace_mm_vmscan_wakeup_kswapd(pgdat->node_id, zone_idx(zone), order);
@@ -3213,6 +4289,10 @@ unsigned long shrink_all_memory(unsigned long nr_to_reclaim)
 		.may_writepage = 1,
 		.nr_to_reclaim = nr_to_reclaim,
 		.hibernation_mode = 1,
+<<<<<<< HEAD
+=======
+		.swappiness = vm_swappiness,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.order = 0,
 	};
 	struct shrink_control shrink = {
@@ -3284,17 +4364,26 @@ int kswapd_run(int nid)
 }
 
 /*
+<<<<<<< HEAD
  * Called by memory hotplug when all memory in a node is offlined.  Caller must
  * hold lock_memory_hotplug().
+=======
+ * Called by memory hotplug when all memory in a node is offlined.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void kswapd_stop(int nid)
 {
 	struct task_struct *kswapd = NODE_DATA(nid)->kswapd;
 
+<<<<<<< HEAD
 	if (kswapd) {
 		kthread_stop(kswapd);
 		NODE_DATA(nid)->kswapd = NULL;
 	}
+=======
+	if (kswapd)
+		kthread_stop(kswapd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __init kswapd_init(void)
@@ -3402,6 +4491,10 @@ static int __zone_reclaim(struct zone *zone, gfp_t gfp_mask, unsigned int order)
 		.nr_to_reclaim = max_t(unsigned long, nr_pages,
 				       SWAP_CLUSTER_MAX),
 		.gfp_mask = gfp_mask,
+<<<<<<< HEAD
+=======
+		.swappiness = vm_swappiness,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.order = order,
 	};
 	struct shrink_control shrink = {
@@ -3550,6 +4643,7 @@ int page_evictable(struct page *page, struct vm_area_struct *vma)
 	return 1;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_SHMEM
 /**
  * check_move_unevictable_pages - check pages for evictability and move to appropriate zone lru list
@@ -3613,6 +4707,160 @@ static void warn_scan_unevictable_pages(void)
 		    "disabled for lack of a legitimate use case.  If you have "
 		    "one, please send an email to linux-mm@kvack.org.\n",
 		    current->comm);
+=======
+/**
+ * check_move_unevictable_page - check page for evictability and move to appropriate zone lru list
+ * @page: page to check evictability and move to appropriate lru list
+ * @zone: zone page is in
+ *
+ * Checks a page for evictability and moves the page to the appropriate
+ * zone lru list.
+ *
+ * Restrictions: zone->lru_lock must be held, page must be on LRU and must
+ * have PageUnevictable set.
+ */
+static void check_move_unevictable_page(struct page *page, struct zone *zone)
+{
+	VM_BUG_ON(PageActive(page));
+
+retry:
+	ClearPageUnevictable(page);
+	if (page_evictable(page, NULL)) {
+		enum lru_list l = page_lru_base_type(page);
+
+		__dec_zone_state(zone, NR_UNEVICTABLE);
+		list_move(&page->lru, &zone->lru[l].list);
+		mem_cgroup_move_lists(page, LRU_UNEVICTABLE, l);
+		__inc_zone_state(zone, NR_INACTIVE_ANON + l);
+		__count_vm_event(UNEVICTABLE_PGRESCUED);
+	} else {
+		/*
+		 * rotate unevictable list
+		 */
+		SetPageUnevictable(page);
+		list_move(&page->lru, &zone->lru[LRU_UNEVICTABLE].list);
+		mem_cgroup_rotate_lru_list(page, LRU_UNEVICTABLE);
+		if (page_evictable(page, NULL))
+			goto retry;
+	}
+}
+
+/**
+ * scan_mapping_unevictable_pages - scan an address space for evictable pages
+ * @mapping: struct address_space to scan for evictable pages
+ *
+ * Scan all pages in mapping.  Check unevictable pages for
+ * evictability and move them to the appropriate zone lru list.
+ */
+void scan_mapping_unevictable_pages(struct address_space *mapping)
+{
+	pgoff_t next = 0;
+	pgoff_t end   = (i_size_read(mapping->host) + PAGE_CACHE_SIZE - 1) >>
+			 PAGE_CACHE_SHIFT;
+	struct zone *zone;
+	struct pagevec pvec;
+
+	if (mapping->nrpages == 0)
+		return;
+
+	pagevec_init(&pvec, 0);
+	while (next < end &&
+		pagevec_lookup(&pvec, mapping, next, PAGEVEC_SIZE)) {
+		int i;
+		int pg_scanned = 0;
+
+		zone = NULL;
+
+		for (i = 0; i < pagevec_count(&pvec); i++) {
+			struct page *page = pvec.pages[i];
+			pgoff_t page_index = page->index;
+			struct zone *pagezone = page_zone(page);
+
+			pg_scanned++;
+			if (page_index > next)
+				next = page_index;
+			next++;
+
+			if (pagezone != zone) {
+				if (zone)
+					spin_unlock_irq(&zone->lru_lock);
+				zone = pagezone;
+				spin_lock_irq(&zone->lru_lock);
+			}
+
+			if (PageLRU(page) && PageUnevictable(page))
+				check_move_unevictable_page(page, zone);
+		}
+		if (zone)
+			spin_unlock_irq(&zone->lru_lock);
+		pagevec_release(&pvec);
+
+		count_vm_events(UNEVICTABLE_PGSCANNED, pg_scanned);
+	}
+
+}
+
+/**
+ * scan_zone_unevictable_pages - check unevictable list for evictable pages
+ * @zone - zone of which to scan the unevictable list
+ *
+ * Scan @zone's unevictable LRU lists to check for pages that have become
+ * evictable.  Move those that have to @zone's inactive list where they
+ * become candidates for reclaim, unless shrink_inactive_zone() decides
+ * to reactivate them.  Pages that are still unevictable are rotated
+ * back onto @zone's unevictable list.
+ */
+#define SCAN_UNEVICTABLE_BATCH_SIZE 16UL /* arbitrary lock hold batch size */
+static void scan_zone_unevictable_pages(struct zone *zone)
+{
+	struct list_head *l_unevictable = &zone->lru[LRU_UNEVICTABLE].list;
+	unsigned long scan;
+	unsigned long nr_to_scan = zone_page_state(zone, NR_UNEVICTABLE);
+
+	while (nr_to_scan > 0) {
+		unsigned long batch_size = min(nr_to_scan,
+						SCAN_UNEVICTABLE_BATCH_SIZE);
+
+		spin_lock_irq(&zone->lru_lock);
+		for (scan = 0;  scan < batch_size; scan++) {
+			struct page *page = lru_to_page(l_unevictable);
+
+			if (!trylock_page(page))
+				continue;
+
+			prefetchw_prev_lru_page(page, l_unevictable, flags);
+
+			if (likely(PageLRU(page) && PageUnevictable(page)))
+				check_move_unevictable_page(page, zone);
+
+			unlock_page(page);
+		}
+		spin_unlock_irq(&zone->lru_lock);
+
+		nr_to_scan -= batch_size;
+	}
+}
+
+
+/**
+ * scan_all_zones_unevictable_pages - scan all unevictable lists for evictable pages
+ *
+ * A really big hammer:  scan all zones' unevictable LRU lists to check for
+ * pages that have become evictable.  Move those back to the zones'
+ * inactive list where they become candidates for reclaim.
+ * This occurs when, e.g., we have unswappable pages on the unevictable lists,
+ * and we add swap to the system.  As such, it runs in the context of a task
+ * that has possibly/probably made some previously unevictable pages
+ * evictable.
+ */
+static void scan_all_zones_unevictable_pages(void)
+{
+	struct zone *zone;
+
+	for_each_zone(zone) {
+		scan_zone_unevictable_pages(zone);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -3625,8 +4873,16 @@ int scan_unevictable_handler(struct ctl_table *table, int write,
 			   void __user *buffer,
 			   size_t *length, loff_t *ppos)
 {
+<<<<<<< HEAD
 	warn_scan_unevictable_pages();
 	proc_doulongvec_minmax(table, write, buffer, length, ppos);
+=======
+	proc_doulongvec_minmax(table, write, buffer, length, ppos);
+
+	if (write && *(unsigned long *)table->data)
+		scan_all_zones_unevictable_pages();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	scan_unevictable_pages = 0;
 	return 0;
 }
@@ -3637,6 +4893,7 @@ int scan_unevictable_handler(struct ctl_table *table, int write,
  * a specified node's per zone unevictable lists for evictable pages.
  */
 
+<<<<<<< HEAD
 static ssize_t read_scan_unevictable_node(struct device *dev,
 					  struct device_attribute *attr,
 					  char *buf)
@@ -3650,21 +4907,59 @@ static ssize_t write_scan_unevictable_node(struct device *dev,
 					const char *buf, size_t count)
 {
 	warn_scan_unevictable_pages();
+=======
+static ssize_t read_scan_unevictable_node(struct sys_device *dev,
+					  struct sysdev_attribute *attr,
+					  char *buf)
+{
+	return sprintf(buf, "0\n");	/* always zero; should fit... */
+}
+
+static ssize_t write_scan_unevictable_node(struct sys_device *dev,
+					   struct sysdev_attribute *attr,
+					const char *buf, size_t count)
+{
+	struct zone *node_zones = NODE_DATA(dev->id)->node_zones;
+	struct zone *zone;
+	unsigned long res;
+	unsigned long req = strict_strtoul(buf, 10, &res);
+
+	if (!req)
+		return 1;	/* zero is no-op */
+
+	for (zone = node_zones; zone - node_zones < MAX_NR_ZONES; ++zone) {
+		if (!populated_zone(zone))
+			continue;
+		scan_zone_unevictable_pages(zone);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
 
+<<<<<<< HEAD
 static DEVICE_ATTR(scan_unevictable_pages, S_IRUGO | S_IWUSR,
+=======
+static SYSDEV_ATTR(scan_unevictable_pages, S_IRUGO | S_IWUSR,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			read_scan_unevictable_node,
 			write_scan_unevictable_node);
 
 int scan_unevictable_register_node(struct node *node)
 {
+<<<<<<< HEAD
 	return device_create_file(&node->dev, &dev_attr_scan_unevictable_pages);
+=======
+	return sysdev_create_file(&node->sysdev, &attr_scan_unevictable_pages);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void scan_unevictable_unregister_node(struct node *node)
 {
+<<<<<<< HEAD
 	device_remove_file(&node->dev, &dev_attr_scan_unevictable_pages);
+=======
+	sysdev_remove_file(&node->sysdev, &attr_scan_unevictable_pages);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif

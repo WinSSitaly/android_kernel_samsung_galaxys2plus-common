@@ -114,15 +114,22 @@ config KMETER1
 
 endif
 
+<<<<<<< HEAD
 # used for usb & gpio
 config PPC_MPC831x
 	bool
 	select ARCH_WANT_OPTIONAL_GPIOLIB
+=======
+# used for usb
+config PPC_MPC831x
+	bool
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # used for math-emu
 config PPC_MPC832x
 	bool
 
+<<<<<<< HEAD
 # used for usb & gpio
 config PPC_MPC834x
 	bool
@@ -132,3 +139,12 @@ config PPC_MPC834x
 config PPC_MPC837x
 	bool
 	select ARCH_WANT_OPTIONAL_GPIOLIB
+=======
+# used for usb
+config PPC_MPC834x
+	bool
+
+# used for usb
+config PPC_MPC837x
+	bool
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

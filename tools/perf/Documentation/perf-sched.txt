@@ -8,7 +8,11 @@ perf-sched - Tool to trace/measure scheduler properties (latencies)
 SYNOPSIS
 --------
 [verse]
+<<<<<<< HEAD
 'perf sched' {record|latency|map|replay|script}
+=======
+'perf sched' {record|latency|map|replay|trace}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 DESCRIPTION
 -----------
@@ -20,8 +24,13 @@ There are five variants of perf sched:
   'perf sched latency' to report the per task scheduling latencies
   and other scheduling properties of the workload.
 
+<<<<<<< HEAD
   'perf sched script' to see a detailed trace of the workload that
    was recorded (aliased to 'perf script' for now).
+=======
+  'perf sched trace' to see a detailed trace of the workload that
+  was recorded.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
   'perf sched replay' to simulate the workload that was recorded
   via perf sched record. (this is done by starting up mockup threads
@@ -40,7 +49,11 @@ OPTIONS
 -------
 -i::
 --input=<file>::
+<<<<<<< HEAD
         Input file name. (default: perf.data unless stdin is a fifo)
+=======
+        Input file name. (default: perf.data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 -v::
 --verbose::

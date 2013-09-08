@@ -1,11 +1,19 @@
 #include "../libslang.h"
 #include <elf.h>
+<<<<<<< HEAD
 #include <newt.h>
 #include <inttypes.h>
 #include <sys/ttydefaults.h>
 #include <string.h>
 #include <linux/bitops.h>
 #include "../../util.h"
+=======
+#include <inttypes.h>
+#include <sys/ttydefaults.h>
+#include <ctype.h>
+#include <string.h>
+#include <linux/bitops.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "../../debug.h"
 #include "../../symbol.h"
 #include "../browser.h"
@@ -109,8 +117,16 @@ static int map_browser__run(struct map_browser *self)
 			     verbose ? "" : "restart with -v to use") < 0)
 		return -1;
 
+<<<<<<< HEAD
 	while (1) {
 		key = ui_browser__run(&self->b, 0);
+=======
+	if (verbose)
+		ui_browser__add_exit_key(&self->b, '/');
+
+	while (1) {
+		key = ui_browser__run(&self->b);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (verbose && key == '/')
 			map_browser__search(self);

@@ -24,6 +24,7 @@
 
 unsigned int ppc_swiotlb_enable;
 
+<<<<<<< HEAD
 static u64 swiotlb_powerpc_get_required(struct device *dev)
 {
 	u64 end, mask, max_direct_dma_addr = dev->archdata.max_direct_dma_addr;
@@ -39,6 +40,8 @@ static u64 swiotlb_powerpc_get_required(struct device *dev)
 	return mask;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * At the moment, all platforms that use this code only require
  * swiotlb to be used if we're operating on HIGHMEM.  Since
@@ -47,8 +50,13 @@ static u64 swiotlb_powerpc_get_required(struct device *dev)
  * for everything else.
  */
 struct dma_map_ops swiotlb_dma_ops = {
+<<<<<<< HEAD
 	.alloc = dma_direct_alloc_coherent,
 	.free = dma_direct_free_coherent,
+=======
+	.alloc_coherent = dma_direct_alloc_coherent,
+	.free_coherent = dma_direct_free_coherent,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_sg = swiotlb_map_sg_attrs,
 	.unmap_sg = swiotlb_unmap_sg_attrs,
 	.dma_supported = swiotlb_dma_supported,
@@ -59,7 +67,10 @@ struct dma_map_ops swiotlb_dma_ops = {
 	.sync_sg_for_cpu = swiotlb_sync_sg_for_cpu,
 	.sync_sg_for_device = swiotlb_sync_sg_for_device,
 	.mapping_error = swiotlb_dma_mapping_error,
+<<<<<<< HEAD
 	.get_required_mask = swiotlb_powerpc_get_required,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void pci_dma_dev_setup_swiotlb(struct pci_dev *pdev)

@@ -13,27 +13,42 @@
  */
 
 #include "rc-core-priv.h"
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * This decoder currently supports:
  * RC6-0-16	(standard toggle bit in header)
+<<<<<<< HEAD
  * RC6-6A-20	(no toggle bit)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * RC6-6A-24	(no toggle bit)
  * RC6-6A-32	(MCE version with toggle bit in body)
  */
 
+<<<<<<< HEAD
 #define RC6_UNIT		444444	/* nanosecs */
 #define RC6_HEADER_NBITS	4	/* not including toggle bit */
 #define RC6_0_NBITS		16
 #define RC6_6A_32_NBITS		32
 #define RC6_6A_NBITS		128	/* Variable 8..128 */
+=======
+#define RC6_UNIT		444444	/* us */
+#define RC6_HEADER_NBITS	4	/* not including toggle bit */
+#define RC6_0_NBITS		16
+#define RC6_6A_SMALL_NBITS	24
+#define RC6_6A_LARGE_NBITS	32
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define RC6_PREFIX_PULSE	(6 * RC6_UNIT)
 #define RC6_PREFIX_SPACE	(2 * RC6_UNIT)
 #define RC6_BIT_START		(1 * RC6_UNIT)
 #define RC6_BIT_END		(1 * RC6_UNIT)
 #define RC6_TOGGLE_START	(2 * RC6_UNIT)
 #define RC6_TOGGLE_END		(2 * RC6_UNIT)
+<<<<<<< HEAD
 #define RC6_SUFFIX_SPACE	(6 * RC6_UNIT)
 #define RC6_MODE_MASK		0x07	/* for the header bits */
 #define RC6_STARTBIT_MASK	0x08	/* for the header bits */
@@ -43,6 +58,11 @@
 #ifndef CHAR_BIT
 #define CHAR_BIT 8	/* Normally in <limits.h> */
 #endif
+=======
+#define RC6_MODE_MASK		0x07	/* for the header bits */
+#define RC6_STARTBIT_MASK	0x08	/* for the header bits */
+#define RC6_6A_MCE_TOGGLE_MASK	0x8000	/* for the body bits */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum rc6_mode {
 	RC6_MODE_0,
@@ -132,7 +152,10 @@ again:
 			break;
 
 		data->state = STATE_HEADER_BIT_START;
+<<<<<<< HEAD
 		data->header = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	case STATE_HEADER_BIT_START:
@@ -179,14 +202,28 @@ again:
 		data->state = STATE_BODY_BIT_START;
 		decrease_duration(&ev, RC6_TOGGLE_END);
 		data->count = 0;
+<<<<<<< HEAD
 		data->body = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		switch (rc6_mode(data)) {
 		case RC6_MODE_0:
 			data->wanted_bits = RC6_0_NBITS;
 			break;
 		case RC6_MODE_6A:
+<<<<<<< HEAD
 			data->wanted_bits = RC6_6A_NBITS;
+=======
+			/* This might look weird, but we basically
+			   check the value of the first body bit to
+			   determine the number of bits in mode 6A */
+			if ((!ev.pulse && !geq_margin(ev.duration, RC6_UNIT, RC6_UNIT / 2)) ||
+			    geq_margin(ev.duration, RC6_UNIT, RC6_UNIT / 2))
+				data->wanted_bits = RC6_6A_LARGE_NBITS;
+			else
+				data->wanted_bits = RC6_6A_SMALL_NBITS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		default:
 			IR_dprintk(1, "RC6 unknown mode\n");
@@ -195,6 +232,7 @@ again:
 		goto again;
 
 	case STATE_BODY_BIT_START:
+<<<<<<< HEAD
 		if (eq_margin(ev.duration, RC6_BIT_START, RC6_UNIT / 2)) {
 			/* Discard LSB's that won't fit in data->body */
 			if (data->count++ < CHAR_BIT * sizeof data->body) {
@@ -210,6 +248,17 @@ again:
 			goto again;
 		}
 		break;
+=======
+		if (!eq_margin(ev.duration, RC6_BIT_START, RC6_UNIT / 2))
+			break;
+
+		data->body <<= 1;
+		if (ev.pulse)
+			data->body |= 1;
+		data->count++;
+		data->state = STATE_BODY_BIT_END;
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	case STATE_BODY_BIT_END:
 		if (!is_transition(&ev, &dev->raw->prev_ev))
@@ -229,12 +278,17 @@ again:
 
 		switch (rc6_mode(data)) {
 		case RC6_MODE_0:
+<<<<<<< HEAD
 			scancode = data->body;
+=======
+			scancode = data->body & 0xffff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			toggle = data->toggle;
 			IR_dprintk(1, "RC6(0) scancode 0x%04x (toggle: %u)\n",
 				   scancode, toggle);
 			break;
 		case RC6_MODE_6A:
+<<<<<<< HEAD
 			if (data->count > CHAR_BIT * sizeof data->body) {
 				IR_dprintk(1, "RC6 too many (%u) data bits\n",
 					data->count);
@@ -250,6 +304,16 @@ again:
 			} else {
 				toggle = 0;
 			}
+=======
+			if (data->wanted_bits == RC6_6A_LARGE_NBITS) {
+				toggle = data->body & RC6_6A_MCE_TOGGLE_MASK ? 1 : 0;
+				scancode = data->body & ~RC6_6A_MCE_TOGGLE_MASK;
+			} else {
+				toggle = 0;
+				scancode = data->body & 0xffffff;
+			}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			IR_dprintk(1, "RC6(6A) scancode 0x%08x (toggle: %u)\n",
 				   scancode, toggle);
 			break;

@@ -1,8 +1,11 @@
 #ifndef LINUX_PCI_ATS_H
 #define LINUX_PCI_ATS_H
 
+<<<<<<< HEAD
 #include <linux/pci.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Address Translation Service */
 struct pci_ats {
 	int pos;        /* capability position */
@@ -12,12 +15,19 @@ struct pci_ats {
 	unsigned int is_enabled:1;      /* Enable bit is set */
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_PCI_ATS
+=======
+#ifdef CONFIG_PCI_IOV
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int pci_enable_ats(struct pci_dev *dev, int ps);
 extern void pci_disable_ats(struct pci_dev *dev);
 extern int pci_ats_queue_depth(struct pci_dev *dev);
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * pci_ats_enabled - query the ATS status
  * @dev: the PCI device
@@ -29,7 +39,11 @@ static inline int pci_ats_enabled(struct pci_dev *dev)
 	return dev->ats && dev->ats->is_enabled;
 }
 
+<<<<<<< HEAD
 #else /* CONFIG_PCI_ATS */
+=======
+#else /* CONFIG_PCI_IOV */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int pci_enable_ats(struct pci_dev *dev, int ps)
 {
@@ -50,6 +64,7 @@ static inline int pci_ats_enabled(struct pci_dev *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #endif /* CONFIG_PCI_ATS */
 
 #ifdef CONFIG_PCI_PRI
@@ -123,5 +138,8 @@ static inline int pci_max_pasids(struct pci_dev *pdev)
 
 #endif /* CONFIG_PCI_PASID */
 
+=======
+#endif /* CONFIG_PCI_IOV */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* LINUX_PCI_ATS_H*/

@@ -238,7 +238,11 @@ exact_match:
 	return result;
 }
 
+<<<<<<< HEAD
 struct sock *__udp6_lib_lookup(struct net *net,
+=======
+static struct sock *__udp6_lib_lookup(struct net *net,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      const struct in6_addr *saddr, __be16 sport,
 				      const struct in6_addr *daddr, __be16 dport,
 				      int dif, struct udp_table *udptable)
@@ -305,7 +309,10 @@ begin:
 	rcu_read_unlock();
 	return result;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(__udp6_lib_lookup);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct sock *__udp6_lib_lookup_skb(struct sk_buff *skb,
 					  __be16 sport, __be16 dport,
@@ -341,8 +348,13 @@ int udpv6_recvmsg(struct kiocb *iocb, struct sock *sk,
 	struct ipv6_pinfo *np = inet6_sk(sk);
 	struct inet_sock *inet = inet_sk(sk);
 	struct sk_buff *skb;
+<<<<<<< HEAD
 	unsigned int ulen, copied;
 	int peeked, off = 0;
+=======
+	unsigned int ulen;
+	int peeked;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err;
 	int is_udplite = IS_UDPLITE(sk);
 	int is_udp4;
@@ -359,15 +371,25 @@ int udpv6_recvmsg(struct kiocb *iocb, struct sock *sk,
 
 try_again:
 	skb = __skb_recv_datagram(sk, flags | (noblock ? MSG_DONTWAIT : 0),
+<<<<<<< HEAD
 				  &peeked, &off, &err);
+=======
+				  &peeked, &err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!skb)
 		goto out;
 
 	ulen = skb->len - sizeof(struct udphdr);
+<<<<<<< HEAD
 	copied = len;
 	if (copied > ulen)
 		copied = ulen;
 	else if (copied < ulen)
+=======
+	if (len > ulen)
+		len = ulen;
+	else if (len < ulen)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		msg->msg_flags |= MSG_TRUNC;
 
 	is_udp4 = (skb->protocol == htons(ETH_P_IP));
@@ -378,14 +400,22 @@ try_again:
 	 * coverage checksum (UDP-Lite), do it before the copy.
 	 */
 
+<<<<<<< HEAD
 	if (copied < ulen || UDP_SKB_CB(skb)->partial_cov) {
+=======
+	if (len < ulen || UDP_SKB_CB(skb)->partial_cov) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (udp_lib_checksum_complete(skb))
 			goto csum_copy_err;
 	}
 
 	if (skb_csum_unnecessary(skb))
 		err = skb_copy_datagram_iovec(skb, sizeof(struct udphdr),
+<<<<<<< HEAD
 					      msg->msg_iov, copied       );
+=======
+					      msg->msg_iov,len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else {
 		err = skb_copy_and_csum_datagram_iovec(skb, sizeof(struct udphdr), msg->msg_iov);
 		if (err == -EINVAL)
@@ -419,7 +449,12 @@ try_again:
 			ipv6_addr_set_v4mapped(ip_hdr(skb)->saddr,
 					       &sin6->sin6_addr);
 		else {
+<<<<<<< HEAD
 			sin6->sin6_addr = ipv6_hdr(skb)->saddr;
+=======
+			ipv6_addr_copy(&sin6->sin6_addr,
+				       &ipv6_hdr(skb)->saddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ipv6_addr_type(&sin6->sin6_addr) & IPV6_ADDR_LINKLOCAL)
 				sin6->sin6_scope_id = IP6CB(skb)->iif;
 		}
@@ -433,7 +468,11 @@ try_again:
 			datagram_recv_ctl(sk, msg, skb);
 	}
 
+<<<<<<< HEAD
 	err = copied;
+=======
+	err = len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (flags & MSG_TRUNC)
 		err = ulen;
 
@@ -510,7 +549,11 @@ int udpv6_queue_rcv_skb(struct sock * sk, struct sk_buff *skb)
 	int is_udplite = IS_UDPLITE(sk);
 
 	if (!ipv6_addr_any(&inet6_sk(sk)->daddr))
+<<<<<<< HEAD
 		sock_rps_save_rxhash(sk, skb);
+=======
+		sock_rps_save_rxhash(sk, skb->rxhash);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!xfrm6_policy_check(sk, XFRM_POLICY_IN, skb))
 		goto drop;
@@ -534,14 +577,22 @@ int udpv6_queue_rcv_skb(struct sock * sk, struct sk_buff *skb)
 		}
 	}
 
+<<<<<<< HEAD
 	if (rcu_access_pointer(sk->sk_filter)) {
+=======
+	if (rcu_dereference_raw(sk->sk_filter)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (udp_lib_checksum_complete(skb))
 			goto drop;
 	}
 
+<<<<<<< HEAD
 	skb_dst_drop(skb);
 	rc = sock_queue_rcv_skb(sk, skb);
 	if (rc < 0) {
+=======
+	if ((rc = ip_queue_rcv_skb(sk, skb)) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Note that an ENOMEM error is charged twice */
 		if (rc == -ENOMEM)
 			UDP6_INC_STATS_BH(sock_net(sk),
@@ -895,16 +946,23 @@ static int udp_v6_push_pending_frames(struct sock *sk)
 	struct udphdr *uh;
 	struct udp_sock  *up = udp_sk(sk);
 	struct inet_sock *inet = inet_sk(sk);
+<<<<<<< HEAD
 	struct flowi6 *fl6;
+=======
+	struct flowi6 *fl6 = &inet->cork.fl.u.ip6;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err = 0;
 	int is_udplite = IS_UDPLITE(sk);
 	__wsum csum = 0;
 
+<<<<<<< HEAD
 	if (up->pending == AF_INET)
 		return udp_push_pending_frames(sk);
 
 	fl6 = &inet->cork.fl.u.ip6;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Grab the skbuff where UDP header space exists. */
 	if ((skb = skb_peek(&sk->sk_write_queue)) == NULL)
 		goto out;
@@ -1098,8 +1156,13 @@ do_udp_sendmsg:
 		memset(opt, 0, sizeof(struct ipv6_txoptions));
 		opt->tot_len = sizeof(*opt);
 
+<<<<<<< HEAD
 		err = datagram_send_ctl(sock_net(sk), sk, msg, &fl6, opt,
 					&hlimit, &tclass, &dontfrag);
+=======
+		err = datagram_send_ctl(sock_net(sk), msg, &fl6, opt, &hlimit,
+					&tclass, &dontfrag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err < 0) {
 			fl6_sock_release(flowlabel);
 			return err;
@@ -1121,11 +1184,19 @@ do_udp_sendmsg:
 
 	fl6.flowi6_proto = sk->sk_protocol;
 	if (!ipv6_addr_any(daddr))
+<<<<<<< HEAD
 		fl6.daddr = *daddr;
 	else
 		fl6.daddr.s6_addr[15] = 0x1; /* :: means loopback (BSD'ism) */
 	if (ipv6_addr_any(&fl6.saddr) && !ipv6_addr_any(&np->saddr))
 		fl6.saddr = np->saddr;
+=======
+		ipv6_addr_copy(&fl6.daddr, daddr);
+	else
+		fl6.daddr.s6_addr[15] = 0x1; /* :: means loopback (BSD'ism) */
+	if (ipv6_addr_any(&fl6.saddr) && !ipv6_addr_any(&np->saddr))
+		ipv6_addr_copy(&fl6.saddr, &np->saddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fl6.fl6_sport = inet->inet_sport;
 
 	final_p = fl6_update_dst(&fl6, opt, &final);
@@ -1135,8 +1206,12 @@ do_udp_sendmsg:
 	if (!fl6.flowi6_oif && ipv6_addr_is_multicast(&fl6.daddr)) {
 		fl6.flowi6_oif = np->mcast_oif;
 		connected = 0;
+<<<<<<< HEAD
 	} else if (!fl6.flowi6_oif)
 		fl6.flowi6_oif = np->ucast_oif;
+=======
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	security_sk_classify_flow(sk, flowi6_to_flowi(&fl6));
 
@@ -1307,8 +1382,12 @@ static int udp6_ufo_send_check(struct sk_buff *skb)
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct sk_buff *udp6_ufo_fragment(struct sk_buff *skb,
 	netdev_features_t features)
+=======
+static struct sk_buff *udp6_ufo_fragment(struct sk_buff *skb, u32 features)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sk_buff *segs = ERR_PTR(-EINVAL);
 	unsigned int mss;
@@ -1319,6 +1398,10 @@ static struct sk_buff *udp6_ufo_fragment(struct sk_buff *skb,
 	u8 frag_hdr_sz = sizeof(struct frag_hdr);
 	int offset;
 	__wsum csum;
+<<<<<<< HEAD
+=======
+	struct rt6_info *rt = (struct rt6_info *)skb_dst(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mss = skb_shinfo(skb)->gso_size;
 	if (unlikely(skb->len <= mss))
@@ -1369,7 +1452,12 @@ static struct sk_buff *udp6_ufo_fragment(struct sk_buff *skb,
 	fptr = (struct frag_hdr *)(skb_network_header(skb) + unfrag_ip6hlen);
 	fptr->nexthdr = nexthdr;
 	fptr->reserved = 0;
+<<<<<<< HEAD
 	ipv6_select_ident(fptr, (struct rt6_info *)skb_dst(skb));
+=======
+	ipv6_select_ident(fptr,
+			  rt ? &rt->rt6i_dst.addr : &ipv6_hdr(skb)->daddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Fragment the skb. ipv6 header and the remaining fields of the
 	 * fragment header are updated in ipv6_gso_segment()
@@ -1434,6 +1522,7 @@ int udp6_seq_show(struct seq_file *seq, void *v)
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct file_operations udp6_afinfo_seq_fops = {
 	.owner    = THIS_MODULE,
 	.open     = udp_seq_open,
@@ -1442,11 +1531,19 @@ static const struct file_operations udp6_afinfo_seq_fops = {
 	.release  = seq_release_net
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct udp_seq_afinfo udp6_seq_afinfo = {
 	.name		= "udp6",
 	.family		= AF_INET6,
 	.udp_table	= &udp_table,
+<<<<<<< HEAD
 	.seq_fops	= &udp6_afinfo_seq_fops,
+=======
+	.seq_fops	= {
+		.owner	=	THIS_MODULE,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.seq_ops	= {
 		.show		= udp6_seq_show,
 	},
@@ -1462,6 +1559,7 @@ void udp6_proc_exit(struct net *net) {
 }
 #endif /* CONFIG_PROC_FS */
 
+<<<<<<< HEAD
 void udp_v6_clear_sk(struct sock *sk, int size)
 {
 	struct inet_sock *inet = inet_sk(sk);
@@ -1473,6 +1571,8 @@ void udp_v6_clear_sk(struct sock *sk, int size)
 	memset(&inet->pinet6 + 1, 0, size);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* ------------------------------------------------------------------------ */
 
 struct proto udpv6_prot = {
@@ -1503,7 +1603,11 @@ struct proto udpv6_prot = {
 	.compat_setsockopt = compat_udpv6_setsockopt,
 	.compat_getsockopt = compat_udpv6_getsockopt,
 #endif
+<<<<<<< HEAD
 	.clear_sk	   = udp_v6_clear_sk,
+=======
+	.clear_sk	   = sk_prot_clear_portaddr_nulls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct inet_protosw udpv6_protosw = {

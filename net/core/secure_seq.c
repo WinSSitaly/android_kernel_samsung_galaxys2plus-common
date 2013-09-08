@@ -19,7 +19,10 @@ static int __init net_secret_init(void)
 }
 late_initcall(net_secret_init);
 
+<<<<<<< HEAD
 #ifdef CONFIG_INET
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u32 seq_scale(u32 seq)
 {
 	/*
@@ -34,10 +37,16 @@ static u32 seq_scale(u32 seq)
 	 */
 	return seq + (ktime_to_ns(ktime_get_real()) >> 6);
 }
+<<<<<<< HEAD
 #endif
 
 #if IS_ENABLED(CONFIG_IPV6)
 __u32 secure_tcpv6_sequence_number(const __be32 *saddr, const __be32 *daddr,
+=======
+
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+__u32 secure_tcpv6_sequence_number(__be32 *saddr, __be32 *daddr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   __be16 sport, __be16 dport)
 {
 	u32 secret[MD5_MESSAGE_BYTES / 4];
@@ -46,7 +55,11 @@ __u32 secure_tcpv6_sequence_number(const __be32 *saddr, const __be32 *daddr,
 
 	memcpy(hash, saddr, 16);
 	for (i = 0; i < 4; i++)
+<<<<<<< HEAD
 		secret[i] = net_secret[i] + (__force u32)daddr[i];
+=======
+		secret[i] = net_secret[i] + daddr[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	secret[4] = net_secret[4] +
 		(((__force u16)sport << 16) + (__force u16)dport);
 	for (i = 5; i < MD5_MESSAGE_BYTES / 4; i++)
@@ -134,7 +147,11 @@ u32 secure_ipv4_port_ephemeral(__be32 saddr, __be32 daddr, __be16 dport)
 EXPORT_SYMBOL_GPL(secure_ipv4_port_ephemeral);
 #endif
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IP_DCCP)
+=======
+#if defined(CONFIG_IP_DCCP) || defined(CONFIG_IP_DCCP_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u64 secure_dccp_sequence_number(__be32 saddr, __be32 daddr,
 				__be16 sport, __be16 dport)
 {
@@ -156,7 +173,11 @@ u64 secure_dccp_sequence_number(__be32 saddr, __be32 daddr,
 }
 EXPORT_SYMBOL(secure_dccp_sequence_number);
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u64 secure_dccpv6_sequence_number(__be32 *saddr, __be32 *daddr,
 				  __be16 sport, __be16 dport)
 {

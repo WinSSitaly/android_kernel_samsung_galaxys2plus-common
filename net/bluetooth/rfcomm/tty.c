@@ -34,7 +34,10 @@
 #include <linux/capability.h>
 #include <linux/slab.h>
 #include <linux/skbuff.h>
+<<<<<<< HEAD
 #include <linux/workqueue.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <net/bluetooth/bluetooth.h>
 #include <net/bluetooth/hci_core.h>
@@ -66,7 +69,11 @@ struct rfcomm_dev {
 	struct rfcomm_dlc	*dlc;
 	struct tty_struct	*tty;
 	wait_queue_head_t       wait;
+<<<<<<< HEAD
 	struct work_struct	wakeup_task;
+=======
+	struct tasklet_struct   wakeup_task;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct device		*tty_dev;
 
@@ -76,13 +83,21 @@ struct rfcomm_dev {
 };
 
 static LIST_HEAD(rfcomm_dev_list);
+<<<<<<< HEAD
 static DEFINE_SPINLOCK(rfcomm_dev_lock);
+=======
+static DEFINE_RWLOCK(rfcomm_dev_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void rfcomm_dev_data_ready(struct rfcomm_dlc *dlc, struct sk_buff *skb);
 static void rfcomm_dev_state_change(struct rfcomm_dlc *dlc, int err);
 static void rfcomm_dev_modem_status(struct rfcomm_dlc *dlc, u8 v24_sig);
 
+<<<<<<< HEAD
 static void rfcomm_tty_wakeup(struct work_struct *work);
+=======
+static void rfcomm_tty_wakeup(unsigned long arg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* ---- Device functions ---- */
 static void rfcomm_dev_destruct(struct rfcomm_dev *dev)
@@ -134,10 +149,20 @@ static inline void rfcomm_dev_put(struct rfcomm_dev *dev)
 static struct rfcomm_dev *__rfcomm_dev_get(int id)
 {
 	struct rfcomm_dev *dev;
+<<<<<<< HEAD
 
 	list_for_each_entry(dev, &rfcomm_dev_list, list)
 		if (dev->id == id)
 			return dev;
+=======
+	struct list_head  *p;
+
+	list_for_each(p, &rfcomm_dev_list) {
+		dev = list_entry(p, struct rfcomm_dev, list);
+		if (dev->id == id)
+			return dev;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return NULL;
 }
@@ -146,7 +171,11 @@ static inline struct rfcomm_dev *rfcomm_dev_get(int id)
 {
 	struct rfcomm_dev *dev;
 
+<<<<<<< HEAD
 	spin_lock(&rfcomm_dev_lock);
+=======
+	read_lock(&rfcomm_dev_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev = __rfcomm_dev_get(id);
 
@@ -157,7 +186,11 @@ static inline struct rfcomm_dev *rfcomm_dev_get(int id)
 			rfcomm_dev_hold(dev);
 	}
 
+<<<<<<< HEAD
 	spin_unlock(&rfcomm_dev_lock);
+=======
+	read_unlock(&rfcomm_dev_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return dev;
 }
@@ -195,8 +228,13 @@ static DEVICE_ATTR(channel, S_IRUGO, show_channel, NULL);
 
 static int rfcomm_dev_add(struct rfcomm_dev_req *req, struct rfcomm_dlc *dlc)
 {
+<<<<<<< HEAD
 	struct rfcomm_dev *dev, *entry;
 	struct list_head *head = &rfcomm_dev_list;
+=======
+	struct rfcomm_dev *dev;
+	struct list_head *head = &rfcomm_dev_list, *p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err = 0;
 
 	BT_DBG("id %d channel %d", req->dev_id, req->channel);
@@ -205,22 +243,41 @@ static int rfcomm_dev_add(struct rfcomm_dev_req *req, struct rfcomm_dlc *dlc)
 	if (!dev)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	spin_lock(&rfcomm_dev_lock);
+=======
+	write_lock_bh(&rfcomm_dev_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (req->dev_id < 0) {
 		dev->id = 0;
 
+<<<<<<< HEAD
 		list_for_each_entry(entry, &rfcomm_dev_list, list) {
 			if (entry->id != dev->id)
 				break;
 
 			dev->id++;
 			head = &entry->list;
+=======
+		list_for_each(p, &rfcomm_dev_list) {
+			if (list_entry(p, struct rfcomm_dev, list)->id != dev->id)
+				break;
+
+			dev->id++;
+			head = p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		dev->id = req->dev_id;
 
+<<<<<<< HEAD
 		list_for_each_entry(entry, &rfcomm_dev_list, list) {
+=======
+		list_for_each(p, &rfcomm_dev_list) {
+			struct rfcomm_dev *entry = list_entry(p, struct rfcomm_dev, list);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (entry->id == dev->id) {
 				err = -EADDRINUSE;
 				goto out;
@@ -229,7 +286,11 @@ static int rfcomm_dev_add(struct rfcomm_dev_req *req, struct rfcomm_dlc *dlc)
 			if (entry->id > dev->id - 1)
 				break;
 
+<<<<<<< HEAD
 			head = &entry->list;
+=======
+			head = p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -253,7 +314,11 @@ static int rfcomm_dev_add(struct rfcomm_dev_req *req, struct rfcomm_dlc *dlc)
 	atomic_set(&dev->opened, 0);
 
 	init_waitqueue_head(&dev->wait);
+<<<<<<< HEAD
 	INIT_WORK(&dev->wakeup_task, rfcomm_tty_wakeup);
+=======
+	tasklet_init(&dev->wakeup_task, rfcomm_tty_wakeup, (unsigned long) dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	skb_queue_head_init(&dev->pending);
 
@@ -290,7 +355,11 @@ static int rfcomm_dev_add(struct rfcomm_dev_req *req, struct rfcomm_dlc *dlc)
 	__module_get(THIS_MODULE);
 
 out:
+<<<<<<< HEAD
 	spin_unlock(&rfcomm_dev_lock);
+=======
+	write_unlock_bh(&rfcomm_dev_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (err < 0)
 		goto free;
@@ -327,9 +396,15 @@ static void rfcomm_dev_del(struct rfcomm_dev *dev)
 	if (atomic_read(&dev->opened) > 0)
 		return;
 
+<<<<<<< HEAD
 	spin_lock(&rfcomm_dev_lock);
 	list_del_init(&dev->list);
 	spin_unlock(&rfcomm_dev_lock);
+=======
+	write_lock_bh(&rfcomm_dev_lock);
+	list_del_init(&dev->list);
+	write_unlock_bh(&rfcomm_dev_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rfcomm_dev_put(dev);
 }
@@ -347,7 +422,11 @@ static void rfcomm_wfree(struct sk_buff *skb)
 	struct rfcomm_dev *dev = (void *) skb->sk;
 	atomic_sub(skb->truesize, &dev->wmem_alloc);
 	if (test_bit(RFCOMM_TTY_ATTACHED, &dev->flags))
+<<<<<<< HEAD
 		queue_work(system_nrt_wq, &dev->wakeup_task);
+=======
+		tasklet_schedule(&dev->wakeup_task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rfcomm_dev_put(dev);
 }
 
@@ -451,9 +530,15 @@ static int rfcomm_release_dev(void __user *arg)
 
 static int rfcomm_get_dev_list(void __user *arg)
 {
+<<<<<<< HEAD
 	struct rfcomm_dev *dev;
 	struct rfcomm_dev_list_req *dl;
 	struct rfcomm_dev_info *di;
+=======
+	struct rfcomm_dev_list_req *dl;
+	struct rfcomm_dev_info *di;
+	struct list_head *p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int n = 0, size, err;
 	u16 dev_num;
 
@@ -467,15 +552,26 @@ static int rfcomm_get_dev_list(void __user *arg)
 
 	size = sizeof(*dl) + dev_num * sizeof(*di);
 
+<<<<<<< HEAD
 	dl = kzalloc(size, GFP_KERNEL);
+=======
+	dl = kmalloc(size, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!dl)
 		return -ENOMEM;
 
 	di = dl->dev_info;
 
+<<<<<<< HEAD
 	spin_lock(&rfcomm_dev_lock);
 
 	list_for_each_entry(dev, &rfcomm_dev_list, list) {
+=======
+	read_lock_bh(&rfcomm_dev_lock);
+
+	list_for_each(p, &rfcomm_dev_list) {
+		struct rfcomm_dev *dev = list_entry(p, struct rfcomm_dev, list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (test_bit(RFCOMM_TTY_RELEASED, &dev->flags))
 			continue;
 		(di + n)->id      = dev->id;
@@ -488,7 +584,11 @@ static int rfcomm_get_dev_list(void __user *arg)
 			break;
 	}
 
+<<<<<<< HEAD
 	spin_unlock(&rfcomm_dev_lock);
+=======
+	read_unlock_bh(&rfcomm_dev_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dl->dev_num = n;
 	size = sizeof(*dl) + n * sizeof(*di);
@@ -630,10 +730,16 @@ static void rfcomm_dev_modem_status(struct rfcomm_dlc *dlc, u8 v24_sig)
 }
 
 /* ---- TTY functions ---- */
+<<<<<<< HEAD
 static void rfcomm_tty_wakeup(struct work_struct *work)
 {
 	struct rfcomm_dev *dev = container_of(work, struct rfcomm_dev,
 								wakeup_task);
+=======
+static void rfcomm_tty_wakeup(unsigned long arg)
+{
+	struct rfcomm_dev *dev = (void *) arg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct tty_struct *tty = dev->tty;
 	if (!tty)
 		return;
@@ -758,7 +864,11 @@ static void rfcomm_tty_close(struct tty_struct *tty, struct file *filp)
 		rfcomm_dlc_close(dev->dlc, 0);
 
 		clear_bit(RFCOMM_TTY_ATTACHED, &dev->flags);
+<<<<<<< HEAD
 		cancel_work_sync(&dev->wakeup_task);
+=======
+		tasklet_kill(&dev->wakeup_task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		rfcomm_dlc_lock(dev->dlc);
 		tty->driver_data = NULL;
@@ -766,9 +876,15 @@ static void rfcomm_tty_close(struct tty_struct *tty, struct file *filp)
 		rfcomm_dlc_unlock(dev->dlc);
 
 		if (test_bit(RFCOMM_TTY_RELEASED, &dev->flags)) {
+<<<<<<< HEAD
 			spin_lock(&rfcomm_dev_lock);
 			list_del_init(&dev->list);
 			spin_unlock(&rfcomm_dev_lock);
+=======
+			write_lock_bh(&rfcomm_dev_lock);
+			list_del_init(&dev->list);
+			write_unlock_bh(&rfcomm_dev_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			rfcomm_dev_put(dev);
 		}
@@ -1151,12 +1267,20 @@ static const struct tty_operations rfcomm_ops = {
 
 int __init rfcomm_init_ttys(void)
 {
+<<<<<<< HEAD
 	int error;
 
 	rfcomm_tty_driver = alloc_tty_driver(RFCOMM_TTY_PORTS);
 	if (!rfcomm_tty_driver)
 		return -ENOMEM;
 
+=======
+	rfcomm_tty_driver = alloc_tty_driver(RFCOMM_TTY_PORTS);
+	if (!rfcomm_tty_driver)
+		return -1;
+
+	rfcomm_tty_driver->owner	= THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rfcomm_tty_driver->driver_name	= "rfcomm";
 	rfcomm_tty_driver->name		= "rfcomm";
 	rfcomm_tty_driver->major	= RFCOMM_TTY_MAJOR;
@@ -1169,11 +1293,18 @@ int __init rfcomm_init_ttys(void)
 	rfcomm_tty_driver->init_termios.c_lflag &= ~ICANON;
 	tty_set_operations(rfcomm_tty_driver, &rfcomm_ops);
 
+<<<<<<< HEAD
 	error = tty_register_driver(rfcomm_tty_driver);
 	if (error) {
 		BT_ERR("Can't register RFCOMM TTY driver");
 		put_tty_driver(rfcomm_tty_driver);
 		return error;
+=======
+	if (tty_register_driver(rfcomm_tty_driver)) {
+		BT_ERR("Can't register RFCOMM TTY driver");
+		put_tty_driver(rfcomm_tty_driver);
+		return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	BT_INFO("RFCOMM TTY layer initialized");

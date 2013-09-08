@@ -53,6 +53,7 @@ unsigned long clk_get_rate(struct clk *clk)
 }
 EXPORT_SYMBOL(clk_get_rate);
 
+<<<<<<< HEAD
 int clk_set_rate(struct clk *clk, unsigned long rate)
 {
 	unsigned long flags;
@@ -68,6 +69,8 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
 }
 EXPORT_SYMBOL(clk_set_rate);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void clk_dummy_enable(struct clk *clk)
 {
 }

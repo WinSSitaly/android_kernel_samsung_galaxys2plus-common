@@ -58,6 +58,11 @@ static struct i2c_client *get_i2c(struct max8997_dev *max8997,
 	default:
 		return ERR_PTR(-EINVAL);
 	}
+<<<<<<< HEAD
+=======
+
+	return ERR_PTR(-EINVAL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct max8997_irq_data {

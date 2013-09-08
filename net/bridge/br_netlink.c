@@ -18,7 +18,10 @@
 #include <net/sock.h>
 
 #include "br_private.h"
+<<<<<<< HEAD
 #include "br_private_stp.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline size_t br_nlmsg_size(void)
 {
@@ -189,6 +192,7 @@ static int br_rtm_setlink(struct sk_buff *skb,  struct nlmsghdr *nlh, void *arg)
 
 	p->state = new_state;
 	br_log_state(p);
+<<<<<<< HEAD
 
 	spin_lock_bh(&p->br->lock);
 	br_port_state_selection(p->br);
@@ -196,6 +200,8 @@ static int br_rtm_setlink(struct sk_buff *skb,  struct nlmsghdr *nlh, void *arg)
 
 	br_ifinfo_notify(RTM_NEWLINK, p);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -211,7 +217,11 @@ static int br_validate(struct nlattr *tb[], struct nlattr *data[])
 	return 0;
 }
 
+<<<<<<< HEAD
 struct rtnl_link_ops br_link_ops __read_mostly = {
+=======
+static struct rtnl_link_ops br_link_ops __read_mostly = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.kind		= "bridge",
 	.priv_size	= sizeof(struct net_bridge),
 	.setup		= br_dev_setup,
@@ -227,6 +237,7 @@ int __init br_netlink_init(void)
 	if (err < 0)
 		goto err1;
 
+<<<<<<< HEAD
 	err = __rtnl_register(PF_BRIDGE, RTM_GETLINK, NULL,
 			      br_dump_ifinfo, NULL);
 	if (err)
@@ -245,6 +256,21 @@ int __init br_netlink_init(void)
 		goto err3;
 	err = __rtnl_register(PF_BRIDGE, RTM_GETNEIGH,
 			      NULL, br_fdb_dump, NULL);
+=======
+	err = __rtnl_register(PF_BRIDGE, RTM_GETLINK, NULL, br_dump_ifinfo);
+	if (err)
+		goto err2;
+	err = __rtnl_register(PF_BRIDGE, RTM_SETLINK, br_rtm_setlink, NULL);
+	if (err)
+		goto err3;
+	err = __rtnl_register(PF_BRIDGE, RTM_NEWNEIGH, br_fdb_add, NULL);
+	if (err)
+		goto err3;
+	err = __rtnl_register(PF_BRIDGE, RTM_DELNEIGH, br_fdb_delete, NULL);
+	if (err)
+		goto err3;
+	err = __rtnl_register(PF_BRIDGE, RTM_GETNEIGH, NULL, br_fdb_dump);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		goto err3;
 

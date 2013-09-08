@@ -34,7 +34,10 @@ static int br_device_event(struct notifier_block *unused, unsigned long event, v
 	struct net_device *dev = ptr;
 	struct net_bridge_port *p;
 	struct net_bridge *br;
+<<<<<<< HEAD
 	bool changed_addr;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err;
 
 	/* register of bridge completed, add sysfs entries */
@@ -58,12 +61,17 @@ static int br_device_event(struct notifier_block *unused, unsigned long event, v
 	case NETDEV_CHANGEADDR:
 		spin_lock_bh(&br->lock);
 		br_fdb_changeaddr(p, dev->dev_addr);
+<<<<<<< HEAD
 		changed_addr = br_stp_recalculate_bridge_id(br);
 		spin_unlock_bh(&br->lock);
 
 		if (changed_addr)
 			call_netdevice_notifiers(NETDEV_CHANGEADDR, br->dev);
 
+=======
+		br_stp_recalculate_bridge_id(br);
+		spin_unlock_bh(&br->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case NETDEV_CHANGE:

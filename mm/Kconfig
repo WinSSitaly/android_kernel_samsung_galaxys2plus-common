@@ -131,6 +131,7 @@ config SPARSEMEM_VMEMMAP
 config HAVE_MEMBLOCK
 	boolean
 
+<<<<<<< HEAD
 config HAVE_MEMBLOCK_NODE_MAP
 	boolean
 
@@ -140,12 +141,18 @@ config ARCH_DISCARD_MEMBLOCK
 config NO_BOOTMEM
 	boolean
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # eventually, we can have this option just 'select SPARSEMEM'
 config MEMORY_HOTPLUG
 	bool "Allow for memory hot-add"
 	depends on SPARSEMEM || X86_64_ACPI_NUMA
 	depends on HOTPLUG && ARCH_ENABLE_MEMORY_HOTPLUG
+<<<<<<< HEAD
 	depends on (IA64 || X86 || PPC_BOOK3S_64 || SUPERH || S390)
+=======
+	depends on (IA64 || X86 || PPC_BOOK3S_64 || SUPERH || S390 || ARM)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config MEMORY_HOTPLUG_SPARSE
 	def_bool y
@@ -198,7 +205,11 @@ config COMPACTION
 config MIGRATION
 	bool "Page migration"
 	def_bool y
+<<<<<<< HEAD
 	depends on NUMA || ARCH_ENABLE_MEMORY_HOTREMOVE || COMPACTION
+=======
+	depends on NUMA || ARCH_ENABLE_MEMORY_HOTREMOVE || COMPACTION || CMA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Allows the migration of the physical location of pages of processes
 	  while the virtual addresses are not changed. This is useful in
@@ -365,7 +376,11 @@ config CLEANCACHE
 	  for clean pages that the kernel's pageframe replacement algorithm
 	  (PFRA) would like to keep around, but can't since there isn't enough
 	  memory.  So when the PFRA "evicts" a page, it first attempts to use
+<<<<<<< HEAD
 	  cleancache code to put the data contained in that page into
+=======
+	  cleancacne code to put the data contained in that page into
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	  "transcendent memory", memory that is not directly accessible or
 	  addressable by the kernel and is of unknown and possibly
 	  time-varying size.  And when a cleancache-enabled

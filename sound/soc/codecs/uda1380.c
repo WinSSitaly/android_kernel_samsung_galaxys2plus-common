@@ -373,7 +373,11 @@ static const struct snd_soc_dapm_widget uda1380_dapm_widgets[] = {
 	SND_SOC_DAPM_PGA("HeadPhone Driver", UDA1380_PM, 13, 0, NULL, 0),
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dapm_route uda1380_dapm_routes[] = {
+=======
+static const struct snd_soc_dapm_route audio_map[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* output mux */
 	{"HeadPhone Driver", NULL, "Output Mux"},
@@ -410,6 +414,20 @@ static const struct snd_soc_dapm_route uda1380_dapm_routes[] = {
 	{"Right PGA", NULL, "VINR"},
 };
 
+<<<<<<< HEAD
+=======
+static int uda1380_add_widgets(struct snd_soc_codec *codec)
+{
+	struct snd_soc_dapm_context *dapm = &codec->dapm;
+
+	snd_soc_dapm_new_controls(dapm, uda1380_dapm_widgets,
+				  ARRAY_SIZE(uda1380_dapm_widgets));
+	snd_soc_dapm_add_routes(dapm, audio_map, ARRAY_SIZE(audio_map));
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int uda1380_set_dai_fmt_both(struct snd_soc_dai *codec_dai,
 		unsigned int fmt)
 {
@@ -632,21 +650,33 @@ static int uda1380_set_bias_level(struct snd_soc_codec *codec,
 		       SNDRV_PCM_RATE_16000 | SNDRV_PCM_RATE_22050 |\
 		       SNDRV_PCM_RATE_44100 | SNDRV_PCM_RATE_48000)
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops uda1380_dai_ops = {
+=======
+static struct snd_soc_dai_ops uda1380_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params	= uda1380_pcm_hw_params,
 	.shutdown	= uda1380_pcm_shutdown,
 	.trigger	= uda1380_trigger,
 	.set_fmt	= uda1380_set_dai_fmt_both,
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops uda1380_dai_ops_playback = {
+=======
+static struct snd_soc_dai_ops uda1380_dai_ops_playback = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params	= uda1380_pcm_hw_params,
 	.shutdown	= uda1380_pcm_shutdown,
 	.trigger	= uda1380_trigger,
 	.set_fmt	= uda1380_set_dai_fmt_playback,
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops uda1380_dai_ops_capture = {
+=======
+static struct snd_soc_dai_ops uda1380_dai_ops_capture = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params	= uda1380_pcm_hw_params,
 	.shutdown	= uda1380_pcm_shutdown,
 	.trigger	= uda1380_trigger,
@@ -694,7 +724,11 @@ static struct snd_soc_dai_driver uda1380_dai[] = {
 },
 };
 
+<<<<<<< HEAD
 static int uda1380_suspend(struct snd_soc_codec *codec)
+=======
+static int uda1380_suspend(struct snd_soc_codec *codec, pm_message_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	uda1380_set_bias_level(codec, SND_SOC_BIAS_OFF);
 	return 0;
@@ -721,6 +755,7 @@ static int uda1380_probe(struct snd_soc_codec *codec)
 		return -EINVAL;
 
 	if (gpio_is_valid(pdata->gpio_reset)) {
+<<<<<<< HEAD
 		ret = gpio_request_one(pdata->gpio_reset, GPIOF_OUT_INIT_LOW,
 				       "uda1380 reset");
 		if (ret)
@@ -736,6 +771,29 @@ static int uda1380_probe(struct snd_soc_codec *codec)
 		ret = uda1380_reset(codec);
 		if (ret)
 			goto err_free_gpio;
+=======
+		ret = gpio_request(pdata->gpio_reset, "uda1380 reset");
+		if (ret)
+			goto err_out;
+		ret = gpio_direction_output(pdata->gpio_reset, 0);
+		if (ret)
+			goto err_gpio_reset_conf;
+	}
+
+	if (gpio_is_valid(pdata->gpio_power)) {
+		ret = gpio_request(pdata->gpio_power, "uda1380 power");
+		if (ret)
+			goto err_gpio;
+		ret = gpio_direction_output(pdata->gpio_power, 0);
+		if (ret)
+			goto err_gpio_power_conf;
+	} else {
+		ret = uda1380_reset(codec);
+		if (ret) {
+			dev_err(codec->dev, "Failed to issue reset\n");
+			goto err_reset;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	INIT_WORK(&uda1380->work, uda1380_flush_work);
@@ -753,9 +811,25 @@ static int uda1380_probe(struct snd_soc_codec *codec)
 		break;
 	}
 
+<<<<<<< HEAD
 	return 0;
 
 err_free_gpio:
+=======
+	snd_soc_add_controls(codec, uda1380_snd_controls,
+				ARRAY_SIZE(uda1380_snd_controls));
+	uda1380_add_widgets(codec);
+
+	return 0;
+
+err_reset:
+err_gpio_power_conf:
+	if (gpio_is_valid(pdata->gpio_power))
+		gpio_free(pdata->gpio_power);
+
+err_gpio_reset_conf:
+err_gpio:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (gpio_is_valid(pdata->gpio_reset))
 		gpio_free(pdata->gpio_reset);
 err_out:
@@ -787,6 +861,7 @@ static struct snd_soc_codec_driver soc_codec_dev_uda1380 = {
 	.reg_word_size = sizeof(u16),
 	.reg_cache_default = uda1380_reg,
 	.reg_cache_step = 1,
+<<<<<<< HEAD
 
 	.controls = uda1380_snd_controls,
 	.num_controls = ARRAY_SIZE(uda1380_snd_controls),
@@ -794,6 +869,8 @@ static struct snd_soc_codec_driver soc_codec_dev_uda1380 = {
 	.num_dapm_widgets = ARRAY_SIZE(uda1380_dapm_widgets),
 	.dapm_routes = uda1380_dapm_routes,
 	.num_dapm_routes = ARRAY_SIZE(uda1380_dapm_routes),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
@@ -803,8 +880,12 @@ static __devinit int uda1380_i2c_probe(struct i2c_client *i2c,
 	struct uda1380_priv *uda1380;
 	int ret;
 
+<<<<<<< HEAD
 	uda1380 = devm_kzalloc(&i2c->dev, sizeof(struct uda1380_priv),
 			       GFP_KERNEL);
+=======
+	uda1380 = kzalloc(sizeof(struct uda1380_priv), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (uda1380 == NULL)
 		return -ENOMEM;
 
@@ -813,12 +894,21 @@ static __devinit int uda1380_i2c_probe(struct i2c_client *i2c,
 
 	ret =  snd_soc_register_codec(&i2c->dev,
 			&soc_codec_dev_uda1380, uda1380_dai, ARRAY_SIZE(uda1380_dai));
+<<<<<<< HEAD
+=======
+	if (ret < 0)
+		kfree(uda1380);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devexit uda1380_i2c_remove(struct i2c_client *i2c)
 {
 	snd_soc_unregister_codec(&i2c->dev);
+<<<<<<< HEAD
+=======
+	kfree(i2c_get_clientdata(i2c));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -841,13 +931,21 @@ static struct i2c_driver uda1380_i2c_driver = {
 
 static int __init uda1380_modinit(void)
 {
+<<<<<<< HEAD
 	int ret = 0;
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
 	ret = i2c_add_driver(&uda1380_i2c_driver);
 	if (ret != 0)
 		pr_err("Failed to register UDA1380 I2C driver: %d\n", ret);
 #endif
+<<<<<<< HEAD
 	return ret;
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 module_init(uda1380_modinit);
 

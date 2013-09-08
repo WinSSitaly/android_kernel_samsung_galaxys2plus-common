@@ -142,7 +142,11 @@ hydra_init(void)
 		return 0;
 	}
 	of_node_put(np);
+<<<<<<< HEAD
 	Hydra = ioremap(r.start, resource_size(&r));
+=======
+	Hydra = ioremap(r.start, r.end-r.start);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk("Hydra Mac I/O at %llx\n", (unsigned long long)r.start);
 	printk("Hydra Feature_Control was %x",
 	       in_le32(&Hydra->Feature_Control));
@@ -199,7 +203,11 @@ static void __init setup_peg2(struct pci_controller *hose, struct device_node *d
 		printk ("RTAS supporting Pegasos OF not found, please upgrade"
 			" your firmware\n");
 	}
+<<<<<<< HEAD
 	pci_add_flags(PCI_REASSIGN_ALL_BUS);
+=======
+	ppc_pci_add_flags(PPC_PCI_REASSIGN_ALL_BUS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* keep the reference to the root node */
 }
 

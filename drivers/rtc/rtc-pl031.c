@@ -312,7 +312,10 @@ static int pl031_probe(struct amba_device *adev, const struct amba_id *id)
 	int ret;
 	struct pl031_local *ldata;
 	struct rtc_class_ops *ops = id->data;
+<<<<<<< HEAD
 	unsigned long time;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = amba_request_regions(adev, NULL);
 	if (ret)
@@ -344,6 +347,7 @@ static int pl031_probe(struct amba_device *adev, const struct amba_id *id)
 		writel(readl(ldata->base + RTC_CR) | RTC_CR_CWEN,
 		       ldata->base + RTC_CR);
 
+<<<<<<< HEAD
 	/*
 	 * On ST PL031 variants, the RTC reset value does not provide correct
 	 * weekday for 2000-01-01. Correct the erroneous sunday to saturday.
@@ -361,6 +365,8 @@ static int pl031_probe(struct amba_device *adev, const struct amba_id *id)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ldata->rtc = rtc_device_register("pl031", &adev->dev, ops,
 					THIS_MODULE);
 	if (IS_ERR(ldata->rtc)) {
@@ -369,7 +375,11 @@ static int pl031_probe(struct amba_device *adev, const struct amba_id *id)
 	}
 
 	if (request_irq(adev->irq[0], pl031_interrupt,
+<<<<<<< HEAD
 			0, "rtc-pl031", ldata)) {
+=======
+			IRQF_DISABLED, "rtc-pl031", ldata)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EIO;
 		goto out_no_irq;
 	}
@@ -437,8 +447,11 @@ static struct amba_id pl031_ids[] = {
 	{0, 0},
 };
 
+<<<<<<< HEAD
 MODULE_DEVICE_TABLE(amba, pl031_ids);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct amba_driver pl031_driver = {
 	.drv = {
 		.name = "rtc-pl031",
@@ -448,7 +461,22 @@ static struct amba_driver pl031_driver = {
 	.remove = pl031_remove,
 };
 
+<<<<<<< HEAD
 module_amba_driver(pl031_driver);
+=======
+static int __init pl031_init(void)
+{
+	return amba_driver_register(&pl031_driver);
+}
+
+static void __exit pl031_exit(void)
+{
+	amba_driver_unregister(&pl031_driver);
+}
+
+module_init(pl031_init);
+module_exit(pl031_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Deepak Saxena <dsaxena@plexity.net");
 MODULE_DESCRIPTION("ARM AMBA PL031 RTC Driver");

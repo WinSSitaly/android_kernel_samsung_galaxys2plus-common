@@ -30,7 +30,11 @@ struct sh_desc {
 	struct sh_dmae_regs hw;
 	struct list_head node;
 	struct dma_async_tx_descriptor async_tx;
+<<<<<<< HEAD
 	enum dma_transfer_direction direction;
+=======
+	enum dma_data_direction direction;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dma_cookie_t cookie;
 	size_t partial;
 	int chunks;
@@ -48,7 +52,10 @@ struct sh_dmae_channel {
 	unsigned int	offset;
 	unsigned int	dmars;
 	unsigned int	dmars_bit;
+<<<<<<< HEAD
 	unsigned int	chclr_offset;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct sh_dmae_pdata {
@@ -63,6 +70,7 @@ struct sh_dmae_pdata {
 	const unsigned int *ts_shift;
 	int ts_shift_num;
 	u16 dmaor_init;
+<<<<<<< HEAD
 	unsigned int chcr_offset;
 	u32 chcr_ie_bit;
 
@@ -71,6 +79,8 @@ struct sh_dmae_pdata {
 	unsigned int no_dmars:1;
 	unsigned int chclr_present:1;
 	unsigned int slave_only:1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* DMA register */
@@ -80,8 +90,11 @@ struct sh_dmae_pdata {
 #define CHCR	0x0C
 #define DMAOR	0x40
 
+<<<<<<< HEAD
 #define TEND	0x18 /* USB-DMAC */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* DMAOR definitions */
 #define DMAOR_AE	0x00000004
 #define DMAOR_NMIF	0x00000002

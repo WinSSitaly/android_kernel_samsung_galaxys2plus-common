@@ -24,7 +24,10 @@
 
 #include <net/mac80211.h>
 #include <linux/crc-ccitt.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "p54.h"
 #include "eeprom.h"
@@ -146,7 +149,10 @@ static int p54_fill_band_bitrates(struct ieee80211_hw *dev,
 
 static int p54_generate_band(struct ieee80211_hw *dev,
 			     struct p54_channel_list *list,
+<<<<<<< HEAD
 			     unsigned int *chan_num,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     enum ieee80211_band band)
 {
 	struct p54_common *priv = dev->priv;
@@ -192,6 +198,7 @@ static int p54_generate_band(struct ieee80211_hw *dev,
 
 		tmp->channels[j].band = chan->band;
 		tmp->channels[j].center_freq = chan->freq;
+<<<<<<< HEAD
 		priv->survey[*chan_num].channel = &tmp->channels[j];
 		priv->survey[*chan_num].filled = SURVEY_INFO_NOISE_DBM |
 			SURVEY_INFO_CHANNEL_TIME |
@@ -200,6 +207,9 @@ static int p54_generate_band(struct ieee80211_hw *dev,
 		tmp->channels[j].hw_value = (*chan_num);
 		j++;
 		(*chan_num)++;
+=======
+		j++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (j == 0) {
@@ -272,7 +282,11 @@ static int p54_generate_channel_lists(struct ieee80211_hw *dev)
 {
 	struct p54_common *priv = dev->priv;
 	struct p54_channel_list *list;
+<<<<<<< HEAD
 	unsigned int i, j, k, max_channel_num;
+=======
+	unsigned int i, j, max_channel_num;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 	u16 freq;
 
@@ -292,6 +306,7 @@ static int p54_generate_channel_lists(struct ieee80211_hw *dev)
 		ret = -ENOMEM;
 		goto free;
 	}
+<<<<<<< HEAD
 	priv->chan_num = max_channel_num;
 	priv->survey = kzalloc(sizeof(struct survey_info) * max_channel_num,
 			       GFP_KERNEL);
@@ -299,6 +314,8 @@ static int p54_generate_channel_lists(struct ieee80211_hw *dev)
 		ret = -ENOMEM;
 		goto free;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list->max_entries = max_channel_num;
 	list->channels = kzalloc(sizeof(struct p54_channel_entry) *
@@ -337,9 +354,14 @@ static int p54_generate_channel_lists(struct ieee80211_hw *dev)
 	sort(list->channels, list->entries, sizeof(struct p54_channel_entry),
 	     p54_compare_channels, NULL);
 
+<<<<<<< HEAD
 	k = 0;
 	for (i = 0, j = 0; i < IEEE80211_NUM_BANDS; i++) {
 		if (p54_generate_band(dev, list, &k, i) == 0)
+=======
+	for (i = 0, j = 0; i < IEEE80211_NUM_BANDS; i++) {
+		if (p54_generate_band(dev, list, i) == 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			j++;
 	}
 	if (j == 0) {
@@ -352,10 +374,13 @@ free:
 		kfree(list->channels);
 		kfree(list);
 	}
+<<<<<<< HEAD
 	if (ret) {
 		kfree(priv->survey);
 		priv->survey = NULL;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -874,12 +899,18 @@ err:
 	kfree(priv->output_limit);
 	kfree(priv->curve_data);
 	kfree(priv->rssi_db);
+<<<<<<< HEAD
 	kfree(priv->survey);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	priv->iq_autocal = NULL;
 	priv->output_limit = NULL;
 	priv->curve_data = NULL;
 	priv->rssi_db = NULL;
+<<<<<<< HEAD
 	priv->survey = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wiphy_err(dev->wiphy, "eeprom parse failed!\n");
 	return err;

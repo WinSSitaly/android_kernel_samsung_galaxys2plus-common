@@ -17,6 +17,7 @@
 
 #include <linux/types.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/rtc.h>
 #include <asm/machdep.h>
 #include <asm/MC68328.h>
@@ -27,6 +28,15 @@
 /***************************************************************************/
 
 int m68328_hwclk(int set, struct rtc_time *t);
+=======
+#include <asm/system.h>
+#include <asm/machdep.h>
+#include <asm/MC68328.h>
+
+/***************************************************************************/
+
+void m68328_timer_gettod(int *year, int *mon, int *day, int *hour, int *min, int *sec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /***************************************************************************/
 
@@ -48,7 +58,11 @@ void config_BSP(char *command, int len)
   printk(KERN_INFO "68328 support Kenneth Albanowski <kjahds@kjshds.com>\n");
   printk(KERN_INFO "68328/Pilot support Bernhard Kuhn <kuhn@lpr.e-technik.tu-muenchen.de>\n");
 
+<<<<<<< HEAD
   mach_hwclk = m68328_hwclk;
+=======
+  mach_gettod = m68328_timer_gettod;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   mach_reset = m68328_reset;
 }
 

@@ -10,6 +10,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 
@@ -39,6 +51,7 @@
 #include <linux/usb.h>
 #include <linux/usb/gadget.h>
 #include <linux/usb/hcd.h>
+<<<<<<< HEAD
 #include <linux/scatterlist.h>
 
 #include <asm/byteorder.h>
@@ -46,11 +59,22 @@
 #include <asm/irq.h>
 #include <asm/unaligned.h>
 
+=======
+
+#include <asm/byteorder.h>
+#include <asm/io.h>
+#include <asm/irq.h>
+#include <asm/system.h>
+#include <asm/unaligned.h>
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DRIVER_DESC	"USB Host+Gadget Emulator"
 #define DRIVER_VERSION	"02 May 2005"
 
 #define POWER_BUDGET	500	/* in mA; use 8 for low-power port testing */
 
+<<<<<<< HEAD
 static const char	driver_name[] = "dummy_hcd";
 static const char	driver_desc[] = "USB Host+Gadget Emulator";
 
@@ -73,6 +97,17 @@ module_param_named(is_super_speed, mod_data.is_super_speed, bool, S_IRUGO);
 MODULE_PARM_DESC(is_super_speed, "true to simulate SuperSpeed connection");
 module_param_named(is_high_speed, mod_data.is_high_speed, bool, S_IRUGO);
 MODULE_PARM_DESC(is_high_speed, "true to simulate HighSpeed connection");
+=======
+static const char	driver_name [] = "dummy_hcd";
+static const char	driver_desc [] = "USB Host+Gadget Emulator";
+
+static const char	gadget_name [] = "dummy_udc";
+
+MODULE_DESCRIPTION (DRIVER_DESC);
+MODULE_AUTHOR ("David Brownell");
+MODULE_LICENSE ("GPL");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*-------------------------------------------------------------------------*/
 
 /* gadget side driver data structres */
@@ -82,11 +117,18 @@ struct dummy_ep {
 	struct usb_gadget		*gadget;
 	const struct usb_endpoint_descriptor *desc;
 	struct usb_ep			ep;
+<<<<<<< HEAD
 	unsigned			halted:1;
 	unsigned			wedged:1;
 	unsigned			already_seen:1;
 	unsigned			setup_stage:1;
 	unsigned			stream_en:1;
+=======
+	unsigned			halted : 1;
+	unsigned			wedged : 1;
+	unsigned			already_seen : 1;
+	unsigned			setup_stage : 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct dummy_request {
@@ -94,15 +136,25 @@ struct dummy_request {
 	struct usb_request		req;
 };
 
+<<<<<<< HEAD
 static inline struct dummy_ep *usb_ep_to_dummy_ep(struct usb_ep *_ep)
 {
 	return container_of(_ep, struct dummy_ep, ep);
+=======
+static inline struct dummy_ep *usb_ep_to_dummy_ep (struct usb_ep *_ep)
+{
+	return container_of (_ep, struct dummy_ep, ep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline struct dummy_request *usb_request_to_dummy_request
 		(struct usb_request *_req)
 {
+<<<<<<< HEAD
 	return container_of(_req, struct dummy_request, req);
+=======
+	return container_of (_req, struct dummy_request, req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*-------------------------------------------------------------------------*/
@@ -121,12 +173,24 @@ static inline struct dummy_request *usb_request_to_dummy_request
  * configurations, illegal or unsupported packet lengths, and so on.
  */
 
+<<<<<<< HEAD
 static const char ep0name[] = "ep0";
 
 static const char *const ep_name[] = {
 	ep0name,				/* everyone has ep0 */
 
 	/* act like a pxa250: fifteen fixed function endpoints */
+=======
+static const char ep0name [] = "ep0";
+
+static const char *const ep_name [] = {
+	ep0name,				/* everyone has ep0 */
+
+	/* act like a net2280: high speed, six configurable endpoints */
+	"ep-a", "ep-b", "ep-c", "ep-d", "ep-e", "ep-f",
+
+	/* or like pxa250: fifteen fixed function endpoints */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"ep1in-bulk", "ep2out-bulk", "ep3in-iso", "ep4out-iso", "ep5in-int",
 	"ep6in-bulk", "ep7out-bulk", "ep8in-iso", "ep9out-iso", "ep10in-int",
 	"ep11in-bulk", "ep12out-bulk", "ep13in-iso", "ep14out-iso",
@@ -134,10 +198,13 @@ static const char *const ep_name[] = {
 
 	/* or like sa1100: two fixed function endpoints */
 	"ep1out-bulk", "ep2in-bulk",
+<<<<<<< HEAD
 
 	/* and now some generic EPs so we have enough in multi config */
 	"ep3out", "ep4in", "ep5out", "ep6out", "ep7in", "ep8out", "ep9in",
 	"ep10out", "ep11out", "ep12in", "ep13out", "ep14in", "ep15out",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #define DUMMY_ENDPOINTS	ARRAY_SIZE(ep_name)
 
@@ -148,8 +215,11 @@ static const char *const ep_name[] = {
 struct urbp {
 	struct urb		*urb;
 	struct list_head	urbp_list;
+<<<<<<< HEAD
 	struct sg_mapping_iter	miter;
 	u32			miter_started;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -159,6 +229,7 @@ enum dummy_rh_state {
 	DUMMY_RH_RUNNING
 };
 
+<<<<<<< HEAD
 struct dummy_hcd {
 	struct dummy			*dum;
 	enum dummy_rh_state		rh_state;
@@ -177,25 +248,41 @@ struct dummy_hcd {
 	unsigned			resuming:1;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct dummy {
 	spinlock_t			lock;
 
 	/*
 	 * SLAVE/GADGET side support
 	 */
+<<<<<<< HEAD
 	struct dummy_ep			ep[DUMMY_ENDPOINTS];
+=======
+	struct dummy_ep			ep [DUMMY_ENDPOINTS];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int				address;
 	struct usb_gadget		gadget;
 	struct usb_gadget_driver	*driver;
 	struct dummy_request		fifo_req;
+<<<<<<< HEAD
 	u8				fifo_buf[FIFO_SIZE];
 	u16				devstatus;
 	unsigned			udc_suspended:1;
 	unsigned			pullup:1;
+=======
+	u8				fifo_buf [FIFO_SIZE];
+	u16				devstatus;
+	unsigned			udc_suspended:1;
+	unsigned			pullup:1;
+	unsigned			active:1;
+	unsigned			old_active:1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * MASTER/HOST side support
 	 */
+<<<<<<< HEAD
 	struct dummy_hcd		*hs_hcd;
 	struct dummy_hcd		*ss_hcd;
 };
@@ -206,20 +293,49 @@ static inline struct dummy_hcd *hcd_to_dummy_hcd(struct usb_hcd *hcd)
 }
 
 static inline struct usb_hcd *dummy_hcd_to_hcd(struct dummy_hcd *dum)
+=======
+	enum dummy_rh_state		rh_state;
+	struct timer_list		timer;
+	u32				port_status;
+	u32				old_status;
+	unsigned			resuming:1;
+	unsigned long			re_timeout;
+
+	struct usb_device		*udev;
+	struct list_head		urbp_list;
+};
+
+static inline struct dummy *hcd_to_dummy (struct usb_hcd *hcd)
+{
+	return (struct dummy *) (hcd->hcd_priv);
+}
+
+static inline struct usb_hcd *dummy_to_hcd (struct dummy *dum)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return container_of((void *) dum, struct usb_hcd, hcd_priv);
 }
 
+<<<<<<< HEAD
 static inline struct device *dummy_dev(struct dummy_hcd *dum)
 {
 	return dummy_hcd_to_hcd(dum)->self.controller;
 }
 
 static inline struct device *udc_dev(struct dummy *dum)
+=======
+static inline struct device *dummy_dev (struct dummy *dum)
+{
+	return dummy_to_hcd(dum)->self.controller;
+}
+
+static inline struct device *udc_dev (struct dummy *dum)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return dum->gadget.dev.parent;
 }
 
+<<<<<<< HEAD
 static inline struct dummy *ep_to_dummy(struct dummy_ep *ep)
 {
 	return container_of(ep->gadget, struct dummy, gadget);
@@ -240,12 +356,31 @@ static inline struct dummy *gadget_dev_to_dummy(struct device *dev)
 }
 
 static struct dummy			the_controller;
+=======
+static inline struct dummy *ep_to_dummy (struct dummy_ep *ep)
+{
+	return container_of (ep->gadget, struct dummy, gadget);
+}
+
+static inline struct dummy *gadget_to_dummy (struct usb_gadget *gadget)
+{
+	return container_of (gadget, struct dummy, gadget);
+}
+
+static inline struct dummy *gadget_dev_to_dummy (struct device *dev)
+{
+	return container_of (dev, struct dummy, gadget.dev);
+}
+
+static struct dummy			*the_controller;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*-------------------------------------------------------------------------*/
 
 /* SLAVE/GADGET SIDE UTILITY ROUTINES */
 
 /* called with spinlock held */
+<<<<<<< HEAD
 static void nuke(struct dummy *dum, struct dummy_ep *ep)
 {
 	while (!list_empty(&ep->queue)) {
@@ -258,11 +393,30 @@ static void nuke(struct dummy *dum, struct dummy_ep *ep)
 		spin_unlock(&dum->lock);
 		req->req.complete(&ep->ep, &req->req);
 		spin_lock(&dum->lock);
+=======
+static void nuke (struct dummy *dum, struct dummy_ep *ep)
+{
+	while (!list_empty (&ep->queue)) {
+		struct dummy_request	*req;
+
+		req = list_entry (ep->queue.next, struct dummy_request, queue);
+		list_del_init (&req->queue);
+		req->req.status = -ESHUTDOWN;
+
+		spin_unlock (&dum->lock);
+		req->req.complete (&ep->ep, &req->req);
+		spin_lock (&dum->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
 /* caller must hold lock */
+<<<<<<< HEAD
 static void stop_activity(struct dummy *dum)
+=======
+static void
+stop_activity (struct dummy *dum)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dummy_ep	*ep;
 
@@ -272,12 +426,18 @@ static void stop_activity(struct dummy *dum)
 	/* The timer is left running so that outstanding URBs can fail */
 
 	/* nuke any pending requests first, so driver i/o is quiesced */
+<<<<<<< HEAD
 	list_for_each_entry(ep, &dum->gadget.ep_list, ep.ep_list)
 		nuke(dum, ep);
+=======
+	list_for_each_entry (ep, &dum->gadget.ep_list, ep.ep_list)
+		nuke (dum, ep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* driver now does any non-usb quiescing necessary */
 }
 
+<<<<<<< HEAD
 /**
  * set_link_state_by_speed() - Sets the current state of the link according to
  *	the hcd speed
@@ -394,6 +554,63 @@ static void set_link_state(struct dummy_hcd *dum_hcd)
 
 	dum_hcd->old_status = dum_hcd->port_status;
 	dum_hcd->old_active = dum_hcd->active;
+=======
+/* caller must hold lock */
+static void
+set_link_state (struct dummy *dum)
+{
+	dum->active = 0;
+	if ((dum->port_status & USB_PORT_STAT_POWER) == 0)
+		dum->port_status = 0;
+
+	/* UDC suspend must cause a disconnect */
+	else if (!dum->pullup || dum->udc_suspended) {
+		dum->port_status &= ~(USB_PORT_STAT_CONNECTION |
+					USB_PORT_STAT_ENABLE |
+					USB_PORT_STAT_LOW_SPEED |
+					USB_PORT_STAT_HIGH_SPEED |
+					USB_PORT_STAT_SUSPEND);
+		if ((dum->old_status & USB_PORT_STAT_CONNECTION) != 0)
+			dum->port_status |= (USB_PORT_STAT_C_CONNECTION << 16);
+	} else {
+		dum->port_status |= USB_PORT_STAT_CONNECTION;
+		if ((dum->old_status & USB_PORT_STAT_CONNECTION) == 0)
+			dum->port_status |= (USB_PORT_STAT_C_CONNECTION << 16);
+		if ((dum->port_status & USB_PORT_STAT_ENABLE) == 0)
+			dum->port_status &= ~USB_PORT_STAT_SUSPEND;
+		else if ((dum->port_status & USB_PORT_STAT_SUSPEND) == 0 &&
+				dum->rh_state != DUMMY_RH_SUSPENDED)
+			dum->active = 1;
+	}
+
+	if ((dum->port_status & USB_PORT_STAT_ENABLE) == 0 || dum->active)
+		dum->resuming = 0;
+
+	if ((dum->port_status & USB_PORT_STAT_CONNECTION) == 0 ||
+			(dum->port_status & USB_PORT_STAT_RESET) != 0) {
+		if ((dum->old_status & USB_PORT_STAT_CONNECTION) != 0 &&
+				(dum->old_status & USB_PORT_STAT_RESET) == 0 &&
+				dum->driver) {
+			stop_activity (dum);
+			spin_unlock (&dum->lock);
+			dum->driver->disconnect (&dum->gadget);
+			spin_lock (&dum->lock);
+		}
+	} else if (dum->active != dum->old_active) {
+		if (dum->old_active && dum->driver->suspend) {
+			spin_unlock (&dum->lock);
+			dum->driver->suspend (&dum->gadget);
+			spin_lock (&dum->lock);
+		} else if (!dum->old_active && dum->driver->resume) {
+			spin_unlock (&dum->lock);
+			dum->driver->resume (&dum->gadget);
+			spin_lock (&dum->lock);
+		}
+	}
+
+	dum->old_status = dum->port_status;
+	dum->old_active = dum->active;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*-------------------------------------------------------------------------*/
@@ -408,15 +625,23 @@ static void set_link_state(struct dummy_hcd *dum_hcd)
 #define is_enabled(dum) \
 	(dum->port_status & USB_PORT_STAT_ENABLE)
 
+<<<<<<< HEAD
 static int dummy_enable(struct usb_ep *_ep,
 		const struct usb_endpoint_descriptor *desc)
 {
 	struct dummy		*dum;
 	struct dummy_hcd	*dum_hcd;
+=======
+static int
+dummy_enable (struct usb_ep *_ep, const struct usb_endpoint_descriptor *desc)
+{
+	struct dummy		*dum;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dummy_ep		*ep;
 	unsigned		max;
 	int			retval;
 
+<<<<<<< HEAD
 	ep = usb_ep_to_dummy_ep(_ep);
 	if (!_ep || !desc || ep->desc || _ep->name == ep0name
 			|| desc->bDescriptorType != USB_DT_ENDPOINT)
@@ -435,6 +660,16 @@ static int dummy_enable(struct usb_ep *_ep,
 	 * For SS devices the wMaxPacketSize is limited by 1024.
 	 */
 	max = usb_endpoint_maxp(desc) & 0x7ff;
+=======
+	ep = usb_ep_to_dummy_ep (_ep);
+	if (!_ep || !desc || ep->desc || _ep->name == ep0name
+			|| desc->bDescriptorType != USB_DT_ENDPOINT)
+		return -EINVAL;
+	dum = ep_to_dummy (ep);
+	if (!dum->driver || !is_enabled (dum))
+		return -ESHUTDOWN;
+	max = le16_to_cpu(desc->wMaxPacketSize) & 0x3ff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* drivers must not request bad settings, since lower levels
 	 * (hardware or its drivers) may not check.  some endpoints
@@ -445,6 +680,7 @@ static int dummy_enable(struct usb_ep *_ep,
 	 * especially for "ep9out" style fixed function ones.)
 	 */
 	retval = -EINVAL;
+<<<<<<< HEAD
 	switch (usb_endpoint_type(desc)) {
 	case USB_ENDPOINT_XFER_BULK:
 		if (strstr(ep->ep.name, "-iso")
@@ -456,6 +692,15 @@ static int dummy_enable(struct usb_ep *_ep,
 			if (max == 1024)
 				break;
 			goto done;
+=======
+	switch (desc->bmAttributes & 0x03) {
+	case USB_ENDPOINT_XFER_BULK:
+		if (strstr (ep->ep.name, "-iso")
+				|| strstr (ep->ep.name, "-int")) {
+			goto done;
+		}
+		switch (dum->gadget.speed) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case USB_SPEED_HIGH:
 			if (max == 512)
 				break;
@@ -470,11 +715,18 @@ static int dummy_enable(struct usb_ep *_ep,
 		}
 		break;
 	case USB_ENDPOINT_XFER_INT:
+<<<<<<< HEAD
 		if (strstr(ep->ep.name, "-iso")) /* bulk is ok */
 			goto done;
 		/* real hardware might not handle all packet sizes */
 		switch (dum->gadget.speed) {
 		case USB_SPEED_SUPER:
+=======
+		if (strstr (ep->ep.name, "-iso")) /* bulk is ok */
+			goto done;
+		/* real hardware might not handle all packet sizes */
+		switch (dum->gadget.speed) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case USB_SPEED_HIGH:
 			if (max <= 1024)
 				break;
@@ -490,12 +742,20 @@ static int dummy_enable(struct usb_ep *_ep,
 		}
 		break;
 	case USB_ENDPOINT_XFER_ISOC:
+<<<<<<< HEAD
 		if (strstr(ep->ep.name, "-bulk")
 				|| strstr(ep->ep.name, "-int"))
 			goto done;
 		/* real hardware might not handle all packet sizes */
 		switch (dum->gadget.speed) {
 		case USB_SPEED_SUPER:
+=======
+		if (strstr (ep->ep.name, "-bulk")
+				|| strstr (ep->ep.name, "-int"))
+			goto done;
+		/* real hardware might not handle all packet sizes */
+		switch (dum->gadget.speed) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case USB_SPEED_HIGH:
 			if (max <= 1024)
 				break;
@@ -514,6 +774,7 @@ static int dummy_enable(struct usb_ep *_ep,
 	}
 
 	_ep->maxpacket = max;
+<<<<<<< HEAD
 	if (usb_ss_max_streams(_ep->comp_desc)) {
 		if (!usb_endpoint_xfer_bulk(desc)) {
 			dev_err(udc_dev(dum), "Can't enable stream support on "
@@ -525,10 +786,16 @@ static int dummy_enable(struct usb_ep *_ep,
 	ep->desc = desc;
 
 	dev_dbg(udc_dev(dum), "enabled %s (ep%d%s-%s) maxpacket %d stream %s\n",
+=======
+	ep->desc = desc;
+
+	dev_dbg (udc_dev(dum), "enabled %s (ep%d%s-%s) maxpacket %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		_ep->name,
 		desc->bEndpointAddress & 0x0f,
 		(desc->bEndpointAddress & USB_DIR_IN) ? "in" : "out",
 		({ char *val;
+<<<<<<< HEAD
 		 switch (usb_endpoint_type(desc)) {
 		 case USB_ENDPOINT_XFER_BULK:
 			 val = "bulk";
@@ -544,6 +811,15 @@ static int dummy_enable(struct usb_ep *_ep,
 			 break;
 		 }; val; }),
 		max, ep->stream_en ? "enabled" : "disabled");
+=======
+		 switch (desc->bmAttributes & 0x03) {
+		 case USB_ENDPOINT_XFER_BULK: val = "bulk"; break;
+		 case USB_ENDPOINT_XFER_ISOC: val = "iso"; break;
+		 case USB_ENDPOINT_XFER_INT: val = "intr"; break;
+		 default: val = "ctrl"; break;
+		 }; val; }),
+		max);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* at this point real hardware should be NAKing transfers
 	 * to that endpoint, until a buffer is queued to it.
@@ -554,13 +830,18 @@ done:
 	return retval;
 }
 
+<<<<<<< HEAD
 static int dummy_disable(struct usb_ep *_ep)
+=======
+static int dummy_disable (struct usb_ep *_ep)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dummy_ep		*ep;
 	struct dummy		*dum;
 	unsigned long		flags;
 	int			retval;
 
+<<<<<<< HEAD
 	ep = usb_ep_to_dummy_ep(_ep);
 	if (!_ep || !ep->desc || _ep->name == ep0name)
 		return -EINVAL;
@@ -579,26 +860,59 @@ static int dummy_disable(struct usb_ep *_ep)
 
 static struct usb_request *dummy_alloc_request(struct usb_ep *_ep,
 		gfp_t mem_flags)
+=======
+	ep = usb_ep_to_dummy_ep (_ep);
+	if (!_ep || !ep->desc || _ep->name == ep0name)
+		return -EINVAL;
+	dum = ep_to_dummy (ep);
+
+	spin_lock_irqsave (&dum->lock, flags);
+	ep->desc = NULL;
+	retval = 0;
+	nuke (dum, ep);
+	spin_unlock_irqrestore (&dum->lock, flags);
+
+	dev_dbg (udc_dev(dum), "disabled %s\n", _ep->name);
+	return retval;
+}
+
+static struct usb_request *
+dummy_alloc_request (struct usb_ep *_ep, gfp_t mem_flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dummy_ep		*ep;
 	struct dummy_request	*req;
 
 	if (!_ep)
 		return NULL;
+<<<<<<< HEAD
 	ep = usb_ep_to_dummy_ep(_ep);
+=======
+	ep = usb_ep_to_dummy_ep (_ep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	req = kzalloc(sizeof(*req), mem_flags);
 	if (!req)
 		return NULL;
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&req->queue);
 	return &req->req;
 }
 
 static void dummy_free_request(struct usb_ep *_ep, struct usb_request *_req)
+=======
+	INIT_LIST_HEAD (&req->queue);
+	return &req->req;
+}
+
+static void
+dummy_free_request (struct usb_ep *_ep, struct usb_request *_req)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dummy_ep		*ep;
 	struct dummy_request	*req;
 
+<<<<<<< HEAD
 	if (!_ep || !_req)
 		return;
 	ep = usb_ep_to_dummy_ep(_ep);
@@ -615,11 +929,30 @@ static void fifo_complete(struct usb_ep *ep, struct usb_request *req)
 }
 
 static int dummy_queue(struct usb_ep *_ep, struct usb_request *_req,
+=======
+	ep = usb_ep_to_dummy_ep (_ep);
+	if (!ep || !_req || (!ep->desc && _ep->name != ep0name))
+		return;
+
+	req = usb_request_to_dummy_request (_req);
+	WARN_ON (!list_empty (&req->queue));
+	kfree (req);
+}
+
+static void
+fifo_complete (struct usb_ep *ep, struct usb_request *req)
+{
+}
+
+static int
+dummy_queue (struct usb_ep *_ep, struct usb_request *_req,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gfp_t mem_flags)
 {
 	struct dummy_ep		*ep;
 	struct dummy_request	*req;
 	struct dummy		*dum;
+<<<<<<< HEAD
 	struct dummy_hcd	*dum_hcd;
 	unsigned long		flags;
 
@@ -648,15 +981,49 @@ static int dummy_queue(struct usb_ep *_ep, struct usb_request *_req,
 	if (ep->desc && (ep->desc->bEndpointAddress & USB_DIR_IN) &&
 			list_empty(&dum->fifo_req.queue) &&
 			list_empty(&ep->queue) &&
+=======
+	unsigned long		flags;
+
+	req = usb_request_to_dummy_request (_req);
+	if (!_req || !list_empty (&req->queue) || !_req->complete)
+		return -EINVAL;
+
+	ep = usb_ep_to_dummy_ep (_ep);
+	if (!_ep || (!ep->desc && _ep->name != ep0name))
+		return -EINVAL;
+
+	dum = ep_to_dummy (ep);
+	if (!dum->driver || !is_enabled (dum))
+		return -ESHUTDOWN;
+
+#if 0
+	dev_dbg (udc_dev(dum), "ep %p queue req %p to %s, len %d buf %p\n",
+			ep, _req, _ep->name, _req->length, _req->buf);
+#endif
+
+	_req->status = -EINPROGRESS;
+	_req->actual = 0;
+	spin_lock_irqsave (&dum->lock, flags);
+
+	/* implement an emulated single-request FIFO */
+	if (ep->desc && (ep->desc->bEndpointAddress & USB_DIR_IN) &&
+			list_empty (&dum->fifo_req.queue) &&
+			list_empty (&ep->queue) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			_req->length <= FIFO_SIZE) {
 		req = &dum->fifo_req;
 		req->req = *_req;
 		req->req.buf = dum->fifo_buf;
+<<<<<<< HEAD
 		memcpy(dum->fifo_buf, _req->buf, _req->length);
+=======
+		memcpy (dum->fifo_buf, _req->buf, _req->length);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		req->req.context = dum;
 		req->req.complete = fifo_complete;
 
 		list_add_tail(&req->queue, &ep->queue);
+<<<<<<< HEAD
 		spin_unlock(&dum->lock);
 		_req->actual = _req->length;
 		_req->status = 0;
@@ -665,6 +1032,16 @@ static int dummy_queue(struct usb_ep *_ep, struct usb_request *_req,
 	}  else
 		list_add_tail(&req->queue, &ep->queue);
 	spin_unlock_irqrestore(&dum->lock, flags);
+=======
+		spin_unlock (&dum->lock);
+		_req->actual = _req->length;
+		_req->status = 0;
+		_req->complete (_ep, _req);
+		spin_lock (&dum->lock);
+	}  else
+		list_add_tail(&req->queue, &ep->queue);
+	spin_unlock_irqrestore (&dum->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* real hardware would likely enable transfers here, in case
 	 * it'd been left NAKing.
@@ -672,7 +1049,11 @@ static int dummy_queue(struct usb_ep *_ep, struct usb_request *_req,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int dummy_dequeue(struct usb_ep *_ep, struct usb_request *_req)
+=======
+static int dummy_dequeue (struct usb_ep *_ep, struct usb_request *_req)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dummy_ep		*ep;
 	struct dummy		*dum;
@@ -682,22 +1063,36 @@ static int dummy_dequeue(struct usb_ep *_ep, struct usb_request *_req)
 
 	if (!_ep || !_req)
 		return retval;
+<<<<<<< HEAD
 	ep = usb_ep_to_dummy_ep(_ep);
 	dum = ep_to_dummy(ep);
+=======
+	ep = usb_ep_to_dummy_ep (_ep);
+	dum = ep_to_dummy (ep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!dum->driver)
 		return -ESHUTDOWN;
 
+<<<<<<< HEAD
 	local_irq_save(flags);
 	spin_lock(&dum->lock);
 	list_for_each_entry(req, &ep->queue, queue) {
 		if (&req->req == _req) {
 			list_del_init(&req->queue);
+=======
+	local_irq_save (flags);
+	spin_lock (&dum->lock);
+	list_for_each_entry (req, &ep->queue, queue) {
+		if (&req->req == _req) {
+			list_del_init (&req->queue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			_req->status = -ECONNRESET;
 			retval = 0;
 			break;
 		}
 	}
+<<<<<<< HEAD
 	spin_unlock(&dum->lock);
 
 	if (retval == 0) {
@@ -707,6 +1102,17 @@ static int dummy_dequeue(struct usb_ep *_ep, struct usb_request *_req)
 		_req->complete(_ep, _req);
 	}
 	local_irq_restore(flags);
+=======
+	spin_unlock (&dum->lock);
+
+	if (retval == 0) {
+		dev_dbg (udc_dev(dum),
+				"dequeued req %p from %s, len %d buf %p\n",
+				req, _ep->name, _req->length, _req->buf);
+		_req->complete (_ep, _req);
+	}
+	local_irq_restore (flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return retval;
 }
 
@@ -718,14 +1124,23 @@ dummy_set_halt_and_wedge(struct usb_ep *_ep, int value, int wedged)
 
 	if (!_ep)
 		return -EINVAL;
+<<<<<<< HEAD
 	ep = usb_ep_to_dummy_ep(_ep);
 	dum = ep_to_dummy(ep);
+=======
+	ep = usb_ep_to_dummy_ep (_ep);
+	dum = ep_to_dummy (ep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!dum->driver)
 		return -ESHUTDOWN;
 	if (!value)
 		ep->halted = ep->wedged = 0;
 	else if (ep->desc && (ep->desc->bEndpointAddress & USB_DIR_IN) &&
+<<<<<<< HEAD
 			!list_empty(&ep->queue))
+=======
+			!list_empty (&ep->queue))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EAGAIN;
 	else {
 		ep->halted = 1;
@@ -766,6 +1181,7 @@ static const struct usb_ep_ops dummy_ep_ops = {
 /*-------------------------------------------------------------------------*/
 
 /* there are both host and device side versions of this call ... */
+<<<<<<< HEAD
 static int dummy_g_get_frame(struct usb_gadget *_gadget)
 {
 	struct timeval	tv;
@@ -786,11 +1202,34 @@ static int dummy_wakeup(struct usb_gadget *_gadget)
 		return -ENOLINK;
 	if ((dum_hcd->port_status & USB_PORT_STAT_SUSPEND) == 0 &&
 			 dum_hcd->rh_state != DUMMY_RH_SUSPENDED)
+=======
+static int dummy_g_get_frame (struct usb_gadget *_gadget)
+{
+	struct timeval	tv;
+
+	do_gettimeofday (&tv);
+	return tv.tv_usec / 1000;
+}
+
+static int dummy_wakeup (struct usb_gadget *_gadget)
+{
+	struct dummy	*dum;
+
+	dum = gadget_to_dummy (_gadget);
+	if (!(dum->devstatus &	( (1 << USB_DEVICE_B_HNP_ENABLE)
+				| (1 << USB_DEVICE_REMOTE_WAKEUP))))
+		return -EINVAL;
+	if ((dum->port_status & USB_PORT_STAT_CONNECTION) == 0)
+		return -ENOLINK;
+	if ((dum->port_status & USB_PORT_STAT_SUSPEND) == 0 &&
+			 dum->rh_state != DUMMY_RH_SUSPENDED)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 
 	/* FIXME: What if the root hub is suspended but the port isn't? */
 
 	/* hub notices our request, issues downstream resume, etc */
+<<<<<<< HEAD
 	dum_hcd->resuming = 1;
 	dum_hcd->re_timeout = jiffies + msecs_to_jiffies(20);
 	mod_timer(&dummy_hcd_to_hcd(dum_hcd)->rh_timer, dum_hcd->re_timeout);
@@ -802,6 +1241,19 @@ static int dummy_set_selfpowered(struct usb_gadget *_gadget, int value)
 	struct dummy	*dum;
 
 	dum = gadget_to_dummy_hcd(_gadget)->dum;
+=======
+	dum->resuming = 1;
+	dum->re_timeout = jiffies + msecs_to_jiffies(20);
+	mod_timer (&dummy_to_hcd (dum)->rh_timer, dum->re_timeout);
+	return 0;
+}
+
+static int dummy_set_selfpowered (struct usb_gadget *_gadget, int value)
+{
+	struct dummy	*dum;
+
+	dum = gadget_to_dummy (_gadget);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (value)
 		dum->devstatus |= (1 << USB_DEVICE_SELF_POWERED);
 	else
@@ -809,6 +1261,7 @@ static int dummy_set_selfpowered(struct usb_gadget *_gadget, int value)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void dummy_udc_update_ep0(struct dummy *dum)
 {
 	if (dum->gadget.speed == USB_SPEED_SUPER)
@@ -856,18 +1309,39 @@ static int dummy_udc_start(struct usb_gadget *g,
 static int dummy_udc_stop(struct usb_gadget *g,
 		struct usb_gadget_driver *driver);
 
+=======
+static int dummy_pullup (struct usb_gadget *_gadget, int value)
+{
+	struct dummy	*dum;
+	unsigned long	flags;
+
+	dum = gadget_to_dummy (_gadget);
+	spin_lock_irqsave (&dum->lock, flags);
+	dum->pullup = (value != 0);
+	set_link_state (dum);
+	spin_unlock_irqrestore (&dum->lock, flags);
+
+	usb_hcd_poll_rh_status (dummy_to_hcd (dum));
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct usb_gadget_ops dummy_ops = {
 	.get_frame	= dummy_g_get_frame,
 	.wakeup		= dummy_wakeup,
 	.set_selfpowered = dummy_set_selfpowered,
 	.pullup		= dummy_pullup,
+<<<<<<< HEAD
 	.udc_start	= dummy_udc_start,
 	.udc_stop	= dummy_udc_stop,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*-------------------------------------------------------------------------*/
 
 /* "function" sysfs attribute */
+<<<<<<< HEAD
 static ssize_t show_function(struct device *dev, struct device_attribute *attr,
 		char *buf)
 {
@@ -878,6 +1352,18 @@ static ssize_t show_function(struct device *dev, struct device_attribute *attr,
 	return scnprintf(buf, PAGE_SIZE, "%s\n", dum->driver->function);
 }
 static DEVICE_ATTR(function, S_IRUGO, show_function, NULL);
+=======
+static ssize_t
+show_function (struct device *dev, struct device_attribute *attr, char *buf)
+{
+	struct dummy	*dum = gadget_dev_to_dummy (dev);
+
+	if (!dum->driver || !dum->driver->function)
+		return 0;
+	return scnprintf (buf, PAGE_SIZE, "%s\n", dum->driver->function);
+}
+static DEVICE_ATTR (function, S_IRUGO, show_function, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*-------------------------------------------------------------------------*/
 
@@ -895,6 +1381,7 @@ static DEVICE_ATTR(function, S_IRUGO, show_function, NULL);
  * for each driver that registers:  just add to a big root hub.
  */
 
+<<<<<<< HEAD
 static int dummy_udc_start(struct usb_gadget *g,
 		struct usb_gadget_driver *driver)
 {
@@ -902,6 +1389,20 @@ static int dummy_udc_start(struct usb_gadget *g,
 	struct dummy		*dum = dum_hcd->dum;
 
 	if (driver->max_speed == USB_SPEED_UNKNOWN)
+=======
+int
+usb_gadget_probe_driver(struct usb_gadget_driver *driver,
+		int (*bind)(struct usb_gadget *))
+{
+	struct dummy	*dum = the_controller;
+	int		retval, i;
+
+	if (!dum)
+		return -EINVAL;
+	if (dum->driver)
+		return -EBUSY;
+	if (!bind || !driver->setup || driver->speed == USB_SPEED_UNKNOWN)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	/*
@@ -911,6 +1412,7 @@ static int dummy_udc_start(struct usb_gadget *g,
 
 	dum->devstatus = 0;
 
+<<<<<<< HEAD
 	dum->driver = driver;
 	dev_dbg(udc_dev(dum), "binding gadget driver '%s'\n",
 			driver->driver.name);
@@ -980,16 +1482,137 @@ static int dummy_udc_probe(struct platform_device *pdev)
 	dum->gadget.name = gadget_name;
 	dum->gadget.ops = &dummy_ops;
 	dum->gadget.max_speed = USB_SPEED_SUPER;
+=======
+	INIT_LIST_HEAD (&dum->gadget.ep_list);
+	for (i = 0; i < DUMMY_ENDPOINTS; i++) {
+		struct dummy_ep	*ep = &dum->ep [i];
+
+		if (!ep_name [i])
+			break;
+		ep->ep.name = ep_name [i];
+		ep->ep.ops = &dummy_ep_ops;
+		list_add_tail (&ep->ep.ep_list, &dum->gadget.ep_list);
+		ep->halted = ep->wedged = ep->already_seen =
+				ep->setup_stage = 0;
+		ep->ep.maxpacket = ~0;
+		ep->last_io = jiffies;
+		ep->gadget = &dum->gadget;
+		ep->desc = NULL;
+		INIT_LIST_HEAD (&ep->queue);
+	}
+
+	dum->gadget.ep0 = &dum->ep [0].ep;
+	dum->ep [0].ep.maxpacket = 64;
+	list_del_init (&dum->ep [0].ep.ep_list);
+	INIT_LIST_HEAD(&dum->fifo_req.queue);
+
+	driver->driver.bus = NULL;
+	dum->driver = driver;
+	dum->gadget.dev.driver = &driver->driver;
+	dev_dbg (udc_dev(dum), "binding gadget driver '%s'\n",
+			driver->driver.name);
+	retval = bind(&dum->gadget);
+	if (retval) {
+		dum->driver = NULL;
+		dum->gadget.dev.driver = NULL;
+		return retval;
+	}
+
+	/* khubd will enumerate this in a while */
+	spin_lock_irq (&dum->lock);
+	dum->pullup = 1;
+	set_link_state (dum);
+	spin_unlock_irq (&dum->lock);
+
+	usb_hcd_poll_rh_status (dummy_to_hcd (dum));
+	return 0;
+}
+EXPORT_SYMBOL(usb_gadget_probe_driver);
+
+int
+usb_gadget_unregister_driver (struct usb_gadget_driver *driver)
+{
+	struct dummy	*dum = the_controller;
+	unsigned long	flags;
+
+	if (!dum)
+		return -ENODEV;
+	if (!driver || driver != dum->driver || !driver->unbind)
+		return -EINVAL;
+
+	dev_dbg (udc_dev(dum), "unregister gadget driver '%s'\n",
+			driver->driver.name);
+
+	spin_lock_irqsave (&dum->lock, flags);
+	dum->pullup = 0;
+	set_link_state (dum);
+	spin_unlock_irqrestore (&dum->lock, flags);
+
+	driver->unbind (&dum->gadget);
+	dum->gadget.dev.driver = NULL;
+	dum->driver = NULL;
+
+	spin_lock_irqsave (&dum->lock, flags);
+	dum->pullup = 0;
+	set_link_state (dum);
+	spin_unlock_irqrestore (&dum->lock, flags);
+
+	usb_hcd_poll_rh_status (dummy_to_hcd (dum));
+	return 0;
+}
+EXPORT_SYMBOL (usb_gadget_unregister_driver);
+
+#undef is_enabled
+
+/* just declare this in any driver that really need it */
+extern int net2280_set_fifo_mode (struct usb_gadget *gadget, int mode);
+
+int net2280_set_fifo_mode (struct usb_gadget *gadget, int mode)
+{
+	return -ENOSYS;
+}
+EXPORT_SYMBOL (net2280_set_fifo_mode);
+
+
+/* The gadget structure is stored inside the hcd structure and will be
+ * released along with it. */
+static void
+dummy_gadget_release (struct device *dev)
+{
+	struct dummy	*dum = gadget_dev_to_dummy (dev);
+
+	usb_put_hcd (dummy_to_hcd (dum));
+}
+
+static int dummy_udc_probe (struct platform_device *pdev)
+{
+	struct dummy	*dum = the_controller;
+	int		rc;
+
+	usb_get_hcd(dummy_to_hcd(dum));
+
+	dum->gadget.name = gadget_name;
+	dum->gadget.ops = &dummy_ops;
+	dum->gadget.is_dualspeed = 1;
+
+	/* maybe claim OTG support, though we won't complete HNP */
+	dum->gadget.is_otg = (dummy_to_hcd(dum)->self.otg_port != 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_set_name(&dum->gadget.dev, "gadget");
 	dum->gadget.dev.parent = &pdev->dev;
 	dum->gadget.dev.release = dummy_gadget_release;
+<<<<<<< HEAD
 	rc = device_register(&dum->gadget.dev);
+=======
+	rc = device_register (&dum->gadget.dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc < 0) {
 		put_device(&dum->gadget.dev);
 		return rc;
 	}
 
+<<<<<<< HEAD
 	init_dummy_udc_hw(dum);
 
 	rc = usb_add_gadget_udc(&pdev->dev, &dum->gadget);
@@ -1048,6 +1671,51 @@ static int dummy_udc_resume(struct platform_device *pdev)
 	dev_dbg(&pdev->dev, "%s\n", __func__);
 	dummy_udc_pm(dum, dum_hcd, 0);
 	usb_hcd_poll_rh_status(dummy_hcd_to_hcd(dum_hcd));
+=======
+	rc = device_create_file (&dum->gadget.dev, &dev_attr_function);
+	if (rc < 0)
+		device_unregister (&dum->gadget.dev);
+	else
+		platform_set_drvdata(pdev, dum);
+	return rc;
+}
+
+static int dummy_udc_remove (struct platform_device *pdev)
+{
+	struct dummy	*dum = platform_get_drvdata (pdev);
+
+	platform_set_drvdata (pdev, NULL);
+	device_remove_file (&dum->gadget.dev, &dev_attr_function);
+	device_unregister (&dum->gadget.dev);
+	return 0;
+}
+
+static int dummy_udc_suspend (struct platform_device *pdev, pm_message_t state)
+{
+	struct dummy	*dum = platform_get_drvdata(pdev);
+
+	dev_dbg (&pdev->dev, "%s\n", __func__);
+	spin_lock_irq (&dum->lock);
+	dum->udc_suspended = 1;
+	set_link_state (dum);
+	spin_unlock_irq (&dum->lock);
+
+	usb_hcd_poll_rh_status (dummy_to_hcd (dum));
+	return 0;
+}
+
+static int dummy_udc_resume (struct platform_device *pdev)
+{
+	struct dummy	*dum = platform_get_drvdata(pdev);
+
+	dev_dbg (&pdev->dev, "%s\n", __func__);
+	spin_lock_irq (&dum->lock);
+	dum->udc_suspended = 0;
+	set_link_state (dum);
+	spin_unlock_irq (&dum->lock);
+
+	usb_hcd_poll_rh_status (dummy_to_hcd (dum));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1064,6 +1732,7 @@ static struct platform_driver dummy_udc_driver = {
 
 /*-------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 static unsigned int dummy_get_ep_idx(const struct usb_endpoint_descriptor *desc)
 {
 	unsigned int index;
@@ -1074,6 +1743,8 @@ static unsigned int dummy_get_ep_idx(const struct usb_endpoint_descriptor *desc)
 	return index;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* MASTER/HOST SIDE DRIVER
  *
  * this uses the hcd framework to hook up to host side drivers.
@@ -1086,6 +1757,7 @@ static unsigned int dummy_get_ep_idx(const struct usb_endpoint_descriptor *desc)
  * usb 2.0 rules.
  */
 
+<<<<<<< HEAD
 static int dummy_ep_stream_en(struct dummy_hcd *dum_hcd, struct urb *urb)
 {
 	const struct usb_endpoint_descriptor *desc = &urb->ep->desc;
@@ -1162,15 +1834,23 @@ static int dummy_validate_stream(struct dummy_hcd *dum_hcd, struct urb *urb)
 }
 
 static int dummy_urb_enqueue(
+=======
+static int dummy_urb_enqueue (
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct usb_hcd			*hcd,
 	struct urb			*urb,
 	gfp_t				mem_flags
 ) {
+<<<<<<< HEAD
 	struct dummy_hcd *dum_hcd;
+=======
+	struct dummy	*dum;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct urbp	*urbp;
 	unsigned long	flags;
 	int		rc;
 
+<<<<<<< HEAD
 	urbp = kmalloc(sizeof *urbp, mem_flags);
 	if (!urbp)
 		return -ENOMEM;
@@ -1186,12 +1866,25 @@ static int dummy_urb_enqueue(
 		goto done;
 	}
 
+=======
+	if (!urb->transfer_buffer && urb->transfer_buffer_length)
+		return -EINVAL;
+
+	urbp = kmalloc (sizeof *urbp, mem_flags);
+	if (!urbp)
+		return -ENOMEM;
+	urbp->urb = urb;
+
+	dum = hcd_to_dummy (hcd);
+	spin_lock_irqsave (&dum->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = usb_hcd_link_urb_to_ep(hcd, urb);
 	if (rc) {
 		kfree(urbp);
 		goto done;
 	}
 
+<<<<<<< HEAD
 	if (!dum_hcd->udev) {
 		dum_hcd->udev = urb->dev;
 		usb_get_dev(dum_hcd->udev);
@@ -1209,17 +1902,41 @@ static int dummy_urb_enqueue(
 
  done:
 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
+=======
+	if (!dum->udev) {
+		dum->udev = urb->dev;
+		usb_get_dev (dum->udev);
+	} else if (unlikely (dum->udev != urb->dev))
+		dev_err (dummy_dev(dum), "usb_device address has changed!\n");
+
+	list_add_tail (&urbp->urbp_list, &dum->urbp_list);
+	urb->hcpriv = urbp;
+	if (usb_pipetype (urb->pipe) == PIPE_CONTROL)
+		urb->error_count = 1;		/* mark as a new urb */
+
+	/* kick the scheduler, it'll do the rest */
+	if (!timer_pending (&dum->timer))
+		mod_timer (&dum->timer, jiffies + 1);
+
+ done:
+	spin_unlock_irqrestore(&dum->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
 static int dummy_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
 {
+<<<<<<< HEAD
 	struct dummy_hcd *dum_hcd;
+=======
+	struct dummy	*dum;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long	flags;
 	int		rc;
 
 	/* giveback happens automatically in timer callback,
 	 * so make sure the callback happens */
+<<<<<<< HEAD
 	dum_hcd = hcd_to_dummy_hcd(hcd);
 	spin_lock_irqsave(&dum_hcd->dum->lock, flags);
 
@@ -1303,20 +2020,46 @@ static int transfer(struct dummy_hcd *dum_hcd, struct urb *urb,
 		struct dummy_ep *ep, int limit, int *status)
 {
 	struct dummy		*dum = dum_hcd->dum;
+=======
+	dum = hcd_to_dummy (hcd);
+	spin_lock_irqsave (&dum->lock, flags);
+
+	rc = usb_hcd_check_unlink_urb(hcd, urb, status);
+	if (!rc && dum->rh_state != DUMMY_RH_RUNNING &&
+			!list_empty(&dum->urbp_list))
+		mod_timer (&dum->timer, jiffies);
+
+	spin_unlock_irqrestore (&dum->lock, flags);
+	return rc;
+}
+
+/* transfer up to a frame's worth; caller must own lock */
+static int
+transfer(struct dummy *dum, struct urb *urb, struct dummy_ep *ep, int limit,
+		int *status)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dummy_request	*req;
 
 top:
 	/* if there's no request queued, the device is NAKing; return */
+<<<<<<< HEAD
 	list_for_each_entry(req, &ep->queue, queue) {
+=======
+	list_for_each_entry (req, &ep->queue, queue) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned	host_len, dev_len, len;
 		int		is_short, to_host;
 		int		rescan = 0;
 
+<<<<<<< HEAD
 		if (dummy_ep_stream_en(dum_hcd, urb)) {
 			if ((urb->stream_id != req->req.stream_id))
 				continue;
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* 1..N packets of ep->ep.maxpacket each ... the last one
 		 * may be short (including zero length).
 		 *
@@ -1326,6 +2069,7 @@ top:
 		 */
 		host_len = urb->transfer_buffer_length - urb->actual_length;
 		dev_len = req->req.length - req->req.actual;
+<<<<<<< HEAD
 		len = min(host_len, dev_len);
 
 		/* FIXME update emulated data toggle too */
@@ -1338,6 +2082,22 @@ top:
 			if (limit < ep->ep.maxpacket && limit < len)
 				break;
 			len = min_t(unsigned, len, limit);
+=======
+		len = min (host_len, dev_len);
+
+		/* FIXME update emulated data toggle too */
+
+		to_host = usb_pipein (urb->pipe);
+		if (unlikely (len == 0))
+			is_short = 1;
+		else {
+			char		*ubuf, *rbuf;
+
+			/* not enough bandwidth left? */
+			if (limit < ep->ep.maxpacket && limit < len)
+				break;
+			len = min (len, (unsigned) limit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (len == 0)
 				break;
 
@@ -1348,6 +2108,7 @@ top:
 			}
 			is_short = (len % ep->ep.maxpacket) != 0;
 
+<<<<<<< HEAD
 			len = dummy_perform_transfer(urb, req, len);
 
 			ep->last_io = jiffies;
@@ -1358,6 +2119,20 @@ top:
 				urb->actual_length += len;
 				req->req.actual += len;
 			}
+=======
+			/* else transfer packet(s) */
+			ubuf = urb->transfer_buffer + urb->actual_length;
+			rbuf = req->req.buf + req->req.actual;
+			if (to_host)
+				memcpy (ubuf, rbuf, len);
+			else
+				memcpy (rbuf, ubuf, len);
+			ep->last_io = jiffies;
+
+			limit -= len;
+			urb->actual_length += len;
+			req->req.actual += len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/* short packets terminate, maybe with overflow/underflow.
@@ -1398,11 +2173,19 @@ top:
 
 		/* device side completion --> continuable */
 		if (req->req.status != -EINPROGRESS) {
+<<<<<<< HEAD
 			list_del_init(&req->queue);
 
 			spin_unlock(&dum->lock);
 			req->req.complete(&ep->ep, &req->req);
 			spin_lock(&dum->lock);
+=======
+			list_del_init (&req->queue);
+
+			spin_unlock (&dum->lock);
+			req->req.complete (&ep->ep, &req->req);
+			spin_lock (&dum->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* requests might have been unlinked... */
 			rescan = 1;
@@ -1419,7 +2202,11 @@ top:
 	return limit;
 }
 
+<<<<<<< HEAD
 static int periodic_bytes(struct dummy *dum, struct dummy_ep *ep)
+=======
+static int periodic_bytes (struct dummy *dum, struct dummy_ep *ep)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int	limit = ep->ep.maxpacket;
 
@@ -1427,11 +2214,16 @@ static int periodic_bytes(struct dummy *dum, struct dummy_ep *ep)
 		int	tmp;
 
 		/* high bandwidth mode */
+<<<<<<< HEAD
 		tmp = usb_endpoint_maxp(ep->desc);
+=======
+		tmp = le16_to_cpu(ep->desc->wMaxPacketSize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tmp = (tmp >> 11) & 0x03;
 		tmp *= 8 /* applies to entire frame */;
 		limit += limit * tmp;
 	}
+<<<<<<< HEAD
 	if (dum->gadget.speed == USB_SPEED_SUPER) {
 		switch (usb_endpoint_type(ep->desc)) {
 		case USB_ENDPOINT_XFER_ISOC:
@@ -1451,10 +2243,17 @@ static int periodic_bytes(struct dummy *dum, struct dummy_ep *ep)
 }
 
 #define is_active(dum_hcd)	((dum_hcd->port_status & \
+=======
+	return limit;
+}
+
+#define is_active(dum)	((dum->port_status & \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		(USB_PORT_STAT_CONNECTION | USB_PORT_STAT_ENABLE | \
 			USB_PORT_STAT_SUSPEND)) \
 		== (USB_PORT_STAT_CONNECTION | USB_PORT_STAT_ENABLE))
 
+<<<<<<< HEAD
 static struct dummy_ep *find_endpoint(struct dummy *dum, u8 address)
 {
 	int		i;
@@ -1466,6 +2265,18 @@ static struct dummy_ep *find_endpoint(struct dummy *dum, u8 address)
 		return &dum->ep[0];
 	for (i = 1; i < DUMMY_ENDPOINTS; i++) {
 		struct dummy_ep	*ep = &dum->ep[i];
+=======
+static struct dummy_ep *find_endpoint (struct dummy *dum, u8 address)
+{
+	int		i;
+
+	if (!is_active (dum))
+		return NULL;
+	if ((address & ~USB_DIR_IN) == 0)
+		return &dum->ep [0];
+	for (i = 1; i < DUMMY_ENDPOINTS; i++) {
+		struct dummy_ep	*ep = &dum->ep [i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (!ep->desc)
 			continue;
@@ -1497,12 +2308,19 @@ static struct dummy_ep *find_endpoint(struct dummy *dum, u8 address)
  *	  1 - if the request wasn't handles
  *	  error code on error
  */
+<<<<<<< HEAD
 static int handle_control_request(struct dummy_hcd *dum_hcd, struct urb *urb,
+=======
+static int handle_control_request(struct dummy *dum, struct urb *urb,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  struct usb_ctrlrequest *setup,
 				  int *status)
 {
 	struct dummy_ep		*ep2;
+<<<<<<< HEAD
 	struct dummy		*dum = dum_hcd->dum;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			ret_val = 1;
 	unsigned	w_index;
 	unsigned	w_value;
@@ -1534,6 +2352,7 @@ static int handle_control_request(struct dummy_hcd *dum_hcd, struct urb *urb,
 			case USB_DEVICE_A_ALT_HNP_SUPPORT:
 				dum->gadget.a_alt_hnp_support = 1;
 				break;
+<<<<<<< HEAD
 			case USB_DEVICE_U1_ENABLE:
 				if (dummy_hcd_to_hcd(dum_hcd)->speed ==
 				    HCD_USB3)
@@ -1555,6 +2374,8 @@ static int handle_control_request(struct dummy_hcd *dum_hcd, struct urb *urb,
 				else
 					ret_val = -EOPNOTSUPP;
 				break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			default:
 				ret_val = -EOPNOTSUPP;
 			}
@@ -1581,6 +2402,7 @@ static int handle_control_request(struct dummy_hcd *dum_hcd, struct urb *urb,
 			case USB_DEVICE_REMOTE_WAKEUP:
 				w_value = USB_DEVICE_REMOTE_WAKEUP;
 				break;
+<<<<<<< HEAD
 			case USB_DEVICE_U1_ENABLE:
 				if (dummy_hcd_to_hcd(dum_hcd)->speed ==
 				    HCD_USB3)
@@ -1602,6 +2424,8 @@ static int handle_control_request(struct dummy_hcd *dum_hcd, struct urb *urb,
 				else
 					ret_val = -EOPNOTSUPP;
 				break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			default:
 				ret_val = -EOPNOTSUPP;
 				break;
@@ -1663,10 +2487,16 @@ static int handle_control_request(struct dummy_hcd *dum_hcd, struct urb *urb,
 /* drive both sides of the transfers; looks like irq handlers to
  * both drivers except the callbacks aren't in_irq().
  */
+<<<<<<< HEAD
 static void dummy_timer(unsigned long _dum_hcd)
 {
 	struct dummy_hcd	*dum_hcd = (struct dummy_hcd *) _dum_hcd;
 	struct dummy		*dum = dum_hcd->dum;
+=======
+static void dummy_timer (unsigned long _dum)
+{
+	struct dummy		*dum = (struct dummy *) _dum;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct urbp		*urbp, *tmp;
 	unsigned long		flags;
 	int			limit, total;
@@ -1683,28 +2513,43 @@ static void dummy_timer(unsigned long _dum_hcd)
 	case USB_SPEED_HIGH:
 		total = 512/*bytes*/ * 13/*packets*/ * 8/*uframes*/;
 		break;
+<<<<<<< HEAD
 	case USB_SPEED_SUPER:
 		/* Bus speed is 500000 bytes/ms, so use a little less */
 		total = 490000;
 		break;
 	default:
 		dev_err(dummy_dev(dum_hcd), "bogus device speed\n");
+=======
+	default:
+		dev_err (dummy_dev(dum), "bogus device speed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
 	/* FIXME if HZ != 1000 this will probably misbehave ... */
 
 	/* look at each urb queued by the host side driver */
+<<<<<<< HEAD
 	spin_lock_irqsave(&dum->lock, flags);
 
 	if (!dum_hcd->udev) {
 		dev_err(dummy_dev(dum_hcd),
 				"timer fired with no URBs pending?\n");
 		spin_unlock_irqrestore(&dum->lock, flags);
+=======
+	spin_lock_irqsave (&dum->lock, flags);
+
+	if (!dum->udev) {
+		dev_err (dummy_dev(dum),
+				"timer fired with no URBs pending?\n");
+		spin_unlock_irqrestore (&dum->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
 	for (i = 0; i < DUMMY_ENDPOINTS; i++) {
+<<<<<<< HEAD
 		if (!ep_name[i])
 			break;
 		dum->ep[i].already_seen = 0;
@@ -1712,6 +2557,15 @@ static void dummy_timer(unsigned long _dum_hcd)
 
 restart:
 	list_for_each_entry_safe(urbp, tmp, &dum_hcd->urbp_list, urbp_list) {
+=======
+		if (!ep_name [i])
+			break;
+		dum->ep [i].already_seen = 0;
+	}
+
+restart:
+	list_for_each_entry_safe (urbp, tmp, &dum->urbp_list, urbp_list) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct urb		*urb;
 		struct dummy_request	*req;
 		u8			address;
@@ -1722,9 +2576,15 @@ restart:
 		urb = urbp->urb;
 		if (urb->unlinked)
 			goto return_urb;
+<<<<<<< HEAD
 		else if (dum_hcd->rh_state != DUMMY_RH_RUNNING)
 			continue;
 		type = usb_pipetype(urb->pipe);
+=======
+		else if (dum->rh_state != DUMMY_RH_RUNNING)
+			continue;
+		type = usb_pipetype (urb->pipe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* used up this frame's non-periodic bandwidth?
 		 * FIXME there's infinite bandwidth for control and
@@ -1735,12 +2595,20 @@ restart:
 
 		/* find the gadget's ep for this request (if configured) */
 		address = usb_pipeendpoint (urb->pipe);
+<<<<<<< HEAD
 		if (usb_pipein(urb->pipe))
+=======
+		if (usb_pipein (urb->pipe))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			address |= USB_DIR_IN;
 		ep = find_endpoint(dum, address);
 		if (!ep) {
 			/* set_configuration() disagreement */
+<<<<<<< HEAD
 			dev_dbg(dummy_dev(dum_hcd),
+=======
+			dev_dbg (dummy_dev(dum),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"no ep configured for urb %p\n",
 				urb);
 			status = -EPROTO;
@@ -1750,13 +2618,21 @@ restart:
 		if (ep->already_seen)
 			continue;
 		ep->already_seen = 1;
+<<<<<<< HEAD
 		if (ep == &dum->ep[0] && urb->error_count) {
+=======
+		if (ep == &dum->ep [0] && urb->error_count) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ep->setup_stage = 1;	/* a new urb */
 			urb->error_count = 0;
 		}
 		if (ep->halted && !ep->setup_stage) {
 			/* NOTE: must not be iso! */
+<<<<<<< HEAD
 			dev_dbg(dummy_dev(dum_hcd), "ep %s halted, urb %p\n",
+=======
+			dev_dbg (dummy_dev(dum), "ep %s halted, urb %p\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					ep->ep.name, urb);
 			status = -EPIPE;
 			goto return_urb;
@@ -1764,6 +2640,7 @@ restart:
 		/* FIXME make sure both ends agree on maxpacket */
 
 		/* handle control requests */
+<<<<<<< HEAD
 		if (ep == &dum->ep[0] && ep->setup_stage) {
 			struct usb_ctrlrequest		setup;
 			int				value = 1;
@@ -1779,6 +2656,23 @@ restart:
 				spin_unlock(&dum->lock);
 				req->req.complete(&ep->ep, &req->req);
 				spin_lock(&dum->lock);
+=======
+		if (ep == &dum->ep [0] && ep->setup_stage) {
+			struct usb_ctrlrequest		setup;
+			int				value = 1;
+
+			setup = *(struct usb_ctrlrequest*) urb->setup_packet;
+			/* paranoia, in case of stale queued data */
+			list_for_each_entry (req, &ep->queue, queue) {
+				list_del_init (&req->queue);
+				req->req.status = -EOVERFLOW;
+				dev_dbg (udc_dev(dum), "stale req = %p\n",
+						req);
+
+				spin_unlock (&dum->lock);
+				req->req.complete (&ep->ep, &req->req);
+				spin_lock (&dum->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ep->already_seen = 0;
 				goto restart;
 			}
@@ -1791,17 +2685,28 @@ restart:
 			ep->setup_stage = 0;
 			ep->halted = 0;
 
+<<<<<<< HEAD
 			value = handle_control_request(dum_hcd, urb, &setup,
+=======
+			value = handle_control_request(dum, urb, &setup,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						       &status);
 
 			/* gadget driver handles all other requests.  block
 			 * until setup() returns; no reentrancy issues etc.
 			 */
 			if (value > 0) {
+<<<<<<< HEAD
 				spin_unlock(&dum->lock);
 				value = dum->driver->setup(&dum->gadget,
 						&setup);
 				spin_lock(&dum->lock);
+=======
+				spin_unlock (&dum->lock);
+				value = dum->driver->setup (&dum->gadget,
+						&setup);
+				spin_lock (&dum->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				if (value >= 0) {
 					/* no delays (max 64KB data stage) */
@@ -1813,7 +2718,11 @@ restart:
 
 			if (value < 0) {
 				if (value != -EOPNOTSUPP)
+<<<<<<< HEAD
 					dev_dbg(udc_dev(dum),
+=======
+					dev_dbg (udc_dev(dum),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						"setup --> %d\n",
 						value);
 				status = -EPIPE;
@@ -1825,14 +2734,22 @@ restart:
 
 		/* non-control requests */
 		limit = total;
+<<<<<<< HEAD
 		switch (usb_pipetype(urb->pipe)) {
+=======
+		switch (usb_pipetype (urb->pipe)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case PIPE_ISOCHRONOUS:
 			/* FIXME is it urb->interval since the last xfer?
 			 * use urb->iso_frame_desc[i].
 			 * complete whether or not ep has requests queued.
 			 * report random errors, to debug drivers.
 			 */
+<<<<<<< HEAD
 			limit = max(limit, periodic_bytes(dum, ep));
+=======
+			limit = max (limit, periodic_bytes (dum, ep));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			status = -ENOSYS;
 			break;
 
@@ -1840,6 +2757,7 @@ restart:
 			/* FIXME is it urb->interval since the last xfer?
 			 * this almost certainly polls too fast.
 			 */
+<<<<<<< HEAD
 			limit = max(limit, periodic_bytes(dum, ep));
 			/* FALLTHROUGH */
 
@@ -1847,6 +2765,16 @@ restart:
 treat_control_like_bulk:
 			ep->last_io = jiffies;
 			total = transfer(dum_hcd, urb, ep, limit, &status);
+=======
+			limit = max (limit, periodic_bytes (dum, ep));
+			/* FALLTHROUGH */
+
+		// case PIPE_BULK:  case PIPE_CONTROL:
+		default:
+		treat_control_like_bulk:
+			ep->last_io = jiffies;
+			total = transfer(dum, urb, ep, limit, &status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 
@@ -1855,6 +2783,7 @@ treat_control_like_bulk:
 			continue;
 
 return_urb:
+<<<<<<< HEAD
 		list_del(&urbp->urbp_list);
 		kfree(urbp);
 		if (ep)
@@ -1864,10 +2793,22 @@ return_urb:
 		spin_unlock(&dum->lock);
 		usb_hcd_giveback_urb(dummy_hcd_to_hcd(dum_hcd), urb, status);
 		spin_lock(&dum->lock);
+=======
+		list_del (&urbp->urbp_list);
+		kfree (urbp);
+		if (ep)
+			ep->already_seen = ep->setup_stage = 0;
+
+		usb_hcd_unlink_urb_from_ep(dummy_to_hcd(dum), urb);
+		spin_unlock (&dum->lock);
+		usb_hcd_giveback_urb(dummy_to_hcd(dum), urb, status);
+		spin_lock (&dum->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		goto restart;
 	}
 
+<<<<<<< HEAD
 	if (list_empty(&dum_hcd->urbp_list)) {
 		usb_put_dev(dum_hcd->udev);
 		dum_hcd->udev = NULL;
@@ -1877,6 +2818,17 @@ return_urb:
 	}
 
 	spin_unlock_irqrestore(&dum->lock, flags);
+=======
+	if (list_empty (&dum->urbp_list)) {
+		usb_put_dev (dum->udev);
+		dum->udev = NULL;
+	} else if (dum->rh_state == DUMMY_RH_RUNNING) {
+		/* want a 1 msec delay here */
+		mod_timer (&dum->timer, jiffies + msecs_to_jiffies(1));
+	}
+
+	spin_unlock_irqrestore (&dum->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*-------------------------------------------------------------------------*/
@@ -1888,6 +2840,7 @@ return_urb:
 	| USB_PORT_STAT_C_OVERCURRENT \
 	| USB_PORT_STAT_C_RESET) << 16)
 
+<<<<<<< HEAD
 static int dummy_hub_status(struct usb_hcd *hcd, char *buf)
 {
 	struct dummy_hcd	*dum_hcd;
@@ -1916,10 +2869,41 @@ static int dummy_hub_status(struct usb_hcd *hcd, char *buf)
 	}
 done:
 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
+=======
+static int dummy_hub_status (struct usb_hcd *hcd, char *buf)
+{
+	struct dummy		*dum;
+	unsigned long		flags;
+	int			retval = 0;
+
+	dum = hcd_to_dummy (hcd);
+
+	spin_lock_irqsave (&dum->lock, flags);
+	if (!HCD_HW_ACCESSIBLE(hcd))
+		goto done;
+
+	if (dum->resuming && time_after_eq (jiffies, dum->re_timeout)) {
+		dum->port_status |= (USB_PORT_STAT_C_SUSPEND << 16);
+		dum->port_status &= ~USB_PORT_STAT_SUSPEND;
+		set_link_state (dum);
+	}
+
+	if ((dum->port_status & PORT_C_MASK) != 0) {
+		*buf = (1 << 1);
+		dev_dbg (dummy_dev(dum), "port status 0x%08x has changes\n",
+				dum->port_status);
+		retval = 1;
+		if (dum->rh_state == DUMMY_RH_SUSPENDED)
+			usb_hcd_resume_root_hub (hcd);
+	}
+done:
+	spin_unlock_irqrestore (&dum->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return retval;
 }
 
 static inline void
+<<<<<<< HEAD
 ss_hub_descriptor(struct usb_hub_descriptor *desc)
 {
 	memset(desc, 0, sizeof *desc);
@@ -1934,6 +2918,11 @@ ss_hub_descriptor(struct usb_hub_descriptor *desc)
 static inline void hub_descriptor(struct usb_hub_descriptor *desc)
 {
 	memset(desc, 0, sizeof *desc);
+=======
+hub_descriptor (struct usb_hub_descriptor *desc)
+{
+	memset (desc, 0, sizeof *desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	desc->bDescriptorType = 0x29;
 	desc->bDescLength = 9;
 	desc->wHubCharacteristics = cpu_to_le16(0x0001);
@@ -1942,7 +2931,11 @@ static inline void hub_descriptor(struct usb_hub_descriptor *desc)
 	desc->u.hs.DeviceRemovable[1] = 0xff;
 }
 
+<<<<<<< HEAD
 static int dummy_hub_control(
+=======
+static int dummy_hub_control (
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct usb_hcd	*hcd,
 	u16		typeReq,
 	u16		wValue,
@@ -1950,22 +2943,32 @@ static int dummy_hub_control(
 	char		*buf,
 	u16		wLength
 ) {
+<<<<<<< HEAD
 	struct dummy_hcd *dum_hcd;
+=======
+	struct dummy	*dum;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int		retval = 0;
 	unsigned long	flags;
 
 	if (!HCD_HW_ACCESSIBLE(hcd))
 		return -ETIMEDOUT;
 
+<<<<<<< HEAD
 	dum_hcd = hcd_to_dummy_hcd(hcd);
 
 	spin_lock_irqsave(&dum_hcd->dum->lock, flags);
+=======
+	dum = hcd_to_dummy (hcd);
+	spin_lock_irqsave (&dum->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (typeReq) {
 	case ClearHubFeature:
 		break;
 	case ClearPortFeature:
 		switch (wValue) {
 		case USB_PORT_FEAT_SUSPEND:
+<<<<<<< HEAD
 			if (hcd->speed == HCD_USB3) {
 				dev_dbg(dummy_dev(dum_hcd),
 					 "USB_PORT_FEAT_SUSPEND req not "
@@ -1976,10 +2979,17 @@ static int dummy_hub_control(
 				/* 20msec resume signaling */
 				dum_hcd->resuming = 1;
 				dum_hcd->re_timeout = jiffies +
+=======
+			if (dum->port_status & USB_PORT_STAT_SUSPEND) {
+				/* 20msec resume signaling */
+				dum->resuming = 1;
+				dum->re_timeout = jiffies +
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						msecs_to_jiffies(20);
 			}
 			break;
 		case USB_PORT_FEAT_POWER:
+<<<<<<< HEAD
 			if (hcd->speed == HCD_USB3) {
 				if (dum_hcd->port_status & USB_PORT_STAT_POWER)
 					dev_dbg(dummy_dev(dum_hcd),
@@ -2011,6 +3021,21 @@ static int dummy_hub_control(
 		break;
 	case GetHubStatus:
 		*(__le32 *) buf = cpu_to_le32(0);
+=======
+			if (dum->port_status & USB_PORT_STAT_POWER)
+				dev_dbg (dummy_dev(dum), "power-off\n");
+			/* FALLS THROUGH */
+		default:
+			dum->port_status &= ~(1 << wValue);
+			set_link_state (dum);
+		}
+		break;
+	case GetHubDescriptor:
+		hub_descriptor ((struct usb_hub_descriptor *) buf);
+		break;
+	case GetHubStatus:
+		*(__le32 *) buf = cpu_to_le32 (0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case GetPortStatus:
 		if (wIndex != 1)
@@ -2019,6 +3044,7 @@ static int dummy_hub_control(
 		/* whoever resets or resumes must GetPortStatus to
 		 * complete it!!
 		 */
+<<<<<<< HEAD
 		if (dum_hcd->resuming &&
 				time_after_eq(jiffies, dum_hcd->re_timeout)) {
 			dum_hcd->port_status |= (USB_PORT_STAT_C_SUSPEND << 16);
@@ -2054,12 +3080,48 @@ static int dummy_hub_control(
 		set_link_state(dum_hcd);
 		((__le16 *) buf)[0] = cpu_to_le16(dum_hcd->port_status);
 		((__le16 *) buf)[1] = cpu_to_le16(dum_hcd->port_status >> 16);
+=======
+		if (dum->resuming &&
+				time_after_eq (jiffies, dum->re_timeout)) {
+			dum->port_status |= (USB_PORT_STAT_C_SUSPEND << 16);
+			dum->port_status &= ~USB_PORT_STAT_SUSPEND;
+		}
+		if ((dum->port_status & USB_PORT_STAT_RESET) != 0 &&
+				time_after_eq (jiffies, dum->re_timeout)) {
+			dum->port_status |= (USB_PORT_STAT_C_RESET << 16);
+			dum->port_status &= ~USB_PORT_STAT_RESET;
+			if (dum->pullup) {
+				dum->port_status |= USB_PORT_STAT_ENABLE;
+				/* give it the best speed we agree on */
+				dum->gadget.speed = dum->driver->speed;
+				dum->gadget.ep0->maxpacket = 64;
+				switch (dum->gadget.speed) {
+				case USB_SPEED_HIGH:
+					dum->port_status |=
+						USB_PORT_STAT_HIGH_SPEED;
+					break;
+				case USB_SPEED_LOW:
+					dum->gadget.ep0->maxpacket = 8;
+					dum->port_status |=
+						USB_PORT_STAT_LOW_SPEED;
+					break;
+				default:
+					dum->gadget.speed = USB_SPEED_FULL;
+					break;
+				}
+			}
+		}
+		set_link_state (dum);
+		((__le16 *) buf)[0] = cpu_to_le16 (dum->port_status);
+		((__le16 *) buf)[1] = cpu_to_le16 (dum->port_status >> 16);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case SetHubFeature:
 		retval = -EPIPE;
 		break;
 	case SetPortFeature:
 		switch (wValue) {
+<<<<<<< HEAD
 		case USB_PORT_FEAT_LINK_STATE:
 			if (hcd->speed != HCD_USB3) {
 				dev_dbg(dummy_dev(dum_hcd),
@@ -2092,18 +3154,31 @@ static int dummy_hub_control(
 			}
 			if (dum_hcd->active) {
 				dum_hcd->port_status |= USB_PORT_STAT_SUSPEND;
+=======
+		case USB_PORT_FEAT_SUSPEND:
+			if (dum->active) {
+				dum->port_status |= USB_PORT_STAT_SUSPEND;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				/* HNP would happen here; for now we
 				 * assume b_bus_req is always true.
 				 */
+<<<<<<< HEAD
 				set_link_state(dum_hcd);
 				if (((1 << USB_DEVICE_B_HNP_ENABLE)
 						& dum_hcd->dum->devstatus) != 0)
 					dev_dbg(dummy_dev(dum_hcd),
+=======
+				set_link_state (dum);
+				if (((1 << USB_DEVICE_B_HNP_ENABLE)
+						& dum->devstatus) != 0)
+					dev_dbg (dummy_dev(dum),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 							"no HNP yet!\n");
 			}
 			break;
 		case USB_PORT_FEAT_POWER:
+<<<<<<< HEAD
 			if (hcd->speed == HCD_USB3)
 				dum_hcd->port_status |= USB_SS_PORT_STAT_POWER;
 			else
@@ -2223,11 +3298,81 @@ static int dummy_bus_resume(struct usb_hcd *hcd)
 		hcd->state = HC_STATE_RUNNING;
 	}
 	spin_unlock_irq(&dum_hcd->dum->lock);
+=======
+			dum->port_status |= USB_PORT_STAT_POWER;
+			set_link_state (dum);
+			break;
+		case USB_PORT_FEAT_RESET:
+			/* if it's already enabled, disable */
+			dum->port_status &= ~(USB_PORT_STAT_ENABLE
+					| USB_PORT_STAT_LOW_SPEED
+					| USB_PORT_STAT_HIGH_SPEED);
+			dum->devstatus = 0;
+			/* 50msec reset signaling */
+			dum->re_timeout = jiffies + msecs_to_jiffies(50);
+			/* FALLS THROUGH */
+		default:
+			if ((dum->port_status & USB_PORT_STAT_POWER) != 0) {
+				dum->port_status |= (1 << wValue);
+				set_link_state (dum);
+			}
+		}
+		break;
+
+	default:
+		dev_dbg (dummy_dev(dum),
+			"hub control req%04x v%04x i%04x l%d\n",
+			typeReq, wValue, wIndex, wLength);
+
+		/* "protocol stall" on error */
+		retval = -EPIPE;
+	}
+	spin_unlock_irqrestore (&dum->lock, flags);
+
+	if ((dum->port_status & PORT_C_MASK) != 0)
+		usb_hcd_poll_rh_status (hcd);
+	return retval;
+}
+
+static int dummy_bus_suspend (struct usb_hcd *hcd)
+{
+	struct dummy *dum = hcd_to_dummy (hcd);
+
+	dev_dbg (&hcd->self.root_hub->dev, "%s\n", __func__);
+
+	spin_lock_irq (&dum->lock);
+	dum->rh_state = DUMMY_RH_SUSPENDED;
+	set_link_state (dum);
+	hcd->state = HC_STATE_SUSPENDED;
+	spin_unlock_irq (&dum->lock);
+	return 0;
+}
+
+static int dummy_bus_resume (struct usb_hcd *hcd)
+{
+	struct dummy *dum = hcd_to_dummy (hcd);
+	int rc = 0;
+
+	dev_dbg (&hcd->self.root_hub->dev, "%s\n", __func__);
+
+	spin_lock_irq (&dum->lock);
+	if (!HCD_HW_ACCESSIBLE(hcd)) {
+		rc = -ESHUTDOWN;
+	} else {
+		dum->rh_state = DUMMY_RH_RUNNING;
+		set_link_state (dum);
+		if (!list_empty(&dum->urbp_list))
+			mod_timer (&dum->timer, jiffies);
+		hcd->state = HC_STATE_RUNNING;
+	}
+	spin_unlock_irq (&dum->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
 /*-------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 static inline ssize_t show_urb(char *buf, size_t size, struct urb *urb)
 {
 	int ep = usb_pipeendpoint(urb->pipe);
@@ -2277,10 +3422,44 @@ static ssize_t show_urbs(struct device *dev, struct device_attribute *attr,
 {
 	struct usb_hcd		*hcd = dev_get_drvdata(dev);
 	struct dummy_hcd	*dum_hcd = hcd_to_dummy_hcd(hcd);
+=======
+static inline ssize_t
+show_urb (char *buf, size_t size, struct urb *urb)
+{
+	int ep = usb_pipeendpoint (urb->pipe);
+
+	return snprintf (buf, size,
+		"urb/%p %s ep%d%s%s len %d/%d\n",
+		urb,
+		({ char *s;
+		 switch (urb->dev->speed) {
+		 case USB_SPEED_LOW:	s = "ls"; break;
+		 case USB_SPEED_FULL:	s = "fs"; break;
+		 case USB_SPEED_HIGH:	s = "hs"; break;
+		 default:		s = "?"; break;
+		 }; s; }),
+		ep, ep ? (usb_pipein (urb->pipe) ? "in" : "out") : "",
+		({ char *s; \
+		 switch (usb_pipetype (urb->pipe)) { \
+		 case PIPE_CONTROL:	s = ""; break; \
+		 case PIPE_BULK:	s = "-bulk"; break; \
+		 case PIPE_INTERRUPT:	s = "-int"; break; \
+		 default: 		s = "-iso"; break; \
+		}; s;}),
+		urb->actual_length, urb->transfer_buffer_length);
+}
+
+static ssize_t
+show_urbs (struct device *dev, struct device_attribute *attr, char *buf)
+{
+	struct usb_hcd		*hcd = dev_get_drvdata (dev);
+	struct dummy		*dum = hcd_to_dummy (hcd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct urbp		*urbp;
 	size_t			size = 0;
 	unsigned long		flags;
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&dum_hcd->dum->lock, flags);
 	list_for_each_entry(urbp, &dum_hcd->urbp_list, urbp_list) {
 		size_t		temp;
@@ -2318,12 +3497,34 @@ static int dummy_start_ss(struct dummy_hcd *dum_hcd)
 static int dummy_start(struct usb_hcd *hcd)
 {
 	struct dummy_hcd	*dum_hcd = hcd_to_dummy_hcd(hcd);
+=======
+	spin_lock_irqsave (&dum->lock, flags);
+	list_for_each_entry (urbp, &dum->urbp_list, urbp_list) {
+		size_t		temp;
+
+		temp = show_urb (buf, PAGE_SIZE - size, urbp->urb);
+		buf += temp;
+		size += temp;
+	}
+	spin_unlock_irqrestore (&dum->lock, flags);
+
+	return size;
+}
+static DEVICE_ATTR (urbs, S_IRUGO, show_urbs, NULL);
+
+static int dummy_start (struct usb_hcd *hcd)
+{
+	struct dummy		*dum;
+
+	dum = hcd_to_dummy (hcd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * MASTER side init ... we emulate a root hub that'll only ever
 	 * talk to one device (the slave side).  Also appears in sysfs,
 	 * just like more familiar pci-based HCDs.
 	 */
+<<<<<<< HEAD
 	if (!usb_hcd_is_primary_hcd(hcd))
 		return dummy_start_ss(dum_hcd);
 
@@ -2334,6 +3535,15 @@ static int dummy_start(struct usb_hcd *hcd)
 	dum_hcd->rh_state = DUMMY_RH_RUNNING;
 
 	INIT_LIST_HEAD(&dum_hcd->urbp_list);
+=======
+	spin_lock_init (&dum->lock);
+	init_timer (&dum->timer);
+	dum->timer.function = dummy_timer;
+	dum->timer.data = (unsigned long) dum;
+	dum->rh_state = DUMMY_RH_RUNNING;
+
+	INIT_LIST_HEAD (&dum->urbp_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hcd->power_budget = POWER_BUDGET;
 	hcd->state = HC_STATE_RUNNING;
@@ -2344,6 +3554,7 @@ static int dummy_start(struct usb_hcd *hcd)
 #endif
 
 	/* FIXME 'urbs' should be a per-device thing, maybe in usbcore */
+<<<<<<< HEAD
 	return device_create_file(dummy_dev(dum_hcd), &dev_attr_urbs);
 }
 
@@ -2488,16 +3699,63 @@ static struct hc_driver dummy_hcd = {
 
 	.alloc_streams =	dummy_alloc_streams,
 	.free_streams =		dummy_free_streams,
+=======
+	return device_create_file (dummy_dev(dum), &dev_attr_urbs);
+}
+
+static void dummy_stop (struct usb_hcd *hcd)
+{
+	struct dummy		*dum;
+
+	dum = hcd_to_dummy (hcd);
+
+	device_remove_file (dummy_dev(dum), &dev_attr_urbs);
+	usb_gadget_unregister_driver (dum->driver);
+	dev_info (dummy_dev(dum), "stopped\n");
+}
+
+/*-------------------------------------------------------------------------*/
+
+static int dummy_h_get_frame (struct usb_hcd *hcd)
+{
+	return dummy_g_get_frame (NULL);
+}
+
+static const struct hc_driver dummy_hcd = {
+	.description =		(char *) driver_name,
+	.product_desc =		"Dummy host controller",
+	.hcd_priv_size =	sizeof(struct dummy),
+
+	.flags =		HCD_USB2,
+
+	.start =		dummy_start,
+	.stop =			dummy_stop,
+
+	.urb_enqueue = 		dummy_urb_enqueue,
+	.urb_dequeue = 		dummy_urb_dequeue,
+
+	.get_frame_number = 	dummy_h_get_frame,
+
+	.hub_status_data = 	dummy_hub_status,
+	.hub_control = 		dummy_hub_control,
+	.bus_suspend =		dummy_bus_suspend,
+	.bus_resume =		dummy_bus_resume,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int dummy_hcd_probe(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct usb_hcd		*hs_hcd;
 	struct usb_hcd		*ss_hcd;
+=======
+	struct usb_hcd		*hcd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			retval;
 
 	dev_info(&pdev->dev, "%s, driver " DRIVER_VERSION "\n", driver_desc);
 
+<<<<<<< HEAD
 	if (!mod_data.is_super_speed)
 		dummy_hcd.flags = HCD_USB2;
 	hs_hcd = usb_create_hcd(&dummy_hcd, &pdev->dev, dev_name(&pdev->dev));
@@ -2564,6 +3822,44 @@ static int dummy_hcd_suspend(struct platform_device *pdev, pm_message_t state)
 	hcd = platform_get_drvdata(pdev);
 	dum_hcd = hcd_to_dummy_hcd(hcd);
 	if (dum_hcd->rh_state == DUMMY_RH_RUNNING) {
+=======
+	hcd = usb_create_hcd(&dummy_hcd, &pdev->dev, dev_name(&pdev->dev));
+	if (!hcd)
+		return -ENOMEM;
+	the_controller = hcd_to_dummy (hcd);
+	hcd->has_tt = 1;
+
+	retval = usb_add_hcd(hcd, 0, 0);
+	if (retval != 0) {
+		usb_put_hcd (hcd);
+		the_controller = NULL;
+	}
+	return retval;
+}
+
+static int dummy_hcd_remove (struct platform_device *pdev)
+{
+	struct usb_hcd		*hcd;
+
+	hcd = platform_get_drvdata (pdev);
+	usb_remove_hcd (hcd);
+	usb_put_hcd (hcd);
+	the_controller = NULL;
+	return 0;
+}
+
+static int dummy_hcd_suspend (struct platform_device *pdev, pm_message_t state)
+{
+	struct usb_hcd		*hcd;
+	struct dummy		*dum;
+	int			rc = 0;
+
+	dev_dbg (&pdev->dev, "%s\n", __func__);
+
+	hcd = platform_get_drvdata (pdev);
+	dum = hcd_to_dummy (hcd);
+	if (dum->rh_state == DUMMY_RH_RUNNING) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_warn(&pdev->dev, "Root hub isn't suspended!\n");
 		rc = -EBUSY;
 	} else
@@ -2571,6 +3867,7 @@ static int dummy_hcd_suspend(struct platform_device *pdev, pm_message_t state)
 	return rc;
 }
 
+<<<<<<< HEAD
 static int dummy_hcd_resume(struct platform_device *pdev)
 {
 	struct usb_hcd		*hcd;
@@ -2580,6 +3877,17 @@ static int dummy_hcd_resume(struct platform_device *pdev)
 	hcd = platform_get_drvdata(pdev);
 	set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
 	usb_hcd_poll_rh_status(hcd);
+=======
+static int dummy_hcd_resume (struct platform_device *pdev)
+{
+	struct usb_hcd		*hcd;
+
+	dev_dbg (&pdev->dev, "%s\n", __func__);
+
+	hcd = platform_get_drvdata (pdev);
+	set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
+	usb_hcd_poll_rh_status (hcd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -2599,6 +3907,7 @@ static struct platform_driver dummy_hcd_driver = {
 static struct platform_device *the_udc_pdev;
 static struct platform_device *the_hcd_pdev;
 
+<<<<<<< HEAD
 static int __init init(void)
 {
 	int	retval = -ENOMEM;
@@ -2609,6 +3918,15 @@ static int __init init(void)
 	if (!mod_data.is_high_speed && mod_data.is_super_speed)
 		return -EINVAL;
 
+=======
+static int __init init (void)
+{
+	int	retval = -ENOMEM;
+
+	if (usb_disabled ())
+		return -ENODEV;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	the_hcd_pdev = platform_device_alloc(driver_name, -1);
 	if (!the_hcd_pdev)
 		return retval;
@@ -2626,8 +3944,12 @@ static int __init init(void)
 	retval = platform_device_add(the_hcd_pdev);
 	if (retval < 0)
 		goto err_add_hcd;
+<<<<<<< HEAD
 	if (!the_controller.hs_hcd ||
 	    (!the_controller.ss_hcd && mod_data.is_super_speed)) {
+=======
+	if (!the_controller) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * The hcd was added successfully but its probe function failed
 		 * for some reason.
@@ -2662,13 +3984,23 @@ err_alloc_udc:
 	platform_device_put(the_hcd_pdev);
 	return retval;
 }
+<<<<<<< HEAD
 module_init(init);
 
 static void __exit cleanup(void)
+=======
+module_init (init);
+
+static void __exit cleanup (void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	platform_device_unregister(the_udc_pdev);
 	platform_device_unregister(the_hcd_pdev);
 	platform_driver_unregister(&dummy_udc_driver);
 	platform_driver_unregister(&dummy_hcd_driver);
 }
+<<<<<<< HEAD
 module_exit(cleanup);
+=======
+module_exit (cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

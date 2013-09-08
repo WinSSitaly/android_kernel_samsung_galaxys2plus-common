@@ -16,12 +16,18 @@
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/err.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/i2c.h>
 #include <linux/gpio.h>
 #include <linux/mfd/core.h>
+<<<<<<< HEAD
 #include <linux/regmap.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mfd/tps65910.h>
 
 static struct mfd_cell tps65910s[] = {
@@ -40,6 +46,7 @@ static struct mfd_cell tps65910s[] = {
 static int tps65910_i2c_read(struct tps65910 *tps65910, u8 reg,
 				  int bytes, void *dest)
 {
+<<<<<<< HEAD
 	return regmap_bulk_read(tps65910->regmap, reg, dest, bytes);
 }
 
@@ -47,16 +54,85 @@ static int tps65910_i2c_write(struct tps65910 *tps65910, u8 reg,
 				  int bytes, void *src)
 {
 	return regmap_bulk_write(tps65910->regmap, reg, src, bytes);
+=======
+	struct i2c_client *i2c = tps65910->i2c_client;
+	struct i2c_msg xfer[2];
+	int ret;
+
+	/* Write register */
+	xfer[0].addr = i2c->addr;
+	xfer[0].flags = 0;
+	xfer[0].len = 1;
+	xfer[0].buf = &reg;
+
+	/* Read data */
+	xfer[1].addr = i2c->addr;
+	xfer[1].flags = I2C_M_RD;
+	xfer[1].len = bytes;
+	xfer[1].buf = dest;
+
+	ret = i2c_transfer(i2c->adapter, xfer, 2);
+	if (ret == 2)
+		ret = 0;
+	else if (ret >= 0)
+		ret = -EIO;
+
+	return ret;
+}
+
+static int tps65910_i2c_write(struct tps65910 *tps65910, u8 reg,
+				   int bytes, void *src)
+{
+	struct i2c_client *i2c = tps65910->i2c_client;
+	/* we add 1 byte for device register */
+	u8 msg[TPS65910_MAX_REGISTER + 1];
+	int ret;
+
+	if (bytes > TPS65910_MAX_REGISTER)
+		return -EINVAL;
+
+	msg[0] = reg;
+	memcpy(&msg[1], src, bytes);
+
+	ret = i2c_master_send(i2c, msg, bytes + 1);
+	if (ret < 0)
+		return ret;
+	if (ret != bytes + 1)
+		return -EIO;
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int tps65910_set_bits(struct tps65910 *tps65910, u8 reg, u8 mask)
 {
+<<<<<<< HEAD
 	return regmap_update_bits(tps65910->regmap, reg, mask, mask);
+=======
+	u8 data;
+	int err;
+
+	mutex_lock(&tps65910->io_mutex);
+	err = tps65910_i2c_read(tps65910, reg, 1, &data);
+	if (err) {
+		dev_err(tps65910->dev, "read from reg %x failed\n", reg);
+		goto out;
+	}
+
+	data |= mask;
+	err = tps65910_i2c_write(tps65910, reg, 1, &data);
+	if (err)
+		dev_err(tps65910->dev, "write to reg %x failed\n", reg);
+
+out:
+	mutex_unlock(&tps65910->io_mutex);
+	return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(tps65910_set_bits);
 
 int tps65910_clear_bits(struct tps65910 *tps65910, u8 reg, u8 mask)
 {
+<<<<<<< HEAD
 	return regmap_update_bits(tps65910->regmap, reg, mask, 0);
 }
 EXPORT_SYMBOL_GPL(tps65910_clear_bits);
@@ -89,6 +165,28 @@ static const struct regmap_config tps65910_regmap_config = {
 	.num_reg_defaults_raw = TPS65910_MAX_REGISTER,
 	.cache_type = REGCACHE_RBTREE,
 };
+=======
+	u8 data;
+	int err;
+
+	mutex_lock(&tps65910->io_mutex);
+	err = tps65910_i2c_read(tps65910, reg, 1, &data);
+	if (err) {
+		dev_err(tps65910->dev, "read from reg %x failed\n", reg);
+		goto out;
+	}
+
+	data &= mask;
+	err = tps65910_i2c_write(tps65910, reg, 1, &data);
+	if (err)
+		dev_err(tps65910->dev, "write to reg %x failed\n", reg);
+
+out:
+	mutex_unlock(&tps65910->io_mutex);
+	return err;
+}
+EXPORT_SYMBOL_GPL(tps65910_clear_bits);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int tps65910_i2c_probe(struct i2c_client *i2c,
 			    const struct i2c_device_id *id)
@@ -106,11 +204,20 @@ static int tps65910_i2c_probe(struct i2c_client *i2c,
 	if (init_data == NULL)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	tps65910 = kzalloc(sizeof(struct tps65910), GFP_KERNEL);
 	if (tps65910 == NULL) {
 		kfree(init_data);
 		return -ENOMEM;
 	}
+=======
+	init_data->irq = pmic_plat_data->irq;
+	init_data->irq_base = pmic_plat_data->irq;
+
+	tps65910 = kzalloc(sizeof(struct tps65910), GFP_KERNEL);
+	if (tps65910 == NULL)
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	i2c_set_clientdata(i2c, tps65910);
 	tps65910->dev = &i2c->dev;
@@ -120,6 +227,7 @@ static int tps65910_i2c_probe(struct i2c_client *i2c,
 	tps65910->write = tps65910_i2c_write;
 	mutex_init(&tps65910->io_mutex);
 
+<<<<<<< HEAD
 	tps65910->regmap = regmap_init_i2c(i2c, &tps65910_regmap_config);
 	if (IS_ERR(tps65910->regmap)) {
 		ret = PTR_ERR(tps65910->regmap);
@@ -127,12 +235,15 @@ static int tps65910_i2c_probe(struct i2c_client *i2c,
 		goto regmap_err;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = mfd_add_devices(tps65910->dev, -1,
 			      tps65910s, ARRAY_SIZE(tps65910s),
 			      NULL, 0);
 	if (ret < 0)
 		goto err;
 
+<<<<<<< HEAD
 	init_data->irq = pmic_plat_data->irq;
 	init_data->irq_base = pmic_plat_data->irq_base;
 
@@ -148,6 +259,19 @@ err:
 regmap_err:
 	kfree(tps65910);
 	kfree(init_data);
+=======
+	tps65910_gpio_init(tps65910, pmic_plat_data->gpio_base);
+
+	ret = tps65910_irq_init(tps65910, init_data->irq, init_data);
+	if (ret < 0)
+		goto err;
+
+	return ret;
+
+err:
+	mfd_remove_devices(tps65910->dev);
+	kfree(tps65910);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -155,9 +279,13 @@ static int tps65910_i2c_remove(struct i2c_client *i2c)
 {
 	struct tps65910 *tps65910 = i2c_get_clientdata(i2c);
 
+<<<<<<< HEAD
 	tps65910_irq_exit(tps65910);
 	mfd_remove_devices(tps65910->dev);
 	regmap_exit(tps65910->regmap);
+=======
+	mfd_remove_devices(tps65910->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(tps65910);
 
 	return 0;

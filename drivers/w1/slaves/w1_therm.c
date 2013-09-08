@@ -1,7 +1,11 @@
 /*
  *	w1_therm.c
  *
+<<<<<<< HEAD
  * Copyright (c) 2004 Evgeniy Polyakov <zbr@ioremap.net>
+=======
+ * Copyright (c) 2004 Evgeniy Polyakov <johnpol@2ka.mipt.ru>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,7 +38,11 @@
 #include "../w1_family.h"
 
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_AUTHOR("Evgeniy Polyakov <zbr@ioremap.net>");
+=======
+MODULE_AUTHOR("Evgeniy Polyakov <johnpol@2ka.mipt.ru>");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("Driver for 1-wire Dallas network protocol, temperature family.");
 
 /* Allow the strong pullup to be disabled, but default to enabled.
@@ -86,11 +94,14 @@ static struct w1_family w1_therm_family_DS1822 = {
 	.fops = &w1_therm_fops,
 };
 
+<<<<<<< HEAD
 static struct w1_family w1_therm_family_DS28EA00 = {
 	.fid = W1_THERM_DS28EA00,
 	.fops = &w1_therm_fops,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct w1_therm_family_converter
 {
 	u8			broken;
@@ -116,10 +127,13 @@ static struct w1_therm_family_converter w1_therm_families[] = {
 		.f		= &w1_therm_family_DS18B20,
 		.convert 	= w1_DS18B20_convert_temp
 	},
+<<<<<<< HEAD
 	{
 		.f		= &w1_therm_family_DS28EA00,
 		.convert	= w1_DS18B20_convert_temp
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline int w1_DS18B20_convert_temp(u8 rom[9])
@@ -175,6 +189,7 @@ static ssize_t w1_therm_read(struct device *device,
 {
 	struct w1_slave *sl = dev_to_w1_slave(device);
 	struct w1_master *dev = sl->master;
+<<<<<<< HEAD
 	u8 rom[9], crc, verdict, external_power;
 	int i, max_trying = 10;
 	ssize_t c = PAGE_SIZE;
@@ -182,6 +197,13 @@ static ssize_t w1_therm_read(struct device *device,
 	i = mutex_lock_interruptible(&dev->mutex);
 	if (i != 0)
 		return i;
+=======
+	u8 rom[9], crc, verdict;
+	int i, max_trying = 10;
+	ssize_t c = PAGE_SIZE;
+
+	mutex_lock(&dev->mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memset(rom, 0, sizeof(rom));
 
@@ -192,6 +214,7 @@ static ssize_t w1_therm_read(struct device *device,
 		if (!w1_reset_select_slave(sl)) {
 			int count = 0;
 			unsigned int tm = 750;
+<<<<<<< HEAD
 			unsigned long sleep_rem;
 
 			w1_write_8(dev, W1_READ_PSUPPLY);
@@ -223,6 +246,15 @@ static ssize_t w1_therm_read(struct device *device,
 					return -EINTR;
 				}
 			}
+=======
+
+			/* 750ms strong pullup (or delay) after the convert */
+			if (w1_strong_pullup)
+				w1_next_pullup(dev, tm);
+			w1_write_8(dev, W1_CONVERT_TEMP);
+			if (!w1_strong_pullup)
+				msleep(tm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (!w1_reset_select_slave(sl)) {
 

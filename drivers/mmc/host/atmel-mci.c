@@ -24,14 +24,20 @@
 #include <linux/seq_file.h>
 #include <linux/slab.h>
 #include <linux/stat.h>
+<<<<<<< HEAD
 #include <linux/types.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/mmc/host.h>
 #include <linux/mmc/sdio.h>
 
 #include <mach/atmel-mci.h>
 #include <linux/atmel-mci.h>
+<<<<<<< HEAD
 #include <linux/atmel_pdc.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/io.h>
 #include <asm/unaligned.h>
@@ -41,7 +47,11 @@
 
 #include "atmel-mci-regs.h"
 
+<<<<<<< HEAD
 #define ATMCI_DATA_ERROR_FLAGS	(ATMCI_DCRCE | ATMCI_DTOE | ATMCI_OVRE | ATMCI_UNRE)
+=======
+#define ATMCI_DATA_ERROR_FLAGS	(MCI_DCRCE | MCI_DTOE | MCI_OVRE | MCI_UNRE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ATMCI_DMA_THRESHOLD	16
 
 enum {
@@ -60,6 +70,7 @@ enum atmel_mci_state {
 	STATE_DATA_ERROR,
 };
 
+<<<<<<< HEAD
 enum atmci_xfer_dir {
 	XFER_RECEIVE = 0,
 	XFER_TRANSMIT,
@@ -83,13 +94,24 @@ struct atmel_mci_caps {
 struct atmel_mci_dma {
 	struct dma_chan			*chan;
 	struct dma_async_tx_descriptor	*data_desc;
+=======
+struct atmel_mci_dma {
+#ifdef CONFIG_MMC_ATMELMCI_DMA
+	struct dma_chan			*chan;
+	struct dma_async_tx_descriptor	*data_desc;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
  * struct atmel_mci - MMC controller state shared between all slots
  * @lock: Spinlock protecting the queue and associated data.
  * @regs: Pointer to MMIO registers.
+<<<<<<< HEAD
  * @sg: Scatterlist entry currently being processed by PIO or PDC code.
+=======
+ * @sg: Scatterlist entry currently being processed by PIO code, if any.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @pio_offset: Offset into the current scatterlist entry.
  * @cur_slot: The slot which is currently using the controller.
  * @mrq: The request currently being processed on @cur_slot,
@@ -97,7 +119,10 @@ struct atmel_mci_dma {
  * @cmd: The command currently being sent to the card, or NULL.
  * @data: The data currently being transferred, or NULL if no data
  *	transfer is in progress.
+<<<<<<< HEAD
  * @data_size: just data->blocks * data->blksz.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @dma: DMA client state.
  * @data_chan: DMA channel being used for the current data transfer.
  * @cmd_status: Snapshot of SR taken upon completion of the current
@@ -124,6 +149,7 @@ struct atmel_mci_dma {
  * @mck: The peripheral bus clock hooked up to the MMC controller.
  * @pdev: Platform device associated with the MMC controller.
  * @slot: Slots sharing this MMC controller.
+<<<<<<< HEAD
  * @caps: MCI capabilities depending on MCI version.
  * @prepare_data: function to setup MCI before data transfer which
  * depends on MCI capabilities.
@@ -131,6 +157,8 @@ struct atmel_mci_dma {
  * capabilities.
  * @stop_transfer: function to stop data transfer which depends on MCI
  * capabilities.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Locking
  * =======
@@ -165,18 +193,27 @@ struct atmel_mci {
 	void __iomem		*regs;
 
 	struct scatterlist	*sg;
+<<<<<<< HEAD
 	unsigned int		sg_len;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int		pio_offset;
 
 	struct atmel_mci_slot	*cur_slot;
 	struct mmc_request	*mrq;
 	struct mmc_command	*cmd;
 	struct mmc_data		*data;
+<<<<<<< HEAD
 	unsigned int		data_size;
 
 	struct atmel_mci_dma	dma;
 	struct dma_chan		*data_chan;
 	struct dma_slave_config	dma_conf;
+=======
+
+	struct atmel_mci_dma	dma;
+	struct dma_chan		*data_chan;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	u32			cmd_status;
 	u32			data_status;
@@ -197,6 +234,7 @@ struct atmel_mci {
 	struct clk		*mck;
 	struct platform_device	*pdev;
 
+<<<<<<< HEAD
 	struct atmel_mci_slot	*slot[ATMCI_MAX_NR_SLOTS];
 
 	struct atmel_mci_caps   caps;
@@ -204,6 +242,9 @@ struct atmel_mci {
 	u32 (*prepare_data)(struct atmel_mci *host, struct mmc_data *data);
 	void (*submit_data)(struct atmel_mci *host, struct mmc_data *data);
 	void (*stop_transfer)(struct atmel_mci *host);
+=======
+	struct atmel_mci_slot	*slot[ATMEL_MCI_MAX_NR_SLOTS];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -240,7 +281,10 @@ struct atmel_mci_slot {
 #define ATMCI_CARD_PRESENT	0
 #define ATMCI_CARD_NEED_INIT	1
 #define ATMCI_SHUTDOWN		2
+<<<<<<< HEAD
 #define ATMCI_SUSPENDED		3
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int			detect_pin;
 	int			wp_pin;
@@ -257,6 +301,34 @@ struct atmel_mci_slot {
 	set_bit(event, &host->pending_events)
 
 /*
+<<<<<<< HEAD
+=======
+ * Enable or disable features/registers based on
+ * whether the processor supports them
+ */
+static bool mci_has_rwproof(void)
+{
+	if (cpu_is_at91sam9261() || cpu_is_at91rm9200())
+		return false;
+	else
+		return true;
+}
+
+/*
+ * The new MCI2 module isn't 100% compatible with the old MCI module,
+ * and it has a few nice features which we want to use...
+ */
+static inline bool atmci_is_mci2(void)
+{
+	if (cpu_is_at91sam9g45())
+		return true;
+
+	return false;
+}
+
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * The debugfs stuff below is mostly optimized away when
  * CONFIG_DEBUG_FS is not set.
  */
@@ -364,7 +436,11 @@ static int atmci_regs_show(struct seq_file *s, void *v)
 	struct atmel_mci	*host = s->private;
 	u32			*buf;
 
+<<<<<<< HEAD
 	buf = kmalloc(ATMCI_REGS_SIZE, GFP_KERNEL);
+=======
+	buf = kmalloc(MCI_REGS_SIZE, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!buf)
 		return -ENOMEM;
 
@@ -375,11 +451,16 @@ static int atmci_regs_show(struct seq_file *s, void *v)
 	 */
 	spin_lock_bh(&host->lock);
 	clk_enable(host->mck);
+<<<<<<< HEAD
 	memcpy_fromio(buf, host->regs, ATMCI_REGS_SIZE);
+=======
+	memcpy_fromio(buf, host->regs, MCI_REGS_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clk_disable(host->mck);
 	spin_unlock_bh(&host->lock);
 
 	seq_printf(s, "MR:\t0x%08x%s%s CLKDIV=%u\n",
+<<<<<<< HEAD
 			buf[ATMCI_MR / 4],
 			buf[ATMCI_MR / 4] & ATMCI_MR_RDPROOF ? " RDPROOF" : "",
 			buf[ATMCI_MR / 4] & ATMCI_MR_WRPROOF ? " WRPROOF" : "",
@@ -403,10 +484,36 @@ static int atmci_regs_show(struct seq_file *s, void *v)
 		u32 val;
 
 		val = buf[ATMCI_DMA / 4];
+=======
+			buf[MCI_MR / 4],
+			buf[MCI_MR / 4] & MCI_MR_RDPROOF ? " RDPROOF" : "",
+			buf[MCI_MR / 4] & MCI_MR_WRPROOF ? " WRPROOF" : "",
+			buf[MCI_MR / 4] & 0xff);
+	seq_printf(s, "DTOR:\t0x%08x\n", buf[MCI_DTOR / 4]);
+	seq_printf(s, "SDCR:\t0x%08x\n", buf[MCI_SDCR / 4]);
+	seq_printf(s, "ARGR:\t0x%08x\n", buf[MCI_ARGR / 4]);
+	seq_printf(s, "BLKR:\t0x%08x BCNT=%u BLKLEN=%u\n",
+			buf[MCI_BLKR / 4],
+			buf[MCI_BLKR / 4] & 0xffff,
+			(buf[MCI_BLKR / 4] >> 16) & 0xffff);
+	if (atmci_is_mci2())
+		seq_printf(s, "CSTOR:\t0x%08x\n", buf[MCI_CSTOR / 4]);
+
+	/* Don't read RSPR and RDR; it will consume the data there */
+
+	atmci_show_status_reg(s, "SR", buf[MCI_SR / 4]);
+	atmci_show_status_reg(s, "IMR", buf[MCI_IMR / 4]);
+
+	if (atmci_is_mci2()) {
+		u32 val;
+
+		val = buf[MCI_DMA / 4];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		seq_printf(s, "DMA:\t0x%08x OFFSET=%u CHKSIZE=%u%s\n",
 				val, val & 3,
 				((val >> 4) & 3) ?
 					1 << (((val >> 4) & 3) + 1) : 1,
+<<<<<<< HEAD
 				val & ATMCI_DMAEN ? " DMAEN" : "");
 	}
 	if (host->caps.has_cfg_reg) {
@@ -419,6 +526,17 @@ static int atmci_regs_show(struct seq_file *s, void *v)
 				val & ATMCI_CFG_FERRCTRL_COR ? " FERRCTRL_CLEAR_ON_READ" : "",
 				val & ATMCI_CFG_HSMODE ? " HSMODE" : "",
 				val & ATMCI_CFG_LSYNC ? " LSYNC" : "");
+=======
+				val & MCI_DMAEN ? " DMAEN" : "");
+
+		val = buf[MCI_CFG / 4];
+		seq_printf(s, "CFG:\t0x%08x%s%s%s%s\n",
+				val,
+				val & MCI_CFG_FIFOMODE_1DATA ? " FIFOMODE_ONE_DATA" : "",
+				val & MCI_CFG_FERRCTRL_COR ? " FERRCTRL_CLEAR_ON_READ" : "",
+				val & MCI_CFG_HSMODE ? " HSMODE" : "",
+				val & MCI_CFG_LSYNC ? " LSYNC" : "");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	kfree(buf);
@@ -481,7 +599,11 @@ err:
 	dev_err(&mmc->class_dev, "failed to initialize debugfs for slot\n");
 }
 
+<<<<<<< HEAD
 static inline unsigned int atmci_ns_to_clocks(struct atmel_mci *host,
+=======
+static inline unsigned int ns_to_clocks(struct atmel_mci *host,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					unsigned int ns)
 {
 	/*
@@ -504,8 +626,12 @@ static void atmci_set_timeout(struct atmel_mci *host,
 	unsigned	dtocyc;
 	unsigned	dtomul;
 
+<<<<<<< HEAD
 	timeout = atmci_ns_to_clocks(host, data->timeout_ns)
 		+ data->timeout_clks;
+=======
+	timeout = ns_to_clocks(host, data->timeout_ns) + data->timeout_clks;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (dtomul = 0; dtomul < 8; dtomul++) {
 		unsigned shift = dtomul_to_shift[dtomul];
@@ -521,7 +647,11 @@ static void atmci_set_timeout(struct atmel_mci *host,
 
 	dev_vdbg(&slot->mmc->class_dev, "setting timeout to %u cycles\n",
 			dtocyc << dtomul_to_shift[dtomul]);
+<<<<<<< HEAD
 	atmci_writel(host, ATMCI_DTOR, (ATMCI_DTOMUL(dtomul) | ATMCI_DTOCYC(dtocyc)));
+=======
+	mci_writel(host, DTOR, (MCI_DTOMUL(dtomul) | MCI_DTOCYC(dtocyc)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -535,6 +665,7 @@ static u32 atmci_prepare_command(struct mmc_host *mmc,
 
 	cmd->error = -EINPROGRESS;
 
+<<<<<<< HEAD
 	cmdr = ATMCI_CMDR_CMDNB(cmd->opcode);
 
 	if (cmd->flags & MMC_RSP_PRESENT) {
@@ -542,6 +673,15 @@ static u32 atmci_prepare_command(struct mmc_host *mmc,
 			cmdr |= ATMCI_CMDR_RSPTYP_136BIT;
 		else
 			cmdr |= ATMCI_CMDR_RSPTYP_48BIT;
+=======
+	cmdr = MCI_CMDR_CMDNB(cmd->opcode);
+
+	if (cmd->flags & MMC_RSP_PRESENT) {
+		if (cmd->flags & MMC_RSP_136)
+			cmdr |= MCI_CMDR_RSPTYP_136BIT;
+		else
+			cmdr |= MCI_CMDR_RSPTYP_48BIT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -549,6 +689,7 @@ static u32 atmci_prepare_command(struct mmc_host *mmc,
 	 * it's too difficult to determine whether this is an ACMD or
 	 * not. Better make it 64.
 	 */
+<<<<<<< HEAD
 	cmdr |= ATMCI_CMDR_MAXLAT_64CYC;
 
 	if (mmc->ios.bus_mode == MMC_BUSMODE_OPENDRAIN)
@@ -571,12 +712,40 @@ static u32 atmci_prepare_command(struct mmc_host *mmc,
 
 		if (data->flags & MMC_DATA_READ)
 			cmdr |= ATMCI_CMDR_TRDIR_READ;
+=======
+	cmdr |= MCI_CMDR_MAXLAT_64CYC;
+
+	if (mmc->ios.bus_mode == MMC_BUSMODE_OPENDRAIN)
+		cmdr |= MCI_CMDR_OPDCMD;
+
+	data = cmd->data;
+	if (data) {
+		cmdr |= MCI_CMDR_START_XFER;
+
+		if (cmd->opcode == SD_IO_RW_EXTENDED) {
+			cmdr |= MCI_CMDR_SDIO_BLOCK;
+		} else {
+			if (data->flags & MMC_DATA_STREAM)
+				cmdr |= MCI_CMDR_STREAM;
+			else if (data->blocks > 1)
+				cmdr |= MCI_CMDR_MULTI_BLOCK;
+			else
+				cmdr |= MCI_CMDR_BLOCK;
+		}
+
+		if (data->flags & MMC_DATA_READ)
+			cmdr |= MCI_CMDR_TRDIR_READ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return cmdr;
 }
 
+<<<<<<< HEAD
 static void atmci_send_command(struct atmel_mci *host,
+=======
+static void atmci_start_command(struct atmel_mci *host,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct mmc_command *cmd, u32 cmd_flags)
 {
 	WARN_ON(host->cmd);
@@ -586,6 +755,7 @@ static void atmci_send_command(struct atmel_mci *host,
 			"start command: ARGR=0x%08x CMDR=0x%08x\n",
 			cmd->arg, cmd_flags);
 
+<<<<<<< HEAD
 	atmci_writel(host, ATMCI_ARGR, cmd->arg);
 	atmci_writel(host, ATMCI_CMDR, cmd_flags);
 }
@@ -699,6 +869,45 @@ static void atmci_dma_cleanup(struct atmel_mci *host)
 /*
  * This function is called by the DMA driver from tasklet context.
  */
+=======
+	mci_writel(host, ARGR, cmd->arg);
+	mci_writel(host, CMDR, cmd_flags);
+}
+
+static void send_stop_cmd(struct atmel_mci *host, struct mmc_data *data)
+{
+	atmci_start_command(host, data->stop, host->stop_cmdr);
+	mci_writel(host, IER, MCI_CMDRDY);
+}
+
+#ifdef CONFIG_MMC_ATMELMCI_DMA
+static void atmci_dma_cleanup(struct atmel_mci *host)
+{
+	struct mmc_data			*data = host->data;
+
+	if (data)
+		dma_unmap_sg(host->dma.chan->device->dev,
+			     data->sg, data->sg_len,
+			     ((data->flags & MMC_DATA_WRITE)
+			      ? DMA_TO_DEVICE : DMA_FROM_DEVICE));
+}
+
+static void atmci_stop_dma(struct atmel_mci *host)
+{
+	struct dma_chan *chan = host->data_chan;
+
+	if (chan) {
+		dmaengine_terminate_all(chan);
+		atmci_dma_cleanup(host);
+	} else {
+		/* Data transfer was stopped by the interrupt handler */
+		atmci_set_pending(host, EVENT_XFER_COMPLETE);
+		mci_writel(host, IER, MCI_NOTBUSY);
+	}
+}
+
+/* This function is called by the DMA driver from tasklet context. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void atmci_dma_complete(void *arg)
 {
 	struct atmel_mci	*host = arg;
@@ -706,9 +915,15 @@ static void atmci_dma_complete(void *arg)
 
 	dev_vdbg(&host->pdev->dev, "DMA complete\n");
 
+<<<<<<< HEAD
 	if (host->caps.has_dma)
 		/* Disable DMA hardware handshaking on MCI */
 		atmci_writel(host, ATMCI_DMA, atmci_readl(host, ATMCI_DMA) & ~ATMCI_DMAEN);
+=======
+	if (atmci_is_mci2())
+		/* Disable DMA hardware handshaking on MCI */
+		mci_writel(host, DMA, mci_readl(host, DMA) & ~MCI_DMAEN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	atmci_dma_cleanup(host);
 
@@ -740,6 +955,7 @@ static void atmci_dma_complete(void *arg)
 		 * completion callback" rule of the dma engine
 		 * framework.
 		 */
+<<<<<<< HEAD
 		atmci_writel(host, ATMCI_IER, ATMCI_NOTBUSY);
 	}
 }
@@ -828,6 +1044,13 @@ atmci_prepare_data_pdc(struct atmel_mci *host, struct mmc_data *data)
 }
 
 static u32
+=======
+		mci_writel(host, IER, MCI_NOTBUSY);
+	}
+}
+
+static int
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 atmci_prepare_data_dma(struct atmel_mci *host, struct mmc_data *data)
 {
 	struct dma_chan			*chan;
@@ -835,6 +1058,7 @@ atmci_prepare_data_dma(struct atmel_mci *host, struct mmc_data *data)
 	struct scatterlist		*sg;
 	unsigned int			i;
 	enum dma_data_direction		direction;
+<<<<<<< HEAD
 	enum dma_transfer_direction	slave_dirn;
 	unsigned int			sglen;
 	u32 iflags;
@@ -846,6 +1070,9 @@ atmci_prepare_data_dma(struct atmel_mci *host, struct mmc_data *data)
 	host->data = data;
 
 	iflags = ATMCI_DATA_ERROR_FLAGS;
+=======
+	unsigned int			sglen;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * We don't do DMA on "complex" transfers, i.e. with
@@ -853,6 +1080,7 @@ atmci_prepare_data_dma(struct atmel_mci *host, struct mmc_data *data)
 	 * with all the DMA setup overhead for short transfers.
 	 */
 	if (data->blocks * data->blksz < ATMCI_DMA_THRESHOLD)
+<<<<<<< HEAD
 		return atmci_prepare_data(host, data);
 	if (data->blksz & 3)
 		return atmci_prepare_data(host, data);
@@ -860,6 +1088,15 @@ atmci_prepare_data_dma(struct atmel_mci *host, struct mmc_data *data)
 	for_each_sg(data->sg, sg, data->sg_len, i) {
 		if (sg->offset & 3 || sg->length & 3)
 			return atmci_prepare_data(host, data);
+=======
+		return -EINVAL;
+	if (data->blksz & 3)
+		return -EINVAL;
+
+	for_each_sg(data->sg, sg, data->sg_len, i) {
+		if (sg->offset & 3 || sg->length & 3)
+			return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* If we don't have a channel, we can't do DMA */
@@ -870,6 +1107,7 @@ atmci_prepare_data_dma(struct atmel_mci *host, struct mmc_data *data)
 	if (!chan)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	if (host->caps.has_dma)
 		atmci_writel(host, ATMCI_DMA, ATMCI_DMA_CHKSIZE(3) | ATMCI_DMAEN);
 
@@ -887,6 +1125,21 @@ atmci_prepare_data_dma(struct atmel_mci *host, struct mmc_data *data)
 	dmaengine_slave_config(chan, &host->dma_conf);
 	desc = dmaengine_prep_slave_sg(chan,
 			data->sg, sglen, slave_dirn,
+=======
+	if (atmci_is_mci2())
+		mci_writel(host, DMA, MCI_DMA_CHKSIZE(3) | MCI_DMAEN);
+
+	if (data->flags & MMC_DATA_READ)
+		direction = DMA_FROM_DEVICE;
+	else
+		direction = DMA_TO_DEVICE;
+
+	sglen = dma_map_sg(chan->device->dev, data->sg,
+			   data->sg_len, direction);
+
+	desc = chan->device->device_prep_slave_sg(chan,
+			data->sg, sglen, direction,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
 	if (!desc)
 		goto unmap_exit;
@@ -895,12 +1148,17 @@ atmci_prepare_data_dma(struct atmel_mci *host, struct mmc_data *data)
 	desc->callback = atmci_dma_complete;
 	desc->callback_param = host;
 
+<<<<<<< HEAD
 	return iflags;
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 unmap_exit:
 	dma_unmap_sg(chan->device->dev, data->sg, data->sg_len, direction);
 	return -ENOMEM;
 }
 
+<<<<<<< HEAD
 static void
 atmci_submit_data(struct atmel_mci *host, struct mmc_data *data)
 {
@@ -921,6 +1179,9 @@ atmci_submit_data_pdc(struct atmel_mci *host, struct mmc_data *data)
 
 static void
 atmci_submit_data_dma(struct atmel_mci *host, struct mmc_data *data)
+=======
+static void atmci_submit_data(struct atmel_mci *host)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dma_chan			*chan = host->data_chan;
 	struct dma_async_tx_descriptor	*desc = host->dma.data_desc;
@@ -931,6 +1192,7 @@ atmci_submit_data_dma(struct atmel_mci *host, struct mmc_data *data)
 	}
 }
 
+<<<<<<< HEAD
 static void atmci_stop_transfer(struct atmel_mci *host)
 {
 	atmci_set_pending(host, EVENT_XFER_COMPLETE);
@@ -964,6 +1226,66 @@ static void atmci_stop_transfer_dma(struct atmel_mci *host)
  * Start a request: prepare data if needed, prepare the command and activate
  * interrupts.
  */
+=======
+#else /* CONFIG_MMC_ATMELMCI_DMA */
+
+static int atmci_prepare_data_dma(struct atmel_mci *host, struct mmc_data *data)
+{
+	return -ENOSYS;
+}
+
+static void atmci_submit_data(struct atmel_mci *host) {}
+
+static void atmci_stop_dma(struct atmel_mci *host)
+{
+	/* Data transfer was stopped by the interrupt handler */
+	atmci_set_pending(host, EVENT_XFER_COMPLETE);
+	mci_writel(host, IER, MCI_NOTBUSY);
+}
+
+#endif /* CONFIG_MMC_ATMELMCI_DMA */
+
+/*
+ * Returns a mask of interrupt flags to be enabled after the whole
+ * request has been prepared.
+ */
+static u32 atmci_prepare_data(struct atmel_mci *host, struct mmc_data *data)
+{
+	u32 iflags;
+
+	data->error = -EINPROGRESS;
+
+	WARN_ON(host->data);
+	host->sg = NULL;
+	host->data = data;
+
+	iflags = ATMCI_DATA_ERROR_FLAGS;
+	if (atmci_prepare_data_dma(host, data)) {
+		host->data_chan = NULL;
+
+		/*
+		 * Errata: MMC data write operation with less than 12
+		 * bytes is impossible.
+		 *
+		 * Errata: MCI Transmit Data Register (TDR) FIFO
+		 * corruption when length is not multiple of 4.
+		 */
+		if (data->blocks * data->blksz < 12
+				|| (data->blocks * data->blksz) & 3)
+			host->need_reset = true;
+
+		host->sg = data->sg;
+		host->pio_offset = 0;
+		if (data->flags & MMC_DATA_READ)
+			iflags |= MCI_RXRDY;
+		else
+			iflags |= MCI_TXRDY;
+	}
+
+	return iflags;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void atmci_start_request(struct atmel_mci *host,
 		struct atmel_mci_slot *slot)
 {
@@ -982,6 +1304,7 @@ static void atmci_start_request(struct atmel_mci *host,
 	host->data_status = 0;
 
 	if (host->need_reset) {
+<<<<<<< HEAD
 		iflags = atmci_readl(host, ATMCI_IMR);
 		iflags &= (ATMCI_SDIOIRQA | ATMCI_SDIOIRQB);
 		atmci_writel(host, ATMCI_CR, ATMCI_CR_SWRST);
@@ -996,13 +1319,31 @@ static void atmci_start_request(struct atmel_mci *host,
 
 	iflags = atmci_readl(host, ATMCI_IMR);
 	if (iflags & ~(ATMCI_SDIOIRQA | ATMCI_SDIOIRQB))
+=======
+		mci_writel(host, CR, MCI_CR_SWRST);
+		mci_writel(host, CR, MCI_CR_MCIEN);
+		mci_writel(host, MR, host->mode_reg);
+		if (atmci_is_mci2())
+			mci_writel(host, CFG, host->cfg_reg);
+		host->need_reset = false;
+	}
+	mci_writel(host, SDCR, slot->sdc_reg);
+
+	iflags = mci_readl(host, IMR);
+	if (iflags & ~(MCI_SDIOIRQA | MCI_SDIOIRQB))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_warn(&slot->mmc->class_dev, "WARNING: IMR=0x%08x\n",
 				iflags);
 
 	if (unlikely(test_and_clear_bit(ATMCI_CARD_NEED_INIT, &slot->flags))) {
 		/* Send init sequence (74 clock cycles) */
+<<<<<<< HEAD
 		atmci_writel(host, ATMCI_CMDR, ATMCI_CMDR_SPCMD_INIT);
 		while (!(atmci_readl(host, ATMCI_SR) & ATMCI_CMDRDY))
+=======
+		mci_writel(host, CMDR, MCI_CMDR_SPCMD_INIT);
+		while (!(mci_readl(host, SR) & MCI_CMDRDY))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cpu_relax();
 	}
 	iflags = 0;
@@ -1011,6 +1352,7 @@ static void atmci_start_request(struct atmel_mci *host,
 		atmci_set_timeout(host, slot, data);
 
 		/* Must set block count/size before sending command */
+<<<<<<< HEAD
 		atmci_writel(host, ATMCI_BLKR, ATMCI_BCNT(data->blocks)
 				| ATMCI_BLKLEN(data->blksz));
 		dev_vdbg(&slot->mmc->class_dev, "BLKR=0x%08x\n",
@@ -1036,6 +1378,33 @@ static void atmci_start_request(struct atmel_mci *host,
 			host->stop_cmdr |= ATMCI_CMDR_STREAM;
 		else
 			host->stop_cmdr |= ATMCI_CMDR_MULTI_BLOCK;
+=======
+		mci_writel(host, BLKR, MCI_BCNT(data->blocks)
+				| MCI_BLKLEN(data->blksz));
+		dev_vdbg(&slot->mmc->class_dev, "BLKR=0x%08x\n",
+			MCI_BCNT(data->blocks) | MCI_BLKLEN(data->blksz));
+
+		iflags |= atmci_prepare_data(host, data);
+	}
+
+	iflags |= MCI_CMDRDY;
+	cmd = mrq->cmd;
+	cmdflags = atmci_prepare_command(slot->mmc, cmd);
+	atmci_start_command(host, cmd, cmdflags);
+
+	if (data)
+		atmci_submit_data(host);
+
+	if (mrq->stop) {
+		host->stop_cmdr = atmci_prepare_command(slot->mmc, mrq->stop);
+		host->stop_cmdr |= MCI_CMDR_STOP_XFER;
+		if (!(data->flags & MMC_DATA_WRITE))
+			host->stop_cmdr |= MCI_CMDR_TRDIR_READ;
+		if (data->flags & MMC_DATA_STREAM)
+			host->stop_cmdr |= MCI_CMDR_STREAM;
+		else
+			host->stop_cmdr |= MCI_CMDR_MULTI_BLOCK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -1044,7 +1413,11 @@ static void atmci_start_request(struct atmel_mci *host,
 	 * conditions (e.g. command and data complete, but stop not
 	 * prepared yet.)
 	 */
+<<<<<<< HEAD
 	atmci_writel(host, ATMCI_IER, iflags);
+=======
+	mci_writel(host, IER, iflags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void atmci_queue_request(struct atmel_mci *host,
@@ -1102,6 +1475,7 @@ static void atmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 	struct atmel_mci	*host = slot->host;
 	unsigned int		i;
 
+<<<<<<< HEAD
 	slot->sdc_reg &= ~ATMCI_SDCBUS_MASK;
 	switch (ios->bus_width) {
 	case MMC_BUS_WIDTH_1:
@@ -1109,6 +1483,15 @@ static void atmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 		break;
 	case MMC_BUS_WIDTH_4:
 		slot->sdc_reg |= ATMCI_SDCBUS_4BIT;
+=======
+	slot->sdc_reg &= ~MCI_SDCBUS_MASK;
+	switch (ios->bus_width) {
+	case MMC_BUS_WIDTH_1:
+		slot->sdc_reg |= MCI_SDCBUS_1BIT;
+		break;
+	case MMC_BUS_WIDTH_4:
+		slot->sdc_reg |= MCI_SDCBUS_4BIT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -1119,10 +1502,17 @@ static void atmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 		spin_lock_bh(&host->lock);
 		if (!host->mode_reg) {
 			clk_enable(host->mck);
+<<<<<<< HEAD
 			atmci_writel(host, ATMCI_CR, ATMCI_CR_SWRST);
 			atmci_writel(host, ATMCI_CR, ATMCI_CR_MCIEN);
 			if (host->caps.has_cfg_reg)
 				atmci_writel(host, ATMCI_CFG, host->cfg_reg);
+=======
+			mci_writel(host, CR, MCI_CR_SWRST);
+			mci_writel(host, CR, MCI_CR_MCIEN);
+			if (atmci_is_mci2())
+				mci_writel(host, CFG, host->cfg_reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/*
@@ -1130,13 +1520,18 @@ static void atmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 		 * core ios update when finding the minimum.
 		 */
 		slot->clock = ios->clock;
+<<<<<<< HEAD
 		for (i = 0; i < ATMCI_MAX_NR_SLOTS; i++) {
+=======
+		for (i = 0; i < ATMEL_MCI_MAX_NR_SLOTS; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (host->slot[i] && host->slot[i]->clock
 					&& host->slot[i]->clock < clock_min)
 				clock_min = host->slot[i]->clock;
 		}
 
 		/* Calculate clock divider */
+<<<<<<< HEAD
 		if (host->caps.has_odd_clk_div) {
 			clkdiv = DIV_ROUND_UP(host->bus_hz, clock_min) - 2;
 			if (clkdiv > 511) {
@@ -1158,11 +1553,24 @@ static void atmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 			host->mode_reg = ATMCI_MR_CLKDIV(clkdiv);
 		}
 
+=======
+		clkdiv = DIV_ROUND_UP(host->bus_hz, 2 * clock_min) - 1;
+		if (clkdiv > 255) {
+			dev_warn(&mmc->class_dev,
+				"clock %u too slow; using %lu\n",
+				clock_min, host->bus_hz / (2 * 256));
+			clkdiv = 255;
+		}
+
+		host->mode_reg = MCI_MR_CLKDIV(clkdiv);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * WRPROOF and RDPROOF prevent overruns/underruns by
 		 * stopping the clock when the FIFO is full/empty.
 		 * This state is not expected to last for long.
 		 */
+<<<<<<< HEAD
 		if (host->caps.has_rwproof)
 			host->mode_reg |= (ATMCI_MR_WRPROOF | ATMCI_MR_RDPROOF);
 
@@ -1178,6 +1586,23 @@ static void atmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 			atmci_writel(host, ATMCI_MR, host->mode_reg);
 			if (host->caps.has_cfg_reg)
 				atmci_writel(host, ATMCI_CFG, host->cfg_reg);
+=======
+		if (mci_has_rwproof())
+			host->mode_reg |= (MCI_MR_WRPROOF | MCI_MR_RDPROOF);
+
+		if (atmci_is_mci2()) {
+			/* setup High Speed mode in relation with card capacity */
+			if (ios->timing == MMC_TIMING_SD_HS)
+				host->cfg_reg |= MCI_CFG_HSMODE;
+			else
+				host->cfg_reg &= ~MCI_CFG_HSMODE;
+		}
+
+		if (list_empty(&host->queue)) {
+			mci_writel(host, MR, host->mode_reg);
+			if (atmci_is_mci2())
+				mci_writel(host, CFG, host->cfg_reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			host->need_clock_update = true;
 		}
@@ -1188,16 +1613,26 @@ static void atmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 
 		spin_lock_bh(&host->lock);
 		slot->clock = 0;
+<<<<<<< HEAD
 		for (i = 0; i < ATMCI_MAX_NR_SLOTS; i++) {
+=======
+		for (i = 0; i < ATMEL_MCI_MAX_NR_SLOTS; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (host->slot[i] && host->slot[i]->clock) {
 				any_slot_active = true;
 				break;
 			}
 		}
 		if (!any_slot_active) {
+<<<<<<< HEAD
 			atmci_writel(host, ATMCI_CR, ATMCI_CR_MCIDIS);
 			if (host->mode_reg) {
 				atmci_readl(host, ATMCI_MR);
+=======
+			mci_writel(host, CR, MCI_CR_MCIDIS);
+			if (host->mode_reg) {
+				mci_readl(host, MR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				clk_disable(host->mck);
 			}
 			host->mode_reg = 0;
@@ -1261,9 +1696,15 @@ static void atmci_enable_sdio_irq(struct mmc_host *mmc, int enable)
 	struct atmel_mci	*host = slot->host;
 
 	if (enable)
+<<<<<<< HEAD
 		atmci_writel(host, ATMCI_IER, slot->sdio_irq);
 	else
 		atmci_writel(host, ATMCI_IDR, slot->sdio_irq);
+=======
+		mci_writel(host, IER, slot->sdio_irq);
+	else
+		mci_writel(host, IDR, slot->sdio_irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct mmc_host_ops atmci_ops = {
@@ -1290,9 +1731,15 @@ static void atmci_request_end(struct atmel_mci *host, struct mmc_request *mrq)
 	 * busy transferring data.
 	 */
 	if (host->need_clock_update) {
+<<<<<<< HEAD
 		atmci_writel(host, ATMCI_MR, host->mode_reg);
 		if (host->caps.has_cfg_reg)
 			atmci_writel(host, ATMCI_CFG, host->cfg_reg);
+=======
+		mci_writel(host, MR, host->mode_reg);
+		if (atmci_is_mci2())
+			mci_writel(host, CFG, host->cfg_reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	host->cur_slot->mrq = NULL;
@@ -1321,6 +1768,7 @@ static void atmci_command_complete(struct atmel_mci *host,
 	u32		status = host->cmd_status;
 
 	/* Read the response from the card (up to 16 bytes) */
+<<<<<<< HEAD
 	cmd->resp[0] = atmci_readl(host, ATMCI_RSPR);
 	cmd->resp[1] = atmci_readl(host, ATMCI_RSPR);
 	cmd->resp[2] = atmci_readl(host, ATMCI_RSPR);
@@ -1331,6 +1779,18 @@ static void atmci_command_complete(struct atmel_mci *host,
 	else if ((cmd->flags & MMC_RSP_CRC) && (status & ATMCI_RCRCE))
 		cmd->error = -EILSEQ;
 	else if (status & (ATMCI_RINDE | ATMCI_RDIRE | ATMCI_RENDE))
+=======
+	cmd->resp[0] = mci_readl(host, RSPR);
+	cmd->resp[1] = mci_readl(host, RSPR);
+	cmd->resp[2] = mci_readl(host, RSPR);
+	cmd->resp[3] = mci_readl(host, RSPR);
+
+	if (status & MCI_RTOE)
+		cmd->error = -ETIMEDOUT;
+	else if ((cmd->flags & MMC_RSP_CRC) && (status & MCI_RCRCE))
+		cmd->error = -EILSEQ;
+	else if (status & (MCI_RINDE | MCI_RDIRE | MCI_RENDE))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cmd->error = -EIO;
 	else
 		cmd->error = 0;
@@ -1340,10 +1800,17 @@ static void atmci_command_complete(struct atmel_mci *host,
 			"command error: status=0x%08x\n", status);
 
 		if (cmd->data) {
+<<<<<<< HEAD
 			host->stop_transfer(host);
 			host->data = NULL;
 			atmci_writel(host, ATMCI_IDR, ATMCI_NOTBUSY
 					| ATMCI_TXRDY | ATMCI_RXRDY
+=======
+			atmci_stop_dma(host);
+			host->data = NULL;
+			mci_writel(host, IDR, MCI_NOTBUSY
+					| MCI_TXRDY | MCI_RXRDY
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					| ATMCI_DATA_ERROR_FLAGS);
 		}
 	}
@@ -1395,11 +1862,19 @@ static void atmci_detect_change(unsigned long data)
 				 * Reset controller to terminate any ongoing
 				 * commands or data transfers.
 				 */
+<<<<<<< HEAD
 				atmci_writel(host, ATMCI_CR, ATMCI_CR_SWRST);
 				atmci_writel(host, ATMCI_CR, ATMCI_CR_MCIEN);
 				atmci_writel(host, ATMCI_MR, host->mode_reg);
 				if (host->caps.has_cfg_reg)
 					atmci_writel(host, ATMCI_CFG, host->cfg_reg);
+=======
+				mci_writel(host, CR, MCI_CR_SWRST);
+				mci_writel(host, CR, MCI_CR_MCIEN);
+				mci_writel(host, MR, host->mode_reg);
+				if (atmci_is_mci2())
+					mci_writel(host, CFG, host->cfg_reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				host->data = NULL;
 				host->cmd = NULL;
@@ -1414,7 +1889,11 @@ static void atmci_detect_change(unsigned long data)
 					/* fall through */
 				case STATE_SENDING_DATA:
 					mrq->data->error = -ENOMEDIUM;
+<<<<<<< HEAD
 					host->stop_transfer(host);
+=======
+					atmci_stop_dma(host);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					break;
 				case STATE_DATA_BUSY:
 				case STATE_DATA_ERROR:
@@ -1465,7 +1944,11 @@ static void atmci_tasklet_func(unsigned long priv)
 	dev_vdbg(&host->pdev->dev,
 		"tasklet: state %u pending/completed/mask %lx/%lx/%x\n",
 		state, host->pending_events, host->completed_events,
+<<<<<<< HEAD
 		atmci_readl(host, ATMCI_IMR));
+=======
+		mci_readl(host, IMR));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	do {
 		prev_state = state;
@@ -1493,9 +1976,15 @@ static void atmci_tasklet_func(unsigned long priv)
 		case STATE_SENDING_DATA:
 			if (atmci_test_and_clear_pending(host,
 						EVENT_DATA_ERROR)) {
+<<<<<<< HEAD
 				host->stop_transfer(host);
 				if (data->stop)
 					atmci_send_stop_cmd(host, data);
+=======
+				atmci_stop_dma(host);
+				if (data->stop)
+					send_stop_cmd(host, data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				state = STATE_DATA_ERROR;
 				break;
 			}
@@ -1517,11 +2006,19 @@ static void atmci_tasklet_func(unsigned long priv)
 			atmci_set_completed(host, EVENT_DATA_COMPLETE);
 			status = host->data_status;
 			if (unlikely(status & ATMCI_DATA_ERROR_FLAGS)) {
+<<<<<<< HEAD
 				if (status & ATMCI_DTOE) {
 					dev_dbg(&host->pdev->dev,
 							"data timeout error\n");
 					data->error = -ETIMEDOUT;
 				} else if (status & ATMCI_DCRCE) {
+=======
+				if (status & MCI_DTOE) {
+					dev_dbg(&host->pdev->dev,
+							"data timeout error\n");
+					data->error = -ETIMEDOUT;
+				} else if (status & MCI_DCRCE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					dev_dbg(&host->pdev->dev,
 							"data CRC error\n");
 					data->error = -EILSEQ;
@@ -1534,7 +2031,11 @@ static void atmci_tasklet_func(unsigned long priv)
 			} else {
 				data->bytes_xfered = data->blocks * data->blksz;
 				data->error = 0;
+<<<<<<< HEAD
 				atmci_writel(host, ATMCI_IDR, ATMCI_DATA_ERROR_FLAGS);
+=======
+				mci_writel(host, IDR, ATMCI_DATA_ERROR_FLAGS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 
 			if (!data->stop) {
@@ -1544,7 +2045,11 @@ static void atmci_tasklet_func(unsigned long priv)
 
 			prev_state = state = STATE_SENDING_STOP;
 			if (!data->error)
+<<<<<<< HEAD
 				atmci_send_stop_cmd(host, data);
+=======
+				send_stop_cmd(host, data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* fall through */
 
 		case STATE_SENDING_STOP:
@@ -1584,7 +2089,11 @@ static void atmci_read_data_pio(struct atmel_mci *host)
 	unsigned int		nbytes = 0;
 
 	do {
+<<<<<<< HEAD
 		value = atmci_readl(host, ATMCI_RDR);
+=======
+		value = mci_readl(host, RDR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (likely(offset + 4 <= sg->length)) {
 			put_unaligned(value, (u32 *)(buf + offset));
 
@@ -1594,8 +2103,12 @@ static void atmci_read_data_pio(struct atmel_mci *host)
 			if (offset == sg->length) {
 				flush_dcache_page(sg_page(sg));
 				host->sg = sg = sg_next(sg);
+<<<<<<< HEAD
 				host->sg_len--;
 				if (!sg || !host->sg_len)
+=======
+				if (!sg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					goto done;
 
 				offset = 0;
@@ -1608,8 +2121,12 @@ static void atmci_read_data_pio(struct atmel_mci *host)
 
 			flush_dcache_page(sg_page(sg));
 			host->sg = sg = sg_next(sg);
+<<<<<<< HEAD
 			host->sg_len--;
 			if (!sg || !host->sg_len)
+=======
+			if (!sg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto done;
 
 			offset = 4 - remaining;
@@ -1618,9 +2135,15 @@ static void atmci_read_data_pio(struct atmel_mci *host)
 			nbytes += offset;
 		}
 
+<<<<<<< HEAD
 		status = atmci_readl(host, ATMCI_SR);
 		if (status & ATMCI_DATA_ERROR_FLAGS) {
 			atmci_writel(host, ATMCI_IDR, (ATMCI_NOTBUSY | ATMCI_RXRDY
+=======
+		status = mci_readl(host, SR);
+		if (status & ATMCI_DATA_ERROR_FLAGS) {
+			mci_writel(host, IDR, (MCI_NOTBUSY | MCI_RXRDY
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						| ATMCI_DATA_ERROR_FLAGS));
 			host->data_status = status;
 			data->bytes_xfered += nbytes;
@@ -1629,7 +2152,11 @@ static void atmci_read_data_pio(struct atmel_mci *host)
 			tasklet_schedule(&host->tasklet);
 			return;
 		}
+<<<<<<< HEAD
 	} while (status & ATMCI_RXRDY);
+=======
+	} while (status & MCI_RXRDY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	host->pio_offset = offset;
 	data->bytes_xfered += nbytes;
@@ -1637,8 +2164,13 @@ static void atmci_read_data_pio(struct atmel_mci *host)
 	return;
 
 done:
+<<<<<<< HEAD
 	atmci_writel(host, ATMCI_IDR, ATMCI_RXRDY);
 	atmci_writel(host, ATMCI_IER, ATMCI_NOTBUSY);
+=======
+	mci_writel(host, IDR, MCI_RXRDY);
+	mci_writel(host, IER, MCI_NOTBUSY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	data->bytes_xfered += nbytes;
 	smp_wmb();
 	atmci_set_pending(host, EVENT_XFER_COMPLETE);
@@ -1657,14 +2189,22 @@ static void atmci_write_data_pio(struct atmel_mci *host)
 	do {
 		if (likely(offset + 4 <= sg->length)) {
 			value = get_unaligned((u32 *)(buf + offset));
+<<<<<<< HEAD
 			atmci_writel(host, ATMCI_TDR, value);
+=======
+			mci_writel(host, TDR, value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			offset += 4;
 			nbytes += 4;
 			if (offset == sg->length) {
 				host->sg = sg = sg_next(sg);
+<<<<<<< HEAD
 				host->sg_len--;
 				if (!sg || !host->sg_len)
+=======
+				if (!sg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					goto done;
 
 				offset = 0;
@@ -1678,15 +2218,21 @@ static void atmci_write_data_pio(struct atmel_mci *host)
 			nbytes += remaining;
 
 			host->sg = sg = sg_next(sg);
+<<<<<<< HEAD
 			host->sg_len--;
 			if (!sg || !host->sg_len) {
 				atmci_writel(host, ATMCI_TDR, value);
+=======
+			if (!sg) {
+				mci_writel(host, TDR, value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto done;
 			}
 
 			offset = 4 - remaining;
 			buf = sg_virt(sg);
 			memcpy((u8 *)&value + remaining, buf, offset);
+<<<<<<< HEAD
 			atmci_writel(host, ATMCI_TDR, value);
 			nbytes += offset;
 		}
@@ -1694,6 +2240,15 @@ static void atmci_write_data_pio(struct atmel_mci *host)
 		status = atmci_readl(host, ATMCI_SR);
 		if (status & ATMCI_DATA_ERROR_FLAGS) {
 			atmci_writel(host, ATMCI_IDR, (ATMCI_NOTBUSY | ATMCI_TXRDY
+=======
+			mci_writel(host, TDR, value);
+			nbytes += offset;
+		}
+
+		status = mci_readl(host, SR);
+		if (status & ATMCI_DATA_ERROR_FLAGS) {
+			mci_writel(host, IDR, (MCI_NOTBUSY | MCI_TXRDY
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						| ATMCI_DATA_ERROR_FLAGS));
 			host->data_status = status;
 			data->bytes_xfered += nbytes;
@@ -1702,7 +2257,11 @@ static void atmci_write_data_pio(struct atmel_mci *host)
 			tasklet_schedule(&host->tasklet);
 			return;
 		}
+<<<<<<< HEAD
 	} while (status & ATMCI_TXRDY);
+=======
+	} while (status & MCI_TXRDY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	host->pio_offset = offset;
 	data->bytes_xfered += nbytes;
@@ -1710,8 +2269,13 @@ static void atmci_write_data_pio(struct atmel_mci *host)
 	return;
 
 done:
+<<<<<<< HEAD
 	atmci_writel(host, ATMCI_IDR, ATMCI_TXRDY);
 	atmci_writel(host, ATMCI_IER, ATMCI_NOTBUSY);
+=======
+	mci_writel(host, IDR, MCI_TXRDY);
+	mci_writel(host, IER, MCI_NOTBUSY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	data->bytes_xfered += nbytes;
 	smp_wmb();
 	atmci_set_pending(host, EVENT_XFER_COMPLETE);
@@ -1719,7 +2283,11 @@ done:
 
 static void atmci_cmd_interrupt(struct atmel_mci *host, u32 status)
 {
+<<<<<<< HEAD
 	atmci_writel(host, ATMCI_IDR, ATMCI_CMDRDY);
+=======
+	mci_writel(host, IDR, MCI_CMDRDY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	host->cmd_status = status;
 	smp_wmb();
@@ -1731,7 +2299,11 @@ static void atmci_sdio_interrupt(struct atmel_mci *host, u32 status)
 {
 	int	i;
 
+<<<<<<< HEAD
 	for (i = 0; i < ATMCI_MAX_NR_SLOTS; i++) {
+=======
+	for (i = 0; i < ATMEL_MCI_MAX_NR_SLOTS; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct atmel_mci_slot *slot = host->slot[i];
 		if (slot && (status & slot->sdio_irq)) {
 			mmc_signal_sdio_irq(slot->mmc);
@@ -1747,22 +2319,34 @@ static irqreturn_t atmci_interrupt(int irq, void *dev_id)
 	unsigned int		pass_count = 0;
 
 	do {
+<<<<<<< HEAD
 		status = atmci_readl(host, ATMCI_SR);
 		mask = atmci_readl(host, ATMCI_IMR);
+=======
+		status = mci_readl(host, SR);
+		mask = mci_readl(host, IMR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pending = status & mask;
 		if (!pending)
 			break;
 
 		if (pending & ATMCI_DATA_ERROR_FLAGS) {
+<<<<<<< HEAD
 			atmci_writel(host, ATMCI_IDR, ATMCI_DATA_ERROR_FLAGS
 					| ATMCI_RXRDY | ATMCI_TXRDY);
 			pending &= atmci_readl(host, ATMCI_IMR);
+=======
+			mci_writel(host, IDR, ATMCI_DATA_ERROR_FLAGS
+					| MCI_RXRDY | MCI_TXRDY);
+			pending &= mci_readl(host, IMR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			host->data_status = status;
 			smp_wmb();
 			atmci_set_pending(host, EVENT_DATA_ERROR);
 			tasklet_schedule(&host->tasklet);
 		}
+<<<<<<< HEAD
 
 		if (pending & ATMCI_TXBUFE) {
 			atmci_writel(host, ATMCI_IDR, ATMCI_TXBUFE);
@@ -1818,12 +2402,18 @@ static irqreturn_t atmci_interrupt(int irq, void *dev_id)
 		if (pending & ATMCI_NOTBUSY) {
 			atmci_writel(host, ATMCI_IDR,
 					ATMCI_DATA_ERROR_FLAGS | ATMCI_NOTBUSY);
+=======
+		if (pending & MCI_NOTBUSY) {
+			mci_writel(host, IDR,
+					ATMCI_DATA_ERROR_FLAGS | MCI_NOTBUSY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!host->data_status)
 				host->data_status = status;
 			smp_wmb();
 			atmci_set_pending(host, EVENT_DATA_COMPLETE);
 			tasklet_schedule(&host->tasklet);
 		}
+<<<<<<< HEAD
 		if (pending & ATMCI_RXRDY)
 			atmci_read_data_pio(host);
 		if (pending & ATMCI_TXRDY)
@@ -1833,6 +2423,17 @@ static irqreturn_t atmci_interrupt(int irq, void *dev_id)
 			atmci_cmd_interrupt(host, status);
 
 		if (pending & (ATMCI_SDIOIRQA | ATMCI_SDIOIRQB))
+=======
+		if (pending & MCI_RXRDY)
+			atmci_read_data_pio(host);
+		if (pending & MCI_TXRDY)
+			atmci_write_data_pio(host);
+
+		if (pending & MCI_CMDRDY)
+			atmci_cmd_interrupt(host, status);
+
+		if (pending & (MCI_SDIOIRQA | MCI_SDIOIRQB))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			atmci_sdio_interrupt(host, status);
 
 	} while (pass_count++ < 5);
@@ -1881,7 +2482,11 @@ static int __init atmci_init_slot(struct atmel_mci *host,
 	mmc->ocr_avail	= MMC_VDD_32_33 | MMC_VDD_33_34;
 	if (sdio_irq)
 		mmc->caps |= MMC_CAP_SDIO_IRQ;
+<<<<<<< HEAD
 	if (host->caps.has_highspeed)
+=======
+	if (atmci_is_mci2())
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mmc->caps |= MMC_CAP_SD_HIGHSPEED;
 	if (slot_data->bus_width >= 4)
 		mmc->caps |= MMC_CAP_4_BIT_DATA;
@@ -1964,7 +2569,12 @@ static void __exit atmci_cleanup_slot(struct atmel_mci_slot *slot,
 	mmc_free_host(slot->mmc);
 }
 
+<<<<<<< HEAD
 static bool atmci_filter(struct dma_chan *chan, void *slave)
+=======
+#ifdef CONFIG_MMC_ATMELMCI_DMA
+static bool filter(struct dma_chan *chan, void *slave)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct mci_dma_data	*sl = slave;
 
@@ -1976,22 +2586,38 @@ static bool atmci_filter(struct dma_chan *chan, void *slave)
 	}
 }
 
+<<<<<<< HEAD
 static bool atmci_configure_dma(struct atmel_mci *host)
+=======
+static void atmci_configure_dma(struct atmel_mci *host)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct mci_platform_data	*pdata;
 
 	if (host == NULL)
+<<<<<<< HEAD
 		return false;
+=======
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pdata = host->pdev->dev.platform_data;
 
 	if (pdata && find_slave_dev(pdata->dma_slave)) {
 		dma_cap_mask_t mask;
 
+<<<<<<< HEAD
+=======
+		setup_dma_addr(pdata->dma_slave,
+			       host->mapbase + MCI_TDR,
+			       host->mapbase + MCI_RDR);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Try to grab a DMA channel */
 		dma_cap_zero(mask);
 		dma_cap_set(DMA_SLAVE, mask);
 		host->dma.chan =
+<<<<<<< HEAD
 			dma_request_channel(mask, atmci_filter, pdata->dma_slave);
 	}
 	if (!host->dma.chan) {
@@ -2066,6 +2692,20 @@ static void __init atmci_get_cap(struct atmel_mci *host)
 		break;
 	}
 }
+=======
+			dma_request_channel(mask, filter, pdata->dma_slave);
+	}
+	if (!host->dma.chan)
+		dev_notice(&host->pdev->dev, "DMA not available, using PIO\n");
+	else
+		dev_info(&host->pdev->dev,
+					"Using %s for DMA transfers\n",
+					dma_chan_name(host->dma.chan));
+}
+#else
+static void atmci_configure_dma(struct atmel_mci *host) {}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __init atmci_probe(struct platform_device *pdev)
 {
@@ -2106,7 +2746,11 @@ static int __init atmci_probe(struct platform_device *pdev)
 		goto err_ioremap;
 
 	clk_enable(host->mck);
+<<<<<<< HEAD
 	atmci_writel(host, ATMCI_CR, ATMCI_CR_SWRST);
+=======
+	mci_writel(host, CR, MCI_CR_SWRST);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	host->bus_hz = clk_get_rate(host->mck);
 	clk_disable(host->mck);
 
@@ -2118,6 +2762,7 @@ static int __init atmci_probe(struct platform_device *pdev)
 	if (ret)
 		goto err_request_irq;
 
+<<<<<<< HEAD
 	/* Get MCI capabilities and set operations according to it */
 	atmci_get_cap(host);
 	if (host->caps.has_dma && atmci_configure_dma(host)) {
@@ -2135,6 +2780,9 @@ static int __init atmci_probe(struct platform_device *pdev)
 		host->submit_data = &atmci_submit_data;
 		host->stop_transfer = &atmci_stop_transfer;
 	}
+=======
+	atmci_configure_dma(host);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	platform_set_drvdata(pdev, host);
 
@@ -2143,13 +2791,21 @@ static int __init atmci_probe(struct platform_device *pdev)
 	ret = -ENODEV;
 	if (pdata->slot[0].bus_width) {
 		ret = atmci_init_slot(host, &pdata->slot[0],
+<<<<<<< HEAD
 				0, ATMCI_SDCSEL_SLOT_A, ATMCI_SDIOIRQA);
+=======
+				0, MCI_SDCSEL_SLOT_A, MCI_SDIOIRQA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!ret)
 			nr_slots++;
 	}
 	if (pdata->slot[1].bus_width) {
 		ret = atmci_init_slot(host, &pdata->slot[1],
+<<<<<<< HEAD
 				1, ATMCI_SDCSEL_SLOT_B, ATMCI_SDIOIRQB);
+=======
+				1, MCI_SDCSEL_SLOT_B, MCI_SDIOIRQB);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!ret)
 			nr_slots++;
 	}
@@ -2166,8 +2822,15 @@ static int __init atmci_probe(struct platform_device *pdev)
 	return 0;
 
 err_init_slot:
+<<<<<<< HEAD
 	if (host->dma.chan)
 		dma_release_channel(host->dma.chan);
+=======
+#ifdef CONFIG_MMC_ATMELMCI_DMA
+	if (host->dma.chan)
+		dma_release_channel(host->dma.chan);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	free_irq(irq, host);
 err_request_irq:
 	iounmap(host->regs);
@@ -2185,12 +2848,17 @@ static int __exit atmci_remove(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, NULL);
 
+<<<<<<< HEAD
 	for (i = 0; i < ATMCI_MAX_NR_SLOTS; i++) {
+=======
+	for (i = 0; i < ATMEL_MCI_MAX_NR_SLOTS; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (host->slot[i])
 			atmci_cleanup_slot(host->slot[i], i);
 	}
 
 	clk_enable(host->mck);
+<<<<<<< HEAD
 	atmci_writel(host, ATMCI_IDR, ~0UL);
 	atmci_writel(host, ATMCI_CR, ATMCI_CR_MCIDIS);
 	atmci_readl(host, ATMCI_SR);
@@ -2198,6 +2866,17 @@ static int __exit atmci_remove(struct platform_device *pdev)
 
 	if (host->dma.chan)
 		dma_release_channel(host->dma.chan);
+=======
+	mci_writel(host, IDR, ~0UL);
+	mci_writel(host, CR, MCI_CR_MCIDIS);
+	mci_readl(host, SR);
+	clk_disable(host->mck);
+
+#ifdef CONFIG_MMC_ATMELMCI_DMA
+	if (host->dma.chan)
+		dma_release_channel(host->dma.chan);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	free_irq(platform_get_irq(pdev, 0), host);
 	iounmap(host->regs);
@@ -2208,6 +2887,7 @@ static int __exit atmci_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 static int atmci_suspend(struct device *dev)
 {
@@ -2269,11 +2949,16 @@ static SIMPLE_DEV_PM_OPS(atmci_pm, atmci_suspend, atmci_resume);
 #define ATMCI_PM_OPS	NULL
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver atmci_driver = {
 	.remove		= __exit_p(atmci_remove),
 	.driver		= {
 		.name		= "atmel_mci",
+<<<<<<< HEAD
 		.pm		= ATMCI_PM_OPS,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

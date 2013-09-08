@@ -2,7 +2,11 @@
  *    pata_artop.c - ARTOP ATA controller driver
  *
  *	(C) 2006 Red Hat
+<<<<<<< HEAD
  *	(C) 2007,2011 Bartlomiej Zolnierkiewicz
+=======
+ *	(C) 2007 Bartlomiej Zolnierkiewicz
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *    Based in part on drivers/ide/pci/aec62xx.c
  *	Copyright (C) 1999-2002	Andre Hedrick <andre@linux-ide.org>
@@ -28,7 +32,11 @@
 #include <linux/ata.h>
 
 #define DRV_NAME	"pata_artop"
+<<<<<<< HEAD
 #define DRV_VERSION	"0.4.6"
+=======
+#define DRV_VERSION	"0.4.5"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  *	The ARTOP has 33 Mhz and "over clocked" timing tables. Until we
@@ -39,6 +47,7 @@
 
 static int clock = 0;
 
+<<<<<<< HEAD
 /**
  *	artop62x0_pre_reset	-	probe begin
  *	@link: link
@@ -48,6 +57,33 @@ static int clock = 0;
  */
 
 static int artop62x0_pre_reset(struct ata_link *link, unsigned long deadline)
+=======
+static int artop6210_pre_reset(struct ata_link *link, unsigned long deadline)
+{
+	struct ata_port *ap = link->ap;
+	struct pci_dev *pdev = to_pci_dev(ap->host->dev);
+	const struct pci_bits artop_enable_bits[] = {
+		{ 0x4AU, 1U, 0x02UL, 0x02UL },	/* port 0 */
+		{ 0x4AU, 1U, 0x04UL, 0x04UL },	/* port 1 */
+	};
+
+	if (!pci_test_config_bits(pdev, &artop_enable_bits[ap->port_no]))
+		return -ENOENT;
+
+	return ata_sff_prereset(link, deadline);
+}
+
+/**
+ *	artop6260_pre_reset	-	check for 40/80 pin
+ *	@link: link
+ *	@deadline: deadline jiffies for the operation
+ *
+ *	The ARTOP hardware reports the cable detect bits in register 0x49.
+ *	Nothing complicated needed here.
+ */
+
+static int artop6260_pre_reset(struct ata_link *link, unsigned long deadline)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static const struct pci_bits artop_enable_bits[] = {
 		{ 0x4AU, 1U, 0x02UL, 0x02UL },	/* port 0 */
@@ -57,7 +93,11 @@ static int artop62x0_pre_reset(struct ata_link *link, unsigned long deadline)
 	struct ata_port *ap = link->ap;
 	struct pci_dev *pdev = to_pci_dev(ap->host->dev);
 
+<<<<<<< HEAD
 	/* Odd numbered device ids are the units with enable bits. */
+=======
+	/* Odd numbered device ids are the units with enable bits (the -R cards) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((pdev->device & 1) &&
 	    !pci_test_config_bits(pdev, &artop_enable_bits[ap->port_no]))
 		return -ENOENT;
@@ -301,7 +341,11 @@ static struct ata_port_operations artop6210_ops = {
 	.cable_detect		= ata_cable_40wire,
 	.set_piomode		= artop6210_set_piomode,
 	.set_dmamode		= artop6210_set_dmamode,
+<<<<<<< HEAD
 	.prereset		= artop62x0_pre_reset,
+=======
+	.prereset		= artop6210_pre_reset,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.qc_defer		= artop6210_qc_defer,
 };
 
@@ -310,6 +354,7 @@ static struct ata_port_operations artop6260_ops = {
 	.cable_detect		= artop6260_cable_detect,
 	.set_piomode		= artop6260_set_piomode,
 	.set_dmamode		= artop6260_set_dmamode,
+<<<<<<< HEAD
 	.prereset		= artop62x0_pre_reset,
 };
 
@@ -340,6 +385,11 @@ static void atp8xx_fixup(struct pci_dev *pdev)
 		pci_write_config_byte(pdev, 0x4a, (reg & ~0x01) | 0x80);
 	}
 }
+=======
+	.prereset		= artop6260_pre_reset,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  *	artop_init_one - Register ARTOP ATA PCI device with kernel services
@@ -357,6 +407,10 @@ static void atp8xx_fixup(struct pci_dev *pdev)
 
 static int artop_init_one (struct pci_dev *pdev, const struct pci_device_id *id)
 {
+<<<<<<< HEAD
+=======
+	static int printed_version;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	static const struct ata_port_info info_6210 = {
 		.flags		= ATA_FLAG_SLAVE_POSS,
 		.pio_mask	= ATA_PIO4,
@@ -388,28 +442,70 @@ static int artop_init_one (struct pci_dev *pdev, const struct pci_device_id *id)
 	const struct ata_port_info *ppi[] = { NULL, NULL };
 	int rc;
 
+<<<<<<< HEAD
 	ata_print_version_once(&pdev->dev, DRV_VERSION);
+=======
+	if (!printed_version++)
+		dev_printk(KERN_DEBUG, &pdev->dev,
+			   "version " DRV_VERSION "\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rc = pcim_enable_device(pdev);
 	if (rc)
 		return rc;
 
+<<<<<<< HEAD
 	if (id->driver_data == 0)	/* 6210 variant */
 		ppi[0] = &info_6210;
+=======
+	if (id->driver_data == 0) {	/* 6210 variant */
+		ppi[0] = &info_6210;
+		/* BIOS may have left us in UDMA, clear it before libata probe */
+		pci_write_config_byte(pdev, 0x54, 0);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else if (id->driver_data == 1)	/* 6260 */
 		ppi[0] = &info_626x;
 	else if (id->driver_data == 2)	{ /* 6280 or 6280 + fast */
 		unsigned long io = pci_resource_start(pdev, 4);
+<<<<<<< HEAD
+=======
+		u8 reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ppi[0] = &info_628x;
 		if (inb(io) & 0x10)
 			ppi[0] = &info_628x_fast;
+<<<<<<< HEAD
+=======
+		/* Mac systems come up with some registers not set as we
+		   will need them */
+
+		/* Clear reset & test bits */
+		pci_read_config_byte(pdev, 0x49, &reg);
+		pci_write_config_byte(pdev, 0x49, reg & ~ 0x30);
+
+		/* PCI latency must be > 0x80 for burst mode, tweak it
+		 * if required.
+		 */
+		pci_read_config_byte(pdev, PCI_LATENCY_TIMER, &reg);
+		if (reg <= 0x80)
+			pci_write_config_byte(pdev, PCI_LATENCY_TIMER, 0x90);
+
+		/* Enable IRQ output and burst mode */
+		pci_read_config_byte(pdev, 0x4a, &reg);
+		pci_write_config_byte(pdev, 0x4a, (reg & ~0x01) | 0x80);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	BUG_ON(ppi[0] == NULL);
 
+<<<<<<< HEAD
 	atp8xx_fixup(pdev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ata_pci_bmdma_init_one(pdev, ppi, &artop_sht, NULL, 0);
 }
 
@@ -423,6 +519,7 @@ static const struct pci_device_id artop_pci_tbl[] = {
 	{ }	/* terminate list */
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 static int atp8xx_reinit_one(struct pci_dev *pdev)
 {
@@ -440,15 +537,20 @@ static int atp8xx_reinit_one(struct pci_dev *pdev)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct pci_driver artop_pci_driver = {
 	.name			= DRV_NAME,
 	.id_table		= artop_pci_tbl,
 	.probe			= artop_init_one,
 	.remove			= ata_pci_remove_one,
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 	.suspend		= ata_pci_device_suspend,
 	.resume			= atp8xx_reinit_one,
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init artop_init(void)
@@ -464,8 +566,16 @@ static void __exit artop_exit(void)
 module_init(artop_init);
 module_exit(artop_exit);
 
+<<<<<<< HEAD
 MODULE_AUTHOR("Alan Cox, Bartlomiej Zolnierkiewicz");
+=======
+MODULE_AUTHOR("Alan Cox");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("SCSI low-level driver for ARTOP PATA");
 MODULE_LICENSE("GPL");
 MODULE_DEVICE_TABLE(pci, artop_pci_tbl);
 MODULE_VERSION(DRV_VERSION);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

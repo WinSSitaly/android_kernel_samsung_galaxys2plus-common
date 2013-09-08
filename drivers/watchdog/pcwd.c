@@ -51,8 +51,11 @@
  *	http://www.pcwatchdog.com/
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>	/* For module specific items */
 #include <linux/moduleparam.h>	/* For new moduleparam's */
 #include <linux/types.h>	/* For standard types (like size_t) */
@@ -77,6 +80,10 @@
 #define WATCHDOG_DATE "18 Feb 2007"
 #define WATCHDOG_DRIVER_NAME "ISA-PC Watchdog"
 #define WATCHDOG_NAME "pcwd"
+<<<<<<< HEAD
+=======
+#define PFX WATCHDOG_NAME ": "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DRIVER_VERSION WATCHDOG_DRIVER_NAME " driver, v" WATCHDOG_VERSION "\n"
 
 /*
@@ -204,8 +211,13 @@ MODULE_PARM_DESC(heartbeat, "Watchdog heartbeat in seconds. "
 	"(2 <= heartbeat <= 7200 or 0=delay-time from dip-switches, default="
 				__MODULE_STRING(WATCHDOG_HEARTBEAT) ")");
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 module_param(nowayout, bool, 0);
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout,
 		"Watchdog cannot be stopped once started (default="
 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
@@ -221,7 +233,12 @@ static int send_isa_command(int cmd)
 	int port0, last_port0;	/* Double read for stabilising */
 
 	if (debug >= DEBUG)
+<<<<<<< HEAD
 		pr_debug("sending following data cmd=0x%02x\n", cmd);
+=======
+		printk(KERN_DEBUG PFX "sending following data cmd=0x%02x\n",
+			cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* The WCMD bit must be 1 and the command is only 4 bits in size */
 	control_status = (cmd & 0x0F) | WD_WCMD;
@@ -240,8 +257,14 @@ static int send_isa_command(int cmd)
 	}
 
 	if (debug >= DEBUG)
+<<<<<<< HEAD
 		pr_debug("received following data for cmd=0x%02x: port0=0x%02x last_port0=0x%02x\n",
 			 cmd, port0, last_port0);
+=======
+		printk(KERN_DEBUG PFX "received following data for "
+			"cmd=0x%02x: port0=0x%02x last_port0=0x%02x\n",
+			cmd, port0, last_port0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return port0;
 }
@@ -270,7 +293,12 @@ static int set_command_mode(void)
 	pcwd_private.command_mode = found;
 
 	if (debug >= DEBUG)
+<<<<<<< HEAD
 		pr_debug("command_mode=%d\n", pcwd_private.command_mode);
+=======
+		printk(KERN_DEBUG PFX "command_mode=%d\n",
+				pcwd_private.command_mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return found;
 }
@@ -286,7 +314,12 @@ static void unset_command_mode(void)
 	pcwd_private.command_mode = 0;
 
 	if (debug >= DEBUG)
+<<<<<<< HEAD
 		pr_debug("command_mode=%d\n", pcwd_private.command_mode);
+=======
+		printk(KERN_DEBUG PFX "command_mode=%d\n",
+				pcwd_private.command_mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void pcwd_check_temperature_support(void)
@@ -333,6 +366,7 @@ static void pcwd_show_card_info(void)
 
 	/* Get some extra info from the hardware (in command/debug/diag mode) */
 	if (pcwd_private.revision == PCWD_REVISION_A)
+<<<<<<< HEAD
 		pr_info("ISA-PC Watchdog (REV.A) detected at port 0x%04x\n",
 			pcwd_private.io_addr);
 	else if (pcwd_private.revision == PCWD_REVISION_C) {
@@ -341,6 +375,19 @@ static void pcwd_show_card_info(void)
 			pcwd_private.io_addr, pcwd_private.fw_ver_str);
 		option_switches = pcwd_get_option_switches();
 		pr_info("Option switches (0x%02x): Temperature Reset Enable=%s, Power On Delay=%s\n",
+=======
+		printk(KERN_INFO PFX
+			"ISA-PC Watchdog (REV.A) detected at port 0x%04x\n",
+							pcwd_private.io_addr);
+	else if (pcwd_private.revision == PCWD_REVISION_C) {
+		pcwd_get_firmware();
+		printk(KERN_INFO PFX "ISA-PC Watchdog (REV.C) detected at port "
+			"0x%04x (Firmware version: %s)\n",
+			pcwd_private.io_addr, pcwd_private.fw_ver_str);
+		option_switches = pcwd_get_option_switches();
+		printk(KERN_INFO PFX "Option switches (0x%02x): "
+			"Temperature Reset Enable=%s, Power On Delay=%s\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			option_switches,
 			((option_switches & 0x10) ? "ON" : "OFF"),
 			((option_switches & 0x08) ? "ON" : "OFF"));
@@ -353,6 +400,7 @@ static void pcwd_show_card_info(void)
 	}
 
 	if (pcwd_private.supports_temp)
+<<<<<<< HEAD
 		pr_info("Temperature Option Detected\n");
 
 	if (pcwd_private.boot_status & WDIOF_CARDRESET)
@@ -365,6 +413,24 @@ static void pcwd_show_card_info(void)
 
 	if (pcwd_private.boot_status == 0)
 		pr_info("No previous trip detected - Cold boot or reset\n");
+=======
+		printk(KERN_INFO PFX "Temperature Option Detected\n");
+
+	if (pcwd_private.boot_status & WDIOF_CARDRESET)
+		printk(KERN_INFO PFX
+			"Previous reboot was caused by the card\n");
+
+	if (pcwd_private.boot_status & WDIOF_OVERHEAT) {
+		printk(KERN_EMERG PFX
+			"Card senses a CPU Overheat. Panicking!\n");
+		printk(KERN_EMERG PFX
+			"CPU Overheat\n");
+	}
+
+	if (pcwd_private.boot_status == 0)
+		printk(KERN_INFO PFX
+			"No previous trip detected - Cold boot or reset\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void pcwd_timer_ping(unsigned long data)
@@ -394,7 +460,12 @@ static void pcwd_timer_ping(unsigned long data)
 
 		spin_unlock(&pcwd_private.io_lock);
 	} else {
+<<<<<<< HEAD
 		pr_warn("Heartbeat lost! Will not ping the watchdog\n");
+=======
+		printk(KERN_WARNING PFX
+			"Heartbeat lost! Will not ping the watchdog\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -415,13 +486,21 @@ static int pcwd_start(void)
 		stat_reg = inb_p(pcwd_private.io_addr + 2);
 		spin_unlock(&pcwd_private.io_lock);
 		if (stat_reg & WD_WDIS) {
+<<<<<<< HEAD
 			pr_info("Could not start watchdog\n");
+=======
+			printk(KERN_INFO PFX "Could not start watchdog\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EIO;
 		}
 	}
 
 	if (debug >= VERBOSE)
+<<<<<<< HEAD
 		pr_debug("Watchdog started\n");
+=======
+		printk(KERN_DEBUG PFX "Watchdog started\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -443,13 +522,21 @@ static int pcwd_stop(void)
 		stat_reg = inb_p(pcwd_private.io_addr + 2);
 		spin_unlock(&pcwd_private.io_lock);
 		if ((stat_reg & WD_WDIS) == 0) {
+<<<<<<< HEAD
 			pr_info("Could not stop watchdog\n");
+=======
+			printk(KERN_INFO PFX "Could not stop watchdog\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EIO;
 		}
 	}
 
 	if (debug >= VERBOSE)
+<<<<<<< HEAD
 		pr_debug("Watchdog stopped\n");
+=======
+		printk(KERN_DEBUG PFX "Watchdog stopped\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -460,7 +547,11 @@ static int pcwd_keepalive(void)
 	pcwd_private.next_heartbeat = jiffies + (heartbeat * HZ);
 
 	if (debug >= DEBUG)
+<<<<<<< HEAD
 		pr_debug("Watchdog keepalive signal send\n");
+=======
+		printk(KERN_DEBUG PFX "Watchdog keepalive signal send\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -473,7 +564,12 @@ static int pcwd_set_heartbeat(int t)
 	heartbeat = t;
 
 	if (debug >= VERBOSE)
+<<<<<<< HEAD
 		pr_debug("New heartbeat: %d\n", heartbeat);
+=======
+		printk(KERN_DEBUG PFX "New heartbeat: %d\n",
+		       heartbeat);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -506,7 +602,12 @@ static int pcwd_get_status(int *status)
 		if (control_status & WD_T110) {
 			*status |= WDIOF_OVERHEAT;
 			if (temp_panic) {
+<<<<<<< HEAD
 				pr_info("Temperature overheat trip!\n");
+=======
+				printk(KERN_INFO PFX
+					"Temperature overheat trip!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				kernel_power_off();
 			}
 		}
@@ -517,7 +618,12 @@ static int pcwd_get_status(int *status)
 		if (control_status & WD_REVC_TTRP) {
 			*status |= WDIOF_OVERHEAT;
 			if (temp_panic) {
+<<<<<<< HEAD
 				pr_info("Temperature overheat trip!\n");
+=======
+				printk(KERN_INFO PFX
+					"Temperature overheat trip!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				kernel_power_off();
 			}
 		}
@@ -534,14 +640,26 @@ static int pcwd_clear_status(void)
 		spin_lock(&pcwd_private.io_lock);
 
 		if (debug >= VERBOSE)
+<<<<<<< HEAD
 			pr_info("clearing watchdog trip status\n");
+=======
+			printk(KERN_INFO PFX
+					"clearing watchdog trip status\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		control_status = inb_p(pcwd_private.io_addr + 1);
 
 		if (debug >= DEBUG) {
+<<<<<<< HEAD
 			pr_debug("status was: 0x%02x\n", control_status);
 			pr_debug("sending: 0x%02x\n",
 				 (control_status & WD_REVC_R2DS));
+=======
+			printk(KERN_DEBUG PFX "status was: 0x%02x\n",
+				control_status);
+			printk(KERN_DEBUG PFX "sending: 0x%02x\n",
+				(control_status & WD_REVC_R2DS));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/* clear reset status & Keep Relay 2 disable state as it is */
@@ -572,7 +690,12 @@ static int pcwd_get_temperature(int *temperature)
 	spin_unlock(&pcwd_private.io_lock);
 
 	if (debug >= DEBUG) {
+<<<<<<< HEAD
 		pr_debug("temperature is: %d F\n", *temperature);
+=======
+		printk(KERN_DEBUG PFX "temperature is: %d F\n",
+			*temperature);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -703,7 +826,12 @@ static int pcwd_close(struct inode *inode, struct file *file)
 	if (expect_close == 42)
 		pcwd_stop();
 	else {
+<<<<<<< HEAD
 		pr_crit("Unexpected close, not stopping watchdog!\n");
+=======
+		printk(KERN_CRIT PFX
+			"Unexpected close, not stopping watchdog!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pcwd_keepalive();
 	}
 	expect_close = 0;
@@ -810,10 +938,18 @@ static int __devinit pcwd_isa_match(struct device *dev, unsigned int id)
 	int retval;
 
 	if (debug >= DEBUG)
+<<<<<<< HEAD
 		pr_debug("pcwd_isa_match id=%d\n", id);
 
 	if (!request_region(base_addr, 4, "PCWD")) {
 		pr_info("Port 0x%04x unavailable\n", base_addr);
+=======
+		printk(KERN_DEBUG PFX "pcwd_isa_match id=%d\n",
+			id);
+
+	if (!request_region(base_addr, 4, "PCWD")) {
+		printk(KERN_INFO PFX "Port 0x%04x unavailable\n", base_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
@@ -851,6 +987,7 @@ static int __devinit pcwd_isa_probe(struct device *dev, unsigned int id)
 	int ret;
 
 	if (debug >= DEBUG)
+<<<<<<< HEAD
 		pr_debug("pcwd_isa_probe id=%d\n", id);
 
 	cards_found++;
@@ -860,11 +997,27 @@ static int __devinit pcwd_isa_probe(struct device *dev, unsigned int id)
 
 	if (cards_found > 1) {
 		pr_err("This driver only supports 1 device\n");
+=======
+		printk(KERN_DEBUG PFX "pcwd_isa_probe id=%d\n",
+			id);
+
+	cards_found++;
+	if (cards_found == 1)
+		printk(KERN_INFO PFX "v%s Ken Hollis (kenji@bitgate.com)\n",
+							WATCHDOG_VERSION);
+
+	if (cards_found > 1) {
+		printk(KERN_ERR PFX "This driver only supports 1 device\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
 	if (pcwd_ioports[id] == 0x0000) {
+<<<<<<< HEAD
 		pr_err("No I/O-Address for card detected\n");
+=======
+		printk(KERN_ERR PFX "No I/O-Address for card detected\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 	pcwd_private.io_addr = pcwd_ioports[id];
@@ -876,8 +1029,13 @@ static int __devinit pcwd_isa_probe(struct device *dev, unsigned int id)
 
 	if (!request_region(pcwd_private.io_addr,
 		(pcwd_private.revision == PCWD_REVISION_A) ? 2 : 4, "PCWD")) {
+<<<<<<< HEAD
 		pr_err("I/O address 0x%04x already in use\n",
 		       pcwd_private.io_addr);
+=======
+		printk(KERN_ERR PFX "I/O address 0x%04x already in use\n",
+			pcwd_private.io_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EIO;
 		goto error_request_region;
 	}
@@ -912,27 +1070,49 @@ static int __devinit pcwd_isa_probe(struct device *dev, unsigned int id)
 	   if not reset to the default */
 	if (pcwd_set_heartbeat(heartbeat)) {
 		pcwd_set_heartbeat(WATCHDOG_HEARTBEAT);
+<<<<<<< HEAD
 		pr_info("heartbeat value must be 2 <= heartbeat <= 7200, using %d\n",
 			WATCHDOG_HEARTBEAT);
+=======
+		printk(KERN_INFO PFX
+		  "heartbeat value must be 2 <= heartbeat <= 7200, using %d\n",
+							WATCHDOG_HEARTBEAT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (pcwd_private.supports_temp) {
 		ret = misc_register(&temp_miscdev);
 		if (ret) {
+<<<<<<< HEAD
 			pr_err("cannot register miscdev on minor=%d (err=%d)\n",
 			       TEMP_MINOR, ret);
+=======
+			printk(KERN_ERR PFX
+			    "cannot register miscdev on minor=%d (err=%d)\n",
+							TEMP_MINOR, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto error_misc_register_temp;
 		}
 	}
 
 	ret = misc_register(&pcwd_miscdev);
 	if (ret) {
+<<<<<<< HEAD
 		pr_err("cannot register miscdev on minor=%d (err=%d)\n",
 		       WATCHDOG_MINOR, ret);
 		goto error_misc_register_watchdog;
 	}
 
 	pr_info("initialized. heartbeat=%d sec (nowayout=%d)\n",
+=======
+		printk(KERN_ERR PFX
+			"cannot register miscdev on minor=%d (err=%d)\n",
+					WATCHDOG_MINOR, ret);
+		goto error_misc_register_watchdog;
+	}
+
+	printk(KERN_INFO PFX "initialized. heartbeat=%d sec (nowayout=%d)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		heartbeat, nowayout);
 
 	return 0;
@@ -952,7 +1132,12 @@ error_request_region:
 static int __devexit pcwd_isa_remove(struct device *dev, unsigned int id)
 {
 	if (debug >= DEBUG)
+<<<<<<< HEAD
 		pr_debug("pcwd_isa_remove id=%d\n", id);
+=======
+		printk(KERN_DEBUG PFX "pcwd_isa_remove id=%d\n",
+			id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!pcwd_private.io_addr)
 		return 1;
@@ -976,7 +1161,12 @@ static int __devexit pcwd_isa_remove(struct device *dev, unsigned int id)
 static void pcwd_isa_shutdown(struct device *dev, unsigned int id)
 {
 	if (debug >= DEBUG)
+<<<<<<< HEAD
 		pr_debug("pcwd_isa_shutdown id=%d\n", id);
+=======
+		printk(KERN_DEBUG PFX "pcwd_isa_shutdown id=%d\n",
+			id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pcwd_stop();
 }
@@ -1000,7 +1190,11 @@ static int __init pcwd_init_module(void)
 static void __exit pcwd_cleanup_module(void)
 {
 	isa_unregister_driver(&pcwd_isa_driver);
+<<<<<<< HEAD
 	pr_info("Watchdog Module Unloaded\n");
+=======
+	printk(KERN_INFO PFX "Watchdog Module Unloaded.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(pcwd_init_module);

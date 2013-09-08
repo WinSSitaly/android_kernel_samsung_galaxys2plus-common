@@ -12,8 +12,13 @@
  *
  * TC6393XB TC6391XB TC6387XB T7L66XB ASIC3
  */
+<<<<<<< HEAD
 #ifndef LINUX_MMC_TMIO_H
 #define LINUX_MMC_TMIO_H
+=======
+#ifndef _LINUX_MMC_TMIO_H_
+#define _LINUX_MMC_TMIO_H_
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define CTL_SD_CMD 0x00
 #define CTL_ARG_REG 0x04
@@ -21,7 +26,10 @@
 #define CTL_XFER_BLK_COUNT 0xa
 #define CTL_RESPONSE 0x0c
 #define CTL_STATUS 0x1c
+<<<<<<< HEAD
 #define CTL_STATUS2 0x1e
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define CTL_IRQ_MASK 0x20
 #define CTL_SD_CARD_CLK_CTL 0x24
 #define CTL_SD_XFER_LEN 0x26
@@ -31,7 +39,10 @@
 #define CTL_TRANSACTION_CTL 0x34
 #define CTL_SDIO_STATUS 0x36
 #define CTL_SDIO_IRQ_MASK 0x38
+<<<<<<< HEAD
 #define CTL_DMA_ENABLE 0xd8
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define CTL_RESET_SD 0xe0
 #define CTL_SDIO_REGS 0x100
 #define CTL_CLK_AND_WAIT_CTL 0x138
@@ -62,4 +73,8 @@
 
 #define TMIO_BBS		512		/* Boot block size */
 
+<<<<<<< HEAD
 #endif /* LINUX_MMC_TMIO_H */
+=======
+#endif /* _LINUX_MMC_TMIO_H_ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

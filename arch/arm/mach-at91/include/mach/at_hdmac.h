@@ -24,6 +24,21 @@ struct at_dma_platform_data {
 };
 
 /**
+<<<<<<< HEAD
+=======
+ * enum at_dma_slave_width - DMA slave register access width.
+ * @AT_DMA_SLAVE_WIDTH_8BIT: Do 8-bit slave register accesses
+ * @AT_DMA_SLAVE_WIDTH_16BIT: Do 16-bit slave register accesses
+ * @AT_DMA_SLAVE_WIDTH_32BIT: Do 32-bit slave register accesses
+ */
+enum at_dma_slave_width {
+	AT_DMA_SLAVE_WIDTH_8BIT = 0,
+	AT_DMA_SLAVE_WIDTH_16BIT,
+	AT_DMA_SLAVE_WIDTH_32BIT,
+};
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * struct at_dma_slave - Controller-specific information about a slave
  * @dma_dev: required DMA master device
  * @tx_reg: physical address of data register used for
@@ -36,6 +51,12 @@ struct at_dma_platform_data {
  */
 struct at_dma_slave {
 	struct device		*dma_dev;
+<<<<<<< HEAD
+=======
+	dma_addr_t		tx_reg;
+	dma_addr_t		rx_reg;
+	enum at_dma_slave_width	reg_width;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32			cfg;
 	u32			ctrla;
 };

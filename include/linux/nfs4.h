@@ -183,12 +183,23 @@ struct nfs4_acl {
 
 typedef struct { char data[NFS4_VERIFIER_SIZE]; } nfs4_verifier;
 
+<<<<<<< HEAD
 struct nfs_stateid4 {
+=======
+struct nfs41_stateid {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__be32 seqid;
 	char other[NFS4_STATEID_OTHER_SIZE];
 } __attribute__ ((packed));
 
+<<<<<<< HEAD
 typedef struct nfs_stateid4 nfs4_stateid;
+=======
+typedef union {
+	char data[NFS4_STATEID_SIZE];
+	struct nfs41_stateid stateid;
+} nfs4_stateid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum nfs_opnum4 {
 	OP_ACCESS = 3,
@@ -370,6 +381,7 @@ enum nfsstat4 {
 	NFS4ERR_DELEG_REVOKED	= 10087,	/* deleg./layout revoked */
 };
 
+<<<<<<< HEAD
 static inline bool seqid_mutating_err(u32 err)
 {
 	/* rfc 3530 section 8.1.5: */
@@ -386,6 +398,8 @@ static inline bool seqid_mutating_err(u32 err)
 	return true;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Note: NF4BAD is not actually part of the protocol; it is just used
  * internally by nfsd.
@@ -407,10 +421,14 @@ enum open_claim_type4 {
 	NFS4_OPEN_CLAIM_NULL = 0,
 	NFS4_OPEN_CLAIM_PREVIOUS = 1,
 	NFS4_OPEN_CLAIM_DELEGATE_CUR = 2,
+<<<<<<< HEAD
 	NFS4_OPEN_CLAIM_DELEGATE_PREV = 3,
 	NFS4_OPEN_CLAIM_FH = 4, /* 4.1 */
 	NFS4_OPEN_CLAIM_DELEG_CUR_FH = 5, /* 4.1 */
 	NFS4_OPEN_CLAIM_DELEG_PREV_FH = 6, /* 4.1 */
+=======
+	NFS4_OPEN_CLAIM_DELEGATE_PREV = 3
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum opentype4 {
@@ -438,6 +456,7 @@ enum limit_by4 {
 enum open_delegation_type4 {
 	NFS4_OPEN_DELEGATE_NONE = 0,
 	NFS4_OPEN_DELEGATE_READ = 1,
+<<<<<<< HEAD
 	NFS4_OPEN_DELEGATE_WRITE = 2,
 	NFS4_OPEN_DELEGATE_NONE_EXT = 3, /* 4.1 */
 };
@@ -452,6 +471,9 @@ enum why_no_delegation4 { /* new to v4.1 */
 	WND4_NOT_SUPP_DOWNGRADE = 6,
 	WND4_CANCELLED = 7,
 	WND4_IS_DIR = 8,
+=======
+	NFS4_OPEN_DELEGATE_WRITE = 2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum lock_type4 {
@@ -592,10 +614,13 @@ enum {
 	NFSPROC4_CLNT_GETDEVICEINFO,
 	NFSPROC4_CLNT_LAYOUTCOMMIT,
 	NFSPROC4_CLNT_LAYOUTRETURN,
+<<<<<<< HEAD
 	NFSPROC4_CLNT_SECINFO_NO_NAME,
 	NFSPROC4_CLNT_TEST_STATEID,
 	NFSPROC4_CLNT_FREE_STATEID,
 	NFSPROC4_CLNT_GETDEVICELIST,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* nfs41 types */

@@ -234,7 +234,11 @@ static unsigned char exofs_type_by_mode[S_IFMT >> S_SHIFT] = {
 static inline
 void exofs_set_de_type(struct exofs_dir_entry *de, struct inode *inode)
 {
+<<<<<<< HEAD
 	umode_t mode = inode->i_mode;
+=======
+	mode_t mode = inode->i_mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	de->file_type = exofs_type_by_mode[(mode & S_IFMT) >> S_SHIFT];
 }
 
@@ -597,7 +601,11 @@ int exofs_make_empty(struct inode *inode, struct inode *parent)
 		goto fail;
 	}
 
+<<<<<<< HEAD
 	kaddr = kmap_atomic(page);
+=======
+	kaddr = kmap_atomic(page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	de = (struct exofs_dir_entry *)kaddr;
 	de->name_len = 1;
 	de->rec_len = cpu_to_le16(EXOFS_DIR_REC_LEN(1));
@@ -611,7 +619,11 @@ int exofs_make_empty(struct inode *inode, struct inode *parent)
 	de->inode_no = cpu_to_le64(parent->i_ino);
 	memcpy(de->name, PARENT_DIR, sizeof(PARENT_DIR));
 	exofs_set_de_type(de, inode);
+<<<<<<< HEAD
 	kunmap_atomic(kaddr);
+=======
+	kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = exofs_commit_chunk(page, 0, chunk_size);
 fail:
 	page_cache_release(page);

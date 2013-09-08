@@ -59,7 +59,11 @@ static LIST_HEAD(slot_list);
 #define warn(format, arg...) printk(KERN_WARNING "%s: " format "\n", MY_NAME , ## arg)
 
 /* local variables */
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int num_slots;
 
 #define DRIVER_VERSION	"0.3"

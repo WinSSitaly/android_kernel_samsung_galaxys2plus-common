@@ -33,7 +33,10 @@
 #include <linux/i2c-gpio.h>
 
 #include <asm/mach-types.h>
+<<<<<<< HEAD
 #include <asm/suspend.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 
@@ -399,6 +402,7 @@ static void __init palmz72_init(void)
 }
 
 MACHINE_START(PALMZ72, "Palm Zire72")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= pxa27x_map_io,
 	.nr_irqs	= PXA_NR_IRQS,
@@ -407,4 +411,11 @@ MACHINE_START(PALMZ72, "Palm Zire72")
 	.timer		= &pxa_timer,
 	.init_machine	= palmz72_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params	= 0xa0000100,
+	.map_io		= pxa27x_map_io,
+	.init_irq	= pxa27x_init_irq,
+	.timer		= &pxa_timer,
+	.init_machine	= palmz72_init
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

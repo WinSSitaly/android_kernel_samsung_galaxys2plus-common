@@ -19,9 +19,12 @@
 #include <net/sock.h>
 #include <net/net_ratelimit.h>
 
+<<<<<<< HEAD
 static int zero = 0;
 static int ushort_max = USHRT_MAX;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_RPS
 static int rps_sock_flow_sysctl(ctl_table *table, int write,
 				void __user *buffer, size_t *lenp, loff_t *ppos)
@@ -71,6 +74,7 @@ static int rps_sock_flow_sysctl(ctl_table *table, int write,
 
 		if (sock_table != orig_sock_table) {
 			rcu_assign_pointer(rps_sock_flow_table, sock_table);
+<<<<<<< HEAD
 			if (sock_table)
 				static_key_slow_inc(&rps_needed);
 			if (orig_sock_table) {
@@ -78,6 +82,10 @@ static int rps_sock_flow_sysctl(ctl_table *table, int write,
 				synchronize_rcu();
 				vfree(orig_sock_table);
 			}
+=======
+			synchronize_rcu();
+			vfree(orig_sock_table);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -200,9 +208,13 @@ static struct ctl_table netns_core_table[] = {
 		.data		= &init_net.core.sysctl_somaxconn,
 		.maxlen		= sizeof(int),
 		.mode		= 0644,
+<<<<<<< HEAD
 		.extra1		= &zero,
 		.extra2		= &ushort_max,
 		.proc_handler	= proc_dointvec_minmax
+=======
+		.proc_handler	= proc_dointvec
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{ }
 };

@@ -37,13 +37,18 @@
 #include <asm/uaccess.h>
 
 /**
+<<<<<<< HEAD
  * mdiobus_alloc_size - allocate a mii_bus structure
  * @size: extra amount of memory to allocate for private storage.
  * If non-zero, then bus->priv is points to that memory.
+=======
+ * mdiobus_alloc - allocate a mii_bus structure
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Description: called by a bus driver to allocate an mii_bus
  * structure to fill in.
  */
+<<<<<<< HEAD
 struct mii_bus *mdiobus_alloc_size(size_t size)
 {
 	struct mii_bus *bus;
@@ -66,6 +71,19 @@ struct mii_bus *mdiobus_alloc_size(size_t size)
 	return bus;
 }
 EXPORT_SYMBOL(mdiobus_alloc_size);
+=======
+struct mii_bus *mdiobus_alloc(void)
+{
+	struct mii_bus *bus;
+
+	bus = kzalloc(sizeof(*bus), GFP_KERNEL);
+	if (bus != NULL)
+		bus->state = MDIOBUS_ALLOCATED;
+
+	return bus;
+}
+EXPORT_SYMBOL(mdiobus_alloc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * mdiobus_release - mii_bus device release callback

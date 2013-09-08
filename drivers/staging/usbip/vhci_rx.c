@@ -94,7 +94,12 @@ static void vhci_recv_ret_submit(struct vhci_device *vdev,
 		return;
 
 	/* restore the padding in iso packets */
+<<<<<<< HEAD
 	usbip_pad_iso(ud, urb);
+=======
+	if (usbip_pad_iso(ud, urb) < 0)
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (usbip_dbg_flag_vhci_rx)
 		usbip_dump_urb(urb);
@@ -180,6 +185,11 @@ static void vhci_recv_ret_unlink(struct vhci_device *vdev,
 	}
 
 	kfree(unlink);
+<<<<<<< HEAD
+=======
+
+	return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int vhci_priv_tx_empty(struct vhci_device *vdev)
@@ -205,7 +215,11 @@ static void vhci_rx_pdu(struct usbip_device *ud)
 	memset(&pdu, 0, sizeof(pdu));
 
 	/* 1. receive a pdu header */
+<<<<<<< HEAD
 	ret = usbip_recv(ud->tcp_socket, &pdu, sizeof(pdu));
+=======
+	ret = usbip_xmit(0, ud->tcp_socket, (char *) &pdu, sizeof(pdu), 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		if (ret == -ECONNRESET)
 			pr_info("connection reset by peer\n");

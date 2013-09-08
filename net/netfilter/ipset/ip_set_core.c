@@ -17,10 +17,17 @@
 #include <linux/spinlock.h>
 #include <linux/netlink.h>
 #include <linux/rculist.h>
+<<<<<<< HEAD
 #include <net/netlink.h>
 
 #include <linux/netfilter.h>
 #include <linux/netfilter/x_tables.h>
+=======
+#include <linux/version.h>
+#include <net/netlink.h>
+
+#include <linux/netfilter.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/netfilter/nfnetlink.h>
 #include <linux/netfilter/ipset/ip_set.h>
 
@@ -69,22 +76,33 @@ find_set_type(const char *name, u8 family, u8 revision)
 
 	list_for_each_entry_rcu(type, &ip_set_type_list, list)
 		if (STREQ(type->name, name) &&
+<<<<<<< HEAD
 		    (type->family == family || type->family == NFPROTO_UNSPEC) &&
 		    revision >= type->revision_min &&
 		    revision <= type->revision_max)
+=======
+		    (type->family == family || type->family == AF_UNSPEC) &&
+		    type->revision == revision)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return type;
 	return NULL;
 }
 
 /* Unlock, try to load a set type module and lock again */
+<<<<<<< HEAD
 static bool
 load_settype(const char *name)
+=======
+static int
+try_to_load_type(const char *name)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	nfnl_unlock();
 	pr_debug("try to load ip_set_%s\n", name);
 	if (request_module("ip_set_%s", name) < 0) {
 		pr_warning("Can't find ip_set type %s\n", name);
 		nfnl_lock();
+<<<<<<< HEAD
 		return false;
 	}
 	nfnl_lock();
@@ -98,21 +116,40 @@ load_settype(const char *name)
 static int
 __find_set_type_get(const char *name, u8 family, u8 revision,
 		    struct ip_set_type **found, bool retry)
+=======
+		return -IPSET_ERR_FIND_TYPE;
+	}
+	nfnl_lock();
+	return -EAGAIN;
+}
+
+/* Find a set type and reference it */
+static int
+find_set_type_get(const char *name, u8 family, u8 revision,
+		  struct ip_set_type **found)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ip_set_type *type;
 	int err;
 
+<<<<<<< HEAD
 	if (retry && !load_settype(name))
 		return -IPSET_ERR_FIND_TYPE;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rcu_read_lock();
 	*found = find_set_type(name, family, revision);
 	if (*found) {
 		err = !try_module_get((*found)->me) ? -EFAULT : 0;
 		goto unlock;
 	}
+<<<<<<< HEAD
 	/* Make sure the type is already loaded
 	 * but we don't support the revision */
+=======
+	/* Make sure the type is loaded but we don't support the revision */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry_rcu(type, &ip_set_type_list, list)
 		if (STREQ(type->name, name)) {
 			err = -IPSET_ERR_FIND_TYPE;
@@ -120,8 +157,12 @@ __find_set_type_get(const char *name, u8 family, u8 revision,
 		}
 	rcu_read_unlock();
 
+<<<<<<< HEAD
 	return retry ? -IPSET_ERR_FIND_TYPE :
 		__find_set_type_get(name, family, revision, found, true);
+=======
+	return try_to_load_type(name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unlock:
 	rcu_read_unlock();
@@ -132,40 +173,65 @@ unlock:
  * If we succeeded, the supported minimal and maximum revisions are
  * filled out.
  */
+<<<<<<< HEAD
 #define find_set_type_minmax(name, family, min, max) \
 	__find_set_type_minmax(name, family, min, max, false)
 
 static int
 __find_set_type_minmax(const char *name, u8 family, u8 *min, u8 *max,
 		       bool retry)
+=======
+static int
+find_set_type_minmax(const char *name, u8 family, u8 *min, u8 *max)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ip_set_type *type;
 	bool found = false;
 
+<<<<<<< HEAD
 	if (retry && !load_settype(name))
 		return -IPSET_ERR_FIND_TYPE;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*min = 255; *max = 0;
 	rcu_read_lock();
 	list_for_each_entry_rcu(type, &ip_set_type_list, list)
 		if (STREQ(type->name, name) &&
+<<<<<<< HEAD
 		    (type->family == family || type->family == NFPROTO_UNSPEC)) {
 			found = true;
 			if (type->revision_min < *min)
 				*min = type->revision_min;
 			if (type->revision_max > *max)
 				*max = type->revision_max;
+=======
+		    (type->family == family || type->family == AF_UNSPEC)) {
+			found = true;
+			if (type->revision < *min)
+				*min = type->revision;
+			if (type->revision > *max)
+				*max = type->revision;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	rcu_read_unlock();
 	if (found)
 		return 0;
 
+<<<<<<< HEAD
 	return retry ? -IPSET_ERR_FIND_TYPE :
 		__find_set_type_minmax(name, family, min, max, true);
 }
 
 #define family_name(f)	((f) == NFPROTO_IPV4 ? "inet" : \
 			 (f) == NFPROTO_IPV6 ? "inet6" : "any")
+=======
+	return try_to_load_type(name);
+}
+
+#define family_name(f)	((f) == AF_INET ? "inet" : \
+			 (f) == AF_INET6 ? "inet6" : "any")
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Register a set type structure. The type is identified by
  * the unique triple of name, family and revision.
@@ -176,27 +242,47 @@ ip_set_type_register(struct ip_set_type *type)
 	int ret = 0;
 
 	if (type->protocol != IPSET_PROTOCOL) {
+<<<<<<< HEAD
 		pr_warning("ip_set type %s, family %s, revision %u:%u uses "
 			   "wrong protocol version %u (want %u)\n",
 			   type->name, family_name(type->family),
 			   type->revision_min, type->revision_max,
 			   type->protocol, IPSET_PROTOCOL);
+=======
+		pr_warning("ip_set type %s, family %s, revision %u uses "
+			   "wrong protocol version %u (want %u)\n",
+			   type->name, family_name(type->family),
+			   type->revision, type->protocol, IPSET_PROTOCOL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
 	ip_set_type_lock();
+<<<<<<< HEAD
 	if (find_set_type(type->name, type->family, type->revision_min)) {
 		/* Duplicate! */
 		pr_warning("ip_set type %s, family %s with revision min %u "
 			   "already registered!\n", type->name,
 			   family_name(type->family), type->revision_min);
+=======
+	if (find_set_type(type->name, type->family, type->revision)) {
+		/* Duplicate! */
+		pr_warning("ip_set type %s, family %s, revision %u "
+			   "already registered!\n", type->name,
+			   family_name(type->family), type->revision);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EINVAL;
 		goto unlock;
 	}
 	list_add_rcu(&type->list, &ip_set_type_list);
+<<<<<<< HEAD
 	pr_debug("type %s, family %s, revision %u:%u registered.\n",
 		 type->name, family_name(type->family),
 		 type->revision_min, type->revision_max);
+=======
+	pr_debug("type %s, family %s, revision %u registered.\n",
+		 type->name, family_name(type->family), type->revision);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 unlock:
 	ip_set_type_unlock();
 	return ret;
@@ -208,6 +294,7 @@ void
 ip_set_type_unregister(struct ip_set_type *type)
 {
 	ip_set_type_lock();
+<<<<<<< HEAD
 	if (!find_set_type(type->name, type->family, type->revision_min)) {
 		pr_warning("ip_set type %s, family %s with revision min %u "
 			   "not registered\n", type->name,
@@ -217,6 +304,17 @@ ip_set_type_unregister(struct ip_set_type *type)
 	list_del_rcu(&type->list);
 	pr_debug("type %s, family %s with revision min %u unregistered.\n",
 		 type->name, family_name(type->family), type->revision_min);
+=======
+	if (!find_set_type(type->name, type->family, type->revision)) {
+		pr_warning("ip_set type %s, family %s, revision %u "
+			   "not registered\n", type->name,
+			   family_name(type->family), type->revision);
+		goto unlock;
+	}
+	list_del_rcu(&type->list);
+	pr_debug("type %s, family %s, revision %u unregistered.\n",
+		 type->name, family_name(type->family), type->revision);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 unlock:
 	ip_set_type_unlock();
 
@@ -344,8 +442,12 @@ __ip_set_put(ip_set_id_t index)
 
 int
 ip_set_test(ip_set_id_t index, const struct sk_buff *skb,
+<<<<<<< HEAD
 	    const struct xt_action_param *par,
 	    const struct ip_set_adt_opt *opt)
+=======
+	    u8 family, u8 dim, u8 flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ip_set *set = ip_set_list[index];
 	int ret = 0;
@@ -353,19 +455,32 @@ ip_set_test(ip_set_id_t index, const struct sk_buff *skb,
 	BUG_ON(set == NULL);
 	pr_debug("set %s, index %u\n", set->name, index);
 
+<<<<<<< HEAD
 	if (opt->dim < set->type->dimension ||
 	    !(opt->family == set->family || set->family == NFPROTO_UNSPEC))
 		return 0;
 
 	read_lock_bh(&set->lock);
 	ret = set->variant->kadt(set, skb, par, IPSET_TEST, opt);
+=======
+	if (dim < set->type->dimension ||
+	    !(family == set->family || set->family == AF_UNSPEC))
+		return 0;
+
+	read_lock_bh(&set->lock);
+	ret = set->variant->kadt(set, skb, IPSET_TEST, family, dim, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	read_unlock_bh(&set->lock);
 
 	if (ret == -EAGAIN) {
 		/* Type requests element to be completed */
 		pr_debug("element must be competed, ADD is triggered\n");
 		write_lock_bh(&set->lock);
+<<<<<<< HEAD
 		set->variant->kadt(set, skb, par, IPSET_ADD, opt);
+=======
+		set->variant->kadt(set, skb, IPSET_ADD, family, dim, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		write_unlock_bh(&set->lock);
 		ret = 1;
 	}
@@ -377,8 +492,12 @@ EXPORT_SYMBOL_GPL(ip_set_test);
 
 int
 ip_set_add(ip_set_id_t index, const struct sk_buff *skb,
+<<<<<<< HEAD
 	   const struct xt_action_param *par,
 	   const struct ip_set_adt_opt *opt)
+=======
+	   u8 family, u8 dim, u8 flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ip_set *set = ip_set_list[index];
 	int ret;
@@ -386,12 +505,21 @@ ip_set_add(ip_set_id_t index, const struct sk_buff *skb,
 	BUG_ON(set == NULL);
 	pr_debug("set %s, index %u\n", set->name, index);
 
+<<<<<<< HEAD
 	if (opt->dim < set->type->dimension ||
 	    !(opt->family == set->family || set->family == NFPROTO_UNSPEC))
 		return 0;
 
 	write_lock_bh(&set->lock);
 	ret = set->variant->kadt(set, skb, par, IPSET_ADD, opt);
+=======
+	if (dim < set->type->dimension ||
+	    !(family == set->family || set->family == AF_UNSPEC))
+		return 0;
+
+	write_lock_bh(&set->lock);
+	ret = set->variant->kadt(set, skb, IPSET_ADD, family, dim, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	write_unlock_bh(&set->lock);
 
 	return ret;
@@ -400,8 +528,12 @@ EXPORT_SYMBOL_GPL(ip_set_add);
 
 int
 ip_set_del(ip_set_id_t index, const struct sk_buff *skb,
+<<<<<<< HEAD
 	   const struct xt_action_param *par,
 	   const struct ip_set_adt_opt *opt)
+=======
+	   u8 family, u8 dim, u8 flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ip_set *set = ip_set_list[index];
 	int ret = 0;
@@ -409,12 +541,21 @@ ip_set_del(ip_set_id_t index, const struct sk_buff *skb,
 	BUG_ON(set == NULL);
 	pr_debug("set %s, index %u\n", set->name, index);
 
+<<<<<<< HEAD
 	if (opt->dim < set->type->dimension ||
 	    !(opt->family == set->family || set->family == NFPROTO_UNSPEC))
 		return 0;
 
 	write_lock_bh(&set->lock);
 	ret = set->variant->kadt(set, skb, par, IPSET_DEL, opt);
+=======
+	if (dim < set->type->dimension ||
+	    !(family == set->family || set->family == AF_UNSPEC))
+		return 0;
+
+	write_lock_bh(&set->lock);
+	ret = set->variant->kadt(set, skb, IPSET_DEL, family, dim, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	write_unlock_bh(&set->lock);
 
 	return ret;
@@ -575,7 +716,11 @@ start_msg(struct sk_buff *skb, u32 pid, u32 seq, unsigned int flags,
 		return NULL;
 
 	nfmsg = nlmsg_data(nlh);
+<<<<<<< HEAD
 	nfmsg->nfgen_family = NFPROTO_IPV4;
+=======
+	nfmsg->nfgen_family = AF_INET;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nfmsg->version = NFNETLINK_V0;
 	nfmsg->res_id = 0;
 
@@ -678,7 +823,10 @@ ip_set_create(struct sock *ctnl, struct sk_buff *skb,
 	rwlock_init(&set->lock);
 	strlcpy(set->name, name, IPSET_MAXNAMELEN);
 	set->family = family;
+<<<<<<< HEAD
 	set->revision = revision;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Next, check that we know the type, and take
@@ -698,8 +846,13 @@ ip_set_create(struct sock *ctnl, struct sk_buff *skb,
 	if (attr[IPSET_ATTR_DATA] &&
 	    nla_parse_nested(tb, IPSET_ATTR_CREATE_MAX, attr[IPSET_ATTR_DATA],
 			     set->type->create_policy)) {
+<<<<<<< HEAD
 		ret = -IPSET_ERR_PROTOCOL;
 		goto put_out;
+=======
+	    	ret = -IPSET_ERR_PROTOCOL;
+	    	goto put_out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ret = set->type->create(set, tb, flags);
@@ -719,8 +872,12 @@ ip_set_create(struct sock *ctnl, struct sk_buff *skb,
 		    (flags & IPSET_FLAG_EXIST) &&
 		    STREQ(set->type->name, clash->type->name) &&
 		    set->type->family == clash->type->family &&
+<<<<<<< HEAD
 		    set->type->revision_min == clash->type->revision_min &&
 		    set->type->revision_max == clash->type->revision_max &&
+=======
+		    set->type->revision == clash->type->revision &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    set->variant->same_set(set, clash))
 			ret = 0;
 		goto cleanup;
@@ -963,6 +1120,7 @@ ip_set_swap(struct sock *ctnl, struct sk_buff *skb,
 
 /* List/save set data */
 
+<<<<<<< HEAD
 #define DUMP_INIT	0
 #define DUMP_ALL	1
 #define DUMP_ONE	2
@@ -970,6 +1128,12 @@ ip_set_swap(struct sock *ctnl, struct sk_buff *skb,
 
 #define DUMP_TYPE(arg)		(((u32)(arg)) & 0x0000FFFF)
 #define DUMP_FLAGS(arg)		(((u32)(arg)) >> 16)
+=======
+#define DUMP_INIT	0L
+#define DUMP_ALL	1L
+#define DUMP_ONE	2L
+#define DUMP_LAST	3L
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int
 ip_set_dump_done(struct netlink_callback *cb)
@@ -1000,7 +1164,10 @@ dump_init(struct netlink_callback *cb)
 	int min_len = NLMSG_SPACE(sizeof(struct nfgenmsg));
 	struct nlattr *cda[IPSET_ATTR_CMD_MAX+1];
 	struct nlattr *attr = (void *)nlh + min_len;
+<<<<<<< HEAD
 	u32 dump_type;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ip_set_id_t index;
 
 	/* Second pass, so parser can't fail */
@@ -1012,6 +1179,7 @@ dump_init(struct netlink_callback *cb)
 	 *         [..]: type specific
 	 */
 
+<<<<<<< HEAD
 	if (cda[IPSET_ATTR_SETNAME]) {
 		index = find_set_id(nla_data(cda[IPSET_ATTR_SETNAME]));
 		if (index == IPSET_INVALID_ID)
@@ -1028,6 +1196,19 @@ dump_init(struct netlink_callback *cb)
 	}
 	cb->args[0] = dump_type;
 
+=======
+	if (!cda[IPSET_ATTR_SETNAME]) {
+		cb->args[0] = DUMP_ALL;
+		return 0;
+	}
+
+	index = find_set_id(nla_data(cda[IPSET_ATTR_SETNAME]));
+	if (index == IPSET_INVALID_ID)
+		return -ENOENT;
+
+	cb->args[0] = DUMP_ONE;
+	cb->args[1] = index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1038,10 +1219,16 @@ ip_set_dump_start(struct sk_buff *skb, struct netlink_callback *cb)
 	struct ip_set *set = NULL;
 	struct nlmsghdr *nlh = NULL;
 	unsigned int flags = NETLINK_CB(cb->skb).pid ? NLM_F_MULTI : 0;
+<<<<<<< HEAD
 	u32 dump_type, dump_flags;
 	int ret = 0;
 
 	if (!cb->args[0]) {
+=======
+	int ret = 0;
+
+	if (cb->args[0] == DUMP_INIT) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = dump_init(cb);
 		if (ret < 0) {
 			nlh = nlmsg_hdr(cb->skb);
@@ -1056,17 +1243,27 @@ ip_set_dump_start(struct sk_buff *skb, struct netlink_callback *cb)
 	if (cb->args[1] >= ip_set_max)
 		goto out;
 
+<<<<<<< HEAD
 	dump_type = DUMP_TYPE(cb->args[0]);
 	dump_flags = DUMP_FLAGS(cb->args[0]);
 	max = dump_type == DUMP_ONE ? cb->args[1] + 1 : ip_set_max;
 dump_last:
 	pr_debug("args[0]: %u %u args[1]: %ld\n",
 		 dump_type, dump_flags, cb->args[1]);
+=======
+	max = cb->args[0] == DUMP_ONE ? cb->args[1] + 1 : ip_set_max;
+dump_last:
+	pr_debug("args[0]: %ld args[1]: %ld\n", cb->args[0], cb->args[1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (; cb->args[1] < max; cb->args[1]++) {
 		index = (ip_set_id_t) cb->args[1];
 		set = ip_set_list[index];
 		if (set == NULL) {
+<<<<<<< HEAD
 			if (dump_type == DUMP_ONE) {
+=======
+			if (cb->args[0] == DUMP_ONE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ret = -ENOENT;
 				goto out;
 			}
@@ -1075,8 +1272,13 @@ dump_last:
 		/* When dumping all sets, we must dump "sorted"
 		 * so that lists (unions of sets) are dumped last.
 		 */
+<<<<<<< HEAD
 		if (dump_type != DUMP_ONE &&
 		    ((dump_type == DUMP_ALL) ==
+=======
+		if (cb->args[0] != DUMP_ONE &&
+		    ((cb->args[0] == DUMP_ALL) ==
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     !!(set->type->features & IPSET_DUMP_LAST)))
 			continue;
 		pr_debug("List set: %s\n", set->name);
@@ -1094,8 +1296,11 @@ dump_last:
 		}
 		NLA_PUT_U8(skb, IPSET_ATTR_PROTOCOL, IPSET_PROTOCOL);
 		NLA_PUT_STRING(skb, IPSET_ATTR_SETNAME, set->name);
+<<<<<<< HEAD
 		if (dump_flags & IPSET_FLAG_LIST_SETNAME)
 			goto next_set;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		switch (cb->args[2]) {
 		case 0:
 			/* Core header data */
@@ -1104,27 +1309,49 @@ dump_last:
 			NLA_PUT_U8(skb, IPSET_ATTR_FAMILY,
 				   set->family);
 			NLA_PUT_U8(skb, IPSET_ATTR_REVISION,
+<<<<<<< HEAD
 				   set->revision);
 			ret = set->variant->head(set, skb);
 			if (ret < 0)
 				goto release_refcount;
 			if (dump_flags & IPSET_FLAG_LIST_HEADER)
 				goto next_set;
+=======
+				   set->type->revision);
+			ret = set->variant->head(set, skb);
+			if (ret < 0)
+				goto release_refcount;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Fall through and add elements */
 		default:
 			read_lock_bh(&set->lock);
 			ret = set->variant->list(set, skb, cb);
 			read_unlock_bh(&set->lock);
+<<<<<<< HEAD
 			if (!cb->args[2])
 				/* Set is done, proceed with next one */
 				goto next_set;
+=======
+			if (!cb->args[2]) {
+				/* Set is done, proceed with next one */
+				if (cb->args[0] == DUMP_ONE)
+					cb->args[1] = IPSET_INVALID_ID;
+				else
+					cb->args[1]++;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto release_refcount;
 		}
 	}
 	/* If we dump all sets, continue with dumping last ones */
+<<<<<<< HEAD
 	if (dump_type == DUMP_ALL) {
 		dump_type = DUMP_LAST;
 		cb->args[0] = dump_type | (dump_flags << 16);
+=======
+	if (cb->args[0] == DUMP_ALL) {
+		cb->args[0] = DUMP_LAST;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cb->args[1] = 0;
 		goto dump_last;
 	}
@@ -1132,17 +1359,23 @@ dump_last:
 
 nla_put_failure:
 	ret = -EFAULT;
+<<<<<<< HEAD
 next_set:
 	if (dump_type == DUMP_ONE)
 		cb->args[1] = IPSET_INVALID_ID;
 	else
 		cb->args[1]++;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 release_refcount:
 	/* If there was an error or set is done, release set */
 	if (ret || !cb->args[2]) {
 		pr_debug("release set %s\n", ip_set_list[index]->name);
 		ip_set_put_byindex(index);
+<<<<<<< HEAD
 		cb->args[2] = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 out:
 	if (nlh) {
@@ -1162,6 +1395,7 @@ ip_set_dump(struct sock *ctnl, struct sk_buff *skb,
 	if (unlikely(protocol_failed(attr)))
 		return -IPSET_ERR_PROTOCOL;
 
+<<<<<<< HEAD
 	{
 		struct netlink_dump_control c = {
 			.dump = ip_set_dump_start,
@@ -1169,6 +1403,11 @@ ip_set_dump(struct sock *ctnl, struct sk_buff *skb,
 		};
 		return netlink_dump_start(ctnl, skb, nlh, &c);
 	}
+=======
+	return netlink_dump_start(ctnl, skb, nlh,
+				  ip_set_dump_start,
+				  ip_set_dump_done);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Add, del and test */
@@ -1187,6 +1426,7 @@ call_ad(struct sock *ctnl, struct sk_buff *skb, struct ip_set *set,
 	struct nlattr *tb[], enum ipset_adt adt,
 	u32 flags, bool use_lineno)
 {
+<<<<<<< HEAD
 	int ret;
 	u32 lineno = 0;
 	bool eexist = flags & IPSET_FLAG_EXIST, retried = false;
@@ -1199,6 +1439,19 @@ call_ad(struct sock *ctnl, struct sk_buff *skb, struct ip_set *set,
 	} while (ret == -EAGAIN &&
 		 set->variant->resize &&
 		 (ret = set->variant->resize(set, retried)) == 0);
+=======
+	int ret, retried = 0;
+	u32 lineno = 0;
+	bool eexist = flags & IPSET_FLAG_EXIST;
+
+	do {
+		write_lock_bh(&set->lock);
+		ret = set->variant->uadt(set, tb, adt, &lineno, flags);
+		write_unlock_bh(&set->lock);
+	} while (ret == -EAGAIN &&
+		 set->variant->resize &&
+		 (ret = set->variant->resize(set, retried++)) == 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!ret || (ret == -IPSET_ERR_EXIST && eexist))
 		return 0;
@@ -1371,7 +1624,11 @@ ip_set_utest(struct sock *ctnl, struct sk_buff *skb,
 		return -IPSET_ERR_PROTOCOL;
 
 	read_lock_bh(&set->lock);
+<<<<<<< HEAD
 	ret = set->variant->uadt(set, tb, IPSET_TEST, NULL, 0, 0);
+=======
+	ret = set->variant->uadt(set, tb, IPSET_TEST, NULL, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	read_unlock_bh(&set->lock);
 	/* Userspace can't trigger element to be re-added */
 	if (ret == -EAGAIN)
@@ -1414,7 +1671,11 @@ ip_set_header(struct sock *ctnl, struct sk_buff *skb,
 	NLA_PUT_STRING(skb2, IPSET_ATTR_SETNAME, set->name);
 	NLA_PUT_STRING(skb2, IPSET_ATTR_TYPENAME, set->type->name);
 	NLA_PUT_U8(skb2, IPSET_ATTR_FAMILY, set->family);
+<<<<<<< HEAD
 	NLA_PUT_U8(skb2, IPSET_ATTR_REVISION, set->revision);
+=======
+	NLA_PUT_U8(skb2, IPSET_ATTR_REVISION, set->type->revision);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nlmsg_end(skb2, nlh2);
 
 	ret = netlink_unicast(ctnl, skb2, NETLINK_CB(skb).pid, MSG_DONTWAIT);
@@ -1720,8 +1981,15 @@ ip_set_init(void)
 
 	ip_set_list = kzalloc(sizeof(struct ip_set *) * ip_set_max,
 			      GFP_KERNEL);
+<<<<<<< HEAD
 	if (!ip_set_list)
 		return -ENOMEM;
+=======
+	if (!ip_set_list) {
+		pr_err("ip_set: Unable to create ip_set_list\n");
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = nfnetlink_subsys_register(&ip_set_netlink_subsys);
 	if (ret != 0) {

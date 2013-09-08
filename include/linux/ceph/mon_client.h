@@ -70,7 +70,11 @@ struct ceph_mon_client {
 	bool hunting;
 	int cur_mon;                       /* last monitor i contacted */
 	unsigned long sub_sent, sub_renew_after;
+<<<<<<< HEAD
 	struct ceph_connection con;
+=======
+	struct ceph_connection *con;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool have_fsid;
 
 	/* pending generic requests */

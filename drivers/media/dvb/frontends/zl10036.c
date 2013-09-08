@@ -305,12 +305,21 @@ static int zl10036_set_gain_params(struct zl10036_state *state,
 	return zl10036_write(state, buf, sizeof(buf));
 }
 
+<<<<<<< HEAD
 static int zl10036_set_params(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
 	struct zl10036_state *state = fe->tuner_priv;
 	int ret = 0;
 	u32 frequency = p->frequency;
+=======
+static int zl10036_set_params(struct dvb_frontend *fe,
+		struct dvb_frontend_parameters *params)
+{
+	struct zl10036_state *state = fe->tuner_priv;
+	int ret = 0;
+	u32 frequency = params->frequency;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 fbw;
 	int i;
 	u8 c;
@@ -326,7 +335,11 @@ static int zl10036_set_params(struct dvb_frontend *fe)
 	 * fBW = (alpha*symbolrate)/(2*0.8)
 	 * 1.35 / (2*0.8) = 27 / 32
 	 */
+<<<<<<< HEAD
 	fbw = (27 * p->symbol_rate) / 32;
+=======
+	fbw = (27 * params->u.qpsk.symbol_rate) / 32;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* scale to kHz */
 	fbw /= 1000;
@@ -353,7 +366,11 @@ static int zl10036_set_params(struct dvb_frontend *fe)
 	if (ret < 0)
 		goto error;
 
+<<<<<<< HEAD
 	ret = zl10036_set_frequency(state, p->frequency);
+=======
+	ret = zl10036_set_frequency(state, params->frequency);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		goto error;
 

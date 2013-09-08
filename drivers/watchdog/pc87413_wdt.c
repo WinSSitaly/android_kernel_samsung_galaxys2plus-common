@@ -18,8 +18,11 @@
  *      Release 1.1
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/types.h>
 #include <linux/miscdevice.h>
@@ -35,6 +38,10 @@
 #include <linux/io.h>
 #include <linux/uaccess.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* #define DEBUG 1 */
 
@@ -43,6 +50,10 @@
 
 #define VERSION             "1.1"
 #define MODNAME             "pc87413 WDT"
+<<<<<<< HEAD
+=======
+#define PFX                 MODNAME ": "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DPFX                MODNAME " - DEBUG: "
 
 #define WDT_INDEX_IO_PORT   (io+0)	/* I/O port base (index register) */
@@ -56,7 +67,10 @@
 #define IO_DEFAULT	0x2E		/* Address used on Portwell Boards */
 
 static int io = IO_DEFAULT;
+<<<<<<< HEAD
 static int swc_base_addr = -1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int timeout = DEFAULT_TIMEOUT;	/* timeout value */
 static unsigned long timer_enabled;	/* is the timer enabled? */
@@ -65,7 +79,11 @@ static char expect_close;		/* is the close expected? */
 
 static DEFINE_SPINLOCK(io_lock);	/* to guard us from io races */
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* -- Low level function ----------------------------------------*/
 
@@ -87,7 +105,11 @@ static inline void pc87413_select_wdt_out(void)
 	outb_p(cr_data, WDT_DATA_IO_PORT);
 
 #ifdef DEBUG
+<<<<<<< HEAD
 	pr_info(DPFX
+=======
+	printk(KERN_INFO DPFX
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"Select multiple pin,pin55,as WDT output: Bit7 to 1: %d\n",
 								cr_data);
 #endif
@@ -111,14 +133,24 @@ static inline void pc87413_enable_swc(void)
 	outb_p(cr_data, WDT_DATA_IO_PORT);	/* Index0x30_bit0P1 */
 
 #ifdef DEBUG
+<<<<<<< HEAD
 	pr_info(DPFX "pc87413 - Enable SWC functions\n");
+=======
+	printk(KERN_INFO DPFX "pc87413 - Enable SWC functions\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }
 
 /* Read SWC I/O base address */
 
+<<<<<<< HEAD
 static void pc87413_get_swc_base_addr(void)
 {
+=======
+static inline unsigned int pc87413_get_swc_base(void)
+{
+	unsigned int  swc_base_addr = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char addr_l, addr_h = 0;
 
 	/* Step 3: Read SWC I/O Base Address */
@@ -132,85 +164,150 @@ static void pc87413_get_swc_base_addr(void)
 
 	swc_base_addr = (addr_h << 8) + addr_l;
 #ifdef DEBUG
+<<<<<<< HEAD
 	pr_info(DPFX
 		"Read SWC I/O Base Address: low %d, high %d, res %d\n",
 						addr_l, addr_h, swc_base_addr);
 #endif
+=======
+	printk(KERN_INFO DPFX
+		"Read SWC I/O Base Address: low %d, high %d, res %d\n",
+						addr_l, addr_h, swc_base_addr);
+#endif
+	return swc_base_addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Select Bank 3 of SWC */
 
+<<<<<<< HEAD
 static inline void pc87413_swc_bank3(void)
+=======
+static inline void pc87413_swc_bank3(unsigned int swc_base_addr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Step 4: Select Bank3 of SWC */
 	outb_p(inb(swc_base_addr + 0x0f) | 0x03, swc_base_addr + 0x0f);
 #ifdef DEBUG
+<<<<<<< HEAD
 	pr_info(DPFX "Select Bank3 of SWC\n");
+=======
+	printk(KERN_INFO DPFX "Select Bank3 of SWC\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }
 
 /* Set watchdog timeout to x minutes */
 
+<<<<<<< HEAD
 static inline void pc87413_programm_wdto(char pc87413_time)
+=======
+static inline void pc87413_programm_wdto(unsigned int swc_base_addr,
+					 char pc87413_time)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Step 5: Programm WDTO, Twd. */
 	outb_p(pc87413_time, swc_base_addr + WDTO);
 #ifdef DEBUG
+<<<<<<< HEAD
 	pr_info(DPFX "Set WDTO to %d minutes\n", pc87413_time);
+=======
+	printk(KERN_INFO DPFX "Set WDTO to %d minutes\n", pc87413_time);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }
 
 /* Enable WDEN */
 
+<<<<<<< HEAD
 static inline void pc87413_enable_wden(void)
+=======
+static inline void pc87413_enable_wden(unsigned int swc_base_addr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Step 6: Enable WDEN */
 	outb_p(inb(swc_base_addr + WDCTL) | 0x01, swc_base_addr + WDCTL);
 #ifdef DEBUG
+<<<<<<< HEAD
 	pr_info(DPFX "Enable WDEN\n");
+=======
+	printk(KERN_INFO DPFX "Enable WDEN\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }
 
 /* Enable SW_WD_TREN */
+<<<<<<< HEAD
 static inline void pc87413_enable_sw_wd_tren(void)
+=======
+static inline void pc87413_enable_sw_wd_tren(unsigned int swc_base_addr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Enable SW_WD_TREN */
 	outb_p(inb(swc_base_addr + WDCFG) | 0x80, swc_base_addr + WDCFG);
 #ifdef DEBUG
+<<<<<<< HEAD
 	pr_info(DPFX "Enable SW_WD_TREN\n");
+=======
+	printk(KERN_INFO DPFX "Enable SW_WD_TREN\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }
 
 /* Disable SW_WD_TREN */
 
+<<<<<<< HEAD
 static inline void pc87413_disable_sw_wd_tren(void)
+=======
+static inline void pc87413_disable_sw_wd_tren(unsigned int swc_base_addr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Disable SW_WD_TREN */
 	outb_p(inb(swc_base_addr + WDCFG) & 0x7f, swc_base_addr + WDCFG);
 #ifdef DEBUG
+<<<<<<< HEAD
 	pr_info(DPFX "pc87413 - Disable SW_WD_TREN\n");
+=======
+	printk(KERN_INFO DPFX "pc87413 - Disable SW_WD_TREN\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }
 
 /* Enable SW_WD_TRG */
 
+<<<<<<< HEAD
 static inline void pc87413_enable_sw_wd_trg(void)
+=======
+static inline void pc87413_enable_sw_wd_trg(unsigned int swc_base_addr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Enable SW_WD_TRG */
 	outb_p(inb(swc_base_addr + WDCTL) | 0x80, swc_base_addr + WDCTL);
 #ifdef DEBUG
+<<<<<<< HEAD
 	pr_info(DPFX "pc87413 - Enable SW_WD_TRG\n");
+=======
+	printk(KERN_INFO DPFX "pc87413 - Enable SW_WD_TRG\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }
 
 /* Disable SW_WD_TRG */
 
+<<<<<<< HEAD
 static inline void pc87413_disable_sw_wd_trg(void)
+=======
+static inline void pc87413_disable_sw_wd_trg(unsigned int swc_base_addr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Disable SW_WD_TRG */
 	outb_p(inb(swc_base_addr + WDCTL) & 0x7f, swc_base_addr + WDCTL);
 #ifdef DEBUG
+<<<<<<< HEAD
 	pr_info(DPFX "Disable SW_WD_TRG\n");
+=======
+	printk(KERN_INFO DPFX "Disable SW_WD_TRG\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }
 
@@ -220,6 +317,7 @@ static inline void pc87413_disable_sw_wd_trg(void)
 
 static void pc87413_enable(void)
 {
+<<<<<<< HEAD
 	spin_lock(&io_lock);
 
 	pc87413_swc_bank3();
@@ -227,6 +325,20 @@ static void pc87413_enable(void)
 	pc87413_enable_wden();
 	pc87413_enable_sw_wd_tren();
 	pc87413_enable_sw_wd_trg();
+=======
+	unsigned int swc_base_addr;
+
+	spin_lock(&io_lock);
+
+	pc87413_select_wdt_out();
+	pc87413_enable_swc();
+	swc_base_addr = pc87413_get_swc_base();
+	pc87413_swc_bank3(swc_base_addr);
+	pc87413_programm_wdto(swc_base_addr, timeout);
+	pc87413_enable_wden(swc_base_addr);
+	pc87413_enable_sw_wd_tren(swc_base_addr);
+	pc87413_enable_sw_wd_trg(swc_base_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock(&io_lock);
 }
@@ -235,12 +347,26 @@ static void pc87413_enable(void)
 
 static void pc87413_disable(void)
 {
+<<<<<<< HEAD
 	spin_lock(&io_lock);
 
 	pc87413_swc_bank3();
 	pc87413_disable_sw_wd_tren();
 	pc87413_disable_sw_wd_trg();
 	pc87413_programm_wdto(0);
+=======
+	unsigned int swc_base_addr;
+
+	spin_lock(&io_lock);
+
+	pc87413_select_wdt_out();
+	pc87413_enable_swc();
+	swc_base_addr = pc87413_get_swc_base();
+	pc87413_swc_bank3(swc_base_addr);
+	pc87413_disable_sw_wd_tren(swc_base_addr);
+	pc87413_disable_sw_wd_trg(swc_base_addr);
+	pc87413_programm_wdto(swc_base_addr, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock(&io_lock);
 }
@@ -249,6 +375,7 @@ static void pc87413_disable(void)
 
 static void pc87413_refresh(void)
 {
+<<<<<<< HEAD
 	spin_lock(&io_lock);
 
 	pc87413_swc_bank3();
@@ -258,6 +385,22 @@ static void pc87413_refresh(void)
 	pc87413_enable_wden();
 	pc87413_enable_sw_wd_tren();
 	pc87413_enable_sw_wd_trg();
+=======
+	unsigned int swc_base_addr;
+
+	spin_lock(&io_lock);
+
+	pc87413_select_wdt_out();
+	pc87413_enable_swc();
+	swc_base_addr = pc87413_get_swc_base();
+	pc87413_swc_bank3(swc_base_addr);
+	pc87413_disable_sw_wd_tren(swc_base_addr);
+	pc87413_disable_sw_wd_trg(swc_base_addr);
+	pc87413_programm_wdto(swc_base_addr, timeout);
+	pc87413_enable_wden(swc_base_addr);
+	pc87413_enable_sw_wd_tren(swc_base_addr);
+	pc87413_enable_sw_wd_trg(swc_base_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock(&io_lock);
 }
@@ -284,7 +427,12 @@ static int pc87413_open(struct inode *inode, struct file *file)
 	/* Reload and activate timer */
 	pc87413_refresh();
 
+<<<<<<< HEAD
 	pr_info("Watchdog enabled. Timeout set to %d minute(s).\n", timeout);
+=======
+	printk(KERN_INFO MODNAME
+		"Watchdog enabled. Timeout set to %d minute(s).\n", timeout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return nonseekable_open(inode, file);
 }
@@ -307,9 +455,17 @@ static int pc87413_release(struct inode *inode, struct file *file)
 
 	if (expect_close == 42) {
 		pc87413_disable();
+<<<<<<< HEAD
 		pr_info("Watchdog disabled, sleeping again...\n");
 	} else {
 		pr_crit("Unexpected close, not stopping watchdog!\n");
+=======
+		printk(KERN_INFO MODNAME
+				"Watchdog disabled, sleeping again...\n");
+	} else {
+		printk(KERN_CRIT MODNAME
+				"Unexpected close, not stopping watchdog!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pc87413_refresh();
 	}
 	clear_bit(0, &timer_enabled);
@@ -425,7 +581,11 @@ static long pc87413_ioctl(struct file *file, unsigned int cmd,
 	case WDIOC_KEEPALIVE:
 		pc87413_refresh();
 #ifdef DEBUG
+<<<<<<< HEAD
 		pr_info(DPFX "keepalive\n");
+=======
+		printk(KERN_INFO DPFX "keepalive\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 		return 0;
 	case WDIOC_SETTIMEOUT:
@@ -505,6 +665,7 @@ static int __init pc87413_init(void)
 {
 	int ret;
 
+<<<<<<< HEAD
 	pr_info("Version " VERSION " at io 0x%X\n",
 							WDT_INDEX_IO_PORT);
 
@@ -514,10 +675,22 @@ static int __init pc87413_init(void)
 	ret = register_reboot_notifier(&pc87413_notifier);
 	if (ret != 0) {
 		pr_err("cannot register reboot notifier (err=%d)\n", ret);
+=======
+	printk(KERN_INFO PFX "Version " VERSION " at io 0x%X\n",
+							WDT_INDEX_IO_PORT);
+
+	/* request_region(io, 2, "pc87413"); */
+
+	ret = register_reboot_notifier(&pc87413_notifier);
+	if (ret != 0) {
+		printk(KERN_ERR PFX
+			"cannot register reboot notifier (err=%d)\n", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ret = misc_register(&pc87413_miscdev);
 	if (ret != 0) {
+<<<<<<< HEAD
 		pr_err("cannot register miscdev on minor=%d (err=%d)\n",
 		       WATCHDOG_MINOR, ret);
 		goto reboot_unreg;
@@ -545,6 +718,17 @@ reboot_unreg:
 	unregister_reboot_notifier(&pc87413_notifier);
 	release_region(io, 2);
 	return ret;
+=======
+		printk(KERN_ERR PFX
+			"cannot register miscdev on minor=%d (err=%d)\n",
+			WATCHDOG_MINOR, ret);
+		unregister_reboot_notifier(&pc87413_notifier);
+		return ret;
+	}
+	printk(KERN_INFO PFX "initialized. timeout=%d min \n", timeout);
+	pc87413_enable();
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -562,14 +746,24 @@ static void __exit pc87413_exit(void)
 	/* Stop the timer before we leave */
 	if (!nowayout) {
 		pc87413_disable();
+<<<<<<< HEAD
 		pr_info("Watchdog disabled\n");
+=======
+		printk(KERN_INFO MODNAME "Watchdog disabled.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	misc_deregister(&pc87413_miscdev);
 	unregister_reboot_notifier(&pc87413_notifier);
+<<<<<<< HEAD
 	release_region(swc_base_addr, 0x20);
 
 	pr_info("watchdog component driver removed\n");
+=======
+	/* release_region(io, 2); */
+
+	printk(KERN_INFO MODNAME " watchdog component driver removed.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(pc87413_init);
@@ -591,7 +785,11 @@ MODULE_PARM_DESC(timeout,
 		"Watchdog timeout in minutes (default="
 				__MODULE_STRING(DEFAULT_TIMEOUT) ").");
 
+<<<<<<< HEAD
 module_param(nowayout, bool, 0);
+=======
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout,
 		"Watchdog cannot be stopped once started (default="
 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");

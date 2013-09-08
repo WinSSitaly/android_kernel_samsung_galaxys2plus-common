@@ -49,15 +49,22 @@
  * for fast lookup of ref objects given a base object.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) "[TTM] " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "ttm/ttm_object.h"
 #include "ttm/ttm_module.h"
 #include <linux/list.h>
 #include <linux/spinlock.h>
 #include <linux/slab.h>
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct ttm_object_file {
 	struct ttm_object_device *tdev;
@@ -234,7 +241,12 @@ struct ttm_base_object *ttm_base_object_lookup(struct ttm_object_file *tfile,
 		return NULL;
 
 	if (tfile != base->tfile && !base->shareable) {
+<<<<<<< HEAD
 		pr_err("Attempted access of non-shareable object\n");
+=======
+		printk(KERN_ERR TTM_PFX
+		       "Attempted access of non-shareable object.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ttm_base_object_unref(&base);
 		return NULL;
 	}

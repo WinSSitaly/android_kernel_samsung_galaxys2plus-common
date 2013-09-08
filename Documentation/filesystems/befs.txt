@@ -27,7 +27,11 @@ His original code can still be found at:
 Does anyone know of a more current email address for Makoto? He doesn't
 respond to the address given above...
 
+<<<<<<< HEAD
 This filesystem doesn't have a maintainer.
+=======
+Current maintainer: Sergey S. Kostyliov <rathamahata@php4.ru>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 WHAT IS THIS DRIVER?
 ==================

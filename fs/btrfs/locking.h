@@ -19,6 +19,7 @@
 #ifndef __BTRFS_LOCKING_
 #define __BTRFS_LOCKING_
 
+<<<<<<< HEAD
 #define BTRFS_WRITE_LOCK 1
 #define BTRFS_READ_LOCK 2
 #define BTRFS_WRITE_LOCK_BLOCKING 3
@@ -58,4 +59,13 @@ static inline void btrfs_clear_lock_blocking(struct extent_buffer *eb)
 {
 	btrfs_clear_lock_blocking_rw(eb, BTRFS_WRITE_LOCK_BLOCKING);
 }
+=======
+int btrfs_tree_lock(struct extent_buffer *eb);
+int btrfs_tree_unlock(struct extent_buffer *eb);
+int btrfs_try_spin_lock(struct extent_buffer *eb);
+
+void btrfs_set_lock_blocking(struct extent_buffer *eb);
+void btrfs_clear_lock_blocking(struct extent_buffer *eb);
+void btrfs_assert_tree_locked(struct extent_buffer *eb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

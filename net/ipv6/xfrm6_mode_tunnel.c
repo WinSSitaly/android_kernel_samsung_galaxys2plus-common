@@ -55,8 +55,13 @@ static int xfrm6_mode_tunnel_output(struct xfrm_state *x, struct sk_buff *skb)
 		dsfield &= ~INET_ECN_MASK;
 	ipv6_change_dsfield(top_iph, 0, dsfield);
 	top_iph->hop_limit = ip6_dst_hoplimit(dst->child);
+<<<<<<< HEAD
 	top_iph->saddr = *(struct in6_addr *)&x->props.saddr;
 	top_iph->daddr = *(struct in6_addr *)&x->id.daddr;
+=======
+	ipv6_addr_copy(&top_iph->saddr, (const struct in6_addr *)&x->props.saddr);
+	ipv6_addr_copy(&top_iph->daddr, (const struct in6_addr *)&x->id.daddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

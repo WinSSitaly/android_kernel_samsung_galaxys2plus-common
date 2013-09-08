@@ -1,10 +1,13 @@
 #ifndef _ASM_GENERIC_BITOPS_EXT2_ATOMIC_H_
 #define _ASM_GENERIC_BITOPS_EXT2_ATOMIC_H_
 
+<<<<<<< HEAD
 /*
  * Spinlock based version of ext2 atomic bitops
  */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ext2_set_bit_atomic(lock, nr, addr)		\
 	({						\
 		int ret;				\

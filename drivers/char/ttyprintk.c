@@ -17,7 +17,10 @@
 #include <linux/device.h>
 #include <linux/serial.h>
 #include <linux/tty.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct ttyprintk_port {
 	struct tty_port port;
@@ -67,7 +70,11 @@ static int tpk_printk(const unsigned char *buf, int count)
 				tmp[tpk_curr + 1] = '\0';
 				printk(KERN_INFO "%s%s", tpk_tag, tmp);
 				tpk_curr = 0;
+<<<<<<< HEAD
 				if ((i + 1) < count && buf[i + 1] == '\n')
+=======
+				if (buf[i + 1] == '\n')
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					i++;
 				break;
 			case '\n':
@@ -171,7 +178,11 @@ static const struct tty_operations ttyprintk_ops = {
 	.ioctl = tpk_ioctl,
 };
 
+<<<<<<< HEAD
 static struct tty_port_operations null_ops = { };
+=======
+struct tty_port_operations null_ops = { };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct tty_driver *ttyprintk_driver;
 
@@ -184,10 +195,18 @@ static int __init ttyprintk_init(void)
 	if (!ttyprintk_driver)
 		return ret;
 
+<<<<<<< HEAD
+=======
+	ttyprintk_driver->owner = THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ttyprintk_driver->driver_name = "ttyprintk";
 	ttyprintk_driver->name = "ttyprintk";
 	ttyprintk_driver->major = TTYAUX_MAJOR;
 	ttyprintk_driver->minor_start = 3;
+<<<<<<< HEAD
+=======
+	ttyprintk_driver->num = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ttyprintk_driver->type = TTY_DRIVER_TYPE_CONSOLE;
 	ttyprintk_driver->init_termios = tty_std_termios;
 	ttyprintk_driver->init_termios.c_oflag = OPOST | OCRNL | ONOCR | ONLRET;

@@ -34,6 +34,7 @@ struct pci_dev;
 
 extern void pcie_clear_root_pme_status(struct pci_dev *dev);
 
+<<<<<<< HEAD
 #ifdef CONFIG_HOTPLUG_PCI_PCIE
 extern bool pciehp_msi_disabled;
 
@@ -46,6 +47,8 @@ static inline bool pciehp_no_msi(void)
 static inline bool pciehp_no_msi(void) { return false; }
 #endif /* !CONFIG_HOTPLUG_PCI_PCIE */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PCIE_PME
 extern bool pcie_pme_msi_disabled;
 

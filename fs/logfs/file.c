@@ -219,6 +219,7 @@ long logfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 	}
 }
 
+<<<<<<< HEAD
 int logfs_fsync(struct file *file, loff_t start, loff_t end, int datasync)
 {
 	struct super_block *sb = file->f_mapping->host->i_sb;
@@ -235,6 +236,13 @@ int logfs_fsync(struct file *file, loff_t start, loff_t end, int datasync)
 	logfs_put_wblocks(sb, NULL, WF_LOCK);
 	mutex_unlock(&inode->i_mutex);
 
+=======
+int logfs_fsync(struct file *file, int datasync)
+{
+	struct super_block *sb = file->f_mapping->host->i_sb;
+
+	logfs_write_anchor(sb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

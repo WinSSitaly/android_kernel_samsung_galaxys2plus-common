@@ -98,6 +98,7 @@ config TOUCHSCREEN_ATMEL_MXT
 	  To compile this driver as a module, choose M here: the
 	  module will be called atmel_mxt_ts.
 
+<<<<<<< HEAD
 config TOUCHSCREEN_AUO_PIXCIR
 	tristate "AUO in-cell touchscreen using Pixcir ICs"
 	depends on I2C
@@ -105,12 +106,61 @@ config TOUCHSCREEN_AUO_PIXCIR
 	help
 	  Say Y here if you have a AUO display with in-cell touchscreen
 	  using Pixcir ICs.
+=======
+config TOUCHSCREEN_ATMEL_MXT224
+	tristate "Atmel mXT224 I2C Touchscreen"
+	depends on I2C
+	help
+	  Say Y here if you have Atmel mXT series I2C touchscreen,
+	  such as AT42QT602240/ATMXT224, connected to your system.
 
 	  If unsure, say N.
 
 	  To compile this driver as a module, choose M here: the
+	  module will be called mxt224.
+
+config TOUCHSCREEN_CYPRESS_TMA46X
+	tristate "CYPRESS TMA46X I2C Touchscreen"
+	depends on I2C
+	help
+	  Say Y here if you have Cypress tma46x I2C touchscreen,
+	  such as TMA46x, connected to your system.
+
+	  If unsure, say N.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called tma46x.
+	  
+config TOUCHSCREEN_ZINITIX_BT532
+	tristate "ZINITIX BT532 I2C Touchscreen"
+	depends on I2C
+	help
+	  Say Y here if you have Zinitix BT532 I2C touchscreen,
+	  such as BT532, connected to your system.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+
+	  If unsure, say N.
+
+	  To compile this driver as a module, choose M here: the
+<<<<<<< HEAD
 	  module will be called auo-pixcir-ts.
 
+=======
+	  module will be called BT532.
+	  
+config TOUCHSCREEN_CYPRESS_TMA46X_CRT
+	tristate "CYPRESS TMA46X I2C Touchscreen"
+	depends on I2C
+	help
+	  Say Y here if you have Cypress tma46x I2C touchscreen,
+	  such as TMA46x, connected to your system.
+
+	  If unsure, say N.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called tma46x.
+	  
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TOUCHSCREEN_BITSY
 	tristate "Compaq iPAQ H3600 (Bitsy) touchscreen"
 	depends on SA1100_BITSY
@@ -123,6 +173,19 @@ config TOUCHSCREEN_BITSY
 	  To compile this driver as a module, choose M here: the
 	  module will be called h3600_ts_input.
 
+<<<<<<< HEAD
+=======
+config TOUCHSCREEN_BCM915500
+	tristate "Broadcom 915500 touchscreen interface"
+	depends on I2C
+	help
+	  Say Y here if you want to support a capactive touchscreen interface using
+	  the BCM915500 controller.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called bcm915500.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TOUCHSCREEN_BU21013
 	tristate "BU21013 based touch panel controllers"
 	depends on I2C
@@ -139,6 +202,10 @@ config TOUCHSCREEN_CY8CTMG110
 	tristate "cy8ctmg110 touchscreen"
 	depends on I2C
 	depends on GPIOLIB
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Say Y here if you have a cy8ctmg110 capacitive touchscreen on
 	  an AAVA device.
@@ -148,6 +215,7 @@ config TOUCHSCREEN_CY8CTMG110
 	  To compile this driver as a module, choose M here: the
 	  module will be called cy8ctmg110_ts.
 
+<<<<<<< HEAD
 config TOUCHSCREEN_CYTTSP_CORE
 	tristate "Cypress TTSP touchscreen"
 	help
@@ -179,6 +247,8 @@ config TOUCHSCREEN_CYTTSP_SPI
 	  To compile this driver as a module, choose M here: the
 	  module will be called cyttsp_spi.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TOUCHSCREEN_DA9034
 	tristate "Touchscreen support for Dialog Semiconductor DA9034"
 	depends on PMIC_DA903X
@@ -220,6 +290,7 @@ config TOUCHSCREEN_EETI
 	  To compile this driver as a module, choose M here: the
 	  module will be called eeti_ts.
 
+<<<<<<< HEAD
 config TOUCHSCREEN_EGALAX
 	tristate "EETI eGalax multi-touch panel support"
 	depends on I2C
@@ -230,6 +301,8 @@ config TOUCHSCREEN_EGALAX
 	  To compile this driver as a module, choose M here: the
 	  module will be called egalax_ts.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TOUCHSCREEN_FUJITSU
 	tristate "Fujitsu serial touchscreen"
 	select SERIO
@@ -243,6 +316,7 @@ config TOUCHSCREEN_FUJITSU
 	  To compile this driver as a module, choose M here: the
 	  module will be called fujitsu-ts.
 
+<<<<<<< HEAD
 config TOUCHSCREEN_ILI210X
 	tristate "Ilitek ILI210X based touchscreen"
 	depends on I2C
@@ -261,6 +335,11 @@ config TOUCHSCREEN_ILI210X
 config TOUCHSCREEN_S3C2410
 	tristate "Samsung S3C2410/generic touchscreen input driver"
 	depends on ARCH_S3C24XX || SAMSUNG_DEV_TS
+=======
+config TOUCHSCREEN_S3C2410
+	tristate "Samsung S3C2410/generic touchscreen input driver"
+	depends on ARCH_S3C2410 || SAMSUNG_DEV_TS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select S3C_ADC
 	help
 	  Say Y here if you have the s3c2410 touchscreen.
@@ -431,6 +510,30 @@ config TOUCHSCREEN_PENMOUNT
 	  To compile this driver as a module, choose M here: the
 	  module will be called penmount.
 
+<<<<<<< HEAD
+=======
+config TOUCHSCREEN_QT602240
+	tristate "QT602240 I2C Touchscreen"
+	depends on I2C
+	help
+	  Say Y here if you have the AT42QT602240/ATMXT224 I2C touchscreen
+	  connected to your system.
+
+	  If unsure, say N.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called qt602240_ts.
+
+config QT602240_BRCM_FIX
+	bool "T602240 I2C Touchscreen with BRCM RheaRay Board"
+	depends on TOUCHSCREEN_QT602240=y
+	help
+	  Say Y if you have the AT42QT602240/ATMXT224 I2C touchscreen
+	  connected to Broadcom RheaRay board
+
+	  If unsure, say N.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TOUCHSCREEN_MIGOR
 	tristate "Renesas MIGO-R touchscreen"
 	depends on SH_MIGOR && I2C
@@ -451,6 +554,15 @@ config TOUCHSCREEN_TNETV107X
 	  To compile this driver as a module, choose M here: the
 	  module will be called tnetv107x-ts.
 
+<<<<<<< HEAD
+=======
+config TOUCHSCREEN_SYNAPTICS_I2C_RMI
+	tristate "Synaptics i2c touchscreen"
+	depends on I2C
+	help
+	  This enables support for Synaptics RMI over I2C based touchscreens.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TOUCHSCREEN_TOUCHRIGHT
 	tristate "Touchright serial touchscreen"
 	select SERIO
@@ -475,6 +587,7 @@ config TOUCHSCREEN_TOUCHWIN
 	  To compile this driver as a module, choose M here: the
 	  module will be called touchwin.
 
+<<<<<<< HEAD
 config TOUCHSCREEN_TI_TSCADC
 	tristate "TI Touchscreen Interface"
 	depends on ARCH_OMAP2PLUS
@@ -487,6 +600,8 @@ config TOUCHSCREEN_TI_TSCADC
 	  To compile this driver as a module, choose M here: the
 	  module will be called ti_tscadc.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TOUCHSCREEN_ATMEL_TSADCC
 	tristate "Atmel Touchscreen Interface"
 	depends on ARCH_AT91SAM9RL || ARCH_AT91SAM9G45
@@ -515,6 +630,7 @@ config TOUCHSCREEN_UCB1400
 	  To compile this driver as a module, choose M here: the
 	  module will be called ucb1400_ts.
 
+<<<<<<< HEAD
 config TOUCHSCREEN_PIXCIR
 	tristate "PIXCIR I2C touchscreens"
 	depends on I2C
@@ -527,6 +643,8 @@ config TOUCHSCREEN_PIXCIR
 	  To compile this driver as a module, choose M here: the
 	  module will be called pixcir_i2c_ts.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TOUCHSCREEN_WM831X
 	tristate "Support for WM831x touchscreen controllers"
 	depends on MFD_WM831X
@@ -633,8 +751,11 @@ config TOUCHSCREEN_USB_COMPOSITE
 	  - GoTop Super_Q2/GogoPen/PenPower tablets
 	  - JASTEC USB Touch Controller/DigiTech DTR-02U
 	  - Zytronic controllers
+<<<<<<< HEAD
 	  - Elo TouchSystems 2700 IntelliTouch
 	  - EasyTouch USB Touch Controller from Data Modul
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	  Have a look at <http://linux.chapter7.ch/touchkit/> for
 	  a usage description and the required user-space stuff.
@@ -714,11 +835,14 @@ config TOUCHSCREEN_USB_JASTEC
 	bool "JASTEC/DigiTech DTR-02U USB touch controller device support" if EXPERT
 	depends on TOUCHSCREEN_USB_COMPOSITE
 
+<<<<<<< HEAD
 config TOUCHSCREEN_USB_ELO
 	default y
 	bool "Elo TouchSystems 2700 IntelliTouch controller device support" if EXPERT
 	depends on TOUCHSCREEN_USB_COMPOSITE
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TOUCHSCREEN_USB_E2I
 	default y
 	bool "e2i Touchscreen controller (e.g. from Mimo 740)"
@@ -739,6 +863,7 @@ config TOUCHSCREEN_USB_NEXIO
 	bool "NEXIO/iNexio device support" if EXPERT
 	depends on TOUCHSCREEN_USB_COMPOSITE
 
+<<<<<<< HEAD
 config TOUCHSCREEN_USB_EASYTOUCH
 	default y
 	bool "EasyTouch USB Touch controller device support" if EMBEDDED
@@ -747,6 +872,8 @@ config TOUCHSCREEN_USB_EASYTOUCH
 	  Say Y here if you have a EasyTouch USB Touch controller device support.
 	  If unsure, say N.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TOUCHSCREEN_TOUCHIT213
 	tristate "Sahara TouchIT-213 touchscreen"
 	select SERIO
@@ -758,6 +885,7 @@ config TOUCHSCREEN_TOUCHIT213
 	  To compile this driver as a module, choose M here: the
 	  module will be called touchit213.
 
+<<<<<<< HEAD
 config TOUCHSCREEN_TSC_SERIO
 	tristate "TSC-10/25/40 serial touchscreen support"
 	select SERIO
@@ -770,6 +898,8 @@ config TOUCHSCREEN_TSC_SERIO
 	  To compile this driver as a module, choose M here: the
 	  module will be called tsc40.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TOUCHSCREEN_TSC2005
         tristate "TSC2005 based touchscreens"
         depends on SPI_MASTER && GENERIC_HARDIRQS
@@ -792,6 +922,21 @@ config TOUCHSCREEN_TSC2007
 	  To compile this driver as a module, choose M here: the
 	  module will be called tsc2007.
 
+<<<<<<< HEAD
+=======
+config TOUCHSCREEN_TANGO
+   tristate "TANGO Capacitive Touchscreen"
+   depends on I2C
+   help
+     Say Y here if you have a Tango based touchscreen. If unsure, say N.
+
+config TOUCHSCREEN_GT818
+   tristate "Goodix Capacitive Touchscreen"
+   depends on I2C
+   help
+     Say Y here if you have a Tango based touchscreen. If unsure, say N.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TOUCHSCREEN_W90X900
 	tristate "W90P910 touchscreen driver"
 	depends on HAVE_CLK
@@ -845,4 +990,38 @@ config TOUCHSCREEN_TPS6507X
 	  To compile this driver as a module, choose M here: the
 	  module will be called tps6507x_ts.
 
+<<<<<<< HEAD
+=======
+config TOUCHSCREEN_EGALAX_I2C
+        tristate "eGalax Capacitive Touchscreen"
+        depends on I2C
+        help
+	  Say Y here if you have the EETI eGalax capacitive touchscreen.
+
+	  If unsure, say N.
+
+	  To compile this driver as a module, choose M here: the
+          module will be called egalax_i2c_ts.
+
+config CP_TS_SOFTKEY
+   bool "Compal Softkey Support"
+   depends on TOUCHSCREEN_EGALAX_I2C
+   default n
+   help
+     Say Y if you want Compal touch panel softkey support.
+     If unsure, say N.
+
+config TOUCHSCREEN_SCALE
+   bool "Compal touchscreen scaling Support"
+   depends on TOUCHSCREEN_EGALAX_I2C
+   default n
+   help
+     Say Y if you want Compal touch panel scaling support.
+     Give it a try, it's quite cool!
+     If unsure, say N.
+     
+source "drivers/input/touchscreen/cypress_touchkey/Kconfig"
+source "drivers/input/touchscreen/coreriver_touchkey/Kconfig"
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endif

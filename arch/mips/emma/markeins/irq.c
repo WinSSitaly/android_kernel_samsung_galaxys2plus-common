@@ -27,6 +27,10 @@
 #include <linux/delay.h>
 
 #include <asm/irq_cpu.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mipsregs.h>
 #include <asm/addrspace.h>
 #include <asm/bootinfo.h>
@@ -168,7 +172,11 @@ void emma2rh_gpio_irq_init(void)
 
 static struct irqaction irq_cascade = {
 	   .handler = no_action,
+<<<<<<< HEAD
 	   .flags = IRQF_NO_THREAD,
+=======
+	   .flags = 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	   .name = "cascade",
 	   .dev_id = NULL,
 	   .next = NULL,

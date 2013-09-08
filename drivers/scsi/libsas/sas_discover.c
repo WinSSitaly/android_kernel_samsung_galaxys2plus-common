@@ -30,13 +30,17 @@
 
 #include <scsi/scsi_transport.h>
 #include <scsi/scsi_transport_sas.h>
+<<<<<<< HEAD
 #include <scsi/sas_ata.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "../scsi_sas_internal.h"
 
 /* ---------- Basic task processing for discovery purposes ---------- */
 
 void sas_init_dev(struct domain_device *dev)
 {
+<<<<<<< HEAD
 	switch (dev->dev_type) {
 	case SAS_END_DEV:
 		break;
@@ -54,6 +58,25 @@ void sas_init_dev(struct domain_device *dev)
 	default:
 		break;
 	}
+=======
+        INIT_LIST_HEAD(&dev->siblings);
+        INIT_LIST_HEAD(&dev->dev_list_node);
+        switch (dev->dev_type) {
+        case SAS_END_DEV:
+                break;
+        case EDGE_DEV:
+        case FANOUT_DEV:
+                INIT_LIST_HEAD(&dev->ex_dev.children);
+                break;
+        case SATA_DEV:
+        case SATA_PM:
+        case SATA_PM_PORT:
+                INIT_LIST_HEAD(&dev->sata_dev.children);
+                break;
+        default:
+                break;
+        }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* ---------- Domain device discovery ---------- */
@@ -69,6 +92,7 @@ void sas_init_dev(struct domain_device *dev)
  */
 static int sas_get_port_device(struct asd_sas_port *port)
 {
+<<<<<<< HEAD
 	struct asd_sas_phy *phy;
 	struct sas_rphy *rphy;
 	struct domain_device *dev;
@@ -82,6 +106,21 @@ static int sas_get_port_device(struct asd_sas_port *port)
 	if (list_empty(&port->phy_list)) {
 		spin_unlock_irq(&port->phy_list_lock);
 		sas_put_device(dev);
+=======
+	unsigned long flags;
+	struct asd_sas_phy *phy;
+	struct sas_rphy *rphy;
+	struct domain_device *dev;
+
+	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+	if (!dev)
+		return -ENOMEM;
+
+	spin_lock_irqsave(&port->phy_list_lock, flags);
+	if (list_empty(&port->phy_list)) {
+		spin_unlock_irqrestore(&port->phy_list_lock, flags);
+		kfree(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 	phy = container_of(port->phy_list.next, struct asd_sas_phy, port_phy_el);
@@ -89,7 +128,11 @@ static int sas_get_port_device(struct asd_sas_port *port)
 	memcpy(dev->frame_rcvd, phy->frame_rcvd, min(sizeof(dev->frame_rcvd),
 					     (size_t)phy->frame_rcvd_size));
 	spin_unlock(&phy->frame_rcvd_lock);
+<<<<<<< HEAD
 	spin_unlock_irq(&port->phy_list_lock);
+=======
+	spin_unlock_irqrestore(&port->phy_list_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dev->frame_rcvd[0] == 0x34 && port->oob_mode == SATA_OOB_MODE) {
 		struct dev_to_host_fis *fis =
@@ -111,6 +154,7 @@ static int sas_get_port_device(struct asd_sas_port *port)
 
 	sas_init_dev(dev);
 
+<<<<<<< HEAD
 	dev->port = port;
 	switch (dev->dev_type) {
 	case SATA_DEV:
@@ -121,6 +165,11 @@ static int sas_get_port_device(struct asd_sas_port *port)
 		}
 		/* fall through */
 	case SAS_END_DEV:
+=======
+	switch (dev->dev_type) {
+	case SAS_END_DEV:
+	case SATA_DEV:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rphy = sas_end_device_alloc(port->port);
 		break;
 	case EDGE_DEV:
@@ -138,15 +187,25 @@ static int sas_get_port_device(struct asd_sas_port *port)
 	}
 
 	if (!rphy) {
+<<<<<<< HEAD
 		sas_put_device(dev);
 		return rc;
 	}
 
+=======
+		kfree(dev);
+		return -ENODEV;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rphy->identify.phy_identifier = phy->phy->identify.phy_identifier;
 	memcpy(dev->sas_addr, port->attached_sas_addr, SAS_ADDR_SIZE);
 	sas_fill_in_rphy(dev, rphy);
 	sas_hash_addr(dev->hashed_sas_addr, dev->sas_addr);
 	port->port_dev = dev;
+<<<<<<< HEAD
+=======
+	dev->port = port;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->linkrate = port->linkrate;
 	dev->min_linkrate = port->linkrate;
 	dev->max_linkrate = port->linkrate;
@@ -155,6 +214,7 @@ static int sas_get_port_device(struct asd_sas_port *port)
 	memset(port->disc.eeds_a, 0, SAS_ADDR_SIZE);
 	memset(port->disc.eeds_b, 0, SAS_ADDR_SIZE);
 	port->disc.max_level = 0;
+<<<<<<< HEAD
 	sas_device_set_phy(dev, port->port);
 
 	dev->rphy = rphy;
@@ -172,6 +232,13 @@ static int sas_get_port_device(struct asd_sas_port *port)
 	list_for_each_entry(phy, &port->phy_list, port_phy_el)
 		sas_phy_set_target(phy, dev);
 	spin_unlock_irq(&port->phy_list_lock);
+=======
+
+	dev->rphy = rphy;
+	spin_lock_irq(&port->dev_list_lock);
+	list_add_tail(&dev->dev_list_node, &port->dev_list);
+	spin_unlock_irq(&port->dev_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -193,7 +260,10 @@ int sas_notify_lldd_dev_found(struct domain_device *dev)
 			       dev_name(sas_ha->dev),
 			       SAS_ADDR(dev->sas_addr), res);
 		}
+<<<<<<< HEAD
 		kref_get(&dev->kref);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return res;
 }
@@ -205,6 +275,7 @@ void sas_notify_lldd_dev_gone(struct domain_device *dev)
 	struct Scsi_Host *shost = sas_ha->core.shost;
 	struct sas_internal *i = to_sas_internal(shost->transportt);
 
+<<<<<<< HEAD
 	if (i->dft->lldd_dev_gone) {
 		i->dft->lldd_dev_gone(dev);
 		sas_put_device(dev);
@@ -238,6 +309,14 @@ static void sas_probe_devices(struct work_struct *work)
 			list_del_init(&dev->disco_list_node);
 	}
 }
+=======
+	if (i->dft->lldd_dev_gone)
+		i->dft->lldd_dev_gone(dev);
+}
+
+/* ---------- Common/dispatchers ---------- */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * sas_discover_end_dev -- discover an end device (SSP, etc)
@@ -251,14 +330,30 @@ int sas_discover_end_dev(struct domain_device *dev)
 
 	res = sas_notify_lldd_dev_found(dev);
 	if (res)
+<<<<<<< HEAD
 		return res;
 	sas_discover_event(dev->port, DISCE_PROBE);
 
 	return 0;
+=======
+		goto out_err2;
+
+	res = sas_rphy_add(dev->rphy);
+	if (res)
+		goto out_err;
+
+	return 0;
+
+out_err:
+	sas_notify_lldd_dev_gone(dev);
+out_err2:
+	return res;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* ---------- Device registration and unregistration ---------- */
 
+<<<<<<< HEAD
 void sas_free_device(struct kref *kref)
 {
 	struct domain_device *dev = container_of(kref, typeof(*dev), kref);
@@ -285,12 +380,16 @@ void sas_free_device(struct kref *kref)
 }
 
 static void sas_unregister_common_dev(struct asd_sas_port *port, struct domain_device *dev)
+=======
+static inline void sas_unregister_common_dev(struct domain_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	sas_notify_lldd_dev_gone(dev);
 	if (!dev->parent)
 		dev->port->port_dev = NULL;
 	else
 		list_del_init(&dev->siblings);
+<<<<<<< HEAD
 
 	spin_lock_irq(&port->dev_list_lock);
 	list_del_init(&dev->dev_list_node);
@@ -346,11 +445,38 @@ void sas_unregister_domain_devices(struct asd_sas_port *port, int gone)
 
 	list_for_each_entry_safe(dev, n, &port->disco_list, disco_list_node)
 		sas_unregister_dev(port, dev);
+=======
+	list_del_init(&dev->dev_list_node);
+}
+
+void sas_unregister_dev(struct domain_device *dev)
+{
+	if (dev->rphy) {
+		sas_remove_children(&dev->rphy->dev);
+		sas_rphy_delete(dev->rphy);
+		dev->rphy = NULL;
+	}
+	if (dev->dev_type == EDGE_DEV || dev->dev_type == FANOUT_DEV) {
+		/* remove the phys and ports, everything else should be gone */
+		kfree(dev->ex_dev.ex_phy);
+		dev->ex_dev.ex_phy = NULL;
+	}
+	sas_unregister_common_dev(dev);
+}
+
+void sas_unregister_domain_devices(struct asd_sas_port *port)
+{
+	struct domain_device *dev, *n;
+
+	list_for_each_entry_safe_reverse(dev,n,&port->dev_list,dev_list_node)
+		sas_unregister_dev(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	port->port->rphy = NULL;
 
 }
 
+<<<<<<< HEAD
 void sas_device_set_phy(struct domain_device *dev, struct sas_port *port)
 {
 	struct sas_ha_struct *ha;
@@ -371,6 +497,8 @@ void sas_device_set_phy(struct domain_device *dev, struct sas_port *port)
 	spin_unlock_irq(&ha->phy_port_lock);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* ---------- Discovery and Revalidation ---------- */
 
 /**
@@ -386,10 +514,19 @@ static void sas_discover_domain(struct work_struct *work)
 {
 	struct domain_device *dev;
 	int error = 0;
+<<<<<<< HEAD
 	struct sas_discovery_event *ev = to_sas_discovery_event(work);
 	struct asd_sas_port *port = ev->port;
 
 	clear_bit(DISCE_DISCOVER_DOMAIN, &port->disc.pending);
+=======
+	struct sas_discovery_event *ev =
+		container_of(work, struct sas_discovery_event, work);
+	struct asd_sas_port *port = ev->port;
+
+	sas_begin_event(DISCE_DISCOVER_DOMAIN, &port->disc.disc_event_lock,
+			&port->disc.pending);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (port->port_dev)
 		return;
@@ -427,12 +564,21 @@ static void sas_discover_domain(struct work_struct *work)
 
 	if (error) {
 		sas_rphy_free(dev->rphy);
+<<<<<<< HEAD
 		list_del_init(&dev->disco_list_node);
+=======
+		dev->rphy = NULL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_lock_irq(&port->dev_list_lock);
 		list_del_init(&dev->dev_list_node);
 		spin_unlock_irq(&port->dev_list_lock);
 
+<<<<<<< HEAD
 		sas_put_device(dev);
+=======
+		kfree(dev); /* not kobject_register-ed yet */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		port->port_dev = NULL;
 	}
 
@@ -443,6 +589,7 @@ static void sas_discover_domain(struct work_struct *work)
 static void sas_revalidate_domain(struct work_struct *work)
 {
 	int res = 0;
+<<<<<<< HEAD
 	struct sas_discovery_event *ev = to_sas_discovery_event(work);
 	struct asd_sas_port *port = ev->port;
 	struct sas_ha_struct *ha = port->ha;
@@ -460,17 +607,32 @@ static void sas_revalidate_domain(struct work_struct *work)
 	SAS_DPRINTK("REVALIDATING DOMAIN on port %d, pid:%d\n", port->id,
 		    task_pid_nr(current));
 
+=======
+	struct sas_discovery_event *ev =
+		container_of(work, struct sas_discovery_event, work);
+	struct asd_sas_port *port = ev->port;
+
+	sas_begin_event(DISCE_REVALIDATE_DOMAIN, &port->disc.disc_event_lock,
+			&port->disc.pending);
+
+	SAS_DPRINTK("REVALIDATING DOMAIN on port %d, pid:%d\n", port->id,
+		    task_pid_nr(current));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (port->port_dev)
 		res = sas_ex_revalidate_domain(port->port_dev);
 
 	SAS_DPRINTK("done REVALIDATING DOMAIN on port %d, pid:%d, res 0x%x\n",
 		    port->id, task_pid_nr(current), res);
+<<<<<<< HEAD
  out:
 	mutex_unlock(&ha->disco_mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* ---------- Events ---------- */
 
+<<<<<<< HEAD
 static void sas_chain_work(struct sas_ha_struct *ha, struct sas_work *sw)
 {
 	/* chained work is not subject to SA_HA_DRAINING or
@@ -494,6 +656,8 @@ static void sas_chain_event(int event, unsigned long *pending,
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int sas_discover_event(struct asd_sas_port *port, enum discover_event ev)
 {
 	struct sas_discovery *disc;
@@ -504,7 +668,12 @@ int sas_discover_event(struct asd_sas_port *port, enum discover_event ev)
 
 	BUG_ON(ev >= DISC_NUM_EVENTS);
 
+<<<<<<< HEAD
 	sas_chain_event(ev, &disc->pending, &disc->disc_work[ev].work, port->ha);
+=======
+	sas_queue_event(ev, &disc->disc_event_lock, &disc->pending,
+			&disc->disc_work[ev].work, port->ha);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -522,6 +691,7 @@ void sas_init_disc(struct sas_discovery *disc, struct asd_sas_port *port)
 	static const work_func_t sas_event_fns[DISC_NUM_EVENTS] = {
 		[DISCE_DISCOVER_DOMAIN] = sas_discover_domain,
 		[DISCE_REVALIDATE_DOMAIN] = sas_revalidate_domain,
+<<<<<<< HEAD
 		[DISCE_PROBE] = sas_probe_devices,
 		[DISCE_DESTRUCT] = sas_destruct_devices,
 	};
@@ -529,6 +699,14 @@ void sas_init_disc(struct sas_discovery *disc, struct asd_sas_port *port)
 	disc->pending = 0;
 	for (i = 0; i < DISC_NUM_EVENTS; i++) {
 		INIT_SAS_WORK(&disc->disc_work[i].work, sas_event_fns[i]);
+=======
+	};
+
+	spin_lock_init(&disc->disc_event_lock);
+	disc->pending = 0;
+	for (i = 0; i < DISC_NUM_EVENTS; i++) {
+		INIT_WORK(&disc->disc_work[i].work, sas_event_fns[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		disc->disc_work[i].port = port;
 	}
 }

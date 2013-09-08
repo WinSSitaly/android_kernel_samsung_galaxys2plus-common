@@ -24,6 +24,10 @@
 #include <linux/seq_file.h>
 #include <linux/of_platform.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/time.h>
 #include <asm/machdep.h>
 #include <asm/pci-bridge.h>
@@ -36,9 +40,15 @@
 
 #include <sysdev/fsl_pci.h>
 #include <sysdev/fsl_soc.h>
+<<<<<<< HEAD
 #include <sysdev/ge/ge_pic.h>
 
 #include "mpc86xx.h"
+=======
+
+#include "mpc86xx.h"
+#include "gef_pic.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #undef DEBUG
 

@@ -118,6 +118,7 @@ extern void iwmmxt_task_switch(struct thread_info *);
 extern void vfp_sync_hwstate(struct thread_info *);
 extern void vfp_flush_hwstate(struct thread_info *);
 
+<<<<<<< HEAD
 struct user_vfp;
 struct user_vfp_exc;
 
@@ -125,6 +126,8 @@ extern int vfp_preserve_user_clear_hwstate(struct user_vfp __user *,
 					   struct user_vfp_exc __user *);
 extern int vfp_restore_user_hwstate(struct user_vfp __user *,
 				    struct user_vfp_exc __user *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /*
@@ -136,7 +139,10 @@ extern int vfp_restore_user_hwstate(struct user_vfp __user *,
 /*
  * thread information flags:
  *  TIF_SYSCALL_TRACE	- syscall trace active
+<<<<<<< HEAD
  *  TIF_SYSCAL_AUDIT	- syscall auditing active
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  TIF_SIGPENDING	- signal pending
  *  TIF_NEED_RESCHED	- rescheduling necessary
  *  TIF_NOTIFY_RESUME	- callback before returning to user
@@ -147,10 +153,17 @@ extern int vfp_restore_user_hwstate(struct user_vfp __user *,
 #define TIF_NEED_RESCHED	1
 #define TIF_NOTIFY_RESUME	2	/* callback before returning to user */
 #define TIF_SYSCALL_TRACE	8
+<<<<<<< HEAD
 #define TIF_SYSCALL_AUDIT	9
 #define TIF_POLLING_NRFLAG	16
 #define TIF_USING_IWMMXT	17
 #define TIF_MEMDIE		18	/* is terminating due to OOM killer */
+=======
+#define TIF_POLLING_NRFLAG	16
+#define TIF_USING_IWMMXT	17
+#define TIF_MEMDIE		18	/* is terminating due to OOM killer */
+#define TIF_FREEZE		19
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define TIF_RESTORE_SIGMASK	20
 #define TIF_SECCOMP		21
 
@@ -158,6 +171,7 @@ extern int vfp_restore_user_hwstate(struct user_vfp __user *,
 #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
 #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
 #define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+<<<<<<< HEAD
 #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
 #define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
 #define _TIF_USING_IWMMXT	(1 << TIF_USING_IWMMXT)
@@ -167,6 +181,14 @@ extern int vfp_restore_user_hwstate(struct user_vfp __user *,
 /* Checks for any syscall work in entry-common.S */
 #define _TIF_SYSCALL_WORK (_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT)
 
+=======
+#define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
+#define _TIF_USING_IWMMXT	(1 << TIF_USING_IWMMXT)
+#define _TIF_FREEZE		(1 << TIF_FREEZE)
+#define _TIF_RESTORE_SIGMASK	(1 << TIF_RESTORE_SIGMASK)
+#define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Change these and you break ASM code in entry-common.S
  */

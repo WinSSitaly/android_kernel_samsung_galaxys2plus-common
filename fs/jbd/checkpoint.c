@@ -22,8 +22,11 @@
 #include <linux/jbd.h>
 #include <linux/errno.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/blkdev.h>
 #include <trace/events/jbd.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Unlink a buffer from a transaction checkpoint list.
@@ -97,6 +100,7 @@ static int __try_to_free_cp_buf(struct journal_head *jh)
 
 	if (jh->b_jlist == BJ_None && !buffer_locked(bh) &&
 	    !buffer_dirty(bh) && !buffer_write_io_error(bh)) {
+<<<<<<< HEAD
 		/*
 		 * Get our reference so that bh cannot be freed before
 		 * we unlock it
@@ -105,6 +109,12 @@ static int __try_to_free_cp_buf(struct journal_head *jh)
 		JBUFFER_TRACE(jh, "remove from checkpoint list");
 		ret = __journal_remove_checkpoint(jh) + 1;
 		jbd_unlock_bh_state(bh);
+=======
+		JBUFFER_TRACE(jh, "remove from checkpoint list");
+		ret = __journal_remove_checkpoint(jh) + 1;
+		jbd_unlock_bh_state(bh);
+		journal_remove_journal_head(bh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		BUFFER_TRACE(bh, "release");
 		__brelse(bh);
 	} else {
@@ -226,8 +236,13 @@ restart:
 			spin_lock(&journal->j_list_lock);
 			goto restart;
 		}
+<<<<<<< HEAD
 		get_bh(bh);
 		if (buffer_locked(bh)) {
+=======
+		if (buffer_locked(bh)) {
+			get_bh(bh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			spin_unlock(&journal->j_list_lock);
 			jbd_unlock_bh_state(bh);
 			wait_on_buffer(bh);
@@ -246,6 +261,10 @@ restart:
 		 */
 		released = __journal_remove_checkpoint(jh);
 		jbd_unlock_bh_state(bh);
+<<<<<<< HEAD
+=======
+		journal_remove_journal_head(bh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__brelse(bh);
 	}
 
@@ -258,12 +277,18 @@ static void
 __flush_batch(journal_t *journal, struct buffer_head **bhs, int *batch_count)
 {
 	int i;
+<<<<<<< HEAD
 	struct blk_plug plug;
 
 	blk_start_plug(&plug);
 	for (i = 0; i < *batch_count; i++)
 		write_dirty_buffer(bhs[i], WRITE_SYNC);
 	blk_finish_plug(&plug);
+=======
+
+	for (i = 0; i < *batch_count; i++)
+		write_dirty_buffer(bhs[i], WRITE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < *batch_count; i++) {
 		struct buffer_head *bh = bhs[i];
@@ -312,12 +337,19 @@ static int __process_buffer(journal_t *journal, struct journal_head *jh,
 		ret = 1;
 		if (unlikely(buffer_write_io_error(bh)))
 			ret = -EIO;
+<<<<<<< HEAD
 		get_bh(bh);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		J_ASSERT_JH(jh, !buffer_jbddirty(bh));
 		BUFFER_TRACE(bh, "remove from checkpoint");
 		__journal_remove_checkpoint(jh);
 		spin_unlock(&journal->j_list_lock);
 		jbd_unlock_bh_state(bh);
+<<<<<<< HEAD
+=======
+		journal_remove_journal_head(bh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__brelse(bh);
 	} else {
 		/*
@@ -366,7 +398,10 @@ int log_do_checkpoint(journal_t *journal)
 	 * journal straight away.
 	 */
 	result = cleanup_journal_tail(journal);
+<<<<<<< HEAD
 	trace_jbd_checkpoint(journal, result);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	jbd_debug(1, "cleanup_journal_tail returned %d\n", result);
 	if (result <= 0)
 		return result;
@@ -453,6 +488,11 @@ out:
  *
  * Return <0 on error, 0 on success, 1 if there was nothing to clean up.
  *
+<<<<<<< HEAD
+=======
+ * Called with the journal lock held.
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This is the only part of the journaling code which really needs to be
  * aware of transaction aborts.  Checkpointing involves writing to the
  * main filesystem area rather than to the journal, so it can proceed
@@ -470,14 +510,23 @@ int cleanup_journal_tail(journal_t *journal)
 	if (is_journal_aborted(journal))
 		return 1;
 
+<<<<<<< HEAD
 	/*
 	 * OK, work out the oldest transaction remaining in the log, and
+=======
+	/* OK, work out the oldest transaction remaining in the log, and
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * the log block it starts at.
 	 *
 	 * If the log is now empty, we need to work out which is the
 	 * next transaction ID we will write, and where it will
+<<<<<<< HEAD
 	 * start.
 	 */
+=======
+	 * start. */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&journal->j_state_lock);
 	spin_lock(&journal->j_list_lock);
 	transaction = journal->j_checkpoint_transactions;
@@ -503,6 +552,7 @@ int cleanup_journal_tail(journal_t *journal)
 		spin_unlock(&journal->j_state_lock);
 		return 1;
 	}
+<<<<<<< HEAD
 	spin_unlock(&journal->j_state_lock);
 
 	/*
@@ -522,6 +572,9 @@ int cleanup_journal_tail(journal_t *journal)
 		/* Someone else cleaned up journal so return 0 */
 		return 0;
 	}
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* OK, update the superblock to recover the freed space.
 	 * Physical blocks come first: have we wrapped beyond the end of
 	 * the log?  */
@@ -529,7 +582,10 @@ int cleanup_journal_tail(journal_t *journal)
 	if (blocknr < journal->j_tail)
 		freed = freed + journal->j_last - journal->j_first;
 
+<<<<<<< HEAD
 	trace_jbd_cleanup_journal_tail(journal, first_tid, blocknr, freed);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	jbd_debug(1,
 		  "Cleaning journal tail from %d to %d (offset %u), "
 		  "freeing %u\n",
@@ -550,11 +606,19 @@ int cleanup_journal_tail(journal_t *journal)
 /*
  * journal_clean_one_cp_list
  *
+<<<<<<< HEAD
  * Find all the written-back checkpoint buffers in the given list and release
  * them.
  *
  * Called with j_list_lock held.
  * Returns number of buffers reaped (for debug)
+=======
+ * Find all the written-back checkpoint buffers in the given list and release them.
+ *
+ * Called with the journal locked.
+ * Called with j_list_lock held.
+ * Returns number of bufers reaped (for debug)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 static int journal_clean_one_cp_list(struct journal_head *jh, int *released)
@@ -659,8 +723,13 @@ out:
  * checkpoint lists.
  *
  * The function returns 1 if it frees the transaction, 0 otherwise.
+<<<<<<< HEAD
  * The function can free jh and bh.
  *
+=======
+ *
+ * This function is called with the journal locked.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This function is called with j_list_lock held.
  * This function is called with jbd_lock_bh_state(jh2bh(jh))
  */
@@ -679,14 +748,23 @@ int __journal_remove_checkpoint(struct journal_head *jh)
 	}
 	journal = transaction->t_journal;
 
+<<<<<<< HEAD
 	JBUFFER_TRACE(jh, "removing from transaction");
 	__buffer_unlink(jh);
 	jh->b_cp_transaction = NULL;
 	journal_put_journal_head(jh);
+=======
+	__buffer_unlink(jh);
+	jh->b_cp_transaction = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (transaction->t_checkpoint_list != NULL ||
 	    transaction->t_checkpoint_io_list != NULL)
 		goto out;
+<<<<<<< HEAD
+=======
+	JBUFFER_TRACE(jh, "transaction has no more buffers");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * There is one special case to worry about: if we have just pulled the
@@ -697,8 +775,15 @@ int __journal_remove_checkpoint(struct journal_head *jh)
 	 * The locking here around t_state is a bit sleazy.
 	 * See the comment at the end of journal_commit_transaction().
 	 */
+<<<<<<< HEAD
 	if (transaction->t_state != T_FINISHED)
 		goto out;
+=======
+	if (transaction->t_state != T_FINISHED) {
+		JBUFFER_TRACE(jh, "belongs to running/committing transaction");
+		goto out;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* OK, that was the last buffer for the transaction: we can now
 	   safely remove this transaction from the log */
@@ -710,6 +795,10 @@ int __journal_remove_checkpoint(struct journal_head *jh)
 	wake_up(&journal->j_wait_logspace);
 	ret = 1;
 out:
+<<<<<<< HEAD
+=======
+	JBUFFER_TRACE(jh, "exit");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -728,8 +817,11 @@ void __journal_insert_checkpoint(struct journal_head *jh,
 	J_ASSERT_JH(jh, buffer_dirty(jh2bh(jh)) || buffer_jbddirty(jh2bh(jh)));
 	J_ASSERT_JH(jh, jh->b_cp_transaction == NULL);
 
+<<<<<<< HEAD
 	/* Get reference for checkpointing transaction */
 	journal_grab_journal_head(jh2bh(jh));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	jh->b_cp_transaction = transaction;
 
 	if (!transaction->t_checkpoint_list) {
@@ -779,7 +871,10 @@ void __journal_drop_transaction(journal_t *journal, transaction_t *transaction)
 	J_ASSERT(journal->j_committing_transaction != transaction);
 	J_ASSERT(journal->j_running_transaction != transaction);
 
+<<<<<<< HEAD
 	trace_jbd_drop_transaction(journal, transaction);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	jbd_debug(1, "Dropping transaction %d, all done\n", transaction->t_tid);
 	kfree(transaction);
 }

@@ -12,8 +12,12 @@
 
 #include <linux/leds.h>
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <linux/device.h>
 #include <linux/fault-inject.h>
+=======
+#include <linux/wakelock.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/mmc/core.h>
 #include <linux/mmc/pm.h>
@@ -57,13 +61,21 @@ struct mmc_ios {
 #define MMC_TIMING_UHS_SDR50	3
 #define MMC_TIMING_UHS_SDR104	4
 #define MMC_TIMING_UHS_DDR50	5
+<<<<<<< HEAD
 #define MMC_TIMING_MMC_HS200	6
+=======
+
+	unsigned char	ddr;			/* dual data rate used */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MMC_SDR_MODE		0
 #define MMC_1_2V_DDR_MODE	1
 #define MMC_1_8V_DDR_MODE	2
+<<<<<<< HEAD
 #define MMC_1_2V_SDR_MODE	3
 #define MMC_1_8V_SDR_MODE	4
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	unsigned char	signal_voltage;		/* signalling voltage (1.8V or 3.3V) */
 
@@ -77,10 +89,22 @@ struct mmc_ios {
 #define MMC_SET_DRIVER_TYPE_A	1
 #define MMC_SET_DRIVER_TYPE_C	2
 #define MMC_SET_DRIVER_TYPE_D	3
+<<<<<<< HEAD
+=======
+
+#ifdef	 CONFIG_BCM_SDIOWL
+	unsigned char	host_reset;		/* reset host controller */
+
+#define MMC_HOST_RESET_CMD	1
+#define MMC_HOST_RESET_DAT	2
+#define MMC_HOST_RESET_ALL	3
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct mmc_host_ops {
 	/*
+<<<<<<< HEAD
 	 * 'enable' is called when the host is claimed and 'disable' is called
 	 * when the host is released. 'enable' and 'disable' are deprecated.
 	 */
@@ -98,6 +122,36 @@ struct mmc_host_ops {
 			    int err);
 	void	(*pre_req)(struct mmc_host *host, struct mmc_request *req,
 			   bool is_first_req);
+=======
+	 * Hosts that support power saving can use the 'enable' and 'disable'
+	 * methods to exit and enter power saving states. 'enable' is called
+	 * when the host is claimed and 'disable' is called (or scheduled with
+	 * a delay) when the host is released. The 'disable' is scheduled if
+	 * the disable delay set by 'mmc_set_disable_delay()' is non-zero,
+	 * otherwise 'disable' is called immediately. 'disable' may be
+	 * scheduled repeatedly, to permit ever greater power saving at the
+	 * expense of ever greater latency to re-enable. Rescheduling is
+	 * determined by the return value of the 'disable' method. A positive
+	 * value gives the delay in milliseconds.
+	 *
+	 * In the case where a host function (like set_ios) may be called
+	 * with or without the host claimed, enabling and disabling can be
+	 * done directly and will nest correctly. Call 'mmc_host_enable()' and
+	 * 'mmc_host_lazy_disable()' for this purpose, but note that these
+	 * functions must be paired.
+	 *
+	 * Alternatively, 'mmc_host_enable()' may be paired with
+	 * 'mmc_host_disable()' which calls 'disable' immediately.  In this
+	 * case the 'disable' method will be called with 'lazy' set to 0.
+	 * This is mainly useful for error paths.
+	 *
+	 * Because lazy disable may be called from a work queue, the 'disable'
+	 * method must claim the host when 'lazy' != 0, which will work
+	 * correctly because recursion is detected and handled.
+	 */
+	int (*enable)(struct mmc_host *host);
+	int (*disable)(struct mmc_host *host, int lazy);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void	(*request)(struct mmc_host *host, struct mmc_request *req);
 	/*
 	 * Avoid calling these three functions too often or in a "fast path",
@@ -129,17 +183,27 @@ struct mmc_host_ops {
 	void	(*init_card)(struct mmc_host *host, struct mmc_card *card);
 
 	int	(*start_signal_voltage_switch)(struct mmc_host *host, struct mmc_ios *ios);
+<<<<<<< HEAD
 
 	/* The tuning command opcode value is different for SD and eMMC cards */
 	int	(*execute_tuning)(struct mmc_host *host, u32 opcode);
 	void	(*enable_preset_value)(struct mmc_host *host, bool enable);
 	int	(*select_drive_strength)(unsigned int max_dtr, int host_drv, int card_drv);
 	void	(*hw_reset)(struct mmc_host *host);
+=======
+	int	(*execute_tuning)(struct mmc_host *host, u32 opcode);
+	void	(*enable_preset_value)(struct mmc_host *host, bool enable);
+	int	(*select_drive_strength)(unsigned int max_dtr,
+			int host_drv, int card_drv);
+	int	(*set_timeout)(struct mmc_host *host,unsigned int timeout);
+	int	(*get_timeout)(struct mmc_host *host,bool def_val,unsigned int *timeout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct mmc_card;
 struct device;
 
+<<<<<<< HEAD
 struct mmc_async_req {
 	/* active mmc request */
 	struct mmc_request	*mrq;
@@ -155,6 +219,8 @@ struct mmc_hotplug {
 	void *handler_priv;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct mmc_host {
 	struct device		*parent;
 	struct device		class_dev;
@@ -196,7 +262,11 @@ struct mmc_host {
 #define MMC_CAP_SPI		(1 << 4)	/* Talks only SPI protocols */
 #define MMC_CAP_NEEDS_POLL	(1 << 5)	/* Needs polling for card-detection */
 #define MMC_CAP_8_BIT_DATA	(1 << 6)	/* Can the host do 8 bit transfers */
+<<<<<<< HEAD
 
+=======
+#define MMC_CAP_DISABLE		(1 << 7)	/* Can the host be disabled */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MMC_CAP_NONREMOVABLE	(1 << 8)	/* Nonremovable e.g. eMMC */
 #define MMC_CAP_WAIT_WHILE_BUSY	(1 << 9)	/* Waits while card is busy */
 #define MMC_CAP_ERASE		(1 << 10)	/* Allow erase/trim commands */
@@ -222,6 +292,7 @@ struct mmc_host {
 #define MMC_CAP_MAX_CURRENT_600	(1 << 28)	/* Host max current limit is 600mA */
 #define MMC_CAP_MAX_CURRENT_800	(1 << 29)	/* Host max current limit is 800mA */
 #define MMC_CAP_CMD23		(1 << 30)	/* CMD23 supported. */
+<<<<<<< HEAD
 #define MMC_CAP_HW_RESET	(1 << 31)	/* Hardware reset */
 
 	unsigned int		caps2;		/* More host capabilities */
@@ -244,17 +315,28 @@ struct mmc_host {
 #define MMC_HOST_PW_NOTIFY_NONE		0
 #define MMC_HOST_PW_NOTIFY_SHORT	1
 #define MMC_HOST_PW_NOTIFY_LONG		2
+=======
+
+	mmc_pm_flag_t		pm_caps;	/* supported pm features */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_MMC_CLKGATE
 	int			clk_requests;	/* internal reference counter */
 	unsigned int		clk_delay;	/* number of MCI clk hold cycles */
 	bool			clk_gated;	/* clock gated */
+<<<<<<< HEAD
 	struct delayed_work	clk_gate_work; /* delayed clock gate */
 	unsigned int		clk_old;	/* old clock value cache */
 	spinlock_t		clk_lock;	/* lock for clk fields */
 	struct mutex		clk_gate_mutex;	/* mutex for clock gating */
 	struct device_attribute clkgate_delay_attr;
 	unsigned long           clkgate_delay;
+=======
+	struct work_struct	clk_gate_work; /* delayed clock gate */
+	unsigned int		clk_old;	/* old clock value cache */
+	spinlock_t		clk_lock;	/* lock for clk fields */
+	struct mutex		clk_gate_mutex;	/* mutex for clock gating */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	/* host specific block data */
@@ -264,7 +346,13 @@ struct mmc_host {
 	unsigned int		max_req_size;	/* maximum number of bytes in one req */
 	unsigned int		max_blk_size;	/* maximum size of one mmc block */
 	unsigned int		max_blk_count;	/* maximum number of blocks in one req */
+<<<<<<< HEAD
 	unsigned int		max_discard_to;	/* max. discard timeout in ms */
+=======
+#ifdef CONFIG_MMC_DISCARD_SUPPORT
+	unsigned int		max_discard_to;	/* max. discard timeout in ms */
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* private data */
 	spinlock_t		lock;		/* lock for claim and bus ops */
@@ -280,7 +368,17 @@ struct mmc_host {
 	unsigned int		removed:1;	/* host is being removed */
 #endif
 
+<<<<<<< HEAD
 	int			rescan_disable;	/* disable card detection */
+=======
+	/* Only used with MMC_CAP_DISABLE */
+	int			enabled;	/* host is enabled */
+	int			rescan_disable;	/* disable card detection */
+	int			nesting_cnt;	/* "enable" nesting count */
+	int			en_dis_recurs;	/* detect recursion */
+	unsigned int		disable_delay;	/* disable delay in msecs */
+	struct delayed_work	disable;	/* disabling work */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct mmc_card		*card;		/* device attached to this host */
 
@@ -289,15 +387,28 @@ struct mmc_host {
 	int			claim_cnt;	/* "claim" nesting count */
 
 	struct delayed_work	detect;
+<<<<<<< HEAD
 	int			detect_change;	/* card detect flag */
 	struct mmc_hotplug	hotplug;
+=======
+	struct wake_lock	detect_wake_lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	const struct mmc_bus_ops *bus_ops;	/* current bus driver */
 	unsigned int		bus_refs;	/* reference counter */
 
+<<<<<<< HEAD
 	unsigned int		sdio_irqs;
 	struct task_struct	*sdio_irq_thread;
 	bool			sdio_irq_pending;
+=======
+	unsigned int		bus_resume_flags;
+#define MMC_BUSRESUME_MANUAL_RESUME	(1 << 0)
+#define MMC_BUSRESUME_NEEDS_RESUME	(1 << 1)
+
+	unsigned int		sdio_irqs;
+	struct task_struct	*sdio_irq_thread;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atomic_t		sdio_irq_thread_abort;
 
 	mmc_pm_flag_t		pm_flags;	/* requested pm features */
@@ -312,6 +423,7 @@ struct mmc_host {
 
 	struct dentry		*debugfs_root;
 
+<<<<<<< HEAD
 	struct mmc_async_req	*areq;		/* active async req */
 
 #ifdef CONFIG_FAIL_MMC_REQUEST
@@ -319,6 +431,18 @@ struct mmc_host {
 #endif
 
 	unsigned int		actual_clock;	/* Actual HC clock rate */
+=======
+#ifdef CONFIG_MMC_EMBEDDED_SDIO
+	struct {
+		struct sdio_cis			*cis;
+		struct sdio_cccr		*cccr;
+		struct sdio_embedded_func	*funcs;
+		int				num_funcs;
+	} embedded_sdio_data;
+#endif
+	unsigned int            actual_clock;   /* Actual HC clock rate */
+	bool			card_detect_cap;	/* supports card detection */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	unsigned long		private[0] ____cacheline_aligned;
 };
@@ -328,6 +452,17 @@ extern int mmc_add_host(struct mmc_host *);
 extern void mmc_remove_host(struct mmc_host *);
 extern void mmc_free_host(struct mmc_host *);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MMC_EMBEDDED_SDIO
+extern void mmc_set_embedded_sdio_data(struct mmc_host *host,
+				       struct sdio_cis *cis,
+				       struct sdio_cccr *cccr,
+				       struct sdio_embedded_func *funcs,
+				       int num_funcs);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void *mmc_priv(struct mmc_host *host)
 {
 	return (void *)host->private;
@@ -338,6 +473,21 @@ static inline void *mmc_priv(struct mmc_host *host)
 #define mmc_dev(x)	((x)->parent)
 #define mmc_classdev(x)	(&(x)->class_dev)
 #define mmc_hostname(x)	(dev_name(&(x)->class_dev))
+<<<<<<< HEAD
+=======
+#define mmc_bus_needs_resume(host) ((host)->bus_resume_flags & MMC_BUSRESUME_NEEDS_RESUME)
+#define mmc_bus_manual_resume(host) ((host)->bus_resume_flags & MMC_BUSRESUME_MANUAL_RESUME)
+
+static inline void mmc_set_bus_resume_policy(struct mmc_host *host, int manual)
+{
+	if (manual)
+		host->bus_resume_flags |= MMC_BUSRESUME_MANUAL_RESUME;
+	else
+		host->bus_resume_flags &= ~MMC_BUSRESUME_MANUAL_RESUME;
+}
+
+extern int mmc_resume_bus(struct mmc_host *host);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int mmc_suspend_host(struct mmc_host *);
 extern int mmc_resume_host(struct mmc_host *);
@@ -348,12 +498,18 @@ extern int mmc_power_restore_host(struct mmc_host *host);
 extern void mmc_detect_change(struct mmc_host *, unsigned long delay);
 extern void mmc_request_done(struct mmc_host *, struct mmc_request *);
 
+<<<<<<< HEAD
 extern int mmc_cache_ctrl(struct mmc_host *, u8);
 
 static inline void mmc_signal_sdio_irq(struct mmc_host *host)
 {
 	host->ops->enable_sdio_irq(host, 0);
 	host->sdio_irq_pending = true;
+=======
+static inline void mmc_signal_sdio_irq(struct mmc_host *host)
+{
+	host->ops->enable_sdio_irq(host, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wake_up_process(host->sdio_irq_thread);
 }
 
@@ -382,10 +538,26 @@ int mmc_card_awake(struct mmc_host *host);
 int mmc_card_sleep(struct mmc_host *host);
 int mmc_card_can_sleep(struct mmc_host *host);
 
+<<<<<<< HEAD
 int mmc_pm_notify(struct notifier_block *notify_block, unsigned long, void *);
 
 /* Module parameter */
 extern bool mmc_assume_removable;
+=======
+int mmc_host_enable(struct mmc_host *host);
+int mmc_host_disable(struct mmc_host *host);
+int mmc_host_lazy_disable(struct mmc_host *host);
+int mmc_pm_notify(struct notifier_block *notify_block, unsigned long, void *);
+
+static inline void mmc_set_disable_delay(struct mmc_host *host,
+					 unsigned int disable_delay)
+{
+	host->disable_delay = disable_delay;
+}
+
+/* Module parameter */
+extern int mmc_assume_removable;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int mmc_card_is_removable(struct mmc_host *host)
 {
@@ -406,6 +578,7 @@ static inline int mmc_host_cmd23(struct mmc_host *host)
 {
 	return host->caps & MMC_CAP_CMD23;
 }
+<<<<<<< HEAD
 
 static inline int mmc_boot_partition_access(struct mmc_host *host)
 {
@@ -432,3 +605,7 @@ static inline unsigned int mmc_host_clk_rate(struct mmc_host *host)
 }
 #endif
 #endif /* LINUX_MMC_HOST_H */
+=======
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

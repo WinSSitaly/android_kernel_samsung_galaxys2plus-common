@@ -10,7 +10,11 @@
 #include <linux/file.h>
 #include <linux/fs.h>
 #include <linux/security.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/uaccess.h>
 #include <linux/writeback.h>
 #include <linux/buffer_head.h>
@@ -42,7 +46,11 @@ static long vfs_ioctl(struct file *filp, unsigned int cmd,
 
 	error = filp->f_op->unlocked_ioctl(filp, cmd, arg);
 	if (error == -ENOIOCTLCMD)
+<<<<<<< HEAD
 		error = -ENOTTY;
+=======
+		error = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  out:
 	return error;
 }

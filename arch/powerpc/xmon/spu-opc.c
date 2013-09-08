@@ -19,7 +19,10 @@
    51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "spu.h"
 
 /* This file holds the Spu opcode table */

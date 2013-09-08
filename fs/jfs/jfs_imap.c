@@ -457,7 +457,11 @@ struct inode *diReadSpecial(struct super_block *sb, ino_t inum, int secondary)
 	/* read the page of fixed disk inode (AIT) in raw mode */
 	mp = read_metapage(ip, address << sbi->l2nbperpage, PSIZE, 1);
 	if (mp == NULL) {
+<<<<<<< HEAD
 		set_nlink(ip, 1);	/* Don't want iput() deleting it */
+=======
+		ip->i_nlink = 1;	/* Don't want iput() deleting it */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iput(ip);
 		return (NULL);
 	}
@@ -469,7 +473,11 @@ struct inode *diReadSpecial(struct super_block *sb, ino_t inum, int secondary)
 	/* copy on-disk inode to in-memory inode */
 	if ((copy_from_dinode(dp, ip)) != 0) {
 		/* handle bad return by returning NULL for ip */
+<<<<<<< HEAD
 		set_nlink(ip, 1);	/* Don't want iput() deleting it */
+=======
+		ip->i_nlink = 1;	/* Don't want iput() deleting it */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iput(ip);
 		/* release the page */
 		release_metapage(mp);
@@ -3076,7 +3084,11 @@ static int copy_from_dinode(struct dinode * dip, struct inode *ip)
 				ip->i_mode |= 0001;
 		}
 	}
+<<<<<<< HEAD
 	set_nlink(ip, le32_to_cpu(dip->di_nlink));
+=======
+	ip->i_nlink = le32_to_cpu(dip->di_nlink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	jfs_ip->saved_uid = le32_to_cpu(dip->di_uid);
 	if (sbi->uid == -1)

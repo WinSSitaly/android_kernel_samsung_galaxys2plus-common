@@ -1,11 +1,19 @@
 /*
+<<<<<<< HEAD
  *   (c) 2003-2012 Advanced Micro Devices, Inc.
+=======
+ *   (c) 2003-2010 Advanced Micro Devices, Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  Your use of this code is subject to the terms and conditions of the
  *  GNU general public license version 2. See "COPYING" or
  *  http://www.gnu.org/licenses/gpl.html
  *
+<<<<<<< HEAD
  *  Maintainer:
  *  Andreas Herrmann <andreas.herrmann3@amd.com>
+=======
+ *  Support : mark.langsdorf@amd.com
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *  Based on the powernow-k7.c module written by Dave Jones.
  *  (C) 2003 Dave Jones on behalf of SuSE Labs
@@ -17,6 +25,7 @@
  *  Valuable input gratefully received from Dave Jones, Pavel Machek,
  *  Dominik Brodowski, Jacob Shin, and others.
  *  Originally developed by Paul Devriendt.
+<<<<<<< HEAD
  *
  *  Processor information obtained from Chapter 9 (Power and Thermal
  *  Management) of the "BIOS and Kernel Developer's Guide (BKDG) for
@@ -25,6 +34,14 @@
  *
  *  Tables for specific CPUs can be inferred from AMD's processor
  *  power and thermal data sheets, (e.g. 30417.pdf, 30430.pdf, 43375.pdf)
+=======
+ *  Processor information obtained from Chapter 9 (Power and Thermal Management)
+ *  of the "BIOS and Kernel Developer's Guide for the AMD Athlon 64 and AMD
+ *  Opteron Processors" available for download from www.amd.com
+ *
+ *  Tables for specific CPUs can be inferred from
+ *     http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/30430.pdf
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/kernel.h>
@@ -35,11 +52,18 @@
 #include <linux/slab.h>
 #include <linux/string.h>
 #include <linux/cpumask.h>
+<<<<<<< HEAD
+=======
+#include <linux/sched.h>	/* for current / set_cpus_allowed() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 #include <linux/delay.h>
 
 #include <asm/msr.h>
+<<<<<<< HEAD
 #include <asm/cpu_device_id.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/acpi.h>
 #include <linux/mutex.h>
@@ -520,6 +544,7 @@ static int core_voltage_post_transition(struct powernow_k8_data *data,
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct x86_cpu_id powernow_k8_ids[] = {
 	/* IO based frequency switching */
 	{ X86_VENDOR_AMD, 0xf },
@@ -529,6 +554,8 @@ static const struct x86_cpu_id powernow_k8_ids[] = {
 };
 MODULE_DEVICE_TABLE(x86cpu, powernow_k8_ids);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void check_supported_cpu(void *_rc)
 {
 	u32 eax, ebx, ecx, edx;
@@ -536,7 +563,17 @@ static void check_supported_cpu(void *_rc)
 
 	*rc = -ENODEV;
 
+<<<<<<< HEAD
 	eax = cpuid_eax(CPUID_PROCESSOR_SIGNATURE);
+=======
+	if (__this_cpu_read(cpu_info.x86_vendor) != X86_VENDOR_AMD)
+		return;
+
+	eax = cpuid_eax(CPUID_PROCESSOR_SIGNATURE);
+	if (((eax & CPUID_XFAM) != CPUID_XFAM_K8) &&
+	    ((eax & CPUID_XFAM) < CPUID_XFAM_10H))
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((eax & CPUID_XFAM) == CPUID_XFAM_K8) {
 		if (((eax & CPUID_USE_XFAM_XMOD) != CPUID_USE_XFAM_XMOD) ||
@@ -1138,6 +1175,7 @@ static int transition_frequency_pstate(struct powernow_k8_data *data,
 	return res;
 }
 
+<<<<<<< HEAD
 struct powernowk8_target_arg {
 	struct cpufreq_policy		*pol;
 	unsigned			targfreq;
@@ -1150,11 +1188,22 @@ static long powernowk8_target_fn(void *arg)
 	struct cpufreq_policy *pol = pta->pol;
 	unsigned targfreq = pta->targfreq;
 	unsigned relation = pta->relation;
+=======
+/* Driver entry point to switch to the target frequency */
+static int powernowk8_target(struct cpufreq_policy *pol,
+		unsigned targfreq, unsigned relation)
+{
+	cpumask_var_t oldmask;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct powernow_k8_data *data = per_cpu(powernow_data, pol->cpu);
 	u32 checkfid;
 	u32 checkvid;
 	unsigned int newstate;
+<<<<<<< HEAD
 	int ret;
+=======
+	int ret = -EIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!data)
 		return -EINVAL;
@@ -1162,16 +1211,39 @@ static long powernowk8_target_fn(void *arg)
 	checkfid = data->currfid;
 	checkvid = data->currvid;
 
+<<<<<<< HEAD
 	if (pending_bit_stuck()) {
 		printk(KERN_ERR PFX "failing targ, change pending bit set\n");
 		return -EIO;
+=======
+	/* only run on specific CPU from here on. */
+	/* This is poor form: use a workqueue or smp_call_function_single */
+	if (!alloc_cpumask_var(&oldmask, GFP_KERNEL))
+		return -ENOMEM;
+
+	cpumask_copy(oldmask, tsk_cpus_allowed(current));
+	set_cpus_allowed_ptr(current, cpumask_of(pol->cpu));
+
+	if (smp_processor_id() != pol->cpu) {
+		printk(KERN_ERR PFX "limiting to cpu %u failed\n", pol->cpu);
+		goto err_out;
+	}
+
+	if (pending_bit_stuck()) {
+		printk(KERN_ERR PFX "failing targ, change pending bit set\n");
+		goto err_out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	pr_debug("targ: cpu %d, %d kHz, min %d, max %d, relation %d\n",
 		pol->cpu, targfreq, pol->min, pol->max, relation);
 
 	if (query_current_values_with_pending_wait(data))
+<<<<<<< HEAD
 		return -EIO;
+=======
+		goto err_out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (cpu_family != CPU_HW_PSTATE) {
 		pr_debug("targ: curr fid 0x%x, vid 0x%x\n",
@@ -1189,7 +1261,11 @@ static long powernowk8_target_fn(void *arg)
 
 	if (cpufreq_frequency_table_target(pol, data->powernow_table,
 				targfreq, relation, &newstate))
+<<<<<<< HEAD
 		return -EIO;
+=======
+		goto err_out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&fidvid_mutex);
 
@@ -1202,8 +1278,14 @@ static long powernowk8_target_fn(void *arg)
 		ret = transition_frequency_fidvid(data, newstate);
 	if (ret) {
 		printk(KERN_ERR PFX "transition frequency failed\n");
+<<<<<<< HEAD
 		mutex_unlock(&fidvid_mutex);
 		return 1;
+=======
+		ret = 1;
+		mutex_unlock(&fidvid_mutex);
+		goto err_out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	mutex_unlock(&fidvid_mutex);
 
@@ -1212,6 +1294,7 @@ static long powernowk8_target_fn(void *arg)
 				data->powernow_table[newstate].index);
 	else
 		pol->cur = find_khz_freq_from_fid(data->currfid);
+<<<<<<< HEAD
 
 	return 0;
 }
@@ -1224,6 +1307,14 @@ static int powernowk8_target(struct cpufreq_policy *pol,
 					     .relation = relation };
 
 	return work_on_cpu(pol->cpu, powernowk8_target_fn, &pta);
+=======
+	ret = 0;
+
+err_out:
+	set_cpus_allowed_ptr(current, oldmask);
+	free_cpumask_var(oldmask);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Driver entry point to verify the policy and range of frequencies */
@@ -1555,9 +1646,12 @@ static int __cpuinit powernowk8_init(void)
 	unsigned int i, supported_cpus = 0, cpu;
 	int rv;
 
+<<<<<<< HEAD
 	if (!x86_match_cpu(powernow_k8_ids))
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for_each_online_cpu(i) {
 		int rc;
 		smp_call_function_single(i, check_supported_cpu, &rc, 1);

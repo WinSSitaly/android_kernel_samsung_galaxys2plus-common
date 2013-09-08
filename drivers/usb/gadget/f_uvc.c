@@ -8,6 +8,10 @@
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
  *	(at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/kernel.h>
@@ -261,10 +265,15 @@ uvc_function_set_alt(struct usb_function *f, unsigned interface, unsigned alt)
 		if (uvc->state != UVC_STATE_CONNECTED)
 			return 0;
 
+<<<<<<< HEAD
 		if (uvc->video.ep) {
 			uvc->video.ep->desc = &uvc_streaming_ep;
 			usb_ep_enable(uvc->video.ep);
 		}
+=======
+		if (uvc->video.ep)
+			usb_ep_enable(uvc->video.ep, &uvc_streaming_ep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		memset(&v4l2_event, 0, sizeof(v4l2_event));
 		v4l2_event.type = UVC_EVENT_STREAMON;
@@ -335,6 +344,10 @@ uvc_register_video(struct uvc_device *uvc)
 		return -ENOMEM;
 
 	video->parent = &cdev->gadget->dev;
+<<<<<<< HEAD
+=======
+	video->minor = -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	video->fops = &uvc_v4l2_fops;
 	video->release = video_device_release;
 	strncpy(video->name, cdev->gadget->name, sizeof(video->name));
@@ -461,12 +474,32 @@ uvc_function_unbind(struct usb_configuration *c, struct usb_function *f)
 
 	INFO(cdev, "uvc_function_unbind\n");
 
+<<<<<<< HEAD
 	video_unregister_device(uvc->vdev);
 	uvc->control_ep->driver_data = NULL;
 	uvc->video.ep->driver_data = NULL;
 
 	usb_ep_free_request(cdev->gadget->ep0, uvc->control_req);
 	kfree(uvc->control_buf);
+=======
+	if (uvc->vdev) {
+		if (uvc->vdev->minor == -1)
+			video_device_release(uvc->vdev);
+		else
+			video_unregister_device(uvc->vdev);
+		uvc->vdev = NULL;
+	}
+
+	if (uvc->control_ep)
+		uvc->control_ep->driver_data = NULL;
+	if (uvc->video.ep)
+		uvc->video.ep->driver_data = NULL;
+
+	if (uvc->control_req) {
+		usb_ep_free_request(cdev->gadget->ep0, uvc->control_req);
+		kfree(uvc->control_buf);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kfree(f->descriptors);
 	kfree(f->hs_descriptors);
@@ -551,6 +584,7 @@ uvc_function_bind(struct usb_configuration *c, struct usb_function *f)
 	return 0;
 
 error:
+<<<<<<< HEAD
 	if (uvc->vdev)
 		video_device_release(uvc->vdev);
 
@@ -567,6 +601,9 @@ error:
 	kfree(f->descriptors);
 	kfree(f->hs_descriptors);
 	kfree(f->ss_descriptors);
+=======
+	uvc_function_unbind(c, f);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -653,7 +690,11 @@ uvc_bind_config(struct usb_configuration *c,
 	if (ret)
 		kfree(uvc);
 
+<<<<<<< HEAD
 	return ret;
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 error:
 	kfree(uvc);

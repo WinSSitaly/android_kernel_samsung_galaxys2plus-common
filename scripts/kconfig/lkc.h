@@ -21,7 +21,16 @@ static inline char *bind_textdomain_codeset(const char *dn, char *c) { return c;
 extern "C" {
 #endif
 
+<<<<<<< HEAD
 #define P(name,type,arg)	extern type name arg
+=======
+#ifdef LKC_DIRECT_LINK
+#define P(name,type,arg)	extern type name arg
+#else
+#include "lkc_defs.h"
+#define P(name,type,arg)	extern type (*name ## _p) arg
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "lkc_proto.h"
 #undef P
 
@@ -63,7 +72,13 @@ struct kconf_id {
 	enum symbol_type stype;
 };
 
+<<<<<<< HEAD
 extern int zconfdebug;
+=======
+#ifdef YYDEBUG
+extern int zconfdebug;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int zconfparse(void);
 void zconfdump(FILE *out);
@@ -74,6 +89,12 @@ void zconf_nextfile(const char *name);
 int zconf_lineno(void);
 const char *zconf_curname(void);
 
+<<<<<<< HEAD
+=======
+/* conf.c */
+void xfgets(char *str, int size, FILE *in);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* confdata.c */
 const char *conf_get_configname(void);
 const char *conf_get_autoconfig_name(void);
@@ -82,6 +103,7 @@ void sym_set_change_count(int count);
 void sym_add_change_count(int count);
 void conf_set_all_new_symbols(enum conf_def_mode mode);
 
+<<<<<<< HEAD
 struct conf_printer {
 	void (*print_symbol)(FILE *, struct symbol *, const char *, void *);
 	void (*print_comment)(FILE *, const char *, void *);
@@ -96,6 +118,18 @@ static inline void xfwrite(const void *str, size_t len, size_t count, FILE *out)
 		fprintf(stderr, "Error in writing or end of file.\n");
 }
 
+=======
+/* confdata.c and expr.c */
+static inline void xfwrite(const void *str, size_t len, size_t count, FILE *out)
+{
+	if (fwrite(str, len, count, out) < count)
+		fprintf(stderr, "\nError in writing or end of file.\n");
+}
+
+/* kconfig_load.c */
+void kconfig_load(void);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* menu.c */
 void _menu_init(void);
 void menu_warn(struct menu *menu, const char *fmt, ...);

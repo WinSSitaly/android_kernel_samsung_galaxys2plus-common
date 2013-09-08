@@ -1,9 +1,14 @@
 /*
  * OMAP4 Power Management Routines
  *
+<<<<<<< HEAD
  * Copyright (C) 2010-2011 Texas Instruments, Inc.
  * Rajendra Nayak <rnayak@ti.com>
  * Santosh Shilimkar <santosh.shilimkar@ti.com>
+=======
+ * Copyright (C) 2010 Texas Instruments, Inc.
+ * Rajendra Nayak <rnayak@ti.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -16,19 +21,28 @@
 #include <linux/list.h>
 #include <linux/err.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <asm/system_misc.h>
 
 #include "common.h"
 #include "clockdomain.h"
 #include "powerdomain.h"
 #include "pm.h"
+=======
+
+#include "powerdomain.h"
+#include <mach/omap4-common.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct power_state {
 	struct powerdomain *pwrdm;
 	u32 next_state;
 #ifdef CONFIG_SUSPEND
 	u32 saved_state;
+<<<<<<< HEAD
 	u32 saved_logic_state;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	struct list_head node;
 };
@@ -38,6 +52,7 @@ static LIST_HEAD(pwrst_list);
 #ifdef CONFIG_SUSPEND
 static int omap4_pm_suspend(void)
 {
+<<<<<<< HEAD
 	struct power_state *pwrst;
 	int state, ret = 0;
 	u32 cpu_id = smp_processor_id();
@@ -84,6 +99,46 @@ static int omap4_pm_suspend(void)
 
 	return 0;
 }
+=======
+	do_wfi();
+	return 0;
+}
+
+static int omap4_pm_enter(suspend_state_t suspend_state)
+{
+	int ret = 0;
+
+	switch (suspend_state) {
+	case PM_SUSPEND_STANDBY:
+	case PM_SUSPEND_MEM:
+		ret = omap4_pm_suspend();
+		break;
+	default:
+		ret = -EINVAL;
+	}
+
+	return ret;
+}
+
+static int omap4_pm_begin(suspend_state_t state)
+{
+	disable_hlt();
+	return 0;
+}
+
+static void omap4_pm_end(void)
+{
+	enable_hlt();
+	return;
+}
+
+static const struct platform_suspend_ops omap_pm_ops = {
+	.begin		= omap4_pm_begin,
+	.end		= omap4_pm_end,
+	.enter		= omap4_pm_enter,
+	.valid		= suspend_valid_only_mem,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_SUSPEND */
 
 static int __init pwrdms_setup(struct powerdomain *pwrdm, void *unused)
@@ -93,6 +148,7 @@ static int __init pwrdms_setup(struct powerdomain *pwrdm, void *unused)
 	if (!pwrdm->pwrsts)
 		return 0;
 
+<<<<<<< HEAD
 	/*
 	 * Skip CPU0 and CPU1 power domains. CPU1 is programmed
 	 * through hotplug path and CPU0 explicitly programmed
@@ -133,6 +189,16 @@ static void omap_default_idle(void)
 	omap_do_wfi();
 
 	local_fiq_enable();
+=======
+	pwrst = kmalloc(sizeof(struct power_state), GFP_ATOMIC);
+	if (!pwrst)
+		return -ENOMEM;
+	pwrst->pwrdm = pwrdm;
+	pwrst->next_state = PWRDM_POWER_ON;
+	list_add(&pwrst->node, &pwrst_list);
+
+	return pwrdm_set_next_pwrst(pwrst->pwrdm, pwrst->next_state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -144,17 +210,23 @@ static void omap_default_idle(void)
 static int __init omap4_pm_init(void)
 {
 	int ret;
+<<<<<<< HEAD
 	struct clockdomain *emif_clkdm, *mpuss_clkdm, *l3_1_clkdm, *l4wkup;
 	struct clockdomain *ducati_clkdm, *l3_2_clkdm, *l4_per_clkdm;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!cpu_is_omap44xx())
 		return -ENODEV;
 
+<<<<<<< HEAD
 	if (omap_rev() == OMAP4430_REV_ES1_0) {
 		WARN(1, "Power Management not supported on OMAP4430 ES1.0\n");
 		return -ENODEV;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pr_err("Power Management for TI OMAP4.\n");
 
 	ret = pwrdm_for_each(pwrdms_setup, NULL);
@@ -163,6 +235,7 @@ static int __init omap4_pm_init(void)
 		goto err2;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * The dynamic dependency between MPUSS -> MEMIF and
 	 * MPUSS -> L4_PER/L3_* and DUCATI -> L3_* doesn't work as
@@ -213,6 +286,11 @@ static int __init omap4_pm_init(void)
 	arm_pm_idle = omap_default_idle;
 
 	omap4_idle_init();
+=======
+#ifdef CONFIG_SUSPEND
+	suspend_set_ops(&omap_pm_ops);
+#endif /* CONFIG_SUSPEND */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 err2:
 	return ret;

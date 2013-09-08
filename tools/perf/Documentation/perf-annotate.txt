@@ -22,7 +22,11 @@ OPTIONS
 -------
 -i::
 --input=::
+<<<<<<< HEAD
         Input file name. (default: perf.data unless stdin is a fifo)
+=======
+        Input file name. (default: perf.data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 -d::
 --dsos=<dso[,dso...]>::
@@ -66,6 +70,7 @@ OPTIONS
 	used. This interfaces starts by centering on the line with more
 	samples, TAB/UNTAB cycles through the lines with more samples.
 
+<<<<<<< HEAD
 -C::
 --cpu:: Only report samples for the list of CPUs provided. Multiple CPUs can
 	be provided as a comma-separated list with no space: 0,1. Ranges of
@@ -85,6 +90,8 @@ OPTIONS
 -M::
 --disassembler-style=:: Set disassembler style for objdump.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 SEE ALSO
 --------
 linkperf:perf-record[1], linkperf:perf-report[1]

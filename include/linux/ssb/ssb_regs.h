@@ -432,6 +432,7 @@
 #define  SSB_SPROM8_RXPO2G		0x00FF	/* 2GHz RX power offset */
 #define  SSB_SPROM8_RXPO5G		0xFF00	/* 5GHz RX power offset */
 #define  SSB_SPROM8_RXPO5G_SHIFT	8
+<<<<<<< HEAD
 #define SSB_SPROM8_FEM2G		0x00AE
 #define SSB_SPROM8_FEM5G		0x00B0
 #define  SSB_SROM8_FEM_TSSIPOS		0x0001
@@ -482,6 +483,8 @@
 #define SSB_SROM8_5GH_PA_2		0x1C
 
 /* TODO: Make it deprecated */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SSB_SPROM8_MAXP_BG		0x00C0  /* Max Power 2GHz in path 1 */
 #define  SSB_SPROM8_MAXP_BG_MASK	0x00FF  /* Mask for Max Power 2GHz */
 #define  SSB_SPROM8_ITSSI_BG		0xFF00	/* Mask for path 1 itssi_bg */
@@ -506,13 +509,17 @@
 #define SSB_SPROM8_PA1HIB0		0x00D8	/* 5.8GHz power amp settings */
 #define SSB_SPROM8_PA1HIB1		0x00DA
 #define SSB_SPROM8_PA1HIB2		0x00DC
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SSB_SPROM8_CCK2GPO		0x0140	/* CCK power offset */
 #define SSB_SPROM8_OFDM2GPO		0x0142	/* 2.4GHz OFDM power offset */
 #define SSB_SPROM8_OFDM5GPO		0x0146	/* 5.3GHz OFDM power offset */
 #define SSB_SPROM8_OFDM5GLPO		0x014A	/* 5.2GHz OFDM power offset */
 #define SSB_SPROM8_OFDM5GHPO		0x014E	/* 5.8GHz OFDM power offset */
 
+<<<<<<< HEAD
 /* Values for boardflags_lo read from SPROM */
 #define SSB_BFL_BTCOEXIST		0x0001	/* implements Bluetooth coexistance */
 #define SSB_BFL_PACTRL			0x0002	/* GPIO 9 controlling the PA */
@@ -553,6 +560,8 @@
 #define SSB_BFL2_SPUR_WAR		0x0200	/* has a workaround for clock-harmonic spurs */
 #define SSB_BFL2_GPLL_WAR		0x0400	/* altenative G-band PLL settings implemented */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Values for SSB_SPROM1_BINF_CCODE */
 enum {
 	SSB_SPROM1CCODE_WORLD = 0,

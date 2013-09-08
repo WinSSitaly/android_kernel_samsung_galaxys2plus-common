@@ -1,9 +1,14 @@
+<<<<<<< HEAD
 #include <asm/unwind.h>
 
 #if __LINUX_ARM_ARCH__ >= 6
 	.macro	bitop, name, instr
 ENTRY(	\name		)
 UNWIND(	.fnstart	)
+=======
+#if __LINUX_ARM_ARCH__ >= 6
+	.macro	bitop, instr
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ands	ip, r1, #3
 	strneb	r1, [ip]		@ assert word-aligned
 	mov	r2, #1
@@ -17,6 +22,7 @@ UNWIND(	.fnstart	)
 	cmp	r0, #0
 	bne	1b
 	bx	lr
+<<<<<<< HEAD
 UNWIND(	.fnend		)
 ENDPROC(\name		)
 	.endm
@@ -24,6 +30,11 @@ ENDPROC(\name		)
 	.macro	testop, name, instr, store
 ENTRY(	\name		)
 UNWIND(	.fnstart	)
+=======
+	.endm
+
+	.macro	testop, instr, store
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ands	ip, r1, #3
 	strneb	r1, [ip]		@ assert word-aligned
 	mov	r2, #1
@@ -42,6 +53,7 @@ UNWIND(	.fnstart	)
 	cmp	r0, #0
 	movne	r0, #1
 2:	bx	lr
+<<<<<<< HEAD
 UNWIND(	.fnend		)
 ENDPROC(\name		)
 	.endm
@@ -49,6 +61,11 @@ ENDPROC(\name		)
 	.macro	bitop, name, instr
 ENTRY(	\name		)
 UNWIND(	.fnstart	)
+=======
+	.endm
+#else
+	.macro	bitop, instr
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ands	ip, r1, #3
 	strneb	r1, [ip]		@ assert word-aligned
 	and	r2, r0, #31
@@ -61,8 +78,11 @@ UNWIND(	.fnstart	)
 	str	r2, [r1, r0, lsl #2]
 	restore_irqs ip
 	mov	pc, lr
+<<<<<<< HEAD
 UNWIND(	.fnend		)
 ENDPROC(\name		)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.endm
 
 /**
@@ -73,9 +93,13 @@ ENDPROC(\name		)
  * Note: we can trivially conditionalise the store instruction
  * to avoid dirtying the data cache.
  */
+<<<<<<< HEAD
 	.macro	testop, name, instr, store
 ENTRY(	\name		)
 UNWIND(	.fnstart	)
+=======
+	.macro	testop, instr, store
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ands	ip, r1, #3
 	strneb	r1, [ip]		@ assert word-aligned
 	and	r3, r0, #31
@@ -89,7 +113,10 @@ UNWIND(	.fnstart	)
 	moveq	r0, #0
 	restore_irqs ip
 	mov	pc, lr
+<<<<<<< HEAD
 UNWIND(	.fnend		)
 ENDPROC(\name		)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.endm
 #endif

@@ -40,9 +40,15 @@
 #include <asm/mach/flash.h>
 
 #include <plat/board.h>
+<<<<<<< HEAD
 #include "common.h"
 #include <video/omapdss.h>
 #include <video/omap-panel-dvi.h>
+=======
+#include <plat/common.h>
+#include <video/omapdss.h>
+#include <video/omap-panel-generic-dpi.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/gpmc.h>
 #include <plat/nand.h>
 #include <plat/usb.h>
@@ -50,6 +56,10 @@
 
 #include "mux.h"
 #include "hsmmc.h"
+<<<<<<< HEAD
+=======
+#include "timer-gp.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "pm.h"
 #include "common-board-devices.h"
 
@@ -60,8 +70,12 @@
  *	AXBX	= GPIO173, GPIO172, GPIO171: 1 1 1
  *	C1_3	= GPIO173, GPIO172, GPIO171: 1 1 0
  *	C4	= GPIO173, GPIO172, GPIO171: 1 0 1
+<<<<<<< HEAD
  *	XMA/XMB = GPIO173, GPIO172, GPIO171: 0 0 0
  *	XMC = GPIO173, GPIO172, GPIO171: 0 1 0
+=======
+ *	XM	= GPIO173, GPIO172, GPIO171: 0 0 0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 enum {
 	OMAP3BEAGLE_BOARD_UNKN = 0,
@@ -69,11 +83,15 @@ enum {
 	OMAP3BEAGLE_BOARD_C1_3,
 	OMAP3BEAGLE_BOARD_C4,
 	OMAP3BEAGLE_BOARD_XM,
+<<<<<<< HEAD
 	OMAP3BEAGLE_BOARD_XMC,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static u8 omap3_beagle_version;
 
+<<<<<<< HEAD
 /*
  * Board-specific configuration
  * Defaults to BeagleBoard-xMC
@@ -89,6 +107,12 @@ static struct {
 	.reset_gpio = 129,
 	.usr_button_gpio = 4,
 };
+=======
+static u8 omap3_beagle_get_rev(void)
+{
+	return omap3_beagle_version;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct gpio omap3_beagle_rev_gpios[] __initdata = {
 	{ 171, GPIOF_IN, "rev_id_0"    },
@@ -123,20 +147,27 @@ static void __init omap3_beagle_init_rev(void)
 	case 7:
 		printk(KERN_INFO "OMAP3 Beagle Rev: Ax/Bx\n");
 		omap3_beagle_version = OMAP3BEAGLE_BOARD_AXBX;
+<<<<<<< HEAD
 		beagle_config.mmc1_gpio_wp = 29;
 		beagle_config.reset_gpio = 170;
 		beagle_config.usr_button_gpio = 7;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case 6:
 		printk(KERN_INFO "OMAP3 Beagle Rev: C1/C2/C3\n");
 		omap3_beagle_version = OMAP3BEAGLE_BOARD_C1_3;
+<<<<<<< HEAD
 		beagle_config.mmc1_gpio_wp = 23;
 		beagle_config.reset_gpio = 170;
 		beagle_config.usr_button_gpio = 7;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case 5:
 		printk(KERN_INFO "OMAP3 Beagle Rev: C4\n");
 		omap3_beagle_version = OMAP3BEAGLE_BOARD_C4;
+<<<<<<< HEAD
 		beagle_config.mmc1_gpio_wp = 23;
 		beagle_config.reset_gpio = 170;
 		beagle_config.usr_button_gpio = 7;
@@ -149,6 +180,12 @@ static void __init omap3_beagle_init_rev(void)
 	case 2:
 		printk(KERN_INFO "OMAP3 Beagle Rev: xM C\n");
 		omap3_beagle_version = OMAP3BEAGLE_BOARD_XMC;
+=======
+		break;
+	case 0:
+		printk(KERN_INFO "OMAP3 Beagle Rev: xM\n");
+		omap3_beagle_version = OMAP3BEAGLE_BOARD_XM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		printk(KERN_INFO "OMAP3 Beagle Rev: unknown %hd\n", beagle_rev);
@@ -203,16 +240,27 @@ static void beagle_disable_dvi(struct omap_dss_device *dssdev)
 		gpio_set_value(dssdev->reset_gpio, 0);
 }
 
+<<<<<<< HEAD
 static struct panel_dvi_platform_data dvi_panel = {
 	.platform_enable = beagle_enable_dvi,
 	.platform_disable = beagle_disable_dvi,
 	.i2c_bus_num = 3,
+=======
+static struct panel_generic_dpi_data dvi_panel = {
+	.name = "generic",
+	.platform_enable = beagle_enable_dvi,
+	.platform_disable = beagle_disable_dvi,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct omap_dss_device beagle_dvi_device = {
 	.type = OMAP_DISPLAY_TYPE_DPI,
 	.name = "dvi",
+<<<<<<< HEAD
 	.driver_name = "dvi",
+=======
+	.driver_name = "generic_dpi_panel",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.data = &dvi_panel,
 	.phy.dpi.data_lines = 24,
 	.reset_gpio = -EINVAL,
@@ -236,6 +284,17 @@ static struct omap_dss_board_info beagle_dss_data = {
 	.default_device = &beagle_dvi_device,
 };
 
+<<<<<<< HEAD
+=======
+static struct regulator_consumer_supply beagle_vdac_supply =
+	REGULATOR_SUPPLY("vdda_dac", "omapdss_venc");
+
+static struct regulator_consumer_supply beagle_vdvi_supplies[] = {
+	REGULATOR_SUPPLY("vdds_dsi", "omapdss"),
+	REGULATOR_SUPPLY("vdds_dsi", "omapdss_dsi1"),
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init beagle_display_init(void)
 {
 	int r;
@@ -252,18 +311,31 @@ static struct omap2_hsmmc_info mmc[] = {
 	{
 		.mmc		= 1,
 		.caps		= MMC_CAP_4_BIT_DATA | MMC_CAP_8_BIT_DATA,
+<<<<<<< HEAD
 		.gpio_wp	= -EINVAL,
 		.deferred	= true,
+=======
+		.gpio_wp	= 29,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{}	/* Terminator */
 };
 
+<<<<<<< HEAD
 static struct regulator_consumer_supply beagle_vmmc1_supply[] = {
 	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.0"),
 };
 
 static struct regulator_consumer_supply beagle_vsim_supply[] = {
 	REGULATOR_SUPPLY("vmmc_aux", "omap_hsmmc.0"),
+=======
+static struct regulator_consumer_supply beagle_vmmc1_supply = {
+	.supply			= "vmmc",
+};
+
+static struct regulator_consumer_supply beagle_vsim_supply = {
+	.supply			= "vmmc_aux",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct gpio_led gpio_leds[];
@@ -271,20 +343,47 @@ static struct gpio_led gpio_leds[];
 static int beagle_twl_gpio_setup(struct device *dev,
 		unsigned gpio, unsigned ngpio)
 {
+<<<<<<< HEAD
 	int r;
 
 	mmc[0].gpio_wp = beagle_config.mmc1_gpio_wp;
 	/* gpio + 0 is "mmc0_cd" (input/IRQ) */
 	mmc[0].gpio_cd = gpio + 0;
 	omap_hsmmc_late_init(mmc);
+=======
+	int r, usb_pwr_level;
+
+	if (omap3_beagle_get_rev() == OMAP3BEAGLE_BOARD_XM) {
+		mmc[0].gpio_wp = -EINVAL;
+	} else if ((omap3_beagle_get_rev() == OMAP3BEAGLE_BOARD_C1_3) ||
+		(omap3_beagle_get_rev() == OMAP3BEAGLE_BOARD_C4)) {
+		omap_mux_init_gpio(23, OMAP_PIN_INPUT);
+		mmc[0].gpio_wp = 23;
+	} else {
+		omap_mux_init_gpio(29, OMAP_PIN_INPUT);
+	}
+	/* gpio + 0 is "mmc0_cd" (input/IRQ) */
+	mmc[0].gpio_cd = gpio + 0;
+	omap2_hsmmc_init(mmc);
+
+	/* link regulators to MMC adapters */
+	beagle_vmmc1_supply.dev = mmc[0].dev;
+	beagle_vsim_supply.dev = mmc[0].dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * TWL4030_GPIO_MAX + 0 == ledA, EHCI nEN_USB_PWR (out, XM active
 	 * high / others active low)
 	 * DVI reset GPIO is different between beagle revisions
 	 */
+<<<<<<< HEAD
 	/* Valid for all -xM revisions */
 	if (cpu_is_omap3630()) {
+=======
+	if (omap3_beagle_get_rev() == OMAP3BEAGLE_BOARD_XM) {
+		usb_pwr_level = GPIOF_OUT_INIT_HIGH;
+		beagle_dvi_device.reset_gpio = 129;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * gpio + 1 on Xm controls the TFP410's enable line (active low)
 		 * gpio + 2 control varies depending on the board rev as below:
@@ -302,6 +401,11 @@ static int beagle_twl_gpio_setup(struct device *dev,
 			pr_err("%s: unable to configure DVI_LDO_EN\n",
 				__func__);
 	} else {
+<<<<<<< HEAD
+=======
+		usb_pwr_level = GPIOF_OUT_INIT_LOW;
+		beagle_dvi_device.reset_gpio = 170;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * REVISIT: need ehci-omap hooks for external VBUS
 		 * power switch and overcurrent detect
@@ -309,10 +413,15 @@ static int beagle_twl_gpio_setup(struct device *dev,
 		if (gpio_request_one(gpio + 1, GPIOF_IN, "EHCI_nOC"))
 			pr_err("%s: unable to configure EHCI_nOC\n", __func__);
 	}
+<<<<<<< HEAD
 	beagle_dvi_device.reset_gpio = beagle_config.reset_gpio;
 
 	gpio_request_one(gpio + TWL4030_GPIO_MAX, beagle_config.usb_pwr_level,
 			"nEN_USB_PWR");
+=======
+
+	gpio_request_one(gpio + TWL4030_GPIO_MAX, usb_pwr_level, "nEN_USB_PWR");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* TWL4030_GPIO_MAX + 1 == ledB, PMU_STAT (out, active low LED) */
 	gpio_leds[2].gpio = gpio + TWL4030_GPIO_MAX + 1;
@@ -342,8 +451,13 @@ static struct regulator_init_data beagle_vmmc1 = {
 					| REGULATOR_CHANGE_MODE
 					| REGULATOR_CHANGE_STATUS,
 	},
+<<<<<<< HEAD
 	.num_consumer_supplies	= ARRAY_SIZE(beagle_vmmc1_supply),
 	.consumer_supplies	= beagle_vmmc1_supply,
+=======
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &beagle_vmmc1_supply,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* VSIM for MMC1 pins DAT4..DAT7 (2 mA, plus card == max 50 mA) */
@@ -357,6 +471,7 @@ static struct regulator_init_data beagle_vsim = {
 					| REGULATOR_CHANGE_MODE
 					| REGULATOR_CHANGE_STATUS,
 	},
+<<<<<<< HEAD
 	.num_consumer_supplies	= ARRAY_SIZE(beagle_vsim_supply),
 	.consumer_supplies	= beagle_vsim_supply,
 };
@@ -366,6 +481,64 @@ static struct twl4030_platform_data beagle_twldata = {
 	.gpio		= &beagle_gpio_data,
 	.vmmc1		= &beagle_vmmc1,
 	.vsim		= &beagle_vsim,
+=======
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &beagle_vsim_supply,
+};
+
+/* VDAC for DSS driving S-Video (8 mA unloaded, max 65 mA) */
+static struct regulator_init_data beagle_vdac = {
+	.constraints = {
+		.min_uV			= 1800000,
+		.max_uV			= 1800000,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask		= REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &beagle_vdac_supply,
+};
+
+/* VPLL2 for digital video outputs */
+static struct regulator_init_data beagle_vpll2 = {
+	.constraints = {
+		.name			= "VDVI",
+		.min_uV			= 1800000,
+		.max_uV			= 1800000,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask		= REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies	= ARRAY_SIZE(beagle_vdvi_supplies),
+	.consumer_supplies	= beagle_vdvi_supplies,
+};
+
+static struct twl4030_usb_data beagle_usb_data = {
+	.usb_mode	= T2_USB_MODE_ULPI,
+};
+
+static struct twl4030_codec_audio_data beagle_audio_data;
+
+static struct twl4030_codec_data beagle_codec_data = {
+	.audio_mclk = 26000000,
+	.audio = &beagle_audio_data,
+};
+
+static struct twl4030_platform_data beagle_twldata = {
+	.irq_base	= TWL4030_IRQ_BASE,
+	.irq_end	= TWL4030_IRQ_END,
+
+	/* platform_data for children goes here */
+	.usb		= &beagle_usb_data,
+	.gpio		= &beagle_gpio_data,
+	.codec		= &beagle_codec_data,
+	.vmmc1		= &beagle_vmmc1,
+	.vsim		= &beagle_vsim,
+	.vdac		= &beagle_vdac,
+	.vpll2		= &beagle_vpll2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct i2c_board_info __initdata beagle_i2c_eeprom[] = {
@@ -376,6 +549,7 @@ static struct i2c_board_info __initdata beagle_i2c_eeprom[] = {
 
 static int __init omap3_beagle_i2c_init(void)
 {
+<<<<<<< HEAD
 	omap3_pmic_get_config(&beagle_twldata,
 			TWL_COMMON_PDATA_USB | TWL_COMMON_PDATA_MADC |
 			TWL_COMMON_PDATA_AUDIO,
@@ -383,6 +557,8 @@ static int __init omap3_beagle_i2c_init(void)
 
 	beagle_twldata.vpll2->constraints.name = "VDVI";
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap3_pmic_init("twl4030", &beagle_twldata);
 	/* Bus 3 is attached to the DVI port where devices like the pico DLP
 	 * projector don't work reliably with 400kHz */
@@ -424,8 +600,12 @@ static struct platform_device leds_gpio = {
 static struct gpio_keys_button gpio_buttons[] = {
 	{
 		.code			= BTN_EXTRA,
+<<<<<<< HEAD
 		/* Dynamically assigned depending on board */
 		.gpio			= -EINVAL,
+=======
+		.gpio			= 7,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.desc			= "user",
 		.wakeup			= 1,
 	},
@@ -444,15 +624,35 @@ static struct platform_device keys_gpio = {
 	},
 };
 
+<<<<<<< HEAD
 static struct platform_device madc_hwmon = {
 	.name	= "twl4030_madc_hwmon",
 	.id	= -1,
 };
+=======
+static void __init omap3_beagle_init_early(void)
+{
+	omap2_init_common_infrastructure();
+	omap2_init_common_devices(mt46h32m32lf6_sdrc_params,
+				  mt46h32m32lf6_sdrc_params);
+}
+
+static void __init omap3_beagle_init_irq(void)
+{
+	omap_init_irq();
+#ifdef CONFIG_OMAP_32K_TIMER
+	omap2_gp_clockevent_set_gptimer(12);
+#endif
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct platform_device *omap3_beagle_devices[] __initdata = {
 	&leds_gpio,
 	&keys_gpio,
+<<<<<<< HEAD
 	&madc_hwmon,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct usbhs_omap_board_data usbhs_bdata __initconst = {
@@ -483,6 +683,7 @@ static void __init beagle_opp_init(void)
 		return;
 	}
 
+<<<<<<< HEAD
 	/* Custom OPP enabled for all xM versions */
 	if (cpu_is_omap3630()) {
 		struct device *mpu_dev, *iva_dev;
@@ -501,6 +702,27 @@ static void __init beagle_opp_init(void)
 
 		/* Enable IVA 800MHz and lower opps */
 		r |= opp_enable(iva_dev, 660000000);
+=======
+	/* Custom OPP enabled for XM */
+	if (omap3_beagle_get_rev() == OMAP3BEAGLE_BOARD_XM) {
+		struct omap_hwmod *mh = omap_hwmod_lookup("mpu");
+		struct omap_hwmod *dh = omap_hwmod_lookup("iva");
+		struct device *dev;
+
+		if (!mh || !dh) {
+			pr_err("%s: Aiee.. no mpu/dsp devices? %p %p\n",
+				__func__, mh, dh);
+			return;
+		}
+		/* Enable MPU 1GHz and lower opps */
+		dev = &mh->od->pdev.dev;
+		r = opp_enable(dev, 800000000);
+		/* TODO: MPU 1GHz needs SR and ABB */
+
+		/* Enable IVA 800MHz and lower opps */
+		dev = &dh->od->pdev.dev;
+		r |= opp_enable(dev, 660000000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* TODO: DSP 800MHz needs SR and ABB */
 		if (r) {
 			pr_err("%s: failed to enable higher opp %d\n",
@@ -509,8 +731,15 @@ static void __init beagle_opp_init(void)
 			 * Cleanup - disable the higher freqs - we dont care
 			 * about the results
 			 */
+<<<<<<< HEAD
 			opp_disable(mpu_dev, 800000000);
 			opp_disable(iva_dev, 660000000);
+=======
+			dev = &mh->od->pdev.dev;
+			opp_disable(dev, 800000000);
+			dev = &dh->od->pdev.dev;
+			opp_disable(dev, 660000000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	return;
@@ -520,6 +749,7 @@ static void __init omap3_beagle_init(void)
 {
 	omap3_mux_init(board_mux, OMAP_PACKAGE_CBB);
 	omap3_beagle_init_rev();
+<<<<<<< HEAD
 
 	if (beagle_config.mmc1_gpio_wp != -EINVAL)
 		omap_mux_init_gpio(beagle_config.mmc1_gpio_wp, OMAP_PIN_INPUT);
@@ -529,12 +759,18 @@ static void __init omap3_beagle_init(void)
 
 	gpio_buttons[0].gpio = beagle_config.usr_button_gpio;
 
+=======
+	omap3_beagle_i2c_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_add_devices(omap3_beagle_devices,
 			ARRAY_SIZE(omap3_beagle_devices));
 	omap_display_init(&beagle_dss_data);
 	omap_serial_init();
+<<<<<<< HEAD
 	omap_sdrc_init(mt46h32m32lf6_sdrc_params,
 				  mt46h32m32lf6_sdrc_params);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	omap_mux_init_gpio(170, OMAP_PIN_INPUT);
 	/* REVISIT leave DVI powered down until it's needed ... */
@@ -558,6 +794,7 @@ static void __init omap3_beagle_init(void)
 
 MACHINE_START(OMAP3_BEAGLE, "OMAP3 Beagle Board")
 	/* Maintainer: Syed Mohammed Khasim - http://beagleboard.org */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.reserve	= omap_reserve,
 	.map_io		= omap3_map_io,
@@ -567,4 +804,13 @@ MACHINE_START(OMAP3_BEAGLE, "OMAP3 Beagle Board")
 	.init_machine	= omap3_beagle_init,
 	.timer		= &omap3_secure_timer,
 	.restart	= omap_prcm_restart,
+=======
+	.boot_params	= 0x80000100,
+	.reserve	= omap_reserve,
+	.map_io		= omap3_map_io,
+	.init_early	= omap3_beagle_init_early,
+	.init_irq	= omap3_beagle_init_irq,
+	.init_machine	= omap3_beagle_init,
+	.timer		= &omap_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

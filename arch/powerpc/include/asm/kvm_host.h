@@ -25,6 +25,7 @@
 #include <linux/interrupt.h>
 #include <linux/types.h>
 #include <linux/kvm_types.h>
+<<<<<<< HEAD
 #include <linux/threads.h>
 #include <linux/spinlock.h>
 #include <linux/kvm_para.h>
@@ -57,6 +58,17 @@ extern int kvm_test_age_hva(struct kvm *kvm, unsigned long hva);
 extern void kvm_set_spte_hva(struct kvm *kvm, unsigned long hva, pte_t pte);
 
 #endif
+=======
+#include <linux/kvm_para.h>
+#include <asm/kvm_asm.h>
+
+#define KVM_MAX_VCPUS 1
+#define KVM_MEMORY_SLOTS 32
+/* memory slots that does not exposed to userspace */
+#define KVM_PRIVATE_MEM_SLOTS 4
+
+#define KVM_COALESCED_MMIO_PAGE_OFFSET 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* We don't currently support large pages. */
 #define KVM_HPAGE_GFN_SHIFT(x)	0
@@ -80,10 +92,13 @@ struct kvm;
 struct kvm_run;
 struct kvm_vcpu;
 
+<<<<<<< HEAD
 struct lppaca;
 struct slb_shadow;
 struct dtl;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct kvm_vm_stat {
 	u32 remote_tlb_flush;
 };
@@ -160,6 +175,7 @@ struct kvmppc_exit_timing {
 	};
 };
 
+<<<<<<< HEAD
 struct kvmppc_pginfo {
 	unsigned long pfn;
 	atomic_t refcnt;
@@ -274,6 +290,11 @@ struct kvmppc_vcore {
 #define VCORE_EXITING	2
 #define VCORE_SLEEPING	3
 
+=======
+struct kvm_arch {
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct kvmppc_pte {
 	ulong eaddr;
 	u64 vpage;
@@ -301,6 +322,7 @@ struct kvmppc_mmu {
 	bool (*is_dcbz32)(struct kvm_vcpu *vcpu);
 };
 
+<<<<<<< HEAD
 struct kvmppc_slb {
 	u64 esid;
 	u64 vsid;
@@ -313,15 +335,38 @@ struct kvmppc_slb {
 	bool large	: 1;	/* PTEs are 16MB */
 	bool tb		: 1;	/* 1TB segment */
 	bool class	: 1;
+=======
+struct hpte_cache {
+	struct hlist_node list_pte;
+	struct hlist_node list_pte_long;
+	struct hlist_node list_vpte;
+	struct hlist_node list_vpte_long;
+	struct rcu_head rcu_head;
+	u64 host_va;
+	u64 pfn;
+	ulong slot;
+	struct kvmppc_pte pte;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct kvm_vcpu_arch {
 	ulong host_stack;
 	u32 host_pid;
 #ifdef CONFIG_PPC_BOOK3S
+<<<<<<< HEAD
 	struct kvmppc_slb slb[64];
 	int slb_max;		/* 1 + index of last valid entry in slb[] */
 	int slb_nr;		/* total number of entries in SLB */
+=======
+	ulong host_msr;
+	ulong host_r2;
+	void *host_retip;
+	ulong trampoline_lowmem;
+	ulong trampoline_enter;
+	ulong highmem_handler;
+	ulong rmcall;
+	ulong host_paca_phys;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct kvmppc_mmu mmu;
 #endif
 
@@ -330,19 +375,26 @@ struct kvm_vcpu_arch {
 	u64 fpr[32];
 	u64 fpscr;
 
+<<<<<<< HEAD
 #ifdef CONFIG_SPE
 	ulong evr[32];
 	ulong spefscr;
 	ulong host_spefscr;
 	u64 acc;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_ALTIVEC
 	vector128 vr[32];
 	vector128 vscr;
 #endif
 
 #ifdef CONFIG_VSX
+<<<<<<< HEAD
 	u64 vsr[64];
+=======
+	u64 vsr[32];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifdef CONFIG_PPC_BOOK3S
@@ -350,12 +402,17 @@ struct kvm_vcpu_arch {
 	u32 qpr[32];
 #endif
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_BOOKE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ulong pc;
 	ulong ctr;
 	ulong lr;
 
 	ulong xer;
 	u32 cr;
+<<<<<<< HEAD
 
 #ifdef CONFIG_PPC_BOOK3S
 	ulong hflags;
@@ -371,6 +428,21 @@ struct kvm_vcpu_arch {
 	u32 vrsave; /* also USPRG0 */
 	u32 mmucr;
 	ulong shadow_msr;
+=======
+#endif
+
+#ifdef CONFIG_PPC_BOOK3S
+	ulong shadow_msr;
+	ulong hflags;
+	ulong guest_owned_ext;
+#endif
+	u32 vrsave; /* also USPRG0 */
+	u32 mmucr;
+	ulong sprg4;
+	ulong sprg5;
+	ulong sprg6;
+	ulong sprg7;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ulong csrr0;
 	ulong csrr1;
 	ulong dsrr0;
@@ -378,11 +450,16 @@ struct kvm_vcpu_arch {
 	ulong mcsrr0;
 	ulong mcsrr1;
 	ulong mcsr;
+<<<<<<< HEAD
+=======
+	ulong esr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 dec;
 	u32 decar;
 	u32 tbl;
 	u32 tbu;
 	u32 tcr;
+<<<<<<< HEAD
 	ulong tsr; /* we need to perform set/clr_bits() which requires ulong */
 	u32 ivor[64];
 	ulong ivpr;
@@ -390,6 +467,15 @@ struct kvm_vcpu_arch {
 
 	u32 shadow_pid;
 	u32 shadow_pid1;
+=======
+	u32 tsr;
+	u32 ivor[64];
+	ulong ivpr;
+	u32 pir;
+	u32 pvr;
+
+	u32 shadow_pid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 pid;
 	u32 swap_pid;
 
@@ -399,9 +485,12 @@ struct kvm_vcpu_arch {
 	u32 dbcr1;
 	u32 dbsr;
 
+<<<<<<< HEAD
 	u64 mmcr[3];
 	u32 pmc[8];
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_KVM_EXIT_TIMING
 	struct mutex exit_timing_lock;
 	struct kvmppc_exit_timing timing_exit;
@@ -416,12 +505,17 @@ struct kvm_vcpu_arch {
 	struct dentry *debugfs_exit_timing;
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_PPC_BOOK3S
 	ulong fault_dar;
 	u32 fault_dsisr;
 #endif
 
 #ifdef CONFIG_BOOKE
+=======
+#ifdef CONFIG_BOOKE
+	u32 last_inst;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ulong fault_dear;
 	ulong fault_esr;
 	ulong queued_dear;
@@ -436,16 +530,20 @@ struct kvm_vcpu_arch {
 	u8 dcr_is_write;
 	u8 osi_needed;
 	u8 osi_enabled;
+<<<<<<< HEAD
 	u8 papr_enabled;
 	u8 sane;
 	u8 cpu_type;
 	u8 hcall_needed;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	u32 cpr0_cfgaddr; /* holds the last set cpr0_cfgaddr */
 
 	struct hrtimer dec_timer;
 	struct tasklet_struct tasklet;
 	u64 dec_jiffies;
+<<<<<<< HEAD
 	u64 dec_expires;
 	unsigned long pending_exceptions;
 	u16 last_cpu;
@@ -467,10 +565,14 @@ struct kvm_vcpu_arch {
 	bool timer_running;
 	wait_queue_head_t cpu_run;
 
+=======
+	unsigned long pending_exceptions;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct kvm_vcpu_arch_shared *shared;
 	unsigned long magic_page_pa; /* phys addr to map the magic page to */
 	unsigned long magic_page_ea; /* effect. addr to map the magic page to */
 
+<<<<<<< HEAD
 #ifdef CONFIG_KVM_BOOK3S_64_HV
 	struct kvm_vcpu_arch_shared shregs;
 
@@ -498,4 +600,16 @@ struct kvm_vcpu_arch {
 #define KVM_MMIO_REG_QPR	0x0040
 #define KVM_MMIO_REG_FQPR	0x0060
 
+=======
+#ifdef CONFIG_PPC_BOOK3S
+	struct hlist_head hpte_hash_pte[HPTEG_HASH_NUM_PTE];
+	struct hlist_head hpte_hash_pte_long[HPTEG_HASH_NUM_PTE_LONG];
+	struct hlist_head hpte_hash_vpte[HPTEG_HASH_NUM_VPTE];
+	struct hlist_head hpte_hash_vpte_long[HPTEG_HASH_NUM_VPTE_LONG];
+	int hpte_cache_count;
+	spinlock_t mmu_lock;
+#endif
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __POWERPC_KVM_HOST_H__ */

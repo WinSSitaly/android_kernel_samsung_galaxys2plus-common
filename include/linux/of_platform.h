@@ -12,6 +12,10 @@
  */
 
 #ifdef CONFIG_OF_DEVICE
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/device.h>
 #include <linux/mod_devicetable.h>
 #include <linux/pm.h>
@@ -81,7 +85,11 @@ extern struct platform_device *of_device_alloc(struct device_node *np,
 					 struct device *parent);
 extern struct platform_device *of_find_device_by_node(struct device_node *np);
 
+<<<<<<< HEAD
 #ifdef CONFIG_OF_ADDRESS /* device reg helpers depend on OF_ADDRESS */
+=======
+#if !defined(CONFIG_SPARC) /* SPARC has its own device registration method */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Platform devices and busses creation */
 extern struct platform_device *of_platform_device_create(struct device_node *np,
 						   const char *bus_id,
@@ -94,6 +102,7 @@ extern int of_platform_populate(struct device_node *root,
 				const struct of_device_id *matches,
 				const struct of_dev_auxdata *lookup,
 				struct device *parent);
+<<<<<<< HEAD
 #endif /* CONFIG_OF_ADDRESS */
 
 #endif /* CONFIG_OF_DEVICE */
@@ -109,4 +118,10 @@ static inline int of_platform_populate(struct device_node *root,
 }
 #endif /* !CONFIG_OF_ADDRESS */
 
+=======
+#endif /* !CONFIG_SPARC */
+
+#endif /* CONFIG_OF_DEVICE */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* _LINUX_OF_PLATFORM_H */

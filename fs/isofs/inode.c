@@ -20,7 +20,10 @@
 #include <linux/statfs.h>
 #include <linux/cdrom.h>
 #include <linux/parser.h>
+<<<<<<< HEAD
 #include <linux/mpage.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "isofs.h"
 #include "zisofs.h"
@@ -85,6 +88,10 @@ static struct inode *isofs_alloc_inode(struct super_block *sb)
 static void isofs_i_callback(struct rcu_head *head)
 {
 	struct inode *inode = container_of(head, struct inode, i_rcu);
+<<<<<<< HEAD
+=======
+	INIT_LIST_HEAD(&inode->i_dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kmem_cache_free(isofs_inode_cachep, ISOFS_I(inode));
 }
 
@@ -119,8 +126,13 @@ static void destroy_inodecache(void)
 
 static int isofs_remount(struct super_block *sb, int *flags, char *data)
 {
+<<<<<<< HEAD
 	if (!(*flags & MS_RDONLY))
 		return -EROFS;
+=======
+	/* we probably want a lot more here */
+	*flags |= MS_RDONLY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -169,8 +181,13 @@ struct iso9660_options{
 	unsigned char map;
 	unsigned char check;
 	unsigned int blocksize;
+<<<<<<< HEAD
 	umode_t fmode;
 	umode_t dmode;
+=======
+	mode_t fmode;
+	mode_t dmode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gid_t gid;
 	uid_t uid;
 	char *iocharset;
@@ -769,6 +786,18 @@ root_found:
 	 */
 	s->s_maxbytes = 0x80000000000LL;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * The CDROM is read-only, has no nodes (devices) on it, and since
+	 * all of the files appear to be owned by root, we really do not want
+	 * to allow suid.  (suid or devices will not show up unless we have
+	 * Rock Ridge extensions)
+	 */
+
+	s->s_flags |= MS_RDONLY /* | MS_NODEV | MS_NOSUID */;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Set this for reference. Its not currently used except on write
 	   which we don't have .. */
 
@@ -854,6 +883,10 @@ root_found:
 	sbi->s_utf8 = opt.utf8;
 	sbi->s_nocompress = opt.nocompress;
 	sbi->s_overriderockperm = opt.overriderockperm;
+<<<<<<< HEAD
+=======
+	mutex_init(&sbi->s_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * It would be incredibly stupid to allow people to mark every file
 	 * on the disk as suid, so we merely allow them to set the default
@@ -938,11 +971,17 @@ root_found:
 	s->s_d_op = &isofs_dentry_ops[table];
 
 	/* get the root dentry */
+<<<<<<< HEAD
 	s->s_root = d_make_root(inode);
 	if (!(s->s_root)) {
 		error = -ENOMEM;
 		goto out_no_inode;
 	}
+=======
+	s->s_root = d_alloc_root(inode);
+	if (!(s->s_root))
+		goto out_no_root;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kfree(opt.iocharset);
 
@@ -1141,6 +1180,7 @@ struct buffer_head *isofs_bread(struct inode *inode, sector_t block)
 
 static int isofs_readpage(struct file *file, struct page *page)
 {
+<<<<<<< HEAD
 	return mpage_readpage(page, isofs_get_block);
 }
 
@@ -1148,6 +1188,9 @@ static int isofs_readpages(struct file *file, struct address_space *mapping,
 			struct list_head *pages, unsigned nr_pages)
 {
 	return mpage_readpages(mapping, pages, nr_pages, isofs_get_block);
+=======
+	return block_read_full_page(page,isofs_get_block);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static sector_t _isofs_bmap(struct address_space *mapping, sector_t block)
@@ -1157,7 +1200,10 @@ static sector_t _isofs_bmap(struct address_space *mapping, sector_t block)
 
 static const struct address_space_operations isofs_aops = {
 	.readpage = isofs_readpage,
+<<<<<<< HEAD
 	.readpages = isofs_readpages,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bmap = _isofs_bmap
 };
 
@@ -1319,7 +1365,11 @@ static int isofs_read_inode(struct inode *inode)
 			inode->i_mode = S_IFDIR | sbi->s_dmode;
 		else
 			inode->i_mode = S_IFDIR | S_IRUGO | S_IXUGO;
+<<<<<<< HEAD
 		set_nlink(inode, 1);	/*
+=======
+		inode->i_nlink = 1;	/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					 * Set to 1.  We know there are 2, but
 					 * the find utility tries to optimize
 					 * if it is 2, and it screws up.  It is
@@ -1337,7 +1387,11 @@ static int isofs_read_inode(struct inode *inode)
 			 */
 			inode->i_mode = S_IFREG | S_IRUGO | S_IXUGO;
 		}
+<<<<<<< HEAD
 		set_nlink(inode, 1);
+=======
+		inode->i_nlink = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	inode->i_uid = sbi->s_uid;
 	inode->i_gid = sbi->s_gid;
@@ -1527,9 +1581,12 @@ struct inode *isofs_iget(struct super_block *sb,
 static struct dentry *isofs_mount(struct file_system_type *fs_type,
 	int flags, const char *dev_name, void *data)
 {
+<<<<<<< HEAD
 	/* We don't support read-write mounts */
 	if (!(flags & MS_RDONLY))
 		return ERR_PTR(-EACCES);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return mount_bdev(fs_type, flags, dev_name, data, isofs_fill_super);
 }
 

@@ -6,7 +6,11 @@
  *          Title:  MPI Integrated RAID messages and structures
  *  Creation Date:  April 26, 2007
  *
+<<<<<<< HEAD
  *    mpi2_raid.h Version:  02.00.06
+=======
+ *    mpi2_raid.h Version:  02.00.05
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *  Version History
  *  ---------------
@@ -23,10 +27,13 @@
  *  07-30-09  02.00.04  Added proper define for the Use Default Settings bit of
  *                      VolumeCreationFlags and marked the old one as obsolete.
  *  05-12-10  02.00.05  Added MPI2_RAID_VOL_FLAGS_OP_MDC define.
+<<<<<<< HEAD
  *  08-24-10  02.00.06  Added MPI2_RAID_ACTION_COMPATIBILITY_CHECK along with
  *                      related structures and defines.
  *                      Added product-specific range to RAID Action values.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  --------------------------------------------------------------------------
  */
 
@@ -180,9 +187,13 @@ typedef struct _MPI2_RAID_ACTION_REQUEST
 #define MPI2_RAID_ACTION_SYSTEM_SHUTDOWN_INITIATED  (0x20)
 #define MPI2_RAID_ACTION_START_RAID_FUNCTION        (0x21)
 #define MPI2_RAID_ACTION_STOP_RAID_FUNCTION         (0x22)
+<<<<<<< HEAD
 #define MPI2_RAID_ACTION_COMPATIBILITY_CHECK        (0x23)
 #define MPI2_RAID_ACTION_MIN_PRODUCT_SPECIFIC       (0x80)
 #define MPI2_RAID_ACTION_MAX_PRODUCT_SPECIFIC       (0xFF)
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* RAID Volume Creation Structure */
 
@@ -250,6 +261,7 @@ typedef struct _MPI2_RAID_ONLINE_CAPACITY_EXPANSION
   Mpi2RaidOnlineCapacityExpansion_t,
   MPI2_POINTER pMpi2RaidOnlineCapacityExpansion_t;
 
+<<<<<<< HEAD
 /* RAID Compatibility Input Structure */
 
 typedef struct _MPI2_RAID_COMPATIBILITY_INPUT_STRUCT {
@@ -267,6 +279,8 @@ MPI2_POINTER pMpi2RaidCompatibilityInputStruct_t;
 #define MPI2_RAID_COMPAT_SOURCE_IS_VOLUME_FLAG      (0x00000002)
 #define MPI2_RAID_COMPAT_REPORT_SOURCE_INFO_FLAG    (0x00000001)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* RAID Volume Indicator Structure */
 
@@ -286,6 +300,7 @@ typedef struct _MPI2_RAID_VOL_INDICATOR
 #define MPI2_RAID_VOL_FLAGS_OP_RESYNC               (0x00000003)
 #define MPI2_RAID_VOL_FLAGS_OP_MDC                  (0x00000004)
 
+<<<<<<< HEAD
 /* RAID Compatibility Result Structure */
 
 typedef struct _MPI2_RAID_COMPATIBILITY_RESULT_STRUCT {
@@ -315,16 +330,26 @@ MPI2_POINTER pMpi2RaidCompatibilityResultStruct_t;
 #define MPI2_RAID_COMPAT_GENATTRIB_PROTOCOL_MASK        (0x00000003)
 #define MPI2_RAID_COMPAT_GENATTRIB_SAS_PROTOCOL         (0x00000002)
 #define MPI2_RAID_COMPAT_GENATTRIB_SATA_PROTOCOL        (0x00000001)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* RAID Action Reply ActionData union */
 typedef union _MPI2_RAID_ACTION_REPLY_DATA
 {
+<<<<<<< HEAD
 	U32                                     Word[5];
 	MPI2_RAID_VOL_INDICATOR                 RaidVolumeIndicator;
 	U16                                     VolDevHandle;
 	U8                                      VolumeState;
 	U8                                      PhysDiskNum;
 	MPI2_RAID_COMPATIBILITY_RESULT_STRUCT   RaidCompatibilityResult;
+=======
+    U32                     Word[5];
+    MPI2_RAID_VOL_INDICATOR RaidVolumeIndicator;
+    U16                     VolDevHandle;
+    U8                      VolumeState;
+    U8                      PhysDiskNum;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } MPI2_RAID_ACTION_REPLY_DATA, MPI2_POINTER PTR_MPI2_RAID_ACTION_REPLY_DATA,
   Mpi2RaidActionReplyData_t, MPI2_POINTER pMpi2RaidActionReplyData_t;
 

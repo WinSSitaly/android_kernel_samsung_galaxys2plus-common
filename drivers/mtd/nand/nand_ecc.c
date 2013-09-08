@@ -110,7 +110,11 @@ static const char bitsperbyte[256] = {
 
 /*
  * addressbits is a lookup table to filter out the bits from the xor-ed
+<<<<<<< HEAD
  * ECC data that identify the faulty location.
+=======
+ * ecc data that identify the faulty location.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * this is only used for repairing parity
  * see the comments in nand_correct_data for more details
  */
@@ -153,7 +157,11 @@ static const char addressbits[256] = {
  * __nand_calculate_ecc - [NAND Interface] Calculate 3-byte ECC for 256/512-byte
  *			 block
  * @buf:	input buffer with raw data
+<<<<<<< HEAD
  * @eccsize:	data bytes per ECC step (256 or 512)
+=======
+ * @eccsize:	data bytes per ecc step (256 or 512)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @code:	output buffer with ECC
  */
 void __nand_calculate_ecc(const unsigned char *buf, unsigned int eccsize,
@@ -348,7 +356,11 @@ void __nand_calculate_ecc(const unsigned char *buf, unsigned int eccsize,
 		rp17 = (par ^ rp16) & 0xff;
 
 	/*
+<<<<<<< HEAD
 	 * Finally calculate the ECC bits.
+=======
+	 * Finally calculate the ecc bits.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Again here it might seem that there are performance optimisations
 	 * possible, but benchmarks showed that on the system this is developed
 	 * the code below is the fastest
@@ -436,7 +448,11 @@ EXPORT_SYMBOL(nand_calculate_ecc);
  * @buf:	raw data read from the chip
  * @read_ecc:	ECC from the chip
  * @calc_ecc:	the ECC calculated from raw data
+<<<<<<< HEAD
  * @eccsize:	data bytes per ECC step (256 or 512)
+=======
+ * @eccsize:	data bytes per ecc step (256 or 512)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Detect and correct a 1 bit error for eccsize byte block
  */
@@ -505,7 +521,11 @@ int __nand_correct_data(unsigned char *buf,
 	}
 	/* count nr of bits; use table lookup, faster than calculating it */
 	if ((bitsperbyte[b0] + bitsperbyte[b1] + bitsperbyte[b2]) == 1)
+<<<<<<< HEAD
 		return 1;	/* error in ECC data; no action needed */
+=======
+		return 1;	/* error in ecc data; no action needed */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	printk(KERN_ERR "uncorrectable error : ");
 	return -1;

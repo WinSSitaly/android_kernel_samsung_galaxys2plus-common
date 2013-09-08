@@ -131,7 +131,11 @@ static int __init rng_init (void)
 	random_fd = err;
 
 	err = um_request_irq(RANDOM_IRQ, random_fd, IRQ_READ, random_interrupt,
+<<<<<<< HEAD
 			     IRQF_SAMPLE_RANDOM, "random",
+=======
+			     IRQF_DISABLED | IRQF_SAMPLE_RANDOM, "random",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     NULL);
 	if (err)
 		goto err_out_cleanup_hw;

@@ -3,7 +3,11 @@
  *	Library for filesystems writers.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pagemap.h>
 #include <linux/slab.h>
 #include <linux/mount.h>
@@ -12,12 +16,19 @@
 #include <linux/mutex.h>
 #include <linux/exportfs.h>
 #include <linux/writeback.h>
+<<<<<<< HEAD
 #include <linux/buffer_head.h> /* sync_mapping_buffers */
 
 #include <asm/uaccess.h>
 
 #include "internal.h"
 
+=======
+#include <linux/buffer_head.h>
+
+#include <asm/uaccess.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int simple_positive(struct dentry *dentry)
 {
 	return dentry->d_inode && !d_unhashed(dentry);
@@ -248,11 +259,20 @@ struct dentry *mount_pseudo(struct file_system_type *fs_type, char *name,
 	root->i_ino = 1;
 	root->i_mode = S_IFDIR | S_IRUSR | S_IWUSR;
 	root->i_atime = root->i_mtime = root->i_ctime = CURRENT_TIME;
+<<<<<<< HEAD
 	dentry = __d_alloc(s, &d_name);
+=======
+	dentry = d_alloc(NULL, &d_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!dentry) {
 		iput(root);
 		goto Enomem;
 	}
+<<<<<<< HEAD
+=======
+	dentry->d_sb = s;
+	dentry->d_parent = dentry;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	d_instantiate(dentry, root);
 	s->s_root = dentry;
 	s->s_d_op = dops;
@@ -264,6 +284,7 @@ Enomem:
 	return ERR_PTR(-ENOMEM);
 }
 
+<<<<<<< HEAD
 int simple_open(struct inode *inode, struct file *file)
 {
 	if (inode->i_private)
@@ -271,6 +292,8 @@ int simple_open(struct inode *inode, struct file *file)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int simple_link(struct dentry *old_dentry, struct inode *dir, struct dentry *dentry)
 {
 	struct inode *inode = old_dentry->d_inode;
@@ -335,10 +358,15 @@ int simple_rename(struct inode *old_dir, struct dentry *old_dentry,
 
 	if (new_dentry->d_inode) {
 		simple_unlink(new_dir, new_dentry);
+<<<<<<< HEAD
 		if (they_are_dirs) {
 			drop_nlink(new_dentry->d_inode);
 			drop_nlink(old_dir);
 		}
+=======
+		if (they_are_dirs)
+			drop_nlink(old_dir);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (they_are_dirs) {
 		drop_nlink(old_dir);
 		inc_nlink(new_dir);
@@ -497,10 +525,19 @@ int simple_fill_super(struct super_block *s, unsigned long magic,
 	inode->i_atime = inode->i_mtime = inode->i_ctime = CURRENT_TIME;
 	inode->i_op = &simple_dir_inode_operations;
 	inode->i_fop = &simple_dir_operations;
+<<<<<<< HEAD
 	set_nlink(inode, 2);
 	root = d_make_root(inode);
 	if (!root)
 		return -ENOMEM;
+=======
+	inode->i_nlink = 2;
+	root = d_alloc_root(inode);
+	if (!root) {
+		iput(inode);
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; !files->name || files->name[0]; i++, files++) {
 		if (!files->name)
 			continue;
@@ -515,10 +552,15 @@ int simple_fill_super(struct super_block *s, unsigned long magic,
 		if (!dentry)
 			goto out;
 		inode = new_inode(s);
+<<<<<<< HEAD
 		if (!inode) {
 			dput(dentry);
 			goto out;
 		}
+=======
+		if (!inode)
+			goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		inode->i_mode = S_IFREG | files->mode;
 		inode->i_atime = inode->i_mtime = inode->i_ctime = CURRENT_TIME;
 		inode->i_fop = files->ops;
@@ -529,7 +571,10 @@ int simple_fill_super(struct super_block *s, unsigned long magic,
 	return 0;
 out:
 	d_genocide(root);
+<<<<<<< HEAD
 	shrink_dcache_parent(root);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dput(root);
 	return -ENOMEM;
 }
@@ -542,7 +587,11 @@ int simple_pin_fs(struct file_system_type *type, struct vfsmount **mount, int *c
 	spin_lock(&pin_fs_lock);
 	if (unlikely(!*mount)) {
 		spin_unlock(&pin_fs_lock);
+<<<<<<< HEAD
 		mnt = vfs_kern_mount(type, MS_KERNMOUNT, type->name, NULL);
+=======
+		mnt = vfs_kern_mount(type, 0, type->name, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (IS_ERR(mnt))
 			return PTR_ERR(mnt);
 		spin_lock(&pin_fs_lock);
@@ -915,13 +964,18 @@ EXPORT_SYMBOL_GPL(generic_fh_to_parent);
  * filesystems which track all non-inode metadata in the buffers list
  * hanging off the address_space structure.
  */
+<<<<<<< HEAD
 int generic_file_fsync(struct file *file, loff_t start, loff_t end,
 		       int datasync)
+=======
+int generic_file_fsync(struct file *file, int datasync)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inode *inode = file->f_mapping->host;
 	int err;
 	int ret;
 
+<<<<<<< HEAD
 	err = filemap_write_and_wait_range(inode->i_mapping, start, end);
 	if (err)
 		return err;
@@ -932,12 +986,22 @@ int generic_file_fsync(struct file *file, loff_t start, loff_t end,
 		goto out;
 	if (datasync && !(inode->i_state & I_DIRTY_DATASYNC))
 		goto out;
+=======
+	ret = sync_mapping_buffers(inode->i_mapping);
+	if (!(inode->i_state & I_DIRTY))
+		return ret;
+	if (datasync && !(inode->i_state & I_DIRTY_DATASYNC))
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = sync_inode_metadata(inode, 1);
 	if (ret == 0)
 		ret = err;
+<<<<<<< HEAD
 out:
 	mutex_unlock(&inode->i_mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 EXPORT_SYMBOL(generic_file_fsync);
@@ -974,7 +1038,11 @@ EXPORT_SYMBOL(generic_check_addressable);
 /*
  * No-op implementation of ->fsync for in-memory filesystems.
  */
+<<<<<<< HEAD
 int noop_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+=======
+int noop_fsync(struct file *file, int datasync)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
@@ -992,7 +1060,10 @@ EXPORT_SYMBOL(simple_dir_operations);
 EXPORT_SYMBOL(simple_empty);
 EXPORT_SYMBOL(simple_fill_super);
 EXPORT_SYMBOL(simple_getattr);
+<<<<<<< HEAD
 EXPORT_SYMBOL(simple_open);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL(simple_link);
 EXPORT_SYMBOL(simple_lookup);
 EXPORT_SYMBOL(simple_pin_fs);

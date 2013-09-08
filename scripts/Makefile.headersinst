@@ -4,16 +4,22 @@
 # header-y  - list files to be installed. They are preprocessed
 #             to remove __KERNEL__ section of the file
 # objhdr-y  - Same as header-y but for generated files
+<<<<<<< HEAD
 # genhdr-y  - Same as objhdr-y but in a generated/ directory
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #
 # ==========================================================================
 
 # called may set destination dir (when installing to asm/)
 _dst := $(if $(dst),$(dst),$(obj))
 
+<<<<<<< HEAD
 # generated header directory
 gen := $(if $(gen),$(gen),$(subst include/,include/generated/,$(obj)))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 kbuild-file := $(srctree)/$(obj)/Kbuild
 include $(kbuild-file)
 
@@ -37,10 +43,16 @@ wrapper-files := $(filter $(header-y), $(generic-y))
 
 # all headers files for this dir
 header-y      := $(filter-out $(generic-y), $(header-y))
+<<<<<<< HEAD
 all-files     := $(header-y) $(objhdr-y) $(genhdr-y) $(wrapper-files)
 input-files   := $(addprefix $(srctree)/$(obj)/,$(header-y)) \
                  $(addprefix $(objtree)/$(obj)/,$(objhdr-y)) \
                  $(addprefix $(objtree)/$(gen)/,$(genhdr-y))
+=======
+all-files     := $(header-y) $(objhdr-y) $(wrapper-files)
+input-files   := $(addprefix $(srctree)/$(obj)/,$(header-y)) \
+                 $(addprefix $(objtree)/$(obj)/,$(objhdr-y))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 output-files  := $(addprefix $(install)/, $(all-files))
 
 # Work out what needs to be removed
@@ -57,7 +69,10 @@ quiet_cmd_install = INSTALL $(printdir) ($(words $(all-files))\
       cmd_install = \
         $(PERL) $< $(srctree)/$(obj) $(install) $(SRCARCH) $(header-y); \
         $(PERL) $< $(objtree)/$(obj) $(install) $(SRCARCH) $(objhdr-y); \
+<<<<<<< HEAD
         $(PERL) $< $(objtree)/$(gen) $(install) $(SRCARCH) $(genhdr-y); \
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         for F in $(wrapper-files); do                                   \
                 echo "\#include <asm-generic/$$F>" > $(install)/$$F;    \
         done;                                                           \

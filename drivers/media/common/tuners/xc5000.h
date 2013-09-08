@@ -27,16 +27,22 @@
 struct dvb_frontend;
 struct i2c_adapter;
 
+<<<<<<< HEAD
 #define XC5000A 1
 #define XC5000C 2
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct xc5000_config {
 	u8   i2c_address;
 	u32  if_khz;
 	u8   radio_input;
+<<<<<<< HEAD
 	u32  xtal_khz;
 
 	int chip_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* xc5000 callback command */

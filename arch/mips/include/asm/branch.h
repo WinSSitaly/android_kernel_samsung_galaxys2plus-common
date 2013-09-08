@@ -9,7 +9,10 @@
 #define _ASM_BRANCH_H
 
 #include <asm/ptrace.h>
+<<<<<<< HEAD
 #include <asm/inst.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int delay_slot(struct pt_regs *regs)
 {
@@ -24,11 +27,15 @@ static inline unsigned long exception_epc(struct pt_regs *regs)
 	return regs->cp0_epc + 4;
 }
 
+<<<<<<< HEAD
 #define BRANCH_LIKELY_TAKEN 0x0001
 
 extern int __compute_return_epc(struct pt_regs *regs);
 extern int __compute_return_epc_for_insn(struct pt_regs *regs,
 					 union mips_instruction insn);
+=======
+extern int __compute_return_epc(struct pt_regs *regs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int compute_return_epc(struct pt_regs *regs)
 {

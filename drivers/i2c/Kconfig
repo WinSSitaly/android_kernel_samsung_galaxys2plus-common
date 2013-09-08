@@ -7,7 +7,11 @@ menuconfig I2C
 	depends on HAS_IOMEM
 	select RT_MUTEXES
 	---help---
+<<<<<<< HEAD
 	  I2C (pronounce: I-squared-C) is a slow serial bus protocol used in
+=======
+	  I2C (pronounce: I-square-C) is a slow serial bus protocol used in
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	  many micro controller applications and developed by Philips.  SMBus,
 	  or System Management Bus is a subset of the I2C protocol.  More
 	  information is contained in the directory <file:Documentation/i2c/>,
@@ -86,6 +90,10 @@ config I2C_SMBUS
 
 source drivers/i2c/algos/Kconfig
 source drivers/i2c/busses/Kconfig
+<<<<<<< HEAD
+=======
+source drivers/i2c/clients/Kconfig
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config I2C_DEBUG_CORE
 	bool "I2C Core debugging messages"

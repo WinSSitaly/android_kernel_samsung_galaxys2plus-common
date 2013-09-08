@@ -23,6 +23,10 @@
 */
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/vt.h>
 #include <linux/tty.h>
 #include <linux/mm.h>		/* __get_free_page() and friends */
@@ -1731,6 +1735,7 @@ static void do_handle_spec(struct vc_data *vc, u_char value, char up_flag)
 	switch (value) {
 	case KVAL(K_CAPS):
 		label = msg_get(MSG_KEYNAME_CAPSLOCK);
+<<<<<<< HEAD
 		on_off = vt_get_leds(fg_console, VC_CAPSLOCK);
 		break;
 	case KVAL(K_NUM):
@@ -1740,6 +1745,17 @@ static void do_handle_spec(struct vc_data *vc, u_char value, char up_flag)
 	case KVAL(K_HOLD):
 		label = msg_get(MSG_KEYNAME_SCROLLLOCK);
 		on_off = vt_get_leds(fg_console, VC_SCROLLOCK);
+=======
+		on_off = (vc_kbd_led(kbd_table + vc->vc_num, VC_CAPSLOCK));
+		break;
+	case KVAL(K_NUM):
+		label = msg_get(MSG_KEYNAME_NUMLOCK);
+		on_off = (vc_kbd_led(kbd_table + vc->vc_num, VC_NUMLOCK));
+		break;
+	case KVAL(K_HOLD):
+		label = msg_get(MSG_KEYNAME_SCROLLLOCK);
+		on_off = (vc_kbd_led(kbd_table + vc->vc_num, VC_SCROLLOCK));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (speakup_console[vc->vc_num])
 			speakup_console[vc->vc_num]->tty_stopped = on_off;
 		break;
@@ -1854,7 +1870,11 @@ static void speakup_bits(struct vc_data *vc)
 
 static int handle_goto(struct vc_data *vc, u_char type, u_char ch, u_short key)
 {
+<<<<<<< HEAD
 	static u_char goto_buf[8];
+=======
+	static u_char *goto_buf = "\0\0\0\0\0\0";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	static int num;
 	int maxlen, go_pos;
 	char *cp;
@@ -2020,7 +2040,11 @@ speakup_key(struct vc_data *vc, int shift_state, int keycode, u_short keysym,
 	if (type >= 0xf0)
 		type -= 0xf0;
 	if (type == KT_PAD
+<<<<<<< HEAD
 		&& (vt_get_leds(fg_console, VC_NUMLOCK))) {
+=======
+		&& (vc_kbd_led(kbd_table + fg_console, VC_NUMLOCK))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (up_flag) {
 			spk_keydown = 0;
 			goto out;
@@ -2268,6 +2292,11 @@ static int __init speakup_init(void)
 		set_mask_bits(0, i, 2);
 
 	set_key_info(key_defaults, key_buf);
+<<<<<<< HEAD
+=======
+	if (quiet_boot)
+		spk_shut_up |= 0x01;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* From here on out, initializations can fail. */
 	err = speakup_add_virtual_keyboard();
@@ -2290,9 +2319,12 @@ static int __init speakup_init(void)
 				goto error_kobjects;
 		}
 
+<<<<<<< HEAD
 	if (quiet_boot)
 		spk_shut_up |= 0x01;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = speakup_kobj_init();
 	if (err)
 		goto error_kobjects;

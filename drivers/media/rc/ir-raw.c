@@ -12,10 +12,15 @@
  *  GNU General Public License for more details.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/kthread.h>
 #include <linux/mutex.h>
 #include <linux/kmod.h>
+=======
+#include <linux/kthread.h>
+#include <linux/mutex.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/freezer.h>
 #include "rc-core-priv.h"
@@ -357,8 +362,11 @@ static void init_decoders(struct work_struct *work)
 	load_rc6_decode();
 	load_jvc_decode();
 	load_sony_decode();
+<<<<<<< HEAD
 	load_sanyo_decode();
 	load_mce_kbd_decode();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	load_lirc_codec();
 
 	/* If needed, we may later add some init code. In this case,

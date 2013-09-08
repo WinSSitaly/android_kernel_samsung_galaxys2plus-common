@@ -35,6 +35,7 @@ typedef union sigval {
 #define __ARCH_SI_BAND_T long
 #endif
 
+<<<<<<< HEAD
 #ifndef __ARCH_SI_CLOCK_T
 #define __ARCH_SI_CLOCK_T __kernel_clock_t
 #endif
@@ -43,6 +44,8 @@ typedef union sigval {
 #define __ARCH_SI_ATTRIBUTES
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef HAVE_ARCH_SIGINFO_T
 
 typedef struct siginfo {
@@ -80,8 +83,13 @@ typedef struct siginfo {
 			__kernel_pid_t _pid;	/* which child */
 			__ARCH_SI_UID_T _uid;	/* sender's uid */
 			int _status;		/* exit code */
+<<<<<<< HEAD
 			__ARCH_SI_CLOCK_T _utime;
 			__ARCH_SI_CLOCK_T _stime;
+=======
+			__kernel_clock_t _utime;
+			__kernel_clock_t _stime;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} _sigchld;
 
 		/* SIGILL, SIGFPE, SIGSEGV, SIGBUS */
@@ -99,7 +107,11 @@ typedef struct siginfo {
 			int _fd;
 		} _sigpoll;
 	} _sifields;
+<<<<<<< HEAD
 } __ARCH_SI_ATTRIBUTES siginfo_t;
+=======
+} siginfo_t;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif
 

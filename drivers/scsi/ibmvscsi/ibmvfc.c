@@ -4890,8 +4890,16 @@ static struct vio_driver ibmvfc_driver = {
 	.probe = ibmvfc_probe,
 	.remove = ibmvfc_remove,
 	.get_desired_dma = ibmvfc_get_desired_dma,
+<<<<<<< HEAD
 	.name = IBMVFC_NAME,
 	.pm = &ibmvfc_pm_ops,
+=======
+	.driver = {
+		.name = IBMVFC_NAME,
+		.owner = THIS_MODULE,
+		.pm = &ibmvfc_pm_ops,
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct fc_function_template ibmvfc_transport_functions = {

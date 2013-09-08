@@ -5,7 +5,11 @@
  *
  * Copyright © 2009 Bluewater Systems Ltd
  * Author: Andre Renaud <andre@bluewatersys.com>
+<<<<<<< HEAD
  * Author: Ryan Mallon
+=======
+ * Author: Ryan Mallon <ryan@bluewatersys.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Based on m25p80.c
  *
@@ -52,6 +56,11 @@ struct sst25l_flash {
 	struct spi_device	*spi;
 	struct mutex		lock;
 	struct mtd_info		mtd;
+<<<<<<< HEAD
+=======
+
+	int 			partitioned;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct flash_info {
@@ -175,6 +184,12 @@ static int sst25l_erase(struct mtd_info *mtd, struct erase_info *instr)
 	int err;
 
 	/* Sanity checks */
+<<<<<<< HEAD
+=======
+	if (instr->addr + instr->len > flash->mtd.size)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((uint32_t)instr->len % mtd->erasesize)
 		return -EINVAL;
 
@@ -220,6 +235,19 @@ static int sst25l_read(struct mtd_info *mtd, loff_t from, size_t len,
 	unsigned char command[4];
 	int ret;
 
+<<<<<<< HEAD
+=======
+	/* Sanity checking */
+	if (len == 0)
+		return 0;
+
+	if (from + len > flash->mtd.size)
+		return -EINVAL;
+
+	if (retlen)
+		*retlen = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spi_message_init(&message);
 	memset(&transfer, 0, sizeof(transfer));
 
@@ -261,6 +289,16 @@ static int sst25l_write(struct mtd_info *mtd, loff_t to, size_t len,
 	int i, j, ret, bytes, copied = 0;
 	unsigned char command[5];
 
+<<<<<<< HEAD
+=======
+	/* Sanity checks */
+	if (!len)
+		return 0;
+
+	if (to + len > flash->mtd.size)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((uint32_t)to % mtd->writesize)
 		return -EINVAL;
 
@@ -358,7 +396,13 @@ static int __devinit sst25l_probe(struct spi_device *spi)
 	struct flash_info *flash_info;
 	struct sst25l_flash *flash;
 	struct flash_platform_data *data;
+<<<<<<< HEAD
 	int ret;
+=======
+	int ret, i;
+	struct mtd_partition *parts = NULL;
+	int nr_parts = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	flash_info = sst25l_match_device(spi);
 	if (!flash_info)
@@ -384,14 +428,25 @@ static int __devinit sst25l_probe(struct spi_device *spi)
 	flash->mtd.writesize	= flash_info->page_size;
 	flash->mtd.writebufsize	= flash_info->page_size;
 	flash->mtd.size		= flash_info->page_size * flash_info->nr_pages;
+<<<<<<< HEAD
 	flash->mtd._erase	= sst25l_erase;
 	flash->mtd._read		= sst25l_read;
 	flash->mtd._write 	= sst25l_write;
+=======
+	flash->mtd.erase	= sst25l_erase;
+	flash->mtd.read		= sst25l_read;
+	flash->mtd.write 	= sst25l_write;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_info(&spi->dev, "%s (%lld KiB)\n", flash_info->name,
 		 (long long)flash->mtd.size >> 10);
 
+<<<<<<< HEAD
 	pr_debug("mtd .name = %s, .size = 0x%llx (%lldMiB) "
+=======
+	DEBUG(MTD_DEBUG_LEVEL2,
+	      "mtd .name = %s, .size = 0x%llx (%lldMiB) "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	      ".erasesize = 0x%.8x (%uKiB) .numeraseregions = %d\n",
 	      flash->mtd.name,
 	      (long long)flash->mtd.size, (long long)(flash->mtd.size >> 20),
@@ -399,10 +454,44 @@ static int __devinit sst25l_probe(struct spi_device *spi)
 	      flash->mtd.numeraseregions);
 
 
+<<<<<<< HEAD
 	ret = mtd_device_parse_register(&flash->mtd, NULL, NULL,
 					data ? data->parts : NULL,
 					data ? data->nr_parts : 0);
 	if (ret) {
+=======
+	if (mtd_has_cmdlinepart()) {
+		static const char *part_probes[] = {"cmdlinepart", NULL};
+
+		nr_parts = parse_mtd_partitions(&flash->mtd,
+						part_probes,
+						&parts, 0);
+	}
+
+	if (nr_parts <= 0 && data && data->parts) {
+		parts = data->parts;
+		nr_parts = data->nr_parts;
+	}
+
+	if (nr_parts > 0) {
+		for (i = 0; i < nr_parts; i++) {
+			DEBUG(MTD_DEBUG_LEVEL2, "partitions[%d] = "
+			      "{.name = %s, .offset = 0x%llx, "
+			      ".size = 0x%llx (%lldKiB) }\n",
+			      i, parts[i].name,
+			      (long long)parts[i].offset,
+			      (long long)parts[i].size,
+			      (long long)(parts[i].size >> 10));
+		}
+
+		flash->partitioned = 1;
+		return mtd_device_register(&flash->mtd, parts,
+					   nr_parts);
+	}
+
+	ret = mtd_device_register(&flash->mtd, NULL, 0);
+	if (ret == 1) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(flash);
 		dev_set_drvdata(&spi->dev, NULL);
 		return -ENODEV;
@@ -425,15 +514,38 @@ static int __devexit sst25l_remove(struct spi_device *spi)
 static struct spi_driver sst25l_driver = {
 	.driver = {
 		.name	= "sst25l",
+<<<<<<< HEAD
+=======
+		.bus	= &spi_bus_type,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.owner	= THIS_MODULE,
 	},
 	.probe		= sst25l_probe,
 	.remove		= __devexit_p(sst25l_remove),
 };
 
+<<<<<<< HEAD
 module_spi_driver(sst25l_driver);
 
 MODULE_DESCRIPTION("MTD SPI driver for SST25L Flash chips");
 MODULE_AUTHOR("Andre Renaud <andre@bluewatersys.com>, "
 	      "Ryan Mallon");
+=======
+static int __init sst25l_init(void)
+{
+	return spi_register_driver(&sst25l_driver);
+}
+
+static void __exit sst25l_exit(void)
+{
+	spi_unregister_driver(&sst25l_driver);
+}
+
+module_init(sst25l_init);
+module_exit(sst25l_exit);
+
+MODULE_DESCRIPTION("MTD SPI driver for SST25L Flash chips");
+MODULE_AUTHOR("Andre Renaud <andre@bluewatersys.com>, "
+	      "Ryan Mallon <ryan@bluewatersys.com>");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("GPL");

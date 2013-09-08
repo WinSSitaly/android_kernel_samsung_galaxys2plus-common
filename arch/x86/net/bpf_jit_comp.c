@@ -30,10 +30,14 @@ int bpf_jit_enable __read_mostly;
  * assembly code in arch/x86/net/bpf_jit.S
  */
 extern u8 sk_load_word[], sk_load_half[], sk_load_byte[], sk_load_byte_msh[];
+<<<<<<< HEAD
 extern u8 sk_load_word_positive_offset[], sk_load_half_positive_offset[];
 extern u8 sk_load_byte_positive_offset[], sk_load_byte_msh_positive_offset[];
 extern u8 sk_load_word_negative_offset[], sk_load_half_negative_offset[];
 extern u8 sk_load_byte_negative_offset[], sk_load_byte_msh_negative_offset[];
+=======
+extern u8 sk_load_word_ind[], sk_load_half_ind[], sk_load_byte_ind[];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline u8 *emit_code(u8 *ptr, u32 bytes, unsigned int len)
 {
@@ -120,8 +124,11 @@ static inline void bpf_flush_icache(void *start, void *end)
 	set_fs(old_fs);
 }
 
+<<<<<<< HEAD
 #define CHOOSE_LOAD_FUNC(K, func) \
 	((int)K < 0 ? ((int)K >= SKF_LL_OFF ? func##_negative_offset : func) : func##_positive_offset)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void bpf_jit_compile(struct sk_filter *fp)
 {
@@ -478,13 +485,23 @@ void bpf_jit_compile(struct sk_filter *fp)
 #endif
 				break;
 			case BPF_S_LD_W_ABS:
+<<<<<<< HEAD
 				func = CHOOSE_LOAD_FUNC(K, sk_load_word);
 common_load:			seen |= SEEN_DATAREF;
+=======
+				func = sk_load_word;
+common_load:			seen |= SEEN_DATAREF;
+				if ((int)K < 0) {
+					/* Abort the JIT because __load_pointer() is needed. */
+					goto out;
+				}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				t_offset = func - (image + addrs[i]);
 				EMIT1_off32(0xbe, K); /* mov imm32,%esi */
 				EMIT1_off32(0xe8, t_offset); /* call */
 				break;
 			case BPF_S_LD_H_ABS:
+<<<<<<< HEAD
 				func = CHOOSE_LOAD_FUNC(K, sk_load_half);
 				goto common_load;
 			case BPF_S_LD_B_ABS:
@@ -494,10 +511,25 @@ common_load:			seen |= SEEN_DATAREF;
 				func = CHOOSE_LOAD_FUNC(K, sk_load_byte_msh);
 				seen |= SEEN_DATAREF | SEEN_XREG;
 				t_offset = func - (image + addrs[i]);
+=======
+				func = sk_load_half;
+				goto common_load;
+			case BPF_S_LD_B_ABS:
+				func = sk_load_byte;
+				goto common_load;
+			case BPF_S_LDX_B_MSH:
+				if ((int)K < 0) {
+					/* Abort the JIT because __load_pointer() is needed. */
+					goto out;
+				}
+				seen |= SEEN_DATAREF | SEEN_XREG;
+				t_offset = sk_load_byte_msh - (image + addrs[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				EMIT1_off32(0xbe, K);	/* mov imm32,%esi */
 				EMIT1_off32(0xe8, t_offset); /* call sk_load_byte_msh */
 				break;
 			case BPF_S_LD_W_IND:
+<<<<<<< HEAD
 				func = sk_load_word;
 common_load_ind:		seen |= SEEN_DATAREF | SEEN_XREG;
 				t_offset = func - (image + addrs[i]);
@@ -518,6 +550,19 @@ common_load_ind:		seen |= SEEN_DATAREF | SEEN_XREG;
 				goto common_load_ind;
 			case BPF_S_LD_B_IND:
 				func = sk_load_byte;
+=======
+				func = sk_load_word_ind;
+common_load_ind:		seen |= SEEN_DATAREF | SEEN_XREG;
+				t_offset = func - (image + addrs[i]);
+				EMIT1_off32(0xbe, K);	/* mov imm32,%esi   */
+				EMIT1_off32(0xe8, t_offset);	/* call sk_load_xxx_ind */
+				break;
+			case BPF_S_LD_H_IND:
+				func = sk_load_half_ind;
+				goto common_load_ind;
+			case BPF_S_LD_B_IND:
+				func = sk_load_byte_ind;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto common_load_ind;
 			case BPF_S_JMP_JA:
 				t_offset = addrs[i + K] - addrs[i];

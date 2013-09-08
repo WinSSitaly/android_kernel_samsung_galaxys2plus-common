@@ -34,6 +34,10 @@
 #include <asm/current.h>
 #include <asm/hw_breakpoint.h>
 #include <asm/kdebug.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/traps.h>
 
 /* Breakpoint currently in use for each BRP. */
@@ -44,6 +48,10 @@ static DEFINE_PER_CPU(struct perf_event *, wp_on_reg[ARM_MAX_WRP]);
 
 /* Number of BRP/WRP registers on this CPU. */
 static int core_num_brps;
+<<<<<<< HEAD
+=======
+static int core_num_reserved_brps;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int core_num_wrps;
 
 /* Debug architecture version. */
@@ -135,11 +143,18 @@ static u8 get_debug_arch(void)
 	u32 didr;
 
 	/* Do we implement the extended CPUID interface? */
+<<<<<<< HEAD
 	if (((read_cpuid_id() >> 16) & 0xf) != 0xf) {
 		pr_warning("CPUID feature registers not supported. "
 			   "Assuming v6 debug is present.\n");
 		return ARM_DEBUG_ARCH_V6;
 	}
+=======
+	if (WARN_ONCE((((read_cpuid_id() >> 16) & 0xf) != 0xf),
+	    "CPUID feature registers not supported. "
+	    "Assuming v6 debug is present.\n"))
+		return ARM_DEBUG_ARCH_V6;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ARM_DBG_READ(c0, 0, didr);
 	return (didr >> 16) & 0xf;
@@ -153,6 +168,7 @@ u8 arch_get_debug_arch(void)
 static int debug_arch_supported(void)
 {
 	u8 arch = get_debug_arch();
+<<<<<<< HEAD
 
 	/* We don't support the memory-mapped interface. */
 	return (arch >= ARM_DEBUG_ARCH_V6 && arch <= ARM_DEBUG_ARCH_V7_ECP14) ||
@@ -174,6 +190,12 @@ static int get_num_wrp_resources(void)
 }
 
 /* Determine number of BRP registers available. */
+=======
+	return arch >= ARM_DEBUG_ARCH_V6 && arch <= ARM_DEBUG_ARCH_V7_ECP14;
+}
+
+/* Determine number of BRP register available. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int get_num_brp_resources(void)
 {
 	u32 didr;
@@ -192,10 +214,16 @@ static int core_has_mismatch_brps(void)
 static int get_num_wrps(void)
 {
 	/*
+<<<<<<< HEAD
 	 * On debug architectures prior to 7.1, when a watchpoint fires, the
 	 * only way to work out which watchpoint it was is by disassembling
 	 * the faulting instruction and working out the address of the memory
 	 * access.
+=======
+	 * FIXME: When a watchpoint fires, the only way to work out which
+	 * watchpoint it was is by disassembling the faulting instruction
+	 * and working out the address of the memory access.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 *
 	 * Furthermore, we can only do this if the watchpoint was precise
 	 * since imprecise watchpoints prevent us from calculating register
@@ -209,17 +237,47 @@ static int get_num_wrps(void)
 	 * [the ARM ARM states that the DFAR is UNKNOWN, but experience shows
 	 * that it is set on some implementations].
 	 */
+<<<<<<< HEAD
 	if (get_debug_arch() < ARM_DEBUG_ARCH_V7_1)
 		return 1;
 
 	return get_num_wrp_resources();
+=======
+
+#if 0
+	int wrps;
+	u32 didr;
+	ARM_DBG_READ(c0, 0, didr);
+	wrps = ((didr >> 28) & 0xf) + 1;
+#endif
+	int wrps = 1;
+
+	if (core_has_mismatch_brps() && wrps >= get_num_brp_resources())
+		wrps = get_num_brp_resources() - 1;
+
+	return wrps;
+}
+
+/* We reserve one breakpoint for each watchpoint. */
+static int get_num_reserved_brps(void)
+{
+	if (core_has_mismatch_brps())
+		return get_num_wrps();
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Determine number of usable BRPs available. */
 static int get_num_brps(void)
 {
 	int brps = get_num_brp_resources();
+<<<<<<< HEAD
 	return core_has_mismatch_brps() ? brps - 1 : brps;
+=======
+	if (core_has_mismatch_brps())
+		brps -= get_num_reserved_brps();
+	return brps;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -237,7 +295,11 @@ static int enable_monitor_mode(void)
 
 	/* Ensure that halting mode is disabled. */
 	if (WARN_ONCE(dscr & ARM_DSCR_HDBGEN,
+<<<<<<< HEAD
 		"halting debug mode enabled. Unable to access hardware resources.\n")) {
+=======
+			"halting debug mode enabled. Unable to access hardware resources.\n")) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EPERM;
 		goto out;
 	}
@@ -253,7 +315,10 @@ static int enable_monitor_mode(void)
 		ARM_DBG_WRITE(c1, 0, (dscr | ARM_DSCR_MDBGEN));
 		break;
 	case ARM_DEBUG_ARCH_V7_ECP14:
+<<<<<<< HEAD
 	case ARM_DEBUG_ARCH_V7_1:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ARM_DBG_WRITE(c2, 2, (dscr | ARM_DSCR_MDBGEN));
 		break;
 	default:
@@ -345,10 +410,31 @@ int arch_install_hw_breakpoint(struct perf_event *bp)
 		val_base = ARM_BASE_BVR;
 		slots = (struct perf_event **)__get_cpu_var(bp_on_reg);
 		max_slots = core_num_brps;
+<<<<<<< HEAD
 	} else {
 		/* Watchpoint */
 		ctrl_base = ARM_BASE_WCR;
 		val_base = ARM_BASE_WVR;
+=======
+		if (info->step_ctrl.enabled) {
+			/* Override the breakpoint data with the step data. */
+			addr = info->trigger & ~0x3;
+			ctrl = encode_ctrl_reg(info->step_ctrl);
+		}
+	} else {
+		/* Watchpoint */
+		if (info->step_ctrl.enabled) {
+			/* Install into the reserved breakpoint region. */
+			ctrl_base = ARM_BASE_BCR + core_num_brps;
+			val_base = ARM_BASE_BVR + core_num_brps;
+			/* Override the watchpoint data with the step data. */
+			addr = info->trigger & ~0x3;
+			ctrl = encode_ctrl_reg(info->step_ctrl);
+		} else {
+			ctrl_base = ARM_BASE_WCR;
+			val_base = ARM_BASE_WVR;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		slots = (struct perf_event **)__get_cpu_var(wp_on_reg);
 		max_slots = core_num_wrps;
 	}
@@ -367,6 +453,7 @@ int arch_install_hw_breakpoint(struct perf_event *bp)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	/* Override the breakpoint data with the step data. */
 	if (info->step_ctrl.enabled) {
 		addr = info->trigger & ~0x3;
@@ -378,6 +465,8 @@ int arch_install_hw_breakpoint(struct perf_event *bp)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Setup the address register. */
 	write_wb_reg(val_base + i, addr);
 
@@ -401,7 +490,14 @@ void arch_uninstall_hw_breakpoint(struct perf_event *bp)
 		max_slots = core_num_brps;
 	} else {
 		/* Watchpoint */
+<<<<<<< HEAD
 		base = ARM_BASE_WCR;
+=======
+		if (info->step_ctrl.enabled)
+			base = ARM_BASE_BCR + core_num_brps;
+		else
+			base = ARM_BASE_WCR;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		slots = (struct perf_event **)__get_cpu_var(wp_on_reg);
 		max_slots = core_num_wrps;
 	}
@@ -419,6 +515,7 @@ void arch_uninstall_hw_breakpoint(struct perf_event *bp)
 	if (WARN_ONCE(i == max_slots, "Can't find any breakpoint slot\n"))
 		return;
 
+<<<<<<< HEAD
 	/* Ensure that we disable the mismatch breakpoint. */
 	if (info->ctrl.type != ARM_BREAKPOINT_EXECUTE &&
 	    info->step_ctrl.enabled) {
@@ -426,6 +523,8 @@ void arch_uninstall_hw_breakpoint(struct perf_event *bp)
 		base = ARM_BASE_BCR + core_num_brps;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Reset the control register. */
 	write_wb_reg(base + i, 0);
 }
@@ -625,6 +724,7 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
 	info->address &= ~alignment_mask;
 	info->ctrl.len <<= offset;
 
+<<<<<<< HEAD
 	if (!bp->overflow_handler) {
 		/*
 		 * Mismatch breakpoints are required for single-stepping
@@ -654,6 +754,21 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
 			return -EINVAL;
 	}
 
+=======
+	/*
+	 * Currently we rely on an overflow handler to take
+	 * care of single-stepping the breakpoint when it fires.
+	 * In the case of userspace breakpoints on a core with V7 debug,
+	 * we can use the mismatch feature as a poor-man's hardware
+	 * single-step, but this only works for per-task breakpoints.
+	 */
+	if (WARN_ONCE(!bp->overflow_handler &&
+		(arch_check_bp_in_kernelspace(bp) || !core_has_mismatch_brps()
+		 || !bp->hw.bp_target),
+			"overflow handler required but none found\n")) {
+		ret = -EINVAL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return ret;
 }
@@ -682,6 +797,7 @@ static void disable_single_step(struct perf_event *bp)
 	arch_install_hw_breakpoint(bp);
 }
 
+<<<<<<< HEAD
 static void watchpoint_handler(unsigned long addr, unsigned int fsr,
 			       struct pt_regs *regs)
 {
@@ -693,11 +809,25 @@ static void watchpoint_handler(unsigned long addr, unsigned int fsr,
 
 	slots = (struct perf_event **)__get_cpu_var(wp_on_reg);
 
+=======
+static void watchpoint_handler(unsigned long unknown, struct pt_regs *regs)
+{
+	int i;
+	struct perf_event *wp, **slots;
+	struct arch_hw_breakpoint *info;
+
+	slots = (struct perf_event **)__get_cpu_var(wp_on_reg);
+
+	/* Without a disassembler, we can only handle 1 watchpoint. */
+	BUG_ON(core_num_wrps > 1);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < core_num_wrps; ++i) {
 		rcu_read_lock();
 
 		wp = slots[i];
 
+<<<<<<< HEAD
 		if (wp == NULL)
 			goto unlock;
 
@@ -740,6 +870,20 @@ static void watchpoint_handler(unsigned long addr, unsigned int fsr,
 			info->trigger = addr;
 		}
 
+=======
+		if (wp == NULL) {
+			rcu_read_unlock();
+			continue;
+		}
+
+		/*
+		 * The DFAR is an unknown value. Since we only allow a
+		 * single watchpoint, we can set the trigger to the lowest
+		 * possible faulting address.
+		 */
+		info = counter_arch_bp(wp);
+		info->trigger = wp->attr.bp_addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_debug("watchpoint fired: address = 0x%x\n", info->trigger);
 		perf_bp_event(wp, regs);
 
@@ -751,7 +895,10 @@ static void watchpoint_handler(unsigned long addr, unsigned int fsr,
 		if (!wp->overflow_handler)
 			enable_single_step(wp, instruction_pointer(regs));
 
+<<<<<<< HEAD
 unlock:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rcu_read_unlock();
 	}
 }
@@ -764,7 +911,11 @@ static void watchpoint_single_step_handler(unsigned long pc)
 
 	slots = (struct perf_event **)__get_cpu_var(wp_on_reg);
 
+<<<<<<< HEAD
 	for (i = 0; i < core_num_wrps; ++i) {
+=======
+	for (i = 0; i < core_num_reserved_brps; ++i) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rcu_read_lock();
 
 		wp = slots[i];
@@ -843,7 +994,11 @@ unlock:
 
 /*
  * Called from either the Data Abort Handler [watchpoint] or the
+<<<<<<< HEAD
  * Prefetch Abort Handler [breakpoint] with interrupts disabled.
+=======
+ * Prefetch Abort Handler [breakpoint] with preemption disabled.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int hw_breakpoint_pending(unsigned long addr, unsigned int fsr,
 				 struct pt_regs *regs)
@@ -851,10 +1006,15 @@ static int hw_breakpoint_pending(unsigned long addr, unsigned int fsr,
 	int ret = 0;
 	u32 dscr;
 
+<<<<<<< HEAD
 	preempt_disable();
 
 	if (interrupts_enabled(regs))
 		local_irq_enable();
+=======
+	/* We must be called with preemption disabled. */
+	WARN_ON(preemptible());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* We only handle watchpoints and hardware breakpoints. */
 	ARM_DBG_READ(c1, 0, dscr);
@@ -867,12 +1027,23 @@ static int hw_breakpoint_pending(unsigned long addr, unsigned int fsr,
 	case ARM_ENTRY_ASYNC_WATCHPOINT:
 		WARN(1, "Asynchronous watchpoint exception taken. Debugging results may be unreliable\n");
 	case ARM_ENTRY_SYNC_WATCHPOINT:
+<<<<<<< HEAD
 		watchpoint_handler(addr, fsr, regs);
+=======
+		watchpoint_handler(addr, regs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		ret = 1; /* Unhandled fault. */
 	}
 
+<<<<<<< HEAD
+=======
+	/*
+	 * Re-enable preemption after it was disabled in the
+	 * low-level exception handling code.
+	 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	preempt_enable();
 
 	return ret;
@@ -881,6 +1052,7 @@ static int hw_breakpoint_pending(unsigned long addr, unsigned int fsr,
 /*
  * One-time initialisation.
  */
+<<<<<<< HEAD
 static cpumask_t debug_err_mask;
 
 static int debug_reg_trap(struct pt_regs *regs, unsigned int instr)
@@ -906,6 +1078,13 @@ static void reset_ctrl_regs(void *unused)
 {
 	int i, raw_num_brps, err = 0, cpu = smp_processor_id();
 	u32 dbg_power;
+=======
+static void reset_ctrl_regs(void *info)
+{
+	int i, cpu = smp_processor_id();
+	u32 dbg_power;
+	cpumask_t *cpumask = info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * v7 debug contains save and restore registers so that debug state
@@ -915,17 +1094,22 @@ static void reset_ctrl_regs(void *unused)
 	 * Access Register to avoid taking undefined instruction exceptions
 	 * later on.
 	 */
+<<<<<<< HEAD
 	switch (debug_arch) {
 	case ARM_DEBUG_ARCH_V6:
 	case ARM_DEBUG_ARCH_V6_1:
 		/* ARMv6 cores just need to reset the registers. */
 		goto reset_regs;
 	case ARM_DEBUG_ARCH_V7_ECP14:
+=======
+	if (debug_arch >= ARM_DEBUG_ARCH_V7_ECP14) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Ensure sticky power-down is clear (i.e. debug logic is
 		 * powered up).
 		 */
 		asm volatile("mrc p14, 0, %0, c1, c5, 4" : "=r" (dbg_power));
+<<<<<<< HEAD
 		if ((dbg_power & 0x1) == 0)
 			err = -EPERM;
 		break;
@@ -960,12 +1144,39 @@ static void reset_ctrl_regs(void *unused)
 	isb();
 
 reset_regs:
+=======
+		if ((dbg_power & 0x1) == 0) {
+			pr_warning("CPU %d debug is powered down!\n", cpu);
+			cpumask_or(cpumask, cpumask, cpumask_of(cpu));
+			return;
+		}
+
+		/*
+		 * Unconditionally clear the lock by writing a value
+		 * other than 0xC5ACCE55 to the access register.
+		 */
+		asm volatile("mcr p14, 0, %0, c1, c0, 4" : : "r" (0));
+		isb();
+
+		/*
+		 * Clear any configured vector-catch events before
+		 * enabling monitor mode.
+		 */
+		asm volatile("mcr p14, 0, %0, c0, c7, 0" : : "r" (0));
+		isb();
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (enable_monitor_mode())
 		return;
 
 	/* We must also reset any reserved registers. */
+<<<<<<< HEAD
 	raw_num_brps = get_num_brp_resources();
 	for (i = 0; i < raw_num_brps; ++i) {
+=======
+	for (i = 0; i < core_num_brps + core_num_reserved_brps; ++i) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		write_wb_reg(ARM_BASE_BCR + i, 0UL);
 		write_wb_reg(ARM_BASE_BVR + i, 0UL);
 	}
@@ -981,7 +1192,10 @@ static int __cpuinit dbg_reset_notify(struct notifier_block *self,
 {
 	if (action == CPU_ONLINE)
 		smp_call_function_single((int)cpu, reset_ctrl_regs, NULL, 1);
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NOTIFY_OK;
 }
 
@@ -992,6 +1206,10 @@ static struct notifier_block __cpuinitdata dbg_reset_nb = {
 static int __init arch_hw_breakpoint_init(void)
 {
 	u32 dscr;
+<<<<<<< HEAD
+=======
+	cpumask_t cpumask = { CPU_BITS_NONE };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	debug_arch = get_debug_arch();
 
@@ -999,6 +1217,7 @@ static int __init arch_hw_breakpoint_init(void)
 		pr_info("debug architecture 0x%x unsupported.\n", debug_arch);
 		return 0;
 	}
+<<<<<<< HEAD
 
 	/* Determine how many BRPs/WRPs are available. */
 	core_num_brps = get_num_brps();
@@ -1010,23 +1229,49 @@ static int __init arch_hw_breakpoint_init(void)
 	 * determine that.
 	 */
 	register_undef_hook(&debug_reg_hook);
+=======
+#if defined(CONFIG_MACH_CAPRI_FPGA) || defined(CONFIG_ARCH_CAPRI)
+        return 0;
+#endif
+	/* Determine how many BRPs/WRPs are available. */
+	core_num_brps = get_num_brps();
+	core_num_reserved_brps = get_num_reserved_brps();
+	core_num_wrps = get_num_wrps();
+
+	pr_info("found %d breakpoint and %d watchpoint registers.\n",
+		core_num_brps + core_num_reserved_brps, core_num_wrps);
+
+	if (core_num_reserved_brps)
+		pr_info("%d breakpoint(s) reserved for watchpoint "
+				"single-step.\n", core_num_reserved_brps);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Reset the breakpoint resources. We assume that a halting
 	 * debugger will leave the world in a nice state for us.
 	 */
+<<<<<<< HEAD
 	on_each_cpu(reset_ctrl_regs, NULL, 1);
 	unregister_undef_hook(&debug_reg_hook);
 	if (!cpumask_empty(&debug_err_mask)) {
 		core_num_brps = 0;
+=======
+	on_each_cpu(reset_ctrl_regs, &cpumask, 1);
+	if (!cpumask_empty(&cpumask)) {
+		core_num_brps = 0;
+		core_num_reserved_brps = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		core_num_wrps = 0;
 		return 0;
 	}
 
+<<<<<<< HEAD
 	pr_info("found %d " "%s" "breakpoint and %d watchpoint registers.\n",
 		core_num_brps, core_has_mismatch_brps() ? "(+1 reserved) " :
 		"", core_num_wrps);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ARM_DBG_READ(c1, 0, dscr);
 	if (dscr & ARM_DSCR_HDBGEN) {
 		max_watchpoint_len = 4;
@@ -1040,10 +1285,17 @@ static int __init arch_hw_breakpoint_init(void)
 	}
 
 	/* Register debug fault handler. */
+<<<<<<< HEAD
 	hook_fault_code(FAULT_CODE_DEBUG, hw_breakpoint_pending, SIGTRAP,
 			TRAP_HWBKPT, "watchpoint debug exception");
 	hook_ifault_code(FAULT_CODE_DEBUG, hw_breakpoint_pending, SIGTRAP,
 			TRAP_HWBKPT, "breakpoint debug exception");
+=======
+	hook_fault_code(2, hw_breakpoint_pending, SIGTRAP, TRAP_HWBKPT,
+			"watchpoint debug exception");
+	hook_ifault_code(2, hw_breakpoint_pending, SIGTRAP, TRAP_HWBKPT,
+			"breakpoint debug exception");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Register hotplug notifier. */
 	register_cpu_notifier(&dbg_reset_nb);

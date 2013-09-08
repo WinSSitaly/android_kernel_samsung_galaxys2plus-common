@@ -15,8 +15,11 @@
 #define CARDBUS_LATENCY_TIMER	176	/* secondary latency timer */
 #define CARDBUS_RESERVE_BUSNR	3
 
+<<<<<<< HEAD
 static LIST_HEAD(pci_host_bridges);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Ugh.  Need to stop exporting this to modules. */
 LIST_HEAD(pci_root_buses);
 EXPORT_SYMBOL(pci_root_buses);
@@ -44,6 +47,7 @@ int no_pci_devices(void)
 }
 EXPORT_SYMBOL(no_pci_devices);
 
+<<<<<<< HEAD
 static struct pci_host_bridge *pci_host_bridge(struct pci_dev *dev)
 {
 	struct pci_bus *bus;
@@ -120,6 +124,8 @@ void pcibios_bus_to_resource(struct pci_dev *dev, struct resource *res,
 }
 EXPORT_SYMBOL(pcibios_bus_to_resource);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * PCI Bus Class
  */
@@ -130,7 +136,10 @@ static void release_pcibus_dev(struct device *dev)
 	if (pci_bus->bridge)
 		put_device(pci_bus->bridge);
 	pci_bus_remove_resources(pci_bus);
+<<<<<<< HEAD
 	pci_release_bus_of_node(pci_bus);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(pci_bus);
 }
 
@@ -146,6 +155,24 @@ static int __init pcibus_class_init(void)
 }
 postcore_initcall(pcibus_class_init);
 
+<<<<<<< HEAD
+=======
+/*
+ * Translate the low bits of the PCI base
+ * to the resource type
+ */
+static inline unsigned int pci_calc_resource_flags(unsigned int flags)
+{
+	if (flags & PCI_BASE_ADDRESS_SPACE_IO)
+		return IORESOURCE_IO;
+
+	if (flags & PCI_BASE_ADDRESS_MEM_PREFETCH)
+		return IORESOURCE_MEM | IORESOURCE_PREFETCH;
+
+	return IORESOURCE_MEM;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u64 pci_size(u64 base, u64 maxbase, u64 mask)
 {
 	u64 size = mask & maxbase;	/* Find the significant bits */
@@ -164,6 +191,7 @@ static u64 pci_size(u64 base, u64 maxbase, u64 mask)
 	return size;
 }
 
+<<<<<<< HEAD
 static inline unsigned long decode_bar(struct pci_dev *dev, u32 bar)
 {
 	u32 mem_type;
@@ -197,6 +225,20 @@ static inline unsigned long decode_bar(struct pci_dev *dev, u32 bar)
 		break;
 	}
 	return flags;
+=======
+static inline enum pci_bar_type decode_bar(struct resource *res, u32 bar)
+{
+	if ((bar & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO) {
+		res->flags = bar & ~PCI_BASE_ADDRESS_IO_MASK;
+		return pci_bar_io;
+	}
+
+	res->flags = bar & ~PCI_BASE_ADDRESS_MEM_MASK;
+
+	if (res->flags & PCI_BASE_ADDRESS_MEM_TYPE_64)
+		return pci_bar_mem64;
+	return pci_bar_mem32;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -213,7 +255,10 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
 {
 	u32 l, sz, mask;
 	u16 orig_cmd;
+<<<<<<< HEAD
 	struct pci_bus_region region;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mask = type ? PCI_ROM_ADDRESS_MASK : ~0;
 
@@ -250,9 +295,15 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
 		l = 0;
 
 	if (type == pci_bar_unknown) {
+<<<<<<< HEAD
 		res->flags = decode_bar(dev, l);
 		res->flags |= IORESOURCE_SIZEALIGN;
 		if (res->flags & IORESOURCE_IO) {
+=======
+		type = decode_bar(res, l);
+		res->flags |= pci_calc_resource_flags(l) | IORESOURCE_SIZEALIGN;
+		if (type == pci_bar_io) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			l &= PCI_BASE_ADDRESS_IO_MASK;
 			mask = PCI_BASE_ADDRESS_IO_MASK & (u32) IO_SPACE_LIMIT;
 		} else {
@@ -265,7 +316,11 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
 		mask = (u32)PCI_ROM_ADDRESS_MASK;
 	}
 
+<<<<<<< HEAD
 	if (res->flags & IORESOURCE_MEM_64) {
+=======
+	if (type == pci_bar_mem64) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u64 l64 = l;
 		u64 sz64 = sz;
 		u64 mask64 = mask | (u64)~0 << 32;
@@ -289,10 +344,15 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
 			goto fail;
 		}
 
+<<<<<<< HEAD
+=======
+		res->flags |= IORESOURCE_MEM_64;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if ((sizeof(resource_size_t) < 8) && l) {
 			/* Address above 32-bit boundary; disable the BAR */
 			pci_write_config_dword(dev, pos, 0);
 			pci_write_config_dword(dev, pos + 4, 0);
+<<<<<<< HEAD
 			region.start = 0;
 			region.end = sz64;
 			pcibios_bus_to_resource(dev, res, &region);
@@ -300,6 +360,13 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
 			region.start = l64;
 			region.end = l64 + sz64;
 			pcibios_bus_to_resource(dev, res, &region);
+=======
+			res->start = 0;
+			res->end = sz64;
+		} else {
+			res->start = l64;
+			res->end = l64 + sz64;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev_printk(KERN_DEBUG, &dev->dev, "reg %x: %pR\n",
 				   pos, res);
 		}
@@ -309,15 +376,24 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
 		if (!sz)
 			goto fail;
 
+<<<<<<< HEAD
 		region.start = l;
 		region.end = l + sz;
 		pcibios_bus_to_resource(dev, res, &region);
+=======
+		res->start = l;
+		res->end = l + sz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		dev_printk(KERN_DEBUG, &dev->dev, "reg %x: %pR\n", pos, res);
 	}
 
  out:
+<<<<<<< HEAD
 	return (res->flags & IORESOURCE_MEM_64) ? 1 : 0;
+=======
+	return (type == pci_bar_mem64) ? 1 : 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  fail:
 	res->flags = 0;
 	goto out;
@@ -348,8 +424,12 @@ static void __devinit pci_read_bridge_io(struct pci_bus *child)
 	struct pci_dev *dev = child->self;
 	u8 io_base_lo, io_limit_lo;
 	unsigned long base, limit;
+<<<<<<< HEAD
 	struct pci_bus_region region;
 	struct resource *res, res2;
+=======
+	struct resource *res;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	res = child->resource[0];
 	pci_read_config_byte(dev, PCI_IO_BASE, &io_base_lo);
@@ -367,6 +447,7 @@ static void __devinit pci_read_bridge_io(struct pci_bus *child)
 
 	if (base && base <= limit) {
 		res->flags = (io_base_lo & PCI_IO_RANGE_TYPE_MASK) | IORESOURCE_IO;
+<<<<<<< HEAD
 		res2.flags = res->flags;
 		region.start = base;
 		region.end = limit + 0xfff;
@@ -376,6 +457,17 @@ static void __devinit pci_read_bridge_io(struct pci_bus *child)
 		if (!res->end)
 			res->end = res2.end;
 		dev_printk(KERN_DEBUG, &dev->dev, "  bridge window %pR\n", res);
+=======
+		if (!res->start)
+			res->start = base;
+		if (!res->end)
+			res->end = limit + 0xfff;
+		dev_printk(KERN_DEBUG, &dev->dev, "  bridge window %pR\n", res);
+	} else {
+		dev_printk(KERN_DEBUG, &dev->dev,
+			 "  bridge window [io  %#06lx-%#06lx] (disabled)\n",
+				 base, limit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -384,7 +476,10 @@ static void __devinit pci_read_bridge_mmio(struct pci_bus *child)
 	struct pci_dev *dev = child->self;
 	u16 mem_base_lo, mem_limit_lo;
 	unsigned long base, limit;
+<<<<<<< HEAD
 	struct pci_bus_region region;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct resource *res;
 
 	res = child->resource[1];
@@ -394,10 +489,20 @@ static void __devinit pci_read_bridge_mmio(struct pci_bus *child)
 	limit = (mem_limit_lo & PCI_MEMORY_RANGE_MASK) << 16;
 	if (base && base <= limit) {
 		res->flags = (mem_base_lo & PCI_MEMORY_RANGE_TYPE_MASK) | IORESOURCE_MEM;
+<<<<<<< HEAD
 		region.start = base;
 		region.end = limit + 0xfffff;
 		pcibios_bus_to_resource(dev, res, &region);
 		dev_printk(KERN_DEBUG, &dev->dev, "  bridge window %pR\n", res);
+=======
+		res->start = base;
+		res->end = limit + 0xfffff;
+		dev_printk(KERN_DEBUG, &dev->dev, "  bridge window %pR\n", res);
+	} else {
+		dev_printk(KERN_DEBUG, &dev->dev,
+			"  bridge window [mem %#010lx-%#010lx] (disabled)\n",
+					 base, limit + 0xfffff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -406,7 +511,10 @@ static void __devinit pci_read_bridge_mmio_pref(struct pci_bus *child)
 	struct pci_dev *dev = child->self;
 	u16 mem_base_lo, mem_limit_lo;
 	unsigned long base, limit;
+<<<<<<< HEAD
 	struct pci_bus_region region;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct resource *res;
 
 	res = child->resource[2];
@@ -443,10 +551,20 @@ static void __devinit pci_read_bridge_mmio_pref(struct pci_bus *child)
 					 IORESOURCE_MEM | IORESOURCE_PREFETCH;
 		if (res->flags & PCI_PREF_RANGE_TYPE_64)
 			res->flags |= IORESOURCE_MEM_64;
+<<<<<<< HEAD
 		region.start = base;
 		region.end = limit + 0xfffff;
 		pcibios_bus_to_resource(dev, res, &region);
 		dev_printk(KERN_DEBUG, &dev->dev, "  bridge window %pR\n", res);
+=======
+		res->start = base;
+		res->end = limit + 0xfffff;
+		dev_printk(KERN_DEBUG, &dev->dev, "  bridge window %pR\n", res);
+	} else {
+		dev_printk(KERN_DEBUG, &dev->dev,
+		     "  bridge window [mem %#010lx-%#010lx pref] (disabled)\n",
+					 base, limit + 0xfffff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -673,7 +791,11 @@ static struct pci_bus *pci_alloc_child_bus(struct pci_bus *parent,
 
 	child->self = bridge;
 	child->bridge = get_device(&bridge->dev);
+<<<<<<< HEAD
 	pci_set_bus_of_node(child);
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pci_set_bus_speed(child);
 
 	/* Set up default resource pointers and names.. */
@@ -749,10 +871,15 @@ int __devinit pci_scan_bridge(struct pci_bus *bus, struct pci_dev *dev, int max,
 
 	/* Check if setup is sensible at all */
 	if (!pass &&
+<<<<<<< HEAD
 	    (primary != bus->number || secondary <= bus->number ||
 	     secondary > subordinate)) {
 		dev_info(&dev->dev, "bridge configuration invalid ([bus %02x-%02x]), reconfiguring\n",
 			 secondary, subordinate);
+=======
+	    (primary != bus->number || secondary <= bus->number)) {
+		dev_dbg(&dev->dev, "bus configuration invalid, reconfiguring\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		broken = 1;
 	}
 
@@ -816,6 +943,7 @@ int __devinit pci_scan_bridge(struct pci_bus *bus, struct pci_dev *dev, int max,
 		pci_write_config_word(dev, PCI_STATUS, 0xffff);
 
 		/* Prevent assigning a bus number that already exists.
+<<<<<<< HEAD
 		 * This can happen when a bridge is hot-plugged, so in
 		 * this case we only re-scan this bus. */
 		child = pci_find_bus(pci_domain_nr(bus), max+1);
@@ -824,6 +952,14 @@ int __devinit pci_scan_bridge(struct pci_bus *bus, struct pci_dev *dev, int max,
 			if (!child)
 				goto out;
 		}
+=======
+		 * This can happen when a bridge is hot-plugged */
+		if (pci_find_bus(pci_domain_nr(bus), max+1))
+			goto out;
+		child = pci_add_new_bus(bus, dev, ++max);
+		if (!child)
+			goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		buses = (buses & 0xff000000)
 		      | ((unsigned int)(child->primary)     <<  0)
 		      | ((unsigned int)(child->secondary)   <<  8)
@@ -954,8 +1090,11 @@ void set_pcie_port_type(struct pci_dev *pdev)
 	pdev->pcie_cap = pos;
 	pci_read_config_word(pdev, pos + PCI_EXP_FLAGS, &reg16);
 	pdev->pcie_type = (reg16 & PCI_EXP_FLAGS_TYPE) >> 4;
+<<<<<<< HEAD
 	pci_read_config_word(pdev, pos + PCI_EXP_DEVCAP, &reg16);
 	pdev->pcie_mpss = reg16 & PCI_EXP_DEVCAP_PAYLOAD;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void set_pcie_hotplug_bridge(struct pci_dev *pdev)
@@ -993,8 +1132,11 @@ int pci_setup_device(struct pci_dev *dev)
 	u8 hdr_type;
 	struct pci_slot *slot;
 	int pos = 0;
+<<<<<<< HEAD
 	struct pci_bus_region region;
 	struct resource *res;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (pci_read_config_byte(dev, PCI_HEADER_TYPE, &hdr_type))
 		return -EIO;
@@ -1021,10 +1163,19 @@ int pci_setup_device(struct pci_dev *dev)
 
 	pci_read_config_dword(dev, PCI_CLASS_REVISION, &class);
 	dev->revision = class & 0xff;
+<<<<<<< HEAD
 	dev->class = class >> 8;		    /* upper 3 bytes */
 
 	dev_printk(KERN_DEBUG, &dev->dev, "[%04x:%04x] type %02x class %#08x\n",
 		   dev->vendor, dev->device, dev->hdr_type, dev->class);
+=======
+	class >>= 8;				    /* upper 3 bytes */
+	dev->class = class;
+	class >>= 8;
+
+	dev_printk(KERN_DEBUG, &dev->dev, "[%04x:%04x] type %d class %#08x\n",
+		   dev->vendor, dev->device, dev->hdr_type, class);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* need to have dev->class ready */
 	dev->cfg_size = pci_cfg_space_size(dev);
@@ -1056,6 +1207,7 @@ int pci_setup_device(struct pci_dev *dev)
 			u8 progif;
 			pci_read_config_byte(dev, PCI_CLASS_PROG, &progif);
 			if ((progif & 1) == 0) {
+<<<<<<< HEAD
 				region.start = 0x1F0;
 				region.end = 0x1F7;
 				res = &dev->resource[0];
@@ -1078,6 +1230,22 @@ int pci_setup_device(struct pci_dev *dev)
 				res = &dev->resource[3];
 				res->flags = LEGACY_IO_RESOURCE;
 				pcibios_bus_to_resource(dev, res, &region);
+=======
+				dev->resource[0].start = 0x1F0;
+				dev->resource[0].end = 0x1F7;
+				dev->resource[0].flags = LEGACY_IO_RESOURCE;
+				dev->resource[1].start = 0x3F6;
+				dev->resource[1].end = 0x3F6;
+				dev->resource[1].flags = LEGACY_IO_RESOURCE;
+			}
+			if ((progif & 4) == 0) {
+				dev->resource[2].start = 0x170;
+				dev->resource[2].end = 0x177;
+				dev->resource[2].flags = LEGACY_IO_RESOURCE;
+				dev->resource[3].start = 0x376;
+				dev->resource[3].end = 0x376;
+				dev->resource[3].flags = LEGACY_IO_RESOURCE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 		break;
@@ -1114,8 +1282,13 @@ int pci_setup_device(struct pci_dev *dev)
 		return -EIO;
 
 	bad:
+<<<<<<< HEAD
 		dev_err(&dev->dev, "ignoring class %#08x (doesn't match header "
 			"type %02x)\n", dev->class, dev->hdr_type);
+=======
+		dev_err(&dev->dev, "ignoring class %02x (doesn't match header "
+			"type %02x)\n", class, dev->hdr_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev->class = PCI_CLASS_NOT_DEFINED;
 	}
 
@@ -1127,7 +1300,10 @@ static void pci_release_capabilities(struct pci_dev *dev)
 {
 	pci_vpd_release(dev);
 	pci_iov_release(dev);
+<<<<<<< HEAD
 	pci_free_cap_save_buffers(dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1143,7 +1319,10 @@ static void pci_release_dev(struct device *dev)
 
 	pci_dev = to_pci_dev(dev);
 	pci_release_capabilities(pci_dev);
+<<<<<<< HEAD
 	pci_release_of_node(pci_dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(pci_dev);
 }
 
@@ -1220,6 +1399,7 @@ struct pci_dev *alloc_pci_dev(void)
 }
 EXPORT_SYMBOL(alloc_pci_dev);
 
+<<<<<<< HEAD
 bool pci_bus_read_dev_vendor_id(struct pci_bus *bus, int devfn, u32 *l,
 				 int crs_timeout)
 {
@@ -1244,10 +1424,39 @@ bool pci_bus_read_dev_vendor_id(struct pci_bus *bus, int devfn, u32 *l,
 			return false;
 		/* Card hasn't responded in 60 seconds?  Must be stuck. */
 		if (delay > crs_timeout) {
+=======
+/*
+ * Read the config data for a PCI device, sanity-check it
+ * and fill in the dev structure...
+ */
+static struct pci_dev *pci_scan_device(struct pci_bus *bus, int devfn)
+{
+	struct pci_dev *dev;
+	u32 l;
+	int delay = 1;
+
+	if (pci_bus_read_config_dword(bus, devfn, PCI_VENDOR_ID, &l))
+		return NULL;
+
+	/* some broken boards return 0 or ~0 if a slot is empty: */
+	if (l == 0xffffffff || l == 0x00000000 ||
+	    l == 0x0000ffff || l == 0xffff0000)
+		return NULL;
+
+	/* Configuration request Retry Status */
+	while (l == 0xffff0001) {
+		msleep(delay);
+		delay *= 2;
+		if (pci_bus_read_config_dword(bus, devfn, PCI_VENDOR_ID, &l))
+			return NULL;
+		/* Card hasn't responded in 60 seconds?  Must be stuck. */
+		if (delay > 60 * 1000) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			printk(KERN_WARNING "pci %04x:%02x:%02x.%d: not "
 					"responding\n", pci_domain_nr(bus),
 					bus->number, PCI_SLOT(devfn),
 					PCI_FUNC(devfn));
+<<<<<<< HEAD
 			return false;
 		}
 	}
@@ -1268,6 +1477,12 @@ static struct pci_dev *pci_scan_device(struct pci_bus *bus, int devfn)
 	if (!pci_bus_read_dev_vendor_id(bus, devfn, &l, 60*1000))
 		return NULL;
 
+=======
+			return NULL;
+		}
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev = alloc_pci_dev();
 	if (!dev)
 		return NULL;
@@ -1277,8 +1492,11 @@ static struct pci_dev *pci_scan_device(struct pci_bus *bus, int devfn)
 	dev->vendor = l & 0xffff;
 	dev->device = (l >> 16) & 0xffff;
 
+<<<<<<< HEAD
 	pci_set_of_node(dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pci_setup_device(dev)) {
 		kfree(dev);
 		return NULL;
@@ -1328,9 +1546,12 @@ void pci_device_add(struct pci_dev *dev, struct pci_bus *bus)
 	/* Fix up broken headers */
 	pci_fixup_device(pci_fixup_header, dev);
 
+<<<<<<< HEAD
 	/* moved out from quirk header fixup code */
 	pci_reassigndev_resource_alignment(dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Clear the state_saved flag. */
 	dev->state_saved = false;
 
@@ -1452,6 +1673,7 @@ int pci_scan_slot(struct pci_bus *bus, int devfn)
 	return nr;
 }
 
+<<<<<<< HEAD
 static int pcie_find_smpss(struct pci_dev *dev, void *data)
 {
 	u8 *smpss = data;
@@ -1603,6 +1825,8 @@ void pcie_bus_configure_settings(struct pci_bus *bus, u8 mpss)
 }
 EXPORT_SYMBOL_GPL(pcie_bus_configure_settings);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 unsigned int __devinit pci_scan_child_bus(struct pci_bus *bus)
 {
 	unsigned int devfn, pass, max = bus->secondary;
@@ -1646,6 +1870,7 @@ unsigned int __devinit pci_scan_child_bus(struct pci_bus *bus)
 	return max;
 }
 
+<<<<<<< HEAD
 struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
 		struct pci_ops *ops, void *sysdata, struct list_head *resources)
 {
@@ -1670,6 +1895,24 @@ struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
 	if (!dev)
 		goto err_dev;
+=======
+struct pci_bus * pci_create_bus(struct device *parent,
+		int bus, struct pci_ops *ops, void *sysdata)
+{
+	int error;
+	struct pci_bus *b, *b2;
+	struct device *dev;
+
+	b = pci_alloc_bus();
+	if (!b)
+		return NULL;
+
+	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+	if (!dev){
+		kfree(b);
+		return NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	b->sysdata = sysdata;
 	b->ops = ops;
@@ -1681,6 +1924,13 @@ struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
 		goto err_out;
 	}
 
+<<<<<<< HEAD
+=======
+	down_write(&pci_bus_sem);
+	list_add_tail(&b->node, &pci_root_buses);
+	up_write(&pci_bus_sem);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->parent = parent;
 	dev->release = pci_release_bus_bridge_dev;
 	dev_set_name(dev, "pci%04x:%02x", pci_domain_nr(b), bus);
@@ -1689,7 +1939,10 @@ struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
 		goto dev_reg_err;
 	b->bridge = get_device(dev);
 	device_enable_async_suspend(b->bridge);
+<<<<<<< HEAD
 	pci_set_bus_of_node(b);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!parent)
 		set_dev_node(b->bridge, pcibus_to_node(b));
@@ -1705,6 +1958,7 @@ struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
 	pci_create_legacy_files(b);
 
 	b->number = b->secondary = bus;
+<<<<<<< HEAD
 
 	bridge->bus = b;
 	INIT_LIST_HEAD(&bridge->windows);
@@ -1737,6 +1991,10 @@ struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
 	list_add_tail(&bridge->list, &pci_host_bridges);
 	list_add_tail(&b->node, &pci_root_buses);
 	up_write(&pci_bus_sem);
+=======
+	b->resource[0] = &ioport_resource;
+	b->resource[1] = &iomem_resource;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return b;
 
@@ -1744,11 +2002,15 @@ class_dev_reg_err:
 	device_unregister(dev);
 dev_reg_err:
 	down_write(&pci_bus_sem);
+<<<<<<< HEAD
 	list_del(&bridge->list);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_del(&b->node);
 	up_write(&pci_bus_sem);
 err_out:
 	kfree(dev);
+<<<<<<< HEAD
 err_dev:
 	kfree(b);
 err_bus:
@@ -1785,10 +2047,25 @@ struct pci_bus * __devinit pci_scan_bus_parented(struct device *parent,
 		b->subordinate = pci_scan_child_bus(b);
 	else
 		pci_free_resource_list(&resources);
+=======
+	kfree(b);
+	return NULL;
+}
+
+struct pci_bus * __devinit pci_scan_bus_parented(struct device *parent,
+		int bus, struct pci_ops *ops, void *sysdata)
+{
+	struct pci_bus *b;
+
+	b = pci_create_bus(parent, bus, ops, sysdata);
+	if (b)
+		b->subordinate = pci_scan_child_bus(b);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return b;
 }
 EXPORT_SYMBOL(pci_scan_bus_parented);
 
+<<<<<<< HEAD
 struct pci_bus * __devinit pci_scan_bus(int bus, struct pci_ops *ops,
 					void *sysdata)
 {
@@ -1829,10 +2106,43 @@ unsigned int __ref pci_rescan_bus_bridge_resize(struct pci_dev *bridge)
 
 	pci_assign_unassigned_bridge_resources(bridge);
 
+=======
+#ifdef CONFIG_HOTPLUG
+/**
+ * pci_rescan_bus - scan a PCI bus for devices.
+ * @bus: PCI bus to scan
+ *
+ * Scan a PCI bus and child buses for new devices, adds them,
+ * and enables them.
+ *
+ * Returns the max number of subordinate bus discovered.
+ */
+unsigned int __ref pci_rescan_bus(struct pci_bus *bus)
+{
+	unsigned int max;
+	struct pci_dev *dev;
+
+	max = pci_scan_child_bus(bus);
+
+	down_read(&pci_bus_sem);
+	list_for_each_entry(dev, &bus->devices, bus_list)
+		if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE ||
+		    dev->hdr_type == PCI_HEADER_TYPE_CARDBUS)
+			if (dev->subordinate)
+				pci_bus_size_bridges(dev->subordinate);
+	up_read(&pci_bus_sem);
+
+	pci_bus_assign_resources(bus);
+	pci_enable_bridges(bus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pci_bus_add_devices(bus);
 
 	return max;
 }
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL_GPL(pci_rescan_bus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 EXPORT_SYMBOL(pci_add_new_bus);
 EXPORT_SYMBOL(pci_scan_slot);

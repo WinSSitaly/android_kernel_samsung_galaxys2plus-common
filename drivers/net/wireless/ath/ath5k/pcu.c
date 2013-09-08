@@ -29,6 +29,7 @@
 #include "ath5k.h"
 #include "reg.h"
 #include "debug.h"
+<<<<<<< HEAD
 
 /**
  * DOC: Protocol Control Unit (PCU) functions
@@ -71,6 +72,15 @@
  * based on current tx rate instead of the base rate.
  * It does this to better utilize channel usage.
  * There is a mapping between G rates (that cover both
+=======
+#include "base.h"
+
+/*
+ * AR5212+ can use higher rates for ack transmition
+ * based on current tx rate instead of the base rate.
+ * It does this to better utilize channel usage.
+ * This is a mapping between G rates (that cover both
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * CCK and OFDM) and ack rates that we use when setting
  * rate -> duration table. This mapping is hw-based so
  * don't change anything.
@@ -99,27 +109,46 @@ static const unsigned int ack_rates_high[] =
 \*******************/
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_get_frame_duration() - Get tx time of a frame
  * @ah: The &struct ath5k_hw
  * @len: Frame's length in bytes
  * @rate: The @struct ieee80211_rate
  * @shortpre: Indicate short preample
+=======
+ * ath5k_hw_get_frame_duration - Get tx time of a frame
+ *
+ * @ah: The &struct ath5k_hw
+ * @len: Frame's length in bytes
+ * @rate: The @struct ieee80211_rate
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Calculate tx duration of a frame given it's rate and length
  * It extends ieee80211_generic_frame_duration for non standard
  * bwmodes.
  */
+<<<<<<< HEAD
 int
 ath5k_hw_get_frame_duration(struct ath5k_hw *ah,
 		int len, struct ieee80211_rate *rate, bool shortpre)
 {
+=======
+int ath5k_hw_get_frame_duration(struct ath5k_hw *ah,
+		int len, struct ieee80211_rate *rate, bool shortpre)
+{
+	struct ath5k_softc *sc = ah->ah_sc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int sifs, preamble, plcp_bits, sym_time;
 	int bitrate, bits, symbols, symbol_bits;
 	int dur;
 
 	/* Fallback */
 	if (!ah->ah_bwmode) {
+<<<<<<< HEAD
 		__le16 raw_dur = ieee80211_generic_frame_duration(ah->hw,
+=======
+		__le16 raw_dur = ieee80211_generic_frame_duration(sc->hw,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					NULL, len, rate);
 
 		/* subtract difference between long and short preamble */
@@ -166,11 +195,19 @@ ath5k_hw_get_frame_duration(struct ath5k_hw *ah,
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_get_default_slottime() - Get the default slot time for current mode
  * @ah: The &struct ath5k_hw
  */
 unsigned int
 ath5k_hw_get_default_slottime(struct ath5k_hw *ah)
+=======
+ * ath5k_hw_get_default_slottime - Get the default slot time for current mode
+ *
+ * @ah: The &struct ath5k_hw
+ */
+unsigned int ath5k_hw_get_default_slottime(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ieee80211_channel *channel = ah->ah_current_channel;
 	unsigned int slot_time;
@@ -188,7 +225,11 @@ ath5k_hw_get_default_slottime(struct ath5k_hw *ah)
 	case AR5K_BWMODE_DEFAULT:
 	default:
 		slot_time = AR5K_INIT_SLOT_TIME_DEFAULT;
+<<<<<<< HEAD
 		if ((channel->hw_value == AR5K_MODE_11B) && !ah->ah_short_slot)
+=======
+		if ((channel->hw_value & CHANNEL_CCK) && !ah->ah_short_slot)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			slot_time = AR5K_INIT_SLOT_TIME_B;
 		break;
 	}
@@ -197,11 +238,19 @@ ath5k_hw_get_default_slottime(struct ath5k_hw *ah)
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_get_default_sifs() - Get the default SIFS for current mode
  * @ah: The &struct ath5k_hw
  */
 unsigned int
 ath5k_hw_get_default_sifs(struct ath5k_hw *ah)
+=======
+ * ath5k_hw_get_default_sifs - Get the default SIFS for current mode
+ *
+ * @ah: The &struct ath5k_hw
+ */
+unsigned int ath5k_hw_get_default_sifs(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ieee80211_channel *channel = ah->ah_current_channel;
 	unsigned int sifs;
@@ -219,7 +268,11 @@ ath5k_hw_get_default_sifs(struct ath5k_hw *ah)
 	case AR5K_BWMODE_DEFAULT:
 		sifs = AR5K_INIT_SIFS_DEFAULT_BG;
 	default:
+<<<<<<< HEAD
 		if (channel->band == IEEE80211_BAND_5GHZ)
+=======
+		if (channel->hw_value & CHANNEL_5GHZ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sifs = AR5K_INIT_SIFS_DEFAULT_A;
 		break;
 	}
@@ -228,19 +281,32 @@ ath5k_hw_get_default_sifs(struct ath5k_hw *ah)
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_update_mib_counters() - Update MIB counters (mac layer statistics)
+=======
+ * ath5k_hw_update_mib_counters - Update MIB counters (mac layer statistics)
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ah: The &struct ath5k_hw
  *
  * Reads MIB counters from PCU and updates sw statistics. Is called after a
  * MIB interrupt, because one of these counters might have reached their maximum
  * and triggered the MIB interrupt, to let us read and clear the counter.
  *
+<<<<<<< HEAD
  * NOTE: Is called in interrupt context!
  */
 void
 ath5k_hw_update_mib_counters(struct ath5k_hw *ah)
 {
 	struct ath5k_statistics *stats = &ah->stats;
+=======
+ * Is called in interrupt context!
+ */
+void ath5k_hw_update_mib_counters(struct ath5k_hw *ah)
+{
+	struct ath5k_statistics *stats = &ah->ah_sc->stats;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Read-And-Clear */
 	stats->ack_fail += ath5k_hw_reg_read(ah, AR5K_ACK_FAIL);
@@ -256,8 +322,15 @@ ath5k_hw_update_mib_counters(struct ath5k_hw *ah)
 \******************/
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_write_rate_duration() - Fill rate code to duration table
  * @ah: The &struct ath5k_hw
+=======
+ * ath5k_hw_write_rate_duration - fill rate code to duration table
+ *
+ * @ah: the &struct ath5k_hw
+ * @mode: one of enum ath5k_driver_mode
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Write the rate code to duration table upon hw reset. This is a helper for
  * ath5k_hw_pcu_init(). It seems all this is doing is setting an ACK timeout on
@@ -271,20 +344,31 @@ ath5k_hw_update_mib_counters(struct ath5k_hw *ah)
  * that include all OFDM and CCK rates.
  *
  */
+<<<<<<< HEAD
 static inline void
 ath5k_hw_write_rate_duration(struct ath5k_hw *ah)
 {
+=======
+static inline void ath5k_hw_write_rate_duration(struct ath5k_hw *ah)
+{
+	struct ath5k_softc *sc = ah->ah_sc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ieee80211_rate *rate;
 	unsigned int i;
 	/* 802.11g covers both OFDM and CCK */
 	u8 band = IEEE80211_BAND_2GHZ;
 
 	/* Write rate duration table */
+<<<<<<< HEAD
 	for (i = 0; i < ah->sbands[band].n_bitrates; i++) {
+=======
+	for (i = 0; i < sc->sbands[band].n_bitrates; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u32 reg;
 		u16 tx_time;
 
 		if (ah->ah_ack_bitrate_high)
+<<<<<<< HEAD
 			rate = &ah->sbands[band].bitrates[ack_rates_high[i]];
 		/* CCK -> 1Mb */
 		else if (i < 4)
@@ -292,6 +376,15 @@ ath5k_hw_write_rate_duration(struct ath5k_hw *ah)
 		/* OFDM -> 6Mb */
 		else
 			rate = &ah->sbands[band].bitrates[4];
+=======
+			rate = &sc->sbands[band].bitrates[ack_rates_high[i]];
+		/* CCK -> 1Mb */
+		else if (i < 4)
+			rate = &sc->sbands[band].bitrates[0];
+		/* OFDM -> 6Mb */
+		else
+			rate = &sc->sbands[band].bitrates[4];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Set ACK timeout */
 		reg = AR5K_RATE_DUR(rate->hw_value);
@@ -316,12 +409,21 @@ ath5k_hw_write_rate_duration(struct ath5k_hw *ah)
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_set_ack_timeout() - Set ACK timeout on PCU
  * @ah: The &struct ath5k_hw
  * @timeout: Timeout in usec
  */
 static int
 ath5k_hw_set_ack_timeout(struct ath5k_hw *ah, unsigned int timeout)
+=======
+ * ath5k_hw_set_ack_timeout - Set ACK timeout on PCU
+ *
+ * @ah: The &struct ath5k_hw
+ * @timeout: Timeout in usec
+ */
+static int ath5k_hw_set_ack_timeout(struct ath5k_hw *ah, unsigned int timeout)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (ath5k_hw_clocktoh(ah, AR5K_REG_MS(0xffffffff, AR5K_TIME_OUT_ACK))
 			<= timeout)
@@ -334,12 +436,21 @@ ath5k_hw_set_ack_timeout(struct ath5k_hw *ah, unsigned int timeout)
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_set_cts_timeout() - Set CTS timeout on PCU
  * @ah: The &struct ath5k_hw
  * @timeout: Timeout in usec
  */
 static int
 ath5k_hw_set_cts_timeout(struct ath5k_hw *ah, unsigned int timeout)
+=======
+ * ath5k_hw_set_cts_timeout - Set CTS timeout on PCU
+ *
+ * @ah: The &struct ath5k_hw
+ * @timeout: Timeout in usec
+ */
+static int ath5k_hw_set_cts_timeout(struct ath5k_hw *ah, unsigned int timeout)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (ath5k_hw_clocktoh(ah, AR5K_REG_MS(0xffffffff, AR5K_TIME_OUT_CTS))
 			<= timeout)
@@ -357,6 +468,7 @@ ath5k_hw_set_cts_timeout(struct ath5k_hw *ah, unsigned int timeout)
 \*******************/
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_set_lladdr() - Set station id
  * @ah: The &struct ath5k_hw
  * @mac: The card's mac address (array of octets)
@@ -365,6 +477,16 @@ ath5k_hw_set_cts_timeout(struct ath5k_hw *ah, unsigned int timeout)
  */
 int
 ath5k_hw_set_lladdr(struct ath5k_hw *ah, const u8 *mac)
+=======
+ * ath5k_hw_set_lladdr - Set station id
+ *
+ * @ah: The &struct ath5k_hw
+ * @mac: The card's mac address
+ *
+ * Set station id on hw using the provided mac address
+ */
+int ath5k_hw_set_lladdr(struct ath5k_hw *ah, const u8 *mac)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath_common *common = ath5k_hw_common(ah);
 	u32 low_id, high_id;
@@ -385,14 +507,23 @@ ath5k_hw_set_lladdr(struct ath5k_hw *ah, const u8 *mac)
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_set_bssid() - Set current BSSID on hw
+=======
+ * ath5k_hw_set_bssid - Set current BSSID on hw
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ah: The &struct ath5k_hw
  *
  * Sets the current BSSID and BSSID mask we have from the
  * common struct into the hardware
  */
+<<<<<<< HEAD
 void
 ath5k_hw_set_bssid(struct ath5k_hw *ah)
+=======
+void ath5k_hw_set_bssid(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath_common *common = ath5k_hw_common(ah);
 	u16 tim_offset = 0;
@@ -425,6 +556,7 @@ ath5k_hw_set_bssid(struct ath5k_hw *ah)
 	ath5k_hw_enable_pspoll(ah, NULL, 0);
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_set_bssid_mask() - Filter out bssids we listen
  * @ah: The &struct ath5k_hw
@@ -442,6 +574,9 @@ ath5k_hw_set_bssid(struct ath5k_hw *ah)
  */
 void
 ath5k_hw_set_bssid_mask(struct ath5k_hw *ah, const u8 *mask)
+=======
+void ath5k_hw_set_bssid_mask(struct ath5k_hw *ah, const u8 *mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath_common *common = ath5k_hw_common(ah);
 
@@ -452,6 +587,7 @@ ath5k_hw_set_bssid_mask(struct ath5k_hw *ah, const u8 *mask)
 		ath_hw_setbssidmask(common);
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_set_mcast_filter() - Set multicast filter
  * @ah: The &struct ath5k_hw
@@ -460,13 +596,24 @@ ath5k_hw_set_bssid_mask(struct ath5k_hw *ah, const u8 *mask)
  */
 void
 ath5k_hw_set_mcast_filter(struct ath5k_hw *ah, u32 filter0, u32 filter1)
+=======
+/*
+ * Set multicast filter
+ */
+void ath5k_hw_set_mcast_filter(struct ath5k_hw *ah, u32 filter0, u32 filter1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	ath5k_hw_reg_write(ah, filter0, AR5K_MCAST_FILTER0);
 	ath5k_hw_reg_write(ah, filter1, AR5K_MCAST_FILTER1);
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_get_rx_filter() - Get current rx filter
+=======
+ * ath5k_hw_get_rx_filter - Get current rx filter
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ah: The &struct ath5k_hw
  *
  * Returns the RX filter by reading rx filter and
@@ -475,8 +622,12 @@ ath5k_hw_set_mcast_filter(struct ath5k_hw *ah, u32 filter0, u32 filter1)
  * and pass to the driver. For a list of frame types
  * check out reg.h.
  */
+<<<<<<< HEAD
 u32
 ath5k_hw_get_rx_filter(struct ath5k_hw *ah)
+=======
+u32 ath5k_hw_get_rx_filter(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 data, filter = 0;
 
@@ -496,7 +647,12 @@ ath5k_hw_get_rx_filter(struct ath5k_hw *ah)
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_set_rx_filter() - Set rx filter
+=======
+ * ath5k_hw_set_rx_filter - Set rx filter
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ah: The &struct ath5k_hw
  * @filter: RX filter mask (see reg.h)
  *
@@ -504,8 +660,12 @@ ath5k_hw_get_rx_filter(struct ath5k_hw *ah)
  * register on 5212 and newer chips so that we have proper PHY
  * error reporting.
  */
+<<<<<<< HEAD
 void
 ath5k_hw_set_rx_filter(struct ath5k_hw *ah, u32 filter)
+=======
+void ath5k_hw_set_rx_filter(struct ath5k_hw *ah, u32 filter)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 data = 0;
 
@@ -549,13 +709,22 @@ ath5k_hw_set_rx_filter(struct ath5k_hw *ah, u32 filter)
 #define ATH5K_MAX_TSF_READ 10
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_get_tsf64() - Get the full 64bit TSF
+=======
+ * ath5k_hw_get_tsf64 - Get the full 64bit TSF
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ah: The &struct ath5k_hw
  *
  * Returns the current TSF
  */
+<<<<<<< HEAD
 u64
 ath5k_hw_get_tsf64(struct ath5k_hw *ah)
+=======
+u64 ath5k_hw_get_tsf64(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 tsf_lower, tsf_upper1, tsf_upper2;
 	int i;
@@ -587,6 +756,7 @@ ath5k_hw_get_tsf64(struct ath5k_hw *ah)
 
 	local_irq_restore(flags);
 
+<<<<<<< HEAD
 	WARN_ON(i == ATH5K_MAX_TSF_READ);
 
 	return ((u64)tsf_upper1 << 32) | tsf_lower;
@@ -596,26 +766,49 @@ ath5k_hw_get_tsf64(struct ath5k_hw *ah)
 
 /**
  * ath5k_hw_set_tsf64() - Set a new 64bit TSF
+=======
+	WARN_ON( i == ATH5K_MAX_TSF_READ );
+
+	return (((u64)tsf_upper1 << 32) | tsf_lower);
+}
+
+/**
+ * ath5k_hw_set_tsf64 - Set a new 64bit TSF
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ah: The &struct ath5k_hw
  * @tsf64: The new 64bit TSF
  *
  * Sets the new TSF
  */
+<<<<<<< HEAD
 void
 ath5k_hw_set_tsf64(struct ath5k_hw *ah, u64 tsf64)
+=======
+void ath5k_hw_set_tsf64(struct ath5k_hw *ah, u64 tsf64)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	ath5k_hw_reg_write(ah, tsf64 & 0xffffffff, AR5K_TSF_L32);
 	ath5k_hw_reg_write(ah, (tsf64 >> 32) & 0xffffffff, AR5K_TSF_U32);
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_reset_tsf() - Force a TSF reset
+=======
+ * ath5k_hw_reset_tsf - Force a TSF reset
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ah: The &struct ath5k_hw
  *
  * Forces a TSF reset on PCU
  */
+<<<<<<< HEAD
 void
 ath5k_hw_reset_tsf(struct ath5k_hw *ah)
+=======
+void ath5k_hw_reset_tsf(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 val;
 
@@ -631,6 +824,7 @@ ath5k_hw_reset_tsf(struct ath5k_hw *ah)
 	ath5k_hw_reg_write(ah, val, AR5K_BEACON);
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_init_beacon_timers() - Initialize beacon timers
  * @ah: The &struct ath5k_hw
@@ -642,13 +836,23 @@ ath5k_hw_reset_tsf(struct ath5k_hw *ah)
  */
 void
 ath5k_hw_init_beacon_timers(struct ath5k_hw *ah, u32 next_beacon, u32 interval)
+=======
+/*
+ * Initialize beacon timers
+ */
+void ath5k_hw_init_beacon(struct ath5k_hw *ah, u32 next_beacon, u32 interval)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 timer1, timer2, timer3;
 
 	/*
 	 * Set the additional timers by mode
 	 */
+<<<<<<< HEAD
 	switch (ah->opmode) {
+=======
+	switch (ah->ah_sc->opmode) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case NL80211_IFTYPE_MONITOR:
 	case NL80211_IFTYPE_STATION:
 		/* In STA mode timer1 is used as next wakeup
@@ -685,8 +889,13 @@ ath5k_hw_init_beacon_timers(struct ath5k_hw *ah, u32 next_beacon, u32 interval)
 	 * Set the beacon register and enable all timers.
 	 */
 	/* When in AP or Mesh Point mode zero timer0 to start TSF */
+<<<<<<< HEAD
 	if (ah->opmode == NL80211_IFTYPE_AP ||
 	    ah->opmode == NL80211_IFTYPE_MESH_POINT)
+=======
+	if (ah->ah_sc->opmode == NL80211_IFTYPE_AP ||
+	    ah->ah_sc->opmode == NL80211_IFTYPE_MESH_POINT)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ath5k_hw_reg_write(ah, 0, AR5K_TIMER0);
 
 	ath5k_hw_reg_write(ah, next_beacon, AR5K_TIMER0);
@@ -705,14 +914,23 @@ ath5k_hw_init_beacon_timers(struct ath5k_hw *ah, u32 next_beacon, u32 interval)
 	/* Flush any pending BMISS interrupts on ISR by
 	 * performing a clear-on-write operation on PISR
 	 * register for the BMISS bit (writing a bit on
+<<<<<<< HEAD
 	 * ISR toggles a reset for that bit and leaves
 	 * the remaining bits intact) */
+=======
+	 * ISR togles a reset for that bit and leaves
+	 * the rest bits intact) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ah->ah_version == AR5K_AR5210)
 		ath5k_hw_reg_write(ah, AR5K_ISR_BMISS, AR5K_ISR);
 	else
 		ath5k_hw_reg_write(ah, AR5K_ISR_BMISS, AR5K_PISR);
 
+<<<<<<< HEAD
 	/* TODO: Set enhanced sleep registers on AR5212
+=======
+	/* TODO: Set enchanced sleep registers on AR5212
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * based on vif->bss_conf params, until then
 	 * disable power save reporting.*/
 	AR5K_REG_DISABLE_BITS(ah, AR5K_STA_ID1, AR5K_STA_ID1_PWR_SV);
@@ -720,7 +938,12 @@ ath5k_hw_init_beacon_timers(struct ath5k_hw *ah, u32 next_beacon, u32 interval)
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_check_timer_win() - Check if timer B is timer A + window
+=======
+ * ath5k_check_timer_win - Check if timer B is timer A + window
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @a: timer a (before b)
  * @b: timer b (after a)
  * @window: difference between a and b
@@ -750,11 +973,20 @@ ath5k_check_timer_win(int a, int b, int window, int intval)
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_check_beacon_timers() - Check if the beacon timers are correct
  * @ah: The &struct ath5k_hw
  * @intval: beacon interval
  *
  * This is a workaround for IBSS mode
+=======
+ * ath5k_hw_check_beacon_timers - Check if the beacon timers are correct
+ *
+ * @ah: The &struct ath5k_hw
+ * @intval: beacon interval
+ *
+ * This is a workaround for IBSS mode:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * The need for this function arises from the fact that we have 4 separate
  * HW timer registers (TIMER0 - TIMER3), which are closely related to the
@@ -798,7 +1030,11 @@ ath5k_hw_check_beacon_timers(struct ath5k_hw *ah, int intval)
 	dma = ath5k_hw_reg_read(ah, AR5K_TIMER1) >> 3;
 
 	/* NOTE: SWBA is different. Having a wrong window there does not
+<<<<<<< HEAD
 	 * stop us from sending data and this condition is caught by
+=======
+	 * stop us from sending data and this condition is catched thru
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * other means (SWBA interrupt) */
 
 	if (ath5k_check_timer_win(nbtt, atim, 1, intval) &&
@@ -809,14 +1045,23 @@ ath5k_hw_check_beacon_timers(struct ath5k_hw *ah, int intval)
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_set_coverage_class() - Set IEEE 802.11 coverage class
+=======
+ * ath5k_hw_set_coverage_class - Set IEEE 802.11 coverage class
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ah: The &struct ath5k_hw
  * @coverage_class: IEEE 802.11 coverage class number
  *
  * Sets IFS intervals and ACK/CTS timeouts for given coverage class.
  */
+<<<<<<< HEAD
 void
 ath5k_hw_set_coverage_class(struct ath5k_hw *ah, u8 coverage_class)
+=======
+void ath5k_hw_set_coverage_class(struct ath5k_hw *ah, u8 coverage_class)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* As defined by IEEE 802.11-2007 17.3.8.6 */
 	int slot_time = ath5k_hw_get_default_slottime(ah) + 3 * coverage_class;
@@ -835,7 +1080,12 @@ ath5k_hw_set_coverage_class(struct ath5k_hw *ah, u8 coverage_class)
 \***************************/
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_start_rx_pcu() - Start RX engine
+=======
+ * ath5k_hw_start_rx_pcu - Start RX engine
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ah: The &struct ath5k_hw
  *
  * Starts RX engine on PCU so that hw can process RXed frames
@@ -843,25 +1093,39 @@ ath5k_hw_set_coverage_class(struct ath5k_hw *ah, u8 coverage_class)
  *
  * NOTE: RX DMA should be already enabled using ath5k_hw_start_rx_dma
  */
+<<<<<<< HEAD
 void
 ath5k_hw_start_rx_pcu(struct ath5k_hw *ah)
+=======
+void ath5k_hw_start_rx_pcu(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	AR5K_REG_DISABLE_BITS(ah, AR5K_DIAG_SW, AR5K_DIAG_SW_DIS_RX);
 }
 
 /**
+<<<<<<< HEAD
  * at5k_hw_stop_rx_pcu() - Stop RX engine
+=======
+ * at5k_hw_stop_rx_pcu - Stop RX engine
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ah: The &struct ath5k_hw
  *
  * Stops RX engine on PCU
  */
+<<<<<<< HEAD
 void
 ath5k_hw_stop_rx_pcu(struct ath5k_hw *ah)
+=======
+void ath5k_hw_stop_rx_pcu(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	AR5K_REG_ENABLE_BITS(ah, AR5K_DIAG_SW, AR5K_DIAG_SW_DIS_RX);
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_set_opmode() - Set PCU operating mode
  * @ah: The &struct ath5k_hw
  * @op_mode: One of enum nl80211_iftype
@@ -870,11 +1134,25 @@ ath5k_hw_stop_rx_pcu(struct ath5k_hw *ah)
  */
 int
 ath5k_hw_set_opmode(struct ath5k_hw *ah, enum nl80211_iftype op_mode)
+=======
+ * ath5k_hw_set_opmode - Set PCU operating mode
+ *
+ * @ah: The &struct ath5k_hw
+ * @op_mode: &enum nl80211_iftype operating mode
+ *
+ * Configure PCU for the various operating modes (AP/STA etc)
+ */
+int ath5k_hw_set_opmode(struct ath5k_hw *ah, enum nl80211_iftype op_mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath_common *common = ath5k_hw_common(ah);
 	u32 pcu_reg, beacon_reg, low_id, high_id;
 
+<<<<<<< HEAD
 	ATH5K_DBG(ah, ATH5K_DEBUG_MODE, "mode %d\n", op_mode);
+=======
+	ATH5K_DBG(ah->ah_sc, ATH5K_DEBUG_MODE, "mode %d\n", op_mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Preserve rest settings */
 	pcu_reg = ath5k_hw_reg_read(ah, AR5K_STA_ID1) & 0xffff0000;
@@ -936,6 +1214,7 @@ ath5k_hw_set_opmode(struct ath5k_hw *ah, enum nl80211_iftype op_mode)
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_pcu_init() - Initialize PCU
  * @ah: The &struct ath5k_hw
@@ -947,6 +1226,10 @@ ath5k_hw_set_opmode(struct ath5k_hw *ah, enum nl80211_iftype op_mode)
  */
 void
 ath5k_hw_pcu_init(struct ath5k_hw *ah, enum nl80211_iftype op_mode)
+=======
+void ath5k_hw_pcu_init(struct ath5k_hw *ah, enum nl80211_iftype op_mode,
+								u8 mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Set bssid and bssid mask */
 	ath5k_hw_set_bssid(ah);
@@ -959,13 +1242,21 @@ ath5k_hw_pcu_init(struct ath5k_hw *ah, enum nl80211_iftype op_mode)
 	 * XXX: rethink this after new mode changes to
 	 * mac80211 are integrated */
 	if (ah->ah_version == AR5K_AR5212 &&
+<<<<<<< HEAD
 		ah->nvifs)
+=======
+		ah->ah_sc->nvifs)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ath5k_hw_write_rate_duration(ah);
 
 	/* Set RSSI/BRSSI thresholds
 	 *
 	 * Note: If we decide to set this value
+<<<<<<< HEAD
 	 * dynamically, have in mind that when AR5K_RSSI_THR
+=======
+	 * dynamicaly, have in mind that when AR5K_RSSI_THR
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * register is read it might return 0x40 if we haven't
 	 * wrote anything to it plus BMISS RSSI threshold is zeroed.
 	 * So doing a save/restore procedure here isn't the right

@@ -15,6 +15,10 @@
 #include <linux/slab.h>
 #include <linux/kmod.h>
 #include <linux/kobj_map.h>
+<<<<<<< HEAD
+=======
+#include <linux/buffer_head.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mutex.h>
 #include <linux/idr.h>
 #include <linux/log2.h>
@@ -25,7 +29,11 @@ static DEFINE_MUTEX(block_class_lock);
 struct kobject *block_depr;
 
 /* for extended dynamic devt allocation, currently only one major is used */
+<<<<<<< HEAD
 #define NR_EXT_DEVT		(1 << MINORBITS)
+=======
+#define MAX_EXT_DEVT		(1 << MINORBITS)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* For extended devt allocation.  ext_devt_mutex prevents look up
  * results from going away underneath its user.
@@ -420,6 +428,7 @@ int blk_alloc_devt(struct hd_struct *part, dev_t *devt)
 	do {
 		if (!idr_pre_get(&ext_devt_idr, GFP_KERNEL))
 			return -ENOMEM;
+<<<<<<< HEAD
 		mutex_lock(&ext_devt_mutex);
 		rc = idr_get_new(&ext_devt_idr, part, &idx);
 		if (!rc && idx >= NR_EXT_DEVT) {
@@ -427,11 +436,22 @@ int blk_alloc_devt(struct hd_struct *part, dev_t *devt)
 			rc = -EBUSY;
 		}
 		mutex_unlock(&ext_devt_mutex);
+=======
+		rc = idr_get_new(&ext_devt_idr, part, &idx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} while (rc == -EAGAIN);
 
 	if (rc)
 		return rc;
 
+<<<<<<< HEAD
+=======
+	if (idx > MAX_EXT_DEVT) {
+		idr_remove(&ext_devt_idr, idx);
+		return -EBUSY;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*devt = MKDEV(BLOCK_EXT_MAJOR, blk_mangle_minor(idx));
 	return 0;
 }
@@ -508,7 +528,11 @@ static int exact_lock(dev_t devt, void *data)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void register_disk(struct gendisk *disk)
+=======
+void register_disk(struct gendisk *disk)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct device *ddev = disk_to_dev(disk);
 	struct block_device *bdev;
@@ -518,7 +542,11 @@ static void register_disk(struct gendisk *disk)
 
 	ddev->parent = disk->driverfs_dev;
 
+<<<<<<< HEAD
 	dev_set_name(ddev, "%s", disk->disk_name);
+=======
+	dev_set_name(ddev, disk->disk_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* delay uevents, until we scanned partition table */
 	dev_set_uevent_suppress(ddev, 1);
@@ -537,7 +565,11 @@ static void register_disk(struct gendisk *disk)
 	disk->slave_dir = kobject_create_and_add("slaves", &ddev->kobj);
 
 	/* No minors to use for partitions */
+<<<<<<< HEAD
 	if (!disk_part_scan_enabled(disk))
+=======
+	if (!disk_partitionable(disk))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto exit;
 
 	/* No such device (e.g., media were just removed) */
@@ -605,7 +637,11 @@ void add_disk(struct gendisk *disk)
 
 	disk_alloc_events(disk);
 
+<<<<<<< HEAD
 	/* Register BDI before referencing it from bdev */
+=======
+	/* Register BDI before referencing it from bdev */ 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bdi = &disk->queue->backing_dev_info;
 	bdi_register_dev(bdi, disk_devt(disk));
 
@@ -618,7 +654,11 @@ void add_disk(struct gendisk *disk)
 	 * Take an extra ref on queue which will be put on disk_release()
 	 * so that it sticks around as long as @disk is there.
 	 */
+<<<<<<< HEAD
 	WARN_ON_ONCE(!blk_get_queue(disk->queue));
+=======
+	WARN_ON_ONCE(blk_get_queue(disk->queue));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	retval = sysfs_create_link(&disk_to_dev(disk)->kobj, &bdi->dev->kobj,
 				   "bdi");
@@ -645,6 +685,10 @@ void del_gendisk(struct gendisk *disk)
 	disk_part_iter_exit(&piter);
 
 	invalidate_partition(disk, 0);
+<<<<<<< HEAD
+=======
+	blk_free_devt(disk_to_dev(disk)->devt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_capacity(disk, 0);
 	disk->flags &= ~GENHD_FL_UP;
 
@@ -662,7 +706,10 @@ void del_gendisk(struct gendisk *disk)
 	if (!sysfs_deprecated)
 		sysfs_remove_link(block_depr, dev_name(disk_to_dev(disk)));
 	device_del(disk_to_dev(disk));
+<<<<<<< HEAD
 	blk_free_devt(disk_to_dev(disk)->devt);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(del_gendisk);
 
@@ -744,7 +791,11 @@ void __init printk_all_partitions(void)
 		struct hd_struct *part;
 		char name_buf[BDEVNAME_SIZE];
 		char devt_buf[BDEVT_SIZE];
+<<<<<<< HEAD
 		char uuid_buf[PARTITION_META_INFO_UUIDLTH * 2 + 5];
+=======
+		u8 uuid[PARTITION_META_INFO_UUIDLTH * 2 + 1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * Don't show empty devices or things that have been
@@ -763,16 +814,26 @@ void __init printk_all_partitions(void)
 		while ((part = disk_part_iter_next(&piter))) {
 			bool is_part0 = part == &disk->part0;
 
+<<<<<<< HEAD
 			uuid_buf[0] = '\0';
 			if (part->info)
 				snprintf(uuid_buf, sizeof(uuid_buf), "%pU",
 					 part->info->uuid);
+=======
+			uuid[0] = 0;
+			if (part->info)
+				part_unpack_uuid(part->info->uuid, uuid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			printk("%s%s %10llu %s %s", is_part0 ? "" : "  ",
 			       bdevt_str(part_devt(part), devt_buf),
 			       (unsigned long long)part->nr_sects >> 1,
+<<<<<<< HEAD
 			       disk_name(disk, part->partno, name_buf),
 			       uuid_buf);
+=======
+			       disk_name(disk, part->partno, name_buf), uuid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (is_part0) {
 				if (disk->driverfs_dev != NULL &&
 				    disk->driverfs_dev->driver != NULL)
@@ -852,7 +913,11 @@ static int show_partition(struct seq_file *seqf, void *v)
 	char buf[BDEVNAME_SIZE];
 
 	/* Don't show non-partitionable removeable devices or empty devices */
+<<<<<<< HEAD
 	if (!get_capacity(sgp) || (!disk_max_parts(sgp) &&
+=======
+	if (!get_capacity(sgp) || (!disk_partitionable(sgp) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   (sgp->flags & GENHD_FL_REMOVABLE)))
 		return 0;
 	if (sgp->flags & GENHD_FL_SUPPRESS_PARTITION_INFO)
@@ -1029,6 +1094,17 @@ static const struct attribute_group *disk_attr_groups[] = {
 	NULL
 };
 
+<<<<<<< HEAD
+=======
+static void disk_free_ptbl_rcu_cb(struct rcu_head *head)
+{
+	struct disk_part_tbl *ptbl =
+		container_of(head, struct disk_part_tbl, rcu_head);
+
+	kfree(ptbl);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * disk_replace_part_tbl - replace disk->part_tbl in RCU-safe way
  * @disk: disk to replace part_tbl for
@@ -1049,7 +1125,11 @@ static void disk_replace_part_tbl(struct gendisk *disk,
 
 	if (old_ptbl) {
 		rcu_assign_pointer(old_ptbl->last_lookup, NULL);
+<<<<<<< HEAD
 		kfree_rcu(old_ptbl, rcu_head);
+=======
+		call_rcu(&old_ptbl->rcu_head, disk_free_ptbl_rcu_cb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1110,11 +1190,38 @@ static void disk_release(struct device *dev)
 		blk_put_queue(disk->queue);
 	kfree(disk);
 }
+<<<<<<< HEAD
+=======
+
+static int disk_uevent(struct device *dev, struct kobj_uevent_env *env)
+{
+	struct gendisk *disk = dev_to_disk(dev);
+	struct disk_part_iter piter;
+	struct hd_struct *part;
+	int cnt = 0;
+
+	disk_part_iter_init(&piter, disk, 0);
+	while((part = disk_part_iter_next(&piter)))
+		cnt++;
+	disk_part_iter_exit(&piter);
+	add_uevent_var(env, "NPARTS=%u", cnt);
+#ifdef CONFIG_USB_STORAGE_MEDIA_SCAN
+	if (disk->interfaces == GENHD_IF_USB)
+		add_uevent_var(env, "MEDIAPRST=%d", disk->media_present);
+#endif
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct class block_class = {
 	.name		= "block",
 };
 
+<<<<<<< HEAD
 static char *block_devnode(struct device *dev, umode_t *mode)
+=======
+static char *block_devnode(struct device *dev, mode_t *mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct gendisk *disk = dev_to_disk(dev);
 
@@ -1128,6 +1235,10 @@ static struct device_type disk_type = {
 	.groups		= disk_attr_groups,
 	.release	= disk_release,
 	.devnode	= block_devnode,
+<<<<<<< HEAD
+=======
+	.uevent		= disk_uevent,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #ifdef CONFIG_PROC_FS
@@ -1153,23 +1264,40 @@ static int diskstats_show(struct seq_file *seqf, void *v)
 				"wsect wuse running use aveq"
 				"\n\n");
 	*/
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	disk_part_iter_init(&piter, gp, DISK_PITER_INCL_EMPTY_PART0);
 	while ((hd = disk_part_iter_next(&piter))) {
 		cpu = part_stat_lock();
 		part_round_stats(cpu, hd);
 		part_stat_unlock();
+<<<<<<< HEAD
 		seq_printf(seqf, "%4d %7d %s %lu %lu %lu "
 			   "%u %lu %lu %lu %u %u %u %u\n",
+=======
+		seq_printf(seqf, "%4d %7d %s %lu %lu %llu "
+			   "%u %lu %lu %llu %u %u %u %u\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   MAJOR(part_devt(hd)), MINOR(part_devt(hd)),
 			   disk_name(gp, hd->partno, buf),
 			   part_stat_read(hd, ios[READ]),
 			   part_stat_read(hd, merges[READ]),
+<<<<<<< HEAD
 			   part_stat_read(hd, sectors[READ]),
 			   jiffies_to_msecs(part_stat_read(hd, ticks[READ])),
 			   part_stat_read(hd, ios[WRITE]),
 			   part_stat_read(hd, merges[WRITE]),
 			   part_stat_read(hd, sectors[WRITE]),
+=======
+			   (unsigned long long)part_stat_read(hd, sectors[READ]),
+			   jiffies_to_msecs(part_stat_read(hd, ticks[READ])),
+			   part_stat_read(hd, ios[WRITE]),
+			   part_stat_read(hd, merges[WRITE]),
+			   (unsigned long long)part_stat_read(hd, sectors[WRITE]),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   jiffies_to_msecs(part_stat_read(hd, ticks[WRITE])),
 			   part_in_flight(hd),
 			   jiffies_to_msecs(part_stat_read(hd, io_ticks)),
@@ -1177,7 +1305,11 @@ static int diskstats_show(struct seq_file *seqf, void *v)
 			);
 	}
 	disk_part_iter_exit(&piter);
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1505,6 +1637,7 @@ void disk_unblock_events(struct gendisk *disk)
 }
 
 /**
+<<<<<<< HEAD
  * disk_flush_events - schedule immediate event checking and flushing
  * @disk: disk to check and flush events for
  * @mask: events to flush
@@ -1519,18 +1652,42 @@ void disk_unblock_events(struct gendisk *disk)
 void disk_flush_events(struct gendisk *disk, unsigned int mask)
 {
 	struct disk_events *ev = disk->ev;
+=======
+ * disk_check_events - schedule immediate event checking
+ * @disk: disk to check events for
+ *
+ * Schedule immediate event checking on @disk if not blocked.
+ *
+ * CONTEXT:
+ * Don't care.  Safe to call from irq context.
+ */
+void disk_check_events(struct gendisk *disk)
+{
+	struct disk_events *ev = disk->ev;
+	unsigned long flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!ev)
 		return;
 
+<<<<<<< HEAD
 	spin_lock_irq(&ev->lock);
 	ev->clearing |= mask;
+=======
+	spin_lock_irqsave(&ev->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ev->block) {
 		cancel_delayed_work(&ev->dwork);
 		queue_delayed_work(system_nrt_freezable_wq, &ev->dwork, 0);
 	}
+<<<<<<< HEAD
 	spin_unlock_irq(&ev->lock);
 }
+=======
+	spin_unlock_irqrestore(&ev->lock, flags);
+}
+EXPORT_SYMBOL_GPL(disk_check_events);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * disk_clear_events - synchronously check, clear and return pending events
@@ -1589,8 +1746,18 @@ static void disk_events_workfn(struct work_struct *work)
 	unsigned long intv;
 	int nr_events = 0, i;
 
+<<<<<<< HEAD
 	/* check events */
 	events = disk->fops->check_events(disk, clearing);
+=======
+#ifdef CONFIG_USB_STORAGE_MEDIA_SCAN
+	if (disk->interfaces != GENHD_IF_USB)
+	/* check events */
+		events = disk->fops->check_events(disk, clearing);
+#else
+	events = disk->fops->check_events(disk, clearing);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* accumulate pending events and schedule next poll if necessary */
 	spin_lock_irq(&ev->lock);
@@ -1614,8 +1781,20 @@ static void disk_events_workfn(struct work_struct *work)
 		if (events & disk->events & (1 << i))
 			envp[nr_events++] = disk_uevents[i];
 
+<<<<<<< HEAD
 	if (nr_events)
 		kobject_uevent_env(&disk_to_dev(disk)->kobj, KOBJ_CHANGE, envp);
+=======
+#ifdef CONFIG_USB_STORAGE_MEDIA_SCAN
+	if (disk->interfaces != GENHD_IF_USB) {
+		if (nr_events)
+			kobject_uevent_env(&disk_to_dev(disk)->kobj, KOBJ_CHANGE, envp);
+	}
+#else
+	if (nr_events)
+		kobject_uevent_env(&disk_to_dev(disk)->kobj, KOBJ_CHANGE, envp);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1720,7 +1899,11 @@ static int disk_events_set_dfl_poll_msecs(const char *val,
 	mutex_lock(&disk_events_mutex);
 
 	list_for_each_entry(ev, &disk_events, node)
+<<<<<<< HEAD
 		disk_flush_events(ev->disk, 0);
+=======
+		disk_check_events(ev->disk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_unlock(&disk_events_mutex);
 

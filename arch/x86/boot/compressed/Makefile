@@ -4,7 +4,11 @@
 # create a compressed vmlinux image from the original vmlinux
 #
 
+<<<<<<< HEAD
 targets := vmlinux vmlinux.bin vmlinux.bin.gz vmlinux.bin.bz2 vmlinux.bin.lzma vmlinux.bin.xz vmlinux.bin.lzo
+=======
+targets := vmlinux.lds vmlinux vmlinux.bin vmlinux.bin.gz vmlinux.bin.bz2 vmlinux.bin.lzma vmlinux.bin.xz vmlinux.bin.lzo head_$(BITS).o misc.o string.o cmdline.o early_serial_console.o piggy.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 KBUILD_CFLAGS := -m$(BITS) -D__KERNEL__ $(LINUX_INCLUDE) -O2
 KBUILD_CFLAGS += -fno-strict-aliasing -fPIC
@@ -22,6 +26,7 @@ LDFLAGS := -m elf_$(UTS_MACHINE)
 LDFLAGS_vmlinux := -T
 
 hostprogs-y	:= mkpiggy
+<<<<<<< HEAD
 HOST_EXTRACFLAGS += -I$(srctree)/tools/include
 
 VMLINUX_OBJS = $(obj)/vmlinux.lds $(obj)/head_$(BITS).o $(obj)/misc.o \
@@ -35,6 +40,10 @@ ifeq ($(CONFIG_EFI_STUB), y)
 endif
 
 $(obj)/vmlinux: $(VMLINUX_OBJS) FORCE
+=======
+
+$(obj)/vmlinux: $(obj)/vmlinux.lds $(obj)/head_$(BITS).o $(obj)/misc.o $(obj)/string.o $(obj)/cmdline.o $(obj)/early_serial_console.o $(obj)/piggy.o FORCE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	$(call if_changed,ld)
 	@:
 
@@ -42,12 +51,22 @@ OBJCOPYFLAGS_vmlinux.bin :=  -R .comment -S
 $(obj)/vmlinux.bin: vmlinux FORCE
 	$(call if_changed,objcopy)
 
+<<<<<<< HEAD
 targets += $(patsubst $(obj)/%,%,$(VMLINUX_OBJS)) vmlinux.bin.all vmlinux.relocs
 
 CMD_RELOCS = arch/x86/tools/relocs
 quiet_cmd_relocs = RELOCS  $@
       cmd_relocs = $(CMD_RELOCS) $< > $@;$(CMD_RELOCS) --abs-relocs $<
 $(obj)/vmlinux.relocs: vmlinux FORCE
+=======
+
+targets += vmlinux.bin.all vmlinux.relocs relocs
+hostprogs-$(CONFIG_X86_NEED_RELOCS) += relocs
+
+quiet_cmd_relocs = RELOCS  $@
+      cmd_relocs = $(obj)/relocs $< > $@;$(obj)/relocs --abs-relocs $<
+$(obj)/vmlinux.relocs: vmlinux $(obj)/relocs FORCE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	$(call if_changed,relocs)
 
 vmlinux.bin.all-y := $(obj)/vmlinux.bin

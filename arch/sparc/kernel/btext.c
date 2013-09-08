@@ -6,6 +6,10 @@
 #include <linux/kernel.h>
 #include <linux/string.h>
 #include <linux/init.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/console.h>
 
 #include <asm/btext.h>

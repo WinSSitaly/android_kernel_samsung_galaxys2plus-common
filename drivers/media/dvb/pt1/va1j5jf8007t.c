@@ -264,7 +264,11 @@ static int va1j5jf8007t_check_modulation(struct va1j5jf8007t_state *state,
 
 static int
 va1j5jf8007t_tune(struct dvb_frontend *fe,
+<<<<<<< HEAD
 		  bool re_tune,
+=======
+		  struct dvb_frontend_parameters *params,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  unsigned int mode_flags,  unsigned int *delay,
 		  fe_status_t *status)
 {
@@ -274,7 +278,11 @@ va1j5jf8007t_tune(struct dvb_frontend *fe,
 
 	state = fe->demodulator_priv;
 
+<<<<<<< HEAD
 	if (re_tune)
+=======
+	if (params != NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		state->tune_state = VA1J5JF8007T_SET_FREQUENCY;
 
 	switch (state->tune_state) {
@@ -428,9 +436,15 @@ static void va1j5jf8007t_release(struct dvb_frontend *fe)
 }
 
 static struct dvb_frontend_ops va1j5jf8007t_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_ISDBT },
 	.info = {
 		.name = "VA1J5JF8007/VA1J5JF8011 ISDB-T",
+=======
+	.info = {
+		.name = "VA1J5JF8007/VA1J5JF8011 ISDB-T",
+		.type = FE_OFDM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min = 90000000,
 		.frequency_max = 770000000,
 		.frequency_stepsize = 142857,

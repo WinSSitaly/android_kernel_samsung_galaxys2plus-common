@@ -252,7 +252,23 @@ static struct platform_driver pcap_ts_driver = {
 		.pm	= PCAP_TS_PM_OPS,
 	},
 };
+<<<<<<< HEAD
 module_platform_driver(pcap_ts_driver);
+=======
+
+static int __init pcap_ts_init(void)
+{
+	return platform_driver_register(&pcap_ts_driver);
+}
+
+static void __exit pcap_ts_exit(void)
+{
+	platform_driver_unregister(&pcap_ts_driver);
+}
+
+module_init(pcap_ts_init);
+module_exit(pcap_ts_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Motorola PCAP2 touchscreen driver");
 MODULE_AUTHOR("Daniel Ribeiro / Harald Welte");

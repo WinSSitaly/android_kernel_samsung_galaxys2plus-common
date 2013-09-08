@@ -715,11 +715,16 @@ repoll:
 		}
 
 		wc->slid	   = be16_to_cpu(cqe->rlid);
+<<<<<<< HEAD
+=======
+		wc->sl		   = be16_to_cpu(cqe->sl_vid) >> 12;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		g_mlpath_rqpn	   = be32_to_cpu(cqe->g_mlpath_rqpn);
 		wc->src_qp	   = g_mlpath_rqpn & 0xffffff;
 		wc->dlid_path_bits = (g_mlpath_rqpn >> 24) & 0x7f;
 		wc->wc_flags	  |= g_mlpath_rqpn & 0x80000000 ? IB_WC_GRH : 0;
 		wc->pkey_index     = be32_to_cpu(cqe->immed_rss_invalid) & 0x7f;
+<<<<<<< HEAD
 		wc->wc_flags	  |= mlx4_ib_ipoib_csum_ok(cqe->status,
 					cqe->checksum) ? IB_WC_IP_CSUM_OK : 0;
 		if (rdma_port_get_link_layer(wc->qp->device,
@@ -727,6 +732,9 @@ repoll:
 			wc->sl  = be16_to_cpu(cqe->sl_vid) >> 13;
 		else
 			wc->sl  = be16_to_cpu(cqe->sl_vid) >> 12;
+=======
+		wc->csum_ok	   = mlx4_ib_ipoib_csum_ok(cqe->status, cqe->checksum);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -748,7 +756,12 @@ int mlx4_ib_poll_cq(struct ib_cq *ibcq, int num_entries, struct ib_wc *wc)
 			break;
 	}
 
+<<<<<<< HEAD
 	mlx4_cq_set_ci(&cq->mcq);
+=======
+	if (npolled)
+		mlx4_cq_set_ci(&cq->mcq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_irqrestore(&cq->lock, flags);
 

@@ -36,6 +36,12 @@
  #define Tuner_Power_OFF                  0
 
 #define GET_USB_SPEED                     0x07
+<<<<<<< HEAD
+=======
+ #define USB_SPEED_LOW                    0
+ #define USB_SPEED_FULL                   1
+ #define USB_SPEED_HIGH                   2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define LOCK_TUNER_COMMAND                0x09
 

@@ -475,6 +475,12 @@ static inline unsigned int getDestinationSize(const unsigned int opcode)
 	return (nRc);
 }
 
+<<<<<<< HEAD
+=======
+extern unsigned int checkCondition(const unsigned int opcode,
+				   const unsigned int ccodes);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern const float64 float64Constant[];
 extern const float32 float32Constant[];
 

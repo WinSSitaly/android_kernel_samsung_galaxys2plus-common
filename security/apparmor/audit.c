@@ -19,7 +19,11 @@
 #include "include/audit.h"
 #include "include/policy.h"
 
+<<<<<<< HEAD
 const char *const op_table[] = {
+=======
+const char *op_table[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"null",
 
 	"sysctl",
@@ -73,7 +77,11 @@ const char *const op_table[] = {
 	"profile_remove"
 };
 
+<<<<<<< HEAD
 const char *const audit_mode_names[] = {
+=======
+const char *audit_mode_names[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"normal",
 	"quiet_denied",
 	"quiet",
@@ -81,7 +89,11 @@ const char *const audit_mode_names[] = {
 	"all"
 };
 
+<<<<<<< HEAD
 static const char *const aa_audit_type[] = {
+=======
+static char *aa_audit_type[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"AUDIT",
 	"ALLOWED",
 	"DENIED",
@@ -89,7 +101,10 @@ static const char *const aa_audit_type[] = {
 	"STATUS",
 	"ERROR",
 	"KILLED"
+<<<<<<< HEAD
 	"AUTO"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -115,6 +130,7 @@ static void audit_pre(struct audit_buffer *ab, void *ca)
 
 	if (aa_g_audit_header) {
 		audit_log_format(ab, "apparmor=");
+<<<<<<< HEAD
 		audit_log_string(ab, aa_audit_type[sa->aad->type]);
 	}
 
@@ -135,6 +151,28 @@ static void audit_pre(struct audit_buffer *ab, void *ca)
 		pid_t pid;
 		rcu_read_lock();
 		pid = rcu_dereference(tsk->real_parent)->pid;
+=======
+		audit_log_string(ab, aa_audit_type[sa->aad.type]);
+	}
+
+	if (sa->aad.op) {
+		audit_log_format(ab, " operation=");
+		audit_log_string(ab, op_table[sa->aad.op]);
+	}
+
+	if (sa->aad.info) {
+		audit_log_format(ab, " info=");
+		audit_log_string(ab, sa->aad.info);
+		if (sa->aad.error)
+			audit_log_format(ab, " error=%d", sa->aad.error);
+	}
+
+	if (sa->aad.profile) {
+		struct aa_profile *profile = sa->aad.profile;
+		pid_t pid;
+		rcu_read_lock();
+		pid = tsk->real_parent->pid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rcu_read_unlock();
 		audit_log_format(ab, " parent=%d", pid);
 		if (profile->ns != root_ns) {
@@ -145,9 +183,15 @@ static void audit_pre(struct audit_buffer *ab, void *ca)
 		audit_log_untrustedstring(ab, profile->base.hname);
 	}
 
+<<<<<<< HEAD
 	if (sa->aad->name) {
 		audit_log_format(ab, " name=");
 		audit_log_untrustedstring(ab, sa->aad->name);
+=======
+	if (sa->aad.name) {
+		audit_log_format(ab, " name=");
+		audit_log_untrustedstring(ab, sa->aad.name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -159,8 +203,15 @@ static void audit_pre(struct audit_buffer *ab, void *ca)
 void aa_audit_msg(int type, struct common_audit_data *sa,
 		  void (*cb) (struct audit_buffer *, void *))
 {
+<<<<<<< HEAD
 	sa->aad->type = type;
 	common_lsm_audit(sa, audit_pre, cb);
+=======
+	sa->aad.type = type;
+	sa->lsm_pre_audit = audit_pre;
+	sa->lsm_post_audit = cb;
+	common_lsm_audit(sa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -182,7 +233,11 @@ int aa_audit(int type, struct aa_profile *profile, gfp_t gfp,
 	BUG_ON(!profile);
 
 	if (type == AUDIT_APPARMOR_AUTO) {
+<<<<<<< HEAD
 		if (likely(!sa->aad->error)) {
+=======
+		if (likely(!sa->aad.error)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (AUDIT_MODE(profile) != AUDIT_ALL)
 				return 0;
 			type = AUDIT_APPARMOR_AUDIT;
@@ -194,12 +249,17 @@ int aa_audit(int type, struct aa_profile *profile, gfp_t gfp,
 	if (AUDIT_MODE(profile) == AUDIT_QUIET ||
 	    (type == AUDIT_APPARMOR_DENIED &&
 	     AUDIT_MODE(profile) == AUDIT_QUIET))
+<<<<<<< HEAD
 		return sa->aad->error;
+=======
+		return sa->aad.error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (KILL_MODE(profile) && type == AUDIT_APPARMOR_DENIED)
 		type = AUDIT_APPARMOR_KILL;
 
 	if (!unconfined(profile))
+<<<<<<< HEAD
 		sa->aad->profile = profile;
 
 	aa_audit_msg(type, sa, cb);
@@ -211,4 +271,17 @@ int aa_audit(int type, struct aa_profile *profile, gfp_t gfp,
 		return complain_error(sa->aad->error);
 
 	return sa->aad->error;
+=======
+		sa->aad.profile = profile;
+
+	aa_audit_msg(type, sa, cb);
+
+	if (sa->aad.type == AUDIT_APPARMOR_KILL)
+		(void)send_sig_info(SIGKILL, NULL, sa->tsk ? sa->tsk : current);
+
+	if (sa->aad.type == AUDIT_APPARMOR_ALLOWED)
+		return complain_error(sa->aad.error);
+
+	return sa->aad.error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

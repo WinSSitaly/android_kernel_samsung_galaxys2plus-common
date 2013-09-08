@@ -22,7 +22,10 @@
  */
 #include <linux/module.h>
 #include <linux/tty.h>
+<<<<<<< HEAD
 #include <linux/tty_flip.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/init.h>
 #include <linux/console.h>
@@ -58,11 +61,17 @@ static struct lock_class_key port_lock_key;
 
 static void uart_change_speed(struct tty_struct *tty, struct uart_state *state,
 					struct ktermios *old_termios);
+<<<<<<< HEAD
 static void uart_wait_until_sent(struct tty_struct *tty, int timeout);
 static void uart_change_pm(struct uart_state *state, int pm_state);
 
 static void uart_port_shutdown(struct tty_port *port);
 
+=======
+static void __uart_wait_until_sent(struct uart_port *port, int timeout);
+static void uart_change_pm(struct uart_state *state, int pm_state);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This routine is used by the interrupt handler to schedule processing in
  * the software interrupt portion of the driver.
@@ -75,7 +84,11 @@ void uart_write_wakeup(struct uart_port *port)
 	 * closed.  No cookie for you.
 	 */
 	BUG_ON(!state);
+<<<<<<< HEAD
 	tty_wakeup(state->port.tty);
+=======
+	tasklet_schedule(&state->tlet);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void uart_stop(struct tty_struct *tty)
@@ -94,6 +107,12 @@ static void __uart_start(struct tty_struct *tty)
 	struct uart_state *state = tty->driver_data;
 	struct uart_port *port = state->uart_port;
 
+<<<<<<< HEAD
+=======
+	if (port->ops->wake_peer)
+		port->ops->wake_peer(port);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!uart_circ_empty(&state->xmit) && state->xmit.buf &&
 	    !tty->stopped && !tty->hw_stopped)
 		port->ops->start_tx(port);
@@ -110,6 +129,15 @@ static void uart_start(struct tty_struct *tty)
 	spin_unlock_irqrestore(&port->lock, flags);
 }
 
+<<<<<<< HEAD
+=======
+static void uart_tasklet_action(unsigned long data)
+{
+	struct uart_state *state = (struct uart_state *)data;
+	tty_wakeup(state->port.tty);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void
 uart_update_mctrl(struct uart_port *port, unsigned int set, unsigned int clear)
 {
@@ -131,16 +159,35 @@ uart_update_mctrl(struct uart_port *port, unsigned int set, unsigned int clear)
  * Startup the port.  This will be called once per open.  All calls
  * will be serialised by the per-port mutex.
  */
+<<<<<<< HEAD
 static int uart_port_startup(struct tty_struct *tty, struct uart_state *state,
 		int init_hw)
+=======
+static int uart_startup(struct tty_struct *tty, struct uart_state *state, int init_hw)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct uart_port *uport = state->uart_port;
 	struct tty_port *port = &state->port;
 	unsigned long page;
 	int retval = 0;
 
+<<<<<<< HEAD
 	if (uport->type == PORT_UNKNOWN)
 		return 1;
+=======
+	if (port->flags & ASYNC_INITIALIZED)
+		return 0;
+
+	/*
+	 * Set the TTY IO error marker - we will only clear this
+	 * once we have successfully opened the port.  Also set
+	 * up the tty->alt_speed kludge
+	 */
+	set_bit(TTY_IO_ERROR, &tty->flags);
+
+	if (uport->type == PORT_UNKNOWN)
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Initialise and allocate the transmit and temporary
@@ -182,6 +229,7 @@ static int uart_port_startup(struct tty_struct *tty, struct uart_state *state,
 				tty->hw_stopped = 1;
 			spin_unlock_irq(&uport->lock);
 		}
+<<<<<<< HEAD
 	}
 
 	/*
@@ -215,6 +263,15 @@ static int uart_startup(struct tty_struct *tty, struct uart_state *state,
 		set_bit(ASYNCB_INITIALIZED, &port->flags);
 		clear_bit(TTY_IO_ERROR, &tty->flags);
 	} else if (retval > 0)
+=======
+
+		set_bit(ASYNCB_INITIALIZED, &port->flags);
+
+		clear_bit(TTY_IO_ERROR, &tty->flags);
+	}
+
+	if (retval && capable(CAP_SYS_ADMIN))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		retval = 0;
 
 	return retval;
@@ -243,6 +300,7 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
 		if (!tty || (tty->termios->c_cflag & HUPCL))
 			uart_clear_mctrl(uport, TIOCM_DTR | TIOCM_RTS);
 
+<<<<<<< HEAD
 		uart_port_shutdown(port);
 	}
 
@@ -252,6 +310,32 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
 	 * we don't try to resume a port that has been shutdown.
 	 */
 	clear_bit(ASYNCB_SUSPENDED, &port->flags);
+=======
+		/*
+		 * clear delta_msr_wait queue to avoid mem leaks: we may free
+		 * the irq here so the queue might never be woken up.  Note
+		 * that we won't end up waiting on delta_msr_wait again since
+		 * any outstanding file descriptors should be pointing at
+		 * hung_up_tty_fops now.
+		 */
+		wake_up_interruptible(&port->delta_msr_wait);
+
+		/*
+		 * Free the IRQ and disable the port.
+		 */
+		uport->ops->shutdown(uport);
+
+		/*
+		 * Ensure that the IRQ handler isn't running on another CPU.
+		 */
+		synchronize_irq(uport->irq);
+	}
+
+	/*
+	 * kill off our tasklet
+	 */
+	tasklet_kill(&state->tlet);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Free the transmit buffer page.
@@ -421,7 +505,11 @@ uart_get_divisor(struct uart_port *port, unsigned int baud)
 	if (baud == 38400 && (port->flags & UPF_SPD_MASK) == UPF_SPD_CUST)
 		quot = port->custom_divisor;
 	else
+<<<<<<< HEAD
 		quot = DIV_ROUND_CLOSEST(port->uartclk, 16 * baud);
+=======
+		quot = (port->uartclk + (8 * baud)) / (16 * baud);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return quot;
 }
@@ -656,10 +744,17 @@ static int uart_get_info(struct uart_state *state,
 	tmp.flags	    = uport->flags;
 	tmp.xmit_fifo_size  = uport->fifosize;
 	tmp.baud_base	    = uport->uartclk / 16;
+<<<<<<< HEAD
 	tmp.close_delay	    = jiffies_to_msecs(port->close_delay) / 10;
 	tmp.closing_wait    = port->closing_wait == ASYNC_CLOSING_WAIT_NONE ?
 				ASYNC_CLOSING_WAIT_NONE :
 				jiffies_to_msecs(port->closing_wait) / 10;
+=======
+	tmp.close_delay	    = port->close_delay / 10;
+	tmp.closing_wait    = port->closing_wait == ASYNC_CLOSING_WAIT_NONE ?
+				ASYNC_CLOSING_WAIT_NONE :
+				port->closing_wait / 10;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tmp.custom_divisor  = uport->custom_divisor;
 	tmp.hub6	    = uport->hub6;
 	tmp.io_type         = uport->iotype;
@@ -693,10 +788,16 @@ static int uart_set_info(struct tty_struct *tty, struct uart_state *state,
 		new_port += (unsigned long) new_serial.port_high << HIGH_BITS_OFFSET;
 
 	new_serial.irq = irq_canonicalize(new_serial.irq);
+<<<<<<< HEAD
 	close_delay = msecs_to_jiffies(new_serial.close_delay * 10);
 	closing_wait = new_serial.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
 			ASYNC_CLOSING_WAIT_NONE :
 			msecs_to_jiffies(new_serial.closing_wait * 10);
+=======
+	close_delay = new_serial.close_delay * 10;
+	closing_wait = new_serial.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
+			ASYNC_CLOSING_WAIT_NONE : new_serial.closing_wait * 10;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * This semaphore protects port->count.  It is also
@@ -1256,6 +1357,11 @@ static void uart_close(struct tty_struct *tty, struct file *filp)
 	struct uart_port *uport;
 	unsigned long flags;
 
+<<<<<<< HEAD
+=======
+	BUG_ON(!tty_locked());
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!state)
 		return;
 
@@ -1264,8 +1370,59 @@ static void uart_close(struct tty_struct *tty, struct file *filp)
 
 	pr_debug("uart_close(%d) called\n", uport->line);
 
+<<<<<<< HEAD
 	if (tty_port_close_start(port, tty, filp) == 0)
 		return;
+=======
+	mutex_lock(&port->mutex);
+	spin_lock_irqsave(&port->lock, flags);
+
+	if (tty_hung_up_p(filp)) {
+		spin_unlock_irqrestore(&port->lock, flags);
+		goto done;
+	}
+
+	if ((tty->count == 1) && (port->count != 1)) {
+		/*
+		 * Uh, oh.  tty->count is 1, which means that the tty
+		 * structure will be freed.  port->count should always
+		 * be one in these conditions.  If it's greater than
+		 * one, we've got real problems, since it means the
+		 * serial port won't be shutdown.
+		 */
+		printk(KERN_ERR "uart_close: bad serial port count; tty->count is 1, "
+		       "port->count is %d\n", port->count);
+		port->count = 1;
+	}
+	if (--port->count < 0) {
+		printk(KERN_ERR "uart_close: bad serial port count for %s: %d\n",
+		       tty->name, port->count);
+		port->count = 0;
+	}
+	if (port->count) {
+		spin_unlock_irqrestore(&port->lock, flags);
+		goto done;
+	}
+
+	/*
+	 * Now we wait for the transmit buffer to clear; and we notify
+	 * the line discipline to only process XON/XOFF characters by
+	 * setting tty->closing.
+	 */
+	tty->closing = 1;
+	spin_unlock_irqrestore(&port->lock, flags);
+
+	if (port->closing_wait != ASYNC_CLOSING_WAIT_NONE) {
+		/*
+		 * hack: open-coded tty_wait_until_sent to avoid
+		 * recursive tty_lock
+		 */
+		long timeout = msecs_to_jiffies(port->closing_wait);
+		if (wait_event_interruptible_timeout(tty->write_wait,
+				!tty_chars_in_buffer(tty), timeout) >= 0)
+			__uart_wait_until_sent(uport, timeout);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * At this point, we stop accepting input.  To do this, we
@@ -1281,10 +1438,16 @@ static void uart_close(struct tty_struct *tty, struct file *filp)
 		 * has completely drained; this is especially
 		 * important if there is a transmit FIFO!
 		 */
+<<<<<<< HEAD
 		uart_wait_until_sent(tty, uport->timeout);
 	}
 
 	mutex_lock(&port->mutex);
+=======
+		__uart_wait_until_sent(uport, uport->timeout);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uart_shutdown(tty, state);
 	uart_flush_buffer(tty);
 
@@ -1297,8 +1460,12 @@ static void uart_close(struct tty_struct *tty, struct file *filp)
 	if (port->blocked_open) {
 		spin_unlock_irqrestore(&port->lock, flags);
 		if (port->close_delay)
+<<<<<<< HEAD
 			msleep_interruptible(
 					jiffies_to_msecs(port->close_delay));
+=======
+			msleep_interruptible(port->close_delay);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_lock_irqsave(&port->lock, flags);
 	} else if (!uart_console(uport)) {
 		spin_unlock_irqrestore(&port->lock, flags);
@@ -1310,6 +1477,7 @@ static void uart_close(struct tty_struct *tty, struct file *filp)
 	 * Wake up anyone trying to open this port.
 	 */
 	clear_bit(ASYNCB_NORMAL_ACTIVE, &port->flags);
+<<<<<<< HEAD
 	clear_bit(ASYNCB_CLOSING, &port->flags);
 	spin_unlock_irqrestore(&port->lock, flags);
 	wake_up_interruptible(&port->open_wait);
@@ -1322,6 +1490,17 @@ static void uart_wait_until_sent(struct tty_struct *tty, int timeout)
 {
 	struct uart_state *state = tty->driver_data;
 	struct uart_port *port = state->uart_port;
+=======
+	spin_unlock_irqrestore(&port->lock, flags);
+	wake_up_interruptible(&port->open_wait);
+
+done:
+	mutex_unlock(&port->mutex);
+}
+
+static void __uart_wait_until_sent(struct uart_port *port, int timeout)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long char_time, expire;
 
 	if (port->type == PORT_UNKNOWN || port->fifosize == 0)
@@ -1373,6 +1552,19 @@ static void uart_wait_until_sent(struct tty_struct *tty, int timeout)
 	}
 }
 
+<<<<<<< HEAD
+=======
+static void uart_wait_until_sent(struct tty_struct *tty, int timeout)
+{
+	struct uart_state *state = tty->driver_data;
+	struct uart_port *port = state->uart_port;
+
+	tty_lock();
+	__uart_wait_until_sent(port, timeout);
+	tty_unlock();
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This is called with the BKL held in
  *  linux/drivers/char/tty_io.c:do_tty_hangup()
@@ -1385,6 +1577,10 @@ static void uart_hangup(struct tty_struct *tty)
 	struct tty_port *port = &state->port;
 	unsigned long flags;
 
+<<<<<<< HEAD
+=======
+	BUG_ON(!tty_locked());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pr_debug("uart_hangup(%d)\n", state->uart_port->line);
 
 	mutex_lock(&port->mutex);
@@ -1402,6 +1598,7 @@ static void uart_hangup(struct tty_struct *tty)
 	mutex_unlock(&port->mutex);
 }
 
+<<<<<<< HEAD
 static int uart_port_activate(struct tty_port *port, struct tty_struct *tty)
 {
 	return 0;
@@ -1432,6 +1629,8 @@ static void uart_port_shutdown(struct tty_port *port)
 	synchronize_irq(uport->irq);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int uart_carrier_raised(struct tty_port *port)
 {
 	struct uart_state *state = container_of(port, struct uart_state, port);
@@ -1457,6 +1656,36 @@ static void uart_dtr_rts(struct tty_port *port, int onoff)
 		uart_clear_mctrl(uport, TIOCM_DTR | TIOCM_RTS);
 }
 
+<<<<<<< HEAD
+=======
+static struct uart_state *uart_get(struct uart_driver *drv, int line)
+{
+	struct uart_state *state;
+	struct tty_port *port;
+	int ret = 0;
+
+	state = drv->state + line;
+	port = &state->port;
+	if (mutex_lock_interruptible(&port->mutex)) {
+		ret = -ERESTARTSYS;
+		goto err;
+	}
+
+	port->count++;
+	if (!state->uart_port || state->uart_port->flags & UPF_DEAD) {
+		ret = -ENXIO;
+		goto err_unlock;
+	}
+	return state;
+
+ err_unlock:
+	port->count--;
+	mutex_unlock(&port->mutex);
+ err:
+	return ERR_PTR(ret);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * calls to uart_open are serialised by the BKL in
  *   fs/char_dev.c:chrdev_open()
@@ -1470,6 +1699,7 @@ static void uart_dtr_rts(struct tty_port *port, int onoff)
 static int uart_open(struct tty_struct *tty, struct file *filp)
 {
 	struct uart_driver *drv = (struct uart_driver *)tty->driver->driver_state;
+<<<<<<< HEAD
 	int retval, line = tty->index;
 	struct uart_state *state = drv->state + line;
 	struct tty_port *port = &state->port;
@@ -1493,6 +1723,29 @@ static int uart_open(struct tty_struct *tty, struct file *filp)
 		retval = -ENXIO;
 		goto err_dec_count;
 	}
+=======
+	struct uart_state *state;
+	struct tty_port *port;
+	int retval, line = tty->index;
+
+	BUG_ON(!tty_locked());
+	pr_debug("uart_open(%d) called\n", line);
+
+	/*
+	 * We take the semaphore inside uart_get to guarantee that we won't
+	 * be re-entered while allocating the state structure, or while we
+	 * request any IRQs that the driver may need.  This also has the nice
+	 * side-effect that it delays the action of uart_hangup, so we can
+	 * guarantee that state->port.tty will always contain something
+	 * reasonable.
+	 */
+	state = uart_get(drv, line);
+	if (IS_ERR(state)) {
+		retval = PTR_ERR(state);
+		goto fail;
+	}
+	port = &state->port;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Once we set tty->driver_data here, we are guaranteed that
@@ -1502,6 +1755,10 @@ static int uart_open(struct tty_struct *tty, struct file *filp)
 	tty->driver_data = state;
 	state->uart_port->state = state;
 	tty->low_latency = (state->uart_port->flags & UPF_LOW_LATENCY) ? 1 : 0;
+<<<<<<< HEAD
+=======
+	tty->alt_speed = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tty_port_tty_set(port, tty);
 
 	/*
@@ -1509,7 +1766,13 @@ static int uart_open(struct tty_struct *tty, struct file *filp)
 	 */
 	if (tty_hung_up_p(filp)) {
 		retval = -EAGAIN;
+<<<<<<< HEAD
 		goto err_dec_count;
+=======
+		port->count--;
+		mutex_unlock(&port->mutex);
+		goto fail;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -1530,12 +1793,17 @@ static int uart_open(struct tty_struct *tty, struct file *filp)
 	if (retval == 0)
 		retval = tty_port_block_til_ready(port, tty, filp);
 
+<<<<<<< HEAD
 end:
 	return retval;
 err_dec_count:
 	port->count--;
 	mutex_unlock(&port->mutex);
 	goto end;
+=======
+fail:
+	return retval;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const char *uart_type(struct uart_port *port)
@@ -1739,7 +2007,20 @@ struct baud_rates {
 };
 
 static const struct baud_rates baud_rates[] = {
+<<<<<<< HEAD
 	{ 921600, B921600 },
+=======
+	{ 4000000, B4000000 },
+	{ 3500000, B3500000 },
+	{ 3000000, B3000000 },
+	{ 2500000, B2500000 },
+	{ 2000000, B2000000 },
+	{ 1500000, B1500000 },
+	{ 1152000, B1152000 },
+	{ 1000000, B1000000 },
+	{ 921600, B921600 },
+	{ 500000, B500000 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 460800, B460800 },
 	{ 230400, B230400 },
 	{ 115200, B115200 },
@@ -1826,6 +2107,7 @@ uart_set_options(struct uart_port *port, struct console *co,
 EXPORT_SYMBOL_GPL(uart_set_options);
 #endif /* CONFIG_SERIAL_CORE_CONSOLE */
 
+<<<<<<< HEAD
 /**
  * uart_change_pm - set power state of the port
  *
@@ -1834,6 +2116,8 @@ EXPORT_SYMBOL_GPL(uart_set_options);
  *
  * Locking: port->mutex has to be held
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void uart_change_pm(struct uart_state *state, int pm_state)
 {
 	struct uart_port *port = state->uart_port;
@@ -1877,8 +2161,11 @@ int uart_suspend_port(struct uart_driver *drv, struct uart_port *uport)
 		mutex_unlock(&port->mutex);
 		return 0;
 	}
+<<<<<<< HEAD
 	put_device(tty_dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (console_suspend_enabled || !uart_console(uport))
 		uport->suspended = 1;
 
@@ -1944,11 +2231,17 @@ int uart_resume_port(struct uart_driver *drv, struct uart_port *uport)
 			disable_irq_wake(uport->irq);
 			uport->irq_wake = 0;
 		}
+<<<<<<< HEAD
 		put_device(tty_dev);
 		mutex_unlock(&port->mutex);
 		return 0;
 	}
 	put_device(tty_dev);
+=======
+		mutex_unlock(&port->mutex);
+		return 0;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uport->suspended = 0;
 
 	/*
@@ -2194,8 +2487,11 @@ static const struct tty_operations uart_ops = {
 };
 
 static const struct tty_port_operations uart_port_ops = {
+<<<<<<< HEAD
 	.activate	= uart_port_activate,
 	.shutdown	= uart_port_shutdown,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.carrier_raised = uart_carrier_raised,
 	.dtr_rts	= uart_dtr_rts,
 };
@@ -2234,6 +2530,10 @@ int uart_register_driver(struct uart_driver *drv)
 
 	drv->tty_driver = normal;
 
+<<<<<<< HEAD
+=======
+	normal->owner		= drv->owner;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	normal->driver_name	= drv->driver_name;
 	normal->name		= drv->dev_name;
 	normal->major		= drv->major;
@@ -2256,8 +2556,15 @@ int uart_register_driver(struct uart_driver *drv)
 
 		tty_port_init(port);
 		port->ops = &uart_port_ops;
+<<<<<<< HEAD
 		port->close_delay     = HZ / 2;	/* .5 seconds */
 		port->closing_wait    = 30 * HZ;/* 30 seconds */
+=======
+		port->close_delay     = 500;	/* .5 seconds */
+		port->closing_wait    = 30000;	/* 30 seconds */
+		tasklet_init(&state->tlet, uart_tasklet_action,
+			     (unsigned long)state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	retval = tty_register_driver(normal);
@@ -2286,7 +2593,10 @@ void uart_unregister_driver(struct uart_driver *drv)
 	tty_unregister_driver(p);
 	put_tty_driver(p);
 	kfree(drv->state);
+<<<<<<< HEAD
 	drv->state = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	drv->tty_driver = NULL;
 }
 
@@ -2352,11 +2662,23 @@ int uart_add_one_port(struct uart_driver *drv, struct uart_port *uport)
 	 */
 	tty_dev = tty_register_device(drv->tty_driver, uport->line, uport->dev);
 	if (likely(!IS_ERR(tty_dev))) {
+<<<<<<< HEAD
 		device_set_wakeup_capable(tty_dev, 1);
 	} else {
 		printk(KERN_ERR "Cannot register tty device on line %d\n",
 		       uport->line);
 	}
+=======
+#ifdef CONFIG_ARCH_KONA
+		device_set_wakeup_capable(tty_dev, true);
+#else
+		device_init_wakeup(tty_dev, 1);
+#endif
+		device_set_wakeup_enable(tty_dev, 0);
+	} else
+		printk(KERN_ERR "Cannot register tty device on line %d\n",
+		       uport->line);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Ensure UPF_DEAD is not set.
@@ -2419,6 +2741,14 @@ int uart_remove_one_port(struct uart_driver *drv, struct uart_port *uport)
 	 */
 	uport->type = PORT_UNKNOWN;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * Kill the tasklet, and free resources.
+	 */
+	tasklet_kill(&state->tlet);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	state->uart_port = NULL;
 	mutex_unlock(&port_mutex);
 
@@ -2449,6 +2779,7 @@ int uart_match_port(struct uart_port *port1, struct uart_port *port2)
 }
 EXPORT_SYMBOL(uart_match_port);
 
+<<<<<<< HEAD
 /**
  *	uart_handle_dcd_change - handle a change of carrier detect state
  *	@uport: uart_port structure for the open port
@@ -2542,6 +2873,8 @@ void uart_insert_char(struct uart_port *port, unsigned int status,
 }
 EXPORT_SYMBOL_GPL(uart_insert_char);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL(uart_write_wakeup);
 EXPORT_SYMBOL(uart_register_driver);
 EXPORT_SYMBOL(uart_unregister_driver);

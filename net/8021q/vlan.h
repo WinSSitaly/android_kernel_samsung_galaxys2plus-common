@@ -3,7 +3,10 @@
 
 #include <linux/if_vlan.h>
 #include <linux/u64_stats_sync.h>
+<<<<<<< HEAD
 #include <linux/list.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /**
@@ -41,10 +44,15 @@ struct vlan_pcpu_stats {
 	u32			tx_dropped;
 };
 
+<<<<<<< HEAD
 struct netpoll;
 
 /**
  *	struct vlan_dev_priv - VLAN private device data
+=======
+/**
+ *	struct vlan_dev_info - VLAN private device data
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	@nr_ingress_mappings: number of ingress priority mappings
  *	@ingress_priority_map: ingress priority mappings
  *	@nr_egress_mappings: number of egress priority mappings
@@ -56,7 +64,11 @@ struct netpoll;
  *	@dent: proc dir entry
  *	@vlan_pcpu_stats: ptr to percpu rx stats
  */
+<<<<<<< HEAD
 struct vlan_dev_priv {
+=======
+struct vlan_dev_info {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int				nr_ingress_mappings;
 	u32					ingress_priority_map[8];
 	unsigned int				nr_egress_mappings;
@@ -70,16 +82,23 @@ struct vlan_dev_priv {
 
 	struct proc_dir_entry			*dent;
 	struct vlan_pcpu_stats __percpu		*vlan_pcpu_stats;
+<<<<<<< HEAD
 #ifdef CONFIG_NET_POLL_CONTROLLER
 	struct netpoll				*netpoll;
 #endif
 };
 
 static inline struct vlan_dev_priv *vlan_dev_priv(const struct net_device *dev)
+=======
+};
+
+static inline struct vlan_dev_info *vlan_dev_info(const struct net_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return netdev_priv(dev);
 }
 
+<<<<<<< HEAD
 /* if this changes, algorithm will have to be reworked because this
  * depends on completely exhausting the VLAN identifier space.  Thus
  * it gives constant time look-up, but in many cases it wastes memory.
@@ -134,6 +153,8 @@ static inline struct net_device *vlan_find_dev(struct net_device *real_dev,
 	return NULL;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* found in vlan_dev.c */
 void vlan_dev_set_ingress_priority(const struct net_device *dev,
 				   u32 skb_prio, u16 vlan_prio);
@@ -150,7 +171,11 @@ void unregister_vlan_dev(struct net_device *dev, struct list_head *head);
 static inline u32 vlan_get_ingress_priority(struct net_device *dev,
 					    u16 vlan_tci)
 {
+<<<<<<< HEAD
 	struct vlan_dev_priv *vip = vlan_dev_priv(dev);
+=======
+	struct vlan_dev_info *vip = vlan_dev_info(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return vip->ingress_priority_map[(vlan_tci >> VLAN_PRIO_SHIFT) & 0x7];
 }

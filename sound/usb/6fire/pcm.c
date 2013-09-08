@@ -5,6 +5,10 @@
  *
  * Author:	Torsten Schenk <torsten.schenk@zoho.com>
  * Created:	Jan 01, 2011
+<<<<<<< HEAD
+=======
+ * Version:	0.3.0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright:	(C) Torsten Schenk
  *
  * This program is free software; you can redistribute it and/or modify
@@ -540,7 +544,11 @@ static snd_pcm_uframes_t usb6fire_pcm_pointer(
 	snd_pcm_uframes_t ret;
 
 	if (rt->panic || !sub)
+<<<<<<< HEAD
 		return SNDRV_PCM_POS_XRUN;
+=======
+		return SNDRV_PCM_STATE_XRUN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&sub->lock, flags);
 	ret = sub->dma_off;

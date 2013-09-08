@@ -450,7 +450,11 @@ static int dbgp_ehci_startup(void)
 	writel(FLAG_CF, &ehci_regs->configured_flag);
 
 	/* Wait until the controller is no longer halted */
+<<<<<<< HEAD
 	loop = 1000;
+=======
+	loop = 10;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do {
 		status = readl(&ehci_regs->status);
 		if (!(status & STS_HALT))

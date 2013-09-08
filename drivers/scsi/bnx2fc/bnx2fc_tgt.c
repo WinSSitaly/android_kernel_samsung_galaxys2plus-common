@@ -2,7 +2,11 @@
  * Handles operations such as session offload/upload etc, and manages
  * session resources such as connection id and qp resources.
  *
+<<<<<<< HEAD
  * Copyright (c) 2008 - 2011 Broadcom Corporation
+=======
+ * Copyright (c) 2008 - 2010 Broadcom Corporation
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,8 +69,12 @@ static void bnx2fc_offload_session(struct fcoe_port *port,
 {
 	struct fc_lport *lport = rdata->local_port;
 	struct fc_rport *rport = rdata->rport;
+<<<<<<< HEAD
 	struct bnx2fc_interface *interface = port->priv;
 	struct bnx2fc_hba *hba = interface->hba;
+=======
+	struct bnx2fc_hba *hba = port->priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rval;
 	int i = 0;
 
@@ -76,7 +84,11 @@ static void bnx2fc_offload_session(struct fcoe_port *port,
 	if (rval) {
 		printk(KERN_ERR PFX "Failed to allocate conn id for "
 			"port_id (%6x)\n", rport->port_id);
+<<<<<<< HEAD
 		goto tgt_init_err;
+=======
+		goto ofld_err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Allocate session resources */
@@ -139,12 +151,20 @@ retry_ofld:
 ofld_err:
 	/* couldn't offload the session. log off from this rport */
 	BNX2FC_TGT_DBG(tgt, "bnx2fc_offload_session - offload error\n");
+<<<<<<< HEAD
 	/* Free session resources */
 	bnx2fc_free_session_resc(hba, tgt);
 tgt_init_err:
 	if (tgt->fcoe_conn_id != -1)
 		bnx2fc_free_conn_id(hba, tgt->fcoe_conn_id);
 	lport->tt.rport_logoff(rdata);
+=======
+	lport->tt.rport_logoff(rdata);
+	/* Free session resources */
+	bnx2fc_free_session_resc(hba, tgt);
+	if (tgt->fcoe_conn_id != -1)
+		bnx2fc_free_conn_id(hba, tgt->fcoe_conn_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void bnx2fc_flush_active_ios(struct bnx2fc_rport *tgt)
@@ -237,8 +257,12 @@ void bnx2fc_flush_active_ios(struct bnx2fc_rport *tgt)
 static void bnx2fc_upload_session(struct fcoe_port *port,
 					struct bnx2fc_rport *tgt)
 {
+<<<<<<< HEAD
 	struct bnx2fc_interface *interface = port->priv;
 	struct bnx2fc_hba *hba = interface->hba;
+=======
+	struct bnx2fc_hba *hba = port->priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BNX2FC_TGT_DBG(tgt, "upload_session: active_ios = %d\n",
 		tgt->num_active_ios.counter);
@@ -317,10 +341,14 @@ static int bnx2fc_init_tgt(struct bnx2fc_rport *tgt,
 {
 
 	struct fc_rport *rport = rdata->rport;
+<<<<<<< HEAD
 	struct bnx2fc_interface *interface = port->priv;
 	struct bnx2fc_hba *hba = interface->hba;
 	struct b577xx_doorbell_set_prod *sq_db = &tgt->sq_db;
 	struct b577xx_fcoe_rx_doorbell *rx_db = &tgt->rx_db;
+=======
+	struct bnx2fc_hba *hba = port->priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tgt->rport = rport;
 	tgt->rdata = rdata;
@@ -341,7 +369,10 @@ static int bnx2fc_init_tgt(struct bnx2fc_rport *tgt,
 	tgt->max_sqes = BNX2FC_SQ_WQES_MAX;
 	tgt->max_rqes = BNX2FC_RQ_WQES_MAX;
 	tgt->max_cqes = BNX2FC_CQ_WQES_MAX;
+<<<<<<< HEAD
 	atomic_set(&tgt->free_sqes, BNX2FC_SQ_WQES_MAX);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Initialize the toggle bit */
 	tgt->sq_curr_toggle_bit = 1;
@@ -352,6 +383,7 @@ static int bnx2fc_init_tgt(struct bnx2fc_rport *tgt,
 	tgt->rq_cons_idx = 0;
 	atomic_set(&tgt->num_active_ios, 0);
 
+<<<<<<< HEAD
 	if (rdata->flags & FC_RP_FLAGS_RETRY) {
 		tgt->dev_type = TYPE_TAPE;
 		tgt->io_timeout = 0; /* use default ULP timeout */
@@ -371,6 +403,9 @@ static int bnx2fc_init_tgt(struct bnx2fc_rport *tgt,
 				B577XX_DOORBELL_HDR_CONN_TYPE_SHIFT));
 	rx_db->params = (0x2 << B577XX_FCOE_RX_DOORBELL_NEGATIVE_ARM_SHIFT) |
 		     (0x3 << B577XX_FCOE_RX_DOORBELL_OPCODE_SHIFT);
+=======
+	tgt->work_time_slice = 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_init(&tgt->tgt_lock);
 	spin_lock_init(&tgt->cq_lock);
@@ -402,8 +437,12 @@ void bnx2fc_rport_event_handler(struct fc_lport *lport,
 				enum fc_rport_event event)
 {
 	struct fcoe_port *port = lport_priv(lport);
+<<<<<<< HEAD
 	struct bnx2fc_interface *interface = port->priv;
 	struct bnx2fc_hba *hba = interface->hba;
+=======
+	struct bnx2fc_hba *hba = port->priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct fc_rport *rport = rdata->rport;
 	struct fc_rport_libfc_priv *rp;
 	struct bnx2fc_rport *tgt;
@@ -414,7 +453,11 @@ void bnx2fc_rport_event_handler(struct fc_lport *lport,
 	switch (event) {
 	case RPORT_EV_READY:
 		if (!rport) {
+<<<<<<< HEAD
 			printk(KERN_ERR PFX "rport is NULL: ERROR!\n");
+=======
+			printk(KERN_ALERT PFX "rport is NULL: ERROR!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 
@@ -426,7 +469,11 @@ void bnx2fc_rport_event_handler(struct fc_lport *lport,
 			 * We should not come here, as lport will
 			 * take care of fabric login
 			 */
+<<<<<<< HEAD
 			printk(KERN_ERR PFX "%x - rport_event_handler ERROR\n",
+=======
+			printk(KERN_ALERT PFX "%x - rport_event_handler ERROR\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				rdata->ids.port_id);
 			break;
 		}
@@ -494,7 +541,11 @@ void bnx2fc_rport_event_handler(struct fc_lport *lport,
 			break;
 
 		if (!rport) {
+<<<<<<< HEAD
 			printk(KERN_INFO PFX "%x - rport not created Yet!!\n",
+=======
+			printk(KERN_ALERT PFX "%x - rport not created Yet!!\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				port_id);
 			break;
 		}
@@ -548,8 +599,12 @@ void bnx2fc_rport_event_handler(struct fc_lport *lport,
 struct bnx2fc_rport *bnx2fc_tgt_lookup(struct fcoe_port *port,
 					     u32 port_id)
 {
+<<<<<<< HEAD
 	struct bnx2fc_interface *interface = port->priv;
 	struct bnx2fc_hba *hba = interface->hba;
+=======
+	struct bnx2fc_hba *hba = port->priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bnx2fc_rport *tgt;
 	struct fc_rport_priv *rdata;
 	int i;
@@ -564,7 +619,11 @@ struct bnx2fc_rport *bnx2fc_tgt_lookup(struct fcoe_port *port,
 						"obtained\n");
 					return tgt;
 				} else {
+<<<<<<< HEAD
 					BNX2FC_TGT_DBG(tgt, "rport 0x%x "
+=======
+					printk(KERN_ERR PFX "rport 0x%x "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						"is in DELETED state\n",
 						rdata->ids.port_id);
 					return NULL;
@@ -623,6 +682,10 @@ static void bnx2fc_free_conn_id(struct bnx2fc_hba *hba, u32 conn_id)
 	/* called with hba mutex held */
 	spin_lock_bh(&hba->hba_lock);
 	hba->tgt_ofld_list[conn_id] = NULL;
+<<<<<<< HEAD
+=======
+	hba->next_conn_id = conn_id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_bh(&hba->hba_lock);
 }
 
@@ -644,7 +707,11 @@ static int bnx2fc_alloc_session_resc(struct bnx2fc_hba *hba,
 	tgt->sq = dma_alloc_coherent(&hba->pcidev->dev, tgt->sq_mem_size,
 				     &tgt->sq_dma, GFP_KERNEL);
 	if (!tgt->sq) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "unable to allocate SQ memory %d\n",
+=======
+		printk(KERN_ALERT PFX "unable to allocate SQ memory %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			tgt->sq_mem_size);
 		goto mem_alloc_failure;
 	}
@@ -657,7 +724,11 @@ static int bnx2fc_alloc_session_resc(struct bnx2fc_hba *hba,
 	tgt->cq = dma_alloc_coherent(&hba->pcidev->dev, tgt->cq_mem_size,
 				     &tgt->cq_dma, GFP_KERNEL);
 	if (!tgt->cq) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "unable to allocate CQ memory %d\n",
+=======
+		printk(KERN_ALERT PFX "unable to allocate CQ memory %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			tgt->cq_mem_size);
 		goto mem_alloc_failure;
 	}
@@ -670,7 +741,11 @@ static int bnx2fc_alloc_session_resc(struct bnx2fc_hba *hba,
 	tgt->rq = dma_alloc_coherent(&hba->pcidev->dev, tgt->rq_mem_size,
 					&tgt->rq_dma, GFP_KERNEL);
 	if (!tgt->rq) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "unable to allocate RQ memory %d\n",
+=======
+		printk(KERN_ALERT PFX "unable to allocate RQ memory %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			tgt->rq_mem_size);
 		goto mem_alloc_failure;
 	}
@@ -682,7 +757,11 @@ static int bnx2fc_alloc_session_resc(struct bnx2fc_hba *hba,
 	tgt->rq_pbl = dma_alloc_coherent(&hba->pcidev->dev, tgt->rq_pbl_size,
 					 &tgt->rq_pbl_dma, GFP_KERNEL);
 	if (!tgt->rq_pbl) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "unable to allocate RQ PBL %d\n",
+=======
+		printk(KERN_ALERT PFX "unable to allocate RQ PBL %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			tgt->rq_pbl_size);
 		goto mem_alloc_failure;
 	}
@@ -708,7 +787,11 @@ static int bnx2fc_alloc_session_resc(struct bnx2fc_hba *hba,
 	tgt->xferq = dma_alloc_coherent(&hba->pcidev->dev, tgt->xferq_mem_size,
 					&tgt->xferq_dma, GFP_KERNEL);
 	if (!tgt->xferq) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "unable to allocate XFERQ %d\n",
+=======
+		printk(KERN_ALERT PFX "unable to allocate XFERQ %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			tgt->xferq_mem_size);
 		goto mem_alloc_failure;
 	}
@@ -722,7 +805,11 @@ static int bnx2fc_alloc_session_resc(struct bnx2fc_hba *hba,
 	tgt->confq = dma_alloc_coherent(&hba->pcidev->dev, tgt->confq_mem_size,
 					&tgt->confq_dma, GFP_KERNEL);
 	if (!tgt->confq) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "unable to allocate CONFQ %d\n",
+=======
+		printk(KERN_ALERT PFX "unable to allocate CONFQ %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			tgt->confq_mem_size);
 		goto mem_alloc_failure;
 	}
@@ -737,7 +824,11 @@ static int bnx2fc_alloc_session_resc(struct bnx2fc_hba *hba,
 					    tgt->confq_pbl_size,
 					    &tgt->confq_pbl_dma, GFP_KERNEL);
 	if (!tgt->confq_pbl) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "unable to allocate CONFQ PBL %d\n",
+=======
+		printk(KERN_ALERT PFX "unable to allocate CONFQ PBL %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			tgt->confq_pbl_size);
 		goto mem_alloc_failure;
 	}
@@ -762,7 +853,11 @@ static int bnx2fc_alloc_session_resc(struct bnx2fc_hba *hba,
 					  tgt->conn_db_mem_size,
 					  &tgt->conn_db_dma, GFP_KERNEL);
 	if (!tgt->conn_db) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "unable to allocate conn_db %d\n",
+=======
+		printk(KERN_ALERT PFX "unable to allocate conn_db %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						tgt->conn_db_mem_size);
 		goto mem_alloc_failure;
 	}
@@ -778,17 +873,31 @@ static int bnx2fc_alloc_session_resc(struct bnx2fc_hba *hba,
 				      &tgt->lcq_dma, GFP_KERNEL);
 
 	if (!tgt->lcq) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "unable to allocate lcq %d\n",
+=======
+		printk(KERN_ALERT PFX "unable to allocate lcq %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       tgt->lcq_mem_size);
 		goto mem_alloc_failure;
 	}
 	memset(tgt->lcq, 0, tgt->lcq_mem_size);
 
+<<<<<<< HEAD
+=======
+	/* Arm CQ */
+	tgt->conn_db->cq_arm.lo = -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tgt->conn_db->rq_prod = 0x8000;
 
 	return 0;
 
 mem_alloc_failure:
+<<<<<<< HEAD
+=======
+	bnx2fc_free_session_resc(hba, tgt);
+	bnx2fc_free_conn_id(hba, tgt->fcoe_conn_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -ENOMEM;
 }
 
@@ -803,6 +912,7 @@ mem_alloc_failure:
 static void bnx2fc_free_session_resc(struct bnx2fc_hba *hba,
 						struct bnx2fc_rport *tgt)
 {
+<<<<<<< HEAD
 	void __iomem *ctx_base_ptr;
 
 	BNX2FC_TGT_DBG(tgt, "Freeing up session resources\n");
@@ -811,6 +921,14 @@ static void bnx2fc_free_session_resc(struct bnx2fc_hba *hba,
 	ctx_base_ptr = tgt->ctx_base;
 	tgt->ctx_base = NULL;
 
+=======
+	BNX2FC_TGT_DBG(tgt, "Freeing up session resources\n");
+
+	if (tgt->ctx_base) {
+		iounmap(tgt->ctx_base);
+		tgt->ctx_base = NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Free LCQ */
 	if (tgt->lcq) {
 		dma_free_coherent(&hba->pcidev->dev, tgt->lcq_mem_size,
@@ -852,19 +970,30 @@ static void bnx2fc_free_session_resc(struct bnx2fc_hba *hba,
 		tgt->rq = NULL;
 	}
 	/* Free CQ */
+<<<<<<< HEAD
+=======
+	spin_lock_bh(&tgt->cq_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (tgt->cq) {
 		dma_free_coherent(&hba->pcidev->dev, tgt->cq_mem_size,
 				    tgt->cq, tgt->cq_dma);
 		tgt->cq = NULL;
 	}
+<<<<<<< HEAD
+=======
+	spin_unlock_bh(&tgt->cq_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Free SQ */
 	if (tgt->sq) {
 		dma_free_coherent(&hba->pcidev->dev, tgt->sq_mem_size,
 				    tgt->sq, tgt->sq_dma);
 		tgt->sq = NULL;
 	}
+<<<<<<< HEAD
 	spin_unlock_bh(&tgt->cq_lock);
 
 	if (ctx_base_ptr)
 		iounmap(ctx_base_ptr);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

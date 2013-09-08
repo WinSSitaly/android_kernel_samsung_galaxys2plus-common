@@ -35,7 +35,11 @@ struct ir_raw_event_ctrl {
 	struct list_head		list;		/* to keep track of raw clients */
 	struct task_struct		*thread;
 	spinlock_t			lock;
+<<<<<<< HEAD
 	struct kfifo_rec_ptr_1		kfifo;		/* fifo for the pulse/space durations */
+=======
+	struct kfifo			kfifo;		/* fifo for the pulse/space durations */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ktime_t				last_event;	/* when last event occurred */
 	enum raw_event_type		last_type;	/* last event type */
 	struct rc_dev			*dev;		/* pointer to the parent rc_dev */
@@ -84,6 +88,7 @@ struct ir_raw_event_ctrl {
 		unsigned count;
 		unsigned wanted_bits;
 	} rc5_sz;
+<<<<<<< HEAD
 	struct sanyo_dec {
 		int state;
 		unsigned count;
@@ -100,6 +105,8 @@ struct ir_raw_event_ctrl {
 		unsigned count;
 		unsigned wanted_bits;
 	} mce_kbd;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct lirc_codec {
 		struct rc_dev *dev;
 		struct lirc_driver *drv;
@@ -167,34 +174,51 @@ void ir_raw_init(void);
 #ifdef CONFIG_IR_NEC_DECODER_MODULE
 #define load_nec_decode()	request_module("ir-nec-decoder")
 #else
+<<<<<<< HEAD
 static inline void load_nec_decode(void) { }
+=======
+#define load_nec_decode()	0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /* from ir-rc5-decoder.c */
 #ifdef CONFIG_IR_RC5_DECODER_MODULE
 #define load_rc5_decode()	request_module("ir-rc5-decoder")
 #else
+<<<<<<< HEAD
 static inline void load_rc5_decode(void) { }
+=======
+#define load_rc5_decode()	0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /* from ir-rc6-decoder.c */
 #ifdef CONFIG_IR_RC6_DECODER_MODULE
 #define load_rc6_decode()	request_module("ir-rc6-decoder")
 #else
+<<<<<<< HEAD
 static inline void load_rc6_decode(void) { }
+=======
+#define load_rc6_decode()	0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /* from ir-jvc-decoder.c */
 #ifdef CONFIG_IR_JVC_DECODER_MODULE
 #define load_jvc_decode()	request_module("ir-jvc-decoder")
 #else
+<<<<<<< HEAD
 static inline void load_jvc_decode(void) { }
+=======
+#define load_jvc_decode()	0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /* from ir-sony-decoder.c */
 #ifdef CONFIG_IR_SONY_DECODER_MODULE
 #define load_sony_decode()	request_module("ir-sony-decoder")
 #else
+<<<<<<< HEAD
 static inline void load_sony_decode(void) { }
 #endif
 
@@ -210,13 +234,20 @@ static inline void load_sanyo_decode(void) { }
 #define load_mce_kbd_decode()	request_module("ir-mce_kbd-decoder")
 #else
 static inline void load_mce_kbd_decode(void) { }
+=======
+#define load_sony_decode()	0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /* from ir-lirc-codec.c */
 #ifdef CONFIG_IR_LIRC_CODEC_MODULE
 #define load_lirc_codec()	request_module("ir-lirc-codec")
 #else
+<<<<<<< HEAD
 static inline void load_lirc_codec(void) { }
+=======
+#define load_lirc_codec()	0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 

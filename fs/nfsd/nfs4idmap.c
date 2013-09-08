@@ -36,11 +36,15 @@
 #include <linux/seq_file.h>
 #include <linux/sched.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <net/net_namespace.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "idmap.h"
 #include "nfsd.h"
 
 /*
+<<<<<<< HEAD
  * Turn off idmapping when using AUTH_SYS.
  */
 static bool nfs4_disable_idmapping = true;
@@ -49,6 +53,8 @@ MODULE_PARM_DESC(nfs4_disable_idmapping,
 		"Turn off server's NFSv4 idmapping when using 'sec=sys'");
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Cache entry
  */
 
@@ -475,20 +481,34 @@ nfsd_idmap_init(void)
 {
 	int rv;
 
+<<<<<<< HEAD
 	rv = cache_register_net(&idtoname_cache, &init_net);
 	if (rv)
 		return rv;
 	rv = cache_register_net(&nametoid_cache, &init_net);
 	if (rv)
 		cache_unregister_net(&idtoname_cache, &init_net);
+=======
+	rv = cache_register(&idtoname_cache);
+	if (rv)
+		return rv;
+	rv = cache_register(&nametoid_cache);
+	if (rv)
+		cache_unregister(&idtoname_cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rv;
 }
 
 void
 nfsd_idmap_shutdown(void)
 {
+<<<<<<< HEAD
 	cache_unregister_net(&idtoname_cache, &init_net);
 	cache_unregister_net(&nametoid_cache, &init_net);
+=======
+	cache_unregister(&idtoname_cache);
+	cache_unregister(&nametoid_cache);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -569,6 +589,7 @@ idmap_id_to_name(struct svc_rqst *rqstp, int type, uid_t id, char *name)
 	return ret;
 }
 
+<<<<<<< HEAD
 static bool
 numeric_name_to_id(struct svc_rqst *rqstp, int type, const char *name, u32 namelen, uid_t *id)
 {
@@ -606,28 +627,46 @@ do_id_to_name(struct svc_rqst *rqstp, int type, uid_t id, char *name)
 	return idmap_id_to_name(rqstp, type, id, name);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 __be32
 nfsd_map_name_to_uid(struct svc_rqst *rqstp, const char *name, size_t namelen,
 		__u32 *id)
 {
+<<<<<<< HEAD
 	return do_name_to_id(rqstp, IDMAP_TYPE_USER, name, namelen, id);
+=======
+	return idmap_name_to_id(rqstp, IDMAP_TYPE_USER, name, namelen, id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 __be32
 nfsd_map_name_to_gid(struct svc_rqst *rqstp, const char *name, size_t namelen,
 		__u32 *id)
 {
+<<<<<<< HEAD
 	return do_name_to_id(rqstp, IDMAP_TYPE_GROUP, name, namelen, id);
+=======
+	return idmap_name_to_id(rqstp, IDMAP_TYPE_GROUP, name, namelen, id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int
 nfsd_map_uid_to_name(struct svc_rqst *rqstp, __u32 id, char *name)
 {
+<<<<<<< HEAD
 	return do_id_to_name(rqstp, IDMAP_TYPE_USER, id, name);
+=======
+	return idmap_id_to_name(rqstp, IDMAP_TYPE_USER, id, name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int
 nfsd_map_gid_to_name(struct svc_rqst *rqstp, __u32 id, char *name)
 {
+<<<<<<< HEAD
 	return do_id_to_name(rqstp, IDMAP_TYPE_GROUP, id, name);
+=======
+	return idmap_id_to_name(rqstp, IDMAP_TYPE_GROUP, id, name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

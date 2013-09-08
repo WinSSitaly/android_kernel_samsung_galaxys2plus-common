@@ -26,6 +26,10 @@ static struct gpio palmtc_pcmcia_gpios[] = {
 	{ GPIO_NR_PALMTC_PCMCIA_POWER2,	GPIOF_INIT_LOW,	"PCMCIA Power 2" },
 	{ GPIO_NR_PALMTC_PCMCIA_POWER3,	GPIOF_INIT_LOW,	"PCMCIA Power 3" },
 	{ GPIO_NR_PALMTC_PCMCIA_RESET,	GPIOF_INIT_HIGH,"PCMCIA Reset" },
+<<<<<<< HEAD
+=======
+	{ GPIO_NR_PALMTC_PCMCIA_READY,	GPIOF_IN,	"PCMCIA Ready" },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ GPIO_NR_PALMTC_PCMCIA_PWRREADY, GPIOF_IN,	"PCMCIA Power Ready" },
 };
 
@@ -36,8 +40,12 @@ static int palmtc_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
 	ret = gpio_request_array(palmtc_pcmcia_gpios,
 				ARRAY_SIZE(palmtc_pcmcia_gpios));
 
+<<<<<<< HEAD
 	skt->stat[SOC_STAT_RDY].gpio = GPIO_NR_PALMTC_PCMCIA_READY;
 	skt->stat[SOC_STAT_RDY].name = "PCMCIA Ready";
+=======
+	skt->socket.pci_irq = IRQ_GPIO(GPIO_NR_PALMTC_PCMCIA_READY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -51,6 +59,13 @@ static void palmtc_pcmcia_socket_state(struct soc_pcmcia_socket *skt,
 					struct pcmcia_state *state)
 {
 	state->detect = 1; /* always inserted */
+<<<<<<< HEAD
+=======
+	state->ready  = !!gpio_get_value(GPIO_NR_PALMTC_PCMCIA_READY);
+	state->bvd1   = 1;
+	state->bvd2   = 1;
+	state->wrprot = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	state->vs_3v  = 1;
 	state->vs_Xv  = 0;
 }
@@ -113,6 +128,17 @@ static int palmtc_pcmcia_configure_socket(struct soc_pcmcia_socket *skt,
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+static void palmtc_pcmcia_socket_init(struct soc_pcmcia_socket *skt)
+{
+}
+
+static void palmtc_pcmcia_socket_suspend(struct soc_pcmcia_socket *skt)
+{
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct pcmcia_low_level palmtc_pcmcia_ops = {
 	.owner			= THIS_MODULE,
 
@@ -124,6 +150,12 @@ static struct pcmcia_low_level palmtc_pcmcia_ops = {
 
 	.socket_state		= palmtc_pcmcia_socket_state,
 	.configure_socket	= palmtc_pcmcia_configure_socket,
+<<<<<<< HEAD
+=======
+
+	.socket_init		= palmtc_pcmcia_socket_init,
+	.socket_suspend		= palmtc_pcmcia_socket_suspend,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device *palmtc_pcmcia_device;

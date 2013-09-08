@@ -23,7 +23,11 @@
 #include <linux/swab.h>
 #include "r592.h"
 
+<<<<<<< HEAD
 static bool r592_enable_dma = 1;
+=======
+static int r592_enable_dma = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int debug;
 
 static const char *tpc_names[] = {

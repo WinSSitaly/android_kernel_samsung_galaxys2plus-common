@@ -54,7 +54,11 @@ int __init bcm63xx_uart_register(unsigned int id)
 	if (id >= ARRAY_SIZE(bcm63xx_uart_devices))
 		return -ENODEV;
 
+<<<<<<< HEAD
 	if (id == 1 && (!BCMCPU_IS_6358() && !BCMCPU_IS_6368()))
+=======
+	if (id == 1 && !BCMCPU_IS_6358())
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 
 	if (id == 0) {

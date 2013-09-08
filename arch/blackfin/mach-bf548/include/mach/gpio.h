@@ -170,8 +170,11 @@
 
 #define MAX_BLACKFIN_GPIOS 160
 
+<<<<<<< HEAD
 #define BFIN_GPIO_PINT 1
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __ASSEMBLY__
 
 struct gpio_port_t {

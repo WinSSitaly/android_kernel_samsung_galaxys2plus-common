@@ -13,8 +13,11 @@
  * warranty of any kind, whether express or implied.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/types.h>
@@ -27,7 +30,11 @@
 #include <linux/uaccess.h>
 #include <mach/hardware.h>
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int heartbeat = 60;	/* (secs) Default is 1 minute */
 static unsigned long wdt_status;
 static unsigned long boot_status;
@@ -149,7 +156,12 @@ static int ixp4xx_wdt_release(struct inode *inode, struct file *file)
 	if (test_bit(WDT_OK_TO_CLOSE, &wdt_status))
 		wdt_disable();
 	else
+<<<<<<< HEAD
 		pr_crit("Device closed unexpectedly - timer will not stop\n");
+=======
+		printk(KERN_CRIT "WATCHDOG: Device closed unexpectedly - "
+					"timer will not stop\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clear_bit(WDT_IN_USE, &wdt_status);
 	clear_bit(WDT_OK_TO_CLOSE, &wdt_status);
 
@@ -177,15 +189,29 @@ static int __init ixp4xx_wdt_init(void)
 	int ret;
 
 	if (!(read_cpuid_id() & 0xf) && !cpu_is_ixp46x()) {
+<<<<<<< HEAD
 		pr_err("Rev. A0 IXP42x CPU detected - watchdog disabled\n");
 
 		return -ENODEV;
 	}
+=======
+		printk(KERN_ERR "IXP4XXX Watchdog: Rev. A0 IXP42x CPU detected"
+			" - watchdog disabled\n");
+
+		return -ENODEV;
+	}
+	spin_lock_init(&wdt_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	boot_status = (*IXP4XX_OSST & IXP4XX_OSST_TIMER_WARM_RESET) ?
 			WDIOF_CARDRESET : 0;
 	ret = misc_register(&ixp4xx_wdt_miscdev);
 	if (ret == 0)
+<<<<<<< HEAD
 		pr_info("timer heartbeat %d sec\n", heartbeat);
+=======
+		printk(KERN_INFO "IXP4xx Watchdog Timer: heartbeat %d sec\n",
+			heartbeat);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -204,7 +230,11 @@ MODULE_DESCRIPTION("IXP4xx Network Processor Watchdog");
 module_param(heartbeat, int, 0);
 MODULE_PARM_DESC(heartbeat, "Watchdog heartbeat in seconds (default 60s)");
 
+<<<<<<< HEAD
 module_param(nowayout, bool, 0);
+=======
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started");
 
 MODULE_LICENSE("GPL");

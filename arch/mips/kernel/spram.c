@@ -15,6 +15,10 @@
 
 #include <asm/fpu.h>
 #include <asm/mipsregs.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/r4kcache.h>
 #include <asm/hazards.h>
 

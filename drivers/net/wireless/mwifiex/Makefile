@@ -39,6 +39,9 @@ obj-$(CONFIG_MWIFIEX) += mwifiex.o
 
 mwifiex_sdio-y += sdio.o
 obj-$(CONFIG_MWIFIEX_SDIO) += mwifiex_sdio.o
+<<<<<<< HEAD
 
 mwifiex_pcie-y += pcie.o
 obj-$(CONFIG_MWIFIEX_PCIE) += mwifiex_pcie.o
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

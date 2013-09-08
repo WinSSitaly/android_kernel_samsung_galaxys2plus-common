@@ -401,7 +401,11 @@ static void __devexit pasemi_smb_remove(struct pci_dev *dev)
 	kfree(smbus);
 }
 
+<<<<<<< HEAD
 static DEFINE_PCI_DEVICE_TABLE(pasemi_smb_ids) = {
+=======
+static const struct pci_device_id pasemi_smb_ids[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ PCI_DEVICE(0x1959, 0xa003) },
 	{ 0, }
 };

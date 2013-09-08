@@ -18,7 +18,10 @@
 #include <linux/kernel.h>
 #include <linux/errno.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/prefetch.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/usb.h>
 #include <linux/irq.h>
 #include <linux/platform_device.h>
@@ -56,7 +59,10 @@ u8 tusb_get_revision(struct musb *musb)
 
 	return rev;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(tusb_get_revision);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int tusb_print_revision(struct musb *musb)
 {
@@ -271,13 +277,22 @@ void musb_read_fifo(struct musb_hw_ep *hw_ep, u16 len, u8 *buf)
 
 static struct musb *the_musb;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_GADGET_MUSB_HDRC
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* This is used by gadget drivers, and OTG transceiver logic, allowing
  * at most mA current to be drawn from VBUS during a Default-B session
  * (that is, while VBUS exceeds 4.4V).  In Default-A (including pure host
  * mode), or low power Default-B sessions, something else supplies power.
  * Caller must take care of locking.
  */
+<<<<<<< HEAD
 static int tusb_draw_power(struct usb_phy *x, unsigned mA)
+=======
+static int tusb_draw_power(struct otg_transceiver *x, unsigned mA)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct musb	*musb = the_musb;
 	void __iomem	*tbase = musb->ctrl_base;
@@ -293,7 +308,11 @@ static int tusb_draw_power(struct usb_phy *x, unsigned mA)
 	 * The actual current usage would be very board-specific.  For now,
 	 * it's simpler to just use an aggregate (also board-specific).
 	 */
+<<<<<<< HEAD
 	if (x->otg->default_a || mA < (musb->min_power << 1))
+=======
+	if (x->default_a || mA < (musb->min_power << 1))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mA = 0;
 
 	reg = musb_readl(tbase, TUSB_PRCM_MNGMT);
@@ -310,6 +329,13 @@ static int tusb_draw_power(struct usb_phy *x, unsigned mA)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+#else
+#define tusb_draw_power	NULL
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* workaround for issue 13:  change clock during chip idle
  * (to be fixed in rev3 silicon) ... symptoms include disconnect
  * or looping suspend/resume cycles
@@ -436,15 +462,30 @@ static void musb_do_idle(unsigned long _musb)
 		if (is_host_active(musb) && (musb->port1_status >> 16))
 			goto done;
 
+<<<<<<< HEAD
 		if (is_peripheral_enabled(musb) && !musb->gadget_driver) {
 			wakeups = 0;
 		} else {
 			wakeups = TUSB_PRCM_WHOSTDISCON
 				| TUSB_PRCM_WBUS
+=======
+#ifdef CONFIG_USB_GADGET_MUSB_HDRC
+		if (is_peripheral_enabled(musb) && !musb->gadget_driver)
+			wakeups = 0;
+		else {
+			wakeups = TUSB_PRCM_WHOSTDISCON
+					| TUSB_PRCM_WBUS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					| TUSB_PRCM_WVBUS;
 			if (is_otg_enabled(musb))
 				wakeups |= TUSB_PRCM_WID;
 		}
+<<<<<<< HEAD
+=======
+#else
+		wakeups = TUSB_PRCM_WHOSTDISCON | TUSB_PRCM_WBUS;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tusb_allow_idle(musb, wakeups);
 	}
 done:
@@ -510,7 +551,10 @@ static void tusb_musb_set_vbus(struct musb *musb, int is_on)
 	void __iomem	*tbase = musb->ctrl_base;
 	u32		conf, prcm, timer;
 	u8		devctl;
+<<<<<<< HEAD
 	struct usb_otg	*otg = musb->xceiv->otg;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* HDRC controls CPEN, but beware current surges during device
 	 * connect.  They can trigger transient overcurrent conditions
@@ -523,7 +567,11 @@ static void tusb_musb_set_vbus(struct musb *musb, int is_on)
 
 	if (is_on) {
 		timer = OTG_TIMER_MS(OTG_TIME_A_WAIT_VRISE);
+<<<<<<< HEAD
 		otg->default_a = 1;
+=======
+		musb->xceiv->default_a = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		musb->xceiv->state = OTG_STATE_A_WAIT_VRISE;
 		devctl |= MUSB_DEVCTL_SESSION;
 
@@ -549,11 +597,19 @@ static void tusb_musb_set_vbus(struct musb *musb, int is_on)
 				musb->xceiv->state = OTG_STATE_A_IDLE;
 			}
 			musb->is_active = 0;
+<<<<<<< HEAD
 			otg->default_a = 1;
 			MUSB_HST_MODE(musb);
 		} else {
 			musb->is_active = 0;
 			otg->default_a = 0;
+=======
+			musb->xceiv->default_a = 1;
+			MUSB_HST_MODE(musb);
+		} else {
+			musb->is_active = 0;
+			musb->xceiv->default_a = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			musb->xceiv->state = OTG_STATE_B_IDLE;
 			MUSB_DEV_MODE(musb);
 		}
@@ -603,22 +659,42 @@ static int tusb_musb_set_mode(struct musb *musb, u8 musb_mode)
 
 	switch (musb_mode) {
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_MUSB_HDRC_HCD
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case MUSB_HOST:		/* Disable PHY ID detect, ground ID */
 		phy_otg_ctrl &= ~TUSB_PHY_OTG_CTRL_OTG_ID_PULLUP;
 		phy_otg_ena |= TUSB_PHY_OTG_CTRL_OTG_ID_PULLUP;
 		dev_conf |= TUSB_DEV_CONF_ID_SEL;
 		dev_conf &= ~TUSB_DEV_CONF_SOFT_ID;
 		break;
+<<<<<<< HEAD
+=======
+#endif
+
+#ifdef CONFIG_USB_GADGET_MUSB_HDRC
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case MUSB_PERIPHERAL:	/* Disable PHY ID detect, keep ID pull-up on */
 		phy_otg_ctrl |= TUSB_PHY_OTG_CTRL_OTG_ID_PULLUP;
 		phy_otg_ena |= TUSB_PHY_OTG_CTRL_OTG_ID_PULLUP;
 		dev_conf |= (TUSB_DEV_CONF_ID_SEL | TUSB_DEV_CONF_SOFT_ID);
 		break;
+<<<<<<< HEAD
+=======
+#endif
+
+#ifdef CONFIG_USB_MUSB_OTG
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case MUSB_OTG:		/* Use PHY ID detection */
 		phy_otg_ctrl |= TUSB_PHY_OTG_CTRL_OTG_ID_PULLUP;
 		phy_otg_ena |= TUSB_PHY_OTG_CTRL_OTG_ID_PULLUP;
 		dev_conf &= ~(TUSB_DEV_CONF_ID_SEL | TUSB_DEV_CONF_SOFT_ID);
 		break;
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	default:
 		dev_dbg(musb->controller, "Trying to set mode %i\n", musb_mode);
@@ -645,7 +721,10 @@ tusb_otg_ints(struct musb *musb, u32 int_src, void __iomem *tbase)
 {
 	u32		otg_stat = musb_readl(tbase, TUSB_DEV_OTG_STAT);
 	unsigned long	idle_timeout = 0;
+<<<<<<< HEAD
 	struct usb_otg	*otg = musb->xceiv->otg;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* ID pin */
 	if ((int_src & TUSB_INT_SRC_ID_STATUS_CHNG)) {
@@ -656,7 +735,11 @@ tusb_otg_ints(struct musb *musb, u32 int_src, void __iomem *tbase)
 		else
 			default_a = is_host_enabled(musb);
 		dev_dbg(musb->controller, "Default-%c\n", default_a ? 'A' : 'B');
+<<<<<<< HEAD
 		otg->default_a = default_a;
+=======
+		musb->xceiv->default_a = default_a;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tusb_musb_set_vbus(musb, default_a);
 
 		/* Don't allow idling immediately */
@@ -668,8 +751,14 @@ tusb_otg_ints(struct musb *musb, u32 int_src, void __iomem *tbase)
 	if (int_src & TUSB_INT_SRC_VBUS_SENSE_CHNG) {
 
 		/* B-dev state machine:  no vbus ~= disconnect */
+<<<<<<< HEAD
 		if ((is_otg_enabled(musb) && !otg->default_a)
 				|| !is_host_enabled(musb)) {
+=======
+		if ((is_otg_enabled(musb) && !musb->xceiv->default_a)
+				|| !is_host_enabled(musb)) {
+#ifdef CONFIG_USB_MUSB_HDRC_HCD
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* ? musb_root_disconnect(musb); */
 			musb->port1_status &=
 				~(USB_PORT_STAT_CONNECTION
@@ -678,6 +767,10 @@ tusb_otg_ints(struct musb *musb, u32 int_src, void __iomem *tbase)
 				| USB_PORT_STAT_HIGH_SPEED
 				| USB_PORT_STAT_TEST
 				);
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (otg_stat & TUSB_DEV_OTG_STAT_SESS_END) {
 				dev_dbg(musb->controller, "Forcing disconnect (no interrupt)\n");
@@ -1078,7 +1171,11 @@ static int tusb_musb_init(struct musb *musb)
 	int			ret;
 
 	usb_nop_xceiv_register();
+<<<<<<< HEAD
 	musb->xceiv = usb_get_transceiver();
+=======
+	musb->xceiv = otg_get_transceiver();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!musb->xceiv)
 		return -ENODEV;
 
@@ -1130,7 +1227,11 @@ done:
 		if (sync)
 			iounmap(sync);
 
+<<<<<<< HEAD
 		usb_put_transceiver(musb->xceiv);
+=======
+		otg_put_transceiver(musb->xceiv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		usb_nop_xceiv_unregister();
 	}
 	return ret;
@@ -1146,7 +1247,11 @@ static int tusb_musb_exit(struct musb *musb)
 
 	iounmap(musb->sync_va);
 
+<<<<<<< HEAD
 	usb_put_transceiver(musb->xceiv);
+=======
+	otg_put_transceiver(musb->xceiv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usb_nop_xceiv_unregister();
 	return 0;
 }
@@ -1167,7 +1272,11 @@ static const struct musb_platform_ops tusb_ops = {
 
 static u64 tusb_dmamask = DMA_BIT_MASK(32);
 
+<<<<<<< HEAD
 static int __devinit tusb_probe(struct platform_device *pdev)
+=======
+static int __init tusb_probe(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct musb_hdrc_platform_data	*pdata = pdev->dev.platform_data;
 	struct platform_device		*musb;
@@ -1229,7 +1338,11 @@ err0:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int __devexit tusb_remove(struct platform_device *pdev)
+=======
+static int __exit tusb_remove(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tusb6010_glue		*glue = platform_get_drvdata(pdev);
 
@@ -1241,8 +1354,12 @@ static int __devexit tusb_remove(struct platform_device *pdev)
 }
 
 static struct platform_driver tusb_driver = {
+<<<<<<< HEAD
 	.probe		= tusb_probe,
 	.remove		= __devexit_p(tusb_remove),
+=======
+	.remove		= __exit_p(tusb_remove),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.driver		= {
 		.name	= "musb-tusb",
 	},
@@ -1254,9 +1371,15 @@ MODULE_LICENSE("GPL v2");
 
 static int __init tusb_init(void)
 {
+<<<<<<< HEAD
 	return platform_driver_register(&tusb_driver);
 }
 module_init(tusb_init);
+=======
+	return platform_driver_probe(&tusb_driver, tusb_probe);
+}
+subsys_initcall(tusb_init);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void __exit tusb_exit(void)
 {

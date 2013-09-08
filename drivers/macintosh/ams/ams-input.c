@@ -19,11 +19,19 @@
 
 #include "ams.h"
 
+<<<<<<< HEAD
 static bool joystick;
 module_param(joystick, bool, S_IRUGO);
 MODULE_PARM_DESC(joystick, "Enable the input class device on module load");
 
 static bool invert;
+=======
+static unsigned int joystick;
+module_param(joystick, bool, S_IRUGO);
+MODULE_PARM_DESC(joystick, "Enable the input class device on module load");
+
+static unsigned int invert;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(invert, bool, S_IWUSR | S_IRUGO);
 MODULE_PARM_DESC(invert, "Invert input data on X and Y axis");
 

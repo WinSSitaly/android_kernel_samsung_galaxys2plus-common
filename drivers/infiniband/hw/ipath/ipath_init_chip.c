@@ -33,9 +33,13 @@
 
 #include <linux/pci.h>
 #include <linux/netdevice.h>
+<<<<<<< HEAD
 #include <linux/moduleparam.h>
 #include <linux/slab.h>
 #include <linux/stat.h>
+=======
+#include <linux/slab.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/vmalloc.h>
 
 #include "ipath_kernel.h"

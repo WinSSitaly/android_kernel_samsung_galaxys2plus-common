@@ -85,12 +85,15 @@
 #define IRQ_S3CUART_RX4		IRQ_S5P_UART_RX4
 #define IRQ_S3CUART_RX5		IRQ_S5P_UART_RX5
 
+<<<<<<< HEAD
 #define IRQ_I2S0		IRQ_I2SV40
 
 #define IRQ_LCD_FIFO		IRQ_DISPCON0
 #define IRQ_LCD_VSYNC		IRQ_DISPCON1
 #define IRQ_LCD_SYSTEM		IRQ_DISPCON2
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* S5P6450 EINT feature will be added */
 
 /*
@@ -141,8 +144,11 @@
 
 #define IRQ_EINT_GROUP(grp, x)	(IRQ_EINT_GROUP##grp##_BASE + (x))
 
+<<<<<<< HEAD
 #define IRQ_TIMER_BASE		(11)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Set the default NR_IRQS */
 
 #define NR_IRQS			(IRQ_EINT_GROUP8_BASE + IRQ_EINT_GROUP8_NR + 1)

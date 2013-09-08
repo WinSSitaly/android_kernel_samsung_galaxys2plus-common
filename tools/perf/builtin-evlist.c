@@ -15,7 +15,11 @@
 #include "util/parse-options.h"
 #include "util/session.h"
 
+<<<<<<< HEAD
 static const char *input_name;
+=======
+static char const *input_name = "perf.data";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __cmd_evlist(void)
 {

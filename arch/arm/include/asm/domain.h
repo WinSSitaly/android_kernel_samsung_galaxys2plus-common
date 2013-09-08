@@ -10,10 +10,13 @@
 #ifndef __ASM_PROC_DOMAIN_H
 #define __ASM_PROC_DOMAIN_H
 
+<<<<<<< HEAD
 #ifndef __ASSEMBLY__
 #include <asm/barrier.h>
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Domain numbers
  *
@@ -87,9 +90,15 @@
  * instructions (inline assembly)
  */
 #ifdef CONFIG_CPU_USE_DOMAINS
+<<<<<<< HEAD
 #define TUSER(instr)	#instr "t"
 #else
 #define TUSER(instr)	#instr
+=======
+#define T(instr)	#instr "t"
+#else
+#define T(instr)	#instr
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #else /* __ASSEMBLY__ */
@@ -99,9 +108,15 @@
  * instructions
  */
 #ifdef CONFIG_CPU_USE_DOMAINS
+<<<<<<< HEAD
 #define TUSER(instr)	instr ## t
 #else
 #define TUSER(instr)	instr
+=======
+#define T(instr)	instr ## t
+#else
+#define T(instr)	instr
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #endif /* __ASSEMBLY__ */

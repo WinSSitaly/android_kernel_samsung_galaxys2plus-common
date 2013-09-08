@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2007-2012 B.A.T.M.A.N. contributors:
+=======
+ * Copyright (C) 2007-2011 B.A.T.M.A.N. contributors:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Marek Lindner
  *
@@ -28,9 +32,15 @@ void ring_buffer_set(uint8_t lq_recv[], uint8_t *lq_index, uint8_t value)
 	*lq_index = (*lq_index + 1) % TQ_GLOBAL_WINDOW_SIZE;
 }
 
+<<<<<<< HEAD
 uint8_t ring_buffer_avg(const uint8_t lq_recv[])
 {
 	const uint8_t *ptr;
+=======
+uint8_t ring_buffer_avg(uint8_t lq_recv[])
+{
+	uint8_t *ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint16_t count = 0, i = 0, sum = 0;
 
 	ptr = lq_recv;

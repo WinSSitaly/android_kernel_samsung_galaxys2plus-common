@@ -1,6 +1,7 @@
 include include/asm-generic/Kbuild.asm
 
 header-y += hwcap.h
+<<<<<<< HEAD
 
 generic-y += auxvec.h
 generic-y += bitsperlong.h
@@ -18,3 +19,5 @@ generic-y += resource.h
 generic-y += sections.h
 generic-y += siginfo.h
 generic-y += sizes.h
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

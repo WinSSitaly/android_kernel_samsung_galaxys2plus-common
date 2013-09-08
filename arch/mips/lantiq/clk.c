@@ -7,7 +7,11 @@
  * Copyright (C) 2010 John Crispin <blogic@openwrt.org>
  */
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/types.h>
@@ -100,6 +104,7 @@ void clk_put(struct clk *clk)
 }
 EXPORT_SYMBOL(clk_put);
 
+<<<<<<< HEAD
 int clk_enable(struct clk *clk)
 {
 	/* not used */
@@ -113,6 +118,8 @@ void clk_disable(struct clk *clk)
 }
 EXPORT_SYMBOL(clk_disable);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline u32 ltq_get_counter_resolution(void)
 {
 	u32 res;
@@ -134,11 +141,19 @@ void __init plat_time_init(void)
 	struct clk *clk;
 
 	if (insert_resource(&iomem_resource, &ltq_cgu_resource) < 0)
+<<<<<<< HEAD
 		panic("Failed to insert cgu memory");
 
 	if (request_mem_region(ltq_cgu_resource.start,
 			resource_size(&ltq_cgu_resource), "cgu") < 0)
 		panic("Failed to request cgu memory");
+=======
+		panic("Failed to insert cgu memory\n");
+
+	if (request_mem_region(ltq_cgu_resource.start,
+			resource_size(&ltq_cgu_resource), "cgu") < 0)
+		panic("Failed to request cgu memory\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ltq_cgu_membase = ioremap_nocache(ltq_cgu_resource.start,
 				resource_size(&ltq_cgu_resource));

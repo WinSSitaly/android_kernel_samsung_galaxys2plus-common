@@ -9,7 +9,11 @@
  * of the GNU General Public License, incorporated herein by reference.
  *
  */
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ARCOFI_USE	1
 
 /* states */

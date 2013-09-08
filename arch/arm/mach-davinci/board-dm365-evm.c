@@ -32,6 +32,10 @@
 #include <asm/mach/arch.h>
 
 #include <mach/mux.h>
+<<<<<<< HEAD
+=======
+#include <mach/dm365.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/common.h>
 #include <mach/i2c.h>
 #include <mach/serial.h>
@@ -41,8 +45,11 @@
 
 #include <media/tvp514x.h>
 
+<<<<<<< HEAD
 #include "davinci.h"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int have_imager(void)
 {
 	/* REVISIT when it's supported, trigger via Kconfig */
@@ -55,7 +62,11 @@ static inline int have_tvp7002(void)
 	return 0;
 }
 
+<<<<<<< HEAD
 #define DM365_EVM_PHY_ID		"davinci_mdio-0:01"
+=======
+#define DM365_EVM_PHY_ID		"0:01"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * A MAX-II CPLD is used for various board control functions.
  */
@@ -108,7 +119,11 @@ static struct mtd_partition davinci_nand_partitions[] = {
 		/* UBL (a few copies) plus U-Boot */
 		.name		= "bootloader",
 		.offset		= 0,
+<<<<<<< HEAD
 		.size		= 30 * NAND_BLOCK_SIZE,
+=======
+		.size		= 28 * NAND_BLOCK_SIZE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.mask_flags	= MTD_WRITEABLE, /* force read-only */
 	}, {
 		/* U-Boot environment */
@@ -140,7 +155,11 @@ static struct davinci_nand_pdata davinci_nand_data = {
 	.parts			= davinci_nand_partitions,
 	.nr_parts		= ARRAY_SIZE(davinci_nand_partitions),
 	.ecc_mode		= NAND_ECC_HW,
+<<<<<<< HEAD
 	.bbt_options		= NAND_BBT_USE_FLASH,
+=======
+	.options		= NAND_USE_FLASH_BBT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ecc_bits		= 4,
 };
 
@@ -613,12 +632,19 @@ static __init void dm365_evm_init(void)
 }
 
 MACHINE_START(DAVINCI_DM365_EVM, "DaVinci DM365 EVM")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= (0x80000100),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io		= dm365_evm_map_io,
 	.init_irq	= davinci_irq_init,
 	.timer		= &davinci_timer,
 	.init_machine	= dm365_evm_init,
+<<<<<<< HEAD
 	.dma_zone_size	= SZ_128M,
 	.restart	= davinci_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 

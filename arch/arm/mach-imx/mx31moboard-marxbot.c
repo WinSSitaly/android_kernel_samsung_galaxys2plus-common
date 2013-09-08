@@ -272,7 +272,11 @@ static int marxbot_usbh1_hw_init(struct platform_device *pdev)
 #define USBH1_VBUSEN_B	IOMUX_TO_GPIO(MX31_PIN_NFRE_B)
 #define USBH1_MODE	IOMUX_TO_GPIO(MX31_PIN_NFALE)
 
+<<<<<<< HEAD
 static int marxbot_isp1105_init(struct usb_phy *otg)
+=======
+static int marxbot_isp1105_init(struct otg_transceiver *otg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret = gpio_request(USBH1_MODE, "usbh1-mode");
 	if (ret)
@@ -291,7 +295,11 @@ static int marxbot_isp1105_init(struct usb_phy *otg)
 }
 
 
+<<<<<<< HEAD
 static int marxbot_isp1105_set_vbus(struct usb_otg *otg, bool on)
+=======
+static int marxbot_isp1105_set_vbus(struct otg_transceiver *otg, bool on)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (on)
 		gpio_set_value(USBH1_VBUSEN_B, 0);
@@ -308,6 +316,7 @@ static struct mxc_usbh_platform_data usbh1_pdata __initdata = {
 
 static int __init marxbot_usbh1_init(void)
 {
+<<<<<<< HEAD
 	struct usb_phy *phy;
 	struct platform_device *pdev;
 
@@ -326,6 +335,20 @@ static int __init marxbot_usbh1_init(void)
 	phy->otg->set_vbus	= marxbot_isp1105_set_vbus;
 
 	usbh1_pdata.otg = phy;
+=======
+	struct otg_transceiver *otg;
+	struct platform_device *pdev;
+
+	otg = kzalloc(sizeof(*otg), GFP_KERNEL);
+	if (!otg)
+		return -ENOMEM;
+
+	otg->label	= "ISP1105";
+	otg->init	= marxbot_isp1105_init;
+	otg->set_vbus	= marxbot_isp1105_set_vbus;
+
+	usbh1_pdata.otg = otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pdev = imx31_add_mxc_ehci_hs(1, &usbh1_pdata);
 	if (IS_ERR(pdev))

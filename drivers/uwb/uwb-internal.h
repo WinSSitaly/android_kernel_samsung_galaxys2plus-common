@@ -28,6 +28,10 @@
 #ifndef __UWB_INTERNAL_H__
 #define __UWB_INTERNAL_H__
 
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/device.h>
 #include <linux/uwb.h>

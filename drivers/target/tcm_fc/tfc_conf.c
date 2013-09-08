@@ -23,6 +23,10 @@
 
 #include <linux/module.h>
 #include <linux/moduleparam.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <generated/utsrelease.h>
 #include <linux/utsname.h>
 #include <linux/init.h>
@@ -31,7 +35,10 @@
 #include <linux/types.h>
 #include <linux/string.h>
 #include <linux/configfs.h>
+<<<<<<< HEAD
 #include <linux/kernel.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ctype.h>
 #include <asm/unaligned.h>
 #include <scsi/scsi.h>
@@ -41,9 +48,20 @@
 #include <scsi/libfc.h>
 
 #include <target/target_core_base.h>
+<<<<<<< HEAD
 #include <target/target_core_fabric.h>
 #include <target/target_core_fabric_configfs.h>
 #include <target/target_core_configfs.h>
+=======
+#include <target/target_core_transport.h>
+#include <target/target_core_fabric_ops.h>
+#include <target/target_core_fabric_configfs.h>
+#include <target/target_core_fabric_lib.h>
+#include <target/target_core_device.h>
+#include <target/target_core_tpg.h>
+#include <target/target_core_configfs.h>
+#include <target/target_core_base.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <target/configfs_macros.h>
 
 #include "tcm_fc.h"
@@ -67,10 +85,17 @@ static ssize_t ft_parse_wwn(const char *name, u64 *wwn, int strict)
 {
 	const char *cp;
 	char c;
+<<<<<<< HEAD
 	u32 byte = 0;
 	u32 pos = 0;
 	u32 err;
 	int val;
+=======
+	u32 nibble;
+	u32 byte = 0;
+	u32 pos = 0;
+	u32 err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	*wwn = 0;
 	for (cp = name; cp < &name[FT_NAMELEN - 1]; cp++) {
@@ -91,6 +116,7 @@ static ssize_t ft_parse_wwn(const char *name, u64 *wwn, int strict)
 			return cp - name;
 		}
 		err = 3;
+<<<<<<< HEAD
 		val = hex_to_bin(c);
 		if (val < 0 || (strict && isupper(c)))
 			goto fail;
@@ -99,6 +125,19 @@ static ssize_t ft_parse_wwn(const char *name, u64 *wwn, int strict)
 	err = 4;
 fail:
 	pr_debug("err %u len %zu pos %u byte %u\n",
+=======
+		if (isdigit(c))
+			nibble = c - '0';
+		else if (isxdigit(c) && (islower(c) || !strict))
+			nibble = tolower(c) - 'a' + 10;
+		else
+			goto fail;
+		*wwn = (*wwn << 4) | nibble;
+	}
+	err = 4;
+fail:
+	FT_CONF_DBG("err %u len %zu pos %u byte %u\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    err, cp - name, pos, byte);
 	return -1;
 }
@@ -208,14 +247,22 @@ static struct se_node_acl *ft_add_acl(
 	u64 wwpn;
 	u32 q_depth;
 
+<<<<<<< HEAD
 	pr_debug("add acl %s\n", name);
+=======
+	FT_CONF_DBG("add acl %s\n", name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tpg = container_of(se_tpg, struct ft_tpg, se_tpg);
 
 	if (ft_parse_wwn(name, &wwpn, 1) < 0)
 		return ERR_PTR(-EINVAL);
 
 	acl = kzalloc(sizeof(struct ft_node_acl), GFP_KERNEL);
+<<<<<<< HEAD
 	if (!acl)
+=======
+	if (!(acl))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ERR_PTR(-ENOMEM);
 	acl->node_auth.port_name = wwpn;
 
@@ -231,11 +278,19 @@ static void ft_del_acl(struct se_node_acl *se_acl)
 	struct ft_node_acl *acl = container_of(se_acl,
 				struct ft_node_acl, se_node_acl);
 
+<<<<<<< HEAD
 	pr_debug("del acl %s\n",
 		config_item_name(&se_acl->acl_group.cg_item));
 
 	tpg = container_of(se_tpg, struct ft_tpg, se_tpg);
 	pr_debug("del acl %p se_acl %p tpg %p se_tpg %p\n",
+=======
+	FT_CONF_DBG("del acl %s\n",
+		config_item_name(&se_acl->acl_group.cg_item));
+
+	tpg = container_of(se_tpg, struct ft_tpg, se_tpg);
+	FT_CONF_DBG("del acl %p se_acl %p tpg %p se_tpg %p\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    acl, se_acl, tpg, &tpg->se_tpg);
 
 	core_tpg_del_initiator_node_acl(&tpg->se_tpg, se_acl, 1);
@@ -249,6 +304,7 @@ struct ft_node_acl *ft_acl_get(struct ft_tpg *tpg, struct fc_rport_priv *rdata)
 	struct se_portal_group *se_tpg = &tpg->se_tpg;
 	struct se_node_acl *se_acl;
 
+<<<<<<< HEAD
 	spin_lock_irq(&se_tpg->acl_node_lock);
 	list_for_each_entry(se_acl, &se_tpg->acl_node_list, acl_list) {
 		acl = container_of(se_acl, struct ft_node_acl, se_node_acl);
@@ -257,13 +313,27 @@ struct ft_node_acl *ft_acl_get(struct ft_tpg *tpg, struct fc_rport_priv *rdata)
 		if (acl->node_auth.port_name == rdata->ids.port_name ||
 		    acl->node_auth.node_name == rdata->ids.node_name) {
 			pr_debug("acl %p port_name %llx matched\n", acl,
+=======
+	spin_lock_bh(&se_tpg->acl_node_lock);
+	list_for_each_entry(se_acl, &se_tpg->acl_node_list, acl_list) {
+		acl = container_of(se_acl, struct ft_node_acl, se_node_acl);
+		FT_CONF_DBG("acl %p port_name %llx\n",
+			acl, (unsigned long long)acl->node_auth.port_name);
+		if (acl->node_auth.port_name == rdata->ids.port_name ||
+		    acl->node_auth.node_name == rdata->ids.node_name) {
+			FT_CONF_DBG("acl %p port_name %llx matched\n", acl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    (unsigned long long)rdata->ids.port_name);
 			found = acl;
 			/* XXX need to hold onto ACL */
 			break;
 		}
 	}
+<<<<<<< HEAD
 	spin_unlock_irq(&se_tpg->acl_node_lock);
+=======
+	spin_unlock_bh(&se_tpg->acl_node_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return found;
 }
 
@@ -272,11 +342,19 @@ struct se_node_acl *ft_tpg_alloc_fabric_acl(struct se_portal_group *se_tpg)
 	struct ft_node_acl *acl;
 
 	acl = kzalloc(sizeof(*acl), GFP_KERNEL);
+<<<<<<< HEAD
 	if (!acl) {
 		pr_err("Unable to allocate struct ft_node_acl\n");
 		return NULL;
 	}
 	pr_debug("acl %p\n", acl);
+=======
+	if (!(acl)) {
+		printk(KERN_ERR "Unable to allocate struct ft_node_acl\n");
+		return NULL;
+	}
+	FT_CONF_DBG("acl %p\n", acl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return &acl->se_node_acl;
 }
 
@@ -286,7 +364,11 @@ static void ft_tpg_release_fabric_acl(struct se_portal_group *se_tpg,
 	struct ft_node_acl *acl = container_of(se_acl,
 				struct ft_node_acl, se_node_acl);
 
+<<<<<<< HEAD
 	pr_debug("acl %p\n", acl);
+=======
+	FT_CONF_DBG(KERN_INFO "acl %p\n", acl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(acl);
 }
 
@@ -300,11 +382,18 @@ static struct se_portal_group *ft_add_tpg(
 {
 	struct ft_lport_acl *lacl;
 	struct ft_tpg *tpg;
+<<<<<<< HEAD
 	struct workqueue_struct *wq;
 	unsigned long index;
 	int ret;
 
 	pr_debug("tcm_fc: add tpg %s\n", name);
+=======
+	unsigned long index;
+	int ret;
+
+	FT_CONF_DBG("tcm_fc: add tpg %s\n", name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Name must be "tpgt_" followed by the index.
@@ -321,13 +410,22 @@ static struct se_portal_group *ft_add_tpg(
 	tpg->index = index;
 	tpg->lport_acl = lacl;
 	INIT_LIST_HEAD(&tpg->lun_list);
+<<<<<<< HEAD
 
 	wq = alloc_workqueue("tcm_fc", 0, 1);
 	if (!wq) {
+=======
+	transport_init_queue_obj(&tpg->qobj);
+
+	ret = core_tpg_register(&ft_configfs->tf_ops, wwn, &tpg->se_tpg,
+				(void *)tpg, TRANSPORT_TPG_TYPE_NORMAL);
+	if (ret < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(tpg);
 		return NULL;
 	}
 
+<<<<<<< HEAD
 	ret = core_tpg_register(&ft_configfs->tf_ops, wwn, &tpg->se_tpg,
 				tpg, TRANSPORT_TPG_TYPE_NORMAL);
 	if (ret < 0) {
@@ -336,6 +434,13 @@ static struct se_portal_group *ft_add_tpg(
 		return NULL;
 	}
 	tpg->workqueue = wq;
+=======
+	tpg->thread = kthread_run(ft_thread, tpg, "ft_tpg%lu", index);
+	if (IS_ERR(tpg->thread)) {
+		kfree(tpg);
+		return NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&ft_lport_lock);
 	list_add_tail(&tpg->list, &lacl->tpg_list);
@@ -348,10 +453,17 @@ static void ft_del_tpg(struct se_portal_group *se_tpg)
 {
 	struct ft_tpg *tpg = container_of(se_tpg, struct ft_tpg, se_tpg);
 
+<<<<<<< HEAD
 	pr_debug("del tpg %s\n",
 		    config_item_name(&tpg->se_tpg.tpg_group.cg_item));
 
 	destroy_workqueue(tpg->workqueue);
+=======
+	FT_CONF_DBG("del tpg %s\n",
+		    config_item_name(&tpg->se_tpg.tpg_group.cg_item));
+
+	kthread_stop(tpg->thread);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Wait for sessions to be freed thru RCU, for BUG_ON below */
 	synchronize_rcu();
@@ -406,7 +518,11 @@ static struct se_wwn *ft_add_lport(
 	struct ft_lport_acl *old_lacl;
 	u64 wwpn;
 
+<<<<<<< HEAD
 	pr_debug("add lport %s\n", name);
+=======
+	FT_CONF_DBG("add lport %s\n", name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ft_parse_wwn(name, &wwpn, 1) < 0)
 		return NULL;
 	lacl = kzalloc(sizeof(*lacl), GFP_KERNEL);
@@ -435,7 +551,12 @@ static void ft_del_lport(struct se_wwn *wwn)
 	struct ft_lport_acl *lacl = container_of(wwn,
 				struct ft_lport_acl, fc_lport_wwn);
 
+<<<<<<< HEAD
 	pr_debug("del lport %s\n", lacl->name);
+=======
+	FT_CONF_DBG("del lport %s\n",
+			config_item_name(&wwn->wwn_group.cg_item));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&ft_lport_lock);
 	list_del(&lacl->list);
 	mutex_unlock(&ft_lport_lock);
@@ -529,9 +650,19 @@ static struct target_core_fabric_ops ft_fabric_ops = {
 	.tpg_release_fabric_acl =	ft_tpg_release_fabric_acl,
 	.tpg_get_inst_index =		ft_tpg_get_inst_index,
 	.check_stop_free =		ft_check_stop_free,
+<<<<<<< HEAD
 	.release_cmd =			ft_release_cmd,
 	.shutdown_session =		ft_sess_shutdown,
 	.close_session =		ft_sess_close,
+=======
+	.release_cmd_to_pool =		ft_release_cmd,
+	.release_cmd_direct =		ft_release_cmd,
+	.shutdown_session =		ft_sess_shutdown,
+	.close_session =		ft_sess_close,
+	.stop_session =			ft_sess_stop,
+	.fall_back_to_erl0 =		ft_sess_set_erl0,
+	.sess_logged_in =		ft_sess_logged_in,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.sess_get_index =		ft_sess_get_index,
 	.sess_get_initiator_sid =	NULL,
 	.write_pending =		ft_write_pending,
@@ -539,11 +670,19 @@ static struct target_core_fabric_ops ft_fabric_ops = {
 	.set_default_node_attributes =	ft_set_default_node_attr,
 	.get_task_tag =			ft_get_task_tag,
 	.get_cmd_state =		ft_get_cmd_state,
+<<<<<<< HEAD
+=======
+	.new_cmd_failure =		ft_new_cmd_failure,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.queue_data_in =		ft_queue_data_in,
 	.queue_status =			ft_queue_status,
 	.queue_tm_rsp =			ft_queue_tm_resp,
 	.get_fabric_sense_len =		ft_get_fabric_sense_len,
 	.set_fabric_sense_len =		ft_set_fabric_sense_len,
+<<<<<<< HEAD
+=======
+	.is_state_remove =		ft_is_state_remove,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Setup function pointers for generic logic in
 	 * target_core_fabric_configfs.c
@@ -569,10 +708,17 @@ int ft_register_configfs(void)
 	 * Register the top level struct config_item_type with TCM core
 	 */
 	fabric = target_fabric_configfs_init(THIS_MODULE, "fc");
+<<<<<<< HEAD
 	if (IS_ERR(fabric)) {
 		pr_err("%s: target_fabric_configfs_init() failed!\n",
 		       __func__);
 		return PTR_ERR(fabric);
+=======
+	if (!fabric) {
+		printk(KERN_INFO "%s: target_fabric_configfs_init() failed!\n",
+		       __func__);
+		return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	fabric->tf_ops = ft_fabric_ops;
 
@@ -597,8 +743,16 @@ int ft_register_configfs(void)
 	 */
 	ret = target_fabric_configfs_register(fabric);
 	if (ret < 0) {
+<<<<<<< HEAD
 		pr_debug("target_fabric_configfs_register() for"
 			    " FC Target failed!\n");
+=======
+		FT_CONF_DBG("target_fabric_configfs_register() for"
+			    " FC Target failed!\n");
+		printk(KERN_INFO
+		       "%s: target_fabric_configfs_register() failed!\n",
+		       __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		target_fabric_configfs_free(fabric);
 		return -1;
 	}
@@ -645,7 +799,15 @@ static void __exit ft_exit(void)
 	synchronize_rcu();
 }
 
+<<<<<<< HEAD
+=======
+#ifdef MODULE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("FC TCM fabric driver " FT_VERSION);
 MODULE_LICENSE("GPL");
 module_init(ft_init);
 module_exit(ft_exit);
+<<<<<<< HEAD
+=======
+#endif /* MODULE */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

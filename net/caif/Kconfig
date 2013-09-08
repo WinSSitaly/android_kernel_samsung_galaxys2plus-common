@@ -40,6 +40,7 @@ config CAIF_NETDEV
 	If you select to build it as a built-in then the main CAIF device must
 	also be a built-in.
 	If unsure say Y.
+<<<<<<< HEAD
 
 config CAIF_USB
 	tristate "CAIF USB support"
@@ -51,3 +52,5 @@ config CAIF_USB
 	If you select to build it as a built-in then the main CAIF device must
 	also be a built-in.
 	If unsure say N.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

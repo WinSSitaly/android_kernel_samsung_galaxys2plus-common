@@ -50,13 +50,23 @@ static struct page **pcpu_get_pages_and_bitmap(struct pcpu_chunk *chunk,
 
 	if (!pages || !bitmap) {
 		if (may_alloc && !pages)
+<<<<<<< HEAD
 			pages = pcpu_mem_zalloc(pages_size);
 		if (may_alloc && !bitmap)
 			bitmap = pcpu_mem_zalloc(bitmap_size);
+=======
+			pages = pcpu_mem_alloc(pages_size);
+		if (may_alloc && !bitmap)
+			bitmap = pcpu_mem_alloc(bitmap_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!pages || !bitmap)
 			return NULL;
 	}
 
+<<<<<<< HEAD
+=======
+	memset(pages, 0, pages_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bitmap_copy(bitmap, chunk->populated, pcpu_unit_pages);
 
 	*bitmapp = bitmap;
@@ -184,7 +194,12 @@ static void pcpu_unmap_pages(struct pcpu_chunk *chunk,
 				   page_end - page_start);
 	}
 
+<<<<<<< HEAD
 	bitmap_clear(populated, page_start, page_end - page_start);
+=======
+	for (i = page_start; i < page_end; i++)
+		__clear_bit(i, populated);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**

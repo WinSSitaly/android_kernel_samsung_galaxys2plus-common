@@ -488,6 +488,7 @@ UNUSUAL_DEV(  0x04e8, 0x5122, 0x0000, 0x9999,
 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
 		US_FL_MAX_SECTORS_64 | US_FL_BULK_IGNORE_TAG),
 
+<<<<<<< HEAD
 /* Added by Dmitry Artamonow <mad_soft@inbox.ru> */
 UNUSUAL_DEV(  0x04e8, 0x5136, 0x0000, 0x9999,
 		"Samsung",
@@ -495,6 +496,8 @@ UNUSUAL_DEV(  0x04e8, 0x5136, 0x0000, 0x9999,
 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
 		US_FL_MAX_SECTORS_64),
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Entry and supporting patch by Theodore Kilgore <kilgota@auburn.edu>.
  * Device uses standards-violating 32-byte Bulk Command Block Wrappers and
  * reports itself as "Proprietary SCSI Bulk." Cf. device entry 0x084d:0x0011.
@@ -657,6 +660,7 @@ UNUSUAL_DEV(  0x054c, 0x016a, 0x0000, 0x9999,
 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
 		US_FL_FIX_INQUIRY ),
 
+<<<<<<< HEAD
 /* Submitted by Ren Bigcren <bigcren.ren@sonymobile.com> */
 UNUSUAL_DEV(  0x054c, 0x02a5, 0x0100, 0x0100,
 		"Sony Corp.",
@@ -664,6 +668,8 @@ UNUSUAL_DEV(  0x054c, 0x02a5, 0x0100, 0x0100,
 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
 		US_FL_NO_READ_CAPACITY_16 ),
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* floppy reports multiple luns */
 UNUSUAL_DEV(  0x055d, 0x2020, 0x0000, 0x0210,
 		"SAMSUNG",
@@ -1018,12 +1024,15 @@ UNUSUAL_DEV( 0x07cf, 0x1001, 0x1000, 0x9999,
 		USB_SC_8070, USB_PR_CB, NULL,
 		US_FL_NEED_OVERRIDE | US_FL_FIX_INQUIRY ),
 
+<<<<<<< HEAD
 /* Submitted by Oleksandr Chumachenko <ledest@gmail.com> */
 UNUSUAL_DEV( 0x07cf, 0x1167, 0x0100, 0x0100,
 		"Casio",
 		"EX-N1 DigitalCamera",
 		USB_SC_8070, USB_PR_DEVICE, NULL, 0),
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Submitted by Hartmut Wahl <hwahl@hwahl.de>*/
 UNUSUAL_DEV( 0x0839, 0x000a, 0x0001, 0x0001,
 		"Samsung",
@@ -1905,6 +1914,7 @@ UNUSUAL_DEV(  0x1652, 0x6600, 0x0201, 0x0201,
 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
 		US_FL_IGNORE_RESIDUE ),
 
+<<<<<<< HEAD
 /* Reported by Jesse Feddema <jdfeddema@gmail.com> */
 UNUSUAL_DEV(  0x177f, 0x0400, 0x0000, 0x0000,
 		"Yarvik",
@@ -1912,6 +1922,8 @@ UNUSUAL_DEV(  0x177f, 0x0400, 0x0000, 0x0000,
 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
 		US_FL_BULK_IGNORE_TAG | US_FL_MAX_SECTORS_64 ),
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Reported by Hans de Goede <hdegoede@redhat.com>
  * These Appotech controllers are found in Picture Frames, they provide a
  * (buggy) emulation of a cdrom drive which contains the windows software
@@ -1941,7 +1953,11 @@ UNUSUAL_DEV(  0x1b1c, 0x1ab5, 0x0200, 0x0200,
 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
 		US_FL_INITIAL_READ10 ),
 
+<<<<<<< HEAD
 /* Patch by Richard SchÃ¼tz <r.schtz@t-online.de>
+=======
+/* Patch by Richard Schütz <r.schtz@t-online.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This external hard drive enclosure uses a JMicron chip which
  * needs the US_FL_IGNORE_RESIDUE flag to work properly. */
 UNUSUAL_DEV(  0x1e68, 0x001b, 0x0000, 0x0000,

@@ -21,6 +21,10 @@
 #include <linux/if_ether.h>	/* For the statistics structure. */
 #include <linux/slab.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <asm/io.h>
 

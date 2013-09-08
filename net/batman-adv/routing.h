@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2007-2012 B.A.T.M.A.N. contributors:
+=======
+ * Copyright (C) 2007-2011 B.A.T.M.A.N. contributors:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Marek Lindner, Simon Wunderlich
  *
@@ -23,14 +27,25 @@
 #define _NET_BATMAN_ADV_ROUTING_H_
 
 void slide_own_bcast_window(struct hard_iface *hard_iface);
+<<<<<<< HEAD
 void update_route(struct bat_priv *bat_priv, struct orig_node *orig_node,
 		  struct neigh_node *neigh_node);
+=======
+void receive_bat_packet(struct ethhdr *ethhdr,
+				struct batman_packet *batman_packet,
+				unsigned char *tt_buff, int tt_buff_len,
+				struct hard_iface *if_incoming);
+void update_routes(struct bat_priv *bat_priv, struct orig_node *orig_node,
+		   struct neigh_node *neigh_node, unsigned char *tt_buff,
+		   int tt_buff_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int route_unicast_packet(struct sk_buff *skb, struct hard_iface *recv_if);
 int recv_icmp_packet(struct sk_buff *skb, struct hard_iface *recv_if);
 int recv_unicast_packet(struct sk_buff *skb, struct hard_iface *recv_if);
 int recv_ucast_frag_packet(struct sk_buff *skb, struct hard_iface *recv_if);
 int recv_bcast_packet(struct sk_buff *skb, struct hard_iface *recv_if);
 int recv_vis_packet(struct sk_buff *skb, struct hard_iface *recv_if);
+<<<<<<< HEAD
 int recv_bat_ogm_packet(struct sk_buff *skb, struct hard_iface *recv_if);
 int recv_tt_query(struct sk_buff *skb, struct hard_iface *recv_if);
 int recv_roam_adv(struct sk_buff *skb, struct hard_iface *recv_if);
@@ -46,5 +61,13 @@ void bonding_save_primary(const struct orig_node *orig_node,
 			  const struct batman_ogm_packet *batman_ogm_packet);
 int window_protected(struct bat_priv *bat_priv, int32_t seq_num_diff,
 		     unsigned long *last_reset);
+=======
+int recv_bat_packet(struct sk_buff *skb, struct hard_iface *recv_if);
+struct neigh_node *find_router(struct bat_priv *bat_priv,
+			       struct orig_node *orig_node,
+			       struct hard_iface *recv_if);
+void bonding_candidate_del(struct orig_node *orig_node,
+			   struct neigh_node *neigh_node);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* _NET_BATMAN_ADV_ROUTING_H_ */

@@ -15,12 +15,17 @@
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <asm/system_info.h>
 
 #include <plat/cpu.h>
 
 #include <mach/hardware.h>
 
+=======
+#include <plat/cpu.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define OMAP_DIE_ID_0		0xfffe1800
 #define OMAP_DIE_ID_1		0xfffe1804
 #define OMAP_PRODUCTION_ID_0	0xfffe2000

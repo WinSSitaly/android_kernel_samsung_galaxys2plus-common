@@ -26,8 +26,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/in.h>
 #include <linux/module.h>
 #include <linux/net.h>
@@ -180,8 +183,13 @@ static int parse_opts(char *params, struct p9_rdma_opts *opts)
 
 	tmp_options = kstrdup(params, GFP_KERNEL);
 	if (!tmp_options) {
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_ERROR,
 			 "failed to allocate copy of option string\n");
+=======
+		P9_DPRINTK(P9_DEBUG_ERROR,
+			   "failed to allocate copy of option string\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 	options = tmp_options;
@@ -194,8 +202,13 @@ static int parse_opts(char *params, struct p9_rdma_opts *opts)
 		token = match_token(p, tokens, args);
 		r = match_int(&args[0], &option);
 		if (r < 0) {
+<<<<<<< HEAD
 			p9_debug(P9_DEBUG_ERROR,
 				 "integer field, but no integer?\n");
+=======
+			P9_DPRINTK(P9_DEBUG_ERROR,
+				   "integer field, but no integer?\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 		switch (token) {
@@ -303,7 +316,12 @@ handle_recv(struct p9_client *client, struct p9_trans_rdma *rdma,
 	return;
 
  err_out:
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_ERROR, "req %p err %d status %d\n", req, err, status);
+=======
+	P9_DPRINTK(P9_DEBUG_ERROR, "req %p err %d status %d\n",
+		   req, err, status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rdma->state = P9_RDMA_FLUSHING;
 	client->status = Disconnected;
 }
@@ -319,8 +337,13 @@ handle_send(struct p9_client *client, struct p9_trans_rdma *rdma,
 
 static void qp_event_handler(struct ib_event *event, void *context)
 {
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_ERROR, "QP event %d context %p\n",
 		 event->event, context);
+=======
+	P9_DPRINTK(P9_DEBUG_ERROR, "QP event %d context %p\n", event->event,
+								context);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void cq_comp_handler(struct ib_cq *cq, void *cq_context)
@@ -346,7 +369,12 @@ static void cq_comp_handler(struct ib_cq *cq, void *cq_context)
 			break;
 
 		default:
+<<<<<<< HEAD
 			pr_err("unexpected completion type, c->wc_op=%d, wc.opcode=%d, status=%d\n",
+=======
+			printk(KERN_ERR "9prdma: unexpected completion type, "
+			       "c->wc_op=%d, wc.opcode=%d, status=%d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       c->wc_op, wc.opcode, wc.status);
 			break;
 		}
@@ -356,7 +384,11 @@ static void cq_comp_handler(struct ib_cq *cq, void *cq_context)
 
 static void cq_event_handler(struct ib_event *e, void *v)
 {
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_ERROR, "CQ event %d context %p\n", e->event, v);
+=======
+	P9_DPRINTK(P9_DEBUG_ERROR, "CQ event %d context %p\n", e->event, v);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void rdma_destroy_trans(struct p9_trans_rdma *rdma)
@@ -407,7 +439,11 @@ post_recv(struct p9_client *client, struct p9_rdma_context *c)
 	return ib_post_recv(rdma->qp, &wr, &bad_wr);
 
  error:
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_ERROR, "EIO\n");
+=======
+	P9_DPRINTK(P9_DEBUG_ERROR, "EIO\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -EIO;
 }
 
@@ -500,7 +536,11 @@ static int rdma_request(struct p9_client *client, struct p9_req_t *req)
 	kfree(c);
 	kfree(rpl_context->rc);
 	kfree(rpl_context);
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_ERROR, "EIO\n");
+=======
+	P9_DPRINTK(P9_DEBUG_ERROR, "EIO\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -EIO;
  err_free1:
 	kfree(rpl_context->rc);

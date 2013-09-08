@@ -123,11 +123,19 @@ static int pageattr_test(void)
 	if (print)
 		printk(KERN_INFO "CPA self-test:\n");
 
+<<<<<<< HEAD
 	bm = vzalloc((max_pfn_mapped + 7) / 8);
+=======
+	bm = vmalloc((max_pfn_mapped + 7) / 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!bm) {
 		printk(KERN_ERR "CPA Cannot vmalloc bitmap\n");
 		return -ENOMEM;
 	}
+<<<<<<< HEAD
+=======
+	memset(bm, 0, (max_pfn_mapped + 7) / 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	failed += print_split(&sa);
 	srandom32(100);

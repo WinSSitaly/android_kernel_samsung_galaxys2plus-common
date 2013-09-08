@@ -45,6 +45,11 @@ void ec_write(unsigned short addr, unsigned char val)
 	/*  flush the write action */
 	inb(EC_IO_PORT_DATA);
 	spin_unlock_irqrestore(&index_access_lock, flags);
+<<<<<<< HEAD
+=======
+
+	return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(ec_write);
 

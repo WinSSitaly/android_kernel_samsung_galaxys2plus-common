@@ -78,7 +78,11 @@ void __init n2100_map_io(void)
  * N2100 PCI.
  */
 static int __init
+<<<<<<< HEAD
 n2100_pci_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+n2100_pci_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int irq;
 
@@ -291,6 +295,7 @@ static void n2100_power_off(void)
 		;
 }
 
+<<<<<<< HEAD
 static void n2100_restart(char mode, const char *cmd)
 {
 	gpio_line_set(N2100_HARDWARE_RESET, GPIO_LOW);
@@ -299,6 +304,8 @@ static void n2100_restart(char mode, const char *cmd)
 		;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct timer_list power_button_poll_timer;
 
@@ -335,10 +342,17 @@ static void __init n2100_init_machine(void)
 
 MACHINE_START(N2100, "Thecus N2100")
 	/* Maintainer: Lennert Buytenhek <buytenh@wantstofly.org> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= 0xa0000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io		= n2100_map_io,
 	.init_irq	= iop32x_init_irq,
 	.timer		= &n2100_timer,
 	.init_machine	= n2100_init_machine,
+<<<<<<< HEAD
 	.restart	= n2100_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

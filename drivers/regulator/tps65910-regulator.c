@@ -25,11 +25,40 @@
 #include <linux/gpio.h>
 #include <linux/mfd/tps65910.h>
 
+<<<<<<< HEAD
 #define TPS65910_SUPPLY_STATE_ENABLED	0x1
 #define EXT_SLEEP_CONTROL (TPS65910_SLEEP_CONTROL_EXT_INPUT_EN1 |	\
 			TPS65910_SLEEP_CONTROL_EXT_INPUT_EN2 |		\
 			TPS65910_SLEEP_CONTROL_EXT_INPUT_EN3 |		\
 			TPS65911_SLEEP_CONTROL_EXT_INPUT_SLEEP)
+=======
+#define TPS65910_REG_VRTC		0
+#define TPS65910_REG_VIO		1
+#define TPS65910_REG_VDD1		2
+#define TPS65910_REG_VDD2		3
+#define TPS65910_REG_VDD3		4
+#define TPS65910_REG_VDIG1		5
+#define TPS65910_REG_VDIG2		6
+#define TPS65910_REG_VPLL		7
+#define TPS65910_REG_VDAC		8
+#define TPS65910_REG_VAUX1		9
+#define TPS65910_REG_VAUX2		10
+#define TPS65910_REG_VAUX33		11
+#define TPS65910_REG_VMMC		12
+
+#define TPS65911_REG_VDDCTRL		4
+#define TPS65911_REG_LDO1		5
+#define TPS65911_REG_LDO2		6
+#define TPS65911_REG_LDO3		7
+#define TPS65911_REG_LDO4		8
+#define TPS65911_REG_LDO5		9
+#define TPS65911_REG_LDO6		10
+#define TPS65911_REG_LDO7		11
+#define TPS65911_REG_LDO8		12
+
+#define TPS65910_NUM_REGULATOR		13
+#define TPS65910_SUPPLY_STATE_ENABLED	0x1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* supported VIO voltages in milivolts */
 static const u16 VIO_VSEL_table[] = {
@@ -87,112 +116,177 @@ struct tps_info {
 	const char *name;
 	unsigned min_uV;
 	unsigned max_uV;
+<<<<<<< HEAD
 	u8 n_voltages;
 	const u16 *voltage_table;
 	int enable_time_us;
+=======
+	u8 table_len;
+	const u16 *table;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct tps_info tps65910_regs[] = {
 	{
 		.name = "VRTC",
+<<<<<<< HEAD
 		.enable_time_us = 2200,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "VIO",
 		.min_uV = 1500000,
 		.max_uV = 3300000,
+<<<<<<< HEAD
 		.n_voltages = ARRAY_SIZE(VIO_VSEL_table),
 		.voltage_table = VIO_VSEL_table,
 		.enable_time_us = 350,
+=======
+		.table_len = ARRAY_SIZE(VIO_VSEL_table),
+		.table = VIO_VSEL_table,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "VDD1",
 		.min_uV = 600000,
 		.max_uV = 4500000,
+<<<<<<< HEAD
 		.enable_time_us = 350,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "VDD2",
 		.min_uV = 600000,
 		.max_uV = 4500000,
+<<<<<<< HEAD
 		.enable_time_us = 350,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "VDD3",
 		.min_uV = 5000000,
 		.max_uV = 5000000,
+<<<<<<< HEAD
 		.n_voltages = ARRAY_SIZE(VDD3_VSEL_table),
 		.voltage_table = VDD3_VSEL_table,
 		.enable_time_us = 200,
+=======
+		.table_len = ARRAY_SIZE(VDD3_VSEL_table),
+		.table = VDD3_VSEL_table,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "VDIG1",
 		.min_uV = 1200000,
 		.max_uV = 2700000,
+<<<<<<< HEAD
 		.n_voltages = ARRAY_SIZE(VDIG1_VSEL_table),
 		.voltage_table = VDIG1_VSEL_table,
 		.enable_time_us = 100,
+=======
+		.table_len = ARRAY_SIZE(VDIG1_VSEL_table),
+		.table = VDIG1_VSEL_table,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "VDIG2",
 		.min_uV = 1000000,
 		.max_uV = 1800000,
+<<<<<<< HEAD
 		.n_voltages = ARRAY_SIZE(VDIG2_VSEL_table),
 		.voltage_table = VDIG2_VSEL_table,
 		.enable_time_us = 100,
+=======
+		.table_len = ARRAY_SIZE(VDIG2_VSEL_table),
+		.table = VDIG2_VSEL_table,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "VPLL",
 		.min_uV = 1000000,
 		.max_uV = 2500000,
+<<<<<<< HEAD
 		.n_voltages = ARRAY_SIZE(VPLL_VSEL_table),
 		.voltage_table = VPLL_VSEL_table,
 		.enable_time_us = 100,
+=======
+		.table_len = ARRAY_SIZE(VPLL_VSEL_table),
+		.table = VPLL_VSEL_table,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "VDAC",
 		.min_uV = 1800000,
 		.max_uV = 2850000,
+<<<<<<< HEAD
 		.n_voltages = ARRAY_SIZE(VDAC_VSEL_table),
 		.voltage_table = VDAC_VSEL_table,
 		.enable_time_us = 100,
+=======
+		.table_len = ARRAY_SIZE(VDAC_VSEL_table),
+		.table = VDAC_VSEL_table,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "VAUX1",
 		.min_uV = 1800000,
 		.max_uV = 2850000,
+<<<<<<< HEAD
 		.n_voltages = ARRAY_SIZE(VAUX1_VSEL_table),
 		.voltage_table = VAUX1_VSEL_table,
 		.enable_time_us = 100,
+=======
+		.table_len = ARRAY_SIZE(VAUX1_VSEL_table),
+		.table = VAUX1_VSEL_table,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "VAUX2",
 		.min_uV = 1800000,
 		.max_uV = 3300000,
+<<<<<<< HEAD
 		.n_voltages = ARRAY_SIZE(VAUX2_VSEL_table),
 		.voltage_table = VAUX2_VSEL_table,
 		.enable_time_us = 100,
+=======
+		.table_len = ARRAY_SIZE(VAUX2_VSEL_table),
+		.table = VAUX2_VSEL_table,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "VAUX33",
 		.min_uV = 1800000,
 		.max_uV = 3300000,
+<<<<<<< HEAD
 		.n_voltages = ARRAY_SIZE(VAUX33_VSEL_table),
 		.voltage_table = VAUX33_VSEL_table,
 		.enable_time_us = 100,
+=======
+		.table_len = ARRAY_SIZE(VAUX33_VSEL_table),
+		.table = VAUX33_VSEL_table,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "VMMC",
 		.min_uV = 1800000,
 		.max_uV = 3300000,
+<<<<<<< HEAD
 		.n_voltages = ARRAY_SIZE(VMMC_VSEL_table),
 		.voltage_table = VMMC_VSEL_table,
 		.enable_time_us = 100,
+=======
+		.table_len = ARRAY_SIZE(VMMC_VSEL_table),
+		.table = VMMC_VSEL_table,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 
 static struct tps_info tps65911_regs[] = {
 	{
+<<<<<<< HEAD
 		.name = "VRTC",
 		.enable_time_us = 2200,
 	},
@@ -203,81 +297,119 @@ static struct tps_info tps65911_regs[] = {
 		.n_voltages = ARRAY_SIZE(VIO_VSEL_table),
 		.voltage_table = VIO_VSEL_table,
 		.enable_time_us = 350,
+=======
+		.name = "VIO",
+		.min_uV = 1500000,
+		.max_uV = 3300000,
+		.table_len = ARRAY_SIZE(VIO_VSEL_table),
+		.table = VIO_VSEL_table,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "VDD1",
 		.min_uV = 600000,
 		.max_uV = 4500000,
+<<<<<<< HEAD
 		.n_voltages = 73,
 		.enable_time_us = 350,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "VDD2",
 		.min_uV = 600000,
 		.max_uV = 4500000,
+<<<<<<< HEAD
 		.n_voltages = 73,
 		.enable_time_us = 350,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "VDDCTRL",
 		.min_uV = 600000,
 		.max_uV = 1400000,
+<<<<<<< HEAD
 		.n_voltages = 65,
 		.enable_time_us = 900,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "LDO1",
 		.min_uV = 1000000,
 		.max_uV = 3300000,
+<<<<<<< HEAD
 		.n_voltages = 47,
 		.enable_time_us = 420,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "LDO2",
 		.min_uV = 1000000,
 		.max_uV = 3300000,
+<<<<<<< HEAD
 		.n_voltages = 47,
 		.enable_time_us = 420,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "LDO3",
 		.min_uV = 1000000,
 		.max_uV = 3300000,
+<<<<<<< HEAD
 		.n_voltages = 24,
 		.enable_time_us = 230,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "LDO4",
 		.min_uV = 1000000,
 		.max_uV = 3300000,
+<<<<<<< HEAD
 		.n_voltages = 47,
 		.enable_time_us = 230,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "LDO5",
 		.min_uV = 1000000,
 		.max_uV = 3300000,
+<<<<<<< HEAD
 		.n_voltages = 24,
 		.enable_time_us = 230,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "LDO6",
 		.min_uV = 1000000,
 		.max_uV = 3300000,
+<<<<<<< HEAD
 		.n_voltages = 24,
 		.enable_time_us = 230,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "LDO7",
 		.min_uV = 1000000,
 		.max_uV = 3300000,
+<<<<<<< HEAD
 		.n_voltages = 24,
 		.enable_time_us = 230,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "LDO8",
 		.min_uV = 1000000,
 		.max_uV = 3300000,
+<<<<<<< HEAD
 		.n_voltages = 24,
 		.enable_time_us = 230,
 	},
@@ -327,6 +459,19 @@ struct tps65910_reg {
 	int  (*get_ctrl_reg)(int);
 	unsigned int *ext_sleep_control;
 	unsigned int board_ext_control[TPS65910_NUM_REGS];
+=======
+	},
+};
+
+struct tps65910_reg {
+	struct regulator_desc desc[TPS65910_NUM_REGULATOR];
+	struct tps65910 *mfd;
+	struct regulator_dev *rdev[TPS65910_NUM_REGULATOR];
+	struct tps_info *info[TPS65910_NUM_REGULATOR];
+	struct mutex mutex;
+	int mode;
+	int  (*get_ctrl_reg)(int);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline int tps65910_read(struct tps65910_reg *pmic, u8 reg)
@@ -509,12 +654,15 @@ static int tps65910_disable(struct regulator_dev *dev)
 	return tps65910_clear_bits(mfd, reg, TPS65910_SUPPLY_STATE_ENABLED);
 }
 
+<<<<<<< HEAD
 static int tps65910_enable_time(struct regulator_dev *dev)
 {
 	struct tps65910_reg *pmic = rdev_get_drvdata(dev);
 	int id = rdev_get_id(dev);
 	return pmic->info[id]->enable_time_us;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int tps65910_set_mode(struct regulator_dev *dev, unsigned int mode)
 {
@@ -553,7 +701,11 @@ static unsigned int tps65910_get_mode(struct regulator_dev *dev)
 	if (value < 0)
 		return value;
 
+<<<<<<< HEAD
 	if (!(value & LDO_ST_ON_BIT))
+=======
+	if (value & LDO_ST_ON_BIT)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return REGULATOR_MODE_STANDBY;
 	else if (value & LDO_ST_MODE_BIT)
 		return REGULATOR_MODE_IDLE;
@@ -561,10 +713,17 @@ static unsigned int tps65910_get_mode(struct regulator_dev *dev)
 		return REGULATOR_MODE_NORMAL;
 }
 
+<<<<<<< HEAD
 static int tps65910_get_voltage_dcdc_sel(struct regulator_dev *dev)
 {
 	struct tps65910_reg *pmic = rdev_get_drvdata(dev);
 	int id = rdev_get_id(dev);
+=======
+static int tps65910_get_voltage_dcdc(struct regulator_dev *dev)
+{
+	struct tps65910_reg *pmic = rdev_get_drvdata(dev);
+	int id = rdev_get_id(dev), voltage = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int opvsel = 0, srvsel = 0, vselmax = 0, mult = 0, sr = 0;
 
 	switch (id) {
@@ -608,7 +767,13 @@ static int tps65910_get_voltage_dcdc_sel(struct regulator_dev *dev)
 			srvsel = 3;
 		if (srvsel > vselmax)
 			srvsel = vselmax;
+<<<<<<< HEAD
 		return srvsel - 3;
+=======
+		srvsel -= 3;
+
+		voltage = (srvsel * VDD1_2_OFFSET + VDD1_2_MIN_VOLT) * 100;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 
 		/* normalise to valid range*/
@@ -616,9 +781,20 @@ static int tps65910_get_voltage_dcdc_sel(struct regulator_dev *dev)
 			opvsel = 3;
 		if (opvsel > vselmax)
 			opvsel = vselmax;
+<<<<<<< HEAD
 		return opvsel - 3;
 	}
 	return -EINVAL;
+=======
+		opvsel -= 3;
+
+		voltage = (opvsel * VDD1_2_OFFSET + VDD1_2_MIN_VOLT) * 100;
+	}
+
+	voltage *= mult;
+
+	return voltage;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int tps65910_get_voltage(struct regulator_dev *dev)
@@ -651,7 +827,11 @@ static int tps65910_get_voltage(struct regulator_dev *dev)
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	voltage = pmic->info[id]->voltage_table[value] * 1000;
+=======
+	voltage = pmic->info[id]->table[value] * 1000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return voltage;
 }
@@ -701,9 +881,14 @@ static int tps65911_get_voltage(struct regulator_dev *dev)
 		step_mv = 100;
 		break;
 	case TPS65910_REG_VIO:
+<<<<<<< HEAD
 		value &= LDO_SEL_MASK;
 		value >>= LDO_SEL_SHIFT;
 		return pmic->info[id]->voltage_table[value] * 1000;
+=======
+		return pmic->info[id]->table[value] * 1000;
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return -EINVAL;
 	}
@@ -711,8 +896,13 @@ static int tps65911_get_voltage(struct regulator_dev *dev)
 	return (LDO_MIN_VOLT + value * step_mv) * 1000;
 }
 
+<<<<<<< HEAD
 static int tps65910_set_voltage_dcdc_sel(struct regulator_dev *dev,
 					 unsigned selector)
+=======
+static int tps65910_set_voltage_dcdc(struct regulator_dev *dev,
+				unsigned selector)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tps65910_reg *pmic = rdev_get_drvdata(dev);
 	int id = rdev_get_id(dev), vsel;
@@ -720,10 +910,17 @@ static int tps65910_set_voltage_dcdc_sel(struct regulator_dev *dev,
 
 	switch (id) {
 	case TPS65910_REG_VDD1:
+<<<<<<< HEAD
 		dcdc_mult = (selector / VDD1_2_NUM_VOLT_FINE) + 1;
 		if (dcdc_mult == 1)
 			dcdc_mult--;
 		vsel = (selector % VDD1_2_NUM_VOLT_FINE) + 3;
+=======
+		dcdc_mult = (selector / VDD1_2_NUM_VOLTS) + 1;
+		if (dcdc_mult == 1)
+			dcdc_mult--;
+		vsel = (selector % VDD1_2_NUM_VOLTS) + 3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		tps65910_modify_bits(pmic, TPS65910_VDD1,
 				(dcdc_mult << VDD1_VGAIN_SEL_SHIFT),
@@ -731,10 +928,17 @@ static int tps65910_set_voltage_dcdc_sel(struct regulator_dev *dev,
 		tps65910_reg_write(pmic, TPS65910_VDD1_OP, vsel);
 		break;
 	case TPS65910_REG_VDD2:
+<<<<<<< HEAD
 		dcdc_mult = (selector / VDD1_2_NUM_VOLT_FINE) + 1;
 		if (dcdc_mult == 1)
 			dcdc_mult--;
 		vsel = (selector % VDD1_2_NUM_VOLT_FINE) + 3;
+=======
+		dcdc_mult = (selector / VDD1_2_NUM_VOLTS) + 1;
+		if (dcdc_mult == 1)
+			dcdc_mult--;
+		vsel = (selector % VDD1_2_NUM_VOLTS) + 3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		tps65910_modify_bits(pmic, TPS65910_VDD2,
 				(dcdc_mult << VDD2_VGAIN_SEL_SHIFT),
@@ -742,15 +946,23 @@ static int tps65910_set_voltage_dcdc_sel(struct regulator_dev *dev,
 		tps65910_reg_write(pmic, TPS65910_VDD2_OP, vsel);
 		break;
 	case TPS65911_REG_VDDCTRL:
+<<<<<<< HEAD
 		vsel = selector + 3;
+=======
+		vsel = selector;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tps65910_reg_write(pmic, TPS65911_VDDCTRL_OP, vsel);
 	}
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int tps65910_set_voltage_sel(struct regulator_dev *dev,
 				    unsigned selector)
+=======
+static int tps65910_set_voltage(struct regulator_dev *dev, unsigned selector)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tps65910_reg *pmic = rdev_get_drvdata(dev);
 	int reg, id = rdev_get_id(dev);
@@ -776,8 +988,12 @@ static int tps65910_set_voltage_sel(struct regulator_dev *dev,
 	return -EINVAL;
 }
 
+<<<<<<< HEAD
 static int tps65911_set_voltage_sel(struct regulator_dev *dev,
 				    unsigned selector)
+=======
+static int tps65911_set_voltage(struct regulator_dev *dev, unsigned selector)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tps65910_reg *pmic = rdev_get_drvdata(dev);
 	int reg, id = rdev_get_id(dev);
@@ -797,11 +1013,17 @@ static int tps65911_set_voltage_sel(struct regulator_dev *dev,
 	case TPS65911_REG_LDO6:
 	case TPS65911_REG_LDO7:
 	case TPS65911_REG_LDO8:
+<<<<<<< HEAD
 		return tps65910_modify_bits(pmic, reg,
 				(selector << LDO_SEL_SHIFT), LDO3_SEL_MASK);
 	case TPS65910_REG_VIO:
 		return tps65910_modify_bits(pmic, reg,
 				(selector << LDO_SEL_SHIFT), LDO_SEL_MASK);
+=======
+	case TPS65910_REG_VIO:
+		return tps65910_modify_bits(pmic, reg,
+				(selector << LDO_SEL_SHIFT), LDO3_SEL_MASK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return -EINVAL;
@@ -816,9 +1038,15 @@ static int tps65910_list_voltage_dcdc(struct regulator_dev *dev,
 	switch (id) {
 	case TPS65910_REG_VDD1:
 	case TPS65910_REG_VDD2:
+<<<<<<< HEAD
 		mult = (selector / VDD1_2_NUM_VOLT_FINE) + 1;
 		volt = VDD1_2_MIN_VOLT +
 				(selector % VDD1_2_NUM_VOLT_FINE) * VDD1_2_OFFSET;
+=======
+		mult = (selector / VDD1_2_NUM_VOLTS) + 1;
+		volt = VDD1_2_MIN_VOLT +
+				(selector % VDD1_2_NUM_VOLTS) * VDD1_2_OFFSET;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case TPS65911_REG_VDDCTRL:
 		volt = VDDCTRL_MIN_VOLT + (selector * VDDCTRL_OFFSET);
@@ -840,10 +1068,17 @@ static int tps65910_list_voltage(struct regulator_dev *dev,
 	if (id < TPS65910_REG_VIO || id > TPS65910_REG_VMMC)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	if (selector >= pmic->info[id]->n_voltages)
 		return -EINVAL;
 	else
 		voltage = pmic->info[id]->voltage_table[selector] * 1000;
+=======
+	if (selector >= pmic->info[id]->table_len)
+		return -EINVAL;
+	else
+		voltage = pmic->info[id]->table[selector] * 1000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return voltage;
 }
@@ -879,7 +1114,11 @@ static int tps65911_list_voltage(struct regulator_dev *dev, unsigned selector)
 		step_mv = 100;
 		break;
 	case TPS65910_REG_VIO:
+<<<<<<< HEAD
 		return pmic->info[id]->voltage_table[selector] * 1000;
+=======
+		return pmic->info[id]->table[selector] * 1000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return -EINVAL;
 	}
@@ -887,6 +1126,7 @@ static int tps65911_list_voltage(struct regulator_dev *dev, unsigned selector)
 	return (LDO_MIN_VOLT + selector * step_mv) * 1000;
 }
 
+<<<<<<< HEAD
 static int tps65910_set_voltage_dcdc_time_sel(struct regulator_dev *dev,
 		unsigned int old_selector, unsigned int new_selector)
 {
@@ -912,17 +1152,26 @@ static int tps65910_set_voltage_dcdc_time_sel(struct regulator_dev *dev,
 	return -EINVAL;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Regulator ops (except VRTC) */
 static struct regulator_ops tps65910_ops_dcdc = {
 	.is_enabled		= tps65910_is_enabled,
 	.enable			= tps65910_enable,
 	.disable		= tps65910_disable,
+<<<<<<< HEAD
 	.enable_time		= tps65910_enable_time,
 	.set_mode		= tps65910_set_mode,
 	.get_mode		= tps65910_get_mode,
 	.get_voltage_sel	= tps65910_get_voltage_dcdc_sel,
 	.set_voltage_sel	= tps65910_set_voltage_dcdc_sel,
 	.set_voltage_time_sel	= tps65910_set_voltage_dcdc_time_sel,
+=======
+	.set_mode		= tps65910_set_mode,
+	.get_mode		= tps65910_get_mode,
+	.get_voltage		= tps65910_get_voltage_dcdc,
+	.set_voltage_sel	= tps65910_set_voltage_dcdc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.list_voltage		= tps65910_list_voltage_dcdc,
 };
 
@@ -930,7 +1179,10 @@ static struct regulator_ops tps65910_ops_vdd3 = {
 	.is_enabled		= tps65910_is_enabled,
 	.enable			= tps65910_enable,
 	.disable		= tps65910_disable,
+<<<<<<< HEAD
 	.enable_time		= tps65910_enable_time,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.set_mode		= tps65910_set_mode,
 	.get_mode		= tps65910_get_mode,
 	.get_voltage		= tps65910_get_voltage_vdd3,
@@ -941,11 +1193,18 @@ static struct regulator_ops tps65910_ops = {
 	.is_enabled		= tps65910_is_enabled,
 	.enable			= tps65910_enable,
 	.disable		= tps65910_disable,
+<<<<<<< HEAD
 	.enable_time		= tps65910_enable_time,
 	.set_mode		= tps65910_set_mode,
 	.get_mode		= tps65910_get_mode,
 	.get_voltage		= tps65910_get_voltage,
 	.set_voltage_sel	= tps65910_set_voltage_sel,
+=======
+	.set_mode		= tps65910_set_mode,
+	.get_mode		= tps65910_get_mode,
+	.get_voltage		= tps65910_get_voltage,
+	.set_voltage_sel	= tps65910_set_voltage,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.list_voltage		= tps65910_list_voltage,
 };
 
@@ -953,6 +1212,7 @@ static struct regulator_ops tps65911_ops = {
 	.is_enabled		= tps65910_is_enabled,
 	.enable			= tps65910_enable,
 	.disable		= tps65910_disable,
+<<<<<<< HEAD
 	.enable_time		= tps65910_enable_time,
 	.set_mode		= tps65910_set_mode,
 	.get_mode		= tps65910_get_mode,
@@ -1094,6 +1354,15 @@ static int tps65910_set_ext_sleep_config(struct tps65910_reg *pmic,
 	return ret;
 }
 
+=======
+	.set_mode		= tps65910_set_mode,
+	.get_mode		= tps65910_get_mode,
+	.get_voltage		= tps65911_get_voltage,
+	.set_voltage_sel	= tps65911_set_voltage,
+	.list_voltage		= tps65911_list_voltage,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __devinit int tps65910_probe(struct platform_device *pdev)
 {
 	struct tps65910 *tps65910 = dev_get_drvdata(pdev->dev.parent);
@@ -1108,6 +1377,11 @@ static __devinit int tps65910_probe(struct platform_device *pdev)
 	if (!pmic_plat_data)
 		return -EINVAL;
 
+<<<<<<< HEAD
+=======
+	reg_data = pmic_plat_data->tps65910_pmic_init_data;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pmic = kzalloc(sizeof(*pmic), GFP_KERNEL);
 	if (!pmic)
 		return -ENOMEM;
@@ -1123,18 +1397,25 @@ static __devinit int tps65910_probe(struct platform_device *pdev)
 	switch(tps65910_chip_id(tps65910)) {
 	case TPS65910:
 		pmic->get_ctrl_reg = &tps65910_get_ctrl_register;
+<<<<<<< HEAD
 		pmic->num_regulators = ARRAY_SIZE(tps65910_regs);
 		pmic->ext_sleep_control = tps65910_ext_sleep_control;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		info = tps65910_regs;
 		break;
 	case TPS65911:
 		pmic->get_ctrl_reg = &tps65911_get_ctrl_register;
+<<<<<<< HEAD
 		pmic->num_regulators = ARRAY_SIZE(tps65911_regs);
 		pmic->ext_sleep_control = tps65911_ext_sleep_control;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		info = tps65911_regs;
 		break;
 	default:
 		pr_err("Invalid tps chip version\n");
+<<<<<<< HEAD
 		kfree(pmic);
 		return -ENODEV;
 	}
@@ -1170,17 +1451,30 @@ static __devinit int tps65910_probe(struct platform_device *pdev)
 		if (!reg_data)
 			continue;
 
+=======
+		return -ENODEV;
+	}
+
+	for (i = 0; i < TPS65910_NUM_REGULATOR; i++, info++, reg_data++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Register the regulators */
 		pmic->info[i] = info;
 
 		pmic->desc[i].name = info->name;
 		pmic->desc[i].id = i;
+<<<<<<< HEAD
 		pmic->desc[i].n_voltages = info->n_voltages;
 
 		if (i == TPS65910_REG_VDD1 || i == TPS65910_REG_VDD2) {
 			pmic->desc[i].ops = &tps65910_ops_dcdc;
 			pmic->desc[i].n_voltages = VDD1_2_NUM_VOLT_FINE *
 							VDD1_2_NUM_VOLT_COARSE;
+=======
+		pmic->desc[i].n_voltages = info->table_len;
+
+		if (i == TPS65910_REG_VDD1 || i == TPS65910_REG_VDD2) {
+			pmic->desc[i].ops = &tps65910_ops_dcdc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else if (i == TPS65910_REG_VDD3) {
 			if (tps65910_chip_id(tps65910) == TPS65910)
 				pmic->desc[i].ops = &tps65910_ops_vdd3;
@@ -1193,6 +1487,7 @@ static __devinit int tps65910_probe(struct platform_device *pdev)
 				pmic->desc[i].ops = &tps65911_ops;
 		}
 
+<<<<<<< HEAD
 		err = tps65910_set_ext_sleep_config(pmic, i,
 				pmic_plat_data->regulator_ext_sleep_control[i]);
 		/*
@@ -1203,17 +1498,27 @@ static __devinit int tps65910_probe(struct platform_device *pdev)
 			dev_warn(tps65910->dev,
 				"Failed to initialise ext control config\n");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pmic->desc[i].type = REGULATOR_VOLTAGE;
 		pmic->desc[i].owner = THIS_MODULE;
 
 		rdev = regulator_register(&pmic->desc[i],
+<<<<<<< HEAD
 				tps65910->dev, reg_data, pmic, NULL);
+=======
+				tps65910->dev, reg_data, pmic);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (IS_ERR(rdev)) {
 			dev_err(tps65910->dev,
 				"failed to register %s regulator\n",
 				pdev->name);
 			err = PTR_ERR(rdev);
+<<<<<<< HEAD
 			goto err_unregister_regulator;
+=======
+			goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/* Save regulator for cleanup */
@@ -1221,6 +1526,7 @@ static __devinit int tps65910_probe(struct platform_device *pdev)
 	}
 	return 0;
 
+<<<<<<< HEAD
 err_unregister_regulator:
 	while (--i >= 0)
 		regulator_unregister(pmic->rdev[i]);
@@ -1230,12 +1536,19 @@ err_free_info:
 err_free_desc:
 	kfree(pmic->desc);
 err_free_pmic:
+=======
+err:
+	while (--i >= 0)
+		regulator_unregister(pmic->rdev[i]);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(pmic);
 	return err;
 }
 
 static int __devexit tps65910_remove(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct tps65910_reg *pmic = platform_get_drvdata(pdev);
 	int i;
 
@@ -1279,6 +1592,18 @@ static void tps65910_shutdown(struct platform_device *pdev)
 	}
 }
 
+=======
+	struct tps65910_reg *tps65910_reg = platform_get_drvdata(pdev);
+	int i;
+
+	for (i = 0; i < TPS65910_NUM_REGULATOR; i++)
+		regulator_unregister(tps65910_reg->rdev[i]);
+
+	kfree(tps65910_reg);
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver tps65910_driver = {
 	.driver = {
 		.name = "tps65910-pmic",
@@ -1286,7 +1611,10 @@ static struct platform_driver tps65910_driver = {
 	},
 	.probe = tps65910_probe,
 	.remove = __devexit_p(tps65910_remove),
+<<<<<<< HEAD
 	.shutdown = tps65910_shutdown,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init tps65910_init(void)
@@ -1302,6 +1630,10 @@ static void __exit tps65910_cleanup(void)
 module_exit(tps65910_cleanup);
 
 MODULE_AUTHOR("Graeme Gregory <gg@slimlogic.co.uk>");
+<<<<<<< HEAD
 MODULE_DESCRIPTION("TPS65910/TPS65911 voltage regulator driver");
+=======
+MODULE_DESCRIPTION("TPS6507x voltage regulator driver");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("GPL v2");
 MODULE_ALIAS("platform:tps65910-pmic");

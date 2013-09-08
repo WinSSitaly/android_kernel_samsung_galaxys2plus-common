@@ -27,8 +27,12 @@ use IO::Handle;
 		"or51211", "or51132_qam", "or51132_vsb", "bluebird",
 		"opera1", "cx231xx", "cx18", "cx23885", "pvrusb2", "mpc718",
 		"af9015", "ngene", "az6027", "lme2510_lg", "lme2510c_s7395",
+<<<<<<< HEAD
 		"lme2510c_s7395_old", "drxk", "drxk_terratec_h5",
 		"drxk_hauppauge_hvr930c", "tda10071", "it9135", "it9137");
+=======
+		"lme2510c_s7395_old");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # Check args
 syntax() if (scalar(@ARGV) != 1);
@@ -115,7 +119,11 @@ sub tda10045 {
 
 sub tda10046 {
 	my $sourcefile = "TT_PCI_2.19h_28_11_2006.zip";
+<<<<<<< HEAD
 	my $url = "http://technotrend.com.ua/download/software/219/$sourcefile";
+=======
+	my $url = "http://www.tt-download.com/download/updates/219/$sourcefile";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	my $hash = "6a7e1e2f2644b162ff0502367553c72d";
 	my $outfile = "dvb-fe-tda10046.fw";
 	my $tmpdir = tempdir(DIR => "/tmp", CLEANUP => 1);
@@ -576,10 +584,26 @@ sub ngene {
 }
 
 sub az6027{
+<<<<<<< HEAD
     my $firmware = "dvb-usb-az6027-03.fw";
     my $url = "http://linux.terratec.de/files/TERRATEC_S7/$firmware";
 
     wgetfile($firmware, $url);
+=======
+    my $file = "AZ6027_Linux_Driver.tar.gz";
+    my $url = "http://linux.terratec.de/files/$file";
+    my $firmware = "dvb-usb-az6027-03.fw";
+
+    wgetfile($file, $url);
+
+    #untar
+    if( system("tar xzvf $file $firmware")){
+        die "failed to untar firmware";
+    }
+    if( system("rm $file")){
+        die ("unable to remove unnecessary files");
+    }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
     $firmware;
 }
@@ -626,6 +650,7 @@ sub lme2510c_s7395_old {
     $outfile;
 }
 
+<<<<<<< HEAD
 sub drxk {
     my $url = "http://l4m-daten.de/files/";
     my $zipfile = "DDTuner.zip";
@@ -730,6 +755,8 @@ sub tda10071 {
     "$fwfile";
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # ---------------------------------------------------------------
 # Utilities
 

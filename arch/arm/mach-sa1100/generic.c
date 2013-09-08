@@ -9,17 +9,24 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pm.h>
 #include <linux/cpufreq.h>
 #include <linux/ioport.h>
 #include <linux/platform_device.h>
 
+<<<<<<< HEAD
 #include <video/sa1100fb.h>
 
 #include <asm/div64.h>
@@ -30,6 +37,15 @@
 
 #include <mach/hardware.h>
 #include <mach/irqs.h>
+=======
+#include <asm/div64.h>
+#include <mach/hardware.h>
+#include <asm/system.h>
+#include <asm/mach/map.h>
+#include <asm/mach/flash.h>
+#include <asm/irq.h>
+#include <asm/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "generic.h"
 
@@ -131,6 +147,7 @@ static void sa1100_power_off(void)
 	PMCR = PMCR_SF;
 }
 
+<<<<<<< HEAD
 void sa11x0_restart(char mode, const char *cmd)
 {
 	if (mode == 's') {
@@ -142,6 +159,8 @@ void sa11x0_restart(char mode, const char *cmd)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void sa11x0_register_device(struct platform_device *dev, void *data)
 {
 	int err;
@@ -154,8 +173,21 @@ static void sa11x0_register_device(struct platform_device *dev, void *data)
 
 
 static struct resource sa11x0udc_resources[] = {
+<<<<<<< HEAD
 	[0] = DEFINE_RES_MEM(__PREG(Ser0UDCCR), SZ_64K),
 	[1] = DEFINE_RES_IRQ(IRQ_Ser0UDC),
+=======
+	[0] = {
+		.start	= __PREG(Ser0UDCCR),
+		.end	= __PREG(Ser0UDCCR) + 0xffff,
+		.flags	= IORESOURCE_MEM,
+	},
+	[1] = {
+		.start	= IRQ_Ser0UDC,
+		.end	= IRQ_Ser0UDC,
+		.flags	= IORESOURCE_IRQ,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static u64 sa11x0udc_dma_mask = 0xffffffffUL;
@@ -172,8 +204,21 @@ static struct platform_device sa11x0udc_device = {
 };
 
 static struct resource sa11x0uart1_resources[] = {
+<<<<<<< HEAD
 	[0] = DEFINE_RES_MEM(__PREG(Ser1UTCR0), SZ_64K),
 	[1] = DEFINE_RES_IRQ(IRQ_Ser1UART),
+=======
+	[0] = {
+		.start	= __PREG(Ser1UTCR0),
+		.end	= __PREG(Ser1UTCR0) + 0xffff,
+		.flags	= IORESOURCE_MEM,
+	},
+	[1] = {
+		.start	= IRQ_Ser1UART,
+		.end	= IRQ_Ser1UART,
+		.flags	= IORESOURCE_IRQ,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device sa11x0uart1_device = {
@@ -184,8 +229,21 @@ static struct platform_device sa11x0uart1_device = {
 };
 
 static struct resource sa11x0uart3_resources[] = {
+<<<<<<< HEAD
 	[0] = DEFINE_RES_MEM(__PREG(Ser3UTCR0), SZ_64K),
 	[1] = DEFINE_RES_IRQ(IRQ_Ser3UART),
+=======
+	[0] = {
+		.start	= __PREG(Ser3UTCR0),
+		.end	= __PREG(Ser3UTCR0) + 0xffff,
+		.flags	= IORESOURCE_MEM,
+	},
+	[1] = {
+		.start	= IRQ_Ser3UART,
+		.end	= IRQ_Ser3UART,
+		.flags	= IORESOURCE_IRQ,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device sa11x0uart3_device = {
@@ -196,9 +254,22 @@ static struct platform_device sa11x0uart3_device = {
 };
 
 static struct resource sa11x0mcp_resources[] = {
+<<<<<<< HEAD
 	[0] = DEFINE_RES_MEM(__PREG(Ser4MCCR0), SZ_64K),
 	[1] = DEFINE_RES_MEM(__PREG(Ser4MCCR1), 4),
 	[2] = DEFINE_RES_IRQ(IRQ_Ser4MCP),
+=======
+	[0] = {
+		.start	= __PREG(Ser4MCCR0),
+		.end	= __PREG(Ser4MCCR0) + 0xffff,
+		.flags	= IORESOURCE_MEM,
+	},
+	[1] = {
+		.start	= IRQ_Ser4MCP,
+		.end	= IRQ_Ser4MCP,
+		.flags	= IORESOURCE_IRQ,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static u64 sa11x0mcp_dma_mask = 0xffffffffUL;
@@ -214,6 +285,7 @@ static struct platform_device sa11x0mcp_device = {
 	.resource	= sa11x0mcp_resources,
 };
 
+<<<<<<< HEAD
 void __init sa11x0_ppc_configure_mcp(void)
 {
 	/* Setup the PPC unit for the MCP */
@@ -224,14 +296,29 @@ void __init sa11x0_ppc_configure_mcp(void)
 	PPSR &= ~(PPC_TXD4 | PPC_SCLK | PPC_SFRM);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void sa11x0_register_mcp(struct mcp_plat_data *data)
 {
 	sa11x0_register_device(&sa11x0mcp_device, data);
 }
 
 static struct resource sa11x0ssp_resources[] = {
+<<<<<<< HEAD
 	[0] = DEFINE_RES_MEM(0x80070000, SZ_64K),
 	[1] = DEFINE_RES_IRQ(IRQ_Ser4SSP),
+=======
+	[0] = {
+		.start	= 0x80070000,
+		.end	= 0x8007ffff,
+		.flags	= IORESOURCE_MEM,
+	},
+	[1] = {
+		.start	= IRQ_Ser4SSP,
+		.end	= IRQ_Ser4SSP,
+		.flags	= IORESOURCE_IRQ,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static u64 sa11x0ssp_dma_mask = 0xffffffffUL;
@@ -248,8 +335,21 @@ static struct platform_device sa11x0ssp_device = {
 };
 
 static struct resource sa11x0fb_resources[] = {
+<<<<<<< HEAD
 	[0] = DEFINE_RES_MEM(0xb0100000, SZ_64K),
 	[1] = DEFINE_RES_IRQ(IRQ_LCD),
+=======
+	[0] = {
+		.start	= 0xb0100000,
+		.end	= 0xb010ffff,
+		.flags	= IORESOURCE_MEM,
+	},
+	[1] = {
+		.start	= IRQ_LCD,
+		.end	= IRQ_LCD,
+		.flags	= IORESOURCE_IRQ,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device sa11x0fb_device = {
@@ -262,11 +362,14 @@ static struct platform_device sa11x0fb_device = {
 	.resource	= sa11x0fb_resources,
 };
 
+<<<<<<< HEAD
 void sa11x0_register_lcd(struct sa1100fb_mach_info *inf)
 {
 	sa11x0_register_device(&sa11x0fb_device, inf);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_device sa11x0pcmcia_device = {
 	.name		= "sa11x0-pcmcia",
 	.id		= -1,
@@ -287,10 +390,30 @@ void sa11x0_register_mtd(struct flash_platform_data *flash,
 }
 
 static struct resource sa11x0ir_resources[] = {
+<<<<<<< HEAD
 	DEFINE_RES_MEM(__PREG(Ser2UTCR0), 0x24),
 	DEFINE_RES_MEM(__PREG(Ser2HSCR0), 0x1c),
 	DEFINE_RES_MEM(__PREG(Ser2HSCR2), 0x04),
 	DEFINE_RES_IRQ(IRQ_Ser2ICP),
+=======
+	{
+		.start	= __PREG(Ser2UTCR0),
+		.end	= __PREG(Ser2UTCR0) + 0x24 - 1,
+		.flags	= IORESOURCE_MEM,
+	}, {
+		.start	= __PREG(Ser2HSCR0),
+		.end	= __PREG(Ser2HSCR0) + 0x1c - 1,
+		.flags	= IORESOURCE_MEM,
+	}, {
+		.start	= __PREG(Ser2HSCR2),
+		.end	= __PREG(Ser2HSCR2) + 0x04 - 1,
+		.flags	= IORESOURCE_MEM,
+	}, {
+		.start	= IRQ_Ser2ICP,
+		.end	= IRQ_Ser2ICP,
+		.flags	= IORESOURCE_IRQ,
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device sa11x0ir_device = {
@@ -305,6 +428,7 @@ void sa11x0_register_irda(struct irda_platform_data *irda)
 	sa11x0_register_device(&sa11x0ir_device, irda);
 }
 
+<<<<<<< HEAD
 static struct resource sa1100_rtc_resources[] = {
 	DEFINE_RES_MEM(0x90010000, 0x40),
 	DEFINE_RES_IRQ_NAMED(IRQ_RTC1Hz, "rtc 1Hz"),
@@ -339,6 +463,11 @@ static struct platform_device sa11x0dma_device = {
 	},
 	.num_resources	= ARRAY_SIZE(sa11x0dma_resources),
 	.resource	= sa11x0dma_resources,
+=======
+static struct platform_device sa11x0rtc_device = {
+	.name		= "sa1100-rtc",
+	.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device *sa11x0_devices[] __initdata = {
@@ -347,8 +476,13 @@ static struct platform_device *sa11x0_devices[] __initdata = {
 	&sa11x0uart3_device,
 	&sa11x0ssp_device,
 	&sa11x0pcmcia_device,
+<<<<<<< HEAD
 	&sa11x0rtc_device,
 	&sa11x0dma_device,
+=======
+	&sa11x0fb_device,
+	&sa11x0rtc_device,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init sa1100_init(void)
@@ -359,6 +493,15 @@ static int __init sa1100_init(void)
 
 arch_initcall(sa1100_init);
 
+<<<<<<< HEAD
+=======
+void (*sa1100fb_backlight_power)(int on);
+void (*sa1100fb_lcd_power)(int on);
+
+EXPORT_SYMBOL(sa1100fb_backlight_power);
+EXPORT_SYMBOL(sa1100fb_lcd_power);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Common I/O mapping:
@@ -413,7 +556,11 @@ void __init sa1100_map_io(void)
  * the MBGNT signal false to ensure the SA1111 doesn't own the
  * SDRAM bus.
  */
+<<<<<<< HEAD
 void sa1110_mb_disable(void)
+=======
+void __init sa1110_mb_disable(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags;
 
@@ -432,7 +579,11 @@ void sa1110_mb_disable(void)
  * If the system is going to use the SA-1111 DMA engines, set up
  * the memory bus request/grant pins.
  */
+<<<<<<< HEAD
 void sa1110_mb_enable(void)
+=======
+void __devinit sa1110_mb_enable(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags;
 

@@ -3,7 +3,11 @@
  * Broadcom MIPS core driver
  *
  * Copyright 2005, Broadcom Corporation
+<<<<<<< HEAD
  * Copyright 2006, 2007, Michael Buesch <m@bues.ch>
+=======
+ * Copyright 2006, 2007, Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Licensed under the GNU/GPL. See COPYING for details.
  */
@@ -208,9 +212,12 @@ u32 ssb_cpu_clock(struct ssb_mipscore *mcore)
 	struct ssb_bus *bus = mcore->dev->bus;
 	u32 pll_type, n, m, rate = 0;
 
+<<<<<<< HEAD
 	if (bus->chipco.capabilities & SSB_CHIPCO_CAP_PMU)
 		return ssb_pmu_get_cpu_clock(&bus->chipco);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (bus->extif.dev) {
 		ssb_extif_get_clockcontrol(&bus->extif, &pll_type, &n, &m);
 	} else if (bus->chipco.dev) {

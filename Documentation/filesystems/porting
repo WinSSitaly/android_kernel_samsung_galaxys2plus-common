@@ -400,10 +400,17 @@ a file off.
 
 --
 [mandatory]
+<<<<<<< HEAD
+=======
+
+--
+[mandatory]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	->get_sb() is gone.  Switch to use of ->mount().  Typically it's just
 a matter of switching from calling get_sb_... to mount_... and changing the
 function type.  If you were doing it manually, just switch from setting ->mnt_root
 to some pointer to returning that pointer.  On errors return ERR_PTR(...).
+<<<<<<< HEAD
 
 --
 [mandatory]
@@ -435,3 +442,5 @@ release it yourself.
 	d_alloc_root() is gone, along with a lot of bugs caused by code
 misusing it.  Replacement: d_make_root(inode).  The difference is,
 d_make_root() drops the reference to inode if dentry allocation fails.  
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -23,8 +23,11 @@
 #ifndef ASM_ARM_HARDWARE_SERIAL_AMBA_H
 #define ASM_ARM_HARDWARE_SERIAL_AMBA_H
 
+<<<<<<< HEAD
 #include <linux/types.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* -------------------------------------------------------------------------------
  *  From AMBA UART (PL010) Block Specification
  * -------------------------------------------------------------------------------

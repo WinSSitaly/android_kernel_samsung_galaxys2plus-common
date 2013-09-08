@@ -34,14 +34,20 @@
 struct bfa_iocfc_intr_attr_s {
 	u8		coalesce;	/*  enable/disable coalescing */
 	u8		rsvd[3];
+<<<<<<< HEAD
 	__be16		latency;	/*  latency in microseconds   */
 	__be16		delay;		/*  delay in microseconds     */
+=======
+	__be16	latency;	/*  latency in microseconds   */
+	__be16	delay;		/*  delay in microseconds     */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
  * IOC firmware configuraton
  */
 struct bfa_iocfc_fwcfg_s {
+<<<<<<< HEAD
 	u16		num_fabrics;	/*  number of fabrics		*/
 	u16		num_lports;	/*  number of local lports	*/
 	u16		num_rports;	/*  number of remote ports	*/
@@ -53,10 +59,25 @@ struct bfa_iocfc_fwcfg_s {
 	u8		num_cqs;
 	u8		fw_tick_res;	/*  FW clock resolution in ms */
 	u8		rsvd[6];
+=======
+	u16        num_fabrics;	/*  number of fabrics		*/
+	u16        num_lports;	/*  number of local lports	*/
+	u16        num_rports;	/*  number of remote ports	*/
+	u16        num_ioim_reqs;	/*  number of IO reqs		*/
+	u16        num_tskim_reqs;	/*  task management requests	*/
+	u16        num_iotm_reqs;	/*  number of TM IO reqs	*/
+	u16        num_tsktm_reqs;	/*  TM task management requests*/
+	u16        num_fcxp_reqs;	/*  unassisted FC exchanges	*/
+	u16        num_uf_bufs;	/*  unsolicited recv buffers	*/
+	u8		num_cqs;
+	u8		fw_tick_res;	/*  FW clock resolution in ms */
+	u8		rsvd[4];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #pragma pack()
 
 struct bfa_iocfc_drvcfg_s {
+<<<<<<< HEAD
 	u16		num_reqq_elems;	/*  number of req queue elements */
 	u16		num_rspq_elems;	/*  number of rsp queue elements */
 	u16		num_sgpgs;	/*  number of total SG pages	 */
@@ -71,6 +92,18 @@ struct bfa_iocfc_drvcfg_s {
 	bfa_boolean_t	delay_comp;	/* delay completion of failed
 					 * inflight IOs */
 	u16		num_ttsk_reqs;	 /* TM task management requests */
+=======
+	u16        num_reqq_elems;	/*  number of req queue elements */
+	u16        num_rspq_elems;	/*  number of rsp queue elements */
+	u16        num_sgpgs;	/*  number of total SG pages	  */
+	u16        num_sboot_tgts;	/*  number of SAN boot targets	  */
+	u16        num_sboot_luns;	/*  number of SAN boot luns	  */
+	u16	    ioc_recover;	/*  IOC recovery mode		  */
+	u16	    min_cfg;	/*  minimum configuration	  */
+	u16        path_tov;	/*  device path timeout	  */
+	bfa_boolean_t   delay_comp; /*  delay completion of
+							failed inflight IOs */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32		rsvd;
 };
 
@@ -85,7 +118,11 @@ struct bfa_iocfc_cfg_s {
 /*
  * IOC firmware IO stats
  */
+<<<<<<< HEAD
 struct bfa_fw_ioim_stats_s {
+=======
+struct bfa_fw_io_stats_s {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32	host_abort;		/*  IO aborted by host driver*/
 	u32	host_cleanup;		/*  IO clean up by host driver */
 
@@ -101,8 +138,13 @@ struct bfa_fw_ioim_stats_s {
 	u32	fw_frm_drop;		/*  f/w drop the frame */
 
 	u32	rec_timeout;		/*  FW rec timed out */
+<<<<<<< HEAD
 	u32	error_rec;		/*  FW sending rec on
 					 *  an error condition*/
+=======
+	u32	error_rec;			/*  FW sending rec on
+							* an error condition*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32	wait_for_si;		/*  FW wait for SI */
 	u32	rec_rsp_inval;		/*  REC rsp invalid */
 	u32	seqr_io_abort;		/*  target does not know cmd so abort */
@@ -124,9 +166,15 @@ struct bfa_fw_ioim_stats_s {
 	u32	unexp_fcp_rsp;		/*  fcp response in wrong state */
 
 	u32	fcp_rsp_under_run;	/*  fcp rsp IO underrun */
+<<<<<<< HEAD
 	u32     fcp_rsp_under_run_wr;   /*  fcp rsp IO underrun for write */
 	u32	fcp_rsp_under_run_err;	/*  fcp rsp IO underrun error */
 	u32     fcp_rsp_resid_inval;    /*  invalid residue */
+=======
+	u32        fcp_rsp_under_run_wr;   /*  fcp rsp IO underrun for write */
+	u32	fcp_rsp_under_run_err;	/*  fcp rsp IO underrun error */
+	u32        fcp_rsp_resid_inval;    /*  invalid residue */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32	fcp_rsp_over_run;	/*  fcp rsp IO overrun */
 	u32	fcp_rsp_over_run_err;	/*  fcp rsp IO overrun error */
 	u32	fcp_rsp_proto_err;	/*  protocol error in fcp rsp */
@@ -142,13 +190,19 @@ struct bfa_fw_ioim_stats_s {
 	u32	ioh_hit_class2_event;	/*  IOH hit class2 */
 	u32	ioh_miss_other_event;	/*  IOH miss other */
 	u32	ioh_seq_cnt_err_event;	/*  IOH seq cnt error */
+<<<<<<< HEAD
 	u32	ioh_len_err_event;	/*  IOH len error - fcp_dl !=
 					 *  bytes xfered */
+=======
+	u32	ioh_len_err_event;		/*  IOH len error - fcp_dl !=
+							* bytes xfered */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32	ioh_seq_len_err_event;	/*  IOH seq len error */
 	u32	ioh_data_oor_event;	/*  Data out of range */
 	u32	ioh_ro_ooo_event;	/*  Relative offset out of range */
 	u32	ioh_cpu_owned_event;	/*  IOH hit -iost owned by f/w */
 	u32	ioh_unexp_frame_event;	/*  unexpected frame received
+<<<<<<< HEAD
 					 *  count */
 	u32	ioh_err_int;		/*  IOH error int during data-phase
 					 *  for scsi write */
@@ -202,6 +256,12 @@ struct bfa_fw_tio_stats_s {
 struct bfa_fw_io_stats_s {
 	struct bfa_fw_ioim_stats_s	ioim_stats;
 	struct bfa_fw_tio_stats_s	tio_stats;
+=======
+						 *   count */
+	u32	ioh_err_int;		/*  IOH error int during data-phase
+						 *   for scsi write
+						 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -209,6 +269,7 @@ struct bfa_fw_io_stats_s {
  */
 
 struct bfa_fw_port_fpg_stats_s {
+<<<<<<< HEAD
 	u32    intr_evt;
 	u32    intr;
 	u32    intr_excess;
@@ -235,10 +296,39 @@ struct bfa_fw_port_fpg_stats_s {
 	u32    mrk_rx;
 	u32    const_mrk_rx;
 	u32    prim_unknown;
+=======
+    u32    intr_evt;
+    u32    intr;
+    u32    intr_excess;
+    u32    intr_cause0;
+    u32    intr_other;
+    u32    intr_other_ign;
+    u32    sig_lost;
+    u32    sig_regained;
+    u32    sync_lost;
+    u32    sync_to;
+    u32    sync_regained;
+    u32    div2_overflow;
+    u32    div2_underflow;
+    u32    efifo_overflow;
+    u32    efifo_underflow;
+    u32    idle_rx;
+    u32    lrr_rx;
+    u32    lr_rx;
+    u32    ols_rx;
+    u32    nos_rx;
+    u32    lip_rx;
+    u32    arbf0_rx;
+    u32    arb_rx;
+    u32    mrk_rx;
+    u32    const_mrk_rx;
+    u32    prim_unknown;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
 struct bfa_fw_port_lksm_stats_s {
+<<<<<<< HEAD
 	u32    hwsm_success;       /*  hwsm state machine success          */
 	u32    hwsm_fails;         /*  hwsm fails                          */
 	u32    hwsm_wdtov;         /*  hwsm timed out                      */
@@ -314,14 +404,94 @@ struct bfa_fw_fcoe_stats_s {
 	u32    fip_linkdns;        /*  FIP link up count                   */
 	u32    fip_fails;          /*  FIP fail count                      */
 	u32    mac_invalids;       /*  Invalid mac assigned                */
+=======
+    u32    hwsm_success;       /*  hwsm state machine success          */
+    u32    hwsm_fails;         /*  hwsm fails                          */
+    u32    hwsm_wdtov;         /*  hwsm timed out                      */
+    u32    swsm_success;       /*  swsm success                        */
+    u32    swsm_fails;         /*  swsm fails                          */
+    u32    swsm_wdtov;         /*  swsm timed out                      */
+    u32    busybufs;           /*  link init failed due to busybuf     */
+    u32    buf_waits;          /*  bufwait state entries               */
+    u32    link_fails;         /*  link failures                       */
+    u32    psp_errors;         /*  primitive sequence protocol errors  */
+    u32    lr_unexp;           /*  No. of times LR rx-ed unexpectedly  */
+    u32    lrr_unexp;          /*  No. of times LRR rx-ed unexpectedly */
+    u32    lr_tx;              /*  No. of times LR tx started          */
+    u32    lrr_tx;             /*  No. of times LRR tx started         */
+    u32    ols_tx;             /*  No. of times OLS tx started         */
+    u32    nos_tx;             /*  No. of times NOS tx started         */
+    u32    hwsm_lrr_rx;        /*  No. of times LRR rx-ed by HWSM      */
+    u32    hwsm_lr_rx;         /*  No. of times LR rx-ed by HWSM      */
+};
+
+struct bfa_fw_port_snsm_stats_s {
+    u32    hwsm_success;       /*  Successful hwsm terminations        */
+    u32    hwsm_fails;         /*  hwsm fail count                     */
+    u32    hwsm_wdtov;         /*  hwsm timed out                      */
+    u32    swsm_success;       /*  swsm success                        */
+    u32    swsm_wdtov;         /*  swsm timed out                      */
+    u32    error_resets;       /*  error resets initiated by upsm      */
+    u32    sync_lost;          /*  Sync loss count                     */
+    u32    sig_lost;           /*  Signal loss count                   */
+};
+
+struct bfa_fw_port_physm_stats_s {
+    u32    module_inserts;     /*  Module insert count                 */
+    u32    module_xtracts;     /*  Module extracts count               */
+    u32    module_invalids;    /*  Invalid module inserted count       */
+    u32    module_read_ign;    /*  Module validation status ignored    */
+    u32    laser_faults;       /*  Laser fault count                   */
+    u32    rsvd;
+};
+
+struct bfa_fw_fip_stats_s {
+    u32    vlan_req;           /*  vlan discovery requests             */
+    u32    vlan_notify;        /*  vlan notifications                  */
+    u32    vlan_err;           /*  vlan response error                 */
+    u32    vlan_timeouts;      /*  vlan disvoery timeouts              */
+    u32    vlan_invalids;      /*  invalid vlan in discovery advert.   */
+    u32    disc_req;           /*  Discovery solicit requests          */
+    u32    disc_rsp;           /*  Discovery solicit response          */
+    u32    disc_err;           /*  Discovery advt. parse errors        */
+    u32    disc_unsol;         /*  Discovery unsolicited               */
+    u32    disc_timeouts;      /*  Discovery timeouts                  */
+    u32    disc_fcf_unavail;   /*  Discovery FCF Not Avail.            */
+    u32    linksvc_unsupp;     /*  Unsupported link service req        */
+    u32    linksvc_err;        /*  Parse error in link service req     */
+    u32    logo_req;           /*  FIP logos received                  */
+    u32    clrvlink_req;       /*  Clear virtual link req              */
+    u32    op_unsupp;          /*  Unsupported FIP operation           */
+    u32    untagged;           /*  Untagged frames (ignored)           */
+    u32    invalid_version;    /*  Invalid FIP version                 */
+};
+
+struct bfa_fw_lps_stats_s {
+    u32    mac_invalids;       /*  Invalid mac assigned                */
+    u32    rsvd;
+};
+
+struct bfa_fw_fcoe_stats_s {
+    u32    cee_linkups;        /*  CEE link up count                   */
+    u32    cee_linkdns;        /*  CEE link down count                 */
+    u32    fip_linkups;        /*  FIP link up count                   */
+    u32    fip_linkdns;        /*  FIP link up count                   */
+    u32    fip_fails;          /*  FIP fail count                      */
+    u32    mac_invalids;       /*  Invalid mac assigned                */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
  * IOC firmware FCoE port stats
  */
 struct bfa_fw_fcoe_port_stats_s {
+<<<<<<< HEAD
 	struct bfa_fw_fcoe_stats_s		fcoe_stats;
 	struct bfa_fw_fip_stats_s		fip_stats;
+=======
+    struct bfa_fw_fcoe_stats_s  fcoe_stats;
+    struct bfa_fw_fip_stats_s   fip_stats;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -336,8 +506,13 @@ struct bfa_fw_fc_uport_stats_s {
  * IOC firmware FC port stats
  */
 union bfa_fw_fc_port_stats_s {
+<<<<<<< HEAD
 	struct bfa_fw_fc_uport_stats_s		fc_stats;
 	struct bfa_fw_fcoe_port_stats_s		fcoe_stats;
+=======
+	struct bfa_fw_fc_uport_stats_s	fc_stats;
+	struct bfa_fw_fcoe_port_stats_s	fcoe_stats;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -367,6 +542,7 @@ struct bfa_fw_lpsm_stats_s {
  */
 struct bfa_fw_trunk_stats_s {
 	u32 emt_recvd;		/*  Trunk EMT received		*/
+<<<<<<< HEAD
 	u32 emt_accepted;	/*  Trunk EMT Accepted		*/
 	u32 emt_rejected;	/*  Trunk EMT rejected		*/
 	u32 etp_recvd;		/*  Trunk ETP received		*/
@@ -374,18 +550,36 @@ struct bfa_fw_trunk_stats_s {
 	u32 etp_rejected;	/*  Trunk ETP rejected		*/
 	u32 lr_recvd;		/*  Trunk LR received		*/
 	u32 rsvd;		/*  padding for 64 bit alignment */
+=======
+	u32 emt_accepted;		/*  Trunk EMT Accepted		*/
+	u32 emt_rejected;		/*  Trunk EMT rejected		*/
+	u32 etp_recvd;		/*  Trunk ETP received		*/
+	u32 etp_accepted;		/*  Trunk ETP Accepted		*/
+	u32 etp_rejected;		/*  Trunk ETP rejected		*/
+	u32 lr_recvd;		/*  Trunk LR received		*/
+	u32 rsvd;			/*  padding for 64 bit alignment */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct bfa_fw_advsm_stats_s {
 	u32 flogi_sent;		/*  Flogi sent			*/
 	u32 flogi_acc_recvd;	/*  Flogi Acc received		*/
 	u32 flogi_rjt_recvd;	/*  Flogi rejects received	*/
+<<<<<<< HEAD
 	u32 flogi_retries;	/*  Flogi retries		*/
 
 	u32 elp_recvd;		/*  ELP received		*/
 	u32 elp_accepted;	/*  ELP Accepted		*/
 	u32 elp_rejected;	/*  ELP rejected		*/
 	u32 elp_dropped;	/*  ELP dropped			*/
+=======
+	u32 flogi_retries;		/*  Flogi retries		*/
+
+	u32 elp_recvd;		/*  ELP received		*/
+	u32 elp_accepted;		/*  ELP Accepted		*/
+	u32 elp_rejected;		/*  ELP rejected		*/
+	u32 elp_dropped;		/*  ELP dropped		*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -470,7 +664,10 @@ struct bfa_fw_stats_s {
  * QoS states
  */
 enum bfa_qos_state {
+<<<<<<< HEAD
 	BFA_QOS_DISABLED = 0,		/* QoS is disabled */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BFA_QOS_ONLINE = 1,		/*  QoS is online */
 	BFA_QOS_OFFLINE = 2,		/*  QoS is offline */
 };
@@ -522,7 +719,11 @@ struct bfa_qos_vc_attr_s {
 	u16  total_vc_count;                    /*  Total VC Count */
 	u16  shared_credit;
 	u32  elp_opmode_flags;
+<<<<<<< HEAD
 	struct bfa_qos_vc_info_s vc_info[BFA_QOS_MAX_VC];  /* as many as
+=======
+	struct bfa_qos_vc_info_s vc_info[BFA_QOS_MAX_VC];  /*   as many as
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 							    * total_vc_count */
 };
 
@@ -532,16 +733,28 @@ struct bfa_qos_vc_attr_s {
 struct bfa_qos_stats_s {
 	u32	flogi_sent;		/*  QoS Flogi sent */
 	u32	flogi_acc_recvd;	/*  QoS Flogi Acc received */
+<<<<<<< HEAD
 	u32	flogi_rjt_recvd;	/*  QoS Flogi rejects received */
+=======
+	u32	flogi_rjt_recvd; /*  QoS Flogi rejects received */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32	flogi_retries;		/*  QoS Flogi retries */
 
 	u32	elp_recvd;		/*  QoS ELP received */
 	u32	elp_accepted;		/*  QoS ELP Accepted */
+<<<<<<< HEAD
 	u32	elp_rejected;		/*  QoS ELP rejected */
 	u32	elp_dropped;		/*  QoS ELP dropped  */
 
 	u32	qos_rscn_recvd;		/*  QoS RSCN received */
 	u32	rsvd;			/* padding for 64 bit alignment */
+=======
+	u32	elp_rejected;       /*  QoS ELP rejected */
+	u32	elp_dropped;        /*  QoS ELP dropped  */
+
+	u32	qos_rscn_recvd;     /*  QoS RSCN received */
+	u32	rsvd;		    /* padding for 64 bit alignment */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -549,9 +762,15 @@ struct bfa_qos_stats_s {
  */
 struct bfa_fcoe_stats_s {
 	u64	secs_reset;	/*  Seconds since stats reset	     */
+<<<<<<< HEAD
 	u64	cee_linkups;	/*  CEE link up			     */
 	u64	cee_linkdns;	/*  CEE link down		     */
 	u64	fip_linkups;	/*  FIP link up			     */
+=======
+	u64	cee_linkups;	/*  CEE link up		     */
+	u64	cee_linkdns;	/*  CEE link down		     */
+	u64	fip_linkups;	/*  FIP link up		     */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64	fip_linkdns;	/*  FIP link down		     */
 	u64	fip_fails;	/*  FIP failures		     */
 	u64	mac_invalids;	/*  Invalid mac assignments	     */
@@ -561,11 +780,16 @@ struct bfa_fcoe_stats_s {
 	u64	vlan_timeouts;	/*  Vlan request timeouts	     */
 	u64	vlan_invalids;	/*  Vlan invalids		     */
 	u64	disc_req;	/*  Discovery requests		     */
+<<<<<<< HEAD
 	u64	disc_rsp;	/*  Discovery responses		     */
+=======
+	u64	disc_rsp;	/*  Discovery responses	     */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64	disc_err;	/*  Discovery error frames	     */
 	u64	disc_unsol;	/*  Discovery unsolicited	     */
 	u64	disc_timeouts;	/*  Discovery timeouts		     */
 	u64	disc_fcf_unavail; /*  Discovery FCF not avail	     */
+<<<<<<< HEAD
 	u64	linksvc_unsupp;	/*  FIP link service req unsupp	     */
 	u64	linksvc_err;	/*  FIP link service req errors	     */
 	u64	logo_req;	/*  FIP logos received		     */
@@ -593,6 +817,35 @@ struct bfa_fcoe_stats_s {
 	u64	rxf_bcast_octets; /*  Rx FCoE broadcast octets	     */
 	u64	rxf_bcast;	/*  Rx FCoE broadcast frames	     */
 	u64	rxf_bcast_vlan;	/*  Rx FCoE broadcast vlan frames    */
+=======
+	u64	linksvc_unsupp;	/*  FIP link service req unsupp.    */
+	u64	linksvc_err;	/*  FIP link service req errors     */
+	u64	logo_req;	/*  FIP logos received		     */
+	u64	clrvlink_req;	/*  Clear virtual link requests     */
+	u64	op_unsupp;	/*  FIP operation unsupp.	     */
+	u64	untagged;	/*  FIP untagged frames	     */
+	u64	txf_ucast;	/*  Tx FCoE unicast frames	     */
+	u64	txf_ucast_vlan;	/*  Tx FCoE unicast vlan frames     */
+	u64	txf_ucast_octets; /*  Tx FCoE unicast octets	     */
+	u64	txf_mcast;	/*  Tx FCoE multicast frames	     */
+	u64	txf_mcast_vlan;	/*  Tx FCoE multicast vlan frames   */
+	u64	txf_mcast_octets; /*  Tx FCoE multicast octets	     */
+	u64	txf_bcast;	/*  Tx FCoE broadcast frames	     */
+	u64	txf_bcast_vlan;	/*  Tx FCoE broadcast vlan frames   */
+	u64	txf_bcast_octets; /*  Tx FCoE broadcast octets	     */
+	u64	txf_timeout;	/*  Tx timeouts		     */
+	u64	txf_parity_errors; /*  Transmit parity err	     */
+	u64	txf_fid_parity_errors; /*  Transmit FID parity err  */
+	u64	rxf_ucast_octets; /*  Rx FCoE unicast octets	     */
+	u64	rxf_ucast;	/*  Rx FCoE unicast frames	     */
+	u64	rxf_ucast_vlan;	/*  Rx FCoE unicast vlan frames     */
+	u64	rxf_mcast_octets; /*  Rx FCoE multicast octets	     */
+	u64	rxf_mcast;	/*  Rx FCoE multicast frames	     */
+	u64	rxf_mcast_vlan;	/*  Rx FCoE multicast vlan frames   */
+	u64	rxf_bcast_octets; /*  Rx FCoE broadcast octets	     */
+	u64	rxf_bcast;	/*  Rx FCoE broadcast frames	     */
+	u64	rxf_bcast_vlan;	/*  Rx FCoE broadcast vlan frames   */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -673,7 +926,10 @@ struct bfa_itnim_iostats_s {
 	u32	tm_iocdowns;		/*  TM cleaned-up due to IOC down   */
 	u32	tm_cleanups;		/*  TM cleanup requests	*/
 	u32	tm_cleanup_comps;	/*  TM cleanup completions	*/
+<<<<<<< HEAD
 	u32	rsvd[6];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Modify char* port_stt[] in bfal_port.c if a new state was added */
@@ -692,7 +948,10 @@ enum bfa_port_states {
 	BFA_PORT_ST_FWMISMATCH		= 12,
 	BFA_PORT_ST_PREBOOT_DISABLED	= 13,
 	BFA_PORT_ST_TOGGLING_QWAIT	= 14,
+<<<<<<< HEAD
 	BFA_PORT_ST_ACQ_ADDR		= 15,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BFA_PORT_ST_MAX_STATE,
 };
 
@@ -789,6 +1048,7 @@ enum bfa_port_linkstate_rsn {
 	CEE_ISCSI_PRI_PFC_OFF			= 42,
 	CEE_ISCSI_PRI_OVERLAP_FCOE_PRI		= 43
 };
+<<<<<<< HEAD
 
 #define MAX_LUN_MASK_CFG 16
 
@@ -834,6 +1094,10 @@ struct bfa_lunmask_cfg_s {
 };
 
 /*
+=======
+#pragma pack(1)
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *      Physical port configuration
  */
 struct bfa_port_cfg_s {
@@ -848,12 +1112,17 @@ struct bfa_port_cfg_s {
 	u8	 tx_bbcredit;	/*  transmit buffer credits	*/
 	u8	 ratelimit;	/*  ratelimit enabled or not	*/
 	u8	 trl_def_speed;	/*  ratelimit default speed	*/
+<<<<<<< HEAD
 	u8	 bb_scn;	/*  BB_SCN value from FLOGI Exchg */
 	u8	 bb_scn_state;	/*  Config state of BB_SCN */
 	u8	 faa_state;	/*  FAA enabled/disabled        */
 	u8	 rsvd[1];
 	u16	 path_tov;	/*  device path timeout	*/
 	u16	 q_depth;	/*  SCSI Queue depth		*/
+=======
+	u16 path_tov;	/*  device path timeout	*/
+	u16 q_depth;	/*  SCSI Queue depth		*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #pragma pack()
 
@@ -864,6 +1133,7 @@ struct bfa_port_attr_s {
 	/*
 	 * Static fields
 	 */
+<<<<<<< HEAD
 	wwn_t			nwwn;		/*  node wwn */
 	wwn_t			pwwn;		/*  port wwn */
 	wwn_t			factorynwwn;	/*  factory node wwn */
@@ -874,11 +1144,26 @@ struct bfa_port_attr_s {
 	struct fc_symname_s	port_symname;	/*  port symbolic name */
 	enum bfa_port_speed	speed_supported; /* supported speeds */
 	bfa_boolean_t		pbind_enabled;
+=======
+	wwn_t	   nwwn;		/*  node wwn */
+	wwn_t	   pwwn;		/*  port wwn */
+	wwn_t	   factorynwwn;	/*  factory node wwn */
+	wwn_t	   factorypwwn;	/*  factory port wwn */
+	enum fc_cos	cos_supported;	/*  supported class of services */
+	u32	rsvd;
+	struct fc_symname_s	port_symname;	/*  port symbolic name */
+	enum bfa_port_speed speed_supported; /*  supported speeds */
+	bfa_boolean_t   pbind_enabled;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Configured values
 	 */
+<<<<<<< HEAD
 	struct bfa_port_cfg_s	pport_cfg;	/*  pport cfg */
+=======
+	struct bfa_port_cfg_s pport_cfg;	/*  pport cfg */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Dynamic field - info from BFA
@@ -887,13 +1172,19 @@ struct bfa_port_attr_s {
 	enum bfa_port_speed	speed;		/*  current speed */
 	enum bfa_port_topology	topology;	/*  current topology */
 	bfa_boolean_t		beacon;		/*  current beacon status */
+<<<<<<< HEAD
 	bfa_boolean_t		link_e2e_beacon; /* link beacon is on */
 	bfa_boolean_t		bbsc_op_status;	/* fc credit recovery oper
 						 * state */
+=======
+	bfa_boolean_t		link_e2e_beacon; /*  link beacon is on */
+	bfa_boolean_t		plog_enabled;	/*  portlog is enabled */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Dynamic field - info from FCS
 	 */
+<<<<<<< HEAD
 	u32			pid;		/*  port ID */
 	enum bfa_port_type	port_type;	/*  current topology */
 	u32			loopback;	/*  external loopback */
@@ -902,40 +1193,72 @@ struct bfa_port_attr_s {
 	/* FCoE specific  */
 	u16			fcoe_vlan;
 	u8			rsvd1[2];
+=======
+	u32		pid;		/*  port ID */
+	enum bfa_port_type	port_type;	/*  current topology */
+	u32		loopback;	/*  external loopback */
+	u32		authfail;	/*  auth fail state */
+	bfa_boolean_t		io_profile;	/*  get it from fcpim mod */
+	u8			pad[4];		/*  for 64-bit alignement */
+
+	/* FCoE specific  */
+	u16		fcoe_vlan;
+	u8			rsvd1[6];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
  *	      Port FCP mappings.
  */
 struct bfa_port_fcpmap_s {
+<<<<<<< HEAD
 	char	osdevname[256];
+=======
+	char		osdevname[256];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32	bus;
 	u32	target;
 	u32	oslun;
 	u32	fcid;
+<<<<<<< HEAD
 	wwn_t	nwwn;
 	wwn_t	pwwn;
 	u64	fcplun;
 	char	luid[256];
+=======
+	wwn_t	   nwwn;
+	wwn_t	   pwwn;
+	u64	fcplun;
+	char		luid[256];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
  *	      Port RNID info.
  */
 struct bfa_port_rnid_s {
+<<<<<<< HEAD
 	wwn_t	  wwn;
+=======
+	wwn_t	     wwn;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32	  unittype;
 	u32	  portid;
 	u32	  attached_nodes_num;
 	u16	  ip_version;
 	u16	  udp_port;
+<<<<<<< HEAD
 	u8	  ipaddr[16];
+=======
+	u8	   ipaddr[16];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16	  rsvd;
 	u16	  topologydiscoveryflags;
 };
 
 #pragma pack(1)
 struct bfa_fcport_fcf_s {
+<<<<<<< HEAD
 	wwn_t	name;		/*  FCF name		   */
 	wwn_t	fabric_name;    /*  Fabric Name		   */
 	u8	fipenabled;	/*  FIP enabled or not	   */
@@ -950,6 +1273,22 @@ struct bfa_fcport_fcf_s {
 	__be16	vlan;		/*  FCoE vlan tag/priority */
 	u32	fka_adv_per;    /*  FIP  ka advert. period */
 	mac_t	mac;		/*  FCF mac		   */
+=======
+	wwn_t	   name;	   /*  FCF name		 */
+	wwn_t	   fabric_name;    /*  Fabric Name	      */
+	u8		fipenabled;	/*  FIP enabled or not */
+	u8		fipfailed;	/*  FIP failed or not	*/
+	u8		resv[2];
+	u8	 pri;	    /*  FCF priority	     */
+	u8	 version;	/*  FIP version used	 */
+	u8	 available;      /*  Available  for  login    */
+	u8	 fka_disabled;   /*  FKA is disabled	  */
+	u8	 maxsz_verified; /*  FCoE max size verified   */
+	u8	 fc_map[3];      /*  FC map		   */
+	__be16	 vlan;	   /*  FCoE vlan tag/priority   */
+	u32	fka_adv_per;    /*  FIP  ka advert. period   */
+	mac_t	   mac;	    /*  FCF mac		  */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -979,7 +1318,11 @@ struct bfa_port_link_s {
 	u8	 linkstate_rsn;	/*  bfa_port_linkstate_rsn_t */
 	u8	 topology;	/*  P2P/LOOP bfa_port_topology */
 	u8	 speed;		/*  Link speed (1/2/4/8 G) */
+<<<<<<< HEAD
 	u32	 linkstate_opt; /*  Linkstate optional data (debug) */
+=======
+	u32	linkstate_opt;  /*  Linkstate optional data (debug) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8	 trunked;	/*  Trunked or not (1 or 0) */
 	u8	 resvd[3];
 	struct bfa_qos_attr_s  qos_attr;   /* QoS Attributes */
@@ -1033,7 +1376,11 @@ struct bfa_rport_hal_stats_s {
 	u32        sm_fwc_del;	    /*  fw create: delete events   */
 	u32        sm_fwc_off;	    /*  fw create: offline events  */
 	u32        sm_fwc_hwf;	    /*  fw create: IOC down        */
+<<<<<<< HEAD
 	u32        sm_fwc_unexp;    /*  fw create: exception events*/
+=======
+	u32        sm_fwc_unexp;	    /*  fw create: exception events*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32        sm_on_off;	    /*  online: offline events     */
 	u32        sm_on_del;	    /*  online: delete events      */
 	u32        sm_on_hwf;	    /*  online: IOC down events    */
@@ -1041,6 +1388,7 @@ struct bfa_rport_hal_stats_s {
 	u32        sm_fwd_rsp;	    /*  fw delete: fw responses    */
 	u32        sm_fwd_del;	    /*  fw delete: delete events   */
 	u32        sm_fwd_hwf;	    /*  fw delete: IOC down events */
+<<<<<<< HEAD
 	u32        sm_fwd_unexp;    /*  fw delete: exception events*/
 	u32        sm_off_del;	    /*  offline: delete events     */
 	u32        sm_off_on;	    /*  offline: online events     */
@@ -1060,6 +1408,27 @@ struct bfa_rport_hal_stats_s {
 	u32        sm_iocd_del;	    /*  IOC down: delete events    */
 	u32        sm_iocd_on;	    /*  IOC down: online events    */
 	u32        sm_iocd_unexp;   /*  IOC down: exceptions       */
+=======
+	u32        sm_fwd_unexp;	    /*  fw delete: exception events*/
+	u32        sm_off_del;	    /*  offline: delete events     */
+	u32        sm_off_on;	    /*  offline: online events     */
+	u32        sm_off_hwf;	    /*  offline: IOC down events   */
+	u32        sm_off_unexp;	    /*  offline: exception events  */
+	u32        sm_del_fwrsp;	    /*  delete: fw responses       */
+	u32        sm_del_hwf;	    /*  delete: IOC down events    */
+	u32        sm_del_unexp;	    /*  delete: exception events   */
+	u32        sm_delp_fwrsp;	    /*  delete pend: fw responses  */
+	u32        sm_delp_hwf;	    /*  delete pend: IOC downs     */
+	u32        sm_delp_unexp;	    /*  delete pend: exceptions    */
+	u32        sm_offp_fwrsp;	    /*  off-pending: fw responses  */
+	u32        sm_offp_del;	    /*  off-pending: deletes       */
+	u32        sm_offp_hwf;	    /*  off-pending: IOC downs     */
+	u32        sm_offp_unexp;	    /*  off-pending: exceptions    */
+	u32        sm_iocd_off;	    /*  IOC down: offline events   */
+	u32        sm_iocd_del;	    /*  IOC down: delete events    */
+	u32        sm_iocd_on;	    /*  IOC down: online events    */
+	u32        sm_iocd_unexp;	    /*  IOC down: exceptions       */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32        rsvd;
 };
 #pragma pack(1)
@@ -1067,9 +1436,15 @@ struct bfa_rport_hal_stats_s {
  *  Rport's QoS attributes
  */
 struct bfa_rport_qos_attr_s {
+<<<<<<< HEAD
 	u8		qos_priority;	/*  rport's QoS priority   */
 	u8		rsvd[3];
 	u32		qos_flow_id;	/*  QoS flow Id	 */
+=======
+	u8			qos_priority;  /*  rport's QoS priority   */
+	u8			rsvd[3];
+	u32	       qos_flow_id;	  /*  QoS flow Id	 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #pragma pack()
 
@@ -1092,6 +1467,7 @@ struct bfa_itnim_ioprofile_s {
 };
 
 /*
+<<<<<<< HEAD
  *	vHBA port attribute values.
  */
 struct bfa_vhba_attr_s {
@@ -1105,6 +1481,8 @@ struct bfa_vhba_attr_s {
 };
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * FC physical port statistics.
  */
 struct bfa_port_fc_stats_s {
@@ -1137,9 +1515,12 @@ struct bfa_port_fc_stats_s {
 	u64     bad_os_count;   /*  Invalid ordered sets        */
 	u64     err_enc_out;    /*  Encoding err nonframe_8b10b */
 	u64     err_enc;        /*  Encoding err frame_8b10b    */
+<<<<<<< HEAD
 	u64	bbsc_frames_lost; /* Credit Recovery-Frames Lost  */
 	u64	bbsc_credits_lost; /* Credit Recovery-Credits Lost */
 	u64	bbsc_link_resets; /* Credit Recovery-Link Resets   */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -1198,6 +1579,7 @@ union bfa_port_stats_u {
 	struct bfa_port_eth_stats_s     eth;
 };
 
+<<<<<<< HEAD
 struct bfa_port_cfg_mode_s {
 	u16		max_pf;
 	u16		max_vf;
@@ -1325,4 +1707,6 @@ struct bfa_aen_entry_s {
 	u32                     bfad_num;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __BFA_DEFS_SVC_H__ */

@@ -86,6 +86,7 @@ static inline void get_clock_ext(char *clk)
 	asm volatile("stcke %0" : "=Q" (*clk) : : "cc");
 }
 
+<<<<<<< HEAD
 static inline unsigned long long get_clock_fast(void)
 {
 	unsigned long long clk;
@@ -97,6 +98,8 @@ static inline unsigned long long get_clock_fast(void)
 	return clk;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline unsigned long long get_clock_xt(void)
 {
 	unsigned char clk[16];
@@ -137,6 +140,7 @@ static inline unsigned long long get_clock_monotonic(void)
 	return get_clock_xt() - sched_clock_base_cc;
 }
 
+<<<<<<< HEAD
 /**
  * tod_to_ns - convert a TOD format value to nanoseconds
  * @todval: to be converted TOD format value
@@ -165,4 +169,6 @@ static inline unsigned long long tod_to_ns(unsigned long long todval)
 	return ns;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

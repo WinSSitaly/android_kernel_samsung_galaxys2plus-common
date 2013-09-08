@@ -34,12 +34,16 @@
 #include <linux/io.h>
 #include <linux/irq.h>
 #include <linux/mfd/tmio.h>
+<<<<<<< HEAD
 #include <linux/mmc/cd-gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mmc/host.h>
 #include <linux/mmc/tmio.h>
 #include <linux/module.h>
 #include <linux/pagemap.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/pm_qos.h>
 #include <linux/pm_runtime.h>
 #include <linux/scatterlist.h>
@@ -52,12 +56,64 @@ void tmio_mmc_enable_mmc_irqs(struct tmio_mmc_host *host, u32 i)
 {
 	host->sdcard_irq_mask &= ~(i & TMIO_MASK_IRQ);
 	sd_ctrl_write32(host, CTL_IRQ_MASK, host->sdcard_irq_mask);
+=======
+#include <linux/pm_runtime.h>
+#include <linux/scatterlist.h>
+#include <linux/workqueue.h>
+#include <linux/spinlock.h>
+
+#include "tmio_mmc.h"
+
+static u16 sd_ctrl_read16(struct tmio_mmc_host *host, int addr)
+{
+	return readw(host->ctl + (addr << host->bus_shift));
+}
+
+static void sd_ctrl_read16_rep(struct tmio_mmc_host *host, int addr,
+		u16 *buf, int count)
+{
+	readsw(host->ctl + (addr << host->bus_shift), buf, count);
+}
+
+static u32 sd_ctrl_read32(struct tmio_mmc_host *host, int addr)
+{
+	return readw(host->ctl + (addr << host->bus_shift)) |
+	       readw(host->ctl + ((addr + 2) << host->bus_shift)) << 16;
+}
+
+static void sd_ctrl_write16(struct tmio_mmc_host *host, int addr, u16 val)
+{
+	writew(val, host->ctl + (addr << host->bus_shift));
+}
+
+static void sd_ctrl_write16_rep(struct tmio_mmc_host *host, int addr,
+		u16 *buf, int count)
+{
+	writesw(host->ctl + (addr << host->bus_shift), buf, count);
+}
+
+static void sd_ctrl_write32(struct tmio_mmc_host *host, int addr, u32 val)
+{
+	writew(val, host->ctl + (addr << host->bus_shift));
+	writew(val >> 16, host->ctl + ((addr + 2) << host->bus_shift));
+}
+
+void tmio_mmc_enable_mmc_irqs(struct tmio_mmc_host *host, u32 i)
+{
+	u32 mask = sd_ctrl_read32(host, CTL_IRQ_MASK) & ~(i & TMIO_MASK_IRQ);
+	sd_ctrl_write32(host, CTL_IRQ_MASK, mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void tmio_mmc_disable_mmc_irqs(struct tmio_mmc_host *host, u32 i)
 {
+<<<<<<< HEAD
 	host->sdcard_irq_mask |= (i & TMIO_MASK_IRQ);
 	sd_ctrl_write32(host, CTL_IRQ_MASK, host->sdcard_irq_mask);
+=======
+	u32 mask = sd_ctrl_read32(host, CTL_IRQ_MASK) | (i & TMIO_MASK_IRQ);
+	sd_ctrl_write32(host, CTL_IRQ_MASK, mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void tmio_mmc_ack_mmc_irqs(struct tmio_mmc_host *host, u32 i)
@@ -94,7 +150,11 @@ static int tmio_mmc_next_sg(struct tmio_mmc_host *host)
 static void pr_debug_status(u32 status)
 {
 	int i = 0;
+<<<<<<< HEAD
 	pr_debug("status: %08x = ", status);
+=======
+	printk(KERN_DEBUG "status: %08x = ", status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	STATUS_TO_TEXT(CARD_REMOVE, status, i);
 	STATUS_TO_TEXT(CARD_INSERT, status, i);
 	STATUS_TO_TEXT(SIGSTATE, status, i);
@@ -128,6 +188,7 @@ static void tmio_mmc_enable_sdio_irq(struct mmc_host *mmc, int enable)
 	struct tmio_mmc_host *host = mmc_priv(mmc);
 
 	if (enable) {
+<<<<<<< HEAD
 		host->sdio_irq_mask = TMIO_SDIO_MASK_ALL &
 					~TMIO_SDIO_STAT_IOIRQ;
 		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0001);
@@ -136,6 +197,16 @@ static void tmio_mmc_enable_sdio_irq(struct mmc_host *mmc, int enable)
 		host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
 		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
 		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0000);
+=======
+		host->sdio_irq_enabled = 1;
+		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0001);
+		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK,
+			(TMIO_SDIO_MASK_ALL & ~TMIO_SDIO_STAT_IOIRQ));
+	} else {
+		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, TMIO_SDIO_MASK_ALL);
+		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0000);
+		host->sdio_irq_enabled = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -246,13 +317,17 @@ static void tmio_mmc_reset_work(struct work_struct *work)
 	/* Ready for new calls */
 	host->mrq = NULL;
 
+<<<<<<< HEAD
 	tmio_mmc_abort_dma(host);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mmc_request_done(host->mmc, mrq);
 }
 
 /* called with host->lock held, interrupts disabled */
 static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
 {
+<<<<<<< HEAD
 	struct mmc_request *mrq;
 	unsigned long flags;
 
@@ -263,6 +338,12 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
 		spin_unlock_irqrestore(&host->lock, flags);
 		return;
 	}
+=======
+	struct mmc_request *mrq = host->mrq;
+
+	if (!mrq)
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	host->cmd = NULL;
 	host->data = NULL;
@@ -271,6 +352,7 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
 	cancel_delayed_work(&host->delayed_reset_work);
 
 	host->mrq = NULL;
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&host->lock, flags);
 
 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
@@ -286,6 +368,13 @@ static void tmio_mmc_done_work(struct work_struct *work)
 	tmio_mmc_finish_request(host);
 }
 
+=======
+
+	/* FIXME: mmc_request_done() can schedule! */
+	mmc_request_done(host->mmc, mrq);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* These are the bitmasks the tmio chip requires to implement the MMC response
  * types. Note that R1 and R6 are the same in this scheme. */
 #define APP_CMD        0x0040
@@ -303,7 +392,10 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
 {
 	struct mmc_data *data = host->data;
 	int c = cmd->opcode;
+<<<<<<< HEAD
 	u32 irq_mask = TMIO_MASK_CMD;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Command 12 is handled by hardware */
 	if (cmd->opcode == 12 && !cmd->arg) {
@@ -339,9 +431,13 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
 			c |= TRANSFER_READ;
 	}
 
+<<<<<<< HEAD
 	if (!host->native_hotplug)
 		irq_mask &= ~(TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
 	tmio_mmc_enable_mmc_irqs(host, irq_mask);
+=======
+	tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_CMD);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Fire off the command */
 	sd_ctrl_write32(host, CTL_ARG_REG, cmd->arg);
@@ -455,7 +551,11 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
 			BUG();
 	}
 
+<<<<<<< HEAD
 	schedule_work(&host->done);
+=======
+	tmio_mmc_finish_request(host);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void tmio_mmc_data_irq(struct tmio_mmc_host *host)
@@ -545,13 +645,18 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host,
 				tasklet_schedule(&host->dma_issue);
 		}
 	} else {
+<<<<<<< HEAD
 		schedule_work(&host->done);
+=======
+		tmio_mmc_finish_request(host);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 out:
 	spin_unlock(&host->lock);
 }
 
+<<<<<<< HEAD
 static void tmio_mmc_card_irq_status(struct tmio_mmc_host *host,
 				       int *ireg, int *status)
 {
@@ -671,6 +776,101 @@ irqreturn_t tmio_mmc_irq(int irq, void *devid)
 
 	tmio_mmc_sdio_irq(irq, devid);
 
+=======
+irqreturn_t tmio_mmc_irq(int irq, void *devid)
+{
+	struct tmio_mmc_host *host = devid;
+	struct tmio_mmc_data *pdata = host->pdata;
+	unsigned int ireg, irq_mask, status;
+	unsigned int sdio_ireg, sdio_irq_mask, sdio_status;
+
+	pr_debug("MMC IRQ begin\n");
+
+	status = sd_ctrl_read32(host, CTL_STATUS);
+	irq_mask = sd_ctrl_read32(host, CTL_IRQ_MASK);
+	ireg = status & TMIO_MASK_IRQ & ~irq_mask;
+
+	sdio_ireg = 0;
+	if (!ireg && pdata->flags & TMIO_MMC_SDIO_IRQ) {
+		sdio_status = sd_ctrl_read16(host, CTL_SDIO_STATUS);
+		sdio_irq_mask = sd_ctrl_read16(host, CTL_SDIO_IRQ_MASK);
+		sdio_ireg = sdio_status & TMIO_SDIO_MASK_ALL & ~sdio_irq_mask;
+
+		sd_ctrl_write16(host, CTL_SDIO_STATUS, sdio_status & ~TMIO_SDIO_MASK_ALL);
+
+		if (sdio_ireg && !host->sdio_irq_enabled) {
+			pr_warning("tmio_mmc: Spurious SDIO IRQ, disabling! 0x%04x 0x%04x 0x%04x\n",
+				   sdio_status, sdio_irq_mask, sdio_ireg);
+			tmio_mmc_enable_sdio_irq(host->mmc, 0);
+			goto out;
+		}
+
+		if (host->mmc->caps & MMC_CAP_SDIO_IRQ &&
+			sdio_ireg & TMIO_SDIO_STAT_IOIRQ)
+			mmc_signal_sdio_irq(host->mmc);
+
+		if (sdio_ireg)
+			goto out;
+	}
+
+	pr_debug_status(status);
+	pr_debug_status(ireg);
+
+	if (!ireg) {
+		tmio_mmc_disable_mmc_irqs(host, status & ~irq_mask);
+
+		pr_warning("tmio_mmc: Spurious irq, disabling! "
+			"0x%08x 0x%08x 0x%08x\n", status, irq_mask, ireg);
+		pr_debug_status(status);
+
+		goto out;
+	}
+
+	while (ireg) {
+		/* Card insert / remove attempts */
+		if (ireg & (TMIO_STAT_CARD_INSERT | TMIO_STAT_CARD_REMOVE)) {
+			tmio_mmc_ack_mmc_irqs(host, TMIO_STAT_CARD_INSERT |
+				TMIO_STAT_CARD_REMOVE);
+			mmc_detect_change(host->mmc, msecs_to_jiffies(100));
+		}
+
+		/* CRC and other errors */
+/*		if (ireg & TMIO_STAT_ERR_IRQ)
+ *			handled |= tmio_error_irq(host, irq, stat);
+ */
+
+		/* Command completion */
+		if (ireg & (TMIO_STAT_CMDRESPEND | TMIO_STAT_CMDTIMEOUT)) {
+			tmio_mmc_ack_mmc_irqs(host,
+				     TMIO_STAT_CMDRESPEND |
+				     TMIO_STAT_CMDTIMEOUT);
+			tmio_mmc_cmd_irq(host, status);
+		}
+
+		/* Data transfer */
+		if (ireg & (TMIO_STAT_RXRDY | TMIO_STAT_TXRQ)) {
+			tmio_mmc_ack_mmc_irqs(host, TMIO_STAT_RXRDY | TMIO_STAT_TXRQ);
+			tmio_mmc_pio_irq(host);
+		}
+
+		/* Data transfer completion */
+		if (ireg & TMIO_STAT_DATAEND) {
+			tmio_mmc_ack_mmc_irqs(host, TMIO_STAT_DATAEND);
+			tmio_mmc_data_irq(host);
+		}
+
+		/* Check status - keep going until we've handled it all */
+		status = sd_ctrl_read32(host, CTL_STATUS);
+		irq_mask = sd_ctrl_read32(host, CTL_IRQ_MASK);
+		ireg = status & TMIO_MASK_IRQ & ~irq_mask;
+
+		pr_debug("Status at end of loop: %08x\n", status);
+		pr_debug_status(status);
+	}
+	pr_debug("MMC IRQ end\n");
+
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return IRQ_HANDLED;
 }
 EXPORT_SYMBOL(tmio_mmc_irq);
@@ -760,6 +960,7 @@ fail:
 static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 {
 	struct tmio_mmc_host *host = mmc_priv(mmc);
+<<<<<<< HEAD
 	struct device *dev = &host->pdev->dev;
 	unsigned long flags;
 
@@ -769,19 +970,35 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 	if (host->mrq) {
 		if (IS_ERR(host->mrq)) {
 			dev_dbg(dev,
+=======
+	struct tmio_mmc_data *pdata = host->pdata;
+	unsigned long flags;
+
+	spin_lock_irqsave(&host->lock, flags);
+	if (host->mrq) {
+		if (IS_ERR(host->mrq)) {
+			dev_dbg(&host->pdev->dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"%s.%d: concurrent .set_ios(), clk %u, mode %u\n",
 				current->comm, task_pid_nr(current),
 				ios->clock, ios->power_mode);
 			host->mrq = ERR_PTR(-EINTR);
 		} else {
+<<<<<<< HEAD
 			dev_dbg(dev,
+=======
+			dev_dbg(&host->pdev->dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"%s.%d: CMD%u active since %lu, now %lu!\n",
 				current->comm, task_pid_nr(current),
 				host->mrq->cmd->opcode, host->last_req_ts, jiffies);
 		}
 		spin_unlock_irqrestore(&host->lock, flags);
+<<<<<<< HEAD
 
 		mutex_unlock(&host->ios_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -789,6 +1006,7 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 
 	spin_unlock_irqrestore(&host->lock, flags);
 
+<<<<<<< HEAD
 	/*
 	 * host->power toggles between false and true in both cases - either
 	 * or not the controller can be runtime-suspended during inactivity.
@@ -814,6 +1032,35 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 			pm_runtime_put(dev);
 		}
 		tmio_mmc_clk_stop(host);
+=======
+	if (ios->clock)
+		tmio_mmc_set_clock(host, ios->clock);
+
+	/* Power sequence - OFF -> UP -> ON */
+	if (ios->power_mode == MMC_POWER_UP) {
+		if ((pdata->flags & TMIO_MMC_HAS_COLD_CD) && !pdata->power) {
+			pm_runtime_get_sync(&host->pdev->dev);
+			pdata->power = true;
+		}
+		/* power up SD bus */
+		if (host->set_pwr)
+			host->set_pwr(host->pdev, 1);
+	} else if (ios->power_mode == MMC_POWER_OFF || !ios->clock) {
+		/* power down SD bus */
+		if (ios->power_mode == MMC_POWER_OFF) {
+			if (host->set_pwr)
+				host->set_pwr(host->pdev, 0);
+			if ((pdata->flags & TMIO_MMC_HAS_COLD_CD) &&
+			    pdata->power) {
+				pdata->power = false;
+				pm_runtime_put(&host->pdev->dev);
+			}
+		}
+		tmio_mmc_clk_stop(host);
+	} else {
+		/* start bus clock */
+		tmio_mmc_clk_start(host);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	switch (ios->bus_width) {
@@ -833,8 +1080,11 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 			current->comm, task_pid_nr(current),
 			ios->clock, ios->power_mode);
 	host->mrq = NULL;
+<<<<<<< HEAD
 
 	mutex_unlock(&host->ios_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int tmio_mmc_get_ro(struct mmc_host *mmc)
@@ -917,16 +1167,21 @@ int __devinit tmio_mmc_host_probe(struct tmio_mmc_host **host,
 	else
 		mmc->ocr_avail = MMC_VDD_32_33 | MMC_VDD_33_34;
 
+<<<<<<< HEAD
 	_host->native_hotplug = !(pdata->flags & TMIO_MMC_USE_GPIO_CD ||
 				  mmc->caps & MMC_CAP_NEEDS_POLL ||
 				  mmc->caps & MMC_CAP_NONREMOVABLE);
 
 	_host->power = false;
+=======
+	pdata->power = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pm_runtime_enable(&pdev->dev);
 	ret = pm_runtime_resume(&pdev->dev);
 	if (ret < 0)
 		goto pm_disable;
 
+<<<<<<< HEAD
 	/*
 	 * There are 4 different scenarios for the card detection:
 	 *  1) an external gpio irq handles the cd (best for power savings)
@@ -947,29 +1202,49 @@ int __devinit tmio_mmc_host_probe(struct tmio_mmc_host **host,
 	tmio_mmc_reset(_host);
 
 	_host->sdcard_irq_mask = sd_ctrl_read32(_host, CTL_IRQ_MASK);
+=======
+	tmio_mmc_clk_stop(_host);
+	tmio_mmc_reset(_host);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tmio_mmc_disable_mmc_irqs(_host, TMIO_MASK_ALL);
 	if (pdata->flags & TMIO_MMC_SDIO_IRQ)
 		tmio_mmc_enable_sdio_irq(mmc, 0);
 
 	spin_lock_init(&_host->lock);
+<<<<<<< HEAD
 	mutex_init(&_host->ios_lock);
 
 	/* Init delayed work for request timeouts */
 	INIT_DELAYED_WORK(&_host->delayed_reset_work, tmio_mmc_reset_work);
 	INIT_WORK(&_host->done, tmio_mmc_done_work);
+=======
+
+	/* Init delayed work for request timeouts */
+	INIT_DELAYED_WORK(&_host->delayed_reset_work, tmio_mmc_reset_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* See if we also get DMA */
 	tmio_mmc_request_dma(_host, pdata);
 
+<<<<<<< HEAD
 	mmc_add_host(mmc);
 
 	dev_pm_qos_expose_latency_limit(&pdev->dev, 100);
+=======
+	/* We have to keep the device powered for its card detection to work */
+	if (!(pdata->flags & TMIO_MMC_HAS_COLD_CD))
+		pm_runtime_get_noresume(&pdev->dev);
+
+	mmc_add_host(mmc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Unmask the IRQs we want to know about */
 	if (!_host->chan_rx)
 		irq_mask |= TMIO_MASK_READOP;
 	if (!_host->chan_tx)
 		irq_mask |= TMIO_MASK_WRITEOP;
+<<<<<<< HEAD
 	if (!_host->native_hotplug)
 		irq_mask &= ~(TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
 
@@ -983,6 +1258,11 @@ int __devinit tmio_mmc_host_probe(struct tmio_mmc_host **host,
 		}
 	}
 
+=======
+
+	tmio_mmc_enable_mmc_irqs(_host, irq_mask);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*host = _host;
 
 	return 0;
@@ -1000,6 +1280,7 @@ EXPORT_SYMBOL(tmio_mmc_host_probe);
 void tmio_mmc_host_remove(struct tmio_mmc_host *host)
 {
 	struct platform_device *pdev = host->pdev;
+<<<<<<< HEAD
 	struct tmio_mmc_data *pdata = host->pdata;
 	struct mmc_host *mmc = host->mmc;
 
@@ -1017,6 +1298,20 @@ void tmio_mmc_host_remove(struct tmio_mmc_host *host)
 
 	mmc_remove_host(mmc);
 	cancel_work_sync(&host->done);
+=======
+
+	/*
+	 * We don't have to manipulate pdata->power here: if there is a card in
+	 * the slot, the runtime PM is active and our .runtime_resume() will not
+	 * be run. If there is no card in the slot and the platform can suspend
+	 * the controller, the runtime PM is suspended and pdata->power == false,
+	 * so, our .runtime_resume() will not try to detect a card in the slot.
+	 */
+	if (host->pdata->flags & TMIO_MMC_HAS_COLD_CD)
+		pm_runtime_get_sync(&pdev->dev);
+
+	mmc_remove_host(host->mmc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cancel_delayed_work_sync(&host->delayed_reset_work);
 	tmio_mmc_release_dma(host);
 
@@ -1024,7 +1319,11 @@ void tmio_mmc_host_remove(struct tmio_mmc_host *host)
 	pm_runtime_disable(&pdev->dev);
 
 	iounmap(host->ctl);
+<<<<<<< HEAD
 	mmc_free_host(mmc);
+=======
+	mmc_free_host(host->mmc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(tmio_mmc_host_remove);
 
@@ -1038,6 +1337,11 @@ int tmio_mmc_host_suspend(struct device *dev)
 	if (!ret)
 		tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_ALL);
 
+<<<<<<< HEAD
+=======
+	host->pm_error = pm_runtime_put_sync(dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 EXPORT_SYMBOL(tmio_mmc_host_suspend);
@@ -1047,10 +1351,22 @@ int tmio_mmc_host_resume(struct device *dev)
 	struct mmc_host *mmc = dev_get_drvdata(dev);
 	struct tmio_mmc_host *host = mmc_priv(mmc);
 
+<<<<<<< HEAD
 	tmio_mmc_reset(host);
 	tmio_mmc_enable_dma(host, true);
 
 	/* The MMC core will perform the complete set up */
+=======
+	/* The MMC core will perform the complete set up */
+	host->pdata->power = false;
+
+	if (!host->pm_error)
+		pm_runtime_get_sync(dev);
+
+	tmio_mmc_reset(mmc_priv(mmc));
+	tmio_mmc_request_dma(host, host->pdata);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return mmc_resume_host(mmc);
 }
 EXPORT_SYMBOL(tmio_mmc_host_resume);
@@ -1067,9 +1383,21 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
 {
 	struct mmc_host *mmc = dev_get_drvdata(dev);
 	struct tmio_mmc_host *host = mmc_priv(mmc);
+<<<<<<< HEAD
 
 	tmio_mmc_reset(host);
 	tmio_mmc_enable_dma(host, true);
+=======
+	struct tmio_mmc_data *pdata = host->pdata;
+
+	tmio_mmc_reset(host);
+
+	if (pdata->power) {
+		/* Only entered after a card-insert interrupt */
+		tmio_mmc_set_ios(mmc, &mmc->ios);
+		mmc_detect_change(mmc, msecs_to_jiffies(100));
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

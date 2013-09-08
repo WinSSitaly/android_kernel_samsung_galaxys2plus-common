@@ -35,7 +35,10 @@
  */
 #include <linux/dma-mapping.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <rdma/ib_cache.h>
 
 #include "mad_priv.h"
@@ -1597,9 +1600,12 @@ find_mad_agent(struct ib_mad_port_private *port_priv,
 					mad->mad_hdr.class_version].class;
 			if (!class)
 				goto out;
+<<<<<<< HEAD
 			if (convert_mgmt_class(mad->mad_hdr.mgmt_class) >=
 			    IB_MGMT_MAX_METHODS)
 				goto out;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			method = class->method_table[convert_mgmt_class(
 							mad->mad_hdr.mgmt_class)];
 			if (method)
@@ -1842,6 +1848,7 @@ static void ib_mad_complete_recv(struct ib_mad_agent_private *mad_agent_priv,
 	}
 }
 
+<<<<<<< HEAD
 static bool generate_unmatched_resp(struct ib_mad_private *recv,
 				    struct ib_mad_private *response)
 {
@@ -1862,6 +1869,8 @@ static bool generate_unmatched_resp(struct ib_mad_private *recv,
 		return false;
 	}
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ib_mad_recv_done_handler(struct ib_mad_port_private *port_priv,
 				     struct ib_wc *wc)
 {
@@ -1871,7 +1880,10 @@ static void ib_mad_recv_done_handler(struct ib_mad_port_private *port_priv,
 	struct ib_mad_list_head *mad_list;
 	struct ib_mad_agent_private *mad_agent;
 	int port_num;
+<<<<<<< HEAD
 	int ret = IB_MAD_RESULT_SUCCESS;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mad_list = (struct ib_mad_list_head *)(unsigned long)wc->wr_id;
 	qp_info = mad_list->mad_queue->qp_info;
@@ -1955,6 +1967,11 @@ static void ib_mad_recv_done_handler(struct ib_mad_port_private *port_priv,
 local:
 	/* Give driver "right of first refusal" on incoming MAD */
 	if (port_priv->device->process_mad) {
+<<<<<<< HEAD
+=======
+		int ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = port_priv->device->process_mad(port_priv->device, 0,
 						     port_priv->port_num,
 						     wc, &recv->grh,
@@ -1982,10 +1999,13 @@ local:
 		 * or via recv_handler in ib_mad_complete_recv()
 		 */
 		recv = NULL;
+<<<<<<< HEAD
 	} else if ((ret & IB_MAD_RESULT_SUCCESS) &&
 		   generate_unmatched_resp(recv, response)) {
 		agent_send_response(&response->mad.mad, &recv->grh, wc,
 				    port_priv->device, port_num, qp_info->qp->qp_num);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 out:

@@ -998,7 +998,11 @@ out_err:
 }
 EXPORT_SYMBOL(set_memory_uc);
 
+<<<<<<< HEAD
 static int _set_memory_array(unsigned long *addr, int addrinarray,
+=======
+int _set_memory_array(unsigned long *addr, int addrinarray,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned long new_type)
 {
 	int i, j;
@@ -1334,6 +1338,15 @@ void kernel_map_pages(struct page *page, int numpages, int enable)
 	}
 
 	/*
+<<<<<<< HEAD
+=======
+	 * If page allocator is not up yet then do not call c_p_a():
+	 */
+	if (!debug_pagealloc_enabled)
+		return;
+
+	/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * The return value is ignored as the calls cannot fail.
 	 * Large pages for identity mappings are not used at boot time
 	 * and hence no memory allocations during large page split.

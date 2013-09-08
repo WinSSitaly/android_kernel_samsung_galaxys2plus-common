@@ -6,6 +6,10 @@
  * Written by Theodore Ts'o, 2010.
  */
 
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/fs.h>
 #include <linux/time.h>
 #include <linux/jbd2.h>
@@ -69,6 +73,10 @@ static void put_io_page(struct ext4_io_page *io_page)
 void ext4_free_io_end(ext4_io_end_t *io)
 {
 	int i;
+<<<<<<< HEAD
+=======
+	wait_queue_head_t *wq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BUG_ON(!io);
 	if (io->page)
@@ -76,28 +84,43 @@ void ext4_free_io_end(ext4_io_end_t *io)
 	for (i = 0; i < io->num_io_pages; i++)
 		put_io_page(io->pages[i]);
 	io->num_io_pages = 0;
+<<<<<<< HEAD
 	if (atomic_dec_and_test(&EXT4_I(io->inode)->i_ioend_count))
 		wake_up_all(ext4_ioend_wq(io->inode));
+=======
+	wq = ext4_ioend_wq(io->inode);
+	if (atomic_dec_and_test(&EXT4_I(io->inode)->i_ioend_count) &&
+	    waitqueue_active(wq))
+		wake_up_all(wq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kmem_cache_free(io_end_cachep, io);
 }
 
 /*
  * check a range of space and convert unwritten extents to written.
+<<<<<<< HEAD
  *
  * Called with inode->i_mutex; we depend on this when we manipulate
  * io->flag, since we could otherwise race with ext4_flush_completed_IO()
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int ext4_end_io_nolock(ext4_io_end_t *io)
 {
 	struct inode *inode = io->inode;
 	loff_t offset = io->offset;
 	ssize_t size = io->size;
+<<<<<<< HEAD
+=======
+	wait_queue_head_t *wq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	ext4_debug("ext4_end_io_nolock: io 0x%p from inode %lu,list->next 0x%p,"
 		   "list->prev 0x%p\n",
 		   io, inode->i_ino, io->list.next, io->list.prev);
 
+<<<<<<< HEAD
 	ret = ext4_convert_unwritten_extents(inode, offset, size);
 	if (ret < 0) {
 		ext4_msg(inode->i_sb, KERN_EMERG,
@@ -105,16 +128,45 @@ int ext4_end_io_nolock(ext4_io_end_t *io)
 			 "extents -- potential data loss!  "
 			 "(inode %lu, offset %llu, size %zd, error %d)",
 			 inode->i_ino, offset, size, ret);
+=======
+	if (list_empty(&io->list))
+		return ret;
+
+	if (!(io->flag & EXT4_IO_END_UNWRITTEN))
+		return ret;
+
+	ret = ext4_convert_unwritten_extents(inode, offset, size);
+	if (ret < 0) {
+		printk(KERN_EMERG "%s: failed to convert unwritten "
+			"extents to written extents, error is %d "
+			"io is still on inode %lu aio dio list\n",
+		       __func__, ret, inode->i_ino);
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (io->iocb)
 		aio_complete(io->iocb, io->result, 0);
+<<<<<<< HEAD
 
 	if (io->flag & EXT4_IO_END_DIRECT)
 		inode_dio_done(inode);
 	/* Wake up anyone waiting on unwritten extent conversion */
 	if (atomic_dec_and_test(&EXT4_I(inode)->i_aiodio_unwritten))
 		wake_up_all(ext4_ioend_wq(io->inode));
+=======
+	/* clear the DIO AIO unwritten flag */
+	if (io->flag & EXT4_IO_END_UNWRITTEN) {
+		io->flag &= ~EXT4_IO_END_UNWRITTEN;
+		/* Wake up anyone waiting on unwritten extent conversion */
+		wq = ext4_ioend_wq(io->inode);
+		if (atomic_dec_and_test(&EXT4_I(inode)->i_aiodio_unwritten) &&
+		    waitqueue_active(wq)) {
+			wake_up_all(wq);
+		}
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -127,6 +179,7 @@ static void ext4_end_io_work(struct work_struct *work)
 	struct inode		*inode = io->inode;
 	struct ext4_inode_info	*ei = EXT4_I(inode);
 	unsigned long		flags;
+<<<<<<< HEAD
 
 	spin_lock_irqsave(&ei->i_completed_io_lock, flags);
 	if (io->flag & EXT4_IO_END_IN_FSYNC)
@@ -142,6 +195,11 @@ requeue:
 		was_queued = !!(io->flag & EXT4_IO_END_QUEUED);
 		io->flag |= EXT4_IO_END_QUEUED;
 		spin_unlock_irqrestore(&ei->i_completed_io_lock, flags);
+=======
+	int			ret;
+
+	if (!mutex_trylock(&inode->i_mutex)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Requeue the work instead of waiting so that the work
 		 * items queued after this can be processed.
@@ -153,6 +211,7 @@ requeue:
 		 * yield the cpu if it sees an end_io request that has already
 		 * been requeued.
 		 */
+<<<<<<< HEAD
 		if (was_queued)
 			yield();
 		return;
@@ -162,6 +221,24 @@ requeue:
 	(void) ext4_end_io_nolock(io);
 	mutex_unlock(&inode->i_mutex);
 free:
+=======
+		if (io->flag & EXT4_IO_END_QUEUED)
+			yield();
+		io->flag |= EXT4_IO_END_QUEUED;
+		return;
+	}
+	ret = ext4_end_io_nolock(io);
+	if (ret < 0) {
+		mutex_unlock(&inode->i_mutex);
+		return;
+	}
+
+	spin_lock_irqsave(&ei->i_completed_io_lock, flags);
+	if (!list_empty(&io->list))
+		list_del_init(&io->list);
+	spin_unlock_irqrestore(&ei->i_completed_io_lock, flags);
+	mutex_unlock(&inode->i_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ext4_free_io_end(io);
 }
 
@@ -293,7 +370,15 @@ static int io_submit_init(struct ext4_io_submit *io,
 	io_end = ext4_init_io_end(inode, GFP_NOFS);
 	if (!io_end)
 		return -ENOMEM;
+<<<<<<< HEAD
 	bio = bio_alloc(GFP_NOIO, min(nvecs, BIO_MAX_PAGES));
+=======
+	do {
+		bio = bio_alloc(GFP_NOIO, nvecs);
+		nvecs >>= 1;
+	} while (bio == NULL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bio->bi_sector = bh->b_blocknr * (bh->b_size >> 9);
 	bio->bi_bdev = bh->b_bdev;
 	bio->bi_private = io->io_end = io_end;
@@ -342,8 +427,15 @@ submit_and_retry:
 	if ((io_end->num_io_pages >= MAX_IO_PAGES) &&
 	    (io_end->pages[io_end->num_io_pages-1] != io_page))
 		goto submit_and_retry;
+<<<<<<< HEAD
 	if (buffer_uninit(bh))
 		ext4_set_io_unwritten_flag(inode, io_end);
+=======
+	if (buffer_uninit(bh) && !(io_end->flag & EXT4_IO_END_UNWRITTEN)) {
+		io_end->flag |= EXT4_IO_END_UNWRITTEN;
+		atomic_inc(&EXT4_I(inode)->i_aiodio_unwritten);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	io->io_end->size += bh->b_size;
 	io->io_next_block++;
 	ret = bio_add_page(io->io_bio, bh->b_page, bh->b_size, bh_offset(bh));

@@ -16,7 +16,10 @@
 #include <linux/fs.h>
 #include <arch/svinto.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <arch/system.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_ETRAX_GPIO
 void etrax_gpio_wake_up_check(void); /* drivers/gpio.c */

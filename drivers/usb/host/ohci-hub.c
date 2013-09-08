@@ -111,7 +111,10 @@ __acquires(ohci->lock)
 	if (!autostop) {
 		ohci->next_statechange = jiffies + msecs_to_jiffies (5);
 		ohci->autostop = 0;
+<<<<<<< HEAD
 		ohci->rh_state = OHCI_RH_SUSPENDED;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 done:
@@ -141,7 +144,11 @@ __acquires(ohci->lock)
 
 	if (ohci->hc_control & (OHCI_CTRL_IR | OHCI_SCHED_ENABLES)) {
 		/* this can happen after resuming a swsusp snapshot */
+<<<<<<< HEAD
 		if (ohci->rh_state != OHCI_RH_RUNNING) {
+=======
+		if (hcd->state == HC_STATE_RESUMING) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ohci_dbg (ohci, "BIOS/SMM active, control %03x\n",
 					ohci->hc_control);
 			status = -EBUSY;
@@ -275,7 +282,10 @@ skip_resume:
 		(void) ohci_readl (ohci, &ohci->regs->control);
 	}
 
+<<<<<<< HEAD
 	ohci->rh_state = OHCI_RH_RUNNING;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -338,8 +348,16 @@ static void ohci_finish_controller_resume(struct usb_hcd *hcd)
 	/* If needed, reinitialize and suspend the root hub */
 	if (need_reinit) {
 		spin_lock_irq(&ohci->lock);
+<<<<<<< HEAD
 		ohci_rh_resume(ohci);
 		ohci_rh_suspend(ohci, 0);
+=======
+		hcd->state = HC_STATE_RESUMING;
+		ohci_rh_resume(ohci);
+		hcd->state = HC_STATE_QUIESCING;
+		ohci_rh_suspend(ohci, 0);
+		hcd->state = HC_STATE_SUSPENDED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock_irq(&ohci->lock);
 	}
 

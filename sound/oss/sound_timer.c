@@ -320,7 +320,11 @@ void  sound_timer_init(struct sound_lowlev_timer *t, char *name)
 	n = sound_alloc_timerdev();
 	if (n == -1)
 		n = 0;		/* Overwrite the system timer */
+<<<<<<< HEAD
 	strlcpy(sound_timer.info.name, name, sizeof(sound_timer.info.name));
+=======
+	strcpy(sound_timer.info.name, name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sound_timer_devs[n] = &sound_timer;
 }
 EXPORT_SYMBOL(sound_timer_init);

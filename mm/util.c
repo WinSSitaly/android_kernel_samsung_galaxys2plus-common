@@ -1,7 +1,11 @@
 #include <linux/mm.h>
 #include <linux/slab.h>
 #include <linux/string.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/err.h>
 #include <linux/sched.h>
 #include <asm/uaccess.h>
@@ -239,6 +243,7 @@ void __vma_link_list(struct mm_struct *mm, struct vm_area_struct *vma,
 		next->vm_prev = vma;
 }
 
+<<<<<<< HEAD
 /* Check if the vma is being used as a stack by this task */
 static int vm_is_stack_for_task(struct task_struct *t,
 				struct vm_area_struct *vma)
@@ -280,6 +285,8 @@ done:
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_MMU) && !defined(HAVE_ARCH_PICK_MMAP_LAYOUT)
 void arch_pick_mmap_layout(struct mm_struct *mm)
 {

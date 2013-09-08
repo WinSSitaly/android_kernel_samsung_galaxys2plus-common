@@ -566,7 +566,11 @@ int scsi_cmd_ioctl(struct request_queue *q, struct gendisk *bd_disk, fmode_t mod
 {
 	int err;
 
+<<<<<<< HEAD
 	if (!q)
+=======
+	if (!q || blk_get_queue(q))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENXIO;
 
 	switch (cmd) {
@@ -687,6 +691,10 @@ int scsi_cmd_ioctl(struct request_queue *q, struct gendisk *bd_disk, fmode_t mod
 			err = -ENOTTY;
 	}
 
+<<<<<<< HEAD
+=======
+	blk_put_queue(q);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 EXPORT_SYMBOL(scsi_cmd_ioctl);
@@ -716,19 +724,30 @@ int scsi_verify_blk_ioctl(struct block_device *bd, unsigned int cmd)
 		 * and we do not want to spam dmesg about it.   CD-ROMs do
 		 * not have partitions, so we get here only for disks.
 		 */
+<<<<<<< HEAD
 		return -ENOIOCTLCMD;
+=======
+		return -ENOTTY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		break;
 	}
 
+<<<<<<< HEAD
 	if (capable(CAP_SYS_RAWIO))
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* In particular, rule out all resets and host-specific ioctls.  */
 	printk_ratelimited(KERN_WARNING
 			   "%s: sending ioctl %x to a partition!\n", current->comm, cmd);
 
+<<<<<<< HEAD
 	return -ENOIOCTLCMD;
+=======
+	return capable(CAP_SYS_RAWIO) ? 0 : -ENOTTY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(scsi_verify_blk_ioctl);
 

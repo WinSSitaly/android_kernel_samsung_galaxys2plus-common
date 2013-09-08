@@ -10,8 +10,11 @@
  * of the GNU Public License, incorporated herein by reference.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/fs.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -33,6 +36,11 @@ enum {
 	ASMTYPE_SPRUCE,
 };
 
+<<<<<<< HEAD
+=======
+#define PFX "ibmasr: "
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define TOPAZ_ASR_REG_OFFSET	4
 #define TOPAZ_ASR_TOGGLE	0x40
 #define TOPAZ_ASR_DISABLE	0x80
@@ -60,7 +68,11 @@ enum {
 #define SPRUCE_ASR_TOGGLE_MASK	0x02	/* bit 0: 0, then 1, then 0 */
 
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static unsigned long asr_is_open;
 static char asr_expect_close;
@@ -68,7 +80,11 @@ static char asr_expect_close;
 static unsigned int asr_type, asr_base, asr_length;
 static unsigned int asr_read_addr, asr_write_addr;
 static unsigned char asr_toggle_mask, asr_disable_mask;
+<<<<<<< HEAD
 static DEFINE_SPINLOCK(asr_lock);
+=======
+static spinlock_t asr_lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void __asr_toggle(void)
 {
@@ -234,11 +250,20 @@ static int __init asr_get_base_address(void)
 	}
 
 	if (!request_region(asr_base, asr_length, "ibmasr")) {
+<<<<<<< HEAD
 		pr_err("address %#x already in use\n", asr_base);
 		return -EBUSY;
 	}
 
 	pr_info("found %sASR @ addr %#x\n", type, asr_base);
+=======
+		printk(KERN_ERR PFX "address %#x already in use\n",
+			asr_base);
+		return -EBUSY;
+	}
+
+	printk(KERN_INFO PFX "found %sASR @ addr %#x\n", type, asr_base);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -331,7 +356,12 @@ static int asr_release(struct inode *inode, struct file *file)
 	if (asr_expect_close == 42)
 		asr_disable();
 	else {
+<<<<<<< HEAD
 		pr_crit("unexpected close, not stopping watchdog!\n");
+=======
+		printk(KERN_CRIT PFX
+				"unexpected close, not stopping watchdog!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		asr_toggle();
 	}
 	clear_bit(0, &asr_is_open);
@@ -384,6 +414,11 @@ static int __init ibmasr_init(void)
 	if (!asr_type)
 		return -ENODEV;
 
+<<<<<<< HEAD
+=======
+	spin_lock_init(&asr_lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = asr_get_base_address();
 	if (rc)
 		return rc;
@@ -391,7 +426,11 @@ static int __init ibmasr_init(void)
 	rc = misc_register(&asr_miscdev);
 	if (rc < 0) {
 		release_region(asr_base, asr_length);
+<<<<<<< HEAD
 		pr_err("failed to register misc device\n");
+=======
+		printk(KERN_ERR PFX "failed to register misc device\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return rc;
 	}
 
@@ -411,7 +450,11 @@ static void __exit ibmasr_exit(void)
 module_init(ibmasr_init);
 module_exit(ibmasr_exit);
 
+<<<<<<< HEAD
 module_param(nowayout, bool, 0);
+=======
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout,
 	"Watchdog cannot be stopped once started (default="
 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");

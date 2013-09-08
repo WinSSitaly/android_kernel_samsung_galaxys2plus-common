@@ -7,6 +7,10 @@ config ARCH_OMAP2PLUS_TYPICAL
 	default y
 	select AEABI
 	select REGULATOR
+<<<<<<< HEAD
+=======
+	select PM
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select PM_RUNTIME
 	select VFP
 	select NEON if ARCH_OMAP3 || ARCH_OMAP4
@@ -14,6 +18,10 @@ config ARCH_OMAP2PLUS_TYPICAL
 	select SERIAL_OMAP_CONSOLE
 	select I2C
 	select I2C_OMAP
+<<<<<<< HEAD
+=======
+	select MFD_SUPPORT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select MENELAUS if ARCH_OMAP2
 	select TWL4030_CORE if ARCH_OMAP3 || ARCH_OMAP4
 	select TWL4030_POWER if ARCH_OMAP3 || ARCH_OMAP4
@@ -25,35 +33,54 @@ config ARCH_OMAP2
 	depends on ARCH_OMAP2PLUS
 	default y
 	select CPU_V6
+<<<<<<< HEAD
 	select MULTI_IRQ_HANDLER
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config ARCH_OMAP3
 	bool "TI OMAP3"
 	depends on ARCH_OMAP2PLUS
 	default y
 	select CPU_V7
+<<<<<<< HEAD
 	select USB_ARCH_HAS_EHCI if USB_SUPPORT
 	select ARCH_HAS_OPP
 	select PM_OPP if PM
 	select ARM_CPU_SUSPEND if PM
 	select MULTI_IRQ_HANDLER
+=======
+	select USB_ARCH_HAS_EHCI
+	select ARM_L1_CACHE_SHIFT_6 if !ARCH_OMAP4
+	select ARCH_HAS_OPP
+	select PM_OPP if PM
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config ARCH_OMAP4
 	bool "TI OMAP4"
 	default y
 	depends on ARCH_OMAP2PLUS
+<<<<<<< HEAD
 	select CACHE_L2X0
 	select CPU_V7
 	select ARM_GIC
 	select HAVE_SMP
+=======
+	select CPU_V7
+	select ARM_GIC
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select LOCAL_TIMERS if SMP
 	select PL310_ERRATA_588369
 	select PL310_ERRATA_727915
 	select ARM_ERRATA_720789
 	select ARCH_HAS_OPP
 	select PM_OPP if PM
+<<<<<<< HEAD
 	select USB_ARCH_HAS_EHCI if USB_SUPPORT
 	select ARM_CPU_SUSPEND if PM
+=======
+	select USB_ARCH_HAS_EHCI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 comment "OMAP Core Type"
 	depends on ARCH_OMAP2
@@ -77,6 +104,7 @@ config SOC_OMAP3430
 	default y
 	select ARCH_OMAP_OTG
 
+<<<<<<< HEAD
 config SOC_OMAPTI81XX
 	bool "TI81XX support"
 	depends on ARCH_OMAP3
@@ -84,6 +112,10 @@ config SOC_OMAPTI81XX
 
 config SOC_OMAPAM33XX
 	bool "AM33XX support"
+=======
+config SOC_OMAPTI816X
+	bool "TI816X support"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	depends on ARCH_OMAP3
 	default y
 
@@ -115,12 +147,18 @@ comment "OMAP Board Type"
 	depends on ARCH_OMAP2PLUS
 
 config MACH_OMAP_GENERIC
+<<<<<<< HEAD
 	bool "Generic OMAP2+ board"
 	depends on ARCH_OMAP2PLUS
 	default y
 	help
 	  Support for generic TI OMAP2+ boards using Flattened Device Tree.
 	  More information at Documentation/devicetree
+=======
+	bool "Generic OMAP board"
+	depends on ARCH_OMAP2
+	default y
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config MACH_OMAP2_TUSB6010
 	bool
@@ -212,12 +250,20 @@ config MACH_OMAP3_PANDORA
 	depends on ARCH_OMAP3
 	default y
 	select OMAP_PACKAGE_CBB
+<<<<<<< HEAD
 	select REGULATOR_FIXED_VOLTAGE if REGULATOR
+=======
+	select REGULATOR_FIXED_VOLTAGE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config MACH_OMAP3_TOUCHBOOK
 	bool "OMAP3 Touch Book"
 	depends on ARCH_OMAP3
 	default y
+<<<<<<< HEAD
+=======
+	select BACKLIGHT_CLASS_DEVICE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config MACH_OMAP_3430SDP
 	bool "OMAP 3430 SDP board"
@@ -244,11 +290,18 @@ config MACH_NOKIA_N8X0
 	select MACH_NOKIA_N810_WIMAX
 
 config MACH_NOKIA_RM680
+<<<<<<< HEAD
 	bool "Nokia RM-680/696 board"
 	depends on ARCH_OMAP3
 	default y
 	select OMAP_PACKAGE_CBB
 	select MACH_NOKIA_RM696
+=======
+	bool "Nokia RM-680 board"
+	depends on ARCH_OMAP3
+	default y
+	select OMAP_PACKAGE_CBB
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config MACH_NOKIA_RX51
 	bool "Nokia RX-51 board"
@@ -264,7 +317,11 @@ config MACH_OMAP_ZOOM2
 	select SERIAL_8250
 	select SERIAL_CORE_CONSOLE
 	select SERIAL_8250_CONSOLE
+<<<<<<< HEAD
 	select REGULATOR_FIXED_VOLTAGE if REGULATOR
+=======
+	select REGULATOR_FIXED_VOLTAGE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config MACH_OMAP_ZOOM3
 	bool "OMAP3630 Zoom3 board"
@@ -274,6 +331,7 @@ config MACH_OMAP_ZOOM3
 	select SERIAL_8250
 	select SERIAL_CORE_CONSOLE
 	select SERIAL_8250_CONSOLE
+<<<<<<< HEAD
 	select REGULATOR_FIXED_VOLTAGE if REGULATOR
 
 config MACH_CM_T35
@@ -281,6 +339,14 @@ config MACH_CM_T35
 	depends on ARCH_OMAP3
 	default y
 	select MACH_CM_T3730
+=======
+	select REGULATOR_FIXED_VOLTAGE
+
+config MACH_CM_T35
+	bool "CompuLab CM-T35 module"
+	depends on ARCH_OMAP3
+	default y
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select OMAP_PACKAGE_CUS
 
 config MACH_CM_T3517
@@ -289,9 +355,12 @@ config MACH_CM_T3517
 	default y
 	select OMAP_PACKAGE_CBB
 
+<<<<<<< HEAD
 config MACH_CM_T3730
        bool
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config MACH_IGEP0020
 	bool "IGEP v2 board"
 	depends on ARCH_OMAP3
@@ -319,12 +388,16 @@ config MACH_OMAP_3630SDP
 
 config MACH_TI8168EVM
 	bool "TI8168 Evaluation Module"
+<<<<<<< HEAD
 	depends on SOC_OMAPTI81XX
 	default y
 
 config MACH_TI8148EVM
 	bool "TI8148 Evaluation Module"
 	depends on SOC_OMAPTI81XX
+=======
+	depends on SOC_OMAPTI816X
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default y
 
 config MACH_OMAP_4430SDP
@@ -333,7 +406,11 @@ config MACH_OMAP_4430SDP
 	depends on ARCH_OMAP4
 	select OMAP_PACKAGE_CBL
 	select OMAP_PACKAGE_CBS
+<<<<<<< HEAD
 	select REGULATOR_FIXED_VOLTAGE if REGULATOR
+=======
+	select REGULATOR_FIXED_VOLTAGE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config MACH_OMAP4_PANDA
 	bool "OMAP4 Panda Board"
@@ -341,7 +418,11 @@ config MACH_OMAP4_PANDA
 	depends on ARCH_OMAP4
 	select OMAP_PACKAGE_CBL
 	select OMAP_PACKAGE_CBS
+<<<<<<< HEAD
 	select REGULATOR_FIXED_VOLTAGE if REGULATOR
+=======
+	select REGULATOR_FIXED_VOLTAGE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config OMAP3_EMU
 	bool "OMAP3 debugging peripherals"
@@ -363,6 +444,7 @@ config OMAP3_SDRC_AC_TIMING
 	  wish to say no.  Selecting yes without understanding what is
 	  going on could result in system crashes;
 
+<<<<<<< HEAD
 config OMAP4_ERRATA_I688
 	bool "OMAP4 errata: Async Bridge Corruption"
 	depends on ARCH_OMAP4
@@ -384,6 +466,8 @@ config OMAP4_ERRATA_I688
 	  In MPU case, L3 T2ASYNC FIFO and DDR T2ASYNC FIFO needs to be drained.
 	  IO barrier ensure that there is no synchronisation loss on initiators
 	  operating on both interconnect port simultaneously.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endmenu
 
 endif

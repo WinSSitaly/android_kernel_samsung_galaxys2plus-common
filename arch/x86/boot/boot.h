@@ -67,7 +67,11 @@ static inline void outl(u32 v, u16 port)
 {
 	asm volatile("outl %0,%1" : : "a" (v), "dN" (port));
 }
+<<<<<<< HEAD
 static inline u32 inl(u16 port)
+=======
+static inline u32 inl(u32 port)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 v;
 	asm volatile("inl %1,%0" : "=a" (v) : "dN" (port));

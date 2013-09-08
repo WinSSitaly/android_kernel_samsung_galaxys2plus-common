@@ -1,8 +1,11 @@
 #ifndef __ASM_SH_ATOMIC_IRQ_H
 #define __ASM_SH_ATOMIC_IRQ_H
 
+<<<<<<< HEAD
 #include <linux/irqflags.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * To get proper branch prediction for the main line, we must branch
  * forward to code at the end of this object's .text section, then

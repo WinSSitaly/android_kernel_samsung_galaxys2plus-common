@@ -850,7 +850,10 @@ static struct pci_device_id agp_intel_pci_table[] = {
 	.subvendor	= PCI_ANY_ID,			\
 	.subdevice	= PCI_ANY_ID,			\
 	}
+<<<<<<< HEAD
 	ID(PCI_DEVICE_ID_INTEL_82441), /* for HAS2 support */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ID(PCI_DEVICE_ID_INTEL_82443LX_0),
 	ID(PCI_DEVICE_ID_INTEL_82443BX_0),
 	ID(PCI_DEVICE_ID_INTEL_82443GX_0),
@@ -898,7 +901,10 @@ static struct pci_device_id agp_intel_pci_table[] = {
 	ID(PCI_DEVICE_ID_INTEL_B43_HB),
 	ID(PCI_DEVICE_ID_INTEL_B43_1_HB),
 	ID(PCI_DEVICE_ID_INTEL_IRONLAKE_D_HB),
+<<<<<<< HEAD
 	ID(PCI_DEVICE_ID_INTEL_IRONLAKE_D2_HB),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ID(PCI_DEVICE_ID_INTEL_IRONLAKE_M_HB),
 	ID(PCI_DEVICE_ID_INTEL_IRONLAKE_MA_HB),
 	ID(PCI_DEVICE_ID_INTEL_IRONLAKE_MC2_HB),

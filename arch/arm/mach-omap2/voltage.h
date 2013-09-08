@@ -19,8 +19,11 @@
 #include "vc.h"
 #include "vp.h"
 
+<<<<<<< HEAD
 struct powerdomain;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* XXX document */
 #define VOLTSCALE_VPFORCEUPDATE		1
 #define VOLTSCALE_VCBYPASS		2
@@ -34,6 +37,7 @@ struct powerdomain;
 #define OMAP3_VOLTSETUP2	0xff
 
 /**
+<<<<<<< HEAD
  * struct omap_vfsm_instance - per-voltage manager FSM register/bitfield
  * data
  * @voltsetup_mask: SETUP_TIME* bitmask in the PRM_VOLTSETUP* register
@@ -44,10 +48,27 @@ struct powerdomain;
 struct omap_vfsm_instance {
 	u32 voltsetup_mask;
 	u8 voltsetup_reg;
+=======
+ * struct omap_vfsm_instance_data - per-voltage manager FSM register/bitfield
+ * data
+ * @voltsetup_mask: SETUP_TIME* bitmask in the PRM_VOLTSETUP* register
+ * @voltsetup_reg: register offset of PRM_VOLTSETUP from PRM base
+ * @voltsetup_shift: SETUP_TIME* field shift in the PRM_VOLTSETUP* register
+ *
+ * XXX What about VOLTOFFSET/VOLTCTRL?
+ * XXX It is not necessary to have both a _mask and a _shift for the same
+ *     bitfield - remove one!
+ */
+struct omap_vfsm_instance_data {
+	u32 voltsetup_mask;
+	u8 voltsetup_reg;
+	u8 voltsetup_shift;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
  * struct voltagedomain - omap voltage domain global structure.
+<<<<<<< HEAD
  * @name: Name of the voltage domain which can be used as a unique identifier.
  * @scalable: Whether or not this voltage domain is scalable
  * @node: list_head linking all voltage domains
@@ -88,6 +109,13 @@ struct voltagedomain {
 
 	u32 nominal_volt;
 	struct omap_volt_data *volt_data;
+=======
+ * @name:	Name of the voltage domain which can be used as a unique
+ *		identifier.
+ */
+struct voltagedomain {
+	char *name;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -110,6 +138,7 @@ struct omap_volt_data {
 };
 
 /**
+<<<<<<< HEAD
  * struct omap_voltdm_pmic - PMIC specific data required by voltage driver.
  * @slew_rate:	PMIC slew rate (in uv/us)
  * @step_size:	PMIC voltage step size (in uv)
@@ -122,6 +151,15 @@ struct omap_volt_data {
  * @uv_to_vsel:	PMIC API to convert voltage in uV to vsel value.
  */
 struct omap_voltdm_pmic {
+=======
+ * struct omap_volt_pmic_info - PMIC specific data required by voltage driver.
+ * @slew_rate:	PMIC slew rate (in uv/us)
+ * @step_size:	PMIC voltage step size (in uv)
+ * @vsel_to_uv:	PMIC API to convert vsel value to actual voltage in uV.
+ * @uv_to_vsel:	PMIC API to convert voltage in uV to vsel value.
+ */
+struct omap_volt_pmic_info {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int slew_rate;
 	int step_size;
 	u32 on_volt;
@@ -129,25 +167,79 @@ struct omap_voltdm_pmic {
 	u32 ret_volt;
 	u32 off_volt;
 	u16 volt_setup_time;
+<<<<<<< HEAD
 	u16 i2c_slave_addr;
 	u16 volt_reg_addr;
 	u16 cmd_reg_addr;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 vp_erroroffset;
 	u8 vp_vstepmin;
 	u8 vp_vstepmax;
 	u8 vp_vddmin;
 	u8 vp_vddmax;
 	u8 vp_timeout_us;
+<<<<<<< HEAD
 	bool i2c_high_speed;
 	u8 i2c_mcode;
+=======
+	u8 i2c_slave_addr;
+	u8 pmic_reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long (*vsel_to_uv) (const u8 vsel);
 	u8 (*uv_to_vsel) (unsigned long uV);
 };
 
+<<<<<<< HEAD
+=======
+/**
+ * omap_vdd_info - Per Voltage Domain info
+ *
+ * @volt_data		: voltage table having the distinct voltages supported
+ *			  by the domain and other associated per voltage data.
+ * @pmic_info		: pmic specific parameters which should be populted by
+ *			  the pmic drivers.
+ * @vp_data		: the register values, shifts, masks for various
+ *			  vp registers
+ * @vp_rt_data          : VP data derived at runtime, not predefined
+ * @vc_data		: structure containing various various vc registers,
+ *			  shifts, masks etc.
+ * @vfsm                : voltage manager FSM data
+ * @voltdm		: pointer to the voltage domain structure
+ * @debug_dir		: debug directory for this voltage domain.
+ * @curr_volt		: current voltage for this vdd.
+ * @vp_enabled		: flag to keep track of whether vp is enabled or not
+ * @volt_scale		: API to scale the voltage of the vdd.
+ */
+struct omap_vdd_info {
+	struct omap_volt_data *volt_data;
+	struct omap_volt_pmic_info *pmic_info;
+	struct omap_vp_instance_data *vp_data;
+	struct omap_vp_runtime_data vp_rt_data;
+	struct omap_vc_instance_data *vc_data;
+	const struct omap_vfsm_instance_data *vfsm;
+	struct voltagedomain voltdm;
+	struct dentry *debug_dir;
+	u32 curr_volt;
+	bool vp_enabled;
+	u32 (*read_reg) (u16 mod, u8 offset);
+	void (*write_reg) (u32 val, u16 mod, u8 offset);
+	int (*volt_scale) (struct omap_vdd_info *vdd,
+		unsigned long target_volt);
+};
+
+unsigned long omap_vp_get_curr_volt(struct voltagedomain *voltdm);
+void omap_vp_enable(struct voltagedomain *voltdm);
+void omap_vp_disable(struct voltagedomain *voltdm);
+int omap_voltage_scale_vdd(struct voltagedomain *voltdm,
+		unsigned long target_volt);
+void omap_voltage_reset(struct voltagedomain *voltdm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void omap_voltage_get_volttable(struct voltagedomain *voltdm,
 		struct omap_volt_data **volt_data);
 struct omap_volt_data *omap_voltage_get_voltdata(struct voltagedomain *voltdm,
 		unsigned long volt);
+<<<<<<< HEAD
 int omap_voltage_register_pmic(struct voltagedomain *voltdm,
 			       struct omap_voltdm_pmic *pmic);
 void omap_change_voltscale_method(struct voltagedomain *voltdm,
@@ -169,4 +261,38 @@ int voltdm_for_each_pwrdm(struct voltagedomain *voltdm,
 int voltdm_scale(struct voltagedomain *voltdm, unsigned long target_volt);
 void voltdm_reset(struct voltagedomain *voltdm);
 unsigned long voltdm_get_voltage(struct voltagedomain *voltdm);
+=======
+unsigned long omap_voltage_get_nom_volt(struct voltagedomain *voltdm);
+struct dentry *omap_voltage_get_dbgdir(struct voltagedomain *voltdm);
+int __init omap_voltage_early_init(s16 prm_mod, s16 prm_irqst_mod,
+				   struct omap_vdd_info *omap_vdd_array[],
+				   u8 omap_vdd_count);
+#ifdef CONFIG_PM
+int omap_voltage_register_pmic(struct voltagedomain *voltdm,
+		struct omap_volt_pmic_info *pmic_info);
+void omap_change_voltscale_method(struct voltagedomain *voltdm,
+		int voltscale_method);
+/* API to get the voltagedomain pointer */
+struct voltagedomain *omap_voltage_domain_lookup(char *name);
+
+int omap_voltage_late_init(void);
+#else
+static inline int omap_voltage_register_pmic(struct voltagedomain *voltdm,
+		struct omap_volt_pmic_info *pmic_info)
+{
+	return -EINVAL;
+}
+static inline  void omap_change_voltscale_method(struct voltagedomain *voltdm,
+		int voltscale_method) {}
+static inline int omap_voltage_late_init(void)
+{
+	return -EINVAL;
+}
+static inline struct voltagedomain *omap_voltage_domain_lookup(char *name)
+{
+	return ERR_PTR(-EINVAL);
+}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

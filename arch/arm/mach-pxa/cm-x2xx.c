@@ -21,8 +21,12 @@
 #include <asm/mach-types.h>
 #include <asm/mach/map.h>
 
+<<<<<<< HEAD
 #include <mach/pxa25x.h>
 #include <mach/pxa27x.h>
+=======
+#include <mach/pxa2xx-regs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/audio.h>
 #include <mach/pxafb.h>
 #include <mach/smemc.h>
@@ -39,7 +43,11 @@ extern void cmx270_init(void);
 #define CMX2XX_NR_IRQS		(IRQ_BOARD_START + 40)
 
 /* virtual addresses for statically mapped regions */
+<<<<<<< HEAD
 #define CMX2XX_VIRT_BASE	(void __iomem *)(0xe8000000)
+=======
+#define CMX2XX_VIRT_BASE	(0xe8000000)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define CMX2XX_IT8152_VIRT	(CMX2XX_VIRT_BASE)
 
 /* physical address if local-bus attached devices */
@@ -58,8 +66,13 @@ extern void cmx270_init(void);
 #define CMX255_GPIO_IT8152_IRQ	(0)
 #define CMX270_GPIO_IT8152_IRQ	(22)
 
+<<<<<<< HEAD
 #define CMX255_ETHIRQ		PXA_GPIO_TO_IRQ(GPIO22_ETHIRQ)
 #define CMX270_ETHIRQ		PXA_GPIO_TO_IRQ(GPIO10_ETHIRQ)
+=======
+#define CMX255_ETHIRQ		IRQ_GPIO(GPIO22_ETHIRQ)
+#define CMX270_ETHIRQ		IRQ_GPIO(GPIO10_ETHIRQ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if defined(CONFIG_DM9000) || defined(CONFIG_DM9000_MODULE)
 static struct resource cmx255_dm9000_resource[] = {
@@ -482,7 +495,11 @@ static void __init cmx2xx_init_irq(void)
 /* Map PCI companion statically */
 static struct map_desc cmx2xx_io_desc[] __initdata = {
 	[0] = { /* PCI bridge */
+<<<<<<< HEAD
 		.virtual	= (unsigned long)CMX2XX_IT8152_VIRT,
+=======
+		.virtual	= CMX2XX_IT8152_VIRT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.pfn		= __phys_to_pfn(PXA_CS4_PHYS),
 		.length		= SZ_64M,
 		.type		= MT_DEVICE
@@ -513,6 +530,7 @@ static void __init cmx2xx_map_io(void)
 #endif
 
 MACHINE_START(ARMCORE, "Compulab CM-X2XX")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= cmx2xx_map_io,
 	.nr_irqs	= CMX2XX_NR_IRQS,
@@ -525,4 +543,12 @@ MACHINE_START(ARMCORE, "Compulab CM-X2XX")
 	.dma_zone_size	= SZ_64M,
 #endif
 	.restart	= pxa_restart,
+=======
+	.boot_params	= 0xa0000100,
+	.map_io		= cmx2xx_map_io,
+	.nr_irqs	= CMX2XX_NR_IRQS,
+	.init_irq	= cmx2xx_init_irq,
+	.timer		= &pxa_timer,
+	.init_machine	= cmx2xx_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

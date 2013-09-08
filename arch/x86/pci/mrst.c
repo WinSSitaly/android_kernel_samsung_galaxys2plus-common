@@ -43,8 +43,11 @@
 #define PCI_FIXED_BAR_4_SIZE	0x14
 #define PCI_FIXED_BAR_5_SIZE	0x1c
 
+<<<<<<< HEAD
 static int pci_soc_mode = 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * fixed_bar_cap - return the offset of the fixed BAR cap if found
  * @bus: PCI bus
@@ -150,9 +153,13 @@ static bool type1_access_ok(unsigned int bus, unsigned int devfn, int reg)
 	 */
 	if (reg >= 0x100 || reg == PCI_STATUS || reg == PCI_HEADER_TYPE)
 		return 0;
+<<<<<<< HEAD
 	if (bus == 0 && (devfn == PCI_DEVFN(2, 0)
 				|| devfn == PCI_DEVFN(0, 0)
 				|| devfn == PCI_DEVFN(3, 0)))
+=======
+	if (bus == 0 && (devfn == PCI_DEVFN(2, 0) || devfn == PCI_DEVFN(0, 0)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 	return 0; /* langwell on others */
 }
@@ -235,15 +242,23 @@ struct pci_ops pci_mrst_ops = {
  */
 int __init pci_mrst_init(void)
 {
+<<<<<<< HEAD
 	printk(KERN_INFO "Intel MID platform detected, using MID PCI ops\n");
 	pci_mmcfg_late_init();
 	pcibios_enable_irq = mrst_pci_irq_enable;
 	pci_root_ops = pci_mrst_ops;
 	pci_soc_mode = 1;
+=======
+	printk(KERN_INFO "Moorestown platform detected, using MRST PCI ops\n");
+	pci_mmcfg_late_init();
+	pcibios_enable_irq = mrst_pci_irq_enable;
+	pci_root_ops = pci_mrst_ops;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Continue with standard init */
 	return 1;
 }
 
+<<<<<<< HEAD
 /* Langwell devices are not true pci devices, they are not subject to 10 ms
  * d3 to d0 delay required by pci spec.
  */
@@ -272,6 +287,8 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x080C, mrst_power_off_unused_dev);
 DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0812, mrst_power_off_unused_dev);
 DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0815, mrst_power_off_unused_dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Langwell devices reside at fixed offsets, don't try to move them.
  */
@@ -281,9 +298,12 @@ static void __devinit pci_fixed_bar_fixup(struct pci_dev *dev)
 	u32 size;
 	int i;
 
+<<<<<<< HEAD
 	if (!pci_soc_mode)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Must have extended configuration space */
 	if (dev->cfg_size < PCIE_CAP_OFFSET + 4)
 		return;

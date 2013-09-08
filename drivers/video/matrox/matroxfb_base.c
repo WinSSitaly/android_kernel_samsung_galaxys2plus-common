@@ -147,6 +147,10 @@ static struct fb_var_screeninfo vesafb_defined = {
 	39721L,48L,16L,33L,10L,
 	96L,2L,~0,	/* No sync info */
 	FB_VMODE_NONINTERLACED,
+<<<<<<< HEAD
+=======
+	0, {0,0,0,0,0}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 

@@ -37,7 +37,11 @@
 #include <linux/time.h>
 #include <linux/slab.h>
 #include <linux/string.h>
+<<<<<<< HEAD
 #include "reiserfs.h"
+=======
+#include <linux/reiserfs_fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/buffer_head.h>
 
 /* To make any changes in the tree we find a node, that contains item

@@ -239,6 +239,11 @@ static int __devexit qt1070_remove(struct i2c_client *client)
 	input_unregister_device(data->input);
 	kfree(data);
 
+<<<<<<< HEAD
+=======
+	i2c_set_clientdata(client, NULL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -258,7 +263,21 @@ static struct i2c_driver qt1070_driver = {
 	.remove		= __devexit_p(qt1070_remove),
 };
 
+<<<<<<< HEAD
 module_i2c_driver(qt1070_driver);
+=======
+static int __init qt1070_init(void)
+{
+	return i2c_add_driver(&qt1070_driver);
+}
+module_init(qt1070_init);
+
+static void __exit qt1070_exit(void)
+{
+	i2c_del_driver(&qt1070_driver);
+}
+module_exit(qt1070_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Bo Shen <voice.shen@atmel.com>");
 MODULE_DESCRIPTION("Driver for AT42QT1070 QTouch sensor");

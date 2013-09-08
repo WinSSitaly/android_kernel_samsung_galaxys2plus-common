@@ -16,6 +16,10 @@
 #include <linux/init.h>
 
 #include <asm/ptrace.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/dma.h>
 #include <asm/irq.h>
 #include <asm/mmu_context.h>
@@ -193,7 +197,11 @@ sable_init_irq(void)
  */
 
 static int __init
+<<<<<<< HEAD
 sable_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+sable_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static char irq_tab[9][5] __initdata = {
 		/*INT    INTA   INTB   INTC   INTD */
@@ -375,7 +383,11 @@ lynx_init_irq(void)
  */
 
 static int __init
+<<<<<<< HEAD
 lynx_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+lynx_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static char irq_tab[19][5] __initdata = {
 		/*INT    INTA   INTB   INTC   INTD */

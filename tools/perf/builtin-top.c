@@ -5,7 +5,10 @@
  * any workload, CPU or specific PID.
  *
  * Copyright (C) 2008, Red Hat Inc, Ingo Molnar <mingo@redhat.com>
+<<<<<<< HEAD
  *		 2011, Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Improvements and fixes by:
  *
@@ -37,12 +40,18 @@
 #include "util/parse-events.h"
 #include "util/cpumap.h"
 #include "util/xyarray.h"
+<<<<<<< HEAD
 #include "util/sort.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "util/debug.h"
 
 #include <assert.h>
+<<<<<<< HEAD
 #include <elf.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <fcntl.h>
 
 #include <stdio.h>
@@ -60,12 +69,56 @@
 #include <sys/prctl.h>
 #include <sys/wait.h>
 #include <sys/uio.h>
+<<<<<<< HEAD
 #include <sys/utsname.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sys/mman.h>
 
 #include <linux/unistd.h>
 #include <linux/types.h>
 
+<<<<<<< HEAD
+=======
+static struct perf_top top = {
+	.count_filter		= 5,
+	.delay_secs		= 2,
+	.display_weighted	= -1,
+	.target_pid		= -1,
+	.target_tid		= -1,
+	.active_symbols		= LIST_HEAD_INIT(top.active_symbols),
+	.active_symbols_lock	= PTHREAD_MUTEX_INITIALIZER,
+	.active_symbols_cond	= PTHREAD_COND_INITIALIZER,
+	.freq			= 1000, /* 1 KHz */
+};
+
+static bool			system_wide			=  false;
+
+static bool			use_tui, use_stdio;
+
+static int			default_interval		=      0;
+
+static bool			kptr_restrict_warned;
+static bool			vmlinux_warned;
+static bool			inherit				=  false;
+static int			realtime_prio			=      0;
+static bool			group				=  false;
+static unsigned int		page_size;
+static unsigned int		mmap_pages			=    128;
+
+static bool			dump_symtab                     =  false;
+
+static struct winsize		winsize;
+
+static const char		*sym_filter			=   NULL;
+struct sym_entry		*sym_filter_entry_sched		=   NULL;
+static int			sym_pcnt_filter			=      5;
+
+/*
+ * Source functions
+ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void get_term_dimensions(struct winsize *ws)
 {
 	char *s = getenv("LINES");
@@ -88,6 +141,7 @@ void get_term_dimensions(struct winsize *ws)
 	ws->ws_col = 80;
 }
 
+<<<<<<< HEAD
 static void perf_top__update_print_entries(struct perf_top *top)
 {
 	if (top->print_entries > 9)
@@ -110,17 +164,42 @@ static void perf_top__sig_winch(int sig __used, siginfo_t *info __used, void *ar
 }
 
 static int perf_top__parse_source(struct perf_top *top, struct hist_entry *he)
+=======
+static void update_print_entries(struct winsize *ws)
+{
+	top.print_entries = ws->ws_row;
+
+	if (top.print_entries > 9)
+		top.print_entries -= 9;
+}
+
+static void sig_winch_handler(int sig __used)
+{
+	get_term_dimensions(&winsize);
+	update_print_entries(&winsize);
+}
+
+static int parse_source(struct sym_entry *syme)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct symbol *sym;
 	struct annotation *notes;
 	struct map *map;
 	int err = -1;
 
+<<<<<<< HEAD
 	if (!he || !he->ms.sym)
 		return -1;
 
 	sym = he->ms.sym;
 	map = he->ms.map;
+=======
+	if (!syme)
+		return -1;
+
+	sym = sym_entry__symbol(syme);
+	map = syme->map;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * We can't annotate with just /proc/kallsyms
@@ -140,7 +219,11 @@ static int perf_top__parse_source(struct perf_top *top, struct hist_entry *he)
 
 	pthread_mutex_lock(&notes->lock);
 
+<<<<<<< HEAD
 	if (symbol__alloc_hist(sym) < 0) {
+=======
+	if (symbol__alloc_hist(sym, top.evlist->nr_entries) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pthread_mutex_unlock(&notes->lock);
 		pr_err("Not enough memory for annotating '%s' symbol!\n",
 		       sym->name);
@@ -148,16 +231,24 @@ static int perf_top__parse_source(struct perf_top *top, struct hist_entry *he)
 		return err;
 	}
 
+<<<<<<< HEAD
 	err = symbol__annotate(sym, map, 0);
 	if (err == 0) {
 out_assign:
 		top->sym_filter_entry = he;
+=======
+	err = symbol__annotate(sym, syme->map, 0);
+	if (err == 0) {
+out_assign:
+		top.sym_filter_entry = syme;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	pthread_mutex_unlock(&notes->lock);
 	return err;
 }
 
+<<<<<<< HEAD
 static void __zero_source_counters(struct hist_entry *he)
 {
 	struct symbol *sym = he->ms.sym;
@@ -205,11 +296,29 @@ static void perf_top__record_precise_ip(struct perf_top *top,
 		return;
 
 	sym = he->ms.sym;
+=======
+static void __zero_source_counters(struct sym_entry *syme)
+{
+	struct symbol *sym = sym_entry__symbol(syme);
+	symbol__annotate_zero_histograms(sym);
+}
+
+static void record_precise_ip(struct sym_entry *syme, int counter, u64 ip)
+{
+	struct annotation *notes;
+	struct symbol *sym;
+
+	if (syme != top.sym_filter_entry)
+		return;
+
+	sym = sym_entry__symbol(syme);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	notes = symbol__annotation(sym);
 
 	if (pthread_mutex_trylock(&notes->lock))
 		return;
 
+<<<<<<< HEAD
 	if (notes->src == NULL && symbol__alloc_hist(sym) < 0) {
 		pthread_mutex_unlock(&notes->lock);
 		pr_err("Not enough memory for annotating '%s' symbol!\n",
@@ -230,14 +339,31 @@ static void perf_top__record_precise_ip(struct perf_top *top,
 static void perf_top__show_details(struct perf_top *top)
 {
 	struct hist_entry *he = top->sym_filter_entry;
+=======
+	ip = syme->map->map_ip(syme->map, ip);
+	symbol__inc_addr_samples(sym, syme->map, counter, ip);
+
+	pthread_mutex_unlock(&notes->lock);
+}
+
+static void show_details(struct sym_entry *syme)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct annotation *notes;
 	struct symbol *symbol;
 	int more;
 
+<<<<<<< HEAD
 	if (!he)
 		return;
 
 	symbol = he->ms.sym;
+=======
+	if (!syme)
+		return;
+
+	symbol = sym_entry__symbol(syme);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	notes = symbol__annotation(symbol);
 
 	pthread_mutex_lock(&notes->lock);
@@ -245,6 +371,7 @@ static void perf_top__show_details(struct perf_top *top)
 	if (notes->src == NULL)
 		goto out_unlock;
 
+<<<<<<< HEAD
 	printf("Showing %s for %s\n", event_name(top->sym_evsel), symbol->name);
 	printf("  Events  Pcnt (>=%d%%)\n", top->sym_pcnt_filter);
 
@@ -254,6 +381,17 @@ static void perf_top__show_details(struct perf_top *top)
 		symbol__annotate_zero_histogram(symbol, top->sym_evsel->idx);
 	else
 		symbol__annotate_decay_histogram(symbol, top->sym_evsel->idx);
+=======
+	printf("Showing %s for %s\n", event_name(top.sym_evsel), symbol->name);
+	printf("  Events  Pcnt (>=%d%%)\n", sym_pcnt_filter);
+
+	more = symbol__annotate_printf(symbol, syme->map, top.sym_evsel->idx,
+				       0, sym_pcnt_filter, top.print_entries, 4);
+	if (top.zero)
+		symbol__annotate_zero_histogram(symbol, top.sym_evsel->idx);
+	else
+		symbol__annotate_decay_histogram(symbol, top.sym_evsel->idx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (more != 0)
 		printf("%d lines not displayed, maybe increase display entries [e]\n", more);
 out_unlock:
@@ -262,6 +400,7 @@ out_unlock:
 
 static const char		CONSOLE_CLEAR[] = "[H[2J";
 
+<<<<<<< HEAD
 static struct hist_entry *perf_evsel__add_hist_entry(struct perf_evsel *evsel,
 						     struct addr_location *al,
 						     struct perf_sample *sample)
@@ -316,6 +455,96 @@ static void perf_top__print_sym_table(struct perf_top *top)
 	putchar('\n');
 	hists__fprintf(&top->sym_evsel->hists, NULL, false, false,
 		       top->winsize.ws_row - 4 - printed, win_width, stdout);
+=======
+static void __list_insert_active_sym(struct sym_entry *syme)
+{
+	list_add(&syme->node, &top.active_symbols);
+}
+
+static void print_sym_table(struct perf_session *session)
+{
+	char bf[160];
+	int printed = 0;
+	struct rb_node *nd;
+	struct sym_entry *syme;
+	struct rb_root tmp = RB_ROOT;
+	const int win_width = winsize.ws_col - 1;
+	int sym_width, dso_width, dso_short_width;
+	float sum_ksamples = perf_top__decay_samples(&top, &tmp);
+
+	puts(CONSOLE_CLEAR);
+
+	perf_top__header_snprintf(&top, bf, sizeof(bf));
+	printf("%s\n", bf);
+
+	perf_top__reset_sample_counters(&top);
+
+	printf("%-*.*s\n", win_width, win_width, graph_dotted_line);
+
+	if (session->hists.stats.total_lost != 0) {
+		color_fprintf(stdout, PERF_COLOR_RED, "WARNING:");
+		printf(" LOST %" PRIu64 " events, Check IO/CPU overload\n",
+		       session->hists.stats.total_lost);
+	}
+
+	if (top.sym_filter_entry) {
+		show_details(top.sym_filter_entry);
+		return;
+	}
+
+	perf_top__find_widths(&top, &tmp, &dso_width, &dso_short_width,
+			      &sym_width);
+
+	if (sym_width + dso_width > winsize.ws_col - 29) {
+		dso_width = dso_short_width;
+		if (sym_width + dso_width > winsize.ws_col - 29)
+			sym_width = winsize.ws_col - dso_width - 29;
+	}
+	putchar('\n');
+	if (top.evlist->nr_entries == 1)
+		printf("             samples  pcnt");
+	else
+		printf("   weight    samples  pcnt");
+
+	if (verbose)
+		printf("         RIP       ");
+	printf(" %-*.*s DSO\n", sym_width, sym_width, "function");
+	printf("   %s    _______ _____",
+	       top.evlist->nr_entries == 1 ? "      " : "______");
+	if (verbose)
+		printf(" ________________");
+	printf(" %-*.*s", sym_width, sym_width, graph_line);
+	printf(" %-*.*s", dso_width, dso_width, graph_line);
+	puts("\n");
+
+	for (nd = rb_first(&tmp); nd; nd = rb_next(nd)) {
+		struct symbol *sym;
+		double pcnt;
+
+		syme = rb_entry(nd, struct sym_entry, rb_node);
+		sym = sym_entry__symbol(syme);
+		if (++printed > top.print_entries ||
+		    (int)syme->snap_count < top.count_filter)
+			continue;
+
+		pcnt = 100.0 - (100.0 * ((sum_ksamples - syme->snap_count) /
+					 sum_ksamples));
+
+		if (top.evlist->nr_entries == 1 || !top.display_weighted)
+			printf("%20.2f ", syme->weight);
+		else
+			printf("%9.1f %10ld ", syme->weight, syme->snap_count);
+
+		percent_color_fprintf(stdout, "%4.1f%%", pcnt);
+		if (verbose)
+			printf(" %016" PRIx64, sym->start);
+		printf(" %-*.*s", sym_width, sym_width, sym->name);
+		printf(" %-*.*s\n", dso_width, dso_width,
+		       dso_width >= syme->map->dso->long_name_len ?
+					syme->map->dso->long_name :
+					syme->map->dso->short_name);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void prompt_integer(int *target, const char *msg)
@@ -353,17 +582,28 @@ static void prompt_percent(int *target, const char *msg)
 		*target = tmp;
 }
 
+<<<<<<< HEAD
 static void perf_top__prompt_symbol(struct perf_top *top, const char *msg)
 {
 	char *buf = malloc(0), *p;
 	struct hist_entry *syme = top->sym_filter_entry, *n, *found = NULL;
 	struct rb_node *next;
+=======
+static void prompt_symbol(struct sym_entry **target, const char *msg)
+{
+	char *buf = malloc(0), *p;
+	struct sym_entry *syme = *target, *n, *found = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	size_t dummy = 0;
 
 	/* zero counters of active symbol */
 	if (syme) {
 		__zero_source_counters(syme);
+<<<<<<< HEAD
 		top->sym_filter_entry = NULL;
+=======
+		*target = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	fprintf(stdout, "\n%s: ", msg);
@@ -374,6 +614,7 @@ static void perf_top__prompt_symbol(struct perf_top *top, const char *msg)
 	if (p)
 		*p = 0;
 
+<<<<<<< HEAD
 	next = rb_first(&top->sym_evsel->hists.entries);
 	while (next) {
 		n = rb_entry(next, struct hist_entry, rb_node);
@@ -382,28 +623,57 @@ static void perf_top__prompt_symbol(struct perf_top *top, const char *msg)
 			break;
 		}
 		next = rb_next(&n->rb_node);
+=======
+	pthread_mutex_lock(&top.active_symbols_lock);
+	syme = list_entry(top.active_symbols.next, struct sym_entry, node);
+	pthread_mutex_unlock(&top.active_symbols_lock);
+
+	list_for_each_entry_safe_from(syme, n, &top.active_symbols, node) {
+		struct symbol *sym = sym_entry__symbol(syme);
+
+		if (!strcmp(buf, sym->name)) {
+			found = syme;
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (!found) {
 		fprintf(stderr, "Sorry, %s is not active.\n", buf);
 		sleep(1);
+<<<<<<< HEAD
 	} else
 		perf_top__parse_source(top, found);
+=======
+		return;
+	} else
+		parse_source(found);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out_free:
 	free(buf);
 }
 
+<<<<<<< HEAD
 static void perf_top__print_mapped_keys(struct perf_top *top)
 {
 	char *name = NULL;
 
 	if (top->sym_filter_entry) {
 		struct symbol *sym = top->sym_filter_entry->ms.sym;
+=======
+static void print_mapped_keys(void)
+{
+	char *name = NULL;
+
+	if (top.sym_filter_entry) {
+		struct symbol *sym = sym_entry__symbol(top.sym_filter_entry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		name = sym->name;
 	}
 
 	fprintf(stdout, "\nMapped keys:\n");
+<<<<<<< HEAD
 	fprintf(stdout, "\t[d]     display refresh delay.             \t(%d)\n", top->delay_secs);
 	fprintf(stdout, "\t[e]     display entries (lines).           \t(%d)\n", top->print_entries);
 
@@ -427,6 +697,34 @@ static void perf_top__print_mapped_keys(struct perf_top *top)
 }
 
 static int perf_top__key_mapped(struct perf_top *top, int c)
+=======
+	fprintf(stdout, "\t[d]     display refresh delay.             \t(%d)\n", top.delay_secs);
+	fprintf(stdout, "\t[e]     display entries (lines).           \t(%d)\n", top.print_entries);
+
+	if (top.evlist->nr_entries > 1)
+		fprintf(stdout, "\t[E]     active event counter.              \t(%s)\n", event_name(top.sym_evsel));
+
+	fprintf(stdout, "\t[f]     profile display filter (count).    \t(%d)\n", top.count_filter);
+
+	fprintf(stdout, "\t[F]     annotate display filter (percent). \t(%d%%)\n", sym_pcnt_filter);
+	fprintf(stdout, "\t[s]     annotate symbol.                   \t(%s)\n", name?: "NULL");
+	fprintf(stdout, "\t[S]     stop annotation.\n");
+
+	if (top.evlist->nr_entries > 1)
+		fprintf(stdout, "\t[w]     toggle display weighted/count[E]r. \t(%d)\n", top.display_weighted ? 1 : 0);
+
+	fprintf(stdout,
+		"\t[K]     hide kernel_symbols symbols.     \t(%s)\n",
+		top.hide_kernel_symbols ? "yes" : "no");
+	fprintf(stdout,
+		"\t[U]     hide user symbols.               \t(%s)\n",
+		top.hide_user_symbols ? "yes" : "no");
+	fprintf(stdout, "\t[z]     toggle sample zeroing.             \t(%d)\n", top.zero ? 1 : 0);
+	fprintf(stdout, "\t[qQ]    quit.\n");
+}
+
+static int key_mapped(int c)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	switch (c) {
 		case 'd':
@@ -442,7 +740,12 @@ static int perf_top__key_mapped(struct perf_top *top, int c)
 		case 'S':
 			return 1;
 		case 'E':
+<<<<<<< HEAD
 			return top->evlist->nr_entries > 1 ? 1 : 0;
+=======
+		case 'w':
+			return top.evlist->nr_entries > 1 ? 1 : 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			break;
 	}
@@ -450,6 +753,7 @@ static int perf_top__key_mapped(struct perf_top *top, int c)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void perf_top__handle_keypress(struct perf_top *top, int c)
 {
 	if (!perf_top__key_mapped(top, c)) {
@@ -457,6 +761,15 @@ static void perf_top__handle_keypress(struct perf_top *top, int c)
 		struct termios tc, save;
 
 		perf_top__print_mapped_keys(top);
+=======
+static void handle_keypress(struct perf_session *session, int c)
+{
+	if (!key_mapped(c)) {
+		struct pollfd stdin_poll = { .fd = 0, .events = POLLIN };
+		struct termios tc, save;
+
+		print_mapped_keys();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fprintf(stdout, "\nEnter selection, or unmapped key to continue: ");
 		fflush(stdout);
 
@@ -471,12 +784,17 @@ static void perf_top__handle_keypress(struct perf_top *top, int c)
 		c = getc(stdin);
 
 		tcsetattr(0, TCSAFLUSH, &save);
+<<<<<<< HEAD
 		if (!perf_top__key_mapped(top, c))
+=======
+		if (!key_mapped(c))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 	}
 
 	switch (c) {
 		case 'd':
+<<<<<<< HEAD
 			prompt_integer(&top->delay_secs, "Enter display delay");
 			if (top->delay_secs < 1)
 				top->delay_secs = 1;
@@ -497,11 +815,28 @@ static void perf_top__handle_keypress(struct perf_top *top, int c)
 			break;
 		case 'E':
 			if (top->evlist->nr_entries > 1) {
+=======
+			prompt_integer(&top.delay_secs, "Enter display delay");
+			if (top.delay_secs < 1)
+				top.delay_secs = 1;
+			break;
+		case 'e':
+			prompt_integer(&top.print_entries, "Enter display entries (lines)");
+			if (top.print_entries == 0) {
+				sig_winch_handler(SIGWINCH);
+				signal(SIGWINCH, sig_winch_handler);
+			} else
+				signal(SIGWINCH, SIG_DFL);
+			break;
+		case 'E':
+			if (top.evlist->nr_entries > 1) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/* Select 0 as the default event: */
 				int counter = 0;
 
 				fprintf(stderr, "\nAvailable events:");
 
+<<<<<<< HEAD
 				list_for_each_entry(top->sym_evsel, &top->evlist->entries, node)
 					fprintf(stderr, "\n\t%d %s", top->sym_evsel->idx, event_name(top->sym_evsel));
 
@@ -528,10 +863,38 @@ static void perf_top__handle_keypress(struct perf_top *top, int c)
 			break;
 		case 'K':
 			top->hide_kernel_symbols = !top->hide_kernel_symbols;
+=======
+				list_for_each_entry(top.sym_evsel, &top.evlist->entries, node)
+					fprintf(stderr, "\n\t%d %s", top.sym_evsel->idx, event_name(top.sym_evsel));
+
+				prompt_integer(&counter, "Enter details event counter");
+
+				if (counter >= top.evlist->nr_entries) {
+					top.sym_evsel = list_entry(top.evlist->entries.next, struct perf_evsel, node);
+					fprintf(stderr, "Sorry, no such event, using %s.\n", event_name(top.sym_evsel));
+					sleep(1);
+					break;
+				}
+				list_for_each_entry(top.sym_evsel, &top.evlist->entries, node)
+					if (top.sym_evsel->idx == counter)
+						break;
+			} else
+				top.sym_evsel = list_entry(top.evlist->entries.next, struct perf_evsel, node);
+			break;
+		case 'f':
+			prompt_integer(&top.count_filter, "Enter display event count filter");
+			break;
+		case 'F':
+			prompt_percent(&sym_pcnt_filter, "Enter details display event filter (percent)");
+			break;
+		case 'K':
+			top.hide_kernel_symbols = !top.hide_kernel_symbols;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case 'q':
 		case 'Q':
 			printf("exiting.\n");
+<<<<<<< HEAD
 			if (top->dump_symtab)
 				perf_session__fprintf_dsos(top->session, stderr);
 			exit(0);
@@ -545,20 +908,46 @@ static void perf_top__handle_keypress(struct perf_top *top, int c)
 				struct hist_entry *syme = top->sym_filter_entry;
 
 				top->sym_filter_entry = NULL;
+=======
+			if (dump_symtab)
+				perf_session__fprintf_dsos(session, stderr);
+			exit(0);
+		case 's':
+			prompt_symbol(&top.sym_filter_entry, "Enter details symbol");
+			break;
+		case 'S':
+			if (!top.sym_filter_entry)
+				break;
+			else {
+				struct sym_entry *syme = top.sym_filter_entry;
+
+				top.sym_filter_entry = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				__zero_source_counters(syme);
 			}
 			break;
 		case 'U':
+<<<<<<< HEAD
 			top->hide_user_symbols = !top->hide_user_symbols;
 			break;
 		case 'z':
 			top->zero = !top->zero;
+=======
+			top.hide_user_symbols = !top.hide_user_symbols;
+			break;
+		case 'w':
+			top.display_weighted = ~top.display_weighted;
+			break;
+		case 'z':
+			top.zero = !top.zero;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		default:
 			break;
 	}
 }
 
+<<<<<<< HEAD
 static void perf_top__sort_new_samples(void *arg)
 {
 	struct perf_top *t = arg;
@@ -594,17 +983,41 @@ static void *display_thread_tui(void *arg)
 				      perf_top__sort_new_samples,
 				      top, top->delay_secs);
 
+=======
+static void *display_thread_tui(void *arg __used)
+{
+	int err = 0;
+	pthread_mutex_lock(&top.active_symbols_lock);
+	while (list_empty(&top.active_symbols)) {
+		err = pthread_cond_wait(&top.active_symbols_cond,
+					&top.active_symbols_lock);
+		if (err)
+			break;
+	}
+	pthread_mutex_unlock(&top.active_symbols_lock);
+	if (!err)
+		perf_top__tui_browser(&top);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	exit_browser(0);
 	exit(0);
 	return NULL;
 }
 
+<<<<<<< HEAD
 static void *display_thread(void *arg)
 {
 	struct pollfd stdin_poll = { .fd = 0, .events = POLLIN };
 	struct termios tc, save;
 	struct perf_top *top = arg;
 	int delay_msecs, c;
+=======
+static void *display_thread(void *arg __used)
+{
+	struct pollfd stdin_poll = { .fd = 0, .events = POLLIN };
+	struct termios tc, save;
+	int delay_msecs, c;
+	struct perf_session *session = (struct perf_session *) arg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tcgetattr(0, &save);
 	tc = save;
@@ -612,13 +1025,19 @@ static void *display_thread(void *arg)
 	tc.c_cc[VMIN] = 0;
 	tc.c_cc[VTIME] = 0;
 
+<<<<<<< HEAD
 	pthread__unblock_sigwinch();
 repeat:
 	delay_msecs = top->delay_secs * 1000;
+=======
+repeat:
+	delay_msecs = top.delay_secs * 1000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tcsetattr(0, TCSANOW, &tc);
 	/* trash return*/
 	getc(stdin);
 
+<<<<<<< HEAD
 	while (1) {
 		perf_top__print_sym_table(top);
 		/*
@@ -641,6 +1060,16 @@ process_hotkey:
 	tcsetattr(0, TCSAFLUSH, &save);
 
 	perf_top__handle_keypress(top, c);
+=======
+	do {
+		print_sym_table(session);
+	} while (!poll(&stdin_poll, 1, delay_msecs) == 1);
+
+	c = getc(stdin);
+	tcsetattr(0, TCSAFLUSH, &save);
+
+	handle_keypress(session, c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	goto repeat;
 
 	return NULL;
@@ -648,7 +1077,10 @@ process_hotkey:
 
 /* Tag samples to be skipped. */
 static const char *skip_symbols[] = {
+<<<<<<< HEAD
 	"intel_idle",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"default_idle",
 	"native_safe_halt",
 	"cpu_idle",
@@ -662,8 +1094,14 @@ static const char *skip_symbols[] = {
 	NULL
 };
 
+<<<<<<< HEAD
 static int symbol_filter(struct map *map __used, struct symbol *sym)
 {
+=======
+static int symbol_filter(struct map *map, struct symbol *sym)
+{
+	struct sym_entry *syme;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const char *name = sym->name;
 	int i;
 
@@ -683,6 +1121,19 @@ static int symbol_filter(struct map *map __used, struct symbol *sym)
 	    strstr(name, "_text_end"))
 		return 1;
 
+<<<<<<< HEAD
+=======
+	syme = symbol__priv(sym);
+	syme->map = map;
+	symbol__annotate_init(map, sym);
+
+	if (!top.sym_filter_entry && sym_filter && !strcmp(name, sym_filter)) {
+		/* schedule initial sym_filter_entry setup */
+		sym_filter_entry_sched = syme;
+		sym_filter = NULL;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; skip_symbols[i]; i++) {
 		if (!strcmp(skip_symbols[i], name)) {
 			sym->ignore = true;
@@ -693,6 +1144,7 @@ static int symbol_filter(struct map *map __used, struct symbol *sym)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void perf_event__process_sample(struct perf_tool *tool,
 				       const union perf_event *event,
 				       struct perf_evsel *evsel,
@@ -714,18 +1166,73 @@ static void perf_event__process_sample(struct perf_tool *tool,
 	if (!machine) {
 		pr_err("%u unprocessable samples recorded.",
 		       top->session->hists.stats.nr_unprocessable_samples++);
+=======
+static void perf_event__process_sample(const union perf_event *event,
+				       struct perf_sample *sample,
+				       struct perf_session *session)
+{
+	u64 ip = event->ip.ip;
+	struct sym_entry *syme;
+	struct addr_location al;
+	struct machine *machine;
+	u8 origin = event->header.misc & PERF_RECORD_MISC_CPUMODE_MASK;
+
+	++top.samples;
+
+	switch (origin) {
+	case PERF_RECORD_MISC_USER:
+		++top.us_samples;
+		if (top.hide_user_symbols)
+			return;
+		machine = perf_session__find_host_machine(session);
+		break;
+	case PERF_RECORD_MISC_KERNEL:
+		++top.kernel_samples;
+		if (top.hide_kernel_symbols)
+			return;
+		machine = perf_session__find_host_machine(session);
+		break;
+	case PERF_RECORD_MISC_GUEST_KERNEL:
+		++top.guest_kernel_samples;
+		machine = perf_session__find_machine(session, event->ip.pid);
+		break;
+	case PERF_RECORD_MISC_GUEST_USER:
+		++top.guest_us_samples;
+		/*
+		 * TODO: we don't process guest user from host side
+		 * except simple counting.
+		 */
+		return;
+	default:
+		return;
+	}
+
+	if (!machine && perf_guest) {
+		pr_err("Can't find guest [%d]'s kernel information\n",
+			event->ip.pid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
 	if (event->header.misc & PERF_RECORD_MISC_EXACT_IP)
+<<<<<<< HEAD
 		top->exact_samples++;
 
 	if (perf_event__preprocess_sample(event, machine, &al, sample,
+=======
+		top.exact_samples++;
+
+	if (perf_event__preprocess_sample(event, session, &al, sample,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					  symbol_filter) < 0 ||
 	    al.filtered)
 		return;
 
+<<<<<<< HEAD
 	if (!top->kptr_restrict_warned &&
+=======
+	if (!kptr_restrict_warned &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    symbol_conf.kptr_restrict &&
 	    al.cpumode == PERF_RECORD_MISC_KERNEL) {
 		ui__warning(
@@ -736,7 +1243,11 @@ static void perf_event__process_sample(struct perf_tool *tool,
 			  " modules" : "");
 		if (use_browser <= 0)
 			sleep(5);
+<<<<<<< HEAD
 		top->kptr_restrict_warned = true;
+=======
+		kptr_restrict_warned = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (al.sym == NULL) {
@@ -752,7 +1263,11 @@ static void perf_event__process_sample(struct perf_tool *tool,
 		 * --hide-kernel-symbols, even if the user specifies an
 		 * invalid --vmlinux ;-)
 		 */
+<<<<<<< HEAD
 		if (!top->kptr_restrict_warned && !top->vmlinux_warned &&
+=======
+		if (!kptr_restrict_warned && !vmlinux_warned &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    al.map == machine->vmlinux_maps[MAP__FUNCTION] &&
 		    RB_EMPTY_ROOT(&al.map->dso->symbols[MAP__FUNCTION])) {
 			if (symbol_conf.vmlinux_name) {
@@ -765,6 +1280,7 @@ static void perf_event__process_sample(struct perf_tool *tool,
 
 			if (use_browser <= 0)
 				sleep(5);
+<<<<<<< HEAD
 			top->vmlinux_warned = true;
 		}
 	}
@@ -812,11 +1328,66 @@ static void perf_top__mmap_read_idx(struct perf_top *top, int idx)
 
 	while ((event = perf_evlist__mmap_read(top->evlist, idx)) != NULL) {
 		ret = perf_session__parse_sample(session, event, &sample);
+=======
+			vmlinux_warned = true;
+		}
+
+		return;
+	}
+
+	/* let's see, whether we need to install initial sym_filter_entry */
+	if (sym_filter_entry_sched) {
+		top.sym_filter_entry = sym_filter_entry_sched;
+		sym_filter_entry_sched = NULL;
+		if (parse_source(top.sym_filter_entry) < 0) {
+			struct symbol *sym = sym_entry__symbol(top.sym_filter_entry);
+
+			pr_err("Can't annotate %s", sym->name);
+			if (top.sym_filter_entry->map->dso->symtab_type == SYMTAB__KALLSYMS) {
+				pr_err(": No vmlinux file was found in the path:\n");
+				machine__fprintf_vmlinux_path(machine, stderr);
+			} else
+				pr_err(".\n");
+			exit(1);
+		}
+	}
+
+	syme = symbol__priv(al.sym);
+	if (!al.sym->ignore) {
+		struct perf_evsel *evsel;
+
+		evsel = perf_evlist__id2evsel(top.evlist, sample->id);
+		assert(evsel != NULL);
+		syme->count[evsel->idx]++;
+		record_precise_ip(syme, evsel->idx, ip);
+		pthread_mutex_lock(&top.active_symbols_lock);
+		if (list_empty(&syme->node) || !syme->node.next) {
+			static bool first = true;
+			__list_insert_active_sym(syme);
+			if (first) {
+				pthread_cond_broadcast(&top.active_symbols_cond);
+				first = false;
+			}
+		}
+		pthread_mutex_unlock(&top.active_symbols_lock);
+	}
+}
+
+static void perf_session__mmap_read_idx(struct perf_session *self, int idx)
+{
+	struct perf_sample sample;
+	union perf_event *event;
+	int ret;
+
+	while ((event = perf_evlist__mmap_read(top.evlist, idx)) != NULL) {
+		ret = perf_session__parse_sample(self, event, &sample);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret) {
 			pr_err("Can't parse sample, err = %d\n", ret);
 			continue;
 		}
 
+<<<<<<< HEAD
 		evsel = perf_evlist__id2evsel(session->evlist, sample.id);
 		assert(evsel != NULL);
 
@@ -893,6 +1464,36 @@ static void perf_top__start_counters(struct perf_top *top)
 			attr->sample_type |= PERF_SAMPLE_PERIOD;
 			attr->freq	  = 1;
 			attr->sample_freq = top->freq;
+=======
+		if (event->header.type == PERF_RECORD_SAMPLE)
+			perf_event__process_sample(event, &sample, self);
+		else
+			perf_event__process(event, &sample, self);
+	}
+}
+
+static void perf_session__mmap_read(struct perf_session *self)
+{
+	int i;
+
+	for (i = 0; i < top.evlist->nr_mmaps; i++)
+		perf_session__mmap_read_idx(self, i);
+}
+
+static void start_counters(struct perf_evlist *evlist)
+{
+	struct perf_evsel *counter;
+
+	list_for_each_entry(counter, &evlist->entries, node) {
+		struct perf_event_attr *attr = &counter->attr;
+
+		attr->sample_type = PERF_SAMPLE_IP | PERF_SAMPLE_TID;
+
+		if (top.freq) {
+			attr->sample_type |= PERF_SAMPLE_PERIOD;
+			attr->freq	  = 1;
+			attr->sample_freq = top.freq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (evlist->nr_entries > 1) {
@@ -900,6 +1501,7 @@ static void perf_top__start_counters(struct perf_top *top)
 			attr->read_format |= PERF_FORMAT_ID;
 		}
 
+<<<<<<< HEAD
 		if (symbol_conf.use_callchain)
 			attr->sample_type |= PERF_SAMPLE_CALLCHAIN;
 
@@ -934,6 +1536,18 @@ try_again:
 					top->sample_id_all_missing = true;
 					goto retry_sample_id;
 				}
+=======
+		attr->mmap = 1;
+		attr->inherit = inherit;
+try_again:
+		if (perf_evsel__open(counter, top.evlist->cpus,
+				     top.evlist->threads, group) < 0) {
+			int err = errno;
+
+			if (err == EPERM || err == EACCES) {
+				ui__warning_paranoid();
+				goto out_err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			/*
 			 * If it's cycles then fall back to hrtimer
@@ -955,10 +1569,13 @@ try_again:
 				ui__warning("The %s event is not supported.\n",
 					    event_name(counter));
 				goto out_err;
+<<<<<<< HEAD
 			} else if (err == EMFILE) {
 				ui__warning("Too many events are opened.\n"
 					    "Try again after reducing the number of events\n");
 				goto out_err;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 
 			ui__warning("The sys_perf_event_open() syscall "
@@ -970,7 +1587,11 @@ try_again:
 		}
 	}
 
+<<<<<<< HEAD
 	if (perf_evlist__mmap(evlist, top->mmap_pages, false) < 0) {
+=======
+	if (perf_evlist__mmap(evlist, mmap_pages, false) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ui__warning("Failed to mmap with %d (%s)\n",
 			    errno, strerror(errno));
 		goto out_err;
@@ -983,6 +1604,7 @@ out_err:
 	exit(0);
 }
 
+<<<<<<< HEAD
 static int perf_top__setup_sample_type(struct perf_top *top)
 {
 	if (!top->sort_has_symbols) {
@@ -1004,10 +1626,17 @@ static int __cmd_top(struct perf_top *top)
 {
 	pthread_t thread;
 	int ret;
+=======
+static int __cmd_top(void)
+{
+	pthread_t thread;
+	int ret __used;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * FIXME: perf_session__new should allow passing a O_MMAP, so that all this
 	 * mmap reading, etc is encapsulated in it. Use O_WRONLY for now.
 	 */
+<<<<<<< HEAD
 	top->session = perf_session__new(NULL, O_WRONLY, false, false, NULL);
 	if (top->session == NULL)
 		return -ENOMEM;
@@ -1034,14 +1663,44 @@ static int __cmd_top(struct perf_top *top)
 
 	if (pthread_create(&thread, NULL, (use_browser > 0 ? display_thread_tui :
 							    display_thread), top)) {
+=======
+	struct perf_session *session = perf_session__new(NULL, O_WRONLY, false, false, NULL);
+	if (session == NULL)
+		return -ENOMEM;
+
+	if (top.target_tid != -1)
+		perf_event__synthesize_thread_map(top.evlist->threads,
+						  perf_event__process, session);
+	else
+		perf_event__synthesize_threads(perf_event__process, session);
+
+	start_counters(top.evlist);
+	session->evlist = top.evlist;
+	perf_session__update_sample_type(session);
+
+	/* Wait for a minimal set of events before starting the snapshot */
+	poll(top.evlist->pollfd, top.evlist->nr_fds, 100);
+
+	perf_session__mmap_read(session);
+
+	if (pthread_create(&thread, NULL, (use_browser > 0 ? display_thread_tui :
+							     display_thread), session)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printf("Could not create display thread.\n");
 		exit(-1);
 	}
 
+<<<<<<< HEAD
 	if (top->realtime_prio) {
 		struct sched_param param;
 
 		param.sched_priority = top->realtime_prio;
+=======
+	if (realtime_prio) {
+		struct sched_param param;
+
+		param.sched_priority = realtime_prio;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (sched_setscheduler(0, SCHED_FIFO, &param)) {
 			printf("Could not set realtime priority.\n");
 			exit(-1);
@@ -1049,6 +1708,7 @@ static int __cmd_top(struct perf_top *top)
 	}
 
 	while (1) {
+<<<<<<< HEAD
 		u64 hits = top->samples;
 
 		perf_top__mmap_read(top);
@@ -1139,6 +1799,16 @@ setup:
 		fprintf(stderr, "Can't register callchain params\n");
 		return -1;
 	}
+=======
+		u64 hits = top.samples;
+
+		perf_session__mmap_read(session);
+
+		if (hits == top.samples)
+			ret = poll(top.evlist->pollfd, top.evlist->nr_fds, 100);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1147,6 +1817,7 @@ static const char * const top_usage[] = {
 	NULL
 };
 
+<<<<<<< HEAD
 int cmd_top(int argc, const char **argv, const char *prefix __used)
 {
 	struct perf_evsel *pos;
@@ -1171,6 +1842,19 @@ int cmd_top(int argc, const char **argv, const char *prefix __used)
 	OPT_STRING('t', "tid", &top.target_tid, "tid",
 		    "profile events on existing thread id"),
 	OPT_BOOLEAN('a', "all-cpus", &top.system_wide,
+=======
+static const struct option options[] = {
+	OPT_CALLBACK('e', "event", &top.evlist, "event",
+		     "event selector. use 'perf list' to list available events",
+		     parse_events),
+	OPT_INTEGER('c', "count", &default_interval,
+		    "event period to sample"),
+	OPT_INTEGER('p', "pid", &top.target_pid,
+		    "profile events on existing process id"),
+	OPT_INTEGER('t', "tid", &top.target_tid,
+		    "profile events on existing thread id"),
+	OPT_BOOLEAN('a', "all-cpus", &system_wide,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    "system-wide collection from all CPUs"),
 	OPT_STRING('C', "cpu", &top.cpu_list, "cpu",
 		    "list of cpus to monitor"),
@@ -1178,6 +1862,7 @@ int cmd_top(int argc, const char **argv, const char *prefix __used)
 		   "file", "vmlinux pathname"),
 	OPT_BOOLEAN('K', "hide_kernel_symbols", &top.hide_kernel_symbols,
 		    "hide kernel symbols"),
+<<<<<<< HEAD
 	OPT_UINTEGER('m', "mmap-pages", &top.mmap_pages, "number of mmap data pages"),
 	OPT_INTEGER('r', "realtime", &top.realtime_prio,
 		    "collect data with this RT SCHED_FIFO priority"),
@@ -1192,6 +1877,22 @@ int cmd_top(int argc, const char **argv, const char *prefix __used)
 	OPT_BOOLEAN('i', "inherit", &top.inherit,
 		    "child tasks inherit counters"),
 	OPT_STRING(0, "sym-annotate", &top.sym_filter, "symbol name",
+=======
+	OPT_UINTEGER('m', "mmap-pages", &mmap_pages, "number of mmap data pages"),
+	OPT_INTEGER('r', "realtime", &realtime_prio,
+		    "collect data with this RT SCHED_FIFO priority"),
+	OPT_INTEGER('d', "delay", &top.delay_secs,
+		    "number of seconds to delay between refreshes"),
+	OPT_BOOLEAN('D', "dump-symtab", &dump_symtab,
+			    "dump the symbol table used for profiling"),
+	OPT_INTEGER('f', "count-filter", &top.count_filter,
+		    "only display functions with more events than this"),
+	OPT_BOOLEAN('g', "group", &group,
+			    "put the counters into a counter group"),
+	OPT_BOOLEAN('i', "inherit", &inherit,
+		    "child tasks inherit counters"),
+	OPT_STRING('s', "sym-annotate", &sym_filter, "symbol name",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    "symbol to annotate"),
 	OPT_BOOLEAN('z', "zero", &top.zero,
 		    "zero history across updates"),
@@ -1201,6 +1902,7 @@ int cmd_top(int argc, const char **argv, const char *prefix __used)
 		    "display this many functions"),
 	OPT_BOOLEAN('U', "hide_user_symbols", &top.hide_user_symbols,
 		    "hide user symbols"),
+<<<<<<< HEAD
 	OPT_BOOLEAN(0, "tui", &top.use_tui, "Use the TUI interface"),
 	OPT_BOOLEAN(0, "stdio", &top.use_stdio, "Use the stdio interface"),
 	OPT_INCR('v', "verbose", &verbose,
@@ -1230,17 +1932,35 @@ int cmd_top(int argc, const char **argv, const char *prefix __used)
 	OPT_STRING('u', "uid", &top.uid_str, "user", "user to profile"),
 	OPT_END()
 	};
+=======
+	OPT_BOOLEAN(0, "tui", &use_tui, "Use the TUI interface"),
+	OPT_BOOLEAN(0, "stdio", &use_stdio, "Use the stdio interface"),
+	OPT_INCR('v', "verbose", &verbose,
+		    "be more verbose (show counter open errors, etc)"),
+	OPT_END()
+};
+
+int cmd_top(int argc, const char **argv, const char *prefix __used)
+{
+	struct perf_evsel *pos;
+	int status = -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	top.evlist = perf_evlist__new(NULL, NULL);
 	if (top.evlist == NULL)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	symbol_conf.exclude_other = false;
+=======
+	page_size = sysconf(_SC_PAGE_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	argc = parse_options(argc, argv, options, top_usage, 0);
 	if (argc)
 		usage_with_options(top_usage, options);
 
+<<<<<<< HEAD
 	if (sort_order == default_sort_order)
 		sort_order = "dso,symbol";
 
@@ -1249,26 +1969,51 @@ int cmd_top(int argc, const char **argv, const char *prefix __used)
 	if (top.use_stdio)
 		use_browser = 0;
 	else if (top.use_tui)
+=======
+	/*
+ 	 * XXX For now start disabled, only using TUI if explicitely asked for.
+ 	 * Change that when handle_keys equivalent gets written, live annotation
+ 	 * done, etc.
+ 	 */
+	use_browser = 0;
+
+	if (use_stdio)
+		use_browser = 0;
+	else if (use_tui)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		use_browser = 1;
 
 	setup_browser(false);
 
+<<<<<<< HEAD
 	top.uid = parse_target_uid(top.uid_str, top.target_tid, top.target_pid);
 	if (top.uid_str != NULL && top.uid == UINT_MAX - 1)
 		goto out_delete_evlist;
 
 	/* CPU and PID are mutually exclusive */
 	if (top.target_tid && top.cpu_list) {
+=======
+	/* CPU and PID are mutually exclusive */
+	if (top.target_tid > 0 && top.cpu_list) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printf("WARNING: PID switch overriding CPU\n");
 		sleep(1);
 		top.cpu_list = NULL;
 	}
 
+<<<<<<< HEAD
 	if (top.target_pid)
 		top.target_tid = top.target_pid;
 
 	if (perf_evlist__create_maps(top.evlist, top.target_pid,
 				     top.target_tid, top.uid, top.cpu_list) < 0)
+=======
+	if (top.target_pid != -1)
+		top.target_tid = top.target_pid;
+
+	if (perf_evlist__create_maps(top.evlist, top.target_pid,
+				     top.target_tid, top.cpu_list) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		usage_with_options(top_usage, options);
 
 	if (!top.evlist->nr_entries &&
@@ -1277,24 +2022,35 @@ int cmd_top(int argc, const char **argv, const char *prefix __used)
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	symbol_conf.nr_events = top.evlist->nr_entries;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (top.delay_secs < 1)
 		top.delay_secs = 1;
 
 	/*
 	 * User specified count overrides default frequency.
 	 */
+<<<<<<< HEAD
 	if (top.default_interval)
 		top.freq = 0;
 	else if (top.freq) {
 		top.default_interval = top.freq;
+=======
+	if (default_interval)
+		top.freq = 0;
+	else if (top.freq) {
+		default_interval = top.freq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		fprintf(stderr, "frequency and count are zero, aborting\n");
 		exit(EXIT_FAILURE);
 	}
 
 	list_for_each_entry(pos, &top.evlist->entries, node) {
+<<<<<<< HEAD
 		/*
 		 * Fill in the ones not specifically initialized via -c:
 		 */
@@ -1305,11 +2061,34 @@ int cmd_top(int argc, const char **argv, const char *prefix __used)
 	top.sym_evsel = list_entry(top.evlist->entries.next, struct perf_evsel, node);
 
 	symbol_conf.priv_size = sizeof(struct annotation);
+=======
+		if (perf_evsel__alloc_fd(pos, top.evlist->cpus->nr,
+					 top.evlist->threads->nr) < 0)
+			goto out_free_fd;
+		/*
+		 * Fill in the ones not specifically initialized via -c:
+		 */
+		if (pos->attr.sample_period)
+			continue;
+
+		pos->attr.sample_period = default_interval;
+	}
+
+	if (perf_evlist__alloc_pollfd(top.evlist) < 0 ||
+	    perf_evlist__alloc_mmap(top.evlist) < 0)
+		goto out_free_fd;
+
+	top.sym_evsel = list_entry(top.evlist->entries.next, struct perf_evsel, node);
+
+	symbol_conf.priv_size = (sizeof(struct sym_entry) + sizeof(struct annotation) +
+				 (top.evlist->nr_entries + 1) * sizeof(unsigned long));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	symbol_conf.try_vmlinux_path = (symbol_conf.vmlinux_name == NULL);
 	if (symbol__init() < 0)
 		return -1;
 
+<<<<<<< HEAD
 	sort_entry__setup_elide(&sort_dso, symbol_conf.dso_list, "dso", stdout);
 	sort_entry__setup_elide(&sort_comm, symbol_conf.comm_list, "comm", stdout);
 	sort_entry__setup_elide(&sort_sym, symbol_conf.sym_list, "symbol", stdout);
@@ -1333,6 +2112,16 @@ int cmd_top(int argc, const char **argv, const char *prefix __used)
 	status = __cmd_top(&top);
 
 out_delete_evlist:
+=======
+	get_term_dimensions(&winsize);
+	if (top.print_entries == 0) {
+		update_print_entries(&winsize);
+		signal(SIGWINCH, sig_winch_handler);
+	}
+
+	status = __cmd_top();
+out_free_fd:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	perf_evlist__delete(top.evlist);
 
 	return status;

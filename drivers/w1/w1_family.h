@@ -1,7 +1,11 @@
 /*
  *	w1_family.h
  *
+<<<<<<< HEAD
  * Copyright (c) 2004 Evgeniy Polyakov <zbr@ioremap.net>
+=======
+ * Copyright (c) 2004 Evgeniy Polyakov <johnpol@2ka.mipt.ru>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +28,11 @@
 
 #include <linux/types.h>
 #include <linux/device.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define W1_FAMILY_DEFAULT	0
 #define W1_FAMILY_SMEM_01	0x01
@@ -38,8 +46,11 @@
 #define W1_EEPROM_DS2431	0x2D
 #define W1_FAMILY_DS2760	0x30
 #define W1_FAMILY_DS2780	0x32
+<<<<<<< HEAD
 #define W1_FAMILY_DS2781	0x3D
 #define W1_THERM_DS28EA00	0x42
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MAXNAMELEN		32
 

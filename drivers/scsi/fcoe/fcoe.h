@@ -40,7 +40,13 @@
 #define FCOE_MIN_XID		0x0000	/* the min xid supported by fcoe_sw */
 #define FCOE_MAX_XID		0x0FFF	/* the max xid supported by fcoe_sw */
 
+<<<<<<< HEAD
 extern unsigned int fcoe_debug_logging;
+=======
+unsigned int fcoe_debug_logging;
+module_param_named(debug_logging, fcoe_debug_logging, int, S_IRUGO|S_IWUSR);
+MODULE_PARM_DESC(debug_logging, "a bit mask of logging levels");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define FCOE_LOGGING	    0x01 /* General logging, not categorized */
 #define FCOE_NETDEV_LOGGING 0x02 /* Netdevice logging */
@@ -71,16 +77,28 @@ do {                                                            	\
  * @ctlr:	      The FCoE controller (for FIP)
  * @oem:	      The offload exchange manager for all local port
  *		      instances associated with this port
+<<<<<<< HEAD
+=======
+ * @kref:	      The kernel reference
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This structure is 1:1 with a net devive.
  */
 struct fcoe_interface {
 	struct list_head   list;
 	struct net_device  *netdev;
+<<<<<<< HEAD
 	struct net_device  *realdev;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct packet_type fcoe_packet_type;
 	struct packet_type fip_packet_type;
 	struct fcoe_ctlr   ctlr;
 	struct fc_exch_mgr *oem;
+<<<<<<< HEAD
+=======
+	struct kref	   kref;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define fcoe_from_ctlr(fip) container_of(fip, struct fcoe_interface, ctlr)
@@ -95,4 +113,17 @@ static inline struct net_device *fcoe_netdev(const struct fc_lport *lport)
 			((struct fcoe_port *)lport_priv(lport))->priv)->netdev;
 }
 
+<<<<<<< HEAD
+=======
+static inline void wwn_to_str(u64 wwn, char *buf, int len)
+{
+	u8 wwpn[8];
+
+	u64_to_wwn(wwn, wwpn);
+	snprintf(buf, len, "%02x%02x%02x%02x%02x%02x%02x%02x",
+		wwpn[0], wwpn[1], wwpn[2], wwpn[3],
+		wwpn[4], wwpn[5], wwpn[6], wwpn[7]);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _FCOE_H_ */

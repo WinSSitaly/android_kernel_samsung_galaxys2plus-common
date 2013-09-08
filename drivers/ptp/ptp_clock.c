@@ -340,6 +340,10 @@ no_region:
 subsys_initcall(ptp_init);
 module_exit(ptp_exit);
 
+<<<<<<< HEAD
 MODULE_AUTHOR("Richard Cochran <richardcochran@gmail.com>");
+=======
+MODULE_AUTHOR("Richard Cochran <richard.cochran@omicron.at>");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("PTP clocks support");
 MODULE_LICENSE("GPL");

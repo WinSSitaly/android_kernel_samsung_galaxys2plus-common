@@ -144,17 +144,36 @@ static int cea_sampling_frequencies[8] = {
 	SNDRV_PCM_RATE_192000,	/* 7: 192000Hz */
 };
 
+<<<<<<< HEAD
 static unsigned int hdmi_get_eld_data(struct hda_codec *codec, hda_nid_t nid,
+=======
+static unsigned char hdmi_get_eld_byte(struct hda_codec *codec, hda_nid_t nid,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					int byte_index)
 {
 	unsigned int val;
 
 	val = snd_hda_codec_read(codec, nid, 0,
 					AC_VERB_GET_HDMI_ELDD, byte_index);
+<<<<<<< HEAD
 #ifdef BE_PARANOID
 	printk(KERN_INFO "HDMI: ELD data byte %d: 0x%x\n", byte_index, val);
 #endif
 	return val;
+=======
+
+#ifdef BE_PARANOID
+	printk(KERN_INFO "HDMI: ELD data byte %d: 0x%x\n", byte_index, val);
+#endif
+
+	if ((val & AC_ELDD_ELD_VALID) == 0) {
+		snd_printd(KERN_INFO "HDMI: invalid ELD data byte %d\n",
+								byte_index);
+		val = 0;
+	}
+
+	return val & AC_ELDD_ELD_DATA;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #define GRAB_BITS(buf, byte, lowbit, bits) 		\
@@ -297,6 +316,7 @@ static int hdmi_update_eld(struct hdmi_eld *e,
 					buf + ELD_FIXED_BYTES + mnl + 3 * i);
 	}
 
+<<<<<<< HEAD
 	/*
 	 * HDMI sink's ELD info cannot always be retrieved for now, e.g.
 	 * in console or for audio devices. Assume the highest speakers
@@ -309,6 +329,12 @@ static int hdmi_update_eld(struct hdmi_eld *e,
 	return 0;
 
 out_fail:
+=======
+	return 0;
+
+out_fail:
+	e->eld_ver = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -EINVAL;
 }
 
@@ -322,6 +348,7 @@ int snd_hdmi_get_eld(struct hdmi_eld *eld,
 		     struct hda_codec *codec, hda_nid_t nid)
 {
 	int i;
+<<<<<<< HEAD
 	int ret = 0;
 	int size;
 	unsigned char *buf;
@@ -330,6 +357,14 @@ int snd_hdmi_get_eld(struct hdmi_eld *eld,
 	 * ELD size is initialized to zero in caller function. If no errors and
 	 * ELD is valid, actual eld_size is assigned in hdmi_update_eld()
 	 */
+=======
+	int ret;
+	int size;
+	unsigned char *buf;
+
+	if (!eld->eld_valid)
+		return -ENOENT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	size = snd_hdmi_get_eld_size(codec, nid);
 	if (size == 0) {
@@ -337,11 +372,16 @@ int snd_hdmi_get_eld(struct hdmi_eld *eld,
 		snd_printd(KERN_INFO "HDMI: ELD buf size is 0, force 128\n");
 		size = 128;
 	}
+<<<<<<< HEAD
 	if (size < ELD_FIXED_BYTES || size > ELD_MAX_SIZE) {
+=======
+	if (size < ELD_FIXED_BYTES || size > PAGE_SIZE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printd(KERN_INFO "HDMI: invalid ELD buf size %d\n", size);
 		return -ERANGE;
 	}
 
+<<<<<<< HEAD
 	/* set ELD buffer */
 	buf = eld->eld_buffer;
 
@@ -400,6 +440,21 @@ static void hdmi_print_pcm_rates(int pcm, char *buf, int buflen)
 
 #define SND_PRINT_RATES_ADVISED_BUFSIZE	80
 
+=======
+	buf = kmalloc(size, GFP_KERNEL);
+	if (!buf)
+		return -ENOMEM;
+
+	for (i = 0; i < size; i++)
+		buf[i] = hdmi_get_eld_byte(codec, nid, i);
+
+	ret = hdmi_update_eld(eld, buf, size);
+
+	kfree(buf);
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void hdmi_show_short_audio_desc(struct cea_sad *a)
 {
 	char buf[SND_PRINT_RATES_ADVISED_BUFSIZE];
@@ -408,7 +463,11 @@ static void hdmi_show_short_audio_desc(struct cea_sad *a)
 	if (!a->format)
 		return;
 
+<<<<<<< HEAD
 	hdmi_print_pcm_rates(a->rates, buf, sizeof(buf));
+=======
+	snd_print_pcm_rates(a->rates, buf, sizeof(buf));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (a->format == AUDIO_CODING_TYPE_LPCM)
 		snd_print_pcm_bits(a->sample_bits, buf2 + 8, sizeof(buf2) - 8);
@@ -418,7 +477,11 @@ static void hdmi_show_short_audio_desc(struct cea_sad *a)
 	else
 		buf2[0] = '\0';
 
+<<<<<<< HEAD
 	_snd_printd(SND_PR_VERBOSE, "HDMI: supports coding type %s:"
+=======
+	printk(KERN_INFO "HDMI: supports coding type %s:"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			" channels = %d, rates =%s%s\n",
 			cea_audio_coding_type_names[a->format],
 			a->channels,
@@ -442,14 +505,22 @@ void snd_hdmi_show_eld(struct hdmi_eld *e)
 {
 	int i;
 
+<<<<<<< HEAD
 	_snd_printd(SND_PR_VERBOSE, "HDMI: detected monitor %s at connection type %s\n",
+=======
+	printk(KERN_INFO "HDMI: detected monitor %s at connection type %s\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			e->monitor_name,
 			eld_connection_type_names[e->conn_type]);
 
 	if (e->spk_alloc) {
 		char buf[SND_PRINT_CHANNEL_ALLOCATION_ADVISED_BUFSIZE];
 		snd_print_channel_allocation(e->spk_alloc, buf, sizeof(buf));
+<<<<<<< HEAD
 		_snd_printd(SND_PR_VERBOSE, "HDMI: available speakers:%s\n", buf);
+=======
+		printk(KERN_INFO "HDMI: available speakers:%s\n", buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	for (i = 0; i < e->sad_count; i++)
@@ -467,7 +538,11 @@ static void hdmi_print_sad_info(int i, struct cea_sad *a,
 			i, a->format, cea_audio_coding_type_names[a->format]);
 	snd_iprintf(buffer, "sad%d_channels\t\t%d\n", i, a->channels);
 
+<<<<<<< HEAD
 	hdmi_print_pcm_rates(a->rates, buf, sizeof(buf));
+=======
+	snd_print_pcm_rates(a->rates, buf, sizeof(buf));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_iprintf(buffer, "sad%d_rates\t\t[0x%x]%s\n", i, a->rates, buf);
 
 	if (a->format == AUDIO_CODING_TYPE_LPCM) {
@@ -627,6 +702,7 @@ void snd_hda_eld_proc_free(struct hda_codec *codec, struct hdmi_eld *eld)
 #endif /* CONFIG_PROC_FS */
 
 /* update PCM info based on ELD */
+<<<<<<< HEAD
 void snd_hdmi_eld_update_pcm_info(struct hdmi_eld *eld,
 			      struct hda_pcm_stream *hinfo)
 {
@@ -634,11 +710,17 @@ void snd_hdmi_eld_update_pcm_info(struct hdmi_eld *eld,
 	u64 formats;
 	unsigned int maxbps;
 	unsigned int channels_max;
+=======
+void hdmi_eld_update_pcm_info(struct hdmi_eld *eld, struct hda_pcm_stream *pcm,
+			      struct hda_pcm_stream *codec_pars)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	/* assume basic audio support (the basic audio flag is not in ELD;
 	 * however, all audio capable sinks are required to support basic
 	 * audio) */
+<<<<<<< HEAD
 	rates = SNDRV_PCM_RATE_32000 | SNDRV_PCM_RATE_44100 |
 		SNDRV_PCM_RATE_48000;
 	formats = SNDRV_PCM_FMTBIT_S16_LE;
@@ -659,13 +741,45 @@ void snd_hdmi_eld_update_pcm_info(struct hdmi_eld *eld,
 				formats |= SNDRV_PCM_FMTBIT_S32_LE;
 				if (maxbps < 24)
 					maxbps = 24;
+=======
+	pcm->rates = SNDRV_PCM_RATE_32000 | SNDRV_PCM_RATE_44100 | SNDRV_PCM_RATE_48000;
+	pcm->formats = SNDRV_PCM_FMTBIT_S16_LE;
+	pcm->maxbps = 16;
+	pcm->channels_max = 2;
+	for (i = 0; i < eld->sad_count; i++) {
+		struct cea_sad *a = &eld->sad[i];
+		pcm->rates |= a->rates;
+		if (a->channels > pcm->channels_max)
+			pcm->channels_max = a->channels;
+		if (a->format == AUDIO_CODING_TYPE_LPCM) {
+			if (a->sample_bits & AC_SUPPCM_BITS_20) {
+				pcm->formats |= SNDRV_PCM_FMTBIT_S32_LE;
+				if (pcm->maxbps < 20)
+					pcm->maxbps = 20;
+			}
+			if (a->sample_bits & AC_SUPPCM_BITS_24) {
+				pcm->formats |= SNDRV_PCM_FMTBIT_S32_LE;
+				if (pcm->maxbps < 24)
+					pcm->maxbps = 24;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 	}
 
+<<<<<<< HEAD
 	/* restrict the parameters by the values the codec provides */
 	hinfo->rates &= rates;
 	hinfo->formats &= formats;
 	hinfo->maxbps = min(hinfo->maxbps, maxbps);
 	hinfo->channels_max = min(hinfo->channels_max, channels_max);
+=======
+	if (!codec_pars)
+		return;
+
+	/* restrict the parameters by the values the codec provides */
+	pcm->rates &= codec_pars->rates;
+	pcm->formats &= codec_pars->formats;
+	pcm->channels_max = min(pcm->channels_max, codec_pars->channels_max);
+	pcm->maxbps = min(pcm->maxbps, codec_pars->maxbps);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

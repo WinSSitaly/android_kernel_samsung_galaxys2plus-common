@@ -285,7 +285,22 @@ static struct spi_driver tosa_lcd_driver = {
 	.resume		= tosa_lcd_resume,
 };
 
+<<<<<<< HEAD
 module_spi_driver(tosa_lcd_driver);
+=======
+static int __init tosa_lcd_init(void)
+{
+	return spi_register_driver(&tosa_lcd_driver);
+}
+
+static void __exit tosa_lcd_exit(void)
+{
+	spi_unregister_driver(&tosa_lcd_driver);
+}
+
+module_init(tosa_lcd_init);
+module_exit(tosa_lcd_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Dmitry Baryshkov");
 MODULE_LICENSE("GPL v2");

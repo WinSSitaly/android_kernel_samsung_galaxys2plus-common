@@ -100,7 +100,11 @@ static void __init ep405_setup_arch(void)
 	/* Find & init the BCSR CPLD */
 	ep405_init_bcsr();
 
+<<<<<<< HEAD
 	pci_set_flags(PCI_REASSIGN_ALL_RSRC);
+=======
+	ppc_pci_set_flags(PPC_PCI_REASSIGN_ALL_RSRC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __init ep405_probe(void)

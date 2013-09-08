@@ -143,6 +143,12 @@ config MAX_ACTIVE_REGIONS
 		       CPU_SUBTYPE_SH7785)
 	default "1"
 
+<<<<<<< HEAD
+=======
+config ARCH_POPULATES_NODE_MAP
+	def_bool y
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config ARCH_SELECT_MEMORY_MODEL
 	def_bool y
 

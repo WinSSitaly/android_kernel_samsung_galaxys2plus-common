@@ -8,7 +8,10 @@
  */
 #include <linux/kernel.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/qdio.h>
 
 #include "cio.h"
@@ -20,6 +23,7 @@
 #include "qdio_debug.h"
 
 static struct kmem_cache *qdio_q_cache;
+<<<<<<< HEAD
 static struct kmem_cache *qdio_aob_cache;
 
 struct qaob *qdio_allocate_aob(void)
@@ -33,6 +37,8 @@ void qdio_release_aob(struct qaob *aob)
 	kmem_cache_free(qdio_aob_cache, aob);
 }
 EXPORT_SYMBOL_GPL(qdio_release_aob);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * qebsm is only available under 64bit but the adapter sets the feature
@@ -168,6 +174,7 @@ static void setup_queues(struct qdio_irq *irq_ptr,
 	struct qdio_q *q;
 	void **input_sbal_array = qdio_init->input_sbal_addr_array;
 	void **output_sbal_array = qdio_init->output_sbal_addr_array;
+<<<<<<< HEAD
 	struct qdio_outbuf_state *output_sbal_state_array =
 				  qdio_init->output_sbal_state_array;
 	int i;
@@ -190,15 +197,37 @@ static void setup_queues(struct qdio_irq *irq_ptr,
 			tasklet_init(&q->tasklet, qdio_inbound_processing,
 				     (unsigned long) q);
 		}
+=======
+	int i;
+
+	for_each_input_queue(irq_ptr, q, i) {
+		DBF_EVENT("in-q:%1d", i);
+		setup_queues_misc(q, irq_ptr, qdio_init->input_handler, i);
+
+		q->is_input_q = 1;
+		q->u.in.queue_start_poll = qdio_init->queue_start_poll;
+		setup_storage_lists(q, irq_ptr, input_sbal_array, i);
+		input_sbal_array += QDIO_MAX_BUFFERS_PER_Q;
+
+		if (is_thinint_irq(irq_ptr))
+			tasklet_init(&q->tasklet, tiqdio_inbound_processing,
+				     (unsigned long) q);
+		else
+			tasklet_init(&q->tasklet, qdio_inbound_processing,
+				     (unsigned long) q);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	for_each_output_queue(irq_ptr, q, i) {
 		DBF_EVENT("outq:%1d", i);
 		setup_queues_misc(q, irq_ptr, qdio_init->output_handler, i);
 
+<<<<<<< HEAD
 		q->u.out.sbal_state = output_sbal_state_array;
 		output_sbal_state_array += QDIO_MAX_BUFFERS_PER_Q;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		q->is_input_q = 0;
 		q->u.out.scan_threshold = qdio_init->scan_threshold;
 		setup_storage_lists(q, irq_ptr, output_sbal_array, i);
@@ -311,8 +340,12 @@ void qdio_setup_ssqd_info(struct qdio_irq *irq_ptr)
 
 	check_and_setup_qebsm(irq_ptr, qdioac, irq_ptr->ssqd_desc.sch_token);
 	process_ac_flags(irq_ptr, qdioac);
+<<<<<<< HEAD
 	DBF_EVENT("ac 1:%2x 2:%4x", qdioac, irq_ptr->ssqd_desc.qdioac2);
 	DBF_EVENT("3:%4x qib:%4x", irq_ptr->ssqd_desc.qdioac3, irq_ptr->qib.ac);
+=======
+	DBF_EVENT("qdioac:%4x", qdioac);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void qdio_release_memory(struct qdio_irq *irq_ptr)
@@ -334,6 +367,7 @@ void qdio_release_memory(struct qdio_irq *irq_ptr)
 	for (i = 0; i < QDIO_MAX_QUEUES_PER_IRQ; i++) {
 		q = irq_ptr->output_qs[i];
 		if (q) {
+<<<<<<< HEAD
 			if (q->u.out.use_cq) {
 				int n;
 
@@ -347,6 +381,8 @@ void qdio_release_memory(struct qdio_irq *irq_ptr)
 
 				qdio_disable_async_operation(&q->u.out);
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			free_page((unsigned long) q->slib);
 			kmem_cache_free(qdio_q_cache, q);
 		}
@@ -381,7 +417,10 @@ static void setup_qdr(struct qdio_irq *irq_ptr,
 	int i;
 
 	irq_ptr->qdr->qfmt = qdio_init->q_format;
+<<<<<<< HEAD
 	irq_ptr->qdr->ac = qdio_init->qdr_ac;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	irq_ptr->qdr->iqdcnt = qdio_init->no_input_qs;
 	irq_ptr->qdr->oqdcnt = qdio_init->no_output_qs;
 	irq_ptr->qdr->iqdsz = sizeof(struct qdesfmt0) / 4; /* size in words */
@@ -502,6 +541,7 @@ void qdio_print_subchannel_info(struct qdio_irq *irq_ptr,
 	printk(KERN_INFO "%s", s);
 }
 
+<<<<<<< HEAD
 int qdio_enable_async_operation(struct qdio_output_q *outq)
 {
 	outq->aobs = kzalloc(sizeof(struct qaob *) * QDIO_MAX_BUFFERS_PER_Q,
@@ -525,11 +565,16 @@ int __init qdio_setup_init(void)
 {
 	int rc;
 
+=======
+int __init qdio_setup_init(void)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	qdio_q_cache = kmem_cache_create("qdio_q", sizeof(struct qdio_q),
 					 256, 0, NULL);
 	if (!qdio_q_cache)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	qdio_aob_cache = kmem_cache_create("qdio_aob",
 					sizeof(struct qaob),
 					sizeof(struct qaob),
@@ -540,22 +585,31 @@ int __init qdio_setup_init(void)
 		goto free_qdio_q_cache;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Check for OSA/FCP thin interrupts (bit 67). */
 	DBF_EVENT("thinint:%1d",
 		  (css_general_characteristics.aif_osa) ? 1 : 0);
 
 	/* Check for QEBSM support in general (bit 58). */
 	DBF_EVENT("cssQEBSM:%1d", (qebsm_possible()) ? 1 : 0);
+<<<<<<< HEAD
 	rc = 0;
 out:
 	return rc;
 free_qdio_q_cache:
 	kmem_cache_destroy(qdio_q_cache);
 	goto out;
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void qdio_setup_exit(void)
 {
+<<<<<<< HEAD
 	kmem_cache_destroy(qdio_aob_cache);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kmem_cache_destroy(qdio_q_cache);
 }

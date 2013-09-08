@@ -20,6 +20,11 @@
 #ifndef __ASM_ARM_ARCH_IO_H
 #define __ASM_ARM_ARCH_IO_H
 
+<<<<<<< HEAD
+=======
+#define IO_SPACE_LIMIT 0xffff
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * WARNING: this has to mirror definitions in platform.h
  */
@@ -29,5 +34,9 @@
 #define PCI_IO_VADDR            0xee000000
 
 #define __io(a)			((void __iomem *)(PCI_IO_VADDR + (a)))
+<<<<<<< HEAD
+=======
+#define __mem_pci(a)		(a)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

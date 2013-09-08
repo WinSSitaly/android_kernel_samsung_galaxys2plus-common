@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  *	SoftDog:	A Software Watchdog Device
+=======
+ *	SoftDog	0.07:	A Software Watchdog Device
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *	(c) Copyright 1996 Alan Cox <alan@lxorguk.ukuu.org.uk>,
  *							All Rights Reserved.
@@ -36,37 +40,73 @@
  *	Added Matt Domsch's nowayout module option.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/types.h>
 #include <linux/timer.h>
 #include <linux/miscdevice.h>
 #include <linux/watchdog.h>
+<<<<<<< HEAD
+=======
+#include <linux/fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/notifier.h>
 #include <linux/reboot.h>
 #include <linux/init.h>
 #include <linux/jiffies.h>
+<<<<<<< HEAD
 #include <linux/kernel.h>
 
 #define TIMER_MARGIN	60		/* Default is 60 seconds */
 static unsigned int soft_margin = TIMER_MARGIN;	/* in seconds */
 module_param(soft_margin, uint, 0);
+=======
+#include <linux/uaccess.h>
+#include <linux/kernel.h>
+
+#define PFX "SoftDog: "
+
+#define TIMER_MARGIN	60		/* Default is 60 seconds */
+static int soft_margin = TIMER_MARGIN;	/* in seconds */
+module_param(soft_margin, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(soft_margin,
 	"Watchdog soft_margin in seconds. (0 < soft_margin < 65536, default="
 					__MODULE_STRING(TIMER_MARGIN) ")");
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 module_param(nowayout, bool, 0);
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout,
 		"Watchdog cannot be stopped once started (default="
 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
 
+<<<<<<< HEAD
 static int soft_noboot = 0;
 module_param(soft_noboot, int, 0);
 MODULE_PARM_DESC(soft_noboot,
 	"Softdog action, set to 1 to ignore reboots, 0 to reboot (default=0)");
+=======
+#ifdef ONLY_TESTING
+static int soft_noboot = 1;
+#else
+static int soft_noboot = 0;
+#endif  /* ONLY_TESTING */
+
+module_param(soft_noboot, int, 0);
+MODULE_PARM_DESC(soft_noboot,
+	"Softdog action, set to 1 to ignore reboots, 0 to reboot "
+					"(default depends on ONLY_TESTING)");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int soft_panic;
 module_param(soft_panic, int, 0);
@@ -81,6 +121,12 @@ static void watchdog_fire(unsigned long);
 
 static struct timer_list watchdog_ticktock =
 		TIMER_INITIALIZER(watchdog_fire, 0, 0);
+<<<<<<< HEAD
+=======
+static unsigned long driver_open, orphan_timer;
+static char expect_close;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  *	If the timer expires..
@@ -88,6 +134,7 @@ static struct timer_list watchdog_ticktock =
 
 static void watchdog_fire(unsigned long data)
 {
+<<<<<<< HEAD
 	if (soft_noboot)
 		pr_crit("Triggered - Reboot ignored\n");
 	else if (soft_panic) {
@@ -97,6 +144,20 @@ static void watchdog_fire(unsigned long data)
 		pr_crit("Initiating system reboot\n");
 		emergency_restart();
 		pr_crit("Reboot didn't ?????\n");
+=======
+	if (test_and_clear_bit(0, &orphan_timer))
+		module_put(THIS_MODULE);
+
+	if (soft_noboot)
+		printk(KERN_CRIT PFX "Triggered - Reboot ignored.\n");
+	else if (soft_panic) {
+		printk(KERN_CRIT PFX "Initiating panic.\n");
+		panic("Software Watchdog Timer expired.");
+	} else {
+		printk(KERN_CRIT PFX "Initiating system reboot.\n");
+		emergency_restart();
+		printk(KERN_CRIT PFX "Reboot didn't ?????\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -104,6 +165,7 @@ static void watchdog_fire(unsigned long data)
  *	Softdog operations
  */
 
+<<<<<<< HEAD
 static int softdog_ping(struct watchdog_device *w)
 {
 	mod_timer(&watchdog_ticktock, jiffies+(w->timeout*HZ));
@@ -111,17 +173,138 @@ static int softdog_ping(struct watchdog_device *w)
 }
 
 static int softdog_stop(struct watchdog_device *w)
+=======
+static int softdog_keepalive(void)
+{
+	mod_timer(&watchdog_ticktock, jiffies+(soft_margin*HZ));
+	return 0;
+}
+
+static int softdog_stop(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	del_timer(&watchdog_ticktock);
 	return 0;
 }
 
+<<<<<<< HEAD
 static int softdog_set_timeout(struct watchdog_device *w, unsigned int t)
 {
 	w->timeout = t;
 	return 0;
 }
 
+=======
+static int softdog_set_heartbeat(int t)
+{
+	if ((t < 0x0001) || (t > 0xFFFF))
+		return -EINVAL;
+
+	soft_margin = t;
+	return 0;
+}
+
+/*
+ *	/dev/watchdog handling
+ */
+
+static int softdog_open(struct inode *inode, struct file *file)
+{
+	if (test_and_set_bit(0, &driver_open))
+		return -EBUSY;
+	if (!test_and_clear_bit(0, &orphan_timer))
+		__module_get(THIS_MODULE);
+	/*
+	 *	Activate timer
+	 */
+	softdog_keepalive();
+	return nonseekable_open(inode, file);
+}
+
+static int softdog_release(struct inode *inode, struct file *file)
+{
+	/*
+	 *	Shut off the timer.
+	 *	Lock it in if it's a module and we set nowayout
+	 */
+	if (expect_close == 42) {
+		softdog_stop();
+		module_put(THIS_MODULE);
+	} else {
+		printk(KERN_CRIT PFX
+			"Unexpected close, not stopping watchdog!\n");
+		set_bit(0, &orphan_timer);
+		softdog_keepalive();
+	}
+	clear_bit(0, &driver_open);
+	expect_close = 0;
+	return 0;
+}
+
+static ssize_t softdog_write(struct file *file, const char __user *data,
+						size_t len, loff_t *ppos)
+{
+	/*
+	 *	Refresh the timer.
+	 */
+	if (len) {
+		if (!nowayout) {
+			size_t i;
+
+			/* In case it was set long ago */
+			expect_close = 0;
+
+			for (i = 0; i != len; i++) {
+				char c;
+
+				if (get_user(c, data + i))
+					return -EFAULT;
+				if (c == 'V')
+					expect_close = 42;
+			}
+		}
+		softdog_keepalive();
+	}
+	return len;
+}
+
+static long softdog_ioctl(struct file *file, unsigned int cmd,
+							unsigned long arg)
+{
+	void __user *argp = (void __user *)arg;
+	int __user *p = argp;
+	int new_margin;
+	static const struct watchdog_info ident = {
+		.options =		WDIOF_SETTIMEOUT |
+					WDIOF_KEEPALIVEPING |
+					WDIOF_MAGICCLOSE,
+		.firmware_version =	0,
+		.identity =		"Software Watchdog",
+	};
+	switch (cmd) {
+	case WDIOC_GETSUPPORT:
+		return copy_to_user(argp, &ident, sizeof(ident)) ? -EFAULT : 0;
+	case WDIOC_GETSTATUS:
+	case WDIOC_GETBOOTSTATUS:
+		return put_user(0, p);
+	case WDIOC_KEEPALIVE:
+		softdog_keepalive();
+		return 0;
+	case WDIOC_SETTIMEOUT:
+		if (get_user(new_margin, p))
+			return -EFAULT;
+		if (softdog_set_heartbeat(new_margin))
+			return -EINVAL;
+		softdog_keepalive();
+		/* Fall */
+	case WDIOC_GETTIMEOUT:
+		return put_user(soft_margin, p);
+	default:
+		return -ENOTTY;
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *	Notifier for system down
  */
@@ -131,7 +314,11 @@ static int softdog_notify_sys(struct notifier_block *this, unsigned long code,
 {
 	if (code == SYS_DOWN || code == SYS_HALT)
 		/* Turn the WDT off */
+<<<<<<< HEAD
 		softdog_stop(NULL);
+=======
+		softdog_stop();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NOTIFY_DONE;
 }
 
@@ -139,6 +326,7 @@ static int softdog_notify_sys(struct notifier_block *this, unsigned long code,
  *	Kernel Interfaces
  */
 
+<<<<<<< HEAD
 static struct notifier_block softdog_notifier = {
 	.notifier_call	= softdog_notify_sys,
 };
@@ -162,6 +350,30 @@ static struct watchdog_device softdog_dev = {
 	.min_timeout = 1,
 	.max_timeout = 0xFFFF
 };
+=======
+static const struct file_operations softdog_fops = {
+	.owner		= THIS_MODULE,
+	.llseek		= no_llseek,
+	.write		= softdog_write,
+	.unlocked_ioctl	= softdog_ioctl,
+	.open		= softdog_open,
+	.release	= softdog_release,
+};
+
+static struct miscdevice softdog_miscdev = {
+	.minor		= WATCHDOG_MINOR,
+	.name		= "watchdog",
+	.fops		= &softdog_fops,
+};
+
+static struct notifier_block softdog_notifier = {
+	.notifier_call	= softdog_notify_sys,
+};
+
+static char banner[] __initdata = KERN_INFO "Software Watchdog Timer: 0.07 "
+	"initialized. soft_noboot=%d soft_margin=%d sec soft_panic=%d "
+	"(nowayout= %d)\n";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __init watchdog_init(void)
 {
@@ -169,6 +381,7 @@ static int __init watchdog_init(void)
 
 	/* Check that the soft_margin value is within it's range;
 	   if not reset to the default */
+<<<<<<< HEAD
 	if (soft_margin < 1 || soft_margin > 65535) {
 		pr_info("soft_margin must be 0 < soft_margin < 65536, using %d\n",
 			TIMER_MARGIN);
@@ -186,19 +399,48 @@ static int __init watchdog_init(void)
 
 	ret = watchdog_register_device(&softdog_dev);
 	if (ret) {
+=======
+	if (softdog_set_heartbeat(soft_margin)) {
+		softdog_set_heartbeat(TIMER_MARGIN);
+		printk(KERN_INFO PFX
+		    "soft_margin must be 0 < soft_margin < 65536, using %d\n",
+			TIMER_MARGIN);
+	}
+
+	ret = register_reboot_notifier(&softdog_notifier);
+	if (ret) {
+		printk(KERN_ERR PFX
+			"cannot register reboot notifier (err=%d)\n", ret);
+		return ret;
+	}
+
+	ret = misc_register(&softdog_miscdev);
+	if (ret) {
+		printk(KERN_ERR PFX
+			"cannot register miscdev on minor=%d (err=%d)\n",
+						WATCHDOG_MINOR, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unregister_reboot_notifier(&softdog_notifier);
 		return ret;
 	}
 
+<<<<<<< HEAD
 	pr_info("Software Watchdog Timer: 0.08 initialized. soft_noboot=%d soft_margin=%d sec soft_panic=%d (nowayout=%d)\n",
 		soft_noboot, soft_margin, soft_panic, nowayout);
+=======
+	printk(banner, soft_noboot, soft_margin, soft_panic, nowayout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 static void __exit watchdog_exit(void)
 {
+<<<<<<< HEAD
 	watchdog_unregister_device(&softdog_dev);
+=======
+	misc_deregister(&softdog_miscdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unregister_reboot_notifier(&softdog_notifier);
 }
 

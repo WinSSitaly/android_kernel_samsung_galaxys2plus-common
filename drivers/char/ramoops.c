@@ -19,16 +19,21 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
 #include <linux/kernel.h>
 #include <linux/err.h>
+=======
+#include <linux/kernel.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/kmsg_dump.h>
 #include <linux/time.h>
 #include <linux/io.h>
 #include <linux/ioport.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/slab.h>
 #include <linux/ramoops.h>
 
@@ -39,6 +44,13 @@ static ulong record_size = MIN_MEM_SIZE;
 module_param(record_size, ulong, 0400);
 MODULE_PARM_DESC(record_size,
 		"size of each dump done on oops/panic");
+=======
+#include <linux/ramoops.h>
+
+#define RAMOOPS_KERNMSG_HDR "===="
+
+#define RECORD_SIZE 4096UL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static ulong mem_address;
 module_param(mem_address, ulong, 0400);
@@ -60,15 +72,21 @@ static struct ramoops_context {
 	void *virt_addr;
 	phys_addr_t phys_addr;
 	unsigned long size;
+<<<<<<< HEAD
 	unsigned long record_size;
 	int dump_oops;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int count;
 	int max_count;
 } oops_cxt;
 
+<<<<<<< HEAD
 static struct platform_device *dummy;
 static struct ramoops_platform_data *dummy_data;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ramoops_do_dump(struct kmsg_dumper *dumper,
 		enum kmsg_dump_reason reason, const char *s1, unsigned long l1,
 		const char *s2, unsigned long l2)
@@ -82,6 +100,7 @@ static void ramoops_do_dump(struct kmsg_dumper *dumper,
 	struct timeval timestamp;
 
 	if (reason != KMSG_DUMP_OOPS &&
+<<<<<<< HEAD
 	    reason != KMSG_DUMP_PANIC)
 		return;
 
@@ -93,6 +112,20 @@ static void ramoops_do_dump(struct kmsg_dumper *dumper,
 	buf_orig = buf;
 
 	memset(buf, '\0', cxt->record_size);
+=======
+	    reason != KMSG_DUMP_PANIC &&
+	    reason != KMSG_DUMP_KEXEC)
+		return;
+
+	/* Only dump oopses if dump_oops is set */
+	if (reason == KMSG_DUMP_OOPS && !dump_oops)
+		return;
+
+	buf = cxt->virt_addr + (cxt->count * RECORD_SIZE);
+	buf_orig = buf;
+
+	memset(buf, '\0', RECORD_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	res = sprintf(buf, "%s", RAMOOPS_KERNMSG_HDR);
 	buf += res;
 	do_gettimeofday(&timestamp);
@@ -100,8 +133,13 @@ static void ramoops_do_dump(struct kmsg_dumper *dumper,
 	buf += res;
 
 	hdr_size = buf - buf_orig;
+<<<<<<< HEAD
 	l2_cpy = min(l2, cxt->record_size - hdr_size);
 	l1_cpy = min(l1, cxt->record_size - hdr_size - l2_cpy);
+=======
+	l2_cpy = min(l2, RECORD_SIZE - hdr_size);
+	l1_cpy = min(l1, RECORD_SIZE - hdr_size - l2_cpy);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	s2_start = l2 - l2_cpy;
 	s1_start = l1 - l1_cpy;
@@ -118,6 +156,7 @@ static int __init ramoops_probe(struct platform_device *pdev)
 	struct ramoops_context *cxt = &oops_cxt;
 	int err = -EINVAL;
 
+<<<<<<< HEAD
 	if (!pdata->mem_size || !pdata->record_size) {
 		pr_err("The memory size and the record size must be "
 			"non-zero\n");
@@ -149,19 +188,50 @@ static int __init ramoops_probe(struct platform_device *pdev)
 
 	if (!request_mem_region(cxt->phys_addr, cxt->size, "ramoops")) {
 		pr_err("request mem region failed\n");
+=======
+	if (pdata) {
+		mem_size = pdata->mem_size;
+		mem_address = pdata->mem_address;
+	}
+
+	if (!mem_size) {
+		printk(KERN_ERR "ramoops: invalid size specification");
+		goto fail3;
+	}
+
+	rounddown_pow_of_two(mem_size);
+
+	if (mem_size < RECORD_SIZE) {
+		printk(KERN_ERR "ramoops: size too small");
+		goto fail3;
+	}
+
+	cxt->max_count = mem_size / RECORD_SIZE;
+	cxt->count = 0;
+	cxt->size = mem_size;
+	cxt->phys_addr = mem_address;
+
+	if (!request_mem_region(cxt->phys_addr, cxt->size, "ramoops")) {
+		printk(KERN_ERR "ramoops: request mem region failed");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = -EINVAL;
 		goto fail3;
 	}
 
 	cxt->virt_addr = ioremap(cxt->phys_addr,  cxt->size);
 	if (!cxt->virt_addr) {
+<<<<<<< HEAD
 		pr_err("ioremap failed\n");
+=======
+		printk(KERN_ERR "ramoops: ioremap failed");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto fail2;
 	}
 
 	cxt->dump.dump = ramoops_do_dump;
 	err = kmsg_dump_register(&cxt->dump);
 	if (err) {
+<<<<<<< HEAD
 		pr_err("registering kmsg dumper failed\n");
 		goto fail1;
 	}
@@ -175,6 +245,12 @@ static int __init ramoops_probe(struct platform_device *pdev)
 	record_size = pdata->record_size;
 	dump_oops = pdata->dump_oops;
 
+=======
+		printk(KERN_ERR "ramoops: registering kmsg dumper failed");
+		goto fail1;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 fail1:
@@ -190,7 +266,11 @@ static int __exit ramoops_remove(struct platform_device *pdev)
 	struct ramoops_context *cxt = &oops_cxt;
 
 	if (kmsg_dump_unregister(&cxt->dump) < 0)
+<<<<<<< HEAD
 		pr_warn("could not unregister kmsg_dumper\n");
+=======
+		printk(KERN_WARNING "ramoops: could not unregister kmsg_dumper");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	iounmap(cxt->virt_addr);
 	release_mem_region(cxt->phys_addr, cxt->size);
@@ -207,6 +287,7 @@ static struct platform_driver ramoops_driver = {
 
 static int __init ramoops_init(void)
 {
+<<<<<<< HEAD
 	int ret;
 	ret = platform_driver_probe(&ramoops_driver, ramoops_probe);
 	if (ret == -ENODEV) {
@@ -234,12 +315,18 @@ static int __init ramoops_init(void)
 	}
 
 	return ret;
+=======
+	return platform_driver_probe(&ramoops_driver, ramoops_probe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit ramoops_exit(void)
 {
 	platform_driver_unregister(&ramoops_driver);
+<<<<<<< HEAD
 	kfree(dummy_data);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(ramoops_init);

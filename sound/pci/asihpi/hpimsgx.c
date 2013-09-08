@@ -1,7 +1,11 @@
 /******************************************************************************
 
     AudioScience HPI driver
+<<<<<<< HEAD
     Copyright (C) 1997-2011  AudioScience Inc. <support@audioscience.com>
+=======
+    Copyright (C) 1997-2010  AudioScience Inc. <support@audioscience.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of version 2 of the GNU General Public License as
@@ -16,13 +20,20 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+<<<<<<< HEAD
 Extended Message Function With Response Caching
+=======
+Extended Message Function With Response Cacheing
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 (C) Copyright AudioScience Inc. 2002
 *****************************************************************************/
 #define SOURCEFILE_NAME "hpimsgx.c"
 #include "hpi_internal.h"
+<<<<<<< HEAD
 #include "hpi_version.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "hpimsginit.h"
 #include "hpicmn.h"
 #include "hpimsgx.h"
@@ -187,6 +198,10 @@ static void subsys_message(struct hpi_message *phm, struct hpi_response *phr,
 		/* Initialize this module's internal state */
 		hpios_msgxlock_init(&msgx_lock);
 		memset(&hpi_entry_points, 0, sizeof(hpi_entry_points));
+<<<<<<< HEAD
+=======
+		hpios_locked_mem_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Init subsys_findadapters response to no-adapters */
 		HPIMSGX__reset(HPIMSGX_ALLADAPTERS);
 		hpi_init_response(phr, HPI_OBJ_SUBSYSTEM,
@@ -197,6 +212,10 @@ static void subsys_message(struct hpi_message *phm, struct hpi_response *phr,
 	case HPI_SUBSYS_DRIVER_UNLOAD:
 		HPI_COMMON(phm, phr);
 		HPIMSGX__cleanup(HPIMSGX_ALLADAPTERS, h_owner);
+<<<<<<< HEAD
+=======
+		hpios_locked_mem_free_all();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hpi_init_response(phr, HPI_OBJ_SUBSYSTEM,
 			HPI_SUBSYS_DRIVER_UNLOAD, 0);
 		return;
@@ -314,7 +333,11 @@ void hpi_send_recv_ex(struct hpi_message *phm, struct hpi_response *phr,
 {
 	HPI_DEBUG_MESSAGE(DEBUG, phm);
 
+<<<<<<< HEAD
 	if (phm->type != HPI_TYPE_REQUEST) {
+=======
+	if (phm->type != HPI_TYPE_MESSAGE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hpi_init_response(phr, phm->object, phm->function,
 			HPI_ERROR_INVALID_TYPE);
 		return;

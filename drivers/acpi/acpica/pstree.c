@@ -5,7 +5,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -74,12 +78,15 @@ union acpi_parse_object *acpi_ps_get_arg(union acpi_parse_object *op, u32 argn)
 
 	ACPI_FUNCTION_ENTRY();
 
+<<<<<<< HEAD
 /*
 	if (Op->Common.aml_opcode == AML_INT_CONNECTION_OP)
 	{
 		return (Op->Common.Value.Arg);
 	}
 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Get the info structure for this opcode */
 
 	op_info = acpi_ps_get_opcode_info(op->common.aml_opcode);

@@ -19,7 +19,11 @@ the card number and the minor unit number.  Usually you don't have to
 define these aliases by yourself.
 
 Only necessary step for auto-loading of OSS modules is to define the
+<<<<<<< HEAD
 card alias in /etc/modprobe.d/alsa.conf, such as
+=======
+card alias in /etc/modprobe.conf, such as
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	alias sound-slot-0 snd-emu10k1
 

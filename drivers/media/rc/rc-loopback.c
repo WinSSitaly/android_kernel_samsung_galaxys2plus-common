@@ -101,14 +101,31 @@ static int loop_set_rx_carrier_range(struct rc_dev *dev, u32 min, u32 max)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int loop_tx_ir(struct rc_dev *dev, unsigned *txbuf, unsigned count)
 {
 	struct loopback_dev *lodev = dev->priv;
 	u32 rxmask;
+=======
+static int loop_tx_ir(struct rc_dev *dev, int *txbuf, u32 n)
+{
+	struct loopback_dev *lodev = dev->priv;
+	u32 rxmask;
+	unsigned count;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned total_duration = 0;
 	unsigned i;
 	DEFINE_IR_RAW_EVENT(rawir);
 
+<<<<<<< HEAD
+=======
+	if (n == 0 || n % sizeof(int)) {
+		dprintk("invalid tx buffer size\n");
+		return -EINVAL;
+	}
+
+	count = n / sizeof(int);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < count; i++)
 		total_duration += abs(txbuf[i]);
 
@@ -135,7 +152,11 @@ static int loop_tx_ir(struct rc_dev *dev, unsigned *txbuf, unsigned count)
 
 	for (i = 0; i < count; i++) {
 		rawir.pulse = i % 2 ? false : true;
+<<<<<<< HEAD
 		rawir.duration = txbuf[i] * 1000;
+=======
+		rawir.duration = abs(txbuf[i]) * 1000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rawir.duration)
 			ir_raw_event_store_with_filter(dev, &rawir);
 	}
@@ -151,7 +172,11 @@ out:
 	/* Lirc expects this function to take as long as the total duration */
 	set_current_state(TASK_INTERRUPTIBLE);
 	schedule_timeout(usecs_to_jiffies(total_duration));
+<<<<<<< HEAD
 	return count;
+=======
+	return n;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void loop_set_idle(struct rc_dev *dev, bool enable)

@@ -15,7 +15,11 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
@@ -25,8 +29,13 @@
 #include <linux/mtd/physmap.h>
 #include <linux/input.h>
 #include <linux/smc91x.h>
+<<<<<<< HEAD
 #include <linux/omapfb.h>
 
+=======
+
+#include <mach/hardware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
@@ -34,6 +43,7 @@
 #include <plat/mux.h>
 #include <plat/flash.h>
 #include <plat/fpga.h>
+<<<<<<< HEAD
 #include <plat/tc.h>
 #include <plat/usb.h>
 #include <plat/keypad.h>
@@ -44,6 +54,15 @@
 #include "iomap.h"
 #include "common.h"
 
+=======
+#include <mach/gpio.h>
+#include <plat/tc.h>
+#include <plat/usb.h>
+#include <plat/keypad.h>
+#include <plat/common.h>
+#include <plat/mmc.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* At OMAP1610 Innovator the Ethernet is directly connected to CS1 */
 #define INNOVATOR1610_ETHR_START	0x04000300
 
@@ -248,6 +267,11 @@ static struct resource innovator1610_smc91x_resources[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 	[1] = {
+<<<<<<< HEAD
+=======
+		.start	= OMAP_GPIO_IRQ(0),
+		.end	= OMAP_GPIO_IRQ(0),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_IRQ | IORESOURCE_IRQ_LOWEDGE,
 	},
 };
@@ -290,6 +314,15 @@ static void __init innovator_init_smc91x(void)
 	}
 }
 
+<<<<<<< HEAD
+=======
+static void __init innovator_init_irq(void)
+{
+	omap1_init_common_hw();
+	omap_init_irq();
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_ARCH_OMAP15XX
 static struct omap_usb_config innovator1510_usb_config __initdata = {
 	/* for bundled non-standard host and peripheral cables */
@@ -372,6 +405,13 @@ static inline void innovator_mmc_init(void)
 }
 #endif
 
+<<<<<<< HEAD
+=======
+static struct omap_board_config_kernel innovator_config[] = {
+	{ OMAP_TAG_LCD,		NULL },
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init innovator_init(void)
 {
 	if (cpu_is_omap1510())
@@ -407,8 +447,11 @@ static void __init innovator_init(void)
 #endif
 #ifdef CONFIG_ARCH_OMAP16XX
 	if (!cpu_is_omap1510()) {
+<<<<<<< HEAD
 		innovator1610_smc91x_resources[1].start = gpio_to_irq(0);
 		innovator1610_smc91x_resources[1].end = gpio_to_irq(0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		platform_add_devices(innovator1610_devices, ARRAY_SIZE(innovator1610_devices));
 	}
 #endif
@@ -416,20 +459,33 @@ static void __init innovator_init(void)
 #ifdef CONFIG_ARCH_OMAP15XX
 	if (cpu_is_omap1510()) {
 		omap1_usb_init(&innovator1510_usb_config);
+<<<<<<< HEAD
 		omapfb_set_lcd_config(&innovator1510_lcd_config);
+=======
+		innovator_config[1].data = &innovator1510_lcd_config;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 #endif
 #ifdef CONFIG_ARCH_OMAP16XX
 	if (cpu_is_omap1610()) {
 		omap1_usb_init(&h2_usb_config);
+<<<<<<< HEAD
 		omapfb_set_lcd_config(&innovator1610_lcd_config);
 	}
 #endif
+=======
+		innovator_config[1].data = &innovator1610_lcd_config;
+	}
+#endif
+	omap_board_config = innovator_config;
+	omap_board_config_size = ARRAY_SIZE(innovator_config);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap_serial_init();
 	omap_register_i2c_bus(1, 100, NULL, 0);
 	innovator_mmc_init();
 }
 
+<<<<<<< HEAD
 /*
  * REVISIT: Assume 15xx for now, we don't want to do revision check
  * until later on. The right way to fix this is to set up a different
@@ -447,10 +503,29 @@ static void __init innovator_map_io(void)
 			fpga_read(OMAP1510_FPGA_REV_HIGH),
 			fpga_read(OMAP1510_FPGA_REV_LOW),
 			fpga_read(OMAP1510_FPGA_BOARD_REV));
+=======
+static void __init innovator_map_io(void)
+{
+	omap1_map_common_io();
+
+#ifdef CONFIG_ARCH_OMAP15XX
+	if (cpu_is_omap1510()) {
+		iotable_init(innovator1510_io_desc, ARRAY_SIZE(innovator1510_io_desc));
+		udelay(10);	/* Delay needed for FPGA */
+
+		/* Dump the Innovator FPGA rev early - useful info for support. */
+		printk("Innovator FPGA Rev %d.%d Board Rev %d\n",
+		       fpga_read(OMAP1510_FPGA_REV_HIGH),
+		       fpga_read(OMAP1510_FPGA_REV_LOW),
+		       fpga_read(OMAP1510_FPGA_BOARD_REV));
+	}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 MACHINE_START(OMAP_INNOVATOR, "TI-Innovator")
 	/* Maintainer: MontaVista Software, Inc. */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= innovator_map_io,
 	.init_early     = omap1_init_early,
@@ -459,4 +534,12 @@ MACHINE_START(OMAP_INNOVATOR, "TI-Innovator")
 	.init_machine	= innovator_init,
 	.timer		= &omap1_timer,
 	.restart	= omap1_restart,
+=======
+	.boot_params	= 0x10000100,
+	.map_io		= innovator_map_io,
+	.reserve	= omap_reserve,
+	.init_irq	= innovator_init_irq,
+	.init_machine	= innovator_init,
+	.timer		= &omap_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

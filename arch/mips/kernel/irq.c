@@ -13,6 +13,10 @@
 #include <linux/init.h>
 #include <linux/interrupt.h>
 #include <linux/kernel_stat.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/proc_fs.h>
 #include <linux/mm.h>
 #include <linux/random.h>
@@ -22,7 +26,12 @@
 #include <linux/kgdb.h>
 #include <linux/ftrace.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 
 #ifdef CONFIG_KGDB

@@ -6,9 +6,13 @@
  */
 #include <linux/types.h>
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <asm/processor.h>
 #include <asm/user32.h>
 #include <asm/unistd.h>
+=======
+#include <asm/user32.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define COMPAT_USER_HZ		100
 #define COMPAT_UTS_MACHINE	"i686\0\0"
@@ -110,8 +114,12 @@ struct compat_statfs {
 	compat_fsid_t	f_fsid;
 	int		f_namelen;	/* SunOS ignores this field. */
 	int		f_frsize;
+<<<<<<< HEAD
 	int		f_flags;
 	int		f_spare[4];
+=======
+	int		f_spare[5];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define COMPAT_RLIM_OLD_INFINITY	0x7fffffff
@@ -188,6 +196,7 @@ struct compat_shmid64_ds {
 /*
  * The type of struct elf_prstatus.pr_reg in compatible core dumps.
  */
+<<<<<<< HEAD
 #ifdef CONFIG_X86_X32_ABI
 typedef struct user_regs_struct compat_elf_gregset_t;
 
@@ -202,6 +211,9 @@ typedef struct user_regs_struct compat_elf_gregset_t;
 #else
 typedef struct user_regs_struct32 compat_elf_gregset_t;
 #endif
+=======
+typedef struct user_regs_struct32 compat_elf_gregset_t;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * A pointer passed in from user mode. This should not
@@ -223,6 +235,7 @@ static inline compat_uptr_t ptr_to_compat(void __user *uptr)
 
 static inline void __user *arch_compat_alloc_user_space(long len)
 {
+<<<<<<< HEAD
 	compat_uptr_t sp;
 
 	if (test_thread_flag(TIF_IA32)) {
@@ -247,6 +260,15 @@ static inline bool is_x32_task(void)
 static inline bool is_compat_task(void)
 {
 	return is_ia32_task() || is_x32_task();
+=======
+	struct pt_regs *regs = task_pt_regs(current);
+	return (void __user *)regs->sp - len;
+}
+
+static inline int is_compat_task(void)
+{
+	return current_thread_info()->status & TS_COMPAT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #endif /* _ASM_X86_COMPAT_H */

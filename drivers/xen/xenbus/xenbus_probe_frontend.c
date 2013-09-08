@@ -13,7 +13,10 @@
 #include <linux/kthread.h>
 #include <linux/mutex.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/page.h>
 #include <asm/pgtable.h>
@@ -53,12 +56,15 @@ static int xenbus_probe_frontend(struct xen_bus_type *bus, const char *type,
 	char *nodename;
 	int err;
 
+<<<<<<< HEAD
 	/* ignore console/0 */
 	if (!strncmp(type, "console", 7) && !strncmp(name, "0", 1)) {
 		DPRINTK("Ignoring buggy device entry console/0");
 		return 0;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nodename = kasprintf(GFP_KERNEL, "%s/%s/%s", bus->root, type, name);
 	if (!nodename)
 		return -ENOMEM;
@@ -88,6 +94,13 @@ static void backend_changed(struct xenbus_watch *watch,
 	xenbus_otherend_changed(watch, vec, len, 1);
 }
 
+<<<<<<< HEAD
+=======
+static struct device_attribute xenbus_frontend_dev_attrs[] = {
+	__ATTR_NULL
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct dev_pm_ops xenbus_pm_ops = {
 	.suspend	= xenbus_dev_suspend,
 	.resume		= xenbus_dev_resume,
@@ -109,7 +122,11 @@ static struct xen_bus_type xenbus_frontend = {
 		.probe		= xenbus_dev_probe,
 		.remove		= xenbus_dev_remove,
 		.shutdown	= xenbus_dev_shutdown,
+<<<<<<< HEAD
 		.dev_attrs	= xenbus_dev_attrs,
+=======
+		.dev_attrs	= xenbus_frontend_dev_attrs,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		.pm		= &xenbus_pm_ops,
 	},
@@ -273,13 +290,23 @@ static void wait_for_devices(struct xenbus_driver *xendrv)
 			 print_device_status);
 }
 
+<<<<<<< HEAD
 int xenbus_register_frontend(struct xenbus_driver *drv)
+=======
+int __xenbus_register_frontend(struct xenbus_driver *drv,
+			       struct module *owner, const char *mod_name)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 
 	drv->read_otherend_details = read_backend_details;
 
+<<<<<<< HEAD
 	ret = xenbus_register_driver_common(drv, &xenbus_frontend);
+=======
+	ret = xenbus_register_driver_common(drv, &xenbus_frontend,
+					    owner, mod_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -288,6 +315,7 @@ int xenbus_register_frontend(struct xenbus_driver *drv)
 
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(xenbus_register_frontend);
 
 static DECLARE_WAIT_QUEUE_HEAD(backend_state_wq);
@@ -407,14 +435,20 @@ static void xenbus_reset_state(void)
 	}
 	kfree(devclass);
 }
+=======
+EXPORT_SYMBOL_GPL(__xenbus_register_frontend);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int frontend_probe_and_watch(struct notifier_block *notifier,
 				   unsigned long event,
 				   void *data)
 {
+<<<<<<< HEAD
 	/* reset devices in Connected or Closed state */
 	if (xen_hvm_domain())
 		xenbus_reset_state();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Enumerate devices in xenstore and watch for changes. */
 	xenbus_probe_devices(&xenbus_frontend);
 	register_xenbus_watch(&fe_watch);

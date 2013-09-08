@@ -25,9 +25,15 @@
 #include <linux/types.h>
 #include <linux/err.h>
 #include <asm/cacheflush.h>
+<<<<<<< HEAD
 #include <asm/unaligned.h>
 #include <arch/abi.h>
 #include <arch/opcode.h>
+=======
+#include <asm/opcode-tile.h>
+#include <asm/opcode_constants.h>
+#include <arch/abi.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define signExtend17(val) sign_extend((val), 17)
 #define TILE_X1_MASK (0xffffffffULL << 31)
@@ -118,7 +124,11 @@ static tile_bundle_bits rewrite_load_store_unaligned(
 	int val_reg, addr_reg, err, val;
 
 	/* Get address and value registers */
+<<<<<<< HEAD
 	if (bundle & TILEPRO_BUNDLE_Y_ENCODING_MASK) {
+=======
+	if (bundle & TILE_BUNDLE_Y_ENCODING_MASK) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		addr_reg = get_SrcA_Y2(bundle);
 		val_reg = get_SrcBDest_Y2(bundle);
 	} else if (mem_op == MEMOP_LOAD || mem_op == MEMOP_LOAD_POSTINCR) {
@@ -153,6 +163,7 @@ static tile_bundle_bits rewrite_load_store_unaligned(
 	if (((unsigned long)addr % size) == 0)
 		return bundle;
 
+<<<<<<< HEAD
 	/*
 	 * Return SIGBUS with the unaligned address, if requested.
 	 * Note that we return SIGBUS even for completely invalid addresses
@@ -172,6 +183,8 @@ static tile_bundle_bits rewrite_load_store_unaligned(
 		return (tilepro_bundle_bits) 0;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __LITTLE_ENDIAN
 # error We assume little-endian representation with copy_xx_user size 2 here
 #endif
@@ -211,6 +224,21 @@ static tile_bundle_bits rewrite_load_store_unaligned(
 		return (tile_bundle_bits) 0;
 	}
 
+<<<<<<< HEAD
+=======
+	if (unaligned_fixup == 0) {
+		siginfo_t info = {
+			.si_signo = SIGBUS,
+			.si_code = BUS_ADRALN,
+			.si_addr = addr
+		};
+		trace_unhandled_signal("unaligned trap", regs,
+				       (unsigned long)addr, SIGBUS);
+		force_sig_info(info.si_signo, &info, current);
+		return (tile_bundle_bits) 0;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unaligned_printk || unaligned_fixup_count == 0) {
 		pr_info("Process %d/%s: PC %#lx: Fixup of"
 			" unaligned %s at %#lx.\n",
@@ -236,7 +264,11 @@ P("\n");
 	}
 	++unaligned_fixup_count;
 
+<<<<<<< HEAD
 	if (bundle & TILEPRO_BUNDLE_Y_ENCODING_MASK) {
+=======
+	if (bundle & TILE_BUNDLE_Y_ENCODING_MASK) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Convert the Y2 instruction to a prefetch. */
 		bundle &= ~(create_SrcBDest_Y2(-1) |
 			    create_Opcode_Y2(-1));
@@ -346,10 +378,19 @@ void single_step_once(struct pt_regs *regs)
 		}
 
 		/* allocate a cache line of writable, executable memory */
+<<<<<<< HEAD
 		buffer = (void __user *) vm_mmap(NULL, 0, 64,
 					  PROT_EXEC | PROT_READ | PROT_WRITE,
 					  MAP_PRIVATE | MAP_ANONYMOUS,
 					  0);
+=======
+		down_write(&current->mm->mmap_sem);
+		buffer = (void __user *) do_mmap(NULL, 0, 64,
+					  PROT_EXEC | PROT_READ | PROT_WRITE,
+					  MAP_PRIVATE | MAP_ANONYMOUS,
+					  0);
+		up_write(&current->mm->mmap_sem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (IS_ERR((void __force *)buffer)) {
 			kfree(state);
@@ -394,7 +435,11 @@ void single_step_once(struct pt_regs *regs)
 	state->branch_next_pc = 0;
 	state->update = 0;
 
+<<<<<<< HEAD
 	if (!(bundle & TILEPRO_BUNDLE_Y_ENCODING_MASK)) {
+=======
+	if (!(bundle & TILE_BUNDLE_Y_ENCODING_MASK)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* two wide, check for control flow */
 		int opcode = get_Opcode_X1(bundle);
 

@@ -25,7 +25,10 @@
 #include <linux/input.h>
 #include <linux/slab.h>
 #include <linux/usb.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "hid-ids.h"
 
@@ -70,6 +73,7 @@ static int zpff_init(struct hid_device *hid)
 	struct hid_report *report;
 	struct hid_input *hidinput = list_entry(hid->inputs.next,
 						struct hid_input, list);
+<<<<<<< HEAD
 	struct input_dev *dev = hidinput->input;
 	int i, error;
 
@@ -77,6 +81,23 @@ static int zpff_init(struct hid_device *hid)
 		report = hid_validate_values(hid, HID_OUTPUT_REPORT, 0, i, 1);
 		if (!report)
 			return -ENODEV;
+=======
+	struct list_head *report_list =
+			&hid->report_enum[HID_OUTPUT_REPORT].report_list;
+	struct input_dev *dev = hidinput->input;
+	int error;
+
+	if (list_empty(report_list)) {
+		hid_err(hid, "no output report found\n");
+		return -ENODEV;
+	}
+
+	report = list_entry(report_list->next, struct hid_report, list);
+
+	if (report->maxfield < 4) {
+		hid_err(hid, "not enough fields in report\n");
+		return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	zpff = kzalloc(sizeof(struct zpff_device), GFP_KERNEL);

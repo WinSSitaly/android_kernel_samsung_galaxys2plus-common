@@ -8,7 +8,10 @@
  *  Free Software Foundation;  either version 2 of the  License, or (at your
  *  option) any later version.
  */
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/soc.h>
 #include <sound/pcm_params.h>
 #include <sound/pcm.h>
@@ -128,7 +131,11 @@ static struct snd_soc_dai_link smdk_dai[] = {
 		.cpu_dai_name = "samsung-pcm.0",
 		.codec_dai_name = "wm8580-hifi-playback",
 		.platform_name = "samsung-audio",
+<<<<<<< HEAD
 		.codec_name = "wm8580.0-001b",
+=======
+		.codec_name = "wm8580-codec.0-001b",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.ops = &smdk_wm8580_pcm_ops,
 	}, {
 		.name = "WM8580 PAIF PCM TX",
@@ -136,14 +143,21 @@ static struct snd_soc_dai_link smdk_dai[] = {
 		.cpu_dai_name = "samsung-pcm.0",
 		.codec_dai_name = "wm8580-hifi-capture",
 		.platform_name = "samsung-audio",
+<<<<<<< HEAD
 		.codec_name = "wm8580.0-001b",
+=======
+		.codec_name = "wm8580-codec.0-001b",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.ops = &smdk_wm8580_pcm_ops,
 	},
 };
 
 static struct snd_soc_card smdk_pcm = {
 	.name = "SMDK-PCM",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link = smdk_dai,
 	.num_links = 2,
 };
@@ -189,7 +203,23 @@ static struct platform_driver snd_smdk_driver = {
 	.remove = __devexit_p(snd_smdk_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(snd_smdk_driver);
+=======
+static int __init smdk_audio_init(void)
+{
+	return platform_driver_register(&snd_smdk_driver);
+}
+
+module_init(smdk_audio_init);
+
+static void __exit smdk_audio_exit(void)
+{
+	platform_driver_unregister(&snd_smdk_driver);
+}
+
+module_exit(smdk_audio_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Sangbeom Kim, <sbkim73@samsung.com>");
 MODULE_DESCRIPTION("ALSA SoC SMDK WM8580 for PCM");

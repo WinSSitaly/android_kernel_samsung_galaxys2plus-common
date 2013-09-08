@@ -50,7 +50,11 @@
 
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;	/* Index 0-MAX */
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;	/* ID for this card */
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;	/* Enable this card */
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;	/* Enable this card */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_array(index, int, NULL, 0444);
 MODULE_PARM_DESC(index, "Index value for Sun AMD7930 soundcard.");
@@ -962,7 +966,11 @@ static int __devinit snd_amd7930_create(struct snd_card *card,
 	amd7930_idle(amd);
 
 	if (request_irq(irq, snd_amd7930_interrupt,
+<<<<<<< HEAD
 			IRQF_SHARED, "amd7930", amd)) {
+=======
+			IRQF_DISABLED | IRQF_SHARED, "amd7930", amd)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printk(KERN_ERR "amd7930-%d: Unable to grab IRQ %d\n",
 			   dev, irq);
 		snd_amd7930_free(amd);

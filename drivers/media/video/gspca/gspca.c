@@ -21,11 +21,18 @@
  * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
 #define GSPCA_VERSION	"2.14.0"
 
 #include <linux/init.h>
+=======
+#define MODULE_NAME "gspca"
+
+#include <linux/init.h>
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/fs.h>
 #include <linux/vmalloc.h>
 #include <linux/sched.h>
@@ -55,7 +62,12 @@
 MODULE_AUTHOR("Jean-François Moine <http://moinejf.free.fr>");
 MODULE_DESCRIPTION("GSPCA USB Camera Driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_VERSION(GSPCA_VERSION);
+=======
+
+#define DRIVER_VERSION_NUMBER	KERNEL_VERSION(2, 13, 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef GSPCA_DEBUG
 int gspca_debug = D_ERR | D_PROBE;
@@ -148,7 +160,11 @@ static void int_irq(struct urb *urb)
 	if (ret == 0) {
 		ret = usb_submit_urb(urb, GFP_ATOMIC);
 		if (ret < 0)
+<<<<<<< HEAD
 			pr_err("Resubmit URB failed with error %i\n", ret);
+=======
+			err("Resubmit URB failed with error %i", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -177,8 +193,13 @@ static int gspca_input_connect(struct gspca_dev *dev)
 
 		err = input_register_device(input_dev);
 		if (err) {
+<<<<<<< HEAD
 			pr_err("Input device registration failed with error %i\n",
 			       err);
+=======
+			err("Input device registration failed with error %i",
+				err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			input_dev->dev.parent = NULL;
 			input_free_device(input_dev);
 		} else {
@@ -323,8 +344,13 @@ static void fill_frame(struct gspca_dev *gspca_dev,
 		/* check the packet status and length */
 		st = urb->iso_frame_desc[i].status;
 		if (st) {
+<<<<<<< HEAD
 			pr_err("ISOC data error: [%d] len=%d, status=%d\n",
 			       i, len, st);
+=======
+			err("ISOC data error: [%d] len=%d, status=%d",
+				i, len, st);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			gspca_dev->last_packet_type = DISCARD_PACKET;
 			continue;
 		}
@@ -346,7 +372,11 @@ resubmit:
 	/* resubmit the URB */
 	st = usb_submit_urb(urb, GFP_ATOMIC);
 	if (st < 0)
+<<<<<<< HEAD
 		pr_err("usb_submit_urb() ret %d\n", st);
+=======
+		err("usb_submit_urb() ret %d", st);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -400,7 +430,11 @@ resubmit:
 	if (gspca_dev->cam.bulk_nurbs != 0) {
 		st = usb_submit_urb(urb, GFP_ATOMIC);
 		if (st < 0)
+<<<<<<< HEAD
 			pr_err("usb_submit_urb() ret %d\n", st);
+=======
+			err("usb_submit_urb() ret %d", st);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -443,11 +477,16 @@ void gspca_frame_add(struct gspca_dev *gspca_dev,
 	} else {
 		switch (gspca_dev->last_packet_type) {
 		case DISCARD_PACKET:
+<<<<<<< HEAD
 			if (packet_type == LAST_PACKET) {
 				gspca_dev->last_packet_type = packet_type;
 				gspca_dev->image = NULL;
 				gspca_dev->image_len = 0;
 			}
+=======
+			if (packet_type == LAST_PACKET)
+				gspca_dev->last_packet_type = packet_type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 		case LAST_PACKET:
 			return;
@@ -464,7 +503,11 @@ void gspca_frame_add(struct gspca_dev *gspca_dev,
 		} else {
 /* !! image is NULL only when last pkt is LAST or DISCARD
 			if (gspca_dev->image == NULL) {
+<<<<<<< HEAD
 				pr_err("gspca_frame_add() image == NULL\n");
+=======
+				err("gspca_frame_add() image == NULL");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return;
 			}
  */
@@ -497,6 +540,22 @@ void gspca_frame_add(struct gspca_dev *gspca_dev,
 }
 EXPORT_SYMBOL(gspca_frame_add);
 
+<<<<<<< HEAD
+=======
+static int gspca_is_compressed(__u32 format)
+{
+	switch (format) {
+	case V4L2_PIX_FMT_MJPEG:
+	case V4L2_PIX_FMT_JPEG:
+	case V4L2_PIX_FMT_SPCA561:
+	case V4L2_PIX_FMT_PAC207:
+	case V4L2_PIX_FMT_MR97310A:
+		return 1;
+	}
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int frame_alloc(struct gspca_dev *gspca_dev, struct file *file,
 			enum v4l2_memory memory, unsigned int count)
 {
@@ -512,7 +571,11 @@ static int frame_alloc(struct gspca_dev *gspca_dev, struct file *file,
 		count = GSPCA_MAX_FRAMES - 1;
 	gspca_dev->frbuf = vmalloc_32(frsz * count);
 	if (!gspca_dev->frbuf) {
+<<<<<<< HEAD
 		pr_err("frame alloc failed\n");
+=======
+		err("frame alloc failed");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 	gspca_dev->capt_file = file;
@@ -584,7 +647,11 @@ static int gspca_set_alt0(struct gspca_dev *gspca_dev)
 		return 0;
 	ret = usb_set_interface(gspca_dev->dev, gspca_dev->iface, 0);
 	if (ret < 0)
+<<<<<<< HEAD
 		pr_err("set alt 0 err %d\n", ret);
+=======
+		err("set alt 0 err %d", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -627,6 +694,7 @@ static struct usb_host_endpoint *alt_xfer(struct usb_host_interface *alt,
 	return NULL;
 }
 
+<<<<<<< HEAD
 /* compute the minimum bandwidth for the current transfer */
 static u32 which_bandwidth(struct gspca_dev *gspca_dev)
 {
@@ -754,6 +822,55 @@ static int build_isoc_ep_tb(struct gspca_dev *gspca_dev,
 		i--;
 	}
 	return i;
+=======
+/*
+ * look for an input (isoc or bulk) endpoint
+ *
+ * The endpoint is defined by the subdriver.
+ * Use only the first isoc (some Zoran - 0x0572:0x0001 - have two such ep).
+ * This routine may be called many times when the bandwidth is too small
+ * (the bandwidth is checked on urb submit).
+ */
+static struct usb_host_endpoint *get_ep(struct gspca_dev *gspca_dev)
+{
+	struct usb_interface *intf;
+	struct usb_host_endpoint *ep;
+	int xfer, i, ret;
+
+	intf = usb_ifnum_to_if(gspca_dev->dev, gspca_dev->iface);
+	ep = NULL;
+	xfer = gspca_dev->cam.bulk ? USB_ENDPOINT_XFER_BULK
+				   : USB_ENDPOINT_XFER_ISOC;
+	i = gspca_dev->alt;			/* previous alt setting */
+	if (gspca_dev->cam.reverse_alts) {
+		while (++i < gspca_dev->nbalt) {
+			ep = alt_xfer(&intf->altsetting[i], xfer);
+			if (ep)
+				break;
+		}
+	} else {
+		while (--i >= 0) {
+			ep = alt_xfer(&intf->altsetting[i], xfer);
+			if (ep)
+				break;
+		}
+	}
+	if (ep == NULL) {
+		err("no transfer endpoint found");
+		return NULL;
+	}
+	PDEBUG(D_STREAM, "use alt %d ep 0x%02x",
+			i, ep->desc.bEndpointAddress);
+	gspca_dev->alt = i;		/* memorize the current alt setting */
+	if (gspca_dev->nbalt > 1) {
+		ret = usb_set_interface(gspca_dev->dev, gspca_dev->iface, i);
+		if (ret < 0) {
+			err("set alt %d err %d", i, ret);
+			ep = NULL;
+		}
+	}
+	return ep;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -798,7 +915,11 @@ static int create_urbs(struct gspca_dev *gspca_dev,
 	for (n = 0; n < nurbs; n++) {
 		urb = usb_alloc_urb(npkt, GFP_KERNEL);
 		if (!urb) {
+<<<<<<< HEAD
 			pr_err("usb_alloc_urb failed\n");
+=======
+			err("usb_alloc_urb failed");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ENOMEM;
 		}
 		gspca_dev->urb[n] = urb;
@@ -808,7 +929,11 @@ static int create_urbs(struct gspca_dev *gspca_dev,
 						&urb->transfer_dma);
 
 		if (urb->transfer_buffer == NULL) {
+<<<<<<< HEAD
 			pr_err("usb_alloc_coherent failed\n");
+=======
+			err("usb_alloc_coherent failed");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ENOMEM;
 		}
 		urb->dev = gspca_dev->dev;
@@ -819,7 +944,11 @@ static int create_urbs(struct gspca_dev *gspca_dev,
 						    ep->desc.bEndpointAddress);
 			urb->transfer_flags = URB_ISO_ASAP
 					| URB_NO_TRANSFER_DMA_MAP;
+<<<<<<< HEAD
 			urb->interval = 1 << (ep->desc.bInterval - 1);
+=======
+			urb->interval = ep->desc.bInterval;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			urb->complete = isoc_irq;
 			urb->number_of_packets = npkt;
 			for (i = 0; i < npkt; i++) {
@@ -841,11 +970,17 @@ static int create_urbs(struct gspca_dev *gspca_dev,
  */
 static int gspca_init_transfer(struct gspca_dev *gspca_dev)
 {
+<<<<<<< HEAD
 	struct usb_interface *intf;
 	struct usb_host_endpoint *ep;
 	struct urb *urb;
 	struct ep_tb_s ep_tb[MAX_ALT];
 	int n, ret, xfer, alt, alt_idx;
+=======
+	struct usb_host_endpoint *ep;
+	struct urb *urb;
+	int n, ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mutex_lock_interruptible(&gspca_dev->usb_lock))
 		return -ERESTARTSYS;
@@ -863,14 +998,25 @@ static int gspca_init_transfer(struct gspca_dev *gspca_dev)
 
 	gspca_dev->usb_err = 0;
 
+<<<<<<< HEAD
 	/* do the specific subdriver stuff before endpoint selection */
 	intf = usb_ifnum_to_if(gspca_dev->dev, gspca_dev->iface);
 	gspca_dev->alt = gspca_dev->cam.bulk ? intf->num_altsetting : 0;
+=======
+	/* set the higher alternate setting and
+	 * loop until urb submit succeeds */
+	if (gspca_dev->cam.reverse_alts)
+		gspca_dev->alt = 0;
+	else
+		gspca_dev->alt = gspca_dev->nbalt;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (gspca_dev->sd_desc->isoc_init) {
 		ret = gspca_dev->sd_desc->isoc_init(gspca_dev);
 		if (ret < 0)
 			goto unlock;
 	}
+<<<<<<< HEAD
 	xfer = gspca_dev->cam.bulk ? USB_ENDPOINT_XFER_BULK
 				   : USB_ENDPOINT_XFER_ISOC;
 
@@ -922,6 +1068,20 @@ static int gspca_init_transfer(struct gspca_dev *gspca_dev)
 			PDEBUG(D_STREAM, "init transfer alt %d", alt);
 			ret = create_urbs(gspca_dev,
 				alt_xfer(&intf->altsetting[alt], xfer));
+=======
+
+	gspca_input_destroy_urb(gspca_dev);
+	ep = get_ep(gspca_dev);
+	if (ep == NULL) {
+		ret = -EIO;
+		goto out;
+	}
+	for (;;) {
+		if (!gspca_dev->cam.no_urb_create) {
+			PDEBUG(D_STREAM, "init transfer alt %d",
+				gspca_dev->alt);
+			ret = create_urbs(gspca_dev, ep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret < 0) {
 				destroy_urbs(gspca_dev);
 				goto out;
@@ -955,6 +1115,7 @@ static int gspca_init_transfer(struct gspca_dev *gspca_dev)
 				break;
 		}
 		if (ret >= 0)
+<<<<<<< HEAD
 			break;			/* transfer is started */
 
 		/* something when wrong
@@ -963,27 +1124,47 @@ static int gspca_init_transfer(struct gspca_dev *gspca_dev)
 		if (ret != -ENOSPC) {
 			pr_err("usb_submit_urb alt %d err %d\n",
 			       gspca_dev->alt, ret);
+=======
+			break;
+		gspca_stream_off(gspca_dev);
+		if (ret != -ENOSPC) {
+			err("usb_submit_urb alt %d err %d",
+				gspca_dev->alt, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out;
 		}
 
 		/* the bandwidth is not wide enough
 		 * negotiate or try a lower alternate setting */
+<<<<<<< HEAD
 retry:
 		PDEBUG(D_ERR|D_STREAM,
 			"alt %d - bandwidth not wide enough - trying again",
 			alt);
+=======
+		PDEBUG(D_ERR|D_STREAM,
+			"bandwidth not wide enough - trying again");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		msleep(20);	/* wait for kill complete */
 		if (gspca_dev->sd_desc->isoc_nego) {
 			ret = gspca_dev->sd_desc->isoc_nego(gspca_dev);
 			if (ret < 0)
 				goto out;
 		} else {
+<<<<<<< HEAD
 			if (alt_idx <= 0) {
 				pr_err("no transfer endpoint found\n");
 				ret = -EIO;
 				goto out;
 			}
 			gspca_dev->alt = ep_tb[--alt_idx].alt;
+=======
+			ep = get_ep(gspca_dev);
+			if (ep == NULL) {
+				ret = -EIO;
+				goto out;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 out:
@@ -1154,9 +1335,13 @@ static int vidioc_enum_fmt_vid_cap(struct file *file, void  *priv,
 		return -EINVAL;		/* no more format */
 
 	fmtdesc->pixelformat = fmt_tb[index];
+<<<<<<< HEAD
 	if (gspca_dev->cam.cam_mode[i].sizeimage <
 			gspca_dev->cam.cam_mode[i].width *
 				gspca_dev->cam.cam_mode[i].height)
+=======
+	if (gspca_is_compressed(fmt_tb[index]))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fmtdesc->flags = V4L2_FMT_FLAG_COMPRESSED;
 	fmtdesc->description[0] = fmtdesc->pixelformat & 0xff;
 	fmtdesc->description[1] = (fmtdesc->pixelformat >> 8) & 0xff;
@@ -1393,10 +1578,17 @@ static int vidioc_querycap(struct file *file, void  *priv,
 		ret = -ENODEV;
 		goto out;
 	}
+<<<<<<< HEAD
 	strlcpy((char *) cap->driver, gspca_dev->sd_desc->name,
 			sizeof cap->driver);
 	if (gspca_dev->dev->product != NULL) {
 		strlcpy((char *) cap->card, gspca_dev->dev->product,
+=======
+	strncpy((char *) cap->driver, gspca_dev->sd_desc->name,
+			sizeof cap->driver);
+	if (gspca_dev->dev->product != NULL) {
+		strncpy((char *) cap->card, gspca_dev->dev->product,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sizeof cap->card);
 	} else {
 		snprintf((char *) cap->card, sizeof cap->card,
@@ -1406,6 +1598,10 @@ static int vidioc_querycap(struct file *file, void  *priv,
 	}
 	usb_make_path(gspca_dev->dev, (char *) cap->bus_info,
 			sizeof(cap->bus_info));
+<<<<<<< HEAD
+=======
+	cap->version = DRIVER_VERSION_NUMBER;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cap->capabilities = V4L2_CAP_VIDEO_CAPTURE
 			  | V4L2_CAP_STREAMING
 			  | V4L2_CAP_READWRITE;
@@ -1574,7 +1770,11 @@ static int vidioc_enum_input(struct file *file, void *priv,
 		return -EINVAL;
 	input->type = V4L2_INPUT_TYPE_CAMERA;
 	input->status = gspca_dev->cam.input_flags;
+<<<<<<< HEAD
 	strlcpy(input->name, gspca_dev->sd_desc->name,
+=======
+	strncpy(input->name, gspca_dev->sd_desc->name,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sizeof input->name);
 	return 0;
 }
@@ -1723,7 +1923,11 @@ static int vidioc_streamoff(struct file *file, void *priv,
 				enum v4l2_buf_type buf_type)
 {
 	struct gspca_dev *gspca_dev = priv;
+<<<<<<< HEAD
 	int i, ret;
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (buf_type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
 		return -EINVAL;
@@ -1754,8 +1958,11 @@ static int vidioc_streamoff(struct file *file, void *priv,
 	wake_up_interruptible(&gspca_dev->wq);
 
 	/* empty the transfer queues */
+<<<<<<< HEAD
 	for (i = 0; i < gspca_dev->nframes; i++)
 		gspca_dev->frame[i].v4l2_buf.flags &= ~BUF_ALL_FLAGS;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atomic_set(&gspca_dev->fr_q, 0);
 	atomic_set(&gspca_dev->fr_i, 0);
 	gspca_dev->fr_o = 0;
@@ -2309,25 +2516,38 @@ int gspca_dev_probe2(struct usb_interface *intf,
 	struct usb_device *dev = interface_to_usbdev(intf);
 	int ret;
 
+<<<<<<< HEAD
 	pr_info("%s-" GSPCA_VERSION " probing %04x:%04x\n",
 		sd_desc->name, id->idVendor, id->idProduct);
+=======
+	PDEBUG(D_PROBE, "probing %04x:%04x", id->idVendor, id->idProduct);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* create the device */
 	if (dev_size < sizeof *gspca_dev)
 		dev_size = sizeof *gspca_dev;
 	gspca_dev = kzalloc(dev_size, GFP_KERNEL);
 	if (!gspca_dev) {
+<<<<<<< HEAD
 		pr_err("couldn't kzalloc gspca struct\n");
+=======
+		err("couldn't kzalloc gspca struct");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 	gspca_dev->usb_buf = kmalloc(USB_BUF_SZ, GFP_KERNEL);
 	if (!gspca_dev->usb_buf) {
+<<<<<<< HEAD
 		pr_err("out of memory\n");
+=======
+		err("out of memory");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENOMEM;
 		goto out;
 	}
 	gspca_dev->dev = dev;
 	gspca_dev->iface = intf->cur_altsetting->desc.bInterfaceNumber;
+<<<<<<< HEAD
 
 	/* check if any audio device */
 	if (dev->actconfig->desc.bNumInterfaces != 1) {
@@ -2336,6 +2556,17 @@ int gspca_dev_probe2(struct usb_interface *intf,
 
 		for (i = 0; i < dev->actconfig->desc.bNumInterfaces; i++) {
 			intf2 = dev->actconfig->interface[i];
+=======
+	gspca_dev->nbalt = intf->num_altsetting;
+
+	/* check if any audio device */
+	if (dev->config->desc.bNumInterfaces != 1) {
+		int i;
+		struct usb_interface *intf2;
+
+		for (i = 0; i < dev->config->desc.bNumInterfaces; i++) {
+			intf2 = dev->config->interface[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (intf2 != NULL
 			 && intf2->altsetting != NULL
 			 && intf2->altsetting->desc.bInterfaceClass ==
@@ -2378,7 +2609,11 @@ int gspca_dev_probe2(struct usb_interface *intf,
 				  VFL_TYPE_GRABBER,
 				  -1);
 	if (ret < 0) {
+<<<<<<< HEAD
 		pr_err("video_register_device err %d\n", ret);
+=======
+		err("video_register_device err %d", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
@@ -2410,13 +2645,22 @@ int gspca_dev_probe(struct usb_interface *intf,
 
 	/* we don't handle multi-config cameras */
 	if (dev->descriptor.bNumConfigurations != 1) {
+<<<<<<< HEAD
 		pr_err("%04x:%04x too many config\n",
 		       id->idVendor, id->idProduct);
+=======
+		err("%04x:%04x too many config",
+				id->idVendor, id->idProduct);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
 	/* the USB video interface must be the first one */
+<<<<<<< HEAD
 	if (dev->actconfig->desc.bNumInterfaces != 1
+=======
+	if (dev->config->desc.bNumInterfaces != 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 && intf->cur_altsetting->desc.bInterfaceNumber != 0)
 		return -ENODEV;
 
@@ -2594,7 +2838,14 @@ EXPORT_SYMBOL(gspca_auto_gain_n_exposure);
 /* -- module insert / remove -- */
 static int __init gspca_init(void)
 {
+<<<<<<< HEAD
 	pr_info("v" GSPCA_VERSION " registered\n");
+=======
+	info("v%d.%d.%d registered",
+		(DRIVER_VERSION_NUMBER >> 16) & 0xff,
+		(DRIVER_VERSION_NUMBER >> 8) & 0xff,
+		DRIVER_VERSION_NUMBER & 0xff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 static void __exit gspca_exit(void)

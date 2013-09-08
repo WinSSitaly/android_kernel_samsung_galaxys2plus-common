@@ -82,7 +82,11 @@ struct otg_fsm {
 	int loc_sof;
 
 	struct otg_fsm_ops *ops;
+<<<<<<< HEAD
 	struct usb_otg *otg;
+=======
+	struct otg_transceiver *transceiver;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Current usb protocol used: 0:undefine; 1:host; 2:client */
 	int protocol;

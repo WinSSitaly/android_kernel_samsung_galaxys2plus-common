@@ -9,8 +9,13 @@
  * your option) any later version.
  */
 
+<<<<<<< HEAD
 #ifndef LINUX_MMC_SDIO_H
 #define LINUX_MMC_SDIO_H
+=======
+#ifndef MMC_SDIO_H
+#define MMC_SDIO_H
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* SDIO commands                         type  argument     response */
 #define SD_IO_SEND_OP_COND          5 /* bcr  [23:0] OCR         R4  */
@@ -38,7 +43,10 @@
  *      [8:0] Byte/block count
  */
 
+<<<<<<< HEAD
 #define R4_18V_PRESENT (1<<24)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define R4_MEMORY_PRESENT (1 << 27)
 
 /*
@@ -75,18 +83,29 @@
 #define  SDIO_CCCR_REV_1_20	2	/* CCCR/FBR Version 1.20 */
 #define  SDIO_CCCR_REV_3_00	3	/* CCCR/FBR Version 3.00 */
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define  SDIO_SDIO_REV_1_00	0	/* SDIO Spec Version 1.00 */
 #define  SDIO_SDIO_REV_1_10	1	/* SDIO Spec Version 1.10 */
 #define  SDIO_SDIO_REV_1_20	2	/* SDIO Spec Version 1.20 */
 #define  SDIO_SDIO_REV_2_00	3	/* SDIO Spec Version 2.00 */
 #define  SDIO_SDIO_REV_3_00	4	/* SDIO Spec Version 3.00 */
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SDIO_CCCR_SD		0x01
 
 #define  SDIO_SD_REV_1_01	0	/* SD Physical Spec Version 1.01 */
 #define  SDIO_SD_REV_1_10	1	/* SD Physical Spec Version 1.10 */
 #define  SDIO_SD_REV_2_00	2	/* SD Physical Spec Version 2.00 */
+<<<<<<< HEAD
 #define  SDIO_SD_REV_3_00	3	/* SD Physical Spev Version 3.00 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define SDIO_CCCR_IOEx		0x02
 #define SDIO_CCCR_IORx		0x03
@@ -136,6 +155,7 @@
 #define SDIO_CCCR_SPEED		0x13
 
 #define  SDIO_SPEED_SHS		0x01	/* Supports High-Speed mode */
+<<<<<<< HEAD
 #define  SDIO_SPEED_BSS_SHIFT	1
 #define  SDIO_SPEED_BSS_MASK	(7<<SDIO_SPEED_BSS_SHIFT)
 #define  SDIO_SPEED_SDR12	(0<<SDIO_SPEED_BSS_SHIFT)
@@ -161,6 +181,10 @@
 #define  SDIO_DTSx_SET_TYPE_A	(1 << SDIO_DRIVE_DTSx_SHIFT)
 #define  SDIO_DTSx_SET_TYPE_C	(2 << SDIO_DRIVE_DTSx_SHIFT)
 #define  SDIO_DTSx_SET_TYPE_D	(3 << SDIO_DRIVE_DTSx_SHIFT)
+=======
+#define  SDIO_SPEED_EHS		0x02	/* Enable High-Speed mode */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Function Basic Registers (FBR)
  */
@@ -188,4 +212,9 @@
 
 #define SDIO_FBR_BLKSIZE	0x10	/* block size (2 bytes) */
 
+<<<<<<< HEAD
 #endif /* LINUX_MMC_SDIO_H */
+=======
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

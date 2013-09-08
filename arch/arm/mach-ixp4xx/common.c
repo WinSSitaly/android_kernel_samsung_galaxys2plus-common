@@ -17,6 +17,10 @@
 #include <linux/mm.h>
 #include <linux/init.h>
 #include <linux/serial.h>
+<<<<<<< HEAD
+=======
+#include <linux/sched.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/tty.h>
 #include <linux/platform_device.h>
 #include <linux/serial_core.h>
@@ -27,18 +31,27 @@
 #include <linux/clocksource.h>
 #include <linux/clockchips.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/gpio.h>
 
 #include <mach/udc.h>
 #include <mach/hardware.h>
 #include <mach/io.h>
+=======
+
+#include <mach/udc.h>
+#include <mach/hardware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <asm/pgtable.h>
 #include <asm/page.h>
 #include <asm/irq.h>
 #include <asm/sched_clock.h>
+<<<<<<< HEAD
 #include <asm/system_misc.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach/map.h>
 #include <asm/mach/irq.h>
@@ -108,7 +121,11 @@ static signed char irq2gpio[32] = {
 	 7,  8,  9, 10, 11, 12, -1, -1,
 };
 
+<<<<<<< HEAD
 static int ixp4xx_gpio_to_irq(struct gpio_chip *chip, unsigned gpio)
+=======
+int gpio_to_irq(int gpio)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int irq;
 
@@ -118,6 +135,10 @@ static int ixp4xx_gpio_to_irq(struct gpio_chip *chip, unsigned gpio)
 	}
 	return -EINVAL;
 }
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL(gpio_to_irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int irq_to_gpio(unsigned int irq)
 {
@@ -238,12 +259,15 @@ void __init ixp4xx_init_irq(void)
 {
 	int i = 0;
 
+<<<<<<< HEAD
 	/*
 	 * ixp4xx does not implement the XScale PWRMODE register
 	 * so it must not call cpu_do_idle().
 	 */
 	disable_hlt();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Route all sources to IRQ instead of FIQ */
 	*IXP4XX_ICLR = 0x0;
 
@@ -383,6 +407,7 @@ static struct platform_device *ixp46x_devices[] __initdata = {
 unsigned long ixp4xx_exp_bus_size;
 EXPORT_SYMBOL(ixp4xx_exp_bus_size);
 
+<<<<<<< HEAD
 static int ixp4xx_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
 {
 	gpio_line_config(gpio, IXP4XX_GPIO_IN);
@@ -425,14 +450,19 @@ static struct gpio_chip ixp4xx_gpio_chip = {
 	.ngpio			= 16,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init ixp4xx_sys_init(void)
 {
 	ixp4xx_exp_bus_size = SZ_16M;
 
 	platform_add_devices(ixp4xx_devices, ARRAY_SIZE(ixp4xx_devices));
 
+<<<<<<< HEAD
 	gpiochip_add(&ixp4xx_gpio_chip);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cpu_is_ixp46x()) {
 		int region;
 
@@ -454,9 +484,24 @@ void __init ixp4xx_sys_init(void)
 /*
  * sched_clock()
  */
+<<<<<<< HEAD
 static u32 notrace ixp4xx_read_sched_clock(void)
 {
 	return *IXP4XX_OSTS;
+=======
+static DEFINE_CLOCK_DATA(cd);
+
+unsigned long long notrace sched_clock(void)
+{
+	u32 cyc = *IXP4XX_OSTS;
+	return cyc_to_sched_clock(&cd, cyc, (u32)~0);
+}
+
+static void notrace ixp4xx_update_sched_clock(void)
+{
+	u32 cyc = *IXP4XX_OSTS;
+	update_sched_clock(&cd, cyc, (u32)~0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -472,7 +517,11 @@ unsigned long ixp4xx_timer_freq = IXP4XX_TIMER_FREQ;
 EXPORT_SYMBOL(ixp4xx_timer_freq);
 static void __init ixp4xx_clocksource_init(void)
 {
+<<<<<<< HEAD
 	setup_sched_clock(ixp4xx_read_sched_clock, 32, ixp4xx_timer_freq);
+=======
+	init_sched_clock(&cd, ixp4xx_update_sched_clock, 32, ixp4xx_timer_freq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	clocksource_mmio_init(NULL, "OSTS", ixp4xx_timer_freq, 200, 32,
 			ixp4xx_clocksource_read);
@@ -543,6 +592,7 @@ static void __init ixp4xx_clockevent_init(void)
 
 	clockevents_register_device(&clockevent_ixp4xx);
 }
+<<<<<<< HEAD
 
 void ixp4xx_restart(char mode, const char *cmd)
 {
@@ -595,3 +645,5 @@ void __init ixp4xx_init_early(void)
 #else
 void __init ixp4xx_init_early(void) {}
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

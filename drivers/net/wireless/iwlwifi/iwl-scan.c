@@ -2,7 +2,11 @@
  *
  * GPL LICENSE SUMMARY
  *
+<<<<<<< HEAD
  * Copyright(c) 2008 - 2012 Intel Corporation. All rights reserved.
+=======
+ * Copyright(c) 2008 - 2011 Intel Corporation. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -33,9 +37,15 @@
 #include "iwl-eeprom.h"
 #include "iwl-dev.h"
 #include "iwl-core.h"
+<<<<<<< HEAD
 #include "iwl-io.h"
 #include "iwl-agn.h"
 #include "iwl-trans.h"
+=======
+#include "iwl-sta.h"
+#include "iwl-io.h"
+#include "iwl-helpers.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* For active scan, listen ACTIVE_DWELL_TIME (msec) on each channel after
  * sending probe req.  This should be set long enough to hear probe responses
@@ -57,11 +67,19 @@
 static int iwl_send_scan_abort(struct iwl_priv *priv)
 {
 	int ret;
+<<<<<<< HEAD
 	struct iwl_host_cmd cmd = {
 		.id = REPLY_SCAN_ABORT_CMD,
 		.flags = CMD_SYNC | CMD_WANT_SKB,
 	};
 	__le32 *status;
+=======
+	struct iwl_rx_packet *pkt;
+	struct iwl_host_cmd cmd = {
+		.id = REPLY_SCAN_ABORT_CMD,
+		.flags = CMD_WANT_SKB,
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Exit instantly with error when device is not ready
 	 * to receive scan abort command or it does not perform
@@ -69,6 +87,7 @@ static int iwl_send_scan_abort(struct iwl_priv *priv)
 	if (!test_bit(STATUS_READY, &priv->status) ||
 	    !test_bit(STATUS_GEO_CONFIGURED, &priv->status) ||
 	    !test_bit(STATUS_SCAN_HW, &priv->status) ||
+<<<<<<< HEAD
 	    test_bit(STATUS_FW_ERROR, &priv->shrd->status))
 		return -EIO;
 
@@ -78,18 +97,38 @@ static int iwl_send_scan_abort(struct iwl_priv *priv)
 
 	status = (void *)cmd.resp_pkt->data;
 	if (*status != CAN_ABORT_STATUS) {
+=======
+	    test_bit(STATUS_FW_ERROR, &priv->status) ||
+	    test_bit(STATUS_EXIT_PENDING, &priv->status))
+		return -EIO;
+
+	ret = iwl_send_cmd_sync(priv, &cmd);
+	if (ret)
+		return ret;
+
+	pkt = (struct iwl_rx_packet *)cmd.reply_page;
+	if (pkt->u.status != CAN_ABORT_STATUS) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* The scan abort will return 1 for success or
 		 * 2 for "failure".  A failure condition can be
 		 * due to simply not being in an active scan which
 		 * can occur if we send the scan abort before we
 		 * the microcode has notified us that a scan is
 		 * completed. */
+<<<<<<< HEAD
 		IWL_DEBUG_SCAN(priv, "SCAN_ABORT ret %d.\n",
 			       le32_to_cpu(*status));
 		ret = -EIO;
 	}
 
 	iwl_free_resp(&cmd);
+=======
+		IWL_DEBUG_SCAN(priv, "SCAN_ABORT ret %d.\n", pkt->u.status);
+		ret = -EIO;
+	}
+
+	iwl_free_pages(priv, cmd.reply_page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -101,17 +140,21 @@ static void iwl_complete_scan(struct iwl_priv *priv, bool aborted)
 		ieee80211_scan_completed(priv->hw, aborted);
 	}
 
+<<<<<<< HEAD
 	if (priv->scan_type == IWL_SCAN_ROC) {
 		ieee80211_remain_on_channel_expired(priv->hw);
 		priv->hw_roc_channel = NULL;
 		schedule_delayed_work(&priv->hw_roc_disable_work, 10 * HZ);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	priv->scan_type = IWL_SCAN_NORMAL;
 	priv->scan_vif = NULL;
 	priv->scan_request = NULL;
 }
 
+<<<<<<< HEAD
 static void iwl_process_scan_complete(struct iwl_priv *priv)
 {
 	bool aborted;
@@ -171,6 +214,8 @@ out_settings:
 	iwlagn_post_scan(priv);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void iwl_force_scan_end(struct iwl_priv *priv)
 {
 	lockdep_assert_held(&priv->mutex);
@@ -184,7 +229,10 @@ void iwl_force_scan_end(struct iwl_priv *priv)
 	clear_bit(STATUS_SCANNING, &priv->status);
 	clear_bit(STATUS_SCAN_HW, &priv->status);
 	clear_bit(STATUS_SCAN_ABORTING, &priv->status);
+<<<<<<< HEAD
 	clear_bit(STATUS_SCAN_COMPLETE, &priv->status);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iwl_complete_scan(priv, true);
 }
 
@@ -227,7 +275,11 @@ int iwl_scan_cancel(struct iwl_priv *priv)
  * @ms: amount of time to wait (in milliseconds) for scan to abort
  *
  */
+<<<<<<< HEAD
 void iwl_scan_cancel_timeout(struct iwl_priv *priv, unsigned long ms)
+=======
+int iwl_scan_cancel_timeout(struct iwl_priv *priv, unsigned long ms)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long timeout = jiffies + msecs_to_jiffies(ms);
 
@@ -239,6 +291,7 @@ void iwl_scan_cancel_timeout(struct iwl_priv *priv, unsigned long ms)
 
 	while (time_before_eq(jiffies, timeout)) {
 		if (!test_bit(STATUS_SCAN_HW, &priv->status))
+<<<<<<< HEAD
 			goto finished;
 		msleep(20);
 	}
@@ -281,6 +334,35 @@ static int iwl_rx_scan_start_notif(struct iwl_priv *priv,
 	struct iwl_rx_packet *pkt = rxb_addr(rxb);
 	struct iwl_scanstart_notification *notif = (void *)pkt->data;
 
+=======
+			break;
+		msleep(20);
+	}
+
+	return test_bit(STATUS_SCAN_HW, &priv->status);
+}
+
+/* Service response to REPLY_SCAN_CMD (0x80) */
+static void iwl_rx_reply_scan(struct iwl_priv *priv,
+			      struct iwl_rx_mem_buffer *rxb)
+{
+#ifdef CONFIG_IWLWIFI_DEBUG
+	struct iwl_rx_packet *pkt = rxb_addr(rxb);
+	struct iwl_scanreq_notification *notif =
+	    (struct iwl_scanreq_notification *)pkt->u.raw;
+
+	IWL_DEBUG_SCAN(priv, "Scan request status = 0x%x\n", notif->status);
+#endif
+}
+
+/* Service SCAN_START_NOTIFICATION (0x82) */
+static void iwl_rx_scan_start_notif(struct iwl_priv *priv,
+				    struct iwl_rx_mem_buffer *rxb)
+{
+	struct iwl_rx_packet *pkt = rxb_addr(rxb);
+	struct iwl_scanstart_notification *notif =
+	    (struct iwl_scanstart_notification *)pkt->u.raw;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	priv->scan_start_tsf = le32_to_cpu(notif->tsf_low);
 	IWL_DEBUG_SCAN(priv, "Scan start: "
 		       "%d [802.11%s] "
@@ -290,6 +372,7 @@ static int iwl_rx_scan_start_notif(struct iwl_priv *priv,
 		       le32_to_cpu(notif->tsf_high),
 		       le32_to_cpu(notif->tsf_low),
 		       notif->status, notif->beacon_timer);
+<<<<<<< HEAD
 
 	if (priv->scan_type == IWL_SCAN_ROC &&
 	    !priv->hw_roc_start_notified) {
@@ -312,16 +395,35 @@ static int iwl_rx_scan_results_notif(struct iwl_priv *priv,
 	IWL_DEBUG_SCAN(priv, "Scan ch.res: "
 		       "%d [802.11%s] "
 		       "probe status: %u:%u "
+=======
+}
+
+/* Service SCAN_RESULTS_NOTIFICATION (0x83) */
+static void iwl_rx_scan_results_notif(struct iwl_priv *priv,
+				      struct iwl_rx_mem_buffer *rxb)
+{
+#ifdef CONFIG_IWLWIFI_DEBUG
+	struct iwl_rx_packet *pkt = rxb_addr(rxb);
+	struct iwl_scanresults_notification *notif =
+	    (struct iwl_scanresults_notification *)pkt->u.raw;
+
+	IWL_DEBUG_SCAN(priv, "Scan ch.res: "
+		       "%d [802.11%s] "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       "(TSF: 0x%08X:%08X) - %d "
 		       "elapsed=%lu usec\n",
 		       notif->channel,
 		       notif->band ? "bg" : "a",
+<<<<<<< HEAD
 		       notif->probe_status, notif->num_probe_not_sent,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       le32_to_cpu(notif->tsf_high),
 		       le32_to_cpu(notif->tsf_low),
 		       le32_to_cpu(notif->statistics[0]),
 		       le32_to_cpu(notif->tsf_low) - priv->scan_start_tsf);
 #endif
+<<<<<<< HEAD
 	return 0;
 }
 
@@ -332,16 +434,33 @@ static int iwl_rx_scan_complete_notif(struct iwl_priv *priv,
 {
 	struct iwl_rx_packet *pkt = rxb_addr(rxb);
 	struct iwl_scancomplete_notification *scan_notif = (void *)pkt->data;
+=======
+}
+
+/* Service SCAN_COMPLETE_NOTIFICATION (0x84) */
+static void iwl_rx_scan_complete_notif(struct iwl_priv *priv,
+				       struct iwl_rx_mem_buffer *rxb)
+{
+	struct iwl_rx_packet *pkt = rxb_addr(rxb);
+	struct iwl_scancomplete_notification *scan_notif = (void *)pkt->u.raw;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	IWL_DEBUG_SCAN(priv, "Scan complete: %d channels (TSF 0x%08X:%08X) - %d\n",
 		       scan_notif->scanned_channels,
 		       scan_notif->tsf_low,
 		       scan_notif->tsf_high, scan_notif->status);
 
+<<<<<<< HEAD
+=======
+	/* The HW is no longer scanning */
+	clear_bit(STATUS_SCAN_HW, &priv->status);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	IWL_DEBUG_SCAN(priv, "Scan on %sGHz took %dms\n",
 		       (priv->scan_band == IEEE80211_BAND_2GHZ) ? "2.4" : "5.2",
 		       jiffies_to_msecs(jiffies - priv->scan_start));
 
+<<<<<<< HEAD
 	/*
 	 * When aborting, we run the scan completed background work inline
 	 * and the background work must then do nothing. The SCAN_COMPLETE
@@ -352,6 +471,8 @@ static int iwl_rx_scan_complete_notif(struct iwl_priv *priv,
 	 */
 	set_bit(STATUS_SCAN_COMPLETE, &priv->status);
 	clear_bit(STATUS_SCAN_HW, &priv->status);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	queue_work(priv->workqueue, &priv->scan_completed);
 
 	if (priv->iw_mode != NL80211_IFTYPE_ADHOC &&
@@ -372,10 +493,15 @@ static int iwl_rx_scan_complete_notif(struct iwl_priv *priv,
 				IWL_BT_COEX_TRAFFIC_LOAD_NONE;
 		}
 		priv->bt_status = scan_notif->bt_status;
+<<<<<<< HEAD
 		queue_work(priv->workqueue,
 			   &priv->bt_traffic_change_work);
 	}
 	return 0;
+=======
+		queue_work(priv->workqueue, &priv->bt_traffic_change_work);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void iwl_setup_rx_scan_handlers(struct iwl_priv *priv)
@@ -389,8 +515,14 @@ void iwl_setup_rx_scan_handlers(struct iwl_priv *priv)
 					iwl_rx_scan_complete_notif;
 }
 
+<<<<<<< HEAD
 static u16 iwl_get_active_dwell_time(struct iwl_priv *priv,
 				     enum ieee80211_band band, u8 n_probes)
+=======
+inline u16 iwl_get_active_dwell_time(struct iwl_priv *priv,
+				     enum ieee80211_band band,
+				     u8 n_probes)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (band == IEEE80211_BAND_5GHZ)
 		return IWL_ACTIVE_DWELL_TIME_52 +
@@ -400,6 +532,7 @@ static u16 iwl_get_active_dwell_time(struct iwl_priv *priv,
 			IWL_ACTIVE_DWELL_FACTOR_24GHZ * (n_probes + 1);
 }
 
+<<<<<<< HEAD
 static u16 iwl_limit_dwell(struct iwl_priv *priv, u16 dwell_time)
 {
 	struct iwl_rxon_context *ctx;
@@ -444,10 +577,18 @@ static u16 iwl_limit_dwell(struct iwl_priv *priv, u16 dwell_time)
 static u16 iwl_get_passive_dwell_time(struct iwl_priv *priv,
 				      enum ieee80211_band band)
 {
+=======
+u16 iwl_get_passive_dwell_time(struct iwl_priv *priv,
+			       enum ieee80211_band band,
+			       struct ieee80211_vif *vif)
+{
+	struct iwl_rxon_context *ctx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 passive = (band == IEEE80211_BAND_2GHZ) ?
 	    IWL_PASSIVE_DWELL_BASE + IWL_PASSIVE_DWELL_TIME_24 :
 	    IWL_PASSIVE_DWELL_BASE + IWL_PASSIVE_DWELL_TIME_52;
 
+<<<<<<< HEAD
 	return iwl_limit_dwell(priv, passive);
 }
 
@@ -940,11 +1081,37 @@ static int iwlagn_request_scan(struct iwl_priv *priv, struct ieee80211_vif *vif)
 	}
 
 	return ret;
+=======
+	if (iwl_is_any_associated(priv)) {
+		/*
+		 * If we're associated, we clamp the maximum passive
+		 * dwell time to be 98% of the smallest beacon interval
+		 * (minus 2 * channel tune time)
+		 */
+		for_each_context(priv, ctx) {
+			u16 value;
+
+			if (!iwl_is_associated_ctx(ctx))
+				continue;
+			value = ctx->vif ? ctx->vif->bss_conf.beacon_int : 0;
+			if ((value > IWL_PASSIVE_DWELL_BASE) || !value)
+				value = IWL_PASSIVE_DWELL_BASE;
+			value = (value * 98) / 100 - IWL_CHANNEL_TUNE_TIME * 2;
+			passive = min(value, passive);
+		}
+	}
+
+	return passive;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void iwl_init_scan_params(struct iwl_priv *priv)
 {
+<<<<<<< HEAD
 	u8 ant_idx = fls(hw_params(priv).valid_tx_ant) - 1;
+=======
+	u8 ant_idx = fls(priv->hw_params.valid_tx_ant) - 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!priv->scan_tx_ant[IEEE80211_BAND_5GHZ])
 		priv->scan_tx_ant[IEEE80211_BAND_5GHZ] = ant_idx;
 	if (!priv->scan_tx_ant[IEEE80211_BAND_2GHZ])
@@ -960,6 +1127,12 @@ int __must_check iwl_scan_initiate(struct iwl_priv *priv,
 
 	lockdep_assert_held(&priv->mutex);
 
+<<<<<<< HEAD
+=======
+	if (WARN_ON(!priv->cfg->ops->utils->request_scan))
+		return -EOPNOTSUPP;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cancel_delayed_work(&priv->scan_check);
 
 	if (!iwl_is_ready_rf(priv)) {
@@ -980,7 +1153,11 @@ int __must_check iwl_scan_initiate(struct iwl_priv *priv,
 
 	IWL_DEBUG_SCAN(priv, "Starting %sscan...\n",
 			scan_type == IWL_SCAN_NORMAL ? "" :
+<<<<<<< HEAD
 			scan_type == IWL_SCAN_ROC ? "remain-on-channel " :
+=======
+			scan_type == IWL_SCAN_OFFCH_TX ? "offchan TX " :
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"internal short ");
 
 	set_bit(STATUS_SCANNING, &priv->status);
@@ -988,7 +1165,11 @@ int __must_check iwl_scan_initiate(struct iwl_priv *priv,
 	priv->scan_start = jiffies;
 	priv->scan_band = band;
 
+<<<<<<< HEAD
 	ret = iwlagn_request_scan(priv, vif);
+=======
+	ret = priv->cfg->ops->utils->request_scan(priv, vif);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret) {
 		clear_bit(STATUS_SCANNING, &priv->status);
 		priv->scan_type = IWL_SCAN_NORMAL;
@@ -1001,6 +1182,54 @@ int __must_check iwl_scan_initiate(struct iwl_priv *priv,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+int iwl_mac_hw_scan(struct ieee80211_hw *hw,
+		    struct ieee80211_vif *vif,
+		    struct cfg80211_scan_request *req)
+{
+	struct iwl_priv *priv = hw->priv;
+	int ret;
+
+	IWL_DEBUG_MAC80211(priv, "enter\n");
+
+	if (req->n_channels == 0)
+		return -EINVAL;
+
+	mutex_lock(&priv->mutex);
+
+	/*
+	 * If an internal scan is in progress, just set
+	 * up the scan_request as per above.
+	 */
+	if (priv->scan_type != IWL_SCAN_NORMAL) {
+		IWL_DEBUG_SCAN(priv,
+			       "SCAN request during internal scan - defer\n");
+		priv->scan_request = req;
+		priv->scan_vif = vif;
+		ret = 0;
+	} else {
+		priv->scan_request = req;
+		priv->scan_vif = vif;
+		/*
+		 * mac80211 will only ask for one band at a time
+		 * so using channels[0] here is ok
+		 */
+		ret = iwl_scan_initiate(priv, vif, IWL_SCAN_NORMAL,
+					req->channels[0]->band);
+		if (ret) {
+			priv->scan_request = NULL;
+			priv->scan_vif = NULL;
+		}
+	}
+
+	IWL_DEBUG_MAC80211(priv, "leave\n");
+
+	mutex_unlock(&priv->mutex);
+
+	return ret;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * internal short scan, this function should only been called while associated.
@@ -1051,6 +1280,56 @@ static void iwl_bg_scan_check(struct work_struct *data)
 	mutex_unlock(&priv->mutex);
 }
 
+<<<<<<< HEAD
+=======
+/**
+ * iwl_fill_probe_req - fill in all required fields and IE for probe request
+ */
+
+u16 iwl_fill_probe_req(struct iwl_priv *priv, struct ieee80211_mgmt *frame,
+		       const u8 *ta, const u8 *ies, int ie_len, int left)
+{
+	int len = 0;
+	u8 *pos = NULL;
+
+	/* Make sure there is enough space for the probe request,
+	 * two mandatory IEs and the data */
+	left -= 24;
+	if (left < 0)
+		return 0;
+
+	frame->frame_control = cpu_to_le16(IEEE80211_STYPE_PROBE_REQ);
+	memcpy(frame->da, iwl_bcast_addr, ETH_ALEN);
+	memcpy(frame->sa, ta, ETH_ALEN);
+	memcpy(frame->bssid, iwl_bcast_addr, ETH_ALEN);
+	frame->seq_ctrl = 0;
+
+	len += 24;
+
+	/* ...next IE... */
+	pos = &frame->u.probe_req.variable[0];
+
+	/* fill in our indirect SSID IE */
+	left -= 2;
+	if (left < 0)
+		return 0;
+	*pos++ = WLAN_EID_SSID;
+	*pos++ = 0;
+
+	len += 2;
+
+	if (WARN_ON(left < ie_len))
+		return len;
+
+	if (ies && ie_len) {
+		memcpy(pos, ies, ie_len);
+		len += ie_len;
+	}
+
+	return (u16)len;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void iwl_bg_abort_scan(struct work_struct *work)
 {
 	struct iwl_priv *priv = container_of(work, struct iwl_priv, abort_scan);
@@ -1067,10 +1346,75 @@ static void iwl_bg_abort_scan(struct work_struct *work)
 static void iwl_bg_scan_completed(struct work_struct *work)
 {
 	struct iwl_priv *priv =
+<<<<<<< HEAD
 		container_of(work, struct iwl_priv, scan_completed);
 
 	mutex_lock(&priv->mutex);
 	iwl_process_scan_complete(priv);
+=======
+	    container_of(work, struct iwl_priv, scan_completed);
+	bool aborted;
+
+	IWL_DEBUG_SCAN(priv, "Completed scan.\n");
+
+	cancel_delayed_work(&priv->scan_check);
+
+	mutex_lock(&priv->mutex);
+
+	aborted = test_and_clear_bit(STATUS_SCAN_ABORTING, &priv->status);
+	if (aborted)
+		IWL_DEBUG_SCAN(priv, "Aborted scan completed.\n");
+
+	if (!test_and_clear_bit(STATUS_SCANNING, &priv->status)) {
+		IWL_DEBUG_SCAN(priv, "Scan already completed.\n");
+		goto out_settings;
+	}
+
+	if (priv->scan_type == IWL_SCAN_OFFCH_TX && priv->_agn.offchan_tx_skb) {
+		ieee80211_tx_status_irqsafe(priv->hw,
+					    priv->_agn.offchan_tx_skb);
+		priv->_agn.offchan_tx_skb = NULL;
+	}
+
+	if (priv->scan_type != IWL_SCAN_NORMAL && !aborted) {
+		int err;
+
+		/* Check if mac80211 requested scan during our internal scan */
+		if (priv->scan_request == NULL)
+			goto out_complete;
+
+		/* If so request a new scan */
+		err = iwl_scan_initiate(priv, priv->scan_vif, IWL_SCAN_NORMAL,
+					priv->scan_request->channels[0]->band);
+		if (err) {
+			IWL_DEBUG_SCAN(priv,
+				"failed to initiate pending scan: %d\n", err);
+			aborted = true;
+			goto out_complete;
+		}
+
+		goto out;
+	}
+
+out_complete:
+	iwl_complete_scan(priv, aborted);
+
+out_settings:
+	/* Can we still talk to firmware ? */
+	if (!iwl_is_ready_rf(priv))
+		goto out;
+
+	/*
+	 * We do not commit power settings while scan is pending,
+	 * do it now if the settings changed.
+	 */
+	iwl_power_set_mode(priv, &priv->power_data.sleep_cmd_next, false);
+	iwl_set_tx_power(priv, priv->tx_power_next, false);
+
+	priv->cfg->ops->utils->post_scan(priv);
+
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&priv->mutex);
 }
 

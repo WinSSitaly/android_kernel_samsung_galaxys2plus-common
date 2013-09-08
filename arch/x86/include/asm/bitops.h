@@ -380,8 +380,11 @@ static inline unsigned long __fls(unsigned long word)
 	return word;
 }
 
+<<<<<<< HEAD
 #undef ADDR
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef __KERNEL__
 /**
  * ffs - find first set bit in word
@@ -397,6 +400,7 @@ static inline unsigned long __fls(unsigned long word)
 static inline int ffs(int x)
 {
 	int r;
+<<<<<<< HEAD
 
 #ifdef CONFIG_X86_64
 	/*
@@ -416,6 +420,12 @@ static inline int ffs(int x)
 	asm("bsfl %1,%0\n\t"
 	    "cmovzl %2,%0"
 	    : "=&r" (r) : "rm" (x), "r" (-1));
+=======
+#ifdef CONFIG_X86_CMOV
+	asm("bsfl %1,%0\n\t"
+	    "cmovzl %2,%0"
+	    : "=r" (r) : "rm" (x), "r" (-1));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 	asm("bsfl %1,%0\n\t"
 	    "jnz 1f\n\t"
@@ -439,6 +449,7 @@ static inline int ffs(int x)
 static inline int fls(int x)
 {
 	int r;
+<<<<<<< HEAD
 
 #ifdef CONFIG_X86_64
 	/*
@@ -455,6 +466,9 @@ static inline int fls(int x)
 	    : "=r" (r)
 	    : "rm" (x), "0" (tmp));
 #elif defined(CONFIG_X86_CMOV)
+=======
+#ifdef CONFIG_X86_CMOV
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	asm("bsrl %1,%0\n\t"
 	    "cmovzl %2,%0"
 	    : "=&r" (r) : "rm" (x), "rm" (-1));
@@ -466,6 +480,7 @@ static inline int fls(int x)
 #endif
 	return r + 1;
 }
+<<<<<<< HEAD
 
 /**
  * fls64 - find last set bit in a 64-bit word
@@ -495,6 +510,13 @@ static __always_inline int fls64(__u64 x)
 #else
 #include <asm-generic/bitops/fls64.h>
 #endif
+=======
+#endif /* __KERNEL__ */
+
+#undef ADDR
+
+#ifdef __KERNEL__
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm-generic/bitops/find.h>
 
@@ -506,9 +528,24 @@ static __always_inline int fls64(__u64 x)
 
 #include <asm-generic/bitops/const_hweight.h>
 
+<<<<<<< HEAD
 #include <asm-generic/bitops/le.h>
 
 #include <asm-generic/bitops/ext2-atomic-setbit.h>
+=======
+#endif /* __KERNEL__ */
+
+#include <asm-generic/bitops/fls64.h>
+
+#ifdef __KERNEL__
+
+#include <asm-generic/bitops/le.h>
+
+#define ext2_set_bit_atomic(lock, nr, addr)			\
+	test_and_set_bit((nr), (unsigned long *)(addr))
+#define ext2_clear_bit_atomic(lock, nr, addr)			\
+	test_and_clear_bit((nr), (unsigned long *)(addr))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __KERNEL__ */
 #endif /* _ASM_X86_BITOPS_H */

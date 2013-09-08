@@ -26,6 +26,10 @@
 #include <linux/gfp.h>
 #include <linux/jump_label.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/page.h>
 #include <asm/pgtable.h>
 
@@ -44,6 +48,24 @@ void *module_alloc(unsigned long size)
 				-1, __builtin_return_address(0));
 }
 
+<<<<<<< HEAD
+=======
+/* Free memory returned from module_alloc */
+void module_free(struct module *mod, void *module_region)
+{
+	vfree(module_region);
+}
+
+/* We don't need anything special. */
+int module_frob_arch_sections(Elf_Ehdr *hdr,
+			      Elf_Shdr *sechdrs,
+			      char *secstrings,
+			      struct module *mod)
+{
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_X86_32
 int apply_relocate(Elf32_Shdr *sechdrs,
 		   const char *strtab,
@@ -84,6 +106,20 @@ int apply_relocate(Elf32_Shdr *sechdrs,
 	}
 	return 0;
 }
+<<<<<<< HEAD
+=======
+
+int apply_relocate_add(Elf32_Shdr *sechdrs,
+		       const char *strtab,
+		       unsigned int symindex,
+		       unsigned int relsec,
+		       struct module *me)
+{
+	printk(KERN_ERR "module %s: ADD RELOCATION unsupported\n",
+	       me->name);
+	return -ENOEXEC;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else /*X86_64*/
 int apply_relocate_add(Elf64_Shdr *sechdrs,
 		   const char *strtab,
@@ -154,6 +190,20 @@ overflow:
 	       me->name);
 	return -ENOEXEC;
 }
+<<<<<<< HEAD
+=======
+
+int apply_relocate(Elf_Shdr *sechdrs,
+		   const char *strtab,
+		   unsigned int symindex,
+		   unsigned int relsec,
+		   struct module *me)
+{
+	printk(KERN_ERR "non add relocation not supported\n");
+	return -ENOSYS;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 int module_finalize(const Elf_Ehdr *hdr,

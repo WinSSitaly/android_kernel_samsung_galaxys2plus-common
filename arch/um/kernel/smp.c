@@ -76,7 +76,11 @@ static int idle_proc(void *cpup)
 		cpu_relax();
 
 	notify_cpu_starting(cpu);
+<<<<<<< HEAD
 	set_cpu_online(cpu, true);
+=======
+	cpu_set(cpu, cpu_online_map);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default_idle();
 	return 0;
 }
@@ -110,7 +114,12 @@ void smp_prepare_cpus(unsigned int maxcpus)
 	for (i = 0; i < ncpus; ++i)
 		set_cpu_possible(i, true);
 
+<<<<<<< HEAD
 	set_cpu_online(me, true);
+=======
+	cpu_clear(me, cpu_online_map);
+	cpu_set(me, cpu_online_map);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cpu_set(me, cpu_callin_map);
 
 	err = os_pipe(cpu_data[me].ipi_pipe, 1, 1);
@@ -137,13 +146,21 @@ void smp_prepare_cpus(unsigned int maxcpus)
 
 void smp_prepare_boot_cpu(void)
 {
+<<<<<<< HEAD
 	set_cpu_online(smp_processor_id(), true);
+=======
+	cpu_set(smp_processor_id(), cpu_online_map);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int __cpu_up(unsigned int cpu)
 {
 	cpu_set(cpu, smp_commenced_mask);
+<<<<<<< HEAD
 	while (!cpu_online(cpu))
+=======
+	while (!cpu_isset(cpu, cpu_online_map))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mb();
 	return 0;
 }

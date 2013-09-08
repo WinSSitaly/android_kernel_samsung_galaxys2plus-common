@@ -238,6 +238,7 @@ static struct snd_pcm_ops imx_pcm_ops = {
 
 static int ssi_irq = 0;
 
+<<<<<<< HEAD
 static int imx_pcm_fiq_new(struct snd_soc_pcm_runtime *rtd)
 {
 	struct snd_pcm *pcm = rtd->pcm;
@@ -250,13 +251,33 @@ static int imx_pcm_fiq_new(struct snd_soc_pcm_runtime *rtd)
 
 	substream = pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream;
 	if (substream) {
+=======
+static int imx_pcm_fiq_new(struct snd_card *card, struct snd_soc_dai *dai,
+	struct snd_pcm *pcm)
+{
+	int ret;
+
+	ret = imx_pcm_new(card, dai, pcm);
+	if (ret)
+		return ret;
+
+	if (dai->driver->playback.channels_min) {
+		struct snd_pcm_substream *substream =
+			pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct snd_dma_buffer *buf = &substream->dma_buffer;
 
 		imx_ssi_fiq_tx_buffer = (unsigned long)buf->area;
 	}
 
+<<<<<<< HEAD
 	substream = pcm->streams[SNDRV_PCM_STREAM_CAPTURE].substream;
 	if (substream) {
+=======
+	if (dai->driver->capture.channels_min) {
+		struct snd_pcm_substream *substream =
+			pcm->streams[SNDRV_PCM_STREAM_CAPTURE].substream;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct snd_dma_buffer *buf = &substream->dma_buffer;
 
 		imx_ssi_fiq_rx_buffer = (unsigned long)buf->area;
@@ -331,6 +352,20 @@ static struct platform_driver imx_pcm_driver = {
 	.remove = __devexit_p(imx_soc_platform_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(imx_pcm_driver);
 
 MODULE_LICENSE("GPL");
+=======
+static int __init snd_imx_pcm_init(void)
+{
+	return platform_driver_register(&imx_pcm_driver);
+}
+module_init(snd_imx_pcm_init);
+
+static void __exit snd_imx_pcm_exit(void)
+{
+	platform_driver_unregister(&imx_pcm_driver);
+}
+module_exit(snd_imx_pcm_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

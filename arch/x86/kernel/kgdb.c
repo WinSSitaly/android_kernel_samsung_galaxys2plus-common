@@ -48,6 +48,10 @@
 
 #include <asm/debugreg.h>
 #include <asm/apicdef.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/apic.h>
 #include <asm/nmi.h>
 
@@ -68,6 +72,11 @@ struct dbg_reg_def_t dbg_reg_def[DBG_MAX_REG_NUM] =
 	{ "ss", 4, offsetof(struct pt_regs, ss) },
 	{ "ds", 4, offsetof(struct pt_regs, ds) },
 	{ "es", 4, offsetof(struct pt_regs, es) },
+<<<<<<< HEAD
+=======
+	{ "fs", 4, -1 },
+	{ "gs", 4, -1 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 	{ "ax", 8, offsetof(struct pt_regs, ax) },
 	{ "bx", 8, offsetof(struct pt_regs, bx) },
@@ -89,11 +98,15 @@ struct dbg_reg_def_t dbg_reg_def[DBG_MAX_REG_NUM] =
 	{ "flags", 4, offsetof(struct pt_regs, flags) },
 	{ "cs", 4, offsetof(struct pt_regs, cs) },
 	{ "ss", 4, offsetof(struct pt_regs, ss) },
+<<<<<<< HEAD
 	{ "ds", 4, -1 },
 	{ "es", 4, -1 },
 #endif
 	{ "fs", 4, -1 },
 	{ "gs", 4, -1 },
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int dbg_set_reg(int regno, void *mem, struct pt_regs *regs)
@@ -514,15 +527,25 @@ single_step_cont(struct pt_regs *regs, struct die_args *args)
 
 static int was_in_debug_nmi[NR_CPUS];
 
+<<<<<<< HEAD
 static int kgdb_nmi_handler(unsigned int cmd, struct pt_regs *regs)
 {
 	switch (cmd) {
 	case NMI_LOCAL:
+=======
+static int __kgdb_notify(struct die_args *args, unsigned long cmd)
+{
+	struct pt_regs *regs = args->regs;
+
+	switch (cmd) {
+	case DIE_NMI:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (atomic_read(&kgdb_active) != -1) {
 			/* KGDB CPU roundup */
 			kgdb_nmicallback(raw_smp_processor_id(), regs);
 			was_in_debug_nmi[raw_smp_processor_id()] = 1;
 			touch_nmi_watchdog();
+<<<<<<< HEAD
 			return NMI_HANDLED;
 		}
 		break;
@@ -545,6 +568,19 @@ static int __kgdb_notify(struct die_args *args, unsigned long cmd)
 	struct pt_regs *regs = args->regs;
 
 	switch (cmd) {
+=======
+			return NOTIFY_STOP;
+		}
+		return NOTIFY_DONE;
+
+	case DIE_NMIUNKNOWN:
+		if (was_in_debug_nmi[raw_smp_processor_id()]) {
+			was_in_debug_nmi[raw_smp_processor_id()] = 0;
+			return NOTIFY_STOP;
+		}
+		return NOTIFY_DONE;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case DIE_DEBUG:
 		if (atomic_read(&kgdb_cpu_doing_single_step) != -1) {
 			if (user_mode(regs))
@@ -602,6 +638,14 @@ kgdb_notify(struct notifier_block *self, unsigned long cmd, void *ptr)
 
 static struct notifier_block kgdb_notifier = {
 	.notifier_call	= kgdb_notify,
+<<<<<<< HEAD
+=======
+
+	/*
+	 * Lowest-prio notifier priority, we want to be notified last:
+	 */
+	.priority	= NMI_LOCAL_LOW_PRIOR,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -612,6 +656,7 @@ static struct notifier_block kgdb_notifier = {
  */
 int kgdb_arch_init(void)
 {
+<<<<<<< HEAD
 	int retval;
 
 	retval = register_die_notifier(&kgdb_notifier);
@@ -640,6 +685,12 @@ out:
 }
 
 static void kgdb_hw_overflow_handler(struct perf_event *event,
+=======
+	return register_die_notifier(&kgdb_notifier);
+}
+
+static void kgdb_hw_overflow_handler(struct perf_event *event, int nmi,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct perf_sample_data *data, struct pt_regs *regs)
 {
 	struct task_struct *tsk = current;
@@ -669,7 +720,11 @@ void kgdb_arch_late(void)
 	for (i = 0; i < HBP_NUM; i++) {
 		if (breakinfo[i].pev)
 			continue;
+<<<<<<< HEAD
 		breakinfo[i].pev = register_wide_hw_breakpoint(&attr, NULL, NULL);
+=======
+		breakinfo[i].pev = register_wide_hw_breakpoint(&attr, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (IS_ERR((void * __force)breakinfo[i].pev)) {
 			printk(KERN_ERR "kgdb: Could not allocate hw"
 			       "breakpoints\nDisabling the kernel debugger\n");
@@ -704,8 +759,11 @@ void kgdb_arch_exit(void)
 			breakinfo[i].pev = NULL;
 		}
 	}
+<<<<<<< HEAD
 	unregister_nmi_handler(NMI_UNKNOWN, "kgdb");
 	unregister_nmi_handler(NMI_LOCAL, "kgdb");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unregister_die_notifier(&kgdb_notifier);
 }
 

@@ -11,11 +11,17 @@
 
 #include <linux/tracehook.h>
 #include <linux/signal.h>
+<<<<<<< HEAD
 #include <linux/key.h>
 #include <asm/hw_breakpoint.h>
 #include <asm/uaccess.h>
 #include <asm/unistd.h>
 #include <asm/debug.h>
+=======
+#include <asm/hw_breakpoint.h>
+#include <asm/uaccess.h>
+#include <asm/unistd.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "signal.h"
 
@@ -58,7 +64,14 @@ void __user * get_sigframe(struct k_sigaction *ka, struct pt_regs *regs,
 void restore_sigmask(sigset_t *set)
 {
 	sigdelsetmask(set, ~_BLOCKABLE);
+<<<<<<< HEAD
 	set_current_blocked(set);
+=======
+	spin_lock_irq(&current->sighand->siglock);
+	current->blocked = *set;
+	recalc_sigpending();
+	spin_unlock_irq(&current->sighand->siglock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void check_syscall_restart(struct pt_regs *regs, struct k_sigaction *ka,
@@ -112,9 +125,14 @@ static void check_syscall_restart(struct pt_regs *regs, struct k_sigaction *ka,
 	}
 }
 
+<<<<<<< HEAD
 static int do_signal(struct pt_regs *regs)
 {
 	sigset_t *oldset;
+=======
+static int do_signal_pending(sigset_t *oldset, struct pt_regs *regs)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	siginfo_t info;
 	int signr;
 	struct k_sigaction ka;
@@ -123,7 +141,11 @@ static int do_signal(struct pt_regs *regs)
 
 	if (current_thread_info()->local_flags & _TLF_RESTORE_SIGMASK)
 		oldset = &current->saved_sigmask;
+<<<<<<< HEAD
 	else
+=======
+	else if (!oldset)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		oldset = &current->blocked;
 
 	signr = get_signal_to_deliver(&info, &ka, regs, NULL);
@@ -167,7 +189,17 @@ static int do_signal(struct pt_regs *regs)
 
 	regs->trap = 0;
 	if (ret) {
+<<<<<<< HEAD
 		block_sigmask(&ka, signr);
+=======
+		spin_lock_irq(&current->sighand->siglock);
+		sigorsets(&current->blocked, &current->blocked,
+			  &ka.sa.sa_mask);
+		if (!(ka.sa.sa_flags & SA_NODEFER))
+			sigaddset(&current->blocked, signr);
+		recalc_sigpending();
+		spin_unlock_irq(&current->sighand->siglock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * A signal was successfully delivered; the saved sigmask is in
@@ -185,16 +217,26 @@ static int do_signal(struct pt_regs *regs)
 	return ret;
 }
 
+<<<<<<< HEAD
 void do_notify_resume(struct pt_regs *regs, unsigned long thread_info_flags)
 {
 	if (thread_info_flags & _TIF_SIGPENDING)
 		do_signal(regs);
+=======
+void do_signal(struct pt_regs *regs, unsigned long thread_info_flags)
+{
+	if (thread_info_flags & _TIF_SIGPENDING)
+		do_signal_pending(NULL, regs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (thread_info_flags & _TIF_NOTIFY_RESUME) {
 		clear_thread_flag(TIF_NOTIFY_RESUME);
 		tracehook_notify_resume(regs);
+<<<<<<< HEAD
 		if (current->replacement_session_keyring)
 			key_replace_session_keyring();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 

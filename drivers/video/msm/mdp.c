@@ -28,7 +28,10 @@
 #include <mach/msm_iomap.h>
 #include <mach/msm_fb.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "mdp_hw.h"
 
@@ -407,7 +410,12 @@ int mdp_probe(struct platform_device *pdev)
 		goto error_get_irq;
 	}
 
+<<<<<<< HEAD
 	mdp->base = ioremap(resource->start, resource_size(resource));
+=======
+	mdp->base = ioremap(resource->start,
+			    resource->end - resource->start);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (mdp->base == 0) {
 		printk(KERN_ERR "msmfb: cannot allocate mdp regs!\n");
 		ret = -ENOMEM;
@@ -422,11 +430,18 @@ int mdp_probe(struct platform_device *pdev)
 	clk = clk_get(&pdev->dev, "mdp_clk");
 	if (IS_ERR(clk)) {
 		printk(KERN_INFO "mdp: failed to get mdp clk");
+<<<<<<< HEAD
 		ret = PTR_ERR(clk);
 		goto error_get_clk;
 	}
 
 	ret = request_irq(mdp->irq, mdp_isr, 0, "msm_mdp", mdp);
+=======
+		return PTR_ERR(clk);
+	}
+
+	ret = request_irq(mdp->irq, mdp_isr, IRQF_DISABLED, "msm_mdp", mdp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto error_request_irq;
 	disable_irq(mdp->irq);
@@ -497,7 +512,10 @@ int mdp_probe(struct platform_device *pdev)
 error_device_register:
 	free_irq(mdp->irq, mdp);
 error_request_irq:
+<<<<<<< HEAD
 error_get_clk:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iounmap(mdp->base);
 error_get_irq:
 error_ioremap:

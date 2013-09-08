@@ -5,7 +5,11 @@ use strict;
 ## Copyright (c) 1998 Michael Zucchi, All Rights Reserved        ##
 ## Copyright (C) 2000, 1  Tim Waugh <twaugh@redhat.com>          ##
 ## Copyright (C) 2001  Simon Huggins                             ##
+<<<<<<< HEAD
 ## Copyright (C) 2005-2012  Randy Dunlap                         ##
+=======
+## Copyright (C) 2005-2010  Randy Dunlap                         ##
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ## 								 ##
 ## #define enhancements by Armin Kuster <akuster@mvista.com>	 ##
 ## Copyright (c) 2000 MontaVista Software, Inc.			 ##
@@ -1785,7 +1789,10 @@ sub dump_function($$) {
     $prototype =~ s/__devinit +//;
     $prototype =~ s/__init +//;
     $prototype =~ s/__init_or_module +//;
+<<<<<<< HEAD
     $prototype =~ s/__must_check +//;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     $prototype =~ s/^#\s*define\s+//; #ak added
     $prototype =~ s/__attribute__\s*\(\([a-z,]*\)\)//;
 
@@ -2045,9 +2052,12 @@ sub process_file($) {
 
     $section_counter = 0;
     while (<IN>) {
+<<<<<<< HEAD
 	while (s/\\\s*$//) {
 	    $_ .= <IN>;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ($state == 0) {
 	    if (/$doc_start/o) {
 		$state = 1;		# next line is always the function name

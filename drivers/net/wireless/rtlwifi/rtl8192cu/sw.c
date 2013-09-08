@@ -1,6 +1,10 @@
 /******************************************************************************
  *
+<<<<<<< HEAD
  * Copyright(c) 2009-2012  Realtek Corporation. All rights reserved.
+=======
+ * Copyright(c) 2009-2010  Realtek Corporation. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
@@ -41,7 +45,11 @@
 #include "trx.h"
 #include "led.h"
 #include "hw.h"
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/vmalloc.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Georgia		<georgia@realtek.com>");
 MODULE_AUTHOR("Ziv Huang	<ziv_huang@realtek.com>");
@@ -53,6 +61,7 @@ MODULE_FIRMWARE("rtlwifi/rtl8192cufw.bin");
 static int rtl92cu_init_sw_vars(struct ieee80211_hw *hw)
 {
 	struct rtl_priv *rtlpriv = rtl_priv(hw);
+<<<<<<< HEAD
 	int err;
 
 	rtlpriv->dm.dm_initialgain_enable = true;
@@ -75,6 +84,38 @@ static int rtl92cu_init_sw_vars(struct ieee80211_hw *hw)
 				      rtlpriv->cfg->fw_name, rtlpriv->io.dev,
 				      GFP_KERNEL, hw, rtl_fw_cb);
 
+=======
+	const struct firmware *firmware;
+	int err;
+
+	rtlpriv->dm.dm_initialgain_enable = 1;
+	rtlpriv->dm.dm_flag = 0;
+	rtlpriv->dm.disable_framebursting = 0;
+	rtlpriv->dm.thermalvalue = 0;
+	rtlpriv->rtlhal.pfirmware = vmalloc(0x4000);
+	if (!rtlpriv->rtlhal.pfirmware) {
+		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+			 ("Can't alloc buffer for fw.\n"));
+		return 1;
+	}
+	/* request fw */
+	err = request_firmware(&firmware, rtlpriv->cfg->fw_name,
+			rtlpriv->io.dev);
+	if (err) {
+		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+			 ("Failed to request firmware!\n"));
+		return 1;
+	}
+	if (firmware->size > 0x4000) {
+		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+			 ("Firmware is too big!\n"));
+		release_firmware(firmware);
+		return 1;
+	}
+	memcpy(rtlpriv->rtlhal.pfirmware, firmware->data, firmware->size);
+	rtlpriv->rtlhal.fwsize = firmware->size;
+	release_firmware(firmware);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -141,6 +182,7 @@ static struct rtl_hal_ops rtl8192cu_hal_ops = {
 
 static struct rtl_mod_params rtl92cu_mod_params = {
 	.sw_crypto = 0,
+<<<<<<< HEAD
 	.debug = DBG_EMERG,
 };
 
@@ -149,6 +191,10 @@ module_param_named(debug, rtl92cu_mod_params.debug, int, 0444);
 MODULE_PARM_DESC(swenc, "Set to 1 for software crypto (default 0)\n");
 MODULE_PARM_DESC(debug, "Set debug level (0-5) (default 0)");
 
+=======
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct rtl_hal_usbint_cfg rtl92cu_interface_cfg = {
 	/* rx */
 	.in_ep_num = RTL92C_USB_BULK_IN_NUM,
@@ -239,6 +285,7 @@ static struct rtl_hal_cfg rtl92cu_hal_cfg = {
 	.maps[RTL_IMR_ROK] = IMR_ROK,
 	.maps[RTL_IBSS_INT_MASKS] = (IMR_BCNINT | IMR_TBDOK | IMR_TBDER),
 
+<<<<<<< HEAD
 	.maps[RTL_RC_CCK_RATE1M] = DESC92_RATE1M,
 	.maps[RTL_RC_CCK_RATE2M] = DESC92_RATE2M,
 	.maps[RTL_RC_CCK_RATE5_5M] = DESC92_RATE5_5M,
@@ -253,6 +300,22 @@ static struct rtl_hal_cfg rtl92cu_hal_cfg = {
 	.maps[RTL_RC_OFDM_RATE54M] = DESC92_RATE54M,
 	.maps[RTL_RC_HT_RATEMCS7] = DESC92_RATEMCS7,
 	.maps[RTL_RC_HT_RATEMCS15] = DESC92_RATEMCS15,
+=======
+	.maps[RTL_RC_CCK_RATE1M] = DESC92C_RATE1M,
+	.maps[RTL_RC_CCK_RATE2M] = DESC92C_RATE2M,
+	.maps[RTL_RC_CCK_RATE5_5M] = DESC92C_RATE5_5M,
+	.maps[RTL_RC_CCK_RATE11M] = DESC92C_RATE11M,
+	.maps[RTL_RC_OFDM_RATE6M] = DESC92C_RATE6M,
+	.maps[RTL_RC_OFDM_RATE9M] = DESC92C_RATE9M,
+	.maps[RTL_RC_OFDM_RATE12M] = DESC92C_RATE12M,
+	.maps[RTL_RC_OFDM_RATE18M] = DESC92C_RATE18M,
+	.maps[RTL_RC_OFDM_RATE24M] = DESC92C_RATE24M,
+	.maps[RTL_RC_OFDM_RATE36M] = DESC92C_RATE36M,
+	.maps[RTL_RC_OFDM_RATE48M] = DESC92C_RATE48M,
+	.maps[RTL_RC_OFDM_RATE54M] = DESC92C_RATE54M,
+	.maps[RTL_RC_HT_RATEMCS7] = DESC92C_RATEMCS7,
+	.maps[RTL_RC_HT_RATEMCS15] = DESC92C_RATEMCS15,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define USB_VENDER_ID_REALTEK		0x0bda
@@ -265,8 +328,11 @@ static struct usb_device_id rtl8192c_usb_ids[] = {
 	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x8191, rtl92cu_hal_cfg)},
 
 	/****** 8188CU ********/
+<<<<<<< HEAD
 	/* RTL8188CTV */
 	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x018a, rtl92cu_hal_cfg)},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* 8188CE-VAU USB minCard */
 	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x8170, rtl92cu_hal_cfg)},
 	/* 8188cu 1*1 dongle */
@@ -281,28 +347,42 @@ static struct usb_device_id rtl8192c_usb_ids[] = {
 	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x817d, rtl92cu_hal_cfg)},
 	/* 8188CE-VAU USB minCard (b/g mode only) */
 	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x817e, rtl92cu_hal_cfg)},
+<<<<<<< HEAD
 	/* 8188RU in Alfa AWUS036NHR */
 	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x817f, rtl92cu_hal_cfg)},
 	/* RTL8188CUS-VL */
 	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x818a, rtl92cu_hal_cfg)},
 	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x819a, rtl92cu_hal_cfg)},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* 8188 Combo for BC4 */
 	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x8754, rtl92cu_hal_cfg)},
 
 	/****** 8192CU ********/
+<<<<<<< HEAD
 	/* 8192cu 2*2 */
 	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x8178, rtl92cu_hal_cfg)},
+=======
+	/* 8191cu 1*2 */
+	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x8177, rtl92cu_hal_cfg)},
+	/* 8192cu 2*2 */
+	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x817b, rtl92cu_hal_cfg)},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* 8192CE-VAU USB minCard */
 	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x817c, rtl92cu_hal_cfg)},
 
 	/*=== Customer ID ===*/
 	/****** 8188CU ********/
 	{RTL_USB_DEVICE(0x050d, 0x1102, rtl92cu_hal_cfg)}, /*Belkin - Edimax*/
+<<<<<<< HEAD
 	{RTL_USB_DEVICE(0x050d, 0x11f2, rtl92cu_hal_cfg)}, /*Belkin - ISY*/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{RTL_USB_DEVICE(0x06f8, 0xe033, rtl92cu_hal_cfg)}, /*Hercules - Edimax*/
 	{RTL_USB_DEVICE(0x07b8, 0x8188, rtl92cu_hal_cfg)}, /*Abocom - Abocom*/
 	{RTL_USB_DEVICE(0x07b8, 0x8189, rtl92cu_hal_cfg)}, /*Funai - Abocom*/
 	{RTL_USB_DEVICE(0x0846, 0x9041, rtl92cu_hal_cfg)}, /*NetGear WNA1000M*/
+<<<<<<< HEAD
 	{RTL_USB_DEVICE(0x0bda, 0x5088, rtl92cu_hal_cfg)}, /*Thinkware-CC&C*/
 	{RTL_USB_DEVICE(0x0df6, 0x0052, rtl92cu_hal_cfg)}, /*Sitecom - Edimax*/
 	{RTL_USB_DEVICE(0x0df6, 0x005c, rtl92cu_hal_cfg)}, /*Sitecom - Edimax*/
@@ -352,12 +432,35 @@ static struct usb_device_id rtl8192c_usb_ids[] = {
 	{RTL_USB_DEVICE(0x0bda, 0x8186, rtl92cu_hal_cfg)}, /*Realtek 92CE-VAU*/
 	{RTL_USB_DEVICE(0x0df6, 0x0061, rtl92cu_hal_cfg)}, /*Sitecom-Edimax*/
 	{RTL_USB_DEVICE(0x0e66, 0x0019, rtl92cu_hal_cfg)}, /*Hawking-Edimax*/
+=======
+	{RTL_USB_DEVICE(0x0Df6, 0x0052, rtl92cu_hal_cfg)}, /*Sitecom - Edimax*/
+	{RTL_USB_DEVICE(0x0eb0, 0x9071, rtl92cu_hal_cfg)}, /*NO Brand - Etop*/
+	/* HP - Lite-On ,8188CUS Slim Combo */
+	{RTL_USB_DEVICE(0x103c, 0x1629, rtl92cu_hal_cfg)},
+	{RTL_USB_DEVICE(0x2001, 0x3308, rtl92cu_hal_cfg)}, /*D-Link - Alpha*/
+	{RTL_USB_DEVICE(0x2019, 0xab2a, rtl92cu_hal_cfg)}, /*Planex - Abocom*/
+	{RTL_USB_DEVICE(0x2019, 0xed17, rtl92cu_hal_cfg)}, /*PCI - Edimax*/
+	{RTL_USB_DEVICE(0x20f4, 0x648b, rtl92cu_hal_cfg)}, /*TRENDnet - Cameo*/
+	{RTL_USB_DEVICE(0x7392, 0x7811, rtl92cu_hal_cfg)}, /*Edimax - Edimax*/
+	{RTL_USB_DEVICE(0x3358, 0x13d3, rtl92cu_hal_cfg)}, /*Azwave 8188CE-VAU*/
+	/* Russian customer -Azwave (8188CE-VAU  b/g mode only) */
+	{RTL_USB_DEVICE(0x3359, 0x13d3, rtl92cu_hal_cfg)},
+
+	/****** 8192CU ********/
+	{RTL_USB_DEVICE(0x0586, 0x341f, rtl92cu_hal_cfg)}, /*Zyxel -Abocom*/
+	{RTL_USB_DEVICE(0x07aa, 0x0056, rtl92cu_hal_cfg)}, /*ATKK-Gemtek*/
+	{RTL_USB_DEVICE(0x07b8, 0x8178, rtl92cu_hal_cfg)}, /*Funai -Abocom*/
+	{RTL_USB_DEVICE(0x07b8, 0x8178, rtl92cu_hal_cfg)}, /*Abocom -Abocom*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{RTL_USB_DEVICE(0x2001, 0x3307, rtl92cu_hal_cfg)}, /*D-Link-Cameo*/
 	{RTL_USB_DEVICE(0x2001, 0x3309, rtl92cu_hal_cfg)}, /*D-Link-Alpha*/
 	{RTL_USB_DEVICE(0x2001, 0x330a, rtl92cu_hal_cfg)}, /*D-Link-Alpha*/
 	{RTL_USB_DEVICE(0x2019, 0xab2b, rtl92cu_hal_cfg)}, /*Planex -Abocom*/
+<<<<<<< HEAD
 	{RTL_USB_DEVICE(0x20f4, 0x624d, rtl92cu_hal_cfg)}, /*TRENDNet*/
 	{RTL_USB_DEVICE(0x2357, 0x0100, rtl92cu_hal_cfg)}, /*TP-Link WN8200ND*/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{RTL_USB_DEVICE(0x7392, 0x7822, rtl92cu_hal_cfg)}, /*Edimax -Edimax*/
 	{}
 };
@@ -380,4 +483,19 @@ static struct usb_driver rtl8192cu_driver = {
 #endif
 };
 
+<<<<<<< HEAD
 module_usb_driver(rtl8192cu_driver);
+=======
+static int __init rtl8192cu_init(void)
+{
+	return usb_register(&rtl8192cu_driver);
+}
+
+static void __exit rtl8192cu_exit(void)
+{
+	usb_deregister(&rtl8192cu_driver);
+}
+
+module_init(rtl8192cu_init);
+module_exit(rtl8192cu_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

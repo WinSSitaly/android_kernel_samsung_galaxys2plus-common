@@ -4,6 +4,7 @@
 #include <mach/hardware.h>
 #include <mach/pxa2xx-regs.h>
 #include <mach/mfp-pxa25x.h>
+<<<<<<< HEAD
 #include <mach/irqs.h>
 
 extern void __init pxa25x_map_io(void);
@@ -13,5 +14,7 @@ extern void __init pxa26x_init_irq(void);
 #endif
 
 #define pxa25x_handle_irq	icip_handle_irq
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __MACH_PXA25x_H */

@@ -45,8 +45,13 @@ typedef struct tagsPMKIDInfo {
 } PMKIDInfo, *PPMKIDInfo;
 
 typedef struct tagSPMKIDCache {
+<<<<<<< HEAD
 	u32 BSSIDInfoCount;
 	PMKIDInfo BSSIDInfo[MAX_PMKID_CACHE];
+=======
+    unsigned long       BSSIDInfoCount;
+    PMKIDInfo   BSSIDInfo[MAX_PMKID_CACHE];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } SPMKIDCache, *PSPMKIDCache;
 
 

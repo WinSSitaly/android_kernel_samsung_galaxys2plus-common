@@ -71,9 +71,14 @@ static int tda826x_sleep(struct dvb_frontend *fe)
 	return (ret == 1) ? 0 : ret;
 }
 
+<<<<<<< HEAD
 static int tda826x_set_params(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int tda826x_set_params(struct dvb_frontend *fe, struct dvb_frontend_parameters *params)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct tda826x_priv *priv = fe->tuner_priv;
 	int ret;
 	u32 div;
@@ -84,11 +89,19 @@ static int tda826x_set_params(struct dvb_frontend *fe)
 
 	dprintk("%s:\n", __func__);
 
+<<<<<<< HEAD
 	div = (p->frequency + (1000-1)) / 1000;
 
 	/* BW = ((1 + RO) * SR/2 + 5) * 1.3      [SR in MSPS, BW in MHz] */
 	/* with R0 = 0.35 and some transformations: */
 	ksyms = p->symbol_rate / 1000;
+=======
+	div = (params->frequency + (1000-1)) / 1000;
+
+	/* BW = ((1 + RO) * SR/2 + 5) * 1.3      [SR in MSPS, BW in MHz] */
+	/* with R0 = 0.35 and some transformations: */
+	ksyms = params->u.qpsk.symbol_rate / 1000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bandwidth = (878 * ksyms + 6500000) / 1000000 + 1;
 	if (bandwidth < 5)
 		bandwidth = 5;

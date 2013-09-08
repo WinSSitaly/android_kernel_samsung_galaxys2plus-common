@@ -21,7 +21,11 @@
 #include <linux/rcupdate.h>
 #include <linux/sysctl.h>
 #include <linux/rwsem.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef __KERNEL__
 
@@ -155,7 +159,10 @@ struct key {
 #define KEY_FLAG_IN_QUOTA	3	/* set if key consumes quota */
 #define KEY_FLAG_USER_CONSTRUCT	4	/* set if key is being constructed in userspace */
 #define KEY_FLAG_NEGATIVE	5	/* set if key is negative */
+<<<<<<< HEAD
 #define KEY_FLAG_ROOT_CAN_CLEAR	6	/* set if key can be cleared by root without permission */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* the description string
 	 * - this is used to match a key against search criteria
@@ -272,13 +279,20 @@ extern int keyring_add_key(struct key *keyring,
 
 extern struct key *key_lookup(key_serial_t id);
 
+<<<<<<< HEAD
 static inline key_serial_t key_serial(const struct key *key)
+=======
+static inline key_serial_t key_serial(struct key *key)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return key ? key->serial : 0;
 }
 
+<<<<<<< HEAD
 extern void key_set_timeout(struct key *, unsigned);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * key_is_instantiated - Determine if a key has been positively instantiated
  * @key: The key to check.
@@ -296,9 +310,12 @@ static inline bool key_is_instantiated(const struct key *key)
 	(rcu_dereference_protected((KEY)->payload.rcudata,		\
 				   rwsem_is_locked(&((struct key *)(KEY))->sem)))
 
+<<<<<<< HEAD
 #define rcu_assign_keypointer(KEY, PAYLOAD)				\
 	(rcu_assign_pointer((KEY)->payload.rcudata, PAYLOAD))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SYSCTL
 extern ctl_table key_sysctls[];
 #endif

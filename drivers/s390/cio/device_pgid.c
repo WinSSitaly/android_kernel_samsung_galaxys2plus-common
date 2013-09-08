@@ -234,7 +234,11 @@ static int pgid_cmp(struct pgid *p1, struct pgid *p2)
  * Determine pathgroup state from PGID data.
  */
 static void pgid_analyze(struct ccw_device *cdev, struct pgid **p,
+<<<<<<< HEAD
 			 int *mismatch, u8 *reserved, u8 *reset)
+=======
+			 int *mismatch, int *reserved, u8 *reset)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct pgid *pgid = &cdev->private->pgid[0];
 	struct pgid *first = NULL;
@@ -248,7 +252,11 @@ static void pgid_analyze(struct ccw_device *cdev, struct pgid **p,
 		if ((cdev->private->pgid_valid_mask & lpm) == 0)
 			continue;
 		if (pgid->inf.ps.state2 == SNID_STATE2_RESVD_ELSE)
+<<<<<<< HEAD
 			*reserved |= lpm;
+=======
+			*reserved = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (pgid_is_reset(pgid)) {
 			*reset |= lpm;
 			continue;
@@ -316,14 +324,22 @@ static void snid_done(struct ccw_device *cdev, int rc)
 	struct subchannel *sch = to_subchannel(cdev->dev.parent);
 	struct pgid *pgid;
 	int mismatch = 0;
+<<<<<<< HEAD
 	u8 reserved = 0;
+=======
+	int reserved = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 reset = 0;
 	u8 donepm;
 
 	if (rc)
 		goto out;
 	pgid_analyze(cdev, &pgid, &mismatch, &reserved, &reset);
+<<<<<<< HEAD
 	if (reserved == cdev->private->pgid_valid_mask)
+=======
+	if (reserved)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -EUSERS;
 	else if (mismatch)
 		rc = -EOPNOTSUPP;
@@ -336,7 +352,11 @@ static void snid_done(struct ccw_device *cdev, int rc)
 	}
 out:
 	CIO_MSG_EVENT(2, "snid: device 0.%x.%04x: rc=%d pvm=%02x vpm=%02x "
+<<<<<<< HEAD
 		      "todo=%02x mism=%d rsvd=%02x reset=%02x\n", id->ssid,
+=======
+		      "todo=%02x mism=%d rsvd=%d reset=%02x\n", id->ssid,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      id->devno, rc, cdev->private->pgid_valid_mask, sch->vpm,
 		      cdev->private->pgid_todo_mask, mismatch, reserved, reset);
 	switch (rc) {

@@ -36,7 +36,11 @@ static int hvc_udbg_put(uint32_t vtermno, const char *buf, int count)
 {
 	int i;
 
+<<<<<<< HEAD
 	for (i = 0; i < count && udbg_putc; i++)
+=======
+	for (i = 0; i < count; i++)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		udbg_putc(buf[i]);
 
 	return i;
@@ -67,12 +71,18 @@ static int __init hvc_udbg_init(void)
 {
 	struct hvc_struct *hp;
 
+<<<<<<< HEAD
 	if (!udbg_putc)
 		return -ENODEV;
 
 	BUG_ON(hvc_udbg_dev);
 
 	hp = hvc_alloc(0, 0, &hvc_udbg_ops, 16);
+=======
+	BUG_ON(hvc_udbg_dev);
+
+	hp = hvc_alloc(0, NO_IRQ, &hvc_udbg_ops, 16);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(hp))
 		return PTR_ERR(hp);
 
@@ -91,9 +101,12 @@ module_exit(hvc_udbg_exit);
 
 static int __init hvc_udbg_console_init(void)
 {
+<<<<<<< HEAD
 	if (!udbg_putc)
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hvc_instantiate(0, 0, &hvc_udbg_ops);
 	add_preferred_console("hvc", 0, NULL);
 

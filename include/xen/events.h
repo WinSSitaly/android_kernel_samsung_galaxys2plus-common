@@ -37,6 +37,7 @@ int bind_interdomain_evtchn_to_irqhandler(unsigned int remote_domain,
  */
 void unbind_from_irqhandler(unsigned int irq, void *dev_id);
 
+<<<<<<< HEAD
 /*
  * Allow extra references to event channels exposed to userspace by evtchn
  */
@@ -44,6 +45,8 @@ int evtchn_make_refcounted(unsigned int evtchn);
 int evtchn_get(unsigned int evtchn);
 void evtchn_put(unsigned int evtchn);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void xen_send_IPI_one(unsigned int cpu, enum ipi_vector vector);
 int resend_irq_on_evtchn(unsigned int irq);
 void rebind_evtchn_irq(int evtchn, int irq);
@@ -81,6 +84,11 @@ int xen_set_callback_via(uint64_t via);
 void xen_evtchn_do_upcall(struct pt_regs *regs);
 void xen_hvm_evtchn_do_upcall(void);
 
+<<<<<<< HEAD
+=======
+/* Allocate a pirq for a physical interrupt, given a gsi. */
+int xen_allocate_pirq_gsi(unsigned gsi);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Bind a pirq for a physical interrupt to an irq. */
 int xen_bind_pirq_gsi_to_irq(unsigned gsi,
 			     unsigned pirq, int shareable, char *name);
@@ -103,9 +111,12 @@ int xen_irq_from_pirq(unsigned pirq);
 /* Return the pirq allocated to the irq. */
 int xen_pirq_from_irq(unsigned irq);
 
+<<<<<<< HEAD
 /* Return the irq allocated to the gsi */
 int xen_irq_from_gsi(unsigned gsi);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Determine whether to ignore this IRQ if it is passed to a guest. */
 int xen_test_irq_shared(int irq);
 

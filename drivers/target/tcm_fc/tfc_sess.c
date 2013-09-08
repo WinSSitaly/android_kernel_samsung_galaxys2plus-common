@@ -19,6 +19,10 @@
 
 #include <linux/module.h>
 #include <linux/moduleparam.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <generated/utsrelease.h>
 #include <linux/utsname.h>
 #include <linux/init.h>
@@ -40,10 +44,22 @@
 #include <scsi/libfc.h>
 
 #include <target/target_core_base.h>
+<<<<<<< HEAD
 #include <target/target_core_fabric.h>
 #include <target/target_core_configfs.h>
 #include <target/configfs_macros.h>
 
+=======
+#include <target/target_core_transport.h>
+#include <target/target_core_fabric_ops.h>
+#include <target/target_core_device.h>
+#include <target/target_core_tpg.h>
+#include <target/target_core_configfs.h>
+#include <target/target_core_base.h>
+#include <target/configfs_macros.h>
+
+#include <scsi/libfc.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "tcm_fc.h"
 
 static void ft_sess_delete_all(struct ft_tport *);
@@ -58,8 +74,12 @@ static struct ft_tport *ft_tport_create(struct fc_lport *lport)
 	struct ft_tport *tport;
 	int i;
 
+<<<<<<< HEAD
 	tport = rcu_dereference_protected(lport->prov[FC_TYPE_FCP],
 					  lockdep_is_held(&ft_lport_lock));
+=======
+	tport = rcu_dereference(lport->prov[FC_TYPE_FCP]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (tport && tport->tpg)
 		return tport;
 
@@ -87,6 +107,19 @@ static struct ft_tport *ft_tport_create(struct fc_lport *lport)
 }
 
 /*
+<<<<<<< HEAD
+=======
+ * Free tport via RCU.
+ */
+static void ft_tport_rcu_free(struct rcu_head *rcu)
+{
+	struct ft_tport *tport = container_of(rcu, struct ft_tport, rcu);
+
+	kfree(tport);
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Delete a target local port.
  * Caller holds ft_lport_lock.
  */
@@ -105,7 +138,11 @@ static void ft_tport_delete(struct ft_tport *tport)
 		tpg->tport = NULL;
 		tport->tpg = NULL;
 	}
+<<<<<<< HEAD
 	kfree_rcu(tport, rcu);
+=======
+	call_rcu(&tport->rcu, ft_tport_rcu_free);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -183,13 +220,21 @@ static struct ft_sess *ft_sess_get(struct fc_lport *lport, u32 port_id)
 		if (sess->port_id == port_id) {
 			kref_get(&sess->kref);
 			rcu_read_unlock();
+<<<<<<< HEAD
 			pr_debug("port_id %x found %p\n", port_id, sess);
+=======
+			FT_SESS_DBG("port_id %x found %p\n", port_id, sess);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return sess;
 		}
 	}
 out:
 	rcu_read_unlock();
+<<<<<<< HEAD
 	pr_debug("port_id %x not found\n", port_id);
+=======
+	FT_SESS_DBG("port_id %x not found\n", port_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NULL;
 }
 
@@ -225,7 +270,11 @@ static struct ft_sess *ft_sess_create(struct ft_tport *tport, u32 port_id,
 	hlist_add_head_rcu(&sess->hash, head);
 	tport->sess_count++;
 
+<<<<<<< HEAD
 	pr_debug("port_id %x sess %p\n", port_id, sess);
+=======
+	FT_SESS_DBG("port_id %x sess %p\n", port_id, sess);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	transport_register_session(&tport->tpg->se_tpg, &acl->se_node_acl,
 				   sess->se_sess, sess);
@@ -299,7 +348,11 @@ int ft_sess_shutdown(struct se_session *se_sess)
 {
 	struct ft_sess *sess = se_sess->fabric_sess_ptr;
 
+<<<<<<< HEAD
 	pr_debug("port_id %x\n", sess->port_id);
+=======
+	FT_SESS_DBG("port_id %x\n", sess->port_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
@@ -310,15 +363,27 @@ int ft_sess_shutdown(struct se_session *se_sess)
 void ft_sess_close(struct se_session *se_sess)
 {
 	struct ft_sess *sess = se_sess->fabric_sess_ptr;
+<<<<<<< HEAD
 	u32 port_id;
 
 	mutex_lock(&ft_lport_lock);
+=======
+	struct fc_lport *lport;
+	u32 port_id;
+
+	mutex_lock(&ft_lport_lock);
+	lport = sess->tport->lport;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	port_id = sess->port_id;
 	if (port_id == -1) {
 		mutex_unlock(&ft_lport_lock);
 		return;
 	}
+<<<<<<< HEAD
 	pr_debug("port_id %x\n", port_id);
+=======
+	FT_SESS_DBG("port_id %x\n", port_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ft_sess_unhash(sess);
 	mutex_unlock(&ft_lport_lock);
 	transport_deregister_session_configfs(se_sess);
@@ -327,6 +392,23 @@ void ft_sess_close(struct se_session *se_sess)
 	synchronize_rcu();		/* let transport deregister happen */
 }
 
+<<<<<<< HEAD
+=======
+void ft_sess_stop(struct se_session *se_sess, int sess_sleep, int conn_sleep)
+{
+	struct ft_sess *sess = se_sess->fabric_sess_ptr;
+
+	FT_SESS_DBG("port_id %x\n", sess->port_id);
+}
+
+int ft_sess_logged_in(struct se_session *se_sess)
+{
+	struct ft_sess *sess = se_sess->fabric_sess_ptr;
+
+	return sess->port_id != -1;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u32 ft_sess_get_index(struct se_session *se_sess)
 {
 	struct ft_sess *sess = se_sess->fabric_sess_ptr;
@@ -342,6 +424,14 @@ u32 ft_sess_get_port_name(struct se_session *se_sess,
 	return ft_format_wwn(buf, len, sess->port_name);
 }
 
+<<<<<<< HEAD
+=======
+void ft_sess_set_erl0(struct se_session *se_sess)
+{
+	/* XXX TBD called when out of memory */
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * libfc ops involving sessions.
  */
@@ -356,11 +446,19 @@ static int ft_prli_locked(struct fc_rport_priv *rdata, u32 spp_len,
 
 	tport = ft_tport_create(rdata->local_port);
 	if (!tport)
+<<<<<<< HEAD
 		goto not_target;	/* not a target for this local port */
 
 	acl = ft_acl_get(tport->tpg, rdata);
 	if (!acl)
 		goto not_target;	/* no target for this remote */
+=======
+		return 0;	/* not a target for this local port */
+
+	acl = ft_acl_get(tport->tpg, rdata);
+	if (!acl)
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!rspp)
 		goto fill;
@@ -397,6 +495,7 @@ static int ft_prli_locked(struct fc_rport_priv *rdata, u32 spp_len,
 
 	/*
 	 * OR in our service parameters with other provider (initiator), if any.
+<<<<<<< HEAD
 	 */
 fill:
 	fcp_parm = ntohl(spp->spp_params);
@@ -409,6 +508,14 @@ not_target:
 	fcp_parm &= ~FCP_SPPF_TARG_FCN;
 	spp->spp_params = htonl(fcp_parm);
 	return 0;
+=======
+	 * TBD XXX - indicate RETRY capability?
+	 */
+fill:
+	fcp_parm = ntohl(spp->spp_params);
+	spp->spp_params = htonl(fcp_parm | FCP_SPPF_TARG_FCN);
+	return FC_SPP_RESP_ACK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -428,7 +535,11 @@ static int ft_prli(struct fc_rport_priv *rdata, u32 spp_len,
 	mutex_lock(&ft_lport_lock);
 	ret = ft_prli_locked(rdata, spp_len, rspp, spp);
 	mutex_unlock(&ft_lport_lock);
+<<<<<<< HEAD
 	pr_debug("port_id %x flags %x ret %x\n",
+=======
+	FT_SESS_DBG("port_id %x flags %x ret %x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       rdata->ids.port_id, rspp ? rspp->spp_flags : 0, ret);
 	return ret;
 }
@@ -437,6 +548,10 @@ static void ft_sess_rcu_free(struct rcu_head *rcu)
 {
 	struct ft_sess *sess = container_of(rcu, struct ft_sess, rcu);
 
+<<<<<<< HEAD
+=======
+	transport_deregister_session(sess->se_sess);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(sess);
 }
 
@@ -444,7 +559,10 @@ static void ft_sess_free(struct kref *kref)
 {
 	struct ft_sess *sess = container_of(kref, struct ft_sess, kref);
 
+<<<<<<< HEAD
 	transport_deregister_session(sess->se_sess);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	call_rcu(&sess->rcu, ft_sess_rcu_free);
 }
 
@@ -488,11 +606,19 @@ static void ft_recv(struct fc_lport *lport, struct fc_frame *fp)
 	struct ft_sess *sess;
 	u32 sid = fc_frame_sid(fp);
 
+<<<<<<< HEAD
 	pr_debug("sid %x\n", sid);
 
 	sess = ft_sess_get(lport, sid);
 	if (!sess) {
 		pr_debug("sid %x sess lookup failed\n", sid);
+=======
+	FT_SESS_DBG("sid %x\n", sid);
+
+	sess = ft_sess_get(lport, sid);
+	if (!sess) {
+		FT_SESS_DBG("sid %x sess lookup failed\n", sid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* TBD XXX - if FCP_CMND, send PRLO */
 		fc_frame_free(fp);
 		return;

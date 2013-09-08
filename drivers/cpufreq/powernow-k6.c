@@ -16,7 +16,10 @@
 #include <linux/timex.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
 #include <asm/cpu_device_id.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/msr.h>
 
 #define POWERNOW_IOPORT 0xfff0          /* it doesn't matter where, as long
@@ -211,12 +214,15 @@ static struct cpufreq_driver powernow_k6_driver = {
 	.attr		= powernow_k6_attr,
 };
 
+<<<<<<< HEAD
 static const struct x86_cpu_id powernow_k6_ids[] = {
 	{ X86_VENDOR_AMD, 5, 12 },
 	{ X86_VENDOR_AMD, 5, 13 },
 	{}
 };
 MODULE_DEVICE_TABLE(x86cpu, powernow_k6_ids);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * powernow_k6_init - initializes the k6 PowerNow! CPUFreq driver
@@ -227,7 +233,14 @@ MODULE_DEVICE_TABLE(x86cpu, powernow_k6_ids);
  */
 static int __init powernow_k6_init(void)
 {
+<<<<<<< HEAD
 	if (!x86_match_cpu(powernow_k6_ids))
+=======
+	struct cpuinfo_x86 *c = &cpu_data(0);
+
+	if ((c->x86_vendor != X86_VENDOR_AMD) || (c->x86 != 5) ||
+		((c->x86_model != 12) && (c->x86_model != 13)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 
 	if (!request_region(POWERNOW_IOPORT, 16, "PowerNow!")) {

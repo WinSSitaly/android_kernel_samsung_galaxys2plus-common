@@ -5,7 +5,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,15 +67,24 @@ static void acpi_tb_setup_fadt_registers(void);
 
 typedef struct acpi_fadt_info {
 	char *name;
+<<<<<<< HEAD
 	u16 address64;
 	u16 address32;
 	u16 length;
+=======
+	u8 address64;
+	u8 address32;
+	u8 length;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 default_length;
 	u8 type;
 
 } acpi_fadt_info;
 
+<<<<<<< HEAD
 #define ACPI_FADT_OPTIONAL          0
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ACPI_FADT_REQUIRED          1
 #define ACPI_FADT_SEPARATE_LENGTH   2
 
@@ -88,7 +101,11 @@ static struct acpi_fadt_info fadt_info_table[] = {
 	 ACPI_FADT_OFFSET(pm1b_event_block),
 	 ACPI_FADT_OFFSET(pm1_event_length),
 	 ACPI_PM1_REGISTER_WIDTH * 2,	/* Enable + Status register */
+<<<<<<< HEAD
 	 ACPI_FADT_OPTIONAL},
+=======
+	 0},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	{"Pm1aControlBlock",
 	 ACPI_FADT_OFFSET(xpm1a_control_block),
@@ -102,7 +119,11 @@ static struct acpi_fadt_info fadt_info_table[] = {
 	 ACPI_FADT_OFFSET(pm1b_control_block),
 	 ACPI_FADT_OFFSET(pm1_control_length),
 	 ACPI_PM1_REGISTER_WIDTH,
+<<<<<<< HEAD
 	 ACPI_FADT_OPTIONAL},
+=======
+	 0},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	{"Pm2ControlBlock",
 	 ACPI_FADT_OFFSET(xpm2_control_block),
@@ -140,7 +161,11 @@ static struct acpi_fadt_info fadt_info_table[] = {
 
 typedef struct acpi_fadt_pm_info {
 	struct acpi_generic_address *target;
+<<<<<<< HEAD
 	u16 source;
+=======
+	u8 source;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 register_num;
 
 } acpi_fadt_pm_info;
@@ -254,6 +279,7 @@ void acpi_tb_parse_fadt(u32 table_index)
 	acpi_tb_install_table((acpi_physical_address) acpi_gbl_FADT.Xdsdt,
 			      ACPI_SIG_DSDT, ACPI_TABLE_INDEX_DSDT);
 
+<<<<<<< HEAD
 	/* If Hardware Reduced flag is set, there is no FACS */
 
 	if (!acpi_gbl_reduced_hardware) {
@@ -261,6 +287,10 @@ void acpi_tb_parse_fadt(u32 table_index)
 				      Xfacs, ACPI_SIG_FACS,
 				      ACPI_TABLE_INDEX_FACS);
 	}
+=======
+	acpi_tb_install_table((acpi_physical_address) acpi_gbl_FADT.Xfacs,
+			      ACPI_SIG_FACS, ACPI_TABLE_INDEX_FACS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*******************************************************************************
@@ -283,12 +313,20 @@ void acpi_tb_create_local_fadt(struct acpi_table_header *table, u32 length)
 {
 	/*
 	 * Check if the FADT is larger than the largest table that we expect
+<<<<<<< HEAD
 	 * (the ACPI 5.0 version). If so, truncate the table, and issue
+=======
+	 * (the ACPI 2.0/3.0 version). If so, truncate the table, and issue
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * a warning.
 	 */
 	if (length > sizeof(struct acpi_table_fadt)) {
 		ACPI_WARNING((AE_INFO,
+<<<<<<< HEAD
 			      "FADT (revision %u) is longer than ACPI 5.0 version, "
+=======
+			      "FADT (revision %u) is longer than ACPI 2.0 version, "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      "truncating length %u to %u",
 			      table->revision, length,
 			      (u32)sizeof(struct acpi_table_fadt)));
@@ -303,6 +341,7 @@ void acpi_tb_create_local_fadt(struct acpi_table_header *table, u32 length)
 	ACPI_MEMCPY(&acpi_gbl_FADT, table,
 		    ACPI_MIN(length, sizeof(struct acpi_table_fadt)));
 
+<<<<<<< HEAD
 	/* Take a copy of the Hardware Reduced flag */
 
 	acpi_gbl_reduced_hardware = FALSE;
@@ -310,6 +349,8 @@ void acpi_tb_create_local_fadt(struct acpi_table_header *table, u32 length)
 		acpi_gbl_reduced_hardware = TRUE;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Convert the local copy of the FADT to the common internal format */
 
 	acpi_tb_convert_fadt();
@@ -515,12 +556,15 @@ static void acpi_tb_validate_fadt(void)
 		acpi_gbl_FADT.Xdsdt = (u64) acpi_gbl_FADT.dsdt;
 	}
 
+<<<<<<< HEAD
 	/* If Hardware Reduced flag is set, we are all done */
 
 	if (acpi_gbl_reduced_hardware) {
 		return;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Examine all of the 64-bit extended address fields (X fields) */
 
 	for (i = 0; i < ACPI_FADT_INFO_ENTRIES; i++) {

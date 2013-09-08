@@ -6,7 +6,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +52,10 @@
 #define _COMPONENT          ACPI_HARDWARE
 ACPI_MODULE_NAME("hwacpi")
 
+<<<<<<< HEAD
 #if (!ACPI_REDUCED_HARDWARE)	/* Entire module */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /******************************************************************************
  *
  * FUNCTION:    acpi_hw_set_mode
@@ -167,5 +174,8 @@ u32 acpi_hw_get_mode(void)
 		return_UINT32(ACPI_SYS_MODE_LEGACY);
 	}
 }
+<<<<<<< HEAD
 
 #endif				/* !ACPI_REDUCED_HARDWARE */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -57,7 +57,11 @@
 
 #define SCIC_SDS_MPC_RECONFIGURATION_TIMEOUT    (10)
 #define SCIC_SDS_APC_RECONFIGURATION_TIMEOUT    (10)
+<<<<<<< HEAD
 #define SCIC_SDS_APC_WAIT_LINK_UP_NOTIFICATION  (250)
+=======
+#define SCIC_SDS_APC_WAIT_LINK_UP_NOTIFICATION  (100)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum SCIC_SDS_APC_ACTIVITY {
 	SCIC_SDS_APC_SKIP_PHY,
@@ -466,6 +470,7 @@ sci_apc_agent_validate_phy_configuration(struct isci_host *ihost,
 	return sci_port_configuration_agent_validate_ports(ihost, port_agent);
 }
 
+<<<<<<< HEAD
 /*
  * This routine will restart the automatic port configuration timeout
  * timer for the next time period. This could be caused by either a link
@@ -483,6 +488,8 @@ static void sci_apc_agent_start_timer(
 	sci_mod_timer(&port_agent->timer, timeout);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void sci_apc_agent_configure_ports(struct isci_host *ihost,
 					       struct sci_port_configuration_agent *port_agent,
 					       struct isci_phy *iphy,
@@ -582,8 +589,22 @@ static void sci_apc_agent_configure_ports(struct isci_host *ihost,
 		break;
 
 	case SCIC_SDS_APC_START_TIMER:
+<<<<<<< HEAD
 		sci_apc_agent_start_timer(port_agent,
 					  SCIC_SDS_APC_WAIT_LINK_UP_NOTIFICATION);
+=======
+		/*
+		 * This can occur for either a link down event, or a link
+		 * up event where we cannot yet tell the port to which a
+		 * phy belongs.
+		 */
+		if (port_agent->timer_pending)
+			sci_del_timer(&port_agent->timer);
+
+		port_agent->timer_pending = true;
+		sci_mod_timer(&port_agent->timer,
+			      SCIC_SDS_APC_WAIT_LINK_UP_NOTIFICATION);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case SCIC_SDS_APC_SKIP_PHY:
@@ -615,8 +636,12 @@ static void sci_apc_agent_link_up(struct isci_host *ihost,
 	if (!iport) {
 		/* the phy is not the part of this port */
 		port_agent->phy_ready_mask |= 1 << phy_index;
+<<<<<<< HEAD
 		sci_apc_agent_start_timer(port_agent,
 					  SCIC_SDS_APC_WAIT_LINK_UP_NOTIFICATION);
+=======
+		sci_apc_agent_configure_ports(ihost, port_agent, iphy, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		/* the phy is already the part of the port */
 		u32 port_state = iport->sm.current_state_id;

@@ -13,9 +13,13 @@ fb-objs                           := $(fb-y)
 
 obj-$(CONFIG_VT)		  += console/
 obj-$(CONFIG_LOGO)		  += logo/
+<<<<<<< HEAD
 obj-y				  += backlight/
 
 obj-$(CONFIG_EXYNOS_VIDEO)     += exynos/
+=======
+obj-y				  += backlight/ display/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 obj-$(CONFIG_FB_CFB_FILLRECT)  += cfbfillrect.o
 obj-$(CONFIG_FB_CFB_COPYAREA)  += cfbcopyarea.o
@@ -35,11 +39,17 @@ obj-$(CONFIG_FB_AMIGA)            += amifb.o c2p_planar.o
 obj-$(CONFIG_FB_ARC)              += arcfb.o
 obj-$(CONFIG_FB_CLPS711X)         += clps711xfb.o
 obj-$(CONFIG_FB_CYBER2000)        += cyber2000fb.o
+<<<<<<< HEAD
 obj-$(CONFIG_FB_GRVGA)            += grvga.o
 obj-$(CONFIG_FB_PM2)              += pm2fb.o
 obj-$(CONFIG_FB_PM3)		  += pm3fb.o
 
 obj-$(CONFIG_FB_I740)		  += i740fb.o
+=======
+obj-$(CONFIG_FB_PM2)              += pm2fb.o
+obj-$(CONFIG_FB_PM3)		  += pm3fb.o
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_FB_MATROX)		  += matrox/
 obj-$(CONFIG_FB_RIVA)		  += riva/
 obj-$(CONFIG_FB_NVIDIA)		  += nvidia/
@@ -131,7 +141,10 @@ obj-$(CONFIG_FB_IBM_GXT4500)	  += gxt4500.o
 obj-$(CONFIG_FB_PS3)		  += ps3fb.o
 obj-$(CONFIG_FB_SM501)            += sm501fb.o
 obj-$(CONFIG_FB_UDL)		  += udlfb.o
+<<<<<<< HEAD
 obj-$(CONFIG_FB_SMSCUFX)	  += smscufx.o
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_FB_XILINX)           += xilinxfb.o
 obj-$(CONFIG_SH_MIPI_DSI)	  += sh_mipi_dsi.o
 obj-$(CONFIG_FB_SH_MOBILE_HDMI)	  += sh_mobile_hdmi.o
@@ -161,9 +174,18 @@ obj-$(CONFIG_FB_BFIN_7393)        += bfin_adv7393fb.o
 obj-$(CONFIG_FB_MX3)		  += mx3fb.o
 obj-$(CONFIG_FB_DA8XX)		  += da8xx-fb.o
 obj-$(CONFIG_FB_MXS)		  += mxsfb.o
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_LDI_MDNIE_SUPPORT) += mdnie.o mdnie_tuning.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # the test framebuffer is last
 obj-$(CONFIG_FB_VIRTUAL)          += vfb.o
 
 #video output switch sysfs driver
 obj-$(CONFIG_VIDEO_OUTPUT_CONTROL) += output.o
+<<<<<<< HEAD
+=======
+
+obj-$(CONFIG_FB_BRCM_RHEA) += /broadcom/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

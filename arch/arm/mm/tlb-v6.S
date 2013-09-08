@@ -54,6 +54,10 @@ ENTRY(v6wbi_flush_user_tlb_range)
 	add	r0, r0, #PAGE_SZ
 	cmp	r0, r1
 	blo	1b
+<<<<<<< HEAD
+=======
+	mcr	p15, 0, ip, c7, c5, 6		@ flush BTAC/BTB
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mcr	p15, 0, ip, c7, c10, 4		@ data synchronization barrier
 	mov	pc, lr
 
@@ -82,11 +86,26 @@ ENTRY(v6wbi_flush_kern_tlb_range)
 	add	r0, r0, #PAGE_SZ
 	cmp	r0, r1
 	blo	1b
+<<<<<<< HEAD
 	mcr	p15, 0, r2, c7, c10, 4		@ data synchronization barrier
 	mcr	p15, 0, r2, c7, c5, 4		@ prefetch flush (isb)
+=======
+	mcr	p15, 0, r2, c7, c5, 6		@ flush BTAC/BTB
+	mcr	p15, 0, r2, c7, c10, 4		@ data synchronization barrier
+	mcr	p15, 0, r2, c7, c5, 4		@ prefetch flush
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mov	pc, lr
 
 	__INIT
 
+<<<<<<< HEAD
 	/* define struct cpu_tlb_fns (see <asm/tlbflush.h> and proc-macros.S) */
 	define_tlb_functions v6wbi, v6wbi_tlb_flags
+=======
+	.type	v6wbi_tlb_fns, #object
+ENTRY(v6wbi_tlb_fns)
+	.long	v6wbi_flush_user_tlb_range
+	.long	v6wbi_flush_kern_tlb_range
+	.long	v6wbi_tlb_flags
+	.size	v6wbi_tlb_fns, . - v6wbi_tlb_fns
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

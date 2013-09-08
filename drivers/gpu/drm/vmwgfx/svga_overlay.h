@@ -38,9 +38,15 @@
  * Video formats we support
  */
 
+<<<<<<< HEAD
 #define VMWARE_FOURCC_YV12 0x32315659 /* 'Y' 'V' '1' '2' */
 #define VMWARE_FOURCC_YUY2 0x32595559 /* 'Y' 'U' 'Y' '2' */
 #define VMWARE_FOURCC_UYVY 0x59565955 /* 'U' 'Y' 'V' 'Y' */
+=======
+#define VMWARE_FOURCC_YV12 0x32315659 // 'Y' 'V' '1' '2'
+#define VMWARE_FOURCC_YUY2 0x32595559 // 'Y' 'U' 'Y' '2'
+#define VMWARE_FOURCC_UYVY 0x59565955 // 'U' 'Y' 'V' 'Y'
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef enum {
    SVGA_OVERLAY_FORMAT_INVALID = 0,
@@ -68,7 +74,11 @@ struct SVGAEscapeVideoSetRegs {
       uint32 streamId;
    } header;
 
+<<<<<<< HEAD
    /* May include zero or more items. */
+=======
+   // May include zero or more items.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    struct {
       uint32 registerId;
       uint32 value;
@@ -134,12 +144,21 @@ struct {
  */
 
 static inline bool
+<<<<<<< HEAD
 VMwareVideoGetAttributes(const SVGAOverlayFormat format,    /* IN */
                          uint32 *width,                     /* IN / OUT */
                          uint32 *height,                    /* IN / OUT */
                          uint32 *size,                      /* OUT */
                          uint32 *pitches,                   /* OUT (optional) */
                          uint32 *offsets)                   /* OUT (optional) */
+=======
+VMwareVideoGetAttributes(const SVGAOverlayFormat format,    // IN
+                         uint32 *width,                     // IN / OUT
+                         uint32 *height,                    // IN / OUT
+                         uint32 *size,                      // OUT
+                         uint32 *pitches,                   // OUT (optional)
+                         uint32 *offsets)                   // OUT (optional)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
     int tmp;
 
@@ -198,4 +217,8 @@ VMwareVideoGetAttributes(const SVGAOverlayFormat format,    /* IN */
     return true;
 }
 
+<<<<<<< HEAD
 #endif /* _SVGA_OVERLAY_H_ */
+=======
+#endif // _SVGA_OVERLAY_H_
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

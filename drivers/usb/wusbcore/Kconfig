@@ -5,8 +5,12 @@ config USB_WUSB
 	tristate "Enable Wireless USB extensions (EXPERIMENTAL)"
 	depends on EXPERIMENTAL
 	depends on USB
+<<<<<<< HEAD
 	depends on PCI
 	depends on UWB
+=======
+        select UWB
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         select CRYPTO
         select CRYPTO_BLKCIPHER
         select CRYPTO_CBC

@@ -255,8 +255,11 @@ struct acpi_table_fadt {
 	struct acpi_generic_address xpm_timer_block;	/* 64-bit Extended Power Mgt Timer Ctrl Reg Blk address */
 	struct acpi_generic_address xgpe0_block;	/* 64-bit Extended General Purpose Event 0 Reg Blk address */
 	struct acpi_generic_address xgpe1_block;	/* 64-bit Extended General Purpose Event 1 Reg Blk address */
+<<<<<<< HEAD
 	struct acpi_generic_address sleep_control;	/* 64-bit Sleep Control register */
 	struct acpi_generic_address sleep_status;	/* 64-bit Sleep Status register */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Masks for FADT Boot Architecture Flags (boot_flags) */
@@ -266,7 +269,10 @@ struct acpi_table_fadt {
 #define ACPI_FADT_NO_VGA            (1<<2)	/* 02: [V4] It is not safe to probe for VGA hardware */
 #define ACPI_FADT_NO_MSI            (1<<3)	/* 03: [V4] Message Signaled Interrupts (MSI) must not be enabled */
 #define ACPI_FADT_NO_ASPM           (1<<4)	/* 04: [V4] PCIe ASPM control must not be enabled */
+<<<<<<< HEAD
 #define ACPI_FADT_NO_CMOS_RTC       (1<<5)	/* 05: [V5] No CMOS real-time clock present */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define FADT2_REVISION_ID               3
 
@@ -292,8 +298,11 @@ struct acpi_table_fadt {
 #define ACPI_FADT_REMOTE_POWER_ON   (1<<17)	/* 17: [V4] System is compatible with remote power on (ACPI 3.0) */
 #define ACPI_FADT_APIC_CLUSTER      (1<<18)	/* 18: [V4] All local APICs must use cluster model (ACPI 3.0) */
 #define ACPI_FADT_APIC_PHYSICAL     (1<<19)	/* 19: [V4] All local x_aPICs must use physical dest mode (ACPI 3.0) */
+<<<<<<< HEAD
 #define ACPI_FADT_HW_REDUCED        (1<<20)	/* 20: [V5] ACPI hardware is not implemented (ACPI 5.0) */
 #define ACPI_FADT_LOW_POWER_S0      (1<<21)	/* 21: [V5] S0 power savings are equal or better than S3 (ACPI 5.0) */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Values for preferred_profile (Preferred Power Management Profiles) */
 
@@ -304,6 +313,7 @@ enum acpi_prefered_pm_profiles {
 	PM_WORKSTATION = 3,
 	PM_ENTERPRISE_SERVER = 4,
 	PM_SOHO_SERVER = 5,
+<<<<<<< HEAD
 	PM_APPLIANCE_PC = 6,
 	PM_PERFORMANCE_SERVER = 7,
 	PM_TABLET = 8
@@ -316,11 +326,20 @@ enum acpi_prefered_pm_profiles {
 #define ACPI_X_SLEEP_TYPE_POSITION  0x02
 #define ACPI_X_SLEEP_ENABLE         0x20
 
+=======
+	PM_APPLIANCE_PC = 6
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Reset to default packing */
 
 #pragma pack()
 
+<<<<<<< HEAD
 #define ACPI_FADT_OFFSET(f)             (u16) ACPI_OFFSET (struct acpi_table_fadt, f)
+=======
+#define ACPI_FADT_OFFSET(f)             (u8) ACPI_OFFSET (struct acpi_table_fadt, f)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Internal table-related structures
@@ -356,7 +375,10 @@ struct acpi_table_desc {
 
 #include <acpi/actbl1.h>
 #include <acpi/actbl2.h>
+<<<<<<< HEAD
 #include <acpi/actbl3.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Sizes of the various flavors of FADT. We need to look closely
@@ -366,6 +388,7 @@ struct acpi_table_desc {
  * FADT is the bottom line as to what the version really is.
  *
  * For reference, the values below are as follows:
+<<<<<<< HEAD
  *     FADT V1  size: 0x074
  *     FADT V2  size: 0x084
  *     FADT V3  size: 0x0F4
@@ -376,5 +399,14 @@ struct acpi_table_desc {
 #define ACPI_FADT_V2_SIZE       (u32) (ACPI_FADT_OFFSET (reserved4[0]) + 3)
 #define ACPI_FADT_V3_SIZE       (u32) (ACPI_FADT_OFFSET (sleep_control))
 #define ACPI_FADT_V5_SIZE       (u32) (sizeof (struct acpi_table_fadt))
+=======
+ *     FADT V1  size: 0x74
+ *     FADT V2  size: 0x84
+ *     FADT V3+ size: 0xF4
+ */
+#define ACPI_FADT_V1_SIZE       (u32) (ACPI_FADT_OFFSET (flags) + 4)
+#define ACPI_FADT_V2_SIZE       (u32) (ACPI_FADT_OFFSET (reserved4[0]) + 3)
+#define ACPI_FADT_V3_SIZE       (u32) (sizeof (struct acpi_table_fadt))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif				/* __ACTBL_H__ */

@@ -15,7 +15,11 @@
 
 #include <plat/regs-serial.h>
 
+<<<<<<< HEAD
 	.macro addruart, rp, rv, tmp
+=======
+	.macro addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mov	\rp, #0xE0000000
 		orr	\rp, \rp, #0x00100000
 		ldr	\rp, [\rp, #0x118 ]

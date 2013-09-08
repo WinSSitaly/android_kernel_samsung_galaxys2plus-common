@@ -41,11 +41,14 @@ struct lib80211_crypto_alg {
 static LIST_HEAD(lib80211_crypto_algs);
 static DEFINE_SPINLOCK(lib80211_crypto_lock);
 
+<<<<<<< HEAD
 static void lib80211_crypt_deinit_entries(struct lib80211_crypt_info *info,
 					  int force);
 static void lib80211_crypt_quiescing(struct lib80211_crypt_info *info);
 static void lib80211_crypt_deinit_handler(unsigned long data);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 const char *print_ssid(char *buf, const char *ssid, u8 ssid_len)
 {
 	const char *s = ssid;
@@ -116,8 +119,12 @@ void lib80211_crypt_info_free(struct lib80211_crypt_info *info)
 }
 EXPORT_SYMBOL(lib80211_crypt_info_free);
 
+<<<<<<< HEAD
 static void lib80211_crypt_deinit_entries(struct lib80211_crypt_info *info,
 					  int force)
+=======
+void lib80211_crypt_deinit_entries(struct lib80211_crypt_info *info, int force)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct lib80211_crypt_data *entry, *next;
 	unsigned long flags;
@@ -137,9 +144,16 @@ static void lib80211_crypt_deinit_entries(struct lib80211_crypt_info *info,
 	}
 	spin_unlock_irqrestore(info->lock, flags);
 }
+<<<<<<< HEAD
 
 /* After this, crypt_deinit_list won't accept new members */
 static void lib80211_crypt_quiescing(struct lib80211_crypt_info *info)
+=======
+EXPORT_SYMBOL(lib80211_crypt_deinit_entries);
+
+/* After this, crypt_deinit_list won't accept new members */
+void lib80211_crypt_quiescing(struct lib80211_crypt_info *info)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags;
 
@@ -147,8 +161,14 @@ static void lib80211_crypt_quiescing(struct lib80211_crypt_info *info)
 	info->crypt_quiesced = 1;
 	spin_unlock_irqrestore(info->lock, flags);
 }
+<<<<<<< HEAD
 
 static void lib80211_crypt_deinit_handler(unsigned long data)
+=======
+EXPORT_SYMBOL(lib80211_crypt_quiescing);
+
+void lib80211_crypt_deinit_handler(unsigned long data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct lib80211_crypt_info *info = (struct lib80211_crypt_info *)data;
 	unsigned long flags;
@@ -164,6 +184,10 @@ static void lib80211_crypt_deinit_handler(unsigned long data)
 	}
 	spin_unlock_irqrestore(info->lock, flags);
 }
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL(lib80211_crypt_deinit_handler);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void lib80211_crypt_delayed_deinit(struct lib80211_crypt_info *info,
 				    struct lib80211_crypt_data **crypt)

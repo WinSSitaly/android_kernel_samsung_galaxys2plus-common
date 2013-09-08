@@ -15,7 +15,11 @@ test at least a couple of times in a row for confidence.  [This is necessary,
 because some problems only show up on a second attempt at suspending and
 resuming the system.]  Moreover, hibernating in the "reboot" and "shutdown"
 modes causes the PM core to skip some platform-related callbacks which on ACPI
+<<<<<<< HEAD
 systems might be necessary to make hibernation work.  Thus, if your machine fails
+=======
+systems might be necessary to make hibernation work.  Thus, if you machine fails
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 to hibernate or resume in the "reboot" mode, you should try the "platform" mode:
 
 # echo platform > /sys/power/disk
@@ -173,7 +177,11 @@ kernel messages using the serial console.  This may provide you with some
 information about the reasons of the suspend (resume) failure.  Alternatively,
 it may be possible to use a FireWire port for debugging with firescope
 (ftp://ftp.firstfloor.org/pub/ak/firescope/).  On x86 it is also possible to
+<<<<<<< HEAD
 use the PM_TRACE mechanism documented in Documentation/power/s2ram.txt .
+=======
+use the PM_TRACE mechanism documented in Documentation/s2ram.txt .
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 2. Testing suspend to RAM (STR)
 
@@ -201,6 +209,7 @@ case, you may be able to search for failing drivers by following the procedure
 analogous to the one described in section 1.  If you find some failing drivers,
 you will have to unload them every time before an STR transition (ie. before
 you run s2ram), and please report the problems with them.
+<<<<<<< HEAD
 
 There is a debugfs entry which shows the suspend to RAM statistics. Here is an
 example of its output.
@@ -225,3 +234,5 @@ Field success means the success number of suspend to RAM, and field fail means
 the failure number. Others are the failure number of different steps of suspend
 to RAM. suspend_stats just lists the last 2 failed devices, error number and
 failed step of suspend.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

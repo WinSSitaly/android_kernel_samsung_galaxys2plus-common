@@ -36,9 +36,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
+<<<<<<< HEAD
 
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MODULE_NAME "ov519"
 
 #include <linux/input.h>
@@ -137,7 +140,10 @@ enum sensors {
 	SEN_OV7670,
 	SEN_OV76BE,
 	SEN_OV8610,
+<<<<<<< HEAD
 	SEN_OV9600,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Note this is a bit of a hack, but the w9968cf driver needs the code for all
@@ -344,10 +350,13 @@ static const unsigned ctrl_dis[] = {
 			(1 << EXPOSURE) |
 			(1 << AUTOGAIN) |
 			(1 << FREQ),
+<<<<<<< HEAD
 [SEN_OV9600] =		((1 << NCTRL) - 1)	/* no control */
 			^ ((1 << EXPOSURE)	/* but exposure */
 			 | (1 << AUTOGAIN)),	/* and autogain */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct v4l2_pix_format ov519_vga_mode[] = {
@@ -533,6 +542,7 @@ static const struct v4l2_pix_format ovfx2_ov3610_mode[] = {
 		.colorspace = V4L2_COLORSPACE_SRGB,
 		.priv = 0},
 };
+<<<<<<< HEAD
 static const struct v4l2_pix_format ovfx2_ov9600_mode[] = {
 	{640, 480, V4L2_PIX_FMT_SBGGR8, V4L2_FIELD_NONE,
 		.bytesperline = 640,
@@ -544,6 +554,8 @@ static const struct v4l2_pix_format ovfx2_ov9600_mode[] = {
 		.sizeimage = 1280 * 1024,
 		.colorspace = V4L2_COLORSPACE_SRGB},
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Registers common to OV511 / OV518 */
 #define R51x_FIFO_PSIZE			0x30	/* 2 bytes wide w/ OV518(+) */
@@ -1826,6 +1838,7 @@ static const struct ov_i2c_regvals norm_7660[] = {
 			| OV7670_COM8_AEC},
 	{0xa1, 0xc8}
 };
+<<<<<<< HEAD
 static const struct ov_i2c_regvals norm_9600[] = {
 	{0x12, 0x80},
 	{0x0c, 0x28},
@@ -1842,6 +1855,8 @@ static const struct ov_i2c_regvals norm_9600[] = {
 	{0x01, 0x8e},
 	{0x02, 0x85}
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* 7670. Defaults taken from OmniVision provided data,
 *  as provided by Jonathan Corbet of OLPC		*/
@@ -2174,7 +2189,11 @@ static void reg_w(struct sd *sd, u16 index, u16 value)
 			sd->gspca_dev.usb_buf, 1, 500);
 leave:
 	if (ret < 0) {
+<<<<<<< HEAD
 		pr_err("reg_w %02x failed %d\n", index, ret);
+=======
+		err("reg_w %02x failed %d", index, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sd->gspca_dev.usb_err = ret;
 		return;
 	}
@@ -2213,7 +2232,11 @@ static int reg_r(struct sd *sd, u16 index)
 		PDEBUG(D_USBI, "GET %02x 0000 %04x %02x",
 			req, index, ret);
 	} else {
+<<<<<<< HEAD
 		pr_err("reg_r %02x failed %d\n", index, ret);
+=======
+		err("reg_r %02x failed %d", index, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sd->gspca_dev.usb_err = ret;
 	}
 
@@ -2238,7 +2261,11 @@ static int reg_r8(struct sd *sd,
 	if (ret >= 0) {
 		ret = sd->gspca_dev.usb_buf[0];
 	} else {
+<<<<<<< HEAD
 		pr_err("reg_r8 %02x failed %d\n", index, ret);
+=======
+		err("reg_r8 %02x failed %d", index, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sd->gspca_dev.usb_err = ret;
 	}
 
@@ -2291,7 +2318,11 @@ static void ov518_reg_w32(struct sd *sd, u16 index, u32 value, int n)
 			0, index,
 			sd->gspca_dev.usb_buf, n, 500);
 	if (ret < 0) {
+<<<<<<< HEAD
 		pr_err("reg_w32 %02x failed %d\n", index, ret);
+=======
+		err("reg_w32 %02x failed %d", index, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sd->gspca_dev.usb_err = ret;
 	}
 }
@@ -2435,12 +2466,18 @@ static int ov518_i2c_r(struct sd *sd, u8 reg)
 
 	/* Initiate 2-byte write cycle */
 	reg_w(sd, R518_I2C_CTL, 0x03);
+<<<<<<< HEAD
 	reg_r8(sd, R518_I2C_CTL);
 
 	/* Initiate 2-byte read cycle */
 	reg_w(sd, R518_I2C_CTL, 0x05);
 	reg_r8(sd, R518_I2C_CTL);
 
+=======
+
+	/* Initiate 2-byte read cycle */
+	reg_w(sd, R518_I2C_CTL, 0x05);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	value = reg_r(sd, R51x_I2C_DATA);
 	PDEBUG(D_USBI, "ov518_i2c_r %02x %02x", reg, value);
 	return value;
@@ -2460,7 +2497,11 @@ static void ovfx2_i2c_w(struct sd *sd, u8 reg, u8 value)
 			(u16) value, (u16) reg, NULL, 0, 500);
 
 	if (ret < 0) {
+<<<<<<< HEAD
 		pr_err("ovfx2_i2c_w %02x failed %d\n", reg, ret);
+=======
+		err("ovfx2_i2c_w %02x failed %d", reg, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sd->gspca_dev.usb_err = ret;
 	}
 
@@ -2484,7 +2525,11 @@ static int ovfx2_i2c_r(struct sd *sd, u8 reg)
 		ret = sd->gspca_dev.usb_buf[0];
 		PDEBUG(D_USBI, "ovfx2_i2c_r %02x %02x", reg, ret);
 	} else {
+<<<<<<< HEAD
 		pr_err("ovfx2_i2c_r %02x failed %d\n", reg, ret);
+=======
+		err("ovfx2_i2c_r %02x failed %d", reg, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sd->gspca_dev.usb_err = ret;
 	}
 
@@ -2724,13 +2769,21 @@ static void write_i2c_regvals(struct sd *sd,
  *
  ***************************************************************************/
 
+<<<<<<< HEAD
 /* This initializes the OV2x10 / OV3610 / OV3620 / OV9600 */
+=======
+/* This initializes the OV2x10 / OV3610 / OV3620 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ov_hires_configure(struct sd *sd)
 {
 	int high, low;
 
 	if (sd->bridge != BRIDGE_OVFX2) {
+<<<<<<< HEAD
 		pr_err("error hires sensors only supported with ovfx2\n");
+=======
+		err("error hires sensors only supported with ovfx2");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -2740,6 +2793,7 @@ static void ov_hires_configure(struct sd *sd)
 	high = i2c_r(sd, 0x0a);
 	low = i2c_r(sd, 0x0b);
 	/* info("%x, %x", high, low); */
+<<<<<<< HEAD
 	switch (high) {
 	case 0x96:
 		switch (low) {
@@ -2766,6 +2820,21 @@ static void ov_hires_configure(struct sd *sd)
 		break;
 	}
 	pr_err("Error unknown sensor type: %02x%02x\n", high, low);
+=======
+	if (high == 0x96 && low == 0x40) {
+		PDEBUG(D_PROBE, "Sensor is an OV2610");
+		sd->sensor = SEN_OV2610;
+	} else if (high == 0x96 && low == 0x41) {
+		PDEBUG(D_PROBE, "Sensor is an OV2610AE");
+		sd->sensor = SEN_OV2610AE;
+	} else if (high == 0x36 && (low & 0x0f) == 0x00) {
+		PDEBUG(D_PROBE, "Sensor is an OV3610");
+		sd->sensor = SEN_OV3610;
+	} else {
+		err("Error unknown sensor type: %02x%02x",
+			high, low);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* This initializes the OV8110, OV8610 sensor. The OV8110 uses
@@ -2786,7 +2855,11 @@ static void ov8xx0_configure(struct sd *sd)
 	if ((rc & 3) == 1)
 		sd->sensor = SEN_OV8610;
 	else
+<<<<<<< HEAD
 		pr_err("Unknown image sensor version: %d\n", rc & 3);
+=======
+		err("Unknown image sensor version: %d", rc & 3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* This initializes the OV7610, OV7620, or OV76BE sensor. The OV76BE uses
@@ -2843,8 +2916,13 @@ static void ov7xx0_configure(struct sd *sd)
 		if (high == 0x76) {
 			switch (low) {
 			case 0x30:
+<<<<<<< HEAD
 				pr_err("Sensor is an OV7630/OV7635\n");
 				pr_err("7630 is not supported by this driver\n");
+=======
+				err("Sensor is an OV7630/OV7635");
+				err("7630 is not supported by this driver");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return;
 			case 0x40:
 				PDEBUG(D_PROBE, "Sensor is an OV7645");
@@ -2861,6 +2939,10 @@ static void ov7xx0_configure(struct sd *sd)
 			case 0x60:
 				PDEBUG(D_PROBE, "Sensor is a OV7660");
 				sd->sensor = SEN_OV7660;
+<<<<<<< HEAD
+=======
+				sd->invert_led = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 			default:
 				PDEBUG(D_PROBE, "Unknown sensor: 0x76%x", low);
@@ -2871,7 +2953,11 @@ static void ov7xx0_configure(struct sd *sd)
 			sd->sensor = SEN_OV7620;
 		}
 	} else {
+<<<<<<< HEAD
 		pr_err("Unknown image sensor version: %d\n", rc & 3);
+=======
+		err("Unknown image sensor version: %d", rc & 3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -2894,7 +2980,12 @@ static void ov6xx0_configure(struct sd *sd)
 	switch (rc) {
 	case 0x00:
 		sd->sensor = SEN_OV6630;
+<<<<<<< HEAD
 		pr_warn("WARNING: Sensor is an OV66308. Your camera may have been misdetected in previous driver versions.\n");
+=======
+		warn("WARNING: Sensor is an OV66308. Your camera may have");
+		warn("been misdetected in previous driver versions.");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case 0x01:
 		sd->sensor = SEN_OV6620;
@@ -2910,10 +3001,18 @@ static void ov6xx0_configure(struct sd *sd)
 		break;
 	case 0x90:
 		sd->sensor = SEN_OV6630;
+<<<<<<< HEAD
 		pr_warn("WARNING: Sensor is an OV66307. Your camera may have been misdetected in previous driver versions.\n");
 		break;
 	default:
 		pr_err("FATAL: Unknown sensor version: 0x%02x\n", rc);
+=======
+		warn("WARNING: Sensor is an OV66307. Your camera may have");
+		warn("been misdetected in previous driver versions.");
+		break;
+	default:
+		err("FATAL: Unknown sensor version: 0x%02x", rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -3337,6 +3436,10 @@ static int sd_config(struct gspca_dev *gspca_dev,
 	case BRIDGE_OV519:
 		cam->cam_mode = ov519_vga_mode;
 		cam->nmodes = ARRAY_SIZE(ov519_vga_mode);
+<<<<<<< HEAD
+=======
+		sd->invert_led = !sd->invert_led;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case BRIDGE_OVFX2:
 		cam->cam_mode = ov519_vga_mode;
@@ -3348,6 +3451,10 @@ static int sd_config(struct gspca_dev *gspca_dev,
 	case BRIDGE_W9968CF:
 		cam->cam_mode = w9968cf_vga_mode;
 		cam->nmodes = ARRAY_SIZE(w9968cf_vga_mode);
+<<<<<<< HEAD
+=======
+		cam->reverse_alts = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -3405,7 +3512,11 @@ static int sd_init(struct gspca_dev *gspca_dev)
 	} else if (init_ov_sensor(sd, OV_HIRES_SID) >= 0) {
 		ov_hires_configure(sd);
 	} else {
+<<<<<<< HEAD
 		pr_err("Can't determine sensor slave IDs\n");
+=======
+		err("Can't determine sensor slave IDs");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error;
 	}
 
@@ -3446,10 +3557,13 @@ static int sd_init(struct gspca_dev *gspca_dev)
 			cam->cam_mode = ovfx2_ov3610_mode;
 			cam->nmodes = ARRAY_SIZE(ovfx2_ov3610_mode);
 			break;
+<<<<<<< HEAD
 		case SEN_OV9600:
 			cam->cam_mode = ovfx2_ov9600_mode;
 			cam->nmodes = ARRAY_SIZE(ovfx2_ov9600_mode);
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			if (sd->sif) {
 				cam->cam_mode = ov519_sif_mode;
@@ -3547,12 +3661,15 @@ static int sd_init(struct gspca_dev *gspca_dev)
 	case SEN_OV8610:
 		write_i2c_regvals(sd, norm_8610, ARRAY_SIZE(norm_8610));
 		break;
+<<<<<<< HEAD
 	case SEN_OV9600:
 		write_i2c_regvals(sd, norm_9600, ARRAY_SIZE(norm_9600));
 
 		/* enable autoexpo */
 /*		i2c_w_mask(sd, 0x13, 0x05, 0x05); */
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return gspca_dev->usb_err;
 error:
@@ -3590,7 +3707,11 @@ static void ov511_mode_init_regs(struct sd *sd)
 	intf = usb_ifnum_to_if(sd->gspca_dev.dev, sd->gspca_dev.iface);
 	alt = usb_altnum_to_altsetting(intf, sd->gspca_dev.alt);
 	if (!alt) {
+<<<<<<< HEAD
 		pr_err("Couldn't get altsetting\n");
+=======
+		err("Couldn't get altsetting");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sd->gspca_dev.usb_err = -EIO;
 		return;
 	}
@@ -3683,8 +3804,13 @@ static void ov511_mode_init_regs(struct sd *sd)
 	/* Check if we have enough bandwidth to disable compression */
 	fps = (interlaced ? 60 : 30) / (sd->clockdiv + 1) + 1;
 	needed = fps * sd->gspca_dev.width * sd->gspca_dev.height * 3 / 2;
+<<<<<<< HEAD
 	/* 1000 isoc packets/sec */
 	if (needed > 1000 * packet_size) {
+=======
+	/* 1400 is a conservative estimate of the max nr of isoc packets/sec */
+	if (needed > 1400 * packet_size) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Enable Y and UV quantization and compression */
 		reg_w(sd, R511_COMP_EN, 0x07);
 		reg_w(sd, R511_COMP_LUT_EN, 0x03);
@@ -3713,7 +3839,11 @@ static void ov518_mode_init_regs(struct sd *sd)
 	intf = usb_ifnum_to_if(sd->gspca_dev.dev, sd->gspca_dev.iface);
 	alt = usb_altnum_to_altsetting(intf, sd->gspca_dev.alt);
 	if (!alt) {
+<<<<<<< HEAD
 		pr_err("Couldn't get altsetting\n");
+=======
+		err("Couldn't get altsetting");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sd->gspca_dev.usb_err = -EIO;
 		return;
 	}
@@ -4141,6 +4271,7 @@ static void mode_init_ov_sensor_regs(struct sd *sd)
 		i2c_w_mask(sd, 0x14, qvga ? 0x20 : 0x00, 0x20);
 		i2c_w_mask(sd, 0x12, 0x04, 0x06); /* AWB: 1 Test pattern: 0 */
 		break;
+<<<<<<< HEAD
 	case SEN_OV9600: {
 		const struct ov_i2c_regvals *vals;
 		static const struct ov_i2c_regvals sxga_15[] = {
@@ -4168,6 +4299,8 @@ static void mode_init_ov_sensor_regs(struct sd *sd)
 		write_i2c_regvals(sd, vals, ARRAY_SIZE(sxga_15));
 		return;
 	    }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return;
 	}
@@ -4203,7 +4336,10 @@ static void set_ov_sensor_window(struct sd *sd)
 	case SEN_OV2610AE:
 	case SEN_OV3610:
 	case SEN_OV7670:
+<<<<<<< HEAD
 	case SEN_OV9600:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mode_init_ov_sensor_regs(sd);
 		return;
 	case SEN_OV7660:
@@ -5003,6 +5139,7 @@ static const struct sd_desc sd_desc = {
 /* -- module initialisation -- */
 static const struct usb_device_id device_table[] = {
 	{USB_DEVICE(0x041e, 0x4003), .driver_info = BRIDGE_W9968CF },
+<<<<<<< HEAD
 	{USB_DEVICE(0x041e, 0x4052),
 		.driver_info = BRIDGE_OV519 | BRIDGE_INVERT_LED },
 	{USB_DEVICE(0x041e, 0x405f), .driver_info = BRIDGE_OV519 },
@@ -5021,6 +5158,25 @@ static const struct usb_device_id device_table[] = {
 		.driver_info = BRIDGE_OV519 | BRIDGE_INVERT_LED },
 	{USB_DEVICE(0x05a9, 0x0530),
 		.driver_info = BRIDGE_OV519 | BRIDGE_INVERT_LED },
+=======
+	{USB_DEVICE(0x041e, 0x4052), .driver_info = BRIDGE_OV519 },
+	{USB_DEVICE(0x041e, 0x405f), .driver_info = BRIDGE_OV519 },
+	{USB_DEVICE(0x041e, 0x4060), .driver_info = BRIDGE_OV519 },
+	{USB_DEVICE(0x041e, 0x4061), .driver_info = BRIDGE_OV519 },
+	{USB_DEVICE(0x041e, 0x4064),
+		.driver_info = BRIDGE_OV519 | BRIDGE_INVERT_LED },
+	{USB_DEVICE(0x041e, 0x4067), .driver_info = BRIDGE_OV519 },
+	{USB_DEVICE(0x041e, 0x4068),
+		.driver_info = BRIDGE_OV519 | BRIDGE_INVERT_LED },
+	{USB_DEVICE(0x045e, 0x028c), .driver_info = BRIDGE_OV519 },
+	{USB_DEVICE(0x054c, 0x0154), .driver_info = BRIDGE_OV519 },
+	{USB_DEVICE(0x054c, 0x0155),
+		.driver_info = BRIDGE_OV519 | BRIDGE_INVERT_LED },
+	{USB_DEVICE(0x05a9, 0x0511), .driver_info = BRIDGE_OV511 },
+	{USB_DEVICE(0x05a9, 0x0518), .driver_info = BRIDGE_OV518 },
+	{USB_DEVICE(0x05a9, 0x0519), .driver_info = BRIDGE_OV519 },
+	{USB_DEVICE(0x05a9, 0x0530), .driver_info = BRIDGE_OV519 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{USB_DEVICE(0x05a9, 0x2800), .driver_info = BRIDGE_OVFX2 },
 	{USB_DEVICE(0x05a9, 0x4519), .driver_info = BRIDGE_OV519 },
 	{USB_DEVICE(0x05a9, 0x8519), .driver_info = BRIDGE_OV519 },
@@ -5055,7 +5211,22 @@ static struct usb_driver sd_driver = {
 #endif
 };
 
+<<<<<<< HEAD
 module_usb_driver(sd_driver);
+=======
+/* -- module insert / remove -- */
+static int __init sd_mod_init(void)
+{
+	return usb_register(&sd_driver);
+}
+static void __exit sd_mod_exit(void)
+{
+	usb_deregister(&sd_driver);
+}
+
+module_init(sd_mod_init);
+module_exit(sd_mod_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(frame_rate, int, 0644);
 MODULE_PARM_DESC(frame_rate, "Frame rate (5, 10, 15, 20 or 30 fps)");

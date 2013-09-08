@@ -102,8 +102,11 @@ const struct seq_operations cpuinfo_op = {
 
 /* Set in linux_main */
 unsigned long uml_physmem;
+<<<<<<< HEAD
 EXPORT_SYMBOL(uml_physmem);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 unsigned long uml_reserved; /* Also modified in mem_init */
 unsigned long start_vm;
 unsigned long end_vm;

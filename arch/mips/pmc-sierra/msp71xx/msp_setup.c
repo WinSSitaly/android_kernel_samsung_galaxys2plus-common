@@ -14,7 +14,10 @@
 #include <asm/cacheflush.h>
 #include <asm/r4kcache.h>
 #include <asm/reboot.h>
+<<<<<<< HEAD
 #include <asm/smp-ops.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/time.h>
 
 #include <msp_prom.h>
@@ -209,7 +212,11 @@ void __init prom_init(void)
 	default:
 		/* we don't recognize the machine */
 		mips_machtype  = MACH_UNKNOWN;
+<<<<<<< HEAD
 		panic("***Bogosity factor five***, exiting");
+=======
+		panic("***Bogosity factor five***, exiting\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -229,11 +236,21 @@ void __init prom_init(void)
 	 */
 	msp_serial_setup();
 
+<<<<<<< HEAD
 	if (register_vsmp_smp_ops()) {
 #ifdef CONFIG_MIPS_MT_SMTC
 		register_smp_ops(&msp_smtc_smp_ops);
 #endif
 	}
+=======
+#ifdef CONFIG_MIPS_MT_SMP
+	register_smp_ops(&vsmp_smp_ops);
+#endif
+
+#ifdef CONFIG_MIPS_MT_SMTC
+	register_smp_ops(&msp_smtc_smp_ops);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_PMCTWILED
 	/*

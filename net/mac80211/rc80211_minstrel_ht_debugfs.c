@@ -10,7 +10,10 @@
 #include <linux/skbuff.h>
 #include <linux/debugfs.h>
 #include <linux/ieee80211.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/mac80211.h>
 #include "rc80211_minstrel.h"
 #include "rc80211_minstrel_ht.h"

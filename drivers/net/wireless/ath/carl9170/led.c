@@ -118,7 +118,11 @@ static void carl9170_led_set_brightness(struct led_classdev *led,
 	}
 
 	if (likely(IS_ACCEPTING_CMD(ar) && arl->toggled))
+<<<<<<< HEAD
 		ieee80211_queue_delayed_work(ar->hw, &ar->led_work, HZ / 10);
+=======
+		ieee80211_queue_delayed_work(ar->hw, &ar->led_work, HZ/10);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int carl9170_led_register_led(struct ar9170 *ar, int i, char *name,

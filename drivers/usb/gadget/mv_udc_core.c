@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Copyright (C) 2011 Marvell International Ltd. All rights reserved.
  * Author: Chao Xie <chao.xie@marvell.com>
@@ -9,6 +10,8 @@
  * option) any later version.
  */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/pci.h>
 #include <linux/dma-mapping.h>
@@ -33,7 +36,11 @@
 #include <linux/irq.h>
 #include <linux/platform_device.h>
 #include <linux/clk.h>
+<<<<<<< HEAD
 #include <linux/platform_data/mv_usb.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/unaligned.h>
 
 #include "mv_udc.h"
@@ -56,8 +63,11 @@
 #define LOOPS_USEC		(1 << LOOPS_USEC_SHIFT)
 #define LOOPS(timeout)		((timeout) >> LOOPS_USEC_SHIFT)
 
+<<<<<<< HEAD
 static DECLARE_COMPLETION(release_done);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const char driver_name[] = "mv_udc";
 static const char driver_desc[] = DRIVER_DESC;
 
@@ -66,7 +76,10 @@ static struct mv_udc	*the_controller;
 int mv_usb_otgsc;
 
 static void nuke(struct mv_ep *ep, int status);
+<<<<<<< HEAD
 static void stop_activity(struct mv_udc *udc, struct usb_gadget_driver *driver);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* for endpoint 0 operations */
 static const struct usb_endpoint_descriptor mv_ep0_desc = {
@@ -96,16 +109,26 @@ static void ep0_reset(struct mv_udc *udc)
 			(EP0_MAX_PKT_SIZE << EP_QUEUE_HEAD_MAX_PKT_LEN_POS)
 			| EP_QUEUE_HEAD_IOS;
 
+<<<<<<< HEAD
 		ep->dqh->next_dtd_ptr = EP_QUEUE_HEAD_NEXT_TERMINATE;
 
 		epctrlx = readl(&udc->op_regs->epctrlx[0]);
 		if (i) {	/* TX */
 			epctrlx |= EPCTRL_TX_ENABLE
+=======
+		epctrlx = readl(&udc->op_regs->epctrlx[0]);
+		if (i) {	/* TX */
+			epctrlx |= EPCTRL_TX_ENABLE | EPCTRL_TX_DATA_TOGGLE_RST
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				| (USB_ENDPOINT_XFER_CONTROL
 					<< EPCTRL_TX_EP_TYPE_SHIFT);
 
 		} else {	/* RX */
+<<<<<<< HEAD
 			epctrlx |= EPCTRL_RX_ENABLE
+=======
+			epctrlx |= EPCTRL_RX_ENABLE | EPCTRL_RX_DATA_TOGGLE_RST
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				| (USB_ENDPOINT_XFER_CONTROL
 					<< EPCTRL_RX_EP_TYPE_SHIFT);
 		}
@@ -138,7 +161,10 @@ static int process_ep_req(struct mv_udc *udc, int index,
 	int i, direction;
 	int retval = 0;
 	u32 errors;
+<<<<<<< HEAD
 	u32 bit_pos;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	curr_dqh = &udc->ep_dqh[index];
 	direction = index % 2;
@@ -156,6 +182,7 @@ static int process_ep_req(struct mv_udc *udc, int index,
 
 		errors = curr_dtd->size_ioc_sts & DTD_ERROR_MASK;
 		if (!errors) {
+<<<<<<< HEAD
 			remaining_length =
 				(curr_dtd->size_ioc_sts	& DTD_PACKET_SIZE)
 					>> DTD_LENGTH_BIT_POS;
@@ -170,6 +197,12 @@ static int process_ep_req(struct mv_udc *udc, int index,
 				} else
 					break;
 			}
+=======
+			remaining_length +=
+				(curr_dtd->size_ioc_sts	& DTD_PACKET_SIZE)
+					>> DTD_LENGTH_BIT_POS;
+			actual -= remaining_length;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			dev_info(&udc->dev->dev,
 				"complete_tr error: ep=%d %s: error = 0x%x\n",
@@ -191,6 +224,7 @@ static int process_ep_req(struct mv_udc *udc, int index,
 	if (retval)
 		return retval;
 
+<<<<<<< HEAD
 	if (direction == EP_DIR_OUT)
 		bit_pos = 1 << curr_req->ep->ep_num;
 	else
@@ -205,6 +239,8 @@ static int process_ep_req(struct mv_udc *udc, int index,
 		udelay(1);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	curr_req->req.actual = actual;
 
 	return 0;
@@ -275,12 +311,20 @@ static void done(struct mv_ep *ep, struct mv_req *req, int status)
 
 static int queue_dtd(struct mv_ep *ep, struct mv_req *req)
 {
+<<<<<<< HEAD
 	struct mv_udc *udc;
 	struct mv_dqh *dqh;
 	u32 bit_pos, direction;
 	u32 usbcmd, epstatus;
 	unsigned int loops;
 	int retval = 0;
+=======
+	u32 tmp, epstatus, bit_pos, direction;
+	struct mv_udc *udc;
+	struct mv_dqh *dqh;
+	unsigned int loops;
+	int readsafe, retval = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	udc = ep->udc;
 	direction = ep_dir(ep);
@@ -293,6 +337,7 @@ static int queue_dtd(struct mv_ep *ep, struct mv_req *req)
 		lastreq = list_entry(ep->queue.prev, struct mv_req, queue);
 		lastreq->tail->dtd_next =
 			req->head->td_dma & EP_QUEUE_HEAD_NEXT_POINTER_MASK;
+<<<<<<< HEAD
 
 		wmb();
 
@@ -305,6 +350,32 @@ static int queue_dtd(struct mv_ep *ep, struct mv_req *req)
 			usbcmd = readl(&udc->op_regs->usbcmd);
 			usbcmd |= USBCMD_ATDTW_TRIPWIRE_SET;
 			writel(usbcmd, &udc->op_regs->usbcmd);
+=======
+		if (readl(&udc->op_regs->epprime) & bit_pos) {
+			loops = LOOPS(PRIME_TIMEOUT);
+			while (readl(&udc->op_regs->epprime) & bit_pos) {
+				if (loops == 0) {
+					retval = -ETIME;
+					goto done;
+				}
+				udelay(LOOPS_USEC);
+				loops--;
+			}
+			if (readl(&udc->op_regs->epstatus) & bit_pos)
+				goto done;
+		}
+		readsafe = 0;
+		loops = LOOPS(READSAFE_TIMEOUT);
+		while (readsafe == 0) {
+			if (loops == 0) {
+				retval = -ETIME;
+				goto done;
+			}
+			/* start with setting the semaphores */
+			tmp = readl(&udc->op_regs->usbcmd);
+			tmp |= USBCMD_ATDTW_TRIPWIRE_SET;
+			writel(tmp, &udc->op_regs->usbcmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* read the endpoint status */
 			epstatus = readl(&udc->op_regs->epstatus) & bit_pos;
@@ -317,6 +388,7 @@ static int queue_dtd(struct mv_ep *ep, struct mv_req *req)
 			 * primed.
 			 */
 			if (readl(&udc->op_regs->usbcmd)
+<<<<<<< HEAD
 				& USBCMD_ATDTW_TRIPWIRE_SET)
 				break;
 
@@ -327,10 +399,17 @@ static int queue_dtd(struct mv_ep *ep, struct mv_req *req)
 				retval = -ETIME;
 				goto done;
 			}
+=======
+				& USBCMD_ATDTW_TRIPWIRE_SET) {
+				readsafe = 1;
+			}
+			loops--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			udelay(LOOPS_USEC);
 		}
 
 		/* Clear the semaphore */
+<<<<<<< HEAD
 		usbcmd = readl(&udc->op_regs->usbcmd);
 		usbcmd &= USBCMD_ATDTW_TRIPWIRE_CLEAR;
 		writel(usbcmd, &udc->op_regs->usbcmd);
@@ -357,6 +436,92 @@ done:
 }
 
 
+=======
+		tmp = readl(&udc->op_regs->usbcmd);
+		tmp &= USBCMD_ATDTW_TRIPWIRE_CLEAR;
+		writel(tmp, &udc->op_regs->usbcmd);
+
+		/* If endpoint is not active, we activate it now. */
+		if (!epstatus) {
+			if (direction == EP_DIR_IN) {
+				struct mv_dtd *curr_dtd = dma_to_virt(
+					&udc->dev->dev, dqh->curr_dtd_ptr);
+
+				loops = LOOPS(DTD_TIMEOUT);
+				while (curr_dtd->size_ioc_sts
+					& DTD_STATUS_ACTIVE) {
+					if (loops == 0) {
+						retval = -ETIME;
+						goto done;
+					}
+					loops--;
+					udelay(LOOPS_USEC);
+				}
+			}
+			/* No other transfers on the queue */
+
+			/* Write dQH next pointer and terminate bit to 0 */
+			dqh->next_dtd_ptr = req->head->td_dma
+				& EP_QUEUE_HEAD_NEXT_POINTER_MASK;
+			dqh->size_ioc_int_sts = 0;
+
+			/*
+			 * Ensure that updates to the QH will
+			 * occur before priming.
+			 */
+			wmb();
+
+			/* Prime the Endpoint */
+			writel(bit_pos, &udc->op_regs->epprime);
+		}
+	} else {
+		/* Write dQH next pointer and terminate bit to 0 */
+		dqh->next_dtd_ptr = req->head->td_dma
+			& EP_QUEUE_HEAD_NEXT_POINTER_MASK;;
+		dqh->size_ioc_int_sts = 0;
+
+		/* Ensure that updates to the QH will occur before priming. */
+		wmb();
+
+		/* Prime the Endpoint */
+		writel(bit_pos, &udc->op_regs->epprime);
+
+		if (direction == EP_DIR_IN) {
+			/* FIXME add status check after prime the IN ep */
+			int prime_again;
+			u32 curr_dtd_ptr = dqh->curr_dtd_ptr;
+
+			loops = LOOPS(DTD_TIMEOUT);
+			prime_again = 0;
+			while ((curr_dtd_ptr != req->head->td_dma)) {
+				curr_dtd_ptr = dqh->curr_dtd_ptr;
+				if (loops == 0) {
+					dev_err(&udc->dev->dev,
+						"failed to prime %s\n",
+						ep->name);
+					retval = -ETIME;
+					goto done;
+				}
+				loops--;
+				udelay(LOOPS_USEC);
+
+				if (loops == (LOOPS(DTD_TIMEOUT) >> 2)) {
+					if (prime_again)
+						goto done;
+					dev_info(&udc->dev->dev,
+						"prime again\n");
+					writel(bit_pos,
+						&udc->op_regs->epprime);
+					prime_again = 1;
+				}
+			}
+		}
+	}
+done:
+	return retval;;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct mv_dtd *build_dtd(struct mv_req *req, unsigned *length,
 		dma_addr_t *dma, int *is_last)
 {
@@ -459,7 +624,10 @@ static int mv_ep_enable(struct usb_ep *_ep,
 	u16 max = 0;
 	u32 bit_pos, epctrlx, direction;
 	unsigned char zlt = 0, ios = 0, mult = 0;
+<<<<<<< HEAD
 	unsigned long flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ep = container_of(_ep, struct mv_ep, ep);
 	udc = ep->udc;
@@ -472,7 +640,11 @@ static int mv_ep_enable(struct usb_ep *_ep,
 		return -ESHUTDOWN;
 
 	direction = ep_dir(ep);
+<<<<<<< HEAD
 	max = usb_endpoint_maxp(desc);
+=======
+	max = le16_to_cpu(desc->wMaxPacketSize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * disable HW zero length termination select
@@ -480,6 +652,12 @@ static int mv_ep_enable(struct usb_ep *_ep,
 	 */
 	zlt = 1;
 
+<<<<<<< HEAD
+=======
+	/* Get the endpoint queue head address */
+	dqh = (struct mv_dqh *)ep->dqh;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bit_pos = 1 << ((direction == EP_DIR_OUT ? 0 : 16) + ep->ep_num);
 
 	/* Check if the Endpoint is Primed */
@@ -508,7 +686,11 @@ static int mv_ep_enable(struct usb_ep *_ep,
 	case USB_ENDPOINT_XFER_ISOC:
 		/* Calculate transactions needed for high bandwidth iso */
 		mult = (unsigned char)(1 + ((max >> 11) & 0x03));
+<<<<<<< HEAD
 		max = max & 0x7ff;	/* bit 0~10 */
+=======
+		max = max & 0x8ff;	/* bit 0~10 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* 3 transactions at most */
 		if (mult > 3)
 			goto en_done;
@@ -516,10 +698,13 @@ static int mv_ep_enable(struct usb_ep *_ep,
 	default:
 		goto en_done;
 	}
+<<<<<<< HEAD
 
 	spin_lock_irqsave(&udc->lock, flags);
 	/* Get the endpoint queue head address */
 	dqh = ep->dqh;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dqh->max_packet_length = (max << EP_QUEUE_HEAD_MAX_PKT_LEN_POS)
 		| (mult << EP_QUEUE_HEAD_MULT_POS)
 		| (zlt ? EP_QUEUE_HEAD_ZLT_SEL : 0)
@@ -552,20 +737,31 @@ static int mv_ep_enable(struct usb_ep *_ep,
 	 */
 	epctrlx = readl(&udc->op_regs->epctrlx[ep->ep_num]);
 	if ((epctrlx & EPCTRL_RX_ENABLE) == 0) {
+<<<<<<< HEAD
 		epctrlx |= (USB_ENDPOINT_XFER_BULK
+=======
+		epctrlx |= ((desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				<< EPCTRL_RX_EP_TYPE_SHIFT);
 		writel(epctrlx, &udc->op_regs->epctrlx[ep->ep_num]);
 	}
 
 	epctrlx = readl(&udc->op_regs->epctrlx[ep->ep_num]);
 	if ((epctrlx & EPCTRL_TX_ENABLE) == 0) {
+<<<<<<< HEAD
 		epctrlx |= (USB_ENDPOINT_XFER_BULK
+=======
+		epctrlx |= ((desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				<< EPCTRL_TX_EP_TYPE_SHIFT);
 		writel(epctrlx, &udc->op_regs->epctrlx[ep->ep_num]);
 	}
 
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&udc->lock, flags);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 en_done:
 	return -EINVAL;
@@ -577,7 +773,10 @@ static int  mv_ep_disable(struct usb_ep *_ep)
 	struct mv_ep *ep;
 	struct mv_dqh *dqh;
 	u32 bit_pos, epctrlx, direction;
+<<<<<<< HEAD
 	unsigned long flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ep = container_of(_ep, struct mv_ep, ep);
 	if ((_ep == NULL) || !ep->desc)
@@ -588,8 +787,11 @@ static int  mv_ep_disable(struct usb_ep *_ep)
 	/* Get the endpoint queue head address */
 	dqh = ep->dqh;
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&udc->lock, flags);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	direction = ep_dir(ep);
 	bit_pos = 1 << ((direction == EP_DIR_OUT ? 0 : 16) + ep->ep_num);
 
@@ -607,11 +809,15 @@ static int  mv_ep_disable(struct usb_ep *_ep)
 	nuke(ep, -ESHUTDOWN);
 
 	ep->desc = NULL;
+<<<<<<< HEAD
 	ep->ep.desc = NULL;
 	ep->stopped = 1;
 
 	spin_unlock_irqrestore(&udc->lock, flags);
 
+=======
+	ep->stopped = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -644,6 +850,7 @@ static void mv_ep_fifo_flush(struct usb_ep *_ep)
 {
 	struct mv_udc *udc;
 	u32 bit_pos, direction;
+<<<<<<< HEAD
 	struct mv_ep *ep;
 	unsigned int loops;
 
@@ -666,6 +873,39 @@ static void mv_ep_fifo_flush(struct usb_ep *_ep)
 
 	loops = LOOPS(EPSTATUS_TIMEOUT);
 	do {
+=======
+	struct mv_ep *ep = container_of(_ep, struct mv_ep, ep);
+	unsigned int loops;
+
+	udc = ep->udc;
+	direction = ep_dir(ep);
+	bit_pos = 1 << ((direction == EP_DIR_OUT ? 0 : 16) + ep->ep_num);
+	/*
+	 * Flushing will halt the pipe
+	 * Write 1 to the Flush register
+	 */
+	writel(bit_pos, &udc->op_regs->epflush);
+
+	/* Wait until flushing completed */
+	loops = LOOPS(FLUSH_TIMEOUT);
+	while (readl(&udc->op_regs->epflush) & bit_pos) {
+		/*
+		 * ENDPTFLUSH bit should be cleared to indicate this
+		 * operation is complete
+		 */
+		if (loops == 0) {
+			dev_err(&udc->dev->dev,
+				"TIMEOUT for ENDPTFLUSH=0x%x, bit_pos=0x%x\n",
+				(unsigned)readl(&udc->op_regs->epflush),
+				(unsigned)bit_pos);
+			return;
+		}
+		loops--;
+		udelay(LOOPS_USEC);
+	}
+	loops = LOOPS(EPSTATUS_TIMEOUT);
+	while (readl(&udc->op_regs->epstatus) & bit_pos) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned int inter_loops;
 
 		if (loops == 0) {
@@ -680,7 +920,11 @@ static void mv_ep_fifo_flush(struct usb_ep *_ep)
 
 		/* Wait until flushing completed */
 		inter_loops = LOOPS(FLUSH_TIMEOUT);
+<<<<<<< HEAD
 		while (readl(&udc->op_regs->epflush)) {
+=======
+		while (readl(&udc->op_regs->epflush) & bit_pos) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * ENDPTFLUSH bit should be cleared to indicate this
 			 * operation is complete
@@ -697,7 +941,11 @@ static void mv_ep_fifo_flush(struct usb_ep *_ep)
 			udelay(LOOPS_USEC);
 		}
 		loops--;
+<<<<<<< HEAD
 	} while (readl(&udc->op_regs->epstatus) & bit_pos);
+=======
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* queues (submits) an I/O request to an endpoint */
@@ -771,12 +1019,18 @@ mv_ep_queue(struct usb_ep *_ep, struct usb_request *_req, gfp_t gfp_flags)
 		udc->ep0_state = DATA_STATE_XMIT;
 
 	/* irq handler advances the queue */
+<<<<<<< HEAD
 	list_add_tail(&req->queue, &ep->queue);
+=======
+	if (req != NULL)
+		list_add_tail(&req->queue, &ep->queue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&udc->lock, flags);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static void mv_prime_ep(struct mv_ep *ep, struct mv_req *req)
 {
 	struct mv_dqh *dqh = ep->dqh;
@@ -798,6 +1052,8 @@ static void mv_prime_ep(struct mv_ep *ep, struct mv_req *req)
 	writel(bit_pos, &ep->udc->op_regs->epprime);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* dequeues (cancels, unlinks) an I/O request from an endpoint */
 static int mv_ep_dequeue(struct usb_ep *_ep, struct usb_request *_req)
 {
@@ -840,6 +1096,7 @@ static int mv_ep_dequeue(struct usb_ep *_ep, struct usb_request *_req)
 
 		/* The request isn't the last request in this ep queue */
 		if (req->queue.next != &ep->queue) {
+<<<<<<< HEAD
 			struct mv_req *next_req;
 
 			next_req = list_entry(req->queue.next,
@@ -847,6 +1104,17 @@ static int mv_ep_dequeue(struct usb_ep *_ep, struct usb_request *_req)
 
 			/* Point the QH to the first TD of next request */
 			mv_prime_ep(ep, next_req);
+=======
+			struct mv_dqh *qh;
+			struct mv_req *next_req;
+
+			qh = ep->dqh;
+			next_req = list_entry(req->queue.next, struct mv_req,
+					queue);
+
+			/* Point the QH to the first TD of next request */
+			writel((u32) next_req->head, &qh->curr_dtd_ptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			struct mv_dqh *qh;
 
@@ -985,6 +1253,7 @@ static struct usb_ep_ops mv_ep_ops = {
 	.fifo_flush	= mv_ep_fifo_flush,	/* flush fifo */
 };
 
+<<<<<<< HEAD
 static void udc_clock_enable(struct mv_udc *udc)
 {
 	unsigned int i;
@@ -1001,6 +1270,8 @@ static void udc_clock_disable(struct mv_udc *udc)
 		clk_disable(udc->clk[i]);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void udc_stop(struct mv_udc *udc)
 {
 	u32 tmp;
@@ -1011,8 +1282,11 @@ static void udc_stop(struct mv_udc *udc)
 		USBINTR_PORT_CHANGE_DETECT_EN | USBINTR_RESET_EN);
 	writel(tmp, &udc->op_regs->usbintr);
 
+<<<<<<< HEAD
 	udc->stopped = 1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Reset the Run the bit in the command register to stop VUSB */
 	tmp = readl(&udc->op_regs->usbcmd);
 	tmp &= ~USBCMD_RUN_STOP;
@@ -1029,8 +1303,11 @@ static void udc_start(struct mv_udc *udc)
 	/* Enable interrupts */
 	writel(usbintr, &udc->op_regs->usbintr);
 
+<<<<<<< HEAD
 	udc->stopped = 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Set the Run bit in the command register */
 	writel(USBCMD_RUN_STOP, &udc->op_regs->usbcmd);
 }
@@ -1093,6 +1370,7 @@ static int udc_reset(struct mv_udc *udc)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int mv_udc_enable_internal(struct mv_udc *udc)
 {
 	int retval;
@@ -1141,6 +1419,8 @@ static void mv_udc_disable(struct mv_udc *udc)
 		mv_udc_disable_internal(udc);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int mv_udc_get_frame(struct usb_gadget *gadget)
 {
 	struct mv_udc *udc;
@@ -1151,7 +1431,11 @@ static int mv_udc_get_frame(struct usb_gadget *gadget)
 
 	udc = container_of(gadget, struct mv_udc, gadget);
 
+<<<<<<< HEAD
 	retval = readl(&udc->op_regs->frindex) & USB_FRINDEX_MASKS;
+=======
+	retval = readl(udc->op_regs->frindex) & USB_FRINDEX_MASKS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return retval;
 }
@@ -1176,6 +1460,7 @@ static int mv_udc_wakeup(struct usb_gadget *gadget)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int mv_udc_vbus_session(struct usb_gadget *gadget, int is_active)
 {
 	struct mv_udc *udc;
@@ -1209,16 +1494,22 @@ static int mv_udc_vbus_session(struct usb_gadget *gadget, int is_active)
 	return retval;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int mv_udc_pullup(struct usb_gadget *gadget, int is_on)
 {
 	struct mv_udc *udc;
 	unsigned long flags;
+<<<<<<< HEAD
 	int retval = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	udc = container_of(gadget, struct mv_udc, gadget);
 	spin_lock_irqsave(&udc->lock, flags);
 
 	udc->softconnect = (is_on != 0);
+<<<<<<< HEAD
 
 	dev_dbg(&udc->dev->dev, "%s: softconnect %d, vbus_active %d\n",
 			__func__, udc->softconnect, udc->vbus_active);
@@ -1245,6 +1536,17 @@ static int mv_udc_pullup(struct usb_gadget *gadget, int is_on)
 static int mv_udc_start(struct usb_gadget_driver *driver,
 		int (*bind)(struct usb_gadget *));
 static int mv_udc_stop(struct usb_gadget_driver *driver);
+=======
+	if (udc->driver && udc->softconnect)
+		udc_start(udc);
+	else
+		udc_stop(udc);
+
+	spin_unlock_irqrestore(&udc->lock, flags);
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* device controller usb_gadget_ops structure */
 static const struct usb_gadget_ops mv_ops = {
 
@@ -1254,6 +1556,7 @@ static const struct usb_gadget_ops mv_ops = {
 	/* tries to wake up the host connected to this gadget */
 	.wakeup		= mv_udc_wakeup,
 
+<<<<<<< HEAD
 	/* notify controller that VBUS is powered or not */
 	.vbus_session	= mv_udc_vbus_session,
 
@@ -1263,6 +1566,17 @@ static const struct usb_gadget_ops mv_ops = {
 	.stop		= mv_udc_stop,
 };
 
+=======
+	/* D+ pullup, software-controlled connect/disconnect to USB host */
+	.pullup		= mv_udc_pullup,
+};
+
+static void mv_udc_testmode(struct mv_udc *udc, u16 index, bool enter)
+{
+	dev_info(&udc->dev->dev, "Test Mode is not support yet\n");
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int eps_init(struct mv_udc *udc)
 {
 	struct mv_ep	*ep;
@@ -1347,7 +1661,11 @@ static void stop_activity(struct mv_udc *udc, struct usb_gadget_driver *driver)
 	}
 }
 
+<<<<<<< HEAD
 static int mv_udc_start(struct usb_gadget_driver *driver,
+=======
+int usb_gadget_probe_driver(struct usb_gadget_driver *driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int (*bind)(struct usb_gadget *))
 {
 	struct mv_udc *udc = the_controller;
@@ -1369,7 +1687,11 @@ static int mv_udc_start(struct usb_gadget_driver *driver,
 
 	udc->usb_state = USB_STATE_ATTACHED;
 	udc->ep0_state = WAIT_FOR_SETUP;
+<<<<<<< HEAD
 	udc->ep0_dir = EP_DIR_OUT;
+=======
+	udc->ep0_dir = USB_DIR_OUT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_irqrestore(&udc->lock, flags);
 
@@ -1381,6 +1703,7 @@ static int mv_udc_start(struct usb_gadget_driver *driver,
 		udc->gadget.dev.driver = NULL;
 		return retval;
 	}
+<<<<<<< HEAD
 
 	if (udc->transceiver) {
 		retval = otg_set_peripheral(udc->transceiver->otg,
@@ -1408,6 +1731,17 @@ static int mv_udc_start(struct usb_gadget_driver *driver,
 }
 
 static int mv_udc_stop(struct usb_gadget_driver *driver)
+=======
+	udc_reset(udc);
+	ep0_reset(udc);
+	udc_start(udc);
+
+	return 0;
+}
+EXPORT_SYMBOL(usb_gadget_probe_driver);
+
+int usb_gadget_unregister_driver(struct usb_gadget_driver *driver)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct mv_udc *udc = the_controller;
 	unsigned long flags;
@@ -1415,6 +1749,7 @@ static int mv_udc_stop(struct usb_gadget_driver *driver)
 	if (!udc)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&udc->lock, flags);
 
 	mv_udc_enable(udc);
@@ -1425,6 +1760,15 @@ static int mv_udc_stop(struct usb_gadget_driver *driver)
 	stop_activity(udc, driver);
 	mv_udc_disable(udc);
 
+=======
+	udc_stop(udc);
+
+	spin_lock_irqsave(&udc->lock, flags);
+
+	/* stop all usb activities */
+	udc->gadget.speed = USB_SPEED_UNKNOWN;
+	stop_activity(udc, driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&udc->lock, flags);
 
 	/* unbind gadget driver */
@@ -1434,6 +1778,7 @@ static int mv_udc_stop(struct usb_gadget_driver *driver)
 
 	return 0;
 }
+<<<<<<< HEAD
 
 static void mv_set_ptc(struct mv_udc *udc, u32 mode)
 {
@@ -1459,6 +1804,9 @@ static void prime_status_complete(struct usb_ep *ep, struct usb_request *_req)
 	}
 	spin_unlock_irqrestore(&udc->lock, flags);
 }
+=======
+EXPORT_SYMBOL(usb_gadget_unregister_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int
 udc_prime_status(struct mv_udc *udc, u8 direction, u16 status, bool empty)
@@ -1469,7 +1817,10 @@ udc_prime_status(struct mv_udc *udc, u8 direction, u16 status, bool empty)
 
 	ep = &udc->eps[0];
 	udc->ep0_dir = direction;
+<<<<<<< HEAD
 	udc->ep0_state = WAIT_FOR_OUT_STATUS;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	req = udc->status_req;
 
@@ -1483,6 +1834,7 @@ udc_prime_status(struct mv_udc *udc, u8 direction, u16 status, bool empty)
 	req->ep = ep;
 	req->req.status = -EINPROGRESS;
 	req->req.actual = 0;
+<<<<<<< HEAD
 	if (udc->test_mode) {
 		req->req.complete = prime_status_complete;
 		req->test_mode = udc->test_mode;
@@ -1498,6 +1850,11 @@ udc_prime_status(struct mv_udc *udc, u8 direction, u16 status, bool empty)
 		req->mapped = 1;
 	}
 
+=======
+	req->req.complete = NULL;
+	req->dtd_count = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* prime the data phase */
 	if (!req_to_dtd(req))
 		retval = queue_dtd(ep, req);
@@ -1518,6 +1875,7 @@ out:
 	return retval;
 }
 
+<<<<<<< HEAD
 static void mv_udc_testmode(struct mv_udc *udc, u16 index)
 {
 	if (index <= TEST_FORCE_EN) {
@@ -1529,6 +1887,8 @@ static void mv_udc_testmode(struct mv_udc *udc, u16 index)
 			"This test mode(%d) is not supported\n", index);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ch9setaddress(struct mv_udc *udc, struct usb_ctrlrequest *setup)
 {
 	udc->dev_addr = (u8)setup->wValue;
@@ -1543,7 +1903,11 @@ static void ch9setaddress(struct mv_udc *udc, struct usb_ctrlrequest *setup)
 static void ch9getstatus(struct mv_udc *udc, u8 ep_num,
 	struct usb_ctrlrequest *setup)
 {
+<<<<<<< HEAD
 	u16 status = 0;
+=======
+	u16 status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int retval;
 
 	if ((setup->bRequestType & (USB_DIR_IN | USB_TYPE_MASK))
@@ -1571,8 +1935,11 @@ static void ch9getstatus(struct mv_udc *udc, u8 ep_num,
 	retval = udc_prime_status(udc, EP_DIR_IN, status, false);
 	if (retval)
 		ep0_stall(udc);
+<<<<<<< HEAD
 	else
 		udc->ep0_state = DATA_STATE_XMIT;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void ch9clearfeature(struct mv_udc *udc, struct usb_ctrlrequest *setup)
@@ -1587,6 +1954,12 @@ static void ch9clearfeature(struct mv_udc *udc, struct usb_ctrlrequest *setup)
 		case USB_DEVICE_REMOTE_WAKEUP:
 			udc->remote_wakeup = 0;
 			break;
+<<<<<<< HEAD
+=======
+		case USB_DEVICE_TEST_MODE:
+			mv_udc_testmode(udc, 0, false);
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			goto out;
 		}
@@ -1615,6 +1988,11 @@ static void ch9clearfeature(struct mv_udc *udc, struct usb_ctrlrequest *setup)
 
 	if (udc_prime_status(udc, EP_DIR_IN, 0, true))
 		ep0_stall(udc);
+<<<<<<< HEAD
+=======
+	else
+		udc->ep0_state = DATA_STATE_XMIT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return;
 }
@@ -1632,6 +2010,7 @@ static void ch9setfeature(struct mv_udc *udc, struct usb_ctrlrequest *setup)
 			break;
 		case USB_DEVICE_TEST_MODE:
 			if (setup->wIndex & 0xFF
+<<<<<<< HEAD
 				||  udc->gadget.speed != USB_SPEED_HIGH)
 				ep0_stall(udc);
 
@@ -1642,6 +2021,18 @@ static void ch9setfeature(struct mv_udc *udc, struct usb_ctrlrequest *setup)
 
 			mv_udc_testmode(udc, (setup->wIndex >> 8));
 			goto out;
+=======
+				&& udc->gadget.speed != USB_SPEED_HIGH)
+				goto out;
+			if (udc->usb_state == USB_STATE_CONFIGURED
+				|| udc->usb_state == USB_STATE_ADDRESS
+				|| udc->usb_state == USB_STATE_DEFAULT)
+				mv_udc_testmode(udc,
+					setup->wIndex & 0xFF00, true);
+			else
+				goto out;
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			goto out;
 		}
@@ -1779,7 +2170,12 @@ static void get_setup_data(struct mv_udc *udc, u8 ep_num, u8 *buffer_ptr)
 	dqh = &udc->ep_dqh[ep_num * 2 + EP_DIR_OUT];
 
 	/* Clear bit in ENDPTSETUPSTAT */
+<<<<<<< HEAD
 	writel((1 << ep_num), &udc->op_regs->epsetupstat);
+=======
+	temp = readl(&udc->op_regs->epsetupstat);
+	writel(temp | (1 << ep_num), &udc->op_regs->epsetupstat);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* while a hazard exists when setup package arrives */
 	do {
@@ -2016,10 +2412,13 @@ static irqreturn_t mv_udc_irq(int irq, void *dev)
 	struct mv_udc *udc = (struct mv_udc *)dev;
 	u32 status, intr;
 
+<<<<<<< HEAD
 	/* Disable ISR when stopped bit is set */
 	if (udc->stopped)
 		return IRQ_NONE;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&udc->lock);
 
 	status = readl(&udc->op_regs->usbsts);
@@ -2054,6 +2453,7 @@ static irqreturn_t mv_udc_irq(int irq, void *dev)
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
 static irqreturn_t mv_udc_vbus_irq(int irq, void *dev)
 {
 	struct mv_udc *udc = (struct mv_udc *)dev;
@@ -2083,12 +2483,15 @@ static void mv_udc_vbus_work(struct work_struct *work)
 		mv_udc_vbus_session(&udc->gadget, 0);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* release device structure */
 static void gadget_release(struct device *_dev)
 {
 	struct mv_udc *udc = the_controller;
 
 	complete(udc->done);
+<<<<<<< HEAD
 }
 
 static int __devexit mv_udc_remove(struct platform_device *dev)
@@ -2110,6 +2513,18 @@ static int __devexit mv_udc_remove(struct platform_device *dev)
 	if (udc->pdata && udc->pdata->vbus
 		&& udc->clock_gating && udc->transceiver == NULL)
 		free_irq(udc->pdata->vbus->irq, &dev->dev);
+=======
+	kfree(udc);
+}
+
+static int mv_udc_remove(struct platform_device *dev)
+{
+	struct mv_udc *udc = the_controller;
+
+	DECLARE_COMPLETION(done);
+
+	udc->done = &done;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* free memory allocated in probe */
 	if (udc->dtd_pool)
@@ -2124,6 +2539,7 @@ static int __devexit mv_udc_remove(struct platform_device *dev)
 	if (udc->irq)
 		free_irq(udc->irq, &dev->dev);
 
+<<<<<<< HEAD
 	mv_udc_disable(udc);
 
 	if (udc->cap_regs)
@@ -2131,12 +2547,22 @@ static int __devexit mv_udc_remove(struct platform_device *dev)
 
 	if (udc->phy_regs)
 		iounmap(udc->phy_regs);
+=======
+	if (udc->cap_regs)
+		iounmap(udc->cap_regs);
+	udc->cap_regs = NULL;
+
+	if (udc->phy_regs)
+		iounmap((void *)udc->phy_regs);
+	udc->phy_regs = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (udc->status_req) {
 		kfree(udc->status_req->req.buf);
 		kfree(udc->status_req);
 	}
 
+<<<<<<< HEAD
 	for (clk_i = 0; clk_i <= udc->clknum; clk_i++)
 		clk_put(udc->clk[clk_i]);
 
@@ -2145,12 +2571,19 @@ static int __devexit mv_udc_remove(struct platform_device *dev)
 	/* free dev, wait for the release() finished */
 	wait_for_completion(udc->done);
 	kfree(udc);
+=======
+	device_unregister(&udc->gadget.dev);
+
+	/* free dev, wait for the release() finished */
+	wait_for_completion(&done);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	the_controller = NULL;
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int __devinit mv_udc_probe(struct platform_device *dev)
 {
 	struct mv_usb_platform_data *pdata = dev->dev.platform_data;
@@ -2175,10 +2608,27 @@ static int __devinit mv_udc_probe(struct platform_device *dev)
 	the_controller = udc;
 	udc->done = &release_done;
 	udc->pdata = dev->dev.platform_data;
+=======
+int mv_udc_probe(struct platform_device *dev)
+{
+	struct mv_udc *udc;
+	int retval = 0;
+	struct resource *r;
+	size_t size;
+
+	udc = kzalloc(sizeof *udc, GFP_KERNEL);
+	if (udc == NULL) {
+		dev_err(&dev->dev, "failed to allocate memory for udc\n");
+		retval = -ENOMEM;
+		goto error;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_init(&udc->lock);
 
 	udc->dev = dev;
 
+<<<<<<< HEAD
 #ifdef CONFIG_USB_OTG_UTILS
 	if (pdata->mode == MV_USB_MODE_OTG)
 		udc->transceiver = usb_get_transceiver();
@@ -2198,6 +2648,19 @@ static int __devinit mv_udc_probe(struct platform_device *dev)
 		dev_err(&dev->dev, "no I/O memory resource defined\n");
 		retval = -ENODEV;
 		goto err_put_clk;
+=======
+	udc->clk = clk_get(&dev->dev, "U2OCLK");
+	if (IS_ERR(udc->clk)) {
+		retval = PTR_ERR(udc->clk);
+		goto error;
+	}
+
+	r = platform_get_resource_byname(udc->dev, IORESOURCE_MEM, "u2o");
+	if (r == NULL) {
+		dev_err(&dev->dev, "no I/O memory resource defined\n");
+		retval = -ENODEV;
+		goto error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	udc->cap_regs = (struct mv_cap_regs __iomem *)
@@ -2205,6 +2668,7 @@ static int __devinit mv_udc_probe(struct platform_device *dev)
 	if (udc->cap_regs == NULL) {
 		dev_err(&dev->dev, "failed to map I/O memory\n");
 		retval = -EBUSY;
+<<<<<<< HEAD
 		goto err_put_clk;
 	}
 
@@ -2229,10 +2693,39 @@ static int __devinit mv_udc_probe(struct platform_device *dev)
 
 	udc->op_regs =
 		(struct mv_op_regs __iomem *)((unsigned long)udc->cap_regs
+=======
+		goto error;
+	}
+
+	r = platform_get_resource_byname(udc->dev, IORESOURCE_MEM, "u2ophy");
+	if (r == NULL) {
+		dev_err(&dev->dev, "no phy I/O memory resource defined\n");
+		retval = -ENODEV;
+		goto error;
+	}
+
+	udc->phy_regs = (unsigned int)ioremap(r->start, resource_size(r));
+	if (udc->phy_regs == 0) {
+		dev_err(&dev->dev, "failed to map phy I/O memory\n");
+		retval = -EBUSY;
+		goto error;
+	}
+
+	/* we will acces controller register, so enable the clk */
+	clk_enable(udc->clk);
+	retval = mv_udc_phy_init(udc->phy_regs);
+	if (retval) {
+		dev_err(&dev->dev, "phy initialization error %d\n", retval);
+		goto error;
+	}
+
+	udc->op_regs = (struct mv_op_regs __iomem *)((u32)udc->cap_regs
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		+ (readl(&udc->cap_regs->caplength_hciversion)
 			& CAPLENGTH_MASK));
 	udc->max_eps = readl(&udc->cap_regs->dccparams) & DCCPARAMS_DEN_MASK;
 
+<<<<<<< HEAD
 	/*
 	 * some platform will use usb to download image, it may not disconnect
 	 * usb gadget before loading kernel. So first stop udc here.
@@ -2240,6 +2733,8 @@ static int __devinit mv_udc_probe(struct platform_device *dev)
 	udc_stop(udc);
 	writel(0xFFFFFFFF, &udc->op_regs->usbsts);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	size = udc->max_eps * sizeof(struct mv_dqh) *2;
 	size = (size + DQH_ALIGNMENT - 1) & ~(DQH_ALIGNMENT - 1);
 	udc->ep_dqh = dma_alloc_coherent(&dev->dev, size,
@@ -2248,7 +2743,11 @@ static int __devinit mv_udc_probe(struct platform_device *dev)
 	if (udc->ep_dqh == NULL) {
 		dev_err(&dev->dev, "allocate dQH memory failed\n");
 		retval = -ENOMEM;
+<<<<<<< HEAD
 		goto err_disable_clock;
+=======
+		goto error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	udc->ep_dqh_size = size;
 
@@ -2261,7 +2760,11 @@ static int __devinit mv_udc_probe(struct platform_device *dev)
 
 	if (!udc->dtd_pool) {
 		retval = -ENOMEM;
+<<<<<<< HEAD
 		goto err_free_dma;
+=======
+		goto error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	size = udc->max_eps * sizeof(struct mv_ep) *2;
@@ -2269,7 +2772,11 @@ static int __devinit mv_udc_probe(struct platform_device *dev)
 	if (udc->eps == NULL) {
 		dev_err(&dev->dev, "allocate ep memory failed\n");
 		retval = -ENOMEM;
+<<<<<<< HEAD
 		goto err_destroy_dma;
+=======
+		goto error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* initialize ep0 status request structure */
@@ -2277,13 +2784,21 @@ static int __devinit mv_udc_probe(struct platform_device *dev)
 	if (!udc->status_req) {
 		dev_err(&dev->dev, "allocate status_req memory failed\n");
 		retval = -ENOMEM;
+<<<<<<< HEAD
 		goto err_free_eps;
+=======
+		goto error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	INIT_LIST_HEAD(&udc->status_req->queue);
 
 	/* allocate a small amount of memory to get valid address */
 	udc->status_req->req.buf = kzalloc(8, GFP_KERNEL);
+<<<<<<< HEAD
 	udc->status_req->req.dma = DMA_ADDR_INVALID;
+=======
+	udc->status_req->req.dma = virt_to_phys(udc->status_req->req.buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	udc->resume_state = USB_STATE_NOTATTACHED;
 	udc->usb_state = USB_STATE_POWERED;
@@ -2294,6 +2809,7 @@ static int __devinit mv_udc_probe(struct platform_device *dev)
 	if (r == NULL) {
 		dev_err(&dev->dev, "no IRQ resource defined\n");
 		retval = -ENODEV;
+<<<<<<< HEAD
 		goto err_free_status_req;
 	}
 	udc->irq = r->start;
@@ -2303,6 +2819,17 @@ static int __devinit mv_udc_probe(struct platform_device *dev)
 			udc->irq);
 		retval = -ENODEV;
 		goto err_free_status_req;
+=======
+		goto error;
+	}
+	udc->irq = r->start;
+	if (request_irq(udc->irq, mv_udc_irq,
+		IRQF_DISABLED | IRQF_SHARED, driver_name, udc)) {
+		dev_err(&dev->dev, "Request irq %d for UDC failed\n",
+			udc->irq);
+		retval = -ENODEV;
+		goto error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* initialize gadget structure */
@@ -2310,7 +2837,11 @@ static int __devinit mv_udc_probe(struct platform_device *dev)
 	udc->gadget.ep0 = &udc->eps[0].ep;	/* gadget ep0 */
 	INIT_LIST_HEAD(&udc->gadget.ep_list);	/* ep_list */
 	udc->gadget.speed = USB_SPEED_UNKNOWN;	/* speed */
+<<<<<<< HEAD
 	udc->gadget.max_speed = USB_SPEED_HIGH;	/* support dual speed */
+=======
+	udc->gadget.is_dualspeed = 1;		/* support dual speed */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* the "gadget" abstracts/virtualizes the controller */
 	dev_set_name(&udc->gadget.dev, "gadget");
@@ -2321,6 +2852,7 @@ static int __devinit mv_udc_probe(struct platform_device *dev)
 
 	retval = device_register(&udc->gadget.dev);
 	if (retval)
+<<<<<<< HEAD
 		goto err_free_irq;
 
 	eps_init(udc);
@@ -2396,6 +2928,19 @@ err_put_clk:
 		clk_put(udc->clk[clk_i]);
 	the_controller = NULL;
 	kfree(udc);
+=======
+		goto error;
+
+	eps_init(udc);
+
+	the_controller = udc;
+
+	goto out;
+error:
+	if (udc)
+		mv_udc_remove(udc->dev);
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return retval;
 }
 
@@ -2404,6 +2949,7 @@ static int mv_udc_suspend(struct device *_dev)
 {
 	struct mv_udc *udc = the_controller;
 
+<<<<<<< HEAD
 	/* if OTG is enabled, the following will be done in OTG driver*/
 	if (udc->transceiver)
 		return 0;
@@ -2428,6 +2974,9 @@ static int mv_udc_suspend(struct device *_dev)
 
 		mv_udc_disable_internal(udc);
 	}
+=======
+	udc_stop(udc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -2437,6 +2986,7 @@ static int mv_udc_resume(struct device *_dev)
 	struct mv_udc *udc = the_controller;
 	int retval;
 
+<<<<<<< HEAD
 	/* if OTG is enabled, the following will be done in OTG driver*/
 	if (udc->transceiver)
 		return 0;
@@ -2452,6 +3002,16 @@ static int mv_udc_resume(struct device *_dev)
 			udc_start(udc);
 		}
 	}
+=======
+	retval = mv_udc_phy_init(udc->phy_regs);
+	if (retval) {
+		dev_err(_dev, "phy initialization error %d\n", retval);
+		return retval;
+	}
+	udc_reset(udc);
+	ep0_reset(udc);
+	udc_start(udc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -2462,6 +3022,7 @@ static const struct dev_pm_ops mv_udc_pm_ops = {
 };
 #endif
 
+<<<<<<< HEAD
 static void mv_udc_shutdown(struct platform_device *dev)
 {
 	struct mv_udc *udc = the_controller;
@@ -2480,15 +3041,45 @@ static struct platform_driver udc_driver = {
 	.driver		= {
 		.owner	= THIS_MODULE,
 		.name	= "mv-udc",
+=======
+static struct platform_driver udc_driver = {
+	.probe		= mv_udc_probe,
+	.remove		= __exit_p(mv_udc_remove),
+	.driver		= {
+		.owner	= THIS_MODULE,
+		.name	= "pxa-u2o",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PM
 		.pm	= &mv_udc_pm_ops,
 #endif
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(udc_driver);
 MODULE_ALIAS("platform:mv-udc");
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION(DRIVER_DESC);
 MODULE_AUTHOR("Chao Xie <chao.xie@marvell.com>");
 MODULE_VERSION(DRIVER_VERSION);
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+
+static int __init init(void)
+{
+	return platform_driver_register(&udc_driver);
+}
+module_init(init);
+
+
+static void __exit cleanup(void)
+{
+	platform_driver_unregister(&udc_driver);
+}
+module_exit(cleanup);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

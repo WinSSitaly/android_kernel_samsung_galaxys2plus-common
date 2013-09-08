@@ -8,8 +8,13 @@
 #define _LINUX_L2TP_H_
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/socket.h>
 #ifdef __KERNEL__
+=======
+#ifdef __KERNEL__
+#include <linux/socket.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/in.h>
 #else
 #include <netinet/in.h>
@@ -26,15 +31,23 @@
 #define __SOCK_SIZE__	16		/* sizeof(struct sockaddr)	*/
 struct sockaddr_l2tpip {
 	/* The first fields must match struct sockaddr_in */
+<<<<<<< HEAD
 	__kernel_sa_family_t l2tp_family; /* AF_INET */
+=======
+	sa_family_t	l2tp_family;	/* AF_INET */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__be16		l2tp_unused;	/* INET port number (unused) */
 	struct in_addr	l2tp_addr;	/* Internet address */
 
 	__u32		l2tp_conn_id;	/* Connection ID of tunnel */
 
 	/* Pad to size of `struct sockaddr'. */
+<<<<<<< HEAD
 	unsigned char	__pad[sizeof(struct sockaddr) -
 			      sizeof(__kernel_sa_family_t) -
+=======
+	unsigned char	__pad[sizeof(struct sockaddr) - sizeof(sa_family_t) -
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      sizeof(__be16) - sizeof(struct in_addr) -
 			      sizeof(__u32)];
 };

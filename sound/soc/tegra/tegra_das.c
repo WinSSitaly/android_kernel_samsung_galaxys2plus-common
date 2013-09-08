@@ -172,11 +172,19 @@ static int __devinit tegra_das_probe(struct platform_device *pdev)
 	if (das)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	das = devm_kzalloc(&pdev->dev, sizeof(struct tegra_das), GFP_KERNEL);
 	if (!das) {
 		dev_err(&pdev->dev, "Can't allocate tegra_das\n");
 		ret = -ENOMEM;
 		goto err;
+=======
+	das = kzalloc(sizeof(struct tegra_das), GFP_KERNEL);
+	if (!das) {
+		dev_err(&pdev->dev, "Can't allocate tegra_das\n");
+		ret = -ENOMEM;
+		goto exit;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	das->dev = &pdev->dev;
 
@@ -184,6 +192,7 @@ static int __devinit tegra_das_probe(struct platform_device *pdev)
 	if (!res) {
 		dev_err(&pdev->dev, "No memory resource\n");
 		ret = -ENODEV;
+<<<<<<< HEAD
 		goto err;
 	}
 
@@ -213,6 +222,24 @@ static int __devinit tegra_das_probe(struct platform_device *pdev)
 	if (ret) {
 		dev_err(&pdev->dev, "Can't set up DAS DAC connection\n");
 		goto err;
+=======
+		goto err_free;
+	}
+
+	region = request_mem_region(res->start, resource_size(res),
+					pdev->name);
+	if (!region) {
+		dev_err(&pdev->dev, "Memory region already claimed\n");
+		ret = -EBUSY;
+		goto err_free;
+	}
+
+	das->regs = ioremap(res->start, resource_size(res));
+	if (!das->regs) {
+		dev_err(&pdev->dev, "ioremap failed\n");
+		ret = -ENOMEM;
+		goto err_release;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	tegra_das_debug_add(das);
@@ -221,41 +248,92 @@ static int __devinit tegra_das_probe(struct platform_device *pdev)
 
 	return 0;
 
+<<<<<<< HEAD
 err:
 	das = NULL;
+=======
+err_release:
+	release_mem_region(res->start, resource_size(res));
+err_free:
+	kfree(das);
+	das = 0;
+exit:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devexit tegra_das_remove(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	if (!das)
 		return -ENODEV;
 
 	tegra_das_debug_remove(das);
 
 	das = NULL;
+=======
+	struct resource *res;
+
+	if (!das)
+		return -ENODEV;
+
+	platform_set_drvdata(pdev, NULL);
+
+	tegra_das_debug_remove(das);
+
+	iounmap(das->regs);
+
+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	release_mem_region(res->start, resource_size(res));
+
+	kfree(das);
+	das = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct of_device_id tegra_das_of_match[] __devinitconst = {
 	{ .compatible = "nvidia,tegra20-das", },
 	{},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver tegra_das_driver = {
 	.probe = tegra_das_probe,
 	.remove = __devexit_p(tegra_das_remove),
 	.driver = {
 		.name = DRV_NAME,
+<<<<<<< HEAD
 		.owner = THIS_MODULE,
 		.of_match_table = tegra_das_of_match,
 	},
 };
 module_platform_driver(tegra_das_driver);
+=======
+	},
+};
+
+static int __init tegra_das_modinit(void)
+{
+	return platform_driver_register(&tegra_das_driver);
+}
+module_init(tegra_das_modinit);
+
+static void __exit tegra_das_modexit(void)
+{
+	platform_driver_unregister(&tegra_das_driver);
+}
+module_exit(tegra_das_modexit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Stephen Warren <swarren@nvidia.com>");
 MODULE_DESCRIPTION("Tegra DAS driver");
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:" DRV_NAME);
+<<<<<<< HEAD
 MODULE_DEVICE_TABLE(of, tegra_das_of_match);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

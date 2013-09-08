@@ -34,14 +34,21 @@
 #include <asm/mach/map.h>
 
 #include <plat/board.h>
+<<<<<<< HEAD
 #include "common.h"
+=======
+#include <plat/common.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/gpmc.h>
 #include <plat/usb.h>
 #include <plat/gpmc-smc91x.h>
 
+<<<<<<< HEAD
 #include <video/omapdss.h>
 #include <video/omap-panel-generic-dpi.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "mux.h"
 #include "hsmmc.h"
 #include "common-board-devices.h"
@@ -102,6 +109,7 @@ static struct platform_device sdp2430_flash_device = {
 	.resource	= &sdp2430_flash_resource,
 };
 
+<<<<<<< HEAD
 static struct platform_device *sdp2430_devices[] __initdata = {
 	&sdp2430_flash_device,
 };
@@ -168,6 +176,22 @@ static void __init sdp2430_display_init(void)
 	omap_display_init(&sdp2430_dss_data);
 }
 
+=======
+static struct platform_device sdp2430_lcd_device = {
+	.name		= "sdp2430_lcd",
+	.id		= -1,
+};
+
+static struct platform_device *sdp2430_devices[] __initdata = {
+	&sdp2430_flash_device,
+	&sdp2430_lcd_device,
+};
+
+static struct omap_lcd_config sdp2430_lcd_config __initdata = {
+	.ctrl_name	= "internal",
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_SMC91X) || defined(CONFIG_SMC91x_MODULE)
 
 static struct omap_smc91x_platform_data board_smc91x_data = {
@@ -192,6 +216,19 @@ static inline void board_smc91x_init(void)
 
 #endif
 
+<<<<<<< HEAD
+=======
+static struct omap_board_config_kernel sdp2430_config[] __initdata = {
+	{OMAP_TAG_LCD, &sdp2430_lcd_config},
+};
+
+static void __init omap_2430sdp_init_early(void)
+{
+	omap2_init_common_infrastructure();
+	omap2_init_common_devices(NULL, NULL);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct regulator_consumer_supply sdp2430_vmmc1_supplies[] = {
 	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.0"),
 };
@@ -230,16 +267,26 @@ static struct i2c_board_info __initdata sdp2430_i2c1_boardinfo[] = {
 	{
 		I2C_BOARD_INFO("isp1301_omap", 0x2D),
 		.flags = I2C_CLIENT_WAKE,
+<<<<<<< HEAD
+=======
+		.irq = OMAP_GPIO_IRQ(78),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 
 static int __init omap2430_i2c_init(void)
 {
+<<<<<<< HEAD
 	sdp2430_i2c1_boardinfo[0].irq = gpio_to_irq(78);
 	omap_register_i2c_bus(1, 100, sdp2430_i2c1_boardinfo,
 			ARRAY_SIZE(sdp2430_i2c1_boardinfo));
 	omap_pmic_init(2, 100, "twl4030", INT_24XX_SYS_NIRQ,
 			&sdp2430_twldata);
+=======
+	omap_register_i2c_bus(1, 100, sdp2430_i2c1_boardinfo,
+			ARRAY_SIZE(sdp2430_i2c1_boardinfo));
+	omap2_pmic_init("twl4030", &sdp2430_twldata);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -274,12 +321,22 @@ static void __init omap_2430sdp_init(void)
 {
 	omap2430_mux_init(board_mux, OMAP_PACKAGE_ZAC);
 
+<<<<<<< HEAD
+=======
+	omap_board_config = sdp2430_config;
+	omap_board_config_size = ARRAY_SIZE(sdp2430_config);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap2430_i2c_init();
 
 	platform_add_devices(sdp2430_devices, ARRAY_SIZE(sdp2430_devices));
 	omap_serial_init();
+<<<<<<< HEAD
 	omap_sdrc_init(NULL, NULL);
 	omap_hsmmc_init(mmc);
+=======
+	omap2_hsmmc_init(mmc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap2_usbfs_init(&sdp2430_usb_config);
 
 	omap_mux_init_signal("usb0hs_stp", OMAP_PULL_ENA | OMAP_PULL_UP);
@@ -290,12 +347,22 @@ static void __init omap_2430sdp_init(void)
 	/* Turn off secondary LCD backlight */
 	gpio_request_one(SECONDARY_LCD_GPIO, GPIOF_OUT_INIT_LOW,
 			 "Secondary LCD backlight");
+<<<<<<< HEAD
 
 	sdp2430_display_init();
+=======
+}
+
+static void __init omap_2430sdp_map_io(void)
+{
+	omap2_set_globals_243x();
+	omap243x_map_common_io();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 MACHINE_START(OMAP_2430SDP, "OMAP2430 sdp2430 board")
 	/* Maintainer: Syed Khasim - Texas Instruments Inc */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.reserve	= omap_reserve,
 	.map_io		= omap243x_map_io,
@@ -305,4 +372,13 @@ MACHINE_START(OMAP_2430SDP, "OMAP2430 sdp2430 board")
 	.init_machine	= omap_2430sdp_init,
 	.timer		= &omap2_timer,
 	.restart	= omap_prcm_restart,
+=======
+	.boot_params	= 0x80000100,
+	.reserve	= omap_reserve,
+	.map_io		= omap_2430sdp_map_io,
+	.init_early	= omap_2430sdp_init_early,
+	.init_irq	= omap_init_irq,
+	.init_machine	= omap_2430sdp_init,
+	.timer		= &omap_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

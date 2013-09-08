@@ -26,7 +26,10 @@
 **********************************************************************/
 #include <linux/kernel.h>
 #include <linux/netdevice.h>
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/dst.h>
 
 #include <asm/octeon/octeon.h>
@@ -35,11 +38,19 @@
 #include "octeon-ethernet.h"
 #include "ethernet-util.h"
 
+<<<<<<< HEAD
 #include <asm/octeon/cvmx-spi.h>
 
 #include <asm/octeon/cvmx-npi-defs.h>
 #include <asm/octeon/cvmx-spxx-defs.h>
 #include <asm/octeon/cvmx-stxx-defs.h>
+=======
+#include "cvmx-spi.h"
+
+#include <asm/octeon/cvmx-npi-defs.h>
+#include "cvmx-spxx-defs.h"
+#include "cvmx-stxx-defs.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int number_spi_ports;
 static int need_retrain[2] = { 0, 0 };

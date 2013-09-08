@@ -14,6 +14,11 @@ extern struct proto tcpv6_prot;
 
 struct flowi6;
 
+<<<<<<< HEAD
+=======
+extern void initialize_hashidentrnd(void);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* extension headers */
 extern int				ipv6_exthdrs_init(void);
 extern void				ipv6_exthdrs_exit(void);
@@ -39,7 +44,10 @@ extern int			datagram_recv_ctl(struct sock *sk,
 						  struct sk_buff *skb);
 
 extern int			datagram_send_ctl(struct net *net,
+<<<<<<< HEAD
 						  struct sock *sk,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						  struct msghdr *msg,
 						  struct flowi6 *fl6,
 						  struct ipv6_txoptions *opt,

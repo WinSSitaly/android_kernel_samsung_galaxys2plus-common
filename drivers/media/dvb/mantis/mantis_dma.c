@@ -43,6 +43,7 @@
 #define RISC_IRQ		(0x01 << 24)
 
 #define RISC_STATUS(status)	((((~status) & 0x0f) << 20) | ((status & 0x0f) << 16))
+<<<<<<< HEAD
 #define RISC_FLUSH(risc_pos)		(risc_pos = 0)
 #define RISC_INSTR(risc_pos, opcode)	(mantis->risc_cpu[risc_pos++] = cpu_to_le32(opcode))
 
@@ -54,6 +55,15 @@
 #define MANTIS_DMA_TR_UNITS     (MANTIS_BLOCK_BYTES / MANTIS_DMA_TR_BYTES)
 /* MANTIS_BUF_SIZE / MANTIS_DMA_TR_UNITS must not exceed MANTIS_RISC_SIZE (4k RISC cmd buffer) */
 #define MANTIS_RISC_SIZE	PAGE_SIZE /* RISC program must fit here. */
+=======
+#define RISC_FLUSH()		(mantis->risc_pos = 0)
+#define RISC_INSTR(opcode)	(mantis->risc_cpu[mantis->risc_pos++] = cpu_to_le32(opcode))
+
+#define MANTIS_BUF_SIZE		(64 * 1024)
+#define MANTIS_BLOCK_BYTES	(MANTIS_BUF_SIZE >> 4)
+#define MANTIS_BLOCK_COUNT	(1 << 4)
+#define MANTIS_RISC_SIZE	PAGE_SIZE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int mantis_dma_exit(struct mantis_pci *mantis)
 {
@@ -128,6 +138,30 @@ err:
 	return -ENOMEM;
 }
 
+<<<<<<< HEAD
+=======
+static inline int mantis_calc_lines(struct mantis_pci *mantis)
+{
+	mantis->line_bytes = MANTIS_BLOCK_BYTES;
+	mantis->line_count = MANTIS_BLOCK_COUNT;
+
+	while (mantis->line_bytes > 4095) {
+		mantis->line_bytes >>= 1;
+		mantis->line_count <<= 1;
+	}
+
+	dprintk(MANTIS_DEBUG, 1, "Mantis RISC block bytes=[%d], line bytes=[%d], line count=[%d]",
+		MANTIS_BLOCK_BYTES, mantis->line_bytes, mantis->line_count);
+
+	if (mantis->line_count > 255) {
+		dprintk(MANTIS_ERROR, 1, "Buffer size error");
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int mantis_dma_init(struct mantis_pci *mantis)
 {
 	int err = 0;
@@ -141,6 +175,15 @@ int mantis_dma_init(struct mantis_pci *mantis)
 
 		goto err;
 	}
+<<<<<<< HEAD
+=======
+	err = mantis_calc_lines(mantis);
+	if (err < 0) {
+		dprintk(MANTIS_ERROR, 1, "Mantis calc lines failed");
+
+		goto err;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 err:
@@ -151,6 +194,7 @@ EXPORT_SYMBOL_GPL(mantis_dma_init);
 static inline void mantis_risc_program(struct mantis_pci *mantis)
 {
 	u32 buf_pos = 0;
+<<<<<<< HEAD
 	u32 line, step;
 	u32 risc_pos;
 
@@ -177,6 +221,33 @@ static inline void mantis_risc_program(struct mantis_pci *mantis)
 	}
 	RISC_INSTR(risc_pos, RISC_JUMP);
 	RISC_INSTR(risc_pos, mantis->risc_dma);
+=======
+	u32 line;
+
+	dprintk(MANTIS_DEBUG, 1, "Mantis create RISC program");
+	RISC_FLUSH();
+
+	dprintk(MANTIS_DEBUG, 1, "risc len lines %u, bytes per line %u",
+		mantis->line_count, mantis->line_bytes);
+
+	for (line = 0; line < mantis->line_count; line++) {
+		dprintk(MANTIS_DEBUG, 1, "RISC PROG line=[%d]", line);
+		if (!(buf_pos % MANTIS_BLOCK_BYTES)) {
+			RISC_INSTR(RISC_WRITE	|
+				   RISC_IRQ	|
+				   RISC_STATUS(((buf_pos / MANTIS_BLOCK_BYTES) +
+				   (MANTIS_BLOCK_COUNT - 1)) %
+				    MANTIS_BLOCK_COUNT) |
+				    mantis->line_bytes);
+		} else {
+			RISC_INSTR(RISC_WRITE	| mantis->line_bytes);
+		}
+		RISC_INSTR(mantis->buf_dma + buf_pos);
+		buf_pos += mantis->line_bytes;
+	}
+	RISC_INSTR(RISC_JUMP);
+	RISC_INSTR(mantis->risc_dma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void mantis_dma_start(struct mantis_pci *mantis)
@@ -188,7 +259,11 @@ void mantis_dma_start(struct mantis_pci *mantis)
 	mmwrite(mmread(MANTIS_GPIF_ADDR) | MANTIS_GPIF_HIFRDWRN, MANTIS_GPIF_ADDR);
 
 	mmwrite(0, MANTIS_DMA_CTL);
+<<<<<<< HEAD
 	mantis->last_block = mantis->busy_block = 0;
+=======
+	mantis->last_block = mantis->finished_block = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mmwrite(mmread(MANTIS_INT_MASK) | MANTIS_INT_RISCI, MANTIS_INT_MASK);
 
@@ -223,9 +298,15 @@ void mantis_dma_xfer(unsigned long data)
 	struct mantis_pci *mantis = (struct mantis_pci *) data;
 	struct mantis_hwconfig *config = mantis->hwconfig;
 
+<<<<<<< HEAD
 	while (mantis->last_block != mantis->busy_block) {
 		dprintk(MANTIS_DEBUG, 1, "last block=[%d] finished block=[%d]",
 			mantis->last_block, mantis->busy_block);
+=======
+	while (mantis->last_block != mantis->finished_block) {
+		dprintk(MANTIS_DEBUG, 1, "last block=[%d] finished block=[%d]",
+			mantis->last_block, mantis->finished_block);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		(config->ts_size ? dvb_dmx_swfilter_204 : dvb_dmx_swfilter)
 		(&mantis->demux, &mantis->buf_cpu[mantis->last_block * MANTIS_BLOCK_BYTES], MANTIS_BLOCK_BYTES);

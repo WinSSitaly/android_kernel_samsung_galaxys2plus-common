@@ -37,6 +37,10 @@
 #include <linux/thread_info.h>
 #include <asm/addrspace.h>
 #include <asm/page.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define user_mode(regs)			(((regs)->sr & 0x40000000)==0)
 #define kernel_stack_pointer(_regs)	((unsigned long)(_regs)->regs[15])
@@ -44,6 +48,11 @@
 #define GET_FP(regs)	((regs)->regs[14])
 #define GET_USP(regs)	((regs)->regs[15])
 
+<<<<<<< HEAD
+=======
+extern void show_regs(struct pt_regs *);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define arch_has_single_step()	(1)
 
 /*
@@ -122,7 +131,11 @@ static inline unsigned long regs_get_kernel_stack_nth(struct pt_regs *regs,
 struct perf_event;
 struct perf_sample_data;
 
+<<<<<<< HEAD
 extern void ptrace_triggered(struct perf_event *bp,
+=======
+extern void ptrace_triggered(struct perf_event *bp, int nmi,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      struct perf_sample_data *data, struct pt_regs *regs);
 
 #define task_pt_regs(task) \

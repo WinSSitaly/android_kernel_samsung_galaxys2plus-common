@@ -21,7 +21,10 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <scsi/scsi.h>
 #include <scsi/scsi_eh.h>
 #include <scsi/scsi_dh.h>
@@ -629,6 +632,7 @@ static const struct scsi_dh_devlist clariion_dev_list[] = {
 	{NULL, NULL},
 };
 
+<<<<<<< HEAD
 static bool clariion_match(struct scsi_device *sdev)
 {
 	int i;
@@ -647,6 +651,8 @@ static bool clariion_match(struct scsi_device *sdev)
 	return false;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int clariion_bus_attach(struct scsi_device *sdev);
 static void clariion_bus_detach(struct scsi_device *sdev);
 
@@ -660,7 +666,10 @@ static struct scsi_device_handler clariion_dh = {
 	.activate	= clariion_activate,
 	.prep_fn	= clariion_prep_fn,
 	.set_params	= clariion_set_params,
+<<<<<<< HEAD
 	.match		= clariion_match,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int clariion_bus_attach(struct scsi_device *sdev)

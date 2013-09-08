@@ -11,7 +11,11 @@
  *   NON INFRINGEMENT.  See the GNU General Public License for
  *   more details.
  *
+<<<<<<< HEAD
  * Do not include directly; use <linux/atomic.h>.
+=======
+ * Do not include directly; use <asm/atomic.h>.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #ifndef _ASM_TILE_ATOMIC_64_H
@@ -19,7 +23,10 @@
 
 #ifndef __ASSEMBLY__
 
+<<<<<<< HEAD
 #include <asm/barrier.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <arch/spr_def.h>
 
 /* First, the 32-bit atomic ops that are "real" on our 64-bit platform. */
@@ -65,7 +72,11 @@ static inline int atomic_add_return(int i, atomic_t *v)
 	return val;
 }
 
+<<<<<<< HEAD
 static inline int __atomic_add_unless(atomic_t *v, int a, int u)
+=======
+static inline int atomic_add_unless(atomic_t *v, int a, int u)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int guess, oldval = v->counter;
 	do {
@@ -74,7 +85,11 @@ static inline int __atomic_add_unless(atomic_t *v, int a, int u)
 		guess = oldval;
 		oldval = atomic_cmpxchg(v, guess, guess + a);
 	} while (guess != oldval);
+<<<<<<< HEAD
 	return oldval;
+=======
+	return oldval != u;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Now the true 64-bit operations. */

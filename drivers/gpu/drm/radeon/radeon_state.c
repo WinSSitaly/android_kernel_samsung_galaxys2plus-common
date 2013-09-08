@@ -272,12 +272,21 @@ static __inline__ int radeon_check_and_fixup_packets(drm_radeon_private_t *
 	return 0;
 }
 
+<<<<<<< HEAD
 static int radeon_check_and_fixup_packet3(drm_radeon_private_t *
 					  dev_priv,
 					  struct drm_file *file_priv,
 					  drm_radeon_kcmd_buffer_t *
 					  cmdbuf,
 					  unsigned int *cmdsz)
+=======
+static __inline__ int radeon_check_and_fixup_packet3(drm_radeon_private_t *
+						     dev_priv,
+						     struct drm_file *file_priv,
+						     drm_radeon_kcmd_buffer_t *
+						     cmdbuf,
+						     unsigned int *cmdsz)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 *cmd = drm_buffer_pointer_to_dword(cmdbuf->buffer, 0);
 	u32 offset, narrays;
@@ -446,8 +455,13 @@ static int radeon_check_and_fixup_packet3(drm_radeon_private_t *
  * CP hardware state programming functions
  */
 
+<<<<<<< HEAD
 static void radeon_emit_clip_rect(drm_radeon_private_t * dev_priv,
 				  struct drm_clip_rect * box)
+=======
+static __inline__ void radeon_emit_clip_rect(drm_radeon_private_t * dev_priv,
+					     struct drm_clip_rect * box)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	RING_LOCALS;
 

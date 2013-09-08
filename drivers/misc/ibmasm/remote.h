@@ -18,7 +18,11 @@
  *
  * Copyright (C) IBM Corporation, 2004
  *
+<<<<<<< HEAD
  * Author: Max AsbÃ¶ck <amax@us.ibm.com>
+=======
+ * Author: Max Asböck <amax@us.ibm.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Originally written by Pete Reynolds
  */

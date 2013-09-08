@@ -60,6 +60,14 @@ struct xt_rateest *xt_rateest_lookup(const char *name)
 }
 EXPORT_SYMBOL_GPL(xt_rateest_lookup);
 
+<<<<<<< HEAD
+=======
+static void xt_rateest_free_rcu(struct rcu_head *head)
+{
+	kfree(container_of(head, struct xt_rateest, rcu));
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void xt_rateest_put(struct xt_rateest *est)
 {
 	mutex_lock(&xt_rateest_mutex);
@@ -70,7 +78,11 @@ void xt_rateest_put(struct xt_rateest *est)
 		 * gen_estimator est_timer() might access est->lock or bstats,
 		 * wait a RCU grace period before freeing 'est'
 		 */
+<<<<<<< HEAD
 		kfree_rcu(est, rcu);
+=======
+		call_rcu(&est->rcu, xt_rateest_free_rcu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	mutex_unlock(&xt_rateest_mutex);
 }
@@ -183,6 +195,10 @@ static int __init xt_rateest_tg_init(void)
 static void __exit xt_rateest_tg_fini(void)
 {
 	xt_unregister_target(&xt_rateest_tg_reg);
+<<<<<<< HEAD
+=======
+	rcu_barrier(); /* Wait for completion of call_rcu()'s (xt_rateest_free_rcu) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 

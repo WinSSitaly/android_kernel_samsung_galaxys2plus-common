@@ -46,6 +46,7 @@ struct b43_txhdr {
 	__le32 timeout;			/* Timeout */
 
 	union {
+<<<<<<< HEAD
 		/* Tested with 598.314, 644.1001 and 666.2 */
 		struct {
 			__le16 mimo_antenna;            /* MIMO antenna select */
@@ -64,6 +65,9 @@ struct b43_txhdr {
 		} format_598 __packed;
 
 		/* Tested with 410.2160, 478.104 and 508.* */
+=======
+		/* The new r410 format. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct {
 			__le16 mimo_antenna;		/* MIMO antenna select */
 			__le16 preload_size;		/* Preload size */
@@ -74,9 +78,15 @@ struct b43_txhdr {
 			__u8 rts_frame[16];		/* The RTS frame (if used) */
 			PAD_BYTES(2);
 			struct b43_plcp_hdr6 plcp;	/* Main PLCP header */
+<<<<<<< HEAD
 		} format_410 __packed;
 
 		/* Tested with 351.126 */
+=======
+		} new_format __packed;
+
+		/* The old r351 format. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct {
 			PAD_BYTES(2);
 			__le16 cookie;			/* TX frame cookie */
@@ -85,7 +95,11 @@ struct b43_txhdr {
 			__u8 rts_frame[16];		/* The RTS frame (if used) */
 			PAD_BYTES(2);
 			struct b43_plcp_hdr6 plcp;	/* Main PLCP header */
+<<<<<<< HEAD
 		} format_351 __packed;
+=======
+		} old_format __packed;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	} __packed;
 } __packed;
@@ -183,6 +197,7 @@ struct b43_tx_legacy_rate_phy_ctl_entry {
 #define  B43_TXH_PHY1_MODUL_QAM256	0x2000 /* QAM256 */
 
 
+<<<<<<< HEAD
 static inline
 size_t b43_txhdr_size(struct b43_wldev *dev)
 {
@@ -195,6 +210,21 @@ size_t b43_txhdr_size(struct b43_wldev *dev)
 		return 100 + sizeof(struct b43_plcp_hdr6);
 	}
 	return 0;
+=======
+/* r351 firmware compatibility stuff. */
+static inline
+bool b43_is_old_txhdr_format(struct b43_wldev *dev)
+{
+	return (dev->fw.rev <= 351);
+}
+
+static inline
+size_t b43_txhdr_size(struct b43_wldev *dev)
+{
+	if (b43_is_old_txhdr_format(dev))
+		return 100 + sizeof(struct b43_plcp_hdr6);
+	return 104 + sizeof(struct b43_plcp_hdr6);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -248,6 +278,7 @@ struct b43_rxhdr_fw4 {
 			__s8 power1;	/* PHY RX Status 1: Power 1 */
 		} __packed;
 	} __packed;
+<<<<<<< HEAD
 	union {
 		/* HT-PHY */
 		struct {
@@ -289,6 +320,13 @@ struct b43_rxhdr_fw4 {
 			__le16 channel;
 		} format_351 __packed;
 	} __packed;
+=======
+	__le16 phy_status2;	/* PHY RX Status 2 */
+	__le16 phy_status3;	/* PHY RX Status 3 */
+	__le32 mac_status;	/* MAC RX status */
+	__le16 mac_time;
+	__le16 channel;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } __packed;
 
 /* PHY RX Status 0 */

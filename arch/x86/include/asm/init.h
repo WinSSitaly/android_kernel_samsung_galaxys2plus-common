@@ -5,8 +5,11 @@
 extern void __init early_ioremap_page_table_range_init(void);
 #endif
 
+<<<<<<< HEAD
 extern void __init zone_sizes_init(void);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern unsigned long __init
 kernel_physical_mapping_init(unsigned long start,
 			     unsigned long end,

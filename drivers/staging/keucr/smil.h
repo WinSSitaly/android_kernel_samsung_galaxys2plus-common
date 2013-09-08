@@ -177,7 +177,12 @@ struct SSFDCTYPE {
 	WORD MaxLogBlocks;
 };
 
+<<<<<<< HEAD
 typedef struct SSFDCTYPE_T {
+=======
+typedef struct SSFDCTYPE_T
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BYTE Model;
 	BYTE Attribute;
 	BYTE MaxZones;
@@ -193,7 +198,12 @@ struct ADDRESS {
 	WORD LogBlock;	/* Logical Block Number of Zone */
 };
 
+<<<<<<< HEAD
 typedef struct ADDRESS_T {
+=======
+typedef struct ADDRESS_T
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BYTE Zone;	/* Zone Number */
 	BYTE Sector;	/* Sector(512byte) Number on Block */
 	WORD PhyBlock;	/* Physical Block Number on Zone */

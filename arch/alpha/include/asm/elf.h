@@ -2,7 +2,10 @@
 #define __ASM_ALPHA_ELF_H
 
 #include <asm/auxvec.h>
+<<<<<<< HEAD
 #include <asm/special_insns.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Special values for the st_other field in the symbol table.  */
 

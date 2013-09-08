@@ -41,7 +41,10 @@
 
 #include <asm/desc_defs.h>
 #include <asm/kmap_types.h>
+<<<<<<< HEAD
 #include <asm/pgtable_types.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct page;
 struct thread_struct;
@@ -64,11 +67,14 @@ struct paravirt_callee_save {
 struct pv_info {
 	unsigned int kernel_rpl;
 	int shared_kernel_pmd;
+<<<<<<< HEAD
 
 #ifdef CONFIG_X86_64
 	u16 extra_user_64bit_cs;  /* __USER_CS if none */
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int paravirt_enabled;
 	const char *name;
 };
@@ -91,12 +97,18 @@ struct pv_lazy_ops {
 	/* Set deferred update mode, used for batching operations. */
 	void (*enter)(void);
 	void (*leave)(void);
+<<<<<<< HEAD
 	void (*flush)(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct pv_time_ops {
 	unsigned long long (*sched_clock)(void);
+<<<<<<< HEAD
 	unsigned long long (*steal_clock)(int cpu);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long (*get_tsc_khz)(void);
 };
 
@@ -681,7 +693,10 @@ void paravirt_end_context_switch(struct task_struct *next);
 
 void paravirt_enter_lazy_mmu(void);
 void paravirt_leave_lazy_mmu(void);
+<<<<<<< HEAD
 void paravirt_flush_lazy_mmu(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void _paravirt_nop(void);
 u32 _paravirt_ident_32(u32);

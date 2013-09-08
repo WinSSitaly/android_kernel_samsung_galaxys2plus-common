@@ -44,6 +44,11 @@ struct pk_device {
 	struct pcmidi_snd	*pm; /* pcmidi device context */
 };
 
+<<<<<<< HEAD
+=======
+struct pcmidi_snd;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct pcmidi_sustain {
 	unsigned long		in_use;
 	struct pcmidi_snd	*pm;
@@ -90,7 +95,11 @@ static const char longname[] = "Prodikeys PC-MIDI Keyboard";
 
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_array(index, int, NULL, 0444);
 module_param_array(id, charp, NULL, 0444);
@@ -240,7 +249,11 @@ drop_note:
 	return;
 }
 
+<<<<<<< HEAD
 static void pcmidi_sustained_note_release(unsigned long data)
+=======
+void pcmidi_sustained_note_release(unsigned long data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct pcmidi_sustain *pms = (struct pcmidi_sustain *)data;
 
@@ -248,7 +261,11 @@ static void pcmidi_sustained_note_release(unsigned long data)
 	pms->in_use = 0;
 }
 
+<<<<<<< HEAD
 static void init_sustain_timers(struct pcmidi_snd *pm)
+=======
+void init_sustain_timers(struct pcmidi_snd *pm)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct pcmidi_sustain *pms;
 	unsigned i;
@@ -262,7 +279,11 @@ static void init_sustain_timers(struct pcmidi_snd *pm)
 	}
 }
 
+<<<<<<< HEAD
 static void stop_sustain_timers(struct pcmidi_snd *pm)
+=======
+void stop_sustain_timers(struct pcmidi_snd *pm)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct pcmidi_sustain *pms;
 	unsigned i;
@@ -497,7 +518,11 @@ static int pcmidi_handle_report4(struct pcmidi_snd *pm, u8 *data)
 	return 1;
 }
 
+<<<<<<< HEAD
 static int pcmidi_handle_report(
+=======
+int pcmidi_handle_report(
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pcmidi_snd *pm, unsigned report_id, u8 *data, int size)
 {
 	int ret = 0;
@@ -516,8 +541,12 @@ static int pcmidi_handle_report(
 	return ret;
 }
 
+<<<<<<< HEAD
 static void pcmidi_setup_extra_keys(
 	struct pcmidi_snd *pm, struct input_dev *input)
+=======
+void pcmidi_setup_extra_keys(struct pcmidi_snd *pm, struct input_dev *input)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* reassigned functionality for N/A keys
 		MY PICTURES =>	KEY_WORDPROCESSOR
@@ -601,7 +630,11 @@ static struct snd_rawmidi_ops pcmidi_in_ops = {
 	.trigger = pcmidi_in_trigger
 };
 
+<<<<<<< HEAD
 static int pcmidi_snd_initialise(struct pcmidi_snd *pm)
+=======
+int pcmidi_snd_initialise(struct pcmidi_snd *pm)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static int dev;
 	struct snd_card *card;
@@ -719,7 +752,11 @@ fail:
 	return err;
 }
 
+<<<<<<< HEAD
 static int pcmidi_snd_terminate(struct pcmidi_snd *pm)
+=======
+int pcmidi_snd_terminate(struct pcmidi_snd *pm)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (pm->card) {
 		stop_sustain_timers(pm);
@@ -816,7 +853,11 @@ static int pk_probe(struct hid_device *hdev, const struct hid_device_id *id)
 	if (pm == NULL) {
 		hid_err(hdev, "can't alloc descriptor\n");
 		ret = -ENOMEM;
+<<<<<<< HEAD
 		goto err_free_pk;
+=======
+		goto err_free;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	pm->pk = pk;
@@ -849,10 +890,17 @@ static int pk_probe(struct hid_device *hdev, const struct hid_device_id *id)
 err_stop:
 	hid_hw_stop(hdev);
 err_free:
+<<<<<<< HEAD
 	kfree(pm);
 err_free_pk:
 	kfree(pk);
 
+=======
+	if (pm != NULL)
+		kfree(pm);
+
+	kfree(pk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 

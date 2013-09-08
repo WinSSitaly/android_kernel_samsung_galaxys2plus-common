@@ -139,6 +139,10 @@ void cpc_tty_init(pc300dev_t *dev);
 void cpc_tty_unregister_service(pc300dev_t *pc300dev);
 void cpc_tty_receive(pc300dev_t *pc300dev);
 void cpc_tty_trigger_poll(pc300dev_t *pc300dev);
+<<<<<<< HEAD
+=======
+void cpc_tty_reset_var(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * PC300 TTY clear "signal"
@@ -754,7 +758,11 @@ void cpc_tty_receive(pc300dev_t *pc300dev)
 
 	dsr_rx = cpc_readb(card->hw.scabase + DSR_RX(ch));
 
+<<<<<<< HEAD
 	cpc_tty = pc300dev->cpc_tty;
+=======
+	cpc_tty = (st_cpc_tty_area *)pc300dev->cpc_tty; 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (1) { 
 		rx_len = 0;
@@ -1077,3 +1085,23 @@ void cpc_tty_trigger_poll(pc300dev_t *pc300dev)
 	}
 	schedule_work(&(cpc_tty->tty_tx_work)); 
 } 
+<<<<<<< HEAD
+=======
+
+/*
+ * PC300 TTY reset var routine
+ * This routine is called by pc300driver to init the TTY area. 
+ */
+
+void cpc_tty_reset_var(void)
+{
+	int i ; 
+
+	CPC_TTY_DBG("hdlcX-tty: reset variables\n");
+	/* reset  the tty_driver structure - serial_drv */ 
+	memset(&serial_drv, 0, sizeof(struct tty_driver));
+	for (i=0; i < CPC_TTY_NPORTS; i++){
+		memset(&cpc_tty_area[i],0, sizeof(st_cpc_tty_area)); 
+	}
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

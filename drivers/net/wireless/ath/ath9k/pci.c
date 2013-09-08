@@ -18,7 +18,10 @@
 #include <linux/pci.h>
 #include <linux/pci-aspm.h>
 #include <linux/ath9k_platform.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "ath9k.h"
 
 static DEFINE_PCI_DEVICE_TABLE(ath_pci_id_table) = {
@@ -33,6 +36,7 @@ static DEFINE_PCI_DEVICE_TABLE(ath_pci_id_table) = {
 	{ PCI_VDEVICE(ATHEROS, 0x002E) }, /* PCI-E */
 	{ PCI_VDEVICE(ATHEROS, 0x0030) }, /* PCI-E  AR9300 */
 	{ PCI_VDEVICE(ATHEROS, 0x0032) }, /* PCI-E  AR9485 */
+<<<<<<< HEAD
 	{ PCI_VDEVICE(ATHEROS, 0x0033) }, /* PCI-E  AR9580 */
 	{ PCI_VDEVICE(ATHEROS, 0x0034) }, /* PCI-E  AR9462 */
 	{ PCI_VDEVICE(ATHEROS, 0x0037) }, /* PCI-E  AR1111/AR9485 */
@@ -40,6 +44,11 @@ static DEFINE_PCI_DEVICE_TABLE(ath_pci_id_table) = {
 };
 
 
+=======
+	{ 0 }
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* return bus cachesize in 4B word units */
 static void ath_pci_read_cachesize(struct ath_common *common, int *csz)
 {
@@ -93,6 +102,26 @@ static bool ath_pci_eeprom_read(struct ath_common *common, u32 off, u16 *data)
 	return true;
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * Bluetooth coexistance requires disabling ASPM.
+ */
+static void ath_pci_bt_coex_prep(struct ath_common *common)
+{
+	struct ath_softc *sc = (struct ath_softc *) common->priv;
+	struct pci_dev *pdev = to_pci_dev(sc->dev);
+	u8 aspm;
+
+	if (!pci_is_pcie(pdev))
+		return;
+
+	pci_read_config_byte(pdev, ATH_PCIE_CAP_LINK_CTRL, &aspm);
+	aspm &= ~(ATH_PCIE_CAP_LINK_L0S | ATH_PCIE_CAP_LINK_L1);
+	pci_write_config_byte(pdev, ATH_PCIE_CAP_LINK_CTRL, aspm);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ath_pci_extn_synch_enable(struct ath_common *common)
 {
 	struct ath_softc *sc = (struct ath_softc *) common->priv;
@@ -104,7 +133,10 @@ static void ath_pci_extn_synch_enable(struct ath_common *common)
 	pci_write_config_byte(pdev, sc->sc_ah->caps.pcie_lcr_offset, lnkctl);
 }
 
+<<<<<<< HEAD
 /* Need to be called after we discover btcoex capabilities */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ath_pci_aspm_init(struct ath_common *common)
 {
 	struct ath_softc *sc = (struct ath_softc *) common->priv;
@@ -114,6 +146,7 @@ static void ath_pci_aspm_init(struct ath_common *common)
 	int pos;
 	u8 aspm;
 
+<<<<<<< HEAD
 	pos = pci_pcie_cap(pdev);
 	if (!pos)
 		return;
@@ -141,12 +174,25 @@ static void ath_pci_aspm_init(struct ath_common *common)
 		return;
 	}
 
+=======
+	if (!pci_is_pcie(pdev))
+		return;
+
+	parent = pdev->bus->self;
+	if (WARN_ON(!parent))
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pos = pci_pcie_cap(parent);
 	pci_read_config_byte(parent, pos +  PCI_EXP_LNKCTL, &aspm);
 	if (aspm & (PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1)) {
 		ah->aspm_enabled = true;
 		/* Initialize PCIe PM and SERDES registers. */
+<<<<<<< HEAD
 		ath9k_hw_configpcipowersave(ah, false);
+=======
+		ath9k_hw_configpcipowersave(ah, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -154,6 +200,10 @@ static const struct ath_bus_ops ath_pci_bus_ops = {
 	.ath_bus_type = ATH_PCI,
 	.read_cachesize = ath_pci_read_cachesize,
 	.eeprom_read = ath_pci_eeprom_read,
+<<<<<<< HEAD
+=======
+	.bt_coex_prep = ath_pci_bt_coex_prep,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.extn_synch_en = ath_pci_extn_synch_enable,
 	.aspm_init = ath_pci_aspm_init,
 };
@@ -164,6 +214,10 @@ static int ath_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 	struct ath_softc *sc;
 	struct ieee80211_hw *hw;
 	u8 csz;
+<<<<<<< HEAD
+=======
+	u16 subsysid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 val;
 	int ret = 0;
 	char hw_name[64];
@@ -257,7 +311,12 @@ static int ath_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 
 	sc->irq = pdev->irq;
 
+<<<<<<< HEAD
 	ret = ath9k_init_device(id->device, sc, &ath_pci_bus_ops);
+=======
+	pci_read_config_word(pdev, PCI_SUBSYSTEM_ID, &subsysid);
+	ret = ath9k_init_device(id->device, sc, subsysid, &ath_pci_bus_ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret) {
 		dev_err(&pdev->dev, "Failed to initialize device\n");
 		goto err_init;
@@ -309,11 +368,19 @@ static int ath_pci_suspend(struct device *device)
 	struct ieee80211_hw *hw = pci_get_drvdata(pdev);
 	struct ath_softc *sc = hw->priv;
 
+<<<<<<< HEAD
+=======
+	ath9k_hw_set_gpio(sc->sc_ah, sc->sc_ah->led_pin, 1);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* The device has to be moved to FULLSLEEP forcibly.
 	 * Otherwise the chip never moved to full sleep,
 	 * when no interface is up.
 	 */
+<<<<<<< HEAD
 	ath9k_hw_disable(sc->sc_ah);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ath9k_hw_setpower(sc->sc_ah, ATH9K_PM_FULL_SLEEP);
 
 	return 0;
@@ -322,6 +389,11 @@ static int ath_pci_suspend(struct device *device)
 static int ath_pci_resume(struct device *device)
 {
 	struct pci_dev *pdev = to_pci_dev(device);
+<<<<<<< HEAD
+=======
+	struct ieee80211_hw *hw = pci_get_drvdata(pdev);
+	struct ath_softc *sc = hw->priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 val;
 
 	/*
@@ -333,6 +405,25 @@ static int ath_pci_resume(struct device *device)
 	if ((val & 0x0000ff00) != 0)
 		pci_write_config_dword(pdev, 0x40, val & 0xffff00ff);
 
+<<<<<<< HEAD
+=======
+	/* Enable LED */
+	ath9k_hw_cfg_output(sc->sc_ah, sc->sc_ah->led_pin,
+			    AR_GPIO_OUTPUT_MUX_AS_OUTPUT);
+	ath9k_hw_set_gpio(sc->sc_ah, sc->sc_ah->led_pin, 1);
+
+	  /*
+	   * Reset key cache to sane defaults (all entries cleared) instead of
+	   * semi-random values after suspend/resume.
+	   */
+	ath9k_ps_wakeup(sc);
+	ath9k_init_crypto(sc);
+	ath9k_ps_restore(sc);
+
+	sc->ps_idle = true;
+	ath_radio_disable(sc, hw);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

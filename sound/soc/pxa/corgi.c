@@ -45,8 +45,15 @@
 static int corgi_jack_func;
 static int corgi_spk_func;
 
+<<<<<<< HEAD
 static void corgi_ext_control(struct snd_soc_dapm_context *dapm)
 {
+=======
+static void corgi_ext_control(struct snd_soc_codec *codec)
+{
+	struct snd_soc_dapm_context *dapm = &codec->dapm;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* set up jack connection */
 	switch (corgi_jack_func) {
 	case CORGI_HP:
@@ -102,7 +109,11 @@ static int corgi_startup(struct snd_pcm_substream *substream)
 	mutex_lock(&codec->mutex);
 
 	/* check the jack status at stream startup */
+<<<<<<< HEAD
 	corgi_ext_control(&codec->dapm);
+=======
+	corgi_ext_control(codec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_unlock(&codec->mutex);
 
@@ -140,6 +151,21 @@ static int corgi_hw_params(struct snd_pcm_substream *substream,
 		break;
 	}
 
+<<<<<<< HEAD
+=======
+	/* set codec DAI configuration */
+	ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_I2S |
+		SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_CBS_CFS);
+	if (ret < 0)
+		return ret;
+
+	/* set cpu DAI configuration */
+	ret = snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_I2S |
+		SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_CBS_CFS);
+	if (ret < 0)
+		return ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* set the codec system clock for DAC and ADC */
 	ret = snd_soc_dai_set_sysclk(codec_dai, WM8731_SYSCLK_XTAL, clk,
 		SND_SOC_CLOCK_IN);
@@ -171,13 +197,21 @@ static int corgi_get_jack(struct snd_kcontrol *kcontrol,
 static int corgi_set_jack(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
+<<<<<<< HEAD
 	struct snd_soc_card *card = snd_kcontrol_chip(kcontrol);
+=======
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (corgi_jack_func == ucontrol->value.integer.value[0])
 		return 0;
 
 	corgi_jack_func = ucontrol->value.integer.value[0];
+<<<<<<< HEAD
 	corgi_ext_control(&card->dapm);
+=======
+	corgi_ext_control(codec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
@@ -191,13 +225,21 @@ static int corgi_get_spk(struct snd_kcontrol *kcontrol,
 static int corgi_set_spk(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
+<<<<<<< HEAD
 	struct snd_soc_card *card =  snd_kcontrol_chip(kcontrol);
+=======
+	struct snd_soc_codec *codec =  snd_kcontrol_chip(kcontrol);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (corgi_spk_func == ucontrol->value.integer.value[0])
 		return 0;
 
 	corgi_spk_func = ucontrol->value.integer.value[0];
+<<<<<<< HEAD
 	corgi_ext_control(&card->dapm);
+=======
+	corgi_ext_control(codec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
@@ -225,7 +267,11 @@ SND_SOC_DAPM_HP("Headset Jack", NULL),
 };
 
 /* Corgi machine audio map (connections to the codec pins) */
+<<<<<<< HEAD
 static const struct snd_soc_dapm_route corgi_audio_map[] = {
+=======
+static const struct snd_soc_dapm_route audio_map[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* headset Jack  - in = micin, out = LHPOUT*/
 	{"Headset Jack", NULL, "LHPOUT"},
@@ -267,10 +313,31 @@ static int corgi_wm8731_init(struct snd_soc_pcm_runtime *rtd)
 {
 	struct snd_soc_codec *codec = rtd->codec;
 	struct snd_soc_dapm_context *dapm = &codec->dapm;
+<<<<<<< HEAD
+=======
+	int err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	snd_soc_dapm_nc_pin(dapm, "LLINEIN");
 	snd_soc_dapm_nc_pin(dapm, "RLINEIN");
 
+<<<<<<< HEAD
+=======
+	/* Add corgi specific controls */
+	err = snd_soc_add_controls(codec, wm8731_corgi_controls,
+				ARRAY_SIZE(wm8731_corgi_controls));
+	if (err < 0)
+		return err;
+
+	/* Add corgi specific widgets */
+	snd_soc_dapm_new_controls(dapm, wm8731_dapm_widgets,
+				  ARRAY_SIZE(wm8731_dapm_widgets));
+
+	/* Set up corgi specific audio path audio_map */
+	snd_soc_dapm_add_routes(dapm, audio_map, ARRAY_SIZE(audio_map));
+
+	snd_soc_dapm_sync(dapm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -283,12 +350,16 @@ static struct snd_soc_dai_link corgi_dai = {
 	.platform_name = "pxa-pcm-audio",
 	.codec_name = "wm8731.0-001b",
 	.init = corgi_wm8731_init,
+<<<<<<< HEAD
 	.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
 		   SND_SOC_DAIFMT_CBS_CFS,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ops = &corgi_ops,
 };
 
 /* corgi audio machine driver */
+<<<<<<< HEAD
 static struct snd_soc_card corgi = {
 	.name = "Corgi",
 	.owner = THIS_MODULE,
@@ -335,9 +406,50 @@ static struct platform_driver corgi_driver = {
 };
 
 module_platform_driver(corgi_driver);
+=======
+static struct snd_soc_card snd_soc_corgi = {
+	.name = "Corgi",
+	.dai_link = &corgi_dai,
+	.num_links = 1,
+};
+
+static struct platform_device *corgi_snd_device;
+
+static int __init corgi_init(void)
+{
+	int ret;
+
+	if (!(machine_is_corgi() || machine_is_shepherd() ||
+	      machine_is_husky()))
+		return -ENODEV;
+
+	corgi_snd_device = platform_device_alloc("soc-audio", -1);
+	if (!corgi_snd_device)
+		return -ENOMEM;
+
+	platform_set_drvdata(corgi_snd_device, &snd_soc_corgi);
+	ret = platform_device_add(corgi_snd_device);
+
+	if (ret)
+		platform_device_put(corgi_snd_device);
+
+	return ret;
+}
+
+static void __exit corgi_exit(void)
+{
+	platform_device_unregister(corgi_snd_device);
+}
+
+module_init(corgi_init);
+module_exit(corgi_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Module information */
 MODULE_AUTHOR("Richard Purdie");
 MODULE_DESCRIPTION("ALSA SoC Corgi");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_ALIAS("platform:corgi-audio");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

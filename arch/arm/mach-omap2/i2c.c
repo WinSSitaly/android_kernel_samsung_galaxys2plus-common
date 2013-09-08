@@ -21,6 +21,7 @@
 
 #include <plat/cpu.h>
 #include <plat/i2c.h>
+<<<<<<< HEAD
 #include "common.h"
 #include <plat/omap_hwmod.h>
 
@@ -34,6 +35,11 @@
 /* Maximum microseconds to wait for OMAP module to softreset */
 #define MAX_MODULE_SOFTRESET_WAIT	10000
 
+=======
+
+#include "mux.h"
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init omap2_i2c_mux_pins(int bus_id)
 {
 	char mux_name[sizeof("i2c2_scl.i2c2_scl")];
@@ -47,6 +53,7 @@ void __init omap2_i2c_mux_pins(int bus_id)
 	sprintf(mux_name, "i2c%i_sda.i2c%i_sda", bus_id, bus_id);
 	omap_mux_init_signal(mux_name, OMAP_PIN_INPUT);
 }
+<<<<<<< HEAD
 
 /**
  * omap_i2c_reset - reset the omap i2c module.
@@ -105,3 +112,5 @@ int omap_i2c_reset(struct omap_hwmod *oh)
 
 	return 0;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

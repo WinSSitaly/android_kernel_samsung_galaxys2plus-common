@@ -2,7 +2,11 @@
 
   Broadcom B43 wireless driver
 
+<<<<<<< HEAD
   Copyright (c) 2007 Michael Buesch <m@bues.ch>
+=======
+  Copyright (c) 2007 Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,7 +29,10 @@
 
 #include <linux/ssb/ssb.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <pcmcia/cistpl.h>
 #include <pcmcia/ciscode.h>

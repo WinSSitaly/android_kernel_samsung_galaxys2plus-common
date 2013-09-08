@@ -150,6 +150,10 @@ struct ispccdc_lsc {
  * @input: Active input
  * @output: Active outputs
  * @video_out: Output video node
+<<<<<<< HEAD
+=======
+ * @error: A hardware error occurred during capture
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @alaw: A-law compression enabled (1) or disabled (0)
  * @lpf: Low pass filter enabled (1) or disabled (0)
  * @obclamp: Optical-black clamp enabled (1) or disabled (0)
@@ -177,6 +181,10 @@ struct isp_ccdc_device {
 	enum ccdc_input_entity input;
 	unsigned int output;
 	struct isp_video video_out;
+<<<<<<< HEAD
+=======
+	unsigned int error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	unsigned int alaw:1,
 		     lpf:1,

@@ -53,7 +53,10 @@
 
 #ifdef __KERNEL__
 #include <linux/err.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/virtio.h>
 
 /**
@@ -86,8 +89,11 @@
  * @reset: reset the device
  *	vdev: the virtio device
  *	After this, status and feature negotiation must be done again
+<<<<<<< HEAD
  *	Device must not be reset from its vq/config callbacks, or in
  *	parallel with being added/removed.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @find_vqs: find virtqueues and instantiate them.
  *	vdev: the virtio_device
  *	nvqs: the number of virtqueues to find
@@ -103,10 +109,13 @@
  *	vdev: the virtio_device
  *	This gives the final feature bits for the device: it can change
  *	the dev->feature bits if it wants.
+<<<<<<< HEAD
  * @bus_name: return the bus name associated with the device
  *	vdev: the virtio_device
  *      This returns a pointer to the bus name a la pci_name from which
  *      the caller can then copy.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 typedef void vq_callback_t(struct virtqueue *);
 struct virtio_config_ops {
@@ -124,7 +133,10 @@ struct virtio_config_ops {
 	void (*del_vqs)(struct virtio_device *);
 	u32 (*get_features)(struct virtio_device *vdev);
 	void (*finalize_features)(struct virtio_device *vdev);
+<<<<<<< HEAD
 	const char *(*bus_name)(struct virtio_device *vdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* If driver didn't advertise the feature, it will never appear. */
@@ -163,9 +175,12 @@ static inline bool virtio_has_feature(const struct virtio_device *vdev,
 #define virtio_config_val(vdev, fbit, offset, v) \
 	virtio_config_buf((vdev), (fbit), (offset), (v), sizeof(*v))
 
+<<<<<<< HEAD
 #define virtio_config_val_len(vdev, fbit, offset, v, len) \
 	virtio_config_buf((vdev), (fbit), (offset), (v), (len))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int virtio_config_buf(struct virtio_device *vdev,
 				    unsigned int fbit,
 				    unsigned int offset,
@@ -190,6 +205,7 @@ struct virtqueue *virtio_find_single_vq(struct virtio_device *vdev,
 		return ERR_PTR(err);
 	return vq;
 }
+<<<<<<< HEAD
 
 static inline
 const char *virtio_bus_name(struct virtio_device *vdev)
@@ -199,5 +215,7 @@ const char *virtio_bus_name(struct virtio_device *vdev)
 	return vdev->config->bus_name(vdev);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __KERNEL__ */
 #endif /* _LINUX_VIRTIO_CONFIG_H */

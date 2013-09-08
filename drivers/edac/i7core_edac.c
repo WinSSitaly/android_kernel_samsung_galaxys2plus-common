@@ -31,6 +31,7 @@
 #include <linux/pci_ids.h>
 #include <linux/slab.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/dmi.h>
 #include <linux/edac.h>
 #include <linux/mmzone.h>
@@ -38,6 +39,13 @@
 #include <asm/mce.h>
 #include <asm/processor.h>
 #include <asm/div64.h>
+=======
+#include <linux/edac.h>
+#include <linux/mmzone.h>
+#include <linux/edac_mce.h>
+#include <linux/smp.h>
+#include <asm/processor.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "edac_core.h"
 
@@ -80,8 +88,11 @@ MODULE_PARM_DESC(use_pci_fixup, "Enable PCI fixup to seek for hidden devices");
 	/* OFFSETS for Device 0 Function 0 */
 
 #define MC_CFG_CONTROL	0x90
+<<<<<<< HEAD
   #define MC_CFG_UNLOCK		0x02
   #define MC_CFG_LOCK		0x00
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* OFFSETS for Device 3 Function 0 */
 
@@ -102,6 +113,7 @@ MODULE_PARM_DESC(use_pci_fixup, "Enable PCI fixup to seek for hidden devices");
   #define DIMM0_COR_ERR(r)			((r) & 0x7fff)
 
 /* OFFSETS for Device 3 Function 2, as inicated on Xeon 5500 datasheet */
+<<<<<<< HEAD
 #define MC_SSRCONTROL		0x48
   #define SSR_MODE_DISABLE	0x00
   #define SSR_MODE_ENABLE	0x01
@@ -111,6 +123,8 @@ MODULE_PARM_DESC(use_pci_fixup, "Enable PCI fixup to seek for hidden devices");
   #define STARTSCRUB		(1 << 24)
   #define SCRUBINTERVAL_MASK    0xffffff
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MC_COR_ECC_CNT_0	0x80
 #define MC_COR_ECC_CNT_1	0x84
 #define MC_COR_ECC_CNT_2	0x88
@@ -266,7 +280,14 @@ struct i7core_pvt {
 	unsigned long	rdimm_ce_count[NUM_CHANS][MAX_DIMMS];
 	int		rdimm_last_ce_count[NUM_CHANS][MAX_DIMMS];
 
+<<<<<<< HEAD
 	bool		is_registered, enable_scrub;
+=======
+	unsigned int	is_registered;
+
+	/* mcelog glue */
+	struct edac_mce		edac_mce;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Fifo double buffers */
 	struct mce		mce_entry[MCE_LOG_LEN];
@@ -278,9 +299,12 @@ struct i7core_pvt {
 	/* Count indicator to show errors not got */
 	unsigned		mce_overrun;
 
+<<<<<<< HEAD
 	/* DCLK Frequency used for computing scrub rate */
 	int			dclk_freq;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Struct to control EDAC polling */
 	struct edac_pci_ctl_info *i7core_pci;
 };
@@ -294,7 +318,12 @@ static const struct pci_id_descr pci_dev_descr_i7core_nehalem[] = {
 		/* Memory controller */
 	{ PCI_DESCR(3, 0, PCI_DEVICE_ID_INTEL_I7_MCR)     },
 	{ PCI_DESCR(3, 1, PCI_DEVICE_ID_INTEL_I7_MC_TAD)  },
+<<<<<<< HEAD
 			/* Exists only for RDIMM */
+=======
+
+		/* Exists only for RDIMM */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ PCI_DESCR(3, 2, PCI_DEVICE_ID_INTEL_I7_MC_RAS), .optional = 1  },
 	{ PCI_DESCR(3, 4, PCI_DEVICE_ID_INTEL_I7_MC_TEST) },
 
@@ -315,6 +344,7 @@ static const struct pci_id_descr pci_dev_descr_i7core_nehalem[] = {
 	{ PCI_DESCR(6, 1, PCI_DEVICE_ID_INTEL_I7_MC_CH2_ADDR) },
 	{ PCI_DESCR(6, 2, PCI_DEVICE_ID_INTEL_I7_MC_CH2_RANK) },
 	{ PCI_DESCR(6, 3, PCI_DEVICE_ID_INTEL_I7_MC_CH2_TC)   },
+<<<<<<< HEAD
 
 		/* Generic Non-core registers */
 	/*
@@ -325,6 +355,8 @@ static const struct pci_id_descr pci_dev_descr_i7core_nehalem[] = {
 	 */
 	{ PCI_DESCR(0, 0, PCI_DEVICE_ID_INTEL_I7_NONCORE)  },
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct pci_id_descr pci_dev_descr_lynnfield[] = {
@@ -341,12 +373,15 @@ static const struct pci_id_descr pci_dev_descr_lynnfield[] = {
 	{ PCI_DESCR( 5, 1, PCI_DEVICE_ID_INTEL_LYNNFIELD_MC_CH1_ADDR) },
 	{ PCI_DESCR( 5, 2, PCI_DEVICE_ID_INTEL_LYNNFIELD_MC_CH1_RANK) },
 	{ PCI_DESCR( 5, 3, PCI_DEVICE_ID_INTEL_LYNNFIELD_MC_CH1_TC)   },
+<<<<<<< HEAD
 
 	/*
 	 * This is the PCI device has an alternate address on some
 	 * processors like Core i7 860
 	 */
 	{ PCI_DESCR( 0, 0, PCI_DEVICE_ID_INTEL_LYNNFIELD_NONCORE)     },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct pci_id_descr pci_dev_descr_i7core_westmere[] = {
@@ -374,10 +409,13 @@ static const struct pci_id_descr pci_dev_descr_i7core_westmere[] = {
 	{ PCI_DESCR(6, 1, PCI_DEVICE_ID_INTEL_LYNNFIELD_MC_CH2_ADDR_REV2) },
 	{ PCI_DESCR(6, 2, PCI_DEVICE_ID_INTEL_LYNNFIELD_MC_CH2_RANK_REV2) },
 	{ PCI_DESCR(6, 3, PCI_DEVICE_ID_INTEL_LYNNFIELD_MC_CH2_TC_REV2)   },
+<<<<<<< HEAD
 
 		/* Generic Non-core registers */
 	{ PCI_DESCR(0, 0, PCI_DEVICE_ID_INTEL_LYNNFIELD_NONCORE_REV2)  },
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define PCI_ID_TABLE_ENTRY(A) { .descr=A, .n_devs = ARRAY_SIZE(A) }
@@ -391,7 +429,11 @@ static const struct pci_id_table pci_dev_table[] = {
 /*
  *	pci_device_id	table for which devices we are looking for
  */
+<<<<<<< HEAD
 static DEFINE_PCI_DEVICE_TABLE(i7core_pci_tbl) = {
+=======
+static const struct pci_device_id i7core_pci_tbl[] __devinitdata = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_X58_HUB_MGMT)},
 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_LYNNFIELD_QPI_LINK0)},
 	{0,}			/* 0 terminated list. */
@@ -746,10 +788,13 @@ static int get_dimm_config(const struct mem_ctl_info *mci)
 
 			csr->edac_mode = mode;
 			csr->mtype = mtype;
+<<<<<<< HEAD
 			snprintf(csr->channels[0].label,
 					sizeof(csr->channels[0].label),
 					"CPU#%uChannel#%u_DIMM#%u",
 					pvt->i7core_dev->socket, i, j);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			csrow++;
 		}
@@ -767,7 +812,11 @@ static int get_dimm_config(const struct mem_ctl_info *mci)
 			debugf1("\t\t%#x\t%#x\t%#x\n",
 				(value[j] >> 27) & 0x1,
 				(value[j] >> 24) & 0x7,
+<<<<<<< HEAD
 				(value[j] & ((1 << 24) - 1)));
+=======
+				(value[j] && ((1 << 24) - 1)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -1360,6 +1409,7 @@ static int i7core_get_onedevice(struct pci_dev **prev,
 	pdev = pci_get_device(PCI_VENDOR_ID_INTEL,
 			      dev_descr->dev_id, *prev);
 
+<<<<<<< HEAD
 	/*
 	 * On Xeon 55xx, the Intel Quckpath Arch Generic Non-core regs
 	 * is at addr 8086:2c40, instead of 8086:2c41. So, we need
@@ -1374,6 +1424,8 @@ static int i7core_get_onedevice(struct pci_dev **prev,
 				      PCI_DEVICE_ID_INTEL_LYNNFIELD_NONCORE_ALT,
 				      *prev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!pdev) {
 		if (*prev) {
 			*prev = pdev;
@@ -1494,10 +1546,15 @@ static int mci_bind_devs(struct mem_ctl_info *mci,
 	struct i7core_pvt *pvt = mci->pvt_info;
 	struct pci_dev *pdev;
 	int i, func, slot;
+<<<<<<< HEAD
 	char *family;
 
 	pvt->is_registered = false;
 	pvt->enable_scrub  = false;
+=======
+
+	pvt->is_registered = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < i7core_dev->n_devs; i++) {
 		pdev = i7core_dev->pdev[i];
 		if (!pdev)
@@ -1513,6 +1570,7 @@ static int mci_bind_devs(struct mem_ctl_info *mci,
 			if (unlikely(func > MAX_CHAN_FUNC))
 				goto error;
 			pvt->pci_ch[slot - 4][func] = pdev;
+<<<<<<< HEAD
 		} else if (!slot && !func) {
 			pvt->pci_noncore = pdev;
 
@@ -1544,6 +1602,11 @@ static int mci_bind_devs(struct mem_ctl_info *mci,
 			}
 			debugf0("Detected a processor type %s\n", family);
 		} else
+=======
+		} else if (!slot && !func)
+			pvt->pci_noncore = pdev;
+		else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto error;
 
 		debugf0("Associated fn %d.%d, dev = %p, socket %d\n",
@@ -1552,7 +1615,11 @@ static int mci_bind_devs(struct mem_ctl_info *mci,
 
 		if (PCI_SLOT(pdev->devfn) == 3 &&
 			PCI_FUNC(pdev->devfn) == 2)
+<<<<<<< HEAD
 			pvt->is_registered = true;
+=======
+			pvt->is_registered = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -1906,6 +1973,7 @@ check_ce_error:
  * WARNING: As this routine should be called at NMI time, extra care should
  * be taken to avoid deadlocks, and to be as fast as possible.
  */
+<<<<<<< HEAD
 static int i7core_mce_check_error(struct notifier_block *nb, unsigned long val,
 				  void *data)
 {
@@ -1920,23 +1988,47 @@ static int i7core_mce_check_error(struct notifier_block *nb, unsigned long val,
 
 	mci = i7_dev->mci;
 	pvt = mci->pvt_info;
+=======
+static int i7core_mce_check_error(void *priv, struct mce *mce)
+{
+	struct mem_ctl_info *mci = priv;
+	struct i7core_pvt *pvt = mci->pvt_info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Just let mcelog handle it if the error is
 	 * outside the memory controller
 	 */
 	if (((mce->status & 0xffff) >> 7) != 1)
+<<<<<<< HEAD
 		return NOTIFY_DONE;
 
 	/* Bank 8 registers are the only ones that we know how to handle */
 	if (mce->bank != 8)
 		return NOTIFY_DONE;
+=======
+		return 0;
+
+	/* Bank 8 registers are the only ones that we know how to handle */
+	if (mce->bank != 8)
+		return 0;
+
+#ifdef CONFIG_SMP
+	/* Only handle if it is the right mc controller */
+	if (cpu_data(mce->cpu).phys_proc_id != pvt->i7core_dev->socket)
+		return 0;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	smp_rmb();
 	if ((pvt->mce_out + 1) % MCE_LOG_LEN == pvt->mce_in) {
 		smp_wmb();
 		pvt->mce_overrun++;
+<<<<<<< HEAD
 		return NOTIFY_DONE;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Copy memory error at the ringbuffer */
@@ -1949,6 +2041,7 @@ static int i7core_mce_check_error(struct notifier_block *nb, unsigned long val,
 		i7core_check_error(mci);
 
 	/* Advise mcelog that the errors were handled */
+<<<<<<< HEAD
 	return NOTIFY_STOP;
 }
 
@@ -2183,6 +2276,9 @@ static void disable_sdram_scrub_setting(struct mem_ctl_info *mci)
 	pci_lock &= ~0x3;
 	pci_write_config_dword(pvt->pci_noncore, MC_CFG_CONTROL,
 			       pci_lock | MC_CFG_LOCK);
+=======
+	return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void i7core_pci_ctl_create(struct i7core_pvt *pvt)
@@ -2191,8 +2287,12 @@ static void i7core_pci_ctl_create(struct i7core_pvt *pvt)
 						&pvt->i7core_dev->pdev[0]->dev,
 						EDAC_MOD_STR);
 	if (unlikely(!pvt->i7core_pci))
+<<<<<<< HEAD
 		i7core_printk(KERN_WARNING,
 			      "Unable to setup PCI error report via EDAC\n");
+=======
+		pr_warn("Unable to setup PCI error report via EDAC\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void i7core_pci_ctl_release(struct i7core_pvt *pvt)
@@ -2224,9 +2324,14 @@ static void i7core_unregister_mci(struct i7core_dev *i7core_dev)
 	debugf0("MC: " __FILE__ ": %s(): mci = %p, dev = %p\n",
 		__func__, mci, &i7core_dev->pdev[0]->dev);
 
+<<<<<<< HEAD
 	/* Disable scrubrate setting */
 	if (pvt->enable_scrub)
 		disable_sdram_scrub_setting(mci);
+=======
+	/* Disable MCE NMI handler */
+	edac_mce_unregister(&pvt->edac_mce);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Disable EDAC polling */
 	i7core_pci_ctl_release(pvt);
@@ -2298,10 +2403,13 @@ static int i7core_register_mci(struct i7core_dev *i7core_dev)
 	/* Set the function pointer to an actual operation function */
 	mci->edac_check = i7core_check_error;
 
+<<<<<<< HEAD
 	/* Enable scrubrate setting */
 	if (pvt->enable_scrub)
 		enable_sdram_scrub_setting(mci);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* add this new MC control structure to EDAC's list of MCs */
 	if (unlikely(edac_mc_add_mc(mci))) {
 		debugf0("MC: " __FILE__
@@ -2325,11 +2433,29 @@ static int i7core_register_mci(struct i7core_dev *i7core_dev)
 	/* allocating generic PCI control info */
 	i7core_pci_ctl_create(pvt);
 
+<<<<<<< HEAD
 	/* DCLK for scrub rate setting */
 	pvt->dclk_freq = get_dclk_freq();
 
 	return 0;
 
+=======
+	/* Registers on edac_mce in order to receive memory errors */
+	pvt->edac_mce.priv = mci;
+	pvt->edac_mce.check_error = i7core_mce_check_error;
+	rc = edac_mce_register(&pvt->edac_mce);
+	if (unlikely(rc < 0)) {
+		debugf0("MC: " __FILE__
+			": %s(): failed edac_mce_register()\n", __func__);
+		goto fail1;
+	}
+
+	return 0;
+
+fail1:
+	i7core_pci_ctl_release(pvt);
+	edac_mc_del_mc(mci->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 fail0:
 	kfree(mci->ctl_name);
 	edac_mc_free(mci);
@@ -2348,7 +2474,11 @@ fail0:
 static int __devinit i7core_probe(struct pci_dev *pdev,
 				  const struct pci_device_id *id)
 {
+<<<<<<< HEAD
 	int rc, count = 0;
+=======
+	int rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct i7core_dev *i7core_dev;
 
 	/* get the pci devices we want to reserve for our use */
@@ -2368,12 +2498,16 @@ static int __devinit i7core_probe(struct pci_dev *pdev,
 		goto fail0;
 
 	list_for_each_entry(i7core_dev, &i7core_edac_list, list) {
+<<<<<<< HEAD
 		count++;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = i7core_register_mci(i7core_dev);
 		if (unlikely(rc < 0))
 			goto fail1;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * Nehalem-EX uses a different memory controller. However, as the
 	 * memory controller is not visible on some Nehalem/Nehalem-EP, we
@@ -2390,6 +2524,9 @@ static int __devinit i7core_probe(struct pci_dev *pdev,
 	i7core_printk(KERN_INFO,
 		      "Driver loaded, %d memory controller(s) found.\n",
 		      count);
+=======
+	i7core_printk(KERN_INFO, "Driver loaded.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_unlock(&i7core_edac_lock);
 	return 0;
@@ -2471,10 +2608,15 @@ static int __init i7core_init(void)
 
 	pci_rc = pci_register_driver(&i7core_driver);
 
+<<<<<<< HEAD
 	if (pci_rc >= 0) {
 		mce_register_decode_chain(&i7_mce_dec);
 		return 0;
 	}
+=======
+	if (pci_rc >= 0)
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	i7core_printk(KERN_ERR, "Failed to register device with error %d.\n",
 		      pci_rc);
@@ -2490,7 +2632,10 @@ static void __exit i7core_exit(void)
 {
 	debugf2("MC: " __FILE__ ": %s()\n", __func__);
 	pci_unregister_driver(&i7core_driver);
+<<<<<<< HEAD
 	mce_unregister_decode_chain(&i7_mce_dec);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(i7core_init);

@@ -516,6 +516,15 @@ static struct notifier_block i7300_idle_nb = {
 
 MODULE_DEVICE_TABLE(pci, pci_tbl);
 
+<<<<<<< HEAD
+=======
+int stats_open_generic(struct inode *inode, struct file *fp)
+{
+	fp->private_data = inode->i_private;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t stats_read_ul(struct file *fp, char __user *ubuf, size_t count,
 				loff_t *off)
 {
@@ -528,7 +537,11 @@ static ssize_t stats_read_ul(struct file *fp, char __user *ubuf, size_t count,
 }
 
 static const struct file_operations idle_fops = {
+<<<<<<< HEAD
 	.open	= simple_open,
+=======
+	.open	= stats_open_generic,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.read	= stats_read_ul,
 	.llseek = default_llseek,
 };

@@ -2,9 +2,13 @@
  * Architecture specific OF callbacks.
  */
 #include <linux/bootmem.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/io.h>
 #include <linux/irqdomain.h>
+=======
+#include <linux/io.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/interrupt.h>
 #include <linux/list.h>
 #include <linux/of.h>
@@ -18,14 +22,73 @@
 #include <linux/initrd.h>
 
 #include <asm/hpet.h>
+<<<<<<< HEAD
+=======
+#include <asm/irq_controller.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/apic.h>
 #include <asm/pci_x86.h>
 
 __initdata u64 initial_dtb;
 char __initdata cmd_line[COMMAND_LINE_SIZE];
+<<<<<<< HEAD
 
 int __initdata of_ioapic;
 
+=======
+static LIST_HEAD(irq_domains);
+static DEFINE_RAW_SPINLOCK(big_irq_lock);
+
+int __initdata of_ioapic;
+
+#ifdef CONFIG_X86_IO_APIC
+static void add_interrupt_host(struct irq_domain *ih)
+{
+	unsigned long flags;
+
+	raw_spin_lock_irqsave(&big_irq_lock, flags);
+	list_add(&ih->l, &irq_domains);
+	raw_spin_unlock_irqrestore(&big_irq_lock, flags);
+}
+#endif
+
+static struct irq_domain *get_ih_from_node(struct device_node *controller)
+{
+	struct irq_domain *ih, *found = NULL;
+	unsigned long flags;
+
+	raw_spin_lock_irqsave(&big_irq_lock, flags);
+	list_for_each_entry(ih, &irq_domains, l) {
+		if (ih->controller ==  controller) {
+			found = ih;
+			break;
+		}
+	}
+	raw_spin_unlock_irqrestore(&big_irq_lock, flags);
+	return found;
+}
+
+unsigned int irq_create_of_mapping(struct device_node *controller,
+				   const u32 *intspec, unsigned int intsize)
+{
+	struct irq_domain *ih;
+	u32 virq, type;
+	int ret;
+
+	ih = get_ih_from_node(controller);
+	if (!ih)
+		return 0;
+	ret = ih->xlate(ih, intspec, intsize, &virq, &type);
+	if (ret)
+		return 0;
+	if (type == IRQ_TYPE_NONE)
+		return virq;
+	irq_set_irq_type(virq, type);
+	return virq;
+}
+EXPORT_SYMBOL_GPL(irq_create_of_mapping);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 unsigned long pci_address_to_pio(phys_addr_t address)
 {
 	/*
@@ -86,6 +149,7 @@ static int __init add_bus_probe(void)
 module_init(add_bus_probe);
 
 #ifdef CONFIG_PCI
+<<<<<<< HEAD
 struct device_node *pcibios_get_phb_of_node(struct pci_bus *bus)
 {
 	struct device_node *np;
@@ -104,6 +168,8 @@ struct device_node *pcibios_get_phb_of_node(struct pci_bus *bus)
 	return NULL;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int x86_of_pci_irq_enable(struct pci_dev *dev)
 {
 	struct of_irq oirq;
@@ -135,8 +201,55 @@ static void x86_of_pci_irq_disable(struct pci_dev *dev)
 
 void __cpuinit x86_of_pci_init(void)
 {
+<<<<<<< HEAD
 	pcibios_enable_irq = x86_of_pci_irq_enable;
 	pcibios_disable_irq = x86_of_pci_irq_disable;
+=======
+	struct device_node *np;
+
+	pcibios_enable_irq = x86_of_pci_irq_enable;
+	pcibios_disable_irq = x86_of_pci_irq_disable;
+
+	for_each_node_by_type(np, "pci") {
+		const void *prop;
+		struct pci_bus *bus;
+		unsigned int bus_min;
+		struct device_node *child;
+
+		prop = of_get_property(np, "bus-range", NULL);
+		if (!prop)
+			continue;
+		bus_min = be32_to_cpup(prop);
+
+		bus = pci_find_bus(0, bus_min);
+		if (!bus) {
+			printk(KERN_ERR "Can't find a node for bus %s.\n",
+					np->full_name);
+			continue;
+		}
+
+		if (bus->self)
+			bus->self->dev.of_node = np;
+		else
+			bus->dev.of_node = np;
+
+		for_each_child_of_node(np, child) {
+			struct pci_dev *dev;
+			u32 devfn;
+
+			prop = of_get_property(child, "reg", NULL);
+			if (!prop)
+				continue;
+
+			devfn = (be32_to_cpup(prop) >> 8) & 0xff;
+			dev = pci_get_slot(bus, devfn);
+			if (!dev)
+				continue;
+			dev->dev.of_node = child;
+			pci_dev_put(dev);
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif
 
@@ -305,6 +418,7 @@ static struct of_ioapic_type of_ioapic_type[] =
 	},
 };
 
+<<<<<<< HEAD
 static int ioapic_xlate(struct irq_domain *domain,
 			struct device_node *controller,
 			const u32 *intspec, u32 intsize,
@@ -342,6 +456,38 @@ const struct irq_domain_ops ioapic_irq_domain_ops = {
 	.xlate = ioapic_xlate,
 };
 
+=======
+static int ioapic_xlate(struct irq_domain *id, const u32 *intspec, u32 intsize,
+			u32 *out_hwirq, u32 *out_type)
+{
+	struct mp_ioapic_gsi *gsi_cfg;
+	struct io_apic_irq_attr attr;
+	struct of_ioapic_type *it;
+	u32 line, idx, type;
+
+	if (intsize < 2)
+		return -EINVAL;
+
+	line = *intspec;
+	idx = (u32) id->priv;
+	gsi_cfg = mp_ioapic_gsi_routing(idx);
+	*out_hwirq = line + gsi_cfg->gsi_base;
+
+	intspec++;
+	type = *intspec;
+
+	if (type >= ARRAY_SIZE(of_ioapic_type))
+		return -EINVAL;
+
+	it = of_ioapic_type + type;
+	*out_type = it->out_type;
+
+	set_io_apic_irq_attr(&attr, idx, line, it->trigger, it->polarity);
+
+	return io_apic_setup_irq_pin_once(*out_hwirq, cpu_to_node(0), &attr);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init ioapic_add_ofnode(struct device_node *np)
 {
 	struct resource r;
@@ -357,6 +503,7 @@ static void __init ioapic_add_ofnode(struct device_node *np)
 	for (i = 0; i < nr_ioapics; i++) {
 		if (r.start == mpc_ioapic_addr(i)) {
 			struct irq_domain *id;
+<<<<<<< HEAD
 			struct mp_ioapic_gsi *gsi_cfg;
 
 			gsi_cfg = mp_ioapic_gsi_routing(i);
@@ -365,6 +512,15 @@ static void __init ioapic_add_ofnode(struct device_node *np)
 						   &ioapic_irq_domain_ops,
 						   (void*)i);
 			BUG_ON(!id);
+=======
+
+			id = kzalloc(sizeof(*id), GFP_KERNEL);
+			BUG_ON(!id);
+			id->controller = np;
+			id->xlate = ioapic_xlate;
+			id->priv = (void *)i;
+			add_interrupt_host(id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 		}
 	}

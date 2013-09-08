@@ -20,7 +20,10 @@
 #include <linux/virtio_console.h>
 #include <linux/interrupt.h>
 #include <linux/virtio_ring.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pfn.h>
 #include <asm/io.h>
 #include <asm/kvm_para.h>
@@ -34,7 +37,11 @@
  * The pointer to our (page) of device descriptions.
  */
 static void *kvm_devices;
+<<<<<<< HEAD
 static struct work_struct hotplug_work;
+=======
+struct work_struct hotplug_work;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct kvm_device {
 	struct virtio_device vdev;
@@ -198,7 +205,11 @@ static struct virtqueue *kvm_find_vq(struct virtio_device *vdev,
 		goto out;
 
 	vq = vring_new_virtqueue(config->num, KVM_S390_VIRTIO_RING_ALIGN,
+<<<<<<< HEAD
 				 vdev, true, (void *) config->address,
+=======
+				 vdev, (void *) config->address,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 kvm_notify, callback, name);
 	if (!vq) {
 		err = -ENOMEM;
@@ -263,11 +274,14 @@ error:
 	return PTR_ERR(vqs[i]);
 }
 
+<<<<<<< HEAD
 static const char *kvm_bus_name(struct virtio_device *vdev)
 {
 	return "";
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The config ops structure as defined by virtio config
  */
@@ -281,7 +295,10 @@ static struct virtio_config_ops kvm_vq_configspace_ops = {
 	.reset = kvm_reset,
 	.find_vqs = kvm_find_vqs,
 	.del_vqs = kvm_del_vqs,
+<<<<<<< HEAD
 	.bus_name = kvm_bus_name,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -341,10 +358,17 @@ static void scan_devices(void)
  */
 static int match_desc(struct device *dev, void *data)
 {
+<<<<<<< HEAD
 	struct virtio_device *vdev = dev_to_virtio(dev);
 	struct kvm_device *kdev = to_kvmdev(vdev);
 
 	return kdev->desc == data;
+=======
+	if ((ulong)to_kvmdev(dev_to_virtio(dev))->desc == (ulong)data)
+		return 1;
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -380,6 +404,7 @@ static void hotplug_devices(struct work_struct *dummy)
 /*
  * we emulate the request_irq behaviour on top of s390 extints
  */
+<<<<<<< HEAD
 static void kvm_extint_handler(struct ext_code ext_code,
 			       unsigned int param32, unsigned long param64)
 {
@@ -387,6 +412,17 @@ static void kvm_extint_handler(struct ext_code ext_code,
 	u32 param;
 
 	if ((ext_code.subcode & 0xff00) != VIRTIO_SUBCODE_64)
+=======
+static void kvm_extint_handler(unsigned int ext_int_code,
+			       unsigned int param32, unsigned long param64)
+{
+	struct virtqueue *vq;
+	u16 subcode;
+	u32 param;
+
+	subcode = ext_int_code >> 16;
+	if ((subcode & 0xff00) != VIRTIO_SUBCODE_64)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	kstat_cpu(smp_processor_id()).irqs[EXTINT_VRT]++;
 
@@ -418,6 +454,7 @@ static void kvm_extint_handler(struct ext_code ext_code,
 }
 
 /*
+<<<<<<< HEAD
  * For s390-virtio, we expect a page above main storage containing
  * the virtio configuration. Try to actually load from this area
  * in order to figure out if the host provides this page.
@@ -438,6 +475,8 @@ static int __init test_devices_support(unsigned long addr)
 	return ret;
 }
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Init function for virtio
  * devices are in a single page above top of "normal" mem
  */
@@ -448,6 +487,7 @@ static int __init kvm_devices_init(void)
 	if (!MACHINE_IS_KVM)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	if (test_devices_support(real_memory_size) < 0)
 		return -ENODEV;
 
@@ -457,14 +497,30 @@ static int __init kvm_devices_init(void)
 
 	kvm_devices = (void *) real_memory_size;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kvm_root = root_device_register("kvm_s390");
 	if (IS_ERR(kvm_root)) {
 		rc = PTR_ERR(kvm_root);
 		printk(KERN_ERR "Could not register kvm_s390 root device");
+<<<<<<< HEAD
 		vmem_remove_mapping(real_memory_size, PAGE_SIZE);
 		return rc;
 	}
 
+=======
+		return rc;
+	}
+
+	rc = vmem_add_mapping(real_memory_size, PAGE_SIZE);
+	if (rc) {
+		root_device_unregister(kvm_root);
+		return rc;
+	}
+
+	kvm_devices = (void *) real_memory_size;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_WORK(&hotplug_work, hotplug_devices);
 
 	service_subclass_irq_register();

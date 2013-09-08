@@ -8,10 +8,15 @@
 
 #include <linux/sched.h>
 #include <linux/freezer.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/fs_struct.h>
 #include <linux/swap.h>
 #include <linux/nsproxy.h>
+=======
+#include <linux/fs_struct.h>
+#include <linux/swap.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/sunrpc/stats.h>
 #include <linux/sunrpc/svcsock.h>
@@ -221,7 +226,11 @@ static int nfsd_startup(unsigned short port, int nrservs)
 	ret = nfsd_init_socks(port);
 	if (ret)
 		goto out_racache;
+<<<<<<< HEAD
 	ret = lockd_up(&init_net);
+=======
+	ret = lockd_up();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto out_racache;
 	ret = nfs4_state_start();
@@ -230,7 +239,11 @@ static int nfsd_startup(unsigned short port, int nrservs)
 	nfsd_up = true;
 	return 0;
 out_lockd:
+<<<<<<< HEAD
 	lockd_down(&init_net);
+=======
+	lockd_down();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_racache:
 	nfsd_racache_shutdown();
 	return ret;
@@ -247,17 +260,30 @@ static void nfsd_shutdown(void)
 	if (!nfsd_up)
 		return;
 	nfs4_state_shutdown();
+<<<<<<< HEAD
 	lockd_down(&init_net);
+=======
+	lockd_down();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nfsd_racache_shutdown();
 	nfsd_up = false;
 }
 
+<<<<<<< HEAD
 static void nfsd_last_thread(struct svc_serv *serv, struct net *net)
 {
 	nfsd_shutdown();
 
 	svc_rpcb_cleanup(serv, net);
 
+=======
+static void nfsd_last_thread(struct svc_serv *serv)
+{
+	/* When last nfsd thread exits we need to do some clean-up */
+	nfsd_serv = NULL;
+	nfsd_shutdown();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk(KERN_WARNING "nfsd: last server has exited, flushing export "
 			    "cache\n");
 	nfsd_export_flush();
@@ -306,6 +332,7 @@ static void set_max_drc(void)
 	dprintk("%s nfsd_drc_max_mem %u \n", __func__, nfsd_drc_max_mem);
 }
 
+<<<<<<< HEAD
 static int nfsd_get_default_max_blksize(void)
 {
 	struct sysinfo i;
@@ -331,20 +358,47 @@ int nfsd_create_serv(void)
 {
 	int error;
 	struct net *net = current->nsproxy->net_ns;
+=======
+int nfsd_create_serv(void)
+{
+	int err = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	WARN_ON(!mutex_is_locked(&nfsd_mutex));
 	if (nfsd_serv) {
 		svc_get(nfsd_serv);
 		return 0;
 	}
+<<<<<<< HEAD
 	if (nfsd_max_blksize == 0)
 		nfsd_max_blksize = nfsd_get_default_max_blksize();
 	nfsd_reset_versions();
+=======
+	if (nfsd_max_blksize == 0) {
+		/* choose a suitable default */
+		struct sysinfo i;
+		si_meminfo(&i);
+		/* Aim for 1/4096 of memory per thread
+		 * This gives 1MB on 4Gig machines
+		 * But only uses 32K on 128M machines.
+		 * Bottom out at 8K on 32M and smaller.
+		 * Of course, this is only a default.
+		 */
+		nfsd_max_blksize = NFSSVC_MAXBLKSIZE;
+		i.totalram <<= PAGE_SHIFT - 12;
+		while (nfsd_max_blksize > i.totalram &&
+		       nfsd_max_blksize >= 8*1024*2)
+			nfsd_max_blksize /= 2;
+	}
+	nfsd_reset_versions();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nfsd_serv = svc_create_pooled(&nfsd_program, nfsd_max_blksize,
 				      nfsd_last_thread, nfsd, THIS_MODULE);
 	if (nfsd_serv == NULL)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	error = svc_bind(nfsd_serv, net);
 	if (error < 0) {
 		svc_destroy(nfsd_serv);
@@ -354,6 +408,11 @@ int nfsd_create_serv(void)
 	set_max_drc();
 	do_gettimeofday(&nfssvc_boot);		/* record boot time */
 	return 0;
+=======
+	set_max_drc();
+	do_gettimeofday(&nfssvc_boot);		/* record boot time */
+	return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int nfsd_nrpools(void)
@@ -381,7 +440,10 @@ int nfsd_set_nrthreads(int n, int *nthreads)
 	int i = 0;
 	int tot = 0;
 	int err = 0;
+<<<<<<< HEAD
 	struct net *net = &init_net;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	WARN_ON(!mutex_is_locked(&nfsd_mutex));
 
@@ -426,7 +488,12 @@ int nfsd_set_nrthreads(int n, int *nthreads)
 		if (err)
 			break;
 	}
+<<<<<<< HEAD
 	nfsd_destroy(net);
+=======
+	svc_destroy(nfsd_serv);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -440,7 +507,10 @@ nfsd_svc(unsigned short port, int nrservs)
 {
 	int	error;
 	bool	nfsd_up_before;
+<<<<<<< HEAD
 	struct net *net = &init_net;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&nfsd_mutex);
 	dprintk("nfsd: creating service\n");
@@ -473,7 +543,11 @@ out_shutdown:
 	if (error < 0 && !nfsd_up_before)
 		nfsd_shutdown();
 out_destroy:
+<<<<<<< HEAD
 	nfsd_destroy(net);		/* Release server */
+=======
+	svc_destroy(nfsd_serv);		/* Release server */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	mutex_unlock(&nfsd_mutex);
 	return error;
@@ -544,9 +618,22 @@ nfsd(void *vrqstp)
 			continue;
 		}
 
+<<<<<<< HEAD
 		validate_process_creds();
 		svc_process(rqstp);
 		validate_process_creds();
+=======
+
+		/* Lock the export hash tables for reading. */
+		exp_readlock();
+
+		validate_process_creds();
+		svc_process(rqstp);
+		validate_process_creds();
+
+		/* Unlock export hash tables */
+		exp_readunlock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Clear signals before calling svc_exit_thread() */
@@ -556,6 +643,7 @@ nfsd(void *vrqstp)
 	nfsdstats.th_cnt --;
 
 out:
+<<<<<<< HEAD
 	rqstp->rq_server = NULL;
 
 	/* Release the thread */
@@ -563,6 +651,11 @@ out:
 
 	nfsd_destroy(&init_net);
 
+=======
+	/* Release the thread */
+	svc_exit_thread(rqstp);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Release module */
 	mutex_unlock(&nfsd_mutex);
 	module_put_and_exit(0);
@@ -590,6 +683,7 @@ nfsd_dispatch(struct svc_rqst *rqstp, __be32 *statp)
 				rqstp->rq_vers, rqstp->rq_proc);
 	proc = rqstp->rq_procinfo;
 
+<<<<<<< HEAD
 	/*
 	 * Give the xdr decoder a chance to change this if it wants
 	 * (necessary in the NFSv4.0 compound case)
@@ -606,6 +700,10 @@ nfsd_dispatch(struct svc_rqst *rqstp, __be32 *statp)
 
 	/* Check whether we have this call in the cache. */
 	switch (nfsd_cache_lookup(rqstp)) {
+=======
+	/* Check whether we have this call in the cache. */
+	switch (nfsd_cache_lookup(rqstp, proc->pc_cachetype)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case RC_INTR:
 	case RC_DROPIT:
 		return 0;
@@ -615,6 +713,19 @@ nfsd_dispatch(struct svc_rqst *rqstp, __be32 *statp)
 		/* do it */
 	}
 
+<<<<<<< HEAD
+=======
+	/* Decode arguments */
+	xdr = proc->pc_decode;
+	if (xdr && !xdr(rqstp, (__be32*)rqstp->rq_arg.head[0].iov_base,
+			rqstp->rq_argp)) {
+		dprintk("nfsd: failed to decode arguments!\n");
+		nfsd_cache_update(rqstp, RC_NOCACHE, NULL);
+		*statp = rpc_garbage_args;
+		return 1;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* need to grab the location to store the status, as
 	 * nfsv4 does some encoding while processing 
 	 */
@@ -650,7 +761,11 @@ nfsd_dispatch(struct svc_rqst *rqstp, __be32 *statp)
 	}
 
 	/* Store reply in cache. */
+<<<<<<< HEAD
 	nfsd_cache_update(rqstp, rqstp->rq_cachetype, statp + 1);
+=======
+	nfsd_cache_update(rqstp, proc->pc_cachetype, statp + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
@@ -672,11 +787,17 @@ int nfsd_pool_stats_open(struct inode *inode, struct file *file)
 int nfsd_pool_stats_release(struct inode *inode, struct file *file)
 {
 	int ret = seq_release(inode, file);
+<<<<<<< HEAD
 	struct net *net = &init_net;
 
 	mutex_lock(&nfsd_mutex);
 	/* this function really, really should have been called svc_put() */
 	nfsd_destroy(net);
+=======
+	mutex_lock(&nfsd_mutex);
+	/* this function really, really should have been called svc_put() */
+	svc_destroy(nfsd_serv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&nfsd_mutex);
 	return ret;
 }

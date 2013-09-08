@@ -133,6 +133,17 @@ out_both:
 	return;
 }
 
+<<<<<<< HEAD
+=======
+/* the PPS echo function */
+static void pps_echo(struct pps_device *pps, int event, void *data)
+{
+	dev_info(pps->dev, "echo %s %s\n",
+		event & PPS_CAPTUREASSERT ? "assert" : "",
+		event & PPS_CAPTURECLEAR ? "clear" : "");
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void parport_attach(struct parport *port)
 {
 	struct pps_client_pp *device;
@@ -143,6 +154,10 @@ static void parport_attach(struct parport *port)
 				  PPS_OFFSETASSERT | PPS_OFFSETCLEAR | \
 				  PPS_ECHOASSERT | PPS_ECHOCLEAR | \
 				  PPS_CANWAIT | PPS_TSFMT_TSPEC,
+<<<<<<< HEAD
+=======
+		.echo		= pps_echo,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.owner		= THIS_MODULE,
 		.dev		= NULL
 	};

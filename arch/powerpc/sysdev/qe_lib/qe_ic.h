@@ -79,7 +79,11 @@ struct qe_ic {
 	volatile u32 __iomem *regs;
 
 	/* The remapper for this QEIC */
+<<<<<<< HEAD
 	struct irq_domain *irqhost;
+=======
+	struct irq_host *irqhost;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* The "linux" controller struct */
 	struct irq_chip hc_irq;

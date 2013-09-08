@@ -6,6 +6,17 @@ be removed from this file.
 
 ---------------------------
 
+<<<<<<< HEAD
+=======
+What:	x86 floppy disable_hlt
+When:	2012
+Why:	ancient workaround of dubious utility clutters the
+	code used by everybody else.
+Who:	Len Brown <len.brown@intel.com>
+
+---------------------------
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 What:	CONFIG_APM_CPU_IDLE, and its ability to call APM BIOS in idle
 When:	2012
 Why:	This optional sub-feature of APM is of dubious reliability,
@@ -77,6 +88,20 @@ Who:	Robin Getz <rgetz@blackfin.uclinux.org> & Matt Mackall <mpm@selenic.com>
 
 ---------------------------
 
+<<<<<<< HEAD
+=======
+What:	Deprecated snapshot ioctls
+When:	2.6.36
+
+Why:	The ioctls in kernel/power/user.c were marked as deprecated long time
+	ago. Now they notify users about that so that they need to replace
+	their userspace. After some more time, remove them completely.
+
+Who:	Jiri Slaby <jirislaby@gmail.com>
+
+---------------------------
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 What:	The ieee80211_regdom module parameter
 When:	March 2010 / desktop catchup
 
@@ -114,6 +139,44 @@ Who:	Pavel Machek <pavel@ucw.cz>
 
 ---------------------------
 
+<<<<<<< HEAD
+=======
+What:	sys_sysctl
+When:	September 2010
+Option: CONFIG_SYSCTL_SYSCALL
+Why:	The same information is available in a more convenient from
+	/proc/sys, and none of the sysctl variables appear to be
+	important performance wise.
+
+	Binary sysctls are a long standing source of subtle kernel
+	bugs and security issues.
+
+	When I looked several months ago all I could find after
+	searching several distributions were 5 user space programs and
+	glibc (which falls back to /proc/sys) using this syscall.
+
+	The man page for sysctl(2) documents it as unusable for user
+	space programs.
+
+	sysctl(2) is not generally ABI compatible to a 32bit user
+	space application on a 64bit and a 32bit kernel.
+
+	For the last several months the policy has been no new binary
+	sysctls and no one has put forward an argument to use them.
+
+	Binary sysctls issues seem to keep happening appearing so
+	properly deprecating them (with a warning to user space) and a
+	2 year grace warning period will mean eventually we can kill
+	them and end the pain.
+
+	In the mean time individual binary sysctls can be dealt with
+	in a piecewise fashion.
+
+Who:	Eric Biederman <ebiederm@xmission.com>
+
+---------------------------
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 What:	/proc/<pid>/oom_adj
 When:	August 2012
 Why:	/proc/<pid>/oom_adj allows userspace to influence the oom killer's
@@ -130,7 +193,11 @@ Why:	/proc/<pid>/oom_adj allows userspace to influence the oom killer's
 
 	A much more powerful interface, /proc/<pid>/oom_score_adj, was
 	introduced with the oom killer rewrite that allows users to increase or
+<<<<<<< HEAD
 	decrease the badness score linearly.  This interface will replace
+=======
+	decrease the badness() score linearly.  This interface will replace
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/proc/<pid>/oom_adj.
 
 	A warning will be emitted to the kernel log if an application uses this
@@ -139,6 +206,23 @@ Why:	/proc/<pid>/oom_adj allows userspace to influence the oom killer's
 
 ---------------------------
 
+<<<<<<< HEAD
+=======
+What:	CS5535/CS5536 obsolete GPIO driver
+When:	June 2011
+Files:	drivers/staging/cs5535_gpio/*
+Check:	drivers/staging/cs5535_gpio/cs5535_gpio.c
+Why:	A newer driver replaces this; it is drivers/gpio/cs5535-gpio.c, and
+	integrates with the Linux GPIO subsystem.  The old driver has been
+	moved to staging, and will be removed altogether around 2.6.40.
+	Please test the new driver, and ensure that the functionality you
+	need and any bugfixes from the old driver are available in the new
+	one.
+Who:	Andres Salomon <dilinger@queued.net>
+
+--------------------------
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 What:	remove EXPORT_SYMBOL(kernel_thread)
 When:	August 2006
 Files:	arch/*/kernel/*_ksyms.c
@@ -226,7 +310,11 @@ When:	The schedule was July 2008, but it was decided that we are going to keep t
 Why:	The support code for the old firmware hurts code readability/maintainability
 	and slightly hurts runtime performance. Bugfixes for the old firmware
 	are not provided by Broadcom anymore.
+<<<<<<< HEAD
 Who:	Michael Buesch <m@bues.ch>
+=======
+Who:	Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 ---------------------------
 
@@ -242,9 +330,25 @@ Who:	Ravikiran Thirumalai <kiran@scalex86.org>
 
 ---------------------------
 
+<<<<<<< HEAD
 What:	Code that is now under CONFIG_WIRELESS_EXT_SYSFS
 	(in net/core/net-sysfs.c)
 When:	3.5
+=======
+What:	CONFIG_THERMAL_HWMON
+When:	January 2009
+Why:	This option was introduced just to allow older lm-sensors userspace
+	to keep working over the upgrade to 2.6.26. At the scheduled time of
+	removal fixed lm-sensors (2.x or 3.x) should be readily available.
+Who:	Rene Herman <rene.herman@gmail.com>
+
+---------------------------
+
+What:	Code that is now under CONFIG_WIRELESS_EXT_SYSFS
+	(in net/core/net-sysfs.c)
+When:	After the only user (hal) has seen a release with the patches
+	for enough time, probably some time in 2010.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Why:	Over 1K .text/.data size reduction, data is available in other
 	ways (ioctls)
 Who:	Johannes Berg <johannes@sipsolutions.net>
@@ -342,8 +446,22 @@ Who: 	anybody or Florian Mickler <florian@mickler.org>
 
 ----------------------------
 
+<<<<<<< HEAD
 What:	iwlwifi 50XX module parameters
 When:	3.0
+=======
+What:	KVM paravirt mmu host support
+When:	January 2011
+Why:	The paravirt mmu host support is slower than non-paravirt mmu, both
+	on newer and older hardware.  It is already not exposed to the guest,
+	and kept only for live migration purposes.
+Who:	Avi Kivity <avi@redhat.com>
+
+----------------------------
+
+What:	iwlwifi 50XX module parameters
+When:	2.6.40
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Why:	The "..50" modules parameters were used to configure 5000 series and
 	up devices; different set of module parameters also available for 4965
 	with same functionalities. Consolidate both set into single place
@@ -354,7 +472,11 @@ Who:	Wey-Yi Guy <wey-yi.w.guy@intel.com>
 ----------------------------
 
 What:	iwl4965 alias support
+<<<<<<< HEAD
 When:	3.0
+=======
+When:	2.6.40
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Why:	Internal alias support has been present in module-init-tools for some
 	time, the MODULE_ALIAS("iwl4965") boilerplate aliases can be removed
 	with no impact.
@@ -387,8 +509,20 @@ Who:	FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
 
 ----------------------------
 
+<<<<<<< HEAD
 What:	iwlwifi disable_hw_scan module parameters
 When:	3.0
+=======
+What: 	DMA_xxBIT_MASK macros
+When:	Jun 2011
+Why:	DMA_xxBIT_MASK macros were replaced with DMA_BIT_MASK() macros.
+Who:	FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+
+----------------------------
+
+What:	iwlwifi disable_hw_scan module parameters
+When:	2.6.40
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Why:	Hareware scan is the prefer method for iwlwifi devices for
 	scanning operation. Remove software scan support for all the
 	iwlwifi devices.
@@ -397,6 +531,29 @@ Who:	Wey-Yi Guy <wey-yi.w.guy@intel.com>
 
 ----------------------------
 
+<<<<<<< HEAD
+=======
+What:   access to nfsd auth cache through sys_nfsservctl or '.' files
+        in the 'nfsd' filesystem.
+When:   2.6.40
+Why:    This is a legacy interface which have been replaced by a more
+        dynamic cache.  Continuing to maintain this interface is an
+        unnecessary burden.
+Who:    NeilBrown <neilb@suse.de>
+
+----------------------------
+
+What:	cancel_rearming_delayed_work[queue]()
+When:	2.6.39
+
+Why:	The functions have been superceded by cancel_delayed_work_sync()
+	quite some time ago.  The conversion is trivial and there is no
+	in-kernel user left.
+Who:	Tejun Heo <tj@kernel.org>
+
+----------------------------
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 What:	Legacy, non-standard chassis intrusion detection interface.
 When:	June 2011
 Why:	The adm9240, w83792d and w83793 hardware monitoring drivers have
@@ -414,6 +571,25 @@ Files:	net/netfilter/xt_connlimit.c
 
 ----------------------------
 
+<<<<<<< HEAD
+=======
+What:	noswapaccount kernel command line parameter
+When:	2.6.40
+Why:	The original implementation of memsw feature enabled by
+	CONFIG_CGROUP_MEM_RES_CTLR_SWAP could be disabled by the noswapaccount
+	kernel parameter (introduced in 2.6.29-rc1). Later on, this decision
+	turned out to be not ideal because we cannot have the feature compiled
+	in and disabled by default and let only interested to enable it
+	(e.g. general distribution kernels might need it). Therefore we have
+	added swapaccount[=0|1] parameter (introduced in 2.6.37) which provides
+	the both possibilities. If we remove noswapaccount we will have
+	less command line parameters with the same functionality and we
+	can also cleanup the parameter handling a bit ().
+Who:	Michal Hocko <mhocko@suse.cz>
+
+----------------------------
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 What:	ipt_addrtype match include file
 When:	2012
 Why:	superseded by xt_addrtype
@@ -431,6 +607,7 @@ Who:	Jean Delvare <khali@linux-fr.org>
 
 ----------------------------
 
+<<<<<<< HEAD
 What:	Opening a radio device node will no longer automatically switch the
 	tuner mode from tv to radio.
 When:	3.3
@@ -549,3 +726,49 @@ Why:	The V4L2_CID_VCENTER, V4L2_CID_HCENTER controls have been deprecated
 	There are newer controls (V4L2_CID_PAN*, V4L2_CID_TILT*) that provide
 	similar	functionality.
 Who:	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+=======
+What:	Support for UVCIOC_CTRL_ADD in the uvcvideo driver
+When:	2.6.42
+Why:	The information passed to the driver by this ioctl is now queried
+	dynamically from the device.
+Who:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+----------------------------
+
+What:	Support for UVCIOC_CTRL_MAP_OLD in the uvcvideo driver
+When:	2.6.42
+Why:	Used only by applications compiled against older driver versions.
+	Superseded by UVCIOC_CTRL_MAP which supports V4L2 menu controls.
+Who:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+----------------------------
+
+What:	Support for UVCIOC_CTRL_GET and UVCIOC_CTRL_SET in the uvcvideo driver
+When:	2.6.42
+Why:	Superseded by the UVCIOC_CTRL_QUERY ioctl.
+Who:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+----------------------------
+
+What:	For VIDIOC_S_FREQUENCY the type field must match the device node's type.
+	If not, return -EINVAL.
+When:	3.2
+Why:	It makes no sense to switch the tuner to radio mode by calling
+	VIDIOC_S_FREQUENCY on a video node, or to switch the tuner to tv mode by
+	calling VIDIOC_S_FREQUENCY on a radio node. This is the first step of a
+	move to more consistent handling of tv and radio tuners.
+Who:	Hans Verkuil <hans.verkuil@cisco.com>
+
+----------------------------
+
+What:	Opening a radio device node will no longer automatically switch the
+	tuner mode from tv to radio.
+When:	3.3
+Why:	Just opening a V4L device should not change the state of the hardware
+	like that. It's very unexpected and against the V4L spec. Instead, you
+	switch to radio mode by calling VIDIOC_S_FREQUENCY. This is the second
+	and last step of the move to consistent handling of tv and radio tuners.
+Who:	Hans Verkuil <hans.verkuil@cisco.com>
+
+----------------------------
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

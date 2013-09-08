@@ -46,7 +46,10 @@ extern void smtc_prepare_cpus(int cpus);
 extern void smtc_smp_finish(void);
 extern void smtc_boot_secondary(int cpu, struct task_struct *t);
 extern void smtc_cpus_done(void);
+<<<<<<< HEAD
 extern void smtc_init_secondary(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /*

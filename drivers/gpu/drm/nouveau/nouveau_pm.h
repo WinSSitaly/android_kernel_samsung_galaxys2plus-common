@@ -25,6 +25,7 @@
 #ifndef __NOUVEAU_PM_H__
 #define __NOUVEAU_PM_H__
 
+<<<<<<< HEAD
 struct nouveau_mem_exec_func {
 	struct drm_device *dev;
 	void (*precharge)(struct nouveau_mem_exec_func *);
@@ -43,12 +44,17 @@ struct nouveau_mem_exec_func {
 int  nouveau_mem_exec(struct nouveau_mem_exec_func *,
 		      struct nouveau_pm_level *);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* nouveau_pm.c */
 int  nouveau_pm_init(struct drm_device *dev);
 void nouveau_pm_fini(struct drm_device *dev);
 void nouveau_pm_resume(struct drm_device *dev);
+<<<<<<< HEAD
 extern const struct nouveau_pm_profile_func nouveau_pm_static_profile_func;
 void nouveau_pm_trigger(struct drm_device *dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* nouveau_volt.c */
 void nouveau_volt_init(struct drm_device *);
@@ -61,14 +67,18 @@ int  nouveau_voltage_gpio_set(struct drm_device *, int voltage);
 /* nouveau_perf.c */
 void nouveau_perf_init(struct drm_device *);
 void nouveau_perf_fini(struct drm_device *);
+<<<<<<< HEAD
 u8 *nouveau_perf_timing(struct drm_device *, u32 freq, u8 *ver, u8 *len);
 u8 *nouveau_perf_ramcfg(struct drm_device *, u32 freq, u8 *ver, u8 *len);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* nouveau_mem.c */
 void nouveau_mem_timing_init(struct drm_device *);
 void nouveau_mem_timing_fini(struct drm_device *);
 
 /* nv04_pm.c */
+<<<<<<< HEAD
 int nv04_pm_clocks_get(struct drm_device *, struct nouveau_pm_level *);
 void *nv04_pm_clocks_pre(struct drm_device *, struct nouveau_pm_level *);
 int nv04_pm_clocks_set(struct drm_device *, void *);
@@ -96,6 +106,24 @@ int nva3_pm_clocks_set(struct drm_device *, void *);
 int nvc0_pm_clocks_get(struct drm_device *, struct nouveau_pm_level *);
 void *nvc0_pm_clocks_pre(struct drm_device *, struct nouveau_pm_level *);
 int nvc0_pm_clocks_set(struct drm_device *, void *);
+=======
+int nv04_pm_clock_get(struct drm_device *, u32 id);
+void *nv04_pm_clock_pre(struct drm_device *, struct nouveau_pm_level *,
+			u32 id, int khz);
+void nv04_pm_clock_set(struct drm_device *, void *);
+
+/* nv50_pm.c */
+int nv50_pm_clock_get(struct drm_device *, u32 id);
+void *nv50_pm_clock_pre(struct drm_device *, struct nouveau_pm_level *,
+			u32 id, int khz);
+void nv50_pm_clock_set(struct drm_device *, void *);
+
+/* nva3_pm.c */
+int nva3_pm_clock_get(struct drm_device *, u32 id);
+void *nva3_pm_clock_pre(struct drm_device *, struct nouveau_pm_level *,
+			u32 id, int khz);
+void nva3_pm_clock_set(struct drm_device *, void *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* nouveau_temp.c */
 void nouveau_temp_init(struct drm_device *dev);

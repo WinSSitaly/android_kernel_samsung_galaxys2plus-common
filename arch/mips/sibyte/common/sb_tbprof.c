@@ -53,6 +53,10 @@
 #define K_INT_PERF_CNT K_BCM1480_INT_PERF_CNT
 #endif
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 
 #define SBPROF_TB_MAJOR 240

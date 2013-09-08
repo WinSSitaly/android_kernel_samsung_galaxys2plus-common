@@ -342,8 +342,11 @@ void ath9k_htc_txcompletion_cb(struct htc_target *htc_handle,
 			endpoint->ep_callbacks.tx(endpoint->ep_callbacks.priv,
 						  skb, htc_hdr->endpoint_id,
 						  txok);
+<<<<<<< HEAD
 		} else {
 			kfree_skb(skb);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -433,8 +436,16 @@ struct htc_target *ath9k_htc_hw_alloc(void *hif_handle,
 	struct htc_target *target;
 
 	target = kzalloc(sizeof(struct htc_target), GFP_KERNEL);
+<<<<<<< HEAD
 	if (!target)
 		return NULL;
+=======
+	if (!target) {
+		printk(KERN_ERR "Unable to allocate memory for"
+			"target device\n");
+		return NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	init_completion(&target->target_wait);
 	init_completion(&target->cmd_wait);

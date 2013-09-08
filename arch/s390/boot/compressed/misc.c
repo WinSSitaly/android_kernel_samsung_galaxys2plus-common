@@ -61,7 +61,11 @@ static unsigned long free_mem_end_ptr;
 
 extern _sclp_print_early(const char *);
 
+<<<<<<< HEAD
 static int puts(const char *s)
+=======
+int puts(const char *s)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	_sclp_print_early(s);
 	return 0;

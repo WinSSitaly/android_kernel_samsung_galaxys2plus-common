@@ -323,8 +323,11 @@ int acpi_bus_set_power(acpi_handle handle, int state);
 int acpi_bus_update_power(acpi_handle handle, int *state_p);
 bool acpi_bus_power_manageable(acpi_handle handle);
 bool acpi_bus_can_wakeup(acpi_handle handle);
+<<<<<<< HEAD
 int acpi_power_resource_register_device(struct device *dev, acpi_handle handle);
 void acpi_power_resource_unregister_device(struct device *dev, acpi_handle handle);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_ACPI_PROC_EVENT
 int acpi_bus_generate_proc_event(struct acpi_device *device, u8 type, int data);
 int acpi_bus_generate_proc_event4(const char *class, const char *bid, u8 type, int data);
@@ -394,6 +397,7 @@ static inline int acpi_pm_device_sleep_state(struct device *d, int *p)
 #endif
 
 #ifdef CONFIG_PM_SLEEP
+<<<<<<< HEAD
 int acpi_pm_device_run_wake(struct device *, bool);
 int acpi_pm_device_sleep_wake(struct device *, bool);
 #else
@@ -401,6 +405,10 @@ static inline int acpi_pm_device_run_wake(struct device *dev, bool enable)
 {
 	return -ENODEV;
 }
+=======
+int acpi_pm_device_sleep_wake(struct device *, bool);
+#else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int acpi_pm_device_sleep_wake(struct device *dev, bool enable)
 {
 	return -ENODEV;

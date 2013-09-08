@@ -157,6 +157,10 @@ static bool intel_dvo_mode_fixup(struct drm_encoder *encoder,
 		C(vsync_end);
 		C(vtotal);
 		C(clock);
+<<<<<<< HEAD
+=======
+		drm_mode_set_crtcinfo(adjusted_mode, CRTC_INTERLACE_HALVE_V);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #undef C
 	}
 
@@ -370,7 +374,10 @@ void intel_dvo_init(struct drm_device *dev)
 		const struct intel_dvo_device *dvo = &intel_dvo_devices[i];
 		struct i2c_adapter *i2c;
 		int gpio;
+<<<<<<< HEAD
 		bool dvoinit;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Allow the I2C driver info to specify the GPIO to be used in
 		 * special cases, but otherwise default to what's defined
@@ -390,6 +397,7 @@ void intel_dvo_init(struct drm_device *dev)
 		i2c = &dev_priv->gmbus[gpio].adapter;
 
 		intel_dvo->dev = *dvo;
+<<<<<<< HEAD
 
 		/* GMBUS NAK handling seems to be unstable, hence let the
 		 * transmitter detection run in bit banging mode for now.
@@ -401,6 +409,9 @@ void intel_dvo_init(struct drm_device *dev)
 		intel_gmbus_force_bit(i2c, false);
 
 		if (!dvoinit)
+=======
+		if (!dvo->dev_ops->init(&intel_dvo->dev, i2c))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 
 		intel_encoder->type = INTEL_OUTPUT_DVO;

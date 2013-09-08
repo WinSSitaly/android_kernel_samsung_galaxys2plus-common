@@ -19,13 +19,21 @@
 #define __PHY_H
 
 #include <linux/spinlock.h>
+<<<<<<< HEAD
+=======
+#include <linux/device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ethtool.h>
 #include <linux/mii.h>
 #include <linux/timer.h>
 #include <linux/workqueue.h>
 #include <linux/mod_devicetable.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PHY_BASIC_FEATURES	(SUPPORTED_10baseT_Half | \
 				 SUPPORTED_10baseT_Full | \
@@ -52,7 +60,10 @@
 
 /* Interface Mode definitions */
 typedef enum {
+<<<<<<< HEAD
 	PHY_INTERFACE_MODE_NA,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	PHY_INTERFACE_MODE_MII,
 	PHY_INTERFACE_MODE_GMII,
 	PHY_INTERFACE_MODE_SGMII,
@@ -62,8 +73,12 @@ typedef enum {
 	PHY_INTERFACE_MODE_RGMII_ID,
 	PHY_INTERFACE_MODE_RGMII_RXID,
 	PHY_INTERFACE_MODE_RGMII_TXID,
+<<<<<<< HEAD
 	PHY_INTERFACE_MODE_RTBI,
 	PHY_INTERFACE_MODE_SMII,
+=======
+	PHY_INTERFACE_MODE_RTBI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } phy_interface_t;
 
 
@@ -87,9 +102,12 @@ typedef enum {
    IEEE 802.3ae clause 45 addressing mode used by 10GIGE phy chips. */
 #define MII_ADDR_C45 (1<<30)
 
+<<<<<<< HEAD
 struct device;
 struct sk_buff;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The Bus class for PHYs.  Devices which provide access to
  * PHYs should register using this structure
@@ -131,12 +149,16 @@ struct mii_bus {
 };
 #define to_mii_bus(d) container_of(d, struct mii_bus, dev)
 
+<<<<<<< HEAD
 struct mii_bus *mdiobus_alloc_size(size_t);
 static inline struct mii_bus *mdiobus_alloc(void)
 {
 	return mdiobus_alloc_size(0);
 }
 
+=======
+struct mii_bus *mdiobus_alloc(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int mdiobus_register(struct mii_bus *bus);
 void mdiobus_unregister(struct mii_bus *bus);
 void mdiobus_free(struct mii_bus *bus);
@@ -243,6 +265,10 @@ enum phy_state {
 	PHY_RESUMING
 };
 
+<<<<<<< HEAD
+=======
+struct sk_buff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* phy_device: An instance of a PHY
  *

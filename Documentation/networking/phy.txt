@@ -62,8 +62,12 @@ The MDIO bus
  5) The bus must also be declared somewhere as a device, and registered.
 
  As an example for how one driver implemented an mdio bus driver, see
+<<<<<<< HEAD
  drivers/net/ethernet/freescale/fsl_pq_mdio.c and an associated DTS file
  for one of the users. (e.g. "git grep fsl,.*-mdio arch/powerpc/boot/dts/")
+=======
+ drivers/net/gianfar_mii.c and arch/ppc/syslib/mpc85xx_devices.c
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 Connecting to a PHY
 

@@ -1026,4 +1026,19 @@ static struct i2c_driver tas_driver = {
 	.id_table = tas_i2c_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(tas_driver);
+=======
+static int __init tas_init(void)
+{
+	return i2c_add_driver(&tas_driver);
+}
+
+static void __exit tas_exit(void)
+{
+	i2c_del_driver(&tas_driver);
+}
+
+module_init(tas_init);
+module_exit(tas_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

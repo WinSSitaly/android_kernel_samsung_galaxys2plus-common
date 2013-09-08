@@ -14,9 +14,12 @@ struct blackfin_cpudata {
 	struct cpu cpu;
 	unsigned int imemctl;
 	unsigned int dmemctl;
+<<<<<<< HEAD
 #ifdef CONFIG_SMP
 	struct task_struct *idle;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 DECLARE_PER_CPU(struct blackfin_cpudata, cpu_data);

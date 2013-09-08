@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2006 - 2011 Intel Corporation.  All rights reserved.
+=======
+ * Copyright (c) 2006 - 2009 Intel Corporation.  All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This software is available to you under a choice of one of two
  * licenses.  You may choose to be licensed under the terms of the GNU
@@ -51,11 +55,17 @@
 
 #include "nes.h"
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u16 nes_read16_eeprom(void __iomem *addr, u16 offset);
 
 u32 mh_detected;
 u32 mh_pauses_sent;
 
+<<<<<<< HEAD
 static u32 nes_set_pau(struct nes_device *nesdev)
 {
 	u32 ret = 0;
@@ -79,6 +89,8 @@ static u32 nes_set_pau(struct nes_device *nesdev)
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * nes_read_eeprom_values -
  */
@@ -208,11 +220,14 @@ int nes_read_eeprom_values(struct nes_device *nesdev, struct nes_adapter *nesada
 		if (((major_ver == 3) && (minor_ver >= 16)) || (major_ver > 3))
 			nesadapter->send_term_ok = 1;
 
+<<<<<<< HEAD
 		if (nes_drv_opt & NES_DRV_OPT_ENABLE_PAU) {
 			if (!nes_set_pau(nesdev))
 				nesadapter->allow_unaligned_fpdus = 1;
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nesadapter->firmware_version = (((u32)(u8)(eeprom_data>>8))  <<  16) +
 				(u32)((u8)eeprom_data);
 
@@ -620,7 +635,10 @@ void nes_put_cqp_request(struct nes_device *nesdev,
 		nes_free_cqp_request(nesdev, cqp_request);
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * nes_post_cqp_request
  */
@@ -631,8 +649,11 @@ void nes_post_cqp_request(struct nes_device *nesdev,
 	unsigned long flags;
 	u32 cqp_head;
 	u64 u64temp;
+<<<<<<< HEAD
 	u32 opcode;
 	int ctx_index = NES_CQP_WQE_COMP_CTX_LOW_IDX;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&nesdev->cqp.lock, flags);
 
@@ -643,6 +664,7 @@ void nes_post_cqp_request(struct nes_device *nesdev,
 		nesdev->cqp.sq_head &= nesdev->cqp.sq_size-1;
 		cqp_wqe = &nesdev->cqp.sq_vbase[cqp_head];
 		memcpy(cqp_wqe, &cqp_request->cqp_wqe, sizeof(*cqp_wqe));
+<<<<<<< HEAD
 		opcode = le32_to_cpu(cqp_wqe->wqe_words[NES_CQP_WQE_OPCODE_IDX]);
 		if ((opcode & NES_CQP_OPCODE_MASK) == NES_CQP_DOWNLOAD_SEGMENT)
 			ctx_index = NES_CQP_WQE_DL_COMP_CTX_LOW_IDX;
@@ -657,6 +679,19 @@ void nes_post_cqp_request(struct nes_device *nesdev,
 			nesdev->cqp.sq_head, nesdev->cqp.sq_tail, nesdev->cqp.sq_size,
 			cqp_request->waiting, atomic_read(&cqp_request->refcount));
 
+=======
+		barrier();
+		u64temp = (unsigned long)cqp_request;
+		set_wqe_64bit_value(cqp_wqe->wqe_words, NES_CQP_WQE_COMP_SCRATCH_LOW_IDX,
+				    u64temp);
+		nes_debug(NES_DBG_CQP, "CQP request (opcode 0x%02X), line 1 = 0x%08X put on CQPs SQ,"
+				" request = %p, cqp_head = %u, cqp_tail = %u, cqp_size = %u,"
+				" waiting = %d, refcount = %d.\n",
+				le32_to_cpu(cqp_wqe->wqe_words[NES_CQP_WQE_OPCODE_IDX])&0x3f,
+				le32_to_cpu(cqp_wqe->wqe_words[NES_CQP_WQE_ID_IDX]), cqp_request,
+				nesdev->cqp.sq_head, nesdev->cqp.sq_tail, nesdev->cqp.sq_size,
+				cqp_request->waiting, atomic_read(&cqp_request->refcount));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		barrier();
 
 		/* Ring doorbell (1 WQEs) */
@@ -677,6 +712,10 @@ void nes_post_cqp_request(struct nes_device *nesdev,
 	return;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * nes_arp_table
  */

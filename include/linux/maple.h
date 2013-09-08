@@ -1,9 +1,15 @@
 #ifndef __LINUX_MAPLE_H
 #define __LINUX_MAPLE_H
 
+<<<<<<< HEAD
 #include <mach/maple.h>
 
 struct device;
+=======
+#include <linux/device.h>
+#include <mach/maple.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct bus_type maple_bus_type;
 
 /* Maple Bus command and response codes */

@@ -598,7 +598,11 @@ static struct rpc_procinfo	nlm4_procedures[] = {
 	PROC(GRANTED_RES,	res,		norep),
 };
 
+<<<<<<< HEAD
 const struct rpc_version nlm_version4 = {
+=======
+struct rpc_version	nlm_version4 = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.number		= 4,
 	.nrprocs	= ARRAY_SIZE(nlm4_procedures),
 	.procs		= nlm4_procedures,

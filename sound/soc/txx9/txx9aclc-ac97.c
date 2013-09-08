@@ -201,7 +201,11 @@ static int __devinit txx9aclc_ac97_dev_probe(struct platform_device *pdev)
 	if (!drvdata->base)
 		return -EBUSY;
 	err = devm_request_irq(&pdev->dev, irq, txx9aclc_ac97_irq,
+<<<<<<< HEAD
 			       0, dev_name(&pdev->dev), drvdata);
+=======
+			       IRQF_DISABLED, dev_name(&pdev->dev), drvdata);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0)
 		return err;
 
@@ -223,7 +227,22 @@ static struct platform_driver txx9aclc_ac97_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(txx9aclc_ac97_driver);
+=======
+static int __init txx9aclc_ac97_init(void)
+{
+	return platform_driver_register(&txx9aclc_ac97_driver);
+}
+
+static void __exit txx9aclc_ac97_exit(void)
+{
+	platform_driver_unregister(&txx9aclc_ac97_driver);
+}
+
+module_init(txx9aclc_ac97_init);
+module_exit(txx9aclc_ac97_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Atsushi Nemoto <anemo@mba.ocn.ne.jp>");
 MODULE_DESCRIPTION("TXx9 ACLC AC97 driver");

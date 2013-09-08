@@ -27,6 +27,10 @@
 #include <asm/bootinfo.h>
 #include <asm/io.h>
 #include <asm/mipsregs.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/processor.h>
 #include <asm/pci/bridge.h>
@@ -72,7 +76,11 @@ static inline int alloc_level(int cpu, int irq)
 
 	level = find_first_zero_bit(hub->irq_alloc_mask, LEVELS_PER_SLICE);
 	if (level >= LEVELS_PER_SLICE)
+<<<<<<< HEAD
 		panic("Cpu %d flooded with devices", cpu);
+=======
+		panic("Cpu %d flooded with devices\n", cpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	__set_bit(level, hub->irq_alloc_mask);
 	si->level_to_irq[level] = irq;
@@ -95,7 +103,11 @@ static inline int find_level(cpuid_t *cpunum, int irq)
 			}
 	}
 
+<<<<<<< HEAD
 	panic("Could not identify cpu/level for irq %d", irq);
+=======
+	panic("Could not identify cpu/level for irq %d\n", irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -115,7 +127,11 @@ static int ms1bit(unsigned long x)
 }
 
 /*
+<<<<<<< HEAD
  * This code is unnecessarily complex, because we do
+=======
+ * This code is unnecessarily complex, because we do IRQF_DISABLED
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * intr enabling. Basically, once we grab the set of intrs we need
  * to service, we must mask _all_ these interrupts; firstly, to make
  * sure the same intr does not intr again, causing recursion that
@@ -336,12 +352,20 @@ static struct irq_chip bridge_irq_type = {
 	.irq_unmask	= enable_bridge_irq,
 };
 
+<<<<<<< HEAD
 void register_bridge_irq(unsigned int irq)
+=======
+void __devinit register_bridge_irq(unsigned int irq)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	irq_set_chip_and_handler(irq, &bridge_irq_type, handle_level_irq);
 }
 
+<<<<<<< HEAD
 int request_bridge_irq(struct bridge_controller *bc)
+=======
+int __devinit request_bridge_irq(struct bridge_controller *bc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int irq = allocate_irqno();
 	int swlevel, cpu;

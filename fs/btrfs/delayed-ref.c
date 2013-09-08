@@ -101,11 +101,14 @@ static int comp_entry(struct btrfs_delayed_ref_node *ref2,
 		return -1;
 	if (ref1->type > ref2->type)
 		return 1;
+<<<<<<< HEAD
 	/* merging of sequenced refs is not allowed */
 	if (ref1->seq < ref2->seq)
 		return -1;
 	if (ref1->seq > ref2->seq)
 		return 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ref1->type == BTRFS_TREE_BLOCK_REF_KEY ||
 	    ref1->type == BTRFS_SHARED_BLOCK_REF_KEY) {
 		return comp_tree_refs(btrfs_delayed_node_to_tree_ref(ref2),
@@ -155,6 +158,7 @@ static struct btrfs_delayed_ref_node *tree_insert(struct rb_root *root,
 
 /*
  * find an head entry based on bytenr. This returns the delayed ref
+<<<<<<< HEAD
  * head if it was able to find one, or NULL if nothing was in that spot.
  * If return_bigger is given, the next bigger entry is returned if no exact
  * match is found.
@@ -171,6 +175,18 @@ static struct btrfs_delayed_ref_node *find_ref_head(struct rb_root *root,
 again:
 	n = root->rb_node;
 	entry = NULL;
+=======
+ * head if it was able to find one, or NULL if nothing was in that spot
+ */
+static struct btrfs_delayed_ref_node *find_ref_head(struct rb_root *root,
+				  u64 bytenr,
+				  struct btrfs_delayed_ref_node **last)
+{
+	struct rb_node *n = root->rb_node;
+	struct btrfs_delayed_ref_node *entry;
+	int cmp;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (n) {
 		entry = rb_entry(n, struct btrfs_delayed_ref_node, rb_node);
 		WARN_ON(!entry->in_tree);
@@ -193,6 +209,7 @@ again:
 		else
 			return entry;
 	}
+<<<<<<< HEAD
 	if (entry && return_bigger) {
 		if (cmp > 0) {
 			n = rb_next(&entry->rb_node);
@@ -206,6 +223,8 @@ again:
 		}
 		return entry;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NULL;
 }
 
@@ -233,6 +252,7 @@ int btrfs_delayed_ref_lock(struct btrfs_trans_handle *trans,
 	return 0;
 }
 
+<<<<<<< HEAD
 int btrfs_check_delayed_seq(struct btrfs_delayed_ref_root *delayed_refs,
 			    u64 seq)
 {
@@ -251,6 +271,8 @@ int btrfs_check_delayed_seq(struct btrfs_delayed_ref_root *delayed_refs,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int btrfs_find_ref_cluster(struct btrfs_trans_handle *trans,
 			   struct list_head *cluster, u64 start)
 {
@@ -265,8 +287,25 @@ int btrfs_find_ref_cluster(struct btrfs_trans_handle *trans,
 		node = rb_first(&delayed_refs->root);
 	} else {
 		ref = NULL;
+<<<<<<< HEAD
 		find_ref_head(&delayed_refs->root, start + 1, &ref, 1);
 		if (ref) {
+=======
+		find_ref_head(&delayed_refs->root, start, &ref);
+		if (ref) {
+			struct btrfs_delayed_ref_node *tmp;
+
+			node = rb_prev(&ref->rb_node);
+			while (node) {
+				tmp = rb_entry(node,
+					       struct btrfs_delayed_ref_node,
+					       rb_node);
+				if (tmp->bytenr < start)
+					break;
+				ref = tmp;
+				node = rb_prev(&ref->rb_node);
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			node = &ref->rb_node;
 		} else
 			node = rb_first(&delayed_refs->root);
@@ -420,8 +459,12 @@ update_existing_head_ref(struct btrfs_delayed_ref_node *existing,
  * this does all the dirty work in terms of maintaining the correct
  * overall modification count.
  */
+<<<<<<< HEAD
 static noinline void add_delayed_ref_head(struct btrfs_fs_info *fs_info,
 					struct btrfs_trans_handle *trans,
+=======
+static noinline int add_delayed_ref_head(struct btrfs_trans_handle *trans,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					struct btrfs_delayed_ref_node *ref,
 					u64 bytenr, u64 num_bytes,
 					int action, int is_data)
@@ -468,7 +511,10 @@ static noinline void add_delayed_ref_head(struct btrfs_fs_info *fs_info,
 	ref->action  = 0;
 	ref->is_head = 1;
 	ref->in_tree = 1;
+<<<<<<< HEAD
 	ref->seq = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	head_ref = btrfs_delayed_node_to_head(ref);
 	head_ref->must_insert_reserved = must_insert_reserved;
@@ -487,29 +533,47 @@ static noinline void add_delayed_ref_head(struct btrfs_fs_info *fs_info,
 		 * we've updated the existing ref, free the newly
 		 * allocated ref
 		 */
+<<<<<<< HEAD
 		kfree(head_ref);
+=======
+		kfree(ref);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		delayed_refs->num_heads++;
 		delayed_refs->num_heads_ready++;
 		delayed_refs->num_entries++;
 		trans->delayed_ref_updates++;
 	}
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * helper to insert a delayed tree ref into the rbtree.
  */
+<<<<<<< HEAD
 static noinline void add_delayed_tree_ref(struct btrfs_fs_info *fs_info,
 					 struct btrfs_trans_handle *trans,
 					 struct btrfs_delayed_ref_node *ref,
 					 u64 bytenr, u64 num_bytes, u64 parent,
 					 u64 ref_root, int level, int action,
 					 int for_cow)
+=======
+static noinline int add_delayed_tree_ref(struct btrfs_trans_handle *trans,
+					 struct btrfs_delayed_ref_node *ref,
+					 u64 bytenr, u64 num_bytes, u64 parent,
+					 u64 ref_root, int level, int action)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct btrfs_delayed_ref_node *existing;
 	struct btrfs_delayed_tree_ref *full_ref;
 	struct btrfs_delayed_ref_root *delayed_refs;
+<<<<<<< HEAD
 	u64 seq = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (action == BTRFS_ADD_DELAYED_EXTENT)
 		action = BTRFS_ADD_DELAYED_REF;
@@ -525,6 +589,7 @@ static noinline void add_delayed_tree_ref(struct btrfs_fs_info *fs_info,
 	ref->is_head = 0;
 	ref->in_tree = 1;
 
+<<<<<<< HEAD
 	if (need_ref_seq(for_cow, ref_root))
 		seq = inc_delayed_seq(delayed_refs);
 	ref->seq = seq;
@@ -536,6 +601,16 @@ static noinline void add_delayed_tree_ref(struct btrfs_fs_info *fs_info,
 		ref->type = BTRFS_SHARED_BLOCK_REF_KEY;
 	else
 		ref->type = BTRFS_TREE_BLOCK_REF_KEY;
+=======
+	full_ref = btrfs_delayed_node_to_tree_ref(ref);
+	if (parent) {
+		full_ref->parent = parent;
+		ref->type = BTRFS_SHARED_BLOCK_REF_KEY;
+	} else {
+		full_ref->root = ref_root;
+		ref->type = BTRFS_TREE_BLOCK_REF_KEY;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	full_ref->level = level;
 
 	trace_btrfs_delayed_tree_ref(ref, full_ref, action);
@@ -548,27 +623,46 @@ static noinline void add_delayed_tree_ref(struct btrfs_fs_info *fs_info,
 		 * we've updated the existing ref, free the newly
 		 * allocated ref
 		 */
+<<<<<<< HEAD
 		kfree(full_ref);
+=======
+		kfree(ref);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		delayed_refs->num_entries++;
 		trans->delayed_ref_updates++;
 	}
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * helper to insert a delayed data ref into the rbtree.
  */
+<<<<<<< HEAD
 static noinline void add_delayed_data_ref(struct btrfs_fs_info *fs_info,
 					 struct btrfs_trans_handle *trans,
 					 struct btrfs_delayed_ref_node *ref,
 					 u64 bytenr, u64 num_bytes, u64 parent,
 					 u64 ref_root, u64 owner, u64 offset,
 					 int action, int for_cow)
+=======
+static noinline int add_delayed_data_ref(struct btrfs_trans_handle *trans,
+					 struct btrfs_delayed_ref_node *ref,
+					 u64 bytenr, u64 num_bytes, u64 parent,
+					 u64 ref_root, u64 owner, u64 offset,
+					 int action)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct btrfs_delayed_ref_node *existing;
 	struct btrfs_delayed_data_ref *full_ref;
 	struct btrfs_delayed_ref_root *delayed_refs;
+<<<<<<< HEAD
 	u64 seq = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (action == BTRFS_ADD_DELAYED_EXTENT)
 		action = BTRFS_ADD_DELAYED_REF;
@@ -584,6 +678,7 @@ static noinline void add_delayed_data_ref(struct btrfs_fs_info *fs_info,
 	ref->is_head = 0;
 	ref->in_tree = 1;
 
+<<<<<<< HEAD
 	if (need_ref_seq(for_cow, ref_root))
 		seq = inc_delayed_seq(delayed_refs);
 	ref->seq = seq;
@@ -596,6 +691,16 @@ static noinline void add_delayed_data_ref(struct btrfs_fs_info *fs_info,
 	else
 		ref->type = BTRFS_EXTENT_DATA_REF_KEY;
 
+=======
+	full_ref = btrfs_delayed_node_to_data_ref(ref);
+	if (parent) {
+		full_ref->parent = parent;
+		ref->type = BTRFS_SHARED_DATA_REF_KEY;
+	} else {
+		full_ref->root = ref_root;
+		ref->type = BTRFS_EXTENT_DATA_REF_KEY;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	full_ref->objectid = owner;
 	full_ref->offset = offset;
 
@@ -609,11 +714,19 @@ static noinline void add_delayed_data_ref(struct btrfs_fs_info *fs_info,
 		 * we've updated the existing ref, free the newly
 		 * allocated ref
 		 */
+<<<<<<< HEAD
 		kfree(full_ref);
+=======
+		kfree(ref);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		delayed_refs->num_entries++;
 		trans->delayed_ref_updates++;
 	}
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -621,16 +734,27 @@ static noinline void add_delayed_data_ref(struct btrfs_fs_info *fs_info,
  * to make sure the delayed ref is eventually processed before this
  * transaction commits.
  */
+<<<<<<< HEAD
 int btrfs_add_delayed_tree_ref(struct btrfs_fs_info *fs_info,
 			       struct btrfs_trans_handle *trans,
 			       u64 bytenr, u64 num_bytes, u64 parent,
 			       u64 ref_root,  int level, int action,
 			       struct btrfs_delayed_extent_op *extent_op,
 			       int for_cow)
+=======
+int btrfs_add_delayed_tree_ref(struct btrfs_trans_handle *trans,
+			       u64 bytenr, u64 num_bytes, u64 parent,
+			       u64 ref_root,  int level, int action,
+			       struct btrfs_delayed_extent_op *extent_op)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct btrfs_delayed_tree_ref *ref;
 	struct btrfs_delayed_ref_head *head_ref;
 	struct btrfs_delayed_ref_root *delayed_refs;
+<<<<<<< HEAD
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BUG_ON(extent_op && extent_op->is_data);
 	ref = kmalloc(sizeof(*ref), GFP_NOFS);
@@ -652,6 +776,7 @@ int btrfs_add_delayed_tree_ref(struct btrfs_fs_info *fs_info,
 	 * insert both the head node and the new ref without dropping
 	 * the spin lock
 	 */
+<<<<<<< HEAD
 	add_delayed_ref_head(fs_info, trans, &head_ref->node, bytenr,
 				   num_bytes, action, 0);
 
@@ -661,6 +786,15 @@ int btrfs_add_delayed_tree_ref(struct btrfs_fs_info *fs_info,
 	if (!need_ref_seq(for_cow, ref_root) &&
 	    waitqueue_active(&delayed_refs->seq_wait))
 		wake_up(&delayed_refs->seq_wait);
+=======
+	ret = add_delayed_ref_head(trans, &head_ref->node, bytenr, num_bytes,
+				   action, 0);
+	BUG_ON(ret);
+
+	ret = add_delayed_tree_ref(trans, &ref->node, bytenr, num_bytes,
+				   parent, ref_root, level, action);
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&delayed_refs->lock);
 	return 0;
 }
@@ -668,6 +802,7 @@ int btrfs_add_delayed_tree_ref(struct btrfs_fs_info *fs_info,
 /*
  * add a delayed data ref. it's similar to btrfs_add_delayed_tree_ref.
  */
+<<<<<<< HEAD
 int btrfs_add_delayed_data_ref(struct btrfs_fs_info *fs_info,
 			       struct btrfs_trans_handle *trans,
 			       u64 bytenr, u64 num_bytes,
@@ -675,10 +810,21 @@ int btrfs_add_delayed_data_ref(struct btrfs_fs_info *fs_info,
 			       u64 owner, u64 offset, int action,
 			       struct btrfs_delayed_extent_op *extent_op,
 			       int for_cow)
+=======
+int btrfs_add_delayed_data_ref(struct btrfs_trans_handle *trans,
+			       u64 bytenr, u64 num_bytes,
+			       u64 parent, u64 ref_root,
+			       u64 owner, u64 offset, int action,
+			       struct btrfs_delayed_extent_op *extent_op)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct btrfs_delayed_data_ref *ref;
 	struct btrfs_delayed_ref_head *head_ref;
 	struct btrfs_delayed_ref_root *delayed_refs;
+<<<<<<< HEAD
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BUG_ON(extent_op && !extent_op->is_data);
 	ref = kmalloc(sizeof(*ref), GFP_NOFS);
@@ -700,6 +846,7 @@ int btrfs_add_delayed_data_ref(struct btrfs_fs_info *fs_info,
 	 * insert both the head node and the new ref without dropping
 	 * the spin lock
 	 */
+<<<<<<< HEAD
 	add_delayed_ref_head(fs_info, trans, &head_ref->node, bytenr,
 				   num_bytes, action, 1);
 
@@ -709,17 +856,34 @@ int btrfs_add_delayed_data_ref(struct btrfs_fs_info *fs_info,
 	if (!need_ref_seq(for_cow, ref_root) &&
 	    waitqueue_active(&delayed_refs->seq_wait))
 		wake_up(&delayed_refs->seq_wait);
+=======
+	ret = add_delayed_ref_head(trans, &head_ref->node, bytenr, num_bytes,
+				   action, 1);
+	BUG_ON(ret);
+
+	ret = add_delayed_data_ref(trans, &ref->node, bytenr, num_bytes,
+				   parent, ref_root, owner, offset, action);
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&delayed_refs->lock);
 	return 0;
 }
 
+<<<<<<< HEAD
 int btrfs_add_delayed_extent_op(struct btrfs_fs_info *fs_info,
 				struct btrfs_trans_handle *trans,
+=======
+int btrfs_add_delayed_extent_op(struct btrfs_trans_handle *trans,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				u64 bytenr, u64 num_bytes,
 				struct btrfs_delayed_extent_op *extent_op)
 {
 	struct btrfs_delayed_ref_head *head_ref;
 	struct btrfs_delayed_ref_root *delayed_refs;
+<<<<<<< HEAD
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	head_ref = kmalloc(sizeof(*head_ref), GFP_NOFS);
 	if (!head_ref)
@@ -730,12 +894,20 @@ int btrfs_add_delayed_extent_op(struct btrfs_fs_info *fs_info,
 	delayed_refs = &trans->transaction->delayed_refs;
 	spin_lock(&delayed_refs->lock);
 
+<<<<<<< HEAD
 	add_delayed_ref_head(fs_info, trans, &head_ref->node, bytenr,
 				   num_bytes, BTRFS_UPDATE_DELAYED_HEAD,
 				   extent_op->is_data);
 
 	if (waitqueue_active(&delayed_refs->seq_wait))
 		wake_up(&delayed_refs->seq_wait);
+=======
+	ret = add_delayed_ref_head(trans, &head_ref->node, bytenr,
+				   num_bytes, BTRFS_UPDATE_DELAYED_HEAD,
+				   extent_op->is_data);
+	BUG_ON(ret);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&delayed_refs->lock);
 	return 0;
 }
@@ -752,7 +924,11 @@ btrfs_find_delayed_ref_head(struct btrfs_trans_handle *trans, u64 bytenr)
 	struct btrfs_delayed_ref_root *delayed_refs;
 
 	delayed_refs = &trans->transaction->delayed_refs;
+<<<<<<< HEAD
 	ref = find_ref_head(&delayed_refs->root, bytenr, NULL, 0);
+=======
+	ref = find_ref_head(&delayed_refs->root, bytenr, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ref)
 		return btrfs_delayed_node_to_head(ref);
 	return NULL;

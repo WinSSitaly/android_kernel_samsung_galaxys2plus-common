@@ -4,8 +4,13 @@ menuconfig RC_CORE
 	default INPUT
 	---help---
 	  Enable support for Remote Controllers on Linux. This is
+<<<<<<< HEAD
 	  needed in order to support several video capture adapters,
 	  standalone IR receivers/transmitters, and RF receivers.
+=======
+	  needed in order to support several video capture adapters.
+	  Currently, all supported devices use InfraRed.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	  Enable this option if you have a video capture board even
 	  if you don't need IR, as otherwise, you may not be able to
@@ -87,6 +92,7 @@ config IR_RC5_SZ_DECODER
 	   uses an IR protocol that is almost standard RC-5, but not quite,
 	   as it uses an additional bit).
 
+<<<<<<< HEAD
 config IR_SANYO_DECODER
 	tristate "Enable IR raw decoder for the Sanyo protocol"
 	depends on RC_CORE
@@ -108,6 +114,8 @@ config IR_MCE_KBD_DECODER
 	   Windows Media Center Edition, which you would like to use with
 	   a raw IR receiver in your system.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config IR_LIRC_CODEC
 	tristate "Enable IR to LIRC bridge"
 	depends on RC_CORE
@@ -118,6 +126,7 @@ config IR_LIRC_CODEC
 	   Enable this option to pass raw IR to and from userspace via
 	   the LIRC interface.
 
+<<<<<<< HEAD
 config RC_ATI_REMOTE
 	tristate "ATI / X10 based USB RF remote controls"
 	depends on USB_ARCH_HAS_HCD
@@ -137,6 +146,8 @@ config RC_ATI_REMOTE
 	   To compile this driver as a module, choose M here: the module will be
 	   called ati_remote.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config IR_ENE
 	tristate "ENE eHome Receiver/Transceiver (pnp id: ENE0100/ENE02xxx)"
 	depends on PNP
@@ -266,6 +277,7 @@ config RC_LOOPBACK
 	   To compile this driver as a module, choose M here: the module will
 	   be called rc_loopback.
 
+<<<<<<< HEAD
 config IR_GPIO_CIR
 	tristate "GPIO IR remote control"
 	depends on RC_CORE
@@ -275,4 +287,6 @@ config IR_GPIO_CIR
 	   To compile this driver as a module, choose M here: the module will
 	   be called gpio-ir-recv.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endif #RC_CORE

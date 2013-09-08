@@ -1,7 +1,10 @@
 /*
    BlueZ - Bluetooth protocol stack for Linux
    Copyright (C) 2000-2001 Qualcomm Incorporated
+<<<<<<< HEAD
    Copyright (C) 2011 ProFUSION Embedded Systems
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
    Written 2000,2001 by Maxim Krasnyansky <maxk@qualcomm.com>
 
@@ -40,11 +43,19 @@
 #include <linux/skbuff.h>
 #include <linux/workqueue.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
+=======
+#include <linux/notifier.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/rfkill.h>
 #include <linux/timer.h>
 #include <linux/crypto.h>
 #include <net/sock.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/uaccess.h>
 #include <asm/unaligned.h>
 
@@ -53,9 +64,17 @@
 
 #define AUTO_OFF_TIMEOUT 2000
 
+<<<<<<< HEAD
 static void hci_rx_work(struct work_struct *work);
 static void hci_cmd_work(struct work_struct *work);
 static void hci_tx_work(struct work_struct *work);
+=======
+static void hci_cmd_task(unsigned long arg);
+static void hci_rx_task(unsigned long arg);
+static void hci_tx_task(unsigned long arg);
+
+static DEFINE_RWLOCK(hci_task_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* HCI device list */
 LIST_HEAD(hci_dev_list);
@@ -65,11 +84,36 @@ DEFINE_RWLOCK(hci_dev_list_lock);
 LIST_HEAD(hci_cb_list);
 DEFINE_RWLOCK(hci_cb_list_lock);
 
+<<<<<<< HEAD
 /* ---- HCI notifications ---- */
 
 static void hci_notify(struct hci_dev *hdev, int event)
 {
 	hci_sock_dev_event(hdev, event);
+=======
+/* HCI protocols */
+#define HCI_MAX_PROTO	2
+struct hci_proto *hci_proto[HCI_MAX_PROTO];
+
+/* HCI notifiers list */
+static ATOMIC_NOTIFIER_HEAD(hci_notifier);
+
+/* ---- HCI notifications ---- */
+
+int hci_register_notifier(struct notifier_block *nb)
+{
+	return atomic_notifier_chain_register(&hci_notifier, nb);
+}
+
+int hci_unregister_notifier(struct notifier_block *nb)
+{
+	return atomic_notifier_chain_unregister(&hci_notifier, nb);
+}
+
+static void hci_notify(struct hci_dev *hdev, int event)
+{
+	atomic_notifier_call_chain(&hci_notifier, event, hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* ---- HCI requests ---- */
@@ -81,6 +125,7 @@ void hci_req_complete(struct hci_dev *hdev, __u16 cmd, int result)
 	/* If this is the init phase check if the completed command matches
 	 * the last init command, and if not just return.
 	 */
+<<<<<<< HEAD
 	if (test_bit(HCI_INIT, &hdev->flags) && hdev->init_last_cmd != cmd) {
 		struct hci_command_hdr *sent = (void *) hdev->sent_cmd->data;
 		struct sk_buff *skb;
@@ -103,6 +148,10 @@ void hci_req_complete(struct hci_dev *hdev, __u16 cmd, int result)
 
 		return;
 	}
+=======
+	if (test_bit(HCI_INIT, &hdev->flags) && hdev->init_last_cmd != cmd)
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (hdev->req_status == HCI_REQ_PEND) {
 		hdev->req_result = result;
@@ -190,6 +239,7 @@ static void hci_reset_req(struct hci_dev *hdev, unsigned long opt)
 	hci_send_cmd(hdev, HCI_OP_RESET, 0, NULL);
 }
 
+<<<<<<< HEAD
 static void bredr_init(struct hci_dev *hdev)
 {
 	struct hci_cp_delete_stored_link_key cp;
@@ -197,13 +247,40 @@ static void bredr_init(struct hci_dev *hdev)
 	__u8 flt_type;
 
 	hdev->flow_ctl_mode = HCI_FLOW_CTL_MODE_PACKET_BASED;
+=======
+static void hci_init_req(struct hci_dev *hdev, unsigned long opt)
+{
+	struct hci_cp_delete_stored_link_key cp;
+	struct sk_buff *skb;
+	__le16 param;
+	__u8 flt_type;
+
+	BT_DBG("%s %ld", hdev->name, opt);
+
+	/* Driver initialization */
+
+	/* Special commands */
+	while ((skb = skb_dequeue(&hdev->driver_init))) {
+		bt_cb(skb)->pkt_type = HCI_COMMAND_PKT;
+		skb->dev = (void *) hdev;
+
+		skb_queue_tail(&hdev->cmd_q, skb);
+		tasklet_schedule(&hdev->cmd_task);
+	}
+	skb_queue_purge(&hdev->driver_init);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Mandatory initialization */
 
 	/* Reset */
 	if (!test_bit(HCI_QUIRK_NO_RESET, &hdev->quirks)) {
+<<<<<<< HEAD
 		set_bit(HCI_RESET, &hdev->flags);
 		hci_send_cmd(hdev, HCI_OP_RESET, 0, NULL);
+=======
+			set_bit(HCI_RESET, &hdev->flags);
+			hci_send_cmd(hdev, HCI_OP_RESET, 0, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Read Local Supported Features */
@@ -215,6 +292,21 @@ static void bredr_init(struct hci_dev *hdev)
 	/* Read Buffer Size (ACL mtu, max pkt, etc.) */
 	hci_send_cmd(hdev, HCI_OP_READ_BUFFER_SIZE, 0, NULL);
 
+<<<<<<< HEAD
+=======
+#if 0
+	/* Host buffer size */
+	{
+		struct hci_cp_host_buffer_size cp;
+		cp.acl_mtu = cpu_to_le16(HCI_MAX_ACL_SIZE);
+		cp.sco_mtu = HCI_MAX_SCO_SIZE;
+		cp.acl_max_pkt = cpu_to_le16(0xffff);
+		cp.sco_max_pkt = cpu_to_le16(0xffff);
+		hci_send_cmd(hdev, HCI_OP_HOST_BUFFER_SIZE, sizeof(cp), &cp);
+	}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Read BD Address */
 	hci_send_cmd(hdev, HCI_OP_READ_BD_ADDR, 0, NULL);
 
@@ -242,6 +334,7 @@ static void bredr_init(struct hci_dev *hdev)
 	hci_send_cmd(hdev, HCI_OP_DELETE_STORED_LINK_KEY, sizeof(cp), &cp);
 }
 
+<<<<<<< HEAD
 static void amp_init(struct hci_dev *hdev)
 {
 	hdev->flow_ctl_mode = HCI_FLOW_CTL_MODE_BLOCK_BASED;
@@ -287,6 +380,8 @@ static void hci_init_req(struct hci_dev *hdev, unsigned long opt)
 
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void hci_le_init_req(struct hci_dev *hdev, unsigned long opt)
 {
 	BT_DBG("%s", hdev->name);
@@ -339,7 +434,12 @@ static void hci_linkpol_req(struct hci_dev *hdev, unsigned long opt)
  * Device is held on return. */
 struct hci_dev *hci_dev_get(int index)
 {
+<<<<<<< HEAD
 	struct hci_dev *hdev = NULL, *d;
+=======
+	struct hci_dev *hdev = NULL;
+	struct list_head *p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BT_DBG("%d", index);
 
@@ -347,7 +447,12 @@ struct hci_dev *hci_dev_get(int index)
 		return NULL;
 
 	read_lock(&hci_dev_list_lock);
+<<<<<<< HEAD
 	list_for_each_entry(d, &hci_dev_list, list) {
+=======
+	list_for_each(p, &hci_dev_list) {
+		struct hci_dev *d = list_entry(p, struct hci_dev, list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (d->id == index) {
 			hdev = hci_dev_hold(d);
 			break;
@@ -358,6 +463,7 @@ struct hci_dev *hci_dev_get(int index)
 }
 
 /* ---- Inquiry support ---- */
+<<<<<<< HEAD
 
 bool hci_discovery_active(struct hci_dev *hdev)
 {
@@ -433,10 +539,30 @@ struct inquiry_entry *hci_inquiry_cache_lookup_unknown(struct hci_dev *hdev,
 						       bdaddr_t *bdaddr)
 {
 	struct discovery_state *cache = &hdev->discovery;
+=======
+static void inquiry_cache_flush(struct hci_dev *hdev)
+{
+	struct inquiry_cache *cache = &hdev->inq_cache;
+	struct inquiry_entry *next  = cache->list, *e;
+
+	BT_DBG("cache %p", cache);
+
+	cache->list = NULL;
+	while ((e = next)) {
+		next = e->next;
+		kfree(e);
+	}
+}
+
+struct inquiry_entry *hci_inquiry_cache_lookup(struct hci_dev *hdev, bdaddr_t *bdaddr)
+{
+	struct inquiry_cache *cache = &hdev->inq_cache;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct inquiry_entry *e;
 
 	BT_DBG("cache %p, %s", cache, batostr(bdaddr));
 
+<<<<<<< HEAD
 	list_for_each_entry(e, &cache->unknown, list) {
 		if (!bacmp(&e->data.bdaddr, bdaddr))
 			return e;
@@ -487,10 +613,22 @@ bool hci_inquiry_cache_update(struct hci_dev *hdev, struct inquiry_data *data,
 			      bool name_known, bool *ssp)
 {
 	struct discovery_state *cache = &hdev->discovery;
+=======
+	for (e = cache->list; e; e = e->next)
+		if (!bacmp(&e->data.bdaddr, bdaddr))
+			break;
+	return e;
+}
+
+void hci_inquiry_cache_update(struct hci_dev *hdev, struct inquiry_data *data)
+{
+	struct inquiry_cache *cache = &hdev->inq_cache;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct inquiry_entry *ie;
 
 	BT_DBG("cache %p, %s", cache, batostr(&data->bdaddr));
 
+<<<<<<< HEAD
 	if (ssp)
 		*ssp = data->ssp_mode;
 
@@ -527,40 +665,67 @@ update:
 					ie->name_state != NAME_PENDING) {
 		ie->name_state = NAME_KNOWN;
 		list_del(&ie->list);
+=======
+	ie = hci_inquiry_cache_lookup(hdev, &data->bdaddr);
+	if (!ie) {
+		/* Entry not in the cache. Add new one. */
+		ie = kzalloc(sizeof(struct inquiry_entry), GFP_ATOMIC);
+		if (!ie)
+			return;
+
+		ie->next = cache->list;
+		cache->list = ie;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	memcpy(&ie->data, data, sizeof(*data));
 	ie->timestamp = jiffies;
 	cache->timestamp = jiffies;
+<<<<<<< HEAD
 
 	if (ie->name_state == NAME_NOT_KNOWN)
 		return false;
 
 	return true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int inquiry_cache_dump(struct hci_dev *hdev, int num, __u8 *buf)
 {
+<<<<<<< HEAD
 	struct discovery_state *cache = &hdev->discovery;
+=======
+	struct inquiry_cache *cache = &hdev->inq_cache;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct inquiry_info *info = (struct inquiry_info *) buf;
 	struct inquiry_entry *e;
 	int copied = 0;
 
+<<<<<<< HEAD
 	list_for_each_entry(e, &cache->all, all) {
 		struct inquiry_data *data = &e->data;
 
 		if (copied >= num)
 			break;
 
+=======
+	for (e = cache->list; e && copied < num; e = e->next, copied++) {
+		struct inquiry_data *data = &e->data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bacpy(&info->bdaddr, &data->bdaddr);
 		info->pscan_rep_mode	= data->pscan_rep_mode;
 		info->pscan_period_mode	= data->pscan_period_mode;
 		info->pscan_mode	= data->pscan_mode;
 		memcpy(info->dev_class, data->dev_class, 3);
 		info->clock_offset	= data->clock_offset;
+<<<<<<< HEAD
 
 		info++;
 		copied++;
+=======
+		info++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	BT_DBG("cache %p, copied %d", cache, copied);
@@ -600,14 +765,22 @@ int hci_inquiry(void __user *arg)
 	if (!hdev)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	hci_dev_lock(hdev);
+=======
+	hci_dev_lock_bh(hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (inquiry_cache_age(hdev) > INQUIRY_CACHE_AGE_MAX ||
 				inquiry_cache_empty(hdev) ||
 				ir.flags & IREQ_CACHE_FLUSH) {
 		inquiry_cache_flush(hdev);
 		do_inquiry = 1;
 	}
+<<<<<<< HEAD
 	hci_dev_unlock(hdev);
+=======
+	hci_dev_unlock_bh(hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	timeo = ir.length * msecs_to_jiffies(2000);
 
@@ -629,9 +802,15 @@ int hci_inquiry(void __user *arg)
 		goto done;
 	}
 
+<<<<<<< HEAD
 	hci_dev_lock(hdev);
 	ir.num_rsp = inquiry_cache_dump(hdev, max_rsp, buf);
 	hci_dev_unlock(hdev);
+=======
+	hci_dev_lock_bh(hdev);
+	ir.num_rsp = inquiry_cache_dump(hdev, max_rsp, buf);
+	hci_dev_unlock_bh(hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BT_DBG("num_rsp %d", ir.num_rsp);
 
@@ -665,7 +844,11 @@ int hci_dev_open(__u16 dev)
 
 	hci_req_lock(hdev);
 
+<<<<<<< HEAD
 	if (test_bit(HCI_UNREGISTER, &hdev->dev_flags)) {
+=======
+	if (test_bit(HCI_UNREGISTER, &hdev->flags)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENODEV;
 		goto done;
 	}
@@ -683,9 +866,14 @@ int hci_dev_open(__u16 dev)
 	if (test_bit(HCI_QUIRK_RAW_DEVICE, &hdev->quirks))
 		set_bit(HCI_RAW, &hdev->flags);
 
+<<<<<<< HEAD
 	/* Treat all non BR/EDR controllers as raw devices if
 	   enable_hs is not set */
 	if (hdev->dev_type != HCI_BREDR && !enable_hs)
+=======
+	/* Treat all non BR/EDR controllers as raw devices for now */
+	if (hdev->dev_type != HCI_BREDR)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_bit(HCI_RAW, &hdev->flags);
 
 	if (hdev->open(hdev)) {
@@ -712,6 +900,7 @@ int hci_dev_open(__u16 dev)
 		hci_dev_hold(hdev);
 		set_bit(HCI_UP, &hdev->flags);
 		hci_notify(hdev, HCI_DEV_UP);
+<<<<<<< HEAD
 		if (!test_bit(HCI_SETUP, &hdev->dev_flags)) {
 			hci_dev_lock(hdev);
 			mgmt_powered(hdev, 1);
@@ -722,6 +911,15 @@ int hci_dev_open(__u16 dev)
 		flush_work(&hdev->tx_work);
 		flush_work(&hdev->cmd_work);
 		flush_work(&hdev->rx_work);
+=======
+		if (!test_bit(HCI_SETUP, &hdev->flags))
+			mgmt_powered(hdev->id, 1);
+	} else {
+		/* Init failed, cleanup */
+		tasklet_kill(&hdev->rx_task);
+		tasklet_kill(&hdev->tx_task);
+		tasklet_kill(&hdev->cmd_task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		skb_queue_purge(&hdev->cmd_q);
 		skb_queue_purge(&hdev->rx_q);
@@ -748,10 +946,13 @@ static int hci_dev_do_close(struct hci_dev *hdev)
 {
 	BT_DBG("%s %p", hdev->name, hdev);
 
+<<<<<<< HEAD
 	cancel_work_sync(&hdev->le_scan);
 
 	cancel_delayed_work(&hdev->power_off);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hci_req_cancel(hdev, ENODEV);
 	hci_req_lock(hdev);
 
@@ -761,6 +962,7 @@ static int hci_dev_do_close(struct hci_dev *hdev)
 		return 0;
 	}
 
+<<<<<<< HEAD
 	/* Flush RX and TX works */
 	flush_work(&hdev->tx_work);
 	flush_work(&hdev->rx_work);
@@ -780,6 +982,16 @@ static int hci_dev_do_close(struct hci_dev *hdev)
 	inquiry_cache_flush(hdev);
 	hci_conn_hash_flush(hdev);
 	hci_dev_unlock(hdev);
+=======
+	/* Kill RX and TX tasks */
+	tasklet_kill(&hdev->rx_task);
+	tasklet_kill(&hdev->tx_task);
+
+	hci_dev_lock_bh(hdev);
+	inquiry_cache_flush(hdev);
+	hci_conn_hash_flush(hdev);
+	hci_dev_unlock_bh(hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hci_notify(hdev, HCI_DEV_DOWN);
 
@@ -789,16 +1001,25 @@ static int hci_dev_do_close(struct hci_dev *hdev)
 	/* Reset device */
 	skb_queue_purge(&hdev->cmd_q);
 	atomic_set(&hdev->cmd_cnt, 1);
+<<<<<<< HEAD
 	if (!test_bit(HCI_RAW, &hdev->flags) &&
 				test_bit(HCI_QUIRK_NO_RESET, &hdev->quirks)) {
+=======
+	if (!test_bit(HCI_RAW, &hdev->flags)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_bit(HCI_INIT, &hdev->flags);
 		__hci_request(hdev, hci_reset_req, 0,
 					msecs_to_jiffies(250));
 		clear_bit(HCI_INIT, &hdev->flags);
 	}
 
+<<<<<<< HEAD
 	/* flush cmd  work */
 	flush_work(&hdev->cmd_work);
+=======
+	/* Kill cmd task */
+	tasklet_kill(&hdev->cmd_task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Drop queues */
 	skb_queue_purge(&hdev->rx_q);
@@ -816,18 +1037,25 @@ static int hci_dev_do_close(struct hci_dev *hdev)
 	 * and no tasks are scheduled. */
 	hdev->close(hdev);
 
+<<<<<<< HEAD
 	if (!test_and_clear_bit(HCI_AUTO_OFF, &hdev->dev_flags)) {
 		hci_dev_lock(hdev);
 		mgmt_powered(hdev, 0);
 		hci_dev_unlock(hdev);
 	}
+=======
+	mgmt_powered(hdev->id, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Clear flags */
 	hdev->flags = 0;
 
+<<<<<<< HEAD
 	memset(hdev->eir, 0, sizeof(hdev->eir));
 	memset(hdev->dev_class, 0, sizeof(hdev->dev_class));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hci_req_unlock(hdev);
 
 	hci_dev_put(hdev);
@@ -842,12 +1070,16 @@ int hci_dev_close(__u16 dev)
 	hdev = hci_dev_get(dev);
 	if (!hdev)
 		return -ENODEV;
+<<<<<<< HEAD
 
 	if (test_and_clear_bit(HCI_AUTO_OFF, &hdev->dev_flags))
 		cancel_delayed_work(&hdev->power_off);
 
 	err = hci_dev_do_close(hdev);
 
+=======
+	err = hci_dev_do_close(hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hci_dev_put(hdev);
 	return err;
 }
@@ -862,6 +1094,10 @@ int hci_dev_reset(__u16 dev)
 		return -ENODEV;
 
 	hci_req_lock(hdev);
+<<<<<<< HEAD
+=======
+	tasklet_disable(&hdev->tx_task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!test_bit(HCI_UP, &hdev->flags))
 		goto done;
@@ -870,10 +1106,17 @@ int hci_dev_reset(__u16 dev)
 	skb_queue_purge(&hdev->rx_q);
 	skb_queue_purge(&hdev->cmd_q);
 
+<<<<<<< HEAD
 	hci_dev_lock(hdev);
 	inquiry_cache_flush(hdev);
 	hci_conn_hash_flush(hdev);
 	hci_dev_unlock(hdev);
+=======
+	hci_dev_lock_bh(hdev);
+	inquiry_cache_flush(hdev);
+	hci_conn_hash_flush(hdev);
+	hci_dev_unlock_bh(hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (hdev->flush)
 		hdev->flush(hdev);
@@ -886,6 +1129,10 @@ int hci_dev_reset(__u16 dev)
 					msecs_to_jiffies(HCI_INIT_TIMEOUT));
 
 done:
+<<<<<<< HEAD
+=======
+	tasklet_enable(&hdev->tx_task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hci_req_unlock(hdev);
 	hci_dev_put(hdev);
 	return ret;
@@ -984,9 +1231,15 @@ int hci_dev_cmd(unsigned int cmd, void __user *arg)
 
 int hci_get_dev_list(void __user *arg)
 {
+<<<<<<< HEAD
 	struct hci_dev *hdev;
 	struct hci_dev_list_req *dl;
 	struct hci_dev_req *dr;
+=======
+	struct hci_dev_list_req *dl;
+	struct hci_dev_req *dr;
+	struct list_head *p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int n = 0, size, err;
 	__u16 dev_num;
 
@@ -1004,6 +1257,7 @@ int hci_get_dev_list(void __user *arg)
 
 	dr = dl->dev_req;
 
+<<<<<<< HEAD
 	read_lock(&hci_dev_list_lock);
 	list_for_each_entry(hdev, &hci_dev_list, list) {
 		if (test_and_clear_bit(HCI_AUTO_OFF, &hdev->dev_flags))
@@ -1011,6 +1265,18 @@ int hci_get_dev_list(void __user *arg)
 
 		if (!test_bit(HCI_MGMT, &hdev->dev_flags))
 			set_bit(HCI_PAIRABLE, &hdev->dev_flags);
+=======
+	read_lock_bh(&hci_dev_list_lock);
+	list_for_each(p, &hci_dev_list) {
+		struct hci_dev *hdev;
+
+		hdev = list_entry(p, struct hci_dev, list);
+
+		hci_del_off_timer(hdev);
+
+		if (!test_bit(HCI_MGMT, &hdev->flags))
+			set_bit(HCI_PAIRABLE, &hdev->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		(dr + n)->dev_id  = hdev->id;
 		(dr + n)->dev_opt = hdev->flags;
@@ -1018,7 +1284,11 @@ int hci_get_dev_list(void __user *arg)
 		if (++n >= dev_num)
 			break;
 	}
+<<<<<<< HEAD
 	read_unlock(&hci_dev_list_lock);
+=======
+	read_unlock_bh(&hci_dev_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dl->dev_num = n;
 	size = sizeof(*dl) + n * sizeof(*dr);
@@ -1042,11 +1312,18 @@ int hci_get_dev_info(void __user *arg)
 	if (!hdev)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	if (test_and_clear_bit(HCI_AUTO_OFF, &hdev->dev_flags))
 		cancel_delayed_work_sync(&hdev->power_off);
 
 	if (!test_bit(HCI_MGMT, &hdev->dev_flags))
 		set_bit(HCI_PAIRABLE, &hdev->dev_flags);
+=======
+	hci_del_off_timer(hdev);
+
+	if (!test_bit(HCI_MGMT, &hdev->flags))
+		set_bit(HCI_PAIRABLE, &hdev->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	strcpy(di.name, hdev->name);
 	di.bdaddr   = hdev->bdaddr;
@@ -1100,7 +1377,10 @@ struct hci_dev *hci_alloc_dev(void)
 	if (!hdev)
 		return NULL;
 
+<<<<<<< HEAD
 	hci_init_sysfs(hdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skb_queue_head_init(&hdev->driver_init);
 
 	return hdev;
@@ -1120,6 +1400,7 @@ EXPORT_SYMBOL(hci_free_dev);
 static void hci_power_on(struct work_struct *work)
 {
 	struct hci_dev *hdev = container_of(work, struct hci_dev, power_on);
+<<<<<<< HEAD
 	int err;
 
 	BT_DBG("%s", hdev->name);
@@ -1136,10 +1417,25 @@ static void hci_power_on(struct work_struct *work)
 
 	if (test_and_clear_bit(HCI_SETUP, &hdev->dev_flags))
 		mgmt_index_added(hdev);
+=======
+
+	BT_DBG("%s", hdev->name);
+
+	if (hci_dev_open(hdev->id) < 0)
+		return;
+
+	if (test_bit(HCI_AUTO_OFF, &hdev->flags))
+		mod_timer(&hdev->off_timer,
+				jiffies + msecs_to_jiffies(AUTO_OFF_TIMEOUT));
+
+	if (test_and_clear_bit(HCI_SETUP, &hdev->flags))
+		mgmt_index_added(hdev->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void hci_power_off(struct work_struct *work)
 {
+<<<<<<< HEAD
 	struct hci_dev *hdev = container_of(work, struct hci_dev,
 							power_off.work);
 
@@ -1164,6 +1460,32 @@ static void hci_discov_off(struct work_struct *work)
 	hdev->discov_timeout = 0;
 
 	hci_dev_unlock(hdev);
+=======
+	struct hci_dev *hdev = container_of(work, struct hci_dev, power_off);
+
+	BT_DBG("%s", hdev->name);
+
+	hci_dev_close(hdev->id);
+}
+
+static void hci_auto_off(unsigned long data)
+{
+	struct hci_dev *hdev = (struct hci_dev *) data;
+
+	BT_DBG("%s", hdev->name);
+
+	clear_bit(HCI_AUTO_OFF, &hdev->flags);
+
+	queue_work(hdev->workqueue, &hdev->power_off);
+}
+
+void hci_del_off_timer(struct hci_dev *hdev)
+{
+	BT_DBG("%s", hdev->name);
+
+	clear_bit(HCI_AUTO_OFF, &hdev->flags);
+	del_timer(&hdev->off_timer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int hci_uuids_clear(struct hci_dev *hdev)
@@ -1198,6 +1520,7 @@ int hci_link_keys_clear(struct hci_dev *hdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 int hci_smp_ltks_clear(struct hci_dev *hdev)
 {
 	struct smp_ltk *k, *tmp;
@@ -1217,15 +1540,34 @@ struct link_key *hci_find_link_key(struct hci_dev *hdev, bdaddr_t *bdaddr)
 	list_for_each_entry(k, &hdev->link_keys, list)
 		if (bacmp(bdaddr, &k->bdaddr) == 0)
 			return k;
+=======
+struct link_key *hci_find_link_key(struct hci_dev *hdev, bdaddr_t *bdaddr)
+{
+	struct list_head *p;
+
+	list_for_each(p, &hdev->link_keys) {
+		struct link_key *k;
+
+		k = list_entry(p, struct link_key, list);
+
+		if (bacmp(bdaddr, &k->bdaddr) == 0)
+			return k;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return NULL;
 }
 
+<<<<<<< HEAD
 static bool hci_persistent_key(struct hci_dev *hdev, struct hci_conn *conn,
+=======
+static int hci_persistent_key(struct hci_dev *hdev, struct hci_conn *conn,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						u8 key_type, u8 old_key_type)
 {
 	/* Legacy key */
 	if (key_type < 0x03)
+<<<<<<< HEAD
 		return true;
 
 	/* Debug keys are insecure so don't store them persistently */
@@ -1267,12 +1609,63 @@ struct smp_ltk *hci_find_ltk(struct hci_dev *hdev, __le16 ediv, u8 rand[8])
 			continue;
 
 		return k;
+=======
+		return 1;
+
+	/* Debug keys are insecure so don't store them persistently */
+	if (key_type == HCI_LK_DEBUG_COMBINATION)
+		return 0;
+
+	/* Changed combination key and there's no previous one */
+	if (key_type == HCI_LK_CHANGED_COMBINATION && old_key_type == 0xff)
+		return 0;
+
+	/* Security mode 3 case */
+	if (!conn)
+		return 1;
+
+	/* Neither local nor remote side had no-bonding as requirement */
+	if (conn->auth_type > 0x01 && conn->remote_auth > 0x01)
+		return 1;
+
+	/* Local side had dedicated bonding as requirement */
+	if (conn->auth_type == 0x02 || conn->auth_type == 0x03)
+		return 1;
+
+	/* Remote side had dedicated bonding as requirement */
+	if (conn->remote_auth == 0x02 || conn->remote_auth == 0x03)
+		return 1;
+
+	/* If none of the above criteria match, then don't store the key
+	 * persistently */
+	return 0;
+}
+
+struct link_key *hci_find_ltk(struct hci_dev *hdev, __le16 ediv, u8 rand[8])
+{
+	struct link_key *k;
+
+	list_for_each_entry(k, &hdev->link_keys, list) {
+		struct key_master_id *id;
+
+		if (k->type != HCI_LK_SMP_LTK)
+			continue;
+
+		if (k->dlen != sizeof(*id))
+			continue;
+
+		id = (void *) &k->data;
+		if (id->ediv == ediv &&
+				(memcmp(rand, id->rand, sizeof(id->rand)) == 0))
+			return k;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return NULL;
 }
 EXPORT_SYMBOL(hci_find_ltk);
 
+<<<<<<< HEAD
 struct smp_ltk *hci_find_ltk_by_addr(struct hci_dev *hdev, bdaddr_t *bdaddr,
 				     u8 addr_type)
 {
@@ -1281,10 +1674,20 @@ struct smp_ltk *hci_find_ltk_by_addr(struct hci_dev *hdev, bdaddr_t *bdaddr,
 	list_for_each_entry(k, &hdev->long_term_keys, list)
 		if (addr_type == k->bdaddr_type &&
 					bacmp(bdaddr, &k->bdaddr) == 0)
+=======
+struct link_key *hci_find_link_key_type(struct hci_dev *hdev,
+					bdaddr_t *bdaddr, u8 type)
+{
+	struct link_key *k;
+
+	list_for_each_entry(k, &hdev->link_keys, list)
+		if (k->type == type && bacmp(bdaddr, &k->bdaddr) == 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return k;
 
 	return NULL;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(hci_find_ltk_by_addr);
 
 int hci_add_link_key(struct hci_dev *hdev, struct hci_conn *conn, int new_key,
@@ -1293,6 +1696,15 @@ int hci_add_link_key(struct hci_dev *hdev, struct hci_conn *conn, int new_key,
 	struct link_key *key, *old_key;
 	u8 old_key_type;
 	bool persistent;
+=======
+EXPORT_SYMBOL(hci_find_link_key_type);
+
+int hci_add_link_key(struct hci_dev *hdev, struct hci_conn *conn, int new_key,
+				bdaddr_t *bdaddr, u8 *val, u8 type, u8 pin_len)
+{
+	struct link_key *key, *old_key;
+	u8 old_key_type, persistent;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	old_key = hci_find_link_key(hdev, bdaddr);
 	if (old_key) {
@@ -1333,14 +1745,24 @@ int hci_add_link_key(struct hci_dev *hdev, struct hci_conn *conn, int new_key,
 
 	persistent = hci_persistent_key(hdev, conn, type, old_key_type);
 
+<<<<<<< HEAD
 	mgmt_new_link_key(hdev, key, persistent);
 
 	if (conn)
 		conn->flush_key = !persistent;
+=======
+	mgmt_new_key(hdev->id, key, persistent);
+
+	if (!persistent) {
+		list_del(&key->list);
+		kfree(key);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 int hci_add_ltk(struct hci_dev *hdev, bdaddr_t *bdaddr, u8 addr_type, u8 type,
 		int new_key, u8 authenticated, u8 tk[16], u8 enc_size, u16
 		ediv, u8 rand[8])
@@ -1374,6 +1796,42 @@ int hci_add_ltk(struct hci_dev *hdev, bdaddr_t *bdaddr, u8 addr_type, u8 type,
 
 	if (type & HCI_SMP_LTK)
 		mgmt_new_ltk(hdev, key, 1);
+=======
+int hci_add_ltk(struct hci_dev *hdev, int new_key, bdaddr_t *bdaddr,
+			u8 key_size, __le16 ediv, u8 rand[8], u8 ltk[16])
+{
+	struct link_key *key, *old_key;
+	struct key_master_id *id;
+	u8 old_key_type;
+
+	BT_DBG("%s addr %s", hdev->name, batostr(bdaddr));
+
+	old_key = hci_find_link_key_type(hdev, bdaddr, HCI_LK_SMP_LTK);
+	if (old_key) {
+		key = old_key;
+		old_key_type = old_key->type;
+	} else {
+		key = kzalloc(sizeof(*key) + sizeof(*id), GFP_ATOMIC);
+		if (!key)
+			return -ENOMEM;
+		list_add(&key->list, &hdev->link_keys);
+		old_key_type = 0xff;
+	}
+
+	key->dlen = sizeof(*id);
+
+	bacpy(&key->bdaddr, bdaddr);
+	memcpy(key->val, ltk, sizeof(key->val));
+	key->type = HCI_LK_SMP_LTK;
+	key->pin_len = key_size;
+
+	id = (void *) &key->data;
+	id->ediv = ediv;
+	memcpy(id->rand, rand, sizeof(id->rand));
+
+	if (new_key)
+		mgmt_new_key(hdev->id, key, old_key_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1394,6 +1852,7 @@ int hci_remove_link_key(struct hci_dev *hdev, bdaddr_t *bdaddr)
 	return 0;
 }
 
+<<<<<<< HEAD
 int hci_remove_ltk(struct hci_dev *hdev, bdaddr_t *bdaddr)
 {
 	struct smp_ltk *k, *tmp;
@@ -1411,6 +1870,8 @@ int hci_remove_ltk(struct hci_dev *hdev, bdaddr_t *bdaddr)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* HCI command timer function */
 static void hci_cmd_timer(unsigned long arg)
 {
@@ -1418,11 +1879,19 @@ static void hci_cmd_timer(unsigned long arg)
 
 	BT_ERR("%s command tx timeout", hdev->name);
 	atomic_set(&hdev->cmd_cnt, 1);
+<<<<<<< HEAD
 	queue_work(hdev->workqueue, &hdev->cmd_work);
 }
 
 struct oob_data *hci_find_remote_oob_data(struct hci_dev *hdev,
 					  bdaddr_t *bdaddr)
+=======
+	tasklet_schedule(&hdev->cmd_task);
+}
+
+struct oob_data *hci_find_remote_oob_data(struct hci_dev *hdev,
+							bdaddr_t *bdaddr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct oob_data *data;
 
@@ -1462,7 +1931,11 @@ int hci_remote_oob_data_clear(struct hci_dev *hdev)
 }
 
 int hci_add_remote_oob_data(struct hci_dev *hdev, bdaddr_t *bdaddr, u8 *hash,
+<<<<<<< HEAD
 			    u8 *randomizer)
+=======
+								u8 *randomizer)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct oob_data *data;
 
@@ -1485,6 +1958,7 @@ int hci_add_remote_oob_data(struct hci_dev *hdev, bdaddr_t *bdaddr, u8 *hash,
 	return 0;
 }
 
+<<<<<<< HEAD
 struct bdaddr_list *hci_blacklist_lookup(struct hci_dev *hdev, bdaddr_t *bdaddr)
 {
 	struct bdaddr_list *b;
@@ -1492,6 +1966,21 @@ struct bdaddr_list *hci_blacklist_lookup(struct hci_dev *hdev, bdaddr_t *bdaddr)
 	list_for_each_entry(b, &hdev->blacklist, list)
 		if (bacmp(bdaddr, &b->bdaddr) == 0)
 			return b;
+=======
+struct bdaddr_list *hci_blacklist_lookup(struct hci_dev *hdev,
+						bdaddr_t *bdaddr)
+{
+	struct list_head *p;
+
+	list_for_each(p, &hdev->blacklist) {
+		struct bdaddr_list *b;
+
+		b = list_entry(p, struct bdaddr_list, list);
+
+		if (bacmp(bdaddr, &b->bdaddr) == 0)
+			return b;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return NULL;
 }
@@ -1512,24 +2001,47 @@ int hci_blacklist_clear(struct hci_dev *hdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 int hci_blacklist_add(struct hci_dev *hdev, bdaddr_t *bdaddr, u8 type)
 {
 	struct bdaddr_list *entry;
+=======
+int hci_blacklist_add(struct hci_dev *hdev, bdaddr_t *bdaddr)
+{
+	struct bdaddr_list *entry;
+	int err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (bacmp(bdaddr, BDADDR_ANY) == 0)
 		return -EBADF;
 
+<<<<<<< HEAD
 	if (hci_blacklist_lookup(hdev, bdaddr))
 		return -EEXIST;
 
 	entry = kzalloc(sizeof(struct bdaddr_list), GFP_KERNEL);
 	if (!entry)
 		return -ENOMEM;
+=======
+	hci_dev_lock_bh(hdev);
+
+	if (hci_blacklist_lookup(hdev, bdaddr)) {
+		err = -EEXIST;
+		goto err;
+	}
+
+	entry = kzalloc(sizeof(struct bdaddr_list), GFP_KERNEL);
+	if (!entry) {
+		return -ENOMEM;
+		goto err;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bacpy(&entry->bdaddr, bdaddr);
 
 	list_add(&entry->list, &hdev->blacklist);
 
+<<<<<<< HEAD
 	return mgmt_device_blocked(hdev, bdaddr, type);
 }
 
@@ -1543,10 +2055,37 @@ int hci_blacklist_del(struct hci_dev *hdev, bdaddr_t *bdaddr, u8 type)
 	entry = hci_blacklist_lookup(hdev, bdaddr);
 	if (!entry)
 		return -ENOENT;
+=======
+	err = 0;
+
+err:
+	hci_dev_unlock_bh(hdev);
+	return err;
+}
+
+int hci_blacklist_del(struct hci_dev *hdev, bdaddr_t *bdaddr)
+{
+	struct bdaddr_list *entry;
+	int err = 0;
+
+	hci_dev_lock_bh(hdev);
+
+	if (bacmp(bdaddr, BDADDR_ANY) == 0) {
+		hci_blacklist_clear(hdev);
+		goto done;
+	}
+
+	entry = hci_blacklist_lookup(hdev, bdaddr);
+	if (!entry) {
+		err = -ENOENT;
+		goto done;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_del(&entry->list);
 	kfree(entry);
 
+<<<<<<< HEAD
 	return mgmt_device_unblocked(hdev, bdaddr, type);
 }
 
@@ -1554,6 +2093,16 @@ static void hci_clear_adv_cache(struct work_struct *work)
 {
 	struct hci_dev *hdev = container_of(work, struct hci_dev,
 					    adv_work.work);
+=======
+done:
+	hci_dev_unlock_bh(hdev);
+	return err;
+}
+
+static void hci_clear_adv_cache(unsigned long arg)
+{
+	struct hci_dev *hdev = (void *) arg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hci_dev_lock(hdev);
 
@@ -1596,7 +2145,15 @@ static inline int is_connectable_adv(u8 evt_type)
 }
 
 int hci_add_adv_entry(struct hci_dev *hdev,
+<<<<<<< HEAD
 					struct hci_ev_le_advertising_info *ev) { struct adv_entry *entry; if (!is_connectable_adv(ev->evt_type))
+=======
+					struct hci_ev_le_advertising_info *ev)
+{
+	struct adv_entry *entry;
+
+	if (!is_connectable_adv(ev->evt_type))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	/* Only new entries should be added to adv_entries. So, if
@@ -1604,7 +2161,11 @@ int hci_add_adv_entry(struct hci_dev *hdev,
 	if (hci_find_adv_entry(hdev, &ev->bdaddr))
 		return 0;
 
+<<<<<<< HEAD
 	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
+=======
+	entry = kzalloc(sizeof(*entry), GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!entry)
 		return -ENOMEM;
 
@@ -1619,6 +2180,7 @@ int hci_add_adv_entry(struct hci_dev *hdev,
 	return 0;
 }
 
+<<<<<<< HEAD
 static void le_scan_param_req(struct hci_dev *hdev, unsigned long opt)
 {
 	struct le_scan_params *param =  (struct le_scan_params *) opt;
@@ -1737,6 +2299,21 @@ int hci_register_dev(struct hci_dev *hdev)
 	id = (hdev->dev_type == HCI_BREDR) ? 0 : 1;
 
 	write_lock(&hci_dev_list_lock);
+=======
+/* Register HCI device */
+int hci_register_dev(struct hci_dev *hdev)
+{
+	struct list_head *head = &hci_dev_list, *p;
+	int i, id = 0;
+
+	BT_DBG("%p name %s bus %d owner %p", hdev, hdev->name,
+						hdev->bus, hdev->owner);
+
+	if (!hdev->open || !hdev->close || !hdev->destruct)
+		return -EINVAL;
+
+	write_lock_bh(&hci_dev_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Find first available device id */
 	list_for_each(p, &hci_dev_list) {
@@ -1747,12 +2324,21 @@ int hci_register_dev(struct hci_dev *hdev)
 
 	sprintf(hdev->name, "hci%d", id);
 	hdev->id = id;
+<<<<<<< HEAD
 	list_add_tail(&hdev->list, head);
 
 	mutex_init(&hdev->lock);
 
 	hdev->flags = 0;
 	hdev->dev_flags = 0;
+=======
+	list_add(&hdev->list, head);
+
+	atomic_set(&hdev->refcnt, 1);
+	spin_lock_init(&hdev->lock);
+
+	hdev->flags = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hdev->pkt_type  = (HCI_DM1 | HCI_DH1 | HCI_HV1);
 	hdev->esco_type = (ESCO_HV1);
 	hdev->link_mode = (HCI_LM_ACCEPT);
@@ -1762,10 +2348,16 @@ int hci_register_dev(struct hci_dev *hdev)
 	hdev->sniff_max_interval = 800;
 	hdev->sniff_min_interval = 80;
 
+<<<<<<< HEAD
 	INIT_WORK(&hdev->rx_work, hci_rx_work);
 	INIT_WORK(&hdev->cmd_work, hci_cmd_work);
 	INIT_WORK(&hdev->tx_work, hci_tx_work);
 
+=======
+	tasklet_init(&hdev->cmd_task, hci_cmd_task, (unsigned long) hdev);
+	tasklet_init(&hdev->rx_task, hci_rx_task, (unsigned long) hdev);
+	tasklet_init(&hdev->tx_task, hci_tx_task, (unsigned long) hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	skb_queue_head_init(&hdev->rx_q);
 	skb_queue_head_init(&hdev->cmd_q);
@@ -1779,33 +2371,53 @@ int hci_register_dev(struct hci_dev *hdev)
 	init_waitqueue_head(&hdev->req_wait_q);
 	mutex_init(&hdev->req_lock);
 
+<<<<<<< HEAD
 	discovery_init(hdev);
 
 	hci_conn_hash_init(hdev);
 
 	INIT_LIST_HEAD(&hdev->mgmt_pending);
 
+=======
+	inquiry_cache_init(hdev);
+
+	hci_conn_hash_init(hdev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_LIST_HEAD(&hdev->blacklist);
 
 	INIT_LIST_HEAD(&hdev->uuids);
 
 	INIT_LIST_HEAD(&hdev->link_keys);
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&hdev->long_term_keys);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	INIT_LIST_HEAD(&hdev->remote_oob_data);
 
 	INIT_LIST_HEAD(&hdev->adv_entries);
+<<<<<<< HEAD
 
 	INIT_DELAYED_WORK(&hdev->adv_work, hci_clear_adv_cache);
 	INIT_WORK(&hdev->power_on, hci_power_on);
 	INIT_DELAYED_WORK(&hdev->power_off, hci_power_off);
 
 	INIT_DELAYED_WORK(&hdev->discov_off, hci_discov_off);
+=======
+	setup_timer(&hdev->adv_timer, hci_clear_adv_cache,
+						(unsigned long) hdev);
+
+	INIT_WORK(&hdev->power_on, hci_power_on);
+	INIT_WORK(&hdev->power_off, hci_power_off);
+	setup_timer(&hdev->off_timer, hci_auto_off, (unsigned long) hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memset(&hdev->stat, 0, sizeof(struct hci_dev_stats));
 
 	atomic_set(&hdev->promisc, 0);
 
+<<<<<<< HEAD
 	INIT_WORK(&hdev->le_scan, le_scan_work);
 
 	INIT_DELAYED_WORK(&hdev->le_scan_disable, le_scan_disable_work);
@@ -1822,6 +2434,20 @@ int hci_register_dev(struct hci_dev *hdev)
 	error = hci_add_sysfs(hdev);
 	if (error < 0)
 		goto err_wqueue;
+=======
+	write_unlock_bh(&hci_dev_list_lock);
+
+	hdev->workqueue = create_singlethread_workqueue(hdev->name);
+	if (!hdev->workqueue)
+		goto nomem;
+
+	hdev->tfm = crypto_alloc_blkcipher("ecb(aes)", 0, CRYPTO_ALG_ASYNC);
+	if (IS_ERR(hdev->tfm))
+		BT_INFO("Failed to load transform for ecb(aes): %ld",
+							PTR_ERR(hdev->tfm));
+
+	hci_register_sysfs(hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hdev->rfkill = rfkill_alloc(hdev->name, &hdev->dev,
 				RFKILL_TYPE_BLUETOOTH, &hci_rfkill_ops, hdev);
@@ -1832,6 +2458,7 @@ int hci_register_dev(struct hci_dev *hdev)
 		}
 	}
 
+<<<<<<< HEAD
 	set_bit(HCI_AUTO_OFF, &hdev->dev_flags);
 	set_bit(HCI_SETUP, &hdev->dev_flags);
 	schedule_work(&hdev->power_on);
@@ -1849,27 +2476,56 @@ err:
 	write_unlock(&hci_dev_list_lock);
 
 	return error;
+=======
+	set_bit(HCI_AUTO_OFF, &hdev->flags);
+	set_bit(HCI_SETUP, &hdev->flags);
+	queue_work(hdev->workqueue, &hdev->power_on);
+
+	hci_notify(hdev, HCI_DEV_REG);
+
+	return id;
+
+nomem:
+	write_lock_bh(&hci_dev_list_lock);
+	list_del(&hdev->list);
+	write_unlock_bh(&hci_dev_list_lock);
+
+	return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(hci_register_dev);
 
 /* Unregister HCI device */
+<<<<<<< HEAD
 void hci_unregister_dev(struct hci_dev *hdev)
+=======
+int hci_unregister_dev(struct hci_dev *hdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 
 	BT_DBG("%p name %s bus %d", hdev, hdev->name, hdev->bus);
 
+<<<<<<< HEAD
 	set_bit(HCI_UNREGISTER, &hdev->dev_flags);
 
 	write_lock(&hci_dev_list_lock);
 	list_del(&hdev->list);
 	write_unlock(&hci_dev_list_lock);
+=======
+	set_bit(HCI_UNREGISTER, &hdev->flags);
+
+	write_lock_bh(&hci_dev_list_lock);
+	list_del(&hdev->list);
+	write_unlock_bh(&hci_dev_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hci_dev_do_close(hdev);
 
 	for (i = 0; i < NUM_REASSEMBLY; i++)
 		kfree_skb(hdev->reassembly[i]);
 
+<<<<<<< HEAD
 	cancel_work_sync(&hdev->power_on);
 
 	if (!test_bit(HCI_INIT, &hdev->flags) &&
@@ -1882,6 +2538,14 @@ void hci_unregister_dev(struct hci_dev *hdev)
 	/* mgmt_index_removed should take care of emptying the
 	 * pending list */
 	BUG_ON(!list_empty(&hdev->mgmt_pending));
+=======
+	if (!test_bit(HCI_INIT, &hdev->flags) &&
+					!test_bit(HCI_SETUP, &hdev->flags))
+		mgmt_index_removed(hdev->id);
+
+	if (!IS_ERR(hdev->tfm))
+		crypto_free_blkcipher(hdev->tfm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hci_notify(hdev, HCI_DEV_UNREG);
 
@@ -1890,6 +2554,7 @@ void hci_unregister_dev(struct hci_dev *hdev)
 		rfkill_destroy(hdev->rfkill);
 	}
 
+<<<<<<< HEAD
 	hci_del_sysfs(hdev);
 
 	cancel_delayed_work_sync(&hdev->adv_work);
@@ -1906,6 +2571,26 @@ void hci_unregister_dev(struct hci_dev *hdev)
 	hci_dev_unlock(hdev);
 
 	hci_dev_put(hdev);
+=======
+	hci_unregister_sysfs(hdev);
+
+	hci_del_off_timer(hdev);
+	del_timer(&hdev->adv_timer);
+
+	destroy_workqueue(hdev->workqueue);
+
+	hci_dev_lock_bh(hdev);
+	hci_blacklist_clear(hdev);
+	hci_uuids_clear(hdev);
+	hci_link_keys_clear(hdev);
+	hci_remote_oob_data_clear(hdev);
+	hci_adv_entries_clear(hdev);
+	hci_dev_unlock_bh(hdev);
+
+	__hci_dev_put(hdev);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(hci_unregister_dev);
 
@@ -1941,8 +2626,14 @@ int hci_recv_frame(struct sk_buff *skb)
 	/* Time stamp */
 	__net_timestamp(skb);
 
+<<<<<<< HEAD
 	skb_queue_tail(&hdev->rx_q, skb);
 	queue_work(hdev->workqueue, &hdev->rx_work);
+=======
+	/* Queue frame for rx task */
+	skb_queue_tail(&hdev->rx_q, skb);
+	tasklet_schedule(&hdev->rx_task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1993,7 +2684,11 @@ static int hci_reassembly(struct hci_dev *hdev, int type, void *data,
 
 	while (count) {
 		scb = (void *) skb->cb;
+<<<<<<< HEAD
 		len = min_t(uint, scb->expect, count);
+=======
+		len = min(scb->expect, (__u16)count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		memcpy(skb_put(skb, len), data, len);
 
@@ -2071,7 +2766,11 @@ int hci_recv_fragment(struct hci_dev *hdev, int type, void *data, int count)
 
 		data += (count - rem);
 		count = rem;
+<<<<<<< HEAD
 	}
+=======
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return rem;
 }
@@ -2106,7 +2805,11 @@ int hci_recv_stream_fragment(struct hci_dev *hdev, void *data, int count)
 
 		data += (count - rem);
 		count = rem;
+<<<<<<< HEAD
 	}
+=======
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return rem;
 }
@@ -2114,13 +2817,68 @@ EXPORT_SYMBOL(hci_recv_stream_fragment);
 
 /* ---- Interface to upper protocols ---- */
 
+<<<<<<< HEAD
+=======
+/* Register/Unregister protocols.
+ * hci_task_lock is used to ensure that no tasks are running. */
+int hci_register_proto(struct hci_proto *hp)
+{
+	int err = 0;
+
+	BT_DBG("%p name %s id %d", hp, hp->name, hp->id);
+
+	if (hp->id >= HCI_MAX_PROTO)
+		return -EINVAL;
+
+	write_lock_bh(&hci_task_lock);
+
+	if (!hci_proto[hp->id])
+		hci_proto[hp->id] = hp;
+	else
+		err = -EEXIST;
+
+	write_unlock_bh(&hci_task_lock);
+
+	return err;
+}
+EXPORT_SYMBOL(hci_register_proto);
+
+int hci_unregister_proto(struct hci_proto *hp)
+{
+	int err = 0;
+
+	BT_DBG("%p name %s id %d", hp, hp->name, hp->id);
+
+	if (hp->id >= HCI_MAX_PROTO)
+		return -EINVAL;
+
+	write_lock_bh(&hci_task_lock);
+
+	if (hci_proto[hp->id])
+		hci_proto[hp->id] = NULL;
+	else
+		err = -ENOENT;
+
+	write_unlock_bh(&hci_task_lock);
+
+	return err;
+}
+EXPORT_SYMBOL(hci_unregister_proto);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int hci_register_cb(struct hci_cb *cb)
 {
 	BT_DBG("%p name %s", cb, cb->name);
 
+<<<<<<< HEAD
 	write_lock(&hci_cb_list_lock);
 	list_add(&cb->list, &hci_cb_list);
 	write_unlock(&hci_cb_list_lock);
+=======
+	write_lock_bh(&hci_cb_list_lock);
+	list_add(&cb->list, &hci_cb_list);
+	write_unlock_bh(&hci_cb_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -2130,9 +2888,15 @@ int hci_unregister_cb(struct hci_cb *cb)
 {
 	BT_DBG("%p name %s", cb, cb->name);
 
+<<<<<<< HEAD
 	write_lock(&hci_cb_list_lock);
 	list_del(&cb->list);
 	write_unlock(&hci_cb_list_lock);
+=======
+	write_lock_bh(&hci_cb_list_lock);
+	list_del(&cb->list);
+	write_unlock_bh(&hci_cb_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -2149,6 +2913,7 @@ static int hci_send_frame(struct sk_buff *skb)
 
 	BT_DBG("%s type %d len %d", hdev->name, bt_cb(skb)->pkt_type, skb->len);
 
+<<<<<<< HEAD
 	/* Time stamp */
 	__net_timestamp(skb);
 
@@ -2158,6 +2923,13 @@ static int hci_send_frame(struct sk_buff *skb)
 	if (atomic_read(&hdev->promisc)) {
 		/* Send copy to the sockets */
 		hci_send_to_sock(hdev, skb);
+=======
+	if (atomic_read(&hdev->promisc)) {
+		/* Time stamp */
+		__net_timestamp(skb);
+
+		hci_send_to_sock(hdev, skb, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Get rid of skb owner, prior to sending to the driver. */
@@ -2197,7 +2969,11 @@ int hci_send_cmd(struct hci_dev *hdev, __u16 opcode, __u32 plen, void *param)
 		hdev->init_last_cmd = opcode;
 
 	skb_queue_tail(&hdev->cmd_q, skb);
+<<<<<<< HEAD
 	queue_work(hdev->workqueue, &hdev->cmd_work);
+=======
+	tasklet_schedule(&hdev->cmd_task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -2233,18 +3009,35 @@ static void hci_add_acl_hdr(struct sk_buff *skb, __u16 handle, __u16 flags)
 	hdr->dlen   = cpu_to_le16(len);
 }
 
+<<<<<<< HEAD
 static void hci_queue_acl(struct hci_conn *conn, struct sk_buff_head *queue,
 				struct sk_buff *skb, __u16 flags)
+=======
+void hci_send_acl(struct hci_conn *conn, struct sk_buff *skb, __u16 flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hci_dev *hdev = conn->hdev;
 	struct sk_buff *list;
 
+<<<<<<< HEAD
+=======
+	BT_DBG("%s conn %p flags 0x%x", hdev->name, conn, flags);
+
+	skb->dev = (void *) hdev;
+	bt_cb(skb)->pkt_type = HCI_ACLDATA_PKT;
+	hci_add_acl_hdr(skb, conn->handle, flags);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list = skb_shinfo(skb)->frag_list;
 	if (!list) {
 		/* Non fragmented */
 		BT_DBG("%s nonfrag skb %p len %d", hdev->name, skb, skb->len);
 
+<<<<<<< HEAD
 		skb_queue_tail(queue, skb);
+=======
+		skb_queue_tail(&conn->data_q, skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		/* Fragmented */
 		BT_DBG("%s frag %p len %d", hdev->name, skb, skb->len);
@@ -2252,9 +3045,15 @@ static void hci_queue_acl(struct hci_conn *conn, struct sk_buff_head *queue,
 		skb_shinfo(skb)->frag_list = NULL;
 
 		/* Queue all fragments atomically */
+<<<<<<< HEAD
 		spin_lock(&queue->lock);
 
 		__skb_queue_tail(queue, skb);
+=======
+		spin_lock_bh(&conn->data_q.lock);
+
+		__skb_queue_tail(&conn->data_q, skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		flags &= ~ACL_START;
 		flags |= ACL_CONT;
@@ -2267,6 +3066,7 @@ static void hci_queue_acl(struct hci_conn *conn, struct sk_buff_head *queue,
 
 			BT_DBG("%s frag %p len %d", hdev->name, skb, skb->len);
 
+<<<<<<< HEAD
 			__skb_queue_tail(queue, skb);
 		} while (list);
 
@@ -2288,6 +3088,15 @@ void hci_send_acl(struct hci_chan *chan, struct sk_buff *skb, __u16 flags)
 	hci_queue_acl(conn, &chan->data_q, skb, flags);
 
 	queue_work(hdev->workqueue, &hdev->tx_work);
+=======
+			__skb_queue_tail(&conn->data_q, skb);
+		} while (list);
+
+		spin_unlock_bh(&conn->data_q.lock);
+	}
+
+	tasklet_schedule(&hdev->tx_task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(hci_send_acl);
 
@@ -2310,7 +3119,11 @@ void hci_send_sco(struct hci_conn *conn, struct sk_buff *skb)
 	bt_cb(skb)->pkt_type = HCI_SCODATA_PKT;
 
 	skb_queue_tail(&conn->data_q, skb);
+<<<<<<< HEAD
 	queue_work(hdev->workqueue, &hdev->tx_work);
+=======
+	tasklet_schedule(&hdev->tx_task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(hci_send_sco);
 
@@ -2320,6 +3133,7 @@ EXPORT_SYMBOL(hci_send_sco);
 static inline struct hci_conn *hci_low_sent(struct hci_dev *hdev, __u8 type, int *quote)
 {
 	struct hci_conn_hash *h = &hdev->conn_hash;
+<<<<<<< HEAD
 	struct hci_conn *conn = NULL, *c;
 	int num = 0, min = ~0;
 
@@ -2329,6 +3143,18 @@ static inline struct hci_conn *hci_low_sent(struct hci_dev *hdev, __u8 type, int
 	rcu_read_lock();
 
 	list_for_each_entry_rcu(c, &h->list, list) {
+=======
+	struct hci_conn *conn = NULL;
+	int num = 0, min = ~0;
+	struct list_head *p;
+
+	/* We don't have to lock device here. Connections are always
+	 * added and removed with TX task disabled. */
+	list_for_each(p, &h->list) {
+		struct hci_conn *c;
+		c = list_entry(p, struct hci_conn, list);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (c->type != type || skb_queue_empty(&c->data_q))
 			continue;
 
@@ -2341,6 +3167,7 @@ static inline struct hci_conn *hci_low_sent(struct hci_dev *hdev, __u8 type, int
 			min  = c->sent;
 			conn = c;
 		}
+<<<<<<< HEAD
 
 		if (hci_conn_num(hdev, type) == num)
 			break;
@@ -2348,6 +3175,10 @@ static inline struct hci_conn *hci_low_sent(struct hci_dev *hdev, __u8 type, int
 
 	rcu_read_unlock();
 
+=======
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (conn) {
 		int cnt, q;
 
@@ -2379,6 +3210,7 @@ static inline struct hci_conn *hci_low_sent(struct hci_dev *hdev, __u8 type, int
 static inline void hci_link_tx_to(struct hci_dev *hdev, __u8 type)
 {
 	struct hci_conn_hash *h = &hdev->conn_hash;
+<<<<<<< HEAD
 	struct hci_conn *c;
 
 	BT_ERR("%s link tx timeout", hdev->name);
@@ -2387,12 +3219,23 @@ static inline void hci_link_tx_to(struct hci_dev *hdev, __u8 type)
 
 	/* Kill stalled connections */
 	list_for_each_entry_rcu(c, &h->list, list) {
+=======
+	struct list_head *p;
+	struct hci_conn  *c;
+
+	BT_ERR("%s link tx timeout", hdev->name);
+
+	/* Kill stalled connections */
+	list_for_each(p, &h->list) {
+		c = list_entry(p, struct hci_conn, list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (c->type == type && c->sent) {
 			BT_ERR("%s killing stalled connection %s",
 				hdev->name, batostr(&c->dst));
 			hci_acl_disconn(c, 0x13);
 		}
 	}
+<<<<<<< HEAD
 
 	rcu_read_unlock();
 }
@@ -2567,11 +3410,36 @@ static inline void hci_sched_acl_pkt(struct hci_dev *hdev)
 
 			hci_conn_enter_active_mode(chan->conn,
 						   bt_cb(skb)->force_active);
+=======
+}
+
+static inline void hci_sched_acl(struct hci_dev *hdev)
+{
+	struct hci_conn *conn;
+	struct sk_buff *skb;
+	int quote;
+
+	BT_DBG("%s", hdev->name);
+
+	if (!test_bit(HCI_RAW, &hdev->flags)) {
+		/* ACL tx timeout must be longer than maximum
+		 * link supervision timeout (40.9 seconds) */
+		if (!hdev->acl_cnt && time_after(jiffies, hdev->acl_last_tx + HZ * 45))
+			hci_link_tx_to(hdev, ACL_LINK);
+	}
+
+	while (hdev->acl_cnt && (conn = hci_low_sent(hdev, ACL_LINK, &quote))) {
+		while (quote-- && (skb = skb_dequeue(&conn->data_q))) {
+			BT_DBG("skb %p len %d", skb, skb->len);
+
+			hci_conn_enter_active_mode(conn, bt_cb(skb)->force_active);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			hci_send_frame(skb);
 			hdev->acl_last_tx = jiffies;
 
 			hdev->acl_cnt--;
+<<<<<<< HEAD
 			chan->sent++;
 			chan->conn->sent++;
 		}
@@ -2643,6 +3511,11 @@ static inline void hci_sched_acl(struct hci_dev *hdev)
 		hci_sched_acl_blk(hdev);
 		break;
 	}
+=======
+			conn->sent++;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Schedule SCO */
@@ -2654,9 +3527,12 @@ static inline void hci_sched_sco(struct hci_dev *hdev)
 
 	BT_DBG("%s", hdev->name);
 
+<<<<<<< HEAD
 	if (!hci_conn_num(hdev, SCO_LINK))
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (hdev->sco_cnt && (conn = hci_low_sent(hdev, SCO_LINK, &quote))) {
 		while (quote-- && (skb = skb_dequeue(&conn->data_q))) {
 			BT_DBG("skb %p len %d", skb, skb->len);
@@ -2677,9 +3553,12 @@ static inline void hci_sched_esco(struct hci_dev *hdev)
 
 	BT_DBG("%s", hdev->name);
 
+<<<<<<< HEAD
 	if (!hci_conn_num(hdev, ESCO_LINK))
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (hdev->sco_cnt && (conn = hci_low_sent(hdev, ESCO_LINK, &quote))) {
 		while (quote-- && (skb = skb_dequeue(&conn->data_q))) {
 			BT_DBG("skb %p len %d", skb, skb->len);
@@ -2694,6 +3573,7 @@ static inline void hci_sched_esco(struct hci_dev *hdev)
 
 static inline void hci_sched_le(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	struct hci_chan *chan;
 	struct sk_buff *skb;
 	int quote, cnt, tmp;
@@ -2703,6 +3583,14 @@ static inline void hci_sched_le(struct hci_dev *hdev)
 	if (!hci_conn_num(hdev, LE_LINK))
 		return;
 
+=======
+	struct hci_conn *conn;
+	struct sk_buff *skb;
+	int quote, cnt;
+
+	BT_DBG("%s", hdev->name);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!test_bit(HCI_RAW, &hdev->flags)) {
 		/* LE tx timeout must be longer than maximum
 		 * link supervision timeout (40.9 seconds) */
@@ -2712,6 +3600,7 @@ static inline void hci_sched_le(struct hci_dev *hdev)
 	}
 
 	cnt = hdev->le_pkts ? hdev->le_cnt : hdev->acl_cnt;
+<<<<<<< HEAD
 	tmp = cnt;
 	while (cnt && (chan = hci_chan_sent(hdev, LE_LINK, &quote))) {
 		u32 priority = (skb_peek(&chan->data_q))->priority;
@@ -2724,20 +3613,32 @@ static inline void hci_sched_le(struct hci_dev *hdev)
 				break;
 
 			skb = skb_dequeue(&chan->data_q);
+=======
+	while (cnt && (conn = hci_low_sent(hdev, LE_LINK, &quote))) {
+		while (quote-- && (skb = skb_dequeue(&conn->data_q))) {
+			BT_DBG("skb %p len %d", skb, skb->len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			hci_send_frame(skb);
 			hdev->le_last_tx = jiffies;
 
 			cnt--;
+<<<<<<< HEAD
 			chan->sent++;
 			chan->conn->sent++;
 		}
 	}
 
+=======
+			conn->sent++;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (hdev->le_pkts)
 		hdev->le_cnt = cnt;
 	else
 		hdev->acl_cnt = cnt;
+<<<<<<< HEAD
 
 	if (cnt != tmp)
 		hci_prio_recalculate(hdev, LE_LINK);
@@ -2748,6 +3649,17 @@ static void hci_tx_work(struct work_struct *work)
 	struct hci_dev *hdev = container_of(work, struct hci_dev, tx_work);
 	struct sk_buff *skb;
 
+=======
+}
+
+static void hci_tx_task(unsigned long arg)
+{
+	struct hci_dev *hdev = (struct hci_dev *) arg;
+	struct sk_buff *skb;
+
+	read_lock(&hci_task_lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BT_DBG("%s acl %d sco %d le %d", hdev->name, hdev->acl_cnt,
 		hdev->sco_cnt, hdev->le_cnt);
 
@@ -2764,6 +3676,11 @@ static void hci_tx_work(struct work_struct *work)
 	/* Send next queued raw (unknown type) packet */
 	while ((skb = skb_dequeue(&hdev->raw_q)))
 		hci_send_frame(skb);
+<<<<<<< HEAD
+=======
+
+	read_unlock(&hci_task_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* ----- HCI RX task (incoming data processing) ----- */
@@ -2790,6 +3707,7 @@ static inline void hci_acldata_packet(struct hci_dev *hdev, struct sk_buff *skb)
 	hci_dev_unlock(hdev);
 
 	if (conn) {
+<<<<<<< HEAD
 		hci_conn_enter_active_mode(conn, BT_POWER_FORCE_ACTIVE_OFF);
 
 		hci_dev_lock(hdev);
@@ -2803,6 +3721,18 @@ static inline void hci_acldata_packet(struct hci_dev *hdev, struct sk_buff *skb)
 		/* Send to upper protocol */
 		l2cap_recv_acldata(conn, skb, flags);
 		return;
+=======
+		register struct hci_proto *hp;
+
+		hci_conn_enter_active_mode(conn, bt_cb(skb)->force_active);
+
+		/* Send to upper protocol */
+		hp = hci_proto[HCI_PROTO_L2CAP];
+		if (hp && hp->recv_acldata) {
+			hp->recv_acldata(conn, skb, flags);
+			return;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		BT_ERR("%s ACL packet for unknown connection handle %d",
 			hdev->name, handle);
@@ -2831,9 +3761,20 @@ static inline void hci_scodata_packet(struct hci_dev *hdev, struct sk_buff *skb)
 	hci_dev_unlock(hdev);
 
 	if (conn) {
+<<<<<<< HEAD
 		/* Send to upper protocol */
 		sco_recv_scodata(conn, skb);
 		return;
+=======
+		register struct hci_proto *hp;
+
+		/* Send to upper protocol */
+		hp = hci_proto[HCI_PROTO_SCO];
+		if (hp && hp->recv_scodata) {
+			hp->recv_scodata(conn, skb);
+			return;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		BT_ERR("%s SCO packet for unknown connection handle %d",
 			hdev->name, handle);
@@ -2842,13 +3783,20 @@ static inline void hci_scodata_packet(struct hci_dev *hdev, struct sk_buff *skb)
 	kfree_skb(skb);
 }
 
+<<<<<<< HEAD
 static void hci_rx_work(struct work_struct *work)
 {
 	struct hci_dev *hdev = container_of(work, struct hci_dev, rx_work);
+=======
+static void hci_rx_task(unsigned long arg)
+{
+	struct hci_dev *hdev = (struct hci_dev *) arg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sk_buff *skb;
 
 	BT_DBG("%s", hdev->name);
 
+<<<<<<< HEAD
 	while ((skb = skb_dequeue(&hdev->rx_q))) {
 		/* Send copy to monitor */
 		hci_send_to_monitor(hdev, skb);
@@ -2856,6 +3804,14 @@ static void hci_rx_work(struct work_struct *work)
 		if (atomic_read(&hdev->promisc)) {
 			/* Send copy to the sockets */
 			hci_send_to_sock(hdev, skb);
+=======
+	read_lock(&hci_task_lock);
+
+	while ((skb = skb_dequeue(&hdev->rx_q))) {
+		if (atomic_read(&hdev->promisc)) {
+			/* Send copy to the sockets */
+			hci_send_to_sock(hdev, skb, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (test_bit(HCI_RAW, &hdev->flags)) {
@@ -2876,7 +3832,10 @@ static void hci_rx_work(struct work_struct *work)
 		/* Process frame */
 		switch (bt_cb(skb)->pkt_type) {
 		case HCI_EVENT_PKT:
+<<<<<<< HEAD
 			BT_DBG("%s Event packet", hdev->name);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			hci_event_packet(hdev, skb);
 			break;
 
@@ -2895,11 +3854,21 @@ static void hci_rx_work(struct work_struct *work)
 			break;
 		}
 	}
+<<<<<<< HEAD
 }
 
 static void hci_cmd_work(struct work_struct *work)
 {
 	struct hci_dev *hdev = container_of(work, struct hci_dev, cmd_work);
+=======
+
+	read_unlock(&hci_task_lock);
+}
+
+static void hci_cmd_task(unsigned long arg)
+{
+	struct hci_dev *hdev = (struct hci_dev *) arg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sk_buff *skb;
 
 	BT_DBG("%s cmd %d", hdev->name, atomic_read(&hdev->cmd_cnt));
@@ -2923,6 +3892,7 @@ static void hci_cmd_work(struct work_struct *work)
 				  jiffies + msecs_to_jiffies(HCI_CMD_TIMEOUT));
 		} else {
 			skb_queue_head(&hdev->cmd_q, skb);
+<<<<<<< HEAD
 			queue_work(hdev->workqueue, &hdev->cmd_work);
 		}
 	}
@@ -2957,3 +3927,9 @@ int hci_cancel_inquiry(struct hci_dev *hdev)
 
 	return hci_send_cmd(hdev, HCI_OP_INQUIRY_CANCEL, 0, NULL);
 }
+=======
+			tasklet_schedule(&hdev->cmd_task);
+		}
+	}
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

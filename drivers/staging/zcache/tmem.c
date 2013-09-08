@@ -142,7 +142,10 @@ static void tmem_obj_init(struct tmem_obj *obj, struct tmem_hashbucket *hb,
 	obj->oid = *oidp;
 	obj->objnode_count = 0;
 	obj->pampd_count = 0;
+<<<<<<< HEAD
 	(*tmem_pamops.new_obj)(obj);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	SET_SENTINEL(obj, OBJ);
 	while (*new) {
 		BUG_ON(RB_EMPTY_NODE(*new));
@@ -275,7 +278,11 @@ static void tmem_objnode_free(struct tmem_objnode *objnode)
 /*
  * lookup index in object and return associated pampd (or NULL if not found)
  */
+<<<<<<< HEAD
 static void **__tmem_pampd_lookup_in_obj(struct tmem_obj *obj, uint32_t index)
+=======
+static void *tmem_pampd_lookup_in_obj(struct tmem_obj *obj, uint32_t index)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int height, shift;
 	struct tmem_objnode **slot = NULL;
@@ -304,6 +311,7 @@ static void **__tmem_pampd_lookup_in_obj(struct tmem_obj *obj, uint32_t index)
 		height--;
 	}
 out:
+<<<<<<< HEAD
 	return slot != NULL ? (void **)slot : NULL;
 }
 
@@ -331,6 +339,11 @@ static void *tmem_pampd_replace_in_obj(struct tmem_obj *obj, uint32_t index,
 	return ret;
 }
 
+=======
+	return slot != NULL ? *slot : NULL;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int tmem_pampd_add_to_obj(struct tmem_obj *obj, uint32_t index,
 					void *pampd)
 {
@@ -481,7 +494,11 @@ static void tmem_objnode_node_destroy(struct tmem_obj *obj,
 			if (ht == 1) {
 				obj->pampd_count--;
 				(*tmem_pamops.free)(objnode->slots[i],
+<<<<<<< HEAD
 						obj->pool, NULL, 0);
+=======
+								obj->pool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				objnode->slots[i] = NULL;
 				continue;
 			}
@@ -498,7 +515,11 @@ static void tmem_pampd_destroy_all_in_obj(struct tmem_obj *obj)
 		return;
 	if (obj->objnode_tree_height == 0) {
 		obj->pampd_count--;
+<<<<<<< HEAD
 		(*tmem_pamops.free)(obj->objnode_tree_root, obj->pool, NULL, 0);
+=======
+		(*tmem_pamops.free)(obj->objnode_tree_root, obj->pool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		tmem_objnode_node_destroy(obj, obj->objnode_tree_root,
 					obj->objnode_tree_height);
@@ -506,7 +527,10 @@ static void tmem_pampd_destroy_all_in_obj(struct tmem_obj *obj)
 		obj->objnode_tree_height = 0;
 	}
 	obj->objnode_tree_root = NULL;
+<<<<<<< HEAD
 	(*tmem_pamops.free_obj)(obj->pool, obj);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -529,13 +553,24 @@ static void tmem_pampd_destroy_all_in_obj(struct tmem_obj *obj)
  * always flushes for simplicity.
  */
 int tmem_put(struct tmem_pool *pool, struct tmem_oid *oidp, uint32_t index,
+<<<<<<< HEAD
 		char *data, size_t size, bool raw, bool ephemeral)
+=======
+		struct page *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tmem_obj *obj = NULL, *objfound = NULL, *objnew = NULL;
 	void *pampd = NULL, *pampd_del = NULL;
 	int ret = -ENOMEM;
+<<<<<<< HEAD
 	struct tmem_hashbucket *hb;
 
+=======
+	bool ephemeral;
+	struct tmem_hashbucket *hb;
+
+	ephemeral = is_ephemeral(pool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hb = &pool->hashbucket[tmem_oid_hash(oidp)];
 	spin_lock(&hb->lock);
 	obj = objfound = tmem_obj_find(hb, oidp);
@@ -545,7 +580,11 @@ int tmem_put(struct tmem_pool *pool, struct tmem_oid *oidp, uint32_t index,
 			/* if found, is a dup put, flush the old one */
 			pampd_del = tmem_pampd_delete_from_obj(obj, index);
 			BUG_ON(pampd_del != pampd);
+<<<<<<< HEAD
 			(*tmem_pamops.free)(pampd, pool, oidp, index);
+=======
+			(*tmem_pamops.free)(pampd, pool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (obj->pampd_count == 0) {
 				objnew = obj;
 				objfound = NULL;
@@ -562,8 +601,12 @@ int tmem_put(struct tmem_pool *pool, struct tmem_oid *oidp, uint32_t index,
 	}
 	BUG_ON(obj == NULL);
 	BUG_ON(((objnew != obj) && (objfound != obj)) || (objnew == objfound));
+<<<<<<< HEAD
 	pampd = (*tmem_pamops.create)(data, size, raw, ephemeral,
 					obj->pool, &obj->oid, index);
+=======
+	pampd = (*tmem_pamops.create)(obj->pool, &obj->oid, index, page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(pampd == NULL))
 		goto free;
 	ret = tmem_pampd_add_to_obj(obj, index, pampd);
@@ -576,7 +619,11 @@ delete_and_free:
 	(void)tmem_pampd_delete_from_obj(obj, index);
 free:
 	if (pampd)
+<<<<<<< HEAD
 		(*tmem_pamops.free)(pampd, pool, NULL, 0);
+=======
+		(*tmem_pamops.free)(pampd, pool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (objnew) {
 		tmem_obj_free(objnew, hb);
 		(*tmem_hostops.obj_free)(objnew, pool);
@@ -598,12 +645,18 @@ out:
  * "put" done with the same handle).
 
  */
+<<<<<<< HEAD
 int tmem_get(struct tmem_pool *pool, struct tmem_oid *oidp, uint32_t index,
 		char *data, size_t *size, bool raw, int get_and_free)
+=======
+int tmem_get(struct tmem_pool *pool, struct tmem_oid *oidp,
+				uint32_t index, struct page *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tmem_obj *obj;
 	void *pampd;
 	bool ephemeral = is_ephemeral(pool);
+<<<<<<< HEAD
 	int ret = -1;
 	struct tmem_hashbucket *hb;
 	bool free = (get_and_free == 1) || ((get_and_free == 0) && ephemeral);
@@ -616,18 +669,39 @@ int tmem_get(struct tmem_pool *pool, struct tmem_oid *oidp, uint32_t index,
 	if (obj == NULL)
 		goto out;
 	if (free)
+=======
+	uint32_t ret = -1;
+	struct tmem_hashbucket *hb;
+
+	hb = &pool->hashbucket[tmem_oid_hash(oidp)];
+	spin_lock(&hb->lock);
+	obj = tmem_obj_find(hb, oidp);
+	if (obj == NULL)
+		goto out;
+	ephemeral = is_ephemeral(pool);
+	if (ephemeral)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pampd = tmem_pampd_delete_from_obj(obj, index);
 	else
 		pampd = tmem_pampd_lookup_in_obj(obj, index);
 	if (pampd == NULL)
 		goto out;
+<<<<<<< HEAD
 	if (free) {
+=======
+	ret = (*tmem_pamops.get_data)(page, pampd, pool);
+	if (ret < 0)
+		goto out;
+	if (ephemeral) {
+		(*tmem_pamops.free)(pampd, pool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (obj->pampd_count == 0) {
 			tmem_obj_free(obj, hb);
 			(*tmem_hostops.obj_free)(obj, pool);
 			obj = NULL;
 		}
 	}
+<<<<<<< HEAD
 	if (tmem_pamops.is_remote(pampd)) {
 		lock_held = false;
 		spin_unlock(&hb->lock);
@@ -644,6 +718,11 @@ int tmem_get(struct tmem_pool *pool, struct tmem_oid *oidp, uint32_t index,
 out:
 	if (lock_held)
 		spin_unlock(&hb->lock);
+=======
+	ret = 0;
+out:
+	spin_unlock(&hb->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -668,7 +747,11 @@ int tmem_flush_page(struct tmem_pool *pool,
 	pampd = tmem_pampd_delete_from_obj(obj, index);
 	if (pampd == NULL)
 		goto out;
+<<<<<<< HEAD
 	(*tmem_pamops.free)(pampd, pool, oidp, index);
+=======
+	(*tmem_pamops.free)(pampd, pool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (obj->pampd_count == 0) {
 		tmem_obj_free(obj, hb);
 		(*tmem_hostops.obj_free)(obj, pool);
@@ -681,6 +764,7 @@ out:
 }
 
 /*
+<<<<<<< HEAD
  * If a page in tmem matches the handle, replace the page so that any
  * subsequent "get" gets the new page.  Returns 0 if
  * there was a page to replace, else returns -1.
@@ -705,6 +789,8 @@ out:
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * "Flush" all pages in tmem matching this oid.
  */
 int tmem_flush_object(struct tmem_pool *pool, struct tmem_oid *oidp)

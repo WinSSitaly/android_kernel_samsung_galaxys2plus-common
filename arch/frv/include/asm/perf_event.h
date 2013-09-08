@@ -12,4 +12,9 @@
 #ifndef _ASM_PERF_EVENT_H
 #define _ASM_PERF_EVENT_H
 
+<<<<<<< HEAD
+=======
+#define PERF_EVENT_INDEX_OFFSET	0
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _ASM_PERF_EVENT_H */

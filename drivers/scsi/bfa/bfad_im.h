@@ -91,7 +91,10 @@ struct bfad_itnim_s {
 	struct fc_rport *fc_rport;
 	struct bfa_itnim_s *bfa_itnim;
 	u16        scsi_tgt_id;
+<<<<<<< HEAD
 	u16	   channel;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16        queue_work;
 	unsigned long	last_ramp_up_time;
 	unsigned long	last_queue_full_time;
@@ -116,6 +119,7 @@ struct bfad_im_s {
 	struct bfad_s         *bfad;
 	struct workqueue_struct *drv_workq;
 	char            drv_workq_name[KOBJ_NAME_LEN];
+<<<<<<< HEAD
 	struct work_struct	aen_im_notify_work;
 };
 
@@ -140,6 +144,10 @@ struct bfad_im_s {
 			   &(_drv)->im->aen_im_notify_work);		      \
 } while (0)
 
+=======
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct Scsi_Host *bfad_scsi_host_alloc(struct bfad_im_port_s *im_port,
 				struct bfad_s *);
 bfa_status_t bfad_thread_workq(struct bfad_s *bfad);
@@ -164,6 +172,7 @@ extern struct device_attribute *bfad_im_vport_attrs[];
 
 irqreturn_t bfad_intx(int irq, void *dev_id);
 
+<<<<<<< HEAD
 int bfad_im_bsg_request(struct fc_bsg_job *job);
 int bfad_im_bsg_timeout(struct fc_bsg_job *job);
 
@@ -193,4 +202,6 @@ int bfad_im_bsg_timeout(struct fc_bsg_job *job);
 	}								\
 } while (0)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

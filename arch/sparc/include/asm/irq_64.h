@@ -95,6 +95,10 @@ void arch_trigger_all_cpu_backtrace(void);
 extern void *hardirq_stack[NR_CPUS];
 extern void *softirq_stack[NR_CPUS];
 #define __ARCH_HAS_DO_SOFTIRQ
+<<<<<<< HEAD
+=======
+#define ARCH_HAS_NMI_WATCHDOG
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define NO_IRQ		0xffffffff
 

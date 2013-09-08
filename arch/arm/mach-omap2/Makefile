@@ -3,14 +3,20 @@
 #
 
 # Common support
+<<<<<<< HEAD
 obj-y := id.o io.o control.o mux.o devices.o serial.o gpmc.o timer.o pm.o \
 	 common.o gpio.o dma.o wd_timer.o display.o i2c.o
+=======
+obj-y := id.o io.o control.o mux.o devices.o serial.o gpmc.o timer-gp.o pm.o \
+	 common.o gpio.o dma.o wd_timer.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 omap-2-3-common				= irq.o sdrc.o
 hwmod-common				= omap_hwmod.o \
 					  omap_hwmod_common_data.o
 clock-common				= clock.o clock_common_data.o \
 					  clkt_dpll.o clkt_clksel.o
+<<<<<<< HEAD
 secure-common				= omap-smc.o omap-secure.o
 
 obj-$(CONFIG_ARCH_OMAP2) += $(omap-2-3-common) $(hwmod-common)
@@ -20,11 +26,20 @@ obj-$(CONFIG_ARCH_OMAP4) += prm44xx.o $(hwmod-common) $(secure-common)
 ifneq ($(CONFIG_SND_OMAP_SOC_MCBSP),)
 obj-y += mcbsp.o
 endif
+=======
+
+obj-$(CONFIG_ARCH_OMAP2) += $(omap-2-3-common) $(hwmod-common)
+obj-$(CONFIG_ARCH_OMAP3) += $(omap-2-3-common) $(hwmod-common)
+obj-$(CONFIG_ARCH_OMAP4) += prm44xx.o $(hwmod-common)
+
+obj-$(CONFIG_OMAP_MCBSP) += mcbsp.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 obj-$(CONFIG_TWL4030_CORE) += omap_twl.o
 
 # SMP support ONLY available for OMAP4
 obj-$(CONFIG_SMP)			+= omap-smp.o omap-headsmp.o
+<<<<<<< HEAD
 obj-$(CONFIG_HOTPLUG_CPU)		+= omap-hotplug.o
 obj-$(CONFIG_ARCH_OMAP4)		+= omap4-common.o omap-wakeupgen.o \
 					   sleep44xx.o
@@ -33,6 +48,15 @@ plus_sec := $(call as-instr,.arch_extension sec,+sec)
 AFLAGS_omap-headsmp.o			:=-Wa,-march=armv7-a$(plus_sec)
 AFLAGS_omap-smc.o			:=-Wa,-march=armv7-a$(plus_sec)
 AFLAGS_sleep44xx.o			:=-Wa,-march=armv7-a$(plus_sec)
+=======
+obj-$(CONFIG_LOCAL_TIMERS)		+= timer-mpu.o
+obj-$(CONFIG_HOTPLUG_CPU)		+= omap-hotplug.o
+obj-$(CONFIG_ARCH_OMAP4)		+= omap44xx-smc.o omap4-common.o
+
+plus_sec := $(call as-instr,.arch_extension sec,+sec)
+AFLAGS_omap-headsmp.o			:=-Wa,-march=armv7-a$(plus_sec)
+AFLAGS_omap44xx-smc.o			:=-Wa,-march=armv7-a$(plus_sec)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # Functions loaded to SRAM
 obj-$(CONFIG_SOC_OMAP2420)		+= sram242x.o
@@ -66,8 +90,12 @@ obj-$(CONFIG_ARCH_OMAP2)		+= pm24xx.o
 obj-$(CONFIG_ARCH_OMAP2)		+= sleep24xx.o
 obj-$(CONFIG_ARCH_OMAP3)		+= pm34xx.o sleep34xx.o \
 					   cpuidle34xx.o
+<<<<<<< HEAD
 obj-$(CONFIG_ARCH_OMAP4)		+= pm44xx.o omap-mpuss-lowpower.o \
 					   cpuidle44xx.o
+=======
+obj-$(CONFIG_ARCH_OMAP4)		+= pm44xx.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_PM_DEBUG)			+= pm-debug.o
 obj-$(CONFIG_OMAP_SMARTREFLEX)          += sr_device.o smartreflex.o
 obj-$(CONFIG_OMAP_SMARTREFLEX_CLASS3)	+= smartreflex-class3.o
@@ -82,7 +110,10 @@ endif
 endif
 
 # PRCM
+<<<<<<< HEAD
 obj-y					+= prm_common.o
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_ARCH_OMAP2)		+= prcm.o cm2xxx_3xxx.o prm2xxx_3xxx.o
 obj-$(CONFIG_ARCH_OMAP3)		+= prcm.o cm2xxx_3xxx.o prm2xxx_3xxx.o \
 					   vc3xxx_data.o vp3xxx_data.o
@@ -92,16 +123,29 @@ obj-$(CONFIG_ARCH_OMAP3)		+= prcm.o cm2xxx_3xxx.o prm2xxx_3xxx.o \
 obj-$(CONFIG_ARCH_OMAP4)		+= prcm.o cm2xxx_3xxx.o cminst44xx.o \
 					   cm44xx.o prcm_mpu44xx.o \
 					   prminst44xx.o vc44xx_data.o \
+<<<<<<< HEAD
 					   vp44xx_data.o prm44xx.o
 
 # OMAP voltage domains
 voltagedomain-common			:= voltage.o vc.o vp.o
 obj-$(CONFIG_ARCH_OMAP2)		+= $(voltagedomain-common) \
 					   voltagedomains2xxx_data.o
+=======
+					   vp44xx_data.o
+
+# OMAP voltage domains
+ifeq ($(CONFIG_PM),y)
+voltagedomain-common			:= voltage.o
+obj-$(CONFIG_ARCH_OMAP2)		+= $(voltagedomain-common)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_ARCH_OMAP3)		+= $(voltagedomain-common) \
 					   voltagedomains3xxx_data.o
 obj-$(CONFIG_ARCH_OMAP4)		+= $(voltagedomain-common) \
 					   voltagedomains44xx_data.o
+<<<<<<< HEAD
+=======
+endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # OMAP powerdomain framework
 powerdomain-common			+= powerdomain.o powerdomain-common.o
@@ -121,12 +165,18 @@ obj-$(CONFIG_ARCH_OMAP4)		+= $(powerdomain-common) \
 obj-$(CONFIG_ARCH_OMAP2)		+= clockdomain.o \
 					   clockdomain2xxx_3xxx.o \
 					   clockdomains2xxx_3xxx_data.o
+<<<<<<< HEAD
 obj-$(CONFIG_SOC_OMAP2420)		+= clockdomains2420_data.o
 obj-$(CONFIG_SOC_OMAP2430)		+= clockdomains2430_data.o
 obj-$(CONFIG_ARCH_OMAP3)		+= clockdomain.o \
 					   clockdomain2xxx_3xxx.o \
 					   clockdomains2xxx_3xxx_data.o \
 					   clockdomains3xxx_data.o
+=======
+obj-$(CONFIG_ARCH_OMAP3)		+= clockdomain.o \
+					   clockdomain2xxx_3xxx.o \
+					   clockdomains2xxx_3xxx_data.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_ARCH_OMAP4)		+= clockdomain.o \
 					   clockdomain44xx.o \
 					   clockdomains44xx_data.o
@@ -153,6 +203,7 @@ obj-$(CONFIG_SOC_OMAP2420)		+= opp2420_data.o
 obj-$(CONFIG_SOC_OMAP2430)		+= opp2430_data.o
 
 # hwmod data
+<<<<<<< HEAD
 obj-$(CONFIG_SOC_OMAP2420)		+= omap_hwmod_2xxx_ipblock_data.o \
 					   omap_hwmod_2xxx_3xxx_ipblock_data.o \
 					   omap_hwmod_2xxx_interconnect_data.o \
@@ -166,6 +217,11 @@ obj-$(CONFIG_SOC_OMAP2430)		+= omap_hwmod_2xxx_ipblock_data.o \
 obj-$(CONFIG_ARCH_OMAP3)		+= omap_hwmod_2xxx_3xxx_ipblock_data.o \
 					   omap_hwmod_2xxx_3xxx_interconnect_data.o \
 					   omap_hwmod_3xxx_data.o
+=======
+obj-$(CONFIG_SOC_OMAP2420)		+= omap_hwmod_2420_data.o
+obj-$(CONFIG_SOC_OMAP2430)		+= omap_hwmod_2430_data.o
+obj-$(CONFIG_ARCH_OMAP3)		+= omap_hwmod_3xxx_data.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_ARCH_OMAP4)		+= omap_hwmod_44xx_data.o
 
 # EMU peripherals
@@ -183,6 +239,12 @@ obj-$(CONFIG_OMAP_IOMMU)		+= iommu2.o
 iommu-$(CONFIG_OMAP_IOMMU)		:= omap-iommu.o
 obj-y					+= $(iommu-m) $(iommu-y)
 
+<<<<<<< HEAD
+=======
+i2c-omap-$(CONFIG_I2C_OMAP)		:= i2c.o
+obj-y					+= $(i2c-omap-m) $(i2c-omap-y)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ifneq ($(CONFIG_TIDSPBRIDGE),)
 obj-y					+= dsp.o
 endif
@@ -190,6 +252,7 @@ endif
 # Specific board support
 obj-$(CONFIG_MACH_OMAP_GENERIC)		+= board-generic.o
 obj-$(CONFIG_MACH_OMAP_H4)		+= board-h4.o
+<<<<<<< HEAD
 obj-$(CONFIG_MACH_OMAP_2430SDP)		+= board-2430sdp.o
 obj-$(CONFIG_MACH_OMAP_APOLLON)		+= board-apollon.o
 obj-$(CONFIG_MACH_OMAP3_BEAGLE)		+= board-omap3beagle.o
@@ -212,10 +275,50 @@ obj-$(CONFIG_MACH_NOKIA_RX51)		+= board-rx51.o \
 obj-$(CONFIG_MACH_OMAP_ZOOM2)		+= board-zoom.o \
 					   board-zoom-peripherals.o \
 					   board-zoom-display.o \
+=======
+obj-$(CONFIG_MACH_OMAP_2430SDP)		+= board-2430sdp.o \
+					   hsmmc.o
+obj-$(CONFIG_MACH_OMAP_APOLLON)		+= board-apollon.o
+obj-$(CONFIG_MACH_OMAP3_BEAGLE)		+= board-omap3beagle.o \
+					   hsmmc.o
+obj-$(CONFIG_MACH_DEVKIT8000)     	+= board-devkit8000.o \
+                                           hsmmc.o
+obj-$(CONFIG_MACH_OMAP_LDP)		+= board-ldp.o \
+					   board-flash.o \
+					   hsmmc.o
+obj-$(CONFIG_MACH_OMAP3530_LV_SOM)      += board-omap3logic.o \
+					   hsmmc.o
+obj-$(CONFIG_MACH_OMAP3_TORPEDO)        += board-omap3logic.o \
+					   hsmmc.o
+obj-$(CONFIG_MACH_OVERO)		+= board-overo.o \
+					   hsmmc.o
+obj-$(CONFIG_MACH_OMAP3EVM)		+= board-omap3evm.o \
+					   hsmmc.o
+obj-$(CONFIG_MACH_OMAP3_PANDORA)	+= board-omap3pandora.o \
+					   hsmmc.o
+obj-$(CONFIG_MACH_OMAP_3430SDP)		+= board-3430sdp.o \
+					   hsmmc.o \
+					   board-flash.o
+obj-$(CONFIG_MACH_NOKIA_N8X0)		+= board-n8x0.o
+obj-$(CONFIG_MACH_NOKIA_RM680)		+= board-rm680.o \
+					   sdram-nokia.o \
+					   hsmmc.o
+obj-$(CONFIG_MACH_NOKIA_RX51)		+= board-rx51.o \
+					   sdram-nokia.o \
+					   board-rx51-peripherals.o \
+					   board-rx51-video.o \
+					   hsmmc.o
+obj-$(CONFIG_MACH_OMAP_ZOOM2)		+= board-zoom.o \
+					   board-zoom-peripherals.o \
+					   board-zoom-display.o \
+					   board-flash.o \
+					   hsmmc.o \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					   board-zoom-debugboard.o
 obj-$(CONFIG_MACH_OMAP_ZOOM3)		+= board-zoom.o \
 					   board-zoom-peripherals.o \
 					   board-zoom-display.o \
+<<<<<<< HEAD
 					   board-zoom-debugboard.o
 obj-$(CONFIG_MACH_OMAP_3630SDP)		+= board-3630sdp.o \
 					   board-zoom-peripherals.o \
@@ -252,6 +355,42 @@ obj-y					+= $(usbfs-m) $(usbfs-y)
 obj-y					+= usb-musb.o
 obj-y					+= omap_phy_internal.o
 
+=======
+					   board-flash.o \
+					   hsmmc.o \
+					   board-zoom-debugboard.o
+obj-$(CONFIG_MACH_OMAP_3630SDP)		+= board-3630sdp.o \
+					   board-zoom-peripherals.o \
+					   board-zoom-display.o \
+					   board-flash.o \
+					   hsmmc.o
+obj-$(CONFIG_MACH_CM_T35)		+= board-cm-t35.o \
+					   hsmmc.o
+obj-$(CONFIG_MACH_CM_T3517)		+= board-cm-t3517.o
+obj-$(CONFIG_MACH_IGEP0020)		+= board-igep0020.o \
+					   hsmmc.o
+obj-$(CONFIG_MACH_OMAP3_TOUCHBOOK)	+= board-omap3touchbook.o \
+					   hsmmc.o
+obj-$(CONFIG_MACH_OMAP_4430SDP)		+= board-4430sdp.o \
+					   hsmmc.o \
+					   omap_phy_internal.o
+obj-$(CONFIG_MACH_OMAP4_PANDA)		+= board-omap4panda.o \
+					   hsmmc.o \
+					   omap_phy_internal.o
+
+obj-$(CONFIG_MACH_OMAP3517EVM)		+= board-am3517evm.o \
+					   omap_phy_internal.o \
+
+obj-$(CONFIG_MACH_CRANEBOARD)		+= board-am3517crane.o
+
+obj-$(CONFIG_MACH_SBC3530)		+= board-omap3stalker.o \
+					   hsmmc.o
+obj-$(CONFIG_MACH_TI8168EVM)		+= board-ti8168evm.o
+# Platform specific device init code
+usbfs-$(CONFIG_ARCH_OMAP_OTG)		:= usb-fs.o
+obj-y					+= $(usbfs-m) $(usbfs-y)
+obj-y					+= usb-musb.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_MACH_OMAP2_TUSB6010)	+= usb-tusb6010.o
 obj-y					+= usb-host.o
 
@@ -266,6 +405,7 @@ obj-y					+= $(smc91x-m) $(smc91x-y)
 
 smsc911x-$(CONFIG_SMSC911X)		:= gpmc-smsc911x.o
 obj-y					+= $(smsc911x-m) $(smsc911x-y)
+<<<<<<< HEAD
 ifneq ($(CONFIG_HWSPINLOCK_OMAP),)
 obj-y					+= hwspinlock.o
 endif
@@ -274,3 +414,11 @@ emac-$(CONFIG_TI_DAVINCI_EMAC)		:= am35xx-emac.o
 obj-y					+= $(emac-m) $(emac-y)
 
 obj-y					+= common-board-devices.o twl-common.o
+=======
+obj-$(CONFIG_ARCH_OMAP4)		+= hwspinlock.o
+
+disp-$(CONFIG_OMAP2_DSS)		:= display.o
+obj-y					+= $(disp-m) $(disp-y)
+
+obj-y					+= common-board-devices.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

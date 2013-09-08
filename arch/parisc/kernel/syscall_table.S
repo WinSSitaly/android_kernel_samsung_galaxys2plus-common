@@ -259,7 +259,11 @@
 	ENTRY_SAME(ni_syscall)		/* query_module */
 	ENTRY_SAME(poll)
 	/* structs contain pointers and an in_addr... */
+<<<<<<< HEAD
 	ENTRY_SAME(ni_syscall)		/* was nfsservctl */
+=======
+	ENTRY_COMP(nfsservctl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ENTRY_SAME(setresgid)		/* 170 */
 	ENTRY_SAME(getresgid)
 	ENTRY_SAME(prctl)

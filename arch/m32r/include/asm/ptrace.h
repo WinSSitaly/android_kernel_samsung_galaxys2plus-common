@@ -138,6 +138,11 @@ extern void init_debug_traps(struct task_struct *);
 #define instruction_pointer(regs) ((regs)->bpc)
 #define profile_pc(regs) instruction_pointer(regs)
 
+<<<<<<< HEAD
+=======
+extern void show_regs(struct pt_regs *);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void withdraw_debug_trap(struct pt_regs *regs);
 
 #define task_pt_regs(task) \

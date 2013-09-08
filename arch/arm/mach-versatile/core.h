@@ -23,13 +23,17 @@
 #define __ASM_ARCH_VERSATILE_H
 
 #include <linux/amba/bus.h>
+<<<<<<< HEAD
 #include <linux/of_platform.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void __init versatile_init(void);
 extern void __init versatile_init_early(void);
 extern void __init versatile_init_irq(void);
 extern void __init versatile_map_io(void);
 extern struct sys_timer versatile_timer;
+<<<<<<< HEAD
 extern void versatile_restart(char, const char *);
 extern unsigned int mmc_status(struct device *dev);
 #ifdef CONFIG_OF
@@ -41,5 +45,24 @@ static AMBA_APB_DEVICE(name, busid, 0, VERSATILE_##base##_BASE, base##_IRQ, plat
 
 #define AHB_DEVICE(name, busid, base, plat)	\
 static AMBA_AHB_DEVICE(name, busid, 0, VERSATILE_##base##_BASE, base##_IRQ, plat)
+=======
+extern unsigned int mmc_status(struct device *dev);
+
+#define AMBA_DEVICE(name,busid,base,plat)			\
+static struct amba_device name##_device = {			\
+	.dev		= {					\
+		.coherent_dma_mask = ~0,			\
+		.init_name = busid,				\
+		.platform_data = plat,				\
+	},							\
+	.res		= {					\
+		.start	= VERSATILE_##base##_BASE,		\
+		.end	= (VERSATILE_##base##_BASE) + SZ_4K - 1,\
+		.flags	= IORESOURCE_MEM,			\
+	},							\
+	.dma_mask	= ~0,					\
+	.irq		= base##_IRQ,				\
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

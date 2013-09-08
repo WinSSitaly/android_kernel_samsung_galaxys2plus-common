@@ -10,8 +10,11 @@
  * warranty of any kind, whether express or implied.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/types.h>
@@ -30,14 +33,21 @@
 /*
  * Watchdog timer block registers.
  */
+<<<<<<< HEAD
 #define TIMER_CTRL		0x0000
 #define  WDT_EN			0x0010
 #define WDT_VAL			0x0024
+=======
+#define TIMER_CTRL		(TIMER_VIRT_BASE + 0x0000)
+#define  WDT_EN			0x0010
+#define WDT_VAL			(TIMER_VIRT_BASE + 0x0024)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define WDT_MAX_CYCLE_COUNT	0xffffffff
 #define WDT_IN_USE		0
 #define WDT_OK_TO_CLOSE		1
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 static int heartbeat = -1;		/* module parameter (seconds) */
 static unsigned int wdt_max_duration;	/* (seconds) */
@@ -45,13 +55,25 @@ static unsigned int wdt_tclk;
 static void __iomem *wdt_reg;
 static unsigned long wdt_status;
 static DEFINE_SPINLOCK(wdt_lock);
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+static int heartbeat = -1;		/* module parameter (seconds) */
+static unsigned int wdt_max_duration;	/* (seconds) */
+static unsigned int wdt_tclk;
+static unsigned long wdt_status;
+static spinlock_t wdt_lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void orion_wdt_ping(void)
 {
 	spin_lock(&wdt_lock);
 
 	/* Reload watchdog duration */
+<<<<<<< HEAD
 	writel(wdt_tclk * heartbeat, wdt_reg + WDT_VAL);
+=======
+	writel(wdt_tclk * heartbeat, WDT_VAL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock(&wdt_lock);
 }
@@ -63,7 +85,11 @@ static void orion_wdt_enable(void)
 	spin_lock(&wdt_lock);
 
 	/* Set watchdog duration */
+<<<<<<< HEAD
 	writel(wdt_tclk * heartbeat, wdt_reg + WDT_VAL);
+=======
+	writel(wdt_tclk * heartbeat, WDT_VAL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Clear watchdog timer interrupt */
 	reg = readl(BRIDGE_CAUSE);
@@ -71,9 +97,15 @@ static void orion_wdt_enable(void)
 	writel(reg, BRIDGE_CAUSE);
 
 	/* Enable watchdog timer */
+<<<<<<< HEAD
 	reg = readl(wdt_reg + TIMER_CTRL);
 	reg |= WDT_EN;
 	writel(reg, wdt_reg + TIMER_CTRL);
+=======
+	reg = readl(TIMER_CTRL);
+	reg |= WDT_EN;
+	writel(reg, TIMER_CTRL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Enable reset on watchdog */
 	reg = readl(RSTOUTn_MASK);
@@ -95,9 +127,15 @@ static void orion_wdt_disable(void)
 	writel(reg, RSTOUTn_MASK);
 
 	/* Disable watchdog timer */
+<<<<<<< HEAD
 	reg = readl(wdt_reg + TIMER_CTRL);
 	reg &= ~WDT_EN;
 	writel(reg, wdt_reg + TIMER_CTRL);
+=======
+	reg = readl(TIMER_CTRL);
+	reg &= ~WDT_EN;
+	writel(reg, TIMER_CTRL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock(&wdt_lock);
 }
@@ -105,7 +143,11 @@ static void orion_wdt_disable(void)
 static int orion_wdt_get_timeleft(int *time_left)
 {
 	spin_lock(&wdt_lock);
+<<<<<<< HEAD
 	*time_left = readl(wdt_reg + WDT_VAL) / wdt_tclk;
+=======
+	*time_left = readl(WDT_VAL) / wdt_tclk;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&wdt_lock);
 	return 0;
 }
@@ -212,7 +254,12 @@ static int orion_wdt_release(struct inode *inode, struct file *file)
 	if (test_bit(WDT_OK_TO_CLOSE, &wdt_status))
 		orion_wdt_disable();
 	else
+<<<<<<< HEAD
 		pr_crit("Device closed unexpectedly - timer will not stop\n");
+=======
+		printk(KERN_CRIT "WATCHDOG: Device closed unexpectedly - "
+					"timer will not stop\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clear_bit(WDT_IN_USE, &wdt_status);
 	clear_bit(WDT_OK_TO_CLOSE, &wdt_status);
 
@@ -238,12 +285,16 @@ static struct miscdevice orion_wdt_miscdev = {
 static int __devinit orion_wdt_probe(struct platform_device *pdev)
 {
 	struct orion_wdt_platform_data *pdata = pdev->dev.platform_data;
+<<<<<<< HEAD
 	struct resource *res;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	if (pdata) {
 		wdt_tclk = pdata->tclk;
 	} else {
+<<<<<<< HEAD
 		pr_err("misses platform data\n");
 		return -ENODEV;
 	}
@@ -252,6 +303,12 @@ static int __devinit orion_wdt_probe(struct platform_device *pdev)
 
 	wdt_reg = ioremap(res->start, resource_size(res));
 
+=======
+		printk(KERN_ERR "Orion Watchdog misses platform data\n");
+		return -ENODEV;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (orion_wdt_miscdev.parent)
 		return -EBUSY;
 	orion_wdt_miscdev.parent = &pdev->dev;
@@ -264,8 +321,13 @@ static int __devinit orion_wdt_probe(struct platform_device *pdev)
 	if (ret)
 		return ret;
 
+<<<<<<< HEAD
 	pr_info("Initial timeout %d sec%s\n",
 		heartbeat, nowayout ? ", nowayout" : "");
+=======
+	printk(KERN_INFO "Orion Watchdog Timer: Initial timeout %d sec%s\n",
+				heartbeat, nowayout ? ", nowayout" : "");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -301,7 +363,23 @@ static struct platform_driver orion_wdt_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(orion_wdt_driver);
+=======
+static int __init orion_wdt_init(void)
+{
+	spin_lock_init(&wdt_lock);
+	return platform_driver_register(&orion_wdt_driver);
+}
+
+static void __exit orion_wdt_exit(void)
+{
+	platform_driver_unregister(&orion_wdt_driver);
+}
+
+module_init(orion_wdt_init);
+module_exit(orion_wdt_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Sylver Bruneau <sylver.bruneau@googlemail.com>");
 MODULE_DESCRIPTION("Orion Processor Watchdog");
@@ -309,7 +387,11 @@ MODULE_DESCRIPTION("Orion Processor Watchdog");
 module_param(heartbeat, int, 0);
 MODULE_PARM_DESC(heartbeat, "Initial watchdog heartbeat in seconds");
 
+<<<<<<< HEAD
 module_param(nowayout, bool, 0);
+=======
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
 

@@ -3,6 +3,10 @@
 
 #include "kern_util.h"
 #include "os.h"
+<<<<<<< HEAD
+=======
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "um_malloc.h"
 
 static inline void *cow_malloc(int size)

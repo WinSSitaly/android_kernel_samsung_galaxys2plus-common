@@ -4,7 +4,10 @@
 #include <linux/list.h>
 #include <linux/spinlock.h>
 #include <linux/mm_types.h>
+<<<<<<< HEAD
 #include <linux/srcu.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct mmu_notifier;
 struct mmu_notifier_ops;

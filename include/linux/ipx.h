@@ -7,7 +7,11 @@
 #define IPX_MTU		576
 
 struct sockaddr_ipx {
+<<<<<<< HEAD
 	__kernel_sa_family_t sipx_family;
+=======
+	sa_family_t	sipx_family;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__be16		sipx_port;
 	__be32		sipx_network;
 	unsigned char 	sipx_node[IPX_NODE_LEN];

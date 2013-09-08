@@ -34,7 +34,10 @@ pen:	ldr	r7, [r6]
 	 * should now contain the SVC stack for this core
 	 */
 	b	secondary_startup
+<<<<<<< HEAD
 ENDPROC(msm_secondary_startup)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.align
 1:	.long	.

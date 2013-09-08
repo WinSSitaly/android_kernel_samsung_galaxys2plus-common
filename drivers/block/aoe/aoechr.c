@@ -11,7 +11,10 @@
 #include <linux/slab.h>
 #include <linux/mutex.h>
 #include <linux/skbuff.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "aoe.h"
 
 enum {
@@ -270,7 +273,11 @@ static const struct file_operations aoe_fops = {
 	.llseek = noop_llseek,
 };
 
+<<<<<<< HEAD
 static char *aoe_devnode(struct device *dev, umode_t *mode)
+=======
+static char *aoe_devnode(struct device *dev, mode_t *mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return kasprintf(GFP_KERNEL, "etherd/%s", dev_name(dev));
 }

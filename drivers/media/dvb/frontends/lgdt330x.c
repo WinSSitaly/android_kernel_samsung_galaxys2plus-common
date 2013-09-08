@@ -290,8 +290,11 @@ static int lgdt330x_read_ucblocks(struct dvb_frontend* fe, u32* ucblocks)
 	int err;
 	u8 buf[2];
 
+<<<<<<< HEAD
 	*ucblocks = 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (state->config->demod_chip) {
 	case LGDT3302:
 		err = i2c_read_demod_bytes(state, LGDT3302_PACKET_ERR_COUNTER1,
@@ -306,16 +309,25 @@ static int lgdt330x_read_ucblocks(struct dvb_frontend* fe, u32* ucblocks)
 		       "Only LGDT3302 and LGDT3303 are supported chips.\n");
 		err = -ENODEV;
 	}
+<<<<<<< HEAD
 	if (err < 0)
 		return err;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	*ucblocks = (buf[0] << 8) | buf[1];
 	return 0;
 }
 
+<<<<<<< HEAD
 static int lgdt330x_set_parameters(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int lgdt330x_set_parameters(struct dvb_frontend* fe,
+				   struct dvb_frontend_parameters *param)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Array of byte pairs <address, value>
 	 * to initialize 8VSB for lgdt3303 chip 50 MHz IF
@@ -349,10 +361,17 @@ static int lgdt330x_set_parameters(struct dvb_frontend *fe)
 
 	static u8 top_ctrl_cfg[]   = { TOP_CONTROL, 0x03 };
 
+<<<<<<< HEAD
 	int err = 0;
 	/* Change only if we are actually changing the modulation */
 	if (state->current_modulation != p->modulation) {
 		switch (p->modulation) {
+=======
+	int err;
+	/* Change only if we are actually changing the modulation */
+	if (state->current_modulation != param->u.vsb.modulation) {
+		switch(param->u.vsb.modulation) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case VSB_8:
 			dprintk("%s: VSB_8 MODE\n", __func__);
 
@@ -401,6 +420,7 @@ static int lgdt330x_set_parameters(struct dvb_frontend *fe)
 			}
 			break;
 		default:
+<<<<<<< HEAD
 			printk(KERN_WARNING "lgdt330x: %s: Modulation type(%d) UNSUPPORTED\n", __func__, p->modulation);
 			return -1;
 		}
@@ -409,6 +429,11 @@ static int lgdt330x_set_parameters(struct dvb_frontend *fe)
 			       "bytes to lgdt3303 for modulation type(%d)\n",
 			       __func__, p->modulation);
 
+=======
+			printk(KERN_WARNING "lgdt330x: %s: Modulation type(%d) UNSUPPORTED\n", __func__, param->u.vsb.modulation);
+			return -1;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * select serial or parallel MPEG harware interface
 		 * Serial:   0x04 for LGDT3302 or 0x40 for LGDT3303
@@ -421,29 +446,49 @@ static int lgdt330x_set_parameters(struct dvb_frontend *fe)
 				      sizeof(top_ctrl_cfg));
 		if (state->config->set_ts_params)
 			state->config->set_ts_params(fe, 0);
+<<<<<<< HEAD
 		state->current_modulation = p->modulation;
+=======
+		state->current_modulation = param->u.vsb.modulation;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Tune to the specified frequency */
 	if (fe->ops.tuner_ops.set_params) {
+<<<<<<< HEAD
 		fe->ops.tuner_ops.set_params(fe);
+=======
+		fe->ops.tuner_ops.set_params(fe, param);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (fe->ops.i2c_gate_ctrl) fe->ops.i2c_gate_ctrl(fe, 0);
 	}
 
 	/* Keep track of the new frequency */
 	/* FIXME this is the wrong way to do this...           */
 	/* The tuner is shared with the video4linux analog API */
+<<<<<<< HEAD
 	state->current_frequency = p->frequency;
+=======
+	state->current_frequency = param->frequency;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lgdt330x_SwReset(state);
 	return 0;
 }
 
+<<<<<<< HEAD
 static int lgdt330x_get_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
 	struct lgdt330x_state *state = fe->demodulator_priv;
 	p->frequency = state->current_frequency;
+=======
+static int lgdt330x_get_frontend(struct dvb_frontend* fe,
+				 struct dvb_frontend_parameters* param)
+{
+	struct lgdt330x_state *state = fe->demodulator_priv;
+	param->frequency = state->current_frequency;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -773,9 +818,15 @@ error:
 }
 
 static struct dvb_frontend_ops lgdt3302_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_ATSC, SYS_DVBC_ANNEX_B },
 	.info = {
 		.name= "LG Electronics LGDT3302 VSB/QAM Frontend",
+=======
+	.info = {
+		.name= "LG Electronics LGDT3302 VSB/QAM Frontend",
+		.type = FE_ATSC,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min= 54000000,
 		.frequency_max= 858000000,
 		.frequency_stepsize= 62500,
@@ -796,9 +847,15 @@ static struct dvb_frontend_ops lgdt3302_ops = {
 };
 
 static struct dvb_frontend_ops lgdt3303_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_ATSC, SYS_DVBC_ANNEX_B },
 	.info = {
 		.name= "LG Electronics LGDT3303 VSB/QAM Frontend",
+=======
+	.info = {
+		.name= "LG Electronics LGDT3303 VSB/QAM Frontend",
+		.type = FE_ATSC,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min= 54000000,
 		.frequency_max= 858000000,
 		.frequency_stepsize= 62500,

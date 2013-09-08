@@ -3,8 +3,12 @@
   Broadcom B43 wireless driver
   IEEE 802.11n PHY and radio device data tables
 
+<<<<<<< HEAD
   Copyright (c) 2008 Michael Buesch <m@bues.ch>
   Copyright (c) 2010 Rafał Miłecki <zajec5@gmail.com>
+=======
+  Copyright (c) 2008 Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by

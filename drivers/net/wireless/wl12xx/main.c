@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This file is part of wl1271
  *
@@ -32,11 +35,16 @@
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 #include <linux/wl12xx.h>
+<<<<<<< HEAD
 #include <linux/sched.h>
 #include <linux/interrupt.h>
 
 #include "wl12xx.h"
 #include "debug.h"
+=======
+
+#include "wl12xx.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "wl12xx_80211.h"
 #include "reg.h"
 #include "io.h"
@@ -55,6 +63,7 @@
 
 static struct conf_drv_settings default_conf = {
 	.sg = {
+<<<<<<< HEAD
 		.params = {
 			[CONF_SG_ACL_BT_MASTER_MIN_BR] = 10,
 			[CONF_SG_ACL_BT_MASTER_MAX_BR] = 180,
@@ -119,6 +128,112 @@ static struct conf_drv_settings default_conf = {
 			/* CTS Diluting params */
 			[CONF_SG_CTS_DILUTED_BAD_RX_PACKETS_TH] = 0,
 			[CONF_SG_CTS_CHOP_IN_DUAL_ANT_SCO_MASTER] = 0,
+=======
+		.sta_params = {
+			[CONF_SG_BT_PER_THRESHOLD]                  = 7500,
+			[CONF_SG_HV3_MAX_OVERRIDE]                  = 0,
+			[CONF_SG_BT_NFS_SAMPLE_INTERVAL]            = 400,
+			[CONF_SG_BT_LOAD_RATIO]                     = 200,
+			[CONF_SG_AUTO_PS_MODE]                      = 1,
+			[CONF_SG_AUTO_SCAN_PROBE_REQ]               = 170,
+			[CONF_SG_ACTIVE_SCAN_DURATION_FACTOR_HV3]   = 50,
+			[CONF_SG_ANTENNA_CONFIGURATION]             = 0,
+			[CONF_SG_BEACON_MISS_PERCENT]               = 60,
+			[CONF_SG_RATE_ADAPT_THRESH]                 = 12,
+			[CONF_SG_RATE_ADAPT_SNR]                    = 0,
+			[CONF_SG_WLAN_PS_BT_ACL_MASTER_MIN_BR]      = 10,
+			[CONF_SG_WLAN_PS_BT_ACL_MASTER_MAX_BR]      = 30,
+			[CONF_SG_WLAN_PS_MAX_BT_ACL_MASTER_BR]      = 8,
+			[CONF_SG_WLAN_PS_BT_ACL_SLAVE_MIN_BR]       = 20,
+			[CONF_SG_WLAN_PS_BT_ACL_SLAVE_MAX_BR]       = 50,
+			/* Note: with UPSD, this should be 4 */
+			[CONF_SG_WLAN_PS_MAX_BT_ACL_SLAVE_BR]       = 8,
+			[CONF_SG_WLAN_PS_BT_ACL_MASTER_MIN_EDR]     = 7,
+			[CONF_SG_WLAN_PS_BT_ACL_MASTER_MAX_EDR]     = 25,
+			[CONF_SG_WLAN_PS_MAX_BT_ACL_MASTER_EDR]     = 20,
+			/* Note: with UPDS, this should be 15 */
+			[CONF_SG_WLAN_PS_BT_ACL_SLAVE_MIN_EDR]      = 8,
+			/* Note: with UPDS, this should be 50 */
+			[CONF_SG_WLAN_PS_BT_ACL_SLAVE_MAX_EDR]      = 40,
+			/* Note: with UPDS, this should be 10 */
+			[CONF_SG_WLAN_PS_MAX_BT_ACL_SLAVE_EDR]      = 20,
+			[CONF_SG_RXT]                               = 1200,
+			[CONF_SG_TXT]                               = 1000,
+			[CONF_SG_ADAPTIVE_RXT_TXT]                  = 1,
+			[CONF_SG_PS_POLL_TIMEOUT]                   = 10,
+			[CONF_SG_UPSD_TIMEOUT]                      = 10,
+			[CONF_SG_WLAN_ACTIVE_BT_ACL_MASTER_MIN_EDR] = 7,
+			[CONF_SG_WLAN_ACTIVE_BT_ACL_MASTER_MAX_EDR] = 15,
+			[CONF_SG_WLAN_ACTIVE_MAX_BT_ACL_MASTER_EDR] = 15,
+			[CONF_SG_WLAN_ACTIVE_BT_ACL_SLAVE_MIN_EDR]  = 8,
+			[CONF_SG_WLAN_ACTIVE_BT_ACL_SLAVE_MAX_EDR]  = 20,
+			[CONF_SG_WLAN_ACTIVE_MAX_BT_ACL_SLAVE_EDR]  = 15,
+			[CONF_SG_WLAN_ACTIVE_BT_ACL_MIN_BR]         = 20,
+			[CONF_SG_WLAN_ACTIVE_BT_ACL_MAX_BR]         = 50,
+			[CONF_SG_WLAN_ACTIVE_MAX_BT_ACL_BR]         = 10,
+			[CONF_SG_PASSIVE_SCAN_DURATION_FACTOR_HV3]  = 200,
+			[CONF_SG_PASSIVE_SCAN_DURATION_FACTOR_A2DP] = 800,
+			[CONF_SG_PASSIVE_SCAN_A2DP_BT_TIME]         = 75,
+			[CONF_SG_PASSIVE_SCAN_A2DP_WLAN_TIME]       = 15,
+			[CONF_SG_HV3_MAX_SERVED]                    = 6,
+			[CONF_SG_DHCP_TIME]                         = 5000,
+			[CONF_SG_ACTIVE_SCAN_DURATION_FACTOR_A2DP]  = 100,
+		},
+		.ap_params = {
+			[CONF_SG_BT_PER_THRESHOLD]                  = 7500,
+			[CONF_SG_HV3_MAX_OVERRIDE]                  = 0,
+			[CONF_SG_BT_NFS_SAMPLE_INTERVAL]            = 400,
+			[CONF_SG_BT_LOAD_RATIO]                     = 50,
+			[CONF_SG_AUTO_PS_MODE]                      = 1,
+			[CONF_SG_AUTO_SCAN_PROBE_REQ]               = 170,
+			[CONF_SG_ACTIVE_SCAN_DURATION_FACTOR_HV3]   = 50,
+			[CONF_SG_ANTENNA_CONFIGURATION]             = 0,
+			[CONF_SG_BEACON_MISS_PERCENT]               = 60,
+			[CONF_SG_RATE_ADAPT_THRESH]                 = 64,
+			[CONF_SG_RATE_ADAPT_SNR]                    = 1,
+			[CONF_SG_WLAN_PS_BT_ACL_MASTER_MIN_BR]      = 10,
+			[CONF_SG_WLAN_PS_BT_ACL_MASTER_MAX_BR]      = 25,
+			[CONF_SG_WLAN_PS_MAX_BT_ACL_MASTER_BR]      = 25,
+			[CONF_SG_WLAN_PS_BT_ACL_SLAVE_MIN_BR]       = 20,
+			[CONF_SG_WLAN_PS_BT_ACL_SLAVE_MAX_BR]       = 25,
+			[CONF_SG_WLAN_PS_MAX_BT_ACL_SLAVE_BR]       = 25,
+			[CONF_SG_WLAN_PS_BT_ACL_MASTER_MIN_EDR]     = 7,
+			[CONF_SG_WLAN_PS_BT_ACL_MASTER_MAX_EDR]     = 25,
+			[CONF_SG_WLAN_PS_MAX_BT_ACL_MASTER_EDR]     = 25,
+			[CONF_SG_WLAN_PS_BT_ACL_SLAVE_MIN_EDR]      = 8,
+			[CONF_SG_WLAN_PS_BT_ACL_SLAVE_MAX_EDR]      = 25,
+			[CONF_SG_WLAN_PS_MAX_BT_ACL_SLAVE_EDR]      = 25,
+			[CONF_SG_RXT]                               = 1200,
+			[CONF_SG_TXT]                               = 1000,
+			[CONF_SG_ADAPTIVE_RXT_TXT]                  = 1,
+			[CONF_SG_PS_POLL_TIMEOUT]                   = 10,
+			[CONF_SG_UPSD_TIMEOUT]                      = 10,
+			[CONF_SG_WLAN_ACTIVE_BT_ACL_MASTER_MIN_EDR] = 7,
+			[CONF_SG_WLAN_ACTIVE_BT_ACL_MASTER_MAX_EDR] = 15,
+			[CONF_SG_WLAN_ACTIVE_MAX_BT_ACL_MASTER_EDR] = 15,
+			[CONF_SG_WLAN_ACTIVE_BT_ACL_SLAVE_MIN_EDR]  = 8,
+			[CONF_SG_WLAN_ACTIVE_BT_ACL_SLAVE_MAX_EDR]  = 20,
+			[CONF_SG_WLAN_ACTIVE_MAX_BT_ACL_SLAVE_EDR]  = 15,
+			[CONF_SG_WLAN_ACTIVE_BT_ACL_MIN_BR]         = 20,
+			[CONF_SG_WLAN_ACTIVE_BT_ACL_MAX_BR]         = 50,
+			[CONF_SG_WLAN_ACTIVE_MAX_BT_ACL_BR]         = 10,
+			[CONF_SG_PASSIVE_SCAN_DURATION_FACTOR_HV3]  = 200,
+			[CONF_SG_PASSIVE_SCAN_DURATION_FACTOR_A2DP] = 800,
+			[CONF_SG_PASSIVE_SCAN_A2DP_BT_TIME]         = 75,
+			[CONF_SG_PASSIVE_SCAN_A2DP_WLAN_TIME]       = 15,
+			[CONF_SG_HV3_MAX_SERVED]                    = 6,
+			[CONF_SG_DHCP_TIME]                         = 5000,
+			[CONF_SG_ACTIVE_SCAN_DURATION_FACTOR_A2DP]  = 100,
+			[CONF_SG_TEMP_PARAM_1]                      = 0,
+			[CONF_SG_TEMP_PARAM_2]                      = 0,
+			[CONF_SG_TEMP_PARAM_3]                      = 0,
+			[CONF_SG_TEMP_PARAM_4]                      = 0,
+			[CONF_SG_TEMP_PARAM_5]                      = 0,
+			[CONF_SG_AP_BEACON_MISS_TX]                 = 3,
+			[CONF_SG_RX_WINDOW_LENGTH]                  = 6,
+			[CONF_SG_AP_CONNECTION_PROTECTION_TIME]     = 50,
+			[CONF_SG_TEMP_PARAM_6]                      = 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 		.state = CONF_SG_PROTECTIVE,
 	},
@@ -173,8 +288,12 @@ static struct conf_drv_settings default_conf = {
 				.tx_op_limit = 1504,
 			},
 		},
+<<<<<<< HEAD
 		.max_tx_retries = 100,
 		.ap_aging_period = 300,
+=======
+		.ap_max_tx_retries = 100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.tid_conf_count = 4,
 		.tid_conf = {
 			[CONF_TX_AC_BE] = {
@@ -217,13 +336,19 @@ static struct conf_drv_settings default_conf = {
 		.basic_rate_5                = CONF_HW_BIT_RATE_6MBPS,
 		.tmpl_short_retry_limit      = 10,
 		.tmpl_long_retry_limit       = 10,
+<<<<<<< HEAD
 		.tx_watchdog_timeout         = 5000,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.conn = {
 		.wake_up_event               = CONF_WAKE_UP_EVENT_DTIM,
 		.listen_interval             = 1,
+<<<<<<< HEAD
 		.suspend_wake_up_event       = CONF_WAKE_UP_EVENT_N_DTIM,
 		.suspend_listen_interval     = 3,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.bcn_filt_mode               = CONF_BCN_FILT_MODE_ENABLED,
 		.bcn_filt_ie_count           = 2,
 		.bcn_filt_ie = {
@@ -242,6 +367,7 @@ static struct conf_drv_settings default_conf = {
 		.broadcast_timeout           = 20000,
 		.rx_broadcast_in_ps          = 1,
 		.ps_poll_threshold           = 10,
+<<<<<<< HEAD
 		.bet_enable                  = CONF_BET_MODE_ENABLE,
 		.bet_max_consecutive         = 50,
 		.psm_entry_retries           = 8,
@@ -249,6 +375,15 @@ static struct conf_drv_settings default_conf = {
 		.psm_entry_nullfunc_retries  = 3,
 		.dynamic_ps_timeout          = 200,
 		.forced_ps                   = false,
+=======
+		.ps_poll_recovery_period     = 700,
+		.bet_enable                  = CONF_BET_MODE_ENABLE,
+		.bet_max_consecutive         = 50,
+		.psm_entry_retries           = 5,
+		.psm_exit_retries            = 16,
+		.psm_entry_nullfunc_retries  = 3,
+		.psm_entry_hangover_period   = 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.keep_alive_interval         = 55000,
 		.max_listen_interval         = 20,
 	},
@@ -273,12 +408,20 @@ static struct conf_drv_settings default_conf = {
 		.min_dwell_time_passive       = 100000,
 		.max_dwell_time_passive       = 100000,
 		.num_probe_reqs               = 2,
+<<<<<<< HEAD
 		.split_scan_timeout           = 50000,
 	},
 	.sched_scan = {
 		/* sched_scan requires dwell times in TU instead of TU/1000 */
 		.min_dwell_time_active = 30,
 		.max_dwell_time_active = 60,
+=======
+	},
+	.sched_scan = {
+		/* sched_scan requires dwell times in TU instead of TU/1000 */
+		.min_dwell_time_active = 8,
+		.max_dwell_time_active = 30,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.dwell_time_passive    = 100,
 		.dwell_time_dfs        = 150,
 		.num_probe_reqs        = 2,
@@ -296,10 +439,15 @@ static struct conf_drv_settings default_conf = {
 		},
 	},
 	.ht = {
+<<<<<<< HEAD
 		.rx_ba_win_size = 8,
 		.tx_ba_win_size = 64,
 		.inactivity_timeout = 10000,
 		.tx_ba_tid_bitmap = CONF_TX_BA_ENABLED_TID_BITMAP,
+=======
+		.tx_ba_win_size = 64,
+		.inactivity_timeout = 10000,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.mem_wl127x = {
 		.num_stations                 = 1,
@@ -333,6 +481,7 @@ static struct conf_drv_settings default_conf = {
 		.fm_disturbed_band_margin     = 0xff,       /* default */
 		.swallow_clk_diff             = 0xff,       /* default */
 	},
+<<<<<<< HEAD
 	.rx_streaming = {
 		.duration                      = 150,
 		.queues                        = 0x1,
@@ -501,12 +650,84 @@ static void wl1271_rx_streaming_enable_work(struct work_struct *work)
 		goto out;
 
 	if (!wl->conf.rx_streaming.interval)
+=======
+	.hci_io_ds = HCI_IO_DS_6MA,
+};
+
+static void __wl1271_op_remove_interface(struct wl1271 *wl,
+					 bool reset_tx_queues);
+static void wl1271_free_ap_keys(struct wl1271 *wl);
+
+
+static void wl1271_device_release(struct device *dev)
+{
+
+}
+
+static struct platform_device wl1271_device = {
+	.name           = "wl1271",
+	.id             = -1,
+
+	/* device model insists to have a release function */
+	.dev            = {
+		.release = wl1271_device_release,
+	},
+};
+
+static DEFINE_MUTEX(wl_list_mutex);
+static LIST_HEAD(wl_list);
+
+static int wl1271_dev_notify(struct notifier_block *me, unsigned long what,
+			     void *arg)
+{
+	struct net_device *dev = arg;
+	struct wireless_dev *wdev;
+	struct wiphy *wiphy;
+	struct ieee80211_hw *hw;
+	struct wl1271 *wl;
+	struct wl1271 *wl_temp;
+	int ret = 0;
+
+	/* Check that this notification is for us. */
+	if (what != NETDEV_CHANGE)
+		return NOTIFY_DONE;
+
+	wdev = dev->ieee80211_ptr;
+	if (wdev == NULL)
+		return NOTIFY_DONE;
+
+	wiphy = wdev->wiphy;
+	if (wiphy == NULL)
+		return NOTIFY_DONE;
+
+	hw = wiphy_priv(wiphy);
+	if (hw == NULL)
+		return NOTIFY_DONE;
+
+	wl_temp = hw->priv;
+	mutex_lock(&wl_list_mutex);
+	list_for_each_entry(wl, &wl_list, list) {
+		if (wl == wl_temp)
+			break;
+	}
+	mutex_unlock(&wl_list_mutex);
+	if (wl != wl_temp)
+		return NOTIFY_DONE;
+
+	mutex_lock(&wl->mutex);
+
+	if (wl->state == WL1271_STATE_OFF)
+		goto out;
+
+	if (!test_bit(WL1271_FLAG_STA_ASSOCIATED, &wl->flags))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	ret = wl1271_ps_elp_wakeup(wl);
 	if (ret < 0)
 		goto out;
 
+<<<<<<< HEAD
 	ret = wl1271_set_rx_streaming(wl, wlvif, true);
 	if (ret < 0)
 		goto out_sleep;
@@ -626,6 +847,42 @@ static void wl12xx_tx_watchdog_work(struct work_struct *work)
 
 out:
 	mutex_unlock(&wl->mutex);
+=======
+	if ((dev->operstate == IF_OPER_UP) &&
+	    !test_and_set_bit(WL1271_FLAG_STA_STATE_SENT, &wl->flags)) {
+		wl1271_cmd_set_sta_state(wl);
+		wl1271_info("Association completed.");
+	}
+
+	wl1271_ps_elp_sleep(wl);
+
+out:
+	mutex_unlock(&wl->mutex);
+
+	return NOTIFY_OK;
+}
+
+static int wl1271_reg_notify(struct wiphy *wiphy,
+			     struct regulatory_request *request)
+{
+	struct ieee80211_supported_band *band;
+	struct ieee80211_channel *ch;
+	int i;
+
+	band = wiphy->bands[IEEE80211_BAND_5GHZ];
+	for (i = 0; i < band->n_channels; i++) {
+		ch = &band->channels[i];
+		if (ch->flags & IEEE80211_CHAN_DISABLED)
+			continue;
+
+		if (ch->flags & IEEE80211_CHAN_RADAR)
+			ch->flags |= IEEE80211_CHAN_NO_IBSS |
+				     IEEE80211_CHAN_PASSIVE_SCAN;
+
+	}
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void wl1271_conf_init(struct wl1271 *wl)
@@ -643,6 +900,7 @@ static void wl1271_conf_init(struct wl1271 *wl)
 
 	/* apply driver default configuration */
 	memcpy(&wl->conf, &default_conf, sizeof(default_conf));
+<<<<<<< HEAD
 
 	/* Adjust settings according to optional module parameters */
 	if (fwlog_param) {
@@ -665,6 +923,16 @@ static void wl1271_conf_init(struct wl1271 *wl)
 static int wl1271_plt_init(struct wl1271 *wl)
 {
 	int ret;
+=======
+}
+
+
+static int wl1271_plt_init(struct wl1271 *wl)
+{
+	struct conf_tx_ac_category *conf_ac;
+	struct conf_tx_tid *conf_tid;
+	int ret, i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (wl->chip.id == CHIP_ID_1283_PG20)
 		ret = wl128x_cmd_general_parms(wl);
@@ -685,20 +953,95 @@ static int wl1271_plt_init(struct wl1271 *wl)
 		if (ret < 0)
 			return ret;
 	}
+<<<<<<< HEAD
+=======
+	if (ret < 0)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Chip-specific initializations */
 	ret = wl1271_chip_specific_init(wl);
 	if (ret < 0)
 		return ret;
 
+<<<<<<< HEAD
+=======
+	ret = wl1271_sta_init_templates_config(wl);
+	if (ret < 0)
+		return ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = wl1271_acx_init_mem_config(wl);
 	if (ret < 0)
 		return ret;
 
+<<<<<<< HEAD
 	ret = wl12xx_acx_mem_cfg(wl);
 	if (ret < 0)
 		goto out_free_memmap;
 
+=======
+	/* PHY layer config */
+	ret = wl1271_init_phy_config(wl);
+	if (ret < 0)
+		goto out_free_memmap;
+
+	ret = wl1271_acx_dco_itrim_params(wl);
+	if (ret < 0)
+		goto out_free_memmap;
+
+	/* Initialize connection monitoring thresholds */
+	ret = wl1271_acx_conn_monit_params(wl, false);
+	if (ret < 0)
+		goto out_free_memmap;
+
+	/* Bluetooth WLAN coexistence */
+	ret = wl1271_init_pta(wl);
+	if (ret < 0)
+		goto out_free_memmap;
+
+	/* FM WLAN coexistence */
+	ret = wl1271_acx_fm_coex(wl);
+	if (ret < 0)
+		goto out_free_memmap;
+
+	/* Energy detection */
+	ret = wl1271_init_energy_detection(wl);
+	if (ret < 0)
+		goto out_free_memmap;
+
+	ret = wl1271_acx_sta_mem_cfg(wl);
+	if (ret < 0)
+		goto out_free_memmap;
+
+	/* Default fragmentation threshold */
+	ret = wl1271_acx_frag_threshold(wl, wl->conf.tx.frag_threshold);
+	if (ret < 0)
+		goto out_free_memmap;
+
+	/* Default TID/AC configuration */
+	BUG_ON(wl->conf.tx.tid_conf_count != wl->conf.tx.ac_conf_count);
+	for (i = 0; i < wl->conf.tx.tid_conf_count; i++) {
+		conf_ac = &wl->conf.tx.ac_conf[i];
+		ret = wl1271_acx_ac_cfg(wl, conf_ac->ac, conf_ac->cw_min,
+					conf_ac->cw_max, conf_ac->aifsn,
+					conf_ac->tx_op_limit);
+		if (ret < 0)
+			goto out_free_memmap;
+
+		conf_tid = &wl->conf.tx.tid_conf[i];
+		ret = wl1271_acx_tid_cfg(wl, conf_tid->queue_id,
+					 conf_tid->channel_type,
+					 conf_tid->tsid,
+					 conf_tid->ps_scheme,
+					 conf_tid->ack_policy,
+					 conf_tid->apsd_conf[0],
+					 conf_tid->apsd_conf[1]);
+		if (ret < 0)
+			goto out_free_memmap;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Enable data path */
 	ret = wl1271_cmd_data_path(wl, 1);
 	if (ret < 0)
@@ -723,6 +1066,7 @@ static int wl1271_plt_init(struct wl1271 *wl)
 	return ret;
 }
 
+<<<<<<< HEAD
 static void wl12xx_irq_ps_regulate_link(struct wl1271 *wl,
 					struct wl12xx_vif *wlvif,
 					u8 hlid, u8 tx_pkts)
@@ -757,6 +1101,35 @@ static void wl12xx_irq_update_links_status(struct wl1271 *wl,
 	u8 hlid, cnt;
 
 	/* TODO: also use link_fast_bitmap here */
+=======
+static void wl1271_irq_ps_regulate_link(struct wl1271 *wl, u8 hlid, u8 tx_blks)
+{
+	bool fw_ps;
+
+	/* only regulate station links */
+	if (hlid < WL1271_AP_STA_HLID_START)
+		return;
+
+	fw_ps = test_bit(hlid, (unsigned long *)&wl->ap_fw_ps_map);
+
+	/*
+	 * Wake up from high level PS if the STA is asleep with too little
+	 * blocks in FW or if the STA is awake.
+	 */
+	if (!fw_ps || tx_blks < WL1271_PS_STA_MAX_BLOCKS)
+		wl1271_ps_link_end(wl, hlid);
+
+	/* Start high-level PS if the STA is asleep with enough blocks in FW */
+	else if (fw_ps && tx_blks >= WL1271_PS_STA_MAX_BLOCKS)
+		wl1271_ps_link_start(wl, hlid, true);
+}
+
+static void wl1271_irq_update_links_status(struct wl1271 *wl,
+				       struct wl1271_fw_ap_status *status)
+{
+	u32 cur_fw_ps_map;
+	u8 hlid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cur_fw_ps_map = le32_to_cpu(status->link_ps_bitmap);
 	if (wl->ap_fw_ps_map != cur_fw_ps_map) {
@@ -768,6 +1141,7 @@ static void wl12xx_irq_update_links_status(struct wl1271 *wl,
 		wl->ap_fw_ps_map = cur_fw_ps_map;
 	}
 
+<<<<<<< HEAD
 	for_each_set_bit(hlid, wlvif->ap.sta_hlid_map, WL12XX_MAX_LINKS) {
 		lnk = &wl->links[hlid];
 		cnt = status->tx_lnk_free_pkts[hlid] - lnk->prev_freed_pkts;
@@ -790,6 +1164,37 @@ static void wl12xx_fw_status(struct wl1271 *wl,
 	int i;
 
 	wl1271_raw_read(wl, FW_STATUS_ADDR, status, sizeof(*status), false);
+=======
+	for (hlid = WL1271_AP_STA_HLID_START; hlid < AP_MAX_LINKS; hlid++) {
+		u8 cnt = status->tx_lnk_free_blks[hlid] -
+			wl->links[hlid].prev_freed_blks;
+
+		wl->links[hlid].prev_freed_blks =
+			status->tx_lnk_free_blks[hlid];
+		wl->links[hlid].allocated_blks -= cnt;
+
+		wl1271_irq_ps_regulate_link(wl, hlid,
+					    wl->links[hlid].allocated_blks);
+	}
+}
+
+static void wl1271_fw_status(struct wl1271 *wl,
+			     struct wl1271_fw_full_status *full_status)
+{
+	struct wl1271_fw_common_status *status = &full_status->common;
+	struct timespec ts;
+	u32 old_tx_blk_count = wl->tx_blocks_available;
+	u32 freed_blocks = 0;
+	int i;
+
+	if (wl->bss_type == BSS_TYPE_AP_BSS) {
+		wl1271_raw_read(wl, FW_STATUS_ADDR, status,
+				sizeof(struct wl1271_fw_ap_status), false);
+	} else {
+		wl1271_raw_read(wl, FW_STATUS_ADDR, status,
+				sizeof(struct wl1271_fw_sta_status), false);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wl1271_debug(DEBUG_IRQ, "intr: 0x%x (fw_rx_counter = %d, "
 		     "drv_rx_counter = %d, tx_results_counter = %d)",
@@ -798,6 +1203,7 @@ static void wl12xx_fw_status(struct wl1271 *wl,
 		     status->drv_rx_counter,
 		     status->tx_results_counter);
 
+<<<<<<< HEAD
 	for (i = 0; i < NUM_TX_QUEUES; i++) {
 		/* prevent wrap-around in freed-packets counter */
 		wl->tx_allocated_pkts[i] -=
@@ -844,16 +1250,50 @@ static void wl12xx_fw_status(struct wl1271 *wl,
 	 */
 	wl->tx_blocks_available = max((int)wl->tx_blocks_available,
 				      avail);
+=======
+	/* update number of available TX blocks */
+	for (i = 0; i < NUM_TX_QUEUES; i++) {
+		freed_blocks += le32_to_cpu(status->tx_released_blks[i]) -
+				wl->tx_blocks_freed[i];
+
+		wl->tx_blocks_freed[i] =
+			le32_to_cpu(status->tx_released_blks[i]);
+	}
+
+	wl->tx_allocated_blocks -= freed_blocks;
+
+	if (wl->bss_type == BSS_TYPE_AP_BSS) {
+		/* Update num of allocated TX blocks per link and ps status */
+		wl1271_irq_update_links_status(wl, &full_status->ap);
+		wl->tx_blocks_available += freed_blocks;
+	} else {
+		int avail = full_status->sta.tx_total - wl->tx_allocated_blocks;
+
+		/*
+		 * The FW might change the total number of TX memblocks before
+		 * we get a notification about blocks being released. Thus, the
+		 * available blocks calculation might yield a temporary result
+		 * which is lower than the actual available blocks. Keeping in
+		 * mind that only blocks that were allocated can be moved from
+		 * TX to RX, tx_blocks_available should never decrease here.
+		 */
+		wl->tx_blocks_available = max((int)wl->tx_blocks_available,
+					      avail);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* if more blocks are available now, tx work can be scheduled */
 	if (wl->tx_blocks_available > old_tx_blk_count)
 		clear_bit(WL1271_FLAG_FW_TX_BUSY, &wl->flags);
 
+<<<<<<< HEAD
 	/* for AP update num of allocated TX blocks per link and ps status */
 	wl12xx_for_each_wlvif_ap(wl, wlvif) {
 		wl12xx_irq_update_links_status(wl, wlvif, status);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* update the host-chipset time offset */
 	getnstimeofday(&ts);
 	wl->time_offset = (timespec_to_ns(&ts) >> 10) -
@@ -870,7 +1310,11 @@ static void wl1271_flush_deferred_work(struct wl1271 *wl)
 
 	/* Return sent skbs to the network stack */
 	while ((skb = skb_dequeue(&wl->deferred_tx_queue)))
+<<<<<<< HEAD
 		ieee80211_tx_status_ni(wl->hw, skb);
+=======
+		ieee80211_tx_status(wl->hw, skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void wl1271_netstack_work(struct work_struct *work)
@@ -885,7 +1329,11 @@ static void wl1271_netstack_work(struct work_struct *work)
 
 #define WL1271_IRQ_MAX_LOOPS 256
 
+<<<<<<< HEAD
 static irqreturn_t wl1271_irq(int irq, void *cookie)
+=======
+irqreturn_t wl1271_irq(int irq, void *cookie)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 	u32 intr;
@@ -926,8 +1374,13 @@ static irqreturn_t wl1271_irq(int irq, void *cookie)
 		clear_bit(WL1271_FLAG_IRQ_RUNNING, &wl->flags);
 		smp_mb__after_clear_bit();
 
+<<<<<<< HEAD
 		wl12xx_fw_status(wl, wl->fw_status);
 		intr = le32_to_cpu(wl->fw_status->intr);
+=======
+		wl1271_fw_status(wl, wl->fw_status);
+		intr = le32_to_cpu(wl->fw_status->common.intr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		intr &= WL1271_INTR_MASK;
 		if (!intr) {
 			done = true;
@@ -937,7 +1390,11 @@ static irqreturn_t wl1271_irq(int irq, void *cookie)
 		if (unlikely(intr & WL1271_ACX_INTR_WATCHDOG)) {
 			wl1271_error("watchdog interrupt received! "
 				     "starting recovery.");
+<<<<<<< HEAD
 			wl12xx_queue_recovery_work(wl);
+=======
+			ieee80211_queue_work(wl->hw, &wl->recovery_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* restarting the chip. ignore any other interrupt. */
 			goto out;
@@ -946,12 +1403,20 @@ static irqreturn_t wl1271_irq(int irq, void *cookie)
 		if (likely(intr & WL1271_ACX_INTR_DATA)) {
 			wl1271_debug(DEBUG_IRQ, "WL1271_ACX_INTR_DATA");
 
+<<<<<<< HEAD
 			wl12xx_rx(wl, wl->fw_status);
+=======
+			wl1271_rx(wl, &wl->fw_status->common);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* Check if any tx blocks were freed */
 			spin_lock_irqsave(&wl->wl_lock, flags);
 			if (!test_bit(WL1271_FLAG_FW_TX_BUSY, &wl->flags) &&
+<<<<<<< HEAD
 			    wl1271_tx_total_queue_count(wl) > 0) {
+=======
+			    wl->tx_queue_count) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				spin_unlock_irqrestore(&wl->wl_lock, flags);
 				/*
 				 * In order to avoid starvation of the TX path,
@@ -963,7 +1428,11 @@ static irqreturn_t wl1271_irq(int irq, void *cookie)
 			}
 
 			/* check for tx results */
+<<<<<<< HEAD
 			if (wl->fw_status->tx_results_counter !=
+=======
+			if (wl->fw_status->common.tx_results_counter !=
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    (wl->tx_results_count & 0xff))
 				wl1271_tx_complete(wl);
 
@@ -999,7 +1468,11 @@ out:
 	/* In case TX was not handled here, queue TX work */
 	clear_bit(WL1271_FLAG_TX_PENDING, &wl->flags);
 	if (!test_bit(WL1271_FLAG_FW_TX_BUSY, &wl->flags) &&
+<<<<<<< HEAD
 	    wl1271_tx_total_queue_count(wl) > 0)
+=======
+	    wl->tx_queue_count)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ieee80211_queue_work(wl->hw, &wl->tx_work);
 	spin_unlock_irqrestore(&wl->wl_lock, flags);
 
@@ -1007,6 +1480,7 @@ out:
 
 	return IRQ_HANDLED;
 }
+<<<<<<< HEAD
 
 struct vif_counter_data {
 	u8 counter;
@@ -1079,6 +1553,42 @@ static int wl12xx_fetch_firmware(struct wl1271 *wl, bool plt)
 
 	if (ret < 0) {
 		wl1271_error("could not get firmware %s: %d", fw_name, ret);
+=======
+EXPORT_SYMBOL_GPL(wl1271_irq);
+
+static int wl1271_fetch_firmware(struct wl1271 *wl)
+{
+	const struct firmware *fw;
+	const char *fw_name;
+	int ret;
+
+	switch (wl->bss_type) {
+	case BSS_TYPE_AP_BSS:
+		if (wl->chip.id == CHIP_ID_1283_PG20)
+			fw_name = WL128X_AP_FW_NAME;
+		else
+			fw_name = WL127X_AP_FW_NAME;
+		break;
+	case BSS_TYPE_IBSS:
+	case BSS_TYPE_STA_BSS:
+		if (wl->chip.id == CHIP_ID_1283_PG20)
+			fw_name = WL128X_FW_NAME;
+		else
+			fw_name	= WL1271_FW_NAME;
+		break;
+	default:
+		wl1271_error("no compatible firmware for bss_type %d",
+			     wl->bss_type);
+		return -EINVAL;
+	}
+
+	wl1271_debug(DEBUG_BOOT, "booting firmware %s", fw_name);
+
+	ret = request_firmware(&fw, fw_name, wl1271_wl_to_dev(wl));
+
+	if (ret < 0) {
+		wl1271_error("could not get firmware: %d", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 
@@ -1090,7 +1600,10 @@ static int wl12xx_fetch_firmware(struct wl1271 *wl, bool plt)
 	}
 
 	vfree(wl->fw);
+<<<<<<< HEAD
 	wl->fw_type = WL12XX_FW_TYPE_NONE;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wl->fw_len = fw->size;
 	wl->fw = vmalloc(wl->fw_len);
 
@@ -1101,8 +1614,14 @@ static int wl12xx_fetch_firmware(struct wl1271 *wl, bool plt)
 	}
 
 	memcpy(wl->fw, fw->data, wl->fw_len);
+<<<<<<< HEAD
 	ret = 0;
 	wl->fw_type = fw_type;
+=======
+	wl->fw_bss_type = wl->bss_type;
+	ret = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	release_firmware(fw);
 
@@ -1114,11 +1633,18 @@ static int wl1271_fetch_nvs(struct wl1271 *wl)
 	const struct firmware *fw;
 	int ret;
 
+<<<<<<< HEAD
 	ret = request_firmware(&fw, WL12XX_NVS_NAME, wl->dev);
 
 	if (ret < 0) {
 		wl1271_error("could not get nvs file %s: %d", WL12XX_NVS_NAME,
 			     ret);
+=======
+	ret = request_firmware(&fw, WL12XX_NVS_NAME, wl1271_wl_to_dev(wl));
+
+	if (ret < 0) {
+		wl1271_error("could not get nvs file: %d", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 
@@ -1138,6 +1664,7 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 void wl12xx_queue_recovery_work(struct wl1271 *wl)
 {
 	if (!test_bit(WL1271_FLAG_RECOVERY_IN_PROGRESS, &wl->flags))
@@ -1287,6 +1814,45 @@ static void wl1271_recovery_work(struct work_struct *work)
 out_unlock:
 	mutex_unlock(&wl->mutex);
 }
+=======
+static void wl1271_recovery_work(struct work_struct *work)
+{
+	struct wl1271 *wl =
+		container_of(work, struct wl1271, recovery_work);
+
+	mutex_lock(&wl->mutex);
+
+	if (wl->state != WL1271_STATE_ON)
+		goto out;
+
+	wl1271_info("Hardware recovery in progress. FW ver: %s pc: 0x%x",
+		    wl->chip.fw_ver_str, wl1271_read32(wl, SCR_PAD4));
+
+	if (test_bit(WL1271_FLAG_STA_ASSOCIATED, &wl->flags))
+		ieee80211_connection_loss(wl->vif);
+
+	/* Prevent spurious TX during FW restart */
+	ieee80211_stop_queues(wl->hw);
+
+	if (wl->sched_scanning) {
+		ieee80211_sched_scan_stopped(wl->hw);
+		wl->sched_scanning = false;
+	}
+
+	/* reboot the chipset */
+	__wl1271_op_remove_interface(wl, false);
+	ieee80211_restart_hw(wl->hw);
+
+	/*
+	 * Its safe to enable TX now - the queues are stopped after a request
+	 * to restart the HW.
+	 */
+	ieee80211_wake_queues(wl->hw);
+
+out:
+	mutex_unlock(&wl->mutex);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void wl1271_fw_wakeup(struct wl1271 *wl)
 {
@@ -1311,9 +1877,16 @@ static int wl1271_setup(struct wl1271 *wl)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int wl12xx_set_power_on(struct wl1271 *wl)
 {
 	int ret;
+=======
+static int wl1271_chip_wakeup(struct wl1271 *wl)
+{
+	struct wl1271_partition_set partition;
+	int ret = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	msleep(WL1271_PRE_POWER_ON_SLEEP);
 	ret = wl1271_power_on(wl);
@@ -1323,11 +1896,21 @@ static int wl12xx_set_power_on(struct wl1271 *wl)
 	wl1271_io_reset(wl);
 	wl1271_io_init(wl);
 
+<<<<<<< HEAD
 	wl1271_set_partition(wl, &wl12xx_part_table[PART_DOWN]);
+=======
+	/* We don't need a real memory partition here, because we only want
+	 * to use the registers at this point. */
+	memset(&partition, 0, sizeof(partition));
+	partition.reg.start = REGISTERS_BASE;
+	partition.reg.size = REGISTERS_DOWN_SIZE;
+	wl1271_set_partition(wl, &partition);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* ELP module wake up */
 	wl1271_fw_wakeup(wl);
 
+<<<<<<< HEAD
 out:
 	return ret;
 }
@@ -1350,6 +1933,14 @@ static int wl12xx_chip_wakeup(struct wl1271 *wl, bool plt)
 	 */
 	if (!wl1271_set_block_size(wl))
 		wl->quirks |= WL12XX_QUIRK_NO_BLOCKSIZE_ALIGNMENT;
+=======
+	/* whal_FwCtrl_BootSm() */
+
+	/* 0. read chip id from CHIP_ID */
+	wl->chip.id = wl1271_read32(wl, CHIP_ID_B);
+
+	/* 1. check if chip id is valid */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (wl->chip.id) {
 	case CHIP_ID_1271_PG10:
@@ -1359,19 +1950,34 @@ static int wl12xx_chip_wakeup(struct wl1271 *wl, bool plt)
 		ret = wl1271_setup(wl);
 		if (ret < 0)
 			goto out;
+<<<<<<< HEAD
 		wl->quirks |= WL12XX_QUIRK_NO_BLOCKSIZE_ALIGNMENT;
 		break;
 
+=======
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case CHIP_ID_1271_PG20:
 		wl1271_debug(DEBUG_BOOT, "chip id 0x%x (1271 PG20)",
 			     wl->chip.id);
 
+<<<<<<< HEAD
 		ret = wl1271_setup(wl);
 		if (ret < 0)
 			goto out;
 		wl->quirks |= WL12XX_QUIRK_NO_BLOCKSIZE_ALIGNMENT;
 		break;
 
+=======
+		/* end-of-transaction flag should be set in wl127x AP mode */
+		if (wl->bss_type == BSS_TYPE_AP_BSS)
+			wl->quirks |= WL12XX_QUIRK_END_OF_TRANSACTION;
+
+		ret = wl1271_setup(wl);
+		if (ret < 0)
+			goto out;
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case CHIP_ID_1283_PG20:
 		wl1271_debug(DEBUG_BOOT, "chip id 0x%x (1283 PG20)",
 			     wl->chip.id);
@@ -1379,6 +1985,11 @@ static int wl12xx_chip_wakeup(struct wl1271 *wl, bool plt)
 		ret = wl1271_setup(wl);
 		if (ret < 0)
 			goto out;
+<<<<<<< HEAD
+=======
+		if (wl1271_set_block_size(wl))
+			wl->quirks |= WL12XX_QUIRK_BLOCKSIZE_ALIGNMENT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CHIP_ID_1283_PG10:
 	default:
@@ -1387,9 +1998,18 @@ static int wl12xx_chip_wakeup(struct wl1271 *wl, bool plt)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	ret = wl12xx_fetch_firmware(wl, plt);
 	if (ret < 0)
 		goto out;
+=======
+	/* Make sure the firmware type matches the BSS type */
+	if (wl->fw == NULL || wl->fw_bss_type != wl->bss_type) {
+		ret = wl1271_fetch_firmware(wl);
+		if (ret < 0)
+			goto out;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* No NVS from netlink, try to get it from the filesystem */
 	if (wl->nvs == NULL) {
@@ -1402,10 +2022,34 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_plt_start(struct wl1271 *wl)
 {
 	int retries = WL1271_BOOT_RETRIES;
 	struct wiphy *wiphy = wl->hw->wiphy;
+=======
+static unsigned int wl1271_get_fw_ver_quirks(struct wl1271 *wl)
+{
+	unsigned int quirks = 0;
+	unsigned int *fw_ver = wl->chip.fw_ver;
+
+	/* Only for wl127x */
+	if ((fw_ver[FW_VER_CHIP] == FW_VER_CHIP_WL127X) &&
+	    /* Check STA version */
+	    (((fw_ver[FW_VER_IF_TYPE] == FW_VER_IF_TYPE_STA) &&
+	      (fw_ver[FW_VER_MINOR] < FW_VER_MINOR_1_SPARE_STA_MIN)) ||
+	     /* Check AP version */
+	     ((fw_ver[FW_VER_IF_TYPE] == FW_VER_IF_TYPE_AP) &&
+	      (fw_ver[FW_VER_MINOR] < FW_VER_MINOR_1_SPARE_AP_MIN))))
+		quirks |= WL12XX_QUIRK_USE_2_SPARE_BLOCKS;
+
+	return quirks;
+}
+
+int wl1271_plt_start(struct wl1271 *wl)
+{
+	int retries = WL1271_BOOT_RETRIES;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	mutex_lock(&wl->mutex);
@@ -1419,9 +2063,17 @@ int wl1271_plt_start(struct wl1271 *wl)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	while (retries) {
 		retries--;
 		ret = wl12xx_chip_wakeup(wl, true);
+=======
+	wl->bss_type = BSS_TYPE_STA_BSS;
+
+	while (retries) {
+		retries--;
+		ret = wl1271_chip_wakeup(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0)
 			goto power_off;
 
@@ -1433,6 +2085,7 @@ int wl1271_plt_start(struct wl1271 *wl)
 		if (ret < 0)
 			goto irq_disable;
 
+<<<<<<< HEAD
 		wl->plt = true;
 		wl->state = WL1271_STATE_ON;
 		wl1271_notice("firmware booted in PLT mode (%s)",
@@ -1443,6 +2096,14 @@ int wl1271_plt_start(struct wl1271 *wl)
 		strncpy(wiphy->fw_version, wl->chip.fw_ver_str,
 			sizeof(wiphy->fw_version));
 
+=======
+		wl->state = WL1271_STATE_PLT;
+		wl1271_notice("firmware booted in PLT mode (%s)",
+			      wl->chip.fw_ver_str);
+
+		/* Check if any quirks are needed with older fw versions */
+		wl->quirks |= wl1271_get_fw_ver_quirks(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 irq_disable:
@@ -1470,12 +2131,17 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_plt_stop(struct wl1271 *wl)
+=======
+static int __wl1271_plt_stop(struct wl1271 *wl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret = 0;
 
 	wl1271_notice("power down");
 
+<<<<<<< HEAD
 	/*
 	 * Interrupts must be disabled before setting the state to OFF.
 	 * Otherwise, the interrupt handler might be called and exit without
@@ -1493,12 +2159,16 @@ int wl1271_plt_stop(struct wl1271 *wl)
 		 */
 		wl1271_enable_interrupts(wl);
 
+=======
+	if (wl->state != WL1271_STATE_PLT) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wl1271_error("cannot power down because not in PLT "
 			     "state: %d", wl->state);
 		ret = -EBUSY;
 		goto out;
 	}
 
+<<<<<<< HEAD
 	mutex_unlock(&wl->mutex);
 
 	wl1271_flush_deferred_work(wl);
@@ -1516,12 +2186,37 @@ int wl1271_plt_stop(struct wl1271 *wl)
 	mutex_unlock(&wl->mutex);
 
 out:
+=======
+	wl1271_power_off(wl);
+
+	wl->state = WL1271_STATE_OFF;
+	wl->rx_counter = 0;
+
+	mutex_unlock(&wl->mutex);
+	wl1271_disable_interrupts(wl);
+	wl1271_flush_deferred_work(wl);
+	cancel_work_sync(&wl->netstack_work);
+	cancel_work_sync(&wl->recovery_work);
+	mutex_lock(&wl->mutex);
+out:
+	return ret;
+}
+
+int wl1271_plt_stop(struct wl1271 *wl)
+{
+	int ret;
+
+	mutex_lock(&wl->mutex);
+	ret = __wl1271_plt_stop(wl);
+	mutex_unlock(&wl->mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static void wl1271_op_tx(struct ieee80211_hw *hw, struct sk_buff *skb)
 {
 	struct wl1271 *wl = hw->priv;
+<<<<<<< HEAD
 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
 	struct ieee80211_vif *vif = info->control.vif;
 	struct wl12xx_vif *wlvif = NULL;
@@ -1552,15 +2247,44 @@ static void wl1271_op_tx(struct ieee80211_hw *hw, struct sk_buff *skb)
 	skb_queue_tail(&wl->links[hlid].tx_queue[q], skb);
 
 	wl->tx_queue_count[q]++;
+=======
+	unsigned long flags;
+	int q;
+	u8 hlid = 0;
+
+	q = wl1271_tx_get_queue(skb_get_queue_mapping(skb));
+
+	if (wl->bss_type == BSS_TYPE_AP_BSS)
+		hlid = wl1271_tx_get_hlid(skb);
+
+	spin_lock_irqsave(&wl->wl_lock, flags);
+
+	wl->tx_queue_count++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * The workqueue is slow to process the tx_queue and we need stop
 	 * the queue here, otherwise the queue will get too long.
 	 */
+<<<<<<< HEAD
 	if (wl->tx_queue_count[q] >= WL1271_TX_QUEUE_HIGH_WATERMARK) {
 		wl1271_debug(DEBUG_TX, "op_tx: stopping queues for q %d", q);
 		ieee80211_stop_queue(wl->hw, mapping);
 		set_bit(q, &wl->stopped_queues_map);
+=======
+	if (wl->tx_queue_count >= WL1271_TX_QUEUE_HIGH_WATERMARK) {
+		wl1271_debug(DEBUG_TX, "op_tx: stopping queues");
+		ieee80211_stop_queues(wl->hw);
+		set_bit(WL1271_FLAG_TX_QUEUE_STOPPED, &wl->flags);
+	}
+
+	/* queue the packet */
+	if (wl->bss_type == BSS_TYPE_AP_BSS) {
+		wl1271_debug(DEBUG_TX, "queue skb hlid %d q %d", hlid, q);
+		skb_queue_tail(&wl->links[hlid].tx_queue[q], skb);
+	} else {
+		skb_queue_tail(&wl->tx_queue[q], skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -1572,13 +2296,17 @@ static void wl1271_op_tx(struct ieee80211_hw *hw, struct sk_buff *skb)
 	    !test_bit(WL1271_FLAG_TX_PENDING, &wl->flags))
 		ieee80211_queue_work(wl->hw, &wl->tx_work);
 
+<<<<<<< HEAD
 out:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&wl->wl_lock, flags);
 }
 
 int wl1271_tx_dummy_packet(struct wl1271 *wl)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	int q;
 
 	/* no need to queue a new dummy packet if one is already pending */
@@ -1590,6 +2318,12 @@ int wl1271_tx_dummy_packet(struct wl1271 *wl)
 	spin_lock_irqsave(&wl->wl_lock, flags);
 	set_bit(WL1271_FLAG_DUMMY_PACKET_PENDING, &wl->flags);
 	wl->tx_queue_count[q]++;
+=======
+
+	spin_lock_irqsave(&wl->wl_lock, flags);
+	set_bit(WL1271_FLAG_DUMMY_PACKET_PENDING, &wl->flags);
+	wl->tx_queue_count++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&wl->wl_lock, flags);
 
 	/* The FW is low on RX memory blocks, so send the dummy packet asap */
@@ -1646,6 +2380,7 @@ static struct sk_buff *wl12xx_alloc_dummy_packet(struct wl1271 *wl)
 }
 
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 static int wl1271_configure_suspend_sta(struct wl1271 *wl,
 					struct wl12xx_vif *wlvif)
@@ -1656,11 +2391,27 @@ static int wl1271_configure_suspend_sta(struct wl1271 *wl,
 
 	if (!test_bit(WLVIF_FLAG_STA_ASSOCIATED, &wlvif->flags))
 		goto out_unlock;
+=======
+static struct notifier_block wl1271_dev_notifier = {
+	.notifier_call = wl1271_dev_notify,
+};
+
+#ifdef CONFIG_PM
+static int wl1271_configure_suspend(struct wl1271 *wl)
+{
+	int ret;
+
+	if (wl->bss_type != BSS_TYPE_STA_BSS)
+		return 0;
+
+	mutex_lock(&wl->mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = wl1271_ps_elp_wakeup(wl);
 	if (ret < 0)
 		goto out_unlock;
 
+<<<<<<< HEAD
 	ret = wl1271_acx_wake_up_conditions(wl, wlvif,
 				    wl->conf.conn.suspend_wake_up_event,
 				    wl->conf.conn.suspend_listen_interval);
@@ -1696,10 +2447,47 @@ static int wl1271_configure_suspend_ap(struct wl1271 *wl,
 	wl1271_ps_elp_sleep(wl);
 out_unlock:
 	mutex_unlock(&wl->mutex);
+=======
+	/* enter psm if needed*/
+	if (!test_bit(WL1271_FLAG_PSM, &wl->flags)) {
+		DECLARE_COMPLETION_ONSTACK(compl);
+
+		wl->ps_compl = &compl;
+		ret = wl1271_ps_set_mode(wl, STATION_POWER_SAVE_MODE,
+				   wl->basic_rate, true);
+		if (ret < 0)
+			goto out_sleep;
+
+		/* we must unlock here so we will be able to get events */
+		wl1271_ps_elp_sleep(wl);
+		mutex_unlock(&wl->mutex);
+
+		ret = wait_for_completion_timeout(
+			&compl, msecs_to_jiffies(WL1271_PS_COMPLETE_TIMEOUT));
+		if (ret <= 0) {
+			wl1271_warning("couldn't enter ps mode!");
+			ret = -EBUSY;
+			goto out;
+		}
+
+		/* take mutex again, and wakeup */
+		mutex_lock(&wl->mutex);
+
+		ret = wl1271_ps_elp_wakeup(wl);
+		if (ret < 0)
+			goto out_unlock;
+	}
+out_sleep:
+	wl1271_ps_elp_sleep(wl);
+out_unlock:
+	mutex_unlock(&wl->mutex);
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 
 }
 
+<<<<<<< HEAD
 static int wl1271_configure_suspend(struct wl1271 *wl,
 				    struct wl12xx_vif *wlvif)
 {
@@ -1718,6 +2506,13 @@ static void wl1271_configure_resume(struct wl1271 *wl,
 	bool is_sta = wlvif->bss_type == BSS_TYPE_STA_BSS;
 
 	if ((!is_ap) && (!is_sta))
+=======
+static void wl1271_configure_resume(struct wl1271 *wl)
+{
+	int ret;
+
+	if (wl->bss_type != BSS_TYPE_STA_BSS)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	mutex_lock(&wl->mutex);
@@ -1725,6 +2520,7 @@ static void wl1271_configure_resume(struct wl1271 *wl,
 	if (ret < 0)
 		goto out;
 
+<<<<<<< HEAD
 	if (is_sta) {
 		ret = wl1271_acx_wake_up_conditions(wl, wlvif,
 				    wl->conf.conn.wake_up_event,
@@ -1737,6 +2533,12 @@ static void wl1271_configure_resume(struct wl1271 *wl,
 	} else if (is_ap) {
 		ret = wl1271_acx_beacon_filter_opt(wl, wlvif, false);
 	}
+=======
+	/* exit psm if it wasn't configured */
+	if (!test_bit(WL1271_FLAG_PSM_REQUESTED, &wl->flags))
+		wl1271_ps_set_mode(wl, STATION_ACTIVE_MODE,
+				   wl->basic_rate, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wl1271_ps_elp_sleep(wl);
 out:
@@ -1747,6 +2549,7 @@ static int wl1271_op_suspend(struct ieee80211_hw *hw,
 			    struct cfg80211_wowlan *wow)
 {
 	struct wl1271 *wl = hw->priv;
+<<<<<<< HEAD
 	struct wl12xx_vif *wlvif;
 	int ret;
 
@@ -1758,10 +2561,18 @@ static int wl1271_op_suspend(struct ieee80211_hw *hw,
 	wl->wow_enabled = true;
 	wl12xx_for_each_wlvif(wl, wlvif) {
 		ret = wl1271_configure_suspend(wl, wlvif);
+=======
+	wl1271_debug(DEBUG_MAC80211, "mac80211 suspend wow=%d", !!wow);
+	wl->wow_enabled = !!wow;
+	if (wl->wow_enabled) {
+		int ret;
+		ret = wl1271_configure_suspend(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0) {
 			wl1271_warning("couldn't prepare device to suspend");
 			return ret;
 		}
+<<<<<<< HEAD
 	}
 	/* flush any remaining work */
 	wl1271_debug(DEBUG_MAC80211, "flushing remaining works");
@@ -1782,12 +2593,36 @@ static int wl1271_op_suspend(struct ieee80211_hw *hw,
 	flush_work(&wl->tx_work);
 	flush_delayed_work(&wl->elp_work);
 
+=======
+		/* flush any remaining work */
+		wl1271_debug(DEBUG_MAC80211, "flushing remaining works");
+		flush_delayed_work(&wl->scan_complete_work);
+
+		/*
+		 * disable and re-enable interrupts in order to flush
+		 * the threaded_irq
+		 */
+		wl1271_disable_interrupts(wl);
+
+		/*
+		 * set suspended flag to avoid triggering a new threaded_irq
+		 * work. no need for spinlock as interrupts are disabled.
+		 */
+		set_bit(WL1271_FLAG_SUSPENDED, &wl->flags);
+
+		wl1271_enable_interrupts(wl);
+		flush_work(&wl->tx_work);
+		flush_delayed_work(&wl->pspoll_work);
+		flush_delayed_work(&wl->elp_work);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int wl1271_op_resume(struct ieee80211_hw *hw)
 {
 	struct wl1271 *wl = hw->priv;
+<<<<<<< HEAD
 	struct wl12xx_vif *wlvif;
 	unsigned long flags;
 	bool run_irq_work = false;
@@ -1795,11 +2630,16 @@ static int wl1271_op_resume(struct ieee80211_hw *hw)
 	wl1271_debug(DEBUG_MAC80211, "mac80211 resume wow=%d",
 		     wl->wow_enabled);
 	WARN_ON(!wl->wow_enabled);
+=======
+	wl1271_debug(DEBUG_MAC80211, "mac80211 resume wow=%d",
+		     wl->wow_enabled);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * re-enable irq_work enqueuing, and call irq_work directly if
 	 * there is a pending work.
 	 */
+<<<<<<< HEAD
 	spin_lock_irqsave(&wl->wl_lock, flags);
 	clear_bit(WL1271_FLAG_SUSPENDED, &wl->flags);
 	if (test_and_clear_bit(WL1271_FLAG_PENDING_WORK, &wl->flags))
@@ -1816,6 +2656,28 @@ static int wl1271_op_resume(struct ieee80211_hw *hw)
 		wl1271_configure_resume(wl, wlvif);
 	}
 	wl->wow_enabled = false;
+=======
+	if (wl->wow_enabled) {
+		struct wl1271 *wl = hw->priv;
+		unsigned long flags;
+		bool run_irq_work = false;
+
+		spin_lock_irqsave(&wl->wl_lock, flags);
+		clear_bit(WL1271_FLAG_SUSPENDED, &wl->flags);
+		if (test_and_clear_bit(WL1271_FLAG_PENDING_WORK, &wl->flags))
+			run_irq_work = true;
+		spin_unlock_irqrestore(&wl->wl_lock, flags);
+
+		if (run_irq_work) {
+			wl1271_debug(DEBUG_MAC80211,
+				     "run postponed irq_work directly");
+			wl1271_irq(0, wl);
+			wl1271_enable_interrupts(wl);
+		}
+
+		wl1271_configure_resume(wl);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1834,6 +2696,12 @@ static int wl1271_op_start(struct ieee80211_hw *hw)
 	 *
 	 * The MAC address is first known when the corresponding interface
 	 * is added. That is where we will initialize the hardware.
+<<<<<<< HEAD
+=======
+	 *
+	 * In addition, we currently have different firmwares for AP and managed
+	 * operation. We will know which to boot according to interface type.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 
 	return 0;
@@ -1841,6 +2709,7 @@ static int wl1271_op_start(struct ieee80211_hw *hw)
 
 static void wl1271_op_stop(struct ieee80211_hw *hw)
 {
+<<<<<<< HEAD
 	struct wl1271 *wl = hw->priv;
 	int i;
 
@@ -2064,6 +2933,70 @@ static bool wl12xx_init_fw(struct wl1271 *wl)
 	while (retries) {
 		retries--;
 		ret = wl12xx_chip_wakeup(wl, false);
+=======
+	wl1271_debug(DEBUG_MAC80211, "mac80211 stop");
+}
+
+static int wl1271_op_add_interface(struct ieee80211_hw *hw,
+				   struct ieee80211_vif *vif)
+{
+	struct wl1271 *wl = hw->priv;
+	struct wiphy *wiphy = hw->wiphy;
+	int retries = WL1271_BOOT_RETRIES;
+	int ret = 0;
+	bool booted = false;
+
+	wl1271_debug(DEBUG_MAC80211, "mac80211 add interface type %d mac %pM",
+		     vif->type, vif->addr);
+
+	mutex_lock(&wl->mutex);
+	if (wl->vif) {
+		wl1271_debug(DEBUG_MAC80211,
+			     "multiple vifs are not supported yet");
+		ret = -EBUSY;
+		goto out;
+	}
+
+	/*
+	 * in some very corner case HW recovery scenarios its possible to
+	 * get here before __wl1271_op_remove_interface is complete, so
+	 * opt out if that is the case.
+	 */
+	if (test_bit(WL1271_FLAG_IF_INITIALIZED, &wl->flags)) {
+		ret = -EBUSY;
+		goto out;
+	}
+
+	switch (vif->type) {
+	case NL80211_IFTYPE_STATION:
+		wl->bss_type = BSS_TYPE_STA_BSS;
+		wl->set_bss_type = BSS_TYPE_STA_BSS;
+		break;
+	case NL80211_IFTYPE_ADHOC:
+		wl->bss_type = BSS_TYPE_IBSS;
+		wl->set_bss_type = BSS_TYPE_STA_BSS;
+		break;
+	case NL80211_IFTYPE_AP:
+		wl->bss_type = BSS_TYPE_AP_BSS;
+		break;
+	default:
+		ret = -EOPNOTSUPP;
+		goto out;
+	}
+
+	memcpy(wl->mac_addr, vif->addr, ETH_ALEN);
+
+	if (wl->state != WL1271_STATE_OFF) {
+		wl1271_error("cannot start because not in off state: %d",
+			     wl->state);
+		ret = -EBUSY;
+		goto out;
+	}
+
+	while (retries) {
+		retries--;
+		ret = wl1271_chip_wakeup(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0)
 			goto power_off;
 
@@ -2101,6 +3034,12 @@ power_off:
 		goto out;
 	}
 
+<<<<<<< HEAD
+=======
+	wl->vif = vif;
+	wl->state = WL1271_STATE_ON;
+	set_bit(WL1271_FLAG_IF_INITIALIZED, &wl->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wl1271_info("firmware booted (%s)", wl->chip.fw_ver_str);
 
 	/* update hw/fw version info in wiphy struct */
@@ -2108,6 +3047,12 @@ power_off:
 	strncpy(wiphy->fw_version, wl->chip.fw_ver_str,
 		sizeof(wiphy->fw_version));
 
+<<<<<<< HEAD
+=======
+	/* Check if any quirks are needed with older fw versions */
+	wl->quirks |= wl1271_get_fw_ver_quirks(wl);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Now we know if 11a is supported (info from the NVS), so disable
 	 * 11a channels if not supported
@@ -2118,6 +3063,7 @@ power_off:
 	wl1271_debug(DEBUG_MAC80211, "11a is %ssupported",
 		     wl->enable_11a ? "" : "not ");
 
+<<<<<<< HEAD
 	wl->state = WL1271_STATE_ON;
 out:
 	return booted;
@@ -2284,10 +3230,21 @@ out:
 out_unlock:
 	mutex_unlock(&wl->mutex);
 
+=======
+out:
+	mutex_unlock(&wl->mutex);
+
+	mutex_lock(&wl_list_mutex);
+	if (!ret)
+		list_add(&wl->list, &wl_list);
+	mutex_unlock(&wl_list_mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static void __wl1271_op_remove_interface(struct wl1271 *wl,
+<<<<<<< HEAD
 					 struct ieee80211_vif *vif,
 					 bool reset_tx_queues)
 {
@@ -2299,12 +3256,21 @@ static void __wl1271_op_remove_interface(struct wl1271 *wl,
 	if (!test_and_clear_bit(WLVIF_FLAG_INITIALIZED, &wlvif->flags))
 		return;
 
+=======
+					 bool reset_tx_queues)
+{
+	int i;
+
+	wl1271_debug(DEBUG_MAC80211, "mac80211 remove interface");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* because of hardware recovery, we may get here twice */
 	if (wl->state != WL1271_STATE_ON)
 		return;
 
 	wl1271_info("down");
 
+<<<<<<< HEAD
 	if (wl->scan.state != WL1271_SCAN_STATE_IDLE &&
 	    wl->scan_vif == vif) {
 		/*
@@ -2316,10 +3282,24 @@ static void __wl1271_op_remove_interface(struct wl1271 *wl,
 		wl->scan.state = WL1271_SCAN_STATE_IDLE;
 		memset(wl->scan.scanned_ch, 0, sizeof(wl->scan.scanned_ch));
 		wl->scan_vif = NULL;
+=======
+	mutex_lock(&wl_list_mutex);
+	list_del(&wl->list);
+	mutex_unlock(&wl_list_mutex);
+
+	/* enable dyn ps just in case (if left on due to fw crash etc) */
+	if (wl->bss_type == BSS_TYPE_STA_BSS)
+		ieee80211_enable_dyn_ps(wl->vif);
+
+	if (wl->scan.state != WL1271_SCAN_STATE_IDLE) {
+		wl->scan.state = WL1271_SCAN_STATE_IDLE;
+		memset(wl->scan.scanned_ch, 0, sizeof(wl->scan.scanned_ch));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wl->scan.req = NULL;
 		ieee80211_scan_completed(wl->hw, true);
 	}
 
+<<<<<<< HEAD
 	if (!test_bit(WL1271_FLAG_RECOVERY_IN_PROGRESS, &wl->flags)) {
 		/* disable active roles */
 		ret = wl1271_ps_elp_wakeup(wl);
@@ -2383,12 +3363,82 @@ deinit:
 	cancel_work_sync(&wlvif->rx_streaming_disable_work);
 
 	mutex_lock(&wl->mutex);
+=======
+	/*
+	 * this must be before the cancel_work calls below, so that the work
+	 * functions don't perform further work.
+	 */
+	wl->state = WL1271_STATE_OFF;
+
+	mutex_unlock(&wl->mutex);
+
+	wl1271_disable_interrupts(wl);
+	wl1271_flush_deferred_work(wl);
+	cancel_delayed_work_sync(&wl->scan_complete_work);
+	cancel_work_sync(&wl->netstack_work);
+	cancel_work_sync(&wl->tx_work);
+	cancel_delayed_work_sync(&wl->pspoll_work);
+	cancel_delayed_work_sync(&wl->elp_work);
+
+	mutex_lock(&wl->mutex);
+
+	/* let's notify MAC80211 about the remaining pending TX frames */
+	wl1271_tx_reset(wl, reset_tx_queues);
+	wl1271_power_off(wl);
+
+	memset(wl->bssid, 0, ETH_ALEN);
+	memset(wl->ssid, 0, IW_ESSID_MAX_SIZE + 1);
+	wl->ssid_len = 0;
+	wl->bss_type = MAX_BSS_TYPE;
+	wl->set_bss_type = MAX_BSS_TYPE;
+	wl->band = IEEE80211_BAND_2GHZ;
+
+	wl->rx_counter = 0;
+	wl->psm_entry_retry = 0;
+	wl->power_level = WL1271_DEFAULT_POWER_LEVEL;
+	wl->tx_blocks_available = 0;
+	wl->tx_allocated_blocks = 0;
+	wl->tx_results_count = 0;
+	wl->tx_packets_count = 0;
+	wl->tx_security_last_seq = 0;
+	wl->tx_security_seq = 0;
+	wl->time_offset = 0;
+	wl->session_counter = 0;
+	wl->rate_set = CONF_TX_RATE_MASK_BASIC;
+	wl->vif = NULL;
+	wl->filters = 0;
+	wl1271_free_ap_keys(wl);
+	memset(wl->ap_hlid_map, 0, sizeof(wl->ap_hlid_map));
+	wl->ap_fw_ps_map = 0;
+	wl->ap_ps_map = 0;
+	wl->sched_scanning = false;
+
+	/*
+	 * this is performed after the cancel_work calls and the associated
+	 * mutex_lock, so that wl1271_op_add_interface does not accidentally
+	 * get executed before all these vars have been reset.
+	 */
+	wl->flags = 0;
+
+	for (i = 0; i < NUM_TX_QUEUES; i++)
+		wl->tx_blocks_freed[i] = 0;
+
+	wl1271_debugfs_reset(wl);
+
+	kfree(wl->fw_status);
+	wl->fw_status = NULL;
+	kfree(wl->tx_res_if);
+	wl->tx_res_if = NULL;
+	kfree(wl->target_mem_map);
+	wl->target_mem_map = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void wl1271_op_remove_interface(struct ieee80211_hw *hw,
 				       struct ieee80211_vif *vif)
 {
 	struct wl1271 *wl = hw->priv;
+<<<<<<< HEAD
 	struct wl12xx_vif *wlvif = wl12xx_vif_to_data(vif);
 	struct wl12xx_vif *iter;
 	struct vif_counter_data vif_count;
@@ -2401,10 +3451,15 @@ static void wl1271_op_remove_interface(struct ieee80211_hw *hw,
 	    !test_bit(WLVIF_FLAG_INITIALIZED, &wlvif->flags))
 		goto out;
 
+=======
+
+	mutex_lock(&wl->mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * wl->vif can be null here if someone shuts down the interface
 	 * just when hardware recovery has been started.
 	 */
+<<<<<<< HEAD
 	wl12xx_for_each_wlvif(wl, iter) {
 		if (iter != wlvif)
 			continue;
@@ -2448,6 +3503,75 @@ static int wl1271_join(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 {
 	int ret;
 	bool is_ibss = (wlvif->bss_type == BSS_TYPE_IBSS);
+=======
+	if (wl->vif) {
+		WARN_ON(wl->vif != vif);
+		__wl1271_op_remove_interface(wl, true);
+	}
+
+	mutex_unlock(&wl->mutex);
+	cancel_work_sync(&wl->recovery_work);
+}
+
+void wl1271_configure_filters(struct wl1271 *wl, unsigned int filters)
+{
+	wl1271_set_default_filters(wl);
+
+	/* combine requested filters with current filter config */
+	filters = wl->filters | filters;
+
+	wl1271_debug(DEBUG_FILTERS, "RX filters set: ");
+
+	if (filters & FIF_PROMISC_IN_BSS) {
+		wl1271_debug(DEBUG_FILTERS, " - FIF_PROMISC_IN_BSS");
+		wl->rx_config &= ~CFG_UNI_FILTER_EN;
+		wl->rx_config |= CFG_BSSID_FILTER_EN;
+	}
+	if (filters & FIF_BCN_PRBRESP_PROMISC) {
+		wl1271_debug(DEBUG_FILTERS, " - FIF_BCN_PRBRESP_PROMISC");
+		wl->rx_config &= ~CFG_BSSID_FILTER_EN;
+		wl->rx_config &= ~CFG_SSID_FILTER_EN;
+	}
+	if (filters & FIF_OTHER_BSS) {
+		wl1271_debug(DEBUG_FILTERS, " - FIF_OTHER_BSS");
+		wl->rx_config &= ~CFG_BSSID_FILTER_EN;
+	}
+	if (filters & FIF_CONTROL) {
+		wl1271_debug(DEBUG_FILTERS, " - FIF_CONTROL");
+		wl->rx_filter |= CFG_RX_CTL_EN;
+	}
+	if (filters & FIF_FCSFAIL) {
+		wl1271_debug(DEBUG_FILTERS, " - FIF_FCSFAIL");
+		wl->rx_filter |= CFG_RX_FCS_ERROR;
+	}
+}
+
+static int wl1271_dummy_join(struct wl1271 *wl)
+{
+	int ret = 0;
+	/* we need to use a dummy BSSID for now */
+	static const u8 dummy_bssid[ETH_ALEN] = { 0x0b, 0xad, 0xde,
+						  0xad, 0xbe, 0xef };
+
+	memcpy(wl->bssid, dummy_bssid, ETH_ALEN);
+
+	/* pass through frames from all BSS */
+	wl1271_configure_filters(wl, FIF_OTHER_BSS);
+
+	ret = wl1271_cmd_join(wl, wl->set_bss_type);
+	if (ret < 0)
+		goto out;
+
+	set_bit(WL1271_FLAG_JOINED, &wl->flags);
+
+out:
+	return ret;
+}
+
+static int wl1271_join(struct wl1271 *wl, bool set_assoc)
+{
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * One of the side effects of the JOIN command is that is clears
@@ -2458,6 +3582,7 @@ static int wl1271_join(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	 * Keep the below message for now, unless it starts bothering
 	 * users who really like to roam a lot :)
 	 */
+<<<<<<< HEAD
 	if (test_bit(WLVIF_FLAG_STA_ASSOCIATED, &wlvif->flags))
 		wl1271_info("JOIN while associated.");
 
@@ -2475,6 +3600,21 @@ static int wl1271_join(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 
 	if (!test_bit(WLVIF_FLAG_STA_ASSOCIATED, &wlvif->flags))
+=======
+	if (test_bit(WL1271_FLAG_STA_ASSOCIATED, &wl->flags))
+		wl1271_info("JOIN while associated.");
+
+	if (set_assoc)
+		set_bit(WL1271_FLAG_STA_ASSOCIATED, &wl->flags);
+
+	ret = wl1271_cmd_join(wl, wl->set_bss_type);
+	if (ret < 0)
+		goto out;
+
+	set_bit(WL1271_FLAG_JOINED, &wl->flags);
+
+	if (!test_bit(WL1271_FLAG_STA_ASSOCIATED, &wl->flags))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	/*
@@ -2483,6 +3623,7 @@ static int wl1271_join(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	 * the join. The acx_aid starts the keep-alive process, and the order
 	 * of the commands below is relevant.
 	 */
+<<<<<<< HEAD
 	ret = wl1271_acx_keep_alive_mode(wl, wlvif, true);
 	if (ret < 0)
 		goto out;
@@ -2497,6 +3638,21 @@ static int wl1271_join(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 
 	ret = wl1271_acx_keep_alive_config(wl, wlvif,
 					   CMD_TEMPL_KLV_IDX_NULL_DATA,
+=======
+	ret = wl1271_acx_keep_alive_mode(wl, true);
+	if (ret < 0)
+		goto out;
+
+	ret = wl1271_acx_aid(wl, wl->aid);
+	if (ret < 0)
+		goto out;
+
+	ret = wl1271_cmd_build_klv_null_data(wl);
+	if (ret < 0)
+		goto out;
+
+	ret = wl1271_acx_keep_alive_config(wl, CMD_TEMPL_KLV_IDX_NULL_DATA,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					   ACX_KEEP_ALIVE_TPL_VALID);
 	if (ret < 0)
 		goto out;
@@ -2505,6 +3661,7 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int wl1271_unjoin(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 {
 	int ret;
@@ -2524,11 +3681,28 @@ static int wl1271_unjoin(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 	/* reset TX security counters on a clean disconnect */
 	wlvif->tx_security_last_seq_lsb = 0;
 	wlvif->tx_security_seq = 0;
+=======
+static int wl1271_unjoin(struct wl1271 *wl)
+{
+	int ret;
+
+	/* to stop listening to a channel, we disconnect */
+	ret = wl1271_cmd_disconnect(wl);
+	if (ret < 0)
+		goto out;
+
+	clear_bit(WL1271_FLAG_JOINED, &wl->flags);
+	memset(wl->bssid, 0, ETH_ALEN);
+
+	/* stop filtering packets based on bssid */
+	wl1271_configure_filters(wl, FIF_OTHER_BSS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	return ret;
 }
 
+<<<<<<< HEAD
 static void wl1271_set_band_rate(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 {
 	wlvif->basic_rate_set = wlvif->bitrate_masks[wlvif->band];
@@ -2680,14 +3854,70 @@ static int wl12xx_config_vif(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	}
 
 	return 0;
+=======
+static void wl1271_set_band_rate(struct wl1271 *wl)
+{
+	if (wl->band == IEEE80211_BAND_2GHZ)
+		wl->basic_rate_set = wl->conf.tx.basic_rate;
+	else
+		wl->basic_rate_set = wl->conf.tx.basic_rate_5;
+}
+
+static int wl1271_sta_handle_idle(struct wl1271 *wl, bool idle)
+{
+	int ret;
+
+	if (idle) {
+		if (test_bit(WL1271_FLAG_JOINED, &wl->flags)) {
+			ret = wl1271_unjoin(wl);
+			if (ret < 0)
+				goto out;
+		}
+		wl->rate_set = wl1271_tx_min_rate_get(wl);
+		ret = wl1271_acx_sta_rate_policies(wl);
+		if (ret < 0)
+			goto out;
+		ret = wl1271_acx_keep_alive_config(
+			wl, CMD_TEMPL_KLV_IDX_NULL_DATA,
+			ACX_KEEP_ALIVE_TPL_INVALID);
+		if (ret < 0)
+			goto out;
+		set_bit(WL1271_FLAG_IDLE, &wl->flags);
+	} else {
+		/* increment the session counter */
+		wl->session_counter++;
+		if (wl->session_counter >= SESSION_COUNTER_MAX)
+			wl->session_counter = 0;
+
+		/* The current firmware only supports sched_scan in idle */
+		if (wl->sched_scanning) {
+			wl1271_scan_sched_scan_stop(wl);
+			ieee80211_sched_scan_stopped(wl->hw);
+		}
+
+		ret = wl1271_dummy_join(wl);
+		if (ret < 0)
+			goto out;
+		clear_bit(WL1271_FLAG_IDLE, &wl->flags);
+	}
+
+out:
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int wl1271_op_config(struct ieee80211_hw *hw, u32 changed)
 {
 	struct wl1271 *wl = hw->priv;
+<<<<<<< HEAD
 	struct wl12xx_vif *wlvif;
 	struct ieee80211_conf *conf = &hw->conf;
 	int channel, ret = 0;
+=======
+	struct ieee80211_conf *conf = &hw->conf;
+	int channel, ret = 0;
+	bool is_ap;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	channel = ieee80211_frequency_to_channel(conf->channel->center_freq);
 
@@ -2710,6 +3940,7 @@ static int wl1271_op_config(struct ieee80211_hw *hw, u32 changed)
 
 	mutex_lock(&wl->mutex);
 
+<<<<<<< HEAD
 	/* we support configuring the channel and band even while off */
 	if (changed & IEEE80211_CONF_CHANGE_CHANNEL) {
 		wl->band = conf->channel->band;
@@ -2721,16 +3952,109 @@ static int wl1271_op_config(struct ieee80211_hw *hw, u32 changed)
 
 	if (unlikely(wl->state == WL1271_STATE_OFF))
 		goto out;
+=======
+	if (unlikely(wl->state == WL1271_STATE_OFF)) {
+		/* we support configuring the channel and band while off */
+		if ((changed & IEEE80211_CONF_CHANGE_CHANNEL)) {
+			wl->band = conf->channel->band;
+			wl->channel = channel;
+		}
+
+		goto out;
+	}
+
+	is_ap = (wl->bss_type == BSS_TYPE_AP_BSS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = wl1271_ps_elp_wakeup(wl);
 	if (ret < 0)
 		goto out;
 
+<<<<<<< HEAD
 	/* configure each interface */
 	wl12xx_for_each_wlvif(wl, wlvif) {
 		ret = wl12xx_config_vif(wl, wlvif, conf, changed);
 		if (ret < 0)
 			goto out_sleep;
+=======
+	/* if the channel changes while joined, join again */
+	if (changed & IEEE80211_CONF_CHANGE_CHANNEL &&
+	    ((wl->band != conf->channel->band) ||
+	     (wl->channel != channel))) {
+		wl->band = conf->channel->band;
+		wl->channel = channel;
+
+		if (!is_ap) {
+			/*
+			 * FIXME: the mac80211 should really provide a fixed
+			 * rate to use here. for now, just use the smallest
+			 * possible rate for the band as a fixed rate for
+			 * association frames and other control messages.
+			 */
+			if (!test_bit(WL1271_FLAG_STA_ASSOCIATED, &wl->flags))
+				wl1271_set_band_rate(wl);
+
+			wl->basic_rate = wl1271_tx_min_rate_get(wl);
+			ret = wl1271_acx_sta_rate_policies(wl);
+			if (ret < 0)
+				wl1271_warning("rate policy for channel "
+					       "failed %d", ret);
+
+			if (test_bit(WL1271_FLAG_JOINED, &wl->flags)) {
+				ret = wl1271_join(wl, false);
+				if (ret < 0)
+					wl1271_warning("cmd join on channel "
+						       "failed %d", ret);
+			}
+		}
+	}
+
+	if (changed & IEEE80211_CONF_CHANGE_IDLE && !is_ap) {
+		ret = wl1271_sta_handle_idle(wl,
+					conf->flags & IEEE80211_CONF_IDLE);
+		if (ret < 0)
+			wl1271_warning("idle mode change failed %d", ret);
+	}
+
+	/*
+	 * if mac80211 changes the PSM mode, make sure the mode is not
+	 * incorrectly changed after the pspoll failure active window.
+	 */
+	if (changed & IEEE80211_CONF_CHANGE_PS)
+		clear_bit(WL1271_FLAG_PSPOLL_FAILURE, &wl->flags);
+
+	if (conf->flags & IEEE80211_CONF_PS &&
+	    !test_bit(WL1271_FLAG_PSM_REQUESTED, &wl->flags)) {
+		set_bit(WL1271_FLAG_PSM_REQUESTED, &wl->flags);
+
+		/*
+		 * We enter PSM only if we're already associated.
+		 * If we're not, we'll enter it when joining an SSID,
+		 * through the bss_info_changed() hook.
+		 */
+		if (test_bit(WL1271_FLAG_STA_ASSOCIATED, &wl->flags)) {
+			wl1271_debug(DEBUG_PSM, "psm enabled");
+			ret = wl1271_ps_set_mode(wl, STATION_POWER_SAVE_MODE,
+						 wl->basic_rate, true);
+		}
+	} else if (!(conf->flags & IEEE80211_CONF_PS) &&
+		   test_bit(WL1271_FLAG_PSM_REQUESTED, &wl->flags)) {
+		wl1271_debug(DEBUG_PSM, "psm disabled");
+
+		clear_bit(WL1271_FLAG_PSM_REQUESTED, &wl->flags);
+
+		if (test_bit(WL1271_FLAG_PSM, &wl->flags))
+			ret = wl1271_ps_set_mode(wl, STATION_ACTIVE_MODE,
+						 wl->basic_rate, true);
+	}
+
+	if (conf->power_level != wl->power_level) {
+		ret = wl1271_acx_tx_power(wl, conf->power_level);
+		if (ret < 0)
+			goto out_sleep;
+
+		wl->power_level = conf->power_level;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 out_sleep:
@@ -2793,8 +4117,11 @@ static void wl1271_op_configure_filter(struct ieee80211_hw *hw,
 {
 	struct wl1271_filter_params *fp = (void *)(unsigned long)multicast;
 	struct wl1271 *wl = hw->priv;
+<<<<<<< HEAD
 	struct wl12xx_vif *wlvif;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	wl1271_debug(DEBUG_MAC80211, "mac80211 configure filter changed %x"
@@ -2812,6 +4139,7 @@ static void wl1271_op_configure_filter(struct ieee80211_hw *hw,
 	if (ret < 0)
 		goto out;
 
+<<<<<<< HEAD
 	wl12xx_for_each_wlvif(wl, wlvif) {
 		if (wlvif->bss_type != BSS_TYPE_AP_BSS) {
 			if (*total & FIF_ALLMULTI)
@@ -2833,6 +4161,31 @@ static void wl1271_op_configure_filter(struct ieee80211_hw *hw,
 	 * the filters configuration is based on the active roles / ROC
 	 * state.
 	 */
+=======
+	if (wl->bss_type != BSS_TYPE_AP_BSS) {
+		if (*total & FIF_ALLMULTI)
+			ret = wl1271_acx_group_address_tbl(wl, false, NULL, 0);
+		else if (fp)
+			ret = wl1271_acx_group_address_tbl(wl, fp->enabled,
+							   fp->mc_list,
+							   fp->mc_list_length);
+		if (ret < 0)
+			goto out_sleep;
+	}
+
+	/* determine, whether supported filter values have changed */
+	if (changed == 0)
+		goto out_sleep;
+
+	/* configure filters */
+	wl->filters = *total;
+	wl1271_configure_filters(wl, 0);
+
+	/* apply configured filters */
+	ret = wl1271_acx_rx_config(wl, wl->rx_config, wl->rx_filter);
+	if (ret < 0)
+		goto out_sleep;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out_sleep:
 	wl1271_ps_elp_sleep(wl);
@@ -2842,10 +4195,16 @@ out:
 	kfree(fp);
 }
 
+<<<<<<< HEAD
 static int wl1271_record_ap_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 				u8 id, u8 key_type, u8 key_size,
 				const u8 *key, u8 hlid, u32 tx_seq_32,
 				u16 tx_seq_16)
+=======
+static int wl1271_record_ap_key(struct wl1271 *wl, u8 id, u8 key_type,
+			u8 key_size, const u8 *key, u8 hlid, u32 tx_seq_32,
+			u16 tx_seq_16)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct wl1271_ap_key *ap_key;
 	int i;
@@ -2860,10 +4219,17 @@ static int wl1271_record_ap_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	 * an existing key.
 	 */
 	for (i = 0; i < MAX_NUM_KEYS; i++) {
+<<<<<<< HEAD
 		if (wlvif->ap.recorded_keys[i] == NULL)
 			break;
 
 		if (wlvif->ap.recorded_keys[i]->id == id) {
+=======
+		if (wl->recorded_ap_keys[i] == NULL)
+			break;
+
+		if (wl->recorded_ap_keys[i]->id == id) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			wl1271_warning("trying to record key replacement");
 			return -EINVAL;
 		}
@@ -2884,27 +4250,45 @@ static int wl1271_record_ap_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	ap_key->tx_seq_32 = tx_seq_32;
 	ap_key->tx_seq_16 = tx_seq_16;
 
+<<<<<<< HEAD
 	wlvif->ap.recorded_keys[i] = ap_key;
 	return 0;
 }
 
 static void wl1271_free_ap_keys(struct wl1271 *wl, struct wl12xx_vif *wlvif)
+=======
+	wl->recorded_ap_keys[i] = ap_key;
+	return 0;
+}
+
+static void wl1271_free_ap_keys(struct wl1271 *wl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 
 	for (i = 0; i < MAX_NUM_KEYS; i++) {
+<<<<<<< HEAD
 		kfree(wlvif->ap.recorded_keys[i]);
 		wlvif->ap.recorded_keys[i] = NULL;
 	}
 }
 
 static int wl1271_ap_init_hwenc(struct wl1271 *wl, struct wl12xx_vif *wlvif)
+=======
+		kfree(wl->recorded_ap_keys[i]);
+		wl->recorded_ap_keys[i] = NULL;
+	}
+}
+
+static int wl1271_ap_init_hwenc(struct wl1271 *wl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i, ret = 0;
 	struct wl1271_ap_key *key;
 	bool wep_key_added = false;
 
 	for (i = 0; i < MAX_NUM_KEYS; i++) {
+<<<<<<< HEAD
 		u8 hlid;
 		if (wlvif->ap.recorded_keys[i] == NULL)
 			break;
@@ -2918,6 +4302,16 @@ static int wl1271_ap_init_hwenc(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 					    key->id, key->key_type,
 					    key->key_size, key->key,
 					    hlid, key->tx_seq_32,
+=======
+		if (wl->recorded_ap_keys[i] == NULL)
+			break;
+
+		key = wl->recorded_ap_keys[i];
+		ret = wl1271_cmd_set_ap_key(wl, KEY_ADD_OR_REPLACE,
+					    key->id, key->key_type,
+					    key->key_size, key->key,
+					    key->hlid, key->tx_seq_32,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					    key->tx_seq_16);
 		if (ret < 0)
 			goto out;
@@ -2927,24 +4321,40 @@ static int wl1271_ap_init_hwenc(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 	}
 
 	if (wep_key_added) {
+<<<<<<< HEAD
 		ret = wl12xx_cmd_set_default_wep_key(wl, wlvif->default_key,
 						     wlvif->ap.bcast_hlid);
+=======
+		ret = wl1271_cmd_set_ap_default_wep_key(wl, wl->default_key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0)
 			goto out;
 	}
 
 out:
+<<<<<<< HEAD
 	wl1271_free_ap_keys(wl, wlvif);
 	return ret;
 }
 
 static int wl1271_set_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		       u16 action, u8 id, u8 key_type,
+=======
+	wl1271_free_ap_keys(wl);
+	return ret;
+}
+
+static int wl1271_set_key(struct wl1271 *wl, u16 action, u8 id, u8 key_type,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       u8 key_size, const u8 *key, u32 tx_seq_32,
 		       u16 tx_seq_16, struct ieee80211_sta *sta)
 {
 	int ret;
+<<<<<<< HEAD
 	bool is_ap = (wlvif->bss_type == BSS_TYPE_AP_BSS);
+=======
+	bool is_ap = (wl->bss_type == BSS_TYPE_AP_BSS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (is_ap) {
 		struct wl1271_station *wl_sta;
@@ -2954,10 +4364,17 @@ static int wl1271_set_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			wl_sta = (struct wl1271_station *)sta->drv_priv;
 			hlid = wl_sta->hlid;
 		} else {
+<<<<<<< HEAD
 			hlid = wlvif->ap.bcast_hlid;
 		}
 
 		if (!test_bit(WLVIF_FLAG_AP_STARTED, &wlvif->flags)) {
+=======
+			hlid = WL1271_AP_BROADCAST_HLID;
+		}
+
+		if (!test_bit(WL1271_FLAG_AP_STARTED, &wl->flags)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * We do not support removing keys after AP shutdown.
 			 * Pretend we do to make mac80211 happy.
@@ -2965,12 +4382,20 @@ static int wl1271_set_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			if (action != KEY_ADD_OR_REPLACE)
 				return 0;
 
+<<<<<<< HEAD
 			ret = wl1271_record_ap_key(wl, wlvif, id,
+=======
+			ret = wl1271_record_ap_key(wl, id,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					     key_type, key_size,
 					     key, hlid, tx_seq_32,
 					     tx_seq_16);
 		} else {
+<<<<<<< HEAD
 			ret = wl1271_cmd_set_ap_key(wl, wlvif, action,
+=======
+			ret = wl1271_cmd_set_ap_key(wl, action,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					     id, key_type, key_size,
 					     key, hlid, tx_seq_32,
 					     tx_seq_16);
@@ -2984,6 +4409,7 @@ static int wl1271_set_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			0xff, 0xff, 0xff, 0xff, 0xff, 0xff
 		};
 
+<<<<<<< HEAD
 		/*
 		 * A STA set to GEM cipher requires 2 tx spare blocks.
 		 * Return to default value when GEM cipher key is removed
@@ -2995,6 +4421,8 @@ static int wl1271_set_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 				wl->tx_spare_blocks = TX_HW_BLOCK_SPARE_DEFAULT;
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		addr = sta ? sta->addr : bcast_addr;
 
 		if (is_zero_ether_addr(addr)) {
@@ -3009,12 +4437,16 @@ static int wl1271_set_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		if (action == KEY_REMOVE && !is_broadcast_ether_addr(addr))
 			return 0;
 
+<<<<<<< HEAD
 		/* don't remove key if hlid was already deleted */
 		if (action == KEY_REMOVE &&
 		    wlvif->sta.hlid == WL12XX_INVALID_LINK_ID)
 			return 0;
 
 		ret = wl1271_cmd_set_sta_key(wl, wlvif, action,
+=======
+		ret = wl1271_cmd_set_sta_key(wl, action,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					     id, key_type, key_size,
 					     key, addr, tx_seq_32,
 					     tx_seq_16);
@@ -3023,9 +4455,14 @@ static int wl1271_set_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 
 		/* the default WEP key needs to be configured at least once */
 		if (key_type == KEY_WEP) {
+<<<<<<< HEAD
 			ret = wl12xx_cmd_set_default_wep_key(wl,
 							wlvif->default_key,
 							wlvif->sta.hlid);
+=======
+			ret = wl1271_cmd_set_sta_default_wep_key(wl,
+							wl->default_key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret < 0)
 				return ret;
 		}
@@ -3040,7 +4477,10 @@ static int wl1271_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 			     struct ieee80211_key_conf *key_conf)
 {
 	struct wl1271 *wl = hw->priv;
+<<<<<<< HEAD
 	struct wl12xx_vif *wlvif = wl12xx_vif_to_data(vif);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 	u32 tx_seq_32 = 0;
 	u16 tx_seq_16 = 0;
@@ -3076,12 +4516,18 @@ static int wl1271_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 		key_type = KEY_TKIP;
 
 		key_conf->hw_key_idx = key_conf->keyidx;
+<<<<<<< HEAD
 		tx_seq_32 = WL1271_TX_SECURITY_HI32(wlvif->tx_security_seq);
 		tx_seq_16 = WL1271_TX_SECURITY_LO16(wlvif->tx_security_seq);
+=======
+		tx_seq_32 = WL1271_TX_SECURITY_HI32(wl->tx_security_seq);
+		tx_seq_16 = WL1271_TX_SECURITY_LO16(wl->tx_security_seq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case WLAN_CIPHER_SUITE_CCMP:
 		key_type = KEY_AES;
 
+<<<<<<< HEAD
 		key_conf->flags |= IEEE80211_KEY_FLAG_PUT_IV_SPACE;
 		tx_seq_32 = WL1271_TX_SECURITY_HI32(wlvif->tx_security_seq);
 		tx_seq_16 = WL1271_TX_SECURITY_LO16(wlvif->tx_security_seq);
@@ -3090,6 +4536,16 @@ static int wl1271_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 		key_type = KEY_GEM;
 		tx_seq_32 = WL1271_TX_SECURITY_HI32(wlvif->tx_security_seq);
 		tx_seq_16 = WL1271_TX_SECURITY_LO16(wlvif->tx_security_seq);
+=======
+		key_conf->flags |= IEEE80211_KEY_FLAG_GENERATE_IV;
+		tx_seq_32 = WL1271_TX_SECURITY_HI32(wl->tx_security_seq);
+		tx_seq_16 = WL1271_TX_SECURITY_LO16(wl->tx_security_seq);
+		break;
+	case WL1271_CIPHER_SUITE_GEM:
+		key_type = KEY_GEM;
+		tx_seq_32 = WL1271_TX_SECURITY_HI32(wl->tx_security_seq);
+		tx_seq_16 = WL1271_TX_SECURITY_LO16(wl->tx_security_seq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		wl1271_error("Unknown key algo 0x%x", key_conf->cipher);
@@ -3100,7 +4556,11 @@ static int wl1271_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 
 	switch (cmd) {
 	case SET_KEY:
+<<<<<<< HEAD
 		ret = wl1271_set_key(wl, wlvif, KEY_ADD_OR_REPLACE,
+=======
+		ret = wl1271_set_key(wl, KEY_ADD_OR_REPLACE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 key_conf->keyidx, key_type,
 				 key_conf->keylen, key_conf->key,
 				 tx_seq_32, tx_seq_16, sta);
@@ -3108,6 +4568,7 @@ static int wl1271_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 			wl1271_error("Could not add or replace key");
 			goto out_sleep;
 		}
+<<<<<<< HEAD
 
 		/*
 		 * reconfiguring arp response if the unicast (or common)
@@ -3127,6 +4588,12 @@ static int wl1271_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 
 	case DISABLE_KEY:
 		ret = wl1271_set_key(wl, wlvif, KEY_REMOVE,
+=======
+		break;
+
+	case DISABLE_KEY:
+		ret = wl1271_set_key(wl, KEY_REMOVE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     key_conf->keyidx, key_type,
 				     key_conf->keylen, key_conf->key,
 				     0, 0, sta);
@@ -3183,6 +4650,7 @@ static int wl1271_op_hw_scan(struct ieee80211_hw *hw,
 	if (ret < 0)
 		goto out;
 
+<<<<<<< HEAD
 	/* fail if there is any role in ROC */
 	if (find_first_bit(wl->roc_map, WL12XX_MAX_ROLES) < WL12XX_MAX_ROLES) {
 		/* don't allow scanning right now */
@@ -3243,6 +4711,16 @@ out:
 	mutex_unlock(&wl->mutex);
 
 	cancel_delayed_work_sync(&wl->scan_complete_work);
+=======
+	ret = wl1271_scan(hw->priv, ssid, len, req);
+
+	wl1271_ps_elp_sleep(wl);
+
+out:
+	mutex_unlock(&wl->mutex);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int wl1271_op_sched_scan_start(struct ieee80211_hw *hw,
@@ -3251,27 +4729,41 @@ static int wl1271_op_sched_scan_start(struct ieee80211_hw *hw,
 				      struct ieee80211_sched_scan_ies *ies)
 {
 	struct wl1271 *wl = hw->priv;
+<<<<<<< HEAD
 	struct wl12xx_vif *wlvif = wl12xx_vif_to_data(vif);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	wl1271_debug(DEBUG_MAC80211, "wl1271_op_sched_scan_start");
 
 	mutex_lock(&wl->mutex);
 
+<<<<<<< HEAD
 	if (wl->state == WL1271_STATE_OFF) {
 		ret = -EAGAIN;
 		goto out;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = wl1271_ps_elp_wakeup(wl);
 	if (ret < 0)
 		goto out;
 
+<<<<<<< HEAD
 	ret = wl1271_scan_sched_scan_config(wl, wlvif, req, ies);
 	if (ret < 0)
 		goto out_sleep;
 
 	ret = wl1271_scan_sched_scan_start(wl, wlvif);
+=======
+	ret = wl1271_scan_sched_scan_config(wl, req, ies);
+	if (ret < 0)
+		goto out_sleep;
+
+	ret = wl1271_scan_sched_scan_start(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		goto out_sleep;
 
@@ -3294,9 +4786,12 @@ static void wl1271_op_sched_scan_stop(struct ieee80211_hw *hw,
 
 	mutex_lock(&wl->mutex);
 
+<<<<<<< HEAD
 	if (wl->state == WL1271_STATE_OFF)
 		goto out;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = wl1271_ps_elp_wakeup(wl);
 	if (ret < 0)
 		goto out;
@@ -3339,7 +4834,10 @@ out:
 static int wl1271_op_set_rts_threshold(struct ieee80211_hw *hw, u32 value)
 {
 	struct wl1271 *wl = hw->priv;
+<<<<<<< HEAD
 	struct wl12xx_vif *wlvif;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	mutex_lock(&wl->mutex);
@@ -3353,11 +4851,18 @@ static int wl1271_op_set_rts_threshold(struct ieee80211_hw *hw, u32 value)
 	if (ret < 0)
 		goto out;
 
+<<<<<<< HEAD
 	wl12xx_for_each_wlvif(wl, wlvif) {
 		ret = wl1271_acx_rts_threshold(wl, wlvif, value);
 		if (ret < 0)
 			wl1271_warning("set rts threshold failed: %d", ret);
 	}
+=======
+	ret = wl1271_acx_rts_threshold(wl, value);
+	if (ret < 0)
+		wl1271_warning("wl1271_op_set_rts_threshold failed: %d", ret);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wl1271_ps_elp_sleep(wl);
 
 out:
@@ -3366,10 +4871,16 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int wl1271_ssid_set(struct ieee80211_vif *vif, struct sk_buff *skb,
 			    int offset)
 {
 	struct wl12xx_vif *wlvif = wl12xx_vif_to_data(vif);
+=======
+static int wl1271_ssid_set(struct wl1271 *wl, struct sk_buff *skb,
+			    int offset)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 ssid_len;
 	const u8 *ptr = cfg80211_find_ie(WLAN_EID_SSID, skb->data + offset,
 					 skb->len - offset);
@@ -3385,6 +4896,7 @@ static int wl1271_ssid_set(struct ieee80211_vif *vif, struct sk_buff *skb,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	wlvif->ssid_len = ssid_len;
 	memcpy(wlvif->ssid, ptr+2, ssid_len);
 	return 0;
@@ -3506,13 +5018,30 @@ static int wl1271_bss_erp_info_changed(struct wl1271 *wl,
 				       u32 changed)
 {
 	struct wl12xx_vif *wlvif = wl12xx_vif_to_data(vif);
+=======
+	wl->ssid_len = ssid_len;
+	memcpy(wl->ssid, ptr+2, ssid_len);
+	return 0;
+}
+
+static int wl1271_bss_erp_info_changed(struct wl1271 *wl,
+				       struct ieee80211_bss_conf *bss_conf,
+				       u32 changed)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	if (changed & BSS_CHANGED_ERP_SLOT) {
 		if (bss_conf->use_short_slot)
+<<<<<<< HEAD
 			ret = wl1271_acx_slot(wl, wlvif, SLOT_TIME_SHORT);
 		else
 			ret = wl1271_acx_slot(wl, wlvif, SLOT_TIME_LONG);
+=======
+			ret = wl1271_acx_slot(wl, SLOT_TIME_SHORT);
+		else
+			ret = wl1271_acx_slot(wl, SLOT_TIME_LONG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0) {
 			wl1271_warning("Set slot time failed %d", ret);
 			goto out;
@@ -3521,18 +5050,30 @@ static int wl1271_bss_erp_info_changed(struct wl1271 *wl,
 
 	if (changed & BSS_CHANGED_ERP_PREAMBLE) {
 		if (bss_conf->use_short_preamble)
+<<<<<<< HEAD
 			wl1271_acx_set_preamble(wl, wlvif, ACX_PREAMBLE_SHORT);
 		else
 			wl1271_acx_set_preamble(wl, wlvif, ACX_PREAMBLE_LONG);
+=======
+			wl1271_acx_set_preamble(wl, ACX_PREAMBLE_SHORT);
+		else
+			wl1271_acx_set_preamble(wl, ACX_PREAMBLE_LONG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (changed & BSS_CHANGED_ERP_CTS_PROT) {
 		if (bss_conf->use_cts_prot)
+<<<<<<< HEAD
 			ret = wl1271_acx_cts_protect(wl, wlvif,
 						     CTSPROTECT_ENABLE);
 		else
 			ret = wl1271_acx_cts_protect(wl, wlvif,
 						     CTSPROTECT_DISABLE);
+=======
+			ret = wl1271_acx_cts_protect(wl, CTSPROTECT_ENABLE);
+		else
+			ret = wl1271_acx_cts_protect(wl, CTSPROTECT_DISABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0) {
 			wl1271_warning("Set ctsprotect failed %d", ret);
 			goto out;
@@ -3548,14 +5089,19 @@ static int wl1271_bss_beacon_info_changed(struct wl1271 *wl,
 					  struct ieee80211_bss_conf *bss_conf,
 					  u32 changed)
 {
+<<<<<<< HEAD
 	struct wl12xx_vif *wlvif = wl12xx_vif_to_data(vif);
 	bool is_ap = (wlvif->bss_type == BSS_TYPE_AP_BSS);
+=======
+	bool is_ap = (wl->bss_type == BSS_TYPE_AP_BSS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	if ((changed & BSS_CHANGED_BEACON_INT)) {
 		wl1271_debug(DEBUG_MASTER, "beacon interval updated: %d",
 			bss_conf->beacon_int);
 
+<<<<<<< HEAD
 		wlvif->beacon_int = bss_conf->beacon_int;
 	}
 
@@ -3565,16 +5111,23 @@ static int wl1271_bss_beacon_info_changed(struct wl1271 *wl,
 			wl1271_debug(DEBUG_AP, "probe response updated");
 			set_bit(WLVIF_FLAG_AP_PROBE_RESP_SET, &wlvif->flags);
 		}
+=======
+		wl->beacon_int = bss_conf->beacon_int;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if ((changed & BSS_CHANGED_BEACON)) {
 		struct ieee80211_hdr *hdr;
+<<<<<<< HEAD
 		u32 min_rate;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int ieoffset = offsetof(struct ieee80211_mgmt,
 					u.beacon.variable);
 		struct sk_buff *beacon = ieee80211_beacon_get(wl->hw, vif);
 		u16 tmpl_id;
 
+<<<<<<< HEAD
 		if (!beacon) {
 			ret = -EINVAL;
 			goto out;
@@ -3583,10 +5136,19 @@ static int wl1271_bss_beacon_info_changed(struct wl1271 *wl,
 		wl1271_debug(DEBUG_MASTER, "beacon updated");
 
 		ret = wl1271_ssid_set(vif, beacon, ieoffset);
+=======
+		if (!beacon)
+			goto out;
+
+		wl1271_debug(DEBUG_MASTER, "beacon updated");
+
+		ret = wl1271_ssid_set(wl, beacon, ieoffset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0) {
 			dev_kfree_skb(beacon);
 			goto out;
 		}
+<<<<<<< HEAD
 		min_rate = wl1271_tx_min_rate_get(wl, wlvif->basic_rate_set);
 		tmpl_id = is_ap ? CMD_TEMPL_AP_BEACON :
 				  CMD_TEMPL_BEACON;
@@ -3594,11 +5156,20 @@ static int wl1271_bss_beacon_info_changed(struct wl1271 *wl,
 					      beacon->data,
 					      beacon->len, 0,
 					      min_rate);
+=======
+		tmpl_id = is_ap ? CMD_TEMPL_AP_BEACON :
+				  CMD_TEMPL_BEACON;
+		ret = wl1271_cmd_template_set(wl, tmpl_id,
+					      beacon->data,
+					      beacon->len, 0,
+					      wl1271_tx_min_rate_get(wl));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0) {
 			dev_kfree_skb(beacon);
 			goto out;
 		}
 
+<<<<<<< HEAD
 		/*
 		 * In case we already have a probe-resp beacon set explicitly
 		 * by usermode, don't use the beacon data.
@@ -3635,14 +5206,30 @@ static int wl1271_bss_beacon_info_changed(struct wl1271 *wl,
 						beacon->len, 0,
 						min_rate);
 end_bcn:
+=======
+		hdr = (struct ieee80211_hdr *) beacon->data;
+		hdr->frame_control = cpu_to_le16(IEEE80211_FTYPE_MGMT |
+						 IEEE80211_STYPE_PROBE_RESP);
+
+		tmpl_id = is_ap ? CMD_TEMPL_AP_PROBE_RESPONSE :
+				  CMD_TEMPL_PROBE_RESPONSE;
+		ret = wl1271_cmd_template_set(wl,
+					      tmpl_id,
+					      beacon->data,
+					      beacon->len, 0,
+					      wl1271_tx_min_rate_get(wl));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_kfree_skb(beacon);
 		if (ret < 0)
 			goto out;
 	}
 
 out:
+<<<<<<< HEAD
 	if (ret != 0)
 		wl1271_error("beacon info change failed: %d", ret);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -3652,24 +5239,38 @@ static void wl1271_bss_info_changed_ap(struct wl1271 *wl,
 				       struct ieee80211_bss_conf *bss_conf,
 				       u32 changed)
 {
+<<<<<<< HEAD
 	struct wl12xx_vif *wlvif = wl12xx_vif_to_data(vif);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	if ((changed & BSS_CHANGED_BASIC_RATES)) {
 		u32 rates = bss_conf->basic_rates;
 
+<<<<<<< HEAD
 		wlvif->basic_rate_set = wl1271_tx_enabled_rates_get(wl, rates,
 								 wlvif->band);
 		wlvif->basic_rate = wl1271_tx_min_rate_get(wl,
 							wlvif->basic_rate_set);
 
 		ret = wl1271_init_ap_rates(wl, wlvif);
+=======
+		wl->basic_rate_set = wl1271_tx_enabled_rates_get(wl, rates);
+		wl->basic_rate = wl1271_tx_min_rate_get(wl);
+
+		ret = wl1271_init_ap_rates(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0) {
 			wl1271_error("AP rate policy change failed %d", ret);
 			goto out;
 		}
 
+<<<<<<< HEAD
 		ret = wl1271_ap_init_templates(wl, vif);
+=======
+		ret = wl1271_ap_init_templates(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0)
 			goto out;
 	}
@@ -3680,6 +5281,7 @@ static void wl1271_bss_info_changed_ap(struct wl1271 *wl,
 
 	if ((changed & BSS_CHANGED_BEACON_ENABLED)) {
 		if (bss_conf->enable_beacon) {
+<<<<<<< HEAD
 			if (!test_bit(WLVIF_FLAG_AP_STARTED, &wlvif->flags)) {
 				ret = wl12xx_cmd_role_start_ap(wl, wlvif);
 				if (ret < 0)
@@ -3701,11 +5303,33 @@ static void wl1271_bss_info_changed_ap(struct wl1271 *wl,
 				clear_bit(WLVIF_FLAG_AP_STARTED, &wlvif->flags);
 				clear_bit(WLVIF_FLAG_AP_PROBE_RESP_SET,
 					  &wlvif->flags);
+=======
+			if (!test_bit(WL1271_FLAG_AP_STARTED, &wl->flags)) {
+				ret = wl1271_cmd_start_bss(wl);
+				if (ret < 0)
+					goto out;
+
+				set_bit(WL1271_FLAG_AP_STARTED, &wl->flags);
+				wl1271_debug(DEBUG_AP, "started AP");
+
+				ret = wl1271_ap_init_hwenc(wl);
+				if (ret < 0)
+					goto out;
+			}
+		} else {
+			if (test_bit(WL1271_FLAG_AP_STARTED, &wl->flags)) {
+				ret = wl1271_cmd_stop_bss(wl);
+				if (ret < 0)
+					goto out;
+
+				clear_bit(WL1271_FLAG_AP_STARTED, &wl->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				wl1271_debug(DEBUG_AP, "stopped AP");
 			}
 		}
 	}
 
+<<<<<<< HEAD
 	ret = wl1271_bss_erp_info_changed(wl, vif, bss_conf, changed);
 	if (ret < 0)
 		goto out;
@@ -3721,6 +5345,29 @@ static void wl1271_bss_info_changed_ap(struct wl1271 *wl,
 		}
 	}
 
+=======
+	if (changed & BSS_CHANGED_IBSS) {
+		wl1271_debug(DEBUG_ADHOC, "ibss_joined: %d",
+			     bss_conf->ibss_joined);
+
+		if (bss_conf->ibss_joined) {
+			u32 rates = bss_conf->basic_rates;
+			wl->basic_rate_set = wl1271_tx_enabled_rates_get(wl,
+									 rates);
+			wl->basic_rate = wl1271_tx_min_rate_get(wl);
+
+			/* by default, use 11b rates */
+			wl->rate_set = CONF_TX_IBSS_DEFAULT_RATES;
+			ret = wl1271_acx_sta_rate_policies(wl);
+			if (ret < 0)
+				goto out;
+		}
+	}
+
+	ret = wl1271_bss_erp_info_changed(wl, bss_conf, changed);
+	if (ret < 0)
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return;
 }
@@ -3731,10 +5378,15 @@ static void wl1271_bss_info_changed_sta(struct wl1271 *wl,
 					struct ieee80211_bss_conf *bss_conf,
 					u32 changed)
 {
+<<<<<<< HEAD
 	struct wl12xx_vif *wlvif = wl12xx_vif_to_data(vif);
 	bool do_join = false, set_assoc = false;
 	bool is_ibss = (wlvif->bss_type == BSS_TYPE_IBSS);
 	bool ibss_joined = false;
+=======
+	bool do_join = false, set_assoc = false;
+	bool is_ibss = (wl->bss_type == BSS_TYPE_IBSS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 sta_rate_set = 0;
 	int ret;
 	struct ieee80211_sta *sta;
@@ -3748,6 +5400,7 @@ static void wl1271_bss_info_changed_sta(struct wl1271 *wl,
 			goto out;
 	}
 
+<<<<<<< HEAD
 	if (changed & BSS_CHANGED_IBSS) {
 		if (bss_conf->ibss_joined) {
 			set_bit(WLVIF_FLAG_IBSS_JOINED, &wlvif->flags);
@@ -3779,15 +5432,40 @@ static void wl1271_bss_info_changed_sta(struct wl1271 *wl,
 			wl1271_warning("idle mode change failed %d", ret);
 	}
 
+=======
+	if ((changed & BSS_CHANGED_BEACON_INT)  && is_ibss)
+		do_join = true;
+
+	/* Need to update the SSID (for filtering etc) */
+	if ((changed & BSS_CHANGED_BEACON) && is_ibss)
+		do_join = true;
+
+	if ((changed & BSS_CHANGED_BEACON_ENABLED) && is_ibss) {
+		wl1271_debug(DEBUG_ADHOC, "ad-hoc beaconing: %s",
+			     bss_conf->enable_beacon ? "enabled" : "disabled");
+
+		if (bss_conf->enable_beacon)
+			wl->set_bss_type = BSS_TYPE_IBSS;
+		else
+			wl->set_bss_type = BSS_TYPE_STA_BSS;
+		do_join = true;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((changed & BSS_CHANGED_CQM)) {
 		bool enable = false;
 		if (bss_conf->cqm_rssi_thold)
 			enable = true;
+<<<<<<< HEAD
 		ret = wl1271_acx_rssi_snr_trigger(wl, wlvif, enable,
+=======
+		ret = wl1271_acx_rssi_snr_trigger(wl, enable,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						  bss_conf->cqm_rssi_thold,
 						  bss_conf->cqm_rssi_hyst);
 		if (ret < 0)
 			goto out;
+<<<<<<< HEAD
 		wlvif->rssi_thold = bss_conf->cqm_rssi_thold;
 	}
 
@@ -3822,21 +5500,102 @@ static void wl1271_bss_info_changed_sta(struct wl1271 *wl,
 
 sta_not_found:
 		rcu_read_unlock();
+=======
+		wl->rssi_thold = bss_conf->cqm_rssi_thold;
+	}
+
+	if ((changed & BSS_CHANGED_BSSID) &&
+	    /*
+	     * Now we know the correct bssid, so we send a new join command
+	     * and enable the BSSID filter
+	     */
+	    memcmp(wl->bssid, bss_conf->bssid, ETH_ALEN)) {
+		memcpy(wl->bssid, bss_conf->bssid, ETH_ALEN);
+
+		if (!is_zero_ether_addr(wl->bssid)) {
+			ret = wl1271_cmd_build_null_data(wl);
+			if (ret < 0)
+				goto out;
+
+			ret = wl1271_build_qos_null_data(wl);
+			if (ret < 0)
+				goto out;
+
+			/* filter out all packets not from this BSSID */
+			wl1271_configure_filters(wl, 0);
+
+			/* Need to update the BSSID (for filtering etc) */
+			do_join = true;
+		}
+	}
+
+	rcu_read_lock();
+	sta = ieee80211_find_sta(vif, bss_conf->bssid);
+	if (sta)  {
+		/* save the supp_rates of the ap */
+		sta_rate_set = sta->supp_rates[wl->hw->conf.channel->band];
+		if (sta->ht_cap.ht_supported)
+			sta_rate_set |=
+			    (sta->ht_cap.mcs.rx_mask[0] << HW_HT_RATES_OFFSET);
+		sta_ht_cap = sta->ht_cap;
+		sta_exists = true;
+	}
+	rcu_read_unlock();
+
+	if (sta_exists) {
+		/* handle new association with HT and HT information change */
+		if ((changed & BSS_CHANGED_HT) &&
+		    (bss_conf->channel_type != NL80211_CHAN_NO_HT)) {
+			ret = wl1271_acx_set_ht_capabilities(wl, &sta_ht_cap,
+							     true);
+			if (ret < 0) {
+				wl1271_warning("Set ht cap true failed %d",
+					       ret);
+				goto out;
+			}
+			ret = wl1271_acx_set_ht_information(wl,
+						bss_conf->ht_operation_mode);
+			if (ret < 0) {
+				wl1271_warning("Set ht information failed %d",
+					       ret);
+				goto out;
+			}
+		}
+		/* handle new association without HT and disassociation */
+		else if (changed & BSS_CHANGED_ASSOC) {
+			ret = wl1271_acx_set_ht_capabilities(wl, &sta_ht_cap,
+							     false);
+			if (ret < 0) {
+				wl1271_warning("Set ht cap false failed %d",
+					       ret);
+				goto out;
+			}
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if ((changed & BSS_CHANGED_ASSOC)) {
 		if (bss_conf->assoc) {
 			u32 rates;
 			int ieoffset;
+<<<<<<< HEAD
 			wlvif->aid = bss_conf->aid;
 			wlvif->beacon_int = bss_conf->beacon_int;
 			set_assoc = true;
 
+=======
+			wl->aid = bss_conf->aid;
+			set_assoc = true;
+
+			wl->ps_poll_failures = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * use basic rates from AP, and determine lowest rate
 			 * to use with control frames.
 			 */
 			rates = bss_conf->basic_rates;
+<<<<<<< HEAD
 			wlvif->basic_rate_set =
 				wl1271_tx_enabled_rates_get(wl, rates,
 							    wlvif->band);
@@ -3849,6 +5608,15 @@ sta_not_found:
 								sta_rate_set,
 								wlvif->band);
 			ret = wl1271_acx_sta_rate_policies(wl, wlvif);
+=======
+			wl->basic_rate_set = wl1271_tx_enabled_rates_get(wl,
+									 rates);
+			wl->basic_rate = wl1271_tx_min_rate_get(wl);
+			if (sta_rate_set)
+				wl->rate_set = wl1271_tx_enabled_rates_get(wl,
+								sta_rate_set);
+			ret = wl1271_acx_sta_rate_policies(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret < 0)
 				goto out;
 
@@ -3858,13 +5626,18 @@ sta_not_found:
 			 * updates it by itself when the first beacon is
 			 * received after a join.
 			 */
+<<<<<<< HEAD
 			ret = wl1271_cmd_build_ps_poll(wl, wlvif, wlvif->aid);
+=======
+			ret = wl1271_cmd_build_ps_poll(wl, wl->aid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret < 0)
 				goto out;
 
 			/*
 			 * Get a template for hardware connection maintenance
 			 */
+<<<<<<< HEAD
 			dev_kfree_skb(wlvif->probereq);
 			wlvif->probereq = wl1271_cmd_build_ap_probe_req(wl,
 									wlvif,
@@ -3897,19 +5670,71 @@ sta_not_found:
 				wl1271_tx_min_rate_get(wl,
 						       wlvif->basic_rate_set);
 			ret = wl1271_acx_sta_rate_policies(wl, wlvif);
+=======
+			dev_kfree_skb(wl->probereq);
+			wl->probereq = wl1271_cmd_build_ap_probe_req(wl, NULL);
+			ieoffset = offsetof(struct ieee80211_mgmt,
+					    u.probe_req.variable);
+			wl1271_ssid_set(wl, wl->probereq, ieoffset);
+
+			/* enable the connection monitoring feature */
+			ret = wl1271_acx_conn_monit_params(wl, true);
+			if (ret < 0)
+				goto out;
+
+			/* If we want to go in PSM but we're not there yet */
+			if (test_bit(WL1271_FLAG_PSM_REQUESTED, &wl->flags) &&
+			    !test_bit(WL1271_FLAG_PSM, &wl->flags)) {
+				enum wl1271_cmd_ps_mode mode;
+
+				mode = STATION_POWER_SAVE_MODE;
+				ret = wl1271_ps_set_mode(wl, mode,
+							 wl->basic_rate,
+							 true);
+				if (ret < 0)
+					goto out;
+			}
+		} else {
+			/* use defaults when not associated */
+			bool was_assoc =
+			    !!test_and_clear_bit(WL1271_FLAG_STA_ASSOCIATED,
+						 &wl->flags);
+			clear_bit(WL1271_FLAG_STA_STATE_SENT, &wl->flags);
+			wl->aid = 0;
+
+			/* free probe-request template */
+			dev_kfree_skb(wl->probereq);
+			wl->probereq = NULL;
+
+			/* re-enable dynamic ps - just in case */
+			ieee80211_enable_dyn_ps(wl->vif);
+
+			/* revert back to minimum rates for the current band */
+			wl1271_set_band_rate(wl);
+			wl->basic_rate = wl1271_tx_min_rate_get(wl);
+			ret = wl1271_acx_sta_rate_policies(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret < 0)
 				goto out;
 
 			/* disable connection monitor features */
+<<<<<<< HEAD
 			ret = wl1271_acx_conn_monit_params(wl, wlvif, false);
 
 			/* Disable the keep-alive feature */
 			ret = wl1271_acx_keep_alive_mode(wl, wlvif, false);
+=======
+			ret = wl1271_acx_conn_monit_params(wl, false);
+
+			/* Disable the keep-alive feature */
+			ret = wl1271_acx_keep_alive_mode(wl, false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret < 0)
 				goto out;
 
 			/* restore the bssid filter and go to dummy bssid */
 			if (was_assoc) {
+<<<<<<< HEAD
 				/*
 				 * we might have to disable roc, if there was
 				 * no IF_OPER_UP notification.
@@ -3934,10 +5759,15 @@ sta_not_found:
 				wl1271_unjoin(wl, wlvif);
 				if (!bss_conf->idle)
 					wl12xx_start_dev(wl, wlvif);
+=======
+				wl1271_unjoin(wl);
+				wl1271_dummy_join(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 	}
 
+<<<<<<< HEAD
 	if (changed & BSS_CHANGED_IBSS) {
 		wl1271_debug(DEBUG_ADHOC, "ibss_joined: %d",
 			     bss_conf->ibss_joined);
@@ -4039,18 +5869,35 @@ sta_not_found:
 		if (bss_conf->arp_addr_cnt == 1 &&
 		    bss_conf->arp_filter_enabled) {
 			wlvif->ip_addr = addr;
+=======
+	ret = wl1271_bss_erp_info_changed(wl, bss_conf, changed);
+	if (ret < 0)
+		goto out;
+
+	if (changed & BSS_CHANGED_ARP_FILTER) {
+		__be32 addr = bss_conf->arp_addr_list[0];
+		WARN_ON(wl->bss_type != BSS_TYPE_STA_BSS);
+
+		if (bss_conf->arp_addr_cnt == 1 &&
+		    bss_conf->arp_filter_enabled) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * The template should have been configured only upon
 			 * association. however, it seems that the correct ip
 			 * isn't being set (when sending), so we have to
 			 * reconfigure the template upon every ip change.
 			 */
+<<<<<<< HEAD
 			ret = wl1271_cmd_build_arp_rsp(wl, wlvif);
+=======
+			ret = wl1271_cmd_build_arp_rsp(wl, addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret < 0) {
 				wl1271_warning("build arp rsp failed: %d", ret);
 				goto out;
 			}
 
+<<<<<<< HEAD
 			ret = wl1271_acx_arp_ip_filter(wl, wlvif,
 				(ACX_ARP_FILTER_ARP_FILTERING |
 				 ACX_ARP_FILTER_AUTO_ARP),
@@ -4059,11 +5906,29 @@ sta_not_found:
 			wlvif->ip_addr = 0;
 			ret = wl1271_acx_arp_ip_filter(wl, wlvif, 0, addr);
 		}
+=======
+			ret = wl1271_acx_arp_ip_filter(wl,
+				ACX_ARP_FILTER_ARP_FILTERING,
+				addr);
+		} else
+			ret = wl1271_acx_arp_ip_filter(wl, 0, addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (ret < 0)
 			goto out;
 	}
 
+<<<<<<< HEAD
+=======
+	if (do_join) {
+		ret = wl1271_join(wl, set_assoc);
+		if (ret < 0) {
+			wl1271_warning("cmd join failed %d", ret);
+			goto out;
+		}
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return;
 }
@@ -4074,8 +5939,12 @@ static void wl1271_op_bss_info_changed(struct ieee80211_hw *hw,
 				       u32 changed)
 {
 	struct wl1271 *wl = hw->priv;
+<<<<<<< HEAD
 	struct wl12xx_vif *wlvif = wl12xx_vif_to_data(vif);
 	bool is_ap = (wlvif->bss_type == BSS_TYPE_AP_BSS);
+=======
+	bool is_ap = (wl->bss_type == BSS_TYPE_AP_BSS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	wl1271_debug(DEBUG_MAC80211, "mac80211 bss info changed 0x%x",
@@ -4086,9 +5955,12 @@ static void wl1271_op_bss_info_changed(struct ieee80211_hw *hw,
 	if (unlikely(wl->state == WL1271_STATE_OFF))
 		goto out;
 
+<<<<<<< HEAD
 	if (unlikely(!test_bit(WLVIF_FLAG_INITIALIZED, &wlvif->flags)))
 		goto out;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = wl1271_ps_elp_wakeup(wl);
 	if (ret < 0)
 		goto out;
@@ -4104,12 +5976,19 @@ out:
 	mutex_unlock(&wl->mutex);
 }
 
+<<<<<<< HEAD
 static int wl1271_op_conf_tx(struct ieee80211_hw *hw,
 			     struct ieee80211_vif *vif, u16 queue,
 			     const struct ieee80211_tx_queue_params *params)
 {
 	struct wl1271 *wl = hw->priv;
 	struct wl12xx_vif *wlvif = wl12xx_vif_to_data(vif);
+=======
+static int wl1271_op_conf_tx(struct ieee80211_hw *hw, u16 queue,
+			     const struct ieee80211_tx_queue_params *params)
+{
+	struct wl1271 *wl = hw->priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 ps_scheme;
 	int ret = 0;
 
@@ -4122,8 +6001,36 @@ static int wl1271_op_conf_tx(struct ieee80211_hw *hw,
 	else
 		ps_scheme = CONF_PS_SCHEME_LEGACY;
 
+<<<<<<< HEAD
 	if (!test_bit(WLVIF_FLAG_INITIALIZED, &wlvif->flags))
 		goto out;
+=======
+	if (wl->state == WL1271_STATE_OFF) {
+		/*
+		 * If the state is off, the parameters will be recorded and
+		 * configured on init. This happens in AP-mode.
+		 */
+		struct conf_tx_ac_category *conf_ac =
+			&wl->conf.tx.ac_conf[wl1271_tx_get_queue(queue)];
+		struct conf_tx_tid *conf_tid =
+			&wl->conf.tx.tid_conf[wl1271_tx_get_queue(queue)];
+
+		conf_ac->ac = wl1271_tx_get_queue(queue);
+		conf_ac->cw_min = (u8)params->cw_min;
+		conf_ac->cw_max = params->cw_max;
+		conf_ac->aifsn = params->aifs;
+		conf_ac->tx_op_limit = params->txop << 5;
+
+		conf_tid->queue_id = wl1271_tx_get_queue(queue);
+		conf_tid->channel_type = CONF_CHANNEL_TYPE_EDCF;
+		conf_tid->tsid = wl1271_tx_get_queue(queue);
+		conf_tid->ps_scheme = ps_scheme;
+		conf_tid->ack_policy = CONF_ACK_POLICY_LEGACY;
+		conf_tid->apsd_conf[0] = 0;
+		conf_tid->apsd_conf[1] = 0;
+		goto out;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = wl1271_ps_elp_wakeup(wl);
 	if (ret < 0)
@@ -4133,13 +6040,21 @@ static int wl1271_op_conf_tx(struct ieee80211_hw *hw,
 	 * the txop is confed in units of 32us by the mac80211,
 	 * we need us
 	 */
+<<<<<<< HEAD
 	ret = wl1271_acx_ac_cfg(wl, wlvif, wl1271_tx_get_queue(queue),
+=======
+	ret = wl1271_acx_ac_cfg(wl, wl1271_tx_get_queue(queue),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				params->cw_min, params->cw_max,
 				params->aifs, params->txop << 5);
 	if (ret < 0)
 		goto out_sleep;
 
+<<<<<<< HEAD
 	ret = wl1271_acx_tid_cfg(wl, wlvif, wl1271_tx_get_queue(queue),
+=======
+	ret = wl1271_acx_tid_cfg(wl, wl1271_tx_get_queue(queue),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 CONF_CHANNEL_TYPE_EDCF,
 				 wl1271_tx_get_queue(queue),
 				 ps_scheme, CONF_ACK_POLICY_LEGACY,
@@ -4154,12 +6069,19 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 static u64 wl1271_op_get_tsf(struct ieee80211_hw *hw,
 			     struct ieee80211_vif *vif)
 {
 
 	struct wl1271 *wl = hw->priv;
 	struct wl12xx_vif *wlvif = wl12xx_vif_to_data(vif);
+=======
+static u64 wl1271_op_get_tsf(struct ieee80211_hw *hw)
+{
+
+	struct wl1271 *wl = hw->priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64 mactime = ULLONG_MAX;
 	int ret;
 
@@ -4174,7 +6096,11 @@ static u64 wl1271_op_get_tsf(struct ieee80211_hw *hw,
 	if (ret < 0)
 		goto out;
 
+<<<<<<< HEAD
 	ret = wl12xx_acx_tsf_info(wl, wlvif, &mactime);
+=======
+	ret = wl1271_acx_tsf_info(wl, &mactime);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		goto out_sleep;
 
@@ -4203,6 +6129,7 @@ static int wl1271_op_get_survey(struct ieee80211_hw *hw, int idx,
 }
 
 static int wl1271_allocate_sta(struct wl1271 *wl,
+<<<<<<< HEAD
 			     struct wl12xx_vif *wlvif,
 			     struct ieee80211_sta *sta)
 {
@@ -4211,11 +6138,22 @@ static int wl1271_allocate_sta(struct wl1271 *wl,
 
 
 	if (wl->active_sta_count >= AP_MAX_STATIONS) {
+=======
+			     struct ieee80211_sta *sta,
+			     u8 *hlid)
+{
+	struct wl1271_station *wl_sta;
+	int id;
+
+	id = find_first_zero_bit(wl->ap_hlid_map, AP_MAX_STATIONS);
+	if (id >= AP_MAX_STATIONS) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wl1271_warning("could not allocate HLID - too much stations");
 		return -EBUSY;
 	}
 
 	wl_sta = (struct wl1271_station *)sta->drv_priv;
+<<<<<<< HEAD
 	ret = wl12xx_allocate_link(wl, wlvif, &wl_sta->hlid);
 	if (ret < 0) {
 		wl1271_warning("could not allocate HLID - too many links");
@@ -4562,6 +6500,125 @@ static void wl12xx_op_channel_switch(struct ieee80211_hw *hw,
 			struct ieee80211_vif *vif = wl12xx_wlvif_to_vif(wlvif);
 			ieee80211_chswitch_done(vif, false);
 		}
+=======
+	__set_bit(id, wl->ap_hlid_map);
+	wl_sta->hlid = WL1271_AP_STA_HLID_START + id;
+	*hlid = wl_sta->hlid;
+	memcpy(wl->links[wl_sta->hlid].addr, sta->addr, ETH_ALEN);
+	return 0;
+}
+
+static void wl1271_free_sta(struct wl1271 *wl, u8 hlid)
+{
+	int id = hlid - WL1271_AP_STA_HLID_START;
+
+	if (WARN_ON(!test_bit(id, wl->ap_hlid_map)))
+		return;
+
+	__clear_bit(id, wl->ap_hlid_map);
+	memset(wl->links[hlid].addr, 0, ETH_ALEN);
+	wl1271_tx_reset_link_queues(wl, hlid);
+	__clear_bit(hlid, &wl->ap_ps_map);
+	__clear_bit(hlid, (unsigned long *)&wl->ap_fw_ps_map);
+}
+
+static int wl1271_op_sta_add(struct ieee80211_hw *hw,
+			     struct ieee80211_vif *vif,
+			     struct ieee80211_sta *sta)
+{
+	struct wl1271 *wl = hw->priv;
+	int ret = 0;
+	u8 hlid;
+
+	mutex_lock(&wl->mutex);
+
+	if (unlikely(wl->state == WL1271_STATE_OFF))
+		goto out;
+
+	if (wl->bss_type != BSS_TYPE_AP_BSS)
+		goto out;
+
+	wl1271_debug(DEBUG_MAC80211, "mac80211 add sta %d", (int)sta->aid);
+
+	ret = wl1271_allocate_sta(wl, sta, &hlid);
+	if (ret < 0)
+		goto out;
+
+	ret = wl1271_ps_elp_wakeup(wl);
+	if (ret < 0)
+		goto out_free_sta;
+
+	ret = wl1271_cmd_add_sta(wl, sta, hlid);
+	if (ret < 0)
+		goto out_sleep;
+
+out_sleep:
+	wl1271_ps_elp_sleep(wl);
+
+out_free_sta:
+	if (ret < 0)
+		wl1271_free_sta(wl, hlid);
+
+out:
+	mutex_unlock(&wl->mutex);
+	return ret;
+}
+
+static int wl1271_op_sta_remove(struct ieee80211_hw *hw,
+				struct ieee80211_vif *vif,
+				struct ieee80211_sta *sta)
+{
+	struct wl1271 *wl = hw->priv;
+	struct wl1271_station *wl_sta;
+	int ret = 0, id;
+
+	mutex_lock(&wl->mutex);
+
+	if (unlikely(wl->state == WL1271_STATE_OFF))
+		goto out;
+
+	if (wl->bss_type != BSS_TYPE_AP_BSS)
+		goto out;
+
+	wl1271_debug(DEBUG_MAC80211, "mac80211 remove sta %d", (int)sta->aid);
+
+	wl_sta = (struct wl1271_station *)sta->drv_priv;
+	id = wl_sta->hlid - WL1271_AP_STA_HLID_START;
+	if (WARN_ON(!test_bit(id, wl->ap_hlid_map)))
+		goto out;
+
+	ret = wl1271_ps_elp_wakeup(wl);
+	if (ret < 0)
+		goto out;
+
+	ret = wl1271_cmd_remove_sta(wl, wl_sta->hlid);
+	if (ret < 0)
+		goto out_sleep;
+
+	wl1271_free_sta(wl, wl_sta->hlid);
+
+out_sleep:
+	wl1271_ps_elp_sleep(wl);
+
+out:
+	mutex_unlock(&wl->mutex);
+	return ret;
+}
+
+static int wl1271_op_ampdu_action(struct ieee80211_hw *hw,
+				  struct ieee80211_vif *vif,
+				  enum ieee80211_ampdu_mlme_action action,
+				  struct ieee80211_sta *sta, u16 tid, u16 *ssn,
+				  u8 buf_size)
+{
+	struct wl1271 *wl = hw->priv;
+	int ret;
+
+	mutex_lock(&wl->mutex);
+
+	if (unlikely(wl->state == WL1271_STATE_OFF)) {
+		ret = -EAGAIN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
@@ -4569,18 +6626,57 @@ static void wl12xx_op_channel_switch(struct ieee80211_hw *hw,
 	if (ret < 0)
 		goto out;
 
+<<<<<<< HEAD
 	/* TODO: change mac80211 to pass vif as param */
 	wl12xx_for_each_wlvif_sta(wl, wlvif) {
 		ret = wl12xx_cmd_channel_switch(wl, wlvif, ch_switch);
 
 		if (!ret)
 			set_bit(WLVIF_FLAG_CS_PROGRESS, &wlvif->flags);
+=======
+	switch (action) {
+	case IEEE80211_AMPDU_RX_START:
+		if (wl->ba_support) {
+			ret = wl1271_acx_set_ba_receiver_session(wl, tid, *ssn,
+								 true);
+			if (!ret)
+				wl->ba_rx_bitmap |= BIT(tid);
+		} else {
+			ret = -ENOTSUPP;
+		}
+		break;
+
+	case IEEE80211_AMPDU_RX_STOP:
+		ret = wl1271_acx_set_ba_receiver_session(wl, tid, 0, false);
+		if (!ret)
+			wl->ba_rx_bitmap &= ~BIT(tid);
+		break;
+
+	/*
+	 * The BA initiator session management in FW independently.
+	 * Falling break here on purpose for all TX APDU commands.
+	 */
+	case IEEE80211_AMPDU_TX_START:
+	case IEEE80211_AMPDU_TX_STOP:
+	case IEEE80211_AMPDU_TX_OPERATIONAL:
+		ret = -EINVAL;
+		break;
+
+	default:
+		wl1271_error("Incorrect ampdu action id=%x\n", action);
+		ret = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	wl1271_ps_elp_sleep(wl);
 
 out:
 	mutex_unlock(&wl->mutex);
+<<<<<<< HEAD
+=======
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static bool wl1271_tx_frames_pending(struct ieee80211_hw *hw)
@@ -4594,7 +6690,15 @@ static bool wl1271_tx_frames_pending(struct ieee80211_hw *hw)
 		goto out;
 
 	/* packets are considered pending if in the TX queue or the FW */
+<<<<<<< HEAD
 	ret = (wl1271_tx_total_queue_count(wl) > 0) || (wl->tx_frames_cnt > 0);
+=======
+	ret = (wl->tx_queue_count > 0) || (wl->tx_frames_cnt > 0);
+
+	/* the above is appropriate for STA mode for PS purposes */
+	WARN_ON(wl->bss_type != BSS_TYPE_STA_BSS);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	mutex_unlock(&wl->mutex);
 
@@ -4665,7 +6769,10 @@ static struct ieee80211_channel wl1271_channels[] = {
 /* mapping to indexes for wl1271_rates */
 static const u8 wl1271_rate_to_idx_2ghz[] = {
 	/* MCS rates are used only with 11n */
+<<<<<<< HEAD
 	7,                            /* CONF_HW_RXTX_RATE_MCS7_SGI */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	7,                            /* CONF_HW_RXTX_RATE_MCS7 */
 	6,                            /* CONF_HW_RXTX_RATE_MCS6 */
 	5,                            /* CONF_HW_RXTX_RATE_MCS5 */
@@ -4696,6 +6803,10 @@ static const u8 wl1271_rate_to_idx_2ghz[] = {
 /* 11n STA capabilities */
 #define HW_RX_HIGHEST_RATE	72
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_WL12XX_HT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define WL12XX_HT_CAP { \
 	.cap = IEEE80211_HT_CAP_GRN_FLD | IEEE80211_HT_CAP_SGI_20 | \
 	       (1 << IEEE80211_HT_CAP_RX_STBC_SHIFT), \
@@ -4708,6 +6819,14 @@ static const u8 wl1271_rate_to_idx_2ghz[] = {
 		.tx_params = IEEE80211_HT_MCS_TX_DEFINED, \
 		}, \
 }
+<<<<<<< HEAD
+=======
+#else
+#define WL12XX_HT_CAP { \
+	.ht_supported = false, \
+}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* can't be const, mac80211 writes to this */
 static struct ieee80211_supported_band wl1271_band_2ghz = {
@@ -4748,6 +6867,7 @@ static struct ieee80211_rate wl1271_rates_5ghz[] = {
 
 /* 5 GHz band channels for WL1273 */
 static struct ieee80211_channel wl1271_channels_5ghz[] = {
+<<<<<<< HEAD
 	{ .hw_value = 7, .center_freq = 5035, .max_power = 25 },
 	{ .hw_value = 8, .center_freq = 5040, .max_power = 25 },
 	{ .hw_value = 9, .center_freq = 5045, .max_power = 25 },
@@ -4782,12 +6902,51 @@ static struct ieee80211_channel wl1271_channels_5ghz[] = {
 	{ .hw_value = 157, .center_freq = 5785, .max_power = 25 },
 	{ .hw_value = 161, .center_freq = 5805, .max_power = 25 },
 	{ .hw_value = 165, .center_freq = 5825, .max_power = 25 },
+=======
+	{ .hw_value = 7, .center_freq = 5035},
+	{ .hw_value = 8, .center_freq = 5040},
+	{ .hw_value = 9, .center_freq = 5045},
+	{ .hw_value = 11, .center_freq = 5055},
+	{ .hw_value = 12, .center_freq = 5060},
+	{ .hw_value = 16, .center_freq = 5080},
+	{ .hw_value = 34, .center_freq = 5170},
+	{ .hw_value = 36, .center_freq = 5180},
+	{ .hw_value = 38, .center_freq = 5190},
+	{ .hw_value = 40, .center_freq = 5200},
+	{ .hw_value = 42, .center_freq = 5210},
+	{ .hw_value = 44, .center_freq = 5220},
+	{ .hw_value = 46, .center_freq = 5230},
+	{ .hw_value = 48, .center_freq = 5240},
+	{ .hw_value = 52, .center_freq = 5260},
+	{ .hw_value = 56, .center_freq = 5280},
+	{ .hw_value = 60, .center_freq = 5300},
+	{ .hw_value = 64, .center_freq = 5320},
+	{ .hw_value = 100, .center_freq = 5500},
+	{ .hw_value = 104, .center_freq = 5520},
+	{ .hw_value = 108, .center_freq = 5540},
+	{ .hw_value = 112, .center_freq = 5560},
+	{ .hw_value = 116, .center_freq = 5580},
+	{ .hw_value = 120, .center_freq = 5600},
+	{ .hw_value = 124, .center_freq = 5620},
+	{ .hw_value = 128, .center_freq = 5640},
+	{ .hw_value = 132, .center_freq = 5660},
+	{ .hw_value = 136, .center_freq = 5680},
+	{ .hw_value = 140, .center_freq = 5700},
+	{ .hw_value = 149, .center_freq = 5745},
+	{ .hw_value = 153, .center_freq = 5765},
+	{ .hw_value = 157, .center_freq = 5785},
+	{ .hw_value = 161, .center_freq = 5805},
+	{ .hw_value = 165, .center_freq = 5825},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* mapping to indexes for wl1271_rates_5ghz */
 static const u8 wl1271_rate_to_idx_5ghz[] = {
 	/* MCS rates are used only with 11n */
+<<<<<<< HEAD
 	7,                            /* CONF_HW_RXTX_RATE_MCS7_SGI */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	7,                            /* CONF_HW_RXTX_RATE_MCS7 */
 	6,                            /* CONF_HW_RXTX_RATE_MCS6 */
 	5,                            /* CONF_HW_RXTX_RATE_MCS5 */
@@ -4833,7 +6992,10 @@ static const struct ieee80211_ops wl1271_ops = {
 	.stop = wl1271_op_stop,
 	.add_interface = wl1271_op_add_interface,
 	.remove_interface = wl1271_op_remove_interface,
+<<<<<<< HEAD
 	.change_interface = wl12xx_op_change_interface,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PM
 	.suspend = wl1271_op_suspend,
 	.resume = wl1271_op_resume,
@@ -4844,7 +7006,10 @@ static const struct ieee80211_ops wl1271_ops = {
 	.tx = wl1271_op_tx,
 	.set_key = wl1271_op_set_key,
 	.hw_scan = wl1271_op_hw_scan,
+<<<<<<< HEAD
 	.cancel_hw_scan = wl1271_op_cancel_hw_scan,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.sched_scan_start = wl1271_op_sched_scan_start,
 	.sched_scan_stop = wl1271_op_sched_scan_stop,
 	.bss_info_changed = wl1271_op_bss_info_changed,
@@ -4853,11 +7018,18 @@ static const struct ieee80211_ops wl1271_ops = {
 	.conf_tx = wl1271_op_conf_tx,
 	.get_tsf = wl1271_op_get_tsf,
 	.get_survey = wl1271_op_get_survey,
+<<<<<<< HEAD
 	.sta_state = wl12xx_op_sta_state,
 	.ampdu_action = wl1271_op_ampdu_action,
 	.tx_frames_pending = wl1271_tx_frames_pending,
 	.set_bitrate_mask = wl12xx_set_bitrate_mask,
 	.channel_switch = wl12xx_op_channel_switch,
+=======
+	.sta_add = wl1271_op_sta_add,
+	.sta_remove = wl1271_op_sta_remove,
+	.ampdu_action = wl1271_op_ampdu_action,
+	.tx_frames_pending = wl1271_tx_frames_pending,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CFG80211_TESTMODE_CMD(wl1271_tm_cmd)
 };
 
@@ -4961,6 +7133,7 @@ static ssize_t wl1271_sysfs_show_hw_pg_ver(struct device *dev,
 	return len;
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(hw_pg_ver, S_IRUGO,
 		   wl1271_sysfs_show_hw_pg_ver, NULL);
 
@@ -5131,16 +7304,27 @@ static int wl1271_register_hw(struct wl1271 *wl)
 {
 	int ret;
 	u32 oui_addr = 0, nic_addr = 0;
+=======
+static DEVICE_ATTR(hw_pg_ver, S_IRUGO | S_IWUSR,
+		   wl1271_sysfs_show_hw_pg_ver, NULL);
+
+int wl1271_register_hw(struct wl1271 *wl)
+{
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (wl->mac80211_registered)
 		return 0;
 
+<<<<<<< HEAD
 	ret = wl12xx_get_hw_info(wl);
 	if (ret < 0) {
 		wl1271_error("couldn't get hw info");
 		goto out;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = wl1271_fetch_nvs(wl);
 	if (ret == 0) {
 		/* NOTE: The wl->nvs->nvs element must be first, in
@@ -5149,6 +7333,7 @@ static int wl1271_register_hw(struct wl1271 *wl)
 		 */
 		u8 *nvs_ptr = (u8 *)wl->nvs;
 
+<<<<<<< HEAD
 		oui_addr =
 			(nvs_ptr[11] << 16) + (nvs_ptr[10] << 8) + nvs_ptr[6];
 		nic_addr =
@@ -5163,17 +7348,33 @@ static int wl1271_register_hw(struct wl1271 *wl)
 	}
 
 	wl12xx_derive_mac_addresses(wl, oui_addr, nic_addr, 2);
+=======
+		wl->mac_addr[0] = nvs_ptr[11];
+		wl->mac_addr[1] = nvs_ptr[10];
+		wl->mac_addr[2] = nvs_ptr[6];
+		wl->mac_addr[3] = nvs_ptr[5];
+		wl->mac_addr[4] = nvs_ptr[4];
+		wl->mac_addr[5] = nvs_ptr[3];
+	}
+
+	SET_IEEE80211_PERM_ADDR(wl->hw, wl->mac_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = ieee80211_register_hw(wl->hw);
 	if (ret < 0) {
 		wl1271_error("unable to register mac80211 hw: %d", ret);
+<<<<<<< HEAD
 		goto out;
+=======
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	wl->mac80211_registered = true;
 
 	wl1271_debugfs_init(wl);
 
+<<<<<<< HEAD
 	wl1271_notice("loaded");
 
 out:
@@ -5185,12 +7386,34 @@ static void wl1271_unregister_hw(struct wl1271 *wl)
 	if (wl->plt)
 		wl1271_plt_stop(wl);
 
+=======
+	register_netdevice_notifier(&wl1271_dev_notifier);
+
+	wl1271_notice("loaded");
+
+	return 0;
+}
+EXPORT_SYMBOL_GPL(wl1271_register_hw);
+
+void wl1271_unregister_hw(struct wl1271 *wl)
+{
+	if (wl->state == WL1271_STATE_PLT)
+		__wl1271_plt_stop(wl);
+
+	unregister_netdevice_notifier(&wl1271_dev_notifier);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ieee80211_unregister_hw(wl->hw);
 	wl->mac80211_registered = false;
 
 }
+<<<<<<< HEAD
 
 static int wl1271_init_ieee80211(struct wl1271 *wl)
+=======
+EXPORT_SYMBOL_GPL(wl1271_unregister_hw);
+
+int wl1271_init_ieee80211(struct wl1271 *wl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static const u32 cipher_suites[] = {
 		WLAN_CIPHER_SUITE_WEP40,
@@ -5201,7 +7424,11 @@ static int wl1271_init_ieee80211(struct wl1271 *wl)
 	};
 
 	/* The tx descriptor buffer and the TKIP space. */
+<<<<<<< HEAD
 	wl->hw->extra_tx_headroom = WL1271_EXTRA_SPACE_TKIP +
+=======
+	wl->hw->extra_tx_headroom = WL1271_TKIP_IV_SPACE +
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sizeof(struct wl1271_tx_hw_descr);
 
 	/* unit us */
@@ -5210,6 +7437,7 @@ static int wl1271_init_ieee80211(struct wl1271 *wl)
 	wl->hw->max_listen_interval = wl->conf.conn.max_listen_interval;
 
 	wl->hw->flags = IEEE80211_HW_SIGNAL_DBM |
+<<<<<<< HEAD
 		IEEE80211_HW_SUPPORTS_PS |
 		IEEE80211_HW_SUPPORTS_DYNAMIC_PS |
 		IEEE80211_HW_SUPPORTS_UAPSD |
@@ -5221,16 +7449,32 @@ static int wl1271_init_ieee80211(struct wl1271 *wl)
 		IEEE80211_HW_AMPDU_AGGREGATION |
 		IEEE80211_HW_TX_AMPDU_SETUP_IN_HW |
 		IEEE80211_HW_SCAN_WHILE_IDLE;
+=======
+		IEEE80211_HW_BEACON_FILTER |
+		IEEE80211_HW_SUPPORTS_PS |
+		IEEE80211_HW_SUPPORTS_UAPSD |
+		IEEE80211_HW_HAS_RATE_CONTROL |
+		IEEE80211_HW_CONNECTION_MONITOR |
+		IEEE80211_HW_SUPPORTS_CQM_RSSI |
+		IEEE80211_HW_REPORTS_TX_ACK_STATUS |
+		IEEE80211_HW_SPECTRUM_MGMT |
+		IEEE80211_HW_AP_LINK_PS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wl->hw->wiphy->cipher_suites = cipher_suites;
 	wl->hw->wiphy->n_cipher_suites = ARRAY_SIZE(cipher_suites);
 
 	wl->hw->wiphy->interface_modes = BIT(NL80211_IFTYPE_STATION) |
+<<<<<<< HEAD
 		BIT(NL80211_IFTYPE_ADHOC) | BIT(NL80211_IFTYPE_AP) |
 		BIT(NL80211_IFTYPE_P2P_CLIENT) | BIT(NL80211_IFTYPE_P2P_GO);
 	wl->hw->wiphy->max_scan_ssids = 1;
 	wl->hw->wiphy->max_sched_scan_ssids = 16;
 	wl->hw->wiphy->max_match_sets = 16;
+=======
+		BIT(NL80211_IFTYPE_ADHOC) | BIT(NL80211_IFTYPE_AP);
+	wl->hw->wiphy->max_scan_ssids = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Maximum length of elements in scanning probe request templates
 	 * should be the maximum length possible for a template, without
@@ -5239,11 +7483,14 @@ static int wl1271_init_ieee80211(struct wl1271 *wl)
 	wl->hw->wiphy->max_scan_ie_len = WL1271_CMD_TEMPL_MAX_SIZE -
 			sizeof(struct ieee80211_header);
 
+<<<<<<< HEAD
 	wl->hw->wiphy->max_sched_scan_ie_len = WL1271_CMD_TEMPL_MAX_SIZE -
 		sizeof(struct ieee80211_header);
 
 	wl->hw->wiphy->flags |= WIPHY_FLAG_AP_UAPSD;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* make sure all our channels fit in the scanned_ch bitmask */
 	BUILD_BUG_ON(ARRAY_SIZE(wl1271_channels) +
 		     ARRAY_SIZE(wl1271_channels_5ghz) >
@@ -5267,6 +7514,7 @@ static int wl1271_init_ieee80211(struct wl1271 *wl)
 
 	wl->hw->wiphy->reg_notifier = wl1271_reg_notify;
 
+<<<<<<< HEAD
 	/* the FW answers probe-requests in AP-mode */
 	wl->hw->wiphy->flags |= WIPHY_FLAG_AP_PROBE_RESP_OFFLOAD;
 	wl->hw->wiphy->probe_resp_offload =
@@ -5278,23 +7526,42 @@ static int wl1271_init_ieee80211(struct wl1271 *wl)
 
 	wl->hw->sta_data_size = sizeof(struct wl1271_station);
 	wl->hw->vif_data_size = sizeof(struct wl12xx_vif);
+=======
+	SET_IEEE80211_DEV(wl->hw, wl1271_wl_to_dev(wl));
+
+	wl->hw->sta_data_size = sizeof(struct wl1271_station);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wl->hw->max_rx_aggregation_subframes = 8;
 
 	return 0;
 }
+<<<<<<< HEAD
 
 #define WL1271_DEFAULT_CHANNEL 0
 
 static struct ieee80211_hw *wl1271_alloc_hw(void)
 {
 	struct ieee80211_hw *hw;
+=======
+EXPORT_SYMBOL_GPL(wl1271_init_ieee80211);
+
+#define WL1271_DEFAULT_CHANNEL 0
+
+struct ieee80211_hw *wl1271_alloc_hw(void)
+{
+	struct ieee80211_hw *hw;
+	struct platform_device *plat_dev = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct wl1271 *wl;
 	int i, j, ret;
 	unsigned int order;
 
+<<<<<<< HEAD
 	BUILD_BUG_ON(AP_MAX_STATIONS > WL12XX_MAX_LINKS);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hw = ieee80211_alloc_hw(sizeof(*wl), &wl1271_ops);
 	if (!hw) {
 		wl1271_error("could not alloc ieee80211_hw");
@@ -5302,6 +7569,7 @@ static struct ieee80211_hw *wl1271_alloc_hw(void)
 		goto err_hw_alloc;
 	}
 
+<<<<<<< HEAD
 	wl = hw->priv;
 	memset(wl, 0, sizeof(*wl));
 
@@ -5311,16 +7579,43 @@ static struct ieee80211_hw *wl1271_alloc_hw(void)
 
 	for (i = 0; i < NUM_TX_QUEUES; i++)
 		for (j = 0; j < WL12XX_MAX_LINKS; j++)
+=======
+	plat_dev = kmemdup(&wl1271_device, sizeof(wl1271_device), GFP_KERNEL);
+	if (!plat_dev) {
+		wl1271_error("could not allocate platform_device");
+		ret = -ENOMEM;
+		goto err_plat_alloc;
+	}
+
+	wl = hw->priv;
+	memset(wl, 0, sizeof(*wl));
+
+	INIT_LIST_HEAD(&wl->list);
+
+	wl->hw = hw;
+	wl->plat_dev = plat_dev;
+
+	for (i = 0; i < NUM_TX_QUEUES; i++)
+		skb_queue_head_init(&wl->tx_queue[i]);
+
+	for (i = 0; i < NUM_TX_QUEUES; i++)
+		for (j = 0; j < AP_MAX_LINKS; j++)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			skb_queue_head_init(&wl->links[j].tx_queue[i]);
 
 	skb_queue_head_init(&wl->deferred_rx_queue);
 	skb_queue_head_init(&wl->deferred_tx_queue);
 
 	INIT_DELAYED_WORK(&wl->elp_work, wl1271_elp_work);
+<<<<<<< HEAD
+=======
+	INIT_DELAYED_WORK(&wl->pspoll_work, wl1271_pspoll_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_WORK(&wl->netstack_work, wl1271_netstack_work);
 	INIT_WORK(&wl->tx_work, wl1271_tx_work);
 	INIT_WORK(&wl->recovery_work, wl1271_recovery_work);
 	INIT_DELAYED_WORK(&wl->scan_complete_work, wl1271_scan_complete_work);
+<<<<<<< HEAD
 	INIT_DELAYED_WORK(&wl->tx_watchdog_work, wl12xx_tx_watchdog_work);
 
 	wl->freezable_wq = create_freezable_workqueue("wl12xx_wq");
@@ -5336,11 +7631,34 @@ static struct ieee80211_hw *wl1271_alloc_hw(void)
 	wl->flags = 0;
 	wl->sg_enabled = true;
 	wl->hw_pg_ver = -1;
+=======
+	wl->channel = WL1271_DEFAULT_CHANNEL;
+	wl->beacon_int = WL1271_DEFAULT_BEACON_INT;
+	wl->default_key = 0;
+	wl->rx_counter = 0;
+	wl->rx_config = WL1271_DEFAULT_STA_RX_CONFIG;
+	wl->rx_filter = WL1271_DEFAULT_STA_RX_FILTER;
+	wl->psm_entry_retry = 0;
+	wl->power_level = WL1271_DEFAULT_POWER_LEVEL;
+	wl->basic_rate_set = CONF_TX_RATE_MASK_BASIC;
+	wl->basic_rate = CONF_TX_RATE_MASK_BASIC;
+	wl->rate_set = CONF_TX_RATE_MASK_BASIC;
+	wl->band = IEEE80211_BAND_2GHZ;
+	wl->vif = NULL;
+	wl->flags = 0;
+	wl->sg_enabled = true;
+	wl->hw_pg_ver = -1;
+	wl->bss_type = MAX_BSS_TYPE;
+	wl->set_bss_type = MAX_BSS_TYPE;
+	wl->fw_bss_type = MAX_BSS_TYPE;
+	wl->last_tx_hlid = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wl->ap_ps_map = 0;
 	wl->ap_fw_ps_map = 0;
 	wl->quirks = 0;
 	wl->platform_quirks = 0;
 	wl->sched_scanning = false;
+<<<<<<< HEAD
 	wl->tx_spare_blocks = TX_HW_BLOCK_SPARE_DEFAULT;
 	wl->system_hlid = WL12XX_SYSTEM_HLID;
 	wl->active_sta_count = 0;
@@ -5349,6 +7667,8 @@ static struct ieee80211_hw *wl1271_alloc_hw(void)
 
 	/* The system link is always allocated */
 	__set_bit(WL12XX_SYSTEM_HLID, wl->links_map);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memset(wl->tx_frames_map, 0, sizeof(wl->tx_frames_map));
 	for (i = 0; i < ACX_TX_DESCRIPTORS; i++)
@@ -5357,7 +7677,10 @@ static struct ieee80211_hw *wl1271_alloc_hw(void)
 	spin_lock_init(&wl->wl_lock);
 
 	wl->state = WL1271_STATE_OFF;
+<<<<<<< HEAD
 	wl->fw_type = WL12XX_FW_TYPE_NONE;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_init(&wl->mutex);
 
 	/* Apply default driver configuration. */
@@ -5367,7 +7690,11 @@ static struct ieee80211_hw *wl1271_alloc_hw(void)
 	wl->aggr_buf = (u8 *)__get_free_pages(GFP_KERNEL, order);
 	if (!wl->aggr_buf) {
 		ret = -ENOMEM;
+<<<<<<< HEAD
 		goto err_wq;
+=======
+		goto err_hw;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	wl->dummy_packet = wl12xx_alloc_dummy_packet(wl);
@@ -5376,6 +7703,7 @@ static struct ieee80211_hw *wl1271_alloc_hw(void)
 		goto err_aggr;
 	}
 
+<<<<<<< HEAD
 	/* Allocate one page for the FW log */
 	wl->fwlog = (u8 *)get_zeroed_page(GFP_KERNEL);
 	if (!wl->fwlog) {
@@ -5385,23 +7713,64 @@ static struct ieee80211_hw *wl1271_alloc_hw(void)
 
 	return hw;
 
+=======
+	/* Register platform device */
+	ret = platform_device_register(wl->plat_dev);
+	if (ret) {
+		wl1271_error("couldn't register platform device");
+		goto err_dummy_packet;
+	}
+	dev_set_drvdata(&wl->plat_dev->dev, wl);
+
+	/* Create sysfs file to control bt coex state */
+	ret = device_create_file(&wl->plat_dev->dev, &dev_attr_bt_coex_state);
+	if (ret < 0) {
+		wl1271_error("failed to create sysfs file bt_coex_state");
+		goto err_platform;
+	}
+
+	/* Create sysfs file to get HW PG version */
+	ret = device_create_file(&wl->plat_dev->dev, &dev_attr_hw_pg_ver);
+	if (ret < 0) {
+		wl1271_error("failed to create sysfs file hw_pg_ver");
+		goto err_bt_coex_state;
+	}
+
+	return hw;
+
+err_bt_coex_state:
+	device_remove_file(&wl->plat_dev->dev, &dev_attr_bt_coex_state);
+
+err_platform:
+	platform_device_unregister(wl->plat_dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_dummy_packet:
 	dev_kfree_skb(wl->dummy_packet);
 
 err_aggr:
 	free_pages((unsigned long)wl->aggr_buf, order);
 
+<<<<<<< HEAD
 err_wq:
 	destroy_workqueue(wl->freezable_wq);
 
 err_hw:
 	wl1271_debugfs_exit(wl);
+=======
+err_hw:
+	wl1271_debugfs_exit(wl);
+	kfree(plat_dev);
+
+err_plat_alloc:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ieee80211_free_hw(hw);
 
 err_hw_alloc:
 
 	return ERR_PTR(ret);
 }
+<<<<<<< HEAD
 
 static int wl1271_free_hw(struct wl1271 *wl)
 {
@@ -5420,23 +7789,41 @@ static int wl1271_free_hw(struct wl1271 *wl)
 	dev_kfree_skb(wl->dummy_packet);
 	free_pages((unsigned long)wl->aggr_buf,
 			get_order(WL1271_AGGR_BUFFER_SIZE));
+=======
+EXPORT_SYMBOL_GPL(wl1271_alloc_hw);
+
+int wl1271_free_hw(struct wl1271 *wl)
+{
+	platform_device_unregister(wl->plat_dev);
+	dev_kfree_skb(wl->dummy_packet);
+	free_pages((unsigned long)wl->aggr_buf,
+			get_order(WL1271_AGGR_BUFFER_SIZE));
+	kfree(wl->plat_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wl1271_debugfs_exit(wl);
 
 	vfree(wl->fw);
 	wl->fw = NULL;
+<<<<<<< HEAD
 	wl->fw_type = WL12XX_FW_TYPE_NONE;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(wl->nvs);
 	wl->nvs = NULL;
 
 	kfree(wl->fw_status);
 	kfree(wl->tx_res_if);
+<<<<<<< HEAD
 	destroy_workqueue(wl->freezable_wq);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ieee80211_free_hw(wl->hw);
 
 	return 0;
 }
+<<<<<<< HEAD
 
 static irqreturn_t wl12xx_hardirq(int irq, void *cookie)
 {
@@ -5605,12 +7992,16 @@ static void __exit wl12xx_exit(void)
 	platform_driver_unregister(&wl12xx_driver);
 }
 module_exit(wl12xx_exit);
+=======
+EXPORT_SYMBOL_GPL(wl1271_free_hw);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 u32 wl12xx_debug_level = DEBUG_NONE;
 EXPORT_SYMBOL_GPL(wl12xx_debug_level);
 module_param_named(debug_level, wl12xx_debug_level, uint, S_IRUSR | S_IWUSR);
 MODULE_PARM_DESC(debug_level, "wl12xx debugging level");
 
+<<<<<<< HEAD
 module_param_named(fwlog, fwlog_param, charp, 0);
 MODULE_PARM_DESC(fwlog,
 		 "FW logger options: continuous, ondemand, dbgpins or disable");
@@ -5618,6 +8009,8 @@ MODULE_PARM_DESC(fwlog,
 module_param(bug_on_recovery, bool, S_IRUSR | S_IWUSR);
 MODULE_PARM_DESC(bug_on_recovery, "BUG() on fw recovery");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Luciano Coelho <coelho@ti.com>");
 MODULE_AUTHOR("Juuso Oikarinen <juuso.oikarinen@nokia.com>");

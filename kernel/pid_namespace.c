@@ -15,7 +15,10 @@
 #include <linux/acct.h>
 #include <linux/slab.h>
 #include <linux/proc_fs.h>
+<<<<<<< HEAD
 #include <linux/reboot.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define BITS_PER_PAGE		(PAGE_SIZE*8)
 
@@ -169,9 +172,19 @@ void zap_pid_ns_processes(struct pid_namespace *pid_ns)
 	while (nr > 0) {
 		rcu_read_lock();
 
+<<<<<<< HEAD
 		task = pid_task(find_vpid(nr), PIDTYPE_PID);
 		if (task && !__fatal_signal_pending(task))
 			send_sig_info(SIGKILL, SEND_SIG_FORCED, task);
+=======
+		/*
+		 * Any nested-container's init processes won't ignore the
+		 * SEND_SIG_NOINFO signal, see send_signal()->si_fromuser().
+		 */
+		task = pid_task(find_vpid(nr), PIDTYPE_PID);
+		if (task)
+			send_sig_info(SIGKILL, SEND_SIG_NOINFO, task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		rcu_read_unlock();
 
@@ -184,13 +197,17 @@ void zap_pid_ns_processes(struct pid_namespace *pid_ns)
 		rc = sys_wait4(-1, NULL, __WALL, NULL);
 	} while (rc != -ECHILD);
 
+<<<<<<< HEAD
 	if (pid_ns->reboot)
 		current->signal->group_exit_code = pid_ns->reboot;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acct_exit_ns(pid_ns);
 	return;
 }
 
+<<<<<<< HEAD
 static int pid_ns_ctl_handler(struct ctl_table *table, int write,
 		void __user *buffer, size_t *lenp, loff_t *ppos)
 {
@@ -254,6 +271,11 @@ static __init int pid_namespaces_init(void)
 {
 	pid_ns_cachep = KMEM_CACHE(pid_namespace, SLAB_PANIC);
 	register_sysctl_paths(kern_path, pid_ns_ctl_table);
+=======
+static __init int pid_namespaces_init(void)
+{
+	pid_ns_cachep = KMEM_CACHE(pid_namespace, SLAB_PANIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

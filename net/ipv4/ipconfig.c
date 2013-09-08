@@ -54,7 +54,10 @@
 #include <linux/delay.h>
 #include <linux/nfs_fs.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/net_namespace.h>
 #include <net/arp.h>
 #include <net/ip.h>
@@ -141,7 +144,11 @@ __be32 ic_servaddr = NONE;	/* Boot server IP address */
 __be32 root_server_addr = NONE;	/* Address of NFS server */
 u8 root_server_path[256] = { 0, };	/* Path to mount as root */
 
+<<<<<<< HEAD
 __be32 ic_dev_xid;		/* Device under configuration */
+=======
+u32 ic_dev_xid;		/* Device under configuration */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* vendor class identifier */
 static char vendor_class_identifier[253] __initdata;
@@ -214,7 +221,11 @@ static int __init ic_open_devs(void)
 		if (!(dev->flags & IFF_LOOPBACK))
 			continue;
 		if (dev_change_flags(dev, dev->flags | IFF_UP) < 0)
+<<<<<<< HEAD
 			pr_err("IP-Config: Failed to open %s\n", dev->name);
+=======
+			printk(KERN_ERR "IP-Config: Failed to open %s\n", dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	for_each_netdev(&init_net, dev) {
@@ -223,8 +234,12 @@ static int __init ic_open_devs(void)
 			if (dev->mtu >= 364)
 				able |= IC_BOOTP;
 			else
+<<<<<<< HEAD
 				pr_warn("DHCP/BOOTP: Ignoring device %s, MTU %d too small",
 					dev->name, dev->mtu);
+=======
+				printk(KERN_WARNING "DHCP/BOOTP: Ignoring device %s, MTU %d too small", dev->name, dev->mtu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!(dev->flags & IFF_NOARP))
 				able |= IC_RARP;
 			able &= ic_proto_enabled;
@@ -232,8 +247,12 @@ static int __init ic_open_devs(void)
 				continue;
 			oflags = dev->flags;
 			if (dev_change_flags(dev, oflags | IFF_UP) < 0) {
+<<<<<<< HEAD
 				pr_err("IP-Config: Failed to open %s\n",
 				       dev->name);
+=======
+				printk(KERN_ERR "IP-Config: Failed to open %s\n", dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				continue;
 			}
 			if (!(d = kmalloc(sizeof(struct ic_device), GFP_KERNEL))) {
@@ -275,10 +294,16 @@ have_carrier:
 
 	if (!ic_first_dev) {
 		if (user_dev_name[0])
+<<<<<<< HEAD
 			pr_err("IP-Config: Device `%s' not found\n",
 			       user_dev_name);
 		else
 			pr_err("IP-Config: No network devices available\n");
+=======
+			printk(KERN_ERR "IP-Config: Device `%s' not found.\n", user_dev_name);
+		else
+			printk(KERN_ERR "IP-Config: No network devices available.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 	return 0;
@@ -362,20 +387,32 @@ static int __init ic_setup_if(void)
 	strcpy(ir.ifr_ifrn.ifrn_name, ic_dev->name);
 	set_sockaddr(sin, ic_myaddr, 0);
 	if ((err = ic_devinet_ioctl(SIOCSIFADDR, &ir)) < 0) {
+<<<<<<< HEAD
 		pr_err("IP-Config: Unable to set interface address (%d)\n",
 		       err);
+=======
+		printk(KERN_ERR "IP-Config: Unable to set interface address (%d).\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 	set_sockaddr(sin, ic_netmask, 0);
 	if ((err = ic_devinet_ioctl(SIOCSIFNETMASK, &ir)) < 0) {
+<<<<<<< HEAD
 		pr_err("IP-Config: Unable to set interface netmask (%d)\n",
 		       err);
+=======
+		printk(KERN_ERR "IP-Config: Unable to set interface netmask (%d).\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 	set_sockaddr(sin, ic_myaddr | ~ic_netmask, 0);
 	if ((err = ic_devinet_ioctl(SIOCSIFBRDADDR, &ir)) < 0) {
+<<<<<<< HEAD
 		pr_err("IP-Config: Unable to set interface broadcast address (%d)\n",
 		       err);
+=======
+		printk(KERN_ERR "IP-Config: Unable to set interface broadcast address (%d).\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 	/* Handle the case where we need non-standard MTU on the boot link (a network
@@ -386,8 +423,13 @@ static int __init ic_setup_if(void)
 		strcpy(ir.ifr_name, ic_dev->name);
 		ir.ifr_mtu = ic_dev_mtu;
 		if ((err = ic_dev_ioctl(SIOCSIFMTU, &ir)) < 0)
+<<<<<<< HEAD
 			pr_err("IP-Config: Unable to set interface mtu to %d (%d)\n",
 			       ic_dev_mtu, err);
+=======
+			printk(KERN_ERR "IP-Config: Unable to set interface mtu to %d (%d).\n",
+			                 ic_dev_mtu, err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }
@@ -402,7 +444,11 @@ static int __init ic_setup_routes(void)
 
 		memset(&rm, 0, sizeof(rm));
 		if ((ic_gateway ^ ic_myaddr) & ic_netmask) {
+<<<<<<< HEAD
 			pr_err("IP-Config: Gateway not on directly connected network\n");
+=======
+			printk(KERN_ERR "IP-Config: Gateway not on directly connected network.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -1;
 		}
 		set_sockaddr((struct sockaddr_in *) &rm.rt_dst, 0, 0);
@@ -410,8 +456,12 @@ static int __init ic_setup_routes(void)
 		set_sockaddr((struct sockaddr_in *) &rm.rt_gateway, ic_gateway, 0);
 		rm.rt_flags = RTF_UP | RTF_GATEWAY;
 		if ((err = ic_route_ioctl(SIOCADDRT, &rm)) < 0) {
+<<<<<<< HEAD
 			pr_err("IP-Config: Cannot add default route (%d)\n",
 			       err);
+=======
+			printk(KERN_ERR "IP-Config: Cannot add default route (%d).\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -1;
 		}
 	}
@@ -444,8 +494,13 @@ static int __init ic_defaults(void)
 		else if (IN_CLASSC(ntohl(ic_myaddr)))
 			ic_netmask = htonl(IN_CLASSC_NET);
 		else {
+<<<<<<< HEAD
 			pr_err("IP-Config: Unable to guess netmask for address %pI4\n",
 			       &ic_myaddr);
+=======
+			printk(KERN_ERR "IP-Config: Unable to guess netmask for address %pI4\n",
+				&ic_myaddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -1;
 		}
 		printk("IP-Config: Guessing netmask %pI4\n", &ic_netmask);
@@ -695,8 +750,13 @@ ic_dhcp_init_options(u8 *options)
 			e += len;
 		}
 		if (*vendor_class_identifier) {
+<<<<<<< HEAD
 			pr_info("DHCP: sending class identifier \"%s\"\n",
 				vendor_class_identifier);
+=======
+			printk(KERN_INFO "DHCP: sending class identifier \"%s\"\n",
+			       vendor_class_identifier);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			*e++ = 60;	/* Class-identifier */
 			len = strlen(vendor_class_identifier);
 			*e++ = len;
@@ -774,6 +834,7 @@ static void __init ic_bootp_send_if(struct ic_device *d, unsigned long jiffies_d
 	struct sk_buff *skb;
 	struct bootp_pkt *b;
 	struct iphdr *h;
+<<<<<<< HEAD
 	int hlen = LL_RESERVED_SPACE(dev);
 	int tlen = dev->needed_tailroom;
 
@@ -783,6 +844,15 @@ static void __init ic_bootp_send_if(struct ic_device *d, unsigned long jiffies_d
 	if (!skb)
 		return;
 	skb_reserve(skb, hlen);
+=======
+
+	/* Allocate packet */
+	skb = alloc_skb(sizeof(struct bootp_pkt) + LL_ALLOCATED_SPACE(dev) + 15,
+			GFP_KERNEL);
+	if (!skb)
+		return;
+	skb_reserve(skb, LL_RESERVED_SPACE(dev));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	b = (struct bootp_pkt *) skb_put(skb, sizeof(struct bootp_pkt));
 	memset(b, 0, sizeof(struct bootp_pkt));
 
@@ -835,6 +905,7 @@ static void __init ic_bootp_send_if(struct ic_device *d, unsigned long jiffies_d
 	skb->dev = dev;
 	skb->protocol = htons(ETH_P_IP);
 	if (dev_hard_header(skb, dev, ntohs(skb->protocol),
+<<<<<<< HEAD
 			    dev->broadcast, dev->dev_addr, skb->len) < 0) {
 		kfree_skb(skb);
 		printk("E");
@@ -842,6 +913,10 @@ static void __init ic_bootp_send_if(struct ic_device *d, unsigned long jiffies_d
 	}
 
 	if (dev_queue_xmit(skb) < 0)
+=======
+			    dev->broadcast, dev->dev_addr, skb->len) < 0 ||
+	    dev_queue_xmit(skb) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk("E");
 }
 
@@ -866,9 +941,15 @@ static int __init ic_bootp_string(char *dest, char *src, int len, int max)
  */
 static void __init ic_do_bootp_ext(u8 *ext)
 {
+<<<<<<< HEAD
 	u8 servers;
 	int i;
 	__be16 mtu;
+=======
+       u8 servers;
+       int i;
+	u16 mtu;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef IPCONFIG_DEBUG
 	u8 *c;
@@ -880,6 +961,7 @@ static void __init ic_do_bootp_ext(u8 *ext)
 #endif
 
 	switch (*ext++) {
+<<<<<<< HEAD
 	case 1:		/* Subnet mask */
 		if (ic_netmask == NONE)
 			memcpy(&ic_netmask, ext+1, 4);
@@ -918,6 +1000,43 @@ static void __init ic_do_bootp_ext(u8 *ext)
 		ic_bootp_string(utsname()->domainname, ext+1, *ext,
 				__NEW_UTS_LEN);
 		break;
+=======
+		case 1:		/* Subnet mask */
+			if (ic_netmask == NONE)
+				memcpy(&ic_netmask, ext+1, 4);
+			break;
+		case 3:		/* Default gateway */
+			if (ic_gateway == NONE)
+				memcpy(&ic_gateway, ext+1, 4);
+			break;
+		case 6:		/* DNS server */
+			servers= *ext/4;
+			if (servers > CONF_NAMESERVERS_MAX)
+				servers = CONF_NAMESERVERS_MAX;
+			for (i = 0; i < servers; i++) {
+				if (ic_nameservers[i] == NONE)
+					memcpy(&ic_nameservers[i], ext+1+4*i, 4);
+			}
+			break;
+		case 12:	/* Host name */
+			ic_bootp_string(utsname()->nodename, ext+1, *ext, __NEW_UTS_LEN);
+			ic_host_name_set = 1;
+			break;
+		case 15:	/* Domain name (DNS) */
+			ic_bootp_string(ic_domain, ext+1, *ext, sizeof(ic_domain));
+			break;
+		case 17:	/* Root path */
+			if (!root_server_path[0])
+				ic_bootp_string(root_server_path, ext+1, *ext, sizeof(root_server_path));
+			break;
+		case 26:	/* Interface MTU */
+			memcpy(&mtu, ext+1, sizeof(mtu));
+			ic_dev_mtu = ntohs(mtu);
+			break;
+		case 40:	/* NIS Domain name (_not_ DNS) */
+			ic_bootp_string(utsname()->domainname, ext+1, *ext, __NEW_UTS_LEN);
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -954,9 +1073,16 @@ static int __init ic_bootp_recv(struct sk_buff *skb, struct net_device *dev, str
 		goto drop;
 
 	/* Fragments are not supported */
+<<<<<<< HEAD
 	if (ip_is_fragment(h)) {
 		if (net_ratelimit())
 			pr_err("DHCP/BOOTP: Ignoring fragmented reply\n");
+=======
+	if (h->frag_off & htons(IP_OFFSET | IP_MF)) {
+		if (net_ratelimit())
+			printk(KERN_ERR "DHCP/BOOTP: Ignoring fragmented "
+			       "reply.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto drop;
 	}
 
@@ -1005,7 +1131,12 @@ static int __init ic_bootp_recv(struct sk_buff *skb, struct net_device *dev, str
 	if (b->op != BOOTP_REPLY ||
 	    b->xid != d->xid) {
 		if (net_ratelimit())
+<<<<<<< HEAD
 			pr_err("DHCP/BOOTP: Reply not for us, op[%x] xid[%x]\n",
+=======
+			printk(KERN_ERR "DHCP/BOOTP: Reply not for us, "
+			       "op[%x] xid[%x]\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       b->op, b->xid);
 		goto drop_unlock;
 	}
@@ -1013,7 +1144,11 @@ static int __init ic_bootp_recv(struct sk_buff *skb, struct net_device *dev, str
 	/* Is it a reply for the device we are configuring? */
 	if (b->xid != ic_dev_xid) {
 		if (net_ratelimit())
+<<<<<<< HEAD
 			pr_err("DHCP/BOOTP: Ignoring delayed packet\n");
+=======
+			printk(KERN_ERR "DHCP/BOOTP: Ignoring delayed packet\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto drop_unlock;
 	}
 
@@ -1151,17 +1286,29 @@ static int __init ic_dynamic(void)
 	 * are missing, and without DHCP/BOOTP/RARP we are unable to get it.
 	 */
 	if (!ic_proto_enabled) {
+<<<<<<< HEAD
 		pr_err("IP-Config: Incomplete network configuration information\n");
+=======
+		printk(KERN_ERR "IP-Config: Incomplete network configuration information.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
 #ifdef IPCONFIG_BOOTP
 	if ((ic_proto_enabled ^ ic_proto_have_if) & IC_BOOTP)
+<<<<<<< HEAD
 		pr_err("DHCP/BOOTP: No suitable device found\n");
 #endif
 #ifdef IPCONFIG_RARP
 	if ((ic_proto_enabled ^ ic_proto_have_if) & IC_RARP)
 		pr_err("RARP: No suitable device found\n");
+=======
+		printk(KERN_ERR "DHCP/BOOTP: No suitable device found.\n");
+#endif
+#ifdef IPCONFIG_RARP
+	if ((ic_proto_enabled ^ ic_proto_have_if) & IC_RARP)
+		printk(KERN_ERR "RARP: No suitable device found.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	if (!ic_proto_have_if)
@@ -1188,11 +1335,19 @@ static int __init ic_dynamic(void)
 	 * [Actually we could now, but the nothing else running note still
 	 *  applies.. - AC]
 	 */
+<<<<<<< HEAD
 	pr_notice("Sending %s%s%s requests .",
 		  do_bootp
 		  ? ((ic_proto_enabled & IC_USE_DHCP) ? "DHCP" : "BOOTP") : "",
 		  (do_bootp && do_rarp) ? " and " : "",
 		  do_rarp ? "RARP" : "");
+=======
+	printk(KERN_NOTICE "Sending %s%s%s requests .",
+	       do_bootp
+		? ((ic_proto_enabled & IC_USE_DHCP) ? "DHCP" : "BOOTP") : "",
+	       (do_bootp && do_rarp) ? " and " : "",
+	       do_rarp ? "RARP" : "");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	start_jiffies = jiffies;
 	d = ic_first_dev;
@@ -1221,13 +1376,21 @@ static int __init ic_dynamic(void)
 		    (ic_proto_enabled & IC_USE_DHCP) &&
 		    ic_dhcp_msgtype != DHCPACK) {
 			ic_got_reply = 0;
+<<<<<<< HEAD
 			pr_cont(",");
+=======
+			printk(KERN_CONT ",");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 #endif /* IPCONFIG_DHCP */
 
 		if (ic_got_reply) {
+<<<<<<< HEAD
 			pr_cont(" OK\n");
+=======
+			printk(KERN_CONT " OK\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 
@@ -1235,7 +1398,11 @@ static int __init ic_dynamic(void)
 			continue;
 
 		if (! --retries) {
+<<<<<<< HEAD
 			pr_cont(" timed out!\n");
+=======
+			printk(KERN_CONT " timed out!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 
@@ -1245,7 +1412,11 @@ static int __init ic_dynamic(void)
 		if (timeout > CONF_TIMEOUT_MAX)
 			timeout = CONF_TIMEOUT_MAX;
 
+<<<<<<< HEAD
 		pr_cont(".");
+=======
+		printk(KERN_CONT ".");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 #ifdef IPCONFIG_BOOTP
@@ -1265,8 +1436,13 @@ static int __init ic_dynamic(void)
 	printk("IP-Config: Got %s answer from %pI4, ",
 		((ic_got_reply & IC_RARP) ? "RARP"
 		 : (ic_proto_enabled & IC_USE_DHCP) ? "DHCP" : "BOOTP"),
+<<<<<<< HEAD
 	       &ic_servaddr);
 	pr_cont("my address is %pI4\n", &ic_myaddr);
+=======
+		&ic_servaddr);
+	printk(KERN_CONT "my address is %pI4\n", &ic_myaddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1442,22 +1618,40 @@ static int __init ip_auto_config(void)
 			 */
 #ifdef CONFIG_ROOT_NFS
 			if (ROOT_DEV ==  Root_NFS) {
+<<<<<<< HEAD
 				pr_err("IP-Config: Retrying forever (NFS root)...\n");
+=======
+				printk(KERN_ERR
+					"IP-Config: Retrying forever (NFS root)...\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto try_try_again;
 			}
 #endif
 
 			if (--retries) {
+<<<<<<< HEAD
 				pr_err("IP-Config: Reopening network devices...\n");
+=======
+				printk(KERN_ERR
+				       "IP-Config: Reopening network devices...\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto try_try_again;
 			}
 
 			/* Oh, well.  At least we tried. */
+<<<<<<< HEAD
 			pr_err("IP-Config: Auto-configuration of network failed\n");
 			return -1;
 		}
 #else /* !DYNAMIC */
 		pr_err("IP-Config: Incomplete network configuration information\n");
+=======
+			printk(KERN_ERR "IP-Config: Auto-configuration of network failed.\n");
+			return -1;
+		}
+#else /* !DYNAMIC */
+		printk(KERN_ERR "IP-Config: Incomplete network configuration information.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ic_close_devs();
 		return -1;
 #endif /* IPCONFIG_DYNAMIC */
@@ -1495,6 +1689,7 @@ static int __init ip_auto_config(void)
 	/*
 	 * Clue in the operator.
 	 */
+<<<<<<< HEAD
 	pr_info("IP-Config: Complete:\n");
 	pr_info("     device=%s, addr=%pI4, mask=%pI4, gw=%pI4\n",
 		ic_dev->name, &ic_myaddr, &ic_netmask, &ic_gateway);
@@ -1505,6 +1700,21 @@ static int __init ip_auto_config(void)
 	if (ic_dev_mtu)
 		pr_cont(", mtu=%d", ic_dev_mtu);
 	pr_cont("\n");
+=======
+	printk("IP-Config: Complete:\n");
+	printk("     device=%s", ic_dev->name);
+	printk(KERN_CONT ", addr=%pI4", &ic_myaddr);
+	printk(KERN_CONT ", mask=%pI4", &ic_netmask);
+	printk(KERN_CONT ", gw=%pI4", &ic_gateway);
+	printk(KERN_CONT ",\n     host=%s, domain=%s, nis-domain=%s",
+	       utsname()->nodename, ic_domain, utsname()->domainname);
+	printk(KERN_CONT ",\n     bootserver=%pI4", &ic_servaddr);
+	printk(KERN_CONT ", rootserver=%pI4", &root_server_addr);
+	printk(KERN_CONT ", rootpath=%s", root_server_path);
+	if (ic_dev_mtu)
+		printk(KERN_CONT ", mtu=%d", ic_dev_mtu);
+	printk(KERN_CONT "\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* !SILENT */
 
 	return 0;
@@ -1637,8 +1847,13 @@ static int __init vendor_class_identifier_setup(char *addrs)
 	if (strlcpy(vendor_class_identifier, addrs,
 		    sizeof(vendor_class_identifier))
 	    >= sizeof(vendor_class_identifier))
+<<<<<<< HEAD
 		pr_warn("DHCP: vendorclass too long, truncated to \"%s\"",
 			vendor_class_identifier);
+=======
+		printk(KERN_WARNING "DHCP: vendorclass too long, truncated to \"%s\"",
+		       vendor_class_identifier);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 

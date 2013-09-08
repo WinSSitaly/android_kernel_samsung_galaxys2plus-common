@@ -5,7 +5,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -329,7 +333,10 @@ acpi_ev_execute_reg_method(union acpi_operand_object *region_obj, u32 function)
  * FUNCTION:    acpi_ev_address_space_dispatch
  *
  * PARAMETERS:  region_obj          - Internal region object
+<<<<<<< HEAD
  *              field_obj           - Corresponding field. Can be NULL.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *              Function            - Read or Write operation
  *              region_offset       - Where in the region to read or write
  *              bit_width           - Field width in bits (8, 16, 32, or 64)
@@ -345,7 +352,10 @@ acpi_ev_execute_reg_method(union acpi_operand_object *region_obj, u32 function)
 
 acpi_status
 acpi_ev_address_space_dispatch(union acpi_operand_object *region_obj,
+<<<<<<< HEAD
 			       union acpi_operand_object *field_obj,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       u32 function,
 			       u32 region_offset, u32 bit_width, u64 *value)
 {
@@ -355,7 +365,10 @@ acpi_ev_address_space_dispatch(union acpi_operand_object *region_obj,
 	union acpi_operand_object *handler_desc;
 	union acpi_operand_object *region_obj2;
 	void *region_context = NULL;
+<<<<<<< HEAD
 	struct acpi_connection_info *context;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ACPI_FUNCTION_TRACE(ev_address_space_dispatch);
 
@@ -378,8 +391,11 @@ acpi_ev_address_space_dispatch(union acpi_operand_object *region_obj,
 		return_ACPI_STATUS(AE_NOT_EXIST);
 	}
 
+<<<<<<< HEAD
 	context = handler_desc->address_space.context;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * It may be the case that the region has never been initialized.
 	 * Some types of regions require special init code
@@ -409,7 +425,12 @@ acpi_ev_address_space_dispatch(union acpi_operand_object *region_obj,
 		acpi_ex_exit_interpreter();
 
 		status = region_setup(region_obj, ACPI_REGION_ACTIVATE,
+<<<<<<< HEAD
 				      context, &region_context);
+=======
+				      handler_desc->address_space.context,
+				      &region_context);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Re-enter the interpreter */
 
@@ -459,6 +480,7 @@ acpi_ev_address_space_dispatch(union acpi_operand_object *region_obj,
 			  acpi_ut_get_region_name(region_obj->region.
 						  space_id)));
 
+<<<<<<< HEAD
 	/*
 	 * Special handling for generic_serial_bus and general_purpose_io:
 	 * There are three extra parameters that must be passed to the
@@ -478,6 +500,8 @@ acpi_ev_address_space_dispatch(union acpi_operand_object *region_obj,
 		context->access_length = field_obj->field.access_length;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!(handler_desc->address_space.handler_flags &
 	      ACPI_ADDR_HANDLER_DEFAULT_INSTALLED)) {
 		/*
@@ -492,7 +516,11 @@ acpi_ev_address_space_dispatch(union acpi_operand_object *region_obj,
 
 	status = handler(function,
 			 (region_obj->region.address + region_offset),
+<<<<<<< HEAD
 			 bit_width, value, context,
+=======
+			 bit_width, value, handler_desc->address_space.context,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 region_obj2->extra.region_context);
 
 	if (ACPI_FAILURE(status)) {

@@ -29,7 +29,11 @@
  *           nxp,external-clock-frequency = <16000000>;
  *   };
  *
+<<<<<<< HEAD
  * See "Documentation/devicetree/bindings/net/can/sja1000.txt" for further
+=======
+ * See "Documentation/powerpc/dts-bindings/can/sja1000.txt" for further
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * information.
  */
 
@@ -38,7 +42,10 @@
 #include <linux/interrupt.h>
 #include <linux/netdevice.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/io.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/can/dev.h>
 
 #include <linux/of_platform.h>
@@ -94,8 +101,13 @@ static int __devinit sja1000_ofp_probe(struct platform_device *ofdev)
 	struct net_device *dev;
 	struct sja1000_priv *priv;
 	struct resource res;
+<<<<<<< HEAD
 	u32 prop;
 	int err, irq, res_size;
+=======
+	const u32 *prop;
+	int err, irq, res_size, prop_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void __iomem *base;
 
 	err = of_address_to_resource(np, 0, &res);
@@ -136,6 +148,7 @@ static int __devinit sja1000_ofp_probe(struct platform_device *ofdev)
 	priv->read_reg = sja1000_ofp_read_reg;
 	priv->write_reg = sja1000_ofp_write_reg;
 
+<<<<<<< HEAD
 	err = of_property_read_u32(np, "nxp,external-clock-frequency", &prop);
 	if (!err)
 		priv->can.clock.freq = prop / 2;
@@ -157,6 +170,29 @@ static int __devinit sja1000_ofp_probe(struct platform_device *ofdev)
 	err = of_property_read_u32(np, "nxp,clock-out-frequency", &prop);
 	if (!err && prop) {
 		u32 divider = priv->can.clock.freq * 2 / prop;
+=======
+	prop = of_get_property(np, "nxp,external-clock-frequency", &prop_size);
+	if (prop && (prop_size ==  sizeof(u32)))
+		priv->can.clock.freq = *prop / 2;
+	else
+		priv->can.clock.freq = SJA1000_OFP_CAN_CLOCK; /* default */
+
+	prop = of_get_property(np, "nxp,tx-output-mode", &prop_size);
+	if (prop && (prop_size == sizeof(u32)))
+		priv->ocr |= *prop & OCR_MODE_MASK;
+	else
+		priv->ocr |= OCR_MODE_NORMAL; /* default */
+
+	prop = of_get_property(np, "nxp,tx-output-config", &prop_size);
+	if (prop && (prop_size == sizeof(u32)))
+		priv->ocr |= (*prop << OCR_TX_SHIFT) & OCR_TX_MASK;
+	else
+		priv->ocr |= OCR_TX0_PULLDOWN; /* default */
+
+	prop = of_get_property(np, "nxp,clock-out-frequency", &prop_size);
+	if (prop && (prop_size == sizeof(u32)) && *prop) {
+		u32 divider = priv->can.clock.freq * 2 / *prop;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (divider > 1)
 			priv->cdr |= divider / 2 - 1;
@@ -166,7 +202,12 @@ static int __devinit sja1000_ofp_probe(struct platform_device *ofdev)
 		priv->cdr |= CDR_CLK_OFF; /* default */
 	}
 
+<<<<<<< HEAD
 	if (!of_property_read_bool(np, "nxp,no-comparator-bypass"))
+=======
+	prop = of_get_property(np, "nxp,no-comparator-bypass", NULL);
+	if (!prop)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		priv->cdr |= CDR_CBP; /* default */
 
 	priv->irq_flags = IRQF_SHARED;
@@ -219,4 +260,18 @@ static struct platform_driver sja1000_ofp_driver = {
 	.remove = __devexit_p(sja1000_ofp_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(sja1000_ofp_driver);
+=======
+static int __init sja1000_ofp_init(void)
+{
+	return platform_driver_register(&sja1000_ofp_driver);
+}
+module_init(sja1000_ofp_init);
+
+static void __exit sja1000_ofp_exit(void)
+{
+	return platform_driver_unregister(&sja1000_ofp_driver);
+};
+module_exit(sja1000_ofp_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

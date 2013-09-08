@@ -13,6 +13,14 @@
 #ifndef __ASM_ARCH_GPIO_H
 #define __ASM_ARCH_GPIO_H __FILE__
 
+<<<<<<< HEAD
+=======
+#define gpio_get_value	__gpio_get_value
+#define gpio_set_value	__gpio_set_value
+#define gpio_cansleep	__gpio_cansleep
+#define gpio_to_irq	__gpio_to_irq
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Practically, GPIO banks up to MP03 are the configurable gpio banks */
 
 /* GPIO bank sizes */
@@ -137,4 +145,9 @@ enum s5p_gpio_number {
 #define ARCH_NR_GPIOS		(S5PV210_MP05(S5PV210_GPIO_MP05_NR) +	\
 				 CONFIG_SAMSUNG_GPIO_EXTRA + 1)
 
+<<<<<<< HEAD
+=======
+#include <asm-generic/gpio.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ASM_ARCH_GPIO_H */

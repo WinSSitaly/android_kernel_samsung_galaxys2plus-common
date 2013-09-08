@@ -34,7 +34,11 @@
  *	does memory allocation too using vmalloc_32().
  *
  * videobuf_dma_*()
+<<<<<<< HEAD
  *	see Documentation/DMA-API-HOWTO.txt, these functions to
+=======
+ *	see Documentation/PCI/PCI-DMA-mapping.txt, these functions to
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	basically the same.  The map function does also build a
  *	scatterlist for the buffer (and unmap frees it ...)
  *

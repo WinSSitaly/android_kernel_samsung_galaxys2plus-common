@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #ifndef _M68K_BITOPS_H
 #define _M68K_BITOPS_H
 /*
@@ -528,3 +529,10 @@ static inline int __fls(int x)
 #endif /* __KERNEL__ */
 
 #endif /* _M68K_BITOPS_H */
+=======
+#ifdef __uClinux__
+#include "bitops_no.h"
+#else
+#include "bitops_mm.h"
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

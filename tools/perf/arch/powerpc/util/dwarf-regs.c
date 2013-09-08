@@ -9,10 +9,14 @@
  * 2 of the License, or (at your option) any later version.
  */
 
+<<<<<<< HEAD
 #include <stdlib.h>
 #ifndef __UCLIBC__
 #include <libio.h>
 #endif
+=======
+#include <libio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <dwarf-regs.h>
 
 

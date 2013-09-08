@@ -1333,6 +1333,7 @@ sisfb_set_base_CRT2(struct sis_video_info *ivideo, unsigned int base)
 }
 
 static int
+<<<<<<< HEAD
 sisfb_pan_var(struct sis_video_info *ivideo, struct fb_info *info,
 	      struct fb_var_screeninfo *var)
 {
@@ -1341,6 +1342,21 @@ sisfb_pan_var(struct sis_video_info *ivideo, struct fb_info *info,
 
 	/* calculate base bpp dep. */
 	switch (info->var.bits_per_pixel) {
+=======
+sisfb_pan_var(struct sis_video_info *ivideo, struct fb_var_screeninfo *var)
+{
+	if(var->xoffset > (var->xres_virtual - var->xres)) {
+		return -EINVAL;
+	}
+	if(var->yoffset > (var->yres_virtual - var->yres)) {
+		return -EINVAL;
+	}
+
+	ivideo->current_base = (var->yoffset * var->xres_virtual) + var->xoffset;
+
+	/* calculate base bpp dep. */
+	switch(var->bits_per_pixel) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case 32:
 		break;
 	case 16:
@@ -1630,6 +1646,7 @@ sisfb_pan_display(struct fb_var_screeninfo *var, struct fb_info* info)
 	struct sis_video_info *ivideo = (struct sis_video_info *)info->par;
 	int err;
 
+<<<<<<< HEAD
 	if (var->vmode & FB_VMODE_YWRAP)
 		return -EINVAL;
 
@@ -1639,6 +1656,22 @@ sisfb_pan_display(struct fb_var_screeninfo *var, struct fb_info* info)
 
 	err = sisfb_pan_var(ivideo, info, var);
 	if (err < 0)
+=======
+	if(var->xoffset > (var->xres_virtual - var->xres))
+		return -EINVAL;
+
+	if(var->yoffset > (var->yres_virtual - var->yres))
+		return -EINVAL;
+
+	if(var->vmode & FB_VMODE_YWRAP)
+		return -EINVAL;
+
+	if(var->xoffset + info->var.xres > info->var.xres_virtual ||
+	   var->yoffset + info->var.yres > info->var.yres_virtual)
+		return -EINVAL;
+
+	if((err = sisfb_pan_var(ivideo, var)) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 
 	info->var.xoffset = var->xoffset;

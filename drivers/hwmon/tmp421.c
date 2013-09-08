@@ -157,7 +157,11 @@ static ssize_t show_fault(struct device *dev,
 		return sprintf(buf, "0\n");
 }
 
+<<<<<<< HEAD
 static umode_t tmp421_is_visible(struct kobject *kobj, struct attribute *a,
+=======
+static mode_t tmp421_is_visible(struct kobject *kobj, struct attribute *a,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				int n)
 {
 	struct device *dev = container_of(kobj, struct device, kobj);
@@ -324,9 +328,27 @@ static struct i2c_driver tmp421_driver = {
 	.address_list = normal_i2c,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(tmp421_driver);
+=======
+static int __init tmp421_init(void)
+{
+	return i2c_add_driver(&tmp421_driver);
+}
+
+static void __exit tmp421_exit(void)
+{
+	i2c_del_driver(&tmp421_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Andre Prendel <andre.prendel@gmx.de>");
 MODULE_DESCRIPTION("Texas Instruments TMP421/422/423 temperature sensor"
 		   " driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(tmp421_init);
+module_exit(tmp421_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

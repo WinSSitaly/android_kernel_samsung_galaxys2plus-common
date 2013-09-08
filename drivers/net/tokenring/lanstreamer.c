@@ -127,6 +127,10 @@
 #include <net/checksum.h>
 
 #include <asm/io.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "lanstreamer.h"
 
@@ -230,7 +234,11 @@ static const struct net_device_ops streamer_netdev_ops = {
 #if STREAMER_IOCTL
 	.ndo_do_ioctl		= streamer_ioctl,
 #endif
+<<<<<<< HEAD
 	.ndo_set_rx_mode	= streamer_set_rx_mode,
+=======
+	.ndo_set_multicast_list = streamer_set_rx_mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ndo_set_mac_address	= streamer_set_mac_address,
 };
 

@@ -15,8 +15,13 @@
 #include <linux/err.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
 #include "iomap.h"
 #include "common.h"
+=======
+#include <plat/common.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "prcm_mpu44xx.h"
 #include "cm-regbits-44xx.h"
 

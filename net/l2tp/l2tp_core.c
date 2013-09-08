@@ -55,7 +55,11 @@
 #include <net/protocol.h>
 
 #include <asm/byteorder.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "l2tp_core.h"
 
@@ -397,7 +401,10 @@ static void l2tp_recv_dequeue(struct l2tp_session *session)
 	 * expect to send up next, dequeue it and any other
 	 * in-sequence packets behind it.
 	 */
+<<<<<<< HEAD
 start:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_bh(&session->reorder_q.lock);
 	skb_queue_walk_safe(&session->reorder_q, skb, tmp) {
 		if (time_after(jiffies, L2TP_SKB_CB(skb)->expires)) {
@@ -434,7 +441,11 @@ start:
 		 */
 		spin_unlock_bh(&session->reorder_q.lock);
 		l2tp_recv_dequeue_skb(session, skb);
+<<<<<<< HEAD
 		goto start;
+=======
+		spin_lock_bh(&session->reorder_q.lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 out:
@@ -756,6 +767,12 @@ static int l2tp_udp_recv_core(struct l2tp_tunnel *tunnel, struct sk_buff *skb,
 		goto error;
 	}
 
+<<<<<<< HEAD
+=======
+	/* Point to L2TP header */
+	optr = ptr = skb->data;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Trace packet contents, if enabled */
 	if (tunnel->debug & L2TP_MSG_DATA) {
 		length = min(32u, skb->len);
@@ -766,15 +783,22 @@ static int l2tp_udp_recv_core(struct l2tp_tunnel *tunnel, struct sk_buff *skb,
 
 		offset = 0;
 		do {
+<<<<<<< HEAD
 			printk(" %02X", skb->data[offset]);
+=======
+			printk(" %02X", ptr[offset]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} while (++offset < length);
 
 		printk("\n");
 	}
 
+<<<<<<< HEAD
 	/* Point to L2TP header */
 	optr = ptr = skb->data;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Get L2TP header flags */
 	hdrflags = ntohs(*(__be16 *) ptr);
 
@@ -1072,7 +1096,11 @@ int l2tp_xmit_skb(struct l2tp_session *session, struct sk_buff *skb, int hdr_len
 
 	/* Get routing info from the tunnel socket */
 	skb_dst_drop(skb);
+<<<<<<< HEAD
 	skb_dst_set(skb, dst_clone(__sk_dst_check(sk, 0)));
+=======
+	skb_dst_set(skb, dst_clone(__sk_dst_get(sk)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	inet = inet_sk(sk);
 	fl = &inet->cork.fl;
@@ -1253,10 +1281,18 @@ static void l2tp_tunnel_free(struct l2tp_tunnel *tunnel)
 	/* Remove from tunnel list */
 	spin_lock_bh(&pn->l2tp_tunnel_list_lock);
 	list_del_rcu(&tunnel->list);
+<<<<<<< HEAD
 	kfree_rcu(tunnel, rcu);
 	spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
 
 	atomic_dec(&l2tp_tunnel_count);
+=======
+	spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
+	synchronize_rcu();
+
+	atomic_dec(&l2tp_tunnel_count);
+	kfree(tunnel);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Create a socket for the tunnel, if one isn't set up by

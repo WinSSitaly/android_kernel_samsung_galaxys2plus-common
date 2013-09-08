@@ -23,8 +23,11 @@
 #include <linux/sched.h>
 #include <linux/slab.h>
 #include <linux/seq_file.h>
+<<<<<<< HEAD
 #include <linux/cryptouser.h>
 #include <net/netlink.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <crypto/scatterwalk.h>
 
@@ -383,6 +386,7 @@ static int crypto_init_ablkcipher_ops(struct crypto_tfm *tfm, u32 type,
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_NET
 static int crypto_ablkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
 {
@@ -412,6 +416,8 @@ static int crypto_ablkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void crypto_ablkcipher_show(struct seq_file *m, struct crypto_alg *alg)
 	__attribute__ ((unused));
 static void crypto_ablkcipher_show(struct seq_file *m, struct crypto_alg *alg)
@@ -434,7 +440,10 @@ const struct crypto_type crypto_ablkcipher_type = {
 #ifdef CONFIG_PROC_FS
 	.show = crypto_ablkcipher_show,
 #endif
+<<<<<<< HEAD
 	.report = crypto_ablkcipher_report,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 EXPORT_SYMBOL_GPL(crypto_ablkcipher_type);
 
@@ -464,6 +473,7 @@ static int crypto_init_givcipher_ops(struct crypto_tfm *tfm, u32 type,
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_NET
 static int crypto_givcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
 {
@@ -493,6 +503,8 @@ static int crypto_givcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void crypto_givcipher_show(struct seq_file *m, struct crypto_alg *alg)
 	__attribute__ ((unused));
 static void crypto_givcipher_show(struct seq_file *m, struct crypto_alg *alg)
@@ -515,7 +527,10 @@ const struct crypto_type crypto_givcipher_type = {
 #ifdef CONFIG_PROC_FS
 	.show = crypto_givcipher_show,
 #endif
+<<<<<<< HEAD
 	.report = crypto_givcipher_report,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 EXPORT_SYMBOL_GPL(crypto_givcipher_type);
 
@@ -613,7 +628,12 @@ out:
 	return err;
 }
 
+<<<<<<< HEAD
 struct crypto_alg *crypto_lookup_skcipher(const char *name, u32 type, u32 mask)
+=======
+static struct crypto_alg *crypto_lookup_skcipher(const char *name, u32 type,
+						 u32 mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct crypto_alg *alg;
 
@@ -651,7 +671,10 @@ struct crypto_alg *crypto_lookup_skcipher(const char *name, u32 type, u32 mask)
 
 	return ERR_PTR(crypto_givcipher_default(alg, type, mask));
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(crypto_lookup_skcipher);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int crypto_grab_skcipher(struct crypto_skcipher_spawn *spawn, const char *name,
 			 u32 type, u32 mask)

@@ -17,6 +17,28 @@ config MMC_UNSAFE_RESUME
 	  This option sets a default which can be overridden by the
 	  module parameter "removable=0" or "removable=1".
 
+<<<<<<< HEAD
+=======
+config MMC_45_FEATURE_SUPPORT
+	bool "MMC 4.5 feature support"
+	help
+	  If you say Y here, the MMC layer will support MMC 4.5 feature.
+
+config MMC_DISCARD_SUPPORT
+	bool "MMC discard support"
+	depends on MMC_45_FEATURE_SUPPORT
+	help
+	  If you say Y here, the MMC layer will support MMC discard
+	  function.
+
+config MMC_DISCARD_SAMSUNG_eMMC_SUPPORT
+	bool "MMC discard SAMSUNG eMMC support"
+	depends on MMC_DISCARD_SUPPORT
+	help
+	  If you say Y here, the MMC layer will support MMC discard
+	  function for SAMSUNG eMMC device.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config MMC_CLKGATE
 	bool "MMC host clock gating (EXPERIMENTAL)"
 	depends on EXPERIMENTAL
@@ -27,3 +49,23 @@ config MMC_CLKGATE
 	  support handling this in order for it to be of any use.
 
 	  If unsure, say N.
+<<<<<<< HEAD
+=======
+
+config MMC_EMBEDDED_SDIO
+	boolean "MMC embedded SDIO device support (EXPERIMENTAL)"
+	depends on EXPERIMENTAL
+	help
+	  If you say Y here, support will be added for embedded SDIO
+	  devices which do not contain the necessary enumeration
+	  support in hardware to be properly detected.
+
+config MMC_PARANOID_SD_INIT
+	bool "Enable paranoid SD card initialization (EXPERIMENTAL)"
+	depends on EXPERIMENTAL
+	help
+	  If you say Y here, the MMC layer will be extra paranoid
+	  about re-trying SD init requests. This can be a useful
+	  work-around for buggy controllers and hardware. Enable
+	  if you are experiencing issues with SD detection.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

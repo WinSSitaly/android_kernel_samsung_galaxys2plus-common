@@ -23,14 +23,23 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/types.h>
 #include <linux/timer.h>
+<<<<<<< HEAD
 #include <linux/miscdevice.h> /* for MODULE_ALIAS_MISCDEV */
 #include <linux/watchdog.h>
+=======
+#include <linux/miscdevice.h>
+#include <linux/watchdog.h>
+#include <linux/fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/platform_device.h>
 #include <linux/interrupt.h>
@@ -39,7 +48,10 @@
 #include <linux/io.h>
 #include <linux/cpufreq.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/err.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/map.h>
 
@@ -48,10 +60,19 @@
 
 #include <plat/regs-watchdog.h>
 
+<<<<<<< HEAD
 #define CONFIG_S3C2410_WATCHDOG_ATBOOT		(0)
 #define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME	(15)
 
 static bool nowayout	= WATCHDOG_NOWAYOUT;
+=======
+#define PFX "s3c2410-wdt: "
+
+#define CONFIG_S3C2410_WATCHDOG_ATBOOT		(0)
+#define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME	(15)
+
+static int nowayout	= WATCHDOG_NOWAYOUT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int tmr_margin	= CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME;
 static int tmr_atboot	= CONFIG_S3C2410_WATCHDOG_ATBOOT;
 static int soft_noboot;
@@ -59,7 +80,11 @@ static int debug;
 
 module_param(tmr_margin,  int, 0);
 module_param(tmr_atboot,  int, 0);
+<<<<<<< HEAD
 module_param(nowayout,   bool, 0);
+=======
+module_param(nowayout,    int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(soft_noboot, int, 0);
 module_param(debug,	  int, 0);
 
@@ -74,16 +99,25 @@ MODULE_PARM_DESC(soft_noboot, "Watchdog action, set to 1 to ignore reboots, "
 			"0 to reboot (default 0)");
 MODULE_PARM_DESC(debug, "Watchdog debug, set to >1 for debug (default 0)");
 
+<<<<<<< HEAD
+=======
+static unsigned long open_lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct device    *wdt_dev;	/* platform device attached to */
 static struct resource	*wdt_mem;
 static struct resource	*wdt_irq;
 static struct clk	*wdt_clock;
 static void __iomem	*wdt_base;
 static unsigned int	 wdt_count;
+<<<<<<< HEAD
+=======
+static char		 expect_close;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEFINE_SPINLOCK(wdt_lock);
 
 /* watchdog control routines */
 
+<<<<<<< HEAD
 #define DBG(fmt, ...)					\
 do {							\
 	if (debug)					\
@@ -93,12 +127,25 @@ do {							\
 /* functions */
 
 static int s3c2410wdt_keepalive(struct watchdog_device *wdd)
+=======
+#define DBG(msg...) do { \
+	if (debug) \
+		printk(KERN_INFO msg); \
+	} while (0)
+
+/* functions */
+
+static void s3c2410wdt_keepalive(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	spin_lock(&wdt_lock);
 	writel(wdt_count, wdt_base + S3C2410_WTCNT);
 	spin_unlock(&wdt_lock);
+<<<<<<< HEAD
 
 	return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __s3c2410wdt_stop(void)
@@ -110,16 +157,26 @@ static void __s3c2410wdt_stop(void)
 	writel(wtcon, wdt_base + S3C2410_WTCON);
 }
 
+<<<<<<< HEAD
 static int s3c2410wdt_stop(struct watchdog_device *wdd)
+=======
+static void s3c2410wdt_stop(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	spin_lock(&wdt_lock);
 	__s3c2410wdt_stop();
 	spin_unlock(&wdt_lock);
+<<<<<<< HEAD
 
 	return 0;
 }
 
 static int s3c2410wdt_start(struct watchdog_device *wdd)
+=======
+}
+
+static void s3c2410wdt_start(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long wtcon;
 
@@ -145,8 +202,11 @@ static int s3c2410wdt_start(struct watchdog_device *wdd)
 	writel(wdt_count, wdt_base + S3C2410_WTCNT);
 	writel(wtcon, wdt_base + S3C2410_WTCON);
 	spin_unlock(&wdt_lock);
+<<<<<<< HEAD
 
 	return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int s3c2410wdt_is_running(void)
@@ -154,7 +214,11 @@ static inline int s3c2410wdt_is_running(void)
 	return readl(wdt_base + S3C2410_WTCON) & S3C2410_WTCON_ENABLE;
 }
 
+<<<<<<< HEAD
 static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd, unsigned timeout)
+=======
+static int s3c2410wdt_set_heartbeat(int timeout)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long freq = clk_get_rate(wdt_clock);
 	unsigned int count;
@@ -187,6 +251,11 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd, unsigned timeou
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	tmr_margin = timeout;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DBG("%s: timeout=%d, divisor=%d, count=%d (%08x)\n",
 	    __func__, timeout, divisor, count, count/divisor);
 
@@ -201,11 +270,81 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd, unsigned timeou
 	writel(count, wdt_base + S3C2410_WTDAT);
 	writel(wtcon, wdt_base + S3C2410_WTCON);
 
+<<<<<<< HEAD
 	wdd->timeout = timeout;
 
 	return 0;
 }
 
+=======
+	return 0;
+}
+
+/*
+ *	/dev/watchdog handling
+ */
+
+static int s3c2410wdt_open(struct inode *inode, struct file *file)
+{
+	if (test_and_set_bit(0, &open_lock))
+		return -EBUSY;
+
+	if (nowayout)
+		__module_get(THIS_MODULE);
+
+	expect_close = 0;
+
+	/* start the timer */
+	s3c2410wdt_start();
+	return nonseekable_open(inode, file);
+}
+
+static int s3c2410wdt_release(struct inode *inode, struct file *file)
+{
+	/*
+	 *	Shut off the timer.
+	 *	Lock it in if it's a module and we set nowayout
+	 */
+
+	if (expect_close == 42)
+		s3c2410wdt_stop();
+	else {
+		dev_err(wdt_dev, "Unexpected close, not stopping watchdog\n");
+		s3c2410wdt_keepalive();
+	}
+	expect_close = 0;
+	clear_bit(0, &open_lock);
+	return 0;
+}
+
+static ssize_t s3c2410wdt_write(struct file *file, const char __user *data,
+				size_t len, loff_t *ppos)
+{
+	/*
+	 *	Refresh the timer.
+	 */
+	if (len) {
+		if (!nowayout) {
+			size_t i;
+
+			/* In case it was set long ago */
+			expect_close = 0;
+
+			for (i = 0; i != len; i++) {
+				char c;
+
+				if (get_user(c, data + i))
+					return -EFAULT;
+				if (c == 'V')
+					expect_close = 42;
+			}
+		}
+		s3c2410wdt_keepalive();
+	}
+	return len;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define OPTIONS (WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE)
 
 static const struct watchdog_info s3c2410_wdt_ident = {
@@ -214,6 +353,7 @@ static const struct watchdog_info s3c2410_wdt_ident = {
 	.identity         =	"S3C2410 Watchdog",
 };
 
+<<<<<<< HEAD
 static struct watchdog_ops s3c2410wdt_ops = {
 	.owner = THIS_MODULE,
 	.start = s3c2410wdt_start,
@@ -225,6 +365,55 @@ static struct watchdog_ops s3c2410wdt_ops = {
 static struct watchdog_device s3c2410_wdd = {
 	.info = &s3c2410_wdt_ident,
 	.ops = &s3c2410wdt_ops,
+=======
+
+static long s3c2410wdt_ioctl(struct file *file,	unsigned int cmd,
+							unsigned long arg)
+{
+	void __user *argp = (void __user *)arg;
+	int __user *p = argp;
+	int new_margin;
+
+	switch (cmd) {
+	case WDIOC_GETSUPPORT:
+		return copy_to_user(argp, &s3c2410_wdt_ident,
+			sizeof(s3c2410_wdt_ident)) ? -EFAULT : 0;
+	case WDIOC_GETSTATUS:
+	case WDIOC_GETBOOTSTATUS:
+		return put_user(0, p);
+	case WDIOC_KEEPALIVE:
+		s3c2410wdt_keepalive();
+		return 0;
+	case WDIOC_SETTIMEOUT:
+		if (get_user(new_margin, p))
+			return -EFAULT;
+		if (s3c2410wdt_set_heartbeat(new_margin))
+			return -EINVAL;
+		s3c2410wdt_keepalive();
+		return put_user(tmr_margin, p);
+	case WDIOC_GETTIMEOUT:
+		return put_user(tmr_margin, p);
+	default:
+		return -ENOTTY;
+	}
+}
+
+/* kernel interface */
+
+static const struct file_operations s3c2410wdt_fops = {
+	.owner		= THIS_MODULE,
+	.llseek		= no_llseek,
+	.write		= s3c2410wdt_write,
+	.unlocked_ioctl	= s3c2410wdt_ioctl,
+	.open		= s3c2410wdt_open,
+	.release	= s3c2410wdt_release,
+};
+
+static struct miscdevice s3c2410wdt_miscdev = {
+	.minor		= WATCHDOG_MINOR,
+	.name		= "watchdog",
+	.fops		= &s3c2410wdt_fops,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* interrupt handler code */
@@ -233,7 +422,11 @@ static irqreturn_t s3c2410wdt_irq(int irqno, void *param)
 {
 	dev_info(wdt_dev, "watchdog timer expired (irq)\n");
 
+<<<<<<< HEAD
 	s3c2410wdt_keepalive(&s3c2410_wdd);
+=======
+	s3c2410wdt_keepalive();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return IRQ_HANDLED;
 }
 
@@ -254,6 +447,7 @@ static int s3c2410wdt_cpufreq_transition(struct notifier_block *nb,
 		 * the watchdog is running.
 		 */
 
+<<<<<<< HEAD
 		s3c2410wdt_keepalive(&s3c2410_wdd);
 	} else if (val == CPUFREQ_POSTCHANGE) {
 		s3c2410wdt_stop(&s3c2410_wdd);
@@ -262,6 +456,16 @@ static int s3c2410wdt_cpufreq_transition(struct notifier_block *nb,
 
 		if (ret >= 0)
 			s3c2410wdt_start(&s3c2410_wdd);
+=======
+		s3c2410wdt_keepalive();
+	} else if (val == CPUFREQ_POSTCHANGE) {
+		s3c2410wdt_stop();
+
+		ret = s3c2410wdt_set_heartbeat(tmr_margin);
+
+		if (ret >= 0)
+			s3c2410wdt_start();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		else
 			goto err;
 	}
@@ -270,8 +474,12 @@ done:
 	return 0;
 
  err:
+<<<<<<< HEAD
 	dev_err(wdt_dev, "cannot set new value for timeout %d\n",
 				s3c2410_wdd.timeout);
+=======
+	dev_err(wdt_dev, "cannot set new value for timeout %d\n", tmr_margin);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -302,6 +510,13 @@ static inline void s3c2410wdt_cpufreq_deregister(void)
 }
 #endif
 
+<<<<<<< HEAD
+=======
+
+
+/* device interface */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
 {
 	struct device *dev;
@@ -315,12 +530,18 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
 	dev = &pdev->dev;
 	wdt_dev = &pdev->dev;
 
+<<<<<<< HEAD
+=======
+	/* get the memory region for the watchdog timer */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wdt_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	if (wdt_mem == NULL) {
 		dev_err(dev, "no memory resource specified\n");
 		return -ENOENT;
 	}
 
+<<<<<<< HEAD
 	wdt_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
 	if (wdt_irq == NULL) {
 		dev_err(dev, "no irq resource specified\n");
@@ -335,6 +556,12 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
 		dev_err(dev, "failed to get memory region\n");
 		ret = -EBUSY;
 		goto err;
+=======
+	size = resource_size(wdt_mem);
+	if (!request_mem_region(wdt_mem->start, size, pdev->name)) {
+		dev_err(dev, "failed to get memory region\n");
+		return -EBUSY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	wdt_base = ioremap(wdt_mem->start, size);
@@ -346,26 +573,56 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
 
 	DBG("probe: mapped wdt_base=%p\n", wdt_base);
 
+<<<<<<< HEAD
+=======
+	wdt_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+	if (wdt_irq == NULL) {
+		dev_err(dev, "no irq resource specified\n");
+		ret = -ENOENT;
+		goto err_map;
+	}
+
+	ret = request_irq(wdt_irq->start, s3c2410wdt_irq, 0, pdev->name, pdev);
+	if (ret != 0) {
+		dev_err(dev, "failed to install irq (%d)\n", ret);
+		goto err_map;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wdt_clock = clk_get(&pdev->dev, "watchdog");
 	if (IS_ERR(wdt_clock)) {
 		dev_err(dev, "failed to find watchdog clock source\n");
 		ret = PTR_ERR(wdt_clock);
+<<<<<<< HEAD
 		goto err_map;
+=======
+		goto err_irq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	clk_enable(wdt_clock);
 
+<<<<<<< HEAD
 	ret = s3c2410wdt_cpufreq_register();
 	if (ret < 0) {
 		pr_err("failed to register cpufreq\n");
+=======
+	if (s3c2410wdt_cpufreq_register() < 0) {
+		printk(KERN_ERR PFX "failed to register cpufreq\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_clk;
 	}
 
 	/* see if we can actually set the requested timer margin, and if
 	 * not, try the default value */
 
+<<<<<<< HEAD
 	if (s3c2410wdt_set_heartbeat(&s3c2410_wdd, tmr_margin)) {
 		started = s3c2410wdt_set_heartbeat(&s3c2410_wdd,
+=======
+	if (s3c2410wdt_set_heartbeat(tmr_margin)) {
+		started = s3c2410wdt_set_heartbeat(
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME);
 
 		if (started == 0)
@@ -377,6 +634,7 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
 							"cannot start\n");
 	}
 
+<<<<<<< HEAD
 	ret = request_irq(wdt_irq->start, s3c2410wdt_irq, 0, pdev->name, pdev);
 	if (ret != 0) {
 		dev_err(dev, "failed to install irq (%d)\n", ret);
@@ -389,17 +647,32 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
 	if (ret) {
 		dev_err(dev, "cannot register watchdog (%d)\n", ret);
 		goto err_irq;
+=======
+	ret = misc_register(&s3c2410wdt_miscdev);
+	if (ret) {
+		dev_err(dev, "cannot register miscdev on minor=%d (%d)\n",
+			WATCHDOG_MINOR, ret);
+		goto err_cpufreq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (tmr_atboot && started == 0) {
 		dev_info(dev, "starting watchdog timer\n");
+<<<<<<< HEAD
 		s3c2410wdt_start(&s3c2410_wdd);
+=======
+		s3c2410wdt_start();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (!tmr_atboot) {
 		/* if we're not enabling the watchdog, then ensure it is
 		 * disabled if it has been left running from the bootloader
 		 * or other source */
 
+<<<<<<< HEAD
 		s3c2410wdt_stop(&s3c2410_wdd);
+=======
+		s3c2410wdt_stop();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* print out a statement of readiness */
@@ -408,6 +681,7 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
 
 	dev_info(dev, "watchdog %sactive, reset %sabled, irq %sabled\n",
 		 (wtcon & S3C2410_WTCON_ENABLE) ?  "" : "in",
+<<<<<<< HEAD
 		 (wtcon & S3C2410_WTCON_RSTEN) ? "en" : "dis",
 		 (wtcon & S3C2410_WTCON_INTEN) ? "en" : "dis");
 
@@ -416,31 +690,53 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
  err_irq:
 	free_irq(wdt_irq->start, pdev);
 
+=======
+		 (wtcon & S3C2410_WTCON_RSTEN) ? "" : "dis",
+		 (wtcon & S3C2410_WTCON_INTEN) ? "" : "en");
+
+	return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  err_cpufreq:
 	s3c2410wdt_cpufreq_deregister();
 
  err_clk:
 	clk_disable(wdt_clock);
 	clk_put(wdt_clock);
+<<<<<<< HEAD
 	wdt_clock = NULL;
+=======
+
+ err_irq:
+	free_irq(wdt_irq->start, pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
  err_map:
 	iounmap(wdt_base);
 
  err_req:
 	release_mem_region(wdt_mem->start, size);
+<<<<<<< HEAD
 
  err:
 	wdt_irq = NULL;
 	wdt_mem = NULL;
+=======
+	wdt_mem = NULL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devexit s3c2410wdt_remove(struct platform_device *dev)
 {
+<<<<<<< HEAD
 	watchdog_unregister_device(&s3c2410_wdd);
 
 	free_irq(wdt_irq->start, dev);
+=======
+	misc_deregister(&s3c2410wdt_miscdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	s3c2410wdt_cpufreq_deregister();
 
@@ -448,17 +744,30 @@ static int __devexit s3c2410wdt_remove(struct platform_device *dev)
 	clk_put(wdt_clock);
 	wdt_clock = NULL;
 
+<<<<<<< HEAD
 	iounmap(wdt_base);
 
 	release_mem_region(wdt_mem->start, resource_size(wdt_mem));
 	wdt_irq = NULL;
+=======
+	free_irq(wdt_irq->start, dev);
+	wdt_irq = NULL;
+
+	iounmap(wdt_base);
+
+	release_mem_region(wdt_mem->start, resource_size(wdt_mem));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wdt_mem = NULL;
 	return 0;
 }
 
 static void s3c2410wdt_shutdown(struct platform_device *dev)
 {
+<<<<<<< HEAD
 	s3c2410wdt_stop(&s3c2410_wdd);
+=======
+	s3c2410wdt_stop();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_PM
@@ -473,7 +782,11 @@ static int s3c2410wdt_suspend(struct platform_device *dev, pm_message_t state)
 	wtdat_save = readl(wdt_base + S3C2410_WTDAT);
 
 	/* Note that WTCNT doesn't need to be saved. */
+<<<<<<< HEAD
 	s3c2410wdt_stop(&s3c2410_wdd);
+=======
+	s3c2410wdt_stop();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -486,8 +799,13 @@ static int s3c2410wdt_resume(struct platform_device *dev)
 	writel(wtdat_save, wdt_base + S3C2410_WTCNT); /* Reset count */
 	writel(wtcon_save, wdt_base + S3C2410_WTCON);
 
+<<<<<<< HEAD
 	pr_info("watchdog %sabled\n",
 		(wtcon_save & S3C2410_WTCON_ENABLE) ? "en" : "dis");
+=======
+	printk(KERN_INFO PFX "watchdog %sabled\n",
+	       (wtcon_save & S3C2410_WTCON_ENABLE) ? "en" : "dis");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -497,6 +815,7 @@ static int s3c2410wdt_resume(struct platform_device *dev)
 #define s3c2410wdt_resume  NULL
 #endif /* CONFIG_PM */
 
+<<<<<<< HEAD
 #ifdef CONFIG_OF
 static const struct of_device_id s3c2410_wdt_match[] = {
 	{ .compatible = "samsung,s3c2410-wdt" },
@@ -506,6 +825,8 @@ MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
 #else
 #define s3c2410_wdt_match NULL
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct platform_driver s3c2410wdt_driver = {
 	.probe		= s3c2410wdt_probe,
@@ -516,15 +837,27 @@ static struct platform_driver s3c2410wdt_driver = {
 	.driver		= {
 		.owner	= THIS_MODULE,
 		.name	= "s3c2410-wdt",
+<<<<<<< HEAD
 		.of_match_table	= s3c2410_wdt_match,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 
 
+<<<<<<< HEAD
 static int __init watchdog_init(void)
 {
 	pr_info("S3C2410 Watchdog Timer, (c) 2004 Simtec Electronics\n");
 
+=======
+static char banner[] __initdata =
+	KERN_INFO "S3C2410 Watchdog Timer, (c) 2004 Simtec Electronics\n";
+
+static int __init watchdog_init(void)
+{
+	printk(banner);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return platform_driver_register(&s3c2410wdt_driver);
 }
 

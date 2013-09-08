@@ -111,6 +111,7 @@ unsigned long long simple_strtoull(const char *cp, char **endp, unsigned int bas
 
 	return result;
 }
+<<<<<<< HEAD
 
 /**
  * strlen - Find the length of a string
@@ -146,3 +147,5 @@ char *strstr(const char *s1, const char *s2)
 	}
 	return NULL;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

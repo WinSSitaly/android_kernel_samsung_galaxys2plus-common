@@ -16,6 +16,7 @@
  */
 static struct kmem_cache *iocontext_cachep;
 
+<<<<<<< HEAD
 /**
  * get_io_context - increment reference count to io_context
  * @ioc: io_context to get
@@ -154,20 +155,73 @@ void put_io_context(struct io_context *ioc)
 		kmem_cache_free(iocontext_cachep, ioc);
 }
 EXPORT_SYMBOL(put_io_context);
+=======
+static void cfq_dtor(struct io_context *ioc)
+{
+	if (!hlist_empty(&ioc->cic_list)) {
+		struct cfq_io_context *cic;
+
+		cic = hlist_entry(ioc->cic_list.first, struct cfq_io_context,
+								cic_list);
+		cic->dtor(ioc);
+	}
+}
+
+/*
+ * IO Context helper functions. put_io_context() returns 1 if there are no
+ * more users of this io context, 0 otherwise.
+ */
+int put_io_context(struct io_context *ioc)
+{
+	if (ioc == NULL)
+		return 1;
+
+	BUG_ON(atomic_long_read(&ioc->refcount) == 0);
+
+	if (atomic_long_dec_and_test(&ioc->refcount)) {
+		rcu_read_lock();
+		cfq_dtor(ioc);
+		rcu_read_unlock();
+
+		kmem_cache_free(iocontext_cachep, ioc);
+		return 1;
+	}
+	return 0;
+}
+EXPORT_SYMBOL(put_io_context);
+
+static void cfq_exit(struct io_context *ioc)
+{
+	rcu_read_lock();
+
+	if (!hlist_empty(&ioc->cic_list)) {
+		struct cfq_io_context *cic;
+
+		cic = hlist_entry(ioc->cic_list.first, struct cfq_io_context,
+								cic_list);
+		cic->exit(ioc);
+	}
+	rcu_read_unlock();
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Called by the exiting task */
 void exit_io_context(struct task_struct *task)
 {
 	struct io_context *ioc;
+<<<<<<< HEAD
 	struct io_cq *icq;
 	struct hlist_node *n;
 	unsigned long flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	task_lock(task);
 	ioc = task->io_context;
 	task->io_context = NULL;
 	task_unlock(task);
 
+<<<<<<< HEAD
 	if (!atomic_dec_and_test(&ioc->nr_tasks)) {
 		put_io_context(ioc);
 		return;
@@ -193,10 +247,15 @@ retry:
 		}
 	}
 	spin_unlock_irqrestore(&ioc->lock, flags);
+=======
+	if (atomic_dec_and_test(&ioc->nr_tasks))
+		cfq_exit(ioc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	put_io_context(ioc);
 }
 
+<<<<<<< HEAD
 /**
  * ioc_clear_queue - break any ioc association with the specified queue
  * @q: request_queue being cleared
@@ -449,6 +508,82 @@ unsigned icq_get_changed(struct io_cq *icq)
 	return changed;
 }
 EXPORT_SYMBOL(icq_get_changed);
+=======
+struct io_context *alloc_io_context(gfp_t gfp_flags, int node)
+{
+	struct io_context *ret;
+
+	ret = kmem_cache_alloc_node(iocontext_cachep, gfp_flags, node);
+	if (ret) {
+		atomic_long_set(&ret->refcount, 1);
+		atomic_set(&ret->nr_tasks, 1);
+		spin_lock_init(&ret->lock);
+		ret->ioprio_changed = 0;
+		ret->ioprio = 0;
+		ret->last_waited = 0; /* doesn't matter... */
+		ret->nr_batch_requests = 0; /* because this is 0 */
+		INIT_RADIX_TREE(&ret->radix_root, GFP_ATOMIC | __GFP_HIGH);
+		INIT_HLIST_HEAD(&ret->cic_list);
+		ret->ioc_data = NULL;
+#if defined(CONFIG_BLK_CGROUP) || defined(CONFIG_BLK_CGROUP_MODULE)
+		ret->cgroup_changed = 0;
+#endif
+	}
+
+	return ret;
+}
+
+/*
+ * If the current task has no IO context then create one and initialise it.
+ * Otherwise, return its existing IO context.
+ *
+ * This returned IO context doesn't have a specifically elevated refcount,
+ * but since the current task itself holds a reference, the context can be
+ * used in general code, so long as it stays within `current` context.
+ */
+struct io_context *current_io_context(gfp_t gfp_flags, int node)
+{
+	struct task_struct *tsk = current;
+	struct io_context *ret;
+
+	ret = tsk->io_context;
+	if (likely(ret))
+		return ret;
+
+	ret = alloc_io_context(gfp_flags, node);
+	if (ret) {
+		/* make sure set_task_ioprio() sees the settings above */
+		smp_wmb();
+		tsk->io_context = ret;
+	}
+
+	return ret;
+}
+
+/*
+ * If the current task has no IO context then create one and initialise it.
+ * If it does have a context, take a ref on it.
+ *
+ * This is always called in the context of the task which submitted the I/O.
+ */
+struct io_context *get_io_context(gfp_t gfp_flags, int node)
+{
+	struct io_context *ret = NULL;
+
+	/*
+	 * Check for unlikely race with exiting task. ioc ref count is
+	 * zero when ioc is being detached.
+	 */
+	do {
+		ret = current_io_context(gfp_flags, node);
+		if (unlikely(!ret))
+			break;
+	} while (!atomic_long_inc_not_zero(&ret->refcount));
+
+	return ret;
+}
+EXPORT_SYMBOL(get_io_context);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __init blk_ioc_init(void)
 {

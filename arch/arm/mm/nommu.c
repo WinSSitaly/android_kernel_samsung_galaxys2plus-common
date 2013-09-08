@@ -13,7 +13,10 @@
 #include <asm/sections.h>
 #include <asm/page.h>
 #include <asm/setup.h>
+<<<<<<< HEAD
 #include <asm/traps.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach/arch.h>
 
 #include "mm.h"
@@ -30,8 +33,11 @@ void __init arm_mm_memblock_reserve(void)
 
 void __init sanity_check_meminfo(void)
 {
+<<<<<<< HEAD
 	phys_addr_t end = bank_phys_end(&meminfo.bank[meminfo.nr_banks - 1]);
 	high_memory = __va(end - 1) + 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -40,14 +46,21 @@ void __init sanity_check_meminfo(void)
  */
 void __init paging_init(struct machine_desc *mdesc)
 {
+<<<<<<< HEAD
 	early_trap_init((void *)CONFIG_VECTORS_BASE);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bootmem_init();
 }
 
 /*
  * We don't need to do anything here for nommu machines.
  */
+<<<<<<< HEAD
 void setup_mm_for_reboot(void)
+=======
+void setup_mm_for_reboot(char mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 }
 
@@ -57,12 +70,15 @@ void flush_dcache_page(struct page *page)
 }
 EXPORT_SYMBOL(flush_dcache_page);
 
+<<<<<<< HEAD
 void flush_kernel_dcache_page(struct page *page)
 {
 	__cpuc_flush_dcache_area(page_address(page), PAGE_SIZE);
 }
 EXPORT_SYMBOL(flush_kernel_dcache_page);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void copy_to_user_page(struct vm_area_struct *vma, struct page *page,
 		       unsigned long uaddr, void *dst, const void *src,
 		       unsigned long len)
@@ -94,17 +110,27 @@ void __iomem *__arm_ioremap(unsigned long phys_addr, size_t size,
 }
 EXPORT_SYMBOL(__arm_ioremap);
 
+<<<<<<< HEAD
 void __iomem * (*arch_ioremap_caller)(unsigned long, size_t, unsigned int, void *);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __iomem *__arm_ioremap_caller(unsigned long phys_addr, size_t size,
 				   unsigned int mtype, void *caller)
 {
 	return __arm_ioremap(phys_addr, size, mtype);
 }
 
+<<<<<<< HEAD
 void (*arch_iounmap)(volatile void __iomem *);
 
 void __arm_iounmap(volatile void __iomem *addr)
 {
 }
 EXPORT_SYMBOL(__arm_iounmap);
+=======
+void __iounmap(volatile void __iomem *addr)
+{
+}
+EXPORT_SYMBOL(__iounmap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

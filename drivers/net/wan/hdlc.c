@@ -22,8 +22,11 @@
  * - proto->start() and stop() are called with spin_lock_irq held.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/errno.h>
 #include <linux/hdlc.h>
 #include <linux/if_arp.h>
@@ -132,10 +135,17 @@ static int hdlc_device_event(struct notifier_block *this, unsigned long event,
 		goto carrier_exit;
 
 	if (hdlc->carrier) {
+<<<<<<< HEAD
 		netdev_info(dev, "Carrier detected\n");
 		hdlc_proto_start(dev);
 	} else {
 		netdev_info(dev, "Carrier lost\n");
+=======
+		printk(KERN_INFO "%s: Carrier detected\n", dev->name);
+		hdlc_proto_start(dev);
+	} else {
+		printk(KERN_INFO "%s: Carrier lost\n", dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hdlc_proto_stop(dev);
 	}
 
@@ -167,10 +177,17 @@ int hdlc_open(struct net_device *dev)
 	spin_lock_irq(&hdlc->state_lock);
 
 	if (hdlc->carrier) {
+<<<<<<< HEAD
 		netdev_info(dev, "Carrier detected\n");
 		hdlc_proto_start(dev);
 	} else
 		netdev_info(dev, "No carrier\n");
+=======
+		printk(KERN_INFO "%s: Carrier detected\n", dev->name);
+		hdlc_proto_start(dev);
+	} else
+		printk(KERN_INFO "%s: No carrier\n", dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hdlc->open = 1;
 
@@ -283,8 +300,13 @@ int attach_hdlc_protocol(struct net_device *dev, struct hdlc_proto *proto,
 	if (size)
 		if ((dev_to_hdlc(dev)->state = kmalloc(size,
 						       GFP_KERNEL)) == NULL) {
+<<<<<<< HEAD
 			netdev_warn(dev,
 				    "Memory squeeze on hdlc_proto_attach()\n");
+=======
+			printk(KERN_WARNING "Memory squeeze on"
+			       " hdlc_proto_attach()\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			module_put(proto->module);
 			return -ENOBUFS;
 		}
@@ -365,7 +387,11 @@ static int __init hdlc_module_init(void)
 {
 	int result;
 
+<<<<<<< HEAD
 	pr_info("%s\n", version);
+=======
+	printk(KERN_INFO "%s\n", version);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((result = register_netdevice_notifier(&hdlc_notifier)) != 0)
 		return result;
 	dev_add_pack(&hdlc_packet_type);

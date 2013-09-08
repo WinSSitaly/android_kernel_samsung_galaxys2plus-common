@@ -192,6 +192,7 @@ config DA850_UI_RMII
 
 endchoice
 
+<<<<<<< HEAD
 config DA850_WL12XX
 	bool "AM18x wl1271 daughter board"
 	depends on MACH_DAVINCI_DA850_EVM
@@ -202,6 +203,8 @@ config DA850_WL12XX
 	  Say Y if you want to use a wl1271 expansion card connected to the
 	  AM18x EVM.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config GPIO_PCA953X
 	default MACH_DAVINCI_DA850_EVM
 

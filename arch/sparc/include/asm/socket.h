@@ -58,6 +58,7 @@
 
 #define SO_RXQ_OVFL             0x0024
 
+<<<<<<< HEAD
 #define SO_WIFI_STATUS		0x0025
 #define SCM_WIFI_STATUS		SO_WIFI_STATUS
 #define SO_PEEK_OFF		0x0026
@@ -66,6 +67,8 @@
 #define SO_NOFCS		0x0027
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Security levels - as per NRL IPv6 - don't actually do anything */
 #define SO_SECURITY_AUTHENTICATION		0x5001
 #define SO_SECURITY_ENCRYPTION_TRANSPORT	0x5002

@@ -75,7 +75,11 @@
  */
 
 #define SVGA_ESCAPE_VMWARE_HINT               0x00030000
+<<<<<<< HEAD
 #define SVGA_ESCAPE_VMWARE_HINT_FULLSCREEN    0x00030001  /* Deprecated */
+=======
+#define SVGA_ESCAPE_VMWARE_HINT_FULLSCREEN    0x00030001  // Deprecated
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef
 struct {

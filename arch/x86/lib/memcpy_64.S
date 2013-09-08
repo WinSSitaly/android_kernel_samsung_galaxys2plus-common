@@ -27,8 +27,14 @@
 	.section .altinstr_replacement, "ax", @progbits
 .Lmemcpy_c:
 	movq %rdi, %rax
+<<<<<<< HEAD
 	movq %rdx, %rcx
 	shrq $3, %rcx
+=======
+
+	movl %edx, %ecx
+	shrl $3, %ecx
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	andl $7, %edx
 	rep movsq
 	movl %edx, %ecx
@@ -47,7 +53,12 @@
 	.section .altinstr_replacement, "ax", @progbits
 .Lmemcpy_c_e:
 	movq %rdi, %rax
+<<<<<<< HEAD
 	movq %rdx, %rcx
+=======
+
+	movl %edx, %ecx
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rep movsb
 	ret
 .Lmemcpy_e_e:
@@ -58,7 +69,14 @@ ENTRY(memcpy)
 	CFI_STARTPROC
 	movq %rdi, %rax
 
+<<<<<<< HEAD
 	cmpq $0x20, %rdx
+=======
+	/*
+	 * Use 32bit CMP here to avoid long NOP padding.
+	 */
+	cmp  $0x20, %edx
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	jb .Lhandle_tail
 
 	/*
@@ -67,7 +85,11 @@ ENTRY(memcpy)
 	 */
 	cmp  %dil, %sil
 	jl .Lcopy_backward
+<<<<<<< HEAD
 	subq $0x20, %rdx
+=======
+	subl $0x20, %edx
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 .Lcopy_forward_loop:
 	subq $0x20,	%rdx
 
@@ -86,7 +108,11 @@ ENTRY(memcpy)
 	movq %r11,	3*8(%rdi)
 	leaq 4*8(%rdi),	%rdi
 	jae  .Lcopy_forward_loop
+<<<<<<< HEAD
 	addl $0x20,	%edx
+=======
+	addq $0x20,	%rdx
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	jmp  .Lhandle_tail
 
 .Lcopy_backward:
@@ -118,11 +144,19 @@ ENTRY(memcpy)
 	/*
 	 * Calculate copy position to head.
 	 */
+<<<<<<< HEAD
 	addl $0x20,	%edx
 	subq %rdx,	%rsi
 	subq %rdx,	%rdi
 .Lhandle_tail:
 	cmpl $16,	%edx
+=======
+	addq $0x20,	%rdx
+	subq %rdx,	%rsi
+	subq %rdx,	%rdi
+.Lhandle_tail:
+	cmpq $16,	%rdx
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	jb   .Lless_16bytes
 
 	/*
@@ -139,7 +173,11 @@ ENTRY(memcpy)
 	retq
 	.p2align 4
 .Lless_16bytes:
+<<<<<<< HEAD
 	cmpl $8,	%edx
+=======
+	cmpq $8,	%rdx
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	jb   .Lless_8bytes
 	/*
 	 * Move data from 8 bytes to 15 bytes.
@@ -151,7 +189,11 @@ ENTRY(memcpy)
 	retq
 	.p2align 4
 .Lless_8bytes:
+<<<<<<< HEAD
 	cmpl $4,	%edx
+=======
+	cmpq $4,	%rdx
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	jb   .Lless_3bytes
 
 	/*
@@ -164,6 +206,7 @@ ENTRY(memcpy)
 	retq
 	.p2align 4
 .Lless_3bytes:
+<<<<<<< HEAD
 	subl $1, %edx
 	jb .Lend
 	/*
@@ -177,6 +220,20 @@ ENTRY(memcpy)
 	movb %r9b, (%rdi, %rdx)
 .Lstore_1byte:
 	movb %cl, (%rdi)
+=======
+	cmpl $0, %edx
+	je .Lend
+	/*
+	 * Move data from 1 bytes to 3 bytes.
+	 */
+.Lloop_1:
+	movb (%rsi), %r8b
+	movb %r8b, (%rdi)
+	incq %rdi
+	incq %rsi
+	decl %edx
+	jnz .Lloop_1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 .Lend:
 	retq

@@ -15,18 +15,25 @@
  * GNU General Public License for more details.
  */
 
+<<<<<<< HEAD
 #include <linux/string.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
 #include <linux/io.h>
 #include <linux/clk.h>
 #include <linux/err.h>
+<<<<<<< HEAD
 #include <linux/delay.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <video/omapdss.h>
 #include <plat/omap_hwmod.h>
 #include <plat/omap_device.h>
+<<<<<<< HEAD
 #include <plat/omap-pm.h>
 #include "common.h"
 
@@ -59,6 +66,8 @@
  *     reset before deciding that something has gone wrong
  */
 #define FRAMEDONE_IRQ_TIMEOUT		100
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct platform_device omap_display_device = {
 	.name          = "omapdss",
@@ -68,6 +77,31 @@ static struct platform_device omap_display_device = {
 	},
 };
 
+<<<<<<< HEAD
+=======
+static struct omap_device_pm_latency omap_dss_latency[] = {
+	[0] = {
+		.deactivate_func        = omap_device_idle_hwmods,
+		.activate_func          = omap_device_enable_hwmods,
+		.flags			= OMAP_DEVICE_LATENCY_AUTO_ADJUST,
+	},
+};
+
+/* oh_core is used for getting opt-clocks */
+static struct omap_hwmod	*oh_core;
+
+static bool opt_clock_available(const char *clk_role)
+{
+	int i;
+
+	for (i = 0; i < oh_core->opt_clks_cnt; i++) {
+		if (!strcmp(oh_core->opt_clks[i].role, clk_role))
+			return true;
+	}
+	return false;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct omap_dss_hwmod_data {
 	const char *oh_name;
 	const char *dev_name;
@@ -86,7 +120,11 @@ static const struct omap_dss_hwmod_data omap3_dss_hwmod_data[] __initdata = {
 	{ "dss_dispc", "omapdss_dispc", -1 },
 	{ "dss_rfbi", "omapdss_rfbi", -1 },
 	{ "dss_venc", "omapdss_venc", -1 },
+<<<<<<< HEAD
 	{ "dss_dsi1", "omapdss_dsi", 0 },
+=======
+	{ "dss_dsi1", "omapdss_dsi1", -1 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct omap_dss_hwmod_data omap4_dss_hwmod_data[] __initdata = {
@@ -94,6 +132,7 @@ static const struct omap_dss_hwmod_data omap4_dss_hwmod_data[] __initdata = {
 	{ "dss_dispc", "omapdss_dispc", -1 },
 	{ "dss_rfbi", "omapdss_rfbi", -1 },
 	{ "dss_venc", "omapdss_venc", -1 },
+<<<<<<< HEAD
 	{ "dss_dsi1", "omapdss_dsi", 0 },
 	{ "dss_dsi2", "omapdss_dsi", 1 },
 	{ "dss_hdmi", "omapdss_hdmi", -1 },
@@ -180,11 +219,22 @@ static void omap_dsi_disable_pads(int dsi_id, unsigned lane_mask)
 		omap4_dsi_mux_pads(dsi_id, 0);
 }
 
+=======
+	{ "dss_dsi1", "omapdss_dsi1", -1 },
+	{ "dss_dsi2", "omapdss_dsi2", -1 },
+	{ "dss_hdmi", "omapdss_hdmi", -1 },
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int __init omap_display_init(struct omap_dss_board_info *board_data)
 {
 	int r = 0;
 	struct omap_hwmod *oh;
+<<<<<<< HEAD
 	struct platform_device *pdev;
+=======
+	struct omap_device *od;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i, oh_count;
 	struct omap_display_platform_data pdata;
 	const struct omap_dss_hwmod_data *curr_dss_hwmod;
@@ -202,6 +252,7 @@ int __init omap_display_init(struct omap_dss_board_info *board_data)
 		oh_count = ARRAY_SIZE(omap4_dss_hwmod_data);
 	}
 
+<<<<<<< HEAD
 	if (board_data->dsi_enable_pads == NULL)
 		board_data->dsi_enable_pads = omap_dsi_enable_pads;
 	if (board_data->dsi_disable_pads == NULL)
@@ -210,6 +261,18 @@ int __init omap_display_init(struct omap_dss_board_info *board_data)
 	pdata.board_data = board_data;
 	pdata.board_data->get_context_loss_count =
 		omap_pm_get_dev_context_loss_count;
+=======
+	/* opt_clks are always associated with dss hwmod */
+	oh_core = omap_hwmod_lookup("dss_core");
+	if (!oh_core) {
+		pr_err("Could not look up dss_core.\n");
+		return -ENODEV;
+	}
+
+	pdata.board_data = board_data;
+	pdata.board_data->get_last_off_on_transaction_id = NULL;
+	pdata.opt_clock_available = opt_clock_available;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < oh_count; i++) {
 		oh = omap_hwmod_lookup(curr_dss_hwmod[i].oh_name);
@@ -219,12 +282,22 @@ int __init omap_display_init(struct omap_dss_board_info *board_data)
 			return -ENODEV;
 		}
 
+<<<<<<< HEAD
 		pdev = omap_device_build(curr_dss_hwmod[i].dev_name,
 				curr_dss_hwmod[i].id, oh, &pdata,
 				sizeof(struct omap_display_platform_data),
 				NULL, 0, 0);
 
 		if (WARN((IS_ERR(pdev)), "Could not build omap_device for %s\n",
+=======
+		od = omap_device_build(curr_dss_hwmod[i].dev_name,
+				curr_dss_hwmod[i].id, oh, &pdata,
+				sizeof(struct omap_display_platform_data),
+				omap_dss_latency,
+				ARRAY_SIZE(omap_dss_latency), 0);
+
+		if (WARN((IS_ERR(od)), "Could not build omap_device for %s\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				curr_dss_hwmod[i].oh_name))
 			return -ENODEV;
 	}
@@ -236,6 +309,7 @@ int __init omap_display_init(struct omap_dss_board_info *board_data)
 
 	return r;
 }
+<<<<<<< HEAD
 
 static void dispc_disable_outputs(void)
 {
@@ -368,3 +442,5 @@ int omap_dss_reset(struct omap_hwmod *oh)
 
 	return r;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

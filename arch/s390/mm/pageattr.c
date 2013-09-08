@@ -5,7 +5,10 @@
 #include <linux/module.h>
 #include <linux/mm.h>
 #include <linux/hugetlb.h>
+<<<<<<< HEAD
 #include <asm/cacheflush.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/pgtable.h>
 
 static void change_page_attr(unsigned long addr, int numpages,

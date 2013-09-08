@@ -37,7 +37,11 @@
 				/* and pci_do_scan_bus */
 #include "rpaphp.h"
 
+<<<<<<< HEAD
 bool rpaphp_debug;
+=======
+int rpaphp_debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 LIST_HEAD(rpaphp_slot_head);
 
 #define DRIVER_VERSION	"0.1"

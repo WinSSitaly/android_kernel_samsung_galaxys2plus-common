@@ -61,6 +61,7 @@ static inline struct dev_cgroup *task_devcgroup(struct task_struct *task)
 
 struct cgroup_subsys devices_subsys;
 
+<<<<<<< HEAD
 static int devcgroup_can_attach(struct cgroup *new_cgrp,
 				struct cgroup_taskset *set)
 {
@@ -68,6 +69,14 @@ static int devcgroup_can_attach(struct cgroup *new_cgrp,
 
 	if (current != task && !capable(CAP_SYS_ADMIN))
 		return -EPERM;
+=======
+static int devcgroup_can_attach(struct cgroup_subsys *ss,
+		struct cgroup *new_cgroup, struct task_struct *task)
+{
+	if (current != task && !capable(CAP_SYS_ADMIN))
+			return -EPERM;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -126,6 +135,17 @@ static int dev_whitelist_add(struct dev_cgroup *dev_cgroup,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void whitelist_item_free(struct rcu_head *rcu)
+{
+	struct dev_whitelist_item *item;
+
+	item = container_of(rcu, struct dev_whitelist_item, rcu);
+	kfree(item);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * called under devcgroup_mutex
  */
@@ -148,7 +168,11 @@ remove:
 		walk->access &= ~wh->access;
 		if (!walk->access) {
 			list_del_rcu(&walk->list);
+<<<<<<< HEAD
 			kfree_rcu(walk, rcu);
+=======
+			call_rcu(&walk->rcu, whitelist_item_free);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }
@@ -156,7 +180,12 @@ remove:
 /*
  * called from kernel/cgroup.c with cgroup_lock() held.
  */
+<<<<<<< HEAD
 static struct cgroup_subsys_state *devcgroup_create(struct cgroup *cgroup)
+=======
+static struct cgroup_subsys_state *devcgroup_create(struct cgroup_subsys *ss,
+						struct cgroup *cgroup)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dev_cgroup *dev_cgroup, *parent_dev_cgroup;
 	struct cgroup *parent_cgroup;
@@ -194,7 +223,12 @@ static struct cgroup_subsys_state *devcgroup_create(struct cgroup *cgroup)
 	return &dev_cgroup->css;
 }
 
+<<<<<<< HEAD
 static void devcgroup_destroy(struct cgroup *cgroup)
+=======
+static void devcgroup_destroy(struct cgroup_subsys *ss,
+			struct cgroup *cgroup)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dev_cgroup *dev_cgroup;
 	struct dev_whitelist_item *wh, *tmp;

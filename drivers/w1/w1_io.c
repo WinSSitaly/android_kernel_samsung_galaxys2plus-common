@@ -1,7 +1,11 @@
 /*
  *	w1_io.c
  *
+<<<<<<< HEAD
  * Copyright (c) 2004 Evgeniy Polyakov <zbr@ioremap.net>
+=======
+ * Copyright (c) 2004 Evgeniy Polyakov <johnpol@2ka.mipt.ru>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -158,18 +162,25 @@ EXPORT_SYMBOL_GPL(w1_write_8);
 static u8 w1_read_bit(struct w1_master *dev)
 {
 	int result;
+<<<<<<< HEAD
 	unsigned long flags;
 
 	/* sample timing is critical here */
 	local_irq_save(flags);
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->bus_master->write_bit(dev->bus_master->data, 0);
 	w1_delay(6);
 	dev->bus_master->write_bit(dev->bus_master->data, 1);
 	w1_delay(9);
 
 	result = dev->bus_master->read_bit(dev->bus_master->data);
+<<<<<<< HEAD
 	local_irq_restore(flags);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	w1_delay(55);
 
 	return result & 0x1;

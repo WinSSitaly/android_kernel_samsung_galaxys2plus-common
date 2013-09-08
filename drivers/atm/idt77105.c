@@ -16,6 +16,10 @@
 #include <linux/atm_idt77105.h>
 #include <linux/spinlock.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/param.h>
 #include <asm/uaccess.h>
 

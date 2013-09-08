@@ -410,6 +410,7 @@ struct gps_event_hdr {
 	u16 plen;
 } __attribute__ ((packed));
 
+<<<<<<< HEAD
 /**
  * struct ti_st_plat_data - platform data shared between ST driver and
  *	platform specific board file which adds the ST device.
@@ -432,6 +433,9 @@ struct gps_event_hdr {
  *	asleep or run host faster when chip awake etc..
  *
  */
+=======
+/* platform data */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ti_st_plat_data {
 	long nshutdown_gpio;
 	unsigned char dev_name[UART_DEV_NAME_LEN]; /* uart name */
@@ -439,10 +443,13 @@ struct ti_st_plat_data {
 	unsigned long baud_rate;
 	int (*suspend)(struct platform_device *, pm_message_t);
 	int (*resume)(struct platform_device *);
+<<<<<<< HEAD
 	int (*chip_enable) (struct kim_data_s *);
 	int (*chip_disable) (struct kim_data_s *);
 	int (*chip_asleep) (struct kim_data_s *);
 	int (*chip_awake) (struct kim_data_s *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif /* TI_WILINK_ST_H */

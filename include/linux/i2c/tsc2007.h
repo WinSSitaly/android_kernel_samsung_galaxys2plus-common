@@ -5,7 +5,11 @@
 
 struct tsc2007_platform_data {
 	u16	model;				/* 2007. */
+<<<<<<< HEAD
 	u16	x_plate_ohms;	/* must be non-zero value */
+=======
+	u16	x_plate_ohms;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16	max_rt; /* max. resistance above which samples are ignored */
 	unsigned long poll_delay; /* delay (in ms) after pen-down event
 				     before polling starts */

@@ -9,11 +9,18 @@
 #ifndef _ATTRIBUTE_CONTAINER_H_
 #define _ATTRIBUTE_CONTAINER_H_
 
+<<<<<<< HEAD
 #include <linux/list.h>
 #include <linux/klist.h>
 
 struct device;
 
+=======
+#include <linux/device.h>
+#include <linux/list.h>
+#include <linux/klist.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct attribute_container {
 	struct list_head	node;
 	struct klist		containers;

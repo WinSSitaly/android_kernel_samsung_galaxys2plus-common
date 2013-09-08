@@ -10,8 +10,11 @@
  *
  */
 
+<<<<<<< HEAD
 #ifndef _LINUX_ISDN_DIVERTIF_H
 #define _LINUX_ISDN_DIVERTIF_H
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /***********************************************************/
 /* magic value is also used to control version information */
@@ -47,5 +50,8 @@ typedef struct
 /*********************/
 extern int DIVERT_REG_NAME(isdn_divert_if *);
 #endif
+<<<<<<< HEAD
 
 #endif /* _LINUX_ISDN_DIVERTIF_H */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

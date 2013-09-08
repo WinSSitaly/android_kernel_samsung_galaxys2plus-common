@@ -4368,6 +4368,28 @@ static inline int ocfs2_may_create(struct inode *dir, struct dentry *child)
 	return inode_permission(dir, MAY_WRITE | MAY_EXEC);
 }
 
+<<<<<<< HEAD
+=======
+/* copied from user_path_parent. */
+static int ocfs2_user_path_parent(const char __user *path,
+				  struct nameidata *nd, char **name)
+{
+	char *s = getname(path);
+	int error;
+
+	if (IS_ERR(s))
+		return PTR_ERR(s);
+
+	error = kern_path_parent(s, nd);
+	if (error)
+		putname(s);
+	else
+		*name = s;
+
+	return error;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * ocfs2_vfs_reflink - Create a reference-counted link
  *
@@ -4441,8 +4463,15 @@ int ocfs2_reflink_ioctl(struct inode *inode,
 			bool preserve)
 {
 	struct dentry *new_dentry;
+<<<<<<< HEAD
 	struct path old_path, new_path;
 	int error;
+=======
+	struct nameidata nd;
+	struct path old_path;
+	int error;
+	char *to = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!ocfs2_refcount_tree(OCFS2_SB(inode->i_sb)))
 		return -EOPNOTSUPP;
@@ -4453,26 +4482,45 @@ int ocfs2_reflink_ioctl(struct inode *inode,
 		return error;
 	}
 
+<<<<<<< HEAD
 	new_dentry = user_path_create(AT_FDCWD, newname, &new_path, 0);
 	error = PTR_ERR(new_dentry);
 	if (IS_ERR(new_dentry)) {
+=======
+	error = ocfs2_user_path_parent(newname, &nd, &to);
+	if (error) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mlog_errno(error);
 		goto out;
 	}
 
 	error = -EXDEV;
+<<<<<<< HEAD
 	if (old_path.mnt != new_path.mnt) {
 		mlog_errno(error);
 		goto out_dput;
 	}
 
 	error = mnt_want_write(new_path.mnt);
+=======
+	if (old_path.mnt != nd.path.mnt)
+		goto out_release;
+	new_dentry = lookup_create(&nd, 0);
+	error = PTR_ERR(new_dentry);
+	if (IS_ERR(new_dentry)) {
+		mlog_errno(error);
+		goto out_unlock;
+	}
+
+	error = mnt_want_write(nd.path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error) {
 		mlog_errno(error);
 		goto out_dput;
 	}
 
 	error = ocfs2_vfs_reflink(old_path.dentry,
+<<<<<<< HEAD
 				  new_path.dentry->d_inode,
 				  new_dentry, preserve);
 	mnt_drop_write(new_path.mnt);
@@ -4480,6 +4528,18 @@ out_dput:
 	dput(new_dentry);
 	mutex_unlock(&new_path.dentry->d_inode->i_mutex);
 	path_put(&new_path);
+=======
+				  nd.path.dentry->d_inode,
+				  new_dentry, preserve);
+	mnt_drop_write(nd.path.mnt);
+out_dput:
+	dput(new_dentry);
+out_unlock:
+	mutex_unlock(&nd.path.dentry->d_inode->i_mutex);
+out_release:
+	path_put(&nd.path);
+	putname(to);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	path_put(&old_path);
 

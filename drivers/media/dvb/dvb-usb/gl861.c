@@ -103,9 +103,15 @@ static struct zl10353_config gl861_zl10353_config = {
 static int gl861_frontend_attach(struct dvb_usb_adapter *adap)
 {
 
+<<<<<<< HEAD
 	adap->fe_adap[0].fe = dvb_attach(zl10353_attach, &gl861_zl10353_config,
 		&adap->dev->i2c_adap);
 	if (adap->fe_adap[0].fe == NULL)
+=======
+	adap->fe = dvb_attach(zl10353_attach, &gl861_zl10353_config,
+		&adap->dev->i2c_adap);
+	if (adap->fe == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 
 	return 0;
@@ -118,7 +124,11 @@ static struct qt1010_config gl861_qt1010_config = {
 static int gl861_tuner_attach(struct dvb_usb_adapter *adap)
 {
 	return dvb_attach(qt1010_attach,
+<<<<<<< HEAD
 			  adap->fe_adap[0].fe, &adap->dev->i2c_adap,
+=======
+			  adap->fe, &adap->dev->i2c_adap,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  &gl861_qt1010_config) == NULL ? -ENODEV : 0;
 }
 
@@ -167,8 +177,11 @@ static struct dvb_usb_device_properties gl861_properties = {
 
 	.num_adapters = 1,
 	.adapter = {{
+<<<<<<< HEAD
 		.num_frontends = 1,
 		.fe = {{
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		.frontend_attach  = gl861_frontend_attach,
 		.tuner_attach     = gl861_tuner_attach,
@@ -183,7 +196,10 @@ static struct dvb_usb_device_properties gl861_properties = {
 				}
 			}
 		},
+<<<<<<< HEAD
 		}},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} },
 	.i2c_algo         = &gl861_i2c_algo,
 
@@ -209,7 +225,30 @@ static struct usb_driver gl861_driver = {
 	.id_table	= gl861_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(gl861_driver);
+=======
+/* module stuff */
+static int __init gl861_module_init(void)
+{
+	int ret;
+
+	ret = usb_register(&gl861_driver);
+	if (ret)
+		err("usb_register failed. Error number %d", ret);
+
+	return ret;
+}
+
+static void __exit gl861_module_exit(void)
+{
+	/* deregister this driver from the USB subsystem */
+	usb_deregister(&gl861_driver);
+}
+
+module_init(gl861_module_init);
+module_exit(gl861_module_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Carl Lundqvist <comabug@gmail.com>");
 MODULE_DESCRIPTION("Driver MSI Mega Sky 580 DVB-T USB2.0 / GL861");

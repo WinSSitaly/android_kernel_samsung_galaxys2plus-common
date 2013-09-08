@@ -70,6 +70,7 @@ struct squashfs_cache_entry *squashfs_cache_get(struct super_block *sb,
 	spin_lock(&cache->lock);
 
 	while (1) {
+<<<<<<< HEAD
 		for (i = cache->curr_blk, n = 0; n < cache->entries; n++) {
 			if (cache->entry[i].block == block) {
 				cache->curr_blk = i;
@@ -79,6 +80,13 @@ struct squashfs_cache_entry *squashfs_cache_get(struct super_block *sb,
 		}
 
 		if (n == cache->entries) {
+=======
+		for (i = 0; i < cache->entries; i++)
+			if (cache->entry[i].block == block)
+				break;
+
+		if (i == cache->entries) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * Block not in cache, if all cache entries are used
 			 * go to sleep waiting for one to become available.
@@ -249,7 +257,10 @@ struct squashfs_cache *squashfs_cache_init(char *name, int entries,
 		goto cleanup;
 	}
 
+<<<<<<< HEAD
 	cache->curr_blk = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cache->next_blk = 0;
 	cache->unused = entries;
 	cache->entries = entries;
@@ -337,13 +348,18 @@ int squashfs_read_metadata(struct super_block *sb, void *buffer,
 		u64 *block, int *offset, int length)
 {
 	struct squashfs_sb_info *msblk = sb->s_fs_info;
+<<<<<<< HEAD
 	int bytes, res = length;
+=======
+	int bytes, copied = length;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct squashfs_cache_entry *entry;
 
 	TRACE("Entered squashfs_read_metadata [%llx:%x]\n", *block, *offset);
 
 	while (length) {
 		entry = squashfs_cache_get(sb, msblk->block_cache, *block, 0);
+<<<<<<< HEAD
 		if (entry->error) {
 			res = entry->error;
 			goto error;
@@ -351,6 +367,12 @@ int squashfs_read_metadata(struct super_block *sb, void *buffer,
 			res = -EIO;
 			goto error;
 		}
+=======
+		if (entry->error)
+			return entry->error;
+		else if (*offset >= entry->length)
+			return -EIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		bytes = squashfs_copy_data(buffer, entry, *offset, length);
 		if (buffer)
@@ -366,11 +388,15 @@ int squashfs_read_metadata(struct super_block *sb, void *buffer,
 		squashfs_cache_put(entry);
 	}
 
+<<<<<<< HEAD
 	return res;
 
 error:
 	squashfs_cache_put(entry);
 	return res;
+=======
+	return copied;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 

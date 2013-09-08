@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mce.h>
 
 enum severity_level {
@@ -17,7 +21,11 @@ enum severity_level {
 struct mce_bank {
 	u64			ctl;			/* subevents to enable */
 	unsigned char init;				/* initialise bank? */
+<<<<<<< HEAD
 	struct device_attribute attr;			/* device attribute */
+=======
+	struct sysdev_attribute attr;			/* sysdev attribute */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char			attrname[ATTR_LEN];	/* attribute name */
 };
 

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # the core
 obj-$(CONFIG_NET_DSA) += dsa_core.o
 dsa_core-y += dsa.o slave.o
@@ -6,3 +7,18 @@ dsa_core-y += dsa.o slave.o
 dsa_core-$(CONFIG_NET_DSA_TAG_DSA) += tag_dsa.o
 dsa_core-$(CONFIG_NET_DSA_TAG_EDSA) += tag_edsa.o
 dsa_core-$(CONFIG_NET_DSA_TAG_TRAILER) += tag_trailer.o
+=======
+# tagging formats
+obj-$(CONFIG_NET_DSA_TAG_DSA) += tag_dsa.o
+obj-$(CONFIG_NET_DSA_TAG_EDSA) += tag_edsa.o
+obj-$(CONFIG_NET_DSA_TAG_TRAILER) += tag_trailer.o
+
+# switch drivers
+obj-$(CONFIG_NET_DSA_MV88E6XXX) += mv88e6xxx.o
+obj-$(CONFIG_NET_DSA_MV88E6060) += mv88e6060.o
+obj-$(CONFIG_NET_DSA_MV88E6123_61_65) += mv88e6123_61_65.o
+obj-$(CONFIG_NET_DSA_MV88E6131) += mv88e6131.o
+
+# the core
+obj-$(CONFIG_NET_DSA) += dsa.o slave.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

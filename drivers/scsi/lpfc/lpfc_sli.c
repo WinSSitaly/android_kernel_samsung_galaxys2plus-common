@@ -1,7 +1,11 @@
 /*******************************************************************
  * This file is part of the Emulex Linux Device Driver for         *
  * Fibre Channel Host Bus Adapters.                                *
+<<<<<<< HEAD
  * Copyright (C) 2004-2012 Emulex.  All rights reserved.           *
+=======
+ * Copyright (C) 2004-2011 Emulex.  All rights reserved.           *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * EMULEX and SLI are trademarks of Emulex.                        *
  * www.emulex.com                                                  *
  * Portions Copyright (C) 2004-2005 Christoph Hellwig              *
@@ -89,6 +93,7 @@ lpfc_get_iocb_from_iocbq(struct lpfc_iocbq *iocbq)
 static uint32_t
 lpfc_sli4_wq_put(struct lpfc_queue *q, union lpfc_wqe *wqe)
 {
+<<<<<<< HEAD
 	union lpfc_wqe *temp_wqe;
 	struct lpfc_register doorbell;
 	uint32_t host_index;
@@ -98,11 +103,21 @@ lpfc_sli4_wq_put(struct lpfc_queue *q, union lpfc_wqe *wqe)
 		return -ENOMEM;
 	temp_wqe = q->qe[q->host_index].wqe;
 
+=======
+	union lpfc_wqe *temp_wqe = q->qe[q->host_index].wqe;
+	struct lpfc_register doorbell;
+	uint32_t host_index;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* If the host has not yet processed the next entry then we are done */
 	if (((q->host_index + 1) % q->entry_count) == q->hba_index)
 		return -ENOMEM;
 	/* set consumption flag every once in a while */
+<<<<<<< HEAD
 	if (!((q->host_index + 1) % q->entry_repost))
+=======
+	if (!((q->host_index + 1) % LPFC_RELEASE_NOTIFICATION_INTERVAL))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bf_set(wqe_wqec, &wqe->generic.wqe_com, 1);
 	if (q->phba->sli3_options & LPFC_SLI4_PHWQ_ENABLED)
 		bf_set(wqe_wqid, &wqe->generic.wqe_com, q->queue_id);
@@ -139,10 +154,13 @@ lpfc_sli4_wq_release(struct lpfc_queue *q, uint32_t index)
 {
 	uint32_t released = 0;
 
+<<<<<<< HEAD
 	/* sanity check on queue memory */
 	if (unlikely(!q))
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (q->hba_index == index)
 		return 0;
 	do {
@@ -167,6 +185,7 @@ lpfc_sli4_wq_release(struct lpfc_queue *q, uint32_t index)
 static uint32_t
 lpfc_sli4_mq_put(struct lpfc_queue *q, struct lpfc_mqe *mqe)
 {
+<<<<<<< HEAD
 	struct lpfc_mqe *temp_mqe;
 	struct lpfc_register doorbell;
 	uint32_t host_index;
@@ -176,6 +195,12 @@ lpfc_sli4_mq_put(struct lpfc_queue *q, struct lpfc_mqe *mqe)
 		return -ENOMEM;
 	temp_mqe = q->qe[q->host_index].mqe;
 
+=======
+	struct lpfc_mqe *temp_mqe = q->qe[q->host_index].mqe;
+	struct lpfc_register doorbell;
+	uint32_t host_index;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* If the host has not yet processed the next entry then we are done */
 	if (((q->host_index + 1) % q->entry_count) == q->hba_index)
 		return -ENOMEM;
@@ -209,10 +234,13 @@ lpfc_sli4_mq_put(struct lpfc_queue *q, struct lpfc_mqe *mqe)
 static uint32_t
 lpfc_sli4_mq_release(struct lpfc_queue *q)
 {
+<<<<<<< HEAD
 	/* sanity check on queue memory */
 	if (unlikely(!q))
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Clear the mailbox pointer for completion */
 	q->phba->mbox = NULL;
 	q->hba_index = ((q->hba_index + 1) % q->entry_count);
@@ -231,12 +259,16 @@ lpfc_sli4_mq_release(struct lpfc_queue *q)
 static struct lpfc_eqe *
 lpfc_sli4_eq_get(struct lpfc_queue *q)
 {
+<<<<<<< HEAD
 	struct lpfc_eqe *eqe;
 
 	/* sanity check on queue memory */
 	if (unlikely(!q))
 		return NULL;
 	eqe = q->qe[q->hba_index].eqe;
+=======
+	struct lpfc_eqe *eqe = q->qe[q->hba_index].eqe;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* If the next EQE is not valid then we are done */
 	if (!bf_get_le32(lpfc_eqe_valid, eqe))
@@ -271,10 +303,13 @@ lpfc_sli4_eq_release(struct lpfc_queue *q, bool arm)
 	struct lpfc_eqe *temp_eqe;
 	struct lpfc_register doorbell;
 
+<<<<<<< HEAD
 	/* sanity check on queue memory */
 	if (unlikely(!q))
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* while there are valid entries */
 	while (q->hba_index != q->host_index) {
 		temp_eqe = q->qe[q->host_index].eqe;
@@ -293,9 +328,13 @@ lpfc_sli4_eq_release(struct lpfc_queue *q, bool arm)
 	}
 	bf_set(lpfc_eqcq_doorbell_num_released, &doorbell, released);
 	bf_set(lpfc_eqcq_doorbell_qt, &doorbell, LPFC_QUEUE_TYPE_EVENT);
+<<<<<<< HEAD
 	bf_set(lpfc_eqcq_doorbell_eqid_hi, &doorbell,
 			(q->queue_id >> LPFC_EQID_HI_FIELD_SHIFT));
 	bf_set(lpfc_eqcq_doorbell_eqid_lo, &doorbell, q->queue_id);
+=======
+	bf_set(lpfc_eqcq_doorbell_eqid, &doorbell, q->queue_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writel(doorbell.word0, q->phba->sli4_hba.EQCQDBregaddr);
 	/* PCI read to flush PCI pipeline on re-arming for INTx mode */
 	if ((q->phba->intr_type == INTx) && (arm == LPFC_QUEUE_REARM))
@@ -317,10 +356,13 @@ lpfc_sli4_cq_get(struct lpfc_queue *q)
 {
 	struct lpfc_cqe *cqe;
 
+<<<<<<< HEAD
 	/* sanity check on queue memory */
 	if (unlikely(!q))
 		return NULL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* If the next CQE is not valid then we are done */
 	if (!bf_get_le32(lpfc_cqe_valid, q->qe[q->hba_index].cqe))
 		return NULL;
@@ -355,9 +397,12 @@ lpfc_sli4_cq_release(struct lpfc_queue *q, bool arm)
 	struct lpfc_cqe *temp_qe;
 	struct lpfc_register doorbell;
 
+<<<<<<< HEAD
 	/* sanity check on queue memory */
 	if (unlikely(!q))
 		return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* while there are valid entries */
 	while (q->hba_index != q->host_index) {
 		temp_qe = q->qe[q->host_index].cqe;
@@ -374,9 +419,13 @@ lpfc_sli4_cq_release(struct lpfc_queue *q, bool arm)
 		bf_set(lpfc_eqcq_doorbell_arm, &doorbell, 1);
 	bf_set(lpfc_eqcq_doorbell_num_released, &doorbell, released);
 	bf_set(lpfc_eqcq_doorbell_qt, &doorbell, LPFC_QUEUE_TYPE_COMPLETION);
+<<<<<<< HEAD
 	bf_set(lpfc_eqcq_doorbell_cqid_hi, &doorbell,
 			(q->queue_id >> LPFC_CQID_HI_FIELD_SHIFT));
 	bf_set(lpfc_eqcq_doorbell_cqid_lo, &doorbell, q->queue_id);
+=======
+	bf_set(lpfc_eqcq_doorbell_cqid, &doorbell, q->queue_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writel(doorbell.word0, q->phba->sli4_hba.EQCQDBregaddr);
 	return released;
 }
@@ -397,6 +446,7 @@ static int
 lpfc_sli4_rq_put(struct lpfc_queue *hq, struct lpfc_queue *dq,
 		 struct lpfc_rqe *hrqe, struct lpfc_rqe *drqe)
 {
+<<<<<<< HEAD
 	struct lpfc_rqe *temp_hrqe;
 	struct lpfc_rqe *temp_drqe;
 	struct lpfc_register doorbell;
@@ -408,6 +458,13 @@ lpfc_sli4_rq_put(struct lpfc_queue *hq, struct lpfc_queue *dq,
 	temp_hrqe = hq->qe[hq->host_index].rqe;
 	temp_drqe = dq->qe[dq->host_index].rqe;
 
+=======
+	struct lpfc_rqe *temp_hrqe = hq->qe[hq->host_index].rqe;
+	struct lpfc_rqe *temp_drqe = dq->qe[dq->host_index].rqe;
+	struct lpfc_register doorbell;
+	int put_index = hq->host_index;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (hq->type != LPFC_HRQ || dq->type != LPFC_DRQ)
 		return -EINVAL;
 	if (hq->host_index != dq->host_index)
@@ -423,10 +480,17 @@ lpfc_sli4_rq_put(struct lpfc_queue *hq, struct lpfc_queue *dq,
 	dq->host_index = ((dq->host_index + 1) % dq->entry_count);
 
 	/* Ring The Header Receive Queue Doorbell */
+<<<<<<< HEAD
 	if (!(hq->host_index % hq->entry_repost)) {
 		doorbell.word0 = 0;
 		bf_set(lpfc_rq_doorbell_num_posted, &doorbell,
 		       hq->entry_repost);
+=======
+	if (!(hq->host_index % LPFC_RQ_POST_BATCH)) {
+		doorbell.word0 = 0;
+		bf_set(lpfc_rq_doorbell_num_posted, &doorbell,
+		       LPFC_RQ_POST_BATCH);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bf_set(lpfc_rq_doorbell_id, &doorbell, hq->queue_id);
 		writel(doorbell.word0, hq->phba->sli4_hba.RQDBregaddr);
 	}
@@ -446,10 +510,13 @@ lpfc_sli4_rq_put(struct lpfc_queue *hq, struct lpfc_queue *dq,
 static uint32_t
 lpfc_sli4_rq_release(struct lpfc_queue *hq, struct lpfc_queue *dq)
 {
+<<<<<<< HEAD
 	/* sanity check on queue memory */
 	if (unlikely(!hq) || unlikely(!dq))
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((hq->type != LPFC_HRQ) || (dq->type != LPFC_DRQ))
 		return 0;
 	hq->hba_index = ((hq->hba_index + 1) % hq->entry_count);
@@ -558,6 +625,84 @@ __lpfc_get_active_sglq(struct lpfc_hba *phba, uint16_t xritag)
 }
 
 /**
+<<<<<<< HEAD
+=======
+ * __lpfc_set_rrq_active - set RRQ active bit in the ndlp's xri_bitmap.
+ * @phba: Pointer to HBA context object.
+ * @ndlp: nodelist pointer for this target.
+ * @xritag: xri used in this exchange.
+ * @rxid: Remote Exchange ID.
+ * @send_rrq: Flag used to determine if we should send rrq els cmd.
+ *
+ * This function is called with hbalock held.
+ * The active bit is set in the ndlp's active rrq xri_bitmap. Allocates an
+ * rrq struct and adds it to the active_rrq_list.
+ *
+ * returns  0 for rrq slot for this xri
+ *         < 0  Were not able to get rrq mem or invalid parameter.
+ **/
+static int
+__lpfc_set_rrq_active(struct lpfc_hba *phba, struct lpfc_nodelist *ndlp,
+		uint16_t xritag, uint16_t rxid, uint16_t send_rrq)
+{
+	struct lpfc_node_rrq *rrq;
+	int empty;
+	uint32_t did = 0;
+
+
+	if (!ndlp)
+		return -EINVAL;
+
+	if (!phba->cfg_enable_rrq)
+		return -EINVAL;
+
+	if (phba->pport->load_flag & FC_UNLOADING) {
+		phba->hba_flag &= ~HBA_RRQ_ACTIVE;
+		goto out;
+	}
+	did = ndlp->nlp_DID;
+
+	/*
+	 * set the active bit even if there is no mem available.
+	 */
+	if (NLP_CHK_FREE_REQ(ndlp))
+		goto out;
+
+	if (ndlp->vport && (ndlp->vport->load_flag & FC_UNLOADING))
+		goto out;
+
+	if (test_and_set_bit(xritag, ndlp->active_rrqs.xri_bitmap))
+		goto out;
+
+	rrq = mempool_alloc(phba->rrq_pool, GFP_KERNEL);
+	if (rrq) {
+		rrq->send_rrq = send_rrq;
+		rrq->xritag = xritag;
+		rrq->rrq_stop_time = jiffies + HZ * (phba->fc_ratov + 1);
+		rrq->ndlp = ndlp;
+		rrq->nlp_DID = ndlp->nlp_DID;
+		rrq->vport = ndlp->vport;
+		rrq->rxid = rxid;
+		empty = list_empty(&phba->active_rrq_list);
+		rrq->send_rrq = send_rrq;
+		list_add_tail(&rrq->list, &phba->active_rrq_list);
+		if (!(phba->hba_flag & HBA_RRQ_ACTIVE)) {
+			phba->hba_flag |= HBA_RRQ_ACTIVE;
+			if (empty)
+				lpfc_worker_wake_up(phba);
+		}
+		return 0;
+	}
+out:
+	lpfc_printf_log(phba, KERN_INFO, LOG_SLI,
+			"2921 Can't set rrq active xri:0x%x rxid:0x%x"
+			" DID:0x%x Send:%d\n",
+			xritag, rxid, did, send_rrq);
+	return -EINVAL;
+}
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * lpfc_clr_rrq_active - Clears RRQ active bit in xri_bitmap.
  * @phba: Pointer to HBA context object.
  * @xritag: xri used in this exchange.
@@ -785,6 +930,7 @@ lpfc_test_rrq_active(struct lpfc_hba *phba, struct lpfc_nodelist *ndlp,
  **/
 int
 lpfc_set_rrq_active(struct lpfc_hba *phba, struct lpfc_nodelist *ndlp,
+<<<<<<< HEAD
 		    uint16_t xritag, uint16_t rxid, uint16_t send_rrq)
 {
 	unsigned long iflags;
@@ -847,6 +993,17 @@ out:
 			" DID:0x%x Send:%d\n",
 			xritag, rxid, ndlp->nlp_DID, send_rrq);
 	return -EINVAL;
+=======
+			uint16_t xritag, uint16_t rxid, uint16_t send_rrq)
+{
+	int ret;
+	unsigned long iflags;
+
+	spin_lock_irqsave(&phba->hbalock, iflags);
+	ret = __lpfc_set_rrq_active(phba, ndlp, xritag, rxid, send_rrq);
+	spin_unlock_irqrestore(&phba->hbalock, iflags);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1890,7 +2047,11 @@ lpfc_sli_hbqbuf_init_hbqs(struct lpfc_hba *phba, uint32_t qno)
 {
 	if (phba->sli_rev == LPFC_SLI_REV4)
 		return lpfc_sli_hbqbuf_fill_hbqs(phba, qno,
+<<<<<<< HEAD
 					lpfc_hbq_defs[qno]->entry_count);
+=======
+					 lpfc_hbq_defs[qno]->entry_count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		return lpfc_sli_hbqbuf_fill_hbqs(phba, qno,
 					 lpfc_hbq_defs[qno]->init_count);
@@ -2226,6 +2387,7 @@ lpfc_sli_handle_mb_event(struct lpfc_hba *phba)
 			/* Unknown mailbox command compl */
 			lpfc_printf_log(phba, KERN_ERR, LOG_MBOX | LOG_SLI,
 					"(%d):0323 Unknown Mailbox command "
+<<<<<<< HEAD
 					"x%x (x%x/x%x) Cmpl\n",
 					pmb->vport ? pmb->vport->vpi : 0,
 					pmbox->mbxCommand,
@@ -2233,6 +2395,12 @@ lpfc_sli_handle_mb_event(struct lpfc_hba *phba)
 									pmb),
 					lpfc_sli_config_mbox_opcode_get(phba,
 									pmb));
+=======
+					"x%x (x%x) Cmpl\n",
+					pmb->vport ? pmb->vport->vpi : 0,
+					pmbox->mbxCommand,
+					lpfc_sli4_mbox_opcode_get(phba, pmb));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			phba->link_state = LPFC_HBA_ERROR;
 			phba->work_hs = HS_FFER3;
 			lpfc_handle_eratt(phba);
@@ -2244,6 +2412,7 @@ lpfc_sli_handle_mb_event(struct lpfc_hba *phba)
 			if (pmbox->mbxStatus == MBXERR_NO_RESOURCES) {
 				/* Mbox cmd cmpl error - RETRYing */
 				lpfc_printf_log(phba, KERN_INFO,
+<<<<<<< HEAD
 					LOG_MBOX | LOG_SLI,
 					"(%d):0305 Mbox cmd cmpl "
 					"error - RETRYing Data: x%x "
@@ -2257,6 +2426,19 @@ lpfc_sli_handle_mb_event(struct lpfc_hba *phba)
 					pmbox->mbxStatus,
 					pmbox->un.varWords[0],
 					pmb->vport->port_state);
+=======
+						LOG_MBOX | LOG_SLI,
+						"(%d):0305 Mbox cmd cmpl "
+						"error - RETRYing Data: x%x "
+						"(x%x) x%x x%x x%x\n",
+						pmb->vport ? pmb->vport->vpi :0,
+						pmbox->mbxCommand,
+						lpfc_sli4_mbox_opcode_get(phba,
+									  pmb),
+						pmbox->mbxStatus,
+						pmbox->un.varWords[0],
+						pmb->vport->port_state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				pmbox->mbxStatus = 0;
 				pmbox->mbxOwner = OWN_HOST;
 				rc = lpfc_sli_issue_mbox(phba, pmb, MBX_NOWAIT);
@@ -2267,12 +2449,20 @@ lpfc_sli_handle_mb_event(struct lpfc_hba *phba)
 
 		/* Mailbox cmd <cmd> Cmpl <cmpl> */
 		lpfc_printf_log(phba, KERN_INFO, LOG_MBOX | LOG_SLI,
+<<<<<<< HEAD
 				"(%d):0307 Mailbox cmd x%x (x%x/x%x) Cmpl x%p "
 				"Data: x%x x%x x%x x%x x%x x%x x%x x%x x%x\n",
 				pmb->vport ? pmb->vport->vpi : 0,
 				pmbox->mbxCommand,
 				lpfc_sli_config_mbox_subsys_get(phba, pmb),
 				lpfc_sli_config_mbox_opcode_get(phba, pmb),
+=======
+				"(%d):0307 Mailbox cmd x%x (x%x) Cmpl x%p "
+				"Data: x%x x%x x%x x%x x%x x%x x%x x%x x%x\n",
+				pmb->vport ? pmb->vport->vpi : 0,
+				pmbox->mbxCommand,
+				lpfc_sli4_mbox_opcode_get(phba, pmb),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				pmb->mbox_cmpl,
 				*((uint32_t *) pmbox),
 				pmbox->un.varWords[0],
@@ -3601,8 +3791,13 @@ lpfc_sli_brdready(struct lpfc_hba *phba, uint32_t mask)
  * lpfc_reset_barrier - Make HBA ready for HBA reset
  * @phba: Pointer to HBA context object.
  *
+<<<<<<< HEAD
  * This function is called before resetting an HBA. This function is called
  * with hbalock held and requests HBA to quiesce DMAs before a reset.
+=======
+ * This function is called before resetting an HBA. This
+ * function requests HBA to quiesce DMAs before a reset.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  **/
 void lpfc_reset_barrier(struct lpfc_hba *phba)
 {
@@ -3877,6 +4072,10 @@ lpfc_sli4_brdreset(struct lpfc_hba *phba)
 {
 	struct lpfc_sli *psli = &phba->sli;
 	uint16_t cfg_value;
+<<<<<<< HEAD
+=======
+	uint8_t qindx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Reset HBA */
 	lpfc_printf_log(phba, KERN_INFO, LOG_SLI,
@@ -3892,6 +4091,22 @@ lpfc_sli4_brdreset(struct lpfc_hba *phba)
 	spin_lock_irq(&phba->hbalock);
 	psli->sli_flag &= ~(LPFC_PROCESS_LA);
 	phba->fcf.fcf_flag = 0;
+<<<<<<< HEAD
+=======
+	/* Clean up the child queue list for the CQs */
+	list_del_init(&phba->sli4_hba.mbx_wq->list);
+	list_del_init(&phba->sli4_hba.els_wq->list);
+	list_del_init(&phba->sli4_hba.hdr_rq->list);
+	list_del_init(&phba->sli4_hba.dat_rq->list);
+	list_del_init(&phba->sli4_hba.mbx_cq->list);
+	list_del_init(&phba->sli4_hba.els_cq->list);
+	for (qindx = 0; qindx < phba->cfg_fcp_wq_count; qindx++)
+		list_del_init(&phba->sli4_hba.fcp_wq[qindx]->list);
+	qindx = 0;
+	do
+		list_del_init(&phba->sli4_hba.fcp_cq[qindx]->list);
+	while (++qindx < phba->cfg_fcp_eq_count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irq(&phba->hbalock);
 
 	/* Now physically reset the device */
@@ -3904,7 +4119,10 @@ lpfc_sli4_brdreset(struct lpfc_hba *phba)
 			      ~(PCI_COMMAND_PARITY | PCI_COMMAND_SERR)));
 
 	/* Perform FCoE PCI function reset */
+<<<<<<< HEAD
 	lpfc_sli4_queue_destroy(phba);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lpfc_pci_function_reset(phba);
 
 	/* Restore PCI cmd register */
@@ -4352,11 +4570,14 @@ lpfc_sli_config_port(struct lpfc_hba *phba, int sli_mode)
 			phba->sli.sli_flag &= ~LPFC_SLI_ASYNC_MBX_BLK;
 			spin_unlock_irq(&phba->hbalock);
 			done = 1;
+<<<<<<< HEAD
 
 			if ((pmb->u.mb.un.varCfgPort.casabt == 1) &&
 			    (pmb->u.mb.un.varCfgPort.gasabt == 0))
 				lpfc_printf_log(phba, KERN_WARNING, LOG_INIT,
 					"3110 Port did not grant ASABT\n");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	if (!done) {
@@ -4569,9 +4790,15 @@ lpfc_sli_hba_setup_error:
  * data structure.
  **/
 static int
+<<<<<<< HEAD
 lpfc_sli4_read_fcoe_params(struct lpfc_hba *phba)
 {
 	LPFC_MBOXQ_t *mboxq;
+=======
+lpfc_sli4_read_fcoe_params(struct lpfc_hba *phba,
+		LPFC_MBOXQ_t *mboxq)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct lpfc_dmabuf *mp;
 	struct lpfc_mqe *mqe;
 	uint32_t data_length;
@@ -4583,6 +4810,7 @@ lpfc_sli4_read_fcoe_params(struct lpfc_hba *phba)
 	phba->fc_map[1] = LPFC_FCOE_FCF_MAP1;
 	phba->fc_map[2] = LPFC_FCOE_FCF_MAP2;
 
+<<<<<<< HEAD
 	mboxq = (LPFC_MBOXQ_t *)mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
 	if (!mboxq)
 		return -ENOMEM;
@@ -4592,6 +4820,11 @@ lpfc_sli4_read_fcoe_params(struct lpfc_hba *phba)
 		rc = -ENOMEM;
 		goto out_free_mboxq;
 	}
+=======
+	mqe = &mboxq->u.mqe;
+	if (lpfc_dump_fcoe_param(phba, mboxq))
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mp = (struct lpfc_dmabuf *) mboxq->context1;
 	rc = lpfc_sli_issue_mbox(phba, mboxq, MBX_POLL);
@@ -4620,25 +4853,37 @@ lpfc_sli4_read_fcoe_params(struct lpfc_hba *phba)
 	if (rc) {
 		lpfc_mbuf_free(phba, mp->virt, mp->phys);
 		kfree(mp);
+<<<<<<< HEAD
 		rc = -EIO;
 		goto out_free_mboxq;
+=======
+		return -EIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	data_length = mqe->un.mb_words[5];
 	if (data_length > DMP_RGN23_SIZE) {
 		lpfc_mbuf_free(phba, mp->virt, mp->phys);
 		kfree(mp);
+<<<<<<< HEAD
 		rc = -EIO;
 		goto out_free_mboxq;
+=======
+		return -EIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	lpfc_parse_fcoe_conf(phba, mp->virt, data_length);
 	lpfc_mbuf_free(phba, mp->virt, mp->phys);
 	kfree(mp);
+<<<<<<< HEAD
 	rc = 0;
 
 out_free_mboxq:
 	mempool_free(mboxq, phba->mbox_mem_pool);
 	return rc;
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -4722,6 +4967,7 @@ lpfc_sli4_read_rev(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq,
 }
 
 /**
+<<<<<<< HEAD
  * lpfc_sli4_retrieve_pport_name - Retrieve SLI4 device physical port name
  * @phba: pointer to lpfc hba data structure.
  *
@@ -4868,6 +5114,8 @@ out_free_mboxq:
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * lpfc_sli4_arm_cqeq_intr - Arm sli-4 device completion and event queues
  * @phba: pointer to lpfc hba data structure.
  *
@@ -4882,6 +5130,7 @@ lpfc_sli4_arm_cqeq_intr(struct lpfc_hba *phba)
 	lpfc_sli4_cq_release(phba->sli4_hba.mbx_cq, LPFC_QUEUE_REARM);
 	lpfc_sli4_cq_release(phba->sli4_hba.els_cq, LPFC_QUEUE_REARM);
 	fcp_eqidx = 0;
+<<<<<<< HEAD
 	if (phba->sli4_hba.fcp_cq) {
 		do
 			lpfc_sli4_cq_release(phba->sli4_hba.fcp_cq[fcp_eqidx],
@@ -4895,12 +5144,23 @@ lpfc_sli4_arm_cqeq_intr(struct lpfc_hba *phba)
 			lpfc_sli4_eq_release(phba->sli4_hba.fp_eq[fcp_eqidx],
 					     LPFC_QUEUE_REARM);
 	}
+=======
+	do
+		lpfc_sli4_cq_release(phba->sli4_hba.fcp_cq[fcp_eqidx],
+				     LPFC_QUEUE_REARM);
+	while (++fcp_eqidx < phba->cfg_fcp_eq_count);
+	lpfc_sli4_eq_release(phba->sli4_hba.sp_eq, LPFC_QUEUE_REARM);
+	for (fcp_eqidx = 0; fcp_eqidx < phba->cfg_fcp_eq_count; fcp_eqidx++)
+		lpfc_sli4_eq_release(phba->sli4_hba.fp_eq[fcp_eqidx],
+				     LPFC_QUEUE_REARM);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
  * lpfc_sli4_get_avail_extnt_rsrc - Get available resource extent count.
  * @phba: Pointer to HBA context object.
  * @type: The resource extent type.
+<<<<<<< HEAD
  * @extnt_count: buffer to hold port available extent count.
  * @extnt_size: buffer to hold element count per extent.
  *
@@ -4910,6 +5170,12 @@ lpfc_sli4_arm_cqeq_intr(struct lpfc_hba *phba)
  * Returns: 0 if successful.  Nonzero otherwise.
  **/
 int
+=======
+ *
+ * This function allocates all SLI4 resource identifiers.
+ **/
+static int
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 lpfc_sli4_get_avail_extnt_rsrc(struct lpfc_hba *phba, uint16_t type,
 			       uint16_t *extnt_count, uint16_t *extnt_size)
 {
@@ -4941,7 +5207,11 @@ lpfc_sli4_get_avail_extnt_rsrc(struct lpfc_hba *phba, uint16_t type,
 	if (!phba->sli4_hba.intr_enable)
 		rc = lpfc_sli_issue_mbox(phba, mbox, MBX_POLL);
 	else {
+<<<<<<< HEAD
 		mbox_tmo = lpfc_mbox_tmo_val(phba, mbox);
+=======
+		mbox_tmo = lpfc_mbox_tmo_val(phba, MBX_SLI4_CONFIG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = lpfc_sli_issue_mbox_wait(phba, mbox, mbox_tmo);
 	}
 	if (unlikely(rc)) {
@@ -5086,7 +5356,11 @@ lpfc_sli4_cfg_post_extnts(struct lpfc_hba *phba, uint16_t *extnt_cnt,
 				     req_len, *emb);
 	if (alloc_len < req_len) {
 		lpfc_printf_log(phba, KERN_ERR, LOG_INIT,
+<<<<<<< HEAD
 			"2982 Allocated DMA memory size (x%x) is "
+=======
+			"9000 Allocated DMA memory size (x%x) is "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"less than the requested DMA memory "
 			"size (x%x)\n", alloc_len, req_len);
 		return -ENOMEM;
@@ -5098,7 +5372,11 @@ lpfc_sli4_cfg_post_extnts(struct lpfc_hba *phba, uint16_t *extnt_cnt,
 	if (!phba->sli4_hba.intr_enable)
 		rc = lpfc_sli_issue_mbox(phba, mbox, MBX_POLL);
 	else {
+<<<<<<< HEAD
 		mbox_tmo = lpfc_mbox_tmo_val(phba, mbox);
+=======
+		mbox_tmo = lpfc_mbox_tmo_val(phba, MBX_SLI4_CONFIG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = lpfc_sli_issue_mbox_wait(phba, mbox, mbox_tmo);
 	}
 
@@ -5381,7 +5659,11 @@ lpfc_sli4_dealloc_extent(struct lpfc_hba *phba, uint16_t type)
 	if (!phba->sli4_hba.intr_enable)
 		rc = lpfc_sli_issue_mbox(phba, mbox, MBX_POLL);
 	else {
+<<<<<<< HEAD
 		mbox_tmo = lpfc_mbox_tmo_val(phba, mbox);
+=======
+		mbox_tmo = lpfc_mbox_tmo_val(phba, mbox_tmo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = lpfc_sli_issue_mbox_wait(phba, mbox, mbox_tmo);
 	}
 	if (unlikely(rc)) {
@@ -5469,8 +5751,11 @@ lpfc_sli4_alloc_resource_identifiers(struct lpfc_hba *phba)
 	uint16_t count, base;
 	unsigned long longs;
 
+<<<<<<< HEAD
 	if (!phba->sli4_hba.rpi_hdrs_in_use)
 		phba->sli4_hba.next_rpi = phba->sli4_hba.max_cfg_param.max_rpi;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (phba->sli4_hba.extents_in_use) {
 		/*
 		 * The port supports resource extents. The XRI, VPI, VFI, RPI
@@ -5552,10 +5837,16 @@ lpfc_sli4_alloc_resource_identifiers(struct lpfc_hba *phba)
 		 * need any action - just exit.
 		 */
 		if (bf_get(lpfc_idx_rsrc_rdy, &phba->sli4_hba.sli4_flags) ==
+<<<<<<< HEAD
 		    LPFC_IDX_RSRC_RDY) {
 			lpfc_sli4_dealloc_resource_identifiers(phba);
 			lpfc_sli4_remove_rpis(phba);
 		}
+=======
+		    LPFC_IDX_RSRC_RDY)
+			return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* RPIs. */
 		count = phba->sli4_hba.max_cfg_param.max_rpi;
 		base = phba->sli4_hba.max_cfg_param.rpi_base;
@@ -5611,8 +5902,11 @@ lpfc_sli4_alloc_resource_identifiers(struct lpfc_hba *phba)
 			rc = -ENOMEM;
 			goto free_vpi_ids;
 		}
+<<<<<<< HEAD
 		phba->sli4_hba.max_cfg_param.xri_used = 0;
 		phba->sli4_hba.xri_count = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		phba->sli4_hba.xri_ids = kzalloc(count *
 						 sizeof(uint16_t),
 						 GFP_KERNEL);
@@ -5705,6 +5999,7 @@ lpfc_sli4_dealloc_resource_identifiers(struct lpfc_hba *phba)
 }
 
 /**
+<<<<<<< HEAD
  * lpfc_sli4_get_allocated_extnts - Get the port's allocated extents.
  * @phba: Pointer to HBA context object.
  * @type: The resource extent type.
@@ -5853,6 +6148,8 @@ lpfc_sli4_get_allocated_extnts(struct lpfc_hba *phba, uint16_t type,
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * lpfc_sli4_hba_setup - SLI4 device intialization PCI function
  * @phba: Pointer to HBA context object.
  *
@@ -5897,6 +6194,17 @@ lpfc_sli4_hba_setup(struct lpfc_hba *phba)
 	if (!mboxq)
 		return -ENOMEM;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * Continue initialization with default values even if driver failed
+	 * to read FCoE param config regions
+	 */
+	if (lpfc_sli4_read_fcoe_params(phba, mboxq))
+		lpfc_printf_log(phba, KERN_WARNING, LOG_MBOX | LOG_INIT,
+			"2570 Failed to read FCoE parameters\n");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Issue READ_REV to collect vpd and FW information. */
 	vpd_size = SLI4_PAGE_SIZE;
 	vpd = kzalloc(vpd_size, GFP_KERNEL);
@@ -5932,6 +6240,7 @@ lpfc_sli4_hba_setup(struct lpfc_hba *phba)
 		kfree(vpd);
 		goto out_free_mbox;
 	}
+<<<<<<< HEAD
 
 	/*
 	 * Continue initialization with default values even if driver failed
@@ -5953,6 +6262,8 @@ lpfc_sli4_hba_setup(struct lpfc_hba *phba)
 				"3080 Successful retrieving SLI4 device "
 				"physical port name: %s.\n", phba->Port);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Evaluate the read rev and vpd data. Populate the driver
 	 * state with the results. If this routine fails, the failure
@@ -6023,6 +6334,7 @@ lpfc_sli4_hba_setup(struct lpfc_hba *phba)
 	 * then turn off the global config parameters to disable the
 	 * feature in the driver.  This is not a fatal error.
 	 */
+<<<<<<< HEAD
 	phba->sli3_options &= ~LPFC_SLI3_BG_ENABLED;
 	if (phba->cfg_enable_bg) {
 		if (bf_get(lpfc_mbx_rq_ftr_rsp_dif, &mqe->un.req_ftrs))
@@ -6030,6 +6342,11 @@ lpfc_sli4_hba_setup(struct lpfc_hba *phba)
 		else
 			ftr_rsp++;
 	}
+=======
+	if ((phba->cfg_enable_bg) &&
+	    !(bf_get(lpfc_mbx_rq_ftr_rsp_dif, &mqe->un.req_ftrs)))
+		ftr_rsp++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (phba->max_vpi && phba->cfg_enable_npiv &&
 	    !(bf_get(lpfc_mbx_rq_ftr_rsp_npiv, &mqe->un.req_ftrs)))
@@ -6063,8 +6380,11 @@ lpfc_sli4_hba_setup(struct lpfc_hba *phba)
 				"rc = x%x\n", rc);
 		goto out_free_mbox;
 	}
+<<<<<<< HEAD
 	/* update physical xri mappings in the scsi buffers */
 	lpfc_scsi_buf_update(phba);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Read the port's service parameters. */
 	rc = lpfc_read_sparam(phba, mboxq, vport->vpi);
@@ -6147,6 +6467,7 @@ lpfc_sli4_hba_setup(struct lpfc_hba *phba)
 		rc = -ENODEV;
 		goto out_free_mbox;
 	}
+<<<<<<< HEAD
 	lpfc_sli4_node_prep(phba);
 
 	/* Create all the SLI4 queues */
@@ -6157,12 +6478,19 @@ lpfc_sli4_hba_setup(struct lpfc_hba *phba)
 		rc = -ENODEV;
 		goto out_stop_timers;
 	}
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Set up all the queues to the device */
 	rc = lpfc_sli4_queue_setup(phba);
 	if (unlikely(rc)) {
 		lpfc_printf_log(phba, KERN_ERR, LOG_MBOX | LOG_SLI,
 				"0381 Error %d during queue setup.\n ", rc);
+<<<<<<< HEAD
 		goto out_destroy_queue;
+=======
+		goto out_stop_timers;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Arm the CQs and then EQs on device */
@@ -6227,11 +6555,15 @@ lpfc_sli4_hba_setup(struct lpfc_hba *phba)
 		rc = 0;
 		phba->fcf.fcfi = bf_get(lpfc_reg_fcfi_fcfi,
 					&mboxq->u.mqe.un.reg_fcfi);
+<<<<<<< HEAD
 
 		/* Check if the port is configured to be disabled */
 		lpfc_sli_read_link_ste(phba);
 	}
 
+=======
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * The port is ready, set the host's link state to LINK_DOWN
 	 * in preparation for link interrupts.
@@ -6239,6 +6571,7 @@ lpfc_sli4_hba_setup(struct lpfc_hba *phba)
 	spin_lock_irq(&phba->hbalock);
 	phba->link_state = LPFC_LINK_DOWN;
 	spin_unlock_irq(&phba->hbalock);
+<<<<<<< HEAD
 	if (!(phba->hba_flag & HBA_FCOE_MODE) &&
 	    (phba->hba_flag & LINK_DISABLED)) {
 		lpfc_printf_log(phba, KERN_ERR, LOG_INIT | LOG_SLI,
@@ -6268,6 +6601,17 @@ out_destroy_queue:
 	lpfc_sli4_queue_destroy(phba);
 out_stop_timers:
 	lpfc_stop_hba_timers(phba);
+=======
+	if (phba->cfg_suppress_link_up == LPFC_INITIALIZE_LINK)
+		rc = phba->lpfc_hba_init_link(phba, MBX_NOWAIT);
+out_unset_queue:
+	/* Unset all the queues set up in this routine when error out */
+	if (rc)
+		lpfc_sli4_queue_unset(phba);
+out_stop_timers:
+	if (rc)
+		lpfc_stop_hba_timers(phba);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_free_mbox:
 	mempool_free(mboxq, phba->mbox_mem_pool);
 	return rc;
@@ -6562,7 +6906,11 @@ lpfc_sli_issue_mbox_s3(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmbox,
 		}
 		/* timeout active mbox command */
 		mod_timer(&psli->mbox_tmo, (jiffies +
+<<<<<<< HEAD
 			       (HZ * lpfc_mbox_tmo_val(phba, pmbox))));
+=======
+			       (HZ * lpfc_mbox_tmo_val(phba, mb->mbxCommand))));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Mailbox cmd <cmd> issue */
@@ -6686,8 +7034,14 @@ lpfc_sli_issue_mbox_s3(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmbox,
 						       drvr_flag);
 			goto out_not_finished;
 		}
+<<<<<<< HEAD
 		timeout = msecs_to_jiffies(lpfc_mbox_tmo_val(phba, pmbox) *
 							1000) + jiffies;
+=======
+		timeout = msecs_to_jiffies(lpfc_mbox_tmo_val(phba,
+							     mb->mbxCommand) *
+					   1000) + jiffies;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		i = 0;
 		/* Wait for command to complete */
 		while (((word0 & OWN_CHIP) == OWN_CHIP) ||
@@ -6798,12 +7152,19 @@ static int
 lpfc_sli4_async_mbox_block(struct lpfc_hba *phba)
 {
 	struct lpfc_sli *psli = &phba->sli;
+<<<<<<< HEAD
 	int rc = 0;
 	unsigned long timeout = 0;
+=======
+	uint8_t actcmd = MBX_HEARTBEAT;
+	int rc = 0;
+	unsigned long timeout;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Mark the asynchronous mailbox command posting as blocked */
 	spin_lock_irq(&phba->hbalock);
 	psli->sli_flag |= LPFC_SLI_ASYNC_MBX_BLK;
+<<<<<<< HEAD
 	/* Determine how long we might wait for the active mailbox
 	 * command to be gracefully completed by firmware.
 	 */
@@ -6813,6 +7174,16 @@ lpfc_sli4_async_mbox_block(struct lpfc_hba *phba)
 						1000) + jiffies;
 	spin_unlock_irq(&phba->hbalock);
 
+=======
+	if (phba->sli.mbox_active)
+		actcmd = phba->sli.mbox_active->u.mb.mbxCommand;
+	spin_unlock_irq(&phba->hbalock);
+	/* Determine how long we might wait for the active mailbox
+	 * command to be gracefully completed by firmware.
+	 */
+	timeout = msecs_to_jiffies(lpfc_mbox_tmo_val(phba, actcmd) * 1000) +
+				   jiffies;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Wait for the outstnading mailbox command to complete */
 	while (phba->sli.mbox_active) {
 		/* Check active mailbox complete status every 2ms */
@@ -6907,12 +7278,20 @@ lpfc_sli4_post_sync_mbox(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 	if (psli->sli_flag & LPFC_SLI_MBOX_ACTIVE) {
 		spin_unlock_irqrestore(&phba->hbalock, iflag);
 		lpfc_printf_log(phba, KERN_ERR, LOG_MBOX | LOG_SLI,
+<<<<<<< HEAD
 				"(%d):2532 Mailbox command x%x (x%x/x%x) "
 				"cannot issue Data: x%x x%x\n",
 				mboxq->vport ? mboxq->vport->vpi : 0,
 				mboxq->u.mb.mbxCommand,
 				lpfc_sli_config_mbox_subsys_get(phba, mboxq),
 				lpfc_sli_config_mbox_opcode_get(phba, mboxq),
+=======
+				"(%d):2532 Mailbox command x%x (x%x) "
+				"cannot issue Data: x%x x%x\n",
+				mboxq->vport ? mboxq->vport->vpi : 0,
+				mboxq->u.mb.mbxCommand,
+				lpfc_sli4_mbox_opcode_get(phba, mboxq),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				psli->sli_flag, MBX_POLL);
 		return MBXERR_ERROR;
 	}
@@ -6935,7 +7314,11 @@ lpfc_sli4_post_sync_mbox(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 	dma_address = &phba->sli4_hba.bmbx.dma_address;
 	writel(dma_address->addr_hi, phba->sli4_hba.BMBXregaddr);
 
+<<<<<<< HEAD
 	timeout = msecs_to_jiffies(lpfc_mbox_tmo_val(phba, mboxq)
+=======
+	timeout = msecs_to_jiffies(lpfc_mbox_tmo_val(phba, mbx_cmnd)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   * 1000) + jiffies;
 	do {
 		bmbx_reg.word0 = readl(phba->sli4_hba.BMBXregaddr);
@@ -6951,7 +7334,11 @@ lpfc_sli4_post_sync_mbox(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 
 	/* Post the low mailbox dma address to the port. */
 	writel(dma_address->addr_lo, phba->sli4_hba.BMBXregaddr);
+<<<<<<< HEAD
 	timeout = msecs_to_jiffies(lpfc_mbox_tmo_val(phba, mboxq)
+=======
+	timeout = msecs_to_jiffies(lpfc_mbox_tmo_val(phba, mbx_cmnd)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   * 1000) + jiffies;
 	do {
 		bmbx_reg.word0 = readl(phba->sli4_hba.BMBXregaddr);
@@ -6990,12 +7377,20 @@ lpfc_sli4_post_sync_mbox(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 		lpfc_sli4_swap_str(phba, mboxq);
 
 	lpfc_printf_log(phba, KERN_INFO, LOG_MBOX | LOG_SLI,
+<<<<<<< HEAD
 			"(%d):0356 Mailbox cmd x%x (x%x/x%x) Status x%x "
 			"Data: x%x x%x x%x x%x x%x x%x x%x x%x x%x x%x x%x"
 			" x%x x%x CQ: x%x x%x x%x x%x\n",
 			mboxq->vport ? mboxq->vport->vpi : 0, mbx_cmnd,
 			lpfc_sli_config_mbox_subsys_get(phba, mboxq),
 			lpfc_sli_config_mbox_opcode_get(phba, mboxq),
+=======
+			"(%d):0356 Mailbox cmd x%x (x%x) Status x%x "
+			"Data: x%x x%x x%x x%x x%x x%x x%x x%x x%x x%x x%x"
+			" x%x x%x CQ: x%x x%x x%x x%x\n",
+			mboxq->vport ? mboxq->vport->vpi : 0,
+			mbx_cmnd, lpfc_sli4_mbox_opcode_get(phba, mboxq),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			bf_get(lpfc_mqe_status, mb),
 			mb->un.mb_words[0], mb->un.mb_words[1],
 			mb->un.mb_words[2], mb->un.mb_words[3],
@@ -7035,6 +7430,7 @@ lpfc_sli_issue_mbox_s4(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq,
 	unsigned long iflags;
 	int rc;
 
+<<<<<<< HEAD
 	/* dump from issue mailbox command if setup */
 	lpfc_idiag_mbxacc_dump_issue_mbox(phba, &mboxq->u.mb);
 
@@ -7047,6 +7443,16 @@ lpfc_sli_issue_mbox_s4(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq,
 				mboxq->u.mb.mbxCommand,
 				lpfc_sli_config_mbox_subsys_get(phba, mboxq),
 				lpfc_sli_config_mbox_opcode_get(phba, mboxq),
+=======
+	rc = lpfc_mbox_dev_check(phba);
+	if (unlikely(rc)) {
+		lpfc_printf_log(phba, KERN_ERR, LOG_MBOX | LOG_SLI,
+				"(%d):2544 Mailbox command x%x (x%x) "
+				"cannot issue Data: x%x x%x\n",
+				mboxq->vport ? mboxq->vport->vpi : 0,
+				mboxq->u.mb.mbxCommand,
+				lpfc_sli4_mbox_opcode_get(phba, mboxq),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				psli->sli_flag, flag);
 		goto out_not_finished;
 	}
@@ -7060,6 +7466,7 @@ lpfc_sli_issue_mbox_s4(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq,
 		if (rc != MBX_SUCCESS)
 			lpfc_printf_log(phba, KERN_WARNING, LOG_MBOX | LOG_SLI,
 					"(%d):2541 Mailbox command x%x "
+<<<<<<< HEAD
 					"(x%x/x%x) cannot issue Data: "
 					"x%x x%x\n",
 					mboxq->vport ? mboxq->vport->vpi : 0,
@@ -7068,17 +7475,31 @@ lpfc_sli_issue_mbox_s4(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq,
 									mboxq),
 					lpfc_sli_config_mbox_opcode_get(phba,
 									mboxq),
+=======
+					"(x%x) cannot issue Data: x%x x%x\n",
+					mboxq->vport ? mboxq->vport->vpi : 0,
+					mboxq->u.mb.mbxCommand,
+					lpfc_sli4_mbox_opcode_get(phba, mboxq),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					psli->sli_flag, flag);
 		return rc;
 	} else if (flag == MBX_POLL) {
 		lpfc_printf_log(phba, KERN_WARNING, LOG_MBOX | LOG_SLI,
 				"(%d):2542 Try to issue mailbox command "
+<<<<<<< HEAD
 				"x%x (x%x/x%x) synchronously ahead of async"
 				"mailbox command queue: x%x x%x\n",
 				mboxq->vport ? mboxq->vport->vpi : 0,
 				mboxq->u.mb.mbxCommand,
 				lpfc_sli_config_mbox_subsys_get(phba, mboxq),
 				lpfc_sli_config_mbox_opcode_get(phba, mboxq),
+=======
+				"x%x (x%x) synchronously ahead of async"
+				"mailbox command queue: x%x x%x\n",
+				mboxq->vport ? mboxq->vport->vpi : 0,
+				mboxq->u.mb.mbxCommand,
+				lpfc_sli4_mbox_opcode_get(phba, mboxq),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				psli->sli_flag, flag);
 		/* Try to block the asynchronous mailbox posting */
 		rc = lpfc_sli4_async_mbox_block(phba);
@@ -7087,6 +7508,7 @@ lpfc_sli_issue_mbox_s4(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq,
 			rc = lpfc_sli4_post_sync_mbox(phba, mboxq);
 			if (rc != MBX_SUCCESS)
 				lpfc_printf_log(phba, KERN_ERR,
+<<<<<<< HEAD
 					LOG_MBOX | LOG_SLI,
 					"(%d):2597 Mailbox command "
 					"x%x (x%x/x%x) cannot issue "
@@ -7099,6 +7521,18 @@ lpfc_sli_issue_mbox_s4(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq,
 					lpfc_sli_config_mbox_opcode_get(phba,
 									mboxq),
 					psli->sli_flag, flag);
+=======
+						LOG_MBOX | LOG_SLI,
+						"(%d):2597 Mailbox command "
+						"x%x (x%x) cannot issue "
+						"Data: x%x x%x\n",
+						mboxq->vport ?
+						mboxq->vport->vpi : 0,
+						mboxq->u.mb.mbxCommand,
+						lpfc_sli4_mbox_opcode_get(phba,
+								mboxq),
+						psli->sli_flag, flag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Unblock the async mailbox posting afterward */
 			lpfc_sli4_async_mbox_unblock(phba);
 		}
@@ -7109,12 +7543,20 @@ lpfc_sli_issue_mbox_s4(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq,
 	rc = lpfc_mbox_cmd_check(phba, mboxq);
 	if (rc) {
 		lpfc_printf_log(phba, KERN_ERR, LOG_MBOX | LOG_SLI,
+<<<<<<< HEAD
 				"(%d):2543 Mailbox command x%x (x%x/x%x) "
 				"cannot issue Data: x%x x%x\n",
 				mboxq->vport ? mboxq->vport->vpi : 0,
 				mboxq->u.mb.mbxCommand,
 				lpfc_sli_config_mbox_subsys_get(phba, mboxq),
 				lpfc_sli_config_mbox_opcode_get(phba, mboxq),
+=======
+				"(%d):2543 Mailbox command x%x (x%x) "
+				"cannot issue Data: x%x x%x\n",
+				mboxq->vport ? mboxq->vport->vpi : 0,
+				mboxq->u.mb.mbxCommand,
+				lpfc_sli4_mbox_opcode_get(phba, mboxq),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				psli->sli_flag, flag);
 		goto out_not_finished;
 	}
@@ -7126,11 +7568,18 @@ lpfc_sli_issue_mbox_s4(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq,
 	spin_unlock_irqrestore(&phba->hbalock, iflags);
 	lpfc_printf_log(phba, KERN_INFO, LOG_MBOX | LOG_SLI,
 			"(%d):0354 Mbox cmd issue - Enqueue Data: "
+<<<<<<< HEAD
 			"x%x (x%x/x%x) x%x x%x x%x\n",
 			mboxq->vport ? mboxq->vport->vpi : 0xffffff,
 			bf_get(lpfc_mqe_command, &mboxq->u.mqe),
 			lpfc_sli_config_mbox_subsys_get(phba, mboxq),
 			lpfc_sli_config_mbox_opcode_get(phba, mboxq),
+=======
+			"x%x (x%x) x%x x%x x%x\n",
+			mboxq->vport ? mboxq->vport->vpi : 0xffffff,
+			bf_get(lpfc_mqe_command, &mboxq->u.mqe),
+			lpfc_sli4_mbox_opcode_get(phba, mboxq),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			phba->pport->port_state,
 			psli->sli_flag, MBX_NOWAIT);
 	/* Wake up worker thread to transport mailbox command from head */
@@ -7207,6 +7656,7 @@ lpfc_sli4_post_async_mbox(struct lpfc_hba *phba)
 
 	/* Start timer for the mbox_tmo and log some mailbox post messages */
 	mod_timer(&psli->mbox_tmo, (jiffies +
+<<<<<<< HEAD
 		  (HZ * lpfc_mbox_tmo_val(phba, mboxq))));
 
 	lpfc_printf_log(phba, KERN_INFO, LOG_MBOX | LOG_SLI,
@@ -7215,6 +7665,15 @@ lpfc_sli4_post_async_mbox(struct lpfc_hba *phba)
 			mboxq->vport ? mboxq->vport->vpi : 0, mbx_cmnd,
 			lpfc_sli_config_mbox_subsys_get(phba, mboxq),
 			lpfc_sli_config_mbox_opcode_get(phba, mboxq),
+=======
+		  (HZ * lpfc_mbox_tmo_val(phba, mbx_cmnd))));
+
+	lpfc_printf_log(phba, KERN_INFO, LOG_MBOX | LOG_SLI,
+			"(%d):0355 Mailbox cmd x%x (x%x) issue Data: "
+			"x%x x%x\n",
+			mboxq->vport ? mboxq->vport->vpi : 0, mbx_cmnd,
+			lpfc_sli4_mbox_opcode_get(phba, mboxq),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			phba->pport->port_state, psli->sli_flag);
 
 	if (mbx_cmnd != MBX_HEARTBEAT) {
@@ -7238,12 +7697,20 @@ lpfc_sli4_post_async_mbox(struct lpfc_hba *phba)
 	rc = lpfc_sli4_mq_put(phba->sli4_hba.mbx_wq, mqe);
 	if (rc != MBX_SUCCESS) {
 		lpfc_printf_log(phba, KERN_ERR, LOG_MBOX | LOG_SLI,
+<<<<<<< HEAD
 				"(%d):2533 Mailbox command x%x (x%x/x%x) "
 				"cannot issue Data: x%x x%x\n",
 				mboxq->vport ? mboxq->vport->vpi : 0,
 				mboxq->u.mb.mbxCommand,
 				lpfc_sli_config_mbox_subsys_get(phba, mboxq),
 				lpfc_sli_config_mbox_opcode_get(phba, mboxq),
+=======
+				"(%d):2533 Mailbox command x%x (x%x) "
+				"cannot issue Data: x%x x%x\n",
+				mboxq->vport ? mboxq->vport->vpi : 0,
+				mboxq->u.mb.mbxCommand,
+				lpfc_sli4_mbox_opcode_get(phba, mboxq),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				psli->sli_flag, MBX_NOWAIT);
 		goto out_not_finished;
 	}
@@ -7252,6 +7719,7 @@ lpfc_sli4_post_async_mbox(struct lpfc_hba *phba)
 
 out_not_finished:
 	spin_lock_irqsave(&phba->hbalock, iflags);
+<<<<<<< HEAD
 	if (phba->sli.mbox_active) {
 		mboxq->u.mb.mbxStatus = MBX_NOT_FINISHED;
 		__lpfc_mbox_cmpl_put(phba, mboxq);
@@ -7259,6 +7727,13 @@ out_not_finished:
 		psli->sli_flag &= ~LPFC_SLI_MBOX_ACTIVE;
 		phba->sli.mbox_active = NULL;
 	}
+=======
+	mboxq->u.mb.mbxStatus = MBX_NOT_FINISHED;
+	__lpfc_mbox_cmpl_put(phba, mboxq);
+	/* Release the token */
+	psli->sli_flag &= ~LPFC_SLI_MBOX_ACTIVE;
+	phba->sli.mbox_active = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&phba->hbalock, iflags);
 
 	return MBX_NOT_FINISHED;
@@ -7530,7 +8005,10 @@ lpfc_sli4_bpl2sgl(struct lpfc_hba *phba, struct lpfc_iocbq *piocbq,
 	struct ulp_bde64 *bpl = NULL;
 	struct ulp_bde64 bde;
 	struct sli4_sge *sgl  = NULL;
+<<<<<<< HEAD
 	struct lpfc_dmabuf *dmabuf;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	IOCB_t *icmd;
 	int numBdes = 0;
 	int i = 0;
@@ -7542,8 +8020,11 @@ lpfc_sli4_bpl2sgl(struct lpfc_hba *phba, struct lpfc_iocbq *piocbq,
 
 	sgl  = (struct sli4_sge *)sglq->sgl;
 	icmd = &piocbq->iocb;
+<<<<<<< HEAD
 	if (icmd->ulpCommand == CMD_XMIT_BLS_RSP64_CX)
 		return sglq->sli4_xritag;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (icmd->un.genreq64.bdl.bdeFlags == BUFF_TYPE_BLP_64) {
 		numBdes = icmd->un.genreq64.bdl.bdeSize /
 				sizeof(struct ulp_bde64);
@@ -7551,12 +8032,18 @@ lpfc_sli4_bpl2sgl(struct lpfc_hba *phba, struct lpfc_iocbq *piocbq,
 		 * have not been byteswapped yet so there is no
 		 * need to swap them back.
 		 */
+<<<<<<< HEAD
 		if (piocbq->context3)
 			dmabuf = (struct lpfc_dmabuf *)piocbq->context3;
 		else
 			return xritag;
 
 		bpl  = (struct ulp_bde64 *)dmabuf->virt;
+=======
+		bpl  = (struct ulp_bde64 *)
+			((struct lpfc_dmabuf *)piocbq->context3)->virt;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!bpl)
 			return xritag;
 
@@ -7587,8 +8074,11 @@ lpfc_sli4_bpl2sgl(struct lpfc_hba *phba, struct lpfc_iocbq *piocbq,
 				if (inbound == 1)
 					offset = 0;
 				bf_set(lpfc_sli4_sge_offset, sgl, offset);
+<<<<<<< HEAD
 				bf_set(lpfc_sli4_sge_type, sgl,
 					LPFC_SGE_TYPE_DATA);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				offset += bde.tus.f.bdeSize;
 			}
 			sgl->word2 = cpu_to_le32(sgl->word2);
@@ -7665,8 +8155,11 @@ lpfc_sli4_iocb2wqe(struct lpfc_hba *phba, struct lpfc_iocbq *iocbq,
 	int numBdes, i;
 	struct ulp_bde64 bde;
 	struct lpfc_nodelist *ndlp;
+<<<<<<< HEAD
 	uint32_t *pcmd;
 	uint32_t if_type;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fip = phba->hba_flag & HBA_FIP_SUPPORT;
 	/* The fcp commands will set command type */
@@ -7720,7 +8213,10 @@ lpfc_sli4_iocb2wqe(struct lpfc_hba *phba, struct lpfc_iocbq *iocbq,
 				iocbq->iocb.ulpCommand);
 			return IOCB_ERROR;
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wqe->els_req.payload_len = xmit_len;
 		/* Els_reguest64 has a TMO */
 		bf_set(wqe_tmo, &wqe->els_req.wqe_com,
@@ -7735,6 +8231,7 @@ lpfc_sli4_iocb2wqe(struct lpfc_hba *phba, struct lpfc_iocbq *iocbq,
 		bf_set(wqe_ct, &wqe->els_req.wqe_com, ct);
 		bf_set(wqe_pu, &wqe->els_req.wqe_com, 0);
 		/* CCP CCPE PV PRI in word10 were set in the memcpy */
+<<<<<<< HEAD
 		if (command_type == ELS_COMMAND_FIP)
 			els_id = ((iocbq->iocb_flag & LPFC_FIP_ELS_ID_MASK)
 					>> LPFC_FIP_ELS_ID_SHIFT);
@@ -7759,6 +8256,11 @@ lpfc_sli4_iocb2wqe(struct lpfc_hba *phba, struct lpfc_iocbq *iocbq,
 				bf_set(wqe_ctxt_tag, &wqe->els_req.wqe_com,
 					phba->sli4_hba.rpi_ids[ndlp->nlp_rpi]);
 			}
+=======
+		if (command_type == ELS_COMMAND_FIP) {
+			els_id = ((iocbq->iocb_flag & LPFC_FIP_ELS_ID_MASK)
+					>> LPFC_FIP_ELS_ID_SHIFT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		bf_set(wqe_temp_rpi, &wqe->els_req.wqe_com,
 		       phba->sli4_hba.rpi_ids[ndlp->nlp_rpi]);
@@ -7777,8 +8279,11 @@ lpfc_sli4_iocb2wqe(struct lpfc_hba *phba, struct lpfc_iocbq *iocbq,
 		/* The entire sequence is transmitted for this IOCB */
 		xmit_len = total_len;
 		cmnd = CMD_XMIT_SEQUENCE64_CR;
+<<<<<<< HEAD
 		if (phba->link_flag & LS_LOOPBACK_MODE)
 			bf_set(wqe_xo, &wqe->xmit_sequence.wge_ctl, 1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case CMD_XMIT_SEQUENCE64_CR:
 		/* word3 iocb=io_tag32 wqe=reserved */
 		wqe->xmit_sequence.rsvd3 = 0;
@@ -7821,16 +8326,23 @@ lpfc_sli4_iocb2wqe(struct lpfc_hba *phba, struct lpfc_iocbq *iocbq,
 		bf_set(wqe_lnk, &wqe->fcp_iwrite.wqe_com, iocbq->iocb.ulpXS);
 		/* Always open the exchange */
 		bf_set(wqe_xc, &wqe->fcp_iwrite.wqe_com, 0);
+<<<<<<< HEAD
+=======
+		bf_set(wqe_dbde, &wqe->fcp_iwrite.wqe_com, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bf_set(wqe_iod, &wqe->fcp_iwrite.wqe_com, LPFC_WQE_IOD_WRITE);
 		bf_set(wqe_lenloc, &wqe->fcp_iwrite.wqe_com,
 		       LPFC_WQE_LENLOC_WORD4);
 		bf_set(wqe_ebde_cnt, &wqe->fcp_iwrite.wqe_com, 0);
 		bf_set(wqe_pu, &wqe->fcp_iwrite.wqe_com, iocbq->iocb.ulpPU);
+<<<<<<< HEAD
 		if (iocbq->iocb_flag & LPFC_IO_DIF) {
 			iocbq->iocb_flag &= ~LPFC_IO_DIF;
 			bf_set(wqe_dif, &wqe->generic.wqe_com, 1);
 		}
 		bf_set(wqe_dbde, &wqe->fcp_iwrite.wqe_com, 1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CMD_FCP_IREAD64_CR:
 		/* word3 iocb=iotag wqe=payload_offset_len */
@@ -7844,16 +8356,23 @@ lpfc_sli4_iocb2wqe(struct lpfc_hba *phba, struct lpfc_iocbq *iocbq,
 		bf_set(wqe_lnk, &wqe->fcp_iread.wqe_com, iocbq->iocb.ulpXS);
 		/* Always open the exchange */
 		bf_set(wqe_xc, &wqe->fcp_iread.wqe_com, 0);
+<<<<<<< HEAD
+=======
+		bf_set(wqe_dbde, &wqe->fcp_iread.wqe_com, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bf_set(wqe_iod, &wqe->fcp_iread.wqe_com, LPFC_WQE_IOD_READ);
 		bf_set(wqe_lenloc, &wqe->fcp_iread.wqe_com,
 		       LPFC_WQE_LENLOC_WORD4);
 		bf_set(wqe_ebde_cnt, &wqe->fcp_iread.wqe_com, 0);
 		bf_set(wqe_pu, &wqe->fcp_iread.wqe_com, iocbq->iocb.ulpPU);
+<<<<<<< HEAD
 		if (iocbq->iocb_flag & LPFC_IO_DIF) {
 			iocbq->iocb_flag &= ~LPFC_IO_DIF;
 			bf_set(wqe_dif, &wqe->generic.wqe_com, 1);
 		}
 		bf_set(wqe_dbde, &wqe->fcp_iread.wqe_com, 1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CMD_FCP_ICMND64_CR:
 		/* word3 iocb=IO_TAG wqe=reserved */
@@ -7929,6 +8448,7 @@ lpfc_sli4_iocb2wqe(struct lpfc_hba *phba, struct lpfc_iocbq *iocbq,
 		bf_set(wqe_ebde_cnt, &wqe->xmit_els_rsp.wqe_com, 0);
 		bf_set(wqe_rsp_temp_rpi, &wqe->xmit_els_rsp,
 		       phba->sli4_hba.rpi_ids[ndlp->nlp_rpi]);
+<<<<<<< HEAD
 		pcmd = (uint32_t *) (((struct lpfc_dmabuf *)
 					iocbq->context2)->virt);
 		if (phba->fc_topology == LPFC_TOPOLOGY_LOOP) {
@@ -7939,6 +8459,8 @@ lpfc_sli4_iocb2wqe(struct lpfc_hba *phba, struct lpfc_iocbq *iocbq,
 				bf_set(wqe_ctxt_tag, &wqe->els_req.wqe_com,
 					phba->vpi_ids[phba->pport->vpi]);
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		command_type = OTHER_COMMAND;
 		break;
 	case CMD_CLOSE_XRI_CN:
@@ -7981,7 +8503,10 @@ lpfc_sli4_iocb2wqe(struct lpfc_hba *phba, struct lpfc_iocbq *iocbq,
 		xritag = 0;
 		break;
 	case CMD_XMIT_BLS_RSP64_CX:
+<<<<<<< HEAD
 		ndlp = (struct lpfc_nodelist *)iocbq->context1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* As BLS ABTS RSP WQE is very different from other WQEs,
 		 * we re-construct this WQE here based on information in
 		 * iocbq from scratch.
@@ -8008,6 +8533,7 @@ lpfc_sli4_iocb2wqe(struct lpfc_hba *phba, struct lpfc_iocbq *iocbq,
 		}
 		bf_set(xmit_bls_rsp64_seqcnthi, &wqe->xmit_bls_rsp, 0xffff);
 		bf_set(wqe_xmit_bls_pt, &wqe->xmit_bls_rsp.wqe_dest, 0x1);
+<<<<<<< HEAD
 
 		/* Use CT=VPI */
 		bf_set(wqe_els_did, &wqe->xmit_bls_rsp.wqe_dest,
@@ -8017,6 +8543,10 @@ lpfc_sli4_iocb2wqe(struct lpfc_hba *phba, struct lpfc_iocbq *iocbq,
 		bf_set(wqe_ct, &wqe->xmit_bls_rsp.wqe_com, 1);
 		bf_set(wqe_ctxt_tag, &wqe->xmit_bls_rsp.wqe_com,
 			phba->vpi_ids[phba->pport->vpi]);
+=======
+		bf_set(wqe_ctxt_tag, &wqe->xmit_bls_rsp.wqe_com,
+		       iocbq->iocb.ulpContext);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bf_set(wqe_qosd, &wqe->xmit_bls_rsp.wqe_com, 1);
 		bf_set(wqe_lenloc, &wqe->xmit_bls_rsp.wqe_com,
 		       LPFC_WQE_LENLOC_NONE);
@@ -8080,7 +8610,12 @@ __lpfc_sli_issue_iocb_s4(struct lpfc_hba *phba, uint32_t ring_number,
 
 	if (piocb->sli4_xritag == NO_XRI) {
 		if (piocb->iocb.ulpCommand == CMD_ABORT_XRI_CN ||
+<<<<<<< HEAD
 		    piocb->iocb.ulpCommand == CMD_CLOSE_XRI_CN)
+=======
+		    piocb->iocb.ulpCommand == CMD_CLOSE_XRI_CN ||
+		    piocb->iocb.ulpCommand == CMD_XMIT_BLS_RSP64_CX)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sglq = NULL;
 		else {
 			if (pring->txq_cnt) {
@@ -8137,8 +8672,11 @@ __lpfc_sli_issue_iocb_s4(struct lpfc_hba *phba, uint32_t ring_number,
 		 */
 		if (piocb->iocb_flag & LPFC_IO_FCP)
 			piocb->fcp_wqidx = lpfc_sli4_scmd_to_wqidx_distr(phba);
+<<<<<<< HEAD
 		if (unlikely(!phba->sli4_hba.fcp_wq))
 			return IOCB_ERROR;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (lpfc_sli4_wq_put(phba->sli4_hba.fcp_wq[piocb->fcp_wqidx],
 				     &wqe))
 			return IOCB_ERROR;
@@ -8260,6 +8798,7 @@ lpfc_extra_ring_setup( struct lpfc_hba *phba)
 	/* and give them to the extra ring */
 	pring = &psli->ring[psli->extra_ring];
 
+<<<<<<< HEAD
 	pring->numCiocb += SLI2_IOCB_CMD_R1XTRA_ENTRIES;
 	pring->numRiocb += SLI2_IOCB_RSP_R1XTRA_ENTRIES;
 	pring->numCiocb += SLI2_IOCB_CMD_R3XTRA_ENTRIES;
@@ -8416,6 +8955,21 @@ lpfc_sli4_abts_err_handler(struct lpfc_hba *phba,
 	if ((bf_get(lpfc_wcqe_xa_status, axri) == IOSTAT_LOCAL_REJECT) &&
 	    ((ext_status == IOERR_SEQUENCE_TIMEOUT) || (ext_status == 0)))
 		lpfc_sli_abts_recover_port(vport, ndlp);
+=======
+	pring->numCiocb += SLI2_IOCB_CMD_R1XTRA_ENTRIES;
+	pring->numRiocb += SLI2_IOCB_RSP_R1XTRA_ENTRIES;
+	pring->numCiocb += SLI2_IOCB_CMD_R3XTRA_ENTRIES;
+	pring->numRiocb += SLI2_IOCB_RSP_R3XTRA_ENTRIES;
+
+	/* Setup default profile for this ring */
+	pring->iotag_max = 4096;
+	pring->num_mask = 1;
+	pring->prt[0].profile = 0;      /* Mask 0 */
+	pring->prt[0].rctl = phba->cfg_multi_ring_rctl;
+	pring->prt[0].type = phba->cfg_multi_ring_type;
+	pring->prt[0].lpfc_sli_rcv_unsol_event = NULL;
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -8437,12 +8991,17 @@ lpfc_sli_async_event_handler(struct lpfc_hba * phba,
 {
 	IOCB_t *icmd;
 	uint16_t evt_code;
+<<<<<<< HEAD
+=======
+	uint16_t temp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct temp_event temp_event_data;
 	struct Scsi_Host *shost;
 	uint32_t *iocb_w;
 
 	icmd = &iocbq->iocb;
 	evt_code = icmd->un.asyncstat.evt_code;
+<<<<<<< HEAD
 
 	switch (evt_code) {
 	case ASYNC_TEMP_WARN:
@@ -8475,20 +9034,67 @@ lpfc_sli_async_event_handler(struct lpfc_hba * phba,
 	default:
 		iocb_w = (uint32_t *) icmd;
 		lpfc_printf_log(phba, KERN_ERR, LOG_SLI,
+=======
+	temp = icmd->ulpContext;
+
+	if ((evt_code != ASYNC_TEMP_WARN) &&
+		(evt_code != ASYNC_TEMP_SAFE)) {
+		iocb_w = (uint32_t *) icmd;
+		lpfc_printf_log(phba,
+			KERN_ERR,
+			LOG_SLI,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"0346 Ring %d handler: unexpected ASYNC_STATUS"
 			" evt_code 0x%x\n"
 			"W0  0x%08x W1  0x%08x W2  0x%08x W3  0x%08x\n"
 			"W4  0x%08x W5  0x%08x W6  0x%08x W7  0x%08x\n"
 			"W8  0x%08x W9  0x%08x W10 0x%08x W11 0x%08x\n"
 			"W12 0x%08x W13 0x%08x W14 0x%08x W15 0x%08x\n",
+<<<<<<< HEAD
 			pring->ringno, icmd->un.asyncstat.evt_code,
+=======
+			pring->ringno,
+			icmd->un.asyncstat.evt_code,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			iocb_w[0], iocb_w[1], iocb_w[2], iocb_w[3],
 			iocb_w[4], iocb_w[5], iocb_w[6], iocb_w[7],
 			iocb_w[8], iocb_w[9], iocb_w[10], iocb_w[11],
 			iocb_w[12], iocb_w[13], iocb_w[14], iocb_w[15]);
 
+<<<<<<< HEAD
 		break;
 	}
+=======
+		return;
+	}
+	temp_event_data.data = (uint32_t)temp;
+	temp_event_data.event_type = FC_REG_TEMPERATURE_EVENT;
+	if (evt_code == ASYNC_TEMP_WARN) {
+		temp_event_data.event_code = LPFC_THRESHOLD_TEMP;
+		lpfc_printf_log(phba,
+				KERN_ERR,
+				LOG_TEMP,
+				"0347 Adapter is very hot, please take "
+				"corrective action. temperature : %d Celsius\n",
+				temp);
+	}
+	if (evt_code == ASYNC_TEMP_SAFE) {
+		temp_event_data.event_code = LPFC_NORMAL_TEMP;
+		lpfc_printf_log(phba,
+				KERN_ERR,
+				LOG_TEMP,
+				"0340 Adapter temperature is OK now. "
+				"temperature : %d Celsius\n",
+				temp);
+	}
+
+	/* Send temperature change event to applications */
+	shost = lpfc_shost_from_vport(phba->pport);
+	fc_host_post_vendor_event(shost, fc_get_event_number(),
+		sizeof(temp_event_data), (char *) &temp_event_data,
+		LPFC_NL_VENDOR_ID);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -9063,6 +9669,7 @@ lpfc_sli_abort_els_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
 {
 	IOCB_t *irsp = &rspiocb->iocb;
 	uint16_t abort_iotag, abort_context;
+<<<<<<< HEAD
 	struct lpfc_iocbq *abort_iocb = NULL;
 
 	if (irsp->ulpStatus) {
@@ -9071,6 +9678,14 @@ lpfc_sli_abort_els_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
 		 * Assume that the port already completed and returned, or
 		 * will return the iocb. Just Log the message.
 		 */
+=======
+	struct lpfc_iocbq *abort_iocb;
+	struct lpfc_sli_ring *pring = &phba->sli.ring[LPFC_ELS_RING];
+
+	abort_iocb = NULL;
+
+	if (irsp->ulpStatus) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		abort_context = cmdiocb->iocb.un.acxri.abortContextTag;
 		abort_iotag = cmdiocb->iocb.un.acxri.abortIoTag;
 
@@ -9088,15 +9703,77 @@ lpfc_sli_abort_els_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
 			 */
 			abort_iocb = phba->sli.iocbq_lookup[abort_context];
 
+<<<<<<< HEAD
+=======
+		/*
+		 *  If the iocb is not found in Firmware queue the iocb
+		 *  might have completed already. Do not free it again.
+		 */
+		if (irsp->ulpStatus == IOSTAT_LOCAL_REJECT) {
+			if (irsp->un.ulpWord[4] != IOERR_NO_XRI) {
+				spin_unlock_irq(&phba->hbalock);
+				lpfc_sli_release_iocbq(phba, cmdiocb);
+				return;
+			}
+			/* For SLI4 the ulpContext field for abort IOCB
+			 * holds the iotag of the IOCB being aborted so
+			 * the local abort_context needs to be reset to
+			 * match the aborted IOCBs ulpContext.
+			 */
+			if (abort_iocb && phba->sli_rev == LPFC_SLI_REV4)
+				abort_context = abort_iocb->iocb.ulpContext;
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		lpfc_printf_log(phba, KERN_WARNING, LOG_ELS | LOG_SLI,
 				"0327 Cannot abort els iocb %p "
 				"with tag %x context %x, abort status %x, "
 				"abort code %x\n",
 				abort_iocb, abort_iotag, abort_context,
 				irsp->ulpStatus, irsp->un.ulpWord[4]);
+<<<<<<< HEAD
 
 		spin_unlock_irq(&phba->hbalock);
 	}
+=======
+		/*
+		 * make sure we have the right iocbq before taking it
+		 * off the txcmplq and try to call completion routine.
+		 */
+		if (!abort_iocb ||
+		    abort_iocb->iocb.ulpContext != abort_context ||
+		    (abort_iocb->iocb_flag & LPFC_DRIVER_ABORTED) == 0)
+			spin_unlock_irq(&phba->hbalock);
+		else if (phba->sli_rev < LPFC_SLI_REV4) {
+			/*
+			 * leave the SLI4 aborted command on the txcmplq
+			 * list and the command complete WCQE's XB bit
+			 * will tell whether the SGL (XRI) can be released
+			 * immediately or to the aborted SGL list for the
+			 * following abort XRI from the HBA.
+			 */
+			list_del_init(&abort_iocb->list);
+			if (abort_iocb->iocb_flag & LPFC_IO_ON_Q) {
+				abort_iocb->iocb_flag &= ~LPFC_IO_ON_Q;
+				pring->txcmplq_cnt--;
+			}
+
+			/* Firmware could still be in progress of DMAing
+			 * payload, so don't free data buffer till after
+			 * a hbeat.
+			 */
+			abort_iocb->iocb_flag |= LPFC_DELAY_MEM_FREE;
+			abort_iocb->iocb_flag &= ~LPFC_DRIVER_ABORTED;
+			spin_unlock_irq(&phba->hbalock);
+
+			abort_iocb->iocb.ulpStatus = IOSTAT_LOCAL_REJECT;
+			abort_iocb->iocb.un.ulpWord[4] = IOERR_ABORT_REQUESTED;
+			(abort_iocb->iocb_cmpl)(phba, abort_iocb, abort_iocb);
+		} else
+			spin_unlock_irq(&phba->hbalock);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lpfc_sli_release_iocbq(phba, cmdiocb);
 	return;
 }
@@ -9447,6 +10124,7 @@ void
 lpfc_sli_abort_fcp_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
 			struct lpfc_iocbq *rspiocb)
 {
+<<<<<<< HEAD
 	lpfc_printf_log(phba, KERN_INFO, LOG_SLI,
 			"3096 ABORT_XRI_CN completing on xri x%x "
 			"original iotag x%x, abort cmd iotag x%x "
@@ -9455,6 +10133,8 @@ lpfc_sli_abort_fcp_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
 			cmdiocb->iocb.un.acxri.abortIoTag,
 			cmdiocb->iotag, rspiocb->iocb.ulpStatus,
 			rspiocb->iocb.un.ulpWord[4]);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lpfc_sli_release_iocbq(phba, cmdiocb);
 	return;
 }
@@ -9774,6 +10454,10 @@ lpfc_sli_issue_mbox_wait(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmboxq,
 
 	/* now issue the command */
 	retval = lpfc_sli_issue_mbox(phba, pmboxq, MBX_NOWAIT);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval == MBX_BUSY || retval == MBX_SUCCESS) {
 		wait_event_interruptible_timeout(done_q,
 				pmboxq->mbox_flag & LPFC_MBX_WAKE,
@@ -9817,6 +10501,7 @@ void
 lpfc_sli_mbox_sys_shutdown(struct lpfc_hba *phba)
 {
 	struct lpfc_sli *psli = &phba->sli;
+<<<<<<< HEAD
 	unsigned long timeout;
 
 	timeout = msecs_to_jiffies(LPFC_MBOX_TMO * 1000) + jiffies;
@@ -9834,6 +10519,25 @@ lpfc_sli_mbox_sys_shutdown(struct lpfc_hba *phba)
 						1000) + jiffies;
 		spin_unlock_irq(&phba->hbalock);
 
+=======
+	uint8_t actcmd = MBX_HEARTBEAT;
+	unsigned long timeout;
+
+	spin_lock_irq(&phba->hbalock);
+	psli->sli_flag |= LPFC_SLI_ASYNC_MBX_BLK;
+	spin_unlock_irq(&phba->hbalock);
+
+	if (psli->sli_flag & LPFC_SLI_ACTIVE) {
+		spin_lock_irq(&phba->hbalock);
+		if (phba->sli.mbox_active)
+			actcmd = phba->sli.mbox_active->u.mb.mbxCommand;
+		spin_unlock_irq(&phba->hbalock);
+		/* Determine how long we might wait for the active mailbox
+		 * command to be gracefully completed by firmware.
+		 */
+		timeout = msecs_to_jiffies(lpfc_mbox_tmo_val(phba, actcmd) *
+					   1000) + jiffies;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		while (phba->sli.mbox_active) {
 			/* Check active mailbox complete status every 2ms */
 			msleep(2);
@@ -9843,9 +10547,13 @@ lpfc_sli_mbox_sys_shutdown(struct lpfc_hba *phba)
 				 */
 				break;
 		}
+<<<<<<< HEAD
 	} else
 		spin_unlock_irq(&phba->hbalock);
 
+=======
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lpfc_sli_mbox_sys_flush(phba);
 }
 
@@ -9969,7 +10677,11 @@ lpfc_sli4_eratt_read(struct lpfc_hba *phba)
 			phba->work_status[1] =
 				readl(phba->sli4_hba.u.if_type2.ERR2regaddr);
 			lpfc_printf_log(phba, KERN_ERR, LOG_INIT,
+<<<<<<< HEAD
 					"2885 Port Status Event: "
+=======
+					"2885 Port Error Detected: "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"port status reg 0x%x, "
 					"port smphr reg 0x%x, "
 					"error 1=0x%x, error 2=0x%x\n",
@@ -10672,14 +11384,21 @@ lpfc_sli4_iocb_param_transfer(struct lpfc_hba *phba,
 			      struct lpfc_wcqe_complete *wcqe)
 {
 	unsigned long iflags;
+<<<<<<< HEAD
 	uint32_t status;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	size_t offset = offsetof(struct lpfc_iocbq, iocb);
 
 	memcpy((char *)pIocbIn + offset, (char *)pIocbOut + offset,
 	       sizeof(struct lpfc_iocbq) - offset);
 	/* Map WCQE parameters into irspiocb parameters */
+<<<<<<< HEAD
 	status = bf_get(lpfc_wcqe_c_status, wcqe);
 	pIocbIn->iocb.ulpStatus = (status & LPFC_IOCB_STATUS_MASK);
+=======
+	pIocbIn->iocb.ulpStatus = bf_get(lpfc_wcqe_c_status, wcqe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pIocbOut->iocb_flag & LPFC_IO_FCP)
 		if (pIocbIn->iocb.ulpStatus == IOSTAT_FCP_RSP_ERROR)
 			pIocbIn->iocb.un.fcpi.fcpi_parm =
@@ -10692,6 +11411,7 @@ lpfc_sli4_iocb_param_transfer(struct lpfc_hba *phba,
 		pIocbIn->iocb.un.genreq64.bdl.bdeSize = wcqe->total_data_placed;
 	}
 
+<<<<<<< HEAD
 	/* Convert BG errors for completion status */
 	if (status == CQE_STATUS_DI_ERROR) {
 		pIocbIn->iocb.ulpStatus = IOSTAT_LOCAL_REJECT;
@@ -10730,6 +11450,8 @@ lpfc_sli4_iocb_param_transfer(struct lpfc_hba *phba,
 				BGS_GUARD_ERR_MASK);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Pick up HBA exchange busy condition */
 	if (bf_get(lpfc_wcqe_c_xb, wcqe)) {
 		spin_lock_irqsave(&phba->hbalock, iflags);
@@ -10871,6 +11593,7 @@ lpfc_sli4_sp_handle_mbox_event(struct lpfc_hba *phba, struct lpfc_mcqe *mcqe)
 	/* Move mbox data to caller's mailbox region, do endian swapping */
 	if (pmb->mbox_cmpl && mbox)
 		lpfc_sli_pcimem_bcopy(mbox, mqe, sizeof(struct lpfc_mqe));
+<<<<<<< HEAD
 
 	/*
 	 * For mcqe errors, conditionally move a modified error code to
@@ -10882,6 +11605,14 @@ lpfc_sli4_sp_handle_mbox_event(struct lpfc_hba *phba, struct lpfc_mcqe *mcqe)
 			bf_set(lpfc_mqe_status, mqe,
 			       (LPFC_MBX_ERROR_RANGE | mcqe_status));
 	}
+=======
+	/* Set the mailbox status with SLI4 range 0x4000 */
+	mcqe_status = bf_get(lpfc_mcqe_status, mcqe);
+	if (mcqe_status != MB_CQE_STATUS_SUCCESS)
+		bf_set(lpfc_mqe_status, mqe,
+		       (LPFC_MBX_ERROR_RANGE | mcqe_status));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pmb->mbox_flag & LPFC_MBX_IMED_UNREG) {
 		pmb->mbox_flag &= ~LPFC_MBX_IMED_UNREG;
 		lpfc_debugfs_disc_trc(vport, LPFC_DISC_TRC_MBOX_VPORT,
@@ -11015,9 +11746,12 @@ static void
 lpfc_sli4_sp_handle_rel_wcqe(struct lpfc_hba *phba,
 			     struct lpfc_wcqe_release *wcqe)
 {
+<<<<<<< HEAD
 	/* sanity check on queue memory */
 	if (unlikely(!phba->sli4_hba.els_wq))
 		return;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Check for the slow-path ELS work queue */
 	if (bf_get(lpfc_wcqe_r_wq_id, wcqe) == phba->sli4_hba.els_wq->queue_id)
 		lpfc_sli4_wq_release(phba->sli4_hba.els_wq,
@@ -11107,10 +11841,13 @@ lpfc_sli4_sp_handle_rcqe(struct lpfc_hba *phba, struct lpfc_rcqe *rcqe)
 	uint32_t status, rq_id;
 	unsigned long iflags;
 
+<<<<<<< HEAD
 	/* sanity check on queue memory */
 	if (unlikely(!hrq) || unlikely(!drq))
 		return workposted;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (bf_get(lpfc_cqe_code, rcqe) == CQE_CODE_RECEIVE_V1)
 		rq_id = bf_get(lpfc_rcqe_rq_id_v1, rcqe);
 	else
@@ -11245,9 +11982,12 @@ lpfc_sli4_sp_handle_eqe(struct lpfc_hba *phba, struct lpfc_eqe *eqe)
 
 	/* Search for completion queue pointer matching this cqid */
 	speq = phba->sli4_hba.sp_eq;
+<<<<<<< HEAD
 	/* sanity check on queue memory */
 	if (unlikely(!speq))
 		return;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(childq, &speq->child_list, list) {
 		if (childq->queue_id == cqid) {
 			cq = childq;
@@ -11267,7 +12007,11 @@ lpfc_sli4_sp_handle_eqe(struct lpfc_hba *phba, struct lpfc_eqe *eqe)
 	case LPFC_MCQ:
 		while ((cqe = lpfc_sli4_cq_get(cq))) {
 			workposted |= lpfc_sli4_sp_handle_mcqe(phba, cqe);
+<<<<<<< HEAD
 			if (!(++ecount % cq->entry_repost))
+=======
+			if (!(++ecount % LPFC_GET_QE_REL_INT))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				lpfc_sli4_cq_release(cq, LPFC_QUEUE_NOARM);
 		}
 		break;
@@ -11279,7 +12023,11 @@ lpfc_sli4_sp_handle_eqe(struct lpfc_hba *phba, struct lpfc_eqe *eqe)
 			else
 				workposted |= lpfc_sli4_sp_handle_cqe(phba, cq,
 								      cqe);
+<<<<<<< HEAD
 			if (!(++ecount % cq->entry_repost))
+=======
+			if (!(++ecount % LPFC_GET_QE_REL_INT))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				lpfc_sli4_cq_release(cq, LPFC_QUEUE_NOARM);
 		}
 		break;
@@ -11489,18 +12237,25 @@ lpfc_sli4_fp_handle_eqe(struct lpfc_hba *phba, struct lpfc_eqe *eqe,
 		return;
 	}
 
+<<<<<<< HEAD
 	if (unlikely(!phba->sli4_hba.fcp_cq)) {
 		lpfc_printf_log(phba, KERN_WARNING, LOG_SLI,
 				"3146 Fast-path completion queues "
 				"does not exist\n");
 		return;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cq = phba->sli4_hba.fcp_cq[fcp_cqidx];
 	if (unlikely(!cq)) {
 		if (phba->sli.sli_flag & LPFC_SLI_ACTIVE)
 			lpfc_printf_log(phba, KERN_ERR, LOG_SLI,
 					"0367 Fast-path completion queue "
+<<<<<<< HEAD
 					"(%d) does not exist\n", fcp_cqidx);
+=======
+					"does not exist\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -11517,7 +12272,11 @@ lpfc_sli4_fp_handle_eqe(struct lpfc_hba *phba, struct lpfc_eqe *eqe,
 	/* Process all the entries to the CQ */
 	while ((cqe = lpfc_sli4_cq_get(cq))) {
 		workposted |= lpfc_sli4_fp_handle_wcqe(phba, cq, cqe);
+<<<<<<< HEAD
 		if (!(++ecount % cq->entry_repost))
+=======
+		if (!(++ecount % LPFC_GET_QE_REL_INT))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			lpfc_sli4_cq_release(cq, LPFC_QUEUE_NOARM);
 	}
 
@@ -11587,8 +12346,11 @@ lpfc_sli4_sp_intr_handler(int irq, void *dev_id)
 
 	/* Get to the EQ struct associated with this vector */
 	speq = phba->sli4_hba.sp_eq;
+<<<<<<< HEAD
 	if (unlikely(!speq))
 		return IRQ_NONE;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Check device state for handling interrupt */
 	if (unlikely(lpfc_intr_state_check(phba))) {
@@ -11606,7 +12368,11 @@ lpfc_sli4_sp_intr_handler(int irq, void *dev_id)
 	 */
 	while ((eqe = lpfc_sli4_eq_get(speq))) {
 		lpfc_sli4_sp_handle_eqe(phba, eqe);
+<<<<<<< HEAD
 		if (!(++ecount % speq->entry_repost))
+=======
+		if (!(++ecount % LPFC_GET_QE_REL_INT))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			lpfc_sli4_eq_release(speq, LPFC_QUEUE_NOARM);
 	}
 
@@ -11666,6 +12432,7 @@ lpfc_sli4_fp_intr_handler(int irq, void *dev_id)
 
 	if (unlikely(!phba))
 		return IRQ_NONE;
+<<<<<<< HEAD
 	if (unlikely(!phba->sli4_hba.fp_eq))
 		return IRQ_NONE;
 
@@ -11673,6 +12440,11 @@ lpfc_sli4_fp_intr_handler(int irq, void *dev_id)
 	fpeq = phba->sli4_hba.fp_eq[fcp_eqidx];
 	if (unlikely(!fpeq))
 		return IRQ_NONE;
+=======
+
+	/* Get to the EQ struct associated with this vector */
+	fpeq = phba->sli4_hba.fp_eq[fcp_eqidx];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Check device state for handling interrupt */
 	if (unlikely(lpfc_intr_state_check(phba))) {
@@ -11690,7 +12462,11 @@ lpfc_sli4_fp_intr_handler(int irq, void *dev_id)
 	 */
 	while ((eqe = lpfc_sli4_eq_get(fpeq))) {
 		lpfc_sli4_fp_handle_eqe(phba, eqe, fcp_eqidx);
+<<<<<<< HEAD
 		if (!(++ecount % fpeq->entry_repost))
+=======
+		if (!(++ecount % LPFC_GET_QE_REL_INT))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			lpfc_sli4_eq_release(fpeq, LPFC_QUEUE_NOARM);
 	}
 
@@ -11842,6 +12618,7 @@ lpfc_sli4_queue_alloc(struct lpfc_hba *phba, uint32_t entry_size,
 	}
 	queue->entry_size = entry_size;
 	queue->entry_count = entry_count;
+<<<<<<< HEAD
 
 	/*
 	 * entry_repost is calculated based on the number of entries in the
@@ -11851,6 +12628,8 @@ lpfc_sli4_queue_alloc(struct lpfc_hba *phba, uint32_t entry_size,
 	queue->entry_repost = (entry_count >> 3);
 	if (queue->entry_repost < LPFC_QUEUE_MIN_REPOST)
 		queue->entry_repost = LPFC_QUEUE_MIN_REPOST;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	queue->phba = phba;
 
 	return queue;
@@ -11891,9 +12670,12 @@ lpfc_eq_create(struct lpfc_hba *phba, struct lpfc_queue *eq, uint16_t imax)
 	uint16_t dmult;
 	uint32_t hw_page_size = phba->sli4_hba.pc_sli4_params.if_page_sz;
 
+<<<<<<< HEAD
 	/* sanity check on queue memory */
 	if (!eq)
 		return -ENODEV;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!phba->sli4_hba.pc_sli4_params.supported)
 		hw_page_size = SLI4_PAGE_SIZE;
 
@@ -12010,9 +12792,12 @@ lpfc_cq_create(struct lpfc_hba *phba, struct lpfc_queue *cq,
 	union lpfc_sli4_cfg_shdr *shdr;
 	uint32_t hw_page_size = phba->sli4_hba.pc_sli4_params.if_page_sz;
 
+<<<<<<< HEAD
 	/* sanity check on queue memory */
 	if (!cq || !eq)
 		return -ENODEV;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!phba->sli4_hba.pc_sli4_params.supported)
 		hw_page_size = SLI4_PAGE_SIZE;
 
@@ -12195,9 +12980,12 @@ lpfc_mq_create(struct lpfc_hba *phba, struct lpfc_queue *mq,
 	union lpfc_sli4_cfg_shdr *shdr;
 	uint32_t hw_page_size = phba->sli4_hba.pc_sli4_params.if_page_sz;
 
+<<<<<<< HEAD
 	/* sanity check on queue memory */
 	if (!mq || !cq)
 		return -ENODEV;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!phba->sli4_hba.pc_sli4_params.supported)
 		hw_page_size = SLI4_PAGE_SIZE;
 
@@ -12348,9 +13136,12 @@ lpfc_wq_create(struct lpfc_hba *phba, struct lpfc_queue *wq,
 	uint32_t hw_page_size = phba->sli4_hba.pc_sli4_params.if_page_sz;
 	struct dma_address *page;
 
+<<<<<<< HEAD
 	/* sanity check on queue memory */
 	if (!wq || !cq)
 		return -ENODEV;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!phba->sli4_hba.pc_sli4_params.supported)
 		hw_page_size = SLI4_PAGE_SIZE;
 
@@ -12419,7 +13210,10 @@ lpfc_wq_create(struct lpfc_hba *phba, struct lpfc_queue *wq,
 	wq->subtype = subtype;
 	wq->host_index = 0;
 	wq->hba_index = 0;
+<<<<<<< HEAD
 	wq->entry_repost = LPFC_RELEASE_NOTIFICATION_INTERVAL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* link the wq onto the parent cq child list */
 	list_add_tail(&wq->list, &cq->child_list);
@@ -12429,6 +13223,7 @@ out:
 }
 
 /**
+<<<<<<< HEAD
  * lpfc_rq_adjust_repost - Adjust entry_repost for an RQ
  * @phba: HBA structure that indicates port to create a queue on.
  * @rq:   The queue structure to use for the receive queue.
@@ -12457,6 +13252,8 @@ lpfc_rq_adjust_repost(struct lpfc_hba *phba, struct lpfc_queue *rq, int qno)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * lpfc_rq_create - Create a Receive Queue on the HBA
  * @phba: HBA structure that indicates port to create a queue on.
  * @hrq: The queue structure to use to create the header receive queue.
@@ -12491,9 +13288,12 @@ lpfc_rq_create(struct lpfc_hba *phba, struct lpfc_queue *hrq,
 	union lpfc_sli4_cfg_shdr *shdr;
 	uint32_t hw_page_size = phba->sli4_hba.pc_sli4_params.if_page_sz;
 
+<<<<<<< HEAD
 	/* sanity check on queue memory */
 	if (!hrq || !drq || !cq)
 		return -ENODEV;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!phba->sli4_hba.pc_sli4_params.supported)
 		hw_page_size = SLI4_PAGE_SIZE;
 
@@ -12695,7 +13495,10 @@ lpfc_eq_destroy(struct lpfc_hba *phba, struct lpfc_queue *eq)
 	uint32_t shdr_status, shdr_add_status;
 	union lpfc_sli4_cfg_shdr *shdr;
 
+<<<<<<< HEAD
 	/* sanity check on queue memory */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!eq)
 		return -ENODEV;
 	mbox = mempool_alloc(eq->phba->mbox_mem_pool, GFP_KERNEL);
@@ -12751,7 +13554,10 @@ lpfc_cq_destroy(struct lpfc_hba *phba, struct lpfc_queue *cq)
 	uint32_t shdr_status, shdr_add_status;
 	union lpfc_sli4_cfg_shdr *shdr;
 
+<<<<<<< HEAD
 	/* sanity check on queue memory */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!cq)
 		return -ENODEV;
 	mbox = mempool_alloc(cq->phba->mbox_mem_pool, GFP_KERNEL);
@@ -12805,7 +13611,10 @@ lpfc_mq_destroy(struct lpfc_hba *phba, struct lpfc_queue *mq)
 	uint32_t shdr_status, shdr_add_status;
 	union lpfc_sli4_cfg_shdr *shdr;
 
+<<<<<<< HEAD
 	/* sanity check on queue memory */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!mq)
 		return -ENODEV;
 	mbox = mempool_alloc(mq->phba->mbox_mem_pool, GFP_KERNEL);
@@ -12859,7 +13668,10 @@ lpfc_wq_destroy(struct lpfc_hba *phba, struct lpfc_queue *wq)
 	uint32_t shdr_status, shdr_add_status;
 	union lpfc_sli4_cfg_shdr *shdr;
 
+<<<<<<< HEAD
 	/* sanity check on queue memory */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!wq)
 		return -ENODEV;
 	mbox = mempool_alloc(wq->phba->mbox_mem_pool, GFP_KERNEL);
@@ -12913,7 +13725,10 @@ lpfc_rq_destroy(struct lpfc_hba *phba, struct lpfc_queue *hrq,
 	uint32_t shdr_status, shdr_add_status;
 	union lpfc_sli4_cfg_shdr *shdr;
 
+<<<<<<< HEAD
 	/* sanity check on queue memory */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!hrq || !drq)
 		return -ENODEV;
 	mbox = mempool_alloc(hrq->phba->mbox_mem_pool, GFP_KERNEL);
@@ -13030,7 +13845,11 @@ lpfc_sli4_post_sgl(struct lpfc_hba *phba,
 	if (!phba->sli4_hba.intr_enable)
 		rc = lpfc_sli_issue_mbox(phba, mbox, MBX_POLL);
 	else {
+<<<<<<< HEAD
 		mbox_tmo = lpfc_mbox_tmo_val(phba, mbox);
+=======
+		mbox_tmo = lpfc_mbox_tmo_val(phba, MBX_SLI4_CONFIG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = lpfc_sli_issue_mbox_wait(phba, mbox, mbox_tmo);
 	}
 	/* The IOCTL status is embedded in the mailbox subheader. */
@@ -13245,7 +14064,11 @@ lpfc_sli4_post_els_sgl_list(struct lpfc_hba *phba)
 	if (!phba->sli4_hba.intr_enable)
 		rc = lpfc_sli_issue_mbox(phba, mbox, MBX_POLL);
 	else {
+<<<<<<< HEAD
 		mbox_tmo = lpfc_mbox_tmo_val(phba, mbox);
+=======
+		mbox_tmo = lpfc_mbox_tmo_val(phba, MBX_SLI4_CONFIG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = lpfc_sli_issue_mbox_wait(phba, mbox, mbox_tmo);
 	}
 	shdr = (union lpfc_sli4_cfg_shdr *) &sgl->cfg_shdr;
@@ -13286,7 +14109,11 @@ lpfc_sli4_post_els_sgl_list_ext(struct lpfc_hba *phba)
 	LPFC_MBOXQ_t *mbox;
 	uint32_t reqlen, alloclen, index;
 	uint32_t mbox_tmo;
+<<<<<<< HEAD
 	uint16_t rsrc_start, rsrc_size, els_xri_cnt, post_els_xri_cnt;
+=======
+	uint16_t rsrc_start, rsrc_size, els_xri_cnt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint16_t xritag_start = 0, lxri = 0;
 	struct lpfc_rsrc_blks *rsrc_blk;
 	int cnt, ttl_cnt, rc = 0;
@@ -13308,7 +14135,10 @@ lpfc_sli4_post_els_sgl_list_ext(struct lpfc_hba *phba)
 
 	cnt = 0;
 	ttl_cnt = 0;
+<<<<<<< HEAD
 	post_els_xri_cnt = els_xri_cnt;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(rsrc_blk, &phba->sli4_hba.lpfc_xri_blk_list,
 			    list) {
 		rsrc_start = rsrc_blk->rsrc_start;
@@ -13318,12 +14148,20 @@ lpfc_sli4_post_els_sgl_list_ext(struct lpfc_hba *phba)
 				"3014 Working ELS Extent start %d, cnt %d\n",
 				rsrc_start, rsrc_size);
 
+<<<<<<< HEAD
 		loop_cnt = min(post_els_xri_cnt, rsrc_size);
 		if (loop_cnt < post_els_xri_cnt) {
 			post_els_xri_cnt -= loop_cnt;
 			ttl_cnt += loop_cnt;
 		} else
 			ttl_cnt += post_els_xri_cnt;
+=======
+		loop_cnt = min(els_xri_cnt, rsrc_size);
+		if (ttl_cnt + loop_cnt >= els_xri_cnt) {
+			loop_cnt = els_xri_cnt - ttl_cnt;
+			ttl_cnt = els_xri_cnt;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		mbox = mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
 		if (!mbox)
@@ -13410,7 +14248,11 @@ lpfc_sli4_post_els_sgl_list_ext(struct lpfc_hba *phba)
 		if (!phba->sli4_hba.intr_enable)
 			rc = lpfc_sli_issue_mbox(phba, mbox, MBX_POLL);
 		else {
+<<<<<<< HEAD
 			mbox_tmo = lpfc_mbox_tmo_val(phba, mbox);
+=======
+			mbox_tmo = lpfc_mbox_tmo_val(phba, MBX_SLI4_CONFIG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rc = lpfc_sli_issue_mbox_wait(phba, mbox, mbox_tmo);
 		}
 		shdr = (union lpfc_sli4_cfg_shdr *) &sgl->cfg_shdr;
@@ -13534,7 +14376,11 @@ lpfc_sli4_post_scsi_sgl_block(struct lpfc_hba *phba, struct list_head *sblist,
 	if (!phba->sli4_hba.intr_enable)
 		rc = lpfc_sli_issue_mbox(phba, mbox, MBX_POLL);
 	else {
+<<<<<<< HEAD
 		mbox_tmo = lpfc_mbox_tmo_val(phba, mbox);
+=======
+		mbox_tmo = lpfc_mbox_tmo_val(phba, MBX_SLI4_CONFIG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = lpfc_sli_issue_mbox_wait(phba, mbox, mbox_tmo);
 	}
 	shdr = (union lpfc_sli4_cfg_shdr *) &sgl->cfg_shdr;
@@ -13690,7 +14536,11 @@ lpfc_sli4_post_scsi_sgl_blk_ext(struct lpfc_hba *phba, struct list_head *sblist,
 		if (!phba->sli4_hba.intr_enable)
 			rc = lpfc_sli_issue_mbox(phba, mbox, MBX_POLL);
 		else {
+<<<<<<< HEAD
 			mbox_tmo = lpfc_mbox_tmo_val(phba, mbox);
+=======
+			mbox_tmo = lpfc_mbox_tmo_val(phba, MBX_SLI4_CONFIG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rc = lpfc_sli_issue_mbox_wait(phba, mbox, mbox_tmo);
 		}
 		shdr = (union lpfc_sli4_cfg_shdr *) &sgl->cfg_shdr;
@@ -13839,8 +14689,12 @@ lpfc_fc_frame_to_vport(struct lpfc_hba *phba, struct fc_frame_header *fc_hdr,
 	uint32_t did = (fc_hdr->fh_d_id[0] << 16 |
 			fc_hdr->fh_d_id[1] << 8 |
 			fc_hdr->fh_d_id[2]);
+<<<<<<< HEAD
 	if (did == Fabric_DID)
 		return phba->pport;
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vports = lpfc_create_vport_work_array(phba);
 	if (vports != NULL)
 		for (i = 0; i <= phba->max_vpi && vports[i] != NULL; i++) {
@@ -14103,6 +14957,7 @@ lpfc_sli4_seq_abort_rsp_cmpl(struct lpfc_hba *phba,
 {
 	if (cmd_iocbq)
 		lpfc_sli_release_iocbq(phba, cmd_iocbq);
+<<<<<<< HEAD
 
 	/* Failure means BLS ABORT RSP did not get delivered to remote node*/
 	if (rsp_iocbq && rsp_iocbq->iocb.ulpStatus)
@@ -14110,6 +14965,8 @@ lpfc_sli4_seq_abort_rsp_cmpl(struct lpfc_hba *phba,
 			"3154 BLS ABORT RSP failed, data:  x%x/x%x\n",
 			rsp_iocbq->iocb.ulpStatus,
 			rsp_iocbq->iocb.un.ulpWord[4]);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -14219,6 +15076,7 @@ lpfc_sli4_seq_abort_rsp(struct lpfc_hba *phba,
 		 * field and RX_ID from ABTS for RX_ID field.
 		 */
 		bf_set(lpfc_abts_orig, &icmd->un.bls_rsp, LPFC_ABTS_UNSOL_RSP);
+<<<<<<< HEAD
 	} else {
 		/* ABTS sent by initiator to CT exchange, construction
 		 * of BA_ACC will need to allocate a new XRI as for the
@@ -14227,6 +15085,17 @@ lpfc_sli4_seq_abort_rsp(struct lpfc_hba *phba,
 		bf_set(lpfc_abts_orig, &icmd->un.bls_rsp, LPFC_ABTS_UNSOL_INT);
 	}
 	bf_set(lpfc_abts_rxid, &icmd->un.bls_rsp, rxid);
+=======
+		bf_set(lpfc_abts_rxid, &icmd->un.bls_rsp, rxid);
+	} else {
+		/* ABTS sent by initiator to CT exchange, construction
+		 * of BA_ACC will need to allocate a new XRI as for the
+		 * XRI_TAG and RX_ID fields.
+		 */
+		bf_set(lpfc_abts_orig, &icmd->un.bls_rsp, LPFC_ABTS_UNSOL_INT);
+		bf_set(lpfc_abts_rxid, &icmd->un.bls_rsp, NO_XRI);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bf_set(lpfc_abts_oxid, &icmd->un.bls_rsp, oxid);
 
 	/* Xmit CT abts response on exchange <xid> */
@@ -14815,8 +15684,12 @@ lpfc_sli4_remove_rpis(struct lpfc_hba *phba)
  * provided rpi via a bitmask.
  **/
 int
+<<<<<<< HEAD
 lpfc_sli4_resume_rpi(struct lpfc_nodelist *ndlp,
 	void (*cmpl)(struct lpfc_hba *, LPFC_MBOXQ_t *), void *arg)
+=======
+lpfc_sli4_resume_rpi(struct lpfc_nodelist *ndlp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	LPFC_MBOXQ_t *mboxq;
 	struct lpfc_hba *phba = ndlp->phba;
@@ -14829,6 +15702,7 @@ lpfc_sli4_resume_rpi(struct lpfc_nodelist *ndlp,
 
 	/* Post all rpi memory regions to the port. */
 	lpfc_resume_rpi(mboxq, ndlp);
+<<<<<<< HEAD
 	if (cmpl) {
 		mboxq->mbox_cmpl = cmpl;
 		mboxq->context1 = arg;
@@ -14836,6 +15710,8 @@ lpfc_sli4_resume_rpi(struct lpfc_nodelist *ndlp,
 	} else
 		mboxq->mbox_cmpl = lpfc_sli_def_mbox_cmpl;
 	mboxq->vport = ndlp->vport;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = lpfc_sli_issue_mbox(phba, mboxq, MBX_NOWAIT);
 	if (rc == MBX_NOT_FINISHED) {
 		lpfc_printf_log(phba, KERN_ERR, LOG_SLI,
@@ -14870,7 +15746,11 @@ lpfc_sli4_init_vpi(struct lpfc_vport *vport)
 	if (!mboxq)
 		return -ENOMEM;
 	lpfc_init_vpi(phba, mboxq, vport->vpi);
+<<<<<<< HEAD
 	mbox_tmo = lpfc_mbox_tmo_val(phba, mboxq);
+=======
+	mbox_tmo = lpfc_mbox_tmo_val(phba, MBX_INIT_VPI);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = lpfc_sli_issue_mbox_wait(phba, mboxq, mbox_tmo);
 	if (rc != MBX_SUCCESS) {
 		lpfc_printf_vlog(vport, KERN_ERR, LOG_SLI,
@@ -15057,7 +15937,10 @@ lpfc_sli4_fcf_scan_read_fcf_rec(struct lpfc_hba *phba, uint16_t fcf_index)
 	LPFC_MBOXQ_t *mboxq;
 
 	phba->fcoe_eventtag_at_fcf_scan = phba->fcoe_eventtag;
+<<<<<<< HEAD
 	phba->fcoe_cvl_eventtag_attn = phba->fcoe_cvl_eventtag;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mboxq = mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
 	if (!mboxq) {
 		lpfc_printf_log(phba, KERN_ERR, LOG_INIT,
@@ -15194,6 +16077,7 @@ fail_fcf_read:
 }
 
 /**
+<<<<<<< HEAD
  * lpfc_check_next_fcf_pri
  * phba pointer to the lpfc_hba struct for this port.
  * This routine is called from the lpfc_sli4_fcf_rr_next_index_get
@@ -15280,6 +16164,8 @@ lpfc_check_next_fcf_pri_level(struct lpfc_hba *phba)
 	return ret;
 }
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * lpfc_sli4_fcf_rr_next_index_get - Get next eligible fcf record index
  * @phba: pointer to lpfc hba data structure.
  *
@@ -15295,7 +16181,10 @@ lpfc_sli4_fcf_rr_next_index_get(struct lpfc_hba *phba)
 	uint16_t next_fcf_index;
 
 	/* Search start from next bit of currently registered FCF index */
+<<<<<<< HEAD
 next_priority:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	next_fcf_index = (phba->fcf.current_rec.fcf_indx + 1) %
 					LPFC_SLI4_FCF_TBL_INDX_MAX;
 	next_fcf_index = find_next_bit(phba->fcf.fcf_rr_bmask,
@@ -15303,6 +16192,7 @@ next_priority:
 				       next_fcf_index);
 
 	/* Wrap around condition on phba->fcf.fcf_rr_bmask */
+<<<<<<< HEAD
 	if (next_fcf_index >= LPFC_SLI4_FCF_TBL_INDX_MAX) {
 		/*
 		 * If we have wrapped then we need to clear the bits that
@@ -15343,6 +16233,19 @@ next_priority:
 		LPFC_FCF_FLOGI_FAILED)
 		goto next_priority;
 
+=======
+	if (next_fcf_index >= LPFC_SLI4_FCF_TBL_INDX_MAX)
+		next_fcf_index = find_next_bit(phba->fcf.fcf_rr_bmask,
+					       LPFC_SLI4_FCF_TBL_INDX_MAX, 0);
+
+	/* Check roundrobin failover list empty condition */
+	if (next_fcf_index >= LPFC_SLI4_FCF_TBL_INDX_MAX) {
+		lpfc_printf_log(phba, KERN_WARNING, LOG_FIP,
+				"2844 No roundrobin failover FCF available\n");
+		return LPFC_FCOE_FCF_NEXT_NONE;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lpfc_printf_log(phba, KERN_INFO, LOG_FIP,
 			"2845 Get next roundrobin failover FCF (x%x)\n",
 			next_fcf_index);
@@ -15394,7 +16297,10 @@ lpfc_sli4_fcf_rr_index_set(struct lpfc_hba *phba, uint16_t fcf_index)
 void
 lpfc_sli4_fcf_rr_index_clear(struct lpfc_hba *phba, uint16_t fcf_index)
 {
+<<<<<<< HEAD
 	struct lpfc_fcf_pri *fcf_pri;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (fcf_index >= LPFC_SLI4_FCF_TBL_INDX_MAX) {
 		lpfc_printf_log(phba, KERN_ERR, LOG_FIP,
 				"2762 FCF (x%x) reached driver's book "
@@ -15403,6 +16309,7 @@ lpfc_sli4_fcf_rr_index_clear(struct lpfc_hba *phba, uint16_t fcf_index)
 		return;
 	}
 	/* Clear the eligible FCF record index bmask */
+<<<<<<< HEAD
 	spin_lock_irq(&phba->hbalock);
 	list_for_each_entry(fcf_pri, &phba->fcf.fcf_pri_list, list) {
 		if (fcf_pri->fcf_rec.fcf_index == fcf_index) {
@@ -15411,6 +16318,8 @@ lpfc_sli4_fcf_rr_index_clear(struct lpfc_hba *phba, uint16_t fcf_index)
 		}
 	}
 	spin_unlock_irq(&phba->hbalock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clear_bit(fcf_index, phba->fcf.fcf_rr_bmask);
 
 	lpfc_printf_log(phba, KERN_INFO, LOG_FIP,
@@ -15549,6 +16458,7 @@ lpfc_sli4_fcf_dead_failthrough(struct lpfc_hba *phba)
 }
 
 /**
+<<<<<<< HEAD
  * lpfc_sli_get_config_region23 - Get sli3 port region 23 data.
  * @phba: pointer to lpfc hba data structure.
  * @rgn23_data: pointer to configure region 23 data.
@@ -15576,15 +16486,53 @@ lpfc_sli_get_config_region23(struct lpfc_hba *phba, char *rgn23_data)
 	}
 	mb = &pmb->u.mb;
 
+=======
+ * lpfc_sli_read_link_ste - Read region 23 to decide if link is disabled.
+ * @phba: pointer to lpfc hba data structure.
+ *
+ * This function read region 23 and parse TLV for port status to
+ * decide if the user disaled the port. If the TLV indicates the
+ * port is disabled, the hba_flag is set accordingly.
+ **/
+void
+lpfc_sli_read_link_ste(struct lpfc_hba *phba)
+{
+	LPFC_MBOXQ_t *pmb = NULL;
+	MAILBOX_t *mb;
+	uint8_t *rgn23_data = NULL;
+	uint32_t offset = 0, data_size, sub_tlv_len, tlv_offset;
+	int rc;
+
+	pmb = mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
+	if (!pmb) {
+		lpfc_printf_log(phba, KERN_ERR, LOG_INIT,
+			"2600 lpfc_sli_read_serdes_param failed to"
+			" allocate mailbox memory\n");
+		goto out;
+	}
+	mb = &pmb->u.mb;
+
+	/* Get adapter Region 23 data */
+	rgn23_data = kzalloc(DMP_RGN23_SIZE, GFP_KERNEL);
+	if (!rgn23_data)
+		goto out;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do {
 		lpfc_dump_mem(phba, pmb, offset, DMP_REGION_23);
 		rc = lpfc_sli_issue_mbox(phba, pmb, MBX_POLL);
 
 		if (rc != MBX_SUCCESS) {
 			lpfc_printf_log(phba, KERN_INFO, LOG_INIT,
+<<<<<<< HEAD
 					"2601 failed to read config "
 					"region 23, rc 0x%x Status 0x%x\n",
 					rc, mb->mbxStatus);
+=======
+				"2601 lpfc_sli_read_link_ste failed to"
+				" read config region 23 rc 0x%x Status 0x%x\n",
+				rc, mb->mbxStatus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mb->un.varDmp.word_cnt = 0;
 		}
 		/*
@@ -15597,6 +16545,7 @@ lpfc_sli_get_config_region23(struct lpfc_hba *phba, char *rgn23_data)
 			mb->un.varDmp.word_cnt = DMP_RGN23_SIZE - offset;
 
 		lpfc_sli_pcimem_bcopy(((uint8_t *)mb) + DMP_RSP_OFFSET,
+<<<<<<< HEAD
 				       rgn23_data + offset,
 				       mb->un.varDmp.word_cnt);
 		offset += mb->un.varDmp.word_cnt;
@@ -15687,6 +16636,15 @@ lpfc_sli_read_link_ste(struct lpfc_hba *phba)
 			goto out;
 		data_size = lpfc_sli4_get_config_region23(phba, rgn23_data);
 	}
+=======
+			rgn23_data + offset,
+			mb->un.varDmp.word_cnt);
+		offset += mb->un.varDmp.word_cnt;
+	} while (mb->un.varDmp.word_cnt && offset < DMP_RGN23_SIZE);
+
+	data_size = offset;
+	offset = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!data_size)
 		goto out;
@@ -15750,8 +16708,14 @@ lpfc_sli_read_link_ste(struct lpfc_hba *phba)
 			goto out;
 		}
 	}
+<<<<<<< HEAD
 
 out:
+=======
+out:
+	if (pmb)
+		mempool_free(pmb, phba->mbox_mem_pool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(rgn23_data);
 	return;
 }
@@ -15826,7 +16790,11 @@ lpfc_wr_object(struct lpfc_hba *phba, struct list_head *dmabuf_list,
 	if (!phba->sli4_hba.intr_enable)
 		rc = lpfc_sli_issue_mbox(phba, mbox, MBX_POLL);
 	else {
+<<<<<<< HEAD
 		mbox_tmo = lpfc_mbox_tmo_val(phba, mbox);
+=======
+		mbox_tmo = lpfc_mbox_tmo_val(phba, MBX_SLI4_CONFIG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = lpfc_sli_issue_mbox_wait(phba, mbox, mbox_tmo);
 	}
 	/* The IOCTL status is embedded in the mailbox subheader. */

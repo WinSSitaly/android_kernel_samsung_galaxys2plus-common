@@ -22,12 +22,19 @@
  */
 
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <scsi/scsi_dh.h>
 #include "../scsi_priv.h"
 
 static DEFINE_SPINLOCK(list_lock);
 static LIST_HEAD(scsi_dh_list);
+<<<<<<< HEAD
+=======
+static int scsi_dh_list_idx = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct scsi_device_handler *get_device_handler(const char *name)
 {
@@ -44,6 +51,7 @@ static struct scsi_device_handler *get_device_handler(const char *name)
 	return found;
 }
 
+<<<<<<< HEAD
 /*
  * device_handler_match_function - Match a device handler to a device
  * @sdev - SCSI device to be tested
@@ -60,11 +68,25 @@ device_handler_match_function(struct scsi_device *sdev)
 	list_for_each_entry(tmp_dh, &scsi_dh_list, list) {
 		if (tmp_dh->match && tmp_dh->match(sdev)) {
 			found_dh = tmp_dh;
+=======
+static struct scsi_device_handler *get_device_handler_by_idx(int idx)
+{
+	struct scsi_device_handler *tmp, *found = NULL;
+
+	spin_lock(&list_lock);
+	list_for_each_entry(tmp, &scsi_dh_list, list) {
+		if (tmp->idx == idx) {
+			found = tmp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	}
 	spin_unlock(&list_lock);
+<<<<<<< HEAD
 	return found_dh;
+=======
+	return found;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -80,9 +102,18 @@ static struct scsi_device_handler *
 device_handler_match(struct scsi_device_handler *scsi_dh,
 		     struct scsi_device *sdev)
 {
+<<<<<<< HEAD
 	struct scsi_device_handler *found_dh;
 
 	found_dh = device_handler_match_function(sdev);
+=======
+	struct scsi_device_handler *found_dh = NULL;
+	int idx;
+
+	idx = scsi_get_device_flags_keyed(sdev, sdev->vendor, sdev->model,
+					  SCSI_DEVINFO_DH);
+	found_dh = get_device_handler_by_idx(idx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (scsi_dh && found_dh != scsi_dh)
 		found_dh = NULL;
@@ -156,10 +187,13 @@ store_dh_state(struct device *dev, struct device_attribute *attr,
 	struct scsi_device_handler *scsi_dh;
 	int err = -EINVAL;
 
+<<<<<<< HEAD
 	if (sdev->sdev_state == SDEV_CANCEL ||
 	    sdev->sdev_state == SDEV_DEL)
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!sdev->scsi_dh_data) {
 		/*
 		 * Attach to a device handler
@@ -326,14 +360,34 @@ static int scsi_dh_notifier_remove(struct device *dev, void *data)
  */
 int scsi_register_device_handler(struct scsi_device_handler *scsi_dh)
 {
+<<<<<<< HEAD
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (get_device_handler(scsi_dh->name))
 		return -EBUSY;
 
 	spin_lock(&list_lock);
+<<<<<<< HEAD
 	list_add(&scsi_dh->list, &scsi_dh_list);
 	spin_unlock(&list_lock);
 
+=======
+	scsi_dh->idx = scsi_dh_list_idx++;
+	list_add(&scsi_dh->list, &scsi_dh_list);
+	spin_unlock(&list_lock);
+
+	for (i = 0; scsi_dh->devlist[i].vendor; i++) {
+		scsi_dev_info_list_add_keyed(0,
+					scsi_dh->devlist[i].vendor,
+					scsi_dh->devlist[i].model,
+					NULL,
+					scsi_dh->idx,
+					SCSI_DEVINFO_DH);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bus_for_each_dev(&scsi_bus_type, NULL, scsi_dh, scsi_dh_notifier_add);
 	printk(KERN_INFO "%s: device handler registered\n", scsi_dh->name);
 
@@ -350,6 +404,10 @@ EXPORT_SYMBOL_GPL(scsi_register_device_handler);
  */
 int scsi_unregister_device_handler(struct scsi_device_handler *scsi_dh)
 {
+<<<<<<< HEAD
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!get_device_handler(scsi_dh->name))
 		return -ENODEV;
@@ -357,6 +415,15 @@ int scsi_unregister_device_handler(struct scsi_device_handler *scsi_dh)
 	bus_for_each_dev(&scsi_bus_type, NULL, scsi_dh,
 			 scsi_dh_notifier_remove);
 
+<<<<<<< HEAD
+=======
+	for (i = 0; scsi_dh->devlist[i].vendor; i++) {
+		scsi_dev_info_list_del_keyed(scsi_dh->devlist[i].vendor,
+					     scsi_dh->devlist[i].model,
+					     SCSI_DEVINFO_DH);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&list_lock);
 	list_del(&scsi_dh->list);
 	spin_unlock(&list_lock);
@@ -467,7 +534,11 @@ int scsi_dh_handler_exist(const char *name)
 EXPORT_SYMBOL_GPL(scsi_dh_handler_exist);
 
 /*
+<<<<<<< HEAD
  * scsi_dh_attach - Attach device handler
+=======
+ * scsi_dh_handler_attach - Attach device handler
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @sdev - sdev the handler should be attached to
  * @name - name of the handler to attach
  */
@@ -497,7 +568,11 @@ int scsi_dh_attach(struct request_queue *q, const char *name)
 EXPORT_SYMBOL_GPL(scsi_dh_attach);
 
 /*
+<<<<<<< HEAD
  * scsi_dh_detach - Detach device handler
+=======
+ * scsi_dh_handler_detach - Detach device handler
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @sdev - sdev the handler should be detached from
  *
  * This function will detach the device handler only
@@ -535,6 +610,13 @@ static int __init scsi_dh_init(void)
 {
 	int r;
 
+<<<<<<< HEAD
+=======
+	r = scsi_dev_info_add_list(SCSI_DEVINFO_DH, "SCSI Device Handler");
+	if (r)
+		return r;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = bus_register_notifier(&scsi_bus_type, &scsi_dh_nb);
 
 	if (!r)
@@ -549,6 +631,10 @@ static void __exit scsi_dh_exit(void)
 	bus_for_each_dev(&scsi_bus_type, NULL, NULL,
 			 scsi_dh_sysfs_attr_remove);
 	bus_unregister_notifier(&scsi_bus_type, &scsi_dh_nb);
+<<<<<<< HEAD
+=======
+	scsi_dev_info_remove_list(SCSI_DEVINFO_DH);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(scsi_dh_init);

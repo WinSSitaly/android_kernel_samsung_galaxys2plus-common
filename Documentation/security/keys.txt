@@ -123,7 +123,11 @@ KEY SERVICE OVERVIEW
 
 The key service provides a number of features besides keys:
 
+<<<<<<< HEAD
  (*) The key service defines three special key types:
+=======
+ (*) The key service defines two special key types:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
      (+) "keyring"
 
@@ -137,6 +141,7 @@ The key service provides a number of features besides keys:
 	 blobs of data. These can be created, updated and read by userspace,
 	 and aren't intended for use by kernel services.
 
+<<<<<<< HEAD
      (+) "logon"
 
 	 Like a "user" key, a "logon" key has a payload that is an arbitrary
@@ -149,6 +154,8 @@ The key service provides a number of features besides keys:
 	 be created and updated from userspace, but the payload is only
 	 readable from kernel space.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  (*) Each process subscribes to three keyrings: a thread-specific keyring, a
      process-specific keyring, and a session-specific keyring.
 
@@ -566,10 +573,13 @@ The keyctl syscall functions are:
      process must have write permission on the keyring, and it must be a
      keyring (or else error ENOTDIR will result).
 
+<<<<<<< HEAD
      This function can also be used to clear special kernel keyrings if they
      are appropriately marked if the user has CAP_SYS_ADMIN capability.  The
      DNS resolver cache keyring is an example of this.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
  (*) Link a key into a keyring:
 
@@ -684,7 +694,11 @@ The keyctl syscall functions are:
 
      If the kernel calls back to userspace to complete the instantiation of a
      key, userspace should use this call mark the key as negative before the
+<<<<<<< HEAD
      invoked process returns if it is unable to fulfill the request.
+=======
+     invoked process returns if it is unable to fulfil the request.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
      The process must have write access on the key to be able to instantiate
      it, and the key must be uninstantiated.

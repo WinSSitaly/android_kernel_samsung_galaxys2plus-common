@@ -582,7 +582,11 @@ static int sm501fb_pan_crt(struct fb_var_screeninfo *var,
 {
 	struct sm501fb_par  *par = info->par;
 	struct sm501fb_info *fbi = par->info;
+<<<<<<< HEAD
 	unsigned int bytes_pixel = info->var.bits_per_pixel / 8;
+=======
+	unsigned int bytes_pixel = var->bits_per_pixel / 8;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long reg;
 	unsigned long xoffs;
 
@@ -614,10 +618,17 @@ static int sm501fb_pan_pnl(struct fb_var_screeninfo *var,
 	struct sm501fb_info *fbi = par->info;
 	unsigned long reg;
 
+<<<<<<< HEAD
 	reg = var->xoffset | (info->var.xres_virtual << 16);
 	smc501_writel(reg, fbi->regs + SM501_DC_PANEL_FB_WIDTH);
 
 	reg = var->yoffset | (info->var.yres_virtual << 16);
+=======
+	reg = var->xoffset | (var->xres_virtual << 16);
+	smc501_writel(reg, fbi->regs + SM501_DC_PANEL_FB_WIDTH);
+
+	reg = var->yoffset | (var->yres_virtual << 16);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	smc501_writel(reg, fbi->regs + SM501_DC_PANEL_FB_HEIGHT);
 
 	sm501fb_sync_regs(fbi);
@@ -2230,7 +2241,22 @@ static struct platform_driver sm501fb_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(sm501fb_driver);
+=======
+static int __devinit sm501fb_init(void)
+{
+	return platform_driver_register(&sm501fb_driver);
+}
+
+static void __exit sm501fb_cleanup(void)
+{
+	platform_driver_unregister(&sm501fb_driver);
+}
+
+module_init(sm501fb_init);
+module_exit(sm501fb_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_named(mode, fb_mode, charp, 0);
 MODULE_PARM_DESC(mode,

@@ -39,6 +39,7 @@
 #define PCI_DEVICE_ID_VMWARE_SVGA2      0x0405
 
 /*
+<<<<<<< HEAD
  * SVGA_REG_ENABLE bit definitions.
  */
 #define SVGA_REG_ENABLE_DISABLE     0
@@ -48,6 +49,8 @@
 				     SVGA_REG_ENABLE_HIDE)
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Legal values for the SVGA_REG_CURSOR_ON register in old-fashioned
  * cursor bypass mode. This is still supported, but no new guest
  * drivers should use it.
@@ -167,9 +170,13 @@ enum {
    SVGA_REG_GMR_MAX_DESCRIPTOR_LENGTH = 44,
 
    SVGA_REG_TRACES = 45,            /* Enable trace-based updates even when FIFO is on */
+<<<<<<< HEAD
    SVGA_REG_GMRS_MAX_PAGES = 46,    /* Maximum number of 4KB pages for all GMRs */
    SVGA_REG_MEMORY_SIZE = 47,       /* Total dedicated device memory excluding FIFO */
    SVGA_REG_TOP = 48,               /* Must be 1 more than the last register */
+=======
+   SVGA_REG_TOP = 46,               /* Must be 1 more than the last register */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
    SVGA_PALETTE_BASE = 1024,        /* Base of SVGA color map */
    /* Next 768 (== 256*3) registers exist for colormap */
@@ -276,7 +283,11 @@ enum {
  * possible.
  */
 #define SVGA_GMR_NULL         ((uint32) -1)
+<<<<<<< HEAD
 #define SVGA_GMR_FRAMEBUFFER  ((uint32) -2)  /* Guest Framebuffer (GFB) */
+=======
+#define SVGA_GMR_FRAMEBUFFER  ((uint32) -2)  // Guest Framebuffer (GFB)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef
 struct SVGAGuestMemDescriptor {
@@ -317,13 +328,18 @@ struct SVGAGMRImageFormat {
       struct {
          uint32 bitsPerPixel : 8;
          uint32 colorDepth   : 8;
+<<<<<<< HEAD
          uint32 reserved     : 16;  /* Must be zero */
+=======
+         uint32 reserved     : 16;  // Must be zero
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
       };
 
       uint32 value;
    };
 } SVGAGMRImageFormat;
 
+<<<<<<< HEAD
 typedef
 struct SVGAGuestImage {
    SVGAGuestPtr         ptr;
@@ -346,6 +362,8 @@ struct SVGAGuestImage {
    uint32 pitch;
 } SVGAGuestImage;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * SVGAColorBGRX --
  *
@@ -361,7 +379,11 @@ struct SVGAColorBGRX {
          uint32 b : 8;
          uint32 g : 8;
          uint32 r : 8;
+<<<<<<< HEAD
          uint32 x : 8;  /* Unused */
+=======
+         uint32 x : 8;  // Unused
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
       };
 
       uint32 value;
@@ -403,6 +425,7 @@ struct SVGASignedPoint {
  *  Note the holes in the bitfield. Missing bits have been deprecated,
  *  and must not be reused. Those capabilities will never be reported
  *  by new versions of the SVGA device.
+<<<<<<< HEAD
  *
  * SVGA_CAP_GMR2 --
  *    Provides asynchronous commands to define and remap guest memory
@@ -412,17 +435,25 @@ struct SVGASignedPoint {
  * SVGA_CAP_SCREEN_OBJECT_2 --
  *    Allow screen object support, and require backing stores from the
  *    guest for each screen object.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #define SVGA_CAP_NONE               0x00000000
 #define SVGA_CAP_RECT_COPY          0x00000002
 #define SVGA_CAP_CURSOR             0x00000020
+<<<<<<< HEAD
 #define SVGA_CAP_CURSOR_BYPASS      0x00000040   /* Legacy (Use Cursor Bypass 3 instead) */
 #define SVGA_CAP_CURSOR_BYPASS_2    0x00000080   /* Legacy (Use Cursor Bypass 3 instead) */
+=======
+#define SVGA_CAP_CURSOR_BYPASS      0x00000040   // Legacy (Use Cursor Bypass 3 instead)
+#define SVGA_CAP_CURSOR_BYPASS_2    0x00000080   // Legacy (Use Cursor Bypass 3 instead)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SVGA_CAP_8BIT_EMULATION     0x00000100
 #define SVGA_CAP_ALPHA_CURSOR       0x00000200
 #define SVGA_CAP_3D                 0x00004000
 #define SVGA_CAP_EXTENDED_FIFO      0x00008000
+<<<<<<< HEAD
 #define SVGA_CAP_MULTIMON           0x00010000   /* Legacy multi-monitor support */
 #define SVGA_CAP_PITCHLOCK          0x00020000
 #define SVGA_CAP_IRQMASK            0x00040000
@@ -431,6 +462,14 @@ struct SVGASignedPoint {
 #define SVGA_CAP_TRACES             0x00200000
 #define SVGA_CAP_GMR2               0x00400000
 #define SVGA_CAP_SCREEN_OBJECT_2    0x00800000
+=======
+#define SVGA_CAP_MULTIMON           0x00010000   // Legacy multi-monitor support
+#define SVGA_CAP_PITCHLOCK          0x00020000
+#define SVGA_CAP_IRQMASK            0x00040000
+#define SVGA_CAP_DISPLAY_TOPOLOGY   0x00080000   // Legacy multi-monitor support
+#define SVGA_CAP_GMR                0x00100000
+#define SVGA_CAP_TRACES             0x00200000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /*
@@ -475,7 +514,11 @@ enum {
 
    SVGA_FIFO_CAPABILITIES = 4,
    SVGA_FIFO_FLAGS,
+<<<<<<< HEAD
    /* Valid with SVGA_FIFO_CAP_FENCE: */
+=======
+   // Valid with SVGA_FIFO_CAP_FENCE:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    SVGA_FIFO_FENCE,
 
    /*
@@ -488,32 +531,55 @@ enum {
     * extended FIFO.
     */
 
+<<<<<<< HEAD
    /* Valid if exists (i.e. if extended FIFO enabled): */
    SVGA_FIFO_3D_HWVERSION,       /* See SVGA3dHardwareVersion in svga3d_reg.h */
    /* Valid with SVGA_FIFO_CAP_PITCHLOCK: */
    SVGA_FIFO_PITCHLOCK,
 
    /* Valid with SVGA_FIFO_CAP_CURSOR_BYPASS_3: */
+=======
+   // Valid if exists (i.e. if extended FIFO enabled):
+   SVGA_FIFO_3D_HWVERSION,       /* See SVGA3dHardwareVersion in svga3d_reg.h */
+   // Valid with SVGA_FIFO_CAP_PITCHLOCK:
+   SVGA_FIFO_PITCHLOCK,
+
+   // Valid with SVGA_FIFO_CAP_CURSOR_BYPASS_3:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    SVGA_FIFO_CURSOR_ON,          /* Cursor bypass 3 show/hide register */
    SVGA_FIFO_CURSOR_X,           /* Cursor bypass 3 x register */
    SVGA_FIFO_CURSOR_Y,           /* Cursor bypass 3 y register */
    SVGA_FIFO_CURSOR_COUNT,       /* Incremented when any of the other 3 change */
    SVGA_FIFO_CURSOR_LAST_UPDATED,/* Last time the host updated the cursor */
 
+<<<<<<< HEAD
    /* Valid with SVGA_FIFO_CAP_RESERVE: */
    SVGA_FIFO_RESERVED,           /* Bytes past NEXT_CMD with real contents */
 
    /*
     * Valid with SVGA_FIFO_CAP_SCREEN_OBJECT or SVGA_FIFO_CAP_SCREEN_OBJECT_2:
+=======
+   // Valid with SVGA_FIFO_CAP_RESERVE:
+   SVGA_FIFO_RESERVED,           /* Bytes past NEXT_CMD with real contents */
+
+   /*
+    * Valid with SVGA_FIFO_CAP_SCREEN_OBJECT:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     *
     * By default this is SVGA_ID_INVALID, to indicate that the cursor
     * coordinates are specified relative to the virtual root. If this
     * is set to a specific screen ID, cursor position is reinterpreted
+<<<<<<< HEAD
     * as a signed offset relative to that screen's origin.
+=======
+    * as a signed offset relative to that screen's origin. This is the
+    * only way to place the cursor on a non-rooted screen.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     */
    SVGA_FIFO_CURSOR_SCREEN_ID,
 
    /*
+<<<<<<< HEAD
     * Valid with SVGA_FIFO_CAP_DEAD
     *
     * An arbitrary value written by the host, drivers should not use it.
@@ -529,6 +595,8 @@ enum {
    SVGA_FIFO_3D_HWVERSION_REVISED,
 
    /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     * XXX: The gap here, up until SVGA_FIFO_3D_CAPS, can be used for new
     * registers, but this must be done carefully and with judicious use of
     * capability bits, since comparisons based on SVGA_FIFO_MIN aren't
@@ -566,7 +634,11 @@ enum {
     * sets SVGA_FIFO_MIN high enough to leave room for them.
     */
 
+<<<<<<< HEAD
    /* Valid if register exists: */
+=======
+   // Valid if register exists:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    SVGA_FIFO_GUEST_3D_HWVERSION, /* Guest driver's 3D version */
    SVGA_FIFO_FENCE_GOAL,         /* Matching target for SVGA_IRQFLAG_FENCE_GOAL */
    SVGA_FIFO_BUSY,               /* See "FIFO Synchronization Registers" */
@@ -767,6 +839,7 @@ enum {
  *
  *       - When a screen is resized, either using Screen Object commands or
  *         legacy multimon registers, its contents are preserved.
+<<<<<<< HEAD
  *
  * SVGA_FIFO_CAP_GMR2 --
  *
@@ -798,6 +871,8 @@ enum {
  *
  *    Drivers should not use this cap bit.  This cap bit can not be
  *    reused since some hosts already expose it.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #define SVGA_FIFO_CAP_NONE                  0
@@ -809,10 +884,13 @@ enum {
 #define SVGA_FIFO_CAP_ESCAPE            (1<<5)
 #define SVGA_FIFO_CAP_RESERVE           (1<<6)
 #define SVGA_FIFO_CAP_SCREEN_OBJECT     (1<<7)
+<<<<<<< HEAD
 #define SVGA_FIFO_CAP_GMR2              (1<<8)
 #define SVGA_FIFO_CAP_3D_HWVERSION_REVISED  SVGA_FIFO_CAP_GMR2
 #define SVGA_FIFO_CAP_SCREEN_OBJECT_2   (1<<9)
 #define SVGA_FIFO_CAP_DEAD              (1<<10)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /*
@@ -823,7 +901,11 @@ enum {
 
 #define SVGA_FIFO_FLAG_NONE                 0
 #define SVGA_FIFO_FLAG_ACCELFRONT       (1<<0)
+<<<<<<< HEAD
 #define SVGA_FIFO_FLAG_RESERVED        (1<<31) /* Internal use only */
+=======
+#define SVGA_FIFO_FLAG_RESERVED        (1<<31) // Internal use only
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * FIFO reservation sentinel value
@@ -856,22 +938,36 @@ enum {
    SVGA_VIDEO_DATA_OFFSET,
    SVGA_VIDEO_FORMAT,
    SVGA_VIDEO_COLORKEY,
+<<<<<<< HEAD
    SVGA_VIDEO_SIZE,          /* Deprecated */
+=======
+   SVGA_VIDEO_SIZE,          // Deprecated
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    SVGA_VIDEO_WIDTH,
    SVGA_VIDEO_HEIGHT,
    SVGA_VIDEO_SRC_X,
    SVGA_VIDEO_SRC_Y,
    SVGA_VIDEO_SRC_WIDTH,
    SVGA_VIDEO_SRC_HEIGHT,
+<<<<<<< HEAD
    SVGA_VIDEO_DST_X,         /* Signed int32 */
    SVGA_VIDEO_DST_Y,         /* Signed int32 */
+=======
+   SVGA_VIDEO_DST_X,         // Signed int32
+   SVGA_VIDEO_DST_Y,         // Signed int32
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    SVGA_VIDEO_DST_WIDTH,
    SVGA_VIDEO_DST_HEIGHT,
    SVGA_VIDEO_PITCH_1,
    SVGA_VIDEO_PITCH_2,
    SVGA_VIDEO_PITCH_3,
+<<<<<<< HEAD
    SVGA_VIDEO_DATA_GMRID,    /* Optional, defaults to SVGA_GMR_FRAMEBUFFER */
    SVGA_VIDEO_DST_SCREEN_ID, /* Optional, defaults to virtual coords (SVGA_ID_INVALID) */
+=======
+   SVGA_VIDEO_DATA_GMRID,    // Optional, defaults to SVGA_GMR_FRAMEBUFFER
+   SVGA_VIDEO_DST_SCREEN_ID, // Optional, defaults to virtual coords (SVGA_ID_INVALID)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    SVGA_VIDEO_NUM_REGS
 };
 
@@ -922,6 +1018,7 @@ typedef struct SVGAOverlayUnit {
  *    compatibility. New flags can be added, and the struct may grow,
  *    but existing fields must retain their meaning.
  *
+<<<<<<< HEAD
  *    Added with SVGA_FIFO_CAP_SCREEN_OBJECT_2 are required fields of
  *    a SVGAGuestPtr that is used to back the screen contents.  This
  *    memory must come from the GFB.  The guest is not allowed to
@@ -967,6 +1064,17 @@ typedef struct SVGAOverlayUnit {
 typedef
 struct SVGAScreenObject {
    uint32 structSize;   /* sizeof(SVGAScreenObject) */
+=======
+ */
+
+#define SVGA_SCREEN_HAS_ROOT    (1 << 0)  // Screen is present in the virtual coord space
+#define SVGA_SCREEN_IS_PRIMARY  (1 << 1)  // Guest considers this screen to be 'primary'
+#define SVGA_SCREEN_FULLSCREEN_HINT (1 << 2)   // Guest is running a fullscreen app here
+
+typedef
+struct SVGAScreenObject {
+   uint32 structSize;   // sizeof(SVGAScreenObject)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    uint32 id;
    uint32 flags;
    struct {
@@ -976,6 +1084,7 @@ struct SVGAScreenObject {
    struct {
       int32 x;
       int32 y;
+<<<<<<< HEAD
    } root;
 
    /*
@@ -984,6 +1093,9 @@ struct SVGAScreenObject {
     */
    SVGAGuestImage backingStore;
    uint32 cloneCount;
+=======
+   } root;              // Only used if SVGA_SCREEN_HAS_ROOT is set.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } SVGAScreenObject;
 
 
@@ -1021,8 +1133,11 @@ typedef enum {
    SVGA_CMD_BLIT_SCREEN_TO_GMRFB  = 38,
    SVGA_CMD_ANNOTATION_FILL       = 39,
    SVGA_CMD_ANNOTATION_COPY       = 40,
+<<<<<<< HEAD
    SVGA_CMD_DEFINE_GMR2           = 41,
    SVGA_CMD_REMAP_GMR2            = 42,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    SVGA_CMD_MAX
 } SVGAFifoCmdId;
 
@@ -1058,7 +1173,11 @@ typedef enum {
  */
 
 typedef
+<<<<<<< HEAD
 struct SVGAFifoCmdUpdate {
+=======
+struct {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    uint32 x;
    uint32 y;
    uint32 width;
@@ -1077,7 +1196,11 @@ struct SVGAFifoCmdUpdate {
  */
 
 typedef
+<<<<<<< HEAD
 struct SVGAFifoCmdRectCopy {
+=======
+struct {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    uint32 srcX;
    uint32 srcY;
    uint32 destX;
@@ -1101,14 +1224,24 @@ struct SVGAFifoCmdRectCopy {
  */
 
 typedef
+<<<<<<< HEAD
 struct SVGAFifoCmdDefineCursor {
    uint32 id;             /* Reserved, must be zero. */
+=======
+struct {
+   uint32 id;             // Reserved, must be zero.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    uint32 hotspotX;
    uint32 hotspotY;
    uint32 width;
    uint32 height;
+<<<<<<< HEAD
    uint32 andMaskDepth;   /* Value must be 1 or equal to BITS_PER_PIXEL */
    uint32 xorMaskDepth;   /* Value must be 1 or equal to BITS_PER_PIXEL */
+=======
+   uint32 andMaskDepth;   // Value must be 1 or equal to BITS_PER_PIXEL
+   uint32 xorMaskDepth;   // Value must be 1 or equal to BITS_PER_PIXEL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    /*
     * Followed by scanline data for AND mask, then XOR mask.
     * Each scanline is padded to a 32-bit boundary.
@@ -1130,8 +1263,13 @@ struct SVGAFifoCmdDefineCursor {
  */
 
 typedef
+<<<<<<< HEAD
 struct SVGAFifoCmdDefineAlphaCursor {
    uint32 id;             /* Reserved, must be zero. */
+=======
+struct {
+   uint32 id;             // Reserved, must be zero.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    uint32 hotspotX;
    uint32 hotspotY;
    uint32 width;
@@ -1153,7 +1291,11 @@ struct SVGAFifoCmdDefineAlphaCursor {
  */
 
 typedef
+<<<<<<< HEAD
 struct SVGAFifoCmdUpdateVerbose {
+=======
+struct {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    uint32 x;
    uint32 y;
    uint32 width;
@@ -1178,13 +1320,22 @@ struct SVGAFifoCmdUpdateVerbose {
 #define  SVGA_ROP_COPY                    0x03
 
 typedef
+<<<<<<< HEAD
 struct SVGAFifoCmdFrontRopFill {
    uint32 color;     /* In the same format as the GFB */
+=======
+struct {
+   uint32 color;     // In the same format as the GFB
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    uint32 x;
    uint32 y;
    uint32 width;
    uint32 height;
+<<<<<<< HEAD
    uint32 rop;       /* Must be SVGA_ROP_COPY */
+=======
+   uint32 rop;       // Must be SVGA_ROP_COPY
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } SVGAFifoCmdFrontRopFill;
 
 
@@ -1221,7 +1372,11 @@ struct {
  */
 
 typedef
+<<<<<<< HEAD
 struct SVGAFifoCmdEscape {
+=======
+struct {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    uint32 nsid;
    uint32 size;
    /* followed by 'size' bytes of data */
@@ -1251,12 +1406,20 @@ struct SVGAFifoCmdEscape {
  *    registers (SVGA_REG_NUM_GUEST_DISPLAYS, SVGA_REG_DISPLAY_*).
  *
  * Availability:
+<<<<<<< HEAD
  *    SVGA_FIFO_CAP_SCREEN_OBJECT or SVGA_FIFO_CAP_SCREEN_OBJECT_2
+=======
+ *    SVGA_FIFO_CAP_SCREEN_OBJECT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 typedef
 struct {
+<<<<<<< HEAD
    SVGAScreenObject screen;   /* Variable-length according to version */
+=======
+   SVGAScreenObject screen;   // Variable-length according to version
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } SVGAFifoCmdDefineScreen;
 
 
@@ -1267,7 +1430,11 @@ struct {
  *    re-use.
  *
  * Availability:
+<<<<<<< HEAD
  *    SVGA_FIFO_CAP_SCREEN_OBJECT or SVGA_FIFO_CAP_SCREEN_OBJECT_2
+=======
+ *    SVGA_FIFO_CAP_SCREEN_OBJECT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 typedef
@@ -1320,7 +1487,11 @@ struct {
  *    GMRFB.
  *
  * Availability:
+<<<<<<< HEAD
  *    SVGA_FIFO_CAP_SCREEN_OBJECT or SVGA_FIFO_CAP_SCREEN_OBJECT_2
+=======
+ *    SVGA_FIFO_CAP_SCREEN_OBJECT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 typedef
@@ -1357,7 +1528,11 @@ struct {
  *    SVGA_CMD_ANNOTATION_* commands for details.
  *
  * Availability:
+<<<<<<< HEAD
  *    SVGA_FIFO_CAP_SCREEN_OBJECT or SVGA_FIFO_CAP_SCREEN_OBJECT_2
+=======
+ *    SVGA_FIFO_CAP_SCREEN_OBJECT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 typedef
@@ -1405,7 +1580,11 @@ struct {
  *    the time any subsequent FENCE commands are reached.
  *
  * Availability:
+<<<<<<< HEAD
  *    SVGA_FIFO_CAP_SCREEN_OBJECT or SVGA_FIFO_CAP_SCREEN_OBJECT_2
+=======
+ *    SVGA_FIFO_CAP_SCREEN_OBJECT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 typedef
@@ -1440,7 +1619,11 @@ struct {
  *    user's display is being remoted over a network connection.
  *
  * Availability:
+<<<<<<< HEAD
  *    SVGA_FIFO_CAP_SCREEN_OBJECT or SVGA_FIFO_CAP_SCREEN_OBJECT_2
+=======
+ *    SVGA_FIFO_CAP_SCREEN_OBJECT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 typedef
@@ -1472,7 +1655,11 @@ struct {
  *    undefined.
  *
  * Availability:
+<<<<<<< HEAD
  *    SVGA_FIFO_CAP_SCREEN_OBJECT or SVGA_FIFO_CAP_SCREEN_OBJECT_2
+=======
+ *    SVGA_FIFO_CAP_SCREEN_OBJECT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 typedef
@@ -1481,6 +1668,7 @@ struct {
    uint32           srcScreenId;
 } SVGAFifoCmdAnnotationCopy;
 
+<<<<<<< HEAD
 
 /*
  * SVGA_CMD_DEFINE_GMR2 --
@@ -1549,4 +1737,6 @@ struct {
     */
 } SVGAFifoCmdRemapGMR2;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

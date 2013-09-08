@@ -18,16 +18,22 @@
 #include <linux/uio_driver.h>
 #include <linux/spinlock.h>
 #include <linux/bitops.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/interrupt.h>
 #include <linux/stringify.h>
 #include <linux/pm_runtime.h>
 #include <linux/slab.h>
 
+<<<<<<< HEAD
 #include <linux/of.h>
 #include <linux/of_platform.h>
 #include <linux/of_address.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DRIVER_NAME "uio_pdrv_genirq"
 
 struct uio_pdrv_genirq_platdata {
@@ -102,6 +108,7 @@ static int uio_pdrv_genirq_probe(struct platform_device *pdev)
 	int ret = -EINVAL;
 	int i;
 
+<<<<<<< HEAD
 	if (!uioinfo) {
 		int irq;
 
@@ -123,6 +130,8 @@ static int uio_pdrv_genirq_probe(struct platform_device *pdev)
 			uioinfo->irq = irq;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!uioinfo || !uioinfo->name || !uioinfo->version) {
 		dev_err(&pdev->dev, "missing platform_data\n");
 		goto bad0;
@@ -163,7 +172,11 @@ static int uio_pdrv_genirq_probe(struct platform_device *pdev)
 
 		uiomem->memtype = UIO_MEM_PHYS;
 		uiomem->addr = r->start;
+<<<<<<< HEAD
 		uiomem->size = resource_size(r);
+=======
+		uiomem->size = r->end - r->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		++uiomem;
 	}
 
@@ -206,10 +219,13 @@ static int uio_pdrv_genirq_probe(struct platform_device *pdev)
 	kfree(priv);
 	pm_runtime_disable(&pdev->dev);
  bad0:
+<<<<<<< HEAD
 	/* kfree uioinfo for OF */
 	if (pdev->dev.of_node)
 		kfree(uioinfo);
  bad2:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -223,10 +239,13 @@ static int uio_pdrv_genirq_remove(struct platform_device *pdev)
 	priv->uioinfo->handler = NULL;
 	priv->uioinfo->irqcontrol = NULL;
 
+<<<<<<< HEAD
 	/* kfree uioinfo for OF */
 	if (pdev->dev.of_node)
 		kfree(priv->uioinfo);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(priv);
 	return 0;
 }
@@ -253,6 +272,7 @@ static const struct dev_pm_ops uio_pdrv_genirq_dev_pm_ops = {
 	.runtime_resume = uio_pdrv_genirq_runtime_nop,
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_OF
 static const struct of_device_id uio_of_genirq_match[] = {
 	{ /* empty for now */ },
@@ -262,6 +282,8 @@ MODULE_DEVICE_TABLE(of, uio_of_genirq_match);
 # define uio_of_genirq_match NULL
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver uio_pdrv_genirq = {
 	.probe = uio_pdrv_genirq_probe,
 	.remove = uio_pdrv_genirq_remove,
@@ -269,11 +291,29 @@ static struct platform_driver uio_pdrv_genirq = {
 		.name = DRIVER_NAME,
 		.owner = THIS_MODULE,
 		.pm = &uio_pdrv_genirq_dev_pm_ops,
+<<<<<<< HEAD
 		.of_match_table = uio_of_genirq_match,
 	},
 };
 
 module_platform_driver(uio_pdrv_genirq);
+=======
+	},
+};
+
+static int __init uio_pdrv_genirq_init(void)
+{
+	return platform_driver_register(&uio_pdrv_genirq);
+}
+
+static void __exit uio_pdrv_genirq_exit(void)
+{
+	platform_driver_unregister(&uio_pdrv_genirq);
+}
+
+module_init(uio_pdrv_genirq_init);
+module_exit(uio_pdrv_genirq_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Magnus Damm");
 MODULE_DESCRIPTION("Userspace I/O platform driver with generic IRQ handling");

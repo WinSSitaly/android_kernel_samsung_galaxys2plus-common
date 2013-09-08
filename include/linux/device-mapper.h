@@ -10,7 +10,10 @@
 
 #include <linux/bio.h>
 #include <linux/blkdev.h>
+<<<<<<< HEAD
 #include <linux/ratelimit.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct dm_dev;
 struct dm_target;
@@ -128,6 +131,13 @@ void dm_put_device(struct dm_target *ti, struct dm_dev *d);
  * Information about a target type
  */
 
+<<<<<<< HEAD
+=======
+/*
+ * Target features
+ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct target_type {
 	uint64_t features;
 	const char *name;
@@ -156,6 +166,7 @@ struct target_type {
 	struct list_head list;
 };
 
+<<<<<<< HEAD
 /*
  * Target features
  */
@@ -180,6 +191,8 @@ struct target_type {
 #define DM_TARGET_IMMUTABLE		0x00000004
 #define dm_target_is_immutable(type)	((type)->features & DM_TARGET_IMMUTABLE)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct dm_target {
 	struct dm_table *table;
 	struct target_type *type;
@@ -218,11 +231,14 @@ struct dm_target {
 	 * whether or not its underlying devices have support.
 	 */
 	unsigned discards_supported:1;
+<<<<<<< HEAD
 
 	/*
 	 * Set if this target does not return zeroes on discarded blocks.
 	 */
 	unsigned discard_zeroes_data_unsupported:1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Each target can link one of these into the table */
@@ -234,6 +250,7 @@ struct dm_target_callbacks {
 int dm_register_target(struct target_type *t);
 void dm_unregister_target(struct target_type *t);
 
+<<<<<<< HEAD
 /*
  * Target argument parsing.
  */
@@ -277,6 +294,8 @@ const char *dm_shift_arg(struct dm_arg_set *as);
  */
 void dm_consume_args(struct dm_arg_set *as, unsigned num_args);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*-----------------------------------------------------------------
  * Functions for creating and manipulating mapped devices.
  * Drop the reference with dm_put when you finish with the object.
@@ -396,6 +415,7 @@ void *dm_vcalloc(unsigned long nmemb, unsigned long elem_size);
  *---------------------------------------------------------------*/
 #define DM_NAME "device-mapper"
 
+<<<<<<< HEAD
 #ifdef CONFIG_PRINTK
 extern struct ratelimit_state dm_ratelimit_state;
 
@@ -404,6 +424,8 @@ extern struct ratelimit_state dm_ratelimit_state;
 #define dm_ratelimit()	0
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DMCRIT(f, arg...) \
 	printk(KERN_CRIT DM_NAME ": " DM_MSG_PREFIX ": " f "\n", ## arg)
 
@@ -411,7 +433,11 @@ extern struct ratelimit_state dm_ratelimit_state;
 	printk(KERN_ERR DM_NAME ": " DM_MSG_PREFIX ": " f "\n", ## arg)
 #define DMERR_LIMIT(f, arg...) \
 	do { \
+<<<<<<< HEAD
 		if (dm_ratelimit())	\
+=======
+		if (printk_ratelimit())	\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			printk(KERN_ERR DM_NAME ": " DM_MSG_PREFIX ": " \
 			       f "\n", ## arg); \
 	} while (0)
@@ -420,7 +446,11 @@ extern struct ratelimit_state dm_ratelimit_state;
 	printk(KERN_WARNING DM_NAME ": " DM_MSG_PREFIX ": " f "\n", ## arg)
 #define DMWARN_LIMIT(f, arg...) \
 	do { \
+<<<<<<< HEAD
 		if (dm_ratelimit())	\
+=======
+		if (printk_ratelimit())	\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			printk(KERN_WARNING DM_NAME ": " DM_MSG_PREFIX ": " \
 			       f "\n", ## arg); \
 	} while (0)
@@ -429,7 +459,11 @@ extern struct ratelimit_state dm_ratelimit_state;
 	printk(KERN_INFO DM_NAME ": " DM_MSG_PREFIX ": " f "\n", ## arg)
 #define DMINFO_LIMIT(f, arg...) \
 	do { \
+<<<<<<< HEAD
 		if (dm_ratelimit())	\
+=======
+		if (printk_ratelimit())	\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			printk(KERN_INFO DM_NAME ": " DM_MSG_PREFIX ": " f \
 			       "\n", ## arg); \
 	} while (0)
@@ -439,7 +473,11 @@ extern struct ratelimit_state dm_ratelimit_state;
 	printk(KERN_DEBUG DM_NAME ": " DM_MSG_PREFIX " DEBUG: " f "\n", ## arg)
 #  define DMDEBUG_LIMIT(f, arg...) \
 	do { \
+<<<<<<< HEAD
 		if (dm_ratelimit())	\
+=======
+		if (printk_ratelimit())	\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			printk(KERN_DEBUG DM_NAME ": " DM_MSG_PREFIX ": " f \
 			       "\n", ## arg); \
 	} while (0)

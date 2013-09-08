@@ -161,5 +161,8 @@ void pwm_free(struct pwm_device *pwm)
 	kfree(pwm);
 }
 EXPORT_SYMBOL(pwm_free);
+<<<<<<< HEAD
 
 MODULE_LICENSE("GPL");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

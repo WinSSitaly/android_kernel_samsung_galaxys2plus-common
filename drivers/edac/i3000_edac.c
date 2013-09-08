@@ -470,7 +470,11 @@ static void __devexit i3000_remove_one(struct pci_dev *pdev)
 	edac_mc_free(mci);
 }
 
+<<<<<<< HEAD
 static DEFINE_PCI_DEVICE_TABLE(i3000_pci_tbl) = {
+=======
+static const struct pci_device_id i3000_pci_tbl[] __devinitdata = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 	 PCI_VEND_DEV(INTEL, 3000_HB), PCI_ANY_ID, PCI_ANY_ID, 0, 0,
 	 I3000},

@@ -158,7 +158,11 @@ static int als_set_default_config(struct i2c_client *client)
 		dev_err(&client->dev, "default write failed.");
 		return retval;
 	}
+<<<<<<< HEAD
 	return 0;
+=======
+	return 0;;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int  isl29020_probe(struct i2c_client *client,
@@ -230,7 +234,22 @@ static struct i2c_driver isl29020_driver = {
 	.id_table = isl29020_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(isl29020_driver);
+=======
+static int __init sensor_isl29020_init(void)
+{
+	return i2c_add_driver(&isl29020_driver);
+}
+
+static void  __exit sensor_isl29020_exit(void)
+{
+	i2c_del_driver(&isl29020_driver);
+}
+
+module_init(sensor_isl29020_init);
+module_exit(sensor_isl29020_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Kalhan Trisal <kalhan.trisal@intel.com>");
 MODULE_DESCRIPTION("Intersil isl29020 ALS Driver");

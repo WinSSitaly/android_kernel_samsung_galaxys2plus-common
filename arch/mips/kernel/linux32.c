@@ -349,6 +349,7 @@ SYSCALL_DEFINE6(32_fanotify_mark, int, fanotify_fd, unsigned int, flags,
 	return sys_fanotify_mark(fanotify_fd, flags, merge_64(a3, a4),
 				 dfd, pathname);
 }
+<<<<<<< HEAD
 
 SYSCALL_DEFINE6(32_futex, u32 __user *, uaddr, int, op, u32, val,
 		struct compat_timespec __user *, utime, u32 __user *, uaddr2,
@@ -356,3 +357,5 @@ SYSCALL_DEFINE6(32_futex, u32 __user *, uaddr, int, op, u32, val,
 {
 	return compat_sys_futex(uaddr, op, val, utime, uaddr2, val3);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

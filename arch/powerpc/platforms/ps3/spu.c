@@ -22,7 +22,10 @@
 #include <linux/init.h>
 #include <linux/slab.h>
 #include <linux/mmzone.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 #include <linux/mm.h>
 
@@ -154,7 +157,11 @@ static unsigned long get_vas_id(void)
 	u64 id;
 
 	lv1_get_logical_ppe_id(&id);
+<<<<<<< HEAD
 	lv1_get_virtual_address_space_id_of_ppe(&id);
+=======
+	lv1_get_virtual_address_space_id_of_ppe(id, &id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return id;
 }

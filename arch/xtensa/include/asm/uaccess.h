@@ -17,10 +17,13 @@
 #define _XTENSA_UACCESS_H
 
 #include <linux/errno.h>
+<<<<<<< HEAD
 #ifndef __ASSEMBLY__
 #include <linux/prefetch.h>
 #endif
 #include <asm/types.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define VERIFY_READ    0
 #define VERIFY_WRITE   1
@@ -30,6 +33,10 @@
 #include <asm/current.h>
 #include <asm/asm-offsets.h>
 #include <asm/processor.h>
+<<<<<<< HEAD
+=======
+#include <asm/types.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * These assembly macros mirror the C macros that follow below.  They
@@ -160,6 +167,10 @@
 #else /* __ASSEMBLY__ not defined */
 
 #include <linux/sched.h>
+<<<<<<< HEAD
+=======
+#include <asm/types.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * The fs value determines whether argument validity checking should

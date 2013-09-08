@@ -3,8 +3,12 @@
 
 #include <linux/kernel.h>
 #include <linux/preempt.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
 #include <linux/bug.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  *  bit-based spin_lock()
@@ -89,7 +93,11 @@ static inline int bit_spin_is_locked(int bitnum, unsigned long *addr)
 {
 #if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
 	return test_bit(bitnum, addr);
+<<<<<<< HEAD
 #elif defined CONFIG_PREEMPT_COUNT
+=======
+#elif defined CONFIG_PREEMPT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return preempt_count();
 #else
 	return 1;

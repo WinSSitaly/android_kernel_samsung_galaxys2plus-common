@@ -30,6 +30,7 @@ PATCHLEVEL = $4
 lastword = \$(word \$(words \$(1)),\$(1))
 makedir := \$(dir \$(call lastword,\$(MAKEFILE_LIST)))
 
+<<<<<<< HEAD
 ifeq ("\$(origin V)", "command line")
 VERBOSE := \$(V)
 endif
@@ -37,6 +38,8 @@ ifneq (\$(VERBOSE),1)
 Q := @
 endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MAKEARGS := -C $1
 MAKEARGS += O=\$(if \$(patsubst /%,,\$(makedir)),\$(CURDIR)/)\$(patsubst %/,%,\$(makedir))
 
@@ -47,7 +50,11 @@ MAKEFLAGS += --no-print-directory
 all	:= \$(filter-out all Makefile,\$(MAKECMDGOALS))
 
 all:
+<<<<<<< HEAD
 	\$(Q)\$(MAKE) \$(MAKEARGS) \$(all)
+=======
+	\$(MAKE) \$(MAKEARGS) \$(all)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 Makefile:;
 

@@ -45,7 +45,11 @@
 
 #if defined(MODULE) && defined(SERIAL_DEBUG_MCOUNT)
 #define DBG_CNT(s) printk("(%s): [%x] refc=%d, serc=%d, ttyc=%d -> %s\n", \
+<<<<<<< HEAD
  tty->name, (info->tport.flags), serial_driver->refcount,info->count,tty->count,s)
+=======
+ tty->name, (info->flags), serial_driver->refcount,info->count,tty->count,s)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 #define DBG_CNT(s)
 #endif
@@ -58,6 +62,10 @@
 
 #include <linux/types.h>
 #include <linux/serial.h>
+<<<<<<< HEAD
+=======
+#include <linux/serialP.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/serial_reg.h>
 static char *serial_version = "4.30";
 
@@ -69,7 +77,10 @@ static char *serial_version = "4.30";
 #include <linux/interrupt.h>
 #include <linux/tty.h>
 #include <linux/tty_flip.h>
+<<<<<<< HEAD
 #include <linux/circ_buf.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/console.h>
 #include <linux/major.h>
 #include <linux/string.h>
@@ -85,12 +96,17 @@ static char *serial_version = "4.30";
 
 #include <asm/setup.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/irq.h>
 
 #include <asm/amigahw.h>
 #include <asm/amigaints.h>
 
+<<<<<<< HEAD
 struct serial_state {
 	struct tty_port		tport;
 	struct circ_buf		xmit;
@@ -109,6 +125,8 @@ struct serial_state {
 	int			x_char;	/* xon/xoff character */
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define custom amiga_custom
 static char *serial_name = "Amiga-builtin serial driver";
 
@@ -117,10 +135,18 @@ static struct tty_driver *serial_driver;
 /* number of characters left in xmit buffer before we ask for more */
 #define WAKEUP_CHARS 256
 
+<<<<<<< HEAD
 static unsigned char current_ctl_bits;
 
 static void change_speed(struct tty_struct *tty, struct serial_state *info,
 		struct ktermios *old);
+=======
+static struct async_struct *IRQ_ports;
+
+static unsigned char current_ctl_bits;
+
+static void change_speed(struct async_struct *info, struct ktermios *old);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void rs_wait_until_sent(struct tty_struct *tty, int timeout);
 
 
@@ -133,7 +159,11 @@ static struct serial_state rs_table[1];
 #define serial_isroot()	(capable(CAP_SYS_ADMIN))
 
 
+<<<<<<< HEAD
 static inline int serial_paranoia_check(struct serial_state *info,
+=======
+static inline int serial_paranoia_check(struct async_struct *info,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					char *name, const char *routine)
 {
 #ifdef SERIAL_PARANOIA_CHECK
@@ -186,7 +216,11 @@ static __inline__ void rtsdtr_ctrl(int bits)
  */
 static void rs_stop(struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
+=======
+	struct async_struct *info = tty->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	if (serial_paranoia_check(info, tty->name, "rs_stop"))
@@ -206,7 +240,11 @@ static void rs_stop(struct tty_struct *tty)
 
 static void rs_start(struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
+=======
+	struct async_struct *info = tty->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	if (serial_paranoia_check(info, tty->name, "rs_start"))
@@ -247,16 +285,39 @@ static void rs_start(struct tty_struct *tty)
  * -----------------------------------------------------------------------
  */
 
+<<<<<<< HEAD
 static void receive_chars(struct serial_state *info)
 {
         int status;
 	int serdatr;
 	struct tty_struct *tty = info->tport.tty;
+=======
+/*
+ * This routine is used by the interrupt handler to schedule
+ * processing in the software interrupt portion of the driver.
+ */
+static void rs_sched_event(struct async_struct *info,
+			   int event)
+{
+	info->event |= 1 << event;
+	tasklet_schedule(&info->tlet);
+}
+
+static void receive_chars(struct async_struct *info)
+{
+        int status;
+	int serdatr;
+	struct tty_struct *tty = info->tty;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char ch, flag;
 	struct	async_icount *icount;
 	int oe = 0;
 
+<<<<<<< HEAD
 	icount = &info->icount;
+=======
+	icount = &info->state->icount;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	status = UART_LSR_DR; /* We obviously have a character! */
 	serdatr = custom.serdatr;
@@ -313,7 +374,11 @@ static void receive_chars(struct serial_state *info)
 	    printk("handling break....");
 #endif
 	    flag = TTY_BREAK;
+<<<<<<< HEAD
 	    if (info->tport.flags & ASYNC_SAK)
+=======
+	    if (info->flags & ASYNC_SAK)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	      do_SAK(tty);
 	  } else if (status & UART_LSR_PE)
 	    flag = TTY_PARITY;
@@ -336,20 +401,33 @@ out:
 	return;
 }
 
+<<<<<<< HEAD
 static void transmit_chars(struct serial_state *info)
+=======
+static void transmit_chars(struct async_struct *info)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	custom.intreq = IF_TBE;
 	mb();
 	if (info->x_char) {
 	        custom.serdat = info->x_char | 0x100;
 		mb();
+<<<<<<< HEAD
 		info->icount.tx++;
+=======
+		info->state->icount.tx++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		info->x_char = 0;
 		return;
 	}
 	if (info->xmit.head == info->xmit.tail
+<<<<<<< HEAD
 	    || info->tport.tty->stopped
 	    || info->tport.tty->hw_stopped) {
+=======
+	    || info->tty->stopped
+	    || info->tty->hw_stopped) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		info->IER &= ~UART_IER_THRI;
 	        custom.intena = IF_TBE;
 		mb();
@@ -359,12 +437,20 @@ static void transmit_chars(struct serial_state *info)
 	custom.serdat = info->xmit.buf[info->xmit.tail++] | 0x100;
 	mb();
 	info->xmit.tail = info->xmit.tail & (SERIAL_XMIT_SIZE-1);
+<<<<<<< HEAD
 	info->icount.tx++;
+=======
+	info->state->icount.tx++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (CIRC_CNT(info->xmit.head,
 		     info->xmit.tail,
 		     SERIAL_XMIT_SIZE) < WAKEUP_CHARS)
+<<<<<<< HEAD
 		tty_wakeup(info->tport.tty);
+=======
+		rs_sched_event(info, RS_EVENT_WRITE_WAKEUP);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef SERIAL_DEBUG_INTR
 	printk("THRE...");
@@ -376,9 +462,14 @@ static void transmit_chars(struct serial_state *info)
 	}
 }
 
+<<<<<<< HEAD
 static void check_modem_status(struct serial_state *info)
 {
 	struct tty_port *port = &info->tport;
+=======
+static void check_modem_status(struct async_struct *info)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char status = ciab.pra & (SER_DCD | SER_CTS | SER_DSR);
 	unsigned char dstatus;
 	struct	async_icount *icount;
@@ -388,52 +479,88 @@ static void check_modem_status(struct serial_state *info)
 	current_ctl_bits = status;
 
 	if (dstatus) {
+<<<<<<< HEAD
 		icount = &info->icount;
+=======
+		icount = &info->state->icount;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* update input line counters */
 		if (dstatus & SER_DSR)
 			icount->dsr++;
 		if (dstatus & SER_DCD) {
 			icount->dcd++;
 #ifdef CONFIG_HARD_PPS
+<<<<<<< HEAD
 			if ((port->flags & ASYNC_HARDPPS_CD) &&
+=======
+			if ((info->flags & ASYNC_HARDPPS_CD) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    !(status & SER_DCD))
 				hardpps();
 #endif
 		}
 		if (dstatus & SER_CTS)
 			icount->cts++;
+<<<<<<< HEAD
 		wake_up_interruptible(&port->delta_msr_wait);
 	}
 
 	if ((port->flags & ASYNC_CHECK_CD) && (dstatus & SER_DCD)) {
+=======
+		wake_up_interruptible(&info->delta_msr_wait);
+	}
+
+	if ((info->flags & ASYNC_CHECK_CD) && (dstatus & SER_DCD)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if (defined(SERIAL_DEBUG_OPEN) || defined(SERIAL_DEBUG_INTR))
 		printk("ttyS%d CD now %s...", info->line,
 		       (!(status & SER_DCD)) ? "on" : "off");
 #endif
 		if (!(status & SER_DCD))
+<<<<<<< HEAD
 			wake_up_interruptible(&port->open_wait);
+=======
+			wake_up_interruptible(&info->open_wait);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		else {
 #ifdef SERIAL_DEBUG_OPEN
 			printk("doing serial hangup...");
 #endif
+<<<<<<< HEAD
 			if (port->tty)
 				tty_hangup(port->tty);
 		}
 	}
 	if (port->flags & ASYNC_CTS_FLOW) {
 		if (port->tty->hw_stopped) {
+=======
+			if (info->tty)
+				tty_hangup(info->tty);
+		}
+	}
+	if (info->flags & ASYNC_CTS_FLOW) {
+		if (info->tty->hw_stopped) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!(status & SER_CTS)) {
 #if (defined(SERIAL_DEBUG_INTR) || defined(SERIAL_DEBUG_FLOW))
 				printk("CTS tx start...");
 #endif
+<<<<<<< HEAD
 				port->tty->hw_stopped = 0;
+=======
+				info->tty->hw_stopped = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				info->IER |= UART_IER_THRI;
 				custom.intena = IF_SETCLR | IF_TBE;
 				mb();
 				/* set a pending Tx Interrupt, transmitter should restart now */
 				custom.intreq = IF_SETCLR | IF_TBE;
 				mb();
+<<<<<<< HEAD
 				tty_wakeup(port->tty);
+=======
+				rs_sched_event(info, RS_EVENT_WRITE_WAKEUP);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return;
 			}
 		} else {
@@ -441,7 +568,11 @@ static void check_modem_status(struct serial_state *info)
 #if (defined(SERIAL_DEBUG_INTR) || defined(SERIAL_DEBUG_FLOW))
 				printk("CTS tx stop...");
 #endif
+<<<<<<< HEAD
 				port->tty->hw_stopped = 1;
+=======
+				info->tty->hw_stopped = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				info->IER &= ~UART_IER_THRI;
 				/* disable Tx interrupt and remove any pending interrupts */
 				custom.intena = IF_TBE;
@@ -456,7 +587,11 @@ static void check_modem_status(struct serial_state *info)
 static irqreturn_t ser_vbl_int( int irq, void *data)
 {
         /* vbl is just a periodic interrupt we tie into to update modem status */
+<<<<<<< HEAD
 	struct serial_state *info = data;
+=======
+	struct async_struct * info = IRQ_ports;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * TBD - is it better to unregister from this interrupt or to
 	 * ignore it if MSI is clear ?
@@ -468,16 +603,29 @@ static irqreturn_t ser_vbl_int( int irq, void *data)
 
 static irqreturn_t ser_rx_int(int irq, void *dev_id)
 {
+<<<<<<< HEAD
 	struct serial_state *info = dev_id;
+=======
+	struct async_struct * info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef SERIAL_DEBUG_INTR
 	printk("ser_rx_int...");
 #endif
 
+<<<<<<< HEAD
 	if (!info->tport.tty)
 		return IRQ_NONE;
 
 	receive_chars(info);
+=======
+	info = IRQ_ports;
+	if (!info || !info->tty)
+		return IRQ_NONE;
+
+	receive_chars(info);
+	info->last_active = jiffies;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef SERIAL_DEBUG_INTR
 	printk("end.\n");
 #endif
@@ -486,17 +634,30 @@ static irqreturn_t ser_rx_int(int irq, void *dev_id)
 
 static irqreturn_t ser_tx_int(int irq, void *dev_id)
 {
+<<<<<<< HEAD
 	struct serial_state *info = dev_id;
+=======
+	struct async_struct * info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (custom.serdatr & SDR_TBE) {
 #ifdef SERIAL_DEBUG_INTR
 	  printk("ser_tx_int...");
 #endif
 
+<<<<<<< HEAD
 	  if (!info->tport.tty)
 		return IRQ_NONE;
 
 	  transmit_chars(info);
+=======
+	  info = IRQ_ports;
+	  if (!info || !info->tty)
+		return IRQ_NONE;
+
+	  transmit_chars(info);
+	  info->last_active = jiffies;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef SERIAL_DEBUG_INTR
 	  printk("end.\n");
 #endif
@@ -511,6 +672,32 @@ static irqreturn_t ser_tx_int(int irq, void *dev_id)
  */
 
 /*
+<<<<<<< HEAD
+=======
+ * This routine is used to handle the "bottom half" processing for the
+ * serial driver, known also the "software interrupt" processing.
+ * This processing is done at the kernel interrupt level, after the
+ * rs_interrupt() has returned, BUT WITH INTERRUPTS TURNED ON.  This
+ * is where time-consuming activities which can not be done in the
+ * interrupt driver proper are done; the interrupt driver schedules
+ * them using rs_sched_event(), and they get done here.
+ */
+
+static void do_softint(unsigned long private_)
+{
+	struct async_struct	*info = (struct async_struct *) private_;
+	struct tty_struct	*tty;
+
+	tty = info->tty;
+	if (!tty)
+		return;
+
+	if (test_and_clear_bit(RS_EVENT_WRITE_WAKEUP, &info->event))
+		tty_wakeup(tty);
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * ---------------------------------------------------------------
  * Low level utility subroutines for the serial driver:  routines to
  * figure out the appropriate timeout for an interrupt chain, routines
@@ -519,9 +706,14 @@ static irqreturn_t ser_tx_int(int irq, void *dev_id)
  * ---------------------------------------------------------------
  */
 
+<<<<<<< HEAD
 static int startup(struct tty_struct *tty, struct serial_state *info)
 {
 	struct tty_port *port = &info->tport;
+=======
+static int startup(struct async_struct * info)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 	int	retval=0;
 	unsigned long page;
@@ -532,7 +724,11 @@ static int startup(struct tty_struct *tty, struct serial_state *info)
 
 	local_irq_save(flags);
 
+<<<<<<< HEAD
 	if (port->flags & ASYNC_INITIALIZED) {
+=======
+	if (info->flags & ASYNC_INITIALIZED) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		free_page(page);
 		goto errout;
 	}
@@ -554,7 +750,13 @@ static int startup(struct tty_struct *tty, struct serial_state *info)
 	retval = request_irq(IRQ_AMIGA_VERTB, ser_vbl_int, 0, "serial status", info);
 	if (retval) {
 	  if (serial_isroot()) {
+<<<<<<< HEAD
 	      set_bit(TTY_IO_ERROR, &tty->flags);
+=======
+	    if (info->tty)
+	      set_bit(TTY_IO_ERROR,
+		      &info->tty->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    retval = 0;
 	  }
 	  goto errout;
@@ -568,17 +770,30 @@ static int startup(struct tty_struct *tty, struct serial_state *info)
 	/* remember current state of the DCD and CTS bits */
 	current_ctl_bits = ciab.pra & (SER_DCD | SER_CTS | SER_DSR);
 
+<<<<<<< HEAD
 	info->MCR = 0;
 	if (C_BAUD(tty))
 	  info->MCR = SER_DTR | SER_RTS;
 	rtsdtr_ctrl(info->MCR);
 
 	clear_bit(TTY_IO_ERROR, &tty->flags);
+=======
+	IRQ_ports = info;
+
+	info->MCR = 0;
+	if (info->tty->termios->c_cflag & CBAUD)
+	  info->MCR = SER_DTR | SER_RTS;
+	rtsdtr_ctrl(info->MCR);
+
+	if (info->tty)
+		clear_bit(TTY_IO_ERROR, &info->tty->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info->xmit.head = info->xmit.tail = 0;
 
 	/*
 	 * Set up the tty->alt_speed kludge
 	 */
+<<<<<<< HEAD
 	if ((port->flags & ASYNC_SPD_MASK) == ASYNC_SPD_HI)
 		tty->alt_speed = 57600;
 	if ((port->flags & ASYNC_SPD_MASK) == ASYNC_SPD_VHI)
@@ -587,13 +802,31 @@ static int startup(struct tty_struct *tty, struct serial_state *info)
 		tty->alt_speed = 230400;
 	if ((port->flags & ASYNC_SPD_MASK) == ASYNC_SPD_WARP)
 		tty->alt_speed = 460800;
+=======
+	if (info->tty) {
+		if ((info->flags & ASYNC_SPD_MASK) == ASYNC_SPD_HI)
+			info->tty->alt_speed = 57600;
+		if ((info->flags & ASYNC_SPD_MASK) == ASYNC_SPD_VHI)
+			info->tty->alt_speed = 115200;
+		if ((info->flags & ASYNC_SPD_MASK) == ASYNC_SPD_SHI)
+			info->tty->alt_speed = 230400;
+		if ((info->flags & ASYNC_SPD_MASK) == ASYNC_SPD_WARP)
+			info->tty->alt_speed = 460800;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * and set the speed of the serial port
 	 */
+<<<<<<< HEAD
 	change_speed(tty, info, NULL);
 
 	port->flags |= ASYNC_INITIALIZED;
+=======
+	change_speed(info, NULL);
+
+	info->flags |= ASYNC_INITIALIZED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_irq_restore(flags);
 	return 0;
 
@@ -606,15 +839,26 @@ errout:
  * This routine will shutdown a serial port; interrupts are disabled, and
  * DTR is dropped if the hangup on close termio flag is on.
  */
+<<<<<<< HEAD
 static void shutdown(struct tty_struct *tty, struct serial_state *info)
+=======
+static void shutdown(struct async_struct * info)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long	flags;
 	struct serial_state *state;
 
+<<<<<<< HEAD
 	if (!(info->tport.flags & ASYNC_INITIALIZED))
 		return;
 
 	state = info;
+=======
+	if (!(info->flags & ASYNC_INITIALIZED))
+		return;
+
+	state = info->state;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef SERIAL_DEBUG_OPEN
 	printk("Shutting down serial port %d ....\n", info->line);
@@ -626,7 +870,13 @@ static void shutdown(struct tty_struct *tty, struct serial_state *info)
 	 * clear delta_msr_wait queue to avoid mem leaks: we may free the irq
 	 * here so the queue might never be waken up
 	 */
+<<<<<<< HEAD
 	wake_up_interruptible(&info->tport.delta_msr_wait);
+=======
+	wake_up_interruptible(&info->delta_msr_wait);
+
+	IRQ_ports = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Free the IRQ, if necessary
@@ -646,6 +896,7 @@ static void shutdown(struct tty_struct *tty, struct serial_state *info)
 	custom.adkcon = AC_UARTBRK;
 	mb();
 
+<<<<<<< HEAD
 	if (tty->termios->c_cflag & HUPCL)
 		info->MCR &= ~(SER_DTR|SER_RTS);
 	rtsdtr_ctrl(info->MCR);
@@ -653,6 +904,16 @@ static void shutdown(struct tty_struct *tty, struct serial_state *info)
 	set_bit(TTY_IO_ERROR, &tty->flags);
 
 	info->tport.flags &= ~ASYNC_INITIALIZED;
+=======
+	if (!info->tty || (info->tty->termios->c_cflag & HUPCL))
+		info->MCR &= ~(SER_DTR|SER_RTS);
+	rtsdtr_ctrl(info->MCR);
+
+	if (info->tty)
+		set_bit(TTY_IO_ERROR, &info->tty->flags);
+
+	info->flags &= ~ASYNC_INITIALIZED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_irq_restore(flags);
 }
 
@@ -661,16 +922,28 @@ static void shutdown(struct tty_struct *tty, struct serial_state *info)
  * This routine is called to set the UART divisor registers to match
  * the specified baud rate for a serial port.
  */
+<<<<<<< HEAD
 static void change_speed(struct tty_struct *tty, struct serial_state *info,
 			 struct ktermios *old_termios)
 {
 	struct tty_port *port = &info->tport;
+=======
+static void change_speed(struct async_struct *info,
+			 struct ktermios *old_termios)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int	quot = 0, baud_base, baud;
 	unsigned cflag, cval = 0;
 	int	bits;
 	unsigned long	flags;
 
+<<<<<<< HEAD
 	cflag = tty->termios->c_cflag;
+=======
+	if (!info->tty || !info->tty->termios)
+		return;
+	cflag = info->tty->termios->c_cflag;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Byte size is always 8 bits plus parity bit if requested */
 
@@ -691,12 +964,22 @@ static void change_speed(struct tty_struct *tty, struct serial_state *info,
 #endif
 
 	/* Determine divisor based on baud rate */
+<<<<<<< HEAD
 	baud = tty_get_baud_rate(tty);
 	if (!baud)
 		baud = 9600;	/* B0 transition handled in rs_set_termios */
 	baud_base = info->baud_base;
 	if (baud == 38400 && (port->flags & ASYNC_SPD_MASK) == ASYNC_SPD_CUST)
 		quot = info->custom_divisor;
+=======
+	baud = tty_get_baud_rate(info->tty);
+	if (!baud)
+		baud = 9600;	/* B0 transition handled in rs_set_termios */
+	baud_base = info->state->baud_base;
+	if (baud == 38400 &&
+	    ((info->flags & ASYNC_SPD_MASK) == ASYNC_SPD_CUST))
+		quot = info->state->custom_divisor;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else {
 		if (baud == 134)
 			/* Special case since 134 is really 134.5 */
@@ -707,6 +990,7 @@ static void change_speed(struct tty_struct *tty, struct serial_state *info,
 	/* If the quotient is zero refuse the change */
 	if (!quot && old_termios) {
 		/* FIXME: Will need updating for new tty in the end */
+<<<<<<< HEAD
 		tty->termios->c_cflag &= ~CBAUD;
 		tty->termios->c_cflag |= (old_termios->c_cflag & CBAUD);
 		baud = tty_get_baud_rate(tty);
@@ -715,6 +999,16 @@ static void change_speed(struct tty_struct *tty, struct serial_state *info,
 		if (baud == 38400 &&
 		    (port->flags & ASYNC_SPD_MASK) == ASYNC_SPD_CUST)
 			quot = info->custom_divisor;
+=======
+		info->tty->termios->c_cflag &= ~CBAUD;
+		info->tty->termios->c_cflag |= (old_termios->c_cflag & CBAUD);
+		baud = tty_get_baud_rate(info->tty);
+		if (!baud)
+			baud = 9600;
+		if (baud == 38400 &&
+		    ((info->flags & ASYNC_SPD_MASK) == ASYNC_SPD_CUST))
+			quot = info->state->custom_divisor;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		else {
 			if (baud == 134)
 				/* Special case since 134 is really 134.5 */
@@ -732,6 +1026,7 @@ static void change_speed(struct tty_struct *tty, struct serial_state *info,
 
 	/* CTS flow control flag and modem status interrupts */
 	info->IER &= ~UART_IER_MSI;
+<<<<<<< HEAD
 	if (port->flags & ASYNC_HARDPPS_CD)
 		info->IER |= UART_IER_MSI;
 	if (cflag & CRTSCTS) {
@@ -743,6 +1038,19 @@ static void change_speed(struct tty_struct *tty, struct serial_state *info,
 		port->flags &= ~ASYNC_CHECK_CD;
 	else {
 		port->flags |= ASYNC_CHECK_CD;
+=======
+	if (info->flags & ASYNC_HARDPPS_CD)
+		info->IER |= UART_IER_MSI;
+	if (cflag & CRTSCTS) {
+		info->flags |= ASYNC_CTS_FLOW;
+		info->IER |= UART_IER_MSI;
+	} else
+		info->flags &= ~ASYNC_CTS_FLOW;
+	if (cflag & CLOCAL)
+		info->flags &= ~ASYNC_CHECK_CD;
+	else {
+		info->flags |= ASYNC_CHECK_CD;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		info->IER |= UART_IER_MSI;
 	}
 	/* TBD:
@@ -754,24 +1062,40 @@ static void change_speed(struct tty_struct *tty, struct serial_state *info,
 	 */
 
 	info->read_status_mask = UART_LSR_OE | UART_LSR_DR;
+<<<<<<< HEAD
 	if (I_INPCK(tty))
 		info->read_status_mask |= UART_LSR_FE | UART_LSR_PE;
 	if (I_BRKINT(tty) || I_PARMRK(tty))
+=======
+	if (I_INPCK(info->tty))
+		info->read_status_mask |= UART_LSR_FE | UART_LSR_PE;
+	if (I_BRKINT(info->tty) || I_PARMRK(info->tty))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		info->read_status_mask |= UART_LSR_BI;
 
 	/*
 	 * Characters to ignore
 	 */
 	info->ignore_status_mask = 0;
+<<<<<<< HEAD
 	if (I_IGNPAR(tty))
 		info->ignore_status_mask |= UART_LSR_PE | UART_LSR_FE;
 	if (I_IGNBRK(tty)) {
+=======
+	if (I_IGNPAR(info->tty))
+		info->ignore_status_mask |= UART_LSR_PE | UART_LSR_FE;
+	if (I_IGNBRK(info->tty)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		info->ignore_status_mask |= UART_LSR_BI;
 		/*
 		 * If we're ignore parity and break indicators, ignore 
 		 * overruns too.  (For real raw support).
 		 */
+<<<<<<< HEAD
 		if (I_IGNPAR(tty))
+=======
+		if (I_IGNPAR(info->tty))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			info->ignore_status_mask |= UART_LSR_OE;
 	}
 	/*
@@ -796,12 +1120,20 @@ static void change_speed(struct tty_struct *tty, struct serial_state *info,
 	mb();
 	}
 
+<<<<<<< HEAD
+=======
+	info->LCR = cval;				/* Save LCR */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_irq_restore(flags);
 }
 
 static int rs_put_char(struct tty_struct *tty, unsigned char ch)
 {
+<<<<<<< HEAD
 	struct serial_state *info;
+=======
+	struct async_struct *info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	info = tty->driver_data;
@@ -828,7 +1160,11 @@ static int rs_put_char(struct tty_struct *tty, unsigned char ch)
 
 static void rs_flush_chars(struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
+=======
+	struct async_struct *info = tty->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	if (serial_paranoia_check(info, tty->name, "rs_flush_chars"))
@@ -853,9 +1189,17 @@ static void rs_flush_chars(struct tty_struct *tty)
 static int rs_write(struct tty_struct * tty, const unsigned char *buf, int count)
 {
 	int	c, ret = 0;
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
 	unsigned long flags;
 
+=======
+	struct async_struct *info;
+	unsigned long flags;
+
+	info = tty->driver_data;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (serial_paranoia_check(info, tty->name, "rs_write"))
 		return 0;
 
@@ -899,7 +1243,11 @@ static int rs_write(struct tty_struct * tty, const unsigned char *buf, int count
 
 static int rs_write_room(struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
+=======
+	struct async_struct *info = tty->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (serial_paranoia_check(info, tty->name, "rs_write_room"))
 		return 0;
@@ -908,7 +1256,11 @@ static int rs_write_room(struct tty_struct *tty)
 
 static int rs_chars_in_buffer(struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
+=======
+	struct async_struct *info = tty->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (serial_paranoia_check(info, tty->name, "rs_chars_in_buffer"))
 		return 0;
@@ -917,7 +1269,11 @@ static int rs_chars_in_buffer(struct tty_struct *tty)
 
 static void rs_flush_buffer(struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
+=======
+	struct async_struct *info = tty->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	if (serial_paranoia_check(info, tty->name, "rs_flush_buffer"))
@@ -934,7 +1290,11 @@ static void rs_flush_buffer(struct tty_struct *tty)
  */
 static void rs_send_xchar(struct tty_struct *tty, char ch)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
+=======
+	struct async_struct *info = tty->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         unsigned long flags;
 
 	if (serial_paranoia_check(info, tty->name, "rs_send_char"))
@@ -969,7 +1329,11 @@ static void rs_send_xchar(struct tty_struct *tty, char ch)
  */
 static void rs_throttle(struct tty_struct * tty)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
+=======
+	struct async_struct *info = tty->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 #ifdef SERIAL_DEBUG_THROTTLE
 	char	buf[64];
@@ -994,7 +1358,11 @@ static void rs_throttle(struct tty_struct * tty)
 
 static void rs_unthrottle(struct tty_struct * tty)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
+=======
+	struct async_struct *info = tty->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 #ifdef SERIAL_DEBUG_THROTTLE
 	char	buf[64];
@@ -1025,15 +1393,24 @@ static void rs_unthrottle(struct tty_struct * tty)
  * ------------------------------------------------------------
  */
 
+<<<<<<< HEAD
 static int get_serial_info(struct tty_struct *tty, struct serial_state *state,
 			   struct serial_struct __user * retinfo)
 {
 	struct serial_struct tmp;
+=======
+static int get_serial_info(struct async_struct * info,
+			   struct serial_struct __user * retinfo)
+{
+	struct serial_struct tmp;
+	struct serial_state *state = info->state;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    
 	if (!retinfo)
 		return -EFAULT;
 	memset(&tmp, 0, sizeof(tmp));
 	tty_lock();
+<<<<<<< HEAD
 	tmp.line = tty->index;
 	tmp.port = state->port;
 	tmp.flags = state->tport.flags;
@@ -1041,6 +1418,17 @@ static int get_serial_info(struct tty_struct *tty, struct serial_state *state,
 	tmp.baud_base = state->baud_base;
 	tmp.close_delay = state->tport.close_delay;
 	tmp.closing_wait = state->tport.closing_wait;
+=======
+	tmp.type = state->type;
+	tmp.line = state->line;
+	tmp.port = state->port;
+	tmp.irq = state->irq;
+	tmp.flags = state->flags;
+	tmp.xmit_fifo_size = state->xmit_fifo_size;
+	tmp.baud_base = state->baud_base;
+	tmp.close_delay = state->close_delay;
+	tmp.closing_wait = state->closing_wait;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tmp.custom_divisor = state->custom_divisor;
 	tty_unlock();
 	if (copy_to_user(retinfo,&tmp,sizeof(*retinfo)))
@@ -1048,28 +1436,49 @@ static int get_serial_info(struct tty_struct *tty, struct serial_state *state,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int set_serial_info(struct tty_struct *tty, struct serial_state *state,
 			   struct serial_struct __user * new_info)
 {
 	struct tty_port *port = &state->tport;
 	struct serial_struct new_serial;
 	bool change_spd;
+=======
+static int set_serial_info(struct async_struct * info,
+			   struct serial_struct __user * new_info)
+{
+	struct serial_struct new_serial;
+ 	struct serial_state old_state, *state;
+	unsigned int		change_irq,change_port;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int 			retval = 0;
 
 	if (copy_from_user(&new_serial,new_info,sizeof(new_serial)))
 		return -EFAULT;
 
 	tty_lock();
+<<<<<<< HEAD
 	change_spd = ((new_serial.flags ^ port->flags) & ASYNC_SPD_MASK) ||
 		new_serial.custom_divisor != state->custom_divisor;
 	if (new_serial.irq || new_serial.port != state->port ||
 			new_serial.xmit_fifo_size != state->xmit_fifo_size) {
 		tty_unlock();
 		return -EINVAL;
+=======
+	state = info->state;
+	old_state = *state;
+  
+	change_irq = new_serial.irq != state->irq;
+	change_port = (new_serial.port != state->port);
+	if(change_irq || change_port || (new_serial.xmit_fifo_size != state->xmit_fifo_size)) {
+	  tty_unlock();
+	  return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
   
 	if (!serial_isroot()) {
 		if ((new_serial.baud_base != state->baud_base) ||
+<<<<<<< HEAD
 		    (new_serial.close_delay != port->close_delay) ||
 		    (new_serial.xmit_fifo_size != state->xmit_fifo_size) ||
 		    ((new_serial.flags & ~ASYNC_USR_MASK) !=
@@ -1078,6 +1487,18 @@ static int set_serial_info(struct tty_struct *tty, struct serial_state *state,
 			return -EPERM;
 		}
 		port->flags = ((port->flags & ~ASYNC_USR_MASK) |
+=======
+		    (new_serial.close_delay != state->close_delay) ||
+		    (new_serial.xmit_fifo_size != state->xmit_fifo_size) ||
+		    ((new_serial.flags & ~ASYNC_USR_MASK) !=
+		     (state->flags & ~ASYNC_USR_MASK))) {
+			tty_unlock();
+			return -EPERM;
+		}
+		state->flags = ((state->flags & ~ASYNC_USR_MASK) |
+			       (new_serial.flags & ASYNC_USR_MASK));
+		info->flags = ((info->flags & ~ASYNC_USR_MASK) |
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       (new_serial.flags & ASYNC_USR_MASK));
 		state->custom_divisor = new_serial.custom_divisor;
 		goto check_and_exit;
@@ -1094,6 +1515,7 @@ static int set_serial_info(struct tty_struct *tty, struct serial_state *state,
 	 */
 
 	state->baud_base = new_serial.baud_base;
+<<<<<<< HEAD
 	port->flags = ((port->flags & ~ASYNC_FLAGS) |
 			(new_serial.flags & ASYNC_FLAGS));
 	state->custom_divisor = new_serial.custom_divisor;
@@ -1116,6 +1538,34 @@ check_and_exit:
 		}
 	} else
 		retval = startup(tty, state);
+=======
+	state->flags = ((state->flags & ~ASYNC_FLAGS) |
+			(new_serial.flags & ASYNC_FLAGS));
+	info->flags = ((state->flags & ~ASYNC_INTERNAL_FLAGS) |
+		       (info->flags & ASYNC_INTERNAL_FLAGS));
+	state->custom_divisor = new_serial.custom_divisor;
+	state->close_delay = new_serial.close_delay * HZ/100;
+	state->closing_wait = new_serial.closing_wait * HZ/100;
+	info->tty->low_latency = (info->flags & ASYNC_LOW_LATENCY) ? 1 : 0;
+
+check_and_exit:
+	if (info->flags & ASYNC_INITIALIZED) {
+		if (((old_state.flags & ASYNC_SPD_MASK) !=
+		     (state->flags & ASYNC_SPD_MASK)) ||
+		    (old_state.custom_divisor != state->custom_divisor)) {
+			if ((state->flags & ASYNC_SPD_MASK) == ASYNC_SPD_HI)
+				info->tty->alt_speed = 57600;
+			if ((state->flags & ASYNC_SPD_MASK) == ASYNC_SPD_VHI)
+				info->tty->alt_speed = 115200;
+			if ((state->flags & ASYNC_SPD_MASK) == ASYNC_SPD_SHI)
+				info->tty->alt_speed = 230400;
+			if ((state->flags & ASYNC_SPD_MASK) == ASYNC_SPD_WARP)
+				info->tty->alt_speed = 460800;
+			change_speed(info, NULL);
+		}
+	} else
+		retval = startup(info);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tty_unlock();
 	return retval;
 }
@@ -1131,7 +1581,11 @@ check_and_exit:
  * 	    transmit holding register is empty.  This functionality
  * 	    allows an RS485 driver to be written in user space. 
  */
+<<<<<<< HEAD
 static int get_lsr_info(struct serial_state *info, unsigned int __user *value)
+=======
+static int get_lsr_info(struct async_struct * info, unsigned int __user *value)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned char status;
 	unsigned int result;
@@ -1150,7 +1604,11 @@ static int get_lsr_info(struct serial_state *info, unsigned int __user *value)
 
 static int rs_tiocmget(struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
+=======
+	struct async_struct * info = tty->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char control, status;
 	unsigned long flags;
 
@@ -1173,7 +1631,11 @@ static int rs_tiocmget(struct tty_struct *tty)
 static int rs_tiocmset(struct tty_struct *tty, unsigned int set,
 						unsigned int clear)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
+=======
+	struct async_struct * info = tty->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	if (serial_paranoia_check(info, tty->name, "rs_ioctl"))
@@ -1200,7 +1662,11 @@ static int rs_tiocmset(struct tty_struct *tty, unsigned int set,
  */
 static int rs_break(struct tty_struct *tty, int break_state)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
+=======
+	struct async_struct * info = tty->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	if (serial_paranoia_check(info, tty->name, "rs_break"))
@@ -1225,12 +1691,20 @@ static int rs_break(struct tty_struct *tty, int break_state)
 static int rs_get_icount(struct tty_struct *tty,
 				struct serial_icounter_struct *icount)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
+=======
+	struct async_struct *info = tty->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct async_icount cnow;
 	unsigned long flags;
 
 	local_irq_save(flags);
+<<<<<<< HEAD
 	cnow = info->icount;
+=======
+	cnow = info->state->icount;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_irq_restore(flags);
 	icount->cts = cnow.cts;
 	icount->dsr = cnow.dsr;
@@ -1250,7 +1724,11 @@ static int rs_get_icount(struct tty_struct *tty,
 static int rs_ioctl(struct tty_struct *tty,
 		    unsigned int cmd, unsigned long arg)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
+=======
+	struct async_struct * info = tty->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct async_icount cprev, cnow;	/* kernel counter temps */
 	void __user *argp = (void __user *)arg;
 	unsigned long flags;
@@ -1267,9 +1745,15 @@ static int rs_ioctl(struct tty_struct *tty,
 
 	switch (cmd) {
 		case TIOCGSERIAL:
+<<<<<<< HEAD
 			return get_serial_info(tty, info, argp);
 		case TIOCSSERIAL:
 			return set_serial_info(tty, info, argp);
+=======
+			return get_serial_info(info, argp);
+		case TIOCSSERIAL:
+			return set_serial_info(info, argp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case TIOCSERCONFIG:
 			return 0;
 
@@ -1278,7 +1762,11 @@ static int rs_ioctl(struct tty_struct *tty,
 
 		case TIOCSERGSTRUCT:
 			if (copy_to_user(argp,
+<<<<<<< HEAD
 					 info, sizeof(struct serial_state)))
+=======
+					 info, sizeof(struct async_struct)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return -EFAULT;
 			return 0;
 
@@ -1291,15 +1779,26 @@ static int rs_ioctl(struct tty_struct *tty,
 		case TIOCMIWAIT:
 			local_irq_save(flags);
 			/* note the counters on entry */
+<<<<<<< HEAD
 			cprev = info->icount;
 			local_irq_restore(flags);
 			while (1) {
 				interruptible_sleep_on(&info->tport.delta_msr_wait);
+=======
+			cprev = info->state->icount;
+			local_irq_restore(flags);
+			while (1) {
+				interruptible_sleep_on(&info->delta_msr_wait);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/* see if a signal did it */
 				if (signal_pending(current))
 					return -ERESTARTSYS;
 				local_irq_save(flags);
+<<<<<<< HEAD
 				cnow = info->icount; /* atomic copy */
+=======
+				cnow = info->state->icount; /* atomic copy */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				local_irq_restore(flags);
 				if (cnow.rng == cprev.rng && cnow.dsr == cprev.dsr && 
 				    cnow.dcd == cprev.dcd && cnow.cts == cprev.cts)
@@ -1328,11 +1827,19 @@ static int rs_ioctl(struct tty_struct *tty,
 
 static void rs_set_termios(struct tty_struct *tty, struct ktermios *old_termios)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
 	unsigned long flags;
 	unsigned int cflag = tty->termios->c_cflag;
 
 	change_speed(tty, info, old_termios);
+=======
+	struct async_struct *info = tty->driver_data;
+	unsigned long flags;
+	unsigned int cflag = tty->termios->c_cflag;
+
+	change_speed(info, old_termios);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Handle transition to B0 status */
 	if ((old_termios->c_cflag & CBAUD) &&
@@ -1388,6 +1895,7 @@ static void rs_set_termios(struct tty_struct *tty, struct ktermios *old_termios)
  */
 static void rs_close(struct tty_struct *tty, struct file * filp)
 {
+<<<<<<< HEAD
 	struct serial_state *state = tty->driver_data;
 	struct tty_port *port = &state->tport;
 
@@ -1397,14 +1905,71 @@ static void rs_close(struct tty_struct *tty, struct file * filp)
 	if (tty_port_close_start(port, tty, filp) == 0)
 		return;
 
+=======
+	struct async_struct * info = tty->driver_data;
+	struct serial_state *state;
+	unsigned long flags;
+
+	if (!info || serial_paranoia_check(info, tty->name, "rs_close"))
+		return;
+
+	state = info->state;
+
+	local_irq_save(flags);
+
+	if (tty_hung_up_p(filp)) {
+		DBG_CNT("before DEC-hung");
+		local_irq_restore(flags);
+		return;
+	}
+
+#ifdef SERIAL_DEBUG_OPEN
+	printk("rs_close ttys%d, count = %d\n", info->line, state->count);
+#endif
+	if ((tty->count == 1) && (state->count != 1)) {
+		/*
+		 * Uh, oh.  tty->count is 1, which means that the tty
+		 * structure will be freed.  state->count should always
+		 * be one in these conditions.  If it's greater than
+		 * one, we've got real problems, since it means the
+		 * serial port won't be shutdown.
+		 */
+		printk("rs_close: bad serial port count; tty->count is 1, "
+		       "state->count is %d\n", state->count);
+		state->count = 1;
+	}
+	if (--state->count < 0) {
+		printk("rs_close: bad serial port count for ttys%d: %d\n",
+		       info->line, state->count);
+		state->count = 0;
+	}
+	if (state->count) {
+		DBG_CNT("before DEC-2");
+		local_irq_restore(flags);
+		return;
+	}
+	info->flags |= ASYNC_CLOSING;
+	/*
+	 * Now we wait for the transmit buffer to clear; and we notify 
+	 * the line discipline to only process XON/XOFF characters.
+	 */
+	tty->closing = 1;
+	if (info->closing_wait != ASYNC_CLOSING_WAIT_NONE)
+		tty_wait_until_sent(tty, info->closing_wait);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * At this point we stop accepting input.  To do this, we
 	 * disable the receive line status interrupts, and tell the
 	 * interrupt driver to stop checking the data ready bit in the
 	 * line status register.
 	 */
+<<<<<<< HEAD
 	state->read_status_mask &= ~UART_LSR_DR;
 	if (port->flags & ASYNC_INITIALIZED) {
+=======
+	info->read_status_mask &= ~UART_LSR_DR;
+	if (info->flags & ASYNC_INITIALIZED) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	        /* disable receive interrupts */
 	        custom.intena = IF_RBF;
 		mb();
@@ -1417,6 +1982,7 @@ static void rs_close(struct tty_struct *tty, struct file * filp)
 		 * has completely drained; this is especially
 		 * important if there is a transmit FIFO!
 		 */
+<<<<<<< HEAD
 		rs_wait_until_sent(tty, state->timeout);
 	}
 	shutdown(tty, state);
@@ -1426,6 +1992,26 @@ static void rs_close(struct tty_struct *tty, struct file * filp)
 	port->tty = NULL;
 
 	tty_port_close_end(port, tty);
+=======
+		rs_wait_until_sent(tty, info->timeout);
+	}
+	shutdown(info);
+	rs_flush_buffer(tty);
+		
+	tty_ldisc_flush(tty);
+	tty->closing = 0;
+	info->event = 0;
+	info->tty = NULL;
+	if (info->blocked_open) {
+		if (info->close_delay) {
+			msleep_interruptible(jiffies_to_msecs(info->close_delay));
+		}
+		wake_up_interruptible(&info->open_wait);
+	}
+	info->flags &= ~(ASYNC_NORMAL_ACTIVE|ASYNC_CLOSING);
+	wake_up_interruptible(&info->close_wait);
+	local_irq_restore(flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1433,8 +2019,14 @@ static void rs_close(struct tty_struct *tty, struct file * filp)
  */
 static void rs_wait_until_sent(struct tty_struct *tty, int timeout)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
 	unsigned long orig_jiffies, char_time;
+=======
+	struct async_struct * info = tty->driver_data;
+	unsigned long orig_jiffies, char_time;
+	int tty_was_locked = tty_locked();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int lsr;
 
 	if (serial_paranoia_check(info, tty->name, "rs_wait_until_sent"))
@@ -1446,6 +2038,15 @@ static void rs_wait_until_sent(struct tty_struct *tty, int timeout)
 	orig_jiffies = jiffies;
 
 	/*
+<<<<<<< HEAD
+=======
+	 * tty_wait_until_sent is called from lots of places,
+	 * with or without the BTM.
+	 */
+	if (!tty_was_locked)
+		tty_lock();
+	/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Set the check interval to be 1/5 of the estimated time to
 	 * send a single character, and make it at least 1.  The check
 	 * interval should also be less than the timeout.
@@ -1485,7 +2086,12 @@ static void rs_wait_until_sent(struct tty_struct *tty, int timeout)
 			break;
 	}
 	__set_current_state(TASK_RUNNING);
+<<<<<<< HEAD
 
+=======
+	if (!tty_was_locked)
+		tty_unlock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef SERIAL_DEBUG_RS_WAIT_UNTIL_SENT
 	printk("lsr = %d (jiff=%lu)...done\n", lsr, jiffies);
 #endif
@@ -1496,17 +2102,186 @@ static void rs_wait_until_sent(struct tty_struct *tty, int timeout)
  */
 static void rs_hangup(struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	struct serial_state *info = tty->driver_data;
+=======
+	struct async_struct * info = tty->driver_data;
+	struct serial_state *state = info->state;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (serial_paranoia_check(info, tty->name, "rs_hangup"))
 		return;
 
+<<<<<<< HEAD
 	rs_flush_buffer(tty);
 	shutdown(tty, info);
 	info->tport.count = 0;
 	info->tport.flags &= ~ASYNC_NORMAL_ACTIVE;
 	info->tport.tty = NULL;
 	wake_up_interruptible(&info->tport.open_wait);
+=======
+	state = info->state;
+
+	rs_flush_buffer(tty);
+	shutdown(info);
+	info->event = 0;
+	state->count = 0;
+	info->flags &= ~ASYNC_NORMAL_ACTIVE;
+	info->tty = NULL;
+	wake_up_interruptible(&info->open_wait);
+}
+
+/*
+ * ------------------------------------------------------------
+ * rs_open() and friends
+ * ------------------------------------------------------------
+ */
+static int block_til_ready(struct tty_struct *tty, struct file * filp,
+			   struct async_struct *info)
+{
+#ifdef DECLARE_WAITQUEUE
+	DECLARE_WAITQUEUE(wait, current);
+#else
+	struct wait_queue wait = { current, NULL };
+#endif
+	struct serial_state *state = info->state;
+	int		retval;
+	int		do_clocal = 0, extra_count = 0;
+	unsigned long	flags;
+
+	/*
+	 * If the device is in the middle of being closed, then block
+	 * until it's done, and then try again.
+	 */
+	if (tty_hung_up_p(filp) ||
+	    (info->flags & ASYNC_CLOSING)) {
+		if (info->flags & ASYNC_CLOSING)
+			interruptible_sleep_on(&info->close_wait);
+#ifdef SERIAL_DO_RESTART
+		return ((info->flags & ASYNC_HUP_NOTIFY) ?
+			-EAGAIN : -ERESTARTSYS);
+#else
+		return -EAGAIN;
+#endif
+	}
+
+	/*
+	 * If non-blocking mode is set, or the port is not enabled,
+	 * then make the check up front and then exit.
+	 */
+	if ((filp->f_flags & O_NONBLOCK) ||
+	    (tty->flags & (1 << TTY_IO_ERROR))) {
+		info->flags |= ASYNC_NORMAL_ACTIVE;
+		return 0;
+	}
+
+	if (tty->termios->c_cflag & CLOCAL)
+		do_clocal = 1;
+
+	/*
+	 * Block waiting for the carrier detect and the line to become
+	 * free (i.e., not in use by the callout).  While we are in
+	 * this loop, state->count is dropped by one, so that
+	 * rs_close() knows when to free things.  We restore it upon
+	 * exit, either normal or abnormal.
+	 */
+	retval = 0;
+	add_wait_queue(&info->open_wait, &wait);
+#ifdef SERIAL_DEBUG_OPEN
+	printk("block_til_ready before block: ttys%d, count = %d\n",
+	       state->line, state->count);
+#endif
+	local_irq_save(flags);
+	if (!tty_hung_up_p(filp)) {
+		extra_count = 1;
+		state->count--;
+	}
+	local_irq_restore(flags);
+	info->blocked_open++;
+	while (1) {
+		local_irq_save(flags);
+		if (tty->termios->c_cflag & CBAUD)
+		        rtsdtr_ctrl(SER_DTR|SER_RTS);
+		local_irq_restore(flags);
+		set_current_state(TASK_INTERRUPTIBLE);
+		if (tty_hung_up_p(filp) ||
+		    !(info->flags & ASYNC_INITIALIZED)) {
+#ifdef SERIAL_DO_RESTART
+			if (info->flags & ASYNC_HUP_NOTIFY)
+				retval = -EAGAIN;
+			else
+				retval = -ERESTARTSYS;
+#else
+			retval = -EAGAIN;
+#endif
+			break;
+		}
+		if (!(info->flags & ASYNC_CLOSING) &&
+		    (do_clocal || (!(ciab.pra & SER_DCD)) ))
+			break;
+		if (signal_pending(current)) {
+			retval = -ERESTARTSYS;
+			break;
+		}
+#ifdef SERIAL_DEBUG_OPEN
+		printk("block_til_ready blocking: ttys%d, count = %d\n",
+		       info->line, state->count);
+#endif
+		tty_unlock();
+		schedule();
+		tty_lock();
+	}
+	__set_current_state(TASK_RUNNING);
+	remove_wait_queue(&info->open_wait, &wait);
+	if (extra_count)
+		state->count++;
+	info->blocked_open--;
+#ifdef SERIAL_DEBUG_OPEN
+	printk("block_til_ready after blocking: ttys%d, count = %d\n",
+	       info->line, state->count);
+#endif
+	if (retval)
+		return retval;
+	info->flags |= ASYNC_NORMAL_ACTIVE;
+	return 0;
+}
+
+static int get_async_struct(int line, struct async_struct **ret_info)
+{
+	struct async_struct *info;
+	struct serial_state *sstate;
+
+	sstate = rs_table + line;
+	sstate->count++;
+	if (sstate->info) {
+		*ret_info = sstate->info;
+		return 0;
+	}
+	info = kzalloc(sizeof(struct async_struct), GFP_KERNEL);
+	if (!info) {
+		sstate->count--;
+		return -ENOMEM;
+	}
+#ifdef DECLARE_WAITQUEUE
+	init_waitqueue_head(&info->open_wait);
+	init_waitqueue_head(&info->close_wait);
+	init_waitqueue_head(&info->delta_msr_wait);
+#endif
+	info->magic = SERIAL_MAGIC;
+	info->port = sstate->port;
+	info->flags = sstate->flags;
+	info->xmit_fifo_size = sstate->xmit_fifo_size;
+	info->line = line;
+	tasklet_init(&info->tlet, do_softint, (unsigned long)info);
+	info->state = sstate;
+	if (sstate->info) {
+		kfree(info);
+		*ret_info = sstate->info;
+		return 0;
+	}
+	*ret_info = sstate->info = info;
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1517,6 +2292,7 @@ static void rs_hangup(struct tty_struct *tty)
  */
 static int rs_open(struct tty_struct *tty, struct file * filp)
 {
+<<<<<<< HEAD
 	struct serial_state *info = rs_table + tty->index;
 	struct tty_port *port = &info->tport;
 	int retval;
@@ -1531,17 +2307,76 @@ static int rs_open(struct tty_struct *tty, struct file * filp)
 	tty->low_latency = (port->flags & ASYNC_LOW_LATENCY) ? 1 : 0;
 
 	retval = startup(tty, info);
+=======
+	struct async_struct	*info;
+	int 			retval, line;
+
+	line = tty->index;
+	if ((line < 0) || (line >= NR_PORTS)) {
+		return -ENODEV;
+	}
+	retval = get_async_struct(line, &info);
+	if (retval) {
+		return retval;
+	}
+	tty->driver_data = info;
+	info->tty = tty;
+	if (serial_paranoia_check(info, tty->name, "rs_open"))
+		return -ENODEV;
+
+#ifdef SERIAL_DEBUG_OPEN
+	printk("rs_open %s, count = %d\n", tty->name, info->state->count);
+#endif
+	info->tty->low_latency = (info->flags & ASYNC_LOW_LATENCY) ? 1 : 0;
+
+	/*
+	 * If the port is the middle of closing, bail out now
+	 */
+	if (tty_hung_up_p(filp) ||
+	    (info->flags & ASYNC_CLOSING)) {
+		if (info->flags & ASYNC_CLOSING)
+			interruptible_sleep_on(&info->close_wait);
+#ifdef SERIAL_DO_RESTART
+		return ((info->flags & ASYNC_HUP_NOTIFY) ?
+			-EAGAIN : -ERESTARTSYS);
+#else
+		return -EAGAIN;
+#endif
+	}
+
+	/*
+	 * Start up serial port
+	 */
+	retval = startup(info);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval) {
 		return retval;
 	}
 
+<<<<<<< HEAD
 	return tty_port_block_til_ready(port, tty, filp);
+=======
+	retval = block_til_ready(tty, filp, info);
+	if (retval) {
+#ifdef SERIAL_DEBUG_OPEN
+		printk("rs_open returning after block_til_ready with %d\n",
+		       retval);
+#endif
+		return retval;
+	}
+
+#ifdef SERIAL_DEBUG_OPEN
+	printk("rs_open %s successful...", tty->name);
+#endif
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * /proc fs routines....
  */
 
+<<<<<<< HEAD
 static inline void line_info(struct seq_file *m, int line,
 		struct serial_state *state)
 {
@@ -1553,6 +2388,30 @@ static inline void line_info(struct seq_file *m, int line,
 	local_irq_save(flags);
 	status = ciab.pra;
 	control = (state->tport.flags & ASYNC_INITIALIZED) ? state->MCR : status;
+=======
+static inline void line_info(struct seq_file *m, struct serial_state *state)
+{
+	struct async_struct *info = state->info, scr_info;
+	char	stat_buf[30], control, status;
+	unsigned long flags;
+
+	seq_printf(m, "%d: uart:amiga_builtin",state->line);
+
+	/*
+	 * Figure out the current RS-232 lines
+	 */
+	if (!info) {
+		info = &scr_info;	/* This is just for serial_{in,out} */
+
+		info->magic = SERIAL_MAGIC;
+		info->flags = state->flags;
+		info->quot = 0;
+		info->tty = NULL;
+	}
+	local_irq_save(flags);
+	status = ciab.pra;
+	control = info ? info->MCR : status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_irq_restore(flags);
 
 	stat_buf[0] = 0;
@@ -1568,8 +2427,14 @@ static inline void line_info(struct seq_file *m, int line,
 	if(!(status & SER_DCD))
 		strcat(stat_buf, "|CD");
 
+<<<<<<< HEAD
 	if (state->quot)
 		seq_printf(m, " baud:%d", state->baud_base / state->quot);
+=======
+	if (info->quot) {
+		seq_printf(m, " baud:%d", state->baud_base / info->quot);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	seq_printf(m, " tx:%d rx:%d", state->icount.tx, state->icount.rx);
 
@@ -1594,7 +2459,11 @@ static inline void line_info(struct seq_file *m, int line,
 static int rs_proc_show(struct seq_file *m, void *v)
 {
 	seq_printf(m, "serinfo:1.0 driver:%s\n", serial_version);
+<<<<<<< HEAD
 	line_info(m, 0, &rs_table[0]);
+=======
+	line_info(m, &rs_table[0]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1655,6 +2524,7 @@ static const struct tty_operations serial_ops = {
 	.proc_fops = &rs_proc_fops,
 };
 
+<<<<<<< HEAD
 static int amiga_carrier_raised(struct tty_port *port)
 {
 	return !(ciab.pra & SER_DCD);
@@ -1681,6 +2551,8 @@ static const struct tty_port_operations amiga_port_ops = {
 	.dtr_rts = amiga_dtr_rts,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The serial driver boot-time initialization code!
  */
@@ -1690,14 +2562,27 @@ static int __init amiga_serial_probe(struct platform_device *pdev)
 	struct serial_state * state;
 	int error;
 
+<<<<<<< HEAD
 	serial_driver = alloc_tty_driver(NR_PORTS);
 	if (!serial_driver)
 		return -ENOMEM;
 
+=======
+	serial_driver = alloc_tty_driver(1);
+	if (!serial_driver)
+		return -ENOMEM;
+
+	IRQ_ports = NULL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	show_serial_version();
 
 	/* Initialize the tty_driver structure */
 
+<<<<<<< HEAD
+=======
+	serial_driver->owner = THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	serial_driver->driver_name = "amiserial";
 	serial_driver->name = "ttyS";
 	serial_driver->major = TTY_MAJOR;
@@ -1715,17 +2600,32 @@ static int __init amiga_serial_probe(struct platform_device *pdev)
 		goto fail_put_tty_driver;
 
 	state = rs_table;
+<<<<<<< HEAD
 	state->port = (int)&custom.serdatr; /* Just to give it a value */
 	state->custom_divisor = 0;
+=======
+	state->magic = SSTATE_MAGIC;
+	state->port = (int)&custom.serdatr; /* Just to give it a value */
+	state->line = 0;
+	state->custom_divisor = 0;
+	state->close_delay = 5*HZ/10;
+	state->closing_wait = 30*HZ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	state->icount.cts = state->icount.dsr = 
 	  state->icount.rng = state->icount.dcd = 0;
 	state->icount.rx = state->icount.tx = 0;
 	state->icount.frame = state->icount.parity = 0;
 	state->icount.overrun = state->icount.brk = 0;
+<<<<<<< HEAD
 	tty_port_init(&state->tport);
 	state->tport.ops = &amiga_port_ops;
 
 	printk(KERN_INFO "ttyS0 is the amiga builtin serial port\n");
+=======
+
+	printk(KERN_INFO "ttyS%d is the amiga builtin serial port\n",
+		       state->line);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Hardware set up */
 
@@ -1737,7 +2637,11 @@ static int __init amiga_serial_probe(struct platform_device *pdev)
 	if (error)
 		goto fail_unregister;
 
+<<<<<<< HEAD
 	error = request_irq(IRQ_AMIGA_RBF, ser_rx_int, 0,
+=======
+	error = request_irq(IRQ_AMIGA_RBF, ser_rx_int, IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    "serial RX", state);
 	if (error)
 		goto fail_free_irq;
@@ -1778,15 +2682,30 @@ static int __exit amiga_serial_remove(struct platform_device *pdev)
 {
 	int error;
 	struct serial_state *state = platform_get_drvdata(pdev);
+<<<<<<< HEAD
 
 	/* printk("Unloading %s: version %s\n", serial_name, serial_version); */
+=======
+	struct async_struct *info = state->info;
+
+	/* printk("Unloading %s: version %s\n", serial_name, serial_version); */
+	tasklet_kill(&info->tlet);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((error = tty_unregister_driver(serial_driver)))
 		printk("SERIAL: failed to unregister serial driver (%d)\n",
 		       error);
 	put_tty_driver(serial_driver);
 
+<<<<<<< HEAD
 	free_irq(IRQ_AMIGA_TBE, state);
 	free_irq(IRQ_AMIGA_RBF, state);
+=======
+	rs_table[0].info = NULL;
+	kfree(info);
+
+	free_irq(IRQ_AMIGA_TBE, rs_table);
+	free_irq(IRQ_AMIGA_RBF, rs_table);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	platform_set_drvdata(pdev, NULL);
 

@@ -31,6 +31,7 @@ char kdb_prompt_str[CMD_BUFLEN];
 
 int kdb_trap_printk;
 
+<<<<<<< HEAD
 static int kgdb_transition_check(char *buffer)
 {
 	if (buffer[0] != '+' && buffer[0] != '$') {
@@ -46,6 +47,17 @@ static int kgdb_transition_check(char *buffer)
 		}
 	}
 	return 0;
+=======
+static void kgdb_transition_check(char *buffer)
+{
+	int slen = strlen(buffer);
+	if (strncmp(buffer, "$?#3f", slen) != 0 &&
+	    strncmp(buffer, "$qSupported#37", slen) != 0 &&
+	    strncmp(buffer, "+$qSupported#37", slen) != 0) {
+		KDB_STATE_SET(KGDB_TRANS);
+		kdb_printf("%s", buffer);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int kdb_read_get_key(char *buffer, size_t bufsize)
@@ -257,10 +269,13 @@ poll_again:
 	case 13: /* enter */
 		*lastchar++ = '\n';
 		*lastchar++ = '\0';
+<<<<<<< HEAD
 		if (!KDB_STATE(KGDB_TRANS)) {
 			KDB_STATE_SET(KGDB_TRANS);
 			kdb_printf("%s", buffer);
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kdb_printf("\n");
 		return buffer;
 	case 4: /* Del */
@@ -392,26 +407,43 @@ poll_again:
 				 * printed characters if we think that
 				 * kgdb is connecting, until the check
 				 * fails */
+<<<<<<< HEAD
 				if (!KDB_STATE(KGDB_TRANS)) {
 					if (kgdb_transition_check(buffer))
 						return buffer;
 				} else {
 					kdb_printf("%c", key);
 				}
+=======
+				if (!KDB_STATE(KGDB_TRANS))
+					kgdb_transition_check(buffer);
+				else
+					kdb_printf("%c", key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			/* Special escape to kgdb */
 			if (lastchar - buffer >= 5 &&
 			    strcmp(lastchar - 5, "$?#3f") == 0) {
+<<<<<<< HEAD
 				kdb_gdb_state_pass(lastchar - 5);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				strcpy(buffer, "kgdb");
 				KDB_STATE_SET(DOING_KGDB);
 				return buffer;
 			}
+<<<<<<< HEAD
 			if (lastchar - buffer >= 11 &&
 			    strcmp(lastchar - 11, "$qSupported") == 0) {
 				kdb_gdb_state_pass(lastchar - 11);
 				strcpy(buffer, "kgdb");
 				KDB_STATE_SET(DOING_KGDB);
+=======
+			if (lastchar - buffer >= 14 &&
+			    strcmp(lastchar - 14, "$qSupported#37") == 0) {
+				strcpy(buffer, "kgdb");
+				KDB_STATE_SET(DOING_KGDB2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return buffer;
 			}
 		}
@@ -552,7 +584,10 @@ int vkdb_printf(const char *fmt, va_list ap)
 {
 	int diag;
 	int linecount;
+<<<<<<< HEAD
 	int colcount;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int logging, saved_loglevel = 0;
 	int saved_trap_printk;
 	int got_printf_lock = 0;
@@ -585,10 +620,13 @@ int vkdb_printf(const char *fmt, va_list ap)
 	if (diag || linecount <= 1)
 		linecount = 24;
 
+<<<<<<< HEAD
 	diag = kdbgetintenv("COLUMNS", &colcount);
 	if (diag || colcount <= 1)
 		colcount = 80;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	diag = kdbgetintenv("LOGGING", &logging);
 	if (diag)
 		logging = 0;
@@ -694,8 +732,13 @@ kdb_printit:
 	if (!dbg_kdb_mode && kgdb_connected) {
 		gdbstub_msg_write(kdb_buffer, retlen);
 	} else {
+<<<<<<< HEAD
 		if (dbg_io_ops && !dbg_io_ops->is_console) {
 			len = retlen;
+=======
+		if (!dbg_io_ops->is_console) {
+			len = strlen(kdb_buffer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cp = kdb_buffer;
 			while (len--) {
 				dbg_io_ops->write_char(*cp);
@@ -714,6 +757,7 @@ kdb_printit:
 		printk(KERN_INFO "%s", kdb_buffer);
 	}
 
+<<<<<<< HEAD
 	if (KDB_STATE(PAGER)) {
 		/*
 		 * Check printed string to decide how to bump the
@@ -737,6 +781,13 @@ kdb_printit:
 
 	/* check for having reached the LINES number of printed lines */
 	if (kdb_nextline >= linecount) {
+=======
+	if (KDB_STATE(PAGER) && strchr(kdb_buffer, '\n'))
+		kdb_nextline++;
+
+	/* check for having reached the LINES number of printed lines */
+	if (kdb_nextline == linecount) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		char buf1[16] = "";
 #if defined(CONFIG_SMP)
 		char buf2[32];
@@ -766,7 +817,11 @@ kdb_printit:
 		kdb_input_flush();
 		c = console_drivers;
 
+<<<<<<< HEAD
 		if (dbg_io_ops && !dbg_io_ops->is_console) {
+=======
+		if (!dbg_io_ops->is_console) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			len = strlen(moreprompt);
 			cp = moreprompt;
 			while (len--) {
@@ -799,7 +854,11 @@ kdb_printit:
 			kdb_grepping_flag = 0;
 			kdb_printf("\n");
 		} else if (buf1[0] == ' ') {
+<<<<<<< HEAD
 			kdb_printf("\r");
+=======
+			kdb_printf("\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			suspend_grep = 1; /* for this recursion */
 		} else if (buf1[0] == '\n') {
 			kdb_nextline = linecount - 1;

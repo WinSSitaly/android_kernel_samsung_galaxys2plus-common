@@ -26,7 +26,10 @@
 #include <linux/delay.h>
 #include <linux/io.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/pm_runtime.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 
 #include <linux/mtd/mtd.h>
@@ -284,7 +287,11 @@ static void write_fiforeg(struct sh_flctl *flctl, int rlen, int offset)
 static void set_cmd_regs(struct mtd_info *mtd, uint32_t cmd, uint32_t flcmcdr_val)
 {
 	struct sh_flctl *flctl = mtd_to_flctl(mtd);
+<<<<<<< HEAD
 	uint32_t flcmncr_val = flctl->flcmncr_base & ~SEL_16BIT;
+=======
+	uint32_t flcmncr_val = readl(FLCMNCR(flctl)) & ~SEL_16BIT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint32_t flcmdcr_val, addr_len_bytes = 0;
 
 	/* Set SNAND bit if page size is 2048byte */
@@ -304,7 +311,10 @@ static void set_cmd_regs(struct mtd_info *mtd, uint32_t cmd, uint32_t flcmcdr_va
 		break;
 	case NAND_CMD_READ0:
 	case NAND_CMD_READOOB:
+<<<<<<< HEAD
 	case NAND_CMD_RNDOUT:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		addr_len_bytes = flctl->rw_ADRCNT;
 		flcmdcr_val |= CDSRC_E;
 		if (flctl->chip.options & NAND_BUSWIDTH_16)
@@ -322,7 +332,10 @@ static void set_cmd_regs(struct mtd_info *mtd, uint32_t cmd, uint32_t flcmcdr_va
 		break;
 	case NAND_CMD_READID:
 		flcmncr_val &= ~SNAND_E;
+<<<<<<< HEAD
 		flcmdcr_val |= CDSRC_E;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		addr_len_bytes = ADRCNT_1;
 		break;
 	case NAND_CMD_STATUS:
@@ -516,8 +529,11 @@ static void flctl_cmdfunc(struct mtd_info *mtd, unsigned int command,
 	struct sh_flctl *flctl = mtd_to_flctl(mtd);
 	uint32_t read_cmd = 0;
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(&flctl->pdev->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	flctl->read_bytes = 0;
 	if (command != NAND_CMD_PAGEPROG)
 		flctl->index = 0;
@@ -530,6 +546,10 @@ static void flctl_cmdfunc(struct mtd_info *mtd, unsigned int command,
 			execmd_read_page_sector(mtd, page_addr);
 			break;
 		}
+<<<<<<< HEAD
+=======
+		empty_fifo(flctl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (flctl->page_size)
 			set_cmd_regs(mtd, command, (NAND_CMD_READSTART << 8)
 				| command);
@@ -551,6 +571,10 @@ static void flctl_cmdfunc(struct mtd_info *mtd, unsigned int command,
 			break;
 		}
 
+<<<<<<< HEAD
+=======
+		empty_fifo(flctl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (flctl->page_size) {
 			set_cmd_regs(mtd, command, (NAND_CMD_READSTART << 8)
 				| NAND_CMD_READ0);
@@ -562,6 +586,7 @@ static void flctl_cmdfunc(struct mtd_info *mtd, unsigned int command,
 		flctl->read_bytes = mtd->oobsize;
 		goto read_normal_exit;
 
+<<<<<<< HEAD
 	case NAND_CMD_RNDOUT:
 		if (flctl->hwecc)
 			break;
@@ -591,6 +616,17 @@ static void flctl_cmdfunc(struct mtd_info *mtd, unsigned int command,
 		start_translation(flctl);
 		read_fiforeg(flctl, flctl->read_bytes, 0);
 		wait_completion(flctl);
+=======
+	case NAND_CMD_READID:
+		empty_fifo(flctl);
+		set_cmd_regs(mtd, command, command);
+		set_addr(mtd, 0, 0);
+
+		flctl->read_bytes = 4;
+		writel(flctl->read_bytes, FLDTCNTR(flctl)); /* set read size */
+		start_translation(flctl);
+		read_datareg(flctl, 0);	/* read and end */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case NAND_CMD_ERASE1:
@@ -673,6 +709,7 @@ static void flctl_cmdfunc(struct mtd_info *mtd, unsigned int command,
 	default:
 		break;
 	}
+<<<<<<< HEAD
 	goto runtime_exit;
 
 read_normal_exit:
@@ -683,12 +720,22 @@ read_normal_exit:
 	wait_completion(flctl);
 runtime_exit:
 	pm_runtime_put_sync(&flctl->pdev->dev);
+=======
+	return;
+
+read_normal_exit:
+	writel(flctl->read_bytes, FLDTCNTR(flctl));	/* set read size */
+	start_translation(flctl);
+	read_fiforeg(flctl, flctl->read_bytes, 0);
+	wait_completion(flctl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 }
 
 static void flctl_select_chip(struct mtd_info *mtd, int chipnr)
 {
 	struct sh_flctl *flctl = mtd_to_flctl(mtd);
+<<<<<<< HEAD
 	int ret;
 
 	switch (chipnr) {
@@ -722,6 +769,18 @@ static void flctl_select_chip(struct mtd_info *mtd, int chipnr)
 			writel(HOLDEN, FLHOLDCR(flctl));
 			pm_runtime_put_sync(&flctl->pdev->dev);
 		}
+=======
+	uint32_t flcmncr_val = readl(FLCMNCR(flctl));
+
+	switch (chipnr) {
+	case -1:
+		flcmncr_val &= ~CE0_ENABLE;
+		writel(flcmncr_val, FLCMNCR(flctl));
+		break;
+	case 0:
+		flcmncr_val |= CE0_ENABLE;
+		writel(flcmncr_val, FLCMNCR(flctl));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		BUG();
@@ -779,6 +838,14 @@ static int flctl_verify_buf(struct mtd_info *mtd, const u_char *buf, int len)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void flctl_register_init(struct sh_flctl *flctl, unsigned long val)
+{
+	writel(val, FLCMNCR(flctl));
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int flctl_chip_init_tail(struct mtd_info *mtd)
 {
 	struct sh_flctl *flctl = mtd_to_flctl(mtd);
@@ -825,13 +892,21 @@ static int flctl_chip_init_tail(struct mtd_info *mtd)
 
 		chip->ecc.size = 512;
 		chip->ecc.bytes = 10;
+<<<<<<< HEAD
 		chip->ecc.strength = 4;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		chip->ecc.read_page = flctl_read_page_hwecc;
 		chip->ecc.write_page = flctl_write_page_hwecc;
 		chip->ecc.mode = NAND_ECC_HW;
 
 		/* 4 symbols ECC enabled */
+<<<<<<< HEAD
 		flctl->flcmncr_base |= _4ECCEN | ECCPOS2 | ECCPOS_02;
+=======
+		writel(readl(FLCMNCR(flctl)) | _4ECCEN | ECCPOS2 | ECCPOS_02,
+				FLCMNCR(flctl));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		chip->ecc.mode = NAND_ECC_SOFT;
 	}
@@ -863,13 +938,21 @@ static int __devinit flctl_probe(struct platform_device *pdev)
 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	if (!res) {
 		dev_err(&pdev->dev, "failed to get I/O memory\n");
+<<<<<<< HEAD
 		goto err_iomap;
+=======
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	flctl->reg = ioremap(res->start, resource_size(res));
 	if (flctl->reg == NULL) {
 		dev_err(&pdev->dev, "failed to remap I/O memory\n");
+<<<<<<< HEAD
 		goto err_iomap;
+=======
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	platform_set_drvdata(pdev, flctl);
@@ -877,9 +960,15 @@ static int __devinit flctl_probe(struct platform_device *pdev)
 	nand = &flctl->chip;
 	flctl_mtd->priv = nand;
 	flctl->pdev = pdev;
+<<<<<<< HEAD
 	flctl->flcmncr_base = pdata->flcmncr_val;
 	flctl->hwecc = pdata->has_hwecc;
 	flctl->holden = pdata->use_holden;
+=======
+	flctl->hwecc = pdata->has_hwecc;
+
+	flctl_register_init(flctl, pdata->flcmncr_val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nand->options = NAND_NO_AUTOINCR;
 
@@ -899,6 +988,7 @@ static int __devinit flctl_probe(struct platform_device *pdev)
 		nand->read_word = flctl_read_word;
 	}
 
+<<<<<<< HEAD
 	pm_runtime_enable(&pdev->dev);
 	pm_runtime_resume(&pdev->dev);
 
@@ -913,14 +1003,31 @@ static int __devinit flctl_probe(struct platform_device *pdev)
 	ret = nand_scan_tail(flctl_mtd);
 	if (ret)
 		goto err_chip;
+=======
+	ret = nand_scan_ident(flctl_mtd, 1, NULL);
+	if (ret)
+		goto err;
+
+	ret = flctl_chip_init_tail(flctl_mtd);
+	if (ret)
+		goto err;
+
+	ret = nand_scan_tail(flctl_mtd);
+	if (ret)
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mtd_device_register(flctl_mtd, pdata->parts, pdata->nr_parts);
 
 	return 0;
 
+<<<<<<< HEAD
 err_chip:
 	pm_runtime_disable(&pdev->dev);
 err_iomap:
+=======
+err:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(flctl);
 	return ret;
 }
@@ -930,7 +1037,10 @@ static int __devexit flctl_remove(struct platform_device *pdev)
 	struct sh_flctl *flctl = platform_get_drvdata(pdev);
 
 	nand_release(&flctl->mtd);
+<<<<<<< HEAD
 	pm_runtime_disable(&pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(flctl);
 
 	return 0;

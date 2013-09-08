@@ -18,9 +18,12 @@
 #include <linux/rcupdate.h>
 #include <linux/rculist_bl.h>
 #include <linux/completion.h>
+<<<<<<< HEAD
 #include <linux/rbtree.h>
 #include <linux/ktime.h>
 #include <linux/percpu.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DIO_WAIT	0x00000010
 #define DIO_METADATA	0x00000020
@@ -81,7 +84,12 @@ struct gfs2_bitmap {
 };
 
 struct gfs2_rgrpd {
+<<<<<<< HEAD
 	struct rb_node rd_node;		/* Link with superblock */
+=======
+	struct list_head rd_list;	/* Link with superblock */
+	struct list_head rd_list_mru;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct gfs2_glock *rd_gl;	/* Glock for this rgrp */
 	u64 rd_addr;			/* grp block disk address */
 	u64 rd_data0;			/* first data location */
@@ -93,7 +101,14 @@ struct gfs2_rgrpd {
 	u32 rd_dinodes;
 	u64 rd_igeneration;
 	struct gfs2_bitmap *rd_bits;
+<<<<<<< HEAD
 	struct gfs2_sbd *rd_sbd;
+=======
+	struct mutex rd_mutex;
+	struct gfs2_log_element rd_le;
+	struct gfs2_sbd *rd_sbd;
+	unsigned int rd_bh_count;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 rd_last_alloc;
 	u32 rd_flags;
 #define GFS2_RDF_CHECK		0x10000000 /* check for unlinked inodes */
@@ -105,15 +120,21 @@ struct gfs2_rgrpd {
 enum gfs2_state_bits {
 	BH_Pinned = BH_PrivateStart,
 	BH_Escaped = BH_PrivateStart + 1,
+<<<<<<< HEAD
 	BH_Zeronew = BH_PrivateStart + 2,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 BUFFER_FNS(Pinned, pinned)
 TAS_BUFFER_FNS(Pinned, pinned)
 BUFFER_FNS(Escaped, escaped)
 TAS_BUFFER_FNS(Escaped, escaped)
+<<<<<<< HEAD
 BUFFER_FNS(Zeronew, zeronew)
 TAS_BUFFER_FNS(Zeronew, zeronew)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct gfs2_bufdata {
 	struct buffer_head *bd_bh;
@@ -141,6 +162,7 @@ struct gfs2_bufdata {
 #define GDLM_STRNAME_BYTES	25
 #define GDLM_LVB_SIZE		32
 
+<<<<<<< HEAD
 /*
  * ls_recover_flags:
  *
@@ -180,6 +202,10 @@ enum {
 	DFL_MOUNT_DONE		= 4,
 	DFL_UNMOUNT		= 5,
 	DFL_DLM_RECOVERY	= 6,
+=======
+enum {
+	DFL_BLOCK_LOCKS		= 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct lm_lockname {
@@ -202,11 +228,16 @@ struct gfs2_glock_operations {
 	int (*go_dump)(struct seq_file *seq, const struct gfs2_glock *gl);
 	void (*go_callback) (struct gfs2_glock *gl);
 	const int go_type;
+<<<<<<< HEAD
+=======
+	const unsigned long go_min_hold_time;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const unsigned long go_flags;
 #define GLOF_ASPACE 1
 };
 
 enum {
+<<<<<<< HEAD
 	GFS2_LKS_SRTT = 0,	/* Non blocking smoothed round trip time */
 	GFS2_LKS_SRTTVAR = 1,	/* Non blocking smoothed variance */
 	GFS2_LKS_SRTTB = 2,	/* Blocking smoothed round trip time */
@@ -223,6 +254,8 @@ struct gfs2_lkstats {
 };
 
 enum {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* States */
 	HIF_HOLDER		= 6,  /* Set for gh that "holds" the glock */
 	HIF_FIRST		= 7,
@@ -256,12 +289,18 @@ enum {
 	GLF_QUEUED			= 12,
 	GLF_LRU				= 13,
 	GLF_OBJECT			= 14, /* Used only for tracing */
+<<<<<<< HEAD
 	GLF_BLOCKING			= 15,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct gfs2_glock {
 	struct hlist_bl_node gl_list;
+<<<<<<< HEAD
 	struct gfs2_sbd *gl_sbd;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long gl_flags;		/* GLF_... */
 	struct lm_lockname gl_name;
 	atomic_t gl_ref;
@@ -277,18 +316,31 @@ struct gfs2_glock {
 
 	unsigned int gl_hash;
 	unsigned long gl_demote_time; /* time of first demote request */
+<<<<<<< HEAD
 	long gl_hold_time;
 	struct list_head gl_holders;
 
 	const struct gfs2_glock_operations *gl_ops;
 	ktime_t gl_dstamp;
 	struct gfs2_lkstats gl_stats;
+=======
+	struct list_head gl_holders;
+
+	const struct gfs2_glock_operations *gl_ops;
+	char gl_strname[GDLM_STRNAME_BYTES];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dlm_lksb gl_lksb;
 	char gl_lvb[32];
 	unsigned long gl_tchange;
 	void *gl_object;
 
 	struct list_head gl_lru;
+<<<<<<< HEAD
+=======
+
+	struct gfs2_sbd *gl_sbd;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head gl_ail_list;
 	atomic_t gl_ail_count;
 	atomic_t gl_revokes;
@@ -299,6 +351,7 @@ struct gfs2_glock {
 
 #define GFS2_MIN_LVB_SIZE 32	/* Min size of LVB that gfs2 supports */
 
+<<<<<<< HEAD
 struct gfs2_qadata { /* quota allocation data */
 	/* Quota stuff */
 	struct gfs2_quota_data *qa_qd[2*MAXQUOTAS];
@@ -309,12 +362,35 @@ struct gfs2_qadata { /* quota allocation data */
 struct gfs2_blkreserv {
 	u32 rs_requested; /* Filled in by caller of gfs2_inplace_reserve() */
 	struct gfs2_holder rs_rgd_gh; /* Filled in by gfs2_inplace_reserve() */
+=======
+struct gfs2_alloc {
+	/* Quota stuff */
+
+	struct gfs2_quota_data *al_qd[2*MAXQUOTAS];
+	struct gfs2_holder al_qd_ghs[2*MAXQUOTAS];
+	unsigned int al_qd_num;
+
+	u32 al_requested; /* Filled in by caller of gfs2_inplace_reserve() */
+	u32 al_alloced; /* Filled in by gfs2_alloc_*() */
+
+	/* Filled in by gfs2_inplace_reserve() */
+
+	unsigned int al_line;
+	char *al_file;
+	struct gfs2_holder al_ri_gh;
+	struct gfs2_holder al_rgd_gh;
+	struct gfs2_rgrpd *al_rgd;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum {
 	GIF_INVALID		= 0,
 	GIF_QD_LOCKED		= 1,
+<<<<<<< HEAD
 	GIF_ALLOC_FAILED	= 2,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	GIF_SW_PAGED		= 3,
 };
 
@@ -329,6 +405,7 @@ struct gfs2_inode {
 	struct gfs2_glock *i_gl; /* Move into i_gh? */
 	struct gfs2_holder i_iopen_gh;
 	struct gfs2_holder i_gh; /* for prepare/commit_write only */
+<<<<<<< HEAD
 	struct gfs2_qadata *i_qadata; /* quota allocation data */
 	struct gfs2_blkreserv *i_res; /* resource group block reservation */
 	struct gfs2_rgrpd *i_rgd;
@@ -336,6 +413,12 @@ struct gfs2_inode {
 	struct rw_semaphore i_rw_mutex;
 	struct list_head i_trunc_list;
 	__be64 *i_hash_cache;
+=======
+	struct gfs2_alloc *i_alloc;
+	u64 i_goal;	/* goal block for allocations */
+	struct rw_semaphore i_rw_mutex;
+	struct list_head i_trunc_list;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 i_entries;
 	u32 i_diskflags;
 	u8 i_height;
@@ -447,7 +530,10 @@ struct gfs2_jdesc {
 #define JDF_RECOVERY 1
 	unsigned int jd_jid;
 	unsigned int jd_blocks;
+<<<<<<< HEAD
 	int jd_recover_error;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct gfs2_statfs_change_host {
@@ -517,7 +603,10 @@ enum {
 	SDF_NORECOVERY		= 4,
 	SDF_DEMOTE		= 5,
 	SDF_NOJOURNALID		= 6,
+<<<<<<< HEAD
 	SDF_RORECOVERY		= 7, /* read only recovery */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define GFS2_FSNAME_LEN		256
@@ -556,6 +645,7 @@ struct gfs2_sb_host {
 struct lm_lockstruct {
 	int ls_jid;
 	unsigned int ls_first;
+<<<<<<< HEAD
 	unsigned int ls_nodir;
 	const struct lm_lockops *ls_ops;
 	dlm_lockspace_t *ls_dlm;
@@ -581,11 +671,24 @@ struct lm_lockstruct {
 struct gfs2_pcpu_lkstats {
 	/* One struct for each glock type */
 	struct gfs2_lkstats lkstats[10];
+=======
+	unsigned int ls_first_done;
+	unsigned int ls_nodir;
+	const struct lm_lockops *ls_ops;
+	unsigned long ls_flags;
+	dlm_lockspace_t *ls_dlm;
+
+	int ls_recover_jid_done;
+	int ls_recover_jid_status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct gfs2_sbd {
 	struct super_block *sd_vfs;
+<<<<<<< HEAD
 	struct gfs2_pcpu_lkstats __percpu *sd_lkstats;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct kobject sd_kobj;
 	unsigned long sd_flags;	/* SDF_... */
 	struct gfs2_sb_host sd_sb;
@@ -619,7 +722,10 @@ struct gfs2_sbd {
 	wait_queue_head_t sd_glock_wait;
 	atomic_t sd_glock_disposal;
 	struct completion sd_locking_init;
+<<<<<<< HEAD
 	struct delayed_work sd_control_work;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Inode Stuff */
 
@@ -644,7 +750,14 @@ struct gfs2_sbd {
 
 	int sd_rindex_uptodate;
 	spinlock_t sd_rindex_spin;
+<<<<<<< HEAD
 	struct rb_root sd_rindex_tree;
+=======
+	struct mutex sd_rindex_mutex;
+	struct list_head sd_rindex_list;
+	struct list_head sd_rindex_mru_list;
+	struct gfs2_rgrpd *sd_rindex_forward;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int sd_rgrps;
 	unsigned int sd_max_rg_data;
 
@@ -748,6 +861,7 @@ struct gfs2_sbd {
 
 	unsigned long sd_last_warning;
 	struct dentry *debugfs_dir;    /* debugfs directory */
+<<<<<<< HEAD
 	struct dentry *debugfs_dentry_glocks;
 	struct dentry *debugfs_dentry_glstats;
 	struct dentry *debugfs_dentry_sbstats;
@@ -766,5 +880,10 @@ static inline void gfs2_sbstats_inc(const struct gfs2_glock *gl, int which)
 	preempt_enable();
 }
 
+=======
+	struct dentry *debugfs_dentry_glocks; /* for debugfs */
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __INCORE_DOT_H__ */
 

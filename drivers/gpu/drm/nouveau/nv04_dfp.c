@@ -289,7 +289,10 @@ static void nv04_dfp_mode_set(struct drm_encoder *encoder,
 	struct nouveau_connector *nv_connector = nouveau_crtc_connector_get(nv_crtc);
 	struct nouveau_encoder *nv_encoder = nouveau_encoder(encoder);
 	struct drm_display_mode *output_mode = &nv_encoder->mode;
+<<<<<<< HEAD
 	struct drm_connector *connector = &nv_connector->base;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint32_t mode_ratio, panel_ratio;
 
 	NV_DEBUG_KMS(dev, "Output mode on CRTC %d:\n", nv_crtc->index);
@@ -341,6 +344,7 @@ static void nv04_dfp_mode_set(struct drm_encoder *encoder,
 	    output_mode->clock > 165000)
 		regp->fp_control |= (2 << 24);
 	if (nv_encoder->dcb->type == OUTPUT_LVDS) {
+<<<<<<< HEAD
 		bool duallink = false, dummy;
 		if (nv_connector->edid &&
 		    nv_connector->type == DCB_CONNECTOR_LVDS_SPWG) {
@@ -350,6 +354,12 @@ static void nv04_dfp_mode_set(struct drm_encoder *encoder,
 						      &duallink, &dummy);
 		}
 
+=======
+		bool duallink, dummy;
+
+		nouveau_bios_parse_lvds_table(dev, output_mode->clock,
+					      &duallink, &dummy);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (duallink)
 			regp->fp_control |= (8 << 28);
 	} else
@@ -413,9 +423,13 @@ static void nv04_dfp_mode_set(struct drm_encoder *encoder,
 	}
 
 	/* Output property. */
+<<<<<<< HEAD
 	if ((nv_connector->dithering_mode == DITHERING_MODE_ON) ||
 	    (nv_connector->dithering_mode == DITHERING_MODE_AUTO &&
 	     encoder->crtc->fb->depth > connector->display_info.bpc * 3)) {
+=======
+	if (nv_connector->use_dithering) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (dev_priv->chipset == 0x11)
 			regp->dither = savep->dither | 0x00010000;
 		else {
@@ -476,7 +490,11 @@ static void nv04_dfp_commit(struct drm_encoder *encoder)
 
 	helper->dpms(encoder, DRM_MODE_DPMS_ON);
 
+<<<<<<< HEAD
 	NV_DEBUG(dev, "Output %s is running on CRTC %d using output %c\n",
+=======
+	NV_INFO(dev, "Output %s is running on CRTC %d using output %c\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		drm_get_connector_name(&nouveau_encoder_connector_get(nv_encoder)->base),
 		nv_crtc->index, '@' + ffs(nv_encoder->dcb->or));
 }
@@ -504,7 +522,11 @@ static void nv04_dfp_update_backlight(struct drm_encoder *encoder, int mode)
 
 static inline bool is_powersaving_dpms(int mode)
 {
+<<<<<<< HEAD
 	return mode != DRM_MODE_DPMS_ON && mode != NV_DPMS_CLEARED;
+=======
+	return (mode != DRM_MODE_DPMS_ON);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void nv04_lvds_dpms(struct drm_encoder *encoder, int mode)
@@ -519,7 +541,11 @@ static void nv04_lvds_dpms(struct drm_encoder *encoder, int mode)
 		return;
 	nv_encoder->last_dpms = mode;
 
+<<<<<<< HEAD
 	NV_DEBUG(dev, "Setting dpms mode %d on lvds encoder (output %d)\n",
+=======
+	NV_INFO(dev, "Setting dpms mode %d on lvds encoder (output %d)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     mode, nv_encoder->dcb->index);
 
 	if (was_powersaving && is_powersaving_dpms(mode))
@@ -564,7 +590,11 @@ static void nv04_tmds_dpms(struct drm_encoder *encoder, int mode)
 		return;
 	nv_encoder->last_dpms = mode;
 
+<<<<<<< HEAD
 	NV_DEBUG(dev, "Setting dpms mode %d on tmds encoder (output %d)\n",
+=======
+	NV_INFO(dev, "Setting dpms mode %d on tmds encoder (output %d)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     mode, nv_encoder->dcb->index);
 
 	nv04_dfp_update_backlight(encoder, mode);

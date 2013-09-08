@@ -57,8 +57,14 @@
 #include <linux/scatterlist.h>
 
 #include <asm/dma.h>
+<<<<<<< HEAD
 #include <asm/io.h>
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <asm/io.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <scsi/scsi.h>
 #include <scsi/scsi_host.h>

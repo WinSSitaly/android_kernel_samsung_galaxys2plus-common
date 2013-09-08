@@ -7,7 +7,11 @@
 #include <linux/uio.h>
 #include <linux/rcupdate.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AIO_MAXSEGS		4
 #define AIO_KIOGRP_NR_ATOMIC	8
@@ -117,7 +121,10 @@ struct kiocb {
 
 	struct list_head	ki_list;	/* the aio core uses this
 						 * for cancellation */
+<<<<<<< HEAD
 	struct list_head	ki_batch;	/* batch allocation */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If the aio_resfd field of the userspace iocb is not zero,
@@ -140,7 +147,10 @@ struct kiocb {
 		(x)->ki_dtor = NULL;			\
 		(x)->ki_obj.tsk = tsk;			\
 		(x)->ki_user_data = 0;                  \
+<<<<<<< HEAD
 		(x)->private = NULL;			\
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} while (0)
 
 #define AIO_RING_MAGIC			0xa10a10a1

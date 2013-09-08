@@ -164,6 +164,7 @@ EXPORT_SYMBOL(strchr);
 size_t strlen(const char *s)
 {
 	int d0;
+<<<<<<< HEAD
 	size_t res;
 	asm volatile("repne\n\t"
 		"scasb"
@@ -171,6 +172,17 @@ size_t strlen(const char *s)
 		: "1" (s), "a" (0), "0" (0xffffffffu)
 		: "memory");
 	return ~res - 1;
+=======
+	int res;
+	asm volatile("repne\n\t"
+		"scasb\n\t"
+		"notl %0\n\t"
+		"decl %0"
+		: "=c" (res), "=&D" (d0)
+		: "1" (s), "a" (0), "0" (0xffffffffu)
+		: "memory");
+	return res;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(strlen);
 #endif

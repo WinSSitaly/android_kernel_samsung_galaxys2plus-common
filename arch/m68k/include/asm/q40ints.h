@@ -24,3 +24,9 @@
 #define Q40_IRQ10_MASK       (1<<5)
 #define Q40_IRQ14_MASK       (1<<6)
 #define Q40_IRQ15_MASK       (1<<7)
+<<<<<<< HEAD
+=======
+
+extern unsigned long q40_probe_irq_on (void);
+extern int q40_probe_irq_off (unsigned long irqs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -167,13 +167,21 @@ static struct irq_chip level_irq_type = {
 
 static struct irqaction gic_action = {
 	.handler =	no_action,
+<<<<<<< HEAD
 	.flags =	IRQF_NO_THREAD,
+=======
+	.flags =	IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name =		"GIC",
 };
 
 static struct irqaction timer_action = {
 	.handler =	no_action,
+<<<<<<< HEAD
 	.flags =	IRQF_TIMER,
+=======
+	.flags =	IRQF_DISABLED | IRQF_TIMER,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name =		"Timer",
 };
 

@@ -134,7 +134,11 @@ struct net_device *x25_dev_get(char *devname)
 
 	if (dev &&
 	    (!(dev->flags & IFF_UP) || (dev->type != ARPHRD_X25
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_LLC)
+=======
+#if defined(CONFIG_LLC) || defined(CONFIG_LLC_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					&& dev->type != ARPHRD_ETHER
 #endif
 					))){

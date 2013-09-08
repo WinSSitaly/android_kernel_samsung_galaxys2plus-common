@@ -15,6 +15,7 @@ static inline int nfs_dns_resolver_init(void)
 
 static inline void nfs_dns_resolver_destroy(void)
 {}
+<<<<<<< HEAD
 
 static inline int nfs_dns_resolver_cache_init(struct net *net)
 {
@@ -32,5 +33,14 @@ extern void nfs_dns_resolver_cache_destroy(struct net *net);
 
 extern ssize_t nfs_dns_resolve_name(struct net *net, char *name,
 		size_t namelen,	struct sockaddr *sa, size_t salen);
+=======
+#else
+extern int nfs_dns_resolver_init(void);
+extern void nfs_dns_resolver_destroy(void);
+#endif
+
+extern ssize_t nfs_dns_resolve_name(char *name, size_t namelen,
+		struct sockaddr *sa, size_t salen);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

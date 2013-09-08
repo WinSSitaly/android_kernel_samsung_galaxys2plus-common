@@ -26,8 +26,11 @@
 
 */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/delay.h>
@@ -101,7 +104,11 @@ int bttv_sub_add_device(struct bttv_core *core, char *name)
 		kfree(sub);
 		return err;
 	}
+<<<<<<< HEAD
 	pr_info("%d: add subdevice \"%s\"\n", core->nr, dev_name(&sub->dev));
+=======
+	printk("bttv%d: add subdevice \"%s\"\n", core->nr, dev_name(&sub->dev));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_add_tail(&sub->list,&core->subs);
 	return 0;
 }

@@ -5,7 +5,15 @@
  * Copyright (C) 2003 by Andreas Gruenbacher, <a.gruenbacher@computer.org>
  */
 
+<<<<<<< HEAD
 #include "ext2.h"
+=======
+#include <linux/module.h>
+#include <linux/string.h>
+#include <linux/capability.h>
+#include <linux/fs.h>
+#include <linux/ext2_fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "xattr.h"
 
 static size_t

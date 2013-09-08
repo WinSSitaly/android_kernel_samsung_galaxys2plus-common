@@ -144,8 +144,11 @@ struct usb_int_retry_fail {
 
 struct read_regs_int {
 	struct completion completion;
+<<<<<<< HEAD
 	struct usb_req_read_regs *req;
 	unsigned int req_count;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Stores the USB int structure and contains the USB address of the
 	 * first requested register before request.
 	 */
@@ -171,8 +174,12 @@ struct zd_usb_interrupt {
 	void *buffer;
 	dma_addr_t buffer_dma;
 	int interval;
+<<<<<<< HEAD
 	atomic_t read_regs_enabled;
 	u8 read_regs_int_overridden:1;
+=======
+	u8 read_regs_enabled:1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline struct usb_int_regs *get_read_regs(struct zd_usb_interrupt *intr)

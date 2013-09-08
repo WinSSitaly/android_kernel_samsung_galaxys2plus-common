@@ -4,11 +4,22 @@
 /*
  * Function: v6_early_abort
  *
+<<<<<<< HEAD
  * Params  : r2 = pt_regs
  *	   : r4 = aborted context pc
  *	   : r5 = aborted context psr
  *
  * Returns : r4 - r11, r13 preserved
+=======
+ * Params  : r2 = address of aborted instruction
+ *         : r3 = saved SPSR
+ *
+ * Returns : r0 = address of abort
+ *	   : r1 = FSR, bit 11 = write
+ *	   : r2-r8 = corrupted
+ *	   : r9 = preserved
+ *	   : sp = pointer to registers
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Purpose : obtain information about current aborted instruction.
  * Note: we read user space.  This means we might cause a data
@@ -26,6 +37,7 @@ ENTRY(v6_early_abort)
 	mrc	p15, 0, r1, c5, c0, 0		@ get FSR
 	mrc	p15, 0, r0, c6, c0, 0		@ get FAR
 /*
+<<<<<<< HEAD
  * Faulty SWP instruction on 1136 doesn't set bit 11 in DFSR.
  */
 #ifdef CONFIG_ARM_ERRATA_326103
@@ -46,3 +58,22 @@ ENTRY(v6_early_abort)
 	orreq	r1, r1, #1 << 11		@ yes.
 #endif
 	b	do_DataAbort
+=======
+ * Faulty SWP instruction on 1136 doesn't set bit 11 in DFSR (erratum 326103).
+ * The test below covers all the write situations, including Java bytecodes
+ */
+	bic	r1, r1, #1 << 11		@ clear bit 11 of FSR
+	tst	r3, #PSR_J_BIT			@ Java?
+	movne	pc, lr
+	do_thumb_abort
+	ldreq	r3, [r2]			@ read aborted ARM instruction
+#ifdef CONFIG_CPU_ENDIAN_BE8
+	reveq	r3, r3
+#endif
+	do_ldrd_abort
+	tst	r3, #1 << 20			@ L = 0 -> write
+	orreq	r1, r1, #1 << 11		@ yes.
+	mov	pc, lr
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

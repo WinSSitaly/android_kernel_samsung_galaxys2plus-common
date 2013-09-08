@@ -18,20 +18,35 @@
 #include <linux/moduleparam.h>
 #include <linux/types.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
+=======
+#include <linux/fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/miscdevice.h>
 #include <linux/watchdog.h>
 #include <linux/init.h>
 #include <linux/bitops.h>
 #include <linux/platform_device.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/io.h>
+=======
+#include <linux/uaccess.h>
+#include <linux/io.h>
+#include <linux/device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 
 #define DEFAULT_HEARTBEAT 60
 #define MAX_HEARTBEAT     60
 
+<<<<<<< HEAD
 static unsigned int heartbeat = DEFAULT_HEARTBEAT;
 static bool nowayout  = WATCHDOG_NOWAYOUT;
+=======
+static int heartbeat = DEFAULT_HEARTBEAT;
+static int nowayout  = WATCHDOG_NOWAYOUT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Memory mapping: a single byte, 3 first lower bits to select bit 3
@@ -42,8 +57,20 @@ static bool nowayout  = WATCHDOG_NOWAYOUT;
 
 static DEFINE_SPINLOCK(io_lock);
 
+<<<<<<< HEAD
 static int nodelay;
 static void __iomem	*wdt_base;
+=======
+static unsigned long wdt_status;
+#define WDT_IN_USE	0
+#define WDT_RUNNING	1
+#define WDT_OK_TO_CLOSE 2
+
+static int nodelay;
+static struct resource	*wdt_mem;
+static void __iomem	*wdt_base;
+static struct platform_device *max63xx_pdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * The timeout values used are actually the absolute minimum the chip
@@ -107,7 +134,11 @@ max63xx_select_timeout(struct max63xx_timeout *table, int value)
 	return NULL;
 }
 
+<<<<<<< HEAD
 static int max63xx_wdt_ping(struct watchdog_device *wdd)
+=======
+static void max63xx_wdt_ping(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u8 val;
 
@@ -119,6 +150,7 @@ static int max63xx_wdt_ping(struct watchdog_device *wdd)
 	__raw_writeb(val & ~MAX6369_WDI, wdt_base);
 
 	spin_unlock(&io_lock);
+<<<<<<< HEAD
 	return 0;
 }
 
@@ -127,6 +159,17 @@ static int max63xx_wdt_start(struct watchdog_device *wdd)
 	struct max63xx_timeout *entry = watchdog_get_drvdata(wdd);
 	u8 val;
 
+=======
+}
+
+static void max63xx_wdt_enable(struct max63xx_timeout *entry)
+{
+	u8 val;
+
+	if (test_and_set_bit(WDT_RUNNING, &wdt_status))
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&io_lock);
 
 	val = __raw_readb(wdt_base);
@@ -138,11 +181,18 @@ static int max63xx_wdt_start(struct watchdog_device *wdd)
 
 	/* check for a edge triggered startup */
 	if (entry->tdelay == 0)
+<<<<<<< HEAD
 		max63xx_wdt_ping(wdd);
 	return 0;
 }
 
 static int max63xx_wdt_stop(struct watchdog_device *wdd)
+=======
+		max63xx_wdt_ping();
+}
+
+static void max63xx_wdt_disable(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u8 val;
 
@@ -154,6 +204,7 @@ static int max63xx_wdt_stop(struct watchdog_device *wdd)
 	__raw_writeb(val, wdt_base);
 
 	spin_unlock(&io_lock);
+<<<<<<< HEAD
 	return 0;
 }
 
@@ -172,11 +223,119 @@ static const struct watchdog_ops max63xx_wdt_ops = {
 static struct watchdog_device max63xx_wdt_dev = {
 	.info = &max63xx_wdt_info,
 	.ops = &max63xx_wdt_ops,
+=======
+
+	clear_bit(WDT_RUNNING, &wdt_status);
+}
+
+static int max63xx_wdt_open(struct inode *inode, struct file *file)
+{
+	if (test_and_set_bit(WDT_IN_USE, &wdt_status))
+		return -EBUSY;
+
+	max63xx_wdt_enable(current_timeout);
+	clear_bit(WDT_OK_TO_CLOSE, &wdt_status);
+
+	return nonseekable_open(inode, file);
+}
+
+static ssize_t max63xx_wdt_write(struct file *file, const char *data,
+				 size_t len, loff_t *ppos)
+{
+	if (len) {
+		if (!nowayout) {
+			size_t i;
+
+			clear_bit(WDT_OK_TO_CLOSE, &wdt_status);
+			for (i = 0; i != len; i++) {
+				char c;
+
+				if (get_user(c, data + i))
+					return -EFAULT;
+
+				if (c == 'V')
+					set_bit(WDT_OK_TO_CLOSE, &wdt_status);
+			}
+		}
+
+		max63xx_wdt_ping();
+	}
+
+	return len;
+}
+
+static const struct watchdog_info ident = {
+	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING,
+	.identity = "max63xx Watchdog",
+};
+
+static long max63xx_wdt_ioctl(struct file *file, unsigned int cmd,
+			      unsigned long arg)
+{
+	int ret = -ENOTTY;
+
+	switch (cmd) {
+	case WDIOC_GETSUPPORT:
+		ret = copy_to_user((struct watchdog_info *)arg, &ident,
+				   sizeof(ident)) ? -EFAULT : 0;
+		break;
+
+	case WDIOC_GETSTATUS:
+	case WDIOC_GETBOOTSTATUS:
+		ret = put_user(0, (int *)arg);
+		break;
+
+	case WDIOC_KEEPALIVE:
+		max63xx_wdt_ping();
+		ret = 0;
+		break;
+
+	case WDIOC_GETTIMEOUT:
+		ret = put_user(heartbeat, (int *)arg);
+		break;
+	}
+	return ret;
+}
+
+static int max63xx_wdt_release(struct inode *inode, struct file *file)
+{
+	if (test_bit(WDT_OK_TO_CLOSE, &wdt_status))
+		max63xx_wdt_disable();
+	else
+		dev_crit(&max63xx_pdev->dev,
+			 "device closed unexpectedly - timer will not stop\n");
+
+	clear_bit(WDT_IN_USE, &wdt_status);
+	clear_bit(WDT_OK_TO_CLOSE, &wdt_status);
+
+	return 0;
+}
+
+static const struct file_operations max63xx_wdt_fops = {
+	.owner		= THIS_MODULE,
+	.llseek		= no_llseek,
+	.write		= max63xx_wdt_write,
+	.unlocked_ioctl	= max63xx_wdt_ioctl,
+	.open		= max63xx_wdt_open,
+	.release	= max63xx_wdt_release,
+};
+
+static struct miscdevice max63xx_wdt_miscdev = {
+	.minor	= WATCHDOG_MINOR,
+	.name	= "watchdog",
+	.fops	= &max63xx_wdt_fops,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __devinit max63xx_wdt_probe(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct resource	*wdt_mem;
+=======
+	int ret = 0;
+	int size;
+	struct device *dev = &pdev->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct max63xx_timeout *table;
 
 	table = (struct max63xx_timeout *)pdev->id_entry->driver_data;
@@ -184,6 +343,7 @@ static int __devinit max63xx_wdt_probe(struct platform_device *pdev)
 	if (heartbeat < 1 || heartbeat > MAX_HEARTBEAT)
 		heartbeat = DEFAULT_HEARTBEAT;
 
+<<<<<<< HEAD
 	dev_info(&pdev->dev, "requesting %ds heartbeat\n", heartbeat);
 	current_timeout = max63xx_select_timeout(table, heartbeat);
 
@@ -193,10 +353,22 @@ static int __devinit max63xx_wdt_probe(struct platform_device *pdev)
 	}
 
 	dev_info(&pdev->dev, "using %ds heartbeat with %ds initial delay\n",
+=======
+	dev_info(dev, "requesting %ds heartbeat\n", heartbeat);
+	current_timeout = max63xx_select_timeout(table, heartbeat);
+
+	if (!current_timeout) {
+		dev_err(dev, "unable to satisfy heartbeat request\n");
+		return -EINVAL;
+	}
+
+	dev_info(dev, "using %ds heartbeat with %ds initial delay\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 current_timeout->twd, current_timeout->tdelay);
 
 	heartbeat = current_timeout->twd;
 
+<<<<<<< HEAD
 	wdt_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	wdt_base = devm_request_and_ioremap(&pdev->dev, wdt_mem);
 	if (!wdt_base)
@@ -207,11 +379,61 @@ static int __devinit max63xx_wdt_probe(struct platform_device *pdev)
 	watchdog_set_drvdata(&max63xx_wdt_dev, current_timeout);
 
 	return watchdog_register_device(&max63xx_wdt_dev);
+=======
+	max63xx_pdev = pdev;
+
+	wdt_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	if (wdt_mem == NULL) {
+		dev_err(dev, "failed to get memory region resource\n");
+		return -ENOENT;
+	}
+
+	size = resource_size(wdt_mem);
+	if (!request_mem_region(wdt_mem->start, size, pdev->name)) {
+		dev_err(dev, "failed to get memory region\n");
+		return -ENOENT;
+	}
+
+	wdt_base = ioremap(wdt_mem->start, size);
+	if (!wdt_base) {
+		dev_err(dev, "failed to map memory region\n");
+		ret = -ENOMEM;
+		goto out_request;
+	}
+
+	ret = misc_register(&max63xx_wdt_miscdev);
+	if (ret < 0) {
+		dev_err(dev, "cannot register misc device\n");
+		goto out_unmap;
+	}
+
+	return 0;
+
+out_unmap:
+	iounmap(wdt_base);
+out_request:
+	release_mem_region(wdt_mem->start, size);
+	wdt_mem = NULL;
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __devexit max63xx_wdt_remove(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	watchdog_unregister_device(&max63xx_wdt_dev);
+=======
+	misc_deregister(&max63xx_wdt_miscdev);
+	if (wdt_mem) {
+		release_mem_region(wdt_mem->start, resource_size(wdt_mem));
+		wdt_mem = NULL;
+	}
+
+	if (wdt_base)
+		iounmap(wdt_base);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -236,7 +458,22 @@ static struct platform_driver max63xx_wdt_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(max63xx_wdt_driver);
+=======
+static int __init max63xx_wdt_init(void)
+{
+	return platform_driver_register(&max63xx_wdt_driver);
+}
+
+static void __exit max63xx_wdt_exit(void)
+{
+	platform_driver_unregister(&max63xx_wdt_driver);
+}
+
+module_init(max63xx_wdt_init);
+module_exit(max63xx_wdt_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Marc Zyngier <maz@misterjones.org>");
 MODULE_DESCRIPTION("max63xx Watchdog Driver");
@@ -247,7 +484,11 @@ MODULE_PARM_DESC(heartbeat,
 		 __MODULE_STRING(MAX_HEARTBEAT) ", default "
 		 __MODULE_STRING(DEFAULT_HEARTBEAT));
 
+<<<<<<< HEAD
 module_param(nowayout, bool, 0);
+=======
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
 		 __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
 

@@ -85,8 +85,12 @@ static int __devinit platform_lcd_probe(struct platform_device *pdev)
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	plcd = devm_kzalloc(&pdev->dev, sizeof(struct platform_lcd),
 			    GFP_KERNEL);
+=======
+	plcd = kzalloc(sizeof(struct platform_lcd), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!plcd) {
 		dev_err(dev, "no memory for state\n");
 		return -ENOMEM;
@@ -99,7 +103,11 @@ static int __devinit platform_lcd_probe(struct platform_device *pdev)
 	if (IS_ERR(plcd->lcd)) {
 		dev_err(dev, "cannot register lcd device\n");
 		err = PTR_ERR(plcd->lcd);
+<<<<<<< HEAD
 		goto err;
+=======
+		goto err_mem;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	platform_set_drvdata(pdev, plcd);
@@ -107,7 +115,12 @@ static int __devinit platform_lcd_probe(struct platform_device *pdev)
 
 	return 0;
 
+<<<<<<< HEAD
  err:
+=======
+ err_mem:
+	kfree(plcd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -116,14 +129,24 @@ static int __devexit platform_lcd_remove(struct platform_device *pdev)
 	struct platform_lcd *plcd = platform_get_drvdata(pdev);
 
 	lcd_device_unregister(plcd->lcd);
+<<<<<<< HEAD
+=======
+	kfree(plcd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 #ifdef CONFIG_PM
+<<<<<<< HEAD
 static int platform_lcd_suspend(struct device *dev)
 {
 	struct platform_lcd *plcd = dev_get_drvdata(dev);
+=======
+static int platform_lcd_suspend(struct platform_device *pdev, pm_message_t st)
+{
+	struct platform_lcd *plcd = platform_get_drvdata(pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	plcd->suspended = 1;
 	platform_lcd_set_power(plcd->lcd, plcd->power);
@@ -131,24 +154,37 @@ static int platform_lcd_suspend(struct device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int platform_lcd_resume(struct device *dev)
 {
 	struct platform_lcd *plcd = dev_get_drvdata(dev);
+=======
+static int platform_lcd_resume(struct platform_device *pdev)
+{
+	struct platform_lcd *plcd = platform_get_drvdata(pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	plcd->suspended = 0;
 	platform_lcd_set_power(plcd->lcd, plcd->power);
 
 	return 0;
 }
+<<<<<<< HEAD
 
 static SIMPLE_DEV_PM_OPS(platform_lcd_pm_ops, platform_lcd_suspend,
 			platform_lcd_resume);
+=======
+#else
+#define platform_lcd_suspend NULL
+#define platform_lcd_resume NULL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 static struct platform_driver platform_lcd_driver = {
 	.driver		= {
 		.name	= "platform-lcd",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 		.pm	= &platform_lcd_pm_ops,
 #endif
@@ -158,6 +194,27 @@ static struct platform_driver platform_lcd_driver = {
 };
 
 module_platform_driver(platform_lcd_driver);
+=======
+	},
+	.probe		= platform_lcd_probe,
+	.remove		= __devexit_p(platform_lcd_remove),
+	.suspend        = platform_lcd_suspend,
+	.resume         = platform_lcd_resume,
+};
+
+static int __init platform_lcd_init(void)
+{
+	return platform_driver_register(&platform_lcd_driver);
+}
+
+static void __exit platform_lcd_cleanup(void)
+{
+	platform_driver_unregister(&platform_lcd_driver);
+}
+
+module_init(platform_lcd_init);
+module_exit(platform_lcd_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Ben Dooks <ben-linux@fluff.org>");
 MODULE_LICENSE("GPL v2");

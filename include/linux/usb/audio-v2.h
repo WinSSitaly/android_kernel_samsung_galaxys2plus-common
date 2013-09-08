@@ -43,6 +43,7 @@ static inline bool uac2_control_is_writeable(u32 bmControls, u8 control)
 	return (bmControls >> (control * 2)) & 0x2;
 }
 
+<<<<<<< HEAD
 /* 4.7.2 Class-Specific AC Interface Descriptor */
 struct uac2_ac_header_descriptor {
 	__u8  bLength;			/* 9 */
@@ -64,6 +65,8 @@ struct uac2_format_type_i_descriptor {
 	__u8  bBitResolution;
 } __packed;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* 4.7.2.1 Clock Source Descriptor */
 
 struct uac_clock_source_descriptor {

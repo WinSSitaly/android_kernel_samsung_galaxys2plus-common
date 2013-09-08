@@ -404,8 +404,13 @@ static struct pda_power_pdata tosa_power_data = {
 static struct resource tosa_power_resource[] = {
 	{
 		.name		= "ac",
+<<<<<<< HEAD
 		.start		= PXA_GPIO_TO_IRQ(TOSA_GPIO_AC_IN),
 		.end		= PXA_GPIO_TO_IRQ(TOSA_GPIO_AC_IN),
+=======
+		.start		= gpio_to_irq(TOSA_GPIO_AC_IN),
+		.end		= gpio_to_irq(TOSA_GPIO_AC_IN),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags		= IORESOURCE_IRQ |
 				  IORESOURCE_IRQ_HIGHEDGE |
 				  IORESOURCE_IRQ_LOWEDGE,
@@ -889,11 +894,14 @@ static struct platform_device wm9712_device = {
 	.id	= -1,
 };
 
+<<<<<<< HEAD
 static struct platform_device tosa_audio_device = {
 	.name	= "tosa-audio",
 	.id	= -1,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_device *devices[] __initdata = {
 	&tosascoop_device,
 	&tosascoop_jc_device,
@@ -906,12 +914,19 @@ static struct platform_device *devices[] __initdata = {
 	&sharpsl_rom_device,
 	&wm9712_device,
 	&tosa_gpio_vbus,
+<<<<<<< HEAD
 	&tosa_audio_device,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void tosa_poweroff(void)
 {
+<<<<<<< HEAD
 	pxa_restart('g', NULL);
+=======
+	arm_machine_restart('g', NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void tosa_restart(char mode, const char *cmd)
@@ -941,6 +956,10 @@ static void __init tosa_init(void)
 	init_gpio_reset(TOSA_GPIO_ON_RESET, 0, 0);
 
 	pm_power_off = tosa_poweroff;
+<<<<<<< HEAD
+=======
+	arm_pm_restart = tosa_restart;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	PCFR |= PCFR_OPDE;
 
@@ -965,8 +984,13 @@ static void __init tosa_init(void)
 	platform_add_devices(devices, ARRAY_SIZE(devices));
 }
 
+<<<<<<< HEAD
 static void __init fixup_tosa(struct tag *tags, char **cmdline,
 			      struct meminfo *mi)
+=======
+static void __init fixup_tosa(struct machine_desc *desc,
+		struct tag *tags, char **cmdline, struct meminfo *mi)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	sharpsl_save_param();
 	mi->nr_banks=1;
@@ -975,13 +999,21 @@ static void __init fixup_tosa(struct tag *tags, char **cmdline,
 }
 
 MACHINE_START(TOSA, "SHARP Tosa")
+<<<<<<< HEAD
 	.restart_mode	= 'g',
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.fixup          = fixup_tosa,
 	.map_io         = pxa25x_map_io,
 	.nr_irqs	= TOSA_NR_IRQS,
 	.init_irq       = pxa25x_init_irq,
+<<<<<<< HEAD
 	.handle_irq       = pxa25x_handle_irq,
 	.init_machine   = tosa_init,
 	.timer          = &pxa_timer,
 	.restart	= tosa_restart,
+=======
+	.init_machine   = tosa_init,
+	.timer          = &pxa_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

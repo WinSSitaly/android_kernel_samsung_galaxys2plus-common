@@ -14,6 +14,7 @@
 #include <linux/mount.h>
 #include <linux/namei.h>
 #include <linux/security.h>
+<<<<<<< HEAD
 #include <linux/evm.h>
 #include <linux/syscalls.h>
 #include <linux/export.h>
@@ -23,6 +24,15 @@
 
 #include <asm/uaccess.h>
 
+=======
+#include <linux/syscalls.h>
+#include <linux/module.h>
+#include <linux/fsnotify.h>
+#include <linux/audit.h>
+#include <asm/uaccess.h>
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Check permissions for extended attribute access.  This is a bit complicated
  * because different namespaces have very different rules.
@@ -168,6 +178,7 @@ out_noalloc:
 }
 EXPORT_SYMBOL_GPL(xattr_getsecurity);
 
+<<<<<<< HEAD
 /*
  * vfs_getxattr_alloc - allocate memory, if necessary, before calling getxattr
  *
@@ -226,6 +237,8 @@ int vfs_xattr_cmp(struct dentry *dentry, const char *xattr_name,
 	return rc;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ssize_t
 vfs_getxattr(struct dentry *dentry, const char *name, void *value, size_t size)
 {
@@ -303,10 +316,15 @@ vfs_removexattr(struct dentry *dentry, const char *name)
 	error = inode->i_op->removexattr(dentry, name);
 	mutex_unlock(&inode->i_mutex);
 
+<<<<<<< HEAD
 	if (!error) {
 		fsnotify_xattr(dentry);
 		evm_inode_post_removexattr(dentry, name);
 	}
+=======
+	if (!error)
+		fsnotify_xattr(dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error;
 }
 EXPORT_SYMBOL_GPL(vfs_removexattr);
@@ -321,7 +339,10 @@ setxattr(struct dentry *d, const char __user *name, const void __user *value,
 {
 	int error;
 	void *kvalue = NULL;
+<<<<<<< HEAD
 	void *vvalue = NULL;	/* If non-NULL, we used vmalloc() */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char kname[XATTR_NAME_MAX + 1];
 
 	if (flags & ~(XATTR_CREATE|XATTR_REPLACE))
@@ -336,6 +357,7 @@ setxattr(struct dentry *d, const char __user *name, const void __user *value,
 	if (size) {
 		if (size > XATTR_SIZE_MAX)
 			return -E2BIG;
+<<<<<<< HEAD
 		kvalue = kmalloc(size, GFP_KERNEL | __GFP_NOWARN);
 		if (!kvalue) {
 			vvalue = vmalloc(size);
@@ -355,6 +377,15 @@ out:
 		vfree(vvalue);
 	else
 		kfree(kvalue);
+=======
+		kvalue = memdup_user(value, size);
+		if (IS_ERR(kvalue))
+			return PTR_ERR(kvalue);
+	}
+
+	error = vfs_setxattr(d, kname, kvalue, size, flags);
+	kfree(kvalue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error;
 }
 
@@ -411,7 +442,11 @@ SYSCALL_DEFINE5(fsetxattr, int, fd, const char __user *, name,
 	error = mnt_want_write_file(f);
 	if (!error) {
 		error = setxattr(dentry, name, value, size, flags);
+<<<<<<< HEAD
 		mnt_drop_write_file(f);
+=======
+		mnt_drop_write(f->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	fput(f);
 	return error;
@@ -506,11 +541,15 @@ listxattr(struct dentry *d, char __user *list, size_t size)
 {
 	ssize_t error;
 	char *klist = NULL;
+<<<<<<< HEAD
 	char *vlist = NULL;	/* If non-NULL, we used vmalloc() */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (size) {
 		if (size > XATTR_LIST_MAX)
 			size = XATTR_LIST_MAX;
+<<<<<<< HEAD
 		klist = kmalloc(size, __GFP_NOWARN | GFP_KERNEL);
 		if (!klist) {
 			vlist = vmalloc(size);
@@ -518,6 +557,11 @@ listxattr(struct dentry *d, char __user *list, size_t size)
 				return -ENOMEM;
 			klist = vlist;
 		}
+=======
+		klist = kmalloc(size, GFP_KERNEL);
+		if (!klist)
+			return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	error = vfs_listxattr(d, klist, size);
@@ -529,10 +573,14 @@ listxattr(struct dentry *d, char __user *list, size_t size)
 		   than XATTR_LIST_MAX bytes. Not possible. */
 		error = -E2BIG;
 	}
+<<<<<<< HEAD
 	if (vlist)
 		vfree(vlist);
 	else
 		kfree(klist);
+=======
+	kfree(klist);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error;
 }
 
@@ -646,7 +694,11 @@ SYSCALL_DEFINE2(fremovexattr, int, fd, const char __user *, name)
 	error = mnt_want_write_file(f);
 	if (!error) {
 		error = removexattr(dentry, name);
+<<<<<<< HEAD
 		mnt_drop_write_file(f);
+=======
+		mnt_drop_write(f->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	fput(f);
 	return error;

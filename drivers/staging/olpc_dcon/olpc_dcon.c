@@ -21,7 +21,10 @@
 #include <linux/pci_ids.h>
 #include <linux/interrupt.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/backlight.h>
 #include <linux/device.h>
 #include <linux/uaccess.h>
@@ -34,8 +37,16 @@
 
 /* Module definitions */
 
+<<<<<<< HEAD
 static ushort resumeline = 898;
 module_param(resumeline, ushort, 0444);
+=======
+static int resumeline = 898;
+module_param(resumeline, int, 0444);
+
+static int noinit;
+module_param(noinit, int, 0444);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Default off since it doesn't work on DCON ASIC in B-test OLPC board */
 static int useaa = 1;
@@ -66,10 +77,18 @@ static s32 dcon_read(struct dcon_priv *dcon, u8 reg)
 
 static int dcon_hw_init(struct dcon_priv *dcon, int is_init)
 {
+<<<<<<< HEAD
 	uint16_t ver;
 	int rc = 0;
 
 	ver = dcon_read(dcon, DCON_REG_ID);
+=======
+	struct i2c_client *client = dcon->client;
+	uint16_t ver;
+	int rc = 0;
+
+	ver = i2c_smbus_read_word_data(client, DCON_REG_ID);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((ver >> 8) != 0xDC) {
 		printk(KERN_ERR "olpc-dcon:  DCON ID not 0xDCxx: 0x%04x "
 				"instead.\n", ver);
@@ -87,6 +106,7 @@ static int dcon_hw_init(struct dcon_priv *dcon, int is_init)
 		}
 	}
 
+<<<<<<< HEAD
 	if (ver < 0xdc02) {
 		dev_err(&dcon->client->dev,
 				"DCON v1 is unsupported, giving up..\n");
@@ -100,6 +120,32 @@ static int dcon_hw_init(struct dcon_priv *dcon, int is_init)
 	dcon_write(dcon, 0x41, 0x0101);
 	dcon_write(dcon, 0x42, 0x0101);
 
+=======
+	if (ver < 0xdc02 && !noinit) {
+		/* Initialize the DCON registers */
+
+		/* Start with work-arounds for DCON ASIC */
+		i2c_smbus_write_word_data(client, 0x4b, 0x00cc);
+		i2c_smbus_write_word_data(client, 0x4b, 0x00cc);
+		i2c_smbus_write_word_data(client, 0x4b, 0x00cc);
+		i2c_smbus_write_word_data(client, 0x0b, 0x007a);
+		i2c_smbus_write_word_data(client, 0x36, 0x025c);
+		i2c_smbus_write_word_data(client, 0x37, 0x025e);
+
+		/* Initialise SDRAM */
+
+		i2c_smbus_write_word_data(client, 0x3b, 0x002b);
+		i2c_smbus_write_word_data(client, 0x41, 0x0101);
+		i2c_smbus_write_word_data(client, 0x42, 0x0101);
+	} else if (!noinit) {
+		/* SDRAM setup/hold time */
+		i2c_smbus_write_word_data(client, 0x3a, 0xc040);
+		i2c_smbus_write_word_data(client, 0x41, 0x0000);
+		i2c_smbus_write_word_data(client, 0x41, 0x0101);
+		i2c_smbus_write_word_data(client, 0x42, 0x0101);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Colour swizzle, AA, no passthrough, backlight */
 	if (is_init) {
 		dcon->disp_mode = MODE_PASSTHRU | MODE_BL_ENABLE |
@@ -107,11 +153,19 @@ static int dcon_hw_init(struct dcon_priv *dcon, int is_init)
 		if (useaa)
 			dcon->disp_mode |= MODE_COL_AA;
 	}
+<<<<<<< HEAD
 	dcon_write(dcon, DCON_REG_MODE, dcon->disp_mode);
 
 
 	/* Set the scanline to interrupt on during resume */
 	dcon_write(dcon, DCON_REG_SCAN_INT, resumeline);
+=======
+	i2c_smbus_write_word_data(client, DCON_REG_MODE, dcon->disp_mode);
+
+
+	/* Set the scanline to interrupt on during resume */
+	i2c_smbus_write_word_data(client, DCON_REG_SCAN_INT, resumeline);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 err:
 	return rc;
@@ -456,7 +510,11 @@ static ssize_t dcon_mono_store(struct device *dev,
 	unsigned long enable_mono;
 	int rc;
 
+<<<<<<< HEAD
 	rc = kstrtoul(buf, 10, &enable_mono);
+=======
+	rc = strict_strtoul(buf, 10, &enable_mono);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc)
 		return rc;
 
@@ -472,7 +530,11 @@ static ssize_t dcon_freeze_store(struct device *dev,
 	unsigned long output;
 	int ret;
 
+<<<<<<< HEAD
 	ret = kstrtoul(buf, 10, &output);
+=======
+	ret = strict_strtoul(buf, 10, &output);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -498,10 +560,17 @@ static ssize_t dcon_freeze_store(struct device *dev,
 static ssize_t dcon_resumeline_store(struct device *dev,
 	struct device_attribute *attr, const char *buf, size_t count)
 {
+<<<<<<< HEAD
 	unsigned short rl;
 	int rc;
 
 	rc = kstrtou16(buf, 10, &rl);
+=======
+	unsigned long rl;
+	int rc;
+
+	rc = strict_strtoul(buf, 10, &rl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc)
 		return rc;
 
@@ -517,7 +586,11 @@ static ssize_t dcon_sleep_store(struct device *dev,
 	unsigned long output;
 	int ret;
 
+<<<<<<< HEAD
 	ret = kstrtoul(buf, 10, &output);
+=======
+	ret = strict_strtoul(buf, 10, &output);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -698,6 +771,10 @@ static int dcon_probe(struct i2c_client *client, const struct i2c_device_id *id)
  eirq:
 	free_irq(DCON_IRQ, dcon);
  einit:
+<<<<<<< HEAD
+=======
+	i2c_set_clientdata(client, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(dcon);
 	return rc;
 }
@@ -706,6 +783,11 @@ static int dcon_remove(struct i2c_client *client)
 {
 	struct dcon_priv *dcon = i2c_get_clientdata(client);
 
+<<<<<<< HEAD
+=======
+	i2c_set_clientdata(client, NULL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fb_unregister_client(&dcon->fbevent_nb);
 	unregister_reboot_notifier(&dcon->reboot_nb);
 	atomic_notifier_chain_unregister(&panic_notifier_list, &dcon_panic_nb);
@@ -755,9 +837,15 @@ static int dcon_resume(struct i2c_client *client)
 irqreturn_t dcon_interrupt(int irq, void *id)
 {
 	struct dcon_priv *dcon = id;
+<<<<<<< HEAD
 	u8 status;
 
 	if (pdata->read_status(&status))
+=======
+	int status = pdata->read_status();
+
+	if (status == -1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return IRQ_NONE;
 
 	switch (status & 3) {

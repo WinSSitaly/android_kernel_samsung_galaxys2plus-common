@@ -17,7 +17,10 @@
 
 #include <asm/cacheflush.h>
 #include <asm/delay.h>
+<<<<<<< HEAD
 #include <asm/io.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/da8xx.h>
 #include <mach/sram.h>

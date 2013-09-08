@@ -6,11 +6,19 @@
  *  Copyright (C) 2006, Timesys Corp., Thomas Gleixner <tglx@timesys.com>
  *
  */
+<<<<<<< HEAD
 #include <linux/device.h>
 #include <linux/kthread.h>
 #include <linux/export.h>
 #include <linux/sched.h>
 #include <linux/spinlock.h>
+=======
+#include <linux/kthread.h>
+#include <linux/module.h>
+#include <linux/sched.h>
+#include <linux/spinlock.h>
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/timer.h>
 #include <linux/freezer.h>
 
@@ -27,7 +35,11 @@ struct test_thread_data {
 	int			opdata;
 	int			mutexes[MAX_RT_TEST_MUTEXES];
 	int			event;
+<<<<<<< HEAD
 	struct device		dev;
+=======
+	struct sys_device	sysdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct test_thread_data thread_data[MAX_RT_TEST_THREADS];
@@ -271,7 +283,11 @@ static int test_func(void *data)
  *
  * opcode:data
  */
+<<<<<<< HEAD
 static ssize_t sysfs_test_command(struct device *dev, struct device_attribute *attr,
+=======
+static ssize_t sysfs_test_command(struct sys_device *dev, struct sysdev_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  const char *buf, size_t count)
 {
 	struct sched_param schedpar;
@@ -279,8 +295,13 @@ static ssize_t sysfs_test_command(struct device *dev, struct device_attribute *a
 	char cmdbuf[32];
 	int op, dat, tid, ret;
 
+<<<<<<< HEAD
 	td = container_of(dev, struct test_thread_data, dev);
 	tid = td->dev.id;
+=======
+	td = container_of(dev, struct test_thread_data, sysdev);
+	tid = td->sysdev.id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* strings from sysfs write are not 0 terminated! */
 	if (count >= sizeof(cmdbuf))
@@ -334,7 +355,11 @@ static ssize_t sysfs_test_command(struct device *dev, struct device_attribute *a
  * @dev:	thread to query
  * @buf:	char buffer to be filled with thread status info
  */
+<<<<<<< HEAD
 static ssize_t sysfs_test_status(struct device *dev, struct device_attribute *attr,
+=======
+static ssize_t sysfs_test_status(struct sys_device *dev, struct sysdev_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 char *buf)
 {
 	struct test_thread_data *td;
@@ -342,8 +367,13 @@ static ssize_t sysfs_test_status(struct device *dev, struct device_attribute *at
 	char *curr = buf;
 	int i;
 
+<<<<<<< HEAD
 	td = container_of(dev, struct test_thread_data, dev);
 	tsk = threads[td->dev.id];
+=======
+	td = container_of(dev, struct test_thread_data, sysdev);
+	tsk = threads[td->sysdev.id];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock(&rttest_lock);
 
@@ -360,29 +390,50 @@ static ssize_t sysfs_test_status(struct device *dev, struct device_attribute *at
 	spin_unlock(&rttest_lock);
 
 	curr += sprintf(curr, ", T: %p, R: %p\n", tsk,
+<<<<<<< HEAD
 			mutexes[td->dev.id].owner);
+=======
+			mutexes[td->sysdev.id].owner);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return curr - buf;
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(status, 0600, sysfs_test_status, NULL);
 static DEVICE_ATTR(command, 0600, NULL, sysfs_test_command);
 
 static struct bus_type rttest_subsys = {
 	.name = "rttest",
 	.dev_name = "rttest",
+=======
+static SYSDEV_ATTR(status, 0600, sysfs_test_status, NULL);
+static SYSDEV_ATTR(command, 0600, NULL, sysfs_test_command);
+
+static struct sysdev_class rttest_sysclass = {
+	.name = "rttest",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int init_test_thread(int id)
 {
+<<<<<<< HEAD
 	thread_data[id].dev.bus = &rttest_subsys;
 	thread_data[id].dev.id = id;
+=======
+	thread_data[id].sysdev.cls = &rttest_sysclass;
+	thread_data[id].sysdev.id = id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	threads[id] = kthread_run(test_func, &thread_data[id], "rt-test-%d", id);
 	if (IS_ERR(threads[id]))
 		return PTR_ERR(threads[id]);
 
+<<<<<<< HEAD
 	return device_register(&thread_data[id].dev);
+=======
+	return sysdev_register(&thread_data[id].sysdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int init_rttest(void)
@@ -394,7 +445,11 @@ static int init_rttest(void)
 	for (i = 0; i < MAX_RT_TEST_MUTEXES; i++)
 		rt_mutex_init(&mutexes[i]);
 
+<<<<<<< HEAD
 	ret = subsys_system_register(&rttest_subsys, NULL);
+=======
+	ret = sysdev_class_register(&rttest_sysclass);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -402,10 +457,17 @@ static int init_rttest(void)
 		ret = init_test_thread(i);
 		if (ret)
 			break;
+<<<<<<< HEAD
 		ret = device_create_file(&thread_data[i].dev, &dev_attr_status);
 		if (ret)
 			break;
 		ret = device_create_file(&thread_data[i].dev, &dev_attr_command);
+=======
+		ret = sysdev_create_file(&thread_data[i].sysdev, &attr_status);
+		if (ret)
+			break;
+		ret = sysdev_create_file(&thread_data[i].sysdev, &attr_command);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret)
 			break;
 	}

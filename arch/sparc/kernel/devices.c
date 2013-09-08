@@ -17,8 +17,13 @@
 #include <asm/oplib.h>
 #include <asm/prom.h>
 #include <asm/smp.h>
+<<<<<<< HEAD
 #include <asm/cpudata.h>
 #include <asm/cpu_type.h>
+=======
+#include <asm/system.h>
+#include <asm/cpudata.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void clock_stop_probe(void); /* tadpole.c */
 extern void sun4c_probe_memerr_reg(void);

@@ -12,6 +12,10 @@
 #include <linux/console.h>
 #include <linux/init.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/machdep.h>
 #include <asm/irq.h>
 #include <asm/sun3xprom.h>

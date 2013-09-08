@@ -75,6 +75,7 @@
 #define DP_EDP_CONFIGURATION_CAP            0x00d
 #define DP_TRAINING_AUX_RD_INTERVAL         0x00e
 
+<<<<<<< HEAD
 #define DP_PSR_SUPPORT                      0x070
 # define DP_PSR_IS_SUPPORTED                1
 #define DP_PSR_CAPS                         0x071
@@ -89,6 +90,8 @@
 # define DP_PSR_SETUP_TIME_MASK             (7 << 1)
 # define DP_PSR_SETUP_TIME_SHIFT            1
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* link configuration */
 #define	DP_LINK_BW_SET		            0x100
 # define DP_LINK_BW_1_62		    0x06
@@ -148,6 +151,7 @@
 #define DP_MAIN_LINK_CHANNEL_CODING_SET	    0x108
 # define DP_SET_ANSI_8B10B		    (1 << 0)
 
+<<<<<<< HEAD
 #define DP_PSR_EN_CFG			    0x170
 # define DP_PSR_ENABLE			    (1 << 0)
 # define DP_PSR_MAIN_LINK_ACTIVE	    (1 << 1)
@@ -160,6 +164,8 @@
 # define DP_CP_IRQ			    (1 << 2)
 # define DP_SINK_SPECIFIC_IRQ		    (1 << 6)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DP_EDP_CONFIGURATION_SET            0x10a
 
 #define DP_LANE0_1_STATUS		    0x202
@@ -194,6 +200,7 @@
 # define DP_ADJUST_PRE_EMPHASIS_LANE1_MASK   0xc0
 # define DP_ADJUST_PRE_EMPHASIS_LANE1_SHIFT  6
 
+<<<<<<< HEAD
 #define DP_TEST_REQUEST			    0x218
 # define DP_TEST_LINK_TRAINING		    (1 << 0)
 # define DP_TEST_LINK_PATTERN		    (1 << 1)
@@ -213,10 +220,13 @@
 # define DP_TEST_NAK			    (1 << 1)
 # define DP_TEST_EDID_CHECKSUM_WRITE	    (1 << 2)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DP_SET_POWER                        0x600
 # define DP_SET_POWER_D0                    0x1
 # define DP_SET_POWER_D3                    0x2
 
+<<<<<<< HEAD
 #define DP_PSR_ERROR_STATUS                 0x2006
 # define DP_PSR_LINK_CRC_ERROR              (1 << 0)
 # define DP_PSR_RFB_STORAGE_ERROR           (1 << 1)
@@ -233,6 +243,8 @@
 # define DP_PSR_SINK_INTERNAL_ERROR         7
 # define DP_PSR_SINK_STATE_MASK             0x07
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MODE_I2C_START	1
 #define MODE_I2C_WRITE	2
 #define MODE_I2C_READ	4

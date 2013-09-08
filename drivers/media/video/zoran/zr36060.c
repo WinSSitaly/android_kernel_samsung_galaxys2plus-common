@@ -50,7 +50,11 @@
 /* amount of chips attached via this driver */
 static int zr36060_codecs;
 
+<<<<<<< HEAD
 static bool low_bitrate;
+=======
+static int low_bitrate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(low_bitrate, bool, 0);
 MODULE_PARM_DESC(low_bitrate, "Buz compatibility option, halves bitrate");
 

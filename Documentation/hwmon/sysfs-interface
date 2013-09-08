@@ -139,6 +139,7 @@ in[0-*]_input	Voltage input value.
 		thumb: drivers should report the voltage values at the
 		"pins" of the chip.
 
+<<<<<<< HEAD
 in[0-*]_average
 		Average voltage
 		Unit: millivolt
@@ -162,6 +163,8 @@ in_reset_history
 		Reset inX_lowest and inX_highest for all sensors
 		WO
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 in[0-*]_label	Suggested voltage channel label.
 		Text string
 		Should only be created if the driver has hints about what
@@ -304,7 +307,11 @@ value (fastest fan speed) wins.
 temp[1-*]_type	Sensor type selection.
 		Integers 1 to 6
 		RW
+<<<<<<< HEAD
 		1: CPU embedded diode
+=======
+		1: PII/Celeron Diode
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		2: 3904 transistor
 		3: thermal diode
 		4: thermistor
@@ -430,6 +437,7 @@ curr[1-*]_input	Current input value
 		Unit: milliampere
 		RO
 
+<<<<<<< HEAD
 curr[1-*]_average
 		Average current use
 		Unit: milliampere
@@ -453,6 +461,8 @@ curr_reset_history
 		Reset currX_lowest and currX_highest for all sensors
 		WO
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Also see the Alarms section for status flags associated with currents.
 
 *********

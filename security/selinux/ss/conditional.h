@@ -13,7 +13,10 @@
 #include "avtab.h"
 #include "symtab.h"
 #include "policydb.h"
+<<<<<<< HEAD
 #include "../include/conditional.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define COND_EXPR_MAXDEPTH 10
 

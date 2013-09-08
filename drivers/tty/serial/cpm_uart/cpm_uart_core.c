@@ -31,7 +31,10 @@
 
 #include <linux/module.h>
 #include <linux/tty.h>
+<<<<<<< HEAD
 #include <linux/tty_flip.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ioport.h>
 #include <linux/init.h>
 #include <linux/serial.h>

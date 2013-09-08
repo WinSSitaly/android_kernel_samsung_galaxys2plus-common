@@ -159,7 +159,11 @@ static ssize_t ctcm_proto_store(struct device *dev,
 	return count;
 }
 
+<<<<<<< HEAD
 static const char *ctcm_type[] = {
+=======
+const char *ctcm_type[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"not a channel",
 	"CTC/A",
 	"FICON channel",

@@ -23,14 +23,22 @@
 #include <asm/spitfire.h>
 #include <asm/prom.h>
 #include <asm/irq.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if defined(CONFIG_MAGIC_SYSRQ)
 #define SUPPORT_SYSRQ
 #endif
 
 #include <linux/serial_core.h>
+<<<<<<< HEAD
 #include <linux/sunserialcore.h>
+=======
+
+#include "suncore.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define CON_BREAK	((long)-1)
 #define CON_HUP		((long)-2)

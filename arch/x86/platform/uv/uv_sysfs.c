@@ -19,7 +19,11 @@
  *  Copyright (c) Russ Anderson
  */
 
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uv/bios.h>
 #include <asm/uv/uv.h>
 

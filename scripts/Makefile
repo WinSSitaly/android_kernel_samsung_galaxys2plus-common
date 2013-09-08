@@ -8,8 +8,11 @@
 # conmakehash:	 Create arrays for initializing the kernel console tables
 # docproc:       Used in Documentation/DocBook
 
+<<<<<<< HEAD
 HOST_EXTRACFLAGS += -I$(srctree)/tools/include
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 hostprogs-$(CONFIG_KALLSYMS)     += kallsyms
 hostprogs-$(CONFIG_LOGO)         += pnmtologo
 hostprogs-$(CONFIG_VT)           += conmakehash

@@ -1,7 +1,10 @@
 #ifndef _ASM_IA64_KEXEC_H
 #define _ASM_IA64_KEXEC_H
 
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Maximum physical address we can use pages from */
 #define KEXEC_SOURCE_MEMORY_LIMIT (-1UL)

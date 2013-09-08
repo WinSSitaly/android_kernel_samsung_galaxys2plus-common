@@ -44,6 +44,11 @@ extern void
 radeon_legacy_backlight_init(struct radeon_encoder *radeon_encoder,
 			     struct drm_connector *drm_connector);
 
+<<<<<<< HEAD
+=======
+bool radeon_connector_encoder_is_dp_bridge(struct drm_connector *connector);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void radeon_connector_hotplug(struct drm_connector *connector)
 {
 	struct drm_device *dev = connector->dev;
@@ -64,6 +69,7 @@ void radeon_connector_hotplug(struct drm_connector *connector)
 
 	/* just deal with DP (not eDP) here. */
 	if (connector->connector_type == DRM_MODE_CONNECTOR_DisplayPort) {
+<<<<<<< HEAD
 		struct radeon_connector_atom_dig *dig_connector =
 			radeon_connector->con_priv;
 
@@ -91,6 +97,16 @@ void radeon_connector_hotplug(struct drm_connector *connector)
 			}
 			connector->dpms = saved_dpms;
 		}
+=======
+		int saved_dpms = connector->dpms;
+
+		/* Only turn off the display it it's physically disconnected */
+		if (!radeon_hpd_sense(rdev, radeon_connector->hpd.hpd))
+			drm_helper_connector_dpms(connector, DRM_MODE_DPMS_OFF);
+		else if (radeon_dp_needs_link_train(radeon_connector))
+			drm_helper_connector_dpms(connector, DRM_MODE_DPMS_ON);
+		connector->dpms = saved_dpms;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -449,11 +465,64 @@ int radeon_connector_set_property(struct drm_connector *connector, struct drm_pr
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * Some integrated ATI Radeon chipset implementations (e. g.
+ * Asus M2A-VM HDMI) may indicate the availability of a DDC,
+ * even when there's no monitor connected. For these connectors
+ * following DDC probe extension will be applied: check also for the
+ * availability of EDID with at least a correct EDID header. Only then,
+ * DDC is assumed to be available. This prevents drm_get_edid() and
+ * drm_edid_block_valid() from periodically dumping data and kernel
+ * errors into the logs and onto the terminal.
+ */
+static bool radeon_connector_needs_extended_probe(struct radeon_device *dev,
+				     uint32_t supported_device,
+				     int connector_type)
+{
+	/* Asus M2A-VM HDMI board sends data to i2c bus even,
+	 * if HDMI add-on card is not plugged in or HDMI is disabled in
+	 * BIOS. Valid DDC can only be assumed, if also a valid EDID header
+	 * can be retrieved via i2c bus during DDC probe */
+	if ((dev->pdev->device == 0x791e) &&
+	    (dev->pdev->subsystem_vendor == 0x1043) &&
+	    (dev->pdev->subsystem_device == 0x826d)) {
+		if ((connector_type == DRM_MODE_CONNECTOR_HDMIA) &&
+		    (supported_device == ATOM_DEVICE_DFP2_SUPPORT))
+			return true;
+	}
+	/* ECS A740GM-M with ATI RADEON 2100 sends data to i2c bus
+	 * for a DVI connector that is not implemented */
+	if ((dev->pdev->device == 0x796e) &&
+	    (dev->pdev->subsystem_vendor == 0x1019) &&
+	    (dev->pdev->subsystem_device == 0x2615)) {
+		if ((connector_type == DRM_MODE_CONNECTOR_DVID) &&
+		    (supported_device == ATOM_DEVICE_DFP2_SUPPORT))
+			return true;
+	}
+	/* TOSHIBA Satellite L300D with ATI Mobility Radeon x1100
+	 * (RS690M) sends data to i2c bus for a HDMI connector that
+	 * is not implemented */
+	if ((dev->pdev->device == 0x791f) &&
+	    (dev->pdev->subsystem_vendor == 0x1179) &&
+	    (dev->pdev->subsystem_device == 0xff68)) {
+		if ((connector_type == DRM_MODE_CONNECTOR_HDMIA) &&
+		    (supported_device == ATOM_DEVICE_DFP2_SUPPORT))
+			return true;
+	}
+
+	/* Default: no EDID header probe required for DDC probing */
+	return false;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void radeon_fixup_lvds_native_mode(struct drm_encoder *encoder,
 					  struct drm_connector *connector)
 {
 	struct radeon_encoder *radeon_encoder =	to_radeon_encoder(encoder);
 	struct drm_display_mode *native_mode = &radeon_encoder->native_mode;
+<<<<<<< HEAD
 	struct drm_display_mode *t, *mode;
 
 	/* If the EDID preferred mode doesn't match the native mode, use it */
@@ -467,6 +536,13 @@ static void radeon_fixup_lvds_native_mode(struct drm_encoder *encoder,
 
 	/* Try to get native mode details from EDID if necessary */
 	if (!native_mode->clock) {
+=======
+
+	/* Try to get native mode details from EDID if necessary */
+	if (!native_mode->clock) {
+		struct drm_display_mode *t, *mode;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_for_each_entry_safe(mode, t, &connector->probed_modes, head) {
 			if (mode->hdisplay == native_mode->hdisplay &&
 			    mode->vdisplay == native_mode->vdisplay) {
@@ -477,7 +553,10 @@ static void radeon_fixup_lvds_native_mode(struct drm_encoder *encoder,
 			}
 		}
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!native_mode->clock) {
 		DRM_DEBUG_KMS("No LVDS native mode details, disabling RMX\n");
 		radeon_encoder->rmx_type = RMX_OFF;
@@ -689,7 +768,12 @@ radeon_vga_detect(struct drm_connector *connector, bool force)
 		ret = connector_status_disconnected;
 
 	if (radeon_connector->ddc_bus)
+<<<<<<< HEAD
 		dret = radeon_ddc_probe(radeon_connector, false);
+=======
+		dret = radeon_ddc_probe(radeon_connector,
+					radeon_connector->requires_extended_probe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dret) {
 		radeon_connector->detected_by_load = false;
 		if (radeon_connector->edid) {
@@ -846,6 +930,7 @@ static int radeon_dvi_get_modes(struct drm_connector *connector)
 	return ret;
 }
 
+<<<<<<< HEAD
 static bool radeon_check_hpd_status_unchanged(struct drm_connector *connector)
 {
 	struct drm_device *dev = connector->dev;
@@ -867,6 +952,8 @@ static bool radeon_check_hpd_status_unchanged(struct drm_connector *connector)
 	return false;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * DVI is complicated
  * Do a DDC probe, if DDC probe passes, get the full EDID so
@@ -891,11 +978,17 @@ radeon_dvi_detect(struct drm_connector *connector, bool force)
 	enum drm_connector_status ret = connector_status_disconnected;
 	bool dret = false;
 
+<<<<<<< HEAD
 	if (!force && radeon_check_hpd_status_unchanged(connector))
 		return connector->status;
 
 	if (radeon_connector->ddc_bus)
 		dret = radeon_ddc_probe(radeon_connector, false);
+=======
+	if (radeon_connector->ddc_bus)
+		dret = radeon_ddc_probe(radeon_connector,
+					radeon_connector->requires_extended_probe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dret) {
 		radeon_connector->detected_by_load = false;
 		if (radeon_connector->edid) {
@@ -1104,7 +1197,11 @@ static int radeon_dvi_mode_valid(struct drm_connector *connector,
 		    (radeon_connector->connector_object_id == CONNECTOR_OBJECT_ID_HDMI_TYPE_B))
 			return MODE_OK;
 		else if (radeon_connector->connector_object_id == CONNECTOR_OBJECT_ID_HDMI_TYPE_A) {
+<<<<<<< HEAD
 			if (ASIC_IS_DCE6(rdev)) {
+=======
+			if (ASIC_IS_DCE3(rdev)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/* HDMI 1.3+ supports max clock of 340 Mhz */
 				if (mode->clock > 340000)
 					return MODE_CLOCK_HIGH;
@@ -1164,6 +1261,7 @@ static int radeon_dp_get_modes(struct drm_connector *connector)
 	    (connector->connector_type == DRM_MODE_CONNECTOR_LVDS)) {
 		struct drm_display_mode *mode;
 
+<<<<<<< HEAD
 		if (connector->connector_type == DRM_MODE_CONNECTOR_eDP) {
 			if (!radeon_dig_connector->edp_on)
 				atombios_set_edp_panel_power(connector,
@@ -1181,6 +1279,15 @@ static int radeon_dp_get_modes(struct drm_connector *connector)
 			}
 			ret = radeon_ddc_get_modes(radeon_connector);
 		}
+=======
+		if (!radeon_dig_connector->edp_on)
+			atombios_set_edp_panel_power(connector,
+						     ATOM_TRANSMITTER_ACTION_POWER_ON);
+		ret = radeon_ddc_get_modes(radeon_connector);
+		if (!radeon_dig_connector->edp_on)
+			atombios_set_edp_panel_power(connector,
+						     ATOM_TRANSMITTER_ACTION_POWER_OFF);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (ret > 0) {
 			if (encoder) {
@@ -1191,6 +1298,10 @@ static int radeon_dp_get_modes(struct drm_connector *connector)
 			return ret;
 		}
 
+<<<<<<< HEAD
+=======
+		encoder = radeon_best_single_encoder(connector);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!encoder)
 			return 0;
 
@@ -1207,8 +1318,12 @@ static int radeon_dp_get_modes(struct drm_connector *connector)
 		}
 	} else {
 		/* need to setup ddc on the bridge */
+<<<<<<< HEAD
 		if (radeon_connector_encoder_get_dp_bridge_encoder_id(connector) !=
 			ENCODER_OBJECT_ID_NONE) {
+=======
+		if (radeon_connector_encoder_is_dp_bridge(connector)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (encoder)
 				radeon_atom_ext_encoder_setup_ddc(encoder);
 		}
@@ -1218,12 +1333,20 @@ static int radeon_dp_get_modes(struct drm_connector *connector)
 	return ret;
 }
 
+<<<<<<< HEAD
 u16 radeon_connector_encoder_get_dp_bridge_encoder_id(struct drm_connector *connector)
+=======
+bool radeon_connector_encoder_is_dp_bridge(struct drm_connector *connector)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_mode_object *obj;
 	struct drm_encoder *encoder;
 	struct radeon_encoder *radeon_encoder;
 	int i;
+<<<<<<< HEAD
+=======
+	bool found = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < DRM_CONNECTOR_MAX_ENCODER; i++) {
 		if (connector->encoder_ids[i] == 0)
@@ -1239,13 +1362,22 @@ u16 radeon_connector_encoder_get_dp_bridge_encoder_id(struct drm_connector *conn
 		switch (radeon_encoder->encoder_id) {
 		case ENCODER_OBJECT_ID_TRAVIS:
 		case ENCODER_OBJECT_ID_NUTMEG:
+<<<<<<< HEAD
 			return radeon_encoder->encoder_id;
+=======
+			found = true;
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			break;
 		}
 	}
 
+<<<<<<< HEAD
 	return ENCODER_OBJECT_ID_NONE;
+=======
+	return found;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 bool radeon_connector_encoder_is_hbr2(struct drm_connector *connector)
@@ -1297,9 +1429,12 @@ radeon_dp_detect(struct drm_connector *connector, bool force)
 	struct radeon_connector_atom_dig *radeon_dig_connector = radeon_connector->con_priv;
 	struct drm_encoder *encoder = radeon_best_single_encoder(connector);
 
+<<<<<<< HEAD
 	if (!force && radeon_check_hpd_status_unchanged(connector))
 		return connector->status;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (radeon_connector->edid) {
 		kfree(radeon_connector->edid);
 		radeon_connector->edid = NULL;
@@ -1325,6 +1460,7 @@ radeon_dp_detect(struct drm_connector *connector, bool force)
 		if (!radeon_dig_connector->edp_on)
 			atombios_set_edp_panel_power(connector,
 						     ATOM_TRANSMITTER_ACTION_POWER_OFF);
+<<<<<<< HEAD
 	} else if (radeon_connector_encoder_get_dp_bridge_encoder_id(connector) !=
 		   ENCODER_OBJECT_ID_NONE) {
 		/* DP bridges are always DP */
@@ -1344,6 +1480,14 @@ radeon_dp_detect(struct drm_connector *connector, bool force)
 			}
 		}
 	} else {
+=======
+	} else {
+		/* need to setup ddc on the bridge */
+		if (radeon_connector_encoder_is_dp_bridge(connector)) {
+			if (encoder)
+				radeon_atom_ext_encoder_setup_ddc(encoder);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		radeon_dig_connector->dp_sink_type = radeon_dp_getsinktype(radeon_connector);
 		if (radeon_hpd_sense(rdev, radeon_connector->hpd.hpd)) {
 			ret = connector_status_connected;
@@ -1354,11 +1498,29 @@ radeon_dp_detect(struct drm_connector *connector, bool force)
 				if (radeon_dp_getdpcd(radeon_connector))
 					ret = connector_status_connected;
 			} else {
+<<<<<<< HEAD
 				/* try non-aux ddc (DP to DVI/HMDI/etc. adapter) */
 				if (radeon_ddc_probe(radeon_connector, false))
 					ret = connector_status_connected;
 			}
 		}
+=======
+				if (radeon_ddc_probe(radeon_connector,
+						     radeon_connector->requires_extended_probe))
+					ret = connector_status_connected;
+			}
+		}
+
+		if ((ret == connector_status_disconnected) &&
+		    radeon_connector->dac_load_detect) {
+			struct drm_encoder *encoder = radeon_best_single_encoder(connector);
+			struct drm_encoder_helper_funcs *encoder_funcs;
+			if (encoder) {
+				encoder_funcs = encoder->helper_private;
+				ret = encoder_funcs->detect(encoder, connector);
+			}
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	radeon_connector_update_scratch_regs(connector, ret);
@@ -1500,7 +1662,13 @@ radeon_add_atom_connector(struct drm_device *dev,
 	radeon_connector->shared_ddc = shared_ddc;
 	radeon_connector->connector_object_id = connector_object_id;
 	radeon_connector->hpd = *hpd;
+<<<<<<< HEAD
 
+=======
+	radeon_connector->requires_extended_probe =
+		radeon_connector_needs_extended_probe(rdev, supported_device,
+							connector_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	radeon_connector->router = *router;
 	if (router->ddc_valid || router->cd_valid) {
 		radeon_connector->router_bus = radeon_i2c_lookup(rdev, &router->i2c_info);
@@ -1847,7 +2015,13 @@ radeon_add_legacy_connector(struct drm_device *dev,
 	radeon_connector->devices = supported_device;
 	radeon_connector->connector_object_id = connector_object_id;
 	radeon_connector->hpd = *hpd;
+<<<<<<< HEAD
 
+=======
+	radeon_connector->requires_extended_probe =
+		radeon_connector_needs_extended_probe(rdev, supported_device,
+							connector_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (connector_type) {
 	case DRM_MODE_CONNECTOR_VGA:
 		drm_connector_init(dev, &radeon_connector->base, &radeon_vga_connector_funcs, connector_type);

@@ -23,6 +23,10 @@
 #include <linux/pm.h>
 #include <linux/device.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/irq.h>
 
 #include <pcmcia/ss.h>

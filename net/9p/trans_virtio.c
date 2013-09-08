@@ -26,8 +26,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/in.h>
 #include <linux/module.h>
 #include <linux/net.h>
@@ -147,22 +150,51 @@ static void req_done(struct virtqueue *vq)
 	struct p9_req_t *req;
 	unsigned long flags;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_TRANS, ": request done\n");
+=======
+	P9_DPRINTK(P9_DEBUG_TRANS, ": request done\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (1) {
 		spin_lock_irqsave(&chan->lock, flags);
 		rc = virtqueue_get_buf(chan->vq, &len);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rc == NULL) {
 			spin_unlock_irqrestore(&chan->lock, flags);
 			break;
 		}
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		chan->ring_bufs_avail = 1;
 		spin_unlock_irqrestore(&chan->lock, flags);
 		/* Wakeup if anyone waiting for VirtIO ring space. */
 		wake_up(chan->vc_wq);
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_TRANS, ": rc %p\n", rc);
 		p9_debug(P9_DEBUG_TRANS, ": lookup tag %d\n", rc->tag);
 		req = p9_tag_lookup(chan->client, rc->tag);
+=======
+		P9_DPRINTK(P9_DEBUG_TRANS, ": rc %p\n", rc);
+		P9_DPRINTK(P9_DEBUG_TRANS, ": lookup tag %d\n", rc->tag);
+		req = p9_tag_lookup(chan->client, rc->tag);
+		if (req->tc->private) {
+			struct trans_rpage_info *rp = req->tc->private;
+			int p = rp->rp_nr_pages;
+			/*Release pages */
+			p9_release_req_pages(rp);
+			atomic_sub(p, &vp_pinned);
+			wake_up(&vp_wq);
+			if (rp->rp_alloc)
+				kfree(rp);
+			req->tc->private = NULL;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		req->status = REQ_STATUS_RCVD;
 		p9_client_cb(chan->client, req);
 	}
@@ -182,8 +214,14 @@ static void req_done(struct virtqueue *vq)
  *
  */
 
+<<<<<<< HEAD
 static int pack_sg_list(struct scatterlist *sg, int start,
 			int limit, char *data, int count)
+=======
+static int
+pack_sg_list(struct scatterlist *sg, int start, int limit, char *data,
+								int count)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int s;
 	int index = start;
@@ -192,10 +230,17 @@ static int pack_sg_list(struct scatterlist *sg, int start,
 		s = rest_of_page(data);
 		if (s > count)
 			s = count;
+<<<<<<< HEAD
 		BUG_ON(index > limit);
 		sg_set_buf(&sg[index++], data, s);
 		count -= s;
 		data += s;
+=======
+		sg_set_buf(&sg[index++], data, s);
+		count -= s;
+		data += s;
+		BUG_ON(index > limit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return index-start;
@@ -212,6 +257,7 @@ static int p9_virtio_cancel(struct p9_client *client, struct p9_req_t *req)
  * this takes a list of pages.
  * @sg: scatter/gather list to pack into
  * @start: which segment of the sg_list to start at
+<<<<<<< HEAD
  * @**pdata: a list of pages to add into sg.
  * @nr_pages: number of pages to pack into the scatter/gather list
  * @data: data to pack into scatter/gather list
@@ -242,6 +288,33 @@ pack_sg_list_p(struct scatterlist *sg, int start, int limit,
 		nr_pages--;
 	}
 	return index - start;
+=======
+ * @pdata_off: Offset into the first page
+ * @**pdata: a list of pages to add into sg.
+ * @count: amount of data to pack into the scatter/gather list
+ */
+static int
+pack_sg_list_p(struct scatterlist *sg, int start, int limit, size_t pdata_off,
+		struct page **pdata, int count)
+{
+	int s;
+	int i = 0;
+	int index = start;
+
+	if (pdata_off) {
+		s = min((int)(PAGE_SIZE - pdata_off), count);
+		sg_set_page(&sg[index++], pdata[i++], s, pdata_off);
+		count -= s;
+	}
+
+	while (count) {
+		BUG_ON(index > limit);
+		s = min((int)PAGE_SIZE, count);
+		sg_set_page(&sg[index++], pdata[i++], s, 0);
+		count -= s;
+	}
+	return index-start;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -254,6 +327,7 @@ pack_sg_list_p(struct scatterlist *sg, int start, int limit,
 static int
 p9_virtio_request(struct p9_client *client, struct p9_req_t *req)
 {
+<<<<<<< HEAD
 	int err;
 	int in, out;
 	unsigned long flags;
@@ -417,11 +491,124 @@ req_retry_pinned:
 
 	err = virtqueue_add_buf(chan->vq, chan->sg, out, in, req->tc,
 				GFP_ATOMIC);
+=======
+	int in, out, inp, outp;
+	struct virtio_chan *chan = client->trans;
+	unsigned long flags;
+	size_t pdata_off = 0;
+	struct trans_rpage_info *rpinfo = NULL;
+	int err, pdata_len = 0;
+
+	P9_DPRINTK(P9_DEBUG_TRANS, "9p debug: virtio request\n");
+
+	req->status = REQ_STATUS_SENT;
+
+	if (req->tc->pbuf_size && (req->tc->pubuf && P9_IS_USER_CONTEXT)) {
+		int nr_pages = p9_nr_pages(req);
+		int rpinfo_size = sizeof(struct trans_rpage_info) +
+			sizeof(struct page *) * nr_pages;
+
+		if (atomic_read(&vp_pinned) >= chan->p9_max_pages) {
+			err = wait_event_interruptible(vp_wq,
+				atomic_read(&vp_pinned) < chan->p9_max_pages);
+			if (err  == -ERESTARTSYS)
+				return err;
+			P9_DPRINTK(P9_DEBUG_TRANS, "9p: May gup pages now.\n");
+		}
+
+		if (rpinfo_size <= (req->tc->capacity - req->tc->size)) {
+			/* We can use sdata */
+			req->tc->private = req->tc->sdata + req->tc->size;
+			rpinfo = (struct trans_rpage_info *)req->tc->private;
+			rpinfo->rp_alloc = 0;
+		} else {
+			req->tc->private = kmalloc(rpinfo_size, GFP_NOFS);
+			if (!req->tc->private) {
+				P9_DPRINTK(P9_DEBUG_TRANS, "9p debug: "
+					"private kmalloc returned NULL");
+				return -ENOMEM;
+			}
+			rpinfo = (struct trans_rpage_info *)req->tc->private;
+			rpinfo->rp_alloc = 1;
+		}
+
+		err = p9_payload_gup(req, &pdata_off, &pdata_len, nr_pages,
+				req->tc->id == P9_TREAD ? 1 : 0);
+		if (err < 0) {
+			if (rpinfo->rp_alloc)
+				kfree(rpinfo);
+			return err;
+		} else {
+			atomic_add(rpinfo->rp_nr_pages, &vp_pinned);
+		}
+	}
+
+req_retry_pinned:
+	spin_lock_irqsave(&chan->lock, flags);
+
+	/* Handle out VirtIO ring buffers */
+	out = pack_sg_list(chan->sg, 0, VIRTQUEUE_NUM, req->tc->sdata,
+			req->tc->size);
+
+	if (req->tc->pbuf_size && (req->tc->id == P9_TWRITE)) {
+		/* We have additional write payload buffer to take care */
+		if (req->tc->pubuf && P9_IS_USER_CONTEXT) {
+			outp = pack_sg_list_p(chan->sg, out, VIRTQUEUE_NUM,
+					pdata_off, rpinfo->rp_data, pdata_len);
+		} else {
+			char *pbuf;
+			if (req->tc->pubuf)
+				pbuf = (__force char *) req->tc->pubuf;
+			else
+				pbuf = req->tc->pkbuf;
+			outp = pack_sg_list(chan->sg, out, VIRTQUEUE_NUM, pbuf,
+					req->tc->pbuf_size);
+		}
+		out += outp;
+	}
+
+	/* Handle in VirtIO ring buffers */
+	if (req->tc->pbuf_size &&
+		((req->tc->id == P9_TREAD) || (req->tc->id == P9_TREADDIR))) {
+		/*
+		 * Take care of additional Read payload.
+		 * 11 is the read/write header = PDU Header(7) + IO Size (4).
+		 * Arrange in such a way that server places header in the
+		 * alloced memory and payload onto the user buffer.
+		 */
+		inp = pack_sg_list(chan->sg, out,
+				   VIRTQUEUE_NUM, req->rc->sdata, 11);
+		/*
+		 * Running executables in the filesystem may result in
+		 * a read request with kernel buffer as opposed to user buffer.
+		 */
+		if (req->tc->pubuf && P9_IS_USER_CONTEXT) {
+			in = pack_sg_list_p(chan->sg, out+inp, VIRTQUEUE_NUM,
+					pdata_off, rpinfo->rp_data, pdata_len);
+		} else {
+			char *pbuf;
+			if (req->tc->pubuf)
+				pbuf = (__force char *) req->tc->pubuf;
+			else
+				pbuf = req->tc->pkbuf;
+
+			in = pack_sg_list(chan->sg, out+inp, VIRTQUEUE_NUM,
+					pbuf, req->tc->pbuf_size);
+		}
+		in += inp;
+	} else {
+		in = pack_sg_list(chan->sg, out, VIRTQUEUE_NUM,
+				  req->rc->sdata, req->rc->capacity);
+	}
+
+	err = virtqueue_add_buf(chan->vq, chan->sg, out, in, req->tc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0) {
 		if (err == -ENOSPC) {
 			chan->ring_bufs_avail = 0;
 			spin_unlock_irqrestore(&chan->lock, flags);
 			err = wait_event_interruptible(*chan->vc_wq,
+<<<<<<< HEAD
 						       chan->ring_bufs_avail);
 			if (err  == -ERESTARTSYS)
 				goto err_out;
@@ -460,6 +647,30 @@ err_out:
 	kfree(in_pages);
 	kfree(out_pages);
 	return err;
+=======
+							chan->ring_bufs_avail);
+			if (err  == -ERESTARTSYS)
+				return err;
+
+			P9_DPRINTK(P9_DEBUG_TRANS, "9p:Retry virtio request\n");
+			goto req_retry_pinned;
+		} else {
+			spin_unlock_irqrestore(&chan->lock, flags);
+			P9_DPRINTK(P9_DEBUG_TRANS,
+					"9p debug: "
+					"virtio rpc add_buf returned failure");
+			if (rpinfo && rpinfo->rp_alloc)
+				kfree(rpinfo);
+			return -EIO;
+		}
+	}
+
+	virtqueue_kick(chan->vq);
+	spin_unlock_irqrestore(&chan->lock, flags);
+
+	P9_DPRINTK(P9_DEBUG_TRANS, "9p debug: virtio request kicked\n");
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t p9_mount_tag_show(struct device *dev,
@@ -493,7 +704,11 @@ static int p9_virtio_probe(struct virtio_device *vdev)
 
 	chan = kmalloc(sizeof(struct virtio_chan), GFP_KERNEL);
 	if (!chan) {
+<<<<<<< HEAD
 		pr_err("Failed to allocate virtio 9P channel\n");
+=======
+		printk(KERN_ERR "9p: Failed to allocate virtio 9P channel\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = -ENOMEM;
 		goto fail;
 	}
@@ -594,7 +809,11 @@ p9_virtio_create(struct p9_client *client, const char *devname, char *args)
 	mutex_unlock(&virtio_9p_lock);
 
 	if (!found) {
+<<<<<<< HEAD
 		pr_err("no channels available\n");
+=======
+		printk(KERN_ERR "9p: no channels available\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 
@@ -653,8 +872,13 @@ static struct p9_trans_module p9_virtio_trans = {
 	.create = p9_virtio_create,
 	.close = p9_virtio_close,
 	.request = p9_virtio_request,
+<<<<<<< HEAD
 	.zc_request = p9_virtio_zc_request,
 	.cancel = p9_virtio_cancel,
+=======
+	.cancel = p9_virtio_cancel,
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * We leave one entry for input and one entry for response
 	 * headers. We also skip one more entry to accomodate, address
@@ -662,6 +886,10 @@ static struct p9_trans_module p9_virtio_trans = {
 	 * page in zero copy.
 	 */
 	.maxsize = PAGE_SIZE * (VIRTQUEUE_NUM - 3),
+<<<<<<< HEAD
+=======
+	.pref = P9_TRANS_PREF_PAYLOAD_SEP,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.def = 0,
 	.owner = THIS_MODULE,
 };

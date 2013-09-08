@@ -254,7 +254,10 @@ extern void set_current_blocked(const sigset_t *);
 extern int show_unhandled_signals;
 
 extern int get_signal_to_deliver(siginfo_t *info, struct k_sigaction *return_ka, struct pt_regs *regs, void *cookie);
+<<<<<<< HEAD
 extern void block_sigmask(struct k_sigaction *ka, int signr);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void exit_signals(struct task_struct *tsk);
 
 extern struct kmem_cache *sighand_cachep;

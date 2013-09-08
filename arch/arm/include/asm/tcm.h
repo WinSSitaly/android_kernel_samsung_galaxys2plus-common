@@ -27,7 +27,10 @@
 
 void *tcm_alloc(size_t len);
 void tcm_free(void *addr, size_t len);
+<<<<<<< HEAD
 bool tcm_dtcm_present(void);
 bool tcm_itcm_present(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

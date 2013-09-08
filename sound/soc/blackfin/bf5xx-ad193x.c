@@ -56,10 +56,29 @@ static int bf5xx_ad193x_hw_params(struct snd_pcm_substream *substream,
 
 	switch (params_rate(params)) {
 	case 48000:
+<<<<<<< HEAD
 		clk = 24576000;
 		break;
 	}
 
+=======
+		clk = 12288000;
+		break;
+	}
+
+	/* set cpu DAI configuration */
+	ret = snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_DSP_A |
+		SND_SOC_DAIFMT_IB_IF | SND_SOC_DAIFMT_CBM_CFM);
+	if (ret < 0)
+		return ret;
+
+	/* set codec DAI configuration */
+	ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_DSP_A |
+		SND_SOC_DAIFMT_IB_IF | SND_SOC_DAIFMT_CBM_CFM);
+	if (ret < 0)
+		return ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* set the codec system clock for DAC and ADC */
 	ret = snd_soc_dai_set_sysclk(codec_dai, 0, clk,
 		SND_SOC_CLOCK_IN);
@@ -80,9 +99,12 @@ static int bf5xx_ad193x_hw_params(struct snd_pcm_substream *substream,
 	return 0;
 }
 
+<<<<<<< HEAD
 #define BF5XX_AD193X_DAIFMT (SND_SOC_DAIFMT_DSP_A | SND_SOC_DAIFMT_IB_IF | \
 				SND_SOC_DAIFMT_CBM_CFM)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct snd_soc_ops bf5xx_ad193x_ops = {
 	.hw_params = bf5xx_ad193x_hw_params,
 };
@@ -96,7 +118,10 @@ static struct snd_soc_dai_link bf5xx_ad193x_dai[] = {
 		.platform_name = "bfin-tdm-pcm-audio",
 		.codec_name = "spi0.5",
 		.ops = &bf5xx_ad193x_ops,
+<<<<<<< HEAD
 		.dai_fmt = BF5XX_AD193X_DAIFMT,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "ad193x",
@@ -106,13 +131,19 @@ static struct snd_soc_dai_link bf5xx_ad193x_dai[] = {
 		.platform_name = "bfin-tdm-pcm-audio",
 		.codec_name = "spi0.5",
 		.ops = &bf5xx_ad193x_ops,
+<<<<<<< HEAD
 		.dai_fmt = BF5XX_AD193X_DAIFMT,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 
 static struct snd_soc_card bf5xx_ad193x = {
 	.name = "bfin-ad193x",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link = &bf5xx_ad193x_dai[CONFIG_SND_BF5XX_SPORT_NUM],
 	.num_links = 1,
 };

@@ -79,7 +79,11 @@ static int __init ss4200_led_dmi_callback(const struct dmi_system_id *id)
 	return 1;
 }
 
+<<<<<<< HEAD
 static bool __initdata nodetect;
+=======
+static unsigned int __initdata nodetect;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(nodetect, nodetect, bool, 0);
 MODULE_PARM_DESC(nodetect, "Skip DMI-based hardware detection");
 

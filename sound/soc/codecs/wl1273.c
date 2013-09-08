@@ -23,7 +23,10 @@
 
 #include <linux/mfd/wl1273-core.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/pcm.h>
 #include <sound/pcm_params.h>
 #include <sound/soc.h>
@@ -386,7 +389,11 @@ static int wl1273_hw_params(struct snd_pcm_substream *substream,
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops wl1273_dai_ops = {
+=======
+static struct snd_soc_dai_ops wl1273_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.startup	= wl1273_startup,
 	.hw_params	= wl1273_hw_params,
 };
@@ -463,8 +470,14 @@ static int wl1273_probe(struct snd_soc_codec *codec)
 	wl1273->core = *core;
 
 	snd_soc_codec_set_drvdata(codec, wl1273);
+<<<<<<< HEAD
 
 	r = snd_soc_add_codec_controls(codec, wl1273_controls,
+=======
+	mutex_init(&codec->mutex);
+
+	r = snd_soc_add_controls(codec, wl1273_controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 ARRAY_SIZE(wl1273_controls));
 	if (r)
 		kfree(wl1273);
@@ -510,7 +523,21 @@ static struct platform_driver wl1273_platform_driver = {
 	.remove		= __devexit_p(wl1273_platform_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(wl1273_platform_driver);
+=======
+static int __init wl1273_init(void)
+{
+	return platform_driver_register(&wl1273_platform_driver);
+}
+module_init(wl1273_init);
+
+static void __exit wl1273_exit(void)
+{
+	platform_driver_unregister(&wl1273_platform_driver);
+}
+module_exit(wl1273_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Matti Aaltonen <matti.j.aaltonen@nokia.com>");
 MODULE_DESCRIPTION("ASoC WL1273 codec driver");

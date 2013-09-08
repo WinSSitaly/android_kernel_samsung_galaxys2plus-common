@@ -14,7 +14,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/irq.h>
 #include <linux/gpio.h>
@@ -24,13 +28,20 @@
 #include <linux/smsc911x.h>
 #include <linux/usb/msm_hsusb.h>
 #include <linux/clkdev.h>
+<<<<<<< HEAD
 #include <linux/memblock.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 #include <asm/memory.h>
 #include <asm/setup.h>
 
+<<<<<<< HEAD
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/board.h>
 #include <mach/msm_iomap.h>
 #include <mach/dma.h>
@@ -42,6 +53,7 @@
 
 extern struct sys_timer msm_timer;
 
+<<<<<<< HEAD
 static void __init msm7x30_fixup(struct tag *tag, char **cmdline,
 		struct meminfo *mi)
 {
@@ -57,6 +69,8 @@ static void __init msm7x30_reserve(void)
 	memblock_remove(0x0, SZ_2M);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int hsusb_phy_init_seq[] = {
 	0x30, 0x32,	/* Enable and set Pre-Emphasis Depth to 20% */
 	0x02, 0x36,	/* Disable CDR Auto Reset feature */
@@ -121,9 +135,13 @@ static void __init msm7x30_map_io(void)
 }
 
 MACHINE_START(MSM7X30_SURF, "QCT MSM7X30 SURF")
+<<<<<<< HEAD
 	.atag_offset = 0x100,
 	.fixup = msm7x30_fixup,
 	.reserve = msm7x30_reserve,
+=======
+	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io = msm7x30_map_io,
 	.init_irq = msm7x30_init_irq,
 	.init_machine = msm7x30_init,
@@ -131,9 +149,13 @@ MACHINE_START(MSM7X30_SURF, "QCT MSM7X30 SURF")
 MACHINE_END
 
 MACHINE_START(MSM7X30_FFA, "QCT MSM7X30 FFA")
+<<<<<<< HEAD
 	.atag_offset = 0x100,
 	.fixup = msm7x30_fixup,
 	.reserve = msm7x30_reserve,
+=======
+	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io = msm7x30_map_io,
 	.init_irq = msm7x30_init_irq,
 	.init_machine = msm7x30_init,
@@ -141,9 +163,13 @@ MACHINE_START(MSM7X30_FFA, "QCT MSM7X30 FFA")
 MACHINE_END
 
 MACHINE_START(MSM7X30_FLUID, "QCT MSM7X30 FLUID")
+<<<<<<< HEAD
 	.atag_offset = 0x100,
 	.fixup = msm7x30_fixup,
 	.reserve = msm7x30_reserve,
+=======
+	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io = msm7x30_map_io,
 	.init_irq = msm7x30_init_irq,
 	.init_machine = msm7x30_init,

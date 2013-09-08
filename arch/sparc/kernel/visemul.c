@@ -9,9 +9,15 @@
 
 #include <asm/ptrace.h>
 #include <asm/pstate.h>
+<<<<<<< HEAD
 #include <asm/fpumacro.h>
 #include <asm/uaccess.h>
 #include <asm/cacheflush.h>
+=======
+#include <asm/system.h>
+#include <asm/fpumacro.h>
+#include <asm/uaccess.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* OPF field of various VIS instructions.  */
 
@@ -802,7 +808,11 @@ int vis_emul(struct pt_regs *regs, unsigned int insn)
 
 	BUG_ON(regs->tstate & TSTATE_PRIV);
 
+<<<<<<< HEAD
 	perf_sw_event(PERF_COUNT_SW_EMULATION_FAULTS, 1, regs, 0);
+=======
+	perf_sw_event(PERF_COUNT_SW_EMULATION_FAULTS, 1, 0, regs, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (test_thread_flag(TIF_32BIT))
 		pc = (u32)pc;

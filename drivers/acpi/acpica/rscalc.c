@@ -5,7 +5,11 @@
  ******************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -313,6 +317,7 @@ acpi_rs_get_aml_length(struct acpi_resource * resource, acpi_size * size_needed)
 							  resource_source));
 			break;
 
+<<<<<<< HEAD
 		case ACPI_RESOURCE_TYPE_GPIO:
 
 			total_size =
@@ -345,6 +350,8 @@ acpi_rs_get_aml_length(struct acpi_resource * resource, acpi_size * size_needed)
 
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			break;
 		}
@@ -394,11 +401,18 @@ acpi_rs_get_list_length(u8 * aml_buffer,
 	u32 extra_struct_bytes;
 	u8 resource_index;
 	u8 minimum_aml_resource_length;
+<<<<<<< HEAD
 	union aml_resource *aml_resource;
 
 	ACPI_FUNCTION_TRACE(rs_get_list_length);
 
 	*size_needed = ACPI_RS_SIZE_MIN;	/* Minimum size is one end_tag */
+=======
+
+	ACPI_FUNCTION_TRACE(rs_get_list_length);
+
+	*size_needed = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	end_aml = aml_buffer + aml_buffer_length;
 
 	/* Walk the list of AML resource descriptors */
@@ -409,6 +423,7 @@ acpi_rs_get_list_length(u8 * aml_buffer,
 
 		status = acpi_ut_validate_resource(aml_buffer, &resource_index);
 		if (ACPI_FAILURE(status)) {
+<<<<<<< HEAD
 			/*
 			 * Exit on failure. Cannot continue because the descriptor length
 			 * may be bogus also.
@@ -418,6 +433,11 @@ acpi_rs_get_list_length(u8 * aml_buffer,
 
 		aml_resource = (void *)aml_buffer;
 
+=======
+			return_ACPI_STATUS(status);
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Get the resource length and base (minimum) AML size */
 
 		resource_length = acpi_ut_get_resource_length(aml_buffer);
@@ -461,8 +481,15 @@ acpi_rs_get_list_length(u8 * aml_buffer,
 
 		case ACPI_RESOURCE_NAME_END_TAG:
 			/*
+<<<<<<< HEAD
 			 * End Tag: This is the normal exit
 			 */
+=======
+			 * End Tag:
+			 * This is the normal exit, add size of end_tag
+			 */
+			*size_needed += ACPI_RS_SIZE_MIN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return_ACPI_STATUS(AE_OK);
 
 		case ACPI_RESOURCE_NAME_ADDRESS32:
@@ -494,6 +521,7 @@ acpi_rs_get_list_length(u8 * aml_buffer,
 							 minimum_aml_resource_length);
 			break;
 
+<<<<<<< HEAD
 		case ACPI_RESOURCE_NAME_GPIO:
 
 			/* Vendor data is optional */
@@ -521,6 +549,8 @@ acpi_rs_get_list_length(u8 * aml_buffer,
 			    minimum_aml_resource_length;
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			break;
 		}
@@ -531,6 +561,7 @@ acpi_rs_get_list_length(u8 * aml_buffer,
 		 * Important: Round the size up for the appropriate alignment. This
 		 * is a requirement on IA64.
 		 */
+<<<<<<< HEAD
 		if (acpi_ut_get_resource_type(aml_buffer) ==
 		    ACPI_RESOURCE_NAME_SERIAL_BUS) {
 			buffer_size =
@@ -543,6 +574,11 @@ acpi_rs_get_list_length(u8 * aml_buffer,
 			    extra_struct_bytes;
 		}
 		buffer_size = (u32)ACPI_ROUND_UP_TO_NATIVE_WORD(buffer_size);
+=======
+		buffer_size = acpi_gbl_resource_struct_sizes[resource_index] +
+		    extra_struct_bytes;
+		buffer_size = (u32) ACPI_ROUND_UP_TO_NATIVE_WORD(buffer_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		*size_needed += buffer_size;
 

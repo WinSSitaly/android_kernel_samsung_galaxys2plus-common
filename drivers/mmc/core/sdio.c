@@ -14,7 +14,10 @@
 
 #include <linux/mmc/host.h>
 #include <linux/mmc/card.h>
+<<<<<<< HEAD
 #include <linux/mmc/mmc.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mmc/sdio.h>
 #include <linux/mmc/sdio_func.h>
 #include <linux/mmc/sdio_ids.h>
@@ -28,6 +31,13 @@
 #include "sdio_ops.h"
 #include "sdio_cis.h"
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MMC_EMBEDDED_SDIO
+#include <linux/mmc/sdio_ids.h>
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int sdio_read_fbr(struct sdio_func *func)
 {
 	int ret;
@@ -98,6 +108,7 @@ fail:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int sdio_read_cccr(struct mmc_card *card, u32 ocr)
 {
 	int ret;
@@ -105,6 +116,13 @@ static int sdio_read_cccr(struct mmc_card *card, u32 ocr)
 	int uhs = ocr & R4_18V_PRESENT;
 	unsigned char data;
 	unsigned char speed;
+=======
+static int sdio_read_cccr(struct mmc_card *card)
+{
+	int ret;
+	int cccr_vsn;
+	unsigned char data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memset(&card->cccr, 0, sizeof(struct sdio_cccr));
 
@@ -115,7 +133,11 @@ static int sdio_read_cccr(struct mmc_card *card, u32 ocr)
 	cccr_vsn = data & 0x0f;
 
 	if (cccr_vsn > SDIO_CCCR_REV_3_00) {
+<<<<<<< HEAD
 		pr_err("%s: unrecognised CCCR structure version %d\n",
+=======
+		printk(KERN_ERR "%s: unrecognised CCCR structure version %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mmc_hostname(card->host), cccr_vsn);
 		return -EINVAL;
 	}
@@ -143,6 +165,7 @@ static int sdio_read_cccr(struct mmc_card *card, u32 ocr)
 	}
 
 	if (cccr_vsn >= SDIO_CCCR_REV_1_20) {
+<<<<<<< HEAD
 		ret = mmc_io_rw_direct(card, 0, 0, SDIO_CCCR_SPEED, 0, &speed);
 		if (ret)
 			goto out;
@@ -197,6 +220,14 @@ static int sdio_read_cccr(struct mmc_card *card, u32 ocr)
 				card->sw_caps.hs_max_dtr = 25000000;
 			}
 		}
+=======
+		ret = mmc_io_rw_direct(card, 0, 0, SDIO_CCCR_SPEED, 0, &data);
+		if (ret)
+			goto out;
+
+		if (data & SDIO_SPEED_SHS)
+			card->cccr.high_speed = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 out:
@@ -378,6 +409,7 @@ static unsigned mmc_sdio_get_max_clock(struct mmc_card *card)
 	return max_dtr;
 }
 
+<<<<<<< HEAD
 static unsigned char host_drive_to_sdio_drive(int host_strength)
 {
 	switch (host_strength) {
@@ -566,6 +598,8 @@ out:
 	return err;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Handle the detection and initialisation of a card.
  *
@@ -585,9 +619,12 @@ static int mmc_sdio_init_card(struct mmc_host *host, u32 ocr,
 	 * Inform the card of the voltage
 	 */
 	if (!powered_resume) {
+<<<<<<< HEAD
 		/* The initialization should be done at 3.3 V I/O voltage. */
 		mmc_set_signal_voltage(host, MMC_SIGNAL_VOLTAGE_330, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = mmc_send_io_op_cond(host, host->ocr, &ocr);
 		if (err)
 			goto err;
@@ -636,6 +673,7 @@ static int mmc_sdio_init_card(struct mmc_host *host, u32 ocr,
 		host->ops->init_card(host, card);
 
 	/*
+<<<<<<< HEAD
 	 * If the host and card support UHS-I mode request the card
 	 * to switch to 1.8V signaling level.  No 1.8v signalling if
 	 * UHS mode is not enabled to maintain compatibilty and some
@@ -660,6 +698,8 @@ static int mmc_sdio_init_card(struct mmc_host *host, u32 ocr,
 	}
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * For native busses:  set card RCA and quit open drain mode.
 	 */
 	if (!powered_resume && !mmc_host_is_spi(host)) {
@@ -674,6 +714,11 @@ static int mmc_sdio_init_card(struct mmc_host *host, u32 ocr,
 		 */
 		if (oldcard)
 			oldcard->rca = card->rca;
+<<<<<<< HEAD
+=======
+
+		mmc_set_bus_mode(host, MMC_BUSMODE_PUSHPULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -713,6 +758,7 @@ static int mmc_sdio_init_card(struct mmc_host *host, u32 ocr,
 		goto finish;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * Read the common registers.
 	 */
@@ -726,6 +772,37 @@ static int mmc_sdio_init_card(struct mmc_host *host, u32 ocr,
 	err = sdio_read_common_cis(card);
 	if (err)
 		goto remove;
+=======
+#ifdef CONFIG_MMC_EMBEDDED_SDIO
+	if (host->embedded_sdio_data.cccr)
+		memcpy(&card->cccr, host->embedded_sdio_data.cccr, sizeof(struct sdio_cccr));
+	else {
+#endif
+		/*
+		 * Read the common registers.
+		 */
+		err = sdio_read_cccr(card);
+		if (err)
+			goto remove;
+#ifdef CONFIG_MMC_EMBEDDED_SDIO
+	}
+#endif
+
+#ifdef CONFIG_MMC_EMBEDDED_SDIO
+	if (host->embedded_sdio_data.cis)
+		memcpy(&card->cis, host->embedded_sdio_data.cis, sizeof(struct sdio_cis));
+	else {
+#endif
+		/*
+		 * Read the common CIS tuples.
+		 */
+		err = sdio_read_common_cis(card);
+		if (err)
+			goto remove;
+#ifdef CONFIG_MMC_EMBEDDED_SDIO
+	}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (oldcard) {
 		int same = (card->cis.vendor == oldcard->cis.vendor &&
@@ -758,6 +835,7 @@ static int mmc_sdio_init_card(struct mmc_host *host, u32 ocr,
 	if (err)
 		goto remove;
 
+<<<<<<< HEAD
 	/* Initialization sequence for UHS-I cards */
 	/* Only if card supports 1.8v and UHS signaling */
 	if ((ocr & R4_18V_PRESENT) && card->sw_caps.sd3_bus_mode) {
@@ -791,6 +869,37 @@ static int mmc_sdio_init_card(struct mmc_host *host, u32 ocr,
 		else if (err)
 			goto remove;
 	}
+=======
+	/*
+	 * Switch to high-speed (if supported).
+	 */
+	err = sdio_enable_hs(card);
+	if (err > 0)
+		mmc_sd_go_highspeed(card);
+	else if (err)
+		goto remove;
+
+#ifdef CONFIG_BCM_SDIOWL
+	if ((card->cis.max_dtr == 0) ||
+	    ((!card->cccr.high_speed) && (card->cis.max_dtr > 25000000)) ||
+	    ((!(card->host->caps & MMC_CAP_SD_HIGHSPEED)) && (card->cis.max_dtr > 25000000)))
+		card->cis.max_dtr = 25000000;
+#endif
+	/*
+	 * Change to the card's maximum speed.
+	 */
+	mmc_set_clock(host, mmc_sdio_get_max_clock(card));
+
+	/*
+	 * Switch to wider bus (if supported).
+	 */
+	err = sdio_enable_4bit_bus(card);
+	if (err > 0)
+		mmc_set_bus_width(card->host, MMC_BUS_WIDTH_4);
+	else if (err)
+		goto remove;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 finish:
 	if (!oldcard)
 		host->card = card;
@@ -826,6 +935,7 @@ static void mmc_sdio_remove(struct mmc_host *host)
 }
 
 /*
+<<<<<<< HEAD
  * Card detection - card is alive.
  */
 static int mmc_sdio_alive(struct mmc_host *host)
@@ -834,6 +944,8 @@ static int mmc_sdio_alive(struct mmc_host *host)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Card detection callback from host.
  */
 static void mmc_sdio_detect(struct mmc_host *host)
@@ -855,7 +967,11 @@ static void mmc_sdio_detect(struct mmc_host *host)
 	/*
 	 * Just check if our card has been removed.
 	 */
+<<<<<<< HEAD
 	err = _mmc_detect_card_removed(host);
+=======
+	err = mmc_select_card(host->card);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mmc_release_host(host);
 
@@ -947,7 +1063,11 @@ static int mmc_sdio_resume(struct mmc_host *host)
 	}
 
 	if (!err && host->sdio_irqs)
+<<<<<<< HEAD
 		wake_up_process(host->sdio_irq_thread);
+=======
+		mmc_signal_sdio_irq(host);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mmc_release_host(host);
 
 	/*
@@ -999,11 +1119,14 @@ static int mmc_sdio_power_restore(struct mmc_host *host)
 	 * With these steps taken, mmc_select_voltage() is also required to
 	 * restore the correct voltage setting of the card.
 	 */
+<<<<<<< HEAD
 
 	/* The initialization should be done at 3.3 V I/O voltage. */
 	if (!mmc_card_keep_power(host))
 		mmc_set_signal_voltage(host, MMC_SIGNAL_VOLTAGE_330, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sdio_reset(host);
 	mmc_go_idle(host);
 	mmc_send_if_cond(host, host->ocr_avail);
@@ -1038,7 +1161,10 @@ static const struct mmc_bus_ops mmc_sdio_ops = {
 	.suspend = mmc_sdio_suspend,
 	.resume = mmc_sdio_resume,
 	.power_restore = mmc_sdio_power_restore,
+<<<<<<< HEAD
 	.alive = mmc_sdio_alive,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -1067,7 +1193,11 @@ int mmc_attach_sdio(struct mmc_host *host)
 	 * support.
 	 */
 	if (ocr & 0x7F) {
+<<<<<<< HEAD
 		pr_warning("%s: card claims to support voltages "
+=======
+		printk(KERN_WARNING "%s: card claims to support voltages "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       "below the defined range. These will be ignored.\n",
 		       mmc_hostname(host));
 		ocr &= ~0x7F;
@@ -1087,6 +1217,7 @@ int mmc_attach_sdio(struct mmc_host *host)
 	 * Detect and init the card.
 	 */
 	err = mmc_sdio_init_card(host, host->ocr, NULL, 0);
+<<<<<<< HEAD
 	if (err) {
 		if (err == -EAGAIN) {
 			/*
@@ -1098,6 +1229,10 @@ int mmc_attach_sdio(struct mmc_host *host)
 		if (err)
 			goto err;
 	}
+=======
+	if (err)
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	card = host->card;
 
 	/*
@@ -1124,14 +1259,46 @@ int mmc_attach_sdio(struct mmc_host *host)
 	funcs = (ocr & 0x70000000) >> 28;
 	card->sdio_funcs = 0;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MMC_EMBEDDED_SDIO
+	if (host->embedded_sdio_data.funcs)
+		card->sdio_funcs = funcs = host->embedded_sdio_data.num_funcs;
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Initialize (but don't add) all present functions.
 	 */
 	for (i = 0; i < funcs; i++, card->sdio_funcs++) {
+<<<<<<< HEAD
 		err = sdio_init_func(host->card, i + 1);
 		if (err)
 			goto remove;
 
+=======
+#ifdef CONFIG_MMC_EMBEDDED_SDIO
+		if (host->embedded_sdio_data.funcs) {
+			struct sdio_func *tmp;
+
+			tmp = sdio_alloc_func(host->card);
+			if (IS_ERR(tmp))
+				goto remove;
+			tmp->num = (i + 1);
+			card->sdio_func[i] = tmp;
+			tmp->class = host->embedded_sdio_data.funcs[i].f_class;
+			tmp->max_blksize = host->embedded_sdio_data.funcs[i].f_maxblksize;
+			tmp->vendor = card->cis.vendor;
+			tmp->device = card->cis.device;
+		} else {
+#endif
+			err = sdio_init_func(host->card, i + 1);
+			if (err)
+				goto remove;
+#ifdef CONFIG_MMC_EMBEDDED_SDIO
+		}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Enable Runtime PM for this func (if supported)
 		 */
@@ -1173,9 +1340,90 @@ remove:
 err:
 	mmc_detach_bus(host);
 
+<<<<<<< HEAD
 	pr_err("%s: error %d whilst initialising SDIO card\n",
+=======
+	printk(KERN_ERR "%s: error %d whilst initialising SDIO card\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mmc_hostname(host), err);
 
 	return err;
 }
 
+<<<<<<< HEAD
+=======
+int sdio_reset_comm(struct mmc_card *card)
+{
+	struct mmc_host *host = card->host;
+	u32 ocr;
+	int err;
+
+	printk("%s():\n", __func__);
+	mmc_claim_host(host);
+
+	mmc_go_idle(host);
+
+	mmc_set_clock(host, host->f_min);
+
+	err = mmc_send_io_op_cond(host, 0, &ocr);
+	if (err)
+		goto err;
+
+	host->ocr = mmc_select_voltage(host, ocr);
+	if (!host->ocr) {
+		err = -EINVAL;
+		goto err;
+	}
+
+	err = mmc_send_io_op_cond(host, host->ocr, &ocr);
+	if (err)
+		goto err;
+
+	if (mmc_host_is_spi(host)) {
+		err = mmc_spi_set_crc(host, use_spi_crc);
+		if (err)
+			goto err;
+	}
+
+	if (!mmc_host_is_spi(host)) {
+		err = mmc_send_relative_addr(host, &card->rca);
+		if (err)
+			goto err;
+		mmc_set_bus_mode(host, MMC_BUSMODE_PUSHPULL);
+	}
+	if (!mmc_host_is_spi(host)) {
+		err = mmc_select_card(card);
+		if (err)
+			goto err;
+	}
+
+	/*
+	 * Switch to high-speed (if supported).
+	 */
+	err = sdio_enable_hs(card);
+	if (err > 0)
+		mmc_sd_go_highspeed(card);
+	else if (err)
+		goto err;
+
+	/*
+	 * Change to the card's maximum speed.
+	 */
+	mmc_set_clock(host, mmc_sdio_get_max_clock(card));
+
+	err = sdio_enable_4bit_bus(card);
+	if (err > 0)
+		mmc_set_bus_width(host, MMC_BUS_WIDTH_4);
+	else if (err)
+		goto err;
+
+	mmc_release_host(host);
+	return 0;
+err:
+	printk("%s: Error resetting SDIO communications (%d)\n",
+	       mmc_hostname(host), err);
+	mmc_release_host(host);
+	return err;
+}
+EXPORT_SYMBOL(sdio_reset_comm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

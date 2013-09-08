@@ -1,10 +1,13 @@
 #ifndef __ASM_ALPHA_FPU_H
 #define __ASM_ALPHA_FPU_H
 
+<<<<<<< HEAD
 #ifdef __KERNEL__
 #include <asm/special_insns.h>
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Alpha floating-point control register defines:
  */

@@ -135,10 +135,15 @@ extern unsigned long min_low_pfn;
 extern unsigned long max_pfn;
 
 extern unsigned long memory_start;
+<<<<<<< HEAD
 extern unsigned long memory_size;
 extern unsigned long lowmem_size;
 
 extern unsigned long kernel_tlb;
+=======
+extern unsigned long memory_end;
+extern unsigned long memory_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int page_is_ram(unsigned long pfn);
 
@@ -176,8 +181,20 @@ extern int page_is_ram(unsigned long pfn);
 
 #define	virt_addr_valid(vaddr)	(pfn_valid(virt_to_pfn(vaddr)))
 
+<<<<<<< HEAD
 # define __pa(x)	__virt_to_phys((unsigned long)(x))
 # define __va(x)	((void *)__phys_to_virt((unsigned long)(x)))
+=======
+
+#  ifndef CONFIG_MMU
+#  define __pa(vaddr)	((unsigned long) (vaddr))
+#  define __va(paddr)	((void *) (paddr))
+#  else /* CONFIG_MMU */
+#  define __pa(x)	__virt_to_phys((unsigned long)(x))
+#  define __va(x)	((void *)__phys_to_virt((unsigned long)(x)))
+#  endif /* CONFIG_MMU */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Convert between virtual and physical address for MMU. */
 /* Handle MicroBlaze processor with virtual memory. */

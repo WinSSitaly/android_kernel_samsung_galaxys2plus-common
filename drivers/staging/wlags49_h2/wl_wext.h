@@ -22,7 +22,11 @@
  * software indicates your acceptance of these terms and conditions.  If you do
  * not agree with these terms and conditions, do not use the software.
  *
+<<<<<<< HEAD
  * Copyright Â© 2003 Agere Systems Inc.
+=======
+ * Copyright © 2003 Agere Systems Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source or binary forms, with or without
@@ -43,7 +47,11 @@
  *
  * Disclaimer
  *
+<<<<<<< HEAD
  * THIS SOFTWARE IS PROVIDED Â“AS ISÂ” AND ANY EXPRESS OR IMPLIED WARRANTIES,
+=======
+ * THIS SOFTWARE IS PROVIDED “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * INCLUDING, BUT NOT LIMITED TO, INFRINGEMENT AND THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  ANY
  * USE, MODIFICATION OR DISTRIBUTION OF THIS SOFTWARE IS SOLELY AT THE USERS OWN
@@ -62,6 +70,12 @@
 #define __WL_WEXT_H__
 
 
+<<<<<<< HEAD
+=======
+#ifdef WIRELESS_EXT
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*******************************************************************************
  *  function protoypes
  ******************************************************************************/
@@ -85,4 +99,12 @@ void wl_wext_event_assoc_ie( struct net_device *dev );
 
 extern const struct iw_handler_def wl_iw_handler_def;
 
+<<<<<<< HEAD
+=======
+#else
+#error WIRELESS_EXT
+#endif // WIRELESS_EXT
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif  // __WL_WEXT_H__

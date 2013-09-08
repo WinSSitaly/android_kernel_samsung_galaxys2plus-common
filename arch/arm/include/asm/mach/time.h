@@ -10,6 +10,11 @@
 #ifndef __ASM_ARM_MACH_TIME_H
 #define __ASM_ARM_MACH_TIME_H
 
+<<<<<<< HEAD
+=======
+#include <linux/sysdev.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This is our kernel timer structure.
  *

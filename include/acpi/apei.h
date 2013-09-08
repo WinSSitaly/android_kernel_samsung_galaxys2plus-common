@@ -16,6 +16,7 @@
 
 #ifdef __KERNEL__
 
+<<<<<<< HEAD
 extern bool hest_disable;
 extern int erst_disable;
 #ifdef CONFIG_ACPI_APEI_GHES
@@ -23,6 +24,10 @@ extern bool ghes_disable;
 #else
 #define ghes_disable 1
 #endif
+=======
+extern int hest_disable;
+extern int erst_disable;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_ACPI_APEI
 void __init acpi_hest_init(void);

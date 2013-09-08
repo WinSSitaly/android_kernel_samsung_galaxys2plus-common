@@ -37,7 +37,10 @@
 #include <linux/device.h>
 #include <linux/notifier.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/completion.h>
 #include <linux/init.h>
 #include <linux/slab.h>
@@ -85,6 +88,11 @@ struct xenbus_device_id
 
 /* A xenbus driver. */
 struct xenbus_driver {
+<<<<<<< HEAD
+=======
+	char *name;
+	struct module *owner;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const struct xenbus_device_id *ids;
 	int (*probe)(struct xenbus_device *dev,
 		     const struct xenbus_device_id *id);
@@ -99,6 +107,7 @@ struct xenbus_driver {
 	int (*is_ready)(struct xenbus_device *dev);
 };
 
+<<<<<<< HEAD
 #define DEFINE_XENBUS_DRIVER(var, drvname, methods...)		\
 struct xenbus_driver var ## _driver = {				\
 	.driver.name = drvname + 0 ?: var ## _ids->devicetype,	\
@@ -106,13 +115,38 @@ struct xenbus_driver var ## _driver = {				\
 	.ids = var ## _ids, ## methods				\
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline struct xenbus_driver *to_xenbus_driver(struct device_driver *drv)
 {
 	return container_of(drv, struct xenbus_driver, driver);
 }
 
+<<<<<<< HEAD
 int __must_check xenbus_register_frontend(struct xenbus_driver *);
 int __must_check xenbus_register_backend(struct xenbus_driver *);
+=======
+int __must_check __xenbus_register_frontend(struct xenbus_driver *drv,
+					    struct module *owner,
+					    const char *mod_name);
+
+static inline int __must_check
+xenbus_register_frontend(struct xenbus_driver *drv)
+{
+	WARN_ON(drv->owner != THIS_MODULE);
+	return __xenbus_register_frontend(drv, THIS_MODULE, KBUILD_MODNAME);
+}
+
+int __must_check __xenbus_register_backend(struct xenbus_driver *drv,
+					   struct module *owner,
+					   const char *mod_name);
+static inline int __must_check
+xenbus_register_backend(struct xenbus_driver *drv)
+{
+	WARN_ON(drv->owner != THIS_MODULE);
+	return __xenbus_register_backend(drv, THIS_MODULE, KBUILD_MODNAME);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void xenbus_unregister_driver(struct xenbus_driver *drv);
 
@@ -139,6 +173,7 @@ int xenbus_transaction_start(struct xenbus_transaction *t);
 int xenbus_transaction_end(struct xenbus_transaction t, int abort);
 
 /* Single read and scanf: returns -errno or num scanned if > 0. */
+<<<<<<< HEAD
 __scanf(4, 5)
 int xenbus_scanf(struct xenbus_transaction t,
 		 const char *dir, const char *node, const char *fmt, ...);
@@ -147,6 +182,16 @@ int xenbus_scanf(struct xenbus_transaction t,
 __printf(4, 5)
 int xenbus_printf(struct xenbus_transaction t,
 		  const char *dir, const char *node, const char *fmt, ...);
+=======
+int xenbus_scanf(struct xenbus_transaction t,
+		 const char *dir, const char *node, const char *fmt, ...)
+	__attribute__((format(scanf, 4, 5)));
+
+/* Single printf and write: returns -errno or 0. */
+int xenbus_printf(struct xenbus_transaction t,
+		  const char *dir, const char *node, const char *fmt, ...)
+	__attribute__((format(printf, 4, 5)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Generic read function: NULL-terminated triples of name,
  * sprintf-style type string, and pointer. Returns 0 or errno.*/
@@ -188,11 +233,19 @@ int xenbus_watch_path(struct xenbus_device *dev, const char *path,
 		      struct xenbus_watch *watch,
 		      void (*callback)(struct xenbus_watch *,
 				       const char **, unsigned int));
+<<<<<<< HEAD
 __printf(4, 5)
 int xenbus_watch_pathfmt(struct xenbus_device *dev, struct xenbus_watch *watch,
 			 void (*callback)(struct xenbus_watch *,
 					  const char **, unsigned int),
 			 const char *pathfmt, ...);
+=======
+int xenbus_watch_pathfmt(struct xenbus_device *dev, struct xenbus_watch *watch,
+			 void (*callback)(struct xenbus_watch *,
+					  const char **, unsigned int),
+			 const char *pathfmt, ...)
+	__attribute__ ((format (printf, 4, 5)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int xenbus_switch_state(struct xenbus_device *dev, enum xenbus_state new_state);
 int xenbus_grant_ring(struct xenbus_device *dev, unsigned long ring_mfn);
@@ -211,9 +264,13 @@ int xenbus_free_evtchn(struct xenbus_device *dev, int port);
 
 enum xenbus_state xenbus_read_driver_state(const char *path);
 
+<<<<<<< HEAD
 __printf(3, 4)
 void xenbus_dev_error(struct xenbus_device *dev, int err, const char *fmt, ...);
 __printf(3, 4)
+=======
+void xenbus_dev_error(struct xenbus_device *dev, int err, const char *fmt, ...);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void xenbus_dev_fatal(struct xenbus_device *dev, int err, const char *fmt, ...);
 
 const char *xenbus_strstate(enum xenbus_state state);

@@ -82,6 +82,10 @@ static int keywest_attach_adapter(struct i2c_adapter *adapter)
 
 static int keywest_remove(struct i2c_client *client)
 {
+<<<<<<< HEAD
+=======
+	i2c_set_clientdata(client, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (! keywest_ctx)
 		return 0;
 	if (client == keywest_ctx->client)

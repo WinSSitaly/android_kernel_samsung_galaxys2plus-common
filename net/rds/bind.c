@@ -35,7 +35,10 @@
 #include <linux/in.h>
 #include <linux/if_arp.h>
 #include <linux/jhash.h>
+<<<<<<< HEAD
 #include <linux/ratelimit.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "rds.h"
 
 #define BIND_HASH_SIZE 1024
@@ -186,7 +189,12 @@ int rds_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
 	if (!trans) {
 		ret = -EADDRNOTAVAIL;
 		rds_remove_bound(rs);
+<<<<<<< HEAD
 		printk_ratelimited(KERN_INFO "RDS: rds_bind() could not find a transport, "
+=======
+		if (printk_ratelimit())
+			printk(KERN_INFO "RDS: rds_bind() could not find a transport, "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"load rds_tcp or rds_rdma?\n");
 		goto out;
 	}

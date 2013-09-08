@@ -77,7 +77,10 @@
 #include <linux/netfilter_decnet.h>
 #include <linux/rcupdate.h>
 #include <linux/times.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/errno.h>
 #include <net/net_namespace.h>
 #include <net/netlink.h>
@@ -112,12 +115,19 @@ static unsigned long dn_rt_deadline;
 static int dn_dst_gc(struct dst_ops *ops);
 static struct dst_entry *dn_dst_check(struct dst_entry *, __u32);
 static unsigned int dn_dst_default_advmss(const struct dst_entry *dst);
+<<<<<<< HEAD
 static unsigned int dn_dst_mtu(const struct dst_entry *dst);
+=======
+static unsigned int dn_dst_default_mtu(const struct dst_entry *dst);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void dn_dst_destroy(struct dst_entry *);
 static struct dst_entry *dn_dst_negative_advice(struct dst_entry *);
 static void dn_dst_link_failure(struct sk_buff *);
 static void dn_dst_update_pmtu(struct dst_entry *dst, u32 mtu);
+<<<<<<< HEAD
 static struct neighbour *dn_dst_neigh_lookup(const struct dst_entry *dst, const void *daddr);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int dn_route_input(struct sk_buff *);
 static void dn_run_flush(unsigned long dummy);
 
@@ -135,13 +145,20 @@ static struct dst_ops dn_dst_ops = {
 	.gc =			dn_dst_gc,
 	.check =		dn_dst_check,
 	.default_advmss =	dn_dst_default_advmss,
+<<<<<<< HEAD
 	.mtu =			dn_dst_mtu,
+=======
+	.default_mtu =		dn_dst_default_mtu,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.cow_metrics =		dst_cow_metrics_generic,
 	.destroy =		dn_dst_destroy,
 	.negative_advice =	dn_dst_negative_advice,
 	.link_failure =		dn_dst_link_failure,
 	.update_pmtu =		dn_dst_update_pmtu,
+<<<<<<< HEAD
 	.neigh_lookup =		dn_dst_neigh_lookup,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void dn_dst_destroy(struct dst_entry *dst)
@@ -244,7 +261,11 @@ static int dn_dst_gc(struct dst_ops *ops)
  */
 static void dn_dst_update_pmtu(struct dst_entry *dst, u32 mtu)
 {
+<<<<<<< HEAD
 	struct neighbour *n = dst_get_neighbour_noref(dst);
+=======
+	struct neighbour *n = dst_get_neighbour(dst);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 min_mtu = 230;
 	struct dn_dev *dn;
 
@@ -500,11 +521,19 @@ static int dn_route_rx_packet(struct sk_buff *skb)
 	}
 
 	if ((skb->pkt_type == PACKET_HOST) && (cb->rt_flags & DN_RT_F_RQR)) {
+<<<<<<< HEAD
 		switch (cb->rt_flags & DN_RT_PKT_MSK) {
 		case DN_RT_PKT_SHORT:
 			return dn_return_short(skb);
 		case DN_RT_PKT_LONG:
 			return dn_return_long(skb);
+=======
+		switch(cb->rt_flags & DN_RT_PKT_MSK) {
+			case DN_RT_PKT_SHORT:
+				return dn_return_short(skb);
+			case DN_RT_PKT_LONG:
+				return dn_return_long(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -657,6 +686,7 @@ int dn_route_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_type
 		if (unlikely(skb_linearize(skb)))
 			goto dump_it;
 
+<<<<<<< HEAD
 		switch (flags & DN_RT_CNTL_MSK) {
 		case DN_RT_PKT_INIT:
 			dn_dev_init_pkt(skb);
@@ -664,11 +694,21 @@ int dn_route_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_type
 		case DN_RT_PKT_VERI:
 			dn_dev_veri_pkt(skb);
 			break;
+=======
+		switch(flags & DN_RT_CNTL_MSK) {
+			case DN_RT_PKT_INIT:
+				dn_dev_init_pkt(skb);
+				break;
+			case DN_RT_PKT_VERI:
+				dn_dev_veri_pkt(skb);
+				break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (dn->parms.state != DN_DEV_S_RU)
 			goto dump_it;
 
+<<<<<<< HEAD
 		switch (flags & DN_RT_CNTL_MSK) {
 		case DN_RT_PKT_HELO:
 			return NF_HOOK(NFPROTO_DECNET, NF_DN_HELLO,
@@ -689,6 +729,28 @@ int dn_route_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_type
 			return NF_HOOK(NFPROTO_DECNET, NF_DN_HELLO,
 				       skb, skb->dev, NULL,
 				       dn_neigh_endnode_hello);
+=======
+		switch(flags & DN_RT_CNTL_MSK) {
+			case DN_RT_PKT_HELO:
+				return NF_HOOK(NFPROTO_DECNET, NF_DN_HELLO,
+					       skb, skb->dev, NULL,
+					       dn_route_ptp_hello);
+
+			case DN_RT_PKT_L1RT:
+			case DN_RT_PKT_L2RT:
+				return NF_HOOK(NFPROTO_DECNET, NF_DN_ROUTE,
+					       skb, skb->dev, NULL,
+					       dn_route_discard);
+			case DN_RT_PKT_ERTH:
+				return NF_HOOK(NFPROTO_DECNET, NF_DN_HELLO,
+					       skb, skb->dev, NULL,
+					       dn_neigh_router_hello);
+
+			case DN_RT_PKT_EEDH:
+				return NF_HOOK(NFPROTO_DECNET, NF_DN_HELLO,
+					       skb, skb->dev, NULL,
+					       dn_neigh_endnode_hello);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		if (dn->parms.state != DN_DEV_S_RU)
@@ -696,11 +758,19 @@ int dn_route_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_type
 
 		skb_pull(skb, 1); /* Pull flags */
 
+<<<<<<< HEAD
 		switch (flags & DN_RT_PKT_MSK) {
 		case DN_RT_PKT_LONG:
 			return dn_route_rx_long(skb);
 		case DN_RT_PKT_SHORT:
 			return dn_route_rx_short(skb);
+=======
+		switch(flags & DN_RT_PKT_MSK) {
+			case DN_RT_PKT_LONG:
+				return dn_route_rx_long(skb);
+			case DN_RT_PKT_SHORT:
+				return dn_route_rx_short(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -710,6 +780,7 @@ out:
 	return NET_RX_DROP;
 }
 
+<<<<<<< HEAD
 static int dn_to_neigh_output(struct sk_buff *skb)
 {
 	struct dst_entry *dst = skb_dst(skb);
@@ -718,16 +789,26 @@ static int dn_to_neigh_output(struct sk_buff *skb)
 	return n->output(n, skb);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int dn_output(struct sk_buff *skb)
 {
 	struct dst_entry *dst = skb_dst(skb);
 	struct dn_route *rt = (struct dn_route *)dst;
 	struct net_device *dev = dst->dev;
 	struct dn_skb_cb *cb = DN_SKB_CB(skb);
+<<<<<<< HEAD
 
 	int err = -EINVAL;
 
 	if (dst_get_neighbour_noref(dst) == NULL)
+=======
+	struct neighbour *neigh;
+
+	int err = -EINVAL;
+
+	if ((neigh = dst_get_neighbour(dst)) == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error;
 
 	skb->dev = dev;
@@ -745,7 +826,11 @@ static int dn_output(struct sk_buff *skb)
 	cb->hops = 0;
 
 	return NF_HOOK(NFPROTO_DECNET, NF_DN_LOCAL_OUT, skb, NULL, dev,
+<<<<<<< HEAD
 		       dn_to_neigh_output);
+=======
+		       neigh->output);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 error:
 	if (net_ratelimit())
@@ -762,6 +847,10 @@ static int dn_forward(struct sk_buff *skb)
 	struct dst_entry *dst = skb_dst(skb);
 	struct dn_dev *dn_db = rcu_dereference(dst->dev->dn_ptr);
 	struct dn_route *rt;
+<<<<<<< HEAD
+=======
+	struct neighbour *neigh = dst_get_neighbour(dst);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int header_len;
 #ifdef CONFIG_NETFILTER
 	struct net_device *dev = skb->dev;
@@ -794,7 +883,11 @@ static int dn_forward(struct sk_buff *skb)
 		cb->rt_flags |= DN_RT_F_IE;
 
 	return NF_HOOK(NFPROTO_DECNET, NF_DN_FORWARD, skb, dev, skb->dev,
+<<<<<<< HEAD
 		       dn_to_neigh_output);
+=======
+		       neigh->output);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 drop:
 	kfree_skb(skb);
@@ -824,6 +917,7 @@ static unsigned int dn_dst_default_advmss(const struct dst_entry *dst)
 	return dn_mss_from_pmtu(dst->dev, dst_mtu(dst));
 }
 
+<<<<<<< HEAD
 static unsigned int dn_dst_mtu(const struct dst_entry *dst)
 {
 	unsigned int mtu = dst_metric_raw(dst, RTAX_MTU);
@@ -834,6 +928,11 @@ static unsigned int dn_dst_mtu(const struct dst_entry *dst)
 static struct neighbour *dn_dst_neigh_lookup(const struct dst_entry *dst, const void *daddr)
 {
 	return __neigh_lookup_errno(&dn_neigh_table, daddr, dst->dev);
+=======
+static unsigned int dn_dst_default_mtu(const struct dst_entry *dst)
+{
+	return dst->dev->mtu;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int dn_rt_set_next_hop(struct dn_route *rt, struct dn_fib_res *res)
@@ -851,7 +950,11 @@ static int dn_rt_set_next_hop(struct dn_route *rt, struct dn_fib_res *res)
 	}
 	rt->rt_type = res->type;
 
+<<<<<<< HEAD
 	if (dev != NULL && dst_get_neighbour_noref(&rt->dst) == NULL) {
+=======
+	if (dev != NULL && dst_get_neighbour(&rt->dst) == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		n = __neigh_lookup_errno(&dn_neigh_table, &rt->rt_gateway, dev);
 		if (IS_ERR(n))
 			return PTR_ERR(n);
@@ -1437,6 +1540,7 @@ make_route:
 	dst_set_neighbour(&rt->dst, neigh);
 	rt->dst.lastuse = jiffies;
 	rt->dst.output = dn_rt_bug;
+<<<<<<< HEAD
 	switch (res.type) {
 	case RTN_UNICAST:
 		rt->dst.input = dn_forward;
@@ -1451,6 +1555,22 @@ make_route:
 	case RTN_UNREACHABLE:
 	case RTN_BLACKHOLE:
 		rt->dst.input = dst_discard;
+=======
+	switch(res.type) {
+		case RTN_UNICAST:
+			rt->dst.input = dn_forward;
+			break;
+		case RTN_LOCAL:
+			rt->dst.output = dn_output;
+			rt->dst.input = dn_nsp_rx;
+			rt->dst.dev = in_dev;
+			flags |= RTCF_LOCAL;
+			break;
+		default:
+		case RTN_UNREACHABLE:
+		case RTN_BLACKHOLE:
+			rt->dst.input = dst_discard;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	rt->rt_flags = flags;
 
@@ -1859,11 +1979,18 @@ void __init dn_route_init(void)
 	proc_net_fops_create(&init_net, "decnet_cache", S_IRUGO, &dn_rt_cache_seq_fops);
 
 #ifdef CONFIG_DECNET_ROUTER
+<<<<<<< HEAD
 	rtnl_register(PF_DECnet, RTM_GETROUTE, dn_cache_getroute,
 		      dn_fib_dump, NULL);
 #else
 	rtnl_register(PF_DECnet, RTM_GETROUTE, dn_cache_getroute,
 		      dn_cache_dump, NULL);
+=======
+	rtnl_register(PF_DECnet, RTM_GETROUTE, dn_cache_getroute, dn_fib_dump);
+#else
+	rtnl_register(PF_DECnet, RTM_GETROUTE, dn_cache_getroute,
+		      dn_cache_dump);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }
 

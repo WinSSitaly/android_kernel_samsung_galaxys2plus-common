@@ -20,8 +20,11 @@
 #ifndef _LINUX_HWMON_SYSFS_H
 #define _LINUX_HWMON_SYSFS_H
 
+<<<<<<< HEAD
 #include <linux/device.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct sensor_device_attribute{
 	struct device_attribute dev_attr;
 	int index;

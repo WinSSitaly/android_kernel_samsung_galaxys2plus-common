@@ -9,6 +9,10 @@
 #include <linux/file.h>
 #include <linux/utsname.h>
 #include <net/net_namespace.h>
+<<<<<<< HEAD
+=======
+#include <linux/mnt_namespace.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ipc_namespace.h>
 #include <linux/pid_namespace.h>
 #include "internal.h"
@@ -156,15 +160,24 @@ static struct dentry *proc_ns_dir_lookup(struct inode *dir,
 	if (!ptrace_may_access(task, PTRACE_MODE_READ))
 		goto out;
 
+<<<<<<< HEAD
 	last = &ns_entries[ARRAY_SIZE(ns_entries)];
 	for (entry = ns_entries; entry < last; entry++) {
+=======
+	last = &ns_entries[ARRAY_SIZE(ns_entries) - 1];
+	for (entry = ns_entries; entry <= last; entry++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (strlen((*entry)->name) != len)
 			continue;
 		if (!memcmp(dentry->d_name.name, (*entry)->name, len))
 			break;
 	}
 	error = ERR_PTR(-ENOENT);
+<<<<<<< HEAD
 	if (entry == last)
+=======
+	if (entry > last)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	error = proc_ns_instantiate(dir, dentry, task, *entry);

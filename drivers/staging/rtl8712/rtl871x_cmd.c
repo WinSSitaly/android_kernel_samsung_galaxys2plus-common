@@ -28,6 +28,7 @@
 
 #define _RTL871X_CMD_C_
 
+<<<<<<< HEAD
 #include <linux/compiler.h>
 #include <linux/kernel.h>
 #include <linux/errno.h>
@@ -46,6 +47,8 @@
 #include <linux/semaphore.h>
 #include <linux/rtnetlink.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "osdep_service.h"
 #include "drv_types.h"
 #include "recv_osdep.h"
@@ -240,7 +243,11 @@ u8 r8712_sitesurvey_cmd(struct _adapter *padapter,
 	init_h2fwcmd_w_parm_no_rsp(ph2c, psurveyPara,
 				   GEN_CMD_CODE(_SiteSurvey));
 	psurveyPara->bsslimit = cpu_to_le32(48);
+<<<<<<< HEAD
 	psurveyPara->passive_mode = cpu_to_le32(pmlmepriv->passive_mode);
+=======
+	psurveyPara->passive_mode = cpu_to_le32(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	psurveyPara->ss_ssidlen = 0;
 	memset(psurveyPara->ss_ssid, 0, IW_ESSID_MAX_SIZE + 1);
 	if ((pssid != NULL) && (pssid->SsidLength)) {
@@ -251,7 +258,10 @@ u8 r8712_sitesurvey_cmd(struct _adapter *padapter,
 	r8712_enqueue_cmd(pcmdpriv, ph2c);
 	_set_timer(&pmlmepriv->scan_to_timer, SCANNING_TIMEOUT);
 	padapter->ledpriv.LedControlHandler(padapter, LED_CTL_SITE_SURVEY);
+<<<<<<< HEAD
 	padapter->blnEnableRxFF0Filter = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return _SUCCESS;
 }
 
@@ -278,6 +288,7 @@ u8 r8712_setdatarate_cmd(struct _adapter *padapter, u8 *rateset)
 	return _SUCCESS;
 }
 
+<<<<<<< HEAD
 u8 r8712_set_chplan_cmd(struct _adapter *padapter, int chplan)
 {
 	struct cmd_obj *ph2c;
@@ -300,6 +311,8 @@ u8 r8712_set_chplan_cmd(struct _adapter *padapter, int chplan)
 	return _SUCCESS;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u8 r8712_setbasicrate_cmd(struct _adapter *padapter, u8 *rateset)
 {
 	struct cmd_obj *ph2c;
@@ -326,12 +339,17 @@ u8 r8712_setbasicrate_cmd(struct _adapter *padapter, u8 *rateset)
 u8 r8712_setptm_cmd(struct _adapter *padapter, u8 type)
 {
 	struct cmd_obj		*ph2c;
+<<<<<<< HEAD
 	struct writePTM_parm	*pwriteptmparm;
+=======
+	struct PT_param		*pptparm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct cmd_priv		*pcmdpriv = &padapter->cmdpriv;
 
 	ph2c = (struct cmd_obj *)_malloc(sizeof(struct cmd_obj));
 	if (ph2c == NULL)
 		return _FAIL;
+<<<<<<< HEAD
 	pwriteptmparm = (struct writePTM_parm *)
 		_malloc(sizeof(struct writePTM_parm));
 	if (pwriteptmparm == NULL) {
@@ -382,6 +400,16 @@ u8 r8712_setfwra_cmd(struct _adapter *padapter, u8 type)
 	}
 	init_h2fwcmd_w_parm_no_rsp(ph2c, pwriteptmparm, GEN_CMD_CODE(_SetRA));
 	pwriteptmparm->type = type;
+=======
+	pptparm = (struct PT_param *)_malloc(sizeof(struct PT_param));
+	if (pptparm == NULL) {
+		kfree((u8 *) ph2c);
+		return _FAIL;
+	}
+	init_h2fwcmd_w_parm_no_rsp(ph2c, pptparm,
+				   GEN_CMD_CODE(_SetPowerTracking));
+	pptparm->PT_En = type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r8712_enqueue_cmd(pcmdpriv, ph2c);
 	return _SUCCESS;
 }
@@ -436,6 +464,7 @@ u8 r8712_getrfreg_cmd(struct _adapter *padapter, u8 offset, u8 *pval)
 void r8712_getbbrfreg_cmdrsp_callback(struct _adapter *padapter,
 				      struct cmd_obj *pcmd)
 {
+<<<<<<< HEAD
 	kfree(pcmd->parmbuf);
 	kfree(pcmd);
 	padapter->mppriv.workparam.bcompleted = true;
@@ -447,6 +476,10 @@ void r8712_readtssi_cmdrsp_callback(struct _adapter *padapter,
 	kfree(pcmd->parmbuf);
 	kfree(pcmd);
 
+=======
+	kfree((unsigned char *) pcmd->parmbuf);
+	kfree((unsigned char *) pcmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	padapter->mppriv.workparam.bcompleted = true;
 }
 
@@ -577,6 +610,15 @@ u8 r8712_joinbss_cmd(struct _adapter  *padapter, struct wlan_network *pnetwork)
 						&psecnetwork->IEs[0],
 						pnetwork->network.IELength,
 						&psecnetwork->IELength);
+<<<<<<< HEAD
+=======
+			if (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE))
+				r8712_add_ht_addt_info(padapter,
+						&pnetwork->network.IEs[0],
+						&psecnetwork->IEs[0],
+						pnetwork->network.IELength,
+						&psecnetwork->IELength);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	psecuritypriv->supplicant_ie[0] = (u8)psecnetwork->IELength;
@@ -761,6 +803,7 @@ u8 r8712_setrttbl_cmd(struct _adapter *padapter,
 	return _SUCCESS;
 }
 
+<<<<<<< HEAD
 u8 r8712_gettssi_cmd(struct _adapter *padapter, u8 offset, u8 *pval)
 {
 	struct cmd_priv *pcmdpriv = &padapter->cmdpriv;
@@ -788,6 +831,8 @@ u8 r8712_gettssi_cmd(struct _adapter *padapter, u8 offset, u8 *pval)
 	return _SUCCESS;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u8 r8712_setMacAddr_cmd(struct _adapter *padapter, u8 *mac_addr)
 {
 	struct cmd_priv	*pcmdpriv = &padapter->cmdpriv;
@@ -1036,6 +1081,7 @@ void r8712_setassocsta_cmdrsp_callback(struct _adapter *padapter,
 	spin_unlock_irqrestore(&pmlmepriv->lock, irqL);
 	r8712_free_cmd_obj(pcmd);
 }
+<<<<<<< HEAD
 
 u8 r8712_disconnectCtrlEx_cmd(struct _adapter *adapter, u32 enableDrvCtrl,
 			u32 tryPktCnt, u32 tryPktInterval, u32 firstStageTO)
@@ -1065,3 +1111,5 @@ u8 r8712_disconnectCtrlEx_cmd(struct _adapter *adapter, u32 enableDrvCtrl,
 	r8712_enqueue_cmd(pcmdpriv, ph2c);
 	return _SUCCESS;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

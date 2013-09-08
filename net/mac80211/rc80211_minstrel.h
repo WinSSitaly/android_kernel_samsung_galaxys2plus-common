@@ -78,6 +78,7 @@ struct minstrel_priv {
 	unsigned int update_interval;
 	unsigned int lookaround_rate;
 	unsigned int lookaround_rate_mrr;
+<<<<<<< HEAD
 
 #ifdef CONFIG_MAC80211_DEBUGFS
 	/*
@@ -90,6 +91,8 @@ struct minstrel_priv {
 	struct dentry *dbg_fixed_rate;
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct minstrel_debugfs_info {

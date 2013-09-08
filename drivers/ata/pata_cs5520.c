@@ -149,7 +149,12 @@ static int __devinit cs5520_init_one(struct pci_dev *pdev, const struct pci_devi
 		ppi[1] = &pi;
 
 	if ((pcicfg & 0x40) == 0) {
+<<<<<<< HEAD
 		dev_warn(&pdev->dev, "DMA mode disabled. Enabling.\n");
+=======
+		dev_printk(KERN_WARNING, &pdev->dev,
+			   "DMA mode disabled. Enabling.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pci_write_config_byte(pdev, 0x60, pcicfg | 0x40);
 	}
 

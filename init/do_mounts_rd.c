@@ -54,19 +54,30 @@ identify_ramdisk_image(int fd, int start_block, decompress_fn *decompressor)
 {
 	const int size = 512;
 	struct minix_super_block *minixsb;
+<<<<<<< HEAD
+=======
+	struct ext2_super_block *ext2sb;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct romfs_super_block *romfsb;
 	struct cramfs_super *cramfsb;
 	struct squashfs_super_block *squashfsb;
 	int nblocks = -1;
 	unsigned char *buf;
 	const char *compress_name;
+<<<<<<< HEAD
 	unsigned long n;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	buf = kmalloc(size, GFP_KERNEL);
 	if (!buf)
 		return -ENOMEM;
 
 	minixsb = (struct minix_super_block *) buf;
+<<<<<<< HEAD
+=======
+	ext2sb = (struct ext2_super_block *) buf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	romfsb = (struct romfs_super_block *) buf;
 	cramfsb = (struct cramfs_super *) buf;
 	squashfsb = (struct squashfs_super_block *) buf;
@@ -119,6 +130,7 @@ identify_ramdisk_image(int fd, int start_block, decompress_fn *decompressor)
 	}
 
 	/*
+<<<<<<< HEAD
 	 * Read 512 bytes further to check if cramfs is padded
 	 */
 	sys_lseek(fd, start_block * BLOCK_SIZE + 0x200, 0);
@@ -133,6 +145,8 @@ identify_ramdisk_image(int fd, int start_block, decompress_fn *decompressor)
 	}
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Read block 1 to test for minix and ext2 superblock
 	 */
 	sys_lseek(fd, (start_block+1) * BLOCK_SIZE, 0);
@@ -149,12 +163,21 @@ identify_ramdisk_image(int fd, int start_block, decompress_fn *decompressor)
 	}
 
 	/* Try ext2 */
+<<<<<<< HEAD
 	n = ext2_image_size(buf);
 	if (n) {
 		printk(KERN_NOTICE
 		       "RAMDISK: ext2 filesystem found at block %d\n",
 		       start_block);
 		nblocks = n;
+=======
+	if (ext2sb->s_magic == cpu_to_le16(EXT2_SUPER_MAGIC)) {
+		printk(KERN_NOTICE
+		       "RAMDISK: ext2 filesystem found at block %d\n",
+		       start_block);
+		nblocks = le32_to_cpu(ext2sb->s_blocks_count) <<
+			le32_to_cpu(ext2sb->s_log_block_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto done;
 	}
 
@@ -177,7 +200,11 @@ int __init rd_load_image(char *from)
 	char *buf = NULL;
 	unsigned short rotate = 0;
 	decompress_fn decompressor = NULL;
+<<<<<<< HEAD
 #if !defined(CONFIG_S390)
+=======
+#if !defined(CONFIG_S390) && !defined(CONFIG_PPC_ISERIES)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char rotator[4] = { '|' , '/' , '-' , '\\' };
 #endif
 
@@ -263,7 +290,11 @@ int __init rd_load_image(char *from)
 		}
 		sys_read(in_fd, buf, BLOCK_SIZE);
 		sys_write(out_fd, buf, BLOCK_SIZE);
+<<<<<<< HEAD
 #if !defined(CONFIG_S390)
+=======
+#if !defined(CONFIG_S390) && !defined(CONFIG_PPC_ISERIES)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!(i % 16)) {
 			printk("%c\b", rotator[rotate & 0x3]);
 			rotate++;

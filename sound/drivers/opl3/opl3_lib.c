@@ -26,7 +26,10 @@
 #include <sound/opl3.h>
 #include <asm/io.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/slab.h>
 #include <linux/ioport.h>

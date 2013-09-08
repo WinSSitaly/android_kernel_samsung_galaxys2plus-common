@@ -39,7 +39,11 @@
 
 struct hostfs_iattr {
 	unsigned int	ia_valid;
+<<<<<<< HEAD
 	unsigned short	ia_mode;
+=======
+	mode_t		ia_mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uid_t		ia_uid;
 	gid_t		ia_gid;
 	loff_t		ia_size;
@@ -67,8 +71,12 @@ extern int access_file(char *path, int r, int w, int x);
 extern int open_file(char *path, int r, int w, int append);
 extern void *open_dir(char *path, int *err_out);
 extern char *read_dir(void *stream, unsigned long long *pos,
+<<<<<<< HEAD
 		      unsigned long long *ino_out, int *len_out,
 		      unsigned int *type_out);
+=======
+		      unsigned long long *ino_out, int *len_out);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void close_file(void *stream);
 extern int replace_file(int oldfd, int fd);
 extern void close_dir(void *stream);

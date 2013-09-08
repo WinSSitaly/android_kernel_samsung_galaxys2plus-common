@@ -33,6 +33,14 @@
 // #define	DEBUG			// error path messages, extra info
 // #define	VERBOSE			// more; success messages
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ARCH_KONA
+#undef NET_IP_ALIGN
+#define NET_IP_ALIGN 0
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/netdevice.h>
@@ -210,7 +218,10 @@ static int init_status (struct usbnet *dev, struct usb_interface *intf)
 		} else {
 			usb_fill_int_urb(dev->interrupt, dev->udev, pipe,
 				buf, maxp, intr_complete, dev, period);
+<<<<<<< HEAD
 			dev->interrupt->transfer_flags |= URB_FREE_BUFFER;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev_dbg(&intf->dev,
 				"status ep%din, %d bytes period %d\n",
 				usb_pipeendpoint(pipe), maxp, period);
@@ -239,10 +250,13 @@ void usbnet_skb_return (struct usbnet *dev, struct sk_buff *skb)
 	netif_dbg(dev, rx_status, dev->net, "< rx, len %zu, type 0x%x\n",
 		  skb->len + sizeof (struct ethhdr), skb->protocol);
 	memset (skb->cb, 0, sizeof (struct skb_data));
+<<<<<<< HEAD
 
 	if (skb_defer_rx_timestamp(skb))
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = netif_rx (skb);
 	if (status != NET_RX_SUCCESS)
 		netif_dbg(dev, rx_err, dev->net,
@@ -282,6 +296,7 @@ int usbnet_change_mtu (struct net_device *net, int new_mtu)
 }
 EXPORT_SYMBOL_GPL(usbnet_change_mtu);
 
+<<<<<<< HEAD
 /* The caller must hold list->lock */
 static void __usbnet_queue_skb(struct sk_buff_head *list,
 			struct sk_buff *newsk, enum skb_state state)
@@ -292,12 +307,15 @@ static void __usbnet_queue_skb(struct sk_buff_head *list,
 	entry->state = state;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*-------------------------------------------------------------------------*/
 
 /* some LK 2.4 HCDs oopsed if we freed or resubmitted urbs from
  * completion callbacks.  2.5 should have fixed those bugs...
  */
 
+<<<<<<< HEAD
 static enum skb_state defer_bh(struct usbnet *dev, struct sk_buff *skb,
 		struct sk_buff_head *list, enum skb_state state)
 {
@@ -308,6 +326,13 @@ static enum skb_state defer_bh(struct usbnet *dev, struct sk_buff *skb,
 	spin_lock_irqsave(&list->lock, flags);
 	old_state = entry->state;
 	entry->state = state;
+=======
+static void defer_bh(struct usbnet *dev, struct sk_buff *skb, struct sk_buff_head *list)
+{
+	unsigned long		flags;
+
+	spin_lock_irqsave(&list->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__skb_unlink(skb, list);
 	spin_unlock(&list->lock);
 	spin_lock(&dev->done.lock);
@@ -315,7 +340,10 @@ static enum skb_state defer_bh(struct usbnet *dev, struct sk_buff *skb,
 	if (dev->done.qlen == 1)
 		tasklet_schedule(&dev->bh);
 	spin_unlock_irqrestore(&dev->done.lock, flags);
+<<<<<<< HEAD
 	return old_state;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* some work can't be done in tasklets, so we use keventd
@@ -345,17 +373,29 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
 	unsigned long		lockflags;
 	size_t			size = dev->rx_urb_size;
 
+<<<<<<< HEAD
 	skb = __netdev_alloc_skb_ip_align(dev->net, size, flags);
 	if (!skb) {
+=======
+	if ((skb = alloc_skb (size + NET_IP_ALIGN, flags)) == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		netif_dbg(dev, rx_err, dev->net, "no rx skb\n");
 		usbnet_defer_kevent (dev, EVENT_RX_MEMORY);
 		usb_free_urb (urb);
 		return -ENOMEM;
 	}
+<<<<<<< HEAD
+=======
+	skb_reserve (skb, NET_IP_ALIGN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	entry = (struct skb_data *) skb->cb;
 	entry->urb = urb;
 	entry->dev = dev;
+<<<<<<< HEAD
+=======
+	entry->state = rx_start;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	entry->length = 0;
 
 	usb_fill_bulk_urb (urb, dev->udev, dev->in,
@@ -387,7 +427,11 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
 			tasklet_schedule (&dev->bh);
 			break;
 		case 0:
+<<<<<<< HEAD
 			__usbnet_queue_skb(&dev->rxq, skb, rx_start);
+=======
+			__skb_queue_tail (&dev->rxq, skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		netif_dbg(dev, ifdown, dev->net, "rx: stopped\n");
@@ -438,17 +482,27 @@ static void rx_complete (struct urb *urb)
 	struct skb_data		*entry = (struct skb_data *) skb->cb;
 	struct usbnet		*dev = entry->dev;
 	int			urb_status = urb->status;
+<<<<<<< HEAD
 	enum skb_state		state;
 
 	skb_put (skb, urb->actual_length);
 	state = rx_done;
+=======
+
+	skb_put (skb, urb->actual_length);
+	entry->state = rx_done;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	entry->urb = NULL;
 
 	switch (urb_status) {
 	/* success */
 	case 0:
 		if (skb->len < dev->net->hard_header_len) {
+<<<<<<< HEAD
 			state = rx_cleanup;
+=======
+			entry->state = rx_cleanup;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev->net->stats.rx_errors++;
 			dev->net->stats.rx_length_errors++;
 			netif_dbg(dev, rx_err, dev->net,
@@ -487,7 +541,11 @@ static void rx_complete (struct urb *urb)
 				  "rx throttle %d\n", urb_status);
 		}
 block:
+<<<<<<< HEAD
 		state = rx_cleanup;
+=======
+		entry->state = rx_cleanup;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		entry->urb = urb;
 		urb = NULL;
 		break;
@@ -498,12 +556,17 @@ block:
 		// FALLTHROUGH
 
 	default:
+<<<<<<< HEAD
 		state = rx_cleanup;
+=======
+		entry->state = rx_cleanup;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev->net->stats.rx_errors++;
 		netif_dbg(dev, rx_err, dev->net, "rx status %d\n", urb_status);
 		break;
 	}
 
+<<<<<<< HEAD
 	state = defer_bh(dev, skb, &dev->rxq, state);
 
 	if (urb) {
@@ -512,6 +575,14 @@ block:
 		    state != unlink_start) {
 			rx_submit (dev, urb, GFP_ATOMIC);
 			usb_mark_last_busy(dev->udev);
+=======
+	defer_bh(dev, skb, &dev->rxq);
+
+	if (urb) {
+		if (netif_running (dev->net) &&
+		    !test_bit (EVENT_RX_HALT, &dev->flags)) {
+			rx_submit (dev, urb, GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 		}
 		usb_free_urb (urb);
@@ -596,15 +667,24 @@ EXPORT_SYMBOL_GPL(usbnet_purge_paused_rxq);
 static int unlink_urbs (struct usbnet *dev, struct sk_buff_head *q)
 {
 	unsigned long		flags;
+<<<<<<< HEAD
 	struct sk_buff		*skb;
 	int			count = 0;
 
 	spin_lock_irqsave (&q->lock, flags);
 	while (!skb_queue_empty(q)) {
+=======
+	struct sk_buff		*skb, *skbnext;
+	int			count = 0;
+
+	spin_lock_irqsave (&q->lock, flags);
+	skb_queue_walk_safe(q, skb, skbnext) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct skb_data		*entry;
 		struct urb		*urb;
 		int			retval;
 
+<<<<<<< HEAD
 		skb_queue_walk(q, skb) {
 			entry = (struct skb_data *) skb->cb;
 			if (entry->state != unlink_start)
@@ -613,6 +693,9 @@ static int unlink_urbs (struct usbnet *dev, struct sk_buff_head *q)
 		break;
 found:
 		entry->state = unlink_start;
+=======
+		entry = (struct skb_data *) skb->cb;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		urb = entry->urb;
 
 		/*
@@ -1063,7 +1146,12 @@ static void tx_complete (struct urb *urb)
 	}
 
 	usb_autopm_put_interface_async(dev->intf);
+<<<<<<< HEAD
 	(void) defer_bh(dev, skb, &dev->txq, tx_done);
+=======
+	entry->state = tx_done;
+	defer_bh(dev, skb, &dev->txq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*-------------------------------------------------------------------------*/
@@ -1092,9 +1180,12 @@ netdev_tx_t usbnet_start_xmit (struct sk_buff *skb,
 	unsigned long		flags;
 	int retval;
 
+<<<<<<< HEAD
 	if (skb)
 		skb_tx_timestamp(skb);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	// some devices want funky USB-level framing, for
 	// win32 driver (usually) and/or hardware quirks
 	if (info->tx_fixup) {
@@ -1119,6 +1210,10 @@ netdev_tx_t usbnet_start_xmit (struct sk_buff *skb,
 	entry = (struct skb_data *) skb->cb;
 	entry->urb = urb;
 	entry->dev = dev;
+<<<<<<< HEAD
+=======
+	entry->state = tx_start;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	entry->length = length;
 
 	usb_fill_bulk_urb (urb, dev->udev, dev->out,
@@ -1158,7 +1253,10 @@ netdev_tx_t usbnet_start_xmit (struct sk_buff *skb,
 		usb_anchor_urb(urb, &dev->deferred);
 		/* no use to process more packets */
 		netif_stop_queue(net);
+<<<<<<< HEAD
 		usb_put_urb(urb);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock_irqrestore(&dev->txq.lock, flags);
 		netdev_dbg(dev->net, "Delaying transmission for resumption\n");
 		goto deferred;
@@ -1178,7 +1276,11 @@ netdev_tx_t usbnet_start_xmit (struct sk_buff *skb,
 		break;
 	case 0:
 		net->trans_start = jiffies;
+<<<<<<< HEAD
 		__usbnet_queue_skb(&dev->txq, skb, tx_start);
+=======
+		__skb_queue_tail (&dev->txq, skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (dev->txq.qlen >= TX_QLEN (dev))
 			netif_stop_queue (net);
 	}
@@ -1300,8 +1402,11 @@ void usbnet_disconnect (struct usb_interface *intf)
 
 	cancel_work_sync(&dev->kevent);
 
+<<<<<<< HEAD
 	usb_scuttle_anchored_urbs(&dev->deferred);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dev->driver_info->unbind)
 		dev->driver_info->unbind (dev, intf);
 
@@ -1371,8 +1476,15 @@ usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
 
 	// set up our own records
 	net = alloc_etherdev(sizeof(*dev));
+<<<<<<< HEAD
 	if (!net)
 		goto out;
+=======
+	if (!net) {
+		dbg ("can't kmalloc dev");
+		goto out;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* netdev_printk() needs this so do it as early as possible */
 	SET_NETDEV_DEV(net, &udev->dev);
@@ -1469,7 +1581,11 @@ usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
 
 	status = register_netdev (net);
 	if (status)
+<<<<<<< HEAD
 		goto out4;
+=======
+		goto out3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	netif_info(dev, probe, dev->net,
 		   "register '%s' at usb-%s-%s, %s, %pM\n",
 		   udev->dev.driver->name,
@@ -1487,8 +1603,11 @@ usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
 
 	return 0;
 
+<<<<<<< HEAD
 out4:
 	usb_free_urb(dev->interrupt);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out3:
 	if (info->unbind)
 		info->unbind (dev, udev);
@@ -1514,7 +1633,11 @@ int usbnet_suspend (struct usb_interface *intf, pm_message_t message)
 	if (!dev->suspend_count++) {
 		spin_lock_irq(&dev->txq.lock);
 		/* don't autosuspend while transmitting */
+<<<<<<< HEAD
 		if (dev->txq.qlen && PMSG_IS_AUTO(message)) {
+=======
+		if (dev->txq.qlen && (message.event & PM_EVENT_AUTO)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			spin_unlock_irq(&dev->txq.lock);
 			return -EBUSY;
 		} else {
@@ -1572,7 +1695,11 @@ int usbnet_resume (struct usb_interface *intf)
 
 		if (test_bit(EVENT_DEV_OPEN, &dev->flags)) {
 			if (!(dev->txq.qlen >= TX_QLEN(dev)))
+<<<<<<< HEAD
 				netif_tx_wake_all_queues(dev->net);
+=======
+				netif_start_queue(dev->net);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			tasklet_schedule (&dev->bh);
 		}
 	}

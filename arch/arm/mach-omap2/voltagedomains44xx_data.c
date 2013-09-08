@@ -21,7 +21,11 @@
 #include <linux/err.h>
 #include <linux/init.h>
 
+<<<<<<< HEAD
 #include "common.h"
+=======
+#include <plat/common.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "prm-regbits-44xx.h"
 #include "prm44xx.h"
@@ -32,6 +36,7 @@
 #include "vc.h"
 #include "vp.h"
 
+<<<<<<< HEAD
 static const struct omap_vfsm_instance omap4_vdd_mpu_vfsm = {
 	.voltsetup_reg = OMAP4_PRM_VOLTSETUP_MPU_RET_SLEEP_OFFSET,
 };
@@ -95,11 +100,68 @@ void __init omap44xx_voltagedomains_init(void)
 {
 	struct voltagedomain *voltdm;
 	int i;
+=======
+static const struct omap_vfsm_instance_data omap4_vdd_mpu_vfsm_data = {
+	.voltsetup_reg = OMAP4_PRM_VOLTSETUP_MPU_RET_SLEEP_OFFSET,
+};
+
+static struct omap_vdd_info omap4_vdd_mpu_info = {
+	.vp_data = &omap4_vp_mpu_data,
+	.vc_data = &omap4_vc_mpu_data,
+	.vfsm = &omap4_vdd_mpu_vfsm_data,
+	.voltdm = {
+		.name = "mpu",
+	},
+};
+
+static const struct omap_vfsm_instance_data omap4_vdd_iva_vfsm_data = {
+	.voltsetup_reg = OMAP4_PRM_VOLTSETUP_IVA_RET_SLEEP_OFFSET,
+};
+
+static struct omap_vdd_info omap4_vdd_iva_info = {
+	.vp_data = &omap4_vp_iva_data,
+	.vc_data = &omap4_vc_iva_data,
+	.vfsm = &omap4_vdd_iva_vfsm_data,
+	.voltdm = {
+		.name = "iva",
+	},
+};
+
+static const struct omap_vfsm_instance_data omap4_vdd_core_vfsm_data = {
+	.voltsetup_reg = OMAP4_PRM_VOLTSETUP_CORE_RET_SLEEP_OFFSET,
+};
+
+static struct omap_vdd_info omap4_vdd_core_info = {
+	.vp_data = &omap4_vp_core_data,
+	.vc_data = &omap4_vc_core_data,
+	.vfsm = &omap4_vdd_core_vfsm_data,
+	.voltdm = {
+		.name = "core",
+	},
+};
+
+/* OMAP4 VDD structures */
+static struct omap_vdd_info *omap4_vdd_info[] = {
+	&omap4_vdd_mpu_info,
+	&omap4_vdd_iva_info,
+	&omap4_vdd_core_info,
+};
+
+/* OMAP4 specific voltage init functions */
+static int __init omap44xx_voltage_early_init(void)
+{
+	s16 prm_mod = OMAP4430_PRM_DEVICE_INST;
+	s16 prm_irqst_ocp_mod = OMAP4430_PRM_OCP_SOCKET_INST;
+
+	if (!cpu_is_omap44xx())
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * XXX Will depend on the process, validation, and binning
 	 * for the currently-running IC
 	 */
+<<<<<<< HEAD
 #ifdef CONFIG_PM_OPP
 	omap4_voltdm_mpu.volt_data = omap44xx_vdd_mpu_volt_data;
 	omap4_voltdm_iva.volt_data = omap44xx_vdd_iva_volt_data;
@@ -111,3 +173,14 @@ void __init omap44xx_voltagedomains_init(void)
 
 	voltdm_init(voltagedomains_omap4);
 };
+=======
+	omap4_vdd_mpu_info.volt_data = omap44xx_vdd_mpu_volt_data;
+	omap4_vdd_iva_info.volt_data = omap44xx_vdd_iva_volt_data;
+	omap4_vdd_core_info.volt_data = omap44xx_vdd_core_volt_data;
+
+	return omap_voltage_early_init(prm_mod, prm_irqst_ocp_mod,
+				       omap4_vdd_info,
+				       ARRAY_SIZE(omap4_vdd_info));
+};
+core_initcall(omap44xx_voltage_early_init);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

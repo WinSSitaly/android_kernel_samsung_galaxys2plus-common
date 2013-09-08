@@ -23,11 +23,19 @@
  * 02110-1301, USA.
  *
  */
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
 #include <linux/input.h>
+<<<<<<< HEAD
 #include <linux/delay.h>
+=======
+#include <linux/io.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/gpio.h>
 #include <linux/gpio_keys.h>
 #include <linux/i2c.h>
@@ -36,12 +44,19 @@
 #include <linux/leds.h>
 #include <linux/spi/spi.h>
 #include <linux/spi/ads7846.h>
+<<<<<<< HEAD
 #include <linux/omapfb.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 
 #include <plat/omap7xx.h>
+<<<<<<< HEAD
+=======
+#include <plat/common.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/board.h>
 #include <plat/keypad.h>
 #include <plat/usb.h>
@@ -49,7 +64,11 @@
 
 #include <mach/irqs.h>
 
+<<<<<<< HEAD
 #include "common.h"
+=======
+#include <linux/delay.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* LCD register definition */
 #define       OMAP_LCDC_CONTROL               (0xfffec000 + 0x00)
@@ -324,6 +343,11 @@ static struct platform_device gpio_leds_device = {
 
 static struct resource htcpld_resources[] = {
 	[0] = {
+<<<<<<< HEAD
+=======
+		.start  = OMAP_GPIO_IRQ(HTCHERALD_GIRQ_BTNS),
+		.end    = OMAP_GPIO_IRQ(HTCHERALD_GIRQ_BTNS),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags  = IORESOURCE_IRQ,
 	},
 };
@@ -396,6 +420,13 @@ static struct omap_lcd_config htcherald_lcd_config __initdata = {
 	.ctrl_name	= "internal",
 };
 
+<<<<<<< HEAD
+=======
+static struct omap_board_config_kernel htcherald_config[] __initdata = {
+	{ OMAP_TAG_LCD, &htcherald_lcd_config },
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_device lcd_device = {
 	.name           = "lcd_htcherald",
 	.id             = -1,
@@ -448,6 +479,10 @@ static struct spi_board_info __initdata htcherald_spi_board_info[] = {
 	{
 		.modalias		= "ads7846",
 		.platform_data		= &htcherald_ts_platform_data,
+<<<<<<< HEAD
+=======
+		.irq			= OMAP_GPIO_IRQ(HTCHERALD_GPIO_TS),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.max_speed_hz		= 2500000,
 		.bus_num		= 2,
 		.chip_select		= 1,
@@ -492,7 +527,11 @@ static void __init htcherald_lcd_init(void)
 
 static void __init htcherald_map_io(void)
 {
+<<<<<<< HEAD
 	omap7xx_map_io();
+=======
+	omap1_map_common_io();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * The LCD panel must be disabled and DMA turned off here, as doing
@@ -573,8 +612,13 @@ static void __init htcherald_init(void)
 	printk(KERN_INFO "HTC Herald init.\n");
 
 	/* Do board initialization before we register all the devices */
+<<<<<<< HEAD
 	htcpld_resources[0].start = gpio_to_irq(HTCHERALD_GIRQ_BTNS);
 	htcpld_resources[0].end = gpio_to_irq(HTCHERALD_GIRQ_BTNS);
+=======
+	omap_board_config = htcherald_config;
+	omap_board_config_size = ARRAY_SIZE(htcherald_config);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_add_devices(devices, ARRAY_SIZE(devices));
 
 	htcherald_disable_watchdog();
@@ -582,7 +626,10 @@ static void __init htcherald_init(void)
 	htcherald_usb_enable();
 	omap1_usb_init(&htcherald_usb_config);
 
+<<<<<<< HEAD
 	htcherald_spi_board_info[0].irq = gpio_to_irq(HTCHERALD_GPIO_TS);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spi_register_board_info(htcherald_spi_board_info,
 		ARRAY_SIZE(htcherald_spi_board_info));
 
@@ -592,13 +639,24 @@ static void __init htcherald_init(void)
 	htc_mmc_data[0] = &htc_mmc1_data;
 	omap1_init_mmc(htc_mmc_data, 1);
 #endif
+<<<<<<< HEAD
 
 	omapfb_set_lcd_config(&htcherald_lcd_config);
+=======
+}
+
+static void __init htcherald_init_irq(void)
+{
+	printk(KERN_INFO "htcherald_init_irq.\n");
+	omap1_init_common_hw();
+	omap_init_irq();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 MACHINE_START(HERALD, "HTC Herald")
 	/* Maintainer: Cory Maccarrone <darkstar6262@gmail.com> */
 	/* Maintainer: wing-linux.sourceforge.net */
+<<<<<<< HEAD
 	.atag_offset    = 0x100,
 	.map_io         = htcherald_map_io,
 	.init_early     = omap1_init_early,
@@ -607,4 +665,12 @@ MACHINE_START(HERALD, "HTC Herald")
 	.init_machine   = htcherald_init,
 	.timer          = &omap1_timer,
 	.restart	= omap1_restart,
+=======
+	.boot_params    = 0x10000100,
+	.map_io         = htcherald_map_io,
+	.reserve	= omap_reserve,
+	.init_irq       = htcherald_init_irq,
+	.init_machine   = htcherald_init,
+	.timer          = &omap_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

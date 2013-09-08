@@ -30,15 +30,26 @@ static void ncp_do_readdir(struct file *, void *, filldir_t,
 
 static int ncp_readdir(struct file *, void *, filldir_t);
 
+<<<<<<< HEAD
 static int ncp_create(struct inode *, struct dentry *, umode_t, struct nameidata *);
 static struct dentry *ncp_lookup(struct inode *, struct dentry *, struct nameidata *);
 static int ncp_unlink(struct inode *, struct dentry *);
 static int ncp_mkdir(struct inode *, struct dentry *, umode_t);
+=======
+static int ncp_create(struct inode *, struct dentry *, int, struct nameidata *);
+static struct dentry *ncp_lookup(struct inode *, struct dentry *, struct nameidata *);
+static int ncp_unlink(struct inode *, struct dentry *);
+static int ncp_mkdir(struct inode *, struct dentry *, int);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ncp_rmdir(struct inode *, struct dentry *);
 static int ncp_rename(struct inode *, struct dentry *,
 	  	      struct inode *, struct dentry *);
 static int ncp_mknod(struct inode * dir, struct dentry *dentry,
+<<<<<<< HEAD
 		     umode_t mode, dev_t rdev);
+=======
+		     int mode, dev_t rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_NCPFS_EXTRAS) || defined(CONFIG_NCPFS_NFS_NS)
 extern int ncp_symlink(struct inode *, struct dentry *, const char *);
 #else
@@ -919,7 +930,11 @@ out_close:
 	goto out;
 }
 
+<<<<<<< HEAD
 int ncp_create_new(struct inode *dir, struct dentry *dentry, umode_t mode,
+=======
+int ncp_create_new(struct inode *dir, struct dentry *dentry, int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   dev_t rdev, __le32 attributes)
 {
 	struct ncp_server *server = NCP_SERVER(dir);
@@ -928,7 +943,11 @@ int ncp_create_new(struct inode *dir, struct dentry *dentry, umode_t mode,
 	int opmode;
 	__u8 __name[NCP_MAXPATHLEN + 1];
 	
+<<<<<<< HEAD
 	PPRINTK("ncp_create_new: creating %s/%s, mode=%hx\n",
+=======
+	PPRINTK("ncp_create_new: creating %s/%s, mode=%x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dentry->d_parent->d_name.name, dentry->d_name.name, mode);
 
 	ncp_age_dentry(server, dentry);
@@ -979,13 +998,21 @@ out:
 	return error;
 }
 
+<<<<<<< HEAD
 static int ncp_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+=======
+static int ncp_create(struct inode *dir, struct dentry *dentry, int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct nameidata *nd)
 {
 	return ncp_create_new(dir, dentry, mode, 0, 0);
 }
 
+<<<<<<< HEAD
 static int ncp_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+=======
+static int ncp_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ncp_entry_info finfo;
 	struct ncp_server *server = NCP_SERVER(dir);
@@ -1201,12 +1228,20 @@ out:
 }
 
 static int ncp_mknod(struct inode * dir, struct dentry *dentry,
+<<<<<<< HEAD
 		     umode_t mode, dev_t rdev)
+=======
+		     int mode, dev_t rdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (!new_valid_dev(rdev))
 		return -EINVAL;
 	if (ncp_is_nfs_extras(NCP_SERVER(dir), NCP_FINFO(dir)->volNumber)) {
+<<<<<<< HEAD
 		DPRINTK(KERN_DEBUG "ncp_mknod: mode = 0%ho\n", mode);
+=======
+		DPRINTK(KERN_DEBUG "ncp_mknod: mode = 0%o\n", mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ncp_create_new(dir, dentry, mode, rdev, 0);
 	}
 	return -EPERM; /* Strange, but true */

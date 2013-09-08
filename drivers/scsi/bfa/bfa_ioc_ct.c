@@ -17,7 +17,11 @@
 
 #include "bfad_drv.h"
 #include "bfa_ioc.h"
+<<<<<<< HEAD
 #include "bfi_reg.h"
+=======
+#include "bfi_ctreg.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "bfa_defs.h"
 
 BFA_TRC_FILE(CNA, IOC_CT);
@@ -36,6 +40,12 @@ BFA_TRC_FILE(CNA, IOC_CT);
  */
 static bfa_boolean_t bfa_ioc_ct_firmware_lock(struct bfa_ioc_s *ioc);
 static void bfa_ioc_ct_firmware_unlock(struct bfa_ioc_s *ioc);
+<<<<<<< HEAD
+=======
+static void bfa_ioc_ct_reg_init(struct bfa_ioc_s *ioc);
+static void bfa_ioc_ct_map_port(struct bfa_ioc_s *ioc);
+static void bfa_ioc_ct_isr_mode_set(struct bfa_ioc_s *ioc, bfa_boolean_t msix);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void bfa_ioc_ct_notify_fail(struct bfa_ioc_s *ioc);
 static void bfa_ioc_ct_ownership_reset(struct bfa_ioc_s *ioc);
 static bfa_boolean_t bfa_ioc_ct_sync_start(struct bfa_ioc_s *ioc);
@@ -45,7 +55,33 @@ static void bfa_ioc_ct_sync_ack(struct bfa_ioc_s *ioc);
 static bfa_boolean_t bfa_ioc_ct_sync_complete(struct bfa_ioc_s *ioc);
 
 static struct bfa_ioc_hwif_s hwif_ct;
+<<<<<<< HEAD
 static struct bfa_ioc_hwif_s hwif_ct2;
+=======
+
+/*
+ * Called from bfa_ioc_attach() to map asic specific calls.
+ */
+void
+bfa_ioc_set_ct_hwif(struct bfa_ioc_s *ioc)
+{
+	hwif_ct.ioc_pll_init = bfa_ioc_ct_pll_init;
+	hwif_ct.ioc_firmware_lock = bfa_ioc_ct_firmware_lock;
+	hwif_ct.ioc_firmware_unlock = bfa_ioc_ct_firmware_unlock;
+	hwif_ct.ioc_reg_init = bfa_ioc_ct_reg_init;
+	hwif_ct.ioc_map_port = bfa_ioc_ct_map_port;
+	hwif_ct.ioc_isr_mode_set = bfa_ioc_ct_isr_mode_set;
+	hwif_ct.ioc_notify_fail = bfa_ioc_ct_notify_fail;
+	hwif_ct.ioc_ownership_reset = bfa_ioc_ct_ownership_reset;
+	hwif_ct.ioc_sync_start = bfa_ioc_ct_sync_start;
+	hwif_ct.ioc_sync_join = bfa_ioc_ct_sync_join;
+	hwif_ct.ioc_sync_leave = bfa_ioc_ct_sync_leave;
+	hwif_ct.ioc_sync_ack = bfa_ioc_ct_sync_ack;
+	hwif_ct.ioc_sync_complete = bfa_ioc_ct_sync_complete;
+
+	ioc->ioc_hwif = &hwif_ct;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Return true if firmware of current driver matches the running firmware.
@@ -58,9 +94,21 @@ bfa_ioc_ct_firmware_lock(struct bfa_ioc_s *ioc)
 	struct bfi_ioc_image_hdr_s fwhdr;
 
 	/*
+<<<<<<< HEAD
 	 * If bios boot (flash based) -- do not increment usage count
 	 */
 	if (bfa_cb_image_get_size(bfa_ioc_asic_gen(ioc)) <
+=======
+	 * Firmware match check is relevant only for CNA.
+	 */
+	if (!ioc->cna)
+		return BFA_TRUE;
+
+	/*
+	 * If bios boot (flash based) -- do not increment usage count
+	 */
+	if (bfa_cb_image_get_size(BFA_IOC_FWIMG_TYPE(ioc)) <
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						BFA_IOC_FWIMG_MINSZ)
 		return BFA_TRUE;
 
@@ -72,7 +120,10 @@ bfa_ioc_ct_firmware_lock(struct bfa_ioc_s *ioc)
 	 */
 	if (usecnt == 0) {
 		writel(1, ioc->ioc_regs.ioc_usage_reg);
+<<<<<<< HEAD
 		readl(ioc->ioc_regs.ioc_usage_sem_reg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		writel(1, ioc->ioc_regs.ioc_usage_sem_reg);
 		writel(0, ioc->ioc_regs.ioc_fail_sync);
 		bfa_trc(ioc, usecnt);
@@ -92,7 +143,10 @@ bfa_ioc_ct_firmware_lock(struct bfa_ioc_s *ioc)
 	 */
 	bfa_ioc_fwver_get(ioc, &fwhdr);
 	if (!bfa_ioc_fwver_cmp(ioc, &fwhdr)) {
+<<<<<<< HEAD
 		readl(ioc->ioc_regs.ioc_usage_sem_reg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		writel(1, ioc->ioc_regs.ioc_usage_sem_reg);
 		bfa_trc(ioc, usecnt);
 		return BFA_FALSE;
@@ -103,7 +157,10 @@ bfa_ioc_ct_firmware_lock(struct bfa_ioc_s *ioc)
 	 */
 	usecnt++;
 	writel(usecnt, ioc->ioc_regs.ioc_usage_reg);
+<<<<<<< HEAD
 	readl(ioc->ioc_regs.ioc_usage_sem_reg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writel(1, ioc->ioc_regs.ioc_usage_sem_reg);
 	bfa_trc(ioc, usecnt);
 	return BFA_TRUE;
@@ -115,9 +172,21 @@ bfa_ioc_ct_firmware_unlock(struct bfa_ioc_s *ioc)
 	u32 usecnt;
 
 	/*
+<<<<<<< HEAD
 	 * If bios boot (flash based) -- do not decrement usage count
 	 */
 	if (bfa_cb_image_get_size(bfa_ioc_asic_gen(ioc)) <
+=======
+	 * Firmware lock is relevant only for CNA.
+	 */
+	if (!ioc->cna)
+		return;
+
+	/*
+	 * If bios boot (flash based) -- do not decrement usage count
+	 */
+	if (bfa_cb_image_get_size(BFA_IOC_FWIMG_TYPE(ioc)) <
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						BFA_IOC_FWIMG_MINSZ)
 		return;
 
@@ -132,7 +201,10 @@ bfa_ioc_ct_firmware_unlock(struct bfa_ioc_s *ioc)
 	writel(usecnt, ioc->ioc_regs.ioc_usage_reg);
 	bfa_trc(ioc, usecnt);
 
+<<<<<<< HEAD
 	readl(ioc->ioc_regs.ioc_usage_sem_reg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writel(1, ioc->ioc_regs.ioc_usage_sem_reg);
 }
 
@@ -142,14 +214,22 @@ bfa_ioc_ct_firmware_unlock(struct bfa_ioc_s *ioc)
 static void
 bfa_ioc_ct_notify_fail(struct bfa_ioc_s *ioc)
 {
+<<<<<<< HEAD
 	if (bfa_ioc_is_cna(ioc)) {
+=======
+	if (ioc->cna) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		writel(__FW_INIT_HALT_P, ioc->ioc_regs.ll_halt);
 		writel(__FW_INIT_HALT_P, ioc->ioc_regs.alt_ll_halt);
 		/* Wait for halt to take effect */
 		readl(ioc->ioc_regs.ll_halt);
 		readl(ioc->ioc_regs.alt_ll_halt);
 	} else {
+<<<<<<< HEAD
 		writel(~0U, ioc->ioc_regs.err_set);
+=======
+		writel(__PSS_ERR_STATUS_SET, ioc->ioc_regs.err_set);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		readl(ioc->ioc_regs.err_set);
 	}
 }
@@ -157,7 +237,11 @@ bfa_ioc_ct_notify_fail(struct bfa_ioc_s *ioc)
 /*
  * Host to LPU mailbox message addresses
  */
+<<<<<<< HEAD
 static struct { u32 hfn_mbox, lpu_mbox, hfn_pgn; } ct_fnreg[] = {
+=======
+static struct { u32 hfn_mbox, lpu_mbox, hfn_pgn; } iocreg_fnreg[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ HOSTFN0_LPU_MBOX0_0, LPU_HOSTFN0_MBOX0_0, HOST_PAGE_NUM_FN0 },
 	{ HOSTFN1_LPU_MBOX0_8, LPU_HOSTFN1_MBOX0_8, HOST_PAGE_NUM_FN1 },
 	{ HOSTFN2_LPU_MBOX0_0, LPU_HOSTFN2_MBOX0_0, HOST_PAGE_NUM_FN2 },
@@ -167,16 +251,25 @@ static struct { u32 hfn_mbox, lpu_mbox, hfn_pgn; } ct_fnreg[] = {
 /*
  * Host <-> LPU mailbox command/status registers - port 0
  */
+<<<<<<< HEAD
 static struct { u32 hfn, lpu; } ct_p0reg[] = {
 	{ HOSTFN0_LPU0_CMD_STAT, LPU0_HOSTFN0_CMD_STAT },
 	{ HOSTFN1_LPU0_CMD_STAT, LPU0_HOSTFN1_CMD_STAT },
 	{ HOSTFN2_LPU0_CMD_STAT, LPU0_HOSTFN2_CMD_STAT },
 	{ HOSTFN3_LPU0_CMD_STAT, LPU0_HOSTFN3_CMD_STAT }
+=======
+static struct { u32 hfn, lpu; } iocreg_mbcmd_p0[] = {
+	{ HOSTFN0_LPU0_MBOX0_CMD_STAT, LPU0_HOSTFN0_MBOX0_CMD_STAT },
+	{ HOSTFN1_LPU0_MBOX0_CMD_STAT, LPU0_HOSTFN1_MBOX0_CMD_STAT },
+	{ HOSTFN2_LPU0_MBOX0_CMD_STAT, LPU0_HOSTFN2_MBOX0_CMD_STAT },
+	{ HOSTFN3_LPU0_MBOX0_CMD_STAT, LPU0_HOSTFN3_MBOX0_CMD_STAT }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
  * Host <-> LPU mailbox command/status registers - port 1
  */
+<<<<<<< HEAD
 static struct { u32 hfn, lpu; } ct_p1reg[] = {
 	{ HOSTFN0_LPU1_CMD_STAT, LPU1_HOSTFN0_CMD_STAT },
 	{ HOSTFN1_LPU1_CMD_STAT, LPU1_HOSTFN1_CMD_STAT },
@@ -192,6 +285,13 @@ static struct { uint32_t hfn_mbox, lpu_mbox, hfn_pgn, hfn, lpu, lpu_read; }
 	{ CT2_HOSTFN_LPU1_MBOX0, CT2_LPU1_HOSTFN_MBOX0, CT2_HOSTFN_PAGE_NUM,
 	  CT2_HOSTFN_LPU1_CMD_STAT, CT2_LPU1_HOSTFN_CMD_STAT,
 	  CT2_HOSTFN_LPU1_READ_STAT},
+=======
+static struct { u32 hfn, lpu; } iocreg_mbcmd_p1[] = {
+	{ HOSTFN0_LPU1_MBOX0_CMD_STAT, LPU1_HOSTFN0_MBOX0_CMD_STAT },
+	{ HOSTFN1_LPU1_MBOX0_CMD_STAT, LPU1_HOSTFN1_MBOX0_CMD_STAT },
+	{ HOSTFN2_LPU1_MBOX0_CMD_STAT, LPU1_HOSTFN2_MBOX0_CMD_STAT },
+	{ HOSTFN3_LPU1_MBOX0_CMD_STAT, LPU1_HOSTFN3_MBOX0_CMD_STAT }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void
@@ -202,24 +302,40 @@ bfa_ioc_ct_reg_init(struct bfa_ioc_s *ioc)
 
 	rb = bfa_ioc_bar0(ioc);
 
+<<<<<<< HEAD
 	ioc->ioc_regs.hfn_mbox = rb + ct_fnreg[pcifn].hfn_mbox;
 	ioc->ioc_regs.lpu_mbox = rb + ct_fnreg[pcifn].lpu_mbox;
 	ioc->ioc_regs.host_page_num_fn = rb + ct_fnreg[pcifn].hfn_pgn;
+=======
+	ioc->ioc_regs.hfn_mbox = rb + iocreg_fnreg[pcifn].hfn_mbox;
+	ioc->ioc_regs.lpu_mbox = rb + iocreg_fnreg[pcifn].lpu_mbox;
+	ioc->ioc_regs.host_page_num_fn = rb + iocreg_fnreg[pcifn].hfn_pgn;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ioc->port_id == 0) {
 		ioc->ioc_regs.heartbeat = rb + BFA_IOC0_HBEAT_REG;
 		ioc->ioc_regs.ioc_fwstate = rb + BFA_IOC0_STATE_REG;
 		ioc->ioc_regs.alt_ioc_fwstate = rb + BFA_IOC1_STATE_REG;
+<<<<<<< HEAD
 		ioc->ioc_regs.hfn_mbox_cmd = rb + ct_p0reg[pcifn].hfn;
 		ioc->ioc_regs.lpu_mbox_cmd = rb + ct_p0reg[pcifn].lpu;
+=======
+		ioc->ioc_regs.hfn_mbox_cmd = rb + iocreg_mbcmd_p0[pcifn].hfn;
+		ioc->ioc_regs.lpu_mbox_cmd = rb + iocreg_mbcmd_p0[pcifn].lpu;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ioc->ioc_regs.ll_halt = rb + FW_INIT_HALT_P0;
 		ioc->ioc_regs.alt_ll_halt = rb + FW_INIT_HALT_P1;
 	} else {
 		ioc->ioc_regs.heartbeat = (rb + BFA_IOC1_HBEAT_REG);
 		ioc->ioc_regs.ioc_fwstate = (rb + BFA_IOC1_STATE_REG);
 		ioc->ioc_regs.alt_ioc_fwstate = rb + BFA_IOC0_STATE_REG;
+<<<<<<< HEAD
 		ioc->ioc_regs.hfn_mbox_cmd = rb + ct_p1reg[pcifn].hfn;
 		ioc->ioc_regs.lpu_mbox_cmd = rb + ct_p1reg[pcifn].lpu;
+=======
+		ioc->ioc_regs.hfn_mbox_cmd = rb + iocreg_mbcmd_p1[pcifn].hfn;
+		ioc->ioc_regs.lpu_mbox_cmd = rb + iocreg_mbcmd_p1[pcifn].lpu;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ioc->ioc_regs.ll_halt = rb + FW_INIT_HALT_P1;
 		ioc->ioc_regs.alt_ll_halt = rb + FW_INIT_HALT_P0;
 	}
@@ -229,8 +345,13 @@ bfa_ioc_ct_reg_init(struct bfa_ioc_s *ioc)
 	 */
 	ioc->ioc_regs.pss_ctl_reg = (rb + PSS_CTL_REG);
 	ioc->ioc_regs.pss_err_status_reg = (rb + PSS_ERR_STATUS_REG);
+<<<<<<< HEAD
 	ioc->ioc_regs.app_pll_fast_ctl_reg = (rb + APP_PLL_LCLK_CTL_REG);
 	ioc->ioc_regs.app_pll_slow_ctl_reg = (rb + APP_PLL_SCLK_CTL_REG);
+=======
+	ioc->ioc_regs.app_pll_fast_ctl_reg = (rb + APP_PLL_425_CTL_REG);
+	ioc->ioc_regs.app_pll_slow_ctl_reg = (rb + APP_PLL_312_CTL_REG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * IOC semaphore registers and serialization
@@ -253,6 +374,7 @@ bfa_ioc_ct_reg_init(struct bfa_ioc_s *ioc)
 	ioc->ioc_regs.err_set = (rb + ERR_SET_REG);
 }
 
+<<<<<<< HEAD
 static void
 bfa_ioc_ct2_reg_init(struct bfa_ioc_s *ioc)
 {
@@ -311,6 +433,8 @@ bfa_ioc_ct2_reg_init(struct bfa_ioc_s *ioc)
 	ioc->ioc_regs.err_set = (rb + ERR_SET_REG);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Initialize IOC to port mapping.
  */
@@ -333,6 +457,7 @@ bfa_ioc_ct_map_port(struct bfa_ioc_s *ioc)
 	bfa_trc(ioc, ioc->port_id);
 }
 
+<<<<<<< HEAD
 static void
 bfa_ioc_ct2_map_port(struct bfa_ioc_s *ioc)
 {
@@ -346,6 +471,8 @@ bfa_ioc_ct2_map_port(struct bfa_ioc_s *ioc)
 	bfa_trc(ioc, ioc->port_id);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Set interrupt mode for a function: INTX or MSIX
  */
@@ -364,7 +491,11 @@ bfa_ioc_ct_isr_mode_set(struct bfa_ioc_s *ioc, bfa_boolean_t msix)
 	/*
 	 * If already in desired mode, do not change anything
 	 */
+<<<<<<< HEAD
 	if ((!msix && mode) || (msix && !mode))
+=======
+	if (!msix && mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	if (msix)
@@ -379,6 +510,7 @@ bfa_ioc_ct_isr_mode_set(struct bfa_ioc_s *ioc, bfa_boolean_t msix)
 	writel(r32, rb + FNC_PERS_REG);
 }
 
+<<<<<<< HEAD
 bfa_boolean_t
 bfa_ioc_ct2_lpu_read_stat(struct bfa_ioc_s *ioc)
 {
@@ -393,6 +525,8 @@ bfa_ioc_ct2_lpu_read_stat(struct bfa_ioc_s *ioc)
 	return BFA_FALSE;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Cleanup hw semaphore and usecnt registers
  */
@@ -400,10 +534,16 @@ static void
 bfa_ioc_ct_ownership_reset(struct bfa_ioc_s *ioc)
 {
 
+<<<<<<< HEAD
 	if (bfa_ioc_is_cna(ioc)) {
 		bfa_ioc_sem_get(ioc->ioc_regs.ioc_usage_sem_reg);
 		writel(0, ioc->ioc_regs.ioc_usage_reg);
 		readl(ioc->ioc_regs.ioc_usage_sem_reg);
+=======
+	if (ioc->cna) {
+		bfa_ioc_sem_get(ioc->ioc_regs.ioc_usage_sem_reg);
+		writel(0, ioc->ioc_regs.ioc_usage_reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		writel(1, ioc->ioc_regs.ioc_usage_sem_reg);
 	}
 
@@ -512,6 +652,7 @@ bfa_ioc_ct_sync_complete(struct bfa_ioc_s *ioc)
 	return BFA_FALSE;
 }
 
+<<<<<<< HEAD
 /**
  * Called from bfa_ioc_attach() to map asic specific calls.
  */
@@ -605,6 +746,34 @@ bfa_ioc_ct_pll_init(void __iomem *rb, enum bfi_asic_mode mode)
 		__APP_PLL_LCLK_JITLMT0_1(3U) |
 		__APP_PLL_LCLK_CNTLMT0_1(1U);
 
+=======
+/*
+ * Check the firmware state to know if pll_init has been completed already
+ */
+bfa_boolean_t
+bfa_ioc_ct_pll_init_complete(void __iomem *rb)
+{
+	if ((readl(rb + BFA_IOC0_STATE_REG) == BFI_IOC_OP) ||
+	  (readl(rb + BFA_IOC1_STATE_REG) == BFI_IOC_OP))
+		return BFA_TRUE;
+
+	return BFA_FALSE;
+}
+
+bfa_status_t
+bfa_ioc_ct_pll_init(void __iomem *rb, bfa_boolean_t fcmode)
+{
+	u32	pll_sclk, pll_fclk, r32;
+
+	pll_sclk = __APP_PLL_312_LRESETN | __APP_PLL_312_ENARST |
+		__APP_PLL_312_RSEL200500 | __APP_PLL_312_P0_1(3U) |
+		__APP_PLL_312_JITLMT0_1(3U) |
+		__APP_PLL_312_CNTLMT0_1(1U);
+	pll_fclk = __APP_PLL_425_LRESETN | __APP_PLL_425_ENARST |
+		__APP_PLL_425_RSEL200500 | __APP_PLL_425_P0_1(3U) |
+		__APP_PLL_425_JITLMT0_1(3U) |
+		__APP_PLL_425_CNTLMT0_1(1U);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (fcmode) {
 		writel(0, (rb + OP_MODE));
 		writel(__APP_EMS_CMLCKSEL | __APP_EMS_REFCKBUFEN2 |
@@ -621,6 +790,7 @@ bfa_ioc_ct_pll_init(void __iomem *rb, enum bfi_asic_mode mode)
 	writel(0xffffffffU, (rb + HOSTFN1_INT_STATUS));
 	writel(0xffffffffU, (rb + HOSTFN0_INT_MSK));
 	writel(0xffffffffU, (rb + HOSTFN1_INT_MSK));
+<<<<<<< HEAD
 	writel(pll_sclk | __APP_PLL_SCLK_LOGIC_SOFT_RESET,
 			rb + APP_PLL_SCLK_CTL_REG);
 	writel(pll_fclk | __APP_PLL_LCLK_LOGIC_SOFT_RESET,
@@ -629,13 +799,28 @@ bfa_ioc_ct_pll_init(void __iomem *rb, enum bfi_asic_mode mode)
 		__APP_PLL_SCLK_ENABLE, rb + APP_PLL_SCLK_CTL_REG);
 	writel(pll_fclk | __APP_PLL_LCLK_LOGIC_SOFT_RESET |
 		__APP_PLL_LCLK_ENABLE, rb + APP_PLL_LCLK_CTL_REG);
+=======
+	writel(pll_sclk | __APP_PLL_312_LOGIC_SOFT_RESET,
+			rb + APP_PLL_312_CTL_REG);
+	writel(pll_fclk | __APP_PLL_425_LOGIC_SOFT_RESET,
+			rb + APP_PLL_425_CTL_REG);
+	writel(pll_sclk | __APP_PLL_312_LOGIC_SOFT_RESET | __APP_PLL_312_ENABLE,
+			rb + APP_PLL_312_CTL_REG);
+	writel(pll_fclk | __APP_PLL_425_LOGIC_SOFT_RESET | __APP_PLL_425_ENABLE,
+			rb + APP_PLL_425_CTL_REG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	readl(rb + HOSTFN0_INT_MSK);
 	udelay(2000);
 	writel(0xffffffffU, (rb + HOSTFN0_INT_STATUS));
 	writel(0xffffffffU, (rb + HOSTFN1_INT_STATUS));
+<<<<<<< HEAD
 	writel(pll_sclk | __APP_PLL_SCLK_ENABLE, rb + APP_PLL_SCLK_CTL_REG);
 	writel(pll_fclk | __APP_PLL_LCLK_ENABLE, rb + APP_PLL_LCLK_CTL_REG);
 
+=======
+	writel(pll_sclk | __APP_PLL_312_ENABLE, rb + APP_PLL_312_CTL_REG);
+	writel(pll_fclk | __APP_PLL_425_ENABLE, rb + APP_PLL_425_CTL_REG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!fcmode) {
 		writel(__PMM_1T_RESET_P, (rb + PMM_1T_RESET_REG_P0));
 		writel(__PMM_1T_RESET_P, (rb + PMM_1T_RESET_REG_P1));
@@ -655,6 +840,7 @@ bfa_ioc_ct_pll_init(void __iomem *rb, enum bfi_asic_mode mode)
 	writel(0, (rb + MBIST_CTL_REG));
 	return BFA_STATUS_OK;
 }
+<<<<<<< HEAD
 
 static void
 bfa_ioc_ct2_sclk_init(void __iomem *rb)
@@ -919,3 +1105,5 @@ bfa_ioc_ct2_pll_init(void __iomem *rb, enum bfi_asic_mode mode)
 
 	return BFA_STATUS_OK;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -25,7 +25,12 @@
 #include <linux/root_dev.h>
 #include <linux/of_platform.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/time.h>
 #include <asm/io.h>
 #include <asm/machdep.h>
@@ -40,12 +45,20 @@
 
 static struct of_device_id __initdata mpc834x_itx_ids[] = {
 	{ .compatible = "fsl,pq2pro-localbus", },
+<<<<<<< HEAD
+=======
+	{ .compatible = "simple-bus", },
+	{ .compatible = "gianfar", },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{},
 };
 
 static int __init mpc834x_itx_declare_of_platform_devices(void)
 {
+<<<<<<< HEAD
 	mpc83xx_declare_of_platform_devices();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return of_platform_bus_probe(NULL, mpc834x_itx_ids, NULL);
 }
 machine_device_initcall(mpc834x_itx, mpc834x_itx_declare_of_platform_devices);
@@ -57,14 +70,47 @@ machine_device_initcall(mpc834x_itx, mpc834x_itx_declare_of_platform_devices);
  */
 static void __init mpc834x_itx_setup_arch(void)
 {
+<<<<<<< HEAD
 	if (ppc_md.progress)
 		ppc_md.progress("mpc834x_itx_setup_arch()", 0);
 
 	mpc83xx_setup_pci();
+=======
+#ifdef CONFIG_PCI
+	struct device_node *np;
+#endif
+
+	if (ppc_md.progress)
+		ppc_md.progress("mpc834x_itx_setup_arch()", 0);
+
+#ifdef CONFIG_PCI
+	for_each_compatible_node(np, "pci", "fsl,mpc8349-pci")
+		mpc83xx_add_bridge(np);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mpc834x_usb_cfg();
 }
 
+<<<<<<< HEAD
+=======
+static void __init mpc834x_itx_init_IRQ(void)
+{
+	struct device_node *np;
+
+	np = of_find_node_by_type(NULL, "ipic");
+	if (!np)
+		return;
+
+	ipic_init(np, 0);
+
+	/* Initialize the default interrupt mapping priorities,
+	 * in case the boot rom changed something on us.
+	 */
+	ipic_set_default_priority();
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Called very early, MMU is off, device-tree isn't unflattened
  */
@@ -79,7 +125,11 @@ define_machine(mpc834x_itx) {
 	.name			= "MPC834x ITX",
 	.probe			= mpc834x_itx_probe,
 	.setup_arch		= mpc834x_itx_setup_arch,
+<<<<<<< HEAD
 	.init_IRQ		= mpc83xx_ipic_init_IRQ,
+=======
+	.init_IRQ		= mpc834x_itx_init_IRQ,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.get_irq		= ipic_get_irq,
 	.restart		= mpc83xx_restart,
 	.time_init		= mpc83xx_time_init,

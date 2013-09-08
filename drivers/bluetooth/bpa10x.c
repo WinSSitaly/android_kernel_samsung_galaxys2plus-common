@@ -66,7 +66,11 @@ struct hci_vendor_hdr {
 
 static int bpa10x_recv(struct hci_dev *hdev, int queue, void *buf, int count)
 {
+<<<<<<< HEAD
 	struct bpa10x_data *data = hci_get_drvdata(hdev);
+=======
+	struct bpa10x_data *data = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BT_DBG("%s queue %d buffer %p count %d", hdev->name,
 							queue, buf, count);
@@ -189,7 +193,11 @@ done:
 static void bpa10x_rx_complete(struct urb *urb)
 {
 	struct hci_dev *hdev = urb->context;
+<<<<<<< HEAD
 	struct bpa10x_data *data = hci_get_drvdata(hdev);
+=======
+	struct bpa10x_data *data = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err;
 
 	BT_DBG("%s urb %p status %d count %d", hdev->name,
@@ -219,7 +227,11 @@ static void bpa10x_rx_complete(struct urb *urb)
 
 static inline int bpa10x_submit_intr_urb(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	struct bpa10x_data *data = hci_get_drvdata(hdev);
+=======
+	struct bpa10x_data *data = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct urb *urb;
 	unsigned char *buf;
 	unsigned int pipe;
@@ -260,7 +272,11 @@ static inline int bpa10x_submit_intr_urb(struct hci_dev *hdev)
 
 static inline int bpa10x_submit_bulk_urb(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	struct bpa10x_data *data = hci_get_drvdata(hdev);
+=======
+	struct bpa10x_data *data = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct urb *urb;
 	unsigned char *buf;
 	unsigned int pipe;
@@ -301,7 +317,11 @@ static inline int bpa10x_submit_bulk_urb(struct hci_dev *hdev)
 
 static int bpa10x_open(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	struct bpa10x_data *data = hci_get_drvdata(hdev);
+=======
+	struct bpa10x_data *data = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err;
 
 	BT_DBG("%s", hdev->name);
@@ -329,7 +349,11 @@ error:
 
 static int bpa10x_close(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	struct bpa10x_data *data = hci_get_drvdata(hdev);
+=======
+	struct bpa10x_data *data = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BT_DBG("%s", hdev->name);
 
@@ -343,7 +367,11 @@ static int bpa10x_close(struct hci_dev *hdev)
 
 static int bpa10x_flush(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	struct bpa10x_data *data = hci_get_drvdata(hdev);
+=======
+	struct bpa10x_data *data = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BT_DBG("%s", hdev->name);
 
@@ -355,7 +383,11 @@ static int bpa10x_flush(struct hci_dev *hdev)
 static int bpa10x_send_frame(struct sk_buff *skb)
 {
 	struct hci_dev *hdev = (struct hci_dev *) skb->dev;
+<<<<<<< HEAD
 	struct bpa10x_data *data = hci_get_drvdata(hdev);
+=======
+	struct bpa10x_data *data = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct usb_ctrlrequest *dr;
 	struct urb *urb;
 	unsigned int pipe;
@@ -432,6 +464,20 @@ static int bpa10x_send_frame(struct sk_buff *skb)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void bpa10x_destruct(struct hci_dev *hdev)
+{
+	struct bpa10x_data *data = hdev->driver_data;
+
+	BT_DBG("%s", hdev->name);
+
+	kfree_skb(data->rx_skb[0]);
+	kfree_skb(data->rx_skb[1]);
+	kfree(data);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int bpa10x_probe(struct usb_interface *intf, const struct usb_device_id *id)
 {
 	struct bpa10x_data *data;
@@ -459,7 +505,11 @@ static int bpa10x_probe(struct usb_interface *intf, const struct usb_device_id *
 	}
 
 	hdev->bus = HCI_USB;
+<<<<<<< HEAD
 	hci_set_drvdata(hdev, data);
+=======
+	hdev->driver_data = data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	data->hdev = hdev;
 
@@ -469,6 +519,12 @@ static int bpa10x_probe(struct usb_interface *intf, const struct usb_device_id *
 	hdev->close    = bpa10x_close;
 	hdev->flush    = bpa10x_flush;
 	hdev->send     = bpa10x_send_frame;
+<<<<<<< HEAD
+=======
+	hdev->destruct = bpa10x_destruct;
+
+	hdev->owner = THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	set_bit(HCI_QUIRK_NO_RESET, &hdev->quirks);
 
@@ -498,9 +554,12 @@ static void bpa10x_disconnect(struct usb_interface *intf)
 	hci_unregister_dev(data->hdev);
 
 	hci_free_dev(data->hdev);
+<<<<<<< HEAD
 	kfree_skb(data->rx_skb[0]);
 	kfree_skb(data->rx_skb[1]);
 	kfree(data);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct usb_driver bpa10x_driver = {
@@ -510,7 +569,24 @@ static struct usb_driver bpa10x_driver = {
 	.id_table	= bpa10x_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(bpa10x_driver);
+=======
+static int __init bpa10x_init(void)
+{
+	BT_INFO("Digianswer Bluetooth USB driver ver %s", VERSION);
+
+	return usb_register(&bpa10x_driver);
+}
+
+static void __exit bpa10x_exit(void)
+{
+	usb_deregister(&bpa10x_driver);
+}
+
+module_init(bpa10x_init);
+module_exit(bpa10x_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Marcel Holtmann <marcel@holtmann.org>");
 MODULE_DESCRIPTION("Digianswer Bluetooth USB driver ver " VERSION);

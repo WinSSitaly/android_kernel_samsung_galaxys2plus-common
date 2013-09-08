@@ -34,22 +34,34 @@
  * Section 4.11.1.1:
  * "All components of all Command and Transfer TRBs shall be initialized to '0'"
  */
+<<<<<<< HEAD
 static struct xhci_segment *xhci_segment_alloc(struct xhci_hcd *xhci,
 					unsigned int cycle_state, gfp_t flags)
 {
 	struct xhci_segment *seg;
 	dma_addr_t	dma;
 	int		i;
+=======
+static struct xhci_segment *xhci_segment_alloc(struct xhci_hcd *xhci, gfp_t flags)
+{
+	struct xhci_segment *seg;
+	dma_addr_t	dma;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	seg = kzalloc(sizeof *seg, flags);
 	if (!seg)
 		return NULL;
+<<<<<<< HEAD
+=======
+	xhci_dbg(xhci, "Allocating priv segment structure at %p\n", seg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	seg->trbs = dma_pool_alloc(xhci->segment_pool, flags, &dma);
 	if (!seg->trbs) {
 		kfree(seg);
 		return NULL;
 	}
+<<<<<<< HEAD
 
 	memset(seg->trbs, 0, SEGMENT_SIZE);
 	/* If the cycle state is 0, set the cycle bit to 1 for all the TRBs */
@@ -57,6 +69,12 @@ static struct xhci_segment *xhci_segment_alloc(struct xhci_hcd *xhci,
 		for (i = 0; i < TRBS_PER_SEGMENT; i++)
 			seg->trbs[i].link.control |= TRB_CYCLE;
 	}
+=======
+	xhci_dbg(xhci, "// Allocating segment at %p (virtual) 0x%llx (DMA)\n",
+			seg->trbs, (unsigned long long)dma);
+
+	memset(seg->trbs, 0, SEGMENT_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	seg->dma = dma;
 	seg->next = NULL;
 
@@ -65,6 +83,7 @@ static struct xhci_segment *xhci_segment_alloc(struct xhci_hcd *xhci,
 
 static void xhci_segment_free(struct xhci_hcd *xhci, struct xhci_segment *seg)
 {
+<<<<<<< HEAD
 	if (seg->trbs) {
 		dma_pool_free(xhci->segment_pool, seg->trbs, seg->dma);
 		seg->trbs = NULL;
@@ -86,6 +105,20 @@ static void xhci_free_segments_for_ring(struct xhci_hcd *xhci,
 	xhci_segment_free(xhci, first);
 }
 
+=======
+	if (!seg)
+		return;
+	if (seg->trbs) {
+		xhci_dbg(xhci, "Freeing DMA segment at %p (virtual) 0x%llx (DMA)\n",
+				seg->trbs, (unsigned long long)seg->dma);
+		dma_pool_free(xhci->segment_pool, seg->trbs, seg->dma);
+		seg->trbs = NULL;
+	}
+	xhci_dbg(xhci, "Freeing priv segment structure at %p\n", seg);
+	kfree(seg);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Make the prev segment point to the next segment.
  *
@@ -94,16 +127,26 @@ static void xhci_free_segments_for_ring(struct xhci_hcd *xhci,
  * related flags, such as End TRB, Toggle Cycle, and no snoop.
  */
 static void xhci_link_segments(struct xhci_hcd *xhci, struct xhci_segment *prev,
+<<<<<<< HEAD
 		struct xhci_segment *next, enum xhci_ring_type type)
+=======
+		struct xhci_segment *next, bool link_trbs, bool isoc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 val;
 
 	if (!prev || !next)
 		return;
 	prev->next = next;
+<<<<<<< HEAD
 	if (type != TYPE_EVENT) {
 		prev->trbs[TRBS_PER_SEGMENT-1].link.segment_ptr =
 			cpu_to_le64(next->dma);
+=======
+	if (link_trbs) {
+		prev->trbs[TRBS_PER_SEGMENT-1].link.
+			segment_ptr = cpu_to_le64(next->dma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Set the last TRB in the segment to have a TRB type ID of Link TRB */
 		val = le32_to_cpu(prev->trbs[TRBS_PER_SEGMENT-1].link.control);
@@ -112,6 +155,7 @@ static void xhci_link_segments(struct xhci_hcd *xhci, struct xhci_segment *prev,
 		/* Always set the chain bit with 0.95 hardware */
 		/* Set chain bit for isoc rings on AMD 0.96 host */
 		if (xhci_link_trb_quirk(xhci) ||
+<<<<<<< HEAD
 				(type == TYPE_ISOC &&
 				 (xhci->quirks & XHCI_AMD_0x96_HOST)))
 			val |= TRB_CHAIN;
@@ -145,11 +189,21 @@ static void xhci_link_rings(struct xhci_hcd *xhci, struct xhci_ring *ring,
 			|= cpu_to_le32(LINK_TOGGLE);
 		ring->last_seg = last;
 	}
+=======
+				(isoc && (xhci->quirks & XHCI_AMD_0x96_HOST)))
+			val |= TRB_CHAIN;
+		prev->trbs[TRBS_PER_SEGMENT-1].link.control = cpu_to_le32(val);
+	}
+	xhci_dbg(xhci, "Linking segment 0x%llx to segment 0x%llx (DMA)\n",
+			(unsigned long long)prev->dma,
+			(unsigned long long)next->dma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* XXX: Do we need the hcd structure in all these functions? */
 void xhci_ring_free(struct xhci_hcd *xhci, struct xhci_ring *ring)
 {
+<<<<<<< HEAD
 	if (!ring)
 		return;
 
@@ -161,6 +215,29 @@ void xhci_ring_free(struct xhci_hcd *xhci, struct xhci_ring *ring)
 
 static void xhci_initialize_ring_info(struct xhci_ring *ring,
 					unsigned int cycle_state)
+=======
+	struct xhci_segment *seg;
+	struct xhci_segment *first_seg;
+
+	if (!ring)
+		return;
+	if (ring->first_seg) {
+		first_seg = ring->first_seg;
+		seg = first_seg->next;
+		xhci_dbg(xhci, "Freeing ring at %p\n", ring);
+		while (seg != first_seg) {
+			struct xhci_segment *next = seg->next;
+			xhci_segment_free(xhci, seg);
+			seg = next;
+		}
+		xhci_segment_free(xhci, first_seg);
+		ring->first_seg = NULL;
+	}
+	kfree(ring);
+}
+
+static void xhci_initialize_ring_info(struct xhci_ring *ring)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* The ring is empty, so the enqueue pointer == dequeue pointer */
 	ring->enqueue = ring->first_seg->trbs;
@@ -170,6 +247,7 @@ static void xhci_initialize_ring_info(struct xhci_ring *ring,
 	/* The ring is initialized to 0. The producer must write 1 to the cycle
 	 * bit to handover ownership of the TRB, so PCS = 1.  The consumer must
 	 * compare CCS to the cycle bit to check ownership, so CCS = 1.
+<<<<<<< HEAD
 	 *
 	 * New rings are initialized with cycle state equal to 1; if we are
 	 * handling ring expansion, set the cycle state equal to the old ring.
@@ -222,6 +300,13 @@ static int xhci_alloc_segments_for_ring(struct xhci_hcd *xhci,
 	*last = prev;
 
 	return 0;
+=======
+	 */
+	ring->cycle_state = 1;
+	/* Not necessary for new rings, but needed for re-initialized rings */
+	ring->enq_updates = 0;
+	ring->deq_updates = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -232,6 +317,7 @@ static int xhci_alloc_segments_for_ring(struct xhci_hcd *xhci,
  * See section 4.9.1 and figures 15 and 16.
  */
 static struct xhci_ring *xhci_ring_alloc(struct xhci_hcd *xhci,
+<<<<<<< HEAD
 		unsigned int num_segs, unsigned int cycle_state,
 		enum xhci_ring_type type, gfp_t flags)
 {
@@ -264,6 +350,54 @@ static struct xhci_ring *xhci_ring_alloc(struct xhci_hcd *xhci,
 
 fail:
 	kfree(ring);
+=======
+		unsigned int num_segs, bool link_trbs, bool isoc, gfp_t flags)
+{
+	struct xhci_ring	*ring;
+	struct xhci_segment	*prev;
+
+	ring = kzalloc(sizeof *(ring), flags);
+	xhci_dbg(xhci, "Allocating ring at %p\n", ring);
+	if (!ring)
+		return NULL;
+
+	INIT_LIST_HEAD(&ring->td_list);
+	if (num_segs == 0)
+		return ring;
+
+	ring->first_seg = xhci_segment_alloc(xhci, flags);
+	if (!ring->first_seg)
+		goto fail;
+	num_segs--;
+
+	prev = ring->first_seg;
+	while (num_segs > 0) {
+		struct xhci_segment	*next;
+
+		next = xhci_segment_alloc(xhci, flags);
+		if (!next)
+			goto fail;
+		xhci_link_segments(xhci, prev, next, link_trbs, isoc);
+
+		prev = next;
+		num_segs--;
+	}
+	xhci_link_segments(xhci, prev, ring->first_seg, link_trbs, isoc);
+
+	if (link_trbs) {
+		/* See section 4.9.2.1 and 6.4.4.1 */
+		prev->trbs[TRBS_PER_SEGMENT-1].link.
+			control |= cpu_to_le32(LINK_TOGGLE);
+		xhci_dbg(xhci, "Wrote link toggle flag to"
+				" segment %p (virtual), 0x%llx (DMA)\n",
+				prev, (unsigned long long)prev->dma);
+	}
+	xhci_initialize_ring_info(ring);
+	return ring;
+
+fail:
+	xhci_ring_free(xhci, ring);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NULL;
 }
 
@@ -295,6 +429,7 @@ void xhci_free_or_cache_endpoint_ring(struct xhci_hcd *xhci,
  * pointers to the beginning of the ring.
  */
 static void xhci_reinit_cached_ring(struct xhci_hcd *xhci,
+<<<<<<< HEAD
 			struct xhci_ring *ring, unsigned int cycle_state,
 			enum xhci_ring_type type)
 {
@@ -314,12 +449,26 @@ static void xhci_reinit_cached_ring(struct xhci_hcd *xhci,
 	} while (seg != ring->first_seg);
 	ring->type = type;
 	xhci_initialize_ring_info(ring, cycle_state);
+=======
+		struct xhci_ring *ring, bool isoc)
+{
+	struct xhci_segment	*seg = ring->first_seg;
+	do {
+		memset(seg->trbs, 0,
+				sizeof(union xhci_trb)*TRBS_PER_SEGMENT);
+		/* All endpoint rings have link TRBs */
+		xhci_link_segments(xhci, seg, seg->next, 1, isoc);
+		seg = seg->next;
+	} while (seg != ring->first_seg);
+	xhci_initialize_ring_info(ring);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* td list should be empty since all URBs have been cancelled,
 	 * but just in case...
 	 */
 	INIT_LIST_HEAD(&ring->td_list);
 }
 
+<<<<<<< HEAD
 /*
  * Expand an existing ring.
  * Look for a cached ring or allocate a new ring which has same segment numbers
@@ -353,6 +502,8 @@ int xhci_ring_expansion(struct xhci_hcd *xhci, struct xhci_ring *ring,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define CTX_SIZE(_hcc) (HCC_64BYTE_CONTEXT(_hcc) ? 64 : 32)
 
 static struct xhci_container_ctx *xhci_alloc_container_ctx(struct xhci_hcd *xhci,
@@ -369,10 +520,13 @@ static struct xhci_container_ctx *xhci_alloc_container_ctx(struct xhci_hcd *xhci
 		ctx->size += CTX_SIZE(xhci->hcc_params);
 
 	ctx->bytes = dma_pool_alloc(xhci->device_pool, flags, &ctx->dma);
+<<<<<<< HEAD
 	if (!ctx->bytes) {
 		kfree(ctx);
 		return NULL;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(ctx->bytes, 0, ctx->size);
 	return ctx;
 }
@@ -426,7 +580,11 @@ static void xhci_free_stream_ctx(struct xhci_hcd *xhci,
 	struct pci_dev *pdev = to_pci_dev(xhci_to_hcd(xhci)->self.controller);
 
 	if (num_stream_ctxs > MEDIUM_STREAM_ARRAY_SIZE)
+<<<<<<< HEAD
 		dma_free_coherent(&pdev->dev,
+=======
+		pci_free_consistent(pdev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				sizeof(struct xhci_stream_ctx)*num_stream_ctxs,
 				stream_ctx, dma);
 	else if (num_stream_ctxs <= SMALL_STREAM_ARRAY_SIZE)
@@ -454,9 +612,15 @@ static struct xhci_stream_ctx *xhci_alloc_stream_ctx(struct xhci_hcd *xhci,
 	struct pci_dev *pdev = to_pci_dev(xhci_to_hcd(xhci)->self.controller);
 
 	if (num_stream_ctxs > MEDIUM_STREAM_ARRAY_SIZE)
+<<<<<<< HEAD
 		return dma_alloc_coherent(&pdev->dev,
 				sizeof(struct xhci_stream_ctx)*num_stream_ctxs,
 				dma, mem_flags);
+=======
+		return pci_alloc_consistent(pdev,
+				sizeof(struct xhci_stream_ctx)*num_stream_ctxs,
+				dma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else if (num_stream_ctxs <= SMALL_STREAM_ARRAY_SIZE)
 		return dma_pool_alloc(xhci->small_streams_pool,
 				mem_flags, dma);
@@ -651,7 +815,11 @@ struct xhci_stream_info *xhci_alloc_stream_info(struct xhci_hcd *xhci,
 	 */
 	for (cur_stream = 1; cur_stream < num_streams; cur_stream++) {
 		stream_info->stream_rings[cur_stream] =
+<<<<<<< HEAD
 			xhci_ring_alloc(xhci, 2, 1, TYPE_STREAM, mem_flags);
+=======
+			xhci_ring_alloc(xhci, 1, true, false, mem_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cur_ring = stream_info->stream_rings[cur_stream];
 		if (!cur_ring)
 			goto cleanup_rings;
@@ -660,8 +828,13 @@ struct xhci_stream_info *xhci_alloc_stream_info(struct xhci_hcd *xhci,
 		addr = cur_ring->first_seg->dma |
 			SCT_FOR_CTX(SCT_PRI_TR) |
 			cur_ring->cycle_state;
+<<<<<<< HEAD
 		stream_info->stream_ctx_array[cur_stream].stream_ring =
 			cpu_to_le64(addr);
+=======
+		stream_info->stream_ctx_array[cur_stream].
+			stream_ring = cpu_to_le64(addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		xhci_dbg(xhci, "Setting stream %d ring ptr to 0x%08llx\n",
 				cur_stream, (unsigned long long) addr);
 
@@ -798,6 +971,7 @@ static void xhci_init_endpoint_timer(struct xhci_hcd *xhci,
 	ep->xhci = xhci;
 }
 
+<<<<<<< HEAD
 static void xhci_free_tt_info(struct xhci_hcd *xhci,
 		struct xhci_virt_device *virt_dev,
 		int slot_id)
@@ -871,11 +1045,17 @@ free_tts:
  * will be manipulated by the configure endpoint, allocate device, or update
  * hub functions while this function is removing the TT entries from the list.
  */
+=======
+/* All the xhci_tds in the ring's TD list should be freed at this point */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void xhci_free_virt_device(struct xhci_hcd *xhci, int slot_id)
 {
 	struct xhci_virt_device *dev;
 	int i;
+<<<<<<< HEAD
 	int old_active_eps = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Slot ID 0 is reserved */
 	if (slot_id == 0 || !xhci->devs[slot_id])
@@ -886,15 +1066,19 @@ void xhci_free_virt_device(struct xhci_hcd *xhci, int slot_id)
 	if (!dev)
 		return;
 
+<<<<<<< HEAD
 	if (dev->tt_info)
 		old_active_eps = dev->tt_info->active_eps;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < 31; ++i) {
 		if (dev->eps[i].ring)
 			xhci_ring_free(xhci, dev->eps[i].ring);
 		if (dev->eps[i].stream_info)
 			xhci_free_stream_info(xhci,
 					dev->eps[i].stream_info);
+<<<<<<< HEAD
 		/* Endpoints on the TT/root port lists should have been removed
 		 * when usb_disable_device() was called for the device.
 		 * We can't drop them anyway, because the udev might have gone
@@ -909,6 +1093,9 @@ void xhci_free_virt_device(struct xhci_hcd *xhci, int slot_id)
 	xhci_free_tt_info(xhci, dev, slot_id);
 	/* If necessary, update the number of active TTs on this root port */
 	xhci_update_tt_active_eps(xhci, dev, old_active_eps);
+=======
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dev->ring_cache) {
 		for (i = 0; i < dev->num_rings_cached; i++)
@@ -962,11 +1149,18 @@ int xhci_alloc_virt_device(struct xhci_hcd *xhci, int slot_id,
 	for (i = 0; i < 31; i++) {
 		xhci_init_endpoint_timer(xhci, &dev->eps[i]);
 		INIT_LIST_HEAD(&dev->eps[i].cancelled_td_list);
+<<<<<<< HEAD
 		INIT_LIST_HEAD(&dev->eps[i].bw_endpoint_list);
 	}
 
 	/* Allocate endpoint 0 ring */
 	dev->eps[0].ring = xhci_ring_alloc(xhci, 2, 1, TYPE_CTRL, flags);
+=======
+	}
+
+	/* Allocate endpoint 0 ring */
+	dev->eps[0].ring = xhci_ring_alloc(xhci, 1, true, false, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!dev->eps[0].ring)
 		goto fail;
 
@@ -987,7 +1181,11 @@ int xhci_alloc_virt_device(struct xhci_hcd *xhci, int slot_id,
 	xhci_dbg(xhci, "Set slot id %d dcbaa entry %p to 0x%llx\n",
 		 slot_id,
 		 &xhci->dcbaa->dev_context_ptrs[slot_id],
+<<<<<<< HEAD
 		 le64_to_cpu(xhci->dcbaa->dev_context_ptrs[slot_id]));
+=======
+		 (unsigned long long) le64_to_cpu(xhci->dcbaa->dev_context_ptrs[slot_id]));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 1;
 fail:
@@ -1086,6 +1284,7 @@ int xhci_setup_addressable_virt_dev(struct xhci_hcd *xhci, struct usb_device *ud
 	slot_ctx = xhci_get_slot_ctx(xhci, dev->in_ctx);
 
 	/* 3) Only the control endpoint is valid - one endpoint context */
+<<<<<<< HEAD
 	slot_ctx->dev_info |= cpu_to_le32(LAST_CTX(1) | udev->route);
 	switch (udev->speed) {
 	case USB_SPEED_SUPER:
@@ -1099,6 +1298,21 @@ int xhci_setup_addressable_virt_dev(struct xhci_hcd *xhci, struct usb_device *ud
 		break;
 	case USB_SPEED_LOW:
 		slot_ctx->dev_info |= cpu_to_le32(SLOT_SPEED_LS);
+=======
+	slot_ctx->dev_info |= cpu_to_le32(LAST_CTX(1) | (u32) udev->route);
+	switch (udev->speed) {
+	case USB_SPEED_SUPER:
+		slot_ctx->dev_info |= cpu_to_le32((u32) SLOT_SPEED_SS);
+		break;
+	case USB_SPEED_HIGH:
+		slot_ctx->dev_info |= cpu_to_le32((u32) SLOT_SPEED_HS);
+		break;
+	case USB_SPEED_FULL:
+		slot_ctx->dev_info |= cpu_to_le32((u32) SLOT_SPEED_FS);
+		break;
+	case USB_SPEED_LOW:
+		slot_ctx->dev_info |= cpu_to_le32((u32) SLOT_SPEED_LS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case USB_SPEED_WIRELESS:
 		xhci_dbg(xhci, "FIXME xHCI doesn't support wireless speeds\n");
@@ -1112,11 +1326,16 @@ int xhci_setup_addressable_virt_dev(struct xhci_hcd *xhci, struct usb_device *ud
 	port_num = xhci_find_real_port_number(xhci, udev);
 	if (!port_num)
 		return -EINVAL;
+<<<<<<< HEAD
 	slot_ctx->dev_info2 |= cpu_to_le32(ROOT_HUB_PORT(port_num));
+=======
+	slot_ctx->dev_info2 |= cpu_to_le32((u32) ROOT_HUB_PORT(port_num));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Set the port number in the virtual_device to the faked port number */
 	for (top_dev = udev; top_dev->parent && top_dev->parent->parent;
 			top_dev = top_dev->parent)
 		/* Found device below root hub */;
+<<<<<<< HEAD
 	dev->fake_port = top_dev->portnum;
 	dev->real_port = port_num;
 	xhci_dbg(xhci, "Set root hub portnum to %d\n", port_num);
@@ -1151,6 +1370,11 @@ int xhci_setup_addressable_virt_dev(struct xhci_hcd *xhci, struct usb_device *ud
 		if (!dev->tt_info)
 			xhci_warn(xhci, "WARN: Didn't find a matching TT\n");
 	}
+=======
+	dev->port = top_dev->portnum;
+	xhci_dbg(xhci, "Set root hub portnum to %d\n", port_num);
+	xhci_dbg(xhci, "Set fake root hub portnum to %d\n", dev->port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Is this a LS/FS device under an external HS hub? */
 	if (udev->tt && udev->tt->hub->parent) {
@@ -1254,8 +1478,11 @@ static unsigned int xhci_microframes_to_exponent(struct usb_device *udev,
 static unsigned int xhci_parse_microframe_interval(struct usb_device *udev,
 		struct usb_host_endpoint *ep)
 {
+<<<<<<< HEAD
 	if (ep->desc.bInterval == 0)
 		return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return xhci_microframes_to_exponent(udev, ep,
 			ep->desc.bInterval, 0, 15);
 }
@@ -1386,8 +1613,13 @@ static u32 xhci_get_max_esit_payload(struct xhci_hcd *xhci,
 	if (udev->speed == USB_SPEED_SUPER)
 		return le16_to_cpu(ep->ss_ep_comp.wBytesPerInterval);
 
+<<<<<<< HEAD
 	max_packet = GET_MAX_PACKET(usb_endpoint_maxp(&ep->desc));
 	max_burst = (usb_endpoint_maxp(&ep->desc) & 0x1800) >> 11;
+=======
+	max_packet = GET_MAX_PACKET(le16_to_cpu(ep->desc.wMaxPacketSize));
+	max_burst = (le16_to_cpu(ep->desc.wMaxPacketSize) & 0x1800) >> 11;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* A 0 in max burst means 1 transfer per ESIT */
 	return max_packet * (max_burst + 1);
 }
@@ -1406,16 +1638,35 @@ int xhci_endpoint_init(struct xhci_hcd *xhci,
 	struct xhci_ring *ep_ring;
 	unsigned int max_packet;
 	unsigned int max_burst;
+<<<<<<< HEAD
 	enum xhci_ring_type type;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 max_esit_payload;
 
 	ep_index = xhci_get_endpoint_index(&ep->desc);
 	ep_ctx = xhci_get_ep_ctx(xhci, virt_dev->in_ctx, ep_index);
 
+<<<<<<< HEAD
 	type = usb_endpoint_type(&ep->desc);
 	/* Set up the endpoint ring */
 	virt_dev->eps[ep_index].new_ring =
 		xhci_ring_alloc(xhci, 2, 1, type, mem_flags);
+=======
+	/* Set up the endpoint ring */
+	/*
+	 * Isochronous endpoint ring needs bigger size because one isoc URB
+	 * carries multiple packets and it will insert multiple tds to the
+	 * ring.
+	 * This should be replaced with dynamic ring resizing in the future.
+	 */
+	if (usb_endpoint_xfer_isoc(&ep->desc))
+		virt_dev->eps[ep_index].new_ring =
+			xhci_ring_alloc(xhci, 8, true, true, mem_flags);
+	else
+		virt_dev->eps[ep_index].new_ring =
+			xhci_ring_alloc(xhci, 1, true, false, mem_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!virt_dev->eps[ep_index].new_ring) {
 		/* Attempt to use the ring cache */
 		if (virt_dev->num_rings_cached == 0)
@@ -1425,7 +1676,11 @@ int xhci_endpoint_init(struct xhci_hcd *xhci,
 		virt_dev->ring_cache[virt_dev->num_rings_cached] = NULL;
 		virt_dev->num_rings_cached--;
 		xhci_reinit_cached_ring(xhci, virt_dev->eps[ep_index].new_ring,
+<<<<<<< HEAD
 					1, type);
+=======
+			usb_endpoint_xfer_isoc(&ep->desc) ? true : false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	virt_dev->eps[ep_index].skip = false;
 	ep_ring = virt_dev->eps[ep_index].new_ring;
@@ -1447,6 +1702,7 @@ int xhci_endpoint_init(struct xhci_hcd *xhci,
 	ep_ctx->ep_info2 |= cpu_to_le32(xhci_get_endpoint_type(udev, ep));
 
 	/* Set the max packet size and max burst */
+<<<<<<< HEAD
 	max_packet = GET_MAX_PACKET(usb_endpoint_maxp(&ep->desc));
 	max_burst = 0;
 	switch (udev->speed) {
@@ -1458,23 +1714,49 @@ int xhci_endpoint_init(struct xhci_hcd *xhci,
 		/* Some devices get this wrong */
 		if (usb_endpoint_xfer_bulk(&ep->desc))
 			max_packet = 512;
+=======
+	switch (udev->speed) {
+	case USB_SPEED_SUPER:
+		max_packet = le16_to_cpu(ep->desc.wMaxPacketSize);
+		ep_ctx->ep_info2 |= cpu_to_le32(MAX_PACKET(max_packet));
+		/* dig out max burst from ep companion desc */
+		max_packet = ep->ss_ep_comp.bMaxBurst;
+		ep_ctx->ep_info2 |= cpu_to_le32(MAX_BURST(max_packet));
+		break;
+	case USB_SPEED_HIGH:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* bits 11:12 specify the number of additional transaction
 		 * opportunities per microframe (USB 2.0, section 9.6.6)
 		 */
 		if (usb_endpoint_xfer_isoc(&ep->desc) ||
 				usb_endpoint_xfer_int(&ep->desc)) {
+<<<<<<< HEAD
 			max_burst = (usb_endpoint_maxp(&ep->desc)
 				     & 0x1800) >> 11;
 		}
 		break;
 	case USB_SPEED_FULL:
 	case USB_SPEED_LOW:
+=======
+			max_burst = (le16_to_cpu(ep->desc.wMaxPacketSize)
+				     & 0x1800) >> 11;
+			ep_ctx->ep_info2 |= cpu_to_le32(MAX_BURST(max_burst));
+		}
+		/* Fall through */
+	case USB_SPEED_FULL:
+	case USB_SPEED_LOW:
+		max_packet = GET_MAX_PACKET(le16_to_cpu(ep->desc.wMaxPacketSize));
+		ep_ctx->ep_info2 |= cpu_to_le32(MAX_PACKET(max_packet));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		BUG();
 	}
+<<<<<<< HEAD
 	ep_ctx->ep_info2 |= cpu_to_le32(MAX_PACKET(max_packet) |
 			MAX_BURST(max_burst));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	max_esit_payload = xhci_get_max_esit_payload(xhci, udev, ep);
 	ep_ctx->tx_info = cpu_to_le32(MAX_ESIT_PAYLOAD_FOR_EP(max_esit_payload));
 
@@ -1525,6 +1807,7 @@ void xhci_endpoint_zero(struct xhci_hcd *xhci,
 	 */
 }
 
+<<<<<<< HEAD
 void xhci_clear_endpoint_bw_info(struct xhci_bw_info *bw_info)
 {
 	bw_info->ep_interval = 0;
@@ -1589,6 +1872,8 @@ void xhci_update_bw_info(struct xhci_hcd *xhci,
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Copy output xhci_ep_ctx to the input xhci_ep_ctx copy.
  * Useful when you want to change one particular aspect of the endpoint and then
  * issue a configure endpoint command.
@@ -1647,9 +1932,16 @@ static int scratchpad_alloc(struct xhci_hcd *xhci, gfp_t flags)
 	if (!xhci->scratchpad)
 		goto fail_sp;
 
+<<<<<<< HEAD
 	xhci->scratchpad->sp_array = dma_alloc_coherent(dev,
 				     num_sp * sizeof(u64),
 				     &xhci->scratchpad->sp_dma, flags);
+=======
+	xhci->scratchpad->sp_array =
+		pci_alloc_consistent(to_pci_dev(dev),
+				     num_sp * sizeof(u64),
+				     &xhci->scratchpad->sp_dma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!xhci->scratchpad->sp_array)
 		goto fail_sp2;
 
@@ -1666,8 +1958,13 @@ static int scratchpad_alloc(struct xhci_hcd *xhci, gfp_t flags)
 	xhci->dcbaa->dev_context_ptrs[0] = cpu_to_le64(xhci->scratchpad->sp_dma);
 	for (i = 0; i < num_sp; i++) {
 		dma_addr_t dma;
+<<<<<<< HEAD
 		void *buf = dma_alloc_coherent(dev, xhci->page_size, &dma,
 				flags);
+=======
+		void *buf = pci_alloc_consistent(to_pci_dev(dev),
+						 xhci->page_size, &dma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!buf)
 			goto fail_sp5;
 
@@ -1680,7 +1977,11 @@ static int scratchpad_alloc(struct xhci_hcd *xhci, gfp_t flags)
 
  fail_sp5:
 	for (i = i - 1; i >= 0; i--) {
+<<<<<<< HEAD
 		dma_free_coherent(dev, xhci->page_size,
+=======
+		pci_free_consistent(to_pci_dev(dev), xhci->page_size,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    xhci->scratchpad->sp_buffers[i],
 				    xhci->scratchpad->sp_dma_buffers[i]);
 	}
@@ -1690,7 +1991,11 @@ static int scratchpad_alloc(struct xhci_hcd *xhci, gfp_t flags)
 	kfree(xhci->scratchpad->sp_buffers);
 
  fail_sp3:
+<<<<<<< HEAD
 	dma_free_coherent(dev, num_sp * sizeof(u64),
+=======
+	pci_free_consistent(to_pci_dev(dev), num_sp * sizeof(u64),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    xhci->scratchpad->sp_array,
 			    xhci->scratchpad->sp_dma);
 
@@ -1714,13 +2019,21 @@ static void scratchpad_free(struct xhci_hcd *xhci)
 	num_sp = HCS_MAX_SCRATCHPAD(xhci->hcs_params2);
 
 	for (i = 0; i < num_sp; i++) {
+<<<<<<< HEAD
 		dma_free_coherent(&pdev->dev, xhci->page_size,
+=======
+		pci_free_consistent(pdev, xhci->page_size,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    xhci->scratchpad->sp_buffers[i],
 				    xhci->scratchpad->sp_dma_buffers[i]);
 	}
 	kfree(xhci->scratchpad->sp_dma_buffers);
 	kfree(xhci->scratchpad->sp_buffers);
+<<<<<<< HEAD
 	dma_free_coherent(&pdev->dev, num_sp * sizeof(u64),
+=======
+	pci_free_consistent(pdev, num_sp * sizeof(u64),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    xhci->scratchpad->sp_array,
 			    xhci->scratchpad->sp_dma);
 	kfree(xhci->scratchpad);
@@ -1765,10 +2078,25 @@ struct xhci_command *xhci_alloc_command(struct xhci_hcd *xhci,
 
 void xhci_urb_free_priv(struct xhci_hcd *xhci, struct urb_priv *urb_priv)
 {
+<<<<<<< HEAD
 	if (urb_priv) {
 		kfree(urb_priv->td[0]);
 		kfree(urb_priv);
 	}
+=======
+	int last;
+
+	if (!urb_priv)
+		return;
+
+	last = urb_priv->length - 1;
+	if (last >= 0) {
+		int	i;
+		for (i = 0; i <= last; i++)
+			kfree(urb_priv->td[i]);
+	}
+	kfree(urb_priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void xhci_free_command(struct xhci_hcd *xhci,
@@ -1783,16 +2111,25 @@ void xhci_free_command(struct xhci_hcd *xhci,
 void xhci_mem_cleanup(struct xhci_hcd *xhci)
 {
 	struct pci_dev	*pdev = to_pci_dev(xhci_to_hcd(xhci)->self.controller);
+<<<<<<< HEAD
 	struct dev_info	*dev_info, *next;
 	struct xhci_cd  *cur_cd, *next_cd;
 	unsigned long	flags;
 	int size;
 	int i, j, num_ports;
+=======
+	int size;
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Free the Event Ring Segment Table and the actual Event Ring */
 	size = sizeof(struct xhci_erst_entry)*(xhci->erst.num_entries);
 	if (xhci->erst.entries)
+<<<<<<< HEAD
 		dma_free_coherent(&pdev->dev, size,
+=======
+		pci_free_consistent(pdev, size,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				xhci->erst.entries, xhci->erst.erst_dma_addr);
 	xhci->erst.entries = NULL;
 	xhci_dbg(xhci, "Freed ERST\n");
@@ -1801,16 +2138,22 @@ void xhci_mem_cleanup(struct xhci_hcd *xhci)
 	xhci->event_ring = NULL;
 	xhci_dbg(xhci, "Freed event ring\n");
 
+<<<<<<< HEAD
 	xhci->cmd_ring_reserved_trbs = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (xhci->cmd_ring)
 		xhci_ring_free(xhci, xhci->cmd_ring);
 	xhci->cmd_ring = NULL;
 	xhci_dbg(xhci, "Freed command ring\n");
+<<<<<<< HEAD
 	list_for_each_entry_safe(cur_cd, next_cd,
 			&xhci->cancel_cmd_list, cancel_cmd_list) {
 		list_del(&cur_cd->cancel_cmd_list);
 		kfree(cur_cd);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 1; i < MAX_HC_SLOTS; ++i)
 		xhci_free_virt_device(xhci, i);
@@ -1836,12 +2179,17 @@ void xhci_mem_cleanup(struct xhci_hcd *xhci)
 	xhci_dbg(xhci, "Freed medium stream array pool\n");
 
 	if (xhci->dcbaa)
+<<<<<<< HEAD
 		dma_free_coherent(&pdev->dev, sizeof(*xhci->dcbaa),
+=======
+		pci_free_consistent(pdev, sizeof(*xhci->dcbaa),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				xhci->dcbaa, xhci->dcbaa->dma);
 	xhci->dcbaa = NULL;
 
 	scratchpad_free(xhci);
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&xhci->lock, flags);
 	list_for_each_entry_safe(dev_info, next, &xhci->lpm_failed_devs, list) {
 		list_del(&dev_info->list);
@@ -1878,6 +2226,13 @@ no_bw:
 	kfree(xhci->usb3_ports);
 	kfree(xhci->port_array);
 	kfree(xhci->rh_bw);
+=======
+	xhci->num_usb2_ports = 0;
+	xhci->num_usb3_ports = 0;
+	kfree(xhci->usb2_ports);
+	kfree(xhci->usb3_ports);
+	kfree(xhci->port_array);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	xhci->page_size = 0;
 	xhci->page_shift = 0;
@@ -2089,6 +2444,7 @@ static void xhci_add_in_port(struct xhci_hcd *xhci, unsigned int num_ports,
 	if (port_offset == 0 || (port_offset + port_count - 1) > num_ports)
 		/* WTF? "Valid values are ‘1’ to MaxPorts" */
 		return;
+<<<<<<< HEAD
 
 	/* Check the host's USB2 LPM capability */
 	if ((xhci->hci_version == 0x96) && (major_revision != 0x03) &&
@@ -2106,6 +2462,8 @@ static void xhci_add_in_port(struct xhci_hcd *xhci, unsigned int num_ports,
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	port_offset--;
 	for (i = port_offset; i < (port_offset + port_count); i++) {
 		/* Duplicate entry.  Ignore the port if the revisions differ. */
@@ -2150,7 +2508,11 @@ static int xhci_setup_port_arrays(struct xhci_hcd *xhci, gfp_t flags)
 	__le32 __iomem *addr;
 	u32 offset;
 	unsigned int num_ports;
+<<<<<<< HEAD
 	int i, j, port_index;
+=======
+	int i, port_index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	addr = &xhci->cap_regs->hcc_params;
 	offset = XHCI_HCC_EXT_CAPS(xhci_readl(xhci, addr));
@@ -2165,6 +2527,7 @@ static int xhci_setup_port_arrays(struct xhci_hcd *xhci, gfp_t flags)
 	if (!xhci->port_array)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	xhci->rh_bw = kzalloc(sizeof(*xhci->rh_bw)*num_ports, flags);
 	if (!xhci->rh_bw)
 		return -ENOMEM;
@@ -2177,6 +2540,8 @@ static int xhci_setup_port_arrays(struct xhci_hcd *xhci, gfp_t flags)
 			INIT_LIST_HEAD(&bw_table->interval_bw[j].endpoints);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * For whatever reason, the first capability offset is from the
 	 * capability register base, not from the HCCPARAMS register.
@@ -2279,12 +2644,18 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
 	unsigned int	val, val2;
 	u64		val_64;
 	struct xhci_segment	*seg;
+<<<<<<< HEAD
 	u32 page_size, temp;
 	int i;
 
 	INIT_LIST_HEAD(&xhci->lpm_failed_devs);
 	INIT_LIST_HEAD(&xhci->cancel_cmd_list);
 
+=======
+	u32 page_size;
+	int i;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	page_size = xhci_readl(xhci, &xhci->op_regs->page_size);
 	xhci_dbg(xhci, "Supported page size register = 0x%x\n", page_size);
 	for (i = 0; i < 16; i++) {
@@ -2318,8 +2689,13 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
 	 * Section 5.4.8 - doorbell array must be
 	 * "physically contiguous and 64-byte (cache line) aligned".
 	 */
+<<<<<<< HEAD
 	xhci->dcbaa = dma_alloc_coherent(dev, sizeof(*xhci->dcbaa), &dma,
 			GFP_KERNEL);
+=======
+	xhci->dcbaa = pci_alloc_consistent(to_pci_dev(dev),
+			sizeof(*xhci->dcbaa), &dma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!xhci->dcbaa)
 		goto fail;
 	memset(xhci->dcbaa, 0, sizeof *(xhci->dcbaa));
@@ -2353,14 +2729,22 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
 		dma_pool_create("xHCI 1KB stream ctx arrays",
 			dev, MEDIUM_STREAM_ARRAY_SIZE, 16, 0);
 	/* Any stream context array bigger than MEDIUM_STREAM_ARRAY_SIZE
+<<<<<<< HEAD
 	 * will be allocated with dma_alloc_coherent()
+=======
+	 * will be allocated with pci_alloc_consistent()
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 
 	if (!xhci->small_streams_pool || !xhci->medium_streams_pool)
 		goto fail;
 
 	/* Set up the command ring to have one segments for now. */
+<<<<<<< HEAD
 	xhci->cmd_ring = xhci_ring_alloc(xhci, 1, 1, TYPE_COMMAND, flags);
+=======
+	xhci->cmd_ring = xhci_ring_alloc(xhci, 1, true, false, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!xhci->cmd_ring)
 		goto fail;
 	xhci_dbg(xhci, "Allocated command ring at %p\n", xhci->cmd_ring);
@@ -2391,16 +2775,25 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
 	 * the event ring segment table (ERST).  Section 4.9.3.
 	 */
 	xhci_dbg(xhci, "// Allocating event ring\n");
+<<<<<<< HEAD
 	xhci->event_ring = xhci_ring_alloc(xhci, ERST_NUM_SEGS, 1, TYPE_EVENT,
+=======
+	xhci->event_ring = xhci_ring_alloc(xhci, ERST_NUM_SEGS, false, false,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						flags);
 	if (!xhci->event_ring)
 		goto fail;
 	if (xhci_check_trb_in_td_math(xhci, flags) < 0)
 		goto fail;
 
+<<<<<<< HEAD
 	xhci->erst.entries = dma_alloc_coherent(dev,
 			sizeof(struct xhci_erst_entry) * ERST_NUM_SEGS, &dma,
 			GFP_KERNEL);
+=======
+	xhci->erst.entries = pci_alloc_consistent(to_pci_dev(dev),
+			sizeof(struct xhci_erst_entry)*ERST_NUM_SEGS, &dma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!xhci->erst.entries)
 		goto fail;
 	xhci_dbg(xhci, "// Allocated event ring segment table at 0x%llx\n",
@@ -2463,6 +2856,7 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
 	if (xhci_setup_port_arrays(xhci, flags))
 		goto fail;
 
+<<<<<<< HEAD
 	/* Enable USB 3.0 device notifications for function remote wake, which
 	 * is necessary for allowing USB 3.0 devices to do remote wakeup from
 	 * U3 (device suspend).
@@ -2472,6 +2866,8 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
 	temp |= DEV_NOTE_FWAKE;
 	xhci_writel(xhci, temp, &xhci->op_regs->dev_notification);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 fail:

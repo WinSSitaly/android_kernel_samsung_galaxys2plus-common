@@ -39,7 +39,11 @@
 #include <linux/dma-mapping.h>
 #include <linux/slab.h>
 #include <linux/vmalloc.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/firmware.h>
 #include <linux/input.h>
 #include <sound/core.h>
@@ -64,8 +68,13 @@ MODULE_FIRMWARE("ess/maestro3_assp_minisrc.fw");
 
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;	/* Index 0-MAX */
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;	/* ID for this card */
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP; /* all enabled */
 static bool external_amp[SNDRV_CARDS] = {[0 ... (SNDRV_CARDS - 1)] = 1};
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP; /* all enabled */
+static int external_amp[SNDRV_CARDS] = {[0 ... (SNDRV_CARDS - 1)] = 1};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int amp_gpio[SNDRV_CARDS] = {[0 ... (SNDRV_CARDS - 1)] = -1};
 
 module_param_array(index, int, NULL, 0444);
@@ -850,10 +859,18 @@ struct snd_m3 {
 	struct input_dev *input_dev;
 	char phys[64];			/* physical device path */
 #else
+<<<<<<< HEAD
 	struct snd_kcontrol *master_switch;
 	struct snd_kcontrol *master_volume;
 #endif
 	struct work_struct hwvol_work;
+=======
+	spinlock_t ac97_lock;
+	struct snd_kcontrol *master_switch;
+	struct snd_kcontrol *master_volume;
+	struct tasklet_struct hwvol_tq;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	unsigned int in_suspend;
 
@@ -1608,10 +1625,20 @@ static void snd_m3_update_ptr(struct snd_m3 *chip, struct m3_dma *s)
    (without wrap around) in response to volume button presses and then
    generating an interrupt. The pair of counters is stored in bits 1-3 and 5-7
    of a byte wide register. The meaning of bits 0 and 4 is unknown. */
+<<<<<<< HEAD
 static void snd_m3_update_hw_volume(struct work_struct *work)
 {
 	struct snd_m3 *chip = container_of(work, struct snd_m3, hwvol_work);
 	int x, val;
+=======
+static void snd_m3_update_hw_volume(unsigned long private_data)
+{
+	struct snd_m3 *chip = (struct snd_m3 *) private_data;
+	int x, val;
+#ifndef CONFIG_SND_MAESTRO3_INPUT
+	unsigned long flags;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Figure out which volume control button was pushed,
 	   based on differences from the default register
@@ -1641,13 +1668,28 @@ static void snd_m3_update_hw_volume(struct work_struct *work)
 	if (!chip->master_switch || !chip->master_volume)
 		return;
 
+<<<<<<< HEAD
 	val = snd_ac97_read(chip->ac97, AC97_MASTER);
+=======
+	/* FIXME: we can't call snd_ac97_* functions since here is in tasklet. */
+	spin_lock_irqsave(&chip->ac97_lock, flags);
+
+	val = chip->ac97->regs[AC97_MASTER_VOL];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (x) {
 	case 0x88:
 		/* The counters have not changed, yet we've received a HV
 		   interrupt. According to tests run by various people this
 		   happens when pressing the mute button. */
 		val ^= 0x8000;
+<<<<<<< HEAD
+=======
+		chip->ac97->regs[AC97_MASTER_VOL] = val;
+		outw(val, chip->iobase + CODEC_DATA);
+		outb(AC97_MASTER_VOL, chip->iobase + CODEC_COMMAND);
+		snd_ctl_notify(chip->card, SNDRV_CTL_EVENT_MASK_VALUE,
+			       &chip->master_switch->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case 0xaa:
 		/* counters increased by 1 -> volume up */
@@ -1655,6 +1697,14 @@ static void snd_m3_update_hw_volume(struct work_struct *work)
 			val--;
 		if ((val & 0x7f00) > 0)
 			val -= 0x0100;
+<<<<<<< HEAD
+=======
+		chip->ac97->regs[AC97_MASTER_VOL] = val;
+		outw(val, chip->iobase + CODEC_DATA);
+		outb(AC97_MASTER_VOL, chip->iobase + CODEC_COMMAND);
+		snd_ctl_notify(chip->card, SNDRV_CTL_EVENT_MASK_VALUE,
+			       &chip->master_volume->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case 0x66:
 		/* counters decreased by 1 -> volume down */
@@ -1662,11 +1712,22 @@ static void snd_m3_update_hw_volume(struct work_struct *work)
 			val++;
 		if ((val & 0x7f00) < 0x1f00)
 			val += 0x0100;
+<<<<<<< HEAD
 		break;
 	}
 	if (snd_ac97_update(chip->ac97, AC97_MASTER, val))
 		snd_ctl_notify(chip->card, SNDRV_CTL_EVENT_MASK_VALUE,
 			       &chip->master_switch->id);
+=======
+		chip->ac97->regs[AC97_MASTER_VOL] = val;
+		outw(val, chip->iobase + CODEC_DATA);
+		outb(AC97_MASTER_VOL, chip->iobase + CODEC_COMMAND);
+		snd_ctl_notify(chip->card, SNDRV_CTL_EVENT_MASK_VALUE,
+			       &chip->master_volume->id);
+		break;
+	}
+	spin_unlock_irqrestore(&chip->ac97_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 	if (!chip->input_dev)
 		return;
@@ -1710,7 +1771,15 @@ static irqreturn_t snd_m3_interrupt(int irq, void *dev_id)
 		return IRQ_NONE;
 
 	if (status & HV_INT_PENDING)
+<<<<<<< HEAD
 		schedule_work(&chip->hwvol_work);
+=======
+#ifdef CONFIG_SND_MAESTRO3_INPUT
+		snd_m3_update_hw_volume((unsigned long)chip);
+#else
+		tasklet_schedule(&chip->hwvol_tq);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * ack an assp int if its running
@@ -1976,14 +2045,34 @@ static unsigned short
 snd_m3_ac97_read(struct snd_ac97 *ac97, unsigned short reg)
 {
 	struct snd_m3 *chip = ac97->private_data;
+<<<<<<< HEAD
+=======
+#ifndef CONFIG_SND_MAESTRO3_INPUT
+	unsigned long flags;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned short data = 0xffff;
 
 	if (snd_m3_ac97_wait(chip))
 		goto fail;
+<<<<<<< HEAD
 	snd_m3_outb(chip, 0x80 | (reg & 0x7f), CODEC_COMMAND);
 	if (snd_m3_ac97_wait(chip))
 		goto fail;
 	data = snd_m3_inw(chip, CODEC_DATA);
+=======
+#ifndef CONFIG_SND_MAESTRO3_INPUT
+	spin_lock_irqsave(&chip->ac97_lock, flags);
+#endif
+	snd_m3_outb(chip, 0x80 | (reg & 0x7f), CODEC_COMMAND);
+	if (snd_m3_ac97_wait(chip))
+		goto fail_unlock;
+	data = snd_m3_inw(chip, CODEC_DATA);
+fail_unlock:
+#ifndef CONFIG_SND_MAESTRO3_INPUT
+	spin_unlock_irqrestore(&chip->ac97_lock, flags);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 fail:
 	return data;
 }
@@ -1992,11 +2081,28 @@ static void
 snd_m3_ac97_write(struct snd_ac97 *ac97, unsigned short reg, unsigned short val)
 {
 	struct snd_m3 *chip = ac97->private_data;
+<<<<<<< HEAD
 
 	if (snd_m3_ac97_wait(chip))
 		return;
 	snd_m3_outw(chip, val, CODEC_DATA);
 	snd_m3_outb(chip, reg & 0x7f, CODEC_COMMAND);
+=======
+#ifndef CONFIG_SND_MAESTRO3_INPUT
+	unsigned long flags;
+#endif
+
+	if (snd_m3_ac97_wait(chip))
+		return;
+#ifndef CONFIG_SND_MAESTRO3_INPUT
+	spin_lock_irqsave(&chip->ac97_lock, flags);
+#endif
+	snd_m3_outw(chip, val, CODEC_DATA);
+	snd_m3_outb(chip, reg & 0x7f, CODEC_COMMAND);
+#ifndef CONFIG_SND_MAESTRO3_INPUT
+	spin_unlock_irqrestore(&chip->ac97_lock, flags);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -2415,7 +2521,10 @@ static int snd_m3_free(struct snd_m3 *chip)
 	struct m3_dma *s;
 	int i;
 
+<<<<<<< HEAD
 	cancel_work_sync(&chip->hwvol_work);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SND_MAESTRO3_INPUT
 	if (chip->input_dev)
 		input_unregister_device(chip->input_dev);
@@ -2469,7 +2578,10 @@ static int m3_suspend(struct pci_dev *pci, pm_message_t state)
 		return 0;
 
 	chip->in_suspend = 1;
+<<<<<<< HEAD
 	cancel_work_sync(&chip->hwvol_work);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_power_change_state(card, SNDRV_CTL_POWER_D3hot);
 	snd_pcm_suspend_all(chip->pcm);
 	snd_ac97_suspend(chip->ac97);
@@ -2626,6 +2738,12 @@ snd_m3_create(struct snd_card *card, struct pci_dev *pci,
 	}
 
 	spin_lock_init(&chip->reg_lock);
+<<<<<<< HEAD
+=======
+#ifndef CONFIG_SND_MAESTRO3_INPUT
+	spin_lock_init(&chip->ac97_lock);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (pci->device) {
 	case PCI_DEVICE_ID_ESS_ALLEGRO:
@@ -2639,7 +2757,10 @@ snd_m3_create(struct snd_card *card, struct pci_dev *pci,
 	chip->card = card;
 	chip->pci = pci;
 	chip->irq = -1;
+<<<<<<< HEAD
 	INIT_WORK(&chip->hwvol_work, snd_m3_update_hw_volume);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	chip->external_amp = enable_amp;
 	if (amp_gpio >= 0 && amp_gpio <= 0x0f)
@@ -2709,8 +2830,17 @@ snd_m3_create(struct snd_card *card, struct pci_dev *pci,
 
 	snd_m3_hv_init(chip);
 
+<<<<<<< HEAD
 	if (request_irq(pci->irq, snd_m3_interrupt, IRQF_SHARED,
 			KBUILD_MODNAME, chip)) {
+=======
+#ifndef CONFIG_SND_MAESTRO3_INPUT
+	tasklet_init(&chip->hwvol_tq, snd_m3_update_hw_volume, (unsigned long)chip);
+#endif
+
+	if (request_irq(pci->irq, snd_m3_interrupt, IRQF_SHARED,
+			card->driver, chip)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printk(KERN_ERR "unable to grab IRQ %d\n", pci->irq);
 		snd_m3_free(chip);
 		return -ENOMEM;
@@ -2820,8 +2950,13 @@ snd_m3_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
 	/* TODO enable MIDI IRQ and I/O */
 	err = snd_mpu401_uart_new(chip->card, 0, MPU401_HW_MPU401,
 				  chip->iobase + MPU401_DATA_PORT,
+<<<<<<< HEAD
 				  MPU401_INFO_INTEGRATED | MPU401_INFO_IRQ_HOOK,
 				  -1, &chip->rmidi);
+=======
+				  MPU401_INFO_INTEGRATED,
+				  chip->irq, 0, &chip->rmidi);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0)
 		printk(KERN_WARNING "maestro3: no MIDI support.\n");
 #endif
@@ -2838,7 +2973,11 @@ static void __devexit snd_m3_remove(struct pci_dev *pci)
 }
 
 static struct pci_driver driver = {
+<<<<<<< HEAD
 	.name = KBUILD_MODNAME,
+=======
+	.name = "Maestro3",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table = snd_m3_ids,
 	.probe = snd_m3_probe,
 	.remove = __devexit_p(snd_m3_remove),

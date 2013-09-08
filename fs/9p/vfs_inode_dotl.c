@@ -48,7 +48,11 @@
 #include "acl.h"
 
 static int
+<<<<<<< HEAD
 v9fs_vfs_mknod_dotl(struct inode *dir, struct dentry *dentry, umode_t omode,
+=======
+v9fs_vfs_mknod_dotl(struct inode *dir, struct dentry *dentry, int omode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    dev_t rdev);
 
 /**
@@ -253,13 +257,21 @@ int v9fs_open_to_dotl_flags(int flags)
  */
 
 static int
+<<<<<<< HEAD
 v9fs_vfs_create_dotl(struct inode *dir, struct dentry *dentry, umode_t omode,
+=======
+v9fs_vfs_create_dotl(struct inode *dir, struct dentry *dentry, int omode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct nameidata *nd)
 {
 	int err = 0;
 	gid_t gid;
 	int flags;
+<<<<<<< HEAD
 	umode_t mode;
+=======
+	mode_t mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *name = NULL;
 	struct file *filp;
 	struct p9_qid qid;
@@ -271,8 +283,13 @@ v9fs_vfs_create_dotl(struct inode *dir, struct dentry *dentry, umode_t omode,
 	struct posix_acl *pacl = NULL, *dacl = NULL;
 
 	v9ses = v9fs_inode2v9ses(dir);
+<<<<<<< HEAD
 	if (nd)
 		flags = nd->intent.open.flags;
+=======
+	if (nd && nd->flags & LOOKUP_OPEN)
+		flags = nd->intent.open.flags - 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else {
 		/*
 		 * create call without LOOKUP_OPEN is due
@@ -283,13 +300,22 @@ v9fs_vfs_create_dotl(struct inode *dir, struct dentry *dentry, umode_t omode,
 	}
 
 	name = (char *) dentry->d_name.name;
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, "name:%s flags:0x%x mode:0x%hx\n",
 		 name, flags, omode);
+=======
+	P9_DPRINTK(P9_DEBUG_VFS, "v9fs_vfs_create_dotl: name:%s flags:0x%x "
+			"mode:0x%x\n", name, flags, omode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dfid = v9fs_fid_lookup(dentry->d_parent);
 	if (IS_ERR(dfid)) {
 		err = PTR_ERR(dfid);
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_VFS, "fid lookup failed %d\n", err);
+=======
+		P9_DPRINTK(P9_DEBUG_VFS, "fid lookup failed %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 	}
 
@@ -297,7 +323,11 @@ v9fs_vfs_create_dotl(struct inode *dir, struct dentry *dentry, umode_t omode,
 	ofid = p9_client_walk(dfid, 0, NULL, 1);
 	if (IS_ERR(ofid)) {
 		err = PTR_ERR(ofid);
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_VFS, "p9_client_walk failed %d\n", err);
+=======
+		P9_DPRINTK(P9_DEBUG_VFS, "p9_client_walk failed %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 	}
 
@@ -307,15 +337,26 @@ v9fs_vfs_create_dotl(struct inode *dir, struct dentry *dentry, umode_t omode,
 	/* Update mode based on ACL value */
 	err = v9fs_acl_mode(dir, &mode, &dacl, &pacl);
 	if (err) {
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_VFS, "Failed to get acl values in creat %d\n",
 			 err);
+=======
+		P9_DPRINTK(P9_DEBUG_VFS,
+			   "Failed to get acl values in creat %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error;
 	}
 	err = p9_client_create_dotl(ofid, name, v9fs_open_to_dotl_flags(flags),
 				    mode, gid, &qid);
 	if (err < 0) {
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_VFS, "p9_client_open_dotl failed in creat %d\n",
 			 err);
+=======
+		P9_DPRINTK(P9_DEBUG_VFS,
+				"p9_client_open_dotl failed in creat %d\n",
+				err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error;
 	}
 	v9fs_invalidate_inode_attr(dir);
@@ -324,14 +365,22 @@ v9fs_vfs_create_dotl(struct inode *dir, struct dentry *dentry, umode_t omode,
 	fid = p9_client_walk(dfid, 1, &name, 1);
 	if (IS_ERR(fid)) {
 		err = PTR_ERR(fid);
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_VFS, "p9_client_walk failed %d\n", err);
+=======
+		P9_DPRINTK(P9_DEBUG_VFS, "p9_client_walk failed %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fid = NULL;
 		goto error;
 	}
 	inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
 	if (IS_ERR(inode)) {
 		err = PTR_ERR(inode);
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_VFS, "inode creation failed %d\n", err);
+=======
+		P9_DPRINTK(P9_DEBUG_VFS, "inode creation failed %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error;
 	}
 	err = v9fs_fid_add(dentry, fid);
@@ -394,20 +443,32 @@ err_clunk_old_fid:
  */
 
 static int v9fs_vfs_mkdir_dotl(struct inode *dir,
+<<<<<<< HEAD
 			       struct dentry *dentry, umode_t omode)
+=======
+			       struct dentry *dentry, int omode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 	struct v9fs_session_info *v9ses;
 	struct p9_fid *fid = NULL, *dfid = NULL;
 	gid_t gid;
 	char *name;
+<<<<<<< HEAD
 	umode_t mode;
+=======
+	mode_t mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct inode *inode;
 	struct p9_qid qid;
 	struct dentry *dir_dentry;
 	struct posix_acl *dacl = NULL, *pacl = NULL;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, "name %s\n", dentry->d_name.name);
+=======
+	P9_DPRINTK(P9_DEBUG_VFS, "name %s\n", dentry->d_name.name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = 0;
 	v9ses = v9fs_inode2v9ses(dir);
 
@@ -419,7 +480,11 @@ static int v9fs_vfs_mkdir_dotl(struct inode *dir,
 	dfid = v9fs_fid_lookup(dir_dentry);
 	if (IS_ERR(dfid)) {
 		err = PTR_ERR(dfid);
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_VFS, "fid lookup failed %d\n", err);
+=======
+		P9_DPRINTK(P9_DEBUG_VFS, "fid lookup failed %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dfid = NULL;
 		goto error;
 	}
@@ -429,8 +494,13 @@ static int v9fs_vfs_mkdir_dotl(struct inode *dir,
 	/* Update mode based on ACL value */
 	err = v9fs_acl_mode(dir, &mode, &dacl, &pacl);
 	if (err) {
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_VFS, "Failed to get acl values in mkdir %d\n",
 			 err);
+=======
+		P9_DPRINTK(P9_DEBUG_VFS,
+			   "Failed to get acl values in mkdir %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error;
 	}
 	name = (char *) dentry->d_name.name;
@@ -443,8 +513,13 @@ static int v9fs_vfs_mkdir_dotl(struct inode *dir,
 		fid = p9_client_walk(dfid, 1, &name, 1);
 		if (IS_ERR(fid)) {
 			err = PTR_ERR(fid);
+<<<<<<< HEAD
 			p9_debug(P9_DEBUG_VFS, "p9_client_walk failed %d\n",
 				 err);
+=======
+			P9_DPRINTK(P9_DEBUG_VFS, "p9_client_walk failed %d\n",
+				err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			fid = NULL;
 			goto error;
 		}
@@ -452,8 +527,13 @@ static int v9fs_vfs_mkdir_dotl(struct inode *dir,
 		inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
 		if (IS_ERR(inode)) {
 			err = PTR_ERR(inode);
+<<<<<<< HEAD
 			p9_debug(P9_DEBUG_VFS, "inode creation failed %d\n",
 				 err);
+=======
+			P9_DPRINTK(P9_DEBUG_VFS, "inode creation failed %d\n",
+				err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto error;
 		}
 		err = v9fs_fid_add(dentry, fid);
@@ -494,7 +574,11 @@ v9fs_vfs_getattr_dotl(struct vfsmount *mnt, struct dentry *dentry,
 	struct p9_fid *fid;
 	struct p9_stat_dotl *st;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, "dentry: %p\n", dentry);
+=======
+	P9_DPRINTK(P9_DEBUG_VFS, "dentry: %p\n", dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = -EPERM;
 	v9ses = v9fs_dentry2v9ses(dentry);
 	if (v9ses->cache == CACHE_LOOSE || v9ses->cache == CACHE_FSCACHE) {
@@ -522,6 +606,7 @@ v9fs_vfs_getattr_dotl(struct vfsmount *mnt, struct dentry *dentry,
 	return 0;
 }
 
+<<<<<<< HEAD
 /*
  * Attribute flags.
  */
@@ -562,6 +647,8 @@ static int v9fs_mapped_iattr_valid(int iattr_valid)
 	return p9_iattr_valid;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * v9fs_vfs_setattr_dotl - set file metadata
  * @dentry: file whose metadata to set
@@ -576,13 +663,21 @@ int v9fs_vfs_setattr_dotl(struct dentry *dentry, struct iattr *iattr)
 	struct p9_fid *fid;
 	struct p9_iattr_dotl p9attr;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, "\n");
+=======
+	P9_DPRINTK(P9_DEBUG_VFS, "\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	retval = inode_change_ok(dentry->d_inode, iattr);
 	if (retval)
 		return retval;
 
+<<<<<<< HEAD
 	p9attr.valid = v9fs_mapped_iattr_valid(iattr->ia_valid);
+=======
+	p9attr.valid = iattr->ia_valid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	p9attr.mode = iattr->ia_mode;
 	p9attr.uid = iattr->ia_uid;
 	p9attr.gid = iattr->ia_gid;
@@ -633,7 +728,11 @@ int v9fs_vfs_setattr_dotl(struct dentry *dentry, struct iattr *iattr)
 void
 v9fs_stat2inode_dotl(struct p9_stat_dotl *stat, struct inode *inode)
 {
+<<<<<<< HEAD
 	umode_t mode;
+=======
+	mode_t mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct v9fs_inode *v9inode = V9FS_I(inode);
 
 	if ((stat->st_result_mask & P9_STATS_BASIC) == P9_STATS_BASIC) {
@@ -645,7 +744,11 @@ v9fs_stat2inode_dotl(struct p9_stat_dotl *stat, struct inode *inode)
 		inode->i_ctime.tv_nsec = stat->st_ctime_nsec;
 		inode->i_uid = stat->st_uid;
 		inode->i_gid = stat->st_gid;
+<<<<<<< HEAD
 		set_nlink(inode, stat->st_nlink);
+=======
+		inode->i_nlink = stat->st_nlink;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		mode = stat->st_mode & S_IALLUGO;
 		mode |= inode->i_mode & ~S_IALLUGO;
@@ -671,7 +774,11 @@ v9fs_stat2inode_dotl(struct p9_stat_dotl *stat, struct inode *inode)
 		if (stat->st_result_mask & P9_STATS_GID)
 			inode->i_gid = stat->st_gid;
 		if (stat->st_result_mask & P9_STATS_NLINK)
+<<<<<<< HEAD
 			set_nlink(inode, stat->st_nlink);
+=======
+			inode->i_nlink = stat->st_nlink;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (stat->st_result_mask & P9_STATS_MODE) {
 			inode->i_mode = stat->st_mode;
 			if ((S_ISBLK(inode->i_mode)) ||
@@ -709,13 +816,22 @@ v9fs_vfs_symlink_dotl(struct inode *dir, struct dentry *dentry,
 	struct v9fs_session_info *v9ses;
 
 	name = (char *) dentry->d_name.name;
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, "%lu,%s,%s\n", dir->i_ino, name, symname);
+=======
+	P9_DPRINTK(P9_DEBUG_VFS, "v9fs_vfs_symlink_dotl : %lu,%s,%s\n",
+			dir->i_ino, name, symname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	v9ses = v9fs_inode2v9ses(dir);
 
 	dfid = v9fs_fid_lookup(dentry->d_parent);
 	if (IS_ERR(dfid)) {
 		err = PTR_ERR(dfid);
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_VFS, "fid lookup failed %d\n", err);
+=======
+		P9_DPRINTK(P9_DEBUG_VFS, "fid lookup failed %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 	}
 
@@ -725,7 +841,11 @@ v9fs_vfs_symlink_dotl(struct inode *dir, struct dentry *dentry,
 	err = p9_client_symlink(dfid, name, (char *)symname, gid, &qid);
 
 	if (err < 0) {
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_VFS, "p9_client_symlink failed %d\n", err);
+=======
+		P9_DPRINTK(P9_DEBUG_VFS, "p9_client_symlink failed %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error;
 	}
 
@@ -735,8 +855,13 @@ v9fs_vfs_symlink_dotl(struct inode *dir, struct dentry *dentry,
 		fid = p9_client_walk(dfid, 1, &name, 1);
 		if (IS_ERR(fid)) {
 			err = PTR_ERR(fid);
+<<<<<<< HEAD
 			p9_debug(P9_DEBUG_VFS, "p9_client_walk failed %d\n",
 				 err);
+=======
+			P9_DPRINTK(P9_DEBUG_VFS, "p9_client_walk failed %d\n",
+					err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			fid = NULL;
 			goto error;
 		}
@@ -745,8 +870,13 @@ v9fs_vfs_symlink_dotl(struct inode *dir, struct dentry *dentry,
 		inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
 		if (IS_ERR(inode)) {
 			err = PTR_ERR(inode);
+<<<<<<< HEAD
 			p9_debug(P9_DEBUG_VFS, "inode creation failed %d\n",
 				 err);
+=======
+			P9_DPRINTK(P9_DEBUG_VFS, "inode creation failed %d\n",
+					err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto error;
 		}
 		err = v9fs_fid_add(dentry, fid);
@@ -789,8 +919,14 @@ v9fs_vfs_link_dotl(struct dentry *old_dentry, struct inode *dir,
 	struct p9_fid *dfid, *oldfid;
 	struct v9fs_session_info *v9ses;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, "dir ino: %lu, old_name: %s, new_name: %s\n",
 		 dir->i_ino, old_dentry->d_name.name, dentry->d_name.name);
+=======
+	P9_DPRINTK(P9_DEBUG_VFS, "dir ino: %lu, old_name: %s, new_name: %s\n",
+			dir->i_ino, old_dentry->d_name.name,
+			dentry->d_name.name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	v9ses = v9fs_inode2v9ses(dir);
 	dir_dentry = v9fs_dentry_from_dir_inode(dir);
@@ -807,7 +943,11 @@ v9fs_vfs_link_dotl(struct dentry *old_dentry, struct inode *dir,
 	err = p9_client_link(dfid, oldfid, (char *)dentry->d_name.name);
 
 	if (err < 0) {
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_VFS, "p9_client_link failed %d\n", err);
+=======
+		P9_DPRINTK(P9_DEBUG_VFS, "p9_client_link failed %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 	}
 
@@ -836,13 +976,21 @@ v9fs_vfs_link_dotl(struct dentry *old_dentry, struct inode *dir,
  *
  */
 static int
+<<<<<<< HEAD
 v9fs_vfs_mknod_dotl(struct inode *dir, struct dentry *dentry, umode_t omode,
+=======
+v9fs_vfs_mknod_dotl(struct inode *dir, struct dentry *dentry, int omode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_t rdev)
 {
 	int err;
 	gid_t gid;
 	char *name;
+<<<<<<< HEAD
 	umode_t mode;
+=======
+	mode_t mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct v9fs_session_info *v9ses;
 	struct p9_fid *fid = NULL, *dfid = NULL;
 	struct inode *inode;
@@ -850,9 +998,15 @@ v9fs_vfs_mknod_dotl(struct inode *dir, struct dentry *dentry, umode_t omode,
 	struct dentry *dir_dentry;
 	struct posix_acl *dacl = NULL, *pacl = NULL;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, " %lu,%s mode: %hx MAJOR: %u MINOR: %u\n",
 		 dir->i_ino, dentry->d_name.name, omode,
 		 MAJOR(rdev), MINOR(rdev));
+=======
+	P9_DPRINTK(P9_DEBUG_VFS,
+		" %lu,%s mode: %x MAJOR: %u MINOR: %u\n", dir->i_ino,
+		dentry->d_name.name, omode, MAJOR(rdev), MINOR(rdev));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!new_valid_dev(rdev))
 		return -EINVAL;
@@ -862,7 +1016,11 @@ v9fs_vfs_mknod_dotl(struct inode *dir, struct dentry *dentry, umode_t omode,
 	dfid = v9fs_fid_lookup(dir_dentry);
 	if (IS_ERR(dfid)) {
 		err = PTR_ERR(dfid);
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_VFS, "fid lookup failed %d\n", err);
+=======
+		P9_DPRINTK(P9_DEBUG_VFS, "fid lookup failed %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dfid = NULL;
 		goto error;
 	}
@@ -872,8 +1030,13 @@ v9fs_vfs_mknod_dotl(struct inode *dir, struct dentry *dentry, umode_t omode,
 	/* Update mode based on ACL value */
 	err = v9fs_acl_mode(dir, &mode, &dacl, &pacl);
 	if (err) {
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_VFS, "Failed to get acl values in mknod %d\n",
 			 err);
+=======
+		P9_DPRINTK(P9_DEBUG_VFS,
+			   "Failed to get acl values in mknod %d\n", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error;
 	}
 	name = (char *) dentry->d_name.name;
@@ -888,8 +1051,13 @@ v9fs_vfs_mknod_dotl(struct inode *dir, struct dentry *dentry, umode_t omode,
 		fid = p9_client_walk(dfid, 1, &name, 1);
 		if (IS_ERR(fid)) {
 			err = PTR_ERR(fid);
+<<<<<<< HEAD
 			p9_debug(P9_DEBUG_VFS, "p9_client_walk failed %d\n",
 				 err);
+=======
+			P9_DPRINTK(P9_DEBUG_VFS, "p9_client_walk failed %d\n",
+				err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			fid = NULL;
 			goto error;
 		}
@@ -897,8 +1065,13 @@ v9fs_vfs_mknod_dotl(struct inode *dir, struct dentry *dentry, umode_t omode,
 		inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
 		if (IS_ERR(inode)) {
 			err = PTR_ERR(inode);
+<<<<<<< HEAD
 			p9_debug(P9_DEBUG_VFS, "inode creation failed %d\n",
 				 err);
+=======
+			P9_DPRINTK(P9_DEBUG_VFS, "inode creation failed %d\n",
+				err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto error;
 		}
 		err = v9fs_fid_add(dentry, fid);
@@ -942,7 +1115,11 @@ v9fs_vfs_follow_link_dotl(struct dentry *dentry, struct nameidata *nd)
 	char *link = __getname();
 	char *target;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, "%s\n", dentry->d_name.name);
+=======
+	P9_DPRINTK(P9_DEBUG_VFS, "%s\n", dentry->d_name.name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!link) {
 		link = ERR_PTR(-ENOMEM);
@@ -1014,7 +1191,11 @@ const struct inode_operations v9fs_dir_inode_operations_dotl = {
 	.getxattr = generic_getxattr,
 	.removexattr = generic_removexattr,
 	.listxattr = v9fs_listxattr,
+<<<<<<< HEAD
 	.get_acl = v9fs_iop_get_acl,
+=======
+	.check_acl = v9fs_check_acl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 const struct inode_operations v9fs_file_inode_operations_dotl = {
@@ -1024,7 +1205,11 @@ const struct inode_operations v9fs_file_inode_operations_dotl = {
 	.getxattr = generic_getxattr,
 	.removexattr = generic_removexattr,
 	.listxattr = v9fs_listxattr,
+<<<<<<< HEAD
 	.get_acl = v9fs_iop_get_acl,
+=======
+	.check_acl = v9fs_check_acl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 const struct inode_operations v9fs_symlink_inode_operations_dotl = {

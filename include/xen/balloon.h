@@ -15,16 +15,20 @@ struct balloon_stats {
 	unsigned long max_schedule_delay;
 	unsigned long retry_count;
 	unsigned long max_retry_count;
+<<<<<<< HEAD
 #ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
 	unsigned long hotplug_pages;
 	unsigned long balloon_hotplug;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 extern struct balloon_stats balloon_stats;
 
 void balloon_set_new_target(unsigned long target);
 
+<<<<<<< HEAD
 int alloc_xenballooned_pages(int nr_pages, struct page **pages,
 		bool highmem);
 void free_xenballooned_pages(int nr_pages, struct page **pages);
@@ -38,3 +42,7 @@ static inline int register_xen_selfballooning(struct device *dev)
 	return -ENOSYS;
 }
 #endif
+=======
+int alloc_xenballooned_pages(int nr_pages, struct page** pages);
+void free_xenballooned_pages(int nr_pages, struct page** pages);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

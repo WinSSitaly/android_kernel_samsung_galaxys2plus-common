@@ -84,7 +84,11 @@ struct dcon_platform_data {
 	int (*init)(struct dcon_priv *);
 	void (*bus_stabilize_wiggle)(void);
 	void (*set_dconload)(int);
+<<<<<<< HEAD
 	int (*read_status)(u8 *);
+=======
+	u8 (*read_status)(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #include <linux/interrupt.h>

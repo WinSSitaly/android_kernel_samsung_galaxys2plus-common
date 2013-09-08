@@ -30,7 +30,10 @@
 #include <asm/pgtable.h>
 #include <asm/mmu_context.h>
 #include <asm/fpu.h>
+<<<<<<< HEAD
 #include <asm/switch_to.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct task_struct *last_task_used_math = NULL;
 
@@ -286,7 +289,11 @@ void show_regs(struct pt_regs *regs)
 /*
  * Create a kernel thread
  */
+<<<<<<< HEAD
 __noreturn void kernel_thread_helper(void *arg, int (*fn)(void *))
+=======
+ATTRIB_NORET void kernel_thread_helper(void *arg, int (*fn)(void *))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	do_exit(fn(arg));
 }

@@ -36,7 +36,13 @@
 #include <linux/dma-mapping.h>
 #include <linux/proc_fs.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/i2c.h>
+=======
+
+#include <linux/i2c.h>
+#include <linux/i2c-dev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "bfin_adv7393fb.h"
 
@@ -409,13 +415,21 @@ static int __devinit bfin_adv7393_fb_probe(struct i2c_client *client,
 
 	/* Workaround "PPI Does Not Start Properly In Specific Mode" */
 	if (ANOMALY_05000400) {
+<<<<<<< HEAD
 		ret = gpio_request_one(P_IDENT(P_PPI0_FS3), GPIOF_OUT_INIT_LOW,
 					"PPI0_FS3")
 		if (ret) {
+=======
+		if (gpio_request(P_IDENT(P_PPI0_FS3), "PPI0_FS3")) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev_err(&client->dev, "PPI0_FS3 GPIO request failed\n");
 			ret = -EBUSY;
 			goto out_8;
 		}
+<<<<<<< HEAD
+=======
+		gpio_direction_output(P_IDENT(P_PPI0_FS3), 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (peripheral_request_list(ppi_pins, DRIVER_NAME)) {
@@ -480,7 +494,11 @@ static int __devinit bfin_adv7393_fb_probe(struct i2c_client *client,
 		goto out_4;
 	}
 
+<<<<<<< HEAD
 	if (request_irq(IRQ_PPI_ERROR, ppi_irq_error, 0,
+=======
+	if (request_irq(IRQ_PPI_ERROR, ppi_irq_error, IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"PPI ERROR", fbdev) < 0) {
 		dev_err(&client->dev, "unable to request PPI ERROR IRQ\n");
 		ret = -EFAULT;

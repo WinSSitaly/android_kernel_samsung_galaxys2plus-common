@@ -37,10 +37,13 @@ int mc13xxx_irq_ack(struct mc13xxx *mc13xxx, int irq);
 
 int mc13xxx_get_flags(struct mc13xxx *mc13xxx);
 
+<<<<<<< HEAD
 int mc13xxx_adc_do_conversion(struct mc13xxx *mc13xxx,
 		unsigned int mode, unsigned int channel,
 		u8 ato, bool atox, unsigned int *sample);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MC13XXX_IRQ_ADCDONE	0
 #define MC13XXX_IRQ_ADCBISDONE	1
 #define MC13XXX_IRQ_TS		2
@@ -70,7 +73,10 @@ struct regulator_init_data;
 struct mc13xxx_regulator_init_data {
 	int id;
 	struct regulator_init_data *init_data;
+<<<<<<< HEAD
 	struct device_node *node;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct mc13xxx_regulator_platform_data {
@@ -142,6 +148,7 @@ struct mc13xxx_leds_platform_data {
 	char tc3_period;
 };
 
+<<<<<<< HEAD
 struct mc13xxx_buttons_platform_data {
 #define MC13783_BUTTON_DBNC_0MS		0
 #define MC13783_BUTTON_DBNC_30MS	1
@@ -170,15 +177,23 @@ struct mc13xxx_ts_platform_data {
 	bool atox;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct mc13xxx_platform_data {
 #define MC13XXX_USE_TOUCHSCREEN (1 << 0)
 #define MC13XXX_USE_CODEC	(1 << 1)
 #define MC13XXX_USE_ADC		(1 << 2)
 #define MC13XXX_USE_RTC		(1 << 3)
+<<<<<<< HEAD
+=======
+#define MC13XXX_USE_REGULATOR	(1 << 4)
+#define MC13XXX_USE_LED		(1 << 5)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int flags;
 
 	struct mc13xxx_regulator_platform_data regulators;
 	struct mc13xxx_leds_platform_data *leds;
+<<<<<<< HEAD
 	struct mc13xxx_buttons_platform_data *buttons;
 	struct mc13xxx_ts_platform_data touch;
 };
@@ -207,4 +222,8 @@ struct mc13xxx_platform_data {
 					MC13XXX_ADC0_CHRGICON | \
 					MC13XXX_ADC0_BATICON)
 
+=======
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* ifndef __LINUX_MFD_MC13XXX_H */

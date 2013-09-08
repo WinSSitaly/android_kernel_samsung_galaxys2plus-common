@@ -19,6 +19,10 @@
 
 #include <pcmcia/ss.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "pd6729.h"
 #include "i82365.h"
@@ -762,8 +766,18 @@ static void __devexit pd6729_pci_remove(struct pci_dev *dev)
 	kfree(socket);
 }
 
+<<<<<<< HEAD
 static DEFINE_PCI_DEVICE_TABLE(pd6729_pci_ids) = {
 	{ PCI_DEVICE(PCI_VENDOR_ID_CIRRUS, PCI_DEVICE_ID_CIRRUS_6729) },
+=======
+static struct pci_device_id pd6729_pci_ids[] = {
+	{
+		.vendor		= PCI_VENDOR_ID_CIRRUS,
+		.device		= PCI_DEVICE_ID_CIRRUS_6729,
+		.subvendor	= PCI_ANY_ID,
+		.subdevice	= PCI_ANY_ID,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ }
 };
 MODULE_DEVICE_TABLE(pci, pd6729_pci_ids);

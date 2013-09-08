@@ -30,6 +30,7 @@ new_skb(ulong len)
 {
 	struct sk_buff *skb;
 
+<<<<<<< HEAD
 	skb = alloc_skb(len + MAX_HEADER, GFP_ATOMIC);
 	if (skb) {
 		skb_reserve(skb, MAX_HEADER);
@@ -37,6 +38,13 @@ new_skb(ulong len)
 		skb_reset_network_header(skb);
 		skb->protocol = __constant_htons(ETH_P_AOE);
 		skb_checksum_none_assert(skb);
+=======
+	skb = alloc_skb(len, GFP_ATOMIC);
+	if (skb) {
+		skb_reset_mac_header(skb);
+		skb_reset_network_header(skb);
+		skb->protocol = __constant_htons(ETH_P_AOE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return skb;
 }

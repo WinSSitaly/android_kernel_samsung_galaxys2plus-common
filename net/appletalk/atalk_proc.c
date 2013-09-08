@@ -14,7 +14,10 @@
 #include <net/net_namespace.h>
 #include <net/sock.h>
 #include <linux/atalk.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 static __inline__ struct atalk_iface *atalk_get_interface_idx(loff_t pos)

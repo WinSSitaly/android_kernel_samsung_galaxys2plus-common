@@ -203,6 +203,7 @@ static struct resource bfin_uart0_resources[] = {
 	 .flags = IORESOURCE_MEM,
 	 },
 	{
+<<<<<<< HEAD
 	 .start = IRQ_UART_TX,
 	 .end = IRQ_UART_TX,
 	 .flags = IORESOURCE_IRQ,
@@ -210,6 +211,10 @@ static struct resource bfin_uart0_resources[] = {
 	{
 	 .start = IRQ_UART_RX,
 	 .end = IRQ_UART_RX,
+=======
+	 .start = IRQ_UART_RX,
+	 .end = IRQ_UART_RX + 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 .flags = IORESOURCE_IRQ,
 	 },
 	{
@@ -369,10 +374,25 @@ static struct flash_platform_data bfin_spi_dataflash_data = {
 /* DataFlash chip */
 static struct bfin5xx_spi_chip data_flash_chip_info = {
 	.enable_dma = 0,	/* use dma transfer with this chip */
+<<<<<<< HEAD
 };
 #endif
 
 #if defined(CONFIG_SPI_BFIN5XX) || defined(CONFIG_SPI_BFIN5XX_MODULE)
+=======
+	.bits_per_word = 8,
+};
+#endif
+
+#if defined(CONFIG_SPI_SPIDEV) || defined(CONFIG_SPI_SPIDEV_MODULE)
+static struct bfin5xx_spi_chip spidev_chip_info = {
+	.enable_dma = 0,
+	.bits_per_word = 8,
+};
+#endif
+
+#if defined(CONFIG_SPI_BFIN) || defined(CONFIG_SPI_BFIN_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* SPI (0) */
 static struct resource bfin_spi0_resource[] = {
 	[0] = {
@@ -417,6 +437,10 @@ static struct spi_board_info bfin_spi_board_info[] __initdata = {
 	 .max_speed_hz = 3125000,	/* max spi clock (SCK) speed in HZ */
 	 .bus_num = 0,
 	 .chip_select = 3,
+<<<<<<< HEAD
+=======
+	 .controller_data = &spidev_chip_info,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 },
 #endif
 #if defined(CONFIG_MTD_DATAFLASH) || defined(CONFIG_MTD_DATAFLASH_MODULE)
@@ -475,7 +499,11 @@ static struct platform_device bfin_dpmc = {
 static struct platform_device *acvilon_devices[] __initdata = {
 	&bfin_dpmc,
 
+<<<<<<< HEAD
 #if defined(CONFIG_SPI_BFIN5XX) || defined(CONFIG_SPI_BFIN5XX_MODULE)
+=======
+#if defined(CONFIG_SPI_BFIN) || defined(CONFIG_SPI_BFIN_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&bfin_spi0_device,
 #endif
 

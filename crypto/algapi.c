@@ -22,6 +22,11 @@
 
 #include "internal.h"
 
+<<<<<<< HEAD
+=======
+static void crypto_remove_final(struct list_head *list);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static LIST_HEAD(crypto_template_list);
 
 void crypto_larval_error(const char *name, u32 type, u32 mask)
@@ -127,8 +132,14 @@ static void crypto_remove_spawn(struct crypto_spawn *spawn,
 	BUG_ON(!list_empty(&inst->alg.cra_users));
 }
 
+<<<<<<< HEAD
 void crypto_remove_spawns(struct crypto_alg *alg, struct list_head *list,
 			  struct crypto_alg *nalg)
+=======
+static void crypto_remove_spawns(struct crypto_alg *alg,
+				 struct list_head *list,
+				 struct crypto_alg *nalg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 new_type = (nalg ?: alg)->cra_flags;
 	struct crypto_spawn *spawn, *n;
@@ -174,7 +185,10 @@ void crypto_remove_spawns(struct crypto_alg *alg, struct list_head *list,
 			crypto_remove_spawn(spawn, list);
 	}
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(crypto_remove_spawns);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct crypto_larval *__crypto_register_alg(struct crypto_alg *alg)
 {
@@ -319,7 +333,11 @@ unlock:
 }
 EXPORT_SYMBOL_GPL(crypto_alg_tested);
 
+<<<<<<< HEAD
 void crypto_remove_final(struct list_head *list)
+=======
+static void crypto_remove_final(struct list_head *list)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct crypto_alg *alg;
 	struct crypto_alg *n;
@@ -329,7 +347,10 @@ void crypto_remove_final(struct list_head *list)
 		crypto_alg_put(alg);
 	}
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(crypto_remove_final);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void crypto_wait_for_test(struct crypto_larval *larval)
 {
@@ -405,6 +426,7 @@ int crypto_unregister_alg(struct crypto_alg *alg)
 }
 EXPORT_SYMBOL_GPL(crypto_unregister_alg);
 
+<<<<<<< HEAD
 int crypto_register_algs(struct crypto_alg *algs, int count)
 {
 	int i, ret;
@@ -440,6 +462,8 @@ int crypto_unregister_algs(struct crypto_alg *algs, int count)
 }
 EXPORT_SYMBOL_GPL(crypto_unregister_algs);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int crypto_register_template(struct crypto_template *tmpl)
 {
 	struct crypto_template *q;
@@ -512,8 +536,12 @@ static struct crypto_template *__crypto_lookup_template(const char *name)
 
 struct crypto_template *crypto_lookup_template(const char *name)
 {
+<<<<<<< HEAD
 	return try_then_request_module(__crypto_lookup_template(name), "%s",
 				       name);
+=======
+	return try_then_request_module(__crypto_lookup_template(name), name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(crypto_lookup_template);
 
@@ -528,7 +556,10 @@ int crypto_register_instance(struct crypto_template *tmpl,
 		goto err;
 
 	inst->alg.cra_module = tmpl->module;
+<<<<<<< HEAD
 	inst->alg.cra_flags |= CRYPTO_ALG_INSTANCE;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	down_write(&crypto_alg_sem);
 
@@ -554,6 +585,7 @@ err:
 }
 EXPORT_SYMBOL_GPL(crypto_register_instance);
 
+<<<<<<< HEAD
 int crypto_unregister_instance(struct crypto_alg *alg)
 {
 	int err;
@@ -583,6 +615,8 @@ int crypto_unregister_instance(struct crypto_alg *alg)
 }
 EXPORT_SYMBOL_GPL(crypto_unregister_instance);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int crypto_init_spawn(struct crypto_spawn *spawn, struct crypto_alg *alg,
 		      struct crypto_instance *inst, u32 mask)
 {

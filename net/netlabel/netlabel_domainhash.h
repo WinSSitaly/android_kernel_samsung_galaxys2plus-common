@@ -6,7 +6,11 @@
  * system manages static and dynamic label mappings for network protocols such
  * as CIPSO and RIPSO.
  *
+<<<<<<< HEAD
  * Author: Paul Moore <paul@paul-moore.com>
+=======
+ * Author: Paul Moore <paul.moore@hp.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  */
 
@@ -104,7 +108,11 @@ int netlbl_domhsh_walk(u32 *skip_bkt,
 		     int (*callback) (struct netlbl_dom_map *entry, void *arg),
 		     void *cb_arg);
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct netlbl_domaddr6_map *netlbl_domhsh_getentry_af6(const char *domain,
 						  const struct in6_addr *addr);
 #endif /* IPv6 */

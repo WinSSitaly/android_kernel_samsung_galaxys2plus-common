@@ -4,7 +4,10 @@ obj-$(CONFIG_RC_MAP) += rc-adstech-dvb-t-pci.o \
 			rc-apac-viewcomp.o \
 			rc-asus-pc39.o \
 			rc-ati-tv-wonder-hd-600.o \
+<<<<<<< HEAD
 			rc-ati-x10.o \
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rc-avermedia-a16d.o \
 			rc-avermedia.o \
 			rc-avermedia-cardbus.o \
@@ -41,17 +44,25 @@ obj-$(CONFIG_RC_MAP) += rc-adstech-dvb-t-pci.o \
 			rc-imon-mce.o \
 			rc-imon-pad.o \
 			rc-iodata-bctv7e.o \
+<<<<<<< HEAD
 			rc-it913x-v1.o \
 			rc-it913x-v2.o \
 			rc-kaiomy.o \
 			rc-kworld-315u.o \
 			rc-kworld-pc150u.o \
+=======
+			rc-kaiomy.o \
+			rc-kworld-315u.o \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rc-kworld-plus-tv-analog.o \
 			rc-leadtek-y04g0051.o \
 			rc-lirc.o \
 			rc-lme2510.o \
 			rc-manli.o \
+<<<<<<< HEAD
 			rc-medion-x10.o \
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rc-msi-digivox-ii.o \
 			rc-msi-digivox-iii.o \
 			rc-msi-tvanywhere.o \
@@ -75,7 +86,10 @@ obj-$(CONFIG_RC_MAP) += rc-adstech-dvb-t-pci.o \
 			rc-hauppauge.o \
 			rc-rc6-mce.o \
 			rc-real-audio-220-32-keys.o \
+<<<<<<< HEAD
 			rc-snapstream-firefly.o \
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rc-streamzap.o \
 			rc-tbs-nec.o \
 			rc-technisat-usb2.o \

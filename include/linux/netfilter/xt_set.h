@@ -35,7 +35,11 @@ struct xt_set_info_target_v0 {
 	struct xt_set_info_v0 del_set;
 };
 
+<<<<<<< HEAD
 /* Revision 1  match and target */
+=======
+/* Revision 1: current interface to netfilter/iptables */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct xt_set_info {
 	ip_set_id_t index;
@@ -44,15 +48,24 @@ struct xt_set_info {
 };
 
 /* match and target infos */
+<<<<<<< HEAD
 struct xt_set_info_match_v1 {
 	struct xt_set_info match_set;
 };
 
 struct xt_set_info_target_v1 {
+=======
+struct xt_set_info_match {
+	struct xt_set_info match_set;
+};
+
+struct xt_set_info_target {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct xt_set_info add_set;
 	struct xt_set_info del_set;
 };
 
+<<<<<<< HEAD
 /* Revision 2 target */
 
 struct xt_set_info_target_v2 {
@@ -62,4 +75,6 @@ struct xt_set_info_target_v2 {
 	__u32 timeout;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /*_XT_SET_H*/

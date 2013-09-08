@@ -21,16 +21,27 @@
 
 #include <asm/cputype.h>
 
+<<<<<<< HEAD
 #include "common.h"
+=======
+#include <plat/common.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/cpu.h>
 
 #include <mach/id.h>
 
 #include "control.h"
 
+<<<<<<< HEAD
 static unsigned int omap_revision;
 static const char *cpu_rev;
 u32 omap_features;
+=======
+static struct omap_chip_id omap_chip;
+static unsigned int omap_revision;
+
+u32 omap3_features;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unsigned int omap_rev(void)
 {
@@ -38,14 +49,33 @@ unsigned int omap_rev(void)
 }
 EXPORT_SYMBOL(omap_rev);
 
+<<<<<<< HEAD
+=======
+/**
+ * omap_chip_is - test whether currently running OMAP matches a chip type
+ * @oc: omap_chip_t to test against
+ *
+ * Test whether the currently-running OMAP chip matches the supplied
+ * chip type 'oc'.  Returns 1 upon a match; 0 upon failure.
+ */
+int omap_chip_is(struct omap_chip_id oci)
+{
+	return (oci.oc & omap_chip.oc) ? 1 : 0;
+}
+EXPORT_SYMBOL(omap_chip_is);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int omap_type(void)
 {
 	u32 val = 0;
 
 	if (cpu_is_omap24xx()) {
 		val = omap_ctrl_readl(OMAP24XX_CONTROL_STATUS);
+<<<<<<< HEAD
 	} else if (cpu_is_am33xx()) {
 		val = omap_ctrl_readl(AM33XX_CONTROL_STATUS);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (cpu_is_omap34xx()) {
 		val = omap_ctrl_readl(OMAP343X_CONTROL_STATUS);
 	} else if (cpu_is_omap44xx()) {
@@ -114,7 +144,11 @@ void omap_get_die_id(struct omap_die_id *odi)
 	odi->id_3 = read_tap_reg(OMAP_TAP_DIE_ID_3);
 }
 
+<<<<<<< HEAD
 void __init omap2xxx_check_revision(void)
+=======
+static void __init omap24xx_check_revision(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i, j;
 	u32 idcode, prod_id;
@@ -168,6 +202,7 @@ void __init omap2xxx_check_revision(void)
 	pr_info("\n");
 }
 
+<<<<<<< HEAD
 #define OMAP3_SHOW_FEATURE(feat)		\
 	if (omap3_has_ ##feat())		\
 		printk(#feat" ");
@@ -229,6 +264,19 @@ void __init omap3xxx_check_features(void)
 	u32 status;
 
 	omap_features = 0;
+=======
+#define OMAP3_CHECK_FEATURE(status,feat)				\
+	if (((status & OMAP3_ ##feat## _MASK) 				\
+		>> OMAP3_ ##feat## _SHIFT) != FEAT_ ##feat## _NONE) { 	\
+		omap3_features |= OMAP3_HAS_ ##feat;			\
+	}
+
+static void __init omap3_check_features(void)
+{
+	u32 status;
+
+	omap3_features = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	status = omap_ctrl_readl(OMAP3_CONTROL_OMAP_STATUS);
 
@@ -238,6 +286,7 @@ void __init omap3xxx_check_features(void)
 	OMAP3_CHECK_FEATURE(status, NEON);
 	OMAP3_CHECK_FEATURE(status, ISP);
 	if (cpu_is_omap3630())
+<<<<<<< HEAD
 		omap_features |= OMAP3_HAS_192MHZ_CLK;
 	if (cpu_is_omap3430() || cpu_is_omap3630())
 		omap_features |= OMAP3_HAS_IO_WAKEUP;
@@ -246,11 +295,19 @@ void __init omap3xxx_check_features(void)
 		omap_features |= OMAP3_HAS_IO_CHAIN_CTRL;
 
 	omap_features |= OMAP3_HAS_SDRC;
+=======
+		omap3_features |= OMAP3_HAS_192MHZ_CLK;
+	if (!cpu_is_omap3505() && !cpu_is_omap3517())
+		omap3_features |= OMAP3_HAS_IO_WAKEUP;
+
+	omap3_features |= OMAP3_HAS_SDRC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * TODO: Get additional info (where applicable)
 	 *       e.g. Size of L2 cache.
 	 */
+<<<<<<< HEAD
 
 	omap3_cpuinfo();
 }
@@ -287,11 +344,26 @@ void __init ti81xx_check_features(void)
 }
 
 void __init omap3xxx_check_revision(void)
+=======
+}
+
+static void __init ti816x_check_features(void)
+{
+	omap3_features = OMAP3_HAS_NEON;
+}
+
+static void __init omap3_check_revision(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 cpuid, idcode;
 	u16 hawkeye;
 	u8 rev;
 
+<<<<<<< HEAD
+=======
+	omap_chip.oc = CHIP_IS_OMAP3430;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * We cannot access revision registers on ES1.0.
 	 * If the processor type is Cortex-A8 and the revision is 0x0
@@ -300,7 +372,11 @@ void __init omap3xxx_check_revision(void)
 	cpuid = read_cpuid(CPUID_ID);
 	if ((((cpuid >> 4) & 0xfff) == 0xc08) && ((cpuid & 0xf) == 0x0)) {
 		omap_revision = OMAP3430_REV_ES1_0;
+<<<<<<< HEAD
 		cpu_rev = "1.0";
+=======
+		omap_chip.oc |= CHIP_IS_OMAP3430ES1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -321,6 +397,7 @@ void __init omap3xxx_check_revision(void)
 		case 0: /* Take care of early samples */
 		case 1:
 			omap_revision = OMAP3430_REV_ES2_0;
+<<<<<<< HEAD
 			cpu_rev = "2.0";
 			break;
 		case 2:
@@ -334,12 +411,28 @@ void __init omap3xxx_check_revision(void)
 		case 4:
 			omap_revision = OMAP3430_REV_ES3_1;
 			cpu_rev = "3.1";
+=======
+			omap_chip.oc |= CHIP_IS_OMAP3430ES2;
+			break;
+		case 2:
+			omap_revision = OMAP3430_REV_ES2_1;
+			omap_chip.oc |= CHIP_IS_OMAP3430ES2;
+			break;
+		case 3:
+			omap_revision = OMAP3430_REV_ES3_0;
+			omap_chip.oc |= CHIP_IS_OMAP3430ES3_0;
+			break;
+		case 4:
+			omap_revision = OMAP3430_REV_ES3_1;
+			omap_chip.oc |= CHIP_IS_OMAP3430ES3_1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case 7:
 		/* FALLTHROUGH */
 		default:
 			/* Use the latest known revision as default */
 			omap_revision = OMAP3430_REV_ES3_1_2;
+<<<<<<< HEAD
 			cpu_rev = "3.1.2";
 		}
 		break;
@@ -364,10 +457,32 @@ void __init omap3xxx_check_revision(void)
 		break;
 	case 0xb891:
 		/* Handle 36xx devices */
+=======
+
+			/* REVISIT: Add CHIP_IS_OMAP3430ES3_1_2? */
+			omap_chip.oc |= CHIP_IS_OMAP3430ES3_1;
+		}
+		break;
+	case 0xb868:
+		/* Handle OMAP35xx/AM35xx devices
+		 *
+		 * Set the device to be OMAP3505 here. Actual device
+		 * is identified later based on the features.
+		 *
+		 * REVISIT: AM3505/AM3517 should have their own CHIP_IS
+		 */
+		omap_revision = OMAP3505_REV(rev);
+		omap_chip.oc |= CHIP_IS_OMAP3430ES3_1;
+		break;
+	case 0xb891:
+		/* Handle 36xx devices */
+		omap_chip.oc |= CHIP_IS_OMAP3630ES1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		switch(rev) {
 		case 0: /* Take care of early samples */
 			omap_revision = OMAP3630_REV_ES1_0;
+<<<<<<< HEAD
 			cpu_rev = "1.0";
 			break;
 		case 1:
@@ -428,6 +543,41 @@ void __init omap3xxx_check_revision(void)
 }
 
 void __init omap4xxx_check_revision(void)
+=======
+			break;
+		case 1:
+			omap_revision = OMAP3630_REV_ES1_1;
+			omap_chip.oc |= CHIP_IS_OMAP3630ES1_1;
+			break;
+		case 2:
+		default:
+			omap_revision =  OMAP3630_REV_ES1_2;
+			omap_chip.oc |= CHIP_IS_OMAP3630ES1_2;
+		}
+		break;
+	case 0xb81e:
+		omap_chip.oc = CHIP_IS_TI816X;
+
+		switch (rev) {
+		case 0:
+			omap_revision = TI8168_REV_ES1_0;
+			break;
+		case 1:
+			omap_revision = TI8168_REV_ES1_1;
+			break;
+		default:
+			omap_revision =  TI8168_REV_ES1_1;
+		}
+		break;
+	default:
+		/* Unknown default to latest silicon rev as default*/
+		omap_revision =  OMAP3630_REV_ES1_2;
+		omap_chip.oc |= CHIP_IS_OMAP3630ES1_2;
+	}
+}
+
+static void __init omap4_check_revision(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 idcode;
 	u16 hawkeye;
@@ -443,10 +593,17 @@ void __init omap4xxx_check_revision(void)
 	rev = (idcode >> 28) & 0xf;
 
 	/*
+<<<<<<< HEAD
 	 * Few initial 4430 ES2.0 samples IDCODE is same as ES1.0
 	 * Use ARM register to detect the correct ES version
 	 */
 	if (!rev && (hawkeye != 0xb94e) && (hawkeye != 0xb975)) {
+=======
+	 * Few initial ES2.0 samples IDCODE is same as ES1.0
+	 * Use ARM register to detect the correct ES version
+	 */
+	if (!rev) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		idcode = read_cpuid(CPUID_ID);
 		rev = (idcode & 0xf) - 1;
 	}
@@ -456,16 +613,25 @@ void __init omap4xxx_check_revision(void)
 		switch (rev) {
 		case 0:
 			omap_revision = OMAP4430_REV_ES1_0;
+<<<<<<< HEAD
+=======
+			omap_chip.oc |= CHIP_IS_OMAP4430ES1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case 1:
 		default:
 			omap_revision = OMAP4430_REV_ES2_0;
+<<<<<<< HEAD
+=======
+			omap_chip.oc |= CHIP_IS_OMAP4430ES2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		break;
 	case 0xb95c:
 		switch (rev) {
 		case 3:
 			omap_revision = OMAP4430_REV_ES2_1;
+<<<<<<< HEAD
 			break;
 		case 4:
 			omap_revision = OMAP4430_REV_ES2_2;
@@ -498,6 +664,177 @@ void __init omap4xxx_check_revision(void)
 
 	pr_info("OMAP%04x ES%d.%d\n", omap_rev() >> 16,
 		((omap_rev() >> 12) & 0xf), ((omap_rev() >> 8) & 0xf));
+=======
+			omap_chip.oc |= CHIP_IS_OMAP4430ES2_1;
+			break;
+		case 4:
+		default:
+			omap_revision = OMAP4430_REV_ES2_2;
+			omap_chip.oc |= CHIP_IS_OMAP4430ES2_2;
+		}
+		break;
+	default:
+		/* Unknown default to latest silicon rev as default */
+		omap_revision = OMAP4430_REV_ES2_2;
+		omap_chip.oc |= CHIP_IS_OMAP4430ES2_2;
+	}
+
+	pr_info("OMAP%04x ES%d.%d\n", omap_rev() >> 16,
+		((omap_rev() >> 12) & 0xf), ((omap_rev() >> 8) & 0xf));
+}
+
+#define OMAP3_SHOW_FEATURE(feat)		\
+	if (omap3_has_ ##feat())		\
+		printk(#feat" ");
+
+static void __init omap3_cpuinfo(void)
+{
+	u8 rev = GET_OMAP_REVISION();
+	char cpu_name[16], cpu_rev[16];
+
+	/* OMAP3430 and OMAP3530 are assumed to be same.
+	 *
+	 * OMAP3525, OMAP3515 and OMAP3503 can be detected only based
+	 * on available features. Upon detection, update the CPU id
+	 * and CPU class bits.
+	 */
+	if (cpu_is_omap3630()) {
+		strcpy(cpu_name, "OMAP3630");
+	} else if (cpu_is_omap3505()) {
+		/*
+		 * AM35xx devices
+		 */
+		if (omap3_has_sgx()) {
+			omap_revision = OMAP3517_REV(rev);
+			strcpy(cpu_name, "AM3517");
+		} else {
+			/* Already set in omap3_check_revision() */
+			strcpy(cpu_name, "AM3505");
+		}
+	} else if (cpu_is_ti816x()) {
+		strcpy(cpu_name, "TI816X");
+	} else if (omap3_has_iva() && omap3_has_sgx()) {
+		/* OMAP3430, OMAP3525, OMAP3515, OMAP3503 devices */
+		strcpy(cpu_name, "OMAP3430/3530");
+	} else if (omap3_has_iva()) {
+		omap_revision = OMAP3525_REV(rev);
+		strcpy(cpu_name, "OMAP3525");
+	} else if (omap3_has_sgx()) {
+		omap_revision = OMAP3515_REV(rev);
+		strcpy(cpu_name, "OMAP3515");
+	} else {
+		omap_revision = OMAP3503_REV(rev);
+		strcpy(cpu_name, "OMAP3503");
+	}
+
+	if (cpu_is_omap3630() || cpu_is_ti816x()) {
+		switch (rev) {
+		case OMAP_REVBITS_00:
+			strcpy(cpu_rev, "1.0");
+			break;
+		case OMAP_REVBITS_01:
+			strcpy(cpu_rev, "1.1");
+			break;
+		case OMAP_REVBITS_02:
+			/* FALLTHROUGH */
+		default:
+			/* Use the latest known revision as default */
+			strcpy(cpu_rev, "1.2");
+		}
+	} else if (cpu_is_omap3505() || cpu_is_omap3517()) {
+		switch (rev) {
+		case OMAP_REVBITS_00:
+			strcpy(cpu_rev, "1.0");
+			break;
+		case OMAP_REVBITS_01:
+			/* FALLTHROUGH */
+		default:
+			/* Use the latest known revision as default */
+			strcpy(cpu_rev, "1.1");
+		}
+	} else {
+		switch (rev) {
+		case OMAP_REVBITS_00:
+			strcpy(cpu_rev, "1.0");
+			break;
+		case OMAP_REVBITS_01:
+			strcpy(cpu_rev, "2.0");
+			break;
+		case OMAP_REVBITS_02:
+			strcpy(cpu_rev, "2.1");
+			break;
+		case OMAP_REVBITS_03:
+			strcpy(cpu_rev, "3.0");
+			break;
+		case OMAP_REVBITS_04:
+			strcpy(cpu_rev, "3.1");
+			break;
+		case OMAP_REVBITS_05:
+			/* FALLTHROUGH */
+		default:
+			/* Use the latest known revision as default */
+			strcpy(cpu_rev, "3.1.2");
+		}
+	}
+
+	/* Print verbose information */
+	pr_info("%s ES%s (", cpu_name, cpu_rev);
+
+	OMAP3_SHOW_FEATURE(l2cache);
+	OMAP3_SHOW_FEATURE(iva);
+	OMAP3_SHOW_FEATURE(sgx);
+	OMAP3_SHOW_FEATURE(neon);
+	OMAP3_SHOW_FEATURE(isp);
+	OMAP3_SHOW_FEATURE(192mhz_clk);
+
+	printk(")\n");
+}
+
+/*
+ * Try to detect the exact revision of the omap we're running on
+ */
+void __init omap2_check_revision(void)
+{
+	/*
+	 * At this point we have an idea about the processor revision set
+	 * earlier with omap2_set_globals_tap().
+	 */
+	if (cpu_is_omap24xx()) {
+		omap24xx_check_revision();
+	} else if (cpu_is_omap34xx()) {
+		omap3_check_revision();
+
+		/* TI816X doesn't have feature register */
+		if (!cpu_is_ti816x())
+			omap3_check_features();
+		else
+			ti816x_check_features();
+
+		omap3_cpuinfo();
+		return;
+	} else if (cpu_is_omap44xx()) {
+		omap4_check_revision();
+		return;
+	} else {
+		pr_err("OMAP revision unknown, please fix!\n");
+	}
+
+	/*
+	 * OK, now we know the exact revision. Initialize omap_chip bits
+	 * for powerdowmain and clockdomain code.
+	 */
+	if (cpu_is_omap243x()) {
+		/* Currently only supports 2430ES2.1 and 2430-all */
+		omap_chip.oc |= CHIP_IS_OMAP2430;
+		return;
+	} else if (cpu_is_omap242x()) {
+		/* Currently only supports 2420ES2.1.1 and 2420-all */
+		omap_chip.oc |= CHIP_IS_OMAP2420;
+		return;
+	}
+
+	pr_err("Uninitialized omap_chip, please fix!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*

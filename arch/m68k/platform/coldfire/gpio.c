@@ -15,7 +15,11 @@
 
 #include <linux/kernel.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/gpio.h>
 #include <asm/pinmux.h>
@@ -115,14 +119,23 @@ void mcf_gpio_free(struct gpio_chip *chip, unsigned offset)
 		mcf_pinmux_release(mcf_chip->gpio_to_pinmux[offset], 0);
 }
 
+<<<<<<< HEAD
 struct bus_type mcf_gpio_subsys = {
 	.name		= "gpio",
 	.dev_name	= "gpio",
+=======
+struct sysdev_class mcf_gpio_sysclass = {
+	.name	= "gpio",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init mcf_gpio_sysinit(void)
 {
+<<<<<<< HEAD
 	return subsys_system_register(&mcf_gpio_subsys, NULL);
+=======
+	return sysdev_class_register(&mcf_gpio_sysclass);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 core_initcall(mcf_gpio_sysinit);

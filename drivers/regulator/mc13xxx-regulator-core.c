@@ -18,14 +18,20 @@
 #include <linux/mfd/mc13xxx.h>
 #include <linux/regulator/machine.h>
 #include <linux/regulator/driver.h>
+<<<<<<< HEAD
 #include <linux/regulator/of_regulator.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <linux/kernel.h>
 #include <linux/slab.h>
 #include <linux/init.h>
 #include <linux/err.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/of.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "mc13xxx.h"
 
 static int mc13xxx_regulator_enable(struct regulator_dev *rdev)
@@ -238,6 +244,7 @@ int mc13xxx_sw_regulator_is_enabled(struct regulator_dev *rdev)
 }
 EXPORT_SYMBOL_GPL(mc13xxx_sw_regulator_is_enabled);
 
+<<<<<<< HEAD
 #ifdef CONFIG_OF
 int __devinit mc13xxx_get_num_regulators_dt(struct platform_device *pdev)
 {
@@ -295,6 +302,8 @@ struct mc13xxx_regulator_init_data * __devinit mc13xxx_parse_regulators_dt(
 EXPORT_SYMBOL_GPL(mc13xxx_parse_regulators_dt);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("GPL v2");
 MODULE_AUTHOR("Yong Shen <yong.shen@linaro.org>");
 MODULE_DESCRIPTION("Regulator Driver for Freescale MC13xxx PMIC");

@@ -37,6 +37,10 @@
 #else
 #define IO_ADDRESS(x)		(x)
 #endif
+<<<<<<< HEAD
 #define __io_address(n)		IOMEM(IO_ADDRESS(n))
+=======
+#define __io_address(n)		__io(IO_ADDRESS(n))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

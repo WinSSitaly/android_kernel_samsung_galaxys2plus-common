@@ -108,6 +108,7 @@ static inline int omap1_i2c_add_bus(int bus_id)
 	res[1].start = INT_I2C;
 	pdata = &i2c_pdata[bus_id - 1];
 
+<<<<<<< HEAD
 	/* all OMAP1 have IP version 1 register set */
 	pdata->rev = OMAP_I2C_IP_VERSION_1;
 
@@ -124,6 +125,8 @@ static inline int omap1_i2c_add_bus(int bus_id)
 	else
 		pdata->flags |= OMAP_I2C_FLAG_BUS_SHIFT_2;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return platform_device_register(pdev);
 }
 
@@ -139,14 +142,31 @@ static void omap_pm_set_max_mpu_wakeup_lat_compat(struct device *dev, long t)
 	omap_pm_set_max_mpu_wakeup_lat(dev, t);
 }
 
+<<<<<<< HEAD
+=======
+static struct omap_device_pm_latency omap_i2c_latency[] = {
+	[0] = {
+		.deactivate_func	= omap_device_idle_hwmods,
+		.activate_func		= omap_device_enable_hwmods,
+		.flags			= OMAP_DEVICE_LATENCY_AUTO_ADJUST,
+	},
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int omap2_i2c_add_bus(int bus_id)
 {
 	int l;
 	struct omap_hwmod *oh;
+<<<<<<< HEAD
 	struct platform_device *pdev;
 	char oh_name[MAX_OMAP_I2C_HWMOD_NAME_LEN];
 	struct omap_i2c_bus_platform_data *pdata;
 	struct omap_i2c_dev_attr *dev_attr;
+=======
+	struct omap_device *od;
+	char oh_name[MAX_OMAP_I2C_HWMOD_NAME_LEN];
+	struct omap_i2c_bus_platform_data *pdata;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	omap2_i2c_mux_pins(bus_id);
 
@@ -161,6 +181,7 @@ static inline int omap2_i2c_add_bus(int bus_id)
 
 	pdata = &i2c_pdata[bus_id - 1];
 	/*
+<<<<<<< HEAD
 	 * pass the hwmod class's CPU-specific knowledge of I2C IP revision in
 	 * use, and functionality implementation flags, up to the OMAP I2C
 	 * driver via platform data
@@ -171,6 +192,8 @@ static inline int omap2_i2c_add_bus(int bus_id)
 	pdata->flags = dev_attr->flags;
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * When waiting for completion of a i2c transfer, we need to
 	 * set a wake up latency constraint for the MPU. This is to
 	 * ensure quick enough wakeup from idle, when transfer
@@ -179,12 +202,21 @@ static inline int omap2_i2c_add_bus(int bus_id)
 	 */
 	if (cpu_is_omap34xx())
 		pdata->set_mpu_wkup_lat = omap_pm_set_max_mpu_wakeup_lat_compat;
+<<<<<<< HEAD
 	pdev = omap_device_build(name, bus_id, oh, pdata,
 			sizeof(struct omap_i2c_bus_platform_data),
 			NULL, 0, 0);
 	WARN(IS_ERR(pdev), "Could not build omap_device for %s\n", name);
 
 	return PTR_RET(pdev);
+=======
+	od = omap_device_build(name, bus_id, oh, pdata,
+			sizeof(struct omap_i2c_bus_platform_data),
+			omap_i2c_latency, ARRAY_SIZE(omap_i2c_latency), 0);
+	WARN(IS_ERR(od), "Could not build omap_device for %s\n", name);
+
+	return PTR_ERR(od);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #else
 static inline int omap2_i2c_add_bus(int bus_id)

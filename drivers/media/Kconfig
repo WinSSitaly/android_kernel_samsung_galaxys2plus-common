@@ -68,6 +68,10 @@ config VIDEO_V4L2_SUBDEV_API
 
 config DVB_CORE
 	tristate "DVB for Linux"
+<<<<<<< HEAD
+=======
+	depends on NET && INET
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select CRC32
 	help
 	  DVB core utility functions for device handling, software fallbacks etc.
@@ -84,6 +88,7 @@ config DVB_CORE
 
 	  If unsure say N.
 
+<<<<<<< HEAD
 config DVB_NET
 	bool "DVB Network Support"
 	default (NET && INET)
@@ -97,6 +102,8 @@ config DVB_NET
 	  You may want to disable the network support on embedded devices. If
 	  unsure say Y.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config VIDEO_MEDIA
 	tristate
 	default (DVB_CORE && (VIDEO_DEV = n)) || (VIDEO_DEV && (DVB_CORE = n)) || (DVB_CORE && VIDEO_DEV)

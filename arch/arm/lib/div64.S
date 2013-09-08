@@ -13,7 +13,10 @@
  */
 
 #include <linux/linkage.h>
+<<<<<<< HEAD
 #include <asm/unwind.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef __ARMEB__
 #define xh r0
@@ -45,7 +48,10 @@
  */
 
 ENTRY(__do_div64)
+<<<<<<< HEAD
 UNWIND(.fnstart)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	@ Test for easy paths first.
 	subs	ip, r4, #1
@@ -191,12 +197,16 @@ UNWIND(.fnstart)
 	moveq	yh, xh
 	moveq	xh, #0
 	moveq	pc, lr
+<<<<<<< HEAD
 UNWIND(.fnend)
 
 UNWIND(.fnstart)
 UNWIND(.pad #4)
 UNWIND(.save {lr})
 Ldiv0_64:
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	@ Division by 0:
 	str	lr, [sp, #-8]!
 	bl	__div0
@@ -207,5 +217,8 @@ Ldiv0_64:
 	mov	xh, #0
 	ldr	pc, [sp], #8
 
+<<<<<<< HEAD
 UNWIND(.fnend)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ENDPROC(__do_div64)

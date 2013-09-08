@@ -17,15 +17,29 @@
 #include <linux/moduleparam.h>
 #include <linux/types.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/miscdevice.h>
 #include <linux/watchdog.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
+=======
+#include <linux/fs.h>
+#include <linux/miscdevice.h>
+#include <linux/watchdog.h>
+#include <linux/init.h>
+#include <linux/bitops.h>
+#include <linux/platform_device.h>
+#include <linux/spinlock.h>
+#include <linux/uaccess.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 #include <linux/device.h>
 #include <linux/clk.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/err.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach-jz4740/timer.h>
 
@@ -38,6 +52,12 @@
 #define JZ_WDT_CLOCK_RTC  0x2
 #define JZ_WDT_CLOCK_EXT  0x4
 
+<<<<<<< HEAD
+=======
+#define WDT_IN_USE        0
+#define WDT_OK_TO_CLOSE   1
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define JZ_WDT_CLOCK_DIV_SHIFT   3
 
 #define JZ_WDT_CLOCK_DIV_1    (0 << JZ_WDT_CLOCK_DIV_SHIFT)
@@ -50,6 +70,7 @@
 #define DEFAULT_HEARTBEAT 5
 #define MAX_HEARTBEAT     2048
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 module_param(nowayout, bool, 0);
 MODULE_PARM_DESC(nowayout,
@@ -81,13 +102,40 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
 				    unsigned int new_timeout)
 {
 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+=======
+static struct {
+	void __iomem *base;
+	struct resource	*mem;
+	struct clk *rtc_clk;
+	unsigned long status;
+} jz4740_wdt;
+
+static int heartbeat = DEFAULT_HEARTBEAT;
+
+
+static void jz4740_wdt_service(void)
+{
+	writew(0x0, jz4740_wdt.base + JZ_REG_WDT_TIMER_COUNTER);
+}
+
+static void jz4740_wdt_set_heartbeat(int new_heartbeat)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int rtc_clk_rate;
 	unsigned int timeout_value;
 	unsigned short clock_div = JZ_WDT_CLOCK_DIV_1;
 
+<<<<<<< HEAD
 	rtc_clk_rate = clk_get_rate(drvdata->rtc_clk);
 
 	timeout_value = rtc_clk_rate * new_timeout;
+=======
+	heartbeat = new_heartbeat;
+
+	rtc_clk_rate = clk_get_rate(jz4740_wdt.rtc_clk);
+
+	timeout_value = rtc_clk_rate * heartbeat;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (timeout_value > 0xffff) {
 		if (clock_div == JZ_WDT_CLOCK_DIV_1024) {
 			/* Requested timeout too high;
@@ -99,6 +147,7 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
 		clock_div += (1 << JZ_WDT_CLOCK_DIV_SHIFT);
 	}
 
+<<<<<<< HEAD
 	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
 	writew(clock_div, drvdata->base + JZ_REG_WDT_TIMER_CONTROL);
 
@@ -142,10 +191,135 @@ static const struct watchdog_ops jz4740_wdt_ops = {
 	.stop = jz4740_wdt_stop,
 	.ping = jz4740_wdt_ping,
 	.set_timeout = jz4740_wdt_set_timeout,
+=======
+	writeb(0x0, jz4740_wdt.base + JZ_REG_WDT_COUNTER_ENABLE);
+	writew(clock_div, jz4740_wdt.base + JZ_REG_WDT_TIMER_CONTROL);
+
+	writew((u16)timeout_value, jz4740_wdt.base + JZ_REG_WDT_TIMER_DATA);
+	writew(0x0, jz4740_wdt.base + JZ_REG_WDT_TIMER_COUNTER);
+	writew(clock_div | JZ_WDT_CLOCK_RTC,
+		jz4740_wdt.base + JZ_REG_WDT_TIMER_CONTROL);
+
+	writeb(0x1, jz4740_wdt.base + JZ_REG_WDT_COUNTER_ENABLE);
+}
+
+static void jz4740_wdt_enable(void)
+{
+	jz4740_timer_enable_watchdog();
+	jz4740_wdt_set_heartbeat(heartbeat);
+}
+
+static void jz4740_wdt_disable(void)
+{
+	jz4740_timer_disable_watchdog();
+	writeb(0x0, jz4740_wdt.base + JZ_REG_WDT_COUNTER_ENABLE);
+}
+
+static int jz4740_wdt_open(struct inode *inode, struct file *file)
+{
+	if (test_and_set_bit(WDT_IN_USE, &jz4740_wdt.status))
+		return -EBUSY;
+
+	jz4740_wdt_enable();
+
+	return nonseekable_open(inode, file);
+}
+
+static ssize_t jz4740_wdt_write(struct file *file, const char *data,
+		size_t len, loff_t *ppos)
+{
+	if (len) {
+		size_t i;
+
+		clear_bit(WDT_OK_TO_CLOSE, &jz4740_wdt.status);
+		for (i = 0; i != len; i++) {
+			char c;
+
+			if (get_user(c, data + i))
+				return -EFAULT;
+
+			if (c == 'V')
+				set_bit(WDT_OK_TO_CLOSE, &jz4740_wdt.status);
+		}
+		jz4740_wdt_service();
+	}
+
+	return len;
+}
+
+static const struct watchdog_info ident = {
+	.options = WDIOF_KEEPALIVEPING,
+	.identity = "jz4740 Watchdog",
+};
+
+static long jz4740_wdt_ioctl(struct file *file,
+					unsigned int cmd, unsigned long arg)
+{
+	int ret = -ENOTTY;
+	int heartbeat_seconds;
+
+	switch (cmd) {
+	case WDIOC_GETSUPPORT:
+		ret = copy_to_user((struct watchdog_info *)arg, &ident,
+				sizeof(ident)) ? -EFAULT : 0;
+		break;
+
+	case WDIOC_GETSTATUS:
+	case WDIOC_GETBOOTSTATUS:
+		ret = put_user(0, (int *)arg);
+		break;
+
+	case WDIOC_KEEPALIVE:
+		jz4740_wdt_service();
+		return 0;
+
+	case WDIOC_SETTIMEOUT:
+		if (get_user(heartbeat_seconds, (int __user *)arg))
+			return -EFAULT;
+
+		jz4740_wdt_set_heartbeat(heartbeat_seconds);
+		return 0;
+
+	case WDIOC_GETTIMEOUT:
+		return put_user(heartbeat, (int *)arg);
+
+	default:
+		break;
+	}
+
+	return ret;
+}
+
+static int jz4740_wdt_release(struct inode *inode, struct file *file)
+{
+	jz4740_wdt_service();
+
+	if (test_and_clear_bit(WDT_OK_TO_CLOSE, &jz4740_wdt.status))
+		jz4740_wdt_disable();
+
+	clear_bit(WDT_IN_USE, &jz4740_wdt.status);
+	return 0;
+}
+
+static const struct file_operations jz4740_wdt_fops = {
+	.owner = THIS_MODULE,
+	.llseek = no_llseek,
+	.write = jz4740_wdt_write,
+	.unlocked_ioctl = jz4740_wdt_ioctl,
+	.open = jz4740_wdt_open,
+	.release = jz4740_wdt_release,
+};
+
+static struct miscdevice jz4740_wdt_miscdev = {
+	.minor = WATCHDOG_MINOR,
+	.name = "watchdog",
+	.fops = &jz4740_wdt_fops,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __devinit jz4740_wdt_probe(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct jz4740_wdt_drvdata *drvdata;
 	struct watchdog_device *jz4740_wdt;
 	struct resource	*res;
@@ -204,10 +378,78 @@ static int __devexit jz4740_wdt_remove(struct platform_device *pdev)
 	jz4740_wdt_stop(&drvdata->wdt);
 	watchdog_unregister_device(&drvdata->wdt);
 	clk_put(drvdata->rtc_clk);
+=======
+	int ret = 0, size;
+	struct resource *res;
+	struct device *dev = &pdev->dev;
+
+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	if (res == NULL) {
+		dev_err(dev, "failed to get memory region resource\n");
+		return -ENXIO;
+	}
+
+	size = resource_size(res);
+	jz4740_wdt.mem = request_mem_region(res->start, size, pdev->name);
+	if (jz4740_wdt.mem == NULL) {
+		dev_err(dev, "failed to get memory region\n");
+		return -EBUSY;
+	}
+
+	jz4740_wdt.base = ioremap_nocache(res->start, size);
+	if (jz4740_wdt.base == NULL) {
+		dev_err(dev, "failed to map memory region\n");
+		ret = -EBUSY;
+		goto err_release_region;
+	}
+
+	jz4740_wdt.rtc_clk = clk_get(NULL, "rtc");
+	if (IS_ERR(jz4740_wdt.rtc_clk)) {
+		dev_err(dev, "cannot find RTC clock\n");
+		ret = PTR_ERR(jz4740_wdt.rtc_clk);
+		goto err_iounmap;
+	}
+
+	ret = misc_register(&jz4740_wdt_miscdev);
+	if (ret < 0) {
+		dev_err(dev, "cannot register misc device\n");
+		goto err_disable_clk;
+	}
+
+	return 0;
+
+err_disable_clk:
+	clk_put(jz4740_wdt.rtc_clk);
+err_iounmap:
+	iounmap(jz4740_wdt.base);
+err_release_region:
+	release_mem_region(jz4740_wdt.mem->start,
+			resource_size(jz4740_wdt.mem));
+	return ret;
+}
+
+
+static int __devexit jz4740_wdt_remove(struct platform_device *pdev)
+{
+	jz4740_wdt_disable();
+	misc_deregister(&jz4740_wdt_miscdev);
+	clk_put(jz4740_wdt.rtc_clk);
+
+	iounmap(jz4740_wdt.base);
+	jz4740_wdt.base = NULL;
+
+	release_mem_region(jz4740_wdt.mem->start,
+				resource_size(jz4740_wdt.mem));
+	jz4740_wdt.mem = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver jz4740_wdt_driver = {
 	.probe = jz4740_wdt_probe,
 	.remove = __devexit_p(jz4740_wdt_remove),
@@ -217,10 +459,35 @@ static struct platform_driver jz4740_wdt_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(jz4740_wdt_driver);
 
 MODULE_AUTHOR("Paul Cercueil <paul@crapouillou.net>");
 MODULE_DESCRIPTION("jz4740 Watchdog Driver");
+=======
+
+static int __init jz4740_wdt_init(void)
+{
+	return platform_driver_register(&jz4740_wdt_driver);
+}
+module_init(jz4740_wdt_init);
+
+static void __exit jz4740_wdt_exit(void)
+{
+	platform_driver_unregister(&jz4740_wdt_driver);
+}
+module_exit(jz4740_wdt_exit);
+
+MODULE_AUTHOR("Paul Cercueil <paul@crapouillou.net>");
+MODULE_DESCRIPTION("jz4740 Watchdog Driver");
+
+module_param(heartbeat, int, 0);
+MODULE_PARM_DESC(heartbeat,
+		"Watchdog heartbeat period in seconds from 1 to "
+		__MODULE_STRING(MAX_HEARTBEAT) ", default "
+		__MODULE_STRING(DEFAULT_HEARTBEAT));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("GPL");
 MODULE_ALIAS_MISCDEV(WATCHDOG_MINOR);
 MODULE_ALIAS("platform:jz4740-wdt");

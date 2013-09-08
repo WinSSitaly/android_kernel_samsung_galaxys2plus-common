@@ -249,7 +249,21 @@ static struct platform_driver pcf50633_adc_driver = {
 	.remove = __devexit_p(pcf50633_adc_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(pcf50633_adc_driver);
+=======
+static int __init pcf50633_adc_init(void)
+{
+	return platform_driver_register(&pcf50633_adc_driver);
+}
+module_init(pcf50633_adc_init);
+
+static void __exit pcf50633_adc_exit(void)
+{
+	platform_driver_unregister(&pcf50633_adc_driver);
+}
+module_exit(pcf50633_adc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Balaji Rao <balajirrao@openmoko.org>");
 MODULE_DESCRIPTION("PCF50633 adc driver");

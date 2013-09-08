@@ -21,9 +21,13 @@
 #include <linux/slab.h>
 #include <linux/delay.h>
 #include <linux/blkdev.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/seq_file.h>
 #include <linux/ratelimit.h>
+=======
+#include <linux/seq_file.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "md.h"
 #include "raid10.h"
 #include "raid0.h"
@@ -59,6 +63,7 @@
  */
 #define	NR_RAID10_BIOS 256
 
+<<<<<<< HEAD
 /* When there are this many requests queue to be written by
  * the raid10 thread, we become 'congested' to provide back-pressure
  * for writeback.
@@ -76,6 +81,17 @@ static void * r10bio_pool_alloc(gfp_t gfp_flags, void *data)
 
 	/* allocate a r10bio with room for raid_disks entries in the
 	 * bios array */
+=======
+static void allow_barrier(conf_t *conf);
+static void lower_barrier(conf_t *conf);
+
+static void * r10bio_pool_alloc(gfp_t gfp_flags, void *data)
+{
+	conf_t *conf = data;
+	int size = offsetof(struct r10bio_s, devs[conf->copies]);
+
+	/* allocate a r10bio with room for raid_disks entries in the bios array */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return kzalloc(size, gfp_flags);
 }
 
@@ -101,9 +117,15 @@ static void r10bio_pool_free(void *r10_bio, void *data)
  */
 static void * r10buf_pool_alloc(gfp_t gfp_flags, void *data)
 {
+<<<<<<< HEAD
 	struct r10conf *conf = data;
 	struct page *page;
 	struct r10bio *r10_bio;
+=======
+	conf_t *conf = data;
+	struct page *page;
+	r10bio_t *r10_bio;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bio *bio;
 	int i, j;
 	int nalloc;
@@ -125,18 +147,22 @@ static void * r10buf_pool_alloc(gfp_t gfp_flags, void *data)
 		if (!bio)
 			goto out_free_bio;
 		r10_bio->devs[j].bio = bio;
+<<<<<<< HEAD
 		if (!conf->have_replacement)
 			continue;
 		bio = bio_kmalloc(gfp_flags, RESYNC_PAGES);
 		if (!bio)
 			goto out_free_bio;
 		r10_bio->devs[j].repl_bio = bio;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	/*
 	 * Allocate RESYNC_PAGES data pages and attach them
 	 * where needed.
 	 */
 	for (j = 0 ; j < nalloc; j++) {
+<<<<<<< HEAD
 		struct bio *rbio = r10_bio->devs[j].repl_bio;
 		bio = r10_bio->devs[j].bio;
 		for (i = 0; i < RESYNC_PAGES; i++) {
@@ -148,12 +174,20 @@ static void * r10buf_pool_alloc(gfp_t gfp_flags, void *data)
 				get_page(page);
 			} else
 				page = alloc_page(gfp_flags);
+=======
+		bio = r10_bio->devs[j].bio;
+		for (i = 0; i < RESYNC_PAGES; i++) {
+			page = alloc_page(gfp_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (unlikely(!page))
 				goto out_free_pages;
 
 			bio->bi_io_vec[i].bv_page = page;
+<<<<<<< HEAD
 			if (rbio)
 				rbio->bi_io_vec[i].bv_page = page;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -167,11 +201,16 @@ out_free_pages:
 			safe_put_page(r10_bio->devs[j].bio->bi_io_vec[i].bv_page);
 	j = -1;
 out_free_bio:
+<<<<<<< HEAD
 	while (++j < nalloc) {
 		bio_put(r10_bio->devs[j].bio);
 		if (r10_bio->devs[j].repl_bio)
 			bio_put(r10_bio->devs[j].repl_bio);
 	}
+=======
+	while ( ++j < nalloc )
+		bio_put(r10_bio->devs[j].bio);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r10bio_pool_free(r10_bio, conf);
 	return NULL;
 }
@@ -179,8 +218,13 @@ out_free_bio:
 static void r10buf_pool_free(void *__r10_bio, void *data)
 {
 	int i;
+<<<<<<< HEAD
 	struct r10conf *conf = data;
 	struct r10bio *r10bio = __r10_bio;
+=======
+	conf_t *conf = data;
+	r10bio_t *r10bio = __r10_bio;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int j;
 
 	for (j=0; j < conf->copies; j++) {
@@ -192,51 +236,88 @@ static void r10buf_pool_free(void *__r10_bio, void *data)
 			}
 			bio_put(bio);
 		}
+<<<<<<< HEAD
 		bio = r10bio->devs[j].repl_bio;
 		if (bio)
 			bio_put(bio);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	r10bio_pool_free(r10bio, conf);
 }
 
+<<<<<<< HEAD
 static void put_all_bios(struct r10conf *conf, struct r10bio *r10_bio)
+=======
+static void put_all_bios(conf_t *conf, r10bio_t *r10_bio)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 
 	for (i = 0; i < conf->copies; i++) {
 		struct bio **bio = & r10_bio->devs[i].bio;
+<<<<<<< HEAD
 		if (!BIO_SPECIAL(*bio))
 			bio_put(*bio);
 		*bio = NULL;
 		bio = &r10_bio->devs[i].repl_bio;
 		if (r10_bio->read_slot < 0 && !BIO_SPECIAL(*bio))
+=======
+		if (*bio && *bio != IO_BLOCKED)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			bio_put(*bio);
 		*bio = NULL;
 	}
 }
 
+<<<<<<< HEAD
 static void free_r10bio(struct r10bio *r10_bio)
 {
 	struct r10conf *conf = r10_bio->mddev->private;
+=======
+static void free_r10bio(r10bio_t *r10_bio)
+{
+	conf_t *conf = r10_bio->mddev->private;
+
+	/*
+	 * Wake up any possible resync thread that waits for the device
+	 * to go idle.
+	 */
+	allow_barrier(conf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	put_all_bios(conf, r10_bio);
 	mempool_free(r10_bio, conf->r10bio_pool);
 }
 
+<<<<<<< HEAD
 static void put_buf(struct r10bio *r10_bio)
 {
 	struct r10conf *conf = r10_bio->mddev->private;
+=======
+static void put_buf(r10bio_t *r10_bio)
+{
+	conf_t *conf = r10_bio->mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mempool_free(r10_bio, conf->r10buf_pool);
 
 	lower_barrier(conf);
 }
 
+<<<<<<< HEAD
 static void reschedule_retry(struct r10bio *r10_bio)
 {
 	unsigned long flags;
 	struct mddev *mddev = r10_bio->mddev;
 	struct r10conf *conf = mddev->private;
+=======
+static void reschedule_retry(r10bio_t *r10_bio)
+{
+	unsigned long flags;
+	mddev_t *mddev = r10_bio->mddev;
+	conf_t *conf = mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&conf->device_lock, flags);
 	list_add(&r10_bio->retry_list, &conf->retry_list);
@@ -254,6 +335,7 @@ static void reschedule_retry(struct r10bio *r10_bio)
  * operation and are ready to return a success/failure code to the buffer
  * cache layer.
  */
+<<<<<<< HEAD
 static void raid_end_bio_io(struct r10bio *r10_bio)
 {
 	struct bio *bio = r10_bio->master_bio;
@@ -278,20 +360,35 @@ static void raid_end_bio_io(struct r10bio *r10_bio)
 		 */
 		allow_barrier(conf);
 	}
+=======
+static void raid_end_bio_io(r10bio_t *r10_bio)
+{
+	struct bio *bio = r10_bio->master_bio;
+
+	bio_endio(bio,
+		test_bit(R10BIO_Uptodate, &r10_bio->state) ? 0 : -EIO);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	free_r10bio(r10_bio);
 }
 
 /*
  * Update disk head position estimator based on IRQ completion info.
  */
+<<<<<<< HEAD
 static inline void update_head_pos(int slot, struct r10bio *r10_bio)
 {
 	struct r10conf *conf = r10_bio->mddev->private;
+=======
+static inline void update_head_pos(int slot, r10bio_t *r10_bio)
+{
+	conf_t *conf = r10_bio->mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	conf->mirrors[r10_bio->devs[slot].devnum].head_position =
 		r10_bio->devs[slot].addr + (r10_bio->sectors);
 }
 
+<<<<<<< HEAD
 /*
  * Find the disk number which triggered given bio
  */
@@ -327,11 +424,22 @@ static void raid10_end_read_request(struct bio *bio, int error)
 	int slot, dev;
 	struct md_rdev *rdev;
 	struct r10conf *conf = r10_bio->mddev->private;
+=======
+static void raid10_end_read_request(struct bio *bio, int error)
+{
+	int uptodate = test_bit(BIO_UPTODATE, &bio->bi_flags);
+	r10bio_t *r10_bio = bio->bi_private;
+	int slot, dev;
+	conf_t *conf = r10_bio->mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 	slot = r10_bio->read_slot;
 	dev = r10_bio->devs[slot].devnum;
+<<<<<<< HEAD
 	rdev = r10_bio->devs[slot].rdev;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * this branch is our 'one mirror IO has finished' event handler:
 	 */
@@ -348,6 +456,7 @@ static void raid10_end_read_request(struct bio *bio, int error)
 		 * wait for the 'master' bio.
 		 */
 		set_bit(R10BIO_Uptodate, &r10_bio->state);
+<<<<<<< HEAD
 	} else {
 		/* If all other devices that store this block have
 		 * failed, we want to return the error upwards rather
@@ -363,21 +472,33 @@ static void raid10_end_read_request(struct bio *bio, int error)
 	if (uptodate) {
 		raid_end_bio_io(r10_bio);
 		rdev_dec_pending(rdev, conf->mddev);
+=======
+		raid_end_bio_io(r10_bio);
+		rdev_dec_pending(conf->mirrors[dev].rdev, conf->mddev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		/*
 		 * oops, read error - keep the refcount on the rdev
 		 */
 		char b[BDEVNAME_SIZE];
+<<<<<<< HEAD
 		printk_ratelimited(KERN_ERR
 				   "md/raid10:%s: %s: rescheduling sector %llu\n",
 				   mdname(conf->mddev),
 				   bdevname(rdev->bdev, b),
 				   (unsigned long long)r10_bio->sector);
 		set_bit(R10BIO_ReadError, &r10_bio->state);
+=======
+		if (printk_ratelimit())
+			printk(KERN_ERR "md/raid10:%s: %s: rescheduling sector %llu\n",
+			       mdname(conf->mddev),
+			       bdevname(conf->mirrors[dev].rdev->bdev,b), (unsigned long long)r10_bio->sector);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reschedule_retry(r10_bio);
 	}
 }
 
+<<<<<<< HEAD
 static void close_write(struct r10bio *r10_bio)
 {
 	/* clear the bitmap if all writes complete successfully */
@@ -422,10 +543,25 @@ static void raid10_end_write_request(struct bio *bio, int error)
 		repl = 0;
 		rdev = conf->mirrors[dev].rdev;
 	}
+=======
+static void raid10_end_write_request(struct bio *bio, int error)
+{
+	int uptodate = test_bit(BIO_UPTODATE, &bio->bi_flags);
+	r10bio_t *r10_bio = bio->bi_private;
+	int slot, dev;
+	conf_t *conf = r10_bio->mddev->private;
+
+	for (slot = 0; slot < conf->copies; slot++)
+		if (r10_bio->devs[slot].bio == bio)
+			break;
+	dev = r10_bio->devs[slot].devnum;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * this branch is our 'one mirror IO has finished' event handler:
 	 */
 	if (!uptodate) {
+<<<<<<< HEAD
 		if (repl)
 			/* Never record new bad blocks to replacement,
 			 * just fail it.
@@ -440,6 +576,12 @@ static void raid10_end_write_request(struct bio *bio, int error)
 			dec_rdev = 0;
 		}
 	} else {
+=======
+		md_error(r10_bio->mddev, conf->mirrors[dev].rdev);
+		/* an I/O failed, we can't clear the bitmap */
+		set_bit(R10BIO_Degraded, &r10_bio->state);
+	} else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Set R10BIO_Uptodate in our master bio, so that
 		 * we will return a good error code for to the higher
@@ -449,6 +591,7 @@ static void raid10_end_write_request(struct bio *bio, int error)
 		 * user-side. So if something waits for IO, then it will
 		 * wait for the 'master' bio.
 		 */
+<<<<<<< HEAD
 		sector_t first_bad;
 		int bad_sectors;
 
@@ -478,17 +621,39 @@ static void raid10_end_write_request(struct bio *bio, int error)
 			set_bit(R10BIO_MadeGood, &r10_bio->state);
 		}
 	}
+=======
+		set_bit(R10BIO_Uptodate, &r10_bio->state);
+
+	update_head_pos(slot, r10_bio);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 *
 	 * Let's see if all mirrored write operations have finished
 	 * already.
 	 */
+<<<<<<< HEAD
 	one_write_done(r10_bio);
 	if (dec_rdev)
 		rdev_dec_pending(rdev, conf->mddev);
 }
 
+=======
+	if (atomic_dec_and_test(&r10_bio->remaining)) {
+		/* clear the bitmap if all writes complete successfully */
+		bitmap_endwrite(r10_bio->mddev->bitmap, r10_bio->sector,
+				r10_bio->sectors,
+				!test_bit(R10BIO_Degraded, &r10_bio->state),
+				0);
+		md_write_end(r10_bio->mddev);
+		raid_end_bio_io(r10_bio);
+	}
+
+	rdev_dec_pending(conf->mirrors[dev].rdev, conf->mddev);
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * RAID10 layout manager
  * As well as the chunksize and raid_disks count, there are two
@@ -514,7 +679,11 @@ static void raid10_end_write_request(struct bio *bio, int error)
  * sector offset to a virtual address
  */
 
+<<<<<<< HEAD
 static void raid10_find_phys(struct r10conf *conf, struct r10bio *r10bio)
+=======
+static void raid10_find_phys(conf_t *conf, r10bio_t *r10bio)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int n,f;
 	sector_t sector;
@@ -562,7 +731,11 @@ static void raid10_find_phys(struct r10conf *conf, struct r10bio *r10bio)
 	BUG_ON(slot != conf->copies);
 }
 
+<<<<<<< HEAD
 static sector_t raid10_find_virt(struct r10conf *conf, sector_t sector, int dev)
+=======
+static sector_t raid10_find_virt(conf_t *conf, sector_t sector, int dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	sector_t offset, chunk, vchunk;
 
@@ -596,20 +769,30 @@ static sector_t raid10_find_virt(struct r10conf *conf, sector_t sector, int dev)
  *	@biovec: the request that could be merged to it.
  *
  *	Return amount of bytes we can accept at this offset
+<<<<<<< HEAD
  *	This requires checking for end-of-chunk if near_copies != raid_disks,
  *	and for subordinate merge_bvec_fns if merge_check_needed.
+=======
+ *      If near_copies == raid_disk, there are no striping issues,
+ *      but in that case, the function isn't called at all.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int raid10_mergeable_bvec(struct request_queue *q,
 				 struct bvec_merge_data *bvm,
 				 struct bio_vec *biovec)
 {
+<<<<<<< HEAD
 	struct mddev *mddev = q->queuedata;
 	struct r10conf *conf = mddev->private;
+=======
+	mddev_t *mddev = q->queuedata;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sector_t sector = bvm->bi_sector + get_start_sect(bvm->bi_bdev);
 	int max;
 	unsigned int chunk_sectors = mddev->chunk_sectors;
 	unsigned int bio_sectors = bvm->bi_size >> 9;
 
+<<<<<<< HEAD
 	if (conf->near_copies < conf->raid_disks) {
 		max = (chunk_sectors - ((sector & (chunk_sectors - 1))
 					+ bio_sectors)) << 9;
@@ -662,6 +845,14 @@ static int raid10_mergeable_bvec(struct request_queue *q,
 		rcu_read_unlock();
 	}
 	return max;
+=======
+	max =  (chunk_sectors - ((sector & (chunk_sectors - 1)) + bio_sectors)) << 9;
+	if (max < 0) max = 0; /* bio_add cannot handle a negative return */
+	if (max <= biovec->bv_len && bio_sectors == 0)
+		return biovec->bv_len;
+	else
+		return max;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -683,6 +874,7 @@ static int raid10_mergeable_bvec(struct request_queue *q,
  * FIXME: possibly should rethink readbalancing and do it differently
  * depending on near_copies / far_copies geometry.
  */
+<<<<<<< HEAD
 static struct md_rdev *read_balance(struct r10conf *conf,
 				    struct r10bio *r10_bio,
 				    int *max_sectors)
@@ -693,17 +885,31 @@ static struct md_rdev *read_balance(struct r10conf *conf,
 	int best_good_sectors;
 	sector_t new_distance, best_dist;
 	struct md_rdev *rdev, *best_rdev;
+=======
+static int read_balance(conf_t *conf, r10bio_t *r10_bio)
+{
+	const sector_t this_sector = r10_bio->sector;
+	int disk, slot;
+	const int sectors = r10_bio->sectors;
+	sector_t new_distance, best_dist;
+	mdk_rdev_t *rdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int do_balance;
 	int best_slot;
 
 	raid10_find_phys(conf, r10_bio);
 	rcu_read_lock();
 retry:
+<<<<<<< HEAD
 	sectors = r10_bio->sectors;
 	best_slot = -1;
 	best_rdev = NULL;
 	best_dist = MaxSector;
 	best_good_sectors = 0;
+=======
+	best_slot = -1;
+	best_dist = MaxSector;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do_balance = 1;
 	/*
 	 * Check if we can balance. We can balance on the whole
@@ -716,6 +922,7 @@ retry:
 		do_balance = 0;
 
 	for (slot = 0; slot < conf->copies ; slot++) {
+<<<<<<< HEAD
 		sector_t first_bad;
 		int bad_sectors;
 		sector_t dev_sector;
@@ -767,6 +974,16 @@ retry:
 			continue;
 		} else
 			best_good_sectors = sectors;
+=======
+		if (r10_bio->devs[slot].bio == IO_BLOCKED)
+			continue;
+		disk = r10_bio->devs[slot].devnum;
+		rdev = rcu_dereference(conf->mirrors[disk].rdev);
+		if (rdev == NULL)
+			continue;
+		if (!test_bit(In_sync, &rdev->flags))
+			continue;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (!do_balance)
 			break;
@@ -787,6 +1004,7 @@ retry:
 		if (new_distance < best_dist) {
 			best_dist = new_distance;
 			best_slot = slot;
+<<<<<<< HEAD
 			best_rdev = rdev;
 		}
 	}
@@ -796,6 +1014,18 @@ retry:
 	}
 
 	if (slot >= 0) {
+=======
+		}
+	}
+	if (slot == conf->copies)
+		slot = best_slot;
+
+	if (slot >= 0) {
+		disk = r10_bio->devs[slot].devnum;
+		rdev = rcu_dereference(conf->mirrors[disk].rdev);
+		if (!rdev)
+			goto retry;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		atomic_inc(&rdev->nr_pending);
 		if (test_bit(Faulty, &rdev->flags)) {
 			/* Cannot risk returning a device that failed
@@ -806,15 +1036,23 @@ retry:
 		}
 		r10_bio->read_slot = slot;
 	} else
+<<<<<<< HEAD
 		rdev = NULL;
 	rcu_read_unlock();
 	*max_sectors = best_good_sectors;
 
 	return rdev;
+=======
+		disk = -1;
+	rcu_read_unlock();
+
+	return disk;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int raid10_congested(void *data, int bits)
 {
+<<<<<<< HEAD
 	struct mddev *mddev = data;
 	struct r10conf *conf = mddev->private;
 	int i, ret = 0;
@@ -823,11 +1061,21 @@ static int raid10_congested(void *data, int bits)
 	    conf->pending_count >= max_queued_requests)
 		return 1;
 
+=======
+	mddev_t *mddev = data;
+	conf_t *conf = mddev->private;
+	int i, ret = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (mddev_congested(mddev, bits))
 		return 1;
 	rcu_read_lock();
 	for (i = 0; i < conf->raid_disks && ret == 0; i++) {
+<<<<<<< HEAD
 		struct md_rdev *rdev = rcu_dereference(conf->mirrors[i].rdev);
+=======
+		mdk_rdev_t *rdev = rcu_dereference(conf->mirrors[i].rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rdev && !test_bit(Faulty, &rdev->flags)) {
 			struct request_queue *q = bdev_get_queue(rdev->bdev);
 
@@ -838,7 +1086,11 @@ static int raid10_congested(void *data, int bits)
 	return ret;
 }
 
+<<<<<<< HEAD
 static void flush_pending_writes(struct r10conf *conf)
+=======
+static void flush_pending_writes(conf_t *conf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Any writes that have been queued but are awaiting
 	 * bitmap updates get flushed here.
@@ -848,12 +1100,18 @@ static void flush_pending_writes(struct r10conf *conf)
 	if (conf->pending_bio_list.head) {
 		struct bio *bio;
 		bio = bio_list_get(&conf->pending_bio_list);
+<<<<<<< HEAD
 		conf->pending_count = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock_irq(&conf->device_lock);
 		/* flush any pending bitmap writes to disk
 		 * before proceeding w/ I/O */
 		bitmap_unplug(conf->mddev->bitmap);
+<<<<<<< HEAD
 		wake_up(&conf->wait_barrier);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		while (bio) { /* submit pending writes */
 			struct bio *next = bio->bi_next;
@@ -887,7 +1145,11 @@ static void flush_pending_writes(struct r10conf *conf)
  *    lower_barrier when the particular background IO completes.
  */
 
+<<<<<<< HEAD
 static void raise_barrier(struct r10conf *conf, int force)
+=======
+static void raise_barrier(conf_t *conf, int force)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	BUG_ON(force && !conf->barrier);
 	spin_lock_irq(&conf->resync_lock);
@@ -907,7 +1169,11 @@ static void raise_barrier(struct r10conf *conf, int force)
 	spin_unlock_irq(&conf->resync_lock);
 }
 
+<<<<<<< HEAD
 static void lower_barrier(struct r10conf *conf)
+=======
+static void lower_barrier(conf_t *conf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags;
 	spin_lock_irqsave(&conf->resync_lock, flags);
@@ -916,7 +1182,11 @@ static void lower_barrier(struct r10conf *conf)
 	wake_up(&conf->wait_barrier);
 }
 
+<<<<<<< HEAD
 static void wait_barrier(struct r10conf *conf)
+=======
+static void wait_barrier(conf_t *conf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	spin_lock_irq(&conf->resync_lock);
 	if (conf->barrier) {
@@ -943,7 +1213,11 @@ static void wait_barrier(struct r10conf *conf)
 	spin_unlock_irq(&conf->resync_lock);
 }
 
+<<<<<<< HEAD
 static void allow_barrier(struct r10conf *conf)
+=======
+static void allow_barrier(conf_t *conf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags;
 	spin_lock_irqsave(&conf->resync_lock, flags);
@@ -952,17 +1226,29 @@ static void allow_barrier(struct r10conf *conf)
 	wake_up(&conf->wait_barrier);
 }
 
+<<<<<<< HEAD
 static void freeze_array(struct r10conf *conf, int extra)
+=======
+static void freeze_array(conf_t *conf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* stop syncio and normal IO and wait for everything to
 	 * go quiet.
 	 * We increment barrier and nr_waiting, and then
+<<<<<<< HEAD
 	 * wait until nr_pending match nr_queued+extra
+=======
+	 * wait until nr_pending match nr_queued+1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * This is called in the context of one normal IO request
 	 * that has failed. Thus any sync request that might be pending
 	 * will be blocked by nr_pending, and we need to wait for
 	 * pending IO requests to complete or be queued for re-try.
+<<<<<<< HEAD
 	 * Thus the number queued (nr_queued) plus this request (extra)
+=======
+	 * Thus the number queued (nr_queued) plus this request (1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * must match the number of pending IOs (nr_pending) before
 	 * we continue.
 	 */
@@ -970,14 +1256,22 @@ static void freeze_array(struct r10conf *conf, int extra)
 	conf->barrier++;
 	conf->nr_waiting++;
 	wait_event_lock_irq(conf->wait_barrier,
+<<<<<<< HEAD
 			    conf->nr_pending == conf->nr_queued+extra,
+=======
+			    conf->nr_pending == conf->nr_queued+1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    conf->resync_lock,
 			    flush_pending_writes(conf));
 
 	spin_unlock_irq(&conf->resync_lock);
 }
 
+<<<<<<< HEAD
 static void unfreeze_array(struct r10conf *conf)
+=======
+static void unfreeze_array(conf_t *conf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* reverse the effect of the freeze */
 	spin_lock_irq(&conf->resync_lock);
@@ -987,10 +1281,18 @@ static void unfreeze_array(struct r10conf *conf)
 	spin_unlock_irq(&conf->resync_lock);
 }
 
+<<<<<<< HEAD
 static void make_request(struct mddev *mddev, struct bio * bio)
 {
 	struct r10conf *conf = mddev->private;
 	struct r10bio *r10_bio;
+=======
+static int make_request(mddev_t *mddev, struct bio * bio)
+{
+	conf_t *conf = mddev->private;
+	mirror_info_t *mirror;
+	r10bio_t *r10_bio;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bio *read_bio;
 	int i;
 	int chunk_sects = conf->chunk_mask + 1;
@@ -998,6 +1300,7 @@ static void make_request(struct mddev *mddev, struct bio * bio)
 	const unsigned long do_sync = (bio->bi_rw & REQ_SYNC);
 	const unsigned long do_fua = (bio->bi_rw & REQ_FUA);
 	unsigned long flags;
+<<<<<<< HEAD
 	struct md_rdev *blocked_rdev;
 	int plugged;
 	int sectors_handled;
@@ -1006,6 +1309,14 @@ static void make_request(struct mddev *mddev, struct bio * bio)
 	if (unlikely(bio->bi_rw & REQ_FLUSH)) {
 		md_flush_request(mddev, bio);
 		return;
+=======
+	mdk_rdev_t *blocked_rdev;
+	int plugged;
+
+	if (unlikely(bio->bi_rw & REQ_FLUSH)) {
+		md_flush_request(mddev, bio);
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* If this request crosses a chunk boundary, we need to
@@ -1037,8 +1348,15 @@ static void make_request(struct mddev *mddev, struct bio * bio)
 		conf->nr_waiting++;
 		spin_unlock_irq(&conf->resync_lock);
 
+<<<<<<< HEAD
 		make_request(mddev, &bp->bio1);
 		make_request(mddev, &bp->bio2);
+=======
+		if (make_request(mddev, &bp->bio1))
+			generic_make_request(&bp->bio1);
+		if (make_request(mddev, &bp->bio2))
+			generic_make_request(&bp->bio2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		spin_lock_irq(&conf->resync_lock);
 		conf->nr_waiting--;
@@ -1046,14 +1364,22 @@ static void make_request(struct mddev *mddev, struct bio * bio)
 		spin_unlock_irq(&conf->resync_lock);
 
 		bio_pair_release(bp);
+<<<<<<< HEAD
 		return;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bad_map:
 		printk("md/raid10:%s: make_request bug: can't convert block across chunks"
 		       " or bigger than %dk %llu %d\n", mdname(mddev), chunk_sects/2,
 		       (unsigned long long)bio->bi_sector, bio->bi_size >> 10);
 
 		bio_io_error(bio);
+<<<<<<< HEAD
 		return;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	md_write_start(mddev, bio);
@@ -1074,6 +1400,7 @@ static void make_request(struct mddev *mddev, struct bio * bio)
 	r10_bio->sector = bio->bi_sector;
 	r10_bio->state = 0;
 
+<<<<<<< HEAD
 	/* We might need to issue multiple reads to different
 	 * devices if there are bad blocks around, so we keep
 	 * track of the number of reads in bio->bi_phys_segments.
@@ -1084,10 +1411,13 @@ static void make_request(struct mddev *mddev, struct bio * bio)
 	bio->bi_phys_segments = 0;
 	clear_bit(BIO_SEG_VALID, &bio->bi_flags);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rw == READ) {
 		/*
 		 * read balancing logic:
 		 */
+<<<<<<< HEAD
 		struct md_rdev *rdev;
 		int slot;
 
@@ -1109,10 +1439,28 @@ read_again:
 		read_bio->bi_sector = r10_bio->devs[slot].addr +
 			rdev->data_offset;
 		read_bio->bi_bdev = rdev->bdev;
+=======
+		int disk = read_balance(conf, r10_bio);
+		int slot = r10_bio->read_slot;
+		if (disk < 0) {
+			raid_end_bio_io(r10_bio);
+			return 0;
+		}
+		mirror = conf->mirrors + disk;
+
+		read_bio = bio_clone_mddev(bio, GFP_NOIO, mddev);
+
+		r10_bio->devs[slot].bio = read_bio;
+
+		read_bio->bi_sector = r10_bio->devs[slot].addr +
+			mirror->rdev->data_offset;
+		read_bio->bi_bdev = mirror->rdev->bdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		read_bio->bi_end_io = raid10_end_read_request;
 		read_bio->bi_rw = READ | do_sync;
 		read_bio->bi_private = r10_bio;
 
+<<<<<<< HEAD
 		if (max_sectors < r10_bio->sectors) {
 			/* Could not read all from this device, so we will
 			 * need another r10_bio.
@@ -1145,11 +1493,16 @@ read_again:
 		} else
 			generic_make_request(read_bio);
 		return;
+=======
+		generic_make_request(read_bio);
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
 	 * WRITE:
 	 */
+<<<<<<< HEAD
 	if (conf->pending_count >= max_queued_requests) {
 		md_wakeup_thread(mddev->thread);
 		wait_event(conf->wait_barrier,
@@ -1182,11 +1535,27 @@ retry_write:
 			conf->mirrors[d].replacement);
 		if (rdev == rrdev)
 			rrdev = NULL;
+=======
+	/* first select target devices under rcu_lock and
+	 * inc refcount on their rdev.  Record them by setting
+	 * bios[x] to bio
+	 */
+	plugged = mddev_check_plugged(mddev);
+
+	raid10_find_phys(conf, r10_bio);
+ retry_write:
+	blocked_rdev = NULL;
+	rcu_read_lock();
+	for (i = 0;  i < conf->copies; i++) {
+		int d = r10_bio->devs[i].devnum;
+		mdk_rdev_t *rdev = rcu_dereference(conf->mirrors[d].rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rdev && unlikely(test_bit(Blocked, &rdev->flags))) {
 			atomic_inc(&rdev->nr_pending);
 			blocked_rdev = rdev;
 			break;
 		}
+<<<<<<< HEAD
 		if (rrdev && unlikely(test_bit(Blocked, &rrdev->flags))) {
 			atomic_inc(&rrdev->nr_pending);
 			blocked_rdev = rrdev;
@@ -1255,6 +1624,14 @@ retry_write:
 		if (rrdev) {
 			r10_bio->devs[i].repl_bio = bio;
 			atomic_inc(&rrdev->nr_pending);
+=======
+		if (rdev && !test_bit(Faulty, &rdev->flags)) {
+			atomic_inc(&rdev->nr_pending);
+			r10_bio->devs[i].bio = bio;
+		} else {
+			r10_bio->devs[i].bio = NULL;
+			set_bit(R10BIO_Degraded, &r10_bio->state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	rcu_read_unlock();
@@ -1264,11 +1641,16 @@ retry_write:
 		int j;
 		int d;
 
+<<<<<<< HEAD
 		for (j = 0; j < i; j++) {
+=======
+		for (j = 0; j < i; j++)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (r10_bio->devs[j].bio) {
 				d = r10_bio->devs[j].devnum;
 				rdev_dec_pending(conf->mirrors[d].rdev, mddev);
 			}
+<<<<<<< HEAD
 			if (r10_bio->devs[j].repl_bio) {
 				struct md_rdev *rdev;
 				d = r10_bio->devs[j].devnum;
@@ -1281,12 +1663,15 @@ retry_write:
 				rdev_dec_pending(rdev, mddev);
 			}
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		allow_barrier(conf);
 		md_wait_for_blocked_rdev(blocked_rdev, mddev);
 		wait_barrier(conf);
 		goto retry_write;
 	}
 
+<<<<<<< HEAD
 	if (max_sectors < r10_bio->sectors) {
 		/* We are splitting this into multiple parts, so
 		 * we need to prepare for allocating another r10_bio.
@@ -1303,10 +1688,15 @@ retry_write:
 
 	atomic_set(&r10_bio->remaining, 1);
 	bitmap_startwrite(mddev->bitmap, r10_bio->sector, r10_bio->sectors, 0);
+=======
+	atomic_set(&r10_bio->remaining, 1);
+	bitmap_startwrite(mddev->bitmap, bio->bi_sector, r10_bio->sectors, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < conf->copies; i++) {
 		struct bio *mbio;
 		int d = r10_bio->devs[i].devnum;
+<<<<<<< HEAD
 		if (r10_bio->devs[i].bio) {
 			struct md_rdev *rdev = conf->mirrors[d].rdev;
 			mbio = bio_clone_mddev(bio, GFP_NOIO, mddev);
@@ -1375,17 +1765,56 @@ retry_write:
 		goto retry_write;
 	}
 	one_write_done(r10_bio);
+=======
+		if (!r10_bio->devs[i].bio)
+			continue;
+
+		mbio = bio_clone_mddev(bio, GFP_NOIO, mddev);
+		r10_bio->devs[i].bio = mbio;
+
+		mbio->bi_sector	= r10_bio->devs[i].addr+
+			conf->mirrors[d].rdev->data_offset;
+		mbio->bi_bdev = conf->mirrors[d].rdev->bdev;
+		mbio->bi_end_io	= raid10_end_write_request;
+		mbio->bi_rw = WRITE | do_sync | do_fua;
+		mbio->bi_private = r10_bio;
+
+		atomic_inc(&r10_bio->remaining);
+		spin_lock_irqsave(&conf->device_lock, flags);
+		bio_list_add(&conf->pending_bio_list, mbio);
+		spin_unlock_irqrestore(&conf->device_lock, flags);
+	}
+
+	if (atomic_dec_and_test(&r10_bio->remaining)) {
+		/* This matches the end of raid10_end_write_request() */
+		bitmap_endwrite(r10_bio->mddev->bitmap, r10_bio->sector,
+				r10_bio->sectors,
+				!test_bit(R10BIO_Degraded, &r10_bio->state),
+				0);
+		md_write_end(mddev);
+		raid_end_bio_io(r10_bio);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* In case raid10d snuck in to freeze_array */
 	wake_up(&conf->wait_barrier);
 
 	if (do_sync || !mddev->bitmap || !plugged)
 		md_wakeup_thread(mddev->thread);
+<<<<<<< HEAD
 }
 
 static void status(struct seq_file *seq, struct mddev *mddev)
 {
 	struct r10conf *conf = mddev->private;
+=======
+	return 0;
+}
+
+static void status(struct seq_file *seq, mddev_t *mddev)
+{
+	conf_t *conf = mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	if (conf->near_copies < conf->raid_disks)
@@ -1407,6 +1836,7 @@ static void status(struct seq_file *seq, struct mddev *mddev)
 	seq_printf(seq, "]");
 }
 
+<<<<<<< HEAD
 /* check if there are enough drives for
  * every block to appear on atleast one.
  * Don't consider the device numbered 'ignore'
@@ -1435,6 +1865,12 @@ static void error(struct mddev *mddev, struct md_rdev *rdev)
 {
 	char b[BDEVNAME_SIZE];
 	struct r10conf *conf = mddev->private;
+=======
+static void error(mddev_t *mddev, mdk_rdev_t *rdev)
+{
+	char b[BDEVNAME_SIZE];
+	conf_t *conf = mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If it is not operational, then we have already marked it as dead
@@ -1443,9 +1879,19 @@ static void error(struct mddev *mddev, struct md_rdev *rdev)
 	 * else mark the drive as failed
 	 */
 	if (test_bit(In_sync, &rdev->flags)
+<<<<<<< HEAD
 	    && !enough(conf, rdev->raid_disk))
 		/*
 		 * Don't fail the drive, just return an IO error.
+=======
+	    && conf->raid_disks-mddev->degraded == 1)
+		/*
+		 * Don't fail the drive, just return an IO error.
+		 * The test should really be more sophisticated than
+		 * "working_disks == 1", but it isn't critical, and
+		 * can wait until we do more sophisticated "is the drive
+		 * really dead" tests...
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 */
 		return;
 	if (test_and_clear_bit(In_sync, &rdev->flags)) {
@@ -1458,7 +1904,10 @@ static void error(struct mddev *mddev, struct md_rdev *rdev)
 		 */
 		set_bit(MD_RECOVERY_INTR, &mddev->recovery);
 	}
+<<<<<<< HEAD
 	set_bit(Blocked, &rdev->flags);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_bit(Faulty, &rdev->flags);
 	set_bit(MD_CHANGE_DEVS, &mddev->flags);
 	printk(KERN_ALERT
@@ -1468,10 +1917,17 @@ static void error(struct mddev *mddev, struct md_rdev *rdev)
 	       mdname(mddev), conf->raid_disks - mddev->degraded);
 }
 
+<<<<<<< HEAD
 static void print_conf(struct r10conf *conf)
 {
 	int i;
 	struct mirror_info *tmp;
+=======
+static void print_conf(conf_t *conf)
+{
+	int i;
+	mirror_info_t *tmp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	printk(KERN_DEBUG "RAID10 conf printout:\n");
 	if (!conf) {
@@ -1492,7 +1948,11 @@ static void print_conf(struct r10conf *conf)
 	}
 }
 
+<<<<<<< HEAD
 static void close_sync(struct r10conf *conf)
+=======
+static void close_sync(conf_t *conf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	wait_barrier(conf);
 	allow_barrier(conf);
@@ -1501,11 +1961,40 @@ static void close_sync(struct r10conf *conf)
 	conf->r10buf_pool = NULL;
 }
 
+<<<<<<< HEAD
 static int raid10_spare_active(struct mddev *mddev)
 {
 	int i;
 	struct r10conf *conf = mddev->private;
 	struct mirror_info *tmp;
+=======
+/* check if there are enough drives for
+ * every block to appear on atleast one
+ */
+static int enough(conf_t *conf)
+{
+	int first = 0;
+
+	do {
+		int n = conf->copies;
+		int cnt = 0;
+		while (n--) {
+			if (conf->mirrors[first].rdev)
+				cnt++;
+			first = (first+1) % conf->raid_disks;
+		}
+		if (cnt == 0)
+			return 0;
+	} while (first != 0);
+	return 1;
+}
+
+static int raid10_spare_active(mddev_t *mddev)
+{
+	int i;
+	conf_t *conf = mddev->private;
+	mirror_info_t *tmp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int count = 0;
 	unsigned long flags;
 
@@ -1515,6 +2004,7 @@ static int raid10_spare_active(struct mddev *mddev)
 	 */
 	for (i = 0; i < conf->raid_disks; i++) {
 		tmp = conf->mirrors + i;
+<<<<<<< HEAD
 		if (tmp->replacement
 		    && tmp->replacement->recovery_offset == MaxSector
 		    && !test_bit(Faulty, &tmp->replacement->flags)
@@ -1536,6 +2026,11 @@ static int raid10_spare_active(struct mddev *mddev)
 		} else if (tmp->rdev
 			   && !test_bit(Faulty, &tmp->rdev->flags)
 			   && !test_and_set_bit(In_sync, &tmp->rdev->flags)) {
+=======
+		if (tmp->rdev
+		    && !test_bit(Faulty, &tmp->rdev->flags)
+		    && !test_and_set_bit(In_sync, &tmp->rdev->flags)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			count++;
 			sysfs_notify_dirent(tmp->rdev->sysfs_state);
 		}
@@ -1549,6 +2044,7 @@ static int raid10_spare_active(struct mddev *mddev)
 }
 
 
+<<<<<<< HEAD
 static int raid10_add_disk(struct mddev *mddev, struct md_rdev *rdev)
 {
 	struct r10conf *conf = mddev->private;
@@ -1557,28 +2053,48 @@ static int raid10_add_disk(struct mddev *mddev, struct md_rdev *rdev)
 	int first = 0;
 	int last = conf->raid_disks - 1;
 	struct request_queue *q = bdev_get_queue(rdev->bdev);
+=======
+static int raid10_add_disk(mddev_t *mddev, mdk_rdev_t *rdev)
+{
+	conf_t *conf = mddev->private;
+	int err = -EEXIST;
+	int mirror;
+	mirror_info_t *p;
+	int first = 0;
+	int last = conf->raid_disks - 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mddev->recovery_cp < MaxSector)
 		/* only hot-add to in-sync arrays, as recovery is
 		 * very different from resync
 		 */
 		return -EBUSY;
+<<<<<<< HEAD
 	if (rdev->saved_raid_disk < 0 && !enough(conf, -1))
+=======
+	if (!enough(conf))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	if (rdev->raid_disk >= 0)
 		first = last = rdev->raid_disk;
 
+<<<<<<< HEAD
 	if (q->merge_bvec_fn) {
 		set_bit(Unmerged, &rdev->flags);
 		mddev->merge_check_needed = 1;
 	}
 
 	if (rdev->saved_raid_disk >= first &&
+=======
+	if (rdev->saved_raid_disk >= 0 &&
+	    rdev->saved_raid_disk >= first &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    conf->mirrors[rdev->saved_raid_disk].rdev == NULL)
 		mirror = rdev->saved_raid_disk;
 	else
 		mirror = first;
+<<<<<<< HEAD
 	for ( ; mirror <= last ; mirror++) {
 		struct mirror_info *p = &conf->mirrors[mirror];
 		if (p->recovery_disabled == mddev->recovery_disabled)
@@ -1623,11 +2139,40 @@ static int raid10_add_disk(struct mddev *mddev, struct md_rdev *rdev)
 		unfreeze_array(conf);
 		clear_bit(Unmerged, &rdev->flags);
 	}
+=======
+	for ( ; mirror <= last ; mirror++)
+		if ( !(p=conf->mirrors+mirror)->rdev) {
+
+			disk_stack_limits(mddev->gendisk, rdev->bdev,
+					  rdev->data_offset << 9);
+			/* as we don't honour merge_bvec_fn, we must
+			 * never risk violating it, so limit
+			 * ->max_segments to one lying with a single
+			 * page, as a one page request is never in
+			 * violation.
+			 */
+			if (rdev->bdev->bd_disk->queue->merge_bvec_fn) {
+				blk_queue_max_segments(mddev->queue, 1);
+				blk_queue_segment_boundary(mddev->queue,
+							   PAGE_CACHE_SIZE - 1);
+			}
+
+			p->head_position = 0;
+			rdev->raid_disk = mirror;
+			err = 0;
+			if (rdev->saved_raid_disk != mirror)
+				conf->fullsync = 1;
+			rcu_assign_pointer(p->rdev, rdev);
+			break;
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	md_integrity_add_rdev(rdev, mddev);
 	print_conf(conf);
 	return err;
 }
 
+<<<<<<< HEAD
 static int raid10_remove_disk(struct mddev *mddev, struct md_rdev *rdev)
 {
 	struct r10conf *conf = mddev->private;
@@ -1683,6 +2228,41 @@ static int raid10_remove_disk(struct mddev *mddev, struct md_rdev *rdev)
 
 	err = md_integrity_register(mddev);
 
+=======
+static int raid10_remove_disk(mddev_t *mddev, int number)
+{
+	conf_t *conf = mddev->private;
+	int err = 0;
+	mdk_rdev_t *rdev;
+	mirror_info_t *p = conf->mirrors+ number;
+
+	print_conf(conf);
+	rdev = p->rdev;
+	if (rdev) {
+		if (test_bit(In_sync, &rdev->flags) ||
+		    atomic_read(&rdev->nr_pending)) {
+			err = -EBUSY;
+			goto abort;
+		}
+		/* Only remove faulty devices in recovery
+		 * is not possible.
+		 */
+		if (!test_bit(Faulty, &rdev->flags) &&
+		    enough(conf)) {
+			err = -EBUSY;
+			goto abort;
+		}
+		p->rdev = NULL;
+		synchronize_rcu();
+		if (atomic_read(&rdev->nr_pending)) {
+			/* lost the race, try later */
+			err = -EBUSY;
+			p->rdev = rdev;
+			goto abort;
+		}
+		err = md_integrity_register(mddev);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 abort:
 
 	print_conf(conf);
@@ -1692,6 +2272,7 @@ abort:
 
 static void end_sync_read(struct bio *bio, int error)
 {
+<<<<<<< HEAD
 	struct r10bio *r10_bio = bio->bi_private;
 	struct r10conf *conf = r10_bio->mddev->private;
 	int d;
@@ -1706,6 +2287,28 @@ static void end_sync_read(struct bio *bio, int error)
 		 */
 		atomic_add(r10_bio->sectors,
 			   &conf->mirrors[d].rdev->corrected_errors);
+=======
+	r10bio_t *r10_bio = bio->bi_private;
+	conf_t *conf = r10_bio->mddev->private;
+	int i,d;
+
+	for (i=0; i<conf->copies; i++)
+		if (r10_bio->devs[i].bio == bio)
+			break;
+	BUG_ON(i == conf->copies);
+	update_head_pos(i, r10_bio);
+	d = r10_bio->devs[i].devnum;
+
+	if (test_bit(BIO_UPTODATE, &bio->bi_flags))
+		set_bit(R10BIO_Uptodate, &r10_bio->state);
+	else {
+		atomic_add(r10_bio->sectors,
+			   &conf->mirrors[d].rdev->corrected_errors);
+		if (!test_bit(MD_RECOVERY_SYNC, &conf->mddev->recovery))
+			md_error(r10_bio->mddev,
+				 conf->mirrors[d].rdev);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* for reconstruct, we always reschedule after a read.
 	 * for resync, only after all reads
@@ -1720,14 +2323,37 @@ static void end_sync_read(struct bio *bio, int error)
 	}
 }
 
+<<<<<<< HEAD
 static void end_sync_request(struct r10bio *r10_bio)
 {
 	struct mddev *mddev = r10_bio->mddev;
 
+=======
+static void end_sync_write(struct bio *bio, int error)
+{
+	int uptodate = test_bit(BIO_UPTODATE, &bio->bi_flags);
+	r10bio_t *r10_bio = bio->bi_private;
+	mddev_t *mddev = r10_bio->mddev;
+	conf_t *conf = mddev->private;
+	int i,d;
+
+	for (i = 0; i < conf->copies; i++)
+		if (r10_bio->devs[i].bio == bio)
+			break;
+	d = r10_bio->devs[i].devnum;
+
+	if (!uptodate)
+		md_error(mddev, conf->mirrors[d].rdev);
+
+	update_head_pos(i, r10_bio);
+
+	rdev_dec_pending(conf->mirrors[d].rdev, mddev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (atomic_dec_and_test(&r10_bio->remaining)) {
 		if (r10_bio->master_bio == NULL) {
 			/* the primary of several recovery bios */
 			sector_t s = r10_bio->sectors;
+<<<<<<< HEAD
 			if (test_bit(R10BIO_MadeGood, &r10_bio->state) ||
 			    test_bit(R10BIO_WriteError, &r10_bio->state))
 				reschedule_retry(r10_bio);
@@ -1785,6 +2411,17 @@ static void end_sync_write(struct bio *bio, int error)
 	rdev_dec_pending(rdev, mddev);
 
 	end_sync_request(r10_bio);
+=======
+			put_buf(r10_bio);
+			md_done_sync(mddev, s, 1);
+			break;
+		} else {
+			r10bio_t *r10_bio2 = (r10bio_t *)r10_bio->master_bio;
+			put_buf(r10_bio);
+			r10_bio = r10_bio2;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1803,12 +2440,20 @@ static void end_sync_write(struct bio *bio, int error)
  * We check if all blocks are in-sync and only write to blocks that
  * aren't in sync
  */
+<<<<<<< HEAD
 static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
 {
 	struct r10conf *conf = mddev->private;
 	int i, first;
 	struct bio *tbio, *fbio;
 	int vcnt;
+=======
+static void sync_request_write(mddev_t *mddev, r10bio_t *r10_bio)
+{
+	conf_t *conf = mddev->private;
+	int i, first;
+	struct bio *tbio, *fbio;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	atomic_set(&r10_bio->remaining, 1);
 
@@ -1823,10 +2468,17 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
 	first = i;
 	fbio = r10_bio->devs[i].bio;
 
+<<<<<<< HEAD
 	vcnt = (r10_bio->sectors + (PAGE_SIZE >> 9) - 1) >> (PAGE_SHIFT - 9);
 	/* now find blocks with errors */
 	for (i=0 ; i < conf->copies ; i++) {
 		int  j, d;
+=======
+	/* now find blocks with errors */
+	for (i=0 ; i < conf->copies ; i++) {
+		int  j, d;
+		int vcnt = r10_bio->sectors >> (PAGE_SHIFT-9);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		tbio = r10_bio->devs[i].bio;
 
@@ -1842,17 +2494,29 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
 			for (j = 0; j < vcnt; j++)
 				if (memcmp(page_address(fbio->bi_io_vec[j].bv_page),
 					   page_address(tbio->bi_io_vec[j].bv_page),
+<<<<<<< HEAD
 					   fbio->bi_io_vec[j].bv_len))
+=======
+					   PAGE_SIZE))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					break;
 			if (j == vcnt)
 				continue;
 			mddev->resync_mismatches += r10_bio->sectors;
+<<<<<<< HEAD
 			if (test_bit(MD_RECOVERY_CHECK, &mddev->recovery))
 				/* Don't fix anything. */
 				continue;
 		}
 		/* Ok, we need to write this bio, either to correct an
 		 * inconsistency or to correct an unreadable block.
+=======
+		}
+		if (test_bit(MD_RECOVERY_CHECK, &mddev->recovery))
+			/* Don't fix anything. */
+			continue;
+		/* Ok, we need to write this bio
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * First we need to fixup bv_offset, bv_len and
 		 * bi_vecs, as the read request might have corrupted these
 		 */
@@ -1887,6 +2551,7 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
 		generic_make_request(tbio);
 	}
 
+<<<<<<< HEAD
 	/* Now write out to any replacement devices
 	 * that are active
 	 */
@@ -1909,6 +2574,8 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
 		generic_make_request(tbio);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 done:
 	if (atomic_dec_and_test(&r10_bio->remaining)) {
 		md_done_sync(mddev, r10_bio->sectors, 1);
@@ -1926,6 +2593,7 @@ done:
  * The second for writing.
  *
  */
+<<<<<<< HEAD
 static void fix_recovery_read_error(struct r10bio *r10_bio)
 {
 	/* We got a read error during recovery.
@@ -2046,6 +2714,34 @@ static void recovery_request_write(struct mddev *mddev, struct r10bio *r10_bio)
 			     wbio2->bi_size >> 9);
 		generic_make_request(wbio2);
 	}
+=======
+
+static void recovery_request_write(mddev_t *mddev, r10bio_t *r10_bio)
+{
+	conf_t *conf = mddev->private;
+	int i, d;
+	struct bio *bio, *wbio;
+
+
+	/* move the pages across to the second bio
+	 * and submit the write request
+	 */
+	bio = r10_bio->devs[0].bio;
+	wbio = r10_bio->devs[1].bio;
+	for (i=0; i < wbio->bi_vcnt; i++) {
+		struct page *p = bio->bi_io_vec[i].bv_page;
+		bio->bi_io_vec[i].bv_page = wbio->bi_io_vec[i].bv_page;
+		wbio->bi_io_vec[i].bv_page = p;
+	}
+	d = r10_bio->devs[1].devnum;
+
+	atomic_inc(&conf->mirrors[d].rdev->nr_pending);
+	md_sync_acct(conf->mirrors[d].rdev->bdev, wbio->bi_size >> 9);
+	if (test_bit(R10BIO_Uptodate, &r10_bio->state))
+		generic_make_request(wbio);
+	else
+		bio_endio(wbio, -EIO);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -2055,7 +2751,11 @@ static void recovery_request_write(struct mddev *mddev, struct r10bio *r10_bio)
  * since the last recorded read error.
  *
  */
+<<<<<<< HEAD
 static void check_decay_read_errors(struct mddev *mddev, struct md_rdev *rdev)
+=======
+static void check_decay_read_errors(mddev_t *mddev, mdk_rdev_t *rdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct timespec cur_time_mon;
 	unsigned long hours_since_last;
@@ -2086,6 +2786,7 @@ static void check_decay_read_errors(struct mddev *mddev, struct md_rdev *rdev)
 		atomic_set(&rdev->read_errors, read_errors >> hours_since_last);
 }
 
+<<<<<<< HEAD
 static int r10_sync_page_io(struct md_rdev *rdev, sector_t sector,
 			    int sectors, struct page *page, int rw)
 {
@@ -2110,6 +2811,8 @@ static int r10_sync_page_io(struct md_rdev *rdev, sector_t sector,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This is a kernel thread which:
  *
@@ -2118,11 +2821,19 @@ static int r10_sync_page_io(struct md_rdev *rdev, sector_t sector,
  *	3.	Performs writes following reads for array synchronising.
  */
 
+<<<<<<< HEAD
 static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10bio *r10_bio)
 {
 	int sect = 0; /* Offset from r10_bio->sector */
 	int sectors = r10_bio->sectors;
 	struct md_rdev*rdev;
+=======
+static void fix_read_error(conf_t *conf, mddev_t *mddev, r10bio_t *r10_bio)
+{
+	int sect = 0; /* Offset from r10_bio->sector */
+	int sectors = r10_bio->sectors;
+	mdk_rdev_t*rdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int max_read_errors = atomic_read(&mddev->max_corr_read_errors);
 	int d = r10_bio->devs[r10_bio->read_slot].devnum;
 
@@ -2151,7 +2862,10 @@ static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
 		       "md/raid10:%s: %s: Failing raid device\n",
 		       mdname(mddev), b);
 		md_error(mddev, conf->mirrors[d].rdev);
+<<<<<<< HEAD
 		r10_bio->devs[r10_bio->read_slot].bio = IO_BLOCKED;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -2166,6 +2880,7 @@ static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
 
 		rcu_read_lock();
 		do {
+<<<<<<< HEAD
 			sector_t first_bad;
 			int bad_sectors;
 
@@ -2176,6 +2891,12 @@ static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
 			    test_bit(In_sync, &rdev->flags) &&
 			    is_badblock(rdev, r10_bio->devs[sl].addr + sect, s,
 					&first_bad, &bad_sectors) == 0) {
+=======
+			d = r10_bio->devs[sl].devnum;
+			rdev = rcu_dereference(conf->mirrors[d].rdev);
+			if (rdev &&
+			    test_bit(In_sync, &rdev->flags)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				atomic_inc(&rdev->nr_pending);
 				rcu_read_unlock();
 				success = sync_page_io(rdev,
@@ -2195,6 +2916,7 @@ static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
 		rcu_read_unlock();
 
 		if (!success) {
+<<<<<<< HEAD
 			/* Cannot read from anywhere, just mark the block
 			 * as bad on the first device to discourage future
 			 * reads.
@@ -2211,6 +2933,11 @@ static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
 				r10_bio->devs[r10_bio->read_slot].bio
 					= IO_BLOCKED;
 			}
+=======
+			/* Cannot read from anywhere -- bye bye array */
+			int dn = r10_bio->devs[r10_bio->read_slot].devnum;
+			md_error(mddev, conf->mirrors[dn].rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 
@@ -2225,6 +2952,7 @@ static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
 			sl--;
 			d = r10_bio->devs[sl].devnum;
 			rdev = rcu_dereference(conf->mirrors[d].rdev);
+<<<<<<< HEAD
 			if (!rdev ||
 			    test_bit(Unmerged, &rdev->flags) ||
 			    !test_bit(In_sync, &rdev->flags))
@@ -2257,12 +2985,46 @@ static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
 		sl = start;
 		while (sl != r10_bio->read_slot) {
 			char b[BDEVNAME_SIZE];
+=======
+			if (rdev &&
+			    test_bit(In_sync, &rdev->flags)) {
+				atomic_inc(&rdev->nr_pending);
+				rcu_read_unlock();
+				atomic_add(s, &rdev->corrected_errors);
+				if (sync_page_io(rdev,
+						 r10_bio->devs[sl].addr +
+						 sect,
+						 s<<9, conf->tmppage, WRITE, false)
+				    == 0) {
+					/* Well, this device is dead */
+					printk(KERN_NOTICE
+					       "md/raid10:%s: read correction "
+					       "write failed"
+					       " (%d sectors at %llu on %s)\n",
+					       mdname(mddev), s,
+					       (unsigned long long)(
+						       sect + rdev->data_offset),
+					       bdevname(rdev->bdev, b));
+					printk(KERN_NOTICE "md/raid10:%s: %s: failing "
+					       "drive\n",
+					       mdname(mddev),
+					       bdevname(rdev->bdev, b));
+					md_error(mddev, rdev);
+				}
+				rdev_dec_pending(rdev, mddev);
+				rcu_read_lock();
+			}
+		}
+		sl = start;
+		while (sl != r10_bio->read_slot) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (sl==0)
 				sl = conf->copies;
 			sl--;
 			d = r10_bio->devs[sl].devnum;
 			rdev = rcu_dereference(conf->mirrors[d].rdev);
+<<<<<<< HEAD
 			if (!rdev ||
 			    !test_bit(In_sync, &rdev->flags))
 				continue;
@@ -2302,6 +3064,45 @@ static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
 
 			rdev_dec_pending(rdev, mddev);
 			rcu_read_lock();
+=======
+			if (rdev &&
+			    test_bit(In_sync, &rdev->flags)) {
+				char b[BDEVNAME_SIZE];
+				atomic_inc(&rdev->nr_pending);
+				rcu_read_unlock();
+				if (sync_page_io(rdev,
+						 r10_bio->devs[sl].addr +
+						 sect,
+						 s<<9, conf->tmppage,
+						 READ, false) == 0) {
+					/* Well, this device is dead */
+					printk(KERN_NOTICE
+					       "md/raid10:%s: unable to read back "
+					       "corrected sectors"
+					       " (%d sectors at %llu on %s)\n",
+					       mdname(mddev), s,
+					       (unsigned long long)(
+						       sect + rdev->data_offset),
+					       bdevname(rdev->bdev, b));
+					printk(KERN_NOTICE "md/raid10:%s: %s: failing drive\n",
+					       mdname(mddev),
+					       bdevname(rdev->bdev, b));
+
+					md_error(mddev, rdev);
+				} else {
+					printk(KERN_INFO
+					       "md/raid10:%s: read error corrected"
+					       " (%d sectors at %llu on %s)\n",
+					       mdname(mddev), s,
+					       (unsigned long long)(
+						       sect + rdev->data_offset),
+					       bdevname(rdev->bdev, b));
+				}
+
+				rdev_dec_pending(rdev, mddev);
+				rcu_read_lock();
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		rcu_read_unlock();
 
@@ -2310,6 +3111,7 @@ static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
 	}
 }
 
+<<<<<<< HEAD
 static void bi_complete(struct bio *bio, int error)
 {
 	complete((struct completion *)bio->bi_private);
@@ -2575,12 +3377,26 @@ static void raid10d(struct mddev *mddev)
 	unsigned long flags;
 	struct r10conf *conf = mddev->private;
 	struct list_head *head = &conf->retry_list;
+=======
+static void raid10d(mddev_t *mddev)
+{
+	r10bio_t *r10_bio;
+	struct bio *bio;
+	unsigned long flags;
+	conf_t *conf = mddev->private;
+	struct list_head *head = &conf->retry_list;
+	mdk_rdev_t *rdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct blk_plug plug;
 
 	md_check_recovery(mddev);
 
 	blk_start_plug(&plug);
 	for (;;) {
+<<<<<<< HEAD
+=======
+		char b[BDEVNAME_SIZE];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		flush_pending_writes(conf);
 
@@ -2589,13 +3405,18 @@ static void raid10d(struct mddev *mddev)
 			spin_unlock_irqrestore(&conf->device_lock, flags);
 			break;
 		}
+<<<<<<< HEAD
 		r10_bio = list_entry(head->prev, struct r10bio, retry_list);
+=======
+		r10_bio = list_entry(head->prev, r10bio_t, retry_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_del(head->prev);
 		conf->nr_queued--;
 		spin_unlock_irqrestore(&conf->device_lock, flags);
 
 		mddev = r10_bio->mddev;
 		conf = mddev->private;
+<<<<<<< HEAD
 		if (test_bit(R10BIO_MadeGood, &r10_bio->state) ||
 		    test_bit(R10BIO_WriteError, &r10_bio->state))
 			handle_write_completed(conf, r10_bio);
@@ -2616,11 +3437,72 @@ static void raid10d(struct mddev *mddev)
 		cond_resched();
 		if (mddev->flags & ~(1<<MD_CHANGE_PENDING))
 			md_check_recovery(mddev);
+=======
+		if (test_bit(R10BIO_IsSync, &r10_bio->state))
+			sync_request_write(mddev, r10_bio);
+		else if (test_bit(R10BIO_IsRecover, &r10_bio->state))
+			recovery_request_write(mddev, r10_bio);
+		else {
+			int slot = r10_bio->read_slot;
+			int mirror = r10_bio->devs[slot].devnum;
+			/* we got a read error. Maybe the drive is bad.  Maybe just
+			 * the block and we can fix it.
+			 * We freeze all other IO, and try reading the block from
+			 * other devices.  When we find one, we re-write
+			 * and check it that fixes the read error.
+			 * This is all done synchronously while the array is
+			 * frozen.
+			 */
+			if (mddev->ro == 0) {
+				freeze_array(conf);
+				fix_read_error(conf, mddev, r10_bio);
+				unfreeze_array(conf);
+			}
+			rdev_dec_pending(conf->mirrors[mirror].rdev, mddev);
+
+			bio = r10_bio->devs[slot].bio;
+			r10_bio->devs[slot].bio =
+				mddev->ro ? IO_BLOCKED : NULL;
+			mirror = read_balance(conf, r10_bio);
+			if (mirror == -1) {
+				printk(KERN_ALERT "md/raid10:%s: %s: unrecoverable I/O"
+				       " read error for block %llu\n",
+				       mdname(mddev),
+				       bdevname(bio->bi_bdev,b),
+				       (unsigned long long)r10_bio->sector);
+				raid_end_bio_io(r10_bio);
+				bio_put(bio);
+			} else {
+				const unsigned long do_sync = (r10_bio->master_bio->bi_rw & REQ_SYNC);
+				bio_put(bio);
+				slot = r10_bio->read_slot;
+				rdev = conf->mirrors[mirror].rdev;
+				if (printk_ratelimit())
+					printk(KERN_ERR "md/raid10:%s: %s: redirecting sector %llu to"
+					       " another mirror\n",
+					       mdname(mddev),
+					       bdevname(rdev->bdev,b),
+					       (unsigned long long)r10_bio->sector);
+				bio = bio_clone_mddev(r10_bio->master_bio,
+						      GFP_NOIO, mddev);
+				r10_bio->devs[slot].bio = bio;
+				bio->bi_sector = r10_bio->devs[slot].addr
+					+ rdev->data_offset;
+				bio->bi_bdev = rdev->bdev;
+				bio->bi_rw = READ | do_sync;
+				bio->bi_private = r10_bio;
+				bio->bi_end_io = raid10_end_read_request;
+				generic_make_request(bio);
+			}
+		}
+		cond_resched();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	blk_finish_plug(&plug);
 }
 
 
+<<<<<<< HEAD
 static int init_resync(struct r10conf *conf)
 {
 	int buffs;
@@ -2632,6 +3514,14 @@ static int init_resync(struct r10conf *conf)
 	for (i = 0; i < conf->raid_disks; i++)
 		if (conf->mirrors[i].replacement)
 			conf->have_replacement = 1;
+=======
+static int init_resync(conf_t *conf)
+{
+	int buffs;
+
+	buffs = RESYNC_WINDOW / RESYNC_BLOCK_SIZE;
+	BUG_ON(conf->r10buf_pool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	conf->r10buf_pool = mempool_create(buffs, r10buf_pool_alloc, r10buf_pool_free, conf);
 	if (!conf->r10buf_pool)
 		return -ENOMEM;
@@ -2671,16 +3561,28 @@ static int init_resync(struct r10conf *conf)
  *
  */
 
+<<<<<<< HEAD
 static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 			     int *skipped, int go_faster)
 {
 	struct r10conf *conf = mddev->private;
 	struct r10bio *r10_bio;
+=======
+static sector_t sync_request(mddev_t *mddev, sector_t sector_nr,
+			     int *skipped, int go_faster)
+{
+	conf_t *conf = mddev->private;
+	r10bio_t *r10_bio;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bio *biolist = NULL, *bio;
 	sector_t max_sector, nr_sectors;
 	int i;
 	int max_sync;
 	sector_t sync_blocks;
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sector_t sectors_skipped = 0;
 	int chunks_skipped = 0;
 
@@ -2712,6 +3614,7 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 				bitmap_end_sync(mddev->bitmap, sect,
 						&sync_blocks, 1);
 			}
+<<<<<<< HEAD
 		} else {
 			/* completed sync */
 			if ((!mddev->bitmap || conf->fullsync)
@@ -2728,6 +3631,11 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 			}
 			conf->fullsync = 0;
 		}
+=======
+		} else /* completed sync */
+			conf->fullsync = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bitmap_close_sync(mddev->bitmap);
 		close_sync(conf);
 		*skipped = 1;
@@ -2775,11 +3683,16 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 	max_sync = RESYNC_PAGES << (PAGE_SHIFT-9);
 	if (!test_bit(MD_RECOVERY_SYNC, &mddev->recovery)) {
 		/* recovery... the complicated one */
+<<<<<<< HEAD
 		int j;
+=======
+		int j, k;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r10_bio = NULL;
 
 		for (i=0 ; i<conf->raid_disks; i++) {
 			int still_degraded;
+<<<<<<< HEAD
 			struct r10bio *rb2;
 			sector_t sect;
 			int must_sync;
@@ -2792,12 +3705,21 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 			    (mirror->replacement == NULL ||
 			     test_bit(Faulty,
 				      &mirror->replacement->flags)))
+=======
+			r10bio_t *rb2;
+			sector_t sect;
+			int must_sync;
+
+			if (conf->mirrors[i].rdev == NULL ||
+			    test_bit(In_sync, &conf->mirrors[i].rdev->flags)) 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				continue;
 
 			still_degraded = 0;
 			/* want to reconstruct this device */
 			rb2 = r10_bio;
 			sect = raid10_find_virt(conf, sector_nr, i);
+<<<<<<< HEAD
 			if (sect >= mddev->resync_max_sectors) {
 				/* last stripe is not complete - don't
 				 * try to recover this sector.
@@ -2807,13 +3729,20 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 			/* Unless we are doing a full sync, or a replacement
 			 * we only need to recover the block if it is set in
 			 * the bitmap
+=======
+			/* Unless we are doing a full sync, we only need
+			 * to recover the block if it is set in the bitmap
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 */
 			must_sync = bitmap_start_sync(mddev->bitmap, sect,
 						      &sync_blocks, 1);
 			if (sync_blocks < max_sync)
 				max_sync = sync_blocks;
 			if (!must_sync &&
+<<<<<<< HEAD
 			    mirror->replacement == NULL &&
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    !conf->fullsync) {
 				/* yep, skip the sync_blocks here, but don't assume
 				 * that there will never be anything to do here
@@ -2848,6 +3777,7 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 			must_sync = bitmap_start_sync(mddev->bitmap, sect,
 						      &sync_blocks, still_degraded);
 
+<<<<<<< HEAD
 			any_working = 0;
 			for (j=0; j<conf->copies;j++) {
 				int k;
@@ -2856,10 +3786,15 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 				struct md_rdev *rdev;
 				sector_t sector, first_bad;
 				int bad_sectors;
+=======
+			for (j=0; j<conf->copies;j++) {
+				int d = r10_bio->devs[j].devnum;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				if (!conf->mirrors[d].rdev ||
 				    !test_bit(In_sync, &conf->mirrors[d].rdev->flags))
 					continue;
 				/* This is where we read from */
+<<<<<<< HEAD
 				any_working = 1;
 				rdev = conf->mirrors[d].rdev;
 				sector = r10_bio->devs[j].addr;
@@ -2876,22 +3811,34 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 						continue;
 					}
 				}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				bio = r10_bio->devs[0].bio;
 				bio->bi_next = biolist;
 				biolist = bio;
 				bio->bi_private = r10_bio;
 				bio->bi_end_io = end_sync_read;
 				bio->bi_rw = READ;
+<<<<<<< HEAD
 				from_addr = r10_bio->devs[j].addr;
 				bio->bi_sector = from_addr + rdev->data_offset;
 				bio->bi_bdev = rdev->bdev;
 				atomic_inc(&rdev->nr_pending);
 				/* and we write to 'i' (if not in_sync) */
+=======
+				bio->bi_sector = r10_bio->devs[j].addr +
+					conf->mirrors[d].rdev->data_offset;
+				bio->bi_bdev = conf->mirrors[d].rdev->bdev;
+				atomic_inc(&conf->mirrors[d].rdev->nr_pending);
+				atomic_inc(&r10_bio->remaining);
+				/* and we write to 'i' */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				for (k=0; k<conf->copies; k++)
 					if (r10_bio->devs[k].devnum == i)
 						break;
 				BUG_ON(k == conf->copies);
+<<<<<<< HEAD
 				to_addr = r10_bio->devs[k].addr;
 				r10_bio->devs[0].devnum = d;
 				r10_bio->devs[0].addr = from_addr;
@@ -2929,11 +3876,15 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 				if (rdev == NULL || bio == NULL ||
 				    test_bit(Faulty, &rdev->flags))
 					break;
+=======
+				bio = r10_bio->devs[1].bio;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				bio->bi_next = biolist;
 				biolist = bio;
 				bio->bi_private = r10_bio;
 				bio->bi_end_io = end_sync_write;
 				bio->bi_rw = WRITE;
+<<<<<<< HEAD
 				bio->bi_sector = to_addr + rdev->data_offset;
 				bio->bi_bdev = rdev->bdev;
 				atomic_inc(&r10_bio->remaining);
@@ -2942,10 +3893,24 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 			if (j == conf->copies) {
 				/* Cannot recover, so abort the recovery or
 				 * record a bad block */
+=======
+				bio->bi_sector = r10_bio->devs[k].addr +
+					conf->mirrors[i].rdev->data_offset;
+				bio->bi_bdev = conf->mirrors[i].rdev->bdev;
+
+				r10_bio->devs[0].devnum = d;
+				r10_bio->devs[1].devnum = i;
+
+				break;
+			}
+			if (j == conf->copies) {
+				/* Cannot recover, so abort the recovery */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				put_buf(r10_bio);
 				if (rb2)
 					atomic_dec(&rb2->remaining);
 				r10_bio = rb2;
+<<<<<<< HEAD
 				if (any_working) {
 					/* problem is that there are bad blocks
 					 * on other device(s)
@@ -2977,13 +3942,25 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 					mirror->recovery_disabled
 						= mddev->recovery_disabled;
 				}
+=======
+				if (!test_and_set_bit(MD_RECOVERY_INTR,
+						      &mddev->recovery))
+					printk(KERN_INFO "md/raid10:%s: insufficient "
+					       "working devices for recovery.\n",
+					       mdname(mddev));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 			}
 		}
 		if (biolist == NULL) {
 			while (r10_bio) {
+<<<<<<< HEAD
 				struct r10bio *rb2 = r10_bio;
 				r10_bio = (struct r10bio*) rb2->master_bio;
+=======
+				r10bio_t *rb2 = r10_bio;
+				r10_bio = (r10bio_t*) rb2->master_bio;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				rb2->master_bio = NULL;
 				put_buf(rb2);
 			}
@@ -3020,18 +3997,22 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 
 		for (i=0; i<conf->copies; i++) {
 			int d = r10_bio->devs[i].devnum;
+<<<<<<< HEAD
 			sector_t first_bad, sector;
 			int bad_sectors;
 
 			if (r10_bio->devs[i].repl_bio)
 				r10_bio->devs[i].repl_bio->bi_end_io = NULL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			bio = r10_bio->devs[i].bio;
 			bio->bi_end_io = NULL;
 			clear_bit(BIO_UPTODATE, &bio->bi_flags);
 			if (conf->mirrors[d].rdev == NULL ||
 			    test_bit(Faulty, &conf->mirrors[d].rdev->flags))
 				continue;
+<<<<<<< HEAD
 			sector = r10_bio->devs[i].addr;
 			if (is_badblock(conf->mirrors[d].rdev,
 					sector, max_sync,
@@ -3045,6 +4026,8 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 					continue;
 				}
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			atomic_inc(&conf->mirrors[d].rdev->nr_pending);
 			atomic_inc(&r10_bio->remaining);
 			bio->bi_next = biolist;
@@ -3052,6 +4035,7 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 			bio->bi_private = r10_bio;
 			bio->bi_end_io = end_sync_read;
 			bio->bi_rw = READ;
+<<<<<<< HEAD
 			bio->bi_sector = sector +
 				conf->mirrors[d].rdev->data_offset;
 			bio->bi_bdev = conf->mirrors[d].rdev->bdev;
@@ -3077,6 +4061,12 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 				conf->mirrors[d].replacement->data_offset;
 			bio->bi_bdev = conf->mirrors[d].replacement->bdev;
 			count++;
+=======
+			bio->bi_sector = r10_bio->devs[i].addr +
+				conf->mirrors[d].rdev->data_offset;
+			bio->bi_bdev = conf->mirrors[d].rdev->bdev;
+			count++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (count < 2) {
@@ -3085,11 +4075,14 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 				if (r10_bio->devs[i].bio->bi_end_io)
 					rdev_dec_pending(conf->mirrors[d].rdev,
 							 mddev);
+<<<<<<< HEAD
 				if (r10_bio->devs[i].repl_bio &&
 				    r10_bio->devs[i].repl_bio->bi_end_io)
 					rdev_dec_pending(
 						conf->mirrors[d].replacement,
 						mddev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			put_buf(r10_bio);
 			biolist = NULL;
@@ -3165,8 +4158,12 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 	return sectors_skipped + nr_sectors;
  giveup:
 	/* There is nowhere to write, so all non-sync
+<<<<<<< HEAD
 	 * drives must be failed or in resync, all drives
 	 * have a bad block, so try the next chunk...
+=======
+	 * drives must be failed, so try the next chunk...
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	if (sector_nr + max_sync < max_sector)
 		max_sector = sector_nr + max_sync;
@@ -3178,10 +4175,17 @@ static sector_t sync_request(struct mddev *mddev, sector_t sector_nr,
 }
 
 static sector_t
+<<<<<<< HEAD
 raid10_size(struct mddev *mddev, sector_t sectors, int raid_disks)
 {
 	sector_t size;
 	struct r10conf *conf = mddev->private;
+=======
+raid10_size(mddev_t *mddev, sector_t sectors, int raid_disks)
+{
+	sector_t size;
+	conf_t *conf = mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!raid_disks)
 		raid_disks = conf->raid_disks;
@@ -3196,6 +4200,7 @@ raid10_size(struct mddev *mddev, sector_t sectors, int raid_disks)
 	return size << conf->chunk_shift;
 }
 
+<<<<<<< HEAD
 static void calc_sectors(struct r10conf *conf, sector_t size)
 {
 	/* Calculate the number of sectors-per-device that will
@@ -3230,6 +4235,14 @@ static struct r10conf *setup_conf(struct mddev *mddev)
 {
 	struct r10conf *conf = NULL;
 	int nc, fc, fo;
+=======
+
+static conf_t *setup_conf(mddev_t *mddev)
+{
+	conf_t *conf = NULL;
+	int nc, fc, fo;
+	sector_t stride, size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err = -EINVAL;
 
 	if (mddev->new_chunk_sectors < (PAGE_SIZE >> 9) ||
@@ -3252,7 +4265,11 @@ static struct r10conf *setup_conf(struct mddev *mddev)
 	}
 
 	err = -ENOMEM;
+<<<<<<< HEAD
 	conf = kzalloc(sizeof(struct r10conf), GFP_KERNEL);
+=======
+	conf = kzalloc(sizeof(conf_t), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!conf)
 		goto out;
 
@@ -3279,7 +4296,32 @@ static struct r10conf *setup_conf(struct mddev *mddev)
 	if (!conf->r10bio_pool)
 		goto out;
 
+<<<<<<< HEAD
 	calc_sectors(conf, mddev->dev_sectors);
+=======
+	size = mddev->dev_sectors >> conf->chunk_shift;
+	sector_div(size, fc);
+	size = size * conf->raid_disks;
+	sector_div(size, nc);
+	/* 'size' is now the number of chunks in the array */
+	/* calculate "used chunks per device" in 'stride' */
+	stride = size * conf->copies;
+
+	/* We need to round up when dividing by raid_disks to
+	 * get the stride size.
+	 */
+	stride += conf->raid_disks - 1;
+	sector_div(stride, conf->raid_disks);
+
+	conf->dev_sectors = stride << conf->chunk_shift;
+
+	if (fo)
+		stride = 1;
+	else
+		sector_div(stride, fc);
+	conf->stride = stride << conf->chunk_shift;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_init(&conf->device_lock);
 	INIT_LIST_HEAD(&conf->retry_list);
@@ -3307,12 +4349,21 @@ static struct r10conf *setup_conf(struct mddev *mddev)
 	return ERR_PTR(err);
 }
 
+<<<<<<< HEAD
 static int run(struct mddev *mddev)
 {
 	struct r10conf *conf;
 	int i, disk_idx, chunk_size;
 	struct mirror_info *disk;
 	struct md_rdev *rdev;
+=======
+static int run(mddev_t *mddev)
+{
+	conf_t *conf;
+	int i, disk_idx, chunk_size;
+	mirror_info_t *disk;
+	mdk_rdev_t *rdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sector_t size;
 
 	/*
@@ -3342,14 +4393,19 @@ static int run(struct mddev *mddev)
 		blk_queue_io_opt(mddev->queue, chunk_size *
 				 (conf->raid_disks / conf->near_copies));
 
+<<<<<<< HEAD
 	rdev_for_each(rdev, mddev) {
 		struct request_queue *q;
+=======
+	list_for_each_entry(rdev, &mddev->disks, same_set) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		disk_idx = rdev->raid_disk;
 		if (disk_idx >= conf->raid_disks
 		    || disk_idx < 0)
 			continue;
 		disk = conf->mirrors + disk_idx;
 
+<<<<<<< HEAD
 		if (test_bit(Replacement, &rdev->flags)) {
 			if (disk->replacement)
 				goto out_free_conf;
@@ -3365,11 +4421,29 @@ static int run(struct mddev *mddev)
 
 		disk_stack_limits(mddev->gendisk, rdev->bdev,
 				  rdev->data_offset << 9);
+=======
+		disk->rdev = rdev;
+		disk_stack_limits(mddev->gendisk, rdev->bdev,
+				  rdev->data_offset << 9);
+		/* as we don't honour merge_bvec_fn, we must never risk
+		 * violating it, so limit max_segments to 1 lying
+		 * within a single page.
+		 */
+		if (rdev->bdev->bd_disk->queue->merge_bvec_fn) {
+			blk_queue_max_segments(mddev->queue, 1);
+			blk_queue_segment_boundary(mddev->queue,
+						   PAGE_CACHE_SIZE - 1);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		disk->head_position = 0;
 	}
 	/* need to check that every block has at least one working mirror */
+<<<<<<< HEAD
 	if (!enough(conf, -1)) {
+=======
+	if (!enough(conf)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR "md/raid10:%s: not enough operational mirrors.\n",
 		       mdname(mddev));
 		goto out_free_conf;
@@ -3380,6 +4454,7 @@ static int run(struct mddev *mddev)
 
 		disk = conf->mirrors + i;
 
+<<<<<<< HEAD
 		if (!disk->rdev && disk->replacement) {
 			/* The replacement is all we have - use it */
 			disk->rdev = disk->replacement;
@@ -3387,6 +4462,8 @@ static int run(struct mddev *mddev)
 			clear_bit(Replacement, &disk->rdev->flags);
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!disk->rdev ||
 		    !test_bit(In_sync, &disk->rdev->flags)) {
 			disk->head_position = 0;
@@ -3394,7 +4471,10 @@ static int run(struct mddev *mddev)
 			if (disk->rdev)
 				conf->fullsync = 1;
 		}
+<<<<<<< HEAD
 		disk->recovery_disabled = mddev->recovery_disabled - 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (mddev->recovery_cp != MaxSector)
@@ -3428,7 +4508,12 @@ static int run(struct mddev *mddev)
 			mddev->queue->backing_dev_info.ra_pages = 2* stripe;
 	}
 
+<<<<<<< HEAD
 	blk_queue_merge_bvec(mddev->queue, raid10_mergeable_bvec);
+=======
+	if (conf->near_copies < conf->raid_disks)
+		blk_queue_merge_bvec(mddev->queue, raid10_mergeable_bvec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (md_integrity_register(mddev))
 		goto out_free_conf;
@@ -3447,9 +4532,15 @@ out:
 	return -EIO;
 }
 
+<<<<<<< HEAD
 static int stop(struct mddev *mddev)
 {
 	struct r10conf *conf = mddev->private;
+=======
+static int stop(mddev_t *mddev)
+{
+	conf_t *conf = mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	raise_barrier(conf, 0);
 	lower_barrier(conf);
@@ -3464,9 +4555,15 @@ static int stop(struct mddev *mddev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void raid10_quiesce(struct mddev *mddev, int state)
 {
 	struct r10conf *conf = mddev->private;
+=======
+static void raid10_quiesce(mddev_t *mddev, int state)
+{
+	conf_t *conf = mddev->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch(state) {
 	case 1:
@@ -3478,6 +4575,7 @@ static void raid10_quiesce(struct mddev *mddev, int state)
 	}
 }
 
+<<<<<<< HEAD
 static int raid10_resize(struct mddev *mddev, sector_t sectors)
 {
 	/* Resize of 'far' arrays is not supported.
@@ -3520,6 +4618,12 @@ static void *raid10_takeover_raid0(struct mddev *mddev)
 {
 	struct md_rdev *rdev;
 	struct r10conf *conf;
+=======
+static void *raid10_takeover_raid0(mddev_t *mddev)
+{
+	mdk_rdev_t *rdev;
+	conf_t *conf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mddev->degraded > 0) {
 		printk(KERN_ERR "md/raid10:%s: Error: degraded raid0!\n",
@@ -3539,7 +4643,11 @@ static void *raid10_takeover_raid0(struct mddev *mddev)
 
 	conf = setup_conf(mddev);
 	if (!IS_ERR(conf)) {
+<<<<<<< HEAD
 		rdev_for_each(rdev, mddev)
+=======
+		list_for_each_entry(rdev, &mddev->disks, same_set)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (rdev->raid_disk >= 0)
 				rdev->new_raid_disk = rdev->raid_disk * 2;
 		conf->barrier = 1;
@@ -3548,17 +4656,28 @@ static void *raid10_takeover_raid0(struct mddev *mddev)
 	return conf;
 }
 
+<<<<<<< HEAD
 static void *raid10_takeover(struct mddev *mddev)
 {
 	struct r0conf *raid0_conf;
+=======
+static void *raid10_takeover(mddev_t *mddev)
+{
+	struct raid0_private_data *raid0_priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* raid10 can take over:
 	 *  raid0 - providing it has only two drives
 	 */
 	if (mddev->level == 0) {
 		/* for raid0 takeover only one zone is supported */
+<<<<<<< HEAD
 		raid0_conf = mddev->private;
 		if (raid0_conf->nr_strip_zones > 1) {
+=======
+		raid0_priv = mddev->private;
+		if (raid0_priv->nr_strip_zones > 1) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			printk(KERN_ERR "md/raid10:%s: cannot takeover raid 0"
 			       " with more than one zone.\n",
 			       mdname(mddev));
@@ -3569,7 +4688,11 @@ static void *raid10_takeover(struct mddev *mddev)
 	return ERR_PTR(-EINVAL);
 }
 
+<<<<<<< HEAD
 static struct md_personality raid10_personality =
+=======
+static struct mdk_personality raid10_personality =
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	.name		= "raid10",
 	.level		= 10,
@@ -3585,7 +4708,10 @@ static struct md_personality raid10_personality =
 	.sync_request	= sync_request,
 	.quiesce	= raid10_quiesce,
 	.size		= raid10_size,
+<<<<<<< HEAD
 	.resize		= raid10_resize,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.takeover	= raid10_takeover,
 };
 
@@ -3606,5 +4732,8 @@ MODULE_DESCRIPTION("RAID10 (striped mirror) personality for MD");
 MODULE_ALIAS("md-personality-9"); /* RAID10 */
 MODULE_ALIAS("md-raid10");
 MODULE_ALIAS("md-level-10");
+<<<<<<< HEAD
 
 module_param(max_queued_requests, int, S_IRUGO|S_IWUSR);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

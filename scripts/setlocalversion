@@ -75,7 +75,12 @@ scm_version()
 		[ -w . ] && git update-index --refresh --unmerged > /dev/null
 
 		# Check for uncommitted changes
+<<<<<<< HEAD
 		if git diff-index --name-only HEAD | grep -qv "^scripts/package"; then
+=======
+		if git diff-index --name-only HEAD | grep -v "^scripts/package" \
+		    | read dummy; then
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			printf '%s' -dirty
 		fi
 

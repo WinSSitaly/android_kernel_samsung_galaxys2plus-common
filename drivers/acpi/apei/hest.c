@@ -41,7 +41,11 @@
 
 #define HEST_PFX "HEST: "
 
+<<<<<<< HEAD
 bool hest_disable;
+=======
+int hest_disable;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL_GPL(hest_disable);
 
 /* HEST table parsing */
@@ -221,15 +225,23 @@ void __init acpi_hest_init(void)
 
 	status = acpi_get_table(ACPI_SIG_HEST, 0,
 				(struct acpi_table_header **)&hest_tab);
+<<<<<<< HEAD
 	if (status == AE_NOT_FOUND)
 		goto err;
 	else if (ACPI_FAILURE(status)) {
+=======
+	if (status == AE_NOT_FOUND) {
+		pr_info(HEST_PFX "Table not found.\n");
+		goto err;
+	} else if (ACPI_FAILURE(status)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		const char *msg = acpi_format_exception(status);
 		pr_err(HEST_PFX "Failed to get table, %s\n", msg);
 		rc = -EINVAL;
 		goto err;
 	}
 
+<<<<<<< HEAD
 	if (!ghes_disable) {
 		rc = apei_hest_parse(hest_parse_ghes_count, &ghes_count);
 		if (rc)
@@ -241,6 +253,18 @@ void __init acpi_hest_init(void)
 
 	pr_info(HEST_PFX "Table parsing has been initialized.\n");
 	return;
+=======
+	rc = apei_hest_parse(hest_parse_ghes_count, &ghes_count);
+	if (rc)
+		goto err;
+
+	rc = hest_ghes_dev_register(ghes_count);
+	if (!rc) {
+		pr_info(HEST_PFX "Table parsing has been initialized.\n");
+		return;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err:
 	hest_disable = 1;
 }

@@ -19,6 +19,7 @@
 #include <linux/irq.h>
 #include <linux/bitops.h>
 #include <linux/gpio.h>
+<<<<<<< HEAD
 #include <linux/slab.h>
 #include <linux/ioport.h>
 
@@ -88,6 +89,8 @@ static void __iomem *pfc_phys_to_virt(struct pinmux_info *pip,
 	/* no windows defined, register must be 1:1 mapped virt:phys */
 	return (void __iomem *)address;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int enum_in_range(pinmux_enum_t enum_id, struct pinmux_range *r)
 {
@@ -100,28 +103,45 @@ static int enum_in_range(pinmux_enum_t enum_id, struct pinmux_range *r)
 	return 1;
 }
 
+<<<<<<< HEAD
 static unsigned long gpio_read_raw_reg(void __iomem *mapped_reg,
+=======
+static unsigned long gpio_read_raw_reg(unsigned long reg,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				       unsigned long reg_width)
 {
 	switch (reg_width) {
 	case 8:
+<<<<<<< HEAD
 		return ioread8(mapped_reg);
 	case 16:
 		return ioread16(mapped_reg);
 	case 32:
 		return ioread32(mapped_reg);
+=======
+		return __raw_readb(reg);
+	case 16:
+		return __raw_readw(reg);
+	case 32:
+		return __raw_readl(reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	BUG();
 	return 0;
 }
 
+<<<<<<< HEAD
 static void gpio_write_raw_reg(void __iomem *mapped_reg,
+=======
+static void gpio_write_raw_reg(unsigned long reg,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       unsigned long reg_width,
 			       unsigned long data)
 {
 	switch (reg_width) {
 	case 8:
+<<<<<<< HEAD
 		iowrite8(data, mapped_reg);
 		return;
 	case 16:
@@ -129,12 +149,22 @@ static void gpio_write_raw_reg(void __iomem *mapped_reg,
 		return;
 	case 32:
 		iowrite32(data, mapped_reg);
+=======
+		__raw_writeb(data, reg);
+		return;
+	case 16:
+		__raw_writew(data, reg);
+		return;
+	case 32:
+		__raw_writel(data, reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
 	BUG();
 }
 
+<<<<<<< HEAD
 static int gpio_read_bit(struct pinmux_data_reg *dr,
 			 unsigned long in_pos)
 {
@@ -148,6 +178,8 @@ static int gpio_read_bit(struct pinmux_data_reg *dr,
 	return (gpio_read_raw_reg(dr->mapped_reg, dr->reg_width) >> pos) & 1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void gpio_write_bit(struct pinmux_data_reg *dr,
 			   unsigned long in_pos, unsigned long value)
 {
@@ -164,6 +196,7 @@ static void gpio_write_bit(struct pinmux_data_reg *dr,
 	else
 		clear_bit(pos, &dr->reg_shadow);
 
+<<<<<<< HEAD
 	gpio_write_raw_reg(dr->mapped_reg, dr->reg_width, dr->reg_shadow);
 }
 
@@ -217,10 +250,45 @@ static void write_config_reg(struct pinmux_info *gpioc,
 	pr_debug("write_reg addr = %lx, value = %ld, field = %ld, "
 		 "r_width = %ld, f_width = %ld\n",
 		 crp->reg, value, field, crp->reg_width, crp->field_width);
+=======
+	gpio_write_raw_reg(dr->reg, dr->reg_width, dr->reg_shadow);
+}
+
+static int gpio_read_reg(unsigned long reg, unsigned long reg_width,
+			 unsigned long field_width, unsigned long in_pos)
+{
+	unsigned long data, mask, pos;
+
+	data = 0;
+	mask = (1 << field_width) - 1;
+	pos = reg_width - ((in_pos + 1) * field_width);
+
+	pr_debug("read_reg: addr = %lx, pos = %ld, "
+		 "r_width = %ld, f_width = %ld\n",
+		 reg, pos, reg_width, field_width);
+
+	data = gpio_read_raw_reg(reg, reg_width);
+	return (data >> pos) & mask;
+}
+
+static void gpio_write_reg(unsigned long reg, unsigned long reg_width,
+			   unsigned long field_width, unsigned long in_pos,
+			   unsigned long value)
+{
+	unsigned long mask, pos;
+
+	mask = (1 << field_width) - 1;
+	pos = reg_width - ((in_pos + 1) * field_width);
+
+	pr_debug("write_reg addr = %lx, value = %ld, pos = %ld, "
+		 "r_width = %ld, f_width = %ld\n",
+		 reg, value, pos, reg_width, field_width);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mask = ~(mask << pos);
 	value = value << pos;
 
+<<<<<<< HEAD
 	data = gpio_read_raw_reg(mapped_reg, crp->reg_width);
 	data &= mask;
 	data |= value;
@@ -230,6 +298,19 @@ static void write_config_reg(struct pinmux_info *gpioc,
 				   32, ~data);
 
 	gpio_write_raw_reg(mapped_reg, crp->reg_width, data);
+=======
+	switch (reg_width) {
+	case 8:
+		__raw_writeb((__raw_readb(reg) & mask) | value, reg);
+		break;
+	case 16:
+		__raw_writew((__raw_readw(reg) & mask) | value, reg);
+		break;
+	case 32:
+		__raw_writel((__raw_readl(reg) & mask) | value, reg);
+		break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int setup_data_reg(struct pinmux_info *gpioc, unsigned gpio)
@@ -248,8 +329,11 @@ static int setup_data_reg(struct pinmux_info *gpioc, unsigned gpio)
 		if (!data_reg->reg_width)
 			break;
 
+<<<<<<< HEAD
 		data_reg->mapped_reg = pfc_phys_to_virt(gpioc, data_reg->reg);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (n = 0; n < data_reg->reg_width; n++) {
 			if (data_reg->enum_ids[n] == gpiop->enum_id) {
 				gpiop->flags &= ~PINMUX_FLAG_DREG;
@@ -282,8 +366,12 @@ static void setup_data_regs(struct pinmux_info *gpioc)
 		if (!drp->reg_width)
 			break;
 
+<<<<<<< HEAD
 		drp->reg_shadow = gpio_read_raw_reg(drp->mapped_reg,
 						    drp->reg_width);
+=======
+		drp->reg_shadow = gpio_read_raw_reg(drp->reg, drp->reg_width);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		k++;
 	}
 }
@@ -305,6 +393,7 @@ static int get_data_reg(struct pinmux_info *gpioc, unsigned gpio,
 }
 
 static int get_config_reg(struct pinmux_info *gpioc, pinmux_enum_t enum_id,
+<<<<<<< HEAD
 			  struct pinmux_cfg_reg **crp,
 			  int *fieldp, int *valuep,
 			  unsigned long **cntp)
@@ -312,6 +401,14 @@ static int get_config_reg(struct pinmux_info *gpioc, pinmux_enum_t enum_id,
 	struct pinmux_cfg_reg *config_reg;
 	unsigned long r_width, f_width, curr_width, ncomb;
 	int k, m, n, pos, bit_pos;
+=======
+			  struct pinmux_cfg_reg **crp, int *indexp,
+			  unsigned long **cntp)
+{
+	struct pinmux_cfg_reg *config_reg;
+	unsigned long r_width, f_width;
+	int k, n;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	k = 0;
 	while (1) {
@@ -322,6 +419,7 @@ static int get_config_reg(struct pinmux_info *gpioc, pinmux_enum_t enum_id,
 
 		if (!r_width)
 			break;
+<<<<<<< HEAD
 
 		pos = 0;
 		m = 0;
@@ -343,6 +441,15 @@ static int get_config_reg(struct pinmux_info *gpioc, pinmux_enum_t enum_id,
 			}
 			pos += ncomb;
 			m++;
+=======
+		for (n = 0; n < (r_width / f_width) * 1 << f_width; n++) {
+			if (config_reg->enum_ids[n] == enum_id) {
+				*crp = config_reg;
+				*indexp = n;
+				*cntp = &config_reg->cnt[n / (1 << f_width)];
+				return 0;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		k++;
 	}
@@ -380,6 +487,39 @@ static int get_gpio_enum_id(struct pinmux_info *gpioc, unsigned gpio,
 	return -1;
 }
 
+<<<<<<< HEAD
+=======
+static void write_config_reg(struct pinmux_info *gpioc,
+			     struct pinmux_cfg_reg *crp,
+			     int index)
+{
+	unsigned long ncomb, pos, value;
+
+	ncomb = 1 << crp->field_width;
+	pos = index / ncomb;
+	value = index % ncomb;
+
+	gpio_write_reg(crp->reg, crp->reg_width, crp->field_width, pos, value);
+}
+
+static int check_config_reg(struct pinmux_info *gpioc,
+			    struct pinmux_cfg_reg *crp,
+			    int index)
+{
+	unsigned long ncomb, pos, value;
+
+	ncomb = 1 << crp->field_width;
+	pos = index / ncomb;
+	value = index % ncomb;
+
+	if (gpio_read_reg(crp->reg, crp->reg_width,
+			  crp->field_width, pos) == value)
+		return 0;
+
+	return -1;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum { GPIO_CFG_DRYRUN, GPIO_CFG_REQ, GPIO_CFG_FREE };
 
 static int pinmux_config_gpio(struct pinmux_info *gpioc, unsigned gpio,
@@ -388,7 +528,11 @@ static int pinmux_config_gpio(struct pinmux_info *gpioc, unsigned gpio,
 	struct pinmux_cfg_reg *cr = NULL;
 	pinmux_enum_t enum_id;
 	struct pinmux_range *range;
+<<<<<<< HEAD
 	int in_range, pos, field, value;
+=======
+	int in_range, pos, index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long *cntp;
 
 	switch (pinmux_type) {
@@ -419,8 +563,12 @@ static int pinmux_config_gpio(struct pinmux_info *gpioc, unsigned gpio,
 
 	pos = 0;
 	enum_id = 0;
+<<<<<<< HEAD
 	field = 0;
 	value = 0;
+=======
+	index = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (1) {
 		pos = get_gpio_enum_id(gpioc, gpio, pos, &enum_id);
 		if (pos <= 0)
@@ -467,19 +615,31 @@ static int pinmux_config_gpio(struct pinmux_info *gpioc, unsigned gpio,
 		if (!in_range)
 			continue;
 
+<<<<<<< HEAD
 		if (get_config_reg(gpioc, enum_id, &cr,
 				   &field, &value, &cntp) != 0)
+=======
+		if (get_config_reg(gpioc, enum_id, &cr, &index, &cntp) != 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out_err;
 
 		switch (cfg_mode) {
 		case GPIO_CFG_DRYRUN:
+<<<<<<< HEAD
 			if (!*cntp ||
 			    (read_config_reg(gpioc, cr, field) != value))
+=======
+			if (!*cntp || !check_config_reg(gpioc, cr, index))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				continue;
 			break;
 
 		case GPIO_CFG_REQ:
+<<<<<<< HEAD
 			write_config_reg(gpioc, cr, field, value);
+=======
+			write_config_reg(gpioc, cr, index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			*cntp = *cntp + 1;
 			break;
 
@@ -656,7 +816,11 @@ static int sh_gpio_get_value(struct pinmux_info *gpioc, unsigned gpio)
 	if (!gpioc || get_data_reg(gpioc, gpio, &dr, &bit) != 0)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	return gpio_read_bit(dr, bit);
+=======
+	return gpio_read_reg(dr->reg, dr->reg_width, 1, bit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int sh_gpio_get(struct gpio_chip *chip, unsigned offset)
@@ -669,6 +833,7 @@ static void sh_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
 	sh_gpio_set_value(chip_to_pinmux(chip), offset, value);
 }
 
+<<<<<<< HEAD
 static int sh_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
 {
 	struct pinmux_info *gpioc = chip_to_pinmux(chip);
@@ -699,14 +864,22 @@ int register_pinmux(struct pinmux_info *pip)
 {
 	struct gpio_chip *chip = &pip->chip;
 	int ret;
+=======
+int register_pinmux(struct pinmux_info *pip)
+{
+	struct gpio_chip *chip = &pip->chip;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pr_info("%s handling gpio %d -> %d\n",
 		pip->name, pip->first_gpio, pip->last_gpio);
 
+<<<<<<< HEAD
 	ret = pfc_ioremap(pip);
 	if (ret < 0)
 		return ret;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	setup_data_regs(pip);
 
 	chip->request = sh_gpio_request;
@@ -715,7 +888,10 @@ int register_pinmux(struct pinmux_info *pip)
 	chip->get = sh_gpio_get;
 	chip->direction_output = sh_gpio_direction_output;
 	chip->set = sh_gpio_set;
+<<<<<<< HEAD
 	chip->to_irq = sh_gpio_to_irq;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	WARN_ON(pip->first_gpio != 0); /* needs testing */
 
@@ -724,16 +900,24 @@ int register_pinmux(struct pinmux_info *pip)
 	chip->base = pip->first_gpio;
 	chip->ngpio = (pip->last_gpio - pip->first_gpio) + 1;
 
+<<<<<<< HEAD
 	ret = gpiochip_add(chip);
 	if (ret < 0)
 		pfc_iounmap(pip);
 
 	return ret;
+=======
+	return gpiochip_add(chip);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int unregister_pinmux(struct pinmux_info *pip)
 {
 	pr_info("%s deregistering\n", pip->name);
+<<<<<<< HEAD
 	pfc_iounmap(pip);
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return gpiochip_remove(&pip->chip);
 }

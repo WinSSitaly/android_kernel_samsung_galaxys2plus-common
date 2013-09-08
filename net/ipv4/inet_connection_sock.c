@@ -123,6 +123,7 @@ again:
 						smallest_size = tb->num_owners;
 						smallest_rover = rover;
 						if (atomic_read(&hashinfo->bsockets) > (high - low) + 1) {
+<<<<<<< HEAD
 							snum = smallest_rover;
 							goto tb_found;
 						}
@@ -131,6 +132,13 @@ again:
 						snum = rover;
 						goto tb_found;
 					}
+=======
+							spin_unlock(&head->lock);
+							snum = smallest_rover;
+							goto have_snum;
+						}
+					}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					goto next;
 				}
 			break;
@@ -421,7 +429,11 @@ static inline u32 inet_synq_hash(const __be32 raddr, const __be16 rport,
 	return jhash_2words((__force u32)raddr, (__force u32)rport, rnd) & (synq_hsize - 1);
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AF_INET_FAMILY(fam) ((fam) == AF_INET)
 #else
 #define AF_INET_FAMILY(fam) 1
@@ -591,6 +603,7 @@ void inet_csk_reqsk_queue_prune(struct sock *parent,
 }
 EXPORT_SYMBOL_GPL(inet_csk_reqsk_queue_prune);
 
+<<<<<<< HEAD
 /**
  *	inet_csk_clone_lock - clone an inet socket, and lock its clone
  *	@sk: the socket to clone
@@ -604,6 +617,12 @@ struct sock *inet_csk_clone_lock(const struct sock *sk,
 				 const gfp_t priority)
 {
 	struct sock *newsk = sk_clone_lock(sk, priority);
+=======
+struct sock *inet_csk_clone(struct sock *sk, const struct request_sock *req,
+			    const gfp_t priority)
+{
+	struct sock *newsk = sk_clone(sk, priority);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (newsk != NULL) {
 		struct inet_connection_sock *newicsk = inet_csk(newsk);
@@ -627,7 +646,11 @@ struct sock *inet_csk_clone_lock(const struct sock *sk,
 	}
 	return newsk;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(inet_csk_clone_lock);
+=======
+EXPORT_SYMBOL_GPL(inet_csk_clone);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * At this point, there should be no process reference to this
@@ -659,6 +682,7 @@ void inet_csk_destroy_sock(struct sock *sk)
 }
 EXPORT_SYMBOL(inet_csk_destroy_sock);
 
+<<<<<<< HEAD
 /* This function allows to force a closure of a socket after the call to
  * tcp/dccp_create_openreq_child().
  */
@@ -675,6 +699,8 @@ void inet_csk_prepare_forced_close(struct sock *sk)
 }
 EXPORT_SYMBOL(inet_csk_prepare_forced_close);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int inet_csk_listen_start(struct sock *sk, const int nr_table_entries)
 {
 	struct inet_sock *inet = inet_sk(sk);

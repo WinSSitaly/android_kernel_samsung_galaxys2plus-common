@@ -46,10 +46,16 @@
 #include <linux/clockchips.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+#include <mach/hardware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/leds.h>
 #include <asm/irq.h>
 #include <asm/mach/irq.h>
 #include <asm/mach/time.h>
+<<<<<<< HEAD
 
 #include <plat/dmtimer.h>
 
@@ -57,6 +63,11 @@
 
 #include "common.h"
 
+=======
+#include <plat/common.h>
+#include <plat/dmtimer.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * ---------------------------------------------------------------------------
  * 32KHz OS timer
@@ -185,6 +196,13 @@ static __init void omap_init_32k_timer(void)
 bool __init omap_32k_timer_init(void)
 {
 	omap_init_clocksource_32k();
+<<<<<<< HEAD
+=======
+
+#ifdef CONFIG_OMAP_DM_TIMER
+	omap_dm_timer_init();
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap_init_32k_timer();
 
 	return true;

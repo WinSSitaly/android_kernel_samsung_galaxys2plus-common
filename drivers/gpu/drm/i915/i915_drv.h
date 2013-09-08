@@ -35,9 +35,13 @@
 #include "intel_ringbuffer.h"
 #include <linux/io-mapping.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/i2c-algo-bit.h>
 #include <drm/intel-gtt.h>
 #include <linux/backlight.h>
+=======
+#include <drm/intel-gtt.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* General customization:
  */
@@ -108,7 +112,10 @@ struct opregion_header;
 struct opregion_acpi;
 struct opregion_swsci;
 struct opregion_asle;
+<<<<<<< HEAD
 struct drm_i915_private;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct intel_opregion {
 	struct opregion_header *header;
@@ -128,15 +135,21 @@ struct drm_i915_master_private {
 	struct _drm_i915_sarea *sarea_priv;
 };
 #define I915_FENCE_REG_NONE -1
+<<<<<<< HEAD
 #define I915_MAX_NUM_FENCES 16
 /* 16 fences + sign bit for FENCE_REG_NONE */
 #define I915_MAX_NUM_FENCE_BITS 5
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct drm_i915_fence_reg {
 	struct list_head lru_list;
 	struct drm_i915_gem_object *obj;
 	uint32_t setup_seqno;
+<<<<<<< HEAD
 	int pin_count;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct sdvo_device_mapping {
@@ -145,6 +158,10 @@ struct sdvo_device_mapping {
 	u8 slave_addr;
 	u8 dvo_wiring;
 	u8 i2c_pin;
+<<<<<<< HEAD
+=======
+	u8 i2c_speed;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 ddc_pin;
 };
 
@@ -154,6 +171,7 @@ struct drm_i915_error_state {
 	u32 eir;
 	u32 pgtbl_er;
 	u32 pipestat[I915_MAX_PIPES];
+<<<<<<< HEAD
 	u32 tail[I915_NUM_RINGS];
 	u32 head[I915_NUM_RINGS];
 	u32 ipeir[I915_NUM_RINGS];
@@ -188,6 +206,35 @@ struct drm_i915_error_state {
 		} *requests;
 		int num_requests;
 	} ring[I915_NUM_RINGS];
+=======
+	u32 ipeir;
+	u32 ipehr;
+	u32 instdone;
+	u32 acthd;
+	u32 error; /* gen6+ */
+	u32 bcs_acthd; /* gen6+ blt engine */
+	u32 bcs_ipehr;
+	u32 bcs_ipeir;
+	u32 bcs_instdone;
+	u32 bcs_seqno;
+	u32 vcs_acthd; /* gen6+ bsd engine */
+	u32 vcs_ipehr;
+	u32 vcs_ipeir;
+	u32 vcs_instdone;
+	u32 vcs_seqno;
+	u32 instpm;
+	u32 instps;
+	u32 instdone1;
+	u32 seqno;
+	u64 bbaddr;
+	u64 fence[16];
+	struct timeval time;
+	struct drm_i915_error_object {
+		int page_count;
+		u32 gtt_offset;
+		u32 *pages[0];
+	} *ringbuffer[I915_NUM_RINGS], *batchbuffer[I915_NUM_RINGS];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct drm_i915_error_buffer {
 		u32 size;
 		u32 name;
@@ -195,12 +242,20 @@ struct drm_i915_error_state {
 		u32 gtt_offset;
 		u32 read_domains;
 		u32 write_domain;
+<<<<<<< HEAD
 		s32 fence_reg:I915_MAX_NUM_FENCE_BITS;
+=======
+		s32 fence_reg:5;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		s32 pinned:2;
 		u32 tiling:2;
 		u32 dirty:1;
 		u32 purgeable:1;
+<<<<<<< HEAD
 		s32 ring:4;
+=======
+		u32 ring:4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u32 cache_level:2;
 	} *active_bo, *pinned_bo;
 	u32 active_bo_count, pinned_bo_count;
@@ -216,25 +271,34 @@ struct drm_i915_display_funcs {
 	int (*get_display_clock_speed)(struct drm_device *dev);
 	int (*get_fifo_size)(struct drm_device *dev, int plane);
 	void (*update_wm)(struct drm_device *dev);
+<<<<<<< HEAD
 	void (*update_sprite_wm)(struct drm_device *dev, int pipe,
 				 uint32_t sprite_width, int pixel_size);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*crtc_mode_set)(struct drm_crtc *crtc,
 			     struct drm_display_mode *mode,
 			     struct drm_display_mode *adjusted_mode,
 			     int x, int y,
 			     struct drm_framebuffer *old_fb);
+<<<<<<< HEAD
 	void (*write_eld)(struct drm_connector *connector,
 			  struct drm_crtc *crtc);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void (*fdi_link_train)(struct drm_crtc *crtc);
 	void (*init_clock_gating)(struct drm_device *dev);
 	void (*init_pch_clock_gating)(struct drm_device *dev);
 	int (*queue_flip)(struct drm_device *dev, struct drm_crtc *crtc,
 			  struct drm_framebuffer *fb,
 			  struct drm_i915_gem_object *obj);
+<<<<<<< HEAD
 	int (*update_plane)(struct drm_crtc *crtc, struct drm_framebuffer *fb,
 			    int x, int y);
 	void (*force_wake_get)(struct drm_i915_private *dev_priv);
 	void (*force_wake_put)(struct drm_i915_private *dev_priv);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* clock updates for mode set */
 	/* cursor updates */
 	/* render clock increase/decrease */
@@ -244,6 +308,7 @@ struct drm_i915_display_funcs {
 
 struct intel_device_info {
 	u8 gen;
+<<<<<<< HEAD
 	u8 is_mobile:1;
 	u8 is_i85x:1;
 	u8 is_i915g:1;
@@ -276,6 +341,28 @@ struct i915_hw_ppgtt {
 	uint32_t pd_offset;
 	dma_addr_t *pt_dma_addr;
 	dma_addr_t scratch_page_dma_addr;
+=======
+	u8 is_mobile : 1;
+	u8 is_i85x : 1;
+	u8 is_i915g : 1;
+	u8 is_i945gm : 1;
+	u8 is_g33 : 1;
+	u8 need_gfx_hws : 1;
+	u8 is_g4x : 1;
+	u8 is_pineview : 1;
+	u8 is_broadwater : 1;
+	u8 is_crestline : 1;
+	u8 is_ivybridge : 1;
+	u8 has_fbc : 1;
+	u8 has_pipe_cxsr : 1;
+	u8 has_hotplug : 1;
+	u8 cursor_needs_physical : 1;
+	u8 has_overlay : 1;
+	u8 overlay_needs_physical : 1;
+	u8 supports_tv : 1;
+	u8 has_bsd_ring : 1;
+	u8 has_blt_ring : 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum no_fbc_reason {
@@ -296,6 +383,7 @@ enum intel_pch {
 
 #define QUIRK_PIPEA_FORCE (1<<0)
 #define QUIRK_LVDS_SSC_DISABLE (1<<1)
+<<<<<<< HEAD
 #define QUIRK_NO_PCH_PWM_ENABLE (1<<2)
 
 struct intel_fbdev;
@@ -310,6 +398,10 @@ struct intel_gmbus {
 	struct i2c_algo_bit_data bit_algo;
 	struct drm_i915_private *dev_priv;
 };
+=======
+
+struct intel_fbdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct drm_i915_private {
 	struct drm_device *dev;
@@ -320,6 +412,7 @@ typedef struct drm_i915_private {
 	int relative_constants_mode;
 
 	void __iomem *regs;
+<<<<<<< HEAD
 	/** gt_fifo_count and the subsequent register write are synchronized
 	 * with dev->struct_mutex. */
 	unsigned gt_fifo_count;
@@ -333,6 +426,14 @@ typedef struct drm_i915_private {
 	/** gmbus_mutex protects against concurrent usage of the single hw gmbus
 	 * controller on different i2c buses. */
 	struct mutex gmbus_mutex;
+=======
+
+	struct intel_gmbus {
+		struct i2c_adapter adapter;
+		struct i2c_adapter *force_bit;
+		u32 reg0;
+	} *gmbus;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct pci_dev *bridge_dev;
 	struct intel_ring_buffer ring[I915_NUM_RINGS];
@@ -367,6 +468,10 @@ typedef struct drm_i915_private {
 
 	int tex_lru_log_granularity;
 	int allow_batchbuffer;
+<<<<<<< HEAD
+=======
+	struct mem_block *agp_heap;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int sr01, adpa, ppcr, dvob, dvoc, lvds;
 	int vblank_pipe;
 	int num_pipe;
@@ -382,20 +487,35 @@ typedef struct drm_i915_private {
 	uint32_t last_instdone1;
 
 	unsigned long cfb_size;
+<<<<<<< HEAD
 	unsigned int cfb_fb;
 	enum plane cfb_plane;
 	int cfb_y;
 	struct intel_fbc_work *fbc_work;
+=======
+	unsigned long cfb_pitch;
+	unsigned long cfb_offset;
+	int cfb_fence;
+	int cfb_plane;
+	int cfb_y;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct intel_opregion opregion;
 
 	/* overlay */
 	struct intel_overlay *overlay;
+<<<<<<< HEAD
 	bool sprite_scaling_enabled;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* LVDS info */
 	int backlight_level;  /* restore backlight to this value */
 	bool backlight_enabled;
+<<<<<<< HEAD
+=======
+	struct drm_display_mode *panel_fixed_mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct drm_display_mode *lfp_lvds_vbt_mode; /* if any */
 	struct drm_display_mode *sdvo_lvds_vbt_mode; /* if any */
 
@@ -405,10 +525,14 @@ typedef struct drm_i915_private {
 	unsigned int lvds_vbt:1;
 	unsigned int int_crt_support:1;
 	unsigned int lvds_use_ssc:1;
+<<<<<<< HEAD
 	unsigned int display_clock_mode:1;
 	int lvds_ssc_freq;
 	unsigned int bios_lvds_val; /* initial [PCH_]LVDS reg val in VBIOS */
 	unsigned int lvds_val; /* used for checking LVDS channel mode */
+=======
+	int lvds_ssc_freq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct {
 		int rate;
 		int lanes;
@@ -425,7 +549,11 @@ typedef struct drm_i915_private {
 	struct notifier_block lid_notifier;
 
 	int crt_ddc_pin;
+<<<<<<< HEAD
 	struct drm_i915_fence_reg fence_regs[I915_MAX_NUM_FENCES]; /* assume 965 */
+=======
+	struct drm_i915_fence_reg fence_regs[16]; /* assume 965 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int fence_reg_start; /* 4 if userland hasn't ioctl'd us yet */
 	int num_fence_regs; /* 8 on pre-965, 16 otherwise */
 
@@ -556,7 +684,11 @@ typedef struct drm_i915_private {
 	u8 saveAR[21];
 	u8 saveDACMASK;
 	u8 saveCR[37];
+<<<<<<< HEAD
 	uint64_t saveFENCE[I915_MAX_NUM_FENCES];
+=======
+	uint64_t saveFENCE[16];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 saveCURACNTR;
 	u32 saveCURAPOS;
 	u32 saveCURABASE;
@@ -617,9 +749,12 @@ typedef struct drm_i915_private {
 		struct io_mapping *gtt_mapping;
 		int gtt_mtrr;
 
+<<<<<<< HEAD
 		/** PPGTT used for aliasing the PPGTT with the GTT */
 		struct i915_hw_ppgtt *aliasing_ppgtt;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct shrinker inactive_shrinker;
 
 		/**
@@ -726,9 +861,16 @@ typedef struct drm_i915_private {
 	unsigned int lvds_border_bits;
 	/* Panel fitter placement and size for Ironlake+ */
 	u32 pch_pf_pos, pch_pf_size;
+<<<<<<< HEAD
 
 	struct drm_crtc *plane_to_crtc_mapping[3];
 	struct drm_crtc *pipe_to_crtc_mapping[3];
+=======
+	int panel_t3, panel_t12;
+
+	struct drm_crtc *plane_to_crtc_mapping[2];
+	struct drm_crtc *pipe_to_crtc_mapping[2];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wait_queue_head_t pending_flip_queue;
 	bool flip_pending_is_done;
 
@@ -744,7 +886,10 @@ typedef struct drm_i915_private {
 	int child_dev_num;
 	struct child_device_config *child_dev;
 	struct drm_connector *int_lvds_connector;
+<<<<<<< HEAD
 	struct drm_connector *int_edp_connector;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bool mchbar_need_disable;
 
@@ -779,6 +924,7 @@ typedef struct drm_i915_private {
 	/* list of fbdev register on this device */
 	struct intel_fbdev *fbdev;
 
+<<<<<<< HEAD
 	struct backlight_device *backlight;
 
 	struct drm_property *broadcast_rgb_property;
@@ -791,6 +937,13 @@ enum hdmi_force_audio {
 	HDMI_AUDIO_AUTO,		/* trust EDID */
 	HDMI_AUDIO_ON,			/* force turn on HDMI audio */
 };
+=======
+	struct drm_property *broadcast_rgb_property;
+	struct drm_property *force_audio_property;
+
+	atomic_t forcewake_count;
+} drm_i915_private_t;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum i915_cache_level {
 	I915_CACHE_NONE,
@@ -818,37 +971,65 @@ struct drm_i915_gem_object {
 	 * (has pending rendering), and is not set if it's on inactive (ready
 	 * to be unbound).
 	 */
+<<<<<<< HEAD
 	unsigned int active:1;
+=======
+	unsigned int active : 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/**
 	 * This is set if the object has been written to since last bound
 	 * to the GTT
 	 */
+<<<<<<< HEAD
 	unsigned int dirty:1;
+=======
+	unsigned int dirty : 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/**
 	 * This is set if the object has been written to since the last
 	 * GPU flush.
 	 */
+<<<<<<< HEAD
 	unsigned int pending_gpu_write:1;
+=======
+	unsigned int pending_gpu_write : 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/**
 	 * Fence register bits (if any) for this object.  Will be set
 	 * as needed when mapped into the GTT.
 	 * Protected by dev->struct_mutex.
+<<<<<<< HEAD
 	 */
 	signed int fence_reg:I915_MAX_NUM_FENCE_BITS;
+=======
+	 *
+	 * Size: 4 bits for 16 fences + sign (for FENCE_REG_NONE)
+	 */
+	signed int fence_reg : 5;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/**
 	 * Advice: are the backing pages purgeable?
 	 */
+<<<<<<< HEAD
 	unsigned int madv:2;
+=======
+	unsigned int madv : 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/**
 	 * Current tiling mode for the object.
 	 */
+<<<<<<< HEAD
 	unsigned int tiling_mode:2;
 	unsigned int tiling_changed:1;
+=======
+	unsigned int tiling_mode : 2;
+	unsigned int tiling_changed : 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/** How many users have pinned this object in GTT space. The following
 	 * users can each hold at most one reference: pwrite/pread, pin_ioctl
@@ -859,22 +1040,35 @@ struct drm_i915_gem_object {
 	 *
 	 * In the worst case this is 1 + 1 + 1 + 2*2 = 7. That would fit into 3
 	 * bits with absolutely no headroom. So use 4 bits. */
+<<<<<<< HEAD
 	unsigned int pin_count:4;
+=======
+	unsigned int pin_count : 4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DRM_I915_GEM_OBJECT_MAX_PIN_COUNT 0xf
 
 	/**
 	 * Is the object at the current location in the gtt mappable and
 	 * fenceable? Used to avoid costly recalculations.
 	 */
+<<<<<<< HEAD
 	unsigned int map_and_fenceable:1;
+=======
+	unsigned int map_and_fenceable : 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/**
 	 * Whether the current gtt mapping needs to be mappable (and isn't just
 	 * mappable by accident). Track pin and fault separate for a more
 	 * accurate mappable working set.
 	 */
+<<<<<<< HEAD
 	unsigned int fault_mappable:1;
 	unsigned int pin_mappable:1;
+=======
+	unsigned int fault_mappable : 1;
+	unsigned int pin_mappable : 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Is the GPU currently using a fence to access this buffer,
@@ -884,8 +1078,11 @@ struct drm_i915_gem_object {
 
 	unsigned int cache_level:2;
 
+<<<<<<< HEAD
 	unsigned int has_aliasing_ppgtt_mapping:1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct page **pages;
 
 	/**
@@ -963,9 +1160,12 @@ struct drm_i915_gem_request {
 	/** GEM sequence number associated with this request. */
 	uint32_t seqno;
 
+<<<<<<< HEAD
 	/** Postion in the ringbuffer of the end of the request */
 	u32 tail;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/** Time at which this request was emitted, in jiffies. */
 	unsigned long emitted_jiffies;
 
@@ -1022,11 +1222,16 @@ struct drm_i915_file_private {
 
 #define HAS_BSD(dev)            (INTEL_INFO(dev)->has_bsd_ring)
 #define HAS_BLT(dev)            (INTEL_INFO(dev)->has_blt_ring)
+<<<<<<< HEAD
 #define HAS_LLC(dev)            (INTEL_INFO(dev)->has_llc)
 #define I915_NEED_GFX_HWS(dev)	(INTEL_INFO(dev)->need_gfx_hws)
 
 #define HAS_ALIASING_PPGTT(dev)	(INTEL_INFO(dev)->gen >=6)
 
+=======
+#define I915_NEED_GFX_HWS(dev)	(INTEL_INFO(dev)->need_gfx_hws)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define HAS_OVERLAY(dev)		(INTEL_INFO(dev)->has_overlay)
 #define OVERLAY_NEEDS_PHYSICAL(dev)	(INTEL_INFO(dev)->overlay_needs_physical)
 
@@ -1055,6 +1260,7 @@ struct drm_i915_file_private {
 #define HAS_PCH_CPT(dev) (INTEL_PCH_TYPE(dev) == PCH_CPT)
 #define HAS_PCH_IBX(dev) (INTEL_PCH_TYPE(dev) == PCH_IBX)
 
+<<<<<<< HEAD
 #define HAS_FORCE_WAKE(dev) (INTEL_INFO(dev)->has_force_wake)
 
 #include "i915_trace.h"
@@ -1093,6 +1299,21 @@ extern int i915_enable_rc6 __read_mostly;
 extern int i915_enable_fbc __read_mostly;
 extern bool i915_enable_hangcheck __read_mostly;
 extern int i915_enable_ppgtt __read_mostly;
+=======
+#include "i915_trace.h"
+
+extern struct drm_ioctl_desc i915_ioctls[];
+extern int i915_max_ioctl;
+extern unsigned int i915_fbpercrtc;
+extern int i915_panel_ignore_lid;
+extern unsigned int i915_powersave;
+extern unsigned int i915_semaphores;
+extern unsigned int i915_lvds_downclock;
+extern unsigned int i915_panel_use_ssc;
+extern int i915_vbt_sdvo_panel_type;
+extern unsigned int i915_enable_rc6;
+extern unsigned int i915_enable_fbc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int i915_suspend(struct drm_device *dev, pm_message_t state);
 extern int i915_resume(struct drm_device *dev);
@@ -1145,7 +1366,11 @@ i915_enable_pipestat(drm_i915_private_t *dev_priv, int pipe, u32 mask);
 void
 i915_disable_pipestat(drm_i915_private_t *dev_priv, int pipe, u32 mask);
 
+<<<<<<< HEAD
 void intel_enable_asle(struct drm_device *dev);
+=======
+void intel_enable_asle (struct drm_device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_DEBUG_FS
 extern void i915_destroy_error_state(struct drm_device *dev);
@@ -1154,6 +1379,21 @@ extern void i915_destroy_error_state(struct drm_device *dev);
 #endif
 
 
+<<<<<<< HEAD
+=======
+/* i915_mem.c */
+extern int i915_mem_alloc(struct drm_device *dev, void *data,
+			  struct drm_file *file_priv);
+extern int i915_mem_free(struct drm_device *dev, void *data,
+			 struct drm_file *file_priv);
+extern int i915_mem_init_heap(struct drm_device *dev, void *data,
+			      struct drm_file *file_priv);
+extern int i915_mem_destroy_heap(struct drm_device *dev, void *data,
+				 struct drm_file *file_priv);
+extern void i915_mem_takedown(struct mem_block **heap);
+extern void i915_mem_release(struct drm_device * dev,
+			     struct drm_file *file_priv, struct mem_block *heap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* i915_gem.c */
 int i915_gem_init_ioctl(struct drm_device *dev, void *data,
 			struct drm_file *file_priv);
@@ -1223,7 +1463,11 @@ int i915_gem_dumb_create(struct drm_file *file_priv,
 int i915_gem_mmap_gtt(struct drm_file *file_priv, struct drm_device *dev,
 		      uint32_t handle, uint64_t *offset);
 int i915_gem_dumb_destroy(struct drm_file *file_priv, struct drm_device *dev,
+<<<<<<< HEAD
 			  uint32_t handle);
+=======
+			  uint32_t handle);			  
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * Returns true if seq1 is later than seq2.
  */
@@ -1233,12 +1477,22 @@ i915_seqno_passed(uint32_t seq1, uint32_t seq2)
 	return (int32_t)(seq1 - seq2) >= 0;
 }
 
+<<<<<<< HEAD
 u32 i915_gem_next_request_seqno(struct intel_ring_buffer *ring);
+=======
+static inline u32
+i915_gem_next_request_seqno(struct intel_ring_buffer *ring)
+{
+	drm_i915_private_t *dev_priv = ring->dev->dev_private;
+	return ring->outstanding_lazy_request = dev_priv->next_seqno;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int __must_check i915_gem_object_get_fence(struct drm_i915_gem_object *obj,
 					   struct intel_ring_buffer *pipelined);
 int __must_check i915_gem_object_put_fence(struct drm_i915_gem_object *obj);
 
+<<<<<<< HEAD
 static inline void
 i915_gem_object_pin_fence(struct drm_i915_gem_object *obj)
 {
@@ -1260,35 +1514,55 @@ i915_gem_object_unpin_fence(struct drm_i915_gem_object *obj)
 void i915_gem_retire_requests(struct drm_device *dev);
 void i915_gem_retire_requests_ring(struct intel_ring_buffer *ring);
 
+=======
+void i915_gem_retire_requests(struct drm_device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void i915_gem_reset(struct drm_device *dev);
 void i915_gem_clflush_object(struct drm_i915_gem_object *obj);
 int __must_check i915_gem_object_set_domain(struct drm_i915_gem_object *obj,
 					    uint32_t read_domains,
 					    uint32_t write_domain);
+<<<<<<< HEAD
 int __must_check i915_gem_object_finish_gpu(struct drm_i915_gem_object *obj);
 int __must_check i915_gem_init_hw(struct drm_device *dev);
 void i915_gem_init_swizzling(struct drm_device *dev);
 void i915_gem_init_ppgtt(struct drm_device *dev);
+=======
+int __must_check i915_gem_object_flush_gpu(struct drm_i915_gem_object *obj);
+int __must_check i915_gem_init_ringbuffer(struct drm_device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void i915_gem_cleanup_ringbuffer(struct drm_device *dev);
 void i915_gem_do_init(struct drm_device *dev,
 		      unsigned long start,
 		      unsigned long mappable_end,
 		      unsigned long end);
+<<<<<<< HEAD
 int __must_check i915_gpu_idle(struct drm_device *dev, bool do_retire);
+=======
+int __must_check i915_gpu_idle(struct drm_device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int __must_check i915_gem_idle(struct drm_device *dev);
 int __must_check i915_add_request(struct intel_ring_buffer *ring,
 				  struct drm_file *file,
 				  struct drm_i915_gem_request *request);
 int __must_check i915_wait_request(struct intel_ring_buffer *ring,
+<<<<<<< HEAD
 				   uint32_t seqno,
 				   bool do_retire);
+=======
+				   uint32_t seqno);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int i915_gem_fault(struct vm_area_struct *vma, struct vm_fault *vmf);
 int __must_check
 i915_gem_object_set_to_gtt_domain(struct drm_i915_gem_object *obj,
 				  bool write);
 int __must_check
+<<<<<<< HEAD
 i915_gem_object_pin_to_display_plane(struct drm_i915_gem_object *obj,
 				     u32 alignment,
+=======
+i915_gem_object_set_to_display_plane(struct drm_i915_gem_object *obj,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     struct intel_ring_buffer *pipelined);
 int i915_gem_attach_phys_object(struct drm_device *dev,
 				struct drm_i915_gem_object *obj,
@@ -1304,6 +1578,7 @@ i915_gem_get_unfenced_gtt_alignment(struct drm_device *dev,
 				    uint32_t size,
 				    int tiling_mode);
 
+<<<<<<< HEAD
 int i915_gem_object_set_cache_level(struct drm_i915_gem_object *obj,
 				    enum i915_cache_level cache_level);
 
@@ -1320,6 +1595,11 @@ void i915_gem_restore_gtt_mappings(struct drm_device *dev);
 int __must_check i915_gem_gtt_bind_object(struct drm_i915_gem_object *obj);
 void i915_gem_gtt_rebind_object(struct drm_i915_gem_object *obj,
 				enum i915_cache_level cache_level);
+=======
+/* i915_gem_gtt.c */
+void i915_gem_restore_gtt_mappings(struct drm_device *dev);
+int __must_check i915_gem_gtt_bind_object(struct drm_i915_gem_object *obj);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void i915_gem_gtt_unbind_object(struct drm_i915_gem_object *obj);
 
 /* i915_gem_evict.c */
@@ -1401,6 +1681,7 @@ extern void intel_modeset_init(struct drm_device *dev);
 extern void intel_modeset_gem_init(struct drm_device *dev);
 extern void intel_modeset_cleanup(struct drm_device *dev);
 extern int intel_modeset_vga_set_state(struct drm_device *dev, bool state);
+<<<<<<< HEAD
 extern bool intel_fbc_enabled(struct drm_device *dev);
 extern void intel_disable_fbc(struct drm_device *dev);
 extern bool ironlake_set_drps(struct drm_device *dev, u8 val);
@@ -1414,6 +1695,19 @@ extern void __gen6_gt_force_wake_get(struct drm_i915_private *dev_priv);
 extern void __gen6_gt_force_wake_mt_get(struct drm_i915_private *dev_priv);
 extern void __gen6_gt_force_wake_put(struct drm_i915_private *dev_priv);
 extern void __gen6_gt_force_wake_mt_put(struct drm_i915_private *dev_priv);
+=======
+extern void i8xx_disable_fbc(struct drm_device *dev);
+extern void g4x_disable_fbc(struct drm_device *dev);
+extern void ironlake_disable_fbc(struct drm_device *dev);
+extern void intel_disable_fbc(struct drm_device *dev);
+extern void intel_enable_fbc(struct drm_crtc *crtc, unsigned long interval);
+extern bool intel_fbc_enabled(struct drm_device *dev);
+extern bool ironlake_set_drps(struct drm_device *dev, u8 val);
+extern void ironlake_enable_rc6(struct drm_device *dev);
+extern void gen6_set_rps(struct drm_device *dev, u8 val);
+extern void intel_detect_pch (struct drm_device *dev);
+extern int intel_trans_dp_port_sel (struct drm_crtc *crtc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* overlay */
 #ifdef CONFIG_DEBUG_FS
@@ -1454,10 +1748,34 @@ extern void intel_display_print_error_state(struct seq_file *m,
  */
 void gen6_gt_force_wake_get(struct drm_i915_private *dev_priv);
 void gen6_gt_force_wake_put(struct drm_i915_private *dev_priv);
+<<<<<<< HEAD
 int __gen6_gt_wait_for_fifo(struct drm_i915_private *dev_priv);
 
 #define __i915_read(x, y) \
 	u##x i915_read##x(struct drm_i915_private *dev_priv, u32 reg);
+=======
+void __gen6_gt_wait_for_fifo(struct drm_i915_private *dev_priv);
+
+/* We give fast paths for the really cool registers */
+#define NEEDS_FORCE_WAKE(dev_priv, reg) \
+	(((dev_priv)->info->gen >= 6) && \
+	((reg) < 0x40000) && \
+	((reg) != FORCEWAKE))
+
+#define __i915_read(x, y) \
+static inline u##x i915_read##x(struct drm_i915_private *dev_priv, u32 reg) { \
+	u##x val = 0; \
+	if (NEEDS_FORCE_WAKE((dev_priv), (reg))) { \
+		gen6_gt_force_wake_get(dev_priv); \
+		val = read##y(dev_priv->regs + reg); \
+		gen6_gt_force_wake_put(dev_priv); \
+	} else { \
+		val = read##y(dev_priv->regs + reg); \
+	} \
+	trace_i915_reg_rw(false, reg, val, sizeof(val)); \
+	return val; \
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 __i915_read(8, b)
 __i915_read(16, w)
@@ -1466,8 +1784,18 @@ __i915_read(64, q)
 #undef __i915_read
 
 #define __i915_write(x, y) \
+<<<<<<< HEAD
 	void i915_write##x(struct drm_i915_private *dev_priv, u32 reg, u##x val);
 
+=======
+static inline void i915_write##x(struct drm_i915_private *dev_priv, u32 reg, u##x val) { \
+	trace_i915_reg_rw(true, reg, val, sizeof(val)); \
+	if (NEEDS_FORCE_WAKE((dev_priv), (reg))) { \
+		__gen6_gt_wait_for_fifo(dev_priv); \
+	} \
+	write##y(val, dev_priv->regs + reg); \
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 __i915_write(8, b)
 __i915_write(16, w)
 __i915_write(32, l)

@@ -11,6 +11,11 @@ config PLAT_VERSATILE_LEDS
 	depends on ARCH_REALVIEW || ARCH_VERSATILE
 
 config PLAT_VERSATILE_SCHED_CLOCK
+<<<<<<< HEAD
 	def_bool y
+=======
+	def_bool y if !ARCH_INTEGRATOR_AP
+	select HAVE_SCHED_CLOCK
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 endif

@@ -41,17 +41,31 @@
 
 #include <linux/pci.h>
 #include "ath5k.h"
+<<<<<<< HEAD
 
 #define ATH_SDEVICE(subv, subd) \
 	.vendor = PCI_ANY_ID, .device = PCI_ANY_ID, \
 	.subvendor = (subv), .subdevice = (subd)
 
 #define ATH_LED(pin, polarity) .driver_data = (((pin) << 8) | (polarity))
+=======
+#include "base.h"
+
+#define ATH_SDEVICE(subv,subd) \
+	.vendor = PCI_ANY_ID, .device = PCI_ANY_ID, \
+	.subvendor = (subv), .subdevice = (subd)
+
+#define ATH_LED(pin,polarity) .driver_data = (((pin) << 8) | (polarity))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ATH_PIN(data) ((data) >> 8)
 #define ATH_POLARITY(data) ((data) & 0xff)
 
 /* Devices we match on for LED config info (typically laptops) */
+<<<<<<< HEAD
 static DEFINE_PCI_DEVICE_TABLE(ath5k_led_devices) = {
+=======
+static const struct pci_device_id ath5k_led_devices[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* AR5211 */
 	{ PCI_VDEVICE(ATHEROS, PCI_DEVICE_ID_ATHEROS_AR5211), ATH_LED(0, 0) },
 	/* HP Compaq nc6xx, nc4000, nx6000 */
@@ -85,6 +99,7 @@ static DEFINE_PCI_DEVICE_TABLE(ath5k_led_devices) = {
 	{ }
 };
 
+<<<<<<< HEAD
 void ath5k_led_enable(struct ath5k_hw *ah)
 {
 	if (test_bit(ATH_STAT_LEDSOFT, ah->status)) {
@@ -105,6 +120,28 @@ void ath5k_led_off(struct ath5k_hw *ah)
 	if (!test_bit(ATH_STAT_LEDSOFT, ah->status))
 		return;
 	ath5k_hw_set_gpio(ah, ah->led_pin, !ah->led_on);
+=======
+void ath5k_led_enable(struct ath5k_softc *sc)
+{
+	if (test_bit(ATH_STAT_LEDSOFT, sc->status)) {
+		ath5k_hw_set_gpio_output(sc->ah, sc->led_pin);
+		ath5k_led_off(sc);
+	}
+}
+
+static void ath5k_led_on(struct ath5k_softc *sc)
+{
+	if (!test_bit(ATH_STAT_LEDSOFT, sc->status))
+		return;
+	ath5k_hw_set_gpio(sc->ah, sc->led_pin, sc->led_on);
+}
+
+void ath5k_led_off(struct ath5k_softc *sc)
+{
+	if (!test_bit(ATH_STAT_LEDSOFT, sc->status))
+		return;
+	ath5k_hw_set_gpio(sc->ah, sc->led_pin, !sc->led_on);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -115,6 +152,7 @@ ath5k_led_brightness_set(struct led_classdev *led_dev,
 		led_dev);
 
 	if (brightness == LED_OFF)
+<<<<<<< HEAD
 		ath5k_led_off(led->ah);
 	else
 		ath5k_led_on(led->ah);
@@ -122,20 +160,40 @@ ath5k_led_brightness_set(struct led_classdev *led_dev,
 
 static int
 ath5k_register_led(struct ath5k_hw *ah, struct ath5k_led *led,
+=======
+		ath5k_led_off(led->sc);
+	else
+		ath5k_led_on(led->sc);
+}
+
+static int
+ath5k_register_led(struct ath5k_softc *sc, struct ath5k_led *led,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   const char *name, char *trigger)
 {
 	int err;
 
+<<<<<<< HEAD
 	led->ah = ah;
+=======
+	led->sc = sc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	strncpy(led->name, name, sizeof(led->name));
 	led->led_dev.name = led->name;
 	led->led_dev.default_trigger = trigger;
 	led->led_dev.brightness_set = ath5k_led_brightness_set;
 
+<<<<<<< HEAD
 	err = led_classdev_register(ah->dev, &led->led_dev);
 	if (err) {
 		ATH5K_WARN(ah, "could not register LED %s\n", name);
 		led->ah = NULL;
+=======
+	err = led_classdev_register(sc->dev, &led->led_dev);
+	if (err) {
+		ATH5K_WARN(sc, "could not register LED %s\n", name);
+		led->sc = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return err;
 }
@@ -143,6 +201,7 @@ ath5k_register_led(struct ath5k_hw *ah, struct ath5k_led *led,
 static void
 ath5k_unregister_led(struct ath5k_led *led)
 {
+<<<<<<< HEAD
 	if (!led->ah)
 		return;
 	led_classdev_unregister(&led->led_dev);
@@ -162,11 +221,36 @@ int __devinit ath5k_init_leds(struct ath5k_hw *ah)
 	struct ieee80211_hw *hw = ah->hw;
 #ifndef CONFIG_ATHEROS_AR231X
 	struct pci_dev *pdev = ah->pdev;
+=======
+	if (!led->sc)
+		return;
+	led_classdev_unregister(&led->led_dev);
+	ath5k_led_off(led->sc);
+	led->sc = NULL;
+}
+
+void ath5k_unregister_leds(struct ath5k_softc *sc)
+{
+	ath5k_unregister_led(&sc->rx_led);
+	ath5k_unregister_led(&sc->tx_led);
+}
+
+int ath5k_init_leds(struct ath5k_softc *sc)
+{
+	int ret = 0;
+	struct ieee80211_hw *hw = sc->hw;
+#ifndef CONFIG_ATHEROS_AR231X
+	struct pci_dev *pdev = sc->pdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	char name[ATH5K_LED_MAX_NAME_LEN + 1];
 	const struct pci_device_id *match;
 
+<<<<<<< HEAD
 	if (!ah->pdev)
+=======
+	if (!sc->pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 #ifdef CONFIG_ATHEROS_AR231X
@@ -175,6 +259,7 @@ int __devinit ath5k_init_leds(struct ath5k_hw *ah)
 	match = pci_match_id(&ath5k_led_devices[0], pdev);
 #endif
 	if (match) {
+<<<<<<< HEAD
 		__set_bit(ATH_STAT_LEDSOFT, ah->status);
 		ah->led_pin = ATH_PIN(match->driver_data);
 		ah->led_on = ATH_POLARITY(match->driver_data);
@@ -187,12 +272,30 @@ int __devinit ath5k_init_leds(struct ath5k_hw *ah)
 
 	snprintf(name, sizeof(name), "ath5k-%s::rx", wiphy_name(hw->wiphy));
 	ret = ath5k_register_led(ah, &ah->rx_led, name,
+=======
+		__set_bit(ATH_STAT_LEDSOFT, sc->status);
+		sc->led_pin = ATH_PIN(match->driver_data);
+		sc->led_on = ATH_POLARITY(match->driver_data);
+	}
+
+	if (!test_bit(ATH_STAT_LEDSOFT, sc->status))
+		goto out;
+
+	ath5k_led_enable(sc);
+
+	snprintf(name, sizeof(name), "ath5k-%s::rx", wiphy_name(hw->wiphy));
+	ret = ath5k_register_led(sc, &sc->rx_led, name,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ieee80211_get_rx_led_name(hw));
 	if (ret)
 		goto out;
 
 	snprintf(name, sizeof(name), "ath5k-%s::tx", wiphy_name(hw->wiphy));
+<<<<<<< HEAD
 	ret = ath5k_register_led(ah, &ah->tx_led, name,
+=======
+	ret = ath5k_register_led(sc, &sc->tx_led, name,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ieee80211_get_tx_led_name(hw));
 out:
 	return ret;

@@ -119,7 +119,11 @@ unmap_kernel_range(unsigned long addr, unsigned long size)
 #endif
 
 /* Allocate/destroy a 'vmalloc' VM area. */
+<<<<<<< HEAD
 extern struct vm_struct *alloc_vm_area(size_t size, pte_t **ptes);
+=======
+extern struct vm_struct *alloc_vm_area(size_t size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void free_vm_area(struct vm_struct *area);
 
 /* for /dev/kmem */
@@ -131,7 +135,10 @@ extern long vwrite(char *buf, char *addr, unsigned long count);
  */
 extern rwlock_t vmlist_lock;
 extern struct vm_struct *vmlist;
+<<<<<<< HEAD
 extern __init void vm_area_add_early(struct vm_struct *vm);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern __init void vm_area_register_early(struct vm_struct *vm, size_t align);
 
 #ifdef CONFIG_SMP

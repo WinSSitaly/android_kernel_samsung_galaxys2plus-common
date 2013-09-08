@@ -34,7 +34,10 @@
 #define __LINUX_USB_CH9_H
 
 #include <linux/types.h>	/* __u8 etc */
+<<<<<<< HEAD
 #include <asm/byteorder.h>	/* le16_to_cpu */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*-------------------------------------------------------------------------*/
 
@@ -144,6 +147,7 @@
 #define USB_INTRF_FUNC_SUSPEND	0	/* function suspend */
 
 #define USB_INTR_FUNC_SUSPEND_OPT_MASK	0xFF00
+<<<<<<< HEAD
 /*
  * Suspend Options, Table 9-7 USB 3.0 spec
  */
@@ -155,6 +159,8 @@
  */
 #define USB_INTRF_STAT_FUNC_RW_CAP     1
 #define USB_INTRF_STAT_FUNC_RW         2
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define USB_ENDPOINT_HALT		0	/* IN/OUT will STALL */
 
@@ -163,6 +169,17 @@
 #define USB_DEV_STAT_U2_ENABLED		3	/* transition into U2 state */
 #define USB_DEV_STAT_LTM_ENABLED	4	/* Latency tolerance messages */
 
+<<<<<<< HEAD
+=======
+/* OTG 2.0 spec 6.2 and 6.3 sections */
+#define OTG_STATUS_SELECTOR		0xF000
+#define THOST_REQ_POLL				1500
+#define HOST_REQUEST_FLAG			0
+/* TTST_VBOFF max is 5000 */
+#define TTST_VBOFF					1000
+#define HOST_VBOFF					10000
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct usb_ctrlrequest - SETUP data for a USB device control request
  * @bRequestType: matches the USB bmRequestType field
@@ -389,6 +406,7 @@ struct usb_endpoint_descriptor {
 #define USB_ENDPOINT_NUMBER_MASK	0x0f	/* in bEndpointAddress */
 #define USB_ENDPOINT_DIR_MASK		0x80
 
+<<<<<<< HEAD
 #define USB_ENDPOINT_XFERTYPE_MASK	0x03	/* in bmAttributes */
 #define USB_ENDPOINT_XFER_CONTROL	0
 #define USB_ENDPOINT_XFER_ISOC		1
@@ -396,16 +414,27 @@ struct usb_endpoint_descriptor {
 #define USB_ENDPOINT_XFER_INT		3
 #define USB_ENDPOINT_MAX_ADJUSTABLE	0x80
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define USB_ENDPOINT_SYNCTYPE		0x0c
 #define USB_ENDPOINT_SYNC_NONE		(0 << 2)
 #define USB_ENDPOINT_SYNC_ASYNC		(1 << 2)
 #define USB_ENDPOINT_SYNC_ADAPTIVE	(2 << 2)
 #define USB_ENDPOINT_SYNC_SYNC		(3 << 2)
 
+<<<<<<< HEAD
 #define USB_ENDPOINT_USAGE_MASK		0x30
 #define USB_ENDPOINT_USAGE_DATA		0x00
 #define USB_ENDPOINT_USAGE_FEEDBACK	0x10
 #define USB_ENDPOINT_USAGE_IMPLICIT_FB	0x20	/* Implicit feedback Data endpoint */
+=======
+#define USB_ENDPOINT_XFERTYPE_MASK	0x03	/* in bmAttributes */
+#define USB_ENDPOINT_XFER_CONTROL	0
+#define USB_ENDPOINT_XFER_ISOC		1
+#define USB_ENDPOINT_XFER_BULK		2
+#define USB_ENDPOINT_XFER_INT		3
+#define USB_ENDPOINT_MAX_ADJUSTABLE	0x80
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*-------------------------------------------------------------------------*/
 
@@ -587,6 +616,7 @@ static inline int usb_endpoint_is_isoc_out(
 	return usb_endpoint_xfer_isoc(epd) && usb_endpoint_dir_out(epd);
 }
 
+<<<<<<< HEAD
 /**
  * usb_endpoint_maxp - get endpoint's max packet size
  * @epd: endpoint to be checked
@@ -598,6 +628,8 @@ static inline int usb_endpoint_maxp(const struct usb_endpoint_descriptor *epd)
 	return __le16_to_cpu(epd->wMaxPacketSize);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*-------------------------------------------------------------------------*/
 
 /* USB_DT_SS_ENDPOINT_COMP: SuperSpeed Endpoint Companion descriptor */
@@ -653,17 +685,31 @@ struct usb_qualifier_descriptor {
 
 /*-------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 /* USB_DT_OTG (from OTG 1.0a supplement) */
+=======
+/* USB_DT_OTG (from OTG 2.0 supplement) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct usb_otg_descriptor {
 	__u8  bLength;
 	__u8  bDescriptorType;
 
+<<<<<<< HEAD
 	__u8  bmAttributes;	/* support for HNP, SRP, etc */
+=======
+	__u8  bmAttributes;	/* support for HNP, SRP, ADP etc */
+	__le16 bcdOTG;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } __attribute__ ((packed));
 
 /* from usb_otg_descriptor.bmAttributes */
 #define USB_OTG_SRP		(1 << 0)
+<<<<<<< HEAD
 #define USB_OTG_HNP		(1 << 1)	/* swap host/device roles */
+=======
+#define USB_OTG_HNP	(1 << 1)	/* swap host/device roles */
+#define USB_OTG_ADP	(1 << 2) /* Attach detection protocol */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*-------------------------------------------------------------------------*/
 
@@ -795,11 +841,14 @@ struct usb_ext_cap_descriptor {		/* Link Power Management */
 	__u8  bDevCapabilityType;
 	__le32 bmAttributes;
 #define USB_LPM_SUPPORT			(1 << 1)	/* supports LPM */
+<<<<<<< HEAD
 #define USB_BESL_SUPPORT		(1 << 2)	/* supports BESL */
 #define USB_BESL_BASELINE_VALID		(1 << 3)	/* Baseline BESL valid*/
 #define USB_BESL_DEEP_VALID		(1 << 4)	/* Deep BESL valid */
 #define USB_GET_BESL_BASELINE(p)	(((p) & (0xf << 8)) >> 8)
 #define USB_GET_BESL_DEEP(p)		(((p) & (0xf << 12)) >> 12)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } __attribute__((packed));
 
 #define USB_DT_USB_EXT_CAP_SIZE	7
@@ -902,6 +951,7 @@ enum usb_device_speed {
 	USB_SPEED_SUPER,			/* usb 3.0 */
 };
 
+<<<<<<< HEAD
 #ifdef __KERNEL__
 
 /**
@@ -914,6 +964,8 @@ extern const char *usb_speed_string(enum usb_device_speed speed);
 
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum usb_device_state {
 	/* NOTATTACHED isn't in the USB spec, and this state acts
 	 * the same as ATTACHED ... but it's clearer this way.

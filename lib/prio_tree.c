@@ -85,6 +85,7 @@ static inline unsigned long prio_tree_maxindex(unsigned int bits)
 	return index_bits_to_maxindex[bits - 1];
 }
 
+<<<<<<< HEAD
 static void prio_set_parent(struct prio_tree_node *parent,
 			    struct prio_tree_node *child, bool left)
 {
@@ -96,6 +97,8 @@ static void prio_set_parent(struct prio_tree_node *parent,
 	child->parent = parent;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Extend a priority search tree so that it can store a node with heap_index
  * max_heap_index. In the worst case, this algorithm takes O((log n)^2).
@@ -105,22 +108,31 @@ static void prio_set_parent(struct prio_tree_node *parent,
 static struct prio_tree_node *prio_tree_expand(struct prio_tree_root *root,
 		struct prio_tree_node *node, unsigned long max_heap_index)
 {
+<<<<<<< HEAD
 	struct prio_tree_node *prev;
+=======
+	struct prio_tree_node *first = NULL, *prev, *last = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (max_heap_index > prio_tree_maxindex(root->index_bits))
 		root->index_bits++;
 
+<<<<<<< HEAD
 	prev = node;
 	INIT_PRIO_TREE_NODE(node);
 
 	while (max_heap_index > prio_tree_maxindex(root->index_bits)) {
 		struct prio_tree_node *tmp = root->prio_tree_node;
 
+=======
+	while (max_heap_index > prio_tree_maxindex(root->index_bits)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		root->index_bits++;
 
 		if (prio_tree_empty(root))
 			continue;
 
+<<<<<<< HEAD
 		prio_tree_remove(root, root->prio_tree_node);
 		INIT_PRIO_TREE_NODE(tmp);
 
@@ -130,6 +142,35 @@ static struct prio_tree_node *prio_tree_expand(struct prio_tree_root *root,
 
 	if (!prio_tree_empty(root))
 		prio_set_parent(prev, root->prio_tree_node, true);
+=======
+		if (first == NULL) {
+			first = root->prio_tree_node;
+			prio_tree_remove(root, root->prio_tree_node);
+			INIT_PRIO_TREE_NODE(first);
+			last = first;
+		} else {
+			prev = last;
+			last = root->prio_tree_node;
+			prio_tree_remove(root, root->prio_tree_node);
+			INIT_PRIO_TREE_NODE(last);
+			prev->left = last;
+			last->parent = prev;
+		}
+	}
+
+	INIT_PRIO_TREE_NODE(node);
+
+	if (first) {
+		node->left = first;
+		first->parent = node;
+	} else
+		last = node;
+
+	if (!prio_tree_empty(root)) {
+		last->left = root->prio_tree_node;
+		last->left->parent = last;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	root->prio_tree_node = node;
 	return node;
@@ -149,6 +190,7 @@ struct prio_tree_node *prio_tree_replace(struct prio_tree_root *root,
 		 * We can reduce root->index_bits here. However, it is complex
 		 * and does not help much to improve performance (IMO).
 		 */
+<<<<<<< HEAD
 		root->prio_tree_node = node;
 	} else
 		prio_set_parent(old->parent, node, old->parent->left == old);
@@ -158,6 +200,27 @@ struct prio_tree_node *prio_tree_replace(struct prio_tree_root *root,
 
 	if (!prio_tree_right_empty(old))
 		prio_set_parent(node, old->right, false);
+=======
+		node->parent = node;
+		root->prio_tree_node = node;
+	} else {
+		node->parent = old->parent;
+		if (old->parent->left == old)
+			old->parent->left = node;
+		else
+			old->parent->right = node;
+	}
+
+	if (!prio_tree_left_empty(old)) {
+		node->left = old->left;
+		old->left->parent = node;
+	}
+
+	if (!prio_tree_right_empty(old)) {
+		node->right = old->right;
+		old->right->parent = node;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return old;
 }
@@ -217,14 +280,24 @@ struct prio_tree_node *prio_tree_insert(struct prio_tree_root *root,
 		if (index & mask) {
 			if (prio_tree_right_empty(cur)) {
 				INIT_PRIO_TREE_NODE(node);
+<<<<<<< HEAD
 				prio_set_parent(cur, node, false);
+=======
+				cur->right = node;
+				node->parent = cur;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return res;
 			} else
 				cur = cur->right;
 		} else {
 			if (prio_tree_left_empty(cur)) {
 				INIT_PRIO_TREE_NODE(node);
+<<<<<<< HEAD
 				prio_set_parent(cur, node, true);
+=======
+				cur->left = node;
+				node->parent = cur;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return res;
 			} else
 				cur = cur->left;
@@ -291,6 +364,7 @@ void prio_tree_remove(struct prio_tree_root *root, struct prio_tree_node *node)
 		cur = prio_tree_replace(root, cur->parent, cur);
 }
 
+<<<<<<< HEAD
 static void iter_walk_down(struct prio_tree_iter *iter)
 {
 	iter->mask >>= 1;
@@ -325,6 +399,8 @@ static void iter_walk_up(struct prio_tree_iter *iter)
 		iter->value ^= iter->mask;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Following functions help to enumerate all prio_tree_nodes in the tree that
  * overlap with the input interval X [radix_index, heap_index]. The enumeration
@@ -343,7 +419,25 @@ static struct prio_tree_node *prio_tree_left(struct prio_tree_iter *iter,
 
 	if (iter->r_index <= *h_index) {
 		iter->cur = iter->cur->left;
+<<<<<<< HEAD
 		iter_walk_down(iter);
+=======
+		iter->mask >>= 1;
+		if (iter->mask) {
+			if (iter->size_level)
+				iter->size_level++;
+		} else {
+			if (iter->size_level) {
+				BUG_ON(!prio_tree_left_empty(iter->cur));
+				BUG_ON(!prio_tree_right_empty(iter->cur));
+				iter->size_level++;
+				iter->mask = ULONG_MAX;
+			} else {
+				iter->size_level = 1;
+				iter->mask = 1UL << (BITS_PER_LONG - 1);
+			}
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return iter->cur;
 	}
 
@@ -370,7 +464,26 @@ static struct prio_tree_node *prio_tree_right(struct prio_tree_iter *iter,
 
 	if (iter->r_index <= *h_index) {
 		iter->cur = iter->cur->right;
+<<<<<<< HEAD
 		iter_walk_down(iter);
+=======
+		iter->mask >>= 1;
+		iter->value = value;
+		if (iter->mask) {
+			if (iter->size_level)
+				iter->size_level++;
+		} else {
+			if (iter->size_level) {
+				BUG_ON(!prio_tree_left_empty(iter->cur));
+				BUG_ON(!prio_tree_right_empty(iter->cur));
+				iter->size_level++;
+				iter->mask = ULONG_MAX;
+			} else {
+				iter->size_level = 1;
+				iter->mask = 1UL << (BITS_PER_LONG - 1);
+			}
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return iter->cur;
 	}
 
@@ -380,7 +493,20 @@ static struct prio_tree_node *prio_tree_right(struct prio_tree_iter *iter,
 static struct prio_tree_node *prio_tree_parent(struct prio_tree_iter *iter)
 {
 	iter->cur = iter->cur->parent;
+<<<<<<< HEAD
 	iter_walk_up(iter);
+=======
+	if (iter->mask == ULONG_MAX)
+		iter->mask = 1UL;
+	else if (iter->size_level == 1)
+		iter->mask = 1UL;
+	else
+		iter->mask <<= 1;
+	if (iter->size_level)
+		iter->size_level--;
+	if (!iter->size_level && (iter->value & iter->mask))
+		iter->value ^= iter->mask;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return iter->cur;
 }
 

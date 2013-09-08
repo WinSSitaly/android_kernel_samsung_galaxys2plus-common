@@ -96,7 +96,11 @@ struct inode *efs_iget(struct super_block *super, unsigned long ino)
 	efs_inode = (struct efs_dinode *) (bh->b_data + offset);
     
 	inode->i_mode  = be16_to_cpu(efs_inode->di_mode);
+<<<<<<< HEAD
 	set_nlink(inode, be16_to_cpu(efs_inode->di_nlink));
+=======
+	inode->i_nlink = be16_to_cpu(efs_inode->di_nlink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	inode->i_uid   = (uid_t)be16_to_cpu(efs_inode->di_uid);
 	inode->i_gid   = (gid_t)be16_to_cpu(efs_inode->di_gid);
 	inode->i_size  = be32_to_cpu(efs_inode->di_size);

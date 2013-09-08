@@ -51,8 +51,14 @@
 #include <linux/nfs_page.h>
 #include <linux/sunrpc/clnt.h>
 
+<<<<<<< HEAD
 #include <asm/uaccess.h>
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <asm/uaccess.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "internal.h"
 #include "iostat.h"
@@ -264,7 +270,13 @@ static void nfs_direct_read_release(void *calldata)
 }
 
 static const struct rpc_call_ops nfs_read_direct_ops = {
+<<<<<<< HEAD
 	.rpc_call_prepare = nfs_read_prepare,
+=======
+#if defined(CONFIG_NFS_V4_1)
+	.rpc_call_prepare = nfs_read_prepare,
+#endif /* CONFIG_NFS_V4_1 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.rpc_call_done = nfs_direct_read_result,
 	.rpc_release = nfs_direct_read_release,
 };
@@ -281,7 +293,11 @@ static ssize_t nfs_direct_read_schedule_segment(struct nfs_direct_req *dreq,
 						loff_t pos)
 {
 	struct nfs_open_context *ctx = dreq->ctx;
+<<<<<<< HEAD
 	struct inode *inode = ctx->dentry->d_inode;
+=======
+	struct inode *inode = ctx->path.dentry->d_inode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long user_addr = (unsigned long)iov->iov_base;
 	size_t count = iov->iov_len;
 	size_t rsize = NFS_SERVER(inode)->rsize;
@@ -551,7 +567,13 @@ static void nfs_direct_commit_release(void *calldata)
 }
 
 static const struct rpc_call_ops nfs_commit_direct_ops = {
+<<<<<<< HEAD
 	.rpc_call_prepare = nfs_write_prepare,
+=======
+#if defined(CONFIG_NFS_V4_1)
+	.rpc_call_prepare = nfs_write_prepare,
+#endif /* CONFIG_NFS_V4_1 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.rpc_call_done = nfs_direct_commit_result,
 	.rpc_release = nfs_direct_commit_release,
 };
@@ -691,7 +713,13 @@ out_unlock:
 }
 
 static const struct rpc_call_ops nfs_write_direct_ops = {
+<<<<<<< HEAD
 	.rpc_call_prepare = nfs_write_prepare,
+=======
+#if defined(CONFIG_NFS_V4_1)
+	.rpc_call_prepare = nfs_write_prepare,
+#endif /* CONFIG_NFS_V4_1 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.rpc_call_done = nfs_direct_write_result,
 	.rpc_release = nfs_direct_write_release,
 };
@@ -708,7 +736,11 @@ static ssize_t nfs_direct_write_schedule_segment(struct nfs_direct_req *dreq,
 						 loff_t pos, int sync)
 {
 	struct nfs_open_context *ctx = dreq->ctx;
+<<<<<<< HEAD
 	struct inode *inode = ctx->dentry->d_inode;
+=======
+	struct inode *inode = ctx->path.dentry->d_inode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long user_addr = (unsigned long)iov->iov_base;
 	size_t count = iov->iov_len;
 	struct rpc_task *task;

@@ -17,7 +17,10 @@
  * the CPU clock speed on the fly.
  */
 
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/cpufreq.h>
 #include <linux/clk.h>
 #include <linux/err.h>
@@ -98,7 +101,11 @@ static int mxc_set_target(struct cpufreq_policy *policy,
 	return ret;
 }
 
+<<<<<<< HEAD
 static int mxc_cpufreq_init(struct cpufreq_policy *policy)
+=======
+static int __init mxc_cpufreq_init(struct cpufreq_policy *policy)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 	int i;

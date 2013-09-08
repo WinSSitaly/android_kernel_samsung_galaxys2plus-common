@@ -34,6 +34,7 @@ static void tcp_diag_get_info(struct sock *sk, struct inet_diag_msg *r,
 		tcp_get_info(sk, info);
 }
 
+<<<<<<< HEAD
 static void tcp_diag_dump(struct sk_buff *skb, struct netlink_callback *cb,
 		struct inet_diag_req_v2 *r, struct nlattr *bc)
 {
@@ -51,6 +52,13 @@ static const struct inet_diag_handler tcp_diag_handler = {
 	.dump_one	 = tcp_diag_dump_one,
 	.idiag_get_info	 = tcp_diag_get_info,
 	.idiag_type	 = IPPROTO_TCP,
+=======
+static const struct inet_diag_handler tcp_diag_handler = {
+	.idiag_hashinfo	 = &tcp_hashinfo,
+	.idiag_get_info	 = tcp_diag_get_info,
+	.idiag_type	 = TCPDIAG_GETSOCK,
+	.idiag_info_size = sizeof(struct tcp_info),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init tcp_diag_init(void)
@@ -66,4 +74,8 @@ static void __exit tcp_diag_exit(void)
 module_init(tcp_diag_init);
 module_exit(tcp_diag_exit);
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_ALIAS_NET_PF_PROTO_TYPE(PF_NETLINK, NETLINK_SOCK_DIAG, 2-6 /* AF_INET - IPPROTO_TCP */);
+=======
+MODULE_ALIAS_NET_PF_PROTO_TYPE(PF_NETLINK, NETLINK_INET_DIAG, TCPDIAG_GETSOCK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

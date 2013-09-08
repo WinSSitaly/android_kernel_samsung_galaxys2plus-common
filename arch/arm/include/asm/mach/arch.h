@@ -13,13 +13,21 @@
 struct tag;
 struct meminfo;
 struct sys_timer;
+<<<<<<< HEAD
 struct pt_regs;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct machine_desc {
 	unsigned int		nr;		/* architecture number	*/
 	const char		*name;		/* architecture name	*/
+<<<<<<< HEAD
 	unsigned long		atag_offset;	/* tagged list (relative) */
 	const char *const 	*dt_compat;	/* array of device tree
+=======
+	unsigned long		boot_params;	/* tagged list		*/
+	const char		**dt_compat;	/* array of device tree
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						 * 'compatible' strings	*/
 
 	unsigned int		nr_irqs;	/* number of IRQs */
@@ -31,11 +39,20 @@ struct machine_desc {
 	unsigned int		video_start;	/* start of video RAM	*/
 	unsigned int		video_end;	/* end of video RAM	*/
 
+<<<<<<< HEAD
 	unsigned char		reserve_lp0 :1;	/* never has lp0	*/
 	unsigned char		reserve_lp1 :1;	/* never has lp1	*/
 	unsigned char		reserve_lp2 :1;	/* never has lp2	*/
 	char			restart_mode;	/* default restart mode	*/
 	void			(*fixup)(struct tag *, char **,
+=======
+	unsigned int		reserve_lp0 :1;	/* never has lp0	*/
+	unsigned int		reserve_lp1 :1;	/* never has lp1	*/
+	unsigned int		reserve_lp2 :1;	/* never has lp2	*/
+	unsigned int		soft_reboot :1;	/* soft reboot		*/
+	void			(*fixup)(struct machine_desc *,
+					 struct tag *, char **,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					 struct meminfo *);
 	void			(*reserve)(void);/* reserve mem blocks	*/
 	void			(*map_io)(void);/* IO mapping function	*/
@@ -46,7 +63,10 @@ struct machine_desc {
 #ifdef CONFIG_MULTI_IRQ_HANDLER
 	void			(*handle_irq)(struct pt_regs *);
 #endif
+<<<<<<< HEAD
 	void			(*restart)(char, const char *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*

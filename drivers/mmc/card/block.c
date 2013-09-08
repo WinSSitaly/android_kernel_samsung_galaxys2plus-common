@@ -41,6 +41,10 @@
 #include <linux/mmc/mmc.h>
 #include <linux/mmc/sd.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 
 #include "queue.h"
@@ -65,12 +69,31 @@ static DEFINE_MUTEX(block_mutex);
  * or bootarg options.
  */
 static int perdev_minors = CONFIG_MMC_BLOCK_MINORS;
+<<<<<<< HEAD
 
+=======
+static int max_devices;
+
+#ifdef CONFIG_MMC_BCM_SD
+/*
+ * max 16 partitions per card
+ */
+#define MMC_SHIFT	4
+#define SDHCI_CMD_DROP_RETRY 5
+#else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * We've only got one major, so number of mmcblk devices is
  * limited to 256 / number of minors per device.
  */
+<<<<<<< HEAD
 static int max_devices;
+=======
+#define MMC_SHIFT	3
+#endif
+
+#define MMC_NUM_MINORS	(256 >> MMC_SHIFT)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* 256 minors, so at most 256 separate devices */
 static DECLARE_BITMAP(dev_use, 256);
@@ -93,11 +116,14 @@ struct mmc_blk_data {
 	unsigned int	read_only;
 	unsigned int	part_type;
 	unsigned int	name_idx;
+<<<<<<< HEAD
 	unsigned int	reset_done;
 #define MMC_BLK_READ		BIT(0)
 #define MMC_BLK_WRITE		BIT(1)
 #define MMC_BLK_DISCARD		BIT(2)
 #define MMC_BLK_SECDISCARD	BIT(3)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Only set in main mmc_blk_data associated
@@ -106,12 +132,16 @@ struct mmc_blk_data {
 	 */
 	unsigned int	part_curr;
 	struct device_attribute force_ro;
+<<<<<<< HEAD
 	struct device_attribute power_ro_lock;
 	int	area_type;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static DEFINE_MUTEX(open_lock);
 
+<<<<<<< HEAD
 enum mmc_blk_status {
 	MMC_BLK_SUCCESS = 0,
 	MMC_BLK_PARTIAL,
@@ -123,6 +153,8 @@ enum mmc_blk_status {
 	MMC_BLK_NOMEDIUM,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(perdev_minors, int, 0444);
 MODULE_PARM_DESC(perdev_minors, "Minors numbers to allocate per device");
 
@@ -143,11 +175,15 @@ static struct mmc_blk_data *mmc_blk_get(struct gendisk *disk)
 
 static inline int mmc_get_devidx(struct gendisk *disk)
 {
+<<<<<<< HEAD
 	int devmaj = MAJOR(disk_devt(disk));
 	int devidx = MINOR(disk_devt(disk)) / perdev_minors;
 
 	if (!devmaj)
 		devidx = disk->first_minor / perdev_minors;
+=======
+	int devidx = disk->first_minor / perdev_minors;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return devidx;
 }
 
@@ -167,6 +203,7 @@ static void mmc_blk_put(struct mmc_blk_data *md)
 	mutex_unlock(&open_lock);
 }
 
+<<<<<<< HEAD
 static ssize_t power_ro_lock_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -231,6 +268,8 @@ static ssize_t power_ro_lock_store(struct device *dev,
 	return count;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t force_ro_show(struct device *dev, struct device_attribute *attr,
 			     char *buf)
 {
@@ -365,7 +404,11 @@ static int mmc_blk_ioctl_cmd(struct block_device *bdev,
 	struct mmc_card *card;
 	struct mmc_command cmd = {0};
 	struct mmc_data data = {0};
+<<<<<<< HEAD
 	struct mmc_request mrq = {NULL};
+=======
+	struct mmc_request mrq = {0};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct scatterlist sg;
 	int err;
 
@@ -516,16 +559,31 @@ static const struct block_device_operations mmc_bdops = {
 #endif
 };
 
+<<<<<<< HEAD
+=======
+struct mmc_blk_request {
+	struct mmc_request	mrq;
+	struct mmc_command	sbc;
+	struct mmc_command	cmd;
+	struct mmc_command	stop;
+	struct mmc_data		data;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int mmc_blk_part_switch(struct mmc_card *card,
 				      struct mmc_blk_data *md)
 {
 	int ret;
 	struct mmc_blk_data *main_md = mmc_get_drvdata(card);
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (main_md->part_curr == md->part_type)
 		return 0;
 
 	if (mmc_card_mmc(card)) {
+<<<<<<< HEAD
 		u8 part_config = card->ext_csd.part_config;
 
 		part_config &= ~EXT_CSD_PART_CONFIG_ACC_MASK;
@@ -539,6 +597,17 @@ static inline int mmc_blk_part_switch(struct mmc_card *card,
 
 		card->ext_csd.part_config = part_config;
 	}
+=======
+		card->ext_csd.part_config &= ~EXT_CSD_PART_CONFIG_ACC_MASK;
+		card->ext_csd.part_config |= md->part_type;
+
+		ret = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+				 EXT_CSD_PART_CONFIG, card->ext_csd.part_config,
+				 card->ext_csd.part_time);
+		if (ret)
+			return ret;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	main_md->part_curr = md->part_type;
 	return 0;
@@ -550,7 +619,11 @@ static u32 mmc_sd_num_wr_blocks(struct mmc_card *card)
 	u32 result;
 	__be32 *blocks;
 
+<<<<<<< HEAD
 	struct mmc_request mrq = {NULL};
+=======
+	struct mmc_request mrq = {0};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mmc_command cmd = {0};
 	struct mmc_data data = {0};
 	unsigned int timeout_us;
@@ -639,7 +712,10 @@ static int get_card_status(struct mmc_card *card, u32 *status, int retries)
 	return err;
 }
 
+<<<<<<< HEAD
 #define ERR_NOMEDIUM	3
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ERR_RETRY	2
 #define ERR_ABORT	1
 #define ERR_CONTINUE	0
@@ -660,18 +736,35 @@ static int mmc_blk_cmd_error(struct request *req, const char *name, int error,
 			req->rq_disk->disk_name, "timed out", name, status);
 
 		/* If the status cmd initially failed, retry the r/w cmd */
+<<<<<<< HEAD
 		if (!status_valid)
 			return ERR_RETRY;
 
+=======
+		if (!status_valid) {
+			pr_err("%s: status not valid, retrying timeout\n", req->rq_disk->disk_name);
+			return ERR_RETRY;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * If it was a r/w cmd crc error, or illegal command
 		 * (eg, issued in wrong state) then retry - we should
 		 * have corrected the state problem above.
 		 */
+<<<<<<< HEAD
 		if (status & (R1_COM_CRC_ERROR | R1_ILLEGAL_COMMAND))
 			return ERR_RETRY;
 
 		/* Otherwise abort the command */
+=======
+		if (status & (R1_COM_CRC_ERROR | R1_ILLEGAL_COMMAND)) {
+			pr_err("%s: command error, retrying timeout\n", req->rq_disk->disk_name);
+			return ERR_RETRY;
+		}
+
+		/* Otherwise abort the command */
+		pr_err("%s: not retrying timeout\n", req->rq_disk->disk_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ERR_ABORT;
 
 	default:
@@ -701,15 +794,22 @@ static int mmc_blk_cmd_error(struct request *req, const char *name, int error,
  * Otherwise we don't understand what happened, so abort.
  */
 static int mmc_blk_cmd_recovery(struct mmc_card *card, struct request *req,
+<<<<<<< HEAD
 	struct mmc_blk_request *brq, int *ecc_err)
+=======
+	struct mmc_blk_request *brq)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	bool prev_cmd_status_valid = true;
 	u32 status, stop_status = 0;
 	int err, retry;
 
+<<<<<<< HEAD
 	if (mmc_card_removed(card))
 		return ERR_NOMEDIUM;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Try to get card status which indicates both the card state
 	 * and why there was no response.  If the first attempt fails,
@@ -726,6 +826,7 @@ static int mmc_blk_cmd_recovery(struct mmc_card *card, struct request *req,
 	}
 
 	/* We couldn't get a response from the card.  Give up. */
+<<<<<<< HEAD
 	if (err) {
 		/* Check if the card is removed */
 		if (mmc_detect_card_removed(card->host))
@@ -738,6 +839,10 @@ static int mmc_blk_cmd_recovery(struct mmc_card *card, struct request *req,
 	    (brq->stop.resp[0] & R1_CARD_ECC_FAILED) ||
 	    (brq->cmd.resp[0] & R1_CARD_ECC_FAILED))
 		*ecc_err = 1;
+=======
+	if (err)
+		return ERR_ABORT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Check the current card state.  If it is in some data transfer
@@ -756,8 +861,11 @@ static int mmc_blk_cmd_recovery(struct mmc_card *card, struct request *req,
 		 */
 		if (err)
 			return ERR_ABORT;
+<<<<<<< HEAD
 		if (stop_status & R1_CARD_ECC_FAILED)
 			*ecc_err = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Check for set block count errors */
@@ -770,10 +878,13 @@ static int mmc_blk_cmd_recovery(struct mmc_card *card, struct request *req,
 		return mmc_blk_cmd_error(req, "r/w cmd", brq->cmd.error,
 				prev_cmd_status_valid, status);
 
+<<<<<<< HEAD
 	/* Data errors */
 	if (!brq->stop.error)
 		return ERR_CONTINUE;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Now for stop errors.  These aren't fatal to the transfer. */
 	pr_err("%s: error %d sending stop command, original cmd response %#x, card status %#x\n",
 	       req->rq_disk->disk_name, brq->stop.error,
@@ -790,6 +901,7 @@ static int mmc_blk_cmd_recovery(struct mmc_card *card, struct request *req,
 	return ERR_CONTINUE;
 }
 
+<<<<<<< HEAD
 static int mmc_blk_reset(struct mmc_blk_data *md, struct mmc_host *host,
 			 int type)
 {
@@ -823,12 +935,18 @@ static inline void mmc_blk_reset_success(struct mmc_blk_data *md, int type)
 	md->reset_done &= ~type;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int mmc_blk_issue_discard_rq(struct mmc_queue *mq, struct request *req)
 {
 	struct mmc_blk_data *md = mq->data;
 	struct mmc_card *card = md->queue.card;
 	unsigned int from, nr, arg;
+<<<<<<< HEAD
 	int err = 0, type = MMC_BLK_DISCARD;
+=======
+	int err = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!mmc_can_erase(card)) {
 		err = -EOPNOTSUPP;
@@ -838,6 +956,7 @@ static int mmc_blk_issue_discard_rq(struct mmc_queue *mq, struct request *req)
 	from = blk_rq_pos(req);
 	nr = blk_rq_sectors(req);
 
+<<<<<<< HEAD
 	if (mmc_can_discard(card))
 		arg = MMC_DISCARD_ARG;
 	else if (mmc_can_trim(card))
@@ -845,6 +964,18 @@ static int mmc_blk_issue_discard_rq(struct mmc_queue *mq, struct request *req)
 	else
 		arg = MMC_ERASE_ARG;
 retry:
+=======
+#ifdef CONFIG_MMC_DISCARD_SUPPORT
+	if (mmc_can_discard(card))
+		arg = MMC_DISCARD_ARG;
+	else
+#endif
+	if (mmc_can_trim(card))
+		arg = MMC_TRIM_ARG;
+	else
+		arg = MMC_ERASE_ARG;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (card->quirks & MMC_QUIRK_INAND_CMD38) {
 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
 				 INAND_CMD38_ARG_EXT_CSD,
@@ -857,10 +988,13 @@ retry:
 	}
 	err = mmc_erase(card, from, nr, arg);
 out:
+<<<<<<< HEAD
 	if (err == -EIO && !mmc_blk_reset(md, card->host, type))
 		goto retry;
 	if (!err)
 		mmc_blk_reset_success(md, type);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irq(&md->lock);
 	__blk_end_request(req, err, blk_rq_bytes(req));
 	spin_unlock_irq(&md->lock);
@@ -873,10 +1007,17 @@ static int mmc_blk_issue_secdiscard_rq(struct mmc_queue *mq,
 {
 	struct mmc_blk_data *md = mq->data;
 	struct mmc_card *card = md->queue.card;
+<<<<<<< HEAD
 	unsigned int from, nr, arg, trim_arg, erase_arg;
 	int err = 0, type = MMC_BLK_SECDISCARD;
 
 	if (!(mmc_can_secure_erase_trim(card) || mmc_can_sanitize(card))) {
+=======
+	unsigned int from, nr, arg;
+	int err = 0;
+
+	if (!mmc_can_secure_erase_trim(card)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = -EOPNOTSUPP;
 		goto out;
 	}
@@ -884,6 +1025,7 @@ static int mmc_blk_issue_secdiscard_rq(struct mmc_queue *mq,
 	from = blk_rq_pos(req);
 	nr = blk_rq_sectors(req);
 
+<<<<<<< HEAD
 	/* The sanitize operation is supported at v4.5 only */
 	if (mmc_can_sanitize(card)) {
 		erase_arg = MMC_ERASE_ARG;
@@ -902,6 +1044,13 @@ static int mmc_blk_issue_secdiscard_rq(struct mmc_queue *mq,
 		goto out;
 	}
 retry:
+=======
+	if (mmc_can_trim(card) && !mmc_erase_group_aligned(card, from, nr))
+		arg = MMC_SECURE_TRIM1_ARG;
+	else
+		arg = MMC_SECURE_ERASE_ARG;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (card->quirks & MMC_QUIRK_INAND_CMD38) {
 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
 				 INAND_CMD38_ARG_EXT_CSD,
@@ -910,6 +1059,7 @@ retry:
 				 INAND_CMD38_ARG_SECERASE,
 				 0);
 		if (err)
+<<<<<<< HEAD
 			goto out_retry;
 	}
 
@@ -920,12 +1070,19 @@ retry:
 		goto out;
 
 	if (arg == MMC_SECURE_TRIM1_ARG) {
+=======
+			goto out;
+	}
+	err = mmc_erase(card, from, nr, arg);
+	if (!err && arg == MMC_SECURE_TRIM1_ARG) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (card->quirks & MMC_QUIRK_INAND_CMD38) {
 			err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
 					 INAND_CMD38_ARG_EXT_CSD,
 					 INAND_CMD38_ARG_SECTRIM2,
 					 0);
 			if (err)
+<<<<<<< HEAD
 				goto out_retry;
 		}
 
@@ -944,6 +1101,12 @@ out_retry:
 		goto retry;
 	if (!err)
 		mmc_blk_reset_success(md, type);
+=======
+				goto out;
+		}
+		err = mmc_erase(card, from, nr, MMC_SECURE_TRIM2_ARG);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	spin_lock_irq(&md->lock);
 	__blk_end_request(req, err, blk_rq_bytes(req));
@@ -955,6 +1118,7 @@ out:
 static int mmc_blk_issue_flush(struct mmc_queue *mq, struct request *req)
 {
 	struct mmc_blk_data *md = mq->data;
+<<<<<<< HEAD
 	struct mmc_card *card = md->queue.card;
 	int ret = 0;
 
@@ -967,6 +1131,18 @@ static int mmc_blk_issue_flush(struct mmc_queue *mq, struct request *req)
 	spin_unlock_irq(&md->lock);
 
 	return ret ? 0 : 1;
+=======
+
+	/*
+	 * No-op, only service this because we need REQ_FUA for reliable
+	 * writes.
+	 */
+	spin_lock_irq(&md->lock);
+	__blk_end_request_all(req, 0);
+	spin_unlock_irq(&md->lock);
+
+	return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1000,6 +1176,7 @@ static inline void mmc_apply_rel_rw(struct mmc_blk_request *brq,
 	 R1_CC_ERROR |		/* Card controller error */		\
 	 R1_ERROR)		/* General/unknown error */
 
+<<<<<<< HEAD
 static int mmc_blk_err_check(struct mmc_card *card,
 			     struct mmc_async_req *areq)
 {
@@ -1102,19 +1279,31 @@ static void mmc_blk_rw_rq_prep(struct mmc_queue_req *mqrq,
 	struct request *req = mqrq->req;
 	struct mmc_blk_data *md = mq->data;
 	bool do_data_tag;
+=======
+static int mmc_blk_issue_rw_rq(struct mmc_queue *mq, struct request *req)
+{
+	struct mmc_blk_data *md = mq->data;
+	struct mmc_card *card = md->queue.card;
+	struct mmc_blk_request brq;
+	int ret = 1, disable_multi = 0, retry = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Reliable writes are used to implement Forced Unit Access and
 	 * REQ_META accesses, and are supported only on MMCs.
+<<<<<<< HEAD
 	 *
 	 * XXX: this really needs a good explanation of why REQ_META
 	 * is treated special.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	bool do_rel_wr = ((req->cmd_flags & REQ_FUA) ||
 			  (req->cmd_flags & REQ_META)) &&
 		(rq_data_dir(req) == WRITE) &&
 		(md->flags & MMC_BLK_REL_WR);
 
+<<<<<<< HEAD
 	memset(brq, 0, sizeof(struct mmc_blk_request));
 	brq->mrq.cmd = &brq->cmd;
 	brq->mrq.data = &brq->data;
@@ -1254,6 +1443,236 @@ static int mmc_blk_cmd_err(struct mmc_blk_data *md, struct mmc_card *card,
 	 * If this is an SD card and we're writing, we can first
 	 * mark the known good sectors as ok.
 	 *
+=======
+	do {
+		u32 readcmd, writecmd;
+
+		memset(&brq, 0, sizeof(struct mmc_blk_request));
+		brq.mrq.cmd = &brq.cmd;
+		brq.mrq.data = &brq.data;
+
+		brq.cmd.arg = blk_rq_pos(req);
+		if (!mmc_card_blockaddr(card))
+			brq.cmd.arg <<= 9;
+		brq.cmd.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_ADTC;
+#ifdef CONFIG_MMC_BCM_SD
+		brq.cmd.retries = SDHCI_CMD_DROP_RETRY;
+#endif
+
+		brq.data.blksz = 512;
+		brq.stop.opcode = MMC_STOP_TRANSMISSION;
+		brq.stop.arg = 0;
+		brq.stop.flags = MMC_RSP_SPI_R1B | MMC_RSP_R1B | MMC_CMD_AC;
+#ifdef CONFIG_MMC_BCM_SD
+               brq.stop.retries = SDHCI_CMD_DROP_RETRY;
+#endif
+
+		brq.data.blocks = blk_rq_sectors(req);
+
+		/*
+		 * The block layer doesn't support all sector count
+		 * restrictions, so we need to be prepared for too big
+		 * requests.
+		 */
+		if (brq.data.blocks > card->host->max_blk_count)
+			brq.data.blocks = card->host->max_blk_count;
+
+		/*
+		 * After a read error, we redo the request one sector at a time
+		 * in order to accurately determine which sectors can be read
+		 * successfully.
+		 */
+		if (disable_multi && brq.data.blocks > 1)
+			brq.data.blocks = 1;
+
+		if (brq.data.blocks > 1 || do_rel_wr ||
+				md->part_type == EXT_CSD_PART_CONFIG_ACC_RPMB) {
+			/* SPI multiblock writes terminate using a special
+			 * token, not a STOP_TRANSMISSION request.
+			 */
+			if (!mmc_host_is_spi(card->host) ||
+			    rq_data_dir(req) == READ)
+				brq.mrq.stop = &brq.stop;
+			readcmd = MMC_READ_MULTIPLE_BLOCK;
+			writecmd = MMC_WRITE_MULTIPLE_BLOCK;
+		} else {
+			brq.mrq.stop = NULL;
+			readcmd = MMC_READ_SINGLE_BLOCK;
+			writecmd = MMC_WRITE_BLOCK;
+		}
+		if (rq_data_dir(req) == READ) {
+			brq.cmd.opcode = readcmd;
+			brq.data.flags |= MMC_DATA_READ;
+		} else {
+			brq.cmd.opcode = writecmd;
+			brq.data.flags |= MMC_DATA_WRITE;
+		}
+
+		if (do_rel_wr)
+			mmc_apply_rel_rw(&brq, card, req);
+
+		/*
+		 * Pre-defined multi-block transfers are preferable to
+		 * open ended-ones (and necessary for reliable writes).
+		 * However, it is not sufficient to just send CMD23,
+		 * and avoid the final CMD12, as on an error condition
+		 * CMD12 (stop) needs to be sent anyway. This, coupled
+		 * with Auto-CMD23 enhancements provided by some
+		 * hosts, means that the complexity of dealing
+		 * with this is best left to the host. If CMD23 is
+		 * supported by card and host, we'll fill sbc in and let
+		 * the host deal with handling it correctly. This means
+		 * that for hosts that don't expose MMC_CAP_CMD23, no
+		 * change of behavior will be observed.
+		 *
+		 * N.B: Some MMC cards experience perf degradation.
+		 * We'll avoid using CMD23-bounded multiblock writes for
+		 * these, while retaining features like reliable writes.
+		 */
+
+		if ((md->flags & MMC_BLK_CMD23) &&
+		    mmc_op_multi(brq.cmd.opcode) &&
+		    (do_rel_wr || !(card->quirks & MMC_QUIRK_BLK_NO_CMD23)) &&
+		    (!(card->quirks & MMC_QUIRK_BLK_DISABLE_CMD23))) {
+			brq.sbc.opcode = MMC_SET_BLOCK_COUNT;
+			brq.sbc.arg = brq.data.blocks |
+				(do_rel_wr ? (1 << 31) : 0);
+			brq.sbc.flags = MMC_RSP_R1 | MMC_CMD_AC;
+			brq.mrq.sbc = &brq.sbc;
+		}
+
+		mmc_set_data_timeout(&brq.data, card);
+
+		brq.data.sg = mq->sg;
+		brq.data.sg_len = mmc_queue_map_sg(mq);
+
+		/*
+		 * Adjust the sg list so it is the same size as the
+		 * request.
+		 */
+		if (brq.data.blocks != blk_rq_sectors(req)) {
+			int i, data_size = brq.data.blocks << 9;
+			struct scatterlist *sg;
+
+			for_each_sg(brq.data.sg, sg, brq.data.sg_len, i) {
+				data_size -= sg->length;
+				if (data_size <= 0) {
+					sg->length += data_size;
+					i++;
+					break;
+				}
+			}
+			brq.data.sg_len = i;
+		}
+
+		mmc_queue_bounce_pre(mq);
+
+		mmc_wait_for_req(card->host, &brq.mrq);
+
+		mmc_queue_bounce_post(mq);
+
+		/*
+		 * sbc.error indicates a problem with the set block count
+		 * command.  No data will have been transferred.
+		 *
+		 * cmd.error indicates a problem with the r/w command.  No
+		 * data will have been transferred.
+		 *
+		 * stop.error indicates a problem with the stop command.  Data
+		 * may have been transferred, or may still be transferring.
+		 */
+		if (brq.sbc.error || brq.cmd.error || brq.stop.error) {
+			switch (mmc_blk_cmd_recovery(card, req, &brq)) {
+			case ERR_RETRY:
+				if (retry++ < 5)
+					continue;
+			case ERR_ABORT:
+				goto cmd_abort;
+			case ERR_CONTINUE:
+				break;
+			}
+		}
+
+		/*
+		 * Check for errors relating to the execution of the
+		 * initial command - such as address errors.  No data
+		 * has been transferred.
+		 */
+		if (brq.cmd.resp[0] & CMD_ERRORS) {
+			pr_err("%s: r/w command failed, status = %#x\n",
+				req->rq_disk->disk_name, brq.cmd.resp[0]);
+			goto cmd_abort;
+		}
+
+		/*
+		 * Everything else is either success, or a data error of some
+		 * kind.  If it was a write, we may have transitioned to
+		 * program mode, which we have to wait for it to complete.
+		 */
+		if (!mmc_host_is_spi(card->host) && rq_data_dir(req) != READ) {
+			u32 status;
+			do {
+				int err = get_card_status(card, &status, 5);
+				if (err) {
+					printk(KERN_ERR "%s: error %d requesting status\n",
+					       req->rq_disk->disk_name, err);
+					goto cmd_err;
+				}
+				/*
+				 * Some cards mishandle the status bits,
+				 * so make sure to check both the busy
+				 * indication and the card state.
+				 */
+			} while (!(status & R1_READY_FOR_DATA) ||
+				 (R1_CURRENT_STATE(status) == R1_STATE_PRG));
+		}
+
+		if (brq.data.error) {
+			pr_err("%s: error %d transferring data, sector %u, nr %u, cmd response %#x, card status %#x\n",
+				req->rq_disk->disk_name, brq.data.error,
+				(unsigned)blk_rq_pos(req),
+				(unsigned)blk_rq_sectors(req),
+				brq.cmd.resp[0], brq.stop.resp[0]);
+
+			if (rq_data_dir(req) == READ) {
+				if (brq.data.blocks > 1) {
+					/* Redo read one sector at a time */
+					pr_warning("%s: retrying using single block read\n",
+						req->rq_disk->disk_name);
+					disable_multi = 1;
+					continue;
+				}
+
+				/*
+				 * After an error, we redo I/O one sector at a
+				 * time, so we only reach here after trying to
+				 * read a single sector.
+				 */
+				spin_lock_irq(&md->lock);
+				ret = __blk_end_request(req, -EIO, brq.data.blksz);
+				spin_unlock_irq(&md->lock);
+				continue;
+			} else {
+				goto cmd_err;
+			}
+		}
+
+		/*
+		 * A block was successfully transferred.
+		 */
+		spin_lock_irq(&md->lock);
+		ret = __blk_end_request(req, 0, brq.data.bytes_xfered);
+		spin_unlock_irq(&md->lock);
+	} while (ret);
+
+	return 1;
+
+ cmd_err:
+ 	/*
+ 	 * If this is an SD card and we're writing, we can first
+ 	 * mark the known good sectors as ok.
+ 	 *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * If the card is not SD, we can still ok written sectors
 	 * as reported by the controller (which might be less than
 	 * the real number of written sectors, but never more).
@@ -1269,6 +1688,7 @@ static int mmc_blk_cmd_err(struct mmc_blk_data *md, struct mmc_card *card,
 		}
 	} else {
 		spin_lock_irq(&md->lock);
+<<<<<<< HEAD
 		ret = __blk_end_request(req, 0, brq->data.bytes_xfered);
 		spin_unlock_irq(&md->lock);
 	}
@@ -1392,10 +1812,19 @@ static int mmc_blk_issue_rw_rq(struct mmc_queue *mq, struct request *rqc)
 	spin_lock_irq(&md->lock);
 	if (mmc_card_removed(card))
 		req->cmd_flags |= REQ_QUIET;
+=======
+		ret = __blk_end_request(req, 0, brq.data.bytes_xfered);
+		spin_unlock_irq(&md->lock);
+	}
+
+ cmd_abort:
+	spin_lock_irq(&md->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (ret)
 		ret = __blk_end_request(req, -EIO, blk_rq_cur_bytes(req));
 	spin_unlock_irq(&md->lock);
 
+<<<<<<< HEAD
  start_new_req:
 	if (rqc) {
 		mmc_blk_rw_rq_prep(mq->mqrq_cur, card, 0, mq);
@@ -1405,12 +1834,21 @@ static int mmc_blk_issue_rw_rq(struct mmc_queue *mq, struct request *rqc)
 	return 0;
 }
 
+=======
+	return 0;
+}
+
+static int
+mmc_blk_set_blksize(struct mmc_blk_data *md, struct mmc_card *card);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int mmc_blk_issue_rq(struct mmc_queue *mq, struct request *req)
 {
 	int ret;
 	struct mmc_blk_data *md = mq->data;
 	struct mmc_card *card = md->queue.card;
 
+<<<<<<< HEAD
 	if (req && !mq->mqrq_prev->req)
 		/* claim host only for the first request */
 		mmc_claim_host(card->host);
@@ -1422,10 +1860,23 @@ static int mmc_blk_issue_rq(struct mmc_queue *mq, struct request *req)
 			__blk_end_request_all(req, -EIO);
 			spin_unlock_irq(&md->lock);
 		}
+=======
+#ifdef CONFIG_MMC_BLOCK_DEFERRED_RESUME
+	if (mmc_bus_needs_resume(card->host)) {
+		mmc_resume_bus(card->host);
+		mmc_blk_set_blksize(md, card);
+	}
+#endif
+
+	mmc_claim_host(card->host);
+	ret = mmc_blk_part_switch(card, md);
+	if (ret) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = 0;
 		goto out;
 	}
 
+<<<<<<< HEAD
 	if (req && req->cmd_flags & REQ_DISCARD) {
 		/* complete ongoing async transfer before issuing discard */
 		if (card->host->areq)
@@ -1439,15 +1890,27 @@ static int mmc_blk_issue_rq(struct mmc_queue *mq, struct request *req)
 		/* complete ongoing async transfer before issuing flush */
 		if (card->host->areq)
 			mmc_blk_issue_rw_rq(mq, NULL);
+=======
+	if (req->cmd_flags & REQ_DISCARD) {
+		if (req->cmd_flags & REQ_SECURE)
+			ret = mmc_blk_issue_secdiscard_rq(mq, req);
+		else
+			ret = mmc_blk_issue_discard_rq(mq, req);
+	} else if (req->cmd_flags & REQ_FLUSH) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = mmc_blk_issue_flush(mq, req);
 	} else {
 		ret = mmc_blk_issue_rw_rq(mq, req);
 	}
 
 out:
+<<<<<<< HEAD
 	if (!req)
 		/* release host only when there are no more requests */
 		mmc_release_host(card->host);
+=======
+	mmc_release_host(card->host);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1461,8 +1924,12 @@ static struct mmc_blk_data *mmc_blk_alloc_req(struct mmc_card *card,
 					      struct device *parent,
 					      sector_t size,
 					      bool default_ro,
+<<<<<<< HEAD
 					      const char *subname,
 					      int area_type)
+=======
+					      const char *subname)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct mmc_blk_data *md;
 	int devidx, ret;
@@ -1487,12 +1954,20 @@ static struct mmc_blk_data *mmc_blk_alloc_req(struct mmc_card *card,
 	if (!subname) {
 		md->name_idx = find_first_zero_bit(name_use, max_devices);
 		__set_bit(md->name_idx, name_use);
+<<<<<<< HEAD
 	} else
 		md->name_idx = ((struct mmc_blk_data *)
 				dev_to_disk(parent)->private_data)->name_idx;
 
 	md->area_type = area_type;
 
+=======
+	}
+	else
+		md->name_idx = ((struct mmc_blk_data *)
+				dev_to_disk(parent)->private_data)->name_idx;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Set the read-only status based on the supported commands
 	 * and the write protect switch.
@@ -1523,6 +1998,10 @@ static struct mmc_blk_data *mmc_blk_alloc_req(struct mmc_card *card,
 	md->disk->queue = md->queue.queue;
 	md->disk->driverfs_dev = parent;
 	set_disk_ro(md->disk, md->read_only || default_ro);
+<<<<<<< HEAD
+=======
+	md->disk->flags = GENHD_FL_EXT_DEVT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * As discussed on lkml, GENHD_FL_REMOVABLE should:
@@ -1586,8 +2065,12 @@ static struct mmc_blk_data *mmc_blk_alloc(struct mmc_card *card)
 		size = card->csd.capacity << (card->csd.read_blkbits - 9);
 	}
 
+<<<<<<< HEAD
 	md = mmc_blk_alloc_req(card, &card->dev, size, false, NULL,
 					MMC_BLK_DATA_AREA_MAIN);
+=======
+	md = mmc_blk_alloc_req(card, &card->dev, size, false, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return md;
 }
 
@@ -1596,14 +2079,22 @@ static int mmc_blk_alloc_part(struct mmc_card *card,
 			      unsigned int part_type,
 			      sector_t size,
 			      bool default_ro,
+<<<<<<< HEAD
 			      const char *subname,
 			      int area_type)
+=======
+			      const char *subname)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	char cap_str[10];
 	struct mmc_blk_data *part_md;
 
 	part_md = mmc_blk_alloc_req(card, disk_to_dev(md->disk), size, default_ro,
+<<<<<<< HEAD
 				    subname, area_type);
+=======
+				    subname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(part_md))
 		return PTR_ERR(part_md);
 	part_md->part_type = part_type;
@@ -1611,12 +2102,17 @@ static int mmc_blk_alloc_part(struct mmc_card *card,
 
 	string_get_size((u64)get_capacity(part_md->disk) << 9, STRING_UNITS_2,
 			cap_str, sizeof(cap_str));
+<<<<<<< HEAD
 	pr_info("%s: %s %s partition %u %s\n",
+=======
+	printk(KERN_INFO "%s: %s %s partition %u %s\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       part_md->disk->disk_name, mmc_card_id(card),
 	       mmc_card_name(card), part_md->part_type, cap_str);
 	return 0;
 }
 
+<<<<<<< HEAD
 /* MMC Physical partitions consist of two boot partitions and
  * up to four general purpose partitions.
  * For each partition enabled in EXT_CSD a block device will be allocatedi
@@ -1626,10 +2122,16 @@ static int mmc_blk_alloc_part(struct mmc_card *card,
 static int mmc_blk_alloc_parts(struct mmc_card *card, struct mmc_blk_data *md)
 {
 	int idx, ret = 0;
+=======
+static int mmc_blk_alloc_parts(struct mmc_card *card, struct mmc_blk_data *md)
+{
+	int ret = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!mmc_card_mmc(card))
 		return 0;
 
+<<<<<<< HEAD
 	for (idx = 0; idx < card->nr_parts; idx++) {
 		if (card->part[idx].size) {
 			ret = mmc_blk_alloc_part(card, md,
@@ -1641,11 +2143,36 @@ static int mmc_blk_alloc_parts(struct mmc_card *card, struct mmc_blk_data *md)
 			if (ret)
 				return ret;
 		}
+=======
+	if (card->ext_csd.boot_size) {
+		ret = mmc_blk_alloc_part(card, md, EXT_CSD_PART_CONFIG_ACC_BOOT0,
+					 card->ext_csd.boot_size >> 9,
+					 true,
+					 "boot0");
+		if (ret)
+			return ret;
+		ret = mmc_blk_alloc_part(card, md, EXT_CSD_PART_CONFIG_ACC_BOOT1,
+					 card->ext_csd.boot_size >> 9,
+					 true,
+					 "boot1");
+		if (ret)
+			return ret;
+	}
+
+	if (card->ext_csd.rpmb_size) {
+		ret =
+		    mmc_blk_alloc_part(card, md, EXT_CSD_PART_CONFIG_ACC_RPMB,
+				       card->ext_csd.rpmb_size >> 9, false,
+				       "rpmb");
+		if (ret)
+			return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;
 }
 
+<<<<<<< HEAD
 static void mmc_blk_remove_req(struct mmc_blk_data *md)
 {
 	struct mmc_card *card;
@@ -1658,6 +2185,31 @@ static void mmc_blk_remove_req(struct mmc_blk_data *md)
 					card->ext_csd.boot_ro_lockable)
 				device_remove_file(disk_to_dev(md->disk),
 					&md->power_ro_lock);
+=======
+static int
+mmc_blk_set_blksize(struct mmc_blk_data *md, struct mmc_card *card)
+{
+	int err;
+
+	mmc_claim_host(card->host);
+	err = mmc_set_blocklen(card, 512);
+	mmc_release_host(card->host);
+
+	if (err) {
+		printk(KERN_ERR "%s: unable to set block size to 512: %d\n",
+			md->disk->disk_name, err);
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+static void mmc_blk_remove_req(struct mmc_blk_data *md)
+{
+	if (md) {
+		if (md->disk->flags & GENHD_FL_UP) {
+			device_remove_file(disk_to_dev(md->disk), &md->force_ro);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* Stop new requests from getting into the queue */
 			del_gendisk(md->disk);
@@ -1686,7 +2238,10 @@ static void mmc_blk_remove_parts(struct mmc_card *card,
 static int mmc_add_disk(struct mmc_blk_data *md)
 {
 	int ret;
+<<<<<<< HEAD
 	struct mmc_card *card = md->queue.card;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	add_disk(md->disk);
 	md->force_ro.show = force_ro_show;
@@ -1696,6 +2251,7 @@ static int mmc_add_disk(struct mmc_blk_data *md)
 	md->force_ro.attr.mode = S_IRUGO | S_IWUSR;
 	ret = device_create_file(disk_to_dev(md->disk), &md->force_ro);
 	if (ret)
+<<<<<<< HEAD
 		goto force_ro_fail;
 
 	if ((md->area_type & MMC_BLK_DATA_AREA_BOOT) &&
@@ -1724,10 +2280,14 @@ power_ro_lock_fail:
 	device_remove_file(disk_to_dev(md->disk), &md->force_ro);
 force_ro_fail:
 	del_gendisk(md->disk);
+=======
+		del_gendisk(md->disk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
 
+<<<<<<< HEAD
 #define CID_MANFID_SANDISK	0x2
 #define CID_MANFID_TOSHIBA	0x11
 #define CID_MANFID_MICRON	0x13
@@ -1745,6 +2305,15 @@ static const struct mmc_fixup blk_fixups[] =
 		  MMC_QUIRK_INAND_CMD38),
 	MMC_FIXUP("SEM32G", CID_MANFID_SANDISK, 0x100, add_quirk,
 		  MMC_QUIRK_INAND_CMD38),
+=======
+static const struct mmc_fixup blk_fixups[] =
+{
+	MMC_FIXUP("SEM02G", 0x2, 0x100, add_quirk, MMC_QUIRK_INAND_CMD38),
+	MMC_FIXUP("SEM04G", 0x2, 0x100, add_quirk, MMC_QUIRK_INAND_CMD38),
+	MMC_FIXUP("SEM08G", 0x2, 0x100, add_quirk, MMC_QUIRK_INAND_CMD38),
+	MMC_FIXUP("SEM16G", 0x2, 0x100, add_quirk, MMC_QUIRK_INAND_CMD38),
+	MMC_FIXUP("SEM32G", 0x2, 0x100, add_quirk, MMC_QUIRK_INAND_CMD38),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Some MMC cards experience performance degradation with CMD23
@@ -1754,6 +2323,7 @@ static const struct mmc_fixup blk_fixups[] =
 	 *
 	 * N.B. This doesn't affect SD cards.
 	 */
+<<<<<<< HEAD
 	MMC_FIXUP("MMC08G", CID_MANFID_TOSHIBA, CID_OEMID_ANY, add_quirk_mmc,
 		  MMC_QUIRK_BLK_NO_CMD23),
 	MMC_FIXUP("MMC16G", CID_MANFID_TOSHIBA, CID_OEMID_ANY, add_quirk_mmc,
@@ -1790,12 +2360,28 @@ static const struct mmc_fixup blk_fixups[] =
 	MMC_FIXUP("VZL00M", CID_MANFID_SAMSUNG, CID_OEMID_ANY, add_quirk_mmc,
 		  MMC_QUIRK_SEC_ERASE_TRIM_BROKEN),
 
+=======
+	MMC_FIXUP("MMC08G", 0x11, CID_OEMID_ANY, add_quirk_mmc,
+		  MMC_QUIRK_BLK_NO_CMD23),
+	/* 
+	 * CMD23 does not work on this Thoshiba eMMC card at all. 
+	 * We disable it even for reliable writes. 
+	 */
+	MMC_FIXUP("MMC16G", 0x11, CID_OEMID_ANY, add_quirk_mmc,
+		  MMC_QUIRK_BLK_NO_CMD23 | MMC_QUIRK_BLK_DISABLE_CMD23),
+	MMC_FIXUP("MMC32G", 0x11, CID_OEMID_ANY, add_quirk_mmc,
+		  MMC_QUIRK_BLK_NO_CMD23),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	END_FIXUP
 };
 
 static int mmc_blk_probe(struct mmc_card *card)
 {
 	struct mmc_blk_data *md, *part_md;
+<<<<<<< HEAD
+=======
+	int err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char cap_str[10];
 
 	/*
@@ -1808,6 +2394,7 @@ static int mmc_blk_probe(struct mmc_card *card)
 	if (IS_ERR(md))
 		return PTR_ERR(md);
 
+<<<<<<< HEAD
 	string_get_size((u64)get_capacity(md->disk) << 9, STRING_UNITS_2,
 			cap_str, sizeof(cap_str));
 	pr_info("%s: %s %s %s %s\n",
@@ -1816,10 +2403,44 @@ static int mmc_blk_probe(struct mmc_card *card)
 
 	if (mmc_blk_alloc_parts(card, md))
 		goto out;
+=======
+	err = mmc_blk_set_blksize(md, card);
+	if (err)
+		goto out;
+
+	string_get_size((u64)get_capacity(md->disk) << 9, STRING_UNITS_2,
+			cap_str, sizeof(cap_str));
+	printk(KERN_INFO "%s: %s %s %s %s\n",
+		md->disk->disk_name, mmc_card_id(card), mmc_card_name(card),
+		cap_str, md->read_only ? "(ro)" : "");
+
+
+/***
+	Do not activate boot partition of eMMC on kernel.
+	NANI.
+***/
+#if 0
+	/*
+	 * Allocating boot partitions on certain Micron eMMC cards causes
+	 * undesired behavior.
+	 */
+	if ((0x13 != card->cid.manfid) || (0x100 != card->cid.oemid)) {
+		if (mmc_blk_alloc_parts(card, md))
+			goto out;
+	}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mmc_set_drvdata(card, md);
 	mmc_fixup_device(card, blk_fixups);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MMC_BLOCK_DEFERRED_RESUME
+	mmc_set_bus_resume_policy(card->host, 1);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (mmc_add_disk(md))
 		goto out;
 
@@ -1832,7 +2453,11 @@ static int mmc_blk_probe(struct mmc_card *card)
  out:
 	mmc_blk_remove_parts(card, md);
 	mmc_blk_remove_req(md);
+<<<<<<< HEAD
 	return 0;
+=======
+	return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void mmc_blk_remove(struct mmc_card *card)
@@ -1845,10 +2470,20 @@ static void mmc_blk_remove(struct mmc_card *card)
 	mmc_release_host(card->host);
 	mmc_blk_remove_req(md);
 	mmc_set_drvdata(card, NULL);
+<<<<<<< HEAD
 }
 
 #ifdef CONFIG_PM
 static int mmc_blk_suspend(struct mmc_card *card)
+=======
+#ifdef CONFIG_MMC_BLOCK_DEFERRED_RESUME
+	mmc_set_bus_resume_policy(card->host, 0);
+#endif
+}
+
+#ifdef CONFIG_PM
+static int mmc_blk_suspend(struct mmc_card *card, pm_message_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct mmc_blk_data *part_md;
 	struct mmc_blk_data *md = mmc_get_drvdata(card);
@@ -1868,6 +2503,13 @@ static int mmc_blk_resume(struct mmc_card *card)
 	struct mmc_blk_data *md = mmc_get_drvdata(card);
 
 	if (md) {
+<<<<<<< HEAD
+=======
+#ifndef CONFIG_MMC_BLOCK_DEFERRED_RESUME
+		mmc_blk_set_blksize(md, card);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Resume involves the card going into idle state,
 		 * so current partition is always the main one.

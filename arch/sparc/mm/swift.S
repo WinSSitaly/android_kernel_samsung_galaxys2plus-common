@@ -105,7 +105,11 @@ swift_flush_cache_mm_out:
 
 	.globl	swift_flush_cache_range
 swift_flush_cache_range:
+<<<<<<< HEAD
 	ld	[%o0 + VMA_VM_MM], %o0
+=======
+	ld	[%o0 + 0x0], %o0		/* XXX vma->vm_mm, GROSS XXX */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sub	%o2, %o1, %o2
 	sethi	%hi(4096), %o3
 	cmp	%o2, %o3
@@ -116,7 +120,11 @@ swift_flush_cache_range:
 
 	.globl	swift_flush_cache_page
 swift_flush_cache_page:
+<<<<<<< HEAD
 	ld	[%o0 + VMA_VM_MM], %o0
+=======
+	ld	[%o0 + 0x0], %o0		/* XXX vma->vm_mm, GROSS XXX */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 70:
 	ld	[%o0 + AOFF_mm_context], %g2
 	cmp	%g2, -1
@@ -219,7 +227,11 @@ swift_flush_sig_insns:
 	.globl	swift_flush_tlb_range
 	.globl	swift_flush_tlb_all
 swift_flush_tlb_range:
+<<<<<<< HEAD
 	ld	[%o0 + VMA_VM_MM], %o0
+=======
+	ld	[%o0 + 0x00], %o0	/* XXX vma->vm_mm GROSS XXX */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 swift_flush_tlb_mm:
 	ld	[%o0 + AOFF_mm_context], %g2
 	cmp	%g2, -1
@@ -233,7 +245,11 @@ swift_flush_tlb_all_out:
 
 	.globl	swift_flush_tlb_page
 swift_flush_tlb_page:
+<<<<<<< HEAD
 	ld	[%o0 + VMA_VM_MM], %o0
+=======
+	ld	[%o0 + 0x00], %o0	/* XXX vma->vm_mm GROSS XXX */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mov	SRMMU_CTX_REG, %g1
 	ld	[%o0 + AOFF_mm_context], %o3
 	andn	%o1, (PAGE_SIZE - 1), %o1

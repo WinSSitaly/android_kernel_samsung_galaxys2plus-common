@@ -6,6 +6,11 @@
 # for more details.
 #
 
+<<<<<<< HEAD
+=======
+MKIMAGE		:= $(srctree)/scripts/mkuboot.sh
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extra-y		:= vmlinux.bin vmlinux.gz
 
 OBJCOPYFLAGS_vmlinux.bin := -O binary -R .note.gnu.build-id
@@ -15,9 +20,16 @@ $(obj)/vmlinux.bin: vmlinux FORCE
 $(obj)/vmlinux.gz: $(obj)/vmlinux.bin FORCE
 	$(call if_changed,gzip)
 
+<<<<<<< HEAD
 UIMAGE_LOADADDR = $(CONFIG_LOAD_ADDRESS)
 UIMAGE_ENTRYADDR = $(CONFIG_ENTRY_ADDRESS)
 UIMAGE_COMPRESSION = gzip
+=======
+quiet_cmd_uimage = UIMAGE $@
+      cmd_uimage = $(CONFIG_SHELL) $(MKIMAGE) -A avr32 -O linux -T kernel	\
+		-C gzip -a $(CONFIG_LOAD_ADDRESS) -e $(CONFIG_ENTRY_ADDRESS)	\
+		-n 'Linux-$(KERNELRELEASE)' -d $< $@
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 targets += uImage uImage.srec
 $(obj)/uImage: $(obj)/vmlinux.gz

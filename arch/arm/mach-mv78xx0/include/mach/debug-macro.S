@@ -8,7 +8,11 @@
 
 #include <mach/mv78xx0.h>
 
+<<<<<<< HEAD
 	.macro	addruart, rp, rv, tmp
+=======
+	.macro	addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ldr	\rp, =MV78XX0_REGS_PHYS_BASE
 	ldr	\rv, =MV78XX0_REGS_VIRT_BASE
 	orr	\rp, \rp, #0x00012000

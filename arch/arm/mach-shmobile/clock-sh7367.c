@@ -74,7 +74,11 @@ static unsigned long div2_recalc(struct clk *clk)
 	return clk->parent->rate / 2;
 }
 
+<<<<<<< HEAD
 static struct sh_clk_ops div2_clk_ops = {
+=======
+static struct clk_ops div2_clk_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.recalc		= div2_recalc,
 };
 
@@ -101,7 +105,11 @@ static unsigned long pllc1_recalc(struct clk *clk)
 	return clk->parent->rate * mult;
 }
 
+<<<<<<< HEAD
 static struct sh_clk_ops pllc1_clk_ops = {
+=======
+static struct clk_ops pllc1_clk_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.recalc		= pllc1_recalc,
 };
 
@@ -128,7 +136,11 @@ static unsigned long pllc2_recalc(struct clk *clk)
 	return clk->parent->rate * mult;
 }
 
+<<<<<<< HEAD
 static struct sh_clk_ops pllc2_clk_ops = {
+=======
+static struct clk_ops pllc2_clk_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.recalc		= pllc2_recalc,
 };
 
@@ -259,6 +271,12 @@ static struct clk mstp_clks[MSTP_NR] = {
 	[CMMSTP003] = MSTP(&r_clk, CMMSTPCR0, 3, 0), /* KEYSC */
 };
 
+<<<<<<< HEAD
+=======
+#define CLKDEV_CON_ID(_id, _clk) { .con_id = _id, .clk = _clk }
+#define CLKDEV_DEV_ID(_id, _clk) { .dev_id = _id, .clk = _clk }
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct clk_lookup lookups[] = {
 	/* main clocks */
 	CLKDEV_CON_ID("r_clk", &r_clk),
@@ -349,7 +367,11 @@ void __init sh7367_clock_init(void)
 	clkdev_add_table(lookups, ARRAY_SIZE(lookups));
 
 	if (!ret)
+<<<<<<< HEAD
 		shmobile_clk_init();
+=======
+		clk_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		panic("failed to setup sh7367 clocks\n");
 }

@@ -18,9 +18,13 @@
  */
 
 
+<<<<<<< HEAD
 /**
  * DOC: RF Buffer registers
  *
+=======
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * There are some special registers on the RF chip
  * that control various operation settings related mostly to
  * the analog parts (channel, gain adjustment etc).
@@ -46,6 +50,7 @@
  */
 
 
+<<<<<<< HEAD
 /**
  * struct ath5k_ini_rfbuffer - Initial RF Buffer settings
  * @rfb_bank: RF Bank number
@@ -67,11 +72,25 @@ struct ath5k_ini_rfbuffer {
  * @pos: Offset on the raw packet
  * @col: Used for shifting
  *
+=======
+/*
+ * Struct to hold default mode specific RF
+ * register values (RF Banks)
+ */
+struct ath5k_ini_rfbuffer {
+	u8	rfb_bank;		/* RF Bank number */
+	u16	rfb_ctrl_register;	/* RF Buffer control register */
+	u32	rfb_mode_data[3];	/* RF Buffer data for each mode */
+};
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Struct to hold RF Buffer field
  * infos used to access certain RF
  * analog registers
  */
 struct ath5k_rfb_field {
+<<<<<<< HEAD
 	u8	len;
 	u16	pos;
 	u8	col;
@@ -103,6 +122,26 @@ struct ath5k_rf_reg {
  * life easier by using an index for each register
  * instead of a full rfb_field
  */
+=======
+	u8	len;	/* Field length */
+	u16	pos;	/* Offset on the raw packet */
+	u8	col;	/* Column -used for shifting */
+};
+
+/*
+ * RF analog register definition
+ */
+struct ath5k_rf_reg {
+	u8			bank;	/* RF Buffer Bank number */
+	u8			index;	/* Register's index on rf_regs_idx */
+	struct ath5k_rfb_field	field;	/* RF Buffer field for this register */
+};
+
+/* Map RF registers to indexes
+ * We do this to handle common bits and make our
+ * life easier by using an index for each register
+ * instead of a full rfb_field */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum ath5k_rf_regs_idx {
 	/* BANK 2 */
 	AR5K_RF_TURBO = 0,
@@ -279,7 +318,11 @@ static const struct ath5k_ini_rfbuffer rfb_5111[] = {
 
 /* RFX112 (Derby 1) */
 
+<<<<<<< HEAD
 /* BANK 6				len  pos col */
+=======
+/* BANK 6 				len  pos col */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define	AR5K_RF5112_OB_2GHZ		{ 3, 269, 0 }
 #define	AR5K_RF5112_DB_2GHZ		{ 3, 272, 0 }
 
@@ -520,7 +563,11 @@ static const struct ath5k_ini_rfbuffer rfb_5112a[] = {
 /* BANK 2				len  pos col */
 #define AR5K_RF2413_RF_TURBO		{ 1, 1,   2 }
 
+<<<<<<< HEAD
 /* BANK 6				len  pos col */
+=======
+/* BANK 6 				len  pos col */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define	AR5K_RF2413_OB_2GHZ		{ 3, 168, 0 }
 #define	AR5K_RF2413_DB_2GHZ		{ 3, 165, 0 }
 

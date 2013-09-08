@@ -24,7 +24,10 @@
 #define I2O_MAX_DRIVERS		8
 
 #include <linux/pci.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/dma-mapping.h>
 #include <linux/string.h>
 #include <linux/slab.h>

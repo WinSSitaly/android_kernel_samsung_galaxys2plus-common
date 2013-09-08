@@ -19,7 +19,10 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/irq.h>
 #include <linux/module.h>
 #include <linux/slab.h>
@@ -281,7 +284,10 @@ static int __devinit wl1251_spi_probe(struct spi_device *spi)
 
 	wl->use_eeprom = pdata->use_eeprom;
 
+<<<<<<< HEAD
 	irq_set_status_flags(wl->irq, IRQ_NOAUTOEN);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = request_irq(wl->irq, wl1251_irq, 0, DRIVER_NAME, wl);
 	if (ret < 0) {
 		wl1251_error("request_irq() failed: %d", ret);
@@ -290,6 +296,11 @@ static int __devinit wl1251_spi_probe(struct spi_device *spi)
 
 	irq_set_irq_type(wl->irq, IRQ_TYPE_EDGE_RISING);
 
+<<<<<<< HEAD
+=======
+	disable_irq(wl->irq);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = wl1251_init_ieee80211(wl);
 	if (ret)
 		goto out_irq;
@@ -318,6 +329,10 @@ static int __devexit wl1251_spi_remove(struct spi_device *spi)
 static struct spi_driver wl1251_spi_driver = {
 	.driver = {
 		.name		= DRIVER_NAME,
+<<<<<<< HEAD
+=======
+		.bus		= &spi_bus_type,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.owner		= THIS_MODULE,
 	},
 

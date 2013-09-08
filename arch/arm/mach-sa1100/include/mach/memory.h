@@ -14,6 +14,13 @@
  */
 #define PLAT_PHYS_OFFSET	UL(0xc0000000)
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SA1111
+#define ARM_DMA_ZONE_SIZE	SZ_1M
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Because of the wide memory address space between physical RAM banks on the
  * SA1100, it's much convenient to use Linux's SparseMEM support to implement

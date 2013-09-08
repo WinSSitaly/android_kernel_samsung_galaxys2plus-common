@@ -28,5 +28,9 @@ If the scx200_acb driver is built into the kernel, add the following
 parameter to your boot command line:
   scx200_acb.base=0x810,0x820
 If the scx200_acb driver is built as a module, add the following line to
+<<<<<<< HEAD
 a configuration file in /etc/modprobe.d/ instead:
+=======
+the file /etc/modprobe.conf instead:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   options scx200_acb base=0x810,0x820

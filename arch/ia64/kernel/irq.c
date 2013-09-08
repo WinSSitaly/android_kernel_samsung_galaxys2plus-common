@@ -23,8 +23,11 @@
 #include <linux/interrupt.h>
 #include <linux/kernel_stat.h>
 
+<<<<<<< HEAD
 #include <asm/mca.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * 'what should we do if we get a hw irq event on an illegal vector'.
  * each architecture has to answer this themselves.
@@ -85,12 +88,15 @@ bool is_affinity_mask_valid(const struct cpumask *cpumask)
 
 #endif /* CONFIG_SMP */
 
+<<<<<<< HEAD
 int __init arch_early_irq_init(void)
 {
 	ia64_mca_irq_init();
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_HOTPLUG_CPU
 unsigned int vectors_in_migration[NR_IRQS];
 

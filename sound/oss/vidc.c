@@ -28,6 +28,10 @@
 #include <asm/io.h>
 #include <asm/hardware/iomd.h>
 #include <asm/irq.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "sound_config.h"
 #include "vidc.h"

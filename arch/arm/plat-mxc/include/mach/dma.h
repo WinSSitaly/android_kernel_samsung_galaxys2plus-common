@@ -60,7 +60,11 @@ static inline int imx_dma_is_ipu(struct dma_chan *chan)
 
 static inline int imx_dma_is_general_purpose(struct dma_chan *chan)
 {
+<<<<<<< HEAD
 	return strstr(dev_name(chan->device->dev), "sdma") ||
+=======
+	return !strcmp(dev_name(chan->device->dev), "imx-sdma") ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		!strcmp(dev_name(chan->device->dev), "imx-dma");
 }
 

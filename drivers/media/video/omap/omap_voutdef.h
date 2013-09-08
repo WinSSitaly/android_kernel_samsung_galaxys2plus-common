@@ -12,7 +12,10 @@
 #define OMAP_VOUTDEF_H
 
 #include <video/omapdss.h>
+<<<<<<< HEAD
 #include <plat/vrfb.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define YUYV_BPP        2
 #define RGB565_BPP      2
@@ -25,6 +28,7 @@
 #define MAC_VRFB_CTXS	4
 #define MAX_VOUT_DEV	2
 #define MAX_OVLS	3
+<<<<<<< HEAD
 #define MAX_DISPLAYS	10
 #define MAX_MANAGERS	3
 
@@ -53,6 +57,11 @@ enum dma_channel_state {
 	DMA_CHAN_ALLOTED,
 };
 
+=======
+#define MAX_DISPLAYS	3
+#define MAX_MANAGERS	3
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Enum for Rotation
  * DSS understands rotation in 0, 1, 2, 3 context
  * while V4L2 driver understands it as 0, 90, 180, 270
@@ -63,6 +72,7 @@ enum dss_rotation {
 	dss_rotation_180_degree	= 2,
 	dss_rotation_270_degree = 3,
 };
+<<<<<<< HEAD
 
 /* Enum for choosing rotation type for vout
  * DSS2 doesn't understand no rotation as an
@@ -75,6 +85,8 @@ enum vout_rotaion_type {
 	VOUT_ROT_VRFB	= 1,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This structure is used to store the DMA transfer parameters
  * for VRFB hidden buffer
@@ -91,7 +103,10 @@ struct omapvideo_info {
 	int id;
 	int num_overlays;
 	struct omap_overlay *overlays[MAX_OVLS];
+<<<<<<< HEAD
 	enum vout_rotaion_type rotation_type;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct omap2video_device {
@@ -183,6 +198,7 @@ struct omap_vout_device {
 	int io_allowed;
 
 };
+<<<<<<< HEAD
 
 /*
  * Return true if rotation is 90 or 270
@@ -222,4 +238,6 @@ static inline int calc_rotation(const struct omap_vout_device *vout)
 }
 
 void omap_vout_free_buffers(struct omap_vout_device *vout);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* ifndef OMAP_VOUTDEF_H */

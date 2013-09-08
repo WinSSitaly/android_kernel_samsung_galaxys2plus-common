@@ -9,7 +9,16 @@
 #define _LINUX_CAIF_SOCKET_H
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/socket.h>
+=======
+
+#ifdef __KERNEL__
+#include <linux/socket.h>
+#else
+#include <sys/socket.h>
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * enum caif_link_selector -    Physical Link Selection.
@@ -139,7 +148,11 @@ enum caif_debug_service {
  * CAIF Channel. It defines the service to connect to on the modem.
  */
 struct sockaddr_caif {
+<<<<<<< HEAD
 	__kernel_sa_family_t  family;
+=======
+	sa_family_t  family;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	union {
 		struct {
 			__u8  type;		/* type: enum caif_at_type */

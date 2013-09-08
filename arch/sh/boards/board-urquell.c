@@ -190,7 +190,11 @@ static int urquell_clk_init(void)
 		return -EINVAL;
 
 	clk = clk_get(NULL, "extal");
+<<<<<<< HEAD
 	if (IS_ERR(clk))
+=======
+	if (!clk || IS_ERR(clk))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return PTR_ERR(clk);
 	ret = clk_set_rate(clk, 33333333);
 	clk_put(clk);

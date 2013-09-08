@@ -1177,8 +1177,12 @@ static bool DAC960_V1_EnableMemoryMailboxInterface(DAC960_Controller_T
   int TimeoutCounter;
   int i;
 
+<<<<<<< HEAD
   memset(&CommandMailbox, 0, sizeof(DAC960_V1_CommandMailbox_T));
 
+=======
+  
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   if (pci_set_dma_mask(Controller->PCIDevice, DMA_BIT_MASK(32)))
 	return DAC960_Failure(Controller, "DMA mask out of range");
   Controller->BounceBufferLimit = DMA_BIT_MASK(32);
@@ -4628,8 +4632,12 @@ static void DAC960_V2_ProcessCompletedCommand(DAC960_Command_T *Command)
   DAC960_Controller_T *Controller = Command->Controller;
   DAC960_CommandType_T CommandType = Command->CommandType;
   DAC960_V2_CommandMailbox_T *CommandMailbox = &Command->V2.CommandMailbox;
+<<<<<<< HEAD
   DAC960_V2_IOCTL_Opcode_T IOCTLOpcode = CommandMailbox->Common.IOCTL_Opcode;
   DAC960_V2_CommandOpcode_T CommandOpcode = CommandMailbox->SCSI_10.CommandOpcode;
+=======
+  DAC960_V2_IOCTL_Opcode_T CommandOpcode = CommandMailbox->Common.IOCTL_Opcode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   DAC960_V2_CommandStatus_T CommandStatus = Command->V2.CommandStatus;
 
   if (CommandType == DAC960_ReadCommand ||
@@ -4701,7 +4709,11 @@ static void DAC960_V2_ProcessCompletedCommand(DAC960_Command_T *Command)
     {
       if (Controller->ShutdownMonitoringTimer)
 	      return;
+<<<<<<< HEAD
       if (IOCTLOpcode == DAC960_V2_GetControllerInfo)
+=======
+      if (CommandOpcode == DAC960_V2_GetControllerInfo)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 	  DAC960_V2_ControllerInfo_T *NewControllerInfo =
 	    Controller->V2.NewControllerInformation;
@@ -4721,14 +4733,22 @@ static void DAC960_V2_ProcessCompletedCommand(DAC960_Command_T *Command)
 	  memcpy(ControllerInfo, NewControllerInfo,
 		 sizeof(DAC960_V2_ControllerInfo_T));
 	}
+<<<<<<< HEAD
       else if (IOCTLOpcode == DAC960_V2_GetEvent)
+=======
+      else if (CommandOpcode == DAC960_V2_GetEvent)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 	  if (CommandStatus == DAC960_V2_NormalCompletion) {
 	    DAC960_V2_ReportEvent(Controller, Controller->V2.Event);
 	  }
 	  Controller->V2.NextEventSequenceNumber++;
 	}
+<<<<<<< HEAD
       else if (IOCTLOpcode == DAC960_V2_GetPhysicalDeviceInfoValid &&
+=======
+      else if (CommandOpcode == DAC960_V2_GetPhysicalDeviceInfoValid &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       CommandStatus == DAC960_V2_NormalCompletion)
 	{
 	  DAC960_V2_PhysicalDeviceInfo_T *NewPhysicalDeviceInfo =
@@ -4917,7 +4937,11 @@ static void DAC960_V2_ProcessCompletedCommand(DAC960_Command_T *Command)
 	  NewPhysicalDeviceInfo->LogicalUnit++;
 	  Controller->V2.PhysicalDeviceIndex++;
 	}
+<<<<<<< HEAD
       else if (IOCTLOpcode == DAC960_V2_GetPhysicalDeviceInfoValid)
+=======
+      else if (CommandOpcode == DAC960_V2_GetPhysicalDeviceInfoValid)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 	  unsigned int DeviceIndex;
 	  for (DeviceIndex = Controller->V2.PhysicalDeviceIndex;
@@ -4940,7 +4964,11 @@ static void DAC960_V2_ProcessCompletedCommand(DAC960_Command_T *Command)
 	    }
 	  Controller->V2.NeedPhysicalDeviceInformation = false;
 	}
+<<<<<<< HEAD
       else if (IOCTLOpcode == DAC960_V2_GetLogicalDeviceInfoValid &&
+=======
+      else if (CommandOpcode == DAC960_V2_GetLogicalDeviceInfoValid &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       CommandStatus == DAC960_V2_NormalCompletion)
 	{
 	  DAC960_V2_LogicalDeviceInfo_T *NewLogicalDeviceInfo =
@@ -5067,7 +5095,11 @@ static void DAC960_V2_ProcessCompletedCommand(DAC960_Command_T *Command)
 			 [LogicalDeviceNumber] = true;
 	  NewLogicalDeviceInfo->LogicalDeviceNumber++;
 	}
+<<<<<<< HEAD
       else if (IOCTLOpcode == DAC960_V2_GetLogicalDeviceInfoValid)
+=======
+      else if (CommandOpcode == DAC960_V2_GetLogicalDeviceInfoValid)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 	  int LogicalDriveNumber;
 	  for (LogicalDriveNumber = 0;
@@ -6580,6 +6612,7 @@ static const struct file_operations dac960_user_command_proc_fops = {
 
 static void DAC960_CreateProcEntries(DAC960_Controller_T *Controller)
 {
+<<<<<<< HEAD
 	struct proc_dir_entry *ControllerProcEntry;
 
 	if (DAC960_ProcDirectoryEntry == NULL) {
@@ -6595,6 +6628,26 @@ static void DAC960_CreateProcEntries(DAC960_Controller_T *Controller)
 	proc_create_data("current_status", 0, ControllerProcEntry, &dac960_current_status_proc_fops, Controller);
 	proc_create_data("user_command", S_IWUSR | S_IRUSR, ControllerProcEntry, &dac960_user_command_proc_fops, Controller);
 	Controller->ControllerProcEntry = ControllerProcEntry;
+=======
+	struct proc_dir_entry *StatusProcEntry;
+	struct proc_dir_entry *ControllerProcEntry;
+	struct proc_dir_entry *UserCommandProcEntry;
+
+	if (DAC960_ProcDirectoryEntry == NULL) {
+  		DAC960_ProcDirectoryEntry = proc_mkdir("rd", NULL);
+  		StatusProcEntry = proc_create("status", 0,
+					   DAC960_ProcDirectoryEntry,
+					   &dac960_proc_fops);
+	}
+
+      sprintf(Controller->ControllerName, "c%d", Controller->ControllerNumber);
+      ControllerProcEntry = proc_mkdir(Controller->ControllerName,
+				       DAC960_ProcDirectoryEntry);
+      proc_create_data("initial_status", 0, ControllerProcEntry, &dac960_initial_status_proc_fops, Controller);
+      proc_create_data("current_status", 0, ControllerProcEntry, &dac960_current_status_proc_fops, Controller);
+      UserCommandProcEntry = proc_create_data("user_command", S_IWUSR | S_IRUSR, ControllerProcEntry, &dac960_user_command_proc_fops, Controller);
+      Controller->ControllerProcEntry = ControllerProcEntry;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 

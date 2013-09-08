@@ -17,7 +17,11 @@
  *  Amaury Demol (ademol@dibcom.fr) from DiBcom for providing specs and driver
  *  sources, on which this driver (and the dvb-dibusb) are based.
  *
+<<<<<<< HEAD
  * see Documentation/dvb/README.dvb-usb for more information
+=======
+ * see Documentation/dvb/README.dibusb for more information
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  */
 

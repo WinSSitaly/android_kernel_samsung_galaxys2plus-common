@@ -37,7 +37,10 @@
 #include "drm_core.h"
 
 #include "linux/pci.h"
+<<<<<<< HEAD
 #include "linux/export.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * Get the bus id.
@@ -159,11 +162,22 @@ int drm_getmap(struct drm_device *dev, void *data,
 	int i;
 
 	idx = map->offset;
+<<<<<<< HEAD
 	if (idx < 0)
 		return -EINVAL;
 
 	i = 0;
 	mutex_lock(&dev->struct_mutex);
+=======
+
+	mutex_lock(&dev->struct_mutex);
+	if (idx < 0) {
+		mutex_unlock(&dev->struct_mutex);
+		return -EINVAL;
+	}
+
+	i = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each(list, &dev->maplist) {
 		if (i == idx) {
 			r_list = list_entry(list, struct drm_map_list, head);
@@ -209,9 +223,15 @@ int drm_getclient(struct drm_device *dev, void *data,
 	int i;
 
 	idx = client->idx;
+<<<<<<< HEAD
 	i = 0;
 
 	mutex_lock(&dev->struct_mutex);
+=======
+	mutex_lock(&dev->struct_mutex);
+
+	i = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(pt, &dev->filelist, lhead) {
 		if (i++ >= idx) {
 			client->auth = pt->authenticated;
@@ -247,6 +267,11 @@ int drm_getstats(struct drm_device *dev, void *data,
 
 	memset(stats, 0, sizeof(*stats));
 
+<<<<<<< HEAD
+=======
+	mutex_lock(&dev->struct_mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < dev->counters; i++) {
 		if (dev->types[i] == _DRM_STAT_LOCK)
 			stats->data[i].value =
@@ -258,6 +283,11 @@ int drm_getstats(struct drm_device *dev, void *data,
 
 	stats->count = dev->counters;
 
+<<<<<<< HEAD
+=======
+	mutex_unlock(&dev->struct_mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -277,12 +307,15 @@ int drm_getcap(struct drm_device *dev, void *data, struct drm_file *file_priv)
 	case DRM_CAP_VBLANK_HIGH_CRTC:
 		req->value = 1;
 		break;
+<<<<<<< HEAD
 	case DRM_CAP_DUMB_PREFERRED_DEPTH:
 		req->value = dev->mode_config.preferred_depth;
 		break;
 	case DRM_CAP_DUMB_PREFER_SHADOW:
 		req->value = dev->mode_config.prefer_shadow;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return -EINVAL;
 	}
@@ -353,4 +386,7 @@ int drm_noop(struct drm_device *dev, void *data,
 	DRM_DEBUG("\n");
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(drm_noop);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -3,7 +3,11 @@
  * Copyright (C) 2009 Hong H. Pham <hong.pham@windriver.com>
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
@@ -325,8 +329,11 @@ static int iterate_cpu(struct cpuinfo_tree *t, unsigned int root_index)
 	case SUN4V_CHIP_NIAGARA1:
 	case SUN4V_CHIP_NIAGARA2:
 	case SUN4V_CHIP_NIAGARA3:
+<<<<<<< HEAD
 	case SUN4V_CHIP_NIAGARA4:
 	case SUN4V_CHIP_NIAGARA5:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rover_inc_table = niagara_iterate_method;
 		break;
 	default:

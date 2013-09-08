@@ -25,6 +25,7 @@
 #define HWLOCK_IRQSTATE	0x01	/* Disable interrupts, save state */
 #define HWLOCK_IRQ	0x02	/* Disable interrupts, don't save state */
 
+<<<<<<< HEAD
 struct device;
 struct hwspinlock;
 struct hwspinlock_device;
@@ -63,6 +64,14 @@ struct hwspinlock_pdata {
 int hwspin_lock_register(struct hwspinlock_device *bank, struct device *dev,
 		const struct hwspinlock_ops *ops, int base_id, int num_locks);
 int hwspin_lock_unregister(struct hwspinlock_device *bank);
+=======
+struct hwspinlock;
+
+#if defined(CONFIG_HWSPINLOCK) || defined(CONFIG_HWSPINLOCK_MODULE)
+
+int hwspin_lock_register(struct hwspinlock *lock);
+struct hwspinlock *hwspin_lock_unregister(unsigned int id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct hwspinlock *hwspin_lock_request(void);
 struct hwspinlock *hwspin_lock_request_specific(unsigned int id);
 int hwspin_lock_free(struct hwspinlock *hwlock);
@@ -118,6 +127,10 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
 static inline
 void __hwspin_unlock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
 {
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int hwspin_lock_get_id(struct hwspinlock *hwlock)
@@ -125,6 +138,19 @@ static inline int hwspin_lock_get_id(struct hwspinlock *hwlock)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static inline int hwspin_lock_register(struct hwspinlock *hwlock)
+{
+	return -ENODEV;
+}
+
+static inline struct hwspinlock *hwspin_lock_unregister(unsigned int id)
+{
+	return NULL;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* !CONFIG_HWSPINLOCK */
 
 /**

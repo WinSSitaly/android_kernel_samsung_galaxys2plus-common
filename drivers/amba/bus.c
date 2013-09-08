@@ -52,10 +52,13 @@ static int amba_uevent(struct device *dev, struct kobj_uevent_env *env)
 	int retval = 0;
 
 	retval = add_uevent_var(env, "AMBA_ID=%08x", pcdev->periphid);
+<<<<<<< HEAD
 	if (retval)
 		return retval;
 
 	retval = add_uevent_var(env, "MODALIAS=amba:d%08X", pcdev->periphid);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return retval;
 }
 #else
@@ -113,7 +116,35 @@ static int amba_legacy_resume(struct device *dev)
 	return ret;
 }
 
+<<<<<<< HEAD
 #endif /* CONFIG_PM_SLEEP */
+=======
+static int amba_pm_prepare(struct device *dev)
+{
+	struct device_driver *drv = dev->driver;
+	int ret = 0;
+
+	if (drv && drv->pm && drv->pm->prepare)
+		ret = drv->pm->prepare(dev);
+
+	return ret;
+}
+
+static void amba_pm_complete(struct device *dev)
+{
+	struct device_driver *drv = dev->driver;
+
+	if (drv && drv->pm && drv->pm->complete)
+		drv->pm->complete(dev);
+}
+
+#else /* !CONFIG_PM_SLEEP */
+
+#define amba_pm_prepare		NULL
+#define amba_pm_complete		NULL
+
+#endif /* !CONFIG_PM_SLEEP */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_SUSPEND
 
@@ -135,6 +166,25 @@ static int amba_pm_suspend(struct device *dev)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+static int amba_pm_suspend_noirq(struct device *dev)
+{
+	struct device_driver *drv = dev->driver;
+	int ret = 0;
+
+	if (!drv)
+		return 0;
+
+	if (drv->pm) {
+		if (drv->pm->suspend_noirq)
+			ret = drv->pm->suspend_noirq(dev);
+	}
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int amba_pm_resume(struct device *dev)
 {
 	struct device_driver *drv = dev->driver;
@@ -153,10 +203,34 @@ static int amba_pm_resume(struct device *dev)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+static int amba_pm_resume_noirq(struct device *dev)
+{
+	struct device_driver *drv = dev->driver;
+	int ret = 0;
+
+	if (!drv)
+		return 0;
+
+	if (drv->pm) {
+		if (drv->pm->resume_noirq)
+			ret = drv->pm->resume_noirq(dev);
+	}
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else /* !CONFIG_SUSPEND */
 
 #define amba_pm_suspend		NULL
 #define amba_pm_resume		NULL
+<<<<<<< HEAD
+=======
+#define amba_pm_suspend_noirq	NULL
+#define amba_pm_resume_noirq	NULL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* !CONFIG_SUSPEND */
 
@@ -180,6 +254,25 @@ static int amba_pm_freeze(struct device *dev)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+static int amba_pm_freeze_noirq(struct device *dev)
+{
+	struct device_driver *drv = dev->driver;
+	int ret = 0;
+
+	if (!drv)
+		return 0;
+
+	if (drv->pm) {
+		if (drv->pm->freeze_noirq)
+			ret = drv->pm->freeze_noirq(dev);
+	}
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int amba_pm_thaw(struct device *dev)
 {
 	struct device_driver *drv = dev->driver;
@@ -198,6 +291,25 @@ static int amba_pm_thaw(struct device *dev)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+static int amba_pm_thaw_noirq(struct device *dev)
+{
+	struct device_driver *drv = dev->driver;
+	int ret = 0;
+
+	if (!drv)
+		return 0;
+
+	if (drv->pm) {
+		if (drv->pm->thaw_noirq)
+			ret = drv->pm->thaw_noirq(dev);
+	}
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int amba_pm_poweroff(struct device *dev)
 {
 	struct device_driver *drv = dev->driver;
@@ -216,6 +328,25 @@ static int amba_pm_poweroff(struct device *dev)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+static int amba_pm_poweroff_noirq(struct device *dev)
+{
+	struct device_driver *drv = dev->driver;
+	int ret = 0;
+
+	if (!drv)
+		return 0;
+
+	if (drv->pm) {
+		if (drv->pm->poweroff_noirq)
+			ret = drv->pm->poweroff_noirq(dev);
+	}
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int amba_pm_restore(struct device *dev)
 {
 	struct device_driver *drv = dev->driver;
@@ -234,6 +365,7 @@ static int amba_pm_restore(struct device *dev)
 	return ret;
 }
 
+<<<<<<< HEAD
 #else /* !CONFIG_HIBERNATE_CALLBACKS */
 
 #define amba_pm_freeze		NULL
@@ -256,10 +388,25 @@ static int amba_pm_runtime_suspend(struct device *dev)
 
 	if (ret == 0 && dev->driver)
 		clk_disable(pcdev->pclk);
+=======
+static int amba_pm_restore_noirq(struct device *dev)
+{
+	struct device_driver *drv = dev->driver;
+	int ret = 0;
+
+	if (!drv)
+		return 0;
+
+	if (drv->pm) {
+		if (drv->pm->restore_noirq)
+			ret = drv->pm->restore_noirq(dev);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
 
+<<<<<<< HEAD
 static int amba_pm_runtime_resume(struct device *dev)
 {
 	struct amba_device *pcdev = to_amba_device(dev);
@@ -275,19 +422,50 @@ static int amba_pm_runtime_resume(struct device *dev)
 	return pm_generic_runtime_resume(dev);
 }
 #endif
+=======
+#else /* !CONFIG_HIBERNATE_CALLBACKS */
+
+#define amba_pm_freeze		NULL
+#define amba_pm_thaw		NULL
+#define amba_pm_poweroff		NULL
+#define amba_pm_restore		NULL
+#define amba_pm_freeze_noirq	NULL
+#define amba_pm_thaw_noirq		NULL
+#define amba_pm_poweroff_noirq	NULL
+#define amba_pm_restore_noirq	NULL
+
+#endif /* !CONFIG_HIBERNATE_CALLBACKS */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_PM
 
 static const struct dev_pm_ops amba_pm = {
+<<<<<<< HEAD
+=======
+	.prepare	= amba_pm_prepare,
+	.complete	= amba_pm_complete,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.suspend	= amba_pm_suspend,
 	.resume		= amba_pm_resume,
 	.freeze		= amba_pm_freeze,
 	.thaw		= amba_pm_thaw,
 	.poweroff	= amba_pm_poweroff,
 	.restore	= amba_pm_restore,
+<<<<<<< HEAD
 	SET_RUNTIME_PM_OPS(
 		amba_pm_runtime_suspend,
 		amba_pm_runtime_resume,
+=======
+	.suspend_noirq	= amba_pm_suspend_noirq,
+	.resume_noirq	= amba_pm_resume_noirq,
+	.freeze_noirq	= amba_pm_freeze_noirq,
+	.thaw_noirq	= amba_pm_thaw_noirq,
+	.poweroff_noirq	= amba_pm_poweroff_noirq,
+	.restore_noirq	= amba_pm_restore_noirq,
+	SET_RUNTIME_PM_OPS(
+		pm_generic_runtime_suspend,
+		pm_generic_runtime_resume,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pm_generic_runtime_idle
 	)
 };
@@ -329,6 +507,7 @@ static int amba_get_enable_pclk(struct amba_device *pcdev)
 	if (IS_ERR(pclk))
 		return PTR_ERR(pclk);
 
+<<<<<<< HEAD
 	ret = clk_prepare(pclk);
 	if (ret) {
 		clk_put(pclk);
@@ -340,6 +519,11 @@ static int amba_get_enable_pclk(struct amba_device *pcdev)
 		clk_unprepare(pclk);
 		clk_put(pclk);
 	}
+=======
+	ret = clk_enable(pclk);
+	if (ret)
+		clk_put(pclk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -349,10 +533,49 @@ static void amba_put_disable_pclk(struct amba_device *pcdev)
 	struct clk *pclk = pcdev->pclk;
 
 	clk_disable(pclk);
+<<<<<<< HEAD
 	clk_unprepare(pclk);
 	clk_put(pclk);
 }
 
+=======
+	clk_put(pclk);
+}
+
+static int amba_get_enable_vcore(struct amba_device *pcdev)
+{
+	struct regulator *vcore = regulator_get(&pcdev->dev, "vcore");
+	int ret;
+
+	pcdev->vcore = vcore;
+
+	if (IS_ERR(vcore)) {
+		/* It is OK not to supply a vcore regulator */
+		if (PTR_ERR(vcore) == -ENODEV)
+			return 0;
+		return PTR_ERR(vcore);
+	}
+
+	ret = regulator_enable(vcore);
+	if (ret) {
+		regulator_put(vcore);
+		pcdev->vcore = ERR_PTR(-ENODEV);
+	}
+
+	return ret;
+}
+
+static void amba_put_disable_vcore(struct amba_device *pcdev)
+{
+	struct regulator *vcore = pcdev->vcore;
+
+	if (!IS_ERR(vcore)) {
+		regulator_disable(vcore);
+		regulator_put(vcore);
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * These are the device model conversion veneers; they convert the
  * device model structures to our more specific structures.
@@ -365,6 +588,7 @@ static int amba_probe(struct device *dev)
 	int ret;
 
 	do {
+<<<<<<< HEAD
 		ret = amba_get_enable_pclk(pcdev);
 		if (ret)
 			break;
@@ -372,16 +596,30 @@ static int amba_probe(struct device *dev)
 		pm_runtime_get_noresume(dev);
 		pm_runtime_set_active(dev);
 		pm_runtime_enable(dev);
+=======
+		ret = amba_get_enable_vcore(pcdev);
+		if (ret)
+			break;
+
+		ret = amba_get_enable_pclk(pcdev);
+		if (ret)
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ret = pcdrv->probe(pcdev, id);
 		if (ret == 0)
 			break;
 
+<<<<<<< HEAD
 		pm_runtime_disable(dev);
 		pm_runtime_set_suspended(dev);
 		pm_runtime_put_noidle(dev);
 
 		amba_put_disable_pclk(pcdev);
+=======
+		amba_put_disable_pclk(pcdev);
+		amba_put_disable_vcore(pcdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} while (0);
 
 	return ret;
@@ -391,6 +629,7 @@ static int amba_remove(struct device *dev)
 {
 	struct amba_device *pcdev = to_amba_device(dev);
 	struct amba_driver *drv = to_amba_driver(dev->driver);
+<<<<<<< HEAD
 	int ret;
 
 	pm_runtime_get_sync(dev);
@@ -403,6 +642,12 @@ static int amba_remove(struct device *dev)
 	pm_runtime_put_noidle(dev);
 
 	amba_put_disable_pclk(pcdev);
+=======
+	int ret = drv->remove(pcdev);
+
+	amba_put_disable_pclk(pcdev);
+	amba_put_disable_vcore(pcdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -457,6 +702,7 @@ static void amba_device_release(struct device *dev)
 }
 
 /**
+<<<<<<< HEAD
  *	amba_device_add - add a previously allocated AMBA device structure
  *	@dev: AMBA device allocated by amba_device_alloc
  *	@parent: resource parent for this devices resources
@@ -466,13 +712,44 @@ static void amba_device_release(struct device *dev)
  *	manager.
  */
 int amba_device_add(struct amba_device *dev, struct resource *parent)
+=======
+ *	amba_device_register - register an AMBA device
+ *	@dev: AMBA device to register
+ *	@parent: parent memory resource
+ *
+ *	Setup the AMBA device, reading the cell ID if present.
+ *	Claim the resource, and register the AMBA device with
+ *	the Linux device manager.
+ */
+int amba_device_register(struct amba_device *dev, struct resource *parent)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 size;
 	void __iomem *tmp;
 	int i, ret;
 
+<<<<<<< HEAD
 	WARN_ON(dev->irq[0] == (unsigned int)-1);
 	WARN_ON(dev->irq[1] == (unsigned int)-1);
+=======
+	device_initialize(&dev->dev);
+
+	/*
+	 * Copy from device_add
+	 */
+	if (dev->dev.init_name) {
+		dev_set_name(&dev->dev, "%s", dev->dev.init_name);
+		dev->dev.init_name = NULL;
+	}
+
+	dev->dev.release = amba_device_release;
+	dev->dev.bus = &amba_bustype;
+	dev->dev.dma_mask = &dev->dma_mask;
+	dev->res.name = dev_name(&dev->dev);
+
+	if (!dev->dev.coherent_dma_mask && dev->dma_mask)
+		dev_warn(&dev->dev, "coherent dma mask is unset\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = request_resource(parent, &dev->res);
 	if (ret)
@@ -527,9 +804,15 @@ int amba_device_add(struct amba_device *dev, struct resource *parent)
 	if (ret)
 		goto err_release;
 
+<<<<<<< HEAD
 	if (dev->irq[0] && dev->irq[0] != NO_IRQ)
 		ret = device_create_file(&dev->dev, &dev_attr_irq0);
 	if (ret == 0 && dev->irq[1] && dev->irq[1] != NO_IRQ)
+=======
+	if (dev->irq[0] != NO_IRQ)
+		ret = device_create_file(&dev->dev, &dev_attr_irq0);
+	if (ret == 0 && dev->irq[1] != NO_IRQ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = device_create_file(&dev->dev, &dev_attr_irq1);
 	if (ret == 0)
 		return ret;
@@ -541,6 +824,7 @@ int amba_device_add(struct amba_device *dev, struct resource *parent)
  err_out:
 	return ret;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(amba_device_add);
 
 static void amba_device_initialize(struct amba_device *dev, const char *name)
@@ -609,6 +893,8 @@ void amba_device_put(struct amba_device *dev)
 	put_device(&dev->dev);
 }
 EXPORT_SYMBOL_GPL(amba_device_put);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  *	amba_device_unregister - unregister an AMBA device

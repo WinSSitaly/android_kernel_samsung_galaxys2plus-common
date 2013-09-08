@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 #define pr_fmt(fmt) "IPsec: " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <crypto/aead.h>
 #include <crypto/authenc.h>
 #include <linux/err.h>
@@ -139,6 +142,11 @@ static int esp_output(struct xfrm_state *x, struct sk_buff *skb)
 
 	/* skb is pure payload to encrypt */
 
+<<<<<<< HEAD
+=======
+	err = -ENOMEM;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	esp = x->data;
 	aead = esp->aead;
 	alen = crypto_aead_authsize(aead);
@@ -174,10 +182,15 @@ static int esp_output(struct xfrm_state *x, struct sk_buff *skb)
 	}
 
 	tmp = esp_alloc_tmp(aead, nfrags + sglists, seqhilen);
+<<<<<<< HEAD
 	if (!tmp) {
 		err = -ENOMEM;
 		goto error;
 	}
+=======
+	if (!tmp)
+		goto error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	seqhi = esp_tmp_seqhi(tmp);
 	iv = esp_tmp_iv(aead, tmp, seqhilen);
@@ -459,6 +472,7 @@ static u32 esp4_get_mtu(struct xfrm_state *x, int mtu)
 	struct esp_data *esp = x->data;
 	u32 blksize = ALIGN(crypto_aead_blocksize(esp->aead), 4);
 	u32 align = max_t(u32, blksize, esp->padlen);
+<<<<<<< HEAD
 	unsigned int net_adj;
 
 	switch (x->props.mode) {
@@ -475,6 +489,30 @@ static u32 esp4_get_mtu(struct xfrm_state *x, int mtu)
 
 	return ((mtu - x->props.header_len - crypto_aead_authsize(esp->aead) -
 		 net_adj) & ~(align - 1)) + (net_adj - 2);
+=======
+	u32 rem;
+
+	mtu -= x->props.header_len + crypto_aead_authsize(esp->aead);
+	rem = mtu & (align - 1);
+	mtu &= ~(align - 1);
+
+	switch (x->props.mode) {
+	case XFRM_MODE_TUNNEL:
+		break;
+	default:
+	case XFRM_MODE_TRANSPORT:
+		/* The worst case */
+		mtu -= blksize - 4;
+		mtu += min_t(u32, blksize - 4, rem);
+		break;
+	case XFRM_MODE_BEET:
+		/* The worst case. */
+		mtu += min_t(u32, IPV4_BEET_PHMAXLEN, rem);
+		break;
+	}
+
+	return mtu - 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void esp4_err(struct sk_buff *skb, u32 info)
@@ -702,11 +740,19 @@ static const struct net_protocol esp4_protocol = {
 static int __init esp4_init(void)
 {
 	if (xfrm_register_type(&esp_type, AF_INET) < 0) {
+<<<<<<< HEAD
 		pr_info("%s: can't add xfrm type\n", __func__);
 		return -EAGAIN;
 	}
 	if (inet_add_protocol(&esp4_protocol, IPPROTO_ESP) < 0) {
 		pr_info("%s: can't add protocol\n", __func__);
+=======
+		printk(KERN_INFO "ip esp init: can't add xfrm type\n");
+		return -EAGAIN;
+	}
+	if (inet_add_protocol(&esp4_protocol, IPPROTO_ESP) < 0) {
+		printk(KERN_INFO "ip esp init: can't add protocol\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		xfrm_unregister_type(&esp_type, AF_INET);
 		return -EAGAIN;
 	}
@@ -716,9 +762,15 @@ static int __init esp4_init(void)
 static void __exit esp4_fini(void)
 {
 	if (inet_del_protocol(&esp4_protocol, IPPROTO_ESP) < 0)
+<<<<<<< HEAD
 		pr_info("%s: can't remove protocol\n", __func__);
 	if (xfrm_unregister_type(&esp_type, AF_INET) < 0)
 		pr_info("%s: can't remove xfrm type\n", __func__);
+=======
+		printk(KERN_INFO "ip esp close: can't remove protocol\n");
+	if (xfrm_unregister_type(&esp_type, AF_INET) < 0)
+		printk(KERN_INFO "ip esp close: can't remove xfrm type\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(esp4_init);

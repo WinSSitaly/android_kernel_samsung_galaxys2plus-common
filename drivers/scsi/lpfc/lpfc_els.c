@@ -1,7 +1,11 @@
 /*******************************************************************
  * This file is part of the Emulex Linux Device Driver for         *
  * Fibre Channel Host Bus Adapters.                                *
+<<<<<<< HEAD
  * Copyright (C) 2004-2012 Emulex.  All rights reserved.           *
+=======
+ * Copyright (C) 2004-2011 Emulex.  All rights reserved.           *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * EMULEX and SLI are trademarks of Emulex.                        *
  * www.emulex.com                                                  *
  * Portions Copyright (C) 2004-2005 Christoph Hellwig              *
@@ -421,13 +425,21 @@ fail:
  * @vport: pointer to a host virtual N_Port data structure.
  *
  * This routine issues a REG_VFI mailbox for the vfi, vpi, fcfi triplet for
+<<<<<<< HEAD
  * the @vport. This mailbox command is necessary for SLI4 port only.
+=======
+ * the @vport. This mailbox command is necessary for FCoE only.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Return code
  *   0 - successfully issued REG_VFI for @vport
  *   A failure code otherwise.
  **/
+<<<<<<< HEAD
 int
+=======
+static int
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 lpfc_issue_reg_vfi(struct lpfc_vport *vport)
 {
 	struct lpfc_hba  *phba = vport->phba;
@@ -438,6 +450,7 @@ lpfc_issue_reg_vfi(struct lpfc_vport *vport)
 	int rc = 0;
 
 	sp = &phba->fc_fabparam;
+<<<<<<< HEAD
 	/* move forward in case of SLI4 FC port loopback test */
 	if ((phba->sli_rev == LPFC_SLI_REV4) &&
 	    !(phba->link_flag & LS_LOOPBACK_MODE)) {
@@ -446,6 +459,12 @@ lpfc_issue_reg_vfi(struct lpfc_vport *vport)
 			rc = -ENODEV;
 			goto fail;
 		}
+=======
+	ndlp = lpfc_findnode_did(vport, Fabric_DID);
+	if (!ndlp || !NLP_CHK_NODE_ACT(ndlp)) {
+		rc = -ENODEV;
+		goto fail;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	dmabuf = kzalloc(sizeof(struct lpfc_dmabuf), GFP_KERNEL);
@@ -491,6 +510,7 @@ fail:
 }
 
 /**
+<<<<<<< HEAD
  * lpfc_issue_unreg_vfi - Unregister VFI for this vport's fabric login
  * @vport: pointer to a host virtual N_Port data structure.
  *
@@ -539,6 +559,8 @@ lpfc_issue_unreg_vfi(struct lpfc_vport *vport)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * lpfc_check_clean_addr_bit - Check whether assigned FCID is clean.
  * @vport: pointer to a host virtual N_Port data structure.
  * @sp: pointer to service parameter data structure.
@@ -667,9 +689,13 @@ lpfc_cmpl_els_flogi_fabric(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 					 "1816 FLOGI NPIV supported, "
 					 "response data 0x%x\n",
 					 sp->cmn.response_multiple_NPort);
+<<<<<<< HEAD
 			spin_lock_irq(&phba->hbalock);
 			phba->link_flag |= LS_NPIV_FAB_SUPPORTED;
 			spin_unlock_irq(&phba->hbalock);
+=======
+			phba->link_flag |= LS_NPIV_FAB_SUPPORTED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			/* Because we asked f/w for NPIV it still expects us
 			to call reg_vnpid atleast for the physcial host */
@@ -677,9 +703,13 @@ lpfc_cmpl_els_flogi_fabric(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 					 LOG_ELS | LOG_VPORT,
 					 "1817 Fabric does not support NPIV "
 					 "- configuring single port mode.\n");
+<<<<<<< HEAD
 			spin_lock_irq(&phba->hbalock);
 			phba->link_flag &= ~LS_NPIV_FAB_SUPPORTED;
 			spin_unlock_irq(&phba->hbalock);
+=======
+			phba->link_flag &= ~LS_NPIV_FAB_SUPPORTED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -742,6 +772,7 @@ lpfc_cmpl_els_flogi_fabric(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 			lpfc_do_scr_ns_plogi(phba, vport);
 		} else if (vport->fc_flag & FC_VFI_REGISTERED)
 			lpfc_issue_init_vpi(vport);
+<<<<<<< HEAD
 		else {
 			lpfc_printf_vlog(vport, KERN_INFO, LOG_ELS,
 					"3135 Need register VFI: (x%x/%x)\n",
@@ -752,6 +783,13 @@ lpfc_cmpl_els_flogi_fabric(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 	return 0;
 }
 
+=======
+		else
+			lpfc_issue_reg_vfi(vport);
+	}
+	return 0;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * lpfc_cmpl_els_flogi_nport - Completion function for flogi to an N_Port
  * @vport: pointer to a host virtual N_Port data structure.
@@ -925,6 +963,7 @@ lpfc_cmpl_els_flogi(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
 		 * due to new FCF discovery
 		 */
 		if ((phba->hba_flag & HBA_FIP_SUPPORT) &&
+<<<<<<< HEAD
 		    (phba->fcf.fcf_flag & FCF_DISCOVERY)) {
 			if (phba->link_state < LPFC_LINK_UP)
 				goto stop_rr_fcf_flogi;
@@ -936,6 +975,11 @@ lpfc_cmpl_els_flogi(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
 			else
 				phba->fcoe_cvl_eventtag_attn =
 					phba->fcoe_cvl_eventtag;
+=======
+		    (phba->fcf.fcf_flag & FCF_DISCOVERY) &&
+		    !((irsp->ulpStatus == IOSTAT_LOCAL_REJECT) &&
+		     (irsp->un.ulpWord[4] == IOERR_SLI_ABORTED))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			lpfc_printf_log(phba, KERN_WARNING, LOG_FIP | LOG_ELS,
 					"2611 FLOGI failed on FCF (x%x), "
 					"status:x%x/x%x, tmo:x%x, perform "
@@ -943,15 +987,21 @@ lpfc_cmpl_els_flogi(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
 					phba->fcf.current_rec.fcf_indx,
 					irsp->ulpStatus, irsp->un.ulpWord[4],
 					irsp->ulpTimeout);
+<<<<<<< HEAD
 			lpfc_sli4_set_fcf_flogi_fail(phba,
 					phba->fcf.current_rec.fcf_indx);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			fcf_index = lpfc_sli4_fcf_rr_next_index_get(phba);
 			rc = lpfc_sli4_fcf_rr_next_proc(vport, fcf_index);
 			if (rc)
 				goto out;
 		}
 
+<<<<<<< HEAD
 stop_rr_fcf_flogi:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* FLOGI failure */
 		lpfc_printf_vlog(vport, KERN_ERR, LOG_ELS,
 				"2858 FLOGI failure Status:x%x/x%x TMO:x%x\n",
@@ -977,6 +1027,7 @@ stop_rr_fcf_flogi:
 		 * LPFC_MAX_DISC_THREADS (32). Scanning in the case of no
 		 * alpa map would take too long otherwise.
 		 */
+<<<<<<< HEAD
 		if (phba->alpa_map[0] == 0)
 			vport->cfg_discovery_threads = LPFC_MAX_DISC_THREADS;
 		if ((phba->sli_rev == LPFC_SLI_REV4) &&
@@ -987,6 +1038,19 @@ stop_rr_fcf_flogi:
 			lpfc_issue_reg_vfi(vport);
 			lpfc_nlp_put(ndlp);
 			goto out;
+=======
+		if (phba->alpa_map[0] == 0) {
+			vport->cfg_discovery_threads = LPFC_MAX_DISC_THREADS;
+			if ((phba->sli_rev == LPFC_SLI_REV4) &&
+			    (!(vport->fc_flag & FC_VFI_REGISTERED) ||
+			     (vport->fc_prevDID != vport->fc_myDID))) {
+				if (vport->fc_flag & FC_VFI_REGISTERED)
+					lpfc_sli4_unreg_all_rpis(vport);
+				lpfc_issue_reg_vfi(vport);
+				lpfc_nlp_put(ndlp);
+				goto out;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		goto flogifail;
 	}
@@ -1144,7 +1208,10 @@ lpfc_issue_els_flogi(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 	/* Setup CSPs accordingly for Fabric */
 	sp->cmn.e_d_tov = 0;
 	sp->cmn.w2.r_a_tov = 0;
+<<<<<<< HEAD
 	sp->cmn.virtual_fabric_support = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sp->cls1.classValid = 0;
 	sp->cls2.seqDelivery = 1;
 	sp->cls3.seqDelivery = 1;
@@ -1233,7 +1300,12 @@ lpfc_els_abort_flogi(struct lpfc_hba *phba)
 	spin_lock_irq(&phba->hbalock);
 	list_for_each_entry_safe(iocb, next_iocb, &pring->txcmplq, list) {
 		icmd = &iocb->iocb;
+<<<<<<< HEAD
 		if (icmd->ulpCommand == CMD_ELS_REQUEST64_CR) {
+=======
+		if (icmd->ulpCommand == CMD_ELS_REQUEST64_CR &&
+		    icmd->un.elsreq64.bdl.ulpIoTag32) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ndlp = (struct lpfc_nodelist *)(iocb->context1);
 			if (ndlp && NLP_CHK_NODE_ACT(ndlp) &&
 			    (ndlp->nlp_DID == Fabric_DID))
@@ -1535,6 +1607,10 @@ lpfc_plogi_confirm_nport(struct lpfc_hba *phba, uint32_t *prsp,
 			memcpy(&ndlp->active_rrqs.xri_bitmap,
 				&rrq.xri_bitmap,
 				sizeof(ndlp->active_rrqs.xri_bitmap));
+<<<<<<< HEAD
+=======
+		lpfc_nlp_set_state(vport, ndlp, NLP_STE_NPR_NODE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Since we are swapping the ndlp passed in with the new one
 		 * and the did has already been swapped, copy over the
 		 * state and names.
@@ -1544,7 +1620,10 @@ lpfc_plogi_confirm_nport(struct lpfc_hba *phba, uint32_t *prsp,
 		memcpy(&new_ndlp->nlp_nodename, &ndlp->nlp_nodename,
 			sizeof(struct lpfc_name));
 		new_ndlp->nlp_state = ndlp->nlp_state;
+<<<<<<< HEAD
 		lpfc_nlp_set_state(vport, ndlp, NLP_STE_NPR_NODE);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Fix up the rport accordingly */
 		rport = ndlp->rport;
 		if (rport) {
@@ -3135,22 +3214,33 @@ lpfc_els_retry(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
 	if (did == FDMI_DID)
 		retry = 1;
 
+<<<<<<< HEAD
 	if ((cmd == ELS_CMD_FLOGI) &&
+=======
+	if (((cmd == ELS_CMD_FLOGI) || (cmd == ELS_CMD_FDISC)) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    (phba->fc_topology != LPFC_TOPOLOGY_LOOP) &&
 	    !lpfc_error_lost_link(irsp)) {
 		/* FLOGI retry policy */
 		retry = 1;
+<<<<<<< HEAD
 		/* retry FLOGI forever */
+=======
+		/* retry forever */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		maxretry = 0;
 		if (cmdiocb->retry >= 100)
 			delay = 5000;
 		else if (cmdiocb->retry >= 32)
 			delay = 1000;
+<<<<<<< HEAD
 	} else if ((cmd == ELS_CMD_FDISC) && !lpfc_error_lost_link(irsp)) {
 		/* retry FDISCs every second up to devloss */
 		retry = 1;
 		maxretry = vport->cfg_devloss_tmo;
 		delay = 1000;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	cmdiocb->retry++;
@@ -3460,6 +3550,7 @@ lpfc_cmpl_els_logo_acc(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
 			cmdiocb->context1 = NULL;
 		}
 	}
+<<<<<<< HEAD
 
 	/*
 	 * The driver received a LOGO from the rport and has ACK'd it.
@@ -3474,6 +3565,9 @@ lpfc_cmpl_els_logo_acc(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
 	if (ndlp->nlp_type & NLP_FABRIC)
 		lpfc_nlp_put(ndlp);
 
+=======
+	lpfc_els_free_iocb(phba, cmdiocb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 }
 
@@ -4169,6 +4263,12 @@ lpfc_els_rsp_rnid_acc(struct lpfc_vport *vport, uint8_t format,
 
 	phba->fc_stat.elsXmitACC++;
 	elsiocb->iocb_cmpl = lpfc_cmpl_els_rsp;
+<<<<<<< HEAD
+=======
+	lpfc_nlp_put(ndlp);
+	elsiocb->context1 = NULL;  /* Don't need ndlp for cmpl,
+				    * it could be freed */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rc = lpfc_sli_issue_iocb(phba, LPFC_ELS_RING, elsiocb, 0);
 	if (rc == IOCB_ERROR) {
@@ -4250,11 +4350,14 @@ lpfc_els_rsp_echo_acc(struct lpfc_vport *vport, uint8_t *data,
 	psli = &phba->sli;
 	cmdsize = oldiocb->iocb.unsli3.rcvsli3.acc_len;
 
+<<<<<<< HEAD
 	/* The accumulated length can exceed the BPL_SIZE.  For
 	 * now, use this as the limit
 	 */
 	if (cmdsize > LPFC_BPL_SIZE)
 		cmdsize = LPFC_BPL_SIZE;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	elsiocb = lpfc_prep_els_iocb(vport, 0, cmdsize, oldiocb->retry, ndlp,
 				     ndlp->nlp_DID, ELS_CMD_ACC);
 	if (!elsiocb)
@@ -4278,6 +4381,12 @@ lpfc_els_rsp_echo_acc(struct lpfc_vport *vport, uint8_t *data,
 
 	phba->fc_stat.elsXmitACC++;
 	elsiocb->iocb_cmpl = lpfc_cmpl_els_rsp;
+<<<<<<< HEAD
+=======
+	lpfc_nlp_put(ndlp);
+	elsiocb->context1 = NULL;  /* Don't need ndlp for cmpl,
+				    * it could be freed */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rc = lpfc_sli_issue_iocb(phba, LPFC_ELS_RING, elsiocb, 0);
 	if (rc == IOCB_ERROR) {
@@ -4947,6 +5056,7 @@ lpfc_els_rcv_flogi(struct lpfc_vport *vport, struct lpfc_iocbq *cmdiocb,
 			    sizeof(struct lpfc_name));
 
 		if (!rc) {
+<<<<<<< HEAD
 			if (phba->sli_rev < LPFC_SLI_REV4) {
 				mbox = mempool_alloc(phba->mbox_mem_pool,
 						     GFP_KERNEL);
@@ -4972,6 +5082,25 @@ lpfc_els_rcv_flogi(struct lpfc_vport *vport, struct lpfc_iocbq *cmdiocb,
 				lpfc_els_abort_flogi(phba);
 				return 0;
 			}
+=======
+			mbox = mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
+			if (!mbox)
+				return 1;
+
+			lpfc_linkdown(phba);
+			lpfc_init_link(phba, mbox,
+				       phba->cfg_topology,
+				       phba->cfg_link_speed);
+			mbox->u.mb.un.varInitLnk.lipsr_AL_PA = 0;
+			mbox->mbox_cmpl = lpfc_sli_def_mbox_cmpl;
+			mbox->vport = vport;
+			rc = lpfc_sli_issue_mbox(phba, mbox, MBX_NOWAIT);
+			lpfc_set_loopback_flag(phba);
+			if (rc == MBX_NOT_FINISHED) {
+				mempool_free(mbox, phba->mbox_mem_pool);
+			}
+			return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else if (rc > 0) {	/* greater than */
 			spin_lock_irq(shost->host_lock);
 			vport->fc_flag |= FC_PT2PT_PLOGI;
@@ -5926,12 +6055,17 @@ lpfc_els_rcv_fan(struct lpfc_vport *vport, struct lpfc_iocbq *cmdiocb,
 			vport->fc_myDID = vport->fc_prevDID;
 			if (phba->sli_rev < LPFC_SLI_REV4)
 				lpfc_issue_fabric_reglogin(vport);
+<<<<<<< HEAD
 			else {
 				lpfc_printf_vlog(vport, KERN_INFO, LOG_ELS,
 					"3138 Need register VFI: (x%x/%x)\n",
 					vport->fc_prevDID, vport->fc_myDID);
 				lpfc_issue_reg_vfi(vport);
 			}
+=======
+			else
+				lpfc_issue_reg_vfi(vport);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	return 0;
@@ -6688,6 +6822,59 @@ dropit:
 }
 
 /**
+<<<<<<< HEAD
+=======
+ * lpfc_find_vport_by_vpid - Find a vport on a HBA through vport identifier
+ * @phba: pointer to lpfc hba data structure.
+ * @vpi: host virtual N_Port identifier.
+ *
+ * This routine finds a vport on a HBA (referred by @phba) through a
+ * @vpi. The function walks the HBA's vport list and returns the address
+ * of the vport with the matching @vpi.
+ *
+ * Return code
+ *    NULL - No vport with the matching @vpi found
+ *    Otherwise - Address to the vport with the matching @vpi.
+ **/
+struct lpfc_vport *
+lpfc_find_vport_by_vpid(struct lpfc_hba *phba, uint16_t vpi)
+{
+	struct lpfc_vport *vport;
+	unsigned long flags;
+	int i = 0;
+
+	/* The physical ports are always vpi 0 - translate is unnecessary. */
+	if (vpi > 0) {
+		/*
+		 * Translate the physical vpi to the logical vpi.  The
+		 * vport stores the logical vpi.
+		 */
+		for (i = 0; i < phba->max_vpi; i++) {
+			if (vpi == phba->vpi_ids[i])
+				break;
+		}
+
+		if (i >= phba->max_vpi) {
+			lpfc_printf_log(phba, KERN_ERR, LOG_ELS,
+					 "2936 Could not find Vport mapped "
+					 "to vpi %d\n", vpi);
+			return NULL;
+		}
+	}
+
+	spin_lock_irqsave(&phba->hbalock, flags);
+	list_for_each_entry(vport, &phba->port_list, listentry) {
+		if (vport->vpi == i) {
+			spin_unlock_irqrestore(&phba->hbalock, flags);
+			return vport;
+		}
+	}
+	spin_unlock_irqrestore(&phba->hbalock, flags);
+	return NULL;
+}
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * lpfc_els_unsol_event - Process an unsolicited event from an els sli ring
  * @phba: pointer to lpfc hba data structure.
  * @pring: pointer to a SLI ring.
@@ -7181,7 +7368,11 @@ lpfc_cmpl_els_fdisc(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
 			goto out;
 		/* FDISC failed */
 		lpfc_printf_vlog(vport, KERN_ERR, LOG_ELS,
+<<<<<<< HEAD
 				 "0126 FDISC failed. (x%x/x%x)\n",
+=======
+				 "0126 FDISC failed. (%d/%d)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 irsp->ulpStatus, irsp->un.ulpWord[4]);
 		goto fdisc_failed;
 	}
@@ -7292,7 +7483,10 @@ lpfc_issue_els_fdisc(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 	int rc;
 
 	vport->port_state = LPFC_FDISC;
+<<<<<<< HEAD
 	vport->fc_myDID = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmdsize = (sizeof(uint32_t) + sizeof(struct serv_parm));
 	elsiocb = lpfc_prep_els_iocb(vport, 1, cmdsize, retry, ndlp, did,
 				     ELS_CMD_FDISC);
@@ -7307,11 +7501,24 @@ lpfc_issue_els_fdisc(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 	icmd->un.elsreq64.myID = 0;
 	icmd->un.elsreq64.fl = 1;
 
+<<<<<<< HEAD
 	/*
 	 * SLI3 ports require a different context type value than SLI4.
 	 * Catch SLI3 ports here and override the prep.
 	 */
 	if (phba->sli_rev == LPFC_SLI_REV3) {
+=======
+	if  ((phba->sli_rev == LPFC_SLI_REV4) &&
+	     (bf_get(lpfc_sli_intf_if_type, &phba->sli4_hba.sli_intf) ==
+	      LPFC_SLI_INTF_IF_TYPE_0)) {
+		/* FDISC needs to be 1 for WQE VPI */
+		elsiocb->iocb.ulpCt_h = (SLI4_CT_VPI >> 1) & 1;
+		elsiocb->iocb.ulpCt_l = SLI4_CT_VPI & 1 ;
+		/* Set the ulpContext to the vpi */
+		elsiocb->iocb.ulpContext = phba->vpi_ids[vport->vpi];
+	} else {
+		/* For FDISC, Let FDISC rsp set the NPortID for this VPI */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		icmd->ulpCt_h = 1;
 		icmd->ulpCt_l = 0;
 	}
@@ -7324,7 +7531,10 @@ lpfc_issue_els_fdisc(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 	/* Setup CSPs accordingly for Fabric */
 	sp->cmn.e_d_tov = 0;
 	sp->cmn.w2.r_a_tov = 0;
+<<<<<<< HEAD
 	sp->cmn.virtual_fabric_support = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sp->cls1.classValid = 0;
 	sp->cls2.seqDelivery = 1;
 	sp->cls3.seqDelivery = 1;

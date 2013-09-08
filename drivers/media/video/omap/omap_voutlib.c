@@ -24,12 +24,17 @@
 #include <linux/types.h>
 #include <linux/videodev2.h>
 
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
 
 #include <plat/cpu.h>
 
 #include "omap_voutlib.h"
 
+=======
+#include <plat/cpu.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_AUTHOR("Texas Instruments");
 MODULE_DESCRIPTION("OMAP Video library");
 MODULE_LICENSE("GPL");
@@ -295,6 +300,7 @@ void omap_vout_new_format(struct v4l2_pix_format *pix,
 }
 EXPORT_SYMBOL_GPL(omap_vout_new_format);
 
+<<<<<<< HEAD
 /*
  * Allocate buffers
  */
@@ -337,3 +343,5 @@ void omap_vout_free_buffer(unsigned long virtaddr, u32 buf_size)
 	}
 	free_pages((unsigned long) virtaddr, order);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

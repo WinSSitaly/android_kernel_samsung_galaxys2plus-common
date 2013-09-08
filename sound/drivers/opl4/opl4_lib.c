@@ -22,7 +22,10 @@
 #include <linux/ioport.h>
 #include <linux/slab.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 
 MODULE_AUTHOR("Clemens Ladisch <clemens@ladisch.de>");

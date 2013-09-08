@@ -16,8 +16,12 @@ struct ceph_crypto_key {
 
 static inline void ceph_crypto_key_destroy(struct ceph_crypto_key *key)
 {
+<<<<<<< HEAD
 	if (key)
 		kfree(key->key);
+=======
+	kfree(key->key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 extern int ceph_crypto_key_clone(struct ceph_crypto_key *dst,

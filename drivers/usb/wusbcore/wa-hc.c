@@ -23,7 +23,10 @@
  * FIXME: docs
  */
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "wusbhc.h"
 #include "wa-hc.h"
 
@@ -44,7 +47,11 @@ int wa_create(struct wahc *wa, struct usb_interface *iface)
 	/* Fill up Data Transfer EP pointers */
 	wa->dti_epd = &iface->cur_altsetting->endpoint[1].desc;
 	wa->dto_epd = &iface->cur_altsetting->endpoint[2].desc;
+<<<<<<< HEAD
 	wa->xfer_result_size = usb_endpoint_maxp(wa->dti_epd);
+=======
+	wa->xfer_result_size = le16_to_cpu(wa->dti_epd->wMaxPacketSize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wa->xfer_result = kmalloc(wa->xfer_result_size, GFP_KERNEL);
 	if (wa->xfer_result == NULL)
 		goto error_xfer_result_alloc;

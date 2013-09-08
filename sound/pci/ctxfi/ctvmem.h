@@ -18,7 +18,11 @@
 #ifndef CTVMEM_H
 #define CTVMEM_H
 
+<<<<<<< HEAD
 #define CT_PTP_NUM	4	/* num of device page table pages */
+=======
+#define CT_PTP_NUM	1	/* num of device page table pages */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/mutex.h>
 #include <linux/list.h>

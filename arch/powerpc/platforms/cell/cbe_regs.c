@@ -8,7 +8,11 @@
 
 #include <linux/percpu.h>
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/of_device.h>
 #include <linux/of_platform.h>
 

@@ -21,7 +21,10 @@
 #include <linux/rtc.h>
 #include <linux/platform_device.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRV_VERSION "0.4"
 
@@ -174,7 +177,11 @@ static int __devinit ds1742_rtc_probe(struct platform_device *pdev)
 	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
 	if (!pdata)
 		return -ENOMEM;
+<<<<<<< HEAD
 	pdata->size = resource_size(res);
+=======
+	pdata->size = res->end - res->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!devm_request_mem_region(&pdev->dev, res->start, pdata->size,
 		pdev->name))
 		return -EBUSY;
@@ -240,7 +247,22 @@ static struct platform_driver ds1742_rtc_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(ds1742_rtc_driver);
+=======
+static __init int ds1742_init(void)
+{
+	return platform_driver_register(&ds1742_rtc_driver);
+}
+
+static __exit void ds1742_exit(void)
+{
+	platform_driver_unregister(&ds1742_rtc_driver);
+}
+
+module_init(ds1742_init);
+module_exit(ds1742_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Atsushi Nemoto <anemo@mba.ocn.ne.jp>");
 MODULE_DESCRIPTION("Dallas DS1742 RTC driver");

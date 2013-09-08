@@ -36,6 +36,7 @@
 
 #define PAGE_SIZE		(ASM_CONST(1) << PAGE_SHIFT)
 
+<<<<<<< HEAD
 #ifndef __ASSEMBLY__
 #ifdef CONFIG_HUGETLB_PAGE
 extern unsigned int HPAGE_SHIFT;
@@ -48,6 +49,8 @@ extern unsigned int HPAGE_SHIFT;
 #define HUGE_MAX_HSTATE		(MMU_PAGE_COUNT-1)
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* We do define AT_SYSINFO_EHDR but don't use the gate mechanism */
 #define __HAVE_ARCH_GATE_AREA		1
 
@@ -92,11 +95,16 @@ extern unsigned int HPAGE_SHIFT;
 #define PAGE_OFFSET	ASM_CONST(CONFIG_PAGE_OFFSET)
 #define LOAD_OFFSET	ASM_CONST((CONFIG_KERNEL_START-CONFIG_PHYSICAL_START))
 
+<<<<<<< HEAD
 #if defined(CONFIG_NONSTATIC_KERNEL)
+=======
+#if defined(CONFIG_RELOCATABLE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __ASSEMBLY__
 
 extern phys_addr_t memstart_addr;
 extern phys_addr_t kernstart_addr;
+<<<<<<< HEAD
 
 #ifdef CONFIG_RELOCATABLE_PPC32
 extern long long virt_phys_offset;
@@ -120,6 +128,17 @@ extern long long virt_phys_offset;
 #ifdef CONFIG_PPC64
 #define MEMORY_START	0UL
 #elif defined(CONFIG_NONSTATIC_KERNEL)
+=======
+#endif
+#define PHYSICAL_START	kernstart_addr
+#else
+#define PHYSICAL_START	ASM_CONST(CONFIG_PHYSICAL_START)
+#endif
+
+#ifdef CONFIG_PPC64
+#define MEMORY_START	0UL
+#elif defined(CONFIG_RELOCATABLE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MEMORY_START	memstart_addr
 #else
 #define MEMORY_START	(PHYSICAL_START + PAGE_OFFSET - KERNELBASE)
@@ -139,6 +158,7 @@ extern long long virt_phys_offset;
  * determine MEMORY_START until then.  However we can determine PHYSICAL_START
  * from information at hand (program counter, TLB lookup).
  *
+<<<<<<< HEAD
  * On BookE with RELOCATABLE (RELOCATABLE_PPC32)
  *
  *   With RELOCATABLE_PPC32,  we support loading the kernel at any physical 
@@ -204,10 +224,13 @@ extern long long virt_phys_offset;
  * 	__pa(x) = x + PHYSICAL_START - Effective KERNELBASE
  * 		= x - virt_phys_offset
  * 		
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * On non-Book-E PPC64 PAGE_OFFSET and MEMORY_START are constants so use
  * the other definitions for __va & __pa.
  */
 #ifdef CONFIG_BOOKE
+<<<<<<< HEAD
 #define __va(x) ((void *)(unsigned long)((phys_addr_t)(x) + VIRT_PHYS_OFFSET))
 #define __pa(x) ((unsigned long)(x) - VIRT_PHYS_OFFSET)
 #else
@@ -224,6 +247,14 @@ extern long long virt_phys_offset;
 #define __pa(x) ((unsigned long)(x) - PAGE_OFFSET + MEMORY_START)
 #endif
 #endif
+=======
+#define __va(x) ((void *)(unsigned long)((phys_addr_t)(x) - PHYSICAL_START + KERNELBASE))
+#define __pa(x) ((unsigned long)(x) + PHYSICAL_START - KERNELBASE)
+#else
+#define __va(x) ((void *)(unsigned long)((phys_addr_t)(x) + PAGE_OFFSET - MEMORY_START))
+#define __pa(x) ((unsigned long)(x) - PAGE_OFFSET + MEMORY_START)
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Unfortunately the PLT is in the BSS in the PPC32 ELF ABI,
@@ -259,6 +290,7 @@ extern long long virt_phys_offset;
 #define is_kernel_addr(x)	((x) >= PAGE_OFFSET)
 #endif
 
+<<<<<<< HEAD
 /*
  * Use the top bit of the higher-level page table entries to indicate whether
  * the entries we point to contain hugepages.  This works because we know that
@@ -277,6 +309,8 @@ extern long long virt_phys_offset;
  */
 #define HUGEPD_SHIFT_MASK     0x3f
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __ASSEMBLY__
 
 #undef STRICT_MM_TYPECHECKS
@@ -362,6 +396,10 @@ typedef unsigned long pgprot_t;
 #endif
 
 typedef struct { signed long pd; } hugepd_t;
+<<<<<<< HEAD
+=======
+#define HUGEPD_SHIFT_MASK     0x3f
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_HUGETLB_PAGE
 static inline int hugepd_ok(hugepd_t hpd)
@@ -379,7 +417,10 @@ extern void clear_user_page(void *page, unsigned long vaddr, struct page *pg);
 extern void copy_user_page(void *to, void *from, unsigned long vaddr,
 		struct page *p);
 extern int page_is_ram(unsigned long pfn);
+<<<<<<< HEAD
 extern int devmem_is_allowed(unsigned long pfn);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_PPC_SMLPAR
 void arch_free_page(struct page *page, int order);

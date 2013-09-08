@@ -10,7 +10,11 @@
 #include <linux/audit.h>
 #include <linux/capability.h>
 #include <linux/mm.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/security.h>
 #include <linux/syscalls.h>
 #include <linux/pid_namespace.h>
@@ -287,6 +291,7 @@ error:
 }
 
 /**
+<<<<<<< HEAD
  * has_ns_capability - Does a task have a capability in a specific user ns
  * @t: The task in question
  * @ns: target user namespace
@@ -305,11 +310,26 @@ bool has_ns_capability(struct task_struct *t,
 	rcu_read_lock();
 	ret = security_capable(__task_cred(t), ns, cap);
 	rcu_read_unlock();
+=======
+ * has_capability - Does a task have a capability in init_user_ns
+ * @t: The task in question
+ * @cap: The capability to be tested for
+ *
+ * Return true if the specified task has the given superior capability
+ * currently in effect to the initial user namespace, false if not.
+ *
+ * Note that this does not set PF_SUPERPRIV on the task.
+ */
+bool has_capability(struct task_struct *t, int cap)
+{
+	int ret = security_real_capable(t, &init_user_ns, cap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return (ret == 0);
 }
 
 /**
+<<<<<<< HEAD
  * has_capability - Does a task have a capability in init_user_ns
  * @t: The task in question
  * @cap: The capability to be tested for
@@ -345,11 +365,46 @@ bool has_ns_capability_noaudit(struct task_struct *t,
 	rcu_read_lock();
 	ret = security_capable_noaudit(__task_cred(t), ns, cap);
 	rcu_read_unlock();
+=======
+ * has_capability - Does a task have a capability in a specific user ns
+ * @t: The task in question
+ * @ns: target user namespace
+ * @cap: The capability to be tested for
+ *
+ * Return true if the specified task has the given superior capability
+ * currently in effect to the specified user namespace, false if not.
+ *
+ * Note that this does not set PF_SUPERPRIV on the task.
+ */
+bool has_ns_capability(struct task_struct *t,
+		       struct user_namespace *ns, int cap)
+{
+	int ret = security_real_capable(t, ns, cap);
 
 	return (ret == 0);
 }
 
 /**
+ * has_capability_noaudit - Does a task have a capability (unaudited)
+ * @t: The task in question
+ * @cap: The capability to be tested for
+ *
+ * Return true if the specified task has the given superior capability
+ * currently in effect to init_user_ns, false if not.  Don't write an
+ * audit message for the check.
+ *
+ * Note that this does not set PF_SUPERPRIV on the task.
+ */
+bool has_capability_noaudit(struct task_struct *t, int cap)
+{
+	int ret = security_real_capable_noaudit(t, &init_user_ns, cap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+
+	return (ret == 0);
+}
+
+/**
+<<<<<<< HEAD
  * has_capability_noaudit - Does a task have a capability (unaudited) in the
  * initial user ns
  * @t: The task in question
@@ -365,6 +420,22 @@ bool has_capability_noaudit(struct task_struct *t, int cap)
 {
 	return has_ns_capability_noaudit(t, &init_user_ns, cap);
 }
+=======
+ * capable - Determine if the current task has a superior capability in effect
+ * @cap: The capability to be tested for
+ *
+ * Return true if the current task has the given superior capability currently
+ * available for use, false if not.
+ *
+ * This sets PF_SUPERPRIV on the task if the capability is available on the
+ * assumption that it's about to be used.
+ */
+bool capable(int cap)
+{
+	return ns_capable(&init_user_ns, cap);
+}
+EXPORT_SYMBOL(capable);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * ns_capable - Determine if the current task has a superior capability in effect
@@ -384,7 +455,11 @@ bool ns_capable(struct user_namespace *ns, int cap)
 		BUG();
 	}
 
+<<<<<<< HEAD
 	if (security_capable(current_cred(), ns, cap) == 0) {
+=======
+	if (security_capable(ns, current_cred(), cap) == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		current->flags |= PF_SUPERPRIV;
 		return true;
 	}
@@ -393,6 +468,7 @@ bool ns_capable(struct user_namespace *ns, int cap)
 EXPORT_SYMBOL(ns_capable);
 
 /**
+<<<<<<< HEAD
  * capable - Determine if the current task has a superior capability in effect
  * @cap: The capability to be tested for
  *
@@ -407,6 +483,20 @@ bool capable(int cap)
 	return ns_capable(&init_user_ns, cap);
 }
 EXPORT_SYMBOL(capable);
+=======
+ * task_ns_capable - Determine whether current task has a superior
+ * capability targeted at a specific task's user namespace.
+ * @t: The task whose user namespace is targeted.
+ * @cap: The capability in question.
+ *
+ *  Return true if it does, false otherwise.
+ */
+bool task_ns_capable(struct task_struct *t, int cap)
+{
+	return ns_capable(task_cred_xxx(t, user)->user_ns, cap);
+}
+EXPORT_SYMBOL(task_ns_capable);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * nsown_capable - Check superior capability to one's own user_ns

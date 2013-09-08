@@ -22,12 +22,18 @@
 #include <linux/delay.h>
 #include <linux/slab.h>
 #include <linux/pci.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <sound/core.h>
 #include "hda_codec.h"
 #include "hda_local.h"
 #include "hda_jack.h"
 #include <sound/tlv.h>
+=======
+#include <sound/core.h>
+#include "hda_codec.h"
+#include "hda_local.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  */
@@ -59,13 +65,17 @@ struct cs_spec {
 	unsigned int gpio_mask;
 	unsigned int gpio_dir;
 	unsigned int gpio_data;
+<<<<<<< HEAD
 	unsigned int gpio_eapd_hp; /* EAPD GPIO bit for headphones */
 	unsigned int gpio_eapd_speaker; /* EAPD GPIO bit for speakers */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct hda_pcm pcm_rec[2];	/* PCM information */
 
 	unsigned int hp_detect:1;
 	unsigned int mic_detect:1;
+<<<<<<< HEAD
 	/* CS421x */
 	unsigned int spdif_detect:1;
 	unsigned int sense_b:1;
@@ -75,28 +85,44 @@ struct cs_spec {
 };
 
 /* available models with CS420x */
+=======
+};
+
+/* available models */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum {
 	CS420X_MBP53,
 	CS420X_MBP55,
 	CS420X_IMAC27,
+<<<<<<< HEAD
 	CS420X_IMAC27_122,
 	CS420X_APPLE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CS420X_AUTO,
 	CS420X_MODELS
 };
 
+<<<<<<< HEAD
 /* CS421x boards */
 enum {
 	CS421X_CDB4210,
 	CS421X_MODELS
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Vendor-specific processing widget */
 #define CS420X_VENDOR_NID	0x11
 #define CS_DIG_OUT1_PIN_NID	0x10
 #define CS_DIG_OUT2_PIN_NID	0x15
+<<<<<<< HEAD
 #define CS_DMIC1_PIN_NID	0x0e
 #define CS_DMIC2_PIN_NID	0x12
+=======
+#define CS_DMIC1_PIN_NID	0x12
+#define CS_DMIC2_PIN_NID	0x0e
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* coef indices */
 #define IDX_SPDIF_STAT		0x0000
@@ -130,6 +156,7 @@ enum {
 /* 0x0009 - 0x0014 -> 12 test regs */
 /* 0x0015 - visibility reg */
 
+<<<<<<< HEAD
 /*
  * Cirrus Logic CS4210
  *
@@ -160,16 +187,30 @@ static inline int cs_vendor_coef_get(struct hda_codec *codec, unsigned int idx)
 	snd_hda_codec_write(codec, spec->vendor_nid, 0,
 			    AC_VERB_SET_COEF_INDEX, idx);
 	return snd_hda_codec_read(codec, spec->vendor_nid, 0,
+=======
+
+static inline int cs_vendor_coef_get(struct hda_codec *codec, unsigned int idx)
+{
+	snd_hda_codec_write(codec, CS420X_VENDOR_NID, 0,
+			    AC_VERB_SET_COEF_INDEX, idx);
+	return snd_hda_codec_read(codec, CS420X_VENDOR_NID, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  AC_VERB_GET_PROC_COEF, 0);
 }
 
 static inline void cs_vendor_coef_set(struct hda_codec *codec, unsigned int idx,
 				      unsigned int coef)
 {
+<<<<<<< HEAD
 	struct cs_spec *spec = codec->spec;
 	snd_hda_codec_write(codec, spec->vendor_nid, 0,
 			    AC_VERB_SET_COEF_INDEX, idx);
 	snd_hda_codec_write(codec, spec->vendor_nid, 0,
+=======
+	snd_hda_codec_write(codec, CS420X_VENDOR_NID, 0,
+			    AC_VERB_SET_COEF_INDEX, idx);
+	snd_hda_codec_write(codec, CS420X_VENDOR_NID, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    AC_VERB_SET_PROC_COEF, coef);
 }
 
@@ -246,6 +287,7 @@ static int cs_dig_playback_pcm_cleanup(struct hda_pcm_stream *hinfo,
 	return snd_hda_multi_out_dig_cleanup(codec, &spec->multiout);
 }
 
+<<<<<<< HEAD
 static void cs_update_input_select(struct hda_codec *codec)
 {
 	struct cs_spec *spec = codec->spec;
@@ -255,6 +297,8 @@ static void cs_update_input_select(struct hda_codec *codec)
 				    spec->adc_idx[spec->cur_input]);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Analog capture
  */
@@ -268,7 +312,10 @@ static int cs_capture_pcm_prepare(struct hda_pcm_stream *hinfo,
 	spec->cur_adc = spec->adc_nid[spec->cur_input];
 	spec->cur_adc_stream_tag = stream_tag;
 	spec->cur_adc_format = format;
+<<<<<<< HEAD
 	cs_update_input_select(codec);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_hda_codec_setup_stream(codec, spec->cur_adc, stream_tag, 0, format);
 	return 0;
 }
@@ -395,11 +442,16 @@ static int is_ext_mic(struct hda_codec *codec, unsigned int idx)
 static hda_nid_t get_adc(struct hda_codec *codec, hda_nid_t pin,
 			 unsigned int *idxp)
 {
+<<<<<<< HEAD
 	int i, idx;
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hda_nid_t nid;
 
 	nid = codec->start_nid;
 	for (i = 0; i < codec->num_nodes; i++, nid++) {
+<<<<<<< HEAD
 		unsigned int type;
 		type = get_wcaps_type(get_wcaps(codec, nid));
 		if (type != AC_WID_AUD_IN)
@@ -408,6 +460,23 @@ static hda_nid_t get_adc(struct hda_codec *codec, hda_nid_t pin,
 		if (idx >= 0) {
 			*idxp = idx;
 			return nid;
+=======
+		hda_nid_t pins[2];
+		unsigned int type;
+		int j, nums;
+		type = get_wcaps_type(get_wcaps(codec, nid));
+		if (type != AC_WID_AUD_IN)
+			continue;
+		nums = snd_hda_get_connections(codec, nid, pins,
+					       ARRAY_SIZE(pins));
+		if (nums <= 0)
+			continue;
+		for (j = 0; j < nums; j++) {
+			if (pins[j] == pin) {
+				*idxp = j;
+				return nid;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	return 0;
@@ -460,7 +529,10 @@ static int parse_output(struct hda_codec *codec)
 		memcpy(cfg->speaker_pins, cfg->line_out_pins,
 		       sizeof(cfg->speaker_pins));
 		cfg->line_outs = 0;
+<<<<<<< HEAD
 		memset(cfg->line_out_pins, 0, sizeof(cfg->line_out_pins));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -610,7 +682,11 @@ static int add_output(struct hda_codec *codec, hda_nid_t dac, int idx,
 		"Front Speaker", "Surround Speaker", "Bass Speaker"
 	};
 	static const char * const line_outs[] = {
+<<<<<<< HEAD
 		"Front Line Out", "Surround Line Out", "Bass Line Out"
+=======
+		"Front Line-Out", "Surround Line-Out", "Bass Line-Out"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	};
 
 	fix_volume_caps(codec, dac);
@@ -636,7 +712,11 @@ static int add_output(struct hda_codec *codec, hda_nid_t dac, int idx,
 		if (num_ctls > 1)
 			name = line_outs[idx];
 		else
+<<<<<<< HEAD
 			name = "Line Out";
+=======
+			name = "Line-Out";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -709,8 +789,15 @@ static int change_cur_input(struct hda_codec *codec, unsigned int idx,
 					   spec->cur_adc_stream_tag, 0,
 					   spec->cur_adc_format);
 	}
+<<<<<<< HEAD
 	spec->cur_input = idx;
 	cs_update_input_select(codec);
+=======
+	snd_hda_codec_write(codec, spec->cur_adc, 0,
+			    AC_VERB_SET_CONNECT_SEL,
+			    spec->adc_idx[idx]);
+	spec->cur_input = idx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
@@ -728,9 +815,14 @@ static int cs_capture_source_info(struct snd_kcontrol *kcontrol,
 	if (uinfo->value.enumerated.item >= spec->num_inputs)
 		uinfo->value.enumerated.item = spec->num_inputs - 1;
 	idx = spec->input_idx[uinfo->value.enumerated.item];
+<<<<<<< HEAD
 	snd_hda_get_pin_label(codec, cfg->inputs[idx].pin, cfg,
 			      uinfo->value.enumerated.name,
 			      sizeof(uinfo->value.enumerated.name), NULL);
+=======
+	strcpy(uinfo->value.enumerated.name,
+	       hda_get_input_pin_label(codec, cfg->inputs[idx].pin, 1));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -868,8 +960,12 @@ static int build_digital_output(struct hda_codec *codec)
 	if (!spec->multiout.dig_out_nid)
 		return 0;
 
+<<<<<<< HEAD
 	err = snd_hda_create_spdif_out_ctls(codec, spec->multiout.dig_out_nid,
 					    spec->multiout.dig_out_nid);
+=======
+	err = snd_hda_create_spdif_out_ctls(codec, spec->multiout.dig_out_nid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0)
 		return err;
 	err = snd_hda_create_spdif_share_sw(codec, &spec->multiout);
@@ -888,8 +984,11 @@ static int build_digital_input(struct hda_codec *codec)
 
 /*
  * auto-mute and auto-mic switching
+<<<<<<< HEAD
  * CS421x auto-output redirecting
  * HP/SPK/SPDIF
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 static void cs_automute(struct hda_codec *codec)
@@ -897,6 +996,7 @@ static void cs_automute(struct hda_codec *codec)
 	struct cs_spec *spec = codec->spec;
 	struct auto_pin_cfg *cfg = &spec->autocfg;
 	unsigned int hp_present;
+<<<<<<< HEAD
 	unsigned int spdif_present;
 	hda_nid_t nid;
 	int i;
@@ -916,6 +1016,11 @@ static void cs_automute(struct hda_codec *codec)
 		}
 	}
 
+=======
+	hda_nid_t nid;
+	int i;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hp_present = 0;
 	for (i = 0; i < cfg->hp_outs; i++) {
 		nid = cfg->hp_pins[i];
@@ -925,6 +1030,7 @@ static void cs_automute(struct hda_codec *codec)
 		if (hp_present)
 			break;
 	}
+<<<<<<< HEAD
 
 	/* mute speakers if spdif or hp jack is plugged in */
 	for (i = 0; i < cfg->speaker_outs; i++) {
@@ -971,12 +1077,30 @@ static void cs_automute(struct hda_codec *codec)
  * Switch max 3 inputs of a single ADC (nid 3)
 */
 
+=======
+	for (i = 0; i < cfg->speaker_outs; i++) {
+		nid = cfg->speaker_pins[i];
+		snd_hda_codec_write(codec, nid, 0,
+				    AC_VERB_SET_PIN_WIDGET_CONTROL,
+				    hp_present ? 0 : PIN_OUT);
+	}
+	if (spec->board_config == CS420X_MBP53 ||
+	    spec->board_config == CS420X_MBP55 ||
+	    spec->board_config == CS420X_IMAC27) {
+		unsigned int gpio = hp_present ? 0x02 : 0x08;
+		snd_hda_codec_write(codec, 0x01, 0,
+				    AC_VERB_SET_GPIO_DATA, gpio);
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void cs_automic(struct hda_codec *codec)
 {
 	struct cs_spec *spec = codec->spec;
 	struct auto_pin_cfg *cfg = &spec->autocfg;
 	hda_nid_t nid;
 	unsigned int present;
+<<<<<<< HEAD
 
 	nid = cfg->inputs[spec->automic_idx].pin;
 	present = snd_hda_jack_detect(codec, nid);
@@ -998,6 +1122,15 @@ static void cs_automic(struct hda_codec *codec)
 		}
 		cs_update_input_select(codec);
 	}
+=======
+	
+	nid = cfg->inputs[spec->automic_idx].pin;
+	present = snd_hda_jack_detect(codec, nid);
+	if (present)
+		change_cur_input(codec, spec->automic_idx, 0);
+	else
+		change_cur_input(codec, !spec->automic_idx, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1027,13 +1160,17 @@ static void init_output(struct hda_codec *codec)
 	for (i = 0; i < cfg->line_outs; i++)
 		snd_hda_codec_write(codec, cfg->line_out_pins[i], 0,
 				    AC_VERB_SET_PIN_WIDGET_CONTROL, PIN_OUT);
+<<<<<<< HEAD
 	/* HP */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < cfg->hp_outs; i++) {
 		hda_nid_t nid = cfg->hp_pins[i];
 		snd_hda_codec_write(codec, nid, 0,
 				    AC_VERB_SET_PIN_WIDGET_CONTROL, PIN_HP);
 		if (!cfg->speaker_outs)
 			continue;
+<<<<<<< HEAD
 		if (get_wcaps(codec, nid) & AC_WCAP_UNSOL_CAP) {
 			snd_hda_jack_detect_enable(codec, nid, HP_EVENT);
 			spec->hp_detect = 1;
@@ -1047,6 +1184,19 @@ static void init_output(struct hda_codec *codec)
 
 	/* SPDIF is enabled on presence detect for CS421x */
 	if (spec->hp_detect || spec->spdif_detect)
+=======
+		if (is_jack_detectable(codec, nid)) {
+			snd_hda_codec_write(codec, nid, 0,
+					    AC_VERB_SET_UNSOLICITED_ENABLE,
+					    AC_USRSP_EN | HP_EVENT);
+			spec->hp_detect = 1;
+		}
+	}
+	for (i = 0; i < cfg->speaker_outs; i++)
+		snd_hda_codec_write(codec, cfg->speaker_pins[i], 0,
+				    AC_VERB_SET_PIN_WIDGET_CONTROL, PIN_OUT);
+	if (spec->hp_detect)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cs_automute(codec);
 }
 
@@ -1076,6 +1226,7 @@ static void init_input(struct hda_codec *codec)
 				    AC_VERB_SET_AMP_GAIN_MUTE,
 				    AMP_IN_MUTE(spec->adc_idx[i]));
 		if (spec->mic_detect && spec->automic_idx == i)
+<<<<<<< HEAD
 			snd_hda_jack_detect_enable(codec, pin, MIC_EVENT);
 	}
 	/* CS420x has multiple ADC, CS421x has single ADC */
@@ -1105,6 +1256,25 @@ static void init_input(struct hda_codec *codec)
 			cs_update_input_select(codec);
 		}
 	}
+=======
+			snd_hda_codec_write(codec, pin, 0,
+					    AC_VERB_SET_UNSOLICITED_ENABLE,
+					    AC_USRSP_EN | MIC_EVENT);
+	}
+	change_cur_input(codec, spec->cur_input, 1);
+	if (spec->mic_detect)
+		cs_automic(codec);
+
+	coef = 0x000a; /* ADC1/2 - Digital and Analog Soft Ramp */
+	if (is_active_pin(codec, CS_DMIC2_PIN_NID))
+		coef |= 0x0500; /* DMIC2 enable 2 channels, disable GPIO1 */
+	if (is_active_pin(codec, CS_DMIC1_PIN_NID))
+		coef |= 0x1800; /* DMIC1 enable 2 channels, disable GPIO0 
+				 * No effect if SPDIF_OUT2 is selected in 
+				 * IDX_SPDIF_CTL.
+				  */
+	cs_vendor_coef_set(codec, IDX_ADC_CFG, coef);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct hda_verb cs_coef_init_verbs[] = {
@@ -1117,7 +1287,11 @@ static const struct hda_verb cs_coef_init_verbs[] = {
 	  | 0x0400 /* Disable Coefficient Auto increment */
 	  )},
 	/* Beep */
+<<<<<<< HEAD
 	{0x11, AC_VERB_SET_COEF_INDEX, IDX_BEEP_CFG},
+=======
+	{0x11, AC_VERB_SET_COEF_INDEX, IDX_DAC_CFG},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{0x11, AC_VERB_SET_PROC_COEF, 0x0007}, /* Enable Beep thru DAC1/2/3 */
 
 	{} /* terminator */
@@ -1208,14 +1382,20 @@ static int cs_init(struct hda_codec *codec)
 	init_output(codec);
 	init_input(codec);
 	init_digital(codec);
+<<<<<<< HEAD
 	snd_hda_jack_report_sync(codec);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int cs_build_controls(struct hda_codec *codec)
 {
+<<<<<<< HEAD
 	struct cs_spec *spec = codec->spec;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err;
 
 	err = build_output(codec);
@@ -1230,6 +1410,7 @@ static int cs_build_controls(struct hda_codec *codec)
 	err = build_digital_input(codec);
 	if (err < 0)
 		return err;
+<<<<<<< HEAD
 	err = cs_init(codec);
 	if (err < 0)
 		return err;
@@ -1239,6 +1420,9 @@ static int cs_build_controls(struct hda_codec *codec)
 		return err;
 
 	return 0;
+=======
+	return cs_init(codec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void cs_free(struct hda_codec *codec)
@@ -1251,7 +1435,11 @@ static void cs_free(struct hda_codec *codec)
 
 static void cs_unsol_event(struct hda_codec *codec, unsigned int res)
 {
+<<<<<<< HEAD
 	switch (snd_hda_jack_get_action(codec, res >> 26)) {
+=======
+	switch ((res >> 26) & 0x7f) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case HP_EVENT:
 		cs_automute(codec);
 		break;
@@ -1259,7 +1447,10 @@ static void cs_unsol_event(struct hda_codec *codec, unsigned int res)
 		cs_automic(codec);
 		break;
 	}
+<<<<<<< HEAD
 	snd_hda_jack_report_sync(codec);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct hda_codec_ops cs_patch_ops = {
@@ -1298,8 +1489,11 @@ static const char * const cs420x_models[CS420X_MODELS] = {
 	[CS420X_MBP53] = "mbp53",
 	[CS420X_MBP55] = "mbp55",
 	[CS420X_IMAC27] = "imac27",
+<<<<<<< HEAD
 	[CS420X_IMAC27_122] = "imac27_122",
 	[CS420X_APPLE] = "apple",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[CS420X_AUTO] = "auto",
 };
 
@@ -1309,6 +1503,7 @@ static const struct snd_pci_quirk cs420x_cfg_tbl[] = {
 	SND_PCI_QUIRK(0x10de, 0x0d94, "MacBookAir 3,1(2)", CS420X_MBP55),
 	SND_PCI_QUIRK(0x10de, 0xcb79, "MacBookPro 5,5", CS420X_MBP55),
 	SND_PCI_QUIRK(0x10de, 0xcb89, "MacBookPro 7,1", CS420X_MBP55),
+<<<<<<< HEAD
 	/* this conflicts with too many other models */
 	/*SND_PCI_QUIRK(0x8086, 0x7270, "IMac 27 Inch", CS420X_IMAC27),*/
 	{} /* terminator */
@@ -1317,6 +1512,9 @@ static const struct snd_pci_quirk cs420x_cfg_tbl[] = {
 static const struct snd_pci_quirk cs420x_codec_cfg_tbl[] = {
 	SND_PCI_QUIRK(0x106b, 0x2000, "iMac 12,2", CS420X_IMAC27_122),
 	SND_PCI_QUIRK_VENDOR(0x106b, "Apple", CS420X_APPLE),
+=======
+	SND_PCI_QUIRK(0x8086, 0x7270, "IMac 27 Inch", CS420X_IMAC27),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{} /* terminator */
 };
 
@@ -1373,16 +1571,26 @@ static const struct cs_pincfg *cs_pincfgs[CS420X_MODELS] = {
 	[CS420X_IMAC27] = imac27_pincfgs,
 };
 
+<<<<<<< HEAD
 static void fix_pincfg(struct hda_codec *codec, int model,
 		       const struct cs_pincfg **pin_configs)
 {
 	const struct cs_pincfg *cfg = pin_configs[model];
+=======
+static void fix_pincfg(struct hda_codec *codec, int model)
+{
+	const struct cs_pincfg *cfg = cs_pincfgs[model];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!cfg)
 		return;
 	for (; cfg->nid; cfg++)
 		snd_hda_codec_set_pincfg(codec, cfg->nid, cfg->val);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int patch_cs420x(struct hda_codec *codec)
 {
 	struct cs_spec *spec;
@@ -1393,6 +1601,7 @@ static int patch_cs420x(struct hda_codec *codec)
 		return -ENOMEM;
 	codec->spec = spec;
 
+<<<<<<< HEAD
 	spec->vendor_nid = CS420X_VENDOR_NID;
 
 	spec->board_config =
@@ -1404,11 +1613,19 @@ static int patch_cs420x(struct hda_codec *codec)
 				CS420X_MODELS, NULL, cs420x_codec_cfg_tbl);
 	if (spec->board_config >= 0)
 		fix_pincfg(codec, spec->board_config, cs_pincfgs);
+=======
+	spec->board_config =
+		snd_hda_check_board_config(codec, CS420X_MODELS,
+					   cs420x_models, cs420x_cfg_tbl);
+	if (spec->board_config >= 0)
+		fix_pincfg(codec, spec->board_config);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (spec->board_config) {
 	case CS420X_IMAC27:
 	case CS420X_MBP53:
 	case CS420X_MBP55:
+<<<<<<< HEAD
 	case CS420X_APPLE:
 		spec->gpio_eapd_hp = 2; /* GPIO1 = headphones */
 		spec->gpio_eapd_speaker = 8; /* GPIO3 = speakers */
@@ -1420,6 +1637,12 @@ static int patch_cs420x(struct hda_codec *codec)
 		spec->gpio_eapd_speaker = 8; /* GPIO3 = speakers */
 		spec->gpio_mask = spec->gpio_dir =
 			spec->gpio_eapd_hp | spec->gpio_eapd_speaker;
+=======
+		/* GPIO1 = headphones */
+		/* GPIO3 = speakers */
+		spec->gpio_mask = 0x0a;
+		spec->gpio_dir = 0x0a;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -1432,6 +1655,7 @@ static int patch_cs420x(struct hda_codec *codec)
 	return 0;
 
  error:
+<<<<<<< HEAD
 	cs_free(codec);
 	codec->spec = NULL;
 	return err;
@@ -2015,6 +2239,9 @@ static int patch_cs4213(struct hda_codec *codec)
 
  error:
 	cs_free(codec);
+=======
+	kfree(codec->spec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	codec->spec = NULL;
 	return err;
 }
@@ -2026,15 +2253,21 @@ static int patch_cs4213(struct hda_codec *codec)
 static const struct hda_codec_preset snd_hda_preset_cirrus[] = {
 	{ .id = 0x10134206, .name = "CS4206", .patch = patch_cs420x },
 	{ .id = 0x10134207, .name = "CS4207", .patch = patch_cs420x },
+<<<<<<< HEAD
 	{ .id = 0x10134210, .name = "CS4210", .patch = patch_cs4210 },
 	{ .id = 0x10134213, .name = "CS4213", .patch = patch_cs4213 },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{} /* terminator */
 };
 
 MODULE_ALIAS("snd-hda-codec-id:10134206");
 MODULE_ALIAS("snd-hda-codec-id:10134207");
+<<<<<<< HEAD
 MODULE_ALIAS("snd-hda-codec-id:10134210");
 MODULE_ALIAS("snd-hda-codec-id:10134213");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Cirrus Logic HD-audio codec");

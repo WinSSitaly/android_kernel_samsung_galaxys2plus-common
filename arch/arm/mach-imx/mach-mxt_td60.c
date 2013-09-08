@@ -233,8 +233,11 @@ static const struct imxuart_platform_data uart_pdata __initconst = {
 
 static void __init mxt_td60_board_init(void)
 {
+<<<<<<< HEAD
 	imx27_soc_init();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mxc_gpio_setup_multiple_pins(mxt_td60_pins, ARRAY_SIZE(mxt_td60_pins),
 			"MXT_TD60");
 
@@ -267,6 +270,7 @@ static struct sys_timer mxt_td60_timer = {
 
 MACHINE_START(MXT_TD60, "Maxtrack i-MXT TD60")
 	/* maintainer: Maxtrack Industrial */
+<<<<<<< HEAD
 	.atag_offset = 0x100,
 	.map_io = mx27_map_io,
 	.init_early = imx27_init_early,
@@ -275,4 +279,12 @@ MACHINE_START(MXT_TD60, "Maxtrack i-MXT TD60")
 	.timer = &mxt_td60_timer,
 	.init_machine = mxt_td60_board_init,
 	.restart	= mxc_restart,
+=======
+	.boot_params = MX27_PHYS_OFFSET + 0x100,
+	.map_io = mx27_map_io,
+	.init_early = imx27_init_early,
+	.init_irq = mx27_init_irq,
+	.timer = &mxt_td60_timer,
+	.init_machine = mxt_td60_board_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

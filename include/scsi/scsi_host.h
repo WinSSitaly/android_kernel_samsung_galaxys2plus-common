@@ -355,6 +355,7 @@ struct scsi_host_template {
 	 */
 	enum blk_eh_timer_return (*eh_timed_out)(struct scsi_cmnd *);
 
+<<<<<<< HEAD
 	/* This is an optional routine that allows transport to initiate
 	 * LLD adapter or firmware reset using sysfs attribute.
 	 *
@@ -368,6 +369,8 @@ struct scsi_host_template {
 #define SCSI_FIRMWARE_RESET	2
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Name of proc directory
 	 */
@@ -669,9 +672,12 @@ struct Scsi_Host {
 	/* Asynchronous scan in progress */
 	unsigned async_scan:1;
 
+<<<<<<< HEAD
 	/* Don't resume host in EH */
 	unsigned eh_noresume:1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Optional work queue to be utilized by the transport
 	 */
@@ -731,6 +737,12 @@ struct Scsi_Host {
 	 * Needed just in case we have virtual hosts.
 	 */
 	struct device *dma_dev;
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_STORAGE_MEDIA_SCAN
+	unsigned int  by_usb;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * We should ensure that this is aligned, both for better performance
@@ -807,8 +819,12 @@ static inline struct device *scsi_get_device(struct Scsi_Host *shost)
  **/
 static inline int scsi_host_scan_allowed(struct Scsi_Host *shost)
 {
+<<<<<<< HEAD
 	return shost->shost_state == SHOST_RUNNING ||
 	       shost->shost_state == SHOST_RECOVERY;
+=======
+	return shost->shost_state == SHOST_RUNNING;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 extern void scsi_unblock_requests(struct Scsi_Host *);

@@ -50,9 +50,13 @@ static int usbhsm_autonomy_irq_vbus(struct usbhs_priv *priv,
 {
 	struct platform_device *pdev = usbhs_priv_to_pdev(priv);
 
+<<<<<<< HEAD
 	renesas_usbhs_call_notify_hotplug(pdev);
 
 	return 0;
+=======
+	return usbhsc_drvcllbck_notify_hotplug(pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void usbhs_mod_autonomy_mode(struct usbhs_priv *priv)
@@ -60,7 +64,11 @@ void usbhs_mod_autonomy_mode(struct usbhs_priv *priv)
 	struct usbhs_mod_info *info = usbhs_priv_to_modinfo(priv);
 
 	info->irq_vbus		= usbhsm_autonomy_irq_vbus;
+<<<<<<< HEAD
 	priv->pfunc.get_vbus	= usbhsm_autonomy_get_vbus;
+=======
+	priv->pfunc->get_vbus	= usbhsm_autonomy_get_vbus;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	usbhs_irq_callback_update(priv, NULL);
 }
@@ -95,9 +103,14 @@ struct usbhs_mod *usbhs_mod_get(struct usbhs_priv *priv, int id)
 	return ret;
 }
 
+<<<<<<< HEAD
 int usbhs_mod_is_host(struct usbhs_priv *priv)
 {
 	struct usbhs_mod *mod = usbhs_mod_get_current(priv);
+=======
+int usbhs_mod_is_host(struct usbhs_priv *priv, struct usbhs_mod *mod)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct usbhs_mod_info *info = usbhs_priv_to_modinfo(priv);
 
 	if (!mod)
@@ -142,6 +155,7 @@ int usbhs_mod_probe(struct usbhs_priv *priv)
 	/*
 	 * install host/gadget driver
 	 */
+<<<<<<< HEAD
 	ret = usbhs_mod_host_probe(priv);
 	if (ret < 0)
 		return ret;
@@ -153,6 +167,15 @@ int usbhs_mod_probe(struct usbhs_priv *priv)
 	/* irq settings */
 	ret = request_irq(priv->irq, usbhs_interrupt,
 			  priv->irqflags, dev_name(dev), priv);
+=======
+	ret = usbhs_mod_gadget_probe(priv);
+	if (ret < 0)
+		return ret;
+
+	/* irq settings */
+	ret = request_irq(priv->irq, usbhs_interrupt,
+			  IRQF_DISABLED, dev_name(dev), priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret) {
 		dev_err(dev, "irq request err\n");
 		goto mod_init_gadget_err;
@@ -162,15 +185,21 @@ int usbhs_mod_probe(struct usbhs_priv *priv)
 
 mod_init_gadget_err:
 	usbhs_mod_gadget_remove(priv);
+<<<<<<< HEAD
 mod_init_host_err:
 	usbhs_mod_host_remove(priv);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
 
 void usbhs_mod_remove(struct usbhs_priv *priv)
 {
+<<<<<<< HEAD
 	usbhs_mod_host_remove(priv);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usbhs_mod_gadget_remove(priv);
 	free_irq(priv->irq, priv);
 }
@@ -178,6 +207,23 @@ void usbhs_mod_remove(struct usbhs_priv *priv)
 /*
  *		status functions
  */
+<<<<<<< HEAD
+=======
+int usbhs_status_get_usb_speed(struct usbhs_irq_state *irq_state)
+{
+	switch (irq_state->dvstctr & RHST) {
+	case RHST_LOW_SPEED:
+		return USB_SPEED_LOW;
+	case RHST_FULL_SPEED:
+		return USB_SPEED_FULL;
+	case RHST_HIGH_SPEED:
+		return USB_SPEED_HIGH;
+	}
+
+	return USB_SPEED_UNKNOWN;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int usbhs_status_get_device_state(struct usbhs_irq_state *irq_state)
 {
 	int state = irq_state->intsts0 & DVSQ_MASK;
@@ -217,6 +263,11 @@ static void usbhs_status_get_each_irq(struct usbhs_priv *priv,
 	state->intsts0 = usbhs_read(priv, INTSTS0);
 	state->intsts1 = usbhs_read(priv, INTSTS1);
 
+<<<<<<< HEAD
+=======
+	state->dvstctr = usbhs_read(priv, DVSTCTR);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* mask */
 	if (mod) {
 		state->brdysts = usbhs_read(priv, BRDYSTS);
@@ -263,8 +314,11 @@ static irqreturn_t usbhs_interrupt(int irq, void *data)
 	 * see also
 	 *	usbhs_irq_setting_update
 	 */
+<<<<<<< HEAD
 
 	/* INTSTS0 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (irq_state.intsts0 & VBINT)
 		usbhs_mod_info_call(priv, irq_vbus, priv, &irq_state);
 
@@ -280,6 +334,7 @@ static irqreturn_t usbhs_interrupt(int irq, void *data)
 	if (irq_state.intsts0 & BRDY)
 		usbhs_mod_call(priv, irq_ready, priv, &irq_state);
 
+<<<<<<< HEAD
 	/* INTSTS1 */
 	if (irq_state.intsts1 & ATTCH)
 		usbhs_mod_call(priv, irq_attch, priv, &irq_state);
@@ -293,12 +348,15 @@ static irqreturn_t usbhs_interrupt(int irq, void *data)
 	if (irq_state.intsts1 & SACK)
 		usbhs_mod_call(priv, irq_sack, priv, &irq_state);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return IRQ_HANDLED;
 }
 
 void usbhs_irq_callback_update(struct usbhs_priv *priv, struct usbhs_mod *mod)
 {
 	u16 intenb0 = 0;
+<<<<<<< HEAD
 	u16 intenb1 = 0;
 	struct usbhs_mod_info *info = usbhs_priv_to_modinfo(priv);
 
@@ -312,6 +370,11 @@ void usbhs_irq_callback_update(struct usbhs_priv *priv, struct usbhs_mod *mod)
 	 */
 	usbhs_write(priv, INTENB0, 0);
 	usbhs_write(priv, INTENB1, 0);
+=======
+	struct usbhs_mod_info *info = usbhs_priv_to_modinfo(priv);
+
+	usbhs_write(priv, INTENB0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	usbhs_write(priv, BEMPENB, 0);
 	usbhs_write(priv, BRDYENB, 0);
@@ -329,9 +392,12 @@ void usbhs_irq_callback_update(struct usbhs_priv *priv, struct usbhs_mod *mod)
 		intenb0 |= VBSE;
 
 	if (mod) {
+<<<<<<< HEAD
 		/*
 		 * INTSTS0
 		 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (mod->irq_ctrl_stage)
 			intenb0 |= CTRE;
 
@@ -344,6 +410,7 @@ void usbhs_irq_callback_update(struct usbhs_priv *priv, struct usbhs_mod *mod)
 			usbhs_write(priv, BRDYENB, mod->irq_brdysts);
 			intenb0 |= BRDYE;
 		}
+<<<<<<< HEAD
 
 		/*
 		 * INTSTS1
@@ -366,4 +433,9 @@ void usbhs_irq_callback_update(struct usbhs_priv *priv, struct usbhs_mod *mod)
 
 	if (intenb1)
 		usbhs_write(priv, INTENB1, intenb1);
+=======
+	}
+
+	usbhs_write(priv, INTENB0, intenb0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

@@ -24,6 +24,10 @@
 #define _DVBVERSION_H_
 
 #define DVB_API_VERSION 5
+<<<<<<< HEAD
 #define DVB_API_VERSION_MINOR 5
+=======
+#define DVB_API_VERSION_MINOR 3
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /*_DVBVERSION_H_*/

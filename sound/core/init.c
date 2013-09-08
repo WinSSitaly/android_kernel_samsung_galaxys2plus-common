@@ -21,8 +21,11 @@
 
 #include <linux/init.h>
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/device.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/file.h>
 #include <linux/slab.h>
 #include <linux/time.h>
@@ -213,7 +216,10 @@ int snd_card_create(int idx, const char *xid,
 	spin_lock_init(&card->files_lock);
 	INIT_LIST_HEAD(&card->files_list);
 	init_waitqueue_head(&card->shutdown_sleep);
+<<<<<<< HEAD
 	atomic_set(&card->refcount, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PM
 	mutex_init(&card->power_lock);
 	init_waitqueue_head(&card->power_sleep);
@@ -447,6 +453,7 @@ static int snd_card_do_free(struct snd_card *card)
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * snd_card_unref - release the reference counter
  * @card: the card instance
@@ -477,6 +484,23 @@ int snd_card_free_when_closed(struct snd_card *card)
 
 	card->free_on_last_close = 1;
 	if (atomic_dec_and_test(&card->refcount))
+=======
+int snd_card_free_when_closed(struct snd_card *card)
+{
+	int free_now = 0;
+	int ret = snd_card_disconnect(card);
+	if (ret)
+		return ret;
+
+	spin_lock(&card->files_lock);
+	if (list_empty(&card->files_list))
+		free_now = 1;
+	else
+		card->free_on_last_close = 1;
+	spin_unlock(&card->files_lock);
+
+	if (free_now)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_card_do_free(card);
 	return 0;
 }
@@ -490,13 +514,18 @@ int snd_card_free(struct snd_card *card)
 		return ret;
 
 	/* wait, until all devices are ready for the free operation */
+<<<<<<< HEAD
 	wait_event(card->shutdown_sleep, !atomic_read(&card->refcount));
+=======
+	wait_event(card->shutdown_sleep, list_empty(&card->files_list));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_card_do_free(card);
 	return 0;
 }
 
 EXPORT_SYMBOL(snd_card_free);
 
+<<<<<<< HEAD
 /* retrieve the last word of shortname or longname */
 static const char *retrieve_id_from_card_name(const char *name)
 {
@@ -595,6 +624,76 @@ static void snd_card_set_id_no_lock(struct snd_card *card, const char *src,
 	snd_printk(KERN_ERR "unable to set card id (%s)\n", id);
 	if (card->proc_root->name)
 		strcpy(card->id, card->proc_root->name);
+=======
+static void snd_card_set_id_no_lock(struct snd_card *card, const char *nid)
+{
+	int i, len, idx_flag = 0, loops = SNDRV_CARDS;
+	const char *spos, *src;
+	char *id;
+	
+	if (nid == NULL) {
+		id = card->shortname;
+		spos = src = id;
+		while (*id != '\0') {
+			if (*id == ' ')
+				spos = id + 1;
+			id++;
+		}
+	} else {
+		spos = src = nid;
+	}
+	id = card->id;
+	while (*spos != '\0' && !isalnum(*spos))
+		spos++;
+	if (isdigit(*spos))
+		*id++ = isalpha(src[0]) ? src[0] : 'D';
+	while (*spos != '\0' && (size_t)(id - card->id) < sizeof(card->id) - 1) {
+		if (isalnum(*spos))
+			*id++ = *spos;
+		spos++;
+	}
+	*id = '\0';
+
+	id = card->id;
+	
+	if (*id == '\0')
+		strcpy(id, "Default");
+
+	while (1) {
+	      	if (loops-- == 0) {
+			snd_printk(KERN_ERR "unable to set card id (%s)\n", id);
+      			strcpy(card->id, card->proc_root->name);
+      			return;
+      		}
+	      	if (!snd_info_check_reserved_words(id))
+      			goto __change;
+		for (i = 0; i < snd_ecards_limit; i++) {
+			if (snd_cards[i] && !strcmp(snd_cards[i]->id, id))
+				goto __change;
+		}
+		break;
+
+	      __change:
+		len = strlen(id);
+		if (idx_flag) {
+			if (id[len-1] != '9')
+				id[len-1]++;
+			else
+				id[len-1] = 'A';
+		} else if ((size_t)len <= sizeof(card->id) - 3) {
+			strcat(id, "_1");
+			idx_flag++;
+		} else {
+			spos = id + len - 2;
+			if ((size_t)len <= sizeof(card->id) - 2)
+				spos++;
+			*(char *)spos++ = '_';
+			*(char *)spos++ = '1';
+			*(char *)spos++ = '\0';
+			idx_flag++;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -611,7 +710,11 @@ void snd_card_set_id(struct snd_card *card, const char *nid)
 	if (card->id[0] != '\0')
 		return;
 	mutex_lock(&snd_card_mutex);
+<<<<<<< HEAD
 	snd_card_set_id_no_lock(card, nid, nid);
+=======
+	snd_card_set_id_no_lock(card, nid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&snd_card_mutex);
 }
 EXPORT_SYMBOL(snd_card_set_id);
@@ -643,12 +746,31 @@ card_id_store_attr(struct device *dev, struct device_attribute *attr,
 	memcpy(buf1, buf, copy);
 	buf1[copy] = '\0';
 	mutex_lock(&snd_card_mutex);
+<<<<<<< HEAD
 	if (!card_id_ok(NULL, buf1)) {
 		mutex_unlock(&snd_card_mutex);
 		return -EEXIST;
 	}
 	strcpy(card->id, buf1);
 	snd_info_card_id_change(card);
+=======
+	if (!snd_info_check_reserved_words(buf1)) {
+	     __exist:
+		mutex_unlock(&snd_card_mutex);
+		return -EEXIST;
+	}
+	for (idx = 0; idx < snd_ecards_limit; idx++) {
+		if (snd_cards[idx] && !strcmp(snd_cards[idx]->id, buf1)) {
+			if (card == snd_cards[idx])
+				goto __ok;
+			else
+				goto __exist;
+		}
+	}
+	strcpy(card->id, buf1);
+	snd_info_card_id_change(card);
+__ok:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&snd_card_mutex);
 
 	return count;
@@ -702,6 +824,7 @@ int snd_card_register(struct snd_card *card)
 		mutex_unlock(&snd_card_mutex);
 		return 0;
 	}
+<<<<<<< HEAD
 	if (*card->id) {
 		/* make a unique id name from the given string */
 		char tmpid[sizeof(card->id)];
@@ -714,6 +837,9 @@ int snd_card_register(struct snd_card *card)
 		snd_card_set_id_no_lock(card, src,
 					retrieve_id_from_card_name(src));
 	}
+=======
+	snd_card_set_id_no_lock(card, card->id[0] == '\0' ? NULL : card->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_cards[card->number] = card;
 	mutex_unlock(&snd_card_mutex);
 	init_info_for_card(card);
@@ -902,7 +1028,10 @@ int snd_card_file_add(struct snd_card *card, struct file *file)
 		return -ENODEV;
 	}
 	list_add(&mfile->list, &card->files_list);
+<<<<<<< HEAD
 	atomic_inc(&card->refcount);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&card->files_lock);
 	return 0;
 }
@@ -925,6 +1054,10 @@ EXPORT_SYMBOL(snd_card_file_add);
 int snd_card_file_remove(struct snd_card *card, struct file *file)
 {
 	struct snd_monitor_file *mfile, *found = NULL;
+<<<<<<< HEAD
+=======
+	int last_close = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock(&card->files_lock);
 	list_for_each_entry(mfile, &card->files_list, list) {
@@ -939,13 +1072,27 @@ int snd_card_file_remove(struct snd_card *card, struct file *file)
 			break;
 		}
 	}
+<<<<<<< HEAD
 	spin_unlock(&card->files_lock);
+=======
+	if (list_empty(&card->files_list))
+		last_close = 1;
+	spin_unlock(&card->files_lock);
+	if (last_close) {
+		wake_up(&card->shutdown_sleep);
+		if (card->free_on_last_close)
+			snd_card_do_free(card);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!found) {
 		snd_printk(KERN_ERR "ALSA card file remove problem (%p)\n", file);
 		return -ENOENT;
 	}
 	kfree(found);
+<<<<<<< HEAD
 	snd_card_unref(card);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

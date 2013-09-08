@@ -12,7 +12,18 @@
  * published by the Free Software Foundation.
  *
  */
+<<<<<<< HEAD
 #include "nuc9xx.h"
+=======
+
+struct map_desc;
+struct sys_timer;
+
+/* core initialisation functions */
+
+extern void nuc900_init_irq(void);
+extern struct sys_timer nuc900_timer;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* extern file from nuc960.c */
 

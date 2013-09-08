@@ -74,7 +74,11 @@
 #include <linux/init.h>
 #include <linux/interrupt.h>
 #include <linux/pci.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <sound/core.h>
 #include <sound/info.h>
@@ -89,8 +93,13 @@
 
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;	/* Index 0-MAX */
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;	/* ID for this card */
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;	/* Enable this card */
 static bool fullduplex[SNDRV_CARDS]; // = {[0 ... (SNDRV_CARDS - 1)] = 1};
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;	/* Enable this card */
+static int fullduplex[SNDRV_CARDS]; // = {[0 ... (SNDRV_CARDS - 1)] = 1};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_array(index, int, NULL, 0444);
 MODULE_PARM_DESC(index, "Index value for RME Digi32 soundcard.");
@@ -1017,7 +1026,11 @@ static int snd_rme32_capture_close(struct snd_pcm_substream *substream)
 	spin_lock_irq(&rme32->lock);
 	rme32->capture_substream = NULL;
 	rme32->capture_periodsize = 0;
+<<<<<<< HEAD
 	spin_unlock_irq(&rme32->lock);
+=======
+	spin_unlock(&rme32->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1355,7 +1368,11 @@ static int __devinit snd_rme32_create(struct rme32 * rme32)
 	}
 
 	if (request_irq(pci->irq, snd_rme32_interrupt, IRQF_SHARED,
+<<<<<<< HEAD
 			KBUILD_MODNAME, rme32)) {
+=======
+			"RME32", rme32)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printk(KERN_ERR "unable to grab IRQ %d\n", pci->irq);
 		return -EBUSY;
 	}
@@ -1985,7 +2002,11 @@ static void __devexit snd_rme32_remove(struct pci_dev *pci)
 }
 
 static struct pci_driver driver = {
+<<<<<<< HEAD
 	.name =		KBUILD_MODNAME,
+=======
+	.name =		"RME Digi32",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table =	snd_rme32_ids,
 	.probe =	snd_rme32_probe,
 	.remove =	__devexit_p(snd_rme32_remove),

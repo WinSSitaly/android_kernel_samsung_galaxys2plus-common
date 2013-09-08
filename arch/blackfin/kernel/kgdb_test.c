@@ -13,6 +13,10 @@
 
 #include <asm/current.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/blackfin.h>
 
@@ -49,7 +53,12 @@ void kgdb_l2_test(void)
 
 #endif
 
+<<<<<<< HEAD
 noinline int kgdb_test(char *name, int len, int count, int z)
+=======
+
+int kgdb_test(char *name, int len, int count, int z)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	pr_alert("kgdb name(%d): %s, %d, %d\n", len, name, count, z);
 	count = z;

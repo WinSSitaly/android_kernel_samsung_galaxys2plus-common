@@ -20,7 +20,10 @@
 #include <linux/swapops.h>
 #include <linux/pm.h>
 #include <linux/fs.h>
+<<<<<<< HEAD
 #include <linux/compat.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/console.h>
 #include <linux/cpu.h>
 #include <linux/freezer.h>
@@ -30,6 +33,31 @@
 
 #include "power.h"
 
+<<<<<<< HEAD
+=======
+/*
+ * NOTE: The SNAPSHOT_SET_SWAP_FILE and SNAPSHOT_PMOPS ioctls are obsolete and
+ * will be removed in the future.  They are only preserved here for
+ * compatibility with existing userland utilities.
+ */
+#define SNAPSHOT_SET_SWAP_FILE	_IOW(SNAPSHOT_IOC_MAGIC, 10, unsigned int)
+#define SNAPSHOT_PMOPS		_IOW(SNAPSHOT_IOC_MAGIC, 12, unsigned int)
+
+#define PMOPS_PREPARE	1
+#define PMOPS_ENTER	2
+#define PMOPS_FINISH	3
+
+/*
+ * NOTE: The following ioctl definitions are wrong and have been replaced with
+ * correct ones.  They are only preserved here for compatibility with existing
+ * userland utilities and will be removed in the future.
+ */
+#define SNAPSHOT_ATOMIC_SNAPSHOT	_IOW(SNAPSHOT_IOC_MAGIC, 3, void *)
+#define SNAPSHOT_SET_IMAGE_SIZE		_IOW(SNAPSHOT_IOC_MAGIC, 6, unsigned long)
+#define SNAPSHOT_AVAIL_SWAP		_IOR(SNAPSHOT_IOC_MAGIC, 7, void *)
+#define SNAPSHOT_GET_SWAP_PAGE		_IOR(SNAPSHOT_IOC_MAGIC, 8, void *)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define SNAPSHOT_MINOR	231
 
@@ -49,7 +77,11 @@ static int snapshot_open(struct inode *inode, struct file *filp)
 	struct snapshot_data *data;
 	int error;
 
+<<<<<<< HEAD
 	lock_system_sleep();
+=======
+	mutex_lock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!atomic_add_unless(&snapshot_device_available, -1, 0)) {
 		error = -EBUSY;
@@ -101,7 +133,11 @@ static int snapshot_open(struct inode *inode, struct file *filp)
 	data->platform_support = 0;
 
  Unlock:
+<<<<<<< HEAD
 	unlock_system_sleep();
+=======
+	mutex_unlock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return error;
 }
@@ -110,7 +146,11 @@ static int snapshot_release(struct inode *inode, struct file *filp)
 {
 	struct snapshot_data *data;
 
+<<<<<<< HEAD
 	lock_system_sleep();
+=======
+	mutex_lock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	swsusp_free();
 	free_basic_memory_bitmaps();
@@ -124,7 +164,11 @@ static int snapshot_release(struct inode *inode, struct file *filp)
 			PM_POST_HIBERNATION : PM_POST_RESTORE);
 	atomic_inc(&snapshot_device_available);
 
+<<<<<<< HEAD
 	unlock_system_sleep();
+=======
+	mutex_unlock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -136,7 +180,11 @@ static ssize_t snapshot_read(struct file *filp, char __user *buf,
 	ssize_t res;
 	loff_t pg_offp = *offp & ~PAGE_MASK;
 
+<<<<<<< HEAD
 	lock_system_sleep();
+=======
+	mutex_lock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	data = filp->private_data;
 	if (!data->ready) {
@@ -157,7 +205,11 @@ static ssize_t snapshot_read(struct file *filp, char __user *buf,
 		*offp += res;
 
  Unlock:
+<<<<<<< HEAD
 	unlock_system_sleep();
+=======
+	mutex_unlock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return res;
 }
@@ -169,7 +221,11 @@ static ssize_t snapshot_write(struct file *filp, const char __user *buf,
 	ssize_t res;
 	loff_t pg_offp = *offp & ~PAGE_MASK;
 
+<<<<<<< HEAD
 	lock_system_sleep();
+=======
+	mutex_lock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	data = filp->private_data;
 
@@ -186,11 +242,27 @@ static ssize_t snapshot_write(struct file *filp, const char __user *buf,
 	if (res > 0)
 		*offp += res;
 unlock:
+<<<<<<< HEAD
 	unlock_system_sleep();
+=======
+	mutex_unlock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return res;
 }
 
+<<<<<<< HEAD
+=======
+static void snapshot_deprecated_ioctl(unsigned int cmd)
+{
+	if (printk_ratelimit())
+		printk(KERN_NOTICE "%pf: ioctl '%.8x' is deprecated and will "
+				"be removed soon, update your suspend-to-disk "
+				"utilities\n",
+				__builtin_return_address(0), cmd);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static long snapshot_ioctl(struct file *filp, unsigned int cmd,
 							unsigned long arg)
 {
@@ -221,7 +293,19 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
 		sys_sync();
 		printk("done.\n");
 
+<<<<<<< HEAD
 		error = freeze_processes();
+=======
+		error = usermodehelper_disable();
+		if (error)
+			break;
+
+		error = freeze_processes();
+		if (error) {
+			thaw_processes();
+			usermodehelper_enable();
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!error)
 			data->frozen = 1;
 		break;
@@ -231,9 +315,18 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
 			break;
 		pm_restore_gfp_mask();
 		thaw_processes();
+<<<<<<< HEAD
 		data->frozen = 0;
 		break;
 
+=======
+		usermodehelper_enable();
+		data->frozen = 0;
+		break;
+
+	case SNAPSHOT_ATOMIC_SNAPSHOT:
+		snapshot_deprecated_ioctl(cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SNAPSHOT_CREATE_IMAGE:
 		if (data->mode != O_RDONLY || !data->frozen  || data->ready) {
 			error = -EPERM;
@@ -241,11 +334,18 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
 		}
 		pm_restore_gfp_mask();
 		error = hibernation_snapshot(data->platform_support);
+<<<<<<< HEAD
 		if (!error) {
 			error = put_user(in_suspend, (int __user *)arg);
 			data->ready = !freezer_test_done && !error;
 			freezer_test_done = false;
 		}
+=======
+		if (!error)
+			error = put_user(in_suspend, (int __user *)arg);
+		if (!error)
+			data->ready = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case SNAPSHOT_ATOMIC_RESTORE:
@@ -262,6 +362,7 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
 		swsusp_free();
 		memset(&data->handle, 0, sizeof(struct snapshot_handle));
 		data->ready = 0;
+<<<<<<< HEAD
 		/*
 		 * It is necessary to thaw kernel threads here, because
 		 * SNAPSHOT_CREATE_IMAGE may be invoked directly after
@@ -273,6 +374,12 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
 		thaw_kernel_threads();
 		break;
 
+=======
+		break;
+
+	case SNAPSHOT_SET_IMAGE_SIZE:
+		snapshot_deprecated_ioctl(cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SNAPSHOT_PREF_IMAGE_SIZE:
 		image_size = arg;
 		break;
@@ -287,12 +394,22 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
 		error = put_user(size, (loff_t __user *)arg);
 		break;
 
+<<<<<<< HEAD
+=======
+	case SNAPSHOT_AVAIL_SWAP:
+		snapshot_deprecated_ioctl(cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SNAPSHOT_AVAIL_SWAP_SIZE:
 		size = count_swap_pages(data->swap, 1);
 		size <<= PAGE_SHIFT;
 		error = put_user(size, (loff_t __user *)arg);
 		break;
 
+<<<<<<< HEAD
+=======
+	case SNAPSHOT_GET_SWAP_PAGE:
+		snapshot_deprecated_ioctl(cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SNAPSHOT_ALLOC_SWAP_PAGE:
 		if (data->swap < 0 || data->swap >= MAX_SWAPFILES) {
 			error = -ENODEV;
@@ -315,6 +432,30 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
 		free_all_swap_pages(data->swap);
 		break;
 
+<<<<<<< HEAD
+=======
+	case SNAPSHOT_SET_SWAP_FILE: /* This ioctl is deprecated */
+		snapshot_deprecated_ioctl(cmd);
+		if (!swsusp_swap_in_use()) {
+			/*
+			 * User space encodes device types as two-byte values,
+			 * so we need to recode them
+			 */
+			if (old_decode_dev(arg)) {
+				data->swap = swap_type_of(old_decode_dev(arg),
+							0, NULL);
+				if (data->swap < 0)
+					error = -ENODEV;
+			} else {
+				data->swap = -1;
+				error = -EINVAL;
+			}
+		} else {
+			error = -EPERM;
+		}
+		break;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SNAPSHOT_S2RAM:
 		if (!data->frozen) {
 			error = -EPERM;
@@ -337,6 +478,36 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
 			error = hibernation_platform_enter();
 		break;
 
+<<<<<<< HEAD
+=======
+	case SNAPSHOT_PMOPS: /* This ioctl is deprecated */
+		snapshot_deprecated_ioctl(cmd);
+		error = -EINVAL;
+
+		switch (arg) {
+
+		case PMOPS_PREPARE:
+			data->platform_support = 1;
+			error = 0;
+			break;
+
+		case PMOPS_ENTER:
+			if (data->platform_support)
+				error = hibernation_platform_enter();
+			break;
+
+		case PMOPS_FINISH:
+			if (data->platform_support)
+				error = 0;
+			break;
+
+		default:
+			printk(KERN_ERR "SNAPSHOT_PMOPS: invalid argument %ld\n", arg);
+
+		}
+		break;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SNAPSHOT_SET_SWAP_AREA:
 		if (swsusp_swap_in_use()) {
 			error = -EPERM;
@@ -378,6 +549,7 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
 	return error;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_COMPAT
 
 struct compat_resume_swap_area {
@@ -438,6 +610,8 @@ snapshot_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 
 #endif /* CONFIG_COMPAT */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct file_operations snapshot_fops = {
 	.open = snapshot_open,
 	.release = snapshot_release,
@@ -445,9 +619,12 @@ static const struct file_operations snapshot_fops = {
 	.write = snapshot_write,
 	.llseek = no_llseek,
 	.unlocked_ioctl = snapshot_ioctl,
+<<<<<<< HEAD
 #ifdef CONFIG_COMPAT
 	.compat_ioctl = snapshot_compat_ioctl,
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct miscdevice snapshot_device = {

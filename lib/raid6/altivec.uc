@@ -28,8 +28,13 @@
 
 #include <altivec.h>
 #ifdef __KERNEL__
+<<<<<<< HEAD
 # include <asm/cputable.h>
 # include <asm/switch_to.h>
+=======
+# include <asm/system.h>
+# include <asm/cputable.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /*

@@ -1,7 +1,10 @@
 /*
  * pata_cs5536.c	- CS5536 PATA for new ATA layer
  *			  (C) 2007 Martin K. Petersen <mkp@mkp.net>
+<<<<<<< HEAD
  *			  (C) 2011 Bartlomiej Zolnierkiewicz
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -56,6 +59,7 @@ MODULE_PARM_DESC(msr, "Force using MSR to configure IDE function (Default: 0)");
 #define DRV_VERSION	"0.0.8"
 
 enum {
+<<<<<<< HEAD
 	MSR_IDE_CFG		= 0x51300010,
 	PCI_IDE_CFG		= 0x40,
 
@@ -66,6 +70,26 @@ enum {
 
 	IDE_CFG_CHANEN		= (1 << 1),
 	IDE_CFG_CABLE		= (1 << 17) | (1 << 16),
+=======
+	CFG			= 0,
+	DTC			= 1,
+	CAST			= 2,
+	ETC			= 3,
+
+	MSR_IDE_BASE		= 0x51300000,
+	MSR_IDE_CFG		= (MSR_IDE_BASE + 0x10),
+	MSR_IDE_DTC		= (MSR_IDE_BASE + 0x12),
+	MSR_IDE_CAST		= (MSR_IDE_BASE + 0x13),
+	MSR_IDE_ETC		= (MSR_IDE_BASE + 0x14),
+
+	PCI_IDE_CFG		= 0x40,
+	PCI_IDE_DTC		= 0x48,
+	PCI_IDE_CAST		= 0x4c,
+	PCI_IDE_ETC		= 0x50,
+
+	IDE_CFG_CHANEN		= 0x2,
+	IDE_CFG_CABLE		= 0x10000,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	IDE_D0_SHIFT		= 24,
 	IDE_D1_SHIFT		= 16,
@@ -77,14 +101,30 @@ enum {
 	IDE_CAST_CMD_MASK	= 0xff,
 	IDE_CAST_CMD_SHIFT	= 24,
 
+<<<<<<< HEAD
 	IDE_ETC_UDMA_MASK	= 0xc0,
 };
 
 static int cs5536_read(struct pci_dev *pdev, int reg, u32 *val)
+=======
+	IDE_ETC_NODMA		= 0x03,
+};
+
+static const u32 msr_reg[4] = {
+	MSR_IDE_CFG, MSR_IDE_DTC, MSR_IDE_CAST, MSR_IDE_ETC,
+};
+
+static const u8 pci_reg[4] = {
+	PCI_IDE_CFG, PCI_IDE_DTC, PCI_IDE_CAST, PCI_IDE_ETC,
+};
+
+static inline int cs5536_read(struct pci_dev *pdev, int reg, u32 *val)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (unlikely(use_msr)) {
 		u32 dummy __maybe_unused;
 
+<<<<<<< HEAD
 		rdmsr(MSR_IDE_CFG + reg, *val, dummy);
 		return 0;
 	}
@@ -112,15 +152,37 @@ static void cs5536_program_dtc(struct ata_device *adev, u8 tim)
 	dtc &= ~(IDE_DRV_MASK << dshift);
 	dtc |= tim << dshift;
 	cs5536_write(pdev, DTC, dtc);
+=======
+		rdmsr(msr_reg[reg], *val, dummy);
+		return 0;
+	}
+
+	return pci_read_config_dword(pdev, pci_reg[reg], val);
+}
+
+static inline int cs5536_write(struct pci_dev *pdev, int reg, int val)
+{
+	if (unlikely(use_msr)) {
+		wrmsr(msr_reg[reg], val, 0);
+		return 0;
+	}
+
+	return pci_write_config_dword(pdev, pci_reg[reg], val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
  *	cs5536_cable_detect	-	detect cable type
  *	@ap: Port to detect on
  *
+<<<<<<< HEAD
  *	Perform cable detection for ATA66 capable cable.
  *
  *	Returns a cable type.
+=======
+ *	Perform cable detection for ATA66 capable cable. Return a libata
+ *	cable type.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 static int cs5536_cable_detect(struct ata_port *ap)
@@ -130,7 +192,11 @@ static int cs5536_cable_detect(struct ata_port *ap)
 
 	cs5536_read(pdev, CFG, &cfg);
 
+<<<<<<< HEAD
 	if (cfg & IDE_CFG_CABLE)
+=======
+	if (cfg & (IDE_CFG_CABLE << ap->port_no))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ATA_CBL_PATA80;
 	else
 		return ATA_CBL_PATA40;
@@ -160,15 +226,30 @@ static void cs5536_set_piomode(struct ata_port *ap, struct ata_device *adev)
 	struct ata_device *pair = ata_dev_pair(adev);
 	int mode = adev->pio_mode - XFER_PIO_0;
 	int cmdmode = mode;
+<<<<<<< HEAD
 	int cshift = adev->devno ? IDE_CAST_D1_SHIFT : IDE_CAST_D0_SHIFT;
 	u32 cast;
+=======
+	int dshift = adev->devno ? IDE_D1_SHIFT : IDE_D0_SHIFT;
+	int cshift = adev->devno ? IDE_CAST_D1_SHIFT : IDE_CAST_D0_SHIFT;
+	u32 dtc, cast, etc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (pair)
 		cmdmode = min(mode, pair->pio_mode - XFER_PIO_0);
 
+<<<<<<< HEAD
 	cs5536_program_dtc(adev, drv_timings[mode]);
 
 	cs5536_read(pdev, CAST, &cast);
+=======
+	cs5536_read(pdev, DTC, &dtc);
+	cs5536_read(pdev, CAST, &cast);
+	cs5536_read(pdev, ETC, &etc);
+
+	dtc &= ~(IDE_DRV_MASK << dshift);
+	dtc |= drv_timings[mode] << dshift;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cast &= ~(IDE_CAST_DRV_MASK << cshift);
 	cast |= addr_timings[mode] << cshift;
@@ -176,7 +257,16 @@ static void cs5536_set_piomode(struct ata_port *ap, struct ata_device *adev)
 	cast &= ~(IDE_CAST_CMD_MASK << IDE_CAST_CMD_SHIFT);
 	cast |= cmd_timings[cmdmode] << IDE_CAST_CMD_SHIFT;
 
+<<<<<<< HEAD
 	cs5536_write(pdev, CAST, cast);
+=======
+	etc &= ~(IDE_DRV_MASK << dshift);
+	etc |= IDE_ETC_NODMA << dshift;
+
+	cs5536_write(pdev, DTC, dtc);
+	cs5536_write(pdev, CAST, cast);
+	cs5536_write(pdev, ETC, etc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -197,6 +287,7 @@ static void cs5536_set_dmamode(struct ata_port *ap, struct ata_device *adev)
 	};
 
 	struct pci_dev *pdev = to_pci_dev(ap->host->dev);
+<<<<<<< HEAD
 	u32 etc;
 	int mode = adev->dma_mode;
 	int dshift = adev->devno ? IDE_D1_SHIFT : IDE_D0_SHIFT;
@@ -212,6 +303,27 @@ static void cs5536_set_dmamode(struct ata_port *ap, struct ata_device *adev)
 	}
 
 	cs5536_write(pdev, ETC, etc);
+=======
+	u32 dtc, etc;
+	int mode = adev->dma_mode;
+	int dshift = adev->devno ? IDE_D1_SHIFT : IDE_D0_SHIFT;
+
+	if (mode >= XFER_UDMA_0) {
+		cs5536_read(pdev, ETC, &etc);
+
+		etc &= ~(IDE_DRV_MASK << dshift);
+		etc |= udma_timings[mode - XFER_UDMA_0] << dshift;
+
+		cs5536_write(pdev, ETC, etc);
+	} else { /* MWDMA */
+		cs5536_read(pdev, DTC, &dtc);
+
+		dtc &= ~(IDE_DRV_MASK << dshift);
+		dtc |= mwdma_timings[mode - XFER_MW_DMA_0] << dshift;
+
+		cs5536_write(pdev, DTC, dtc);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct scsi_host_template cs5536_sht = {

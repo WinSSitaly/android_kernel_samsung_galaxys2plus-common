@@ -20,13 +20,27 @@
 #include "asm/current.h"
 #include "asm/irq.h"
 #include "stdio_console.h"
+<<<<<<< HEAD
 #include "chan.h"
+=======
+#include "line.h"
+#include "chan_kern.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "irq_user.h"
 #include "mconsole_kern.h"
 #include "init.h"
 
 #define MAX_TTYS (16)
 
+<<<<<<< HEAD
+=======
+/* Referenced only by tty_driver below - presumably it's locked correctly
+ * by the tty driver.
+ */
+
+static struct tty_driver *console_driver;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void stdio_announce(char *dev_name, int dev)
 {
 	printk(KERN_INFO "Virtual console %d assigned device '%s'\n", dev,
@@ -70,9 +84,15 @@ static struct line_driver driver = {
 /* The array is initialized by line_init, at initcall time.  The
  * elements are locked individually as needed.
  */
+<<<<<<< HEAD
 static char *vt_conf[MAX_TTYS];
 static char *def_conf;
 static struct line vts[MAX_TTYS];
+=======
+static struct line vts[MAX_TTYS] = { LINE_INIT(CONFIG_CON_ZERO_CHAN, &driver),
+				     [ 1 ... MAX_TTYS - 1 ] =
+				     LINE_INIT(CONFIG_CON_CHAN, &driver) };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int con_config(char *str, char **error_out)
 {
@@ -124,14 +144,22 @@ static void uml_console_write(struct console *console, const char *string,
 	unsigned long flags;
 
 	spin_lock_irqsave(&line->lock, flags);
+<<<<<<< HEAD
 	console_write_chan(line->chan_out, string, len);
+=======
+	console_write_chan(&line->chan_list, string, len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&line->lock, flags);
 }
 
 static struct tty_driver *uml_console_device(struct console *c, int *index)
 {
 	*index = c->index;
+<<<<<<< HEAD
 	return driver.driver;
+=======
+	return console_driver;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int uml_console_setup(struct console *co, char *options)
@@ -154,6 +182,7 @@ static struct console stdiocons = {
 static int stdio_init(void)
 {
 	char *new_title;
+<<<<<<< HEAD
 	int err;
 	int i;
 
@@ -162,12 +191,20 @@ static int stdio_init(void)
 	if (err)
 		return err;
 
+=======
+
+	console_driver = register_lines(&driver, &console_ops, vts,
+					ARRAY_SIZE(vts));
+	if (console_driver == NULL)
+		return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk(KERN_INFO "Initialized stdio console driver\n");
 
 	new_title = add_xterm_umid(opts.xterm_title);
 	if(new_title != NULL)
 		opts.xterm_title = new_title;
 
+<<<<<<< HEAD
 	for (i = 0; i < MAX_TTYS; i++) {
 		char *error;
 		char *s = vt_conf[i];
@@ -179,6 +216,9 @@ static int stdio_init(void)
 			printk(KERN_ERR "setup_one_line failed for "
 			       "device %d : %s\n", i, error);
 	}
+=======
+	lines_init(vts, ARRAY_SIZE(vts), &opts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	con_init_done = 1;
 	register_console(&stdiocons);
@@ -196,7 +236,18 @@ __uml_exitcall(console_exit);
 
 static int console_chan_setup(char *str)
 {
+<<<<<<< HEAD
 	line_setup(vt_conf, MAX_TTYS, &def_conf, str, "console");
+=======
+	char *error;
+	int ret;
+
+	ret = line_setup(vts, ARRAY_SIZE(vts), str, &error);
+	if(ret < 0)
+		printk(KERN_ERR "Failed to set up console with "
+		       "configuration string \"%s\" : %s\n", str, error);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 __setup("con", console_chan_setup);

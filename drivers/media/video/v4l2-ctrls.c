@@ -20,6 +20,7 @@
 
 #include <linux/ctype.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <media/v4l2-ioctl.h>
 #include <media/v4l2-device.h>
@@ -57,6 +58,22 @@ static bool is_new_manual(const struct v4l2_ctrl *master)
 	return master->is_auto && master->val == master->manual_mode_value;
 }
 
+=======
+#include <media/v4l2-ioctl.h>
+#include <media/v4l2-device.h>
+#include <media/v4l2-ctrls.h>
+#include <media/v4l2-dev.h>
+
+/* Internal temporary helper struct, one for each v4l2_ext_control */
+struct ctrl_helper {
+	/* The control corresponding to the v4l2_ext_control ID field. */
+	struct v4l2_ctrl *ctrl;
+	/* Used internally to mark whether this control was already
+	   processed. */
+	bool handled;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Returns NULL or a character pointer array containing the menu for
    the given control ID. The pointer array ends with a NULL pointer.
    An empty string signifies a menu entry that is invalid. This allows
@@ -175,6 +192,7 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
 		"16-bit CRC",
 		NULL
 	};
+<<<<<<< HEAD
 	static const char * const mpeg_audio_dec_playback[] = {
 		"Auto",
 		"Stereo",
@@ -184,6 +202,8 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
 		"Swapped Stereo",
 		NULL
 	};
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	static const char * const mpeg_video_encoding[] = {
 		"MPEG-1",
 		"MPEG-2",
@@ -213,14 +233,21 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
 	};
 	static const char * const mpeg_stream_vbi_fmt[] = {
 		"No VBI",
+<<<<<<< HEAD
 		"Private Packet, IVTV Format",
+=======
+		"Private packet, IVTV format",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		NULL
 	};
 	static const char * const camera_power_line_frequency[] = {
 		"Disabled",
 		"50 Hz",
 		"60 Hz",
+<<<<<<< HEAD
 		"Auto",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		NULL
 	};
 	static const char * const camera_exposure_auto[] = {
@@ -237,13 +264,20 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
 		"Negative",
 		"Emboss",
 		"Sketch",
+<<<<<<< HEAD
 		"Sky Blue",
 		"Grass Green",
 		"Skin Whiten",
+=======
+		"Sky blue",
+		"Grass green",
+		"Skin whiten",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"Vivid",
 		NULL
 	};
 	static const char * const tune_preemphasis[] = {
+<<<<<<< HEAD
 		"No Preemphasis",
 		"50 Microseconds",
 		"75 Microseconds",
@@ -369,6 +403,11 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
 		"4:1:1",
 		"4:1:0",
 		"Gray",
+=======
+		"No preemphasis",
+		"50 useconds",
+		"75 useconds",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		NULL,
 	};
 
@@ -393,9 +432,12 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
 		return mpeg_audio_emphasis;
 	case V4L2_CID_MPEG_AUDIO_CRC:
 		return mpeg_audio_crc;
+<<<<<<< HEAD
 	case V4L2_CID_MPEG_AUDIO_DEC_PLAYBACK:
 	case V4L2_CID_MPEG_AUDIO_DEC_MULTILINGUAL_PLAYBACK:
 		return mpeg_audio_dec_playback;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case V4L2_CID_MPEG_VIDEO_ENCODING:
 		return mpeg_video_encoding;
 	case V4L2_CID_MPEG_VIDEO_ASPECT:
@@ -414,6 +456,7 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
 		return colorfx;
 	case V4L2_CID_TUNE_PREEMPHASIS:
 		return tune_preemphasis;
+<<<<<<< HEAD
 	case V4L2_CID_FLASH_LED_MODE:
 		return flash_led_mode;
 	case V4L2_CID_FLASH_STROBE_SOURCE:
@@ -439,6 +482,8 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
 	case V4L2_CID_JPEG_CHROMA_SUBSAMPLING:
 		return jpeg_chroma_subsampling;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return NULL;
 	}
@@ -490,9 +535,12 @@ const char *v4l2_ctrl_get_name(u32 id)
 	case V4L2_CID_CHROMA_GAIN:		return "Chroma Gain";
 	case V4L2_CID_ILLUMINATORS_1:		return "Illuminator 1";
 	case V4L2_CID_ILLUMINATORS_2:		return "Illuminator 2";
+<<<<<<< HEAD
 	case V4L2_CID_MIN_BUFFERS_FOR_CAPTURE:	return "Min Number of Capture Buffers";
 	case V4L2_CID_MIN_BUFFERS_FOR_OUTPUT:	return "Min Number of Output Buffers";
 	case V4L2_CID_ALPHA_COMPONENT:		return "Alpha Component";
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* MPEG controls */
 	/* Keep the order of the 'case's the same as in videodev2.h! */
@@ -517,8 +565,11 @@ const char *v4l2_ctrl_get_name(u32 id)
 	case V4L2_CID_MPEG_AUDIO_MUTE:		return "Audio Mute";
 	case V4L2_CID_MPEG_AUDIO_AAC_BITRATE:	return "Audio AAC Bitrate";
 	case V4L2_CID_MPEG_AUDIO_AC3_BITRATE:	return "Audio AC-3 Bitrate";
+<<<<<<< HEAD
 	case V4L2_CID_MPEG_AUDIO_DEC_PLAYBACK:	return "Audio Playback";
 	case V4L2_CID_MPEG_AUDIO_DEC_MULTILINGUAL_PLAYBACK: return "Audio Multilingual Playback";
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case V4L2_CID_MPEG_VIDEO_ENCODING:	return "Video Encoding";
 	case V4L2_CID_MPEG_VIDEO_ASPECT:	return "Video Aspect";
 	case V4L2_CID_MPEG_VIDEO_B_FRAMES:	return "Video B Frames";
@@ -531,6 +582,7 @@ const char *v4l2_ctrl_get_name(u32 id)
 	case V4L2_CID_MPEG_VIDEO_TEMPORAL_DECIMATION: return "Video Temporal Decimation";
 	case V4L2_CID_MPEG_VIDEO_MUTE:		return "Video Mute";
 	case V4L2_CID_MPEG_VIDEO_MUTE_YUV:	return "Video Mute YUV";
+<<<<<<< HEAD
 	case V4L2_CID_MPEG_VIDEO_DECODER_SLICE_INTERFACE:	return "Decoder Slice Interface";
 	case V4L2_CID_MPEG_VIDEO_DECODER_MPEG4_DEBLOCK_FILTER:	return "MPEG4 Loop Filter Enable";
 	case V4L2_CID_MPEG_VIDEO_CYCLIC_INTRA_REFRESH_MB:	return "Number of Intra Refresh MBs";
@@ -575,6 +627,8 @@ const char *v4l2_ctrl_get_name(u32 id)
 	case V4L2_CID_MPEG_VIDEO_VBV_SIZE:			return "VBV Buffer Size";
 	case V4L2_CID_MPEG_VIDEO_DEC_PTS:			return "Video Decoder PTS";
 	case V4L2_CID_MPEG_VIDEO_DEC_FRAME:			return "Video Decoder Frame Count";
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* CAMERA controls */
 	/* Keep the order of the 'case's the same as in videodev2.h! */
@@ -609,7 +663,11 @@ const char *v4l2_ctrl_get_name(u32 id)
 	case V4L2_CID_AUDIO_LIMITER_ENABLED:	return "Audio Limiter Feature Enabled";
 	case V4L2_CID_AUDIO_LIMITER_RELEASE_TIME: return "Audio Limiter Release Time";
 	case V4L2_CID_AUDIO_LIMITER_DEVIATION:	return "Audio Limiter Deviation";
+<<<<<<< HEAD
 	case V4L2_CID_AUDIO_COMPRESSION_ENABLED: return "Audio Compression Enabled";
+=======
+	case V4L2_CID_AUDIO_COMPRESSION_ENABLED: return "Audio Compression Feature Enabled";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case V4L2_CID_AUDIO_COMPRESSION_GAIN:	return "Audio Compression Gain";
 	case V4L2_CID_AUDIO_COMPRESSION_THRESHOLD: return "Audio Compression Threshold";
 	case V4L2_CID_AUDIO_COMPRESSION_ATTACK_TIME: return "Audio Compression Attack Time";
@@ -617,6 +675,7 @@ const char *v4l2_ctrl_get_name(u32 id)
 	case V4L2_CID_PILOT_TONE_ENABLED:	return "Pilot Tone Feature Enabled";
 	case V4L2_CID_PILOT_TONE_DEVIATION:	return "Pilot Tone Deviation";
 	case V4L2_CID_PILOT_TONE_FREQUENCY:	return "Pilot Tone Frequency";
+<<<<<<< HEAD
 	case V4L2_CID_TUNE_PREEMPHASIS:		return "Pre-Emphasis";
 	case V4L2_CID_TUNE_POWER_LEVEL:		return "Tune Power Level";
 	case V4L2_CID_TUNE_ANTENNA_CAPACITOR:	return "Tune Antenna Capacitor";
@@ -644,6 +703,12 @@ const char *v4l2_ctrl_get_name(u32 id)
 	case V4L2_CID_JPEG_COMPRESSION_QUALITY:	return "Compression Quality";
 	case V4L2_CID_JPEG_ACTIVE_MARKER:	return "Active Markers";
 
+=======
+	case V4L2_CID_TUNE_PREEMPHASIS:		return "Pre-emphasis settings";
+	case V4L2_CID_TUNE_POWER_LEVEL:		return "Tune Power Level";
+	case V4L2_CID_TUNE_ANTENNA_CAPACITOR:	return "Tune Antenna Capacitor";
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return NULL;
 	}
@@ -678,6 +743,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
 	case V4L2_CID_PILOT_TONE_ENABLED:
 	case V4L2_CID_ILLUMINATORS_1:
 	case V4L2_CID_ILLUMINATORS_2:
+<<<<<<< HEAD
 	case V4L2_CID_FLASH_STROBE_STATUS:
 	case V4L2_CID_FLASH_CHARGE:
 	case V4L2_CID_FLASH_READY:
@@ -688,14 +754,19 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
 	case V4L2_CID_MPEG_VIDEO_H264_8X8_TRANSFORM:
 	case V4L2_CID_MPEG_VIDEO_H264_VUI_SAR_ENABLE:
 	case V4L2_CID_MPEG_VIDEO_MPEG4_QPEL:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*type = V4L2_CTRL_TYPE_BOOLEAN;
 		*min = 0;
 		*max = *step = 1;
 		break;
 	case V4L2_CID_PAN_RESET:
 	case V4L2_CID_TILT_RESET:
+<<<<<<< HEAD
 	case V4L2_CID_FLASH_STROBE:
 	case V4L2_CID_FLASH_STROBE_STOP:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*type = V4L2_CTRL_TYPE_BUTTON;
 		*flags |= V4L2_CTRL_FLAG_WRITE_ONLY;
 		*min = *max = *step = *def = 0;
@@ -711,8 +782,11 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
 	case V4L2_CID_MPEG_AUDIO_MODE_EXTENSION:
 	case V4L2_CID_MPEG_AUDIO_EMPHASIS:
 	case V4L2_CID_MPEG_AUDIO_CRC:
+<<<<<<< HEAD
 	case V4L2_CID_MPEG_AUDIO_DEC_PLAYBACK:
 	case V4L2_CID_MPEG_AUDIO_DEC_MULTILINGUAL_PLAYBACK:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case V4L2_CID_MPEG_VIDEO_ENCODING:
 	case V4L2_CID_MPEG_VIDEO_ASPECT:
 	case V4L2_CID_MPEG_VIDEO_BITRATE_MODE:
@@ -721,6 +795,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
 	case V4L2_CID_EXPOSURE_AUTO:
 	case V4L2_CID_COLORFX:
 	case V4L2_CID_TUNE_PREEMPHASIS:
+<<<<<<< HEAD
 	case V4L2_CID_FLASH_LED_MODE:
 	case V4L2_CID_FLASH_STROBE_SOURCE:
 	case V4L2_CID_MPEG_VIDEO_HEADER_MODE:
@@ -733,6 +808,8 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
 	case V4L2_CID_MPEG_VIDEO_MPEG4_LEVEL:
 	case V4L2_CID_MPEG_VIDEO_MPEG4_PROFILE:
 	case V4L2_CID_JPEG_CHROMA_SUBSAMPLING:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*type = V4L2_CTRL_TYPE_MENU;
 		break;
 	case V4L2_CID_RDS_TX_PS_NAME:
@@ -743,8 +820,11 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
 	case V4L2_CID_CAMERA_CLASS:
 	case V4L2_CID_MPEG_CLASS:
 	case V4L2_CID_FM_TX_CLASS:
+<<<<<<< HEAD
 	case V4L2_CID_FLASH_CLASS:
 	case V4L2_CID_JPEG_CLASS:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*type = V4L2_CTRL_TYPE_CTRL_CLASS;
 		/* You can neither read not write these */
 		*flags |= V4L2_CTRL_FLAG_READ_ONLY | V4L2_CTRL_FLAG_WRITE_ONLY;
@@ -757,6 +837,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
 		/* Max is calculated as RGB888 that is 2^24 */
 		*max = 0xFFFFFF;
 		break;
+<<<<<<< HEAD
 	case V4L2_CID_FLASH_FAULT:
 	case V4L2_CID_JPEG_ACTIVE_MARKER:
 		*type = V4L2_CTRL_TYPE_BITMASK;
@@ -771,6 +852,8 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
 		*type = V4L2_CTRL_TYPE_INTEGER64;
 		*flags |= V4L2_CTRL_FLAG_READ_ONLY | V4L2_CTRL_FLAG_VOLATILE;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		*type = V4L2_CTRL_TYPE_INTEGER;
 		break;
@@ -816,10 +899,13 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
 	case V4L2_CID_ZOOM_RELATIVE:
 		*flags |= V4L2_CTRL_FLAG_WRITE_ONLY;
 		break;
+<<<<<<< HEAD
 	case V4L2_CID_FLASH_STROBE_STATUS:
 	case V4L2_CID_FLASH_READY:
 		*flags |= V4L2_CTRL_FLAG_READ_ONLY;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 EXPORT_SYMBOL(v4l2_ctrl_fill);
@@ -838,6 +924,7 @@ static bool type_is_int(const struct v4l2_ctrl *ctrl)
 	}
 }
 
+<<<<<<< HEAD
 static void fill_event(struct v4l2_event *ev, struct v4l2_ctrl *ctrl, u32 changes)
 {
 	memset(ev->reserved, 0, sizeof(ev->reserved));
@@ -874,6 +961,8 @@ static void send_event(struct v4l2_fh *fh, struct v4l2_ctrl *ctrl, u32 changes)
 			v4l2_event_queue_fh(sev->fh, &ev);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Helper function: copy the current control value back to the caller */
 static int cur_to_user(struct v4l2_ext_control *c,
 		       struct v4l2_ctrl *ctrl)
@@ -961,6 +1050,7 @@ static int new_to_user(struct v4l2_ext_control *c,
 }
 
 /* Copy the new value to the current value. */
+<<<<<<< HEAD
 static void new_to_cur(struct v4l2_fh *fh, struct v4l2_ctrl *ctrl,
 						bool update_inactive)
 {
@@ -1006,6 +1096,24 @@ static void new_to_cur(struct v4l2_fh *fh, struct v4l2_ctrl *ctrl,
 			(changed ? V4L2_EVENT_CTRL_CH_VALUE : 0) |
 			(update_inactive ? V4L2_EVENT_CTRL_CH_FLAGS : 0));
 	}
+=======
+static void new_to_cur(struct v4l2_ctrl *ctrl)
+{
+	if (ctrl == NULL)
+		return;
+	switch (ctrl->type) {
+	case V4L2_CTRL_TYPE_STRING:
+		/* strings are always 0-terminated */
+		strcpy(ctrl->cur.string, ctrl->string);
+		break;
+	case V4L2_CTRL_TYPE_INTEGER64:
+		ctrl->cur.val64 = ctrl->val64;
+		break;
+	default:
+		ctrl->cur.val = ctrl->val;
+		break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Copy the current value to the new value */
@@ -1058,11 +1166,21 @@ static int cluster_changed(struct v4l2_ctrl *master)
 	return diff;
 }
 
+<<<<<<< HEAD
 /* Validate integer-type control */
 static int validate_new_int(const struct v4l2_ctrl *ctrl, s32 *pval)
 {
 	s32 val = *pval;
 	u32 offset;
+=======
+/* Validate a new control */
+static int validate_new(struct v4l2_ctrl *ctrl)
+{
+	s32 val = ctrl->val;
+	char *s = ctrl->string;
+	u32 offset;
+	size_t len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (ctrl->type) {
 	case V4L2_CTRL_TYPE_INTEGER:
@@ -1075,11 +1193,19 @@ static int validate_new_int(const struct v4l2_ctrl *ctrl, s32 *pval)
 		offset = val - ctrl->minimum;
 		offset = ctrl->step * (offset / ctrl->step);
 		val = ctrl->minimum + offset;
+<<<<<<< HEAD
 		*pval = val;
 		return 0;
 
 	case V4L2_CTRL_TYPE_BOOLEAN:
 		*pval = !!val;
+=======
+		ctrl->val = val;
+		return 0;
+
+	case V4L2_CTRL_TYPE_BOOLEAN:
+		ctrl->val = !!ctrl->val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	case V4L2_CTRL_TYPE_MENU:
@@ -1090,6 +1216,7 @@ static int validate_new_int(const struct v4l2_ctrl *ctrl, s32 *pval)
 			return -EINVAL;
 		return 0;
 
+<<<<<<< HEAD
 	case V4L2_CTRL_TYPE_BITMASK:
 		*pval &= ctrl->maximum;
 		return 0;
@@ -1119,6 +1246,13 @@ static int validate_new(const struct v4l2_ctrl *ctrl, struct v4l2_ext_control *c
 	case V4L2_CTRL_TYPE_CTRL_CLASS:
 		return validate_new_int(ctrl, &c->value);
 
+=======
+	case V4L2_CTRL_TYPE_BUTTON:
+	case V4L2_CTRL_TYPE_CTRL_CLASS:
+		ctrl->val64 = 0;
+		return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case V4L2_CTRL_TYPE_INTEGER64:
 		return 0;
 
@@ -1156,8 +1290,13 @@ int v4l2_ctrl_handler_init(struct v4l2_ctrl_handler *hdl,
 	INIT_LIST_HEAD(&hdl->ctrls);
 	INIT_LIST_HEAD(&hdl->ctrl_refs);
 	hdl->nr_of_buckets = 1 + nr_of_controls_hint / 8;
+<<<<<<< HEAD
 	hdl->buckets = kcalloc(hdl->nr_of_buckets, sizeof(hdl->buckets[0]),
 			       GFP_KERNEL);
+=======
+	hdl->buckets = kzalloc(sizeof(hdl->buckets[0]) * hdl->nr_of_buckets,
+								GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hdl->error = hdl->buckets ? 0 : -ENOMEM;
 	return hdl->error;
 }
@@ -1168,7 +1307,10 @@ void v4l2_ctrl_handler_free(struct v4l2_ctrl_handler *hdl)
 {
 	struct v4l2_ctrl_ref *ref, *next_ref;
 	struct v4l2_ctrl *ctrl, *next_ctrl;
+<<<<<<< HEAD
 	struct v4l2_subscribed_event *sev, *next_sev;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (hdl == NULL || hdl->buckets == NULL)
 		return;
@@ -1182,8 +1324,11 @@ void v4l2_ctrl_handler_free(struct v4l2_ctrl_handler *hdl)
 	/* Free all controls owned by the handler */
 	list_for_each_entry_safe(ctrl, next_ctrl, &hdl->ctrls, node) {
 		list_del(&ctrl->node);
+<<<<<<< HEAD
 		list_for_each_entry_safe(sev, next_sev, &ctrl->ev_subs, node)
 			list_del(&sev->node);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(ctrl);
 	}
 	kfree(hdl->buckets);
@@ -1353,17 +1498,25 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
 
 	/* Sanity checks */
 	if (id == 0 || name == NULL || id >= V4L2_CID_PRIVATE_BASE ||
+<<<<<<< HEAD
 	    (type == V4L2_CTRL_TYPE_INTEGER && step == 0) ||
 	    (type == V4L2_CTRL_TYPE_BITMASK && max == 0) ||
+=======
+	    max < min ||
+	    (type == V4L2_CTRL_TYPE_INTEGER && step == 0) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    (type == V4L2_CTRL_TYPE_MENU && qmenu == NULL) ||
 	    (type == V4L2_CTRL_TYPE_STRING && max == 0)) {
 		handler_set_err(hdl, -ERANGE);
 		return NULL;
 	}
+<<<<<<< HEAD
 	if (type != V4L2_CTRL_TYPE_BITMASK && max < min) {
 		handler_set_err(hdl, -ERANGE);
 		return NULL;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((type == V4L2_CTRL_TYPE_INTEGER ||
 	     type == V4L2_CTRL_TYPE_MENU ||
 	     type == V4L2_CTRL_TYPE_BOOLEAN) &&
@@ -1371,10 +1524,13 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
 		handler_set_err(hdl, -ERANGE);
 		return NULL;
 	}
+<<<<<<< HEAD
 	if (type == V4L2_CTRL_TYPE_BITMASK && ((def & ~max) || min || step)) {
 		handler_set_err(hdl, -ERANGE);
 		return NULL;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (type == V4L2_CTRL_TYPE_BUTTON)
 		flags |= V4L2_CTRL_FLAG_WRITE_ONLY;
@@ -1390,7 +1546,10 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
 	}
 
 	INIT_LIST_HEAD(&ctrl->node);
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&ctrl->ev_subs);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ctrl->handler = hdl;
 	ctrl->ops = ops;
 	ctrl->id = id;
@@ -1450,8 +1609,15 @@ struct v4l2_ctrl *v4l2_ctrl_new_custom(struct v4l2_ctrl_handler *hdl,
 			type, min, max,
 			is_menu ? cfg->menu_skip_mask : step,
 			def, flags, qmenu, priv);
+<<<<<<< HEAD
 	if (ctrl)
 		ctrl->is_private = cfg->is_private;
+=======
+	if (ctrl) {
+		ctrl->is_private = cfg->is_private;
+		ctrl->is_volatile = cfg->is_volatile;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ctrl;
 }
 EXPORT_SYMBOL(v4l2_ctrl_new_custom);
@@ -1517,7 +1683,11 @@ EXPORT_SYMBOL(v4l2_ctrl_add_ctrl);
 int v4l2_ctrl_add_handler(struct v4l2_ctrl_handler *hdl,
 			  struct v4l2_ctrl_handler *add)
 {
+<<<<<<< HEAD
 	struct v4l2_ctrl_ref *ref;
+=======
+	struct v4l2_ctrl *ctrl;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	/* Do nothing if either handler is NULL or if they are the same */
@@ -1526,6 +1696,7 @@ int v4l2_ctrl_add_handler(struct v4l2_ctrl_handler *hdl,
 	if (hdl->error)
 		return hdl->error;
 	mutex_lock(&add->lock);
+<<<<<<< HEAD
 	list_for_each_entry(ref, &add->ctrl_refs, node) {
 		struct v4l2_ctrl *ctrl = ref->ctrl;
 
@@ -1535,6 +1706,12 @@ int v4l2_ctrl_add_handler(struct v4l2_ctrl_handler *hdl,
 		/* And control classes */
 		if (ctrl->type == V4L2_CTRL_TYPE_CTRL_CLASS)
 			continue;
+=======
+	list_for_each_entry(ctrl, &add->ctrls, node) {
+		/* Skip handler-private controls. */
+		if (ctrl->is_private)
+			continue;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = handler_new_ref(hdl, ctrl);
 		if (ret)
 			break;
@@ -1547,16 +1724,24 @@ EXPORT_SYMBOL(v4l2_ctrl_add_handler);
 /* Cluster controls */
 void v4l2_ctrl_cluster(unsigned ncontrols, struct v4l2_ctrl **controls)
 {
+<<<<<<< HEAD
 	bool has_volatiles = false;
 	int i;
 
 	/* The first control is the master control and it must not be NULL */
 	BUG_ON(ncontrols == 0 || controls[0] == NULL);
+=======
+	int i;
+
+	/* The first control is the master control and it must not be NULL */
+	BUG_ON(controls[0] == NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < ncontrols; i++) {
 		if (controls[i]) {
 			controls[i]->cluster = controls;
 			controls[i]->ncontrols = ncontrols;
+<<<<<<< HEAD
 			if (controls[i]->flags & V4L2_CTRL_FLAG_VOLATILE)
 				has_volatiles = true;
 		}
@@ -1609,6 +1794,25 @@ void v4l2_ctrl_activate(struct v4l2_ctrl *ctrl, bool active)
 		old = test_and_clear_bit(4, &ctrl->flags);
 	if (old != inactive)
 		send_event(NULL, ctrl, V4L2_EVENT_CTRL_CH_FLAGS);
+=======
+		}
+	}
+}
+EXPORT_SYMBOL(v4l2_ctrl_cluster);
+
+/* Activate/deactivate a control. */
+void v4l2_ctrl_activate(struct v4l2_ctrl *ctrl, bool active)
+{
+	if (ctrl == NULL)
+		return;
+
+	if (!active)
+		/* set V4L2_CTRL_FLAG_INACTIVE */
+		set_bit(4, &ctrl->flags);
+	else
+		/* clear V4L2_CTRL_FLAG_INACTIVE */
+		clear_bit(4, &ctrl->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(v4l2_ctrl_activate);
 
@@ -1620,6 +1824,7 @@ EXPORT_SYMBOL(v4l2_ctrl_activate);
    these controls. */
 void v4l2_ctrl_grab(struct v4l2_ctrl *ctrl, bool grabbed)
 {
+<<<<<<< HEAD
 	bool old;
 
 	if (ctrl == NULL)
@@ -1635,6 +1840,17 @@ void v4l2_ctrl_grab(struct v4l2_ctrl *ctrl, bool grabbed)
 	if (old != grabbed)
 		send_event(NULL, ctrl, V4L2_EVENT_CTRL_CH_FLAGS);
 	v4l2_ctrl_unlock(ctrl);
+=======
+	if (ctrl == NULL)
+		return;
+
+	if (grabbed)
+		/* set V4L2_CTRL_FLAG_GRABBED */
+		set_bit(1, &ctrl->flags);
+	else
+		/* clear V4L2_CTRL_FLAG_GRABBED */
+		clear_bit(1, &ctrl->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(v4l2_ctrl_grab);
 
@@ -1642,6 +1858,12 @@ EXPORT_SYMBOL(v4l2_ctrl_grab);
 static void log_ctrl(const struct v4l2_ctrl *ctrl,
 		     const char *prefix, const char *colon)
 {
+<<<<<<< HEAD
+=======
+	int fl_inact = ctrl->flags & V4L2_CTRL_FLAG_INACTIVE;
+	int fl_grabbed = ctrl->flags & V4L2_CTRL_FLAG_GRABBED;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ctrl->flags & (V4L2_CTRL_FLAG_DISABLED | V4L2_CTRL_FLAG_WRITE_ONLY))
 		return;
 	if (ctrl->type == V4L2_CTRL_TYPE_CTRL_CLASS)
@@ -1659,9 +1881,12 @@ static void log_ctrl(const struct v4l2_ctrl *ctrl,
 	case V4L2_CTRL_TYPE_MENU:
 		printk(KERN_CONT "%s", ctrl->qmenu[ctrl->cur.val]);
 		break;
+<<<<<<< HEAD
 	case V4L2_CTRL_TYPE_BITMASK:
 		printk(KERN_CONT "0x%08x", ctrl->cur.val);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case V4L2_CTRL_TYPE_INTEGER64:
 		printk(KERN_CONT "%lld", ctrl->cur.val64);
 		break;
@@ -1672,6 +1897,7 @@ static void log_ctrl(const struct v4l2_ctrl *ctrl,
 		printk(KERN_CONT "unknown type %d", ctrl->type);
 		break;
 	}
+<<<<<<< HEAD
 	if (ctrl->flags & (V4L2_CTRL_FLAG_INACTIVE |
 			   V4L2_CTRL_FLAG_GRABBED |
 			   V4L2_CTRL_FLAG_VOLATILE)) {
@@ -1683,6 +1909,16 @@ static void log_ctrl(const struct v4l2_ctrl *ctrl,
 			printk(KERN_CONT " volatile");
 	}
 	printk(KERN_CONT "\n");
+=======
+	if (fl_inact && fl_grabbed)
+		printk(KERN_CONT " (inactive, grabbed)\n");
+	else if (fl_inact)
+		printk(KERN_CONT " (inactive)\n");
+	else if (fl_grabbed)
+		printk(KERN_CONT " (grabbed)\n");
+	else
+		printk(KERN_CONT "\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Log all controls owned by the handler */
@@ -1725,21 +1961,41 @@ int v4l2_ctrl_handler_setup(struct v4l2_ctrl_handler *hdl)
 		int i;
 
 		/* Skip if this control was already handled by a cluster. */
+<<<<<<< HEAD
 		/* Skip button controls and read-only controls. */
 		if (ctrl->done || ctrl->type == V4L2_CTRL_TYPE_BUTTON ||
 		    (ctrl->flags & V4L2_CTRL_FLAG_READ_ONLY))
+=======
+		if (ctrl->done)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 
 		for (i = 0; i < master->ncontrols; i++) {
 			if (master->cluster[i]) {
 				cur_to_new(master->cluster[i]);
 				master->cluster[i]->is_new = 1;
+<<<<<<< HEAD
 				master->cluster[i]->done = true;
 			}
 		}
 		ret = call_op(master, s_ctrl);
 		if (ret)
 			break;
+=======
+			}
+		}
+
+		/* Skip button controls and read-only controls. */
+		if (ctrl->type == V4L2_CTRL_TYPE_BUTTON ||
+		    (ctrl->flags & V4L2_CTRL_FLAG_READ_ONLY))
+			continue;
+		ret = master->ops->s_ctrl(master);
+		if (ret)
+			break;
+		for (i = 0; i < master->ncontrols; i++)
+			if (master->cluster[i])
+				master->cluster[i]->done = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	mutex_unlock(&hdl->lock);
 	return ret;
@@ -1890,6 +2146,7 @@ EXPORT_SYMBOL(v4l2_subdev_querymenu);
    Find the controls in the control array and do some basic checks. */
 static int prepare_ext_ctrls(struct v4l2_ctrl_handler *hdl,
 			     struct v4l2_ext_controls *cs,
+<<<<<<< HEAD
 			     struct v4l2_ctrl_helper *helpers)
 {
 	struct v4l2_ctrl_helper *h;
@@ -1903,6 +2160,20 @@ static int prepare_ext_ctrls(struct v4l2_ctrl_handler *hdl,
 		u32 id = c->id & V4L2_CTRL_ID_MASK;
 
 		cs->error_idx = i;
+=======
+			     struct ctrl_helper *helpers,
+			     bool try)
+{
+	u32 i;
+
+	for (i = 0; i < cs->count; i++) {
+		struct v4l2_ext_control *c = &cs->controls[i];
+		struct v4l2_ctrl *ctrl;
+		u32 id = c->id & V4L2_CTRL_ID_MASK;
+
+		if (try)
+			cs->error_idx = i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (cs->ctrl_class && V4L2_CTRL_ID2CLASS(id) != cs->ctrl_class)
 			return -EINVAL;
@@ -1911,6 +2182,7 @@ static int prepare_ext_ctrls(struct v4l2_ctrl_handler *hdl,
 		   extended controls */
 		if (id >= V4L2_CID_PRIVATE_BASE)
 			return -EINVAL;
+<<<<<<< HEAD
 		ref = find_ref_lock(hdl, id);
 		if (ref == NULL)
 			return -EINVAL;
@@ -1964,6 +2236,55 @@ static int prepare_ext_ctrls(struct v4l2_ctrl_handler *hdl,
 	}
 	mutex_unlock(&hdl->lock);
 	return 0;
+=======
+		ctrl = v4l2_ctrl_find(hdl, id);
+		if (ctrl == NULL)
+			return -EINVAL;
+		if (ctrl->flags & V4L2_CTRL_FLAG_DISABLED)
+			return -EINVAL;
+
+		helpers[i].ctrl = ctrl;
+		helpers[i].handled = false;
+	}
+	return 0;
+}
+
+typedef int (*cluster_func)(struct v4l2_ext_control *c,
+			    struct v4l2_ctrl *ctrl);
+
+/* Walk over all controls in v4l2_ext_controls belonging to the same cluster
+   and call the provided function. */
+static int cluster_walk(unsigned from,
+			struct v4l2_ext_controls *cs,
+			struct ctrl_helper *helpers,
+			cluster_func f)
+{
+	struct v4l2_ctrl **cluster = helpers[from].ctrl->cluster;
+	int ret = 0;
+	int i;
+
+	/* Find any controls from the same cluster and call the function */
+	for (i = from; !ret && i < cs->count; i++) {
+		struct v4l2_ctrl *ctrl = helpers[i].ctrl;
+
+		if (!helpers[i].handled && ctrl->cluster == cluster)
+			ret = f(&cs->controls[i], ctrl);
+	}
+	return ret;
+}
+
+static void cluster_done(unsigned from,
+			 struct v4l2_ext_controls *cs,
+			 struct ctrl_helper *helpers)
+{
+	struct v4l2_ctrl **cluster = helpers[from].ctrl->cluster;
+	int i;
+
+	/* Find any controls from the same cluster and mark them as handled */
+	for (i = from; i < cs->count; i++)
+		if (helpers[i].ctrl->cluster == cluster)
+			helpers[i].handled = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Handles the corner case where cs->count == 0. It checks whether the
@@ -1981,10 +2302,17 @@ static int class_check(struct v4l2_ctrl_handler *hdl, u32 ctrl_class)
 /* Get extended controls. Allocates the helpers array if needed. */
 int v4l2_g_ext_ctrls(struct v4l2_ctrl_handler *hdl, struct v4l2_ext_controls *cs)
 {
+<<<<<<< HEAD
 	struct v4l2_ctrl_helper helper[4];
 	struct v4l2_ctrl_helper *helpers = helper;
 	int ret;
 	int i, j;
+=======
+	struct ctrl_helper helper[4];
+	struct ctrl_helper *helpers = helper;
+	int ret;
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cs->error_idx = cs->count;
 	cs->ctrl_class = V4L2_CTRL_ID2CLASS(cs->ctrl_class);
@@ -2001,14 +2329,19 @@ int v4l2_g_ext_ctrls(struct v4l2_ctrl_handler *hdl, struct v4l2_ext_controls *cs
 			return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	ret = prepare_ext_ctrls(hdl, cs, helpers);
 	cs->error_idx = cs->count;
+=======
+	ret = prepare_ext_ctrls(hdl, cs, helpers, false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; !ret && i < cs->count; i++)
 		if (helpers[i].ctrl->flags & V4L2_CTRL_FLAG_WRITE_ONLY)
 			ret = -EACCES;
 
 	for (i = 0; !ret && i < cs->count; i++) {
+<<<<<<< HEAD
 		int (*ctrl_to_user)(struct v4l2_ext_control *c,
 				    struct v4l2_ctrl *ctrl) = cur_to_user;
 		struct v4l2_ctrl *master;
@@ -2042,6 +2375,25 @@ int v4l2_g_ext_ctrls(struct v4l2_ctrl_handler *hdl, struct v4l2_ext_controls *cs
 			} while (!ret && idx);
 		}
 		v4l2_ctrl_unlock(master);
+=======
+		struct v4l2_ctrl *ctrl = helpers[i].ctrl;
+		struct v4l2_ctrl *master = ctrl->cluster[0];
+
+		if (helpers[i].handled)
+			continue;
+
+		cs->error_idx = i;
+
+		v4l2_ctrl_lock(master);
+		/* g_volatile_ctrl will update the current control values */
+		if (ctrl->is_volatile && master->ops->g_volatile_ctrl)
+			ret = master->ops->g_volatile_ctrl(master);
+		/* If OK, then copy the current control values to the caller */
+		if (!ret)
+			ret = cluster_walk(i, cs, helpers, cur_to_user);
+		v4l2_ctrl_unlock(master);
+		cluster_done(i, cs, helpers);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (cs->count > ARRAY_SIZE(helper))
@@ -2061,13 +2413,17 @@ static int get_ctrl(struct v4l2_ctrl *ctrl, s32 *val)
 {
 	struct v4l2_ctrl *master = ctrl->cluster[0];
 	int ret = 0;
+<<<<<<< HEAD
 	int i;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ctrl->flags & V4L2_CTRL_FLAG_WRITE_ONLY)
 		return -EACCES;
 
 	v4l2_ctrl_lock(master);
 	/* g_volatile_ctrl will update the current control values */
+<<<<<<< HEAD
 	if (ctrl->flags & V4L2_CTRL_FLAG_VOLATILE) {
 		for (i = 0; i < master->ncontrols; i++)
 			cur_to_new(master->cluster[i]);
@@ -2076,6 +2432,11 @@ static int get_ctrl(struct v4l2_ctrl *ctrl, s32 *val)
 	} else {
 		*val = ctrl->cur.val;
 	}
+=======
+	if (ctrl->is_volatile && master->ops->g_volatile_ctrl)
+		ret = master->ops->g_volatile_ctrl(master);
+	*val = ctrl->cur.val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	v4l2_ctrl_unlock(master);
 	return ret;
 }
@@ -2111,23 +2472,35 @@ EXPORT_SYMBOL(v4l2_ctrl_g_ctrl);
 /* Core function that calls try/s_ctrl and ensures that the new value is
    copied to the current value on a set.
    Must be called with ctrl->handler->lock held. */
+<<<<<<< HEAD
 static int try_or_set_cluster(struct v4l2_fh *fh,
 			      struct v4l2_ctrl *master, bool set)
 {
 	bool update_flag;
 	int ret;
+=======
+static int try_or_set_control_cluster(struct v4l2_ctrl *master, bool set)
+{
+	bool try = !set;
+	int ret = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	/* Go through the cluster and either validate the new value or
 	   (if no new value was set), copy the current value to the new
 	   value, ensuring a consistent view for the control ops when
 	   called. */
+<<<<<<< HEAD
 	for (i = 0; i < master->ncontrols; i++) {
+=======
+	for (i = 0; !ret && i < master->ncontrols; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct v4l2_ctrl *ctrl = master->cluster[i];
 
 		if (ctrl == NULL)
 			continue;
 
+<<<<<<< HEAD
 		if (!ctrl->is_new) {
 			cur_to_new(ctrl);
 			continue;
@@ -2159,13 +2532,62 @@ static int validate_ctrls(struct v4l2_ext_controls *cs,
 			  struct v4l2_ctrl_helper *helpers, bool set)
 {
 	unsigned i;
+=======
+		if (ctrl->is_new) {
+			/* Double check this: it may have changed since the
+			   last check in try_or_set_ext_ctrls(). */
+			if (set && (ctrl->flags & V4L2_CTRL_FLAG_GRABBED))
+				return -EBUSY;
+
+			/* Validate if required */
+			if (!set)
+				ret = validate_new(ctrl);
+			continue;
+		}
+		/* No new value was set, so copy the current and force
+		   a call to try_ctrl later, since the values for the cluster
+		   may now have changed and the end result might be invalid. */
+		try = true;
+		cur_to_new(ctrl);
+	}
+
+	/* For larger clusters you have to call try_ctrl again to
+	   verify that the controls are still valid after the
+	   'cur_to_new' above. */
+	if (!ret && master->ops->try_ctrl && try)
+		ret = master->ops->try_ctrl(master);
+
+	/* Don't set if there is no change */
+	if (!ret && set && cluster_changed(master)) {
+		ret = master->ops->s_ctrl(master);
+		/* If OK, then make the new values permanent. */
+		if (!ret)
+			for (i = 0; i < master->ncontrols; i++)
+				new_to_cur(master->cluster[i]);
+	}
+	return ret;
+}
+
+/* Try or set controls. */
+static int try_or_set_ext_ctrls(struct v4l2_ctrl_handler *hdl,
+				struct v4l2_ext_controls *cs,
+				struct ctrl_helper *helpers,
+				bool set)
+{
+	unsigned i, j;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	cs->error_idx = cs->count;
 	for (i = 0; i < cs->count; i++) {
 		struct v4l2_ctrl *ctrl = helpers[i].ctrl;
 
+<<<<<<< HEAD
 		cs->error_idx = i;
+=======
+		if (!set)
+			cs->error_idx = i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (ctrl->flags & V4L2_CTRL_FLAG_READ_ONLY)
 			return -EACCES;
@@ -2177,6 +2599,7 @@ static int validate_ctrls(struct v4l2_ext_controls *cs,
 		   best-effort to avoid that. */
 		if (set && (ctrl->flags & V4L2_CTRL_FLAG_GRABBED))
 			return -EBUSY;
+<<<<<<< HEAD
 		ret = validate_new(ctrl, &cs->controls[i]);
 		if (ret)
 			return ret;
@@ -2207,6 +2630,52 @@ static int try_set_ext_ctrls(struct v4l2_fh *fh, struct v4l2_ctrl_handler *hdl,
 	struct v4l2_ctrl_helper *helpers = helper;
 	unsigned i, j;
 	int ret;
+=======
+	}
+
+	for (i = 0; !ret && i < cs->count; i++) {
+		struct v4l2_ctrl *ctrl = helpers[i].ctrl;
+		struct v4l2_ctrl *master = ctrl->cluster[0];
+
+		cs->error_idx = i;
+
+		if (helpers[i].handled)
+			continue;
+
+		v4l2_ctrl_lock(ctrl);
+
+		/* Reset the 'is_new' flags of the cluster */
+		for (j = 0; j < master->ncontrols; j++)
+			if (master->cluster[j])
+				master->cluster[j]->is_new = 0;
+
+		/* Copy the new caller-supplied control values.
+		   user_to_new() sets 'is_new' to 1. */
+		ret = cluster_walk(i, cs, helpers, user_to_new);
+
+		if (!ret)
+			ret = try_or_set_control_cluster(master, set);
+
+		/* Copy the new values back to userspace. */
+		if (!ret)
+			ret = cluster_walk(i, cs, helpers, new_to_user);
+
+		v4l2_ctrl_unlock(ctrl);
+		cluster_done(i, cs, helpers);
+	}
+	return ret;
+}
+
+/* Try or try-and-set controls */
+static int try_set_ext_ctrls(struct v4l2_ctrl_handler *hdl,
+			     struct v4l2_ext_controls *cs,
+			     bool set)
+{
+	struct ctrl_helper helper[4];
+	struct ctrl_helper *helpers = helper;
+	int ret;
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cs->error_idx = cs->count;
 	cs->ctrl_class = V4L2_CTRL_ID2CLASS(cs->ctrl_class);
@@ -2222,6 +2691,7 @@ static int try_set_ext_ctrls(struct v4l2_fh *fh, struct v4l2_ctrl_handler *hdl,
 		if (!helpers)
 			return -ENOMEM;
 	}
+<<<<<<< HEAD
 	ret = prepare_ext_ctrls(hdl, cs, helpers);
 	if (!ret)
 		ret = validate_ctrls(cs, helpers, set);
@@ -2290,6 +2760,27 @@ static int try_set_ext_ctrls(struct v4l2_fh *fh, struct v4l2_ctrl_handler *hdl,
 		v4l2_ctrl_unlock(master);
 	}
 
+=======
+	ret = prepare_ext_ctrls(hdl, cs, helpers, !set);
+	if (ret)
+		goto free;
+
+	/* First 'try' all controls and abort on error */
+	ret = try_or_set_ext_ctrls(hdl, cs, helpers, false);
+	/* If this is a 'set' operation and the initial 'try' failed,
+	   then set error_idx to count to tell the application that no
+	   controls changed value yet. */
+	if (set)
+		cs->error_idx = cs->count;
+	if (!ret && set) {
+		/* Reset 'handled' state */
+		for (i = 0; i < cs->count; i++)
+			helpers[i].handled = false;
+		ret = try_or_set_ext_ctrls(hdl, cs, helpers, true);
+	}
+
+free:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cs->count > ARRAY_SIZE(helper))
 		kfree(helpers);
 	return ret;
@@ -2297,6 +2788,7 @@ static int try_set_ext_ctrls(struct v4l2_fh *fh, struct v4l2_ctrl_handler *hdl,
 
 int v4l2_try_ext_ctrls(struct v4l2_ctrl_handler *hdl, struct v4l2_ext_controls *cs)
 {
+<<<<<<< HEAD
 	return try_set_ext_ctrls(NULL, hdl, cs, false);
 }
 EXPORT_SYMBOL(v4l2_try_ext_ctrls);
@@ -2305,31 +2797,57 @@ int v4l2_s_ext_ctrls(struct v4l2_fh *fh, struct v4l2_ctrl_handler *hdl,
 					struct v4l2_ext_controls *cs)
 {
 	return try_set_ext_ctrls(fh, hdl, cs, true);
+=======
+	return try_set_ext_ctrls(hdl, cs, false);
+}
+EXPORT_SYMBOL(v4l2_try_ext_ctrls);
+
+int v4l2_s_ext_ctrls(struct v4l2_ctrl_handler *hdl, struct v4l2_ext_controls *cs)
+{
+	return try_set_ext_ctrls(hdl, cs, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(v4l2_s_ext_ctrls);
 
 int v4l2_subdev_try_ext_ctrls(struct v4l2_subdev *sd, struct v4l2_ext_controls *cs)
 {
+<<<<<<< HEAD
 	return try_set_ext_ctrls(NULL, sd->ctrl_handler, cs, false);
+=======
+	return try_set_ext_ctrls(sd->ctrl_handler, cs, false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(v4l2_subdev_try_ext_ctrls);
 
 int v4l2_subdev_s_ext_ctrls(struct v4l2_subdev *sd, struct v4l2_ext_controls *cs)
 {
+<<<<<<< HEAD
 	return try_set_ext_ctrls(NULL, sd->ctrl_handler, cs, true);
+=======
+	return try_set_ext_ctrls(sd->ctrl_handler, cs, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(v4l2_subdev_s_ext_ctrls);
 
 /* Helper function for VIDIOC_S_CTRL compatibility */
+<<<<<<< HEAD
 static int set_ctrl(struct v4l2_fh *fh, struct v4l2_ctrl *ctrl, s32 *val)
+=======
+static int set_ctrl(struct v4l2_ctrl *ctrl, s32 *val)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct v4l2_ctrl *master = ctrl->cluster[0];
 	int ret;
 	int i;
 
+<<<<<<< HEAD
 	ret = validate_new_int(ctrl, val);
 	if (ret)
 		return ret;
+=======
+	if (ctrl->flags & V4L2_CTRL_FLAG_READ_ONLY)
+		return -EACCES;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	v4l2_ctrl_lock(ctrl);
 
@@ -2338,6 +2856,7 @@ static int set_ctrl(struct v4l2_fh *fh, struct v4l2_ctrl *ctrl, s32 *val)
 		if (master->cluster[i])
 			master->cluster[i]->is_new = 0;
 
+<<<<<<< HEAD
 	/* For autoclusters with volatiles that are switched from auto to
 	   manual mode we have to update the current volatile values since
 	   those will become the initial manual values after such a switch. */
@@ -2347,29 +2866,48 @@ static int set_ctrl(struct v4l2_fh *fh, struct v4l2_ctrl *ctrl, s32 *val)
 	ctrl->val = *val;
 	ctrl->is_new = 1;
 	ret = try_or_set_cluster(fh, master, true);
+=======
+	ctrl->val = *val;
+	ctrl->is_new = 1;
+	ret = try_or_set_control_cluster(master, false);
+	if (!ret)
+		ret = try_or_set_control_cluster(master, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*val = ctrl->cur.val;
 	v4l2_ctrl_unlock(ctrl);
 	return ret;
 }
 
+<<<<<<< HEAD
 int v4l2_s_ctrl(struct v4l2_fh *fh, struct v4l2_ctrl_handler *hdl,
 					struct v4l2_control *control)
+=======
+int v4l2_s_ctrl(struct v4l2_ctrl_handler *hdl, struct v4l2_control *control)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct v4l2_ctrl *ctrl = v4l2_ctrl_find(hdl, control->id);
 
 	if (ctrl == NULL || !type_is_int(ctrl))
 		return -EINVAL;
 
+<<<<<<< HEAD
 	if (ctrl->flags & V4L2_CTRL_FLAG_READ_ONLY)
 		return -EACCES;
 
 	return set_ctrl(fh, ctrl, &control->value);
+=======
+	return set_ctrl(ctrl, &control->value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(v4l2_s_ctrl);
 
 int v4l2_subdev_s_ctrl(struct v4l2_subdev *sd, struct v4l2_control *control)
 {
+<<<<<<< HEAD
 	return v4l2_s_ctrl(NULL, sd->ctrl_handler, control);
+=======
+	return v4l2_s_ctrl(sd->ctrl_handler, control);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(v4l2_subdev_s_ctrl);
 
@@ -2377,6 +2915,7 @@ int v4l2_ctrl_s_ctrl(struct v4l2_ctrl *ctrl, s32 val)
 {
 	/* It's a driver bug if this happens. */
 	WARN_ON(!type_is_int(ctrl));
+<<<<<<< HEAD
 	return set_ctrl(NULL, ctrl, &val);
 }
 EXPORT_SYMBOL(v4l2_ctrl_s_ctrl);
@@ -2440,3 +2979,8 @@ unsigned int v4l2_ctrl_poll(struct file *file, struct poll_table_struct *wait)
 	return 0;
 }
 EXPORT_SYMBOL(v4l2_ctrl_poll);
+=======
+	return set_ctrl(ctrl, &val);
+}
+EXPORT_SYMBOL(v4l2_ctrl_s_ctrl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

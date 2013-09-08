@@ -15,7 +15,10 @@
 
 #include "gigaset.h"
 #include <linux/isdnif.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define SBUFSIZE	4096	/* sk_buff payload size */
 #define TRANSBUFSIZE	768	/* bytes per skb for transparent receive */
@@ -243,7 +246,11 @@ static int command_from_LL(isdn_ctrl *cntrl)
 		dev_kfree_skb(bcs->rx_skb);
 		gigaset_new_rx_skb(bcs);
 
+<<<<<<< HEAD
 		commands = kzalloc(AT_NUM * (sizeof *commands), GFP_ATOMIC);
+=======
+		commands = kzalloc(AT_NUM*(sizeof *commands), GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!commands) {
 			gigaset_free_channel(bcs);
 			dev_err(cs->dev, "ISDN_CMD_DIAL: out of memory\n");
@@ -261,7 +268,11 @@ static int command_from_LL(isdn_ctrl *cntrl)
 			if (!commands[AT_TYPE])
 				goto oom;
 			snprintf(commands[AT_DIAL], l,
+<<<<<<< HEAD
 				 "D%s\r", cntrl->parm.setup.phone + 2);
+=======
+				 "D%s\r", cntrl->parm.setup.phone+2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			commands[AT_TYPE] = kstrdup("^SCTP=1\r", GFP_ATOMIC);
 			if (!commands[AT_TYPE])
@@ -482,7 +493,11 @@ int gigaset_isdn_icall(struct at_state_t *at_state)
 		response.parm.setup.si2 = 2;
 	} else {
 		dev_warn(cs->dev, "RING ignored - unsupported BC %s\n",
+<<<<<<< HEAD
 			 at_state->str_var[STR_ZBC]);
+=======
+		     at_state->str_var[STR_ZBC]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ICALL_IGNORE;
 	}
 	if (at_state->str_var[STR_NMBR]) {
@@ -518,7 +533,11 @@ int gigaset_isdn_icall(struct at_state_t *at_state)
 		return ICALL_REJECT;
 	case 3:	/* incomplete */
 		dev_warn(cs->dev,
+<<<<<<< HEAD
 			 "LL requested unsupported feature: Incomplete Number\n");
+=======
+		       "LL requested unsupported feature: Incomplete Number\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ICALL_IGNORE;
 	case 4:	/* proceeding */
 		/* Gigaset will send ALERTING anyway.
@@ -624,6 +643,11 @@ int gigaset_isdn_regdev(struct cardstate *cs, const char *isdnid)
 {
 	isdn_if *iif;
 
+<<<<<<< HEAD
+=======
+	pr_info("ISDN4Linux interface\n");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iif = kmalloc(sizeof *iif, GFP_KERNEL);
 	if (!iif) {
 		pr_err("out of memory\n");
@@ -682,7 +706,10 @@ void gigaset_isdn_unregdev(struct cardstate *cs)
  */
 void gigaset_isdn_regdrv(void)
 {
+<<<<<<< HEAD
 	pr_info("ISDN4Linux interface\n");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* nothing to do */
 }
 

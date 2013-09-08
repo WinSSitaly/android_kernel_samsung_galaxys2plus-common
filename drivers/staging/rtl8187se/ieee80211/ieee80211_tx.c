@@ -445,7 +445,11 @@ int ieee80211_rtl_xmit(struct sk_buff *skb,
 		(CFG_IEEE80211_COMPUTE_FCS | CFG_IEEE80211_RESERVE_FCS))
 			bytes_per_frag -= IEEE80211_FCS_LEN;
 
+<<<<<<< HEAD
 		/* Each fragment may need to have room for encryption pre/postfix */
+=======
+		/* Each fragment may need to have room for encryptiong pre/postfix */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (encrypt)
 			bytes_per_frag -= crypt->ops->extra_prefix_len +
 				crypt->ops->extra_postfix_len;

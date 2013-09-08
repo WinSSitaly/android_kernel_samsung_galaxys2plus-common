@@ -264,7 +264,11 @@ void *trace_seq_reserve(struct trace_seq *s, size_t len)
 	return ret;
 }
 
+<<<<<<< HEAD
 int trace_seq_path(struct trace_seq *s, const struct path *path)
+=======
+int trace_seq_path(struct trace_seq *s, struct path *path)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned char *p;
 
@@ -300,7 +304,11 @@ ftrace_print_flags_seq(struct trace_seq *p, const char *delim,
 	unsigned long mask;
 	const char *str;
 	const char *ret = p->buffer + p->len;
+<<<<<<< HEAD
 	int i, first = 1;
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0;  flag_array[i].name && flags; i++) {
 
@@ -310,16 +318,25 @@ ftrace_print_flags_seq(struct trace_seq *p, const char *delim,
 
 		str = flag_array[i].name;
 		flags &= ~mask;
+<<<<<<< HEAD
 		if (!first && delim)
 			trace_seq_puts(p, delim);
 		else
 			first = 0;
+=======
+		if (p->len && delim)
+			trace_seq_puts(p, delim);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		trace_seq_puts(p, str);
 	}
 
 	/* check for left over flags */
 	if (flags) {
+<<<<<<< HEAD
 		if (!first && delim)
+=======
+		if (p->len && delim)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			trace_seq_puts(p, delim);
 		trace_seq_printf(p, "0x%lx", flags);
 	}
@@ -346,7 +363,11 @@ ftrace_print_symbols_seq(struct trace_seq *p, unsigned long val,
 		break;
 	}
 
+<<<<<<< HEAD
 	if (ret == (const char *)(p->buffer + p->len))
+=======
+	if (!p->len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		trace_seq_printf(p, "0x%lx", val);
 		
 	trace_seq_putc(p, 0);
@@ -372,7 +393,11 @@ ftrace_print_symbols_seq_u64(struct trace_seq *p, unsigned long long val,
 		break;
 	}
 
+<<<<<<< HEAD
 	if (ret == (const char *)(p->buffer + p->len))
+=======
+	if (!p->len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		trace_seq_printf(p, "0x%llx", val);
 
 	trace_seq_putc(p, 0);
@@ -629,6 +654,7 @@ int trace_print_context(struct trace_iterator *iter)
 	unsigned long usec_rem = do_div(t, USEC_PER_SEC);
 	unsigned long secs = (unsigned long)t;
 	char comm[TASK_COMM_LEN];
+<<<<<<< HEAD
 	int ret;
 
 	trace_find_cmdline(entry->pid, comm);
@@ -646,14 +672,24 @@ int trace_print_context(struct trace_iterator *iter)
 
 	return trace_seq_printf(s, " %5lu.%06lu: ",
 				secs, usec_rem);
+=======
+
+	trace_find_cmdline(entry->pid, comm);
+
+	return trace_seq_printf(s, "%16s-%-5d [%03d] %5lu.%06lu: ",
+				comm, entry->pid, iter->cpu, secs, usec_rem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int trace_print_lat_context(struct trace_iterator *iter)
 {
 	u64 next_ts;
 	int ret;
+<<<<<<< HEAD
 	/* trace_find_next_entry will reset ent_size */
 	int ent_size = iter->ent_size;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct trace_seq *s = &iter->seq;
 	struct trace_entry *entry = iter->ent,
 			   *next_entry = trace_find_next_entry(iter, NULL,
@@ -662,9 +698,12 @@ int trace_print_lat_context(struct trace_iterator *iter)
 	unsigned long abs_usecs = ns2usecs(iter->ts - iter->tr->time_start);
 	unsigned long rel_usecs;
 
+<<<<<<< HEAD
 	/* Restore the original ent_size */
 	iter->ent_size = ent_size;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!next_entry)
 		next_ts = iter->ts;
 	rel_usecs = ns2usecs(next_ts - iter->ts);
@@ -1126,6 +1165,7 @@ static enum print_line_t trace_stack_print(struct trace_iterator *iter,
 {
 	struct stack_entry *field;
 	struct trace_seq *s = &iter->seq;
+<<<<<<< HEAD
 	unsigned long *p;
 	unsigned long *end;
 
@@ -1140,6 +1180,21 @@ static enum print_line_t trace_stack_print(struct trace_iterator *iter,
 			goto partial;
 
 		if (!seq_print_ip_sym(s, *p, flags))
+=======
+	int i;
+
+	trace_assign_type(field, iter->ent);
+
+	if (!trace_seq_puts(s, "<stack trace>\n"))
+		goto partial;
+	for (i = 0; i < FTRACE_STACK_ENTRIES; i++) {
+		if (!field->caller[i] || (field->caller[i] == ULONG_MAX))
+			break;
+		if (!trace_seq_puts(s, " => "))
+			goto partial;
+
+		if (!seq_print_ip_sym(s, field->caller[i], flags))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto partial;
 		if (!trace_seq_puts(s, "\n"))
 			goto partial;

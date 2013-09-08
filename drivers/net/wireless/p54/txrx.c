@@ -16,11 +16,17 @@
  * published by the Free Software Foundation.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/init.h>
 #include <linux/firmware.h>
 #include <linux/etherdevice.h>
 #include <asm/div64.h>
+=======
+#include <linux/init.h>
+#include <linux/firmware.h>
+#include <linux/etherdevice.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <net/mac80211.h>
 
@@ -242,7 +248,11 @@ void p54_free_skb(struct ieee80211_hw *dev, struct sk_buff *skb)
 
 	skb_unlink(skb, &priv->tx_queue);
 	p54_tx_qos_accounting_free(priv, skb);
+<<<<<<< HEAD
 	ieee80211_free_txskb(dev, skb);
+=======
+	dev_kfree_skb_any(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(p54_free_skb);
 
@@ -509,8 +519,11 @@ static void p54_rx_stats(struct p54_common *priv, struct sk_buff *skb)
 	struct p54_hdr *hdr = (struct p54_hdr *) skb->data;
 	struct p54_statistics *stats = (struct p54_statistics *) hdr->data;
 	struct sk_buff *tmp;
+<<<<<<< HEAD
 	struct ieee80211_channel *chan;
 	unsigned int i, rssi, tx, cca, dtime, dtotal, dcca, dtx, drssi, unit;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 tsf32;
 
 	if (unlikely(priv->mode == NL80211_IFTYPE_UNSPECIFIED))
@@ -527,6 +540,7 @@ static void p54_rx_stats(struct p54_common *priv, struct sk_buff *skb)
 
 	priv->noise = p54_rssi_to_dbm(priv, le32_to_cpu(stats->noise));
 
+<<<<<<< HEAD
 	/*
 	 * STSW450X LMAC API page 26 - 3.8 Statistics
 	 * "The exact measurement period can be derived from the
@@ -596,6 +610,10 @@ static void p54_rx_stats(struct p54_common *priv, struct sk_buff *skb)
 	tmp = p54_find_and_unlink_skb(priv, hdr->req_id);
 	dev_kfree_skb_any(tmp);
 	complete(&priv->stat_comp);
+=======
+	tmp = p54_find_and_unlink_skb(priv, hdr->req_id);
+	dev_kfree_skb_any(tmp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void p54_rx_trap(struct p54_common *priv, struct sk_buff *skb)
@@ -690,7 +708,11 @@ static void p54_tx_80211_header(struct p54_common *priv, struct sk_buff *skb,
 	if (!(info->flags & IEEE80211_TX_CTL_ASSIGN_SEQ))
 		*flags |= P54_HDR_FLAG_DATA_OUT_SEQNR;
 
+<<<<<<< HEAD
 	if (info->flags & IEEE80211_TX_CTL_NO_PS_BUFFER)
+=======
+	if (info->flags & IEEE80211_TX_CTL_PSPOLL_RESPONSE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*flags |= P54_HDR_FLAG_DATA_OUT_NOCANCEL;
 
 	if (info->flags & IEEE80211_TX_CTL_CLEAR_PS_FILT)
@@ -788,7 +810,11 @@ void p54_tx_80211(struct ieee80211_hw *dev, struct sk_buff *skb)
 			    &hdr_flags, &aid, &burst_allowed);
 
 	if (p54_tx_qos_accounting_alloc(priv, skb, queue)) {
+<<<<<<< HEAD
 		ieee80211_free_txskb(dev, skb);
+=======
+		dev_kfree_skb_any(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 

@@ -15,6 +15,7 @@
 #include <linux/errno.h>
 #include <linux/list.h>
 
+<<<<<<< HEAD
 /*
  * Keep this list arranged in rough order of priority. Anything listed after
  * KMSG_DUMP_OOPS will not be logged by default unless printk.always_kmsg_dump
@@ -27,6 +28,16 @@ enum kmsg_dump_reason {
 	KMSG_DUMP_RESTART,
 	KMSG_DUMP_HALT,
 	KMSG_DUMP_POWEROFF,
+=======
+enum kmsg_dump_reason {
+	KMSG_DUMP_OOPS,
+	KMSG_DUMP_PANIC,
+	KMSG_DUMP_KEXEC,
+	KMSG_DUMP_RESTART,
+	KMSG_DUMP_HALT,
+	KMSG_DUMP_POWEROFF,
+	KMSG_DUMP_EMERG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**

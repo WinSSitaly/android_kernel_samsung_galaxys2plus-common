@@ -344,7 +344,11 @@ out_err:
 	return PTR_ERR(p);
 }
 
+<<<<<<< HEAD
 static struct crypto_blkcipher *
+=======
+struct crypto_blkcipher *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 context_v2_alloc_cipher(struct krb5_ctx *ctx, const char *cname, u8 *key)
 {
 	struct crypto_blkcipher *cp;
@@ -744,6 +748,7 @@ static struct pf_desc gss_kerberos_pfs[] = {
 	},
 };
 
+<<<<<<< HEAD
 MODULE_ALIAS("rpc-auth-gss-krb5");
 MODULE_ALIAS("rpc-auth-gss-krb5i");
 MODULE_ALIAS("rpc-auth-gss-krb5p");
@@ -751,6 +756,8 @@ MODULE_ALIAS("rpc-auth-gss-390003");
 MODULE_ALIAS("rpc-auth-gss-390004");
 MODULE_ALIAS("rpc-auth-gss-390005");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct gss_api_mech gss_kerberos_mech = {
 	.gm_name	= "krb5",
 	.gm_owner	= THIS_MODULE,

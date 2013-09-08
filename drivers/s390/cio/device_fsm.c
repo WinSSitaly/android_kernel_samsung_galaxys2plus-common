@@ -496,6 +496,7 @@ static void ccw_device_reset_path_events(struct ccw_device *cdev)
 	cdev->private->pgid_reset_mask = 0;
 }
 
+<<<<<<< HEAD
 static void create_fake_irb(struct irb *irb, int type)
 {
 	memset(irb, 0, sizeof(*irb));
@@ -516,6 +517,10 @@ static void create_fake_irb(struct irb *irb, int type)
 }
 
 void ccw_device_verify_done(struct ccw_device *cdev, int err)
+=======
+void
+ccw_device_verify_done(struct ccw_device *cdev, int err)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct subchannel *sch;
 
@@ -538,8 +543,17 @@ callback:
 		ccw_device_done(cdev, DEV_STATE_ONLINE);
 		/* Deliver fake irb to device driver, if needed. */
 		if (cdev->private->flags.fake_irb) {
+<<<<<<< HEAD
 			create_fake_irb(&cdev->private->irb,
 					cdev->private->flags.fake_irb);
+=======
+			memset(&cdev->private->irb, 0, sizeof(struct irb));
+			cdev->private->irb.scsw.cmd.cc = 1;
+			cdev->private->irb.scsw.cmd.fctl = SCSW_FCTL_START_FUNC;
+			cdev->private->irb.scsw.cmd.actl = SCSW_ACTL_START_PEND;
+			cdev->private->irb.scsw.cmd.stctl =
+				SCSW_STCTL_STATUS_PEND;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cdev->private->flags.fake_irb = 0;
 			if (cdev->handler)
 				cdev->handler(cdev, cdev->private->intparm,

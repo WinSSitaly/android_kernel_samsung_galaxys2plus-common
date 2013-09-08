@@ -53,7 +53,11 @@
 int cifsFYI = 0;
 int cifsERROR = 1;
 int traceSMB = 0;
+<<<<<<< HEAD
 bool enable_oplocks = true;
+=======
+unsigned int oplockEnabled = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 unsigned int linuxExtEnabled = 1;
 unsigned int lookupCacheEnabled = 1;
 unsigned int multiuser_mount = 0;
@@ -74,6 +78,7 @@ module_param(cifs_min_small, int, 0);
 MODULE_PARM_DESC(cifs_min_small, "Small network buffers in pool. Default: 30 "
 				 "Range: 2 to 256");
 unsigned int cifs_max_pending = CIFS_MAX_REQ;
+<<<<<<< HEAD
 module_param(cifs_max_pending, int, 0444);
 MODULE_PARM_DESC(cifs_max_pending, "Simultaneous requests to server. "
 				   "Default: 32767 Range: 2 to 32767.");
@@ -81,11 +86,41 @@ module_param(enable_oplocks, bool, 0644);
 MODULE_PARM_DESC(enable_oplocks, "Enable or disable oplocks (bool). Default:"
 				 "y/Y/1");
 
+=======
+module_param(cifs_max_pending, int, 0);
+MODULE_PARM_DESC(cifs_max_pending, "Simultaneous requests to server. "
+				   "Default: 50 Range: 2 to 256");
+unsigned short echo_retries = 5;
+module_param(echo_retries, ushort, 0644);
+MODULE_PARM_DESC(echo_retries, "Number of echo attempts before giving up and "
+			       "reconnecting server. Default: 5. 0 means "
+			       "never reconnect.");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern mempool_t *cifs_sm_req_poolp;
 extern mempool_t *cifs_req_poolp;
 extern mempool_t *cifs_mid_poolp;
 
+<<<<<<< HEAD
 struct workqueue_struct	*cifsiod_wq;
+=======
+void
+cifs_sb_active(struct super_block *sb)
+{
+	struct cifs_sb_info *server = CIFS_SB(sb);
+
+	if (atomic_inc_return(&server->active) == 1)
+		atomic_inc(&sb->s_active);
+}
+
+void
+cifs_sb_deactive(struct super_block *sb)
+{
+	struct cifs_sb_info *server = CIFS_SB(sb);
+
+	if (atomic_dec_and_test(&server->active))
+		deactivate_super(sb);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int
 cifs_read_super(struct super_block *sb)
@@ -116,10 +151,19 @@ cifs_read_super(struct super_block *sb)
 
 	if (IS_ERR(inode)) {
 		rc = PTR_ERR(inode);
+<<<<<<< HEAD
 		goto out_no_root;
 	}
 
 	sb->s_root = d_make_root(inode);
+=======
+		inode = NULL;
+		goto out_no_root;
+	}
+
+	sb->s_root = d_alloc_root(inode);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!sb->s_root) {
 		rc = -ENOMEM;
 		goto out_no_root;
@@ -131,17 +175,31 @@ cifs_read_super(struct super_block *sb)
 	else
 		sb->s_d_op = &cifs_dentry_ops;
 
+<<<<<<< HEAD
 #ifdef CONFIG_CIFS_NFSD_EXPORT
+=======
+#ifdef CIFS_NFSD_EXPORT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_SERVER_INUM) {
 		cFYI(1, "export ops supported");
 		sb->s_export_op = &cifs_export_ops;
 	}
+<<<<<<< HEAD
 #endif /* CONFIG_CIFS_NFSD_EXPORT */
+=======
+#endif /* CIFS_NFSD_EXPORT */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
 out_no_root:
 	cERROR(1, "cifs_read_super: get root inode failed");
+<<<<<<< HEAD
+=======
+	if (inode)
+		iput(inode);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -202,7 +260,11 @@ cifs_statfs(struct dentry *dentry, struct kstatfs *buf)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int cifs_permission(struct inode *inode, int mask)
+=======
+static int cifs_permission(struct inode *inode, int mask, unsigned int flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cifs_sb_info *cifs_sb;
 
@@ -217,7 +279,11 @@ static int cifs_permission(struct inode *inode, int mask)
 		on the client (above and beyond ACL on servers) for
 		servers which do not support setting and viewing mode bits,
 		so allowing client to check permissions is useful */
+<<<<<<< HEAD
 		return generic_permission(inode, mask);
+=======
+		return generic_permission(inode, mask, flags, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct kmem_cache *cifs_inode_cachep;
@@ -335,9 +401,15 @@ cifs_show_security(struct seq_file *s, struct TCP_Server_Info *server)
  * ones are.
  */
 static int
+<<<<<<< HEAD
 cifs_show_options(struct seq_file *s, struct dentry *root)
 {
 	struct cifs_sb_info *cifs_sb = CIFS_SB(root->d_sb);
+=======
+cifs_show_options(struct seq_file *s, struct vfsmount *m)
+{
+	struct cifs_sb_info *cifs_sb = CIFS_SB(m->mnt_sb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct cifs_tcon *tcon = cifs_sb_master_tcon(cifs_sb);
 	struct sockaddr *srcaddr;
 	srcaddr = (struct sockaddr *)&tcon->ses->server->srcaddr;
@@ -370,13 +442,21 @@ cifs_show_options(struct seq_file *s, struct dentry *root)
 				   (int)(srcaddr->sa_family));
 	}
 
+<<<<<<< HEAD
 	seq_printf(s, ",uid=%u", cifs_sb->mnt_uid);
+=======
+	seq_printf(s, ",uid=%d", cifs_sb->mnt_uid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_OVERR_UID)
 		seq_printf(s, ",forceuid");
 	else
 		seq_printf(s, ",noforceuid");
 
+<<<<<<< HEAD
 	seq_printf(s, ",gid=%u", cifs_sb->mnt_gid);
+=======
+	seq_printf(s, ",gid=%d", cifs_sb->mnt_gid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_OVERR_GID)
 		seq_printf(s, ",forcegid");
 	else
@@ -385,7 +465,11 @@ cifs_show_options(struct seq_file *s, struct dentry *root)
 	cifs_show_address(s, tcon->ses->server);
 
 	if (!tcon->unix_ext)
+<<<<<<< HEAD
 		seq_printf(s, ",file_mode=0%ho,dir_mode=0%ho",
+=======
+		seq_printf(s, ",file_mode=0%o,dir_mode=0%o",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					   cifs_sb->mnt_file_mode,
 					   cifs_sb->mnt_dir_mode);
 	if (tcon->seal)
@@ -422,12 +506,17 @@ cifs_show_options(struct seq_file *s, struct dentry *root)
 		seq_printf(s, ",cifsacl");
 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_DYNPERM)
 		seq_printf(s, ",dynperm");
+<<<<<<< HEAD
 	if (root->d_sb->s_flags & MS_POSIXACL)
+=======
+	if (m->mnt_sb->s_flags & MS_POSIXACL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		seq_printf(s, ",acl");
 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MF_SYMLINKS)
 		seq_printf(s, ",mfsymlinks");
 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_FSCACHE)
 		seq_printf(s, ",fsc");
+<<<<<<< HEAD
 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_NOSSYNC)
 		seq_printf(s, ",nostrictsync");
 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_NO_PERM)
@@ -443,6 +532,13 @@ cifs_show_options(struct seq_file *s, struct dentry *root)
 	seq_printf(s, ",wsize=%u", cifs_sb->wsize);
 	/* convert actimeo and display it in seconds */
 	seq_printf(s, ",actimeo=%lu", cifs_sb->actimeo / HZ);
+=======
+
+	seq_printf(s, ",rsize=%d", cifs_sb->rsize);
+	seq_printf(s, ",wsize=%d", cifs_sb->wsize);
+	/* convert actimeo and display it in seconds */
+		seq_printf(s, ",actimeo=%lu", cifs_sb->actimeo / HZ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -484,7 +580,11 @@ static void cifs_umount_begin(struct super_block *sb)
 }
 
 #ifdef CONFIG_CIFS_STATS2
+<<<<<<< HEAD
 static int cifs_show_stats(struct seq_file *s, struct dentry *root)
+=======
+static int cifs_show_stats(struct seq_file *s, struct vfsmount *mnt)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* BB FIXME */
 	return 0;
@@ -536,6 +636,10 @@ cifs_get_root(struct smb_vol *vol, struct super_block *sb)
 	char *full_path = NULL;
 	char *s, *p;
 	char sep;
+<<<<<<< HEAD
+=======
+	int xid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	full_path = cifs_build_path_to_root(vol, cifs_sb,
 					    cifs_sb_master_tcon(cifs_sb));
@@ -544,6 +648,10 @@ cifs_get_root(struct smb_vol *vol, struct super_block *sb)
 
 	cFYI(1, "Get root dentry for %s", full_path);
 
+<<<<<<< HEAD
+=======
+	xid = GetXid();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sep = CIFS_DIR_SEP(cifs_sb);
 	dentry = dget(sb->s_root);
 	p = s = full_path;
@@ -557,11 +665,14 @@ cifs_get_root(struct smb_vol *vol, struct super_block *sb)
 			dentry = ERR_PTR(-ENOENT);
 			break;
 		}
+<<<<<<< HEAD
 		if (!S_ISDIR(dir->i_mode)) {
 			dput(dentry);
 			dentry = ERR_PTR(-ENOTDIR);
 			break;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* skip separators */
 		while (*s == sep)
@@ -579,6 +690,10 @@ cifs_get_root(struct smb_vol *vol, struct super_block *sb)
 		dput(dentry);
 		dentry = child;
 	} while (!IS_ERR(dentry));
+<<<<<<< HEAD
+=======
+	_FreeXid(xid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(full_path);
 	return dentry;
 }
@@ -700,11 +815,16 @@ static ssize_t cifs_file_aio_write(struct kiocb *iocb, const struct iovec *iov,
 
 static loff_t cifs_llseek(struct file *file, loff_t offset, int origin)
 {
+<<<<<<< HEAD
 	/*
 	 * origin == SEEK_END || SEEK_DATA || SEEK_HOLE => we must revalidate
 	 * the cached file length
 	 */
 	if (origin != SEEK_SET && origin != SEEK_CUR) {
+=======
+	/* origin == SEEK_END => we must revalidate the cached file length */
+	if (origin == SEEK_END) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int rc;
 		struct inode *inode = file->f_path.dentry->d_inode;
 
@@ -731,7 +851,11 @@ static loff_t cifs_llseek(struct file *file, loff_t offset, int origin)
 		if (rc < 0)
 			return (loff_t)rc;
 	}
+<<<<<<< HEAD
 	return generic_file_llseek(file, offset, origin);
+=======
+	return generic_file_llseek_unlocked(file, offset, origin);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int cifs_setlease(struct file *file, long arg, struct file_lock **lease)
@@ -950,8 +1074,12 @@ cifs_init_once(void *inode)
 	struct cifsInodeInfo *cifsi = inode;
 
 	inode_init_once(&cifsi->vfs_inode);
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&cifsi->llist);
 	mutex_init(&cifsi->lock_mutex);
+=======
+	INIT_LIST_HEAD(&cifsi->lockList);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -1117,6 +1245,7 @@ init_cifs(void)
 	if (cifs_max_pending < 2) {
 		cifs_max_pending = 2;
 		cFYI(1, "cifs_max_pending set to min of 2");
+<<<<<<< HEAD
 	} else if (cifs_max_pending > CIFS_MAX_REQ) {
 		cifs_max_pending = CIFS_MAX_REQ;
 		cFYI(1, "cifs_max_pending set to max of %u", CIFS_MAX_REQ);
@@ -1126,11 +1255,20 @@ init_cifs(void)
 	if (!cifsiod_wq) {
 		rc = -ENOMEM;
 		goto out_clean_proc;
+=======
+	} else if (cifs_max_pending > 256) {
+		cifs_max_pending = 256;
+		cFYI(1, "cifs_max_pending set to max of 256");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	rc = cifs_fscache_register();
 	if (rc)
+<<<<<<< HEAD
 		goto out_destroy_wq;
+=======
+		goto out_clean_proc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rc = cifs_init_inodecache();
 	if (rc)
@@ -1178,8 +1316,11 @@ out_destroy_inodecache:
 	cifs_destroy_inodecache();
 out_unreg_fscache:
 	cifs_fscache_unregister();
+<<<<<<< HEAD
 out_destroy_wq:
 	destroy_workqueue(cifsiod_wq);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_clean_proc:
 	cifs_proc_clean();
 	return rc;
@@ -1189,8 +1330,16 @@ static void __exit
 exit_cifs(void)
 {
 	cFYI(DBG2, "exit_cifs");
+<<<<<<< HEAD
 	unregister_filesystem(&cifs_fs_type);
 	cifs_dfs_release_automount_timer();
+=======
+	cifs_proc_clean();
+	cifs_fscache_unregister();
+#ifdef CONFIG_CIFS_DFS_UPCALL
+	cifs_dfs_release_automount_timer();
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_CIFS_ACL
 	cifs_destroy_idmaptrees();
 	exit_cifs_idmap();
@@ -1198,12 +1347,19 @@ exit_cifs(void)
 #ifdef CONFIG_CIFS_UPCALL
 	unregister_key_type(&cifs_spnego_key_type);
 #endif
+<<<<<<< HEAD
 	cifs_destroy_request_bufs();
 	cifs_destroy_mids();
 	cifs_destroy_inodecache();
 	cifs_fscache_unregister();
 	destroy_workqueue(cifsiod_wq);
 	cifs_proc_clean();
+=======
+	unregister_filesystem(&cifs_fs_type);
+	cifs_destroy_inodecache();
+	cifs_destroy_mids();
+	cifs_destroy_request_bufs();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 MODULE_AUTHOR("Steve French <sfrench@us.ibm.com>");

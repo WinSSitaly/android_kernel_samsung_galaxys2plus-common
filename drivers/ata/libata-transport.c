@@ -32,7 +32,10 @@
 #include <linux/libata.h>
 #include <linux/hdreg.h>
 #include <linux/uaccess.h>
+<<<<<<< HEAD
 #include <linux/pm_runtime.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "libata.h"
 #include "libata-transport.h"
@@ -280,7 +283,10 @@ int ata_tport_add(struct device *parent,
 	struct device *dev = &ap->tdev;
 
 	device_initialize(dev);
+<<<<<<< HEAD
 	dev->type = &ata_port_type;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev->parent = get_device(parent);
 	dev->release = ata_tport_release;
@@ -291,11 +297,14 @@ int ata_tport_add(struct device *parent,
 		goto tport_err;
 	}
 
+<<<<<<< HEAD
 	device_enable_async_suspend(dev);
 	pm_runtime_set_active(dev);
 	pm_runtime_enable(dev);
 	pm_runtime_forbid(dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	transport_add_device(dev);
 	transport_configure_device(dev);
 

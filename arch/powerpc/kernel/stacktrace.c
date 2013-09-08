@@ -10,7 +10,11 @@
  *      2 of the License, or (at your option) any later version.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/stacktrace.h>
 #include <asm/ptrace.h>

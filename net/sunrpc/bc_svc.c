@@ -27,6 +27,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * reply over an existing open connection previously established by the client.
  */
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_NFS_V4_1)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 
 #include <linux/sunrpc/xprt.h>
@@ -61,3 +66,7 @@ int bc_send(struct rpc_rqst *req)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+#endif /* CONFIG_NFS_V4_1 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

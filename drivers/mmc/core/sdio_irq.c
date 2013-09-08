@@ -16,7 +16,10 @@
 #include <linux/kernel.h>
 #include <linux/sched.h>
 #include <linux/kthread.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/wait.h>
 #include <linux/delay.h>
 
@@ -28,27 +31,43 @@
 
 #include "sdio_ops.h"
 
+<<<<<<< HEAD
 static int process_sdio_pending_irqs(struct mmc_host *host)
 {
 	struct mmc_card *card = host->card;
+=======
+static int process_sdio_pending_irqs(struct mmc_card *card)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i, ret, count;
 	unsigned char pending;
 	struct sdio_func *func;
 
 	/*
 	 * Optimization, if there is only 1 function interrupt registered
+<<<<<<< HEAD
 	 * and we know an IRQ was signaled then call irq handler directly.
 	 * Otherwise do the full probe.
 	 */
 	func = card->sdio_single_irq;
 	if (func && host->sdio_irq_pending) {
+=======
+	 * call irq handler directly
+	 */
+	func = card->sdio_single_irq;
+	if (func) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		func->irq_handler(func);
 		return 1;
 	}
 
 	ret = mmc_io_rw_direct(card, 0, 0, SDIO_CCCR_INTx, 0, &pending);
 	if (ret) {
+<<<<<<< HEAD
 		pr_debug("%s: error %d reading SDIO_CCCR_INTx\n",
+=======
+		printk(KERN_DEBUG "%s: error %d reading SDIO_CCCR_INTx\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       mmc_card_id(card), ret);
 		return ret;
 	}
@@ -58,7 +77,11 @@ static int process_sdio_pending_irqs(struct mmc_host *host)
 		if (pending & (1 << i)) {
 			func = card->sdio_func[i - 1];
 			if (!func) {
+<<<<<<< HEAD
 				pr_warning("%s: pending IRQ for "
+=======
+				printk(KERN_WARNING "%s: pending IRQ for "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"non-existent function\n",
 					mmc_card_id(card));
 				ret = -EINVAL;
@@ -66,7 +89,11 @@ static int process_sdio_pending_irqs(struct mmc_host *host)
 				func->irq_handler(func);
 				count++;
 			} else {
+<<<<<<< HEAD
 				pr_warning("%s: pending IRQ with no handler\n",
+=======
+				printk(KERN_WARNING "%s: pending IRQ with no handler\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				       sdio_func_id(func));
 				ret = -EINVAL;
 			}
@@ -118,8 +145,12 @@ static int sdio_irq_thread(void *_host)
 		ret = __mmc_claim_host(host, &host->sdio_irq_thread_abort);
 		if (ret)
 			break;
+<<<<<<< HEAD
 		ret = process_sdio_pending_irqs(host);
 		host->sdio_irq_pending = false;
+=======
+		ret = process_sdio_pending_irqs(host->card);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mmc_release_host(host);
 
 		/*
@@ -149,21 +180,31 @@ static int sdio_irq_thread(void *_host)
 		}
 
 		set_current_state(TASK_INTERRUPTIBLE);
+<<<<<<< HEAD
 		if (host->caps & MMC_CAP_SDIO_IRQ) {
 			mmc_host_clk_hold(host);
 			host->ops->enable_sdio_irq(host, 1);
 			mmc_host_clk_release(host);
 		}
+=======
+		if (host->caps & MMC_CAP_SDIO_IRQ)
+			host->ops->enable_sdio_irq(host, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!kthread_should_stop())
 			schedule_timeout(period);
 		set_current_state(TASK_RUNNING);
 	} while (!kthread_should_stop());
 
+<<<<<<< HEAD
 	if (host->caps & MMC_CAP_SDIO_IRQ) {
 		mmc_host_clk_hold(host);
 		host->ops->enable_sdio_irq(host, 0);
 		mmc_host_clk_release(host);
 	}
+=======
+	if (host->caps & MMC_CAP_SDIO_IRQ)
+		host->ops->enable_sdio_irq(host, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pr_debug("%s: IRQ thread exiting with code %d\n",
 		 mmc_hostname(host), ret);

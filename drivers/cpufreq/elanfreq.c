@@ -23,7 +23,10 @@
 #include <linux/delay.h>
 #include <linux/cpufreq.h>
 
+<<<<<<< HEAD
 #include <asm/cpu_device_id.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/msr.h>
 #include <linux/timex.h>
 #include <linux/io.h>
@@ -278,6 +281,7 @@ static struct cpufreq_driver elanfreq_driver = {
 	.attr		= elanfreq_attr,
 };
 
+<<<<<<< HEAD
 static const struct x86_cpu_id elan_id[] = {
 	{ X86_VENDOR_AMD, 4, 10, },
 	{}
@@ -288,6 +292,19 @@ static int __init elanfreq_init(void)
 {
 	if (!x86_match_cpu(elan_id))
 		return -ENODEV;
+=======
+
+static int __init elanfreq_init(void)
+{
+	struct cpuinfo_x86 *c = &cpu_data(0);
+
+	/* Test if we have the right hardware */
+	if ((c->x86_vendor != X86_VENDOR_AMD) ||
+		(c->x86 != 4) || (c->x86_model != 10)) {
+		printk(KERN_INFO "elanfreq: error: no Elan processor found!\n");
+		return -ENODEV;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return cpufreq_register_driver(&elanfreq_driver);
 }
 

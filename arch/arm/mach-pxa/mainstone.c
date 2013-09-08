@@ -12,7 +12,11 @@
  *  it under the terms of the GNU General Public License version 2 as
  *  published by the Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/platform_device.h>
 #include <linux/syscore_ops.h>
@@ -43,6 +47,10 @@
 #include <asm/mach/flash.h>
 
 #include <mach/pxa27x.h>
+<<<<<<< HEAD
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/mainstone.h>
 #include <mach/audio.h>
 #include <mach/pxafb.h>
@@ -178,8 +186,13 @@ static void __init mainstone_init_irq(void)
 	MST_INTMSKENA = 0;
 	MST_INTSETCLR = 0;
 
+<<<<<<< HEAD
 	irq_set_chained_handler(PXA_GPIO_TO_IRQ(0), mainstone_irq_handler);
 	irq_set_irq_type(PXA_GPIO_TO_IRQ(0), IRQ_TYPE_EDGE_FALLING);
+=======
+	irq_set_chained_handler(IRQ_GPIO(0), mainstone_irq_handler);
+	irq_set_irq_type(IRQ_GPIO(0), IRQ_TYPE_EDGE_FALLING);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_PM
@@ -615,6 +628,7 @@ static void __init mainstone_map_io(void)
 
 MACHINE_START(MAINSTONE, "Intel HCDDBBVA0 Development Platform (aka Mainstone)")
 	/* Maintainer: MontaVista Software Inc. */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,	/* BLOB boot parameter setting */
 	.map_io		= mainstone_map_io,
 	.nr_irqs	= MAINSTONE_NR_IRQS,
@@ -623,4 +637,12 @@ MACHINE_START(MAINSTONE, "Intel HCDDBBVA0 Development Platform (aka Mainstone)")
 	.timer		= &pxa_timer,
 	.init_machine	= mainstone_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params	= 0xa0000100,	/* BLOB boot parameter setting */
+	.map_io		= mainstone_map_io,
+	.nr_irqs	= MAINSTONE_NR_IRQS,
+	.init_irq	= mainstone_init_irq,
+	.timer		= &pxa_timer,
+	.init_machine	= mainstone_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

@@ -3,12 +3,18 @@
  * It prepares command and sends it to firmware when it is ready.
  */
 
+<<<<<<< HEAD
 #include <linux/hardirq.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kfifo.h>
 #include <linux/sched.h>
 #include <linux/slab.h>
 #include <linux/if_arp.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "decl.h"
 #include "cfg.h"
@@ -875,7 +881,10 @@ int lbs_get_reg(struct lbs_private *priv, u16 reg, u16 offset, u32 *value)
 	memset(&cmd, 0, sizeof(cmd));
 	cmd.hdr.size = cpu_to_le16(sizeof(cmd));
 	cmd.action = cpu_to_le16(CMD_ACT_GET);
+<<<<<<< HEAD
 	cmd.offset = cpu_to_le16(offset);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (reg != CMD_MAC_REG_ACCESS &&
 	    reg != CMD_BBP_REG_ACCESS &&
@@ -885,7 +894,11 @@ int lbs_get_reg(struct lbs_private *priv, u16 reg, u16 offset, u32 *value)
 	}
 
 	ret = lbs_cmd_with_response(priv, reg, &cmd);
+<<<<<<< HEAD
 	if (!ret) {
+=======
+	if (ret) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (reg == CMD_BBP_REG_ACCESS || reg == CMD_RF_REG_ACCESS)
 			*value = cmd.value.bbp_rf;
 		else if (reg == CMD_MAC_REG_ACCESS)
@@ -918,7 +931,10 @@ int lbs_set_reg(struct lbs_private *priv, u16 reg, u16 offset, u32 value)
 	memset(&cmd, 0, sizeof(cmd));
 	cmd.hdr.size = cpu_to_le16(sizeof(cmd));
 	cmd.action = cpu_to_le16(CMD_ACT_SET);
+<<<<<<< HEAD
 	cmd.offset = cpu_to_le16(offset);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (reg == CMD_BBP_REG_ACCESS || reg == CMD_RF_REG_ACCESS)
 		cmd.value.bbp_rf = (u8) (value & 0xFF);
@@ -1071,6 +1087,7 @@ static void lbs_cleanup_and_insert_cmd(struct lbs_private *priv,
 	spin_unlock_irqrestore(&priv->driver_lock, flags);
 }
 
+<<<<<<< HEAD
 void __lbs_complete_command(struct lbs_private *priv, struct cmd_ctrl_node *cmd,
 			    int result)
 {
@@ -1085,10 +1102,19 @@ void __lbs_complete_command(struct lbs_private *priv, struct cmd_ctrl_node *cmd,
 	cmd->result = result;
 	cmd->cmdwaitqwoken = 1;
 	wake_up(&cmd->cmdwait_q);
+=======
+void lbs_complete_command(struct lbs_private *priv, struct cmd_ctrl_node *cmd,
+			  int result)
+{
+	cmd->result = result;
+	cmd->cmdwaitqwoken = 1;
+	wake_up_interruptible(&cmd->cmdwait_q);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!cmd->callback || cmd->callback == lbs_cmd_async_callback)
 		__lbs_cleanup_and_insert_cmd(priv, cmd);
 	priv->cur_cmd = NULL;
+<<<<<<< HEAD
 	wake_up(&priv->waitq);
 }
 
@@ -1099,6 +1125,8 @@ void lbs_complete_command(struct lbs_private *priv, struct cmd_ctrl_node *cmd,
 	spin_lock_irqsave(&priv->driver_lock, flags);
 	__lbs_complete_command(priv, cmd, result);
 	spin_unlock_irqrestore(&priv->driver_lock, flags);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int lbs_set_radio(struct lbs_private *priv, u8 preamble, u8 radio_on)
@@ -1270,7 +1298,11 @@ static struct cmd_ctrl_node *lbs_get_free_cmd_node(struct lbs_private *priv)
 	if (!list_empty(&priv->cmdfreeq)) {
 		tempnode = list_first_entry(&priv->cmdfreeq,
 					    struct cmd_ctrl_node, list);
+<<<<<<< HEAD
 		list_del_init(&tempnode->list);
+=======
+		list_del(&tempnode->list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		lbs_deb_host("GET_CMD_NODE: cmd_ctrl_node is not available\n");
 		tempnode = NULL;
@@ -1378,7 +1410,14 @@ int lbs_execute_next_command(struct lbs_private *priv)
 				    cpu_to_le16(PS_MODE_ACTION_EXIT_PS)) {
 					lbs_deb_host(
 					       "EXEC_NEXT_CMD: ignore ENTER_PS cmd\n");
+<<<<<<< HEAD
 					lbs_complete_command(priv, cmdnode, 0);
+=======
+					spin_lock_irqsave(&priv->driver_lock, flags);
+					list_del(&cmdnode->list);
+					lbs_complete_command(priv, cmdnode, 0);
+					spin_unlock_irqrestore(&priv->driver_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 					ret = 0;
 					goto done;
@@ -1388,7 +1427,14 @@ int lbs_execute_next_command(struct lbs_private *priv)
 				    (priv->psstate == PS_STATE_PRE_SLEEP)) {
 					lbs_deb_host(
 					       "EXEC_NEXT_CMD: ignore EXIT_PS cmd in sleep\n");
+<<<<<<< HEAD
 					lbs_complete_command(priv, cmdnode, 0);
+=======
+					spin_lock_irqsave(&priv->driver_lock, flags);
+					list_del(&cmdnode->list);
+					lbs_complete_command(priv, cmdnode, 0);
+					spin_unlock_irqrestore(&priv->driver_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					priv->needtowakeup = 1;
 
 					ret = 0;
@@ -1400,7 +1446,11 @@ int lbs_execute_next_command(struct lbs_private *priv)
 			}
 		}
 		spin_lock_irqsave(&priv->driver_lock, flags);
+<<<<<<< HEAD
 		list_del_init(&cmdnode->list);
+=======
+		list_del(&cmdnode->list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock_irqrestore(&priv->driver_lock, flags);
 		lbs_deb_host("EXEC_NEXT_CMD: sending command 0x%04x\n",
 			    le16_to_cpu(cmd->command));
@@ -1628,7 +1678,11 @@ struct cmd_ctrl_node *__lbs_cmd_async(struct lbs_private *priv,
 		lbs_deb_host("PREP_CMD: cmdnode is NULL\n");
 
 		/* Wake up main thread to execute next command */
+<<<<<<< HEAD
 		wake_up(&priv->waitq);
+=======
+		wake_up_interruptible(&priv->waitq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cmdnode = ERR_PTR(-ENOBUFS);
 		goto done;
 	}
@@ -1648,7 +1702,11 @@ struct cmd_ctrl_node *__lbs_cmd_async(struct lbs_private *priv,
 
 	cmdnode->cmdwaitqwoken = 0;
 	lbs_queue_cmd(priv, cmdnode);
+<<<<<<< HEAD
 	wake_up(&priv->waitq);
+=======
+	wake_up_interruptible(&priv->waitq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
  done:
 	lbs_deb_leave_args(LBS_DEB_HOST, "ret %p", cmdnode);
@@ -1683,6 +1741,7 @@ int __lbs_cmd(struct lbs_private *priv, uint16_t command,
 	}
 
 	might_sleep();
+<<<<<<< HEAD
 
 	/*
 	 * Be careful with signals here. A signal may be received as the system
@@ -1690,6 +1749,9 @@ int __lbs_cmd(struct lbs_private *priv, uint16_t command,
 	 * command, so we perform an uninterruptible sleep.
 	 */
 	wait_event(cmdnode->cmdwait_q, cmdnode->cmdwaitqwoken);
+=======
+	wait_event_interruptible(cmdnode->cmdwait_q, cmdnode->cmdwaitqwoken);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&priv->driver_lock, flags);
 	ret = cmdnode->result;

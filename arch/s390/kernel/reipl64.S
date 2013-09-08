@@ -1,9 +1,14 @@
 /*
+<<<<<<< HEAD
  *    Copyright IBM Corp 2000,2011
+=======
+ *    Copyright IBM Corp 2000,2009
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *    Author(s): Holger Smolinski <Holger.Smolinski@de.ibm.com>,
  *		 Denis Joseph Barrow,
  */
 
+<<<<<<< HEAD
 #include <linux/linkage.h>
 #include <asm/asm-offsets.h>
 
@@ -69,14 +74,41 @@ ENTRY(store_status)
 	.previous
 
 #
+=======
+#include <asm/asm-offsets.h>
+
+#
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # do_reipl_asm
 # Parameter: r2 = schid of reipl device
 #
 
+<<<<<<< HEAD
 ENTRY(do_reipl_asm)
 		basr	%r13,0
 .Lpg0:		lpswe	.Lnewpsw-.Lpg0(%r13)
 .Lpg1:		brasl	%r14,store_status
+=======
+		.globl	do_reipl_asm
+do_reipl_asm:	basr	%r13,0
+.Lpg0:		lpswe	.Lnewpsw-.Lpg0(%r13)
+.Lpg1:		# do store status of all registers
+
+		stg	%r1,.Lregsave-.Lpg0(%r13)
+		lghi	%r1,0x1000
+		stmg	%r0,%r15,__LC_GPREGS_SAVE_AREA-0x1000(%r1)
+		lg	%r0,.Lregsave-.Lpg0(%r13)
+		stg	%r0,__LC_GPREGS_SAVE_AREA-0x1000+8(%r1)
+		stctg	%c0,%c15,__LC_CREGS_SAVE_AREA-0x1000(%r1)
+		stam	%a0,%a15,__LC_AREGS_SAVE_AREA-0x1000(%r1)
+		lg	%r10,.Ldump_pfx-.Lpg0(%r13)
+		mvc	__LC_PREFIX_SAVE_AREA-0x1000(4,%r1),0(%r10)
+		stfpc	__LC_FP_CREG_SAVE_AREA-0x1000(%r1)
+		stckc	.Lclkcmp-.Lpg0(%r13)
+		mvc	__LC_CLOCK_COMP_SAVE_AREA-0x1000(7,%r1),.Lclkcmp-.Lpg0(%r13)
+		stpt	__LC_CPU_TIMER_SAVE_AREA-0x1000(%r1)
+		stg	%r13, __LC_PSW_SAVE_AREA-0x1000+8(%r1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		lctlg	%c6,%c6,.Lall-.Lpg0(%r13)
 		lgr	%r1,%r2
@@ -113,7 +145,14 @@ ENTRY(do_reipl_asm)
 		st	%r14,.Ldispsw+12-.Lpg0(%r13)
 		lpswe	.Ldispsw-.Lpg0(%r13)
 		.align	8
+<<<<<<< HEAD
 .Lall:		.quad	0x00000000ff000000
+=======
+.Lclkcmp:	.quad	0x0000000000000000
+.Lall:		.quad	0x00000000ff000000
+.Ldump_pfx:	.quad	dump_prefix_page
+.Lregsave:	.quad	0x0000000000000000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.align	16
 /*
  * These addresses have to be 31 bit otherwise

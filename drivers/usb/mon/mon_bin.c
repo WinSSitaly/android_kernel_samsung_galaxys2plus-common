@@ -11,7 +11,10 @@
 #include <linux/types.h>
 #include <linux/fs.h>
 #include <linux/cdev.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/usb.h>
 #include <linux/poll.h>
 #include <linux/compat.h>

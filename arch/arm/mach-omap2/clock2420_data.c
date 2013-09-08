@@ -14,6 +14,7 @@
  */
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/io.h>
 #include <linux/clk.h>
 #include <linux/list.h>
@@ -22,6 +23,13 @@
 #include <plat/clkdev_omap.h>
 
 #include "iomap.h"
+=======
+#include <linux/clk.h>
+#include <linux/list.h>
+
+#include <plat/clkdev_omap.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "clock.h"
 #include "clock2xxx.h"
 #include "opp2xxx.h"
@@ -1808,9 +1816,15 @@ static struct omap_clk omap2420_clks[] = {
 	CLK(NULL,	"gfx_ick",	&gfx_ick,	CK_242X),
 	/* DSS domain clocks */
 	CLK("omapdss_dss",	"ick",		&dss_ick,	CK_242X),
+<<<<<<< HEAD
 	CLK(NULL,	"dss1_fck",		&dss1_fck,	CK_242X),
 	CLK(NULL,	"dss2_fck",	&dss2_fck,	CK_242X),
 	CLK(NULL,	"dss_54m_fck",	&dss_54m_fck,	CK_242X),
+=======
+	CLK("omapdss_dss",	"fck",		&dss1_fck,	CK_242X),
+	CLK("omapdss_dss",	"sys_clk",	&dss2_fck,	CK_242X),
+	CLK("omapdss_dss",	"tv_clk",	&dss_54m_fck,	CK_242X),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* L3 domain clocks */
 	CLK(NULL,	"core_l3_ck",	&core_l3_ck,	CK_242X),
 	CLK(NULL,	"ssi_fck",	&ssi_ssr_sst_fck, CK_242X),
@@ -1847,6 +1861,7 @@ static struct omap_clk omap2420_clks[] = {
 	CLK(NULL,	"gpt12_ick",	&gpt12_ick,	CK_242X),
 	CLK(NULL,	"gpt12_fck",	&gpt12_fck,	CK_242X),
 	CLK("omap-mcbsp.1", "ick",	&mcbsp1_ick,	CK_242X),
+<<<<<<< HEAD
 	CLK(NULL,	"mcbsp1_fck",	&mcbsp1_fck,	CK_242X),
 	CLK("omap-mcbsp.2", "ick",	&mcbsp2_ick,	CK_242X),
 	CLK(NULL,	"mcbsp2_fck",	&mcbsp2_fck,	CK_242X),
@@ -1854,6 +1869,15 @@ static struct omap_clk omap2420_clks[] = {
 	CLK(NULL,	"mcspi1_fck",	&mcspi1_fck,	CK_242X),
 	CLK("omap2_mcspi.2", "ick",	&mcspi2_ick,	CK_242X),
 	CLK(NULL,	"mcspi2_fck",	&mcspi2_fck,	CK_242X),
+=======
+	CLK("omap-mcbsp.1", "fck",	&mcbsp1_fck,	CK_242X),
+	CLK("omap-mcbsp.2", "ick",	&mcbsp2_ick,	CK_242X),
+	CLK("omap-mcbsp.2", "fck",	&mcbsp2_fck,	CK_242X),
+	CLK("omap2_mcspi.1", "ick",	&mcspi1_ick,	CK_242X),
+	CLK("omap2_mcspi.1", "fck",	&mcspi1_fck,	CK_242X),
+	CLK("omap2_mcspi.2", "ick",	&mcspi2_ick,	CK_242X),
+	CLK("omap2_mcspi.2", "fck",	&mcspi2_fck,	CK_242X),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CLK(NULL,	"uart1_ick",	&uart1_ick,	CK_242X),
 	CLK(NULL,	"uart1_fck",	&uart1_fck,	CK_242X),
 	CLK(NULL,	"uart2_ick",	&uart2_ick,	CK_242X),
@@ -1863,7 +1887,11 @@ static struct omap_clk omap2420_clks[] = {
 	CLK(NULL,	"gpios_ick",	&gpios_ick,	CK_242X),
 	CLK(NULL,	"gpios_fck",	&gpios_fck,	CK_242X),
 	CLK("omap_wdt",	"ick",		&mpu_wdt_ick,	CK_242X),
+<<<<<<< HEAD
 	CLK(NULL,	"mpu_wdt_fck",	&mpu_wdt_fck,	CK_242X),
+=======
+	CLK("omap_wdt",	"fck",		&mpu_wdt_fck,	CK_242X),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CLK(NULL,	"sync_32k_ick",	&sync_32k_ick,	CK_242X),
 	CLK(NULL,	"wdt1_ick",	&wdt1_ick,	CK_242X),
 	CLK(NULL,	"omapctrl_ick",	&omapctrl_ick,	CK_242X),
@@ -1883,11 +1911,19 @@ static struct omap_clk omap2420_clks[] = {
 	CLK(NULL,	"eac_ick",	&eac_ick,	CK_242X),
 	CLK(NULL,	"eac_fck",	&eac_fck,	CK_242X),
 	CLK("omap_hdq.0", "ick",	&hdq_ick,	CK_242X),
+<<<<<<< HEAD
 	CLK("omap_hdq.0", "fck",	&hdq_fck,	CK_242X),
 	CLK("omap_i2c.1", "ick",	&i2c1_ick,	CK_242X),
 	CLK(NULL,	"i2c1_fck",	&i2c1_fck,	CK_242X),
 	CLK("omap_i2c.2", "ick",	&i2c2_ick,	CK_242X),
 	CLK(NULL,	"i2c2_fck",	&i2c2_fck,	CK_242X),
+=======
+	CLK("omap_hdq.1", "fck",	&hdq_fck,	CK_242X),
+	CLK("omap_i2c.1", "ick",	&i2c1_ick,	CK_242X),
+	CLK("omap_i2c.1", "fck",	&i2c1_fck,	CK_242X),
+	CLK("omap_i2c.2", "ick",	&i2c2_ick,	CK_242X),
+	CLK("omap_i2c.2", "fck",	&i2c2_fck,	CK_242X),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CLK(NULL,	"gpmc_fck",	&gpmc_fck,	CK_242X),
 	CLK(NULL,	"sdma_fck",	&sdma_fck,	CK_242X),
 	CLK(NULL,	"sdma_ick",	&sdma_ick,	CK_242X),
@@ -1901,6 +1937,7 @@ static struct omap_clk omap2420_clks[] = {
 	CLK(NULL,	"pka_ick",	&pka_ick,	CK_242X),
 	CLK(NULL,	"usb_fck",	&usb_fck,	CK_242X),
 	CLK("musb-hdrc",	"fck",	&osc_ck,	CK_242X),
+<<<<<<< HEAD
 	CLK("omap_timer.1",	"32k_ck",	&func_32k_ck,	CK_243X),
 	CLK("omap_timer.2",	"32k_ck",	&func_32k_ck,	CK_243X),
 	CLK("omap_timer.3",	"32k_ck",	&func_32k_ck,	CK_243X),
@@ -1937,6 +1974,8 @@ static struct omap_clk omap2420_clks[] = {
 	CLK("omap_timer.10",	"alt_ck",	&alt_ck,	CK_243X),
 	CLK("omap_timer.11",	"alt_ck",	&alt_ck,	CK_243X),
 	CLK("omap_timer.12",	"alt_ck",	&alt_ck,	CK_243X),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*

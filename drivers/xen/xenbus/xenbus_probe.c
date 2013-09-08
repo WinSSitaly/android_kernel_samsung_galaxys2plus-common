@@ -46,7 +46,10 @@
 #include <linux/mutex.h>
 #include <linux/io.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/page.h>
 #include <asm/pgtable.h>
@@ -257,12 +260,19 @@ int xenbus_dev_remove(struct device *_dev)
 	DPRINTK("%s", dev->nodename);
 
 	free_otherend_watch(dev);
+<<<<<<< HEAD
+=======
+	free_otherend_details(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (drv->remove)
 		drv->remove(dev);
 
+<<<<<<< HEAD
 	free_otherend_details(dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	xenbus_switch_state(dev, XenbusStateClosed);
 	return 0;
 }
@@ -292,9 +302,20 @@ void xenbus_dev_shutdown(struct device *_dev)
 EXPORT_SYMBOL_GPL(xenbus_dev_shutdown);
 
 int xenbus_register_driver_common(struct xenbus_driver *drv,
+<<<<<<< HEAD
 				  struct xen_bus_type *bus)
 {
 	drv->driver.bus = &bus->bus;
+=======
+				  struct xen_bus_type *bus,
+				  struct module *owner,
+				  const char *mod_name)
+{
+	drv->driver.name = drv->name;
+	drv->driver.bus = &bus->bus;
+	drv->driver.owner = owner;
+	drv->driver.mod_name = mod_name;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return driver_register(&drv->driver);
 }
@@ -306,7 +327,12 @@ void xenbus_unregister_driver(struct xenbus_driver *drv)
 }
 EXPORT_SYMBOL_GPL(xenbus_unregister_driver);
 
+<<<<<<< HEAD
 struct xb_find_info {
+=======
+struct xb_find_info
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct xenbus_device *dev;
 	const char *nodename;
 };
@@ -374,6 +400,7 @@ static void xenbus_dev_release(struct device *dev)
 		kfree(to_xenbus_device(dev));
 }
 
+<<<<<<< HEAD
 static ssize_t nodename_show(struct device *dev,
 			     struct device_attribute *attr, char *buf)
 {
@@ -400,6 +427,28 @@ struct device_attribute xenbus_dev_attrs[] = {
 	__ATTR_NULL
 };
 EXPORT_SYMBOL_GPL(xenbus_dev_attrs);
+=======
+static ssize_t xendev_show_nodename(struct device *dev,
+				    struct device_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%s\n", to_xenbus_device(dev)->nodename);
+}
+static DEVICE_ATTR(nodename, S_IRUSR | S_IRGRP | S_IROTH, xendev_show_nodename, NULL);
+
+static ssize_t xendev_show_devtype(struct device *dev,
+				   struct device_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%s\n", to_xenbus_device(dev)->devicetype);
+}
+static DEVICE_ATTR(devtype, S_IRUSR | S_IRGRP | S_IROTH, xendev_show_devtype, NULL);
+
+static ssize_t xendev_show_modalias(struct device *dev,
+				    struct device_attribute *attr, char *buf)
+{
+	return sprintf(buf, "xen:%s\n", to_xenbus_device(dev)->devicetype);
+}
+static DEVICE_ATTR(modalias, S_IRUSR | S_IRGRP | S_IROTH, xendev_show_modalias, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int xenbus_probe_node(struct xen_bus_type *bus,
 		      const char *type,
@@ -451,7 +500,29 @@ int xenbus_probe_node(struct xen_bus_type *bus,
 	if (err)
 		goto fail;
 
+<<<<<<< HEAD
 	return 0;
+=======
+	err = device_create_file(&xendev->dev, &dev_attr_nodename);
+	if (err)
+		goto fail_unregister;
+
+	err = device_create_file(&xendev->dev, &dev_attr_devtype);
+	if (err)
+		goto fail_remove_nodename;
+
+	err = device_create_file(&xendev->dev, &dev_attr_modalias);
+	if (err)
+		goto fail_remove_devtype;
+
+	return 0;
+fail_remove_devtype:
+	device_remove_file(&xendev->dev, &dev_attr_devtype);
+fail_remove_nodename:
+	device_remove_file(&xendev->dev, &dev_attr_nodename);
+fail_unregister:
+	device_unregister(&xendev->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 fail:
 	kfree(xendev);
 	return err;
@@ -635,7 +706,11 @@ int xenbus_dev_cancel(struct device *dev)
 EXPORT_SYMBOL_GPL(xenbus_dev_cancel);
 
 /* A flag to determine if xenstored is 'ready' (i.e. has started) */
+<<<<<<< HEAD
 int xenstored_ready;
+=======
+int xenstored_ready = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 int register_xenstore_notifier(struct notifier_block *nb)
@@ -680,6 +755,7 @@ static int __init xenbus_probe_initcall(void)
 
 device_initcall(xenbus_probe_initcall);
 
+<<<<<<< HEAD
 /* Set up event channel for xenstored which is run as a local process
  * (this is normally used only in dom0)
  */
@@ -750,6 +826,66 @@ static int __init xenbus_init(void)
 				goto out_error;
 		}
 		xen_store_interface = mfn_to_virt(xen_store_mfn);
+=======
+static int __init xenbus_init(void)
+{
+	int err = 0;
+	unsigned long page = 0;
+
+	DPRINTK("");
+
+	err = -ENODEV;
+	if (!xen_domain())
+		return err;
+
+	/*
+	 * Domain0 doesn't have a store_evtchn or store_mfn yet.
+	 */
+	if (xen_initial_domain()) {
+		struct evtchn_alloc_unbound alloc_unbound;
+
+		/* Allocate Xenstore page */
+		page = get_zeroed_page(GFP_KERNEL);
+		if (!page)
+			goto out_error;
+
+		xen_store_mfn = xen_start_info->store_mfn =
+			pfn_to_mfn(virt_to_phys((void *)page) >>
+				   PAGE_SHIFT);
+
+		/* Next allocate a local port which xenstored can bind to */
+		alloc_unbound.dom        = DOMID_SELF;
+		alloc_unbound.remote_dom = 0;
+
+		err = HYPERVISOR_event_channel_op(EVTCHNOP_alloc_unbound,
+						  &alloc_unbound);
+		if (err == -ENOSYS)
+			goto out_error;
+
+		BUG_ON(err);
+		xen_store_evtchn = xen_start_info->store_evtchn =
+			alloc_unbound.port;
+
+		xen_store_interface = mfn_to_virt(xen_store_mfn);
+	} else {
+		if (xen_hvm_domain()) {
+			uint64_t v = 0;
+			err = hvm_get_parameter(HVM_PARAM_STORE_EVTCHN, &v);
+			if (err)
+				goto out_error;
+			xen_store_evtchn = (int)v;
+			err = hvm_get_parameter(HVM_PARAM_STORE_PFN, &v);
+			if (err)
+				goto out_error;
+			xen_store_mfn = (unsigned long)v;
+			xen_store_interface = ioremap(xen_store_mfn << PAGE_SHIFT, PAGE_SIZE);
+		} else {
+			xen_store_evtchn = xen_start_info->store_evtchn;
+			xen_store_mfn = xen_start_info->store_mfn;
+			xen_store_interface = mfn_to_virt(xen_store_mfn);
+			xenstored_ready = 1;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Initialize the interface to xenstore. */
@@ -768,7 +904,16 @@ static int __init xenbus_init(void)
 	proc_mkdir("xen", NULL);
 #endif
 
+<<<<<<< HEAD
 out_error:
+=======
+	return 0;
+
+  out_error:
+	if (page != 0)
+		free_page(page);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 

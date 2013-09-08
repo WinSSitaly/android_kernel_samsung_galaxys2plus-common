@@ -31,12 +31,18 @@
 /*
  * Enable RPC debugging/profiling.
  */
+<<<<<<< HEAD
 #ifdef CONFIG_SUNRPC_DEBUG
 #define  RPC_DEBUG
 #endif
 #ifdef CONFIG_TRACEPOINTS
 #define RPC_TRACEPOINTS
 #endif
+=======
+#ifdef CONFIG_SYSCTL
+#define  RPC_DEBUG
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* #define  RPC_PROFILE */
 
 /*
@@ -50,11 +56,15 @@ extern unsigned int		nlm_debug;
 #endif
 
 #define dprintk(args...)	dfprintk(FACILITY, ## args)
+<<<<<<< HEAD
 #define dprintk_rcu(args...)	dfprintk_rcu(FACILITY, ## args)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #undef ifdebug
 #ifdef RPC_DEBUG			
 # define ifdebug(fac)		if (unlikely(rpc_debug & RPCDBG_##fac))
+<<<<<<< HEAD
 
 # define dfprintk(fac, args...)	\
 	do { \
@@ -76,6 +86,13 @@ extern unsigned int		nlm_debug;
 # define ifdebug(fac)		if (0)
 # define dfprintk(fac, args...)	do {} while (0)
 # define dfprintk_rcu(fac, args...)	do {} while (0)
+=======
+# define dfprintk(fac, args...)	do { ifdebug(fac) printk(args); } while(0)
+# define RPC_IFDEBUG(x)		x
+#else
+# define ifdebug(fac)		if (0)
+# define dfprintk(fac, args...)	do ; while (0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # define RPC_IFDEBUG(x)
 #endif
 

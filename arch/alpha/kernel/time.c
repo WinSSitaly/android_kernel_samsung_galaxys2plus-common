@@ -46,6 +46,10 @@
 #include <asm/uaccess.h>
 #include <asm/io.h>
 #include <asm/hwrpb.h>
+<<<<<<< HEAD
+=======
+#include <asm/8253pit.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/rtc.h>
 
 #include <linux/mc146818rtc.h>

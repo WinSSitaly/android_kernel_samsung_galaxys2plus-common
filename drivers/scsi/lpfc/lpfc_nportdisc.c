@@ -1,7 +1,11 @@
  /*******************************************************************
  * This file is part of the Emulex Linux Device Driver for         *
  * Fibre Channel Host Bus Adapters.                                *
+<<<<<<< HEAD
  * Copyright (C) 2004-2012 Emulex.  All rights reserved.           *
+=======
+ * Copyright (C) 2004-2009 Emulex.  All rights reserved.           *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * EMULEX and SLI are trademarks of Emulex.                        *
  * www.emulex.com                                                  *
  * Portions Copyright (C) 2004-2005 Christoph Hellwig              *
@@ -48,10 +52,13 @@ static int
 lpfc_check_adisc(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 		 struct lpfc_name *nn, struct lpfc_name *pn)
 {
+<<<<<<< HEAD
 	/* First, we MUST have a RPI registered */
 	if (!(ndlp->nlp_flag & NLP_RPI_REGISTERED))
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Compare the ADISC rsp WWNN / WWPN matches our internal node
 	 * table entry for that node.
 	 */
@@ -389,10 +396,13 @@ lpfc_rcv_plogi(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 	if (!mbox)
 		goto out;
 
+<<<<<<< HEAD
 	/* Registering an existing RPI behaves differently for SLI3 vs SLI4 */
 	if (phba->sli_rev == LPFC_SLI_REV4)
 		lpfc_unreg_rpi(vport, ndlp);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = lpfc_reg_rpi(phba, vport->vpi, icmd->un.rcvels.remoteID,
 			    (uint8_t *) sp, mbox, ndlp->nlp_rpi);
 	if (rc) {
@@ -440,6 +450,7 @@ lpfc_rcv_plogi(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 		spin_unlock_irq(shost->host_lock);
 		stat.un.b.lsRjtRsnCode = LSRJT_INVALID_CMD;
 		stat.un.b.lsRjtRsnCodeExp = LSEXP_NOTHING_MORE;
+<<<<<<< HEAD
 		rc = lpfc_els_rsp_reject(vport, stat.un.lsRjtError, cmdiocb,
 			ndlp, mbox);
 		if (rc)
@@ -449,6 +460,13 @@ lpfc_rcv_plogi(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 	rc = lpfc_els_rsp_acc(vport, ELS_CMD_PLOGI, cmdiocb, ndlp, mbox);
 	if (rc)
 		mempool_free(mbox, phba->mbox_mem_pool);
+=======
+		lpfc_els_rsp_reject(vport, stat.un.lsRjtError, cmdiocb,
+			ndlp, mbox);
+		return 1;
+	}
+	lpfc_els_rsp_acc(vport, ELS_CMD_PLOGI, cmdiocb, ndlp, mbox);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 out:
 	stat.un.b.lsRjtRsnCode = LSRJT_UNABLE_TPC;
@@ -457,6 +475,7 @@ out:
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * lpfc_mbx_cmpl_resume_rpi - Resume RPI completion routine
  * @phba: pointer to lpfc hba data structure.
@@ -488,12 +507,17 @@ lpfc_mbx_cmpl_resume_rpi(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 	mempool_free(mboxq, phba->mbox_mem_pool);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int
 lpfc_rcv_padisc(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 		struct lpfc_iocbq *cmdiocb)
 {
 	struct Scsi_Host   *shost = lpfc_shost_from_vport(vport);
+<<<<<<< HEAD
 	struct lpfc_iocbq  *elsiocb;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct lpfc_dmabuf *pcmd;
 	struct serv_parm   *sp;
 	struct lpfc_name   *pnn, *ppn;
@@ -519,6 +543,7 @@ lpfc_rcv_padisc(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 
 	icmd = &cmdiocb->iocb;
 	if (icmd->ulpStatus == 0 && lpfc_check_adisc(vport, ndlp, pnn, ppn)) {
+<<<<<<< HEAD
 
 		/*
 		 * As soon as  we send ACC, the remote NPort can
@@ -556,6 +581,14 @@ out:
 		else
 			lpfc_nlp_set_state(vport, ndlp, NLP_STE_UNMAPPED_NODE);
 
+=======
+		if (cmd == ELS_CMD_ADISC) {
+			lpfc_els_rsp_adisc_acc(vport, cmdiocb, ndlp);
+		} else {
+			lpfc_els_rsp_acc(vport, ELS_CMD_PLOGI, cmdiocb, ndlp,
+					 NULL);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 	}
 	/* Reject this request because invalid parameters */
@@ -858,6 +891,7 @@ lpfc_device_rm_unused_node(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 }
 
 static uint32_t
+<<<<<<< HEAD
 lpfc_device_recov_unused_node(struct lpfc_vport *vport,
 			struct lpfc_nodelist *ndlp,
 			   void *arg, uint32_t evt)
@@ -866,6 +900,8 @@ lpfc_device_recov_unused_node(struct lpfc_vport *vport,
 }
 
 static uint32_t
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 lpfc_rcv_plogi_plogi_issue(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 			   void *arg, uint32_t evt)
 {
@@ -1304,7 +1340,11 @@ lpfc_cmpl_adisc_adisc_issue(struct lpfc_vport *vport,
 	}
 
 	if (phba->sli_rev == LPFC_SLI_REV4) {
+<<<<<<< HEAD
 		rc = lpfc_sli4_resume_rpi(ndlp, NULL, NULL);
+=======
+		rc = lpfc_sli4_resume_rpi(ndlp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rc) {
 			/* Stay in state and retry. */
 			ndlp->nlp_prev_state = NLP_STE_ADISC_ISSUE;
@@ -2230,7 +2270,11 @@ static uint32_t (*lpfc_disc_action[NLP_STE_MAX_STATE * NLP_EVT_MAX_EVENT])
 	lpfc_disc_illegal,		/* CMPL_ADISC      */
 	lpfc_disc_illegal,		/* CMPL_REG_LOGIN  */
 	lpfc_device_rm_unused_node,	/* DEVICE_RM       */
+<<<<<<< HEAD
 	lpfc_device_recov_unused_node,	/* DEVICE_RECOVERY */
+=======
+	lpfc_disc_illegal,		/* DEVICE_RECOVERY */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lpfc_rcv_plogi_plogi_issue,	/* RCV_PLOGI   PLOGI_ISSUE    */
 	lpfc_rcv_prli_plogi_issue,	/* RCV_PRLI        */

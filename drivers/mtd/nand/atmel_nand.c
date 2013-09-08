@@ -22,15 +22,21 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/of.h>
 #include <linux/of_device.h>
 #include <linux/of_gpio.h>
 #include <linux/of_mtd.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/nand.h>
 #include <linux/mtd/partitions.h>
@@ -38,10 +44,29 @@
 #include <linux/dmaengine.h>
 #include <linux/gpio.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/platform_data/atmel.h>
 
 #include <mach/cpu.h>
 
+=======
+
+#include <mach/board.h>
+#include <mach/cpu.h>
+
+#ifdef CONFIG_MTD_NAND_ATMEL_ECC_HW
+#define hard_ecc	1
+#else
+#define hard_ecc	0
+#endif
+
+#ifdef CONFIG_MTD_NAND_ATMEL_ECC_NONE
+#define no_ecc		1
+#else
+#define no_ecc		0
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int use_dma = 1;
 module_param(use_dma, int, 0);
 
@@ -87,7 +112,11 @@ struct atmel_nand_host {
 	struct mtd_info		mtd;
 	void __iomem		*io_base;
 	dma_addr_t		io_phys;
+<<<<<<< HEAD
 	struct atmel_nand_data	board;
+=======
+	struct atmel_nand_data	*board;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct device		*dev;
 	void __iomem		*ecc;
 
@@ -105,8 +134,13 @@ static int cpu_has_dma(void)
  */
 static void atmel_nand_enable(struct atmel_nand_host *host)
 {
+<<<<<<< HEAD
 	if (gpio_is_valid(host->board.enable_pin))
 		gpio_set_value(host->board.enable_pin, 0);
+=======
+	if (host->board->enable_pin)
+		gpio_set_value(host->board->enable_pin, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -114,8 +148,13 @@ static void atmel_nand_enable(struct atmel_nand_host *host)
  */
 static void atmel_nand_disable(struct atmel_nand_host *host)
 {
+<<<<<<< HEAD
 	if (gpio_is_valid(host->board.enable_pin))
 		gpio_set_value(host->board.enable_pin, 1);
+=======
+	if (host->board->enable_pin)
+		gpio_set_value(host->board->enable_pin, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -136,9 +175,15 @@ static void atmel_nand_cmd_ctrl(struct mtd_info *mtd, int cmd, unsigned int ctrl
 		return;
 
 	if (ctrl & NAND_CLE)
+<<<<<<< HEAD
 		writeb(cmd, host->io_base + (1 << host->board.cle));
 	else
 		writeb(cmd, host->io_base + (1 << host->board.ale));
+=======
+		writeb(cmd, host->io_base + (1 << host->board->cle));
+	else
+		writeb(cmd, host->io_base + (1 << host->board->ale));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -149,8 +194,13 @@ static int atmel_nand_device_ready(struct mtd_info *mtd)
 	struct nand_chip *nand_chip = mtd->priv;
 	struct atmel_nand_host *host = nand_chip->priv;
 
+<<<<<<< HEAD
 	return gpio_get_value(host->board.rdy_pin) ^
                 !!host->board.rdy_pin_active_low;
+=======
+	return gpio_get_value(host->board->rdy_pin) ^
+                !!host->board->rdy_pin_active_low;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -265,7 +315,11 @@ static void atmel_read_buf(struct mtd_info *mtd, u8 *buf, int len)
 		if (atmel_nand_dma_op(mtd, buf, len, 1) == 0)
 			return;
 
+<<<<<<< HEAD
 	if (host->board.bus_width_16)
+=======
+	if (host->board->bus_width_16)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		atmel_read_buf16(mtd, buf, len);
 	else
 		atmel_read_buf8(mtd, buf, len);
@@ -281,7 +335,11 @@ static void atmel_write_buf(struct mtd_info *mtd, const u8 *buf, int len)
 		if (atmel_nand_dma_op(mtd, (void *)buf, len, 0) == 0)
 			return;
 
+<<<<<<< HEAD
 	if (host->board.bus_width_16)
+=======
+	if (host->board->bus_width_16)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		atmel_write_buf16(mtd, buf, len);
 	else
 		atmel_write_buf8(mtd, buf, len);
@@ -473,6 +531,7 @@ static void atmel_nand_hwctl(struct mtd_info *mtd, int mode)
 	}
 }
 
+<<<<<<< HEAD
 #if defined(CONFIG_OF)
 static int __devinit atmel_of_init_port(struct atmel_nand_host *host,
 					 struct device_node *np)
@@ -521,6 +580,10 @@ static int __devinit atmel_of_init_port(struct atmel_nand_host *host,
 {
 	return -EINVAL;
 }
+=======
+#ifdef CONFIG_MTD_CMDLINE_PARTS
+static const char *part_probes[] = { "cmdlinepart", NULL };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /*
@@ -533,8 +596,14 @@ static int __init atmel_nand_probe(struct platform_device *pdev)
 	struct nand_chip *nand_chip;
 	struct resource *regs;
 	struct resource *mem;
+<<<<<<< HEAD
 	struct mtd_part_parser_data ppdata = {};
 	int res;
+=======
+	int res;
+	struct mtd_partition *partitions = NULL;
+	int num_partitions = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	if (!mem) {
@@ -551,7 +620,11 @@ static int __init atmel_nand_probe(struct platform_device *pdev)
 
 	host->io_phys = (dma_addr_t)mem->start;
 
+<<<<<<< HEAD
 	host->io_base = ioremap(mem->start, resource_size(mem));
+=======
+	host->io_base = ioremap(mem->start, mem->end - mem->start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (host->io_base == NULL) {
 		printk(KERN_ERR "atmel_nand: ioremap failed\n");
 		res = -EIO;
@@ -560,6 +633,7 @@ static int __init atmel_nand_probe(struct platform_device *pdev)
 
 	mtd = &host->mtd;
 	nand_chip = &host->nand_chip;
+<<<<<<< HEAD
 	host->dev = &pdev->dev;
 	if (pdev->dev.of_node) {
 		res = atmel_of_init_port(host, pdev->dev.of_node);
@@ -569,6 +643,10 @@ static int __init atmel_nand_probe(struct platform_device *pdev)
 		memcpy(&host->board, pdev->dev.platform_data,
 		       sizeof(struct atmel_nand_data));
 	}
+=======
+	host->board = pdev->dev.platform_data;
+	host->dev = &pdev->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nand_chip->priv = host;		/* link the private data structures */
 	mtd->priv = nand_chip;
@@ -579,6 +657,7 @@ static int __init atmel_nand_probe(struct platform_device *pdev)
 	nand_chip->IO_ADDR_W = host->io_base;
 	nand_chip->cmd_ctrl = atmel_nand_cmd_ctrl;
 
+<<<<<<< HEAD
 	if (gpio_is_valid(host->board.rdy_pin))
 		nand_chip->dev_ready = atmel_nand_device_ready;
 
@@ -593,22 +672,49 @@ static int __init atmel_nand_probe(struct platform_device *pdev)
 
 	if (nand_chip->ecc.mode == NAND_ECC_HW) {
 		host->ecc = ioremap(regs->start, resource_size(regs));
+=======
+	if (host->board->rdy_pin)
+		nand_chip->dev_ready = atmel_nand_device_ready;
+
+	regs = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+	if (!regs && hard_ecc) {
+		printk(KERN_ERR "atmel_nand: can't get I/O resource "
+				"regs\nFalling back on software ECC\n");
+	}
+
+	nand_chip->ecc.mode = NAND_ECC_SOFT;	/* enable ECC */
+	if (no_ecc)
+		nand_chip->ecc.mode = NAND_ECC_NONE;
+	if (hard_ecc && regs) {
+		host->ecc = ioremap(regs->start, regs->end - regs->start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (host->ecc == NULL) {
 			printk(KERN_ERR "atmel_nand: ioremap failed\n");
 			res = -EIO;
 			goto err_ecc_ioremap;
 		}
+<<<<<<< HEAD
+=======
+		nand_chip->ecc.mode = NAND_ECC_HW;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nand_chip->ecc.calculate = atmel_nand_calculate;
 		nand_chip->ecc.correct = atmel_nand_correct;
 		nand_chip->ecc.hwctl = atmel_nand_hwctl;
 		nand_chip->ecc.read_page = atmel_nand_read_page;
 		nand_chip->ecc.bytes = 4;
+<<<<<<< HEAD
 		nand_chip->ecc.strength = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	nand_chip->chip_delay = 20;		/* 20us command delay time */
 
+<<<<<<< HEAD
 	if (host->board.bus_width_16)	/* 16-bit bus width */
+=======
+	if (host->board->bus_width_16)	/* 16-bit bus width */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nand_chip->options |= NAND_BUSWIDTH_16;
 
 	nand_chip->read_buf = atmel_read_buf;
@@ -617,17 +723,28 @@ static int __init atmel_nand_probe(struct platform_device *pdev)
 	platform_set_drvdata(pdev, host);
 	atmel_nand_enable(host);
 
+<<<<<<< HEAD
 	if (gpio_is_valid(host->board.det_pin)) {
 		if (gpio_get_value(host->board.det_pin)) {
+=======
+	if (host->board->det_pin) {
+		if (gpio_get_value(host->board->det_pin)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			printk(KERN_INFO "No SmartMedia card inserted.\n");
 			res = -ENXIO;
 			goto err_no_card;
 		}
 	}
 
+<<<<<<< HEAD
 	if (host->board.on_flash_bbt || on_flash_bbt) {
 		printk(KERN_INFO "atmel_nand: Use On Flash BBT\n");
 		nand_chip->bbt_options |= NAND_BBT_USE_FLASH;
+=======
+	if (on_flash_bbt) {
+		printk(KERN_INFO "atmel_nand: Use On Flash BBT\n");
+		nand_chip->options |= NAND_USE_FLASH_BBT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (!cpu_has_dma())
@@ -638,7 +755,11 @@ static int __init atmel_nand_probe(struct platform_device *pdev)
 
 		dma_cap_zero(mask);
 		dma_cap_set(DMA_MEMCPY, mask);
+<<<<<<< HEAD
 		host->dma_chan = dma_request_channel(mask, NULL, NULL);
+=======
+		host->dma_chan = dma_request_channel(mask, 0, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!host->dma_chan) {
 			dev_err(host->dev, "Failed to request DMA channel\n");
 			use_dma = 0;
@@ -699,6 +820,7 @@ static int __init atmel_nand_probe(struct platform_device *pdev)
 		goto err_scan_tail;
 	}
 
+<<<<<<< HEAD
 	mtd->name = "atmel_nand";
 	ppdata.of_node = pdev->dev.of_node;
 	res = mtd_device_parse_register(mtd, NULL, &ppdata,
@@ -706,6 +828,29 @@ static int __init atmel_nand_probe(struct platform_device *pdev)
 	if (!res)
 		return res;
 
+=======
+#ifdef CONFIG_MTD_CMDLINE_PARTS
+	mtd->name = "atmel_nand";
+	num_partitions = parse_mtd_partitions(mtd, part_probes,
+					      &partitions, 0);
+#endif
+	if (num_partitions <= 0 && host->board->partition_info)
+		partitions = host->board->partition_info(mtd->size,
+							 &num_partitions);
+
+	if ((!partitions) || (num_partitions == 0)) {
+		printk(KERN_ERR "atmel_nand: No partitions defined, or unsupported device.\n");
+		res = -ENXIO;
+		goto err_no_partitions;
+	}
+
+	res = mtd_device_register(mtd, partitions, num_partitions);
+	if (!res)
+		return res;
+
+err_no_partitions:
+	nand_release(mtd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_scan_tail:
 err_scan_ident:
 err_no_card:
@@ -746,6 +891,7 @@ static int __exit atmel_nand_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #if defined(CONFIG_OF)
 static const struct of_device_id atmel_nand_dt_ids[] = {
 	{ .compatible = "atmel,at91rm9200-nand" },
@@ -755,12 +901,17 @@ static const struct of_device_id atmel_nand_dt_ids[] = {
 MODULE_DEVICE_TABLE(of, atmel_nand_dt_ids);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver atmel_nand_driver = {
 	.remove		= __exit_p(atmel_nand_remove),
 	.driver		= {
 		.name	= "atmel_nand",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.of_match_table	= of_match_ptr(atmel_nand_dt_ids),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

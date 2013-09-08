@@ -8,4 +8,8 @@ gspca_m5602-objs := m5602_core.o \
 		    m5602_s5k83a.o \
 		    m5602_s5k4aa.o
 
+<<<<<<< HEAD
 ccflags-y += -I$(srctree)/drivers/media/video/gspca
+=======
+EXTRA_CFLAGS += -Idrivers/media/video/gspca
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

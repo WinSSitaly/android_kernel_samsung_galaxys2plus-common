@@ -8,7 +8,11 @@
  * under the terms of the GNU General Public License version 2 as published by
  * the Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ftrace.h>
 
 #if defined(CONFIG_FRAME_POINTER) && !defined(CONFIG_ARM_UNWIND)

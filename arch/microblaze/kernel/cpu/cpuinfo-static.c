@@ -119,7 +119,10 @@ void __init set_cpuinfo_static(struct cpuinfo *ci, struct device_node *cpu)
 	ci->pvr_user2 = fcpu(cpu, "xlnx,pvr-user2");
 
 	ci->mmu = fcpu(cpu, "xlnx,use-mmu");
+<<<<<<< HEAD
 	ci->mmu_privins = fcpu(cpu, "xlnx,mmu-privileged-instr");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ci->endian = fcpu(cpu, "xlnx,endianness");
 
 	ci->ver_code = 0;

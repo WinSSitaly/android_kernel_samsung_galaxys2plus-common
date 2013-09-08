@@ -263,14 +263,24 @@ static int ieee80211_wep_decrypt(struct ieee80211_local *local,
 }
 
 
+<<<<<<< HEAD
 static bool ieee80211_wep_is_weak_iv(struct sk_buff *skb,
 				     struct ieee80211_key *key)
+=======
+bool ieee80211_wep_is_weak_iv(struct sk_buff *skb, struct ieee80211_key *key)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;
 	unsigned int hdrlen;
 	u8 *ivpos;
 	u32 iv;
 
+<<<<<<< HEAD
+=======
+	if (!ieee80211_has_protected(hdr->frame_control))
+		return false;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hdrlen = ieee80211_hdrlen(hdr->frame_control);
 	ivpos = skb->data + hdrlen;
 	iv = (ivpos[0] << 16) | (ivpos[1] << 8) | ivpos[2];
@@ -284,6 +294,7 @@ ieee80211_crypto_wep_decrypt(struct ieee80211_rx_data *rx)
 	struct sk_buff *skb = rx->skb;
 	struct ieee80211_rx_status *status = IEEE80211_SKB_RXCB(skb);
 	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;
+<<<<<<< HEAD
 	__le16 fc = hdr->frame_control;
 
 	if (!ieee80211_is_data(fc) && !ieee80211_is_auth(fc))
@@ -305,6 +316,20 @@ ieee80211_crypto_wep_decrypt(struct ieee80211_rx_data *rx)
 		/* remove ICV */
 		if (pskb_trim(rx->skb, rx->skb->len - WEP_ICV_LEN))
 			return RX_DROP_UNUSABLE;
+=======
+
+	if (!ieee80211_is_data(hdr->frame_control) &&
+	    !ieee80211_is_auth(hdr->frame_control))
+		return RX_CONTINUE;
+
+	if (!(status->flag & RX_FLAG_DECRYPTED)) {
+		if (ieee80211_wep_decrypt(rx->local, rx->skb, rx->key))
+			return RX_DROP_UNUSABLE;
+	} else if (!(status->flag & RX_FLAG_IV_STRIPPED)) {
+		ieee80211_wep_remove_iv(rx->local, rx->skb, rx->key);
+		/* remove ICV */
+		skb_trim(rx->skb, rx->skb->len - WEP_ICV_LEN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return RX_CONTINUE;
@@ -337,12 +362,21 @@ ieee80211_crypto_wep_encrypt(struct ieee80211_tx_data *tx)
 
 	ieee80211_tx_set_protected(tx);
 
+<<<<<<< HEAD
 	skb_queue_walk(&tx->skbs, skb) {
+=======
+	skb = tx->skb;
+	do {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (wep_encrypt_skb(tx, skb) < 0) {
 			I802_DEBUG_INC(tx->local->tx_handlers_drop_wep);
 			return TX_DROP;
 		}
+<<<<<<< HEAD
 	}
+=======
+	} while ((skb = skb->next));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return TX_CONTINUE;
 }

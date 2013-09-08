@@ -172,6 +172,7 @@ static int tmds_register_read_bytes(int index, u8 *buff, int buff_len)
 }
 
 /* DVI Set Mode */
+<<<<<<< HEAD
 void viafb_dvi_set_mode(const struct fb_var_screeninfo *var,
 	u16 cxres, u16 cyres, int iga)
 {
@@ -187,6 +188,32 @@ void viafb_dvi_set_mode(const struct fb_var_screeninfo *var,
 	}
 
 	viafb_fill_crtc_timing(&dvi_var, cxres, cyres, iga);
+=======
+void viafb_dvi_set_mode(struct VideoModeTable *mode, int mode_bpp,
+	int set_iga)
+{
+	struct VideoModeTable *rb_mode;
+	struct crt_mode_table *pDviTiming;
+	unsigned long desirePixelClock, maxPixelClock;
+	pDviTiming = mode->crtc;
+	desirePixelClock = pDviTiming->refresh_rate
+		* pDviTiming->crtc.hor_total * pDviTiming->crtc.ver_total
+		/ 1000000;
+	maxPixelClock = (unsigned long)viaparinfo->
+		tmds_setting_info->max_pixel_clock;
+
+	DEBUG_MSG(KERN_INFO "\nDVI_set_mode!!\n");
+
+	if ((maxPixelClock != 0) && (desirePixelClock > maxPixelClock)) {
+		rb_mode = viafb_get_rb_mode(mode->crtc[0].crtc.hor_addr,
+			mode->crtc[0].crtc.ver_addr);
+		if (rb_mode) {
+			mode = rb_mode;
+			pDviTiming = rb_mode->crtc;
+		}
+	}
+	viafb_fill_crtc_timing(pDviTiming, mode, mode_bpp / 8, set_iga);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Sense DVI Connector */

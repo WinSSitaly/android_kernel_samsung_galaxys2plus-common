@@ -11,7 +11,11 @@
 #ifndef __CNS3XXX_PM_H
 #define __CNS3XXX_PM_H
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void cns3xxx_pwr_clk_en(unsigned int block);
 void cns3xxx_pwr_clk_dis(unsigned int block);

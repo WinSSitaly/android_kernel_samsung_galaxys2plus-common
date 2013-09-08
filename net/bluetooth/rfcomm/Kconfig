@@ -1,6 +1,10 @@
 config BT_RFCOMM
 	tristate "RFCOMM protocol support"
+<<<<<<< HEAD
 	depends on BT
+=======
+	depends on BT && BT_L2CAP
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  RFCOMM provides connection oriented stream transport.  RFCOMM
 	  support is required for Dialup Networking, OBEX and other Bluetooth

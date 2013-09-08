@@ -50,6 +50,7 @@ static LIST_HEAD(hosts);
 static LIST_HEAD(devices);
 static DEFINE_MUTEX(list_lock);		/* Protects the list of hosts */
 
+<<<<<<< HEAD
 static int soc_camera_power_on(struct soc_camera_device *icd,
 			       struct soc_camera_link *icl)
 {
@@ -109,6 +110,51 @@ static int soc_camera_power_off(struct soc_camera_device *icd,
 		dev_err(icd->pdev, "Cannot disable regulators\n");
 
 	return ret;
+=======
+static int soc_camera_power_set(struct soc_camera_device *icd,
+				struct soc_camera_link *icl,
+				int power_on)
+{
+	int ret;
+
+	if (power_on) {
+		ret = regulator_bulk_enable(icl->num_regulators,
+					    icl->regulators);
+		if (ret < 0) {
+			dev_err(&icd->dev, "Cannot enable regulators\n");
+			return ret;
+		}
+
+		if (icl->power)
+			ret = icl->power(icd->pdev, power_on);
+		if (ret < 0) {
+			dev_err(&icd->dev,
+				"Platform failed to power-on the camera.\n");
+
+			regulator_bulk_disable(icl->num_regulators,
+					       icl->regulators);
+			return ret;
+		}
+	} else {
+		ret = 0;
+		if (icl->power)
+			ret = icl->power(icd->pdev, 0);
+		if (ret < 0) {
+			dev_err(&icd->dev,
+				"Platform failed to power-off the camera.\n");
+			return ret;
+		}
+
+		ret = regulator_bulk_disable(icl->num_regulators,
+					     icl->regulators);
+		if (ret < 0) {
+			dev_err(&icd->dev, "Cannot disable regulators\n");
+			return ret;
+		}
+	}
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 const struct soc_camera_format_xlate *soc_camera_xlate_by_fourcc(
@@ -124,6 +170,7 @@ const struct soc_camera_format_xlate *soc_camera_xlate_by_fourcc(
 EXPORT_SYMBOL(soc_camera_xlate_by_fourcc);
 
 /**
+<<<<<<< HEAD
  * soc_camera_apply_board_flags() - apply platform SOCAM_SENSOR_INVERT_* flags
  * @icl:	camera platform parameters
  * @cfg:	media bus configuration
@@ -151,11 +198,44 @@ unsigned long soc_camera_apply_board_flags(struct soc_camera_link *icl,
 		f = flags & (V4L2_MBUS_PCLK_SAMPLE_RISING | V4L2_MBUS_PCLK_SAMPLE_FALLING);
 		if (f == V4L2_MBUS_PCLK_SAMPLE_RISING || f == V4L2_MBUS_PCLK_SAMPLE_FALLING)
 			flags ^= V4L2_MBUS_PCLK_SAMPLE_RISING | V4L2_MBUS_PCLK_SAMPLE_FALLING;
+=======
+ * soc_camera_apply_sensor_flags() - apply platform SOCAM_SENSOR_INVERT_* flags
+ * @icl:	camera platform parameters
+ * @flags:	flags to be inverted according to platform configuration
+ * @return:	resulting flags
+ */
+unsigned long soc_camera_apply_sensor_flags(struct soc_camera_link *icl,
+					    unsigned long flags)
+{
+	unsigned long f;
+
+	/* If only one of the two polarities is supported, switch to the opposite */
+	if (icl->flags & SOCAM_SENSOR_INVERT_HSYNC) {
+		f = flags & (SOCAM_HSYNC_ACTIVE_HIGH | SOCAM_HSYNC_ACTIVE_LOW);
+		if (f == SOCAM_HSYNC_ACTIVE_HIGH || f == SOCAM_HSYNC_ACTIVE_LOW)
+			flags ^= SOCAM_HSYNC_ACTIVE_HIGH | SOCAM_HSYNC_ACTIVE_LOW;
+	}
+
+	if (icl->flags & SOCAM_SENSOR_INVERT_VSYNC) {
+		f = flags & (SOCAM_VSYNC_ACTIVE_HIGH | SOCAM_VSYNC_ACTIVE_LOW);
+		if (f == SOCAM_VSYNC_ACTIVE_HIGH || f == SOCAM_VSYNC_ACTIVE_LOW)
+			flags ^= SOCAM_VSYNC_ACTIVE_HIGH | SOCAM_VSYNC_ACTIVE_LOW;
+	}
+
+	if (icl->flags & SOCAM_SENSOR_INVERT_PCLK) {
+		f = flags & (SOCAM_PCLK_SAMPLE_RISING | SOCAM_PCLK_SAMPLE_FALLING);
+		if (f == SOCAM_PCLK_SAMPLE_RISING || f == SOCAM_PCLK_SAMPLE_FALLING)
+			flags ^= SOCAM_PCLK_SAMPLE_RISING | SOCAM_PCLK_SAMPLE_FALLING;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return flags;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(soc_camera_apply_board_flags);
+=======
+EXPORT_SYMBOL(soc_camera_apply_sensor_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define pixfmtstr(x) (x) & 0xff, ((x) >> 8) & 0xff, ((x) >> 16) & 0xff, \
 	((x) >> 24) & 0xff
@@ -163,11 +243,19 @@ EXPORT_SYMBOL(soc_camera_apply_board_flags);
 static int soc_camera_try_fmt(struct soc_camera_device *icd,
 			      struct v4l2_format *f)
 {
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
 	struct v4l2_pix_format *pix = &f->fmt.pix;
 	int ret;
 
 	dev_dbg(icd->pdev, "TRY_FMT(%c%c%c%c, %ux%u)\n",
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+	struct v4l2_pix_format *pix = &f->fmt.pix;
+	int ret;
+
+	dev_dbg(&icd->dev, "TRY_FMT(%c%c%c%c, %ux%u)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pixfmtstr(pix->pixelformat), pix->width, pix->height);
 
 	pix->bytesperline = 0;
@@ -215,6 +303,7 @@ static int soc_camera_try_fmt_vid_cap(struct file *file, void *priv,
 static int soc_camera_enum_input(struct file *file, void *priv,
 				 struct v4l2_input *inp)
 {
+<<<<<<< HEAD
 	if (inp->index != 0)
 		return -EINVAL;
 
@@ -224,6 +313,24 @@ static int soc_camera_enum_input(struct file *file, void *priv,
 	strcpy(inp->name, "Camera");
 
 	return 0;
+=======
+	struct soc_camera_device *icd = file->private_data;
+	int ret = 0;
+
+	if (inp->index != 0)
+		return -EINVAL;
+
+	if (icd->ops->enum_input)
+		ret = icd->ops->enum_input(icd, inp);
+	else {
+		/* default is camera */
+		inp->type = V4L2_INPUT_TYPE_CAMERA;
+		inp->std  = V4L2_STD_UNKNOWN;
+		strcpy(inp->name, "Camera");
+	}
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int soc_camera_g_input(struct file *file, void *priv, unsigned int *i)
@@ -249,6 +356,7 @@ static int soc_camera_s_std(struct file *file, void *priv, v4l2_std_id *a)
 	return v4l2_subdev_call(sd, core, s_std, *a);
 }
 
+<<<<<<< HEAD
 static int soc_camera_g_std(struct file *file, void *priv, v4l2_std_id *a)
 {
 	struct soc_camera_device *icd = file->private_data;
@@ -257,11 +365,17 @@ static int soc_camera_g_std(struct file *file, void *priv, v4l2_std_id *a)
 	return v4l2_subdev_call(sd, core, g_std, a);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int soc_camera_enum_fsizes(struct file *file, void *fh,
 					 struct v4l2_frmsizeenum *fsize)
 {
 	struct soc_camera_device *icd = file->private_data;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ici->ops->enum_fsizes(icd, fsize);
 }
@@ -271,7 +385,11 @@ static int soc_camera_reqbufs(struct file *file, void *priv,
 {
 	int ret;
 	struct soc_camera_device *icd = file->private_data;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	WARN_ON(priv != file->private_data);
 
@@ -298,7 +416,11 @@ static int soc_camera_querybuf(struct file *file, void *priv,
 			       struct v4l2_buffer *p)
 {
 	struct soc_camera_device *icd = file->private_data;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	WARN_ON(priv != file->private_data);
 
@@ -312,7 +434,11 @@ static int soc_camera_qbuf(struct file *file, void *priv,
 			   struct v4l2_buffer *p)
 {
 	struct soc_camera_device *icd = file->private_data;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	WARN_ON(priv != file->private_data);
 
@@ -329,7 +455,11 @@ static int soc_camera_dqbuf(struct file *file, void *priv,
 			    struct v4l2_buffer *p)
 {
 	struct soc_camera_device *icd = file->private_data;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	WARN_ON(priv != file->private_data);
 
@@ -342,6 +472,7 @@ static int soc_camera_dqbuf(struct file *file, void *priv,
 		return vb2_dqbuf(&icd->vb2_vidq, p, file->f_flags & O_NONBLOCK);
 }
 
+<<<<<<< HEAD
 static int soc_camera_create_bufs(struct file *file, void *priv,
 			    struct v4l2_create_buffers *create)
 {
@@ -368,11 +499,17 @@ static int soc_camera_prepare_buf(struct file *file, void *priv,
 		return vb2_prepare_buf(&icd->vb2_vidq, b);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Always entered with .video_lock held */
 static int soc_camera_init_user_formats(struct soc_camera_device *icd)
 {
 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int i, fmts = 0, raw_fmts = 0;
 	int ret;
 	enum v4l2_mbus_pixelcode code;
@@ -406,7 +543,11 @@ static int soc_camera_init_user_formats(struct soc_camera_device *icd)
 	if (!icd->user_formats)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	dev_dbg(icd->pdev, "Found %d supported formats.\n", fmts);
+=======
+	dev_dbg(&icd->dev, "Found %d supported formats.\n", fmts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Second pass - actually fill data formats */
 	fmts = 0;
@@ -438,7 +579,11 @@ egfmt:
 /* Always entered with .video_lock held */
 static void soc_camera_free_user_formats(struct soc_camera_device *icd)
 {
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ici->ops->put_formats)
 		ici->ops->put_formats(icd);
@@ -452,11 +597,19 @@ static void soc_camera_free_user_formats(struct soc_camera_device *icd)
 static int soc_camera_set_fmt(struct soc_camera_device *icd,
 			      struct v4l2_format *f)
 {
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
 	struct v4l2_pix_format *pix = &f->fmt.pix;
 	int ret;
 
 	dev_dbg(icd->pdev, "S_FMT(%c%c%c%c, %ux%u)\n",
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+	struct v4l2_pix_format *pix = &f->fmt.pix;
+	int ret;
+
+	dev_dbg(&icd->dev, "S_FMT(%c%c%c%c, %ux%u)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pixfmtstr(pix->pixelformat), pix->width, pix->height);
 
 	/* We always call try_fmt() before set_fmt() or set_crop() */
@@ -469,7 +622,11 @@ static int soc_camera_set_fmt(struct soc_camera_device *icd,
 		return ret;
 	} else if (!icd->current_fmt ||
 		   icd->current_fmt->host_fmt->fourcc != pix->pixelformat) {
+<<<<<<< HEAD
 		dev_err(icd->pdev,
+=======
+		dev_err(&icd->dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"Host driver hasn't set up current format correctly!\n");
 		return -EINVAL;
 	}
@@ -483,21 +640,36 @@ static int soc_camera_set_fmt(struct soc_camera_device *icd,
 	if (ici->ops->init_videobuf)
 		icd->vb_vidq.field = pix->field;
 
+<<<<<<< HEAD
 	dev_dbg(icd->pdev, "set width: %d height: %d\n",
 		icd->user_width, icd->user_height);
 
 	/* set physical bus parameters */
 	return ici->ops->set_bus_param(icd);
+=======
+	dev_dbg(&icd->dev, "set width: %d height: %d\n",
+		icd->user_width, icd->user_height);
+
+	/* set physical bus parameters */
+	return ici->ops->set_bus_param(icd, pix->pixelformat);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int soc_camera_open(struct file *file)
 {
 	struct video_device *vdev = video_devdata(file);
+<<<<<<< HEAD
 	struct soc_camera_device *icd = dev_get_drvdata(vdev->parent);
+=======
+	struct soc_camera_device *icd = container_of(vdev->parent,
+						     struct soc_camera_device,
+						     dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct soc_camera_link *icl = to_soc_camera_link(icd);
 	struct soc_camera_host *ici;
 	int ret;
 
+<<<<<<< HEAD
 	if (!to_soc_camera_control(icd))
 		/* No device driver attached */
 		return -ENODEV;
@@ -506,6 +678,16 @@ static int soc_camera_open(struct file *file)
 
 	if (!try_module_get(ici->ops->owner)) {
 		dev_err(icd->pdev, "Couldn't lock capture bus driver.\n");
+=======
+	if (!icd->ops)
+		/* No device driver attached */
+		return -ENODEV;
+
+	ici = to_soc_camera_host(icd->dev.parent);
+
+	if (!try_module_get(ici->ops->owner)) {
+		dev_err(&icd->dev, "Couldn't lock capture bus driver.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -526,10 +708,18 @@ static int soc_camera_open(struct file *file)
 			},
 		};
 
+<<<<<<< HEAD
+=======
+		ret = soc_camera_power_set(icd, icl, 1);
+		if (ret < 0)
+			goto epower;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* The camera could have been already on, try to reset */
 		if (icl->reset)
 			icl->reset(icd->pdev);
 
+<<<<<<< HEAD
 		/* Don't mess with the host during probe */
 		mutex_lock(&ici->host_lock);
 		ret = ici->ops->add(icd);
@@ -543,6 +733,14 @@ static int soc_camera_open(struct file *file)
 		if (ret < 0)
 			goto epower;
 
+=======
+		ret = ici->ops->add(icd);
+		if (ret < 0) {
+			dev_err(&icd->dev, "Couldn't activate the camera: %d\n", ret);
+			goto eiciadd;
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pm_runtime_enable(&icd->vdev->dev);
 		ret = pm_runtime_resume(&icd->vdev->dev);
 		if (ret < 0 && ret != -ENOSYS)
@@ -565,11 +763,18 @@ static int soc_camera_open(struct file *file)
 			if (ret < 0)
 				goto einitvb;
 		}
+<<<<<<< HEAD
 		v4l2_ctrl_handler_setup(&icd->ctrl_handler);
 	}
 
 	file->private_data = icd;
 	dev_dbg(icd->pdev, "camera device open\n");
+=======
+	}
+
+	file->private_data = icd;
+	dev_dbg(&icd->dev, "camera device open\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
@@ -581,10 +786,17 @@ einitvb:
 esfmt:
 	pm_runtime_disable(&icd->vdev->dev);
 eresume:
+<<<<<<< HEAD
 	soc_camera_power_off(icd, icl);
 epower:
 	ici->ops->remove(icd);
 eiciadd:
+=======
+	ici->ops->remove(icd);
+eiciadd:
+	soc_camera_power_set(icd, icl, 0);
+epower:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	icd->use_count--;
 	module_put(ici->ops->owner);
 
@@ -594,7 +806,11 @@ eiciadd:
 static int soc_camera_close(struct file *file)
 {
 	struct soc_camera_device *icd = file->private_data;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	icd->use_count--;
 	if (!icd->use_count) {
@@ -603,11 +819,19 @@ static int soc_camera_close(struct file *file)
 		pm_runtime_suspend(&icd->vdev->dev);
 		pm_runtime_disable(&icd->vdev->dev);
 
+<<<<<<< HEAD
 		if (ici->ops->init_videobuf2)
 			vb2_queue_release(&icd->vb2_vidq);
 		ici->ops->remove(icd);
 
 		soc_camera_power_off(icd, icl);
+=======
+		ici->ops->remove(icd);
+		if (ici->ops->init_videobuf2)
+			vb2_queue_release(&icd->vb2_vidq);
+
+		soc_camera_power_set(icd, icl, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (icd->streamer == file)
@@ -615,7 +839,11 @@ static int soc_camera_close(struct file *file)
 
 	module_put(ici->ops->owner);
 
+<<<<<<< HEAD
 	dev_dbg(icd->pdev, "camera device close\n");
+=======
+	dev_dbg(&icd->dev, "camera device close\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -626,7 +854,11 @@ static ssize_t soc_camera_read(struct file *file, char __user *buf,
 	struct soc_camera_device *icd = file->private_data;
 	int err = -EINVAL;
 
+<<<<<<< HEAD
 	dev_err(icd->pdev, "camera device read not implemented\n");
+=======
+	dev_err(&icd->dev, "camera device read not implemented\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }
@@ -634,10 +866,17 @@ static ssize_t soc_camera_read(struct file *file, char __user *buf,
 static int soc_camera_mmap(struct file *file, struct vm_area_struct *vma)
 {
 	struct soc_camera_device *icd = file->private_data;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
 	int err;
 
 	dev_dbg(icd->pdev, "mmap called, vma=0x%08lx\n", (unsigned long)vma);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+	int err;
+
+	dev_dbg(&icd->dev, "mmap called, vma=0x%08lx\n", (unsigned long)vma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (icd->streamer != file)
 		return -EBUSY;
@@ -647,7 +886,11 @@ static int soc_camera_mmap(struct file *file, struct vm_area_struct *vma)
 	else
 		err = vb2_mmap(&icd->vb2_vidq, vma);
 
+<<<<<<< HEAD
 	dev_dbg(icd->pdev, "vma start=0x%08lx, size=%ld, ret=%d\n",
+=======
+	dev_dbg(&icd->dev, "vma start=0x%08lx, size=%ld, ret=%d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		(unsigned long)vma->vm_start,
 		(unsigned long)vma->vm_end - (unsigned long)vma->vm_start,
 		err);
@@ -658,13 +901,21 @@ static int soc_camera_mmap(struct file *file, struct vm_area_struct *vma)
 static unsigned int soc_camera_poll(struct file *file, poll_table *pt)
 {
 	struct soc_camera_device *icd = file->private_data;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (icd->streamer != file)
 		return -EBUSY;
 
 	if (ici->ops->init_videobuf && list_empty(&icd->vb_vidq.stream)) {
+<<<<<<< HEAD
 		dev_err(icd->pdev, "Trying to poll with no queued buffers!\n");
+=======
+		dev_err(&icd->dev, "Trying to poll with no queued buffers!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return POLLERR;
 	}
 
@@ -704,15 +955,24 @@ static int soc_camera_s_fmt_vid_cap(struct file *file, void *priv,
 	WARN_ON(priv != file->private_data);
 
 	if (f->type != V4L2_BUF_TYPE_VIDEO_CAPTURE) {
+<<<<<<< HEAD
 		dev_warn(icd->pdev, "Wrong buf-type %d\n", f->type);
+=======
+		dev_warn(&icd->dev, "Wrong buf-type %d\n", f->type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
 	if (icd->streamer && icd->streamer != file)
 		return -EBUSY;
 
+<<<<<<< HEAD
 	if (is_streaming(to_soc_camera_host(icd->parent), icd)) {
 		dev_err(icd->pdev, "S_FMT denied: queue initialised\n");
+=======
+	if (is_streaming(to_soc_camera_host(icd->dev.parent), icd)) {
+		dev_err(&icd->dev, "S_FMT denied: queue initialised\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EBUSY;
 	}
 
@@ -761,7 +1021,11 @@ static int soc_camera_g_fmt_vid_cap(struct file *file, void *priv,
 	pix->field		= icd->field;
 	pix->pixelformat	= icd->current_fmt->host_fmt->fourcc;
 	pix->colorspace		= icd->colorspace;
+<<<<<<< HEAD
 	dev_dbg(icd->pdev, "current_fmt->fourcc: 0x%08x\n",
+=======
+	dev_dbg(&icd->dev, "current_fmt->fourcc: 0x%08x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		icd->current_fmt->host_fmt->fourcc);
 	return 0;
 }
@@ -770,7 +1034,11 @@ static int soc_camera_querycap(struct file *file, void  *priv,
 			       struct v4l2_capability *cap)
 {
 	struct soc_camera_device *icd = file->private_data;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	WARN_ON(priv != file->private_data);
 
@@ -782,7 +1050,11 @@ static int soc_camera_streamon(struct file *file, void *priv,
 			       enum v4l2_buf_type i)
 {
 	struct soc_camera_device *icd = file->private_data;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
 	int ret;
 
@@ -811,7 +1083,11 @@ static int soc_camera_streamoff(struct file *file, void *priv,
 {
 	struct soc_camera_device *icd = file->private_data;
 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	WARN_ON(priv != file->private_data);
 
@@ -835,11 +1111,87 @@ static int soc_camera_streamoff(struct file *file, void *priv,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int soc_camera_queryctrl(struct file *file, void *priv,
+				struct v4l2_queryctrl *qc)
+{
+	struct soc_camera_device *icd = file->private_data;
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+	int i;
+
+	WARN_ON(priv != file->private_data);
+
+	if (!qc->id)
+		return -EINVAL;
+
+	/* First check host controls */
+	for (i = 0; i < ici->ops->num_controls; i++)
+		if (qc->id == ici->ops->controls[i].id) {
+			memcpy(qc, &(ici->ops->controls[i]),
+				sizeof(*qc));
+			return 0;
+		}
+
+	/* Then device controls */
+	for (i = 0; i < icd->ops->num_controls; i++)
+		if (qc->id == icd->ops->controls[i].id) {
+			memcpy(qc, &(icd->ops->controls[i]),
+				sizeof(*qc));
+			return 0;
+		}
+
+	return -EINVAL;
+}
+
+static int soc_camera_g_ctrl(struct file *file, void *priv,
+			     struct v4l2_control *ctrl)
+{
+	struct soc_camera_device *icd = file->private_data;
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
+	int ret;
+
+	WARN_ON(priv != file->private_data);
+
+	if (ici->ops->get_ctrl) {
+		ret = ici->ops->get_ctrl(icd, ctrl);
+		if (ret != -ENOIOCTLCMD)
+			return ret;
+	}
+
+	return v4l2_subdev_call(sd, core, g_ctrl, ctrl);
+}
+
+static int soc_camera_s_ctrl(struct file *file, void *priv,
+			     struct v4l2_control *ctrl)
+{
+	struct soc_camera_device *icd = file->private_data;
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
+	int ret;
+
+	WARN_ON(priv != file->private_data);
+
+	if (ici->ops->set_ctrl) {
+		ret = ici->ops->set_ctrl(icd, ctrl);
+		if (ret != -ENOIOCTLCMD)
+			return ret;
+	}
+
+	return v4l2_subdev_call(sd, core, s_ctrl, ctrl);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int soc_camera_cropcap(struct file *file, void *fh,
 			      struct v4l2_cropcap *a)
 {
 	struct soc_camera_device *icd = file->private_data;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ici->ops->cropcap(icd, a);
 }
@@ -848,7 +1200,11 @@ static int soc_camera_g_crop(struct file *file, void *fh,
 			     struct v4l2_crop *a)
 {
 	struct soc_camera_device *icd = file->private_data;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	ret = ici->ops->get_crop(icd, a);
@@ -865,7 +1221,11 @@ static int soc_camera_s_crop(struct file *file, void *fh,
 			     struct v4l2_crop *a)
 {
 	struct soc_camera_device *icd = file->private_data;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct v4l2_rect *rect = &a->c;
 	struct v4l2_crop current_crop;
 	int ret;
@@ -873,7 +1233,11 @@ static int soc_camera_s_crop(struct file *file, void *fh,
 	if (a->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	dev_dbg(icd->pdev, "S_CROP(%ux%u@%u:%u)\n",
+=======
+	dev_dbg(&icd->dev, "S_CROP(%ux%u@%u:%u)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rect->width, rect->height, rect->left, rect->top);
 
 	/* If get_crop fails, we'll let host and / or client drivers decide */
@@ -881,7 +1245,11 @@ static int soc_camera_s_crop(struct file *file, void *fh,
 
 	/* Prohibit window size change with initialised buffers */
 	if (ret < 0) {
+<<<<<<< HEAD
 		dev_err(icd->pdev,
+=======
+		dev_err(&icd->dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"S_CROP denied: getting current crop failed\n");
 	} else if ((a->c.width == current_crop.c.width &&
 		    a->c.height == current_crop.c.height) ||
@@ -891,7 +1259,11 @@ static int soc_camera_s_crop(struct file *file, void *fh,
 	} else if (ici->ops->set_livecrop) {
 		ret = ici->ops->set_livecrop(icd, a);
 	} else {
+<<<<<<< HEAD
 		dev_err(icd->pdev,
+=======
+		dev_err(&icd->dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"S_CROP denied: queue initialised and sizes differ\n");
 		ret = -EBUSY;
 	}
@@ -903,7 +1275,11 @@ static int soc_camera_g_parm(struct file *file, void *fh,
 			     struct v4l2_streamparm *a)
 {
 	struct soc_camera_device *icd = file->private_data;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ici->ops->get_parm)
 		return ici->ops->get_parm(icd, a);
@@ -915,7 +1291,11 @@ static int soc_camera_s_parm(struct file *file, void *fh,
 			     struct v4l2_streamparm *a)
 {
 	struct soc_camera_device *icd = file->private_data;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ici->ops->set_parm)
 		return ici->ops->set_parm(icd, a);
@@ -952,18 +1332,26 @@ static int soc_camera_s_register(struct file *file, void *fh,
 }
 #endif
 
+<<<<<<< HEAD
 static int soc_camera_probe(struct soc_camera_device *icd);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* So far this function cannot fail */
 static void scan_add_host(struct soc_camera_host *ici)
 {
 	struct soc_camera_device *icd;
 
+<<<<<<< HEAD
 	mutex_lock(&ici->host_lock);
+=======
+	mutex_lock(&list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_for_each_entry(icd, &devices, list) {
 		if (icd->iface == ici->nr) {
 			int ret;
+<<<<<<< HEAD
 
 			icd->parent = ici->v4l2_dev.dev;
 			ret = soc_camera_probe(icd);
@@ -971,6 +1359,21 @@ static void scan_add_host(struct soc_camera_host *ici)
 	}
 
 	mutex_unlock(&ici->host_lock);
+=======
+			icd->dev.parent = ici->v4l2_dev.dev;
+			dev_set_name(&icd->dev, "%u-%u", icd->iface,
+				     icd->devnum);
+			ret = device_register(&icd->dev);
+			if (ret < 0) {
+				icd->dev.parent = NULL;
+				dev_err(&icd->dev,
+					"Cannot register device: %d\n", ret);
+			}
+		}
+	}
+
+	mutex_unlock(&list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_I2C_BOARDINFO
@@ -978,17 +1381,29 @@ static int soc_camera_init_i2c(struct soc_camera_device *icd,
 			       struct soc_camera_link *icl)
 {
 	struct i2c_client *client;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct i2c_adapter *adap = i2c_get_adapter(icl->i2c_adapter_id);
 	struct v4l2_subdev *subdev;
 
 	if (!adap) {
+<<<<<<< HEAD
 		dev_err(icd->pdev, "Cannot get I2C adapter #%d. No driver?\n",
+=======
+		dev_err(&icd->dev, "Cannot get I2C adapter #%d. No driver?\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			icl->i2c_adapter_id);
 		goto ei2cga;
 	}
 
+<<<<<<< HEAD
 	icl->board_info->platform_data = icl;
+=======
+	icl->board_info->platform_data = icd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	subdev = v4l2_i2c_new_subdev_board(&ici->v4l2_dev, adap,
 				icl->board_info, NULL);
@@ -998,7 +1413,11 @@ static int soc_camera_init_i2c(struct soc_camera_device *icd,
 	client = v4l2_get_subdevdata(subdev);
 
 	/* Use to_i2c_client(dev) to recover the i2c client */
+<<<<<<< HEAD
 	icd->control = &client->dev;
+=======
+	dev_set_drvdata(&icd->dev, &client->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 ei2cnd:
@@ -1012,8 +1431,12 @@ static void soc_camera_free_i2c(struct soc_camera_device *icd)
 	struct i2c_client *client =
 		to_i2c_client(to_soc_camera_control(icd));
 	struct i2c_adapter *adap = client->adapter;
+<<<<<<< HEAD
 
 	icd->control = NULL;
+=======
+	dev_set_drvdata(&icd->dev, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	v4l2_device_unregister_subdev(i2c_get_clientdata(client));
 	i2c_unregister_device(client);
 	i2c_put_adapter(adap);
@@ -1026,15 +1449,23 @@ static void soc_camera_free_i2c(struct soc_camera_device *icd)
 static int soc_camera_video_start(struct soc_camera_device *icd);
 static int video_dev_create(struct soc_camera_device *icd);
 /* Called during host-driver probe */
+<<<<<<< HEAD
 static int soc_camera_probe(struct soc_camera_device *icd)
 {
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+static int soc_camera_probe(struct device *dev)
+{
+	struct soc_camera_device *icd = to_soc_camera_dev(dev);
+	struct soc_camera_host *ici = to_soc_camera_host(dev->parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct soc_camera_link *icl = to_soc_camera_link(icd);
 	struct device *control = NULL;
 	struct v4l2_subdev *sd;
 	struct v4l2_mbus_framefmt mf;
 	int ret;
 
+<<<<<<< HEAD
 	dev_info(icd->pdev, "Probing %s\n", dev_name(icd->pdev));
 
 	/*
@@ -1047,12 +1478,22 @@ static int soc_camera_probe(struct soc_camera_device *icd)
 	ret = v4l2_ctrl_handler_init(&icd->ctrl_handler, 16);
 	if (ret < 0)
 		return ret;
+=======
+	dev_info(dev, "Probing %s\n", dev_name(dev));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = regulator_bulk_get(icd->pdev, icl->num_regulators,
 				 icl->regulators);
 	if (ret < 0)
 		goto ereg;
 
+<<<<<<< HEAD
+=======
+	ret = soc_camera_power_set(icd, icl, 1);
+	if (ret < 0)
+		goto epower;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* The camera could have been already on, try to reset */
 	if (icl->reset)
 		icl->reset(icd->pdev);
@@ -1061,6 +1502,7 @@ static int soc_camera_probe(struct soc_camera_device *icd)
 	if (ret < 0)
 		goto eadd;
 
+<<<<<<< HEAD
 	/*
 	 * This will not yet call v4l2_subdev_core_ops::s_power(1), because the
 	 * subdevice has not been initialised yet. We'll have to call it once
@@ -1071,6 +1513,8 @@ static int soc_camera_probe(struct soc_camera_device *icd)
 	if (ret < 0)
 		goto epower;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Must have icd->vdev before registering the device */
 	ret = video_dev_create(icd);
 	if (ret < 0)
@@ -1088,7 +1532,11 @@ static int soc_camera_probe(struct soc_camera_device *icd)
 		if (icl->module_name)
 			ret = request_module(icl->module_name);
 
+<<<<<<< HEAD
 		ret = icl->add_device(icd);
+=======
+		ret = icl->add_device(icl, &icd->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0)
 			goto eadddev;
 
@@ -1099,18 +1547,26 @@ static int soc_camera_probe(struct soc_camera_device *icd)
 		control = to_soc_camera_control(icd);
 		if (!control || !control->driver || !dev_get_drvdata(control) ||
 		    !try_module_get(control->driver->owner)) {
+<<<<<<< HEAD
 			icl->del_device(icd);
 			ret = -ENODEV;
+=======
+			icl->del_device(icl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto enodrv;
 		}
 	}
 
 	sd = soc_camera_to_subdev(icd);
+<<<<<<< HEAD
 	sd->grp_id = soc_camera_grp_id(icd);
 	v4l2_set_subdev_hostdata(sd, icd);
 
 	if (v4l2_ctrl_add_handler(&icd->ctrl_handler, sd->ctrl_handler))
 		goto ectrl;
+=======
+	sd->grp_id = (long)icd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* At this point client .probe() should have run already */
 	ret = soc_camera_init_user_formats(icd);
@@ -1119,6 +1575,11 @@ static int soc_camera_probe(struct soc_camera_device *icd)
 
 	icd->field = V4L2_FIELD_ANY;
 
+<<<<<<< HEAD
+=======
+	icd->vdev->lock = &icd->video_lock;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * ..._video_start() will create a device node, video_register_device()
 	 * itself is protected against concurrent open() calls, but we also have
@@ -1130,10 +1591,13 @@ static int soc_camera_probe(struct soc_camera_device *icd)
 	if (ret < 0)
 		goto evidstart;
 
+<<<<<<< HEAD
 	ret = v4l2_subdev_call(sd, core, s_power, 1);
 	if (ret < 0 && ret != -ENOIOCTLCMD)
 		goto esdpwr;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Try to improve our guess of a reasonable window format */
 	if (!v4l2_subdev_call(sd, video, g_mbus_fmt, &mf)) {
 		icd->user_width		= mf.width;
@@ -1142,30 +1606,52 @@ static int soc_camera_probe(struct soc_camera_device *icd)
 		icd->field		= mf.field;
 	}
 
+<<<<<<< HEAD
 	ici->ops->remove(icd);
 
 	soc_camera_power_off(icd, icl);
+=======
+	/* Do we have to sysfs_remove_link() before device_unregister()? */
+	if (sysfs_create_link(&icd->dev.kobj, &to_soc_camera_control(icd)->kobj,
+			      "control"))
+		dev_warn(&icd->dev, "Failed creating the control symlink\n");
+
+	ici->ops->remove(icd);
+
+	soc_camera_power_set(icd, icl, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_unlock(&icd->video_lock);
 
 	return 0;
 
+<<<<<<< HEAD
 esdpwr:
 	video_unregister_device(icd->vdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 evidstart:
 	mutex_unlock(&icd->video_lock);
 	soc_camera_free_user_formats(icd);
 eiufmt:
+<<<<<<< HEAD
 ectrl:
 	if (icl->board_info) {
 		soc_camera_free_i2c(icd);
 	} else {
 		icl->del_device(icd);
+=======
+	if (icl->board_info) {
+		soc_camera_free_i2c(icd);
+	} else {
+		icl->del_device(icl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		module_put(control->driver->owner);
 	}
 enodrv:
 eadddev:
 	video_device_release(icd->vdev);
+<<<<<<< HEAD
 	icd->vdev = NULL;
 evdc:
 	soc_camera_power_off(icd, icl);
@@ -1175,6 +1661,15 @@ eadd:
 	regulator_bulk_free(icl->num_regulators, icl->regulators);
 ereg:
 	v4l2_ctrl_handler_free(&icd->ctrl_handler);
+=======
+evdc:
+	ici->ops->remove(icd);
+eadd:
+	soc_camera_power_set(icd, icl, 0);
+epower:
+	regulator_bulk_free(icl->num_regulators, icl->regulators);
+ereg:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1182,6 +1677,7 @@ ereg:
  * This is called on device_unregister, which only means we have to disconnect
  * from the host, but not remove ourselves from the device list
  */
+<<<<<<< HEAD
 static int soc_camera_remove(struct soc_camera_device *icd)
 {
 	struct soc_camera_link *icl = to_soc_camera_link(icd);
@@ -1190,6 +1686,16 @@ static int soc_camera_remove(struct soc_camera_device *icd)
 	BUG_ON(!icd->parent);
 
 	v4l2_ctrl_handler_free(&icd->ctrl_handler);
+=======
+static int soc_camera_remove(struct device *dev)
+{
+	struct soc_camera_device *icd = to_soc_camera_dev(dev);
+	struct soc_camera_link *icl = to_soc_camera_link(icd);
+	struct video_device *vdev = icd->vdev;
+
+	BUG_ON(!dev->parent);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (vdev) {
 		video_unregister_device(vdev);
 		icd->vdev = NULL;
@@ -1198,9 +1704,16 @@ static int soc_camera_remove(struct soc_camera_device *icd)
 	if (icl->board_info) {
 		soc_camera_free_i2c(icd);
 	} else {
+<<<<<<< HEAD
 		struct device_driver *drv = to_soc_camera_control(icd)->driver;
 		if (drv) {
 			icl->del_device(icd);
+=======
+		struct device_driver *drv = to_soc_camera_control(icd) ?
+			to_soc_camera_control(icd)->driver : NULL;
+		if (drv) {
+			icl->del_device(icl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			module_put(drv->owner);
 		}
 	}
@@ -1211,6 +1724,52 @@ static int soc_camera_remove(struct soc_camera_device *icd)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int soc_camera_suspend(struct device *dev, pm_message_t state)
+{
+	struct soc_camera_device *icd = to_soc_camera_dev(dev);
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+	int ret = 0;
+
+	if (ici->ops->suspend)
+		ret = ici->ops->suspend(icd, state);
+
+	return ret;
+}
+
+static int soc_camera_resume(struct device *dev)
+{
+	struct soc_camera_device *icd = to_soc_camera_dev(dev);
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+	int ret = 0;
+
+	if (ici->ops->resume)
+		ret = ici->ops->resume(icd);
+
+	return ret;
+}
+
+struct bus_type soc_camera_bus_type = {
+	.name		= "soc-camera",
+	.probe		= soc_camera_probe,
+	.remove		= soc_camera_remove,
+	.suspend	= soc_camera_suspend,
+	.resume		= soc_camera_resume,
+};
+EXPORT_SYMBOL_GPL(soc_camera_bus_type);
+
+static struct device_driver ic_drv = {
+	.name	= "camera",
+	.bus	= &soc_camera_bus_type,
+	.owner	= THIS_MODULE,
+};
+
+static void dummy_release(struct device *dev)
+{
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int default_cropcap(struct soc_camera_device *icd,
 			   struct v4l2_cropcap *a)
 {
@@ -1269,6 +1828,16 @@ static int default_enum_fsizes(struct soc_camera_device *icd,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void soc_camera_device_init(struct device *dev, void *pdata)
+{
+	dev->platform_data	= pdata;
+	dev->bus		= &soc_camera_bus_type;
+	dev->release		= dummy_release;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int soc_camera_host_register(struct soc_camera_host *ici)
 {
 	struct soc_camera_host *ix;
@@ -1316,7 +1885,10 @@ int soc_camera_host_register(struct soc_camera_host *ici)
 	list_add_tail(&ici->list, &hosts);
 	mutex_unlock(&list_lock);
 
+<<<<<<< HEAD
 	mutex_init(&ici->host_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	scan_add_host(ici);
 
 	return 0;
@@ -1335,9 +1907,30 @@ void soc_camera_host_unregister(struct soc_camera_host *ici)
 	mutex_lock(&list_lock);
 
 	list_del(&ici->list);
+<<<<<<< HEAD
 	list_for_each_entry(icd, &devices, list)
 		if (icd->iface == ici->nr && to_soc_camera_control(icd))
 			soc_camera_remove(icd);
+=======
+
+	list_for_each_entry(icd, &devices, list) {
+		if (icd->iface == ici->nr) {
+			void *pdata = icd->dev.platform_data;
+			/* The bus->remove will be called */
+			device_unregister(&icd->dev);
+			/*
+			 * Not before device_unregister(), .remove
+			 * needs parent to call ici->ops->remove().
+			 * If the host module is loaded again, device_register()
+			 * would complain "already initialised," since 2.6.32
+			 * this is also needed to prevent use-after-free of the
+			 * device private data.
+			 */
+			memset(&icd->dev, 0, sizeof(icd->dev));
+			soc_camera_device_init(&icd->dev, pdata);
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_unlock(&list_lock);
 
@@ -1379,16 +1972,30 @@ static int soc_camera_device_register(struct soc_camera_device *icd)
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct v4l2_ioctl_ops soc_camera_ioctl_ops = {
 	.vidioc_querycap	 = soc_camera_querycap,
 	.vidioc_try_fmt_vid_cap  = soc_camera_try_fmt_vid_cap,
 	.vidioc_g_fmt_vid_cap    = soc_camera_g_fmt_vid_cap,
 	.vidioc_s_fmt_vid_cap    = soc_camera_s_fmt_vid_cap,
 	.vidioc_enum_fmt_vid_cap = soc_camera_enum_fmt_vid_cap,
+=======
+static void soc_camera_device_unregister(struct soc_camera_device *icd)
+{
+	list_del(&icd->list);
+}
+
+static const struct v4l2_ioctl_ops soc_camera_ioctl_ops = {
+	.vidioc_querycap	 = soc_camera_querycap,
+	.vidioc_g_fmt_vid_cap    = soc_camera_g_fmt_vid_cap,
+	.vidioc_enum_fmt_vid_cap = soc_camera_enum_fmt_vid_cap,
+	.vidioc_s_fmt_vid_cap    = soc_camera_s_fmt_vid_cap,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.vidioc_enum_input	 = soc_camera_enum_input,
 	.vidioc_g_input		 = soc_camera_g_input,
 	.vidioc_s_input		 = soc_camera_s_input,
 	.vidioc_s_std		 = soc_camera_s_std,
+<<<<<<< HEAD
 	.vidioc_g_std		 = soc_camera_g_std,
 	.vidioc_enum_framesizes  = soc_camera_enum_fsizes,
 	.vidioc_reqbufs		 = soc_camera_reqbufs,
@@ -1399,6 +2006,19 @@ static const struct v4l2_ioctl_ops soc_camera_ioctl_ops = {
 	.vidioc_prepare_buf	 = soc_camera_prepare_buf,
 	.vidioc_streamon	 = soc_camera_streamon,
 	.vidioc_streamoff	 = soc_camera_streamoff,
+=======
+	.vidioc_enum_framesizes  = soc_camera_enum_fsizes,
+	.vidioc_reqbufs		 = soc_camera_reqbufs,
+	.vidioc_try_fmt_vid_cap  = soc_camera_try_fmt_vid_cap,
+	.vidioc_querybuf	 = soc_camera_querybuf,
+	.vidioc_qbuf		 = soc_camera_qbuf,
+	.vidioc_dqbuf		 = soc_camera_dqbuf,
+	.vidioc_streamon	 = soc_camera_streamon,
+	.vidioc_streamoff	 = soc_camera_streamoff,
+	.vidioc_queryctrl	 = soc_camera_queryctrl,
+	.vidioc_g_ctrl		 = soc_camera_g_ctrl,
+	.vidioc_s_ctrl		 = soc_camera_s_ctrl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.vidioc_cropcap		 = soc_camera_cropcap,
 	.vidioc_g_crop		 = soc_camera_g_crop,
 	.vidioc_s_crop		 = soc_camera_s_crop,
@@ -1413,7 +2033,11 @@ static const struct v4l2_ioctl_ops soc_camera_ioctl_ops = {
 
 static int video_dev_create(struct soc_camera_device *icd)
 {
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct video_device *vdev = video_device_alloc();
 
 	if (!vdev)
@@ -1421,14 +2045,21 @@ static int video_dev_create(struct soc_camera_device *icd)
 
 	strlcpy(vdev->name, ici->drv_name, sizeof(vdev->name));
 
+<<<<<<< HEAD
 	vdev->parent		= icd->pdev;
+=======
+	vdev->parent		= &icd->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vdev->current_norm	= V4L2_STD_UNKNOWN;
 	vdev->fops		= &soc_camera_fops;
 	vdev->ioctl_ops		= &soc_camera_ioctl_ops;
 	vdev->release		= video_device_release;
 	vdev->tvnorms		= V4L2_STD_UNKNOWN;
+<<<<<<< HEAD
 	vdev->ctrl_handler	= &icd->ctrl_handler;
 	vdev->lock		= &icd->video_lock;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	icd->vdev = vdev;
 
@@ -1443,12 +2074,26 @@ static int soc_camera_video_start(struct soc_camera_device *icd)
 	const struct device_type *type = icd->vdev->dev.type;
 	int ret;
 
+<<<<<<< HEAD
 	if (!icd->parent)
 		return -ENODEV;
 
 	ret = video_register_device(icd->vdev, VFL_TYPE_GRABBER, -1);
 	if (ret < 0) {
 		dev_err(icd->pdev, "video_register_device failed: %d\n", ret);
+=======
+	if (!icd->dev.parent)
+		return -ENODEV;
+
+	if (!icd->ops ||
+	    !icd->ops->query_bus_param ||
+	    !icd->ops->set_bus_param)
+		return -EINVAL;
+
+	ret = video_register_device(icd->vdev, VFL_TYPE_GRABBER, -1);
+	if (ret < 0) {
+		dev_err(&icd->dev, "video_register_device failed: %d\n", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 
@@ -1472,7 +2117,10 @@ static int __devinit soc_camera_pdrv_probe(struct platform_device *pdev)
 		return -ENOMEM;
 
 	icd->iface = icl->bus_id;
+<<<<<<< HEAD
 	icd->link = icl;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	icd->pdev = &pdev->dev;
 	platform_set_drvdata(pdev, icd);
 
@@ -1480,6 +2128,11 @@ static int __devinit soc_camera_pdrv_probe(struct platform_device *pdev)
 	if (ret < 0)
 		goto escdevreg;
 
+<<<<<<< HEAD
+=======
+	soc_camera_device_init(&icd->dev, icl);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	icd->user_width		= DEFAULT_WIDTH;
 	icd->user_height	= DEFAULT_HEIGHT;
 
@@ -1503,7 +2156,11 @@ static int __devexit soc_camera_pdrv_remove(struct platform_device *pdev)
 	if (!icd)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	list_del(&icd->list);
+=======
+	soc_camera_device_unregister(icd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kfree(icd);
 
@@ -1520,12 +2177,38 @@ static struct platform_driver __refdata soc_camera_pdrv = {
 
 static int __init soc_camera_init(void)
 {
+<<<<<<< HEAD
 	return platform_driver_probe(&soc_camera_pdrv, soc_camera_pdrv_probe);
+=======
+	int ret = bus_register(&soc_camera_bus_type);
+	if (ret)
+		return ret;
+	ret = driver_register(&ic_drv);
+	if (ret)
+		goto edrvr;
+
+	ret = platform_driver_probe(&soc_camera_pdrv, soc_camera_pdrv_probe);
+	if (ret)
+		goto epdr;
+
+	return 0;
+
+epdr:
+	driver_unregister(&ic_drv);
+edrvr:
+	bus_unregister(&soc_camera_bus_type);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit soc_camera_exit(void)
 {
 	platform_driver_unregister(&soc_camera_pdrv);
+<<<<<<< HEAD
+=======
+	driver_unregister(&ic_drv);
+	bus_unregister(&soc_camera_bus_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(soc_camera_init);

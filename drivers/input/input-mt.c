@@ -9,7 +9,10 @@
  */
 
 #include <linux/input/mt.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 
 #define TRKID_SGN	((TRKID_MAX + 1) >> 1)
@@ -118,7 +121,10 @@ void input_mt_report_finger_count(struct input_dev *dev, int count)
 	input_event(dev, EV_KEY, BTN_TOOL_DOUBLETAP, count == 2);
 	input_event(dev, EV_KEY, BTN_TOOL_TRIPLETAP, count == 3);
 	input_event(dev, EV_KEY, BTN_TOOL_QUADTAP, count == 4);
+<<<<<<< HEAD
 	input_event(dev, EV_KEY, BTN_TOOL_QUINTTAP, count == 5);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(input_mt_report_finger_count);
 

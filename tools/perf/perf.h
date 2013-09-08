@@ -9,27 +9,36 @@ void get_term_dimensions(struct winsize *ws);
 #include "../../arch/x86/include/asm/unistd.h"
 #define rmb()		asm volatile("lock; addl $0,0(%%esp)" ::: "memory")
 #define cpu_relax()	asm volatile("rep; nop" ::: "memory");
+<<<<<<< HEAD
 #define CPUINFO_PROC	"model name"
 #ifndef __NR_perf_event_open
 # define __NR_perf_event_open 336
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #if defined(__x86_64__)
 #include "../../arch/x86/include/asm/unistd.h"
 #define rmb()		asm volatile("lfence" ::: "memory")
 #define cpu_relax()	asm volatile("rep; nop" ::: "memory");
+<<<<<<< HEAD
 #define CPUINFO_PROC	"model name"
 #ifndef __NR_perf_event_open
 # define __NR_perf_event_open 298
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifdef __powerpc__
 #include "../../arch/powerpc/include/asm/unistd.h"
 #define rmb()		asm volatile ("sync" ::: "memory")
 #define cpu_relax()	asm volatile ("" ::: "memory");
+<<<<<<< HEAD
 #define CPUINFO_PROC	"cpu"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifdef __s390__
@@ -46,35 +55,50 @@ void get_term_dimensions(struct winsize *ws);
 # define rmb()		asm volatile("" ::: "memory")
 #endif
 #define cpu_relax()	asm volatile("" ::: "memory")
+<<<<<<< HEAD
 #define CPUINFO_PROC	"cpu type"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifdef __hppa__
 #include "../../arch/parisc/include/asm/unistd.h"
 #define rmb()		asm volatile("" ::: "memory")
 #define cpu_relax()	asm volatile("" ::: "memory");
+<<<<<<< HEAD
 #define CPUINFO_PROC	"cpu"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifdef __sparc__
 #include "../../arch/sparc/include/asm/unistd.h"
 #define rmb()		asm volatile("":::"memory")
 #define cpu_relax()	asm volatile("":::"memory")
+<<<<<<< HEAD
 #define CPUINFO_PROC	"cpu"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifdef __alpha__
 #include "../../arch/alpha/include/asm/unistd.h"
 #define rmb()		asm volatile("mb" ::: "memory")
 #define cpu_relax()	asm volatile("" ::: "memory")
+<<<<<<< HEAD
 #define CPUINFO_PROC	"cpu model"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifdef __ia64__
 #include "../../arch/ia64/include/asm/unistd.h"
 #define rmb()		asm volatile ("mf" ::: "memory")
 #define cpu_relax()	asm volatile ("hint @pause" ::: "memory")
+<<<<<<< HEAD
 #define CPUINFO_PROC	"model name"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifdef __arm__
@@ -85,7 +109,10 @@ void get_term_dimensions(struct winsize *ws);
  */
 #define rmb()		((void(*)(void))0xffff0fa0)()
 #define cpu_relax()	asm volatile("":::"memory")
+<<<<<<< HEAD
 #define CPUINFO_PROC	"Processor"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifdef __mips__
@@ -98,7 +125,10 @@ void get_term_dimensions(struct winsize *ws);
 				: /* no input */			\
 				: "memory")
 #define cpu_relax()	asm volatile("" ::: "memory")
+<<<<<<< HEAD
 #define CPUINFO_PROC	"cpu model"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #include <time.h>
@@ -173,6 +203,10 @@ sys_perf_event_open(struct perf_event_attr *attr,
 		      pid_t pid, int cpu, int group_fd,
 		      unsigned long flags)
 {
+<<<<<<< HEAD
+=======
+	attr->size = sizeof(*attr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return syscall(__NR_perf_event_open, attr, pid, cpu,
 		       group_fd, flags);
 }
@@ -185,6 +219,7 @@ struct ip_callchain {
 	u64 ips[0];
 };
 
+<<<<<<< HEAD
 struct branch_flags {
 	u64 mispred:1;
 	u64 predicted:1;
@@ -233,5 +268,8 @@ struct perf_record_opts {
 	u64	     user_interval;
 	const char   *cpu_list;
 };
+=======
+extern bool perf_host, perf_guest;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

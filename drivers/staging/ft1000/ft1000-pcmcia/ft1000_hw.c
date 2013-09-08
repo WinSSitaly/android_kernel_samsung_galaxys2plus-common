@@ -29,6 +29,10 @@
 #include <linux/interrupt.h>
 #include <linux/in.h>
 #include <asm/io.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/bitops.h>
 
 #include <linux/netdevice.h>
@@ -53,6 +57,7 @@
 #endif
 
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include "ft1000.h"
 
 static const struct firmware *fw_entry;
@@ -60,6 +65,21 @@ static const struct firmware *fw_entry;
 static void ft1000_hbchk(u_long data);
 static struct timer_list poll_timer = {
       .function = ft1000_hbchk
+=======
+#include "ft1000_dev.h"
+#include "ft1000.h"
+
+int card_download(struct net_device *dev, const u8 *pFileStart, UINT FileLength);
+
+void ft1000InitProc(struct net_device *dev);
+void ft1000CleanupProc(struct net_device *dev);
+
+const struct firmware *fw_entry;
+
+static void ft1000_hbchk(u_long data);
+static struct timer_list poll_timer = {
+      function:ft1000_hbchk
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static u16 cmdbuffer[1024];
@@ -82,6 +102,43 @@ MODULE_SUPPORTED_DEVICE("FT1000");
 
 //---------------------------------------------------------------------------
 //
+<<<<<<< HEAD
+=======
+// Function:   ft1000_asic_read
+// Description: This function will retrieve the value of a specific ASIC
+//             register.
+// Input:
+//    dev - network device structure
+//    offset - ASIC register to read
+// Output:
+//    value - value of ASIC register
+//
+//---------------------------------------------------------------------------
+inline u16 ft1000_asic_read(struct net_device *dev, u16 offset)
+{
+	return (ft1000_read_reg(dev, offset));
+}
+
+//---------------------------------------------------------------------------
+//
+// Function:   ft1000_asic_write
+// Description: This function will set the value of a specific ASIC
+//             register.
+// Input:
+//    dev - network device structure
+//    value - value to set ASIC register
+// Output:
+//    none
+//
+//---------------------------------------------------------------------------
+inline void ft1000_asic_write(struct net_device *dev, u16 offset, u16 value)
+{
+	ft1000_write_reg(dev, offset, value);
+}
+
+//---------------------------------------------------------------------------
+//
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 // Function:   ft1000_read_fifo_len
 // Description: This function will read the ASIC Uplink FIFO status register
 //             which will return the number of bytes remaining in the Uplink FIFO.
@@ -95,7 +152,11 @@ MODULE_SUPPORTED_DEVICE("FT1000");
 //---------------------------------------------------------------------------
 static inline u16 ft1000_read_fifo_len(struct net_device *dev)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (info->AsicID == ELECTRABUZZ_ID) {
 		return (ft1000_read_reg(dev, FT1000_REG_UFIFO_STAT) - 16);
@@ -118,7 +179,11 @@ static inline u16 ft1000_read_fifo_len(struct net_device *dev)
 //---------------------------------------------------------------------------
 u16 ft1000_read_dpram(struct net_device * dev, int offset)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 	u16 data;
 
@@ -147,7 +212,11 @@ u16 ft1000_read_dpram(struct net_device * dev, int offset)
 static inline void ft1000_write_dpram(struct net_device *dev,
 					  int offset, u16 value)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	// Provide mutual exclusive access while reading ASIC registers.
@@ -171,7 +240,11 @@ static inline void ft1000_write_dpram(struct net_device *dev,
 //---------------------------------------------------------------------------
 u16 ft1000_read_dpram_mag_16(struct net_device *dev, int offset, int Index)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 	u16 data;
 
@@ -205,7 +278,11 @@ u16 ft1000_read_dpram_mag_16(struct net_device *dev, int offset, int Index)
 static inline void ft1000_write_dpram_mag_16(struct net_device *dev,
 						 int offset, u16 value, int Index)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	// Provide mutual exclusive access while reading ASIC registers.
@@ -233,7 +310,11 @@ static inline void ft1000_write_dpram_mag_16(struct net_device *dev,
 //---------------------------------------------------------------------------
 u32 ft1000_read_dpram_mag_32(struct net_device *dev, int offset)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 	u32 data;
 
@@ -261,7 +342,11 @@ u32 ft1000_read_dpram_mag_32(struct net_device *dev, int offset)
 //---------------------------------------------------------------------------
 void ft1000_write_dpram_mag_32(struct net_device *dev, int offset, u32 value)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	// Provide mutual exclusive access while reading ASIC registers.
@@ -283,14 +368,27 @@ void ft1000_write_dpram_mag_32(struct net_device *dev, int offset, u32 value)
 //---------------------------------------------------------------------------
 static void ft1000_enable_interrupts(struct net_device *dev)
 {
+<<<<<<< HEAD
 	u16 tempword;
 
 	DEBUG(1, "ft1000_hw:ft1000_enable_interrupts()\n");
 	ft1000_write_reg(dev, FT1000_REG_SUP_IMASK, ISR_DEFAULT_MASK);
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+	u16 tempword;
+
+	DEBUG(1, "ft1000_hw:ft1000_enable_interrupts()\n");
+	ft1000_write_reg(dev, FT1000_REG_SUP_IMASK,
+			 info->CurrentInterruptEnableMask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tempword = ft1000_read_reg(dev, FT1000_REG_SUP_IMASK);
 	DEBUG(1,
 		  "ft1000_hw:ft1000_enable_interrupts:current interrupt enable mask = 0x%x\n",
 		  tempword);
+<<<<<<< HEAD
+=======
+	info->InterruptsEnabled = TRUE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 //---------------------------------------------------------------------------
@@ -305,6 +403,10 @@ static void ft1000_enable_interrupts(struct net_device *dev)
 //---------------------------------------------------------------------------
 static void ft1000_disable_interrupts(struct net_device *dev)
 {
+<<<<<<< HEAD
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 tempword;
 
 	DEBUG(1, "ft1000_hw: ft1000_disable_interrupts()\n");
@@ -313,6 +415,10 @@ static void ft1000_disable_interrupts(struct net_device *dev)
 	DEBUG(1,
 		  "ft1000_hw:ft1000_disable_interrupts:current interrupt enable mask = 0x%x\n",
 		  tempword);
+<<<<<<< HEAD
+=======
+	info->InterruptsEnabled = FALSE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 //---------------------------------------------------------------------------
@@ -328,12 +434,20 @@ static void ft1000_disable_interrupts(struct net_device *dev)
 //---------------------------------------------------------------------------
 static void ft1000_reset_asic(struct net_device *dev)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 tempword;
 
 	DEBUG(1, "ft1000_hw:ft1000_reset_asic called\n");
 
 	(*info->ft1000_reset) (info->link);
+<<<<<<< HEAD
+=======
+	info->ASICResetNum++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	// Let's use the register provided by the Magnemite ASIC to reset the
 	// ASIC and DSP.
@@ -343,10 +457,17 @@ static void ft1000_reset_asic(struct net_device *dev)
 	}
 	mdelay(1);
 	if (info->AsicID == ELECTRABUZZ_ID) {
+<<<<<<< HEAD
 		// set watermark to -1 in order to not generate an interrupt
 		ft1000_write_reg(dev, FT1000_REG_WATERMARK, 0xffff);
 	} else {
 		// set watermark to -1 in order to not generate an interrupt
+=======
+		// set watermark to -1 in order to not generate an interrrupt
+		ft1000_write_reg(dev, FT1000_REG_WATERMARK, 0xffff);
+	} else {
+		// set watermark to -1 in order to not generate an interrrupt
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ft1000_write_reg(dev, FT1000_REG_MAG_WATERMARK, 0xffff);
 	}
 	// clear interrupts
@@ -365,17 +486,30 @@ static void ft1000_reset_asic(struct net_device *dev)
 // Input:
 //     dev    - device structure
 // Output:
+<<<<<<< HEAD
 //     status - false (card reset fail)
 //              true  (card reset successful)
+=======
+//     status - FALSE (card reset fail)
+//              TRUE  (card reset successful)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 //
 //---------------------------------------------------------------------------
 static int ft1000_reset_card(struct net_device *dev)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info = netdev_priv(dev);
 	u16 tempword;
 	int i;
 	unsigned long flags;
 	struct prov_record *ptr;
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+	u16 tempword;
+	int i;
+	unsigned long flags;
+	PPROV_RECORD ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	DEBUG(1, "ft1000_hw:ft1000_reset_card called.....\n");
 
@@ -390,7 +524,11 @@ static int ft1000_reset_card(struct net_device *dev)
 	while (list_empty(&info->prov_list) == 0) {
 		DEBUG(0,
 			  "ft1000_hw:ft1000_reset_card:deleting provisioning record\n");
+<<<<<<< HEAD
 		ptr = list_entry(info->prov_list.next, struct prov_record, list);
+=======
+		ptr = list_entry(info->prov_list.next, PROV_RECORD, list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_del(&ptr->list);
 		kfree(ptr->pprov_data);
 		kfree(ptr);
@@ -410,12 +548,23 @@ static int ft1000_reset_card(struct net_device *dev)
 	if (ft1000_card_present == 1) {
 		spin_lock_irqsave(&info->dpram_lock, flags);
 		if (info->AsicID == ELECTRABUZZ_ID) {
+<<<<<<< HEAD
 			ft1000_write_reg(dev, FT1000_REG_DPRAM_ADDR,
 					 FT1000_DPRAM_RX_BASE);
 			for (i = 0; i < MAX_DSP_SESS_REC; i++) {
 				info->DSPSess.Rec[i] =
 					ft1000_read_reg(dev,
 							FT1000_REG_DPRAM_DATA);
+=======
+			if (info->DspHibernateFlag == 0) {
+				ft1000_write_reg(dev, FT1000_REG_DPRAM_ADDR,
+						 FT1000_DPRAM_RX_BASE);
+				for (i = 0; i < MAX_DSP_SESS_REC; i++) {
+					info->DSPSess.Rec[i] =
+						ft1000_read_reg(dev,
+								FT1000_REG_DPRAM_DATA);
+				}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		} else {
 			ft1000_write_reg(dev, FT1000_REG_DPRAM_ADDR,
@@ -433,6 +582,11 @@ static int ft1000_reset_card(struct net_device *dev)
 	//reset ASIC
 	ft1000_reset_asic(dev);
 
+<<<<<<< HEAD
+=======
+	info->DSPResetNum++;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DEBUG(1, "ft1000_hw:ft1000_reset_card:downloading dsp image\n");
 
 	if (info->AsicID == MAGNEMITE_ID) {
@@ -466,7 +620,11 @@ static int ft1000_reset_card(struct net_device *dev)
 		if (i == 50) {
 			DEBUG(0,
 				  "ft1000_hw:ft1000_reset_card:No FEFE detected from DSP\n");
+<<<<<<< HEAD
 			return false;
+=======
+			return FALSE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 	} else {
@@ -477,7 +635,11 @@ static int ft1000_reset_card(struct net_device *dev)
 
 	if (card_download(dev, fw_entry->data, fw_entry->size)) {
 		DEBUG(1, "card download unsuccessful\n");
+<<<<<<< HEAD
 		return false;
+=======
+		return FALSE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		DEBUG(1, "card download successful\n");
 	}
@@ -513,7 +675,11 @@ static int ft1000_reset_card(struct net_device *dev)
 //	poll_timer.data = (u_long)dev;
 //	add_timer(&poll_timer);
 
+<<<<<<< HEAD
 	return true;
+=======
+	return TRUE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 }
 
@@ -525,8 +691,13 @@ static int ft1000_reset_card(struct net_device *dev)
 // Input:
 //     dev    - device structure
 // Output:
+<<<<<<< HEAD
 //     status - false (device is not present)
 //              true  (device is present)
+=======
+//     status - FALSE (device is not present)
+//              TRUE  (device is present)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 //
 //---------------------------------------------------------------------------
 static int ft1000_chkcard(struct net_device *dev)
@@ -539,7 +710,11 @@ static int ft1000_chkcard(struct net_device *dev)
 	if (tempword == 0) {
 		DEBUG(1,
 			  "ft1000_hw:ft1000_chkcard: IMASK = 0 Card not detected\n");
+<<<<<<< HEAD
 		return false;
+=======
+		return FALSE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	// The system will return the value of 0xffff for the version register
 	// if the device is not present.
@@ -547,9 +722,15 @@ static int ft1000_chkcard(struct net_device *dev)
 	if (tempword == 0xffff) {
 		DEBUG(1,
 			  "ft1000_hw:ft1000_chkcard: Version = 0xffff Card not detected\n");
+<<<<<<< HEAD
 		return false;
 	}
 	return true;
+=======
+		return FALSE;
+	}
+	return TRUE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -568,8 +749,13 @@ static void ft1000_hbchk(u_long data)
 {
 	struct net_device *dev = (struct net_device *)data;
 
+<<<<<<< HEAD
 	struct ft1000_info *info;
 	u16 tempword;
+=======
+	FT1000_INFO *info;
+	USHORT tempword;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	info = netdev_priv(dev);
 
@@ -782,14 +968,24 @@ static void ft1000_hbchk(u_long data)
 // Output:
 //
 //---------------------------------------------------------------------------
+<<<<<<< HEAD
 static void ft1000_send_cmd (struct net_device *dev, u16 *ptempbuffer, int size, u16 qtype)
 {
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+void ft1000_send_cmd (struct net_device *dev, u16 *ptempbuffer, int size, u16 qtype)
+{
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 	u16 tempword;
 	unsigned long flags;
 
+<<<<<<< HEAD
 	size += sizeof(struct pseudo_hdr);
+=======
+	size += PSEUDOSZ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	// check for odd byte and increment to 16-bit word align value
 	if ((size & 0x0001)) {
 		size++;
@@ -867,10 +1063,16 @@ static void ft1000_send_cmd (struct net_device *dev, u16 *ptempbuffer, int size,
 //          = 1 (successful)
 //
 //---------------------------------------------------------------------------
+<<<<<<< HEAD
 static bool ft1000_receive_cmd(struct net_device *dev, u16 *pbuffer,
 				int maxsz, u16 *pnxtph)
 {
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+BOOLEAN ft1000_receive_cmd(struct net_device *dev, u16 * pbuffer, int maxsz, u16 *pnxtph)
+{
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 size;
 	u16 *ppseudohdr;
 	int i;
@@ -878,18 +1080,30 @@ static bool ft1000_receive_cmd(struct net_device *dev, u16 *pbuffer,
 	unsigned long flags;
 
 	if (info->AsicID == ELECTRABUZZ_ID) {
+<<<<<<< HEAD
 		size = ( ft1000_read_dpram(dev, *pnxtph) ) + sizeof(struct pseudo_hdr);
+=======
+		size = ( ft1000_read_dpram(dev, *pnxtph) ) + PSEUDOSZ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		size =
 			ntohs(ft1000_read_dpram_mag_16
 			  (dev, FT1000_MAG_PH_LEN,
+<<<<<<< HEAD
 			   FT1000_MAG_PH_LEN_INDX)) + sizeof(struct pseudo_hdr);
+=======
+			   FT1000_MAG_PH_LEN_INDX)) + PSEUDOSZ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (size > maxsz) {
 		DEBUG(1,
 			  "FT1000:ft1000_receive_cmd:Invalid command length = %d\n",
 			  size);
+<<<<<<< HEAD
 		return false;
+=======
+		return FALSE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		ppseudohdr = (u16 *) pbuffer;
 		spin_lock_irqsave(&info->dpram_lock, flags);
@@ -944,9 +1158,15 @@ static bool ft1000_receive_cmd(struct net_device *dev, u16 *pbuffer,
 			DEBUG(1,
 				  "FT1000:ft1000_receive_cmd:Pseudo header checksum mismatch\n");
 			// Drop this message
+<<<<<<< HEAD
 			return false;
 		}
 		return true;
+=======
+			return FALSE;
+		}
+		return TRUE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -961,6 +1181,7 @@ static bool ft1000_receive_cmd(struct net_device *dev, u16 *pbuffer,
 //     none
 //
 //---------------------------------------------------------------------------
+<<<<<<< HEAD
 static void ft1000_proc_drvmsg(struct net_device *dev)
 {
 	struct ft1000_info *info = netdev_priv(dev);
@@ -974,6 +1195,21 @@ static void ft1000_proc_drvmsg(struct net_device *dev)
 	struct prov_record *ptr;
 	struct pseudo_hdr *ppseudo_hdr;
 	u16 *pmsg;
+=======
+void ft1000_proc_drvmsg(struct net_device *dev)
+{
+	FT1000_INFO *info = netdev_priv(dev);
+	u16 msgtype;
+	u16 tempword;
+	PMEDIAMSG pmediamsg;
+	PDSPINITMSG pdspinitmsg;
+	PDRVMSG pdrvmsg;
+	u16 len;
+	u16 i;
+	PPROV_RECORD ptr;
+	PPSEUDO_HDR ppseudo_hdr;
+	PUSHORT pmsg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct timeval tv;
 	union {
 		u8 byte[2];
@@ -989,7 +1225,11 @@ static void ft1000_proc_drvmsg(struct net_device *dev)
     if ( ft1000_receive_cmd(dev, &cmdbuffer[0], MAX_CMD_SQSIZE, &tempword) ) {
 
 		// Get the message type which is total_len + PSEUDO header + msgtype + message body
+<<<<<<< HEAD
 		pdrvmsg = (struct drv_msg *) & cmdbuffer[0];
+=======
+		pdrvmsg = (PDRVMSG) & cmdbuffer[0];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		msgtype = ntohs(pdrvmsg->type);
 		DEBUG(1, "Command message type = 0x%x\n", msgtype);
 		switch (msgtype) {
@@ -1012,12 +1252,21 @@ static void ft1000_proc_drvmsg(struct net_device *dev)
 				}
 				ptr =
 					list_entry(info->prov_list.next,
+<<<<<<< HEAD
 						   struct prov_record, list);
 				len = *(u16 *) ptr->pprov_data;
 				len = htons(len);
 
 				pmsg = (u16 *) ptr->pprov_data;
 				ppseudo_hdr = (struct pseudo_hdr *) pmsg;
+=======
+						   PROV_RECORD, list);
+				len = *(u16 *) ptr->pprov_data;
+				len = htons(len);
+
+				pmsg = (PUSHORT) ptr->pprov_data;
+				ppseudo_hdr = (PPSEUDO_HDR) pmsg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				// Insert slow queue sequence number
 				ppseudo_hdr->seq_num = info->squeseqnum++;
 				ppseudo_hdr->portsrc = 0;
@@ -1041,7 +1290,11 @@ static void ft1000_proc_drvmsg(struct net_device *dev)
 			info->CardReady = 1;
 			break;
 		case MEDIA_STATE:
+<<<<<<< HEAD
 			pmediamsg = (struct media_msg *) & cmdbuffer[0];
+=======
+			pmediamsg = (PMEDIAMSG) & cmdbuffer[0];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (info->ProgConStat != 0xFF) {
 			if (pmediamsg->state) {
 				DEBUG(1, "Media is up\n");
@@ -1073,7 +1326,11 @@ static void ft1000_proc_drvmsg(struct net_device *dev)
             }
 			break;
 		case DSP_INIT_MSG:
+<<<<<<< HEAD
 			pdspinitmsg = (struct dsp_init_msg *) & cmdbuffer[0];
+=======
+			pdspinitmsg = (PDSPINITMSG) & cmdbuffer[0];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			memcpy(info->DspVer, pdspinitmsg->DspVer, DSPVERSZ);
 			DEBUG(1, "DSPVER = 0x%2x 0x%2x 0x%2x 0x%2x\n",
 				  info->DspVer[0], info->DspVer[1], info->DspVer[2],
@@ -1090,7 +1347,11 @@ static void ft1000_proc_drvmsg(struct net_device *dev)
 			dev->dev_addr[5] = info->eui64[7];
 
 			if (ntohs(pdspinitmsg->length) ==
+<<<<<<< HEAD
 				(sizeof(struct dsp_init_msg) - 20)) {
+=======
+				(sizeof(DSPINITMSG) - 20)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				memcpy(info->ProductMode,
 					   pdspinitmsg->ProductMode, MODESZ);
 				memcpy(info->RfCalVer, pdspinitmsg->RfCalVer,
@@ -1107,7 +1368,11 @@ static void ft1000_proc_drvmsg(struct net_device *dev)
 			tempword = ntohs(pdrvmsg->length);
 			info->DSPInfoBlklen = tempword;
 			if (tempword < (MAX_DSP_SESS_REC - 4)) {
+<<<<<<< HEAD
 				pmsg = (u16 *) & pdrvmsg->data[0];
+=======
+				pmsg = (PUSHORT) & pdrvmsg->data[0];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				for (i = 0; i < ((tempword + 1) / 2); i++) {
 					DEBUG(1,
 						  "FT1000:drivermsg:dsp info data = 0x%x\n",
@@ -1119,6 +1384,10 @@ static void ft1000_proc_drvmsg(struct net_device *dev)
 		case DSP_GET_INFO:
 			DEBUG(1, "FT1000:drivermsg:Got DSP_GET_INFO\n");
 			// copy dsp info block to dsp
+<<<<<<< HEAD
+=======
+			info->DrvMsgPend = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			// allow any outstanding ioctl to finish
 			mdelay(10);
 			tempword = ft1000_read_reg(dev, FT1000_REG_DOORBELL);
@@ -1134,8 +1403,13 @@ static void ft1000_proc_drvmsg(struct net_device *dev)
 			if ((tempword & FT1000_DB_DPRAM_TX) == 0) {
 				// Put message into Slow Queue
 				// Form Pseudo header
+<<<<<<< HEAD
 				pmsg = (u16 *) info->DSPInfoBlk;
 				ppseudo_hdr = (struct pseudo_hdr *) pmsg;
+=======
+				pmsg = (PUSHORT) info->DSPInfoBlk;
+				ppseudo_hdr = (PPSEUDO_HDR) pmsg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ppseudo_hdr->length =
 					htons(info->DSPInfoBlklen + 4);
 				ppseudo_hdr->source = 0x10;
@@ -1159,13 +1433,23 @@ static void ft1000_proc_drvmsg(struct net_device *dev)
 				info->DSPInfoBlk[8] = 0x7200;
 				info->DSPInfoBlk[9] =
 					htons(info->DSPInfoBlklen);
+<<<<<<< HEAD
 				ft1000_send_cmd (dev, (u16 *)info->DSPInfoBlk, (u16)(info->DSPInfoBlklen+4), 0);
 			}
+=======
+				ft1000_send_cmd (dev, (PUSHORT)info->DSPInfoBlk, (USHORT)(info->DSPInfoBlklen+4), 0);
+			}
+			info->DrvMsgPend = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			break;
 		case GET_DRV_ERR_RPT_MSG:
 			DEBUG(1, "FT1000:drivermsg:Got GET_DRV_ERR_RPT_MSG\n");
 			// copy driver error message to dsp
+<<<<<<< HEAD
+=======
+			info->DrvMsgPend = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			// allow any outstanding ioctl to finish
 			mdelay(10);
 			tempword = ft1000_read_reg(dev, FT1000_REG_DOORBELL);
@@ -1181,8 +1465,13 @@ static void ft1000_proc_drvmsg(struct net_device *dev)
 			if ((tempword & FT1000_DB_DPRAM_TX) == 0) {
 				// Put message into Slow Queue
 				// Form Pseudo header
+<<<<<<< HEAD
 				pmsg = (u16 *) & tempbuffer[0];
 				ppseudo_hdr = (struct pseudo_hdr *) pmsg;
+=======
+				pmsg = (PUSHORT) & tempbuffer[0];
+				ppseudo_hdr = (PPSEUDO_HDR) pmsg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ppseudo_hdr->length = htons(0x0012);
 				ppseudo_hdr->source = 0x10;
 				ppseudo_hdr->destination = 0x20;
@@ -1202,7 +1491,11 @@ static void ft1000_proc_drvmsg(struct net_device *dev)
                 for (i=1; i<7; i++) {
                     ppseudo_hdr->checksum ^= *pmsg++;
                 }
+<<<<<<< HEAD
 				pmsg = (u16 *) & tempbuffer[16];
+=======
+				pmsg = (PUSHORT) & tempbuffer[16];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				*pmsg++ = htons(RSP_DRV_ERR_RPT_MSG);
 				*pmsg++ = htons(0x000e);
 				*pmsg++ = htons(info->DSP_TIME[0]);
@@ -1217,9 +1510,16 @@ static void ft1000_proc_drvmsg(struct net_device *dev)
 				*pmsg++ = convert.wrd;
 				*pmsg++ = htons(info->DrvErrNum);
 
+<<<<<<< HEAD
 				ft1000_send_cmd (dev, (u16 *)&tempbuffer[0], (u16)(0x0012), 0);
 				info->DrvErrNum = 0;
 			}
+=======
+				ft1000_send_cmd (dev, (PUSHORT)&tempbuffer[0], (USHORT)(0x0012), 0);
+				info->DrvErrNum = 0;
+			}
+			info->DrvMsgPend = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			break;
 		default:
@@ -1240,9 +1540,15 @@ static void ft1000_proc_drvmsg(struct net_device *dev)
 //              SUCCESS
 //
 //---------------------------------------------------------------------------
+<<<<<<< HEAD
 static int ft1000_parse_dpram_msg(struct net_device *dev)
 {
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+int ft1000_parse_dpram_msg(struct net_device *dev)
+{
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 doorbell;
 	u16 portid;
 	u16 nxtph;
@@ -1286,11 +1592,19 @@ static int ft1000_parse_dpram_msg(struct net_device *dev)
 			ft1000_write_reg(dev, FT1000_REG_SUP_CTRL,
 					 HOST_INTF_BE);
 		}
+<<<<<<< HEAD
+=======
+		info->DspAsicReset = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (doorbell & FT1000_DSP_ASIC_RESET) {
 		DEBUG(0,
 			  "FT1000:ft1000_parse_dpram_msg: Got a dsp ASIC reset message\n");
+<<<<<<< HEAD
+=======
+		info->DspAsicReset = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ft1000_write_reg(dev, FT1000_REG_DOORBELL,
 				 FT1000_DSP_ASIC_RESET);
 		udelay(200);
@@ -1312,7 +1626,11 @@ static int ft1000_parse_dpram_msg(struct net_device *dev)
 		}
 		DEBUG(1, "FT1000:ft1000_parse_dpram_msg:total length = %d\n",
 			  total_len);
+<<<<<<< HEAD
 		if ((total_len < MAX_CMD_SQSIZE) && (total_len > sizeof(struct pseudo_hdr))) {
+=======
+		if ((total_len < MAX_CMD_SQSIZE) && (total_len > PSEUDOSZ)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
             total_len += nxtph;
             cnt = 0;
             // ft1000_read_reg will return a value that needs to be byteswap
@@ -1397,7 +1715,11 @@ static int ft1000_parse_dpram_msg(struct net_device *dev)
 //---------------------------------------------------------------------------
 static void ft1000_flush_fifo(struct net_device *dev, u16 DrvErrNum)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 i;
 	u32 templong;
 	u16 tempword;
@@ -1541,10 +1863,17 @@ static void ft1000_flush_fifo(struct net_device *dev, u16 DrvErrNum)
 //              SUCCESS
 //
 //---------------------------------------------------------------------------
+<<<<<<< HEAD
 static int ft1000_copy_up_pkt(struct net_device *dev)
 {
 	u16 tempword;
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+int ft1000_copy_up_pkt(struct net_device *dev)
+{
+	u16 tempword;
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 len;
 	struct sk_buff *skb;
 	u16 i;
@@ -1659,7 +1988,11 @@ static int ft1000_copy_up_pkt(struct net_device *dev)
 			tempword = ft1000_read_reg(dev, FT1000_REG_DFIFO);
 			*pbuffer++ = (u8) (tempword >> 8);
 			*pbuffer++ = (u8) tempword;
+<<<<<<< HEAD
 			if (ft1000_chkcard(dev) == false) {
+=======
+			if (ft1000_chkcard(dev) == FALSE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				kfree_skb(skb);
 				return FAILURE;
 			}
@@ -1729,6 +2062,7 @@ static int ft1000_copy_up_pkt(struct net_device *dev)
 //              SUCCESS
 //
 //---------------------------------------------------------------------------
+<<<<<<< HEAD
 static int ft1000_copy_down_pkt(struct net_device *dev, u16 * packet, u16 len)
 {
 	struct ft1000_info *info = netdev_priv(dev);
@@ -1736,6 +2070,15 @@ static int ft1000_copy_down_pkt(struct net_device *dev, u16 * packet, u16 len)
 		struct pseudo_hdr blk;
 		u16 buff[sizeof(struct pseudo_hdr) >> 1];
 		u8 buffc[sizeof(struct pseudo_hdr)];
+=======
+int ft1000_copy_down_pkt(struct net_device *dev, u16 * packet, u16 len)
+{
+	FT1000_INFO *info = netdev_priv(dev);
+	union {
+		PSEUDO_HDR blk;
+		u16 buff[sizeof(PSEUDO_HDR) >> 1];
+		u8 buffc[sizeof(PSEUDO_HDR)];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} pseudo;
 	int i;
 	u32 *plong;
@@ -1891,7 +2234,11 @@ static int ft1000_copy_down_pkt(struct net_device *dev, u16 * packet, u16 len)
 
 static struct net_device_stats *ft1000_stats(struct net_device *dev)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return (&info->stats);
 }
 
@@ -1915,7 +2262,11 @@ static int ft1000_open(struct net_device *dev)
 
 static int ft1000_close(struct net_device *dev)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	DEBUG(0, "ft1000_hw: ft1000_close()\n");
 
@@ -1937,7 +2288,11 @@ static int ft1000_close(struct net_device *dev)
 
 static int ft1000_start_xmit(struct sk_buff *skb, struct net_device *dev)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 *pdata;
 
 	DEBUG(1, "ft1000_hw: ft1000_start_xmit()\n");
@@ -1974,7 +2329,11 @@ static int ft1000_start_xmit(struct sk_buff *skb, struct net_device *dev)
 static irqreturn_t ft1000_interrupt(int irq, void *dev_id)
 {
 	struct net_device *dev = (struct net_device *)dev_id;
+<<<<<<< HEAD
 	struct ft1000_info *info = netdev_priv(dev);
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 tempword;
 	u16 inttype;
 	int cnt;
@@ -1986,7 +2345,11 @@ static irqreturn_t ft1000_interrupt(int irq, void *dev_id)
 		return IRQ_HANDLED;
 	}
 
+<<<<<<< HEAD
 	if (ft1000_chkcard(dev) == false) {
+=======
+	if (ft1000_chkcard(dev) == FALSE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ft1000_disable_interrupts(dev);
 		return IRQ_HANDLED;
 	}
@@ -2039,8 +2402,13 @@ static irqreturn_t ft1000_interrupt(int irq, void *dev_id)
 
 void stop_ft1000_card(struct net_device *dev)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info = netdev_priv(dev);
 	struct prov_record *ptr;
+=======
+	FT1000_INFO *info = netdev_priv(dev);
+	PPROV_RECORD ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 //	int cnt;
 
 	DEBUG(0, "ft1000_hw: stop_ft1000_card()\n");
@@ -2052,7 +2420,11 @@ void stop_ft1000_card(struct net_device *dev)
 
 	// Make sure we free any memory reserve for provisioning
 	while (list_empty(&info->prov_list) == 0) {
+<<<<<<< HEAD
 		ptr = list_entry(info->prov_list.next, struct prov_record, list);
+=======
+		ptr = list_entry(info->prov_list.next, PROV_RECORD, list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_del(&ptr->list);
 		kfree(ptr->pprov_data);
 		kfree(ptr);
@@ -2074,7 +2446,11 @@ void stop_ft1000_card(struct net_device *dev)
 static void ft1000_get_drvinfo(struct net_device *dev,
 				   struct ethtool_drvinfo *info)
 {
+<<<<<<< HEAD
 	struct ft1000_info *ft_info;
+=======
+	FT1000_INFO *ft_info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ft_info = netdev_priv(dev);
 
 	snprintf(info->driver, 32, "ft1000");
@@ -2086,7 +2462,11 @@ static void ft1000_get_drvinfo(struct net_device *dev,
 
 static u32 ft1000_get_link(struct net_device *dev)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info;
+=======
+	FT1000_INFO *info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info = netdev_priv(dev);
 	return info->mediastate;
 }
@@ -2097,9 +2477,15 @@ static const struct ethtool_ops ops = {
 };
 
 struct net_device *init_ft1000_card(struct pcmcia_device *link,
+<<<<<<< HEAD
 						void *ft1000_reset)
 {
 	struct ft1000_info *info;
+=======
+					void *ft1000_reset)
+{
+	FT1000_INFO *info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct net_device *dev;
 
 	static const struct net_device_ops ft1000ops =		// Slavius 21.10.2009 due to kernel changes
@@ -2124,7 +2510,11 @@ struct net_device *init_ft1000_card(struct pcmcia_device *link,
 		return NULL;
 	}
 
+<<<<<<< HEAD
 	dev = alloc_etherdev(sizeof(struct ft1000_info));
+=======
+	dev = alloc_etherdev(sizeof(FT1000_INFO));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!dev) {
 		printk(KERN_ERR "ft1000: failed to allocate etherdev\n");
 		return NULL;
@@ -2133,7 +2523,11 @@ struct net_device *init_ft1000_card(struct pcmcia_device *link,
 	SET_NETDEV_DEV(dev, &link->dev);
 	info = netdev_priv(dev);
 
+<<<<<<< HEAD
 	memset(info, 0, sizeof(struct ft1000_info));
+=======
+	memset(info, 0, sizeof(FT1000_INFO));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	DEBUG(1, "address of dev = 0x%8x\n", (u32) dev);
 	DEBUG(1, "address of dev info = 0x%8x\n", (u32) info);
@@ -2143,11 +2537,22 @@ struct net_device *init_ft1000_card(struct pcmcia_device *link,
 
 	spin_lock_init(&info->dpram_lock);
 	info->DrvErrNum = 0;
+<<<<<<< HEAD
+=======
+	info->ASICResetNum = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info->registered = 1;
 	info->link = link;
 	info->ft1000_reset = ft1000_reset;
 	info->mediastate = 0;
 	info->fifo_cnt = 0;
+<<<<<<< HEAD
+=======
+	info->DeviceCreated = FALSE;
+	info->DeviceMajor = 0;
+	info->CurrentInterruptEnableMask = ISR_DEFAULT_MASK;
+	info->InterruptsEnabled = FALSE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info->CardReady = 0;
 	info->DSP_TIME[0] = 0;
 	info->DSP_TIME[1] = 0;
@@ -2210,8 +2615,16 @@ struct net_device *init_ft1000_card(struct pcmcia_device *link,
 	ft1000InitProc(dev);
 	ft1000_card_present = 1;
 	SET_ETHTOOL_OPS(dev, &ops);
+<<<<<<< HEAD
 	printk(KERN_INFO "ft1000: %s: addr 0x%04lx irq %d, MAC addr %pM\n",
 			dev->name, dev->base_addr, dev->irq, dev->dev_addr);
+=======
+	printk(KERN_INFO
+		   "ft1000: %s: addr 0x%04lx irq %d, MAC addr %02x:%02x:%02x:%02x:%02x:%02x\n",
+		   dev->name, dev->base_addr, dev->irq, dev->dev_addr[0],
+		   dev->dev_addr[1], dev->dev_addr[2], dev->dev_addr[3],
+		   dev->dev_addr[4], dev->dev_addr[5]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return dev;
 
 err_unreg:

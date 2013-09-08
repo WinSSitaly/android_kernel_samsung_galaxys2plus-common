@@ -3,6 +3,7 @@
 #
 
 snd-usb-audio-objs := 	card.o \
+<<<<<<< HEAD
 			clock.o \
 			endpoint.o \
 			format.o \
@@ -13,6 +14,18 @@ snd-usb-audio-objs := 	card.o \
 			proc.o \
 			quirks.o \
 			stream.o
+=======
+			mixer.o \
+			mixer_quirks.o \
+			proc.o \
+			quirks.o \
+			format.o \
+			endpoint.o \
+			urb.o \
+			pcm.o \
+			helper.o \
+			clock.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 snd-usbmidi-lib-objs := midi.o
 

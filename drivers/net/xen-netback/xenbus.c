@@ -474,14 +474,29 @@ static const struct xenbus_device_id netback_ids[] = {
 };
 
 
+<<<<<<< HEAD
 static DEFINE_XENBUS_DRIVER(netback, ,
+=======
+static struct xenbus_driver netback = {
+	.name = "vif",
+	.owner = THIS_MODULE,
+	.ids = netback_ids,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.probe = netback_probe,
 	.remove = netback_remove,
 	.uevent = netback_uevent,
 	.otherend_changed = frontend_changed,
+<<<<<<< HEAD
 );
 
 int xenvif_xenbus_init(void)
 {
 	return xenbus_register_backend(&netback_driver);
+=======
+};
+
+int xenvif_xenbus_init(void)
+{
+	return xenbus_register_backend(&netback);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

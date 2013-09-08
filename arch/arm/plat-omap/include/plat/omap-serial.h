@@ -19,7 +19,10 @@
 
 #include <linux/serial_core.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/pm_qos.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <plat/mux.h>
 
@@ -34,8 +37,11 @@
 
 #define OMAP_MODE13X_SPEED	230400
 
+<<<<<<< HEAD
 #define OMAP_UART_SCR_TX_EMPTY	0x08
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* WER = 0x7F
  * Enable module level wakeup in WER reg
  */
@@ -54,10 +60,15 @@
 
 #define OMAP_UART_DMA_CH_FREE	-1
 
+<<<<<<< HEAD
+=======
+#define RX_TIMEOUT		(3 * HZ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define OMAP_MAX_HSUART_PORTS	4
 
 #define MSR_SAVE_FLAGS		UART_MSR_ANY_DELTA
 
+<<<<<<< HEAD
 #define UART_ERRATA_i202_MDR1_ACCESS	BIT(0)
 #define UART_ERRATA_i291_DMA_FORCEIDLE	BIT(1)
 
@@ -75,6 +86,15 @@ struct omap_uart_port_info {
 	void (*set_forceidle)(struct platform_device *);
 	void (*set_noidle)(struct platform_device *);
 	void (*enable_wakeup)(struct platform_device *, bool);
+=======
+struct omap_uart_port_info {
+	bool			dma_enabled;	/* To specify DMA Mode */
+	unsigned int		uartclk;	/* UART clock rate */
+	void __iomem		*membase;	/* ioremap cookie or NULL */
+	resource_size_t		mapbase;	/* resource base */
+	unsigned long		irqflags;	/* request_irq flags */
+	upf_t			flags;		/* UPF_* flags */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct uart_omap_dma {
@@ -98,9 +118,14 @@ struct uart_omap_dma {
 	spinlock_t		rx_lock;
 	/* timer to poll activity on rx dma */
 	struct timer_list	rx_timer;
+<<<<<<< HEAD
 	unsigned int		rx_buf_size;
 	unsigned int		rx_poll_rate;
 	unsigned int		rx_timeout;
+=======
+	int			rx_buf_size;
+	int			rx_timeout;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct uart_omap_port {
@@ -113,10 +138,13 @@ struct uart_omap_port {
 	unsigned char		mcr;
 	unsigned char		fcr;
 	unsigned char		efr;
+<<<<<<< HEAD
 	unsigned char		dll;
 	unsigned char		dlh;
 	unsigned char		mdr1;
 	unsigned char		scr;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int			use_dma;
 	/*
@@ -128,6 +156,7 @@ struct uart_omap_port {
 	unsigned char		msr_saved_flags;
 	char			name[20];
 	unsigned long		port_activity;
+<<<<<<< HEAD
 	u32			context_loss_cnt;
 	u32			errata;
 	u8			wakeups_enabled;
@@ -136,6 +165,8 @@ struct uart_omap_port {
 	u32			latency;
 	u32			calc_latency;
 	struct work_struct	qos_work;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif /* __OMAP_SERIAL_H__ */

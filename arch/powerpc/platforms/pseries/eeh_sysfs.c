@@ -23,12 +23,19 @@
  * Send comments and feedback to Linas Vepstas <linas@austin.ibm.com>
  */
 #include <linux/pci.h>
+<<<<<<< HEAD
 #include <linux/stat.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/ppc-pci.h>
 #include <asm/pci-bridge.h>
 
 /**
+<<<<<<< HEAD
  * EEH_SHOW_ATTR -- Create sysfs entry for eeh statistic
+=======
+ * EEH_SHOW_ATTR -- create sysfs entry for eeh statistic
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @_name: name of file in sysfs directory
  * @_memb: name of member in struct pci_dn to access
  * @_format: printf format for display
@@ -41,6 +48,7 @@ static ssize_t eeh_show_##_name(struct device *dev,      \
 		struct device_attribute *attr, char *buf)          \
 {                                                        \
 	struct pci_dev *pdev = to_pci_dev(dev);               \
+<<<<<<< HEAD
 	struct eeh_dev *edev = pci_dev_to_eeh_dev(pdev);      \
 	                                                      \
 	if (!edev)                                            \
@@ -56,6 +64,26 @@ EEH_SHOW_ATTR(eeh_pe_config_addr,  pe_config_addr,  "0x%x");
 EEH_SHOW_ATTR(eeh_check_count,     check_count,     "%d"  );
 EEH_SHOW_ATTR(eeh_freeze_count,    freeze_count,    "%d"  );
 EEH_SHOW_ATTR(eeh_false_positives, false_positives, "%d"  );
+=======
+	struct device_node *dn = pci_device_to_OF_node(pdev); \
+	struct pci_dn *pdn;                                   \
+	                                                      \
+	if (!dn || PCI_DN(dn) == NULL)                        \
+		return 0;                                          \
+	                                                      \
+	pdn = PCI_DN(dn);                                     \
+	return sprintf(buf, _format "\n", pdn->_memb);        \
+}                                                        \
+static DEVICE_ATTR(_name, S_IRUGO, eeh_show_##_name, NULL);
+
+
+EEH_SHOW_ATTR(eeh_mode, eeh_mode, "0x%x");
+EEH_SHOW_ATTR(eeh_config_addr, eeh_config_addr, "0x%x");
+EEH_SHOW_ATTR(eeh_pe_config_addr, eeh_pe_config_addr, "0x%x");
+EEH_SHOW_ATTR(eeh_check_count, eeh_check_count, "%d");
+EEH_SHOW_ATTR(eeh_freeze_count, eeh_freeze_count, "%d");
+EEH_SHOW_ATTR(eeh_false_positives, eeh_false_positives, "%d");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void eeh_sysfs_add_device(struct pci_dev *pdev)
 {

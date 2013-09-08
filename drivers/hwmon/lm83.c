@@ -124,7 +124,11 @@ static struct lm83_data *lm83_update_device(struct device *dev);
 /*
  * Driver data (common to all clients)
  */
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct i2c_device_id lm83_id[] = {
 	{ "lm83", lm83 },
 	{ "lm82", lm82 },
@@ -179,6 +183,7 @@ static ssize_t set_temp(struct device *dev, struct device_attribute *devattr,
 	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
 	struct i2c_client *client = to_i2c_client(dev);
 	struct lm83_data *data = i2c_get_clientdata(client);
+<<<<<<< HEAD
 	long val;
 	int nr = attr->index;
 	int err;
@@ -186,6 +191,10 @@ static ssize_t set_temp(struct device *dev, struct device_attribute *devattr,
 	err = kstrtol(buf, 10, &val);
 	if (err < 0)
 		return err;
+=======
+	long val = simple_strtol(buf, NULL, 10);
+	int nr = attr->index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&data->update_lock);
 	data->temp[nr] = TEMP_TO_REG(val);
@@ -360,6 +369,7 @@ static int lm83_probe(struct i2c_client *new_client,
 	 * declare 1 and 3 common, and then 2 and 4 only for the LM83.
 	 */
 
+<<<<<<< HEAD
 	err = sysfs_create_group(&new_client->dev.kobj, &lm83_group);
 	if (err)
 		goto exit_free;
@@ -368,6 +378,14 @@ static int lm83_probe(struct i2c_client *new_client,
 		err = sysfs_create_group(&new_client->dev.kobj,
 					 &lm83_group_opt);
 		if (err)
+=======
+	if ((err = sysfs_create_group(&new_client->dev.kobj, &lm83_group)))
+		goto exit_free;
+
+	if (id->driver_data == lm83) {
+		if ((err = sysfs_create_group(&new_client->dev.kobj,
+					      &lm83_group_opt)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto exit_remove_files;
 	}
 
@@ -430,8 +448,26 @@ static struct lm83_data *lm83_update_device(struct device *dev)
 	return data;
 }
 
+<<<<<<< HEAD
 module_i2c_driver(lm83_driver);
+=======
+static int __init sensors_lm83_init(void)
+{
+	return i2c_add_driver(&lm83_driver);
+}
+
+static void __exit sensors_lm83_exit(void)
+{
+	i2c_del_driver(&lm83_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Jean Delvare <khali@linux-fr.org>");
 MODULE_DESCRIPTION("LM83 driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(sensors_lm83_init);
+module_exit(sensors_lm83_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

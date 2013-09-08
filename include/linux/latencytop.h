@@ -10,8 +10,11 @@
 #define _INCLUDE_GUARD_LATENCYTOP_H_
 
 #include <linux/compiler.h>
+<<<<<<< HEAD
 struct task_struct;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_LATENCYTOP
 
 #define LT_SAVECOUNT		32
@@ -25,6 +28,10 @@ struct latency_record {
 };
 
 
+<<<<<<< HEAD
+=======
+struct task_struct;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int latencytop_enabled;
 void __account_scheduler_latency(struct task_struct *task, int usecs, int inter);

@@ -1,5 +1,8 @@
 #include <linux/dma-mapping.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Set this to 1 if there is a HW IOMMU in the system */
 int iommu_detected __read_mostly;

@@ -17,7 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  *
+<<<<<<< HEAD
  * Maintained by: Arvind Kumar <arvindkumar@vmware.com>
+=======
+ * Maintained by: Alok N Kataria <akataria@vmware.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  */
 
@@ -26,7 +30,11 @@
 
 #include <linux/types.h>
 
+<<<<<<< HEAD
 #define PVSCSI_DRIVER_VERSION_STRING   "1.0.2.0-k"
+=======
+#define PVSCSI_DRIVER_VERSION_STRING   "1.0.1.0-k"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PVSCSI_MAX_NUM_SG_ENTRIES_PER_SEGMENT 128
 
@@ -39,6 +47,7 @@
  * host adapter status/error codes
  */
 enum HostBusAdapterStatus {
+<<<<<<< HEAD
 	BTSTAT_SUCCESS       = 0x00,  /* CCB complete normally with no errors */
 	BTSTAT_LINKED_COMMAND_COMPLETED           = 0x0a,
 	BTSTAT_LINKED_COMMAND_COMPLETED_WITH_FLAG = 0x0b,
@@ -78,6 +87,30 @@ enum HostBusAdapterStatus {
 enum ScsiDeviceStatus {
 	SDSTAT_GOOD  = 0x00, /* No errors. */
 	SDSTAT_CHECK = 0x02, /* Check condition. */
+=======
+   BTSTAT_SUCCESS       = 0x00,  /* CCB complete normally with no errors */
+   BTSTAT_LINKED_COMMAND_COMPLETED           = 0x0a,
+   BTSTAT_LINKED_COMMAND_COMPLETED_WITH_FLAG = 0x0b,
+   BTSTAT_DATA_UNDERRUN = 0x0c,
+   BTSTAT_SELTIMEO      = 0x11,  /* SCSI selection timeout */
+   BTSTAT_DATARUN       = 0x12,  /* data overrun/underrun */
+   BTSTAT_BUSFREE       = 0x13,  /* unexpected bus free */
+   BTSTAT_INVPHASE      = 0x14,  /* invalid bus phase or sequence requested by target */
+   BTSTAT_LUNMISMATCH   = 0x17,  /* linked CCB has different LUN from first CCB */
+   BTSTAT_SENSFAILED    = 0x1b,  /* auto request sense failed */
+   BTSTAT_TAGREJECT     = 0x1c,  /* SCSI II tagged queueing message rejected by target */
+   BTSTAT_BADMSG        = 0x1d,  /* unsupported message received by the host adapter */
+   BTSTAT_HAHARDWARE    = 0x20,  /* host adapter hardware failed */
+   BTSTAT_NORESPONSE    = 0x21,  /* target did not respond to SCSI ATN, sent a SCSI RST */
+   BTSTAT_SENTRST       = 0x22,  /* host adapter asserted a SCSI RST */
+   BTSTAT_RECVRST       = 0x23,  /* other SCSI devices asserted a SCSI RST */
+   BTSTAT_DISCONNECT    = 0x24,  /* target device reconnected improperly (w/o tag) */
+   BTSTAT_BUSRESET      = 0x25,  /* host adapter issued BUS device reset */
+   BTSTAT_ABORTQUEUE    = 0x26,  /* abort queue generated */
+   BTSTAT_HASOFTWARE    = 0x27,  /* host adapter software error */
+   BTSTAT_HATIMEOUT     = 0x30,  /* host adapter hardware timeout error */
+   BTSTAT_SCSIPARITY    = 0x34,  /* SCSI parity error detected */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -131,6 +164,7 @@ struct PVSCSICmdDescResetDevice {
 } __packed;
 
 /*
+<<<<<<< HEAD
  * Command descriptor for PVSCSI_CMD_CONFIG --
  */
 
@@ -154,6 +188,8 @@ enum PVSCSIConfigPageAddressType {
 };
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Command descriptor for PVSCSI_CMD_ABORT_CMD --
  *
  * - currently does not support specifying the LUN.
@@ -372,6 +408,7 @@ struct PVSCSIRingCmpDesc {
 	u32	_pad[2];
 } __packed;
 
+<<<<<<< HEAD
 struct PVSCSIConfigPageHeader {
 	u32 pageNum;
 	u16 numDwords;
@@ -393,6 +430,8 @@ struct PVSCSIConfigPageController {
 	u8  reserved[3];
 } __packed;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Interrupt status / IRQ bits.
  */

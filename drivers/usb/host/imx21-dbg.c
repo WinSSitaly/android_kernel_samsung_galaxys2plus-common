@@ -239,7 +239,11 @@ static int debug_status_show(struct seq_file *s, void *v)
 		"ETDs allocated: %d/%d (max=%d)\n"
 		"ETDs in use sw: %d\n"
 		"ETDs in use hw: %d\n"
+<<<<<<< HEAD
 		"DMEM allocated: %d/%d (max=%d)\n"
+=======
+		"DMEM alocated: %d/%d (max=%d)\n"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"DMEM blocks: %d\n"
 		"Queued waiting for ETD: %d\n"
 		"Queued waiting for DMEM: %d\n",

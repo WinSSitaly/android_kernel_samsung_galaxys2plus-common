@@ -9,6 +9,10 @@
 #define _ASM_DMA_H
 
 #include <asm/io.h>		/* need byte IO */
+<<<<<<< HEAD
+=======
+#include <asm/system.h>	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define dma_outb	outb
 #define dma_inb		inb

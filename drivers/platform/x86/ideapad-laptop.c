@@ -32,6 +32,7 @@
 #include <linux/platform_device.h>
 #include <linux/input.h>
 #include <linux/input/sparse-keymap.h>
+<<<<<<< HEAD
 #include <linux/backlight.h>
 #include <linux/fb.h>
 #include <linux/debugfs.h>
@@ -68,10 +69,16 @@ enum {
 	VPCCMD_W_BL_POWER = 0x33,
 };
 
+=======
+
+#define IDEAPAD_RFKILL_DEV_NUM	(3)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ideapad_private {
 	struct rfkill *rfk[IDEAPAD_RFKILL_DEV_NUM];
 	struct platform_device *platform_device;
 	struct input_dev *inputdev;
+<<<<<<< HEAD
 	struct backlight_device *blightdev;
 	struct dentry *debug;
 	unsigned long cfg;
@@ -79,6 +86,11 @@ struct ideapad_private {
 
 static acpi_handle ideapad_handle;
 static struct ideapad_private *ideapad_priv;
+=======
+};
+
+static acpi_handle ideapad_handle;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static bool no_bt_rfkill;
 module_param(no_bt_rfkill, bool, 0444);
 MODULE_PARM_DESC(no_bt_rfkill, "No rfkill for bluetooth.");
@@ -192,6 +204,7 @@ static int write_ec_cmd(acpi_handle handle, int cmd, unsigned long data)
 }
 
 /*
+<<<<<<< HEAD
  * debugfs
  */
 #define DEBUGFS_EVENT_LEN (4096)
@@ -333,6 +346,9 @@ static void ideapad_debugfs_exit(struct ideapad_private *priv)
 
 /*
  * sysfs
+=======
+ * camera power
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static ssize_t show_ideapad_cam(struct device *dev,
 				struct device_attribute *attr,
@@ -340,7 +356,11 @@ static ssize_t show_ideapad_cam(struct device *dev,
 {
 	unsigned long result;
 
+<<<<<<< HEAD
 	if (read_ec_data(ideapad_handle, VPCCMD_R_CAMERA, &result))
+=======
+	if (read_ec_data(ideapad_handle, 0x1D, &result))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return sprintf(buf, "-1\n");
 	return sprintf(buf, "%lu\n", result);
 }
@@ -355,7 +375,11 @@ static ssize_t store_ideapad_cam(struct device *dev,
 		return 0;
 	if (sscanf(buf, "%i", &state) != 1)
 		return -EINVAL;
+<<<<<<< HEAD
 	ret = write_ec_cmd(ideapad_handle, VPCCMD_W_CAMERA, state);
+=======
+	ret = write_ec_cmd(ideapad_handle, 0x1E, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		return ret;
 	return count;
@@ -363,6 +387,7 @@ static ssize_t store_ideapad_cam(struct device *dev,
 
 static DEVICE_ATTR(camera_power, 0644, show_ideapad_cam, store_ideapad_cam);
 
+<<<<<<< HEAD
 static struct attribute *ideapad_attributes[] = {
 	&dev_attr_camera_power.attr,
 	NULL
@@ -389,6 +414,8 @@ static struct attribute_group ideapad_attribute_group = {
 	.attrs = ideapad_attributes
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Rfkill
  */
@@ -400,9 +427,15 @@ struct ideapad_rfk_data {
 };
 
 const struct ideapad_rfk_data ideapad_rfk_data[] = {
+<<<<<<< HEAD
 	{ "ideapad_wlan",    CFG_WIFI_BIT, VPCCMD_W_WIFI, RFKILL_TYPE_WLAN },
 	{ "ideapad_bluetooth", CFG_BT_BIT, VPCCMD_W_BT, RFKILL_TYPE_BLUETOOTH },
 	{ "ideapad_3g",        CFG_3G_BIT, VPCCMD_W_3G, RFKILL_TYPE_WWAN },
+=======
+	{ "ideapad_wlan",	18, 0x15, RFKILL_TYPE_WLAN },
+	{ "ideapad_bluetooth",	16, 0x17, RFKILL_TYPE_BLUETOOTH },
+	{ "ideapad_3g",		17, 0x20, RFKILL_TYPE_WWAN },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int ideapad_rfk_set(void *data, bool blocked)
@@ -416,12 +449,22 @@ static struct rfkill_ops ideapad_rfk_ops = {
 	.set_block = ideapad_rfk_set,
 };
 
+<<<<<<< HEAD
 static void ideapad_sync_rfk_state(struct ideapad_private *priv)
 {
 	unsigned long hw_blocked;
 	int i;
 
 	if (read_ec_data(ideapad_handle, VPCCMD_R_RF, &hw_blocked))
+=======
+static void ideapad_sync_rfk_state(struct acpi_device *adevice)
+{
+	struct ideapad_private *priv = dev_get_drvdata(&adevice->dev);
+	unsigned long hw_blocked;
+	int i;
+
+	if (read_ec_data(ideapad_handle, 0x23, &hw_blocked))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	hw_blocked = !hw_blocked;
 
@@ -467,7 +510,12 @@ static int __devinit ideapad_register_rfkill(struct acpi_device *adevice,
 	return 0;
 }
 
+<<<<<<< HEAD
 static void ideapad_unregister_rfkill(struct acpi_device *adevice, int dev)
+=======
+static void __devexit ideapad_unregister_rfkill(struct acpi_device *adevice,
+						int dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ideapad_private *priv = dev_get_drvdata(&adevice->dev);
 
@@ -481,6 +529,18 @@ static void ideapad_unregister_rfkill(struct acpi_device *adevice, int dev)
 /*
  * Platform device
  */
+<<<<<<< HEAD
+=======
+static struct attribute *ideapad_attributes[] = {
+	&dev_attr_camera_power.attr,
+	NULL
+};
+
+static struct attribute_group ideapad_attribute_group = {
+	.attrs = ideapad_attributes
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit ideapad_platform_init(struct ideapad_private *priv)
 {
 	int result;
@@ -518,10 +578,15 @@ static void ideapad_platform_exit(struct ideapad_private *priv)
  * input device
  */
 static const struct key_entry ideapad_keymap[] = {
+<<<<<<< HEAD
 	{ KE_KEY, 6,  { KEY_SWITCHVIDEOMODE } },
 	{ KE_KEY, 13, { KEY_WLAN } },
 	{ KE_KEY, 16, { KEY_PROG1 } },
 	{ KE_KEY, 17, { KEY_PROG2 } },
+=======
+	{ KE_KEY, 0x06, { KEY_SWITCHVIDEOMODE } },
+	{ KE_KEY, 0x0D, { KEY_WLAN } },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ KE_END, 0 },
 };
 
@@ -563,7 +628,11 @@ err_free_dev:
 	return error;
 }
 
+<<<<<<< HEAD
 static void ideapad_input_exit(struct ideapad_private *priv)
+=======
+static void __devexit ideapad_input_exit(struct ideapad_private *priv)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	sparse_keymap_free(priv->inputdev);
 	input_unregister_device(priv->inputdev);
@@ -576,6 +645,7 @@ static void ideapad_input_report(struct ideapad_private *priv,
 	sparse_keymap_report_event(priv->inputdev, scancode, 1, true);
 }
 
+<<<<<<< HEAD
 static void ideapad_input_novokey(struct ideapad_private *priv)
 {
 	unsigned long long_pressed;
@@ -683,6 +753,8 @@ static void ideapad_backlight_notify_brightness(struct ideapad_private *priv)
 	backlight_force_update(priv->blightdev, BACKLIGHT_UPDATE_HOTKEY);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * module init/exit
  */
@@ -694,39 +766,58 @@ MODULE_DEVICE_TABLE(acpi, ideapad_device_ids);
 
 static int __devinit ideapad_acpi_add(struct acpi_device *adevice)
 {
+<<<<<<< HEAD
 	int ret, i;
 	unsigned long cfg;
 	struct ideapad_private *priv;
 
 	if (read_method_int(adevice->handle, "_CFG", (int *)&cfg))
+=======
+	int ret, i, cfg;
+	struct ideapad_private *priv;
+
+	if (read_method_int(adevice->handle, "_CFG", &cfg))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 
 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
 	if (!priv)
 		return -ENOMEM;
 	dev_set_drvdata(&adevice->dev, priv);
+<<<<<<< HEAD
 	ideapad_priv = priv;
 	ideapad_handle = adevice->handle;
 	priv->cfg = cfg;
+=======
+	ideapad_handle = adevice->handle;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = ideapad_platform_init(priv);
 	if (ret)
 		goto platform_failed;
 
+<<<<<<< HEAD
 	ret = ideapad_debugfs_init(priv);
 	if (ret)
 		goto debugfs_failed;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = ideapad_input_init(priv);
 	if (ret)
 		goto input_failed;
 
 	for (i = 0; i < IDEAPAD_RFKILL_DEV_NUM; i++) {
+<<<<<<< HEAD
 		if (test_bit(ideapad_rfk_data[i].cfgbit, &cfg))
+=======
+		if (test_bit(ideapad_rfk_data[i].cfgbit, (unsigned long *)&cfg))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ideapad_register_rfkill(adevice, i);
 		else
 			priv->rfk[i] = NULL;
 	}
+<<<<<<< HEAD
 	ideapad_sync_rfk_state(priv);
 
 	if (!acpi_video_backlight_support()) {
@@ -744,6 +835,13 @@ backlight_failed:
 input_failed:
 	ideapad_debugfs_exit(priv);
 debugfs_failed:
+=======
+	ideapad_sync_rfk_state(adevice);
+
+	return 0;
+
+input_failed:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ideapad_platform_exit(priv);
 platform_failed:
 	kfree(priv);
@@ -755,11 +853,17 @@ static int __devexit ideapad_acpi_remove(struct acpi_device *adevice, int type)
 	struct ideapad_private *priv = dev_get_drvdata(&adevice->dev);
 	int i;
 
+<<<<<<< HEAD
 	ideapad_backlight_exit(priv);
 	for (i = 0; i < IDEAPAD_RFKILL_DEV_NUM; i++)
 		ideapad_unregister_rfkill(adevice, i);
 	ideapad_input_exit(priv);
 	ideapad_debugfs_exit(priv);
+=======
+	for (i = 0; i < IDEAPAD_RFKILL_DEV_NUM; i++)
+		ideapad_unregister_rfkill(adevice, i);
+	ideapad_input_exit(priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ideapad_platform_exit(priv);
 	dev_set_drvdata(&adevice->dev, NULL);
 	kfree(priv);
@@ -773,14 +877,21 @@ static void ideapad_acpi_notify(struct acpi_device *adevice, u32 event)
 	acpi_handle handle = adevice->handle;
 	unsigned long vpc1, vpc2, vpc_bit;
 
+<<<<<<< HEAD
 	if (read_ec_data(handle, VPCCMD_R_VPC1, &vpc1))
 		return;
 	if (read_ec_data(handle, VPCCMD_R_VPC2, &vpc2))
+=======
+	if (read_ec_data(handle, 0x10, &vpc1))
+		return;
+	if (read_ec_data(handle, 0x1A, &vpc2))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	vpc1 = (vpc2 << 8) | vpc1;
 	for (vpc_bit = 0; vpc_bit < 16; vpc_bit++) {
 		if (test_bit(vpc_bit, &vpc1)) {
+<<<<<<< HEAD
 			switch (vpc_bit) {
 			case 9:
 				ideapad_sync_rfk_state(priv);
@@ -797,6 +908,14 @@ static void ideapad_acpi_notify(struct acpi_device *adevice, u32 event)
 			default:
 				ideapad_input_report(priv, vpc_bit);
 			}
+=======
+			if (vpc_bit == 9)
+				ideapad_sync_rfk_state(adevice);
+			else if (vpc_bit == 4)
+				read_ec_data(handle, 0x12, &vpc2);
+			else
+				ideapad_input_report(priv, vpc_bit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }

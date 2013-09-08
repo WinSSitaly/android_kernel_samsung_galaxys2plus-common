@@ -66,8 +66,12 @@ enum {
 };
 
 enum {
+<<<<<<< HEAD
 	CONF_HW_RXTX_RATE_MCS7_SGI = 0,
 	CONF_HW_RXTX_RATE_MCS7,
+=======
+	CONF_HW_RXTX_RATE_MCS7 = 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CONF_HW_RXTX_RATE_MCS6,
 	CONF_HW_RXTX_RATE_MCS5,
 	CONF_HW_RXTX_RATE_MCS4,
@@ -92,10 +96,13 @@ enum {
 	CONF_HW_RXTX_RATE_UNSUPPORTED = 0xff
 };
 
+<<<<<<< HEAD
 /* Rates between and including these are MCS rates */
 #define CONF_HW_RXTX_RATE_MCS_MIN CONF_HW_RXTX_RATE_MCS7_SGI
 #define CONF_HW_RXTX_RATE_MCS_MAX CONF_HW_RXTX_RATE_MCS0
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum {
 	CONF_SG_DISABLE = 0,
 	CONF_SG_PROTECTIVE,
@@ -104,6 +111,7 @@ enum {
 
 enum {
 	/*
+<<<<<<< HEAD
 	 * Configure the min and max time BT gains the antenna
 	 * in WLAN / BT master basic rate
 	 *
@@ -173,6 +181,42 @@ enum {
 	CONF_SG_ACL_PASSIVE_SCAN_WLAN_BR,
 	CONF_SG_ACL_PASSIVE_SCAN_BT_EDR,
 	CONF_SG_ACL_PASSIVE_SCAN_WLAN_EDR,
+=======
+	 * PER threshold in PPM of the BT voice
+	 *
+	 * Range: 0 - 10000000
+	 */
+	CONF_SG_BT_PER_THRESHOLD = 0,
+
+	/*
+	 * Number of consequent RX_ACTIVE activities to override BT voice
+	 * frames to ensure WLAN connection
+	 *
+	 * Range: 0 - 100
+	 */
+	CONF_SG_HV3_MAX_OVERRIDE,
+
+	/*
+	 * Defines the PER threshold of the BT voice
+	 *
+	 * Range: 0 - 65000
+	 */
+	CONF_SG_BT_NFS_SAMPLE_INTERVAL,
+
+	/*
+	 * Defines the load ratio of BT
+	 *
+	 * Range: 0 - 100 (%)
+	 */
+	CONF_SG_BT_LOAD_RATIO,
+
+	/*
+	 * Defines whether the SG will force WLAN host to enter/exit PSM
+	 *
+	 * Range: 1 - SG can force, 0 - host handles PSM
+	 */
+	CONF_SG_AUTO_PS_MODE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Compensation percentage of probe requests when scan initiated
@@ -191,6 +235,7 @@ enum {
 	CONF_SG_ACTIVE_SCAN_DURATION_FACTOR_HV3,
 
 	/*
+<<<<<<< HEAD
 	 * Compensation percentage of WLAN active scan window if initiated
 	 * during BT A2DP
 	 *
@@ -255,6 +300,104 @@ enum {
 	 * Range: 0 - 100000 (ms)
 	 */
 	CONF_SG_DHCP_TIME,
+=======
+	 * Defines antenna configuration (single/dual antenna)
+	 *
+	 * Range: 0 - single antenna, 1 - dual antenna
+	 */
+	CONF_SG_ANTENNA_CONFIGURATION,
+
+	/*
+	 * The threshold (percent) of max consequtive beacon misses before
+	 * increasing priority of beacon reception.
+	 *
+	 * Range: 0 - 100 (%)
+	 */
+	CONF_SG_BEACON_MISS_PERCENT,
+
+	/*
+	 * The rate threshold below which receiving a data frame from the AP
+	 * will increase the priority of the data frame above BT traffic.
+	 *
+	 * Range: 0,2, 5(=5.5), 6, 9, 11, 12, 18, 24, 36, 48, 54
+	 */
+	CONF_SG_RATE_ADAPT_THRESH,
+
+	/*
+	 * Not used currently.
+	 *
+	 * Range: 0
+	 */
+	CONF_SG_RATE_ADAPT_SNR,
+
+	/*
+	 * Configure the min and max time BT gains the antenna
+	 * in WLAN PSM / BT master basic rate
+	 *
+	 * Range: 0 - 255 (ms)
+	 */
+	CONF_SG_WLAN_PS_BT_ACL_MASTER_MIN_BR,
+	CONF_SG_WLAN_PS_BT_ACL_MASTER_MAX_BR,
+
+	/*
+	 * The time after it expires no new WLAN trigger frame is trasmitted
+	 * in WLAN PSM / BT master basic rate
+	 *
+	 * Range: 0 - 255 (ms)
+	 */
+	CONF_SG_WLAN_PS_MAX_BT_ACL_MASTER_BR,
+
+	/*
+	 * Configure the min and max time BT gains the antenna
+	 * in WLAN PSM / BT slave basic rate
+	 *
+	 * Range: 0 - 255 (ms)
+	 */
+	CONF_SG_WLAN_PS_BT_ACL_SLAVE_MIN_BR,
+	CONF_SG_WLAN_PS_BT_ACL_SLAVE_MAX_BR,
+
+	/*
+	 * The time after it expires no new WLAN trigger frame is trasmitted
+	 * in WLAN PSM / BT slave basic rate
+	 *
+	 * Range: 0 - 255 (ms)
+	 */
+	CONF_SG_WLAN_PS_MAX_BT_ACL_SLAVE_BR,
+
+	/*
+	 * Configure the min and max time BT gains the antenna
+	 * in WLAN PSM / BT master EDR
+	 *
+	 * Range: 0 - 255 (ms)
+	 */
+	CONF_SG_WLAN_PS_BT_ACL_MASTER_MIN_EDR,
+	CONF_SG_WLAN_PS_BT_ACL_MASTER_MAX_EDR,
+
+	/*
+	 * The time after it expires no new WLAN trigger frame is trasmitted
+	 * in WLAN PSM / BT master EDR
+	 *
+	 * Range: 0 - 255 (ms)
+	 */
+	CONF_SG_WLAN_PS_MAX_BT_ACL_MASTER_EDR,
+
+	/*
+	 * Configure the min and max time BT gains the antenna
+	 * in WLAN PSM / BT slave EDR
+	 *
+	 * Range: 0 - 255 (ms)
+	 */
+	CONF_SG_WLAN_PS_BT_ACL_SLAVE_MIN_EDR,
+	CONF_SG_WLAN_PS_BT_ACL_SLAVE_MAX_EDR,
+
+	/*
+	 * The time after it expires no new WLAN trigger frame is trasmitted
+	 * in WLAN PSM / BT slave EDR
+	 *
+	 * Range: 0 - 255 (ms)
+	 */
+	CONF_SG_WLAN_PS_MAX_BT_ACL_SLAVE_EDR,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * RX guard time before the beginning of a new BT voice frame during
@@ -281,6 +424,7 @@ enum {
 	 */
 	CONF_SG_ADAPTIVE_RXT_TXT,
 
+<<<<<<< HEAD
 	/* TODO: explain this value */
 	CONF_SG_GENERAL_USAGE_BIT_MAP,
 
@@ -321,23 +465,179 @@ enum {
 	CONF_SG_CTS_DILUTED_BAD_RX_PACKETS_TH,
 	CONF_SG_CTS_CHOP_IN_DUAL_ANT_SCO_MASTER,
 
+=======
+	/*
+	 * The used WLAN legacy service period during active BT ACL link
+	 *
+	 * Range: 0 - 255 (ms)
+	 */
+	CONF_SG_PS_POLL_TIMEOUT,
+
+	/*
+	 * The used WLAN UPSD service period during active BT ACL link
+	 *
+	 * Range: 0 - 255 (ms)
+	 */
+	CONF_SG_UPSD_TIMEOUT,
+
+	/*
+	 * Configure the min and max time BT gains the antenna
+	 * in WLAN Active / BT master EDR
+	 *
+	 * Range: 0 - 255 (ms)
+	 */
+	CONF_SG_WLAN_ACTIVE_BT_ACL_MASTER_MIN_EDR,
+	CONF_SG_WLAN_ACTIVE_BT_ACL_MASTER_MAX_EDR,
+
+	/*
+	 * The maximum time WLAN can gain the antenna for
+	 * in WLAN Active / BT master EDR
+	 *
+	 * Range: 0 - 255 (ms)
+	 */
+	CONF_SG_WLAN_ACTIVE_MAX_BT_ACL_MASTER_EDR,
+
+	/*
+	 * Configure the min and max time BT gains the antenna
+	 * in WLAN Active / BT slave EDR
+	 *
+	 * Range: 0 - 255 (ms)
+	 */
+	CONF_SG_WLAN_ACTIVE_BT_ACL_SLAVE_MIN_EDR,
+	CONF_SG_WLAN_ACTIVE_BT_ACL_SLAVE_MAX_EDR,
+
+	/*
+	 * The maximum time WLAN can gain the antenna for
+	 * in WLAN Active / BT slave EDR
+	 *
+	 * Range: 0 - 255 (ms)
+	 */
+	CONF_SG_WLAN_ACTIVE_MAX_BT_ACL_SLAVE_EDR,
+
+	/*
+	 * Configure the min and max time BT gains the antenna
+	 * in WLAN Active / BT basic rate
+	 *
+	 * Range: 0 - 255 (ms)
+	 */
+	CONF_SG_WLAN_ACTIVE_BT_ACL_MIN_BR,
+	CONF_SG_WLAN_ACTIVE_BT_ACL_MAX_BR,
+
+	/*
+	 * The maximum time WLAN can gain the antenna for
+	 * in WLAN Active / BT basic rate
+	 *
+	 * Range: 0 - 255 (ms)
+	 */
+	CONF_SG_WLAN_ACTIVE_MAX_BT_ACL_BR,
+
+	/*
+	 * Compensation percentage of WLAN passive scan window if initiated
+	 * during BT voice
+	 *
+	 * Range: 0 - 1000 (%)
+	 */
+	CONF_SG_PASSIVE_SCAN_DURATION_FACTOR_HV3,
+
+	/*
+	 * Compensation percentage of WLAN passive scan window if initiated
+	 * during BT A2DP
+	 *
+	 * Range: 0 - 1000 (%)
+	 */
+	CONF_SG_PASSIVE_SCAN_DURATION_FACTOR_A2DP,
+
+	/*
+	 * Fixed time ensured for BT traffic to gain the antenna during WLAN
+	 * passive scan.
+	 *
+	 * Range: 0 - 1000 ms
+	 */
+	CONF_SG_PASSIVE_SCAN_A2DP_BT_TIME,
+
+	/*
+	 * Fixed time ensured for WLAN traffic to gain the antenna during WLAN
+	 * passive scan.
+	 *
+	 * Range: 0 - 1000 ms
+	 */
+	CONF_SG_PASSIVE_SCAN_A2DP_WLAN_TIME,
+
+	/*
+	 * Number of consequent BT voice frames not interrupted by WLAN
+	 *
+	 * Range: 0 - 100
+	 */
+	CONF_SG_HV3_MAX_SERVED,
+
+	/*
+	 * Protection time of the DHCP procedure.
+	 *
+	 * Range: 0 - 100000 (ms)
+	 */
+	CONF_SG_DHCP_TIME,
+
+	/*
+	 * Compensation percentage of WLAN active scan window if initiated
+	 * during BT A2DP
+	 *
+	 * Range: 0 - 1000 (%)
+	 */
+	CONF_SG_ACTIVE_SCAN_DURATION_FACTOR_A2DP,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CONF_SG_TEMP_PARAM_1,
 	CONF_SG_TEMP_PARAM_2,
 	CONF_SG_TEMP_PARAM_3,
 	CONF_SG_TEMP_PARAM_4,
 	CONF_SG_TEMP_PARAM_5,
+<<<<<<< HEAD
+=======
+
+	/*
+	 * AP beacon miss
+	 *
+	 * Range: 0 - 255
+	 */
+	CONF_SG_AP_BEACON_MISS_TX,
+
+	/*
+	 * AP RX window length
+	 *
+	 * Range: 0 - 50
+	 */
+	CONF_SG_RX_WINDOW_LENGTH,
+
+	/*
+	 * AP connection protection time
+	 *
+	 * Range: 0 - 5000
+	 */
+	CONF_SG_AP_CONNECTION_PROTECTION_TIME,
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CONF_SG_TEMP_PARAM_6,
 	CONF_SG_TEMP_PARAM_7,
 	CONF_SG_TEMP_PARAM_8,
 	CONF_SG_TEMP_PARAM_9,
 	CONF_SG_TEMP_PARAM_10,
 
+<<<<<<< HEAD
 	CONF_SG_PARAMS_MAX,
+=======
+	CONF_SG_STA_PARAMS_MAX = CONF_SG_TEMP_PARAM_5 + 1,
+	CONF_SG_AP_PARAMS_MAX = CONF_SG_TEMP_PARAM_10 + 1,
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CONF_SG_PARAMS_ALL = 0xff
 };
 
 struct conf_sg_settings {
+<<<<<<< HEAD
 	u32 params[CONF_SG_PARAMS_MAX];
+=======
+	u32 sta_params[CONF_SG_STA_PARAMS_MAX];
+	u32 ap_params[CONF_SG_AP_PARAMS_MAX];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 state;
 };
 
@@ -425,17 +725,24 @@ struct conf_rx_settings {
 	u8 queue_type;
 };
 
+<<<<<<< HEAD
 #define CONF_TX_MAX_RATE_CLASSES       10
+=======
+#define CONF_TX_MAX_RATE_CLASSES       8
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define CONF_TX_RATE_MASK_UNSPECIFIED  0
 #define CONF_TX_RATE_MASK_BASIC        (CONF_HW_BIT_RATE_1MBPS | \
 					CONF_HW_BIT_RATE_2MBPS)
 #define CONF_TX_RATE_RETRY_LIMIT       10
 
+<<<<<<< HEAD
 /* basic rates for p2p operations (probe req/resp, etc.) */
 #define CONF_TX_RATE_MASK_BASIC_P2P    (CONF_HW_BIT_RATE_6MBPS | \
 	CONF_HW_BIT_RATE_12MBPS | CONF_HW_BIT_RATE_24MBPS)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Rates supported for data packets when operating as AP. Note the absence
  * of the 22Mbps rate. There is a FW limitation on 12 rates so we must drop
@@ -449,20 +756,26 @@ struct conf_rx_settings {
 	CONF_HW_BIT_RATE_36MBPS | CONF_HW_BIT_RATE_48MBPS |      \
 	CONF_HW_BIT_RATE_54MBPS)
 
+<<<<<<< HEAD
 #define CONF_TX_CCK_RATES  (CONF_HW_BIT_RATE_1MBPS |		\
 	CONF_HW_BIT_RATE_2MBPS | CONF_HW_BIT_RATE_5_5MBPS |	\
 	CONF_HW_BIT_RATE_11MBPS)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define CONF_TX_OFDM_RATES (CONF_HW_BIT_RATE_6MBPS |             \
 	CONF_HW_BIT_RATE_12MBPS | CONF_HW_BIT_RATE_24MBPS |      \
 	CONF_HW_BIT_RATE_36MBPS | CONF_HW_BIT_RATE_48MBPS |      \
 	CONF_HW_BIT_RATE_54MBPS)
 
+<<<<<<< HEAD
 #define CONF_TX_MCS_RATES (CONF_HW_BIT_RATE_MCS_0 |              \
 	CONF_HW_BIT_RATE_MCS_1 | CONF_HW_BIT_RATE_MCS_2 |        \
 	CONF_HW_BIT_RATE_MCS_3 | CONF_HW_BIT_RATE_MCS_4 |        \
 	CONF_HW_BIT_RATE_MCS_5 | CONF_HW_BIT_RATE_MCS_6 |        \
 	CONF_HW_BIT_RATE_MCS_7)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Default rates for management traffic when operating in AP mode. This
@@ -471,10 +784,19 @@ struct conf_rx_settings {
 #define CONF_TX_AP_DEFAULT_MGMT_RATES  (CONF_HW_BIT_RATE_1MBPS | \
 	CONF_HW_BIT_RATE_2MBPS | CONF_HW_BIT_RATE_5_5MBPS)
 
+<<<<<<< HEAD
 /* default rates for working as IBSS (11b and OFDM) */
 #define CONF_TX_IBSS_DEFAULT_RATES  (CONF_HW_BIT_RATE_1MBPS |       \
 		CONF_HW_BIT_RATE_2MBPS | CONF_HW_BIT_RATE_5_5MBPS | \
 		CONF_HW_BIT_RATE_11MBPS | CONF_TX_OFDM_RATES);
+=======
+/*
+ * Default rates for working as IBSS. use 11b rates
+ */
+#define CONF_TX_IBSS_DEFAULT_RATES  (CONF_HW_BIT_RATE_1MBPS |       \
+		CONF_HW_BIT_RATE_2MBPS | CONF_HW_BIT_RATE_5_5MBPS | \
+		CONF_HW_BIT_RATE_11MBPS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct conf_tx_rate_class {
 
@@ -577,9 +899,12 @@ struct conf_tx_ac_category {
 
 #define CONF_TX_MAX_TID_COUNT 8
 
+<<<<<<< HEAD
 /* Allow TX BA on all TIDs but 6,7. These are currently reserved in the FW */
 #define CONF_TX_BA_ENABLED_TID_BITMAP 0x3F
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum {
 	CONF_CHANNEL_TYPE_DCF = 0,   /* DC/LEGACY*/
 	CONF_CHANNEL_TYPE_EDCF = 1,  /* EDCA*/
@@ -632,6 +957,7 @@ struct conf_tx_settings {
 	/*
 	 * AP-mode - allow this number of TX retries to a station before an
 	 * event is triggered from FW.
+<<<<<<< HEAD
 	 * In AP-mode the hlids of unreachable stations are given in the
 	 * "sta_tx_retry_exceeded" member in the event mailbox.
 	 */
@@ -642,6 +968,10 @@ struct conf_tx_settings {
 	 * considered inactive.
 	 */
 	u16 ap_aging_period;
+=======
+	 */
+	u16 ap_max_tx_retries;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Configuration for TID parameters.
@@ -690,9 +1020,12 @@ struct conf_tx_settings {
 	 */
 	u8 tmpl_short_retry_limit;
 	u8 tmpl_long_retry_limit;
+<<<<<<< HEAD
 
 	/* Time in ms for Tx watchdog timer to expire */
 	u32 tx_watchdog_timeout;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum {
@@ -822,6 +1155,7 @@ struct conf_conn_settings {
 	u8 listen_interval;
 
 	/*
+<<<<<<< HEAD
 	 * Firmware wakeup conditions during suspend
 	 * Range: CONF_WAKE_UP_EVENT_*
 	 */
@@ -835,6 +1169,8 @@ struct conf_conn_settings {
 	u8 suspend_listen_interval;
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Enable or disable the beacon filtering.
 	 *
 	 * Range: CONF_BCN_FILT_MODE_*
@@ -848,7 +1184,11 @@ struct conf_conn_settings {
 	struct conf_bcn_filt_rule bcn_filt_ie[CONF_MAX_BCN_FILT_IE_COUNT];
 
 	/*
+<<<<<<< HEAD
 	 * The number of consecutive beacons to lose, before the firmware
+=======
+	 * The number of consequtive beacons to lose, before the firmware
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * becomes out of synch.
 	 *
 	 * Range: u32
@@ -886,13 +1226,27 @@ struct conf_conn_settings {
 	u8 rx_broadcast_in_ps;
 
 	/*
+<<<<<<< HEAD
 	 * Consecutive PS Poll failures before sending event to driver
+=======
+	 * Consequtive PS Poll failures before sending event to driver
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 *
 	 * Range: u8
 	 */
 	u8 ps_poll_threshold;
 
 	/*
+<<<<<<< HEAD
+=======
+	 * PS Poll failure recovery ACTIVE period length
+	 *
+	 * Range: u32 (ms)
+	 */
+	u32 ps_poll_recovery_period;
+
+	/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Configuration of signal average weights.
 	 */
 	struct conf_sig_weights sig_weights;
@@ -940,6 +1294,7 @@ struct conf_conn_settings {
 	u8 psm_entry_nullfunc_retries;
 
 	/*
+<<<<<<< HEAD
 	 * Specifies the dynamic PS timeout in ms that will be used
 	 * by the FW when in AUTO_PS mode
 	 */
@@ -950,6 +1305,14 @@ struct conf_conn_settings {
 	 * This is required for certain WiFi certification tests.
 	 */
 	u8 forced_ps;
+=======
+	 * Specifies the time to linger in active mode after successfully
+	 * transmitting the PSM entry null-func frame.
+	 *
+	 * Range 0 - 255 TU's
+	 */
+	u8 psm_entry_hangover_period;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 *
@@ -1085,6 +1448,7 @@ struct conf_scan_settings {
 	 */
 	u16 num_probe_reqs;
 
+<<<<<<< HEAD
 	/*
 	 * Scan trigger (split scan) timeout. The FW will split the scan
 	 * operation into slices of the given time and allow the FW to schedule
@@ -1093,6 +1457,8 @@ struct conf_scan_settings {
 	 * Range: u32 Microsecs
 	 */
 	u32 split_scan_timeout;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct conf_sched_scan_settings {
@@ -1139,12 +1505,17 @@ struct conf_rf_settings {
 };
 
 struct conf_ht_setting {
+<<<<<<< HEAD
 	u8 rx_ba_win_size;
 	u8 tx_ba_win_size;
 	u16 inactivity_timeout;
 
 	/* bitmap of enabled TIDs for TX BA sessions */
 	u8 tx_ba_tid_bitmap;
+=======
+	u16 tx_ba_win_size;
+	u16 inactivity_timeout;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct conf_memory_settings {
@@ -1200,6 +1571,7 @@ struct conf_fm_coex {
 	u8 swallow_clk_diff;
 };
 
+<<<<<<< HEAD
 struct conf_rx_streaming_settings {
 	/*
 	 * RX Streaming duration (in msec) from last tx/rx
@@ -1286,6 +1658,8 @@ struct conf_hangover_settings {
 	u8 window_size;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct conf_drv_settings {
 	struct conf_sg_settings sg;
 	struct conf_rx_settings rx;
@@ -1301,10 +1675,13 @@ struct conf_drv_settings {
 	struct conf_memory_settings mem_wl127x;
 	struct conf_memory_settings mem_wl128x;
 	struct conf_fm_coex fm_coex;
+<<<<<<< HEAD
 	struct conf_rx_streaming_settings rx_streaming;
 	struct conf_fwlog fwlog;
 	struct conf_rate_policy_settings rate;
 	struct conf_hangover_settings hangover;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 hci_io_ds;
 };
 

@@ -157,7 +157,11 @@ static inline void kunmap_atomic_primary(void *kvaddr, enum km_type type)
 	pagefault_enable();
 }
 
+<<<<<<< HEAD
 void *kmap_atomic(struct page *page);
+=======
+void *__kmap_atomic(struct page *page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __kunmap_atomic(void *kvaddr);
 
 #endif /* !__ASSEMBLY__ */

@@ -137,6 +137,19 @@ static inline void mpol_cond_put(struct mempolicy *pol)
 		__mpol_put(pol);
 }
 
+<<<<<<< HEAD
+=======
+extern struct mempolicy *__mpol_cond_copy(struct mempolicy *tompol,
+					  struct mempolicy *frompol);
+static inline struct mempolicy *mpol_cond_copy(struct mempolicy *tompol,
+						struct mempolicy *frompol)
+{
+	if (!frompol)
+		return frompol;
+	return __mpol_cond_copy(tompol, frompol);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct mempolicy *__mpol_dup(struct mempolicy *pol);
 static inline struct mempolicy *mpol_dup(struct mempolicy *pol)
 {
@@ -154,11 +167,19 @@ static inline void mpol_get(struct mempolicy *pol)
 		atomic_inc(&pol->refcnt);
 }
 
+<<<<<<< HEAD
 extern bool __mpol_equal(struct mempolicy *a, struct mempolicy *b);
 static inline bool mpol_equal(struct mempolicy *a, struct mempolicy *b)
 {
 	if (a == b)
 		return true;
+=======
+extern int __mpol_equal(struct mempolicy *a, struct mempolicy *b);
+static inline int mpol_equal(struct mempolicy *a, struct mempolicy *b)
+{
+	if (a == b)
+		return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return __mpol_equal(a, b);
 }
 
@@ -178,7 +199,11 @@ struct sp_node {
 
 struct shared_policy {
 	struct rb_root root;
+<<<<<<< HEAD
 	struct mutex mutex;
+=======
+	spinlock_t lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void mpol_shared_policy_init(struct shared_policy *sp, struct mempolicy *mpol);
@@ -247,9 +272,15 @@ static inline int vma_migratable(struct vm_area_struct *vma)
 
 struct mempolicy {};
 
+<<<<<<< HEAD
 static inline bool mpol_equal(struct mempolicy *a, struct mempolicy *b)
 {
 	return true;
+=======
+static inline int mpol_equal(struct mempolicy *a, struct mempolicy *b)
+{
+	return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void mpol_put(struct mempolicy *p)
@@ -260,6 +291,15 @@ static inline void mpol_cond_put(struct mempolicy *pol)
 {
 }
 
+<<<<<<< HEAD
+=======
+static inline struct mempolicy *mpol_cond_copy(struct mempolicy *to,
+						struct mempolicy *from)
+{
+	return from;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void mpol_get(struct mempolicy *pol)
 {
 }

@@ -76,7 +76,11 @@ _GLOBAL(__setup_cpu_ppc970)
 	/* Do nothing if not running in HV mode */
 	mfmsr	r0
 	rldicl.	r0,r0,4,63
+<<<<<<< HEAD
 	beq	no_hv_mode
+=======
+	beqlr
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mfspr	r0,SPRN_HID0
 	li	r11,5			/* clear DOZE and SLEEP */
@@ -90,7 +94,11 @@ _GLOBAL(__setup_cpu_ppc970MP)
 	/* Do nothing if not running in HV mode */
 	mfmsr	r0
 	rldicl.	r0,r0,4,63
+<<<<<<< HEAD
 	beq	no_hv_mode
+=======
+	beqlr
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mfspr	r0,SPRN_HID0
 	li	r11,0x15		/* clear DOZE and SLEEP */
@@ -109,6 +117,7 @@ load_hids:
 	sync
 	isync
 
+<<<<<<< HEAD
 	/* Try to set LPES = 01 in HID4 */
 	mfspr	r0,SPRN_HID4
 	clrldi	r0,r0,1			/* clear LPES0 */
@@ -117,6 +126,8 @@ load_hids:
 	mtspr	SPRN_HID4,r0
 	isync
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Save away cpu state */
 	LOAD_REG_ADDR(r5,cpu_state_storage)
 
@@ -125,6 +136,7 @@ load_hids:
 	std	r3,CS_HID0(r5)
 	mfspr	r3,SPRN_HID1
 	std	r3,CS_HID1(r5)
+<<<<<<< HEAD
 	mfspr	r4,SPRN_HID4
 	std	r4,CS_HID4(r5)
 	mfspr	r3,SPRN_HID5
@@ -140,6 +152,13 @@ no_hv_mode:
 	LOAD_REG_IMMEDIATE(r6,CPU_FTR_HVMODE)
 	andc	r5,r5,r6
 	std	r5,CPU_SPEC_FEATURES(r4)
+=======
+	mfspr	r3,SPRN_HID4
+	std	r3,CS_HID4(r5)
+	mfspr	r3,SPRN_HID5
+	std	r3,CS_HID5(r5)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	blr
 
 /* Called with no MMU context (typically MSR:IR/DR off) to

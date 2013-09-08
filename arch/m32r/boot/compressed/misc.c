@@ -28,7 +28,11 @@ static unsigned long free_mem_ptr;
 static unsigned long free_mem_end_ptr;
 
 #ifdef CONFIG_KERNEL_BZIP2
+<<<<<<< HEAD
 void *memset(void *s, int c, size_t n)
+=======
+static void *memset(void *s, int c, size_t n)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	char *ss = s;
 
@@ -39,6 +43,7 @@ void *memset(void *s, int c, size_t n)
 #endif
 
 #ifdef CONFIG_KERNEL_GZIP
+<<<<<<< HEAD
 void *memcpy(void *dest, const void *src, size_t n)
 {
 	char *d = dest;
@@ -49,6 +54,8 @@ void *memcpy(void *dest, const void *src, size_t n)
 	return dest;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define BOOT_HEAP_SIZE             0x10000
 #include "../../../../lib/decompress_inflate.c"
 #endif

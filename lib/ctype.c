@@ -5,8 +5,12 @@
  */
 
 #include <linux/ctype.h>
+<<<<<<< HEAD
 #include <linux/compiler.h>
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 const unsigned char _ctype[] = {
 _C,_C,_C,_C,_C,_C,_C,_C,				/* 0-7 */

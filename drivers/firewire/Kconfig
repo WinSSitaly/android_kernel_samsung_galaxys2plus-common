@@ -28,6 +28,14 @@ config FIREWIRE_OHCI
 	  To compile this driver as a module, say M here:  The module will be
 	  called firewire-ohci.
 
+<<<<<<< HEAD
+=======
+config FIREWIRE_OHCI_DEBUG
+	bool
+	depends on FIREWIRE_OHCI
+	default y
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config FIREWIRE_SBP2
 	tristate "Storage devices (SBP-2 protocol)"
 	depends on FIREWIRE && SCSI

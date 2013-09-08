@@ -276,7 +276,11 @@ static void phonet_route_autodel(struct net_device *dev)
 	mutex_lock(&pnn->routes.lock);
 	for (i = 0; i < 64; i++)
 		if (dev == pnn->routes.table[i]) {
+<<<<<<< HEAD
 			RCU_INIT_POINTER(pnn->routes.table[i], NULL);
+=======
+			rcu_assign_pointer(pnn->routes.table[i], NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			set_bit(i, deleted);
 		}
 	mutex_unlock(&pnn->routes.lock);
@@ -331,6 +335,26 @@ static int __net_init phonet_init_net(struct net *net)
 
 static void __net_exit phonet_exit_net(struct net *net)
 {
+<<<<<<< HEAD
+=======
+	struct phonet_net *pnn = phonet_pernet(net);
+	struct net_device *dev;
+	unsigned i;
+
+	rtnl_lock();
+	for_each_netdev(net, dev)
+		phonet_device_destroy(dev);
+
+	for (i = 0; i < 64; i++) {
+		dev = pnn->routes.table[i];
+		if (dev) {
+			rtm_phonet_notify(RTM_DELROUTE, dev, i);
+			dev_put(dev);
+		}
+	}
+	rtnl_unlock();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	proc_net_remove(net, "phonet");
 }
 
@@ -344,7 +368,11 @@ static struct pernet_operations phonet_net_ops = {
 /* Initialize Phonet devices list */
 int __init phonet_device_init(void)
 {
+<<<<<<< HEAD
 	int err = register_pernet_subsys(&phonet_net_ops);
+=======
+	int err = register_pernet_device(&phonet_net_ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		return err;
 
@@ -360,7 +388,11 @@ void phonet_device_exit(void)
 {
 	rtnl_unregister_all(PF_PHONET);
 	unregister_netdevice_notifier(&phonet_device_notifier);
+<<<<<<< HEAD
 	unregister_pernet_subsys(&phonet_net_ops);
+=======
+	unregister_pernet_device(&phonet_net_ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	proc_net_remove(&init_net, "pnresource");
 }
 
@@ -389,7 +421,11 @@ int phonet_route_del(struct net_device *dev, u8 daddr)
 	daddr = daddr >> 2;
 	mutex_lock(&routes->lock);
 	if (dev == routes->table[daddr])
+<<<<<<< HEAD
 		RCU_INIT_POINTER(routes->table[daddr], NULL);
+=======
+		rcu_assign_pointer(routes->table[daddr], NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		dev = NULL;
 	mutex_unlock(&routes->lock);

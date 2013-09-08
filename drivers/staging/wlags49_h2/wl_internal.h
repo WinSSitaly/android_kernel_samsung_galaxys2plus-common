@@ -22,7 +22,11 @@
  * software indicates your acceptance of these terms and conditions.  If you do
  * not agree with these terms and conditions, do not use the software.
  *
+<<<<<<< HEAD
  * Copyright Â© 2003 Agere Systems Inc.
+=======
+ * Copyright © 2003 Agere Systems Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source or binary forms, with or without
@@ -43,7 +47,11 @@
  *
  * Disclaimer
  *
+<<<<<<< HEAD
  * THIS SOFTWARE IS PROVIDED Â“AS ISÂ” AND ANY EXPRESS OR IMPLIED WARRANTIES,
+=======
+ * THIS SOFTWARE IS PROVIDED “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * INCLUDING, BUT NOT LIMITED TO, INFRINGEMENT AND THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  ANY
  * USE, MODIFICATION OR DISTRIBUTION OF THIS SOFTWARE IS SOLELY AT THE USERS OWN
@@ -67,6 +75,10 @@
 /*******************************************************************************
  *  include files
  ******************************************************************************/
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef BUS_PCMCIA
 #include <pcmcia/cistpl.h>
 #include <pcmcia/cisreg.h>
@@ -74,8 +86,20 @@
 #include <pcmcia/ds.h>
 #endif  // BUS_PCMCIA
 
+<<<<<<< HEAD
 #include <linux/wireless.h>
 #include <net/iw_handler.h>
+=======
+#ifdef HAS_WIRELESS_EXTENSIONS
+#include <linux/wireless.h>
+#if WIRELESS_EXT > 13
+#include <net/iw_handler.h>
+#endif // WIRELESS_EXT > 13
+#define USE_DBM
+#define RETURN_CURRENT_NETWORKNAME
+#define USE_FREQUENCY
+#endif // HAS_WIRELESS_EXTENSIONS/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/list.h>
 
@@ -883,7 +907,11 @@ struct wl_private
 	int                         is_registered;
 	int                         is_handling_int;
 	int                         firmware_present;
+<<<<<<< HEAD
 	bool                        sysfsCreated;
+=======
+	char                        sysfsCreated;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CFG_DRV_INFO_STRCT          driverInfo;
 	CFG_IDENTITY_STRCT          driverIdentity;
 	CFG_FW_IDENTITY_STRCT       StationIdentity;
@@ -980,6 +1008,7 @@ struct wl_private
 #ifdef USE_WDS
 	WVLAN_WDS_IF                wds_port[NUM_WDS_PORTS];
 #endif // USE_WDS
+<<<<<<< HEAD
 
 	/* Track whether the card is using WEP encryption or WPA
 	 * so we know what to disable next time through.
@@ -989,6 +1018,18 @@ struct wl_private
 }; // wl_private
 
 #define wl_priv(dev) ((struct wl_private *) netdev_priv(dev))
+=======
+}; // wl_private
+
+#ifdef HAVE_NETDEV_PRIV
+#define wl_priv(dev) ((struct wl_private *) netdev_priv(dev))
+#else
+extern inline struct wl_private *wl_priv(struct net_device *dev)
+{
+    return dev->priv;
+}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /********************************************************************/
 /* Locking and synchronization functions                            */

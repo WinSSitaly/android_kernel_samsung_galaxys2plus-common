@@ -38,7 +38,11 @@
  */
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/byteorder.h>
 #include <asm/current.h>
 #include <asm/uaccess.h>
@@ -48,7 +52,10 @@
 #include <linux/errno.h>
 #include <linux/aio.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/spinlock.h>
 #include <linux/sockios.h>
 #include <linux/socket.h>
@@ -131,6 +138,7 @@ found:
  *	0 - deliver
  *	1 - block
  */
+<<<<<<< HEAD
 static int icmp_filter(const struct sock *sk, const struct sk_buff *skb)
 {
 	struct icmphdr _hdr;
@@ -145,6 +153,20 @@ static int icmp_filter(const struct sock *sk, const struct sk_buff *skb)
 		__u32 data = raw_sk(sk)->filter.data;
 
 		return ((1U << hdr->type) & data) != 0;
+=======
+static __inline__ int icmp_filter(struct sock *sk, struct sk_buff *skb)
+{
+	int type;
+
+	if (!pskb_may_pull(skb, sizeof(struct icmphdr)))
+		return 1;
+
+	type = icmp_hdr(skb)->type;
+	if (type < 32) {
+		__u32 data = raw_sk(sk)->filter.data;
+
+		return ((1 << type) & data) != 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Do not block unknown ICMP types */
@@ -294,8 +316,12 @@ static int raw_rcv_skb(struct sock * sk, struct sk_buff * skb)
 {
 	/* Charge it to the socket. */
 
+<<<<<<< HEAD
 	ipv4_pktinfo_prepare(skb);
 	if (sock_queue_rcv_skb(sk, skb) < 0) {
+=======
+	if (ip_queue_rcv_skb(sk, skb) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree_skb(skb);
 		return NET_RX_DROP;
 	}
@@ -330,7 +356,10 @@ static int raw_send_hdrinc(struct sock *sk, struct flowi4 *fl4,
 	unsigned int iphlen;
 	int err;
 	struct rtable *rt = *rtp;
+<<<<<<< HEAD
 	int hlen, tlen;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (length > rt->dst.dev->mtu) {
 		ip_local_error(sk, EMSGSIZE, fl4->daddr, inet->inet_dport,
@@ -340,6 +369,7 @@ static int raw_send_hdrinc(struct sock *sk, struct flowi4 *fl4,
 	if (flags&MSG_PROBE)
 		goto out;
 
+<<<<<<< HEAD
 	hlen = LL_RESERVED_SPACE(rt->dst.dev);
 	tlen = rt->dst.dev->needed_tailroom;
 	skb = sock_alloc_send_skb(sk,
@@ -348,6 +378,14 @@ static int raw_send_hdrinc(struct sock *sk, struct flowi4 *fl4,
 	if (skb == NULL)
 		goto error;
 	skb_reserve(skb, hlen);
+=======
+	skb = sock_alloc_send_skb(sk,
+				  length + LL_ALLOCATED_SPACE(rt->dst.dev) + 15,
+				  flags & MSG_DONTWAIT, &err);
+	if (skb == NULL)
+		goto error;
+	skb_reserve(skb, LL_RESERVED_SPACE(rt->dst.dev));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	skb->priority = sk->sk_priority;
 	skb->mark = sk->sk_mark;
@@ -493,8 +531,16 @@ static int raw_sendmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 		if (msg->msg_namelen < sizeof(*usin))
 			goto out;
 		if (usin->sin_family != AF_INET) {
+<<<<<<< HEAD
 			pr_info_once("%s: %s forgot to set AF_INET. Fix it!\n",
 				     __func__, current->comm);
+=======
+			static int complained;
+			if (!complained++)
+				printk(KERN_INFO "%s forgot to set AF_INET in "
+						 "raw sendmsg. Fix it!\n",
+						 current->comm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			err = -EAFNOSUPPORT;
 			if (usin->sin_family)
 				goto out;
@@ -562,14 +608,22 @@ static int raw_sendmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 			ipc.oif = inet->mc_index;
 		if (!saddr)
 			saddr = inet->mc_addr;
+<<<<<<< HEAD
 	} else if (!ipc.oif)
 		ipc.oif = inet->uc_index;
+=======
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	flowi4_init_output(&fl4, ipc.oif, sk->sk_mark, tos,
 			   RT_SCOPE_UNIVERSE,
 			   inet->hdrincl ? IPPROTO_RAW : sk->sk_protocol,
+<<<<<<< HEAD
 			   inet_sk_flowi_flags(sk) | FLOWI_FLAG_CAN_SLEEP,
 			   daddr, saddr, 0, 0);
+=======
+			   FLOWI_FLAG_CAN_SLEEP, daddr, saddr, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!inet->hdrincl) {
 		err = raw_probe_proto_opt(&fl4, msg);
@@ -831,6 +885,7 @@ static int compat_raw_getsockopt(struct sock *sk, int level, int optname,
 static int raw_ioctl(struct sock *sk, int cmd, unsigned long arg)
 {
 	switch (cmd) {
+<<<<<<< HEAD
 	case SIOCOUTQ: {
 		int amount = sk_wmem_alloc_get(sk);
 
@@ -853,6 +908,30 @@ static int raw_ioctl(struct sock *sk, int cmd, unsigned long arg)
 		return ipmr_ioctl(sk, cmd, (void __user *)arg);
 #else
 		return -ENOIOCTLCMD;
+=======
+		case SIOCOUTQ: {
+			int amount = sk_wmem_alloc_get(sk);
+
+			return put_user(amount, (int __user *)arg);
+		}
+		case SIOCINQ: {
+			struct sk_buff *skb;
+			int amount = 0;
+
+			spin_lock_bh(&sk->sk_receive_queue.lock);
+			skb = skb_peek(&sk->sk_receive_queue);
+			if (skb != NULL)
+				amount = skb->len;
+			spin_unlock_bh(&sk->sk_receive_queue.lock);
+			return put_user(amount, (int __user *)arg);
+		}
+
+		default:
+#ifdef CONFIG_IP_MROUTE
+			return ipmr_ioctl(sk, cmd, (void __user *)arg);
+#else
+			return -ENOIOCTLCMD;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	}
 }

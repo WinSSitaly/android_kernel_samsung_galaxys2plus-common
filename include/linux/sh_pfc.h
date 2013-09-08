@@ -45,12 +45,16 @@ struct pinmux_cfg_reg {
 	unsigned long reg, reg_width, field_width;
 	unsigned long *cnt;
 	pinmux_enum_t *enum_ids;
+<<<<<<< HEAD
 	unsigned long *var_field_width;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define PINMUX_CFG_REG(name, r, r_width, f_width) \
 	.reg = r, .reg_width = r_width, .field_width = f_width,		\
 	.cnt = (unsigned long [r_width / f_width]) {}, \
+<<<<<<< HEAD
 	.enum_ids = (pinmux_enum_t [(r_width / f_width) * (1 << f_width)])
 
 #define PINMUX_CFG_REG_VAR(name, r, r_width, var_fw0, var_fwn...) \
@@ -58,17 +62,24 @@ struct pinmux_cfg_reg {
 	.cnt = (unsigned long [r_width]) {}, \
 	.var_field_width = (unsigned long [r_width]) { var_fw0, var_fwn, 0 }, \
 	.enum_ids = (pinmux_enum_t [])
+=======
+	.enum_ids = (pinmux_enum_t [(r_width / f_width) * (1 << f_width)]) \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct pinmux_data_reg {
 	unsigned long reg, reg_width, reg_shadow;
 	pinmux_enum_t *enum_ids;
+<<<<<<< HEAD
 	void __iomem *mapped_reg;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define PINMUX_DATA_REG(name, r, r_width) \
 	.reg = r, .reg_width = r_width,	\
 	.enum_ids = (pinmux_enum_t [r_width]) \
 
+<<<<<<< HEAD
 struct pinmux_irq {
 	int irq;
 	pinmux_enum_t *enum_ids;
@@ -77,18 +88,23 @@ struct pinmux_irq {
 #define PINMUX_IRQ(irq_nr, ids...)			   \
 	{ .irq = irq_nr, .enum_ids = (pinmux_enum_t []) { ids, 0 } }	\
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct pinmux_range {
 	pinmux_enum_t begin;
 	pinmux_enum_t end;
 	pinmux_enum_t force;
 };
 
+<<<<<<< HEAD
 struct pfc_window {
 	phys_addr_t phys;
 	void __iomem *virt;
 	unsigned long size;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct pinmux_info {
 	char *name;
 	pinmux_enum_t reserved_id;
@@ -109,6 +125,7 @@ struct pinmux_info {
 	pinmux_enum_t *gpio_data;
 	unsigned int gpio_data_size;
 
+<<<<<<< HEAD
 	struct pinmux_irq *gpio_irq;
 	unsigned int gpio_irq_size;
 
@@ -118,12 +135,16 @@ struct pinmux_info {
 
 	unsigned long unlock_reg;
 
+=======
+	unsigned long *gpio_in_use;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct gpio_chip chip;
 };
 
 int register_pinmux(struct pinmux_info *pip);
 int unregister_pinmux(struct pinmux_info *pip);
 
+<<<<<<< HEAD
 /* helper macro for port */
 #define PORT_1(fn, pfx, sfx) fn(pfx, sfx)
 
@@ -200,4 +221,6 @@ int unregister_pinmux(struct pinmux_info *pip);
 				PORT##nr##_FN6, PORT##nr##_FN7 }	\
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __SH_PFC_H */

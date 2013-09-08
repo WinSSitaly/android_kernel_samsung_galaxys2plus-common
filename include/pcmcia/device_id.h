@@ -95,6 +95,7 @@
 	.prod_id = { (v1), NULL, NULL, NULL }, \
 	.prod_id_hash = { (vh1), 0, 0, 0 }, }
 
+<<<<<<< HEAD
 #define PCMCIA_DEVICE_MANF_CARD_PROD_ID3(manf, card, v3, vh3) { \
 	.match_flags = PCMCIA_DEV_ID_MATCH_MANF_ID| \
 			PCMCIA_DEV_ID_MATCH_CARD_ID| \
@@ -104,6 +105,8 @@
 	.prod_id = { NULL, NULL, (v3), NULL }, \
 	.prod_id_hash = { 0, 0, (vh3), 0 }, }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* multi-function devices */
 

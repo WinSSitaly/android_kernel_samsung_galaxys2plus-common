@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * SH7091/SH7750/SH7750S/SH7750R/SH7751/SH7751R Setup
+=======
+ * SH7750/SH7751 Setup
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *  Copyright (C) 2006  Paul Mundt
  *  Copyright (C) 2006  Jamie Lenehan
@@ -38,13 +42,19 @@ static struct platform_device rtc_device = {
 
 static struct plat_sci_port sci_platform_data = {
 	.mapbase	= 0xffe00000,
+<<<<<<< HEAD
 	.port_reg	= 0xffe0001C,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.flags		= UPF_BOOT_AUTOCONF,
 	.scscr		= SCSCR_TE | SCSCR_RE,
 	.scbrr_algo_id	= SCBRR_ALGO_2,
 	.type		= PORT_SCI,
 	.irqs		= { 23, 23, 23, 0 },
+<<<<<<< HEAD
 	.regshift	= 2,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device sci_device = {

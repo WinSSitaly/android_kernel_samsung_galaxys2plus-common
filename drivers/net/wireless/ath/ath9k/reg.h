@@ -600,6 +600,10 @@
 
 #define AR_D_GBL_IFS_SIFS         0x1030
 #define AR_D_GBL_IFS_SIFS_M       0x0000FFFF
+<<<<<<< HEAD
+=======
+#define AR_D_GBL_IFS_SIFS_ASYNC_FIFO_DUR 0x000003AB
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AR_D_GBL_IFS_SIFS_RESV0   0xFFFFFFFF
 
 #define AR_D_TXBLK_BASE            0x1038
@@ -615,11 +619,19 @@
 #define AR_D_GBL_IFS_SLOT         0x1070
 #define AR_D_GBL_IFS_SLOT_M       0x0000FFFF
 #define AR_D_GBL_IFS_SLOT_RESV0   0xFFFF0000
+<<<<<<< HEAD
+=======
+#define AR_D_GBL_IFS_SLOT_ASYNC_FIFO_DUR   0x00000420
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AR_D_GBL_IFS_EIFS         0x10b0
 #define AR_D_GBL_IFS_EIFS_M       0x0000FFFF
 #define AR_D_GBL_IFS_EIFS_RESV0   0xFFFF0000
+<<<<<<< HEAD
 #define AR_D_GBL_IFS_EIFS_ASYNC_FIFO 363
+=======
+#define AR_D_GBL_IFS_EIFS_ASYNC_FIFO_DUR   0x0000A5EB
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AR_D_GBL_IFS_MISC        0x10f0
 #define AR_D_GBL_IFS_MISC_LFSR_SLICE_SEL        0x00000007
@@ -786,22 +798,35 @@
 #define AR_SREV_REVISION_9271_11	1
 #define AR_SREV_VERSION_9300		0x1c0
 #define AR_SREV_REVISION_9300_20	2 /* 2.0 and 2.1 */
+<<<<<<< HEAD
 #define AR_SREV_VERSION_9330		0x200
 #define AR_SREV_REVISION_9330_10	0
 #define AR_SREV_REVISION_9330_11	1
 #define AR_SREV_REVISION_9330_12	2
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AR_SREV_VERSION_9485		0x240
 #define AR_SREV_REVISION_9485_10	0
 #define AR_SREV_REVISION_9485_11        1
 #define AR_SREV_VERSION_9340		0x300
+<<<<<<< HEAD
 #define AR_SREV_VERSION_9580		0x1C0
 #define AR_SREV_REVISION_9580_10	4 /* AR9580 1.0 */
 #define AR_SREV_VERSION_9462		0x280
 #define AR_SREV_REVISION_9462_20	2
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AR_SREV_5416(_ah) \
 	(((_ah)->hw_version.macVersion == AR_SREV_VERSION_5416_PCI) || \
 	 ((_ah)->hw_version.macVersion == AR_SREV_VERSION_5416_PCIE))
+<<<<<<< HEAD
+=======
+#define AR_SREV_5416_20_OR_LATER(_ah) \
+	(((AR_SREV_5416(_ah)) && \
+	 ((_ah)->hw_version.macRev >= AR_SREV_REVISION_5416_20)) || \
+	 ((_ah)->hw_version.macVersion >= AR_SREV_VERSION_9100))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AR_SREV_5416_22_OR_LATER(_ah) \
 	(((AR_SREV_5416(_ah)) && \
 	 ((_ah)->hw_version.macRev >= AR_SREV_REVISION_5416_22)) || \
@@ -864,6 +889,7 @@
 #define AR_SREV_9300_20_OR_LATER(_ah) \
 	((_ah)->hw_version.macVersion >= AR_SREV_VERSION_9300)
 
+<<<<<<< HEAD
 #define AR_SREV_9330(_ah) \
 	(((_ah)->hw_version.macVersion == AR_SREV_VERSION_9330))
 #define AR_SREV_9330_10(_ah) \
@@ -876,6 +902,8 @@
 	(AR_SREV_9330((_ah)) && \
 	 ((_ah)->hw_version.macRev == AR_SREV_REVISION_9330_12))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AR_SREV_9485(_ah) \
 	(((_ah)->hw_version.macVersion == AR_SREV_VERSION_9485))
 #define AR_SREV_9485_10(_ah) \
@@ -894,6 +922,7 @@
     (AR_SREV_9285_12_OR_LATER(_ah) && \
      ((REG_READ(_ah, AR_AN_SYNTH9) & 0x7) == 0x1))
 
+<<<<<<< HEAD
 #define AR_SREV_9462(_ah) \
 	(((_ah)->hw_version.macVersion == AR_SREV_VERSION_9462))
 
@@ -917,6 +946,8 @@
 #define AR_SREV_9580_10_OR_LATER(_ah) \
 	(AR_SREV_9580(_ah))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum ath_usb_dev {
 	AR9280_USB = 1, /* AR7010 + AR9280, UB94 */
 	AR9287_USB = 2, /* AR7010 + AR9287, UB95 */
@@ -1001,8 +1032,11 @@ enum {
 #define AR_INTR_ASYNC_MASK                       (AR_SREV_9340(ah) ? 0x4018 : 0x4030)
 #define AR_INTR_ASYNC_MASK_GPIO                  0xFFFC0000
 #define AR_INTR_ASYNC_MASK_GPIO_S                18
+<<<<<<< HEAD
 #define AR_INTR_ASYNC_MASK_MCI                   0x00000080
 #define AR_INTR_ASYNC_MASK_MCI_S                 7
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AR_INTR_SYNC_MASK                        (AR_SREV_9340(ah) ? 0x401c : 0x4034)
 #define AR_INTR_SYNC_MASK_GPIO                   0xFFFC0000
@@ -1010,6 +1044,7 @@ enum {
 
 #define AR_INTR_ASYNC_CAUSE_CLR                  (AR_SREV_9340(ah) ? 0x4020 : 0x4038)
 #define AR_INTR_ASYNC_CAUSE                      (AR_SREV_9340(ah) ? 0x4020 : 0x4038)
+<<<<<<< HEAD
 #define AR_INTR_ASYNC_CAUSE_MCI			 0x00000080
 #define AR_INTR_ASYNC_USED			 (AR_INTR_MAC_IRQ | \
 						  AR_INTR_ASYNC_CAUSE_MCI)
@@ -1018,6 +1053,8 @@ enum {
 #define AR_INTR_ASYNC_ENABLE_MCI         0x00000080
 #define AR_INTR_ASYNC_ENABLE_MCI_S       7
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AR_INTR_ASYNC_ENABLE                     (AR_SREV_9340(ah) ? 0x4024 : 0x403c)
 #define AR_INTR_ASYNC_ENABLE_GPIO                0xFFFC0000
@@ -1151,8 +1188,12 @@ enum {
 #define AR_INTR_PRIO_ASYNC_ENABLE (AR_SREV_9340(ah) ? 0x4094 : 0x40d4)
 #define AR_ENT_OTP		  0x40d8
 #define AR_ENT_OTP_CHAIN2_DISABLE               0x00020000
+<<<<<<< HEAD
 #define AR_ENT_OTP_49GHZ_DISABLE		0x00100000
 #define AR_ENT_OTP_MIN_PKT_SIZE_DISABLE		0x00800000
+=======
+#define AR_ENT_OTP_MPSD		0x00800000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AR_CH0_BB_DPLL1		 0x16180
 #define AR_CH0_BB_DPLL1_REFDIV	 0xF8000000
@@ -1275,8 +1316,11 @@ enum {
 #define AR_RTC_INTR_MASK \
 	((AR_SREV_9100(ah)) ? (AR_RTC_BASE + 0x0058) : 0x7058)
 
+<<<<<<< HEAD
 #define AR_RTC_KEEP_AWAKE	0x7034
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* RTC_DERIVED_* - only for AR9100 */
 
 #define AR_RTC_DERIVED_CLK \
@@ -1511,6 +1555,10 @@ enum {
 #define AR_TIME_OUT_ACK_S    0
 #define AR_TIME_OUT_CTS      0x3FFF0000
 #define AR_TIME_OUT_CTS_S    16
+<<<<<<< HEAD
+=======
+#define AR_TIME_OUT_ACK_CTS_ASYNC_FIFO_DUR    0x16001D56
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AR_RSSI_THR          0x8018
 #define AR_RSSI_THR_MASK     0x000000FF
@@ -1526,7 +1574,11 @@ enum {
 #define AR_USEC_TX_LAT_S     14
 #define AR_USEC_RX_LAT       0x1F800000
 #define AR_USEC_RX_LAT_S     23
+<<<<<<< HEAD
 #define AR_USEC_ASYNC_FIFO   0x12E00074
+=======
+#define AR_USEC_ASYNC_FIFO_DUR    0x12e00074
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AR_RESET_TSF        0x8020
 #define AR_RESET_TSF_ONCE   0x01000000
@@ -1563,8 +1615,11 @@ enum {
 #define AR_DIAG_FRAME_NV0           0x00020000
 #define AR_DIAG_OBS_PT_SEL1         0x000C0000
 #define AR_DIAG_OBS_PT_SEL1_S       18
+<<<<<<< HEAD
 #define AR_DIAG_OBS_PT_SEL2         0x08000000
 #define AR_DIAG_OBS_PT_SEL2_S       27
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AR_DIAG_FORCE_RX_CLEAR      0x00100000 /* force rx_clear high */
 #define AR_DIAG_IGNORE_VIRT_CS      0x00200000
 #define AR_DIAG_FORCE_CH_IDLE_HIGH  0x00400000
@@ -1762,10 +1817,26 @@ enum {
 
 #define AR_BT_COEX_WL_WEIGHTS0     0x8174
 #define AR_BT_COEX_WL_WEIGHTS1     0x81c4
+<<<<<<< HEAD
 #define AR_MCI_COEX_WL_WEIGHTS(_i) (0x18b0 + (_i << 2))
 #define AR_BT_COEX_BT_WEIGHTS(_i)  (0x83ac + (_i << 2))
 
 #define AR9300_BT_WGHT             0xcccc4444
+=======
+
+#define AR_BT_COEX_BT_WEIGHTS0     0x83ac
+#define AR_BT_COEX_BT_WEIGHTS1     0x83b0
+#define AR_BT_COEX_BT_WEIGHTS2     0x83b4
+#define AR_BT_COEX_BT_WEIGHTS3     0x83b8
+
+#define AR9300_BT_WGHT                     0xcccc4444
+#define AR9300_STOMP_ALL_WLAN_WGHT0        0xfffffff0
+#define AR9300_STOMP_ALL_WLAN_WGHT1        0xfffffff0
+#define AR9300_STOMP_LOW_WLAN_WGHT0        0x88888880
+#define AR9300_STOMP_LOW_WLAN_WGHT1        0x88888880
+#define AR9300_STOMP_NONE_WLAN_WGHT0       0x00000000
+#define AR9300_STOMP_NONE_WLAN_WGHT1       0x00000000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AR_BT_COEX_MODE2           0x817c
 #define AR_BT_BCN_MISS_THRESH      0x000000ff
@@ -1794,7 +1865,10 @@ enum {
 #define AR_TXOP_12_15  0x81fc
 
 #define AR_NEXT_NDP2_TIMER                  0x8180
+<<<<<<< HEAD
 #define AR_GEN_TIMER_BANK_1_LEN			8
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AR_FIRST_NDP_TIMER                  7
 #define AR_NDP2_PERIOD                      0x81a0
 #define AR_NDP2_TIMER_MODE                  0x81c0
@@ -1883,10 +1957,16 @@ enum {
 #define AR_PCU_MISC_MODE2_HWWAR2                       0x02000000
 #define AR_PCU_MISC_MODE2_RESERVED2                    0xFFFE0000
 
+<<<<<<< HEAD
 #define AR_MAC_PCU_ASYNC_FIFO_REG3			0x8358
 #define AR_MAC_PCU_ASYNC_FIFO_REG3_DATAPATH_SEL		0x00000400
 #define AR_MAC_PCU_ASYNC_FIFO_REG3_SOFT_RESET		0x80000000
 #define AR_MAC_PCU_GEN_TIMER_TSF_SEL			0x83d8
+=======
+#define AR_MAC_PCU_ASYNC_FIFO_REG3                     0x8358
+#define AR_MAC_PCU_ASYNC_FIFO_REG3_DATAPATH_SEL        0x00000400
+#define AR_MAC_PCU_ASYNC_FIFO_REG3_SOFT_RESET          0x80000000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 #define AR_AES_MUTE_MASK0       0x805c
@@ -1906,6 +1986,32 @@ enum {
 #define AR_RATE_DURATION(_n)    (AR_RATE_DURATION_0 + ((_n)<<2))
 
 
+<<<<<<< HEAD
+=======
+#define AR_KEYTABLE_0           0x8800
+#define AR_KEYTABLE(_n)         (AR_KEYTABLE_0 + ((_n)*32))
+#define AR_KEY_CACHE_SIZE       128
+#define AR_RSVD_KEYTABLE_ENTRIES 4
+#define AR_KEY_TYPE             0x00000007
+#define AR_KEYTABLE_TYPE_40     0x00000000
+#define AR_KEYTABLE_TYPE_104    0x00000001
+#define AR_KEYTABLE_TYPE_128    0x00000003
+#define AR_KEYTABLE_TYPE_TKIP   0x00000004
+#define AR_KEYTABLE_TYPE_AES    0x00000005
+#define AR_KEYTABLE_TYPE_CCM    0x00000006
+#define AR_KEYTABLE_TYPE_CLR    0x00000007
+#define AR_KEYTABLE_ANT         0x00000008
+#define AR_KEYTABLE_VALID       0x00008000
+#define AR_KEYTABLE_KEY0(_n)    (AR_KEYTABLE(_n) + 0)
+#define AR_KEYTABLE_KEY1(_n)    (AR_KEYTABLE(_n) + 4)
+#define AR_KEYTABLE_KEY2(_n)    (AR_KEYTABLE(_n) + 8)
+#define AR_KEYTABLE_KEY3(_n)    (AR_KEYTABLE(_n) + 12)
+#define AR_KEYTABLE_KEY4(_n)    (AR_KEYTABLE(_n) + 16)
+#define AR_KEYTABLE_TYPE(_n)    (AR_KEYTABLE(_n) + 20)
+#define AR_KEYTABLE_MAC0(_n)    (AR_KEYTABLE(_n) + 24)
+#define AR_KEYTABLE_MAC1(_n)    (AR_KEYTABLE(_n) + 28)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AR9271_CORE_CLOCK	117   /* clock to 117Mhz */
 #define AR9271_TARGET_BAUD_RATE	19200 /* 115200 */
 
@@ -1934,6 +2040,7 @@ enum {
 #define AR_PHY_AGC_CONTROL_NO_UPDATE_NF		0x00020000  /* don't update noise floor automatically */
 #define AR_PHY_AGC_CONTROL_EXT_NF_PWR_MEAS	0x00040000  /* extend noise floor power measurement */
 #define AR_PHY_AGC_CONTROL_CLC_SUCCESS		0x00080000  /* carrier leak calibration done */
+<<<<<<< HEAD
 #define AR_PHY_AGC_CONTROL_PKDET_CAL		0x00100000
 #define AR_PHY_AGC_CONTROL_YCOK_MAX		0x000003c0
 #define AR_PHY_AGC_CONTROL_YCOK_MAX_S		6
@@ -2212,4 +2319,9 @@ enum {
 #define AR_BTCOEX_CTRL3_CONT_INFO_TIMEOUT_S	0
 
 
+=======
+#define AR_PHY_AGC_CONTROL_YCOK_MAX		0x000003c0
+#define AR_PHY_AGC_CONTROL_YCOK_MAX_S		6
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

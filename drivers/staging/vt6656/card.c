@@ -91,10 +91,22 @@ const WORD cwRXBCNTSFOff[MAX_RATE] =
  *      uConnectionChannel  - Channel to be set
  *  Out:
  *      none
+<<<<<<< HEAD
  */
 void CARDbSetMediaChannel(void *pDeviceHandler, unsigned int uConnectionChannel)
 {
 PSDevice            pDevice = (PSDevice) pDeviceHandler;
+=======
+ *
+ * Return Value: TRUE if succeeded; FALSE if failed.
+ *
+ */
+BOOL CARDbSetMediaChannel(void *pDeviceHandler, unsigned int uConnectionChannel)
+{
+PSDevice            pDevice = (PSDevice) pDeviceHandler;
+BOOL                bResult = TRUE;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
     if (pDevice->byBBType == BB_TYPE_11A) { // 15 ~ 38
         if ((uConnectionChannel < (CB_MAX_CHANNEL_24G+1)) || (uConnectionChannel > CB_MAX_CHANNEL))
@@ -135,6 +147,10 @@ PSDevice            pDevice = (PSDevice) pDeviceHandler;
         RFbRawSetPower(pDevice, pDevice->abyCCKPwrTbl[uConnectionChannel-1], RATE_1M);
     }
     ControlvWriteByte(pDevice,MESSAGE_REQUEST_MACREG,MAC_REG_CHANNEL,(BYTE)(uConnectionChannel|0x80));
+<<<<<<< HEAD
+=======
+    return(bResult);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -601,7 +617,11 @@ BYTE ii;
  * Return Value: TRUE if succeeded; FALSE if failed.
  *
  */
+<<<<<<< HEAD
 void CARDbAddBasicRate(void *pDeviceHandler, WORD wRateIdx)
+=======
+BOOL CARDbAddBasicRate(void *pDeviceHandler, WORD wRateIdx)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 PSDevice    pDevice = (PSDevice) pDeviceHandler;
 WORD wRate = (WORD)(1<<wRateIdx);
@@ -610,6 +630,11 @@ WORD wRate = (WORD)(1<<wRateIdx);
 
     //Determines the highest basic rate.
     CARDvUpdateBasicTopRate(pDevice);
+<<<<<<< HEAD
+=======
+
+    return(TRUE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 BOOL CARDbIsOFDMinBasicRate(void *pDeviceHandler)
@@ -1082,7 +1107,11 @@ CARDbChannelSwitch (
 
     if (byCount == 0) {
         pDevice->sMgmtObj.uCurrChannel = byNewChannel;
+<<<<<<< HEAD
 	CARDbSetMediaChannel(pDevice, byNewChannel);
+=======
+        bResult = CARDbSetMediaChannel(pDevice, byNewChannel);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return bResult;
     }

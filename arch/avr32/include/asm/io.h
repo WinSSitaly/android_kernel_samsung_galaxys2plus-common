@@ -1,7 +1,10 @@
 #ifndef __ASM_AVR32_IO_H
 #define __ASM_AVR32_IO_H
 
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/string.h>
 #include <linux/types.h>

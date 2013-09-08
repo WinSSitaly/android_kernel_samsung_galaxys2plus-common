@@ -10,7 +10,10 @@
 #include <linux/in6.h>
 #include <linux/ipv6.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/ndisc.h>
 #include <net/ipv6.h>
 #include <net/addrconf.h>

@@ -21,7 +21,10 @@ struct mpu_rate {
 	unsigned long		pll_rate;
 	__u16			ckctl_val;
 	__u16			dpllctl_val;
+<<<<<<< HEAD
 	u32			flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 extern struct mpu_rate omap1_rate_table[];

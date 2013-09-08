@@ -641,8 +641,11 @@ static long hiddev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 			struct usb_device *dev = hid_to_usb_dev(hid);
 			struct usbhid_device *usbhid = hid->driver_data;
 
+<<<<<<< HEAD
 			memset(&dinfo, 0, sizeof(dinfo));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dinfo.bustype = BUS_USB;
 			dinfo.busnum = dev->bus->busnum;
 			dinfo.devnum = dev->devnum;
@@ -859,7 +862,11 @@ static const struct file_operations hiddev_fops = {
 	.llseek		= noop_llseek,
 };
 
+<<<<<<< HEAD
 static char *hiddev_devnode(struct device *dev, umode_t *mode)
+=======
+static char *hiddev_devnode(struct device *dev, mode_t *mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return kasprintf(GFP_KERNEL, "usb/%s", dev_name(dev));
 }
@@ -922,11 +929,19 @@ void hiddev_disconnect(struct hid_device *hid)
 	struct hiddev *hiddev = hid->hiddev;
 	struct usbhid_device *usbhid = hid->driver_data;
 
+<<<<<<< HEAD
 	usb_deregister_dev(usbhid->intf, &hiddev_class);
 
 	mutex_lock(&hiddev->existancelock);
 	hiddev->exist = 0;
 
+=======
+	mutex_lock(&hiddev->existancelock);
+	hiddev->exist = 0;
+
+	usb_deregister_dev(usbhid->intf, &hiddev_class);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (hiddev->open) {
 		mutex_unlock(&hiddev->existancelock);
 		usbhid_close(hiddev->hid);

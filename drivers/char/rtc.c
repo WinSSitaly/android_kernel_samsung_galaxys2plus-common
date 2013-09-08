@@ -57,8 +57,13 @@
  *	Note that *all* calls to CMOS_READ and CMOS_WRITE are done with
  *	interrupts disabled. Due to the index-port/data-port (0x70/0x71)
  *	design of the RTC, we don't want two different things trying to
+<<<<<<< HEAD
  *	get to it at once. (e.g. the periodic 11 min sync from
  *      kernel/time/ntp.c vs. this driver.)
+=======
+ *	get to it at once. (e.g. the periodic 11 min sync from time.c vs.
+ *	this driver.)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/interrupt.h>
@@ -80,9 +85,15 @@
 #include <linux/bcd.h>
 #include <linux/delay.h>
 #include <linux/uaccess.h>
+<<<<<<< HEAD
 #include <linux/ratelimit.h>
 
 #include <asm/current.h>
+=======
+
+#include <asm/current.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_X86
 #include <asm/hpet.h>
@@ -1195,8 +1206,15 @@ static void rtc_dropped_irq(unsigned long data)
 
 	spin_unlock_irq(&rtc_lock);
 
+<<<<<<< HEAD
 	printk_ratelimited(KERN_WARNING "rtc: lost some interrupts at %ldHz.\n",
 			   freq);
+=======
+	if (printk_ratelimit()) {
+		printk(KERN_WARNING "rtc: lost some interrupts at %ldHz.\n",
+			freq);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Now we have new data */
 	wake_up_interruptible(&rtc_wait);

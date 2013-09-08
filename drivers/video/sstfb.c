@@ -93,11 +93,19 @@
 
 /* initialized by setup */
 
+<<<<<<< HEAD
 static bool vgapass;		/* enable VGA passthrough cable */
 static int mem;			/* mem size in MB, 0 = autodetect */
 static bool clipping = 1;	/* use clipping (slower, safer) */
 static int gfxclk;		/* force FBI freq in Mhz . Dangerous */
 static bool slowpci;		/* slow PCI settings */
+=======
+static int vgapass;		/* enable VGA passthrough cable */
+static int mem;			/* mem size in MB, 0 = autodetect */
+static int clipping = 1;	/* use clipping (slower, safer) */
+static int gfxclk;		/* force FBI freq in Mhz . Dangerous */
+static int slowpci;		/* slow PCI settings */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
   Possible default video modes: 800x600@60, 640x480@75, 1024x768@76, 640x480@60

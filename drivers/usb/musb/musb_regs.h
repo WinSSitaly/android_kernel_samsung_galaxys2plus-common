@@ -234,8 +234,12 @@
 #define MUSB_TESTMODE		0x0F	/* 8 bit */
 
 /* Get offset for a given FIFO from musb->mregs */
+<<<<<<< HEAD
 #if defined(CONFIG_USB_MUSB_TUSB6010) ||	\
 	defined(CONFIG_USB_MUSB_TUSB6010_MODULE)
+=======
+#ifdef	CONFIG_USB_MUSB_TUSB6010
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MUSB_FIFO_OFFSET(epnum)	(0x200 + ((epnum) * 0x20))
 #else
 #define MUSB_FIFO_OFFSET(epnum)	(0x20 + ((epnum) * 4))
@@ -296,8 +300,12 @@
 #define MUSB_FLAT_OFFSET(_epnum, _offset)	\
 	(0x100 + (0x10*(_epnum)) + (_offset))
 
+<<<<<<< HEAD
 #if defined(CONFIG_USB_MUSB_TUSB6010) ||	\
 	defined(CONFIG_USB_MUSB_TUSB6010_MODULE)
+=======
+#ifdef CONFIG_USB_MUSB_TUSB6010
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* TUSB6010 EP0 configuration register is special */
 #define MUSB_TUSB_OFFSET(_epnum, _offset)	\
 	(0x10 + _offset)

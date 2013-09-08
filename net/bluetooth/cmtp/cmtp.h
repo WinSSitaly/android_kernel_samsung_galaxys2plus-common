@@ -81,7 +81,10 @@ struct cmtp_session {
 
 	char name[BTNAMSIZ];
 
+<<<<<<< HEAD
 	atomic_t terminate;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct task_struct *task;
 
 	wait_queue_head_t wait;

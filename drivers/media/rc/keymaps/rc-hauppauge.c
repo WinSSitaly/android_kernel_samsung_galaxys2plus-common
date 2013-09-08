@@ -17,7 +17,10 @@
  */
 
 #include <media/rc-map.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Hauppauge:the newer, gray remotes (seems there are multiple
@@ -183,6 +186,7 @@ static struct rc_map_table rc5_hauppauge_new[] = {
 	{ 0x1d3f, KEY_HOME },
 
 	/*
+<<<<<<< HEAD
 	 * Keycodes for PT# R-005 remote bundled with Haupauge HVR-930C
 	 * Keycodes start with address = 0x1c
 	 */
@@ -234,6 +238,8 @@ static struct rc_map_table rc5_hauppauge_new[] = {
 	{ 0x1c34, KEY_FASTFORWARD },
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Keycodes for the old Black Remote Controller
 	 * This one also uses RC-5 protocol
 	 * Keycodes start with address = 0x00

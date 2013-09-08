@@ -1147,7 +1147,11 @@ static int smscore_validate_client(struct smscore_device_t *coredev,
 
 	if (!client) {
 		sms_err("bad parameter.");
+<<<<<<< HEAD
 		return -EINVAL;
+=======
+		return -EFAULT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	registered_client = smscore_find_client(coredev, data_type, id);
 	if (registered_client == client)

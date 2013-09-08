@@ -193,6 +193,7 @@ static int max8925_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
 	ret = max8925_reg_read(info->rtc, MAX8925_RTC_IRQ_MASK);
 	if (ret < 0)
 		goto out;
+<<<<<<< HEAD
 	if (ret & ALARM0_IRQ) {
 		alrm->enabled = 0;
 	} else {
@@ -204,6 +205,12 @@ static int max8925_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
 		else
 			alrm->enabled = 1;
 	}
+=======
+	if ((ret & ALARM0_IRQ) == 0)
+		alrm->enabled = 1;
+	else
+		alrm->enabled = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = max8925_reg_read(info->rtc, MAX8925_RTC_STATUS);
 	if (ret < 0)
 		goto out;
@@ -211,7 +218,10 @@ static int max8925_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
 		alrm->pending = 1;
 	else
 		alrm->pending = 0;
+<<<<<<< HEAD
 	return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return ret;
 }
@@ -228,11 +238,16 @@ static int max8925_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
 	ret = max8925_bulk_write(info->rtc, MAX8925_ALARM0_SEC, TIME_NUM, buf);
 	if (ret < 0)
 		goto out;
+<<<<<<< HEAD
 	if (alrm->enabled)
 		/* only enable alarm on year/month/day/hour/min/sec */
 		ret = max8925_reg_write(info->rtc, MAX8925_ALARM0_CNTL, 0x77);
 	else
 		ret = max8925_reg_write(info->rtc, MAX8925_ALARM0_CNTL, 0x0);
+=======
+	/* only enable alarm on year/month/day/hour/min/sec */
+	ret = max8925_reg_write(info->rtc, MAX8925_ALARM0_CNTL, 0x77);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		goto out;
 out:
@@ -272,8 +287,11 @@ static int __devinit max8925_rtc_probe(struct platform_device *pdev)
 	/* XXX - isn't this redundant? */
 	platform_set_drvdata(pdev, info);
 
+<<<<<<< HEAD
 	device_init_wakeup(&pdev->dev, 1);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info->rtc_dev = rtc_device_register("max8925-rtc", &pdev->dev,
 					&max8925_rtc_ops, THIS_MODULE);
 	ret = PTR_ERR(info->rtc_dev);
@@ -303,6 +321,7 @@ static int __devexit max8925_rtc_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM_SLEEP
 static int max8925_rtc_suspend(struct device *dev)
 {
@@ -326,17 +345,36 @@ static int max8925_rtc_resume(struct device *dev)
 
 static SIMPLE_DEV_PM_OPS(max8925_rtc_pm_ops, max8925_rtc_suspend, max8925_rtc_resume);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver max8925_rtc_driver = {
 	.driver		= {
 		.name	= "max8925-rtc",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.pm     = &max8925_rtc_pm_ops,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe		= max8925_rtc_probe,
 	.remove		= __devexit_p(max8925_rtc_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(max8925_rtc_driver);
+=======
+static int __init max8925_rtc_init(void)
+{
+	return platform_driver_register(&max8925_rtc_driver);
+}
+module_init(max8925_rtc_init);
+
+static void __exit max8925_rtc_exit(void)
+{
+	platform_driver_unregister(&max8925_rtc_driver);
+}
+module_exit(max8925_rtc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Maxim MAX8925 RTC driver");
 MODULE_AUTHOR("Haojian Zhuang <haojian.zhuang@marvell.com>");

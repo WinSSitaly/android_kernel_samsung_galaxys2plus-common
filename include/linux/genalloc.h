@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
  * Basic general purpose allocator for managing special purpose
  * memory, for example, memory that is not managed by the regular
  * kmalloc/kfree interface.  Uses for this includes on-device special
@@ -21,6 +22,12 @@
  * the allocator can NOT be used in NMI handler.  So code uses the
  * allocator in NMI handler should depend on
  * CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG.
+=======
+ * Basic general purpose allocator for managing special purpose memory
+ * not managed by the regular kmalloc/kfree interface.
+ * Uses for this includes on-device special memory, uncached memory
+ * etc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This source code is licensed under the GNU General Public License,
  * Version 2.  See the file COPYING for more details.
@@ -33,7 +40,11 @@
  *  General purpose special memory pool descriptor.
  */
 struct gen_pool {
+<<<<<<< HEAD
 	spinlock_t lock;
+=======
+	rwlock_t lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head chunks;	/* list of chunks in this pool */
 	int min_alloc_order;		/* minimum allocation order */
 };
@@ -42,8 +53,13 @@ struct gen_pool {
  *  General purpose special memory pool chunk descriptor.
  */
 struct gen_pool_chunk {
+<<<<<<< HEAD
 	struct list_head next_chunk;	/* next chunk in pool */
 	atomic_t avail;
+=======
+	spinlock_t lock;
+	struct list_head next_chunk;	/* next chunk in pool */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	phys_addr_t phys_addr;		/* physical starting address of memory chunk */
 	unsigned long start_addr;	/* starting address of memory chunk */
 	unsigned long end_addr;		/* ending address of memory chunk */
@@ -74,8 +90,11 @@ static inline int gen_pool_add(struct gen_pool *pool, unsigned long addr,
 extern void gen_pool_destroy(struct gen_pool *);
 extern unsigned long gen_pool_alloc(struct gen_pool *, size_t);
 extern void gen_pool_free(struct gen_pool *, unsigned long, size_t);
+<<<<<<< HEAD
 extern void gen_pool_for_each_chunk(struct gen_pool *,
 	void (*)(struct gen_pool *, struct gen_pool_chunk *, void *), void *);
 extern size_t gen_pool_avail(struct gen_pool *);
 extern size_t gen_pool_size(struct gen_pool *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __GENALLOC_H__ */

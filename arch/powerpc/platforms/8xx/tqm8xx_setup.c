@@ -18,6 +18,10 @@
  */
 
 #include <linux/init.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/param.h>
 #include <linux/string.h>
 #include <linux/ioport.h>
@@ -35,6 +39,10 @@
 #include <asm/machdep.h>
 #include <asm/page.h>
 #include <asm/processor.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/time.h>
 #include <asm/mpc8xx.h>
 #include <asm/8xx_immap.h>

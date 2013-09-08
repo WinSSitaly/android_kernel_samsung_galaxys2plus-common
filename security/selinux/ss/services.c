@@ -13,7 +13,11 @@
  *
  *	Added conditional policy language extensions
  *
+<<<<<<< HEAD
  * Updated: Hewlett-Packard <paul@paul-moore.com>
+=======
+ * Updated: Hewlett-Packard <paul.moore@hp.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *      Added support for NetLabel
  *      Added support for the policy capability bitmap
@@ -70,6 +74,11 @@
 #include "ebitmap.h"
 #include "audit.h"
 
+<<<<<<< HEAD
+=======
+extern void selnl_notify_policyload(u32 seqno);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int selinux_policycap_netpeer;
 int selinux_policycap_openperm;
 
@@ -1788,6 +1797,10 @@ static void security_load_policycaps(void)
 						  POLICYDB_CAPABILITY_OPENPERM);
 }
 
+<<<<<<< HEAD
+=======
+extern void selinux_complete_init(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int security_preserve_bools(struct policydb *p);
 
 /**

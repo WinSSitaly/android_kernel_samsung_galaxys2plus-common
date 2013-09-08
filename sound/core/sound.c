@@ -23,7 +23,11 @@
 #include <linux/slab.h>
 #include <linux/time.h>
 #include <linux/device.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/minors.h>
 #include <sound/info.h>
@@ -99,10 +103,13 @@ static void snd_request_other(int minor)
  *
  * Checks that a minor device with the specified type is registered, and returns
  * its user data pointer.
+<<<<<<< HEAD
  *
  * This function increments the reference counter of the card instance
  * if an associated instance with the given minor number and type is found.
  * The caller must call snd_card_unref() appropriately later.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void *snd_lookup_minor_data(unsigned int minor, int type)
 {
@@ -113,11 +120,17 @@ void *snd_lookup_minor_data(unsigned int minor, int type)
 		return NULL;
 	mutex_lock(&sound_mutex);
 	mreg = snd_minors[minor];
+<<<<<<< HEAD
 	if (mreg && mreg->type == type) {
 		private_data = mreg->private_data;
 		if (private_data && mreg->card_ptr)
 			atomic_inc(&mreg->card_ptr->refcount);
 	} else
+=======
+	if (mreg && mreg->type == type)
+		private_data = mreg->private_data;
+	else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		private_data = NULL;
 	mutex_unlock(&sound_mutex);
 	return private_data;
@@ -235,7 +248,10 @@ static int snd_kernel_minor(int type, struct snd_card *card, int dev)
 	case SNDRV_DEVICE_TYPE_RAWMIDI:
 	case SNDRV_DEVICE_TYPE_PCM_PLAYBACK:
 	case SNDRV_DEVICE_TYPE_PCM_CAPTURE:
+<<<<<<< HEAD
 	case SNDRV_DEVICE_TYPE_COMPRESS:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (snd_BUG_ON(!card))
 			return -EINVAL;
 		minor = SNDRV_MINOR(card->number, type + dev);
@@ -282,7 +298,10 @@ int snd_register_device_for_dev(int type, struct snd_card *card, int dev,
 	preg->device = dev;
 	preg->f_ops = f_ops;
 	preg->private_data = private_data;
+<<<<<<< HEAD
 	preg->card_ptr = card;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&sound_mutex);
 #ifdef CONFIG_SND_DYNAMIC_MINORS
 	minor = snd_find_free_minor(type);

@@ -23,11 +23,15 @@
 
 #include <linux/platform_device.h>
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/clk.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/rtc.h>
 #include <linux/init.h>
 #include <linux/fs.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/slab.h>
 #include <linux/string.h>
 #include <linux/of.h>
@@ -40,10 +44,23 @@
 
 #if defined(CONFIG_ARCH_PXA) || defined(CONFIG_ARCH_MMP)
 #include <mach/regs-rtc.h>
+=======
+#include <linux/string.h>
+#include <linux/pm.h>
+#include <linux/bitops.h>
+
+#include <mach/hardware.h>
+#include <asm/irq.h>
+
+#ifdef CONFIG_ARCH_PXA
+#include <mach/regs-rtc.h>
+#include <mach/regs-ost.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #define RTC_DEF_DIVIDER		(32768 - 1)
 #define RTC_DEF_TRIM		0
+<<<<<<< HEAD
 #define RTC_FREQ		1024
 
 struct sa1100_rtc {
@@ -62,6 +79,79 @@ static irqreturn_t sa1100_rtc_interrupt(int irq, void *dev_id)
 	unsigned long events = 0;
 
 	spin_lock(&info->lock);
+=======
+
+static const unsigned long RTC_FREQ = 1024;
+static struct rtc_time rtc_alarm;
+static DEFINE_SPINLOCK(sa1100_rtc_lock);
+
+static inline int rtc_periodic_alarm(struct rtc_time *tm)
+{
+	return  (tm->tm_year == -1) ||
+		((unsigned)tm->tm_mon >= 12) ||
+		((unsigned)(tm->tm_mday - 1) >= 31) ||
+		((unsigned)tm->tm_hour > 23) ||
+		((unsigned)tm->tm_min > 59) ||
+		((unsigned)tm->tm_sec > 59);
+}
+
+/*
+ * Calculate the next alarm time given the requested alarm time mask
+ * and the current time.
+ */
+static void rtc_next_alarm_time(struct rtc_time *next, struct rtc_time *now,
+	struct rtc_time *alrm)
+{
+	unsigned long next_time;
+	unsigned long now_time;
+
+	next->tm_year = now->tm_year;
+	next->tm_mon = now->tm_mon;
+	next->tm_mday = now->tm_mday;
+	next->tm_hour = alrm->tm_hour;
+	next->tm_min = alrm->tm_min;
+	next->tm_sec = alrm->tm_sec;
+
+	rtc_tm_to_time(now, &now_time);
+	rtc_tm_to_time(next, &next_time);
+
+	if (next_time < now_time) {
+		/* Advance one day */
+		next_time += 60 * 60 * 24;
+		rtc_time_to_tm(next_time, next);
+	}
+}
+
+static int rtc_update_alarm(struct rtc_time *alrm)
+{
+	struct rtc_time alarm_tm, now_tm;
+	unsigned long now, time;
+	int ret;
+
+	do {
+		now = RCNR;
+		rtc_time_to_tm(now, &now_tm);
+		rtc_next_alarm_time(&alarm_tm, &now_tm, alrm);
+		ret = rtc_tm_to_time(&alarm_tm, &time);
+		if (ret != 0)
+			break;
+
+		RTSR = RTSR & (RTSR_HZE|RTSR_ALE|RTSR_AL);
+		RTAR = time;
+	} while (now != RCNR);
+
+	return ret;
+}
+
+static irqreturn_t sa1100_rtc_interrupt(int irq, void *dev_id)
+{
+	struct platform_device *pdev = to_platform_device(dev_id);
+	struct rtc_device *rtc = platform_get_drvdata(pdev);
+	unsigned int rtsr;
+	unsigned long events = 0;
+
+	spin_lock(&sa1100_rtc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rtsr = RTSR;
 	/* clear interrupt sources */
@@ -97,13 +187,21 @@ static irqreturn_t sa1100_rtc_interrupt(int irq, void *dev_id)
 
 	rtc_update_irq(rtc, 1, events);
 
+<<<<<<< HEAD
 	spin_unlock(&info->lock);
+=======
+	if (rtsr & RTSR_AL && rtc_periodic_alarm(&rtc_alarm))
+		rtc_update_alarm(&rtc_alarm);
+
+	spin_unlock(&sa1100_rtc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return IRQ_HANDLED;
 }
 
 static int sa1100_rtc_open(struct device *dev)
 {
+<<<<<<< HEAD
 	struct sa1100_rtc *info = dev_get_drvdata(dev);
 	struct rtc_device *rtc = info->rtc;
 	int ret;
@@ -119,6 +217,22 @@ static int sa1100_rtc_open(struct device *dev)
 	ret = request_irq(info->irq_alarm, sa1100_rtc_interrupt, 0, "rtc Alrm", dev);
 	if (ret) {
 		dev_err(dev, "IRQ %d already in use.\n", info->irq_alarm);
+=======
+	int ret;
+	struct platform_device *plat_dev = to_platform_device(dev);
+	struct rtc_device *rtc = platform_get_drvdata(plat_dev);
+
+	ret = request_irq(IRQ_RTC1Hz, sa1100_rtc_interrupt, IRQF_DISABLED,
+		"rtc 1Hz", dev);
+	if (ret) {
+		dev_err(dev, "IRQ %d already in use.\n", IRQ_RTC1Hz);
+		goto fail_ui;
+	}
+	ret = request_irq(IRQ_RTCAlrm, sa1100_rtc_interrupt, IRQF_DISABLED,
+		"rtc Alrm", dev);
+	if (ret) {
+		dev_err(dev, "IRQ %d already in use.\n", IRQ_RTCAlrm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto fail_ai;
 	}
 	rtc->max_user_freq = RTC_FREQ;
@@ -127,15 +241,21 @@ static int sa1100_rtc_open(struct device *dev)
 	return 0;
 
  fail_ai:
+<<<<<<< HEAD
 	free_irq(info->irq_1hz, dev);
  fail_ui:
 	clk_disable_unprepare(info->clk);
  fail_clk:
+=======
+	free_irq(IRQ_RTC1Hz, dev);
+ fail_ui:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static void sa1100_rtc_release(struct device *dev)
 {
+<<<<<<< HEAD
 	struct sa1100_rtc *info = dev_get_drvdata(dev);
 
 	spin_lock_irq(&info->lock);
@@ -145,18 +265,36 @@ static void sa1100_rtc_release(struct device *dev)
 	free_irq(info->irq_alarm, dev);
 	free_irq(info->irq_1hz, dev);
 	clk_disable_unprepare(info->clk);
+=======
+	spin_lock_irq(&sa1100_rtc_lock);
+	RTSR = 0;
+	OIER &= ~OIER_E1;
+	OSSR = OSSR_M1;
+	spin_unlock_irq(&sa1100_rtc_lock);
+
+	free_irq(IRQ_RTCAlrm, dev);
+	free_irq(IRQ_RTC1Hz, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int sa1100_rtc_alarm_irq_enable(struct device *dev, unsigned int enabled)
 {
+<<<<<<< HEAD
 	struct sa1100_rtc *info = dev_get_drvdata(dev);
 
 	spin_lock_irq(&info->lock);
+=======
+	spin_lock_irq(&sa1100_rtc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (enabled)
 		RTSR |= RTSR_ALE;
 	else
 		RTSR &= ~RTSR_ALE;
+<<<<<<< HEAD
 	spin_unlock_irq(&info->lock);
+=======
+	spin_unlock_irq(&sa1100_rtc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -181,6 +319,10 @@ static int sa1100_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
 {
 	u32	rtsr;
 
+<<<<<<< HEAD
+=======
+	memcpy(&alrm->time, &rtc_alarm, sizeof(struct rtc_time));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtsr = RTSR;
 	alrm->enabled = (rtsr & RTSR_ALE) ? 1 : 0;
 	alrm->pending = (rtsr & RTSR_AL) ? 1 : 0;
@@ -189,6 +331,7 @@ static int sa1100_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
 
 static int sa1100_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
 {
+<<<<<<< HEAD
 	struct sa1100_rtc *info = dev_get_drvdata(dev);
 	unsigned long time;
 	int ret;
@@ -205,6 +348,19 @@ static int sa1100_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
 		RTSR &= ~RTSR_ALE;
 out:
 	spin_unlock_irq(&info->lock);
+=======
+	int ret;
+
+	spin_lock_irq(&sa1100_rtc_lock);
+	ret = rtc_update_alarm(&alrm->time);
+	if (ret == 0) {
+		if (alrm->enabled)
+			RTSR |= RTSR_ALE;
+		else
+			RTSR &= ~RTSR_ALE;
+	}
+	spin_unlock_irq(&sa1100_rtc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -231,6 +387,7 @@ static const struct rtc_class_ops sa1100_rtc_ops = {
 static int sa1100_rtc_probe(struct platform_device *pdev)
 {
 	struct rtc_device *rtc;
+<<<<<<< HEAD
 	struct sa1100_rtc *info;
 	int irq_1hz, irq_alarm, ret = 0;
 
@@ -252,6 +409,8 @@ static int sa1100_rtc_probe(struct platform_device *pdev)
 	info->irq_alarm = irq_alarm;
 	spin_lock_init(&info->lock);
 	platform_set_drvdata(pdev, info);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * According to the manual we should be able to let RTTR be zero
@@ -273,11 +432,18 @@ static int sa1100_rtc_probe(struct platform_device *pdev)
 	rtc = rtc_device_register(pdev->name, &pdev->dev, &sa1100_rtc_ops,
 		THIS_MODULE);
 
+<<<<<<< HEAD
 	if (IS_ERR(rtc)) {
 		ret = PTR_ERR(rtc);
 		goto err_dev;
 	}
 	info->rtc = rtc;
+=======
+	if (IS_ERR(rtc))
+		return PTR_ERR(rtc);
+
+	platform_set_drvdata(pdev, rtc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Fix for a nasty initialization problem the in SA11xx RTSR register.
 	 * See also the comments in sa1100_rtc_interrupt().
@@ -304,16 +470,20 @@ static int sa1100_rtc_probe(struct platform_device *pdev)
 	RTSR = RTSR_AL | RTSR_HZ;
 
 	return 0;
+<<<<<<< HEAD
 err_dev:
 	platform_set_drvdata(pdev, NULL);
 	clk_put(info->clk);
 err_clk:
 	kfree(info);
 	return ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int sa1100_rtc_remove(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct sa1100_rtc *info = platform_get_drvdata(pdev);
 
 	if (info) {
@@ -322,6 +492,12 @@ static int sa1100_rtc_remove(struct platform_device *pdev)
 		platform_set_drvdata(pdev, NULL);
 		kfree(info);
 	}
+=======
+	struct rtc_device *rtc = platform_get_drvdata(pdev);
+
+	if (rtc)
+		rtc_device_unregister(rtc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -329,17 +505,27 @@ static int sa1100_rtc_remove(struct platform_device *pdev)
 #ifdef CONFIG_PM
 static int sa1100_rtc_suspend(struct device *dev)
 {
+<<<<<<< HEAD
 	struct sa1100_rtc *info = dev_get_drvdata(dev);
 	if (device_may_wakeup(dev))
 		enable_irq_wake(info->irq_alarm);
+=======
+	if (device_may_wakeup(dev))
+		enable_irq_wake(IRQ_RTCAlrm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int sa1100_rtc_resume(struct device *dev)
 {
+<<<<<<< HEAD
 	struct sa1100_rtc *info = dev_get_drvdata(dev);
 	if (device_may_wakeup(dev))
 		disable_irq_wake(info->irq_alarm);
+=======
+	if (device_may_wakeup(dev))
+		disable_irq_wake(IRQ_RTCAlrm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -349,6 +535,7 @@ static const struct dev_pm_ops sa1100_rtc_pm_ops = {
 };
 #endif
 
+<<<<<<< HEAD
 static struct of_device_id sa1100_rtc_dt_ids[] = {
 	{ .compatible = "mrvl,sa1100-rtc", },
 	{ .compatible = "mrvl,mmp-rtc", },
@@ -356,6 +543,8 @@ static struct of_device_id sa1100_rtc_dt_ids[] = {
 };
 MODULE_DEVICE_TABLE(of, sa1100_rtc_dt_ids);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver sa1100_rtc_driver = {
 	.probe		= sa1100_rtc_probe,
 	.remove		= sa1100_rtc_remove,
@@ -364,11 +553,29 @@ static struct platform_driver sa1100_rtc_driver = {
 #ifdef CONFIG_PM
 		.pm	= &sa1100_rtc_pm_ops,
 #endif
+<<<<<<< HEAD
 		.of_match_table = sa1100_rtc_dt_ids,
 	},
 };
 
 module_platform_driver(sa1100_rtc_driver);
+=======
+	},
+};
+
+static int __init sa1100_rtc_init(void)
+{
+	return platform_driver_register(&sa1100_rtc_driver);
+}
+
+static void __exit sa1100_rtc_exit(void)
+{
+	platform_driver_unregister(&sa1100_rtc_driver);
+}
+
+module_init(sa1100_rtc_init);
+module_exit(sa1100_rtc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Richard Purdie <rpurdie@rpsys.net>");
 MODULE_DESCRIPTION("SA11x0/PXA2xx Realtime Clock Driver (RTC)");

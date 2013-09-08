@@ -34,7 +34,10 @@
 #include <linux/in.h>
 #include <linux/slab.h>
 #include <linux/vmalloc.h>
+<<<<<<< HEAD
 #include <linux/ratelimit.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "rds.h"
 #include "iw.h"
@@ -259,7 +262,12 @@ static int rds_iw_setup_qp(struct rds_connection *conn)
 	 */
 	rds_iwdev = ib_get_client_data(dev, &rds_iw_client);
 	if (!rds_iwdev) {
+<<<<<<< HEAD
 		printk_ratelimited(KERN_NOTICE "RDS/IW: No client_data for device %s\n",
+=======
+		if (printk_ratelimit())
+			printk(KERN_NOTICE "RDS/IW: No client_data for device %s\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					dev->name);
 		return -EOPNOTSUPP;
 	}
@@ -365,12 +373,21 @@ static u32 rds_iw_protocol_compatible(const struct rds_iw_connect_private *dp)
 		version = RDS_PROTOCOL_3_0;
 		while ((common >>= 1) != 0)
 			version++;
+<<<<<<< HEAD
 	}
 	printk_ratelimited(KERN_NOTICE "RDS: Connection from %pI4 using "
+=======
+	} else if (printk_ratelimit()) {
+		printk(KERN_NOTICE "RDS: Connection from %pI4 using "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"incompatible protocol version %u.%u\n",
 			&dp->dp_saddr,
 			dp->dp_protocol_major,
 			dp->dp_protocol_minor);
+<<<<<<< HEAD
+=======
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return version;
 }
 
@@ -694,7 +711,11 @@ int rds_iw_conn_alloc(struct rds_connection *conn, gfp_t gfp)
 	unsigned long flags;
 
 	/* XXX too lazy? */
+<<<<<<< HEAD
 	ic = kzalloc(sizeof(struct rds_iw_connection), gfp);
+=======
+	ic = kzalloc(sizeof(struct rds_iw_connection), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ic)
 		return -ENOMEM;
 

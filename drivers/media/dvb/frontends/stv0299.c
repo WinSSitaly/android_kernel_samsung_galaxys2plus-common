@@ -559,9 +559,14 @@ static int stv0299_read_ucblocks(struct dvb_frontend* fe, u32* ucblocks)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int stv0299_set_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int stv0299_set_frontend(struct dvb_frontend* fe, struct dvb_frontend_parameters * p)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct stv0299_state* state = fe->demodulator_priv;
 	int invval = 0;
 
@@ -580,25 +585,44 @@ static int stv0299_set_frontend(struct dvb_frontend *fe)
 	stv0299_writeregI(state, 0x0c, (stv0299_readreg(state, 0x0c) & 0xfe) | invval);
 
 	if (fe->ops.tuner_ops.set_params) {
+<<<<<<< HEAD
 		fe->ops.tuner_ops.set_params(fe);
 		if (fe->ops.i2c_gate_ctrl) fe->ops.i2c_gate_ctrl(fe, 0);
 	}
 
 	stv0299_set_FEC(state, p->fec_inner);
 	stv0299_set_symbolrate(fe, p->symbol_rate);
+=======
+		fe->ops.tuner_ops.set_params(fe, p);
+		if (fe->ops.i2c_gate_ctrl) fe->ops.i2c_gate_ctrl(fe, 0);
+	}
+
+	stv0299_set_FEC (state, p->u.qpsk.fec_inner);
+	stv0299_set_symbolrate (fe, p->u.qpsk.symbol_rate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	stv0299_writeregI(state, 0x22, 0x00);
 	stv0299_writeregI(state, 0x23, 0x00);
 
 	state->tuner_frequency = p->frequency;
+<<<<<<< HEAD
 	state->fec_inner = p->fec_inner;
 	state->symbol_rate = p->symbol_rate;
+=======
+	state->fec_inner = p->u.qpsk.fec_inner;
+	state->symbol_rate = p->u.qpsk.symbol_rate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int stv0299_get_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int stv0299_get_frontend(struct dvb_frontend* fe, struct dvb_frontend_parameters * p)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct stv0299_state* state = fe->demodulator_priv;
 	s32 derot_freq;
 	int invval;
@@ -616,8 +640,13 @@ static int stv0299_get_frontend(struct dvb_frontend *fe)
 	if (state->config->invert) invval = (~invval) & 1;
 	p->inversion = invval ? INVERSION_ON : INVERSION_OFF;
 
+<<<<<<< HEAD
 	p->fec_inner = stv0299_get_fec(state);
 	p->symbol_rate = stv0299_get_symbolrate(state);
+=======
+	p->u.qpsk.fec_inner = stv0299_get_fec (state);
+	p->u.qpsk.symbol_rate = stv0299_get_symbolrate (state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -648,6 +677,7 @@ static int stv0299_i2c_gate_ctrl(struct dvb_frontend* fe, int enable)
 static int stv0299_get_tune_settings(struct dvb_frontend* fe, struct dvb_frontend_tune_settings* fesettings)
 {
 	struct stv0299_state* state = fe->demodulator_priv;
+<<<<<<< HEAD
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
 
 	fesettings->min_delay_ms = state->config->min_delay_ms;
@@ -657,6 +687,16 @@ static int stv0299_get_tune_settings(struct dvb_frontend* fe, struct dvb_fronten
 	} else {
 		fesettings->step_size = p->symbol_rate / 16000;
 		fesettings->max_drift = p->symbol_rate / 2000;
+=======
+
+	fesettings->min_delay_ms = state->config->min_delay_ms;
+	if (fesettings->parameters.u.qpsk.symbol_rate < 10000000) {
+		fesettings->step_size = fesettings->parameters.u.qpsk.symbol_rate / 32000;
+		fesettings->max_drift = 5000;
+	} else {
+		fesettings->step_size = fesettings->parameters.u.qpsk.symbol_rate / 16000;
+		fesettings->max_drift = fesettings->parameters.u.qpsk.symbol_rate / 2000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }
@@ -708,9 +748,16 @@ error:
 }
 
 static struct dvb_frontend_ops stv0299_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_DVBS },
 	.info = {
 		.name			= "ST STV0299 DVB-S",
+=======
+
+	.info = {
+		.name			= "ST STV0299 DVB-S",
+		.type			= FE_QPSK,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min		= 950000,
 		.frequency_max		= 2150000,
 		.frequency_stepsize	= 125,	 /* kHz for QPSK frontends */

@@ -22,7 +22,11 @@
 #include <linux/timer.h>
 #include <linux/spinlock.h>
 #include <net/sock.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/flow.h>
 #include <net/dn.h>
 
@@ -36,13 +40,25 @@ static void dn_slow_timer(unsigned long arg);
 
 void dn_start_slow_timer(struct sock *sk)
 {
+<<<<<<< HEAD
 	setup_timer(&sk->sk_timer, dn_slow_timer, (unsigned long)sk);
 	sk_reset_timer(sk, &sk->sk_timer, jiffies + SLOW_INTERVAL);
+=======
+	sk->sk_timer.expires	= jiffies + SLOW_INTERVAL;
+	sk->sk_timer.function	= dn_slow_timer;
+	sk->sk_timer.data	= (unsigned long)sk;
+
+	add_timer(&sk->sk_timer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void dn_stop_slow_timer(struct sock *sk)
 {
+<<<<<<< HEAD
 	sk_stop_timer(sk, &sk->sk_timer);
+=======
+	del_timer(&sk->sk_timer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void dn_slow_timer(unsigned long arg)
@@ -50,10 +66,19 @@ static void dn_slow_timer(unsigned long arg)
 	struct sock *sk = (struct sock *)arg;
 	struct dn_scp *scp = DN_SK(sk);
 
+<<<<<<< HEAD
 	bh_lock_sock(sk);
 
 	if (sock_owned_by_user(sk)) {
 		sk_reset_timer(sk, &sk->sk_timer, jiffies + HZ / 10);
+=======
+	sock_hold(sk);
+	bh_lock_sock(sk);
+
+	if (sock_owned_by_user(sk)) {
+		sk->sk_timer.expires = jiffies + HZ / 10;
+		add_timer(&sk->sk_timer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
@@ -95,7 +120,13 @@ static void dn_slow_timer(unsigned long arg)
 			scp->keepalive_fxn(sk);
 	}
 
+<<<<<<< HEAD
 	sk_reset_timer(sk, &sk->sk_timer, jiffies + SLOW_INTERVAL);
+=======
+	sk->sk_timer.expires = jiffies + SLOW_INTERVAL;
+
+	add_timer(&sk->sk_timer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	bh_unlock_sock(sk);
 	sock_put(sk);

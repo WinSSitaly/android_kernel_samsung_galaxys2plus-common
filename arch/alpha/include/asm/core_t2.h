@@ -7,6 +7,10 @@
 #include <linux/types.h>
 #include <linux/spinlock.h>
 #include <asm/compiler.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * T2 is the internal name for the core logic chipset which provides

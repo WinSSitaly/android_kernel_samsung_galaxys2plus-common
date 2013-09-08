@@ -191,8 +191,11 @@ extern int xdr_decode_array2(struct xdr_buf *buf, unsigned int base,
 			     struct xdr_array2_desc *desc);
 extern int xdr_encode_array2(struct xdr_buf *buf, unsigned int base,
 			     struct xdr_array2_desc *desc);
+<<<<<<< HEAD
 extern void _copy_from_pages(char *p, struct page **pages, size_t pgbase,
 			     size_t len);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Provide some simple tools for XDR buffer overflow-checking etc.

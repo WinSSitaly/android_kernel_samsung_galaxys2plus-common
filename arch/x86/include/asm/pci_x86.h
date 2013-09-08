@@ -44,6 +44,11 @@ enum pci_bf_sort_state {
 
 /* pci-i386.c */
 
+<<<<<<< HEAD
+=======
+extern unsigned int pcibios_max_latency;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void pcibios_resource_survey(void);
 void pcibios_set_cache_line_size(void);
 
@@ -97,10 +102,17 @@ struct pci_raw_ops {
 						int reg, int len, u32 val);
 };
 
+<<<<<<< HEAD
 extern const struct pci_raw_ops *raw_pci_ops;
 extern const struct pci_raw_ops *raw_pci_ext_ops;
 
 extern const struct pci_raw_ops pci_direct_conf1;
+=======
+extern struct pci_raw_ops *raw_pci_ops;
+extern struct pci_raw_ops *raw_pci_ext_ops;
+
+extern struct pci_raw_ops pci_direct_conf1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern bool port_cf9_safe;
 
 /* arch_initcall level */

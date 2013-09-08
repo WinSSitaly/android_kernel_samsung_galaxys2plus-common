@@ -17,21 +17,32 @@
  */
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/device.h>
 #include <linux/errno.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
+=======
+#include <mach/hardware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/irq.h>
 #include <asm/mach/irq.h>
 
 #include <plat/fpga.h>
+<<<<<<< HEAD
 
 #include <mach/hardware.h>
 
 #include "iomap.h"
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void fpga_mask_irq(struct irq_data *d)
 {

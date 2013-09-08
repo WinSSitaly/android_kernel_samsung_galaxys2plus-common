@@ -18,11 +18,14 @@ struct security_class_mapping {
 
 extern struct security_class_mapping secclass_map[];
 
+<<<<<<< HEAD
 /*
  * The security server must be initialized before
  * any labeling or access decisions can be provided.
  */
 extern int ss_initialized;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _SELINUX_AVC_SS_H_ */
 

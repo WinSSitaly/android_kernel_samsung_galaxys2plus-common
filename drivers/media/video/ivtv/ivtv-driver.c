@@ -55,7 +55,11 @@
 #include "ivtv-routing.h"
 #include "ivtv-controls.h"
 #include "ivtv-gpio.h"
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/tveeprom.h>
 #include <media/saa7115.h>
 #include <media/v4l2-chip-ident.h>
@@ -99,7 +103,11 @@ static int i2c_clock_period[IVTV_MAX_CARDS] = { -1, -1, -1, -1, -1, -1, -1, -1,
 
 static unsigned int cardtype_c = 1;
 static unsigned int tuner_c = 1;
+<<<<<<< HEAD
 static int radio_c = 1;
+=======
+static unsigned int radio_c = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned int i2c_clock_period_c = 1;
 static char pal[] = "---";
 static char secam[] = "--";
@@ -139,7 +147,11 @@ static int tunertype = -1;
 static int newi2c = -1;
 
 module_param_array(tuner, int, &tuner_c, 0644);
+<<<<<<< HEAD
 module_param_array(radio, int, &radio_c, 0644);
+=======
+module_param_array(radio, bool, &radio_c, 0644);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_array(cardtype, int, &cardtype_c, 0644);
 module_param_string(pal, pal, sizeof(pal), 0644);
 module_param_string(secam, secam, sizeof(secam), 0644);
@@ -731,6 +743,12 @@ static int __devinit ivtv_init_struct1(struct ivtv *itv)
 
 	init_kthread_work(&itv->irq_work, ivtv_irq_work_handler);
 
+<<<<<<< HEAD
+=======
+	/* start counting open_id at 1 */
+	itv->open_id = 1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Initial settings */
 	itv->cxhdl.port = CX2341X_PORT_MEMORY;
 	itv->cxhdl.capabilities = CX2341X_CAP_HAS_SLICED_VBI;
@@ -744,6 +762,11 @@ static int __devinit ivtv_init_struct1(struct ivtv *itv)
 
 	itv->cur_dma_stream = -1;
 	itv->cur_pio_stream = -1;
+<<<<<<< HEAD
+=======
+	itv->audio_stereo_mode = AUDIO_STEREO;
+	itv->audio_bilingual_mode = AUDIO_MONO_LEFT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Ctrls */
 	itv->speed = 1000;
@@ -813,7 +836,11 @@ static int ivtv_setup_pci(struct ivtv *itv, struct pci_dev *pdev,
 		IVTV_ERR("Can't enable device!\n");
 		return -EIO;
 	}
+<<<<<<< HEAD
 	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32))) {
+=======
+	if (pci_set_dma_mask(pdev, 0xffffffff)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		IVTV_ERR("No suitable DMA available.\n");
 		return -EIO;
 	}
@@ -1175,8 +1202,11 @@ static int __devinit ivtv_probe(struct pci_dev *pdev,
 		setup.addr = ADDR_UNSET;
 		setup.type = itv->options.tuner;
 		setup.mode_mask = T_ANALOG_TV;  /* matches TV tuners */
+<<<<<<< HEAD
 		if (itv->options.radio > 0)
 			setup.mode_mask |= T_RADIO;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		setup.tuner_callback = (setup.type == TUNER_XC2028) ?
 			ivtv_reset_tuner_gpio : NULL;
 		ivtv_call_all(itv, tuner, s_type_addr, &setup);
@@ -1198,6 +1228,7 @@ static int __devinit ivtv_probe(struct pci_dev *pdev,
 	itv->tuner_std = itv->std;
 
 	if (itv->v4l2_cap & V4L2_CAP_VIDEO_OUTPUT) {
+<<<<<<< HEAD
 		struct v4l2_ctrl_handler *hdl = itv->v4l2_dev.ctrl_handler;
 
 		itv->ctrl_pts = v4l2_ctrl_new_std(hdl, &ivtv_hdl_out_ops,
@@ -1224,6 +1255,8 @@ static int __devinit ivtv_probe(struct pci_dev *pdev,
 		}
 		v4l2_ctrl_cluster(2, &itv->ctrl_pts);
 		v4l2_ctrl_cluster(2, &itv->ctrl_audio_playback);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ivtv_call_all(itv, video, s_std_output, itv->std);
 		/* Turn off the output signal. The mpeg decoder is not yet
 		   active so without this you would get a green image until the
@@ -1260,7 +1293,10 @@ free_streams:
 free_irq:
 	free_irq(itv->pdev->irq, (void *)itv);
 free_i2c:
+<<<<<<< HEAD
 	v4l2_ctrl_handler_free(&itv->cxhdl.hdl);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	exit_ivtv_i2c(itv);
 free_io:
 	ivtv_iounmap(itv);
@@ -1400,7 +1436,11 @@ static void ivtv_remove(struct pci_dev *pdev)
 			else
 				type = IVTV_DEC_STREAM_TYPE_MPG;
 			ivtv_stop_v4l2_decode_stream(&itv->streams[type],
+<<<<<<< HEAD
 				V4L2_DEC_CMD_STOP_TO_BLACK | V4L2_DEC_CMD_STOP_IMMEDIATELY, 0);
+=======
+				VIDEO_CMD_STOP_TO_BLACK | VIDEO_CMD_STOP_IMMEDIATELY, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		ivtv_halt_firmware(itv);
 	}
@@ -1416,8 +1456,11 @@ static void ivtv_remove(struct pci_dev *pdev)
 	ivtv_streams_cleanup(itv, 1);
 	ivtv_udma_free(itv);
 
+<<<<<<< HEAD
 	v4l2_ctrl_handler_free(&itv->cxhdl.hdl);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	exit_ivtv_i2c(itv);
 
 	free_irq(itv->pdev->irq, (void *)itv);

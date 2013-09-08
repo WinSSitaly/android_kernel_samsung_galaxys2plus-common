@@ -21,8 +21,14 @@
 #include <linux/pagemap.h>
 #include <linux/pagevec.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/mm_inline.h>
+=======
+#include <linux/module.h>
+#include <linux/mm_inline.h>
+#include <linux/buffer_head.h>	/* for try_to_release_page() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/percpu_counter.h>
 #include <linux/percpu.h>
 #include <linux/cpu.h>
@@ -53,7 +59,11 @@ static void __page_cache_release(struct page *page)
 		spin_lock_irqsave(&zone->lru_lock, flags);
 		VM_BUG_ON(!PageLRU(page));
 		__ClearPageLRU(page);
+<<<<<<< HEAD
 		del_page_from_lru_list(zone, page, page_off_lru(page));
+=======
+		del_page_from_lru(zone, page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock_irqrestore(&zone->lru_lock, flags);
 	}
 }
@@ -231,6 +241,7 @@ static void pagevec_lru_move_fn(struct pagevec *pvec,
 static void pagevec_move_tail_fn(struct page *page, void *arg)
 {
 	int *pgmoved = arg;
+<<<<<<< HEAD
 
 	if (PageLRU(page) && !PageActive(page) && !PageUnevictable(page)) {
 		enum lru_list lru = page_lru_base_type(page);
@@ -239,6 +250,14 @@ static void pagevec_move_tail_fn(struct page *page, void *arg)
 		lruvec = mem_cgroup_lru_move_lists(page_zone(page),
 						   page, lru, lru);
 		list_move_tail(&page->lru, &lruvec->lists[lru]);
+=======
+	struct zone *zone = page_zone(page);
+
+	if (PageLRU(page) && !PageActive(page) && !PageUnevictable(page)) {
+		enum lru_list lru = page_lru_base_type(page);
+		list_move_tail(&page->lru, &zone->lru[lru].list);
+		mem_cgroup_rotate_reclaimable_page(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		(*pgmoved)++;
 	}
 }
@@ -369,6 +388,10 @@ void mark_page_accessed(struct page *page)
 		SetPageReferenced(page);
 	}
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL(mark_page_accessed);
 
 void __lru_cache_add(struct page *page, enum lru_list lru)
@@ -377,7 +400,11 @@ void __lru_cache_add(struct page *page, enum lru_list lru)
 
 	page_cache_get(page);
 	if (!pagevec_add(pvec, page))
+<<<<<<< HEAD
 		__pagevec_lru_add(pvec, lru);
+=======
+		____pagevec_lru_add(pvec, lru);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	put_cpu_var(lru_add_pvecs);
 }
 EXPORT_SYMBOL(__lru_cache_add);
@@ -476,13 +503,21 @@ static void lru_deactivate_fn(struct page *page, void *arg)
 		 */
 		SetPageReclaim(page);
 	} else {
+<<<<<<< HEAD
 		struct lruvec *lruvec;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * The page's writeback ends up during pagevec
 		 * We moves tha page into tail of inactive.
 		 */
+<<<<<<< HEAD
 		lruvec = mem_cgroup_lru_move_lists(zone, page, lru, lru);
 		list_move_tail(&page->lru, &lruvec->lists[lru]);
+=======
+		list_move_tail(&page->lru, &zone->lru[lru].list);
+		mem_cgroup_rotate_reclaimable_page(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__count_vm_event(PGROTATED);
 	}
 
@@ -496,7 +531,11 @@ static void lru_deactivate_fn(struct page *page, void *arg)
  * Either "cpu" is the current CPU, and preemption has already been
  * disabled; or "cpu" is being hot-unplugged, and is already dead.
  */
+<<<<<<< HEAD
 void lru_add_drain_cpu(int cpu)
+=======
+static void drain_cpu_pagevecs(int cpu)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct pagevec *pvecs = per_cpu(lru_add_pvecs, cpu);
 	struct pagevec *pvec;
@@ -505,7 +544,11 @@ void lru_add_drain_cpu(int cpu)
 	for_each_lru(lru) {
 		pvec = &pvecs[lru - LRU_BASE];
 		if (pagevec_count(pvec))
+<<<<<<< HEAD
 			__pagevec_lru_add(pvec, lru);
+=======
+			____pagevec_lru_add(pvec, lru);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	pvec = &per_cpu(lru_rotate_pvecs, cpu);
@@ -553,7 +596,11 @@ void deactivate_page(struct page *page)
 
 void lru_add_drain(void)
 {
+<<<<<<< HEAD
 	lru_add_drain_cpu(get_cpu());
+=======
+	drain_cpu_pagevecs(get_cpu());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	put_cpu();
 }
 
@@ -586,10 +633,18 @@ int lru_add_drain_all(void)
 void release_pages(struct page **pages, int nr, int cold)
 {
 	int i;
+<<<<<<< HEAD
 	LIST_HEAD(pages_to_free);
 	struct zone *zone = NULL;
 	unsigned long uninitialized_var(flags);
 
+=======
+	struct pagevec pages_to_free;
+	struct zone *zone = NULL;
+	unsigned long uninitialized_var(flags);
+
+	pagevec_init(&pages_to_free, cold);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < nr; i++) {
 		struct page *page = pages[i];
 
@@ -617,15 +672,33 @@ void release_pages(struct page **pages, int nr, int cold)
 			}
 			VM_BUG_ON(!PageLRU(page));
 			__ClearPageLRU(page);
+<<<<<<< HEAD
 			del_page_from_lru_list(zone, page, page_off_lru(page));
 		}
 
 		list_add(&page->lru, &pages_to_free);
+=======
+			del_page_from_lru(zone, page);
+		}
+
+		if (!pagevec_add(&pages_to_free, page)) {
+			if (zone) {
+				spin_unlock_irqrestore(&zone->lru_lock, flags);
+				zone = NULL;
+			}
+			__pagevec_free(&pages_to_free);
+			pagevec_reinit(&pages_to_free);
+  		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (zone)
 		spin_unlock_irqrestore(&zone->lru_lock, flags);
 
+<<<<<<< HEAD
 	free_hot_cold_page_list(&pages_to_free, cold);
+=======
+	pagevec_free(&pages_to_free);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(release_pages);
 
@@ -645,16 +718,29 @@ void __pagevec_release(struct pagevec *pvec)
 	release_pages(pvec->pages, pagevec_count(pvec), pvec->cold);
 	pagevec_reinit(pvec);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(__pagevec_release);
 
 #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+=======
+
+EXPORT_SYMBOL(__pagevec_release);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* used by __split_huge_page_refcount() */
 void lru_add_page_tail(struct zone* zone,
 		       struct page *page, struct page *page_tail)
 {
+<<<<<<< HEAD
 	int uninitialized_var(active);
 	enum lru_list lru;
 	const int file = 0;
+=======
+	int active;
+	enum lru_list lru;
+	const int file = 0;
+	struct list_head *head;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	VM_BUG_ON(!PageHead(page));
 	VM_BUG_ON(PageCompound(page_tail));
@@ -672,6 +758,7 @@ void lru_add_page_tail(struct zone* zone,
 			active = 0;
 			lru = LRU_INACTIVE_ANON;
 		}
+<<<<<<< HEAD
 	} else {
 		SetPageUnevictable(page_tail);
 		lru = LRU_UNEVICTABLE;
@@ -699,6 +786,21 @@ void lru_add_page_tail(struct zone* zone,
 #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
 
 static void __pagevec_lru_add_fn(struct page *page, void *arg)
+=======
+		update_page_reclaim_stat(zone, page_tail, file, active);
+		if (likely(PageLRU(page)))
+			head = page->lru.prev;
+		else
+			head = &zone->lru[lru].list;
+		__add_page_to_lru_list(zone, page_tail, lru, head);
+	} else {
+		SetPageUnevictable(page_tail);
+		add_page_to_lru_list(zone, page_tail, LRU_UNEVICTABLE);
+	}
+}
+
+static void ____pagevec_lru_add_fn(struct page *page, void *arg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	enum lru_list lru = (enum lru_list)arg;
 	struct zone *zone = page_zone(page);
@@ -712,14 +814,20 @@ static void __pagevec_lru_add_fn(struct page *page, void *arg)
 	SetPageLRU(page);
 	if (active)
 		SetPageActive(page);
+<<<<<<< HEAD
 	add_page_to_lru_list(zone, page, lru);
 	update_page_reclaim_stat(zone, page, file, active);
+=======
+	update_page_reclaim_stat(zone, page, file, active);
+	add_page_to_lru_list(zone, page, lru);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * Add the passed pages to the LRU, then drop the caller's refcount
  * on them.  Reinitialises the caller's pagevec.
  */
+<<<<<<< HEAD
 void __pagevec_lru_add(struct pagevec *pvec, enum lru_list lru)
 {
 	VM_BUG_ON(is_unevictable_lru(lru));
@@ -727,6 +835,34 @@ void __pagevec_lru_add(struct pagevec *pvec, enum lru_list lru)
 	pagevec_lru_move_fn(pvec, __pagevec_lru_add_fn, (void *)lru);
 }
 EXPORT_SYMBOL(__pagevec_lru_add);
+=======
+void ____pagevec_lru_add(struct pagevec *pvec, enum lru_list lru)
+{
+	VM_BUG_ON(is_unevictable_lru(lru));
+
+	pagevec_lru_move_fn(pvec, ____pagevec_lru_add_fn, (void *)lru);
+}
+
+EXPORT_SYMBOL(____pagevec_lru_add);
+
+/*
+ * Try to drop buffers from the pages in a pagevec
+ */
+void pagevec_strip(struct pagevec *pvec)
+{
+	int i;
+
+	for (i = 0; i < pagevec_count(pvec); i++) {
+		struct page *page = pvec->pages[i];
+
+		if (page_has_private(page) && trylock_page(page)) {
+			if (page_has_private(page))
+				try_to_release_page(page, 0);
+			unlock_page(page);
+		}
+	}
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * pagevec_lookup - gang pagecache lookup
@@ -750,6 +886,10 @@ unsigned pagevec_lookup(struct pagevec *pvec, struct address_space *mapping,
 	pvec->nr = find_get_pages(mapping, start, nr_pages, pvec->pages);
 	return pagevec_count(pvec);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL(pagevec_lookup);
 
 unsigned pagevec_lookup_tag(struct pagevec *pvec, struct address_space *mapping,
@@ -759,6 +899,10 @@ unsigned pagevec_lookup_tag(struct pagevec *pvec, struct address_space *mapping,
 					nr_pages, pvec->pages);
 	return pagevec_count(pvec);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL(pagevec_lookup_tag);
 
 /*

@@ -47,6 +47,7 @@
 #define BQ27x00_REG_TTE			0x16
 #define BQ27x00_REG_TTF			0x18
 #define BQ27x00_REG_TTECP		0x26
+<<<<<<< HEAD
 #define BQ27x00_REG_NAC			0x0C /* Nominal available capacity */
 #define BQ27x00_REG_LMD			0x12 /* Last measured discharge */
 #define BQ27x00_REG_CYCT		0x2A /* Cycle count total */
@@ -59,12 +60,26 @@
 #define BQ27000_FLAG_CI			BIT(4) /* Capacity Inaccurate flag */
 #define BQ27000_FLAG_FC			BIT(5)
 #define BQ27000_FLAG_CHGS		BIT(7) /* Charge state flag */
+=======
+#define BQ27x00_REG_NAC			0x0C /* Nominal available capaciy */
+#define BQ27x00_REG_LMD			0x12 /* Last measured discharge */
+#define BQ27x00_REG_CYCT		0x2A /* Cycle count total */
+#define BQ27x00_REG_AE			0x22 /* Available enery */
+
+#define BQ27000_REG_RSOC		0x0B /* Relative State-of-Charge */
+#define BQ27000_REG_ILMD		0x76 /* Initial last measured discharge */
+#define BQ27000_FLAG_CHGS		BIT(7)
+#define BQ27000_FLAG_FC			BIT(5)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define BQ27500_REG_SOC			0x2C
 #define BQ27500_REG_DCAP		0x3C /* Design capacity */
 #define BQ27500_FLAG_DSC		BIT(0)
+<<<<<<< HEAD
 #define BQ27500_FLAG_SOCF		BIT(1) /* State-of-Charge threshold final */
 #define BQ27500_FLAG_SOC1		BIT(2) /* State-of-Charge threshold 1 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define BQ27500_FLAG_FC			BIT(9)
 
 #define BQ27000_RS			20 /* Resistor sense */
@@ -84,8 +99,14 @@ struct bq27x00_reg_cache {
 	int charge_full;
 	int cycle_count;
 	int capacity;
+<<<<<<< HEAD
 	int energy;
 	int flags;
+=======
+	int flags;
+
+	int current_now;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct bq27x00_device_info {
@@ -112,7 +133,10 @@ static enum power_supply_property bq27x00_battery_props[] = {
 	POWER_SUPPLY_PROP_VOLTAGE_NOW,
 	POWER_SUPPLY_PROP_CURRENT_NOW,
 	POWER_SUPPLY_PROP_CAPACITY,
+<<<<<<< HEAD
 	POWER_SUPPLY_PROP_CAPACITY_LEVEL,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	POWER_SUPPLY_PROP_TEMP,
 	POWER_SUPPLY_PROP_TIME_TO_EMPTY_NOW,
 	POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG,
@@ -154,7 +178,11 @@ static int bq27x00_battery_read_rsoc(struct bq27x00_device_info *di)
 		rsoc = bq27x00_read(di, BQ27000_REG_RSOC, true);
 
 	if (rsoc < 0)
+<<<<<<< HEAD
 		dev_dbg(di->dev, "error reading relative State-of-Charge\n");
+=======
+		dev_err(di->dev, "error reading relative State-of-Charge\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return rsoc;
 }
@@ -169,8 +197,12 @@ static int bq27x00_battery_read_charge(struct bq27x00_device_info *di, u8 reg)
 
 	charge = bq27x00_read(di, reg, false);
 	if (charge < 0) {
+<<<<<<< HEAD
 		dev_dbg(di->dev, "error reading charge register %02x: %d\n",
 			reg, charge);
+=======
+		dev_err(di->dev, "error reading nominal available capacity\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return charge;
 	}
 
@@ -214,7 +246,11 @@ static int bq27x00_battery_read_ilmd(struct bq27x00_device_info *di)
 		ilmd = bq27x00_read(di, BQ27000_REG_ILMD, true);
 
 	if (ilmd < 0) {
+<<<<<<< HEAD
 		dev_dbg(di->dev, "error reading initial last measured discharge\n");
+=======
+		dev_err(di->dev, "error reading initial last measured discharge\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ilmd;
 	}
 
@@ -227,6 +263,7 @@ static int bq27x00_battery_read_ilmd(struct bq27x00_device_info *di)
 }
 
 /*
+<<<<<<< HEAD
  * Return the battery Available energy in µWh
  * Or < 0 if something fails.
  */
@@ -271,6 +308,8 @@ static int bq27x00_battery_read_temperature(struct bq27x00_device_info *di)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Return the battery Cycle count total
  * Or < 0 if something fails.
  */
@@ -295,8 +334,12 @@ static int bq27x00_battery_read_time(struct bq27x00_device_info *di, u8 reg)
 
 	tval = bq27x00_read(di, reg, false);
 	if (tval < 0) {
+<<<<<<< HEAD
 		dev_dbg(di->dev, "error reading time register %02x: %d\n",
 			reg, tval);
+=======
+		dev_err(di->dev, "error reading register %02x: %d\n", reg, tval);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return tval;
 	}
 
@@ -311,6 +354,7 @@ static void bq27x00_update(struct bq27x00_device_info *di)
 	struct bq27x00_reg_cache cache = {0, };
 	bool is_bq27500 = di->chip == BQ27500;
 
+<<<<<<< HEAD
 	cache.flags = bq27x00_read(di, BQ27x00_REG_FLAGS, !is_bq27500);
 	if (cache.flags >= 0) {
 		if (!is_bq27500 && (cache.flags & BQ27000_FLAG_CI)) {
@@ -332,12 +376,33 @@ static void bq27x00_update(struct bq27x00_device_info *di)
 		cache.temperature = bq27x00_battery_read_temperature(di);
 		cache.cycle_count = bq27x00_battery_read_cyct(di);
 
+=======
+	cache.flags = bq27x00_read(di, BQ27x00_REG_FLAGS, is_bq27500);
+	if (cache.flags >= 0) {
+		cache.capacity = bq27x00_battery_read_rsoc(di);
+		cache.temperature = bq27x00_read(di, BQ27x00_REG_TEMP, false);
+		cache.time_to_empty = bq27x00_battery_read_time(di, BQ27x00_REG_TTE);
+		cache.time_to_empty_avg = bq27x00_battery_read_time(di, BQ27x00_REG_TTECP);
+		cache.time_to_full = bq27x00_battery_read_time(di, BQ27x00_REG_TTF);
+		cache.charge_full = bq27x00_battery_read_lmd(di);
+		cache.cycle_count = bq27x00_battery_read_cyct(di);
+
+		if (!is_bq27500)
+			cache.current_now = bq27x00_read(di, BQ27x00_REG_AI, false);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* We only have to read charge design full once */
 		if (di->charge_design_full <= 0)
 			di->charge_design_full = bq27x00_battery_read_ilmd(di);
 	}
 
+<<<<<<< HEAD
 	if (memcmp(&di->cache, &cache, sizeof(cache)) != 0) {
+=======
+	/* Ignore current_now which is a snapshot of the current battery state
+	 * and is likely to be different even between two consecutive reads */
+	if (memcmp(&di->cache, &cache, sizeof(cache) - sizeof(int)) != 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		di->cache = cache;
 		power_supply_changed(&di->bat);
 	}
@@ -359,6 +424,28 @@ static void bq27x00_battery_poll(struct work_struct *work)
 	}
 }
 
+<<<<<<< HEAD
+=======
+
+/*
+ * Return the battery temperature in tenths of degree Celsius
+ * Or < 0 if something fails.
+ */
+static int bq27x00_battery_temperature(struct bq27x00_device_info *di,
+	union power_supply_propval *val)
+{
+	if (di->cache.temperature < 0)
+		return di->cache.temperature;
+
+	if (di->chip == BQ27500)
+		val->intval = di->cache.temperature - 2731;
+	else
+		val->intval = ((di->cache.temperature * 5) - 5463) / 2;
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Return the battery average current in µA
  * Note that current can be negative signed as well
@@ -368,6 +455,7 @@ static int bq27x00_battery_current(struct bq27x00_device_info *di,
 	union power_supply_propval *val)
 {
 	int curr;
+<<<<<<< HEAD
 	int flags;
 
 	curr = bq27x00_read(di, BQ27x00_REG_AI, false);
@@ -375,13 +463,27 @@ static int bq27x00_battery_current(struct bq27x00_device_info *di,
 		dev_err(di->dev, "error reading current\n");
 		return curr;
 	}
+=======
+
+	if (di->chip == BQ27500)
+	    curr = bq27x00_read(di, BQ27x00_REG_AI, false);
+	else
+	    curr = di->cache.current_now;
+
+	if (curr < 0)
+		return curr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (di->chip == BQ27500) {
 		/* bq27500 returns signed value */
 		val->intval = (int)((s16)curr) * 1000;
 	} else {
+<<<<<<< HEAD
 		flags = bq27x00_read(di, BQ27x00_REG_FLAGS, false);
 		if (flags & BQ27000_FLAG_CHGS) {
+=======
+		if (di->cache.flags & BQ27000_FLAG_CHGS) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev_dbg(di->dev, "negative current!\n");
 			curr = -curr;
 		}
@@ -420,6 +522,7 @@ static int bq27x00_battery_status(struct bq27x00_device_info *di,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int bq27x00_battery_capacity_level(struct bq27x00_device_info *di,
 	union power_supply_propval *val)
 {
@@ -446,11 +549,28 @@ static int bq27x00_battery_capacity_level(struct bq27x00_device_info *di,
 	}
 
 	val->intval = level;
+=======
+/*
+ * Return the battery Voltage in milivolts
+ * Or < 0 if something fails.
+ */
+static int bq27x00_battery_voltage(struct bq27x00_device_info *di,
+	union power_supply_propval *val)
+{
+	int volt;
+
+	volt = bq27x00_read(di, BQ27x00_REG_VOLT, false);
+	if (volt < 0)
+		return volt;
+
+	val->intval = volt * 1000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 /*
+<<<<<<< HEAD
  * Return the battery Voltage in milivolts
  * Or < 0 if something fails.
  */
@@ -466,10 +586,36 @@ static int bq27x00_battery_voltage(struct bq27x00_device_info *di,
 	}
 
 	val->intval = volt * 1000;
+=======
+ * Return the battery Available energy in µWh
+ * Or < 0 if something fails.
+ */
+static int bq27x00_battery_energy(struct bq27x00_device_info *di,
+	union power_supply_propval *val)
+{
+	int ae;
+
+	ae = bq27x00_read(di, BQ27x00_REG_AE, false);
+	if (ae < 0) {
+		dev_err(di->dev, "error reading available energy\n");
+		return ae;
+	}
+
+	if (di->chip == BQ27500)
+		ae *= 1000;
+	else
+		ae = ae * 29200 / BQ27000_RS;
+
+	val->intval = ae;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int bq27x00_simple_value(int value,
 	union power_supply_propval *val)
 {
@@ -517,11 +663,16 @@ static int bq27x00_battery_get_property(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_CAPACITY:
 		ret = bq27x00_simple_value(di->cache.capacity, val);
 		break;
+<<<<<<< HEAD
 	case POWER_SUPPLY_PROP_CAPACITY_LEVEL:
 		ret = bq27x00_battery_capacity_level(di, val);
 		break;
 	case POWER_SUPPLY_PROP_TEMP:
 		ret = bq27x00_simple_value(di->cache.temperature, val);
+=======
+	case POWER_SUPPLY_PROP_TEMP:
+		ret = bq27x00_battery_temperature(di, val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case POWER_SUPPLY_PROP_TIME_TO_EMPTY_NOW:
 		ret = bq27x00_simple_value(di->cache.time_to_empty, val);
@@ -548,7 +699,11 @@ static int bq27x00_battery_get_property(struct power_supply *psy,
 		ret = bq27x00_simple_value(di->cache.cycle_count, val);
 		break;
 	case POWER_SUPPLY_PROP_ENERGY_NOW:
+<<<<<<< HEAD
 		ret = bq27x00_simple_value(di->cache.energy, val);
+=======
+		ret = bq27x00_battery_energy(di, val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		return -EINVAL;
@@ -593,6 +748,7 @@ static int bq27x00_powersupply_init(struct bq27x00_device_info *di)
 
 static void bq27x00_powersupply_unregister(struct bq27x00_device_info *di)
 {
+<<<<<<< HEAD
 	/*
 	 * power_supply_unregister call bq27x00_battery_get_property which
 	 * call bq27x00_battery_poll.
@@ -601,6 +757,8 @@ static void bq27x00_powersupply_unregister(struct bq27x00_device_info *di)
 	 */
 	poll_interval = 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cancel_delayed_work_sync(&di->work);
 
 	power_supply_unregister(&di->bat);

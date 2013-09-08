@@ -18,7 +18,10 @@ obj-$(CONFIG_MOUSE_PXA930_TRKBALL)	+= pxa930_trkball.o
 obj-$(CONFIG_MOUSE_RISCPC)		+= rpcmouse.o
 obj-$(CONFIG_MOUSE_SERIAL)		+= sermouse.o
 obj-$(CONFIG_MOUSE_SYNAPTICS_I2C)	+= synaptics_i2c.o
+<<<<<<< HEAD
 obj-$(CONFIG_MOUSE_SYNAPTICS_USB)	+= synaptics_usb.o
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_MOUSE_VSXXXAA)		+= vsxxxaa.o
 
 psmouse-objs := psmouse-base.o synaptics.o

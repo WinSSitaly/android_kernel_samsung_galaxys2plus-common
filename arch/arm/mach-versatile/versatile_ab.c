@@ -21,12 +21,19 @@
 
 #include <linux/init.h>
 #include <linux/device.h>
+<<<<<<< HEAD
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/amba/bus.h>
 #include <linux/io.h>
 
 #include <mach/hardware.h>
 #include <asm/irq.h>
+<<<<<<< HEAD
 #include <asm/hardware/vic.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach-types.h>
 
 #include <asm/mach/arch.h>
@@ -35,6 +42,7 @@
 
 MACHINE_START(VERSATILE_AB, "ARM-Versatile AB")
 	/* Maintainer: ARM Ltd/Deep Blue Solutions Ltd */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= versatile_map_io,
 	.init_early	= versatile_init_early,
@@ -43,4 +51,12 @@ MACHINE_START(VERSATILE_AB, "ARM-Versatile AB")
 	.timer		= &versatile_timer,
 	.init_machine	= versatile_init,
 	.restart	= versatile_restart,
+=======
+	.boot_params	= 0x00000100,
+	.map_io		= versatile_map_io,
+	.init_early	= versatile_init_early,
+	.init_irq	= versatile_init_irq,
+	.timer		= &versatile_timer,
+	.init_machine	= versatile_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

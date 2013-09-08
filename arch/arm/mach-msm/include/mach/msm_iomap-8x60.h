@@ -62,6 +62,7 @@
 #define MSM8X60_TMR0_PHYS	0x02040000
 #define MSM8X60_TMR0_SIZE	SZ_4K
 
+<<<<<<< HEAD
 #ifdef CONFIG_DEBUG_MSM8660_UART
 #define MSM_DEBUG_UART_BASE	0xE1040000
 #define MSM_DEBUG_UART_PHYS	0x19C40000
@@ -71,4 +72,6 @@
 extern void msm_map_msm8x60_io(void);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

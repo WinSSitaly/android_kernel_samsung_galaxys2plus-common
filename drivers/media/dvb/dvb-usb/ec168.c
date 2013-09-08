@@ -200,9 +200,15 @@ static struct ec100_config ec168_ec100_config = {
 static int ec168_ec100_frontend_attach(struct dvb_usb_adapter *adap)
 {
 	deb_info("%s:\n", __func__);
+<<<<<<< HEAD
 	adap->fe_adap[0].fe = dvb_attach(ec100_attach, &ec168_ec100_config,
 		&adap->dev->i2c_adap);
 	if (adap->fe_adap[0].fe == NULL)
+=======
+	adap->fe = dvb_attach(ec100_attach, &ec168_ec100_config,
+		&adap->dev->i2c_adap);
+	if (adap->fe == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 
 	return 0;
@@ -228,7 +234,11 @@ static struct mxl5005s_config ec168_mxl5003s_config = {
 static int ec168_mxl5003s_tuner_attach(struct dvb_usb_adapter *adap)
 {
 	deb_info("%s:\n", __func__);
+<<<<<<< HEAD
 	return dvb_attach(mxl5005s_attach, adap->fe_adap[0].fe, &adap->dev->i2c_adap,
+=======
+	return dvb_attach(mxl5005s_attach, adap->fe, &adap->dev->i2c_adap,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		&ec168_mxl5003s_config) == NULL ? -ENODEV : 0;
 }
 
@@ -382,8 +392,11 @@ static struct dvb_usb_device_properties ec168_properties = {
 	.num_adapters = 1,
 	.adapter = {
 		{
+<<<<<<< HEAD
 		.num_frontends = 1,
 		.fe = {{
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.streaming_ctrl   = ec168_streaming_ctrl,
 			.frontend_attach  = ec168_ec100_frontend_attach,
 			.tuner_attach     = ec168_mxl5003s_tuner_attach,
@@ -397,7 +410,10 @@ static struct dvb_usb_device_properties ec168_properties = {
 					}
 				}
 			},
+<<<<<<< HEAD
 		}},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	},
 
@@ -428,7 +444,31 @@ static struct usb_driver ec168_driver = {
 	.id_table   = ec168_id,
 };
 
+<<<<<<< HEAD
 module_usb_driver(ec168_driver);
+=======
+/* module stuff */
+static int __init ec168_module_init(void)
+{
+	int ret;
+	deb_info("%s:\n", __func__);
+	ret = usb_register(&ec168_driver);
+	if (ret)
+		err("module init failed:%d", ret);
+
+	return ret;
+}
+
+static void __exit ec168_module_exit(void)
+{
+	deb_info("%s:\n", __func__);
+	/* deregister this driver from the USB subsystem */
+	usb_deregister(&ec168_driver);
+}
+
+module_init(ec168_module_init);
+module_exit(ec168_module_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Antti Palosaari <crope@iki.fi>");
 MODULE_DESCRIPTION("E3C EC168 DVB-T USB2.0 driver");

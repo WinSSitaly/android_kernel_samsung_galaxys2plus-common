@@ -60,6 +60,21 @@
 
 #include "au1100fb.h"
 
+<<<<<<< HEAD
+=======
+/*
+ * Sanity check. If this is a new Au1100 based board, search for
+ * the PB1100 ifdefs to make sure you modify the code accordingly.
+ */
+#if defined(CONFIG_MIPS_PB1100)
+  #include <asm/mach-pb1x00/pb1100.h>
+#elif defined(CONFIG_MIPS_DB1100)
+  #include <asm/mach-db1x00/db1x00.h>
+#else
+  #error "Unknown Au1100 board, Au1100 FB driver not supported"
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DRIVER_NAME "au1100fb"
 #define DRIVER_DESC "LCD controller driver for AU1100 processors"
 
@@ -98,6 +113,15 @@ static struct fb_var_screeninfo au1100fb_var __devinitdata = {
 	.vmode		= FB_VMODE_NONINTERLACED,
 };
 
+<<<<<<< HEAD
+=======
+static struct au1100fb_drv_info drv_info;
+
+static int nocursor = 0;
+module_param(nocursor, int, 0644);
+MODULE_PARM_DESC(nocursor, "cursor enable/disable");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* fb_blank
  * Blank the screen. Depending on the mode, the screen will be
  * activated with the backlight color, or desactivated
@@ -114,7 +138,11 @@ static int au1100fb_fb_blank(int blank_mode, struct fb_info *fbi)
 			/* Turn on panel */
 			fbdev->regs->lcd_control |= LCD_CONTROL_GO;
 #ifdef CONFIG_MIPS_PB1100
+<<<<<<< HEAD
 			if (fbdev->panel_idx == 1) {
+=======
+			if (drv_info.panel_idx == 1) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				au_writew(au_readw(PB1100_G_CONTROL)
 					  | (PB1100_G_CONTROL_BL | PB1100_G_CONTROL_VDD),
 			PB1100_G_CONTROL);
@@ -129,7 +157,11 @@ static int au1100fb_fb_blank(int blank_mode, struct fb_info *fbi)
 			/* Turn off panel */
 			fbdev->regs->lcd_control &= ~LCD_CONTROL_GO;
 #ifdef CONFIG_MIPS_PB1100
+<<<<<<< HEAD
 			if (fbdev->panel_idx == 1) {
+=======
+			if (drv_info.panel_idx == 1) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				au_writew(au_readw(PB1100_G_CONTROL)
 				  	  & ~(PB1100_G_CONTROL_BL | PB1100_G_CONTROL_VDD),
 			PB1100_G_CONTROL);
@@ -410,6 +442,20 @@ int au1100fb_fb_mmap(struct fb_info *fbi, struct vm_area_struct *vma)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+/* fb_cursor
+ * Used to disable cursor drawing...
+ */
+int au1100fb_fb_cursor(struct fb_info *info, struct fb_cursor *cursor)
+{
+	if (nocursor)
+		return 0;
+	else
+		return -EINVAL;	/* just to force soft_cursor() call */
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct fb_ops au1100fb_ops =
 {
 	.owner			= THIS_MODULE,
@@ -421,11 +467,16 @@ static struct fb_ops au1100fb_ops =
 	.fb_imageblit		= cfb_imageblit,
 	.fb_rotate		= au1100fb_fb_rotate,
 	.fb_mmap		= au1100fb_fb_mmap,
+<<<<<<< HEAD
+=======
+	.fb_cursor		= au1100fb_fb_cursor,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
 /*-------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 static int au1100fb_setup(struct au1100fb_device *fbdev)
 {
 	char *this_opt, *options;
@@ -468,6 +519,9 @@ static int au1100fb_setup(struct au1100fb_device *fbdev)
 
 	return 0;
 }
+=======
+/* AU1100 LCD controller device driver */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __devinit au1100fb_drv_probe(struct platform_device *dev)
 {
@@ -476,33 +530,57 @@ static int __devinit au1100fb_drv_probe(struct platform_device *dev)
 	unsigned long page;
 	u32 sys_clksrc;
 
+<<<<<<< HEAD
 	/* Allocate new device private */
 	fbdev = devm_kzalloc(&dev->dev, sizeof(struct au1100fb_device),
 			     GFP_KERNEL);
 	if (!fbdev) {
+=======
+	if (!dev)
+			return -EINVAL;
+
+	/* Allocate new device private */
+	if (!(fbdev = kzalloc(sizeof(struct au1100fb_device), GFP_KERNEL))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		print_err("fail to allocate device private record");
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	if (au1100fb_setup(fbdev))
 		goto failed;
+=======
+	fbdev->panel = &known_lcd_panels[drv_info.panel_idx];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	platform_set_drvdata(dev, (void *)fbdev);
 
 	/* Allocate region for our registers and map them */
+<<<<<<< HEAD
 	regs_res = platform_get_resource(dev, IORESOURCE_MEM, 0);
 	if (!regs_res) {
+=======
+	if (!(regs_res = platform_get_resource(to_platform_device(dev),
+					IORESOURCE_MEM, 0))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		print_err("fail to retrieve registers resource");
 		return -EFAULT;
 	}
 
 	au1100fb_fix.mmio_start = regs_res->start;
+<<<<<<< HEAD
 	au1100fb_fix.mmio_len = resource_size(regs_res);
 
 	if (!devm_request_mem_region(&dev->dev,
 				     au1100fb_fix.mmio_start,
 				     au1100fb_fix.mmio_len,
 				     DRIVER_NAME)) {
+=======
+	au1100fb_fix.mmio_len = regs_res->end - regs_res->start + 1;
+
+	if (!request_mem_region(au1100fb_fix.mmio_start, au1100fb_fix.mmio_len,
+				DRIVER_NAME)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		print_err("fail to lock memory region at 0x%08lx",
 				au1100fb_fix.mmio_start);
 		return -EBUSY;
@@ -513,13 +591,23 @@ static int __devinit au1100fb_drv_probe(struct platform_device *dev)
 	print_dbg("Register memory map at %p", fbdev->regs);
 	print_dbg("phys=0x%08x, size=%d", fbdev->regs_phys, fbdev->regs_len);
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Allocate the framebuffer to the maximum screen size * nbr of video buffers */
 	fbdev->fb_len = fbdev->panel->xres * fbdev->panel->yres *
 		  	(fbdev->panel->bpp >> 3) * AU1100FB_NBR_VIDEO_BUFFERS;
 
+<<<<<<< HEAD
 	fbdev->fb_mem = dmam_alloc_coherent(&dev->dev,
 					    PAGE_ALIGN(fbdev->fb_len),
 					    &fbdev->fb_phys, GFP_KERNEL);
+=======
+	fbdev->fb_mem = dma_alloc_coherent(dev, PAGE_ALIGN(fbdev->fb_len),
+					&fbdev->fb_phys, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!fbdev->fb_mem) {
 		print_err("fail to allocate frambuffer (size: %dK))",
 			  fbdev->fb_len / 1024);
@@ -537,7 +625,11 @@ static int __devinit au1100fb_drv_probe(struct platform_device *dev)
 	     page < PAGE_ALIGN((unsigned long)fbdev->fb_mem + fbdev->fb_len);
 	     page += PAGE_SIZE) {
 #if CONFIG_DMA_NONCOHERENT
+<<<<<<< HEAD
 		SetPageReserved(virt_to_page(CAC_ADDR((void *)page)));
+=======
+		SetPageReserved(virt_to_page(CAC_ADDR(page)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 		SetPageReserved(virt_to_page(page));
 #endif
@@ -561,14 +653,24 @@ static int __devinit au1100fb_drv_probe(struct platform_device *dev)
 	fbdev->info.fbops = &au1100fb_ops;
 	fbdev->info.fix = au1100fb_fix;
 
+<<<<<<< HEAD
 	fbdev->info.pseudo_palette =
 		devm_kzalloc(&dev->dev, sizeof(u32) * 16, GFP_KERNEL);
 	if (!fbdev->info.pseudo_palette)
 		return -ENOMEM;
+=======
+	if (!(fbdev->info.pseudo_palette = kzalloc(sizeof(u32) * 16, GFP_KERNEL))) {
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (fb_alloc_cmap(&fbdev->info.cmap, AU1100_LCD_NBR_PALETTE_ENTRIES, 0) < 0) {
 		print_err("Fail to allocate colormap (%d entries)",
 			   AU1100_LCD_NBR_PALETTE_ENTRIES);
+<<<<<<< HEAD
+=======
+		kfree(fbdev->info.pseudo_palette);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EFAULT;
 	}
 
@@ -586,16 +688,31 @@ static int __devinit au1100fb_drv_probe(struct platform_device *dev)
 	return 0;
 
 failed:
+<<<<<<< HEAD
 	if (fbdev->fb_mem) {
 		dma_free_noncoherent(&dev->dev, fbdev->fb_len, fbdev->fb_mem,
 				     fbdev->fb_phys);
+=======
+	if (fbdev->regs) {
+		release_mem_region(fbdev->regs_phys, fbdev->regs_len);
+	}
+	if (fbdev->fb_mem) {
+		dma_free_noncoherent(dev, fbdev->fb_len, fbdev->fb_mem, fbdev->fb_phys);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (fbdev->info.cmap.len != 0) {
 		fb_dealloc_cmap(&fbdev->info.cmap);
 	}
+<<<<<<< HEAD
 	platform_set_drvdata(dev, NULL);
 
 	return -ENODEV;
+=======
+	kfree(fbdev);
+	platform_set_drvdata(dev, NULL);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int au1100fb_drv_remove(struct platform_device *dev)
@@ -615,7 +732,17 @@ int au1100fb_drv_remove(struct platform_device *dev)
 	/* Clean up all probe data */
 	unregister_framebuffer(&fbdev->info);
 
+<<<<<<< HEAD
 	fb_dealloc_cmap(&fbdev->info.cmap);
+=======
+	release_mem_region(fbdev->regs_phys, fbdev->regs_len);
+
+	dma_free_coherent(dev, PAGE_ALIGN(fbdev->fb_len), fbdev->fb_mem, fbdev->fb_phys);
+
+	fb_dealloc_cmap(&fbdev->info.cmap);
+	kfree(fbdev->info.pseudo_palette);
+	kfree((void*)fbdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -678,6 +805,7 @@ static struct platform_driver au1100fb_driver = {
         .resume		= au1100fb_drv_resume,
 };
 
+<<<<<<< HEAD
 static int __init au1100fb_load(void)
 {
 	return platform_driver_register(&au1100fb_driver);
@@ -690,6 +818,103 @@ static void __exit au1100fb_unload(void)
 
 module_init(au1100fb_load);
 module_exit(au1100fb_unload);
+=======
+/*-------------------------------------------------------------------------*/
+
+/* Kernel driver */
+
+int au1100fb_setup(char *options)
+{
+	char* this_opt;
+	int num_panels = ARRAY_SIZE(known_lcd_panels);
+	char* mode = NULL;
+	int panel_idx = 0;
+
+	if (num_panels <= 0) {
+		print_err("No LCD panels supported by driver!");
+		return -EFAULT;
+			}
+
+	if (options) {
+		while ((this_opt = strsep(&options,",")) != NULL) {
+			/* Panel option */
+			if (!strncmp(this_opt, "panel:", 6)) {
+				int i;
+				this_opt += 6;
+				for (i = 0; i < num_panels; i++) {
+					if (!strncmp(this_opt,
+					      	     known_lcd_panels[i].name,
+							strlen(this_opt))) {
+						panel_idx = i;
+						break;
+					}
+				}
+				if (i >= num_panels) {
+ 					print_warn("Panel %s not supported!", this_opt);
+				}
+			}
+			if (!strncmp(this_opt, "nocursor", 8)) {
+				this_opt += 8;
+				nocursor = 1;
+				print_info("Cursor disabled");
+			}
+			/* Mode option (only option that start with digit) */
+			else if (isdigit(this_opt[0])) {
+				mode = kstrdup(this_opt, GFP_KERNEL);
+				if (!mode) {
+					print_err("memory allocation failed");
+					return -ENOMEM;
+				}
+			}
+			/* Unsupported option */
+			else {
+				print_warn("Unsupported option \"%s\"", this_opt);
+			}
+		}
+	}
+
+	drv_info.panel_idx = panel_idx;
+	drv_info.opt_mode = mode;
+
+	print_info("Panel=%s Mode=%s",
+			known_lcd_panels[drv_info.panel_idx].name,
+		      	drv_info.opt_mode ? drv_info.opt_mode : "default");
+
+	return 0;
+}
+
+int __init au1100fb_init(void)
+{
+	char* options;
+	int ret;
+
+	print_info("" DRIVER_DESC "");
+
+	memset(&drv_info, 0, sizeof(drv_info));
+
+	if (fb_get_options(DRIVER_NAME, &options))
+		return -ENODEV;
+
+	/* Setup driver with options */
+	ret = au1100fb_setup(options);
+	if (ret < 0) {
+		print_err("Fail to setup driver");
+		return ret;
+	}
+
+	return platform_driver_register(&au1100fb_driver);
+}
+
+void __exit au1100fb_cleanup(void)
+{
+	platform_driver_unregister(&au1100fb_driver);
+
+	kfree(drv_info.opt_mode);
+}
+
+module_init(au1100fb_init);
+module_exit(au1100fb_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION(DRIVER_DESC);
 MODULE_LICENSE("GPL");

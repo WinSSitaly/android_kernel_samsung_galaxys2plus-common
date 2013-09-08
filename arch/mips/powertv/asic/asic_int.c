@@ -34,7 +34,10 @@
 #include <asm/irq_cpu.h>
 #include <linux/io.h>
 #include <asm/irq_regs.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mips-boards/generic.h>
 
 #include <asm/mach-powertv/asic_regs.h>

@@ -12,8 +12,11 @@
 #define FPSTATESIZE (96)
 #elif defined(CONFIG_M68KFPU_EMU)
 #define FPSTATESIZE (28)
+<<<<<<< HEAD
 #elif defined(CONFIG_COLDFIRE) && defined(CONFIG_MMU)
 #define FPSTATESIZE (16)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #elif defined(CONFIG_M68060)
 #define FPSTATESIZE (12)
 #else

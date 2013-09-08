@@ -18,7 +18,10 @@
 #include <linux/of_gpio.h>
 #include <linux/of_i2c.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/machdep.h>
 #include <asm/prom.h>

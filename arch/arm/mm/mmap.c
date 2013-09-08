@@ -9,6 +9,7 @@
 #include <linux/io.h>
 #include <linux/personality.h>
 #include <linux/random.h>
+<<<<<<< HEAD
 #include <asm/cachetype.h>
 
 static inline unsigned long COLOUR_ALIGN_DOWN(unsigned long addr,
@@ -22,11 +23,16 @@ static inline unsigned long COLOUR_ALIGN_DOWN(unsigned long addr,
 
 	return base - off;
 }
+=======
+#include <asm/cputype.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define COLOUR_ALIGN(addr,pgoff)		\
 	((((addr)+SHMLBA-1)&~(SHMLBA-1)) +	\
 	 (((pgoff)<<PAGE_SHIFT) & (SHMLBA-1)))
 
+<<<<<<< HEAD
 /* gap between mmap and stack */
 #define MIN_GAP (128*1024*1024UL)
 #define MAX_GAP ((TASK_SIZE)/6*5)
@@ -54,6 +60,8 @@ static unsigned long mmap_base(unsigned long rnd)
 	return PAGE_ALIGN(TASK_SIZE - gap - rnd);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * We need to ensure that shared mappings are correctly aligned to
  * avoid aliasing issues with VIPT caches.  We need to ensure that
@@ -70,6 +78,7 @@ arch_get_unmapped_area(struct file *filp, unsigned long addr,
 	struct mm_struct *mm = current->mm;
 	struct vm_area_struct *vma;
 	unsigned long start_addr;
+<<<<<<< HEAD
 	int do_align = 0;
 	int aliasing = cache_is_vipt_aliasing();
 
@@ -79,6 +88,27 @@ arch_get_unmapped_area(struct file *filp, unsigned long addr,
 	 */
 	if (aliasing)
 		do_align = filp || (flags & MAP_SHARED);
+=======
+#if defined(CONFIG_CPU_V6) || defined(CONFIG_CPU_V6K)
+	unsigned int cache_type;
+	int do_align = 0, aliasing = 0;
+
+	/*
+	 * We only need to do colour alignment if either the I or D
+	 * caches alias.  This is indicated by bits 9 and 21 of the
+	 * cache type register.
+	 */
+	cache_type = read_cpuid_cachetype();
+	if (cache_type != read_cpuid_id()) {
+		aliasing = (cache_type | cache_type >> 12) & (1 << 11);
+		if (aliasing)
+			do_align = filp || flags & MAP_SHARED;
+	}
+#else
+#define do_align 0
+#define aliasing 0
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * We enforce the MAP_FIXED case.
@@ -107,9 +137,19 @@ arch_get_unmapped_area(struct file *filp, unsigned long addr,
 	if (len > mm->cached_hole_size) {
 	        start_addr = addr = mm->free_area_cache;
 	} else {
+<<<<<<< HEAD
 	        start_addr = addr = mm->mmap_base;
 	        mm->cached_hole_size = 0;
 	}
+=======
+	        start_addr = addr = TASK_UNMAPPED_BASE;
+	        mm->cached_hole_size = 0;
+	}
+	/* 8 bits of randomness in 20 address space bits */
+	if ((current->flags & PF_RANDOMIZE) &&
+	    !(current->personality & ADDR_NO_RANDOMIZE))
+		addr += (get_random_int() % (1 << 8)) << PAGE_SHIFT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 full_search:
 	if (do_align)
@@ -146,6 +186,7 @@ full_search:
 	}
 }
 
+<<<<<<< HEAD
 unsigned long
 arch_get_unmapped_area_topdown(struct file *filp, const unsigned long addr0,
 			const unsigned long len, const unsigned long pgoff,
@@ -274,6 +315,8 @@ void arch_pick_mmap_layout(struct mm_struct *mm)
 		mm->unmap_area = arch_unmap_area_topdown;
 	}
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * You really shouldn't be using read() or write() on /dev/mem.  This

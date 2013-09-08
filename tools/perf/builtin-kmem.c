@@ -7,7 +7,10 @@
 #include "util/thread.h"
 #include "util/header.h"
 #include "util/session.h"
+<<<<<<< HEAD
 #include "util/tool.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "util/parse-options.h"
 #include "util/trace-event.h"
@@ -19,7 +22,11 @@
 struct alloc_stat;
 typedef int (*sort_fn_t)(struct alloc_stat *, struct alloc_stat *);
 
+<<<<<<< HEAD
 static const char		*input_name;
+=======
+static char const		*input_name = "perf.data";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int			alloc_flag;
 static int			caller_flag;
@@ -108,9 +115,13 @@ static void setup_cpunode_map(void)
 				continue;
 			cpunode_map[cpu] = mem;
 		}
+<<<<<<< HEAD
 		closedir(dir2);
 	}
 	closedir(dir1);
+=======
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void insert_alloc_stat(unsigned long call_site, unsigned long ptr,
@@ -306,6 +317,7 @@ static void process_raw_event(union perf_event *raw_event __used, void *data,
 	}
 }
 
+<<<<<<< HEAD
 static int process_sample_event(struct perf_tool *tool __used,
 				union perf_event *event,
 				struct perf_sample *sample,
@@ -313,6 +325,14 @@ static int process_sample_event(struct perf_tool *tool __used,
 				struct machine *machine)
 {
 	struct thread *thread = machine__findnew_thread(machine, event->ip.pid);
+=======
+static int process_sample_event(union perf_event *event,
+				struct perf_sample *sample,
+				struct perf_evsel *evsel __used,
+				struct perf_session *session)
+{
+	struct thread *thread = perf_session__findnew(session, event->ip.pid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (thread == NULL) {
 		pr_debug("problem processing %d event, skipping it.\n",
@@ -328,7 +348,11 @@ static int process_sample_event(struct perf_tool *tool __used,
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct perf_tool perf_kmem = {
+=======
+static struct perf_event_ops event_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.sample			= process_sample_event,
 	.comm			= perf_event__process_comm,
 	.ordered_samples	= true,
@@ -487,7 +511,11 @@ static int __cmd_kmem(void)
 {
 	int err = -EINVAL;
 	struct perf_session *session = perf_session__new(input_name, O_RDONLY,
+<<<<<<< HEAD
 							 0, false, &perf_kmem);
+=======
+							 0, false, &event_ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (session == NULL)
 		return -ENOMEM;
 
@@ -498,7 +526,11 @@ static int __cmd_kmem(void)
 		goto out_delete;
 
 	setup_pager();
+<<<<<<< HEAD
 	err = perf_session__process_events(session, &perf_kmem);
+=======
+	err = perf_session__process_events(session, &event_ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err != 0)
 		goto out_delete;
 	sort_result();
@@ -647,7 +679,10 @@ static int setup_sorting(struct list_head *sort_list, const char *arg)
 			break;
 		if (sort_dimension__add(tok, sort_list) < 0) {
 			error("Unknown --sort key: '%s'", tok);
+<<<<<<< HEAD
 			free(str);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -1;
 		}
 	}

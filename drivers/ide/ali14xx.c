@@ -221,7 +221,11 @@ static int __init ali14xx_probe(void)
 	return ide_legacy_device_add(&ali14xx_port_info, 0);
 }
 
+<<<<<<< HEAD
 static bool probe_ali14xx;
+=======
+static int probe_ali14xx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_named(probe, probe_ali14xx, bool, 0);
 MODULE_PARM_DESC(probe, "probe for ALI M14xx chipsets");

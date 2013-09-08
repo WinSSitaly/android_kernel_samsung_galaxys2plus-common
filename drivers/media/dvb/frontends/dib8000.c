@@ -81,6 +81,7 @@ struct dib8000_state {
 	u8 i2c_write_buffer[4];
 	u8 i2c_read_buffer[2];
 	struct mutex i2c_buffer_lock;
+<<<<<<< HEAD
 	u8 input_mode_mpeg;
 
 	u16 tuner_enable;
@@ -90,6 +91,13 @@ struct dib8000_state {
 enum dib8000_power_mode {
 	DIB8000_POWER_ALL = 0,
 	DIB8000_POWER_INTERFACE_ONLY,
+=======
+};
+
+enum dib8000_power_mode {
+	DIB8000M_POWER_ALL = 0,
+	DIB8000M_POWER_INTERFACE_ONLY,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static u16 dib8000_i2c_read16(struct i2c_device *i2c, u16 reg)
@@ -432,21 +440,30 @@ static void dib8000_set_power_mode(struct dib8000_state *state, enum dib8000_pow
 	/* by default everything is going to be powered off */
 	u16 reg_774 = 0x3fff, reg_775 = 0xffff, reg_776 = 0xffff,
 		reg_900 = (dib8000_read_word(state, 900) & 0xfffc) | 0x3,
+<<<<<<< HEAD
 		reg_1280;
 
 	if (state->revision != 0x8090)
 		reg_1280 = (dib8000_read_word(state, 1280) & 0x00ff) | 0xff00;
 	else
 		reg_1280 = (dib8000_read_word(state, 1280) & 0x707f) | 0x8f80;
+=======
+		reg_1280 = (dib8000_read_word(state, 1280) & 0x00ff) | 0xff00;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* now, depending on the requested mode, we power on */
 	switch (mode) {
 		/* power up everything in the demod */
+<<<<<<< HEAD
 	case DIB8000_POWER_ALL:
+=======
+	case DIB8000M_POWER_ALL:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reg_774 = 0x0000;
 		reg_775 = 0x0000;
 		reg_776 = 0x0000;
 		reg_900 &= 0xfffc;
+<<<<<<< HEAD
 		if (state->revision != 0x8090)
 			reg_1280 &= 0x00ff;
 		else
@@ -457,6 +474,12 @@ static void dib8000_set_power_mode(struct dib8000_state *state, enum dib8000_pow
 			reg_1280 &= 0x00ff;
 		else
 			reg_1280 &= 0xfa7b;
+=======
+		reg_1280 &= 0x00ff;
+		break;
+	case DIB8000M_POWER_INTERFACE_ONLY:
+		reg_1280 &= 0x00ff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -468,6 +491,7 @@ static void dib8000_set_power_mode(struct dib8000_state *state, enum dib8000_pow
 	dib8000_write_word(state, 1280, reg_1280);
 }
 
+<<<<<<< HEAD
 static int dib8000_init_sdram(struct dib8000_state *state)
 {
 	u16 reg = 0;
@@ -529,6 +553,21 @@ static int dib8000_set_adc_state(struct dib8000_state *state, enum dibx000_adc_s
 			dib8000_write_word(state, 1925,
 					(reg & ~(1<<2)) | (1<<4));
 		}
+=======
+static int dib8000_set_adc_state(struct dib8000_state *state, enum dibx000_adc_states no)
+{
+	int ret = 0;
+	u16 reg_907 = dib8000_read_word(state, 907), reg_908 = dib8000_read_word(state, 908);
+
+	switch (no) {
+	case DIBX000_SLOW_ADC_ON:
+		reg_908 |= (1 << 1) | (1 << 0);
+		ret |= dib8000_write_word(state, 908, reg_908);
+		reg_908 &= ~(1 << 1);
+		break;
+
+	case DIBX000_SLOW_ADC_OFF:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reg_908 |= (1 << 1) | (1 << 0);
 		break;
 
@@ -584,12 +623,16 @@ static int dib8000_set_bandwidth(struct dvb_frontend *fe, u32 bw)
 
 static int dib8000_sad_calib(struct dib8000_state *state)
 {
+<<<<<<< HEAD
 	if (state->revision == 0x8090) {
 		dprintk("%s: the sad calibration is not needed for the dib8096P",
 				__func__);
 		return 0;
 	}
 	/* internal */
+=======
+/* internal */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dib8000_write_word(state, 923, (0 << 1) | (0 << 0));
 	dib8000_write_word(state, 924, 776);	// 0.625*3.3 / 4096
 
@@ -614,6 +657,7 @@ EXPORT_SYMBOL(dib8000_set_wbd_ref);
 static void dib8000_reset_pll_common(struct dib8000_state *state, const struct dibx000_bandwidth_config *bw)
 {
 	dprintk("ifreq: %d %x, inversion: %d", bw->ifreq, bw->ifreq, bw->ifreq >> 25);
+<<<<<<< HEAD
 	if (state->revision != 0x8090) {
 		dib8000_write_word(state, 23,
 				(u16) (((bw->internal * 1000) >> 16) & 0xffff));
@@ -624,17 +668,26 @@ static void dib8000_reset_pll_common(struct dib8000_state *state, const struct d
 		dib8000_write_word(state, 24,
 				(u16) ((bw->internal  / 2 * 1000) & 0xffff));
 	}
+=======
+	dib8000_write_word(state, 23, (u16) (((bw->internal * 1000) >> 16) & 0xffff));	/* P_sec_len */
+	dib8000_write_word(state, 24, (u16) ((bw->internal * 1000) & 0xffff));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dib8000_write_word(state, 27, (u16) ((bw->ifreq >> 16) & 0x01ff));
 	dib8000_write_word(state, 28, (u16) (bw->ifreq & 0xffff));
 	dib8000_write_word(state, 26, (u16) ((bw->ifreq >> 25) & 0x0003));
 
+<<<<<<< HEAD
 	if (state->revision != 0x8090)
 		dib8000_write_word(state, 922, bw->sad_cfg);
+=======
+	dib8000_write_word(state, 922, bw->sad_cfg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void dib8000_reset_pll(struct dib8000_state *state)
 {
 	const struct dibx000_bandwidth_config *pll = state->cfg.pll;
+<<<<<<< HEAD
 	u16 clk_cfg1, reg;
 
 	if (state->revision != 0x8090) {
@@ -680,10 +733,39 @@ static void dib8000_reset_pll(struct dib8000_state *state)
 
 		dib8000_write_word(state, 904, (pll->modulo << 8));
 	}
+=======
+	u16 clk_cfg1;
+
+	// clk_cfg0
+	dib8000_write_word(state, 901, (pll->pll_prediv << 8) | (pll->pll_ratio << 0));
+
+	// clk_cfg1
+	clk_cfg1 = (1 << 10) | (0 << 9) | (pll->IO_CLK_en_core << 8) |
+		(pll->bypclk_div << 5) | (pll->enable_refdiv << 4) | (1 << 3) |
+		(pll->pll_range << 1) | (pll->pll_reset << 0);
+
+	dib8000_write_word(state, 902, clk_cfg1);
+	clk_cfg1 = (clk_cfg1 & 0xfff7) | (pll->pll_bypass << 3);
+	dib8000_write_word(state, 902, clk_cfg1);
+
+	dprintk("clk_cfg1: 0x%04x", clk_cfg1);	/* 0x507 1 0 1 000 0 0 11 1 */
+
+	/* smpl_cfg: P_refclksel=2, P_ensmplsel=1 nodivsmpl=1 */
+	if (state->cfg.pll->ADClkSrc == 0)
+		dib8000_write_word(state, 904, (0 << 15) | (0 << 12) | (0 << 10) |
+				(pll->modulo << 8) | (pll->ADClkSrc << 7) | (0 << 1));
+	else if (state->cfg.refclksel != 0)
+		dib8000_write_word(state, 904, (0 << 15) | (1 << 12) |
+				((state->cfg.refclksel & 0x3) << 10) | (pll->modulo << 8) |
+				(pll->ADClkSrc << 7) | (0 << 1));
+	else
+		dib8000_write_word(state, 904, (0 << 15) | (1 << 12) | (3 << 10) | (pll->modulo << 8) | (pll->ADClkSrc << 7) | (0 << 1));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dib8000_reset_pll_common(state, pll);
 }
 
+<<<<<<< HEAD
 int dib8000_update_pll(struct dvb_frontend *fe,
 		struct dibx000_bandwidth_config *pll)
 {
@@ -737,6 +819,8 @@ int dib8000_update_pll(struct dvb_frontend *fe,
 EXPORT_SYMBOL(dib8000_update_pll);
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int dib8000_reset_gpio(struct dib8000_state *st)
 {
 	/* reset the GPIOs */
@@ -870,6 +954,12 @@ static const u16 dib8000_defaults[] = {
 		(3 << 5) |		/* P_ctrl_pre_freq_step=3 */
 		(1 << 0),		/* P_pre_freq_win_len=1 */
 
+<<<<<<< HEAD
+=======
+	1, 903,
+	(0 << 4) | 2,		// P_divclksel=0 P_divbitsel=2 (was clk=3,bit=1 for MPW)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	0,
 };
 
@@ -886,8 +976,12 @@ static u16 dib8000_identify(struct i2c_device *client)
 	}
 
 	value = dib8000_i2c_read16(client, 897);
+<<<<<<< HEAD
 	if (value != 0x8000 && value != 0x8001 &&
 			value != 0x8002 && value != 0x8090) {
+=======
+	if (value != 0x8000 && value != 0x8001 && value != 0x8002) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dprintk("wrong Device ID (%x)", value);
 		return 0;
 	}
@@ -902,9 +996,12 @@ static u16 dib8000_identify(struct i2c_device *client)
 	case 0x8002:
 		dprintk("found DiB8000C");
 		break;
+<<<<<<< HEAD
 	case 0x8090:
 		dprintk("found DiB8096P");
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return value;
 }
@@ -913,6 +1010,7 @@ static int dib8000_reset(struct dvb_frontend *fe)
 {
 	struct dib8000_state *state = fe->demodulator_priv;
 
+<<<<<<< HEAD
 	if ((state->revision = dib8000_identify(&state->i2c)) == 0)
 		return -EINVAL;
 
@@ -920,12 +1018,23 @@ static int dib8000_reset(struct dvb_frontend *fe)
 	if (state->revision != 0x8090)
 		dib8000_write_word(state, 1287, 0x0003);
 
+=======
+	dib8000_write_word(state, 1287, 0x0003);	/* sram lead in, rdy */
+
+	if ((state->revision = dib8000_identify(&state->i2c)) == 0)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (state->revision == 0x8000)
 		dprintk("error : dib8000 MA not supported");
 
 	dibx000_reset_i2c_master(&state->i2c_master);
 
+<<<<<<< HEAD
 	dib8000_set_power_mode(state, DIB8000_POWER_ALL);
+=======
+	dib8000_set_power_mode(state, DIB8000M_POWER_ALL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* always leave the VBG voltage on - it consumes almost nothing but takes a long time to start */
 	dib8000_set_adc_state(state, DIBX000_VBG_ENABLE);
@@ -934,10 +1043,15 @@ static int dib8000_reset(struct dvb_frontend *fe)
 	dib8000_write_word(state, 770, 0xffff);
 	dib8000_write_word(state, 771, 0xffff);
 	dib8000_write_word(state, 772, 0xfffc);
+<<<<<<< HEAD
 	if (state->revision == 0x8090)
 		dib8000_write_word(state, 1280, 0x0045);
 	else
 		dib8000_write_word(state, 1280, 0x004d);
+=======
+	dib8000_write_word(state, 898, 0x000c);	// sad
+	dib8000_write_word(state, 1280, 0x004d);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dib8000_write_word(state, 1281, 0x000c);
 
 	dib8000_write_word(state, 770, 0x0000);
@@ -948,6 +1062,7 @@ static int dib8000_reset(struct dvb_frontend *fe)
 	dib8000_write_word(state, 1281, 0x0000);
 
 	/* drives */
+<<<<<<< HEAD
 	if (state->revision != 0x8090) {
 		if (state->cfg.drives)
 			dib8000_write_word(state, 906, state->cfg.drives);
@@ -961,12 +1076,26 @@ static int dib8000_reset(struct dvb_frontend *fe)
 	dib8000_reset_pll(state);
 	if (state->revision != 0x8090)
 		dib8000_write_word(state, 898, 0x0004);
+=======
+	if (state->cfg.drives)
+		dib8000_write_word(state, 906, state->cfg.drives);
+	else {
+		dprintk("using standard PAD-drive-settings, please adjust settings in config-struct to be optimal.");
+		dib8000_write_word(state, 906, 0x2d98);	// min drive SDRAM - not optimal - adjust
+	}
+
+	dib8000_reset_pll(state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dib8000_reset_gpio(state) != 0)
 		dprintk("GPIO reset was not successful.");
 
+<<<<<<< HEAD
 	if ((state->revision != 0x8090) &&
 			(dib8000_set_output_mode(fe, OUTMODE_HIGH_Z) != 0))
+=======
+	if (dib8000_set_output_mode(fe, OUTMODE_HIGH_Z) != 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dprintk("OUTPUT_MODE could not be resetted.");
 
 	state->current_agc = NULL;
@@ -992,8 +1121,11 @@ static int dib8000_reset(struct dvb_frontend *fe)
 			l = *n++;
 		}
 	}
+<<<<<<< HEAD
 	if (state->revision != 0x8090)
 		dib8000_write_word(state, 903, (0 << 4) | 2);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	state->isdbt_cfg_loaded = 0;
 
 	//div_cfg override for special configs
@@ -1006,12 +1138,19 @@ static int dib8000_reset(struct dvb_frontend *fe)
 	dib8000_set_bandwidth(fe, 6000);
 
 	dib8000_set_adc_state(state, DIBX000_SLOW_ADC_ON);
+<<<<<<< HEAD
 	if (state->revision != 0x8090) {
 		dib8000_sad_calib(state);
 		dib8000_set_adc_state(state, DIBX000_SLOW_ADC_OFF);
 	}
 
 	dib8000_set_power_mode(state, DIB8000_POWER_INTERFACE_ONLY);
+=======
+	dib8000_sad_calib(state);
+	dib8000_set_adc_state(state, DIBX000_SLOW_ADC_OFF);
+
+	dib8000_set_power_mode(state, DIB8000M_POWER_INTERFACE_ONLY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1043,8 +1182,11 @@ static int dib8000_set_agc_config(struct dib8000_state *state, u8 band)
 {
 	struct dibx000_agc_config *agc = NULL;
 	int i;
+<<<<<<< HEAD
 	u16 reg;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (state->current_band == band && state->current_agc != NULL)
 		return 0;
 	state->current_band = band;
@@ -1080,12 +1222,15 @@ static int dib8000_set_agc_config(struct dib8000_state *state, u8 band)
 		dib8000_write_word(state, 106, state->wbd_ref);
 	else			// use default
 		dib8000_write_word(state, 106, agc->wbd_ref);
+<<<<<<< HEAD
 
 	if (state->revision == 0x8090) {
 		reg = dib8000_read_word(state, 922) & (0x3 << 2);
 		dib8000_write_word(state, 922, reg | (agc->wbd_sel << 2));
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dib8000_write_word(state, 107, (agc->wbd_alpha << 9) | (agc->perform_agc_softsplit << 8));
 	dib8000_write_word(state, 108, agc->agc1_max);
 	dib8000_write_word(state, 109, agc->agc1_min);
@@ -1097,10 +1242,14 @@ static int dib8000_set_agc_config(struct dib8000_state *state, u8 band)
 	dib8000_write_word(state, 115, (agc->agc2_slope1 << 8) | agc->agc2_slope2);
 
 	dib8000_write_word(state, 75, agc->agc1_pt3);
+<<<<<<< HEAD
 	if (state->revision != 0x8090)
 		dib8000_write_word(state, 923,
 				(dib8000_read_word(state, 923) & 0xffe3) |
 				(agc->wbd_inv << 4) | (agc->wbd_sel << 2));
+=======
+	dib8000_write_word(state, 923, (dib8000_read_word(state, 923) & 0xffe3) | (agc->wbd_inv << 4) | (agc->wbd_sel << 2));	/*LB : 929 -> 923 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1143,13 +1292,19 @@ static int dib8000_agc_startup(struct dvb_frontend *fe)
 {
 	struct dib8000_state *state = fe->demodulator_priv;
 	enum frontend_tune_state *tune_state = &state->tune_state;
+<<<<<<< HEAD
 	int ret = 0;
 	u16 reg, upd_demod_gain_period = 0x8000;
+=======
+
+	int ret = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (*tune_state) {
 	case CT_AGC_START:
 		// set power-up level: interf+analog+AGC
 
+<<<<<<< HEAD
 		if (state->revision != 0x8090)
 			dib8000_set_adc_state(state, DIBX000_ADC_ON);
 		else {
@@ -1167,6 +1322,9 @@ static int dib8000_agc_startup(struct dvb_frontend *fe)
 			dib8000_write_word(state, 1920, (reg | 0x3) &
 					(~(1 << 7)));
 		}
+=======
+		dib8000_set_adc_state(state, DIBX000_ADC_ON);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (dib8000_set_agc_config(state, (unsigned char)(BAND_OF_FREQUENCY(fe->dtv_property_cache.frequency / 1000))) != 0) {
 			*tune_state = CT_AGC_STOP;
@@ -1217,6 +1375,7 @@ static int dib8000_agc_startup(struct dvb_frontend *fe)
 
 }
 
+<<<<<<< HEAD
 static void dib8096p_host_bus_drive(struct dib8000_state *state, u8 drive)
 {
 	u16 reg;
@@ -1790,6 +1949,8 @@ int dib8096p_tuner_sleep(struct dvb_frontend *fe, int onoff)
 }
 EXPORT_SYMBOL(dib8096p_tuner_sleep);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const s32 lut_1000ln_mant[] =
 {
 	908, 7003, 7090, 7170, 7244, 7313, 7377, 7438, 7495, 7549, 7600
@@ -1815,6 +1976,7 @@ s32 dib8000_get_adc_power(struct dvb_frontend *fe, u8 mode)
 }
 EXPORT_SYMBOL(dib8000_get_adc_power);
 
+<<<<<<< HEAD
 int dib8090p_get_dc_power(struct dvb_frontend *fe, u8 IQ)
 {
 	struct dib8000_state *state = fe->demodulator_priv;
@@ -1835,6 +1997,8 @@ int dib8090p_get_dc_power(struct dvb_frontend *fe, u8 IQ)
 }
 EXPORT_SYMBOL(dib8090p_get_dc_power);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void dib8000_update_timf(struct dib8000_state *state)
 {
 	u32 timf = state->timf = dib8000_read32(state, 435);
@@ -1844,6 +2008,7 @@ static void dib8000_update_timf(struct dib8000_state *state)
 	dprintk("Updated timing frequency: %d (default: %d)", state->timf, state->timf_default);
 }
 
+<<<<<<< HEAD
 u32 dib8000_ctrl_timf(struct dvb_frontend *fe, uint8_t op, uint32_t timf)
 {
 	struct dib8000_state *state = fe->demodulator_priv;
@@ -1864,6 +2029,8 @@ u32 dib8000_ctrl_timf(struct dvb_frontend *fe, uint8_t op, uint32_t timf)
 }
 EXPORT_SYMBOL(dib8000_ctrl_timf);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const u16 adc_target_16dB[11] = {
 	(1 << 13) - 825 - 117,
 	(1 << 13) - 837 - 117,
@@ -1890,9 +2057,12 @@ static void dib8000_set_channel(struct dib8000_state *state, u8 seq, u8 autosear
 	u16 init_prbs = 0xfff;
 	u16 ana_gain = 0;
 
+<<<<<<< HEAD
 	if (state->revision == 0x8090)
 		dib8000_init_sdram(state);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (state->ber_monitored_layer != LAYER_ALL)
 		dib8000_write_word(state, 285, (dib8000_read_word(state, 285) & 0x60) | state->ber_monitored_layer);
 	else
@@ -2225,10 +2395,14 @@ static void dib8000_set_channel(struct dib8000_state *state, u8 seq, u8 autosear
 	dprintk("nbseg_diff = %X (%d)", seg_diff_mask, seg_diff_mask);
 
 	state->differential_constellation = (seg_diff_mask != 0);
+<<<<<<< HEAD
 	if (state->revision != 0x8090)
 		dib8000_set_diversity_in(state->fe[0], state->diversity_onoff);
 	else
 		dib8096p_set_diversity_in(state->fe[0], state->diversity_onoff);
+=======
+	dib8000_set_diversity_in(state->fe[0], state->diversity_onoff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (state->fe[0]->dtv_property_cache.isdbt_sb_mode == 1) {
 		if (state->fe[0]->dtv_property_cache.isdbt_partial_reception == 1)
@@ -2680,7 +2854,11 @@ static int dib8000_tune(struct dvb_frontend *fe)
 {
 	struct dib8000_state *state = fe->demodulator_priv;
 	int ret = 0;
+<<<<<<< HEAD
 	u16 lock, value, mode = fft_to_mode(state);
+=======
+	u16 value, mode = fft_to_mode(state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	// we are already tuned - just resuming from suspend
 	if (state == NULL)
@@ -2734,11 +2912,15 @@ static int dib8000_tune(struct dvb_frontend *fe)
 	}
 
 	// we achieved a coff_cpil_lock - it's time to update the timf
+<<<<<<< HEAD
 	if (state->revision != 0x8090)
 		lock = dib8000_read_word(state, 568);
 	else
 		lock = dib8000_read_word(state, 570);
 	if ((lock >> 11) & 0x1)
+=======
+	if ((dib8000_read_word(state, 568) >> 11) & 0x1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dib8000_update_timf(state);
 
 	//now that tune is finished, lock0 should lock on fec_mpeg to output this lock on MP_LOCK. It's changed in autosearch start
@@ -2760,14 +2942,21 @@ static int dib8000_wakeup(struct dvb_frontend *fe)
 	u8 index_frontend;
 	int ret;
 
+<<<<<<< HEAD
 	dib8000_set_power_mode(state, DIB8000_POWER_ALL);
+=======
+	dib8000_set_power_mode(state, DIB8000M_POWER_ALL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dib8000_set_adc_state(state, DIBX000_ADC_ON);
 	if (dib8000_set_adc_state(state, DIBX000_SLOW_ADC_ON) != 0)
 		dprintk("could not start Slow ADC");
 
+<<<<<<< HEAD
 	if (state->revision != 0x8090)
 		dib8000_sad_calib(state);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (index_frontend = 1; (index_frontend < MAX_NUMBER_OF_FRONTENDS) && (state->fe[index_frontend] != NULL); index_frontend++) {
 		ret = state->fe[index_frontend]->ops.init(state->fe[index_frontend]);
 		if (ret < 0)
@@ -2789,9 +2978,14 @@ static int dib8000_sleep(struct dvb_frontend *fe)
 			return ret;
 	}
 
+<<<<<<< HEAD
 	if (state->revision != 0x8090)
 		dib8000_set_output_mode(fe, OUTMODE_HIGH_Z);
 	dib8000_set_power_mode(state, DIB8000_POWER_INTERFACE_ONLY);
+=======
+	dib8000_set_output_mode(fe, OUTMODE_HIGH_Z);
+	dib8000_set_power_mode(state, DIB8000M_POWER_INTERFACE_ONLY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return dib8000_set_adc_state(state, DIBX000_SLOW_ADC_OFF) | dib8000_set_adc_state(state, DIBX000_ADC_OFF);
 }
 
@@ -2810,7 +3004,11 @@ int dib8000_set_tune_state(struct dvb_frontend *fe, enum frontend_tune_state tun
 }
 EXPORT_SYMBOL(dib8000_set_tune_state);
 
+<<<<<<< HEAD
 static int dib8000_get_frontend(struct dvb_frontend *fe)
+=======
+static int dib8000_get_frontend(struct dvb_frontend *fe, struct dvb_frontend_parameters *fep)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dib8000_state *state = fe->demodulator_priv;
 	u16 i, val = 0;
@@ -2824,7 +3022,11 @@ static int dib8000_get_frontend(struct dvb_frontend *fe)
 		if (stat&FE_HAS_SYNC) {
 			dprintk("TMCC lock on the slave%i", index_frontend);
 			/* synchronize the cache with the other frontends */
+<<<<<<< HEAD
 			state->fe[index_frontend]->ops.get_frontend(state->fe[index_frontend]);
+=======
+			state->fe[index_frontend]->ops.get_frontend(state->fe[index_frontend], fep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			for (sub_index_frontend = 0; (sub_index_frontend < MAX_NUMBER_OF_FRONTENDS) && (state->fe[sub_index_frontend] != NULL); sub_index_frontend++) {
 				if (sub_index_frontend != index_frontend) {
 					state->fe[sub_index_frontend]->dtv_property_cache.isdbt_sb_mode = state->fe[index_frontend]->dtv_property_cache.isdbt_sb_mode;
@@ -2846,10 +3048,14 @@ static int dib8000_get_frontend(struct dvb_frontend *fe)
 
 	fe->dtv_property_cache.isdbt_sb_mode = dib8000_read_word(state, 508) & 0x1;
 
+<<<<<<< HEAD
 	if (state->revision == 0x8090)
 		val = dib8000_read_word(state, 572);
 	else
 		val = dib8000_read_word(state, 570);
+=======
+	val = dib8000_read_word(state, 570);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fe->dtv_property_cache.inversion = (val & 0x40) >> 6;
 	switch ((val & 0x30) >> 4) {
 	case 1:
@@ -2956,7 +3162,11 @@ static int dib8000_get_frontend(struct dvb_frontend *fe)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int dib8000_set_frontend(struct dvb_frontend *fe)
+=======
+static int dib8000_set_frontend(struct dvb_frontend *fe, struct dvb_frontend_parameters *fep)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dib8000_state *state = fe->demodulator_priv;
 	u8 nbr_pending, exit_condition, index_frontend;
@@ -2979,6 +3189,7 @@ static int dib8000_set_frontend(struct dvb_frontend *fe)
 		state->fe[index_frontend]->dtv_property_cache.delivery_system = SYS_ISDBT;
 		memcpy(&state->fe[index_frontend]->dtv_property_cache, &fe->dtv_property_cache, sizeof(struct dtv_frontend_properties));
 
+<<<<<<< HEAD
 		if (state->revision != 0x8090)
 			dib8000_set_output_mode(state->fe[index_frontend],
 					OUTMODE_HIGH_Z);
@@ -2987,6 +3198,11 @@ static int dib8000_set_frontend(struct dvb_frontend *fe)
 					OUTMODE_HIGH_Z);
 		if (state->fe[index_frontend]->ops.tuner_ops.set_params)
 			state->fe[index_frontend]->ops.tuner_ops.set_params(state->fe[index_frontend]);
+=======
+		dib8000_set_output_mode(state->fe[index_frontend], OUTMODE_HIGH_Z);
+		if (state->fe[index_frontend]->ops.tuner_ops.set_params)
+			state->fe[index_frontend]->ops.tuner_ops.set_params(state->fe[index_frontend], fep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		dib8000_set_tune_state(state->fe[index_frontend], CT_AGC_START);
 	}
@@ -3041,7 +3257,11 @@ static int dib8000_set_frontend(struct dvb_frontend *fe)
 			 ((state->fe[0]->dtv_property_cache.layer[1].segment_count == 0) ||
 			  ((state->fe[0]->dtv_property_cache.isdbt_layer_enabled & (2 << 0)) == 0)) &&
 			 ((state->fe[0]->dtv_property_cache.layer[2].segment_count == 0) || ((state->fe[0]->dtv_property_cache.isdbt_layer_enabled & (3 << 0)) == 0)))) {
+<<<<<<< HEAD
 		int i = 100;
+=======
+		int i = 80000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u8 found = 0;
 		u8 tune_failed = 0;
 
@@ -3069,7 +3289,10 @@ static int dib8000_set_frontend(struct dvb_frontend *fe)
 					default:
 						 dprintk("unhandled autosearch result");
 					case 1:
+<<<<<<< HEAD
 						 tune_failed |= (1 << index_frontend);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						 dprintk("autosearch failed for the frontend%i", index_frontend);
 						 break;
 					}
@@ -3088,13 +3311,18 @@ static int dib8000_set_frontend(struct dvb_frontend *fe)
 
 		dprintk("tune success on frontend%i", index_frontend_success);
 
+<<<<<<< HEAD
 		dib8000_get_frontend(fe);
+=======
+		dib8000_get_frontend(fe, fep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	for (index_frontend = 0, ret = 0; (ret >= 0) && (index_frontend < MAX_NUMBER_OF_FRONTENDS) && (state->fe[index_frontend] != NULL); index_frontend++)
 		ret = dib8000_tune(state->fe[index_frontend]);
 
 	/* set output mode and diversity input */
+<<<<<<< HEAD
 	if (state->revision != 0x8090) {
 		dib8000_set_output_mode(state->fe[0], state->cfg.output_mode);
 		for (index_frontend = 1;
@@ -3127,6 +3355,17 @@ static int dib8000_set_frontend(struct dvb_frontend *fe)
 		dib8096p_set_diversity_in(state->fe[index_frontend-1], 0);
 	}
 
+=======
+	dib8000_set_output_mode(state->fe[0], state->cfg.output_mode);
+	for (index_frontend = 1; (index_frontend < MAX_NUMBER_OF_FRONTENDS) && (state->fe[index_frontend] != NULL); index_frontend++) {
+		dib8000_set_output_mode(state->fe[index_frontend], OUTMODE_DIVERSITY);
+		dib8000_set_diversity_in(state->fe[index_frontend-1], 1);
+	}
+
+	/* turn off the diversity of the last chip */
+	dib8000_set_diversity_in(state->fe[index_frontend-1], 0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -3134,14 +3373,18 @@ static u16 dib8000_read_lock(struct dvb_frontend *fe)
 {
 	struct dib8000_state *state = fe->demodulator_priv;
 
+<<<<<<< HEAD
 	if (state->revision == 0x8090)
 		return dib8000_read_word(state, 570);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return dib8000_read_word(state, 568);
 }
 
 static int dib8000_read_status(struct dvb_frontend *fe, fe_status_t * stat)
 {
 	struct dib8000_state *state = fe->demodulator_priv;
+<<<<<<< HEAD
 	u16 lock_slave = 0, lock;
 	u8 index_frontend;
 
@@ -3150,6 +3393,11 @@ static int dib8000_read_status(struct dvb_frontend *fe, fe_status_t * stat)
 	else
 		lock = dib8000_read_word(state, 568);
 
+=======
+	u16 lock_slave = 0, lock = dib8000_read_word(state, 568);
+	u8 index_frontend;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (index_frontend = 1; (index_frontend < MAX_NUMBER_OF_FRONTENDS) && (state->fe[index_frontend] != NULL); index_frontend++)
 		lock_slave |= dib8000_read_lock(state->fe[index_frontend]);
 
@@ -3187,6 +3435,7 @@ static int dib8000_read_status(struct dvb_frontend *fe, fe_status_t * stat)
 static int dib8000_read_ber(struct dvb_frontend *fe, u32 * ber)
 {
 	struct dib8000_state *state = fe->demodulator_priv;
+<<<<<<< HEAD
 
 	/* 13 segments */
 	if (state->revision == 0x8090)
@@ -3195,18 +3444,25 @@ static int dib8000_read_ber(struct dvb_frontend *fe, u32 * ber)
 	else
 		*ber = (dib8000_read_word(state, 560) << 16) |
 			dib8000_read_word(state, 561);
+=======
+	*ber = (dib8000_read_word(state, 560) << 16) | dib8000_read_word(state, 561);	// 13 segments
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int dib8000_read_unc_blocks(struct dvb_frontend *fe, u32 * unc)
 {
 	struct dib8000_state *state = fe->demodulator_priv;
+<<<<<<< HEAD
 
 	/* packet error on 13 seg */
 	if (state->revision == 0x8090)
 		*unc = dib8000_read_word(state, 567);
 	else
 		*unc = dib8000_read_word(state, 565);
+=======
+	*unc = dib8000_read_word(state, 565);	// packet error on 13 seg
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -3239,20 +3495,28 @@ static u32 dib8000_get_snr(struct dvb_frontend *fe)
 	u32 n, s, exp;
 	u16 val;
 
+<<<<<<< HEAD
 	if (state->revision != 0x8090)
 		val = dib8000_read_word(state, 542);
 	else
 		val = dib8000_read_word(state, 544);
+=======
+	val = dib8000_read_word(state, 542);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	n = (val >> 6) & 0xff;
 	exp = (val & 0x3f);
 	if ((exp & 0x20) != 0)
 		exp -= 0x40;
 	n <<= exp+16;
 
+<<<<<<< HEAD
 	if (state->revision != 0x8090)
 		val = dib8000_read_word(state, 543);
 	else
 		val = dib8000_read_word(state, 545);
+=======
+	val = dib8000_read_word(state, 543);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	s = (val >> 6) & 0xff;
 	exp = (val & 0x3f);
 	if ((exp & 0x20) != 0)
@@ -3276,7 +3540,11 @@ static int dib8000_read_snr(struct dvb_frontend *fe, u16 * snr)
 	for (index_frontend = 1; (index_frontend < MAX_NUMBER_OF_FRONTENDS) && (state->fe[index_frontend] != NULL); index_frontend++)
 		snr_master += dib8000_get_snr(state->fe[index_frontend]);
 
+<<<<<<< HEAD
 	if ((snr_master >> 16) != 0) {
+=======
+	if (snr_master != 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snr_master = 10*intlog10(snr_master>>16);
 		*snr = snr_master / ((1 << 24) / 10);
 	}
@@ -3333,8 +3601,12 @@ struct dvb_frontend *dib8000_get_slave_frontend(struct dvb_frontend *fe, int sla
 EXPORT_SYMBOL(dib8000_get_slave_frontend);
 
 
+<<<<<<< HEAD
 int dib8000_i2c_enumeration(struct i2c_adapter *host, int no_of_demods,
 		u8 default_addr, u8 first_addr, u8 is_dib8096p)
+=======
+int dib8000_i2c_enumeration(struct i2c_adapter *host, int no_of_demods, u8 default_addr, u8 first_addr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int k = 0, ret = 0;
 	u8 new_addr = 0;
@@ -3364,12 +3636,18 @@ int dib8000_i2c_enumeration(struct i2c_adapter *host, int no_of_demods,
 		new_addr = first_addr + (k << 1);
 
 		client.addr = new_addr;
+<<<<<<< HEAD
 		if (!is_dib8096p)
 			dib8000_i2c_write16(&client, 1287, 0x0003);	/* sram lead in, rdy */
 		if (dib8000_identify(&client) == 0) {
 			/* sram lead in, rdy */
 			if (!is_dib8096p)
 				dib8000_i2c_write16(&client, 1287, 0x0003);
+=======
+		dib8000_i2c_write16(&client, 1287, 0x0003);	/* sram lead in, rdy */
+		if (dib8000_identify(&client) == 0) {
+			dib8000_i2c_write16(&client, 1287, 0x0003);	/* sram lead in, rdy */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			client.addr = default_addr;
 			if (dib8000_identify(&client) == 0) {
 				dprintk("#%d: not identified", k);
@@ -3428,7 +3706,10 @@ static void dib8000_release(struct dvb_frontend *fe)
 		dvb_frontend_detach(st->fe[index_frontend]);
 
 	dibx000_exit_i2c_master(&st->i2c_master);
+<<<<<<< HEAD
 	i2c_del_adapter(&st->dib8096p_tuner_adap);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(st->fe[0]);
 	kfree(st);
 }
@@ -3461,9 +3742,15 @@ int dib8000_pid_filter(struct dvb_frontend *fe, u8 id, u16 pid, u8 onoff)
 EXPORT_SYMBOL(dib8000_pid_filter);
 
 static const struct dvb_frontend_ops dib8000_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_ISDBT },
 	.info = {
 		 .name = "DiBcom 8000 ISDB-T",
+=======
+	.info = {
+		 .name = "DiBcom 8000 ISDB-T",
+		 .type = FE_OFDM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 .frequency_min = 44250000,
 		 .frequency_max = 867250000,
 		 .frequency_stepsize = 62500,
@@ -3531,6 +3818,7 @@ struct dvb_frontend *dib8000_attach(struct i2c_adapter *i2c_adap, u8 i2c_addr, s
 
 	dibx000_init_i2c_master(&state->i2c_master, DIB8000, state->i2c.adap, state->i2c.addr);
 
+<<<<<<< HEAD
 	/* init 8096p tuner adapter */
 	strncpy(state->dib8096p_tuner_adap.name, "DiB8096P tuner interface",
 			sizeof(state->dib8096p_tuner_adap.name));
@@ -3540,6 +3828,8 @@ struct dvb_frontend *dib8000_attach(struct i2c_adapter *i2c_adap, u8 i2c_addr, s
 	i2c_set_adapdata(&state->dib8096p_tuner_adap, state);
 	i2c_add_adapter(&state->dib8096p_tuner_adap);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dib8000_reset(fe);
 
 	dib8000_write_word(state, 285, (dib8000_read_word(state, 285) & ~0x60) | (3 << 5));	/* ber_rs_len = 3 */

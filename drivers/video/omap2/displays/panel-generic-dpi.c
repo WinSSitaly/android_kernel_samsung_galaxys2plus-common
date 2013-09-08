@@ -58,6 +58,33 @@ struct panel_config {
 
 /* Panel configurations */
 static struct panel_config generic_dpi_panels[] = {
+<<<<<<< HEAD
+=======
+	/* Generic Panel */
+	{
+		{
+			.x_res		= 640,
+			.y_res		= 480,
+
+			.pixel_clock	= 23500,
+
+			.hfp		= 48,
+			.hsw		= 32,
+			.hbp		= 80,
+
+			.vfp		= 3,
+			.vsw		= 4,
+			.vbp		= 7,
+		},
+		.acbi			= 0x0,
+		.acb			= 0x0,
+		.config			= OMAP_DSS_LCD_TFT,
+		.power_on_delay		= 0,
+		.power_off_delay	= 0,
+		.name			= "generic",
+	},
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Sharp LQ043T1DG01 */
 	{
 		{
@@ -208,6 +235,7 @@ static struct panel_config generic_dpi_panels[] = {
 		.power_off_delay	= 0,
 		.name			= "powertip_ph480272t",
 	},
+<<<<<<< HEAD
 
 	/* Innolux AT070TN83 */
 	{
@@ -386,6 +414,8 @@ static struct panel_config generic_dpi_panels[] = {
 
 		.name			= "innolux_at080tn52",
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct panel_drv_data {

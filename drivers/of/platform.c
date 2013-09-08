@@ -13,7 +13,10 @@
  */
 #include <linux/errno.h>
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/amba/bus.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/device.h>
 #include <linux/dma-mapping.h>
 #include <linux/slab.h>
@@ -55,7 +58,11 @@ EXPORT_SYMBOL(of_find_device_by_node);
 #include <asm/dcr.h>
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_OF_ADDRESS
+=======
+#if !defined(CONFIG_SPARC)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The following routines scan a subtree and registers a device for
  * each applicable node.
@@ -162,7 +169,11 @@ struct platform_device *of_device_alloc(struct device_node *np,
 	}
 
 	dev->dev.of_node = of_node_get(np);
+<<<<<<< HEAD
 #if defined(CONFIG_MICROBLAZE)
+=======
+#if defined(CONFIG_PPC) || defined(CONFIG_MICROBLAZE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->dev.dma_mask = &dev->archdata.dma_mask;
 #endif
 	dev->dev.parent = parent;
@@ -201,7 +212,11 @@ struct platform_device *of_platform_device_create_pdata(
 	if (!dev)
 		return NULL;
 
+<<<<<<< HEAD
 #if defined(CONFIG_MICROBLAZE)
+=======
+#if defined(CONFIG_PPC) || defined(CONFIG_MICROBLAZE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->archdata.dma_mask = 0xffffffffUL;
 #endif
 	dev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
@@ -238,6 +253,7 @@ struct platform_device *of_platform_device_create(struct device_node *np,
 }
 EXPORT_SYMBOL(of_platform_device_create);
 
+<<<<<<< HEAD
 #ifdef CONFIG_ARM_AMBA
 static struct amba_device *of_amba_device_create(struct device_node *node,
 						 const char *bus_id,
@@ -303,6 +319,8 @@ static struct amba_device *of_amba_device_create(struct device_node *node,
 }
 #endif /* CONFIG_ARM_AMBA */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * of_devname_lookup() - Given a device node, lookup the preferred Linux name
  */
@@ -310,6 +328,7 @@ static const struct of_dev_auxdata *of_dev_lookup(const struct of_dev_auxdata *l
 				 struct device_node *np)
 {
 	struct resource res;
+<<<<<<< HEAD
 
 	if (!lookup)
 		return NULL;
@@ -325,6 +344,20 @@ static const struct of_dev_auxdata *of_dev_lookup(const struct of_dev_auxdata *l
 		return lookup;
 	}
 
+=======
+	if (lookup) {
+		for(; lookup->name != NULL; lookup++) {
+			if (!of_device_is_compatible(np, lookup->compatible))
+				continue;
+			if (of_address_to_resource(np, 0, &res))
+				continue;
+			if (res.start != lookup->phys_addr)
+				continue;
+			pr_debug("%s: devname=%s\n", np->full_name, lookup->name);
+			return lookup;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NULL;
 }
 
@@ -332,9 +365,14 @@ static const struct of_dev_auxdata *of_dev_lookup(const struct of_dev_auxdata *l
  * of_platform_bus_create() - Create a device for a node and its children.
  * @bus: device node of the bus to instantiate
  * @matches: match table for bus nodes
+<<<<<<< HEAD
  * @lookup: auxdata table for matching id and platform_data with device nodes
  * @parent: parent for new device, or NULL for top level.
  * @strict: require compatible property
+=======
+ * disallow recursive creation of child buses
+ * @parent: parent for new device, or NULL for top level.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Creates a platform_device for the provided device_node, and optionally
  * recursively create devices for all the child nodes.
@@ -364,11 +402,14 @@ static int of_platform_bus_create(struct device_node *bus,
 		platform_data = auxdata->platform_data;
 	}
 
+<<<<<<< HEAD
 	if (of_device_is_compatible(bus, "arm,primecell")) {
 		of_amba_device_create(bus, bus_id, platform_data, parent);
 		return 0;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev = of_platform_device_create_pdata(bus, bus_id, platform_data, parent);
 	if (!dev || !of_match_node(matches, bus))
 		return 0;
@@ -462,4 +503,8 @@ int of_platform_populate(struct device_node *root,
 	of_node_put(root);
 	return rc;
 }
+<<<<<<< HEAD
 #endif /* CONFIG_OF_ADDRESS */
+=======
+#endif /* !CONFIG_SPARC */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

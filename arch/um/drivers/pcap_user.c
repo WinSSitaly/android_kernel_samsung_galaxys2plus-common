@@ -9,7 +9,13 @@
 #include <asm/types.h>
 #include "net_user.h"
 #include "pcap_user.h"
+<<<<<<< HEAD
 #include "um_malloc.h"
+=======
+#include "kern_constants.h"
+#include "um_malloc.h"
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PCAP_FD(p) (*(int *)(p))
 

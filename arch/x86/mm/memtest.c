@@ -34,7 +34,11 @@ static void __init reserve_bad_mem(u64 pattern, u64 start_bad, u64 end_bad)
 	       (unsigned long long) pattern,
 	       (unsigned long long) start_bad,
 	       (unsigned long long) end_bad);
+<<<<<<< HEAD
 	memblock_reserve(start_bad, end_bad - start_bad);
+=======
+	memblock_x86_reserve_range(start_bad, end_bad, "BAD RAM");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __init memtest(u64 pattern, u64 start_phys, u64 size)
@@ -70,6 +74,7 @@ static void __init memtest(u64 pattern, u64 start_phys, u64 size)
 
 static void __init do_one_pass(u64 pattern, u64 start, u64 end)
 {
+<<<<<<< HEAD
 	u64 i;
 	phys_addr_t this_start, this_end;
 
@@ -83,6 +88,26 @@ static void __init do_one_pass(u64 pattern, u64 start, u64 end)
 			       (unsigned long long)cpu_to_be64(pattern));
 			memtest(pattern, this_start, this_end - this_start);
 		}
+=======
+	u64 size = 0;
+
+	while (start < end) {
+		start = memblock_x86_find_in_range_size(start, &size, 1);
+
+		/* done ? */
+		if (start >= end)
+			break;
+		if (start + size > end)
+			size = end - start;
+
+		printk(KERN_INFO "  %010llx - %010llx pattern %016llx\n",
+		       (unsigned long long) start,
+		       (unsigned long long) start + size,
+		       (unsigned long long) cpu_to_be64(pattern));
+		memtest(pattern, start, size);
+
+		start += size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 

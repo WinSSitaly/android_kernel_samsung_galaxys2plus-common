@@ -15,9 +15,17 @@
 #include <unistd.h>
 #include <errno.h>
 #include <netinet/in.h>
+<<<<<<< HEAD
 #include "umcast.h"
 #include "net_user.h"
 #include "um_malloc.h"
+=======
+#include "kern_constants.h"
+#include "umcast.h"
+#include "net_user.h"
+#include "um_malloc.h"
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct sockaddr_in *new_addr(char *addr, unsigned short port)
 {

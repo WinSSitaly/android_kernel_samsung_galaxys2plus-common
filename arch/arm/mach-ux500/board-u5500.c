@@ -8,6 +8,7 @@
 #include <linux/init.h>
 #include <linux/platform_device.h>
 #include <linux/amba/bus.h>
+<<<<<<< HEAD
 #include <linux/irq.h>
 #include <linux/i2c.h>
 #include <linux/mfd/abx500/ab5500.h>
@@ -20,10 +21,19 @@
 #include <plat/i2c.h>
 #include <plat/gpio-nomadik.h>
 
+=======
+#include <linux/gpio.h>
+#include <linux/irq.h>
+
+#include <asm/mach/arch.h>
+#include <asm/mach-types.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/hardware.h>
 #include <mach/devices.h>
 #include <mach/setup.h>
 
+<<<<<<< HEAD
 #include "pins-db5500.h"
 #include "devices-db5500.h"
 #include <linux/led-lm3530.h>
@@ -131,10 +141,20 @@ static void __init u5500_uart_init(struct device *parent)
 	db5500_add_uart0(parent, NULL);
 	db5500_add_uart1(parent, NULL);
 	db5500_add_uart2(parent, NULL);
+=======
+#include "devices-db5500.h"
+
+static void __init u5500_uart_init(void)
+{
+	db5500_add_uart0(NULL);
+	db5500_add_uart1(NULL);
+	db5500_add_uart2(NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __init u5500_init_machine(void)
 {
+<<<<<<< HEAD
 	struct device *parent = NULL;
 	int i;
 
@@ -158,5 +178,18 @@ MACHINE_START(U5500, "ST-Ericsson U5500 Platform")
 	.init_irq	= ux500_init_irq,
 	.timer		= &ux500_timer,
 	.handle_irq	= gic_handle_irq,
+=======
+	u5500_init_devices();
+
+	u5500_sdi_init();
+	u5500_uart_init();
+}
+
+MACHINE_START(U5500, "ST-Ericsson U5500 Platform")
+	.boot_params	= 0x00000100,
+	.map_io		= u5500_map_io,
+	.init_irq	= ux500_init_irq,
+	.timer		= &ux500_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= u5500_init_machine,
 MACHINE_END

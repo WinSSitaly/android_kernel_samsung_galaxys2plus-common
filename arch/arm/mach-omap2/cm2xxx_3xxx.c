@@ -18,10 +18,15 @@
 #include <linux/err.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
 #include <plat/hardware.h>
 
 #include "iomap.h"
 #include "common.h"
+=======
+#include <plat/common.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "cm.h"
 #include "cm2xxx_3xxx.h"
 #include "cm-regbits-24xx.h"

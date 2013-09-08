@@ -19,6 +19,7 @@
 #ifndef __ASM_BCM47XX_H
 #define __ASM_BCM47XX_H
 
+<<<<<<< HEAD
 #include <linux/ssb/ssb.h>
 #include <linux/bcma/bcma.h>
 #include <linux/bcma/bcma_soc.h>
@@ -46,5 +47,9 @@ extern enum bcm47xx_bus_type bcm47xx_bus_type;
 
 void bcm47xx_fill_sprom(struct ssb_sprom *sprom, const char *prefix);
 void bcm47xx_fill_sprom_ethernet(struct ssb_sprom *sprom, const char *prefix);
+=======
+/* SSB bus */
+extern struct ssb_bus ssb_bcm47xx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __ASM_BCM47XX_H */

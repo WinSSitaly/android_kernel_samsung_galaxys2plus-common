@@ -13,7 +13,10 @@
  */
 
 #include <linux/bitrev.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "rc-core-priv.h"
 
 #define JVC_NBITS		16		/* dev(8) + func(8) */

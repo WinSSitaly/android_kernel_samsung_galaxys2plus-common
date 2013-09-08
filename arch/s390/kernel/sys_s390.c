@@ -60,11 +60,18 @@ out:
 }
 
 /*
+<<<<<<< HEAD
  * sys_ipc() is the de-multiplexer for the SysV IPC calls.
+=======
+ * sys_ipc() is the de-multiplexer for the SysV IPC calls..
+ *
+ * This is really horribly ugly.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 SYSCALL_DEFINE5(s390_ipc, uint, call, int, first, unsigned long, second,
 		unsigned long, third, void __user *, ptr)
 {
+<<<<<<< HEAD
 	if (call >> 16)
 		return -EINVAL;
 	/* The s390 sys_ipc variant has only five parameters instead of six
@@ -76,6 +83,69 @@ SYSCALL_DEFINE5(s390_ipc, uint, call, int, first, unsigned long, second,
 	 * third parameter also as fifth parameter.
 	 */
 	return sys_ipc(call, first, second, third, ptr, third);
+=======
+        struct ipc_kludge tmp;
+	int ret;
+
+        switch (call) {
+        case SEMOP:
+		return sys_semtimedop(first, (struct sembuf __user *)ptr,
+				       (unsigned)second, NULL);
+	case SEMTIMEDOP:
+		return sys_semtimedop(first, (struct sembuf __user *)ptr,
+				       (unsigned)second,
+				       (const struct timespec __user *) third);
+        case SEMGET:
+                return sys_semget(first, (int)second, third);
+        case SEMCTL: {
+                union semun fourth;
+                if (!ptr)
+                        return -EINVAL;
+                if (get_user(fourth.__pad, (void __user * __user *) ptr))
+                        return -EFAULT;
+                return sys_semctl(first, (int)second, third, fourth);
+        }
+        case MSGSND:
+		return sys_msgsnd (first, (struct msgbuf __user *) ptr,
+                                   (size_t)second, third);
+		break;
+        case MSGRCV:
+                if (!ptr)
+                        return -EINVAL;
+                if (copy_from_user (&tmp, (struct ipc_kludge __user *) ptr,
+                                    sizeof (struct ipc_kludge)))
+                        return -EFAULT;
+                return sys_msgrcv (first, tmp.msgp,
+                                   (size_t)second, tmp.msgtyp, third);
+        case MSGGET:
+                return sys_msgget((key_t)first, (int)second);
+        case MSGCTL:
+                return sys_msgctl(first, (int)second,
+				   (struct msqid_ds __user *)ptr);
+
+	case SHMAT: {
+		ulong raddr;
+		ret = do_shmat(first, (char __user *)ptr,
+				(int)second, &raddr);
+		if (ret)
+			return ret;
+		return put_user (raddr, (ulong __user *) third);
+		break;
+        }
+	case SHMDT:
+		return sys_shmdt ((char __user *)ptr);
+	case SHMGET:
+		return sys_shmget(first, (size_t)second, third);
+	case SHMCTL:
+		return sys_shmctl(first, (int)second,
+                                   (struct shmid_ds __user *) ptr);
+	default:
+		return -ENOSYS;
+
+	}
+
+	return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_64BIT

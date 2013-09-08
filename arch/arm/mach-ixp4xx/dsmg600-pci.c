@@ -44,7 +44,11 @@ void __init dsmg600_pci_preinit(void)
 	ixp4xx_pci_preinit();
 }
 
+<<<<<<< HEAD
 static int __init dsmg600_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+static int __init dsmg600_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static int pci_irq_table[MAX_DEV][IRQ_LINES] = {
 		{ IXP4XX_GPIO_IRQ(INTE), -1, -1 },

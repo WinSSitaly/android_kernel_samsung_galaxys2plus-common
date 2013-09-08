@@ -16,7 +16,10 @@
 #include <asm/uaccess.h>
 #include <asm/ptrace.h>
 #include <asm/i387.h>
+<<<<<<< HEAD
 #include <asm/fpu-internal.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/user.h>
 
 #ifdef CONFIG_X86_64
@@ -33,6 +36,7 @@
 # define user32_fxsr_struct	user_fxsr_struct
 #endif
 
+<<<<<<< HEAD
 /*
  * Were we in an interrupt that interrupted kernel mode?
  *
@@ -113,6 +117,8 @@ void unlazy_fpu(struct task_struct *tsk)
 }
 EXPORT_SYMBOL(unlazy_fpu);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_MATH_EMULATION
 # define HAVE_HWFP		(boot_cpu_data.hard_math)
 #else
@@ -125,14 +131,22 @@ EXPORT_SYMBOL_GPL(xstate_size);
 unsigned int sig_xstate_ia32_size = sizeof(struct _fpstate_ia32);
 static struct i387_fxsave_struct fx_scratch __cpuinitdata;
 
+<<<<<<< HEAD
 static void __cpuinit mxcsr_feature_mask_init(void)
+=======
+void __cpuinit mxcsr_feature_mask_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long mask = 0;
 
 	clts();
 	if (cpu_has_fxsr) {
 		memset(&fx_scratch, 0, sizeof(struct i387_fxsave_struct));
+<<<<<<< HEAD
 		asm volatile("fxsave %0" : "+m" (fx_scratch));
+=======
+		asm volatile("fxsave %0" : : "m" (fx_scratch));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mask = fx_scratch.mxcsr_mask;
 		if (mask == 0)
 			mask = 0x0000ffbf;
@@ -235,7 +249,10 @@ int init_fpu(struct task_struct *tsk)
 	if (tsk_used_math(tsk)) {
 		if (HAVE_HWFP && tsk == current)
 			unlazy_fpu(tsk);
+<<<<<<< HEAD
 		tsk->thread.fpu.last_cpu = ~0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
@@ -403,7 +420,11 @@ static inline unsigned short twd_i387_to_fxsr(unsigned short twd)
 	return tmp;
 }
 
+<<<<<<< HEAD
 #define FPREG_ADDR(f, n)	((void *)&(f)->st_space + (n) * 16)
+=======
+#define FPREG_ADDR(f, n)	((void *)&(f)->st_space + (n) * 16);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define FP_EXP_TAG_VALID	0
 #define FP_EXP_TAG_ZERO		1
 #define FP_EXP_TAG_SPECIAL	2

@@ -30,21 +30,31 @@
 #include <linux/input.h>
 #include <linux/gpio.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
 #include <linux/leds.h>
 #include <linux/memblock.h>
 #include <media/soc_camera.h>
 #include <sound/tlv320aic32x4.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 #include <asm/mach/time.h>
 #include <mach/common.h>
+<<<<<<< HEAD
 #include <mach/iomux-mx27.h>
 
 #include "devices-imx27.h"
 
 #define TVP5150_RSTN (GPIO_PORTC + 18)
 #define TVP5150_PWDN (GPIO_PORTC + 19)
+=======
+#include <mach/iomux.h>
+
+#include "devices-imx27.h"
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define OTG_PHY_CS_GPIO (GPIO_PORTF + 17)
 #define SDHC1_IRQ IRQ_GPIOB(25)
 
@@ -106,6 +116,7 @@ static const int visstrim_m10_pins[] __initconst = {
 	PE1_PF_USBOTG_STP,
 	PB23_PF_USB_PWR,
 	PB24_PF_USB_OC,
+<<<<<<< HEAD
 	/* CSI */
 	PB10_PF_CSI_D0,
 	PB11_PF_CSI_D1,
@@ -199,6 +210,10 @@ static void __init visstrim_reserve(void)
 	memblock_remove(mx2_camera_base, MX2_CAMERA_BUF_SIZE);
 }
 
+=======
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* GPIOs used as events for applications */
 static struct gpio_keys_button visstrim_gpio_keys[] = {
 	{
@@ -233,6 +248,7 @@ static const struct gpio_keys_platform_data
 	.nbuttons	= ARRAY_SIZE(visstrim_gpio_keys),
 };
 
+<<<<<<< HEAD
 /* led */
 static const struct gpio_led visstrim_m10_leds[] __initconst = {
 	{
@@ -262,6 +278,8 @@ static const struct gpio_led_platform_data visstrim_m10_led_data __initconst = {
 	.num_leds = ARRAY_SIZE(visstrim_m10_leds),
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Visstrim_SM10 has a microSD slot connected to sdhc1 */
 static int visstrim_m10_sdhc1_init(struct device *dev,
 		irq_handler_t detect_irq, void *data)
@@ -323,6 +341,7 @@ static struct pca953x_platform_data visstrim_m10_pca9555_pdata = {
 	.invert = 0,
 };
 
+<<<<<<< HEAD
 static struct aic32x4_pdata visstrim_m10_aic32x4_pdata = {
 	.power_cfg = AIC32X4_PWR_MICBIAS_2075_LDOIN |
 		     AIC32X4_PWR_AVDD_DVDD_WEAK_DISABLE |
@@ -334,6 +353,8 @@ static struct aic32x4_pdata visstrim_m10_aic32x4_pdata = {
 	.swapdacs = false,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct i2c_board_info visstrim_m10_i2c_devices[] = {
 	{
 		I2C_BOARD_INFO("pca9555", 0x20),
@@ -341,10 +362,13 @@ static struct i2c_board_info visstrim_m10_i2c_devices[] = {
 	},
 	{
 		I2C_BOARD_INFO("tlv320aic32x4", 0x18),
+<<<<<<< HEAD
 		.platform_data = &visstrim_m10_aic32x4_pdata,
 	},
 	{
 		 I2C_BOARD_INFO("m41t00", 0x68),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 };
 
@@ -373,8 +397,11 @@ static void __init visstrim_m10_board_init(void)
 {
 	int ret;
 
+<<<<<<< HEAD
 	imx27_soc_init();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = mxc_gpio_setup_multiple_pins(visstrim_m10_pins,
 			ARRAY_SIZE(visstrim_m10_pins), "VISSTRIM_M10");
 	if (ret)
@@ -383,21 +410,31 @@ static void __init visstrim_m10_board_init(void)
 	imx27_add_imx_ssi(0, &visstrim_m10_ssi_pdata);
 	imx27_add_imx_uart0(&uart_pdata);
 
+<<<<<<< HEAD
 	imx27_add_imx_i2c(0, &visstrim_m10_i2c_data);
 	imx27_add_imx_i2c(1, &visstrim_m10_i2c_data);
 	i2c_register_board_info(0, visstrim_m10_i2c_devices,
 				ARRAY_SIZE(visstrim_m10_i2c_devices));
 
+=======
+	i2c_register_board_info(0, visstrim_m10_i2c_devices,
+				ARRAY_SIZE(visstrim_m10_i2c_devices));
+	imx27_add_imx_i2c(0, &visstrim_m10_i2c_data);
+	imx27_add_imx_i2c(1, &visstrim_m10_i2c_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	imx27_add_mxc_mmc(0, &visstrim_m10_sdhc_pdata);
 	imx27_add_mxc_ehci_otg(&visstrim_m10_usbotg_pdata);
 	imx27_add_fec(NULL);
 	imx_add_gpio_keys(&visstrim_gpio_keys_platform_data);
 	platform_add_devices(platform_devices, ARRAY_SIZE(platform_devices));
+<<<<<<< HEAD
 	imx_add_platform_device("mx27vis", 0, NULL, 0, NULL, 0);
 	platform_device_register_resndata(NULL, "soc-camera-pdrv", 0, NULL, 0,
 				      &iclink_tvp5150, sizeof(iclink_tvp5150));
 	gpio_led_register_device(0, &visstrim_m10_led_data);
 	visstrim_camera_init();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __init visstrim_m10_timer_init(void)
@@ -410,6 +447,7 @@ static struct sys_timer visstrim_m10_timer = {
 };
 
 MACHINE_START(IMX27_VISSTRIM_M10, "Vista Silicon Visstrim_M10")
+<<<<<<< HEAD
 	.atag_offset = 0x100,
 	.reserve = visstrim_reserve,
 	.map_io = mx27_map_io,
@@ -419,4 +457,12 @@ MACHINE_START(IMX27_VISSTRIM_M10, "Vista Silicon Visstrim_M10")
 	.timer = &visstrim_m10_timer,
 	.init_machine = visstrim_m10_board_init,
 	.restart	= mxc_restart,
+=======
+	.boot_params = MX27_PHYS_OFFSET + 0x100,
+	.map_io = mx27_map_io,
+	.init_early = imx27_init_early,
+	.init_irq = mx27_init_irq,
+	.timer = &visstrim_m10_timer,
+	.init_machine = visstrim_m10_board_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

@@ -231,12 +231,20 @@ static struct i2c_board_info zylonite_i2c_board_info[] = {
 		.type		= "pca9539",
 		.addr		= 0x74,
 		.platform_data	= &gpio_exp[0],
+<<<<<<< HEAD
 		.irq		= PXA_GPIO_TO_IRQ(18),
+=======
+		.irq		= IRQ_GPIO(18),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}, {
 		.type		= "pca9539",
 		.addr		= 0x75,
 		.platform_data	= &gpio_exp[1],
+<<<<<<< HEAD
 		.irq		= PXA_GPIO_TO_IRQ(19),
+=======
+		.irq		= IRQ_GPIO(19),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

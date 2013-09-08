@@ -69,7 +69,11 @@ static int cinergyt2_frontend_attach(struct dvb_usb_adapter *adap)
 	char state[3];
 	int ret;
 
+<<<<<<< HEAD
 	adap->fe_adap[0].fe = cinergyt2_fe_attach(adap->dev);
+=======
+	adap->fe = cinergyt2_fe_attach(adap->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = dvb_usb_generic_rw(adap->dev, query, sizeof(query), state,
 				sizeof(state), 0);
@@ -198,8 +202,11 @@ static struct dvb_usb_device_properties cinergyt2_properties = {
 	.num_adapters = 1,
 	.adapter = {
 		{
+<<<<<<< HEAD
 		.num_frontends = 1,
 		.fe = {{
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.streaming_ctrl   = cinergyt2_streaming_ctrl,
 			.frontend_attach  = cinergyt2_frontend_attach,
 
@@ -214,7 +221,10 @@ static struct dvb_usb_device_properties cinergyt2_properties = {
 					}
 				}
 			},
+<<<<<<< HEAD
 		}},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	},
 
@@ -247,7 +257,29 @@ static struct usb_driver cinergyt2_driver = {
 	.id_table	= cinergyt2_usb_table
 };
 
+<<<<<<< HEAD
 module_usb_driver(cinergyt2_driver);
+=======
+static int __init cinergyt2_usb_init(void)
+{
+	int err;
+
+	err = usb_register(&cinergyt2_driver);
+	if (err) {
+		err("usb_register() failed! (err %i)\n", err);
+		return err;
+	}
+	return 0;
+}
+
+static void __exit cinergyt2_usb_exit(void)
+{
+	usb_deregister(&cinergyt2_driver);
+}
+
+module_init(cinergyt2_usb_init);
+module_exit(cinergyt2_usb_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Terratec Cinergy T2 DVB-T driver");
 MODULE_LICENSE("GPL");

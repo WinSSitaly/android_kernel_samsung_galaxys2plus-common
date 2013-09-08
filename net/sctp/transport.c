@@ -226,6 +226,26 @@ void sctp_transport_pmtu(struct sctp_transport *transport, struct sock *sk)
 		transport->pathmtu = SCTP_DEFAULT_MAXSEGMENT;
 }
 
+<<<<<<< HEAD
+=======
+/* this is a complete rip-off from __sk_dst_check
+ * the cookie is always 0 since this is how it's used in the
+ * pmtu code
+ */
+static struct dst_entry *sctp_transport_dst_check(struct sctp_transport *t)
+{
+	struct dst_entry *dst = t->dst;
+
+	if (dst && dst->obsolete && dst->ops->check(dst, 0) == NULL) {
+		dst_release(t->dst);
+		t->dst = NULL;
+		return NULL;
+	}
+
+	return dst;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void sctp_transport_update_pmtu(struct sctp_transport *t, u32 pmtu)
 {
 	struct dst_entry *dst;
@@ -624,6 +644,7 @@ void sctp_transport_reset(struct sctp_transport *t)
 	t->cacc.next_tsn_at_change = 0;
 	t->cacc.cacc_saw_newack = 0;
 }
+<<<<<<< HEAD
 
 /* Schedule retransmission on the given transport */
 void sctp_transport_immediate_rtx(struct sctp_transport *t)
@@ -640,3 +661,5 @@ void sctp_transport_immediate_rtx(struct sctp_transport *t)
 	}
 	return;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

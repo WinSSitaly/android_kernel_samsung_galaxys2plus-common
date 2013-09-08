@@ -37,7 +37,10 @@
 #include <asm/idle.h>
 #include <asm/io_apic.h>
 #include <asm/sync_bitops.h>
+<<<<<<< HEAD
 #include <asm/xen/page.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/xen/pci.h>
 #include <asm/xen/hypercall.h>
 #include <asm/xen/hypervisor.h>
@@ -55,7 +58,11 @@
  * This lock protects updates to the following mapping and reference-count
  * arrays. The lock does not need to be acquired to read the mapping tables.
  */
+<<<<<<< HEAD
 static DEFINE_MUTEX(irq_mapping_update_lock);
+=======
+static DEFINE_SPINLOCK(irq_mapping_update_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static LIST_HEAD(xen_irq_list_head);
 
@@ -86,9 +93,15 @@ enum xen_irq_type {
  *    IPI - IPI vector
  *    EVTCHN -
  */
+<<<<<<< HEAD
 struct irq_info {
 	struct list_head list;
 	int refcnt;
+=======
+struct irq_info
+{
+	struct list_head list;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	enum xen_irq_type type;	/* type */
 	unsigned irq;
 	unsigned short evtchn;	/* event channel */
@@ -110,8 +123,11 @@ struct irq_info {
 #define PIRQ_SHAREABLE	(1 << 1)
 
 static int *evtchn_to_irq;
+<<<<<<< HEAD
 static unsigned long *pirq_eoi_map;
 static bool (*pirq_needs_eoi)(unsigned irq);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static DEFINE_PER_CPU(unsigned long [NR_EVENT_CHANNELS/BITS_PER_LONG],
 		      cpu_evtchn_mask);
@@ -272,6 +288,7 @@ static unsigned int cpu_from_evtchn(unsigned int evtchn)
 	return ret;
 }
 
+<<<<<<< HEAD
 static bool pirq_check_eoi_map(unsigned irq)
 {
 	return test_bit(pirq_from_irq(irq), pirq_eoi_map);
@@ -280,6 +297,12 @@ static bool pirq_check_eoi_map(unsigned irq)
 static bool pirq_needs_eoi_flag(unsigned irq)
 {
 	struct irq_info *info = info_for_irq(irq);
+=======
+static bool pirq_needs_eoi(unsigned irq)
+{
+	struct irq_info *info = info_for_irq(irq);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BUG_ON(info->type != IRQT_PIRQ);
 
 	return info->u.pirq.flags & PIRQ_NEEDS_EOI;
@@ -289,9 +312,15 @@ static inline unsigned long active_evtchns(unsigned int cpu,
 					   struct shared_info *sh,
 					   unsigned int idx)
 {
+<<<<<<< HEAD
 	return sh->evtchn_pending[idx] &
 		per_cpu(cpu_evtchn_mask, cpu)[idx] &
 		~sh->evtchn_mask[idx];
+=======
+	return (sh->evtchn_pending[idx] &
+		per_cpu(cpu_evtchn_mask, cpu)[idx] &
+		~sh->evtchn_mask[idx]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void bind_evtchn_to_cpu(unsigned int chn, unsigned int cpu)
@@ -324,7 +353,11 @@ static void init_evtchn_cpu_bindings(void)
 
 	for_each_possible_cpu(i)
 		memset(per_cpu(cpu_evtchn_mask, i),
+<<<<<<< HEAD
 		       (i == 0) ? ~0 : 0, NR_EVENT_CHANNELS/8);
+=======
+		       (i == 0) ? ~0 : 0, sizeof(*per_cpu(cpu_evtchn_mask, i)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void clear_evtchn(int port)
@@ -414,7 +447,10 @@ static void xen_irq_init(unsigned irq)
 		panic("Unable to allocate metadata for IRQ%d\n", irq);
 
 	info->type = IRQT_UNBOUND;
+<<<<<<< HEAD
 	info->refcnt = -1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	irq_set_handler_data(irq, info);
 
@@ -440,8 +476,12 @@ static int __must_check xen_allocate_irq_dynamic(void)
 
 	irq = irq_alloc_desc_from(first, -1);
 
+<<<<<<< HEAD
 	if (irq >= 0)
 		xen_irq_init(irq);
+=======
+	xen_irq_init(irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return irq;
 }
@@ -478,8 +518,11 @@ static void xen_free_irq(unsigned irq)
 
 	irq_set_handler_data(irq, NULL);
 
+<<<<<<< HEAD
 	WARN_ON(info->refcnt > 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(info);
 
 	/* Legacy IRQ descriptors are managed by the arch. */
@@ -611,7 +654,11 @@ static void disable_pirq(struct irq_data *data)
 	disable_dynirq(data);
 }
 
+<<<<<<< HEAD
 int xen_irq_from_gsi(unsigned gsi)
+=======
+static int find_irq_by_gsi(unsigned gsi)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct irq_info *info;
 
@@ -625,7 +672,15 @@ int xen_irq_from_gsi(unsigned gsi)
 
 	return -1;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(xen_irq_from_gsi);
+=======
+
+int xen_allocate_pirq_gsi(unsigned gsi)
+{
+	return gsi;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Do not make any assumptions regarding the relationship between the
@@ -643,6 +698,7 @@ int xen_bind_pirq_gsi_to_irq(unsigned gsi,
 	int irq = -1;
 	struct physdev_irq irq_op;
 
+<<<<<<< HEAD
 	mutex_lock(&irq_mapping_update_lock);
 
 	irq = xen_irq_from_gsi(gsi);
@@ -650,6 +706,15 @@ int xen_bind_pirq_gsi_to_irq(unsigned gsi,
 		printk(KERN_INFO "xen_map_pirq_gsi: returning irq %d for gsi %u\n",
 		       irq, gsi);
 		goto out;
+=======
+	spin_lock(&irq_mapping_update_lock);
+
+	irq = find_irq_by_gsi(gsi);
+	if (irq != -1) {
+		printk(KERN_INFO "xen_map_pirq_gsi: returning irq %d for gsi %u\n",
+		       irq, gsi);
+		goto out;	/* XXX need refcount? */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	irq = xen_allocate_irq_gsi(gsi);
@@ -696,7 +761,11 @@ int xen_bind_pirq_gsi_to_irq(unsigned gsi,
 				handle_edge_irq, name);
 
 out:
+<<<<<<< HEAD
 	mutex_unlock(&irq_mapping_update_lock);
+=======
+	spin_unlock(&irq_mapping_update_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return irq;
 }
@@ -722,10 +791,17 @@ int xen_bind_pirq_msi_to_irq(struct pci_dev *dev, struct msi_desc *msidesc,
 {
 	int irq, ret;
 
+<<<<<<< HEAD
 	mutex_lock(&irq_mapping_update_lock);
 
 	irq = xen_allocate_irq_dynamic();
 	if (irq < 0)
+=======
+	spin_lock(&irq_mapping_update_lock);
+
+	irq = xen_allocate_irq_dynamic();
+	if (irq == -1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	irq_set_chip_and_handler_name(irq, &xen_pirq_chip, handle_edge_irq,
@@ -736,12 +812,21 @@ int xen_bind_pirq_msi_to_irq(struct pci_dev *dev, struct msi_desc *msidesc,
 	if (ret < 0)
 		goto error_irq;
 out:
+<<<<<<< HEAD
 	mutex_unlock(&irq_mapping_update_lock);
 	return irq;
 error_irq:
 	mutex_unlock(&irq_mapping_update_lock);
 	xen_free_irq(irq);
 	return ret;
+=======
+	spin_unlock(&irq_mapping_update_lock);
+	return irq;
+error_irq:
+	spin_unlock(&irq_mapping_update_lock);
+	xen_free_irq(irq);
+	return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif
 
@@ -752,7 +837,11 @@ int xen_destroy_irq(int irq)
 	struct irq_info *info = info_for_irq(irq);
 	int rc = -ENOENT;
 
+<<<<<<< HEAD
 	mutex_lock(&irq_mapping_update_lock);
+=======
+	spin_lock(&irq_mapping_update_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	desc = irq_to_desc(irq);
 	if (!desc)
@@ -778,7 +867,11 @@ int xen_destroy_irq(int irq)
 	xen_free_irq(irq);
 
 out:
+<<<<<<< HEAD
 	mutex_unlock(&irq_mapping_update_lock);
+=======
+	spin_unlock(&irq_mapping_update_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -788,10 +881,17 @@ int xen_irq_from_pirq(unsigned pirq)
 
 	struct irq_info *info;
 
+<<<<<<< HEAD
 	mutex_lock(&irq_mapping_update_lock);
 
 	list_for_each_entry(info, &xen_irq_list_head, list) {
 		if (info->type != IRQT_PIRQ)
+=======
+	spin_lock(&irq_mapping_update_lock);
+
+	list_for_each_entry(info, &xen_irq_list_head, list) {
+		if (info == NULL || info->type != IRQT_PIRQ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		irq = info->irq;
 		if (info->u.pirq.pirq == pirq)
@@ -799,7 +899,11 @@ int xen_irq_from_pirq(unsigned pirq)
 	}
 	irq = -1;
 out:
+<<<<<<< HEAD
 	mutex_unlock(&irq_mapping_update_lock);
+=======
+	spin_unlock(&irq_mapping_update_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return irq;
 }
@@ -814,7 +918,11 @@ int bind_evtchn_to_irq(unsigned int evtchn)
 {
 	int irq;
 
+<<<<<<< HEAD
 	mutex_lock(&irq_mapping_update_lock);
+=======
+	spin_lock(&irq_mapping_update_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	irq = evtchn_to_irq[evtchn];
 
@@ -830,7 +938,11 @@ int bind_evtchn_to_irq(unsigned int evtchn)
 	}
 
 out:
+<<<<<<< HEAD
 	mutex_unlock(&irq_mapping_update_lock);
+=======
+	spin_unlock(&irq_mapping_update_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return irq;
 }
@@ -841,7 +953,11 @@ static int bind_ipi_to_irq(unsigned int ipi, unsigned int cpu)
 	struct evtchn_bind_ipi bind_ipi;
 	int evtchn, irq;
 
+<<<<<<< HEAD
 	mutex_lock(&irq_mapping_update_lock);
+=======
+	spin_lock(&irq_mapping_update_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	irq = per_cpu(ipi_to_irq, cpu)[ipi];
 
@@ -865,7 +981,11 @@ static int bind_ipi_to_irq(unsigned int ipi, unsigned int cpu)
 	}
 
  out:
+<<<<<<< HEAD
 	mutex_unlock(&irq_mapping_update_lock);
+=======
+	spin_unlock(&irq_mapping_update_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return irq;
 }
 
@@ -884,6 +1004,7 @@ static int bind_interdomain_evtchn_to_irq(unsigned int remote_domain,
 	return err ? : bind_evtchn_to_irq(bind_interdomain.local_port);
 }
 
+<<<<<<< HEAD
 static int find_virq(unsigned int virq, unsigned int cpu)
 {
 	struct evtchn_status status;
@@ -905,13 +1026,21 @@ static int find_virq(unsigned int virq, unsigned int cpu)
 	}
 	return rc;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int bind_virq_to_irq(unsigned int virq, unsigned int cpu)
 {
 	struct evtchn_bind_virq bind_virq;
+<<<<<<< HEAD
 	int evtchn, irq, ret;
 
 	mutex_lock(&irq_mapping_update_lock);
+=======
+	int evtchn, irq;
+
+	spin_lock(&irq_mapping_update_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	irq = per_cpu(virq_to_irq, cpu)[virq];
 
@@ -925,6 +1054,7 @@ int bind_virq_to_irq(unsigned int virq, unsigned int cpu)
 
 		bind_virq.virq = virq;
 		bind_virq.vcpu = cpu;
+<<<<<<< HEAD
 		ret = HYPERVISOR_event_channel_op(EVTCHNOP_bind_virq,
 						&bind_virq);
 		if (ret == 0)
@@ -935,6 +1065,12 @@ int bind_virq_to_irq(unsigned int virq, unsigned int cpu)
 			BUG_ON(ret < 0);
 			evtchn = ret;
 		}
+=======
+		if (HYPERVISOR_event_channel_op(EVTCHNOP_bind_virq,
+						&bind_virq) != 0)
+			BUG();
+		evtchn = bind_virq.port;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		xen_irq_info_virq_init(cpu, irq, evtchn, virq);
 
@@ -942,7 +1078,11 @@ int bind_virq_to_irq(unsigned int virq, unsigned int cpu)
 	}
 
 out:
+<<<<<<< HEAD
 	mutex_unlock(&irq_mapping_update_lock);
+=======
+	spin_unlock(&irq_mapping_update_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return irq;
 }
@@ -951,6 +1091,7 @@ static void unbind_from_irq(unsigned int irq)
 {
 	struct evtchn_close close;
 	int evtchn = evtchn_from_irq(irq);
+<<<<<<< HEAD
 	struct irq_info *info = irq_get_handler_data(irq);
 
 	mutex_lock(&irq_mapping_update_lock);
@@ -960,6 +1101,10 @@ static void unbind_from_irq(unsigned int irq)
 		if (info->refcnt != 0)
 			goto done;
 	}
+=======
+
+	spin_lock(&irq_mapping_update_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (VALID_EVTCHN(evtchn)) {
 		close.port = evtchn;
@@ -989,8 +1134,12 @@ static void unbind_from_irq(unsigned int irq)
 
 	xen_free_irq(irq);
 
+<<<<<<< HEAD
  done:
 	mutex_unlock(&irq_mapping_update_lock);
+=======
+	spin_unlock(&irq_mapping_update_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int bind_evtchn_to_irqhandler(unsigned int evtchn,
@@ -1085,6 +1234,7 @@ void unbind_from_irqhandler(unsigned int irq, void *dev_id)
 }
 EXPORT_SYMBOL_GPL(unbind_from_irqhandler);
 
+<<<<<<< HEAD
 int evtchn_make_refcounted(unsigned int evtchn)
 {
 	int irq = evtchn_to_irq[evtchn];
@@ -1148,6 +1298,8 @@ void evtchn_put(unsigned int evtchn)
 }
 EXPORT_SYMBOL_GPL(evtchn_put);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void xen_send_IPI_one(unsigned int cpu, enum ipi_vector vector)
 {
 	int irq = per_cpu(ipi_to_irq, cpu)[vector];
@@ -1258,6 +1410,7 @@ static void __xen_evtchn_do_upcall(void)
 {
 	int start_word_idx, start_bit_idx;
 	int word_idx, bit_idx;
+<<<<<<< HEAD
 	int i, irq;
 	int cpu = get_cpu();
 	struct shared_info *s = HYPERVISOR_shared_info;
@@ -1268,6 +1421,16 @@ static void __xen_evtchn_do_upcall(void)
 		unsigned long pending_words;
 		unsigned long pending_bits;
 		struct irq_desc *desc;
+=======
+	int i;
+	int cpu = get_cpu();
+	struct shared_info *s = HYPERVISOR_shared_info;
+	struct vcpu_info *vcpu_info = __this_cpu_read(xen_vcpu);
+ 	unsigned count;
+
+	do {
+		unsigned long pending_words;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		vcpu_info->evtchn_upcall_pending = 0;
 
@@ -1278,6 +1441,7 @@ static void __xen_evtchn_do_upcall(void)
 		/* Clear master flag /before/ clearing selector flag. */
 		wmb();
 #endif
+<<<<<<< HEAD
 		if ((irq = per_cpu(virq_to_irq, cpu)[VIRQ_TIMER]) != -1) {
 			int evtchn = evtchn_from_irq(irq);
 			word_idx = evtchn / BITS_PER_LONG;
@@ -1289,6 +1453,8 @@ static void __xen_evtchn_do_upcall(void)
 			}
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pending_words = xchg(&vcpu_info->evtchn_pending_sel, 0);
 
 		start_word_idx = __this_cpu_read(current_word_idx);
@@ -1297,6 +1463,10 @@ static void __xen_evtchn_do_upcall(void)
 		word_idx = start_word_idx;
 
 		for (i = 0; pending_words != 0; i++) {
+<<<<<<< HEAD
+=======
+			unsigned long pending_bits;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			unsigned long words;
 
 			words = MASK_LSBS(pending_words, word_idx);
@@ -1325,7 +1495,12 @@ static void __xen_evtchn_do_upcall(void)
 
 			do {
 				unsigned long bits;
+<<<<<<< HEAD
 				int port;
+=======
+				int port, irq;
+				struct irq_desc *desc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				bits = MASK_LSBS(pending_bits, bit_idx);
 
@@ -1376,8 +1551,13 @@ void xen_evtchn_do_upcall(struct pt_regs *regs)
 {
 	struct pt_regs *old_regs = set_irq_regs(regs);
 
+<<<<<<< HEAD
 	irq_enter();
 	exit_idle();
+=======
+	exit_idle();
+	irq_enter();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	__xen_evtchn_do_upcall();
 
@@ -1400,7 +1580,11 @@ void rebind_evtchn_irq(int evtchn, int irq)
 	   will also be masked. */
 	disable_irq(irq);
 
+<<<<<<< HEAD
 	mutex_lock(&irq_mapping_update_lock);
+=======
+	spin_lock(&irq_mapping_update_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* After resume the irq<->evtchn mappings are all cleared out */
 	BUG_ON(evtchn_to_irq[evtchn] != -1);
@@ -1410,7 +1594,11 @@ void rebind_evtchn_irq(int evtchn, int irq)
 
 	xen_irq_info_evtchn_init(irq, evtchn);
 
+<<<<<<< HEAD
 	mutex_unlock(&irq_mapping_update_lock);
+=======
+	spin_unlock(&irq_mapping_update_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* new event channels are always bound to cpu 0 */
 	irq_set_affinity(irq, cpumask_of(0));
@@ -1787,11 +1975,18 @@ void xen_callback_vector(void) {}
 
 void __init xen_init_IRQ(void)
 {
+<<<<<<< HEAD
 	int i, rc;
 
 	evtchn_to_irq = kcalloc(NR_EVENT_CHANNELS, sizeof(*evtchn_to_irq),
 				    GFP_KERNEL);
 	BUG_ON(!evtchn_to_irq);
+=======
+	int i;
+
+	evtchn_to_irq = kcalloc(NR_EVENT_CHANNELS, sizeof(*evtchn_to_irq),
+				    GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < NR_EVENT_CHANNELS; i++)
 		evtchn_to_irq[i] = -1;
 
@@ -1801,8 +1996,11 @@ void __init xen_init_IRQ(void)
 	for (i = 0; i < NR_EVENT_CHANNELS; i++)
 		mask_evtchn(i);
 
+<<<<<<< HEAD
 	pirq_needs_eoi = pirq_needs_eoi_flag;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (xen_hvm_domain()) {
 		xen_callback_vector();
 		native_init_IRQ();
@@ -1810,6 +2008,7 @@ void __init xen_init_IRQ(void)
 		 * __acpi_register_gsi can point at the right function */
 		pci_xen_hvm_init();
 	} else {
+<<<<<<< HEAD
 		struct physdev_pirq_eoi_gmfn eoi_gmfn;
 
 		irq_ctx_init(smp_processor_id());
@@ -1824,5 +2023,10 @@ void __init xen_init_IRQ(void)
 			pirq_eoi_map = NULL;
 		} else
 			pirq_needs_eoi = pirq_check_eoi_map;
+=======
+		irq_ctx_init(smp_processor_id());
+		if (xen_initial_domain())
+			xen_setup_pirqs();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }

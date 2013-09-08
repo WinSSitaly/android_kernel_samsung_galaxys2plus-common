@@ -24,9 +24,13 @@
  * 	will extend to the end of the master MTD device.
  * offset: absolute starting position within the master MTD device; if
  * 	defined as MTDPART_OFS_APPEND, the partition will start where the
+<<<<<<< HEAD
  *	previous one ended; if MTDPART_OFS_NXTBLK, at the next erase block;
  *	if MTDPART_OFS_RETAIN, consume as much as possible, leaving size
  *	after the end of partition.
+=======
+ * 	previous one ended; if MTDPART_OFS_NXTBLK, at the next erase block.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * mask_flags: contains flags that have to be masked (removed) from the
  * 	master MTD flag set for the corresponding MTD partition.
  * 	For example, to force a read-only partition, simply adding
@@ -44,13 +48,17 @@ struct mtd_partition {
 	struct nand_ecclayout *ecclayout;	/* out of band layout for this partition (NAND only) */
 };
 
+<<<<<<< HEAD
 #define MTDPART_OFS_RETAIN	(-3)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MTDPART_OFS_NXTBLK	(-2)
 #define MTDPART_OFS_APPEND	(-1)
 #define MTDPART_SIZ_FULL	(0)
 
 
 struct mtd_info;
+<<<<<<< HEAD
 struct device_node;
 
 /**
@@ -63,6 +71,8 @@ struct mtd_part_parser_data {
 	struct device_node *of_node;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Functions dealing with the various ways of partitioning the space
@@ -72,12 +82,45 @@ struct mtd_part_parser {
 	struct list_head list;
 	struct module *owner;
 	const char *name;
+<<<<<<< HEAD
 	int (*parse_fn)(struct mtd_info *, struct mtd_partition **,
 			struct mtd_part_parser_data *);
+=======
+	int (*parse_fn)(struct mtd_info *, struct mtd_partition **, unsigned long);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 extern int register_mtd_parser(struct mtd_part_parser *parser);
 extern int deregister_mtd_parser(struct mtd_part_parser *parser);
+<<<<<<< HEAD
+=======
+extern int parse_mtd_partitions(struct mtd_info *master, const char **types,
+				struct mtd_partition **pparts, unsigned long origin);
+
+#define put_partition_parser(p) do { module_put((p)->owner); } while(0)
+
+struct device;
+struct device_node;
+
+#ifdef CONFIG_MTD_OF_PARTS
+int __devinit of_mtd_parse_partitions(struct device *dev,
+                                      struct device_node *node,
+                                      struct mtd_partition **pparts);
+#else
+static inline int of_mtd_parse_partitions(struct device *dev,
+					  struct device_node *node,
+					  struct mtd_partition **pparts)
+{
+	return 0;
+}
+#endif
+
+#ifdef CONFIG_MTD_CMDLINE_PARTS
+static inline int mtd_has_cmdlinepart(void) { return 1; }
+#else
+static inline int mtd_has_cmdlinepart(void) { return 0; }
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int mtd_is_partition(struct mtd_info *mtd);
 int mtd_add_partition(struct mtd_info *master, char *name,

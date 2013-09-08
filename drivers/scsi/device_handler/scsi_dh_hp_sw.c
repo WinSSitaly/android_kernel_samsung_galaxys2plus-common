@@ -22,7 +22,10 @@
  */
 
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <scsi/scsi.h>
 #include <scsi/scsi_dbg.h>
 #include <scsi/scsi_eh.h>
@@ -320,6 +323,7 @@ static const struct scsi_dh_devlist hp_sw_dh_data_list[] = {
 	{NULL, NULL},
 };
 
+<<<<<<< HEAD
 static bool hp_sw_match(struct scsi_device *sdev)
 {
 	int i;
@@ -338,6 +342,8 @@ static bool hp_sw_match(struct scsi_device *sdev)
 	return false;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int hp_sw_bus_attach(struct scsi_device *sdev);
 static void hp_sw_bus_detach(struct scsi_device *sdev);
 
@@ -349,7 +355,10 @@ static struct scsi_device_handler hp_sw_dh = {
 	.detach		= hp_sw_bus_detach,
 	.activate	= hp_sw_activate,
 	.prep_fn	= hp_sw_prep_fn,
+<<<<<<< HEAD
 	.match		= hp_sw_match,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int hp_sw_bus_attach(struct scsi_device *sdev)

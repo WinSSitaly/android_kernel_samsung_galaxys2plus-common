@@ -29,7 +29,11 @@ struct map_desc {
 #define MT_MEMORY_NONCACHED	11
 #define MT_MEMORY_DTCM		12
 #define MT_MEMORY_ITCM		13
+<<<<<<< HEAD
 #define MT_MEMORY_SO		14
+=======
+#define MT_MEMORY_DMA_READY	14
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_MMU
 extern void iotable_init(struct map_desc *, int);

@@ -59,13 +59,17 @@ struct rt_sigframe_ia32 {
 #endif /* defined(CONFIG_X86_32) || defined(CONFIG_IA32_EMULATION) */
 
 #ifdef CONFIG_X86_64
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct rt_sigframe {
 	char __user *pretcode;
 	struct ucontext uc;
 	struct siginfo info;
 	/* fp state follows here */
 };
+<<<<<<< HEAD
 
 #ifdef CONFIG_X86_X32_ABI
 
@@ -78,6 +82,8 @@ struct rt_sigframe_x32 {
 
 #endif /* CONFIG_X86_X32_ABI */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_X86_64 */
 
 #endif /* _ASM_X86_SIGFRAME_H */

@@ -9,9 +9,13 @@
  */
 
 #include <linux/suspend.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/smp.h>
 #include <linux/perf_event.h>
+=======
+#include <linux/smp.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/pgtable.h>
 #include <asm/proto.h>
@@ -21,7 +25,10 @@
 #include <asm/xcr.h>
 #include <asm/suspend.h>
 #include <asm/debugreg.h>
+<<<<<<< HEAD
 #include <asm/fpu-internal.h> /* pcntxt_mask */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_X86_32
 static struct saved_context saved_context;
@@ -116,7 +123,11 @@ static void __save_processor_state(struct saved_context *ctxt)
 void save_processor_state(void)
 {
 	__save_processor_state(&saved_context);
+<<<<<<< HEAD
 	x86_platform.save_sched_clock_state();
+=======
+	save_sched_clock_state();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #ifdef CONFIG_X86_32
 EXPORT_SYMBOL(save_processor_state);
@@ -226,15 +237,23 @@ static void __restore_processor_state(struct saved_context *ctxt)
 	fix_processor_context();
 
 	do_fpu_end();
+<<<<<<< HEAD
 	x86_platform.restore_sched_clock_state();
 	mtrr_bp_restore();
 	perf_restore_debug_store();
+=======
+	mtrr_bp_restore();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Needed by apm.c */
 void restore_processor_state(void)
 {
 	__restore_processor_state(&saved_context);
+<<<<<<< HEAD
+=======
+	restore_sched_clock_state();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #ifdef CONFIG_X86_32
 EXPORT_SYMBOL(restore_processor_state);

@@ -16,7 +16,10 @@
 
 #include <linux/slab.h>
 #include <linux/vmalloc.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/unaligned.h>
 
 #include "ath9k.h"
@@ -26,6 +29,14 @@
 #define REG_READ_D(_ah, _reg) \
 	ath9k_hw_common(_ah)->ops->read((_ah), (_reg))
 
+<<<<<<< HEAD
+=======
+static int ath9k_debugfs_open(struct inode *inode, struct file *file)
+{
+	file->private_data = inode->i_private;
+	return 0;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static ssize_t ath9k_debugfs_read_buf(struct file *file, char __user *user_buf,
 				      size_t count, loff_t *ppos)
@@ -78,7 +89,11 @@ static ssize_t write_file_debug(struct file *file, const char __user *user_buf,
 static const struct file_operations fops_debug = {
 	.read = read_file_debug,
 	.write = write_file_debug,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -91,11 +106,19 @@ static ssize_t read_file_tx_chainmask(struct file *file, char __user *user_buf,
 			     size_t count, loff_t *ppos)
 {
 	struct ath_softc *sc = file->private_data;
+<<<<<<< HEAD
 	struct ath_hw *ah = sc->sc_ah;
 	char buf[32];
 	unsigned int len;
 
 	len = sprintf(buf, "0x%08x\n", ah->txchainmask);
+=======
+	struct ath_common *common = ath9k_hw_common(sc->sc_ah);
+	char buf[32];
+	unsigned int len;
+
+	len = sprintf(buf, "0x%08x\n", common->tx_chainmask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return simple_read_from_buffer(user_buf, count, ppos, buf, len);
 }
 
@@ -103,7 +126,11 @@ static ssize_t write_file_tx_chainmask(struct file *file, const char __user *use
 			     size_t count, loff_t *ppos)
 {
 	struct ath_softc *sc = file->private_data;
+<<<<<<< HEAD
 	struct ath_hw *ah = sc->sc_ah;
+=======
+	struct ath_common *common = ath9k_hw_common(sc->sc_ah);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long mask;
 	char buf[32];
 	ssize_t len;
@@ -116,15 +143,24 @@ static ssize_t write_file_tx_chainmask(struct file *file, const char __user *use
 	if (strict_strtoul(buf, 0, &mask))
 		return -EINVAL;
 
+<<<<<<< HEAD
 	ah->txchainmask = mask;
 	ah->caps.tx_chainmask = mask;
+=======
+	common->tx_chainmask = mask;
+	sc->sc_ah->caps.tx_chainmask = mask;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return count;
 }
 
 static const struct file_operations fops_tx_chainmask = {
 	.read = read_file_tx_chainmask,
 	.write = write_file_tx_chainmask,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -134,11 +170,19 @@ static ssize_t read_file_rx_chainmask(struct file *file, char __user *user_buf,
 			     size_t count, loff_t *ppos)
 {
 	struct ath_softc *sc = file->private_data;
+<<<<<<< HEAD
 	struct ath_hw *ah = sc->sc_ah;
 	char buf[32];
 	unsigned int len;
 
 	len = sprintf(buf, "0x%08x\n", ah->rxchainmask);
+=======
+	struct ath_common *common = ath9k_hw_common(sc->sc_ah);
+	char buf[32];
+	unsigned int len;
+
+	len = sprintf(buf, "0x%08x\n", common->rx_chainmask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return simple_read_from_buffer(user_buf, count, ppos, buf, len);
 }
 
@@ -146,7 +190,11 @@ static ssize_t write_file_rx_chainmask(struct file *file, const char __user *use
 			     size_t count, loff_t *ppos)
 {
 	struct ath_softc *sc = file->private_data;
+<<<<<<< HEAD
 	struct ath_hw *ah = sc->sc_ah;
+=======
+	struct ath_common *common = ath9k_hw_common(sc->sc_ah);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long mask;
 	char buf[32];
 	ssize_t len;
@@ -159,19 +207,29 @@ static ssize_t write_file_rx_chainmask(struct file *file, const char __user *use
 	if (strict_strtoul(buf, 0, &mask))
 		return -EINVAL;
 
+<<<<<<< HEAD
 	ah->rxchainmask = mask;
 	ah->caps.rx_chainmask = mask;
+=======
+	common->rx_chainmask = mask;
+	sc->sc_ah->caps.rx_chainmask = mask;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return count;
 }
 
 static const struct file_operations fops_rx_chainmask = {
 	.read = read_file_rx_chainmask,
 	.write = write_file_rx_chainmask,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
 
+<<<<<<< HEAD
 static ssize_t read_file_disable_ani(struct file *file, char __user *user_buf,
 			     size_t count, loff_t *ppos)
 {
@@ -222,6 +280,8 @@ static const struct file_operations fops_disable_ani = {
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static ssize_t read_file_dma(struct file *file, char __user *user_buf,
 			     size_t count, loff_t *ppos)
@@ -319,7 +379,11 @@ static ssize_t read_file_dma(struct file *file, char __user *user_buf,
 
 static const struct file_operations fops_dma = {
 	.read = read_file_dma,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -441,7 +505,101 @@ static ssize_t read_file_interrupt(struct file *file, char __user *user_buf,
 
 static const struct file_operations fops_interrupt = {
 	.read = read_file_interrupt,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+	.owner = THIS_MODULE,
+	.llseek = default_llseek,
+};
+
+static const char *channel_type_str(enum nl80211_channel_type t)
+{
+	switch (t) {
+	case NL80211_CHAN_NO_HT:
+		return "no ht";
+	case NL80211_CHAN_HT20:
+		return "ht20";
+	case NL80211_CHAN_HT40MINUS:
+		return "ht40-";
+	case NL80211_CHAN_HT40PLUS:
+		return "ht40+";
+	default:
+		return "???";
+	}
+}
+
+static ssize_t read_file_wiphy(struct file *file, char __user *user_buf,
+			       size_t count, loff_t *ppos)
+{
+	struct ath_softc *sc = file->private_data;
+	struct ieee80211_channel *chan = sc->hw->conf.channel;
+	struct ieee80211_conf *conf = &(sc->hw->conf);
+	char buf[512];
+	unsigned int len = 0;
+	u8 addr[ETH_ALEN];
+	u32 tmp;
+
+	len += snprintf(buf + len, sizeof(buf) - len,
+			"%s (chan=%d  center-freq: %d MHz  channel-type: %d (%s))\n",
+			wiphy_name(sc->hw->wiphy),
+			ieee80211_frequency_to_channel(chan->center_freq),
+			chan->center_freq,
+			conf->channel_type,
+			channel_type_str(conf->channel_type));
+
+	ath9k_ps_wakeup(sc);
+	put_unaligned_le32(REG_READ_D(sc->sc_ah, AR_STA_ID0), addr);
+	put_unaligned_le16(REG_READ_D(sc->sc_ah, AR_STA_ID1) & 0xffff, addr + 4);
+	len += snprintf(buf + len, sizeof(buf) - len,
+			"addr: %pM\n", addr);
+	put_unaligned_le32(REG_READ_D(sc->sc_ah, AR_BSSMSKL), addr);
+	put_unaligned_le16(REG_READ_D(sc->sc_ah, AR_BSSMSKU) & 0xffff, addr + 4);
+	len += snprintf(buf + len, sizeof(buf) - len,
+			"addrmask: %pM\n", addr);
+	tmp = ath9k_hw_getrxfilter(sc->sc_ah);
+	ath9k_ps_restore(sc);
+	len += snprintf(buf + len, sizeof(buf) - len,
+			"rfilt: 0x%x", tmp);
+	if (tmp & ATH9K_RX_FILTER_UCAST)
+		len += snprintf(buf + len, sizeof(buf) - len, " UCAST");
+	if (tmp & ATH9K_RX_FILTER_MCAST)
+		len += snprintf(buf + len, sizeof(buf) - len, " MCAST");
+	if (tmp & ATH9K_RX_FILTER_BCAST)
+		len += snprintf(buf + len, sizeof(buf) - len, " BCAST");
+	if (tmp & ATH9K_RX_FILTER_CONTROL)
+		len += snprintf(buf + len, sizeof(buf) - len, " CONTROL");
+	if (tmp & ATH9K_RX_FILTER_BEACON)
+		len += snprintf(buf + len, sizeof(buf) - len, " BEACON");
+	if (tmp & ATH9K_RX_FILTER_PROM)
+		len += snprintf(buf + len, sizeof(buf) - len, " PROM");
+	if (tmp & ATH9K_RX_FILTER_PROBEREQ)
+		len += snprintf(buf + len, sizeof(buf) - len, " PROBEREQ");
+	if (tmp & ATH9K_RX_FILTER_PHYERR)
+		len += snprintf(buf + len, sizeof(buf) - len, " PHYERR");
+	if (tmp & ATH9K_RX_FILTER_MYBEACON)
+		len += snprintf(buf + len, sizeof(buf) - len, " MYBEACON");
+	if (tmp & ATH9K_RX_FILTER_COMP_BAR)
+		len += snprintf(buf + len, sizeof(buf) - len, " COMP_BAR");
+	if (tmp & ATH9K_RX_FILTER_PSPOLL)
+		len += snprintf(buf + len, sizeof(buf) - len, " PSPOLL");
+	if (tmp & ATH9K_RX_FILTER_PHYRADAR)
+		len += snprintf(buf + len, sizeof(buf) - len, " PHYRADAR");
+	if (tmp & ATH9K_RX_FILTER_MCAST_BCAST_ALL)
+		len += snprintf(buf + len, sizeof(buf) - len, " MCAST_BCAST_ALL\n");
+	else
+		len += snprintf(buf + len, sizeof(buf) - len, "\n");
+
+	if (len > sizeof(buf))
+		len = sizeof(buf);
+
+	return simple_read_from_buffer(user_buf, count, ppos, buf, len);
+}
+
+static const struct file_operations fops_wiphy = {
+	.read = read_file_wiphy,
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -506,7 +664,10 @@ static ssize_t read_file_xmit(struct file *file, char __user *user_buf,
 
 	PR("MPDUs Queued:    ", queued);
 	PR("MPDUs Completed: ", completed);
+<<<<<<< HEAD
 	PR("MPDUs XRetried:  ", xretries);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	PR("Aggregates:      ", a_aggr);
 	PR("AMPDUs Queued HW:", a_queued_hw);
 	PR("AMPDUs Queued SW:", a_queued_sw);
@@ -544,6 +705,10 @@ static ssize_t read_file_xmit(struct file *file, char __user *user_buf,
 
 	PRQLE("axq_q empty:       ", axq_q);
 	PRQLE("axq_acq empty:     ", axq_acq);
+<<<<<<< HEAD
+=======
+	PRQLE("txq_fifo_pending:  ", txq_fifo_pending);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < ATH_TXFIFO_DEPTH; i++) {
 		snprintf(tmp, sizeof(tmp) - 1, "txq_fifo[%i] empty: ", i);
 		PRQLE(tmp, txq_fifo[i]);
@@ -601,11 +766,16 @@ static ssize_t read_file_stations(struct file *file, char __user *user_buf,
 
 	len += snprintf(buf + len, size - len,
 			"Stations:\n"
+<<<<<<< HEAD
 			" tid: addr sched paused buf_q-empty an ac baw\n"
+=======
+			" tid: addr sched paused buf_q-empty an ac\n"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			" ac: addr sched tid_q-empty txq\n");
 
 	spin_lock(&sc->nodes_lock);
 	list_for_each_entry(an, &sc->nodes, list) {
+<<<<<<< HEAD
 		unsigned short ma = an->maxampdu;
 		if (ma == 0)
 			ma = 65535; /* see ath_lookup_rate */
@@ -613,17 +783,29 @@ static ssize_t read_file_stations(struct file *file, char __user *user_buf,
 				"iface: %pM  sta: %pM max-ampdu: %hu mpdu-density: %uus\n",
 				an->vif->addr, an->sta->addr, ma,
 				(unsigned int)(an->mpdudensity));
+=======
+		len += snprintf(buf + len, size - len,
+				"%pM\n", an->sta->addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (len >= size)
 			goto done;
 
 		for (q = 0; q < WME_NUM_TID; q++) {
 			struct ath_atx_tid *tid = &(an->tid[q]);
 			len += snprintf(buf + len, size - len,
+<<<<<<< HEAD
 					" tid: %p %s %s %i %p %p %hu\n",
 					tid, tid->sched ? "sched" : "idle",
 					tid->paused ? "paused" : "running",
 					skb_queue_empty(&tid->buf_q),
 					tid->an, tid->ac, tid->baw_size);
+=======
+					" tid: %p %s %s %i %p %p\n",
+					tid, tid->sched ? "sched" : "idle",
+					tid->paused ? "paused" : "running",
+					list_empty(&tid->buf_q),
+					tid->an, tid->ac);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (len >= size)
 				goto done;
 		}
@@ -655,6 +837,7 @@ static ssize_t read_file_misc(struct file *file, char __user *user_buf,
 {
 	struct ath_softc *sc = file->private_data;
 	struct ath_common *common = ath9k_hw_common(sc->sc_ah);
+<<<<<<< HEAD
 	struct ieee80211_hw *hw = sc->hw;
 	struct ath9k_vif_iter_data iter_data;
 	char buf[512];
@@ -783,21 +966,133 @@ void ath_debug_stat_tx(struct ath_softc *sc, struct ath_buf *bf,
 {
 #define TX_SAMP_DBG(c) (sc->debug.bb_mac_samp[sc->debug.sampidx].ts\
 			[sc->debug.tsidx].c)
+=======
+	struct ath_hw *ah = sc->sc_ah;
+	struct ieee80211_hw *hw = sc->hw;
+	char *buf;
+	unsigned int len = 0, size = 8000;
+	ssize_t retval = 0;
+	const char *tmp;
+	unsigned int reg;
+	struct ath9k_vif_iter_data iter_data;
+
+	ath9k_calculate_iter_data(hw, NULL, &iter_data);
+	
+	buf = kzalloc(size, GFP_KERNEL);
+	if (buf == NULL)
+		return -ENOMEM;
+
+	switch (sc->sc_ah->opmode) {
+	case  NL80211_IFTYPE_ADHOC:
+		tmp = "ADHOC";
+		break;
+	case  NL80211_IFTYPE_MESH_POINT:
+		tmp = "MESH";
+		break;
+	case  NL80211_IFTYPE_AP:
+		tmp = "AP";
+		break;
+	case  NL80211_IFTYPE_STATION:
+		tmp = "STATION";
+		break;
+	default:
+		tmp = "???";
+		break;
+	}
+
+	ath9k_ps_wakeup(sc);
+	len += snprintf(buf + len, size - len,
+			"curbssid: %pM\n"
+			"OP-Mode: %s(%i)\n"
+			"Beacon-Timer-Register: 0x%x\n",
+			common->curbssid,
+			tmp, (int)(sc->sc_ah->opmode),
+			REG_READ(ah, AR_BEACON_PERIOD));
+
+	reg = REG_READ(ah, AR_TIMER_MODE);
+	ath9k_ps_restore(sc);
+	len += snprintf(buf + len, size - len, "Timer-Mode-Register: 0x%x (",
+			reg);
+	if (reg & AR_TBTT_TIMER_EN)
+		len += snprintf(buf + len, size - len, "TBTT ");
+	if (reg & AR_DBA_TIMER_EN)
+		len += snprintf(buf + len, size - len, "DBA ");
+	if (reg & AR_SWBA_TIMER_EN)
+		len += snprintf(buf + len, size - len, "SWBA ");
+	if (reg & AR_HCF_TIMER_EN)
+		len += snprintf(buf + len, size - len, "HCF ");
+	if (reg & AR_TIM_TIMER_EN)
+		len += snprintf(buf + len, size - len, "TIM ");
+	if (reg & AR_DTIM_TIMER_EN)
+		len += snprintf(buf + len, size - len, "DTIM ");
+	len += snprintf(buf + len, size - len, ")\n");
+
+	reg = sc->sc_ah->imask;
+	len += snprintf(buf + len, size - len, "imask: 0x%x (", reg);
+	if (reg & ATH9K_INT_SWBA)
+		len += snprintf(buf + len, size - len, "SWBA ");
+	if (reg & ATH9K_INT_BMISS)
+		len += snprintf(buf + len, size - len, "BMISS ");
+	if (reg & ATH9K_INT_CST)
+		len += snprintf(buf + len, size - len, "CST ");
+	if (reg & ATH9K_INT_RX)
+		len += snprintf(buf + len, size - len, "RX ");
+	if (reg & ATH9K_INT_RXHP)
+		len += snprintf(buf + len, size - len, "RXHP ");
+	if (reg & ATH9K_INT_RXLP)
+		len += snprintf(buf + len, size - len, "RXLP ");
+	if (reg & ATH9K_INT_BB_WATCHDOG)
+		len += snprintf(buf + len, size - len, "BB_WATCHDOG ");
+	/* there are other IRQs if one wanted to add them. */
+	len += snprintf(buf + len, size - len, ")\n");
+
+	len += snprintf(buf + len, size - len,
+			"VIF Counts: AP: %i STA: %i MESH: %i WDS: %i"
+			" ADHOC: %i OTHER: %i nvifs: %hi beacon-vifs: %hi\n",
+			iter_data.naps, iter_data.nstations, iter_data.nmeshes,
+			iter_data.nwds, iter_data.nadhocs, iter_data.nothers,
+			sc->nvifs, sc->nbcnvifs);
+
+	len += snprintf(buf + len, size - len,
+			"Calculated-BSSID-Mask: %pM\n",
+			iter_data.mask);
+
+	if (len > size)
+		len = size;
+
+	retval = simple_read_from_buffer(user_buf, count, ppos, buf, len);
+	kfree(buf);
+
+	return retval;
+}
+
+void ath_debug_stat_tx(struct ath_softc *sc, struct ath_buf *bf,
+		       struct ath_tx_status *ts, struct ath_txq *txq)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int qnum = txq->axq_qnum;
 
 	TX_STAT_INC(qnum, tx_pkts_all);
 	sc->debug.stats.txstats[qnum].tx_bytes_all += bf->bf_mpdu->len;
 
 	if (bf_isampdu(bf)) {
+<<<<<<< HEAD
 		if (flags & ATH_TX_ERROR)
+=======
+		if (bf_isxretried(bf))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			TX_STAT_INC(qnum, a_xretries);
 		else
 			TX_STAT_INC(qnum, a_completed);
 	} else {
+<<<<<<< HEAD
 		if (ts->ts_status & ATH9K_TXERR_XRETRY)
 			TX_STAT_INC(qnum, xretries);
 		else
 			TX_STAT_INC(qnum, completed);
+=======
+		TX_STAT_INC(qnum, completed);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (ts->ts_status & ATH9K_TXERR_FIFO)
@@ -812,6 +1107,7 @@ void ath_debug_stat_tx(struct ath_softc *sc, struct ath_buf *bf,
 		TX_STAT_INC(qnum, data_underrun);
 	if (ts->ts_flags & ATH9K_TX_DELIM_UNDERRUN)
 		TX_STAT_INC(qnum, delim_underrun);
+<<<<<<< HEAD
 
 #ifdef CONFIG_ATH9K_MAC_DEBUG
 	spin_lock(&sc->debug.samp_lock);
@@ -843,24 +1139,35 @@ void ath_debug_stat_tx(struct ath_softc *sc, struct ath_buf *bf,
 #endif
 
 #undef TX_SAMP_DBG
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct file_operations fops_xmit = {
 	.read = read_file_xmit,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
 
 static const struct file_operations fops_stations = {
 	.read = read_file_stations,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
 
 static const struct file_operations fops_misc = {
 	.read = read_file_misc,
+<<<<<<< HEAD
 	.open = simple_open,
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
@@ -869,6 +1176,9 @@ static const struct file_operations fops_misc = {
 static const struct file_operations fops_reset = {
 	.read = read_file_reset,
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -877,12 +1187,20 @@ static ssize_t read_file_recv(struct file *file, char __user *user_buf,
 			      size_t count, loff_t *ppos)
 {
 #define PHY_ERR(s, p) \
+<<<<<<< HEAD
 	len += snprintf(buf + len, size - len, "%22s : %10u\n", s, \
+=======
+	len += snprintf(buf + len, size - len, "%18s : %10u\n", s, \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sc->debug.stats.rxstats.phy_err_stats[p]);
 
 	struct ath_softc *sc = file->private_data;
 	char *buf;
+<<<<<<< HEAD
 	unsigned int len = 0, size = 1600;
+=======
+	unsigned int len = 0, size = 1400;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ssize_t retval = 0;
 
 	buf = kzalloc(size, GFP_KERNEL);
@@ -890,6 +1208,7 @@ static ssize_t read_file_recv(struct file *file, char __user *user_buf,
 		return -ENOMEM;
 
 	len += snprintf(buf + len, size - len,
+<<<<<<< HEAD
 			"%22s : %10u\n", "CRC ERR",
 			sc->debug.stats.rxstats.crc_err);
 	len += snprintf(buf + len, size - len,
@@ -943,6 +1262,89 @@ static ssize_t read_file_recv(struct file *file, char __user *user_buf,
 			sc->debug.stats.rxstats.rx_pkts_all);
 	len += snprintf(buf + len, size - len,
 			"%22s : %10u\n", "RX-Bytes-All",
+=======
+			"%18s : %10u\n", "CRC ERR",
+			sc->debug.stats.rxstats.crc_err);
+	len += snprintf(buf + len, size - len,
+			"%18s : %10u\n", "DECRYPT CRC ERR",
+			sc->debug.stats.rxstats.decrypt_crc_err);
+	len += snprintf(buf + len, size - len,
+			"%18s : %10u\n", "PHY ERR",
+			sc->debug.stats.rxstats.phy_err);
+	len += snprintf(buf + len, size - len,
+			"%18s : %10u\n", "MIC ERR",
+			sc->debug.stats.rxstats.mic_err);
+	len += snprintf(buf + len, size - len,
+			"%18s : %10u\n", "PRE-DELIM CRC ERR",
+			sc->debug.stats.rxstats.pre_delim_crc_err);
+	len += snprintf(buf + len, size - len,
+			"%18s : %10u\n", "POST-DELIM CRC ERR",
+			sc->debug.stats.rxstats.post_delim_crc_err);
+	len += snprintf(buf + len, size - len,
+			"%18s : %10u\n", "DECRYPT BUSY ERR",
+			sc->debug.stats.rxstats.decrypt_busy_err);
+
+	len += snprintf(buf + len, size - len,
+			"%18s : %10d\n", "RSSI-CTL0",
+			sc->debug.stats.rxstats.rs_rssi_ctl0);
+
+	len += snprintf(buf + len, size - len,
+			"%18s : %10d\n", "RSSI-CTL1",
+			sc->debug.stats.rxstats.rs_rssi_ctl1);
+
+	len += snprintf(buf + len, size - len,
+			"%18s : %10d\n", "RSSI-CTL2",
+			sc->debug.stats.rxstats.rs_rssi_ctl2);
+
+	len += snprintf(buf + len, size - len,
+			"%18s : %10d\n", "RSSI-EXT0",
+			sc->debug.stats.rxstats.rs_rssi_ext0);
+
+	len += snprintf(buf + len, size - len,
+			"%18s : %10d\n", "RSSI-EXT1",
+			sc->debug.stats.rxstats.rs_rssi_ext1);
+
+	len += snprintf(buf + len, size - len,
+			"%18s : %10d\n", "RSSI-EXT2",
+			sc->debug.stats.rxstats.rs_rssi_ext2);
+
+	len += snprintf(buf + len, size - len,
+			"%18s : %10d\n", "Rx Antenna",
+			sc->debug.stats.rxstats.rs_antenna);
+
+	PHY_ERR("UNDERRUN", ATH9K_PHYERR_UNDERRUN);
+	PHY_ERR("TIMING", ATH9K_PHYERR_TIMING);
+	PHY_ERR("PARITY", ATH9K_PHYERR_PARITY);
+	PHY_ERR("RATE", ATH9K_PHYERR_RATE);
+	PHY_ERR("LENGTH", ATH9K_PHYERR_LENGTH);
+	PHY_ERR("RADAR", ATH9K_PHYERR_RADAR);
+	PHY_ERR("SERVICE", ATH9K_PHYERR_SERVICE);
+	PHY_ERR("TOR", ATH9K_PHYERR_TOR);
+	PHY_ERR("OFDM-TIMING", ATH9K_PHYERR_OFDM_TIMING);
+	PHY_ERR("OFDM-SIGNAL-PARITY", ATH9K_PHYERR_OFDM_SIGNAL_PARITY);
+	PHY_ERR("OFDM-RATE", ATH9K_PHYERR_OFDM_RATE_ILLEGAL);
+	PHY_ERR("OFDM-LENGTH", ATH9K_PHYERR_OFDM_LENGTH_ILLEGAL);
+	PHY_ERR("OFDM-POWER-DROP", ATH9K_PHYERR_OFDM_POWER_DROP);
+	PHY_ERR("OFDM-SERVICE", ATH9K_PHYERR_OFDM_SERVICE);
+	PHY_ERR("OFDM-RESTART", ATH9K_PHYERR_OFDM_RESTART);
+	PHY_ERR("FALSE-RADAR-EXT", ATH9K_PHYERR_FALSE_RADAR_EXT);
+	PHY_ERR("CCK-TIMING", ATH9K_PHYERR_CCK_TIMING);
+	PHY_ERR("CCK-HEADER-CRC", ATH9K_PHYERR_CCK_HEADER_CRC);
+	PHY_ERR("CCK-RATE", ATH9K_PHYERR_CCK_RATE_ILLEGAL);
+	PHY_ERR("CCK-SERVICE", ATH9K_PHYERR_CCK_SERVICE);
+	PHY_ERR("CCK-RESTART", ATH9K_PHYERR_CCK_RESTART);
+	PHY_ERR("CCK-LENGTH", ATH9K_PHYERR_CCK_LENGTH_ILLEGAL);
+	PHY_ERR("CCK-POWER-DROP", ATH9K_PHYERR_CCK_POWER_DROP);
+	PHY_ERR("HT-CRC", ATH9K_PHYERR_HT_CRC_ERROR);
+	PHY_ERR("HT-LENGTH", ATH9K_PHYERR_HT_LENGTH_ILLEGAL);
+	PHY_ERR("HT-RATE", ATH9K_PHYERR_HT_RATE_ILLEGAL);
+
+	len += snprintf(buf + len, size - len,
+			"%18s : %10u\n", "RX-Pkts-All",
+			sc->debug.stats.rxstats.rx_pkts_all);
+	len += snprintf(buf + len, size - len,
+			"%18s : %10u\n", "RX-Bytes-All",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sc->debug.stats.rxstats.rx_bytes_all);
 
 	if (len > size)
@@ -960,8 +1362,13 @@ void ath_debug_stat_rx(struct ath_softc *sc, struct ath_rx_status *rs)
 {
 #define RX_STAT_INC(c) sc->debug.stats.rxstats.c++
 #define RX_PHY_ERR_INC(c) sc->debug.stats.rxstats.phy_err_stats[c]++
+<<<<<<< HEAD
 #define RX_SAMP_DBG(c) (sc->debug.bb_mac_samp[sc->debug.sampidx].rs\
 			[sc->debug.rsidx].c)
+=======
+
+	u32 phyerr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	RX_STAT_INC(rx_pkts_all);
 	sc->debug.stats.rxstats.rx_bytes_all += rs->rs_datalen;
@@ -981,6 +1388,7 @@ void ath_debug_stat_rx(struct ath_softc *sc, struct ath_rx_status *rs)
 
 	if (rs->rs_status & ATH9K_RXERR_PHY) {
 		RX_STAT_INC(phy_err);
+<<<<<<< HEAD
 		if (rs->rs_phyerr < ATH9K_PHYERR_MAX)
 			RX_PHY_ERR_INC(rs->rs_phyerr);
 	}
@@ -1007,11 +1415,33 @@ void ath_debug_stat_rx(struct ath_softc *sc, struct ath_rx_status *rs)
 #undef RX_STAT_INC
 #undef RX_PHY_ERR_INC
 #undef RX_SAMP_DBG
+=======
+		phyerr = rs->rs_phyerr & 0x24;
+		RX_PHY_ERR_INC(phyerr);
+	}
+
+	sc->debug.stats.rxstats.rs_rssi_ctl0 = rs->rs_rssi_ctl0;
+	sc->debug.stats.rxstats.rs_rssi_ctl1 = rs->rs_rssi_ctl1;
+	sc->debug.stats.rxstats.rs_rssi_ctl2 = rs->rs_rssi_ctl2;
+
+	sc->debug.stats.rxstats.rs_rssi_ext0 = rs->rs_rssi_ext0;
+	sc->debug.stats.rxstats.rs_rssi_ext1 = rs->rs_rssi_ext1;
+	sc->debug.stats.rxstats.rs_rssi_ext2 = rs->rs_rssi_ext2;
+
+	sc->debug.stats.rxstats.rs_antenna = rs->rs_antenna;
+
+#undef RX_STAT_INC
+#undef RX_PHY_ERR_INC
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct file_operations fops_recv = {
 	.read = read_file_recv,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -1050,7 +1480,11 @@ static ssize_t write_file_regidx(struct file *file, const char __user *user_buf,
 static const struct file_operations fops_regidx = {
 	.read = read_file_regidx,
 	.write = write_file_regidx,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -1097,7 +1531,11 @@ static ssize_t write_file_regval(struct file *file, const char __user *user_buf,
 static const struct file_operations fops_regval = {
 	.read = read_file_regval,
 	.write = write_file_regval,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -1138,6 +1576,7 @@ static const struct file_operations fops_regdump = {
 	.llseek = default_llseek,/* read accesses f_pos */
 };
 
+<<<<<<< HEAD
 static ssize_t read_file_dump_nfcal(struct file *file, char __user *user_buf,
 				    size_t count, loff_t *ppos)
 {
@@ -1524,6 +1963,8 @@ static const struct file_operations fops_samps = {
 
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int ath9k_init_debug(struct ath_hw *ah)
 {
 	struct ath_common *common = ath9k_hw_common(ah);
@@ -1538,29 +1979,43 @@ int ath9k_init_debug(struct ath_hw *ah)
 	debugfs_create_file("debug", S_IRUSR | S_IWUSR, sc->debug.debugfs_phy,
 			    sc, &fops_debug);
 #endif
+<<<<<<< HEAD
 
 	ath9k_dfs_init_debug(sc);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	debugfs_create_file("dma", S_IRUSR, sc->debug.debugfs_phy, sc,
 			    &fops_dma);
 	debugfs_create_file("interrupt", S_IRUSR, sc->debug.debugfs_phy, sc,
 			    &fops_interrupt);
+<<<<<<< HEAD
+=======
+	debugfs_create_file("wiphy", S_IRUSR | S_IWUSR, sc->debug.debugfs_phy,
+			    sc, &fops_wiphy);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	debugfs_create_file("xmit", S_IRUSR, sc->debug.debugfs_phy, sc,
 			    &fops_xmit);
 	debugfs_create_file("stations", S_IRUSR, sc->debug.debugfs_phy, sc,
 			    &fops_stations);
 	debugfs_create_file("misc", S_IRUSR, sc->debug.debugfs_phy, sc,
 			    &fops_misc);
+<<<<<<< HEAD
 	debugfs_create_file("reset", S_IRUSR, sc->debug.debugfs_phy, sc,
 			    &fops_reset);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	debugfs_create_file("recv", S_IRUSR, sc->debug.debugfs_phy, sc,
 			    &fops_recv);
 	debugfs_create_file("rx_chainmask", S_IRUSR | S_IWUSR,
 			    sc->debug.debugfs_phy, sc, &fops_rx_chainmask);
 	debugfs_create_file("tx_chainmask", S_IRUSR | S_IWUSR,
 			    sc->debug.debugfs_phy, sc, &fops_tx_chainmask);
+<<<<<<< HEAD
 	debugfs_create_file("disable_ani", S_IRUSR | S_IWUSR,
 			    sc->debug.debugfs_phy, sc, &fops_disable_ani);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	debugfs_create_file("regidx", S_IRUSR | S_IWUSR, sc->debug.debugfs_phy,
 			    sc, &fops_regidx);
 	debugfs_create_file("regval", S_IRUSR | S_IWUSR, sc->debug.debugfs_phy,
@@ -1570,6 +2025,7 @@ int ath9k_init_debug(struct ath_hw *ah)
 			    &ah->config.cwm_ignore_extcca);
 	debugfs_create_file("regdump", S_IRUSR, sc->debug.debugfs_phy, sc,
 			    &fops_regdump);
+<<<<<<< HEAD
 	debugfs_create_file("dump_nfcal", S_IRUSR, sc->debug.debugfs_phy, sc,
 			    &fops_dump_nfcal);
 	debugfs_create_file("base_eeprom", S_IRUSR, sc->debug.debugfs_phy, sc,
@@ -1580,6 +2036,8 @@ int ath9k_init_debug(struct ath_hw *ah)
 	debugfs_create_file("samples", S_IRUSR, sc->debug.debugfs_phy, sc,
 			    &fops_samps);
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	debugfs_create_u32("gpio_mask", S_IRUSR | S_IWUSR,
 			   sc->debug.debugfs_phy, &sc->sc_ah->gpio_mask);
@@ -1587,5 +2045,9 @@ int ath9k_init_debug(struct ath_hw *ah)
 	debugfs_create_u32("gpio_val", S_IRUSR | S_IWUSR,
 			   sc->debug.debugfs_phy, &sc->sc_ah->gpio_val);
 
+<<<<<<< HEAD
+=======
+	sc->debug.regidx = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }

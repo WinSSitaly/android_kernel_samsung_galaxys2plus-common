@@ -36,7 +36,11 @@ MODULE_LICENSE("GPL");
 
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;	/* Index 0-MAX */
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;	/* ID for this card */
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE;	/* Enable this card */
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE;	/* Enable this card */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned long port[SNDRV_CARDS] = SNDRV_DEFAULT_PORT;
 static unsigned long mpu_port[SNDRV_CARDS] = SNDRV_DEFAULT_PORT;
 static int irq[SNDRV_CARDS] = SNDRV_DEFAULT_IRQ;
@@ -322,6 +326,10 @@ static int __devinit snd_jazz16_probe(struct device *devptr, unsigned int dev)
 					MPU401_HW_MPU401,
 					mpu_port[dev], 0,
 					mpu_irq[dev],
+<<<<<<< HEAD
+=======
+					mpu_irq[dev] >= 0 ? IRQF_DISABLED : 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					NULL) < 0)
 			snd_printk(KERN_ERR "no MPU-401 device at 0x%lx\n",
 					mpu_port[dev]);

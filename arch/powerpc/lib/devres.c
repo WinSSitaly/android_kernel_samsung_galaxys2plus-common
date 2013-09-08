@@ -10,7 +10,11 @@
 #include <linux/device.h>	/* devres_*(), devm_ioremap_release() */
 #include <linux/gfp.h>
 #include <linux/io.h>		/* ioremap_prot() */
+<<<<<<< HEAD
 #include <linux/export.h>	/* EXPORT_SYMBOL() */
+=======
+#include <linux/module.h>	/* EXPORT_SYMBOL() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * devm_ioremap_prot - Managed ioremap_prot()

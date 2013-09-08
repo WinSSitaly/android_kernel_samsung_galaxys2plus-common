@@ -64,6 +64,7 @@ void do_breakpoint(struct pt_regs *, int fault_num);
 
 
 #ifdef __tilegx__
+<<<<<<< HEAD
 /* kernel/single_step.c */
 void gx_singlestep_handle(struct pt_regs *, int fault_num);
 
@@ -72,3 +73,9 @@ void fill_ra_stack(void);
 #endif
 
 #endif /* _ASM_TILE_TRAPS_H */
+=======
+void gx_singlestep_handle(struct pt_regs *, int fault_num);
+#endif
+
+#endif /* _ASM_TILE_SYSCALLS_H */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -16,7 +16,11 @@ initialisation code by creating a struct regulator_consumer_supply for
 each regulator.
 
 struct regulator_consumer_supply {
+<<<<<<< HEAD
 	const char *dev_name;	/* consumer dev_name() */
+=======
+	struct device *dev;	/* consumer */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const char *supply;	/* consumer supply - e.g. "vcc" */
 };
 
@@ -24,13 +28,22 @@ e.g. for the machine above
 
 static struct regulator_consumer_supply regulator1_consumers[] = {
 {
+<<<<<<< HEAD
 	.dev_name	= "dev_name(consumer B)",
 	.supply		= "Vcc",
+=======
+	.dev	= &platform_consumerB_device.dev,
+	.supply	= "Vcc",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 },};
 
 static struct regulator_consumer_supply regulator2_consumers[] = {
 {
+<<<<<<< HEAD
 	.dev	= "dev_name(consumer A"),
+=======
+	.dev	= &platform_consumerA_device.dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.supply	= "Vcc",
 },};
 
@@ -43,7 +56,10 @@ to their supply regulator :-
 
 static struct regulator_init_data regulator1_data = {
 	.constraints = {
+<<<<<<< HEAD
 		.name = "Regulator-1",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.min_uV = 3300000,
 		.max_uV = 3300000,
 		.valid_modes_mask = REGULATOR_MODE_NORMAL,
@@ -52,6 +68,7 @@ static struct regulator_init_data regulator1_data = {
 	.consumer_supplies = regulator1_consumers,
 };
 
+<<<<<<< HEAD
 The name field should be set to something that is usefully descriptive
 for the board for configuration of supplies for other regulators and
 for use in logging and other diagnostic output.  Normally the name
@@ -65,6 +82,15 @@ field below and co:-
 
 static struct regulator_init_data regulator2_data = {
 	.supply_regulator = "Regulator-1",
+=======
+Regulator-1 supplies power to Regulator-2. This relationship must be registered
+with the core so that Regulator-1 is also enabled when Consumer A enables its
+supply (Regulator-2). The supply regulator is set by the supply_regulator
+field below:-
+
+static struct regulator_init_data regulator2_data = {
+	.supply_regulator = "regulator_name",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.constraints = {
 		.min_uV = 1800000,
 		.max_uV = 2000000,

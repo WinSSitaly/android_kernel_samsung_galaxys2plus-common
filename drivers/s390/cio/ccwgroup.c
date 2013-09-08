@@ -29,20 +29,45 @@
 
 /* a device matches a driver if all its slave devices match the same
  * entry of the driver */
+<<<<<<< HEAD
 static int ccwgroup_bus_match(struct device *dev, struct device_driver * drv)
 {
 	struct ccwgroup_device *gdev = to_ccwgroupdev(dev);
 	struct ccwgroup_driver *gdrv = to_ccwgroupdrv(drv);
+=======
+static int
+ccwgroup_bus_match (struct device * dev, struct device_driver * drv)
+{
+	struct ccwgroup_device *gdev;
+	struct ccwgroup_driver *gdrv;
+
+	gdev = to_ccwgroupdev(dev);
+	gdrv = to_ccwgroupdrv(drv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (gdev->creator_id == gdrv->driver_id)
 		return 1;
 
 	return 0;
 }
+<<<<<<< HEAD
 
 static struct bus_type ccwgroup_bus_type;
 
 static void __ccwgroup_remove_symlinks(struct ccwgroup_device *gdev)
+=======
+static int
+ccwgroup_uevent (struct device *dev, struct kobj_uevent_env *env)
+{
+	/* TODO */
+	return 0;
+}
+
+static struct bus_type ccwgroup_bus_type;
+
+static void
+__ccwgroup_remove_symlinks(struct ccwgroup_device *gdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 	char str[8];
@@ -52,6 +77,10 @@ static void __ccwgroup_remove_symlinks(struct ccwgroup_device *gdev)
 		sysfs_remove_link(&gdev->dev.kobj, str);
 		sysfs_remove_link(&gdev->cdev[i]->dev.kobj, "group_device");
 	}
+<<<<<<< HEAD
+=======
+	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -75,6 +104,7 @@ static void __ccwgroup_remove_cdev_refs(struct ccwgroup_device *gdev)
 	}
 }
 
+<<<<<<< HEAD
 static int ccwgroup_set_online(struct ccwgroup_device *gdev)
 {
 	struct ccwgroup_driver *gdrv = to_ccwgroupdrv(gdev->dev.driver);
@@ -156,6 +186,14 @@ static ssize_t ccwgroup_online_show(struct device *dev,
 	return scnprintf(buf, PAGE_SIZE, "%d\n", online);
 }
 
+=======
+static ssize_t ccwgroup_online_store(struct device *dev,
+				     struct device_attribute *attr,
+				     const char *buf, size_t count);
+static ssize_t ccwgroup_online_show(struct device *dev,
+				    struct device_attribute *attr,
+				    char *buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Provide an 'ungroup' attribute so the user can remove group devices no
  * longer needed or accidentially created. Saves memory :)
@@ -173,6 +211,7 @@ static void ccwgroup_ungroup_callback(struct device *dev)
 	mutex_unlock(&gdev->reg_mutex);
 }
 
+<<<<<<< HEAD
 static ssize_t ccwgroup_ungroup_store(struct device *dev,
 				      struct device_attribute *attr,
 				      const char *buf, size_t count)
@@ -180,6 +219,16 @@ static ssize_t ccwgroup_ungroup_store(struct device *dev,
 	struct ccwgroup_device *gdev = to_ccwgroupdev(dev);
 	int rc;
 
+=======
+static ssize_t
+ccwgroup_ungroup_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
+{
+	struct ccwgroup_device *gdev;
+	int rc;
+
+	gdev = to_ccwgroupdev(dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Prevent concurrent online/offline processing and ungrouping. */
 	if (atomic_cmpxchg(&gdev->onoff, 0, 1) != 0)
 		return -EAGAIN;
@@ -200,6 +249,10 @@ out:
 	}
 	return count;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEVICE_ATTR(ungroup, 0200, NULL, ccwgroup_ungroup_store);
 static DEVICE_ATTR(online, 0644, ccwgroup_online_show, ccwgroup_online_store);
 
@@ -216,19 +269,34 @@ static const struct attribute_group *ccwgroup_attr_groups[] = {
 	NULL,
 };
 
+<<<<<<< HEAD
 static void ccwgroup_release(struct device *dev)
+=======
+static void
+ccwgroup_release (struct device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	kfree(to_ccwgroupdev(dev));
 }
 
+<<<<<<< HEAD
 static int __ccwgroup_create_symlinks(struct ccwgroup_device *gdev)
+=======
+static int
+__ccwgroup_create_symlinks(struct ccwgroup_device *gdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	char str[8];
 	int i, rc;
 
 	for (i = 0; i < gdev->count; i++) {
+<<<<<<< HEAD
 		rc = sysfs_create_link(&gdev->cdev[i]->dev.kobj,
 				       &gdev->dev.kobj, "group_device");
+=======
+		rc = sysfs_create_link(&gdev->cdev[i]->dev.kobj, &gdev->dev.kobj,
+				       "group_device");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rc) {
 			for (--i; i >= 0; i--)
 				sysfs_remove_link(&gdev->cdev[i]->dev.kobj,
@@ -238,8 +306,13 @@ static int __ccwgroup_create_symlinks(struct ccwgroup_device *gdev)
 	}
 	for (i = 0; i < gdev->count; i++) {
 		sprintf(str, "cdev%d", i);
+<<<<<<< HEAD
 		rc = sysfs_create_link(&gdev->dev.kobj,
 				       &gdev->cdev[i]->dev.kobj, str);
+=======
+		rc = sysfs_create_link(&gdev->dev.kobj, &gdev->cdev[i]->dev.kobj,
+				       str);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rc) {
 			for (--i; i >= 0; i--) {
 				sprintf(str, "cdev%d", i);
@@ -376,6 +449,7 @@ int ccwgroup_create_from_string(struct device *root, unsigned int creator_id,
 	rc = device_add(&gdev->dev);
 	if (rc)
 		goto error;
+<<<<<<< HEAD
 	rc = __ccwgroup_create_symlinks(gdev);
 	if (rc) {
 		device_del(&gdev->dev);
@@ -383,6 +457,16 @@ int ccwgroup_create_from_string(struct device *root, unsigned int creator_id,
 	}
 	mutex_unlock(&gdev->reg_mutex);
 	return 0;
+=======
+	get_device(&gdev->dev);
+	rc = __ccwgroup_create_symlinks(gdev);
+	if (!rc) {
+		mutex_unlock(&gdev->reg_mutex);
+		put_device(&gdev->dev);
+		return 0;
+	}
+	device_unregister(&gdev->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 error:
 	for (i = 0; i < num_devices; i++)
 		if (gdev->cdev[i]) {
@@ -400,6 +484,7 @@ error:
 EXPORT_SYMBOL(ccwgroup_create_from_string);
 
 static int ccwgroup_notifier(struct notifier_block *nb, unsigned long action,
+<<<<<<< HEAD
 			     void *data)
 {
 	struct device *dev = data;
@@ -409,6 +494,9 @@ static int ccwgroup_notifier(struct notifier_block *nb, unsigned long action,
 
 	return NOTIFY_OK;
 }
+=======
+			     void *data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct notifier_block ccwgroup_nb = {
 	.notifier_call = ccwgroup_notifier
@@ -440,6 +528,7 @@ module_exit(cleanup_ccwgroup);
 
 /************************** driver stuff ******************************/
 
+<<<<<<< HEAD
 static int ccwgroup_probe(struct device *dev)
 {
 	struct ccwgroup_device *gdev = to_ccwgroupdev(dev);
@@ -455,6 +544,130 @@ static int ccwgroup_remove(struct device *dev)
 
 	if (!dev->driver)
 		return 0;
+=======
+static int
+ccwgroup_set_online(struct ccwgroup_device *gdev)
+{
+	struct ccwgroup_driver *gdrv;
+	int ret;
+
+	if (atomic_cmpxchg(&gdev->onoff, 0, 1) != 0)
+		return -EAGAIN;
+	if (gdev->state == CCWGROUP_ONLINE) {
+		ret = 0;
+		goto out;
+	}
+	if (!gdev->dev.driver) {
+		ret = -EINVAL;
+		goto out;
+	}
+	gdrv = to_ccwgroupdrv (gdev->dev.driver);
+	if ((ret = gdrv->set_online ? gdrv->set_online(gdev) : 0))
+		goto out;
+
+	gdev->state = CCWGROUP_ONLINE;
+ out:
+	atomic_set(&gdev->onoff, 0);
+	return ret;
+}
+
+static int
+ccwgroup_set_offline(struct ccwgroup_device *gdev)
+{
+	struct ccwgroup_driver *gdrv;
+	int ret;
+
+	if (atomic_cmpxchg(&gdev->onoff, 0, 1) != 0)
+		return -EAGAIN;
+	if (gdev->state == CCWGROUP_OFFLINE) {
+		ret = 0;
+		goto out;
+	}
+	if (!gdev->dev.driver) {
+		ret = -EINVAL;
+		goto out;
+	}
+	gdrv = to_ccwgroupdrv (gdev->dev.driver);
+	if ((ret = gdrv->set_offline ? gdrv->set_offline(gdev) : 0))
+		goto out;
+
+	gdev->state = CCWGROUP_OFFLINE;
+ out:
+	atomic_set(&gdev->onoff, 0);
+	return ret;
+}
+
+static ssize_t
+ccwgroup_online_store (struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
+{
+	struct ccwgroup_device *gdev;
+	struct ccwgroup_driver *gdrv;
+	unsigned long value;
+	int ret;
+
+	if (!dev->driver)
+		return -EINVAL;
+
+	gdev = to_ccwgroupdev(dev);
+	gdrv = to_ccwgroupdrv(dev->driver);
+
+	if (!try_module_get(gdrv->driver.owner))
+		return -EINVAL;
+
+	ret = strict_strtoul(buf, 0, &value);
+	if (ret)
+		goto out;
+
+	if (value == 1)
+		ret = ccwgroup_set_online(gdev);
+	else if (value == 0)
+		ret = ccwgroup_set_offline(gdev);
+	else
+		ret = -EINVAL;
+out:
+	module_put(gdrv->driver.owner);
+	return (ret == 0) ? count : ret;
+}
+
+static ssize_t
+ccwgroup_online_show (struct device *dev, struct device_attribute *attr, char *buf)
+{
+	int online;
+
+	online = (to_ccwgroupdev(dev)->state == CCWGROUP_ONLINE);
+
+	return sprintf(buf, online ? "1\n" : "0\n");
+}
+
+static int
+ccwgroup_probe (struct device *dev)
+{
+	struct ccwgroup_device *gdev;
+	struct ccwgroup_driver *gdrv;
+
+	int ret;
+
+	gdev = to_ccwgroupdev(dev);
+	gdrv = to_ccwgroupdrv(dev->driver);
+
+	ret = gdrv->probe ? gdrv->probe(gdev) : -ENODEV;
+
+	return ret;
+}
+
+static int
+ccwgroup_remove (struct device *dev)
+{
+	struct ccwgroup_device *gdev;
+	struct ccwgroup_driver *gdrv;
+
+	if (!dev->driver)
+		return 0;
+
+	gdev = to_ccwgroupdev(dev);
+	gdrv = to_ccwgroupdrv(dev->driver);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (gdrv->remove)
 		gdrv->remove(gdev);
 
@@ -463,11 +676,23 @@ static int ccwgroup_remove(struct device *dev)
 
 static void ccwgroup_shutdown(struct device *dev)
 {
+<<<<<<< HEAD
 	struct ccwgroup_device *gdev = to_ccwgroupdev(dev);
 	struct ccwgroup_driver *gdrv = to_ccwgroupdrv(dev->driver);
 
 	if (!dev->driver)
 		return;
+=======
+	struct ccwgroup_device *gdev;
+	struct ccwgroup_driver *gdrv;
+
+	if (!dev->driver)
+		return;
+
+	gdev = to_ccwgroupdev(dev);
+	gdrv = to_ccwgroupdrv(dev->driver);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (gdrv->shutdown)
 		gdrv->shutdown(gdev);
 }
@@ -543,12 +768,32 @@ static const struct dev_pm_ops ccwgroup_pm_ops = {
 static struct bus_type ccwgroup_bus_type = {
 	.name   = "ccwgroup",
 	.match  = ccwgroup_bus_match,
+<<<<<<< HEAD
+=======
+	.uevent = ccwgroup_uevent,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.probe  = ccwgroup_probe,
 	.remove = ccwgroup_remove,
 	.shutdown = ccwgroup_shutdown,
 	.pm = &ccwgroup_pm_ops,
 };
 
+<<<<<<< HEAD
+=======
+
+static int ccwgroup_notifier(struct notifier_block *nb, unsigned long action,
+			     void *data)
+{
+	struct device *dev = data;
+
+	if (action == BUS_NOTIFY_UNBIND_DRIVER)
+		device_schedule_callback(dev, ccwgroup_ungroup_callback);
+
+	return NOTIFY_OK;
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * ccwgroup_driver_register() - register a ccw group driver
  * @cdriver: driver to be registered
@@ -562,9 +807,15 @@ int ccwgroup_driver_register(struct ccwgroup_driver *cdriver)
 
 	return driver_register(&cdriver->driver);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(ccwgroup_driver_register);
 
 static int __ccwgroup_match_all(struct device *dev, void *data)
+=======
+
+static int
+__ccwgroup_match_all(struct device *dev, void *data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 1;
 }
@@ -580,6 +831,10 @@ void ccwgroup_driver_unregister(struct ccwgroup_driver *cdriver)
 	struct device *dev;
 
 	/* We don't want ccwgroup devices to live longer than their driver. */
+<<<<<<< HEAD
+=======
+	get_driver(&cdriver->driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while ((dev = driver_find_device(&cdriver->driver, NULL, NULL,
 					 __ccwgroup_match_all))) {
 		struct ccwgroup_device *gdev = to_ccwgroupdev(dev);
@@ -591,9 +846,15 @@ void ccwgroup_driver_unregister(struct ccwgroup_driver *cdriver)
 		mutex_unlock(&gdev->reg_mutex);
 		put_device(dev);
 	}
+<<<<<<< HEAD
 	driver_unregister(&cdriver->driver);
 }
 EXPORT_SYMBOL(ccwgroup_driver_unregister);
+=======
+	put_driver(&cdriver->driver);
+	driver_unregister(&cdriver->driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * ccwgroup_probe_ccwdev() - probe function for slave devices
@@ -608,7 +869,10 @@ int ccwgroup_probe_ccwdev(struct ccw_device *cdev)
 {
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(ccwgroup_probe_ccwdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * ccwgroup_remove_ccwdev() - remove function for slave devices
@@ -645,5 +909,14 @@ void ccwgroup_remove_ccwdev(struct ccw_device *cdev)
 	/* Release ccwgroup device reference for local processing. */
 	put_device(&gdev->dev);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(ccwgroup_remove_ccwdev);
 MODULE_LICENSE("GPL");
+=======
+
+MODULE_LICENSE("GPL");
+EXPORT_SYMBOL(ccwgroup_driver_register);
+EXPORT_SYMBOL(ccwgroup_driver_unregister);
+EXPORT_SYMBOL(ccwgroup_probe_ccwdev);
+EXPORT_SYMBOL(ccwgroup_remove_ccwdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

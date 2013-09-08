@@ -17,8 +17,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bitops.h>
 #include <linux/errno.h>
 #include <linux/fs.h>
@@ -47,8 +50,13 @@
 #define WDOG_CTRL_ACTION_NMI	2	/* NMI */
 #define WDOG_CTRL_ACTION_FCR	3	/* full chip reset */
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 module_param(nowayout, bool, 0);
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started "
 			   "(default=" __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
 
@@ -70,23 +78,32 @@ static int max_timeout;
 static inline void ath79_wdt_keepalive(void)
 {
 	ath79_reset_wr(AR71XX_RESET_REG_WDOG, wdt_freq * timeout);
+<<<<<<< HEAD
 	/* flush write */
 	ath79_reset_rr(AR71XX_RESET_REG_WDOG);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void ath79_wdt_enable(void)
 {
 	ath79_wdt_keepalive();
 	ath79_reset_wr(AR71XX_RESET_REG_WDOG_CTRL, WDOG_CTRL_ACTION_FCR);
+<<<<<<< HEAD
 	/* flush write */
 	ath79_reset_rr(AR71XX_RESET_REG_WDOG_CTRL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void ath79_wdt_disable(void)
 {
 	ath79_reset_wr(AR71XX_RESET_REG_WDOG_CTRL, WDOG_CTRL_ACTION_NONE);
+<<<<<<< HEAD
 	/* flush write */
 	ath79_reset_rr(AR71XX_RESET_REG_WDOG_CTRL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ath79_wdt_set_timeout(int val)
@@ -116,7 +133,12 @@ static int ath79_wdt_release(struct inode *inode, struct file *file)
 	if (test_bit(WDT_FLAGS_EXPECT_CLOSE, &wdt_flags))
 		ath79_wdt_disable();
 	else {
+<<<<<<< HEAD
 		pr_crit("device closed unexpectedly, watchdog timer will not stop!\n");
+=======
+		pr_crit(DRIVER_NAME ": device closed unexpectedly, "
+			"watchdog timer will not stop!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ath79_wdt_keepalive();
 	}
 

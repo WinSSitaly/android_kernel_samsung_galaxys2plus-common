@@ -10,7 +10,11 @@ struct dev_archdata {
 #ifdef CONFIG_ACPI
 	void	*acpi_handle;
 #endif
+<<<<<<< HEAD
 #ifdef CONFIG_INTEL_IOMMU
+=======
+#ifdef CONFIG_DMAR
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *iommu; /* hook for IOMMU specific extension */
 #endif
 };

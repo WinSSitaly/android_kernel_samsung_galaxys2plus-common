@@ -85,8 +85,11 @@ crisv32_pinmux_alloc_fixed(enum fixed_function function)
 	int ret = -EINVAL;
 	char saved[sizeof pins];
 	unsigned long flags;
+<<<<<<< HEAD
 	reg_pinmux_rw_hwprot hwprot;
 	reg_clkgen_rw_clk_ctrl clk_ctrl;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&pinmux_lock, flags);
 
@@ -95,8 +98,14 @@ crisv32_pinmux_alloc_fixed(enum fixed_function function)
 
 	crisv32_pinmux_init(); /* must be done before we read rw_hwprot */
 
+<<<<<<< HEAD
 	hwprot = REG_RD(pinmux, regi_pinmux, rw_hwprot);
 	clk_ctrl = REG_RD(clkgen, regi_clkgen, rw_clk_ctrl);
+=======
+	reg_pinmux_rw_hwprot hwprot = REG_RD(pinmux, regi_pinmux, rw_hwprot);
+	reg_clkgen_rw_clk_ctrl clk_ctrl = REG_RD(clkgen, regi_clkgen,
+		rw_clk_ctrl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (function) {
 	case pinmux_eth:
@@ -263,7 +272,10 @@ crisv32_pinmux_dealloc_fixed(enum fixed_function function)
 	int ret = -EINVAL;
 	char saved[sizeof pins];
 	unsigned long flags;
+<<<<<<< HEAD
 	reg_pinmux_rw_hwprot hwprot;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&pinmux_lock, flags);
 
@@ -272,7 +284,11 @@ crisv32_pinmux_dealloc_fixed(enum fixed_function function)
 
 	crisv32_pinmux_init(); /* must be done before we read rw_hwprot */
 
+<<<<<<< HEAD
 	hwprot = REG_RD(pinmux, regi_pinmux, rw_hwprot);
+=======
+	reg_pinmux_rw_hwprot hwprot = REG_RD(pinmux, regi_pinmux, rw_hwprot);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (function) {
 	case pinmux_eth:

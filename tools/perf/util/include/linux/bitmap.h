@@ -5,8 +5,11 @@
 #include <linux/bitops.h>
 
 int __bitmap_weight(const unsigned long *bitmap, int bits);
+<<<<<<< HEAD
 void __bitmap_or(unsigned long *dst, const unsigned long *bitmap1,
 		 const unsigned long *bitmap2, int bits);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define BITMAP_LAST_WORD_MASK(nbits)					\
 (									\
@@ -34,6 +37,7 @@ static inline int bitmap_weight(const unsigned long *src, int nbits)
 	return __bitmap_weight(src, nbits);
 }
 
+<<<<<<< HEAD
 static inline void bitmap_or(unsigned long *dst, const unsigned long *src1,
 			     const unsigned long *src2, int nbits)
 {
@@ -43,4 +47,6 @@ static inline void bitmap_or(unsigned long *dst, const unsigned long *src1,
 		__bitmap_or(dst, src1, src2, nbits);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _PERF_BITOPS_H */

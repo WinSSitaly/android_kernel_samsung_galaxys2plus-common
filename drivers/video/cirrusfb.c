@@ -280,6 +280,7 @@ MODULE_DEVICE_TABLE(pci, cirrusfb_pci_table);
 #endif /* CONFIG_PCI */
 
 #ifdef CONFIG_ZORRO
+<<<<<<< HEAD
 struct zorrocl {
 	enum cirrus_board type;	/* Board type */
 	u32 regoffset;		/* Offset of registers in first Zorro device */
@@ -344,10 +345,57 @@ static const struct zorro_device_id cirrusfb_zorro_table[] __devinitconst = {
 	}, {
 		.id		= ZORRO_PROD_VILLAGE_TRONIC_PICASSO_IV_Z2_REG,
 		.driver_data	= (unsigned long)&zcl_picasso4_z2,
+=======
+static const struct zorro_device_id cirrusfb_zorro_table[] = {
+	{
+		.id		= ZORRO_PROD_HELFRICH_SD64_RAM,
+		.driver_data	= BT_SD64,
+	}, {
+		.id		= ZORRO_PROD_HELFRICH_PICCOLO_RAM,
+		.driver_data	= BT_PICCOLO,
+	}, {
+		.id	= ZORRO_PROD_VILLAGE_TRONIC_PICASSO_II_II_PLUS_RAM,
+		.driver_data	= BT_PICASSO,
+	}, {
+		.id		= ZORRO_PROD_GVP_EGS_28_24_SPECTRUM_RAM,
+		.driver_data	= BT_SPECTRUM,
+	}, {
+		.id		= ZORRO_PROD_VILLAGE_TRONIC_PICASSO_IV_Z3,
+		.driver_data	= BT_PICASSO4,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{ 0 }
 };
 MODULE_DEVICE_TABLE(zorro, cirrusfb_zorro_table);
+<<<<<<< HEAD
+=======
+
+static const struct {
+	zorro_id id2;
+	unsigned long size;
+} cirrusfb_zorro_table2[] = {
+	[BT_SD64] = {
+		.id2	= ZORRO_PROD_HELFRICH_SD64_REG,
+		.size	= 0x400000
+	},
+	[BT_PICCOLO] = {
+		.id2	= ZORRO_PROD_HELFRICH_PICCOLO_REG,
+		.size	= 0x200000
+	},
+	[BT_PICASSO] = {
+		.id2	= ZORRO_PROD_VILLAGE_TRONIC_PICASSO_II_II_PLUS_REG,
+		.size	= 0x200000
+	},
+	[BT_SPECTRUM] = {
+		.id2	= ZORRO_PROD_GVP_EGS_28_24_SPECTRUM_REG,
+		.size	= 0x200000
+	},
+	[BT_PICASSO4] = {
+		.id2	= 0,
+		.size	= 0x400000
+	}
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_ZORRO */
 
 #ifdef CIRRUSFB_DEBUG
@@ -372,7 +420,11 @@ struct cirrusfb_info {
 	void (*unmap)(struct fb_info *info);
 };
 
+<<<<<<< HEAD
 static bool noaccel __devinitdata;
+=======
+static int noaccel __devinitdata;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static char *mode_option __devinitdata = "640x480@60";
 
 /****************************************************************************/
@@ -1978,12 +2030,25 @@ static void cirrusfb_zorro_unmap(struct fb_info *info)
 	struct cirrusfb_info *cinfo = info->par;
 	struct zorro_dev *zdev = to_zorro_dev(info->device);
 
+<<<<<<< HEAD
 	if (info->fix.smem_start > 16 * MB_)
 		iounmap(info->screen_base);
 	if (info->fix.mmio_start > 16 * MB_)
 		iounmap(cinfo->regbase);
 
 	zorro_release_device(zdev);
+=======
+	zorro_release_device(zdev);
+
+	if (cinfo->btype == BT_PICASSO4) {
+		cinfo->regbase -= 0x600000;
+		iounmap((void *)cinfo->regbase);
+		iounmap(info->screen_base);
+	} else {
+		if (zorro_resource_start(zdev) > 0x01000000)
+			iounmap(info->screen_base);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif /* CONFIG_ZORRO */
 
@@ -2240,16 +2305,31 @@ static struct pci_driver cirrusfb_pci_driver = {
 static int __devinit cirrusfb_zorro_register(struct zorro_dev *z,
 					     const struct zorro_device_id *ent)
 {
+<<<<<<< HEAD
 	struct fb_info *info;
 	int error;
 	const struct zorrocl *zcl;
 	enum cirrus_board btype;
 	unsigned long regbase, ramsize, rambase;
 	struct cirrusfb_info *cinfo;
+=======
+	struct cirrusfb_info *cinfo;
+	struct fb_info *info;
+	enum cirrus_board btype;
+	struct zorro_dev *z2 = NULL;
+	unsigned long board_addr, board_size, size;
+	int ret;
+
+	btype = ent->driver_data;
+	if (cirrusfb_zorro_table2[btype].id2)
+		z2 = zorro_find_device(cirrusfb_zorro_table2[btype].id2, NULL);
+	size = cirrusfb_zorro_table2[btype].size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	info = framebuffer_alloc(sizeof(struct cirrusfb_info), &z->dev);
 	if (!info) {
 		printk(KERN_ERR "cirrusfb: could not allocate memory\n");
+<<<<<<< HEAD
 		return -ENOMEM;
 	}
 
@@ -2322,12 +2402,87 @@ static int __devinit cirrusfb_zorro_register(struct zorro_dev *z,
 	dev_info(info->device,
 		 "Cirrus Logic chipset on Zorro bus, RAM (%lu MiB) at 0x%lx\n",
 		 ramsize / MB_, rambase);
+=======
+		ret = -ENOMEM;
+		goto err_out;
+	}
+
+	dev_info(info->device, "%s board detected\n",
+		 cirrusfb_board_info[btype].name);
+
+	cinfo = info->par;
+	cinfo->btype = btype;
+
+	assert(z);
+	assert(btype != BT_NONE);
+
+	board_addr = zorro_resource_start(z);
+	board_size = zorro_resource_len(z);
+	info->screen_size = size;
+
+	if (!zorro_request_device(z, "cirrusfb")) {
+		dev_err(info->device, "cannot reserve region 0x%lx, abort\n",
+			board_addr);
+		ret = -EBUSY;
+		goto err_release_fb;
+	}
+
+	ret = -EIO;
+
+	if (btype == BT_PICASSO4) {
+		dev_info(info->device, " REG at $%lx\n", board_addr + 0x600000);
+
+		/* To be precise, for the P4 this is not the */
+		/* begin of the board, but the begin of RAM. */
+		/* for P4, map in its address space in 2 chunks (### TEST! ) */
+		/* (note the ugly hardcoded 16M number) */
+		cinfo->regbase = ioremap(board_addr, 16777216);
+		if (!cinfo->regbase)
+			goto err_release_region;
+
+		dev_dbg(info->device, "Virtual address for board set to: $%p\n",
+			cinfo->regbase);
+		cinfo->regbase += 0x600000;
+		info->fix.mmio_start = board_addr + 0x600000;
+
+		info->fix.smem_start = board_addr + 16777216;
+		info->screen_base = ioremap(info->fix.smem_start, 16777216);
+		if (!info->screen_base)
+			goto err_unmap_regbase;
+	} else {
+		dev_info(info->device, " REG at $%lx\n",
+			 (unsigned long) z2->resource.start);
+
+		info->fix.smem_start = board_addr;
+		if (board_addr > 0x01000000)
+			info->screen_base = ioremap(board_addr, board_size);
+		else
+			info->screen_base = (caddr_t) ZTWO_VADDR(board_addr);
+		if (!info->screen_base)
+			goto err_release_region;
+
+		/* set address for REG area of board */
+		cinfo->regbase = (caddr_t) ZTWO_VADDR(z2->resource.start);
+		info->fix.mmio_start = z2->resource.start;
+
+		dev_dbg(info->device, "Virtual address for board set to: $%p\n",
+			cinfo->regbase);
+	}
+	cinfo->unmap = cirrusfb_zorro_unmap;
+
+	dev_info(info->device,
+		 "Cirrus Logic chipset on Zorro bus, RAM (%lu MB) at $%lx\n",
+		 board_size / MB_, board_addr);
+
+	zorro_set_drvdata(z, info);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* MCLK select etc. */
 	if (cirrusfb_board_info[btype].init_sr1f)
 		vga_wseq(cinfo->regbase, CL_SEQR1F,
 			 cirrusfb_board_info[btype].sr1f);
 
+<<<<<<< HEAD
 	error = cirrusfb_register(info);
 	if (error) {
 		dev_err(info->device, "Failed to register device, error %d\n",
@@ -2350,6 +2505,24 @@ err_release_dev:
 err_release_fb:
 	framebuffer_release(info);
 	return error;
+=======
+	ret = cirrusfb_register(info);
+	if (!ret)
+		return 0;
+
+	if (btype == BT_PICASSO4 || board_addr > 0x01000000)
+		iounmap(info->screen_base);
+
+err_unmap_regbase:
+	if (btype == BT_PICASSO4)
+		iounmap(cinfo->regbase - 0x600000);
+err_release_region:
+	release_region(board_addr, board_size);
+err_release_fb:
+	framebuffer_release(info);
+err_out:
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __devexit cirrusfb_zorro_unregister(struct zorro_dev *z)
@@ -2357,7 +2530,10 @@ void __devexit cirrusfb_zorro_unregister(struct zorro_dev *z)
 	struct fb_info *info = zorro_get_drvdata(z);
 
 	cirrusfb_cleanup(info);
+<<<<<<< HEAD
 	zorro_set_drvdata(z, NULL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct zorro_driver cirrusfb_zorro_driver = {

@@ -72,6 +72,7 @@ static inline void
 qla2x00_clean_dsd_pool(struct qla_hw_data *ha, srb_t *sp)
 {
 	struct dsd_dma *dsd_ptr, *tdsd_ptr;
+<<<<<<< HEAD
 	struct crc_context *ctx;
 
 	ctx = (struct crc_context *)GET_CMD_CTX_SP(sp);
@@ -79,12 +80,22 @@ qla2x00_clean_dsd_pool(struct qla_hw_data *ha, srb_t *sp)
 	/* clean up allocated prev pool */
 	list_for_each_entry_safe(dsd_ptr, tdsd_ptr,
 	    &ctx->dsd_list, list) {
+=======
+
+	/* clean up allocated prev pool */
+	list_for_each_entry_safe(dsd_ptr, tdsd_ptr,
+	    &((struct crc_context *)sp->ctx)->dsd_list, list) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dma_pool_free(ha->dl_dma_pool, dsd_ptr->dsd_addr,
 		    dsd_ptr->dsd_list_dma);
 		list_del(&dsd_ptr->list);
 		kfree(dsd_ptr);
 	}
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&ctx->dsd_list);
+=======
+	INIT_LIST_HEAD(&((struct crc_context *)sp->ctx)->dsd_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void
@@ -97,6 +108,7 @@ qla2x00_set_fcport_state(fc_port_t *fcport, int state)
 
 	/* Don't print state transitions during initial allocation of fcport */
 	if (old_state && old_state != state) {
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_disc, fcport->vha, 0x207d,
 		    "FCPort state transitioned from %s to %s - "
 		    "portid=%02x%02x%02x.\n",
@@ -187,3 +199,13 @@ qla2x00_gid_list_size(struct qla_hw_data *ha)
 {
 	return sizeof(struct gid_list_info) * ha->max_fibre_devices;
 }
+=======
+		DEBUG(qla_printk(KERN_WARNING, fcport->vha->hw,
+		    "scsi(%ld): FCPort state transitioned from %s to %s - "
+		    "portid=%02x%02x%02x.\n", fcport->vha->host_no,
+		    port_state_str[old_state], port_state_str[state],
+		    fcport->d_id.b.domain, fcport->d_id.b.area,
+		    fcport->d_id.b.al_pa));
+	}
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

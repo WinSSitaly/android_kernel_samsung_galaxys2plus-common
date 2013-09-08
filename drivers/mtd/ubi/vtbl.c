@@ -306,8 +306,14 @@ static int create_vtbl(struct ubi_device *ubi, struct ubi_scan_info *si,
 		       int copy, void *vtbl)
 {
 	int err, tries = 0;
+<<<<<<< HEAD
 	struct ubi_vid_hdr *vid_hdr;
 	struct ubi_scan_leb *new_seb;
+=======
+	static struct ubi_vid_hdr *vid_hdr;
+	struct ubi_scan_volume *sv;
+	struct ubi_scan_leb *new_seb, *old_seb = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ubi_msg("create volume table (copy #%d)", copy + 1);
 
@@ -315,6 +321,18 @@ static int create_vtbl(struct ubi_device *ubi, struct ubi_scan_info *si,
 	if (!vid_hdr)
 		return -ENOMEM;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * Check if there is a logical eraseblock which would have to contain
+	 * this volume table copy was found during scanning. It has to be wiped
+	 * out.
+	 */
+	sv = ubi_scan_find_sv(si, UBI_LAYOUT_VOLUME_ID);
+	if (sv)
+		old_seb = ubi_scan_find_seb(sv, copy);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 retry:
 	new_seb = ubi_scan_get_free_peb(ubi, si);
 	if (IS_ERR(new_seb)) {
@@ -322,7 +340,11 @@ retry:
 		goto out_free;
 	}
 
+<<<<<<< HEAD
 	vid_hdr->vol_type = UBI_LAYOUT_VOLUME_TYPE;
+=======
+	vid_hdr->vol_type = UBI_VID_DYNAMIC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vid_hdr->vol_id = cpu_to_be32(UBI_LAYOUT_VOLUME_ID);
 	vid_hdr->compat = UBI_LAYOUT_VOLUME_COMPAT;
 	vid_hdr->data_size = vid_hdr->used_ebs =
@@ -341,12 +363,21 @@ retry:
 		goto write_error;
 
 	/*
+<<<<<<< HEAD
 	 * And add it to the scanning information. Don't delete the old version
 	 * of this LEB as it will be deleted and freed in 'ubi_scan_add_used()'.
 	 */
 	err = ubi_scan_add_used(ubi, si, new_seb->pnum, new_seb->ec,
 				vid_hdr, 0);
 	kmem_cache_free(si->scan_leb_slab, new_seb);
+=======
+	 * And add it to the scanning information. Don't delete the old
+	 * @old_seb as it will be deleted and freed in 'ubi_scan_add_used()'.
+	 */
+	err = ubi_scan_add_used(ubi, si, new_seb->pnum, new_seb->ec,
+				vid_hdr, 0);
+	kfree(new_seb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ubi_free_vid_hdr(ubi, vid_hdr);
 	return err;
 
@@ -359,7 +390,11 @@ write_error:
 		list_add(&new_seb->u.list, &si->erase);
 		goto retry;
 	}
+<<<<<<< HEAD
 	kmem_cache_free(si->scan_leb_slab, new_seb);
+=======
+	kfree(new_seb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_free:
 	ubi_free_vid_hdr(ubi, vid_hdr);
 	return err;
@@ -423,7 +458,11 @@ static struct ubi_vtbl_record *process_lvol(struct ubi_device *ubi,
 
 		err = ubi_io_read_data(ubi, leb[seb->lnum], seb->pnum, 0,
 				       ubi->vtbl_size);
+<<<<<<< HEAD
 		if (err == UBI_IO_BITFLIPS || mtd_is_eccerr(err))
+=======
+		if (err == UBI_IO_BITFLIPS || err == -EBADMSG)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * Scrub the PEB later. Note, -EBADMSG indicates an
 			 * uncorrectable ECC error, but we have our own CRC and
@@ -632,7 +671,11 @@ static int init_volumes(struct ubi_device *ubi, const struct ubi_scan_info *si,
 		return -ENOMEM;
 
 	vol->reserved_pebs = UBI_LAYOUT_VOLUME_EBS;
+<<<<<<< HEAD
 	vol->alignment = UBI_LAYOUT_VOLUME_ALIGN;
+=======
+	vol->alignment = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vol->vol_type = UBI_DYNAMIC_VOLUME;
 	vol->name_len = sizeof(UBI_LAYOUT_VOLUME_NAME) - 1;
 	memcpy(vol->name, UBI_LAYOUT_VOLUME_NAME, vol->name_len + 1);
@@ -866,7 +909,11 @@ out_free:
  */
 static void paranoid_vtbl_check(const struct ubi_device *ubi)
 {
+<<<<<<< HEAD
 	if (!ubi->dbg->chk_gen)
+=======
+	if (!(ubi_chk_flags & UBI_CHK_GEN))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	if (vtbl_check(ubi, ubi->vtbl)) {

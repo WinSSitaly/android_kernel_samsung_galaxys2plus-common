@@ -8,8 +8,13 @@
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation; either version 2 of the License, or
  *	(at your option) any later version.
+<<<<<<< HEAD
  */
 
+=======
+ *
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/device.h>
 #include <linux/usb/video.h>
@@ -373,7 +378,10 @@ static struct usb_composite_driver webcam_driver = {
 	.name		= "g_webcam",
 	.dev		= &webcam_device_descriptor,
 	.strings	= webcam_device_strings,
+<<<<<<< HEAD
 	.max_speed	= USB_SPEED_HIGH,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.unbind		= webcam_unbind,
 };
 

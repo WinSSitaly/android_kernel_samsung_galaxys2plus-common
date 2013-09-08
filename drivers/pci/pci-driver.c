@@ -18,7 +18,10 @@
 #include <linux/sched.h>
 #include <linux/cpu.h>
 #include <linux/pm_runtime.h>
+<<<<<<< HEAD
 #include <linux/suspend.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "pci.h"
 
 struct pci_dynid {
@@ -72,7 +75,13 @@ int pci_add_dynid(struct pci_driver *drv,
 	list_add_tail(&dynid->node, &drv->dynids.list);
 	spin_unlock(&drv->dynids.lock);
 
+<<<<<<< HEAD
 	retval = driver_attach(&drv->driver);
+=======
+	get_driver(&drv->driver);
+	retval = driver_attach(&drv->driver);
+	put_driver(&drv->driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return retval;
 }
@@ -188,6 +197,7 @@ store_remove_id(struct device_driver *driver, const char *buf, size_t count)
 static DRIVER_ATTR(remove_id, S_IWUSR, NULL, store_remove_id);
 
 static int
+<<<<<<< HEAD
 pci_create_newid_files(struct pci_driver *drv)
 {
 	int error = 0;
@@ -216,6 +226,45 @@ static inline int pci_create_newid_files(struct pci_driver *drv)
 	return 0;
 }
 static inline void pci_remove_newid_files(struct pci_driver *drv) {}
+=======
+pci_create_newid_file(struct pci_driver *drv)
+{
+	int error = 0;
+	if (drv->probe != NULL)
+		error = driver_create_file(&drv->driver, &driver_attr_new_id);
+	return error;
+}
+
+static void pci_remove_newid_file(struct pci_driver *drv)
+{
+	driver_remove_file(&drv->driver, &driver_attr_new_id);
+}
+
+static int
+pci_create_removeid_file(struct pci_driver *drv)
+{
+	int error = 0;
+	if (drv->probe != NULL)
+		error = driver_create_file(&drv->driver,&driver_attr_remove_id);
+	return error;
+}
+
+static void pci_remove_removeid_file(struct pci_driver *drv)
+{
+	driver_remove_file(&drv->driver, &driver_attr_remove_id);
+}
+#else /* !CONFIG_HOTPLUG */
+static inline int pci_create_newid_file(struct pci_driver *drv)
+{
+	return 0;
+}
+static inline void pci_remove_newid_file(struct pci_driver *drv) {}
+static inline int pci_create_removeid_file(struct pci_driver *drv)
+{
+	return 0;
+}
+static inline void pci_remove_removeid_file(struct pci_driver *drv) {}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /**
@@ -419,6 +468,7 @@ static void pci_device_shutdown(struct device *dev)
 		drv->shutdown(pci_dev);
 	pci_msi_shutdown(pci_dev);
 	pci_msix_shutdown(pci_dev);
+<<<<<<< HEAD
 
 	/*
 	 * Devices may be enabled to wake up by runtime PM, but they need not
@@ -429,6 +479,8 @@ static void pci_device_shutdown(struct device *dev)
 	 */
 	if (!device_may_wakeup(dev))
 		pci_enable_wake(pci_dev, PCI_UNKNOWN, false);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_PM
@@ -603,8 +655,12 @@ static bool pci_has_legacy_pm_support(struct pci_dev *pci_dev)
 	 * supported as well.  Drivers are supposed to support either the
 	 * former, or the latter, but not both at the same time.
 	 */
+<<<<<<< HEAD
 	WARN(ret && drv->driver.pm, "driver %s device %04x:%04x\n",
 		drv->name, pci_dev->vendor, pci_dev->device);
+=======
+	WARN_ON(ret && drv->driver.pm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -617,6 +673,7 @@ static int pci_pm_prepare(struct device *dev)
 	int error = 0;
 
 	/*
+<<<<<<< HEAD
 	 * If a PCI device configured to wake up the system from sleep states
 	 * has been suspended at run time and there's a resume request pending
 	 * for it, this is equivalent to the device signaling wakeup, so the
@@ -632,6 +689,8 @@ static int pci_pm_prepare(struct device *dev)
 	}
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * PCI devices suspended at run time need to be resumed at this
 	 * point, because in general it is necessary to reconfigure them for
 	 * system suspend.  Namely, if the device is supposed to wake up the
@@ -640,7 +699,11 @@ static int pci_pm_prepare(struct device *dev)
 	 * system from the sleep state, we'll have to prevent it from signaling
 	 * wake-up.
 	 */
+<<<<<<< HEAD
 	pm_runtime_resume(dev);
+=======
+	pm_runtime_get_sync(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (drv && drv->pm && drv->pm->prepare)
 		error = drv->pm->prepare(dev);
@@ -742,6 +805,7 @@ static int pci_pm_suspend_noirq(struct device *dev)
 
 	pci_pm_set_unknown_state(pci_dev);
 
+<<<<<<< HEAD
 	/*
 	 * Some BIOSes from ASUS have a bug: If a USB EHCI host controller's
 	 * PCI COMMAND register isn't 0, the BIOS assumes that the controller
@@ -754,6 +818,8 @@ static int pci_pm_suspend_noirq(struct device *dev)
 	if (pci_dev->class == PCI_CLASS_SERIAL_USB_EHCI)
 		pci_write_config_word(pci_dev, PCI_COMMAND, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -952,6 +1018,7 @@ static int pci_pm_poweroff_noirq(struct device *dev)
 	if (!pci_dev->state_saved && !pci_is_bridge(pci_dev))
 		pci_prepare_to_sleep(pci_dev);
 
+<<<<<<< HEAD
 	/*
 	 * The reason for doing this here is the same as for the analogous code
 	 * in pci_pm_suspend_noirq().
@@ -959,6 +1026,8 @@ static int pci_pm_poweroff_noirq(struct device *dev)
 	if (pci_dev->class == PCI_CLASS_SERIAL_USB_EHCI)
 		pci_write_config_word(pci_dev, PCI_COMMAND, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1156,12 +1225,27 @@ int __pci_register_driver(struct pci_driver *drv, struct module *owner,
 	if (error)
 		goto out;
 
+<<<<<<< HEAD
 	error = pci_create_newid_files(drv);
 	if (error)
 		goto out_newid;
 out:
 	return error;
 
+=======
+	error = pci_create_newid_file(drv);
+	if (error)
+		goto out_newid;
+
+	error = pci_create_removeid_file(drv);
+	if (error)
+		goto out_removeid;
+out:
+	return error;
+
+out_removeid:
+	pci_remove_newid_file(drv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_newid:
 	driver_unregister(&drv->driver);
 	goto out;
@@ -1180,7 +1264,12 @@ out_newid:
 void
 pci_unregister_driver(struct pci_driver *drv)
 {
+<<<<<<< HEAD
 	pci_remove_newid_files(drv);
+=======
+	pci_remove_removeid_file(drv);
+	pci_remove_newid_file(drv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	driver_unregister(&drv->driver);
 	pci_free_dynids(drv);
 }

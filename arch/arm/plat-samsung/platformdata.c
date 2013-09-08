@@ -10,12 +10,18 @@
 */
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/slab.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/string.h>
 #include <linux/platform_device.h>
 
 #include <plat/devs.h>
+<<<<<<< HEAD
 #include <plat/sdhci.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void __init *s3c_set_platdata(void *pd, size_t pdsize,
 			      struct platform_device *pdev)
@@ -37,6 +43,7 @@ void __init *s3c_set_platdata(void *pd, size_t pdsize,
 	pdev->dev.platform_data = npd;
 	return npd;
 }
+<<<<<<< HEAD
 
 void s3c_sdhci_set_platdata(struct s3c_sdhci_platdata *pd,
 			     struct s3c_sdhci_platdata *set)
@@ -60,3 +67,5 @@ void s3c_sdhci_set_platdata(struct s3c_sdhci_platdata *pd,
 	if (pd->clk_type)
 		set->clk_type = pd->clk_type;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -32,7 +32,10 @@
 
 #define pr_fmt(fmt) "%s:%s: " fmt, KBUILD_MODNAME, __func__
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/netlink.h>
 #include <net/net_namespace.h>
 #include <net/sock.h>
@@ -147,6 +150,7 @@ static int ibnl_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 			if (op < 0 || op >= client->nops ||
 			    !client->cb_table[RDMA_NL_GET_OP(op)].dump)
 				return -EINVAL;
+<<<<<<< HEAD
 
 			{
 				struct netlink_dump_control c = {
@@ -155,6 +159,11 @@ static int ibnl_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 				};
 				return netlink_dump_start(nls, skb, nlh, &c);
 			}
+=======
+			return netlink_dump_start(nls, skb, nlh,
+						  client->cb_table[op].dump,
+						  NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 

@@ -254,7 +254,11 @@
 #include <linux/init.h>
 
 #include <linux/ppp_defs.h>
+<<<<<<< HEAD
 #include <linux/ppp-ioctl.h>
+=======
+#include <linux/if_ppp.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ppp_channel.h>
 
 #include <net/irda/irda.h>

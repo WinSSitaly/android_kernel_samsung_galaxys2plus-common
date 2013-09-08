@@ -50,11 +50,14 @@
 # define inline		inline		__attribute__((always_inline))
 # define __inline__	__inline__	__attribute__((always_inline))
 # define __inline	__inline	__attribute__((always_inline))
+<<<<<<< HEAD
 #else
 /* A lot of inline functions can cause havoc with function tracing */
 # define inline		inline		notrace
 # define __inline__	__inline__	notrace
 # define __inline	__inline	notrace
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #define __deprecated			__attribute__((deprecated))
@@ -87,8 +90,12 @@
  */
 #define __pure				__attribute__((pure))
 #define __aligned(x)			__attribute__((aligned(x)))
+<<<<<<< HEAD
 #define __printf(a, b)			__attribute__((format(printf, a, b)))
 #define __scanf(a, b)			__attribute__((format(scanf, a, b)))
+=======
+#define __printf(a,b)			__attribute__((format(printf,a,b)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define  noinline			__attribute__((noinline))
 #define __attribute_const__		__attribute__((__const__))
 #define __maybe_unused			__attribute__((unused))

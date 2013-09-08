@@ -4,6 +4,7 @@
  * Free Software Foundation;  either version 2 of the  License, or (at your
  * option) any later version.
  *
+<<<<<<< HEAD
  * Copyright (C) 2003, 04, 11 Ralf Baechle (ralf@linux-mips.org)
  * Copyright (C) 2011 Wind River Systems,
  *   written by Ralf Baechle (ralf@linux-mips.org)
@@ -13,16 +14,37 @@
 #include <linux/mm.h>
 #include <linux/bootmem.h>
 #include <linux/export.h>
+=======
+ * Copyright (C) 2003, 04 Ralf Baechle (ralf@linux-mips.org)
+ */
+#include <linux/kernel.h>
+#include <linux/mm.h>
+#include <linux/bootmem.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/types.h>
 #include <linux/pci.h>
 
+<<<<<<< HEAD
 #include <asm/cpu-info.h>
 
 /*
  * If PCI_PROBE_ONLY in pci_flags is set, we don't change any PCI resource
  * assignments.
  */
+=======
+/*
+ * Indicate whether we respect the PCI setup left by the firmware.
+ *
+ * Make this long-lived  so that we know when shutting down
+ * whether we probed only or not.
+ */
+int pci_probe_only;
+
+#define PCI_ASSIGN_ALL_BUSSES	1
+
+unsigned int pci_probe = PCI_ASSIGN_ALL_BUSSES;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * The PCI controller list.
@@ -79,12 +101,16 @@ static void __devinit pcibios_scanbus(struct pci_controller *hose)
 {
 	static int next_busno;
 	static int need_domain_info;
+<<<<<<< HEAD
 	LIST_HEAD(resources);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pci_bus *bus;
 
 	if (!hose->iommu)
 		PCI_DMA_BUS_IS_PHYS = 1;
 
+<<<<<<< HEAD
 	if (hose->get_busno && pci_has_flag(PCI_PROBE_ONLY))
 		next_busno = (*hose->get_busno)();
 
@@ -96,6 +122,12 @@ static void __devinit pcibios_scanbus(struct pci_controller *hose)
 	if (!bus)
 		pci_free_resource_list(&resources);
 
+=======
+	if (hose->get_busno && pci_probe_only)
+		next_busno = (*hose->get_busno)();
+
+	bus = pci_scan_bus(next_busno, hose->pci_ops, hose);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hose->bus = bus;
 
 	need_domain_info = need_domain_info || hose->index;
@@ -109,7 +141,11 @@ static void __devinit pcibios_scanbus(struct pci_controller *hose)
 			need_domain_info = 1;
 		}
 
+<<<<<<< HEAD
 		if (!pci_has_flag(PCI_PROBE_ONLY)) {
+=======
+		if (!pci_probe_only) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pci_bus_size_bridges(bus);
 			pci_bus_assign_resources(bus);
 			pci_enable_bridges(bus);
@@ -156,6 +192,7 @@ out:
 	       "Skipping PCI bus scan due to resource conflict\n");
 }
 
+<<<<<<< HEAD
 static void __init pcibios_set_cache_line_size(void)
 {
 	struct cpuinfo_mips *c = &current_cpu_data;
@@ -176,12 +213,17 @@ static void __init pcibios_set_cache_line_size(void)
 	pr_debug("PCI: pci_cache_line_size set to %d bytes\n", lsize);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init pcibios_init(void)
 {
 	struct pci_controller *hose;
 
+<<<<<<< HEAD
 	pcibios_set_cache_line_size();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Scan all of the recorded PCI controllers.  */
 	for (hose = hose_head; hose; hose = hose->next)
 		pcibios_scanbus(hose);
@@ -233,9 +275,36 @@ static int pcibios_enable_resources(struct pci_dev *dev, int mask)
 	return 0;
 }
 
+<<<<<<< HEAD
 unsigned int pcibios_assign_all_busses(void)
 {
 	return 1;
+=======
+/*
+ *  If we set up a device for bus mastering, we need to check the latency
+ *  timer as certain crappy BIOSes forget to set it properly.
+ */
+static unsigned int pcibios_max_latency = 255;
+
+void pcibios_set_master(struct pci_dev *dev)
+{
+	u8 lat;
+	pci_read_config_byte(dev, PCI_LATENCY_TIMER, &lat);
+	if (lat < 16)
+		lat = (64 <= pcibios_max_latency) ? 64 : pcibios_max_latency;
+	else if (lat > pcibios_max_latency)
+		lat = pcibios_max_latency;
+	else
+		return;
+	printk(KERN_DEBUG "PCI: Setting latency timer of device %s to %d\n",
+	       pci_name(dev), lat);
+	pci_write_config_byte(dev, PCI_LATENCY_TIMER, lat);
+}
+
+unsigned int pcibios_assign_all_busses(void)
+{
+	return (pci_probe & PCI_ASSIGN_ALL_BUSSES) ? 1 : 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int pcibios_enable_device(struct pci_dev *dev, int mask)
@@ -248,6 +317,7 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
 	return pcibios_plat_dev_init(dev);
 }
 
+<<<<<<< HEAD
 void __devinit pcibios_fixup_bus(struct pci_bus *bus)
 {
 	struct pci_dev *dev = bus->self;
@@ -255,6 +325,51 @@ void __devinit pcibios_fixup_bus(struct pci_bus *bus)
 	if (pci_has_flag(PCI_PROBE_ONLY) && dev &&
 	    (dev->class >> 8) == PCI_CLASS_BRIDGE_PCI) {
 		pci_read_bridge_bases(bus);
+=======
+static void pcibios_fixup_device_resources(struct pci_dev *dev,
+	struct pci_bus *bus)
+{
+	/* Update device resources.  */
+	struct pci_controller *hose = (struct pci_controller *)bus->sysdata;
+	unsigned long offset = 0;
+	int i;
+
+	for (i = 0; i < PCI_NUM_RESOURCES; i++) {
+		if (!dev->resource[i].start)
+			continue;
+		if (dev->resource[i].flags & IORESOURCE_IO)
+			offset = hose->io_offset;
+		else if (dev->resource[i].flags & IORESOURCE_MEM)
+			offset = hose->mem_offset;
+
+		dev->resource[i].start += offset;
+		dev->resource[i].end += offset;
+	}
+}
+
+void __devinit pcibios_fixup_bus(struct pci_bus *bus)
+{
+	/* Propagate hose info into the subordinate devices.  */
+
+	struct pci_controller *hose = bus->sysdata;
+	struct list_head *ln;
+	struct pci_dev *dev = bus->self;
+
+	if (!dev) {
+		bus->resource[0] = hose->io_resource;
+		bus->resource[1] = hose->mem_resource;
+	} else if (pci_probe_only &&
+		   (dev->class >> 8) == PCI_CLASS_BRIDGE_PCI) {
+		pci_read_bridge_bases(bus);
+		pcibios_fixup_device_resources(dev, bus);
+	}
+
+	for (ln = bus->devices.next; ln != &bus->devices; ln = ln->next) {
+		dev = pci_dev_b(ln);
+
+		if ((dev->class >> 8) != PCI_CLASS_BRIDGE_PCI)
+			pcibios_fixup_device_resources(dev, bus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -264,7 +379,44 @@ pcibios_update_irq(struct pci_dev *dev, int irq)
 	pci_write_config_byte(dev, PCI_INTERRUPT_LINE, irq);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_HOTPLUG
+=======
+void pcibios_resource_to_bus(struct pci_dev *dev, struct pci_bus_region *region,
+			 struct resource *res)
+{
+	struct pci_controller *hose = (struct pci_controller *)dev->sysdata;
+	unsigned long offset = 0;
+
+	if (res->flags & IORESOURCE_IO)
+		offset = hose->io_offset;
+	else if (res->flags & IORESOURCE_MEM)
+		offset = hose->mem_offset;
+
+	region->start = res->start - offset;
+	region->end = res->end - offset;
+}
+
+void __devinit
+pcibios_bus_to_resource(struct pci_dev *dev, struct resource *res,
+			struct pci_bus_region *region)
+{
+	struct pci_controller *hose = (struct pci_controller *)dev->sysdata;
+	unsigned long offset = 0;
+
+	if (res->flags & IORESOURCE_IO)
+		offset = hose->io_offset;
+	else if (res->flags & IORESOURCE_MEM)
+		offset = hose->mem_offset;
+
+	res->start = region->start + offset;
+	res->end = region->end + offset;
+}
+
+#ifdef CONFIG_HOTPLUG
+EXPORT_SYMBOL(pcibios_resource_to_bus);
+EXPORT_SYMBOL(pcibios_bus_to_resource);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL(PCIBIOS_MIN_IO);
 EXPORT_SYMBOL(PCIBIOS_MIN_MEM);
 #endif

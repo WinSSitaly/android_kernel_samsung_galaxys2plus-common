@@ -9,7 +9,21 @@
  * Copyright (C) 2002  Red Hat, Inc.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+=======
+/*******************************************************************************************
+Copyright 2010 Broadcom Corporation.  All rights reserved.
+
+Unless you and Broadcom execute a separate written software license agreement governing use
+of this software, this software is licensed to you under the terms of the GNU General Public
+License version 2, available at http://www.gnu.org/copyleft/gpl.html (the "GPL").
+
+Notwithstanding the above, under no circumstances may you combine this software in any way
+with any other Broadcom software provided under a license other than the GPL, without
+Broadcom's express prior written consent.
+*******************************************************************************************/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/moduleparam.h>
 #include <linux/netdevice.h>
@@ -25,19 +39,39 @@
 #include <linux/rcupdate.h>
 #include <linux/workqueue.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/tcp.h>
 #include <net/udp.h>
 #include <asm/unaligned.h>
 #include <trace/events/napi.h>
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_BRCM_NETCONSOLE
+#include "../../drivers/usb/gadget/u_ether.h"
+#include "../../drivers/usb/gadget/rndis.h"
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * We maintain a small pool of fully-sized skbs, to make sure the
  * message gets out even in extreme OOM situations.
  */
+<<<<<<< HEAD
 
 #define MAX_UDP_CHUNK 1460
 #define MAX_SKBS 32
+=======
+#ifdef CONFIG_BRCM_NETCONSOLE
+#define MAX_UDP_CHUNK 1400
+#else
+#define MAX_UDP_CHUNK 1460
+#endif
+#define MAX_SKBS 128
+#define MAX_QUEUE_DEPTH (MAX_SKBS / 2)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct sk_buff_head skb_pool;
 
@@ -47,11 +81,24 @@ static atomic_t trapped;
 #define NETPOLL_RX_ENABLED  1
 #define NETPOLL_RX_DROP     2
 
+<<<<<<< HEAD
 #define MAX_SKB_SIZE							\
 	(sizeof(struct ethhdr) +					\
 	 sizeof(struct iphdr) +						\
 	 sizeof(struct udphdr) +					\
 	 MAX_UDP_CHUNK)
+=======
+#ifdef CONFIG_BRCM_NETCONSOLE
+#define MAX_SKB_SIZE \
+		(MAX_UDP_CHUNK + sizeof(struct udphdr) + \
+				sizeof(struct iphdr) + sizeof(struct ethhdr) + \
+				sizeof (struct rndis_packet_msg_type))
+#else
+#define MAX_SKB_SIZE \
+		(MAX_UDP_CHUNK + sizeof(struct udphdr) + \
+				sizeof(struct iphdr) + sizeof(struct ethhdr))
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void zap_completion_queue(void);
 static void arp_reply(struct sk_buff *skb);
@@ -59,12 +106,17 @@ static void arp_reply(struct sk_buff *skb);
 static unsigned int carrier_timeout = 4;
 module_param(carrier_timeout, uint, 0644);
 
+<<<<<<< HEAD
 #define np_info(np, fmt, ...)				\
 	pr_info("%s: " fmt, np->name, ##__VA_ARGS__)
 #define np_err(np, fmt, ...)				\
 	pr_err("%s: " fmt, np->name, ##__VA_ARGS__)
 #define np_notice(np, fmt, ...)				\
 	pr_notice("%s: " fmt, np->name, ##__VA_ARGS__)
+=======
+static DEFINE_SPINLOCK(txq_lock);
+static struct workqueue_struct *brcm_tx_work_q;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void queue_process(struct work_struct *work)
 {
@@ -73,12 +125,20 @@ static void queue_process(struct work_struct *work)
 	struct sk_buff *skb;
 	unsigned long flags;
 
+<<<<<<< HEAD
+=======
+	spin_lock(&txq_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while ((skb = skb_dequeue(&npinfo->txq))) {
 		struct net_device *dev = skb->dev;
 		const struct net_device_ops *ops = dev->netdev_ops;
 		struct netdev_queue *txq;
 
+<<<<<<< HEAD
 		if (!netif_device_present(dev) || !netif_running(dev)) {
+=======
+		if (!netif_device_present(dev) || !netif_running(dev) || !netif_carrier_ok(dev)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			__kfree_skb(skb);
 			continue;
 		}
@@ -87,18 +147,32 @@ static void queue_process(struct work_struct *work)
 
 		local_irq_save(flags);
 		__netif_tx_lock(txq, smp_processor_id());
+<<<<<<< HEAD
 		if (netif_xmit_frozen_or_stopped(txq) ||
+=======
+		if (netif_tx_queue_frozen_or_stopped(txq) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    ops->ndo_start_xmit(skb, dev) != NETDEV_TX_OK) {
 			skb_queue_head(&npinfo->txq, skb);
 			__netif_tx_unlock(txq);
 			local_irq_restore(flags);
+<<<<<<< HEAD
 
 			schedule_delayed_work(&npinfo->tx_work, HZ/10);
+=======
+			spin_unlock(&txq_lock);
+			queue_delayed_work(brcm_tx_work_q,
+				&npinfo->tx_work, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 		}
 		__netif_tx_unlock(txq);
 		local_irq_restore(flags);
 	}
+<<<<<<< HEAD
+=======
+	spin_unlock(&txq_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static __sum16 checksum_udp(struct sk_buff *skb, struct udphdr *uh,
@@ -189,7 +263,11 @@ static void service_arp_queue(struct netpoll_info *npi)
 	}
 }
 
+<<<<<<< HEAD
 static void netpoll_poll_dev(struct net_device *dev)
+=======
+void netpoll_poll_dev(struct net_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const struct net_device_ops *ops;
 
@@ -221,17 +299,91 @@ static void netpoll_poll_dev(struct net_device *dev)
 	zap_completion_queue();
 }
 
+<<<<<<< HEAD
 static void refill_skbs(void)
+=======
+void netpoll_poll(struct netpoll *np)
+{
+	netpoll_poll_dev(np->dev);
+}
+
+/**
+ * static void __refill_skbs(struct sk_buff *skb) - put the skb buf back to queue to reuse
+ *
+ */
+static void __refill_skbs(struct sk_buff *skb)
+{
+	unsigned long flags;
+
+	spin_lock_irqsave(&skb_pool.lock, flags);
+
+		if (skb)
+			__skb_queue_tail(&skb_pool, skb);
+		else printk("Can not refill the skb buffer....\n");
+		/* printk("@%d",skb_pool.qlen); */
+	spin_unlock_irqrestore(&skb_pool.lock, flags);
+}
+
+/**
+ * unsigned char netpoll_free_skbs(struct sk_buff *skb) - Obtain the available buffer
+ *
+ * @return the number bytes of free memory buffer
+ */
+
+int netpoll_free_memory(void)
+{
+	unsigned char free_skbs;
+	unsigned long flags;
+
+	spin_lock_irqsave(&skb_pool.lock, flags);
+	free_skbs = skb_queue_len(&skb_pool);
+	spin_unlock_irqrestore(&skb_pool.lock, flags);
+	return free_skbs<<10;
+}
+
+/**
+ * void netpoll_recycle_skbs(struct sk_buff *skb) - recycle the skb buf for the logging to avoid to run out of memory
+ *
+ */
+
+void netpoll_recycle_skbs(struct sk_buff *skb)
+{
+	__refill_skbs(skb);
+}
+
+/**
+ * unsigned short netpoll_skb_size(void) - the whole skb size which includes the memory buffer for the logging data.
+ *
+ */
+unsigned short netpoll_skb_size(void)
+{
+	return 	MAX_SKB_SIZE;
+}
+
+/**
+ * static void reserve_skbs_list(void) - reserve the skb buf list with allocated memory buffer for the logging data at beginning.
+ *
+ */
+static void reserve_skbs_list(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sk_buff *skb;
 	unsigned long flags;
 
+<<<<<<< HEAD
+=======
+	printk("reserve_skbs_list \n");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&skb_pool.lock, flags);
 	while (skb_pool.qlen < MAX_SKBS) {
 		skb = alloc_skb(MAX_SKB_SIZE, GFP_ATOMIC);
 		if (!skb)
 			break;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__skb_queue_tail(&skb_pool, skb);
 	}
 	spin_unlock_irqrestore(&skb_pool.lock, flags);
@@ -271,6 +423,7 @@ static struct sk_buff *find_skb(struct netpoll *np, int len, int reserve)
 	struct sk_buff *skb;
 
 	zap_completion_queue();
+<<<<<<< HEAD
 	refill_skbs();
 repeat:
 
@@ -283,6 +436,18 @@ repeat:
 			netpoll_poll_dev(np->dev);
 			goto repeat;
 		}
+=======
+repeat:
+
+	skb = skb_dequeue(&skb_pool);
+	/* printk("!%d",skb_pool.qlen); */
+	if (!skb) {
+		if (++count < 10) {
+			netpoll_poll(np);
+			goto repeat;
+		}
+		printk("find_skb: out of memory..................\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 	}
 
@@ -311,7 +476,11 @@ void netpoll_send_skb_on_dev(struct netpoll *np, struct sk_buff *skb,
 	/* It is up to the caller to keep npinfo alive. */
 	struct netpoll_info *npinfo = np->dev->npinfo;
 
+<<<<<<< HEAD
 	if (!npinfo || !netif_running(dev) || !netif_device_present(dev)) {
+=======
+	if (!npinfo || !netif_running(dev) || !netif_device_present(dev) || !netif_carrier_ok(dev)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__kfree_skb(skb);
 		return;
 	}
@@ -321,6 +490,14 @@ void netpoll_send_skb_on_dev(struct netpoll *np, struct sk_buff *skb,
 		struct netdev_queue *txq;
 		unsigned long flags;
 
+<<<<<<< HEAD
+=======
+		if (spin_is_locked(&txq_lock)) {
+			skb_queue_tail(&npinfo->txq, skb);
+			return;
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		txq = netdev_get_tx_queue(dev, skb_get_queue_mapping(skb));
 
 		local_irq_save(flags);
@@ -328,7 +505,11 @@ void netpoll_send_skb_on_dev(struct netpoll *np, struct sk_buff *skb,
 		for (tries = jiffies_to_usecs(1)/USEC_PER_POLL;
 		     tries > 0; --tries) {
 			if (__netif_tx_trylock(txq)) {
+<<<<<<< HEAD
 				if (!netif_xmit_stopped(txq)) {
+=======
+				if (!netif_tx_queue_stopped(txq)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					status = ops->ndo_start_xmit(skb, dev);
 					if (status == NETDEV_TX_OK)
 						txq_trans_update(txq);
@@ -341,7 +522,11 @@ void netpoll_send_skb_on_dev(struct netpoll *np, struct sk_buff *skb,
 			}
 
 			/* tickle device maybe there is some cleanup */
+<<<<<<< HEAD
 			netpoll_poll_dev(np->dev);
+=======
+			netpoll_poll(np);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			udelay(USEC_PER_POLL);
 		}
@@ -355,18 +540,28 @@ void netpoll_send_skb_on_dev(struct netpoll *np, struct sk_buff *skb,
 
 	if (status != NETDEV_TX_OK) {
 		skb_queue_tail(&npinfo->txq, skb);
+<<<<<<< HEAD
 		schedule_delayed_work(&npinfo->tx_work,0);
+=======
+		if (!spin_is_locked(&txq_lock))
+			queue_delayed_work(brcm_tx_work_q, &npinfo->tx_work, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 EXPORT_SYMBOL(netpoll_send_skb_on_dev);
 
 void netpoll_send_udp(struct netpoll *np, const char *msg, int len)
 {
+<<<<<<< HEAD
 	int total_len, ip_len, udp_len;
+=======
+	int total_len, eth_len, ip_len, udp_len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sk_buff *skb;
 	struct udphdr *udph;
 	struct iphdr *iph;
 	struct ethhdr *eth;
+<<<<<<< HEAD
 
 	udp_len = len + sizeof(*udph);
 	ip_len = udp_len + sizeof(*iph);
@@ -374,11 +569,35 @@ void netpoll_send_udp(struct netpoll *np, const char *msg, int len)
 
 	skb = find_skb(np, total_len + np->dev->needed_tailroom,
 		       total_len - len);
+=======
+	static unsigned short iph_id = 0x1234;
+	struct net_device *dev = np->dev;
+	struct netpoll_info *npinfo = np->dev->npinfo;
+	struct rndis_packet_msg_type *rndis_header;
+
+	if (!npinfo || !netif_running(dev) || !netif_device_present(dev) || !netif_carrier_ok(dev))
+		return;
+
+	iph_id++;
+	udp_len = len + sizeof(*udph);
+	ip_len = eth_len = udp_len + sizeof(*iph);
+	total_len = eth_len + ETH_HLEN + NET_IP_ALIGN
+#ifdef CONFIG_BRCM_NETCONSOLE
+		+ sizeof (struct rndis_packet_msg_type) /* reserved for the RNDIS header */
+#endif
+	;
+
+	skb = find_skb(np, total_len, total_len - len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!skb)
 		return;
 
 	skb_copy_to_linear_data(skb, msg, len);
+<<<<<<< HEAD
 	skb_put(skb, len);
+=======
+	skb->len += len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	skb_push(skb, sizeof(*udph));
 	skb_reset_transport_header(skb);
@@ -416,12 +635,28 @@ void netpoll_send_udp(struct netpoll *np, const char *msg, int len)
 	skb->protocol = eth->h_proto = htons(ETH_P_IP);
 	memcpy(eth->h_source, np->dev->dev_addr, ETH_ALEN);
 	memcpy(eth->h_dest, np->remote_mac, ETH_ALEN);
+<<<<<<< HEAD
 
+=======
+	/* Add RNDIS header here so we do not need to deal with on the ethernet driver */
+#ifdef CONFIG_BRCM_NETCONSOLE
+	rndis_header = (void *) skb_push (skb, sizeof *rndis_header);
+	memset (rndis_header, 0, sizeof *rndis_header);
+	rndis_header->MessageType = __constant_cpu_to_le32(REMOTE_NDIS_PACKET_MSG);
+	rndis_header->MessageLength = cpu_to_le32(skb->len);
+	rndis_header->DataOffset = __constant_cpu_to_le32 (36);
+	rndis_header->DataLength = cpu_to_le32(skb->len - sizeof *rndis_header);
+#endif
+	skb->signature = SKB_NETPOLL_SIGNATURE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skb->dev = np->dev;
 
 	netpoll_send_skb(np, skb);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(netpoll_send_udp);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void arp_reply(struct sk_buff *skb)
 {
@@ -434,7 +669,10 @@ static void arp_reply(struct sk_buff *skb)
 	struct sk_buff *send_skb;
 	struct netpoll *np, *tmp;
 	unsigned long flags;
+<<<<<<< HEAD
 	int hlen, tlen;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int hits = 0;
 
 	if (list_empty(&npinfo->rx_np))
@@ -492,9 +730,14 @@ static void arp_reply(struct sk_buff *skb)
 		if (tip != np->local_ip)
 			continue;
 
+<<<<<<< HEAD
 		hlen = LL_RESERVED_SPACE(np->dev);
 		tlen = np->dev->needed_tailroom;
 		send_skb = find_skb(np, size + hlen + tlen, hlen);
+=======
+		send_skb = find_skb(np, size + LL_ALLOCATED_SPACE(np->dev),
+				    LL_RESERVED_SPACE(np->dev));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!send_skb)
 			continue;
 
@@ -573,14 +816,23 @@ int __netpoll_rx(struct sk_buff *skb)
 	if (skb_shared(skb))
 		goto out;
 
+<<<<<<< HEAD
 	if (!pskb_may_pull(skb, sizeof(struct iphdr)))
 		goto out;
 	iph = (struct iphdr *)skb->data;
+=======
+	iph = (struct iphdr *)skb->data;
+	if (!pskb_may_pull(skb, sizeof(struct iphdr)))
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (iph->ihl < 5 || iph->version != 4)
 		goto out;
 	if (!pskb_may_pull(skb, iph->ihl*4))
 		goto out;
+<<<<<<< HEAD
 	iph = (struct iphdr *)skb->data;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ip_fast_csum((u8 *)iph, iph->ihl) != 0)
 		goto out;
 
@@ -595,7 +847,10 @@ int __netpoll_rx(struct sk_buff *skb)
 	if (pskb_trim_rcsum(skb, len))
 		goto out;
 
+<<<<<<< HEAD
 	iph = (struct iphdr *)skb->data;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (iph->protocol != IPPROTO_UDP)
 		goto out;
 
@@ -639,6 +894,7 @@ out:
 
 void netpoll_print_options(struct netpoll *np)
 {
+<<<<<<< HEAD
 	np_info(np, "local port %d\n", np->local_port);
 	np_info(np, "local IP %pI4\n", &np->local_ip);
 	np_info(np, "interface '%s'\n", np->dev_name);
@@ -647,6 +903,21 @@ void netpoll_print_options(struct netpoll *np)
 	np_info(np, "remote ethernet address %pM\n", np->remote_mac);
 }
 EXPORT_SYMBOL(netpoll_print_options);
+=======
+	printk(KERN_INFO "%s: local port %d\n",
+			 np->name, np->local_port);
+	printk(KERN_INFO "%s: local IP %pI4\n",
+			 np->name, &np->local_ip);
+	printk(KERN_INFO "%s: interface '%s'\n",
+			 np->name, np->dev_name);
+	printk(KERN_INFO "%s: remote port %d\n",
+			 np->name, np->remote_port);
+	printk(KERN_INFO "%s: remote IP %pI4\n",
+			 np->name, &np->remote_ip);
+	printk(KERN_INFO "%s: remote ethernet address %pM\n",
+	                 np->name, np->remote_mac);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int netpoll_parse_options(struct netpoll *np, char *opt)
 {
@@ -686,7 +957,12 @@ int netpoll_parse_options(struct netpoll *np, char *opt)
 			goto parse_failed;
 		*delim = 0;
 		if (*cur == ' ' || *cur == '\t')
+<<<<<<< HEAD
 			np_info(np, "warning: whitespace is not allowed\n");
+=======
+			printk(KERN_INFO "%s: warning: whitespace"
+					"is not allowed\n", np->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		np->remote_port = simple_strtol(cur, NULL, 10);
 		cur = delim;
 	}
@@ -710,10 +986,17 @@ int netpoll_parse_options(struct netpoll *np, char *opt)
 	return 0;
 
  parse_failed:
+<<<<<<< HEAD
 	np_info(np, "couldn't parse config at '%s'!\n", cur);
 	return -1;
 }
 EXPORT_SYMBOL(netpoll_parse_options);
+=======
+	printk(KERN_INFO "%s: couldn't parse config at '%s'!\n",
+	       np->name, cur);
+	return -1;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int __netpoll_setup(struct netpoll *np)
 {
@@ -723,10 +1006,18 @@ int __netpoll_setup(struct netpoll *np)
 	unsigned long flags;
 	int err;
 
+<<<<<<< HEAD
 	if ((ndev->priv_flags & IFF_DISABLE_NETPOLL) ||
 	    !ndev->netdev_ops->ndo_poll_controller) {
 		np_err(np, "%s doesn't support polling, aborting\n",
 		       np->dev_name);
+=======
+
+	if ((ndev->priv_flags & IFF_DISABLE_NETPOLL) ||
+	    !ndev->netdev_ops->ndo_poll_controller) {
+		printk(KERN_ERR "%s: %s doesn't support polling, aborting.\n",
+		       np->name, np->dev_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = -ENOTSUPP;
 		goto out;
 	}
@@ -745,6 +1036,13 @@ int __netpoll_setup(struct netpoll *np)
 		skb_queue_head_init(&npinfo->arp_tx);
 		skb_queue_head_init(&npinfo->txq);
 		INIT_DELAYED_WORK(&npinfo->tx_work, queue_process);
+<<<<<<< HEAD
+=======
+		brcm_tx_work_q = create_workqueue("netpoll-txq");
+
+		if (brcm_tx_work_q == NULL)
+			pr_err("brcm_tx_work_q is failed to be created!");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		atomic_set(&npinfo->refcnt, 1);
 
@@ -786,30 +1084,58 @@ int netpoll_setup(struct netpoll *np)
 	struct in_device *in_dev;
 	int err;
 
+<<<<<<< HEAD
 	if (np->dev_name)
 		ndev = dev_get_by_name(&init_net, np->dev_name);
 	if (!ndev) {
 		np_err(np, "%s doesn't exist, aborting\n", np->dev_name);
+=======
+	/* coverity fix */
+	if (strnlen(np->dev_name, IFNAMSIZ))
+		ndev = dev_get_by_name(&init_net, np->dev_name);
+	if (!ndev) {
+		printk(KERN_ERR "%s: %s doesn't exist, aborting.\n",
+		       np->name, np->dev_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
 	if (ndev->master) {
+<<<<<<< HEAD
 		np_err(np, "%s is a slave device, aborting\n", np->dev_name);
+=======
+		printk(KERN_ERR "%s: %s is a slave device, aborting.\n",
+		       np->name, np->dev_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = -EBUSY;
 		goto put;
 	}
 
+<<<<<<< HEAD
 	if (!netif_running(ndev)) {
 		unsigned long atmost, atleast;
 
 		np_info(np, "device %s not up yet, forcing it\n", np->dev_name);
+=======
+#if 0 /* for Android CTS test */
+	if (!netif_running(ndev)) {
+		unsigned long atmost, atleast;
+
+		printk(KERN_INFO "%s: device %s not up yet, forcing it\n",
+		       np->name, np->dev_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		rtnl_lock();
 		err = dev_open(ndev);
 		rtnl_unlock();
 
 		if (err) {
+<<<<<<< HEAD
 			np_err(np, "failed to open %s\n", ndev->name);
+=======
+			printk(KERN_ERR "%s: failed to open %s\n",
+			       np->name, ndev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto put;
 		}
 
@@ -817,7 +1143,13 @@ int netpoll_setup(struct netpoll *np)
 		atmost = jiffies + carrier_timeout * HZ;
 		while (!netif_carrier_ok(ndev)) {
 			if (time_after(jiffies, atmost)) {
+<<<<<<< HEAD
 				np_notice(np, "timeout waiting for carrier\n");
+=======
+				printk(KERN_NOTICE
+				       "%s: timeout waiting for carrier\n",
+				       np->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 			}
 			msleep(1);
@@ -829,10 +1161,20 @@ int netpoll_setup(struct netpoll *np)
 		 */
 
 		if (time_before(jiffies, atleast)) {
+<<<<<<< HEAD
 			np_notice(np, "carrier detect appears untrustworthy, waiting 4 seconds\n");
 			msleep(4000);
 		}
 	}
+=======
+			printk(KERN_NOTICE "%s: carrier detect appears"
+			       " untrustworthy, waiting 4 seconds\n",
+			       np->name);
+			msleep(4000);
+		}
+	}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!np->local_ip) {
 		rcu_read_lock();
@@ -840,22 +1182,34 @@ int netpoll_setup(struct netpoll *np)
 
 		if (!in_dev || !in_dev->ifa_list) {
 			rcu_read_unlock();
+<<<<<<< HEAD
 			np_err(np, "no IP address for %s, aborting\n",
 			       np->dev_name);
+=======
+			printk(KERN_ERR "%s: no IP address for %s, aborting\n",
+			       np->name, np->dev_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			err = -EDESTADDRREQ;
 			goto put;
 		}
 
 		np->local_ip = in_dev->ifa_list->ifa_local;
 		rcu_read_unlock();
+<<<<<<< HEAD
 		np_info(np, "local IP %pI4\n", &np->local_ip);
+=======
+		printk(KERN_INFO "%s: local IP %pI4\n", np->name, &np->local_ip);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	np->dev = ndev;
 
+<<<<<<< HEAD
 	/* fill up the skb queue */
 	refill_skbs();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtnl_lock();
 	err = __netpoll_setup(np);
 	rtnl_unlock();
@@ -869,11 +1223,19 @@ put:
 	dev_put(ndev);
 	return err;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(netpoll_setup);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __init netpoll_init(void)
 {
 	skb_queue_head_init(&skb_pool);
+<<<<<<< HEAD
+=======
+	/* preallocate skb buffers */
+	reserve_skbs_list();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 core_initcall(netpoll_init);
@@ -902,6 +1264,7 @@ void __netpoll_cleanup(struct netpoll *np)
 		if (ops->ndo_netpoll_cleanup)
 			ops->ndo_netpoll_cleanup(np->dev);
 
+<<<<<<< HEAD
 		RCU_INIT_POINTER(np->dev->npinfo, NULL);
 
 		/* avoid racing with NAPI reading npinfo */
@@ -913,6 +1276,20 @@ void __netpoll_cleanup(struct netpoll *np)
 
 		/* clean after last, unfinished work */
 		__skb_queue_purge(&npinfo->txq);
+=======
+		rcu_assign_pointer(np->dev->npinfo, NULL);
+
+		/* avoid racing with NAPI reading npinfo */
+		synchronize_rcu_bh();
+		skb_queue_purge(&npinfo->arp_tx);
+		skb_queue_purge(&npinfo->txq);
+		cancel_delayed_work_sync(&npinfo->tx_work);
+		flush_workqueue(brcm_tx_work_q);
+		destroy_workqueue(brcm_tx_work_q);
+		/* clean after last, unfinished work */
+		__skb_queue_purge(&npinfo->txq);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(npinfo);
 	}
 }
@@ -923,6 +1300,11 @@ void netpoll_cleanup(struct netpoll *np)
 	if (!np->dev)
 		return;
 
+<<<<<<< HEAD
+=======
+	pr_info("%s\n", __func__);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtnl_lock();
 	__netpoll_cleanup(np);
 	rtnl_unlock();
@@ -930,13 +1312,19 @@ void netpoll_cleanup(struct netpoll *np)
 	dev_put(np->dev);
 	np->dev = NULL;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(netpoll_cleanup);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int netpoll_trap(void)
 {
 	return atomic_read(&trapped);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(netpoll_trap);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void netpoll_set_trap(int trap)
 {
@@ -946,3 +1334,15 @@ void netpoll_set_trap(int trap)
 		atomic_dec(&trapped);
 }
 EXPORT_SYMBOL(netpoll_set_trap);
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL(netpoll_trap);
+EXPORT_SYMBOL(netpoll_print_options);
+EXPORT_SYMBOL(netpoll_parse_options);
+EXPORT_SYMBOL(netpoll_setup);
+EXPORT_SYMBOL(netpoll_cleanup);
+EXPORT_SYMBOL(netpoll_send_udp);
+EXPORT_SYMBOL(netpoll_free_memory);
+EXPORT_SYMBOL(netpoll_poll_dev);
+EXPORT_SYMBOL(netpoll_poll);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

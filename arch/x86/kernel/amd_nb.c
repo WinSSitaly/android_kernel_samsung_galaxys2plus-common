@@ -154,14 +154,24 @@ int amd_get_subcaches(int cpu)
 {
 	struct pci_dev *link = node_to_amd_nb(amd_get_nb_id(cpu))->link;
 	unsigned int mask;
+<<<<<<< HEAD
 	int cuid;
+=======
+	int cuid = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!amd_nb_has_feature(AMD_NB_L3_PARTITIONING))
 		return 0;
 
 	pci_read_config_dword(link, 0x1d4, &mask);
 
+<<<<<<< HEAD
 	cuid = cpu_data(cpu).compute_unit_id;
+=======
+#ifdef CONFIG_SMP
+	cuid = cpu_data(cpu).compute_unit_id;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return (mask >> (4 * cuid)) & 0xf;
 }
 
@@ -170,7 +180,11 @@ int amd_set_subcaches(int cpu, int mask)
 	static unsigned int reset, ban;
 	struct amd_northbridge *nb = node_to_amd_nb(amd_get_nb_id(cpu));
 	unsigned int reg;
+<<<<<<< HEAD
 	int cuid;
+=======
+	int cuid = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!amd_nb_has_feature(AMD_NB_L3_PARTITIONING) || mask > 0xf)
 		return -EINVAL;
@@ -188,7 +202,13 @@ int amd_set_subcaches(int cpu, int mask)
 		pci_write_config_dword(nb->misc, 0x1b8, reg & ~0x180000);
 	}
 
+<<<<<<< HEAD
 	cuid = cpu_data(cpu).compute_unit_id;
+=======
+#ifdef CONFIG_SMP
+	cuid = cpu_data(cpu).compute_unit_id;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mask <<= 4 * cuid;
 	mask |= (0xf ^ (1 << cuid)) << 26;
 

@@ -2,16 +2,24 @@
 #define __PERF_EVLIST_H 1
 
 #include <linux/list.h>
+<<<<<<< HEAD
 #include <stdio.h>
 #include "../perf.h"
 #include "event.h"
 #include "util.h"
 #include <unistd.h>
+=======
+#include "../perf.h"
+#include "event.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct pollfd;
 struct thread_map;
 struct cpu_map;
+<<<<<<< HEAD
 struct perf_record_opts;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PERF_EVLIST__HLIST_BITS 8
 #define PERF_EVLIST__HLIST_SIZE (1 << PERF_EVLIST__HLIST_BITS)
@@ -23,22 +31,28 @@ struct perf_evlist {
 	int		 nr_fds;
 	int		 nr_mmaps;
 	int		 mmap_len;
+<<<<<<< HEAD
 	struct {
 		int	cork_fd;
 		pid_t	pid;
 	} workload;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool		 overwrite;
 	union perf_event event_copy;
 	struct perf_mmap *mmap;
 	struct pollfd	 *pollfd;
 	struct thread_map *threads;
 	struct cpu_map	  *cpus;
+<<<<<<< HEAD
 	struct perf_evsel *selected;
 };
 
 struct perf_evsel_str_handler {
 	const char *name;
 	void	   *handler;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct perf_evsel;
@@ -52,6 +66,7 @@ void perf_evlist__delete(struct perf_evlist *evlist);
 
 void perf_evlist__add(struct perf_evlist *evlist, struct perf_evsel *entry);
 int perf_evlist__add_default(struct perf_evlist *evlist);
+<<<<<<< HEAD
 int perf_evlist__add_attrs(struct perf_evlist *evlist,
 			   struct perf_event_attr *attrs, size_t nr_attrs);
 int perf_evlist__add_tracepoints(struct perf_evlist *evlist,
@@ -68,16 +83,23 @@ int perf_evlist__set_tracepoints_handlers(struct perf_evlist *evlist,
 
 #define perf_evlist__set_tracepoints_handlers_array(evlist, array) \
 	perf_evlist__set_tracepoints_handlers(evlist, array, ARRAY_SIZE(array))
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void perf_evlist__id_add(struct perf_evlist *evlist, struct perf_evsel *evsel,
 			 int cpu, int thread, u64 id);
 
+<<<<<<< HEAD
+=======
+int perf_evlist__alloc_pollfd(struct perf_evlist *evlist);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void perf_evlist__add_pollfd(struct perf_evlist *evlist, int fd);
 
 struct perf_evsel *perf_evlist__id2evsel(struct perf_evlist *evlist, u64 id);
 
 union perf_event *perf_evlist__mmap_read(struct perf_evlist *self, int idx);
 
+<<<<<<< HEAD
 int perf_evlist__open(struct perf_evlist *evlist, bool group);
 
 void perf_evlist__config_attrs(struct perf_evlist *evlist,
@@ -98,6 +120,12 @@ void perf_evlist__enable(struct perf_evlist *evlist);
 void perf_evlist__set_selected(struct perf_evlist *evlist,
 			       struct perf_evsel *evsel);
 
+=======
+int perf_evlist__alloc_mmap(struct perf_evlist *evlist);
+int perf_evlist__mmap(struct perf_evlist *evlist, int pages, bool overwrite);
+void perf_evlist__munmap(struct perf_evlist *evlist);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void perf_evlist__set_maps(struct perf_evlist *evlist,
 					 struct cpu_map *cpus,
 					 struct thread_map *threads)
@@ -106,13 +134,19 @@ static inline void perf_evlist__set_maps(struct perf_evlist *evlist,
 	evlist->threads	= threads;
 }
 
+<<<<<<< HEAD
 int perf_evlist__create_maps(struct perf_evlist *evlist, const char *target_pid,
 			     const char *tid, uid_t uid, const char *cpu_list);
+=======
+int perf_evlist__create_maps(struct perf_evlist *evlist, pid_t target_pid,
+			     pid_t target_tid, const char *cpu_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void perf_evlist__delete_maps(struct perf_evlist *evlist);
 int perf_evlist__set_filters(struct perf_evlist *evlist);
 
 u64 perf_evlist__sample_type(const struct perf_evlist *evlist);
 bool perf_evlist__sample_id_all(const const struct perf_evlist *evlist);
+<<<<<<< HEAD
 u16 perf_evlist__id_hdr_size(const struct perf_evlist *evlist);
 
 bool perf_evlist__valid_sample_type(const struct perf_evlist *evlist);
@@ -122,4 +156,9 @@ void perf_evlist__splice_list_tail(struct perf_evlist *evlist,
 				   struct list_head *list,
 				   int nr_entries);
 
+=======
+
+bool perf_evlist__valid_sample_type(const struct perf_evlist *evlist);
+bool perf_evlist__valid_sample_id_all(const struct perf_evlist *evlist);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __PERF_EVLIST_H */

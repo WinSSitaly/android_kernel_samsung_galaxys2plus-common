@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * SPI init/core code
+=======
+ * spi.c - SPI init/core code
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Copyright (C) 2005 David Brownell
  *
@@ -29,10 +33,13 @@
 #include <linux/spi/spi.h>
 #include <linux/of_spi.h>
 #include <linux/pm_runtime.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/sched.h>
 #include <linux/delay.h>
 #include <linux/kthread.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void spidev_release(struct device *dev)
 {
@@ -484,7 +491,11 @@ static void spi_match_master_to_boardinfo(struct spi_master *master,
  * The board info passed can safely be __initdata ... but be careful of
  * any embedded pointers (platform_data, etc), they're copied as-is.
  */
+<<<<<<< HEAD
 int __devinit
+=======
+int __init
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 spi_register_board_info(struct spi_board_info const *info, unsigned n)
 {
 	struct boardinfo *bi;
@@ -510,6 +521,7 @@ spi_register_board_info(struct spi_board_info const *info, unsigned n)
 
 /*-------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 /**
  * spi_pump_messages - kthread work function which processes spi message queue
  * @work: pointer to kthread work struct contained in the master struct
@@ -798,6 +810,8 @@ err_init_queue:
 
 /*-------------------------------------------------------------------------*/
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void spi_master_release(struct device *dev)
 {
 	struct spi_master *master;
@@ -813,7 +827,10 @@ static struct class spi_master_class = {
 };
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * spi_alloc_master - allocate SPI master controller
  * @dev: the controller, possibly using the platform_bus
@@ -831,8 +848,12 @@ static struct class spi_master_class = {
  *
  * The caller is responsible for assigning the bus number and initializing
  * the master's methods before calling spi_register_master(); and (after errors
+<<<<<<< HEAD
  * adding the device) calling spi_master_put() and kfree() to prevent a memory
  * leak.
+=======
+ * adding the device) calling spi_master_put() to prevent a memory leak.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct spi_master *spi_alloc_master(struct device *dev, unsigned size)
 {
@@ -914,6 +935,7 @@ int spi_register_master(struct spi_master *master)
 	dev_dbg(dev, "registered master %s%s\n", dev_name(&master->dev),
 			dynamic ? " (dynamic)" : "");
 
+<<<<<<< HEAD
 	/* If we're using a queued driver, start the queue */
 	if (master->transfer)
 		dev_info(dev, "master is unqueued, this is deprecated\n");
@@ -925,12 +947,19 @@ int spi_register_master(struct spi_master *master)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&board_lock);
 	list_add_tail(&master->list, &spi_master_list);
 	list_for_each_entry(bi, &board_list, list)
 		spi_match_master_to_boardinfo(master, &bi->board_info);
 	mutex_unlock(&board_lock);
 
+<<<<<<< HEAD
+=======
+	status = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Register devices from the device tree */
 	of_register_spi_devices(master);
 done:
@@ -938,6 +967,10 @@ done:
 }
 EXPORT_SYMBOL_GPL(spi_register_master);
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __unregister(struct device *dev, void *null)
 {
 	spi_unregister_device(to_spi_device(dev));
@@ -958,11 +991,14 @@ void spi_unregister_master(struct spi_master *master)
 {
 	int dummy;
 
+<<<<<<< HEAD
 	if (master->queued) {
 		if (spi_destroy_queue(master))
 			dev_err(&master->dev, "queue remove failed\n");
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&board_lock);
 	list_del(&master->list);
 	mutex_unlock(&board_lock);
@@ -972,6 +1008,7 @@ void spi_unregister_master(struct spi_master *master)
 }
 EXPORT_SYMBOL_GPL(spi_unregister_master);
 
+<<<<<<< HEAD
 int spi_master_suspend(struct spi_master *master)
 {
 	int ret;
@@ -1003,6 +1040,8 @@ int spi_master_resume(struct spi_master *master)
 }
 EXPORT_SYMBOL_GPL(spi_master_resume);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __spi_master_match(struct device *dev, void *data)
 {
 	struct spi_master *m;

@@ -3,13 +3,30 @@
  *
  * Samsung S3C24xx series on-chip full speed USB device controllers
  *
+<<<<<<< HEAD
  * Copyright (C) 2004-2007 Herbert PÃ¶tzl - Arnaud Patard
+=======
+ * Copyright (C) 2004-2007 Herbert Pötzl - Arnaud Patard
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	Additional cleanups by Ben Dooks <ben-linux@fluff.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/module.h>
@@ -37,6 +54,10 @@
 #include <asm/byteorder.h>
 #include <asm/io.h>
 #include <asm/irq.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/unaligned.h>
 #include <mach/irqs.h>
 
@@ -50,7 +71,11 @@
 
 #define DRIVER_DESC	"S3C2410 USB Device Controller Gadget"
 #define DRIVER_VERSION	"29 Apr 2007"
+<<<<<<< HEAD
 #define DRIVER_AUTHOR	"Herbert PÃ¶tzl <herbert@13thfloor.at>, " \
+=======
+#define DRIVER_AUTHOR	"Herbert Pötzl <herbert@13thfloor.at>, " \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"Arnaud Patard <arnaud.patard@rtp-net.org>"
 
 static const char		gadget_name[] = "s3c2410_udc";
@@ -1071,7 +1096,11 @@ static int s3c2410_udc_ep_enable(struct usb_ep *_ep,
 	if (!dev->driver || dev->gadget.speed == USB_SPEED_UNKNOWN)
 		return -ESHUTDOWN;
 
+<<<<<<< HEAD
 	max = usb_endpoint_maxp(desc) & 0x1fff;
+=======
+	max = le16_to_cpu(desc->wMaxPacketSize) & 0x1fff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	local_irq_save (flags);
 	_ep->maxpacket = max & 0x7ff;
@@ -1147,7 +1176,10 @@ static int s3c2410_udc_ep_disable(struct usb_ep *_ep)
 	dprintk(DEBUG_NORMAL, "ep_disable: %s\n", _ep->name);
 
 	ep->desc = NULL;
+<<<<<<< HEAD
 	ep->ep.desc = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ep->halted = 1;
 
 	s3c2410_udc_nuke (ep->dev, ep, -ESHUTDOWN);
@@ -1542,10 +1574,13 @@ static int s3c2410_vbus_draw(struct usb_gadget *_gadget, unsigned ma)
 	return -ENOTSUPP;
 }
 
+<<<<<<< HEAD
 static int s3c2410_udc_start(struct usb_gadget_driver *driver,
 		int (*bind)(struct usb_gadget *));
 static int s3c2410_udc_stop(struct usb_gadget_driver *driver);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct usb_gadget_ops s3c2410_ops = {
 	.get_frame		= s3c2410_udc_get_frame,
 	.wakeup			= s3c2410_udc_wakeup,
@@ -1553,8 +1588,11 @@ static const struct usb_gadget_ops s3c2410_ops = {
 	.pullup			= s3c2410_udc_pullup,
 	.vbus_session		= s3c2410_udc_vbus_session,
 	.vbus_draw		= s3c2410_vbus_draw,
+<<<<<<< HEAD
 	.start			= s3c2410_udc_start,
 	.stop			= s3c2410_udc_stop,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void s3c2410_udc_command(enum s3c2410_udc_cmd_e cmd)
@@ -1563,7 +1601,11 @@ static void s3c2410_udc_command(enum s3c2410_udc_cmd_e cmd)
 		return;
 
 	if (udc_info->udc_command) {
+<<<<<<< HEAD
 		udc_info->udc_command(cmd);
+=======
+		udc_info->udc_command(S3C2410_UDC_P_DISABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (gpio_is_valid(udc_info->pullup_pin)) {
 		int value;
 
@@ -1630,7 +1672,10 @@ static void s3c2410_udc_reinit(struct s3c2410_udc *dev)
 
 		ep->dev = dev;
 		ep->desc = NULL;
+<<<<<<< HEAD
 		ep->ep.desc = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ep->halted = 0;
 		INIT_LIST_HEAD (&ep->queue);
 	}
@@ -1669,7 +1714,14 @@ static void s3c2410_udc_enable(struct s3c2410_udc *dev)
 	s3c2410_udc_command(S3C2410_UDC_P_ENABLE);
 }
 
+<<<<<<< HEAD
 static int s3c2410_udc_start(struct usb_gadget_driver *driver,
+=======
+/*
+ *	usb_gadget_probe_driver
+ */
+int usb_gadget_probe_driver(struct usb_gadget_driver *driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int (*bind)(struct usb_gadget *))
 {
 	struct s3c2410_udc *udc = the_controller;
@@ -1684,9 +1736,15 @@ static int s3c2410_udc_start(struct usb_gadget_driver *driver,
 	if (udc->driver)
 		return -EBUSY;
 
+<<<<<<< HEAD
 	if (!bind || !driver->setup || driver->max_speed < USB_SPEED_FULL) {
 		printk(KERN_ERR "Invalid driver: bind %p setup %p speed %d\n",
 			bind, driver->setup, driver->max_speed);
+=======
+	if (!bind || !driver->setup || driver->speed < USB_SPEED_FULL) {
+		printk(KERN_ERR "Invalid driver: bind %p setup %p speed %d\n",
+			bind, driver->setup, driver->speed);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 #if defined(MODULE)
@@ -1724,8 +1782,17 @@ register_error:
 	udc->gadget.dev.driver = NULL;
 	return retval;
 }
+<<<<<<< HEAD
 
 static int s3c2410_udc_stop(struct usb_gadget_driver *driver)
+=======
+EXPORT_SYMBOL(usb_gadget_probe_driver);
+
+/*
+ *	usb_gadget_unregister_driver
+ */
+int usb_gadget_unregister_driver(struct usb_gadget_driver *driver)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct s3c2410_udc *udc = the_controller;
 
@@ -1894,7 +1961,11 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
 
 	/* irq setup after old hardware state is cleaned up */
 	retval = request_irq(IRQ_USBD, s3c2410_udc_irq,
+<<<<<<< HEAD
 			     0, gadget_name, udc);
+=======
+			     IRQF_DISABLED, gadget_name, udc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (retval != 0) {
 		dev_err(dev, "cannot get irq %i, err %d\n", IRQ_USBD, retval);
@@ -1918,7 +1989,11 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
 		}
 
 		retval = request_irq(irq, s3c2410_udc_vbus_irq,
+<<<<<<< HEAD
 				     IRQF_TRIGGER_RISING
+=======
+				     IRQF_DISABLED | IRQF_TRIGGER_RISING
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     | IRQF_TRIGGER_FALLING | IRQF_SHARED,
 				     gadget_name, udc);
 
@@ -1945,10 +2020,13 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
 			goto err_vbus_irq;
 	}
 
+<<<<<<< HEAD
 	retval = usb_add_gadget_udc(&pdev->dev, &udc->gadget);
 	if (retval)
 		goto err_add_udc;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (s3c2410_udc_debugfs_root) {
 		udc->regs_info = debugfs_create_file("registers", S_IRUGO,
 				s3c2410_udc_debugfs_root,
@@ -1961,10 +2039,13 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
 
 	return 0;
 
+<<<<<<< HEAD
 err_add_udc:
 	if (udc_info && !udc_info->udc_command &&
 			gpio_is_valid(udc_info->pullup_pin))
 		gpio_free(udc_info->pullup_pin);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_vbus_irq:
 	if (udc_info && udc_info->vbus_pin > 0)
 		free_irq(gpio_to_irq(udc_info->vbus_pin), udc);
@@ -1990,8 +2071,11 @@ static int s3c2410_udc_remove(struct platform_device *pdev)
 	unsigned int irq;
 
 	dev_dbg(&pdev->dev, "%s()\n", __func__);
+<<<<<<< HEAD
 
 	usb_del_gadget_udc(&udc->gadget);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (udc->driver)
 		return -EBUSY;
 
@@ -2048,6 +2132,7 @@ static int s3c2410_udc_resume(struct platform_device *pdev)
 #define s3c2410_udc_resume	NULL
 #endif
 
+<<<<<<< HEAD
 static const struct platform_device_id s3c_udc_ids[] = {
 	{ "s3c2410-usbgadget", },
 	{ "s3c2440-usbgadget", },
@@ -2058,13 +2143,32 @@ MODULE_DEVICE_TABLE(platform, s3c_udc_ids);
 static struct platform_driver udc_driver_24x0 = {
 	.driver		= {
 		.name	= "s3c24x0-usbgadget",
+=======
+static struct platform_driver udc_driver_2410 = {
+	.driver		= {
+		.name	= "s3c2410-usbgadget",
 		.owner	= THIS_MODULE,
 	},
 	.probe		= s3c2410_udc_probe,
 	.remove		= s3c2410_udc_remove,
 	.suspend	= s3c2410_udc_suspend,
 	.resume		= s3c2410_udc_resume,
+};
+
+static struct platform_driver udc_driver_2440 = {
+	.driver		= {
+		.name	= "s3c2440-usbgadget",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+		.owner	= THIS_MODULE,
+	},
+	.probe		= s3c2410_udc_probe,
+	.remove		= s3c2410_udc_remove,
+	.suspend	= s3c2410_udc_suspend,
+	.resume		= s3c2410_udc_resume,
+<<<<<<< HEAD
 	.id_table	= s3c_udc_ids,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init udc_init(void)
@@ -2080,7 +2184,15 @@ static int __init udc_init(void)
 		s3c2410_udc_debugfs_root = NULL;
 	}
 
+<<<<<<< HEAD
 	retval = platform_driver_register(&udc_driver_24x0);
+=======
+	retval = platform_driver_register(&udc_driver_2410);
+	if (retval)
+		goto err;
+
+	retval = platform_driver_register(&udc_driver_2440);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval)
 		goto err;
 
@@ -2093,10 +2205,20 @@ err:
 
 static void __exit udc_exit(void)
 {
+<<<<<<< HEAD
 	platform_driver_unregister(&udc_driver_24x0);
 	debugfs_remove(s3c2410_udc_debugfs_root);
 }
 
+=======
+	platform_driver_unregister(&udc_driver_2410);
+	platform_driver_unregister(&udc_driver_2440);
+	debugfs_remove(s3c2410_udc_debugfs_root);
+}
+
+EXPORT_SYMBOL(usb_gadget_unregister_driver);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_init(udc_init);
 module_exit(udc_exit);
 
@@ -2104,3 +2226,8 @@ MODULE_AUTHOR(DRIVER_AUTHOR);
 MODULE_DESCRIPTION(DRIVER_DESC);
 MODULE_VERSION(DRIVER_VERSION);
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+MODULE_ALIAS("platform:s3c2410-usbgadget");
+MODULE_ALIAS("platform:s3c2440-usbgadget");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

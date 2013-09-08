@@ -25,6 +25,12 @@
 #ifndef _BTTVP_H_
 #define _BTTVP_H_
 
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+#define BTTV_VERSION_CODE KERNEL_VERSION(0,9,18)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/types.h>
 #include <linux/wait.h>
 #include <linux/i2c.h>
@@ -310,6 +316,7 @@ extern unsigned int bttv_gpio;
 extern void bttv_gpio_tracking(struct bttv *btv, char *comment);
 extern int init_bttv_i2c(struct bttv *btv);
 
+<<<<<<< HEAD
 #define dprintk(fmt, ...)			\
 do {						\
 	if (bttv_debug >= 1)			\
@@ -325,6 +332,11 @@ do {						\
 	if (bttv_debug >= 2)			\
 		printk(fmt, ##__VA_ARGS__);	\
 } while (0)
+=======
+#define bttv_printk if (bttv_verbose) printk
+#define dprintk  if (bttv_debug >= 1) printk
+#define d2printk if (bttv_debug >= 2) printk
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define BTTV_MAX_FBUF   0x208000
 #define BTTV_TIMEOUT    msecs_to_jiffies(500)    /* 0.5 seconds */

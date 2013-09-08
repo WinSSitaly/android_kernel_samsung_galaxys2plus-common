@@ -10,6 +10,10 @@
 
 #include <linux/kernel.h>
 #include <linux/init.h>
+<<<<<<< HEAD
+=======
+#include <linux/mbus.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 #include <mach/hardware.h>
 #include <plat/mpp.h>
@@ -23,7 +27,11 @@ static unsigned int __init orion5x_variant(void)
 
 	orion5x_pcie_id(&dev, &rev);
 
+<<<<<<< HEAD
 	if (dev == MV88F5181_DEV_ID)
+=======
+	if (dev == MV88F5181_DEV_ID && rev >= MV88F5181L_REV_A0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return MPP_F5181_MASK;
 
 	if (dev == MV88F5182_DEV_ID)

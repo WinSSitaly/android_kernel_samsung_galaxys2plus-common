@@ -6,7 +6,10 @@
 #define PAGE_FLAGS_H
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __GENERATING_BOUNDS_H
 #include <linux/mm_types.h>
 #include <generated/bounds.h>
@@ -108,6 +111,12 @@ enum pageflags {
 #ifdef CONFIG_TRANSPARENT_HUGEPAGE
 	PG_compound_lock,
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_CMA
+	PG_cma,			/* Sticky flag to track CMA pages */
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__NR_PAGEFLAGS,
 
 	/* Filesystems */
@@ -125,6 +134,12 @@ enum pageflags {
 
 	/* SLOB */
 	PG_slob_free = PG_private,
+<<<<<<< HEAD
+=======
+
+	/* SLUB */
+	PG_slub_frozen = PG_active,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #ifndef __GENERATING_BOUNDS_H
@@ -133,7 +148,11 @@ enum pageflags {
  * Macros to create function definitions for page flags
  */
 #define TESTPAGEFLAG(uname, lname)					\
+<<<<<<< HEAD
 static inline int Page##uname(const struct page *page)			\
+=======
+static inline int Page##uname(struct page *page) 			\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			{ return test_bit(PG_##lname, &page->flags); }
 
 #define SETPAGEFLAG(uname, lname)					\
@@ -171,7 +190,11 @@ static inline int __TestClearPage##uname(struct page *page)		\
 	__SETPAGEFLAG(uname, lname)  __CLEARPAGEFLAG(uname, lname)
 
 #define PAGEFLAG_FALSE(uname) 						\
+<<<<<<< HEAD
 static inline int Page##uname(const struct page *page)			\
+=======
+static inline int Page##uname(struct page *page) 			\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			{ return 0; }
 
 #define TESTSCFLAG(uname, lname)					\
@@ -210,6 +233,11 @@ PAGEFLAG(SwapBacked, swapbacked) __CLEARPAGEFLAG(SwapBacked, swapbacked)
 
 __PAGEFLAG(SlobFree, slob_free)
 
+<<<<<<< HEAD
+=======
+__PAGEFLAG(SlubFrozen, slub_frozen)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Private page markings that may be used by the filesystem that owns the page
  * for its own purposes.
@@ -274,6 +302,17 @@ PAGEFLAG_FALSE(HWPoison)
 #define __PG_HWPOISON 0
 #endif
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_CMA
+PAGEFLAG(Cma, cma)
+#else
+PAGEFLAG_FALSE(Cma)
+SETPAGEFLAG_NOOP(Cma)
+CLEARPAGEFLAG_NOOP(Cma)
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u64 stable_page_flags(struct page *page);
 
 static inline int PageUptodate(struct page *page)
@@ -361,7 +400,11 @@ static inline void ClearPageCompound(struct page *page)
  * pages on the LRU and/or pagecache.
  */
 TESTPAGEFLAG(Compound, compound)
+<<<<<<< HEAD
 __SETPAGEFLAG(Head, compound)  __CLEARPAGEFLAG(Head, compound)
+=======
+__PAGEFLAG(Head, compound)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * PG_reclaim is used in combination with PG_compound to mark the
@@ -373,6 +416,7 @@ __SETPAGEFLAG(Head, compound)  __CLEARPAGEFLAG(Head, compound)
  * PG_compound & PG_reclaim	=> Tail page
  * PG_compound & ~PG_reclaim	=> Head page
  */
+<<<<<<< HEAD
 #define PG_head_mask ((1L << PG_compound))
 #define PG_head_tail_mask ((1L << PG_compound) | (1L << PG_reclaim))
 
@@ -381,6 +425,10 @@ static inline int PageHead(struct page *page)
 	return ((page->flags & PG_head_tail_mask) == PG_head_mask);
 }
 
+=======
+#define PG_head_tail_mask ((1L << PG_compound) | (1L << PG_reclaim))
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int PageTail(struct page *page)
 {
 	return ((page->flags & PG_head_tail_mask) == PG_head_tail_mask);
@@ -421,16 +469,20 @@ static inline int PageTransHuge(struct page *page)
 	return PageHead(page);
 }
 
+<<<<<<< HEAD
 /*
  * PageTransCompound returns true for both transparent huge pages
  * and hugetlbfs pages, so it should only be called when it's known
  * that hugetlbfs pages aren't involved.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int PageTransCompound(struct page *page)
 {
 	return PageCompound(page);
 }
 
+<<<<<<< HEAD
 /*
  * PageTransTail returns true for both transparent huge pages
  * and hugetlbfs pages, so it should only be called when it's known
@@ -441,6 +493,8 @@ static inline int PageTransTail(struct page *page)
 	return PageTail(page);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 
 static inline int PageTransHuge(struct page *page)
@@ -452,11 +506,14 @@ static inline int PageTransCompound(struct page *page)
 {
 	return 0;
 }
+<<<<<<< HEAD
 
 static inline int PageTransTail(struct page *page)
 {
 	return 0;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifdef CONFIG_MMU
@@ -488,7 +545,16 @@ static inline int PageTransTail(struct page *page)
  * Pages being prepped should not have any flags set.  It they are set,
  * there has been a kernel bug or struct page corruption.
  */
+<<<<<<< HEAD
 #define PAGE_FLAGS_CHECK_AT_PREP	((1 << NR_PAGEFLAGS) - 1)
+=======
+#ifdef CONFIG_CMA
+#define PAGE_FLAGS_CHECK_AT_PREP	(((1 << NR_PAGEFLAGS) - 1) & \
+						~(1 << PG_cma))
+#else
+#define PAGE_FLAGS_CHECK_AT_PREP	((1 << NR_PAGEFLAGS) - 1)
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PAGE_FLAGS_PRIVATE				\
 	(1 << PG_private | 1 << PG_private_2)

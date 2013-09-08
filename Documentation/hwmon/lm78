@@ -13,8 +13,12 @@ Supported chips:
     Datasheet: Publicly available at the National Semiconductor website
                http://www.national.com/
 
+<<<<<<< HEAD
 Authors: Frodo Looijaard <frodol@dds.nl>
          Jean Delvare <khali@linux-fr.org>
+=======
+Author: Frodo Looijaard <frodol@dds.nl>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 Description
 -----------

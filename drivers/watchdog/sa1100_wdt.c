@@ -17,9 +17,12 @@
  *
  *	27/11/2000 Initial release
  */
+<<<<<<< HEAD
 
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/types.h>
@@ -28,7 +31,10 @@
 #include <linux/miscdevice.h>
 #include <linux/watchdog.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/io.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bitops.h>
 #include <linux/uaccess.h>
 #include <linux/timex.h>
@@ -70,7 +76,11 @@ static int sa1100dog_open(struct inode *inode, struct file *file)
  */
 static int sa1100dog_release(struct inode *inode, struct file *file)
 {
+<<<<<<< HEAD
 	pr_crit("Device closed - timer will not stop\n");
+=======
+	printk(KERN_CRIT "WATCHDOG: Device closed - timer will not stop\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clear_bit(1, &sa1100wdt_users);
 	return 0;
 }
@@ -173,8 +183,14 @@ static int __init sa1100dog_init(void)
 
 	ret = misc_register(&sa1100dog_miscdev);
 	if (ret == 0)
+<<<<<<< HEAD
 		pr_info("SA1100/PXA2xx Watchdog Timer: timer margin %d sec\n",
 			margin);
+=======
+		printk(KERN_INFO
+			"SA1100/PXA2xx Watchdog Timer: timer margin %d sec\n",
+						margin);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 

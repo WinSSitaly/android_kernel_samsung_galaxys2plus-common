@@ -13,14 +13,18 @@
 
 #ifdef __KERNEL__
 
+<<<<<<< HEAD
 extern char reboot_command[];
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SPARC32
 /* The CPU that was used for booting
  * Only sun4d + leon may have boot_cpu_id != 0
  */
 extern unsigned char boot_cpu_id;
 extern unsigned char boot_cpu_id4;
+<<<<<<< HEAD
 
 extern unsigned long empty_bad_page;
 extern unsigned long empty_bad_page_table;
@@ -37,6 +41,10 @@ extern void sun_do_break(void);
 extern int stop_a_enabled;
 extern int scons_pwroff;
 
+=======
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __KERNEL__ */
 
 #endif /* _SPARC_SETUP_H */

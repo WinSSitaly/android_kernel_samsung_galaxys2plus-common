@@ -26,10 +26,20 @@ static int cfdgml_transmit(struct cflayer *layr, struct cfpkt *pkt);
 
 struct cflayer *cfdgml_create(u8 channel_id, struct dev_info *dev_info)
 {
+<<<<<<< HEAD
 	struct cfsrvl *dgm = kzalloc(sizeof(struct cfsrvl), GFP_ATOMIC);
 	if (!dgm)
 		return NULL;
 	caif_assert(offsetof(struct cfsrvl, layer) == 0);
+=======
+	struct cfsrvl *dgm = kmalloc(sizeof(struct cfsrvl), GFP_ATOMIC);
+	if (!dgm) {
+		pr_warn("Out of memory\n");
+		return NULL;
+	}
+	caif_assert(offsetof(struct cfsrvl, layer) == 0);
+	memset(dgm, 0, sizeof(struct cfsrvl));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cfsrvl_init(dgm, channel_id, dev_info, true);
 	dgm->layer.receive = cfdgml_receive;
 	dgm->layer.transmit = cfdgml_transmit;
@@ -86,6 +96,7 @@ static int cfdgml_transmit(struct cflayer *layr, struct cfpkt *pkt)
 	struct caif_payload_info *info;
 	struct cfsrvl *service = container_obj(layr);
 	int ret;
+<<<<<<< HEAD
 
 	if (!cfsrvl_ready(service, &ret)) {
 		cfpkt_destroy(pkt);
@@ -97,6 +108,14 @@ static int cfdgml_transmit(struct cflayer *layr, struct cfpkt *pkt)
 		cfpkt_destroy(pkt);
 		return -EMSGSIZE;
 	}
+=======
+	if (!cfsrvl_ready(service, &ret))
+		return ret;
+
+	/* STE Modem cannot handle more than 1500 bytes datagrams */
+	if (cfpkt_getlen(pkt) > DGM_MTU)
+		return -EMSGSIZE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cfpkt_add_head(pkt, &zero, 3);
 	packet_type = 0x08; /* B9 set - UNCLASSIFIED */

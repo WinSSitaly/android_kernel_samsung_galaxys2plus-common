@@ -82,8 +82,11 @@
 #define PAGE_OFFSET		(CAC_BASE + PHYS_OFFSET)
 #endif
 
+<<<<<<< HEAD
 #ifndef FIXADDR_TOP
 #define FIXADDR_TOP		((unsigned long)(long)(int)0xfffe0000)
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ASM_MACH_GENERIC_SPACES_H */

@@ -132,8 +132,11 @@ enum vmcs_field {
 	GUEST_IA32_PAT_HIGH		= 0x00002805,
 	GUEST_IA32_EFER			= 0x00002806,
 	GUEST_IA32_EFER_HIGH		= 0x00002807,
+<<<<<<< HEAD
 	GUEST_IA32_PERF_GLOBAL_CTRL	= 0x00002808,
 	GUEST_IA32_PERF_GLOBAL_CTRL_HIGH= 0x00002809,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	GUEST_PDPTR0                    = 0x0000280a,
 	GUEST_PDPTR0_HIGH               = 0x0000280b,
 	GUEST_PDPTR1                    = 0x0000280c,
@@ -146,8 +149,11 @@ enum vmcs_field {
 	HOST_IA32_PAT_HIGH		= 0x00002c01,
 	HOST_IA32_EFER			= 0x00002c02,
 	HOST_IA32_EFER_HIGH		= 0x00002c03,
+<<<<<<< HEAD
 	HOST_IA32_PERF_GLOBAL_CTRL	= 0x00002c04,
 	HOST_IA32_PERF_GLOBAL_CTRL_HIGH	= 0x00002c05,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	PIN_BASED_VM_EXEC_CONTROL       = 0x00004000,
 	CPU_BASED_VM_EXEC_CONTROL       = 0x00004002,
 	EXCEPTION_BITMAP                = 0x00004004,
@@ -350,6 +356,7 @@ enum vmcs_field {
 #define DEBUG_REG_ACCESS_REG(eq)        (((eq) >> 8) & 0xf) /* 11:8, general purpose reg. */
 
 
+<<<<<<< HEAD
 /*
  * Exit Qualifications for APIC-Access
  */
@@ -362,6 +369,8 @@ enum vmcs_field {
 #define TYPE_PHYSICAL_APIC_EVENT        (10 << 12)
 #define TYPE_PHYSICAL_APIC_INST         (15 << 12)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* segment AR */
 #define SEGMENT_AR_L_MASK (1 << 13)
 
@@ -442,6 +451,7 @@ struct vmx_msr_entry {
 	u64 value;
 } __aligned(16);
 
+<<<<<<< HEAD
 /*
  * Exit Qualifications for entry failure during or after loading guest state
  */
@@ -481,4 +491,6 @@ enum vm_instruction_error_number {
 	VMXERR_INVALID_OPERAND_TO_INVEPT_INVVPID = 28,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

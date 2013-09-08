@@ -7,6 +7,11 @@
 
 /* Largest piece of memory kmalloc can allocate */
 #define RD_MAX_ALLOCATION_SIZE	65536
+<<<<<<< HEAD
+=======
+/* Maximum queuedepth for the Ramdisk HBA */
+#define RD_HBA_QUEUE_DEPTH	256
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define RD_DEVICE_QUEUE_DEPTH	32
 #define RD_MAX_DEVICE_QUEUE_DEPTH 128
 #define RD_BLOCKSIZE		512
@@ -22,6 +27,11 @@ void rd_module_exit(void);
 struct rd_request {
 	struct se_task	rd_task;
 
+<<<<<<< HEAD
+=======
+	/* SCSI CDB from iSCSI Command PDU */
+	unsigned char	rd_scsi_cdb[TCM_MAX_COMMAND_SIZE];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Offset from start of page */
 	u32		rd_offset;
 	/* Starting page in Ramdisk for request */
@@ -30,6 +40,11 @@ struct rd_request {
 	u32		rd_page_count;
 	/* Scatterlist count */
 	u32		rd_size;
+<<<<<<< HEAD
+=======
+	/* Ramdisk device */
+	struct rd_dev	*rd_dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } ____cacheline_aligned;
 
 struct rd_dev_sg_table {

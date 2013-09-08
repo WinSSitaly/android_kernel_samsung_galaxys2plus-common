@@ -4,7 +4,11 @@
  * 	Evolved from s3c2443-ac97.c
  *
  * Copyright (c) 2010 Samsung Electronics Co. Ltd
+<<<<<<< HEAD
  *	Author: Jaswinder Singh <jassisinghbrar@gmail.com>
+=======
+ * 	Author: Jaswinder Singh <jassi.brar@samsung.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * 	Credits: Graeme Gregory, Sean Choi
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,7 +19,10 @@
 #include <linux/io.h>
 #include <linux/delay.h>
 #include <linux/clk.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <sound/soc.h>
 
@@ -272,10 +279,14 @@ static int s3c_ac97_trigger(struct snd_pcm_substream *substream, int cmd,
 
 	writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
 
+<<<<<<< HEAD
 	if (!dma_data->ops)
 		dma_data->ops = samsung_dma_get_ops();
 
 	dma_data->ops->started(dma_data->channel);
+=======
+	s3c2410_dma_ctrl(dma_data->channel, S3C2410_DMAOP_STARTED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -321,20 +332,32 @@ static int s3c_ac97_mic_trigger(struct snd_pcm_substream *substream,
 
 	writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
 
+<<<<<<< HEAD
 	if (!dma_data->ops)
 		dma_data->ops = samsung_dma_get_ops();
 
 	dma_data->ops->started(dma_data->channel);
+=======
+	s3c2410_dma_ctrl(dma_data->channel, S3C2410_DMAOP_STARTED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops s3c_ac97_dai_ops = {
+=======
+static struct snd_soc_dai_ops s3c_ac97_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params	= s3c_ac97_hw_params,
 	.trigger	= s3c_ac97_trigger,
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops s3c_ac97_mic_dai_ops = {
+=======
+static struct snd_soc_dai_ops s3c_ac97_mic_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params	= s3c_ac97_hw_mic_params,
 	.trigger	= s3c_ac97_mic_trigger,
 };
@@ -451,7 +474,11 @@ static __devinit int s3c_ac97_probe(struct platform_device *pdev)
 	}
 
 	ret = request_irq(irq_res->start, s3c_ac97_irq,
+<<<<<<< HEAD
 					0, "AC97", NULL);
+=======
+					IRQF_DISABLED, "AC97", NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		dev_err(&pdev->dev, "ac97: interrupt request failed.\n");
 		goto err4;
@@ -502,16 +529,36 @@ static __devexit int s3c_ac97_remove(struct platform_device *pdev)
 
 static struct platform_driver s3c_ac97_driver = {
 	.probe  = s3c_ac97_probe,
+<<<<<<< HEAD
 	.remove = __devexit_p(s3c_ac97_remove),
+=======
+	.remove = s3c_ac97_remove,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.driver = {
 		.name = "samsung-ac97",
 		.owner = THIS_MODULE,
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(s3c_ac97_driver);
 
 MODULE_AUTHOR("Jaswinder Singh, <jassisinghbrar@gmail.com>");
+=======
+static int __init s3c_ac97_init(void)
+{
+	return platform_driver_register(&s3c_ac97_driver);
+}
+module_init(s3c_ac97_init);
+
+static void __exit s3c_ac97_exit(void)
+{
+	platform_driver_unregister(&s3c_ac97_driver);
+}
+module_exit(s3c_ac97_exit);
+
+MODULE_AUTHOR("Jaswinder Singh, <jassi.brar@samsung.com>");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("AC97 driver for the Samsung SoC");
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:samsung-ac97");

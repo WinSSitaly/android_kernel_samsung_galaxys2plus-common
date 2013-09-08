@@ -152,6 +152,7 @@ void tile_dev_intr(struct pt_regs *regs, int intnum)
  * Remove an irq from the disabled mask.  If we're in an interrupt
  * context, defer enabling the HW interrupt until we leave.
  */
+<<<<<<< HEAD
 static void tile_irq_chip_enable(struct irq_data *d)
 {
 	get_cpu_var(irq_disable_mask) &= ~(1UL << d->irq);
@@ -159,6 +160,16 @@ static void tile_irq_chip_enable(struct irq_data *d)
 		unmask_irqs(1UL << d->irq);
 	put_cpu_var(irq_disable_mask);
 }
+=======
+void enable_percpu_irq(unsigned int irq)
+{
+	get_cpu_var(irq_disable_mask) &= ~(1UL << irq);
+	if (__get_cpu_var(irq_depth) == 0)
+		unmask_irqs(1UL << irq);
+	put_cpu_var(irq_disable_mask);
+}
+EXPORT_SYMBOL(enable_percpu_irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Add an irq to the disabled mask.  We disable the HW interrupt
@@ -166,12 +177,22 @@ static void tile_irq_chip_enable(struct irq_data *d)
  * in an interrupt context, the return path is careful to avoid
  * unmasking a newly disabled interrupt.
  */
+<<<<<<< HEAD
 static void tile_irq_chip_disable(struct irq_data *d)
 {
 	get_cpu_var(irq_disable_mask) |= (1UL << d->irq);
 	mask_irqs(1UL << d->irq);
 	put_cpu_var(irq_disable_mask);
 }
+=======
+void disable_percpu_irq(unsigned int irq)
+{
+	get_cpu_var(irq_disable_mask) |= (1UL << irq);
+	mask_irqs(1UL << irq);
+	put_cpu_var(irq_disable_mask);
+}
+EXPORT_SYMBOL(disable_percpu_irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Mask an interrupt. */
 static void tile_irq_chip_mask(struct irq_data *d)
@@ -207,8 +228,11 @@ static void tile_irq_chip_eoi(struct irq_data *d)
 
 static struct irq_chip tile_irq_chip = {
 	.name = "tile_irq_chip",
+<<<<<<< HEAD
 	.irq_enable = tile_irq_chip_enable,
 	.irq_disable = tile_irq_chip_disable,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.irq_ack = tile_irq_chip_ack,
 	.irq_eoi = tile_irq_chip_eoi,
 	.irq_mask = tile_irq_chip_mask,

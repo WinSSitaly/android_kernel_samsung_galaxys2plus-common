@@ -121,7 +121,11 @@ int msm_proc_comm(unsigned cmd, unsigned *data1, unsigned *data2)
  * and unknown state. This function should be called early to
  * wait on the ARM9.
  */
+<<<<<<< HEAD
 void __devinit proc_comm_boot_wait(void)
+=======
+void __init proc_comm_boot_wait(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	void __iomem *base = MSM_SHARED_RAM_BASE;
  

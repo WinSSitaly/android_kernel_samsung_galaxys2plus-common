@@ -145,7 +145,11 @@ void __cpuinit sb1480_clockevent_init(void)
 	bcm1480_unmask_irq(cpu, irq);
 
 	action->handler	= sibyte_counter_handler;
+<<<<<<< HEAD
 	action->flags	= IRQF_PERCPU | IRQF_TIMER;
+=======
+	action->flags	= IRQF_DISABLED | IRQF_PERCPU | IRQF_TIMER;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	action->name	= name;
 	action->dev_id	= cd;
 

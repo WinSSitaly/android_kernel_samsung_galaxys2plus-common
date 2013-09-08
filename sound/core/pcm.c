@@ -21,10 +21,15 @@
 
 #include <linux/init.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/time.h>
 #include <linux/mutex.h>
 #include <linux/device.h>
+=======
+#include <linux/time.h>
+#include <linux/mutex.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/minors.h>
 #include <sound/pcm.h>
@@ -651,7 +656,11 @@ int snd_pcm_new_stream(struct snd_pcm *pcm, int stream, int substream_count)
 	pstr->stream = stream;
 	pstr->pcm = pcm;
 	pstr->substream_count = substream_count;
+<<<<<<< HEAD
 	if (substream_count > 0 && !pcm->internal) {
+=======
+	if (substream_count > 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = snd_pcm_stream_proc_init(pstr);
 		if (err < 0) {
 			snd_printk(KERN_ERR "Error in snd_pcm_stream_proc_init\n");
@@ -675,6 +684,7 @@ int snd_pcm_new_stream(struct snd_pcm *pcm, int stream, int substream_count)
 			pstr->substream = substream;
 		else
 			prev->next = substream;
+<<<<<<< HEAD
 
 		if (!pcm->internal) {
 			err = snd_pcm_substream_proc_init(substream);
@@ -687,6 +697,17 @@ int snd_pcm_new_stream(struct snd_pcm *pcm, int stream, int substream_count)
 				kfree(substream);
 				return err;
 			}
+=======
+		err = snd_pcm_substream_proc_init(substream);
+		if (err < 0) {
+			snd_printk(KERN_ERR "Error in snd_pcm_stream_proc_init\n");
+			if (prev == NULL)
+				pstr->substream = NULL;
+			else
+				prev->next = NULL;
+			kfree(substream);
+			return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		substream->group = &substream->self_group;
 		spin_lock_init(&substream->self_group.lock);
@@ -700,9 +721,31 @@ int snd_pcm_new_stream(struct snd_pcm *pcm, int stream, int substream_count)
 
 EXPORT_SYMBOL(snd_pcm_new_stream);
 
+<<<<<<< HEAD
 static int _snd_pcm_new(struct snd_card *card, const char *id, int device,
 		int playback_count, int capture_count, bool internal,
 		struct snd_pcm **rpcm)
+=======
+/**
+ * snd_pcm_new - create a new PCM instance
+ * @card: the card instance
+ * @id: the id string
+ * @device: the device index (zero based)
+ * @playback_count: the number of substreams for playback
+ * @capture_count: the number of substreams for capture
+ * @rpcm: the pointer to store the new pcm instance
+ *
+ * Creates a new PCM instance.
+ *
+ * The pcm operators have to be set afterwards to the new instance
+ * via snd_pcm_set_ops().
+ *
+ * Returns zero if successful, or a negative error code on failure.
+ */
+int snd_pcm_new(struct snd_card *card, const char *id, int device,
+		int playback_count, int capture_count,
+	        struct snd_pcm ** rpcm)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct snd_pcm *pcm;
 	int err;
@@ -723,7 +766,10 @@ static int _snd_pcm_new(struct snd_card *card, const char *id, int device,
 	}
 	pcm->card = card;
 	pcm->device = device;
+<<<<<<< HEAD
 	pcm->internal = internal;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (id)
 		strlcpy(pcm->id, id, sizeof(pcm->id));
 	if ((err = snd_pcm_new_stream(pcm, SNDRV_PCM_STREAM_PLAYBACK, playback_count)) < 0) {
@@ -745,6 +791,7 @@ static int _snd_pcm_new(struct snd_card *card, const char *id, int device,
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * snd_pcm_new - create a new PCM instance
  * @card: the card instance
@@ -798,6 +845,10 @@ int snd_pcm_new_internal(struct snd_card *card, const char *id, int device,
 }
 EXPORT_SYMBOL(snd_pcm_new_internal);
 
+=======
+EXPORT_SYMBOL(snd_pcm_new);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void snd_pcm_free_stream(struct snd_pcm_str * pstr)
 {
 	struct snd_pcm_substream *substream, *substream_next;
@@ -1034,7 +1085,11 @@ static int snd_pcm_dev_register(struct snd_device *device)
 	}
 	for (cidx = 0; cidx < 2; cidx++) {
 		int devtype = -1;
+<<<<<<< HEAD
 		if (pcm->streams[cidx].substream == NULL || pcm->internal)
+=======
+		if (pcm->streams[cidx].substream == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		switch (cidx) {
 		case SNDRV_PCM_STREAM_PLAYBACK:
@@ -1086,6 +1141,7 @@ static int snd_pcm_dev_disconnect(struct snd_device *device)
 	if (list_empty(&pcm->list))
 		goto unlock;
 
+<<<<<<< HEAD
 	mutex_lock(&pcm->open_mutex);
 	wake_up(&pcm->open_wait);
 	list_del_init(&pcm->list);
@@ -1099,6 +1155,13 @@ static int snd_pcm_dev_disconnect(struct snd_device *device)
 			}
 			snd_pcm_stream_unlock_irq(substream);
 		}
+=======
+	list_del_init(&pcm->list);
+	for (cidx = 0; cidx < 2; cidx++)
+		for (substream = pcm->streams[cidx].substream; substream; substream = substream->next)
+			if (substream->runtime)
+				substream->runtime->status->state = SNDRV_PCM_STATE_DISCONNECTED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(notify, &snd_pcm_notify_list, list) {
 		notify->n_disconnect(pcm);
 	}
@@ -1114,7 +1177,10 @@ static int snd_pcm_dev_disconnect(struct snd_device *device)
 		}
 		snd_unregister_device(devtype, pcm->card, pcm->device);
 	}
+<<<<<<< HEAD
 	mutex_unlock(&pcm->open_mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  unlock:
 	mutex_unlock(&register_mutex);
 	return 0;

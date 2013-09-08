@@ -33,6 +33,10 @@
 #include <linux/string.h>
 #include <linux/init.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
+=======
+#include <linux/irq.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/kbd_kern.h>
 #include <linux/kbd_diacr.h>
@@ -41,9 +45,12 @@
 #include <linux/reboot.h>
 #include <linux/notifier.h>
 #include <linux/jiffies.h>
+<<<<<<< HEAD
 #include <linux/uaccess.h>
 
 #include <asm/irq_regs.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void ctrl_alt_del(void);
 
@@ -56,8 +63,13 @@ extern void ctrl_alt_del(void);
 /*
  * Some laptops take the 789uiojklm,. keys as number pad when NumLock is on.
  * This seems a good reason to start with NumLock off. On HIL keyboards
+<<<<<<< HEAD
  * of PARISC machines however there is no NumLock key and everyone expects the
  * keypad to be used for numbers.
+=======
+ * of PARISC machines however there is no NumLock key and everyone expects the keypad
+ * to be used for numbers.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #if defined(CONFIG_PARISC) && (defined(CONFIG_KEYBOARD_HIL) || defined(CONFIG_KEYBOARD_HIL_OLD))
@@ -68,6 +80,11 @@ extern void ctrl_alt_del(void);
 
 #define KBD_DEFLOCK 0
 
+<<<<<<< HEAD
+=======
+void compute_shiftstate(void);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Handler Tables.
  */
@@ -98,12 +115,29 @@ static fn_handler_fn *fn_handler[] = { FN_HANDLERS };
  * Variables exported for vt_ioctl.c
  */
 
+<<<<<<< HEAD
+=======
+/* maximum values each key_handler can handle */
+const int max_vals[] = {
+	255, ARRAY_SIZE(func_table) - 1, ARRAY_SIZE(fn_handler) - 1, NR_PAD - 1,
+	NR_DEAD - 1, 255, 3, NR_SHIFT - 1, 255, NR_ASCII - 1, NR_LOCK - 1,
+	255, NR_LOCK - 1, 255, NR_BRL - 1
+};
+
+const int NR_TYPES = ARRAY_SIZE(max_vals);
+
+struct kbd_struct kbd_table[MAX_NR_CONSOLES];
+EXPORT_SYMBOL_GPL(kbd_table);
+static struct kbd_struct *kbd = kbd_table;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct vt_spawn_console vt_spawn_con = {
 	.lock = __SPIN_LOCK_UNLOCKED(vt_spawn_con.lock),
 	.pid  = NULL,
 	.sig  = 0,
 };
 
+<<<<<<< HEAD
 
 /*
  * Internal Data.
@@ -120,6 +154,17 @@ static const int max_vals[] = {
 };
 
 static const int NR_TYPES = ARRAY_SIZE(max_vals);
+=======
+/*
+ * Variables exported for vt.c
+ */
+
+int shift_state = 0;
+
+/*
+ * Internal Data.
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct input_handler kbd_handler;
 static DEFINE_SPINLOCK(kbd_event_lock);
@@ -130,8 +175,11 @@ static int npadch = -1;					/* -1 or number assembled on pad */
 static unsigned int diacr;
 static char rep;					/* flag telling character repeat */
 
+<<<<<<< HEAD
 static int shift_state = 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned char ledstate = 0xff;			/* undefined */
 static unsigned char ledioctl;
 
@@ -182,7 +230,11 @@ static int getkeycode_helper(struct input_handle *handle, void *data)
 	return d->error == 0; /* stop as soon as we successfully get one */
 }
 
+<<<<<<< HEAD
 static int getkeycode(unsigned int scancode)
+=======
+int getkeycode(unsigned int scancode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct getset_keycode_data d = {
 		.ke	= {
@@ -209,7 +261,11 @@ static int setkeycode_helper(struct input_handle *handle, void *data)
 	return d->error == 0; /* stop as soon as we successfully set one */
 }
 
+<<<<<<< HEAD
 static int setkeycode(unsigned int scancode, unsigned int keycode)
+=======
+int setkeycode(unsigned int scancode, unsigned int keycode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct getset_keycode_data d = {
 		.ke	= {
@@ -377,11 +433,17 @@ static void to_utf8(struct vc_data *vc, uint c)
 /*
  * Called after returning from RAW mode or when changing consoles - recompute
  * shift_down[] and shift_state from key_down[] maybe called when keymap is
+<<<<<<< HEAD
  * undefined, so that shiftkey release is seen. The caller must hold the
  * kbd_event_lock.
  */
 
 static void do_compute_shiftstate(void)
+=======
+ * undefined, so that shiftkey release is seen
+ */
+void compute_shiftstate(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int i, j, k, sym, val;
 
@@ -414,6 +476,7 @@ static void do_compute_shiftstate(void)
 	}
 }
 
+<<<<<<< HEAD
 /* We still have to export this method to vt.c */
 void compute_shiftstate(void)
 {
@@ -423,6 +486,8 @@ void compute_shiftstate(void)
 	spin_unlock_irqrestore(&kbd_event_lock, flags);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * We have a combining character DIACR here, followed by the character CH.
  * If the combination occurs in the table, return the corresponding value.
@@ -642,7 +707,11 @@ static void fn_SAK(struct vc_data *vc)
 
 static void fn_null(struct vc_data *vc)
 {
+<<<<<<< HEAD
 	do_compute_shiftstate();
+=======
+	compute_shiftstate();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -995,8 +1064,11 @@ unsigned char getledstate(void)
 
 void setledstate(struct kbd_struct *kbd, unsigned int led)
 {
+<<<<<<< HEAD
         unsigned long flags;
         spin_lock_irqsave(&kbd_event_lock, flags);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!(led & ~7)) {
 		ledioctl = led;
 		kbd->ledmode = LED_SHOW_IOCTL;
@@ -1004,7 +1076,10 @@ void setledstate(struct kbd_struct *kbd, unsigned int led)
 		kbd->ledmode = LED_SHOW_FLAGS;
 
 	set_leds();
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&kbd_event_lock, flags);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline unsigned char getleds(void)
@@ -1044,6 +1119,7 @@ static int kbd_update_leds_helper(struct input_handle *handle, void *data)
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  *	vt_get_leds	-	helper for braille console
  *	@console: console to read
@@ -1122,11 +1198,17 @@ void vt_kbd_con_stop(int console)
 /*	spin_unlock_irqrestore(&kbd_event_lock, flags); */
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This is the tasklet that updates LED state on all keyboards
  * attached to the box. The reason we use tasklet is that we
  * need to handle the scenario when keyboard handler is not
+<<<<<<< HEAD
  * registered yet but we already getting updates from the VT to
+=======
+ * registered yet but we already getting updates form VT to
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * update led state.
  */
 static void kbd_bh(unsigned long dummy)
@@ -1341,7 +1423,11 @@ static void kbd_keycode(unsigned int keycode, int down, int hw_raw)
 	if (rc == NOTIFY_STOP || !key_map) {
 		atomic_notifier_call_chain(&keyboard_notifier_list,
 					   KBD_UNBOUND_KEYCODE, &param);
+<<<<<<< HEAD
 		do_compute_shiftstate();
+=======
+		compute_shiftstate();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kbd->slockstate = 0;
 		return;
 	}
@@ -1491,6 +1577,7 @@ static void kbd_start(struct input_handle *handle)
 
 static const struct input_device_id kbd_ids[] = {
 	{
+<<<<<<< HEAD
 		.flags = INPUT_DEVICE_ID_MATCH_EVBIT,
 		.evbit = { BIT_MASK(EV_KEY) },
 	},
@@ -1499,6 +1586,16 @@ static const struct input_device_id kbd_ids[] = {
 		.flags = INPUT_DEVICE_ID_MATCH_EVBIT,
 		.evbit = { BIT_MASK(EV_SND) },
 	},
+=======
+                .flags = INPUT_DEVICE_ID_MATCH_EVBIT,
+                .evbit = { BIT_MASK(EV_KEY) },
+        },
+
+	{
+                .flags = INPUT_DEVICE_ID_MATCH_EVBIT,
+                .evbit = { BIT_MASK(EV_SND) },
+        },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	{ },    /* Terminating entry */
 };
@@ -1520,7 +1617,11 @@ int __init kbd_init(void)
 	int i;
 	int error;
 
+<<<<<<< HEAD
 	for (i = 0; i < MAX_NR_CONSOLES; i++) {
+=======
+        for (i = 0; i < MAX_NR_CONSOLES; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kbd_table[i].ledflagstate = KBD_DEFLEDS;
 		kbd_table[i].default_ledflagstate = KBD_DEFLEDS;
 		kbd_table[i].ledmode = LED_SHOW_FLAGS;
@@ -1539,6 +1640,7 @@ int __init kbd_init(void)
 
 	return 0;
 }
+<<<<<<< HEAD
 
 /* Ioctl support code */
 
@@ -2194,3 +2296,5 @@ void vt_clr_kbd_mode_bit(int console, int bit)
 	clr_vc_kbd_mode(kbd, bit);
 	spin_unlock_irqrestore(&kbd_event_lock, flags);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -61,6 +61,7 @@ _ENTRY(_start);
 	 * of abatron_pteptrs
 	 */
 	nop
+<<<<<<< HEAD
 	mr	r31,r3		/* save device tree ptr */
 	li	r24,0		/* CPU number */
 
@@ -92,6 +93,17 @@ _ENTRY(_start);
 
 	bl	relocate
 #endif
+=======
+/*
+ * Save parameters we are passed
+ */
+	mr	r31,r3
+	mr	r30,r4
+	mr	r29,r5
+	mr	r28,r6
+	mr	r27,r7
+	li	r24,0		/* CPU number */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bl	init_cpu_state
 
@@ -115,6 +127,7 @@ _ENTRY(_start);
 
 	bl	early_init
 
+<<<<<<< HEAD
 #ifdef CONFIG_RELOCATABLE
 	/*
 	 * Relocatable kernel support based on processing of dynamic
@@ -203,6 +216,16 @@ _ENTRY(_start);
  */
 	li	r3,0
 	mr	r4,r31
+=======
+/*
+ * Decide what sort of machine this is and initialize the MMU.
+ */
+	mr	r3,r31
+	mr	r4,r30
+	mr	r5,r29
+	mr	r6,r28
+	mr	r7,r27
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bl	machine_init
 	bl	MMU_init
 
@@ -820,8 +843,11 @@ _GLOBAL(init_cpu_state)
 	/* We use the PVR to differenciate 44x cores from 476 */
 	mfspr	r3,SPRN_PVR
 	srwi	r3,r3,16
+<<<<<<< HEAD
 	cmplwi	cr0,r3,PVR_476FPE@h
 	beq	head_start_47x
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmplwi	cr0,r3,PVR_476@h
 	beq	head_start_47x
 	cmplwi	cr0,r3,PVR_476_ISS@h
@@ -890,6 +916,7 @@ skpinv:	addi	r4,r4,1				/* Increment */
 /*
  * Configure and load pinned entry into TLB slot 63.
  */
+<<<<<<< HEAD
 #ifdef CONFIG_NONSTATIC_KERNEL
 	/*
 	 * In case of a NONSTATIC_KERNEL we reuse the TLB XLAT
@@ -906,13 +933,18 @@ skpinv:	addi	r4,r4,1				/* Increment */
 	/* Use our current RPN entry */
 	mr	r4,r25
 #else
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lis	r3,PAGE_OFFSET@h
 	ori	r3,r3,PAGE_OFFSET@l
 
 	/* Kernel is at the base of RAM */
 	li r4, 0			/* Load the kernel physical address */
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Load the kernel PID = 0 */
 	li	r0,0
@@ -1122,6 +1154,12 @@ clear_utlb_entry:
 	lis	r3,PAGE_OFFSET@h
 	ori	r3,r3,PAGE_OFFSET@l
 
+<<<<<<< HEAD
+=======
+	/* Kernel is at the base of RAM */
+	li r4, 0			/* Load the kernel physical address */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Load the kernel PID = 0 */
 	li	r0,0
 	mtspr	SPRN_PID,r0
@@ -1131,8 +1169,14 @@ clear_utlb_entry:
 	clrrwi	r3,r3,12		/* Mask off the effective page number */
 	ori	r3,r3,PPC47x_TLB0_VALID | PPC47x_TLB0_256M
 
+<<<<<<< HEAD
 	/* Word 1 - use r25.  RPN is the same as the original entry */
 
+=======
+	/* Word 1 */
+	clrrwi	r4,r4,12		/* Mask off the real page number */
+					/* ERPN is 0 for first 4GB page */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Word 2 */
 	li	r5,0
 	ori	r5,r5,PPC47x_TLB2_S_RWX
@@ -1143,7 +1187,11 @@ clear_utlb_entry:
 	/* We write to way 0 and bolted 0 */
 	lis	r0,0x8800
 	tlbwe	r3,r0,0
+<<<<<<< HEAD
 	tlbwe	r25,r0,1
+=======
+	tlbwe	r4,r0,1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tlbwe	r5,r0,2
 
 /*
@@ -1241,6 +1289,7 @@ head_start_common:
 	lis	r4,interrupt_base@h	/* IVPR only uses the high 16-bits */
 	mtspr	SPRN_IVPR,r4
 
+<<<<<<< HEAD
 	/*
 	 * If the kernel was loaded at a non-zero 256 MB page, we need to
 	 * mask off the most significant 4 bits to get the relative address
@@ -1248,6 +1297,9 @@ head_start_common:
 	 */
 	rlwinm	r22,r22,0,4,31
 	addis	r22,r22,PAGE_OFFSET@h
+=======
+	addis	r22,r22,KERNELBASE@h
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mtlr	r22
 	isync
 	blr

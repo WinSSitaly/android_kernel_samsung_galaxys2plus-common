@@ -13,6 +13,7 @@
 
 #include <linux/v4l2-mediabus.h>
 
+<<<<<<< HEAD
 /* Parallel flags */
 /*
  * Can the client run in master or in slave mode. By "Master mode" an operation
@@ -84,6 +85,8 @@ struct v4l2_mbus_config {
 	unsigned int flags;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void v4l2_fill_pix_format(struct v4l2_pix_format *pix_fmt,
 				const struct v4l2_mbus_framefmt *mbus_fmt)
 {

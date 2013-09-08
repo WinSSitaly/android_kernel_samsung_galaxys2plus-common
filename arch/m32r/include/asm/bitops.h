@@ -16,10 +16,16 @@
 #endif
 
 #include <linux/compiler.h>
+<<<<<<< HEAD
 #include <linux/irqflags.h>
 #include <asm/assembler.h>
 #include <asm/byteorder.h>
 #include <asm/dcache_clear.h>
+=======
+#include <asm/assembler.h>
+#include <asm/system.h>
+#include <asm/byteorder.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/types.h>
 
 /*

@@ -24,8 +24,11 @@
 #include <asm/tlbflush.h>
 #include <asm/unaligned.h>
 
+<<<<<<< HEAD
 #include "mm.h"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define CODING_BITS(i)	(i & 0xe0000120)
 
 #define LDST_P_BIT(i)	(i & (1 << 28))	/* Preindex             */

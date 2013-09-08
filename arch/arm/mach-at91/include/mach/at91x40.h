@@ -28,6 +28,7 @@
 #define AT91X40_ID_IRQ2		18	/* External IRQ 2 */
 
 /*
+<<<<<<< HEAD
  * System Peripherals
  */
 #define AT91_BASE_SYS	0xffc00000
@@ -40,6 +41,21 @@
 #define AT91_PIOA	0xffff0000	/* PIO Controller A */
 #define AT91_PS		0xffff4000	/* Power Save */
 #define AT91_WD		0xffff8000	/* Watchdog Timer */
+=======
+ * System Peripherals (offset from AT91_BASE_SYS)
+ */
+#define AT91_BASE_SYS	0xffc00000
+
+#define AT91_EBI	(0xffe00000 - AT91_BASE_SYS)	/* External Bus Interface */
+#define AT91_SF		(0xfff00000 - AT91_BASE_SYS)	/* Special Function */
+#define AT91_USART1	(0xfffcc000 - AT91_BASE_SYS)	/* USART 1 */
+#define AT91_USART0	(0xfffd0000 - AT91_BASE_SYS)	/* USART 0 */
+#define AT91_TC		(0xfffe0000 - AT91_BASE_SYS)	/* Timer Counter */
+#define AT91_PIOA	(0xffff0000 - AT91_BASE_SYS)	/* PIO Controller A */
+#define AT91_PS		(0xffff4000 - AT91_BASE_SYS)	/* Power Save */
+#define AT91_WD		(0xffff8000 - AT91_BASE_SYS)	/* Watchdog Timer */
+#define AT91_AIC	(0xfffff000 - AT91_BASE_SYS)	/* Advanced Interrupt Controller */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * The AT91x40 series doesn't have a debug unit like the other AT91 parts.

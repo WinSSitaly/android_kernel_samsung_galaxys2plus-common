@@ -230,6 +230,7 @@ struct sigcontext {
  * User-space might still rely on the old definition:
  */
 struct sigcontext {
+<<<<<<< HEAD
 	__u64 r8;
 	__u64 r9;
 	__u64 r10;
@@ -261,6 +262,36 @@ struct sigcontext {
 	__u32 __fpstate_pad;
 #endif
 	__u64 reserved1[8];
+=======
+	unsigned long r8;
+	unsigned long r9;
+	unsigned long r10;
+	unsigned long r11;
+	unsigned long r12;
+	unsigned long r13;
+	unsigned long r14;
+	unsigned long r15;
+	unsigned long rdi;
+	unsigned long rsi;
+	unsigned long rbp;
+	unsigned long rbx;
+	unsigned long rdx;
+	unsigned long rax;
+	unsigned long rcx;
+	unsigned long rsp;
+	unsigned long rip;
+	unsigned long eflags;		/* RFLAGS */
+	unsigned short cs;
+	unsigned short gs;
+	unsigned short fs;
+	unsigned short __pad0;
+	unsigned long err;
+	unsigned long trapno;
+	unsigned long oldmask;
+	unsigned long cr2;
+	struct _fpstate __user *fpstate;	/* zero when no FPU context */
+	unsigned long reserved1[8];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #endif /* !__KERNEL__ */
 

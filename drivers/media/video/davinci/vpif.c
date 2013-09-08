@@ -422,7 +422,11 @@ static int __init vpif_probe(struct platform_device *pdev)
 	if (!res)
 		return -ENOENT;
 
+<<<<<<< HEAD
 	res_len = resource_size(res);
+=======
+	res_len = res->end - res->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	res = request_mem_region(res->start, res_len, res->name);
 	if (!res)

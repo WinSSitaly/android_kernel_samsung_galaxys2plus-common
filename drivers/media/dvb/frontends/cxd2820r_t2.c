@@ -21,12 +21,22 @@
 
 #include "cxd2820r_priv.h"
 
+<<<<<<< HEAD
 int cxd2820r_set_frontend_t2(struct dvb_frontend *fe)
 {
 	struct cxd2820r_priv *priv = fe->demodulator_priv;
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
 	int ret, i, bw_i;
 	u32 if_freq, if_ctl;
+=======
+int cxd2820r_set_frontend_t2(struct dvb_frontend *fe,
+	struct dvb_frontend_parameters *params)
+{
+	struct cxd2820r_priv *priv = fe->demodulator_priv;
+	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+	int ret, i;
+	u32 if_khz, if_ctl;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64 num;
 	u8 buf[3], bw_param;
 	u8 bw_params1[][5] = {
@@ -70,6 +80,7 @@ int cxd2820r_set_frontend_t2(struct dvb_frontend *fe)
 
 	dbg("%s: RF=%d BW=%d", __func__, c->frequency, c->bandwidth_hz);
 
+<<<<<<< HEAD
 	switch (c->bandwidth_hz) {
 	case 5000000:
 		bw_i = 0;
@@ -91,6 +102,8 @@ int cxd2820r_set_frontend_t2(struct dvb_frontend *fe)
 		return -EINVAL;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* update GPIOs */
 	ret = cxd2820r_gpio(fe);
 	if (ret)
@@ -98,7 +111,11 @@ int cxd2820r_set_frontend_t2(struct dvb_frontend *fe)
 
 	/* program tuner */
 	if (fe->ops.tuner_ops.set_params)
+<<<<<<< HEAD
 		fe->ops.tuner_ops.set_params(fe);
+=======
+		fe->ops.tuner_ops.set_params(fe, params);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (priv->delivery_system != SYS_DVBT2) {
 		for (i = 0; i < ARRAY_SIZE(tab); i++) {
@@ -111,6 +128,7 @@ int cxd2820r_set_frontend_t2(struct dvb_frontend *fe)
 
 	priv->delivery_system = SYS_DVBT2;
 
+<<<<<<< HEAD
 	/* program IF frequency */
 	if (fe->ops.tuner_ops.get_if_frequency) {
 		ret = fe->ops.tuner_ops.get_if_frequency(fe, &if_freq);
@@ -122,6 +140,34 @@ int cxd2820r_set_frontend_t2(struct dvb_frontend *fe)
 	dbg("%s: if_freq=%d", __func__, if_freq);
 
 	num = if_freq / 1000; /* Hz => kHz */
+=======
+	switch (c->bandwidth_hz) {
+	case 5000000:
+		if_khz = priv->cfg.if_dvbt2_5;
+		i = 0;
+		bw_param = 3;
+		break;
+	case 6000000:
+		if_khz = priv->cfg.if_dvbt2_6;
+		i = 1;
+		bw_param = 2;
+		break;
+	case 7000000:
+		if_khz = priv->cfg.if_dvbt2_7;
+		i = 2;
+		bw_param = 1;
+		break;
+	case 8000000:
+		if_khz = priv->cfg.if_dvbt2_8;
+		i = 3;
+		bw_param = 0;
+		break;
+	default:
+		return -EINVAL;
+	}
+
+	num = if_khz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	num *= 0x1000000;
 	if_ctl = cxd2820r_div_u64_round_closest(num, 41000);
 	buf[0] = ((if_ctl >> 16) & 0xff);
@@ -132,7 +178,11 @@ int cxd2820r_set_frontend_t2(struct dvb_frontend *fe)
 	if (ret)
 		goto error;
 
+<<<<<<< HEAD
 	ret = cxd2820r_wr_regs(priv, 0x0209f, bw_params1[bw_i], 5);
+=======
+	ret = cxd2820r_wr_regs(priv, 0x0209f, bw_params1[i], 5);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto error;
 
@@ -155,7 +205,12 @@ error:
 
 }
 
+<<<<<<< HEAD
 int cxd2820r_get_frontend_t2(struct dvb_frontend *fe)
+=======
+int cxd2820r_get_frontend_t2(struct dvb_frontend *fe,
+	struct dvb_frontend_parameters *p)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cxd2820r_priv *priv = fe->demodulator_priv;
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
@@ -424,3 +479,7 @@ int cxd2820r_get_tune_settings_t2(struct dvb_frontend *fe,
 
 	return 0;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

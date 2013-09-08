@@ -24,7 +24,10 @@
 #include <linux/irq.h>
 #include <linux/serio.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach-types.h>
 #include <plat/board-ams-delta.h>
@@ -92,7 +95,12 @@ static irqreturn_t ams_delta_serio_interrupt(int irq, void *dev_id)
 static int ams_delta_serio_open(struct serio *serio)
 {
 	/* enable keyboard */
+<<<<<<< HEAD
 	gpio_set_value(AMS_DELTA_GPIO_PIN_KEYBRD_PWR, 1);
+=======
+	ams_delta_latch2_write(AMD_DELTA_LATCH2_KEYBRD_PWR,
+			AMD_DELTA_LATCH2_KEYBRD_PWR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -100,6 +108,7 @@ static int ams_delta_serio_open(struct serio *serio)
 static void ams_delta_serio_close(struct serio *serio)
 {
 	/* disable keyboard */
+<<<<<<< HEAD
 	gpio_set_value(AMS_DELTA_GPIO_PIN_KEYBRD_PWR, 0);
 }
 
@@ -126,6 +135,11 @@ static const struct gpio ams_delta_gpios[] __initconst_or_module = {
 	},
 };
 
+=======
+	ams_delta_latch2_write(AMD_DELTA_LATCH2_KEYBRD_PWR, 0);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init ams_delta_serio_init(void)
 {
 	int err;
@@ -145,12 +159,28 @@ static int __init ams_delta_serio_init(void)
 	strlcpy(ams_delta_serio->phys, "GPIO/serio0",
 			sizeof(ams_delta_serio->phys));
 
+<<<<<<< HEAD
 	err = gpio_request_array(ams_delta_gpios,
 				ARRAY_SIZE(ams_delta_gpios));
 	if (err) {
 		pr_err("ams_delta_serio: Couldn't request gpio pins\n");
 		goto serio;
 	}
+=======
+	err = gpio_request(AMS_DELTA_GPIO_PIN_KEYBRD_DATA, "serio-data");
+	if (err) {
+		pr_err("ams_delta_serio: Couldn't request gpio pin for data\n");
+		goto serio;
+	}
+	gpio_direction_input(AMS_DELTA_GPIO_PIN_KEYBRD_DATA);
+
+	err = gpio_request(AMS_DELTA_GPIO_PIN_KEYBRD_CLK, "serio-clock");
+	if (err) {
+		pr_err("ams_delta_serio: couldn't request gpio pin for clock\n");
+		goto gpio_data;
+	}
+	gpio_direction_input(AMS_DELTA_GPIO_PIN_KEYBRD_CLK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = request_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK),
 			ams_delta_serio_interrupt, IRQ_TYPE_EDGE_RISING,
@@ -158,7 +188,11 @@ static int __init ams_delta_serio_init(void)
 	if (err < 0) {
 		pr_err("ams_delta_serio: couldn't request gpio interrupt %d\n",
 				gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK));
+<<<<<<< HEAD
 		goto gpio;
+=======
+		goto gpio_clk;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	/*
 	 * Since GPIO register handling for keyboard clock pin is performed
@@ -172,9 +206,16 @@ static int __init ams_delta_serio_init(void)
 	dev_info(&ams_delta_serio->dev, "%s\n", ams_delta_serio->name);
 
 	return 0;
+<<<<<<< HEAD
 gpio:
 	gpio_free_array(ams_delta_gpios,
 			ARRAY_SIZE(ams_delta_gpios));
+=======
+gpio_clk:
+	gpio_free(AMS_DELTA_GPIO_PIN_KEYBRD_CLK);
+gpio_data:
+	gpio_free(AMS_DELTA_GPIO_PIN_KEYBRD_DATA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 serio:
 	kfree(ams_delta_serio);
 	return err;
@@ -184,8 +225,14 @@ module_init(ams_delta_serio_init);
 static void __exit ams_delta_serio_exit(void)
 {
 	serio_unregister_port(ams_delta_serio);
+<<<<<<< HEAD
 	free_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK), 0);
 	gpio_free_array(ams_delta_gpios,
 			ARRAY_SIZE(ams_delta_gpios));
+=======
+	free_irq(OMAP_GPIO_IRQ(AMS_DELTA_GPIO_PIN_KEYBRD_CLK), 0);
+	gpio_free(AMS_DELTA_GPIO_PIN_KEYBRD_CLK);
+	gpio_free(AMS_DELTA_GPIO_PIN_KEYBRD_DATA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 module_exit(ams_delta_serio_exit);

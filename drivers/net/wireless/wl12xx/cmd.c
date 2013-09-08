@@ -23,13 +23,20 @@
 
 #include <linux/module.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
+=======
+#include <linux/crc7.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/spi/spi.h>
 #include <linux/etherdevice.h>
 #include <linux/ieee80211.h>
 #include <linux/slab.h>
 
 #include "wl12xx.h"
+<<<<<<< HEAD
 #include "debug.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "reg.h"
 #include "io.h"
 #include "acx.h"
@@ -106,7 +113,11 @@ int wl1271_cmd_send(struct wl1271 *wl, u16 id, void *buf, size_t len,
 
 fail:
 	WARN_ON(1);
+<<<<<<< HEAD
 	wl12xx_queue_recovery_work(wl);
+=======
+	ieee80211_queue_work(wl->hw, &wl->recovery_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -374,13 +385,18 @@ static int wl1271_cmd_wait_for_event(struct wl1271 *wl, u32 mask)
 
 	ret = wl1271_cmd_wait_for_event_or_timeout(wl, mask);
 	if (ret != 0) {
+<<<<<<< HEAD
 		wl12xx_queue_recovery_work(wl);
+=======
+		ieee80211_queue_work(wl->hw, &wl->recovery_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 
 	return 0;
 }
 
+<<<<<<< HEAD
 int wl12xx_cmd_role_enable(struct wl1271 *wl, u8 *addr, u8 role_type,
 			   u8 *role_id)
 {
@@ -514,10 +530,21 @@ static int wl12xx_cmd_role_start_dev(struct wl1271 *wl,
 
 	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
 	if (!cmd) {
+=======
+int wl1271_cmd_join(struct wl1271 *wl, u8 bss_type)
+{
+	struct wl1271_cmd_join *join;
+	int ret, i;
+	u8 *bssid;
+
+	join = kzalloc(sizeof(*join), GFP_KERNEL);
+	if (!join) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENOMEM;
 		goto out;
 	}
 
+<<<<<<< HEAD
 	wl1271_debug(DEBUG_CMD, "cmd role start dev %d", wlvif->dev_role_id);
 
 	cmd->role_id = wlvif->dev_role_id;
@@ -777,11 +804,58 @@ out_free_global:
 
 out_free:
 	kfree(cmd);
+=======
+	wl1271_debug(DEBUG_CMD, "cmd join");
+
+	/* Reverse order BSSID */
+	bssid = (u8 *) &join->bssid_lsb;
+	for (i = 0; i < ETH_ALEN; i++)
+		bssid[i] = wl->bssid[ETH_ALEN - i - 1];
+
+	join->rx_config_options = cpu_to_le32(wl->rx_config);
+	join->rx_filter_options = cpu_to_le32(wl->rx_filter);
+	join->bss_type = bss_type;
+	join->basic_rate_set = cpu_to_le32(wl->basic_rate_set);
+	join->supported_rate_set = cpu_to_le32(wl->rate_set);
+
+	if (wl->band == IEEE80211_BAND_5GHZ)
+		join->bss_type |= WL1271_JOIN_CMD_BSS_TYPE_5GHZ;
+
+	join->beacon_interval = cpu_to_le16(wl->beacon_int);
+	join->dtim_interval = WL1271_DEFAULT_DTIM_PERIOD;
+
+	join->channel = wl->channel;
+	join->ssid_len = wl->ssid_len;
+	memcpy(join->ssid, wl->ssid, wl->ssid_len);
+
+	join->ctrl |= wl->session_counter << WL1271_JOIN_CMD_TX_SESSION_OFFSET;
+
+	/* reset TX security counters */
+	wl->tx_security_last_seq = 0;
+	wl->tx_security_seq = 0;
+
+	wl1271_debug(DEBUG_CMD, "cmd join: basic_rate_set=0x%x, rate_set=0x%x",
+		join->basic_rate_set, join->supported_rate_set);
+
+	ret = wl1271_cmd_send(wl, CMD_START_JOIN, join, sizeof(*join), 0);
+	if (ret < 0) {
+		wl1271_error("failed to initiate cmd join");
+		goto out_free;
+	}
+
+	ret = wl1271_cmd_wait_for_event(wl, JOIN_EVENT_COMPLETE_ID);
+	if (ret < 0)
+		wl1271_error("cmd join event completion error");
+
+out_free:
+	kfree(join);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl12xx_cmd_role_stop_ap(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 {
 	struct wl12xx_cmd_role_stop *cmd;
@@ -877,6 +951,8 @@ out:
 }
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * send test command to firmware
  *
@@ -945,7 +1021,11 @@ int wl1271_cmd_configure(struct wl1271 *wl, u16 id, void *buf, size_t len)
 	struct acx_header *acx = buf;
 	int ret;
 
+<<<<<<< HEAD
 	wl1271_debug(DEBUG_CMD, "cmd configure (%d)", id);
+=======
+	wl1271_debug(DEBUG_CMD, "cmd configure");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	acx->id = cpu_to_le16(id);
 
@@ -1011,8 +1091,12 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_cmd_ps_mode(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		       u8 ps_mode, u16 auto_ps_timeout)
+=======
+int wl1271_cmd_ps_mode(struct wl1271 *wl, u8 ps_mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct wl1271_cmd_ps_params *ps_params = NULL;
 	int ret = 0;
@@ -1025,9 +1109,13 @@ int wl1271_cmd_ps_mode(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	ps_params->role_id = wlvif->role_id;
 	ps_params->ps_mode = ps_mode;
 	ps_params->auto_ps_timeout = auto_ps_timeout;
+=======
+	ps_params->ps_mode = ps_mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = wl1271_cmd_send(wl, CMD_SET_PS_MODE, ps_params,
 			      sizeof(*ps_params), 0);
@@ -1041,15 +1129,24 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_cmd_template_set(struct wl1271 *wl, u8 role_id,
 			    u16 template_id, void *buf, size_t buf_len,
 			    int index, u32 rates)
+=======
+int wl1271_cmd_template_set(struct wl1271 *wl, u16 template_id,
+			    void *buf, size_t buf_len, int index, u32 rates)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct wl1271_cmd_template_set *cmd;
 	int ret = 0;
 
+<<<<<<< HEAD
 	wl1271_debug(DEBUG_CMD, "cmd template_set %d (role %d)",
 		     template_id, role_id);
+=======
+	wl1271_debug(DEBUG_CMD, "cmd template_set %d", template_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	WARN_ON(buf_len > WL1271_CMD_TEMPL_MAX_SIZE);
 	buf_len = min_t(size_t, buf_len, WL1271_CMD_TEMPL_MAX_SIZE);
@@ -1060,8 +1157,11 @@ int wl1271_cmd_template_set(struct wl1271 *wl, u8 role_id,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	/* during initialization wlvif is NULL */
 	cmd->role_id = role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmd->len = cpu_to_le16(buf_len);
 	cmd->template_type = template_id;
 	cmd->enabled_rates = cpu_to_le32(rates);
@@ -1085,7 +1185,11 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl12xx_cmd_build_null_data(struct wl1271 *wl, struct wl12xx_vif *wlvif)
+=======
+int wl1271_cmd_build_null_data(struct wl1271 *wl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sk_buff *skb = NULL;
 	int size;
@@ -1093,21 +1197,34 @@ int wl12xx_cmd_build_null_data(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 	int ret = -ENOMEM;
 
 
+<<<<<<< HEAD
 	if (wlvif->bss_type == BSS_TYPE_IBSS) {
 		size = sizeof(struct wl12xx_null_data_template);
 		ptr = NULL;
 	} else {
 		skb = ieee80211_nullfunc_get(wl->hw,
 					     wl12xx_wlvif_to_vif(wlvif));
+=======
+	if (wl->bss_type == BSS_TYPE_IBSS) {
+		size = sizeof(struct wl12xx_null_data_template);
+		ptr = NULL;
+	} else {
+		skb = ieee80211_nullfunc_get(wl->hw, wl->vif);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!skb)
 			goto out;
 		size = skb->len;
 		ptr = skb->data;
 	}
 
+<<<<<<< HEAD
 	ret = wl1271_cmd_template_set(wl, wlvif->role_id,
 				      CMD_TEMPL_NULL_DATA, ptr, size, 0,
 				      wlvif->basic_rate);
+=======
+	ret = wl1271_cmd_template_set(wl, CMD_TEMPL_NULL_DATA, ptr, size, 0,
+				      wl->basic_rate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	dev_kfree_skb(skb);
@@ -1118,6 +1235,7 @@ out:
 
 }
 
+<<<<<<< HEAD
 int wl12xx_cmd_build_klv_null_data(struct wl1271 *wl,
 				   struct wl12xx_vif *wlvif)
 {
@@ -1133,6 +1251,21 @@ int wl12xx_cmd_build_klv_null_data(struct wl1271 *wl,
 				      skb->data, skb->len,
 				      CMD_TEMPL_KLV_IDX_NULL_DATA,
 				      wlvif->basic_rate);
+=======
+int wl1271_cmd_build_klv_null_data(struct wl1271 *wl)
+{
+	struct sk_buff *skb = NULL;
+	int ret = -ENOMEM;
+
+	skb = ieee80211_nullfunc_get(wl->hw, wl->vif);
+	if (!skb)
+		goto out;
+
+	ret = wl1271_cmd_template_set(wl, CMD_TEMPL_KLV,
+				      skb->data, skb->len,
+				      CMD_TEMPL_KLV_IDX_NULL_DATA,
+				      wl->basic_rate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	dev_kfree_skb(skb);
@@ -1143,6 +1276,7 @@ out:
 
 }
 
+<<<<<<< HEAD
 int wl1271_cmd_build_ps_poll(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			     u16 aid)
 {
@@ -1157,12 +1291,26 @@ int wl1271_cmd_build_ps_poll(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	ret = wl1271_cmd_template_set(wl, wlvif->role_id,
 				      CMD_TEMPL_PS_POLL, skb->data,
 				      skb->len, 0, wlvif->basic_rate_set);
+=======
+int wl1271_cmd_build_ps_poll(struct wl1271 *wl, u16 aid)
+{
+	struct sk_buff *skb;
+	int ret = 0;
+
+	skb = ieee80211_pspoll_get(wl->hw, wl->vif);
+	if (!skb)
+		goto out;
+
+	ret = wl1271_cmd_template_set(wl, CMD_TEMPL_PS_POLL, skb->data,
+				      skb->len, 0, wl->basic_rate_set);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	dev_kfree_skb(skb);
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl12xx_cmd_build_probe_req(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			       u8 role_id, u8 band,
 			       const u8 *ssid, size_t ssid_len,
@@ -1174,6 +1322,16 @@ int wl12xx_cmd_build_probe_req(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	u32 rate;
 
 	skb = ieee80211_probereq_get(wl->hw, vif, ssid, ssid_len,
+=======
+int wl1271_cmd_build_probe_req(struct wl1271 *wl,
+			       const u8 *ssid, size_t ssid_len,
+			       const u8 *ie, size_t ie_len, u8 band)
+{
+	struct sk_buff *skb;
+	int ret;
+
+	skb = ieee80211_probereq_get(wl->hw, wl->vif, ssid, ssid_len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     ie, ie_len);
 	if (!skb) {
 		ret = -ENOMEM;
@@ -1182,6 +1340,7 @@ int wl12xx_cmd_build_probe_req(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 
 	wl1271_dump(DEBUG_SCAN, "PROBE REQ: ", skb->data, skb->len);
 
+<<<<<<< HEAD
 	rate = wl1271_tx_min_rate_get(wl, wlvif->bitrate_masks[band]);
 	if (band == IEEE80211_BAND_2GHZ)
 		ret = wl1271_cmd_template_set(wl, role_id,
@@ -1191,6 +1350,16 @@ int wl12xx_cmd_build_probe_req(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		ret = wl1271_cmd_template_set(wl, role_id,
 					      CMD_TEMPL_CFG_PROBE_REQ_5,
 					      skb->data, skb->len, 0, rate);
+=======
+	if (band == IEEE80211_BAND_2GHZ)
+		ret = wl1271_cmd_template_set(wl, CMD_TEMPL_CFG_PROBE_REQ_2_4,
+					      skb->data, skb->len, 0,
+					      wl->conf.tx.basic_rate);
+	else
+		ret = wl1271_cmd_template_set(wl, CMD_TEMPL_CFG_PROBE_REQ_5,
+					      skb->data, skb->len, 0,
+					      wl->conf.tx.basic_rate_5);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	dev_kfree_skb(skb);
@@ -1198,6 +1367,7 @@ out:
 }
 
 struct sk_buff *wl1271_cmd_build_ap_probe_req(struct wl1271 *wl,
+<<<<<<< HEAD
 					      struct wl12xx_vif *wlvif,
 					      struct sk_buff *skb)
 {
@@ -1207,11 +1377,20 @@ struct sk_buff *wl1271_cmd_build_ap_probe_req(struct wl1271 *wl,
 
 	if (!skb)
 		skb = ieee80211_ap_probereq_get(wl->hw, vif);
+=======
+					      struct sk_buff *skb)
+{
+	int ret;
+
+	if (!skb)
+		skb = ieee80211_ap_probereq_get(wl->hw, wl->vif);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!skb)
 		goto out;
 
 	wl1271_dump(DEBUG_SCAN, "AP PROBE REQ: ", skb->data, skb->len);
 
+<<<<<<< HEAD
 	rate = wl1271_tx_min_rate_get(wl, wlvif->bitrate_masks[wlvif->band]);
 	if (wlvif->band == IEEE80211_BAND_2GHZ)
 		ret = wl1271_cmd_template_set(wl, wlvif->role_id,
@@ -1221,6 +1400,16 @@ struct sk_buff *wl1271_cmd_build_ap_probe_req(struct wl1271 *wl,
 		ret = wl1271_cmd_template_set(wl, wlvif->role_id,
 					      CMD_TEMPL_CFG_PROBE_REQ_5,
 					      skb->data, skb->len, 0, rate);
+=======
+	if (wl->band == IEEE80211_BAND_2GHZ)
+		ret = wl1271_cmd_template_set(wl, CMD_TEMPL_CFG_PROBE_REQ_2_4,
+					      skb->data, skb->len, 0,
+					      wl->conf.tx.basic_rate);
+	else
+		ret = wl1271_cmd_template_set(wl, CMD_TEMPL_CFG_PROBE_REQ_5,
+					      skb->data, skb->len, 0,
+					      wl->conf.tx.basic_rate_5);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ret < 0)
 		wl1271_error("Unable to set ap probe request template.");
@@ -1229,6 +1418,7 @@ out:
 	return skb;
 }
 
+<<<<<<< HEAD
 int wl1271_cmd_build_arp_rsp(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 {
 	int ret, extra;
@@ -1257,6 +1447,32 @@ int wl1271_cmd_build_arp_rsp(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 
 	/* arp header */
 	arp_hdr = &tmpl->arp_hdr;
+=======
+int wl1271_cmd_build_arp_rsp(struct wl1271 *wl, __be32 ip_addr)
+{
+	int ret;
+	struct wl12xx_arp_rsp_template tmpl;
+	struct ieee80211_hdr_3addr *hdr;
+	struct arphdr *arp_hdr;
+
+	memset(&tmpl, 0, sizeof(tmpl));
+
+	/* mac80211 header */
+	hdr = &tmpl.hdr;
+	hdr->frame_control = cpu_to_le16(IEEE80211_FTYPE_DATA |
+					 IEEE80211_STYPE_DATA |
+					 IEEE80211_FCTL_TODS);
+	memcpy(hdr->addr1, wl->vif->bss_conf.bssid, ETH_ALEN);
+	memcpy(hdr->addr2, wl->vif->addr, ETH_ALEN);
+	memset(hdr->addr3, 0xff, ETH_ALEN);
+
+	/* llc layer */
+	memcpy(tmpl.llc_hdr, rfc1042_header, sizeof(rfc1042_header));
+	tmpl.llc_type = cpu_to_be16(ETH_P_ARP);
+
+	/* arp header */
+	arp_hdr = &tmpl.arp_hdr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	arp_hdr->ar_hrd = cpu_to_be16(ARPHRD_ETHER);
 	arp_hdr->ar_pro = cpu_to_be16(ETH_P_IP);
 	arp_hdr->ar_hln = ETH_ALEN;
@@ -1264,6 +1480,7 @@ int wl1271_cmd_build_arp_rsp(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 	arp_hdr->ar_op = cpu_to_be16(ARPOP_REPLY);
 
 	/* arp payload */
+<<<<<<< HEAD
 	memcpy(tmpl->sender_hw, vif->addr, ETH_ALEN);
 	tmpl->sender_ip = wlvif->ip_addr;
 
@@ -1323,13 +1540,33 @@ out:
 int wl1271_build_qos_null_data(struct wl1271 *wl, struct ieee80211_vif *vif)
 {
 	struct wl12xx_vif *wlvif = wl12xx_vif_to_data(vif);
+=======
+	memcpy(tmpl.sender_hw, wl->vif->addr, ETH_ALEN);
+	tmpl.sender_ip = ip_addr;
+
+	ret = wl1271_cmd_template_set(wl, CMD_TEMPL_ARP_RSP,
+				      &tmpl, sizeof(tmpl), 0,
+				      wl->basic_rate);
+
+	return ret;
+}
+
+int wl1271_build_qos_null_data(struct wl1271 *wl)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ieee80211_qos_hdr template;
 
 	memset(&template, 0, sizeof(template));
 
+<<<<<<< HEAD
 	memcpy(template.addr1, vif->bss_conf.bssid, ETH_ALEN);
 	memcpy(template.addr2, vif->addr, ETH_ALEN);
 	memcpy(template.addr3, vif->bss_conf.bssid, ETH_ALEN);
+=======
+	memcpy(template.addr1, wl->bssid, ETH_ALEN);
+	memcpy(template.addr2, wl->mac_addr, ETH_ALEN);
+	memcpy(template.addr3, wl->bssid, ETH_ALEN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	template.frame_control = cpu_to_le16(IEEE80211_FTYPE_DATA |
 					     IEEE80211_STYPE_QOS_NULLFUNC |
@@ -1338,6 +1575,7 @@ int wl1271_build_qos_null_data(struct wl1271 *wl, struct ieee80211_vif *vif)
 	/* FIXME: not sure what priority to use here */
 	template.qos_ctrl = cpu_to_le16(0);
 
+<<<<<<< HEAD
 	return wl1271_cmd_template_set(wl, wlvif->role_id,
 				       CMD_TEMPL_QOS_NULL_DATA, &template,
 				       sizeof(template), 0,
@@ -1347,6 +1585,16 @@ int wl1271_build_qos_null_data(struct wl1271 *wl, struct ieee80211_vif *vif)
 int wl12xx_cmd_set_default_wep_key(struct wl1271 *wl, u8 id, u8 hlid)
 {
 	struct wl1271_cmd_set_keys *cmd;
+=======
+	return wl1271_cmd_template_set(wl, CMD_TEMPL_QOS_NULL_DATA, &template,
+				       sizeof(template), 0,
+				       wl->basic_rate);
+}
+
+int wl1271_cmd_set_sta_default_wep_key(struct wl1271 *wl, u8 id)
+{
+	struct wl1271_cmd_set_sta_keys *cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	wl1271_debug(DEBUG_CMD, "cmd set_default_wep_key %d", id);
@@ -1357,9 +1605,10 @@ int wl12xx_cmd_set_default_wep_key(struct wl1271 *wl, u8 id, u8 hlid)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	cmd->hlid = hlid;
-	cmd->key_id = id;
-	cmd->lid_key_type = WEP_DEFAULT_LID_TYPE;
+=======
+	cmd->id = id;
 	cmd->key_action = cpu_to_le16(KEY_SET_ID);
 	cmd->key_type = KEY_WEP;
 
@@ -1375,6 +1624,43 @@ out:
 	return ret;
 }
 
+int wl1271_cmd_set_ap_default_wep_key(struct wl1271 *wl, u8 id)
+{
+	struct wl1271_cmd_set_ap_keys *cmd;
+	int ret = 0;
+
+	wl1271_debug(DEBUG_CMD, "cmd set_ap_default_wep_key %d", id);
+
+	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
+	if (!cmd) {
+		ret = -ENOMEM;
+		goto out;
+	}
+
+	cmd->hlid = WL1271_AP_BROADCAST_HLID;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+	cmd->key_id = id;
+	cmd->lid_key_type = WEP_DEFAULT_LID_TYPE;
+	cmd->key_action = cpu_to_le16(KEY_SET_ID);
+	cmd->key_type = KEY_WEP;
+
+	ret = wl1271_cmd_send(wl, CMD_SET_KEYS, cmd, sizeof(*cmd), 0);
+	if (ret < 0) {
+<<<<<<< HEAD
+		wl1271_warning("cmd set_default_wep_key failed: %d", ret);
+=======
+		wl1271_warning("cmd set_ap_default_wep_key failed: %d", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+		goto out;
+	}
+
+out:
+	kfree(cmd);
+
+	return ret;
+}
+
+<<<<<<< HEAD
 int wl1271_cmd_set_sta_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		       u16 action, u8 id, u8 key_type,
 		       u8 key_size, const u8 *key, const u8 *addr,
@@ -1387,12 +1673,22 @@ int wl1271_cmd_set_sta_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	if (wlvif->sta.hlid == WL12XX_INVALID_LINK_ID)
 		return 0;
 
+=======
+int wl1271_cmd_set_sta_key(struct wl1271 *wl, u16 action, u8 id, u8 key_type,
+		       u8 key_size, const u8 *key, const u8 *addr,
+		       u32 tx_seq_32, u16 tx_seq_16)
+{
+	struct wl1271_cmd_set_sta_keys *cmd;
+	int ret = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
 	if (!cmd) {
 		ret = -ENOMEM;
 		goto out;
 	}
 
+<<<<<<< HEAD
 	cmd->hlid = wlvif->sta.hlid;
 
 	if (key_type == KEY_WEP)
@@ -1401,6 +1697,10 @@ int wl1271_cmd_set_sta_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		cmd->lid_key_type = BROADCAST_LID_TYPE;
 	else
 		cmd->lid_key_type = UNICAST_LID_TYPE;
+=======
+	if (key_type != KEY_WEP)
+		memcpy(cmd->addr, addr, ETH_ALEN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cmd->key_action = cpu_to_le16(action);
 	cmd->key_size = key_size;
@@ -1409,7 +1709,14 @@ int wl1271_cmd_set_sta_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	cmd->ac_seq_num16[0] = cpu_to_le16(tx_seq_16);
 	cmd->ac_seq_num32[0] = cpu_to_le32(tx_seq_32);
 
+<<<<<<< HEAD
 	cmd->key_id = id;
+=======
+	/* we have only one SSID profile */
+	cmd->ssid_profile = 0;
+
+	cmd->id = id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (key_type == KEY_TKIP) {
 		/*
@@ -1440,6 +1747,7 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 /*
  * TODO: merge with sta/ibss into 1 set_key function.
  * note there are slight diffs
@@ -1450,6 +1758,13 @@ int wl1271_cmd_set_ap_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			  u16 tx_seq_16)
 {
 	struct wl1271_cmd_set_keys *cmd;
+=======
+int wl1271_cmd_set_ap_key(struct wl1271 *wl, u16 action, u8 id, u8 key_type,
+			u8 key_size, const u8 *key, u8 hlid, u32 tx_seq_32,
+			u16 tx_seq_16)
+{
+	struct wl1271_cmd_set_ap_keys *cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 	u8 lid_type;
 
@@ -1457,7 +1772,11 @@ int wl1271_cmd_set_ap_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	if (!cmd)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	if (hlid == wlvif->ap.bcast_hlid) {
+=======
+	if (hlid == WL1271_AP_BROADCAST_HLID) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (key_type == KEY_WEP)
 			lid_type = WEP_DEFAULT_LID_TYPE;
 		else
@@ -1506,12 +1825,21 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl12xx_cmd_set_peer_state(struct wl1271 *wl, u8 hlid)
 {
 	struct wl12xx_cmd_set_peer_state *cmd;
 	int ret = 0;
 
 	wl1271_debug(DEBUG_CMD, "cmd set peer state (hlid=%d)", hlid);
+=======
+int wl1271_cmd_disconnect(struct wl1271 *wl)
+{
+	struct wl1271_cmd_disconnect *cmd;
+	int ret = 0;
+
+	wl1271_debug(DEBUG_CMD, "cmd disconnect");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
 	if (!cmd) {
@@ -1519,6 +1847,7 @@ int wl12xx_cmd_set_peer_state(struct wl1271 *wl, u8 hlid)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	cmd->hlid = hlid;
 	cmd->state = WL1271_CMD_STA_STATE_CONNECTED;
 
@@ -1528,6 +1857,23 @@ int wl12xx_cmd_set_peer_state(struct wl1271 *wl, u8 hlid)
 		goto out_free;
 	}
 
+=======
+	cmd->rx_config_options = cpu_to_le32(wl->rx_config);
+	cmd->rx_filter_options = cpu_to_le32(wl->rx_filter);
+	/* disconnect reason is not used in immediate disconnections */
+	cmd->type = DISCONNECT_IMMEDIATE;
+
+	ret = wl1271_cmd_send(wl, CMD_DISCONNECT, cmd, sizeof(*cmd), 0);
+	if (ret < 0) {
+		wl1271_error("failed to send disconnect command");
+		goto out_free;
+	}
+
+	ret = wl1271_cmd_wait_for_event(wl, DISCONNECT_EVENT_COMPLETE_ID);
+	if (ret < 0)
+		wl1271_error("cmd disconnect event completion error");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_free:
 	kfree(cmd);
 
@@ -1535,6 +1881,7 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl12xx_cmd_add_peer(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			struct ieee80211_sta *sta, u8 hlid)
 {
@@ -1543,6 +1890,14 @@ int wl12xx_cmd_add_peer(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	u32 sta_rates;
 
 	wl1271_debug(DEBUG_CMD, "cmd add peer %d", (int)hlid);
+=======
+int wl1271_cmd_set_sta_state(struct wl1271 *wl)
+{
+	struct wl1271_cmd_set_sta_state *cmd;
+	int ret = 0;
+
+	wl1271_debug(DEBUG_CMD, "cmd set sta state");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
 	if (!cmd) {
@@ -1550,6 +1905,7 @@ int wl12xx_cmd_add_peer(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	memcpy(cmd->addr, sta->addr, ETH_ALEN);
 	cmd->bss_index = WL1271_AP_BSS_INDEX;
 	cmd->aid = sta->aid;
@@ -1577,6 +1933,13 @@ int wl12xx_cmd_add_peer(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	ret = wl1271_cmd_send(wl, CMD_ADD_PEER, cmd, sizeof(*cmd), 0);
 	if (ret < 0) {
 		wl1271_error("failed to initiate cmd add peer");
+=======
+	cmd->state = WL1271_CMD_STA_STATE_CONNECTED;
+
+	ret = wl1271_cmd_send(wl, CMD_SET_STA_STATE, cmd, sizeof(*cmd), 0);
+	if (ret < 0) {
+		wl1271_error("failed to send set STA state command");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_free;
 	}
 
@@ -1587,6 +1950,7 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl12xx_cmd_remove_peer(struct wl1271 *wl, u8 hlid)
 {
 	struct wl12xx_cmd_remove_peer *cmd;
@@ -1690,12 +2054,33 @@ int wl12xx_cmd_stop_fwlog(struct wl1271 *wl)
 
 	wl1271_debug(DEBUG_CMD, "cmd stop firmware logger");
 
+=======
+int wl1271_cmd_start_bss(struct wl1271 *wl)
+{
+	struct wl1271_cmd_bss_start *cmd;
+	struct ieee80211_bss_conf *bss_conf = &wl->vif->bss_conf;
+	int ret;
+
+	wl1271_debug(DEBUG_CMD, "cmd start bss");
+
+	/*
+	 * FIXME: We currently do not support hidden SSID. The real SSID
+	 * should be fetched from mac80211 first.
+	 */
+	if (wl->ssid_len == 0) {
+		wl1271_warning("Hidden SSID currently not supported for AP");
+		ret = -EINVAL;
+		goto out;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
 	if (!cmd) {
 		ret = -ENOMEM;
 		goto out;
 	}
 
+<<<<<<< HEAD
 	ret = wl1271_cmd_send(wl, CMD_STOP_FWLOGGER, cmd, sizeof(*cmd), 0);
 	if (ret < 0) {
 		wl1271_error("failed to send stop firmware logger command");
@@ -1729,6 +2114,24 @@ static int wl12xx_cmd_roc(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	cmd->role_id = role_id;
 	cmd->channel = wlvif->channel;
 	switch (wlvif->band) {
+=======
+	memcpy(cmd->bssid, bss_conf->bssid, ETH_ALEN);
+
+	cmd->aging_period = cpu_to_le16(WL1271_AP_DEF_INACTIV_SEC);
+	cmd->bss_index = WL1271_AP_BSS_INDEX;
+	cmd->global_hlid = WL1271_AP_GLOBAL_HLID;
+	cmd->broadcast_hlid = WL1271_AP_BROADCAST_HLID;
+	cmd->basic_rate_set = cpu_to_le32(wl->basic_rate_set);
+	cmd->beacon_interval = cpu_to_le16(wl->beacon_int);
+	cmd->dtim_interval = bss_conf->dtim_period;
+	cmd->beacon_expiry = WL1271_AP_DEF_BEACON_EXP;
+	cmd->channel = wl->channel;
+	cmd->ssid_len = wl->ssid_len;
+	cmd->ssid_type = SSID_TYPE_PUBLIC;
+	memcpy(cmd->ssid, wl->ssid, wl->ssid_len);
+
+	switch (wl->band) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case IEEE80211_BAND_2GHZ:
 		cmd->band = RADIO_BAND_2_4GHZ;
 		break;
@@ -1736,6 +2139,7 @@ static int wl12xx_cmd_roc(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		cmd->band = RADIO_BAND_5GHZ;
 		break;
 	default:
+<<<<<<< HEAD
 		wl1271_error("roc - unknown band: %d", (int)wlvif->band);
 		ret = -EINVAL;
 		goto out_free;
@@ -1745,6 +2149,16 @@ static int wl12xx_cmd_roc(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	ret = wl1271_cmd_send(wl, CMD_REMAIN_ON_CHANNEL, cmd, sizeof(*cmd), 0);
 	if (ret < 0) {
 		wl1271_error("failed to send ROC command");
+=======
+		wl1271_warning("bss start - unknown band: %d", (int)wl->band);
+		cmd->band = RADIO_BAND_2_4GHZ;
+		break;
+	}
+
+	ret = wl1271_cmd_send(wl, CMD_BSS_START, cmd, sizeof(*cmd), 0);
+	if (ret < 0) {
+		wl1271_error("failed to initiate cmd start bss");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_free;
 	}
 
@@ -1755,24 +2169,42 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int wl12xx_cmd_croc(struct wl1271 *wl, u8 role_id)
 {
 	struct wl12xx_cmd_croc *cmd;
 	int ret = 0;
 
 	wl1271_debug(DEBUG_CMD, "cmd croc (%d)", role_id);
+=======
+int wl1271_cmd_stop_bss(struct wl1271 *wl)
+{
+	struct wl1271_cmd_bss_start *cmd;
+	int ret;
+
+	wl1271_debug(DEBUG_CMD, "cmd stop bss");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
 	if (!cmd) {
 		ret = -ENOMEM;
 		goto out;
 	}
+<<<<<<< HEAD
 	cmd->role_id = role_id;
 
 	ret = wl1271_cmd_send(wl, CMD_CANCEL_REMAIN_ON_CHANNEL, cmd,
 			      sizeof(*cmd), 0);
 	if (ret < 0) {
 		wl1271_error("failed to send ROC command");
+=======
+
+	cmd->bss_index = WL1271_AP_BSS_INDEX;
+
+	ret = wl1271_cmd_send(wl, CMD_BSS_STOP, cmd, sizeof(*cmd), 0);
+	if (ret < 0) {
+		wl1271_error("failed to initiate cmd stop bss");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_free;
 	}
 
@@ -1783,6 +2215,7 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl12xx_roc(struct wl1271 *wl, struct wl12xx_vif *wlvif, u8 role_id)
 {
 	int ret = 0;
@@ -1856,22 +2289,13 @@ int wl12xx_cmd_channel_switch(struct wl1271 *wl,
 	ret = wl1271_cmd_send(wl, CMD_CHANNEL_SWITCH, cmd, sizeof(*cmd), 0);
 	if (ret < 0) {
 		wl1271_error("failed to send channel switch command");
-		goto out_free;
-	}
-
-out_free:
-	kfree(cmd);
-
-out:
-	return ret;
-}
-
-int wl12xx_cmd_stop_channel_switch(struct wl1271 *wl)
+=======
+int wl1271_cmd_add_sta(struct wl1271 *wl, struct ieee80211_sta *sta, u8 hlid)
 {
-	struct wl12xx_cmd_stop_channel_switch *cmd;
+	struct wl1271_cmd_add_sta *cmd;
 	int ret;
 
-	wl1271_debug(DEBUG_ACX, "cmd stop channel switch");
+	wl1271_debug(DEBUG_CMD, "cmd add sta %d", (int)hlid);
 
 	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
 	if (!cmd) {
@@ -1879,9 +2303,31 @@ int wl12xx_cmd_stop_channel_switch(struct wl1271 *wl)
 		goto out;
 	}
 
-	ret = wl1271_cmd_send(wl, CMD_STOP_CHANNEL_SWICTH, cmd, sizeof(*cmd), 0);
+	/* currently we don't support UAPSD */
+	cmd->sp_len = 0;
+
+	memcpy(cmd->addr, sta->addr, ETH_ALEN);
+	cmd->bss_index = WL1271_AP_BSS_INDEX;
+	cmd->aid = sta->aid;
+	cmd->hlid = hlid;
+
+	/*
+	 * FIXME: Does STA support QOS? We need to propagate this info from
+	 * hostapd. Currently not that important since this is only used for
+	 * sending the correct flavor of null-data packet in response to a
+	 * trigger.
+	 */
+	cmd->wmm = 0;
+
+	cmd->supported_rates = cpu_to_le32(wl1271_tx_enabled_rates_get(wl,
+						sta->supp_rates[wl->band]));
+
+	wl1271_debug(DEBUG_CMD, "new sta rates: 0x%x", cmd->supported_rates);
+
+	ret = wl1271_cmd_send(wl, CMD_ADD_STA, cmd, sizeof(*cmd), 0);
 	if (ret < 0) {
-		wl1271_error("failed to stop channel switch command");
+		wl1271_error("failed to initiate cmd add sta");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_free;
 	}
 
@@ -1891,6 +2337,62 @@ out_free:
 out:
 	return ret;
 }
+
+<<<<<<< HEAD
+int wl12xx_cmd_stop_channel_switch(struct wl1271 *wl)
+{
+	struct wl12xx_cmd_stop_channel_switch *cmd;
+	int ret;
+
+	wl1271_debug(DEBUG_ACX, "cmd stop channel switch");
+=======
+int wl1271_cmd_remove_sta(struct wl1271 *wl, u8 hlid)
+{
+	struct wl1271_cmd_remove_sta *cmd;
+	int ret;
+
+	wl1271_debug(DEBUG_CMD, "cmd remove sta %d", (int)hlid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+
+	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
+	if (!cmd) {
+		ret = -ENOMEM;
+		goto out;
+	}
+
+<<<<<<< HEAD
+	ret = wl1271_cmd_send(wl, CMD_STOP_CHANNEL_SWICTH, cmd, sizeof(*cmd), 0);
+	if (ret < 0) {
+		wl1271_error("failed to stop channel switch command");
+		goto out_free;
+	}
+
+=======
+	cmd->hlid = hlid;
+	/* We never send a deauth, mac80211 is in charge of this */
+	cmd->reason_opcode = 0;
+	cmd->send_deauth_flag = 0;
+
+	ret = wl1271_cmd_send(wl, CMD_REMOVE_STA, cmd, sizeof(*cmd), 0);
+	if (ret < 0) {
+		wl1271_error("failed to initiate cmd remove sta");
+		goto out_free;
+	}
+
+	/*
+	 * We are ok with a timeout here. The event is sometimes not sent
+	 * due to a firmware bug.
+	 */
+	wl1271_cmd_wait_for_event_or_timeout(wl, STA_REMOVE_COMPLETE_EVENT_ID);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+out_free:
+	kfree(cmd);
+
+out:
+	return ret;
+}
+<<<<<<< HEAD
 
 /* start dev role and roc on its channel */
 int wl12xx_start_dev(struct wl1271 *wl, struct wl12xx_vif *wlvif)
@@ -1941,3 +2443,5 @@ int wl12xx_stop_dev(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 out:
 	return ret;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

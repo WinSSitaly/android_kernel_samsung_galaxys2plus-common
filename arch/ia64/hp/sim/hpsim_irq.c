@@ -10,8 +10,11 @@
 #include <linux/sched.h>
 #include <linux/irq.h>
 
+<<<<<<< HEAD
 #include "hpsim_ssc.h"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned int
 hpsim_irq_startup(struct irq_data *data)
 {
@@ -39,6 +42,7 @@ static struct irq_chip irq_type_hp_sim = {
 	.irq_set_affinity =	hpsim_set_affinity_noop,
 };
 
+<<<<<<< HEAD
 static void hpsim_irq_set_chip(int irq)
 {
 	struct irq_chip *chip = irq_get_chip(irq);
@@ -65,11 +69,22 @@ int hpsim_get_irq(int intr)
 	return irq;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init
 hpsim_irq_init (void)
 {
 	int i;
 
+<<<<<<< HEAD
 	for_each_active_irq(i)
 		hpsim_irq_set_chip(i);
+=======
+	for_each_active_irq(i) {
+		struct irq_chip *chip = irq_get_chip(i);
+
+		if (chip == &no_irq_chip)
+			irq_set_chip(i, &irq_type_hp_sim);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

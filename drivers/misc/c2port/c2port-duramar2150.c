@@ -15,7 +15,10 @@
 #include <linux/module.h>
 #include <linux/delay.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/ioport.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/c2port.h>
 
 #define DATA_PORT	0x325

@@ -1,6 +1,7 @@
 #ifndef __UM_IRQFLAGS_H
 #define __UM_IRQFLAGS_H
 
+<<<<<<< HEAD
 extern int get_signals(void);
 extern int set_signals(int enable);
 extern void block_signals(void);
@@ -38,5 +39,8 @@ static inline bool arch_irqs_disabled(void)
 {
 	return arch_local_save_flags() == 0;
 }
+=======
+/* Empty for now */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

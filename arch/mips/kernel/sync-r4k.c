@@ -16,7 +16,11 @@
 #include <linux/cpumask.h>
 
 #include <asm/r4k-timer.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/barrier.h>
 #include <asm/mipsregs.h>
 

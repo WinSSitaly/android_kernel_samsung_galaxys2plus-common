@@ -25,10 +25,17 @@
 #include <linux/reboot.h>
 #include <linux/interrupt.h>
 #include <linux/pagemap.h>
+<<<<<<< HEAD
 #include <linux/rcupdate.h>
 
 #include <asm/asm-offsets.h>
 #include <asm/uaccess.h>
+=======
+
+#include <asm/asm-offsets.h>
+#include <asm/uaccess.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/setup.h>
 #include <asm/pgtable.h>
 #include <asm/tlb.h>
@@ -44,6 +51,24 @@ asmlinkage void ret_from_fork(void);
 void (*pm_power_off)(void);
 EXPORT_SYMBOL(pm_power_off);
 
+<<<<<<< HEAD
+=======
+struct task_struct *alloc_task_struct_node(int node)
+{
+	struct task_struct *p = kmalloc_node(THREAD_SIZE, GFP_KERNEL, node);
+
+	if (p)
+		atomic_set((atomic_t *)(p+1), 1);
+	return p;
+}
+
+void free_task_struct(struct task_struct *p)
+{
+	if (atomic_dec_and_test((atomic_t *)(p+1)))
+		kfree(p);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void core_sleep_idle(void)
 {
 #ifdef LED_DEBUG_SLEEP
@@ -70,16 +95,26 @@ void cpu_idle(void)
 {
 	/* endless idle loop with no priority at all */
 	while (1) {
+<<<<<<< HEAD
 		rcu_idle_enter();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		while (!need_resched()) {
 			check_pgt_cache();
 
 			if (!frv_dma_inprogress && idle)
 				idle();
 		}
+<<<<<<< HEAD
 		rcu_idle_exit();
 
 		schedule_preempt_disabled();
+=======
+
+		preempt_enable_no_resched();
+		schedule();
+		preempt_disable();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -128,7 +163,14 @@ void machine_power_off(void)
 
 void flush_thread(void)
 {
+<<<<<<< HEAD
 	/* nothing */
+=======
+#if 0 //ndef NO_FPU
+	unsigned long zero = 0;
+#endif
+	set_fs(USER_DS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 inline unsigned long user_stack(const struct pt_regs *regs)

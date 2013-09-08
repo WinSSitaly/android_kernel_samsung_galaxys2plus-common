@@ -104,7 +104,11 @@ void coda_vattr_to_iattr(struct inode *inode, struct coda_vattr *attr)
         if (attr->va_gid != -1)
 	        inode->i_gid = (gid_t) attr->va_gid;
 	if (attr->va_nlink != -1)
+<<<<<<< HEAD
 		set_nlink(inode, attr->va_nlink);
+=======
+	        inode->i_nlink = attr->va_nlink;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (attr->va_size != -1)
 	        inode->i_size = attr->va_size;
 	if (attr->va_size != -1)

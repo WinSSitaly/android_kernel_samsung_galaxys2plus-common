@@ -5,6 +5,10 @@
  *
  * Author:	Torsten Schenk <torsten.schenk@zoho.com>
  * Created:	Jan 01, 2011
+<<<<<<< HEAD
+=======
+ * Version:	0.3.0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright:	(C) Torsten Schenk
  *
  * This program is free software; you can redistribute it and/or modify
@@ -14,9 +18,13 @@
  */
 
 #include <linux/firmware.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/bitrev.h>
 #include <linux/kernel.h>
+=======
+#include <linux/bitrev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "firmware.h"
 #include "chip.h"
@@ -60,6 +68,7 @@ struct ihex_record {
 	unsigned int txt_offset; /* current position in txt_data */
 };
 
+<<<<<<< HEAD
 static u8 usb6fire_fw_ihex_hex(const u8 *data, u8 *crc)
 {
 	u8 val = 0;
@@ -73,6 +82,23 @@ static u8 usb6fire_fw_ihex_hex(const u8 *data, u8 *crc)
 	if (hval >= 0)
 		val |= hval;
 
+=======
+static u8 usb6fire_fw_ihex_nibble(const u8 n)
+{
+	if (n >= '0' && n <= '9')
+		return n - '0';
+	else if (n >= 'A' && n <= 'F')
+		return n - ('A' - 10);
+	else if (n >= 'a' && n <= 'f')
+		return n - ('a' - 10);
+	return 0;
+}
+
+static u8 usb6fire_fw_ihex_hex(const u8 *data, u8 *crc)
+{
+	u8 val = (usb6fire_fw_ihex_nibble(data[0]) << 4) |
+			usb6fire_fw_ihex_nibble(data[1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*crc += val;
 	return val;
 }

@@ -900,9 +900,27 @@ static struct i2c_driver m41t80_driver = {
 	.id_table = m41t80_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(m41t80_driver);
+=======
+static int __init m41t80_rtc_init(void)
+{
+	return i2c_add_driver(&m41t80_driver);
+}
+
+static void __exit m41t80_rtc_exit(void)
+{
+	i2c_del_driver(&m41t80_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Alexander Bigga <ab@mycable.de>");
 MODULE_DESCRIPTION("ST Microelectronics M41T80 series RTC I2C Client Driver");
 MODULE_LICENSE("GPL");
 MODULE_VERSION(DRV_VERSION);
+<<<<<<< HEAD
+=======
+
+module_init(m41t80_rtc_init);
+module_exit(m41t80_rtc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -149,6 +149,10 @@ int usb_choose_configuration(struct usb_device *udev)
 		dev_warn(&udev->dev,
 			"no configuration chosen from %d choice%s\n",
 			num_configs, plural(num_configs));
+<<<<<<< HEAD
+=======
+		dev_warn(&udev->dev, "No support over %dmA\n", udev->bus_mA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return i;
 }

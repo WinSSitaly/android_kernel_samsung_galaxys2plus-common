@@ -25,7 +25,11 @@ struct uib {
 	void (*init)(void);
 };
 
+<<<<<<< HEAD
 static struct uib __initdata mop500_uibs[] = {
+=======
+static struct __initdata uib mop500_uibs[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[STUIB] = {
 		.name	= "ST-UIB",
 		.option	= "stuib",

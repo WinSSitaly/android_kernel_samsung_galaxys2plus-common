@@ -24,13 +24,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <linux/tcp.h>
 #include <linux/slab.h>
 #include <linux/sunrpc/xprt.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/sunrpc/bc_xprt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef RPC_DEBUG
 #define RPCDBG_FACILITY	RPCDBG_TRANS
 #endif
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_NFS_V4_1)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Helper routines that track the number of preallocation elements
  * on the transport.
@@ -174,7 +182,11 @@ out_free:
 	dprintk("RPC:       setup backchannel transport failed\n");
 	return -1;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(xprt_setup_backchannel);
+=======
+EXPORT_SYMBOL(xprt_setup_backchannel);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Destroys the backchannel preallocated structures.
@@ -204,7 +216,11 @@ void xprt_destroy_backchannel(struct rpc_xprt *xprt, unsigned int max_reqs)
 	dprintk("RPC:        backchannel list empty= %s\n",
 		list_empty(&xprt->bc_pa_list) ? "true" : "false");
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(xprt_destroy_backchannel);
+=======
+EXPORT_SYMBOL(xprt_destroy_backchannel);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * One or more rpc_rqst structure have been preallocated during the
@@ -279,3 +295,7 @@ void xprt_free_bc_request(struct rpc_rqst *req)
 	spin_unlock_bh(&xprt->bc_pa_lock);
 }
 
+<<<<<<< HEAD
+=======
+#endif /* CONFIG_NFS_V4_1 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

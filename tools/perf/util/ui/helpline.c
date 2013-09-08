@@ -1,10 +1,18 @@
+<<<<<<< HEAD
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+=======
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <newt.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "../debug.h"
 #include "helpline.h"
 #include "ui.h"
+<<<<<<< HEAD
 #include "libslang.h"
 
 void ui_helpline__pop(void)
@@ -22,6 +30,17 @@ void ui_helpline__push(const char *msg)
 	SLsmg_write_nstring((char *)msg, SLtt_Screen_Cols);
 	SLsmg_refresh();
 	strncpy(ui_helpline__current, msg, sz)[sz - 1] = '\0';
+=======
+
+void ui_helpline__pop(void)
+{
+	newtPopHelpLine();
+}
+
+void ui_helpline__push(const char *msg)
+{
+	newtPushHelpLine(msg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void ui_helpline__vpush(const char *fmt, va_list ap)
@@ -64,13 +83,21 @@ int ui_helpline__show_help(const char *format, va_list ap)
 	static int backlog;
 
 	pthread_mutex_lock(&ui__lock);
+<<<<<<< HEAD
 	ret = vscnprintf(ui_helpline__last_msg + backlog,
+=======
+	ret = vsnprintf(ui_helpline__last_msg + backlog,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sizeof(ui_helpline__last_msg) - backlog, format, ap);
 	backlog += ret;
 
 	if (ui_helpline__last_msg[backlog - 1] == '\n') {
 		ui_helpline__puts(ui_helpline__last_msg);
+<<<<<<< HEAD
 		SLsmg_refresh();
+=======
+		newtRefresh();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		backlog = 0;
 	}
 	pthread_mutex_unlock(&ui__lock);

@@ -366,8 +366,12 @@ static void isp_stat_bufs_free(struct ispstat *stat)
 				dma_unmap_sg(isp->dev, buf->iovm->sgt->sgl,
 					     buf->iovm->sgt->nents,
 					     DMA_FROM_DEVICE);
+<<<<<<< HEAD
 			omap_iommu_vfree(isp->domain, isp->dev,
 							buf->iommu_addr);
+=======
+			iommu_vfree(isp->iommu, buf->iommu_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			if (!buf->virt_addr)
 				continue;
@@ -400,8 +404,13 @@ static int isp_stat_bufs_alloc_iommu(struct ispstat *stat, unsigned int size)
 		struct iovm_struct *iovm;
 
 		WARN_ON(buf->dma_addr);
+<<<<<<< HEAD
 		buf->iommu_addr = omap_iommu_vmalloc(isp->domain, isp->dev, 0,
 							size, IOMMU_FLAG);
+=======
+		buf->iommu_addr = iommu_vmalloc(isp->iommu, 0, size,
+						IOMMU_FLAG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (IS_ERR((void *)buf->iommu_addr)) {
 			dev_err(stat->isp->dev,
 				 "%s: Can't acquire memory for "
@@ -410,7 +419,11 @@ static int isp_stat_bufs_alloc_iommu(struct ispstat *stat, unsigned int size)
 			return -ENOMEM;
 		}
 
+<<<<<<< HEAD
 		iovm = omap_find_iovm_area(isp->dev, buf->iommu_addr);
+=======
+		iovm = find_iovm_area(isp->iommu, buf->iommu_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!iovm ||
 		    !dma_map_sg(isp->dev, iovm->sgt->sgl, iovm->sgt->nents,
 				DMA_FROM_DEVICE)) {
@@ -419,7 +432,11 @@ static int isp_stat_bufs_alloc_iommu(struct ispstat *stat, unsigned int size)
 		}
 		buf->iovm = iovm;
 
+<<<<<<< HEAD
 		buf->virt_addr = omap_da_to_va(stat->isp->dev,
+=======
+		buf->virt_addr = da_to_va(stat->isp->iommu,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					  (u32)buf->iommu_addr);
 		buf->empty = 1;
 		dev_dbg(stat->isp->dev, "%s: buffer[%d] allocated."
@@ -496,7 +513,11 @@ static int isp_stat_bufs_alloc(struct ispstat *stat, u32 size)
 
 static void isp_stat_queue_event(struct ispstat *stat, int err)
 {
+<<<<<<< HEAD
 	struct video_device *vdev = stat->subdev.devnode;
+=======
+	struct video_device *vdev = &stat->subdev.devnode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct v4l2_event event;
 	struct omap3isp_stat_event_status *status = (void *)event.u.data;
 
@@ -1023,6 +1044,28 @@ void omap3isp_stat_dma_isr(struct ispstat *stat)
 	__stat_isr(stat, 1);
 }
 
+<<<<<<< HEAD
+=======
+static int isp_stat_init_entities(struct ispstat *stat, const char *name,
+				  const struct v4l2_subdev_ops *sd_ops)
+{
+	struct v4l2_subdev *subdev = &stat->subdev;
+	struct media_entity *me = &subdev->entity;
+
+	v4l2_subdev_init(subdev, sd_ops);
+	snprintf(subdev->name, V4L2_SUBDEV_NAME_SIZE, "OMAP3 ISP %s", name);
+	subdev->grp_id = 1 << 16;	/* group ID for isp subdevs */
+	subdev->flags |= V4L2_SUBDEV_FL_HAS_EVENTS | V4L2_SUBDEV_FL_HAS_DEVNODE;
+	subdev->nevents = STAT_NEVENTS;
+	v4l2_set_subdevdata(subdev, stat);
+
+	stat->pad.flags = MEDIA_PAD_FL_SINK;
+	me->ops = NULL;
+
+	return media_entity_init(me, 1, &stat->pad, 0);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int omap3isp_stat_subscribe_event(struct v4l2_subdev *subdev,
 				  struct v4l2_fh *fh,
 				  struct v4l2_event_subscription *sub)
@@ -1032,7 +1075,11 @@ int omap3isp_stat_subscribe_event(struct v4l2_subdev *subdev,
 	if (sub->type != stat->event_type)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	return v4l2_event_subscribe(fh, sub, STAT_NEVENTS);
+=======
+	return v4l2_event_subscribe(fh, sub);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int omap3isp_stat_unsubscribe_event(struct v4l2_subdev *subdev,
@@ -1044,6 +1091,10 @@ int omap3isp_stat_unsubscribe_event(struct v4l2_subdev *subdev,
 
 void omap3isp_stat_unregister_entities(struct ispstat *stat)
 {
+<<<<<<< HEAD
+=======
+	media_entity_cleanup(&stat->subdev.entity);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	v4l2_device_unregister_subdev(&stat->subdev);
 }
 
@@ -1053,6 +1104,7 @@ int omap3isp_stat_register_entities(struct ispstat *stat,
 	return v4l2_device_register_subdev(vdev, &stat->subdev);
 }
 
+<<<<<<< HEAD
 static int isp_stat_init_entities(struct ispstat *stat, const char *name,
 				  const struct v4l2_subdev_ops *sd_ops)
 {
@@ -1080,10 +1132,19 @@ int omap3isp_stat_init(struct ispstat *stat, const char *name,
 	if (!stat->buf)
 		return -ENOMEM;
 
+=======
+int omap3isp_stat_init(struct ispstat *stat, const char *name,
+		       const struct v4l2_subdev_ops *sd_ops)
+{
+	stat->buf = kcalloc(STAT_MAX_BUFS, sizeof(*stat->buf), GFP_KERNEL);
+	if (!stat->buf)
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	isp_stat_buf_clear(stat);
 	mutex_init(&stat->ioctl_lock);
 	atomic_set(&stat->buf_err, 0);
 
+<<<<<<< HEAD
 	ret = isp_stat_init_entities(stat, name, sd_ops);
 	if (ret < 0) {
 		mutex_destroy(&stat->ioctl_lock);
@@ -1097,6 +1158,13 @@ void omap3isp_stat_cleanup(struct ispstat *stat)
 {
 	media_entity_cleanup(&stat->subdev.entity);
 	mutex_destroy(&stat->ioctl_lock);
+=======
+	return isp_stat_init_entities(stat, name, sd_ops);
+}
+
+void omap3isp_stat_free(struct ispstat *stat)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	isp_stat_bufs_free(stat);
 	kfree(stat->buf);
 }

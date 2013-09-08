@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2010 Realtek Corporation. All rights reserved.
@@ -35,6 +36,14 @@ struct cmd_hdr {
 	u32 cmd_dw0;
 	u32 cmd_dw1;
 };
+=======
+#ifndef __RTL8712_CMD_H_
+#define __RTL8712_CMD_H_
+
+u8 r8712_fw_cmd(struct _adapter *pAdapter, u32 cmd);
+void r8712_fw_cmd_data(struct _adapter *pAdapter, u32 *value, u8 flag);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum rtl8712_h2c_cmd {
 	GEN_CMD_CODE(_Read_MACREG),	/*0*/
@@ -103,6 +112,7 @@ enum rtl8712_h2c_cmd {
 	GEN_CMD_CODE(_SetPowerTracking),
 	GEN_CMD_CODE(_AMSDU_TO_AMPDU), /*57*/
 	GEN_CMD_CODE(_SetMacAddress), /*58*/
+<<<<<<< HEAD
 
 	GEN_CMD_CODE(_DisconnectCtrl), /*59*/
 	GEN_CMD_CODE(_SetChannelPlan), /*60*/
@@ -137,6 +147,8 @@ enum rtl8712_h2c_cmd {
 	GEN_CMD_CODE(_SetPT),
 	GEN_CMD_CODE(_ReadTSSI),
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	MAX_H2CCMD
 };
 
@@ -216,6 +228,7 @@ static struct _cmd_callback	cmd_callback[] = {
 	{GEN_CMD_CODE(_SetPowerTracking), NULL},
 	{GEN_CMD_CODE(_AMSDU_TO_AMPDU), NULL}, /*57*/
 	{GEN_CMD_CODE(_SetMacAddress), NULL}, /*58*/
+<<<<<<< HEAD
 
 	{GEN_CMD_CODE(_DisconnectCtrl), NULL}, /*59*/
 	{GEN_CMD_CODE(_SetChannelPlan), NULL}, /*60*/
@@ -238,6 +251,8 @@ static struct _cmd_callback	cmd_callback[] = {
 	{_SetRA_CMD_, NULL},
 	{_SetPT_CMD_, NULL},
 	{GEN_CMD_CODE(_ReadTSSI), &r8712_readtssi_cmdrsp_callback}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #endif
 

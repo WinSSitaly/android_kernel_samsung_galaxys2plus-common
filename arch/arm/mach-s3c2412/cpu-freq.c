@@ -16,7 +16,11 @@
 #include <linux/interrupt.h>
 #include <linux/ioport.h>
 #include <linux/cpufreq.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/delay.h>
 #include <linux/clk.h>
 #include <linux/err.h>
@@ -194,8 +198,12 @@ static struct s3c_cpufreq_info s3c2412_cpufreq_info = {
 	.debug_io_show  = s3c_cpufreq_debugfs_call(s3c2412_iotiming_debugfs),
 };
 
+<<<<<<< HEAD
 static int s3c2412_cpufreq_add(struct device *dev,
 			       struct subsys_interface *sif)
+=======
+static int s3c2412_cpufreq_add(struct sys_device *sysdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long fclk_rate;
 
@@ -245,15 +253,25 @@ err_fclk:
 	return -ENOENT;
 }
 
+<<<<<<< HEAD
 static struct subsys_interface s3c2412_cpufreq_interface = {
 	.name		= "s3c2412_cpufreq",
 	.subsys		= &s3c2412_subsys,
 	.add_dev	= s3c2412_cpufreq_add,
+=======
+static struct sysdev_driver s3c2412_cpufreq_driver = {
+	.add		= s3c2412_cpufreq_add,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int s3c2412_cpufreq_init(void)
 {
+<<<<<<< HEAD
 	return subsys_interface_register(&s3c2412_cpufreq_interface);
+=======
+	return sysdev_driver_register(&s3c2412_sysclass,
+				      &s3c2412_cpufreq_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 arch_initcall(s3c2412_cpufreq_init);

@@ -35,7 +35,11 @@ static void early_printk_uartlite_putc(char c)
 	 * we'll never timeout on a working UART.
 	 */
 
+<<<<<<< HEAD
 	unsigned retries = 1000000;
+=======
+	unsigned retries = 10000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* read status bit - 0x8 offset */
 	while (--retries && (in_be32(base_addr + 8) & (1 << 3)))
 		;
@@ -50,9 +54,15 @@ static void early_printk_uartlite_write(struct console *unused,
 					const char *s, unsigned n)
 {
 	while (*s && n-- > 0) {
+<<<<<<< HEAD
 		if (*s == '\n')
 			early_printk_uartlite_putc('\r');
 		early_printk_uartlite_putc(*s);
+=======
+		early_printk_uartlite_putc(*s);
+		if (*s == '\n')
+			early_printk_uartlite_putc('\r');
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		s++;
 	}
 }
@@ -60,7 +70,11 @@ static void early_printk_uartlite_write(struct console *unused,
 static struct console early_serial_uartlite_console = {
 	.name = "earlyser",
 	.write = early_printk_uartlite_write,
+<<<<<<< HEAD
 	.flags = CON_PRINTBUFFER | CON_BOOT,
+=======
+	.flags = CON_PRINTBUFFER,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.index = -1,
 };
 #endif /* CONFIG_SERIAL_UARTLITE_CONSOLE */
@@ -94,9 +108,15 @@ static void early_printk_uart16550_write(struct console *unused,
 					const char *s, unsigned n)
 {
 	while (*s && n-- > 0) {
+<<<<<<< HEAD
 		if (*s == '\n')
 			early_printk_uart16550_putc('\r');
 		early_printk_uart16550_putc(*s);
+=======
+		early_printk_uart16550_putc(*s);
+		if (*s == '\n')
+			early_printk_uart16550_putc('\r');
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		s++;
 	}
 }
@@ -104,7 +124,11 @@ static void early_printk_uart16550_write(struct console *unused,
 static struct console early_serial_uart16550_console = {
 	.name = "earlyser",
 	.write = early_printk_uart16550_write,
+<<<<<<< HEAD
 	.flags = CON_PRINTBUFFER | CON_BOOT,
+=======
+	.flags = CON_PRINTBUFFER,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.index = -1,
 };
 #endif /* CONFIG_SERIAL_8250_CONSOLE */
@@ -127,6 +151,7 @@ void early_printk(const char *fmt, ...)
 
 int __init setup_early_printk(char *opt)
 {
+<<<<<<< HEAD
 	int version = 0;
 
 	if (early_console_initialized)
@@ -191,6 +216,48 @@ void __init remap_early_printk(void)
 	 */
 	tlb_skip -= 1;
 #endif
+=======
+	if (early_console_initialized)
+		return 1;
+
+#ifdef CONFIG_SERIAL_UARTLITE_CONSOLE
+	base_addr = early_uartlite_console();
+	if (base_addr) {
+		early_console_initialized = 1;
+#ifdef CONFIG_MMU
+		early_console_reg_tlb_alloc(base_addr);
+#endif
+		early_console = &early_serial_uartlite_console;
+		early_printk("early_printk_console is enabled at 0x%08x\n",
+							base_addr);
+
+		/* register_console(early_console); */
+
+		return 0;
+	}
+#endif /* CONFIG_SERIAL_UARTLITE_CONSOLE */
+
+#ifdef CONFIG_SERIAL_8250_CONSOLE
+	base_addr = early_uart16550_console();
+	base_addr &= ~3; /* clear register offset */
+	if (base_addr) {
+		early_console_initialized = 1;
+#ifdef CONFIG_MMU
+		early_console_reg_tlb_alloc(base_addr);
+#endif
+		early_console = &early_serial_uart16550_console;
+
+		early_printk("early_printk_console is enabled at 0x%08x\n",
+							base_addr);
+
+		/* register_console(early_console); */
+
+		return 0;
+	}
+#endif /* CONFIG_SERIAL_8250_CONSOLE */
+
+	return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __init disable_early_printk(void)

@@ -28,10 +28,16 @@ static unsigned long romfs_get_unmapped_area(struct file *file,
 	struct inode *inode = file->f_mapping->host;
 	struct mtd_info *mtd = inode->i_sb->s_mtd;
 	unsigned long isize, offset, maxpages, lpages;
+<<<<<<< HEAD
 	int ret;
 
 	if (!mtd)
 		return (unsigned long) -ENOSYS;
+=======
+
+	if (!mtd)
+		goto cant_map_directly;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* the mapping mustn't extend beyond the EOF */
 	lpages = (len + PAGE_SIZE - 1) >> PAGE_SHIFT;
@@ -42,6 +48,7 @@ static unsigned long romfs_get_unmapped_area(struct file *file,
 	if ((pgoff >= maxpages) || (maxpages - pgoff < lpages))
 		return (unsigned long) -EINVAL;
 
+<<<<<<< HEAD
 	if (addr != 0)
 		return (unsigned long) -EINVAL;
 
@@ -56,6 +63,25 @@ static unsigned long romfs_get_unmapped_area(struct file *file,
 	if (ret == -EOPNOTSUPP)
 		ret = -ENOSYS;
 	return (unsigned long) ret;
+=======
+	/* we need to call down to the MTD layer to do the actual mapping */
+	if (mtd->get_unmapped_area) {
+		if (addr != 0)
+			return (unsigned long) -EINVAL;
+
+		if (len > mtd->size || pgoff >= (mtd->size >> PAGE_SHIFT))
+			return (unsigned long) -EINVAL;
+
+		offset += ROMFS_I(inode)->i_dataoffset;
+		if (offset > mtd->size - len)
+			return (unsigned long) -EINVAL;
+
+		return mtd->get_unmapped_area(mtd, len, offset, flags);
+	}
+
+cant_map_directly:
+	return (unsigned long) -ENOSYS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*

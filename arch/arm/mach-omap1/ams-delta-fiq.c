@@ -22,7 +22,10 @@
 #include <plat/board-ams-delta.h>
 
 #include <asm/fiq.h>
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/ams-delta-fiq.h>
 
 static struct fiq_handler fh = {
@@ -48,7 +51,11 @@ static irqreturn_t deferred_fiq(int irq, void *dev_id)
 	struct irq_chip *irq_chip = NULL;
 	int gpio, irq_num, fiq_count;
 
+<<<<<<< HEAD
 	irq_desc = irq_to_desc(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK));
+=======
+	irq_desc = irq_to_desc(IH_GPIO_BASE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (irq_desc)
 		irq_chip = irq_desc->irq_data.chip;
 

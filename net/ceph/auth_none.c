@@ -39,11 +39,14 @@ static int should_authenticate(struct ceph_auth_client *ac)
 	return xi->starting;
 }
 
+<<<<<<< HEAD
 static int build_request(struct ceph_auth_client *ac, void *buf, void *end)
 {
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * the generic auth code decode the global_id, and we carry no actual
  * authenticate state, so nothing happens here.
@@ -64,7 +67,13 @@ static int handle_reply(struct ceph_auth_client *ac, int result,
  */
 static int ceph_auth_none_create_authorizer(
 	struct ceph_auth_client *ac, int peer_type,
+<<<<<<< HEAD
 	struct ceph_auth_handshake *auth)
+=======
+	struct ceph_authorizer **a,
+	void **buf, size_t *len,
+	void **reply_buf, size_t *reply_len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ceph_auth_none_info *ai = ac->private;
 	struct ceph_none_authorizer *au = &ai->au;
@@ -85,12 +94,20 @@ static int ceph_auth_none_create_authorizer(
 		dout("built authorizer len %d\n", au->buf_len);
 	}
 
+<<<<<<< HEAD
 	auth->authorizer = (struct ceph_authorizer *) au;
 	auth->authorizer_buf = au->buf;
 	auth->authorizer_buf_len = au->buf_len;
 	auth->authorizer_reply_buf = au->reply_buf;
 	auth->authorizer_reply_buf_len = sizeof (au->reply_buf);
 
+=======
+	*a = (struct ceph_authorizer *)au;
+	*buf = au->buf;
+	*len = au->buf_len;
+	*reply_buf = au->reply_buf;
+	*reply_len = sizeof(au->reply_buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 bad2:
@@ -111,7 +128,10 @@ static const struct ceph_auth_client_ops ceph_auth_none_ops = {
 	.destroy = destroy,
 	.is_authenticated = is_authenticated,
 	.should_authenticate = should_authenticate,
+<<<<<<< HEAD
 	.build_request = build_request,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.handle_reply = handle_reply,
 	.create_authorizer = ceph_auth_none_create_authorizer,
 	.destroy_authorizer = ceph_auth_none_destroy_authorizer,

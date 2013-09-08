@@ -63,6 +63,10 @@ struct sched_param {
 #include <linux/nodemask.h>
 #include <linux/mm_types.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/page.h>
 #include <asm/ptrace.h>
 #include <asm/cputime.h>
@@ -89,7 +93,10 @@ struct sched_param {
 #include <linux/task_io_accounting.h>
 #include <linux/latencytop.h>
 #include <linux/cred.h>
+<<<<<<< HEAD
 #include <linux/llist.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/processor.h>
 
@@ -219,7 +226,11 @@ extern char ___assert_task_state[1 - 2*!!(
 			((task->state & (__TASK_STOPPED | __TASK_TRACED)) != 0)
 #define task_contributes_to_load(task)	\
 				((task->state & TASK_UNINTERRUPTIBLE) != 0 && \
+<<<<<<< HEAD
 				 (task->flags & PF_FROZEN) == 0)
+=======
+				 (task->flags & PF_FREEZING) == 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define __set_task_state(tsk, state_value)		\
 	do { (tsk)->state = (state_value); } while (0)
@@ -270,6 +281,7 @@ extern void init_idle_bootup_task(struct task_struct *idle);
 
 extern int runqueue_is_locked(int cpu);
 
+<<<<<<< HEAD
 #if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ)
 extern void select_nohz_load_balancer(int stop_tick);
 extern void set_cpu_sd_state_idle(void);
@@ -277,6 +289,14 @@ extern int get_nohz_timer_target(void);
 #else
 static inline void select_nohz_load_balancer(int stop_tick) { }
 static inline void set_cpu_sd_state_idle(void) { }
+=======
+extern cpumask_var_t nohz_cpu_mask;
+#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ)
+extern void select_nohz_load_balancer(int stop_tick);
+extern int get_nohz_timer_target(void);
+#else
+static inline void select_nohz_load_balancer(int stop_tick) { }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /*
@@ -360,7 +380,10 @@ extern signed long schedule_timeout_interruptible(signed long timeout);
 extern signed long schedule_timeout_killable(signed long timeout);
 extern signed long schedule_timeout_uninterruptible(signed long timeout);
 asmlinkage void schedule(void);
+<<<<<<< HEAD
 extern void schedule_preempt_disabled(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int mutex_spin_on_owner(struct mutex *lock, struct task_struct *owner);
 
 struct nsproxy;
@@ -485,8 +508,13 @@ struct task_cputime {
 
 #define INIT_CPUTIME	\
 	(struct task_cputime) {					\
+<<<<<<< HEAD
 		.utime = 0,					\
 		.stime = 0,					\
+=======
+		.utime = cputime_zero,				\
+		.stime = cputime_zero,				\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.sum_exec_runtime = 0,				\
 	}
 
@@ -512,7 +540,11 @@ struct task_cputime {
 struct thread_group_cputimer {
 	struct task_cputime cputime;
 	int running;
+<<<<<<< HEAD
 	raw_spinlock_t lock;
+=======
+	spinlock_t lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #include <linux/rwsem.h>
@@ -552,6 +584,7 @@ struct signal_struct {
 	int			group_stop_count;
 	unsigned int		flags; /* see SIGNAL_* flags below */
 
+<<<<<<< HEAD
 	/*
 	 * PR_SET_CHILD_SUBREAPER marks a process, like a service
 	 * manager, to re-parent orphan (double-forking) child processes
@@ -564,6 +597,8 @@ struct signal_struct {
 	unsigned int		is_child_subreaper:1;
 	unsigned int		has_child_subreaper:1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* POSIX.1b Interval Timers */
 	struct list_head posix_timers;
 
@@ -917,11 +952,14 @@ struct sched_group_power {
 	 * single CPU.
 	 */
 	unsigned int power, power_orig;
+<<<<<<< HEAD
 	unsigned long next_update;
 	/*
 	 * Number of busy cpus in this group.
 	 */
 	atomic_t nr_busy_cpus;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct sched_group {
@@ -946,6 +984,7 @@ static inline struct cpumask *sched_group_cpus(struct sched_group *sg)
 	return to_cpumask(sg->cpumask);
 }
 
+<<<<<<< HEAD
 /**
  * group_first_cpu - Returns the first cpu in the cpumask of a sched_group.
  * @group: The group whose first cpu is to be returned.
@@ -955,6 +994,8 @@ static inline unsigned int group_first_cpu(struct sched_group *group)
 	return cpumask_first(sched_group_cpus(group));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct sched_domain_attr {
 	int relax_domain_level;
 };
@@ -1065,8 +1106,11 @@ static inline int test_sd_parent(struct sched_domain *sd, int flag)
 unsigned long default_scale_freq_power(struct sched_domain *sd, int cpu);
 unsigned long default_scale_smt_power(struct sched_domain *sd, int cpu);
 
+<<<<<<< HEAD
 bool cpus_share_cache(int this_cpu, int that_cpu);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else /* CONFIG_SMP */
 
 struct sched_domain_attr;
@@ -1076,12 +1120,15 @@ partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
 			struct sched_domain_attr *dattr_new)
 {
 }
+<<<<<<< HEAD
 
 static inline bool cpus_share_cache(int this_cpu, int that_cpu)
 {
 	return true;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* !CONFIG_SMP */
 
 
@@ -1246,12 +1293,15 @@ struct sched_rt_entity {
 #endif
 };
 
+<<<<<<< HEAD
 /*
  * default timeslice is 100 msecs (used only for SCHED_RR tasks).
  * Timeslices get refilled after they expire.
  */
 #define RR_TIMESLICE		(100 * HZ / 1000)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct rcu_node;
 
 enum perf_event_task_context {
@@ -1269,7 +1319,11 @@ struct task_struct {
 	unsigned int ptrace;
 
 #ifdef CONFIG_SMP
+<<<<<<< HEAD
 	struct llist_node wake_entry;
+=======
+	struct task_struct *wake_entry;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int on_cpu;
 #endif
 	int on_rq;
@@ -1279,9 +1333,12 @@ struct task_struct {
 	const struct sched_class *sched_class;
 	struct sched_entity se;
 	struct sched_rt_entity rt;
+<<<<<<< HEAD
 #ifdef CONFIG_CGROUP_SCHED
 	struct task_group *sched_task_group;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_PREEMPT_NOTIFIERS
 	/* list of struct preempt_notifier: */
@@ -1307,6 +1364,12 @@ struct task_struct {
 #ifdef CONFIG_PREEMPT_RCU
 	int rcu_read_lock_nesting;
 	char rcu_read_unlock_special;
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_RCU_BOOST) && defined(CONFIG_TREE_PREEMPT_RCU)
+	int rcu_boosted;
+#endif /* #if defined(CONFIG_RCU_BOOST) && defined(CONFIG_TREE_PREEMPT_RCU) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head rcu_node_entry;
 #endif /* #ifdef CONFIG_PREEMPT_RCU */
 #ifdef CONFIG_TREE_PREEMPT_RCU
@@ -1336,7 +1399,11 @@ struct task_struct {
 	int exit_state;
 	int exit_code, exit_signal;
 	int pdeath_signal;  /*  The signal sent when the parent dies  */
+<<<<<<< HEAD
 	unsigned int jobctl;	/* JOBCTL_*, siglock protected */
+=======
+	unsigned int group_stop;	/* GROUP_STOP_*, siglock protected */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* ??? */
 	unsigned int personality;
 	unsigned did_exec:1;
@@ -1349,11 +1416,14 @@ struct task_struct {
 	unsigned sched_reset_on_fork:1;
 	unsigned sched_contributes_to_load:1;
 
+<<<<<<< HEAD
 #ifdef CONFIG_GENERIC_HARDIRQS
 	/* IRQ handler threads */
 	unsigned irq_thread:1;
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pid_t pid;
 	pid_t tgid;
 
@@ -1367,8 +1437,13 @@ struct task_struct {
 	 * older sibling, respectively.  (p->father can be replaced with 
 	 * p->real_parent->pid)
 	 */
+<<<<<<< HEAD
 	struct task_struct __rcu *real_parent; /* real parent process */
 	struct task_struct __rcu *parent; /* recipient of SIGCHLD, wait4() reports */
+=======
+	struct task_struct *real_parent; /* real parent process */
+	struct task_struct *parent; /* recipient of SIGCHLD, wait4() reports */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * children/sibling forms the list of my natural children
 	 */
@@ -1462,6 +1537,14 @@ struct task_struct {
  * mempolicy */
 	spinlock_t alloc_lock;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_GENERIC_HARDIRQS
+	/* IRQ handler threads */
+	struct irqaction *irqaction;
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Protection of the PI data structures: */
 	raw_spinlock_t pi_lock;
 
@@ -1528,7 +1611,11 @@ struct task_struct {
 #endif
 #ifdef CONFIG_CPUSETS
 	nodemask_t mems_allowed;	/* Protected by alloc_lock */
+<<<<<<< HEAD
 	seqcount_t mems_allowed_seq;	/* Seqence no to catch updates */
+=======
+	int mems_allowed_change_disable;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int cpuset_mem_spread_rotor;
 	int cpuset_slab_spread_rotor;
 #endif
@@ -1556,6 +1643,10 @@ struct task_struct {
 	short il_next;
 	short pref_node_fork;
 #endif
+<<<<<<< HEAD
+=======
+	atomic_t fs_excl;	/* holding fs exclusive resources */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct rcu_head rcu;
 
 	/*
@@ -1568,6 +1659,7 @@ struct task_struct {
 #ifdef CONFIG_FAULT_INJECTION
 	int make_it_fail;
 #endif
+<<<<<<< HEAD
 	/*
 	 * when (nr_dirtied >= nr_dirtied_pause), it's time to call
 	 * balance_dirty_pages() for some dirty throttling pause
@@ -1576,6 +1668,9 @@ struct task_struct {
 	int nr_dirtied_pause;
 	unsigned long dirty_paused_when; /* start of a write-and-pause period */
 
+=======
+	struct prop_local_single dirties;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_LATENCYTOP
 	int latency_record_count;
 	struct latency_record latency_record[LT_SAVECOUNT];
@@ -1804,9 +1899,19 @@ static inline void put_task_struct(struct task_struct *t)
 extern void task_times(struct task_struct *p, cputime_t *ut, cputime_t *st);
 extern void thread_group_times(struct task_struct *p, cputime_t *ut, cputime_t *st);
 
+<<<<<<< HEAD
 /*
  * Per process flags
  */
+=======
+extern int task_free_register(struct notifier_block *n);
+extern int task_free_unregister(struct notifier_block *n);
+
+/*
+ * Per process flags
+ */
+#define PF_STARTING	0x00000002	/* being created */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PF_EXITING	0x00000004	/* getting shut down */
 #define PF_EXITPIDONE	0x00000008	/* pi exit done on shut down */
 #define PF_VCPU		0x00000010	/* I'm a virtual CPU */
@@ -1817,8 +1922,13 @@ extern void thread_group_times(struct task_struct *p, cputime_t *ut, cputime_t *
 #define PF_DUMPCORE	0x00000200	/* dumped core */
 #define PF_SIGNALED	0x00000400	/* killed by a signal */
 #define PF_MEMALLOC	0x00000800	/* Allocating memory */
+<<<<<<< HEAD
 #define PF_NPROC_EXCEEDED 0x00001000	/* set_user noticed that RLIMIT_NPROC was exceeded */
 #define PF_USED_MATH	0x00002000	/* if unset the fpu must be initialized before use */
+=======
+#define PF_USED_MATH	0x00002000	/* if unset the fpu must be initialized before use */
+#define PF_FREEZING	0x00004000	/* freeze in progress. do not account to load */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PF_NOFREEZE	0x00008000	/* this thread should not be frozen */
 #define PF_FROZEN	0x00010000	/* frozen for system suspend */
 #define PF_FSTRANS	0x00020000	/* inside a filesystem transaction */
@@ -1834,6 +1944,10 @@ extern void thread_group_times(struct task_struct *p, cputime_t *ut, cputime_t *
 #define PF_MEMPOLICY	0x10000000	/* Non-default NUMA mempolicy */
 #define PF_MUTEX_TESTER	0x20000000	/* Thread belongs to the rt mutex tester */
 #define PF_FREEZER_SKIP	0x40000000	/* Freezer should not count it as freezable */
+<<<<<<< HEAD
+=======
+#define PF_FREEZER_NOSIG 0x80000000	/* Freezer won't send signals to it */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Only the _current_ task can read/write to tsk->flags, but other
@@ -1861,6 +1975,7 @@ extern void thread_group_times(struct task_struct *p, cputime_t *ut, cputime_t *
 #define used_math() tsk_used_math(current)
 
 /*
+<<<<<<< HEAD
  * task->jobctl flags
  */
 #define JOBCTL_STOP_SIGMASK	0xffff	/* signr of the last group stop */
@@ -1889,11 +2004,27 @@ extern bool task_set_jobctl_pending(struct task_struct *task,
 extern void task_clear_jobctl_trapping(struct task_struct *task);
 extern void task_clear_jobctl_pending(struct task_struct *task,
 				      unsigned int mask);
+=======
+ * task->group_stop flags
+ */
+#define GROUP_STOP_SIGMASK	0xffff    /* signr of the last group stop */
+#define GROUP_STOP_PENDING	(1 << 16) /* task should stop for group stop */
+#define GROUP_STOP_CONSUME	(1 << 17) /* consume group stop count */
+#define GROUP_STOP_TRAPPING	(1 << 18) /* switching from STOPPED to TRACED */
+#define GROUP_STOP_DEQUEUED	(1 << 19) /* stop signal dequeued */
+
+extern void task_clear_group_stop_pending(struct task_struct *task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_PREEMPT_RCU
 
 #define RCU_READ_UNLOCK_BLOCKED (1 << 0) /* blocked while in RCU read-side. */
+<<<<<<< HEAD
 #define RCU_READ_UNLOCK_NEED_QS (1 << 1) /* RCU core needs CPU response. */
+=======
+#define RCU_READ_UNLOCK_BOOSTED (1 << 1) /* boosted while in RCU read-side. */
+#define RCU_READ_UNLOCK_NEED_QS (1 << 2) /* RCU core needs CPU response. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void rcu_copy_process(struct task_struct *p)
 {
@@ -1936,6 +2067,7 @@ static inline int set_cpus_allowed_ptr(struct task_struct *p,
 }
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_NO_HZ
 void calc_load_enter_idle(void);
 void calc_load_exit_idle(void);
@@ -1944,6 +2076,8 @@ static inline void calc_load_enter_idle(void) { }
 static inline void calc_load_exit_idle(void) { }
 #endif /* CONFIG_NO_HZ */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef CONFIG_CPUMASK_OFFSTACK
 static inline int set_cpus_allowed(struct task_struct *p, cpumask_t new_mask)
 {
@@ -2085,7 +2219,11 @@ extern void sched_autogroup_fork(struct signal_struct *sig);
 extern void sched_autogroup_exit(struct signal_struct *sig);
 #ifdef CONFIG_PROC_FS
 extern void proc_sched_autogroup_show_task(struct task_struct *p, struct seq_file *m);
+<<<<<<< HEAD
 extern int proc_sched_autogroup_set_nice(struct task_struct *p, int nice);
+=======
+extern int proc_sched_autogroup_set_nice(struct task_struct *p, int *nice);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 #else
 static inline void sched_autogroup_create_attach(struct task_struct *p) { }
@@ -2094,28 +2232,37 @@ static inline void sched_autogroup_fork(struct signal_struct *sig) { }
 static inline void sched_autogroup_exit(struct signal_struct *sig) { }
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_CFS_BANDWIDTH
 extern unsigned int sysctl_sched_cfs_bandwidth_slice;
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_RT_MUTEXES
 extern int rt_mutex_getprio(struct task_struct *p);
 extern void rt_mutex_setprio(struct task_struct *p, int prio);
 extern void rt_mutex_adjust_pi(struct task_struct *p);
+<<<<<<< HEAD
 static inline bool tsk_is_pi_blocked(struct task_struct *tsk)
 {
 	return tsk->pi_blocked_on != NULL;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 static inline int rt_mutex_getprio(struct task_struct *p)
 {
 	return p->normal_prio;
 }
 # define rt_mutex_adjust_pi(p)		do { } while (0)
+<<<<<<< HEAD
 static inline bool tsk_is_pi_blocked(struct task_struct *tsk)
 {
 	return false;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 extern bool yield_to(struct task_struct *p, bool preempt);
@@ -2130,6 +2277,7 @@ extern int sched_setscheduler(struct task_struct *, int,
 extern int sched_setscheduler_nocheck(struct task_struct *, int,
 				      const struct sched_param *);
 extern struct task_struct *idle_task(int cpu);
+<<<<<<< HEAD
 /**
  * is_idle_task - is the specified task an idle task?
  * @p: the task in question.
@@ -2138,6 +2286,8 @@ static inline bool is_idle_task(const struct task_struct *p)
 {
 	return p->pid == 0;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct task_struct *curr_task(int cpu);
 extern void set_curr_task(int cpu, struct task_struct *p);
 
@@ -2229,7 +2379,11 @@ static inline int dequeue_signal_lock(struct task_struct *tsk, sigset_t *mask, s
 	spin_unlock_irqrestore(&tsk->sighand->siglock, flags);
 
 	return ret;
+<<<<<<< HEAD
 }
+=======
+}	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void block_all_signals(int (*notifier)(void *priv), void *priv,
 			      sigset_t *mask);
@@ -2240,12 +2394,20 @@ extern int force_sigsegv(int, struct task_struct *);
 extern int force_sig_info(int, struct siginfo *, struct task_struct *);
 extern int __kill_pgrp_info(int sig, struct siginfo *info, struct pid *pgrp);
 extern int kill_pid_info(int sig, struct siginfo *info, struct pid *pid);
+<<<<<<< HEAD
 extern int kill_pid_info_as_cred(int, struct siginfo *, struct pid *,
 				const struct cred *, u32);
 extern int kill_pgrp(struct pid *pid, int sig, int priv);
 extern int kill_pid(struct pid *pid, int sig, int priv);
 extern int kill_proc_info(int, struct siginfo *, pid_t);
 extern __must_check bool do_notify_parent(struct task_struct *, int);
+=======
+extern int kill_pid_info_as_uid(int, struct siginfo *, struct pid *, uid_t, uid_t, u32);
+extern int kill_pgrp(struct pid *pid, int sig, int priv);
+extern int kill_pid(struct pid *pid, int sig, int priv);
+extern int kill_proc_info(int, struct siginfo *, pid_t);
+extern int do_notify_parent(struct task_struct *, int);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void __wake_up_parent(struct task_struct *p, struct task_struct *parent);
 extern void force_sig(int, struct task_struct *);
 extern int send_sig(int, struct task_struct *, int);
@@ -2303,12 +2465,15 @@ static inline void mmdrop(struct mm_struct * mm)
 extern void mmput(struct mm_struct *);
 /* Grab a reference to a task's mm, if it is not already going away */
 extern struct mm_struct *get_task_mm(struct task_struct *task);
+<<<<<<< HEAD
 /*
  * Grab a reference to a task's mm, if it is not already going away
  * and ptrace_may_access with the mode parameter passed to it
  * succeeds.
  */
 extern struct mm_struct *mm_access(struct task_struct *task, unsigned int mode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Remove the current tasks stale references to the old mm_struct */
 extern void mm_release(struct task_struct *, struct mm_struct *);
 /* Allocate a new mm structure and copy contents from tsk->mm */
@@ -2325,7 +2490,11 @@ extern void __cleanup_sighand(struct sighand_struct *);
 extern void exit_itimers(struct signal_struct *);
 extern void flush_itimer_signals(void);
 
+<<<<<<< HEAD
 extern void do_group_exit(int);
+=======
+extern NORET_TYPE void do_group_exit(int);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void daemonize(const char *, ...);
 extern int allow_signal(int);
@@ -2375,10 +2544,15 @@ static inline int get_nr_threads(struct task_struct *tsk)
 	return tsk->signal->nr_threads;
 }
 
+<<<<<<< HEAD
 static inline bool thread_group_leader(struct task_struct *p)
 {
 	return p->exit_signal >= 0;
 }
+=======
+/* de_thread depends on thread_group_leader not being a pid based check */
+#define thread_group_leader(p)	(p == p->group_leader)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Do to the insanities of de_thread it is possible for a process
  * to have the pid of the thread group leader without actually being
@@ -2411,11 +2585,23 @@ static inline int thread_group_empty(struct task_struct *p)
 #define delay_group_leader(p) \
 		(thread_group_leader(p) && !thread_group_empty(p))
 
+<<<<<<< HEAD
+=======
+static inline int task_detached(struct task_struct *p)
+{
+	return p->exit_signal == -1;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Protects ->fs, ->files, ->mm, ->group_info, ->comm, keyring
  * subscriptions and synchronises with wait4().  Also used in procfs.  Also
  * pins the final release of task.io_context.  Also protects ->cpuset and
+<<<<<<< HEAD
  * ->cgroup.subsys[]. And ->vfork_done.
+=======
+ * ->cgroup.subsys[].
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Nests both inside and outside of read_lock(&tasklist_lock).
  * It must not be nested with write_lock_irq(&tasklist_lock),
@@ -2434,6 +2620,7 @@ static inline void task_unlock(struct task_struct *p)
 extern struct sighand_struct *__lock_task_sighand(struct task_struct *tsk,
 							unsigned long *flags);
 
+<<<<<<< HEAD
 static inline struct sighand_struct *lock_task_sighand(struct task_struct *tsk,
 						       unsigned long *flags)
 {
@@ -2443,6 +2630,14 @@ static inline struct sighand_struct *lock_task_sighand(struct task_struct *tsk,
 	(void)__cond_lock(&tsk->sighand->siglock, ret);
 	return ret;
 }
+=======
+#define lock_task_sighand(tsk, flags)					\
+({	struct sighand_struct *__ss;					\
+	__cond_lock(&(tsk)->sighand->siglock,				\
+		    (__ss = __lock_task_sighand(tsk, flags)));		\
+	__ss;								\
+})									\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void unlock_task_sighand(struct task_struct *tsk,
 						unsigned long *flags)
@@ -2643,7 +2838,11 @@ extern int _cond_resched(void);
 
 extern int __cond_resched_lock(spinlock_t *lock);
 
+<<<<<<< HEAD
 #ifdef CONFIG_PREEMPT_COUNT
+=======
+#ifdef CONFIG_PREEMPT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PREEMPT_LOCK_OFFSET	PREEMPT_OFFSET
 #else
 #define PREEMPT_LOCK_OFFSET	0
@@ -2683,7 +2882,11 @@ void thread_group_cputimer(struct task_struct *tsk, struct task_cputime *times);
 
 static inline void thread_group_cputime_init(struct signal_struct *sig)
 {
+<<<<<<< HEAD
 	raw_spin_lock_init(&sig->cputimer.lock);
+=======
+	spin_lock_init(&sig->cputimer.lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2695,6 +2898,7 @@ static inline void thread_group_cputime_init(struct signal_struct *sig)
 extern void recalc_sigpending_and_wake(struct task_struct *t);
 extern void recalc_sigpending(void);
 
+<<<<<<< HEAD
 extern void signal_wake_up_state(struct task_struct *t, unsigned int state);
 
 static inline void signal_wake_up(struct task_struct *t, bool resume)
@@ -2705,6 +2909,9 @@ static inline void ptrace_signal_wake_up(struct task_struct *t, bool resume)
 {
 	signal_wake_up_state(t, resume ? __TASK_TRACED : 0);
 }
+=======
+extern void signal_wake_up(struct task_struct *t, int resume_stopped);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Wrappers for p->thread_info->cpu access. No-op on UP.
@@ -2756,7 +2963,11 @@ extern int sched_group_set_rt_period(struct task_group *tg,
 extern long sched_group_rt_period(struct task_group *tg);
 extern int sched_rt_can_attach(struct task_group *tg, struct task_struct *tsk);
 #endif
+<<<<<<< HEAD
 #endif /* CONFIG_CGROUP_SCHED */
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int task_can_switch_user(struct user_struct *up,
 					struct task_struct *tsk);

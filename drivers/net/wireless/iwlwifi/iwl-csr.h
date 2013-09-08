@@ -5,7 +5,11 @@
  *
  * GPL LICENSE SUMMARY
  *
+<<<<<<< HEAD
  * Copyright(c) 2005 - 2012 Intel Corporation. All rights reserved.
+=======
+ * Copyright(c) 2005 - 2011 Intel Corporation. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -30,7 +34,11 @@
  *
  * BSD LICENSE
  *
+<<<<<<< HEAD
  * Copyright(c) 2005 - 2012 Intel Corporation. All rights reserved.
+=======
+ * Copyright(c) 2005 - 2011 Intel Corporation. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -284,8 +292,13 @@
 #define CSR_HW_REV_TYPE_6x35	       CSR_HW_REV_TYPE_6x05
 #define CSR_HW_REV_TYPE_2x30	       (0x00000C0)
 #define CSR_HW_REV_TYPE_2x00	       (0x0000100)
+<<<<<<< HEAD
 #define CSR_HW_REV_TYPE_105	       (0x0000110)
 #define CSR_HW_REV_TYPE_135	       (0x0000120)
+=======
+#define CSR_HW_REV_TYPE_200	       (0x0000110)
+#define CSR_HW_REV_TYPE_230	       (0x0000120)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define CSR_HW_REV_TYPE_NONE           (0x00001F0)
 
 /* EEPROM REG */
@@ -351,7 +364,10 @@
 #define CSR_UCODE_SW_BIT_RFKILL                     (0x00000002)
 #define CSR_UCODE_DRV_GP1_BIT_CMD_BLOCKED           (0x00000004)
 #define CSR_UCODE_DRV_GP1_REG_BIT_CT_KILL_EXIT      (0x00000008)
+<<<<<<< HEAD
 #define CSR_UCODE_DRV_GP1_BIT_D3_CFG_COMPLETE       (0x00000020)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* GP Driver */
 #define CSR_GP_DRIVER_REG_BIT_RADIO_SKU_MSK	    (0x00000003)
@@ -439,6 +455,7 @@
  */
 #define HBUS_TARG_WRPTR         (HBUS_BASE+0x060)
 
+<<<<<<< HEAD
 /**********************************************************
  * CSR values
  **********************************************************/
@@ -457,4 +474,6 @@
 #define IWL_HOST_INT_CALIB_TIMEOUT_DEF	(0x10)
 #define IWL_HOST_INT_CALIB_TIMEOUT_MIN	(0x0)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* !__iwl_csr_h__ */

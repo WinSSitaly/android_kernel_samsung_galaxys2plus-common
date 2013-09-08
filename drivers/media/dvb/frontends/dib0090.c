@@ -519,7 +519,11 @@ static int dib0090_fw_identify(struct dvb_frontend *fe)
 	return 0;
 
 identification_error:
+<<<<<<< HEAD
 	return -EIO;
+=======
+	return -EIO;;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void dib0090_reset_digital(struct dvb_frontend *fe, const struct dib0090_config *cfg)
@@ -717,6 +721,7 @@ static const u16 rf_ramp_pwm_cband_7090[] = {
 	(0 << 10) | 109,	/* RF_RAMP4, LNA 4 */
 };
 
+<<<<<<< HEAD
 static const uint16_t rf_ramp_pwm_cband_7090e_sensitivity[] = {
 	186,
 	40,
@@ -745,6 +750,8 @@ static const uint16_t rf_ramp_pwm_cband_7090e_aci[] = {
 	(0  << 10) | 200,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const u16 rf_ramp_pwm_cband_8090[] = {
 	345,			/* max RF gain in 10th of dB */
 	29,			/* ramp_slope = 1dB of gain -> clock_ticks_per_db = clk_khz / ramp_slope -> RF_RAMP2 */
@@ -1104,6 +1111,7 @@ void dib0090_pwm_gain_reset(struct dvb_frontend *fe)
 				dib0090_set_bbramp_pwm(state, bb_ramp_pwm_normal_socs);
 				if (state->identity.version == SOC_8090_P1G_11R1 || state->identity.version == SOC_8090_P1G_21R1)
 					dib0090_set_rframp_pwm(state, rf_ramp_pwm_cband_8090);
+<<<<<<< HEAD
 				else if (state->identity.version == SOC_7090_P1G_11R1
 						|| state->identity.version == SOC_7090_P1G_21R1) {
 					if (state->config->is_dib7090e) {
@@ -1114,6 +1122,10 @@ void dib0090_pwm_gain_reset(struct dvb_frontend *fe)
 					} else
 						dib0090_set_rframp_pwm(state, rf_ramp_pwm_cband_7090);
 				}
+=======
+				else if (state->identity.version == SOC_7090_P1G_11R1 || state->identity.version == SOC_7090_P1G_21R1)
+					dib0090_set_rframp_pwm(state, rf_ramp_pwm_cband_7090);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else {
 				dib0090_set_rframp_pwm(state, rf_ramp_pwm_cband);
 				dib0090_set_bbramp_pwm(state, bb_ramp_pwm_normal);
@@ -1148,13 +1160,18 @@ void dib0090_pwm_gain_reset(struct dvb_frontend *fe)
 		else
 			dib0090_write_reg(state, 0x32, (0 << 11));
 
+<<<<<<< HEAD
 		dib0090_write_reg(state, 0x04, 0x03);
+=======
+		dib0090_write_reg(state, 0x04, 0x01);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dib0090_write_reg(state, 0x39, (1 << 10));
 	}
 }
 
 EXPORT_SYMBOL(dib0090_pwm_gain_reset);
 
+<<<<<<< HEAD
 void dib0090_set_dc_servo(struct dvb_frontend *fe, u8 DC_servo_cutoff)
 {
 	struct dib0090_state *state = fe->tuner_priv;
@@ -1163,6 +1180,8 @@ void dib0090_set_dc_servo(struct dvb_frontend *fe, u8 DC_servo_cutoff)
 }
 EXPORT_SYMBOL(dib0090_set_dc_servo);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u32 dib0090_get_slow_adc_val(struct dib0090_state *state)
 {
 	u16 adc_val = dib0090_read_reg(state, 0x1d);
@@ -1349,7 +1368,11 @@ void dib0090_get_current_gain(struct dvb_frontend *fe, u16 * rf, u16 * bb, u16 *
 
 EXPORT_SYMBOL(dib0090_get_current_gain);
 
+<<<<<<< HEAD
 u16 dib0090_get_wbd_target(struct dvb_frontend *fe)
+=======
+u16 dib0090_get_wbd_offset(struct dvb_frontend *fe)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dib0090_state *state = fe->tuner_priv;
 	u32 f_MHz = state->fe->dtv_property_cache.frequency / 1000000;
@@ -1386,6 +1409,7 @@ u16 dib0090_get_wbd_target(struct dvb_frontend *fe)
 
 	return state->wbd_offset + wbd_tcold;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(dib0090_get_wbd_target);
 
 u16 dib0090_get_wbd_offset(struct dvb_frontend *fe)
@@ -1437,6 +1461,11 @@ int dib0090_update_rframp_7090(struct dvb_frontend *fe, u8 cfg_sensitivity)
 }
 EXPORT_SYMBOL(dib0090_update_rframp_7090);
 
+=======
+
+EXPORT_SYMBOL(dib0090_get_wbd_offset);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const u16 dib0090_defaults[] = {
 
 	25, 0x01,
@@ -1522,7 +1551,11 @@ static void dib0090_set_default_config(struct dib0090_state *state, const u16 * 
 #define POLY_MIN      (u8)  0
 #define POLY_MAX      (u8)  8
 
+<<<<<<< HEAD
 static void dib0090_set_EFUSE(struct dib0090_state *state)
+=======
+void dib0090_set_EFUSE(struct dib0090_state *state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u8 c, h, n;
 	u16 e2, e4;
@@ -1597,10 +1630,14 @@ static int dib0090_reset(struct dvb_frontend *fe)
 		dib0090_set_EFUSE(state);
 
 	/* Congigure in function of the crystal */
+<<<<<<< HEAD
 	if (state->config->force_crystal_mode != 0)
 		dib0090_write_reg(state, 0x14,
 				state->config->force_crystal_mode & 3);
 	else if (state->config->io.clock_khz >= 24000)
+=======
+	if (state->config->io.clock_khz >= 24000)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dib0090_write_reg(state, 0x14, 1);
 	else
 		dib0090_write_reg(state, 0x14, 2);
@@ -2046,6 +2083,7 @@ static const struct dib0090_tuning dib0090_tuning_table_cband_7090[] = {
 #endif
 };
 
+<<<<<<< HEAD
 static const struct dib0090_tuning dib0090_tuning_table_cband_7090e_sensitivity[] = {
 #ifdef CONFIG_BAND_CBAND
 	{ 300000,  0 ,  3,  0x8105, 0x2c0, 0x2d12, 0xb84e, EN_CAB },
@@ -2092,6 +2130,8 @@ int dib0090_update_tuning_table_7090(struct dvb_frontend *fe,
 }
 EXPORT_SYMBOL(dib0090_update_tuning_table_7090);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int dib0090_captrim_search(struct dib0090_state *state, enum frontend_tune_state *tune_state)
 {
 	int ret = 0;
@@ -2340,18 +2380,26 @@ static int dib0090_tune(struct dvb_frontend *fe)
 					if (state->current_band & BAND_CBAND || state->current_band & BAND_FM || state->current_band & BAND_VHF
 							|| state->current_band & BAND_UHF) {
 						state->current_band = BAND_CBAND;
+<<<<<<< HEAD
 						if (state->config->is_dib7090e)
 							tune = dib0090_tuning_table_cband_7090e_sensitivity;
 						else
 							tune = dib0090_tuning_table_cband_7090;
+=======
+						tune = dib0090_tuning_table_cband_7090;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 				} else {	/* Use the CBAND input for all band under UHF */
 					if (state->current_band & BAND_CBAND || state->current_band & BAND_FM || state->current_band & BAND_VHF) {
 						state->current_band = BAND_CBAND;
+<<<<<<< HEAD
 						if (state->config->is_dib7090e)
 							tune = dib0090_tuning_table_cband_7090e_sensitivity;
 						else
 							tune = dib0090_tuning_table_cband_7090;
+=======
+						tune = dib0090_tuning_table_cband_7090;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 				}
 			} else
@@ -2566,7 +2614,11 @@ static int dib0090_get_frequency(struct dvb_frontend *fe, u32 * frequency)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int dib0090_set_params(struct dvb_frontend *fe)
+=======
+static int dib0090_set_params(struct dvb_frontend *fe, struct dvb_frontend_parameters *p)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dib0090_state *state = fe->tuner_priv;
 	u32 ret;

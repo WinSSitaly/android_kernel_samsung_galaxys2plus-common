@@ -28,6 +28,7 @@ int nv04_instmem_init(struct drm_device *dev)
 	/* RAMIN always available */
 	dev_priv->ramin_available = true;
 
+<<<<<<< HEAD
 	/* Reserve space at end of VRAM for PRAMIN */
 	if (dev_priv->card_type >= NV_40) {
 		u32 vs = hweight8((nv_rd32(dev, 0x001540) & 0x0000ff00) >> 8);
@@ -53,6 +54,8 @@ int nv04_instmem_init(struct drm_device *dev)
 		dev_priv->ramin_rsvd_vram = 512 * 1024;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Setup shared RAMHT */
 	ret = nouveau_gpuobj_new_fake(dev, 0x10000, ~0, 4096,
 				      NVOBJ_FLAG_ZERO_ALLOC, &ramht);
@@ -137,8 +140,12 @@ nv04_instmem_resume(struct drm_device *dev)
 }
 
 int
+<<<<<<< HEAD
 nv04_instmem_get(struct nouveau_gpuobj *gpuobj, struct nouveau_channel *chan,
 		 u32 size, u32 align)
+=======
+nv04_instmem_get(struct nouveau_gpuobj *gpuobj, u32 size, u32 align)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_nouveau_private *dev_priv = gpuobj->dev->dev_private;
 	struct drm_mm_node *ramin = NULL;

@@ -130,14 +130,21 @@
 #define PI_PG	4
 #endif
 
+<<<<<<< HEAD
 #include <linux/types.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Here are things one can override from the insmod command.
    Most are autoprobed by paride unless set here.  Verbose is 0
    by default.
 
 */
 
+<<<<<<< HEAD
 static bool verbose = 0;
+=======
+static int verbose = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int major = PG_MAJOR;
 static char *name = PG_NAME;
 static int disable = 0;
@@ -631,7 +638,10 @@ static ssize_t pg_read(struct file *filp, char __user *buf, size_t count, loff_t
 		if (dev->status & 0x10)
 			return -ETIME;
 
+<<<<<<< HEAD
 	memset(&hdr, 0, sizeof(hdr));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hdr.magic = PG_MAGIC;
 	hdr.dlen = dev->dlen;
 	copy = 0;

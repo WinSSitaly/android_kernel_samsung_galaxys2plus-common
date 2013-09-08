@@ -20,7 +20,54 @@
  * TODO:
  * -- Add true modem contol line query capability.  Currently we track the
  *    states reported by the interrupt and the states we request.
+<<<<<<< HEAD
  * -- Add support for flush commands
+=======
+ * -- Add error reporting back to application for UART error conditions.
+ *    Just point me at how to implement this and I'll do it. I've put the
+ *    framework in, but haven't analyzed the "tty_flip" interface yet.
+ * -- Add support for flush commands
+ * -- Add everything that is missing :)
+ *
+ * 27-Nov-2001 gkh
+ * 	compressed all the differnent device entries into 1.
+ *
+ * 30-May-2001 gkh
+ *	switched from using spinlock to a semaphore, which fixes lots of
+ *	problems.
+ *
+ * 08-Apr-2001 gb
+ *	- Identify version on module load.
+ *
+ * 12-Mar-2001 gkh
+ *	- Added support for the GoHubs GO-COM232 device which is the same as the
+ *	  Peracom device.
+ *
+ * 06-Nov-2000 gkh
+ *	- Added support for the old Belkin and Peracom devices.
+ *	- Made the port able to be opened multiple times.
+ *	- Added some defaults incase the line settings are things these devices
+ *	  can't support.
+ *
+ * 18-Oct-2000 William Greathouse
+ *    Released into the wild (linux-usb-devel)
+ *
+ * 17-Oct-2000 William Greathouse
+ *    Add code to recognize firmware version and set hardware flow control
+ *    appropriately.  Belkin states that firmware prior to 3.05 does not
+ *    operate correctly in hardware handshake mode.  I have verified this
+ *    on firmware 2.05 -- for both RTS and DTR input flow control, the control
+ *    line is not reset.  The test performed by the Belkin Win* driver is
+ *    to enable hardware flow control for firmware 2.06 or greater and
+ *    for 1.00 or prior.  I am only enabling for 2.06 or greater.
+ *
+ * 12-Oct-2000 William Greathouse
+ *    First cut at supporting Belkin USB Serial Adapter F5U103
+ *    I did not have a copy of the original work to support this
+ *    adapter, so pardon any stupid mistakes.  All of the information
+ *    I am using to write this driver was acquired by using a modified
+ *    UsbSnoop on Windows2000 and from examining the other USB drivers.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/kernel.h>
@@ -37,7 +84,11 @@
 #include <linux/usb/serial.h>
 #include "belkin_sa.h"
 
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Version Information
@@ -78,6 +129,10 @@ static struct usb_driver belkin_driver = {
 	.probe =	usb_serial_probe,
 	.disconnect =	usb_serial_disconnect,
 	.id_table =	id_table_combined,
+<<<<<<< HEAD
+=======
+	.no_dynamic_id =	1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* All of the device info needed for the serial converters */
@@ -87,6 +142,10 @@ static struct usb_serial_driver belkin_device = {
 		.name =		"belkin",
 	},
 	.description =		"Belkin / Peracom / GoHubs USB Serial Adapter",
+<<<<<<< HEAD
+=======
+	.usb_driver =		&belkin_driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table =		id_table_combined,
 	.num_ports =		1,
 	.open =			belkin_sa_open,
@@ -101,10 +160,13 @@ static struct usb_serial_driver belkin_device = {
 	.release =		belkin_sa_release,
 };
 
+<<<<<<< HEAD
 static struct usb_serial_driver * const serial_drivers[] = {
 	&belkin_device, NULL
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct belkin_sa_private {
 	spinlock_t		lock;
 	unsigned long		control_state;
@@ -524,7 +586,38 @@ exit:
 	return retval;
 }
 
+<<<<<<< HEAD
 module_usb_serial_driver(belkin_driver, serial_drivers);
+=======
+
+static int __init belkin_sa_init(void)
+{
+	int retval;
+	retval = usb_serial_register(&belkin_device);
+	if (retval)
+		goto failed_usb_serial_register;
+	retval = usb_register(&belkin_driver);
+	if (retval)
+		goto failed_usb_register;
+	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_VERSION ":"
+	       DRIVER_DESC "\n");
+	return 0;
+failed_usb_register:
+	usb_serial_deregister(&belkin_device);
+failed_usb_serial_register:
+	return retval;
+}
+
+static void __exit belkin_sa_exit (void)
+{
+	usb_deregister(&belkin_driver);
+	usb_serial_deregister(&belkin_device);
+}
+
+
+module_init(belkin_sa_init);
+module_exit(belkin_sa_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR(DRIVER_AUTHOR);
 MODULE_DESCRIPTION(DRIVER_DESC);

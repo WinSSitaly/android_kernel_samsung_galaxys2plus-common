@@ -29,6 +29,7 @@ extern struct fs_struct init_fs;
 #define INIT_GROUP_RWSEM(sig)
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_CPUSETS
 #define INIT_CPUSET_SEQ							\
 	.mems_allowed_seq = SEQCNT_ZERO,
@@ -36,6 +37,8 @@ extern struct fs_struct init_fs;
 #define INIT_CPUSET_SEQ
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define INIT_SIGNALS(sig) {						\
 	.nr_threads	= 1,						\
 	.wait_chldexit	= __WAIT_QUEUE_HEAD_INITIALIZER(sig.wait_chldexit),\
@@ -48,7 +51,11 @@ extern struct fs_struct init_fs;
 	.cputimer	= { 						\
 		.cputime = INIT_CPUTIME,				\
 		.running = 0,						\
+<<<<<<< HEAD
 		.lock = __RAW_SPIN_LOCK_UNLOCKED(sig.cputimer.lock),	\
+=======
+		.lock = __SPIN_LOCK_UNLOCKED(sig.cputimer.lock),	\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},								\
 	.cred_guard_mutex =						\
 		 __MUTEX_INITIALIZER(sig.cred_guard_mutex),		\
@@ -123,6 +130,7 @@ extern struct group_info init_groups;
 
 extern struct cred init_cred;
 
+<<<<<<< HEAD
 extern struct task_group root_task_group;
 
 #ifdef CONFIG_CGROUP_SCHED
@@ -134,6 +142,10 @@ extern struct task_group root_task_group;
 
 #ifdef CONFIG_PERF_EVENTS
 # define INIT_PERF_EVENTS(tsk)						\
+=======
+#ifdef CONFIG_PERF_EVENTS
+# define INIT_PERF_EVENTS(tsk)					\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.perf_event_mutex = 						\
 		 __MUTEX_INITIALIZER(tsk.perf_event_mutex),		\
 	.perf_event_list = LIST_HEAD_INIT(tsk.perf_event_list),
@@ -141,8 +153,11 @@ extern struct task_group root_task_group;
 # define INIT_PERF_EVENTS(tsk)
 #endif
 
+<<<<<<< HEAD
 #define INIT_TASK_COMM "swapper"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *  INIT_TASK is used to set up the first task table, touch at
  * your own risk!. Base=0, limit=0x1fffff (=2MB)
@@ -165,12 +180,19 @@ extern struct task_group root_task_group;
 	},								\
 	.rt		= {						\
 		.run_list	= LIST_HEAD_INIT(tsk.rt.run_list),	\
+<<<<<<< HEAD
 		.time_slice	= RR_TIMESLICE,				\
+=======
+		.time_slice	= HZ, 					\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.nr_cpus_allowed = NR_CPUS,				\
 	},								\
 	.tasks		= LIST_HEAD_INIT(tsk.tasks),			\
 	INIT_PUSHABLE_TASKS(tsk)					\
+<<<<<<< HEAD
 	INIT_CGROUP_SCHED(tsk)						\
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ptraced	= LIST_HEAD_INIT(tsk.ptraced),			\
 	.ptrace_entry	= LIST_HEAD_INIT(tsk.ptrace_entry),		\
 	.real_parent	= &tsk,						\
@@ -180,7 +202,11 @@ extern struct task_group root_task_group;
 	.group_leader	= &tsk,						\
 	RCU_INIT_POINTER(.real_cred, &init_cred),			\
 	RCU_INIT_POINTER(.cred, &init_cred),				\
+<<<<<<< HEAD
 	.comm		= INIT_TASK_COMM,				\
+=======
+	.comm		= "swapper",					\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.thread		= INIT_THREAD,					\
 	.fs		= &init_fs,					\
 	.files		= &init_files,					\
@@ -194,6 +220,10 @@ extern struct task_group root_task_group;
 	.alloc_lock	= __SPIN_LOCK_UNLOCKED(tsk.alloc_lock),		\
 	.journal_info	= NULL,						\
 	.cpu_timers	= INIT_CPU_TIMERS(tsk.cpu_timers),		\
+<<<<<<< HEAD
+=======
+	.fs_excl	= ATOMIC_INIT(0),				\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.pi_lock	= __RAW_SPIN_LOCK_UNLOCKED(tsk.pi_lock),	\
 	.timer_slack_ns = 50000, /* 50 usec default slack */		\
 	.pids = {							\
@@ -202,6 +232,10 @@ extern struct task_group root_task_group;
 		[PIDTYPE_SID]  = INIT_PID_LINK(PIDTYPE_SID),		\
 	},								\
 	.thread_group	= LIST_HEAD_INIT(tsk.thread_group),		\
+<<<<<<< HEAD
+=======
+	.dirties = INIT_PROP_LOCAL_SINGLE(dirties),			\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_IDS							\
 	INIT_PERF_EVENTS(tsk)						\
 	INIT_TRACE_IRQFLAGS						\
@@ -209,7 +243,10 @@ extern struct task_group root_task_group;
 	INIT_FTRACE_GRAPH						\
 	INIT_TRACE_RECURSION						\
 	INIT_TASK_RCU_PREEMPT(tsk)					\
+<<<<<<< HEAD
 	INIT_CPUSET_SEQ							\
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 

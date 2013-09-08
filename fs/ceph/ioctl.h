@@ -6,6 +6,7 @@
 
 #define CEPH_IOCTL_MAGIC 0x97
 
+<<<<<<< HEAD
 /*
  * CEPH_IOC_GET_LAYOUT - get file layout or dir layout policy
  * CEPH_IOC_SET_LAYOUT - set file layout
@@ -31,6 +32,9 @@
  */
 
 /* use u64 to align sanely on all archs */
+=======
+/* just use u64 to align sanely on all archs */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ceph_ioctl_layout {
 	__u64 stripe_unit, stripe_count, object_size;
 	__u64 data_pool;
@@ -45,8 +49,11 @@ struct ceph_ioctl_layout {
 				   struct ceph_ioctl_layout)
 
 /*
+<<<<<<< HEAD
  * CEPH_IOC_GET_DATALOC - get location of file data in the cluster
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Extract identity, address of the OSD and object storing a given
  * file offset.
  */
@@ -65,6 +72,7 @@ struct ceph_ioctl_dataloc {
 #define CEPH_IOC_GET_DATALOC _IOWR(CEPH_IOCTL_MAGIC, 3,	\
 				   struct ceph_ioctl_dataloc)
 
+<<<<<<< HEAD
 /*
  * CEPH_IOC_LAZYIO - relax consistency
  *
@@ -95,4 +103,8 @@ struct ceph_ioctl_dataloc {
  */
 #define CEPH_IOC_SYNCIO _IO(CEPH_IOCTL_MAGIC, 5)
 
+=======
+#define CEPH_IOC_LAZYIO _IO(CEPH_IOCTL_MAGIC, 4)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

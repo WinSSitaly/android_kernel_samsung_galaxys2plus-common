@@ -18,6 +18,10 @@
 #include <mach/hardware.h>
 
 #define IO_SPACE_LIMIT		0xffffffff
+<<<<<<< HEAD
+=======
+#define __mem_pci(a)		(a)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * The A? revisions of the IXP2000s assert byte lanes for PCI I/O

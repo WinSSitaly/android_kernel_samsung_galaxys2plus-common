@@ -16,7 +16,10 @@
 #include <asm/suspend.h>
 #include <asm/uaccess.h>
 #include <asm/cacheflush.h>
+<<<<<<< HEAD
 #include <asm/bl_bit.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Notifier lists for pre/post sleep notification

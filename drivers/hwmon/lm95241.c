@@ -74,9 +74,14 @@ static const unsigned short normal_i2c[] = {
 #define TT_OFF 0
 #define TT_ON 1
 #define TT_MASK 7
+<<<<<<< HEAD
 #define NATSEMI_MAN_ID	0x01
 #define LM95231_CHIP_ID	0xA1
 #define LM95241_CHIP_ID	0xA4
+=======
+#define MANUFACTURER_ID 0x01
+#define DEFAULT_REVISION 0xA4
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const u8 lm95241_reg_address[] = {
 	LM95241_REG_R_LOCAL_TEMPH,
@@ -169,7 +174,11 @@ static ssize_t set_type(struct device *dev, struct device_attribute *attr,
 	int shift;
 	u8 mask = to_sensor_dev_attr(attr)->index;
 
+<<<<<<< HEAD
 	if (kstrtoul(buf, 10, &val) < 0)
+=======
+	if (strict_strtoul(buf, 10, &val) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	if (val != 1 && val != 2)
 		return -EINVAL;
@@ -216,7 +225,11 @@ static ssize_t set_min(struct device *dev, struct device_attribute *attr,
 	struct lm95241_data *data = i2c_get_clientdata(client);
 	long val;
 
+<<<<<<< HEAD
 	if (kstrtol(buf, 10, &val) < 0)
+=======
+	if (strict_strtol(buf, 10, &val) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	if (val < -128000)
 		return -EINVAL;
@@ -254,7 +267,11 @@ static ssize_t set_max(struct device *dev, struct device_attribute *attr,
 	struct lm95241_data *data = i2c_get_clientdata(client);
 	long val;
 
+<<<<<<< HEAD
 	if (kstrtol(buf, 10, &val) < 0)
+=======
+	if (strict_strtol(buf, 10, &val) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	if (val >= 256000)
 		return -EINVAL;
@@ -290,7 +307,11 @@ static ssize_t set_interval(struct device *dev, struct device_attribute *attr,
 	struct lm95241_data *data = i2c_get_clientdata(client);
 	unsigned long val;
 
+<<<<<<< HEAD
 	if (kstrtoul(buf, 10, &val) < 0)
+=======
+	if (strict_strtoul(buf, 10, &val) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	data->interval = val * HZ / 1000;
@@ -339,12 +360,18 @@ static int lm95241_detect(struct i2c_client *new_client,
 			  struct i2c_board_info *info)
 {
 	struct i2c_adapter *adapter = new_client->adapter;
+<<<<<<< HEAD
 	const char *name;
 	int mfg_id, chip_id;
+=======
+	int address = new_client->addr;
+	const char *name;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA))
 		return -ENODEV;
 
+<<<<<<< HEAD
 	mfg_id = i2c_smbus_read_byte_data(new_client, LM95241_REG_R_MAN_ID);
 	if (mfg_id != NATSEMI_MAN_ID)
 		return -ENODEV;
@@ -358,6 +385,16 @@ static int lm95241_detect(struct i2c_client *new_client,
 		name = "lm95241";
 		break;
 	default:
+=======
+	if ((i2c_smbus_read_byte_data(new_client, LM95241_REG_R_MAN_ID)
+	     == MANUFACTURER_ID)
+	    && (i2c_smbus_read_byte_data(new_client, LM95241_REG_R_CHIP_ID)
+		== DEFAULT_REVISION)) {
+		name = DEVNAME;
+	} else {
+		dev_dbg(&adapter->dev, "LM95241 detection failed at 0x%02x\n",
+			address);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
@@ -437,8 +474,12 @@ static int lm95241_remove(struct i2c_client *client)
 
 /* Driver data (common to all clients) */
 static const struct i2c_device_id lm95241_id[] = {
+<<<<<<< HEAD
 	{ "lm95231", 0 },
 	{ "lm95241", 0 },
+=======
+	{ DEVNAME, 0 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ }
 };
 MODULE_DEVICE_TABLE(i2c, lm95241_id);
@@ -455,8 +496,26 @@ static struct i2c_driver lm95241_driver = {
 	.address_list	= normal_i2c,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(lm95241_driver);
+=======
+static int __init sensors_lm95241_init(void)
+{
+	return i2c_add_driver(&lm95241_driver);
+}
+
+static void __exit sensors_lm95241_exit(void)
+{
+	i2c_del_driver(&lm95241_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Davide Rizzo <elpa.rizzo@gmail.com>");
 MODULE_DESCRIPTION("LM95241 sensor driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(sensors_lm95241_init);
+module_exit(sensors_lm95241_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

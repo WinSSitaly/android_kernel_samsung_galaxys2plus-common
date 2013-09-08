@@ -26,8 +26,11 @@
 #define BE2_IPV4  0x1
 #define BE2_IPV6  0x10
 
+<<<<<<< HEAD
 umode_t be2iscsi_attr_is_visible(int param_type, int param);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void beiscsi_offload_connection(struct beiscsi_conn *beiscsi_conn,
 				struct beiscsi_offload_params *params);
 

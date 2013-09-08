@@ -193,6 +193,7 @@ uint16_t get_enabled_gptimers(void);
 uint32_t get_gptimer_status(unsigned int group);
 void     set_gptimer_status(unsigned int group, uint32_t value);
 
+<<<<<<< HEAD
 static inline void enable_gptimer(unsigned int timer_id)
 {
 	enable_gptimers(1 << timer_id);
@@ -203,6 +204,8 @@ static inline void disable_gptimer(unsigned int timer_id)
 	disable_gptimers(1 << timer_id);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * All Blackfin system MMRs are padded to 32bits even if the register
  * itself is only 16bits.  So use a helper macro to streamline this.
@@ -219,6 +222,7 @@ struct bfin_gptimer_regs {
 	u32 width;
 };
 
+<<<<<<< HEAD
 /*
  * bfin group timer registers layout
  */
@@ -228,6 +232,8 @@ struct bfin_gptimer_group_regs {
 	u32 status;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #undef __BFP
 
 #endif

@@ -28,6 +28,7 @@ static int __init emu_find_memblk_by_nid(int nid, const struct numa_meminfo *mi)
 	return -ENOENT;
 }
 
+<<<<<<< HEAD
 static u64 __init mem_hole_size(u64 start, u64 end)
 {
 	unsigned long start_pfn = PFN_UP(start);
@@ -38,6 +39,8 @@ static u64 __init mem_hole_size(u64 start, u64 end)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Sets up nid to range from @start to @end.  The return value is -errno if
  * something went wrong, 0 otherwise.
@@ -60,7 +63,11 @@ static int __init emu_setup_memblk(struct numa_meminfo *ei,
 	eb->nid = nid;
 
 	if (emu_nid_to_phys[nid] == NUMA_NO_NODE)
+<<<<<<< HEAD
 		emu_nid_to_phys[nid] = nid;
+=======
+		emu_nid_to_phys[nid] = pb->nid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pb->start += size;
 	if (pb->start >= pb->end) {
@@ -99,7 +106,11 @@ static int __init split_nodes_interleave(struct numa_meminfo *ei,
 	 * Calculate target node size.  x86_32 freaks on __udivdi3() so do
 	 * the division in ulong number of pages and convert back.
 	 */
+<<<<<<< HEAD
 	size = max_addr - addr - mem_hole_size(addr, max_addr);
+=======
+	size = max_addr - addr - memblock_x86_hole_size(addr, max_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	size = PFN_PHYS((unsigned long)(size >> PAGE_SHIFT) / nr_nodes);
 
 	/*
@@ -145,7 +156,12 @@ static int __init split_nodes_interleave(struct numa_meminfo *ei,
 			 * Continue to add memory to this fake node if its
 			 * non-reserved memory is less than the per-node size.
 			 */
+<<<<<<< HEAD
 			while (end - start - mem_hole_size(start, end) < size) {
+=======
+			while (end - start -
+			       memblock_x86_hole_size(start, end) < size) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				end += FAKE_NODE_MIN_SIZE;
 				if (end > limit) {
 					end = limit;
@@ -159,7 +175,11 @@ static int __init split_nodes_interleave(struct numa_meminfo *ei,
 			 * this one must extend to the boundary.
 			 */
 			if (end < dma32_end && dma32_end - end -
+<<<<<<< HEAD
 			    mem_hole_size(end, dma32_end) < FAKE_NODE_MIN_SIZE)
+=======
+			    memblock_x86_hole_size(end, dma32_end) < FAKE_NODE_MIN_SIZE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				end = dma32_end;
 
 			/*
@@ -167,7 +187,12 @@ static int __init split_nodes_interleave(struct numa_meminfo *ei,
 			 * next node, this one must extend to the end of the
 			 * physical node.
 			 */
+<<<<<<< HEAD
 			if (limit - end - mem_hole_size(end, limit) < size)
+=======
+			if (limit - end -
+			    memblock_x86_hole_size(end, limit) < size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				end = limit;
 
 			ret = emu_setup_memblk(ei, pi, nid++ % nr_nodes,
@@ -188,7 +213,11 @@ static u64 __init find_end_of_node(u64 start, u64 max_addr, u64 size)
 {
 	u64 end = start + size;
 
+<<<<<<< HEAD
 	while (end - start - mem_hole_size(start, end) < size) {
+=======
+	while (end - start - memblock_x86_hole_size(start, end) < size) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		end += FAKE_NODE_MIN_SIZE;
 		if (end > max_addr) {
 			end = max_addr;
@@ -219,7 +248,12 @@ static int __init split_nodes_size_interleave(struct numa_meminfo *ei,
 	 * creates a uniform distribution of node sizes across the entire
 	 * machine (but not necessarily over physical nodes).
 	 */
+<<<<<<< HEAD
 	min_size = (max_addr - addr - mem_hole_size(addr, max_addr)) / MAX_NUMNODES;
+=======
+	min_size = (max_addr - addr - memblock_x86_hole_size(addr, max_addr)) /
+						MAX_NUMNODES;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	min_size = max(min_size, FAKE_NODE_MIN_SIZE);
 	if ((min_size & FAKE_NODE_MIN_HASH_MASK) < min_size)
 		min_size = (min_size + FAKE_NODE_MIN_SIZE) &
@@ -259,7 +293,11 @@ static int __init split_nodes_size_interleave(struct numa_meminfo *ei,
 			 * this one must extend to the boundary.
 			 */
 			if (end < dma32_end && dma32_end - end -
+<<<<<<< HEAD
 			    mem_hole_size(end, dma32_end) < FAKE_NODE_MIN_SIZE)
+=======
+			    memblock_x86_hole_size(end, dma32_end) < FAKE_NODE_MIN_SIZE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				end = dma32_end;
 
 			/*
@@ -267,7 +305,12 @@ static int __init split_nodes_size_interleave(struct numa_meminfo *ei,
 			 * next node, this one must extend to the end of the
 			 * physical node.
 			 */
+<<<<<<< HEAD
 			if (limit - end - mem_hole_size(end, limit) < size)
+=======
+			if (limit - end -
+			    memblock_x86_hole_size(end, limit) < size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				end = limit;
 
 			ret = emu_setup_memblk(ei, pi, nid++ % MAX_NUMNODES,
@@ -357,11 +400,19 @@ void __init numa_emulation(struct numa_meminfo *numa_meminfo, int numa_dist_cnt)
 
 		phys = memblock_find_in_range(0, PFN_PHYS(max_pfn_mapped),
 					      phys_size, PAGE_SIZE);
+<<<<<<< HEAD
 		if (!phys) {
 			pr_warning("NUMA: Warning: can't allocate copy of distance table, disabling emulation\n");
 			goto no_emu;
 		}
 		memblock_reserve(phys, phys_size);
+=======
+		if (phys == MEMBLOCK_ERROR) {
+			pr_warning("NUMA: Warning: can't allocate copy of distance table, disabling emulation\n");
+			goto no_emu;
+		}
+		memblock_x86_reserve_range(phys, phys + phys_size, "TMP NUMA DIST");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		phys_dist = __va(phys);
 
 		for (i = 0; i < numa_dist_cnt; i++)
@@ -430,7 +481,11 @@ void __init numa_emulation(struct numa_meminfo *numa_meminfo, int numa_dist_cnt)
 
 	/* free the copied physical distance table */
 	if (phys_dist)
+<<<<<<< HEAD
 		memblock_free(__pa(phys_dist), phys_size);
+=======
+		memblock_x86_free_range(__pa(phys_dist), __pa(phys_dist) + phys_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 
 no_emu:

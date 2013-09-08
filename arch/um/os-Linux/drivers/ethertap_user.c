@@ -13,9 +13,17 @@
 #include <sys/socket.h>
 #include <sys/wait.h>
 #include "etap.h"
+<<<<<<< HEAD
 #include "os.h"
 #include "net_user.h"
 #include "um_malloc.h"
+=======
+#include "kern_constants.h"
+#include "os.h"
+#include "net_user.h"
+#include "um_malloc.h"
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MAX_PACKET ETH_MAX_PACKET
 

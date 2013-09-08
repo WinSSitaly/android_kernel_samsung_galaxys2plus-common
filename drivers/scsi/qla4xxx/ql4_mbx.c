@@ -41,6 +41,7 @@ int qla4xxx_mailbox_command(struct scsi_qla_host *ha, uint8_t inCount,
 		return status;
 	}
 
+<<<<<<< HEAD
 	if (is_qla40XX(ha)) {
 		if (test_bit(AF_HA_REMOVAL, &ha->flags)) {
 			DEBUG2(ql4_printk(KERN_WARNING, ha, "scsi%ld: %s: "
@@ -51,6 +52,8 @@ int qla4xxx_mailbox_command(struct scsi_qla_host *ha, uint8_t inCount,
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (is_qla8022(ha)) {
 		if (test_bit(AF_FW_RECOVERY, &ha->flags)) {
 			DEBUG2(ql4_printk(KERN_WARNING, ha, "scsi%ld: %s: "
@@ -219,6 +222,7 @@ int qla4xxx_mailbox_command(struct scsi_qla_host *ha, uint8_t inCount,
 		ha->mailbox_timeout_count++;
 		mbx_sts[0] = (-1);
 		set_bit(DPC_RESET_HA, &ha->dpc_flags);
+<<<<<<< HEAD
 		if (is_qla8022(ha)) {
 			ql4_printk(KERN_INFO, ha,
 				   "disabling pause transmit on port 0 & 1.\n");
@@ -226,6 +230,8 @@ int qla4xxx_mailbox_command(struct scsi_qla_host *ha, uint8_t inCount,
 					CRB_NIU_XG_PAUSE_CTL_P0 |
 					CRB_NIU_XG_PAUSE_CTL_P1);
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto mbox_exit;
 	}
 
@@ -320,7 +326,11 @@ qla4xxx_set_ifcb(struct scsi_qla_host *ha, uint32_t *mbox_cmd,
 	return QLA_SUCCESS;
 }
 
+<<<<<<< HEAD
 uint8_t
+=======
+static uint8_t
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 qla4xxx_get_ifcb(struct scsi_qla_host *ha, uint32_t *mbox_cmd,
 		 uint32_t *mbox_sts, dma_addr_t init_fw_cb_dma)
 {
@@ -344,6 +354,7 @@ qla4xxx_get_ifcb(struct scsi_qla_host *ha, uint32_t *mbox_cmd,
 
 static void
 qla4xxx_update_local_ip(struct scsi_qla_host *ha,
+<<<<<<< HEAD
 			struct addr_ctrl_blk *init_fw_cb)
 {
 	ha->ip_config.tcp_options = le16_to_cpu(init_fw_cb->ipv4_tcp_opts);
@@ -407,6 +418,45 @@ qla4xxx_update_local_ip(struct scsi_qla_host *ha,
 }
 
 uint8_t
+=======
+			 struct addr_ctrl_blk  *init_fw_cb)
+{
+	/* Save IPv4 Address Info */
+	memcpy(ha->ip_address, init_fw_cb->ipv4_addr,
+		min(sizeof(ha->ip_address), sizeof(init_fw_cb->ipv4_addr)));
+	memcpy(ha->subnet_mask, init_fw_cb->ipv4_subnet,
+		min(sizeof(ha->subnet_mask), sizeof(init_fw_cb->ipv4_subnet)));
+	memcpy(ha->gateway, init_fw_cb->ipv4_gw_addr,
+		min(sizeof(ha->gateway), sizeof(init_fw_cb->ipv4_gw_addr)));
+
+	if (is_ipv6_enabled(ha)) {
+		/* Save IPv6 Address */
+		ha->ipv6_link_local_state = init_fw_cb->ipv6_lnk_lcl_addr_state;
+		ha->ipv6_addr0_state = init_fw_cb->ipv6_addr0_state;
+		ha->ipv6_addr1_state = init_fw_cb->ipv6_addr1_state;
+		ha->ipv6_default_router_state = init_fw_cb->ipv6_dflt_rtr_state;
+		ha->ipv6_link_local_addr.in6_u.u6_addr8[0] = 0xFE;
+		ha->ipv6_link_local_addr.in6_u.u6_addr8[1] = 0x80;
+
+		memcpy(&ha->ipv6_link_local_addr.in6_u.u6_addr8[8],
+			init_fw_cb->ipv6_if_id,
+			min(sizeof(ha->ipv6_link_local_addr)/2,
+			sizeof(init_fw_cb->ipv6_if_id)));
+		memcpy(&ha->ipv6_addr0, init_fw_cb->ipv6_addr0,
+			min(sizeof(ha->ipv6_addr0),
+			sizeof(init_fw_cb->ipv6_addr0)));
+		memcpy(&ha->ipv6_addr1, init_fw_cb->ipv6_addr1,
+			min(sizeof(ha->ipv6_addr1),
+			sizeof(init_fw_cb->ipv6_addr1)));
+		memcpy(&ha->ipv6_default_router_addr,
+			init_fw_cb->ipv6_dflt_rtr_addr,
+			min(sizeof(ha->ipv6_default_router_addr),
+			sizeof(init_fw_cb->ipv6_dflt_rtr_addr)));
+	}
+}
+
+static uint8_t
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 qla4xxx_update_local_ifcb(struct scsi_qla_host *ha,
 			  uint32_t *mbox_cmd,
 			  uint32_t *mbox_sts,
@@ -426,14 +476,30 @@ qla4xxx_update_local_ifcb(struct scsi_qla_host *ha,
 	/* Save some info in adapter structure. */
 	ha->acb_version = init_fw_cb->acb_version;
 	ha->firmware_options = le16_to_cpu(init_fw_cb->fw_options);
+<<<<<<< HEAD
+=======
+	ha->tcp_options = le16_to_cpu(init_fw_cb->ipv4_tcp_opts);
+	ha->ipv4_options = le16_to_cpu(init_fw_cb->ipv4_ip_opts);
+	ha->ipv4_addr_state = le16_to_cpu(init_fw_cb->ipv4_addr_state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ha->heartbeat_interval = init_fw_cb->hb_interval;
 	memcpy(ha->name_string, init_fw_cb->iscsi_name,
 		min(sizeof(ha->name_string),
 		sizeof(init_fw_cb->iscsi_name)));
+<<<<<<< HEAD
 	ha->def_timeout = le16_to_cpu(init_fw_cb->def_timeout);
 	/*memcpy(ha->alias, init_fw_cb->Alias,
 	       min(sizeof(ha->alias), sizeof(init_fw_cb->Alias)));*/
 
+=======
+	/*memcpy(ha->alias, init_fw_cb->Alias,
+	       min(sizeof(ha->alias), sizeof(init_fw_cb->Alias)));*/
+
+	if (ha->acb_version == ACB_SUPPORTED) {
+		ha->ipv6_options = init_fw_cb->ipv6_opts;
+		ha->ipv6_addl_options = init_fw_cb->ipv6_addtl_opts;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	qla4xxx_update_local_ip(ha, init_fw_cb);
 
 	return QLA_SUCCESS;
@@ -499,11 +565,18 @@ int qla4xxx_initialize_fw_cb(struct scsi_qla_host * ha)
 
 	init_fw_cb->fw_options &= __constant_cpu_to_le16(~FWOPT_TARGET_MODE);
 
+<<<<<<< HEAD
 	init_fw_cb->add_fw_options = 0;
 	init_fw_cb->add_fw_options |=
 			__constant_cpu_to_le16(ADFWOPT_SERIALIZE_TASK_MGMT);
 	init_fw_cb->add_fw_options |=
 			__constant_cpu_to_le16(ADFWOPT_AUTOCONN_DISABLE);
+=======
+	/* Set bit for "serialize task mgmt" all other bits need to be zero */
+	init_fw_cb->add_fw_options = 0;
+	init_fw_cb->add_fw_options |=
+	    __constant_cpu_to_le16(SERIALIZE_TASK_MGMT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (qla4xxx_set_ifcb(ha, &mbox_cmd[0], &mbox_sts[0], init_fw_cb_dma)
 		!= QLA_SUCCESS) {
@@ -622,7 +695,11 @@ int qla4xxx_get_firmware_status(struct scsi_qla_host * ha)
 		return QLA_ERROR;
 	}
 
+<<<<<<< HEAD
 	ql4_printk(KERN_INFO, ha, "%ld firmware IOCBs available (%d).\n",
+=======
+	ql4_printk(KERN_INFO, ha, "%ld firmare IOCBs available (%d).\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    ha->host_no, mbox_sts[2]);
 
 	return QLA_SUCCESS;
@@ -661,8 +738,11 @@ int qla4xxx_get_fwddb_entry(struct scsi_qla_host *ha,
 	}
 	memset(&mbox_cmd, 0, sizeof(mbox_cmd));
 	memset(&mbox_sts, 0, sizeof(mbox_sts));
+<<<<<<< HEAD
 	if (fw_ddb_entry)
 		memset(fw_ddb_entry, 0, sizeof(struct dev_db_entry));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mbox_cmd[0] = MBOX_CMD_GET_DATABASE_ENTRY;
 	mbox_cmd[1] = (uint32_t) fw_ddb_index;
@@ -731,6 +811,7 @@ exit_get_fwddb:
 	return status;
 }
 
+<<<<<<< HEAD
 int qla4xxx_conn_open(struct scsi_qla_host *ha, uint16_t fw_ddb_index)
 {
 	uint32_t mbox_cmd[MBOX_REG_COUNT];
@@ -751,10 +832,13 @@ int qla4xxx_conn_open(struct scsi_qla_host *ha, uint16_t fw_ddb_index)
 	return status;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * qla4xxx_set_fwddb_entry - sets a ddb entry.
  * @ha: Pointer to host adapter structure.
  * @fw_ddb_index: Firmware's device database index
+<<<<<<< HEAD
  * @fw_ddb_entry_dma: dma address of ddb entry
  * @mbx_sts: mailbox 0 to be returned or NULL
  *
@@ -763,6 +847,17 @@ int qla4xxx_conn_open(struct scsi_qla_host *ha, uint16_t fw_ddb_index)
  **/
 int qla4xxx_set_ddb_entry(struct scsi_qla_host * ha, uint16_t fw_ddb_index,
 			  dma_addr_t fw_ddb_entry_dma, uint32_t *mbx_sts)
+=======
+ * @fw_ddb_entry: Pointer to firmware's ddb entry structure, or NULL.
+ *
+ * This routine initializes or updates the adapter's device database
+ * entry for the specified device. It also triggers a login for the
+ * specified device. Therefore, it may also be used as a secondary
+ * login routine when a NULL pointer is specified for the fw_ddb_entry.
+ **/
+int qla4xxx_set_ddb_entry(struct scsi_qla_host * ha, uint16_t fw_ddb_index,
+			  dma_addr_t fw_ddb_entry_dma)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	uint32_t mbox_cmd[MBOX_REG_COUNT];
 	uint32_t mbox_sts[MBOX_REG_COUNT];
@@ -781,15 +876,20 @@ int qla4xxx_set_ddb_entry(struct scsi_qla_host * ha, uint16_t fw_ddb_index,
 	mbox_cmd[4] = sizeof(struct dev_db_entry);
 
 	status = qla4xxx_mailbox_command(ha, MBOX_REG_COUNT, 5, &mbox_cmd[0],
+<<<<<<< HEAD
 					 &mbox_sts[0]);
 	if (mbx_sts)
 		*mbx_sts = mbox_sts[0];
+=======
+	    &mbox_sts[0]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DEBUG2(printk("scsi%ld: %s: status=%d mbx0=0x%x mbx4=0x%x\n",
 	    ha->host_no, __func__, status, mbox_sts[0], mbox_sts[4]);)
 
 	return status;
 }
 
+<<<<<<< HEAD
 int qla4xxx_session_logout_ddb(struct scsi_qla_host *ha,
 			       struct ddb_entry *ddb_entry, int options)
 {
@@ -816,6 +916,8 @@ int qla4xxx_session_logout_ddb(struct scsi_qla_host *ha,
 	return status;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * qla4xxx_get_crash_record - retrieves crash record.
  * @ha: Pointer to host adapter structure.
@@ -892,6 +994,10 @@ void qla4xxx_get_conn_event_log(struct scsi_qla_host * ha)
 	uint32_t	max_event_log_entries;
 	uint8_t		i;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(&mbox_cmd, 0, sizeof(mbox_cmd));
 	memset(&mbox_sts, 0, sizeof(mbox_cmd));
 
@@ -1190,7 +1296,11 @@ exit_about_fw:
 	return status;
 }
 
+<<<<<<< HEAD
 static int qla4xxx_get_default_ddb(struct scsi_qla_host *ha, uint32_t options,
+=======
+static int qla4xxx_get_default_ddb(struct scsi_qla_host *ha,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   dma_addr_t dma_addr)
 {
 	uint32_t mbox_cmd[MBOX_REG_COUNT];
@@ -1200,7 +1310,10 @@ static int qla4xxx_get_default_ddb(struct scsi_qla_host *ha, uint32_t options,
 	memset(&mbox_sts, 0, sizeof(mbox_sts));
 
 	mbox_cmd[0] = MBOX_CMD_GET_DATABASE_ENTRY_DEFAULTS;
+<<<<<<< HEAD
 	mbox_cmd[1] = options;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mbox_cmd[2] = LSDW(dma_addr);
 	mbox_cmd[3] = MSDW(dma_addr);
 
@@ -1213,10 +1326,15 @@ static int qla4xxx_get_default_ddb(struct scsi_qla_host *ha, uint32_t options,
 	return QLA_SUCCESS;
 }
 
+<<<<<<< HEAD
 int qla4xxx_req_ddb_entry(struct scsi_qla_host *ha, uint32_t ddb_index,
 			  uint32_t *mbx_sts)
 {
 	int status;
+=======
+static int qla4xxx_req_ddb_entry(struct scsi_qla_host *ha, uint32_t *ddb_index)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint32_t mbox_cmd[MBOX_REG_COUNT];
 	uint32_t mbox_sts[MBOX_REG_COUNT];
 
@@ -1224,6 +1342,7 @@ int qla4xxx_req_ddb_entry(struct scsi_qla_host *ha, uint32_t ddb_index,
 	memset(&mbox_sts, 0, sizeof(mbox_sts));
 
 	mbox_cmd[0] = MBOX_CMD_REQUEST_DATABASE_ENTRY;
+<<<<<<< HEAD
 	mbox_cmd[1] = ddb_index;
 
 	status = qla4xxx_mailbox_command(ha, MBOX_REG_COUNT, 1, &mbox_cmd[0],
@@ -1880,3 +1999,77 @@ int qla4xxx_restore_factory_defaults(struct scsi_qla_host *ha,
 	}
 	return status;
 }
+=======
+	mbox_cmd[1] = MAX_PRST_DEV_DB_ENTRIES;
+
+	if (qla4xxx_mailbox_command(ha, MBOX_REG_COUNT, 3, &mbox_cmd[0], &mbox_sts[0]) !=
+	    QLA_SUCCESS) {
+		if (mbox_sts[0] == MBOX_STS_COMMAND_ERROR) {
+			*ddb_index = mbox_sts[2];
+		} else {
+			DEBUG2(printk("scsi%ld: %s: failed status %04X\n",
+			     ha->host_no, __func__, mbox_sts[0]));
+			return QLA_ERROR;
+		}
+	} else {
+		*ddb_index = MAX_PRST_DEV_DB_ENTRIES;
+	}
+
+	return QLA_SUCCESS;
+}
+
+
+int qla4xxx_send_tgts(struct scsi_qla_host *ha, char *ip, uint16_t port)
+{
+	struct dev_db_entry *fw_ddb_entry;
+	dma_addr_t fw_ddb_entry_dma;
+	uint32_t ddb_index;
+	int ret_val = QLA_SUCCESS;
+
+
+	fw_ddb_entry = dma_alloc_coherent(&ha->pdev->dev,
+					  sizeof(*fw_ddb_entry),
+					  &fw_ddb_entry_dma, GFP_KERNEL);
+	if (!fw_ddb_entry) {
+		DEBUG2(printk("scsi%ld: %s: Unable to allocate dma buffer.\n",
+			      ha->host_no, __func__));
+		ret_val = QLA_ERROR;
+		goto exit_send_tgts_no_free;
+	}
+
+	ret_val = qla4xxx_get_default_ddb(ha, fw_ddb_entry_dma);
+	if (ret_val != QLA_SUCCESS)
+		goto exit_send_tgts;
+
+	ret_val = qla4xxx_req_ddb_entry(ha, &ddb_index);
+	if (ret_val != QLA_SUCCESS)
+		goto exit_send_tgts;
+
+	memset(fw_ddb_entry->iscsi_alias, 0,
+	       sizeof(fw_ddb_entry->iscsi_alias));
+
+	memset(fw_ddb_entry->iscsi_name, 0,
+	       sizeof(fw_ddb_entry->iscsi_name));
+
+	memset(fw_ddb_entry->ip_addr, 0, sizeof(fw_ddb_entry->ip_addr));
+	memset(fw_ddb_entry->tgt_addr, 0,
+	       sizeof(fw_ddb_entry->tgt_addr));
+
+	fw_ddb_entry->options = (DDB_OPT_DISC_SESSION | DDB_OPT_TARGET);
+	fw_ddb_entry->port = cpu_to_le16(ntohs(port));
+
+	fw_ddb_entry->ip_addr[0] = *ip;
+	fw_ddb_entry->ip_addr[1] = *(ip + 1);
+	fw_ddb_entry->ip_addr[2] = *(ip + 2);
+	fw_ddb_entry->ip_addr[3] = *(ip + 3);
+
+	ret_val = qla4xxx_set_ddb_entry(ha, ddb_index, fw_ddb_entry_dma);
+
+exit_send_tgts:
+	dma_free_coherent(&ha->pdev->dev, sizeof(*fw_ddb_entry),
+			  fw_ddb_entry, fw_ddb_entry_dma);
+exit_send_tgts_no_free:
+	return ret_val;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

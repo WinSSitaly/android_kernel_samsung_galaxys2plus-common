@@ -49,19 +49,31 @@ static LIST_HEAD(hybrid_tuner_instance_list);
 #define dprintk(level, fmt, arg...) if (debug >= level) \
 	printk(KERN_INFO "%s: " fmt, "xc5000", ## arg)
 
+<<<<<<< HEAD
+=======
+#define XC5000_DEFAULT_FIRMWARE "dvb-fe-xc5000-1.6.114.fw"
+#define XC5000_DEFAULT_FIRMWARE_SIZE 12401
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct xc5000_priv {
 	struct tuner_i2c_props i2c_props;
 	struct list_head hybrid_tuner_instance_list;
 
 	u32 if_khz;
+<<<<<<< HEAD
 	u32 xtal_khz;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 freq_hz;
 	u32 bandwidth;
 	u8  video_standard;
 	u8  rf_mode;
 	u8  radio_input;
+<<<<<<< HEAD
 
 	int chip_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Misc Defines */
@@ -204,6 +216,7 @@ static struct XC_TV_STANDARD XC5000_Standard[MAX_TV_STANDARD] = {
 	{"FM Radio-INPUT1_MONO", 0x0278, 0x9002}
 };
 
+<<<<<<< HEAD
 
 struct xc5000_fw_cfg {
 	char *name;
@@ -231,6 +244,8 @@ static inline const struct xc5000_fw_cfg *xc5000_assign_firmware(int chip_id)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int xc_load_fw_and_init_tuner(struct dvb_frontend *fe);
 static int xc5000_is_firmware_loaded(struct dvb_frontend *fe);
 static int xc5000_readreg(struct xc5000_priv *priv, u16 reg, u16 *val);
@@ -573,6 +588,7 @@ static int xc_tune_channel(struct xc5000_priv *priv, u32 freq_hz, int mode)
 	return found;
 }
 
+<<<<<<< HEAD
 static int xc_set_xtal(struct dvb_frontend *fe)
 {
 	struct xc5000_priv *priv = fe->tuner_priv;
@@ -598,12 +614,15 @@ static int xc_set_xtal(struct dvb_frontend *fe)
 	}
 	return ret;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int xc5000_fwupload(struct dvb_frontend *fe)
 {
 	struct xc5000_priv *priv = fe->tuner_priv;
 	const struct firmware *fw;
 	int ret;
+<<<<<<< HEAD
 	const struct xc5000_fw_cfg *desired_fw =
 		xc5000_assign_firmware(priv->chip_id);
 
@@ -612,6 +631,14 @@ static int xc5000_fwupload(struct dvb_frontend *fe)
 		desired_fw->name);
 
 	ret = request_firmware(&fw, desired_fw->name,
+=======
+
+	/* request the firmware, this will block and timeout */
+	printk(KERN_INFO "xc5000: waiting for firmware upload (%s)...\n",
+		XC5000_DEFAULT_FIRMWARE);
+
+	ret = request_firmware(&fw, XC5000_DEFAULT_FIRMWARE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		priv->i2c_props.adap->dev.parent);
 	if (ret) {
 		printk(KERN_ERR "xc5000: Upload failed. (file not found?)\n");
@@ -623,14 +650,21 @@ static int xc5000_fwupload(struct dvb_frontend *fe)
 		ret = XC_RESULT_SUCCESS;
 	}
 
+<<<<<<< HEAD
 	if (fw->size != desired_fw->size) {
+=======
+	if (fw->size != XC5000_DEFAULT_FIRMWARE_SIZE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR "xc5000: firmware incorrect size\n");
 		ret = XC_RESULT_RESET_FAILURE;
 	} else {
 		printk(KERN_INFO "xc5000: firmware uploading...\n");
 		ret = xc_load_i2c_sequence(fe,  fw->data);
+<<<<<<< HEAD
 		if (XC_RESULT_SUCCESS == ret)
 			ret = xc_set_xtal(fe);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_INFO "xc5000: firmware upload complete...\n");
 	}
 
@@ -684,6 +718,7 @@ static void xc_debug_dump(struct xc5000_priv *priv)
 	dprintk(1, "*** Quality (0:<8dB, 7:>56dB) = %d\n", quality);
 }
 
+<<<<<<< HEAD
 static int xc5000_set_params(struct dvb_frontend *fe)
 {
 	int ret, b;
@@ -691,6 +726,22 @@ static int xc5000_set_params(struct dvb_frontend *fe)
 	u32 bw = fe->dtv_property_cache.bandwidth_hz;
 	u32 freq = fe->dtv_property_cache.frequency;
 	u32 delsys  = fe->dtv_property_cache.delivery_system;
+=======
+/*
+ * As defined on EN 300 429, the DVB-C roll-off factor is 0.15.
+ * So, the amount of the needed bandwith is given by:
+ * 	Bw = Symbol_rate * (1 + 0.15)
+ * As such, the maximum symbol rate supported by 6 MHz is given by:
+ *	max_symbol_rate = 6 MHz / 1.15 = 5217391 Bauds
+ */
+#define MAX_SYMBOL_RATE_6MHz	5217391
+
+static int xc5000_set_params(struct dvb_frontend *fe,
+	struct dvb_frontend_parameters *params)
+{
+	struct xc5000_priv *priv = fe->tuner_priv;
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (xc5000_is_firmware_loaded(fe) != XC_RESULT_SUCCESS) {
 		if (xc_load_fw_and_init_tuner(fe) != XC_RESULT_SUCCESS) {
@@ -699,6 +750,7 @@ static int xc5000_set_params(struct dvb_frontend *fe)
 		}
 	}
 
+<<<<<<< HEAD
 	dprintk(1, "%s() frequency=%d (Hz)\n", __func__, freq);
 
 	switch (delsys) {
@@ -729,12 +781,55 @@ static int xc5000_set_params(struct dvb_frontend *fe)
 		case 8000000:
 			priv->video_standard = DTV8;
 			priv->freq_hz = freq - 2750000;
+=======
+	dprintk(1, "%s() frequency=%d (Hz)\n", __func__, params->frequency);
+
+	if (fe->ops.info.type == FE_ATSC) {
+		dprintk(1, "%s() ATSC\n", __func__);
+		switch (params->u.vsb.modulation) {
+		case VSB_8:
+		case VSB_16:
+			dprintk(1, "%s() VSB modulation\n", __func__);
+			priv->rf_mode = XC_RF_MODE_AIR;
+			priv->freq_hz = params->frequency - 1750000;
+			priv->bandwidth = BANDWIDTH_6_MHZ;
+			priv->video_standard = DTV6;
+			break;
+		case QAM_64:
+		case QAM_256:
+		case QAM_AUTO:
+			dprintk(1, "%s() QAM modulation\n", __func__);
+			priv->rf_mode = XC_RF_MODE_CABLE;
+			priv->freq_hz = params->frequency - 1750000;
+			priv->bandwidth = BANDWIDTH_6_MHZ;
+			priv->video_standard = DTV6;
+			break;
+		default:
+			return -EINVAL;
+		}
+	} else if (fe->ops.info.type == FE_OFDM) {
+		dprintk(1, "%s() OFDM\n", __func__);
+		switch (params->u.ofdm.bandwidth) {
+		case BANDWIDTH_6_MHZ:
+			priv->bandwidth = BANDWIDTH_6_MHZ;
+			priv->video_standard = DTV6;
+			priv->freq_hz = params->frequency - 1750000;
+			break;
+		case BANDWIDTH_7_MHZ:
+			printk(KERN_ERR "xc5000 bandwidth 7MHz not supported\n");
+			return -EINVAL;
+		case BANDWIDTH_8_MHZ:
+			priv->bandwidth = BANDWIDTH_8_MHZ;
+			priv->video_standard = DTV8;
+			priv->freq_hz = params->frequency - 2750000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		default:
 			printk(KERN_ERR "xc5000 bandwidth not set!\n");
 			return -EINVAL;
 		}
 		priv->rf_mode = XC_RF_MODE_AIR;
+<<<<<<< HEAD
 	case SYS_DVBC_ANNEX_A:
 	case SYS_DVBC_ANNEX_C:
 		dprintk(1, "%s() QAM modulation\n", __func__);
@@ -762,6 +857,44 @@ static int xc5000_set_params(struct dvb_frontend *fe)
 
 	dprintk(1, "%s() frequency=%d (compensated to %d)\n",
 		__func__, freq, priv->freq_hz);
+=======
+	} else if (fe->ops.info.type == FE_QAM) {
+		switch (params->u.qam.modulation) {
+		case QAM_256:
+		case QAM_AUTO:
+		case QAM_16:
+		case QAM_32:
+		case QAM_64:
+		case QAM_128:
+			dprintk(1, "%s() QAM modulation\n", __func__);
+			priv->rf_mode = XC_RF_MODE_CABLE;
+			/*
+			 * Using a 8MHz bandwidth sometimes fail
+			 * with 6MHz-spaced channels, due to inter-carrier
+			 * interference. So, use DTV6 firmware
+			 */
+			if (params->u.qam.symbol_rate <= MAX_SYMBOL_RATE_6MHz) {
+				priv->bandwidth = BANDWIDTH_6_MHZ;
+				priv->video_standard = DTV6;
+				priv->freq_hz = params->frequency - 1750000;
+			} else {
+				priv->bandwidth = BANDWIDTH_8_MHZ;
+				priv->video_standard = DTV7_8;
+				priv->freq_hz = params->frequency - 2750000;
+			}
+			break;
+		default:
+			dprintk(1, "%s() Unsupported QAM type\n", __func__);
+			return -EINVAL;
+		}
+	} else {
+		printk(KERN_ERR "xc5000 modulation type not supported!\n");
+		return -EINVAL;
+	}
+
+	dprintk(1, "%s() frequency=%d (compensated)\n",
+		__func__, priv->freq_hz);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = xc_SetSignalSource(priv, priv->rf_mode);
 	if (ret != XC_RESULT_SUCCESS) {
@@ -793,8 +926,11 @@ static int xc5000_set_params(struct dvb_frontend *fe)
 	if (debug)
 		xc_debug_dump(priv);
 
+<<<<<<< HEAD
 	priv->bandwidth = bw;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1000,6 +1136,7 @@ static int xc5000_get_frequency(struct dvb_frontend *fe, u32 *freq)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int xc5000_get_if_frequency(struct dvb_frontend *fe, u32 *freq)
 {
 	struct xc5000_priv *priv = fe->tuner_priv;
@@ -1008,6 +1145,8 @@ static int xc5000_get_if_frequency(struct dvb_frontend *fe, u32 *freq)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int xc5000_get_bandwidth(struct dvb_frontend *fe, u32 *bw)
 {
 	struct xc5000_priv *priv = fe->tuner_priv;
@@ -1148,7 +1287,10 @@ static const struct dvb_tuner_ops xc5000_tuner_ops = {
 	.set_params	   = xc5000_set_params,
 	.set_analog_params = xc5000_set_analog_params,
 	.get_frequency	   = xc5000_get_frequency,
+<<<<<<< HEAD
 	.get_if_frequency  = xc5000_get_if_frequency,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.get_bandwidth	   = xc5000_get_bandwidth,
 	.get_status	   = xc5000_get_status
 };
@@ -1176,7 +1318,11 @@ struct dvb_frontend *xc5000_attach(struct dvb_frontend *fe,
 		break;
 	case 1:
 		/* new tuner instance */
+<<<<<<< HEAD
 		priv->bandwidth = 6000000;
+=======
+		priv->bandwidth = BANDWIDTH_6_MHZ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fe->tuner_priv = priv;
 		break;
 	default:
@@ -1192,6 +1338,7 @@ struct dvb_frontend *xc5000_attach(struct dvb_frontend *fe,
 		priv->if_khz = cfg->if_khz;
 	}
 
+<<<<<<< HEAD
 	if (priv->xtal_khz == 0)
 		priv->xtal_khz = cfg->xtal_khz;
 
@@ -1205,6 +1352,11 @@ struct dvb_frontend *xc5000_attach(struct dvb_frontend *fe,
 		   it can be overridden if this is a hybrid driver */
 		priv->chip_id = (cfg->chip_id) ? cfg->chip_id : 0;
 
+=======
+	if (priv->radio_input == 0)
+		priv->radio_input = cfg->radio_input;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Check if firmware has been loaded. It is possible that another
 	   instance of the driver has loaded the firmware.
 	 */

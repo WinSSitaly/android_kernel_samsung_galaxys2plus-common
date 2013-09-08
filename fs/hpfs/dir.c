@@ -29,10 +29,13 @@ static loff_t hpfs_dir_lseek(struct file *filp, loff_t off, int whence)
 	struct hpfs_inode_info *hpfs_inode = hpfs_i(i);
 	struct super_block *s = i->i_sb;
 
+<<<<<<< HEAD
 	/* Somebody else will have to figure out what to do here */
 	if (whence == SEEK_DATA || whence == SEEK_HOLE)
 		return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hpfs_lock(s);
 
 	/*printk("dir lseek\n");*/
@@ -247,7 +250,11 @@ struct dentry *hpfs_lookup(struct inode *dir, struct dentry *dentry, struct name
 			result->i_mode &= ~0111;
 			result->i_op = &hpfs_file_iops;
 			result->i_fop = &hpfs_file_ops;
+<<<<<<< HEAD
 			set_nlink(result, 1);
+=======
+			result->i_nlink = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		unlock_new_inode(result);
 	}

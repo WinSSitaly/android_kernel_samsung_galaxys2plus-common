@@ -22,7 +22,10 @@
 #ifndef _ISLPCI_DEV_H
 #define _ISLPCI_DEV_H
 
+<<<<<<< HEAD
 #include <linux/irqreturn.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/netdevice.h>
 #include <linux/wireless.h>
 #include <net/iw_handler.h>

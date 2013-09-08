@@ -859,8 +859,13 @@ void dlm_complete_recovery_thread(struct dlm_ctxt *dlm);
 void dlm_wait_for_recovery(struct dlm_ctxt *dlm);
 void dlm_kick_recovery_thread(struct dlm_ctxt *dlm);
 int dlm_is_node_dead(struct dlm_ctxt *dlm, u8 node);
+<<<<<<< HEAD
 void dlm_wait_for_node_death(struct dlm_ctxt *dlm, u8 node, int timeout);
 void dlm_wait_for_node_recovery(struct dlm_ctxt *dlm, u8 node, int timeout);
+=======
+int dlm_wait_for_node_death(struct dlm_ctxt *dlm, u8 node, int timeout);
+int dlm_wait_for_node_recovery(struct dlm_ctxt *dlm, u8 node, int timeout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void dlm_put(struct dlm_ctxt *dlm);
 struct dlm_ctxt *dlm_grab(struct dlm_ctxt *dlm);
@@ -877,8 +882,14 @@ static inline void dlm_lockres_get(struct dlm_lock_resource *res)
 	kref_get(&res->refs);
 }
 void dlm_lockres_put(struct dlm_lock_resource *res);
+<<<<<<< HEAD
 void __dlm_unhash_lockres(struct dlm_ctxt *dlm, struct dlm_lock_resource *res);
 void __dlm_insert_lockres(struct dlm_ctxt *dlm, struct dlm_lock_resource *res);
+=======
+void __dlm_unhash_lockres(struct dlm_lock_resource *res);
+void __dlm_insert_lockres(struct dlm_ctxt *dlm,
+			  struct dlm_lock_resource *res);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct dlm_lock_resource * __dlm_lookup_lockres_full(struct dlm_ctxt *dlm,
 						     const char *name,
 						     unsigned int len,
@@ -901,6 +912,7 @@ struct dlm_lock_resource *dlm_new_lockres(struct dlm_ctxt *dlm,
 					  const char *name,
 					  unsigned int namelen);
 
+<<<<<<< HEAD
 void dlm_lockres_set_refmap_bit(struct dlm_ctxt *dlm,
 				struct dlm_lock_resource *res, int bit);
 void dlm_lockres_clear_refmap_bit(struct dlm_ctxt *dlm,
@@ -910,6 +922,48 @@ void dlm_lockres_drop_inflight_ref(struct dlm_ctxt *dlm,
 				   struct dlm_lock_resource *res);
 void dlm_lockres_grab_inflight_ref(struct dlm_ctxt *dlm,
 				   struct dlm_lock_resource *res);
+=======
+#define dlm_lockres_set_refmap_bit(bit,res)  \
+	__dlm_lockres_set_refmap_bit(bit,res,__FILE__,__LINE__)
+#define dlm_lockres_clear_refmap_bit(bit,res)  \
+	__dlm_lockres_clear_refmap_bit(bit,res,__FILE__,__LINE__)
+
+static inline void __dlm_lockres_set_refmap_bit(int bit,
+						struct dlm_lock_resource *res,
+						const char *file,
+						int line)
+{
+	//printk("%s:%d:%.*s: setting bit %d\n", file, line,
+	//     res->lockname.len, res->lockname.name, bit);
+	set_bit(bit, res->refmap);
+}
+
+static inline void __dlm_lockres_clear_refmap_bit(int bit,
+						  struct dlm_lock_resource *res,
+						  const char *file,
+						  int line)
+{
+	//printk("%s:%d:%.*s: clearing bit %d\n", file, line,
+	//     res->lockname.len, res->lockname.name, bit);
+	clear_bit(bit, res->refmap);
+}
+
+void __dlm_lockres_drop_inflight_ref(struct dlm_ctxt *dlm,
+				   struct dlm_lock_resource *res,
+				   const char *file,
+				   int line);
+void __dlm_lockres_grab_inflight_ref(struct dlm_ctxt *dlm,
+				   struct dlm_lock_resource *res,
+				   int new_lockres,
+				   const char *file,
+				   int line);
+#define dlm_lockres_drop_inflight_ref(d,r)  \
+	__dlm_lockres_drop_inflight_ref(d,r,__FILE__,__LINE__)
+#define dlm_lockres_grab_inflight_ref(d,r)  \
+	__dlm_lockres_grab_inflight_ref(d,r,0,__FILE__,__LINE__)
+#define dlm_lockres_grab_inflight_ref_new(d,r)  \
+	__dlm_lockres_grab_inflight_ref(d,r,1,__FILE__,__LINE__)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void dlm_queue_ast(struct dlm_ctxt *dlm, struct dlm_lock *lock);
 void dlm_queue_bast(struct dlm_ctxt *dlm, struct dlm_lock *lock);

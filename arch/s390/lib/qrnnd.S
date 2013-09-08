@@ -1,7 +1,10 @@
 # S/390 __udiv_qrnnd
 
+<<<<<<< HEAD
 #include <linux/linkage.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # r2 : &__r
 # r3 : upper half of 64 bit word n
 # r4 : lower half of 64 bit word n
@@ -10,7 +13,12 @@
 # the quotient q is to be returned
 
 	.text
+<<<<<<< HEAD
 ENTRY(__udiv_qrnnd)
+=======
+	.globl __udiv_qrnnd
+__udiv_qrnnd:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	st    %r2,24(%r15)	  # store pointer to reminder for later
 	lr    %r0,%r3		  # reload n
 	lr    %r1,%r4

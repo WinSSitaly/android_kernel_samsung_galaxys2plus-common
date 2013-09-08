@@ -11,9 +11,19 @@
 extern void mac_reset(void);
 extern void mac_poweroff(void);
 extern void mac_init_IRQ(void);
+<<<<<<< HEAD
 
 extern void mac_irq_enable(struct irq_data *data);
 extern void mac_irq_disable(struct irq_data *data);
+=======
+extern int mac_irq_pending(unsigned int);
+
+/*
+ *	Floppy driver magic hook - probably shouldn't be here
+ */
+
+extern void via1_set_head(int);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  *	Macintosh Table
@@ -42,7 +52,11 @@ struct mac_model
 #define MAC_ADB_IOP		6
 
 #define MAC_VIA_II		1
+<<<<<<< HEAD
 #define MAC_VIA_IICI		2
+=======
+#define MAC_VIA_IIci		2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MAC_VIA_QUADRA		3
 
 #define MAC_SCSI_NONE		0

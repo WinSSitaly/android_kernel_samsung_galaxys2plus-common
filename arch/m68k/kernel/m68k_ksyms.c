@@ -14,7 +14,11 @@ EXPORT_SYMBOL(__ashrdi3);
 EXPORT_SYMBOL(__lshrdi3);
 EXPORT_SYMBOL(__muldi3);
 
+<<<<<<< HEAD
 #if defined(CONFIG_CPU_HAS_NO_MULDIV64)
+=======
+#if defined(CONFIG_M68000) || defined(CONFIG_COLDFIRE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Simpler 68k and ColdFire parts also need a few other gcc functions.
  */

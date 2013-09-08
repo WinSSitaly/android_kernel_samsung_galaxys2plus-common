@@ -100,7 +100,11 @@ static int usb_hcd_fsl_probe(const struct hc_driver *driver,
 		goto err2;
 	}
 	hcd->rsrc_start = res->start;
+<<<<<<< HEAD
 	hcd->rsrc_len = resource_size(res);
+=======
+	hcd->rsrc_len = res->end - res->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len,
 				driver->description)) {
 		dev_dbg(&pdev->dev, "controller already in use\n");
@@ -134,7 +138,11 @@ static int usb_hcd_fsl_probe(const struct hc_driver *driver,
 
 	/* Don't need to set host mode here. It will be done by tdi_reset() */
 
+<<<<<<< HEAD
 	retval = usb_add_hcd(hcd, irq, IRQF_SHARED);
+=======
+	retval = usb_add_hcd(hcd, irq, IRQF_DISABLED | IRQF_SHARED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval != 0)
 		goto err4;
 
@@ -142,12 +150,20 @@ static int usb_hcd_fsl_probe(const struct hc_driver *driver,
 	if (pdata->operating_mode == FSL_USB2_DR_OTG) {
 		struct ehci_hcd *ehci = hcd_to_ehci(hcd);
 
+<<<<<<< HEAD
 		ehci->transceiver = usb_get_transceiver();
+=======
+		ehci->transceiver = otg_get_transceiver();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_dbg(&pdev->dev, "hcd=0x%p  ehci=0x%p, transceiver=0x%p\n",
 			hcd, ehci, ehci->transceiver);
 
 		if (ehci->transceiver) {
+<<<<<<< HEAD
 			retval = otg_set_host(ehci->transceiver->otg,
+=======
+			retval = otg_set_host(ehci->transceiver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					      &ehci_to_hcd(ehci)->self);
 			if (retval) {
 				if (ehci->transceiver)
@@ -194,7 +210,11 @@ static void usb_hcd_fsl_remove(struct usb_hcd *hcd,
 	struct ehci_hcd *ehci = hcd_to_ehci(hcd);
 
 	if (ehci->transceiver) {
+<<<<<<< HEAD
 		otg_set_host(ehci->transceiver->otg, NULL);
+=======
+		otg_set_host(ehci->transceiver, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		put_device(ehci->transceiver->dev);
 	}
 
@@ -218,9 +238,12 @@ static void ehci_fsl_setup_phy(struct ehci_hcd *ehci,
 	u32 portsc;
 	struct usb_hcd *hcd = ehci_to_hcd(ehci);
 	void __iomem *non_ehci = hcd->regs;
+<<<<<<< HEAD
 	struct fsl_usb2_platform_data *pdata;
 
 	pdata = hcd->self.controller->platform_data;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	portsc = ehci_readl(ehci, &ehci->regs->port_status[port_offset]);
 	portsc &= ~(PORT_PTS_MSK | PORT_PTS_PTW);
@@ -237,9 +260,13 @@ static void ehci_fsl_setup_phy(struct ehci_hcd *ehci,
 		/* fall through */
 	case FSL_USB2_PHY_UTMI:
 		/* enable UTMI PHY */
+<<<<<<< HEAD
 		if (pdata->have_sysif_regs)
 			setbits32(non_ehci + FSL_SOC_USB_CTRL,
 				  CTRL_UTMI_PHY_EN);
+=======
+		setbits32(non_ehci + FSL_SOC_USB_CTRL, CTRL_UTMI_PHY_EN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		portsc |= PORT_PTS_UTMI;
 		break;
 	case FSL_USB2_PHY_NONE:
@@ -261,6 +288,7 @@ static void ehci_fsl_usb_setup(struct ehci_hcd *ehci)
 	if (pdata->have_sysif_regs) {
 		temp = in_be32(non_ehci + FSL_SOC_USB_CTRL);
 		out_be32(non_ehci + FSL_SOC_USB_CTRL, temp | 0x00000004);
+<<<<<<< HEAD
 
 		/*
 		* Turn on cache snooping hardware, since some PowerPC platforms
@@ -273,6 +301,23 @@ static void ehci_fsl_usb_setup(struct ehci_hcd *ehci)
 		/* SNOOP2 starts from 0x80000000, size 2G */
 		out_be32(non_ehci + FSL_SOC_USB_SNOOP2, 0x80000000 | SNOOP_SIZE_2GB);
 	}
+=======
+		out_be32(non_ehci + FSL_SOC_USB_SNOOP1, 0x0000001b);
+	}
+
+#if defined(CONFIG_PPC32) && !defined(CONFIG_NOT_COHERENT_CACHE)
+	/*
+	 * Turn on cache snooping hardware, since some PowerPC platforms
+	 * wholly rely on hardware to deal with cache coherent
+	 */
+
+	/* Setup Snooping for all the 4GB space */
+	/* SNOOP1 starts from 0x0, size 2G */
+	out_be32(non_ehci + FSL_SOC_USB_SNOOP1, 0x0 | SNOOP_SIZE_2GB);
+	/* SNOOP2 starts from 0x80000000, size 2G */
+	out_be32(non_ehci + FSL_SOC_USB_SNOOP2, 0x80000000 | SNOOP_SIZE_2GB);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((pdata->operating_mode == FSL_USB2_DR_HOST) ||
 			(pdata->operating_mode == FSL_USB2_DR_OTG))
@@ -322,9 +367,13 @@ static int ehci_fsl_setup(struct usb_hcd *hcd)
 	struct ehci_hcd *ehci = hcd_to_ehci(hcd);
 	int retval;
 	struct fsl_usb2_platform_data *pdata;
+<<<<<<< HEAD
 	struct device *dev;
 
 	dev = hcd->self.controller;
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pdata = hcd->self.controller->platform_data;
 	ehci->big_endian_desc = pdata->big_endian_desc;
 	ehci->big_endian_mmio = pdata->big_endian_mmio;
@@ -354,6 +403,7 @@ static int ehci_fsl_setup(struct usb_hcd *hcd)
 
 	ehci_reset(ehci);
 
+<<<<<<< HEAD
 	if (of_device_is_compatible(dev->parent->of_node,
 				    "fsl,mpc5121-usb2-dr")) {
 		/*
@@ -364,6 +414,8 @@ static int ehci_fsl_setup(struct usb_hcd *hcd)
 			    hcd->regs + FSL_SOC_USB_SBUSCFG);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	retval = ehci_fsl_reinit(ehci);
 	return retval;
 }
@@ -410,7 +462,11 @@ static int ehci_fsl_mpc512x_drv_suspend(struct device *dev)
 
 	dev_dbg(dev, "suspending...\n");
 
+<<<<<<< HEAD
 	ehci->rh_state = EHCI_RH_SUSPENDED;
+=======
+	hcd->state = HC_STATE_SUSPENDED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->power.power_state = PMSG_SUSPEND;
 
 	/* ignore non-host interrupts */
@@ -487,8 +543,11 @@ static int ehci_fsl_mpc512x_drv_resume(struct device *dev)
 	ehci_writel(ehci, ISIPHYCTRL_PXE | ISIPHYCTRL_PHYE,
 		    hcd->regs + FSL_SOC_USB_ISIPHYCTRL);
 
+<<<<<<< HEAD
 	ehci_writel(ehci, SBUSCFG_INCR8, hcd->regs + FSL_SOC_USB_SBUSCFG);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* restore EHCI registers */
 	ehci_writel(ehci, pdata->pm_command, &ehci->regs->command);
 	ehci_writel(ehci, pdata->pm_intr_enable, &ehci->regs->intr_enable);
@@ -501,7 +560,11 @@ static int ehci_fsl_mpc512x_drv_resume(struct device *dev)
 	ehci_writel(ehci, pdata->pm_portsc, &ehci->regs->port_status[0]);
 
 	set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
+<<<<<<< HEAD
 	ehci->rh_state = EHCI_RH_RUNNING;
+=======
+	hcd->state = HC_STATE_RUNNING;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->power.power_state = PMSG_ON;
 
 	tmp = ehci_readl(ehci, &ehci->regs->command);

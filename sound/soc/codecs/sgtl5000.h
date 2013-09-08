@@ -280,7 +280,11 @@
 /*
  * SGTL5000_CHIP_MIC_CTRL
  */
+<<<<<<< HEAD
 #define SGTL5000_BIAS_R_MASK			0x0300
+=======
+#define SGTL5000_BIAS_R_MASK			0x0200
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SGTL5000_BIAS_R_SHIFT			8
 #define SGTL5000_BIAS_R_WIDTH			2
 #define SGTL5000_BIAS_R_off			0x0
@@ -347,7 +351,11 @@
 #define SGTL5000_PLL_INT_DIV_MASK		0xf800
 #define SGTL5000_PLL_INT_DIV_SHIFT		11
 #define SGTL5000_PLL_INT_DIV_WIDTH		5
+<<<<<<< HEAD
 #define SGTL5000_PLL_FRAC_DIV_MASK		0x07ff
+=======
+#define SGTL5000_PLL_FRAC_DIV_MASK		0x0700
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SGTL5000_PLL_FRAC_DIV_SHIFT		0
 #define SGTL5000_PLL_FRAC_DIV_WIDTH		11
 

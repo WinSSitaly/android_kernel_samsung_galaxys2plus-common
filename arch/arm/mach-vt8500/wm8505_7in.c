@@ -68,7 +68,11 @@ void __init wm8505_7in_init(void)
 }
 
 MACHINE_START(WM8505_7IN_NETBOOK, "WM8505 7-inch generic netbook")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= 0x00000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.reserve	= wm8505_reserve_mem,
 	.map_io		= wm8505_map_io,
 	.init_irq	= wm8505_init_irq,

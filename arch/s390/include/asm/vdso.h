@@ -40,8 +40,13 @@ struct vdso_per_cpu_data {
 extern struct vdso_data *vdso_data;
 
 #ifdef CONFIG_64BIT
+<<<<<<< HEAD
 int vdso_alloc_per_cpu(struct _lowcore *lowcore);
 void vdso_free_per_cpu(struct _lowcore *lowcore);
+=======
+int vdso_alloc_per_cpu(int cpu, struct _lowcore *lowcore);
+void vdso_free_per_cpu(int cpu, struct _lowcore *lowcore);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #endif /* __ASSEMBLY__ */

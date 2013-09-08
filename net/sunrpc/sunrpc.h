@@ -47,7 +47,10 @@ int svc_send_common(struct socket *sock, struct xdr_buf *xdr,
 		    struct page *headpage, unsigned long headoffset,
 		    struct page *tailpage, unsigned long tailoffset);
 
+<<<<<<< HEAD
 int rpc_clients_notifier_register(void);
 void rpc_clients_notifier_unregister(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _NET_SUNRPC_SUNRPC_H */
 

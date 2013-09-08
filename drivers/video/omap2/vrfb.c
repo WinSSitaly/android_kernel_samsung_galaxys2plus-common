@@ -27,6 +27,10 @@
 #include <linux/bitops.h>
 #include <linux/mutex.h>
 
+<<<<<<< HEAD
+=======
+#include <mach/io.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/vrfb.h>
 #include <plat/sdrc.h>
 

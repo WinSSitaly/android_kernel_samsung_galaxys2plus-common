@@ -12,7 +12,10 @@
 
 #include <linux/err.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/stat.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/mmc/host.h>
 #include <linux/mmc/card.h>
@@ -23,6 +26,13 @@
 #include "mmc_ops.h"
 #include "sd_ops.h"
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MMC_BCM_SD
+#include "../host/sdhci.h"
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const unsigned int tran_exp[] = {
 	10000,		100000,		1000000,	10000000,
 	0,		0,		0,		0
@@ -102,11 +112,38 @@ static int mmc_decode_cid(struct mmc_card *card)
 		break;
 
 	default:
+<<<<<<< HEAD
 		pr_err("%s: card has unknown MMCA version %d\n",
+=======
+		printk(KERN_ERR "%s: card has unknown MMCA version %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mmc_hostname(card->host), card->csd.mmca_vsn);
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
+=======
+
+	/*
+	 * Vendor specification
+	 */
+	switch (card->cid.manfid) {
+	case 0x15:
+//		printk("%s, %d : %x - Samsung semi device\n", __FUNCTION__, __LINE__, card->cid.manfid);
+		break;
+
+	case 0x45:
+//		printk("%s, %d : %x - Sandisk device\n", __FUNCTION__, __LINE__, card->cid.manfid);
+		card->quirks	|= MMC_QUIRK_RESET_FOR_CARD_INIT;
+		break;
+
+	default:
+//		printk("%s, %d : %x - Unknown device\n", __FUNCTION__, __LINE__, card->cid.manfid);
+		break;
+	}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -136,7 +173,11 @@ static int mmc_decode_csd(struct mmc_card *card)
 	 */
 	csd->structure = UNSTUFF_BITS(resp, 126, 2);
 	if (csd->structure == 0) {
+<<<<<<< HEAD
 		pr_err("%s: unrecognised CSD structure version %d\n",
+=======
+		printk(KERN_ERR "%s: unrecognised CSD structure version %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mmc_hostname(card->host), csd->structure);
 		return -EINVAL;
 	}
@@ -196,7 +237,11 @@ static int mmc_get_ext_csd(struct mmc_card *card, u8 **new_ext_csd)
 	 */
 	ext_csd = kmalloc(512, GFP_KERNEL);
 	if (!ext_csd) {
+<<<<<<< HEAD
 		pr_err("%s: could not allocate a buffer to "
+=======
+		printk(KERN_ERR "%s: could not allocate a buffer to "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"receive the ext_csd.\n", mmc_hostname(card->host));
 		return -ENOMEM;
 	}
@@ -218,12 +263,20 @@ static int mmc_get_ext_csd(struct mmc_card *card, u8 **new_ext_csd)
 		 * stored in their CSD.
 		 */
 		if (card->csd.capacity == (4096 * 512)) {
+<<<<<<< HEAD
 			pr_err("%s: unable to read EXT_CSD "
+=======
+			printk(KERN_ERR "%s: unable to read EXT_CSD "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"on a possible high capacity card. "
 				"Card will be ignored.\n",
 				mmc_hostname(card->host));
 		} else {
+<<<<<<< HEAD
 			pr_warning("%s: unable to read "
+=======
+			printk(KERN_WARNING "%s: unable to read "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"EXT_CSD, performance might "
 				"suffer.\n",
 				mmc_hostname(card->host));
@@ -240,9 +293,13 @@ static int mmc_get_ext_csd(struct mmc_card *card, u8 **new_ext_csd)
  */
 static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 {
+<<<<<<< HEAD
 	int err = 0, idx;
 	unsigned int part_size;
 	u8 hc_erase_grp_sz = 0, hc_wp_grp_sz = 0;
+=======
+	int err = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BUG_ON(!card);
 
@@ -253,7 +310,11 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 	card->ext_csd.raw_ext_csd_structure = ext_csd[EXT_CSD_STRUCTURE];
 	if (card->csd.structure == 3) {
 		if (card->ext_csd.raw_ext_csd_structure > 2) {
+<<<<<<< HEAD
 			pr_err("%s: unrecognised EXT_CSD structure "
+=======
+			printk(KERN_ERR "%s: unrecognised EXT_CSD structure "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"version %d\n", mmc_hostname(card->host),
 					card->ext_csd.raw_ext_csd_structure);
 			err = -EINVAL;
@@ -262,9 +323,20 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 	}
 
 	card->ext_csd.rev = ext_csd[EXT_CSD_REV];
+<<<<<<< HEAD
 	if (card->ext_csd.rev > 6) {
 		pr_err("%s: unrecognised EXT_CSD revision %d\n",
 			mmc_hostname(card->host), card->ext_csd.rev);
+=======
+#ifdef CONFIG_MMC_BCM_SD
+	if (card->ext_csd.rev > 7) {
+#else
+	if (card->ext_csd.rev > 3) {
+#endif
+		printk(KERN_ERR "%s: unrecognised EXT_CSD structure "
+			"version %d\n", mmc_hostname(card->host),
+			card->ext_csd.rev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = -EINVAL;
 		goto out;
 	}
@@ -286,6 +358,7 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 	}
 	card->ext_csd.raw_card_type = ext_csd[EXT_CSD_CARD_TYPE];
 	switch (ext_csd[EXT_CSD_CARD_TYPE] & EXT_CSD_CARD_TYPE_MASK) {
+<<<<<<< HEAD
 	case EXT_CSD_CARD_TYPE_SDR_ALL:
 	case EXT_CSD_CARD_TYPE_SDR_ALL_DDR_1_8V:
 	case EXT_CSD_CARD_TYPE_SDR_ALL_DDR_1_2V:
@@ -307,6 +380,8 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 		card->ext_csd.hs_max_dtr = 200000000;
 		card->ext_csd.card_type = EXT_CSD_CARD_TYPE_SDR_1_8V;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case EXT_CSD_CARD_TYPE_DDR_52 | EXT_CSD_CARD_TYPE_52 |
 	     EXT_CSD_CARD_TYPE_26:
 		card->ext_csd.hs_max_dtr = 52000000;
@@ -330,7 +405,11 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 		break;
 	default:
 		/* MMC v4 spec says this cannot happen */
+<<<<<<< HEAD
 		pr_warning("%s: card is mmc v4 but doesn't "
+=======
+		printk(KERN_WARNING "%s: card is mmc v4 but doesn't "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"support any high-speed modes.\n",
 			mmc_hostname(card->host));
 	}
@@ -364,6 +443,7 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 		 * There are two boot regions of equal size, defined in
 		 * multiples of 128K.
 		 */
+<<<<<<< HEAD
 		if (ext_csd[EXT_CSD_BOOT_MULT] && mmc_boot_partition_access(card->host)) {
 			for (idx = 0; idx < MMC_NUM_BOOT_PARTITION; idx++) {
 				part_size = ext_csd[EXT_CSD_BOOT_MULT] << 17;
@@ -373,6 +453,9 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 					MMC_BLK_DATA_AREA_BOOT);
 			}
 		}
+=======
+		card->ext_csd.boot_size = ext_csd[EXT_CSD_BOOT_MULT] << 17;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	card->ext_csd.raw_hc_erase_gap_size =
@@ -385,18 +468,30 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 		ext_csd[EXT_CSD_SEC_FEATURE_SUPPORT];
 	card->ext_csd.raw_trim_mult =
 		ext_csd[EXT_CSD_TRIM_MULT];
+<<<<<<< HEAD
 	card->ext_csd.raw_partition_support = ext_csd[EXT_CSD_PARTITION_SUPPORT];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (card->ext_csd.rev >= 4) {
 		/*
 		 * Enhanced area feature support -- check whether the eMMC
 		 * card has the Enhanced area enabled.  If so, export enhanced
 		 * area offset and size to user by adding sysfs interface.
 		 */
+<<<<<<< HEAD
 		if ((ext_csd[EXT_CSD_PARTITION_SUPPORT] & 0x2) &&
 		    (ext_csd[EXT_CSD_PARTITION_ATTRIBUTE] & 0x1)) {
 			hc_erase_grp_sz =
 				ext_csd[EXT_CSD_HC_ERASE_GRP_SIZE];
 			hc_wp_grp_sz =
+=======
+		card->ext_csd.raw_partition_support = ext_csd[EXT_CSD_PARTITION_SUPPORT];
+		if ((ext_csd[EXT_CSD_PARTITION_SUPPORT] & 0x2) &&
+		    (ext_csd[EXT_CSD_PARTITION_ATTRIBUTE] & 0x1)) {
+			u8 hc_erase_grp_sz =
+				ext_csd[EXT_CSD_HC_ERASE_GRP_SIZE];
+			u8 hc_wp_grp_sz =
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ext_csd[EXT_CSD_HC_WP_GRP_SIZE];
 
 			card->ext_csd.enhanced_area_en = 1;
@@ -425,6 +520,7 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 			card->ext_csd.enhanced_area_offset = -EINVAL;
 			card->ext_csd.enhanced_area_size = -EINVAL;
 		}
+<<<<<<< HEAD
 
 		/*
 		 * General purpose partition feature support --
@@ -461,6 +557,8 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 					MMC_BLK_DATA_AREA_GP);
 			}
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		card->ext_csd.sec_trim_mult =
 			ext_csd[EXT_CSD_SEC_TRIM_MULT];
 		card->ext_csd.sec_erase_mult =
@@ -470,6 +568,7 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 		card->ext_csd.trim_timeout = 300 *
 			ext_csd[EXT_CSD_TRIM_MULT];
 
+<<<<<<< HEAD
 		/*
 		 * Note that the call to mmc_part_add above defaults to read
 		 * only. If this default assumption is changed, the call must
@@ -498,6 +597,17 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 		card->ext_csd.rel_param = ext_csd[EXT_CSD_WR_REL_PARAM];
 		card->ext_csd.rst_n_function = ext_csd[EXT_CSD_RST_N_FUNCTION];
 	}
+=======
+		card->ext_csd.rpmb_size =
+			ext_csd[EXT_CSD_RPMB_SIZE_MULT] << 17;
+
+		printk(KERN_INFO "%s: card->ext_csd.rpmb_size: %d\n",
+			__func__, card->ext_csd.rpmb_size);
+	}
+
+	if (card->ext_csd.rev >= 5)
+		card->ext_csd.rel_param = ext_csd[EXT_CSD_WR_REL_PARAM];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	card->ext_csd.raw_erased_mem_count = ext_csd[EXT_CSD_ERASED_MEM_CONT];
 	if (ext_csd[EXT_CSD_ERASED_MEM_CONT])
@@ -505,6 +615,7 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 	else
 		card->erased_byte = 0x0;
 
+<<<<<<< HEAD
 	/* eMMC v4.5 or later */
 	if (card->ext_csd.rev >= 6) {
 		card->ext_csd.feature_support |= MMC_DISCARD_FEATURE;
@@ -534,6 +645,21 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 			card->ext_csd.data_tag_unit_size = 0;
 		}
 	}
+=======
+#ifdef CONFIG_MMC_45_FEATURE_SUPPORT
+
+	/* eMMC v4.5(Revision 1.6) or later */
+	if (card->ext_csd.rev >= 6) {
+		/* Discard should be supported */
+		/* Senitize should be supported */
+	}
+
+#ifdef CONFIG_MMC_DISCARD_SAMSUNG_eMMC_SUPPORT
+	card->ext_csd.optimized_features	= ext_csd[EXT_CSD_OPTIMIZED_FEATURES];
+#endif
+
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	return err;
@@ -655,6 +781,7 @@ static struct device_type mmc_type = {
 };
 
 /*
+<<<<<<< HEAD
  * Select the PowerClass for the current bus width
  * If power class is defined for 4/8 bit bus in the
  * extended CSD register, select it by executing the
@@ -813,6 +940,8 @@ err:
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Handle the detection and initialisation of a card.
  *
  * In the case of a resume, "oldcard" will contain the card
@@ -831,6 +960,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 	BUG_ON(!host);
 	WARN_ON(!host->claimed);
 
+<<<<<<< HEAD
 	/* Set correct bus mode for MMC before attempting init */
 	if (!mmc_host_is_spi(host))
 		mmc_set_bus_mode(host, MMC_BUSMODE_OPENDRAIN);
@@ -838,12 +968,17 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 	/* Initialization should be done at 3.3 V I/O voltage. */
 	mmc_set_signal_voltage(host, MMC_SIGNAL_VOLTAGE_330, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Since we're changing the OCR value, we seem to
 	 * need to tell some cards to go back to the idle
 	 * state.  We wait 1ms to give cards time to
 	 * respond.
+<<<<<<< HEAD
 	 * mmc_go_idle is needed for eMMC that are asleep
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	mmc_go_idle(host);
 
@@ -868,8 +1003,25 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 		err = mmc_send_cid(host, cid);
 	else
 		err = mmc_all_send_cid(host, cid);
+<<<<<<< HEAD
 	if (err)
 		goto err;
+=======
+#if 0 /* Original code before adding temporary workaround for broken MMC parts */
+	if (err)
+		goto err;
+#else
+	if (err){
+		if (err == -ETIMEDOUT || err == -EILSEQ) {
+			pr_debug("%s: Ignoring error %d for mmc_all_send_cid\n",
+				__func__, err);
+			err = 0;
+		} else {
+			goto err;
+		}
+	}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (oldcard) {
 		if (memcmp(cid, oldcard->raw_cid, sizeof(cid)) != 0) {
@@ -957,11 +1109,17 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 	 * If enhanced_area_en is TRUE, host needs to enable ERASE_GRP_DEF
 	 * bit.  This bit will be lost every time after a reset or power off.
 	 */
+<<<<<<< HEAD
 	if (card->ext_csd.enhanced_area_en ||
 	    (card->ext_csd.rev >= 3 && (host->caps2 & MMC_CAP2_HC_ERASE_SZ))) {
 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
 				 EXT_CSD_ERASE_GROUP_DEF, 1,
 				 card->ext_csd.generic_cmd6_time);
+=======
+	if (card->ext_csd.enhanced_area_en) {
+		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+				 EXT_CSD_ERASE_GROUP_DEF, 1, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (err && err != -EBADMSG)
 			goto free_card;
@@ -999,6 +1157,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 	}
 
 	/*
+<<<<<<< HEAD
 	 * If the host supports the power_off_notify capability then
 	 * set the notification byte in the ext_csd register of device
 	 */
@@ -1032,10 +1191,22 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 					 EXT_CSD_HS_TIMING, 1,
 					 card->ext_csd.generic_cmd6_time);
 
+=======
+	 * Activate high speed (if supported)
+	 */
+	if ((card->ext_csd.hs_max_dtr != 0) &&
+#ifdef CONFIG_MMC_BCM_SD
+        (host->f_max > SDHCI_HOST_MAX_CLK_LS_MODE) &&
+#endif
+		(host->caps & MMC_CAP_MMC_HIGHSPEED)) {
+		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+				 EXT_CSD_HS_TIMING, 1, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err && err != -EBADMSG)
 			goto free_card;
 
 		if (err) {
+<<<<<<< HEAD
 			pr_warning("%s: switch to highspeed failed\n",
 			       mmc_hostname(card->host));
 			err = 0;
@@ -1049,6 +1220,14 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 				mmc_card_set_highspeed(card);
 				mmc_set_timing(card->host, MMC_TIMING_MMC_HS);
 			}
+=======
+			printk(KERN_WARNING "%s: switch to highspeed failed\n",
+			       mmc_hostname(card->host));
+			err = 0;
+		} else {
+			mmc_card_set_highspeed(card);
+			mmc_set_timing(card->host, MMC_TIMING_MMC_HS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -1057,7 +1236,11 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 	 */
 	max_dtr = (unsigned int)-1;
 
+<<<<<<< HEAD
 	if (mmc_card_highspeed(card) || mmc_card_hs200(card)) {
+=======
+	if (mmc_card_highspeed(card)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (max_dtr > card->ext_csd.hs_max_dtr)
 			max_dtr = card->ext_csd.hs_max_dtr;
 	} else if (max_dtr > card->csd.max_dtr) {
@@ -1083,6 +1266,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 	}
 
 	/*
+<<<<<<< HEAD
 	 * Indicate HS200 SDR mode (if supported).
 	 */
 	if (mmc_card_hs200(card)) {
@@ -1127,6 +1311,11 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 	 */
 	if (!mmc_card_hs200(card) &&
 	    (card->csd.mmca_vsn >= CSD_SPEC_VER_4) &&
+=======
+	 * Activate wide bus and DDR (if supported).
+	 */
+	if ((card->csd.mmca_vsn >= CSD_SPEC_VER_4) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    (host->caps & (MMC_CAP_4_BIT_DATA | MMC_CAP_8_BIT_DATA))) {
 		static unsigned ext_csd_bits[][2] = {
 			{ EXT_CSD_BUS_WIDTH_8, EXT_CSD_DDR_BUS_WIDTH_8 },
@@ -1148,6 +1337,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 			bus_width = bus_widths[idx];
 			if (bus_width == MMC_BUS_WIDTH_1)
 				ddr = 0; /* no DDR for 1-bit width */
+<<<<<<< HEAD
 			err = mmc_select_powerclass(card, ext_csd_bits[idx][0],
 						    ext_csd);
 			if (err)
@@ -1160,6 +1350,12 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 					 EXT_CSD_BUS_WIDTH,
 					 ext_csd_bits[idx][0],
 					 card->ext_csd.generic_cmd6_time);
+=======
+			err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+					 EXT_CSD_BUS_WIDTH,
+					 ext_csd_bits[idx][0],
+					 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!err) {
 				mmc_set_bus_width(card->host, bus_width);
 
@@ -1179,6 +1375,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 		}
 
 		if (!err && ddr) {
+<<<<<<< HEAD
 			err = mmc_select_powerclass(card, ext_csd_bits[idx][1],
 						    ext_csd);
 			if (err)
@@ -1194,6 +1391,15 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 		}
 		if (err) {
 			pr_warning("%s: switch to bus width %d ddr %d "
+=======
+			err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+					 EXT_CSD_BUS_WIDTH,
+					 ext_csd_bits[idx][1],
+					 0);
+		}
+		if (err) {
+			printk(KERN_WARNING "%s: switch to bus width %d ddr %d "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"failed\n", mmc_hostname(card->host),
 				1 << bus_width, ddr);
 			goto free_card;
@@ -1224,6 +1430,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 		}
 	}
 
+<<<<<<< HEAD
 	/*
 	 * Enable HPI feature (if supported)
 	 */
@@ -1267,6 +1474,8 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!oldcard)
 		host->card = card;
 
@@ -1295,6 +1504,7 @@ static void mmc_remove(struct mmc_host *host)
 }
 
 /*
+<<<<<<< HEAD
  * Card detection - card is alive.
  */
 static int mmc_alive(struct mmc_host *host)
@@ -1303,6 +1513,8 @@ static int mmc_alive(struct mmc_host *host)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Card detection callback from host.
  */
 static void mmc_detect(struct mmc_host *host)
@@ -1317,7 +1529,11 @@ static void mmc_detect(struct mmc_host *host)
 	/*
 	 * Just check if our card has been removed.
 	 */
+<<<<<<< HEAD
 	err = _mmc_detect_card_removed(host);
+=======
+	err = mmc_send_status(host->card, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mmc_release_host(host);
 
@@ -1336,12 +1552,16 @@ static void mmc_detect(struct mmc_host *host)
  */
 static int mmc_suspend(struct mmc_host *host)
 {
+<<<<<<< HEAD
 	int err = 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BUG_ON(!host);
 	BUG_ON(!host->card);
 
 	mmc_claim_host(host);
+<<<<<<< HEAD
 	if (mmc_card_can_sleep(host)) {
 		err = mmc_card_sleep(host);
 		if (!err)
@@ -1352,6 +1572,24 @@ static int mmc_suspend(struct mmc_host *host)
 	mmc_release_host(host);
 
 	return err;
+=======
+
+	if (!mmc_host_is_spi(host)) {
+		if ( host->card->quirks & MMC_QUIRK_RESET_FOR_CARD_INIT ) {
+//			printk("%s, %d : %s - Reset bus width before suspend\n", __FUNCTION__, __LINE__, mmc_hostname(host));
+			mmc_switch(host->card, EXT_CSD_CMD_SET_NORMAL, EXT_CSD_BUS_WIDTH, EXT_CSD_BUS_WIDTH_1, 0);
+		} else {
+//			printk("%s, %d : %s - Nothing do before suspend\n", __FUNCTION__, __LINE__, mmc_hostname(host));
+		}
+
+		mmc_deselect_cards(host);
+	}
+
+	host->card->state &= ~MMC_STATE_HIGHSPEED;
+	mmc_release_host(host);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1368,11 +1606,15 @@ static int mmc_resume(struct mmc_host *host)
 	BUG_ON(!host->card);
 
 	mmc_claim_host(host);
+<<<<<<< HEAD
 	if (mmc_card_is_sleep(host->card)) {
 		err = mmc_card_awake(host);
 		mmc_card_clr_sleep(host->card);
 	} else
 		err = mmc_init_card(host, host->ocr, host->card);
+=======
+	err = mmc_init_card(host, host->ocr, host->card);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mmc_release_host(host);
 
 	return err;
@@ -1382,8 +1624,12 @@ static int mmc_power_restore(struct mmc_host *host)
 {
 	int ret;
 
+<<<<<<< HEAD
 	host->card->state &= ~(MMC_STATE_HIGHSPEED | MMC_STATE_HIGHSPEED_200);
 	mmc_card_clr_sleep(host->card);
+=======
+	host->card->state &= ~MMC_STATE_HIGHSPEED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mmc_claim_host(host);
 	ret = mmc_init_card(host, host->ocr, host->card);
 	mmc_release_host(host);
@@ -1429,7 +1675,10 @@ static const struct mmc_bus_ops mmc_ops = {
 	.suspend = NULL,
 	.resume = NULL,
 	.power_restore = mmc_power_restore,
+<<<<<<< HEAD
 	.alive = mmc_alive,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct mmc_bus_ops mmc_ops_unsafe = {
@@ -1440,7 +1689,10 @@ static const struct mmc_bus_ops mmc_ops_unsafe = {
 	.suspend = mmc_suspend,
 	.resume = mmc_resume,
 	.power_restore = mmc_power_restore,
+<<<<<<< HEAD
 	.alive = mmc_alive,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void mmc_attach_bus_ops(struct mmc_host *host)
@@ -1465,10 +1717,13 @@ int mmc_attach_mmc(struct mmc_host *host)
 	BUG_ON(!host);
 	WARN_ON(!host->claimed);
 
+<<<<<<< HEAD
 	/* Set correct bus mode for MMC before attempting attach */
 	if (!mmc_host_is_spi(host))
 		mmc_set_bus_mode(host, MMC_BUSMODE_OPENDRAIN);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = mmc_send_op_cond(host, 0, &ocr);
 	if (err)
 		return err;
@@ -1491,7 +1746,11 @@ int mmc_attach_mmc(struct mmc_host *host)
 	 * support.
 	 */
 	if (ocr & 0x7F) {
+<<<<<<< HEAD
 		pr_warning("%s: card claims to support voltages "
+=======
+		printk(KERN_WARNING "%s: card claims to support voltages "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       "below the defined range. These will be ignored.\n",
 		       mmc_hostname(host));
 		ocr &= ~0x7F;
@@ -1530,7 +1789,11 @@ remove_card:
 err:
 	mmc_detach_bus(host);
 
+<<<<<<< HEAD
 	pr_err("%s: error %d whilst initialising MMC card\n",
+=======
+	printk(KERN_ERR "%s: error %d whilst initialising MMC card\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mmc_hostname(host), err);
 
 	return err;

@@ -132,9 +132,15 @@ txx9aclc_dma_submit(struct txx9aclc_dmadata *dmadata, dma_addr_t buf_dma_addr)
 	sg_set_page(&sg, pfn_to_page(PFN_DOWN(buf_dma_addr)),
 		    dmadata->frag_bytes, buf_dma_addr & (PAGE_SIZE - 1));
 	sg_dma_address(&sg) = buf_dma_addr;
+<<<<<<< HEAD
 	desc = dmaengine_prep_slave_sg(chan, &sg, 1,
 		dmadata->substream->stream == SNDRV_PCM_STREAM_PLAYBACK ?
 		DMA_MEM_TO_DEV : DMA_DEV_TO_MEM,
+=======
+	desc = chan->device->device_prep_slave_sg(chan, &sg, 1,
+		dmadata->substream->stream == SNDRV_PCM_STREAM_PLAYBACK ?
+		DMA_TO_DEVICE : DMA_FROM_DEVICE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
 	if (!desc) {
 		dev_err(&chan->dev->device, "cannot prepare slave dma\n");
@@ -288,11 +294,17 @@ static void txx9aclc_pcm_free_dma_buffers(struct snd_pcm *pcm)
 	snd_pcm_lib_preallocate_free_for_all(pcm);
 }
 
+<<<<<<< HEAD
 static int txx9aclc_pcm_new(struct snd_soc_pcm_runtime *rtd)
 {
 	struct snd_card *card = rtd->card->snd_card;
 	struct snd_soc_dai *dai = rtd->cpu_dai;
 	struct snd_pcm *pcm = rtd->pcm;
+=======
+static int txx9aclc_pcm_new(struct snd_card *card, struct snd_soc_dai *dai,
+			    struct snd_pcm *pcm)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct platform_device *pdev = to_platform_device(dai->platform->dev);
 	struct txx9aclc_soc_device *dev;
 	struct resource *r;
@@ -438,7 +450,21 @@ static struct platform_driver txx9aclc_pcm_driver = {
 	.remove = __devexit_p(txx9aclc_soc_platform_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(txx9aclc_pcm_driver);
+=======
+static int __init snd_txx9aclc_pcm_init(void)
+{
+	return platform_driver_register(&txx9aclc_pcm_driver);
+}
+module_init(snd_txx9aclc_pcm_init);
+
+static void __exit snd_txx9aclc_pcm_exit(void)
+{
+	platform_driver_unregister(&txx9aclc_pcm_driver);
+}
+module_exit(snd_txx9aclc_pcm_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Atsushi Nemoto <anemo@mba.ocn.ne.jp>");
 MODULE_DESCRIPTION("TXx9 ACLC Audio DMA driver");

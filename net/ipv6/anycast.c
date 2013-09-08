@@ -75,7 +75,11 @@ int ipv6_sock_ac_join(struct sock *sk, int ifindex, const struct in6_addr *addr)
 	if (pac == NULL)
 		return -ENOMEM;
 	pac->acl_next = NULL;
+<<<<<<< HEAD
 	pac->acl_addr = *addr;
+=======
+	ipv6_addr_copy(&pac->acl_addr, addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rcu_read_lock();
 	if (ifindex == 0) {
@@ -83,7 +87,11 @@ int ipv6_sock_ac_join(struct sock *sk, int ifindex, const struct in6_addr *addr)
 
 		rt = rt6_lookup(net, addr, NULL, 0, 0);
 		if (rt) {
+<<<<<<< HEAD
 			dev = rt->dst.dev;
+=======
+			dev = rt->rt6i_dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dst_release(&rt->dst);
 		} else if (ishost) {
 			err = -EADDRNOTAVAIL;
@@ -211,6 +219,38 @@ void ipv6_sock_ac_close(struct sock *sk)
 	rcu_read_unlock();
 }
 
+<<<<<<< HEAD
+=======
+#if 0
+/* The function is not used, which is funny. Apparently, author
+ * supposed to use it to filter out datagrams inside udp/raw but forgot.
+ *
+ * It is OK, anycasts are not special comparing to delivery to unicasts.
+ */
+
+int inet6_ac_check(struct sock *sk, struct in6_addr *addr, int ifindex)
+{
+	struct ipv6_ac_socklist *pac;
+	struct ipv6_pinfo *np = inet6_sk(sk);
+	int	found;
+
+	found = 0;
+	read_lock(&ipv6_sk_ac_lock);
+	for (pac=np->ipv6_ac_list; pac; pac=pac->acl_next) {
+		if (ifindex && pac->acl_ifindex != ifindex)
+			continue;
+		found = ipv6_addr_equal(&pac->acl_addr, addr);
+		if (found)
+			break;
+	}
+	read_unlock(&ipv6_sk_ac_lock);
+
+	return found;
+}
+
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void aca_put(struct ifacaddr6 *ac)
 {
 	if (atomic_dec_and_test(&ac->aca_refcnt)) {
@@ -260,14 +300,22 @@ int ipv6_dev_ac_inc(struct net_device *dev, const struct in6_addr *addr)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	rt = addrconf_dst_alloc(idev, addr, true);
+=======
+	rt = addrconf_dst_alloc(idev, addr, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(rt)) {
 		kfree(aca);
 		err = PTR_ERR(rt);
 		goto out;
 	}
 
+<<<<<<< HEAD
 	aca->aca_addr = *addr;
+=======
+	ipv6_addr_copy(&aca->aca_addr, addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	aca->aca_idev = idev;
 	aca->aca_rt = rt;
 	aca->aca_users = 1;

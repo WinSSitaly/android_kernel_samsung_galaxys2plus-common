@@ -22,7 +22,10 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "emux_voice.h"
 #include <sound/asoundef.h>
 

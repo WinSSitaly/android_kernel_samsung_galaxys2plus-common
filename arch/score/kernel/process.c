@@ -27,7 +27,10 @@
 #include <linux/reboot.h>
 #include <linux/elfcore.h>
 #include <linux/pm.h>
+<<<<<<< HEAD
 #include <linux/rcupdate.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void (*pm_power_off)(void);
 EXPORT_SYMBOL(pm_power_off);
@@ -51,11 +54,20 @@ void __noreturn cpu_idle(void)
 {
 	/* endless idle loop with no priority at all */
 	while (1) {
+<<<<<<< HEAD
 		rcu_idle_enter();
 		while (!need_resched())
 			barrier();
 		rcu_idle_exit();
 		schedule_preempt_disabled();
+=======
+		while (!need_resched())
+			barrier();
+
+		preempt_enable_no_resched();
+		schedule();
+		preempt_disable();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 

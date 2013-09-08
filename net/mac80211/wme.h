@@ -13,6 +13,7 @@
 #include <linux/netdevice.h>
 #include "ieee80211_i.h"
 
+<<<<<<< HEAD
 extern const int ieee802_1d_to_ac[8];
 
 u16 ieee80211_select_queue_80211(struct ieee80211_local *local,
@@ -22,6 +23,18 @@ u16 ieee80211_select_queue(struct ieee80211_sub_if_data *sdata,
 			   struct sk_buff *skb);
 void ieee80211_set_qos_hdr(struct ieee80211_sub_if_data *sdata,
 			   struct sk_buff *skb);
+=======
+#define QOS_CONTROL_ACK_POLICY_NORMAL 0
+#define QOS_CONTROL_ACK_POLICY_NOACK 1
+
+#define QOS_CONTROL_ACK_POLICY_SHIFT 5
+
+extern const int ieee802_1d_to_ac[8];
+
+u16 ieee80211_select_queue(struct ieee80211_sub_if_data *sdata,
+			   struct sk_buff *skb);
+void ieee80211_set_qos_hdr(struct ieee80211_local *local, struct sk_buff *skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u16 ieee80211_downgrade_queue(struct ieee80211_local *local,
                               struct sk_buff *skb);
 

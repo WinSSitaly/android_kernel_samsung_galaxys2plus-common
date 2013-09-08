@@ -108,8 +108,12 @@ sys_pciconfig_write(unsigned long bus, unsigned long dfn,
 }
 
 static void *alpha_noop_alloc_coherent(struct device *dev, size_t size,
+<<<<<<< HEAD
 				       dma_addr_t *dma_handle, gfp_t gfp,
 				       struct dma_attrs *attrs)
+=======
+				       dma_addr_t *dma_handle, gfp_t gfp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	void *ret;
 
@@ -124,8 +128,12 @@ static void *alpha_noop_alloc_coherent(struct device *dev, size_t size,
 }
 
 static void alpha_noop_free_coherent(struct device *dev, size_t size,
+<<<<<<< HEAD
 				     void *cpu_addr, dma_addr_t dma_addr,
 				     struct dma_attrs *attrs)
+=======
+				     void *cpu_addr, dma_addr_t dma_addr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	free_pages((unsigned long)cpu_addr, get_order(size));
 }
@@ -176,8 +184,13 @@ static int alpha_noop_set_mask(struct device *dev, u64 mask)
 }
 
 struct dma_map_ops alpha_noop_ops = {
+<<<<<<< HEAD
 	.alloc			= alpha_noop_alloc_coherent,
 	.free			= alpha_noop_free_coherent,
+=======
+	.alloc_coherent		= alpha_noop_alloc_coherent,
+	.free_coherent		= alpha_noop_free_coherent,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_page		= alpha_noop_map_page,
 	.map_sg			= alpha_noop_map_sg,
 	.mapping_error		= alpha_noop_mapping_error,
@@ -187,3 +200,18 @@ struct dma_map_ops alpha_noop_ops = {
 
 struct dma_map_ops *dma_ops = &alpha_noop_ops;
 EXPORT_SYMBOL(dma_ops);
+<<<<<<< HEAD
+=======
+
+void __iomem *pci_iomap(struct pci_dev *dev, int bar, unsigned long maxlen)
+{
+	return NULL;
+}
+
+void pci_iounmap(struct pci_dev *dev, void __iomem * addr)
+{
+}
+
+EXPORT_SYMBOL(pci_iomap);
+EXPORT_SYMBOL(pci_iounmap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

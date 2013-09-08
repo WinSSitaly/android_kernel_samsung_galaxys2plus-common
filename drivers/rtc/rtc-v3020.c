@@ -393,7 +393,22 @@ static struct platform_driver rtc_device_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(rtc_device_driver);
+=======
+static __init int v3020_init(void)
+{
+	return platform_driver_register(&rtc_device_driver);
+}
+
+static __exit void v3020_exit(void)
+{
+	platform_driver_unregister(&rtc_device_driver);
+}
+
+module_init(v3020_init);
+module_exit(v3020_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("V3020 RTC");
 MODULE_AUTHOR("Raphael Assenat");

@@ -77,6 +77,7 @@
 
 #define	CONFIG_MEMSIZE					0x5428
 
+<<<<<<< HEAD
 #define	BIF_FB_EN						0x5490
 #define		FB_READ_EN					(1 << 0)
 #define		FB_WRITE_EN					(1 << 1)
@@ -86,6 +87,8 @@
 #define	CP_COHER_CNTL					0x85F0
 #define	CP_COHER_SIZE					0x85F4
 #define	CP_COHER_BASE					0x85F8
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define CP_ME_CNTL					0x86D8
 #define		CP_ME_HALT					(1 << 28)
 #define		CP_PFP_HALT					(1 << 26)
@@ -117,7 +120,10 @@
 #define	CP_RB_WPTR_ADDR_HI				0xC11C
 #define	CP_RB_WPTR_DELAY				0x8704
 #define	CP_SEM_WAIT_TIMER				0x85BC
+<<<<<<< HEAD
 #define	CP_SEM_INCOMPLETE_TIMER_CNTL			0x85C8
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define	CP_DEBUG					0xC1FC
 
 
@@ -204,9 +210,12 @@
 #define		NOOFCHAN_MASK					0x00003000
 #define MC_SHARED_CHREMAP					0x2008
 
+<<<<<<< HEAD
 #define MC_SHARED_BLACKOUT_CNTL           		0x20ac
 #define		BLACKOUT_MODE_MASK			0x00000007
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define	MC_ARB_RAMCFG					0x2760
 #define		NOOFBANK_SHIFT					0
 #define		NOOFBANK_MASK					0x00000003
@@ -243,7 +252,10 @@
 #define	MC_VM_MD_L1_TLB0_CNTL				0x2654
 #define	MC_VM_MD_L1_TLB1_CNTL				0x2658
 #define	MC_VM_MD_L1_TLB2_CNTL				0x265C
+<<<<<<< HEAD
 #define	MC_VM_MD_L1_TLB3_CNTL				0x2698
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define	FUS_MC_VM_MD_L1_TLB0_CNTL			0x265C
 #define	FUS_MC_VM_MD_L1_TLB1_CNTL			0x2660
@@ -256,7 +268,10 @@
 #define	PA_CL_ENHANCE					0x8A14
 #define		CLIP_VTX_REORDER_ENA				(1 << 0)
 #define		NUM_CLIP_SEQ(x)					((x) << 1)
+<<<<<<< HEAD
 #define	PA_SC_ENHANCE					0x8BF0
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PA_SC_AA_CONFIG					0x28C04
 #define         MSAA_NUM_SAMPLES_SHIFT                  0
 #define         MSAA_NUM_SAMPLES_MASK                   0x3
@@ -284,7 +299,10 @@
 #define	SCRATCH_UMSK					0x8540
 #define	SCRATCH_ADDR					0x8544
 
+<<<<<<< HEAD
 #define	SMX_SAR_CTL0					0xA008
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define	SMX_DC_CTL0					0xA020
 #define		USE_HASH_FUNCTION				(1 << 0)
 #define		NUMBER_OF_SETS(x)				((x) << 1)
@@ -335,8 +353,11 @@
 #define	SQ_GPR_RESOURCE_MGMT_3				0x8C0C
 #define		NUM_HS_GPRS(x)					((x) << 0)
 #define		NUM_LS_GPRS(x)					((x) << 16)
+<<<<<<< HEAD
 #define	SQ_GLOBAL_GPR_RESOURCE_MGMT_1			0x8C10
 #define	SQ_GLOBAL_GPR_RESOURCE_MGMT_2			0x8C14
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define	SQ_THREAD_RESOURCE_MGMT				0x8C18
 #define		NUM_PS_THREADS(x)				((x) << 0)
 #define		NUM_VS_THREADS(x)				((x) << 8)
@@ -355,10 +376,13 @@
 #define		NUM_HS_STACK_ENTRIES(x)				((x) << 0)
 #define		NUM_LS_STACK_ENTRIES(x)				((x) << 16)
 #define	SQ_DYN_GPR_CNTL_PS_FLUSH_REQ    		0x8D8C
+<<<<<<< HEAD
 #define	SQ_DYN_GPR_SIMD_LOCK_EN    			0x8D94
 #define	SQ_STATIC_THREAD_MGMT_1    			0x8E20
 #define	SQ_STATIC_THREAD_MGMT_2    			0x8E24
 #define	SQ_STATIC_THREAD_MGMT_3    			0x8E28
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define	SQ_LDS_RESOURCE_MGMT    			0x8E2C
 
 #define	SQ_MS_FIFO_SIZES				0x8CF0
@@ -373,7 +397,10 @@
 #define		COLOR_BUFFER_SIZE(x)				((x) << 0)
 #define		POSITION_BUFFER_SIZE(x)				((x) << 8)
 #define		SMX_BUFFER_SIZE(x)				((x) << 16)
+<<<<<<< HEAD
 #define	SX_MEMORY_EXPORT_BASE				0x9010
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define	SX_MISC						0x28350
 
 #define CB_PERF_CTR0_SEL_0				0x9A20
@@ -472,10 +499,13 @@
 #       define LATENCY_LOW_WATERMARK(x)                   ((x) << 0)
 #       define LATENCY_HIGH_WATERMARK(x)                  ((x) << 16)
 
+<<<<<<< HEAD
 #define	PIPE0_DMIF_BUFFER_CONTROL			  0x0ca0
 #       define DMIF_BUFFERS_ALLOCATED(x)                  ((x) << 0)
 #       define DMIF_BUFFERS_ALLOCATED_COMPLETED           (1 << 4)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define IH_RB_CNTL                                        0x3e00
 #       define IH_RB_ENABLE                               (1 << 0)
 #       define IH_IB_SIZE(x)                              ((x) << 1) /* log2 */
@@ -717,7 +747,10 @@
 #define	PACKET3_DRAW_INDEX_MULTI_ELEMENT		0x36
 #define	PACKET3_MEM_SEMAPHORE				0x39
 #define	PACKET3_MPEG_INDEX				0x3A
+<<<<<<< HEAD
 #define	PACKET3_COPY_DW					0x3B
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define	PACKET3_WAIT_REG_MEM				0x3C
 #define	PACKET3_MEM_WRITE				0x3D
 #define	PACKET3_INDIRECT_BUFFER				0x32
@@ -795,8 +828,11 @@
 #define			SQ_TEX_VTX_VALID_TEXTURE			0x2
 #define			SQ_TEX_VTX_VALID_BUFFER				0x3
 
+<<<<<<< HEAD
 #define VGT_VTX_VECT_EJECT_REG				0x88b0
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SQ_CONST_MEM_BASE				0x8df8
 
 #define SQ_ESGS_RING_BASE				0x8c40
@@ -921,6 +957,7 @@
 #define PA_SC_SCREEN_SCISSOR_TL                         0x28030
 #define PA_SC_GENERIC_SCISSOR_TL                        0x28240
 #define PA_SC_WINDOW_SCISSOR_TL                         0x28204
+<<<<<<< HEAD
 
 #define VGT_PRIMITIVE_TYPE                              0x8958
 #define VGT_INDEX_TYPE                                  0x895C
@@ -1059,11 +1096,22 @@
 #define   G_028044_FORMAT(x)                           (((x) >> 0) & 0x1)
 #define   C_028044_FORMAT                              0xFFFFFFFE
 #define   G_028044_TILE_SPLIT(x)                       (((x) >> 8) & 0x7)
+=======
+#define VGT_PRIMITIVE_TYPE                              0x8958
+
+#define DB_DEPTH_CONTROL				0x28800
+#define DB_DEPTH_VIEW					0x28008
+#define DB_HTILE_DATA_BASE				0x28014
+#define DB_Z_INFO					0x28040
+#       define Z_ARRAY_MODE(x)                          ((x) << 4)
+#define DB_STENCIL_INFO					0x28044
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DB_Z_READ_BASE					0x28048
 #define DB_STENCIL_READ_BASE				0x2804c
 #define DB_Z_WRITE_BASE					0x28050
 #define DB_STENCIL_WRITE_BASE				0x28054
 #define DB_DEPTH_SIZE					0x28058
+<<<<<<< HEAD
 #define R_028058_DB_DEPTH_SIZE                       0x028058
 #define   S_028058_PITCH_TILE_MAX(x)                   (((x) & 0x7FF) << 0)
 #define   G_028058_PITCH_TILE_MAX(x)                   (((x) >> 0) & 0x7FF)
@@ -1075,6 +1123,8 @@
 #define   S_02805C_SLICE_TILE_MAX(x)                   (((x) & 0x3FFFFF) << 0)
 #define   G_02805C_SLICE_TILE_MAX(x)                   (((x) >> 0) & 0x3FFFFF)
 #define   C_02805C_SLICE_TILE_MAX                      0xFFC00000
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define SQ_PGM_START_PS					0x28840
 #define SQ_PGM_START_VS					0x2885c
@@ -1084,6 +1134,7 @@
 #define SQ_PGM_START_HS					0x288b8
 #define SQ_PGM_START_LS					0x288d0
 
+<<<<<<< HEAD
 #define	VGT_STRMOUT_BUFFER_BASE_0			0x28AD8
 #define	VGT_STRMOUT_BUFFER_BASE_1			0x28AE8
 #define	VGT_STRMOUT_BUFFER_BASE_2			0x28AF8
@@ -1092,6 +1143,8 @@
 #define VGT_STRMOUT_BUFFER_SIZE_1			0x28AE0
 #define VGT_STRMOUT_BUFFER_SIZE_2			0x28AF0
 #define VGT_STRMOUT_BUFFER_SIZE_3			0x28B00
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define VGT_STRMOUT_CONFIG				0x28b94
 #define VGT_STRMOUT_BUFFER_CONFIG			0x28b98
 
@@ -1118,6 +1171,7 @@
 #define	CB_COLOR0_PITCH					0x28c64
 #define	CB_COLOR0_SLICE					0x28c68
 #define	CB_COLOR0_VIEW					0x28c6c
+<<<<<<< HEAD
 #define R_028C6C_CB_COLOR0_VIEW                      0x00028C6C
 #define   S_028C6C_SLICE_START(x)                      (((x) & 0x7FF) << 0)
 #define   G_028C6C_SLICE_START(x)                      (((x) >> 0) & 0x7FF)
@@ -1228,11 +1282,15 @@
 
 #define	CB_COLOR0_INFO					0x28c70
 #	define CB_FORMAT(x)				((x) << 2)
+=======
+#define	CB_COLOR0_INFO					0x28c70
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #       define CB_ARRAY_MODE(x)                         ((x) << 8)
 #       define ARRAY_LINEAR_GENERAL                     0
 #       define ARRAY_LINEAR_ALIGNED                     1
 #       define ARRAY_1D_TILED_THIN1                     2
 #       define ARRAY_2D_TILED_THIN1                     4
+<<<<<<< HEAD
 #	define CB_SOURCE_FORMAT(x)			((x) << 24)
 #	define CB_SF_EXPORT_FULL			0
 #	define CB_SF_EXPORT_NORM			1
@@ -1275,6 +1333,9 @@
 #       define ADDR_SURF_BANK_HEIGHT_4                  2
 #       define ADDR_SURF_BANK_HEIGHT_8                  3
 #       define CB_MACRO_TILE_ASPECT(x)                  (((x) & 0x3) << 19)
+=======
+#define	CB_COLOR0_ATTRIB				0x28c74
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define	CB_COLOR0_DIM					0x28c78
 /* only CB0-7 blocks have these regs */
 #define	CB_COLOR0_CMASK					0x28c7c
@@ -1435,6 +1496,7 @@
 #define	CB_COLOR7_CLEAR_WORD3				0x28e3c
 
 #define SQ_TEX_RESOURCE_WORD0_0                         0x30000
+<<<<<<< HEAD
 #	define TEX_DIM(x)				((x) << 0)
 #	define SQ_TEX_DIM_1D				0
 #	define SQ_TEX_DIM_2D				1
@@ -1444,11 +1506,14 @@
 #	define SQ_TEX_DIM_2D_ARRAY			5
 #	define SQ_TEX_DIM_2D_MSAA			6
 #	define SQ_TEX_DIM_2D_ARRAY_MSAA			7
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SQ_TEX_RESOURCE_WORD1_0                         0x30004
 #       define TEX_ARRAY_MODE(x)                        ((x) << 28)
 #define SQ_TEX_RESOURCE_WORD2_0                         0x30008
 #define SQ_TEX_RESOURCE_WORD3_0                         0x3000C
 #define SQ_TEX_RESOURCE_WORD4_0                         0x30010
+<<<<<<< HEAD
 #	define TEX_DST_SEL_X(x)				((x) << 16)
 #	define TEX_DST_SEL_Y(x)				((x) << 19)
 #	define TEX_DST_SEL_Z(x)				((x) << 22)
@@ -1655,12 +1720,23 @@
 /* cayman 3D regs */
 #define CAYMAN_VGT_OFFCHIP_LDS_BASE			0x89B4
 #define CAYMAN_SQ_EX_ALLOC_TABLE_SLOTS			0x8E48
+=======
+#define SQ_TEX_RESOURCE_WORD5_0                         0x30014
+#define SQ_TEX_RESOURCE_WORD6_0                         0x30018
+#define SQ_TEX_RESOURCE_WORD7_0                         0x3001c
+
+/* cayman 3D regs */
+#define CAYMAN_VGT_OFFCHIP_LDS_BASE			0x89B0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define CAYMAN_DB_EQAA					0x28804
 #define CAYMAN_DB_DEPTH_INFO				0x2803C
 #define CAYMAN_PA_SC_AA_CONFIG				0x28BE0
 #define         CAYMAN_MSAA_NUM_SAMPLES_SHIFT           0
 #define         CAYMAN_MSAA_NUM_SAMPLES_MASK            0x7
+<<<<<<< HEAD
 #define CAYMAN_SX_SCATTER_EXPORT_BASE			0x28358
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* cayman packet3 addition */
 #define	CAYMAN_PACKET3_DEALLOC_STATE			0x14
 

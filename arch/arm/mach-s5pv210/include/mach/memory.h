@@ -14,6 +14,10 @@
 #define __ASM_ARCH_MEMORY_H
 
 #define PLAT_PHYS_OFFSET		UL(0x20000000)
+<<<<<<< HEAD
+=======
+#define CONSISTENT_DMA_SIZE	(SZ_8M + SZ_4M + SZ_2M)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Sparsemem support

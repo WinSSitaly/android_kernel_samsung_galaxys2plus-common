@@ -18,7 +18,10 @@
 #include <linux/kernel.h>
 #include <linux/pci.h>
 #include <linux/string.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/mm.h>
 #include <linux/notifier.h>
@@ -29,6 +32,10 @@
 #include <asm/pci-bridge.h>
 #include <asm/machdep.h>
 #include <asm/ppc-pci.h>
+<<<<<<< HEAD
+=======
+#include <asm/firmware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unsigned long isa_io_base;	/* NULL if no ISA bus */
 EXPORT_SYMBOL(isa_io_base);
@@ -260,6 +267,11 @@ static struct notifier_block isa_bridge_notifier = {
  */
 static int __init isa_bridge_init(void)
 {
+<<<<<<< HEAD
+=======
+	if (firmware_has_feature(FW_FEATURE_ISERIES))
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bus_register_notifier(&pci_bus_type, &isa_bridge_notifier);
 	return 0;
 }

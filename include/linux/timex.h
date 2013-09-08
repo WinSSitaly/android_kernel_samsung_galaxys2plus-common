@@ -234,9 +234,29 @@ struct timex {
 extern unsigned long tick_usec;		/* USER_HZ period (usec) */
 extern unsigned long tick_nsec;		/* ACTHZ          period (nsec) */
 
+<<<<<<< HEAD
 extern void ntp_init(void);
 extern void ntp_clear(void);
 
+=======
+/*
+ * phase-lock loop variables
+ */
+extern int time_status;		/* clock synchronization status bits */
+
+extern void ntp_init(void);
+extern void ntp_clear(void);
+
+/**
+ * ntp_synced - Returns 1 if the NTP status is not UNSYNC
+ *
+ */
+static inline int ntp_synced(void)
+{
+	return !(time_status & STA_UNSYNC);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Required to safely shift negative values */
 #define shift_right(x, s) ({	\
 	__typeof__(x) __x = (x);	\
@@ -250,9 +270,16 @@ extern void ntp_clear(void);
 #define NTP_INTERVAL_LENGTH (NSEC_PER_SEC/NTP_INTERVAL_FREQ)
 
 /* Returns how long ticks are at present, in ns / 2^NTP_SCALE_SHIFT. */
+<<<<<<< HEAD
 extern u64 ntp_tick_length(void);
 
 extern int second_overflow(unsigned long secs);
+=======
+extern u64 tick_length;
+
+extern void second_overflow(void);
+extern void update_ntp_one_tick(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int do_adjtimex(struct timex *);
 extern void hardpps(const struct timespec *, const struct timespec *);
 

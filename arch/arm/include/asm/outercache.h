@@ -33,8 +33,14 @@ struct outer_cache_fns {
 #ifdef CONFIG_OUTER_CACHE_SYNC
 	void (*sync)(void);
 #endif
+<<<<<<< HEAD
 	void (*set_debug)(unsigned long);
 	void (*resume)(void);
+=======
+	void (*lock_all)(void);
+	void (*unlock_all)(void);
+	void (*set_debug)(unsigned long);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #ifdef CONFIG_OUTER_CACHE
@@ -75,12 +81,26 @@ static inline void outer_disable(void)
 		outer_cache.disable();
 }
 
+<<<<<<< HEAD
 static inline void outer_resume(void)
 {
 	if (outer_cache.resume)
 		outer_cache.resume();
 }
 
+=======
+static inline void outer_lock_all(void)
+{
+	if (outer_cache.lock_all)
+		outer_cache.lock_all();
+}
+
+static inline void outer_unlock_all(void)
+{
+	if (outer_cache.unlock_all)
+		outer_cache.unlock_all();
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 
 static inline void outer_inv_range(phys_addr_t start, phys_addr_t end)
@@ -92,6 +112,11 @@ static inline void outer_flush_range(phys_addr_t start, phys_addr_t end)
 static inline void outer_flush_all(void) { }
 static inline void outer_inv_all(void) { }
 static inline void outer_disable(void) { }
+<<<<<<< HEAD
+=======
+static inline void outer_lock_all(void) { }
+static inline void outer_unlock_all(void) { }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif
 

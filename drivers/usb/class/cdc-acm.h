@@ -101,7 +101,10 @@ struct acm {
 	int transmitting;
 	spinlock_t write_lock;
 	struct mutex mutex;
+<<<<<<< HEAD
 	bool disconnected;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct usb_cdc_line_coding line;		/* bits, stop, parity */
 	struct work_struct work;			/* work queue entry for line discipline waking up */
 	unsigned int ctrlin;				/* input control lines (DCD, DSR, RI, break, overruns) */

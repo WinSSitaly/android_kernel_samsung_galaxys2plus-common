@@ -386,7 +386,11 @@ static int dst_set_freq(struct dst_state *state, u32 freq)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int dst_set_bandwidth(struct dst_state *state, u32 bandwidth)
+=======
+static int dst_set_bandwidth(struct dst_state *state, fe_bandwidth_t bandwidth)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	state->bandwidth = bandwidth;
 
@@ -394,7 +398,11 @@ static int dst_set_bandwidth(struct dst_state *state, u32 bandwidth)
 		return -EOPNOTSUPP;
 
 	switch (bandwidth) {
+<<<<<<< HEAD
 	case 6000000:
+=======
+	case BANDWIDTH_6_MHZ:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (state->dst_hw_cap & DST_TYPE_HAS_CA)
 			state->tx_tuna[7] = 0x06;
 		else {
@@ -402,7 +410,11 @@ static int dst_set_bandwidth(struct dst_state *state, u32 bandwidth)
 			state->tx_tuna[7] = 0x00;
 		}
 		break;
+<<<<<<< HEAD
 	case 7000000:
+=======
+	case BANDWIDTH_7_MHZ:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (state->dst_hw_cap & DST_TYPE_HAS_CA)
 			state->tx_tuna[7] = 0x07;
 		else {
@@ -410,7 +422,11 @@ static int dst_set_bandwidth(struct dst_state *state, u32 bandwidth)
 			state->tx_tuna[7] = 0x00;
 		}
 		break;
+<<<<<<< HEAD
 	case 8000000:
+=======
+	case BANDWIDTH_8_MHZ:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (state->dst_hw_cap & DST_TYPE_HAS_CA)
 			state->tx_tuna[7] = 0x08;
 		else {
@@ -1561,7 +1577,11 @@ static int dst_init(struct dvb_frontend *fe)
 	state->tone = SEC_TONE_OFF;
 	state->diseq_flags = 0;
 	state->k22 = 0x02;
+<<<<<<< HEAD
 	state->bandwidth = 7000000;
+=======
+	state->bandwidth = BANDWIDTH_7_MHZ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	state->cur_jiff = jiffies;
 	if (state->dst_type == DST_TYPE_IS_SAT)
 		memcpy(state->tx_tuna, ((state->type_flags & DST_TYPE_HAS_VLF) ? sat_tuna_188 : sat_tuna_204), sizeof (sat_tuna_204));
@@ -1609,9 +1629,14 @@ static int dst_read_snr(struct dvb_frontend *fe, u16 *snr)
 	return retval;
 }
 
+<<<<<<< HEAD
 static int dst_set_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int dst_set_frontend(struct dvb_frontend *fe, struct dvb_frontend_parameters *p)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int retval = -EINVAL;
 	struct dst_state *state = fe->demodulator_priv;
 
@@ -1624,6 +1649,7 @@ static int dst_set_frontend(struct dvb_frontend *fe)
 		if (state->dst_type == DST_TYPE_IS_SAT) {
 			if (state->type_flags & DST_TYPE_HAS_OBS_REGS)
 				dst_set_inversion(state, p->inversion);
+<<<<<<< HEAD
 			dst_set_fec(state, p->fec_inner);
 			dst_set_symbolrate(state, p->symbol_rate);
 			dst_set_polarization(state);
@@ -1635,6 +1661,19 @@ static int dst_set_frontend(struct dvb_frontend *fe)
 			dst_set_fec(state, p->fec_inner);
 			dst_set_symbolrate(state, p->symbol_rate);
 			dst_set_modulation(state, p->modulation);
+=======
+			dst_set_fec(state, p->u.qpsk.fec_inner);
+			dst_set_symbolrate(state, p->u.qpsk.symbol_rate);
+			dst_set_polarization(state);
+			dprintk(verbose, DST_DEBUG, 1, "Set Symbolrate=[%d]", p->u.qpsk.symbol_rate);
+
+		} else if (state->dst_type == DST_TYPE_IS_TERR)
+			dst_set_bandwidth(state, p->u.ofdm.bandwidth);
+		else if (state->dst_type == DST_TYPE_IS_CABLE) {
+			dst_set_fec(state, p->u.qam.fec_inner);
+			dst_set_symbolrate(state, p->u.qam.symbol_rate);
+			dst_set_modulation(state, p->u.qam.modulation);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		retval = dst_write_tuna(fe);
 	}
@@ -1643,21 +1682,31 @@ static int dst_set_frontend(struct dvb_frontend *fe)
 }
 
 static int dst_tune_frontend(struct dvb_frontend* fe,
+<<<<<<< HEAD
 			    bool re_tune,
+=======
+			    struct dvb_frontend_parameters* p,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    unsigned int mode_flags,
 			    unsigned int *delay,
 			    fe_status_t *status)
 {
 	struct dst_state *state = fe->demodulator_priv;
+<<<<<<< HEAD
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
 
 	if (re_tune) {
+=======
+
+	if (p != NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dst_set_freq(state, p->frequency);
 		dprintk(verbose, DST_DEBUG, 1, "Set Frequency=[%d]", p->frequency);
 
 		if (state->dst_type == DST_TYPE_IS_SAT) {
 			if (state->type_flags & DST_TYPE_HAS_OBS_REGS)
 				dst_set_inversion(state, p->inversion);
+<<<<<<< HEAD
 			dst_set_fec(state, p->fec_inner);
 			dst_set_symbolrate(state, p->symbol_rate);
 			dst_set_polarization(state);
@@ -1669,6 +1718,19 @@ static int dst_tune_frontend(struct dvb_frontend* fe,
 			dst_set_fec(state, p->fec_inner);
 			dst_set_symbolrate(state, p->symbol_rate);
 			dst_set_modulation(state, p->modulation);
+=======
+			dst_set_fec(state, p->u.qpsk.fec_inner);
+			dst_set_symbolrate(state, p->u.qpsk.symbol_rate);
+			dst_set_polarization(state);
+			dprintk(verbose, DST_DEBUG, 1, "Set Symbolrate=[%d]", p->u.qpsk.symbol_rate);
+
+		} else if (state->dst_type == DST_TYPE_IS_TERR)
+			dst_set_bandwidth(state, p->u.ofdm.bandwidth);
+		else if (state->dst_type == DST_TYPE_IS_CABLE) {
+			dst_set_fec(state, p->u.qam.fec_inner);
+			dst_set_symbolrate(state, p->u.qam.symbol_rate);
+			dst_set_modulation(state, p->u.qam.modulation);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		dst_write_tuna(fe);
 	}
@@ -1685,15 +1747,21 @@ static int dst_get_tuning_algo(struct dvb_frontend *fe)
 	return dst_algo ? DVBFE_ALGO_HW : DVBFE_ALGO_SW;
 }
 
+<<<<<<< HEAD
 static int dst_get_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int dst_get_frontend(struct dvb_frontend *fe, struct dvb_frontend_parameters *p)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dst_state *state = fe->demodulator_priv;
 
 	p->frequency = state->decode_freq;
 	if (state->dst_type == DST_TYPE_IS_SAT) {
 		if (state->type_flags & DST_TYPE_HAS_OBS_REGS)
 			p->inversion = state->inversion;
+<<<<<<< HEAD
 		p->symbol_rate = state->symbol_rate;
 		p->fec_inner = dst_get_fec(state);
 	} else if (state->dst_type == DST_TYPE_IS_TERR) {
@@ -1702,6 +1770,16 @@ static int dst_get_frontend(struct dvb_frontend *fe)
 		p->symbol_rate = state->symbol_rate;
 		p->fec_inner = dst_get_fec(state);
 		p->modulation = dst_get_modulation(state);
+=======
+		p->u.qpsk.symbol_rate = state->symbol_rate;
+		p->u.qpsk.fec_inner = dst_get_fec(state);
+	} else if (state->dst_type == DST_TYPE_IS_TERR) {
+		p->u.ofdm.bandwidth = state->bandwidth;
+	} else if (state->dst_type == DST_TYPE_IS_CABLE) {
+		p->u.qam.symbol_rate = state->symbol_rate;
+		p->u.qam.fec_inner = dst_get_fec(state);
+		p->u.qam.modulation = dst_get_modulation(state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -1759,9 +1837,16 @@ struct dst_state *dst_attach(struct dst_state *state, struct dvb_adapter *dvb_ad
 EXPORT_SYMBOL(dst_attach);
 
 static struct dvb_frontend_ops dst_dvbt_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_DVBT },
 	.info = {
 		.name = "DST DVB-T",
+=======
+
+	.info = {
+		.name = "DST DVB-T",
+		.type = FE_OFDM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min = 137000000,
 		.frequency_max = 858000000,
 		.frequency_stepsize = 166667,
@@ -1788,9 +1873,16 @@ static struct dvb_frontend_ops dst_dvbt_ops = {
 };
 
 static struct dvb_frontend_ops dst_dvbs_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_DVBS },
 	.info = {
 		.name = "DST DVB-S",
+=======
+
+	.info = {
+		.name = "DST DVB-S",
+		.type = FE_QPSK,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min = 950000,
 		.frequency_max = 2150000,
 		.frequency_stepsize = 1000,	/* kHz for QPSK frontends */
@@ -1817,9 +1909,16 @@ static struct dvb_frontend_ops dst_dvbs_ops = {
 };
 
 static struct dvb_frontend_ops dst_dvbc_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_DVBC_ANNEX_A },
 	.info = {
 		.name = "DST DVB-C",
+=======
+
+	.info = {
+		.name = "DST DVB-C",
+		.type = FE_QAM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_stepsize = 62500,
 		.frequency_min = 51000000,
 		.frequency_max = 858000000,
@@ -1846,9 +1945,15 @@ static struct dvb_frontend_ops dst_dvbc_ops = {
 };
 
 static struct dvb_frontend_ops dst_atsc_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_ATSC },
 	.info = {
 		.name = "DST ATSC",
+=======
+	.info = {
+		.name = "DST ATSC",
+		.type = FE_ATSC,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_stepsize = 62500,
 		.frequency_min = 510000000,
 		.frequency_max = 858000000,

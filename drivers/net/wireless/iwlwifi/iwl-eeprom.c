@@ -5,7 +5,11 @@
  *
  * GPL LICENSE SUMMARY
  *
+<<<<<<< HEAD
  * Copyright(c) 2008 - 2012 Intel Corporation. All rights reserved.
+=======
+ * Copyright(c) 2008 - 2011 Intel Corporation. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -30,7 +34,11 @@
  *
  * BSD LICENSE
  *
+<<<<<<< HEAD
  * Copyright(c) 2005 - 2012 Intel Corporation. All rights reserved.
+=======
+ * Copyright(c) 2005 - 2011 Intel Corporation. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,10 +80,15 @@
 #include "iwl-dev.h"
 #include "iwl-core.h"
 #include "iwl-debug.h"
+<<<<<<< HEAD
 #include "iwl-agn.h"
 #include "iwl-eeprom.h"
 #include "iwl-io.h"
 #include "iwl-prph.h"
+=======
+#include "iwl-eeprom.h"
+#include "iwl-io.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /************************** EEPROM BANDS ****************************
  *
@@ -140,7 +153,11 @@ static const u8 iwl_eeprom_band_7[] = {       /* 5.2 ht40 channel */
 
 /******************************************************************************
  *
+<<<<<<< HEAD
  * generic NVM functions
+=======
+ * EEPROM related functions
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
 ******************************************************************************/
 
@@ -150,27 +167,43 @@ static const u8 iwl_eeprom_band_7[] = {       /* 5.2 ht40 channel */
  * EEPROM chip, not a single event, so even reads could conflict if they
  * weren't arbitrated by the semaphore.
  */
+<<<<<<< HEAD
 
 #define	EEPROM_SEM_TIMEOUT 10		/* milliseconds */
 #define EEPROM_SEM_RETRY_LIMIT 1000	/* number of attempts (not time) */
 
 static int iwl_eeprom_acquire_semaphore(struct iwl_trans *trans)
+=======
+static int iwl_eeprom_acquire_semaphore(struct iwl_priv *priv)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u16 count;
 	int ret;
 
 	for (count = 0; count < EEPROM_SEM_RETRY_LIMIT; count++) {
 		/* Request semaphore */
+<<<<<<< HEAD
 		iwl_set_bit(trans, CSR_HW_IF_CONFIG_REG,
 			    CSR_HW_IF_CONFIG_REG_BIT_EEPROM_OWN_SEM);
 
 		/* See if we got it */
 		ret = iwl_poll_bit(trans, CSR_HW_IF_CONFIG_REG,
+=======
+		iwl_set_bit(priv, CSR_HW_IF_CONFIG_REG,
+			    CSR_HW_IF_CONFIG_REG_BIT_EEPROM_OWN_SEM);
+
+		/* See if we got it */
+		ret = iwl_poll_bit(priv, CSR_HW_IF_CONFIG_REG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				CSR_HW_IF_CONFIG_REG_BIT_EEPROM_OWN_SEM,
 				CSR_HW_IF_CONFIG_REG_BIT_EEPROM_OWN_SEM,
 				EEPROM_SEM_TIMEOUT);
 		if (ret >= 0) {
+<<<<<<< HEAD
 			IWL_DEBUG_EEPROM(trans,
+=======
+			IWL_DEBUG_EEPROM(priv,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"Acquired semaphore after %d tries.\n",
 				count+1);
 			return ret;
@@ -180,13 +213,20 @@ static int iwl_eeprom_acquire_semaphore(struct iwl_trans *trans)
 	return ret;
 }
 
+<<<<<<< HEAD
 static void iwl_eeprom_release_semaphore(struct iwl_trans *trans)
 {
 	iwl_clear_bit(trans, CSR_HW_IF_CONFIG_REG,
+=======
+static void iwl_eeprom_release_semaphore(struct iwl_priv *priv)
+{
+	iwl_clear_bit(priv, CSR_HW_IF_CONFIG_REG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		CSR_HW_IF_CONFIG_REG_BIT_EEPROM_OWN_SEM);
 
 }
 
+<<<<<<< HEAD
 static int iwl_eeprom_verify_signature(struct iwl_trans *trans)
 {
 	u32 gp = iwl_read32(trans, CSR_EEPROM_GP) &
@@ -198,22 +238,45 @@ static int iwl_eeprom_verify_signature(struct iwl_trans *trans)
 	case CSR_EEPROM_GP_BAD_SIG_EEP_GOOD_SIG_OTP:
 		if (trans->nvm_device_type != NVM_DEVICE_TYPE_OTP) {
 			IWL_ERR(trans, "EEPROM with bad signature: 0x%08x\n",
+=======
+static int iwl_eeprom_verify_signature(struct iwl_priv *priv)
+{
+	u32 gp = iwl_read32(priv, CSR_EEPROM_GP) & CSR_EEPROM_GP_VALID_MSK;
+	int ret = 0;
+
+	IWL_DEBUG_EEPROM(priv, "EEPROM signature=0x%08x\n", gp);
+	switch (gp) {
+	case CSR_EEPROM_GP_BAD_SIG_EEP_GOOD_SIG_OTP:
+		if (priv->nvm_device_type != NVM_DEVICE_TYPE_OTP) {
+			IWL_ERR(priv, "EEPROM with bad signature: 0x%08x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				gp);
 			ret = -ENOENT;
 		}
 		break;
 	case CSR_EEPROM_GP_GOOD_SIG_EEP_LESS_THAN_4K:
 	case CSR_EEPROM_GP_GOOD_SIG_EEP_MORE_THAN_4K:
+<<<<<<< HEAD
 		if (trans->nvm_device_type != NVM_DEVICE_TYPE_EEPROM) {
 			IWL_ERR(trans, "OTP with bad signature: 0x%08x\n", gp);
+=======
+		if (priv->nvm_device_type != NVM_DEVICE_TYPE_EEPROM) {
+			IWL_ERR(priv, "OTP with bad signature: 0x%08x\n", gp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = -ENOENT;
 		}
 		break;
 	case CSR_EEPROM_GP_BAD_SIGNATURE_BOTH_EEP_AND_OTP:
 	default:
+<<<<<<< HEAD
 		IWL_ERR(trans, "bad EEPROM/OTP signature, type=%s, "
 			"EEPROM_GP=0x%08x\n",
 			(trans->nvm_device_type == NVM_DEVICE_TYPE_OTP)
+=======
+		IWL_ERR(priv, "bad EEPROM/OTP signature, type=%s, "
+			"EEPROM_GP=0x%08x\n",
+			(priv->nvm_device_type == NVM_DEVICE_TYPE_OTP)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			? "OTP" : "EEPROM", gp);
 		ret = -ENOENT;
 		break;
@@ -221,6 +284,7 @@ static int iwl_eeprom_verify_signature(struct iwl_trans *trans)
 	return ret;
 }
 
+<<<<<<< HEAD
 u16 iwl_eeprom_query16(const struct iwl_shared *shrd, size_t offset)
 {
 	if (!shrd->eeprom)
@@ -323,6 +387,21 @@ static void iwl_set_otp_access(struct iwl_trans *trans,
 }
 
 static int iwl_get_nvm_type(struct iwl_trans *trans, u32 hw_rev)
+=======
+static void iwl_set_otp_access(struct iwl_priv *priv, enum iwl_access_mode mode)
+{
+	iwl_read32(priv, CSR_OTP_GP_REG);
+
+	if (mode == IWL_OTP_ACCESS_ABSOLUTE)
+		iwl_clear_bit(priv, CSR_OTP_GP_REG,
+			      CSR_OTP_GP_REG_OTP_ACCESS_MODE);
+	else
+		iwl_set_bit(priv, CSR_OTP_GP_REG,
+			    CSR_OTP_GP_REG_OTP_ACCESS_MODE);
+}
+
+static int iwlcore_get_nvm_type(struct iwl_priv *priv, u32 hw_rev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 otpgp;
 	int nvm_type;
@@ -330,7 +409,11 @@ static int iwl_get_nvm_type(struct iwl_trans *trans, u32 hw_rev)
 	/* OTP only valid for CP/PP and after */
 	switch (hw_rev & CSR_HW_REV_TYPE_MSK) {
 	case CSR_HW_REV_TYPE_NONE:
+<<<<<<< HEAD
 		IWL_ERR(trans, "Unknown hardware type\n");
+=======
+		IWL_ERR(priv, "Unknown hardware type\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOENT;
 	case CSR_HW_REV_TYPE_5300:
 	case CSR_HW_REV_TYPE_5350:
@@ -339,7 +422,11 @@ static int iwl_get_nvm_type(struct iwl_trans *trans, u32 hw_rev)
 		nvm_type = NVM_DEVICE_TYPE_EEPROM;
 		break;
 	default:
+<<<<<<< HEAD
 		otpgp = iwl_read32(trans, CSR_OTP_GP_REG);
+=======
+		otpgp = iwl_read32(priv, CSR_OTP_GP_REG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (otpgp & CSR_OTP_GP_REG_DEVICE_SELECT)
 			nvm_type = NVM_DEVICE_TYPE_OTP;
 		else
@@ -349,54 +436,92 @@ static int iwl_get_nvm_type(struct iwl_trans *trans, u32 hw_rev)
 	return  nvm_type;
 }
 
+<<<<<<< HEAD
 static int iwl_init_otp_access(struct iwl_trans *trans)
+=======
+static int iwl_init_otp_access(struct iwl_priv *priv)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 
 	/* Enable 40MHz radio clock */
+<<<<<<< HEAD
 	iwl_write32(trans, CSR_GP_CNTRL,
 		    iwl_read32(trans, CSR_GP_CNTRL) |
 		    CSR_GP_CNTRL_REG_FLAG_INIT_DONE);
 
 	/* wait for clock to be ready */
 	ret = iwl_poll_bit(trans, CSR_GP_CNTRL,
+=======
+	iwl_write32(priv, CSR_GP_CNTRL,
+		    iwl_read32(priv, CSR_GP_CNTRL) |
+		    CSR_GP_CNTRL_REG_FLAG_INIT_DONE);
+
+	/* wait for clock to be ready */
+	ret = iwl_poll_bit(priv, CSR_GP_CNTRL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 CSR_GP_CNTRL_REG_FLAG_MAC_CLOCK_READY,
 				 CSR_GP_CNTRL_REG_FLAG_MAC_CLOCK_READY,
 				 25000);
 	if (ret < 0)
+<<<<<<< HEAD
 		IWL_ERR(trans, "Time out access OTP\n");
 	else {
 		iwl_set_bits_prph(trans, APMG_PS_CTRL_REG,
 				  APMG_PS_CTRL_VAL_RESET_REQ);
 		udelay(5);
 		iwl_clear_bits_prph(trans, APMG_PS_CTRL_REG,
+=======
+		IWL_ERR(priv, "Time out access OTP\n");
+	else {
+		iwl_set_bits_prph(priv, APMG_PS_CTRL_REG,
+				  APMG_PS_CTRL_VAL_RESET_REQ);
+		udelay(5);
+		iwl_clear_bits_prph(priv, APMG_PS_CTRL_REG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    APMG_PS_CTRL_VAL_RESET_REQ);
 
 		/*
 		 * CSR auto clock gate disable bit -
 		 * this is only applicable for HW with OTP shadow RAM
 		 */
+<<<<<<< HEAD
 		if (cfg(trans)->base_params->shadow_ram_support)
 			iwl_set_bit(trans, CSR_DBG_LINK_PWR_MGMT_REG,
+=======
+		if (priv->cfg->base_params->shadow_ram_support)
+			iwl_set_bit(priv, CSR_DBG_LINK_PWR_MGMT_REG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				CSR_RESET_LINK_PWR_MGMT_DISABLED);
 	}
 	return ret;
 }
 
+<<<<<<< HEAD
 static int iwl_read_otp_word(struct iwl_trans *trans, u16 addr,
 			     __le16 *eeprom_data)
+=======
+static int iwl_read_otp_word(struct iwl_priv *priv, u16 addr, __le16 *eeprom_data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret = 0;
 	u32 r;
 	u32 otpgp;
 
+<<<<<<< HEAD
 	iwl_write32(trans, CSR_EEPROM_REG,
 		    CSR_EEPROM_REG_MSK_ADDR & (addr << 1));
 	ret = iwl_poll_bit(trans, CSR_EEPROM_REG,
+=======
+	iwl_write32(priv, CSR_EEPROM_REG,
+		    CSR_EEPROM_REG_MSK_ADDR & (addr << 1));
+	ret = iwl_poll_bit(priv, CSR_EEPROM_REG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 CSR_EEPROM_REG_READ_VALID_MSK,
 				 CSR_EEPROM_REG_READ_VALID_MSK,
 				 IWL_EEPROM_ACCESS_TIMEOUT);
 	if (ret < 0) {
+<<<<<<< HEAD
 		IWL_ERR(trans, "Time out reading OTP[%d]\n", addr);
 		return ret;
 	}
@@ -409,14 +534,34 @@ static int iwl_read_otp_word(struct iwl_trans *trans, u16 addr,
 		iwl_set_bit(trans, CSR_OTP_GP_REG,
 			CSR_OTP_GP_REG_ECC_UNCORR_STATUS_MSK);
 		IWL_ERR(trans, "Uncorrectable OTP ECC error, abort OTP read\n");
+=======
+		IWL_ERR(priv, "Time out reading OTP[%d]\n", addr);
+		return ret;
+	}
+	r = iwl_read32(priv, CSR_EEPROM_REG);
+	/* check for ECC errors: */
+	otpgp = iwl_read32(priv, CSR_OTP_GP_REG);
+	if (otpgp & CSR_OTP_GP_REG_ECC_UNCORR_STATUS_MSK) {
+		/* stop in this case */
+		/* set the uncorrectable OTP ECC bit for acknowledgement */
+		iwl_set_bit(priv, CSR_OTP_GP_REG,
+			CSR_OTP_GP_REG_ECC_UNCORR_STATUS_MSK);
+		IWL_ERR(priv, "Uncorrectable OTP ECC error, abort OTP read\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 	if (otpgp & CSR_OTP_GP_REG_ECC_CORR_STATUS_MSK) {
 		/* continue in this case */
 		/* set the correctable OTP ECC bit for acknowledgement */
+<<<<<<< HEAD
 		iwl_set_bit(trans, CSR_OTP_GP_REG,
 				CSR_OTP_GP_REG_ECC_CORR_STATUS_MSK);
 		IWL_ERR(trans, "Correctable OTP ECC error, continue read\n");
+=======
+		iwl_set_bit(priv, CSR_OTP_GP_REG,
+				CSR_OTP_GP_REG_ECC_CORR_STATUS_MSK);
+		IWL_ERR(priv, "Correctable OTP ECC error, continue read\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	*eeprom_data = cpu_to_le16(r >> 16);
 	return 0;
@@ -425,13 +570,18 @@ static int iwl_read_otp_word(struct iwl_trans *trans, u16 addr,
 /*
  * iwl_is_otp_empty: check for empty OTP
  */
+<<<<<<< HEAD
 static bool iwl_is_otp_empty(struct iwl_trans *trans)
+=======
+static bool iwl_is_otp_empty(struct iwl_priv *priv)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u16 next_link_addr = 0;
 	__le16 link_value;
 	bool is_empty = false;
 
 	/* locate the beginning of OTP link list */
+<<<<<<< HEAD
 	if (!iwl_read_otp_word(trans, next_link_addr, &link_value)) {
 		if (!link_value) {
 			IWL_ERR(trans, "OTP is empty\n");
@@ -439,6 +589,15 @@ static bool iwl_is_otp_empty(struct iwl_trans *trans)
 		}
 	} else {
 		IWL_ERR(trans, "Unable to read first block of OTP list.\n");
+=======
+	if (!iwl_read_otp_word(priv, next_link_addr, &link_value)) {
+		if (!link_value) {
+			IWL_ERR(priv, "OTP is empty\n");
+			is_empty = true;
+		}
+	} else {
+		IWL_ERR(priv, "Unable to read first block of OTP list.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		is_empty = true;
 	}
 
@@ -455,7 +614,11 @@ static bool iwl_is_otp_empty(struct iwl_trans *trans)
  *   we should read and used to configure the device.
  *   only perform this operation if shadow RAM is disabled
  */
+<<<<<<< HEAD
 static int iwl_find_otp_image(struct iwl_trans *trans,
+=======
+static int iwl_find_otp_image(struct iwl_priv *priv,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					u16 *validblockaddr)
 {
 	u16 next_link_addr = 0, valid_addr;
@@ -463,10 +626,17 @@ static int iwl_find_otp_image(struct iwl_trans *trans,
 	int usedblocks = 0;
 
 	/* set addressing mode to absolute to traverse the link list */
+<<<<<<< HEAD
 	iwl_set_otp_access(trans, IWL_OTP_ACCESS_ABSOLUTE);
 
 	/* checking for empty OTP or error */
 	if (iwl_is_otp_empty(trans))
+=======
+	iwl_set_otp_access(priv, IWL_OTP_ACCESS_ABSOLUTE);
+
+	/* checking for empty OTP or error */
+	if (iwl_is_otp_empty(priv))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	/*
@@ -480,9 +650,15 @@ static int iwl_find_otp_image(struct iwl_trans *trans,
 		 */
 		valid_addr = next_link_addr;
 		next_link_addr = le16_to_cpu(link_value) * sizeof(u16);
+<<<<<<< HEAD
 		IWL_DEBUG_EEPROM(trans, "OTP blocks %d addr 0x%x\n",
 			       usedblocks, next_link_addr);
 		if (iwl_read_otp_word(trans, next_link_addr, &link_value))
+=======
+		IWL_DEBUG_EEPROM(priv, "OTP blocks %d addr 0x%x\n",
+			       usedblocks, next_link_addr);
+		if (iwl_read_otp_word(priv, next_link_addr, &link_value))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EINVAL;
 		if (!link_value) {
 			/*
@@ -497,6 +673,7 @@ static int iwl_find_otp_image(struct iwl_trans *trans,
 		}
 		/* more in the link list, continue */
 		usedblocks++;
+<<<<<<< HEAD
 	} while (usedblocks <= cfg(trans)->base_params->max_ll_items);
 
 	/* OTP has no valid blocks */
@@ -651,11 +828,31 @@ static void iwl_eeprom_enhanced_txpower(struct iwl_priv *priv)
 
 		iwl_eeprom_enh_txp_read_element(priv, txp, max_txp_avg);
 	}
+=======
+	} while (usedblocks <= priv->cfg->base_params->max_ll_items);
+
+	/* OTP has no valid blocks */
+	IWL_DEBUG_EEPROM(priv, "OTP has no valid blocks\n");
+	return -EINVAL;
+}
+
+const u8 *iwl_eeprom_query_addr(const struct iwl_priv *priv, size_t offset)
+{
+	return priv->cfg->ops->lib->eeprom_ops.query_addr(priv, offset);
+}
+
+u16 iwl_eeprom_query16(const struct iwl_priv *priv, size_t offset)
+{
+	if (!priv->eeprom)
+		return 0;
+	return (u16)priv->eeprom[offset] | ((u16)priv->eeprom[offset + 1] << 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
  * iwl_eeprom_init - read EEPROM contents
  *
+<<<<<<< HEAD
  * Load the EEPROM contents from adapter into shrd->eeprom
  *
  * NOTE:  This routine uses the non-debug IO access functions.
@@ -664,12 +861,23 @@ int iwl_eeprom_init(struct iwl_trans *trans, u32 hw_rev)
 {
 	__le16 *e;
 	u32 gp = iwl_read32(trans, CSR_EEPROM_GP);
+=======
+ * Load the EEPROM contents from adapter into priv->eeprom
+ *
+ * NOTE:  This routine uses the non-debug IO access functions.
+ */
+int iwl_eeprom_init(struct iwl_priv *priv, u32 hw_rev)
+{
+	__le16 *e;
+	u32 gp = iwl_read32(priv, CSR_EEPROM_GP);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int sz;
 	int ret;
 	u16 addr;
 	u16 validblockaddr = 0;
 	u16 cache_addr = 0;
 
+<<<<<<< HEAD
 	trans->nvm_device_type = iwl_get_nvm_type(trans, hw_rev);
 	if (trans->nvm_device_type == -ENOENT)
 		return -ENOENT;
@@ -686,18 +894,45 @@ int iwl_eeprom_init(struct iwl_trans *trans, u32 hw_rev)
 	ret = iwl_eeprom_verify_signature(trans);
 	if (ret < 0) {
 		IWL_ERR(trans, "EEPROM not found, EEPROM_GP=0x%08x\n", gp);
+=======
+	priv->nvm_device_type = iwlcore_get_nvm_type(priv, hw_rev);
+	if (priv->nvm_device_type == -ENOENT)
+		return -ENOENT;
+	/* allocate eeprom */
+	sz = priv->cfg->base_params->eeprom_size;
+	IWL_DEBUG_EEPROM(priv, "NVM size = %d\n", sz);
+	priv->eeprom = kzalloc(sz, GFP_KERNEL);
+	if (!priv->eeprom) {
+		ret = -ENOMEM;
+		goto alloc_err;
+	}
+	e = (__le16 *)priv->eeprom;
+
+	priv->cfg->ops->lib->apm_ops.init(priv);
+
+	ret = iwl_eeprom_verify_signature(priv);
+	if (ret < 0) {
+		IWL_ERR(priv, "EEPROM not found, EEPROM_GP=0x%08x\n", gp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENOENT;
 		goto err;
 	}
 
 	/* Make sure driver (instead of uCode) is allowed to read EEPROM */
+<<<<<<< HEAD
 	ret = iwl_eeprom_acquire_semaphore(trans);
 	if (ret < 0) {
 		IWL_ERR(trans, "Failed to acquire EEPROM semaphore.\n");
+=======
+	ret = iwl_eeprom_acquire_semaphore(priv);
+	if (ret < 0) {
+		IWL_ERR(priv, "Failed to acquire EEPROM semaphore.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENOENT;
 		goto err;
 	}
 
+<<<<<<< HEAD
 	if (trans->nvm_device_type == NVM_DEVICE_TYPE_OTP) {
 
 		ret = iwl_init_otp_access(trans);
@@ -716,6 +951,26 @@ int iwl_eeprom_init(struct iwl_trans *trans, u32 hw_rev)
 		/* traversing the linked list if no shadow ram supported */
 		if (!cfg(trans)->base_params->shadow_ram_support) {
 			if (iwl_find_otp_image(trans, &validblockaddr)) {
+=======
+	if (priv->nvm_device_type == NVM_DEVICE_TYPE_OTP) {
+
+		ret = iwl_init_otp_access(priv);
+		if (ret) {
+			IWL_ERR(priv, "Failed to initialize OTP access.\n");
+			ret = -ENOENT;
+			goto done;
+		}
+		iwl_write32(priv, CSR_EEPROM_GP,
+			    iwl_read32(priv, CSR_EEPROM_GP) &
+			    ~CSR_EEPROM_GP_IF_OWNER_MSK);
+
+		iwl_set_bit(priv, CSR_OTP_GP_REG,
+			     CSR_OTP_GP_REG_ECC_CORR_STATUS_MSK |
+			     CSR_OTP_GP_REG_ECC_UNCORR_STATUS_MSK);
+		/* traversing the linked list if no shadow ram supported */
+		if (!priv->cfg->base_params->shadow_ram_support) {
+			if (iwl_find_otp_image(priv, &validblockaddr)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ret = -ENOENT;
 				goto done;
 			}
@@ -724,7 +979,11 @@ int iwl_eeprom_init(struct iwl_trans *trans, u32 hw_rev)
 		     addr += sizeof(u16)) {
 			__le16 eeprom_data;
 
+<<<<<<< HEAD
 			ret = iwl_read_otp_word(trans, addr, &eeprom_data);
+=======
+			ret = iwl_read_otp_word(priv, addr, &eeprom_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret)
 				goto done;
 			e[cache_addr / 2] = eeprom_data;
@@ -735,23 +994,38 @@ int iwl_eeprom_init(struct iwl_trans *trans, u32 hw_rev)
 		for (addr = 0; addr < sz; addr += sizeof(u16)) {
 			u32 r;
 
+<<<<<<< HEAD
 			iwl_write32(trans, CSR_EEPROM_REG,
 				    CSR_EEPROM_REG_MSK_ADDR & (addr << 1));
 
 			ret = iwl_poll_bit(trans, CSR_EEPROM_REG,
+=======
+			iwl_write32(priv, CSR_EEPROM_REG,
+				    CSR_EEPROM_REG_MSK_ADDR & (addr << 1));
+
+			ret = iwl_poll_bit(priv, CSR_EEPROM_REG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						  CSR_EEPROM_REG_READ_VALID_MSK,
 						  CSR_EEPROM_REG_READ_VALID_MSK,
 						  IWL_EEPROM_ACCESS_TIMEOUT);
 			if (ret < 0) {
+<<<<<<< HEAD
 				IWL_ERR(trans,
 					"Time out reading EEPROM[%d]\n", addr);
 				goto done;
 			}
 			r = iwl_read32(trans, CSR_EEPROM_REG);
+=======
+				IWL_ERR(priv, "Time out reading EEPROM[%d]\n", addr);
+				goto done;
+			}
+			r = iwl_read32(priv, CSR_EEPROM_REG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			e[addr / 2] = cpu_to_le16(r >> 16);
 		}
 	}
 
+<<<<<<< HEAD
 	IWL_DEBUG_EEPROM(trans, "NVM Type: %s, version: 0x%x\n",
 		       (trans->nvm_device_type == NVM_DEVICE_TYPE_OTP)
 		       ? "OTP" : "EEPROM",
@@ -764,14 +1038,37 @@ done:
 err:
 	if (ret)
 		iwl_eeprom_free(trans->shrd);
+=======
+	IWL_DEBUG_EEPROM(priv, "NVM Type: %s, version: 0x%x\n",
+		       (priv->nvm_device_type == NVM_DEVICE_TYPE_OTP)
+		       ? "OTP" : "EEPROM",
+		       iwl_eeprom_query16(priv, EEPROM_VERSION));
+
+	ret = 0;
+done:
+	iwl_eeprom_release_semaphore(priv);
+
+err:
+	if (ret)
+		iwl_eeprom_free(priv);
+	/* Reset chip to save power until we load uCode during "up". */
+	iwl_apm_stop(priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 alloc_err:
 	return ret;
 }
 
+<<<<<<< HEAD
 void iwl_eeprom_free(struct iwl_shared *shrd)
 {
 	kfree(shrd->eeprom);
 	shrd->eeprom = NULL;
+=======
+void iwl_eeprom_free(struct iwl_priv *priv)
+{
+	kfree(priv->eeprom);
+	priv->eeprom = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void iwl_init_band_reference(const struct iwl_priv *priv,
@@ -779,50 +1076,82 @@ static void iwl_init_band_reference(const struct iwl_priv *priv,
 			const struct iwl_eeprom_channel **eeprom_ch_info,
 			const u8 **eeprom_ch_index)
 {
+<<<<<<< HEAD
 	struct iwl_shared *shrd = priv->shrd;
 	u32 offset = cfg(priv)->lib->
+=======
+	u32 offset = priv->cfg->ops->lib->
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			eeprom_ops.regulatory_bands[eep_band - 1];
 	switch (eep_band) {
 	case 1:		/* 2.4GHz band */
 		*eeprom_ch_count = ARRAY_SIZE(iwl_eeprom_band_1);
 		*eeprom_ch_info = (struct iwl_eeprom_channel *)
+<<<<<<< HEAD
 				iwl_eeprom_query_addr(shrd, offset);
+=======
+				iwl_eeprom_query_addr(priv, offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*eeprom_ch_index = iwl_eeprom_band_1;
 		break;
 	case 2:		/* 4.9GHz band */
 		*eeprom_ch_count = ARRAY_SIZE(iwl_eeprom_band_2);
 		*eeprom_ch_info = (struct iwl_eeprom_channel *)
+<<<<<<< HEAD
 				iwl_eeprom_query_addr(shrd, offset);
+=======
+				iwl_eeprom_query_addr(priv, offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*eeprom_ch_index = iwl_eeprom_band_2;
 		break;
 	case 3:		/* 5.2GHz band */
 		*eeprom_ch_count = ARRAY_SIZE(iwl_eeprom_band_3);
 		*eeprom_ch_info = (struct iwl_eeprom_channel *)
+<<<<<<< HEAD
 				iwl_eeprom_query_addr(shrd, offset);
+=======
+				iwl_eeprom_query_addr(priv, offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*eeprom_ch_index = iwl_eeprom_band_3;
 		break;
 	case 4:		/* 5.5GHz band */
 		*eeprom_ch_count = ARRAY_SIZE(iwl_eeprom_band_4);
 		*eeprom_ch_info = (struct iwl_eeprom_channel *)
+<<<<<<< HEAD
 				iwl_eeprom_query_addr(shrd, offset);
+=======
+				iwl_eeprom_query_addr(priv, offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*eeprom_ch_index = iwl_eeprom_band_4;
 		break;
 	case 5:		/* 5.7GHz band */
 		*eeprom_ch_count = ARRAY_SIZE(iwl_eeprom_band_5);
 		*eeprom_ch_info = (struct iwl_eeprom_channel *)
+<<<<<<< HEAD
 				iwl_eeprom_query_addr(shrd, offset);
+=======
+				iwl_eeprom_query_addr(priv, offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*eeprom_ch_index = iwl_eeprom_band_5;
 		break;
 	case 6:		/* 2.4GHz ht40 channels */
 		*eeprom_ch_count = ARRAY_SIZE(iwl_eeprom_band_6);
 		*eeprom_ch_info = (struct iwl_eeprom_channel *)
+<<<<<<< HEAD
 				iwl_eeprom_query_addr(shrd, offset);
+=======
+				iwl_eeprom_query_addr(priv, offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*eeprom_ch_index = iwl_eeprom_band_6;
 		break;
 	case 7:		/* 5 GHz ht40 channels */
 		*eeprom_ch_count = ARRAY_SIZE(iwl_eeprom_band_7);
 		*eeprom_ch_info = (struct iwl_eeprom_channel *)
+<<<<<<< HEAD
 				iwl_eeprom_query_addr(shrd, offset);
+=======
+				iwl_eeprom_query_addr(priv, offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*eeprom_ch_index = iwl_eeprom_band_7;
 		break;
 	default:
@@ -907,9 +1236,14 @@ int iwl_init_channel_map(struct iwl_priv *priv)
 	IWL_DEBUG_EEPROM(priv, "Parsing data for %d channels.\n",
 			priv->channel_count);
 
+<<<<<<< HEAD
 	priv->channel_info = kcalloc(priv->channel_count,
 				     sizeof(struct iwl_channel_info),
 				     GFP_KERNEL);
+=======
+	priv->channel_info = kzalloc(sizeof(struct iwl_channel_info) *
+				     priv->channel_count, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!priv->channel_info) {
 		IWL_ERR(priv, "Could not allocate channel_info\n");
 		priv->channel_count = 0;
@@ -987,9 +1321,15 @@ int iwl_init_channel_map(struct iwl_priv *priv)
 	}
 
 	/* Check if we do have HT40 channels */
+<<<<<<< HEAD
 	if (cfg(priv)->lib->eeprom_ops.regulatory_bands[5] ==
 	    EEPROM_REGULATORY_BAND_NO_HT40 &&
 	    cfg(priv)->lib->eeprom_ops.regulatory_bands[6] ==
+=======
+	if (priv->cfg->ops->lib->eeprom_ops.regulatory_bands[5] ==
+	    EEPROM_REGULATORY_BAND_NO_HT40 &&
+	    priv->cfg->ops->lib->eeprom_ops.regulatory_bands[6] ==
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    EEPROM_REGULATORY_BAND_NO_HT40)
 		return 0;
 
@@ -1025,8 +1365,13 @@ int iwl_init_channel_map(struct iwl_priv *priv)
 	 * driver need to process addition information
 	 * to determine the max channel tx power limits
 	 */
+<<<<<<< HEAD
 	if (cfg(priv)->lib->eeprom_ops.enhanced_txpower)
 		iwl_eeprom_enhanced_txpower(priv);
+=======
+	if (priv->cfg->ops->lib->eeprom_ops.update_enhanced_txpower)
+		priv->cfg->ops->lib->eeprom_ops.update_enhanced_txpower(priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1067,6 +1412,7 @@ const struct iwl_channel_info *iwl_get_channel_info(const struct iwl_priv *priv,
 
 	return NULL;
 }
+<<<<<<< HEAD
 
 void iwl_rf_config(struct iwl_priv *priv)
 {
@@ -1092,3 +1438,5 @@ void iwl_rf_config(struct iwl_priv *priv)
 		    CSR_HW_IF_CONFIG_REG_BIT_RADIO_SI |
 		    CSR_HW_IF_CONFIG_REG_BIT_MAC_SI);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

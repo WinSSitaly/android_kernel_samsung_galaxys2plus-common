@@ -14,14 +14,23 @@
 #include <asm/mach/map.h>
 
 #include <linux/dma-mapping.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <linux/i2c-gpio.h>
 
 #include <mach/board.h>
+<<<<<<< HEAD
 #include <mach/at91rm9200.h>
 #include <mach/at91rm9200_mc.h>
 #include <mach/at91_ramc.h>
+=======
+#include <mach/gpio.h>
+#include <mach/at91rm9200.h>
+#include <mach/at91rm9200_mc.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "generic.h"
 
@@ -61,6 +70,7 @@ static struct platform_device at91rm9200_usbh_device = {
 
 void __init at91_add_device_usbh(struct at91_usbh_data *data)
 {
+<<<<<<< HEAD
 	int i;
 
 	if (!data)
@@ -72,6 +82,11 @@ void __init at91_add_device_usbh(struct at91_usbh_data *data)
 			at91_set_gpio_input(data->overcurrent_pin[i], 1);
 	}
 
+=======
+	if (!data)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usbh_data = *data;
 	platform_device_register(&at91rm9200_usbh_device);
 }
@@ -84,7 +99,11 @@ void __init at91_add_device_usbh(struct at91_usbh_data *data) {}
  *  USB Device (Gadget)
  * -------------------------------------------------------------------- */
 
+<<<<<<< HEAD
 #if defined(CONFIG_USB_AT91) || defined(CONFIG_USB_AT91_MODULE)
+=======
+#ifdef CONFIG_USB_GADGET_AT91
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct at91_udc_data udc_data;
 
 static struct resource udc_resources[] = {
@@ -115,11 +134,19 @@ void __init at91_add_device_udc(struct at91_udc_data *data)
 	if (!data)
 		return;
 
+<<<<<<< HEAD
 	if (gpio_is_valid(data->vbus_pin)) {
 		at91_set_gpio_input(data->vbus_pin, 0);
 		at91_set_deglitch(data->vbus_pin, 1);
 	}
 	if (gpio_is_valid(data->pullup_pin))
+=======
+	if (data->vbus_pin) {
+		at91_set_gpio_input(data->vbus_pin, 0);
+		at91_set_deglitch(data->vbus_pin, 1);
+	}
+	if (data->pullup_pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		at91_set_gpio_output(data->pullup_pin, 0);
 
 	udc_data = *data;
@@ -136,7 +163,11 @@ void __init at91_add_device_udc(struct at91_udc_data *data) {}
 
 #if defined(CONFIG_ARM_AT91_ETHER) || defined(CONFIG_ARM_AT91_ETHER_MODULE)
 static u64 eth_dmamask = DMA_BIT_MASK(32);
+<<<<<<< HEAD
 static struct macb_platform_data eth_data;
+=======
+static struct at91_eth_data eth_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct resource eth_resources[] = {
 	[0] = {
@@ -163,12 +194,20 @@ static struct platform_device at91rm9200_eth_device = {
 	.num_resources	= ARRAY_SIZE(eth_resources),
 };
 
+<<<<<<< HEAD
 void __init at91_add_device_eth(struct macb_platform_data *data)
+=======
+void __init at91_add_device_eth(struct at91_eth_data *data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (!data)
 		return;
 
+<<<<<<< HEAD
 	if (gpio_is_valid(data->phy_irq_pin)) {
+=======
+	if (data->phy_irq_pin) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		at91_set_gpio_input(data->phy_irq_pin, 0);
 		at91_set_deglitch(data->phy_irq_pin, 1);
 	}
@@ -200,7 +239,11 @@ void __init at91_add_device_eth(struct macb_platform_data *data)
 	platform_device_register(&at91rm9200_eth_device);
 }
 #else
+<<<<<<< HEAD
 void __init at91_add_device_eth(struct macb_platform_data *data) {}
+=======
+void __init at91_add_device_eth(struct at91_eth_data *data) {}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 
@@ -242,15 +285,24 @@ void __init at91_add_device_cf(struct at91_cf_data *data)
 	data->chipselect = 4;		/* can only use EBI ChipSelect 4 */
 
 	/* CF takes over CS4, CS5, CS6 */
+<<<<<<< HEAD
 	csa = at91_ramc_read(0, AT91_EBI_CSA);
 	at91_ramc_write(0, AT91_EBI_CSA, csa | AT91_EBI_CS4A_SMC_COMPACTFLASH);
+=======
+	csa = at91_sys_read(AT91_EBI_CSA);
+	at91_sys_write(AT91_EBI_CSA, csa | AT91_EBI_CS4A_SMC_COMPACTFLASH);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Static memory controller timing adjustments.
 	 * REVISIT:  these timings are in terms of MCK cycles, so
 	 * when MCK changes (cpufreq etc) so must these values...
 	 */
+<<<<<<< HEAD
 	at91_ramc_write(0, AT91_SMC_CSR(4),
+=======
+	at91_sys_write(AT91_SMC_CSR(4),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  AT91_SMC_ACSS_STD
 				| AT91_SMC_DBW_16
 				| AT91_SMC_BAT
@@ -261,7 +313,11 @@ void __init at91_add_device_cf(struct at91_cf_data *data)
 	);
 
 	/* input/irq */
+<<<<<<< HEAD
 	if (gpio_is_valid(data->irq_pin)) {
+=======
+	if (data->irq_pin) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		at91_set_gpio_input(data->irq_pin, 1);
 		at91_set_deglitch(data->irq_pin, 1);
 	}
@@ -269,7 +325,11 @@ void __init at91_add_device_cf(struct at91_cf_data *data)
 	at91_set_deglitch(data->det_pin, 1);
 
 	/* outputs, initially off */
+<<<<<<< HEAD
 	if (gpio_is_valid(data->vcc_pin))
+=======
+	if (data->vcc_pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		at91_set_gpio_output(data->vcc_pin, 0);
 	at91_set_gpio_output(data->rst_pin, 0);
 
@@ -329,6 +389,7 @@ void __init at91_add_device_mmc(short mmc_id, struct at91_mmc_data *data)
 		return;
 
 	/* input/irq */
+<<<<<<< HEAD
 	if (gpio_is_valid(data->det_pin)) {
 		at91_set_gpio_input(data->det_pin, 1);
 		at91_set_deglitch(data->det_pin, 1);
@@ -336,6 +397,15 @@ void __init at91_add_device_mmc(short mmc_id, struct at91_mmc_data *data)
 	if (gpio_is_valid(data->wp_pin))
 		at91_set_gpio_input(data->wp_pin, 1);
 	if (gpio_is_valid(data->vcc_pin))
+=======
+	if (data->det_pin) {
+		at91_set_gpio_input(data->det_pin, 1);
+		at91_set_deglitch(data->det_pin, 1);
+	}
+	if (data->wp_pin)
+		at91_set_gpio_input(data->wp_pin, 1);
+	if (data->vcc_pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		at91_set_gpio_output(data->vcc_pin, 0);
 
 	/* CLK */
@@ -408,11 +478,19 @@ void __init at91_add_device_nand(struct atmel_nand_data *data)
 		return;
 
 	/* enable the address range of CS3 */
+<<<<<<< HEAD
 	csa = at91_ramc_read(0, AT91_EBI_CSA);
 	at91_ramc_write(0, AT91_EBI_CSA, csa | AT91_EBI_CS3A_SMC_SMARTMEDIA);
 
 	/* set the bus interface characteristics */
 	at91_ramc_write(0, AT91_SMC_CSR(3), AT91_SMC_ACSS_STD | AT91_SMC_DBW_8 | AT91_SMC_WSEN
+=======
+	csa = at91_sys_read(AT91_EBI_CSA);
+	at91_sys_write(AT91_EBI_CSA, csa | AT91_EBI_CS3A_SMC_SMARTMEDIA);
+
+	/* set the bus interface characteristics */
+	at91_sys_write(AT91_SMC_CSR(3), AT91_SMC_ACSS_STD | AT91_SMC_DBW_8 | AT91_SMC_WSEN
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		| AT91_SMC_NWS_(5)
 		| AT91_SMC_TDF_(1)
 		| AT91_SMC_RWSETUP_(0)	/* tDS Data Set up Time 30 - ns */
@@ -420,6 +498,7 @@ void __init at91_add_device_nand(struct atmel_nand_data *data)
 	);
 
 	/* enable pin */
+<<<<<<< HEAD
 	if (gpio_is_valid(data->enable_pin))
 		at91_set_gpio_output(data->enable_pin, 1);
 
@@ -429,6 +508,17 @@ void __init at91_add_device_nand(struct atmel_nand_data *data)
 
 	/* card detect pin */
 	if (gpio_is_valid(data->det_pin))
+=======
+	if (data->enable_pin)
+		at91_set_gpio_output(data->enable_pin, 1);
+
+	/* ready/busy pin */
+	if (data->rdy_pin)
+		at91_set_gpio_input(data->rdy_pin, 1);
+
+	/* card detect pin */
+	if (data->det_pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		at91_set_gpio_input(data->det_pin, 1);
 
 	at91_set_A_periph(AT91_PIN_PC1, 0);		/* SMOE */
@@ -463,7 +553,11 @@ static struct i2c_gpio_platform_data pdata = {
 
 static struct platform_device at91rm9200_twi_device = {
 	.name			= "i2c-gpio",
+<<<<<<< HEAD
 	.id			= 0,
+=======
+	.id			= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dev.platform_data	= &pdata,
 };
 
@@ -666,6 +760,7 @@ static void __init at91_add_device_tc(void) { }
  * -------------------------------------------------------------------- */
 
 #if defined(CONFIG_RTC_DRV_AT91RM9200) || defined(CONFIG_RTC_DRV_AT91RM9200_MODULE)
+<<<<<<< HEAD
 static struct resource rtc_resources[] = {
 	[0] = {
 		.start	= AT91RM9200_BASE_RTC,
@@ -684,6 +779,12 @@ static struct platform_device at91rm9200_rtc_device = {
 	.id		= -1,
 	.resource	= rtc_resources,
 	.num_resources	= ARRAY_SIZE(rtc_resources),
+=======
+static struct platform_device at91rm9200_rtc_device = {
+	.name		= "at91_rtc",
+	.id		= -1,
+	.num_resources	= 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void __init at91_add_device_rtc(void)
@@ -892,8 +993,13 @@ void __init at91_add_device_ssc(unsigned id, unsigned pins) {}
 #if defined(CONFIG_SERIAL_ATMEL)
 static struct resource dbgu_resources[] = {
 	[0] = {
+<<<<<<< HEAD
 		.start	= AT91RM9200_BASE_DBGU,
 		.end	= AT91RM9200_BASE_DBGU + SZ_512 - 1,
+=======
+		.start	= AT91_VA_BASE_SYS + AT91_DBGU,
+		.end	= AT91_VA_BASE_SYS + AT91_DBGU + SZ_512 - 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_MEM,
 	},
 	[1] = {
@@ -906,6 +1012,10 @@ static struct resource dbgu_resources[] = {
 static struct atmel_uart_data dbgu_data = {
 	.use_dma_tx	= 0,
 	.use_dma_rx	= 0,		/* DBGU not capable of receive DMA */
+<<<<<<< HEAD
+=======
+	.regs		= (void __iomem *)(AT91_VA_BASE_SYS + AT91_DBGU),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static u64 dbgu_dmamask = DMA_BIT_MASK(32);
@@ -1115,6 +1225,10 @@ static inline void configure_usart3_pins(unsigned pins)
 }
 
 static struct platform_device *__initdata at91_uarts[ATMEL_MAX_UART];	/* the UARTs to use */
+<<<<<<< HEAD
+=======
+struct platform_device *atmel_default_console_device;	/* the serial console device */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void __init at91_register_uart(unsigned id, unsigned portnr, unsigned pins)
 {
@@ -1173,6 +1287,10 @@ void __init at91_add_device_serial(void)
 		printk(KERN_INFO "AT91: No default serial console defined.\n");
 }
 #else
+<<<<<<< HEAD
+=======
+void __init __deprecated at91_init_serial(struct at91_uart_config *config) {}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init at91_register_uart(unsigned id, unsigned portnr, unsigned pins) {}
 void __init at91_set_serial_console(unsigned portnr) {}
 void __init at91_add_device_serial(void) {}

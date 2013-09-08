@@ -34,7 +34,10 @@
  */
 
 #include "drmP.h"
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(__ia64__)
 #include <linux/efi.h>
 #include <linux/slab.h>
@@ -519,6 +522,10 @@ static int drm_mmap_dma(struct file *filp, struct vm_area_struct *vma)
 	vma->vm_flags |= VM_RESERVED;	/* Don't swap */
 	vma->vm_flags |= VM_DONTEXPAND;
 
+<<<<<<< HEAD
+=======
+	vma->vm_file = filp;	/* Needed for drm_vm_open() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	drm_vm_open_locked(vma);
 	return 0;
 }
@@ -670,6 +677,10 @@ int drm_mmap_locked(struct file *filp, struct vm_area_struct *vma)
 	vma->vm_flags |= VM_RESERVED;	/* Don't swap */
 	vma->vm_flags |= VM_DONTEXPAND;
 
+<<<<<<< HEAD
+=======
+	vma->vm_file = filp;	/* Needed for drm_vm_open() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	drm_vm_open_locked(vma);
 	return 0;
 }
@@ -680,9 +691,12 @@ int drm_mmap(struct file *filp, struct vm_area_struct *vma)
 	struct drm_device *dev = priv->minor->dev;
 	int ret;
 
+<<<<<<< HEAD
 	if (drm_device_is_unplugged(dev))
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&dev->struct_mutex);
 	ret = drm_mmap_locked(filp, vma);
 	mutex_unlock(&dev->struct_mutex);

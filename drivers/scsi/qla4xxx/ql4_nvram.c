@@ -156,6 +156,7 @@ u16 rd_nvram_word(struct scsi_qla_host * ha, int offset)
 	return val;
 }
 
+<<<<<<< HEAD
 u8 rd_nvram_byte(struct scsi_qla_host *ha, int offset)
 {
 	u16 val = 0;
@@ -177,6 +178,8 @@ u8 rd_nvram_byte(struct scsi_qla_host *ha, int offset)
 	return rval;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int qla4xxx_is_nvram_configuration_valid(struct scsi_qla_host * ha)
 {
 	int status = QLA_ERROR;

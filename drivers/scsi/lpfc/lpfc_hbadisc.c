@@ -1,7 +1,11 @@
 /*******************************************************************
  * This file is part of the Emulex Linux Device Driver for         *
  * Fibre Channel Host Bus Adapters.                                *
+<<<<<<< HEAD
  * Copyright (C) 2004-2012 Emulex.  All rights reserved.           *
+=======
+ * Copyright (C) 2004-2011 Emulex.  All rights reserved.           *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * EMULEX and SLI are trademarks of Emulex.                        *
  * www.emulex.com                                                  *
  * Portions Copyright (C) 2004-2005 Christoph Hellwig              *
@@ -1074,12 +1078,15 @@ lpfc_mbx_cmpl_local_config_link(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmb)
 
 	mempool_free(pmb, phba->mbox_mem_pool);
 
+<<<<<<< HEAD
 	/* don't perform discovery for SLI4 loopback diagnostic test */
 	if ((phba->sli_rev == LPFC_SLI_REV4) &&
 	    !(phba->hba_flag & HBA_FCOE_MODE) &&
 	    (phba->link_flag & LS_LOOPBACK_MODE))
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (phba->fc_topology == LPFC_TOPOLOGY_LOOP &&
 	    vport->fc_flag & FC_PUBLIC_LOOP &&
 	    !(vport->fc_flag & FC_LBIT)) {
@@ -1115,6 +1122,7 @@ out:
 	return;
 }
 
+<<<<<<< HEAD
 /**
  * lpfc_sli4_clear_fcf_rr_bmask
  * @phba pointer to the struct lpfc_hba for this port.
@@ -1137,6 +1145,8 @@ lpfc_sli4_clear_fcf_rr_bmask(struct lpfc_hba *phba)
 	}
 	spin_unlock_irq(&phba->hbalock);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 lpfc_mbx_cmpl_reg_fcfi(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 {
@@ -1158,8 +1168,12 @@ lpfc_mbx_cmpl_reg_fcfi(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 	spin_unlock_irq(&phba->hbalock);
 
 	/* If there is a pending FCoE event, restart FCF table scan. */
+<<<<<<< HEAD
 	if ((!(phba->hba_flag & FCF_RR_INPROG)) &&
 		lpfc_check_pending_fcoe_event(phba, LPFC_UNREG_FCF))
+=======
+	if (lpfc_check_pending_fcoe_event(phba, LPFC_UNREG_FCF))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto fail_out;
 
 	/* Mark successful completion of FCF table scan */
@@ -1279,6 +1293,7 @@ lpfc_vlan_id_match(uint16_t curr_vlan_id, uint16_t new_vlan_id)
 }
 
 /**
+<<<<<<< HEAD
  * lpfc_update_fcf_record - Update driver fcf record
  * __lpfc_update_fcf_record_pri - update the lpfc_fcf_pri record.
  * @phba: pointer to lpfc hba data structure.
@@ -1303,6 +1318,8 @@ __lpfc_update_fcf_record_pri(struct lpfc_hba *phba, uint16_t fcf_index,
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * lpfc_copy_fcf_record - Copy fcf information to lpfc_hba.
  * @fcf: pointer to driver fcf record.
  * @new_fcf_record: pointer to fcf record.
@@ -1385,9 +1402,12 @@ __lpfc_update_fcf_record(struct lpfc_hba *phba, struct lpfc_fcf_rec *fcf_rec,
 	fcf_rec->addr_mode = addr_mode;
 	fcf_rec->vlan_id = vlan_id;
 	fcf_rec->flag |= (flag | RECORD_VALID);
+<<<<<<< HEAD
 	__lpfc_update_fcf_record_pri(phba,
 		bf_get(lpfc_fcf_record_fcf_index, new_fcf_record),
 				 new_fcf_record);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1418,7 +1438,11 @@ lpfc_register_fcf(struct lpfc_hba *phba)
 		if (phba->pport->port_state != LPFC_FLOGI) {
 			phba->hba_flag |= FCF_RR_INPROG;
 			spin_unlock_irq(&phba->hbalock);
+<<<<<<< HEAD
 			lpfc_initial_flogi(phba->pport);
+=======
+			lpfc_issue_init_vfi(phba->pport);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 		}
 		spin_unlock_irq(&phba->hbalock);
@@ -1890,8 +1914,11 @@ lpfc_sli4_fcf_record_match(struct lpfc_hba *phba,
 		return false;
 	if (!lpfc_fab_name_match(fcf_rec->fabric_name, new_fcf_record))
 		return false;
+<<<<<<< HEAD
 	if (fcf_rec->priority != new_fcf_record->fip_priority)
 		return false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return true;
 }
 
@@ -1955,6 +1982,7 @@ stop_flogi_current_fcf:
 }
 
 /**
+<<<<<<< HEAD
  * lpfc_sli4_fcf_pri_list_del
  * @phba: pointer to lpfc hba data structure.
  * @fcf_index the index of the fcf record to delete
@@ -2101,6 +2129,8 @@ out:
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * lpfc_mbx_cmpl_fcf_scan_read_fcf_rec - fcf scan read_fcf mbox cmpl handler.
  * @phba: pointer to lpfc hba data structure.
  * @mboxq: pointer to mailbox object.
@@ -2162,9 +2192,12 @@ lpfc_mbx_cmpl_fcf_scan_read_fcf_rec(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 	 * record for roundrobin FCF failover.
 	 */
 	if (!rc) {
+<<<<<<< HEAD
 		lpfc_sli4_fcf_pri_list_del(phba,
 					bf_get(lpfc_fcf_record_fcf_index,
 					       new_fcf_record));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		lpfc_printf_log(phba, KERN_WARNING, LOG_FIP,
 				"2781 FCF (x%x) failed connection "
 				"list check: (x%x/x%x)\n",
@@ -2212,8 +2245,12 @@ lpfc_mbx_cmpl_fcf_scan_read_fcf_rec(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 		goto read_next_fcf;
 	} else {
 		fcf_index = bf_get(lpfc_fcf_record_fcf_index, new_fcf_record);
+<<<<<<< HEAD
 		rc = lpfc_sli4_fcf_pri_list_add(phba, fcf_index,
 							new_fcf_record);
+=======
+		rc = lpfc_sli4_fcf_rr_index_set(phba, fcf_index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rc)
 			goto read_next_fcf;
 	}
@@ -2226,8 +2263,12 @@ lpfc_mbx_cmpl_fcf_scan_read_fcf_rec(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 	 */
 	spin_lock_irq(&phba->hbalock);
 	if (phba->fcf.fcf_flag & FCF_IN_USE) {
+<<<<<<< HEAD
 		if (phba->cfg_fcf_failover_policy == LPFC_FCF_FOV &&
 			lpfc_sli4_fcf_record_match(phba, &phba->fcf.current_rec,
+=======
+		if (lpfc_sli4_fcf_record_match(phba, &phba->fcf.current_rec,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    new_fcf_record, vlan_id)) {
 			if (bf_get(lpfc_fcf_record_fcf_index, new_fcf_record) ==
 			    phba->fcf.current_rec.fcf_indx) {
@@ -2441,8 +2482,12 @@ read_next_fcf:
 			    (phba->fcf.fcf_flag & FCF_REDISC_PEND))
 				return;
 
+<<<<<<< HEAD
 			if (phba->cfg_fcf_failover_policy == LPFC_FCF_FOV &&
 				phba->fcf.fcf_flag & FCF_IN_USE) {
+=======
+			if (phba->fcf.fcf_flag & FCF_IN_USE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/*
 				 * In case the current in-use FCF record no
 				 * longer existed during FCF discovery that
@@ -2633,8 +2678,12 @@ lpfc_mbx_cmpl_read_fcf_rec(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 
 	/* Update the eligible FCF record index bmask */
 	fcf_index = bf_get(lpfc_fcf_record_fcf_index, new_fcf_record);
+<<<<<<< HEAD
 
 	rc = lpfc_sli4_fcf_pri_list_add(phba, fcf_index, new_fcf_record);
+=======
+	rc = lpfc_sli4_fcf_rr_index_set(phba, fcf_index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	lpfc_sli4_mbox_cmd_free(phba, mboxq);
@@ -2652,6 +2701,7 @@ lpfc_init_vfi_cmpl(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 {
 	struct lpfc_vport *vport = mboxq->vport;
 
+<<<<<<< HEAD
 	/*
 	 * VFI not supported on interface type 0, just do the flogi
 	 * Also continue if the VFI is in use - just use the same one.
@@ -2660,6 +2710,9 @@ lpfc_init_vfi_cmpl(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 	    (bf_get(lpfc_sli_intf_if_type, &phba->sli4_hba.sli_intf) !=
 			LPFC_SLI_INTF_IF_TYPE_0) &&
 	    mboxq->u.mb.mbxStatus != MBX_VFI_IN_USE) {
+=======
+	if (mboxq->u.mb.mbxStatus && (mboxq->u.mb.mbxStatus != 0x4002)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		lpfc_printf_vlog(vport, KERN_ERR,
 				LOG_MBOX,
 				"2891 Init VFI mailbox failed 0x%x\n",
@@ -2668,7 +2721,10 @@ lpfc_init_vfi_cmpl(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 		lpfc_vport_set_state(vport, FC_VPORT_FAILED);
 		return;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lpfc_initial_flogi(vport);
 	mempool_free(mboxq, phba->mbox_mem_pool);
 	return;
@@ -2843,6 +2899,7 @@ lpfc_mbx_cmpl_reg_vfi(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 	struct lpfc_vport *vport = mboxq->vport;
 	struct Scsi_Host *shost = lpfc_shost_from_vport(vport);
 
+<<<<<<< HEAD
 	/*
 	 * VFI not supported for interface type 0, so ignore any mailbox
 	 * error (except VFI in use) and continue with the discovery.
@@ -2851,6 +2908,9 @@ lpfc_mbx_cmpl_reg_vfi(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 	    (bf_get(lpfc_sli_intf_if_type, &phba->sli4_hba.sli_intf) !=
 			LPFC_SLI_INTF_IF_TYPE_0) &&
 	    mboxq->u.mb.mbxStatus != MBX_VFI_IN_USE) {
+=======
+	if (mboxq->u.mb.mbxStatus) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		lpfc_printf_vlog(vport, KERN_ERR, LOG_MBOX,
 			 "2018 REG_VFI mbxStatus error x%x "
 			 "HBA state x%x\n",
@@ -2860,10 +2920,17 @@ lpfc_mbx_cmpl_reg_vfi(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 			lpfc_disc_list_loopmap(vport);
 			/* Start discovery */
 			lpfc_disc_start(vport);
+<<<<<<< HEAD
 			goto out_free_mem;
 		}
 		lpfc_vport_set_state(vport, FC_VPORT_FAILED);
 		goto out_free_mem;
+=======
+			goto fail_free_mem;
+		}
+		lpfc_vport_set_state(vport, FC_VPORT_FAILED);
+		goto fail_free_mem;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	/* The VPI is implicitly registered when the VFI is registered */
 	spin_lock_irq(shost->host_lock);
@@ -2873,6 +2940,7 @@ lpfc_mbx_cmpl_reg_vfi(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 	vport->fc_flag &= ~FC_VPORT_NEEDS_INIT_VPI;
 	spin_unlock_irq(shost->host_lock);
 
+<<<<<<< HEAD
 	/* In case SLI4 FC loopback test, we are ready */
 	if ((phba->sli_rev == LPFC_SLI_REV4) &&
 	    (phba->link_flag & LS_LOOPBACK_MODE)) {
@@ -2883,6 +2951,12 @@ lpfc_mbx_cmpl_reg_vfi(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 	if (vport->port_state == LPFC_FABRIC_CFG_LINK) {
 		/* For private loop just start discovery and we are done. */
 		if ((phba->fc_topology == LPFC_TOPOLOGY_LOOP) &&
+=======
+	if (vport->port_state == LPFC_FABRIC_CFG_LINK) {
+		/* For private loop just start discovery and we are done. */
+		if ((phba->fc_topology == LPFC_TOPOLOGY_LOOP) &&
+		    (phba->alpa_map[0] == 0) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    !(vport->fc_flag & FC_PUBLIC_LOOP)) {
 			/* Use loop map to make discovery list */
 			lpfc_disc_list_loopmap(vport);
@@ -2894,7 +2968,11 @@ lpfc_mbx_cmpl_reg_vfi(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 		}
 	}
 
+<<<<<<< HEAD
 out_free_mem:
+=======
+fail_free_mem:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mempool_free(mboxq, phba->mbox_mem_pool);
 	lpfc_mbuf_free(phba, dmabuf->virt, dmabuf->phys);
 	kfree(dmabuf);
@@ -2947,7 +3025,10 @@ lpfc_mbx_process_link_up(struct lpfc_hba *phba, struct lpfc_mbx_read_top *la)
 {
 	struct lpfc_vport *vport = phba->pport;
 	LPFC_MBOXQ_t *sparam_mbox, *cfglink_mbox = NULL;
+<<<<<<< HEAD
 	struct Scsi_Host *shost;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 	struct lpfc_dmabuf *mp;
 	int rc;
@@ -2971,7 +3052,10 @@ lpfc_mbx_process_link_up(struct lpfc_hba *phba, struct lpfc_mbx_read_top *la)
 	phba->fc_topology = bf_get(lpfc_mbx_read_top_topology, la);
 	phba->link_flag &= ~LS_NPIV_FAB_SUPPORTED;
 
+<<<<<<< HEAD
 	shost = lpfc_shost_from_vport(vport);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (phba->fc_topology == LPFC_TOPOLOGY_LOOP) {
 		phba->sli3_options &= ~LPFC_SLI3_NPIV_ENABLED;
 
@@ -2983,11 +3067,16 @@ lpfc_mbx_process_link_up(struct lpfc_hba *phba, struct lpfc_mbx_read_top *la)
 				"1309 Link Up Event npiv not supported in loop "
 				"topology\n");
 				/* Get Loop Map information */
+<<<<<<< HEAD
 		if (bf_get(lpfc_mbx_read_top_il, la)) {
 			spin_lock(shost->host_lock);
 			vport->fc_flag |= FC_LBIT;
 			spin_unlock(shost->host_lock);
 		}
+=======
+		if (bf_get(lpfc_mbx_read_top_il, la))
+			vport->fc_flag |= FC_LBIT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		vport->fc_myDID = bf_get(lpfc_mbx_read_top_alpa_granted, la);
 		i = la->lilpBde64.tus.f.bdeSize;
@@ -3032,6 +3121,7 @@ lpfc_mbx_process_link_up(struct lpfc_hba *phba, struct lpfc_mbx_read_top *la)
 	} else {
 		if (!(phba->sli3_options & LPFC_SLI3_NPIV_ENABLED)) {
 			if (phba->max_vpi && phba->cfg_enable_npiv &&
+<<<<<<< HEAD
 			   (phba->sli_rev >= LPFC_SLI_REV3))
 				phba->sli3_options |= LPFC_SLI3_NPIV_ENABLED;
 		}
@@ -3039,6 +3129,13 @@ lpfc_mbx_process_link_up(struct lpfc_hba *phba, struct lpfc_mbx_read_top *la)
 		spin_lock(shost->host_lock);
 		vport->fc_flag |= FC_LBIT;
 		spin_unlock(shost->host_lock);
+=======
+			   (phba->sli_rev == 3))
+				phba->sli3_options |= LPFC_SLI3_NPIV_ENABLED;
+		}
+		vport->fc_myDID = phba->fc_pref_DID;
+		vport->fc_flag |= FC_LBIT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	spin_unlock_irq(&phba->hbalock);
 
@@ -3132,7 +3229,12 @@ lpfc_mbx_process_link_up(struct lpfc_hba *phba, struct lpfc_mbx_read_top *la)
 			goto out;
 		}
 		/* Reset FCF roundrobin bmask for new discovery */
+<<<<<<< HEAD
 		lpfc_sli4_clear_fcf_rr_bmask(phba);
+=======
+		memset(phba->fcf.fcf_rr_bmask, 0,
+		       sizeof(*phba->fcf.fcf_rr_bmask));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return;
@@ -3255,14 +3357,23 @@ lpfc_mbx_cmpl_read_topology(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmb)
 	} else if (bf_get(lpfc_mbx_read_top_att_type, la) ==
 		   LPFC_ATT_LINK_DOWN) {
 		phba->fc_stat.LinkDown++;
+<<<<<<< HEAD
 		if (phba->link_flag & LS_LOOPBACK_MODE)
+=======
+		if (phba->link_flag & LS_LOOPBACK_MODE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			lpfc_printf_log(phba, KERN_ERR, LOG_LINK_EVENT,
 				"1308 Link Down Event in loop back mode "
 				"x%x received "
 				"Data: x%x x%x x%x\n",
 				la->eventTag, phba->fc_eventTag,
 				phba->pport->port_state, vport->fc_flag);
+<<<<<<< HEAD
 		else
+=======
+		}
+		else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			lpfc_printf_log(phba, KERN_ERR, LOG_LINK_EVENT,
 				"1305 Link Down Event x%x received "
 				"Data: x%x x%x x%x x%x x%x\n",
@@ -3270,6 +3381,10 @@ lpfc_mbx_cmpl_read_topology(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmb)
 				phba->pport->port_state, vport->fc_flag,
 				bf_get(lpfc_mbx_read_top_mm, la),
 				bf_get(lpfc_mbx_read_top_fa, la));
+<<<<<<< HEAD
+=======
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		lpfc_mbx_issue_link_down(phba);
 	}
 	if ((bf_get(lpfc_mbx_read_top_mm, la)) &&
@@ -3623,7 +3738,10 @@ lpfc_mbx_cmpl_fabric_reg_login(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmb)
 	MAILBOX_t *mb = &pmb->u.mb;
 	struct lpfc_dmabuf *mp = (struct lpfc_dmabuf *) (pmb->context1);
 	struct lpfc_nodelist *ndlp;
+<<<<<<< HEAD
 	struct Scsi_Host *shost;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ndlp = (struct lpfc_nodelist *) pmb->context2;
 	pmb->context1 = NULL;
@@ -3669,12 +3787,17 @@ lpfc_mbx_cmpl_fabric_reg_login(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmb)
 		 * vport discovery */
 		if (!(vport->fc_flag & FC_LOGO_RCVD_DID_CHNG))
 			lpfc_start_fdiscs(phba);
+<<<<<<< HEAD
 		else {
 			shost = lpfc_shost_from_vport(vport);
 			spin_lock_irq(shost->host_lock);
 			vport->fc_flag &= ~FC_LOGO_RCVD_DID_CHNG ;
 			spin_unlock_irq(shost->host_lock);
 		}
+=======
+		else
+			vport->fc_flag &= ~FC_LOGO_RCVD_DID_CHNG ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		lpfc_do_scr_ns_plogi(phba, vport);
 	}
 
@@ -5339,10 +5462,13 @@ lpfc_filter_by_rpi(struct lpfc_nodelist *ndlp, void *param)
 {
 	uint16_t *rpi = param;
 
+<<<<<<< HEAD
 	/* check for active node */
 	if (!NLP_CHK_NODE_ACT(ndlp))
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ndlp->nlp_rpi == *rpi;
 }
 
@@ -5391,6 +5517,7 @@ lpfc_findnode_wwpn(struct lpfc_vport *vport, struct lpfc_name *wwpn)
 	return ndlp;
 }
 
+<<<<<<< HEAD
 /*
  * This routine looks up the ndlp lists for the given RPI. If the rpi
  * is found, the routine returns the node element list pointer else
@@ -5458,6 +5585,8 @@ lpfc_find_vport_by_vpid(struct lpfc_hba *phba, uint16_t vpi)
 	return NULL;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void
 lpfc_nlp_init(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
 	      uint32_t did)
@@ -5680,6 +5809,7 @@ lpfc_fcf_inuse(struct lpfc_hba *phba)
 				ret = 1;
 				spin_unlock_irq(shost->host_lock);
 				goto out;
+<<<<<<< HEAD
 			} else if (ndlp->nlp_flag & NLP_RPI_REGISTERED) {
 				ret = 1;
 				lpfc_printf_log(phba, KERN_INFO, LOG_ELS,
@@ -5687,6 +5817,16 @@ lpfc_fcf_inuse(struct lpfc_hba *phba)
 						"still logged in\n",
 						ndlp->nlp_rpi, ndlp->nlp_DID,
 						ndlp->nlp_flag);
+=======
+			} else {
+				lpfc_printf_log(phba, KERN_INFO, LOG_ELS,
+					"2624 RPI %x DID %x flg %x still "
+					"logged in\n",
+					ndlp->nlp_rpi, ndlp->nlp_DID,
+					ndlp->nlp_flag);
+				if (ndlp->nlp_flag & NLP_RPI_REGISTERED)
+					ret = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 		spin_unlock_irq(shost->host_lock);
@@ -5703,7 +5843,11 @@ out:
  *
  * This function frees memory associated with the mailbox command.
  */
+<<<<<<< HEAD
 void
+=======
+static void
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 lpfc_unregister_vfi_cmpl(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 {
 	struct lpfc_vport *vport = mboxq->vport;
@@ -5755,6 +5899,10 @@ lpfc_unregister_fcfi_cmpl(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
 int
 lpfc_unregister_fcf_prep(struct lpfc_hba *phba)
 {
+<<<<<<< HEAD
+=======
+	LPFC_MBOXQ_t *mbox;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct lpfc_vport **vports;
 	struct lpfc_nodelist *ndlp;
 	struct Scsi_Host *shost;
@@ -5790,9 +5938,41 @@ lpfc_unregister_fcf_prep(struct lpfc_hba *phba)
 	/* Cleanup any outstanding ELS commands */
 	lpfc_els_flush_all_cmd(phba);
 
+<<<<<<< HEAD
 	/* Unregister the physical port VFI */
 	rc = lpfc_issue_unreg_vfi(phba->pport);
 	return rc;
+=======
+	/* Unregister VFI */
+	mbox = mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
+	if (!mbox) {
+		lpfc_printf_log(phba, KERN_ERR, LOG_DISCOVERY|LOG_MBOX,
+				"2556 UNREG_VFI mbox allocation failed"
+				"HBA state x%x\n", phba->pport->port_state);
+		return -ENOMEM;
+	}
+
+	lpfc_unreg_vfi(mbox, phba->pport);
+	mbox->vport = phba->pport;
+	mbox->mbox_cmpl = lpfc_unregister_vfi_cmpl;
+
+	rc = lpfc_sli_issue_mbox(phba, mbox, MBX_NOWAIT);
+	if (rc == MBX_NOT_FINISHED) {
+		lpfc_printf_log(phba, KERN_ERR, LOG_DISCOVERY|LOG_MBOX,
+				"2557 UNREG_VFI issue mbox failed rc x%x "
+				"HBA state x%x\n",
+				rc, phba->pport->port_state);
+		mempool_free(mbox, phba->mbox_mem_pool);
+		return -EIO;
+	}
+
+	shost = lpfc_shost_from_vport(phba->pport);
+	spin_lock_irq(shost->host_lock);
+	phba->pport->fc_flag &= ~FC_VFI_REGISTERED;
+	spin_unlock_irq(shost->host_lock);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -5876,7 +6056,11 @@ lpfc_unregister_fcf_rescan(struct lpfc_hba *phba)
 	spin_unlock_irq(&phba->hbalock);
 
 	/* Reset FCF roundrobin bmask for new discovery */
+<<<<<<< HEAD
 	lpfc_sli4_clear_fcf_rr_bmask(phba);
+=======
+	memset(phba->fcf.fcf_rr_bmask, 0, sizeof(*phba->fcf.fcf_rr_bmask));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rc = lpfc_sli4_fcf_scan_read_fcf_rec(phba, LPFC_FCOE_FCF_GET_FIRST);
 

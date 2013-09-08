@@ -29,10 +29,13 @@ struct tda18212_config {
 	u16 if_dvbt_6;
 	u16 if_dvbt_7;
 	u16 if_dvbt_8;
+<<<<<<< HEAD
 	u16 if_dvbt2_5;
 	u16 if_dvbt2_6;
 	u16 if_dvbt2_7;
 	u16 if_dvbt2_8;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 if_dvbc;
 };
 

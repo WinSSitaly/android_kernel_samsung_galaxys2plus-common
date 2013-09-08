@@ -29,10 +29,13 @@ struct baboon {
 				 */
 };
 
+<<<<<<< HEAD
 extern int baboon_present;
 
 extern void baboon_register_interrupts(void);
 extern void baboon_irq_enable(int);
 extern void baboon_irq_disable(int);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ASSEMBLY **/

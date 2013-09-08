@@ -369,7 +369,11 @@ static struct i2c_adapter sis5595_adapter = {
 	.algo		= &smbus_algorithm,
 };
 
+<<<<<<< HEAD
 static DEFINE_PCI_DEVICE_TABLE(sis5595_ids) = {
+=======
+static const struct pci_device_id sis5595_ids[] __devinitconst = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ PCI_DEVICE(PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_503) }, 
 	{ 0, }
 };

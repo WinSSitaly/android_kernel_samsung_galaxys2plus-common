@@ -119,6 +119,10 @@ static void jfs_i_callback(struct rcu_head *head)
 {
 	struct inode *inode = container_of(head, struct inode, i_rcu);
 	struct jfs_inode_info *ji = JFS_IP(inode);
+<<<<<<< HEAD
+=======
+	INIT_LIST_HEAD(&inode->i_dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kmem_cache_free(jfs_inode_cachep, ji);
 }
 
@@ -441,7 +445,10 @@ static int jfs_fill_super(struct super_block *sb, void *data, int silent)
 		return -ENOMEM;
 
 	sb->s_fs_info = sbi;
+<<<<<<< HEAD
 	sb->s_max_links = JFS_LINK_MAX;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sbi->sb = sb;
 	sbi->uid = sbi->gid = sbi->umask = -1;
 
@@ -485,6 +492,10 @@ static int jfs_fill_super(struct super_block *sb, void *data, int silent)
 		goto out_unload;
 	}
 	inode->i_ino = 0;
+<<<<<<< HEAD
+=======
+	inode->i_nlink = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	inode->i_size = sb->s_bdev->bd_inode->i_size;
 	inode->i_mapping->a_ops = &jfs_metapage_aops;
 	insert_inode_hash(inode);
@@ -522,7 +533,11 @@ static int jfs_fill_super(struct super_block *sb, void *data, int silent)
 		ret = PTR_ERR(inode);
 		goto out_no_rw;
 	}
+<<<<<<< HEAD
 	sb->s_root = d_make_root(inode);
+=======
+	sb->s_root = d_alloc_root(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!sb->s_root)
 		goto out_no_root;
 
@@ -540,6 +555,10 @@ static int jfs_fill_super(struct super_block *sb, void *data, int silent)
 
 out_no_root:
 	jfs_err("jfs_read_super: get root dentry failed");
+<<<<<<< HEAD
+=======
+	iput(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out_no_rw:
 	rc = jfs_umount(sb);
@@ -608,9 +627,15 @@ static int jfs_sync_fs(struct super_block *sb, int wait)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int jfs_show_options(struct seq_file *seq, struct dentry *root)
 {
 	struct jfs_sb_info *sbi = JFS_SBI(root->d_sb);
+=======
+static int jfs_show_options(struct seq_file *seq, struct vfsmount *vfs)
+{
+	struct jfs_sb_info *sbi = JFS_SBI(vfs->mnt_sb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (sbi->uid != -1)
 		seq_printf(seq, ",uid=%d", sbi->uid);
@@ -860,6 +885,7 @@ static int __init init_jfs_fs(void)
 	jfs_proc_init();
 #endif
 
+<<<<<<< HEAD
 	rc = register_filesystem(&jfs_fs_type);
 	if (!rc)
 		return 0;
@@ -868,6 +894,10 @@ static int __init init_jfs_fs(void)
 	jfs_proc_clean();
 #endif
 	kthread_stop(jfsSyncThread);
+=======
+	return register_filesystem(&jfs_fs_type);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 kill_committask:
 	for (i = 0; i < commit_threads; i++)
 		kthread_stop(jfsCommitThread[i]);

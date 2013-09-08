@@ -39,13 +39,21 @@
 
 
 /*---  PCMCIA  ---*/
+<<<<<<< HEAD
 #define GPIO_CF_CD              24
 #define GPIO_CF_IRQ             1
+=======
+#define GPIO_CF_CD              GPIO_GPIO24
+#define GPIO_CF_IRQ             GPIO_GPIO1
+#define IRQ_GPIO_CF_IRQ         IRQ_GPIO1
+#define IRQ_GPIO_CF_CD          IRQ_GPIO24
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*--- SmartCard ---*/
 #define GPIO_SMART_CARD		GPIO_GPIO10
 #define IRQ_GPIO_SMARD_CARD	IRQ_GPIO10
 
+<<<<<<< HEAD
 /*--- ucb1x00 GPIO ---*/
 #define SIMPAD_UCB1X00_GPIO_BASE	(GPIO_MAX + 1)
 #define SIMPAD_UCB1X00_GPIO_PROG1	(SIMPAD_UCB1X00_GPIO_BASE)
@@ -120,6 +128,34 @@ void simpad_clear_cs3_bit(int value);
 #define PCMCIA_SHORT	0x40
 
 /*--- Battery ---*/
+=======
+// CS3 Latch is write only, a shadow is necessary
+
+#define CS3BUSTYPE unsigned volatile long
+#define CS3_BASE        0xf1000000
+
+#define VCC_5V_EN       0x0001 // For 5V PCMCIA
+#define VCC_3V_EN       0x0002 // FOR 3.3V PCMCIA
+#define EN1             0x0004 // This is only for EPROM's
+#define EN0             0x0008 // Both should be enable for 3.3V or 5V
+#define DISPLAY_ON      0x0010
+#define PCMCIA_BUFF_DIS 0x0020
+#define MQ_RESET        0x0040
+#define PCMCIA_RESET    0x0080
+#define DECT_POWER_ON   0x0100
+#define IRDA_SD         0x0200 // Shutdown for powersave
+#define RS232_ON        0x0400
+#define SD_MEDIAQ       0x0800 // Shutdown for powersave
+#define LED2_ON         0x1000
+#define IRDA_MODE       0x2000 // Fast/Slow IrDA mode
+#define ENABLE_5V       0x4000 // Enable 5V circuit
+#define RESET_SIMCARD   0x8000
+
+#define RS232_ENABLE    0x0440
+#define PCMCIAMASK      0x402f
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct simpad_battery {
 	unsigned char ac_status;	/* line connected yes/no */
 	unsigned char status;		/* battery loading yes/no */

@@ -1,8 +1,11 @@
 #ifndef _XEN_MULTICALLS_H
 #define _XEN_MULTICALLS_H
 
+<<<<<<< HEAD
 #include <trace/events/xen.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "xen-ops.h"
 
 /* Multicalls */
@@ -22,10 +25,15 @@ DECLARE_PER_CPU(unsigned long, xen_mc_irq_flags);
 static inline void xen_mc_batch(void)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 
 	/* need to disable interrupts until this entry is complete */
 	local_irq_save(flags);
 	trace_xen_mc_batch(paravirt_get_lazy_mode());
+=======
+	/* need to disable interrupts until this entry is complete */
+	local_irq_save(flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__this_cpu_write(xen_mc_irq_flags, flags);
 }
 
@@ -41,13 +49,20 @@ void xen_mc_flush(void);
 /* Issue a multicall if we're not in a lazy mode */
 static inline void xen_mc_issue(unsigned mode)
 {
+<<<<<<< HEAD
 	trace_xen_mc_issue(mode);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((paravirt_get_lazy_mode() & mode) == 0)
 		xen_mc_flush();
 
 	/* restore flags saved in xen_mc_batch */
+<<<<<<< HEAD
 	local_irq_restore(this_cpu_read(xen_mc_irq_flags));
+=======
+	local_irq_restore(percpu_read(xen_mc_irq_flags));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Set up a callback to be called when the current batch is flushed */

@@ -26,17 +26,40 @@
 #include <linux/init.h>
 #include <linux/sched.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
 #include <asm/cacheflush.h>
 #include <asm/exception.h>
+=======
+#include <asm/atomic.h>
+#include <asm/cacheflush.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/unistd.h>
 #include <asm/traps.h>
 #include <asm/unwind.h>
 #include <asm/tls.h>
+<<<<<<< HEAD
 #include <asm/system_misc.h>
 
 #include "signal.h"
 
+=======
+
+#include "signal.h"
+
+#ifdef CONFIG_BCM_KNLLOG_SUPPORT
+#include <linux/broadcom/knllog.h>
+
+static int __init logstart(void)
+{
+	knllog_init();
+	return 0;
+}
+subsys_initcall(logstart);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const char *handler[]= { "prefetch abort", "data abort", "address exception", "interrupt" };
 
 void *vectors_page;
@@ -227,11 +250,14 @@ void show_stack(struct task_struct *tsk, unsigned long *sp)
 #else
 #define S_SMP ""
 #endif
+<<<<<<< HEAD
 #ifdef CONFIG_THUMB2_KERNEL
 #define S_ISA " THUMB2"
 #else
 #define S_ISA " ARM"
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __die(const char *str, int err, struct thread_info *thread, struct pt_regs *regs)
 {
@@ -239,8 +265,13 @@ static int __die(const char *str, int err, struct thread_info *thread, struct pt
 	static int die_counter;
 	int ret;
 
+<<<<<<< HEAD
 	printk(KERN_EMERG "Internal error: %s: %x [#%d]" S_PREEMPT S_SMP
 	       S_ISA "\n", str, err, ++die_counter);
+=======
+	printk(KERN_EMERG "Internal error: %s: %x [#%d]" S_PREEMPT S_SMP "\n",
+	       str, err, ++die_counter);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* trap and error numbers are mostly meaningless on ARM */
 	ret = notify_die(DIE_OOPS, str, regs, err, tsk->thread.trap_no, SIGSEGV);
@@ -262,7 +293,11 @@ static int __die(const char *str, int err, struct thread_info *thread, struct pt
 	return ret;
 }
 
+<<<<<<< HEAD
 static DEFINE_RAW_SPINLOCK(die_lock);
+=======
+static DEFINE_SPINLOCK(die_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * This function is protected against re-entrancy.
@@ -275,9 +310,19 @@ void die(const char *str, struct pt_regs *regs, int err)
 
 	oops_enter();
 
+<<<<<<< HEAD
 	raw_spin_lock_irq(&die_lock);
 	console_verbose();
 	bust_spinlocks(1);
+=======
+	spin_lock_irq(&die_lock);
+	console_verbose();
+	bust_spinlocks(1);
+#ifdef CONFIG_BCM_KNLLOG_SUPPORT
+	local_irq_disable();
+	knllog_dump();
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!user_mode(regs))
 		bug_type = report_bug(regs->ARM_pc, regs);
 	if (bug_type != BUG_TRAP_TYPE_NONE)
@@ -289,11 +334,20 @@ void die(const char *str, struct pt_regs *regs, int err)
 
 	bust_spinlocks(0);
 	add_taint(TAINT_DIE);
+<<<<<<< HEAD
 	raw_spin_unlock_irq(&die_lock);
 	oops_exit();
 
 	if (in_interrupt())
 		panic("Fatal exception in interrupt");
+=======
+	spin_unlock_irq(&die_lock);
+	oops_exit();
+
+	if (in_interrupt()) {
+		panic("Fatal exception in interrupt");
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (panic_on_oops)
 		panic("Fatal exception");
 	if (ret != NOTIFY_STOP)
@@ -332,24 +386,40 @@ int is_valid_bugaddr(unsigned long pc)
 #endif
 
 static LIST_HEAD(undef_hook);
+<<<<<<< HEAD
 static DEFINE_RAW_SPINLOCK(undef_lock);
+=======
+static DEFINE_SPINLOCK(undef_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void register_undef_hook(struct undef_hook *hook)
 {
 	unsigned long flags;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&undef_lock, flags);
 	list_add(&hook->node, &undef_hook);
 	raw_spin_unlock_irqrestore(&undef_lock, flags);
+=======
+	spin_lock_irqsave(&undef_lock, flags);
+	list_add(&hook->node, &undef_hook);
+	spin_unlock_irqrestore(&undef_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void unregister_undef_hook(struct undef_hook *hook)
 {
 	unsigned long flags;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&undef_lock, flags);
 	list_del(&hook->node);
 	raw_spin_unlock_irqrestore(&undef_lock, flags);
+=======
+	spin_lock_irqsave(&undef_lock, flags);
+	list_del(&hook->node);
+	spin_unlock_irqrestore(&undef_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int call_undef_hook(struct pt_regs *regs, unsigned int instr)
@@ -358,22 +428,35 @@ static int call_undef_hook(struct pt_regs *regs, unsigned int instr)
 	unsigned long flags;
 	int (*fn)(struct pt_regs *regs, unsigned int instr) = NULL;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&undef_lock, flags);
+=======
+	spin_lock_irqsave(&undef_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(hook, &undef_hook, node)
 		if ((instr & hook->instr_mask) == hook->instr_val &&
 		    (regs->ARM_cpsr & hook->cpsr_mask) == hook->cpsr_val)
 			fn = hook->fn;
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&undef_lock, flags);
+=======
+	spin_unlock_irqrestore(&undef_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return fn ? fn(regs, instr) : 1;
 }
 
 asmlinkage void __exception do_undefinstr(struct pt_regs *regs)
 {
+<<<<<<< HEAD
+=======
+	unsigned int correction = thumb_mode(regs) ? 2 : 4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int instr;
 	siginfo_t info;
 	void __user *pc;
 
+<<<<<<< HEAD
 	pc = (void __user *)instruction_pointer(regs);
 
 	if (processor_mode(regs) == SVC_MODE) {
@@ -399,12 +482,32 @@ asmlinkage void __exception do_undefinstr(struct pt_regs *regs)
 		}
 	} else if (get_user(instr, (u32 __user *)pc)) {
 		goto die_sig;
+=======
+	/*
+	 * According to the ARM ARM, PC is 2 or 4 bytes ahead,
+	 * depending whether we're in Thumb mode or not.
+	 * Correct this offset.
+	 */
+	regs->ARM_pc -= correction;
+
+	pc = (void __user *)instruction_pointer(regs);
+
+	if (processor_mode(regs) == SVC_MODE) {
+		instr = *(u32 *) pc;
+	} else if (thumb_mode(regs)) {
+		get_user(instr, (u16 __user *)pc);
+	} else {
+		get_user(instr, (u32 __user *)pc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (call_undef_hook(regs, instr) == 0)
 		return;
 
+<<<<<<< HEAD
 die_sig:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_DEBUG_USER
 	if (user_debug & UDBG_UNDEFINED) {
 		printk(KERN_INFO "%s (%d): undefined instruction: pc=%p\n",
@@ -771,6 +874,16 @@ void abort(void)
 }
 EXPORT_SYMBOL(abort);
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SEC_DEBUG)
+void cp_abort(void)
+{
+	panic("CP Crash");
+}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init trap_init(void)
 {
 	return;
@@ -786,16 +899,29 @@ static void __init kuser_get_tls_init(unsigned long vectors)
 		memcpy((void *)vectors + 0xfe0, (void *)vectors + 0xfe8, 4);
 }
 
+<<<<<<< HEAD
 void __init early_trap_init(void *vectors_base)
 {
 	unsigned long vectors = (unsigned long)vectors_base;
+=======
+void __init early_trap_init(void)
+{
+#if defined(CONFIG_CPU_USE_DOMAINS)
+	unsigned long vectors = CONFIG_VECTORS_BASE;
+#else
+	unsigned long vectors = (unsigned long)vectors_page;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	extern char __stubs_start[], __stubs_end[];
 	extern char __vectors_start[], __vectors_end[];
 	extern char __kuser_helper_start[], __kuser_helper_end[];
 	int kuser_sz = __kuser_helper_end - __kuser_helper_start;
 
+<<<<<<< HEAD
 	vectors_page = vectors_base;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Copy the vectors, stubs and kuser helpers (in entry-armv.S)
 	 * into the vector page, mapped at 0xffff0000, and ensure these

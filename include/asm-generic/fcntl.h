@@ -145,6 +145,14 @@ struct f_owner_ex {
 #define F_SHLCK		8	/* or 4 */
 #endif
 
+<<<<<<< HEAD
+=======
+/* for leases */
+#ifndef F_INPROGRESS
+#define F_INPROGRESS	16
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* operations for bsd flock(), also used by the kernel implementation */
 #define LOCK_SH		1	/* shared lock */
 #define LOCK_EX		2	/* exclusive lock */

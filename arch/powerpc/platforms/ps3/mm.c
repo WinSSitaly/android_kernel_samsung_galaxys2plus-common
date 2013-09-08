@@ -19,7 +19,11 @@
  */
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/memory_hotplug.h>
 #include <linux/memblock.h>
 #include <linux/slab.h>
@@ -29,7 +33,10 @@
 #include <asm/prom.h>
 #include <asm/udbg.h>
 #include <asm/lv1call.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "platform.h"
 
@@ -320,6 +327,10 @@ static int __init ps3_mm_add_memory(void)
 	}
 
 	memblock_add(start_addr, map.r1.size);
+<<<<<<< HEAD
+=======
+	memblock_analyze();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	result = online_pages(start_pfn, nr_pages);
 

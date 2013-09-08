@@ -18,22 +18,44 @@
 #include <linux/spi/spi.h>
 #include <linux/mfd/core.h>
 #include <linux/mfd/mc13xxx.h>
+<<<<<<< HEAD
 #include <linux/of.h>
 #include <linux/of_device.h>
 #include <linux/of_gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct mc13xxx {
 	struct spi_device *spidev;
 	struct mutex lock;
 	int irq;
+<<<<<<< HEAD
 	int flags;
 
 	irq_handler_t irqhandler[MC13XXX_NUM_IRQ];
 	void *irqdata[MC13XXX_NUM_IRQ];
+=======
+
+	irq_handler_t irqhandler[MC13XXX_NUM_IRQ];
+	void *irqdata[MC13XXX_NUM_IRQ];
+};
+
+struct mc13783 {
+	struct mc13xxx mc13xxx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int adcflags;
 };
 
+<<<<<<< HEAD
+=======
+struct mc13xxx *mc13783_to_mc13xxx(struct mc13783 *mc13783)
+{
+	return &mc13783->mc13xxx;
+}
+EXPORT_SYMBOL(mc13783_to_mc13xxx);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MC13XXX_IRQSTAT0	0
 #define MC13XXX_IRQSTAT0_ADCDONEI	(1 << 0)
 #define MC13XXX_IRQSTAT0_ADCBISDONEI	(1 << 1)
@@ -130,6 +152,7 @@ struct mc13xxx {
 #define MC13XXX_REVISION_FAB		(0x03 << 11)
 #define MC13XXX_REVISION_ICIDCODE	(0x3f << 13)
 
+<<<<<<< HEAD
 #define MC13XXX_ADC1		44
 #define MC13XXX_ADC1_ADEN		(1 << 0)
 #define MC13XXX_ADC1_RAND		(1 << 1)
@@ -138,6 +161,16 @@ struct mc13xxx {
 #define MC13XXX_ADC1_ADTRIGIGN		(1 << 21)
 
 #define MC13XXX_ADC2		45
+=======
+#define MC13783_ADC1		44
+#define MC13783_ADC1_ADEN		(1 << 0)
+#define MC13783_ADC1_RAND		(1 << 1)
+#define MC13783_ADC1_ADSEL		(1 << 3)
+#define MC13783_ADC1_ASC		(1 << 20)
+#define MC13783_ADC1_ADTRIGIGN		(1 << 21)
+
+#define MC13783_ADC2		45
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MC13XXX_NUMREGS 0x3f
 
@@ -481,7 +514,11 @@ enum mc13xxx_id {
 	MC13XXX_ID_INVALID,
 };
 
+<<<<<<< HEAD
 static const char *mc13xxx_chipname[] = {
+=======
+const char *mc13xxx_chipname[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[MC13XXX_ID_MC13783] = "mc13783",
 	[MC13XXX_ID_MC13892] = "mc13892",
 };
@@ -552,6 +589,7 @@ static const char *mc13xxx_get_chipname(struct mc13xxx *mc13xxx)
 	return mc13xxx_chipname[devid->driver_data];
 }
 
+<<<<<<< HEAD
 int mc13xxx_get_flags(struct mc13xxx *mc13xxx)
 {
 	return mc13xxx->flags;
@@ -562,13 +600,32 @@ EXPORT_SYMBOL(mc13xxx_get_flags);
 #define MC13XXX_ADC1_CHAN1_SHIFT	8
 #define MC13783_ADC1_ATO_SHIFT		11
 #define MC13783_ADC1_ATOX		(1 << 19)
+=======
+#include <linux/mfd/mc13783.h>
+
+int mc13xxx_get_flags(struct mc13xxx *mc13xxx)
+{
+	struct mc13xxx_platform_data *pdata =
+		dev_get_platdata(&mc13xxx->spidev->dev);
+
+	return pdata->flags;
+}
+EXPORT_SYMBOL(mc13xxx_get_flags);
+
+#define MC13783_ADC1_CHAN0_SHIFT	5
+#define MC13783_ADC1_CHAN1_SHIFT	8
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct mc13xxx_adcdone_data {
 	struct mc13xxx *mc13xxx;
 	struct completion done;
 };
 
+<<<<<<< HEAD
 static irqreturn_t mc13xxx_handler_adcdone(int irq, void *data)
+=======
+static irqreturn_t mc13783_handler_adcdone(int irq, void *data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct mc13xxx_adcdone_data *adcdone_data = data;
 
@@ -579,12 +636,21 @@ static irqreturn_t mc13xxx_handler_adcdone(int irq, void *data)
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
 #define MC13XXX_ADC_WORKING (1 << 0)
 
 int mc13xxx_adc_do_conversion(struct mc13xxx *mc13xxx, unsigned int mode,
 		unsigned int channel, u8 ato, bool atox,
 		unsigned int *sample)
 {
+=======
+#define MC13783_ADC_WORKING (1 << 0)
+
+int mc13783_adc_do_conversion(struct mc13783 *mc13783, unsigned int mode,
+		unsigned int channel, unsigned int *sample)
+{
+	struct mc13xxx *mc13xxx = &mc13783->mc13xxx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 adc0, adc1, old_adc0;
 	int i, ret;
 	struct mc13xxx_adcdone_data adcdone_data = {
@@ -596,11 +662,16 @@ int mc13xxx_adc_do_conversion(struct mc13xxx *mc13xxx, unsigned int mode,
 
 	mc13xxx_lock(mc13xxx);
 
+<<<<<<< HEAD
 	if (mc13xxx->adcflags & MC13XXX_ADC_WORKING) {
+=======
+	if (mc13783->adcflags & MC13783_ADC_WORKING) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EBUSY;
 		goto out;
 	}
 
+<<<<<<< HEAD
 	mc13xxx->adcflags |= MC13XXX_ADC_WORKING;
 
 	mc13xxx_reg_read(mc13xxx, MC13XXX_ADC0, &old_adc0);
@@ -644,6 +715,48 @@ int mc13xxx_adc_do_conversion(struct mc13xxx *mc13xxx, unsigned int mode,
 
 	mc13xxx_reg_write(mc13xxx, MC13XXX_ADC0, adc0);
 	mc13xxx_reg_write(mc13xxx, MC13XXX_ADC1, adc1);
+=======
+	mc13783->adcflags |= MC13783_ADC_WORKING;
+
+	mc13xxx_reg_read(mc13xxx, MC13783_ADC0, &old_adc0);
+
+	adc0 = MC13783_ADC0_ADINC1 | MC13783_ADC0_ADINC2;
+	adc1 = MC13783_ADC1_ADEN | MC13783_ADC1_ADTRIGIGN | MC13783_ADC1_ASC;
+
+	if (channel > 7)
+		adc1 |= MC13783_ADC1_ADSEL;
+
+	switch (mode) {
+	case MC13783_ADC_MODE_TS:
+		adc0 |= MC13783_ADC0_ADREFEN | MC13783_ADC0_TSMOD0 |
+			MC13783_ADC0_TSMOD1;
+		adc1 |= 4 << MC13783_ADC1_CHAN1_SHIFT;
+		break;
+
+	case MC13783_ADC_MODE_SINGLE_CHAN:
+		adc0 |= old_adc0 & MC13783_ADC0_TSMOD_MASK;
+		adc1 |= (channel & 0x7) << MC13783_ADC1_CHAN0_SHIFT;
+		adc1 |= MC13783_ADC1_RAND;
+		break;
+
+	case MC13783_ADC_MODE_MULT_CHAN:
+		adc0 |= old_adc0 & MC13783_ADC0_TSMOD_MASK;
+		adc1 |= 4 << MC13783_ADC1_CHAN1_SHIFT;
+		break;
+
+	default:
+		mc13783_unlock(mc13783);
+		return -EINVAL;
+	}
+
+	dev_dbg(&mc13783->mc13xxx.spidev->dev, "%s: request irq\n", __func__);
+	mc13xxx_irq_request(mc13xxx, MC13783_IRQ_ADCDONE,
+			mc13783_handler_adcdone, __func__, &adcdone_data);
+	mc13xxx_irq_ack(mc13xxx, MC13783_IRQ_ADCDONE);
+
+	mc13xxx_reg_write(mc13xxx, MC13783_ADC0, adc0);
+	mc13xxx_reg_write(mc13xxx, MC13783_ADC1, adc1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mc13xxx_unlock(mc13xxx);
 
@@ -654,27 +767,47 @@ int mc13xxx_adc_do_conversion(struct mc13xxx *mc13xxx, unsigned int mode,
 
 	mc13xxx_lock(mc13xxx);
 
+<<<<<<< HEAD
 	mc13xxx_irq_free(mc13xxx, MC13XXX_IRQ_ADCDONE, &adcdone_data);
+=======
+	mc13xxx_irq_free(mc13xxx, MC13783_IRQ_ADCDONE, &adcdone_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ret > 0)
 		for (i = 0; i < 4; ++i) {
 			ret = mc13xxx_reg_read(mc13xxx,
+<<<<<<< HEAD
 					MC13XXX_ADC2, &sample[i]);
+=======
+					MC13783_ADC2, &sample[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret)
 				break;
 		}
 
+<<<<<<< HEAD
 	if (mode == MC13XXX_ADC_MODE_TS)
 		/* restore TSMOD */
 		mc13xxx_reg_write(mc13xxx, MC13XXX_ADC0, old_adc0);
 
 	mc13xxx->adcflags &= ~MC13XXX_ADC_WORKING;
+=======
+	if (mode == MC13783_ADC_MODE_TS)
+		/* restore TSMOD */
+		mc13xxx_reg_write(mc13xxx, MC13783_ADC0, old_adc0);
+
+	mc13783->adcflags &= ~MC13783_ADC_WORKING;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	mc13xxx_unlock(mc13xxx);
 
 	return ret;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(mc13xxx_adc_do_conversion);
+=======
+EXPORT_SYMBOL_GPL(mc13783_adc_do_conversion);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int mc13xxx_add_subdevice_pdata(struct mc13xxx *mc13xxx,
 		const char *format, void *pdata, size_t pdata_size)
@@ -703,6 +836,7 @@ static int mc13xxx_add_subdevice(struct mc13xxx *mc13xxx, const char *format)
 	return mc13xxx_add_subdevice_pdata(mc13xxx, format, NULL, 0);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_OF
 static int mc13xxx_probe_flags_dt(struct mc13xxx *mc13xxx)
 {
@@ -756,15 +890,22 @@ static int mc13xxx_probe(struct spi_device *spi)
 {
 	const struct of_device_id *of_id;
 	struct spi_driver *sdrv = to_spi_driver(spi->dev.driver);
+=======
+static int mc13xxx_probe(struct spi_device *spi)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mc13xxx *mc13xxx;
 	struct mc13xxx_platform_data *pdata = dev_get_platdata(&spi->dev);
 	enum mc13xxx_id id;
 	int ret;
 
+<<<<<<< HEAD
 	of_id = of_match_device(mc13xxx_dt_ids, &spi->dev);
 	if (of_id)
 		sdrv->id_table = &mc13xxx_device_id[(enum mc13xxx_id) of_id->data];
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mc13xxx = kzalloc(sizeof(*mc13xxx), GFP_KERNEL);
 	if (!mc13xxx)
 		return -ENOMEM;
@@ -806,6 +947,7 @@ err_revision:
 
 	mc13xxx_unlock(mc13xxx);
 
+<<<<<<< HEAD
 	if (mc13xxx_probe_flags_dt(mc13xxx) < 0 && pdata)
 		mc13xxx->flags = pdata->flags;
 
@@ -834,6 +976,28 @@ err_revision:
 		mc13xxx_add_subdevice(mc13xxx, "%s-led");
 		mc13xxx_add_subdevice(mc13xxx, "%s-pwrbutton");
 	}
+=======
+	if (pdata->flags & MC13XXX_USE_ADC)
+		mc13xxx_add_subdevice(mc13xxx, "%s-adc");
+
+	if (pdata->flags & MC13XXX_USE_CODEC)
+		mc13xxx_add_subdevice(mc13xxx, "%s-codec");
+
+	if (pdata->flags & MC13XXX_USE_REGULATOR) {
+		mc13xxx_add_subdevice_pdata(mc13xxx, "%s-regulator",
+				&pdata->regulators, sizeof(pdata->regulators));
+	}
+
+	if (pdata->flags & MC13XXX_USE_RTC)
+		mc13xxx_add_subdevice(mc13xxx, "%s-rtc");
+
+	if (pdata->flags & MC13XXX_USE_TOUCHSCREEN)
+		mc13xxx_add_subdevice(mc13xxx, "%s-ts");
+
+	if (pdata->flags & MC13XXX_USE_LED)
+		mc13xxx_add_subdevice_pdata(mc13xxx, "%s-led",
+				pdata->leds, sizeof(*pdata->leds));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -851,12 +1015,33 @@ static int __devexit mc13xxx_remove(struct spi_device *spi)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static const struct spi_device_id mc13xxx_device_id[] = {
+	{
+		.name = "mc13783",
+		.driver_data = MC13XXX_ID_MC13783,
+	}, {
+		.name = "mc13892",
+		.driver_data = MC13XXX_ID_MC13892,
+	}, {
+		/* sentinel */
+	}
+};
+MODULE_DEVICE_TABLE(spi, mc13xxx_device_id);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct spi_driver mc13xxx_driver = {
 	.id_table = mc13xxx_device_id,
 	.driver = {
 		.name = "mc13xxx",
+<<<<<<< HEAD
 		.owner = THIS_MODULE,
 		.of_match_table = mc13xxx_dt_ids,
+=======
+		.bus = &spi_bus_type,
+		.owner = THIS_MODULE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe = mc13xxx_probe,
 	.remove = __devexit_p(mc13xxx_remove),

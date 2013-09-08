@@ -46,8 +46,22 @@
 
 #include "hci_uart.h"
 
+<<<<<<< HEAD
 #define VERSION "2.2"
 
+=======
+#if 0
+#ifndef CONFIG_BT_HCIUART_DEBUG
+#undef  BT_DBG
+#define BT_DBG(A...)
+#endif
+#endif
+
+#define VERSION "2.2"
+
+static int reset = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct hci_uart_proto *hup[HCI_UART_MAX_PROTO];
 
 int hci_uart_register_proto(struct hci_uart_proto *p)
@@ -99,7 +113,11 @@ static inline void hci_uart_tx_complete(struct hci_uart *hu, int pkt_type)
 		break;
 
 	case HCI_SCODATA_PKT:
+<<<<<<< HEAD
 		hdev->stat.sco_tx++;
+=======
+		hdev->stat.cmd_tx++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 }
@@ -172,13 +190,22 @@ static int hci_uart_open(struct hci_dev *hdev)
 /* Reset device */
 static int hci_uart_flush(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	struct hci_uart *hu  = hci_get_drvdata(hdev);
+=======
+	struct hci_uart *hu = (struct hci_uart *)hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct tty_struct *tty = hu->tty;
 
 	BT_DBG("hdev %p tty %p", hdev, tty);
 
 	if (hu->tx_skb) {
+<<<<<<< HEAD
 		kfree_skb(hu->tx_skb); hu->tx_skb = NULL;
+=======
+		kfree_skb(hu->tx_skb);
+		hu->tx_skb = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Flush any pending characters in the driver and discipline. */
@@ -207,7 +234,12 @@ static int hci_uart_close(struct hci_dev *hdev)
 /* Send frames from HCI layer */
 static int hci_uart_send_frame(struct sk_buff *skb)
 {
+<<<<<<< HEAD
 	struct hci_dev* hdev = (struct hci_dev *) skb->dev;
+=======
+	struct hci_dev *hdev = (struct hci_dev *)skb->dev;
+	struct tty_struct *tty;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct hci_uart *hu;
 
 	if (!hdev) {
@@ -218,9 +250,17 @@ static int hci_uart_send_frame(struct sk_buff *skb)
 	if (!test_bit(HCI_RUNNING, &hdev->flags))
 		return -EBUSY;
 
+<<<<<<< HEAD
 	hu = hci_get_drvdata(hdev);
 
 	BT_DBG("%s: type %d len %d", hdev->name, bt_cb(skb)->pkt_type, skb->len);
+=======
+	hu = (struct hci_uart *)hdev->driver_data;
+	tty = hu->tty;
+
+	BT_DBG("%s: type %d len %d", hdev->name, bt_cb(skb)->pkt_type,
+	       skb->len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hu->proto->enqueue(hu, skb);
 
@@ -229,18 +269,37 @@ static int hci_uart_send_frame(struct sk_buff *skb)
 	return 0;
 }
 
+<<<<<<< HEAD
 /* ------ LDISC part ------ */
 /* hci_uart_tty_open
  * 
+=======
+static void hci_uart_destruct(struct hci_dev *hdev)
+{
+	if (!hdev)
+		return;
+
+	BT_DBG("%s", hdev->name);
+}
+
+/* ------ LDISC part ------ */
+/* hci_uart_tty_open
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *     Called when line discipline changed to HCI_UART.
  *
  * Arguments:
  *     tty    pointer to tty info structure
+<<<<<<< HEAD
  * Return Value:    
+=======
+ * Return Value:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *     0 if success, otherwise error code
  */
 static int hci_uart_tty_open(struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	struct hci_uart *hu = (void *) tty->disc_data;
 
 	BT_DBG("tty %p", tty);
@@ -255,6 +314,15 @@ static int hci_uart_tty_open(struct tty_struct *tty)
 	if (tty->ops->write == NULL)
 		return -EOPNOTSUPP;
 
+=======
+	struct hci_uart *hu = (void *)tty->disc_data;
+
+	BT_DBG("tty %p", tty);
+
+	if (hu)
+		return -EEXIST;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!(hu = kzalloc(sizeof(struct hci_uart), GFP_KERNEL))) {
 		BT_ERR("Can't allocate control structure");
 		return -ENFILE;
@@ -305,7 +373,10 @@ static void hci_uart_tty_close(struct tty_struct *tty)
 			}
 			hu->proto->close(hu);
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(hu);
 	}
 }
@@ -337,18 +408,33 @@ static void hci_uart_tty_wakeup(struct tty_struct *tty)
 }
 
 /* hci_uart_tty_receive()
+<<<<<<< HEAD
  * 
  *     Called by tty low level driver when receive data is
  *     available.
  *     
+=======
+ *
+ *     Called by tty low level driver when receive data is
+ *     available.
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Arguments:  tty          pointer to tty isntance data
  *             data         pointer to received data
  *             flags        pointer to flags for data
  *             count        count of received data in bytes
+<<<<<<< HEAD
  *     
  * Return Value:    None
  */
 static void hci_uart_tty_receive(struct tty_struct *tty, const u8 *data, char *flags, int count)
+=======
+ *
+ * Return Value:    None
+ */
+static void hci_uart_tty_receive(struct tty_struct *tty, const u8 * data,
+				 char *flags, int count)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hci_uart *hu = (void *)tty->disc_data;
 
@@ -359,7 +445,11 @@ static void hci_uart_tty_receive(struct tty_struct *tty, const u8 *data, char *f
 		return;
 
 	spin_lock(&hu->rx_lock);
+<<<<<<< HEAD
 	hu->proto->recv(hu, (void *) data, count);
+=======
+	hu->proto->recv(hu, (void *)data, count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hu->hdev->stat.byte_rx += count;
 	spin_unlock(&hu->rx_lock);
 
@@ -382,6 +472,7 @@ static int hci_uart_register_dev(struct hci_uart *hu)
 	hu->hdev = hdev;
 
 	hdev->bus = HCI_UART;
+<<<<<<< HEAD
 	hci_set_drvdata(hdev, hu);
 
 	hdev->open  = hci_uart_open;
@@ -400,6 +491,24 @@ static int hci_uart_register_dev(struct hci_uart *hu)
 		hdev->dev_type = HCI_AMP;
 	else
 		hdev->dev_type = HCI_BREDR;
+=======
+	hdev->driver_data = hu;
+
+	hdev->open = hci_uart_open;
+	hdev->close = hci_uart_close;
+	hdev->flush = hci_uart_flush;
+	hdev->send = hci_uart_send_frame;
+	hdev->destruct = hci_uart_destruct;
+	hdev->parent = hu->tty->dev;
+
+	hdev->owner = THIS_MODULE;
+
+	if (!reset)
+		set_bit(HCI_QUIRK_NO_RESET, &hdev->quirks);
+
+	if (test_bit(HCI_UART_RAW_DEVICE, &hu->hdev_flags))
+		set_bit(HCI_QUIRK_RAW_DEVICE, &hdev->quirks);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (hci_register_dev(hdev) < 0) {
 		BT_ERR("Can't register HCI device");
@@ -447,8 +556,13 @@ static int hci_uart_set_proto(struct hci_uart *hu, int id)
  *
  * Return Value:    Command dependent
  */
+<<<<<<< HEAD
 static int hci_uart_tty_ioctl(struct tty_struct *tty, struct file * file,
 					unsigned int cmd, unsigned long arg)
+=======
+static int hci_uart_tty_ioctl(struct tty_struct *tty, struct file *file,
+			      unsigned int cmd, unsigned long arg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hci_uart *hu = (void *)tty->disc_data;
 	int err = 0;
@@ -461,9 +575,18 @@ static int hci_uart_tty_ioctl(struct tty_struct *tty, struct file * file,
 
 	switch (cmd) {
 	case HCIUARTSETPROTO:
+<<<<<<< HEAD
 		if (!test_and_set_bit(HCI_UART_PROTO_SET, &hu->flags)) {
 			err = hci_uart_set_proto(hu, arg);
 			if (err) {
+=======
+		BT_DBG("SETPROTO %lu hu %p", arg, hu);
+		if (!test_and_set_bit(HCI_UART_PROTO_SET, &hu->flags)) {
+			BT_DBG("called hci_uart_set_proto");
+			err = hci_uart_set_proto(hu, arg);
+			if (err) {
+				BT_DBG("error set proto");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				clear_bit(HCI_UART_PROTO_SET, &hu->flags);
 				return err;
 			}
@@ -472,6 +595,10 @@ static int hci_uart_tty_ioctl(struct tty_struct *tty, struct file * file,
 		break;
 
 	case HCIUARTGETPROTO:
+<<<<<<< HEAD
+=======
+		BT_DBG("GETPROTO");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (test_bit(HCI_UART_PROTO_SET, &hu->flags))
 			return hu->proto->id;
 		return -EUNATCH;
@@ -502,19 +629,31 @@ static int hci_uart_tty_ioctl(struct tty_struct *tty, struct file * file,
  * We don't provide read/write/poll interface for user space.
  */
 static ssize_t hci_uart_tty_read(struct tty_struct *tty, struct file *file,
+<<<<<<< HEAD
 					unsigned char __user *buf, size_t nr)
+=======
+				 unsigned char __user *buf, size_t nr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
 
 static ssize_t hci_uart_tty_write(struct tty_struct *tty, struct file *file,
+<<<<<<< HEAD
 					const unsigned char *data, size_t count)
+=======
+				  const unsigned char *data, size_t count)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
 
 static unsigned int hci_uart_tty_poll(struct tty_struct *tty,
+<<<<<<< HEAD
 					struct file *filp, poll_table *wait)
+=======
+				      struct file *filp, poll_table * wait)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
@@ -524,6 +663,7 @@ static int __init hci_uart_init(void)
 	static struct tty_ldisc_ops hci_uart_ldisc;
 	int err;
 
+<<<<<<< HEAD
 	BT_INFO("HCI UART driver ver %s", VERSION);
 
 	/* Register the tty discipline */
@@ -540,12 +680,33 @@ static int __init hci_uart_init(void)
 	hci_uart_ldisc.receive_buf	= hci_uart_tty_receive;
 	hci_uart_ldisc.write_wakeup	= hci_uart_tty_wakeup;
 	hci_uart_ldisc.owner		= THIS_MODULE;
+=======
+	BT_INFO("HCI SAT UART driver ver %s", VERSION);
+
+	/* Register the tty discipline */
+
+	memset(&hci_uart_ldisc, 0, sizeof(hci_uart_ldisc));
+	hci_uart_ldisc.magic = TTY_LDISC_MAGIC;
+	hci_uart_ldisc.name = "n_hci";
+	hci_uart_ldisc.open = hci_uart_tty_open;
+	hci_uart_ldisc.close = hci_uart_tty_close;
+	hci_uart_ldisc.read = hci_uart_tty_read;
+	hci_uart_ldisc.write = hci_uart_tty_write;
+	hci_uart_ldisc.ioctl = hci_uart_tty_ioctl;
+	hci_uart_ldisc.poll = hci_uart_tty_poll;
+	hci_uart_ldisc.receive_buf = hci_uart_tty_receive;
+	hci_uart_ldisc.write_wakeup = hci_uart_tty_wakeup;
+	hci_uart_ldisc.owner = THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((err = tty_register_ldisc(N_HCI, &hci_uart_ldisc))) {
 		BT_ERR("HCI line discipline registration failed. (%d)", err);
 		return err;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_BT_HCIUART_H4
 	h4_init();
 #endif
@@ -558,6 +719,12 @@ static int __init hci_uart_init(void)
 #ifdef CONFIG_BT_HCIUART_ATH3K
 	ath_init();
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_BT_HCIUART_BRCM
+	brcm_init();
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -578,6 +745,12 @@ static void __exit hci_uart_exit(void)
 #ifdef CONFIG_BT_HCIUART_ATH3K
 	ath_deinit();
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_BT_HCIUART_BRCM
+	brcm_deinit();
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Release tty registration of line discipline */
 	if ((err = tty_unregister_ldisc(N_HCI)))
@@ -587,6 +760,12 @@ static void __exit hci_uart_exit(void)
 module_init(hci_uart_init);
 module_exit(hci_uart_exit);
 
+<<<<<<< HEAD
+=======
+module_param(reset, bool, 0644);
+MODULE_PARM_DESC(reset, "Send HCI reset command on initialization");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_AUTHOR("Marcel Holtmann <marcel@holtmann.org>");
 MODULE_DESCRIPTION("Bluetooth HCI UART driver ver " VERSION);
 MODULE_VERSION(VERSION);

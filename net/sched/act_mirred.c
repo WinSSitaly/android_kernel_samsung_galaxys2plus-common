@@ -154,7 +154,11 @@ static int tcf_mirred_cleanup(struct tc_action *a, int bind)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int tcf_mirred(struct sk_buff *skb, const struct tc_action *a,
+=======
+static int tcf_mirred(struct sk_buff *skb, struct tc_action *a,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      struct tcf_result *res)
 {
 	struct tcf_mirred *m = a->priv;
@@ -196,7 +200,12 @@ static int tcf_mirred(struct sk_buff *skb, const struct tc_action *a,
 
 	skb2->skb_iif = skb->dev->ifindex;
 	skb2->dev = dev;
+<<<<<<< HEAD
 	err = dev_queue_xmit(skb2);
+=======
+	dev_queue_xmit(skb2);
+	err = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	if (err) {

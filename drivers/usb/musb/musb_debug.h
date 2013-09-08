@@ -43,8 +43,13 @@
 #define ERR(fmt, args...) yprintk(KERN_ERR, fmt, ## args)
 
 #ifdef CONFIG_DEBUG_FS
+<<<<<<< HEAD
 int musb_init_debugfs(struct musb *musb);
 void musb_exit_debugfs(struct musb *musb);
+=======
+extern int musb_init_debugfs(struct musb *musb);
+extern void musb_exit_debugfs(struct musb *musb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 static inline int musb_init_debugfs(struct musb *musb)
 {

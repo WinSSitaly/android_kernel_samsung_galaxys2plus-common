@@ -11,6 +11,10 @@
 
 #include <linux/poll.h>
 #include <linux/fs.h>
+<<<<<<< HEAD
+=======
+#include <linux/device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mutex.h>
 #include <linux/compiler.h> /* need __user */
 #include <linux/videodev2.h>
@@ -121,8 +125,11 @@ struct v4l2_ioctl_ops {
 	int (*vidioc_qbuf)    (struct file *file, void *fh, struct v4l2_buffer *b);
 	int (*vidioc_dqbuf)   (struct file *file, void *fh, struct v4l2_buffer *b);
 
+<<<<<<< HEAD
 	int (*vidioc_create_bufs)(struct file *file, void *fh, struct v4l2_create_buffers *b);
 	int (*vidioc_prepare_buf)(struct file *file, void *fh, struct v4l2_buffer *b);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int (*vidioc_overlay) (struct file *file, void *fh, unsigned int i);
 	int (*vidioc_g_fbuf)   (struct file *file, void *fh,
@@ -195,10 +202,13 @@ struct v4l2_ioctl_ops {
 					struct v4l2_crop *a);
 	int (*vidioc_s_crop)           (struct file *file, void *fh,
 					struct v4l2_crop *a);
+<<<<<<< HEAD
 	int (*vidioc_g_selection)      (struct file *file, void *fh,
 					struct v4l2_selection *s);
 	int (*vidioc_s_selection)      (struct file *file, void *fh,
 					struct v4l2_selection *s);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Compression ioctls */
 	int (*vidioc_g_jpegcomp)       (struct file *file, void *fh,
 					struct v4l2_jpegcompression *a);
@@ -210,10 +220,13 @@ struct v4l2_ioctl_ops {
 					struct v4l2_encoder_cmd *a);
 	int (*vidioc_try_encoder_cmd)  (struct file *file, void *fh,
 					struct v4l2_encoder_cmd *a);
+<<<<<<< HEAD
 	int (*vidioc_decoder_cmd)      (struct file *file, void *fh,
 					struct v4l2_decoder_cmd *a);
 	int (*vidioc_try_decoder_cmd)  (struct file *file, void *fh,
 					struct v4l2_decoder_cmd *a);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Stream type-dependent parameter ioctls */
 	int (*vidioc_g_parm)           (struct file *file, void *fh,

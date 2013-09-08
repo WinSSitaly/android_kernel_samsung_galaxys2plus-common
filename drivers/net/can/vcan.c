@@ -37,6 +37,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
  *
+<<<<<<< HEAD
+=======
+ * Send feedback to <socketcan-users@lists.berlios.de>
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/module.h>
@@ -63,7 +68,11 @@ MODULE_AUTHOR("Urs Thuermann <urs.thuermann@volkswagen.de>");
  * See Documentation/networking/can.txt for details.
  */
 
+<<<<<<< HEAD
 static bool echo; /* echo testing. Default: 0 (Off) */
+=======
+static int echo; /* echo testing. Default: 0 (Off) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(echo, bool, S_IRUGO);
 MODULE_PARM_DESC(echo, "Echo sent frames (for testing). Default: 0 (Off)");
 

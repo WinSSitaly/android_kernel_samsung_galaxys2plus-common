@@ -39,11 +39,16 @@ static struct timer_list supply_timer;
 static struct timer_list polling_timer;
 static int polling;
 
+<<<<<<< HEAD
 #ifdef CONFIG_USB_OTG_UTILS
 static struct usb_phy *transceiver;
 static struct notifier_block otg_nb;
 #endif
 
+=======
+static struct otg_transceiver *transceiver;
+static struct notifier_block otg_nb;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct regulator *ac_draw;
 
 enum {
@@ -320,15 +325,22 @@ static int pda_power_probe(struct platform_device *pdev)
 		ret = PTR_ERR(ac_draw);
 	}
 
+<<<<<<< HEAD
 #ifdef CONFIG_USB_OTG_UTILS
 	transceiver = usb_get_transceiver();
+=======
+	transceiver = otg_get_transceiver();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (transceiver && !pdata->is_usb_online) {
 		pdata->is_usb_online = otg_is_usb_online;
 	}
 	if (transceiver && !pdata->is_ac_online) {
 		pdata->is_ac_online = otg_is_ac_online;
 	}
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (pdata->is_ac_online) {
 		ret = power_supply_register(&pdev->dev, &pda_psy_ac);
@@ -372,17 +384,26 @@ static int pda_power_probe(struct platform_device *pdev)
 		}
 	}
 
+<<<<<<< HEAD
 #ifdef CONFIG_USB_OTG_UTILS
 	if (transceiver && pdata->use_otg_notifier) {
 		otg_nb.notifier_call = otg_handle_notification;
 		ret = usb_register_notifier(transceiver, &otg_nb);
+=======
+	if (transceiver && pdata->use_otg_notifier) {
+		otg_nb.notifier_call = otg_handle_notification;
+		ret = otg_register_notifier(transceiver, &otg_nb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret) {
 			dev_err(dev, "failure to register otg notifier\n");
 			goto otg_reg_notifier_failed;
 		}
 		polling = 0;
 	}
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (polling) {
 		dev_dbg(dev, "will poll for status\n");
@@ -396,21 +417,32 @@ static int pda_power_probe(struct platform_device *pdev)
 
 	return 0;
 
+<<<<<<< HEAD
 #ifdef CONFIG_USB_OTG_UTILS
 otg_reg_notifier_failed:
 	if (pdata->is_usb_online && usb_irq)
 		free_irq(usb_irq->start, &pda_psy_usb);
 #endif
+=======
+otg_reg_notifier_failed:
+	if (pdata->is_usb_online && usb_irq)
+		free_irq(usb_irq->start, &pda_psy_usb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 usb_irq_failed:
 	if (pdata->is_usb_online)
 		power_supply_unregister(&pda_psy_usb);
 usb_supply_failed:
 	if (pdata->is_ac_online && ac_irq)
 		free_irq(ac_irq->start, &pda_psy_ac);
+<<<<<<< HEAD
 #ifdef CONFIG_USB_OTG_UTILS
 	if (transceiver)
 		usb_put_transceiver(transceiver);
 #endif
+=======
+	if (transceiver)
+		otg_put_transceiver(transceiver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ac_irq_failed:
 	if (pdata->is_ac_online)
 		power_supply_unregister(&pda_psy_ac);
@@ -444,7 +476,11 @@ static int pda_power_remove(struct platform_device *pdev)
 		power_supply_unregister(&pda_psy_ac);
 #ifdef CONFIG_USB_OTG_UTILS
 	if (transceiver)
+<<<<<<< HEAD
 		usb_put_transceiver(transceiver);
+=======
+		otg_put_transceiver(transceiver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	if (ac_draw) {
 		regulator_put(ac_draw);
@@ -498,6 +534,11 @@ static int pda_power_resume(struct platform_device *pdev)
 #define pda_power_resume NULL
 #endif /* CONFIG_PM */
 
+<<<<<<< HEAD
+=======
+MODULE_ALIAS("platform:pda-power");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver pda_power_pdrv = {
 	.driver = {
 		.name = "pda-power",
@@ -508,8 +549,25 @@ static struct platform_driver pda_power_pdrv = {
 	.resume = pda_power_resume,
 };
 
+<<<<<<< HEAD
 module_platform_driver(pda_power_pdrv);
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Anton Vorontsov <cbou@mail.ru>");
 MODULE_ALIAS("platform:pda-power");
+=======
+static int __init pda_power_init(void)
+{
+	return platform_driver_register(&pda_power_pdrv);
+}
+
+static void __exit pda_power_exit(void)
+{
+	platform_driver_unregister(&pda_power_pdrv);
+}
+
+module_init(pda_power_init);
+module_exit(pda_power_exit);
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Anton Vorontsov <cbou@mail.ru>");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

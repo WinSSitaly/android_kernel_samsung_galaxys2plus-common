@@ -6,7 +6,11 @@
 #include <linux/clk.h>
 #include <linux/err.h>
 #include <linux/errno.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/clk_interface.h>
 
 struct clk_interface clk_functions;

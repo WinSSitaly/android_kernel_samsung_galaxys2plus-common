@@ -33,6 +33,7 @@ void genl_unlock(void)
 }
 EXPORT_SYMBOL(genl_unlock);
 
+<<<<<<< HEAD
 #ifdef CONFIG_PROVE_LOCKING
 int lockdep_genl_is_held(void)
 {
@@ -41,6 +42,8 @@ int lockdep_genl_is_held(void)
 EXPORT_SYMBOL(lockdep_genl_is_held);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define GENL_FAM_TAB_SIZE	16
 #define GENL_FAM_TAB_MASK	(GENL_FAM_TAB_SIZE - 1)
 
@@ -106,7 +109,11 @@ static struct genl_ops *genl_get_cmd(u8 cmd, struct genl_family *family)
 /* Of course we are going to have problems once we hit
  * 2^16 alive types, but that can only happen by year 2K
 */
+<<<<<<< HEAD
 static u16 genl_generate_id(void)
+=======
+static inline u16 genl_generate_id(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static u16 id_gen_idx = GENL_MIN_ID;
 	int i;
@@ -142,7 +149,10 @@ int genl_register_mc_group(struct genl_family *family,
 	int err = 0;
 
 	BUG_ON(grp->name[0] == '\0');
+<<<<<<< HEAD
 	BUG_ON(memchr(grp->name, '\0', GENL_NAMSIZ) == NULL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	genl_lock();
 
@@ -499,6 +509,7 @@ int genl_unregister_family(struct genl_family *family)
 }
 EXPORT_SYMBOL(genl_unregister_family);
 
+<<<<<<< HEAD
 /**
  * genlmsg_put - Add generic netlink header to netlink message
  * @skb: socket buffer holding the message
@@ -530,6 +541,8 @@ void *genlmsg_put(struct sk_buff *skb, u32 pid, u32 seq,
 }
 EXPORT_SYMBOL(genlmsg_put);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int genl_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 {
 	struct genl_ops *ops;
@@ -556,7 +569,11 @@ static int genl_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 		return -EOPNOTSUPP;
 
 	if ((ops->flags & GENL_ADMIN_PERM) &&
+<<<<<<< HEAD
 	    !capable(CAP_NET_ADMIN))
+=======
+	    security_netlink_recv(skb, CAP_NET_ADMIN))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EPERM;
 
 	if (nlh->nlmsg_flags & NLM_F_DUMP) {
@@ -564,6 +581,7 @@ static int genl_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 			return -EOPNOTSUPP;
 
 		genl_unlock();
+<<<<<<< HEAD
 		{
 			struct netlink_dump_control c = {
 				.dump = ops->dumpit,
@@ -571,6 +589,10 @@ static int genl_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 			};
 			err = netlink_dump_start(net->genl_sock, skb, nlh, &c);
 		}
+=======
+		err = netlink_dump_start(net->genl_sock, skb, nlh,
+					 ops->dumpit, ops->done);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		genl_lock();
 		return err;
 	}
@@ -829,6 +851,7 @@ static int ctrl_getfamily(struct sk_buff *skb, struct genl_info *info)
 
 		name = nla_data(info->attrs[CTRL_ATTR_FAMILY_NAME]);
 		res = genl_family_find_byname(name);
+<<<<<<< HEAD
 #ifdef CONFIG_MODULES
 		if (res == NULL) {
 			genl_unlock();
@@ -838,6 +861,8 @@ static int ctrl_getfamily(struct sk_buff *skb, struct genl_info *info)
 			res = genl_family_find_byname(name);
 		}
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = -ENOENT;
 	}
 
@@ -1000,6 +1025,7 @@ int genlmsg_multicast_allns(struct sk_buff *skb, u32 pid, unsigned int group,
 	return genlmsg_mcast(skb, pid, group, flags);
 }
 EXPORT_SYMBOL(genlmsg_multicast_allns);
+<<<<<<< HEAD
 
 void genl_notify(struct sk_buff *skb, struct net *net, u32 pid, u32 group,
 		 struct nlmsghdr *nlh, gfp_t flags)
@@ -1013,3 +1039,5 @@ void genl_notify(struct sk_buff *skb, struct net *net, u32 pid, u32 group,
 	nlmsg_notify(sk, skb, pid, group, report, flags);
 }
 EXPORT_SYMBOL(genl_notify);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

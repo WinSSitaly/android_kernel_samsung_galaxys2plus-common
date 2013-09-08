@@ -12,7 +12,11 @@ struct pci_root_info {
 	char *name;
 	unsigned int res_num;
 	struct resource *res;
+<<<<<<< HEAD
 	struct list_head *resources;
+=======
+	struct pci_bus *bus;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int busnum;
 };
 
@@ -24,12 +28,15 @@ static int __init set_use_crs(const struct dmi_system_id *id)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int __init set_nouse_crs(const struct dmi_system_id *id)
 {
 	pci_use_crs = false;
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct dmi_system_id pci_use_crs_table[] __initconst = {
 	/* http://bugzilla.kernel.org/show_bug.cgi?id=14183 */
 	{
@@ -70,6 +77,7 @@ static const struct dmi_system_id pci_use_crs_table[] __initconst = {
 			DMI_MATCH(DMI_BIOS_VENDOR, "Phoenix Technologies, LTD"),
 		},
 	},
+<<<<<<< HEAD
 
 	/* Now for the blacklist.. */
 
@@ -93,6 +101,8 @@ static const struct dmi_system_id pci_use_crs_table[] __initconst = {
 			DMI_MATCH(DMI_BIOS_VERSION, "6JET85WW (1.43 )"),
 		},
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{}
 };
 
@@ -216,7 +226,11 @@ setup_resource(struct acpi_resource *acpi_res, void *data)
 	} else if (orig_end != end) {
 		dev_info(&info->bridge->dev,
 			"host bridge window [%#llx-%#llx] "
+<<<<<<< HEAD
 			"([%#llx-%#llx] ignored, not CPU addressable)\n", 
+=======
+			"([%#llx-%#llx] ignored, not CPU addressable)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			start, orig_end, end + 1, orig_end);
 	}
 
@@ -292,6 +306,12 @@ static void add_resources(struct pci_root_info *info)
 	int i;
 	struct resource *res, *root, *conflict;
 
+<<<<<<< HEAD
+=======
+	if (!pci_use_crs)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	coalesce_windows(info, IORESOURCE_MEM);
 	coalesce_windows(info, IORESOURCE_IO);
 
@@ -307,24 +327,46 @@ static void add_resources(struct pci_root_info *info)
 
 		conflict = insert_resource_conflict(root, res);
 		if (conflict)
+<<<<<<< HEAD
 			dev_info(&info->bridge->dev,
 				 "ignoring host bridge window %pR (conflicts with %s %pR)\n",
 				 res, conflict->name, conflict);
 		else
 			pci_add_resource(info->resources, res);
+=======
+			dev_err(&info->bridge->dev,
+				"address space collision: host bridge window %pR "
+				"conflicts with %s %pR\n",
+				res, conflict->name, conflict);
+		else
+			pci_bus_add_resource(info->bus, res, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
 static void
 get_current_resources(struct acpi_device *device, int busnum,
+<<<<<<< HEAD
 		      int domain, struct list_head *resources)
+=======
+			int domain, struct pci_bus *bus)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct pci_root_info info;
 	size_t size;
 
+<<<<<<< HEAD
 	info.bridge = device;
 	info.res_num = 0;
 	info.resources = resources;
+=======
+	if (pci_use_crs)
+		pci_bus_remove_resources(bus);
+
+	info.bridge = device;
+	info.bus = bus;
+	info.res_num = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acpi_walk_resources(device->handle, METHOD_NAME__CRS, count_resource,
 				&info);
 	if (!info.res_num)
@@ -333,7 +375,11 @@ get_current_resources(struct acpi_device *device, int busnum,
 	size = sizeof(*info.res) * info.res_num;
 	info.res = kmalloc(size, GFP_KERNEL);
 	if (!info.res)
+<<<<<<< HEAD
 		return;
+=======
+		goto res_alloc_fail;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	info.name = kasprintf(GFP_KERNEL, "PCI Bus %04x:%02x", domain, busnum);
 	if (!info.name)
@@ -343,6 +389,7 @@ get_current_resources(struct acpi_device *device, int busnum,
 	acpi_walk_resources(device->handle, METHOD_NAME__CRS, setup_resource,
 				&info);
 
+<<<<<<< HEAD
 	if (pci_use_crs) {
 		add_resources(&info);
 
@@ -353,6 +400,15 @@ get_current_resources(struct acpi_device *device, int busnum,
 
 name_alloc_fail:
 	kfree(info.res);
+=======
+	add_resources(&info);
+	return;
+
+name_alloc_fail:
+	kfree(info.res);
+res_alloc_fail:
+	return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct pci_bus * __devinit pci_acpi_scan_root(struct acpi_pci_root *root)
@@ -360,7 +416,10 @@ struct pci_bus * __devinit pci_acpi_scan_root(struct acpi_pci_root *root)
 	struct acpi_device *device = root->device;
 	int domain = root->segment;
 	int busnum = root->secondary.start;
+<<<<<<< HEAD
 	LIST_HEAD(resources);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pci_bus *bus;
 	struct pci_sysdata *sd;
 	int node;
@@ -415,6 +474,7 @@ struct pci_bus * __devinit pci_acpi_scan_root(struct acpi_pci_root *root)
 		memcpy(bus->sysdata, sd, sizeof(*sd));
 		kfree(sd);
 	} else {
+<<<<<<< HEAD
 		get_current_resources(device, busnum, domain, &resources);
 
 		/*
@@ -442,6 +502,12 @@ struct pci_bus * __devinit pci_acpi_scan_root(struct acpi_pci_root *root)
 				continue;
 
 			pcie_bus_configure_settings(child, self->pcie_mpss);
+=======
+		bus = pci_create_bus(NULL, busnum, &pci_root_ops, sd);
+		if (bus) {
+			get_current_resources(device, busnum, domain, bus);
+			bus->subordinate = pci_scan_child_bus(bus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 

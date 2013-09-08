@@ -12,7 +12,10 @@
  */
 
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/io.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <asm/mach-types.h>
 #include <plat/clock.h>

@@ -5,7 +5,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -73,6 +77,7 @@ typedef const struct acpi_rsconvert_info {
 
 /* Resource conversion opcodes */
 
+<<<<<<< HEAD
 typedef enum {
 	ACPI_RSC_INITGET = 0,
 	ACPI_RSC_INITSET,
@@ -107,6 +112,30 @@ typedef enum {
 	ACPI_RSC_SOURCE,
 	ACPI_RSC_SOURCEX
 } ACPI_RSCONVERT_OPCODES;
+=======
+#define ACPI_RSC_INITGET                0
+#define ACPI_RSC_INITSET                1
+#define ACPI_RSC_FLAGINIT               2
+#define ACPI_RSC_1BITFLAG               3
+#define ACPI_RSC_2BITFLAG               4
+#define ACPI_RSC_COUNT                  5
+#define ACPI_RSC_COUNT16                6
+#define ACPI_RSC_LENGTH                 7
+#define ACPI_RSC_MOVE8                  8
+#define ACPI_RSC_MOVE16                 9
+#define ACPI_RSC_MOVE32                 10
+#define ACPI_RSC_MOVE64                 11
+#define ACPI_RSC_SET8                   12
+#define ACPI_RSC_DATA8                  13
+#define ACPI_RSC_ADDRESS                14
+#define ACPI_RSC_SOURCE                 15
+#define ACPI_RSC_SOURCEX                16
+#define ACPI_RSC_BITMASK                17
+#define ACPI_RSC_BITMASK16              18
+#define ACPI_RSC_EXIT_NE                19
+#define ACPI_RSC_EXIT_LE                20
+#define ACPI_RSC_EXIT_EQ                21
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Resource Conversion sub-opcodes */
 
@@ -118,9 +147,12 @@ typedef enum {
 #define ACPI_RS_OFFSET(f)               (u8) ACPI_OFFSET (struct acpi_resource,f)
 #define AML_OFFSET(f)                   (u8) ACPI_OFFSET (union aml_resource,f)
 
+<<<<<<< HEAD
 /*
  * Individual entry for the resource dump tables
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef const struct acpi_rsdump_info {
 	u8 opcode;
 	u8 offset;
@@ -131,6 +163,7 @@ typedef const struct acpi_rsdump_info {
 
 /* Values for the Opcode field above */
 
+<<<<<<< HEAD
 typedef enum {
 	ACPI_RSD_TITLE = 0,
 	ACPI_RSD_1BITFLAG,
@@ -150,6 +183,22 @@ typedef enum {
 	ACPI_RSD_UINT64,
 	ACPI_RSD_WORDLIST
 } ACPI_RSDUMP_OPCODES;
+=======
+#define ACPI_RSD_TITLE                  0
+#define ACPI_RSD_LITERAL                1
+#define ACPI_RSD_STRING                 2
+#define ACPI_RSD_UINT8                  3
+#define ACPI_RSD_UINT16                 4
+#define ACPI_RSD_UINT32                 5
+#define ACPI_RSD_UINT64                 6
+#define ACPI_RSD_1BITFLAG               7
+#define ACPI_RSD_2BITFLAG               8
+#define ACPI_RSD_SHORTLIST              9
+#define ACPI_RSD_LONGLIST               10
+#define ACPI_RSD_DWORDLIST              11
+#define ACPI_RSD_ADDRESS                12
+#define ACPI_RSD_SOURCE                 13
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* restore default alignment */
 
@@ -158,18 +207,26 @@ typedef enum {
 /* Resource tables indexed by internal resource type */
 
 extern const u8 acpi_gbl_aml_resource_sizes[];
+<<<<<<< HEAD
 extern const u8 acpi_gbl_aml_resource_serial_bus_sizes[];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct acpi_rsconvert_info *acpi_gbl_set_resource_dispatch[];
 
 /* Resource tables indexed by raw AML resource descriptor type */
 
 extern const u8 acpi_gbl_resource_struct_sizes[];
+<<<<<<< HEAD
 extern const u8 acpi_gbl_resource_struct_serial_bus_sizes[];
 extern struct acpi_rsconvert_info *acpi_gbl_get_resource_dispatch[];
 
 extern struct acpi_rsconvert_info
     *acpi_gbl_convert_resource_serial_bus_dispatch[];
 
+=======
+extern struct acpi_rsconvert_info *acpi_gbl_get_resource_dispatch[];
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct acpi_vendor_walk_info {
 	struct acpi_vendor_uuid *uuid;
 	struct acpi_buffer *buffer;
@@ -215,10 +272,13 @@ acpi_status
 acpi_rs_set_srs_method_data(struct acpi_namespace_node *node,
 			    struct acpi_buffer *ret_buffer);
 
+<<<<<<< HEAD
 acpi_status
 acpi_rs_get_aei_method_data(struct acpi_namespace_node *node,
 			    struct acpi_buffer *ret_buffer);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * rscalc
  */
@@ -322,11 +382,14 @@ extern struct acpi_rsconvert_info acpi_rs_convert_address16[];
 extern struct acpi_rsconvert_info acpi_rs_convert_ext_irq[];
 extern struct acpi_rsconvert_info acpi_rs_convert_address64[];
 extern struct acpi_rsconvert_info acpi_rs_convert_ext_address64[];
+<<<<<<< HEAD
 extern struct acpi_rsconvert_info acpi_rs_convert_gpio[];
 extern struct acpi_rsconvert_info acpi_rs_convert_fixed_dma[];
 extern struct acpi_rsconvert_info acpi_rs_convert_i2c_serial_bus[];
 extern struct acpi_rsconvert_info acpi_rs_convert_spi_serial_bus[];
 extern struct acpi_rsconvert_info acpi_rs_convert_uart_serial_bus[];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* These resources require separate get/set tables */
 
@@ -344,7 +407,10 @@ extern struct acpi_rsconvert_info acpi_rs_set_vendor[];
  * rsinfo
  */
 extern struct acpi_rsdump_info *acpi_gbl_dump_resource_dispatch[];
+<<<<<<< HEAD
 extern struct acpi_rsdump_info *acpi_gbl_dump_serial_bus_dispatch[];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * rsdump
@@ -366,12 +432,15 @@ extern struct acpi_rsdump_info acpi_rs_dump_address64[];
 extern struct acpi_rsdump_info acpi_rs_dump_ext_address64[];
 extern struct acpi_rsdump_info acpi_rs_dump_ext_irq[];
 extern struct acpi_rsdump_info acpi_rs_dump_generic_reg[];
+<<<<<<< HEAD
 extern struct acpi_rsdump_info acpi_rs_dump_gpio[];
 extern struct acpi_rsdump_info acpi_rs_dump_fixed_dma[];
 extern struct acpi_rsdump_info acpi_rs_dump_common_serial_bus[];
 extern struct acpi_rsdump_info acpi_rs_dump_i2c_serial_bus[];
 extern struct acpi_rsdump_info acpi_rs_dump_spi_serial_bus[];
 extern struct acpi_rsdump_info acpi_rs_dump_uart_serial_bus[];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #endif				/* __ACRESRC_H__ */

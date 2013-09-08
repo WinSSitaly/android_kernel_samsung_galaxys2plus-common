@@ -387,7 +387,11 @@ static void send_tasklet(unsigned long arg)
  * Queues FM Channel-8 packet to FM TX queue and schedules FM TX tasklet for
  * transmission
  */
+<<<<<<< HEAD
 static int fm_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type,	void *payload,
+=======
+static u32 fm_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type,	void *payload,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int payload_len, struct completion *wait_completion)
 {
 	struct sk_buff *skb;
@@ -456,13 +460,21 @@ static int fm_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type,	void *payload,
 }
 
 /* Sends FM Channel-8 command to the chip and waits for the response */
+<<<<<<< HEAD
 int fmc_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type, void *payload,
+=======
+u32 fmc_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type, void *payload,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned int payload_len, void *response, int *response_len)
 {
 	struct sk_buff *skb;
 	struct fm_event_msg_hdr *evt_hdr;
 	unsigned long flags;
+<<<<<<< HEAD
 	int ret;
+=======
+	u32 ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	init_completion(&fmdev->maintask_comp);
 	ret = fm_send_cmd(fmdev, fm_op, type, payload, payload_len,
@@ -470,8 +482,13 @@ int fmc_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type, void *payload,
 	if (ret)
 		return ret;
 
+<<<<<<< HEAD
 	if (!wait_for_completion_timeout(&fmdev->maintask_comp,
 					 FM_DRV_TX_TIMEOUT)) {
+=======
+	ret = wait_for_completion_timeout(&fmdev->maintask_comp, FM_DRV_TX_TIMEOUT);
+	if (!ret) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fmerr("Timeout(%d sec),didn't get reg"
 			   "completion signal from RX tasklet\n",
 			   jiffies_to_msecs(FM_DRV_TX_TIMEOUT) / 1000);
@@ -508,7 +525,11 @@ int fmc_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type, void *payload,
 }
 
 /* --- Helper functions used in FM interrupt handlers ---*/
+<<<<<<< HEAD
 static inline int check_cmdresp_status(struct fmdev *fmdev,
+=======
+static inline u32 check_cmdresp_status(struct fmdev *fmdev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct sk_buff **skb)
 {
 	struct fm_event_msg_hdr *fm_evt_hdr;
@@ -1058,7 +1079,11 @@ static void fm_irq_handle_intmsk_cmd_resp(struct fmdev *fmdev)
 }
 
 /* Returns availability of RDS data in internel buffer */
+<<<<<<< HEAD
 int fmc_is_rds_data_available(struct fmdev *fmdev, struct file *file,
+=======
+u32 fmc_is_rds_data_available(struct fmdev *fmdev, struct file *file,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				struct poll_table_struct *pts)
 {
 	poll_wait(file, &fmdev->rx.rds.read_queue, pts);
@@ -1069,7 +1094,11 @@ int fmc_is_rds_data_available(struct fmdev *fmdev, struct file *file,
 }
 
 /* Copies RDS data from internal buffer to user buffer */
+<<<<<<< HEAD
 int fmc_transfer_rds_from_internal_buff(struct fmdev *fmdev, struct file *file,
+=======
+u32 fmc_transfer_rds_from_internal_buff(struct fmdev *fmdev, struct file *file,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u8 __user *buf, size_t count)
 {
 	u32 block_count;
@@ -1113,7 +1142,11 @@ int fmc_transfer_rds_from_internal_buff(struct fmdev *fmdev, struct file *file,
 	return ret;
 }
 
+<<<<<<< HEAD
 int fmc_set_freq(struct fmdev *fmdev, u32 freq_to_set)
+=======
+u32 fmc_set_freq(struct fmdev *fmdev, u32 freq_to_set)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	switch (fmdev->curr_fmmode) {
 	case FM_MODE_RX:
@@ -1127,7 +1160,11 @@ int fmc_set_freq(struct fmdev *fmdev, u32 freq_to_set)
 	}
 }
 
+<<<<<<< HEAD
 int fmc_get_freq(struct fmdev *fmdev, u32 *cur_tuned_frq)
+=======
+u32 fmc_get_freq(struct fmdev *fmdev, u32 *cur_tuned_frq)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (fmdev->rx.freq == FM_UNDEFINED_FREQ) {
 		fmerr("RX frequency is not set\n");
@@ -1153,7 +1190,11 @@ int fmc_get_freq(struct fmdev *fmdev, u32 *cur_tuned_frq)
 
 }
 
+<<<<<<< HEAD
 int fmc_set_region(struct fmdev *fmdev, u8 region_to_set)
+=======
+u32 fmc_set_region(struct fmdev *fmdev, u8 region_to_set)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	switch (fmdev->curr_fmmode) {
 	case FM_MODE_RX:
@@ -1167,7 +1208,11 @@ int fmc_set_region(struct fmdev *fmdev, u8 region_to_set)
 	}
 }
 
+<<<<<<< HEAD
 int fmc_set_mute_mode(struct fmdev *fmdev, u8 mute_mode_toset)
+=======
+u32 fmc_set_mute_mode(struct fmdev *fmdev, u8 mute_mode_toset)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	switch (fmdev->curr_fmmode) {
 	case FM_MODE_RX:
@@ -1181,7 +1226,11 @@ int fmc_set_mute_mode(struct fmdev *fmdev, u8 mute_mode_toset)
 	}
 }
 
+<<<<<<< HEAD
 int fmc_set_stereo_mono(struct fmdev *fmdev, u16 mode)
+=======
+u32 fmc_set_stereo_mono(struct fmdev *fmdev, u16 mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	switch (fmdev->curr_fmmode) {
 	case FM_MODE_RX:
@@ -1195,7 +1244,11 @@ int fmc_set_stereo_mono(struct fmdev *fmdev, u16 mode)
 	}
 }
 
+<<<<<<< HEAD
 int fmc_set_rds_mode(struct fmdev *fmdev, u8 rds_en_dis)
+=======
+u32 fmc_set_rds_mode(struct fmdev *fmdev, u8 rds_en_dis)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	switch (fmdev->curr_fmmode) {
 	case FM_MODE_RX:
@@ -1210,10 +1263,17 @@ int fmc_set_rds_mode(struct fmdev *fmdev, u8 rds_en_dis)
 }
 
 /* Sends power off command to the chip */
+<<<<<<< HEAD
 static int fm_power_down(struct fmdev *fmdev)
 {
 	u16 payload;
 	int ret;
+=======
+static u32 fm_power_down(struct fmdev *fmdev)
+{
+	u16 payload;
+	u32 ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!test_bit(FM_CORE_READY, &fmdev->flag)) {
 		fmerr("FM core is not ready\n");
@@ -1234,7 +1294,11 @@ static int fm_power_down(struct fmdev *fmdev)
 }
 
 /* Reads init command from FM firmware file and loads to the chip */
+<<<<<<< HEAD
 static int fm_download_firmware(struct fmdev *fmdev, const u8 *fw_name)
+=======
+static u32 fm_download_firmware(struct fmdev *fmdev, const u8 *fw_name)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const struct firmware *fw_entry;
 	struct bts_header *fw_header;
@@ -1299,7 +1363,11 @@ rel_fw:
 }
 
 /* Loads default RX configuration to the chip */
+<<<<<<< HEAD
 static int load_default_rx_configuration(struct fmdev *fmdev)
+=======
+static u32 load_default_rx_configuration(struct fmdev *fmdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 
@@ -1311,7 +1379,11 @@ static int load_default_rx_configuration(struct fmdev *fmdev)
 }
 
 /* Does FM power on sequence */
+<<<<<<< HEAD
 static int fm_power_up(struct fmdev *fmdev, u8 mode)
+=======
+static u32 fm_power_up(struct fmdev *fmdev, u8 mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u16 payload, asic_id, asic_ver;
 	int resp_len, ret;
@@ -1374,7 +1446,11 @@ rel:
 }
 
 /* Set FM Modes(TX, RX, OFF) */
+<<<<<<< HEAD
 int fmc_set_mode(struct fmdev *fmdev, u8 fm_mode)
+=======
+u32 fmc_set_mode(struct fmdev *fmdev, u8 fm_mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret = 0;
 
@@ -1427,7 +1503,11 @@ int fmc_set_mode(struct fmdev *fmdev, u8 fm_mode)
 }
 
 /* Returns current FM mode (TX, RX, OFF) */
+<<<<<<< HEAD
 int fmc_get_mode(struct fmdev *fmdev, u8 *fmmode)
+=======
+u32 fmc_get_mode(struct fmdev *fmdev, u8 *fmmode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (!test_bit(FM_CORE_READY, &fmdev->flag)) {
 		fmerr("FM core is not ready\n");
@@ -1483,10 +1563,17 @@ static void fm_st_reg_comp_cb(void *arg, char data)
  * This function will be called from FM V4L2 open function.
  * Register with ST driver and initialize driver data.
  */
+<<<<<<< HEAD
 int fmc_prepare(struct fmdev *fmdev)
 {
 	static struct st_proto_s fm_st_proto;
 	int ret;
+=======
+u32 fmc_prepare(struct fmdev *fmdev)
+{
+	static struct st_proto_s fm_st_proto;
+	u32 ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (test_bit(FM_CORE_READY, &fmdev->flag)) {
 		fmdbg("FM Core is already up\n");
@@ -1512,8 +1599,15 @@ int fmc_prepare(struct fmdev *fmdev)
 		fmdev->streg_cbdata = -EINPROGRESS;
 		fmdbg("%s waiting for ST reg completion signal\n", __func__);
 
+<<<<<<< HEAD
 		if (!wait_for_completion_timeout(&wait_for_fmdrv_reg_comp,
 						 FM_ST_REG_TIMEOUT)) {
+=======
+		ret = wait_for_completion_timeout(&wait_for_fmdrv_reg_comp,
+				FM_ST_REG_TIMEOUT);
+
+		if (!ret) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			fmerr("Timeout(%d sec), didn't get reg "
 					"completion signal from ST\n",
 					jiffies_to_msecs(FM_ST_REG_TIMEOUT) / 1000);
@@ -1587,10 +1681,17 @@ int fmc_prepare(struct fmdev *fmdev)
  * This function will be called from FM V4L2 release function.
  * Unregister from ST driver.
  */
+<<<<<<< HEAD
 int fmc_release(struct fmdev *fmdev)
 {
 	static struct st_proto_s fm_st_proto;
 	int ret;
+=======
+u32 fmc_release(struct fmdev *fmdev)
+{
+	static struct st_proto_s fm_st_proto;
+	u32 ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!test_bit(FM_CORE_READY, &fmdev->flag)) {
 		fmdbg("FM Core is already down\n");
@@ -1629,7 +1730,11 @@ int fmc_release(struct fmdev *fmdev)
 static int __init fm_drv_init(void)
 {
 	struct fmdev *fmdev = NULL;
+<<<<<<< HEAD
 	int ret = -ENOMEM;
+=======
+	u32 ret = -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fmdbg("FM driver version %s\n", FM_DRV_VERSION);
 

@@ -11,7 +11,10 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/compat.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/version.h>
 #include <linux/list.h>
@@ -22,7 +25,11 @@
 #include <linux/vmalloc.h>
 #include <linux/mm.h>
 #include <linux/wait.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <media/v4l2-common.h>
 #include <media/v4l2-ioctl.h>
@@ -33,7 +40,11 @@
  * UVC ioctls
  */
 static int uvc_ioctl_ctrl_map(struct uvc_video_chain *chain,
+<<<<<<< HEAD
 	struct uvc_xu_control_mapping *xmap)
+=======
+	struct uvc_xu_control_mapping *xmap, int old)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct uvc_control_mapping *map;
 	unsigned int size;
@@ -59,6 +70,16 @@ static int uvc_ioctl_ctrl_map(struct uvc_video_chain *chain,
 		break;
 
 	case V4L2_CTRL_TYPE_MENU:
+<<<<<<< HEAD
+=======
+		if (old) {
+			uvc_trace(UVC_TRACE_CONTROL, "V4L2_CTRL_TYPE_MENU not "
+				  "supported for UVCIOC_CTRL_MAP_OLD.\n");
+			ret = -EINVAL;
+			goto done;
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Prevent excessive memory consumption, as well as integer
 		 * overflows.
 		 */
@@ -86,7 +107,11 @@ static int uvc_ioctl_ctrl_map(struct uvc_video_chain *chain,
 	default:
 		uvc_trace(UVC_TRACE_CONTROL, "Unsupported V4L2 control type "
 			  "%u.\n", xmap->v4l2_type);
+<<<<<<< HEAD
 		ret = -ENOTTY;
+=======
+		ret = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto done;
 	}
 
@@ -523,7 +548,14 @@ static int uvc_v4l2_release(struct file *file)
 	/* Only free resources if this is a privileged handle. */
 	if (uvc_has_privileges(handle)) {
 		uvc_video_enable(stream, 0);
+<<<<<<< HEAD
 		uvc_free_buffers(&stream->queue);
+=======
+
+		if (uvc_free_buffers(&stream->queue) < 0)
+			uvc_printk(KERN_ERR, "uvc_v4l2_release: Unable to "
+					"free buffers.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Release the file handle. */
@@ -538,6 +570,23 @@ static int uvc_v4l2_release(struct file *file)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void uvc_v4l2_ioctl_warn(void)
+{
+	static int warned;
+
+	if (warned)
+		return;
+
+	uvc_printk(KERN_INFO, "Deprecated UVCIOC_CTRL_{ADD,MAP_OLD,GET,SET} "
+		   "ioctls will be removed in 2.6.42.\n");
+	uvc_printk(KERN_INFO, "See http://www.ideasonboard.org/uvc/upgrade/ "
+		   "for upgrade instructions.\n");
+	warned = 1;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static long uvc_v4l2_do_ioctl(struct file *file, unsigned int cmd, void *arg)
 {
 	struct video_device *vdev = video_devdata(file);
@@ -557,7 +606,11 @@ static long uvc_v4l2_do_ioctl(struct file *file, unsigned int cmd, void *arg)
 		strlcpy(cap->card, vdev->name, sizeof cap->card);
 		usb_make_path(stream->dev->udev,
 			      cap->bus_info, sizeof(cap->bus_info));
+<<<<<<< HEAD
 		cap->version = LINUX_VERSION_CODE;
+=======
+		cap->version = DRIVER_VERSION_NUMBER;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (stream->type == V4L2_BUF_TYPE_VIDEO_CAPTURE)
 			cap->capabilities = V4L2_CAP_VIDEO_CAPTURE
 					  | V4L2_CAP_STREAMING;
@@ -687,7 +740,11 @@ static long uvc_v4l2_do_ioctl(struct file *file, unsigned int cmd, void *arg)
 					break;
 			}
 			pin = iterm->id;
+<<<<<<< HEAD
 		} else if (index < selector->bNrInPins) {
+=======
+		} else if (pin < selector->bNrInPins) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pin = selector->baSourceID[index];
 			list_for_each_entry(iterm, &chain->entities, chain) {
 				if (!UVC_ENTITY_IS_ITERM(iterm))
@@ -921,11 +978,26 @@ static long uvc_v4l2_do_ioctl(struct file *file, unsigned int cmd, void *arg)
 
 	/* Buffers & streaming */
 	case VIDIOC_REQBUFS:
+<<<<<<< HEAD
+=======
+	{
+		struct v4l2_requestbuffers *rb = arg;
+
+		if (rb->type != stream->type ||
+		    rb->memory != V4L2_MEMORY_MMAP)
+			return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if ((ret = uvc_acquire_privileges(handle)) < 0)
 			return ret;
 
 		mutex_lock(&stream->mutex);
+<<<<<<< HEAD
 		ret = uvc_alloc_buffers(&stream->queue, arg);
+=======
+		ret = uvc_alloc_buffers(&stream->queue, rb->count,
+					stream->ctrl.dwMaxVideoFrameSize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mutex_unlock(&stream->mutex);
 		if (ret < 0)
 			return ret;
@@ -933,13 +1005,26 @@ static long uvc_v4l2_do_ioctl(struct file *file, unsigned int cmd, void *arg)
 		if (ret == 0)
 			uvc_dismiss_privileges(handle);
 
+<<<<<<< HEAD
 		ret = 0;
 		break;
+=======
+		rb->count = ret;
+		ret = 0;
+		break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	case VIDIOC_QUERYBUF:
 	{
 		struct v4l2_buffer *buf = arg;
 
+<<<<<<< HEAD
+=======
+		if (buf->type != stream->type)
+			return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!uvc_has_privileges(handle))
 			return -EBUSY;
 
@@ -1005,15 +1090,53 @@ static long uvc_v4l2_do_ioctl(struct file *file, unsigned int cmd, void *arg)
 		uvc_trace(UVC_TRACE_IOCTL, "Unsupported ioctl 0x%08x\n", cmd);
 		return -EINVAL;
 
+<<<<<<< HEAD
 	case UVCIOC_CTRL_MAP:
 		return uvc_ioctl_ctrl_map(chain, arg);
+=======
+	/* Dynamic controls. UVCIOC_CTRL_ADD, UVCIOC_CTRL_MAP_OLD,
+	 * UVCIOC_CTRL_GET and UVCIOC_CTRL_SET are deprecated and scheduled for
+	 * removal in 2.6.42.
+	 */
+	case __UVCIOC_CTRL_ADD:
+		uvc_v4l2_ioctl_warn();
+		return -EEXIST;
+
+	case __UVCIOC_CTRL_MAP_OLD:
+		uvc_v4l2_ioctl_warn();
+	case __UVCIOC_CTRL_MAP:
+	case UVCIOC_CTRL_MAP:
+		return uvc_ioctl_ctrl_map(chain, arg,
+					  cmd == __UVCIOC_CTRL_MAP_OLD);
+
+	case __UVCIOC_CTRL_GET:
+	case __UVCIOC_CTRL_SET:
+	{
+		struct uvc_xu_control *xctrl = arg;
+		struct uvc_xu_control_query xqry = {
+			.unit		= xctrl->unit,
+			.selector	= xctrl->selector,
+			.query		= cmd == __UVCIOC_CTRL_GET
+					? UVC_GET_CUR : UVC_SET_CUR,
+			.size		= xctrl->size,
+			.data		= xctrl->data,
+		};
+
+		uvc_v4l2_ioctl_warn();
+		return uvc_xu_ctrl_query(chain, &xqry);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	case UVCIOC_CTRL_QUERY:
 		return uvc_xu_ctrl_query(chain, arg);
 
 	default:
 		uvc_trace(UVC_TRACE_IOCTL, "Unknown ioctl 0x%08x\n", cmd);
+<<<<<<< HEAD
 		return -ENOTTY;
+=======
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;
@@ -1031,6 +1154,7 @@ static long uvc_v4l2_ioctl(struct file *file,
 	return video_usercopy(file, cmd, arg, uvc_v4l2_do_ioctl);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_COMPAT
 struct uvc_xu_control_mapping32 {
 	__u32 id;
@@ -1232,6 +1356,8 @@ static long uvc_v4l2_compat_ioctl32(struct file *file,
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t uvc_v4l2_read(struct file *file, char __user *data,
 		    size_t count, loff_t *ppos)
 {
@@ -1278,9 +1404,12 @@ const struct v4l2_file_operations uvc_fops = {
 	.open		= uvc_v4l2_open,
 	.release	= uvc_v4l2_release,
 	.unlocked_ioctl	= uvc_v4l2_ioctl,
+<<<<<<< HEAD
 #ifdef CONFIG_COMPAT
 	.compat_ioctl32	= uvc_v4l2_compat_ioctl32,
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.read		= uvc_v4l2_read,
 	.mmap		= uvc_v4l2_mmap,
 	.poll		= uvc_v4l2_poll,

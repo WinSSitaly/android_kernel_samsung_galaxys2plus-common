@@ -21,7 +21,11 @@
 #define B_XMTBUFREADY	1
 #define B_ACKPENDING	2
 
+<<<<<<< HEAD
 __printf(2, 3)
+=======
+__attribute__((format(printf, 2, 3)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void debugl1(struct IsdnCardState *cs, char *fmt, ...);
 void DChannel_proc_xmt(struct IsdnCardState *cs);
 void DChannel_proc_rcv(struct IsdnCardState *cs);

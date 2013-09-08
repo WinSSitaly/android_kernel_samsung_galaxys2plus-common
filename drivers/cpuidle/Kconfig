@@ -1,7 +1,11 @@
 
 config CPU_IDLE
 	bool "CPU idle PM support"
+<<<<<<< HEAD
 	default y if ACPI || PPC_PSERIES
+=======
+	default ACPI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  CPU idle is a generic framework for supporting software-controlled
 	  idle processor power management.  It includes modular cross-platform

@@ -4,7 +4,11 @@
 #include <linux/kernel.h>
 #include <linux/types.h>
 #include <linux/radix-tree.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define _INTC_MK(fn, mode, addr_e, addr_d, width, shift) \
 	((shift) | ((width) << 5) | ((fn) << 9) | ((mode) << 13) | \
@@ -51,7 +55,11 @@ struct intc_subgroup_entry {
 
 struct intc_desc_int {
 	struct list_head list;
+<<<<<<< HEAD
 	struct device dev;
+=======
+	struct sys_device sysdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct radix_tree_root tree;
 	raw_spinlock_t lock;
 	unsigned int index;
@@ -67,7 +75,10 @@ struct intc_desc_int {
 	struct intc_window *window;
 	unsigned int nr_windows;
 	struct irq_chip chip;
+<<<<<<< HEAD
 	bool skip_suspend;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -108,6 +119,7 @@ static inline void activate_irq(int irq)
 #endif
 }
 
+<<<<<<< HEAD
 static inline int intc_handle_int_cmp(const void *a, const void *b)
 {
 	const struct intc_handle_int *_a = a;
@@ -116,6 +128,8 @@ static inline int intc_handle_int_cmp(const void *a, const void *b)
 	return _a->irq - _b->irq;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* access.c */
 extern unsigned long
 (*intc_reg_fns[])(unsigned long addr, unsigned long h, unsigned long data);
@@ -165,7 +179,12 @@ void _intc_enable(struct irq_data *data, unsigned long handle);
 /* core.c */
 extern struct list_head intc_list;
 extern raw_spinlock_t intc_big_lock;
+<<<<<<< HEAD
 extern struct bus_type intc_subsys;
+=======
+extern unsigned int nr_intc_controllers;
+extern struct sysdev_class intc_sysdev_class;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unsigned int intc_get_dfl_prio_level(void);
 unsigned int intc_get_prio_level(unsigned int irq);

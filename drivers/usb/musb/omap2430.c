@@ -29,6 +29,10 @@
 #include <linux/sched.h>
 #include <linux/init.h>
 #include <linux/list.h>
+<<<<<<< HEAD
+=======
+#include <linux/clk.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 #include <linux/platform_device.h>
 #include <linux/dma-mapping.h>
@@ -50,7 +54,13 @@ static void musb_do_idle(unsigned long _musb)
 {
 	struct musb	*musb = (void *)_musb;
 	unsigned long	flags;
+<<<<<<< HEAD
 	u8	power;
+=======
+#ifdef CONFIG_USB_MUSB_HDRC_HCD
+	u8	power;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8	devctl;
 
 	spin_lock_irqsave(&musb->lock, flags);
@@ -67,6 +77,10 @@ static void musb_do_idle(unsigned long _musb)
 			MUSB_HST_MODE(musb);
 		}
 		break;
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_MUSB_HDRC_HCD
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case OTG_STATE_A_SUSPEND:
 		/* finish RESUME signaling? */
 		if (musb->port1_status & MUSB_PORT_STAT_RESUME) {
@@ -83,12 +97,21 @@ static void musb_do_idle(unsigned long _musb)
 			musb->xceiv->state = OTG_STATE_A_HOST;
 		}
 		break;
+<<<<<<< HEAD
+=======
+#endif
+#ifdef CONFIG_USB_MUSB_HDRC_HCD
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case OTG_STATE_A_HOST:
 		devctl = musb_readb(musb->mregs, MUSB_DEVCTL);
 		if (devctl &  MUSB_DEVCTL_BDEVICE)
 			musb->xceiv->state = OTG_STATE_B_IDLE;
 		else
 			musb->xceiv->state = OTG_STATE_A_WAIT_BCON;
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		break;
 	}
@@ -132,7 +155,10 @@ static void omap2430_musb_try_idle(struct musb *musb, unsigned long timeout)
 
 static void omap2430_musb_set_vbus(struct musb *musb, int is_on)
 {
+<<<<<<< HEAD
 	struct usb_otg	*otg = musb->xceiv->otg;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8		devctl;
 	unsigned long timeout = jiffies + msecs_to_jiffies(1000);
 	int ret = 1;
@@ -164,11 +190,19 @@ static void omap2430_musb_set_vbus(struct musb *musb, int is_on)
 				}
 			}
 
+<<<<<<< HEAD
 			if (ret && otg->set_vbus)
 				otg_set_vbus(otg, 1);
 		} else {
 			musb->is_active = 1;
 			otg->default_a = 1;
+=======
+			if (ret && musb->xceiv->set_vbus)
+				otg_set_vbus(musb->xceiv, 1);
+		} else {
+			musb->is_active = 1;
+			musb->xceiv->default_a = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			musb->xceiv->state = OTG_STATE_A_WAIT_VRISE;
 			devctl |= MUSB_DEVCTL_SESSION;
 			MUSB_HST_MODE(musb);
@@ -180,7 +214,11 @@ static void omap2430_musb_set_vbus(struct musb *musb, int is_on)
 		 * jumping right to B_IDLE...
 		 */
 
+<<<<<<< HEAD
 		otg->default_a = 0;
+=======
+		musb->xceiv->default_a = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		musb->xceiv->state = OTG_STATE_B_IDLE;
 		devctl &= ~MUSB_DEVCTL_SESSION;
 
@@ -223,10 +261,15 @@ static inline void omap2430_low_level_init(struct musb *musb)
 	musb_writel(musb->mregs, OTG_FORCESTDBY, l);
 }
 
+<<<<<<< HEAD
+=======
+/* blocking notifier support */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int musb_otg_notifications(struct notifier_block *nb,
 		unsigned long event, void *unused)
 {
 	struct musb	*musb = container_of(nb, struct musb, nb);
+<<<<<<< HEAD
 
 	musb->xceiv_event = event;
 	schedule_work(&musb->otg_notifier_work);
@@ -237,10 +280,13 @@ static int musb_otg_notifications(struct notifier_block *nb,
 static void musb_otg_notifier_work(struct work_struct *data_notifier_work)
 {
 	struct musb *musb = container_of(data_notifier_work, struct musb, otg_notifier_work);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct device *dev = musb->controller;
 	struct musb_hdrc_platform_data *pdata = dev->platform_data;
 	struct omap_musb_board_data *data = pdata->board_data;
 
+<<<<<<< HEAD
 	switch (musb->xceiv_event) {
 	case USB_EVENT_ID:
 		dev_dbg(musb->controller, "ID GND\n");
@@ -248,6 +294,23 @@ static void musb_otg_notifier_work(struct work_struct *data_notifier_work)
 		if (!is_otg_enabled(musb) || musb->gadget_driver) {
 			pm_runtime_get_sync(musb->controller);
 			usb_phy_init(musb->xceiv);
+=======
+	switch (event) {
+	case USB_EVENT_ID:
+		dev_dbg(musb->controller, "ID GND\n");
+
+		if (is_otg_enabled(musb)) {
+#ifdef CONFIG_USB_GADGET_MUSB_HDRC
+			if (musb->gadget_driver) {
+				pm_runtime_get_sync(musb->controller);
+				otg_init(musb->xceiv);
+				omap2430_musb_set_vbus(musb, 1);
+			}
+#endif
+		} else {
+			pm_runtime_get_sync(musb->controller);
+			otg_init(musb->xceiv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			omap2430_musb_set_vbus(musb, 1);
 		}
 		break;
@@ -255,21 +318,38 @@ static void musb_otg_notifier_work(struct work_struct *data_notifier_work)
 	case USB_EVENT_VBUS:
 		dev_dbg(musb->controller, "VBUS Connect\n");
 
+<<<<<<< HEAD
 		if (musb->gadget_driver)
 			pm_runtime_get_sync(musb->controller);
 		usb_phy_init(musb->xceiv);
+=======
+#ifdef CONFIG_USB_GADGET_MUSB_HDRC
+		if (musb->gadget_driver)
+			pm_runtime_get_sync(musb->controller);
+#endif
+		otg_init(musb->xceiv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case USB_EVENT_NONE:
 		dev_dbg(musb->controller, "VBUS Disconnect\n");
 
+<<<<<<< HEAD
 		if (is_otg_enabled(musb) || is_peripheral_enabled(musb))
 			if (musb->gadget_driver) {
+=======
+#ifdef CONFIG_USB_GADGET_MUSB_HDRC
+		if (is_otg_enabled(musb) || is_peripheral_enabled(musb))
+			if (musb->gadget_driver)
+#endif
+			{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				pm_runtime_mark_last_busy(musb->controller);
 				pm_runtime_put_autosuspend(musb->controller);
 			}
 
 		if (data->interface_type == MUSB_INTERFACE_UTMI) {
+<<<<<<< HEAD
 			if (musb->xceiv->otg->set_vbus)
 				otg_set_vbus(musb->xceiv->otg, 0);
 		}
@@ -278,6 +358,19 @@ static void musb_otg_notifier_work(struct work_struct *data_notifier_work)
 	default:
 		dev_dbg(musb->controller, "ID float\n");
 	}
+=======
+			if (musb->xceiv->set_vbus)
+				otg_set_vbus(musb->xceiv, 0);
+		}
+		otg_shutdown(musb->xceiv);
+		break;
+	default:
+		dev_dbg(musb->controller, "ID float\n");
+		return NOTIFY_DONE;
+	}
+
+	return NOTIFY_OK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int omap2430_musb_init(struct musb *musb)
@@ -292,14 +385,21 @@ static int omap2430_musb_init(struct musb *musb)
 	 * up through ULPI.  TWL4030-family PMICs include one,
 	 * which needs a driver, drivers aren't always needed.
 	 */
+<<<<<<< HEAD
 	musb->xceiv = usb_get_transceiver();
+=======
+	musb->xceiv = otg_get_transceiver();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!musb->xceiv) {
 		pr_err("HS USB OTG: no transceiver configured\n");
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	INIT_WORK(&musb->otg_notifier_work, musb_otg_notifier_work);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = pm_runtime_get_sync(dev);
 	if (status < 0) {
 		dev_err(dev, "pm_runtime_get_sync FAILED %d\n", status);
@@ -327,17 +427,28 @@ static int omap2430_musb_init(struct musb *musb)
 			musb_readl(musb->mregs, OTG_SIMENABLE));
 
 	musb->nb.notifier_call = musb_otg_notifications;
+<<<<<<< HEAD
 	status = usb_register_notifier(musb->xceiv, &musb->nb);
+=======
+	status = otg_register_notifier(musb->xceiv, &musb->nb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (status)
 		dev_dbg(musb->controller, "notification register failed\n");
 
 	setup_timer(&musb_idle_timer, musb_do_idle, (unsigned long) musb);
 
+<<<<<<< HEAD
 	pm_runtime_put_noidle(musb->controller);
 	return 0;
 
 err1:
+=======
+	return 0;
+
+err1:
+	pm_runtime_disable(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return status;
 }
 
@@ -352,6 +463,7 @@ static void omap2430_musb_enable(struct musb *musb)
 	switch (musb->xceiv->last_event) {
 
 	case USB_EVENT_ID:
+<<<<<<< HEAD
 		usb_phy_init(musb->xceiv);
 		if (data->interface_type != MUSB_INTERFACE_UTMI)
 			break;
@@ -366,12 +478,33 @@ static void omap2430_musb_enable(struct musb *musb)
 			if (time_after(jiffies, timeout)) {
 				dev_err(dev, "configured as A device timeout");
 				break;
+=======
+		otg_init(musb->xceiv);
+		if (data->interface_type == MUSB_INTERFACE_UTMI) {
+			devctl = musb_readb(musb->mregs, MUSB_DEVCTL);
+			/* start the session */
+			devctl |= MUSB_DEVCTL_SESSION;
+			musb_writeb(musb->mregs, MUSB_DEVCTL, devctl);
+			while (musb_readb(musb->mregs, MUSB_DEVCTL) &
+						MUSB_DEVCTL_BDEVICE) {
+				cpu_relax();
+
+				if (time_after(jiffies, timeout)) {
+					dev_err(musb->controller,
+					"configured as A device timeout");
+					break;
+				}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 		break;
 
 	case USB_EVENT_VBUS:
+<<<<<<< HEAD
 		usb_phy_init(musb->xceiv);
+=======
+		otg_init(musb->xceiv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	default:
@@ -382,16 +515,26 @@ static void omap2430_musb_enable(struct musb *musb)
 static void omap2430_musb_disable(struct musb *musb)
 {
 	if (musb->xceiv->last_event)
+<<<<<<< HEAD
 		usb_phy_shutdown(musb->xceiv);
+=======
+		otg_shutdown(musb->xceiv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int omap2430_musb_exit(struct musb *musb)
 {
 	del_timer_sync(&musb_idle_timer);
+<<<<<<< HEAD
 	cancel_work_sync(&musb->otg_notifier_work);
 
 	omap2430_low_level_exit(musb);
 	usb_put_transceiver(musb->xceiv);
+=======
+
+	omap2430_low_level_exit(musb);
+	otg_put_transceiver(musb->xceiv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -411,7 +554,11 @@ static const struct musb_platform_ops omap2430_ops = {
 
 static u64 omap2430_dmamask = DMA_BIT_MASK(32);
 
+<<<<<<< HEAD
 static int __devinit omap2430_probe(struct platform_device *pdev)
+=======
+static int __init omap2430_probe(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct musb_hdrc_platform_data	*pdata = pdev->dev.platform_data;
 	struct platform_device		*musb;
@@ -474,12 +621,21 @@ err0:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int __devexit omap2430_remove(struct platform_device *pdev)
+=======
+static int __exit omap2430_remove(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct omap2430_glue		*glue = platform_get_drvdata(pdev);
 
 	platform_device_del(glue->musb);
 	platform_device_put(glue->musb);
+<<<<<<< HEAD
+=======
+	pm_runtime_put(&pdev->dev);
+	pm_runtime_disable(&pdev->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(glue);
 
 	return 0;
@@ -492,6 +648,7 @@ static int omap2430_runtime_suspend(struct device *dev)
 	struct omap2430_glue		*glue = dev_get_drvdata(dev);
 	struct musb			*musb = glue_to_musb(glue);
 
+<<<<<<< HEAD
 	if (musb) {
 		musb->context.otg_interfsel = musb_readl(musb->mregs,
 				OTG_INTERFSEL);
@@ -499,6 +656,10 @@ static int omap2430_runtime_suspend(struct device *dev)
 		omap2430_low_level_exit(musb);
 		usb_phy_set_suspend(musb->xceiv, 1);
 	}
+=======
+	omap2430_low_level_exit(musb);
+	otg_set_suspend(musb->xceiv, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -508,6 +669,7 @@ static int omap2430_runtime_resume(struct device *dev)
 	struct omap2430_glue		*glue = dev_get_drvdata(dev);
 	struct musb			*musb = glue_to_musb(glue);
 
+<<<<<<< HEAD
 	if (musb) {
 		omap2430_low_level_init(musb);
 		musb_writel(musb->mregs, OTG_INTERFSEL,
@@ -515,6 +677,10 @@ static int omap2430_runtime_resume(struct device *dev)
 
 		usb_phy_set_suspend(musb->xceiv, 0);
 	}
+=======
+	omap2430_low_level_init(musb);
+	otg_set_suspend(musb->xceiv, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -530,8 +696,12 @@ static struct dev_pm_ops omap2430_pm_ops = {
 #endif
 
 static struct platform_driver omap2430_driver = {
+<<<<<<< HEAD
 	.probe		= omap2430_probe,
 	.remove		= __devexit_p(omap2430_remove),
+=======
+	.remove		= __exit_p(omap2430_remove),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.driver		= {
 		.name	= "musb-omap2430",
 		.pm	= DEV_PM_OPS,
@@ -544,9 +714,15 @@ MODULE_LICENSE("GPL v2");
 
 static int __init omap2430_init(void)
 {
+<<<<<<< HEAD
 	return platform_driver_register(&omap2430_driver);
 }
 module_init(omap2430_init);
+=======
+	return platform_driver_probe(&omap2430_driver, omap2430_probe);
+}
+subsys_initcall(omap2430_init);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void __exit omap2430_exit(void)
 {

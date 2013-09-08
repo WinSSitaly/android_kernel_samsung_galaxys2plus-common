@@ -11,12 +11,23 @@
 
 #include <linux/linkage.h>
 #include <linux/smp.h>
+<<<<<<< HEAD
 #include <linux/irqdomain.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mipsmtregs.h>
 
 #include <irq.h>
 
+<<<<<<< HEAD
+=======
+static inline void irq_dispose_mapping(unsigned int virq)
+{
+	return;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_I8259
 static inline int irq_canonicalize(int irq)
 {

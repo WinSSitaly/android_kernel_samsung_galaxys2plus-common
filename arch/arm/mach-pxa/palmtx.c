@@ -247,7 +247,11 @@ static void palmtx_nand_cmd_ctl(struct mtd_info *mtd, int cmd,
 				 unsigned int ctrl)
 {
 	struct nand_chip *this = mtd->priv;
+<<<<<<< HEAD
 	char __iomem *nandaddr = this->IO_ADDR_W;
+=======
+	unsigned long nandaddr = (unsigned long)this->IO_ADDR_W;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (cmd == NAND_CMD_NONE)
 		return;
@@ -315,17 +319,29 @@ static inline void palmtx_nand_init(void) {}
  ******************************************************************************/
 static struct map_desc palmtx_io_desc[] __initdata = {
 {
+<<<<<<< HEAD
 	.virtual	= (unsigned long)PALMTX_PCMCIA_VIRT,
+=======
+	.virtual	= PALMTX_PCMCIA_VIRT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.pfn		= __phys_to_pfn(PALMTX_PCMCIA_PHYS),
 	.length		= PALMTX_PCMCIA_SIZE,
 	.type		= MT_DEVICE,
 }, {
+<<<<<<< HEAD
 	.virtual	= (unsigned long)PALMTX_NAND_ALE_VIRT,
+=======
+	.virtual	= PALMTX_NAND_ALE_VIRT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.pfn		= __phys_to_pfn(PALMTX_NAND_ALE_PHYS),
 	.length		= SZ_1M,
 	.type		= MT_DEVICE,
 }, {
+<<<<<<< HEAD
 	.virtual	= (unsigned long)PALMTX_NAND_CLE_VIRT,
+=======
+	.virtual	= PALMTX_NAND_CLE_VIRT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.pfn		= __phys_to_pfn(PALMTX_NAND_CLE_PHYS),
 	.length		= SZ_1M,
 	.type		= MT_DEVICE,
@@ -364,6 +380,7 @@ static void __init palmtx_init(void)
 }
 
 MACHINE_START(PALMTX, "Palm T|X")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= palmtx_map_io,
 	.nr_irqs	= PXA_NR_IRQS,
@@ -372,4 +389,11 @@ MACHINE_START(PALMTX, "Palm T|X")
 	.timer		= &pxa_timer,
 	.init_machine	= palmtx_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params	= 0xa0000100,
+	.map_io		= palmtx_map_io,
+	.init_irq	= pxa27x_init_irq,
+	.timer		= &pxa_timer,
+	.init_machine	= palmtx_init
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

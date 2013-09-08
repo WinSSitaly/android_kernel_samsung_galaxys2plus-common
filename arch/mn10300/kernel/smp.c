@@ -24,8 +24,13 @@
 #include <linux/sched.h>
 #include <linux/profile.h>
 #include <linux/smp.h>
+<<<<<<< HEAD
 #include <linux/cpu.h>
 #include <asm/tlbflush.h>
+=======
+#include <asm/tlbflush.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/bitops.h>
 #include <asm/processor.h>
 #include <asm/bug.h>
@@ -39,6 +44,10 @@
 #include "internal.h"
 
 #ifdef CONFIG_HOTPLUG_CPU
+<<<<<<< HEAD
+=======
+#include <linux/cpu.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/cacheflush.h>
 
 static unsigned long sleep_mode[NR_CPUS];
@@ -874,6 +883,7 @@ static void __init smp_online(void)
 
 	cpu = smp_processor_id();
 
+<<<<<<< HEAD
 	notify_cpu_starting(cpu);
 
 	ipi_call_lock();
@@ -881,6 +891,12 @@ static void __init smp_online(void)
 	ipi_call_unlock();
 
 	local_irq_enable();
+=======
+	local_irq_enable();
+
+	set_cpu_online(cpu, true);
+	smp_wmb();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**

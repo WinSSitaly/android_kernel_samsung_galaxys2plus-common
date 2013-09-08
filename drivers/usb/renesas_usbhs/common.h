@@ -33,6 +33,7 @@ struct usbhs_priv;
 #define SYSCFG		0x0000
 #define BUSWAIT		0x0002
 #define DVSTCTR		0x0008
+<<<<<<< HEAD
 #define TESTMODE	0x000C
 #define CFIFO		0x0014
 #define CFIFOSEL	0x0020
@@ -43,6 +44,11 @@ struct usbhs_priv;
 #define D1FIFO		0x0120
 #define D1FIFOSEL	0x002C
 #define D1FIFOCTR	0x002E
+=======
+#define CFIFO		0x0014
+#define CFIFOSEL	0x0020
+#define CFIFOCTR	0x0022
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define INTENB0		0x0030
 #define INTENB1		0x0032
 #define BRDYENB		0x0036
@@ -67,6 +73,7 @@ struct usbhs_priv;
 #define PIPEMAXP	0x006C
 #define PIPEPERI	0x006E
 #define PIPEnCTR	0x0070
+<<<<<<< HEAD
 #define PIPE1TRE	0x0090
 #define PIPE1TRN	0x0092
 #define PIPE2TRE	0x0094
@@ -102,6 +109,8 @@ struct usbhs_priv;
 #define DEVADD8		0x00E0
 #define DEVADD9		0x00E2
 #define DEVADDA		0x00E4
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* SYSCFG */
 #define SCKE	(1 << 10)	/* USB Module Clock Enable */
@@ -114,15 +123,21 @@ struct usbhs_priv;
 /* DVSTCTR */
 #define EXTLP	(1 << 10)	/* Controls the EXTLP pin output state */
 #define PWEN	(1 << 9)	/* Controls the PWEN pin output state */
+<<<<<<< HEAD
 #define USBRST	(1 << 6)	/* Bus Reset Output */
 #define UACT	(1 << 4)	/* USB Bus Enable */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define RHST	(0x7)		/* Reset Handshake */
 #define  RHST_LOW_SPEED  1	/* Low-speed connection */
 #define  RHST_FULL_SPEED 2	/* Full-speed connection */
 #define  RHST_HIGH_SPEED 3	/* High-speed connection */
 
 /* CFIFOSEL */
+<<<<<<< HEAD
 #define DREQE	(1 << 12)	/* DMA Transfer Request Enable */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MBW_32	(0x2 << 10)	/* CFIFO Port Access Bit Width */
 
 /* CFIFOCTR */
@@ -173,6 +188,7 @@ struct usbhs_priv;
 #define  NODATA_STATUS_STAGE	5	/* Control write NoData status stage */
 #define  SEQUENCE_ERROR		6	/* Control transfer sequence error */
 
+<<<<<<< HEAD
 /* INTSTS1 */
 #define OVRCR	(1 << 15) /* OVRCR Interrupt Status */
 #define BCHG	(1 << 14) /* USB Bus Change Interrupt Status */
@@ -182,6 +198,8 @@ struct usbhs_priv;
 #define SIGN	(1 << 5)  /* Setup Transaction Error Interrupt Status */
 #define SACK	(1 << 4)  /* Setup Transaction ACK Response Interrupt Status */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* PIPECFG */
 /* DCPCFG */
 #define TYPE_NONE	(0 << 14)	/* Transfer Type */
@@ -206,11 +224,17 @@ struct usbhs_priv;
 /* PIPEnCTR */
 /* DCPCTR */
 #define BSTS		(1 << 15)	/* Buffer Status */
+<<<<<<< HEAD
 #define SUREQ		(1 << 14)	/* Sending SETUP Token */
 #define CSSTS		(1 << 12)	/* CSSTS Status */
 #define	ACLRM		(1 << 9)	/* Buffer Auto-Clear Mode */
 #define SQCLR		(1 << 8)	/* Toggle Bit Clear */
 #define SQSET		(1 << 7)	/* Toggle Bit Set */
+=======
+#define CSSTS		(1 << 12)	/* CSSTS Status */
+#define SQCLR		(1 << 8)	/* Toggle Bit Clear */
+#define	ACLRM		(1 << 9)	/* Buffer Auto-Clear Mode */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PBUSY		(1 << 5)	/* Pipe Busy */
 #define PID_MASK	(0x3)		/* Response PID */
 #define  PID_NAK	0
@@ -220,6 +244,7 @@ struct usbhs_priv;
 
 #define CCPL		(1 << 2)	/* Control Transfer End Enable */
 
+<<<<<<< HEAD
 /* PIPEnTRE */
 #define TRENB		(1 << 9)	/* Transaction Counter Enable */
 #define TRCLR		(1 << 8)	/* Transaction Counter Clear */
@@ -235,6 +260,11 @@ struct usbhs_priv;
 #define USBSPD_SPEED_FULL	0x2
 #define USBSPD_SPEED_HIGH	0x3
 
+=======
+/* FRMNUM */
+#define FRNM_MASK	(0x7FF)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *		struct
  */
@@ -242,10 +272,16 @@ struct usbhs_priv {
 
 	void __iomem *base;
 	unsigned int irq;
+<<<<<<< HEAD
 	unsigned long irqflags;
 
 	struct renesas_usbhs_platform_callback	pfunc;
 	struct renesas_usbhs_driver_param	dparam;
+=======
+
+	struct renesas_usbhs_platform_callback	*pfunc;
+	struct renesas_usbhs_driver_param	*dparam;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct delayed_work notify_hotplug_work;
 	struct platform_device *pdev;
@@ -263,11 +299,14 @@ struct usbhs_priv {
 	 * pipe control
 	 */
 	struct usbhs_pipe_info pipe_info;
+<<<<<<< HEAD
 
 	/*
 	 * fifo control
 	 */
 	struct usbhs_fifo_info fifo_info;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -277,6 +316,7 @@ u16 usbhs_read(struct usbhs_priv *priv, u32 reg);
 void usbhs_write(struct usbhs_priv *priv, u32 reg, u16 data);
 void usbhs_bset(struct usbhs_priv *priv, u32 reg, u16 mask, u16 data);
 
+<<<<<<< HEAD
 #define usbhs_lock(p, f) spin_lock_irqsave(usbhs_priv_to_lock(p), f)
 #define usbhs_unlock(p, f) spin_unlock_irqrestore(usbhs_priv_to_lock(p), f)
 
@@ -300,6 +340,17 @@ void usbhs_bus_send_sof_enable(struct usbhs_priv *priv);
 void usbhs_bus_send_reset(struct usbhs_priv *priv);
 int usbhs_bus_get_speed(struct usbhs_priv *priv);
 int usbhs_vbus_ctrl(struct usbhs_priv *priv, int enable);
+=======
+int usbhsc_drvcllbck_notify_hotplug(struct platform_device *pdev);
+/*
+ * sysconfig
+ */
+void usbhs_sys_clock_ctrl(struct usbhs_priv *priv, int enable);
+void usbhs_sys_hispeed_ctrl(struct usbhs_priv *priv, int enable);
+void usbhs_sys_usb_ctrl(struct usbhs_priv *priv, int enable);
+void usbhs_sys_host_ctrl(struct usbhs_priv *priv, int enable);
+void usbhs_sys_function_ctrl(struct usbhs_priv *priv, int enable);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * frame
@@ -307,6 +358,7 @@ int usbhs_vbus_ctrl(struct usbhs_priv *priv, int enable);
 int usbhs_frame_get_num(struct usbhs_priv *priv);
 
 /*
+<<<<<<< HEAD
  * device config
  */
 int usbhs_set_device_config(struct usbhs_priv *priv, int devnum, u16 upphub,
@@ -317,6 +369,12 @@ int usbhs_set_device_config(struct usbhs_priv *priv, int devnum, u16 upphub,
  */
 struct usbhs_priv *usbhs_pdev_to_priv(struct platform_device *pdev);
 #define usbhs_get_dparam(priv, param)	(priv->dparam.param)
+=======
+ * data
+ */
+struct usbhs_priv *usbhs_pdev_to_priv(struct platform_device *pdev);
+#define usbhs_get_dparam(priv, param)	(priv->dparam->param)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define usbhs_priv_to_pdev(priv)	(priv->pdev)
 #define usbhs_priv_to_dev(priv)		(&priv->pdev->dev)
 #define usbhs_priv_to_lock(priv)	(&priv->lock)

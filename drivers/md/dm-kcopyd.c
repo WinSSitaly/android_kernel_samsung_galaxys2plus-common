@@ -10,7 +10,11 @@
  */
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/blkdev.h>
 #include <linux/fs.h>
 #include <linux/init.h>
@@ -66,8 +70,11 @@ struct dm_kcopyd_client {
 	struct list_head pages_jobs;
 };
 
+<<<<<<< HEAD
 static struct page_list zero_page_list;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void wake(struct dm_kcopyd_client *kc)
 {
 	queue_work(kc->kcopyd_wq, &kc->kcopyd_work);
@@ -226,6 +233,11 @@ struct kcopyd_job {
 	unsigned int num_dests;
 	struct dm_io_region dests[DM_KCOPYD_MAX_REGIONS];
 
+<<<<<<< HEAD
+=======
+	sector_t offset;
+	unsigned int nr_pages;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct page_list *pages;
 
 	/*
@@ -256,9 +268,12 @@ int __init dm_kcopyd_init(void)
 	if (!_job_cache)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	zero_page_list.next = &zero_page_list;
 	zero_page_list.page = ZERO_PAGE(0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -327,7 +342,11 @@ static int run_complete_job(struct kcopyd_job *job)
 	dm_kcopyd_notify_fn fn = job->fn;
 	struct dm_kcopyd_client *kc = job->kc;
 
+<<<<<<< HEAD
 	if (job->pages && job->pages != &zero_page_list)
+=======
+	if (job->pages)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kcopyd_put_pages(kc, job->pages);
 	/*
 	 * If this is the master job, the sub jobs have already
@@ -383,7 +402,11 @@ static int run_io_job(struct kcopyd_job *job)
 		.bi_rw = job->rw,
 		.mem.type = DM_IO_PAGE_LIST,
 		.mem.ptr.pl = job->pages,
+<<<<<<< HEAD
 		.mem.offset = 0,
+=======
+		.mem.offset = job->offset,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.notify.fn = complete_io,
 		.notify.context = job,
 		.client = job->kc->io_client,
@@ -400,9 +423,16 @@ static int run_io_job(struct kcopyd_job *job)
 static int run_pages_job(struct kcopyd_job *job)
 {
 	int r;
+<<<<<<< HEAD
 	unsigned nr_pages = dm_div_up(job->dests[0].count, PAGE_SIZE >> 9);
 
 	r = kcopyd_get_pages(job->kc, nr_pages, &job->pages);
+=======
+
+	job->nr_pages = dm_div_up(job->dests[0].count + job->offset,
+				  PAGE_SIZE >> 9);
+	r = kcopyd_get_pages(job->kc, job->nr_pages, &job->pages);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!r) {
 		/* this job is ready for io */
 		push(&job->kc->io_jobs, job);
@@ -489,8 +519,11 @@ static void dispatch_job(struct kcopyd_job *job)
 	atomic_inc(&kc->nr_jobs);
 	if (unlikely(!job->source.count))
 		push(&kc->complete_jobs, job);
+<<<<<<< HEAD
 	else if (job->pages == &zero_page_list)
 		push(&kc->io_jobs, job);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		push(&kc->pages_jobs, job);
 	wake(kc);
@@ -599,10 +632,17 @@ int dm_kcopyd_copy(struct dm_kcopyd_client *kc, struct dm_io_region *from,
 	job->flags = flags;
 	job->read_err = 0;
 	job->write_err = 0;
+<<<<<<< HEAD
+=======
+	job->rw = READ;
+
+	job->source = *from;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	job->num_dests = num_dests;
 	memcpy(&job->dests, dests, sizeof(*dests) * num_dests);
 
+<<<<<<< HEAD
 	if (from) {
 		job->source = *from;
 		job->pages = NULL;
@@ -613,6 +653,11 @@ int dm_kcopyd_copy(struct dm_kcopyd_client *kc, struct dm_io_region *from,
 		job->pages = &zero_page_list;
 		job->rw = WRITE;
 	}
+=======
+	job->offset = 0;
+	job->nr_pages = 0;
+	job->pages = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	job->fn = fn;
 	job->context = context;
@@ -630,6 +675,7 @@ int dm_kcopyd_copy(struct dm_kcopyd_client *kc, struct dm_io_region *from,
 }
 EXPORT_SYMBOL(dm_kcopyd_copy);
 
+<<<<<<< HEAD
 int dm_kcopyd_zero(struct dm_kcopyd_client *kc,
 		   unsigned num_dests, struct dm_io_region *dests,
 		   unsigned flags, dm_kcopyd_notify_fn fn, void *context)
@@ -670,6 +716,8 @@ void dm_kcopyd_do_callback(void *j, int read_err, unsigned long write_err)
 }
 EXPORT_SYMBOL(dm_kcopyd_do_callback);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Cancels a kcopyd job, eg. someone might be deactivating a
  * mirror.

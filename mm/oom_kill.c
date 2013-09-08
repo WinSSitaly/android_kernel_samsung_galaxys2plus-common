@@ -26,24 +26,32 @@
 #include <linux/timex.h>
 #include <linux/jiffies.h>
 #include <linux/cpuset.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/notifier.h>
 #include <linux/memcontrol.h>
 #include <linux/mempolicy.h>
 #include <linux/security.h>
 #include <linux/ptrace.h>
+<<<<<<< HEAD
 #include <linux/freezer.h>
 #include <linux/ftrace.h>
 #include <linux/ratelimit.h>
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/oom.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int sysctl_panic_on_oom;
 int sysctl_oom_kill_allocating_task;
 int sysctl_oom_dump_tasks = 1;
 static DEFINE_SPINLOCK(zone_scan_lock);
 
+<<<<<<< HEAD
 /*
  * compare_swap_oom_score_adj() - compare and swap current's oom_score_adj
  * @old_val: old oom_score_adj for compare
@@ -64,6 +72,8 @@ void compare_swap_oom_score_adj(int old_val, int new_val)
 	spin_unlock_irq(&sighand->siglock);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * test_set_oom_score_adj() - set current's oom_score_adj and return old value
  * @new_val: new oom_score_adj value
@@ -79,8 +89,18 @@ int test_set_oom_score_adj(int new_val)
 
 	spin_lock_irq(&sighand->siglock);
 	old_val = current->signal->oom_score_adj;
+<<<<<<< HEAD
 	current->signal->oom_score_adj = new_val;
 	trace_oom_score_adj_update(current);
+=======
+	if (new_val != old_val) {
+		if (new_val == OOM_SCORE_ADJ_MIN)
+			atomic_inc(&current->mm->oom_disable_count);
+		else if (old_val == OOM_SCORE_ADJ_MIN)
+			atomic_dec(&current->mm->oom_disable_count);
+		current->signal->oom_score_adj = new_val;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irq(&sighand->siglock);
 
 	return old_val;
@@ -153,7 +173,11 @@ struct task_struct *find_lock_task_mm(struct task_struct *p)
 
 /* return true if the task is not adequate as candidate victim task. */
 static bool oom_unkillable_task(struct task_struct *p,
+<<<<<<< HEAD
 		const struct mem_cgroup *memcg, const nodemask_t *nodemask)
+=======
+		const struct mem_cgroup *mem, const nodemask_t *nodemask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (is_global_init(p))
 		return true;
@@ -161,7 +185,11 @@ static bool oom_unkillable_task(struct task_struct *p,
 		return true;
 
 	/* When mem_cgroup_out_of_memory() and p is not member of the group */
+<<<<<<< HEAD
 	if (memcg && !task_in_mem_cgroup(p, memcg))
+=======
+	if (mem && !task_in_mem_cgroup(p, mem))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return true;
 
 	/* p may not have freeable memory in nodemask */
@@ -180,19 +208,36 @@ static bool oom_unkillable_task(struct task_struct *p,
  * predictable as possible.  The goal is to return the highest value for the
  * task consuming the most memory to avoid subsequent oom failures.
  */
+<<<<<<< HEAD
 unsigned int oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
+=======
+unsigned int oom_badness(struct task_struct *p, struct mem_cgroup *mem,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      const nodemask_t *nodemask, unsigned long totalpages)
 {
 	long points;
 
+<<<<<<< HEAD
 	if (oom_unkillable_task(p, memcg, nodemask))
+=======
+	if (oom_unkillable_task(p, mem, nodemask))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	p = find_lock_task_mm(p);
 	if (!p)
 		return 0;
 
+<<<<<<< HEAD
 	if (p->signal->oom_score_adj == OOM_SCORE_ADJ_MIN) {
+=======
+	/*
+	 * Shortcut check for a thread sharing p->mm that is OOM_SCORE_ADJ_MIN
+	 * so the entire heuristic doesn't need to be executed for something
+	 * that cannot be killed.
+	 */
+	if (atomic_read(&p->mm->oom_disable_count)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		task_unlock(p);
 		return 0;
 	}
@@ -309,8 +354,13 @@ static enum oom_constraint constrained_alloc(struct zonelist *zonelist,
  * (not docbooked, we don't want this one cluttering up the manual)
  */
 static struct task_struct *select_bad_process(unsigned int *ppoints,
+<<<<<<< HEAD
 		unsigned long totalpages, struct mem_cgroup *memcg,
 		const nodemask_t *nodemask, bool force_kill)
+=======
+		unsigned long totalpages, struct mem_cgroup *mem,
+		const nodemask_t *nodemask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct task_struct *g, *p;
 	struct task_struct *chosen = NULL;
@@ -321,7 +371,11 @@ static struct task_struct *select_bad_process(unsigned int *ppoints,
 
 		if (p->exit_state)
 			continue;
+<<<<<<< HEAD
 		if (oom_unkillable_task(p, memcg, nodemask))
+=======
+		if (oom_unkillable_task(p, mem, nodemask))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 
 		/*
@@ -333,12 +387,17 @@ static struct task_struct *select_bad_process(unsigned int *ppoints,
 		 * blocked waiting for another task which itself is waiting
 		 * for memory. Is there a better alternative?
 		 */
+<<<<<<< HEAD
 		if (test_tsk_thread_flag(p, TIF_MEMDIE)) {
 			if (unlikely(frozen(p)))
 				__thaw_task(p);
 			if (!force_kill)
 				return ERR_PTR(-1UL);
 		}
+=======
+		if (test_tsk_thread_flag(p, TIF_MEMDIE))
+			return ERR_PTR(-1UL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!p->mm)
 			continue;
 
@@ -355,18 +414,31 @@ static struct task_struct *select_bad_process(unsigned int *ppoints,
 			if (p == current) {
 				chosen = p;
 				*ppoints = 1000;
+<<<<<<< HEAD
 			} else if (!force_kill) {
+=======
+			} else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/*
 				 * If this task is not being ptraced on exit,
 				 * then wait for it to finish before killing
 				 * some other task unnecessarily.
 				 */
+<<<<<<< HEAD
 				if (!(p->group_leader->ptrace & PT_TRACE_EXIT))
+=======
+				if (!(task_ptrace(p->group_leader) &
+							PT_TRACE_EXIT))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					return ERR_PTR(-1UL);
 			}
 		}
 
+<<<<<<< HEAD
 		points = oom_badness(p, memcg, nodemask, totalpages);
+=======
+		points = oom_badness(p, mem, nodemask, totalpages);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (points > *ppoints) {
 			chosen = p;
 			*ppoints = points;
@@ -389,14 +461,22 @@ static struct task_struct *select_bad_process(unsigned int *ppoints,
  *
  * Call with tasklist_lock read-locked.
  */
+<<<<<<< HEAD
 static void dump_tasks(const struct mem_cgroup *memcg, const nodemask_t *nodemask)
+=======
+static void dump_tasks(const struct mem_cgroup *mem, const nodemask_t *nodemask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct task_struct *p;
 	struct task_struct *task;
 
 	pr_info("[ pid ]   uid  tgid total_vm      rss cpu oom_adj oom_score_adj name\n");
 	for_each_process(p) {
+<<<<<<< HEAD
 		if (oom_unkillable_task(p, memcg, nodemask))
+=======
+		if (oom_unkillable_task(p, mem, nodemask))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 
 		task = find_lock_task_mm(p);
@@ -419,7 +499,11 @@ static void dump_tasks(const struct mem_cgroup *memcg, const nodemask_t *nodemas
 }
 
 static void dump_header(struct task_struct *p, gfp_t gfp_mask, int order,
+<<<<<<< HEAD
 			struct mem_cgroup *memcg, const nodemask_t *nodemask)
+=======
+			struct mem_cgroup *mem, const nodemask_t *nodemask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	task_lock(current);
 	pr_warning("%s invoked oom-killer: gfp_mask=0x%x, order=%d, "
@@ -429,6 +513,7 @@ static void dump_header(struct task_struct *p, gfp_t gfp_mask, int order,
 	cpuset_print_task_mems_allowed(current);
 	task_unlock(current);
 	dump_stack();
+<<<<<<< HEAD
 	mem_cgroup_print_oom_info(memcg, p);
 	show_mem(SHOW_MEM_FILTER_NODES);
 	if (sysctl_oom_dump_tasks)
@@ -440,14 +525,78 @@ static void oom_kill_process(struct task_struct *p, gfp_t gfp_mask, int order,
 			     unsigned int points, unsigned long totalpages,
 			     struct mem_cgroup *memcg, nodemask_t *nodemask,
 			     const char *message)
+=======
+	mem_cgroup_print_oom_info(mem, p);
+	show_mem(SHOW_MEM_FILTER_NODES);
+	if (sysctl_oom_dump_tasks)
+		dump_tasks(mem, nodemask);
+}
+
+#define K(x) ((x) << (PAGE_SHIFT-10))
+static int oom_kill_task(struct task_struct *p, struct mem_cgroup *mem)
+{
+	struct task_struct *q;
+	struct mm_struct *mm;
+
+	p = find_lock_task_mm(p);
+	if (!p)
+		return 1;
+
+	/* mm cannot be safely dereferenced after task_unlock(p) */
+	mm = p->mm;
+
+	pr_err("Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB\n",
+		task_pid_nr(p), p->comm, K(p->mm->total_vm),
+		K(get_mm_counter(p->mm, MM_ANONPAGES)),
+		K(get_mm_counter(p->mm, MM_FILEPAGES)));
+	task_unlock(p);
+
+	/*
+	 * Kill all processes sharing p->mm in other thread groups, if any.
+	 * They don't get access to memory reserves or a higher scheduler
+	 * priority, though, to avoid depletion of all memory or task
+	 * starvation.  This prevents mm->mmap_sem livelock when an oom killed
+	 * task cannot exit because it requires the semaphore and its contended
+	 * by another thread trying to allocate memory itself.  That thread will
+	 * now get access to memory reserves since it has a pending fatal
+	 * signal.
+	 */
+	for_each_process(q)
+		if (q->mm == mm && !same_thread_group(q, p)) {
+			task_lock(q);	/* Protect ->comm from prctl() */
+			pr_err("Kill process %d (%s) sharing same memory\n",
+				task_pid_nr(q), q->comm);
+			task_unlock(q);
+			force_sig(SIGKILL, q);
+		}
+
+	set_tsk_thread_flag(p, TIF_MEMDIE);
+	force_sig(SIGKILL, p);
+
+	return 0;
+}
+#undef K
+
+static int oom_kill_process(struct task_struct *p, gfp_t gfp_mask, int order,
+			    unsigned int points, unsigned long totalpages,
+			    struct mem_cgroup *mem, nodemask_t *nodemask,
+			    const char *message)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct task_struct *victim = p;
 	struct task_struct *child;
 	struct task_struct *t = p;
+<<<<<<< HEAD
 	struct mm_struct *mm;
 	unsigned int victim_points = 0;
 	static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
 					      DEFAULT_RATELIMIT_BURST);
+=======
+	unsigned int victim_points = 0;
+
+	if (printk_ratelimit())
+		dump_header(p, gfp_mask, order, mem, nodemask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If the task is already exiting, don't alarm the sysadmin or kill
@@ -455,12 +604,18 @@ static void oom_kill_process(struct task_struct *p, gfp_t gfp_mask, int order,
 	 */
 	if (p->flags & PF_EXITING) {
 		set_tsk_thread_flag(p, TIF_MEMDIE);
+<<<<<<< HEAD
 		return;
 	}
 
 	if (__ratelimit(&oom_rs))
 		dump_header(p, gfp_mask, order, memcg, nodemask);
 
+=======
+		return 0;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	task_lock(p);
 	pr_err("%s: Kill process %d (%s) score %d or sacrifice child\n",
 		message, task_pid_nr(p), p->comm, points);
@@ -468,7 +623,11 @@ static void oom_kill_process(struct task_struct *p, gfp_t gfp_mask, int order,
 
 	/*
 	 * If any of p's children has a different mm and is eligible for kill,
+<<<<<<< HEAD
 	 * the one with the highest oom_badness() score is sacrificed for its
+=======
+	 * the one with the highest badness() score is sacrificed for its
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * parent.  This attempts to lose the minimal amount of work done while
 	 * still freeing memory.
 	 */
@@ -481,7 +640,11 @@ static void oom_kill_process(struct task_struct *p, gfp_t gfp_mask, int order,
 			/*
 			 * oom_badness() returns 0 if the thread is unkillable
 			 */
+<<<<<<< HEAD
 			child_points = oom_badness(child, memcg, nodemask,
+=======
+			child_points = oom_badness(child, mem, nodemask,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 								totalpages);
 			if (child_points > victim_points) {
 				victim = child;
@@ -490,6 +653,7 @@ static void oom_kill_process(struct task_struct *p, gfp_t gfp_mask, int order,
 		}
 	} while_each_thread(p, t);
 
+<<<<<<< HEAD
 	victim = find_lock_task_mm(victim);
 	if (!victim)
 		return;
@@ -528,6 +692,10 @@ static void oom_kill_process(struct task_struct *p, gfp_t gfp_mask, int order,
 	do_send_sig_info(SIGKILL, SEND_SIG_FORCED, victim, true);
 }
 #undef K
+=======
+	return oom_kill_task(victim, mem);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Determines whether the kernel must panic because of the panic_on_oom sysctl.
@@ -554,23 +722,36 @@ static void check_panic_on_oom(enum oom_constraint constraint, gfp_t gfp_mask,
 }
 
 #ifdef CONFIG_CGROUP_MEM_RES_CTLR
+<<<<<<< HEAD
 void mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
 			      int order)
+=======
+void mem_cgroup_out_of_memory(struct mem_cgroup *mem, gfp_t gfp_mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long limit;
 	unsigned int points = 0;
 	struct task_struct *p;
 
 	/*
+<<<<<<< HEAD
 	 * If current has a pending SIGKILL or is exiting, then automatically
 	 * select it.  The goal is to allow it to allocate so that it may
 	 * quickly exit and free its memory.
 	 */
 	if (fatal_signal_pending(current) || current->flags & PF_EXITING) {
+=======
+	 * If current has a pending SIGKILL, then automatically select it.  The
+	 * goal is to allow it to allocate so that it may quickly exit and free
+	 * its memory.
+	 */
+	if (fatal_signal_pending(current)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_thread_flag(TIF_MEMDIE);
 		return;
 	}
 
+<<<<<<< HEAD
 	check_panic_on_oom(CONSTRAINT_MEMCG, gfp_mask, order, NULL);
 	limit = mem_cgroup_get_limit(memcg) >> PAGE_SHIFT;
 	read_lock(&tasklist_lock);
@@ -578,6 +759,20 @@ void mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
 	if (p && PTR_ERR(p) != -1UL)
 		oom_kill_process(p, gfp_mask, order, points, limit, memcg, NULL,
 				 "Memory cgroup out of memory");
+=======
+	check_panic_on_oom(CONSTRAINT_MEMCG, gfp_mask, 0, NULL);
+	limit = mem_cgroup_get_limit(mem) >> PAGE_SHIFT;
+	read_lock(&tasklist_lock);
+retry:
+	p = select_bad_process(&points, limit, mem, NULL);
+	if (!p || PTR_ERR(p) == -1UL)
+		goto out;
+
+	if (oom_kill_process(p, gfp_mask, 0, points, limit, mem, NULL,
+				"Memory cgroup out of memory"))
+		goto retry;
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	read_unlock(&tasklist_lock);
 }
 #endif
@@ -689,7 +884,10 @@ static void clear_system_oom(void)
  * @gfp_mask: memory allocation flags
  * @order: amount of memory being requested as a power of 2
  * @nodemask: nodemask passed to page allocator
+<<<<<<< HEAD
  * @force_kill: true if a task must be killed, even if others are exiting
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * If we run out of memory, we have the choice between either
  * killing a random task (bad), letting the system crash (worse)
@@ -697,7 +895,11 @@ static void clear_system_oom(void)
  * don't have to be perfect here, we just have to be good.
  */
 void out_of_memory(struct zonelist *zonelist, gfp_t gfp_mask,
+<<<<<<< HEAD
 		int order, nodemask_t *nodemask, bool force_kill)
+=======
+		int order, nodemask_t *nodemask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const nodemask_t *mpol_mask;
 	struct task_struct *p;
@@ -734,6 +936,7 @@ void out_of_memory(struct zonelist *zonelist, gfp_t gfp_mask,
 	read_lock(&tasklist_lock);
 	if (sysctl_oom_kill_allocating_task &&
 	    !oom_unkillable_task(current, NULL, nodemask) &&
+<<<<<<< HEAD
 	    current->mm) {
 		oom_kill_process(current, gfp_mask, order, 0, totalpages, NULL,
 				 nodemask,
@@ -743,17 +946,44 @@ void out_of_memory(struct zonelist *zonelist, gfp_t gfp_mask,
 
 	p = select_bad_process(&points, totalpages, NULL, mpol_mask,
 			       force_kill);
+=======
+	    current->mm && !atomic_read(&current->mm->oom_disable_count)) {
+		/*
+		 * oom_kill_process() needs tasklist_lock held.  If it returns
+		 * non-zero, current could not be killed so we must fallback to
+		 * the tasklist scan.
+		 */
+		if (!oom_kill_process(current, gfp_mask, order, 0, totalpages,
+				NULL, nodemask,
+				"Out of memory (oom_kill_allocating_task)"))
+			goto out;
+	}
+
+retry:
+	p = select_bad_process(&points, totalpages, NULL, mpol_mask);
+	if (PTR_ERR(p) == -1UL)
+		goto out;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Found nothing?!?! Either we hang forever, or we panic. */
 	if (!p) {
 		dump_header(NULL, gfp_mask, order, NULL, mpol_mask);
 		read_unlock(&tasklist_lock);
 		panic("Out of memory and no killable processes...\n");
 	}
+<<<<<<< HEAD
 	if (PTR_ERR(p) != -1UL) {
 		oom_kill_process(p, gfp_mask, order, points, totalpages, NULL,
 				 nodemask, "Out of memory");
 		killed = 1;
 	}
+=======
+
+	if (oom_kill_process(p, gfp_mask, order, points, totalpages, NULL,
+				nodemask, "Out of memory"))
+		goto retry;
+	killed = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	read_unlock(&tasklist_lock);
 
@@ -774,7 +1004,11 @@ out:
 void pagefault_out_of_memory(void)
 {
 	if (try_set_system_oom()) {
+<<<<<<< HEAD
 		out_of_memory(NULL, 0, 0, NULL, false);
+=======
+		out_of_memory(NULL, 0, 0, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		clear_system_oom();
 	}
 	if (!test_thread_flag(TIF_MEMDIE))

@@ -69,13 +69,22 @@
 #define AR9300_BASE_ADDR 0x3ff
 #define AR9300_BASE_ADDR_512 0x1ff
 
+<<<<<<< HEAD
 #define AR9300_OTP_BASE			(AR_SREV_9340(ah) ? 0x30000 : 0x14000)
 #define AR9300_OTP_STATUS		(AR_SREV_9340(ah) ? 0x30018 : 0x15f18)
+=======
+#define AR9300_OTP_BASE			0x14000
+#define AR9300_OTP_STATUS		0x15f18
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AR9300_OTP_STATUS_TYPE		0x7
 #define AR9300_OTP_STATUS_VALID		0x4
 #define AR9300_OTP_STATUS_ACCESS_BUSY	0x2
 #define AR9300_OTP_STATUS_SM_BUSY	0x1
+<<<<<<< HEAD
 #define AR9300_OTP_READ_DATA		(AR_SREV_9340(ah) ? 0x3001c : 0x15f1c)
+=======
+#define AR9300_OTP_READ_DATA		0x15f1c
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum targetPowerHTRates {
 	HT_TARGET_RATE_0_8_16,
@@ -216,8 +225,15 @@ struct ar9300_modal_eep_header {
 	u8 spurChans[AR_EEPROM_MODAL_SPURS];
 	/* 3  Check if the register is per chain */
 	int8_t noiseFloorThreshCh[AR9300_MAX_CHAINS];
+<<<<<<< HEAD
 	u8 reserved[11];
 	int8_t quick_drop;
+=======
+	u8 ob[AR9300_MAX_CHAINS];
+	u8 db_stage2[AR9300_MAX_CHAINS];
+	u8 db_stage3[AR9300_MAX_CHAINS];
+	u8 db_stage4[AR9300_MAX_CHAINS];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 xpaBiasLvl;
 	u8 txFrameToDataStart;
 	u8 txFrameToPaOn;
@@ -231,8 +247,12 @@ struct ar9300_modal_eep_header {
 	u8 thresh62;
 	__le32 papdRateMaskHt20;
 	__le32 papdRateMaskHt40;
+<<<<<<< HEAD
 	__le16 switchcomspdt;
 	u8 futureModal[8];
+=======
+	u8 futureModal[10];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } __packed;
 
 struct ar9300_cal_data_per_freq_op_loop {
@@ -267,9 +287,13 @@ struct cal_ctl_data_5g {
 
 struct ar9300_BaseExtension_1 {
 	u8 ant_div_control;
+<<<<<<< HEAD
 	u8 future[11];
 	int8_t quick_drop_low;
 	int8_t quick_drop_high;
+=======
+	u8 future[13];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } __packed;
 
 struct ar9300_BaseExtension_2 {

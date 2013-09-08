@@ -36,7 +36,10 @@
  *    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+<<<<<<< HEAD
 #include <asm/div64.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "carl9170.h"
 #include "cmd.h"
 
@@ -166,6 +169,7 @@ int carl9170_bcn_ctrl(struct ar9170 *ar, const unsigned int vif_id,
 	return __carl9170_exec_cmd(ar, cmd, true);
 }
 
+<<<<<<< HEAD
 int carl9170_collect_tally(struct ar9170 *ar)
 {
 	struct carl9170_tally_rsp tally;
@@ -199,6 +203,8 @@ int carl9170_collect_tally(struct ar9170 *ar)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int carl9170_powersave(struct ar9170 *ar, const bool ps)
 {
 	struct carl9170_cmd *cmd;

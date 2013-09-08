@@ -1,7 +1,11 @@
 #ifndef _PARISC_DELAY_H
 #define _PARISC_DELAY_H
 
+<<<<<<< HEAD
 #include <asm/special_insns.h>    /* for mfctl() */
+=======
+#include <asm/system.h>    /* for mfctl() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/processor.h> /* for boot_cpu_data */
 
 

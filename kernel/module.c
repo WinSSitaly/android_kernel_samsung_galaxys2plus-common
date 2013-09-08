@@ -16,7 +16,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/moduleloader.h>
 #include <linux/ftrace_event.h>
 #include <linux/init.h>
@@ -62,6 +66,15 @@
 #define CREATE_TRACE_POINTS
 #include <trace/events/module.h>
 
+<<<<<<< HEAD
+=======
+#if 0
+#define DEBUGP printk
+#else
+#define DEBUGP(fmt , a...)
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef ARCH_SHF_SMALL
 #define ARCH_SHF_SMALL 0
 #endif
@@ -105,7 +118,10 @@ struct list_head *kdb_modules = &modules; /* kdb needs the list of modules */
 
 /* Block module loading/unloading? */
 int modules_disabled = 0;
+<<<<<<< HEAD
 core_param(nomodule, modules_disabled, bint, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Waiting for a module to finish initializing? */
 static DECLARE_WAIT_QUEUE_HEAD(module_wq);
@@ -133,6 +149,10 @@ struct load_info {
 	unsigned long len;
 	Elf_Shdr *sechdrs;
 	char *secstrings, *strtab;
+<<<<<<< HEAD
+=======
+	unsigned long *strmap;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long symoffs, stroffs;
 	struct _ddebug *debug;
 	unsigned int num_debug;
@@ -404,7 +424,11 @@ const struct kernel_symbol *find_symbol(const char *name,
 		return fsa.sym;
 	}
 
+<<<<<<< HEAD
 	pr_debug("Failed to find symbol %s\n", name);
+=======
+	DEBUGP("Failed to find symbol %s\n", name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NULL;
 }
 EXPORT_SYMBOL_GPL(find_symbol);
@@ -539,9 +563,15 @@ static void setup_modinfo_##field(struct module *mod, const char *s)  \
 	mod->field = kstrdup(s, GFP_KERNEL);                          \
 }                                                                     \
 static ssize_t show_modinfo_##field(struct module_attribute *mattr,   \
+<<<<<<< HEAD
 			struct module_kobject *mk, char *buffer)      \
 {                                                                     \
 	return sprintf(buffer, "%s\n", mk->mod->field);               \
+=======
+	                struct module *mod, char *buffer)             \
+{                                                                     \
+	return sprintf(buffer, "%s\n", mod->field);                   \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }                                                                     \
 static int modinfo_##field##_exists(struct module *mod)               \
 {                                                                     \
@@ -594,11 +624,19 @@ static int already_uses(struct module *a, struct module *b)
 
 	list_for_each_entry(use, &b->source_list, source_list) {
 		if (use->source == a) {
+<<<<<<< HEAD
 			pr_debug("%s uses %s!\n", a->name, b->name);
 			return 1;
 		}
 	}
 	pr_debug("%s does not use %s!\n", a->name, b->name);
+=======
+			DEBUGP("%s uses %s!\n", a->name, b->name);
+			return 1;
+		}
+	}
+	DEBUGP("%s does not use %s!\n", a->name, b->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -613,7 +651,11 @@ static int add_module_usage(struct module *a, struct module *b)
 {
 	struct module_use *use;
 
+<<<<<<< HEAD
 	pr_debug("Allocating new usage for %s.\n", a->name);
+=======
+	DEBUGP("Allocating new usage for %s.\n", a->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	use = kmalloc(sizeof(*use), GFP_ATOMIC);
 	if (!use) {
 		printk(KERN_WARNING "%s: out of memory loading\n", a->name);
@@ -657,7 +699,11 @@ static void module_unload_free(struct module *mod)
 	mutex_lock(&module_mutex);
 	list_for_each_entry_safe(use, tmp, &mod->target_list, target_list) {
 		struct module *i = use->target;
+<<<<<<< HEAD
 		pr_debug("%s unusing %s\n", mod->name, i->name);
+=======
+		DEBUGP("%s unusing %s\n", mod->name, i->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		module_put(i);
 		list_del(&use->source_list);
 		list_del(&use->target_list);
@@ -720,9 +766,15 @@ static int try_stop_module(struct module *mod, int flags, int *forced)
 	}
 }
 
+<<<<<<< HEAD
 unsigned long module_refcount(struct module *mod)
 {
 	unsigned long incs = 0, decs = 0;
+=======
+unsigned int module_refcount(struct module *mod)
+{
+	unsigned int incs = 0, decs = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int cpu;
 
 	for_each_possible_cpu(cpu)
@@ -755,7 +807,11 @@ static void wait_for_zero_refcount(struct module *mod)
 	/* Since we might sleep for some time, release the mutex first */
 	mutex_unlock(&module_mutex);
 	for (;;) {
+<<<<<<< HEAD
 		pr_debug("Looking at refcount...\n");
+=======
+		DEBUGP("Looking at refcount...\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_current_state(TASK_UNINTERRUPTIBLE);
 		if (module_refcount(mod) == 0)
 			break;
@@ -798,7 +854,11 @@ SYSCALL_DEFINE2(delete_module, const char __user *, name_user,
 	if (mod->state != MODULE_STATE_LIVE) {
 		/* FIXME: if (force), slam module count and wake up
                    waiter --RR */
+<<<<<<< HEAD
 		pr_debug("%s already dying\n", mod->name);
+=======
+		DEBUGP("%s already dying\n", mod->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EBUSY;
 		goto out;
 	}
@@ -848,7 +908,11 @@ static inline void print_unload_info(struct seq_file *m, struct module *mod)
 	struct module_use *use;
 	int printed_something = 0;
 
+<<<<<<< HEAD
 	seq_printf(m, " %lu ", module_refcount(mod));
+=======
+	seq_printf(m, " %u ", module_refcount(mod));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Always include a trailing , so userspace can differentiate
            between this and the old multi-field proc format. */
@@ -896,6 +960,7 @@ void symbol_put_addr(void *addr)
 EXPORT_SYMBOL_GPL(symbol_put_addr);
 
 static ssize_t show_refcnt(struct module_attribute *mattr,
+<<<<<<< HEAD
 			   struct module_kobject *mk, char *buffer)
 {
 	return sprintf(buffer, "%lu\n", module_refcount(mk->mod));
@@ -933,6 +998,17 @@ bool try_module_get(struct module *module)
 	return ret;
 }
 EXPORT_SYMBOL(try_module_get);
+=======
+			   struct module *mod, char *buffer)
+{
+	return sprintf(buffer, "%u\n", module_refcount(mod));
+}
+
+static struct module_attribute refcnt = {
+	.attr = { .name = "refcnt", .mode = 0444 },
+	.show = show_refcnt,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void module_put(struct module *module)
 {
@@ -973,6 +1049,7 @@ static inline int module_unload_init(struct module *mod)
 }
 #endif /* CONFIG_MODULE_UNLOAD */
 
+<<<<<<< HEAD
 static size_t module_flags_taint(struct module *mod, char *buf)
 {
 	size_t l = 0;
@@ -999,6 +1076,14 @@ static ssize_t show_initstate(struct module_attribute *mattr,
 	const char *state = "unknown";
 
 	switch (mk->mod->state) {
+=======
+static ssize_t show_initstate(struct module_attribute *mattr,
+			   struct module *mod, char *buffer)
+{
+	const char *state = "unknown";
+
+	switch (mod->state) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case MODULE_STATE_LIVE:
 		state = "live";
 		break;
@@ -1012,6 +1097,7 @@ static ssize_t show_initstate(struct module_attribute *mattr,
 	return sprintf(buffer, "%s\n", state);
 }
 
+<<<<<<< HEAD
 static struct module_attribute modinfo_initstate =
 	__ATTR(initstate, 0444, show_initstate, NULL);
 
@@ -1070,6 +1156,19 @@ static struct module_attribute *modinfo_attrs[] = {
 	&modinfo_taint,
 #ifdef CONFIG_MODULE_UNLOAD
 	&modinfo_refcnt,
+=======
+static struct module_attribute initstate = {
+	.attr = { .name = "initstate", .mode = 0444 },
+	.show = show_initstate,
+};
+
+static struct module_attribute *modinfo_attrs[] = {
+	&modinfo_version,
+	&modinfo_srcversion,
+	&initstate,
+#ifdef CONFIG_MODULE_UNLOAD
+	&refcnt,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	NULL,
 };
@@ -1129,7 +1228,11 @@ static int check_version(Elf_Shdr *sechdrs,
 
 		if (versions[i].crc == maybe_relocated(*crc, crc_owner))
 			return 1;
+<<<<<<< HEAD
 		pr_debug("Found checksum %lX vs module %lX\n",
+=======
+		DEBUGP("Found checksum %lX vs module %lX\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       maybe_relocated(*crc, crc_owner), versions[i].crc);
 		goto bad_version;
 	}
@@ -1276,7 +1379,11 @@ struct module_sect_attrs
 };
 
 static ssize_t module_sect_show(struct module_attribute *mattr,
+<<<<<<< HEAD
 				struct module_kobject *mk, char *buf)
+=======
+				struct module *mod, char *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct module_sect_attr *sattr =
 		container_of(mattr, struct module_sect_attr, mattr);
@@ -1786,6 +1893,7 @@ static void unset_module_core_ro_nx(struct module *mod) { }
 static void unset_module_init_ro_nx(struct module *mod) { }
 #endif
 
+<<<<<<< HEAD
 void __weak module_free(struct module *mod, void *module_region)
 {
 	vfree(module_region);
@@ -1795,6 +1903,8 @@ void __weak module_arch_cleanup(struct module *mod)
 {
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Free a module, remove from lists, etc. */
 static void free_module(struct module *mod)
 {
@@ -1906,7 +2016,11 @@ static int simplify_symbols(struct module *mod, const struct load_info *info)
 		case SHN_COMMON:
 			/* We compiled with -fno-common.  These are not
 			   supposed to happen.  */
+<<<<<<< HEAD
 			pr_debug("Common symbol: %s\n", name);
+=======
+			DEBUGP("Common symbol: %s\n", name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			printk("%s: please compile with -fno-common\n",
 			       mod->name);
 			ret = -ENOEXEC;
@@ -1914,7 +2028,11 @@ static int simplify_symbols(struct module *mod, const struct load_info *info)
 
 		case SHN_ABS:
 			/* Don't need to do anything */
+<<<<<<< HEAD
 			pr_debug("Absolute symbol: 0x%08lx\n",
+=======
+			DEBUGP("Absolute symbol: 0x%08lx\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       (long)sym[i].st_value);
 			break;
 
@@ -1949,6 +2067,7 @@ static int simplify_symbols(struct module *mod, const struct load_info *info)
 	return ret;
 }
 
+<<<<<<< HEAD
 int __weak apply_relocate(Elf_Shdr *sechdrs,
 			  const char *strtab,
 			  unsigned int symindex,
@@ -1969,6 +2088,8 @@ int __weak apply_relocate_add(Elf_Shdr *sechdrs,
 	return -ENOEXEC;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int apply_relocations(struct module *mod, const struct load_info *info)
 {
 	unsigned int i;
@@ -2038,7 +2159,11 @@ static void layout_sections(struct module *mod, struct load_info *info)
 	for (i = 0; i < info->hdr->e_shnum; i++)
 		info->sechdrs[i].sh_entsize = ~0UL;
 
+<<<<<<< HEAD
 	pr_debug("Core section allocation order:\n");
+=======
+	DEBUGP("Core section allocation order:\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (m = 0; m < ARRAY_SIZE(masks); ++m) {
 		for (i = 0; i < info->hdr->e_shnum; ++i) {
 			Elf_Shdr *s = &info->sechdrs[i];
@@ -2050,7 +2175,11 @@ static void layout_sections(struct module *mod, struct load_info *info)
 			    || strstarts(sname, ".init"))
 				continue;
 			s->sh_entsize = get_offset(mod, &mod->core_size, s, i);
+<<<<<<< HEAD
 			pr_debug("\t%s\n", sname);
+=======
+			DEBUGP("\t%s\n", name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		switch (m) {
 		case 0: /* executable */
@@ -2067,7 +2196,11 @@ static void layout_sections(struct module *mod, struct load_info *info)
 		}
 	}
 
+<<<<<<< HEAD
 	pr_debug("Init section allocation order:\n");
+=======
+	DEBUGP("Init section allocation order:\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (m = 0; m < ARRAY_SIZE(masks); ++m) {
 		for (i = 0; i < info->hdr->e_shnum; ++i) {
 			Elf_Shdr *s = &info->sechdrs[i];
@@ -2080,7 +2213,11 @@ static void layout_sections(struct module *mod, struct load_info *info)
 				continue;
 			s->sh_entsize = (get_offset(mod, &mod->init_size, s, i)
 					 | INIT_OFFSET_MASK);
+<<<<<<< HEAD
 			pr_debug("\t%s\n", sname);
+=======
+			DEBUGP("\t%s\n", sname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		switch (m) {
 		case 0: /* executable */
@@ -2250,6 +2387,7 @@ static bool is_core_symbol(const Elf_Sym *src, const Elf_Shdr *sechdrs,
 	return true;
 }
 
+<<<<<<< HEAD
 /*
  * We only allocate and copy the strings needed by the parts of symtab
  * we keep.  This is simple, but has the effect of making multiple
@@ -2257,17 +2395,24 @@ static bool is_core_symbol(const Elf_Sym *src, const Elf_Shdr *sechdrs,
  * linux-kernel thread starting with
  * <73defb5e4bca04a6431392cc341112b1@localhost>.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void layout_symtab(struct module *mod, struct load_info *info)
 {
 	Elf_Shdr *symsect = info->sechdrs + info->index.sym;
 	Elf_Shdr *strsect = info->sechdrs + info->index.str;
 	const Elf_Sym *src;
+<<<<<<< HEAD
 	unsigned int i, nsrc, ndst, strtab_size;
+=======
+	unsigned int i, nsrc, ndst;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Put symbol section at end of init part of module. */
 	symsect->sh_flags |= SHF_ALLOC;
 	symsect->sh_entsize = get_offset(mod, &mod->init_size, symsect,
 					 info->index.sym) | INIT_OFFSET_MASK;
+<<<<<<< HEAD
 	pr_debug("\t%s\n", info->secstrings + symsect->sh_name);
 
 	src = (void *)info->hdr + symsect->sh_offset;
@@ -2289,12 +2434,40 @@ static void layout_symtab(struct module *mod, struct load_info *info)
 	info->symoffs = ALIGN(mod->core_size, symsect->sh_addralign ?: 1);
 	info->stroffs = mod->core_size = info->symoffs + ndst * sizeof(Elf_Sym);
 	mod->core_size += strtab_size;
+=======
+	DEBUGP("\t%s\n", info->secstrings + symsect->sh_name);
+
+	src = (void *)info->hdr + symsect->sh_offset;
+	nsrc = symsect->sh_size / sizeof(*src);
+	for (ndst = i = 1; i < nsrc; ++i, ++src)
+		if (is_core_symbol(src, info->sechdrs, info->hdr->e_shnum)) {
+			unsigned int j = src->st_name;
+
+			while (!__test_and_set_bit(j, info->strmap)
+			       && info->strtab[j])
+				++j;
+			++ndst;
+		}
+
+	/* Append room for core symbols at end of core part. */
+	info->symoffs = ALIGN(mod->core_size, symsect->sh_addralign ?: 1);
+	mod->core_size = info->symoffs + ndst * sizeof(Elf_Sym);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Put string table section at end of init part of module. */
 	strsect->sh_flags |= SHF_ALLOC;
 	strsect->sh_entsize = get_offset(mod, &mod->init_size, strsect,
 					 info->index.str) | INIT_OFFSET_MASK;
+<<<<<<< HEAD
 	pr_debug("\t%s\n", info->secstrings + strsect->sh_name);
+=======
+	DEBUGP("\t%s\n", info->secstrings + strsect->sh_name);
+
+	/* Append room for core symbols' strings at end of core part. */
+	info->stroffs = mod->core_size;
+	__set_bit(0, info->strmap);
+	mod->core_size += bitmap_weight(info->strmap, strsect->sh_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void add_kallsyms(struct module *mod, const struct load_info *info)
@@ -2315,6 +2488,7 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
 		mod->symtab[i].st_info = elf_type(&mod->symtab[i], info);
 
 	mod->core_symtab = dst = mod->module_core + info->symoffs;
+<<<<<<< HEAD
 	mod->core_strtab = s = mod->module_core + info->stroffs;
 	src = mod->symtab;
 	*s++ = 0;
@@ -2328,6 +2502,24 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
 		}
 	}
 	mod->core_num_syms = ndst;
+=======
+	src = mod->symtab;
+	*dst = *src;
+	for (ndst = i = 1; i < mod->num_symtab; ++i, ++src) {
+		if (!is_core_symbol(src, info->sechdrs, info->hdr->e_shnum))
+			continue;
+		dst[ndst] = *src;
+		dst[ndst].st_name = bitmap_weight(info->strmap,
+						  dst[ndst].st_name);
+		++ndst;
+	}
+	mod->core_num_syms = ndst;
+
+	mod->core_strtab = s = mod->module_core + info->stroffs;
+	for (*s = 0, i = 1; i < info->sechdrs[info->index.str].sh_size; ++i)
+		if (test_bit(i, info->strmap))
+			*++s = mod->strtab[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #else
 static inline void layout_symtab(struct module *mod, struct load_info *info)
@@ -2356,11 +2548,14 @@ static void dynamic_debug_remove(struct _ddebug *debug)
 		ddebug_remove_module(debug->modname);
 }
 
+<<<<<<< HEAD
 void * __weak module_alloc(unsigned long size)
 {
 	return size == 0 ? NULL : vmalloc_exec(size);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void *module_alloc_update_bounds(unsigned long size)
 {
 	void *ret = module_alloc(size);
@@ -2561,9 +2756,12 @@ static int check_modinfo(struct module *mod, struct load_info *info)
 		return -ENOEXEC;
 	}
 
+<<<<<<< HEAD
 	if (!get_modinfo(info, "intree"))
 		add_taint_module(mod, TAINT_OOT_MODULE);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (get_modinfo(info, "staging")) {
 		add_taint_module(mod, TAINT_CRAP);
 		printk(KERN_WARNING "%s: module is from the staging directory,"
@@ -2695,7 +2893,11 @@ static int move_module(struct module *mod, struct load_info *info)
 	mod->module_init = ptr;
 
 	/* Transfer each section which specifies SHF_ALLOC */
+<<<<<<< HEAD
 	pr_debug("final section addresses:\n");
+=======
+	DEBUGP("final section addresses:\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < info->hdr->e_shnum; i++) {
 		void *dest;
 		Elf_Shdr *shdr = &info->sechdrs[i];
@@ -2713,8 +2915,13 @@ static int move_module(struct module *mod, struct load_info *info)
 			memcpy(dest, (void *)shdr->sh_addr, shdr->sh_size);
 		/* Update sh_addr to point to copy in image. */
 		shdr->sh_addr = (unsigned long)dest;
+<<<<<<< HEAD
 		pr_debug("\t0x%lx %s\n",
 			 (long)shdr->sh_addr, info->secstrings + shdr->sh_name);
+=======
+		DEBUGP("\t0x%lx %s\n",
+		       shdr->sh_addr, info->secstrings + shdr->sh_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -2734,10 +2941,13 @@ static int check_module_license_and_versions(struct module *mod)
 	if (strcmp(mod->name, "driverloader") == 0)
 		add_taint_module(mod, TAINT_PROPRIETARY_MODULE);
 
+<<<<<<< HEAD
 	/* lve claims to be GPL but upstream won't provide source */
 	if (strcmp(mod->name, "lve") == 0)
 		add_taint_module(mod, TAINT_PROPRIETARY_MODULE);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_MODVERSIONS
 	if ((mod->num_syms && !mod->crcs)
 	    || (mod->num_gpl_syms && !mod->gpl_crcs)
@@ -2777,6 +2987,7 @@ static void flush_module_icache(const struct module *mod)
 	set_fs(old_fs);
 }
 
+<<<<<<< HEAD
 int __weak module_frob_arch_sections(Elf_Ehdr *hdr,
 				     Elf_Shdr *sechdrs,
 				     char *secstrings,
@@ -2785,6 +2996,8 @@ int __weak module_frob_arch_sections(Elf_Ehdr *hdr,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct module *layout_and_allocate(struct load_info *info)
 {
 	/* Module within temporary copy. */
@@ -2820,18 +3033,37 @@ static struct module *layout_and_allocate(struct load_info *info)
 	   this is done generically; there doesn't appear to be any
 	   special cases for the architectures. */
 	layout_sections(mod, info);
+<<<<<<< HEAD
+=======
+
+	info->strmap = kzalloc(BITS_TO_LONGS(info->sechdrs[info->index.str].sh_size)
+			 * sizeof(long), GFP_KERNEL);
+	if (!info->strmap) {
+		err = -ENOMEM;
+		goto free_percpu;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	layout_symtab(mod, info);
 
 	/* Allocate and move to the final place */
 	err = move_module(mod, info);
 	if (err)
+<<<<<<< HEAD
 		goto free_percpu;
+=======
+		goto free_strmap;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Module has been copied to its final place now: return it. */
 	mod = (void *)info->sechdrs[info->index.mod].sh_addr;
 	kmemleak_load_module(mod, info);
 	return mod;
 
+<<<<<<< HEAD
+=======
+free_strmap:
+	kfree(info->strmap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 free_percpu:
 	percpu_modfree(mod);
 out:
@@ -2841,11 +3073,16 @@ out:
 /* mod is no longer valid after this! */
 static void module_deallocate(struct module *mod, struct load_info *info)
 {
+<<<<<<< HEAD
+=======
+	kfree(info->strmap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	percpu_modfree(mod);
 	module_free(mod, mod->module_init);
 	module_free(mod, mod->module_core);
 }
 
+<<<<<<< HEAD
 int __weak module_finalize(const Elf_Ehdr *hdr,
 			   const Elf_Shdr *sechdrs,
 			   struct module *me)
@@ -2853,6 +3090,8 @@ int __weak module_finalize(const Elf_Ehdr *hdr,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int post_relocation(struct module *mod, const struct load_info *info)
 {
 	/* Sort exception table now relocations are done. */
@@ -2879,7 +3118,11 @@ static struct module *load_module(void __user *umod,
 	struct module *mod;
 	long err;
 
+<<<<<<< HEAD
 	pr_debug("load_module: umod=%p, len=%lu, uargs=%p\n",
+=======
+	DEBUGP("load_module: umod=%p, len=%lu, uargs=%p\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       umod, len, uargs);
 
 	/* Copy in the blobs from userspace, check they are vaguely sane. */
@@ -2949,7 +3192,12 @@ static struct module *load_module(void __user *umod,
 	}
 
 	/* This has to be done once we're sure module name is unique. */
+<<<<<<< HEAD
 	dynamic_debug_setup(info.debug, info.num_debug);
+=======
+	if (!mod->taints || mod->taints == (1U<<TAINT_CRAP))
+		dynamic_debug_setup(info.debug, info.num_debug);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Find duplicate symbols */
 	err = verify_export_symbols(mod);
@@ -2961,8 +3209,12 @@ static struct module *load_module(void __user *umod,
 	mutex_unlock(&module_mutex);
 
 	/* Module is ready to execute: parsing args may do that. */
+<<<<<<< HEAD
 	err = parse_args(mod->name, mod->args, mod->kp, mod->num_kp,
 			 -32768, 32767, NULL);
+=======
+	err = parse_args(mod->name, mod->args, mod->kp, mod->num_kp, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0)
 		goto unlink;
 
@@ -2971,7 +3223,12 @@ static struct module *load_module(void __user *umod,
 	if (err < 0)
 		goto unlink;
 
+<<<<<<< HEAD
 	/* Get rid of temporary copy. */
+=======
+	/* Get rid of temporary copy and strmap. */
+	kfree(info.strmap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	free_copy(&info);
 
 	/* Done! */
@@ -2985,7 +3242,12 @@ static struct module *load_module(void __user *umod,
 	module_bug_cleanup(mod);
 
  ddebug:
+<<<<<<< HEAD
 	dynamic_debug_remove(info.debug);
+=======
+	if (!mod->taints || mod->taints == (1U<<TAINT_CRAP))
+		dynamic_debug_remove(info.debug);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  unlock:
 	mutex_unlock(&module_mutex);
 	synchronize_sched();
@@ -3324,7 +3586,22 @@ static char *module_flags(struct module *mod, char *buf)
 	    mod->state == MODULE_STATE_GOING ||
 	    mod->state == MODULE_STATE_COMING) {
 		buf[bx++] = '(';
+<<<<<<< HEAD
 		bx += module_flags_taint(mod, buf + bx);
+=======
+		if (mod->taints & (1 << TAINT_PROPRIETARY_MODULE))
+			buf[bx++] = 'P';
+		if (mod->taints & (1 << TAINT_FORCED_MODULE))
+			buf[bx++] = 'F';
+		if (mod->taints & (1 << TAINT_CRAP))
+			buf[bx++] = 'C';
+		/*
+		 * TAINT_FORCED_RMMOD: could be added.
+		 * TAINT_UNSAFE_SMP, TAINT_MACHINE_CHECK, TAINT_BAD_PAGE don't
+		 * apply to modules.
+		 */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Show a - for module-is-being-unloaded */
 		if (mod->state == MODULE_STATE_GOING)
 			buf[bx++] = '-';
@@ -3545,3 +3822,53 @@ void module_layout(struct module *mod,
 }
 EXPORT_SYMBOL(module_layout);
 #endif
+<<<<<<< HEAD
+=======
+
+#ifdef CONFIG_TRACEPOINTS
+void module_update_tracepoints(void)
+{
+	struct module *mod;
+
+	mutex_lock(&module_mutex);
+	list_for_each_entry(mod, &modules, list)
+		if (!mod->taints)
+			tracepoint_update_probe_range(mod->tracepoints_ptrs,
+				mod->tracepoints_ptrs + mod->num_tracepoints);
+	mutex_unlock(&module_mutex);
+}
+
+/*
+ * Returns 0 if current not found.
+ * Returns 1 if current found.
+ */
+int module_get_iter_tracepoints(struct tracepoint_iter *iter)
+{
+	struct module *iter_mod;
+	int found = 0;
+
+	mutex_lock(&module_mutex);
+	list_for_each_entry(iter_mod, &modules, list) {
+		if (!iter_mod->taints) {
+			/*
+			 * Sorted module list
+			 */
+			if (iter_mod < iter->module)
+				continue;
+			else if (iter_mod > iter->module)
+				iter->tracepoint = NULL;
+			found = tracepoint_get_iter_range(&iter->tracepoint,
+				iter_mod->tracepoints_ptrs,
+				iter_mod->tracepoints_ptrs
+					+ iter_mod->num_tracepoints);
+			if (found) {
+				iter->module = iter_mod;
+				break;
+			}
+		}
+	}
+	mutex_unlock(&module_mutex);
+	return found;
+}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

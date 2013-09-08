@@ -63,9 +63,12 @@
 
 #define SCIC_SDS_DUMMY_PORT   0xFF
 
+<<<<<<< HEAD
 #define PF_NOTIFY (1 << 0)
 #define PF_RESUME (1 << 1)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct isci_phy;
 struct isci_host;
 
@@ -80,14 +83,21 @@ enum isci_status {
 
 /**
  * struct isci_port - isci direct attached sas port object
+<<<<<<< HEAD
+=======
+ * @event: counts bcns and port stop events (for bcn filtering)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ready_exit: several states constitute 'ready'. When exiting ready we
  *              need to take extra port-teardown actions that are
  *              skipped when exiting to another 'ready' state.
  * @logical_port_index: software port index
  * @physical_port_index: hardware port index
  * @active_phy_mask: identifies phy members
+<<<<<<< HEAD
  * @enabled_phy_mask: phy mask for the port
  *                    that are already part of the port
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @reserved_tag:
  * @reserved_rni: reserver for port task scheduler workaround
  * @started_request_count: reference count for outstanding commands
@@ -95,19 +105,37 @@ enum isci_status {
  * @timer: timeout start/stop operations
  */
 struct isci_port {
+<<<<<<< HEAD
 	struct isci_host *isci_host;
 	struct list_head remote_dev_list;
 	struct list_head domain_dev_list;
 	#define IPORT_RESET_PENDING 0
 	unsigned long state;
+=======
+	enum isci_status status;
+	#define IPORT_BCN_BLOCKED 0
+	#define IPORT_BCN_PENDING 1
+	unsigned long flags;
+	atomic_t event;
+	struct isci_host *isci_host;
+	struct asd_sas_port sas_port;
+	struct list_head remote_dev_list;
+	spinlock_t state_lock;
+	struct list_head domain_dev_list;
+	struct completion start_complete;
+	struct completion hard_reset_complete;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	enum sci_status hard_reset_status;
 	struct sci_base_state_machine sm;
 	bool ready_exit;
 	u8 logical_port_index;
 	u8 physical_port_index;
 	u8 active_phy_mask;
+<<<<<<< HEAD
 	u8 enabled_phy_mask;
 	u8 last_active_phy;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 reserved_rni;
 	u16 reserved_tag;
 	u32 started_request_count;
@@ -144,6 +172,7 @@ struct sci_port_properties {
 };
 
 /**
+<<<<<<< HEAD
  * enum sci_port_states - port state machine states
  * @SCI_PORT_STOPPED: port has successfully been stopped.  In this state
  *		      no new IO operations are permitted.  This state is
@@ -185,6 +214,72 @@ struct sci_port_properties {
 #define C(a) SCI_##a
 enum sci_port_states PORT_STATES;
 #undef C
+=======
+ * enum sci_port_states - This enumeration depicts all the states for the
+ *    common port state machine.
+ *
+ *
+ */
+enum sci_port_states {
+	/**
+	 * This state indicates that the port has successfully been stopped.
+	 * In this state no new IO operations are permitted.
+	 * This state is entered from the STOPPING state.
+	 */
+	SCI_PORT_STOPPED,
+
+	/**
+	 * This state indicates that the port is in the process of stopping.
+	 * In this state no new IO operations are permitted, but existing IO
+	 * operations are allowed to complete.
+	 * This state is entered from the READY state.
+	 */
+	SCI_PORT_STOPPING,
+
+	/**
+	 * This state indicates the port is now ready.  Thus, the user is
+	 * able to perform IO operations on this port.
+	 * This state is entered from the STARTING state.
+	 */
+	SCI_PORT_READY,
+
+	/**
+	 * The substate where the port is started and ready but has no
+	 * active phys.
+	 */
+	SCI_PORT_SUB_WAITING,
+
+	/**
+	 * The substate where the port is started and ready and there is
+	 * at least one phy operational.
+	 */
+	SCI_PORT_SUB_OPERATIONAL,
+
+	/**
+	 * The substate where the port is started and there was an
+	 * add/remove phy event.  This state is only used in Automatic
+	 * Port Configuration Mode (APC)
+	 */
+	SCI_PORT_SUB_CONFIGURING,
+
+	/**
+	 * This state indicates the port is in the process of performing a hard
+	 * reset.  Thus, the user is unable to perform IO operations on this
+	 * port.
+	 * This state is entered from the READY state.
+	 */
+	SCI_PORT_RESETTING,
+
+	/**
+	 * This state indicates the port has failed a reset request.  This state
+	 * is entered when a port reset request times out.
+	 * This state is entered from the RESETTING state.
+	 */
+	SCI_PORT_FAILED,
+
+
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void sci_port_decrement_request_count(struct isci_port *iport)
 {
@@ -230,10 +325,13 @@ bool sci_port_link_detected(
 	struct isci_port *iport,
 	struct isci_phy *iphy);
 
+<<<<<<< HEAD
 enum sci_status sci_port_get_properties(
 	struct isci_port *iport,
 	struct sci_port_properties *prop);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum sci_status sci_port_link_up(struct isci_port *iport,
 				      struct isci_phy *iphy);
 enum sci_status sci_port_link_down(struct isci_port *iport,
@@ -270,6 +368,12 @@ void sci_port_get_attached_sas_address(
 	struct isci_port *iport,
 	struct sci_sas_address *sas_address);
 
+<<<<<<< HEAD
+=======
+enum isci_status isci_port_get_state(
+	struct isci_port *isci_port);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void isci_port_formed(struct asd_sas_phy *);
 void isci_port_deformed(struct asd_sas_phy *);
 
@@ -280,5 +384,8 @@ void isci_port_init(
 
 int isci_port_perform_hard_reset(struct isci_host *ihost, struct isci_port *iport,
 				 struct isci_phy *iphy);
+<<<<<<< HEAD
 int isci_ata_check_ready(struct domain_device *dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* !defined(_ISCI_PORT_H_) */

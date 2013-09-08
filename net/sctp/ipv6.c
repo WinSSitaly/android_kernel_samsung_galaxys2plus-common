@@ -107,12 +107,19 @@ static int sctp_inet6addr_event(struct notifier_block *this, unsigned long ev,
 		if (addr) {
 			addr->a.v6.sin6_family = AF_INET6;
 			addr->a.v6.sin6_port = 0;
+<<<<<<< HEAD
 			addr->a.v6.sin6_addr = ifa->addr;
+=======
+			ipv6_addr_copy(&addr->a.v6.sin6_addr, &ifa->addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			addr->a.v6.sin6_scope_id = ifa->idev->dev->ifindex;
 			addr->valid = 1;
 			spin_lock_bh(&sctp_local_addr_lock);
 			list_add_tail_rcu(&addr->list, &sctp_local_addr_list);
+<<<<<<< HEAD
 			sctp_addr_wq_mgmt(addr, SCTP_ADDR_NEW);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			spin_unlock_bh(&sctp_local_addr_lock);
 		}
 		break;
@@ -123,7 +130,10 @@ static int sctp_inet6addr_event(struct notifier_block *this, unsigned long ev,
 			if (addr->a.sa.sa_family == AF_INET6 &&
 					ipv6_addr_equal(&addr->a.v6.sin6_addr,
 						&ifa->addr)) {
+<<<<<<< HEAD
 				sctp_addr_wq_mgmt(addr, SCTP_ADDR_DEL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				found = 1;
 				addr->valid = 0;
 				list_del_rcu(&addr->list);
@@ -219,8 +229,13 @@ static int sctp_v6_xmit(struct sk_buff *skb, struct sctp_transport *transport)
 	/* Fill in the dest address from the route entry passed with the skb
 	 * and the source address from the transport.
 	 */
+<<<<<<< HEAD
 	fl6.daddr = transport->ipaddr.v6.sin6_addr;
 	fl6.saddr = transport->saddr.v6.sin6_addr;
+=======
+	ipv6_addr_copy(&fl6.daddr, &transport->ipaddr.v6.sin6_addr);
+	ipv6_addr_copy(&fl6.saddr, &transport->saddr.v6.sin6_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fl6.flowlabel = np->flow_label;
 	IP6_ECN_flow_xmit(sk, fl6.flowlabel);
@@ -231,7 +246,11 @@ static int sctp_v6_xmit(struct sk_buff *skb, struct sctp_transport *transport)
 
 	if (np->opt && np->opt->srcrt) {
 		struct rt0_hdr *rt0 = (struct rt0_hdr *) np->opt->srcrt;
+<<<<<<< HEAD
 		fl6.daddr = *rt0->addr;
+=======
+		ipv6_addr_copy(&fl6.daddr, rt0->addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	SCTP_DEBUG_PRINTK("%s: skb:%p, len:%d, src:%pI6 dst:%pI6\n",
@@ -243,7 +262,11 @@ static int sctp_v6_xmit(struct sk_buff *skb, struct sctp_transport *transport)
 	if (!(transport->param_flags & SPP_PMTUD_ENABLE))
 		skb->local_df = 1;
 
+<<<<<<< HEAD
 	return ip6_xmit(sk, skb, &fl6, np->opt, np->tclass);
+=======
+	return ip6_xmit(sk, skb, &fl6, np->opt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Returns the dst cache entry for the given source and destination ip
@@ -265,7 +288,11 @@ static void sctp_v6_get_dst(struct sctp_transport *t, union sctp_addr *saddr,
 	sctp_scope_t scope;
 
 	memset(fl6, 0, sizeof(struct flowi6));
+<<<<<<< HEAD
 	fl6->daddr = daddr->v6.sin6_addr;
+=======
+	ipv6_addr_copy(&fl6->daddr, &daddr->v6.sin6_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fl6->fl6_dport = daddr->v6.sin6_port;
 	fl6->flowi6_proto = IPPROTO_SCTP;
 	if (ipv6_addr_type(&daddr->v6.sin6_addr) & IPV6_ADDR_LINKLOCAL)
@@ -277,7 +304,11 @@ static void sctp_v6_get_dst(struct sctp_transport *t, union sctp_addr *saddr,
 		fl6->fl6_sport = htons(asoc->base.bind_addr.port);
 
 	if (saddr) {
+<<<<<<< HEAD
 		fl6->saddr = saddr->v6.sin6_addr;
+=======
+		ipv6_addr_copy(&fl6->saddr, &saddr->v6.sin6_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fl6->fl6_sport = saddr->v6.sin6_port;
 		SCTP_DEBUG_PRINTK("SRC=%pI6 - ", &fl6->saddr);
 	}
@@ -334,7 +365,11 @@ static void sctp_v6_get_dst(struct sctp_transport *t, union sctp_addr *saddr,
 	}
 	rcu_read_unlock();
 	if (baddr) {
+<<<<<<< HEAD
 		fl6->saddr = baddr->v6.sin6_addr;
+=======
+		ipv6_addr_copy(&fl6->saddr, &baddr->v6.sin6_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fl6->fl6_sport = baddr->v6.sin6_port;
 		dst = ip6_dst_lookup_flow(sk, fl6, NULL, false);
 	}
@@ -375,7 +410,11 @@ static void sctp_v6_get_saddr(struct sctp_sock *sk,
 
 	if (t->dst) {
 		saddr->v6.sin6_family = AF_INET6;
+<<<<<<< HEAD
 		saddr->v6.sin6_addr = fl6->saddr;
+=======
+		ipv6_addr_copy(&saddr->v6.sin6_addr, &fl6->saddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -400,7 +439,11 @@ static void sctp_v6_copy_addrlist(struct list_head *addrlist,
 		if (addr) {
 			addr->a.v6.sin6_family = AF_INET6;
 			addr->a.v6.sin6_port = 0;
+<<<<<<< HEAD
 			addr->a.v6.sin6_addr = ifp->addr;
+=======
+			ipv6_addr_copy(&addr->a.v6.sin6_addr, &ifp->addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			addr->a.v6.sin6_scope_id = dev->ifindex;
 			addr->valid = 1;
 			INIT_LIST_HEAD(&addr->list);
@@ -416,6 +459,10 @@ static void sctp_v6_copy_addrlist(struct list_head *addrlist,
 static void sctp_v6_from_skb(union sctp_addr *addr,struct sk_buff *skb,
 			     int is_saddr)
 {
+<<<<<<< HEAD
+=======
+	void *from;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__be16 *port;
 	struct sctphdr *sh;
 
@@ -427,11 +474,20 @@ static void sctp_v6_from_skb(union sctp_addr *addr,struct sk_buff *skb,
 	sh = sctp_hdr(skb);
 	if (is_saddr) {
 		*port  = sh->source;
+<<<<<<< HEAD
 		addr->v6.sin6_addr = ipv6_hdr(skb)->saddr;
 	} else {
 		*port = sh->dest;
 		addr->v6.sin6_addr = ipv6_hdr(skb)->daddr;
 	}
+=======
+		from = &ipv6_hdr(skb)->saddr;
+	} else {
+		*port = sh->dest;
+		from = &ipv6_hdr(skb)->daddr;
+	}
+	ipv6_addr_copy(&addr->v6.sin6_addr, from);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Initialize an sctp_addr from a socket. */
@@ -439,7 +495,11 @@ static void sctp_v6_from_sk(union sctp_addr *addr, struct sock *sk)
 {
 	addr->v6.sin6_family = AF_INET6;
 	addr->v6.sin6_port = 0;
+<<<<<<< HEAD
 	addr->v6.sin6_addr = inet6_sk(sk)->rcv_saddr;
+=======
+	ipv6_addr_copy(&addr->v6.sin6_addr, &inet6_sk(sk)->rcv_saddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Initialize sk->sk_rcv_saddr from sctp_addr. */
@@ -452,7 +512,11 @@ static void sctp_v6_to_sk_saddr(union sctp_addr *addr, struct sock *sk)
 		inet6_sk(sk)->rcv_saddr.s6_addr32[3] =
 			addr->v4.sin_addr.s_addr;
 	} else {
+<<<<<<< HEAD
 		inet6_sk(sk)->rcv_saddr = addr->v6.sin6_addr;
+=======
+		ipv6_addr_copy(&inet6_sk(sk)->rcv_saddr, &addr->v6.sin6_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -465,7 +529,11 @@ static void sctp_v6_to_sk_daddr(union sctp_addr *addr, struct sock *sk)
 		inet6_sk(sk)->daddr.s6_addr32[2] = htonl(0x0000ffff);
 		inet6_sk(sk)->daddr.s6_addr32[3] = addr->v4.sin_addr.s_addr;
 	} else {
+<<<<<<< HEAD
 		inet6_sk(sk)->daddr = addr->v6.sin6_addr;
+=======
+		ipv6_addr_copy(&inet6_sk(sk)->daddr, &addr->v6.sin6_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -477,7 +545,11 @@ static void sctp_v6_from_addr_param(union sctp_addr *addr,
 	addr->v6.sin6_family = AF_INET6;
 	addr->v6.sin6_port = port;
 	addr->v6.sin6_flowinfo = 0; /* BUG */
+<<<<<<< HEAD
 	addr->v6.sin6_addr = param->v6.addr;
+=======
+	ipv6_addr_copy(&addr->v6.sin6_addr, &param->v6.addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	addr->v6.sin6_scope_id = iif;
 }
 
@@ -491,7 +563,11 @@ static int sctp_v6_to_addr_param(const union sctp_addr *addr,
 
 	param->v6.param_hdr.type = SCTP_PARAM_IPV6_ADDRESS;
 	param->v6.param_hdr.length = htons(length);
+<<<<<<< HEAD
 	param->v6.addr = addr->v6.sin6_addr;
+=======
+	ipv6_addr_copy(&param->v6.addr, &addr->v6.sin6_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return length;
 }
@@ -502,7 +578,11 @@ static void sctp_v6_to_addr(union sctp_addr *addr, struct in6_addr *saddr,
 {
 	addr->sa.sa_family = AF_INET6;
 	addr->v6.sin6_port = port;
+<<<<<<< HEAD
 	addr->v6.sin6_addr = *saddr;
+=======
+	ipv6_addr_copy(&addr->v6.sin6_addr, saddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Compare addresses exactly.
@@ -757,7 +837,11 @@ static void sctp_inet6_event_msgname(struct sctp_ulpevent *event,
 		}
 
 		sin6from = &asoc->peer.primary_addr.v6;
+<<<<<<< HEAD
 		sin6->sin6_addr = sin6from->sin6_addr;
+=======
+		ipv6_addr_copy(&sin6->sin6_addr, &sin6from->sin6_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ipv6_addr_type(&sin6->sin6_addr) & IPV6_ADDR_LINKLOCAL)
 			sin6->sin6_scope_id = sin6from->sin6_scope_id;
 	}
@@ -785,7 +869,11 @@ static void sctp_inet6_skb_msgname(struct sk_buff *skb, char *msgname,
 		}
 
 		/* Otherwise, just copy the v6 address. */
+<<<<<<< HEAD
 		sin6->sin6_addr = ipv6_hdr(skb)->saddr;
+=======
+		ipv6_addr_copy(&sin6->sin6_addr, &ipv6_hdr(skb)->saddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ipv6_addr_type(&sin6->sin6_addr) & IPV6_ADDR_LINKLOCAL) {
 			struct sctp_ulpevent *ev = sctp_skb2event(skb);
 			sin6->sin6_scope_id = ev->iif;

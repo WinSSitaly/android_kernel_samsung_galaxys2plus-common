@@ -27,7 +27,10 @@
 #include <linux/mm.h>
 #include <linux/omapfb.h>
 #include <linux/vmalloc.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <video/omapdss.h>
 #include <plat/vrfb.h>
@@ -111,6 +114,7 @@ static int omapfb_setup_plane(struct fb_info *fbi, struct omapfb_plane_info *pi)
 		set_fb_fix(fbi);
 	}
 
+<<<<<<< HEAD
 	if (!pi->enabled) {
 		r = ovl->disable(ovl);
 		if (r)
@@ -118,15 +122,36 @@ static int omapfb_setup_plane(struct fb_info *fbi, struct omapfb_plane_info *pi)
 	}
 
 	if (pi->enabled) {
+=======
+	if (pi->enabled) {
+		struct omap_overlay_info info;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r = omapfb_setup_overlay(fbi, ovl, pi->pos_x, pi->pos_y,
 			pi->out_width, pi->out_height);
 		if (r)
 			goto undo;
+<<<<<<< HEAD
+=======
+
+		ovl->get_overlay_info(ovl, &info);
+
+		if (!info.enabled) {
+			info.enabled = pi->enabled;
+			r = ovl->set_overlay_info(ovl, &info);
+			if (r)
+				goto undo;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		struct omap_overlay_info info;
 
 		ovl->get_overlay_info(ovl, &info);
 
+<<<<<<< HEAD
+=======
+		info.enabled = pi->enabled;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		info.pos_x = pi->pos_x;
 		info.pos_y = pi->pos_y;
 		info.out_width = pi->out_width;
@@ -140,12 +165,15 @@ static int omapfb_setup_plane(struct fb_info *fbi, struct omapfb_plane_info *pi)
 	if (ovl->manager)
 		ovl->manager->apply(ovl->manager);
 
+<<<<<<< HEAD
 	if (pi->enabled) {
 		r = ovl->enable(ovl);
 		if (r)
 			goto undo;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Release the locks in a specific order to keep lockdep happy */
 	if (old_rg->id > new_rg->id) {
 		omapfb_put_mem_region(old_rg);
@@ -189,6 +217,7 @@ static int omapfb_query_plane(struct fb_info *fbi, struct omapfb_plane_info *pi)
 		memset(pi, 0, sizeof(*pi));
 	} else {
 		struct omap_overlay *ovl;
+<<<<<<< HEAD
 		struct omap_overlay_info ovli;
 
 		ovl = ofbi->overlays[0];
@@ -202,6 +231,21 @@ static int omapfb_query_plane(struct fb_info *fbi, struct omapfb_plane_info *pi)
 		pi->mem_idx = get_mem_idx(ofbi);
 		pi->out_width = ovli.out_width;
 		pi->out_height = ovli.out_height;
+=======
+		struct omap_overlay_info *ovli;
+
+		ovl = ofbi->overlays[0];
+		ovli = &ovl->info;
+
+		pi->pos_x = ovli->pos_x;
+		pi->pos_y = ovli->pos_y;
+		pi->enabled = ovli->enabled;
+		pi->channel_out = 0; /* xxx */
+		pi->mirror = 0;
+		pi->mem_idx = get_mem_idx(ofbi);
+		pi->out_width = ovli->out_width;
+		pi->out_height = ovli->out_height;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -215,7 +259,11 @@ static int omapfb_setup_mem(struct fb_info *fbi, struct omapfb_mem_info *mi)
 	int r = 0, i;
 	size_t size;
 
+<<<<<<< HEAD
 	if (mi->type != OMAPFB_MEMTYPE_SDRAM)
+=======
+	if (mi->type > OMAPFB_MEMTYPE_MAX)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	size = PAGE_ALIGN(mi->size);
@@ -238,9 +286,13 @@ static int omapfb_setup_mem(struct fb_info *fbi, struct omapfb_mem_info *mi)
 			continue;
 
 		for (j = 0; j < ofbi2->num_overlays; j++) {
+<<<<<<< HEAD
 			struct omap_overlay *ovl;
 			ovl = ofbi2->overlays[j];
 			if (ovl->is_enabled(ovl)) {
+=======
+			if (ofbi2->overlays[j]->info.enabled) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				r = -EBUSY;
 				goto out;
 			}
@@ -319,6 +371,7 @@ int omapfb_update_window(struct fb_info *fbi,
 }
 EXPORT_SYMBOL(omapfb_update_window);
 
+<<<<<<< HEAD
 int omapfb_set_update_mode(struct fb_info *fbi,
 				   enum omapfb_update_mode mode)
 {
@@ -358,10 +411,41 @@ int omapfb_set_update_mode(struct fb_info *fbi,
 	}
 
 	omapfb_unlock(fbdev);
+=======
+static int omapfb_set_update_mode(struct fb_info *fbi,
+				   enum omapfb_update_mode mode)
+{
+	struct omap_dss_device *display = fb2display(fbi);
+	enum omap_dss_update_mode um;
+	int r;
+
+	if (!display || !display->driver->set_update_mode)
+		return -EINVAL;
+
+	switch (mode) {
+	case OMAPFB_UPDATE_DISABLED:
+		um = OMAP_DSS_UPDATE_DISABLED;
+		break;
+
+	case OMAPFB_AUTO_UPDATE:
+		um = OMAP_DSS_UPDATE_AUTO;
+		break;
+
+	case OMAPFB_MANUAL_UPDATE:
+		um = OMAP_DSS_UPDATE_MANUAL;
+		break;
+
+	default:
+		return -EINVAL;
+	}
+
+	r = display->driver->set_update_mode(display, um);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return r;
 }
 
+<<<<<<< HEAD
 int omapfb_get_update_mode(struct fb_info *fbi,
 		enum omapfb_update_mode *mode)
 {
@@ -369,10 +453,18 @@ int omapfb_get_update_mode(struct fb_info *fbi,
 	struct omapfb_info *ofbi = FB2OFB(fbi);
 	struct omapfb2_device *fbdev = ofbi->fbdev;
 	struct omapfb_display_data *d;
+=======
+static int omapfb_get_update_mode(struct fb_info *fbi,
+		enum omapfb_update_mode *mode)
+{
+	struct omap_dss_device *display = fb2display(fbi);
+	enum omap_dss_update_mode m;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!display)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	omapfb_lock(fbdev);
 
 	d = get_display_data(fbdev, display);
@@ -380,6 +472,28 @@ int omapfb_get_update_mode(struct fb_info *fbi,
 	*mode = d->update_mode;
 
 	omapfb_unlock(fbdev);
+=======
+	if (!display->driver->get_update_mode) {
+		*mode = OMAPFB_AUTO_UPDATE;
+		return 0;
+	}
+
+	m = display->driver->get_update_mode(display);
+
+	switch (m) {
+	case OMAP_DSS_UPDATE_DISABLED:
+		*mode = OMAPFB_UPDATE_DISABLED;
+		break;
+	case OMAP_DSS_UPDATE_AUTO:
+		*mode = OMAPFB_AUTO_UPDATE;
+		break;
+	case OMAP_DSS_UPDATE_MANUAL:
+		*mode = OMAPFB_MANUAL_UPDATE;
+		break;
+	default:
+		BUG();
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

@@ -7,10 +7,22 @@
  * Universite Pierre et Marie Curie (Paris VI)
  */
 
+<<<<<<< HEAD
 #include <linux/mount.h>
 #include <linux/compat.h>
 #include <asm/uaccess.h>
 #include "ext3.h"
+=======
+#include <linux/fs.h>
+#include <linux/jbd.h>
+#include <linux/capability.h>
+#include <linux/ext3_fs.h>
+#include <linux/ext3_jbd.h>
+#include <linux/mount.h>
+#include <linux/time.h>
+#include <linux/compat.h>
+#include <asm/uaccess.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 long ext3_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 {
@@ -39,7 +51,11 @@ long ext3_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		if (get_user(flags, (int __user *) arg))
 			return -EFAULT;
 
+<<<<<<< HEAD
 		err = mnt_want_write_file(filp);
+=======
+		err = mnt_want_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err)
 			return err;
 
@@ -105,7 +121,11 @@ flags_err:
 			err = ext3_change_inode_journal_flag(inode, jflag);
 flags_out:
 		mutex_unlock(&inode->i_mutex);
+<<<<<<< HEAD
 		mnt_drop_write_file(filp);
+=======
+		mnt_drop_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 	}
 	case EXT3_IOC_GETVERSION:
@@ -121,7 +141,11 @@ flags_out:
 		if (!inode_owner_or_capable(inode))
 			return -EPERM;
 
+<<<<<<< HEAD
 		err = mnt_want_write_file(filp);
+=======
+		err = mnt_want_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err)
 			return err;
 		if (get_user(generation, (int __user *) arg)) {
@@ -129,11 +153,18 @@ flags_out:
 			goto setversion_out;
 		}
 
+<<<<<<< HEAD
 		mutex_lock(&inode->i_mutex);
 		handle = ext3_journal_start(inode, 1);
 		if (IS_ERR(handle)) {
 			err = PTR_ERR(handle);
 			goto unlock_out;
+=======
+		handle = ext3_journal_start(inode, 1);
+		if (IS_ERR(handle)) {
+			err = PTR_ERR(handle);
+			goto setversion_out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		err = ext3_reserve_inode_write(handle, inode, &iloc);
 		if (err == 0) {
@@ -142,6 +173,7 @@ flags_out:
 			err = ext3_mark_iloc_dirty(handle, inode, &iloc);
 		}
 		ext3_journal_stop(handle);
+<<<<<<< HEAD
 
 unlock_out:
 		mutex_unlock(&inode->i_mutex);
@@ -149,6 +181,36 @@ setversion_out:
 		mnt_drop_write_file(filp);
 		return err;
 	}
+=======
+setversion_out:
+		mnt_drop_write(filp->f_path.mnt);
+		return err;
+	}
+#ifdef CONFIG_JBD_DEBUG
+	case EXT3_IOC_WAIT_FOR_READONLY:
+		/*
+		 * This is racy - by the time we're woken up and running,
+		 * the superblock could be released.  And the module could
+		 * have been unloaded.  So sue me.
+		 *
+		 * Returns 1 if it slept, else zero.
+		 */
+		{
+			struct super_block *sb = inode->i_sb;
+			DECLARE_WAITQUEUE(wait, current);
+			int ret = 0;
+
+			set_current_state(TASK_INTERRUPTIBLE);
+			add_wait_queue(&EXT3_SB(sb)->ro_wait_queue, &wait);
+			if (timer_pending(&EXT3_SB(sb)->turn_ro_timer)) {
+				schedule();
+				ret = 1;
+			}
+			remove_wait_queue(&EXT3_SB(sb)->ro_wait_queue, &wait);
+			return ret;
+		}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case EXT3_IOC_GETRSVSZ:
 		if (test_opt(inode->i_sb, RESERVATION)
 			&& S_ISREG(inode->i_mode)
@@ -163,7 +225,11 @@ setversion_out:
 		if (!test_opt(inode->i_sb, RESERVATION) ||!S_ISREG(inode->i_mode))
 			return -ENOTTY;
 
+<<<<<<< HEAD
 		err = mnt_want_write_file(filp);
+=======
+		err = mnt_want_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err)
 			return err;
 
@@ -194,7 +260,11 @@ setversion_out:
 		}
 		mutex_unlock(&ei->truncate_mutex);
 setrsvsz_out:
+<<<<<<< HEAD
 		mnt_drop_write_file(filp);
+=======
+		mnt_drop_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 	}
 	case EXT3_IOC_GROUP_EXTEND: {
@@ -205,7 +275,11 @@ setrsvsz_out:
 		if (!capable(CAP_SYS_RESOURCE))
 			return -EPERM;
 
+<<<<<<< HEAD
 		err = mnt_want_write_file(filp);
+=======
+		err = mnt_want_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err)
 			return err;
 
@@ -220,7 +294,11 @@ setrsvsz_out:
 		if (err == 0)
 			err = err2;
 group_extend_out:
+<<<<<<< HEAD
 		mnt_drop_write_file(filp);
+=======
+		mnt_drop_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 	}
 	case EXT3_IOC_GROUP_ADD: {
@@ -231,7 +309,11 @@ group_extend_out:
 		if (!capable(CAP_SYS_RESOURCE))
 			return -EPERM;
 
+<<<<<<< HEAD
 		err = mnt_want_write_file(filp);
+=======
+		err = mnt_want_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err)
 			return err;
 
@@ -248,7 +330,11 @@ group_extend_out:
 		if (err == 0)
 			err = err2;
 group_add_out:
+<<<<<<< HEAD
 		mnt_drop_write_file(filp);
+=======
+		mnt_drop_write(filp->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 	}
 	case FITRIM: {
@@ -260,7 +346,11 @@ group_add_out:
 		if (!capable(CAP_SYS_ADMIN))
 			return -EPERM;
 
+<<<<<<< HEAD
 		if (copy_from_user(&range, (struct fstrim_range __user *)arg,
+=======
+		if (copy_from_user(&range, (struct fstrim_range *)arg,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   sizeof(range)))
 			return -EFAULT;
 
@@ -268,7 +358,11 @@ group_add_out:
 		if (ret < 0)
 			return ret;
 
+<<<<<<< HEAD
 		if (copy_to_user((struct fstrim_range __user *)arg, &range,
+=======
+		if (copy_to_user((struct fstrim_range *)arg, &range,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 sizeof(range)))
 			return -EFAULT;
 

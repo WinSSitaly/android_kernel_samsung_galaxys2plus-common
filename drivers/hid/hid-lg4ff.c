@@ -29,6 +29,7 @@
 
 #include "usbhid/usbhid.h"
 #include "hid-lg.h"
+<<<<<<< HEAD
 #include "hid-ids.h"
 
 #define DFGT_REV_MAJ 0x13
@@ -66,11 +67,20 @@ struct lg4ff_device_entry {
 static struct lg4ff_device_entry device_list;
 
 static const signed short lg4ff_wheel_effects[] = {
+=======
+
+struct lg4ff_device {
+	struct hid_report *report;
+};
+
+static const signed short ff4_wheel_ac[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	FF_CONSTANT,
 	FF_AUTOCENTER,
 	-1
 };
 
+<<<<<<< HEAD
 struct lg4ff_wheel {
 	const __u32 product_id;
 	const signed short *ff_effects;
@@ -131,6 +141,10 @@ static const struct lg4ff_usb_revision lg4ff_revs[] = {
 };
 
 static int hid_lg4ff_play(struct input_dev *dev, void *data, struct ff_effect *effect)
+=======
+static int hid_lg4ff_play(struct input_dev *dev, void *data,
+			 struct ff_effect *effect)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hid_device *hid = input_get_drvdata(dev);
 	struct list_head *report_list = &hid->report_enum[HID_OUTPUT_REPORT].report_list;
@@ -144,12 +158,22 @@ static int hid_lg4ff_play(struct input_dev *dev, void *data, struct ff_effect *e
 		x = effect->u.ramp.start_level + 0x80;	/* 0x80 is no force */
 		CLAMP(x);
 		report->field[0]->value[0] = 0x11;	/* Slot 1 */
+<<<<<<< HEAD
 		report->field[0]->value[1] = 0x08;
 		report->field[0]->value[2] = x;
 		report->field[0]->value[3] = 0x80;
 		report->field[0]->value[4] = 0x00;
 		report->field[0]->value[5] = 0x00;
 		report->field[0]->value[6] = 0x00;
+=======
+		report->field[0]->value[1] = 0x10;
+		report->field[0]->value[2] = x;
+		report->field[0]->value[3] = 0x00;
+		report->field[0]->value[4] = 0x00;
+		report->field[0]->value[5] = 0x08;
+		report->field[0]->value[6] = 0x00;
+		dbg_hid("Autocenter, x=0x%02X\n", x);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		usbhid_submit_report(hid, report, USB_DIR_OUT);
 		break;
@@ -157,13 +181,18 @@ static int hid_lg4ff_play(struct input_dev *dev, void *data, struct ff_effect *e
 	return 0;
 }
 
+<<<<<<< HEAD
 /* Sends default autocentering command compatible with
  * all wheels except Formula Force EX */
 static void hid_lg4ff_set_autocenter_default(struct input_dev *dev, u16 magnitude)
+=======
+static void hid_lg4ff_set_autocenter(struct input_dev *dev, u16 magnitude)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hid_device *hid = input_get_drvdata(dev);
 	struct list_head *report_list = &hid->report_enum[HID_OUTPUT_REPORT].report_list;
 	struct hid_report *report = list_entry(report_list->next, struct hid_report, list);
+<<<<<<< HEAD
 
 	report->field[0]->value[0] = 0xfe;
 	report->field[0]->value[1] = 0x0d;
@@ -263,10 +292,22 @@ static void hid_lg4ff_set_range_dfp(struct hid_device *hid, __u16 range)
 	report->field[0]->value[4] = 0xff;
 	report->field[0]->value[5] = (start_right & 0xe) << 4 | (start_left & 0xe);
 	report->field[0]->value[6] = 0xff;
+=======
+	__s32 *value = report->field[0]->value;
+
+	*value++ = 0xfe;
+	*value++ = 0x0d;
+	*value++ = 0x07;
+	*value++ = 0x07;
+	*value++ = (magnitude >> 8) & 0xff;
+	*value++ = 0x00;
+	*value = 0x00;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	usbhid_submit_report(hid, report, USB_DIR_OUT);
 }
 
+<<<<<<< HEAD
 static void hid_lg4ff_switch_native(struct hid_device *hid, const struct lg4ff_native_cmd *cmd)
 {
 	struct list_head *report_list = &hid->report_enum[HID_OUTPUT_REPORT].report_list;
@@ -335,10 +376,13 @@ static ssize_t lg4ff_range_store(struct device *dev, struct device_attribute *at
 
 	return count;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int lg4ff_init(struct hid_device *hid)
 {
 	struct hid_input *hidinput = list_entry(hid->inputs.next, struct hid_input, list);
+<<<<<<< HEAD
 	struct input_dev *dev = hidinput->input;
 	struct lg4ff_device_entry *entry;
 	struct usb_device_descriptor *udesc;
@@ -388,12 +432,44 @@ int lg4ff_init(struct hid_device *hid)
 	/* Set supported force feedback capabilities */
 	for (j = 0; lg4ff_devices[i].ff_effects[j] >= 0; j++)
 		set_bit(lg4ff_devices[i].ff_effects[j], dev->ffbit);
+=======
+	struct list_head *report_list = &hid->report_enum[HID_OUTPUT_REPORT].report_list;
+	struct input_dev *dev = hidinput->input;
+	struct hid_report *report;
+	struct hid_field *field;
+	const signed short *ff_bits = ff4_wheel_ac;
+	int error;
+	int i;
+
+	/* Find the report to use */
+	if (list_empty(report_list)) {
+		hid_err(hid, "No output report found\n");
+		return -1;
+	}
+
+	/* Check that the report looks ok */
+	report = list_entry(report_list->next, struct hid_report, list);
+	if (!report) {
+		hid_err(hid, "NULL output report\n");
+		return -1;
+	}
+
+	field = report->field[0];
+	if (!field) {
+		hid_err(hid, "NULL field\n");
+		return -1;
+	}
+
+	for (i = 0; ff_bits[i] >= 0; i++)
+		set_bit(ff_bits[i], dev->ffbit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	error = input_ff_create_memless(dev, NULL, hid_lg4ff_play);
 
 	if (error)
 		return error;
 
+<<<<<<< HEAD
 	/* Check if autocentering is available and
 	 * set the centering force to zero by default */
 	if (test_bit(FF_AUTOCENTER, dev->ffbit)) {
@@ -438,11 +514,16 @@ int lg4ff_init(struct hid_device *hid)
 	entry->range = entry->max_range;
 	if (entry->set_range != NULL)
 		entry->set_range(hid, entry->range);
+=======
+	if (test_bit(FF_AUTOCENTER, dev->ffbit))
+		dev->ff->set_autocenter = hid_lg4ff_set_autocenter;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hid_info(hid, "Force feedback for Logitech Speed Force Wireless by Simon Wood <simon@mungewell.org>\n");
 	return 0;
 }
 
+<<<<<<< HEAD
 int lg4ff_deinit(struct hid_device *hid)
 {
 	bool found = 0;
@@ -468,3 +549,5 @@ int lg4ff_deinit(struct hid_device *hid)
 	dbg_hid("Device successfully unregistered\n");
 	return 0;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

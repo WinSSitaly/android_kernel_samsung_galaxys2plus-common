@@ -269,4 +269,23 @@ static struct usb_driver usb_acecad_driver = {
 	.id_table =	usb_acecad_id_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(usb_acecad_driver);
+=======
+static int __init usb_acecad_init(void)
+{
+	int result = usb_register(&usb_acecad_driver);
+	if (result == 0)
+		printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_VERSION ":"
+		       DRIVER_DESC "\n");
+	return result;
+}
+
+static void __exit usb_acecad_exit(void)
+{
+	usb_deregister(&usb_acecad_driver);
+}
+
+module_init(usb_acecad_init);
+module_exit(usb_acecad_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

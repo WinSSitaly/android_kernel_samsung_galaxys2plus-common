@@ -23,6 +23,10 @@
 #include <asm/asm-offsets.h>
 #include <asm/setup.h>
 #include <asm/fpu.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <asm/pgtable.h>
 #include <asm/siginfo.h>

@@ -64,11 +64,19 @@ static struct mtd_info *map_ram_probe(struct map_info *map)
 	mtd->name = map->name;
 	mtd->type = MTD_RAM;
 	mtd->size = map->size;
+<<<<<<< HEAD
 	mtd->_erase = mapram_erase;
 	mtd->_get_unmapped_area = mapram_unmapped_area;
 	mtd->_read = mapram_read;
 	mtd->_write = mapram_write;
 	mtd->_sync = mapram_nop;
+=======
+	mtd->erase = mapram_erase;
+	mtd->get_unmapped_area = mapram_unmapped_area;
+	mtd->read = mapram_read;
+	mtd->write = mapram_write;
+	mtd->sync = mapram_nop;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mtd->flags = MTD_CAP_RAM;
 	mtd->writesize = 1;
 
@@ -122,10 +130,21 @@ static int mapram_erase (struct mtd_info *mtd, struct erase_info *instr)
 	unsigned long i;
 
 	allff = map_word_ff(map);
+<<<<<<< HEAD
 	for (i=0; i<instr->len; i += map_bankwidth(map))
 		map_write(map, allff, instr->addr + i);
 	instr->state = MTD_ERASE_DONE;
 	mtd_erase_callback(instr);
+=======
+
+	for (i=0; i<instr->len; i += map_bankwidth(map))
+		map_write(map, allff, instr->addr + i);
+
+	instr->state = MTD_ERASE_DONE;
+
+	mtd_erase_callback(instr);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

@@ -43,6 +43,7 @@ struct bfa_port_s {
 	bfa_port_endis_cbfn_t		endis_cbfn;
 	void				*endis_cbarg;
 	bfa_status_t			endis_status;
+<<<<<<< HEAD
 	struct bfa_ioc_notify_s		ioc_notify;
 	bfa_boolean_t			pbc_disabled;
 	struct bfa_mem_dma_s		port_dma;
@@ -53,6 +54,14 @@ struct bfa_port_s {
 void	     bfa_port_attach(struct bfa_port_s *port, struct bfa_ioc_s *ioc,
 				void *dev, struct bfa_trc_mod_s *trcmod);
 void	bfa_port_notify(void *arg, enum bfa_ioc_event_e event);
+=======
+	struct bfa_ioc_hbfail_notify_s	hbfail;
+};
+
+void	     bfa_port_attach(struct bfa_port_s *port, struct bfa_ioc_s *ioc,
+				void *dev, struct bfa_trc_mod_s *trcmod);
+void	     bfa_port_hbfail(void *arg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 bfa_status_t bfa_port_get_stats(struct bfa_port_s *port,
 				 union bfa_port_stats_u *stats,
@@ -66,6 +75,7 @@ bfa_status_t bfa_port_disable(struct bfa_port_s *port,
 u32     bfa_port_meminfo(void);
 void	     bfa_port_mem_claim(struct bfa_port_s *port,
 				 u8 *dma_kva, u64 dma_pa);
+<<<<<<< HEAD
 
 /*
  * CEE declaration
@@ -120,4 +130,6 @@ bfa_status_t	bfa_cee_get_stats(struct bfa_cee_s *cee,
 bfa_status_t	bfa_cee_reset_stats(struct bfa_cee_s *cee,
 				bfa_cee_reset_stats_cbfn_t cbfn, void *cbarg);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* __BFA_PORT_H__ */

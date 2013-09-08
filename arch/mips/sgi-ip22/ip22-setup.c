@@ -26,6 +26,12 @@
 #include <asm/sgi/hpc3.h>
 #include <asm/sgi/ip22.h>
 
+<<<<<<< HEAD
+=======
+unsigned long sgi_gfxaddr;
+EXPORT_SYMBOL_GPL(sgi_gfxaddr);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void ip22_be_init(void) __init;
 
 void __init plat_mem_setup(void)
@@ -75,4 +81,25 @@ void __init plat_mem_setup(void)
 		prom_flags |= PROM_FLAG_USE_AS_CONSOLE;
 		add_preferred_console("arc", 0, NULL);
 	}
+<<<<<<< HEAD
+=======
+
+#if defined(CONFIG_VT) && defined(CONFIG_SGI_NEWPORT_CONSOLE)
+	{
+		ULONG *gfxinfo;
+		ULONG * (*__vec)(void) = (void *) (long)
+			*((_PULONG *)(long)((PROMBLOCK)->pvector + 0x20));
+
+		gfxinfo = __vec();
+		sgi_gfxaddr = ((gfxinfo[1] >= 0xa0000000
+			       && gfxinfo[1] <= 0xc0000000)
+			       ? gfxinfo[1] - 0xa0000000 : 0);
+
+		/* newport addresses? */
+		if (sgi_gfxaddr == 0x1f0f0000 || sgi_gfxaddr == 0x1f4f0000) {
+			conswitchp = &newport_con;
+		}
+	}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

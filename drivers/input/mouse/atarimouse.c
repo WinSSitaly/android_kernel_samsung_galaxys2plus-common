@@ -47,6 +47,10 @@
 
 #include <asm/irq.h>
 #include <asm/setup.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <asm/atarihw.h>
 #include <asm/atarikb.h>

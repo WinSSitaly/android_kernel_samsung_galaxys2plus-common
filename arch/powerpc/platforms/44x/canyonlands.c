@@ -55,7 +55,11 @@ static int __init ppc460ex_probe(void)
 {
 	unsigned long root = of_get_flat_dt_root();
 	if (of_flat_dt_is_compatible(root, "amcc,canyonlands")) {
+<<<<<<< HEAD
 		pci_set_flags(PCI_REASSIGN_ALL_RSRC);
+=======
+		ppc_pci_set_flags(PPC_PCI_REASSIGN_ALL_RSRC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 		}
 	return 0;

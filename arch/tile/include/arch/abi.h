@@ -15,6 +15,7 @@
 /**
  * @file
  *
+<<<<<<< HEAD
  * ABI-related register definitions.
  */
 
@@ -87,6 +88,15 @@ typedef __int_reg_t int_reg_t;
 /** Number of bits in a register. */
 #define INT_REG_BITS __INT_REG_BITS
 
+=======
+ * ABI-related register definitions helpful when writing assembly code.
+ */
+
+#ifndef __ARCH_ABI_H__
+#define __ARCH_ABI_H__
+
+#include <arch/chip.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Registers 0 - 55 are "normal", but some perform special roles. */
 
@@ -124,7 +134,11 @@ typedef __int_reg_t int_reg_t;
  * The ABI requires callers to allocate a caller state save area of
  * this many bytes at the bottom of each stack frame.
  */
+<<<<<<< HEAD
 #define C_ABI_SAVE_AREA_SIZE (2 * (INT_REG_BITS / 8))
+=======
+#define C_ABI_SAVE_AREA_SIZE (2 * (CHIP_WORD_SIZE() / 8))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * The operand to an 'info' opcode directing the backtracer to not
@@ -132,10 +146,38 @@ typedef __int_reg_t int_reg_t;
  */
 #define INFO_OP_CANNOT_BACKTRACE 2
 
+<<<<<<< HEAD
 
 #endif /* !__need_int_reg_t */
 
 /* Make sure we later can get all the definitions and declarations.  */
 #undef __need_int_reg_t
+=======
+#ifndef __ASSEMBLER__
+#if CHIP_WORD_SIZE() > 32
+
+/** Unsigned type that can hold a register. */
+typedef unsigned long long uint_reg_t;
+
+/** Signed type that can hold a register. */
+typedef long long int_reg_t;
+
+/** String prefix to use for printf(). */
+#define INT_REG_FMT "ll"
+
+#elif !defined(__LP64__)   /* avoid confusion with LP64 cross-build tools */
+
+/** Unsigned type that can hold a register. */
+typedef unsigned long uint_reg_t;
+
+/** Signed type that can hold a register. */
+typedef long int_reg_t;
+
+/** String prefix to use for printf(). */
+#define INT_REG_FMT "l"
+
+#endif
+#endif /* __ASSEMBLER__ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* !__ARCH_ABI_H__ */

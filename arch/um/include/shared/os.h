@@ -10,6 +10,10 @@
 #include "irq_user.h"
 #include "longjmp.h"
 #include "mm_id.h"
+<<<<<<< HEAD
+=======
+#include "sysdep/tls.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define CATCH_EINTR(expr) while ((errno = 0, ((expr) < 0)) && (errno == EINTR))
 
@@ -202,6 +206,15 @@ extern int os_drop_memory(void *addr, int length);
 extern int can_drop_memory(void);
 extern void os_flush_stdout(void);
 
+<<<<<<< HEAD
+=======
+/* uaccess.c */
+extern unsigned long __do_user_copy(void *to, const void *from, int n,
+				    void **fault_addr, jmp_buf **fault_catcher,
+				    void (*op)(void *to, const void *from,
+					       int n), int *faulted_out);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* execvp.c */
 extern int execvp_noalloc(char *buf, const char *file, char *const argv[]);
 /* helper.c */
@@ -211,6 +224,13 @@ extern int run_helper_thread(int (*proc)(void *), void *arg,
 extern int helper_wait(int pid);
 
 
+<<<<<<< HEAD
+=======
+/* tls.c */
+extern int os_set_thread_area(user_desc_t *info, int pid);
+extern int os_get_thread_area(user_desc_t *info, int pid);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* umid.c */
 extern int umid_file_name(char *name, char *buf, int len);
 extern int set_umid(char *name);
@@ -220,7 +240,11 @@ extern char *get_umid(void);
 extern void timer_init(void);
 extern void set_sigstack(void *sig_stack, int size);
 extern void remove_sigstack(void);
+<<<<<<< HEAD
 extern void set_handler(int sig);
+=======
+extern void set_handler(int sig, void (*handler)(int), int flags, ...);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int change_sig(int signal, int on);
 extern void block_signals(void);
 extern void unblock_signals(void);

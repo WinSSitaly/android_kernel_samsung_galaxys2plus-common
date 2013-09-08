@@ -25,9 +25,17 @@
 
 struct aa_profile;
 
+<<<<<<< HEAD
 extern const char *const audit_mode_names[];
 #define AUDIT_MAX_INDEX 5
 
+=======
+extern const char *audit_mode_names[];
+#define AUDIT_MAX_INDEX 5
+
+#define AUDIT_APPARMOR_AUTO 0	/* auto choose audit message type */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum audit_mode {
 	AUDIT_NORMAL,		/* follow normal auditing of accesses */
 	AUDIT_QUIET_DENIED,	/* quiet all denied access messages */
@@ -43,11 +51,18 @@ enum audit_type {
 	AUDIT_APPARMOR_HINT,
 	AUDIT_APPARMOR_STATUS,
 	AUDIT_APPARMOR_ERROR,
+<<<<<<< HEAD
 	AUDIT_APPARMOR_KILL,
 	AUDIT_APPARMOR_AUTO
 };
 
 extern const char *const op_table[];
+=======
+	AUDIT_APPARMOR_KILL
+};
+
+extern const char *op_table[];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum aa_ops {
 	OP_NULL,
 
@@ -103,6 +118,7 @@ enum aa_ops {
 };
 
 
+<<<<<<< HEAD
 struct apparmor_audit_data {
 	int error;
 	int op;
@@ -130,6 +146,9 @@ struct apparmor_audit_data {
 };
 
 /* define a short hand for apparmor_audit_data structure */
+=======
+/* define a short hand for apparmor_audit_data portion of common_audit_data */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define aad apparmor_audit_data
 
 void aa_audit_msg(int type, struct common_audit_data *sa,

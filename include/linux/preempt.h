@@ -27,6 +27,7 @@
 
 asmlinkage void preempt_schedule(void);
 
+<<<<<<< HEAD
 #define preempt_check_resched() \
 do { \
 	if (unlikely(test_thread_flag(TIF_NEED_RESCHED))) \
@@ -42,19 +43,33 @@ do { \
 
 #ifdef CONFIG_PREEMPT_COUNT
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define preempt_disable() \
 do { \
 	inc_preempt_count(); \
 	barrier(); \
 } while (0)
 
+<<<<<<< HEAD
 #define sched_preempt_enable_no_resched() \
+=======
+#define preempt_enable_no_resched() \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 do { \
 	barrier(); \
 	dec_preempt_count(); \
 } while (0)
 
+<<<<<<< HEAD
 #define preempt_enable_no_resched()	sched_preempt_enable_no_resched()
+=======
+#define preempt_check_resched() \
+do { \
+	if (unlikely(test_thread_flag(TIF_NEED_RESCHED))) \
+		preempt_schedule(); \
+} while (0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define preempt_enable() \
 do { \
@@ -91,6 +106,7 @@ do { \
 	preempt_check_resched(); \
 } while (0)
 
+<<<<<<< HEAD
 #else /* !CONFIG_PREEMPT_COUNT */
 
 /*
@@ -109,6 +125,20 @@ do { \
 #define preempt_enable_notrace()		barrier()
 
 #endif /* CONFIG_PREEMPT_COUNT */
+=======
+#else
+
+#define preempt_disable()		do { } while (0)
+#define preempt_enable_no_resched()	do { } while (0)
+#define preempt_enable()		do { } while (0)
+#define preempt_check_resched()		do { } while (0)
+
+#define preempt_disable_notrace()		do { } while (0)
+#define preempt_enable_no_resched_notrace()	do { } while (0)
+#define preempt_enable_notrace()		do { } while (0)
+
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_PREEMPT_NOTIFIERS
 

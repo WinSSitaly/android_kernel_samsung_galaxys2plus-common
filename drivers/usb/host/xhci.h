@@ -206,8 +206,13 @@ struct xhci_op_regs {
 /* bits 12:31 are reserved (and should be preserved on writes). */
 
 /* IMAN - Interrupt Management Register */
+<<<<<<< HEAD
 #define IMAN_IE		(1 << 1)
 #define IMAN_IP		(1 << 0)
+=======
+#define IMAN_IP		(1 << 1)
+#define IMAN_IE		(1 << 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* USBSTS - USB status - status bitmasks */
 /* HC not running - set to 1 when run/stop bit is cleared. */
@@ -276,7 +281,10 @@ struct xhci_op_regs {
  */
 #define PORT_PLS_MASK	(0xf << 5)
 #define XDEV_U0		(0x0 << 5)
+<<<<<<< HEAD
 #define XDEV_U2		(0x2 << 5)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define XDEV_U3		(0x3 << 5)
 #define XDEV_RESUME	(0xf << 5)
 /* true: port has power (see HCC_PPC) */
@@ -341,11 +349,15 @@ struct xhci_op_regs {
 #define PORT_PLC	(1 << 22)
 /* port configure error change - port failed to configure its link partner */
 #define PORT_CEC	(1 << 23)
+<<<<<<< HEAD
 /* Cold Attach Status - xHC can set this bit to report device attached during
  * Sx state. Warm port reset should be perfomed to clear this bit and move port
  * to connected state.
  */
 #define PORT_CAS	(1 << 24)
+=======
+/* bit 24 reserved */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* wake on connect (enable) */
 #define PORT_WKCONN_E	(1 << 25)
 /* wake on disconnect (enable) */
@@ -371,6 +383,7 @@ struct xhci_op_regs {
 /* Bits 24:31 for port testing */
 
 /* USB2 Protocol PORTSPMSC */
+<<<<<<< HEAD
 #define	PORT_L1S_MASK		7
 #define	PORT_L1S_SUCCESS	1
 #define	PORT_RWE		(1 << 3)
@@ -378,6 +391,9 @@ struct xhci_op_regs {
 #define	PORT_HIRD_MASK		(0xf << 4)
 #define	PORT_L1DS(p)		(((p) & 0xff) << 8)
 #define	PORT_HLE		(1 << 16)
+=======
+#define PORT_RWE	(1 << 0x3)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * struct xhci_intr_reg - Interrupt Register Set
@@ -626,13 +642,19 @@ struct xhci_ep_ctx {
 #define EP_STATE_ERROR		4
 /* Mult - Max number of burtst within an interval, in EP companion desc. */
 #define EP_MULT(p)		(((p) & 0x3) << 8)
+<<<<<<< HEAD
 #define CTX_TO_EP_MULT(p)	(((p) >> 8) & 0x3)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* bits 10:14 are Max Primary Streams */
 /* bit 15 is Linear Stream Array */
 /* Interval - period between requests to an endpoint - 125u increments. */
 #define EP_INTERVAL(p)		(((p) & 0xff) << 16)
 #define EP_INTERVAL_TO_UFRAMES(p)		(1 << (((p) >> 16) & 0xff))
+<<<<<<< HEAD
 #define CTX_TO_EP_INTERVAL(p)	(((p) >> 16) & 0xff)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define EP_MAXPSTREAMS_MASK	(0x1f << 10)
 #define EP_MAXPSTREAMS(p)	(((p) << 10) & EP_MAXPSTREAMS_MASK)
 /* Endpoint is set up with a Linear Stream Array (vs. Secondary Stream Array) */
@@ -657,7 +679,10 @@ struct xhci_ep_ctx {
 /* bit 6 reserved */
 /* bit 7 is Host Initiate Disable - for disabling stream selection */
 #define MAX_BURST(p)	(((p)&0xff) << 8)
+<<<<<<< HEAD
 #define CTX_TO_MAX_BURST(p)	(((p) >> 8) & 0xff)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MAX_PACKET(p)	(((p)&0xffff) << 16)
 #define MAX_PACKET_MASK		(0xffff << 16)
 #define MAX_PACKET_DECODED(p)	(((p) >> 16) & 0xffff)
@@ -670,7 +695,10 @@ struct xhci_ep_ctx {
 /* tx_info bitmasks */
 #define AVG_TRB_LENGTH_FOR_EP(p)	((p) & 0xffff)
 #define MAX_ESIT_PAYLOAD_FOR_EP(p)	(((p) & 0xffff) << 16)
+<<<<<<< HEAD
 #define CTX_TO_MAX_ESIT_PAYLOAD(p)	(((p) >> 16) & 0xffff)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* deq bitmasks */
 #define EP_CTX_CYCLE_MASK		(1 << 0)
@@ -689,11 +717,14 @@ struct xhci_input_control_ctx {
 	__le32	rsvd2[6];
 };
 
+<<<<<<< HEAD
 #define	EP_IS_ADDED(ctrl_ctx, i) \
 	(le32_to_cpu(ctrl_ctx->add_flags) & (1 << (i + 1)))
 #define	EP_IS_DROPPED(ctrl_ctx, i)       \
 	(le32_to_cpu(ctrl_ctx->drop_flags) & (1 << (i + 1)))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Represents everything that is needed to issue a command on the command ring.
  * It's useful to pre-allocate these for commands that cannot fail due to
  * out-of-memory errors, like freeing streams.
@@ -755,6 +786,7 @@ struct xhci_stream_info {
 #define	SMALL_STREAM_ARRAY_SIZE		256
 #define	MEDIUM_STREAM_ARRAY_SIZE	1024
 
+<<<<<<< HEAD
 /* Some Intel xHCI host controllers need software to keep track of the bus
  * bandwidth.  Keep track of endpoint info here.  Each root port is allocated
  * the full bus bandwidth.  We must also treat TTs (including each port under a
@@ -816,6 +848,8 @@ struct xhci_bw_info {
 #define HS_BW_RESERVED		20
 #define SS_BW_RESERVED		10
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct xhci_virt_ep {
 	struct xhci_ring		*ring;
 	/* Related to endpoints that are configured to use stream IDs only */
@@ -857,6 +891,7 @@ struct xhci_virt_ep {
 	 * process the missed tds on the endpoint ring.
 	 */
 	bool			skip;
+<<<<<<< HEAD
 	/* Bandwidth checking storage */
 	struct xhci_bw_info	bw_info;
 	struct list_head	bw_endpoint_list;
@@ -890,6 +925,10 @@ struct xhci_interval_bw_table {
 };
 
 
+=======
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct xhci_virt_device {
 	struct usb_device		*udev;
 	/*
@@ -914,6 +953,7 @@ struct xhci_virt_device {
 	/* Status of the last command issued for this device */
 	u32				cmd_status;
 	struct list_head		cmd_list;
+<<<<<<< HEAD
 	u8				fake_port;
 	u8				real_port;
 	struct xhci_interval_bw_table	*bw_table;
@@ -940,6 +980,9 @@ struct xhci_tt_bw_info {
 	int				ttport;
 	struct xhci_interval_bw_table	bw_table;
 	int				active_eps;
+=======
+	u8				port;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -968,10 +1011,13 @@ struct xhci_transfer_event {
 	__le32	flags;
 };
 
+<<<<<<< HEAD
 /* Transfer event TRB length bit mask */
 /* bits 0:23 */
 #define	EVENT_TRB_LEN(p)		((p) & 0xffffff)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /** Transfer Event bit fields **/
 #define	TRB_TO_EP_ID(p)	(((p) >> 16) & 0x1f)
 
@@ -1216,6 +1262,7 @@ union xhci_trb {
 /* Get NEC firmware revision. */
 #define	TRB_NEC_GET_FW		49
 
+<<<<<<< HEAD
 #define TRB_TYPE_LINK(x)	(((x) & TRB_TYPE_BITMASK) == TRB_TYPE(TRB_LINK))
 /* Above, but for __le32 types -- can avoid work by swapping constants: */
 #define TRB_TYPE_LINK_LE32(x)	(((x) & cpu_to_le32(TRB_TYPE_BITMASK)) == \
@@ -1223,6 +1270,8 @@ union xhci_trb {
 #define TRB_TYPE_NOOP_LE32(x)	(((x) & cpu_to_le32(TRB_TYPE_BITMASK)) == \
 				 cpu_to_le32(TRB_TYPE(TRB_TR_NOOP)))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NEC_FW_MINOR(p)		(((p) >> 0) & 0xff)
 #define NEC_FW_MAJOR(p)		(((p) >> 8) & 0xff)
 
@@ -1235,7 +1284,14 @@ union xhci_trb {
 /* Allow two commands + a link TRB, along with any reserved command TRBs */
 #define MAX_RSVD_CMD_TRBS	(TRBS_PER_SEGMENT - 3)
 #define SEGMENT_SIZE		(TRBS_PER_SEGMENT*16)
+<<<<<<< HEAD
 #define SEGMENT_SHIFT		(__ffs(SEGMENT_SIZE))
+=======
+/* SEGMENT_SHIFT should be log2(SEGMENT_SIZE).
+ * Change this if you change TRBS_PER_SEGMENT!
+ */
+#define SEGMENT_SHIFT		10
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* TRB buffer pointers can't cross 64KB boundaries */
 #define TRB_MAX_BUFF_SHIFT		16
 #define TRB_MAX_BUFF_SIZE	(1 << TRB_MAX_BUFF_SHIFT)
@@ -1256,6 +1312,7 @@ struct xhci_td {
 	union xhci_trb		*last_trb;
 };
 
+<<<<<<< HEAD
 /* xHCI command default timeout value */
 #define XHCI_CMD_DEFAULT_TIMEOUT	(5 * HZ)
 
@@ -1266,12 +1323,15 @@ struct xhci_cd {
 	union xhci_trb		*cmd_trb;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct xhci_dequeue_state {
 	struct xhci_segment *new_deq_seg;
 	union xhci_trb *new_deq_ptr;
 	int new_cycle_state;
 };
 
+<<<<<<< HEAD
 enum xhci_ring_type {
 	TYPE_CTRL = 0,
 	TYPE_ISOC,
@@ -1285,6 +1345,10 @@ enum xhci_ring_type {
 struct xhci_ring {
 	struct xhci_segment	*first_seg;
 	struct xhci_segment	*last_seg;
+=======
+struct xhci_ring {
+	struct xhci_segment	*first_seg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	union  xhci_trb		*enqueue;
 	struct xhci_segment	*enq_seg;
 	unsigned int		enq_updates;
@@ -1299,10 +1363,13 @@ struct xhci_ring {
 	 */
 	u32			cycle_state;
 	unsigned int		stream_id;
+<<<<<<< HEAD
 	unsigned int		num_segs;
 	unsigned int		num_trbs_free;
 	unsigned int		num_trbs_free_temp;
 	enum xhci_ring_type	type;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool			last_td_was_short;
 };
 
@@ -1364,12 +1431,15 @@ struct s3_save {
 	u64	erst_dequeue;
 };
 
+<<<<<<< HEAD
 /* Use for lpm */
 struct dev_info {
 	u32			dev_id;
 	struct	list_head	list;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct xhci_bus_state {
 	unsigned long		bus_suspended;
 	unsigned long		next_statechange;
@@ -1378,10 +1448,14 @@ struct xhci_bus_state {
 	/* ports suspend status arrays - max 31 ports for USB2, 15 for USB3 */
 	u32			port_c_suspend;
 	u32			suspended_ports;
+<<<<<<< HEAD
 	u32			port_remote_wakeup;
 	unsigned long		resume_done[USB_MAXCHILDREN];
 	/* which ports have started to resume */
 	unsigned long		resuming_ports;
+=======
+	unsigned long		resume_done[USB_MAXCHILDREN];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline unsigned int hcd_index(struct usb_hcd *hcd)
@@ -1392,7 +1466,11 @@ static inline unsigned int hcd_index(struct usb_hcd *hcd)
 		return 1;
 }
 
+<<<<<<< HEAD
 /* There is one xhci_hcd structure per controller */
+=======
+/* There is one ehci_hci structure per controller */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct xhci_hcd {
 	struct usb_hcd *main_hcd;
 	struct usb_hcd *shared_hcd;
@@ -1431,26 +1509,35 @@ struct xhci_hcd {
 	/* data structures */
 	struct xhci_device_context_array *dcbaa;
 	struct xhci_ring	*cmd_ring;
+<<<<<<< HEAD
 	unsigned int            cmd_ring_state;
 #define CMD_RING_STATE_RUNNING         (1 << 0)
 #define CMD_RING_STATE_ABORTED         (1 << 1)
 #define CMD_RING_STATE_STOPPED         (1 << 2)
 	struct list_head        cancel_cmd_list;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int		cmd_ring_reserved_trbs;
 	struct xhci_ring	*event_ring;
 	struct xhci_erst	erst;
 	/* Scratchpad */
 	struct xhci_scratchpad  *scratchpad;
+<<<<<<< HEAD
 	/* Store LPM test failed devices' information */
 	struct list_head	lpm_failed_devs;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* slot enabling and address device helpers */
 	struct completion	addr_dev;
 	int slot_id;
 	/* Internal mirror of the HW's dcbaa */
 	struct xhci_virt_device	*devs[MAX_HC_SLOTS];
+<<<<<<< HEAD
 	/* For keeping track of bandwidth domains per roothub. */
 	struct xhci_root_port_bw_info	*rh_bw;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* DMA pools */
 	struct dma_pool	*device_pool;
@@ -1502,6 +1589,7 @@ struct xhci_hcd {
 #define XHCI_EP_LIMIT_QUIRK	(1 << 5)
 #define XHCI_BROKEN_MSI		(1 << 6)
 #define XHCI_RESET_ON_RESUME	(1 << 7)
+<<<<<<< HEAD
 #define	XHCI_SW_BW_CHECKING	(1 << 8)
 #define XHCI_AMD_0x96_HOST	(1 << 9)
 #define XHCI_TRUST_TX_LENGTH	(1 << 10)
@@ -1509,6 +1597,9 @@ struct xhci_hcd {
 #define XHCI_COMP_MODE_QUIRK	(1 << 14)
 #define XHCI_AVOID_BEI		(1 << 15)
 #define XHCI_PLAT		(1 << 16)
+=======
+#define XHCI_AMD_0x96_HOST	(1 << 9)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int		num_active_eps;
 	unsigned int		limit_active_eps;
 	/* There are two roothubs to keep track of bus suspend info for */
@@ -1521,6 +1612,7 @@ struct xhci_hcd {
 	/* Array of pointers to USB 2.0 PORTSC registers */
 	__le32 __iomem		**usb2_ports;
 	unsigned int		num_usb2_ports;
+<<<<<<< HEAD
 	/* support xHCI 0.96 spec USB2 software LPM */
 	unsigned		sw_lpm_support:1;
 	/* support xHCI 1.0 spec USB2 hardware LPM */
@@ -1530,6 +1622,8 @@ struct xhci_hcd {
 	u32			port_status_u0;
 /* Compliance Mode Timer Triggered every 2 seconds */
 #define COMP_MODE_RCVRY_MSECS 2000
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* convert between an HCD pointer and the corresponding EHCI_HCD */
@@ -1601,7 +1695,13 @@ static inline void xhci_write_64(struct xhci_hcd *xhci,
 
 static inline int xhci_link_trb_quirk(struct xhci_hcd *xhci)
 {
+<<<<<<< HEAD
 	return xhci->quirks & XHCI_LINK_TRB_QUIRK;
+=======
+	u32 temp = xhci_readl(xhci, &xhci->cap_regs->hc_capbase);
+	return ((HC_VERSION(temp) == 0x95) &&
+			(xhci->quirks & XHCI_LINK_TRB_QUIRK));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* xHCI debugging */
@@ -1636,6 +1736,7 @@ unsigned int xhci_get_endpoint_flag(struct usb_endpoint_descriptor *desc);
 unsigned int xhci_get_endpoint_flag_from_index(unsigned int ep_index);
 unsigned int xhci_last_valid_endpoint(u32 added_ctxs);
 void xhci_endpoint_zero(struct xhci_hcd *xhci, struct xhci_virt_device *virt_dev, struct usb_host_endpoint *ep);
+<<<<<<< HEAD
 void xhci_drop_ep_from_interval_table(struct xhci_hcd *xhci,
 		struct xhci_bw_info *ep_bw,
 		struct xhci_interval_bw_table *bw_table,
@@ -1650,6 +1751,8 @@ void xhci_update_bw_info(struct xhci_hcd *xhci,
 		struct xhci_container_ctx *in_ctx,
 		struct xhci_input_control_ctx *ctrl_ctx,
 		struct xhci_virt_device *virt_dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void xhci_endpoint_copy(struct xhci_hcd *xhci,
 		struct xhci_container_ctx *in_ctx,
 		struct xhci_container_ctx *out_ctx,
@@ -1661,8 +1764,11 @@ int xhci_endpoint_init(struct xhci_hcd *xhci, struct xhci_virt_device *virt_dev,
 		struct usb_device *udev, struct usb_host_endpoint *ep,
 		gfp_t mem_flags);
 void xhci_ring_free(struct xhci_hcd *xhci, struct xhci_ring *ring);
+<<<<<<< HEAD
 int xhci_ring_expansion(struct xhci_hcd *xhci, struct xhci_ring *ring,
 				unsigned int num_trbs, gfp_t flags);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void xhci_free_or_cache_endpoint_ring(struct xhci_hcd *xhci,
 		struct xhci_virt_device *virt_dev,
 		unsigned int ep_index);
@@ -1697,6 +1803,7 @@ void xhci_free_command(struct xhci_hcd *xhci,
 /* xHCI PCI glue */
 int xhci_register_pci(void);
 void xhci_unregister_pci(void);
+<<<<<<< HEAD
 #else
 static inline int xhci_register_pci(void) { return 0; }
 static inline void xhci_unregister_pci(void) {}
@@ -1717,6 +1824,11 @@ static inline void xhci_unregister_plat(void)
 typedef void (*xhci_get_quirks_t)(struct device *, struct xhci_hcd *);
 int handshake(struct xhci_hcd *xhci, void __iomem *ptr,
 		u32 mask, u32 done, int usec);
+=======
+#endif
+
+/* xHCI host controller glue */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void xhci_quiesce(struct xhci_hcd *xhci);
 int xhci_halt(struct xhci_hcd *xhci);
 int xhci_reset(struct xhci_hcd *xhci);
@@ -1724,7 +1836,10 @@ int xhci_init(struct usb_hcd *hcd);
 int xhci_run(struct usb_hcd *hcd);
 void xhci_stop(struct usb_hcd *hcd);
 void xhci_shutdown(struct usb_hcd *hcd);
+<<<<<<< HEAD
 int xhci_gen_setup(struct usb_hcd *hcd, xhci_get_quirks_t get_quirks);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef	CONFIG_PM
 int xhci_suspend(struct xhci_hcd *xhci);
@@ -1739,10 +1854,13 @@ irqreturn_t xhci_irq(struct usb_hcd *hcd);
 irqreturn_t xhci_msi_irq(int irq, struct usb_hcd *hcd);
 int xhci_alloc_dev(struct usb_hcd *hcd, struct usb_device *udev);
 void xhci_free_dev(struct usb_hcd *hcd, struct usb_device *udev);
+<<<<<<< HEAD
 int xhci_alloc_tt_info(struct xhci_hcd *xhci,
 		struct xhci_virt_device *virt_dev,
 		struct usb_device *hdev,
 		struct usb_tt *tt, gfp_t mem_flags);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int xhci_alloc_streams(struct usb_hcd *hcd, struct usb_device *udev,
 		struct usb_host_endpoint **eps, unsigned int num_eps,
 		unsigned int num_streams, gfp_t mem_flags);
@@ -1750,9 +1868,12 @@ int xhci_free_streams(struct usb_hcd *hcd, struct usb_device *udev,
 		struct usb_host_endpoint **eps, unsigned int num_eps,
 		gfp_t mem_flags);
 int xhci_address_device(struct usb_hcd *hcd, struct usb_device *udev);
+<<<<<<< HEAD
 int xhci_update_device(struct usb_hcd *hcd, struct usb_device *udev);
 int xhci_set_usb2_hardware_lpm(struct usb_hcd *hcd,
 				struct usb_device *udev, int enable);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int xhci_update_hub_device(struct usb_hcd *hcd, struct usb_device *hdev,
 			struct usb_tt *tt, gfp_t mem_flags);
 int xhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flags);
@@ -1807,6 +1928,7 @@ void xhci_queue_config_ep_quirk(struct xhci_hcd *xhci,
 		unsigned int slot_id, unsigned int ep_index,
 		struct xhci_dequeue_state *deq_state);
 void xhci_stop_endpoint_command_watchdog(unsigned long arg);
+<<<<<<< HEAD
 int xhci_cancel_cmd(struct xhci_hcd *xhci, struct xhci_command *command,
 		union xhci_trb *cmd_trb);
 void xhci_ring_ep_doorbell(struct xhci_hcd *xhci, unsigned int slot_id,
@@ -1816,6 +1938,12 @@ union xhci_trb *xhci_find_next_enqueue(struct xhci_ring *ring);
 /* xHCI roothub code */
 void xhci_set_link_state(struct xhci_hcd *xhci, __le32 __iomem **port_array,
 				int port_id, u32 link_state);
+=======
+void xhci_ring_ep_doorbell(struct xhci_hcd *xhci, unsigned int slot_id,
+		unsigned int ep_index, unsigned int stream_id);
+
+/* xHCI roothub code */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void xhci_test_and_clear_bit(struct xhci_hcd *xhci, __le32 __iomem **port_array,
 				int port_id, u32 port_bit);
 int xhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue, u16 wIndex,

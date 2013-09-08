@@ -14,6 +14,10 @@
 #include <asm/pgtable.h>
 #include <asm/mce.h>
 #include <asm/nmi.h>
+<<<<<<< HEAD
+=======
+#include <asm/vsyscall.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/cacheflush.h>
 #include <asm/tlbflush.h>
 #include <asm/io.h>
@@ -160,7 +164,11 @@ static const unsigned char * const k7_nops[ASM_NOP_MAX+2] =
 #endif
 
 #ifdef P6_NOP1
+<<<<<<< HEAD
 static const unsigned char p6nops[] =
+=======
+static const unsigned char  __initconst_or_module p6nops[] =
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	P6_NOP1,
 	P6_NOP2,
@@ -219,7 +227,11 @@ void __init arch_init_ideal_nops(void)
 			ideal_nops = intel_nops;
 #endif
 		}
+<<<<<<< HEAD
 		break;
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 #ifdef CONFIG_X86_64
 		ideal_nops = k8_nops;
@@ -249,6 +261,10 @@ static void __init_or_module add_nops(void *insns, unsigned int len)
 
 extern struct alt_instr __alt_instructions[], __alt_instructions_end[];
 extern s32 __smp_locks[], __smp_locks_end[];
+<<<<<<< HEAD
+=======
+extern char __vsyscall_0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void *text_poke_early(void *addr, const void *opcode, size_t len);
 
 /* Replace instructions with better alternatives for this CPU type.
@@ -261,7 +277,10 @@ void __init_or_module apply_alternatives(struct alt_instr *start,
 					 struct alt_instr *end)
 {
 	struct alt_instr *a;
+<<<<<<< HEAD
 	u8 *instr, *replacement;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 insnbuf[MAX_PATCH_LEN];
 
 	DPRINTK("%s: alt table %p -> %p\n", __func__, start, end);
@@ -275,13 +294,18 @@ void __init_or_module apply_alternatives(struct alt_instr *start,
 	 * order.
 	 */
 	for (a = start; a < end; a++) {
+<<<<<<< HEAD
 		instr = (u8 *)&a->instr_offset + a->instr_offset;
 		replacement = (u8 *)&a->repl_offset + a->repl_offset;
+=======
+		u8 *instr = a->instr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		BUG_ON(a->replacementlen > a->instrlen);
 		BUG_ON(a->instrlen > sizeof(insnbuf));
 		BUG_ON(a->cpuid >= NCAPINTS*32);
 		if (!boot_cpu_has(a->cpuid))
 			continue;
+<<<<<<< HEAD
 
 		memcpy(insnbuf, replacement, a->replacementlen);
 
@@ -292,6 +316,21 @@ void __init_or_module apply_alternatives(struct alt_instr *start,
 		add_nops(insnbuf + a->replacementlen,
 			 a->instrlen - a->replacementlen);
 
+=======
+#ifdef CONFIG_X86_64
+		/* vsyscall code is not mapped yet. resolve it manually. */
+		if (instr >= (u8 *)VSYSCALL_START && instr < (u8*)VSYSCALL_END) {
+			instr = __va(instr - (u8*)VSYSCALL_START + (u8*)__pa_symbol(&__vsyscall_0));
+			DPRINTK("%s: vsyscall fixup: %p => %p\n",
+				__func__, a->instr, instr);
+		}
+#endif
+		memcpy(insnbuf, a->replacement, a->replacementlen);
+		if (*insnbuf == 0xe8 && a->replacementlen == 5)
+		    *(s32 *)(insnbuf + 1) += a->replacement - a->instr;
+		add_nops(insnbuf + a->replacementlen,
+			 a->instrlen - a->replacementlen);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		text_poke_early(instr, insnbuf, a->instrlen);
 	}
 }
@@ -738,5 +777,9 @@ void __kprobes text_poke_smp_batch(struct text_poke_param *params, int n)
 
 	atomic_set(&stop_machine_first, 1);
 	wrote_text = 0;
+<<<<<<< HEAD
 	__stop_machine(stop_machine_text_poke, (void *)&tpp, cpu_online_mask);
+=======
+	__stop_machine(stop_machine_text_poke, (void *)&tpp, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

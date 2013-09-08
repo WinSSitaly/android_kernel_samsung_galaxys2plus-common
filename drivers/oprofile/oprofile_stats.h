@@ -10,7 +10,11 @@
 #ifndef OPROFILE_STATS_H
 #define OPROFILE_STATS_H
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct oprofile_stat_struct {
 	atomic_t sample_lost_no_mm;

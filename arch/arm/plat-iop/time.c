@@ -18,10 +18,17 @@
 #include <linux/time.h>
 #include <linux/init.h>
 #include <linux/timex.h>
+<<<<<<< HEAD
 #include <linux/io.h>
 #include <linux/clocksource.h>
 #include <linux/clockchips.h>
 #include <linux/export.h>
+=======
+#include <linux/sched.h>
+#include <linux/io.h>
+#include <linux/clocksource.h>
+#include <linux/clockchips.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/hardware.h>
 #include <asm/irq.h>
 #include <asm/sched_clock.h>
@@ -51,12 +58,30 @@ static struct clocksource iop_clocksource = {
 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
 };
 
+<<<<<<< HEAD
 /*
  * IOP sched_clock() implementation via its clocksource.
  */
 static u32 notrace iop_read_sched_clock(void)
 {
 	return 0xffffffffu - read_tcr1();
+=======
+static DEFINE_CLOCK_DATA(cd);
+
+/*
+ * IOP sched_clock() implementation via its clocksource.
+ */
+unsigned long long notrace sched_clock(void)
+{
+	u32 cyc = 0xffffffffu - read_tcr1();
+	return cyc_to_sched_clock(&cd, cyc, (u32)~0);
+}
+
+static void notrace iop_update_sched_clock(void)
+{
+	u32 cyc = 0xffffffffu - read_tcr1();
+	update_sched_clock(&cd, cyc, (u32)~0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -142,7 +167,11 @@ void __init iop_init_time(unsigned long tick_rate)
 {
 	u32 timer_ctl;
 
+<<<<<<< HEAD
 	setup_sched_clock(iop_read_sched_clock, 32, tick_rate);
+=======
+	init_sched_clock(&cd, iop_update_sched_clock, 32, tick_rate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ticks_per_jiffy = DIV_ROUND_CLOSEST(tick_rate, HZ);
 	iop_tick_rate = tick_rate;

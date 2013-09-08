@@ -11,7 +11,11 @@
 #include <asm/traps.h>
 #include <asm/irq.h>
 #include <asm/io.h>
+<<<<<<< HEAD
 #include <asm/gpio-internal.h>
+=======
+#include <asm/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/regs306x.h>
 
 const int __initdata h8300_saved_vectors[] = {

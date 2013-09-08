@@ -3,7 +3,11 @@
  * Subsystem core
  *
  * Copyright 2005, Broadcom Corporation
+<<<<<<< HEAD
  * Copyright 2006, 2007, Michael Buesch <m@bues.ch>
+=======
+ * Copyright 2006, 2007, Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Licensed under the GNU/GPL. See COPYING for details.
  */
@@ -12,7 +16,10 @@
 
 #include <linux/delay.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ssb/ssb.h>
 #include <linux/ssb/ssb_regs.h>
 #include <linux/ssb/ssb_driver_gige.h>
@@ -140,6 +147,22 @@ static void ssb_device_put(struct ssb_device *dev)
 		put_device(dev->dev);
 }
 
+<<<<<<< HEAD
+=======
+static inline struct ssb_driver *ssb_driver_get(struct ssb_driver *drv)
+{
+	if (drv)
+		get_driver(&drv->drv);
+	return drv;
+}
+
+static inline void ssb_driver_put(struct ssb_driver *drv)
+{
+	if (drv)
+		put_driver(&drv->drv);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ssb_device_resume(struct device *dev)
 {
 	struct ssb_device *ssb_dev = dev_to_ssb_dev(dev);
@@ -237,9 +260,17 @@ int ssb_devices_freeze(struct ssb_bus *bus, struct ssb_freeze_context *ctx)
 			ssb_device_put(sdev);
 			continue;
 		}
+<<<<<<< HEAD
 		sdrv = drv_to_ssb_drv(sdev->dev->driver);
 		if (SSB_WARN_ON(!sdrv->remove))
 			continue;
+=======
+		sdrv = ssb_driver_get(drv_to_ssb_drv(sdev->dev->driver));
+		if (!sdrv || SSB_WARN_ON(!sdrv->remove)) {
+			ssb_device_put(sdev);
+			continue;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sdrv->remove(sdev);
 		ctx->device_frozen[i] = 1;
 	}
@@ -278,6 +309,10 @@ int ssb_devices_thaw(struct ssb_freeze_context *ctx)
 				   dev_name(sdev->dev));
 			result = err;
 		}
+<<<<<<< HEAD
+=======
+		ssb_driver_put(sdrv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ssb_device_put(sdev);
 	}
 
@@ -542,7 +577,11 @@ error:
 }
 
 /* Needs ssb_buses_lock() */
+<<<<<<< HEAD
 static int __devinit ssb_attach_queued_buses(void)
+=======
+static int ssb_attach_queued_buses(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ssb_bus *bus, *n;
 	int err = 0;
@@ -753,9 +792,15 @@ out:
 	return err;
 }
 
+<<<<<<< HEAD
 static int __devinit ssb_bus_register(struct ssb_bus *bus,
 				      ssb_invariants_func_t get_invariants,
 				      unsigned long baseaddr)
+=======
+static int ssb_bus_register(struct ssb_bus *bus,
+			    ssb_invariants_func_t get_invariants,
+			    unsigned long baseaddr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 
@@ -836,8 +881,13 @@ err_disable_xtal:
 }
 
 #ifdef CONFIG_SSB_PCIHOST
+<<<<<<< HEAD
 int __devinit ssb_bus_pcibus_register(struct ssb_bus *bus,
 				      struct pci_dev *host_pci)
+=======
+int ssb_bus_pcibus_register(struct ssb_bus *bus,
+			    struct pci_dev *host_pci)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 
@@ -860,9 +910,15 @@ EXPORT_SYMBOL(ssb_bus_pcibus_register);
 #endif /* CONFIG_SSB_PCIHOST */
 
 #ifdef CONFIG_SSB_PCMCIAHOST
+<<<<<<< HEAD
 int __devinit ssb_bus_pcmciabus_register(struct ssb_bus *bus,
 					 struct pcmcia_device *pcmcia_dev,
 					 unsigned long baseaddr)
+=======
+int ssb_bus_pcmciabus_register(struct ssb_bus *bus,
+			       struct pcmcia_device *pcmcia_dev,
+			       unsigned long baseaddr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 
@@ -882,9 +938,14 @@ EXPORT_SYMBOL(ssb_bus_pcmciabus_register);
 #endif /* CONFIG_SSB_PCMCIAHOST */
 
 #ifdef CONFIG_SSB_SDIOHOST
+<<<<<<< HEAD
 int __devinit ssb_bus_sdiobus_register(struct ssb_bus *bus,
 				       struct sdio_func *func,
 				       unsigned int quirks)
+=======
+int ssb_bus_sdiobus_register(struct ssb_bus *bus, struct sdio_func *func,
+			     unsigned int quirks)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 
@@ -904,9 +965,15 @@ int __devinit ssb_bus_sdiobus_register(struct ssb_bus *bus,
 EXPORT_SYMBOL(ssb_bus_sdiobus_register);
 #endif /* CONFIG_SSB_PCMCIAHOST */
 
+<<<<<<< HEAD
 int __devinit ssb_bus_ssbbus_register(struct ssb_bus *bus,
 				      unsigned long baseaddr,
 				      ssb_invariants_func_t get_invariants)
+=======
+int ssb_bus_ssbbus_register(struct ssb_bus *bus,
+			    unsigned long baseaddr,
+			    ssb_invariants_func_t get_invariants)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 
@@ -987,8 +1054,13 @@ u32 ssb_calc_clock_rate(u32 plltype, u32 n, u32 m)
 	switch (plltype) {
 	case SSB_PLLTYPE_6: /* 100/200 or 120/240 only */
 		if (m & SSB_CHIPCO_CLK_T6_MMASK)
+<<<<<<< HEAD
 			return SSB_CHIPCO_CLK_T6_M1;
 		return SSB_CHIPCO_CLK_T6_M0;
+=======
+			return SSB_CHIPCO_CLK_T6_M0;
+		return SSB_CHIPCO_CLK_T6_M1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SSB_PLLTYPE_1: /* 48Mhz base, 3 dividers */
 	case SSB_PLLTYPE_3: /* 25Mhz, 2 dividers */
 	case SSB_PLLTYPE_4: /* 48Mhz, 4 dividers */
@@ -1078,9 +1150,12 @@ u32 ssb_clockspeed(struct ssb_bus *bus)
 	u32 plltype;
 	u32 clkctl_n, clkctl_m;
 
+<<<<<<< HEAD
 	if (bus->chipco.capabilities & SSB_CHIPCO_CAP_PMU)
 		return ssb_pmu_get_controlclock(&bus->chipco);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ssb_extif_available(&bus->extif))
 		ssb_extif_get_clockcontrol(&bus->extif, &plltype,
 					   &clkctl_n, &clkctl_m);
@@ -1248,6 +1323,7 @@ void ssb_device_disable(struct ssb_device *dev, u32 core_specific_flags)
 }
 EXPORT_SYMBOL(ssb_device_disable);
 
+<<<<<<< HEAD
 /* Some chipsets need routing known for PCIe and 64-bit DMA */
 static bool ssb_dma_translation_special_bit(struct ssb_device *dev)
 {
@@ -1261,12 +1337,15 @@ static bool ssb_dma_translation_special_bit(struct ssb_device *dev)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u32 ssb_dma_translation(struct ssb_device *dev)
 {
 	switch (dev->bus->bustype) {
 	case SSB_BUSTYPE_SSB:
 		return 0;
 	case SSB_BUSTYPE_PCI:
+<<<<<<< HEAD
 		if (pci_is_pcie(dev->bus->host_pci) &&
 		    ssb_read32(dev, SSB_TMSHIGH) & SSB_TMSHIGH_DMA64) {
 			return SSB_PCIE_DMA_H32;
@@ -1276,6 +1355,9 @@ u32 ssb_dma_translation(struct ssb_device *dev)
 			else
 				return SSB_PCI_DMA;
 		}
+=======
+		return SSB_PCI_DMA;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		__ssb_dma_not_implemented(dev);
 	}

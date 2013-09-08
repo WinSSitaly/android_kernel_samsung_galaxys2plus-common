@@ -83,6 +83,7 @@ static struct notifier_block libfcoe_notifier = {
 	.notifier_call = libfcoe_device_notification,
 };
 
+<<<<<<< HEAD
 void __fcoe_get_lesb(struct fc_lport *lport,
 		     struct fc_els_lesb *fc_lesb,
 		     struct net_device *netdev)
@@ -184,6 +185,8 @@ int fcoe_get_wwn(struct net_device *netdev, u64 *wwn, int type)
 }
 EXPORT_SYMBOL_GPL(fcoe_get_wwn);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * fcoe_fc_crc() - Calculates the CRC for a given frame
  * @fp: The frame to be checksumed
@@ -206,6 +209,7 @@ u32 fcoe_fc_crc(struct fc_frame *fp)
 	for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
 		frag = &skb_shinfo(skb)->frags[i];
 		off = frag->page_offset;
+<<<<<<< HEAD
 		len = skb_frag_size(frag);
 		while (len > 0) {
 			clen = min(len, PAGE_SIZE - (off & ~PAGE_MASK));
@@ -213,6 +217,15 @@ u32 fcoe_fc_crc(struct fc_frame *fp)
 				skb_frag_page(frag) + (off >> PAGE_SHIFT));
 			crc = crc32(crc, data + (off & ~PAGE_MASK), clen);
 			kunmap_atomic(data);
+=======
+		len = frag->size;
+		while (len > 0) {
+			clen = min(len, PAGE_SIZE - (off & ~PAGE_MASK));
+			data = kmap_atomic(frag->page + (off >> PAGE_SHIFT),
+					   KM_SKB_DATA_SOFTIRQ);
+			crc = crc32(crc, data + (off & ~PAGE_MASK), clen);
+			kunmap_atomic(data, KM_SKB_DATA_SOFTIRQ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			off += clen;
 			len -= clen;
 		}
@@ -619,8 +632,13 @@ static int libfcoe_device_notification(struct notifier_block *notifier,
 
 	switch (event) {
 	case NETDEV_UNREGISTER:
+<<<<<<< HEAD
 		LIBFCOE_TRANSPORT_DBG("NETDEV_UNREGISTER %s\n",
 				      netdev->name);
+=======
+		printk(KERN_ERR "libfcoe_device_notification: NETDEV_UNREGISTER %s\n",
+				netdev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fcoe_del_netdev_mapping(netdev);
 		break;
 	}

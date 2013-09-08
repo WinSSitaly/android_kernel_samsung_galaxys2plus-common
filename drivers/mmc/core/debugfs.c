@@ -7,14 +7,20 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/moduleparam.h>
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/debugfs.h>
 #include <linux/fs.h>
 #include <linux/seq_file.h>
 #include <linux/slab.h>
 #include <linux/stat.h>
+<<<<<<< HEAD
 #include <linux/fault-inject.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/mmc/card.h>
 #include <linux/mmc/host.h>
@@ -22,6 +28,7 @@
 #include "core.h"
 #include "mmc_ops.h"
 
+<<<<<<< HEAD
 #ifdef CONFIG_FAIL_MMC_REQUEST
 
 static DECLARE_FAULT_ATTR(fail_default_attr);
@@ -30,6 +37,8 @@ module_param(fail_request, charp, 0);
 
 #endif /* CONFIG_FAIL_MMC_REQUEST */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* The debugfs functions are optimized away when CONFIG_DEBUG_FS isn't set. */
 static int mmc_ios_show(struct seq_file *s, void *data)
 {
@@ -57,8 +66,11 @@ static int mmc_ios_show(struct seq_file *s, void *data)
 	const char *str;
 
 	seq_printf(s, "clock:\t\t%u Hz\n", ios->clock);
+<<<<<<< HEAD
 	if (host->actual_clock)
 		seq_printf(s, "actual clock:\t%u Hz\n", host->actual_clock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	seq_printf(s, "vdd:\t\t%u ", ios->vdd);
 	if ((1 << ios->vdd) & MMC_VDD_165_195)
 		seq_printf(s, "(1.65 - 1.95 V)\n");
@@ -126,6 +138,7 @@ static int mmc_ios_show(struct seq_file *s, void *data)
 	case MMC_TIMING_SD_HS:
 		str = "sd high-speed";
 		break;
+<<<<<<< HEAD
 	case MMC_TIMING_UHS_SDR50:
 		str = "sd uhs SDR50";
 		break;
@@ -138,6 +151,8 @@ static int mmc_ios_show(struct seq_file *s, void *data)
 	case MMC_TIMING_MMC_HS200:
 		str = "mmc high-speed SDR200";
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		str = "invalid";
 		break;
@@ -213,6 +228,7 @@ void mmc_add_host_debugfs(struct mmc_host *host)
 				root, &host->clk_delay))
 		goto err_node;
 #endif
+<<<<<<< HEAD
 #ifdef CONFIG_FAIL_MMC_REQUEST
 	if (fail_request)
 		setup_fault_attr(&fail_default_attr, fail_request);
@@ -222,6 +238,8 @@ void mmc_add_host_debugfs(struct mmc_host *host)
 					     &host->fail_mmc_request)))
 		goto err_node;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 
 err_node:

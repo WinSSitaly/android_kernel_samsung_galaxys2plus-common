@@ -37,7 +37,12 @@
 /* Random magic number */
 #define CONFIGFS_MAGIC 0x62656570
 
+<<<<<<< HEAD
 static struct vfsmount *configfs_mount = NULL;
+=======
+struct vfsmount * configfs_mount = NULL;
+struct super_block * configfs_sb = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct kmem_cache *configfs_dir_cachep;
 static int configfs_mnt_count = 0;
 
@@ -76,11 +81,20 @@ static int configfs_fill_super(struct super_block *sb, void *data, int silent)
 	sb->s_magic = CONFIGFS_MAGIC;
 	sb->s_op = &configfs_ops;
 	sb->s_time_gran = 1;
+<<<<<<< HEAD
 
 	inode = configfs_new_inode(S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO,
 				   &configfs_root, sb);
 	if (inode) {
 		inode->i_op = &configfs_root_inode_operations;
+=======
+	configfs_sb = sb;
+
+	inode = configfs_new_inode(S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO,
+				   &configfs_root);
+	if (inode) {
+		inode->i_op = &configfs_dir_inode_operations;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		inode->i_fop = &configfs_dir_operations;
 		/* directory inodes start off with i_nlink == 2 (for "." entry) */
 		inc_nlink(inode);
@@ -89,9 +103,16 @@ static int configfs_fill_super(struct super_block *sb, void *data, int silent)
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	root = d_make_root(inode);
 	if (!root) {
 		pr_debug("%s: could not get root dentry!\n",__func__);
+=======
+	root = d_alloc_root(inode);
+	if (!root) {
+		pr_debug("%s: could not get root dentry!\n",__func__);
+		iput(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 	config_group_init(&configfs_root_group);
@@ -115,11 +136,18 @@ static struct file_system_type configfs_fs_type = {
 	.kill_sb	= kill_litter_super,
 };
 
+<<<<<<< HEAD
 struct dentry *configfs_pin_fs(void)
 {
 	int err = simple_pin_fs(&configfs_fs_type, &configfs_mount,
 			     &configfs_mnt_count);
 	return err ? ERR_PTR(err) : configfs_mount->mnt_root;
+=======
+int configfs_pin_fs(void)
+{
+	return simple_pin_fs(&configfs_fs_type, &configfs_mount,
+			     &configfs_mnt_count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void configfs_release_fs(void)
@@ -141,6 +169,7 @@ static int __init configfs_init(void)
 		goto out;
 
 	config_kobj = kobject_create_and_add("config", kernel_kobj);
+<<<<<<< HEAD
 	if (!config_kobj)
 		goto out2;
 
@@ -161,6 +190,30 @@ out3:
 out2:
 	kmem_cache_destroy(configfs_dir_cachep);
 	configfs_dir_cachep = NULL;
+=======
+	if (!config_kobj) {
+		kmem_cache_destroy(configfs_dir_cachep);
+		configfs_dir_cachep = NULL;
+		goto out;
+	}
+
+	err = register_filesystem(&configfs_fs_type);
+	if (err) {
+		printk(KERN_ERR "configfs: Unable to register filesystem!\n");
+		kobject_put(config_kobj);
+		kmem_cache_destroy(configfs_dir_cachep);
+		configfs_dir_cachep = NULL;
+		goto out;
+	}
+
+	err = configfs_inode_init();
+	if (err) {
+		unregister_filesystem(&configfs_fs_type);
+		kobject_put(config_kobj);
+		kmem_cache_destroy(configfs_dir_cachep);
+		configfs_dir_cachep = NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return err;
 }

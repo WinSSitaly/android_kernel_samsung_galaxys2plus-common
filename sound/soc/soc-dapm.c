@@ -14,6 +14,7 @@
  *      dynamic configuration of codec internal audio paths and active
  *      DACs/ADCs.
  *    o Platform power domain - can support external components i.e. amps and
+<<<<<<< HEAD
  *      mic/headphone insertion events.
  *    o Automatic Mic Bias support
  *    o Jack insertion power event initiation - e.g. hp insertion will enable
@@ -21,6 +22,21 @@
  *    o Delayed power down of audio subsystem to reduce pops between a quick
  *      device reopen.
  *
+=======
+ *      mic/meadphone insertion events.
+ *    o Automatic Mic Bias support
+ *    o Jack insertion power event initiation - e.g. hp insertion will enable
+ *      sinks, dacs, etc
+ *    o Delayed powerdown of audio susbsystem to reduce pops between a quick
+ *      device reopen.
+ *
+ *  Todo:
+ *    o DAPM power change sequencing - allow for configurable per
+ *      codec sequences.
+ *    o Support for analogue bias optimisation.
+ *    o Support for reduced codec oversampling rates.
+ *    o Support for reduced codec bias currents.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/module.h>
@@ -33,8 +49,11 @@
 #include <linux/platform_device.h>
 #include <linux/jiffies.h>
 #include <linux/debugfs.h>
+<<<<<<< HEAD
 #include <linux/pm_runtime.h>
 #include <linux/regulator/consumer.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <sound/core.h>
 #include <sound/pcm.h>
@@ -44,15 +63,22 @@
 
 #include <trace/events/asoc.h>
 
+<<<<<<< HEAD
 #define DAPM_UPDATE_STAT(widget, val) widget->dapm->card->dapm_stats.val++;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* dapm power sequences - make this per codec in the future */
 static int dapm_up_seq[] = {
 	[snd_soc_dapm_pre] = 0,
 	[snd_soc_dapm_supply] = 1,
+<<<<<<< HEAD
 	[snd_soc_dapm_regulator_supply] = 1,
 	[snd_soc_dapm_micbias] = 2,
 	[snd_soc_dapm_dai] = 3,
+=======
+	[snd_soc_dapm_micbias] = 2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[snd_soc_dapm_aif_in] = 3,
 	[snd_soc_dapm_aif_out] = 3,
 	[snd_soc_dapm_mic] = 4,
@@ -89,8 +115,11 @@ static int dapm_down_seq[] = {
 	[snd_soc_dapm_value_mux] = 9,
 	[snd_soc_dapm_aif_in] = 10,
 	[snd_soc_dapm_aif_out] = 10,
+<<<<<<< HEAD
 	[snd_soc_dapm_dai] = 10,
 	[snd_soc_dapm_regulator_supply] = 11,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[snd_soc_dapm_supply] = 11,
 	[snd_soc_dapm_post] = 12,
 };
@@ -121,6 +150,7 @@ static void pop_dbg(struct device *dev, u32 pop_time, const char *fmt, ...)
 	kfree(buf);
 }
 
+<<<<<<< HEAD
 static bool dapm_dirty_widget(struct snd_soc_dapm_widget *w)
 {
 	return !list_empty(&w->dirty);
@@ -136,6 +166,8 @@ void dapm_mark_dirty(struct snd_soc_dapm_widget *w, const char *reason)
 }
 EXPORT_SYMBOL_GPL(dapm_mark_dirty);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* create a new dapm widget */
 static inline struct snd_soc_dapm_widget *dapm_cnew_widget(
 	const struct snd_soc_dapm_widget *_widget)
@@ -143,6 +175,7 @@ static inline struct snd_soc_dapm_widget *dapm_cnew_widget(
 	return kmemdup(_widget, sizeof(*_widget), GFP_KERNEL);
 }
 
+<<<<<<< HEAD
 /* get snd_card from DAPM context */
 static inline struct snd_card *dapm_get_snd_card(
 	struct snd_soc_dapm_context *dapm)
@@ -238,6 +271,8 @@ static int soc_widget_update_bits(struct snd_soc_dapm_widget *w,
 	return change;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * snd_soc_dapm_set_bias_level - set the bias level for the system
  * @dapm: DAPM context
@@ -253,6 +288,7 @@ static int snd_soc_dapm_set_bias_level(struct snd_soc_dapm_context *dapm,
 	struct snd_soc_card *card = dapm->card;
 	int ret = 0;
 
+<<<<<<< HEAD
 	trace_snd_soc_bias_level_start(card, level);
 
 	if (card && card->set_bias_level)
@@ -273,6 +309,41 @@ static int snd_soc_dapm_set_bias_level(struct snd_soc_dapm_context *dapm,
 	if (card && card->set_bias_level_post)
 		ret = card->set_bias_level_post(card, dapm, level);
 out:
+=======
+	switch (level) {
+	case SND_SOC_BIAS_ON:
+		dev_dbg(dapm->dev, "Setting full bias\n");
+		break;
+	case SND_SOC_BIAS_PREPARE:
+		dev_dbg(dapm->dev, "Setting bias prepare\n");
+		break;
+	case SND_SOC_BIAS_STANDBY:
+		dev_dbg(dapm->dev, "Setting standby bias\n");
+		break;
+	case SND_SOC_BIAS_OFF:
+		dev_dbg(dapm->dev, "Setting bias off\n");
+		break;
+	default:
+		dev_err(dapm->dev, "Setting invalid bias %d\n", level);
+		return -EINVAL;
+	}
+
+	trace_snd_soc_bias_level_start(card, level);
+
+	if (card && card->set_bias_level)
+		ret = card->set_bias_level(card, level);
+	if (ret == 0) {
+		if (dapm->codec && dapm->codec->driver->set_bias_level)
+			ret = dapm->codec->driver->set_bias_level(dapm->codec, level);
+		else
+			dapm->bias_level = level;
+	}
+	if (ret == 0) {
+		if (card && card->set_bias_level_post)
+			ret = card->set_bias_level_post(card, level);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_snd_soc_bias_level_done(card, level);
 
 	return ret;
@@ -295,7 +366,11 @@ static void dapm_set_path_status(struct snd_soc_dapm_widget *w,
 		unsigned int mask = (1 << fls(max)) - 1;
 		unsigned int invert = mc->invert;
 
+<<<<<<< HEAD
 		val = soc_widget_read(w, reg);
+=======
+		val = snd_soc_read(w->codec, reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		val = (val >> shift) & mask;
 
 		if ((invert && !val) || (!invert && val))
@@ -310,8 +385,13 @@ static void dapm_set_path_status(struct snd_soc_dapm_widget *w,
 		int val, item, bitmask;
 
 		for (bitmask = 1; bitmask < e->max; bitmask <<= 1)
+<<<<<<< HEAD
 			;
 		val = soc_widget_read(w, e->reg);
+=======
+		;
+		val = snd_soc_read(w->codec, e->reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		item = (val >> e->shift_l) & (bitmask - 1);
 
 		p->connect = 0;
@@ -341,7 +421,11 @@ static void dapm_set_path_status(struct snd_soc_dapm_widget *w,
 			w->kcontrol_news[i].private_value;
 		int val, item;
 
+<<<<<<< HEAD
 		val = soc_widget_read(w, e->reg);
+=======
+		val = snd_soc_read(w->codec, e->reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		val = (val >> e->shift_l) & e->mask;
 		for (item = 0; item < e->max; item++) {
 			if (val == e->values[item])
@@ -355,28 +439,46 @@ static void dapm_set_path_status(struct snd_soc_dapm_widget *w,
 		}
 	}
 	break;
+<<<<<<< HEAD
 	/* does not affect routing - always connected */
+=======
+	/* does not effect routing - always connected */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case snd_soc_dapm_pga:
 	case snd_soc_dapm_out_drv:
 	case snd_soc_dapm_output:
 	case snd_soc_dapm_adc:
 	case snd_soc_dapm_input:
+<<<<<<< HEAD
 	case snd_soc_dapm_siggen:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case snd_soc_dapm_dac:
 	case snd_soc_dapm_micbias:
 	case snd_soc_dapm_vmid:
 	case snd_soc_dapm_supply:
+<<<<<<< HEAD
 	case snd_soc_dapm_regulator_supply:
 	case snd_soc_dapm_aif_in:
 	case snd_soc_dapm_aif_out:
 	case snd_soc_dapm_dai:
+=======
+	case snd_soc_dapm_aif_in:
+	case snd_soc_dapm_aif_out:
+		p->connect = 1;
+	break;
+	/* does effect routing - dynamically connected */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case snd_soc_dapm_hp:
 	case snd_soc_dapm_mic:
 	case snd_soc_dapm_spk:
 	case snd_soc_dapm_line:
+<<<<<<< HEAD
 		p->connect = 1;
 	break;
 	/* does affect routing - dynamically connected */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case snd_soc_dapm_pre:
 	case snd_soc_dapm_post:
 		p->connect = 0;
@@ -485,11 +587,14 @@ static int dapm_new_mixer(struct snd_soc_dapm_widget *w)
 			if (path->name != (char *)w->kcontrol_news[i].name)
 				continue;
 
+<<<<<<< HEAD
 			if (w->kcontrols[i]) {
 				path->kcontrol = w->kcontrols[i];
 				continue;
 			}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			wlistsize = sizeof(struct snd_soc_dapm_widget_list) +
 				    sizeof(struct snd_soc_dapm_widget *),
 			wlist = kzalloc(wlistsize, GFP_KERNEL);
@@ -527,6 +632,7 @@ static int dapm_new_mixer(struct snd_soc_dapm_widget *w)
 				 * for widgets so cut the prefix off
 				 * the front of the widget name.
 				 */
+<<<<<<< HEAD
 				snprintf((char *)path->long_name, name_len,
 					 "%s %s", w->name + prefix_len,
 					 w->kcontrol_news[i].name);
@@ -538,6 +644,19 @@ static int dapm_new_mixer(struct snd_soc_dapm_widget *w)
 			}
 
 			((char *)path->long_name)[name_len - 1] = '\0';
+=======
+				snprintf(path->long_name, name_len, "%s %s",
+					 w->name + prefix_len,
+					 w->kcontrol_news[i].name);
+				break;
+			case snd_soc_dapm_mixer_named_ctl:
+				snprintf(path->long_name, name_len, "%s",
+					 w->kcontrol_news[i].name);
+				break;
+			}
+
+			path->long_name[name_len - 1] = '\0';
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			path->kcontrol = snd_soc_cnew(&w->kcontrol_news[i],
 						      wlist, path->long_name,
@@ -571,7 +690,11 @@ static int dapm_new_mux(struct snd_soc_dapm_widget *w)
 	struct snd_soc_dapm_widget_list *wlist;
 	int shared, wlistentries;
 	size_t wlistsize;
+<<<<<<< HEAD
 	const char *name;
+=======
+	char *name;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (w->num_kcontrols != 1) {
 		dev_err(dapm->dev,
@@ -626,8 +749,13 @@ static int dapm_new_mux(struct snd_soc_dapm_widget *w)
 					name + prefix_len, prefix);
 		ret = snd_ctl_add(card, kcontrol);
 		if (ret < 0) {
+<<<<<<< HEAD
 			dev_err(dapm->dev, "failed to add kcontrol %s: %d\n",
 				w->name, ret);
+=======
+			dev_err(dapm->dev,
+				"asoc: failed to add kcontrol %s\n", w->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			kfree(wlist);
 			return ret;
 		}
@@ -691,6 +819,7 @@ static int is_connected_output_ep(struct snd_soc_dapm_widget *widget)
 	struct snd_soc_dapm_path *path;
 	int con = 0;
 
+<<<<<<< HEAD
 	if (widget->outputs >= 0)
 		return widget->outputs;
 
@@ -703,21 +832,31 @@ static int is_connected_output_ep(struct snd_soc_dapm_widget *widget)
 	default:
 		break;
 	}
+=======
+	if (widget->id == snd_soc_dapm_supply)
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (widget->id) {
 	case snd_soc_dapm_adc:
 	case snd_soc_dapm_aif_out:
+<<<<<<< HEAD
 	case snd_soc_dapm_dai:
 		if (widget->active) {
 			widget->outputs = snd_soc_dapm_suspend_check(widget);
 			return widget->outputs;
 		}
+=======
+		if (widget->active)
+			return snd_soc_dapm_suspend_check(widget);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		break;
 	}
 
 	if (widget->connected) {
 		/* connected pin ? */
+<<<<<<< HEAD
 		if (widget->id == snd_soc_dapm_output && !widget->ext) {
 			widget->outputs = snd_soc_dapm_suspend_check(widget);
 			return widget->outputs;
@@ -739,6 +878,18 @@ static int is_connected_output_ep(struct snd_soc_dapm_widget *widget)
 		if (path->weak)
 			continue;
 
+=======
+		if (widget->id == snd_soc_dapm_output && !widget->ext)
+			return snd_soc_dapm_suspend_check(widget);
+
+		/* connected jack or spk ? */
+		if (widget->id == snd_soc_dapm_hp || widget->id == snd_soc_dapm_spk ||
+		    (widget->id == snd_soc_dapm_line && !list_empty(&widget->sources)))
+			return snd_soc_dapm_suspend_check(widget);
+	}
+
+	list_for_each_entry(path, &widget->sinks, list_source) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (path->walked)
 			continue;
 
@@ -748,8 +899,11 @@ static int is_connected_output_ep(struct snd_soc_dapm_widget *widget)
 		}
 	}
 
+<<<<<<< HEAD
 	widget->outputs = con;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return con;
 }
 
@@ -762,6 +916,7 @@ static int is_connected_input_ep(struct snd_soc_dapm_widget *widget)
 	struct snd_soc_dapm_path *path;
 	int con = 0;
 
+<<<<<<< HEAD
 	if (widget->inputs >= 0)
 		return widget->inputs;
 
@@ -774,22 +929,32 @@ static int is_connected_input_ep(struct snd_soc_dapm_widget *widget)
 	default:
 		break;
 	}
+=======
+	if (widget->id == snd_soc_dapm_supply)
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* active stream ? */
 	switch (widget->id) {
 	case snd_soc_dapm_dac:
 	case snd_soc_dapm_aif_in:
+<<<<<<< HEAD
 	case snd_soc_dapm_dai:
 		if (widget->active) {
 			widget->inputs = snd_soc_dapm_suspend_check(widget);
 			return widget->inputs;
 		}
+=======
+		if (widget->active)
+			return snd_soc_dapm_suspend_check(widget);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		break;
 	}
 
 	if (widget->connected) {
 		/* connected pin ? */
+<<<<<<< HEAD
 		if (widget->id == snd_soc_dapm_input && !widget->ext) {
 			widget->inputs = snd_soc_dapm_suspend_check(widget);
 			return widget->inputs;
@@ -822,6 +987,22 @@ static int is_connected_input_ep(struct snd_soc_dapm_widget *widget)
 		if (path->weak)
 			continue;
 
+=======
+		if (widget->id == snd_soc_dapm_input && !widget->ext)
+			return snd_soc_dapm_suspend_check(widget);
+
+		/* connected VMID/Bias for lower pops */
+		if (widget->id == snd_soc_dapm_vmid)
+			return snd_soc_dapm_suspend_check(widget);
+
+		/* connected jack ? */
+		if (widget->id == snd_soc_dapm_mic ||
+		    (widget->id == snd_soc_dapm_line && !list_empty(&widget->sinks)))
+			return snd_soc_dapm_suspend_check(widget);
+	}
+
+	list_for_each_entry(path, &widget->sources, list_sink) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (path->walked)
 			continue;
 
@@ -831,8 +1012,11 @@ static int is_connected_input_ep(struct snd_soc_dapm_widget *widget)
 		}
 	}
 
+<<<<<<< HEAD
 	widget->inputs = con;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return con;
 }
 
@@ -849,13 +1033,18 @@ int dapm_reg_event(struct snd_soc_dapm_widget *w,
 	else
 		val = w->off_val;
 
+<<<<<<< HEAD
 	soc_widget_update_bits(w, -(w->reg + 1),
+=======
+	snd_soc_update_bits(w->codec, -(w->reg + 1),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    w->mask << w->shift, val << w->shift);
 
 	return 0;
 }
 EXPORT_SYMBOL_GPL(dapm_reg_event);
 
+<<<<<<< HEAD
 /*
  * Handler for regulator supply widget.
  */
@@ -884,14 +1073,19 @@ static int dapm_widget_power_check(struct snd_soc_dapm_widget *w)
 	return w->new_power;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Generic check to see if a widget should be powered.
  */
 static int dapm_generic_check_power(struct snd_soc_dapm_widget *w)
 {
 	int in, out;
 
+<<<<<<< HEAD
 	DAPM_UPDATE_STAT(w, power_checks);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	in = is_connected_input_ep(w);
 	dapm_clear_walk(w->dapm);
 	out = is_connected_output_ep(w);
@@ -899,6 +1093,7 @@ static int dapm_generic_check_power(struct snd_soc_dapm_widget *w)
 	return out != 0 && in != 0;
 }
 
+<<<<<<< HEAD
 static int dapm_dai_check_power(struct snd_soc_dapm_widget *w)
 {
 	DAPM_UPDATE_STAT(w, power_checks);
@@ -906,13 +1101,18 @@ static int dapm_dai_check_power(struct snd_soc_dapm_widget *w)
 	return w->active;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Check to see if an ADC has power */
 static int dapm_adc_check_power(struct snd_soc_dapm_widget *w)
 {
 	int in;
 
+<<<<<<< HEAD
 	DAPM_UPDATE_STAT(w, power_checks);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (w->active) {
 		in = is_connected_input_ep(w);
 		dapm_clear_walk(w->dapm);
@@ -927,8 +1127,11 @@ static int dapm_dac_check_power(struct snd_soc_dapm_widget *w)
 {
 	int out;
 
+<<<<<<< HEAD
 	DAPM_UPDATE_STAT(w, power_checks);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (w->active) {
 		out = is_connected_output_ep(w);
 		dapm_clear_walk(w->dapm);
@@ -942,6 +1145,7 @@ static int dapm_dac_check_power(struct snd_soc_dapm_widget *w)
 static int dapm_supply_check_power(struct snd_soc_dapm_widget *w)
 {
 	struct snd_soc_dapm_path *path;
+<<<<<<< HEAD
 
 	DAPM_UPDATE_STAT(w, power_checks);
 
@@ -952,6 +1156,12 @@ static int dapm_supply_check_power(struct snd_soc_dapm_widget *w)
 		if (path->weak)
 			continue;
 
+=======
+	int power = 0;
+
+	/* Check if one of our outputs is connected */
+	list_for_each_entry(path, &w->sinks, list_source) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (path->connected &&
 		    !path->connected(path->source, path->sink))
 			continue;
@@ -959,18 +1169,35 @@ static int dapm_supply_check_power(struct snd_soc_dapm_widget *w)
 		if (!path->sink)
 			continue;
 
+<<<<<<< HEAD
 		if (dapm_widget_power_check(path->sink))
 			return 1;
+=======
+		if (path->sink->force) {
+			power = 1;
+			break;
+		}
+
+		if (path->sink->power_check &&
+		    path->sink->power_check(path->sink)) {
+			power = 1;
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	dapm_clear_walk(w->dapm);
 
+<<<<<<< HEAD
 	return 0;
 }
 
 static int dapm_always_on_check_power(struct snd_soc_dapm_widget *w)
 {
 	return 1;
+=======
+	return power;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int dapm_seq_compare(struct snd_soc_dapm_widget *a,
@@ -1097,17 +1324,24 @@ static void dapm_seq_run_coalesced(struct snd_soc_dapm_context *dapm,
 	}
 
 	if (reg >= 0) {
+<<<<<<< HEAD
 		/* Any widget will do, they should all be updating the
 		 * same register.
 		 */
 		w = list_first_entry(pending, struct snd_soc_dapm_widget,
 				     power_list);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pop_dbg(dapm->dev, card->pop_time,
 			"pop test : Applying 0x%x/0x%x to %x in %dms\n",
 			value, mask, reg, card->pop_time);
 		pop_wait(card->pop_time);
+<<<<<<< HEAD
 		soc_widget_update_bits(w, reg, mask, value);
+=======
+		snd_soc_update_bits(dapm->codec, reg, mask, value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	list_for_each_entry(w, pending, power_list) {
@@ -1160,7 +1394,11 @@ static void dapm_seq_run(struct snd_soc_dapm_context *dapm,
 
 			INIT_LIST_HEAD(&pending);
 			cur_sort = -1;
+<<<<<<< HEAD
 			cur_subseq = INT_MIN;
+=======
+			cur_subseq = -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cur_reg = SND_SOC_NOPM;
 			cur_dapm = NULL;
 		}
@@ -1259,20 +1497,30 @@ static void dapm_pre_sequence_async(void *data, async_cookie_t cookie)
 	struct snd_soc_dapm_context *d = data;
 	int ret;
 
+<<<<<<< HEAD
 	/* If we're off and we're not supposed to be go into STANDBY */
 	if (d->bias_level == SND_SOC_BIAS_OFF &&
 	    d->target_bias_level != SND_SOC_BIAS_OFF) {
 		if (d->dev)
 			pm_runtime_get_sync(d->dev);
 
+=======
+	if (d->dev_power && d->bias_level == SND_SOC_BIAS_OFF) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = snd_soc_dapm_set_bias_level(d, SND_SOC_BIAS_STANDBY);
 		if (ret != 0)
 			dev_err(d->dev,
 				"Failed to turn on bias: %d\n", ret);
 	}
 
+<<<<<<< HEAD
 	/* Prepare for a STADDBY->ON or ON->STANDBY transition */
 	if (d->bias_level != d->target_bias_level) {
+=======
+	/* If we're changing to all on or all off then prepare */
+	if ((d->dev_power && d->bias_level == SND_SOC_BIAS_STANDBY) ||
+	    (!d->dev_power && d->bias_level == SND_SOC_BIAS_ON)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = snd_soc_dapm_set_bias_level(d, SND_SOC_BIAS_PREPARE);
 		if (ret != 0)
 			dev_err(d->dev,
@@ -1289,9 +1537,13 @@ static void dapm_post_sequence_async(void *data, async_cookie_t cookie)
 	int ret;
 
 	/* If we just powered the last thing off drop to standby bias */
+<<<<<<< HEAD
 	if (d->bias_level == SND_SOC_BIAS_PREPARE &&
 	    (d->target_bias_level == SND_SOC_BIAS_STANDBY ||
 	     d->target_bias_level == SND_SOC_BIAS_OFF)) {
+=======
+	if (d->bias_level == SND_SOC_BIAS_PREPARE && !d->dev_power) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = snd_soc_dapm_set_bias_level(d, SND_SOC_BIAS_STANDBY);
 		if (ret != 0)
 			dev_err(d->dev, "Failed to apply standby bias: %d\n",
@@ -1299,6 +1551,7 @@ static void dapm_post_sequence_async(void *data, async_cookie_t cookie)
 	}
 
 	/* If we're in standby and can support bias off then do that */
+<<<<<<< HEAD
 	if (d->bias_level == SND_SOC_BIAS_STANDBY &&
 	    d->target_bias_level == SND_SOC_BIAS_OFF) {
 		ret = snd_soc_dapm_set_bias_level(d, SND_SOC_BIAS_OFF);
@@ -1312,6 +1565,16 @@ static void dapm_post_sequence_async(void *data, async_cookie_t cookie)
 	/* If we just powered up then move to active bias */
 	if (d->bias_level == SND_SOC_BIAS_PREPARE &&
 	    d->target_bias_level == SND_SOC_BIAS_ON) {
+=======
+	if (d->bias_level == SND_SOC_BIAS_STANDBY && d->idle_bias_off) {
+		ret = snd_soc_dapm_set_bias_level(d, SND_SOC_BIAS_OFF);
+		if (ret != 0)
+			dev_err(d->dev, "Failed to turn off bias: %d\n", ret);
+	}
+
+	/* If we just powered up then move to active bias */
+	if (d->bias_level == SND_SOC_BIAS_PREPARE && d->dev_power) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = snd_soc_dapm_set_bias_level(d, SND_SOC_BIAS_ON);
 		if (ret != 0)
 			dev_err(d->dev, "Failed to apply active bias: %d\n",
@@ -1319,6 +1582,7 @@ static void dapm_post_sequence_async(void *data, async_cookie_t cookie)
 	}
 }
 
+<<<<<<< HEAD
 static void dapm_widget_set_peer_power(struct snd_soc_dapm_widget *peer,
 				       bool power, bool connect)
 {
@@ -1399,6 +1663,8 @@ static void dapm_power_one_widget(struct snd_soc_dapm_widget *w,
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Scan each dapm widget for complete audio path.
  * A complete path is a route that has valid endpoints i.e.:-
@@ -1416,6 +1682,7 @@ static int dapm_power_widgets(struct snd_soc_dapm_context *dapm, int event)
 	LIST_HEAD(up_list);
 	LIST_HEAD(down_list);
 	LIST_HEAD(async_domain);
+<<<<<<< HEAD
 	enum snd_soc_bias_level bias;
 
 	trace_snd_soc_dapm_start(card);
@@ -1477,6 +1744,52 @@ static int dapm_power_widgets(struct snd_soc_dapm_context *dapm, int event)
 			}
 		}
 
+=======
+	int power;
+
+	trace_snd_soc_dapm_start(card);
+
+	list_for_each_entry(d, &card->dapm_list, list)
+		if (d->n_widgets || d->codec == NULL)
+			d->dev_power = 0;
+
+	/* Check which widgets we need to power and store them in
+	 * lists indicating if they should be powered up or down.
+	 */
+	list_for_each_entry(w, &card->widgets, list) {
+		switch (w->id) {
+		case snd_soc_dapm_pre:
+			dapm_seq_insert(w, &down_list, false);
+			break;
+		case snd_soc_dapm_post:
+			dapm_seq_insert(w, &up_list, true);
+			break;
+
+		default:
+			if (!w->power_check)
+				continue;
+
+			if (!w->force)
+				power = w->power_check(w);
+			else
+				power = 1;
+			if (power)
+				w->dapm->dev_power = 1;
+
+			if (w->power == power)
+				continue;
+
+			trace_snd_soc_dapm_widget_power(w, power);
+
+			if (power)
+				dapm_seq_insert(w, &up_list, true);
+			else
+				dapm_seq_insert(w, &down_list, false);
+
+			w->power = power;
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* If there are no DAPM widgets then try to figure out power from the
@@ -1486,6 +1799,7 @@ static int dapm_power_widgets(struct snd_soc_dapm_context *dapm, int event)
 		switch (event) {
 		case SND_SOC_DAPM_STREAM_START:
 		case SND_SOC_DAPM_STREAM_RESUME:
+<<<<<<< HEAD
 			dapm->target_bias_level = SND_SOC_BIAS_ON;
 			break;
 		case SND_SOC_DAPM_STREAM_STOP:
@@ -1499,12 +1813,33 @@ static int dapm_power_widgets(struct snd_soc_dapm_context *dapm, int event)
 			break;
 		case SND_SOC_DAPM_STREAM_NOP:
 			dapm->target_bias_level = dapm->bias_level;
+=======
+			dapm->dev_power = 1;
+			break;
+		case SND_SOC_DAPM_STREAM_STOP:
+			dapm->dev_power = !!dapm->codec->active;
+			break;
+		case SND_SOC_DAPM_STREAM_SUSPEND:
+			dapm->dev_power = 0;
+			break;
+		case SND_SOC_DAPM_STREAM_NOP:
+			switch (dapm->bias_level) {
+				case SND_SOC_BIAS_STANDBY:
+				case SND_SOC_BIAS_OFF:
+					dapm->dev_power = 0;
+					break;
+				default:
+					dapm->dev_power = 1;
+					break;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		default:
 			break;
 		}
 	}
 
+<<<<<<< HEAD
 	/* Force all contexts in the card to the same bias state if
 	 * they're not ground referenced.
 	 */
@@ -1517,6 +1852,16 @@ static int dapm_power_widgets(struct snd_soc_dapm_context *dapm, int event)
 			d->target_bias_level = bias;
 
 	trace_snd_soc_dapm_walk_done(card);
+=======
+	/* Force all contexts in the card to the same bias state */
+	power = 0;
+	list_for_each_entry(d, &card->dapm_list, list)
+		if (d->dev_power)
+			power = 1;
+	list_for_each_entry(d, &card->dapm_list, list)
+		d->dev_power = power;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Run all the bias changes in parallel */
 	list_for_each_entry(d, &dapm->card->dapm_list, list)
@@ -1538,12 +1883,15 @@ static int dapm_power_widgets(struct snd_soc_dapm_context *dapm, int event)
 					&async_domain);
 	async_synchronize_full_domain(&async_domain);
 
+<<<<<<< HEAD
 	/* do we need to notify any clients that DAPM event is complete */
 	list_for_each_entry(d, &card->dapm_list, list) {
 		if (d->stream_event)
 			d->stream_event(d, event);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pop_dbg(dapm->dev, card->pop_time,
 		"DAPM sequencing finished, waiting %dms\n", card->pop_time);
 	pop_wait(card->pop_time);
@@ -1554,6 +1902,15 @@ static int dapm_power_widgets(struct snd_soc_dapm_context *dapm, int event)
 }
 
 #ifdef CONFIG_DEBUG_FS
+<<<<<<< HEAD
+=======
+static int dapm_widget_power_open_file(struct inode *inode, struct file *file)
+{
+	file->private_data = inode->i_private;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t dapm_widget_power_read_file(struct file *file,
 					   char __user *user_buf,
 					   size_t count, loff_t *ppos)
@@ -1573,9 +1930,14 @@ static ssize_t dapm_widget_power_read_file(struct file *file,
 	out = is_connected_output_ep(w);
 	dapm_clear_walk(w->dapm);
 
+<<<<<<< HEAD
 	ret = snprintf(buf, PAGE_SIZE, "%s: %s%s  in %d out %d",
 		       w->name, w->power ? "On" : "Off",
 		       w->force ? " (forced)" : "", in, out);
+=======
+	ret = snprintf(buf, PAGE_SIZE, "%s: %s  in %d out %d",
+		       w->name, w->power ? "On" : "Off", in, out);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (w->reg >= 0)
 		ret += snprintf(buf + ret, PAGE_SIZE - ret,
@@ -1617,11 +1979,24 @@ static ssize_t dapm_widget_power_read_file(struct file *file,
 }
 
 static const struct file_operations dapm_widget_power_fops = {
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = dapm_widget_power_open_file,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.read = dapm_widget_power_read_file,
 	.llseek = default_llseek,
 };
 
+<<<<<<< HEAD
+=======
+static int dapm_bias_open_file(struct inode *inode, struct file *file)
+{
+	file->private_data = inode->i_private;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t dapm_bias_read_file(struct file *file, char __user *user_buf,
 				   size_t count, loff_t *ppos)
 {
@@ -1652,7 +2027,11 @@ static ssize_t dapm_bias_read_file(struct file *file, char __user *user_buf,
 }
 
 static const struct file_operations dapm_bias_fops = {
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = dapm_bias_open_file,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.read = dapm_bias_read_file,
 	.llseek = default_llseek,
 };
@@ -1665,7 +2044,11 @@ void snd_soc_dapm_debugfs_init(struct snd_soc_dapm_context *dapm,
 	dapm->debugfs_dapm = debugfs_create_dir("dapm", parent);
 
 	if (!dapm->debugfs_dapm) {
+<<<<<<< HEAD
 		dev_warn(dapm->dev,
+=======
+		printk(KERN_WARNING
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       "Failed to create DAPM debugfs directory\n");
 		return;
 	}
@@ -1717,8 +2100,14 @@ static inline void dapm_debugfs_cleanup(struct snd_soc_dapm_context *dapm)
 #endif
 
 /* test and update the power status of a mux widget */
+<<<<<<< HEAD
 int snd_soc_dapm_mux_update_power(struct snd_soc_dapm_widget *widget,
 				 struct snd_kcontrol *kcontrol, int mux, struct soc_enum *e)
+=======
+static int dapm_mux_update_power(struct snd_soc_dapm_widget *widget,
+				 struct snd_kcontrol *kcontrol, int change,
+				 int mux, struct soc_enum *e)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct snd_soc_dapm_path *path;
 	int found = 0;
@@ -1728,6 +2117,12 @@ int snd_soc_dapm_mux_update_power(struct snd_soc_dapm_widget *widget,
 	    widget->id != snd_soc_dapm_value_mux)
 		return -ENODEV;
 
+<<<<<<< HEAD
+=======
+	if (!change)
+		return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* find dapm widget path assoc with kcontrol */
 	list_for_each_entry(path, &widget->dapm->card->paths, list) {
 		if (path->kcontrol != kcontrol)
@@ -1738,6 +2133,7 @@ int snd_soc_dapm_mux_update_power(struct snd_soc_dapm_widget *widget,
 
 		found = 1;
 		/* we now need to match the string in the enum to the path */
+<<<<<<< HEAD
 		if (!(strcmp(path->name, e->texts[mux]))) {
 			path->connect = 1; /* new connection */
 			dapm_mark_dirty(path->source, "mux connection");
@@ -1760,6 +2156,22 @@ EXPORT_SYMBOL_GPL(snd_soc_dapm_mux_update_power);
 
 /* test and update the power status of a mixer or switch widget */
 int snd_soc_dapm_mixer_update_power(struct snd_soc_dapm_widget *widget,
+=======
+		if (!(strcmp(path->name, e->texts[mux])))
+			path->connect = 1; /* new connection */
+		else
+			path->connect = 0; /* old connection must be powered down */
+	}
+
+	if (found)
+		dapm_power_widgets(widget->dapm, SND_SOC_DAPM_STREAM_NOP);
+
+	return 0;
+}
+
+/* test and update the power status of a mixer or switch widget */
+static int dapm_mixer_update_power(struct snd_soc_dapm_widget *widget,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   struct snd_kcontrol *kcontrol, int connect)
 {
 	struct snd_soc_dapm_path *path;
@@ -1778,6 +2190,7 @@ int snd_soc_dapm_mixer_update_power(struct snd_soc_dapm_widget *widget,
 		/* found, now check type */
 		found = 1;
 		path->connect = connect;
+<<<<<<< HEAD
 		dapm_mark_dirty(path->source, "mixer connection");
 	}
 
@@ -1789,12 +2202,27 @@ int snd_soc_dapm_mixer_update_power(struct snd_soc_dapm_widget *widget,
 	return 0;
 }
 EXPORT_SYMBOL_GPL(snd_soc_dapm_mixer_update_power);
+=======
+		break;
+	}
+
+	if (found)
+		dapm_power_widgets(widget->dapm, SND_SOC_DAPM_STREAM_NOP);
+
+	return 0;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* show dapm widget status in sys fs */
 static ssize_t dapm_widget_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
+<<<<<<< HEAD
 	struct snd_soc_pcm_runtime *rtd = dev_get_drvdata(dev);
+=======
+	struct snd_soc_pcm_runtime *rtd =
+			container_of(dev, struct snd_soc_pcm_runtime, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct snd_soc_codec *codec =rtd->codec;
 	struct snd_soc_dapm_widget *w;
 	int count = 0;
@@ -1818,7 +2246,10 @@ static ssize_t dapm_widget_show(struct device *dev,
 		case snd_soc_dapm_mixer:
 		case snd_soc_dapm_mixer_named_ctl:
 		case snd_soc_dapm_supply:
+<<<<<<< HEAD
 		case snd_soc_dapm_regulator_supply:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (w->name)
 				count += sprintf(buf + count, "%s: %s\n",
 					w->name, w->power ? "On":"Off");
@@ -1926,9 +2357,12 @@ static int snd_soc_dapm_set_pin(struct snd_soc_dapm_context *dapm,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	if (w->connected != status)
 		dapm_mark_dirty(w, "pin configuration");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	w->connected = status;
 	if (status == 0)
 		w->force = 0;
@@ -1947,6 +2381,7 @@ static int snd_soc_dapm_set_pin(struct snd_soc_dapm_context *dapm,
  */
 int snd_soc_dapm_sync(struct snd_soc_dapm_context *dapm)
 {
+<<<<<<< HEAD
 	/*
 	 * Suppress early reports (eg, jacks syncing their state) to avoid
 	 * silly DAPM runs during card startup.
@@ -1954,6 +2389,8 @@ int snd_soc_dapm_sync(struct snd_soc_dapm_context *dapm)
 	if (!dapm->card || !dapm->card->instantiated)
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return dapm_power_widgets(dapm, SND_SOC_DAPM_STREAM_NOP);
 }
 EXPORT_SYMBOL_GPL(snd_soc_dapm_sync);
@@ -2053,16 +2490,24 @@ static int snd_soc_dapm_add_route(struct snd_soc_dapm_context *dapm,
 	case snd_soc_dapm_out_drv:
 	case snd_soc_dapm_input:
 	case snd_soc_dapm_output:
+<<<<<<< HEAD
 	case snd_soc_dapm_siggen:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case snd_soc_dapm_micbias:
 	case snd_soc_dapm_vmid:
 	case snd_soc_dapm_pre:
 	case snd_soc_dapm_post:
 	case snd_soc_dapm_supply:
+<<<<<<< HEAD
 	case snd_soc_dapm_regulator_supply:
 	case snd_soc_dapm_aif_in:
 	case snd_soc_dapm_aif_out:
 	case snd_soc_dapm_dai:
+=======
+	case snd_soc_dapm_aif_in:
+	case snd_soc_dapm_aif_out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_add(&path->list, &dapm->card->paths);
 		list_add(&path->list_sink, &wsink->sources);
 		list_add(&path->list_source, &wsource->sinks);
@@ -2134,6 +2579,7 @@ int snd_soc_dapm_add_routes(struct snd_soc_dapm_context *dapm,
 }
 EXPORT_SYMBOL_GPL(snd_soc_dapm_add_routes);
 
+<<<<<<< HEAD
 static int snd_soc_dapm_weak_route(struct snd_soc_dapm_context *dapm,
 				   const struct snd_soc_dapm_route *route)
 {
@@ -2212,6 +2658,8 @@ int snd_soc_dapm_weak_routes(struct snd_soc_dapm_context *dapm,
 }
 EXPORT_SYMBOL_GPL(snd_soc_dapm_weak_routes);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * snd_soc_dapm_new_widgets - add new dapm widgets
  * @dapm: DAPM context
@@ -2242,11 +2690,16 @@ int snd_soc_dapm_new_widgets(struct snd_soc_dapm_context *dapm)
 		case snd_soc_dapm_switch:
 		case snd_soc_dapm_mixer:
 		case snd_soc_dapm_mixer_named_ctl:
+<<<<<<< HEAD
+=======
+			w->power_check = dapm_generic_check_power;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dapm_new_mixer(w);
 			break;
 		case snd_soc_dapm_mux:
 		case snd_soc_dapm_virt_mux:
 		case snd_soc_dapm_value_mux:
+<<<<<<< HEAD
 			dapm_new_mux(w);
 			break;
 		case snd_soc_dapm_pga:
@@ -2254,12 +2707,48 @@ int snd_soc_dapm_new_widgets(struct snd_soc_dapm_context *dapm)
 			dapm_new_pga(w);
 			break;
 		default:
+=======
+			w->power_check = dapm_generic_check_power;
+			dapm_new_mux(w);
+			break;
+		case snd_soc_dapm_adc:
+		case snd_soc_dapm_aif_out:
+			w->power_check = dapm_adc_check_power;
+			break;
+		case snd_soc_dapm_dac:
+		case snd_soc_dapm_aif_in:
+			w->power_check = dapm_dac_check_power;
+			break;
+		case snd_soc_dapm_pga:
+		case snd_soc_dapm_out_drv:
+			w->power_check = dapm_generic_check_power;
+			dapm_new_pga(w);
+			break;
+		case snd_soc_dapm_input:
+		case snd_soc_dapm_output:
+		case snd_soc_dapm_micbias:
+		case snd_soc_dapm_spk:
+		case snd_soc_dapm_hp:
+		case snd_soc_dapm_mic:
+		case snd_soc_dapm_line:
+			w->power_check = dapm_generic_check_power;
+			break;
+		case snd_soc_dapm_supply:
+			w->power_check = dapm_supply_check_power;
+		case snd_soc_dapm_vmid:
+		case snd_soc_dapm_pre:
+		case snd_soc_dapm_post:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 
 		/* Read the initial power state from the device */
 		if (w->reg >= 0) {
+<<<<<<< HEAD
 			val = soc_widget_read(w, w->reg);
+=======
+			val = snd_soc_read(w->codec, w->reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			val &= 1 << w->shift;
 			if (w->invert)
 				val = !val;
@@ -2270,7 +2759,10 @@ int snd_soc_dapm_new_widgets(struct snd_soc_dapm_context *dapm)
 
 		w->new = 1;
 
+<<<<<<< HEAD
 		dapm_mark_dirty(w, "new widget");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dapm_debugfs_add_widget(w);
 	}
 
@@ -2376,7 +2868,11 @@ int snd_soc_dapm_put_volsw(struct snd_kcontrol *kcontrol,
 			update.val = val;
 			widget->dapm->update = &update;
 
+<<<<<<< HEAD
 			snd_soc_dapm_mixer_update_power(widget, kcontrol, connect);
+=======
+			dapm_mixer_update_power(widget, kcontrol, connect);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			widget->dapm->update = NULL;
 		}
@@ -2467,7 +2963,11 @@ int snd_soc_dapm_put_enum_double(struct snd_kcontrol *kcontrol,
 			update.val = val;
 			widget->dapm->update = &update;
 
+<<<<<<< HEAD
 			snd_soc_dapm_mux_update_power(widget, kcontrol, mux, e);
+=======
+			dapm_mux_update_power(widget, kcontrol, change, mux, e);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			widget->dapm->update = NULL;
 		}
@@ -2528,7 +3028,12 @@ int snd_soc_dapm_put_enum_virt(struct snd_kcontrol *kcontrol,
 
 			widget->value = ucontrol->value.enumerated.item[0];
 
+<<<<<<< HEAD
 			snd_soc_dapm_mux_update_power(widget, kcontrol, widget->value, e);
+=======
+			dapm_mux_update_power(widget, kcontrol, change,
+					      widget->value, e);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -2631,7 +3136,11 @@ int snd_soc_dapm_put_value_enum_double(struct snd_kcontrol *kcontrol,
 			update.val = val;
 			widget->dapm->update = &update;
 
+<<<<<<< HEAD
 			snd_soc_dapm_mux_update_power(widget, kcontrol, mux, e);
+=======
+			dapm_mux_update_power(widget, kcontrol, change, mux, e);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			widget->dapm->update = NULL;
 		}
@@ -2671,6 +3180,7 @@ EXPORT_SYMBOL_GPL(snd_soc_dapm_info_pin_switch);
 int snd_soc_dapm_get_pin_switch(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_value *ucontrol)
 {
+<<<<<<< HEAD
 	struct snd_soc_card *card = snd_kcontrol_chip(kcontrol);
 	const char *pin = (const char *)kcontrol->private_value;
 
@@ -2680,6 +3190,17 @@ int snd_soc_dapm_get_pin_switch(struct snd_kcontrol *kcontrol,
 		snd_soc_dapm_get_pin_status(&card->dapm, pin);
 
 	mutex_unlock(&card->mutex);
+=======
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+	const char *pin = (const char *)kcontrol->private_value;
+
+	mutex_lock(&codec->mutex);
+
+	ucontrol->value.integer.value[0] =
+		snd_soc_dapm_get_pin_status(&codec->dapm, pin);
+
+	mutex_unlock(&codec->mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -2694,6 +3215,7 @@ EXPORT_SYMBOL_GPL(snd_soc_dapm_get_pin_switch);
 int snd_soc_dapm_put_pin_switch(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_value *ucontrol)
 {
+<<<<<<< HEAD
 	struct snd_soc_card *card = snd_kcontrol_chip(kcontrol);
 	const char *pin = (const char *)kcontrol->private_value;
 
@@ -2707,11 +3229,27 @@ int snd_soc_dapm_put_pin_switch(struct snd_kcontrol *kcontrol,
 	snd_soc_dapm_sync(&card->dapm);
 
 	mutex_unlock(&card->mutex);
+=======
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+	const char *pin = (const char *)kcontrol->private_value;
+
+	mutex_lock(&codec->mutex);
+
+	if (ucontrol->value.integer.value[0])
+		snd_soc_dapm_enable_pin(&codec->dapm, pin);
+	else
+		snd_soc_dapm_disable_pin(&codec->dapm, pin);
+
+	snd_soc_dapm_sync(&codec->dapm);
+
+	mutex_unlock(&codec->mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 EXPORT_SYMBOL_GPL(snd_soc_dapm_put_pin_switch);
 
+<<<<<<< HEAD
 static struct snd_soc_dapm_widget *
 snd_soc_dapm_new_control(struct snd_soc_dapm_context *dapm,
 			 const struct snd_soc_dapm_widget *widget)
@@ -2736,6 +3274,25 @@ snd_soc_dapm_new_control(struct snd_soc_dapm_context *dapm,
 	default:
 		break;
 	}
+=======
+/**
+ * snd_soc_dapm_new_control - create new dapm control
+ * @dapm: DAPM context
+ * @widget: widget template
+ *
+ * Creates a new dapm control based upon the template.
+ *
+ * Returns 0 for success else error.
+ */
+int snd_soc_dapm_new_control(struct snd_soc_dapm_context *dapm,
+	const struct snd_soc_dapm_widget *widget)
+{
+	struct snd_soc_dapm_widget *w;
+	size_t name_len;
+
+	if ((w = dapm_cnew_widget(widget)) == NULL)
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	name_len = strlen(widget->name) + 1;
 	if (dapm->codec && dapm->codec->name_prefix)
@@ -2743,6 +3300,7 @@ snd_soc_dapm_new_control(struct snd_soc_dapm_context *dapm,
 	w->name = kmalloc(name_len, GFP_KERNEL);
 	if (w->name == NULL) {
 		kfree(w);
+<<<<<<< HEAD
 		return NULL;
 	}
 	if (dapm->codec && dapm->codec->name_prefix)
@@ -2792,21 +3350,42 @@ snd_soc_dapm_new_control(struct snd_soc_dapm_context *dapm,
 		w->power_check = dapm_always_on_check_power;
 		break;
 	}
+=======
+		return -ENOMEM;
+	}
+	if (dapm->codec && dapm->codec->name_prefix)
+		snprintf(w->name, name_len, "%s %s",
+			dapm->codec->name_prefix, widget->name);
+	else
+		snprintf(w->name, name_len, "%s", widget->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dapm->n_widgets++;
 	w->dapm = dapm;
 	w->codec = dapm->codec;
+<<<<<<< HEAD
 	w->platform = dapm->platform;
 	INIT_LIST_HEAD(&w->sources);
 	INIT_LIST_HEAD(&w->sinks);
 	INIT_LIST_HEAD(&w->list);
 	INIT_LIST_HEAD(&w->dirty);
+=======
+	INIT_LIST_HEAD(&w->sources);
+	INIT_LIST_HEAD(&w->sinks);
+	INIT_LIST_HEAD(&w->list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_add(&w->list, &dapm->card->widgets);
 
 	/* machine layer set ups unconnected pins and insertions */
 	w->connected = 1;
+<<<<<<< HEAD
 	return w;
 }
+=======
+	return 0;
+}
+EXPORT_SYMBOL_GPL(snd_soc_dapm_new_control);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * snd_soc_dapm_new_controls - create new dapm controls
@@ -2822,6 +3401,7 @@ int snd_soc_dapm_new_controls(struct snd_soc_dapm_context *dapm,
 	const struct snd_soc_dapm_widget *widget,
 	int num)
 {
+<<<<<<< HEAD
 	struct snd_soc_dapm_widget *w;
 	int i;
 
@@ -2832,6 +3412,17 @@ int snd_soc_dapm_new_controls(struct snd_soc_dapm_context *dapm,
 				"ASoC: Failed to create DAPM control %s\n",
 				widget->name);
 			return -ENOMEM;
+=======
+	int i, ret;
+
+	for (i = 0; i < num; i++) {
+		ret = snd_soc_dapm_new_control(dapm, widget);
+		if (ret < 0) {
+			dev_err(dapm->dev,
+				"ASoC: Failed to create DAPM control %s: %d\n",
+				widget->name, ret);
+			return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		widget++;
 	}
@@ -2839,6 +3430,7 @@ int snd_soc_dapm_new_controls(struct snd_soc_dapm_context *dapm,
 }
 EXPORT_SYMBOL_GPL(snd_soc_dapm_new_controls);
 
+<<<<<<< HEAD
 int snd_soc_dapm_new_dai_widgets(struct snd_soc_dapm_context *dapm,
 				 struct snd_soc_dai *dai)
 {
@@ -2935,10 +3527,37 @@ int snd_soc_dapm_link_dai_widgets(struct snd_soc_card *card)
 					r.source, r.sink);
 
 				snd_soc_dapm_add_route(w->dapm, &r);
+=======
+static void soc_dapm_stream_event(struct snd_soc_dapm_context *dapm,
+	const char *stream, int event)
+{
+	struct snd_soc_dapm_widget *w;
+
+	list_for_each_entry(w, &dapm->card->widgets, list)
+	{
+		if (!w->sname || w->dapm != dapm)
+			continue;
+		dev_dbg(w->dapm->dev, "widget %s\n %s stream %s event %d\n",
+			w->name, w->sname, stream, event);
+		if (strstr(w->sname, stream)) {
+			switch(event) {
+			case SND_SOC_DAPM_STREAM_START:
+				w->active = 1;
+				break;
+			case SND_SOC_DAPM_STREAM_STOP:
+				w->active = 0;
+				break;
+			case SND_SOC_DAPM_STREAM_SUSPEND:
+			case SND_SOC_DAPM_STREAM_RESUME:
+			case SND_SOC_DAPM_STREAM_PAUSE_PUSH:
+			case SND_SOC_DAPM_STREAM_PAUSE_RELEASE:
+				break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 	}
 
+<<<<<<< HEAD
 	return 0;
 }
 
@@ -2972,6 +3591,8 @@ static void soc_dapm_stream_event(struct snd_soc_dapm_context *dapm,
 		break;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dapm_power_widgets(dapm, event);
 }
 
@@ -2986,6 +3607,7 @@ static void soc_dapm_stream_event(struct snd_soc_dapm_context *dapm,
  *
  * Returns 0 for success else error.
  */
+<<<<<<< HEAD
 int snd_soc_dapm_stream_event(struct snd_soc_pcm_runtime *rtd, int stream,
 			      struct snd_soc_dai *dai, int event)
 {
@@ -2993,6 +3615,18 @@ int snd_soc_dapm_stream_event(struct snd_soc_pcm_runtime *rtd, int stream,
 
 	mutex_lock(&codec->mutex);
 	soc_dapm_stream_event(&codec->dapm, stream, dai, event);
+=======
+int snd_soc_dapm_stream_event(struct snd_soc_pcm_runtime *rtd,
+	const char *stream, int event)
+{
+	struct snd_soc_codec *codec = rtd->codec;
+
+	if (stream == NULL)
+		return 0;
+
+	mutex_lock(&codec->mutex);
+	soc_dapm_stream_event(&codec->dapm, stream, event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&codec->mutex);
 	return 0;
 }
@@ -3038,7 +3672,10 @@ int snd_soc_dapm_force_enable_pin(struct snd_soc_dapm_context *dapm,
 	dev_dbg(w->dapm->dev, "dapm: force enable pin %s\n", pin);
 	w->connected = 1;
 	w->force = 1;
+<<<<<<< HEAD
 	dapm_mark_dirty(w, "force enable");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -3128,6 +3765,7 @@ int snd_soc_dapm_ignore_suspend(struct snd_soc_dapm_context *dapm,
 }
 EXPORT_SYMBOL_GPL(snd_soc_dapm_ignore_suspend);
 
+<<<<<<< HEAD
 static bool snd_soc_dapm_widget_in_card_paths(struct snd_soc_card *card,
 					      struct snd_soc_dapm_widget *w)
 {
@@ -3204,6 +3842,11 @@ void snd_soc_dapm_auto_nc_codec_pins(struct snd_soc_codec *codec)
 /**
  * snd_soc_dapm_free - free dapm resources
  * @dapm: DAPM context
+=======
+/**
+ * snd_soc_dapm_free - free dapm resources
+ * @card: SoC device
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Free all dapm widgets and resources.
  */
@@ -3253,7 +3896,11 @@ void snd_soc_dapm_shutdown(struct snd_soc_card *card)
 {
 	struct snd_soc_codec *codec;
 
+<<<<<<< HEAD
 	list_for_each_entry(codec, &card->codec_dev_list, card_list) {
+=======
+	list_for_each_entry(codec, &card->codec_dev_list, list) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		soc_dapm_shutdown_codec(&codec->dapm);
 		if (codec->dapm.bias_level == SND_SOC_BIAS_STANDBY)
 			snd_soc_dapm_set_bias_level(&codec->dapm,

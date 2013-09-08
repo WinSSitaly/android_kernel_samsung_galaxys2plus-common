@@ -229,7 +229,21 @@ static struct platform_driver regulator_led_driver = {
 	.remove = __devexit_p(regulator_led_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(regulator_led_driver);
+=======
+static int __init regulator_led_init(void)
+{
+	return platform_driver_register(&regulator_led_driver);
+}
+module_init(regulator_led_init);
+
+static void __exit regulator_led_exit(void)
+{
+	platform_driver_unregister(&regulator_led_driver);
+}
+module_exit(regulator_led_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Antonio Ospite <ospite@studenti.unina.it>");
 MODULE_DESCRIPTION("Regulator driven LED driver");

@@ -83,6 +83,10 @@ SECTIONS
 
   _text = .;
   _stext = .;
+<<<<<<< HEAD
+=======
+  _ftext = .;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
   .text :
   {
@@ -111,7 +115,11 @@ SECTIONS
   EXCEPTION_TABLE(16)
   /* Data section */
 
+<<<<<<< HEAD
   _sdata = .;
+=======
+  _fdata = .;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   RW_DATA_SECTION(XCHAL_ICACHE_LINESIZE, PAGE_SIZE, THREAD_SIZE)
   _edata = .;
 

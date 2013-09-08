@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2010 Realtek Corporation. All rights reserved.
@@ -23,6 +24,8 @@
  * Larry Finger <Larry.Finger@lwfinger.net>
  *
  ******************************************************************************/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef _RTL8712_XMIT_H_
 #define _RTL8712_XMIT_H_
 
@@ -64,8 +67,11 @@
 #define OWN	BIT(31)
 #define FSG	BIT(27)
 #define LSG	BIT(26)
+<<<<<<< HEAD
 #define TYPE_SHT (24)
 #define TYPE_MSK (0x03000000)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*OFFSET 4*/
 #define PKT_OFFSET_SZ (0)
@@ -76,7 +82,10 @@
 #define BMC BIT(7)
 #define BK BIT(30)
 #define AGG_EN BIT(29)
+<<<<<<< HEAD
 #define RTS_RC_SHT (16)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*OFFSET 12*/
 #define SEQ_SHT (16)
@@ -86,8 +95,11 @@
 
 /*OFFSET 20*/
 #define DISFB BIT(15)
+<<<<<<< HEAD
 #define RSVD6_MSK (0x00E00000)
 #define RSVD6_SHT (21)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct tx_desc {
 	/*DWORD 0*/
@@ -113,6 +125,7 @@ int r8712_xmitframe_complete(struct _adapter *padapter,
 void r8712_do_queue_select(struct _adapter *padapter,
 			   struct pkt_attrib *pattrib);
 
+<<<<<<< HEAD
 #ifdef CONFIG_R8712_TX_AGGR
 u8 r8712_xmitframe_aggr_1st(struct xmit_buf *pxmitbuf,
 			struct xmit_frame *pxmitframe);
@@ -120,4 +133,6 @@ u8 r8712_dump_aggr_xframe(struct xmit_buf *pxmitbuf,
 			struct xmit_frame *pxmitframe);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

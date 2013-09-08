@@ -14,7 +14,11 @@
 #ifndef _HWMON_H_
 #define _HWMON_H_
 
+<<<<<<< HEAD
 struct device;
+=======
+#include <linux/device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct device *hwmon_device_register(struct device *dev);
 

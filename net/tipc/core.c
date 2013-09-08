@@ -34,8 +34,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+<<<<<<< HEAD
 #include <linux/module.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "core.h"
 #include "ref.h"
 #include "name_table.h"
@@ -53,6 +56,10 @@
 
 /* global variables used by multiple sub-systems within TIPC */
 
+<<<<<<< HEAD
+=======
+int tipc_mode = TIPC_NOT_RUNNING;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int tipc_random;
 
 const char tipc_alphabet[] =
@@ -98,8 +105,13 @@ struct sk_buff *tipc_buf_acquire(u32 size)
 
 static void tipc_core_stop_net(void)
 {
+<<<<<<< HEAD
 	tipc_net_stop();
 	tipc_eth_media_stop();
+=======
+	tipc_eth_media_stop();
+	tipc_net_stop();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -124,6 +136,14 @@ int tipc_core_start_net(unsigned long addr)
 
 static void tipc_core_stop(void)
 {
+<<<<<<< HEAD
+=======
+	if (tipc_mode != TIPC_NODE_MODE)
+		return;
+
+	tipc_mode = TIPC_NOT_RUNNING;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tipc_netlink_stop();
 	tipc_handler_stop();
 	tipc_cfg_stop();
@@ -142,7 +162,15 @@ static int tipc_core_start(void)
 {
 	int res;
 
+<<<<<<< HEAD
 	get_random_bytes(&tipc_random, sizeof(tipc_random));
+=======
+	if (tipc_mode != TIPC_NOT_RUNNING)
+		return -ENOPROTOOPT;
+
+	get_random_bytes(&tipc_random, sizeof(tipc_random));
+	tipc_mode = TIPC_NODE_MODE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	res = tipc_handler_start();
 	if (!res)

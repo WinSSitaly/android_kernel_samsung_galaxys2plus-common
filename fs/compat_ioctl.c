@@ -34,7 +34,11 @@
 #include <linux/fs.h>
 #include <linux/file.h>
 #include <linux/ppp_defs.h>
+<<<<<<< HEAD
 #include <linux/ppp-ioctl.h>
+=======
+#include <linux/if_ppp.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/if_pppox.h>
 #include <linux/mtio.h>
 #include <linux/auto_fs.h>
@@ -49,6 +53,10 @@
 #include <linux/elevator.h>
 #include <linux/rtc.h>
 #include <linux/pci.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/serial.h>
 #include <linux/if_tun.h>
 #include <linux/ctype.h>
@@ -67,8 +75,11 @@
 
 #ifdef CONFIG_BLOCK
 #include <linux/loop.h>
+<<<<<<< HEAD
 #include <linux/cdrom.h>
 #include <linux/fd.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <scsi/scsi.h>
 #include <scsi/scsi_ioctl.h>
 #include <scsi/sg.h>
@@ -104,7 +115,10 @@
 
 #include <linux/hiddev.h>
 
+<<<<<<< HEAD
 #define __DVB_CORE__
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/dvb/audio.h>
 #include <linux/dvb/dmx.h>
 #include <linux/dvb/frontend.h>
@@ -210,8 +224,11 @@ static int do_video_set_spu_palette(unsigned int fd, unsigned int cmd,
 
 	err  = get_user(palp, &up->palette);
 	err |= get_user(length, &up->length);
+<<<<<<< HEAD
 	if (err)
 		return -EFAULT;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	up_native = compat_alloc_user_space(sizeof(struct video_spu_palette));
 	err  = put_user(compat_ptr(palp), &up_native->palette);
@@ -948,9 +965,12 @@ COMPATIBLE_IOCTL(FIOQSIZE)
 IGNORE_IOCTL(LOOP_CLR_FD)
 /* md calls this on random blockdevs */
 IGNORE_IOCTL(RAID_VERSION)
+<<<<<<< HEAD
 /* qemu/qemu-img might call these two on plain files for probing */
 IGNORE_IOCTL(CDROM_DRIVE_STATUS)
 IGNORE_IOCTL(FDGETPRM32)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* SG stuff */
 COMPATIBLE_IOCTL(SG_SET_TIMEOUT)
 COMPATIBLE_IOCTL(SG_GET_TIMEOUT)
@@ -1005,7 +1025,10 @@ COMPATIBLE_IOCTL(PPPIOCCONNECT)
 COMPATIBLE_IOCTL(PPPIOCDISCONN)
 COMPATIBLE_IOCTL(PPPIOCATTCHAN)
 COMPATIBLE_IOCTL(PPPIOCGCHAN)
+<<<<<<< HEAD
 COMPATIBLE_IOCTL(PPPIOCGL2TPSTATS)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* PPPOX */
 COMPATIBLE_IOCTL(PPPOEIOCSFWD)
 COMPATIBLE_IOCTL(PPPOEIOCDFWD)
@@ -1508,6 +1531,38 @@ static long do_ioctl_trans(int fd, unsigned int cmd,
 	return -ENOIOCTLCMD;
 }
 
+<<<<<<< HEAD
+=======
+static void compat_ioctl_error(struct file *filp, unsigned int fd,
+		unsigned int cmd, unsigned long arg)
+{
+	char buf[10];
+	char *fn = "?";
+	char *path;
+
+	/* find the name of the device. */
+	path = (char *)__get_free_page(GFP_KERNEL);
+	if (path) {
+		fn = d_path(&filp->f_path, path, PAGE_SIZE);
+		if (IS_ERR(fn))
+			fn = "?";
+	}
+
+	 sprintf(buf,"'%c'", (cmd>>_IOC_TYPESHIFT) & _IOC_TYPEMASK);
+	if (!isprint(buf[1]))
+		sprintf(buf, "%02x", buf[1]);
+	compat_printk("ioctl32(%s:%d): Unknown cmd fd(%d) "
+			"cmd(%08x){t:%s;sz:%u} arg(%08x) on %s\n",
+			current->comm, current->pid,
+			(int)fd, (unsigned int)cmd, buf,
+			(cmd >> _IOC_SIZESHIFT) & _IOC_SIZEMASK,
+			(unsigned int)arg, fn);
+
+	if (path)
+		free_page((unsigned long)path);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int compat_ioctl_check_table(unsigned int xcmd)
 {
 	int i;
@@ -1594,8 +1649,18 @@ asmlinkage long compat_sys_ioctl(unsigned int fd, unsigned int cmd,
 		goto found_handler;
 
 	error = do_ioctl_trans(fd, cmd, arg, filp);
+<<<<<<< HEAD
 	if (error == -ENOIOCTLCMD)
 		error = -ENOTTY;
+=======
+	if (error == -ENOIOCTLCMD) {
+		static int count;
+
+		if (++count <= 50)
+			compat_ioctl_error(filp, fd, cmd, arg);
+		error = -EINVAL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	goto out_fput;
 

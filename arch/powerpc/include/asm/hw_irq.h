@@ -11,6 +11,7 @@
 #include <asm/ptrace.h>
 #include <asm/processor.h>
 
+<<<<<<< HEAD
 #ifdef CONFIG_PPC64
 
 /*
@@ -32,6 +33,8 @@
 
 extern void __replay_interrupt(unsigned int vector);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void timer_interrupt(struct pt_regs *);
 
 #ifdef CONFIG_PPC64
@@ -63,6 +66,10 @@ static inline unsigned long arch_local_irq_disable(void)
 }
 
 extern void arch_local_irq_restore(unsigned long);
+<<<<<<< HEAD
+=======
+extern void iseries_handle_interrupts(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void arch_local_irq_enable(void)
 {
@@ -85,6 +92,7 @@ static inline bool arch_irqs_disabled(void)
 }
 
 #ifdef CONFIG_PPC_BOOK3E
+<<<<<<< HEAD
 #define __hard_irq_enable()	asm volatile("wrteei 1" : : : "memory")
 #define __hard_irq_disable()	asm volatile("wrteei 0" : : : "memory")
 #else
@@ -125,6 +133,21 @@ static inline bool arch_irq_disabled_regs(struct pt_regs *regs)
 }
 
 extern bool prep_irq_for_idle(void);
+=======
+#define __hard_irq_enable()	asm volatile("wrteei 1" : : : "memory");
+#define __hard_irq_disable()	asm volatile("wrteei 0" : : : "memory");
+#else
+#define __hard_irq_enable()	__mtmsrd(mfmsr() | MSR_EE, 1)
+#define __hard_irq_disable()	__mtmsrd(mfmsr() & ~MSR_EE, 1)
+#endif
+
+#define  hard_irq_disable()			\
+	do {					\
+		__hard_irq_disable();		\
+		get_paca()->soft_enabled = 0;	\
+		get_paca()->hard_enabled = 0;	\
+	} while(0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #else /* CONFIG_PPC64 */
 
@@ -186,6 +209,7 @@ static inline bool arch_irqs_disabled(void)
 
 #define hard_irq_disable()		arch_local_irq_disable()
 
+<<<<<<< HEAD
 static inline bool arch_irq_disabled_regs(struct pt_regs *regs)
 {
 	return !(regs->msr & MSR_EE);
@@ -193,6 +217,8 @@ static inline bool arch_irq_disabled_regs(struct pt_regs *regs)
 
 static inline void may_hard_irq_enable(void) { }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_PPC64 */
 
 #define ARCH_IRQ_INIT_FLAGS	IRQ_NOREQUEST
@@ -203,6 +229,9 @@ static inline void may_hard_irq_enable(void) { }
  */
 struct irq_chip;
 
+<<<<<<< HEAD
 #endif  /* __ASSEMBLY__ */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* __KERNEL__ */
 #endif	/* _ASM_POWERPC_HW_IRQ_H */

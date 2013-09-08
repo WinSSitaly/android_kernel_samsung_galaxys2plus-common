@@ -263,6 +263,7 @@ enum {
 #define PM8607_PD_PREBIAS_MASK		(0x1F << 0)
 #define PM8607_PD_PRECHG_MASK		(7 << 5)
 
+<<<<<<< HEAD
 #define PM8606_REF_GP_OSC_OFF         0
 #define PM8606_REF_GP_OSC_ON          1
 #define PM8606_REF_GP_OSC_UNKNOWN     2
@@ -279,6 +280,8 @@ enum pm8606_ref_gp_and_osc_clients {
 	REF_GP_MAX_CLIENT       = 0xFFFF
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Interrupt Number in 88PM8607 */
 enum {
 	PM8607_IRQ_ONKEY,
@@ -313,6 +316,7 @@ enum {
 
 struct pm860x_chip {
 	struct device		*dev;
+<<<<<<< HEAD
 	struct mutex		irq_lock;
 	struct mutex		osc_lock;
 	struct i2c_client	*client;
@@ -323,14 +327,27 @@ struct pm860x_chip {
 	int			buck3_double;	/* DVC ramp slope double */
 	unsigned short		companion_addr;
 	unsigned short		osc_vote;
+=======
+	struct mutex		io_lock;
+	struct mutex		irq_lock;
+	struct i2c_client	*client;
+	struct i2c_client	*companion;	/* companion chip client */
+
+	int			buck3_double;	/* DVC ramp slope double */
+	unsigned short		companion_addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			id;
 	int			irq_mode;
 	int			irq_base;
 	int			core_irq;
 	unsigned char		chip_version;
+<<<<<<< HEAD
 	unsigned char		osc_status;
 
 	unsigned int            wakeup_flag;
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum {
@@ -389,9 +406,12 @@ struct pm860x_platform_data {
 	int		num_regulators;
 };
 
+<<<<<<< HEAD
 extern int pm8606_osc_enable(struct pm860x_chip *, unsigned short);
 extern int pm8606_osc_disable(struct pm860x_chip *, unsigned short);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int pm860x_reg_read(struct i2c_client *, int);
 extern int pm860x_reg_write(struct i2c_client *, int, unsigned char);
 extern int pm860x_bulk_read(struct i2c_client *, int, int, unsigned char *);

@@ -27,7 +27,10 @@
 #include <asm/processor.h>
 #include <asm/ucontext.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
 #include <arch/system.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DEBUG_SIG 0
 

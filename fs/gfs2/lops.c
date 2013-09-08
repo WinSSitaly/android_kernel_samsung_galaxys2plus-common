@@ -12,7 +12,10 @@
 #include <linux/spinlock.h>
 #include <linux/completion.h>
 #include <linux/buffer_head.h>
+<<<<<<< HEAD
 #include <linux/mempool.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/gfs2_ondisk.h>
 #include <linux/bio.h>
 #include <linux/fs.h>
@@ -61,6 +64,7 @@ static void gfs2_pin(struct gfs2_sbd *sdp, struct buffer_head *bh)
 	trace_gfs2_pin(bd, 1);
 }
 
+<<<<<<< HEAD
 static bool buffer_is_rgrp(const struct gfs2_bufdata *bd)
 {
 	return bd->bd_gl->gl_name.ln_type == LM_TYPE_RGRP;
@@ -84,6 +88,8 @@ static void maybe_release_space(struct gfs2_bufdata *bd)
 	rgd->rd_free_clone = rgd->rd_free;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * gfs2_unpin - Unpin a buffer
  * @sdp: the filesystem the buffer belongs to
@@ -105,9 +111,12 @@ static void gfs2_unpin(struct gfs2_sbd *sdp, struct buffer_head *bh,
 	mark_buffer_dirty(bh);
 	clear_buffer_pinned(bh);
 
+<<<<<<< HEAD
 	if (buffer_is_rgrp(bd))
 		maybe_release_space(bd);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&sdp->sd_ail_lock);
 	if (bd->bd_ail) {
 		list_del(&bd->bd_ail_st_list);
@@ -144,6 +153,7 @@ static inline __be64 *bh_ptr_end(struct buffer_head *bh)
 	return (__force __be64 *)(bh->b_data + bh->b_size);
 }
 
+<<<<<<< HEAD
 /**
  * gfs2_log_write_endio - End of I/O for a log buffer
  * @bh: The buffer head
@@ -236,6 +246,8 @@ static struct buffer_head *gfs2_log_fake_buf(struct gfs2_sbd *sdp,
 
 	return bh;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct buffer_head *gfs2_get_log_desc(struct gfs2_sbd *sdp, u32 ld_type)
 {
@@ -258,14 +270,25 @@ static void buf_lo_add(struct gfs2_sbd *sdp, struct gfs2_log_element *le)
 	struct gfs2_meta_header *mh;
 	struct gfs2_trans *tr;
 
+<<<<<<< HEAD
 	if (!list_empty(&bd->bd_list_tr))
 		return;
+=======
+	lock_buffer(bd->bd_bh);
+	gfs2_log_lock(sdp);
+	if (!list_empty(&bd->bd_list_tr))
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tr = current->journal_info;
 	tr->tr_touched = 1;
 	tr->tr_num_buf++;
 	list_add(&bd->bd_list_tr, &tr->tr_list_buf);
 	if (!list_empty(&le->le_list))
+<<<<<<< HEAD
 		return;
+=======
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_bit(GLF_LFLUSH, &bd->bd_gl->gl_flags);
 	set_bit(GLF_DIRTY, &bd->bd_gl->gl_flags);
 	gfs2_meta_check(sdp, bd->bd_bh);
@@ -276,6 +299,12 @@ static void buf_lo_add(struct gfs2_sbd *sdp, struct gfs2_log_element *le)
 	sdp->sd_log_num_buf++;
 	list_add(&le->le_list, &sdp->sd_log_le_buf);
 	tr->tr_num_buf_new++;
+<<<<<<< HEAD
+=======
+out:
+	gfs2_log_unlock(sdp);
+	unlock_buffer(bd->bd_bh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void buf_lo_before_commit(struct gfs2_sbd *sdp)
@@ -583,6 +612,45 @@ static void revoke_lo_after_scan(struct gfs2_jdesc *jd, int error, int pass)
 	gfs2_revoke_clean(sdp);
 }
 
+<<<<<<< HEAD
+=======
+static void rg_lo_add(struct gfs2_sbd *sdp, struct gfs2_log_element *le)
+{
+	struct gfs2_rgrpd *rgd;
+	struct gfs2_trans *tr = current->journal_info;
+
+	tr->tr_touched = 1;
+
+	rgd = container_of(le, struct gfs2_rgrpd, rd_le);
+
+	gfs2_log_lock(sdp);
+	if (!list_empty(&le->le_list)){
+		gfs2_log_unlock(sdp);
+		return;
+	}
+	gfs2_rgrp_bh_hold(rgd);
+	sdp->sd_log_num_rg++;
+	list_add(&le->le_list, &sdp->sd_log_le_rg);
+	gfs2_log_unlock(sdp);
+}
+
+static void rg_lo_after_commit(struct gfs2_sbd *sdp, struct gfs2_ail *ai)
+{
+	struct list_head *head = &sdp->sd_log_le_rg;
+	struct gfs2_rgrpd *rgd;
+
+	while (!list_empty(head)) {
+		rgd = list_entry(head->next, struct gfs2_rgrpd, rd_le.le_list);
+		list_del_init(&rgd->rd_le.le_list);
+		sdp->sd_log_num_rg--;
+
+		gfs2_rgrp_repolish_clones(rgd);
+		gfs2_rgrp_bh_put(rgd);
+	}
+	gfs2_assert_warn(sdp, !sdp->sd_log_num_rg);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * databuf_lo_add - Add a databuf to the transaction.
  *
@@ -606,9 +674,17 @@ static void databuf_lo_add(struct gfs2_sbd *sdp, struct gfs2_log_element *le)
 	struct address_space *mapping = bd->bd_bh->b_page->mapping;
 	struct gfs2_inode *ip = GFS2_I(mapping->host);
 
+<<<<<<< HEAD
 	if (tr) {
 		if (!list_empty(&bd->bd_list_tr))
 			return;
+=======
+	lock_buffer(bd->bd_bh);
+	gfs2_log_lock(sdp);
+	if (tr) {
+		if (!list_empty(&bd->bd_list_tr))
+			goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tr->tr_touched = 1;
 		if (gfs2_is_jdata(ip)) {
 			tr->tr_num_buf++;
@@ -616,7 +692,11 @@ static void databuf_lo_add(struct gfs2_sbd *sdp, struct gfs2_log_element *le)
 		}
 	}
 	if (!list_empty(&le->le_list))
+<<<<<<< HEAD
 		return;
+=======
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	set_bit(GLF_LFLUSH, &bd->bd_gl->gl_flags);
 	set_bit(GLF_DIRTY, &bd->bd_gl->gl_flags);
@@ -628,6 +708,12 @@ static void databuf_lo_add(struct gfs2_sbd *sdp, struct gfs2_log_element *le)
 	} else {
 		list_add_tail(&le->le_list, &sdp->sd_log_le_ordered);
 	}
+<<<<<<< HEAD
+=======
+out:
+	gfs2_log_unlock(sdp);
+	unlock_buffer(bd->bd_bh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void gfs2_check_magic(struct buffer_head *bh)
@@ -636,11 +722,19 @@ static void gfs2_check_magic(struct buffer_head *bh)
 	__be32 *ptr;
 
 	clear_buffer_escaped(bh);
+<<<<<<< HEAD
 	kaddr = kmap_atomic(bh->b_page);
 	ptr = kaddr + bh_offset(bh);
 	if (*ptr == cpu_to_be32(GFS2_MAGIC))
 		set_buffer_escaped(bh);
 	kunmap_atomic(kaddr);
+=======
+	kaddr = kmap_atomic(bh->b_page, KM_USER0);
+	ptr = kaddr + bh_offset(bh);
+	if (*ptr == cpu_to_be32(GFS2_MAGIC))
+		set_buffer_escaped(bh);
+	kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void gfs2_write_blocks(struct gfs2_sbd *sdp, struct buffer_head *bh,
@@ -677,10 +771,17 @@ static void gfs2_write_blocks(struct gfs2_sbd *sdp, struct buffer_head *bh,
 		if (buffer_escaped(bd->bd_bh)) {
 			void *kaddr;
 			bh1 = gfs2_log_get_buf(sdp);
+<<<<<<< HEAD
 			kaddr = kmap_atomic(bd->bd_bh->b_page);
 			memcpy(bh1->b_data, kaddr + bh_offset(bd->bd_bh),
 			       bh1->b_size);
 			kunmap_atomic(kaddr);
+=======
+			kaddr = kmap_atomic(bd->bd_bh->b_page, KM_USER0);
+			memcpy(bh1->b_data, kaddr + bh_offset(bd->bd_bh),
+			       bh1->b_size);
+			kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			*(__be32 *)bh1->b_data = 0;
 			clear_buffer_escaped(bd->bd_bh);
 			unlock_buffer(bd->bd_bh);
@@ -778,6 +879,11 @@ static int databuf_lo_scan_elements(struct gfs2_jdesc *jd, unsigned int start,
 
 		brelse(bh_log);
 		brelse(bh_ip);
+<<<<<<< HEAD
+=======
+		if (error)
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		sdp->sd_replayed_blocks++;
 	}
@@ -842,6 +948,11 @@ const struct gfs2_log_operations gfs2_revoke_lops = {
 };
 
 const struct gfs2_log_operations gfs2_rg_lops = {
+<<<<<<< HEAD
+=======
+	.lo_add = rg_lo_add,
+	.lo_after_commit = rg_lo_after_commit,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.lo_name = "rg",
 };
 

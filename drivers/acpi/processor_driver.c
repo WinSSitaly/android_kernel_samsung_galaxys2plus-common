@@ -46,6 +46,10 @@
 #include <linux/slab.h>
 
 #include <asm/io.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/cpu.h>
 #include <asm/delay.h>
 #include <asm/uaccess.h>
@@ -67,7 +71,10 @@
 #define ACPI_PROCESSOR_NOTIFY_PERFORMANCE 0x80
 #define ACPI_PROCESSOR_NOTIFY_POWER	0x81
 #define ACPI_PROCESSOR_NOTIFY_THROTTLING	0x82
+<<<<<<< HEAD
 #define ACPI_PROCESSOR_DEVICE_HID	"ACPI0007"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define ACPI_PROCESSOR_LIMIT_USER	0
 #define ACPI_PROCESSOR_LIMIT_THERMAL	1
@@ -82,6 +89,7 @@ MODULE_LICENSE("GPL");
 static int acpi_processor_add(struct acpi_device *device);
 static int acpi_processor_remove(struct acpi_device *device, int type);
 static void acpi_processor_notify(struct acpi_device *device, u32 event);
+<<<<<<< HEAD
 static acpi_status acpi_processor_hotadd_init(struct acpi_processor *pr);
 static int acpi_processor_handle_eject(struct acpi_processor *pr);
 static int acpi_processor_start(struct acpi_processor *pr);
@@ -89,6 +97,15 @@ static int acpi_processor_start(struct acpi_processor *pr);
 static const struct acpi_device_id processor_device_ids[] = {
 	{ACPI_PROCESSOR_OBJECT_HID, 0},
 	{ACPI_PROCESSOR_DEVICE_HID, 0},
+=======
+static acpi_status acpi_processor_hotadd_init(acpi_handle handle, int *p_cpu);
+static int acpi_processor_handle_eject(struct acpi_processor *pr);
+
+
+static const struct acpi_device_id processor_device_ids[] = {
+	{ACPI_PROCESSOR_OBJECT_HID, 0},
+	{"ACPI0007", 0},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{"", 0},
 };
 MODULE_DEVICE_TABLE(acpi, processor_device_ids);
@@ -324,8 +341,15 @@ static int acpi_processor_get_info(struct acpi_device *device)
 	 *  they are physically not present.
 	 */
 	if (pr->id == -1) {
+<<<<<<< HEAD
 		if (ACPI_FAILURE(acpi_processor_hotadd_init(pr)))
 			return -ENODEV;
+=======
+		if (ACPI_FAILURE
+		    (acpi_processor_hotadd_init(pr->handle, &pr->id))) {
+			return -ENODEV;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	/*
 	 * On some boxes several processors use the same processor bus id.
@@ -407,7 +431,10 @@ static void acpi_processor_notify(struct acpi_device *device, u32 event)
 		acpi_bus_generate_proc_event(device, event, 0);
 		acpi_bus_generate_netlink_event(device->pnp.device_class,
 						  dev_name(&device->dev), event, 0);
+<<<<<<< HEAD
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		ACPI_DEBUG_PRINT((ACPI_DB_INFO,
 				  "Unsupported event [0x%x]\n", event));
@@ -424,6 +451,7 @@ static int acpi_cpu_soft_notify(struct notifier_block *nfb,
 	struct acpi_processor *pr = per_cpu(processors, cpu);
 
 	if (action == CPU_ONLINE && pr) {
+<<<<<<< HEAD
 		/* CPU got physically hotplugged and onlined the first time:
 		 * Initialize missing things
 		 */
@@ -447,6 +475,12 @@ static int acpi_cpu_soft_notify(struct notifier_block *nfb,
 			acpi_processor_reevaluate_tstate(pr, action);
 			acpi_processor_tstate_has_changed(pr);
 		}
+=======
+		acpi_processor_ppc_has_changed(pr, 0);
+		acpi_processor_cst_has_changed(pr);
+		acpi_processor_reevaluate_tstate(pr, action);
+		acpi_processor_tstate_has_changed(pr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (action == CPU_DEAD && pr) {
 		/* invalidate the flag.throttling after one CPU is offline */
@@ -460,6 +494,7 @@ static struct notifier_block acpi_cpu_notifier =
 	    .notifier_call = acpi_cpu_soft_notify,
 };
 
+<<<<<<< HEAD
 /*
  * acpi_processor_start() is called by the cpu_hotplug_notifier func:
  * acpi_cpu_soft_notify(). Getting it __cpuinit{data} is difficult, the
@@ -526,19 +561,30 @@ err_power_exit:
  * (cpu_data(cpu)) values, like CPU feature flags, family, model, etc.
  * Such things have to be put in and set up above in acpi_processor_start()
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __cpuinit acpi_processor_add(struct acpi_device *device)
 {
 	struct acpi_processor *pr = NULL;
 	int result = 0;
+<<<<<<< HEAD
 	struct device *dev;
+=======
+	struct sys_device *sysdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pr = kzalloc(sizeof(struct acpi_processor), GFP_KERNEL);
 	if (!pr)
 		return -ENOMEM;
 
 	if (!zalloc_cpumask_var(&pr->throttling.shared_cpu_map, GFP_KERNEL)) {
+<<<<<<< HEAD
 		result = -ENOMEM;
 		goto err_free_pr;
+=======
+		kfree(pr);
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	pr->handle = device->handle;
@@ -575,6 +621,7 @@ static int __cpuinit acpi_processor_add(struct acpi_device *device)
 
 	per_cpu(processors, pr->id) = pr;
 
+<<<<<<< HEAD
 	dev = get_cpu_device(pr->id);
 	if (sysfs_create_link(&device->dev.kobj, &dev->kobj, "sysdev")) {
 		result = -EFAULT;
@@ -591,10 +638,53 @@ static int __cpuinit acpi_processor_add(struct acpi_device *device)
 	result = acpi_processor_start(pr);
 	if (result)
 		goto err_remove_sysfs;
+=======
+	sysdev = get_cpu_sysdev(pr->id);
+	if (sysfs_create_link(&device->dev.kobj, &sysdev->kobj, "sysdev")) {
+		result = -EFAULT;
+		goto err_free_cpumask;
+	}
+
+#ifdef CONFIG_CPU_FREQ
+	acpi_processor_ppc_has_changed(pr, 0);
+#endif
+	acpi_processor_get_throttling_info(pr);
+	acpi_processor_get_limit_info(pr);
+
+
+	if (cpuidle_get_driver() == &acpi_idle_driver)
+		acpi_processor_power_init(pr, device);
+
+	pr->cdev = thermal_cooling_device_register("Processor", device,
+						&processor_cooling_ops);
+	if (IS_ERR(pr->cdev)) {
+		result = PTR_ERR(pr->cdev);
+		goto err_power_exit;
+	}
+
+	dev_dbg(&device->dev, "registered as cooling_device%d\n",
+		 pr->cdev->id);
+
+	result = sysfs_create_link(&device->dev.kobj,
+				   &pr->cdev->device.kobj,
+				   "thermal_cooling");
+	if (result) {
+		printk(KERN_ERR PREFIX "Create sysfs link\n");
+		goto err_thermal_unregister;
+	}
+	result = sysfs_create_link(&pr->cdev->device.kobj,
+				   &device->dev.kobj,
+				   "device");
+	if (result) {
+		printk(KERN_ERR PREFIX "Create sysfs link\n");
+		goto err_remove_sysfs;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
 err_remove_sysfs:
+<<<<<<< HEAD
 	sysfs_remove_link(&device->dev.kobj, "sysdev");
 err_clear_processor:
 	/*
@@ -605,6 +695,16 @@ err_free_cpumask:
 	free_cpumask_var(pr->throttling.shared_cpu_map);
 err_free_pr:
 	kfree(pr);
+=======
+	sysfs_remove_link(&device->dev.kobj, "thermal_cooling");
+err_thermal_unregister:
+	thermal_cooling_device_unregister(pr->cdev);
+err_power_exit:
+	acpi_processor_power_exit(pr, device);
+err_free_cpumask:
+	free_cpumask_var(pr->throttling.shared_cpu_map);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return result;
 }
 
@@ -749,6 +849,7 @@ static void acpi_processor_hotplug_notify(acpi_handle handle,
 	return;
 }
 
+<<<<<<< HEAD
 static acpi_status is_processor_device(acpi_handle handle)
 {
 	struct acpi_device_info *info;
@@ -779,16 +880,29 @@ static acpi_status is_processor_device(acpi_handle handle)
 	return AE_OK;	/* found a processor device object */
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static acpi_status
 processor_walk_namespace_cb(acpi_handle handle,
 			    u32 lvl, void *context, void **rv)
 {
 	acpi_status status;
 	int *action = context;
+<<<<<<< HEAD
 
 	status = is_processor_device(handle);
 	if (ACPI_FAILURE(status))
 		return AE_OK;	/* not a processor; continue to walk */
+=======
+	acpi_object_type type = 0;
+
+	status = acpi_get_type(handle, &type);
+	if (ACPI_FAILURE(status))
+		return (AE_OK);
+
+	if (type != ACPI_TYPE_PROCESSOR)
+		return (AE_OK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (*action) {
 	case INSTALL_NOTIFY_HANDLER:
@@ -806,6 +920,7 @@ processor_walk_namespace_cb(acpi_handle handle,
 		break;
 	}
 
+<<<<<<< HEAD
 	/* found a processor; skip walking underneath */
 	return AE_CTRL_DEPTH;
 }
@@ -813,11 +928,19 @@ processor_walk_namespace_cb(acpi_handle handle,
 static acpi_status acpi_processor_hotadd_init(struct acpi_processor *pr)
 {
 	acpi_handle handle = pr->handle;
+=======
+	return (AE_OK);
+}
+
+static acpi_status acpi_processor_hotadd_init(acpi_handle handle, int *p_cpu)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!is_processor_present(handle)) {
 		return AE_ERROR;
 	}
 
+<<<<<<< HEAD
 	if (acpi_map_lsapic(handle, &pr->id))
 		return AE_ERROR;
 
@@ -837,6 +960,16 @@ static acpi_status acpi_processor_hotadd_init(struct acpi_processor *pr)
 	printk(KERN_INFO "CPU %d got hotplugged\n", pr->id);
 	pr->flags.need_hotplug_init = 1;
 
+=======
+	if (acpi_map_lsapic(handle, p_cpu))
+		return AE_ERROR;
+
+	if (arch_register_cpu(*p_cpu)) {
+		acpi_unmap_lsapic(*p_cpu);
+		return AE_ERROR;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return AE_OK;
 }
 
@@ -850,7 +983,11 @@ static int acpi_processor_handle_eject(struct acpi_processor *pr)
 	return (0);
 }
 #else
+<<<<<<< HEAD
 static acpi_status acpi_processor_hotadd_init(struct acpi_processor *pr)
+=======
+static acpi_status acpi_processor_hotadd_init(acpi_handle handle, int *p_cpu)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return AE_ERROR;
 }
@@ -865,7 +1002,11 @@ void acpi_processor_install_hotplug_notify(void)
 {
 #ifdef CONFIG_ACPI_HOTPLUG_CPU
 	int action = INSTALL_NOTIFY_HANDLER;
+<<<<<<< HEAD
 	acpi_walk_namespace(ACPI_TYPE_ANY,
+=======
+	acpi_walk_namespace(ACPI_TYPE_PROCESSOR,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    ACPI_ROOT_OBJECT,
 			    ACPI_UINT32_MAX,
 			    processor_walk_namespace_cb, NULL, &action, NULL);
@@ -878,7 +1019,11 @@ void acpi_processor_uninstall_hotplug_notify(void)
 {
 #ifdef CONFIG_ACPI_HOTPLUG_CPU
 	int action = UNINSTALL_NOTIFY_HANDLER;
+<<<<<<< HEAD
 	acpi_walk_namespace(ACPI_TYPE_ANY,
+=======
+	acpi_walk_namespace(ACPI_TYPE_PROCESSOR,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    ACPI_ROOT_OBJECT,
 			    ACPI_UINT32_MAX,
 			    processor_walk_namespace_cb, NULL, &action, NULL);
@@ -901,9 +1046,23 @@ static int __init acpi_processor_init(void)
 
 	memset(&errata, 0, sizeof(errata));
 
+<<<<<<< HEAD
 	result = acpi_bus_register_driver(&acpi_processor_driver);
 	if (result < 0)
 		return result;
+=======
+	if (!cpuidle_register_driver(&acpi_idle_driver)) {
+		printk(KERN_DEBUG "ACPI: %s registered with cpuidle\n",
+			acpi_idle_driver.name);
+	} else {
+		printk(KERN_DEBUG "ACPI: acpi_idle yielding to %s\n",
+			cpuidle_get_driver()->name);
+	}
+
+	result = acpi_bus_register_driver(&acpi_processor_driver);
+	if (result < 0)
+		goto out_cpuidle;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	acpi_processor_install_hotplug_notify();
 
@@ -914,6 +1073,14 @@ static int __init acpi_processor_init(void)
 	acpi_processor_throttling_init();
 
 	return 0;
+<<<<<<< HEAD
+=======
+
+out_cpuidle:
+	cpuidle_unregister_driver(&acpi_idle_driver);
+
+	return result;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit acpi_processor_exit(void)
@@ -929,6 +1096,11 @@ static void __exit acpi_processor_exit(void)
 
 	acpi_bus_unregister_driver(&acpi_processor_driver);
 
+<<<<<<< HEAD
+=======
+	cpuidle_unregister_driver(&acpi_idle_driver);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 }
 

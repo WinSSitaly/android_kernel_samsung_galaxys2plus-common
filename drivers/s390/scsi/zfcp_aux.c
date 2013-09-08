@@ -3,7 +3,11 @@
  *
  * Module interface and handling of zfcp data structures.
  *
+<<<<<<< HEAD
  * Copyright IBM Corp. 2002, 2013
+=======
+ * Copyright IBM Corporation 2002, 2010
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 /*
@@ -23,7 +27,10 @@
  *            Christof Schmitt
  *            Martin Petermann
  *            Sven Schuetz
+<<<<<<< HEAD
  *            Steffen Maier
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #define KMSG_COMPONENT "zfcp"
@@ -32,7 +39,10 @@
 #include <linux/miscdevice.h>
 #include <linux/seq_file.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "zfcp_ext.h"
 #include "zfcp_fc.h"
 #include "zfcp_reqlist.h"
@@ -416,8 +426,11 @@ struct zfcp_adapter *zfcp_adapter_enqueue(struct ccw_device *ccw_device)
 	adapter->dma_parms.max_segment_size = ZFCP_QDIO_SBALE_LEN;
 	adapter->ccw_device->dev.dma_parms = &adapter->dma_parms;
 
+<<<<<<< HEAD
 	adapter->stat_read_buf_num = FSF_STATUS_READS_RECOM;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!zfcp_scsi_adapter_register(adapter))
 		return adapter;
 
@@ -522,7 +535,10 @@ struct zfcp_port *zfcp_port_enqueue(struct zfcp_adapter *adapter, u64 wwpn,
 
 	rwlock_init(&port->unit_list_lock);
 	INIT_LIST_HEAD(&port->unit_list);
+<<<<<<< HEAD
 	atomic_set(&port->units, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	INIT_WORK(&port->gid_pn_work, zfcp_fc_port_did_lookup);
 	INIT_WORK(&port->test_link_work, zfcp_fc_link_test_work);

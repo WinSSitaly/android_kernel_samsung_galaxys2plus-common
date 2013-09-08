@@ -12,7 +12,12 @@
 #include <linux/moduleparam.h>
 #include <linux/types.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/slab.h>
+=======
+#include <linux/fs.h>
+#include <linux/miscdevice.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <linux/watchdog.h>
 #include <linux/uaccess.h>
@@ -22,12 +27,18 @@
 #include <linux/mfd/wm831x/pdata.h>
 #include <linux/mfd/wm831x/watchdog.h>
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 module_param(nowayout, bool, 0);
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout,
 		 "Watchdog cannot be stopped once started (default="
 		 __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
 
+<<<<<<< HEAD
 struct wm831x_wdt_drvdata {
 	struct watchdog_device wdt;
 	struct wm831x *wm831x;
@@ -35,12 +46,26 @@ struct wm831x_wdt_drvdata {
 	int update_gpio;
 	int update_state;
 };
+=======
+static unsigned long wm831x_wdt_users;
+static struct miscdevice wm831x_wdt_miscdev;
+static int wm831x_wdt_expect_close;
+static DEFINE_MUTEX(wdt_mutex);
+static struct wm831x *wm831x;
+static unsigned int update_gpio;
+static unsigned int update_state;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* We can't use the sub-second values here but they're included
  * for completeness.  */
 static struct {
+<<<<<<< HEAD
 	unsigned int time;  /* Seconds */
 	u16 val;            /* WDOG_TO value */
+=======
+	int time;  /* Seconds */
+	u16 val;   /* WDOG_TO value */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } wm831x_wdt_cfgs[] = {
 	{  1, 2 },
 	{  2, 3 },
@@ -51,6 +76,7 @@ static struct {
 	{ 33, 7 },  /* Actually 32.768s so include both, others round down */
 };
 
+<<<<<<< HEAD
 static int wm831x_wdt_start(struct watchdog_device *wdt_dev)
 {
 	struct wm831x_wdt_drvdata *driver_data = watchdog_get_drvdata(wdt_dev);
@@ -58,6 +84,34 @@ static int wm831x_wdt_start(struct watchdog_device *wdt_dev)
 	int ret;
 
 	mutex_lock(&driver_data->lock);
+=======
+static int wm831x_wdt_set_timeout(struct wm831x *wm831x, u16 value)
+{
+	int ret;
+
+	mutex_lock(&wdt_mutex);
+
+	ret = wm831x_reg_unlock(wm831x);
+	if (ret == 0) {
+		ret = wm831x_set_bits(wm831x, WM831X_WATCHDOG,
+				      WM831X_WDOG_TO_MASK, value);
+		wm831x_reg_lock(wm831x);
+	} else {
+		dev_err(wm831x->dev, "Failed to unlock security key: %d\n",
+			ret);
+	}
+
+	mutex_unlock(&wdt_mutex);
+
+	return ret;
+}
+
+static int wm831x_wdt_start(struct wm831x *wm831x)
+{
+	int ret;
+
+	mutex_lock(&wdt_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = wm831x_reg_unlock(wm831x);
 	if (ret == 0) {
@@ -69,11 +123,16 @@ static int wm831x_wdt_start(struct watchdog_device *wdt_dev)
 			ret);
 	}
 
+<<<<<<< HEAD
 	mutex_unlock(&driver_data->lock);
+=======
+	mutex_unlock(&wdt_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
 
+<<<<<<< HEAD
 static int wm831x_wdt_stop(struct watchdog_device *wdt_dev)
 {
 	struct wm831x_wdt_drvdata *driver_data = watchdog_get_drvdata(wdt_dev);
@@ -81,6 +140,13 @@ static int wm831x_wdt_stop(struct watchdog_device *wdt_dev)
 	int ret;
 
 	mutex_lock(&driver_data->lock);
+=======
+static int wm831x_wdt_stop(struct wm831x *wm831x)
+{
+	int ret;
+
+	mutex_lock(&wdt_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = wm831x_reg_unlock(wm831x);
 	if (ret == 0) {
@@ -92,11 +158,16 @@ static int wm831x_wdt_stop(struct watchdog_device *wdt_dev)
 			ret);
 	}
 
+<<<<<<< HEAD
 	mutex_unlock(&driver_data->lock);
+=======
+	mutex_unlock(&wdt_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
 
+<<<<<<< HEAD
 static int wm831x_wdt_ping(struct watchdog_device *wdt_dev)
 {
 	struct wm831x_wdt_drvdata *driver_data = watchdog_get_drvdata(wdt_dev);
@@ -110,10 +181,26 @@ static int wm831x_wdt_ping(struct watchdog_device *wdt_dev)
 		gpio_set_value_cansleep(driver_data->update_gpio,
 					driver_data->update_state);
 		driver_data->update_state = !driver_data->update_state;
+=======
+static int wm831x_wdt_kick(struct wm831x *wm831x)
+{
+	int ret;
+	u16 reg;
+
+	mutex_lock(&wdt_mutex);
+
+	if (update_gpio) {
+		gpio_set_value_cansleep(update_gpio, update_state);
+		update_state = !update_state;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = 0;
 		goto out;
 	}
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	reg = wm831x_reg_read(wm831x, WM831X_WATCHDOG);
 
 	if (!(reg & WM831X_WDOG_RST_SRC)) {
@@ -134,11 +221,16 @@ static int wm831x_wdt_ping(struct watchdog_device *wdt_dev)
 	}
 
 out:
+<<<<<<< HEAD
 	mutex_unlock(&driver_data->lock);
+=======
+	mutex_unlock(&wdt_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
 
+<<<<<<< HEAD
 static int wm831x_wdt_set_timeout(struct watchdog_device *wdt_dev,
 				  unsigned int timeout)
 {
@@ -169,26 +261,197 @@ static int wm831x_wdt_set_timeout(struct watchdog_device *wdt_dev,
 }
 
 static const struct watchdog_info wm831x_wdt_info = {
+=======
+static int wm831x_wdt_open(struct inode *inode, struct file *file)
+{
+	int ret;
+
+	if (!wm831x)
+		return -ENODEV;
+
+	if (test_and_set_bit(0, &wm831x_wdt_users))
+		return -EBUSY;
+
+	ret = wm831x_wdt_start(wm831x);
+	if (ret != 0)
+		return ret;
+
+	return nonseekable_open(inode, file);
+}
+
+static int wm831x_wdt_release(struct inode *inode, struct file *file)
+{
+	if (wm831x_wdt_expect_close)
+		wm831x_wdt_stop(wm831x);
+	else {
+		dev_warn(wm831x->dev, "Watchdog device closed uncleanly\n");
+		wm831x_wdt_kick(wm831x);
+	}
+
+	clear_bit(0, &wm831x_wdt_users);
+
+	return 0;
+}
+
+static ssize_t wm831x_wdt_write(struct file *file,
+				const char __user *data, size_t count,
+				loff_t *ppos)
+{
+	size_t i;
+
+	if (count) {
+		wm831x_wdt_kick(wm831x);
+
+		if (!nowayout) {
+			/* In case it was set long ago */
+			wm831x_wdt_expect_close = 0;
+
+			/* scan to see whether or not we got the magic
+			   character */
+			for (i = 0; i != count; i++) {
+				char c;
+				if (get_user(c, data + i))
+					return -EFAULT;
+				if (c == 'V')
+					wm831x_wdt_expect_close = 42;
+			}
+		}
+	}
+	return count;
+}
+
+static const struct watchdog_info ident = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
 	.identity = "WM831x Watchdog",
 };
 
+<<<<<<< HEAD
 static const struct watchdog_ops wm831x_wdt_ops = {
 	.owner = THIS_MODULE,
 	.start = wm831x_wdt_start,
 	.stop = wm831x_wdt_stop,
 	.ping = wm831x_wdt_ping,
 	.set_timeout = wm831x_wdt_set_timeout,
+=======
+static long wm831x_wdt_ioctl(struct file *file, unsigned int cmd,
+			     unsigned long arg)
+{
+	int ret = -ENOTTY, time, i;
+	void __user *argp = (void __user *)arg;
+	int __user *p = argp;
+	u16 reg;
+
+	switch (cmd) {
+	case WDIOC_GETSUPPORT:
+		ret = copy_to_user(argp, &ident, sizeof(ident)) ? -EFAULT : 0;
+		break;
+
+	case WDIOC_GETSTATUS:
+	case WDIOC_GETBOOTSTATUS:
+		ret = put_user(0, p);
+		break;
+
+	case WDIOC_SETOPTIONS:
+	{
+		int options;
+
+		if (get_user(options, p))
+			return -EFAULT;
+
+		ret = -EINVAL;
+
+		/* Setting both simultaneously means at least one must fail */
+		if (options == WDIOS_DISABLECARD)
+			ret = wm831x_wdt_start(wm831x);
+
+		if (options == WDIOS_ENABLECARD)
+			ret = wm831x_wdt_stop(wm831x);
+		break;
+	}
+
+	case WDIOC_KEEPALIVE:
+		ret = wm831x_wdt_kick(wm831x);
+		break;
+
+	case WDIOC_SETTIMEOUT:
+		ret = get_user(time, p);
+		if (ret)
+			break;
+
+		if (time == 0) {
+			if (nowayout)
+				ret = -EINVAL;
+			else
+				wm831x_wdt_stop(wm831x);
+			break;
+		}
+
+		for (i = 0; i < ARRAY_SIZE(wm831x_wdt_cfgs); i++)
+			if (wm831x_wdt_cfgs[i].time == time)
+				break;
+		if (i == ARRAY_SIZE(wm831x_wdt_cfgs))
+			ret = -EINVAL;
+		else
+			ret = wm831x_wdt_set_timeout(wm831x,
+						     wm831x_wdt_cfgs[i].val);
+		break;
+
+	case WDIOC_GETTIMEOUT:
+		reg = wm831x_reg_read(wm831x, WM831X_WATCHDOG);
+		reg &= WM831X_WDOG_TO_MASK;
+		for (i = 0; i < ARRAY_SIZE(wm831x_wdt_cfgs); i++)
+			if (wm831x_wdt_cfgs[i].val == reg)
+				break;
+		if (i == ARRAY_SIZE(wm831x_wdt_cfgs)) {
+			dev_warn(wm831x->dev,
+				 "Unknown watchdog configuration: %x\n", reg);
+			ret = -EINVAL;
+		} else
+			ret = put_user(wm831x_wdt_cfgs[i].time, p);
+
+	}
+
+	return ret;
+}
+
+static const struct file_operations wm831x_wdt_fops = {
+	.owner = THIS_MODULE,
+	.llseek = no_llseek,
+	.write = wm831x_wdt_write,
+	.unlocked_ioctl = wm831x_wdt_ioctl,
+	.open = wm831x_wdt_open,
+	.release = wm831x_wdt_release,
+};
+
+static struct miscdevice wm831x_wdt_miscdev = {
+	.minor = WATCHDOG_MINOR,
+	.name = "watchdog",
+	.fops = &wm831x_wdt_fops,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __devinit wm831x_wdt_probe(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct wm831x *wm831x = dev_get_drvdata(pdev->dev.parent);
 	struct wm831x_pdata *chip_pdata;
 	struct wm831x_watchdog_pdata *pdata;
 	struct wm831x_wdt_drvdata *driver_data;
 	struct watchdog_device *wm831x_wdt;
 	int reg, ret, i;
+=======
+	struct wm831x_pdata *chip_pdata;
+	struct wm831x_watchdog_pdata *pdata;
+	int reg, ret;
+
+	if (wm831x) {
+		dev_err(&pdev->dev, "wm831x watchdog already registered\n");
+		return -EBUSY;
+	}
+
+	wm831x = dev_get_drvdata(pdev->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = wm831x_reg_read(wm831x, WM831X_WATCHDOG);
 	if (ret < 0) {
@@ -201,6 +464,7 @@ static int __devinit wm831x_wdt_probe(struct platform_device *pdev)
 	if (reg & WM831X_WDOG_DEBUG)
 		dev_warn(wm831x->dev, "Watchdog is paused\n");
 
+<<<<<<< HEAD
 	driver_data = devm_kzalloc(&pdev->dev, sizeof(*driver_data),
 				   GFP_KERNEL);
 	if (!driver_data) {
@@ -230,6 +494,8 @@ static int __devinit wm831x_wdt_probe(struct platform_device *pdev)
 	else
 		wm831x_wdt->timeout = wm831x_wdt_cfgs[i].time;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Apply any configuration */
 	if (pdev->dev.parent->platform_data) {
 		chip_pdata = pdev->dev.parent->platform_data;
@@ -264,7 +530,11 @@ static int __devinit wm831x_wdt_probe(struct platform_device *pdev)
 				goto err_gpio;
 			}
 
+<<<<<<< HEAD
 			driver_data->update_gpio = pdata->update_gpio;
+=======
+			update_gpio = pdata->update_gpio;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* Make sure the watchdog takes hardware updates */
 			reg |= WM831X_WDOG_RST_SRC;
@@ -281,6 +551,7 @@ static int __devinit wm831x_wdt_probe(struct platform_device *pdev)
 		}
 	}
 
+<<<<<<< HEAD
 	ret = watchdog_register_device(&driver_data->wdt);
 	if (ret != 0) {
 		dev_err(wm831x->dev, "watchdog_register_device() failed: %d\n",
@@ -295,18 +566,44 @@ static int __devinit wm831x_wdt_probe(struct platform_device *pdev)
 err_gpio:
 	if (driver_data->update_gpio)
 		gpio_free(driver_data->update_gpio);
+=======
+	wm831x_wdt_miscdev.parent = &pdev->dev;
+
+	ret = misc_register(&wm831x_wdt_miscdev);
+	if (ret != 0) {
+		dev_err(wm831x->dev, "Failed to register miscdev: %d\n", ret);
+		goto err_gpio;
+	}
+
+	return 0;
+
+err_gpio:
+	if (update_gpio) {
+		gpio_free(update_gpio);
+		update_gpio = 0;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err:
 	return ret;
 }
 
 static int __devexit wm831x_wdt_remove(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct wm831x_wdt_drvdata *driver_data = dev_get_drvdata(&pdev->dev);
 
 	watchdog_unregister_device(&driver_data->wdt);
 
 	if (driver_data->update_gpio)
 		gpio_free(driver_data->update_gpio);
+=======
+	if (update_gpio) {
+		gpio_free(update_gpio);
+		update_gpio = 0;
+	}
+
+	misc_deregister(&wm831x_wdt_miscdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -319,7 +616,21 @@ static struct platform_driver wm831x_wdt_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(wm831x_wdt_driver);
+=======
+static int __init wm831x_wdt_init(void)
+{
+	return platform_driver_register(&wm831x_wdt_driver);
+}
+module_init(wm831x_wdt_init);
+
+static void __exit wm831x_wdt_exit(void)
+{
+	platform_driver_unregister(&wm831x_wdt_driver);
+}
+module_exit(wm831x_wdt_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Mark Brown");
 MODULE_DESCRIPTION("WM831x Watchdog");

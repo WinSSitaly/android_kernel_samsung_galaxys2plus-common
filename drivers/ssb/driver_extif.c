@@ -3,7 +3,11 @@
  * Broadcom EXTIF core driver
  *
  * Copyright 2005, Broadcom Corporation
+<<<<<<< HEAD
  * Copyright 2006, 2007, Michael Buesch <m@bues.ch>
+=======
+ * Copyright 2006, 2007, Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright 2006, 2007, Felix Fietkau <nbd@openwrt.org>
  * Copyright 2007, Aurelien Jarno <aurelien@aurel32.net>
  *

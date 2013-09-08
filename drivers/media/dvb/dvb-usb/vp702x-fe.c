@@ -135,9 +135,15 @@ static int vp702x_fe_get_tune_settings(struct dvb_frontend* fe, struct dvb_front
 	return 0;
 }
 
+<<<<<<< HEAD
 static int vp702x_fe_set_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *fep = &fe->dtv_property_cache;
+=======
+static int vp702x_fe_set_frontend(struct dvb_frontend* fe,
+				  struct dvb_frontend_parameters *fep)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct vp702x_fe_state *st = fe->demodulator_priv;
 	struct vp702x_device_state *dst = st->d->priv;
 	u32 freq = fep->frequency/1000;
@@ -155,14 +161,22 @@ static int vp702x_fe_set_frontend(struct dvb_frontend *fe)
 	cmd[1] =  freq       & 0xff;
 	cmd[2] = 1; /* divrate == 4 -> frequencyRef[1] -> 1 here */
 
+<<<<<<< HEAD
 	sr = (u64) (fep->symbol_rate/1000) << 20;
+=======
+	sr = (u64) (fep->u.qpsk.symbol_rate/1000) << 20;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do_div(sr,88000);
 	cmd[3] = (sr >> 12) & 0xff;
 	cmd[4] = (sr >> 4)  & 0xff;
 	cmd[5] = (sr << 4)  & 0xf0;
 
 	deb_fe("setting frontend to: %u -> %u (%x) LNB-based GHz, symbolrate: %d -> %lu (%lx)\n",
+<<<<<<< HEAD
 			fep->frequency, freq, freq, fep->symbol_rate,
+=======
+			fep->frequency,freq,freq, fep->u.qpsk.symbol_rate,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			(unsigned long) sr, (unsigned long) sr);
 
 /*	if (fep->inversion == INVERSION_ON)
@@ -171,7 +185,11 @@ static int vp702x_fe_set_frontend(struct dvb_frontend *fe)
 	if (st->voltage == SEC_VOLTAGE_18)
 		cmd[6] |= 0x40;
 
+<<<<<<< HEAD
 /*	if (fep->symbol_rate > 8000000)
+=======
+/*	if (fep->u.qpsk.symbol_rate > 8000000)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cmd[6] |= 0x20;
 
 	if (fep->frequency < 1531000)
@@ -211,6 +229,16 @@ static int vp702x_fe_sleep(struct dvb_frontend *fe)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int vp702x_fe_get_frontend(struct dvb_frontend* fe,
+				  struct dvb_frontend_parameters *fep)
+{
+	deb_fe("%s\n",__func__);
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int vp702x_fe_send_diseqc_msg (struct dvb_frontend* fe,
 				    struct dvb_diseqc_master_cmd *m)
 {
@@ -343,9 +371,15 @@ error:
 
 
 static struct dvb_frontend_ops vp702x_fe_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_DVBS },
 	.info = {
 		.name           = "Twinhan DST-like frontend (VP7021/VP7020) DVB-S",
+=======
+	.info = {
+		.name           = "Twinhan DST-like frontend (VP7021/VP7020) DVB-S",
+		.type           = FE_QPSK,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min       = 950000,
 		.frequency_max       = 2150000,
 		.frequency_stepsize  = 1000,   /* kHz for QPSK frontends */
@@ -364,6 +398,10 @@ static struct dvb_frontend_ops vp702x_fe_ops = {
 	.sleep = vp702x_fe_sleep,
 
 	.set_frontend = vp702x_fe_set_frontend,
+<<<<<<< HEAD
+=======
+	.get_frontend = vp702x_fe_get_frontend,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.get_tune_settings = vp702x_fe_get_tune_settings,
 
 	.read_status = vp702x_fe_read_status,

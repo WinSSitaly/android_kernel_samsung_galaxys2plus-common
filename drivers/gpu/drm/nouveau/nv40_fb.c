@@ -72,6 +72,7 @@ nv44_fb_init_gart(struct drm_device *dev)
 }
 
 int
+<<<<<<< HEAD
 nv40_fb_vram_init(struct drm_device *dev)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
@@ -117,6 +118,8 @@ nv40_fb_vram_init(struct drm_device *dev)
 }
 
 int
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 nv40_fb_init(struct drm_device *dev)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;

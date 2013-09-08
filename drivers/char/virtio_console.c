@@ -19,10 +19,15 @@
  */
 #include <linux/cdev.h>
 #include <linux/debugfs.h>
+<<<<<<< HEAD
 #include <linux/completion.h>
 #include <linux/device.h>
 #include <linux/err.h>
 #include <linux/freezer.h>
+=======
+#include <linux/device.h>
+#include <linux/err.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/fs.h>
 #include <linux/init.h>
 #include <linux/list.h>
@@ -34,7 +39,10 @@
 #include <linux/virtio_console.h>
 #include <linux/wait.h>
 #include <linux/workqueue.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "../tty/hvc/hvc_console.h"
 
 /*
@@ -76,7 +84,10 @@ struct ports_driver_data {
 static struct ports_driver_data pdrvdata;
 
 DEFINE_SPINLOCK(pdrvdata_lock);
+<<<<<<< HEAD
 DECLARE_COMPLETION(early_console_added);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* This struct holds information that's relevant only for console ports */
 struct console {
@@ -155,10 +166,13 @@ struct ports_device {
 	int chr_major;
 };
 
+<<<<<<< HEAD
 struct port_stats {
 	unsigned long bytes_sent, bytes_received, bytes_discarded;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* This struct holds the per-port data */
 struct port {
 	/* Next port in the list, head is in the ports_device */
@@ -187,6 +201,7 @@ struct port {
 	struct dentry *debugfs_file;
 
 	/*
+<<<<<<< HEAD
 	 * Keep count of the bytes sent, received and discarded for
 	 * this port for accounting and debugging purposes.  These
 	 * counts are not reset across port open / close events.
@@ -194,6 +209,8 @@ struct port {
 	struct port_stats stats;
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * The entries in this struct will be valid if this port is
 	 * hooked up to an hvc console
 	 */
@@ -256,12 +273,18 @@ static struct port *find_port_by_devt_in_portdev(struct ports_device *portdev,
 	unsigned long flags;
 
 	spin_lock_irqsave(&portdev->ports_lock, flags);
+<<<<<<< HEAD
 	list_for_each_entry(port, &portdev->ports, list) {
 		if (port->cdev->dev == dev) {
 			kref_get(&port->kref);
 			goto out;
 		}
 	}
+=======
+	list_for_each_entry(port, &portdev->ports, list)
+		if (port->cdev->dev == dev)
+			goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	port = NULL;
 out:
 	spin_unlock_irqrestore(&portdev->ports_lock, flags);
@@ -365,6 +388,7 @@ fail:
 }
 
 /* Callers should take appropriate locks */
+<<<<<<< HEAD
 static struct port_buffer *get_inbuf(struct port *port)
 {
 	struct port_buffer *buf;
@@ -378,6 +402,19 @@ static struct port_buffer *get_inbuf(struct port *port)
 		buf->len = len;
 		buf->offset = 0;
 		port->stats.bytes_received += len;
+=======
+static void *get_inbuf(struct port *port)
+{
+	struct port_buffer *buf;
+	struct virtqueue *vq;
+	unsigned int len;
+
+	vq = port->in_vq;
+	buf = virtqueue_get_buf(vq, &len);
+	if (buf) {
+		buf->len = len;
+		buf->offset = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return buf;
 }
@@ -395,7 +432,11 @@ static int add_inbuf(struct virtqueue *vq, struct port_buffer *buf)
 
 	sg_init_one(sg, buf->buf, buf->size);
 
+<<<<<<< HEAD
 	ret = virtqueue_add_buf(vq, sg, 0, 1, buf, GFP_ATOMIC);
+=======
+	ret = virtqueue_add_buf(vq, sg, 0, 1, buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	virtqueue_kick(vq);
 	return ret;
 }
@@ -404,12 +445,19 @@ static int add_inbuf(struct virtqueue *vq, struct port_buffer *buf)
 static void discard_port_data(struct port *port)
 {
 	struct port_buffer *buf;
+<<<<<<< HEAD
 	unsigned int err;
+=======
+	struct virtqueue *vq;
+	unsigned int len;
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!port->portdev) {
 		/* Device has been unplugged.  vqs are already gone. */
 		return;
 	}
+<<<<<<< HEAD
 	buf = get_inbuf(port);
 
 	err = 0;
@@ -425,6 +473,26 @@ static void discard_port_data(struct port *port)
 	if (err)
 		dev_warn(port->dev, "Errors adding %d buffers back to vq\n",
 			 err);
+=======
+	vq = port->in_vq;
+	if (port->inbuf)
+		buf = port->inbuf;
+	else
+		buf = virtqueue_get_buf(vq, &len);
+
+	ret = 0;
+	while (buf) {
+		if (add_inbuf(vq, buf) < 0) {
+			ret++;
+			free_buf(buf);
+		}
+		buf = virtqueue_get_buf(vq, &len);
+	}
+	port->inbuf = NULL;
+	if (ret)
+		dev_warn(port->dev, "Errors adding %d buffers back to vq\n",
+			 ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static bool port_has_data(struct port *port)
@@ -432,12 +500,27 @@ static bool port_has_data(struct port *port)
 	unsigned long flags;
 	bool ret;
 
+<<<<<<< HEAD
 	ret = false;
 	spin_lock_irqsave(&port->inbuf_lock, flags);
 	port->inbuf = get_inbuf(port);
 	if (port->inbuf)
 		ret = true;
 
+=======
+	spin_lock_irqsave(&port->inbuf_lock, flags);
+	if (port->inbuf) {
+		ret = true;
+		goto out;
+	}
+	port->inbuf = get_inbuf(port);
+	if (port->inbuf) {
+		ret = true;
+		goto out;
+	}
+	ret = false;
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&port->inbuf_lock, flags);
 	return ret;
 }
@@ -460,7 +543,11 @@ static ssize_t __send_control_msg(struct ports_device *portdev, u32 port_id,
 	vq = portdev->c_ovq;
 
 	sg_init_one(sg, &cpkt, sizeof(cpkt));
+<<<<<<< HEAD
 	if (virtqueue_add_buf(vq, sg, 1, 0, &cpkt, GFP_ATOMIC) >= 0) {
+=======
+	if (virtqueue_add_buf(vq, sg, 1, 0, &cpkt) >= 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		virtqueue_kick(vq);
 		while (!virtqueue_get_buf(vq, &len))
 			cpu_relax();
@@ -509,7 +596,11 @@ static ssize_t send_buf(struct port *port, void *in_buf, size_t in_count,
 	reclaim_consumed_buffers(port);
 
 	sg_init_one(sg, in_buf, in_count);
+<<<<<<< HEAD
 	ret = virtqueue_add_buf(out_vq, sg, 1, 0, in_buf, GFP_ATOMIC);
+=======
+	ret = virtqueue_add_buf(out_vq, sg, 1, 0, in_buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Tell Host to go! */
 	virtqueue_kick(out_vq);
@@ -538,8 +629,11 @@ static ssize_t send_buf(struct port *port, void *in_buf, size_t in_count,
 		cpu_relax();
 done:
 	spin_unlock_irqrestore(&port->outvq_lock, flags);
+<<<<<<< HEAD
 
 	port->stats.bytes_sent += in_count;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * We're expected to return the amount of data we wrote -- all
 	 * of it
@@ -633,10 +727,13 @@ static ssize_t port_fops_read(struct file *filp, char __user *ubuf,
 
 	port = filp->private_data;
 
+<<<<<<< HEAD
 	/* Port is hot-unplugged. */
 	if (!port->guest_connected)
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!port_has_data(port)) {
 		/*
 		 * If nothing's connected on the host just return 0 in
@@ -648,12 +745,21 @@ static ssize_t port_fops_read(struct file *filp, char __user *ubuf,
 		if (filp->f_flags & O_NONBLOCK)
 			return -EAGAIN;
 
+<<<<<<< HEAD
 		ret = wait_event_freezable(port->waitqueue,
 					   !will_read_block(port));
 		if (ret < 0)
 			return ret;
 	}
 	/* Port got hot-unplugged while we were waiting above. */
+=======
+		ret = wait_event_interruptible(port->waitqueue,
+					       !will_read_block(port));
+		if (ret < 0)
+			return ret;
+	}
+	/* Port got hot-unplugged. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!port->guest_connected)
 		return -ENODEV;
 	/*
@@ -692,8 +798,13 @@ static ssize_t port_fops_write(struct file *filp, const char __user *ubuf,
 		if (nonblock)
 			return -EAGAIN;
 
+<<<<<<< HEAD
 		ret = wait_event_freezable(port->waitqueue,
 					   !will_write_block(port));
+=======
+		ret = wait_event_interruptible(port->waitqueue,
+					       !will_write_block(port));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0)
 			return ret;
 	}
@@ -796,6 +907,7 @@ static int port_fops_open(struct inode *inode, struct file *filp)
 	struct port *port;
 	int ret;
 
+<<<<<<< HEAD
 	/* We get the port with a kref here */
 	port = find_port_by_devt(cdev->dev);
 	if (!port) {
@@ -804,6 +916,16 @@ static int port_fops_open(struct inode *inode, struct file *filp)
 	}
 	filp->private_data = port;
 
+=======
+	port = find_port_by_devt(cdev->dev);
+	filp->private_data = port;
+
+	/* Prevent against a port getting hot-unplugged at the same time */
+	spin_lock_irq(&port->portdev->ports_lock);
+	kref_get(&port->kref);
+	spin_unlock_irq(&port->portdev->ports_lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Don't allow opening of console port devices -- that's done
 	 * via /dev/hvc
@@ -1045,6 +1167,15 @@ static struct attribute_group port_attribute_group = {
 	.attrs = port_sysfs_entries,
 };
 
+<<<<<<< HEAD
+=======
+static int debugfs_open(struct inode *inode, struct file *filp)
+{
+	filp->private_data = inode->i_private;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t debugfs_read(struct file *filp, char __user *ubuf,
 			    size_t count, loff_t *offp)
 {
@@ -1068,6 +1199,7 @@ static ssize_t debugfs_read(struct file *filp, char __user *ubuf,
 	out_offset += snprintf(buf + out_offset, out_count - out_offset,
 			       "outvq_full: %d\n", port->outvq_full);
 	out_offset += snprintf(buf + out_offset, out_count - out_offset,
+<<<<<<< HEAD
 			       "bytes_sent: %lu\n", port->stats.bytes_sent);
 	out_offset += snprintf(buf + out_offset, out_count - out_offset,
 			       "bytes_received: %lu\n",
@@ -1076,6 +1208,8 @@ static ssize_t debugfs_read(struct file *filp, char __user *ubuf,
 			       "bytes_discarded: %lu\n",
 			       port->stats.bytes_discarded);
 	out_offset += snprintf(buf + out_offset, out_count - out_offset,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       "is_console: %s\n",
 			       is_console_port(port) ? "yes" : "no");
 	out_offset += snprintf(buf + out_offset, out_count - out_offset,
@@ -1088,7 +1222,11 @@ static ssize_t debugfs_read(struct file *filp, char __user *ubuf,
 
 static const struct file_operations port_debugfs_ops = {
 	.owner = THIS_MODULE,
+<<<<<<< HEAD
 	.open  = simple_open,
+=======
+	.open  = debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.read  = debugfs_read,
 };
 
@@ -1160,7 +1298,10 @@ static int add_port(struct ports_device *portdev, u32 id)
 	port->cons.ws.ws_row = port->cons.ws.ws_col = 0;
 
 	port->host_connected = port->guest_connected = false;
+<<<<<<< HEAD
 	port->stats = (struct port_stats) { 0 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	port->outvq_full = false;
 
@@ -1261,6 +1402,7 @@ static void remove_port(struct kref *kref)
 
 	port = container_of(kref, struct port, kref);
 
+<<<<<<< HEAD
 	kfree(port);
 }
 
@@ -1276,6 +1418,17 @@ static void remove_port_data(struct port *port)
 	/* Remove buffers we queued up for the Host to send us data in. */
 	while ((buf = virtqueue_detach_unused_buf(port->in_vq)))
 		free_buf(buf);
+=======
+	sysfs_remove_group(&port->dev->kobj, &port_attribute_group);
+	device_destroy(pdrvdata.class, port->dev->devt);
+	cdev_del(port->cdev);
+
+	kfree(port->name);
+
+	debugfs_remove(port->debugfs_file);
+
+	kfree(port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1285,11 +1438,17 @@ static void remove_port_data(struct port *port)
  */
 static void unplug_port(struct port *port)
 {
+<<<<<<< HEAD
+=======
+	struct port_buffer *buf;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irq(&port->portdev->ports_lock);
 	list_del(&port->list);
 	spin_unlock_irq(&port->portdev->ports_lock);
 
 	if (port->guest_connected) {
+<<<<<<< HEAD
 		/* Let the app know the port is going down. */
 		send_sigio_to_port(port);
 
@@ -1298,6 +1457,14 @@ static void unplug_port(struct port *port)
 		port->host_connected = false;
 
 		wake_up_interruptible(&port->waitqueue);
+=======
+		port->guest_connected = false;
+		port->host_connected = false;
+		wake_up_interruptible(&port->waitqueue);
+
+		/* Let the app know the port is going down. */
+		send_sigio_to_port(port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (is_console_port(port)) {
@@ -1307,7 +1474,18 @@ static void unplug_port(struct port *port)
 		hvc_remove(port->cons.hvc);
 	}
 
+<<<<<<< HEAD
 	remove_port_data(port);
+=======
+	/* Remove unused data this port might have received. */
+	discard_port_data(port);
+
+	reclaim_consumed_buffers(port);
+
+	/* Remove buffers we queued up for the Host to send us data in. */
+	while ((buf = virtqueue_detach_unused_buf(port->in_vq)))
+		free_buf(buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * We should just assume the device itself has gone off --
@@ -1316,6 +1494,7 @@ static void unplug_port(struct port *port)
 	 */
 	port->portdev = NULL;
 
+<<<<<<< HEAD
 	sysfs_remove_group(&port->dev->kobj, &port_attribute_group);
 	device_destroy(pdrvdata.class, port->dev->devt);
 	cdev_del(port->cdev);
@@ -1324,6 +1503,8 @@ static void unplug_port(struct port *port)
 
 	debugfs_remove(port->debugfs_file);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Locks around here are not necessary - a port can't be
 	 * opened after we removed the port struct from ports_list
@@ -1377,7 +1558,10 @@ static void handle_control_message(struct ports_device *portdev,
 			break;
 
 		init_port_console(port);
+<<<<<<< HEAD
 		complete(&early_console_added);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Could remove the port here in case init fails - but
 		 * have to notify the host first.
@@ -1420,6 +1604,7 @@ static void handle_control_message(struct ports_device *portdev,
 		break;
 	case VIRTIO_CONSOLE_PORT_NAME:
 		/*
+<<<<<<< HEAD
 		 * If we woke up after hibernation, we can get this
 		 * again.  Skip it in that case.
 		 */
@@ -1427,6 +1612,8 @@ static void handle_control_message(struct ports_device *portdev,
 			break;
 
 		/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * Skip the size of the header and the cpkt to get the size
 		 * of the name that was sent
 		 */
@@ -1514,7 +1701,12 @@ static void in_intr(struct virtqueue *vq)
 		return;
 
 	spin_lock_irqsave(&port->inbuf_lock, flags);
+<<<<<<< HEAD
 	port->inbuf = get_inbuf(port);
+=======
+	if (!port->inbuf)
+		port->inbuf = get_inbuf(port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Don't queue up data when port is closed.  This condition
@@ -1595,7 +1787,11 @@ static int init_vqs(struct ports_device *portdev)
 	portdev->out_vqs = kmalloc(nr_ports * sizeof(struct virtqueue *),
 				   GFP_KERNEL);
 	if (!vqs || !io_callbacks || !io_names || !portdev->in_vqs ||
+<<<<<<< HEAD
 	    !portdev->out_vqs) {
+=======
+			!portdev->out_vqs) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = -ENOMEM;
 		goto free;
 	}
@@ -1667,6 +1863,7 @@ static const struct file_operations portdev_fops = {
 	.owner = THIS_MODULE,
 };
 
+<<<<<<< HEAD
 static void remove_vqs(struct ports_device *portdev)
 {
 	portdev->vdev->config->del_vqs(portdev->vdev);
@@ -1689,6 +1886,8 @@ static void remove_controlq_data(struct ports_device *portdev)
 		free_buf(buf);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Once we're further in boot, we get probed like any other virtio
  * device.
@@ -1702,10 +1901,13 @@ static int __devinit virtcons_probe(struct virtio_device *vdev)
 	struct ports_device *portdev;
 	int err;
 	bool multiport;
+<<<<<<< HEAD
 	bool early = early_put_chars != NULL;
 
 	/* Ensure to read early_put_chars now */
 	barrier();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	portdev = kmalloc(sizeof(*portdev), GFP_KERNEL);
 	if (!portdev) {
@@ -1733,11 +1935,21 @@ static int __devinit virtcons_probe(struct virtio_device *vdev)
 
 	multiport = false;
 	portdev->config.max_nr_ports = 1;
+<<<<<<< HEAD
 	if (virtio_config_val(vdev, VIRTIO_CONSOLE_F_MULTIPORT,
 			      offsetof(struct virtio_console_config,
 				       max_nr_ports),
 			      &portdev->config.max_nr_ports) == 0)
 		multiport = true;
+=======
+	if (virtio_has_feature(vdev, VIRTIO_CONSOLE_F_MULTIPORT)) {
+		multiport = true;
+		vdev->config->get(vdev, offsetof(struct virtio_console_config,
+						 max_nr_ports),
+				  &portdev->config.max_nr_ports,
+				  sizeof(portdev->config.max_nr_ports));
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = init_vqs(portdev);
 	if (err < 0) {
@@ -1775,6 +1987,7 @@ static int __devinit virtcons_probe(struct virtio_device *vdev)
 
 	__send_control_msg(portdev, VIRTIO_CONSOLE_BAD_ID,
 			   VIRTIO_CONSOLE_DEVICE_READY, 1);
+<<<<<<< HEAD
 
 	/*
 	 * If there was an early virtio console, assume that there are no
@@ -1788,13 +2001,21 @@ static int __devinit virtcons_probe(struct virtio_device *vdev)
 	if (multiport && early)
 		wait_for_completion(&early_console_added);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 free_vqs:
 	/* The host might want to notify mgmt sw about device add failure */
 	__send_control_msg(portdev, VIRTIO_CONSOLE_BAD_ID,
 			   VIRTIO_CONSOLE_DEVICE_READY, 0);
+<<<<<<< HEAD
 	remove_vqs(portdev);
+=======
+	vdev->config->del_vqs(vdev);
+	kfree(portdev->in_vqs);
+	kfree(portdev->out_vqs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 free_chrdev:
 	unregister_chrdev(portdev->chr_major, "virtio-portsdev");
 free:
@@ -1817,8 +2038,12 @@ static void virtcons_remove(struct virtio_device *vdev)
 	/* Disable interrupts for vqs */
 	vdev->config->reset(vdev);
 	/* Finish up work that's lined up */
+<<<<<<< HEAD
 	if (use_multiport(portdev))
 		cancel_work_sync(&portdev->control_work);
+=======
+	cancel_work_sync(&portdev->control_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_for_each_entry_safe(port, port2, &portdev->ports, list)
 		unplug_port(port);
@@ -1833,8 +2058,26 @@ static void virtcons_remove(struct virtio_device *vdev)
 	 * have to just stop using the port, as the vqs are going
 	 * away.
 	 */
+<<<<<<< HEAD
 	remove_controlq_data(portdev);
 	remove_vqs(portdev);
+=======
+	if (use_multiport(portdev)) {
+		struct port_buffer *buf;
+		unsigned int len;
+
+		while ((buf = virtqueue_get_buf(portdev->c_ivq, &len)))
+			free_buf(buf);
+
+		while ((buf = virtqueue_detach_unused_buf(portdev->c_ivq)))
+			free_buf(buf);
+	}
+
+	vdev->config->del_vqs(vdev);
+	kfree(portdev->in_vqs);
+	kfree(portdev->out_vqs);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(portdev);
 }
 
@@ -1848,6 +2091,7 @@ static unsigned int features[] = {
 	VIRTIO_CONSOLE_F_MULTIPORT,
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 static int virtcons_freeze(struct virtio_device *vdev)
 {
@@ -1917,6 +2161,8 @@ static int virtcons_restore(struct virtio_device *vdev)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct virtio_driver virtio_console = {
 	.feature_table = features,
 	.feature_table_size = ARRAY_SIZE(features),
@@ -1926,10 +2172,13 @@ static struct virtio_driver virtio_console = {
 	.probe =	virtcons_probe,
 	.remove =	virtcons_remove,
 	.config_changed = config_intr,
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 	.freeze =	virtcons_freeze,
 	.restore =	virtcons_restore,
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init init(void)

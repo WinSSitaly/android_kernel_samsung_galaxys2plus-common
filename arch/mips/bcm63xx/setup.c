@@ -33,7 +33,11 @@ static void bcm6348_a1_reboot(void)
 	u32 reg;
 
 	/* soft reset all blocks */
+<<<<<<< HEAD
 	printk(KERN_INFO "soft-resetting all blocks ...\n");
+=======
+	printk(KERN_INFO "soft-reseting all blocks ...\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	reg = bcm_perf_readl(PERF_SOFTRESET_REG);
 	reg &= ~SOFTRESET_6348_ALL;
 	bcm_perf_writel(reg, PERF_SOFTRESET_REG);
@@ -63,6 +67,7 @@ static void bcm6348_a1_reboot(void)
 
 void bcm63xx_machine_reboot(void)
 {
+<<<<<<< HEAD
 	u32 reg, perf_regs[2] = { 0, 0 };
 	unsigned int i;
 
@@ -90,6 +95,15 @@ void bcm63xx_machine_reboot(void)
 		}
 		bcm_perf_writel(reg, perf_regs[i]);
 	}
+=======
+	u32 reg;
+
+	/* mask and clear all external irq */
+	reg = bcm_perf_readl(PERF_EXTIRQ_CFG_REG);
+	reg &= ~EXTIRQ_CFG_MASK_ALL;
+	reg |= EXTIRQ_CFG_CLEAR_ALL;
+	bcm_perf_writel(reg, PERF_EXTIRQ_CFG_REG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (BCMCPU_IS_6348() && (bcm63xx_get_cpu_rev() == 0xa1))
 		bcm6348_a1_reboot();
@@ -144,4 +158,8 @@ int __init bcm63xx_register_devices(void)
 	return board_register_devices();
 }
 
+<<<<<<< HEAD
 device_initcall(bcm63xx_register_devices);
+=======
+arch_initcall(bcm63xx_register_devices);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

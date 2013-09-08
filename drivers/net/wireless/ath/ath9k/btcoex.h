@@ -36,6 +36,7 @@
 #define ATH_BT_CNT_THRESHOLD	       3
 #define ATH_BT_CNT_SCAN_THRESHOLD      15
 
+<<<<<<< HEAD
 #define AR9300_NUM_BT_WEIGHTS   4
 #define AR9300_NUM_WLAN_WEIGHTS 4
 /* Defines the BT AR_BT_COEX_WGHT used */
@@ -45,12 +46,21 @@ enum ath_stomp_type {
 	ATH_BTCOEX_STOMP_NONE,
 	ATH_BTCOEX_STOMP_LOW_FTP,
 	ATH_BTCOEX_STOMP_MAX
+=======
+/* Defines the BT AR_BT_COEX_WGHT used */
+enum ath_stomp_type {
+	ATH_BTCOEX_NO_STOMP,
+	ATH_BTCOEX_STOMP_ALL,
+	ATH_BTCOEX_STOMP_LOW,
+	ATH_BTCOEX_STOMP_NONE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum ath_btcoex_scheme {
 	ATH_BTCOEX_CFG_NONE,
 	ATH_BTCOEX_CFG_2WIRE,
 	ATH_BTCOEX_CFG_3WIRE,
+<<<<<<< HEAD
 	ATH_BTCOEX_CFG_MCI,
 };
 
@@ -81,11 +91,16 @@ struct ath9k_hw_mci {
 	u8 bt_ver_major;
 	u8 bt_ver_minor;
 	u8 bt_state;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct ath_btcoex_hw {
 	enum ath_btcoex_scheme scheme;
+<<<<<<< HEAD
 	struct ath9k_hw_mci mci;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool enabled;
 	u8 wlanactive_gpio;
 	u8 btactive_gpio;
@@ -93,6 +108,7 @@ struct ath_btcoex_hw {
 	u32 bt_coex_mode; 	/* Register setting for AR_BT_COEX_MODE */
 	u32 bt_coex_weights; 	/* Register setting for AR_BT_COEX_WEIGHT */
 	u32 bt_coex_mode2; 	/* Register setting for AR_BT_COEX_MODE2 */
+<<<<<<< HEAD
 	u32 bt_weight[AR9300_NUM_BT_WEIGHTS];
 	u32 wlan_weight[AR9300_NUM_WLAN_WEIGHTS];
 };
@@ -101,10 +117,20 @@ void ath9k_hw_btcoex_init_scheme(struct ath_hw *ah);
 void ath9k_hw_btcoex_init_2wire(struct ath_hw *ah);
 void ath9k_hw_btcoex_init_3wire(struct ath_hw *ah);
 void ath9k_hw_btcoex_init_mci(struct ath_hw *ah);
+=======
+};
+
+void ath9k_hw_btcoex_init_2wire(struct ath_hw *ah);
+void ath9k_hw_btcoex_init_3wire(struct ath_hw *ah);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void ath9k_hw_init_btcoex_hw(struct ath_hw *ah, int qnum);
 void ath9k_hw_btcoex_set_weight(struct ath_hw *ah,
 				u32 bt_weight,
 				u32 wlan_weight);
+<<<<<<< HEAD
+=======
+void ath9k_hw_btcoex_enable(struct ath_hw *ah);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void ath9k_hw_btcoex_disable(struct ath_hw *ah);
 void ath9k_hw_btcoex_bt_stomp(struct ath_hw *ah,
 			      enum ath_stomp_type stomp_type);

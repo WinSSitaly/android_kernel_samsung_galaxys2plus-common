@@ -27,6 +27,7 @@
 
 #include "vmwgfx_kms.h"
 
+<<<<<<< HEAD
 
 /* Might need a hrtimer here? */
 #define VMWGFX_PRESENT_RATE ((HZ / 60 > 0) ? HZ / 60 : 1)
@@ -68,6 +69,13 @@ void vmw_clip_cliprects(struct drm_clip_rect *rects,
 
 	*out_num = k;
 }
+=======
+/* Might need a hrtimer here? */
+#define VMWGFX_PRESENT_RATE ((HZ / 60 > 0) ? HZ / 60 : 1)
+
+static int vmw_surface_dmabuf_pin(struct vmw_framebuffer *vfb);
+static int vmw_surface_dmabuf_unpin(struct vmw_framebuffer *vfb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void vmw_display_unit_cleanup(struct vmw_display_unit *du)
 {
@@ -120,6 +128,7 @@ int vmw_cursor_update_image(struct vmw_private *dev_priv,
 	return 0;
 }
 
+<<<<<<< HEAD
 int vmw_cursor_update_dmabuf(struct vmw_private *dev_priv,
 			     struct vmw_dma_buffer *dmabuf,
 			     u32 width, u32 height,
@@ -157,6 +166,8 @@ err_unreserve:
 }
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void vmw_cursor_update_position(struct vmw_private *dev_priv,
 				bool show, int x, int y)
 {
@@ -180,6 +191,7 @@ int vmw_du_crtc_cursor_set(struct drm_crtc *crtc, struct drm_file *file_priv,
 	struct vmw_dma_buffer *dmabuf = NULL;
 	int ret;
 
+<<<<<<< HEAD
 	/* A lot of the code assumes this */
 	if (handle && (width != 64 || height != 64))
 		return -EINVAL;
@@ -200,6 +212,26 @@ int vmw_du_crtc_cursor_set(struct drm_crtc *crtc, struct drm_file *file_priv,
 		return -EINVAL;
 	}
 
+=======
+	if (handle) {
+		ret = vmw_user_surface_lookup_handle(dev_priv, tfile,
+						     handle, &surface);
+		if (!ret) {
+			if (!surface->snooper.image) {
+				DRM_ERROR("surface not suitable for cursor\n");
+				return -EINVAL;
+			}
+		} else {
+			ret = vmw_user_dmabuf_lookup(tfile,
+						     handle, &dmabuf);
+			if (ret) {
+				DRM_ERROR("failed to find surface or dmabuf: %i\n", ret);
+				return -EINVAL;
+			}
+		}
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* takedown old cursor */
 	if (du->cursor_surface) {
 		du->cursor_surface->snooper.crtc = NULL;
@@ -218,19 +250,56 @@ int vmw_du_crtc_cursor_set(struct drm_crtc *crtc, struct drm_file *file_priv,
 		vmw_cursor_update_image(dev_priv, surface->snooper.image,
 					64, 64, du->hotspot_x, du->hotspot_y);
 	} else if (dmabuf) {
+<<<<<<< HEAD
 		/* vmw_user_surface_lookup takes one reference */
 		du->cursor_dmabuf = dmabuf;
 
 		ret = vmw_cursor_update_dmabuf(dev_priv, dmabuf, width, height,
 					       du->hotspot_x, du->hotspot_y);
+=======
+		struct ttm_bo_kmap_obj map;
+		unsigned long kmap_offset;
+		unsigned long kmap_num;
+		void *virtual;
+		bool dummy;
+
+		/* vmw_user_surface_lookup takes one reference */
+		du->cursor_dmabuf = dmabuf;
+
+		kmap_offset = 0;
+		kmap_num = (64*64*4) >> PAGE_SHIFT;
+
+		ret = ttm_bo_reserve(&dmabuf->base, true, false, false, 0);
+		if (unlikely(ret != 0)) {
+			DRM_ERROR("reserve failed\n");
+			return -EINVAL;
+		}
+
+		ret = ttm_bo_kmap(&dmabuf->base, kmap_offset, kmap_num, &map);
+		if (unlikely(ret != 0))
+			goto err_unreserve;
+
+		virtual = ttm_kmap_obj_virtual(&map, &dummy);
+		vmw_cursor_update_image(dev_priv, virtual, 64, 64,
+					du->hotspot_x, du->hotspot_y);
+
+		ttm_bo_kunmap(&map);
+err_unreserve:
+		ttm_bo_unreserve(&dmabuf->base);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		vmw_cursor_update_position(dev_priv, false, 0, 0);
 		return 0;
 	}
 
+<<<<<<< HEAD
 	vmw_cursor_update_position(dev_priv, true,
 				   du->cursor_x + du->hotspot_x,
 				   du->cursor_y + du->hotspot_y);
+=======
+	vmw_cursor_update_position(dev_priv, true, du->cursor_x, du->cursor_y);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -245,8 +314,12 @@ int vmw_du_crtc_cursor_move(struct drm_crtc *crtc, int x, int y)
 	du->cursor_y = y + crtc->y;
 
 	vmw_cursor_update_position(dev_priv, shown,
+<<<<<<< HEAD
 				   du->cursor_x + du->hotspot_x,
 				   du->cursor_y + du->hotspot_y);
+=======
+				   du->cursor_x, du->cursor_y);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -267,7 +340,11 @@ void vmw_kms_cursor_snoop(struct vmw_surface *srf,
 		SVGA3dCmdHeader header;
 		SVGA3dCmdSurfaceDMA dma;
 	} *cmd;
+<<<<<<< HEAD
 	int i, ret;
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cmd = container_of(header, struct vmw_dma_cmd, header);
 
@@ -289,6 +366,7 @@ void vmw_kms_cursor_snoop(struct vmw_surface *srf,
 	box_count = (cmd->header.size - sizeof(SVGA3dCmdSurfaceDMA)) /
 			sizeof(SVGA3dCopyBox);
 
+<<<<<<< HEAD
 	if (cmd->dma.guest.ptr.offset % PAGE_SIZE ||
 	    box->x != 0    || box->y != 0    || box->z != 0    ||
 	    box->srcx != 0 || box->srcy != 0 || box->srcz != 0 ||
@@ -302,6 +380,18 @@ void vmw_kms_cursor_snoop(struct vmw_surface *srf,
 			  box->x, box->y, box->z,
 			  box->w, box->h, box->d, box_count,
 			  cmd->dma.guest.ptr.offset);
+=======
+	if (cmd->dma.guest.pitch != (64 * 4) ||
+	    cmd->dma.guest.ptr.offset % PAGE_SIZE ||
+	    box->x != 0    || box->y != 0    || box->z != 0    ||
+	    box->srcx != 0 || box->srcy != 0 || box->srcz != 0 ||
+	    box->w != 64   || box->h != 64   || box->d != 1    ||
+	    box_count != 1) {
+		/* TODO handle none page aligned offsets */
+		/* TODO handle partial uploads and pitch != 256 */
+		/* TODO handle more then one copy (size != 64) */
+		DRM_ERROR("lazy programmer, can't handle weird stuff\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -320,6 +410,7 @@ void vmw_kms_cursor_snoop(struct vmw_surface *srf,
 
 	virtual = ttm_kmap_obj_virtual(&map, &dummy);
 
+<<<<<<< HEAD
 	if (box->w == 64 && cmd->dma.guest.pitch == 64*4) {
 		memcpy(srf->snooper.image, virtual, 64*64*4);
 	} else {
@@ -330,6 +421,9 @@ void vmw_kms_cursor_snoop(struct vmw_surface *srf,
 			       box->w * 4);
 	}
 
+=======
+	memcpy(srf->snooper.image, virtual, 64*64*4);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	srf->snooper.age++;
 
 	/* we can't call this function from this function since execbuf has
@@ -394,10 +488,47 @@ struct vmw_framebuffer_surface {
 	struct vmw_framebuffer base;
 	struct vmw_surface *surface;
 	struct vmw_dma_buffer *buffer;
+<<<<<<< HEAD
+=======
+	struct delayed_work d_work;
+	struct mutex work_lock;
+	bool present_fs;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head head;
 	struct drm_master *master;
 };
 
+<<<<<<< HEAD
+=======
+/**
+ * vmw_kms_idle_workqueues - Flush workqueues on this master
+ *
+ * @vmaster - Pointer identifying the master, for the surfaces of which
+ * we idle the dirty work queues.
+ *
+ * This function should be called with the ttm lock held in exclusive mode
+ * to idle all dirty work queues before the fifo is taken down.
+ *
+ * The work task may actually requeue itself, but after the flush returns we're
+ * sure that there's nothing to present, since the ttm lock is held in
+ * exclusive mode, so the fifo will never get used.
+ */
+
+void vmw_kms_idle_workqueues(struct vmw_master *vmaster)
+{
+	struct vmw_framebuffer_surface *entry;
+
+	mutex_lock(&vmaster->fb_surf_mutex);
+	list_for_each_entry(entry, &vmaster->fb_surf, head) {
+		if (cancel_delayed_work_sync(&entry->d_work))
+			(void) entry->d_work.work.func(&entry->d_work.work);
+
+		(void) cancel_delayed_work_sync(&entry->d_work);
+	}
+	mutex_unlock(&vmaster->fb_surf_mutex);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void vmw_framebuffer_surface_destroy(struct drm_framebuffer *framebuffer)
 {
 	struct vmw_framebuffer_surface *vfbs =
@@ -409,14 +540,22 @@ void vmw_framebuffer_surface_destroy(struct drm_framebuffer *framebuffer)
 	list_del(&vfbs->head);
 	mutex_unlock(&vmaster->fb_surf_mutex);
 
+<<<<<<< HEAD
 	drm_master_put(&vfbs->master);
 	drm_framebuffer_cleanup(framebuffer);
 	vmw_surface_unreference(&vfbs->surface);
 	ttm_base_object_unref(&vfbs->base.user_obj);
+=======
+	cancel_delayed_work_sync(&vfbs->d_work);
+	drm_master_put(&vfbs->master);
+	drm_framebuffer_cleanup(framebuffer);
+	vmw_surface_unreference(&vfbs->surface);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kfree(vfbs);
 }
 
+<<<<<<< HEAD
 static int do_surface_dirty_sou(struct vmw_private *dev_priv,
 				struct drm_file *file_priv,
 				struct vmw_framebuffer *framebuffer,
@@ -565,6 +704,59 @@ out_free_tmp:
 	return ret;
 }
 
+=======
+static void vmw_framebuffer_present_fs_callback(struct work_struct *work)
+{
+	struct delayed_work *d_work =
+		container_of(work, struct delayed_work, work);
+	struct vmw_framebuffer_surface *vfbs =
+		container_of(d_work, struct vmw_framebuffer_surface, d_work);
+	struct vmw_surface *surf = vfbs->surface;
+	struct drm_framebuffer *framebuffer = &vfbs->base.base;
+	struct vmw_private *dev_priv = vmw_priv(framebuffer->dev);
+
+	struct {
+		SVGA3dCmdHeader header;
+		SVGA3dCmdPresent body;
+		SVGA3dCopyRect cr;
+	} *cmd;
+
+	/**
+	 * Strictly we should take the ttm_lock in read mode before accessing
+	 * the fifo, to make sure the fifo is present and up. However,
+	 * instead we flush all workqueues under the ttm lock in exclusive mode
+	 * before taking down the fifo.
+	 */
+	mutex_lock(&vfbs->work_lock);
+	if (!vfbs->present_fs)
+		goto out_unlock;
+
+	cmd = vmw_fifo_reserve(dev_priv, sizeof(*cmd));
+	if (unlikely(cmd == NULL))
+		goto out_resched;
+
+	cmd->header.id = cpu_to_le32(SVGA_3D_CMD_PRESENT);
+	cmd->header.size = cpu_to_le32(sizeof(cmd->body) + sizeof(cmd->cr));
+	cmd->body.sid = cpu_to_le32(surf->res.id);
+	cmd->cr.x = cpu_to_le32(0);
+	cmd->cr.y = cpu_to_le32(0);
+	cmd->cr.srcx = cmd->cr.x;
+	cmd->cr.srcy = cmd->cr.y;
+	cmd->cr.w = cpu_to_le32(framebuffer->width);
+	cmd->cr.h = cpu_to_le32(framebuffer->height);
+	vfbs->present_fs = false;
+	vmw_fifo_commit(dev_priv, sizeof(*cmd));
+out_resched:
+	/**
+	 * Will not re-add if already pending.
+	 */
+	schedule_delayed_work(&vfbs->d_work, VMWGFX_PRESENT_RATE);
+out_unlock:
+	mutex_unlock(&vfbs->work_lock);
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int vmw_framebuffer_surface_dirty(struct drm_framebuffer *framebuffer,
 				  struct drm_file *file_priv,
 				  unsigned flags, unsigned color,
@@ -575,6 +767,7 @@ int vmw_framebuffer_surface_dirty(struct drm_framebuffer *framebuffer,
 	struct vmw_master *vmaster = vmw_master(file_priv->master);
 	struct vmw_framebuffer_surface *vfbs =
 		vmw_framebuffer_to_vfbs(framebuffer);
+<<<<<<< HEAD
 	struct drm_clip_rect norect;
 	int ret, inc = 1;
 
@@ -583,12 +776,49 @@ int vmw_framebuffer_surface_dirty(struct drm_framebuffer *framebuffer,
 
 	/* Require ScreenObject support for 3D */
 	if (!dev_priv->sou_priv)
+=======
+	struct vmw_surface *surf = vfbs->surface;
+	struct drm_clip_rect norect;
+	SVGA3dCopyRect *cr;
+	int i, inc = 1;
+	int ret;
+
+	struct {
+		SVGA3dCmdHeader header;
+		SVGA3dCmdPresent body;
+		SVGA3dCopyRect cr;
+	} *cmd;
+
+	if (unlikely(vfbs->master != file_priv->master))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	ret = ttm_read_lock(&vmaster->lock, true);
 	if (unlikely(ret != 0))
 		return ret;
 
+<<<<<<< HEAD
+=======
+	if (!num_clips ||
+	    !(dev_priv->fifo.capabilities &
+	      SVGA_FIFO_CAP_SCREEN_OBJECT)) {
+		int ret;
+
+		mutex_lock(&vfbs->work_lock);
+		vfbs->present_fs = true;
+		ret = schedule_delayed_work(&vfbs->d_work, VMWGFX_PRESENT_RATE);
+		mutex_unlock(&vfbs->work_lock);
+		if (ret) {
+			/**
+			 * No work pending, Force immediate present.
+			 */
+			vmw_framebuffer_present_fs_callback(&vfbs->d_work.work);
+		}
+		ttm_read_unlock(&vmaster->lock);
+		return 0;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!num_clips) {
 		num_clips = 1;
 		clips = &norect;
@@ -600,10 +830,36 @@ int vmw_framebuffer_surface_dirty(struct drm_framebuffer *framebuffer,
 		inc = 2; /* skip source rects */
 	}
 
+<<<<<<< HEAD
 	ret = do_surface_dirty_sou(dev_priv, file_priv, &vfbs->base,
 				   flags, color,
 				   clips, num_clips, inc, NULL);
 
+=======
+	cmd = vmw_fifo_reserve(dev_priv, sizeof(*cmd) + (num_clips - 1) * sizeof(cmd->cr));
+	if (unlikely(cmd == NULL)) {
+		DRM_ERROR("Fifo reserve failed.\n");
+		ttm_read_unlock(&vmaster->lock);
+		return -ENOMEM;
+	}
+
+	memset(cmd, 0, sizeof(*cmd));
+
+	cmd->header.id = cpu_to_le32(SVGA_3D_CMD_PRESENT);
+	cmd->header.size = cpu_to_le32(sizeof(cmd->body) + num_clips * sizeof(cmd->cr));
+	cmd->body.sid = cpu_to_le32(surf->res.id);
+
+	for (i = 0, cr = &cmd->cr; i < num_clips; i++, cr++, clips += inc) {
+		cr->x = cpu_to_le16(clips->x1);
+		cr->y = cpu_to_le16(clips->y1);
+		cr->srcx = cr->x;
+		cr->srcy = cr->y;
+		cr->w = cpu_to_le16(clips->x2 - clips->x1);
+		cr->h = cpu_to_le16(clips->y2 - clips->y1);
+	}
+
+	vmw_fifo_commit(dev_priv, sizeof(*cmd) + (num_clips - 1) * sizeof(cmd->cr));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ttm_read_unlock(&vmaster->lock);
 	return 0;
 }
@@ -628,18 +884,24 @@ static int vmw_kms_new_framebuffer_surface(struct vmw_private *dev_priv,
 	struct vmw_master *vmaster = vmw_master(file_priv->master);
 	int ret;
 
+<<<<<<< HEAD
 	/* 3D is only supported on HWv8 hosts which supports screen objects */
 	if (!dev_priv->sou_priv)
 		return -ENOSYS;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Sanity checks.
 	 */
 
+<<<<<<< HEAD
 	/* Surface must be marked as a scanout. */
 	if (unlikely(!surface->scanout))
 		return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(surface->mip_levels[0] != 1 ||
 		     surface->num_sizes != 1 ||
 		     surface->sizes[0].width < mode_cmd->width ||
@@ -663,9 +925,12 @@ static int vmw_kms_new_framebuffer_surface(struct vmw_private *dev_priv,
 	case 15:
 		format = SVGA3D_A1R5G5B5;
 		break;
+<<<<<<< HEAD
 	case 8:
 		format = SVGA3D_LUMINANCE8;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		DRM_ERROR("Invalid color depth: %d\n", mode_cmd->depth);
 		return -EINVAL;
@@ -694,6 +959,7 @@ static int vmw_kms_new_framebuffer_surface(struct vmw_private *dev_priv,
 
 	/* XXX get the first 3 from the surface info */
 	vfbs->base.base.bits_per_pixel = mode_cmd->bpp;
+<<<<<<< HEAD
 	vfbs->base.base.pitches[0] = mode_cmd->pitch;
 	vfbs->base.base.depth = mode_cmd->depth;
 	vfbs->base.base.width = mode_cmd->width;
@@ -703,6 +969,20 @@ static int vmw_kms_new_framebuffer_surface(struct vmw_private *dev_priv,
 	vfbs->master = drm_master_get(file_priv->master);
 
 	mutex_lock(&vmaster->fb_surf_mutex);
+=======
+	vfbs->base.base.pitch = mode_cmd->pitch;
+	vfbs->base.base.depth = mode_cmd->depth;
+	vfbs->base.base.width = mode_cmd->width;
+	vfbs->base.base.height = mode_cmd->height;
+	vfbs->base.pin = &vmw_surface_dmabuf_pin;
+	vfbs->base.unpin = &vmw_surface_dmabuf_unpin;
+	vfbs->surface = surface;
+	vfbs->master = drm_master_get(file_priv->master);
+	mutex_init(&vfbs->work_lock);
+
+	mutex_lock(&vmaster->fb_surf_mutex);
+	INIT_DELAYED_WORK(&vfbs->d_work, &vmw_framebuffer_present_fs_callback);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_add_tail(&vfbs->head, &vmaster->fb_surf);
 	mutex_unlock(&vmaster->fb_surf_mutex);
 
@@ -737,11 +1017,15 @@ void vmw_framebuffer_dmabuf_destroy(struct drm_framebuffer *framebuffer)
 
 	drm_framebuffer_cleanup(framebuffer);
 	vmw_dmabuf_unreference(&vfbd->buffer);
+<<<<<<< HEAD
 	ttm_base_object_unref(&vfbd->base.user_obj);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kfree(vfbd);
 }
 
+<<<<<<< HEAD
 static int do_dmabuf_dirty_ldu(struct vmw_private *dev_priv,
 			       struct vmw_framebuffer *framebuffer,
 			       unsigned flags, unsigned color,
@@ -751,10 +1035,23 @@ static int do_dmabuf_dirty_ldu(struct vmw_private *dev_priv,
 	size_t fifo_size;
 	int i;
 
+=======
+int vmw_framebuffer_dmabuf_dirty(struct drm_framebuffer *framebuffer,
+				 struct drm_file *file_priv,
+				 unsigned flags, unsigned color,
+				 struct drm_clip_rect *clips,
+				 unsigned num_clips)
+{
+	struct vmw_private *dev_priv = vmw_priv(framebuffer->dev);
+	struct vmw_master *vmaster = vmw_master(file_priv->master);
+	struct drm_clip_rect norect;
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct {
 		uint32_t header;
 		SVGAFifoCmdUpdate body;
 	} *cmd;
+<<<<<<< HEAD
 
 	fifo_size = sizeof(*cmd) * num_clips;
 	cmd = vmw_fifo_reserve(dev_priv, fifo_size);
@@ -764,6 +1061,32 @@ static int do_dmabuf_dirty_ldu(struct vmw_private *dev_priv,
 	}
 
 	memset(cmd, 0, fifo_size);
+=======
+	int i, increment = 1;
+
+	ret = ttm_read_lock(&vmaster->lock, true);
+	if (unlikely(ret != 0))
+		return ret;
+
+	if (!num_clips) {
+		num_clips = 1;
+		clips = &norect;
+		norect.x1 = norect.y1 = 0;
+		norect.x2 = framebuffer->width;
+		norect.y2 = framebuffer->height;
+	} else if (flags & DRM_MODE_FB_DIRTY_ANNOTATE_COPY) {
+		num_clips /= 2;
+		increment = 2;
+	}
+
+	cmd = vmw_fifo_reserve(dev_priv, sizeof(*cmd) * num_clips);
+	if (unlikely(cmd == NULL)) {
+		DRM_ERROR("Fifo reserve failed.\n");
+		ttm_read_unlock(&vmaster->lock);
+		return -ENOMEM;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < num_clips; i++, clips += increment) {
 		cmd[i].header = cpu_to_le32(SVGA_CMD_UPDATE);
 		cmd[i].body.x = cpu_to_le32(clips->x1);
@@ -772,6 +1095,7 @@ static int do_dmabuf_dirty_ldu(struct vmw_private *dev_priv,
 		cmd[i].body.height = cpu_to_le32(clips->y2 - clips->y1);
 	}
 
+<<<<<<< HEAD
 	vmw_fifo_commit(dev_priv, fifo_size);
 	return 0;
 }
@@ -912,10 +1236,44 @@ static int do_dmabuf_dirty_sou(struct drm_file *file_priv,
 	}
 
 	kfree(blits);
+=======
+	vmw_fifo_commit(dev_priv, sizeof(*cmd) * num_clips);
+	ttm_read_unlock(&vmaster->lock);
+
+	return 0;
+}
+
+static struct drm_framebuffer_funcs vmw_framebuffer_dmabuf_funcs = {
+	.destroy = vmw_framebuffer_dmabuf_destroy,
+	.dirty = vmw_framebuffer_dmabuf_dirty,
+	.create_handle = vmw_framebuffer_create_handle,
+};
+
+static int vmw_surface_dmabuf_pin(struct vmw_framebuffer *vfb)
+{
+	struct vmw_private *dev_priv = vmw_priv(vfb->base.dev);
+	struct vmw_framebuffer_surface *vfbs =
+		vmw_framebuffer_to_vfbs(&vfb->base);
+	unsigned long size = vfbs->base.base.pitch * vfbs->base.base.height;
+	int ret;
+
+	vfbs->buffer = kzalloc(sizeof(*vfbs->buffer), GFP_KERNEL);
+	if (unlikely(vfbs->buffer == NULL))
+		return -ENOMEM;
+
+	vmw_overlay_pause_all(dev_priv);
+	ret = vmw_dmabuf_init(dev_priv, vfbs->buffer, size,
+			       &vmw_vram_ne_placement,
+			       false, &vmw_dmabuf_bo_free);
+	vmw_overlay_resume_all(dev_priv);
+	if (unlikely(ret != 0))
+		vfbs->buffer = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
 
+<<<<<<< HEAD
 int vmw_framebuffer_dmabuf_dirty(struct drm_framebuffer *framebuffer,
 				 struct drm_file *file_priv,
 				 unsigned flags, unsigned color,
@@ -967,6 +1325,24 @@ static struct drm_framebuffer_funcs vmw_framebuffer_dmabuf_funcs = {
 /**
  * Pin the dmabuffer to the start of vram.
  */
+=======
+static int vmw_surface_dmabuf_unpin(struct vmw_framebuffer *vfb)
+{
+	struct ttm_buffer_object *bo;
+	struct vmw_framebuffer_surface *vfbs =
+		vmw_framebuffer_to_vfbs(&vfb->base);
+
+	if (unlikely(vfbs->buffer == NULL))
+		return 0;
+
+	bo = &vfbs->buffer->base;
+	ttm_bo_unref(&bo);
+	vfbs->buffer = NULL;
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int vmw_framebuffer_dmabuf_pin(struct vmw_framebuffer *vfb)
 {
 	struct vmw_private *dev_priv = vmw_priv(vfb->base.dev);
@@ -974,12 +1350,19 @@ static int vmw_framebuffer_dmabuf_pin(struct vmw_framebuffer *vfb)
 		vmw_framebuffer_to_vfbd(&vfb->base);
 	int ret;
 
+<<<<<<< HEAD
 	/* This code should not be used with screen objects */
 	BUG_ON(dev_priv->sou_priv);
 
 	vmw_overlay_pause_all(dev_priv);
 
 	ret = vmw_dmabuf_to_start_of_vram(dev_priv, vfbd->buffer, true, false);
+=======
+
+	vmw_overlay_pause_all(dev_priv);
+
+	ret = vmw_dmabuf_to_start_of_vram(dev_priv, vfbd->buffer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	vmw_overlay_resume_all(dev_priv);
 
@@ -999,7 +1382,11 @@ static int vmw_framebuffer_dmabuf_unpin(struct vmw_framebuffer *vfb)
 		return 0;
 	}
 
+<<<<<<< HEAD
 	return vmw_dmabuf_unpin(dev_priv, vfbd->buffer, false);
+=======
+	return vmw_dmabuf_from_vram(dev_priv, vfbd->buffer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int vmw_kms_new_framebuffer_dmabuf(struct vmw_private *dev_priv,
@@ -1021,6 +1408,7 @@ static int vmw_kms_new_framebuffer_dmabuf(struct vmw_private *dev_priv,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	/* Limited framebuffer color depth support for screen objects */
 	if (dev_priv->sou_priv) {
 		switch (mode_cmd->depth) {
@@ -1048,6 +1436,8 @@ static int vmw_kms_new_framebuffer_dmabuf(struct vmw_private *dev_priv,
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vfbd = kzalloc(sizeof(*vfbd), GFP_KERNEL);
 	if (!vfbd) {
 		ret = -ENOMEM;
@@ -1065,6 +1455,7 @@ static int vmw_kms_new_framebuffer_dmabuf(struct vmw_private *dev_priv,
 	}
 
 	vfbd->base.base.bits_per_pixel = mode_cmd->bpp;
+<<<<<<< HEAD
 	vfbd->base.base.pitches[0] = mode_cmd->pitch;
 	vfbd->base.base.depth = mode_cmd->depth;
 	vfbd->base.base.width = mode_cmd->width;
@@ -1076,6 +1467,15 @@ static int vmw_kms_new_framebuffer_dmabuf(struct vmw_private *dev_priv,
 	vfbd->base.dmabuf = true;
 	vfbd->buffer = dmabuf;
 	vfbd->base.user_handle = mode_cmd->handle;
+=======
+	vfbd->base.base.pitch = mode_cmd->pitch;
+	vfbd->base.base.depth = mode_cmd->depth;
+	vfbd->base.base.width = mode_cmd->width;
+	vfbd->base.base.height = mode_cmd->height;
+	vfbd->base.pin = vmw_framebuffer_dmabuf_pin;
+	vfbd->base.unpin = vmw_framebuffer_dmabuf_unpin;
+	vfbd->buffer = dmabuf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*out = &vfbd->base;
 
 	return 0;
@@ -1094,13 +1494,18 @@ out_err1:
 
 static struct drm_framebuffer *vmw_kms_fb_create(struct drm_device *dev,
 						 struct drm_file *file_priv,
+<<<<<<< HEAD
 						 struct drm_mode_fb_cmd2 *mode_cmd2)
+=======
+						 struct drm_mode_fb_cmd *mode_cmd)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct vmw_private *dev_priv = vmw_priv(dev);
 	struct ttm_object_file *tfile = vmw_fpriv(file_priv)->tfile;
 	struct vmw_framebuffer *vfb = NULL;
 	struct vmw_surface *surface = NULL;
 	struct vmw_dma_buffer *bo = NULL;
+<<<<<<< HEAD
 	struct ttm_base_object *user_obj;
 	struct drm_mode_fb_cmd mode_cmd;
 	int ret;
@@ -1112,12 +1517,18 @@ static struct drm_framebuffer *vmw_kms_fb_create(struct drm_device *dev,
 	drm_fb_get_bpp_depth(mode_cmd2->pixel_format, &mode_cmd.depth,
 				    &mode_cmd.bpp);
 
+=======
+	u64 required_size;
+	int ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/**
 	 * This code should be conditioned on Screen Objects not being used.
 	 * If screen objects are used, we can allocate a GMR to hold the
 	 * requested framebuffer.
 	 */
 
+<<<<<<< HEAD
 	if (!vmw_kms_validate_mode_vram(dev_priv,
 					mode_cmd.pitch,
 					mode_cmd.height)) {
@@ -1138,12 +1549,19 @@ static struct drm_framebuffer *vmw_kms_fb_create(struct drm_device *dev,
 	if (unlikely(user_obj == NULL)) {
 		DRM_ERROR("Could not locate requested kms frame buffer.\n");
 		return ERR_PTR(-ENOENT);
+=======
+	required_size = mode_cmd->pitch * mode_cmd->height;
+	if (unlikely(required_size > (u64) dev_priv->vram_size)) {
+		DRM_ERROR("VRAM size is too small for requested mode.\n");
+		return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/**
 	 * End conditioned code.
 	 */
 
+<<<<<<< HEAD
 	/* returns either a dmabuf or surface */
 	ret = vmw_user_lookup_handle(dev_priv, tfile,
 				     mode_cmd.handle,
@@ -1424,6 +1842,61 @@ int vmw_kms_readback(struct vmw_private *dev_priv,
 
 	return ret;
 }
+=======
+	ret = vmw_user_surface_lookup_handle(dev_priv, tfile,
+					     mode_cmd->handle, &surface);
+	if (ret)
+		goto try_dmabuf;
+
+	if (!surface->scanout)
+		goto err_not_scanout;
+
+	ret = vmw_kms_new_framebuffer_surface(dev_priv, file_priv, surface,
+					      &vfb, mode_cmd);
+
+	/* vmw_user_surface_lookup takes one ref so does new_fb */
+	vmw_surface_unreference(&surface);
+
+	if (ret) {
+		DRM_ERROR("failed to create vmw_framebuffer: %i\n", ret);
+		return ERR_PTR(ret);
+	}
+	return &vfb->base;
+
+try_dmabuf:
+	DRM_INFO("%s: trying buffer\n", __func__);
+
+	ret = vmw_user_dmabuf_lookup(tfile, mode_cmd->handle, &bo);
+	if (ret) {
+		DRM_ERROR("failed to find buffer: %i\n", ret);
+		return ERR_PTR(-ENOENT);
+	}
+
+	ret = vmw_kms_new_framebuffer_dmabuf(dev_priv, bo, &vfb,
+					     mode_cmd);
+
+	/* vmw_user_dmabuf_lookup takes one ref so does new_fb */
+	vmw_dmabuf_unreference(&bo);
+
+	if (ret) {
+		DRM_ERROR("failed to create vmw_framebuffer: %i\n", ret);
+		return ERR_PTR(ret);
+	}
+
+	return &vfb->base;
+
+err_not_scanout:
+	DRM_ERROR("surface not marked as scanout\n");
+	/* vmw_user_surface_lookup takes one ref */
+	vmw_surface_unreference(&surface);
+
+	return ERR_PTR(-EINVAL);
+}
+
+static struct drm_mode_config_funcs vmw_kms_funcs = {
+	.fb_create = vmw_kms_fb_create,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int vmw_kms_init(struct vmw_private *dev_priv)
 {
@@ -1438,9 +1911,13 @@ int vmw_kms_init(struct vmw_private *dev_priv)
 	dev->mode_config.max_width = 8192;
 	dev->mode_config.max_height = 8192;
 
+<<<<<<< HEAD
 	ret = vmw_kms_init_screen_object_display(dev_priv);
 	if (ret) /* Fallback */
 		(void)vmw_kms_init_legacy_display_system(dev_priv);
+=======
+	ret = vmw_kms_init_legacy_display_system(dev_priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1453,10 +1930,14 @@ int vmw_kms_close(struct vmw_private *dev_priv)
 	 * drm_encoder_cleanup which takes the lock we deadlock.
 	 */
 	drm_mode_config_cleanup(dev_priv->dev);
+<<<<<<< HEAD
 	if (dev_priv->sou_priv)
 		vmw_kms_close_screen_object_display(dev_priv);
 	else
 		vmw_kms_close_legacy_display_system(dev_priv);
+=======
+	vmw_kms_close_legacy_display_system(dev_priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1501,9 +1982,15 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int vmw_kms_write_svga(struct vmw_private *vmw_priv,
 			unsigned width, unsigned height, unsigned pitch,
 			unsigned bpp, unsigned depth)
+=======
+void vmw_kms_write_svga(struct vmw_private *vmw_priv,
+			unsigned width, unsigned height, unsigned pitch,
+			unsigned bbp, unsigned depth)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (vmw_priv->capabilities & SVGA_CAP_PITCHLOCK)
 		vmw_write(vmw_priv, SVGA_REG_PITCHLOCK, pitch);
@@ -1511,6 +1998,7 @@ int vmw_kms_write_svga(struct vmw_private *vmw_priv,
 		iowrite32(pitch, vmw_priv->mmio_virt + SVGA_FIFO_PITCHLOCK);
 	vmw_write(vmw_priv, SVGA_REG_WIDTH, width);
 	vmw_write(vmw_priv, SVGA_REG_HEIGHT, height);
+<<<<<<< HEAD
 	vmw_write(vmw_priv, SVGA_REG_BITS_PER_PIXEL, bpp);
 
 	if (vmw_read(vmw_priv, SVGA_REG_DEPTH) != depth) {
@@ -1520,6 +2008,13 @@ int vmw_kms_write_svga(struct vmw_private *vmw_priv,
 	}
 
 	return 0;
+=======
+	vmw_write(vmw_priv, SVGA_REG_BITS_PER_PIXEL, bbp);
+	vmw_write(vmw_priv, SVGA_REG_DEPTH, depth);
+	vmw_write(vmw_priv, SVGA_REG_RED_MASK, 0x00ff0000);
+	vmw_write(vmw_priv, SVGA_REG_GREEN_MASK, 0x0000ff00);
+	vmw_write(vmw_priv, SVGA_REG_BLUE_MASK, 0x000000ff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int vmw_kms_save_vga(struct vmw_private *vmw_priv)
@@ -1529,7 +2024,16 @@ int vmw_kms_save_vga(struct vmw_private *vmw_priv)
 
 	vmw_priv->vga_width = vmw_read(vmw_priv, SVGA_REG_WIDTH);
 	vmw_priv->vga_height = vmw_read(vmw_priv, SVGA_REG_HEIGHT);
+<<<<<<< HEAD
 	vmw_priv->vga_bpp = vmw_read(vmw_priv, SVGA_REG_BITS_PER_PIXEL);
+=======
+	vmw_priv->vga_depth = vmw_read(vmw_priv, SVGA_REG_DEPTH);
+	vmw_priv->vga_bpp = vmw_read(vmw_priv, SVGA_REG_BITS_PER_PIXEL);
+	vmw_priv->vga_pseudo = vmw_read(vmw_priv, SVGA_REG_PSEUDOCOLOR);
+	vmw_priv->vga_red_mask = vmw_read(vmw_priv, SVGA_REG_RED_MASK);
+	vmw_priv->vga_blue_mask = vmw_read(vmw_priv, SVGA_REG_BLUE_MASK);
+	vmw_priv->vga_green_mask = vmw_read(vmw_priv, SVGA_REG_GREEN_MASK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (vmw_priv->capabilities & SVGA_CAP_PITCHLOCK)
 		vmw_priv->vga_pitchlock =
 		  vmw_read(vmw_priv, SVGA_REG_PITCHLOCK);
@@ -1578,7 +2082,16 @@ int vmw_kms_restore_vga(struct vmw_private *vmw_priv)
 
 	vmw_write(vmw_priv, SVGA_REG_WIDTH, vmw_priv->vga_width);
 	vmw_write(vmw_priv, SVGA_REG_HEIGHT, vmw_priv->vga_height);
+<<<<<<< HEAD
 	vmw_write(vmw_priv, SVGA_REG_BITS_PER_PIXEL, vmw_priv->vga_bpp);
+=======
+	vmw_write(vmw_priv, SVGA_REG_DEPTH, vmw_priv->vga_depth);
+	vmw_write(vmw_priv, SVGA_REG_BITS_PER_PIXEL, vmw_priv->vga_bpp);
+	vmw_write(vmw_priv, SVGA_REG_PSEUDOCOLOR, vmw_priv->vga_pseudo);
+	vmw_write(vmw_priv, SVGA_REG_RED_MASK, vmw_priv->vga_red_mask);
+	vmw_write(vmw_priv, SVGA_REG_GREEN_MASK, vmw_priv->vga_green_mask);
+	vmw_write(vmw_priv, SVGA_REG_BLUE_MASK, vmw_priv->vga_blue_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (vmw_priv->capabilities & SVGA_CAP_PITCHLOCK)
 		vmw_write(vmw_priv, SVGA_REG_PITCHLOCK,
 			  vmw_priv->vga_pitchlock);
@@ -1603,6 +2116,7 @@ int vmw_kms_restore_vga(struct vmw_private *vmw_priv)
 	return 0;
 }
 
+<<<<<<< HEAD
 bool vmw_kms_validate_mode_vram(struct vmw_private *dev_priv,
 				uint32_t pitch,
 				uint32_t height)
@@ -1977,6 +2491,8 @@ int vmw_du_connector_set_property(struct drm_connector *connector,
 }
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int vmw_kms_update_layout_ioctl(struct drm_device *dev, void *data,
 				struct drm_file *file_priv)
 {
@@ -1988,8 +2504,11 @@ int vmw_kms_update_layout_ioctl(struct drm_device *dev, void *data,
 	struct drm_vmw_rect *rects;
 	unsigned rects_size;
 	int ret;
+<<<<<<< HEAD
 	int i;
 	struct drm_mode_config *mode_config = &dev->mode_config;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = ttm_read_lock(&vmaster->lock, true);
 	if (unlikely(ret != 0))
@@ -1997,13 +2516,21 @@ int vmw_kms_update_layout_ioctl(struct drm_device *dev, void *data,
 
 	if (!arg->num_outputs) {
 		struct drm_vmw_rect def_rect = {0, 0, 800, 600};
+<<<<<<< HEAD
 		vmw_du_update_layout(dev_priv, 1, &def_rect);
+=======
+		vmw_kms_ldu_update_layout(dev_priv, 1, &def_rect);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_unlock;
 	}
 
 	rects_size = arg->num_outputs * sizeof(struct drm_vmw_rect);
+<<<<<<< HEAD
 	rects = kcalloc(arg->num_outputs, sizeof(struct drm_vmw_rect),
 			GFP_KERNEL);
+=======
+	rects = kzalloc(rects_size, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(!rects)) {
 		ret = -ENOMEM;
 		goto out_unlock;
@@ -2017,6 +2544,7 @@ int vmw_kms_update_layout_ioctl(struct drm_device *dev, void *data,
 		goto out_free;
 	}
 
+<<<<<<< HEAD
 	for (i = 0; i < arg->num_outputs; ++i) {
 		if (rects[i].x < 0 ||
 		    rects[i].y < 0 ||
@@ -2029,6 +2557,9 @@ int vmw_kms_update_layout_ioctl(struct drm_device *dev, void *data,
 	}
 
 	vmw_du_update_layout(dev_priv, arg->num_outputs, rects);
+=======
+	vmw_kms_ldu_update_layout(dev_priv, arg->num_outputs, rects);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out_free:
 	kfree(rects);
@@ -2036,3 +2567,18 @@ out_unlock:
 	ttm_read_unlock(&vmaster->lock);
 	return ret;
 }
+<<<<<<< HEAD
+=======
+
+bool vmw_kms_validate_mode_vram(struct vmw_private *dev_priv,
+				uint32_t pitch,
+				uint32_t height)
+{
+	return ((u64) pitch * (u64) height) < (u64) dev_priv->vram_size;
+}
+
+u32 vmw_get_vblank_counter(struct drm_device *dev, int crtc)
+{
+	return 0;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -276,5 +276,9 @@ const struct file_operations fscache_stats_fops = {
 	.open		= fscache_stats_open,
 	.read		= seq_read,
 	.llseek		= seq_lseek,
+<<<<<<< HEAD
 	.release        = single_release,
+=======
+	.release	= seq_release,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };

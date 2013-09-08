@@ -97,10 +97,13 @@ static int show_cpuinfo(struct seq_file *m, void *v)
 		(cpuinfo.use_exc & PVR2_FPU_EXC_MASK) ? "fpu " : "",
 		(cpuinfo.use_exc & PVR2_USE_FSL_EXC) ? "fsl " : "");
 
+<<<<<<< HEAD
 	count += seq_printf(m,
 			"Stream-insns:\t%sprivileged\n",
 			cpuinfo.mmu_privins ? "un" : "");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cpuinfo.use_icache)
 		count += seq_printf(m,
 				"Icache:\t\t%ukB\tline length:\t%dB\n",
@@ -114,11 +117,18 @@ static int show_cpuinfo(struct seq_file *m, void *v)
 				"Dcache:\t\t%ukB\tline length:\t%dB\n",
 				cpuinfo.dcache_size >> 10,
 				cpuinfo.dcache_line_length);
+<<<<<<< HEAD
 		seq_printf(m, "Dcache-Policy:\t");
 		if (cpuinfo.dcache_wb)
 			count += seq_printf(m, "write-back\n");
 		else
 			count += seq_printf(m, "write-through\n");
+=======
+		if (cpuinfo.dcache_wb)
+			count += seq_printf(m, "\t\twrite-back\n");
+		else
+			count += seq_printf(m, "\t\twrite-through\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		count += seq_printf(m, "Dcache:\t\tno\n");
 

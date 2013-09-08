@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 %option nostdinit noyywrap never-interactive full ecs
 %option 8bit nodefault perf-report perf-report
+=======
+%option backup nostdinit noyywrap never-interactive full ecs
+%option 8bit backup nodefault perf-report perf-report
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 %option noinput
 %x COMMAND HELP STRING PARAM
 %{
@@ -14,6 +19,10 @@
 #include <string.h>
 #include <unistd.h>
 
+<<<<<<< HEAD
+=======
+#define LKC_DIRECT_LINK
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "lkc.h"
 
 #define START_STRSIZE	16
@@ -95,7 +104,11 @@ n	[A-Za-z0-9_]
 
 <COMMAND>{
 	{n}+	{
+<<<<<<< HEAD
 		const struct kconf_id *id = kconf_id_lookup(yytext, yyleng);
+=======
+		struct kconf_id *id = kconf_id_lookup(yytext, yyleng);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		BEGIN(PARAM);
 		current_pos.file = current_file;
 		current_pos.lineno = current_file->lineno;
@@ -131,7 +144,11 @@ n	[A-Za-z0-9_]
 	\n	BEGIN(INITIAL); current_file->lineno++; return T_EOL;
 	---	/* ignore */
 	({n}|[-/.])+	{
+<<<<<<< HEAD
 		const struct kconf_id *id = kconf_id_lookup(yytext, yyleng);
+=======
+		struct kconf_id *id = kconf_id_lookup(yytext, yyleng);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (id && id->flags & TF_PARAM) {
 			zconflval.id = id;
 			return id->token;

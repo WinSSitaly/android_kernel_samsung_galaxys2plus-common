@@ -5,17 +5,28 @@
  * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pci.h>
 #include <linux/init.h>
 #include <linux/bitops.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/cpudata.h>
 #include <asm/uaccess.h>
 #include <asm/spitfire.h>
 #include <asm/oplib.h>
 #include <asm/hypervisor.h>
+<<<<<<< HEAD
 #include <asm/cacheflush.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct poll {
 	int fd;

@@ -113,11 +113,17 @@ cifs_get_spnego_key(struct cifs_ses *sesInfo)
 		   MAX_MECH_STR_LEN +
 		   UID_KEY_LEN + (sizeof(uid_t) * 2) +
 		   CREDUID_KEY_LEN + (sizeof(uid_t) * 2) +
+<<<<<<< HEAD
 		   PID_KEY_LEN + (sizeof(pid_t) * 2) + 1;
 
 	if (sesInfo->user_name)
 		desc_len += USER_KEY_LEN + strlen(sesInfo->user_name);
 
+=======
+		   USER_KEY_LEN + strlen(sesInfo->user_name) +
+		   PID_KEY_LEN + (sizeof(pid_t) * 2) + 1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spnego_key = ERR_PTR(-ENOMEM);
 	description = kzalloc(desc_len, GFP_KERNEL);
 	if (description == NULL)
@@ -154,10 +160,15 @@ cifs_get_spnego_key(struct cifs_ses *sesInfo)
 	dp = description + strlen(description);
 	sprintf(dp, ";creduid=0x%x", sesInfo->cred_uid);
 
+<<<<<<< HEAD
 	if (sesInfo->user_name) {
 		dp = description + strlen(description);
 		sprintf(dp, ";user=%s", sesInfo->user_name);
 	}
+=======
+	dp = description + strlen(description);
+	sprintf(dp, ";user=%s", sesInfo->user_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dp = description + strlen(description);
 	sprintf(dp, ";pid=0x%x", current->pid);

@@ -58,11 +58,24 @@ static struct mtd_partition h720x_partitions[] = {
 
 #define NUM_PARTITIONS ARRAY_SIZE(h720x_partitions)
 
+<<<<<<< HEAD
+=======
+static int                   nr_mtd_parts;
+static struct mtd_partition *mtd_parts;
+static const char *probes[] = { "cmdlinepart", NULL };
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Initialize FLASH support
  */
 static int __init h720x_mtd_init(void)
 {
+<<<<<<< HEAD
+=======
+
+	char	*part_type = NULL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	h720x_map.virt = ioremap(h720x_map.phys, h720x_map.size);
 
 	if (!h720x_map.virt) {
@@ -85,8 +98,21 @@ static int __init h720x_mtd_init(void)
 	if (mymtd) {
 		mymtd->owner = THIS_MODULE;
 
+<<<<<<< HEAD
 		mtd_device_parse_register(mymtd, NULL, NULL,
 					  h720x_partitions, NUM_PARTITIONS);
+=======
+		nr_mtd_parts = parse_mtd_partitions(mymtd, probes, &mtd_parts, 0);
+		if (nr_mtd_parts > 0)
+			part_type = "command line";
+		if (nr_mtd_parts <= 0) {
+			mtd_parts = h720x_partitions;
+			nr_mtd_parts = NUM_PARTITIONS;
+			part_type = "builtin";
+		}
+		printk(KERN_INFO "Using %s partition table\n", part_type);
+		mtd_device_register(mymtd, mtd_parts, nr_mtd_parts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
@@ -105,6 +131,13 @@ static void __exit h720x_mtd_cleanup(void)
 		map_destroy(mymtd);
 	}
 
+<<<<<<< HEAD
+=======
+	/* Free partition info, if commandline partition was used */
+	if (mtd_parts && (mtd_parts != h720x_partitions))
+		kfree (mtd_parts);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (h720x_map.virt) {
 		iounmap((void *)h720x_map.virt);
 		h720x_map.virt = 0;

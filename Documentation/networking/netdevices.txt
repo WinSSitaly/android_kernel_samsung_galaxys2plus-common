@@ -47,6 +47,7 @@ packets is preferred.
 
 struct net_device synchronization rules
 =======================================
+<<<<<<< HEAD
 ndo_open:
 	Synchronization: rtnl_lock() semaphore.
 	Context: process
@@ -66,13 +67,39 @@ ndo_get_stats:
 
 ndo_start_xmit:
 	Synchronization: __netif_tx_lock spinlock.
+=======
+dev->open:
+	Synchronization: rtnl_lock() semaphore.
+	Context: process
+
+dev->stop:
+	Synchronization: rtnl_lock() semaphore.
+	Context: process
+	Note1: netif_running() is guaranteed false
+	Note2: dev->poll() is guaranteed to be stopped
+
+dev->do_ioctl:
+	Synchronization: rtnl_lock() semaphore.
+	Context: process
+
+dev->get_stats:
+	Synchronization: dev_base_lock rwlock.
+	Context: nominally process, but don't sleep inside an rwlock
+
+dev->hard_start_xmit:
+	Synchronization: netif_tx_lock spinlock.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	When the driver sets NETIF_F_LLTX in dev->features this will be
 	called without holding netif_tx_lock. In this case the driver
 	has to lock by itself when needed. It is recommended to use a try lock
 	for this and return NETDEV_TX_LOCKED when the spin lock fails.
 	The locking there should also properly protect against 
+<<<<<<< HEAD
 	set_rx_mode. Note that the use of NETIF_F_LLTX is deprecated.
+=======
+	set_multicast_list. Note that the use of NETIF_F_LLTX is deprecated.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	Don't use it for new drivers.
 
 	Context: Process with BHs disabled or BH (timer),
@@ -86,6 +113,7 @@ ndo_start_xmit:
 	o NETDEV_TX_LOCKED Locking failed, please retry quickly.
 	  Only valid when NETIF_F_LLTX is set.
 
+<<<<<<< HEAD
 ndo_tx_timeout:
 	Synchronization: netif_tx_lock spinlock; all TX queues frozen.
 	Context: BHs disabled
@@ -93,13 +121,26 @@ ndo_tx_timeout:
 
 ndo_set_rx_mode:
 	Synchronization: netif_addr_lock spinlock.
+=======
+dev->tx_timeout:
+	Synchronization: netif_tx_lock spinlock.
+	Context: BHs disabled
+	Notes: netif_queue_stopped() is guaranteed true
+
+dev->set_multicast_list:
+	Synchronization: netif_tx_lock spinlock.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	Context: BHs disabled
 
 struct napi_struct synchronization rules
 ========================================
 napi->poll:
 	Synchronization: NAPI_STATE_SCHED bit in napi->state.  Device
+<<<<<<< HEAD
 		driver's ndo_stop method will invoke napi_disable() on
+=======
+		driver's dev->close method will invoke napi_disable() on
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		all NAPI instances which will do a sleeping poll on the
 		NAPI_STATE_SCHED napi->state bit, waiting for all pending
 		NAPI activity to cease.

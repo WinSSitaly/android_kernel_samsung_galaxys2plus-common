@@ -7,7 +7,13 @@
  * Universite Pierre et Marie Curie (Paris VI)
  */
 
+<<<<<<< HEAD
 #include "ext3.h"
+=======
+#include <linux/buffer_head.h>
+#include <linux/jbd.h>
+#include <linux/ext3_fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef EXT3FS_DEBUG
 

@@ -45,6 +45,7 @@ device.
 
 rq_affinity (RW)
 ----------------
+<<<<<<< HEAD
 If this option is '1', the block layer will migrate request completions to the
 cpu "group" that originally submitted the request. For some workloads this
 provides a significant reduction in CPU cycles due to caching effects.
@@ -52,6 +53,11 @@ provides a significant reduction in CPU cycles due to caching effects.
 For storage configurations that need to maximize distribution of completion
 processing setting this option to '2' forces the completion to run on the
 requesting cpu (bypassing the "group" aggregation logic).
+=======
+If this option is enabled, the block layer will migrate request completions
+to the CPU that originally submitted the request. For some workloads
+this provides a significant reduction in CPU cycles due to caching effects.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 scheduler (RW)
 --------------

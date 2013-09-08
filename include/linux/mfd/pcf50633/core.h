@@ -21,7 +21,10 @@
 #include <linux/mfd/pcf50633/backlight.h>
 
 struct pcf50633;
+<<<<<<< HEAD
 struct regmap;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PCF50633_NUM_REGULATORS	11
 
@@ -135,7 +138,11 @@ enum {
 
 struct pcf50633 {
 	struct device *dev;
+<<<<<<< HEAD
 	struct regmap *regmap;
+=======
+	struct i2c_client *i2c_client;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct pcf50633_platform_data *pdata;
 	int irq;

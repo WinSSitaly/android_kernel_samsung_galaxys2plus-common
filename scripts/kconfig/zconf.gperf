@@ -9,7 +9,11 @@
 
 struct kconf_id;
 
+<<<<<<< HEAD
 static const struct kconf_id *kconf_id_lookup(register const char *str, register unsigned int len);
+=======
+static struct kconf_id *kconf_id_lookup(register const char *str, register unsigned int len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 %%
 mainmenu,	T_MAINMENU,	TF_COMMAND

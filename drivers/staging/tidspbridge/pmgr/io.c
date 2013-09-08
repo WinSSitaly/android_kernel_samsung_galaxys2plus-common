@@ -23,6 +23,12 @@
 /*  ----------------------------------- DSP/BIOS Bridge */
 #include <dspbridge/dbdefs.h>
 
+<<<<<<< HEAD
+=======
+/*  ----------------------------------- Trace & Debug */
+#include <dspbridge/dbc.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*  ----------------------------------- Platform Manager */
 #include <dspbridge/dev.h>
 
@@ -30,6 +36,12 @@
 #include <ioobj.h>
 #include <dspbridge/io.h>
 
+<<<<<<< HEAD
+=======
+/*  ----------------------------------- Globals */
+static u32 refs;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *  ======== io_create ========
  *  Purpose:
@@ -44,6 +56,13 @@ int io_create(struct io_mgr **io_man, struct dev_object *hdev_obj,
 	struct io_mgr_ *pio_mgr = NULL;
 	int status = 0;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+	DBC_REQUIRE(io_man != NULL);
+	DBC_REQUIRE(mgr_attrts != NULL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*io_man = NULL;
 
 	/* A memory base of 0 implies no memory base: */
@@ -84,6 +103,11 @@ int io_destroy(struct io_mgr *hio_mgr)
 	struct io_mgr_ *pio_mgr = (struct io_mgr_ *)hio_mgr;
 	int status;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	intf_fxns = pio_mgr->intf_fxns;
 
 	/* Let Bridge channel module destroy the io_mgr: */
@@ -91,3 +115,39 @@ int io_destroy(struct io_mgr *hio_mgr)
 
 	return status;
 }
+<<<<<<< HEAD
+=======
+
+/*
+ *  ======== io_exit ========
+ *  Purpose:
+ *      Discontinue usage of the IO module.
+ */
+void io_exit(void)
+{
+	DBC_REQUIRE(refs > 0);
+
+	refs--;
+
+	DBC_ENSURE(refs >= 0);
+}
+
+/*
+ *  ======== io_init ========
+ *  Purpose:
+ *      Initialize the IO module's private state.
+ */
+bool io_init(void)
+{
+	bool ret = true;
+
+	DBC_REQUIRE(refs >= 0);
+
+	if (ret)
+		refs++;
+
+	DBC_ENSURE((ret && (refs > 0)) || (!ret && (refs >= 0)));
+
+	return ret;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

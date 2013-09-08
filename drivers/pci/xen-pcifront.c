@@ -16,7 +16,11 @@
 #include <xen/interface/io/pciif.h>
 #include <asm/xen/pci.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/workqueue.h>
 #include <linux/bitops.h>
 #include <linux/time.h>
@@ -189,7 +193,11 @@ static int pcifront_bus_read(struct pci_bus *bus, unsigned int devfn,
 
 	if (verbose_request)
 		dev_info(&pdev->xdev->dev,
+<<<<<<< HEAD
 			 "read dev=%04x:%02x:%02x.%d - offset %x size %d\n",
+=======
+			 "read dev=%04x:%02x:%02x.%01x - offset %x size %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 pci_domain_nr(bus), bus->number, PCI_SLOT(devfn),
 			 PCI_FUNC(devfn), where, size);
 
@@ -228,7 +236,11 @@ static int pcifront_bus_write(struct pci_bus *bus, unsigned int devfn,
 
 	if (verbose_request)
 		dev_info(&pdev->xdev->dev,
+<<<<<<< HEAD
 			 "write dev=%04x:%02x:%02x.%d - "
+=======
+			 "write dev=%04x:%02x:%02x.%01x - "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 "offset %x size %d val %x\n",
 			 pci_domain_nr(bus), bus->number,
 			 PCI_SLOT(devfn), PCI_FUNC(devfn), where, size, val);
@@ -290,7 +302,10 @@ static int pci_frontend_enable_msix(struct pci_dev *dev,
 		} else {
 			printk(KERN_DEBUG "enable msix get value %x\n",
 				op.value);
+<<<<<<< HEAD
 			err = op.value;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		dev_err(&dev->dev, "enable msix get err %x\n", err);
@@ -433,7 +448,11 @@ static int __devinit pcifront_scan_bus(struct pcifront_device *pdev,
 		d = pci_scan_single_device(b, devfn);
 		if (d)
 			dev_info(&pdev->xdev->dev, "New device on "
+<<<<<<< HEAD
 				 "%04x:%02x:%02x.%d found.\n", domain, bus,
+=======
+				 "%04x:%02x:%02x.%02x found.\n", domain, bus,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 PCI_SLOT(devfn), PCI_FUNC(devfn));
 	}
 
@@ -545,7 +564,11 @@ static void free_root_bus_devs(struct pci_bus *bus)
 		dev = container_of(bus->devices.next, struct pci_dev,
 				   bus_list);
 		dev_dbg(&dev->dev, "removing device\n");
+<<<<<<< HEAD
 		pci_stop_and_remove_bus_device(dev);
+=======
+		pci_remove_bus_device(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -594,7 +617,11 @@ static pci_ers_result_t pcifront_common_process(int cmd,
 	}
 	pdrv = pcidev->driver;
 
+<<<<<<< HEAD
 	if (pdrv) {
+=======
+	if (get_driver(&pdrv->driver)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (pdrv->err_handler && pdrv->err_handler->error_detected) {
 			dev_dbg(&pcidev->dev,
 				"trying to call AER service\n");
@@ -624,6 +651,10 @@ static pci_ers_result_t pcifront_common_process(int cmd,
 				}
 			}
 		}
+<<<<<<< HEAD
+=======
+		put_driver(&pdrv->driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (!flag)
 		result = PCI_ERS_RESULT_NONE;
@@ -1041,6 +1072,7 @@ static int pcifront_detach_devices(struct pcifront_device *pdev)
 		pci_dev = pci_get_slot(pci_bus, PCI_DEVFN(slot, func));
 		if (!pci_dev) {
 			dev_dbg(&pdev->xdev->dev,
+<<<<<<< HEAD
 				"Cannot get PCI device %04x:%02x:%02x.%d\n",
 				domain, bus, slot, func);
 			continue;
@@ -1050,6 +1082,17 @@ static int pcifront_detach_devices(struct pcifront_device *pdev)
 
 		dev_dbg(&pdev->xdev->dev,
 			"PCI device %04x:%02x:%02x.%d removed.\n",
+=======
+				"Cannot get PCI device %04x:%02x:%02x.%02x\n",
+				domain, bus, slot, func);
+			continue;
+		}
+		pci_remove_bus_device(pci_dev);
+		pci_dev_put(pci_dev);
+
+		dev_dbg(&pdev->xdev->dev,
+			"PCI device %04x:%02x:%02x.%02x removed.\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			domain, bus, slot, func);
 	}
 
@@ -1126,11 +1169,22 @@ static const struct xenbus_device_id xenpci_ids[] = {
 	{""},
 };
 
+<<<<<<< HEAD
 static DEFINE_XENBUS_DRIVER(xenpci, "pcifront",
 	.probe			= pcifront_xenbus_probe,
 	.remove			= pcifront_xenbus_remove,
 	.otherend_changed	= pcifront_backend_changed,
 );
+=======
+static struct xenbus_driver xenbus_pcifront_driver = {
+	.name			= "pcifront",
+	.owner			= THIS_MODULE,
+	.ids			= xenpci_ids,
+	.probe			= pcifront_xenbus_probe,
+	.remove			= pcifront_xenbus_remove,
+	.otherend_changed	= pcifront_backend_changed,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __init pcifront_init(void)
 {
@@ -1139,12 +1193,20 @@ static int __init pcifront_init(void)
 
 	pci_frontend_registrar(1 /* enable */);
 
+<<<<<<< HEAD
 	return xenbus_register_frontend(&xenpci_driver);
+=======
+	return xenbus_register_frontend(&xenbus_pcifront_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit pcifront_cleanup(void)
 {
+<<<<<<< HEAD
 	xenbus_unregister_driver(&xenpci_driver);
+=======
+	xenbus_unregister_driver(&xenbus_pcifront_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pci_frontend_registrar(0 /* disable */);
 }
 module_init(pcifront_init);

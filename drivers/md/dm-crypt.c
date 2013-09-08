@@ -19,7 +19,11 @@
 #include <linux/workqueue.h>
 #include <linux/backing-dev.h>
 #include <linux/percpu.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/scatterlist.h>
 #include <asm/page.h>
 #include <asm/unaligned.h>
@@ -30,6 +34,10 @@
 #include <linux/device-mapper.h>
 
 #define DM_MSG_PREFIX "crypt"
+<<<<<<< HEAD
+=======
+#define MESG_STR(x) x, sizeof(x)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * context holding the current state of a multi-part conversion
@@ -237,7 +245,11 @@ static int crypt_iv_plain_gen(struct crypt_config *cc, u8 *iv,
 			      struct dm_crypt_request *dmreq)
 {
 	memset(iv, 0, cc->iv_size);
+<<<<<<< HEAD
 	*(__le32 *)iv = cpu_to_le32(dmreq->iv_sector & 0xffffffff);
+=======
+	*(u32 *)iv = cpu_to_le32(dmreq->iv_sector & 0xffffffff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -246,7 +258,11 @@ static int crypt_iv_plain64_gen(struct crypt_config *cc, u8 *iv,
 				struct dm_crypt_request *dmreq)
 {
 	memset(iv, 0, cc->iv_size);
+<<<<<<< HEAD
 	*(__le64 *)iv = cpu_to_le64(dmreq->iv_sector);
+=======
+	*(u64 *)iv = cpu_to_le64(dmreq->iv_sector);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -413,7 +429,11 @@ static int crypt_iv_essiv_gen(struct crypt_config *cc, u8 *iv,
 	struct crypto_cipher *essiv_tfm = this_crypt_config(cc)->iv_private;
 
 	memset(iv, 0, cc->iv_size);
+<<<<<<< HEAD
 	*(__le64 *)iv = cpu_to_le64(dmreq->iv_sector);
+=======
+	*(u64 *)iv = cpu_to_le64(dmreq->iv_sector);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	crypto_cipher_encrypt_one(essiv_tfm, iv, iv);
 
 	return 0;
@@ -589,9 +609,15 @@ static int crypt_iv_lmk_gen(struct crypt_config *cc, u8 *iv,
 	int r = 0;
 
 	if (bio_data_dir(dmreq->ctx->bio_in) == WRITE) {
+<<<<<<< HEAD
 		src = kmap_atomic(sg_page(&dmreq->sg_in));
 		r = crypt_iv_lmk_one(cc, iv, dmreq, src + dmreq->sg_in.offset);
 		kunmap_atomic(src);
+=======
+		src = kmap_atomic(sg_page(&dmreq->sg_in), KM_USER0);
+		r = crypt_iv_lmk_one(cc, iv, dmreq, src + dmreq->sg_in.offset);
+		kunmap_atomic(src, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		memset(iv, 0, cc->iv_size);
 
@@ -607,14 +633,22 @@ static int crypt_iv_lmk_post(struct crypt_config *cc, u8 *iv,
 	if (bio_data_dir(dmreq->ctx->bio_in) == WRITE)
 		return 0;
 
+<<<<<<< HEAD
 	dst = kmap_atomic(sg_page(&dmreq->sg_out));
+=======
+	dst = kmap_atomic(sg_page(&dmreq->sg_out), KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = crypt_iv_lmk_one(cc, iv, dmreq, dst + dmreq->sg_out.offset);
 
 	/* Tweak the first block of plaintext sector */
 	if (!r)
 		crypto_xor(dst + dmreq->sg_out.offset, iv, cc->iv_size);
 
+<<<<<<< HEAD
 	kunmap_atomic(dst);
+=======
+	kunmap_atomic(dst, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return r;
 }
 
@@ -1415,7 +1449,10 @@ static int crypt_ctr_cipher(struct dm_target *ti,
 	char *tmp, *cipher, *chainmode, *ivmode, *ivopts, *keycount;
 	char *cipher_api = NULL;
 	int cpu, ret = -EINVAL;
+<<<<<<< HEAD
 	char dummy;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Convert to crypto api definition? */
 	if (strchr(cipher_in, '(')) {
@@ -1437,7 +1474,11 @@ static int crypt_ctr_cipher(struct dm_target *ti,
 
 	if (!keycount)
 		cc->tfms_count = 1;
+<<<<<<< HEAD
 	else if (sscanf(keycount, "%u%c", &cc->tfms_count, &dummy) != 1 ||
+=======
+	else if (sscanf(keycount, "%u", &cc->tfms_count) != 1 ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 !is_power_of_2(cc->tfms_count)) {
 		ti->error = "Bad cipher key count specification";
 		return -EINVAL;
@@ -1577,6 +1618,7 @@ bad_mem:
 static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 {
 	struct crypt_config *cc;
+<<<<<<< HEAD
 	unsigned int key_size, opt_params;
 	unsigned long long tmpll;
 	int ret;
@@ -1589,6 +1631,13 @@ static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 	};
 
 	if (argc < 5) {
+=======
+	unsigned int key_size;
+	unsigned long long tmpll;
+	int ret;
+
+	if (argc != 5) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ti->error = "Not enough arguments";
 		return -EINVAL;
 	}
@@ -1640,7 +1689,11 @@ static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 	}
 
 	ret = -EINVAL;
+<<<<<<< HEAD
 	if (sscanf(argv[2], "%llu%c", &tmpll, &dummy) != 1) {
+=======
+	if (sscanf(argv[2], "%llu", &tmpll) != 1) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ti->error = "Invalid iv_offset sector";
 		goto bad;
 	}
@@ -1651,12 +1704,17 @@ static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 		goto bad;
 	}
 
+<<<<<<< HEAD
 	if (sscanf(argv[4], "%llu%c", &tmpll, &dummy) != 1) {
+=======
+	if (sscanf(argv[4], "%llu", &tmpll) != 1) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ti->error = "Invalid device sector";
 		goto bad;
 	}
 	cc->start = tmpll;
 
+<<<<<<< HEAD
 	argv += 5;
 	argc -= 5;
 
@@ -1681,6 +1739,8 @@ static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = -ENOMEM;
 	cc->io_queue = alloc_workqueue("kcryptd_io",
 				       WQ_NON_REENTRANT|
@@ -1702,8 +1762,11 @@ static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 	}
 
 	ti->num_flush_requests = 1;
+<<<<<<< HEAD
 	ti->discard_zeroes_data_unsupported = 1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 bad:
@@ -1717,6 +1780,7 @@ static int crypt_map(struct dm_target *ti, struct bio *bio,
 	struct dm_crypt_io *io;
 	struct crypt_config *cc;
 
+<<<<<<< HEAD
 	/*
 	 * If bio is REQ_FLUSH or REQ_DISCARD, just bypass crypt queues.
 	 * - for REQ_FLUSH device-mapper core ensures that no IO is in-flight
@@ -1727,6 +1791,11 @@ static int crypt_map(struct dm_target *ti, struct bio *bio,
 		bio->bi_bdev = cc->dev->bdev;
 		if (bio_sectors(bio))
 			bio->bi_sector = cc->start + dm_target_offset(ti, bio->bi_sector);
+=======
+	if (bio->bi_rw & REQ_FLUSH) {
+		cc = ti->private;
+		bio->bi_bdev = cc->dev->bdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return DM_MAPIO_REMAPPED;
 	}
 
@@ -1769,10 +1838,13 @@ static int crypt_status(struct dm_target *ti, status_type_t type,
 
 		DMEMIT(" %llu %s %llu", (unsigned long long)cc->iv_offset,
 				cc->dev->name, (unsigned long long)cc->start);
+<<<<<<< HEAD
 
 		if (ti->num_discard_requests)
 			DMEMIT(" 1 allow_discards");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 	return 0;
@@ -1816,12 +1888,20 @@ static int crypt_message(struct dm_target *ti, unsigned argc, char **argv)
 	if (argc < 2)
 		goto error;
 
+<<<<<<< HEAD
 	if (!strcasecmp(argv[0], "key")) {
+=======
+	if (!strnicmp(argv[0], MESG_STR("key"))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!test_bit(DM_CRYPT_SUSPENDED, &cc->flags)) {
 			DMWARN("not suspended during key manipulation.");
 			return -EINVAL;
 		}
+<<<<<<< HEAD
 		if (argc == 3 && !strcasecmp(argv[1], "set")) {
+=======
+		if (argc == 3 && !strnicmp(argv[1], MESG_STR("set"))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = crypt_set_key(cc, argv[2]);
 			if (ret)
 				return ret;
@@ -1829,7 +1909,11 @@ static int crypt_message(struct dm_target *ti, unsigned argc, char **argv)
 				ret = cc->iv_gen_ops->init(cc);
 			return ret;
 		}
+<<<<<<< HEAD
 		if (argc == 2 && !strcasecmp(argv[1], "wipe")) {
+=======
+		if (argc == 2 && !strnicmp(argv[1], MESG_STR("wipe"))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (cc->iv_gen_ops && cc->iv_gen_ops->wipe) {
 				ret = cc->iv_gen_ops->wipe(cc);
 				if (ret)
@@ -1869,7 +1953,11 @@ static int crypt_iterate_devices(struct dm_target *ti,
 
 static struct target_type crypt_target = {
 	.name   = "crypt",
+<<<<<<< HEAD
 	.version = {1, 11, 0},
+=======
+	.version = {1, 10, 0},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.module = THIS_MODULE,
 	.ctr    = crypt_ctr,
 	.dtr    = crypt_dtr,

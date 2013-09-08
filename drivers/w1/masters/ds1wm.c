@@ -11,6 +11,22 @@
  * preserved in its entirety in all copies and derived works.
  */
 
+<<<<<<< HEAD
+=======
+/*
+ * Frameworks:
+ *
+ *    - SMP:          Fully supported.    Locking is in place where necessary.
+ *    - GPIO:         Fully supported.    No GPIOs are used.
+ *    - MMU:          Fully supported.    Platform model with ioremap used.
+ *    - Dynamic /dev: Not applicable.
+ *    - Suspend:      Implemented.        Suspend and resume are implemented and should work.
+ *    - Clocks:       Not done.           Awaiting clock framework to be completed.
+ *    - Power:        Not done.
+ *
+ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/interrupt.h>
 #include <linux/irq.h>
@@ -445,7 +461,11 @@ static struct w1_bus_master ds1wm_master = {
 	.search	    = ds1wm_search,
 };
 
+<<<<<<< HEAD
 static int ds1wm_probe(struct platform_device *pdev)
+=======
+static int  __init ds1wm_probe(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ds1wm_data *ds1wm_data;
 	struct ds1wm_driver_data *plat;
@@ -550,7 +570,11 @@ static int ds1wm_resume(struct platform_device *pdev)
 #define ds1wm_resume NULL
 #endif
 
+<<<<<<< HEAD
 static int ds1wm_remove(struct platform_device *pdev)
+=======
+static int __devexit ds1wm_remove(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ds1wm_data *ds1wm_data = platform_get_drvdata(pdev);
 
@@ -565,18 +589,35 @@ static int ds1wm_remove(struct platform_device *pdev)
 
 static struct platform_driver ds1wm_driver = {
 	.driver   = {
+<<<<<<< HEAD
 		.name = "ds1wm",
 	},
 	.probe    = ds1wm_probe,
 	.remove   = ds1wm_remove,
+=======
+		.owner	= THIS_MODULE,
+		.name = "ds1wm",
+	},
+	.remove   = __devexit_p(ds1wm_remove),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.suspend  = ds1wm_suspend,
 	.resume   = ds1wm_resume
 };
 
+<<<<<<< HEAD
 static int __init ds1wm_init(void)
 {
 	printk("DS1WM w1 busmaster driver - (c) 2004 Szabolcs Gyurko\n");
 	return platform_driver_register(&ds1wm_driver);
+=======
+static char banner[] __initdata = KERN_INFO
+    "DS1WM w1 busmaster driver - (c) 2004 Szabolcs Gyurko\n";
+
+static int __init ds1wm_init(void)
+{
+	printk(banner);
+	return platform_driver_probe(&ds1wm_driver, ds1wm_probe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit ds1wm_exit(void)

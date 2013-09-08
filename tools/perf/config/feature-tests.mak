@@ -65,6 +65,7 @@ int main(void)
 endef
 endif
 
+<<<<<<< HEAD
 ifndef NO_GTK2
 define SOURCE_GTK2
 #pragma GCC diagnostic ignored \"-Wstrict-prototypes\"
@@ -80,6 +81,8 @@ int main(int argc, char *argv[])
 endef
 endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ifndef NO_LIBPERL
 define SOURCE_PERL_EMBED
 #include <EXTERN.h>

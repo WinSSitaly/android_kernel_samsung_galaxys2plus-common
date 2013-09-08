@@ -8,13 +8,25 @@
  */
 
 #include <linux/smp.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/memblock.h>
 
+=======
+#include <linux/module.h>
+#include <linux/memblock.h>
+
+#include <asm/firmware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/lppaca.h>
 #include <asm/paca.h>
 #include <asm/sections.h>
 #include <asm/pgtable.h>
+<<<<<<< HEAD
+=======
+#include <asm/iseries/lpar_map.h>
+#include <asm/iseries/hv_types.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/kexec.h>
 
 /* This symbol is provided by the linker - let it fill in the paca
@@ -27,8 +39,13 @@ extern unsigned long __toc_start;
  * The structure which the hypervisor knows about - this structure
  * should not cross a page boundary.  The vpa_init/register_vpa call
  * is now known to fail if the lppaca structure crosses a page
+<<<<<<< HEAD
  * boundary.  The lppaca is also used on POWER5 pSeries boxes.
  * The lppaca is 640 bytes long, and cannot readily
+=======
+ * boundary.  The lppaca is also used on legacy iSeries and POWER5
+ * pSeries boxes.  The lppaca is 640 bytes long, and cannot readily
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * change since the hypervisor knows its layout, so a 1kB alignment
  * will suffice to ensure that it doesn't cross a page boundary.
  */
@@ -164,7 +181,11 @@ void setup_paca(struct paca_struct *new_paca)
 	 * if we do a GET_PACA() before the feature fixups have been
 	 * applied
 	 */
+<<<<<<< HEAD
 	if (cpu_has_feature(CPU_FTR_HVMODE))
+=======
+	if (cpu_has_feature(CPU_FTR_HVMODE_206))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mtspr(SPRN_SPRG_HPACA, local_paca);
 #endif
 	mtspr(SPRN_SPRG_PACA, local_paca);
@@ -180,9 +201,18 @@ void __init allocate_pacas(void)
 	/*
 	 * We can't take SLB misses on the paca, and we want to access them
 	 * in real mode, so allocate them within the RMA and also within
+<<<<<<< HEAD
 	 * the first segment.
 	 */
 	limit = min(0x10000000ULL, ppc64_rma_size);
+=======
+	 * the first segment. On iSeries they must be within the area mapped
+	 * by the HV, which is HvPagesToMap * HVPAGESIZE bytes.
+	 */
+	limit = min(0x10000000ULL, ppc64_rma_size);
+	if (firmware_has_feature(FW_FEATURE_ISERIES))
+		limit = min(limit, HvPagesToMap * HVPAGESIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	paca_size = PAGE_ALIGN(sizeof(struct paca_struct) * nr_cpu_ids);
 

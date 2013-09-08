@@ -13,24 +13,35 @@
 
 #include <linux/percpu.h>
 #include <linux/list.h>
+<<<<<<< HEAD
 #include <linux/kobject.h>
 #include <linux/completion.h>
 #include <linux/hrtimer.h>
+=======
+#include <linux/module.h>
+#include <linux/kobject.h>
+#include <linux/completion.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define CPUIDLE_STATE_MAX	8
 #define CPUIDLE_NAME_LEN	16
 #define CPUIDLE_DESC_LEN	32
 
+<<<<<<< HEAD
 struct module;
 
 struct cpuidle_device;
 struct cpuidle_driver;
+=======
+struct cpuidle_device;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /****************************
  * CPUIDLE DEVICE INTERFACE *
  ****************************/
 
+<<<<<<< HEAD
 struct cpuidle_state_usage {
 	void		*driver_data;
 
@@ -53,24 +64,54 @@ struct cpuidle_state {
 			int index);
 
 	int (*enter_dead) (struct cpuidle_device *dev, int index);
+=======
+struct cpuidle_state {
+	char		name[CPUIDLE_NAME_LEN];
+	char		desc[CPUIDLE_DESC_LEN];
+	void		*driver_data;
+
+	unsigned int	flags;
+	unsigned int	exit_latency; /* in US */
+	unsigned int	power_usage; /* in mW */
+	unsigned int	target_residency; /* in US */
+
+	unsigned long long	usage;
+	unsigned long long	time; /* in US */
+
+	int (*enter)	(struct cpuidle_device *dev,
+			 struct cpuidle_state *state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Idle State Flags */
 #define CPUIDLE_FLAG_TIME_VALID	(0x01) /* is residency time measurable? */
+<<<<<<< HEAD
+=======
+#define CPUIDLE_FLAG_IGNORE	(0x100) /* ignore during this idle period */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define CPUIDLE_DRIVER_FLAGS_MASK (0xFFFF0000)
 
 /**
  * cpuidle_get_statedata - retrieves private driver state data
+<<<<<<< HEAD
  * @st_usage: the state usage statistics
  */
 static inline void *cpuidle_get_statedata(struct cpuidle_state_usage *st_usage)
 {
 	return st_usage->driver_data;
+=======
+ * @state: the state
+ */
+static inline void * cpuidle_get_statedata(struct cpuidle_state *state)
+{
+	return state->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
  * cpuidle_set_statedata - stores private driver state data
+<<<<<<< HEAD
  * @st_usage: the state usage statistics
  * @data: the private data
  */
@@ -78,11 +119,23 @@ static inline void
 cpuidle_set_statedata(struct cpuidle_state_usage *st_usage, void *data)
 {
 	st_usage->driver_data = data;
+=======
+ * @state: the state
+ * @data: the private data
+ */
+static inline void
+cpuidle_set_statedata(struct cpuidle_state *state, void *data)
+{
+	state->driver_data = data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct cpuidle_state_kobj {
 	struct cpuidle_state *state;
+<<<<<<< HEAD
 	struct cpuidle_state_usage *state_usage;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct completion kobj_unregister;
 	struct kobject kobj;
 };
@@ -90,16 +143,33 @@ struct cpuidle_state_kobj {
 struct cpuidle_device {
 	unsigned int		registered:1;
 	unsigned int		enabled:1;
+<<<<<<< HEAD
+=======
+	unsigned int		power_specified:1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int		cpu;
 
 	int			last_residency;
 	int			state_count;
+<<<<<<< HEAD
 	struct cpuidle_state_usage	states_usage[CPUIDLE_STATE_MAX];
 	struct cpuidle_state_kobj *kobjs[CPUIDLE_STATE_MAX];
+=======
+	struct cpuidle_state	states[CPUIDLE_STATE_MAX];
+	struct cpuidle_state_kobj *kobjs[CPUIDLE_STATE_MAX];
+	struct cpuidle_state	*last_state;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct list_head 	device_list;
 	struct kobject		kobj;
 	struct completion	kobj_unregister;
+<<<<<<< HEAD
+=======
+	void			*governor_data;
+	struct cpuidle_state	*safe_state;
+
+	int (*prepare)		(struct cpuidle_device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 DECLARE_PER_CPU(struct cpuidle_device *, cpuidle_devices);
@@ -121,6 +191,7 @@ static inline int cpuidle_get_last_residency(struct cpuidle_device *dev)
  ****************************/
 
 struct cpuidle_driver {
+<<<<<<< HEAD
 	const char		*name;
 	struct module 		*owner;
 
@@ -135,6 +206,14 @@ struct cpuidle_driver {
 #ifdef CONFIG_CPU_IDLE
 extern void disable_cpuidle(void);
 extern int cpuidle_idle_call(void);
+=======
+	char			name[CPUIDLE_NAME_LEN];
+	struct module 		*owner;
+};
+
+#ifdef CONFIG_CPU_IDLE
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int cpuidle_register_driver(struct cpuidle_driver *drv);
 struct cpuidle_driver *cpuidle_get_driver(void);
 extern void cpuidle_unregister_driver(struct cpuidle_driver *drv);
@@ -145,6 +224,7 @@ extern void cpuidle_pause_and_lock(void);
 extern void cpuidle_resume_and_unlock(void);
 extern int cpuidle_enable_device(struct cpuidle_device *dev);
 extern void cpuidle_disable_device(struct cpuidle_device *dev);
+<<<<<<< HEAD
 extern int cpuidle_wrap_enter(struct cpuidle_device *dev,
 				struct cpuidle_driver *drv, int index,
 				int (*enter)(struct cpuidle_device *dev,
@@ -154,6 +234,11 @@ extern int cpuidle_play_dead(void);
 #else
 static inline void disable_cpuidle(void) { }
 static inline int cpuidle_idle_call(void) { return -ENODEV; }
+=======
+
+#else
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int cpuidle_register_driver(struct cpuidle_driver *drv)
 {return -ENODEV; }
 static inline struct cpuidle_driver *cpuidle_get_driver(void) {return NULL; }
@@ -167,12 +252,15 @@ static inline void cpuidle_resume_and_unlock(void) { }
 static inline int cpuidle_enable_device(struct cpuidle_device *dev)
 {return -ENODEV; }
 static inline void cpuidle_disable_device(struct cpuidle_device *dev) { }
+<<<<<<< HEAD
 static inline int cpuidle_wrap_enter(struct cpuidle_device *dev,
 				struct cpuidle_driver *drv, int index,
 				int (*enter)(struct cpuidle_device *dev,
 					struct cpuidle_driver *drv, int index))
 { return -ENODEV; }
 static inline int cpuidle_play_dead(void) {return -ENODEV; }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif
 
@@ -185,6 +273,7 @@ struct cpuidle_governor {
 	struct list_head 	governor_list;
 	unsigned int		rating;
 
+<<<<<<< HEAD
 	int  (*enable)		(struct cpuidle_driver *drv,
 					struct cpuidle_device *dev);
 	void (*disable)		(struct cpuidle_driver *drv,
@@ -193,6 +282,13 @@ struct cpuidle_governor {
 	int  (*select)		(struct cpuidle_driver *drv,
 					struct cpuidle_device *dev);
 	void (*reflect)		(struct cpuidle_device *dev, int index);
+=======
+	int  (*enable)		(struct cpuidle_device *dev);
+	void (*disable)		(struct cpuidle_device *dev);
+
+	int  (*select)		(struct cpuidle_device *dev);
+	void (*reflect)		(struct cpuidle_device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct module 		*owner;
 };
@@ -202,6 +298,7 @@ struct cpuidle_governor {
 extern int cpuidle_register_governor(struct cpuidle_governor *gov);
 extern void cpuidle_unregister_governor(struct cpuidle_governor *gov);
 
+<<<<<<< HEAD
 #ifdef CONFIG_INTEL_IDLE
 extern int intel_idle_cpu_init(int cpu);
 #else
@@ -210,6 +307,9 @@ static inline int intel_idle_cpu_init(int cpu) { return -1; }
 
 #else
 static inline int intel_idle_cpu_init(int cpu) { return -1; }
+=======
+#else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int cpuidle_register_governor(struct cpuidle_governor *gov)
 {return 0;}

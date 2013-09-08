@@ -25,6 +25,31 @@
 #include <linux/scatterlist.h>
 #include <linux/sched.h>
 
+<<<<<<< HEAD
+=======
+static inline enum km_type crypto_kmap_type(int out)
+{
+	enum km_type type;
+
+	if (in_softirq())
+		type = out * (KM_SOFTIRQ1 - KM_SOFTIRQ0) + KM_SOFTIRQ0;
+	else
+		type = out * (KM_USER1 - KM_USER0) + KM_USER0;
+
+	return type;
+}
+
+static inline void *crypto_kmap(struct page *page, int out)
+{
+	return kmap_atomic(page, crypto_kmap_type(out));
+}
+
+static inline void crypto_kunmap(void *vaddr, int out)
+{
+	kunmap_atomic(vaddr, crypto_kmap_type(out));
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void crypto_yield(u32 flags)
 {
 	if (flags & CRYPTO_TFM_REQ_MAY_SLEEP)
@@ -99,15 +124,25 @@ static inline struct page *scatterwalk_page(struct scatter_walk *walk)
 	return sg_page(walk->sg) + (walk->offset >> PAGE_SHIFT);
 }
 
+<<<<<<< HEAD
 static inline void scatterwalk_unmap(void *vaddr)
 {
 	kunmap_atomic(vaddr);
+=======
+static inline void scatterwalk_unmap(void *vaddr, int out)
+{
+	crypto_kunmap(vaddr, out);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void scatterwalk_start(struct scatter_walk *walk, struct scatterlist *sg);
 void scatterwalk_copychunks(void *buf, struct scatter_walk *walk,
 			    size_t nbytes, int out);
+<<<<<<< HEAD
 void *scatterwalk_map(struct scatter_walk *walk);
+=======
+void *scatterwalk_map(struct scatter_walk *walk, int out);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void scatterwalk_done(struct scatter_walk *walk, int out, int more);
 
 void scatterwalk_map_and_copy(void *buf, struct scatterlist *sg,

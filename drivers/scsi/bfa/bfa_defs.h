@@ -40,12 +40,16 @@ enum {
 	BFA_MFG_TYPE_ASTRA    = 807,     /*  Astra mezz card            */
 	BFA_MFG_TYPE_LIGHTNING_P0 = 902, /*  Lightning mezz card - old  */
 	BFA_MFG_TYPE_LIGHTNING = 1741,   /*  Lightning mezz card        */
+<<<<<<< HEAD
 	BFA_MFG_TYPE_PROWLER_F = 1560,	 /*  Prowler FC only cards	*/
 	BFA_MFG_TYPE_PROWLER_N = 1410,	 /*  Prowler NIC only cards	*/
 	BFA_MFG_TYPE_PROWLER_C = 1710,   /*  Prowler CNA only cards	*/
 	BFA_MFG_TYPE_PROWLER_D = 1860,   /*  Prowler Dual cards		*/
 	BFA_MFG_TYPE_CHINOOK   = 1867,   /*  Chinook cards		*/
 	BFA_MFG_TYPE_INVALID = 0,        /*  Invalid card type		*/
+=======
+	BFA_MFG_TYPE_INVALID = 0,        /*  Invalid card type          */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #pragma pack(1)
@@ -58,8 +62,12 @@ enum {
 	(type) == BFA_MFG_TYPE_WANCHESE || \
 	(type) == BFA_MFG_TYPE_ASTRA || \
 	(type) == BFA_MFG_TYPE_LIGHTNING_P0 || \
+<<<<<<< HEAD
 	(type) == BFA_MFG_TYPE_LIGHTNING || \
 	(type) == BFA_MFG_TYPE_CHINOOK))
+=======
+	(type) == BFA_MFG_TYPE_LIGHTNING))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Check if the card having old wwn/mac handling
@@ -130,28 +138,38 @@ enum bfa_status {
 	BFA_STATUS_ETIMER	= 5,	/*  Timer expired - Retry, if persists,
 					 *  contact support */
 	BFA_STATUS_EPROTOCOL	= 6,	/*  Protocol error */
+<<<<<<< HEAD
 	BFA_STATUS_SFP_UNSUPP	= 10,	/*  Unsupported SFP - Replace SFP */
 	BFA_STATUS_UNKNOWN_VFID = 11,	/*  VF_ID not found */
 	BFA_STATUS_DATACORRUPTED = 12,  /*  Diag returned data corrupted */
 	BFA_STATUS_DEVBUSY	= 13,	/*  Device busy - Retry operation */
 	BFA_STATUS_HDMA_FAILED  = 16,   /* Host dma failed contact support */
 	BFA_STATUS_FLASH_BAD_LEN = 17,	/*  Flash bad length */
+=======
+	BFA_STATUS_DEVBUSY	= 13,	/*  Device busy - Retry operation */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BFA_STATUS_UNKNOWN_LWWN = 18,	/*  LPORT PWWN not found */
 	BFA_STATUS_UNKNOWN_RWWN = 19,	/*  RPORT PWWN not found */
 	BFA_STATUS_VPORT_EXISTS = 21,	/*  VPORT already exists */
 	BFA_STATUS_VPORT_MAX	= 22,	/*  Reached max VPORT supported limit */
 	BFA_STATUS_UNSUPP_SPEED	= 23,	/*  Invalid Speed Check speed setting */
 	BFA_STATUS_INVLD_DFSZ	= 24,	/*  Invalid Max data field size */
+<<<<<<< HEAD
 	BFA_STATUS_CMD_NOTSUPP  = 26,   /*  Command/API not supported */
 	BFA_STATUS_FABRIC_RJT	= 29,	/*  Reject from attached fabric */
 	BFA_STATUS_UNKNOWN_VWWN = 30,	/*  VPORT PWWN not found */
 	BFA_STATUS_PORT_OFFLINE = 34,	/*  Port is not online */
 	BFA_STATUS_VPORT_WWN_BP	= 46,	/*  WWN is same as base port's WWN */
 	BFA_STATUS_PORT_NOT_DISABLED = 47, /* Port not disabled disable port */
+=======
+	BFA_STATUS_FABRIC_RJT	= 29,	/*  Reject from attached fabric */
+	BFA_STATUS_VPORT_WWN_BP	= 46,	/*  WWN is same as base port's WWN */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BFA_STATUS_NO_FCPIM_NEXUS = 52,	/* No FCP Nexus exists with the rport */
 	BFA_STATUS_IOC_FAILURE	= 56,	/* IOC failure - Retry, if persists
 					 * contact support */
 	BFA_STATUS_INVALID_WWN	= 57,	/*  Invalid WWN */
+<<<<<<< HEAD
 	BFA_STATUS_ADAPTER_ENABLED = 60, /* Adapter is not disabled */
 	BFA_STATUS_IOC_NON_OP   = 61,	/* IOC is not operational */
 	BFA_STATUS_VERSION_FAIL = 70, /* Application/Driver version mismatch */
@@ -168,11 +186,20 @@ enum bfa_status {
 	BFA_STATUS_BAD_FWCFG = 156,	/* Bad firmware configuration */
 	BFA_STATUS_INVALID_VENDOR = 158, /* Invalid switch vendor */
 	BFA_STATUS_SFP_NOT_READY = 159,	/* SFP info is not ready. Retry */
+=======
+	BFA_STATUS_DIAG_BUSY	= 71,	/*  diag busy */
+	BFA_STATUS_ENOFSAVE	= 78,	/*  No saved firmware trace */
+	BFA_STATUS_IOC_DISABLED = 82,   /* IOC is already disabled */
+	BFA_STATUS_INVALID_MAC  = 134, /*  Invalid MAC address */
+	BFA_STATUS_PBC		= 154, /*  Operation not allowed for pre-boot
+					*  configuration */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BFA_STATUS_TRUNK_ENABLED = 164, /* Trunk is already enabled on
 					 * this adapter */
 	BFA_STATUS_TRUNK_DISABLED  = 165, /* Trunking is disabled on
 					   * the adapter */
 	BFA_STATUS_IOPROFILE_OFF = 175, /* IO profile OFF */
+<<<<<<< HEAD
 	BFA_STATUS_PHY_NOT_PRESENT = 183, /* PHY module not present */
 	BFA_STATUS_FEATURE_NOT_SUPPORTED = 192,	/* Feature not supported */
 	BFA_STATUS_ENTRY_EXISTS = 193,	/* Entry already exists */
@@ -184,6 +211,8 @@ enum bfa_status {
 	BFA_STATUS_FAA_ACQ_ADDR = 200,	/* Acquiring addr */
 	BFA_STATUS_ERROR_TRUNK_ENABLED = 203,	/* Trunk enabled on adapter */
 	BFA_STATUS_MAX_ENTRY_REACHED = 212,	/* MAX entry reached */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BFA_STATUS_MAX_VAL		/* Unknown error code */
 };
 #define bfa_status_t enum bfa_status
@@ -301,8 +330,11 @@ enum bfa_ioc_state {
 	BFA_IOC_DISABLED	= 10,	/*  IOC is disabled */
 	BFA_IOC_FWMISMATCH	= 11,	/*  IOC f/w different from drivers */
 	BFA_IOC_ENABLING	= 12,	/*  IOC is being enabled */
+<<<<<<< HEAD
 	BFA_IOC_HWFAIL		= 13,	/*  PCI mapping doesn't exist */
 	BFA_IOC_ACQ_ADDR	= 14,	/*  Acquiring addr from fabric */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -332,7 +364,10 @@ struct bfa_ioc_drv_stats_s {
 	u32	enable_reqs;
 	u32	disable_replies;
 	u32	enable_replies;
+<<<<<<< HEAD
 	u32	rsvd;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -359,6 +394,7 @@ struct bfa_ioc_attr_s {
 	struct bfa_ioc_driver_attr_s	driver_attr;	/*  driver attr    */
 	struct bfa_ioc_pci_attr_s	pci_attr;
 	u8				port_id;	/*  port number    */
+<<<<<<< HEAD
 	u8				port_mode;	/*  bfa_mode_s	*/
 	u8				cap_bm;		/*  capability	*/
 	u8				port_mode_cfg;	/*  bfa_mode_s	*/
@@ -496,6 +532,9 @@ struct bfa_ioc_aen_data_s {
 	wwn_t	pwwn;
 	u16	ioc_type;
 	mac_t	mac;
+=======
+	u8				rsvd[7];	/*  64bit align    */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -512,6 +551,7 @@ struct bfa_ioc_aen_data_s {
 #define BFA_MFG_SUPPLIER_PARTNUM_SIZE		20
 #define BFA_MFG_SUPPLIER_SERIALNUM_SIZE		20
 #define BFA_MFG_SUPPLIER_REVISION_SIZE		4
+<<<<<<< HEAD
 /*
  * Initial capability definition
  */
@@ -527,6 +567,8 @@ struct bfa_ioc_aen_data_s {
 #define BFA_CM_FC16G	0x08
 #define BFA_CM_SRIOV	0x10
 #define BFA_CM_MEZZ	0x20
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #pragma pack(1)
 
@@ -534,6 +576,7 @@ struct bfa_ioc_aen_data_s {
  * All numerical fields are in big-endian format.
  */
 struct bfa_mfg_block_s {
+<<<<<<< HEAD
 	u8	version;    /*!< manufacturing block version */
 	u8     mfg_sig[3]; /*!< characters 'M', 'F', 'G' */
 	u16    mfgsize;    /*!< mfg block size */
@@ -567,6 +610,33 @@ struct bfa_mfg_block_s {
 	char        initial_mode[8]; /*!< initial mode: hba/cna/nic */
 	u8     rsv4[84];
 	u8     md5_chksum[BFA_MFG_CHKSUM_SIZE]; /*!< md5 checksum */
+=======
+	u8		version;	/*  manufacturing block version */
+	u8		mfg_sig[3];	/*  characters 'M', 'F', 'G' */
+	u16	mfgsize;	/*  mfg block size */
+	u16	u16_chksum;	/*  old u16 checksum */
+	char		brcd_serialnum[STRSZ(BFA_MFG_SERIALNUM_SIZE)];
+	char		brcd_partnum[STRSZ(BFA_MFG_PARTNUM_SIZE)];
+	u8		mfg_day;	/*  manufacturing day */
+	u8		mfg_month;	/*  manufacturing month */
+	u16	mfg_year;	/*  manufacturing year */
+	wwn_t		mfg_wwn;	/*  wwn base for this adapter */
+	u8		num_wwn;	/*  number of wwns assigned */
+	u8		mfg_speeds;	/*  speeds allowed for this adapter */
+	u8		rsv[2];
+	char		supplier_id[STRSZ(BFA_MFG_SUPPLIER_ID_SIZE)];
+	char		supplier_partnum[STRSZ(BFA_MFG_SUPPLIER_PARTNUM_SIZE)];
+	char
+		supplier_serialnum[STRSZ(BFA_MFG_SUPPLIER_SERIALNUM_SIZE)];
+	char
+		supplier_revision[STRSZ(BFA_MFG_SUPPLIER_REVISION_SIZE)];
+	mac_t		mfg_mac;	/*  mac address */
+	u8		num_mac;	/*  number of mac addresses */
+	u8		rsv2;
+	u32	mfg_type;	/*  card type */
+	u8		rsv3[108];
+	u8		md5_chksum[BFA_MFG_CHKSUM_SIZE]; /*  md5 checksum */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #pragma pack()
@@ -584,6 +654,7 @@ enum {
 	BFA_PCI_DEVICE_ID_FC_8G1P	= 0x17,
 	BFA_PCI_DEVICE_ID_CT		= 0x14,
 	BFA_PCI_DEVICE_ID_CT_FC		= 0x21,
+<<<<<<< HEAD
 	BFA_PCI_DEVICE_ID_CT2		= 0x22,
 };
 
@@ -596,15 +667,25 @@ enum {
 #define bfa_asic_id_ct2(__d)	((__d) == BFA_PCI_DEVICE_ID_CT2)
 #define bfa_asic_id_ctc(__d)	\
 	(bfa_asic_id_ct(__d) || bfa_asic_id_ct2(__d))
+=======
+};
+
+#define bfa_asic_id_ct(devid)			\
+	((devid) == BFA_PCI_DEVICE_ID_CT ||	\
+	 (devid) == BFA_PCI_DEVICE_ID_CT_FC)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * PCI sub-system device and vendor ID information
  */
 enum {
 	BFA_PCI_FCOE_SSDEVICE_ID	= 0x14,
+<<<<<<< HEAD
 	BFA_PCI_CT2_SSID_FCoE		= 0x22,
 	BFA_PCI_CT2_SSID_ETH		= 0x23,
 	BFA_PCI_CT2_SSID_FC		= 0x24,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -624,7 +705,13 @@ enum bfa_port_speed {
 	BFA_PORT_SPEED_8GBPS	= 8,
 	BFA_PORT_SPEED_10GBPS	= 10,
 	BFA_PORT_SPEED_16GBPS	= 16,
+<<<<<<< HEAD
 	BFA_PORT_SPEED_AUTO	= 0xf,
+=======
+	BFA_PORT_SPEED_AUTO =
+		(BFA_PORT_SPEED_1GBPS | BFA_PORT_SPEED_2GBPS |
+		 BFA_PORT_SPEED_4GBPS | BFA_PORT_SPEED_8GBPS),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #define bfa_port_speed_t enum bfa_port_speed
 
@@ -660,6 +747,7 @@ struct bfa_boot_bootlun_s {
 /*
  * BOOT boot configuraton
  */
+<<<<<<< HEAD
 struct bfa_boot_cfg_s {
 	u8		version;
 	u8		rsvd1;
@@ -674,6 +762,8 @@ struct bfa_boot_cfg_s {
 	struct bfa_boot_bootlun_s blun_disc[BFA_BOOT_BOOTLUN_MAX];
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct bfa_boot_pbc_s {
 	u8              enable;         /*  enable/disable SAN boot */
 	u8              speed;          /*  boot speed settings */
@@ -683,6 +773,7 @@ struct bfa_boot_pbc_s {
 	struct bfa_boot_bootlun_s pblun[BFA_PREBOOT_BOOTLUN_MAX];
 };
 
+<<<<<<< HEAD
 struct bfa_ethboot_cfg_s {
 	u8		version;
 	u8		rsvd1;
@@ -1149,4 +1240,6 @@ struct bfa_phy_stats_s {
 
 #pragma pack()
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __BFA_DEFS_H__ */

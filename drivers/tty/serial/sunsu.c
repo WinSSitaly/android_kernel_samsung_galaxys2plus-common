@@ -41,14 +41,22 @@
 #include <asm/io.h>
 #include <asm/irq.h>
 #include <asm/prom.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if defined(CONFIG_SERIAL_SUNSU_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
 #define SUPPORT_SYSRQ
 #endif
 
 #include <linux/serial_core.h>
+<<<<<<< HEAD
 #include <linux/sunserialcore.h>
+=======
+
+#include "suncore.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* We are on a NS PC87303 clocked with 24.0 MHz, which results
  * in a UART clock of 1.8462 MHz.
@@ -968,7 +976,10 @@ static struct uart_ops sunsu_pops = {
 #define UART_NR	4
 
 static struct uart_sunsu_port sunsu_ports[UART_NR];
+<<<<<<< HEAD
 static int nr_inst; /* Number of already registered ports */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_SERIO
 
@@ -1338,8 +1349,18 @@ static int __init sunsu_console_setup(struct console *co, char *options)
 	printk("Console: ttyS%d (SU)\n",
 	       (sunsu_reg.minor - 64) + co->index);
 
+<<<<<<< HEAD
 	if (co->index > nr_inst)
 		return -ENODEV;
+=======
+	/*
+	 * Check whether an invalid uart number has been specified, and
+	 * if so, search for the first available port that does have
+	 * console support.
+	 */
+	if (co->index >= UART_NR)
+		co->index = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	port = &sunsu_ports[co->index].port;
 
 	/*
@@ -1404,6 +1425,10 @@ static enum su_type __devinit su_get_type(struct device_node *dp)
 
 static int __devinit su_probe(struct platform_device *op)
 {
+<<<<<<< HEAD
+=======
+	static int inst;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct device_node *dp = op->dev.of_node;
 	struct uart_sunsu_port *up;
 	struct resource *rp;
@@ -1413,16 +1438,26 @@ static int __devinit su_probe(struct platform_device *op)
 
 	type = su_get_type(dp);
 	if (type == SU_PORT_PORT) {
+<<<<<<< HEAD
 		if (nr_inst >= UART_NR)
 			return -EINVAL;
 		up = &sunsu_ports[nr_inst];
+=======
+		if (inst >= UART_NR)
+			return -EINVAL;
+		up = &sunsu_ports[inst];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		up = kzalloc(sizeof(*up), GFP_KERNEL);
 		if (!up)
 			return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	up->port.line = nr_inst;
+=======
+	up->port.line = inst;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_init(&up->port.lock);
 
@@ -1430,7 +1465,11 @@ static int __devinit su_probe(struct platform_device *op)
 
 	rp = &op->resource[0];
 	up->port.mapbase = rp->start;
+<<<<<<< HEAD
 	up->reg_size = resource_size(rp);
+=======
+	up->reg_size = (rp->end - rp->start) + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	up->port.membase = of_ioremap(rp, 0, up->reg_size, "su");
 	if (!up->port.membase) {
 		if (type != SU_PORT_PORT)
@@ -1456,8 +1495,11 @@ static int __devinit su_probe(struct platform_device *op)
 		}
 		dev_set_drvdata(&op->dev, up);
 
+<<<<<<< HEAD
 		nr_inst++;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
@@ -1485,7 +1527,11 @@ static int __devinit su_probe(struct platform_device *op)
 
 	dev_set_drvdata(&op->dev, up);
 
+<<<<<<< HEAD
 	nr_inst++;
+=======
+	inst++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 

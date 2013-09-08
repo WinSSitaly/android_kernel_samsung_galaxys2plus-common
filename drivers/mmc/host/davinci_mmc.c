@@ -160,6 +160,7 @@ module_param(rw_threshold, uint, S_IRUGO);
 MODULE_PARM_DESC(rw_threshold,
 		"Read/Write threshold. Default = 32");
 
+<<<<<<< HEAD
 static unsigned poll_threshold = 128;
 module_param(poll_threshold, uint, S_IRUGO);
 MODULE_PARM_DESC(poll_threshold,
@@ -170,6 +171,8 @@ module_param(poll_loopcount, uint, S_IRUGO);
 MODULE_PARM_DESC(poll_loopcount,
 		 "Maximum polling loop count. Default = 32");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned __initdata use_dma = 1;
 module_param(use_dma, uint, 0);
 MODULE_PARM_DESC(use_dma, "Whether to use DMA or not. Default = 1");
@@ -203,7 +206,10 @@ struct mmc_davinci_host {
 	bool use_dma;
 	bool do_dma;
 	bool sdio_int;
+<<<<<<< HEAD
 	bool active_request;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Scatterlist DMA uses one or more parameter RAM entries:
 	 * the main one (associated with rxdma or txdma) plus zero or
@@ -230,7 +236,10 @@ struct mmc_davinci_host {
 #endif
 };
 
+<<<<<<< HEAD
 static irqreturn_t mmc_davinci_irq(int irq, void *dev_id);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* PIO only */
 static void mmc_davinci_sg_to_buf(struct mmc_davinci_host *host)
@@ -388,6 +397,7 @@ static void mmc_davinci_start_command(struct mmc_davinci_host *host,
 
 	writel(cmd->arg, host->base + DAVINCI_MMCARGHL);
 	writel(cmd_reg,  host->base + DAVINCI_MMCCMD);
+<<<<<<< HEAD
 
 	host->active_request = true;
 
@@ -402,6 +412,9 @@ static void mmc_davinci_start_command(struct mmc_davinci_host *host,
 
 	if (host->active_request)
 		writel(im_val, host->base + DAVINCI_MMCIM);
+=======
+	writel(im_val, host->base + DAVINCI_MMCIM);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*----------------------------------------------------------------------*/
@@ -832,14 +845,18 @@ static void calculate_clk_divider(struct mmc_host *mmc, struct mmc_ios *ios)
 static void mmc_davinci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 {
 	struct mmc_davinci_host *host = mmc_priv(mmc);
+<<<<<<< HEAD
 	struct platform_device *pdev = to_platform_device(mmc->parent);
 	struct davinci_mmc_config *config = pdev->dev.platform_data;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_dbg(mmc_dev(host->mmc),
 		"clock %dHz busmode %d powermode %d Vdd %04x\n",
 		ios->clock, ios->bus_mode, ios->power_mode,
 		ios->vdd);
 
+<<<<<<< HEAD
 	switch (ios->power_mode) {
 	case MMC_POWER_OFF:
 		if (config && config->set_power)
@@ -851,6 +868,8 @@ static void mmc_davinci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 		break;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (ios->bus_width) {
 	case MMC_BUS_WIDTH_8:
 		dev_dbg(mmc_dev(host->mmc), "Enabling 8 bit mode\n");
@@ -940,7 +959,10 @@ mmc_davinci_xfer_done(struct mmc_davinci_host *host, struct mmc_data *data)
 	if (!data->stop || (host->cmd && host->cmd->error)) {
 		mmc_request_done(host->mmc, data->mrq);
 		writel(0, host->base + DAVINCI_MMCIM);
+<<<<<<< HEAD
 		host->active_request = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		mmc_davinci_start_command(host, data->stop);
 }
@@ -968,7 +990,10 @@ static void mmc_davinci_cmd_done(struct mmc_davinci_host *host,
 			cmd->mrq->cmd->retries = 0;
 		mmc_request_done(host->mmc, cmd->mrq);
 		writel(0, host->base + DAVINCI_MMCIM);
+<<<<<<< HEAD
 		host->active_request = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1036,6 +1061,7 @@ static irqreturn_t mmc_davinci_irq(int irq, void *dev_id)
 	 * by read. So, it is not unbouned loop even in the case of
 	 * non-dma.
 	 */
+<<<<<<< HEAD
 	if (host->bytes_left && (status & (MMCST0_DXRDY | MMCST0_DRRDY))) {
 		unsigned long im_val;
 
@@ -1063,6 +1089,14 @@ static irqreturn_t mmc_davinci_irq(int irq, void *dev_id)
 		 * status is race-prone.
 		 */
 		writel(im_val, host->base + DAVINCI_MMCIM);
+=======
+	while (host->bytes_left && (status & (MMCST0_DXRDY | MMCST0_DRRDY))) {
+		davinci_fifo_data_trans(host, rw_threshold);
+		status = readl(host->base + DAVINCI_MMCST0);
+		if (!status)
+			break;
+		qstatus |= status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (qstatus & MMCST0_DATDNE) {
@@ -1466,14 +1500,26 @@ static int davinci_mmcsd_suspend(struct device *dev)
 	struct mmc_davinci_host *host = platform_get_drvdata(pdev);
 	int ret;
 
+<<<<<<< HEAD
+=======
+	mmc_host_enable(host->mmc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = mmc_suspend_host(host->mmc);
 	if (!ret) {
 		writel(0, host->base + DAVINCI_MMCIM);
 		mmc_davinci_reset_ctrl(host, 1);
+<<<<<<< HEAD
+=======
+		mmc_host_disable(host->mmc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		clk_disable(host->clk);
 		host->suspended = 1;
 	} else {
 		host->suspended = 0;
+<<<<<<< HEAD
+=======
+		mmc_host_disable(host->mmc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;
@@ -1489,6 +1535,10 @@ static int davinci_mmcsd_resume(struct device *dev)
 		return 0;
 
 	clk_enable(host->clk);
+<<<<<<< HEAD
+=======
+	mmc_host_enable(host->mmc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mmc_davinci_reset_ctrl(host, 0);
 	ret = mmc_resume_host(host->mmc);

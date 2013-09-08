@@ -38,6 +38,10 @@
 #include <linux/pci.h>
 
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/inet.h>
 #include <linux/netdevice.h>
@@ -55,7 +59,10 @@
 struct rtnl_link {
 	rtnl_doit_func		doit;
 	rtnl_dumpit_func	dumpit;
+<<<<<<< HEAD
 	rtnl_calcit_func 	calcit;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static DEFINE_MUTEX(rtnl_mutex);
@@ -144,6 +151,7 @@ static rtnl_dumpit_func rtnl_get_dumpit(int protocol, int msgindex)
 	return tab ? tab[msgindex].dumpit : NULL;
 }
 
+<<<<<<< HEAD
 static rtnl_calcit_func rtnl_get_calcit(int protocol, int msgindex)
 {
 	struct rtnl_link *tab;
@@ -159,13 +167,18 @@ static rtnl_calcit_func rtnl_get_calcit(int protocol, int msgindex)
 	return tab ? tab[msgindex].calcit : NULL;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * __rtnl_register - Register a rtnetlink message type
  * @protocol: Protocol family or PF_UNSPEC
  * @msgtype: rtnetlink message type
  * @doit: Function pointer called for each request message
  * @dumpit: Function pointer called for each dump request (NLM_F_DUMP) message
+<<<<<<< HEAD
  * @calcit: Function pointer to calc size of dump message
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Registers the specified function pointers (at least one of them has
  * to be non-NULL) to be called whenever a request message for the
@@ -178,8 +191,12 @@ static rtnl_calcit_func rtnl_get_calcit(int protocol, int msgindex)
  * Returns 0 on success or a negative error code.
  */
 int __rtnl_register(int protocol, int msgtype,
+<<<<<<< HEAD
 		    rtnl_doit_func doit, rtnl_dumpit_func dumpit,
 		    rtnl_calcit_func calcit)
+=======
+		    rtnl_doit_func doit, rtnl_dumpit_func dumpit)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct rtnl_link *tab;
 	int msgindex;
@@ -202,9 +219,12 @@ int __rtnl_register(int protocol, int msgtype,
 	if (dumpit)
 		tab[msgindex].dumpit = dumpit;
 
+<<<<<<< HEAD
 	if (calcit)
 		tab[msgindex].calcit = calcit;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL_GPL(__rtnl_register);
@@ -219,10 +239,16 @@ EXPORT_SYMBOL_GPL(__rtnl_register);
  * of memory implies no sense in continuing.
  */
 void rtnl_register(int protocol, int msgtype,
+<<<<<<< HEAD
 		   rtnl_doit_func doit, rtnl_dumpit_func dumpit,
 		   rtnl_calcit_func calcit)
 {
 	if (__rtnl_register(protocol, msgtype, doit, dumpit, calcit) < 0)
+=======
+		   rtnl_doit_func doit, rtnl_dumpit_func dumpit)
+{
+	if (__rtnl_register(protocol, msgtype, doit, dumpit) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		panic("Unable to register rtnetlink message handler, "
 		      "protocol = %d, message type = %d\n",
 		      protocol, msgtype);
@@ -271,6 +297,7 @@ EXPORT_SYMBOL_GPL(rtnl_unregister_all);
 
 static LIST_HEAD(link_ops);
 
+<<<<<<< HEAD
 static const struct rtnl_link_ops *rtnl_link_ops_get(const char *kind)
 {
 	const struct rtnl_link_ops *ops;
@@ -282,6 +309,8 @@ static const struct rtnl_link_ops *rtnl_link_ops_get(const char *kind)
 	return NULL;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * __rtnl_link_register - Register rtnl_link_ops with rtnetlink.
  * @ops: struct rtnl_link_ops * to register
@@ -294,9 +323,12 @@ static const struct rtnl_link_ops *rtnl_link_ops_get(const char *kind)
  */
 int __rtnl_link_register(struct rtnl_link_ops *ops)
 {
+<<<<<<< HEAD
 	if (rtnl_link_ops_get(ops->kind))
 		return -EEXIST;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ops->dellink)
 		ops->dellink = unregister_netdevice_queue;
 
@@ -363,6 +395,20 @@ void rtnl_link_unregister(struct rtnl_link_ops *ops)
 }
 EXPORT_SYMBOL_GPL(rtnl_link_unregister);
 
+<<<<<<< HEAD
+=======
+static const struct rtnl_link_ops *rtnl_link_ops_get(const char *kind)
+{
+	const struct rtnl_link_ops *ops;
+
+	list_for_each_entry(ops, &link_ops, list) {
+		if (!strcmp(ops->kind, kind))
+			return ops;
+	}
+	return NULL;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static size_t rtnl_link_get_size(const struct net_device *dev)
 {
 	const struct rtnl_link_ops *ops = dev->rtnl_link_ops;
@@ -671,12 +717,15 @@ static void set_operstate(struct net_device *dev, unsigned char transition)
 	}
 }
 
+<<<<<<< HEAD
 static unsigned int rtnl_dev_get_flags(const struct net_device *dev)
 {
 	return (dev->flags & ~(IFF_PROMISC | IFF_ALLMULTI)) |
 	       (dev->gflags & (IFF_PROMISC | IFF_ALLMULTI));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned int rtnl_dev_combine_flags(const struct net_device *dev,
 					   const struct ifinfomsg *ifm)
 {
@@ -685,7 +734,11 @@ static unsigned int rtnl_dev_combine_flags(const struct net_device *dev,
 	/* bugwards compatibility: ifi_change == 0 is treated as ~0 */
 	if (ifm->ifi_change)
 		flags = (flags & ifm->ifi_change) |
+<<<<<<< HEAD
 			(rtnl_dev_get_flags(dev) & ~ifm->ifi_change);
+=======
+			(dev->flags & ~ifm->ifi_change);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return flags;
 }
@@ -728,19 +781,30 @@ static void copy_rtnl_link_stats64(void *v, const struct rtnl_link_stats64 *b)
 }
 
 /* All VF info */
+<<<<<<< HEAD
 static inline int rtnl_vfinfo_size(const struct net_device *dev,
 				   u32 ext_filter_mask)
 {
 	if (dev->dev.parent && dev_is_pci(dev->dev.parent) &&
 	    (ext_filter_mask & RTEXT_FILTER_VF)) {
+=======
+static inline int rtnl_vfinfo_size(const struct net_device *dev)
+{
+	if (dev->dev.parent && dev_is_pci(dev->dev.parent)) {
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int num_vfs = dev_num_vf(dev->dev.parent);
 		size_t size = nla_total_size(sizeof(struct nlattr));
 		size += nla_total_size(num_vfs * sizeof(struct nlattr));
 		size += num_vfs *
 			(nla_total_size(sizeof(struct ifla_vf_mac)) +
 			 nla_total_size(sizeof(struct ifla_vf_vlan)) +
+<<<<<<< HEAD
 			 nla_total_size(sizeof(struct ifla_vf_tx_rate)) +
 			 nla_total_size(sizeof(struct ifla_vf_spoofchk)));
+=======
+			 nla_total_size(sizeof(struct ifla_vf_tx_rate)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return size;
 	} else
 		return 0;
@@ -771,8 +835,12 @@ static size_t rtnl_port_size(const struct net_device *dev)
 		return port_self_size;
 }
 
+<<<<<<< HEAD
 static noinline size_t if_nlmsg_size(const struct net_device *dev,
 				     u32 ext_filter_mask)
+=======
+static noinline size_t if_nlmsg_size(const struct net_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return NLMSG_ALIGN(sizeof(struct ifinfomsg))
 	       + nla_total_size(IFNAMSIZ) /* IFLA_IFNAME */
@@ -790,9 +858,14 @@ static noinline size_t if_nlmsg_size(const struct net_device *dev,
 	       + nla_total_size(4) /* IFLA_MASTER */
 	       + nla_total_size(1) /* IFLA_OPERSTATE */
 	       + nla_total_size(1) /* IFLA_LINKMODE */
+<<<<<<< HEAD
 	       + nla_total_size(ext_filter_mask
 			        & RTEXT_FILTER_VF ? 4 : 0) /* IFLA_NUM_VF */
 	       + rtnl_vfinfo_size(dev, ext_filter_mask) /* IFLA_VFINFO_LIST */
+=======
+	       + nla_total_size(4) /* IFLA_NUM_VF */
+	       + rtnl_vfinfo_size(dev) /* IFLA_VFINFO_LIST */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       + rtnl_port_size(dev) /* IFLA_VF_PORTS + IFLA_PORT_SELF */
 	       + rtnl_link_get_size(dev) /* IFLA_LINKINFO */
 	       + rtnl_link_get_af_size(dev); /* IFLA_AF_SPEC */
@@ -875,7 +948,11 @@ static int rtnl_port_fill(struct sk_buff *skb, struct net_device *dev)
 
 static int rtnl_fill_ifinfo(struct sk_buff *skb, struct net_device *dev,
 			    int type, u32 pid, u32 seq, u32 change,
+<<<<<<< HEAD
 			    unsigned int flags, u32 ext_filter_mask)
+=======
+			    unsigned int flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ifinfomsg *ifm;
 	struct nlmsghdr *nlh;
@@ -948,11 +1025,18 @@ static int rtnl_fill_ifinfo(struct sk_buff *skb, struct net_device *dev,
 		goto nla_put_failure;
 	copy_rtnl_link_stats64(nla_data(attr), stats);
 
+<<<<<<< HEAD
 	if (dev->dev.parent && (ext_filter_mask & RTEXT_FILTER_VF))
 		NLA_PUT_U32(skb, IFLA_NUM_VF, dev_num_vf(dev->dev.parent));
 
 	if (dev->netdev_ops->ndo_get_vf_config && dev->dev.parent
 	    && (ext_filter_mask & RTEXT_FILTER_VF)) {
+=======
+	if (dev->dev.parent)
+		NLA_PUT_U32(skb, IFLA_NUM_VF, dev_num_vf(dev->dev.parent));
+
+	if (dev->netdev_ops->ndo_get_vf_config && dev->dev.parent) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int i;
 
 		struct nlattr *vfinfo, *vf;
@@ -966,6 +1050,7 @@ static int rtnl_fill_ifinfo(struct sk_buff *skb, struct net_device *dev,
 			struct ifla_vf_mac vf_mac;
 			struct ifla_vf_vlan vf_vlan;
 			struct ifla_vf_tx_rate vf_tx_rate;
+<<<<<<< HEAD
 			struct ifla_vf_spoofchk vf_spoofchk;
 
 			/*
@@ -983,11 +1068,19 @@ static int rtnl_fill_ifinfo(struct sk_buff *skb, struct net_device *dev,
 				vf_tx_rate.vf =
 				vf_spoofchk.vf = ivi.vf;
 
+=======
+			if (dev->netdev_ops->ndo_get_vf_config(dev, i, &ivi))
+				break;
+			vf_mac.vf = vf_vlan.vf = vf_tx_rate.vf = ivi.vf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			memcpy(vf_mac.mac, ivi.mac, sizeof(ivi.mac));
 			vf_vlan.vlan = ivi.vlan;
 			vf_vlan.qos = ivi.qos;
 			vf_tx_rate.rate = ivi.tx_rate;
+<<<<<<< HEAD
 			vf_spoofchk.setting = ivi.spoofchk;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			vf = nla_nest_start(skb, IFLA_VF_INFO);
 			if (!vf) {
 				nla_nest_cancel(skb, vfinfo);
@@ -995,10 +1088,14 @@ static int rtnl_fill_ifinfo(struct sk_buff *skb, struct net_device *dev,
 			}
 			NLA_PUT(skb, IFLA_VF_MAC, sizeof(vf_mac), &vf_mac);
 			NLA_PUT(skb, IFLA_VF_VLAN, sizeof(vf_vlan), &vf_vlan);
+<<<<<<< HEAD
 			NLA_PUT(skb, IFLA_VF_TX_RATE, sizeof(vf_tx_rate),
 				&vf_tx_rate);
 			NLA_PUT(skb, IFLA_VF_SPOOFCHK, sizeof(vf_spoofchk),
 				&vf_spoofchk);
+=======
+			NLA_PUT(skb, IFLA_VF_TX_RATE, sizeof(vf_tx_rate), &vf_tx_rate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			nla_nest_end(skb, vf);
 		}
 		nla_nest_end(skb, vfinfo);
@@ -1057,13 +1154,17 @@ static int rtnl_dump_ifinfo(struct sk_buff *skb, struct netlink_callback *cb)
 	struct net_device *dev;
 	struct hlist_head *head;
 	struct hlist_node *node;
+<<<<<<< HEAD
 	struct nlattr *tb[IFLA_MAX+1];
 	u32 ext_filter_mask = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	s_h = cb->args[0];
 	s_idx = cb->args[1];
 
 	rcu_read_lock();
+<<<<<<< HEAD
 	cb->seq = net->dev_base_seq;
 
 	if (nlmsg_parse(cb->nlh, sizeof(struct ifinfomsg), tb, IFLA_MAX,
@@ -1073,6 +1174,8 @@ static int rtnl_dump_ifinfo(struct sk_buff *skb, struct netlink_callback *cb)
 			ext_filter_mask = nla_get_u32(tb[IFLA_EXT_MASK]);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (h = s_h; h < NETDEV_HASHENTRIES; h++, s_idx = 0) {
 		idx = 0;
 		head = &net->dev_index_head[h];
@@ -1082,11 +1185,16 @@ static int rtnl_dump_ifinfo(struct sk_buff *skb, struct netlink_callback *cb)
 			if (rtnl_fill_ifinfo(skb, dev, RTM_NEWLINK,
 					     NETLINK_CB(cb->skb).pid,
 					     cb->nlh->nlmsg_seq, 0,
+<<<<<<< HEAD
 					     NLM_F_MULTI,
 					     ext_filter_mask) <= 0)
 				goto out;
 
 			nl_dump_check_consistent(cb, nlmsg_hdr(skb));
+=======
+					     NLM_F_MULTI) <= 0)
+				goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 cont:
 			idx++;
 		}
@@ -1119,7 +1227,10 @@ const struct nla_policy ifla_policy[IFLA_MAX+1] = {
 	[IFLA_VF_PORTS]		= { .type = NLA_NESTED },
 	[IFLA_PORT_SELF]	= { .type = NLA_NESTED },
 	[IFLA_AF_SPEC]		= { .type = NLA_NESTED },
+<<<<<<< HEAD
 	[IFLA_EXT_MASK]		= { .type = NLA_U32 },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 EXPORT_SYMBOL(ifla_policy);
 
@@ -1139,8 +1250,11 @@ static const struct nla_policy ifla_vf_policy[IFLA_VF_MAX+1] = {
 				    .len = sizeof(struct ifla_vf_vlan) },
 	[IFLA_VF_TX_RATE]	= { .type = NLA_BINARY,
 				    .len = sizeof(struct ifla_vf_tx_rate) },
+<<<<<<< HEAD
 	[IFLA_VF_SPOOFCHK]	= { .type = NLA_BINARY,
 				    .len = sizeof(struct ifla_vf_spoofchk) },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct nla_policy ifla_port_policy[IFLA_PORT_MAX+1] = {
@@ -1245,6 +1359,7 @@ static int do_setvfinfo(struct net_device *dev, struct nlattr *attr)
 							      ivt->rate);
 			break;
 		}
+<<<<<<< HEAD
 		case IFLA_VF_SPOOFCHK: {
 			struct ifla_vf_spoofchk *ivs;
 			ivs = nla_data(vf);
@@ -1254,6 +1369,8 @@ static int do_setvfinfo(struct net_device *dev, struct nlattr *attr)
 							       ivs->setting);
 			break;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			err = -EINVAL;
 			break;
@@ -1377,7 +1494,10 @@ static int do_setlink(struct net_device *dev, struct ifinfomsg *ifm,
 			goto errout;
 		send_addr_notify = 1;
 		modified = 1;
+<<<<<<< HEAD
 		add_device_randomness(dev->dev_addr, dev->addr_len);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (tb[IFLA_MTU]) {
@@ -1532,7 +1652,10 @@ errout:
 
 	if (send_addr_notify)
 		call_netdevice_notifiers(NETDEV_CHANGEADDR, dev);
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -1658,6 +1781,10 @@ struct net_device *rtnl_create_link(struct net *src_net, struct net *net,
 	dev_net_set(dev, net);
 	dev->rtnl_link_ops = ops;
 	dev->rtnl_link_state = RTNL_LINK_INITIALIZING;
+<<<<<<< HEAD
+=======
+	dev->real_num_tx_queues = real_num_queues;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (tb[IFLA_MTU])
 		dev->mtu = nla_get_u32(tb[IFLA_MTU]);
@@ -1863,7 +1990,10 @@ static int rtnl_getlink(struct sk_buff *skb, struct nlmsghdr* nlh, void *arg)
 	struct net_device *dev = NULL;
 	struct sk_buff *nskb;
 	int err;
+<<<<<<< HEAD
 	u32 ext_filter_mask = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = nlmsg_parse(nlh, sizeof(*ifm), tb, IFLA_MAX, ifla_policy);
 	if (err < 0)
@@ -1872,9 +2002,12 @@ static int rtnl_getlink(struct sk_buff *skb, struct nlmsghdr* nlh, void *arg)
 	if (tb[IFLA_IFNAME])
 		nla_strlcpy(ifname, tb[IFLA_IFNAME], IFNAMSIZ);
 
+<<<<<<< HEAD
 	if (tb[IFLA_EXT_MASK])
 		ext_filter_mask = nla_get_u32(tb[IFLA_EXT_MASK]);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ifm = nlmsg_data(nlh);
 	if (ifm->ifi_index > 0)
 		dev = __dev_get_by_index(net, ifm->ifi_index);
@@ -1886,12 +2019,20 @@ static int rtnl_getlink(struct sk_buff *skb, struct nlmsghdr* nlh, void *arg)
 	if (dev == NULL)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	nskb = nlmsg_new(if_nlmsg_size(dev, ext_filter_mask), GFP_KERNEL);
+=======
+	nskb = nlmsg_new(if_nlmsg_size(dev), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (nskb == NULL)
 		return -ENOBUFS;
 
 	err = rtnl_fill_ifinfo(nskb, dev, RTM_NEWLINK, NETLINK_CB(skb).pid,
+<<<<<<< HEAD
 			       nlh->nlmsg_seq, 0, 0, ext_filter_mask);
+=======
+			       nlh->nlmsg_seq, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0) {
 		/* -EMSGSIZE implies BUG in if_nlmsg_size */
 		WARN_ON(err == -EMSGSIZE);
@@ -1902,6 +2043,7 @@ static int rtnl_getlink(struct sk_buff *skb, struct nlmsghdr* nlh, void *arg)
 	return err;
 }
 
+<<<<<<< HEAD
 static u16 rtnl_calcit(struct sk_buff *skb, struct nlmsghdr *nlh)
 {
 	struct net *net = sock_net(skb->sk);
@@ -1931,6 +2073,8 @@ static u16 rtnl_calcit(struct sk_buff *skb, struct nlmsghdr *nlh)
 	return min_ifinfo_dump_size;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int rtnl_dump_all(struct sk_buff *skb, struct netlink_callback *cb)
 {
 	int idx;
@@ -1960,6 +2104,7 @@ void rtmsg_ifinfo(int type, struct net_device *dev, unsigned change)
 	struct net *net = dev_net(dev);
 	struct sk_buff *skb;
 	int err = -ENOBUFS;
+<<<<<<< HEAD
 	size_t if_info_size;
 
 	skb = nlmsg_new((if_info_size = if_nlmsg_size(dev, 0)), GFP_KERNEL);
@@ -1967,6 +2112,14 @@ void rtmsg_ifinfo(int type, struct net_device *dev, unsigned change)
 		goto errout;
 
 	err = rtnl_fill_ifinfo(skb, dev, type, 0, 0, change, 0, 0);
+=======
+
+	skb = nlmsg_new(if_nlmsg_size(dev), GFP_KERNEL);
+	if (skb == NULL)
+		goto errout;
+
+	err = rtnl_fill_ifinfo(skb, dev, type, 0, 0, change, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0) {
 		/* -EMSGSIZE implies BUG in if_nlmsg_size() */
 		WARN_ON(err == -EMSGSIZE);
@@ -2010,18 +2163,26 @@ static int rtnetlink_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 	sz_idx = type>>2;
 	kind = type&3;
 
+<<<<<<< HEAD
 	if (kind != 2 && !capable(CAP_NET_ADMIN))
+=======
+	if (kind != 2 && security_netlink_recv(skb, CAP_NET_ADMIN))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EPERM;
 
 	if (kind == 2 && nlh->nlmsg_flags&NLM_F_DUMP) {
 		struct sock *rtnl;
 		rtnl_dumpit_func dumpit;
+<<<<<<< HEAD
 		rtnl_calcit_func calcit;
 		u16 min_dump_alloc = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		dumpit = rtnl_get_dumpit(family, type);
 		if (dumpit == NULL)
 			return -EOPNOTSUPP;
+<<<<<<< HEAD
 		calcit = rtnl_get_calcit(family, type);
 		if (calcit)
 			min_dump_alloc = calcit(skb, nlh);
@@ -2035,6 +2196,12 @@ static int rtnetlink_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 			};
 			err = netlink_dump_start(rtnl, skb, nlh, &c);
 		}
+=======
+
+		__rtnl_unlock();
+		rtnl = net->rtnl;
+		err = netlink_dump_start(rtnl, skb, nlh, dumpit, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rtnl_lock();
 		return err;
 	}
@@ -2050,7 +2217,11 @@ static int rtnetlink_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 		struct rtattr *attr = (void *)nlh + NLMSG_ALIGN(min_len);
 
 		while (RTA_OK(attr, attrlen)) {
+<<<<<<< HEAD
 			unsigned int flavor = attr->rta_type & NLA_TYPE_MASK;
+=======
+			unsigned flavor = attr->rta_type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (flavor) {
 				if (flavor > rta_max[sz_idx])
 					return -EINVAL;
@@ -2144,6 +2315,7 @@ void __init rtnetlink_init(void)
 	netlink_set_nonroot(NETLINK_ROUTE, NL_NONROOT_RECV);
 	register_netdevice_notifier(&rtnetlink_dev_notifier);
 
+<<<<<<< HEAD
 	rtnl_register(PF_UNSPEC, RTM_GETLINK, rtnl_getlink,
 		      rtnl_dump_ifinfo, rtnl_calcit);
 	rtnl_register(PF_UNSPEC, RTM_SETLINK, rtnl_setlink, NULL, NULL);
@@ -2152,5 +2324,14 @@ void __init rtnetlink_init(void)
 
 	rtnl_register(PF_UNSPEC, RTM_GETADDR, NULL, rtnl_dump_all, NULL);
 	rtnl_register(PF_UNSPEC, RTM_GETROUTE, NULL, rtnl_dump_all, NULL);
+=======
+	rtnl_register(PF_UNSPEC, RTM_GETLINK, rtnl_getlink, rtnl_dump_ifinfo);
+	rtnl_register(PF_UNSPEC, RTM_SETLINK, rtnl_setlink, NULL);
+	rtnl_register(PF_UNSPEC, RTM_NEWLINK, rtnl_newlink, NULL);
+	rtnl_register(PF_UNSPEC, RTM_DELLINK, rtnl_dellink, NULL);
+
+	rtnl_register(PF_UNSPEC, RTM_GETADDR, NULL, rtnl_dump_all);
+	rtnl_register(PF_UNSPEC, RTM_GETROUTE, NULL, rtnl_dump_all);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 

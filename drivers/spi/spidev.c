@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Simple synchronous userspace interface to SPI devices
+=======
+ * spidev.c -- simple synchronous userspace interface to SPI devices
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Copyright (C) 2006 SWAPP
  *	Andrea Paterniani <a.paterniani@swapp-eng.it>

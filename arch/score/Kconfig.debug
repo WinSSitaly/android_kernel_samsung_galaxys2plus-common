@@ -22,7 +22,11 @@ config RUNTIME_DEBUG
 	help
 	  If you say Y here, some debugging macros will do run-time checking.
 	  If you say N here, those macros will mostly turn to no-ops.  See
+<<<<<<< HEAD
 	  include/asm-score/debug.h for debugging macros.
+=======
+	  include/asm-score/debug.h for debuging macros.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	  If unsure, say N.
 
 endmenu

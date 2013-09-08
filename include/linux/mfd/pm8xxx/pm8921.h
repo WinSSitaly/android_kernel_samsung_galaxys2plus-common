@@ -18,6 +18,10 @@
 #ifndef __MFD_PM8921_H
 #define __MFD_PM8921_H
 
+<<<<<<< HEAD
+=======
+#include <linux/device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mfd/pm8xxx/irq.h>
 
 #define PM8921_NR_IRQS		256

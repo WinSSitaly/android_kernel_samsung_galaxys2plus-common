@@ -11,9 +11,14 @@
  */
 
 #include <linux/kobject.h>
+<<<<<<< HEAD
 #include <linux/device.h>
 #include <linux/edac.h>
 #include <linux/module.h>
+=======
+#include <linux/sysdev.h>
+#include <linux/edac.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mce.h>
 
 #include "mce_amd.h"
@@ -116,6 +121,7 @@ static struct edac_mce_attr *sysfs_attrs[] = { &mce_attr_status, &mce_attr_misc,
 
 static int __init edac_init_mce_inject(void)
 {
+<<<<<<< HEAD
 	struct bus_type *edac_subsys = NULL;
 	int i, err = 0;
 
@@ -124,6 +130,16 @@ static int __init edac_init_mce_inject(void)
 		return -EINVAL;
 
 	mce_kobj = kobject_create_and_add("mce", &edac_subsys->dev_root->kobj);
+=======
+	struct sysdev_class *edac_class = NULL;
+	int i, err = 0;
+
+	edac_class = edac_get_sysfs_class();
+	if (!edac_class)
+		return -EINVAL;
+
+	mce_kobj = kobject_create_and_add("mce", &edac_class->kset.kobj);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!mce_kobj) {
 		printk(KERN_ERR "Error creating a mce kset.\n");
 		err = -ENOMEM;
@@ -147,7 +163,11 @@ err_sysfs_create:
 	kobject_del(mce_kobj);
 
 err_mce_kobj:
+<<<<<<< HEAD
 	edac_put_sysfs_subsys();
+=======
+	edac_put_sysfs_class();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }
@@ -161,7 +181,11 @@ static void __exit edac_exit_mce_inject(void)
 
 	kobject_del(mce_kobj);
 
+<<<<<<< HEAD
 	edac_put_sysfs_subsys();
+=======
+	edac_put_sysfs_class();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(edac_init_mce_inject);

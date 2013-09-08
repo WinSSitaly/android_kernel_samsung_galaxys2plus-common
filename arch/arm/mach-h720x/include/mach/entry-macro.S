@@ -8,9 +8,21 @@
  * warranty of any kind, whether express or implied.
  */
 
+<<<<<<< HEAD
 		.macro  get_irqnr_preamble, base, tmp
 		.endm
 
+=======
+		.macro  disable_fiq
+		.endm
+
+		.macro  get_irqnr_preamble, base, tmp
+		.endm
+
+		.macro  arch_ret_to_user, tmp1, tmp2
+		.endm
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.macro  get_irqnr_and_base, irqnr, irqstat, base, tmp
 #if defined (CONFIG_CPU_H7201) || defined (CONFIG_CPU_H7202)
 		@ we could use the id register on H7202, but this is not
@@ -51,6 +63,12 @@
 		tst     \irqstat, #1		       @ bit 0 should be set
 		.endm
 
+<<<<<<< HEAD
+=======
+		.macro  irq_prio_table
+		.endm
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 #error hynix processor selection missmatch
 #endif

@@ -30,6 +30,7 @@
 #include <asm/irq.h>
 #include <asm/uaccess.h>
 
+<<<<<<< HEAD
 MODULE_DESCRIPTION("ICPlus IP175C/IP101A/IP101G/IC1001 PHY drivers");
 MODULE_AUTHOR("Michael Barkowski");
 MODULE_LICENSE("GPL");
@@ -42,6 +43,12 @@ MODULE_LICENSE("GPL");
 #define IP101A_G_APS_ON			2	/* IP101A/G APS Mode bit */
 #define IP101A_G_IRQ_CONF_STATUS	0x11	/* Conf Info IRQ & Status Reg */
 
+=======
+MODULE_DESCRIPTION("ICPlus IP175C/IC1001 PHY drivers");
+MODULE_AUTHOR("Michael Barkowski");
+MODULE_LICENSE("GPL");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ip175c_config_init(struct phy_device *phydev)
 {
 	int err, i;
@@ -50,36 +57,61 @@ static int ip175c_config_init(struct phy_device *phydev)
 	if (full_reset_performed == 0) {
 
 		/* master reset */
+<<<<<<< HEAD
 		err = mdiobus_write(phydev->bus, 30, 0, 0x175c);
+=======
+		err = phydev->bus->write(phydev->bus, 30, 0, 0x175c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err < 0)
 			return err;
 
 		/* ensure no bus delays overlap reset period */
+<<<<<<< HEAD
 		err = mdiobus_read(phydev->bus, 30, 0);
+=======
+		err = phydev->bus->read(phydev->bus, 30, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* data sheet specifies reset period is 2 msec */
 		mdelay(2);
 
 		/* enable IP175C mode */
+<<<<<<< HEAD
 		err = mdiobus_write(phydev->bus, 29, 31, 0x175c);
+=======
+		err = phydev->bus->write(phydev->bus, 29, 31, 0x175c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err < 0)
 			return err;
 
 		/* Set MII0 speed and duplex (in PHY mode) */
+<<<<<<< HEAD
 		err = mdiobus_write(phydev->bus, 29, 22, 0x420);
+=======
+		err = phydev->bus->write(phydev->bus, 29, 22, 0x420);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err < 0)
 			return err;
 
 		/* reset switch ports */
 		for (i = 0; i < 5; i++) {
+<<<<<<< HEAD
 			err = mdiobus_write(phydev->bus, i,
 					    MII_BMCR, BMCR_RESET);
+=======
+			err = phydev->bus->write(phydev->bus, i,
+						 MII_BMCR, BMCR_RESET);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (err < 0)
 				return err;
 		}
 
 		for (i = 0; i < 5; i++)
+<<<<<<< HEAD
 			err = mdiobus_read(phydev->bus, i, MII_BMCR);
+=======
+			err = phydev->bus->read(phydev->bus, i, MII_BMCR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		mdelay(2);
 
@@ -97,6 +129,7 @@ static int ip175c_config_init(struct phy_device *phydev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int ip1xx_reset(struct phy_device *phydev)
 {
 	int bmcr;
@@ -165,6 +198,33 @@ static int ip101a_g_config_init(struct phy_device *phydev)
 	c |= IP101A_G_APS_ON;
 
 	return phy_write(phydev, IP10XX_SPEC_CTRL_STATUS, c);
+=======
+static int ip1001_config_init(struct phy_device *phydev)
+{
+	int err, value;
+
+	/* Software Reset PHY */
+	value = phy_read(phydev, MII_BMCR);
+	value |= BMCR_RESET;
+	err = phy_write(phydev, MII_BMCR, value);
+	if (err < 0)
+		return err;
+
+	do {
+		value = phy_read(phydev, MII_BMCR);
+	} while (value & BMCR_RESET);
+
+	/* Additional delay (2ns) used to adjust RX clock phase
+	 * at GMII/ RGMII interface */
+	value = phy_read(phydev, 16);
+	value |= 0x3;
+
+	err = phy_write(phydev, 16, value);
+	if (err < 0)
+		return err;
+
+	return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ip175c_read_status(struct phy_device *phydev)
@@ -186,6 +246,7 @@ static int ip175c_config_aneg(struct phy_device *phydev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int ip101a_g_ack_interrupt(struct phy_device *phydev)
 {
 	int err = phy_read(phydev, IP101A_G_IRQ_CONF_STATUS);
@@ -195,6 +256,8 @@ static int ip101a_g_ack_interrupt(struct phy_device *phydev)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct phy_driver ip175c_driver = {
 	.phy_id		= 0x02430d80,
 	.name		= "ICPlus IP175C",
@@ -222,6 +285,7 @@ static struct phy_driver ip1001_driver = {
 	.driver		= { .owner = THIS_MODULE,},
 };
 
+<<<<<<< HEAD
 static struct phy_driver ip101a_g_driver = {
 	.phy_id		= 0x02430c54,
 	.name		= "ICPlus IP101A/G",
@@ -238,6 +302,8 @@ static struct phy_driver ip101a_g_driver = {
 	.driver		= { .owner = THIS_MODULE,},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init icplus_init(void)
 {
 	int ret = 0;
@@ -246,17 +312,23 @@ static int __init icplus_init(void)
 	if (ret < 0)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	ret = phy_driver_register(&ip101a_g_driver);
 	if (ret < 0)
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return phy_driver_register(&ip175c_driver);
 }
 
 static void __exit icplus_exit(void)
 {
 	phy_driver_unregister(&ip1001_driver);
+<<<<<<< HEAD
 	phy_driver_unregister(&ip101a_g_driver);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	phy_driver_unregister(&ip175c_driver);
 }
 
@@ -266,7 +338,10 @@ module_exit(icplus_exit);
 static struct mdio_device_id __maybe_unused icplus_tbl[] = {
 	{ 0x02430d80, 0x0ffffff0 },
 	{ 0x02430d90, 0x0ffffff0 },
+<<<<<<< HEAD
 	{ 0x02430c54, 0x0ffffff0 },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ }
 };
 

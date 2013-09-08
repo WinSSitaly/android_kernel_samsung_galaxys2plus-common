@@ -38,7 +38,11 @@
 #include <linux/seq_file.h>
 #include <linux/rcupdate.h>
 #include <linux/jhash.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/net_namespace.h>
 #include <net/neighbour.h>
 #include <net/dst.h>
@@ -51,9 +55,15 @@
 static int dn_neigh_construct(struct neighbour *);
 static void dn_long_error_report(struct neighbour *, struct sk_buff *);
 static void dn_short_error_report(struct neighbour *, struct sk_buff *);
+<<<<<<< HEAD
 static int dn_long_output(struct neighbour *, struct sk_buff *);
 static int dn_short_output(struct neighbour *, struct sk_buff *);
 static int dn_phase3_output(struct neighbour *, struct sk_buff *);
+=======
+static int dn_long_output(struct sk_buff *);
+static int dn_short_output(struct sk_buff *);
+static int dn_phase3_output(struct sk_buff *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /*
@@ -64,6 +74,11 @@ static const struct neigh_ops dn_long_ops = {
 	.error_report =		dn_long_error_report,
 	.output =		dn_long_output,
 	.connected_output =	dn_long_output,
+<<<<<<< HEAD
+=======
+	.hh_output =		dev_queue_xmit,
+	.queue_xmit =		dev_queue_xmit,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -74,6 +89,11 @@ static const struct neigh_ops dn_short_ops = {
 	.error_report =		dn_short_error_report,
 	.output =		dn_short_output,
 	.connected_output =	dn_short_output,
+<<<<<<< HEAD
+=======
+	.hh_output =		dev_queue_xmit,
+	.queue_xmit =		dev_queue_xmit,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -84,13 +104,24 @@ static const struct neigh_ops dn_phase3_ops = {
 	.error_report =		dn_short_error_report, /* Can use short version here */
 	.output =		dn_phase3_output,
 	.connected_output =	dn_phase3_output,
+<<<<<<< HEAD
+=======
+	.hh_output =		dev_queue_xmit,
+	.queue_xmit =		dev_queue_xmit
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static u32 dn_neigh_hash(const void *pkey,
 			 const struct net_device *dev,
+<<<<<<< HEAD
 			 __u32 *hash_rnd)
 {
 	return jhash_2words(*(__u16 *)pkey, 0, hash_rnd[0]);
+=======
+			 __u32 hash_rnd)
+{
+	return jhash_2words(*(__u16 *)pkey, 0, hash_rnd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct neigh_table dn_neigh_table = {
@@ -107,7 +138,11 @@ struct neigh_table dn_neigh_table = {
 		.gc_staletime =	60 * HZ,
 		.reachable_time =		30 * HZ,
 		.delay_probe_time =	5 * HZ,
+<<<<<<< HEAD
 		.queue_len_bytes =	64*1024,
+=======
+		.queue_len =		3,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.ucast_probes =	0,
 		.app_probes =		0,
 		.mcast_probes =	0,
@@ -202,6 +237,7 @@ static int dn_neigh_output_packet(struct sk_buff *skb)
 {
 	struct dst_entry *dst = skb_dst(skb);
 	struct dn_route *rt = (struct dn_route *)dst;
+<<<<<<< HEAD
 	struct neighbour *neigh = dst_get_neighbour_noref(dst);
 	struct net_device *dev = neigh->dev;
 	char mac_addr[ETH_ALEN];
@@ -226,6 +262,28 @@ static int dn_neigh_output_packet(struct sk_buff *skb)
 
 static int dn_long_output(struct neighbour *neigh, struct sk_buff *skb)
 {
+=======
+	struct neighbour *neigh = dst_get_neighbour(dst);
+	struct net_device *dev = neigh->dev;
+	char mac_addr[ETH_ALEN];
+
+	dn_dn2eth(mac_addr, rt->rt_local_src);
+	if (dev_hard_header(skb, dev, ntohs(skb->protocol), neigh->ha,
+			    mac_addr, skb->len) >= 0)
+		return neigh->ops->queue_xmit(skb);
+
+	if (net_ratelimit())
+		printk(KERN_DEBUG "dn_neigh_output_packet: oops, can't send packet\n");
+
+	kfree_skb(skb);
+	return -EINVAL;
+}
+
+static int dn_long_output(struct sk_buff *skb)
+{
+	struct dst_entry *dst = skb_dst(skb);
+	struct neighbour *neigh = dst_get_neighbour(dst);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct net_device *dev = neigh->dev;
 	int headroom = dev->hard_header_len + sizeof(struct dn_long_packet) + 3;
 	unsigned char *data;
@@ -269,8 +327,15 @@ static int dn_long_output(struct neighbour *neigh, struct sk_buff *skb)
 		       neigh->dev, dn_neigh_output_packet);
 }
 
+<<<<<<< HEAD
 static int dn_short_output(struct neighbour *neigh, struct sk_buff *skb)
 {
+=======
+static int dn_short_output(struct sk_buff *skb)
+{
+	struct dst_entry *dst = skb_dst(skb);
+	struct neighbour *neigh = dst_get_neighbour(dst);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct net_device *dev = neigh->dev;
 	int headroom = dev->hard_header_len + sizeof(struct dn_short_packet) + 2;
 	struct dn_short_packet *sp;
@@ -311,8 +376,15 @@ static int dn_short_output(struct neighbour *neigh, struct sk_buff *skb)
  * Phase 3 output is the same is short output, execpt that
  * it clears the area bits before transmission.
  */
+<<<<<<< HEAD
 static int dn_phase3_output(struct neighbour *neigh, struct sk_buff *skb)
 {
+=======
+static int dn_phase3_output(struct sk_buff *skb)
+{
+	struct dst_entry *dst = skb_dst(skb);
+	struct neighbour *neigh = dst_get_neighbour(dst);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct net_device *dev = neigh->dev;
 	int headroom = dev->hard_header_len + sizeof(struct dn_short_packet) + 2;
 	struct dn_short_packet *sp;
@@ -398,6 +470,7 @@ int dn_neigh_router_hello(struct sk_buff *skb)
 
 			dn->flags &= ~DN_NDFLAG_P3;
 
+<<<<<<< HEAD
 			switch (msg->iinfo & DN_RT_INFO_TYPE) {
 			case DN_RT_INFO_L1RT:
 				dn->flags &=~DN_NDFLAG_R2;
@@ -405,6 +478,15 @@ int dn_neigh_router_hello(struct sk_buff *skb)
 				break;
 			case DN_RT_INFO_L2RT:
 				dn->flags |= DN_NDFLAG_R2;
+=======
+			switch(msg->iinfo & DN_RT_INFO_TYPE) {
+				case DN_RT_INFO_L1RT:
+					dn->flags &=~DN_NDFLAG_R2;
+					dn->flags |= DN_NDFLAG_R1;
+					break;
+				case DN_RT_INFO_L2RT:
+					dn->flags |= DN_NDFLAG_R2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 

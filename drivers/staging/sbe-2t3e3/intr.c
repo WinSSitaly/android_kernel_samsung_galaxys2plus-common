@@ -188,7 +188,11 @@ void dc_intr_rx(struct channel *sc)
 			}
 
 			if (sc->s.LOS) {
+<<<<<<< HEAD
 				error_mask &= ~(SBE_2T3E3_RX_DESC_DRIBBLING_BIT |
+=======
+				error_mask &= ~(SBE_2T3E3_RX_DESC_DRIBBLING_BIT ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						SBE_2T3E3_RX_DESC_MII_ERROR);
 			}
 

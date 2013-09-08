@@ -249,7 +249,10 @@ EXPORT_SYMBOL_GPL(speedstep_get_frequency);
  *                 DETECT SPEEDSTEP-CAPABLE PROCESSOR                *
  *********************************************************************/
 
+<<<<<<< HEAD
 /* Keep in sync with the x86_cpu_id tables in the different modules */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 unsigned int speedstep_detect_processor(void)
 {
 	struct cpuinfo_x86 *c = &cpu_data(0);

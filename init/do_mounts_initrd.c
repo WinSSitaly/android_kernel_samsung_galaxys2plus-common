@@ -2,6 +2,10 @@
 #include <linux/kernel.h>
 #include <linux/fs.h>
 #include <linux/minix_fs.h>
+<<<<<<< HEAD
+=======
+#include <linux/ext2_fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/romfs_fs.h>
 #include <linux/initrd.h>
 #include <linux/sched.h>

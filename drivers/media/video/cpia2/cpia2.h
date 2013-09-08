@@ -31,6 +31,10 @@
 #ifndef __CPIA2_H__
 #define __CPIA2_H__
 
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/videodev2.h>
 #include <media/v4l2-common.h>
 #include <linux/usb.h>
@@ -42,6 +46,13 @@
 /* define for verbose debug output */
 //#define _CPIA2_DEBUG_
 
+<<<<<<< HEAD
+=======
+#define CPIA2_MAJ_VER	3
+#define CPIA2_MIN_VER   0
+#define CPIA2_PATCH_VER	0
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /***
  * Image defines
  ***/

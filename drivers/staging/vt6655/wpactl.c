@@ -213,9 +213,13 @@ int wpa_set_wpadev(PSDevice pDevice, int val)
 	int uu, ii;
 
 
+<<<<<<< HEAD
 	if (param->u.wpa_key.alg_name > WPA_ALG_CCMP ||
 			param->u.wpa_key.key_len >= MAX_KEY_LEN ||
 			param->u.wpa_key.seq_len >= MAX_KEY_LEN)
+=======
+	if (param->u.wpa_key.alg_name > WPA_ALG_CCMP)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
     DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "param->u.wpa_key.alg_name = %d \n", param->u.wpa_key.alg_name);

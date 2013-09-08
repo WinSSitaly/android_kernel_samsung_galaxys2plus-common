@@ -25,7 +25,10 @@
 
 #ifdef CONFIG_SND_SEQUENCER_OSS
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <sound/core.h>
 #include "emux_voice.h"

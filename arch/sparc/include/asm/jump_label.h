@@ -7,7 +7,11 @@
 
 #define JUMP_LABEL_NOP_SIZE 4
 
+<<<<<<< HEAD
 static __always_inline bool arch_static_branch(struct static_key *key)
+=======
+static __always_inline bool arch_static_branch(struct jump_label_key *key)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 		asm goto("1:\n\t"
 			 "nop\n\t"

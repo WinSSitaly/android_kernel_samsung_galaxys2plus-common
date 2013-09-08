@@ -66,7 +66,10 @@ vector	=	0
 	.long	exception_entry0 + vector * 6
 vector	=	vector + 1
 	.endr
+<<<<<<< HEAD
 vector	=	0
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.rept	256
 	.long	exception_entry1 + vector * 6
 vector	=	vector + 1

@@ -25,19 +25,35 @@
  *
  ******************************************************************************/
 
+<<<<<<< HEAD
 #include <linux/kernel.h>
 #include <linux/string.h>
 #include <linux/ctype.h>
 #include <linux/spinlock.h>
 #include <linux/export.h>
+=======
+#include <linux/string.h>
+#include <linux/ctype.h>
+#include <linux/spinlock.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <scsi/scsi.h>
 #include <scsi/scsi_cmnd.h>
 
 #include <target/target_core_base.h>
+<<<<<<< HEAD
 #include <target/target_core_fabric.h>
 #include <target/target_core_configfs.h>
 
 #include "target_core_internal.h"
+=======
+#include <target/target_core_device.h>
+#include <target/target_core_transport.h>
+#include <target/target_core_fabric_lib.h>
+#include <target/target_core_fabric_ops.h>
+#include <target/target_core_configfs.h>
+
+#include "target_core_hba.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "target_core_pr.h"
 
 /*
@@ -60,9 +76,15 @@ u32 sas_get_pr_transport_id(
 	int *format_code,
 	unsigned char *buf)
 {
+<<<<<<< HEAD
 	unsigned char *ptr;
 	int ret;
 
+=======
+	unsigned char binary, *ptr;
+	int i;
+	u32 off = 4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Set PROTOCOL IDENTIFIER to 6h for SAS
 	 */
@@ -73,10 +95,17 @@ u32 sas_get_pr_transport_id(
 	 */
 	ptr = &se_nacl->initiatorname[4]; /* Skip over 'naa. prefix */
 
+<<<<<<< HEAD
 	ret = hex2bin(&buf[4], ptr, 8);
 	if (ret < 0)
 		pr_debug("sas transport_id: invalid hex string\n");
 
+=======
+	for (i = 0; i < 16; i += 2) {
+		binary = transport_asciihex_to_binaryhex(&ptr[i]);
+		buf[off++] = binary;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * The SAS Transport ID is a hardcoded 24-byte length
 	 */
@@ -156,10 +185,16 @@ u32 fc_get_pr_transport_id(
 	int *format_code,
 	unsigned char *buf)
 {
+<<<<<<< HEAD
 	unsigned char *ptr;
 	int i, ret;
 	u32 off = 8;
 
+=======
+	unsigned char binary, *ptr;
+	int i;
+	u32 off = 8;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * PROTOCOL IDENTIFIER is 0h for FCP-2
 	 *
@@ -172,6 +207,7 @@ u32 fc_get_pr_transport_id(
 	ptr = &se_nacl->initiatorname[0];
 
 	for (i = 0; i < 24; ) {
+<<<<<<< HEAD
 		if (!strncmp(&ptr[i], ":", 1)) {
 			i++;
 			continue;
@@ -179,6 +215,14 @@ u32 fc_get_pr_transport_id(
 		ret = hex2bin(&buf[off++], &ptr[i], 1);
 		if (ret < 0)
 			pr_debug("fc transport_id: invalid hex string\n");
+=======
+		if (!(strncmp(&ptr[i], ":", 1))) {
+			i++;
+			continue;
+		}
+		binary = transport_asciihex_to_binaryhex(&ptr[i]);
+		buf[off++] = binary;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		i += 2;
 	}
 	/*
@@ -387,7 +431,11 @@ char *iscsi_parse_pr_out_transport_id(
 	 *            Reserved
 	 */
 	if ((format_code != 0x00) && (format_code != 0x40)) {
+<<<<<<< HEAD
 		pr_err("Illegal format code: 0x%02x for iSCSI"
+=======
+		printk(KERN_ERR "Illegal format code: 0x%02x for iSCSI"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			" Initiator Transport ID\n", format_code);
 		return NULL;
 	}
@@ -399,7 +447,11 @@ char *iscsi_parse_pr_out_transport_id(
 		add_len = ((buf[2] >> 8) & 0xff);
 		add_len |= (buf[3] & 0xff);
 
+<<<<<<< HEAD
 		tid_len = strlen(&buf[4]);
+=======
+		tid_len = strlen((char *)&buf[4]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tid_len += 4; /* Add four bytes for iSCSI Transport ID header */
 		tid_len += 1; /* Add one byte for NULL terminator */
 		padding = ((-tid_len) & 3);
@@ -407,7 +459,11 @@ char *iscsi_parse_pr_out_transport_id(
 			tid_len += padding;
 
 		if ((add_len + 4) != tid_len) {
+<<<<<<< HEAD
 			pr_debug("LIO-Target Extracted add_len: %hu "
+=======
+			printk(KERN_INFO "LIO-Target Extracted add_len: %hu "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"does not match calculated tid_len: %u,"
 				" using tid_len instead\n", add_len+4, tid_len);
 			*out_tid_len = tid_len;
@@ -420,11 +476,19 @@ char *iscsi_parse_pr_out_transport_id(
 	 * format.
 	 */
 	if (format_code == 0x40) {
+<<<<<<< HEAD
 		p = strstr(&buf[4], ",i,0x");
 		if (!p) {
 			pr_err("Unable to locate \",i,0x\" seperator"
 				" for Initiator port identifier: %s\n",
 				&buf[4]);
+=======
+		p = strstr((char *)&buf[4], ",i,0x");
+		if (!(p)) {
+			printk(KERN_ERR "Unable to locate \",i,0x\" seperator"
+				" for Initiator port identifier: %s\n",
+				(char *)&buf[4]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return NULL;
 		}
 		*p = '\0'; /* Terminate iSCSI Name */

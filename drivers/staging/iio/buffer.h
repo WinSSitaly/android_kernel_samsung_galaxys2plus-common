@@ -166,6 +166,10 @@ ssize_t iio_buffer_store_enable(struct device *dev,
 ssize_t iio_buffer_show_enable(struct device *dev,
 			       struct device_attribute *attr,
 			       char *buf);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define IIO_BUFFER_LENGTH_ATTR DEVICE_ATTR(length, S_IRUGO | S_IWUSR,	\
 					   iio_buffer_read_length,	\
 					   iio_buffer_write_length)

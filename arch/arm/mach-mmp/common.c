@@ -14,7 +14,10 @@
 
 #include <asm/page.h>
 #include <asm/mach/map.h>
+<<<<<<< HEAD
 #include <asm/system_misc.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/addr-map.h>
 #include <mach/cputype.h>
 
@@ -28,12 +31,20 @@ EXPORT_SYMBOL(mmp_chip_id);
 static struct map_desc standard_io_desc[] __initdata = {
 	{
 		.pfn		= __phys_to_pfn(APB_PHYS_BASE),
+<<<<<<< HEAD
 		.virtual	= (unsigned long)APB_VIRT_BASE,
+=======
+		.virtual	= APB_VIRT_BASE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.length		= APB_PHYS_SIZE,
 		.type		= MT_DEVICE,
 	}, {
 		.pfn		= __phys_to_pfn(AXI_PHYS_BASE),
+<<<<<<< HEAD
 		.virtual	= (unsigned long)AXI_VIRT_BASE,
+=======
+		.virtual	= AXI_VIRT_BASE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.length		= AXI_PHYS_SIZE,
 		.type		= MT_DEVICE,
 	},
@@ -46,8 +57,11 @@ void __init mmp_map_io(void)
 	/* this is early, initialize mmp_chip_id here */
 	mmp_chip_id = __raw_readl(MMP_CHIPID);
 }
+<<<<<<< HEAD
 
 void mmp_restart(char mode, const char *cmd)
 {
 	soft_restart(0);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

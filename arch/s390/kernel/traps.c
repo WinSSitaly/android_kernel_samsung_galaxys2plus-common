@@ -18,7 +18,11 @@
 #include <linux/kernel.h>
 #include <linux/string.h>
 #include <linux/errno.h>
+<<<<<<< HEAD
 #include <linux/ptrace.h>
+=======
+#include <linux/tracehook.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/timer.h>
 #include <linux/mm.h>
 #include <linux/smp.h>
@@ -33,19 +37,38 @@
 #include <linux/kprobes.h>
 #include <linux/bug.h>
 #include <linux/utsname.h>
+<<<<<<< HEAD
 #include <asm/uaccess.h>
 #include <asm/io.h>
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <asm/uaccess.h>
+#include <asm/io.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mathemu.h>
 #include <asm/cpcmd.h>
 #include <asm/lowcore.h>
 #include <asm/debug.h>
+<<<<<<< HEAD
 #include <asm/ipl.h>
 #include "entry.h"
 
 void (*pgm_check_table[128])(struct pt_regs *regs);
 
 int show_unhandled_signals = 1;
+=======
+#include "entry.h"
+
+pgm_check_handler_t *pgm_check_table[128];
+
+int show_unhandled_signals;
+
+extern pgm_check_handler_t do_protection_exception;
+extern pgm_check_handler_t do_dat_exception;
+extern pgm_check_handler_t do_asce_exception;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define stack_pointer ({ void **sp; asm("la %0,0(15)" : "=&d" (sp)); sp; })
 
@@ -144,8 +167,13 @@ void show_stack(struct task_struct *task, unsigned long *sp)
 	for (i = 0; i < kstack_depth_to_print; i++) {
 		if (((addr_t) stack & (THREAD_SIZE-1)) == 0)
 			break;
+<<<<<<< HEAD
 		if ((i * sizeof(long) % 32) == 0)
 			printk("%s       ", i == 0 ? "" : "\n");
+=======
+		if (i && ((i * sizeof (long) % 32) == 0))
+			printk("\n       ");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(LONG, *stack++);
 	}
 	printk("\n");
@@ -200,7 +228,11 @@ void show_registers(struct pt_regs *regs)
 	       mask_bits(regs, PSW_MASK_PSTATE), mask_bits(regs, PSW_MASK_ASC),
 	       mask_bits(regs, PSW_MASK_CC), mask_bits(regs, PSW_MASK_PM));
 #ifdef CONFIG_64BIT
+<<<<<<< HEAD
 	printk(" EA:%x", mask_bits(regs, PSW_MASK_EA | PSW_MASK_BA));
+=======
+	printk(" EA:%x", mask_bits(regs, PSW_BASE_BITS));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	printk("\n%s GPRS: " FOURLONG, mode,
 	       regs->gprs[0], regs->gprs[1], regs->gprs[2], regs->gprs[3]);
@@ -234,17 +266,28 @@ void show_regs(struct pt_regs *regs)
 
 static DEFINE_SPINLOCK(die_lock);
 
+<<<<<<< HEAD
 void die(struct pt_regs *regs, const char *str)
+=======
+void die(const char * str, struct pt_regs * regs, long err)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static int die_counter;
 
 	oops_enter();
+<<<<<<< HEAD
 	lgr_info_log();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	debug_stop_all();
 	console_verbose();
 	spin_lock_irq(&die_lock);
 	bust_spinlocks(1);
+<<<<<<< HEAD
 	printk("%s: %04x [#%d] ", str, regs->int_code & 0xffff, ++die_counter);
+=======
+	printk("%s: %04lx [#%d] ", str, err & 0xffff, ++die_counter);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PREEMPT
 	printk("PREEMPT ");
 #endif
@@ -255,7 +298,11 @@ void die(struct pt_regs *regs, const char *str)
 	printk("DEBUG_PAGEALLOC");
 #endif
 	printk("\n");
+<<<<<<< HEAD
 	notify_die(DIE_OOPS, str, regs, 0, regs->int_code & 0xffff, SIGSEGV);
+=======
+	notify_die(DIE_OOPS, str, regs, err, current->thread.trap_no, SIGSEGV);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	show_regs(regs);
 	bust_spinlocks(0);
 	add_taint(TAINT_DIE);
@@ -268,7 +315,12 @@ void die(struct pt_regs *regs, const char *str)
 	do_exit(SIGSEGV);
 }
 
+<<<<<<< HEAD
 static inline void report_user_fault(struct pt_regs *regs, int signr)
+=======
+static void inline report_user_fault(struct pt_regs *regs, long int_code,
+				     int signr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if ((task_pid_nr(current) > 1) && !show_unhandled_signals)
 		return;
@@ -276,7 +328,11 @@ static inline void report_user_fault(struct pt_regs *regs, int signr)
 		return;
 	if (!printk_ratelimit())
 		return;
+<<<<<<< HEAD
 	printk("User process fault: interruption code 0x%X ", regs->int_code);
+=======
+	printk("User process fault: interruption code 0x%lX ", int_code);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	print_vma_addr("in ", regs->psw.addr & PSW_ADDR_INSN);
 	printk("\n");
 	show_regs(regs);
@@ -287,6 +343,7 @@ int is_valid_bugaddr(unsigned long addr)
 	return 1;
 }
 
+<<<<<<< HEAD
 static inline void __user *get_psw_address(struct pt_regs *regs)
 {
 	return (void __user *)
@@ -309,6 +366,21 @@ static void __kprobes do_trap(struct pt_regs *regs,
 		info.si_addr = get_psw_address(regs);
 		force_sig_info(si_signo, &info, current);
 		report_user_fault(regs, si_signo);
+=======
+static inline void __kprobes do_trap(long pgm_int_code, int signr, char *str,
+				     struct pt_regs *regs, siginfo_t *info)
+{
+	if (notify_die(DIE_TRAP, str, regs, pgm_int_code,
+		       pgm_int_code, signr) == NOTIFY_STOP)
+		return;
+
+        if (regs->psw.mask & PSW_MASK_PSTATE) {
+                struct task_struct *tsk = current;
+
+		tsk->thread.trap_no = pgm_int_code & 0xffff;
+		force_sig_info(signr, info, tsk);
+		report_user_fault(regs, pgm_int_code, signr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         } else {
                 const struct exception_table_entry *fixup;
                 fixup = search_exception_tables(regs->psw.addr & PSW_ADDR_INSN);
@@ -320,11 +392,16 @@ static void __kprobes do_trap(struct pt_regs *regs,
 			btt = report_bug(regs->psw.addr & PSW_ADDR_INSN, regs);
 			if (btt == BUG_TRAP_TYPE_WARN)
 				return;
+<<<<<<< HEAD
 			die(regs, str);
+=======
+			die(str, regs, pgm_int_code);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
         }
 }
 
+<<<<<<< HEAD
 void __kprobes do_per_trap(struct pt_regs *regs)
 {
 	siginfo_t info;
@@ -354,6 +431,43 @@ static void default_trap_handler(struct pt_regs *regs)
 static void name(struct pt_regs *regs) \
 { \
 	do_trap(regs, signr, sicode, str); \
+=======
+static inline void __user *get_psw_address(struct pt_regs *regs,
+					   long pgm_int_code)
+{
+	return (void __user *)
+		((regs->psw.addr - (pgm_int_code >> 16)) & PSW_ADDR_INSN);
+}
+
+void __kprobes do_per_trap(struct pt_regs *regs)
+{
+	if (notify_die(DIE_SSTEP, "sstep", regs, 0, 0, SIGTRAP) == NOTIFY_STOP)
+		return;
+	if (tracehook_consider_fatal_signal(current, SIGTRAP))
+		force_sig(SIGTRAP, current);
+}
+
+static void default_trap_handler(struct pt_regs *regs, long pgm_int_code,
+				 unsigned long trans_exc_code)
+{
+        if (regs->psw.mask & PSW_MASK_PSTATE) {
+		report_user_fault(regs, pgm_int_code, SIGSEGV);
+		do_exit(SIGSEGV);
+	} else
+		die("Unknown program exception", regs, pgm_int_code);
+}
+
+#define DO_ERROR_INFO(name, signr, sicode, str) \
+static void name(struct pt_regs *regs, long pgm_int_code, \
+		 unsigned long trans_exc_code) \
+{ \
+        siginfo_t info; \
+        info.si_signo = signr; \
+        info.si_errno = 0; \
+        info.si_code = sicode; \
+	info.si_addr = get_psw_address(regs, pgm_int_code); \
+	do_trap(pgm_int_code, signr, str, regs, &info);	    \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 DO_ERROR_INFO(addressing_exception, SIGILL, ILL_ILLADR,
@@ -383,13 +497,26 @@ DO_ERROR_INFO(special_op_exception, SIGILL, ILL_ILLOPN,
 DO_ERROR_INFO(translation_exception, SIGILL, ILL_ILLOPN,
 	      "translation exception")
 
+<<<<<<< HEAD
 static inline void do_fp_trap(struct pt_regs *regs, int fpc)
 {
 	int si_code = 0;
+=======
+static inline void do_fp_trap(struct pt_regs *regs, void __user *location,
+			      int fpc, long pgm_int_code)
+{
+	siginfo_t si;
+
+	si.si_signo = SIGFPE;
+	si.si_errno = 0;
+	si.si_addr = location;
+	si.si_code = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* FPC[2] is Data Exception Code */
 	if ((fpc & 0x00000300) == 0) {
 		/* bits 6 and 7 of DXC are 0 iff IEEE exception */
 		if (fpc & 0x8000) /* invalid fp operation */
+<<<<<<< HEAD
 			si_code = FPE_FLTINV;
 		else if (fpc & 0x4000) /* div by 0 */
 			si_code = FPE_FLTDIV;
@@ -404,18 +531,41 @@ static inline void do_fp_trap(struct pt_regs *regs, int fpc)
 }
 
 static void __kprobes illegal_op(struct pt_regs *regs)
+=======
+			si.si_code = FPE_FLTINV;
+		else if (fpc & 0x4000) /* div by 0 */
+			si.si_code = FPE_FLTDIV;
+		else if (fpc & 0x2000) /* overflow */
+			si.si_code = FPE_FLTOVF;
+		else if (fpc & 0x1000) /* underflow */
+			si.si_code = FPE_FLTUND;
+		else if (fpc & 0x0800) /* inexact */
+			si.si_code = FPE_FLTRES;
+	}
+	do_trap(pgm_int_code, SIGFPE,
+		"floating point exception", regs, &si);
+}
+
+static void __kprobes illegal_op(struct pt_regs *regs, long pgm_int_code,
+				 unsigned long trans_exc_code)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	siginfo_t info;
         __u8 opcode[6];
 	__u16 __user *location;
 	int signal = 0;
 
+<<<<<<< HEAD
 	location = get_psw_address(regs);
+=======
+	location = get_psw_address(regs, pgm_int_code);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (regs->psw.mask & PSW_MASK_PSTATE) {
 		if (get_user(*((__u16 *) opcode), (__u16 __user *) location))
 			return;
 		if (*((__u16 *) opcode) == S390_BREAKPOINT_U16) {
+<<<<<<< HEAD
 			if (current->ptrace) {
 				info.si_signo = SIGTRAP;
 				info.si_errno = 0;
@@ -423,6 +573,11 @@ static void __kprobes illegal_op(struct pt_regs *regs)
 				info.si_addr = location;
 				force_sig_info(SIGTRAP, &info, current);
 			} else
+=======
+			if (tracehook_consider_fatal_signal(current, SIGTRAP))
+				force_sig(SIGTRAP, current);
+			else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				signal = SIGILL;
 #ifdef CONFIG_MATHEMU
 		} else if (opcode[0] == 0xb3) {
@@ -454,13 +609,18 @@ static void __kprobes illegal_op(struct pt_regs *regs)
 		 * If we get an illegal op in kernel mode, send it through the
 		 * kprobes notifier. If kprobes doesn't pick it up, SIGILL
 		 */
+<<<<<<< HEAD
 		if (notify_die(DIE_BPT, "bpt", regs, 0,
+=======
+		if (notify_die(DIE_BPT, "bpt", regs, pgm_int_code,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       3, SIGTRAP) != NOTIFY_STOP)
 			signal = SIGILL;
 	}
 
 #ifdef CONFIG_MATHEMU
         if (signal == SIGFPE)
+<<<<<<< HEAD
 		do_fp_trap(regs, current->thread.fp_regs.fpc);
 	else if (signal == SIGSEGV)
 		do_trap(regs, signal, SEGV_MAPERR, "user address fault");
@@ -468,17 +628,48 @@ static void __kprobes illegal_op(struct pt_regs *regs)
 #endif
 	if (signal)
 		do_trap(regs, signal, ILL_ILLOPC, "illegal operation");
+=======
+		do_fp_trap(regs, location,
+			   current->thread.fp_regs.fpc, pgm_int_code);
+        else if (signal == SIGSEGV) {
+		info.si_signo = signal;
+		info.si_errno = 0;
+		info.si_code = SEGV_MAPERR;
+		info.si_addr = (void __user *) location;
+		do_trap(pgm_int_code, signal,
+			"user address fault", regs, &info);
+	} else
+#endif
+        if (signal) {
+		info.si_signo = signal;
+		info.si_errno = 0;
+		info.si_code = ILL_ILLOPC;
+		info.si_addr = (void __user *) location;
+		do_trap(pgm_int_code, signal,
+			"illegal operation", regs, &info);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
 #ifdef CONFIG_MATHEMU
+<<<<<<< HEAD
 void specification_exception(struct pt_regs *regs)
+=======
+asmlinkage void specification_exception(struct pt_regs *regs,
+					long pgm_int_code,
+					unsigned long trans_exc_code)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
         __u8 opcode[6];
 	__u16 __user *location = NULL;
 	int signal = 0;
 
+<<<<<<< HEAD
 	location = (__u16 __user *) get_psw_address(regs);
+=======
+	location = (__u16 __user *) get_psw_address(regs, pgm_int_code);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
         if (regs->psw.mask & PSW_MASK_PSTATE) {
 		get_user(*((__u16 *) opcode), location);
@@ -513,21 +704,44 @@ void specification_exception(struct pt_regs *regs)
 		signal = SIGILL;
 
         if (signal == SIGFPE)
+<<<<<<< HEAD
 		do_fp_trap(regs, current->thread.fp_regs.fpc);
 	else if (signal)
 		do_trap(regs, signal, ILL_ILLOPN, "specification exception");
+=======
+		do_fp_trap(regs, location,
+			   current->thread.fp_regs.fpc, pgm_int_code);
+        else if (signal) {
+		siginfo_t info;
+		info.si_signo = signal;
+		info.si_errno = 0;
+		info.si_code = ILL_ILLOPN;
+		info.si_addr = location;
+		do_trap(pgm_int_code, signal,
+			"specification exception", regs, &info);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #else
 DO_ERROR_INFO(specification_exception, SIGILL, ILL_ILLOPN,
 	      "specification exception");
 #endif
 
+<<<<<<< HEAD
 static void data_exception(struct pt_regs *regs)
+=======
+static void data_exception(struct pt_regs *regs, long pgm_int_code,
+			   unsigned long trans_exc_code)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	__u16 __user *location;
 	int signal = 0;
 
+<<<<<<< HEAD
 	location = get_psw_address(regs);
+=======
+	location = get_psw_address(regs, pgm_int_code);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (MACHINE_HAS_IEEE)
 		asm volatile("stfpc %0" : "=m" (current->thread.fp_regs.fpc));
@@ -592,6 +806,7 @@ static void data_exception(struct pt_regs *regs)
 	else
 		signal = SIGILL;
         if (signal == SIGFPE)
+<<<<<<< HEAD
 		do_fp_trap(regs, current->thread.fp_regs.fpc);
 	else if (signal)
 		do_trap(regs, signal, ILL_ILLOPN, "data exception");
@@ -599,14 +814,44 @@ static void data_exception(struct pt_regs *regs)
 
 static void space_switch_exception(struct pt_regs *regs)
 {
+=======
+		do_fp_trap(regs, location,
+			   current->thread.fp_regs.fpc, pgm_int_code);
+        else if (signal) {
+		siginfo_t info;
+		info.si_signo = signal;
+		info.si_errno = 0;
+		info.si_code = ILL_ILLOPN;
+		info.si_addr = location;
+		do_trap(pgm_int_code, signal, "data exception", regs, &info);
+	}
+}
+
+static void space_switch_exception(struct pt_regs *regs, long pgm_int_code,
+				   unsigned long trans_exc_code)
+{
+        siginfo_t info;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Set user psw back to home space mode. */
 	if (regs->psw.mask & PSW_MASK_PSTATE)
 		regs->psw.mask |= PSW_ASC_HOME;
 	/* Send SIGILL. */
+<<<<<<< HEAD
 	do_trap(regs, SIGILL, ILL_PRVOPC, "space switch event");
 }
 
 void __kprobes kernel_stack_overflow(struct pt_regs * regs)
+=======
+        info.si_signo = SIGILL;
+        info.si_errno = 0;
+        info.si_code = ILL_PRVOPC;
+	info.si_addr = get_psw_address(regs, pgm_int_code);
+	do_trap(pgm_int_code, SIGILL, "space switch event", regs, &info);
+}
+
+asmlinkage void __kprobes kernel_stack_overflow(struct pt_regs * regs)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	bust_spinlocks(1);
 	printk("Kernel stack overflow.\n");

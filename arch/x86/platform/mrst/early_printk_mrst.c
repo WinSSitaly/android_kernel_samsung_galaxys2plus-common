@@ -245,6 +245,7 @@ struct console early_mrst_console = {
  * Following is the early console based on Medfield HSU (High
  * Speed UART) device.
  */
+<<<<<<< HEAD
 #define HSU_PORT_BASE		0xffa28080
 
 static void __iomem *phsu;
@@ -263,6 +264,18 @@ void hsu_early_console_init(const char *s)
 
 	paddr = HSU_PORT_BASE + port * 0x80;
 	phsu = (void *)set_fixmap_offset_nocache(FIX_EARLYCON_MEM_BASE, paddr);
+=======
+#define HSU_PORT2_PADDR		0xffa28180
+
+static void __iomem *phsu;
+
+void hsu_early_console_init(void)
+{
+	u8 lcr;
+
+	phsu = (void *)set_fixmap_offset_nocache(FIX_EARLYCON_MEM_BASE,
+							HSU_PORT2_PADDR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Disable FIFO */
 	writeb(0x0, phsu + UART_FCR);

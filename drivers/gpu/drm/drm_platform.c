@@ -25,7 +25,10 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drmP.h"
 
 /**
@@ -122,15 +125,22 @@ static const char *drm_platform_get_name(struct drm_device *dev)
 
 static int drm_platform_set_busid(struct drm_device *dev, struct drm_master *master)
 {
+<<<<<<< HEAD
 	int len, ret, id;
 
 	master->unique_len = 13 + strlen(dev->platformdev->name);
 	master->unique_size = master->unique_len;
+=======
+	int len, ret;
+
+	master->unique_len = 10 + strlen(dev->platformdev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	master->unique = kmalloc(master->unique_len + 1, GFP_KERNEL);
 
 	if (master->unique == NULL)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	id = dev->platformdev->id;
 
 	/* if only a single instance of the platform device, id will be
@@ -141,6 +151,10 @@ static int drm_platform_set_busid(struct drm_device *dev, struct drm_master *mas
 
 	len = snprintf(master->unique, master->unique_len,
 			"platform:%s:%02d", dev->platformdev->name, id);
+=======
+	len = snprintf(master->unique, master->unique_len,
+		       "platform:%s", dev->platformdev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (len > master->unique_len) {
 		DRM_ERROR("Unique buffer overflowed\n");

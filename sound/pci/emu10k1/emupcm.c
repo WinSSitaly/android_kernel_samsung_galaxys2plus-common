@@ -1146,11 +1146,14 @@ static int snd_emu10k1_playback_open(struct snd_pcm_substream *substream)
 		kfree(epcm);
 		return err;
 	}
+<<<<<<< HEAD
 	err = snd_pcm_hw_rule_noresample(runtime, 48000);
 	if (err < 0) {
 		kfree(epcm);
 		return err;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mix = &emu->pcm_mixer[substream->number];
 	for (i = 0; i < 4; i++)
 		mix->send_routing[0][i] = mix->send_routing[1][i] = mix->send_routing[2][i] = i;

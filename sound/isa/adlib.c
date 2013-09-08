@@ -18,7 +18,11 @@ MODULE_LICENSE("GPL");
 
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE;
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static long port[SNDRV_CARDS] = SNDRV_DEFAULT_PORT;
 
 module_param_array(index, int, NULL, 0444);

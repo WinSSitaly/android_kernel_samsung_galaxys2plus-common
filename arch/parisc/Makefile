@@ -31,11 +31,15 @@ ifdef CONFIG_64BIT
 UTS_MACHINE	:= parisc64
 CHECKFLAGS	+= -D__LP64__=1 -m64
 WIDTH		:= 64
+<<<<<<< HEAD
 
 # FIXME: if no default set, should really try to locate dynamically
 ifeq ($(CROSS_COMPILE),)
 CROSS_COMPILE	:= hppa64-linux-gnu-
 endif
+=======
+CROSS_COMPILE	:= hppa64-linux-gnu-
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 else # 32-bit
 WIDTH		:=
 endif

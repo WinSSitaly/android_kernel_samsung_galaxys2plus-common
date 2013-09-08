@@ -212,7 +212,11 @@ resume:
 		/* only the first xfrm gets the encap type */
 		encap_type = 0;
 
+<<<<<<< HEAD
 		if (async && x->repl->recheck(x, skb, seq)) {
+=======
+		if (async && x->repl->check(x, skb, seq)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			XFRM_INC_STATS(net, LINUX_MIB_XFRMINSTATESEQERROR);
 			goto drop_unlock;
 		}

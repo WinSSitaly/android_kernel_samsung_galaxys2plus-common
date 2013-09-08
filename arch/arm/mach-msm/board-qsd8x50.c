@@ -14,7 +14,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/irq.h>
 #include <linux/gpio.h>
@@ -32,6 +36,10 @@
 #include <mach/board.h>
 #include <mach/irqs.h>
 #include <mach/sirc.h>
+<<<<<<< HEAD
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/vreg.h>
 #include <mach/mmc.h>
 
@@ -192,7 +200,11 @@ static void __init qsd8x50_init(void)
 }
 
 MACHINE_START(QSD8X50_SURF, "QCT QSD8X50 SURF")
+<<<<<<< HEAD
 	.atag_offset = 0x100,
+=======
+	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io = qsd8x50_map_io,
 	.init_irq = qsd8x50_init_irq,
 	.init_machine = qsd8x50_init,
@@ -200,7 +212,11 @@ MACHINE_START(QSD8X50_SURF, "QCT QSD8X50 SURF")
 MACHINE_END
 
 MACHINE_START(QSD8X50A_ST1_5, "QCT QSD8X50A ST1.5")
+<<<<<<< HEAD
 	.atag_offset = 0x100,
+=======
+	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io = qsd8x50_map_io,
 	.init_irq = qsd8x50_init_irq,
 	.init_machine = qsd8x50_init,

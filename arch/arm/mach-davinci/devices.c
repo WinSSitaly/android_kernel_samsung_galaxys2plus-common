@@ -23,7 +23,10 @@
 #include <mach/mmc.h>
 #include <mach/time.h>
 
+<<<<<<< HEAD
 #include "davinci.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "clock.h"
 
 #define DAVINCI_I2C_BASE	     0x01C21000
@@ -34,6 +37,7 @@
 #define DM365_MMCSD0_BASE	     0x01D11000
 #define DM365_MMCSD1_BASE	     0x01D00000
 
+<<<<<<< HEAD
 void __iomem  *davinci_sysmod_base;
 
 void davinci_map_sysmod(void)
@@ -47,6 +51,10 @@ void davinci_map_sysmod(void)
 	 */
 	BUG_ON(!davinci_sysmod_base);
 }
+=======
+/* System control register offsets */
+#define DM64XX_VDD3P3V_PWDN	0x48
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct resource i2c_resources[] = {
 	{
@@ -224,12 +232,21 @@ void __init davinci_setup_mmc(int module, struct davinci_mmc_config *config)
 			davinci_cfg_reg(DM355_SD1_DATA2);
 			davinci_cfg_reg(DM355_SD1_DATA3);
 		} else if (cpu_is_davinci_dm365()) {
+<<<<<<< HEAD
 			/* Configure pull down control */
 			unsigned v;
 
 			v = __raw_readl(DAVINCI_SYSMOD_VIRT(SYSMOD_PUPDCTL1));
 			__raw_writel(v & ~0xfc0,
 					DAVINCI_SYSMOD_VIRT(SYSMOD_PUPDCTL1));
+=======
+			void __iomem *pupdctl1 =
+				IO_ADDRESS(DAVINCI_SYSTEM_MODULE_BASE + 0x7c);
+
+			/* Configure pull down control */
+			__raw_writel((__raw_readl(pupdctl1) & ~0xfc0),
+					pupdctl1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			mmcsd1_resources[0].start = DM365_MMCSD1_BASE;
 			mmcsd1_resources[0].end = DM365_MMCSD1_BASE +
@@ -258,9 +275,17 @@ void __init davinci_setup_mmc(int module, struct davinci_mmc_config *config)
 			mmcsd0_resources[2].start = IRQ_DM365_SDIOINT0;
 		} else if (cpu_is_davinci_dm644x()) {
 			/* REVISIT: should this be in board-init code? */
+<<<<<<< HEAD
 			/* Power-on 3.3V IO cells */
 			__raw_writel(0,
 				DAVINCI_SYSMOD_VIRT(SYSMOD_VDD3P3VPWDN));
+=======
+			void __iomem *base =
+				IO_ADDRESS(DAVINCI_SYSTEM_MODULE_BASE);
+
+			/* Power-on 3.3V IO cells */
+			__raw_writel(0, base + DM64XX_VDD3P3V_PWDN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*Set up the pull regiter for MMC */
 			davinci_cfg_reg(DM644X_MSTK);
 		}
@@ -301,11 +326,14 @@ struct platform_device davinci_wdt_device = {
 	.resource	= wdt_resources,
 };
 
+<<<<<<< HEAD
 void davinci_restart(char mode, const char *cmd)
 {
 	davinci_watchdog_reset(&davinci_wdt_device);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void davinci_init_wdt(void)
 {
 	platform_device_register(&davinci_wdt_device);

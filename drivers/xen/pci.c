@@ -18,7 +18,10 @@
  */
 
 #include <linux/pci.h>
+<<<<<<< HEAD
 #include <linux/acpi.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <xen/xen.h>
 #include <xen/interface/physdev.h>
 #include <xen/interface/xen.h>
@@ -27,12 +30,16 @@
 #include <asm/xen/hypercall.h>
 #include "../pci/pci.h"
 
+<<<<<<< HEAD
 static bool __read_mostly pci_seg_supported = true;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int xen_add_device(struct device *dev)
 {
 	int r;
 	struct pci_dev *pci_dev = to_pci_dev(dev);
+<<<<<<< HEAD
 #ifdef CONFIG_PCI_IOV
 	struct pci_dev *physfn = pci_dev->physfn;
 #endif
@@ -93,19 +100,35 @@ static int xen_add_device(struct device *dev)
 		r = -ENOSYS;
 #ifdef CONFIG_PCI_IOV
 	else if (pci_dev->is_virtfn) {
+=======
+
+#ifdef CONFIG_PCI_IOV
+	if (pci_dev->is_virtfn) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct physdev_manage_pci_ext manage_pci_ext = {
 			.bus		= pci_dev->bus->number,
 			.devfn		= pci_dev->devfn,
 			.is_virtfn 	= 1,
+<<<<<<< HEAD
 			.physfn.bus	= physfn->bus->number,
 			.physfn.devfn	= physfn->devfn,
+=======
+			.physfn.bus	= pci_dev->physfn->bus->number,
+			.physfn.devfn	= pci_dev->physfn->devfn,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		};
 
 		r = HYPERVISOR_physdev_op(PHYSDEVOP_manage_pci_add_ext,
 			&manage_pci_ext);
+<<<<<<< HEAD
 	}
 #endif
 	else if (pci_ari_enabled(pci_dev->bus) && PCI_SLOT(pci_dev->devfn)) {
+=======
+	} else
+#endif
+	if (pci_ari_enabled(pci_dev->bus) && PCI_SLOT(pci_dev->devfn)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct physdev_manage_pci_ext manage_pci_ext = {
 			.bus		= pci_dev->bus->number,
 			.devfn		= pci_dev->devfn,
@@ -116,7 +139,11 @@ static int xen_add_device(struct device *dev)
 			&manage_pci_ext);
 	} else {
 		struct physdev_manage_pci manage_pci = {
+<<<<<<< HEAD
 			.bus	= pci_dev->bus->number,
+=======
+			.bus 	= pci_dev->bus->number,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.devfn	= pci_dev->devfn,
 		};
 
@@ -131,6 +158,7 @@ static int xen_remove_device(struct device *dev)
 {
 	int r;
 	struct pci_dev *pci_dev = to_pci_dev(dev);
+<<<<<<< HEAD
 
 	if (pci_seg_supported) {
 		struct physdev_pci_device device = {
@@ -152,6 +180,15 @@ static int xen_remove_device(struct device *dev)
 		r = HYPERVISOR_physdev_op(PHYSDEVOP_manage_pci_remove,
 					  &manage_pci);
 	}
+=======
+	struct physdev_manage_pci manage_pci;
+
+	manage_pci.bus = pci_dev->bus->number;
+	manage_pci.devfn = pci_dev->devfn;
+
+	r = HYPERVISOR_physdev_op(PHYSDEVOP_manage_pci_remove,
+		&manage_pci);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return r;
 }
@@ -170,6 +207,7 @@ static int xen_pci_notifier(struct notifier_block *nb,
 		r = xen_remove_device(dev);
 		break;
 	default:
+<<<<<<< HEAD
 		return NOTIFY_DONE;
 	}
 	if (r)
@@ -180,6 +218,15 @@ static int xen_pci_notifier(struct notifier_block *nb,
 }
 
 static struct notifier_block device_nb = {
+=======
+		break;
+	}
+
+	return r;
+}
+
+struct notifier_block device_nb = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.notifier_call = xen_pci_notifier,
 };
 

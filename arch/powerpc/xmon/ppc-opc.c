@@ -22,7 +22,10 @@
 
 #include <linux/stddef.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "nonstdio.h"
 #include "ppc.h"
 

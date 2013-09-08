@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * LSI/Engenio/NetApp E-Series RDAC SCSI Device Handler
+=======
+ * Engenio/LSI RDAC SCSI Device Handler
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Copyright (C) 2005 Mike Christie. All rights reserved.
  * Copyright (C) Chandra Seetharaman, IBM Corp. 2007
@@ -24,7 +28,10 @@
 #include <scsi/scsi_dh.h>
 #include <linux/workqueue.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define RDAC_NAME "rdac"
 #define RDAC_RETRY_COUNT 5
@@ -36,7 +43,11 @@
  * mode page were taken from the LSI RDAC 2.4 GPL'd
  * driver, and then converted to Linux conventions.
  */
+<<<<<<< HEAD
 #define RDAC_QUIESCENCE_TIME 20
+=======
+#define RDAC_QUIESCENCE_TIME 20;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Page Codes
  */
@@ -129,6 +140,7 @@ struct c4_inquiry {
 	u8	reserved[2];
 };
 
+<<<<<<< HEAD
 #define UNIQUE_ID_LEN 16
 struct c8_inquiry {
 	u8	peripheral_info;
@@ -150,6 +162,11 @@ struct c8_inquiry {
 
 struct rdac_controller {
 	u8			array_id[UNIQUE_ID_LEN];
+=======
+struct rdac_controller {
+	u8			subsys_id[SUBSYS_ID_LEN];
+	u8			slot_id[SLOT_ID_LEN];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			use_ms10;
 	struct kref		kref;
 	struct list_head	node; /* list of all controllers */
@@ -159,7 +176,10 @@ struct rdac_controller {
 	} mode_select;
 	u8	index;
 	u8	array_name[ARRAY_LABEL_LEN];
+<<<<<<< HEAD
 	struct Scsi_Host	*host;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spinlock_t		ms_lock;
 	int			ms_queued;
 	struct work_struct	ms_work;
@@ -167,6 +187,27 @@ struct rdac_controller {
 	struct list_head	ms_head;
 };
 
+<<<<<<< HEAD
+=======
+struct c8_inquiry {
+	u8	peripheral_info;
+	u8	page_code; /* 0xC8 */
+	u8	reserved1;
+	u8	page_len;
+	u8	page_id[4]; /* "edid" */
+	u8	reserved2[3];
+	u8	vol_uniq_id_len;
+	u8	vol_uniq_id[16];
+	u8	vol_user_label_len;
+	u8	vol_user_label[60];
+	u8	array_uniq_id_len;
+	u8	array_unique_id[16];
+	u8	array_user_label_len;
+	u8	array_user_label[60];
+	u8	lun[8];
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct c2_inquiry {
 	u8	peripheral_info;
 	u8	page_code;	/* 0xC2 */
@@ -364,6 +405,7 @@ static void release_controller(struct kref *kref)
 	struct rdac_controller *ctlr;
 	ctlr = container_of(kref, struct rdac_controller, kref);
 
+<<<<<<< HEAD
 	list_del(&ctlr->node);
 	kfree(ctlr);
 }
@@ -378,11 +420,33 @@ static struct rdac_controller *get_controller(int index, char *array_name,
 			  (tmp->index == index) &&
 			  (tmp->host == sdev->host)) {
 			kref_get(&tmp->kref);
+=======
+	flush_workqueue(kmpath_rdacd);
+	spin_lock(&list_lock);
+	list_del(&ctlr->node);
+	spin_unlock(&list_lock);
+	kfree(ctlr);
+}
+
+static struct rdac_controller *get_controller(u8 *subsys_id, u8 *slot_id,
+						char *array_name)
+{
+	struct rdac_controller *ctlr, *tmp;
+
+	spin_lock(&list_lock);
+
+	list_for_each_entry(tmp, &ctlr_list, node) {
+		if ((memcmp(tmp->subsys_id, subsys_id, SUBSYS_ID_LEN) == 0) &&
+			  (memcmp(tmp->slot_id, slot_id, SLOT_ID_LEN) == 0)) {
+			kref_get(&tmp->kref);
+			spin_unlock(&list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return tmp;
 		}
 	}
 	ctlr = kmalloc(sizeof(*ctlr), GFP_ATOMIC);
 	if (!ctlr)
+<<<<<<< HEAD
 		return NULL;
 
 	/* initialize fields of controller */
@@ -391,6 +455,21 @@ static struct rdac_controller *get_controller(int index, char *array_name,
 	ctlr->host = sdev->host;
 	memcpy(ctlr->array_name, array_name, ARRAY_LABEL_LEN);
 
+=======
+		goto done;
+
+	/* initialize fields of controller */
+	memcpy(ctlr->subsys_id, subsys_id, SUBSYS_ID_LEN);
+	memcpy(ctlr->slot_id, slot_id, SLOT_ID_LEN);
+	memcpy(ctlr->array_name, array_name, ARRAY_LABEL_LEN);
+
+	/* update the controller index */
+	if (slot_id[1] == 0x31)
+		ctlr->index = 0;
+	else
+		ctlr->index = 1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kref_init(&ctlr->kref);
 	ctlr->use_ms10 = -1;
 	ctlr->ms_queued = 0;
@@ -399,7 +478,12 @@ static struct rdac_controller *get_controller(int index, char *array_name,
 	INIT_WORK(&ctlr->ms_work, send_mode_select);
 	INIT_LIST_HEAD(&ctlr->ms_head);
 	list_add(&ctlr->node, &ctlr_list);
+<<<<<<< HEAD
 
+=======
+done:
+	spin_unlock(&list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ctlr;
 }
 
@@ -435,7 +519,11 @@ done:
 }
 
 static int get_lun_info(struct scsi_device *sdev, struct rdac_dh_data *h,
+<<<<<<< HEAD
 			char *array_name, u8 *array_id)
+=======
+			char *array_name)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err, i;
 	struct c8_inquiry *inqp;
@@ -454,8 +542,11 @@ static int get_lun_info(struct scsi_device *sdev, struct rdac_dh_data *h,
 			*(array_name+i) = inqp->array_user_label[(2*i)+1];
 
 		*(array_name+ARRAY_LABEL_LEN-1) = '\0';
+<<<<<<< HEAD
 		memset(array_id, 0, UNIQUE_ID_LEN);
 		memcpy(array_id, inqp->array_unique_id, inqp->array_uniq_id_len);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return err;
 }
@@ -497,14 +588,21 @@ static int check_ownership(struct scsi_device *sdev, struct rdac_dh_data *h)
 }
 
 static int initialize_controller(struct scsi_device *sdev,
+<<<<<<< HEAD
 		struct rdac_dh_data *h, char *array_name, u8 *array_id)
 {
 	int err, index;
+=======
+				 struct rdac_dh_data *h, char *array_name)
+{
+	int err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct c4_inquiry *inqp;
 
 	err = submit_inquiry(sdev, 0xC4, sizeof(struct c4_inquiry), h);
 	if (err == SCSI_DH_OK) {
 		inqp = &h->inq.c4;
+<<<<<<< HEAD
 		/* get the controller index */
 		if (inqp->slot_id[1] == 0x31)
 			index = 0;
@@ -516,6 +614,12 @@ static int initialize_controller(struct scsi_device *sdev,
 		if (!h->ctlr)
 			err = SCSI_DH_RES_TEMP_UNAVAIL;
 		spin_unlock(&list_lock);
+=======
+		h->ctlr = get_controller(inqp->subsys_id, inqp->slot_id,
+					array_name);
+		if (!h->ctlr)
+			err = SCSI_DH_RES_TEMP_UNAVAIL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return err;
 }
@@ -792,7 +896,10 @@ static const struct scsi_dh_devlist rdac_dev_list[] = {
 	{"IBM", "3526"},
 	{"SGI", "TP9400"},
 	{"SGI", "TP9500"},
+<<<<<<< HEAD
 	{"SGI", "TP9700"},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{"SGI", "IS"},
 	{"STK", "OPENstorage D280"},
 	{"SUN", "CSM200_R"},
@@ -812,6 +919,7 @@ static const struct scsi_dh_devlist rdac_dev_list[] = {
 	{"SUN", "CSM100_R_FC"},
 	{"SUN", "STK6580_6780"},
 	{"SUN", "SUN_6180"},
+<<<<<<< HEAD
 	{"SUN", "ArrayStorage"},
 	{NULL, NULL},
 };
@@ -834,6 +942,11 @@ static bool rdac_match(struct scsi_device *sdev)
 	return false;
 }
 
+=======
+	{NULL, NULL},
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int rdac_bus_attach(struct scsi_device *sdev);
 static void rdac_bus_detach(struct scsi_device *sdev);
 
@@ -846,7 +959,10 @@ static struct scsi_device_handler rdac_dh = {
 	.attach = rdac_bus_attach,
 	.detach = rdac_bus_detach,
 	.activate = rdac_activate,
+<<<<<<< HEAD
 	.match = rdac_match,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int rdac_bus_attach(struct scsi_device *sdev)
@@ -856,7 +972,10 @@ static int rdac_bus_attach(struct scsi_device *sdev)
 	unsigned long flags;
 	int err;
 	char array_name[ARRAY_LABEL_LEN];
+<<<<<<< HEAD
 	char array_id[UNIQUE_ID_LEN];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	scsi_dh_data = kzalloc(sizeof(*scsi_dh_data)
 			       + sizeof(*h) , GFP_KERNEL);
@@ -871,11 +990,19 @@ static int rdac_bus_attach(struct scsi_device *sdev)
 	h->lun = UNINITIALIZED_LUN;
 	h->state = RDAC_STATE_ACTIVE;
 
+<<<<<<< HEAD
 	err = get_lun_info(sdev, h, array_name, array_id);
 	if (err != SCSI_DH_OK)
 		goto failed;
 
 	err = initialize_controller(sdev, h, array_name, array_id);
+=======
+	err = get_lun_info(sdev, h, array_name);
+	if (err != SCSI_DH_OK)
+		goto failed;
+
+	err = initialize_controller(sdev, h, array_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err != SCSI_DH_OK)
 		goto failed;
 
@@ -902,9 +1029,13 @@ static int rdac_bus_attach(struct scsi_device *sdev)
 	return 0;
 
 clean_ctlr:
+<<<<<<< HEAD
 	spin_lock(&list_lock);
 	kref_put(&h->ctlr->kref, release_controller);
 	spin_unlock(&list_lock);
+=======
+	kref_put(&h->ctlr->kref, release_controller);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 failed:
 	kfree(scsi_dh_data);
@@ -919,6 +1050,7 @@ static void rdac_bus_detach( struct scsi_device *sdev )
 	struct rdac_dh_data *h;
 	unsigned long flags;
 
+<<<<<<< HEAD
 	scsi_dh_data = sdev->scsi_dh_data;
 	h = (struct rdac_dh_data *) scsi_dh_data->buf;
 	if (h->ctlr && h->ctlr->ms_queued)
@@ -932,6 +1064,16 @@ static void rdac_bus_detach( struct scsi_device *sdev )
 	if (h->ctlr)
 		kref_put(&h->ctlr->kref, release_controller);
 	spin_unlock(&list_lock);
+=======
+	spin_lock_irqsave(sdev->request_queue->queue_lock, flags);
+	scsi_dh_data = sdev->scsi_dh_data;
+	sdev->scsi_dh_data = NULL;
+	spin_unlock_irqrestore(sdev->request_queue->queue_lock, flags);
+
+	h = (struct rdac_dh_data *) scsi_dh_data->buf;
+	if (h->ctlr)
+		kref_put(&h->ctlr->kref, release_controller);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(scsi_dh_data);
 	module_put(THIS_MODULE);
 	sdev_printk(KERN_NOTICE, sdev, "%s: Detached\n", RDAC_NAME);
@@ -956,8 +1098,11 @@ static int __init rdac_init(void)
 	if (!kmpath_rdacd) {
 		scsi_unregister_device_handler(&rdac_dh);
 		printk(KERN_ERR "kmpath_rdacd creation failed.\n");
+<<<<<<< HEAD
 
 		r = -EINVAL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 done:
 	return r;
@@ -972,7 +1117,11 @@ static void __exit rdac_exit(void)
 module_init(rdac_init);
 module_exit(rdac_exit);
 
+<<<<<<< HEAD
 MODULE_DESCRIPTION("Multipath LSI/Engenio/NetApp E-Series RDAC driver");
+=======
+MODULE_DESCRIPTION("Multipath LSI/Engenio RDAC driver");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_AUTHOR("Mike Christie, Chandra Seetharaman");
 MODULE_VERSION("01.00.0000.0000");
 MODULE_LICENSE("GPL");

@@ -1,7 +1,10 @@
 config MICROBLAZE
 	def_bool y
 	select HAVE_MEMBLOCK
+<<<<<<< HEAD
 	select HAVE_MEMBLOCK_NODE_MAP
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select HAVE_FUNCTION_TRACER
 	select HAVE_FUNCTION_TRACE_MCOUNT_TEST
 	select HAVE_FUNCTION_GRAPH_TRACER
@@ -15,6 +18,7 @@ config MICROBLAZE
 	select TRACING_SUPPORT
 	select OF
 	select OF_EARLY_FLATTREE
+<<<<<<< HEAD
 	select IRQ_DOMAIN
 	select HAVE_GENERIC_HARDIRQS
 	select GENERIC_IRQ_PROBE
@@ -22,6 +26,11 @@ config MICROBLAZE
 	select GENERIC_PCI_IOMAP
 	select GENERIC_CPU_DEVICES
 	select GENERIC_ATOMIC64
+=======
+	select HAVE_GENERIC_HARDIRQS
+	select GENERIC_IRQ_PROBE
+	select GENERIC_IRQ_SHOW
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config SWAP
 	def_bool n
@@ -29,12 +38,15 @@ config SWAP
 config RWSEM_GENERIC_SPINLOCK
 	def_bool y
 
+<<<<<<< HEAD
 config ZONE_DMA
 	def_bool y
 
 config ARCH_POPULATES_NODE_MAP
 	def_bool y
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config RWSEM_XCHGADD_ALGORITHM
 	bool
 
@@ -57,7 +69,11 @@ config GENERIC_CLOCKEVENTS
 	def_bool y
 
 config GENERIC_GPIO
+<<<<<<< HEAD
 	bool
+=======
+	def_bool y
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config GENERIC_CSUM
 	def_bool y
@@ -160,6 +176,7 @@ config XILINX_UNCACHED_SHADOW
 	  The feature requires the design to define the RAM memory controller
 	  window to be twice as large as the actual physical memory.
 
+<<<<<<< HEAD
 config HIGHMEM
 	bool "High memory support"
 	depends on MMU
@@ -172,6 +189,22 @@ config HIGHMEM
 	  memory that is not permanently mapped is called "high memory".
 
 	  If unsure, say n.
+=======
+config HIGHMEM_START_BOOL
+	bool "Set high memory pool address"
+	depends on ADVANCED_OPTIONS && HIGHMEM
+	help
+	  This option allows you to set the base address of the kernel virtual
+	  area used to map high memory pages.  This can be useful in
+	  optimizing the layout of kernel virtual memory.
+
+	  Say N here unless you know what you are doing.
+
+config HIGHMEM_START
+	hex "Virtual start address of high memory pool" if HIGHMEM_START_BOOL
+	depends on MMU
+	default "0xfe000000"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config LOWMEM_SIZE_BOOL
 	bool "Set maximum low memory"
@@ -260,10 +293,13 @@ config MICROBLAZE_32K_PAGES
 
 endchoice
 
+<<<<<<< HEAD
 config KERNEL_PAD
 	hex "Kernel PAD for unpacking" if ADVANCED_OPTIONS
 	default "0x80000" if MMU
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endmenu
 
 source "mm/Kconfig"

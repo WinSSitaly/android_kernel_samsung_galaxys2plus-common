@@ -19,14 +19,20 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+<<<<<<< HEAD
 #include <linux/kernel.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/input.h>
 #include <linux/platform_device.h>
 #include <linux/delay.h>
 #include <linux/io.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/of.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/clk.h>
 #include <linux/slab.h>
 #include <mach/clk.h>
@@ -39,7 +45,11 @@
 #define KBC_ROW_SCAN_DLY	5
 
 /* KBC uses a 32KHz clock so a cycle = 1/32Khz */
+<<<<<<< HEAD
 #define KBC_CYCLE_MS	32
+=======
+#define KBC_CYCLE_USEC	32
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* KBC Registers */
 
@@ -48,17 +58,26 @@
 #define KBC_FIFO_TH_CNT_SHIFT(cnt)	(cnt << 14)
 #define KBC_DEBOUNCE_CNT_SHIFT(cnt)	(cnt << 4)
 #define KBC_CONTROL_FIFO_CNT_INT_EN	(1 << 3)
+<<<<<<< HEAD
 #define KBC_CONTROL_KEYPRESS_INT_EN	(1 << 1)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define KBC_CONTROL_KBC_EN		(1 << 0)
 
 /* KBC Interrupt Register */
 #define KBC_INT_0	0x4
 #define KBC_INT_FIFO_CNT_INT_STATUS	(1 << 2)
+<<<<<<< HEAD
 #define KBC_INT_KEYPRESS_INT_STATUS	(1 << 0)
 
 #define KBC_ROW_CFG0_0	0x8
 #define KBC_COL_CFG0_0	0x18
 #define KBC_TO_CNT_0	0x24
+=======
+
+#define KBC_ROW_CFG0_0	0x8
+#define KBC_COL_CFG0_0	0x18
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define KBC_INIT_DLY_0	0x28
 #define KBC_RPT_DLY_0	0x2c
 #define KBC_KP_ENT0_0	0x30
@@ -74,20 +93,32 @@ struct tegra_kbc {
 	spinlock_t lock;
 	unsigned int repoll_dly;
 	unsigned long cp_dly_jiffies;
+<<<<<<< HEAD
 	unsigned int cp_to_wkup_dly;
 	bool use_fn_map;
 	bool use_ghost_filter;
 	bool keypress_caused_wake;
+=======
+	bool use_fn_map;
+	bool use_ghost_filter;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const struct tegra_kbc_platform_data *pdata;
 	unsigned short keycode[KBC_MAX_KEY * 2];
 	unsigned short current_keys[KBC_MAX_KPENT];
 	unsigned int num_pressed_keys;
+<<<<<<< HEAD
 	u32 wakeup_key;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct timer_list timer;
 	struct clk *clk;
 };
 
+<<<<<<< HEAD
 static const u32 tegra_kbc_default_keymap[] __devinitdata = {
+=======
+static const u32 tegra_kbc_default_keymap[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	KEY(0, 2, KEY_W),
 	KEY(0, 3, KEY_S),
 	KEY(0, 4, KEY_A),
@@ -222,8 +253,12 @@ static const u32 tegra_kbc_default_keymap[] __devinitdata = {
 	KEY(31, 4, KEY_HELP),
 };
 
+<<<<<<< HEAD
 static const
 struct matrix_keymap_data tegra_kbc_default_keymap_data __devinitdata = {
+=======
+static const struct matrix_keymap_data tegra_kbc_default_keymap_data = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.keymap		= tegra_kbc_default_keymap,
 	.keymap_size	= ARRAY_SIZE(tegra_kbc_default_keymap),
 };
@@ -266,10 +301,18 @@ static void tegra_kbc_report_keys(struct tegra_kbc *kbc)
 	u32 val = 0;
 	unsigned int i;
 	unsigned int num_down = 0;
+<<<<<<< HEAD
+=======
+	unsigned long flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool fn_keypress = false;
 	bool key_in_same_row = false;
 	bool key_in_same_col = false;
 
+<<<<<<< HEAD
+=======
+	spin_lock_irqsave(&kbc->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < KBC_MAX_KPENT; i++) {
 		if ((i % 4) == 0)
 			val = readl(kbc->mmio + KBC_KP_ENT0_0 + i);
@@ -298,7 +341,11 @@ static void tegra_kbc_report_keys(struct tegra_kbc *kbc)
 	 * any 2 of the 3 keys share a row, and any 2 of them share a column.
 	 * If so ignore the key presses for this iteration.
 	 */
+<<<<<<< HEAD
 	if (kbc->use_ghost_filter && num_down >= 3) {
+=======
+	if ((kbc->use_ghost_filter) && (num_down >= 3)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (i = 0; i < num_down; i++) {
 			unsigned int j;
 			u8 curr_col = scancodes[i] & 0x07;
@@ -331,6 +378,11 @@ static void tegra_kbc_report_keys(struct tegra_kbc *kbc)
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	spin_unlock_irqrestore(&kbc->lock, flags);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Ignore the key presses for this iteration? */
 	if (key_in_same_col && key_in_same_row)
 		return;
@@ -345,6 +397,7 @@ static void tegra_kbc_report_keys(struct tegra_kbc *kbc)
 	kbc->num_pressed_keys = num_down;
 }
 
+<<<<<<< HEAD
 static void tegra_kbc_set_fifo_interrupt(struct tegra_kbc *kbc, bool enable)
 {
 	u32 val;
@@ -369,6 +422,8 @@ static void tegra_kbc_set_keypress_interrupt(struct tegra_kbc *kbc, bool enable)
 	writel(val, kbc->mmio + KBC_CONTROL_0);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void tegra_kbc_keypress_timer(unsigned long data)
 {
 	struct tegra_kbc *kbc = (struct tegra_kbc *)data;
@@ -376,8 +431,11 @@ static void tegra_kbc_keypress_timer(unsigned long data)
 	u32 val;
 	unsigned int i;
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&kbc->lock, flags);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	val = (readl(kbc->mmio + KBC_INT_0) >> 4) & 0xf;
 	if (val) {
 		unsigned long dly;
@@ -399,19 +457,40 @@ static void tegra_kbc_keypress_timer(unsigned long data)
 		kbc->num_pressed_keys = 0;
 
 		/* All keys are released so enable the keypress interrupt */
+<<<<<<< HEAD
 		tegra_kbc_set_fifo_interrupt(kbc, true);
 	}
 
 	spin_unlock_irqrestore(&kbc->lock, flags);
+=======
+		spin_lock_irqsave(&kbc->lock, flags);
+		val = readl(kbc->mmio + KBC_CONTROL_0);
+		val |= KBC_CONTROL_FIFO_CNT_INT_EN;
+		writel(val, kbc->mmio + KBC_CONTROL_0);
+		spin_unlock_irqrestore(&kbc->lock, flags);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static irqreturn_t tegra_kbc_isr(int irq, void *args)
 {
 	struct tegra_kbc *kbc = args;
+<<<<<<< HEAD
 	unsigned long flags;
 	u32 val;
 
 	spin_lock_irqsave(&kbc->lock, flags);
+=======
+	u32 val, ctl;
+
+	/*
+	 * Until all keys are released, defer further processing to
+	 * the polling loop in tegra_kbc_keypress_timer
+	 */
+	ctl = readl(kbc->mmio + KBC_CONTROL_0);
+	ctl &= ~KBC_CONTROL_FIFO_CNT_INT_EN;
+	writel(ctl, kbc->mmio + KBC_CONTROL_0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Quickly bail out & reenable interrupts if the fifo threshold
@@ -422,6 +501,7 @@ static irqreturn_t tegra_kbc_isr(int irq, void *args)
 
 	if (val & KBC_INT_FIFO_CNT_INT_STATUS) {
 		/*
+<<<<<<< HEAD
 		 * Until all keys are released, defer further processing to
 		 * the polling loop in tegra_kbc_keypress_timer.
 		 */
@@ -434,6 +514,17 @@ static irqreturn_t tegra_kbc_isr(int irq, void *args)
 
 	spin_unlock_irqrestore(&kbc->lock, flags);
 
+=======
+		 * Schedule timer to run when hardware is in continuous
+		 * polling mode.
+		 */
+		mod_timer(&kbc->timer, jiffies + kbc->cp_dly_jiffies);
+	} else {
+		ctl |= KBC_CONTROL_FIFO_CNT_INT_EN;
+		writel(ctl, kbc->mmio + KBC_CONTROL_0);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return IRQ_HANDLED;
 }
 
@@ -468,6 +559,7 @@ static void tegra_kbc_config_pins(struct tegra_kbc *kbc)
 		row_cfg &= ~r_mask;
 		col_cfg &= ~c_mask;
 
+<<<<<<< HEAD
 		switch (pdata->pin_cfg[i].type) {
 		case PIN_CFG_ROW:
 			row_cfg |= ((pdata->pin_cfg[i].num << 1) | 1) << r_shft;
@@ -480,6 +572,12 @@ static void tegra_kbc_config_pins(struct tegra_kbc *kbc)
 		case PIN_CFG_IGNORE:
 			break;
 		}
+=======
+		if (pdata->pin_cfg[i].is_row)
+			row_cfg |= ((pdata->pin_cfg[i].num << 1) | 1) << r_shft;
+		else
+			col_cfg |= ((pdata->pin_cfg[i].num << 1) | 1) << c_shft;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		writel(row_cfg, kbc->mmio + r_offs);
 		writel(col_cfg, kbc->mmio + c_offs);
@@ -489,6 +587,10 @@ static void tegra_kbc_config_pins(struct tegra_kbc *kbc)
 static int tegra_kbc_start(struct tegra_kbc *kbc)
 {
 	const struct tegra_kbc_platform_data *pdata = kbc->pdata;
+<<<<<<< HEAD
+=======
+	unsigned long flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int debounce_cnt;
 	u32 val = 0;
 
@@ -526,6 +628,10 @@ static int tegra_kbc_start(struct tegra_kbc *kbc)
 	 * Atomically clear out any remaining entries in the key FIFO
 	 * and enable keyboard interrupts.
 	 */
+<<<<<<< HEAD
+=======
+	spin_lock_irqsave(&kbc->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (1) {
 		val = readl(kbc->mmio + KBC_INT_0);
 		val >>= 4;
@@ -536,6 +642,10 @@ static int tegra_kbc_start(struct tegra_kbc *kbc)
 		val = readl(kbc->mmio + KBC_KP_ENT1_0);
 	}
 	writel(0x7, kbc->mmio + KBC_INT_0);
+<<<<<<< HEAD
+=======
+	spin_unlock_irqrestore(&kbc->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	enable_irq(kbc->irq);
 
@@ -584,8 +694,12 @@ tegra_kbc_check_pin_cfg(const struct tegra_kbc_platform_data *pdata,
 	for (i = 0; i < KBC_MAX_GPIO; i++) {
 		const struct tegra_kbc_pin_cfg *pin_cfg = &pdata->pin_cfg[i];
 
+<<<<<<< HEAD
 		switch (pin_cfg->type) {
 		case PIN_CFG_ROW:
+=======
+		if (pin_cfg->is_row) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (pin_cfg->num >= KBC_MAX_ROW) {
 				dev_err(dev,
 					"pin_cfg[%d]: invalid row number %d\n",
@@ -593,15 +707,20 @@ tegra_kbc_check_pin_cfg(const struct tegra_kbc_platform_data *pdata,
 				return false;
 			}
 			(*num_rows)++;
+<<<<<<< HEAD
 			break;
 
 		case PIN_CFG_COL:
+=======
+		} else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (pin_cfg->num >= KBC_MAX_COL) {
 				dev_err(dev,
 					"pin_cfg[%d]: invalid column number %d\n",
 					i, pin_cfg->num);
 				return false;
 			}
+<<<<<<< HEAD
 			break;
 
 		case PIN_CFG_IGNORE:
@@ -612,12 +731,15 @@ tegra_kbc_check_pin_cfg(const struct tegra_kbc_platform_data *pdata,
 				"pin_cfg[%d]: invalid entry type %d\n",
 				pin_cfg->type, pin_cfg->num);
 			return false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
 	return true;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_OF
 static struct tegra_kbc_platform_data * __devinit
 tegra_kbc_dt_parse_pdata(struct platform_device *pdev)
@@ -674,6 +796,8 @@ static inline struct tegra_kbc_platform_data *tegra_kbc_dt_parse_pdata(
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit tegra_kbc_probe(struct platform_device *pdev)
 {
 	const struct tegra_kbc_platform_data *pdata = pdev->dev.platform_data;
@@ -688,6 +812,7 @@ static int __devinit tegra_kbc_probe(struct platform_device *pdev)
 	unsigned int scan_time_rows;
 
 	if (!pdata)
+<<<<<<< HEAD
 		pdata = tegra_kbc_dt_parse_pdata(pdev);
 
 	if (!pdata)
@@ -697,19 +822,33 @@ static int __devinit tegra_kbc_probe(struct platform_device *pdev)
 		err = -EINVAL;
 		goto err_free_pdata;
 	}
+=======
+		return -EINVAL;
+
+	if (!tegra_kbc_check_pin_cfg(pdata, &pdev->dev, &num_rows))
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	if (!res) {
 		dev_err(&pdev->dev, "failed to get I/O memory\n");
+<<<<<<< HEAD
 		err = -ENXIO;
 		goto err_free_pdata;
+=======
+		return -ENXIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	irq = platform_get_irq(pdev, 0);
 	if (irq < 0) {
 		dev_err(&pdev->dev, "failed to get keyboard IRQ\n");
+<<<<<<< HEAD
 		err = -ENXIO;
 		goto err_free_pdata;
+=======
+		return -ENXIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	kbc = kzalloc(sizeof(*kbc), GFP_KERNEL);
@@ -755,7 +894,11 @@ static int __devinit tegra_kbc_probe(struct platform_device *pdev)
 	debounce_cnt = min(pdata->debounce_cnt, KBC_MAX_DEBOUNCE_CNT);
 	scan_time_rows = (KBC_ROW_SCAN_TIME + debounce_cnt) * num_rows;
 	kbc->repoll_dly = KBC_ROW_SCAN_DLY + scan_time_rows + pdata->repeat_cnt;
+<<<<<<< HEAD
 	kbc->repoll_dly = DIV_ROUND_UP(kbc->repoll_dly, KBC_CYCLE_MS);
+=======
+	kbc->repoll_dly = ((kbc->repoll_dly * KBC_CYCLE_USEC) + 999) / 1000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	input_dev->name = pdev->name;
 	input_dev->id.bustype = BUS_HOST;
@@ -765,7 +908,11 @@ static int __devinit tegra_kbc_probe(struct platform_device *pdev)
 
 	input_set_drvdata(input_dev, kbc);
 
+<<<<<<< HEAD
 	input_dev->evbit[0] = BIT_MASK(EV_KEY) | BIT_MASK(EV_REP);
+=======
+	input_dev->evbit[0] = BIT_MASK(EV_KEY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	input_set_capability(input_dev, EV_MSC, MSC_SCAN);
 
 	input_dev->keycode = kbc->keycode;
@@ -779,10 +926,16 @@ static int __devinit tegra_kbc_probe(struct platform_device *pdev)
 	keymap_data = pdata->keymap_data ?: &tegra_kbc_default_keymap_data;
 	matrix_keypad_build_keymap(keymap_data, KBC_ROW_SHIFT,
 				   input_dev->keycode, input_dev->keybit);
+<<<<<<< HEAD
 	kbc->wakeup_key = pdata->wakeup_key;
 
 	err = request_irq(kbc->irq, tegra_kbc_isr,
 			  IRQF_NO_SUSPEND | IRQF_TRIGGER_HIGH, pdev->name, kbc);
+=======
+
+	err = request_irq(kbc->irq, tegra_kbc_isr, IRQF_TRIGGER_HIGH,
+			  pdev->name, kbc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err) {
 		dev_err(&pdev->dev, "failed to request keyboard IRQ\n");
 		goto err_put_clk;
@@ -799,9 +952,12 @@ static int __devinit tegra_kbc_probe(struct platform_device *pdev)
 	platform_set_drvdata(pdev, kbc);
 	device_init_wakeup(&pdev->dev, pdata->wakeup);
 
+<<<<<<< HEAD
 	if (!pdev->dev.platform_data)
 		matrix_keyboard_of_free_keymap(pdata->keymap_data);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 err_free_irq:
@@ -813,6 +969,7 @@ err_iounmap:
 err_free_mem_region:
 	release_mem_region(res->start, resource_size(res));
 err_free_mem:
+<<<<<<< HEAD
 	input_free_device(input_dev);
 	kfree(kbc);
 err_free_pdata:
@@ -820,6 +977,10 @@ err_free_pdata:
 		matrix_keyboard_of_free_keymap(pdata->keymap_data);
 		kfree(pdata);
 	}
+=======
+	input_free_device(kbc->idev);
+	kfree(kbc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }
@@ -829,8 +990,11 @@ static int __devexit tegra_kbc_remove(struct platform_device *pdev)
 	struct tegra_kbc *kbc = platform_get_drvdata(pdev);
 	struct resource *res;
 
+<<<<<<< HEAD
 	platform_set_drvdata(pdev, NULL);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	free_irq(kbc->irq, pdev);
 	clk_put(kbc->clk);
 
@@ -839,6 +1003,7 @@ static int __devexit tegra_kbc_remove(struct platform_device *pdev)
 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	release_mem_region(res->start, resource_size(res));
 
+<<<<<<< HEAD
 	/*
 	 * If we do not have platform data attached to the device we
 	 * allocated it ourselves and thus need to free it.
@@ -848,6 +1013,12 @@ static int __devexit tegra_kbc_remove(struct platform_device *pdev)
 
 	kfree(kbc);
 
+=======
+	kfree(kbc);
+
+	platform_set_drvdata(pdev, NULL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -857,6 +1028,7 @@ static int tegra_kbc_suspend(struct device *dev)
 	struct platform_device *pdev = to_platform_device(dev);
 	struct tegra_kbc *kbc = platform_get_drvdata(pdev);
 
+<<<<<<< HEAD
 	mutex_lock(&kbc->idev->mutex);
 	if (device_may_wakeup(&pdev->dev)) {
 		disable_irq(kbc->irq);
@@ -885,6 +1057,20 @@ static int tegra_kbc_suspend(struct device *dev)
 			tegra_kbc_stop(kbc);
 	}
 	mutex_unlock(&kbc->idev->mutex);
+=======
+	if (device_may_wakeup(&pdev->dev)) {
+		tegra_kbc_setup_wakekeys(kbc, true);
+		enable_irq_wake(kbc->irq);
+		/* Forcefully clear the interrupt status */
+		writel(0x7, kbc->mmio + KBC_INT_0);
+		msleep(30);
+	} else {
+		mutex_lock(&kbc->idev->mutex);
+		if (kbc->idev->users)
+			tegra_kbc_stop(kbc);
+		mutex_unlock(&kbc->idev->mutex);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -895,6 +1081,7 @@ static int tegra_kbc_resume(struct device *dev)
 	struct tegra_kbc *kbc = platform_get_drvdata(pdev);
 	int err = 0;
 
+<<<<<<< HEAD
 	mutex_lock(&kbc->idev->mutex);
 	if (device_may_wakeup(&pdev->dev)) {
 		disable_irq_wake(kbc->irq);
@@ -925,6 +1112,17 @@ static int tegra_kbc_resume(struct device *dev)
 			err = tegra_kbc_start(kbc);
 	}
 	mutex_unlock(&kbc->idev->mutex);
+=======
+	if (device_may_wakeup(&pdev->dev)) {
+		disable_irq_wake(kbc->irq);
+		tegra_kbc_setup_wakekeys(kbc, false);
+	} else {
+		mutex_lock(&kbc->idev->mutex);
+		if (kbc->idev->users)
+			err = tegra_kbc_start(kbc);
+		mutex_unlock(&kbc->idev->mutex);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }
@@ -932,12 +1130,15 @@ static int tegra_kbc_resume(struct device *dev)
 
 static SIMPLE_DEV_PM_OPS(tegra_kbc_pm_ops, tegra_kbc_suspend, tegra_kbc_resume);
 
+<<<<<<< HEAD
 static const struct of_device_id tegra_kbc_of_match[] = {
 	{ .compatible = "nvidia,tegra20-kbc", },
 	{ },
 };
 MODULE_DEVICE_TABLE(of, tegra_kbc_of_match);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver tegra_kbc_driver = {
 	.probe		= tegra_kbc_probe,
 	.remove		= __devexit_p(tegra_kbc_remove),
@@ -945,10 +1146,27 @@ static struct platform_driver tegra_kbc_driver = {
 		.name	= "tegra-kbc",
 		.owner  = THIS_MODULE,
 		.pm	= &tegra_kbc_pm_ops,
+<<<<<<< HEAD
 		.of_match_table = tegra_kbc_of_match,
 	},
 };
 module_platform_driver(tegra_kbc_driver);
+=======
+	},
+};
+
+static void __exit tegra_kbc_exit(void)
+{
+	platform_driver_unregister(&tegra_kbc_driver);
+}
+module_exit(tegra_kbc_exit);
+
+static int __init tegra_kbc_init(void)
+{
+	return platform_driver_register(&tegra_kbc_driver);
+}
+module_init(tegra_kbc_init);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Rakesh Iyer <riyer@nvidia.com>");

@@ -33,7 +33,11 @@
 	aliases {
 		ethernet0 = &EMAC0;
 		serial0 = &UART0;
+<<<<<<< HEAD
 		serial1 = &UART1;
+=======
+		//serial1 = &UART1; --gcl missing UART1 label
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	};
 
 	cpus {
@@ -52,7 +56,11 @@
 			d-cache-size = <32768>;
 			dcr-controller;
 			dcr-access-method = "native";
+<<<<<<< HEAD
 			next-level-cache = <&L2C0>;
+=======
+			//next-level-cache = <&L2C0>; --gcl missing L2C0 label
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		};
 	};
 
@@ -117,6 +125,7 @@
 		dcr-reg = <0x00c 0x002>;
 	};
 
+<<<<<<< HEAD
 	L2C0: l2c {
 		compatible = "ibm,l2-cache-apm82181", "ibm,l2-cache";
 		dcr-reg = <0x020 0x008
@@ -127,6 +136,8 @@
 		interrupts = <11 1>;
 	};
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	plb {
 		compatible = "ibm,plb4";
 		#address-cells = <2>;
@@ -192,6 +203,7 @@
 						reg = <0x001a0000 0x00060000>;
 					};
 				};
+<<<<<<< HEAD
 
 				ndfc@1,0 {
 					compatible = "ibm,ndfc";
@@ -239,6 +251,8 @@
 						};
 					};
 				};
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			};
 
 			UART0: serial@ef600300 {
@@ -252,6 +266,7 @@
 				interrupts = <0x1 0x4>;
 			};
 
+<<<<<<< HEAD
 			UART1: serial@ef600400 {
 				device_type = "serial";
 				compatible = "ns16550";
@@ -263,11 +278,14 @@
 				interrupts = <0x1 0x4>;
 			};
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			IIC0: i2c@ef600700 {
 				compatible = "ibm,iic";
 				reg = <0xef600700 0x00000014>;
 				interrupt-parent = <&UIC0>;
 				interrupts = <0x2 0x4>;
+<<<<<<< HEAD
 				#address-cells = <1>;
 				#size-cells = <0>;
 				rtc@68 {
@@ -282,6 +300,8 @@
 					interrupt-parent = <&UIC1>;
 					interrupts = <0x1E 0x8>; /* CPU_THERNAL_L */
 				};
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			};
 
 			IIC1: i2c@ef600800 {
@@ -304,7 +324,11 @@
 
 			EMAC0: ethernet@ef600c00 {
 				device_type = "network";
+<<<<<<< HEAD
 				compatible = "ibm,emac-apm821xx", "ibm,emac4sync";
+=======
+				compatible = "ibm,emac4sync";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				interrupt-parent = <&EMAC0>;
 				interrupts = <0x0 0x1>;
 				#interrupt-cells = <1>;
@@ -332,6 +356,7 @@
 			};
 		};
 
+<<<<<<< HEAD
 		PCIE0: pciex@d00000000 {
 			device_type = "pci";
 			#interrupt-cells = <1>;
@@ -373,5 +398,7 @@
 				0x0 0x0 0x0 0x3 &UIC3 0xe 0x4 /* swizzled int C */
 				0x0 0x0 0x0 0x4 &UIC3 0xf 0x4 /* swizzled int D */>;
 		};
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	};
 };

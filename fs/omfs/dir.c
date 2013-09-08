@@ -93,7 +93,11 @@ int omfs_make_empty(struct inode *inode, struct super_block *sb)
 
 	memset(bh->b_data, 0, sizeof(struct omfs_inode));
 
+<<<<<<< HEAD
 	if (S_ISDIR(inode->i_mode)) {
+=======
+	if (inode->i_mode & S_IFDIR) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		memset(&bh->b_data[OMFS_DIR_START], 0xff,
 			sbi->s_sys_blocksize - OMFS_DIR_START);
 	} else
@@ -255,7 +259,11 @@ static int omfs_remove(struct inode *dir, struct dentry *dentry)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int omfs_add_node(struct inode *dir, struct dentry *dentry, umode_t mode)
+=======
+static int omfs_add_node(struct inode *dir, struct dentry *dentry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 	struct inode *inode = omfs_new_inode(dir, mode);
@@ -279,12 +287,20 @@ out_free_inode:
 	return err;
 }
 
+<<<<<<< HEAD
 static int omfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+=======
+static int omfs_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return omfs_add_node(dir, dentry, mode | S_IFDIR);
 }
 
+<<<<<<< HEAD
 static int omfs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+=======
+static int omfs_create(struct inode *dir, struct dentry *dentry, int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct nameidata *nd)
 {
 	return omfs_add_node(dir, dentry, mode | S_IFREG);

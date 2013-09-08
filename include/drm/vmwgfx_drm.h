@@ -31,6 +31,10 @@
 #define DRM_VMW_MAX_SURFACE_FACES 6
 #define DRM_VMW_MAX_MIP_LEVELS 24
 
+<<<<<<< HEAD
+=======
+#define DRM_VMW_EXT_NAME_LEN 128
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRM_VMW_GET_PARAM            0
 #define DRM_VMW_ALLOC_DMABUF         1
@@ -47,6 +51,7 @@
 #define DRM_VMW_UNREF_SURFACE        10
 #define DRM_VMW_REF_SURFACE          11
 #define DRM_VMW_EXECBUF              12
+<<<<<<< HEAD
 #define DRM_VMW_GET_3D_CAP           13
 #define DRM_VMW_FENCE_WAIT           14
 #define DRM_VMW_FENCE_SIGNALED       15
@@ -55,6 +60,13 @@
 #define DRM_VMW_PRESENT              18
 #define DRM_VMW_PRESENT_READBACK     19
 #define DRM_VMW_UPDATE_LAYOUT        20
+=======
+#define DRM_VMW_FIFO_DEBUG           13
+#define DRM_VMW_FENCE_WAIT           14
+/* guarded by minor version >= 2 */
+#define DRM_VMW_UPDATE_LAYOUT        15
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*************************************************************************/
 /**
@@ -71,10 +83,17 @@
 #define DRM_VMW_PARAM_NUM_STREAMS      0
 #define DRM_VMW_PARAM_NUM_FREE_STREAMS 1
 #define DRM_VMW_PARAM_3D               2
+<<<<<<< HEAD
 #define DRM_VMW_PARAM_HW_CAPS          3
 #define DRM_VMW_PARAM_FIFO_CAPS        4
 #define DRM_VMW_PARAM_MAX_FB_SIZE      5
 #define DRM_VMW_PARAM_FIFO_HW_VERSION  6
+=======
+#define DRM_VMW_PARAM_FIFO_OFFSET      3
+#define DRM_VMW_PARAM_HW_CAPS          4
+#define DRM_VMW_PARAM_FIFO_CAPS        5
+#define DRM_VMW_PARAM_MAX_FB_SIZE      6
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * struct drm_vmw_getparam_arg
@@ -93,6 +112,52 @@ struct drm_vmw_getparam_arg {
 
 /*************************************************************************/
 /**
+<<<<<<< HEAD
+=======
+ * DRM_VMW_EXTENSION - Query device extensions.
+ */
+
+/**
+ * struct drm_vmw_extension_rep
+ *
+ * @exists: The queried extension exists.
+ * @driver_ioctl_offset: Ioctl number of the first ioctl in the extension.
+ * @driver_sarea_offset: Offset to any space in the DRI SAREA
+ * used by the extension.
+ * @major: Major version number of the extension.
+ * @minor: Minor version number of the extension.
+ * @pl: Patch level version number of the extension.
+ *
+ * Output argument to the DRM_VMW_EXTENSION Ioctl.
+ */
+
+struct drm_vmw_extension_rep {
+	int32_t exists;
+	uint32_t driver_ioctl_offset;
+	uint32_t driver_sarea_offset;
+	uint32_t major;
+	uint32_t minor;
+	uint32_t pl;
+	uint32_t pad64;
+};
+
+/**
+ * union drm_vmw_extension_arg
+ *
+ * @extension - Ascii name of the extension to be queried. //In
+ * @rep - Reply as defined above. //Out
+ *
+ * Argument to the DRM_VMW_EXTENSION Ioctl.
+ */
+
+union drm_vmw_extension_arg {
+	char extension[DRM_VMW_EXT_NAME_LEN];
+	struct drm_vmw_extension_rep rep;
+};
+
+/*************************************************************************/
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * DRM_VMW_CREATE_CONTEXT - Create a host context.
  *
  * Allocates a device unique context id, and queues a create context command
@@ -251,7 +316,11 @@ union drm_vmw_surface_reference_arg {
  * DRM_VMW_EXECBUF
  *
  * Submit a command buffer for execution on the host, and return a
+<<<<<<< HEAD
  * fence seqno that when signaled, indicates that the command buffer has
+=======
+ * fence sequence that when signaled, indicates that the command buffer has
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * executed.
  */
 
@@ -273,20 +342,30 @@ union drm_vmw_surface_reference_arg {
  * Argument to the DRM_VMW_EXECBUF Ioctl.
  */
 
+<<<<<<< HEAD
 #define DRM_VMW_EXECBUF_VERSION 1
+=======
+#define DRM_VMW_EXECBUF_VERSION 0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct drm_vmw_execbuf_arg {
 	uint64_t commands;
 	uint32_t command_size;
 	uint32_t throttle_us;
 	uint64_t fence_rep;
+<<<<<<< HEAD
 	uint32_t version;
 	uint32_t flags;
+=======
+	 uint32_t version;
+	 uint32_t flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
  * struct drm_vmw_fence_rep
  *
+<<<<<<< HEAD
  * @handle: Fence object handle for fence associated with a command submission.
  * @mask: Fence flags relevant for this fence object.
  * @seqno: Fence sequence number in fifo. A fence object with a lower
@@ -297,6 +376,9 @@ struct drm_vmw_execbuf_arg {
  * @passed_seqno: The highest seqno number processed by the hardware
  * so far. This can be used to mark user-space fence objects as signaled, and
  * to determine whether a fence seqno might be stale.
+=======
+ * @fence_seq: Fence sequence associated with a command submission.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @error: This member should've been set to -EFAULT on submission.
  * The following actions should be take on completion:
  * error == -EFAULT: Fence communication failed. The host is synchronized.
@@ -310,12 +392,18 @@ struct drm_vmw_execbuf_arg {
  */
 
 struct drm_vmw_fence_rep {
+<<<<<<< HEAD
 	uint32_t handle;
 	uint32_t mask;
 	uint32_t seqno;
 	uint32_t passed_seqno;
 	uint32_t pad64;
 	int32_t error;
+=======
+	uint64_t fence_seq;
+	int32_t error;
+	uint32_t pad64;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*************************************************************************/
@@ -406,6 +494,42 @@ struct drm_vmw_unref_dmabuf_arg {
 
 /*************************************************************************/
 /**
+<<<<<<< HEAD
+=======
+ * DRM_VMW_FIFO_DEBUG - Get last FIFO submission.
+ *
+ * This IOCTL copies the last FIFO submission directly out of the FIFO buffer.
+ */
+
+/**
+ * struct drm_vmw_fifo_debug_arg
+ *
+ * @debug_buffer: User space address of a debug_buffer cast to an uint64_t //In
+ * @debug_buffer_size: Size in bytes of debug buffer //In
+ * @used_size: Number of bytes copied to the buffer // Out
+ * @did_not_fit: Boolean indicating that the fifo contents did not fit. //Out
+ *
+ * Argument to the DRM_VMW_FIFO_DEBUG Ioctl.
+ */
+
+struct drm_vmw_fifo_debug_arg {
+	uint64_t debug_buffer;
+	uint32_t debug_buffer_size;
+	uint32_t used_size;
+	int32_t did_not_fit;
+	uint32_t pad64;
+};
+
+struct drm_vmw_fence_wait_arg {
+	uint64_t sequence;
+	uint64_t kernel_cookie;
+	int32_t cookie_valid;
+	int32_t pad64;
+};
+
+/*************************************************************************/
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * DRM_VMW_CONTROL_STREAM - Control overlays, aka streams.
  *
  * This IOCTL controls the overlay units of the svga device.
@@ -528,6 +652,7 @@ struct drm_vmw_stream_arg {
 
 /*************************************************************************/
 /**
+<<<<<<< HEAD
  * DRM_VMW_GET_3D_CAP
  *
  * Read 3D capabilities from the FIFO
@@ -770,17 +895,32 @@ struct drm_vmw_present_readback_arg {
  *
  * Updates the preferred modes and connection status for connectors. The
  * command consists of one drm_vmw_update_layout_arg pointing to an array
+=======
+ * DRM_VMW_UPDATE_LAYOUT - Update layout
+ *
+ * Updates the preferred modes and connection status for connectors. The
+ * command conisits of one drm_vmw_update_layout_arg pointing out a array
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * of num_outputs drm_vmw_rect's.
  */
 
 /**
  * struct drm_vmw_update_layout_arg
  *
+<<<<<<< HEAD
  * @num_outputs: number of active connectors
  * @rects: pointer to array of drm_vmw_rect cast to an uint64_t
  *
  * Input argument to the DRM_VMW_UPDATE_LAYOUT Ioctl.
  */
+=======
+ * @num_outputs: number of active
+ * @rects: pointer to array of drm_vmw_rect
+ *
+ * Input argument to the DRM_VMW_UPDATE_LAYOUT Ioctl.
+ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct drm_vmw_update_layout_arg {
 	uint32_t num_outputs;
 	uint32_t pad64;

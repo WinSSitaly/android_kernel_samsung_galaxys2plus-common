@@ -7,15 +7,20 @@
  */
 
 #include <linux/pfn.h>
+<<<<<<< HEAD
 #include <linux/suspend.h>
 #include <linux/mm.h>
 #include <asm/ctl_reg.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * References to section boundaries
  */
 extern const void __nosave_begin, __nosave_end;
 
+<<<<<<< HEAD
 /*
  * The restore of the saved pages in an hibernation image will set
  * the change and referenced bits in the storage key for each page.
@@ -133,6 +138,8 @@ void page_key_write(void *address)
 	page_key_rx = 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int pfn_is_nosave(unsigned long pfn)
 {
 	unsigned long nosave_begin_pfn = PFN_DOWN(__pa(&__nosave_begin));

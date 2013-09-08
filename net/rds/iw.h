@@ -1,7 +1,10 @@
 #ifndef _RDS_IW_H
 #define _RDS_IW_H
 
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <rdma/ib_verbs.h>
 #include <rdma/rdma_cm.h>
 #include "rds.h"

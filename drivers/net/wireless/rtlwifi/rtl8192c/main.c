@@ -1,6 +1,10 @@
 /******************************************************************************
  *
+<<<<<<< HEAD
  * Copyright(c) 2009-2012  Realtek Corporation.
+=======
+ * Copyright(c) 2009-2010  Realtek Corporation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
@@ -28,7 +32,10 @@
  *****************************************************************************/
 
 #include "../wifi.h"
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 MODULE_AUTHOR("lizhaoming	<chaoming_li@realsil.com.cn>");

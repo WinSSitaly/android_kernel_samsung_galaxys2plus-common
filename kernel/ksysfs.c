@@ -11,11 +11,18 @@
 #include <linux/kobject.h>
 #include <linux/string.h>
 #include <linux/sysfs.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/init.h>
 #include <linux/kexec.h>
 #include <linux/profile.h>
 #include <linux/stat.h>
+=======
+#include <linux/module.h>
+#include <linux/init.h>
+#include <linux/kexec.h>
+#include <linux/profile.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/capability.h>
 

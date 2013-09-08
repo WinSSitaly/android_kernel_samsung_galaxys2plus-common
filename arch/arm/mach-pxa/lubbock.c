@@ -11,7 +11,10 @@
  *  it under the terms of the GNU General Public License version 2 as
  *  published by the Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
@@ -43,6 +46,10 @@
 #include <asm/hardware/sa1111.h>
 
 #include <mach/pxa25x.h>
+<<<<<<< HEAD
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/audio.h>
 #include <mach/lubbock.h>
 #include <mach/udc.h>
@@ -170,8 +177,13 @@ static void __init lubbock_init_irq(void)
 		set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
 	}
 
+<<<<<<< HEAD
 	irq_set_chained_handler(PXA_GPIO_TO_IRQ(0), lubbock_irq_handler);
 	irq_set_irq_type(PXA_GPIO_TO_IRQ(0), IRQ_TYPE_EDGE_FALLING);
+=======
+	irq_set_chained_handler(IRQ_GPIO(0), lubbock_irq_handler);
+	irq_set_irq_type(IRQ_GPIO(0), IRQ_TYPE_EDGE_FALLING);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_PM
@@ -223,7 +235,10 @@ static struct resource sa1111_resources[] = {
 
 static struct sa1111_platform_data sa1111_info = {
 	.irq_base	= LUBBOCK_SA1111_IRQ_BASE,
+<<<<<<< HEAD
 	.disable_devs	= SA1111_DEVID_SAC,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device sa1111_device = {
@@ -554,8 +569,13 @@ MACHINE_START(LUBBOCK, "Intel DBPXA250 Development Platform (aka Lubbock)")
 	.map_io		= lubbock_map_io,
 	.nr_irqs	= LUBBOCK_NR_IRQS,
 	.init_irq	= lubbock_init_irq,
+<<<<<<< HEAD
 	.handle_irq	= pxa25x_handle_irq,
 	.timer		= &pxa_timer,
 	.init_machine	= lubbock_init,
 	.restart	= pxa_restart,
+=======
+	.timer		= &pxa_timer,
+	.init_machine	= lubbock_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

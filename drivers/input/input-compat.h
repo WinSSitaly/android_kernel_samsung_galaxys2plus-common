@@ -67,7 +67,11 @@ struct ff_effect_compat {
 
 static inline size_t input_event_size(void)
 {
+<<<<<<< HEAD
 	return (INPUT_COMPAT_TEST && !COMPAT_USE_64BIT_TIME) ?
+=======
+	return INPUT_COMPAT_TEST ?
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sizeof(struct input_event_compat) : sizeof(struct input_event);
 }
 

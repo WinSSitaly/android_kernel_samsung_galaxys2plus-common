@@ -10,7 +10,10 @@
  * published by the Free Software Foundation.
  */
 
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
@@ -79,6 +82,12 @@ static int hp6xxled_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+/* work with hotplug and coldplug */
+MODULE_ALIAS("platform:hp6xx-led");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver hp6xxled_driver = {
 	.probe		= hp6xxled_probe,
 	.remove		= hp6xxled_remove,
@@ -88,9 +97,27 @@ static struct platform_driver hp6xxled_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(hp6xxled_driver);
+=======
+static int __init hp6xxled_init(void)
+{
+	return platform_driver_register(&hp6xxled_driver);
+}
+
+static void __exit hp6xxled_exit(void)
+{
+	platform_driver_unregister(&hp6xxled_driver);
+}
+
+module_init(hp6xxled_init);
+module_exit(hp6xxled_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Kristoffer Ericson <kristoffer.ericson@gmail.com>");
 MODULE_DESCRIPTION("HP Jornada 6xx LED driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_ALIAS("platform:hp6xx-led");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

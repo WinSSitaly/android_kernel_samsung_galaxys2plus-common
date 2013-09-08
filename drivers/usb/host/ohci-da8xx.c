@@ -322,7 +322,11 @@ static int usb_hcd_da8xx_probe(const struct hc_driver *driver,
 		goto err2;
 	}
 	hcd->rsrc_start = mem->start;
+<<<<<<< HEAD
 	hcd->rsrc_len = resource_size(mem);
+=======
+	hcd->rsrc_len = mem->end - mem->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len, hcd_name)) {
 		dev_dbg(&pdev->dev, "request_mem_region failed\n");
@@ -344,7 +348,11 @@ static int usb_hcd_da8xx_probe(const struct hc_driver *driver,
 		error = -ENODEV;
 		goto err4;
 	}
+<<<<<<< HEAD
 	error = usb_add_hcd(hcd, irq, 0);
+=======
+	error = usb_add_hcd(hcd, irq, IRQF_DISABLED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error)
 		goto err4;
 

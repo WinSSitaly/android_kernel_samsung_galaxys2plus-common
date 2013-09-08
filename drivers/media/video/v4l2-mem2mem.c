@@ -97,12 +97,20 @@ void *v4l2_m2m_next_buf(struct v4l2_m2m_queue_ctx *q_ctx)
 
 	spin_lock_irqsave(&q_ctx->rdy_spinlock, flags);
 
+<<<<<<< HEAD
 	if (list_empty(&q_ctx->rdy_queue)) {
 		spin_unlock_irqrestore(&q_ctx->rdy_spinlock, flags);
 		return NULL;
 	}
 
 	b = list_entry(q_ctx->rdy_queue.next, struct v4l2_m2m_buffer, list);
+=======
+	if (list_empty(&q_ctx->rdy_queue))
+		goto end;
+
+	b = list_entry(q_ctx->rdy_queue.next, struct v4l2_m2m_buffer, list);
+end:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&q_ctx->rdy_spinlock, flags);
 	return &b->vb;
 }
@@ -118,6 +126,7 @@ void *v4l2_m2m_buf_remove(struct v4l2_m2m_queue_ctx *q_ctx)
 	unsigned long flags;
 
 	spin_lock_irqsave(&q_ctx->rdy_spinlock, flags);
+<<<<<<< HEAD
 	if (list_empty(&q_ctx->rdy_queue)) {
 		spin_unlock_irqrestore(&q_ctx->rdy_spinlock, flags);
 		return NULL;
@@ -125,6 +134,14 @@ void *v4l2_m2m_buf_remove(struct v4l2_m2m_queue_ctx *q_ctx)
 	b = list_entry(q_ctx->rdy_queue.next, struct v4l2_m2m_buffer, list);
 	list_del(&b->list);
 	q_ctx->num_rdy--;
+=======
+	if (!list_empty(&q_ctx->rdy_queue)) {
+		b = list_entry(q_ctx->rdy_queue.next, struct v4l2_m2m_buffer,
+				list);
+		list_del(&b->list);
+		q_ctx->num_rdy--;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&q_ctx->rdy_spinlock, flags);
 
 	return &b->vb;

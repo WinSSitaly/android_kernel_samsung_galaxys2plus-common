@@ -7,8 +7,11 @@
  */
 #include <linux/seq_file.h>
 #include <linux/debugfs.h>
+<<<<<<< HEAD
 #include <linux/uaccess.h>
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/debug.h>
 #include "qdio_debug.h"
 #include "qdio.h"
@@ -56,17 +59,27 @@ static int qstat_show(struct seq_file *m, void *v)
 	if (!q)
 		return 0;
 
+<<<<<<< HEAD
 	seq_printf(m, "Timestamp: %Lx  Last AI: %Lx\n",
 		   q->timestamp, last_ai_time);
 	seq_printf(m, "nr_used: %d  ftc: %d  last_move: %d\n",
 		   atomic_read(&q->nr_buf_used),
+=======
+	seq_printf(m, "DSCI: %d   nr_used: %d\n",
+		   *(u32 *)q->irq_ptr->dsci, atomic_read(&q->nr_buf_used));
+	seq_printf(m, "ftc: %d  last_move: %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   q->first_to_check, q->last_move);
 	if (q->is_input_q) {
 		seq_printf(m, "polling: %d  ack start: %d  ack count: %d\n",
 			   q->u.in.polling, q->u.in.ack_start,
 			   q->u.in.ack_count);
+<<<<<<< HEAD
 		seq_printf(m, "DSCI: %d   IRQs disabled: %u\n",
 			   *(u32 *)q->irq_ptr->dsci,
+=======
+		seq_printf(m, "IRQs disabled: %u\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   test_bit(QDIO_QUEUE_IRQS_DISABLED,
 			   &q->u.in.queue_irq_state));
 	}
@@ -80,9 +93,12 @@ static int qstat_show(struct seq_file *m, void *v)
 		case SLSB_P_OUTPUT_NOT_INIT:
 			seq_printf(m, "N");
 			break;
+<<<<<<< HEAD
 		case SLSB_P_OUTPUT_PENDING:
 			seq_printf(m, "P");
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case SLSB_P_INPUT_PRIMED:
 		case SLSB_CU_OUTPUT_PRIMED:
 			seq_printf(m, "+");
@@ -195,13 +211,28 @@ static ssize_t qperf_seq_write(struct file *file, const char __user *ubuf,
 	struct qdio_irq *irq_ptr = seq->private;
 	struct qdio_q *q;
 	unsigned long val;
+<<<<<<< HEAD
+=======
+	char buf[8];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret, i;
 
 	if (!irq_ptr)
 		return 0;
+<<<<<<< HEAD
 
 	ret = kstrtoul_from_user(ubuf, count, 10, &val);
 	if (ret)
+=======
+	if (count >= sizeof(buf))
+		return -EINVAL;
+	if (copy_from_user(&buf, ubuf, count))
+		return -EFAULT;
+	buf[count] = 0;
+
+	ret = strict_strtoul(buf, 10, &val);
+	if (ret < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 
 	switch (val) {

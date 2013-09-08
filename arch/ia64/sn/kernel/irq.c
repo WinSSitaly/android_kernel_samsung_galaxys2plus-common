@@ -112,6 +112,11 @@ static void sn_ack_irq(struct irq_data *data)
 	irq_move_irq(data);
 }
 
+<<<<<<< HEAD
+=======
+static void sn_irq_info_free(struct rcu_head *head);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct sn_irq_info *sn_retarget_vector(struct sn_irq_info *sn_irq_info,
 				       nasid_t nasid, int slice)
 {
@@ -150,11 +155,20 @@ struct sn_irq_info *sn_retarget_vector(struct sn_irq_info *sn_irq_info,
 	 * PROM does not support SAL_INTR_REDIRECT, or it failed.
 	 * Revert to old method.
 	 */
+<<<<<<< HEAD
 	new_irq_info = kmemdup(sn_irq_info, sizeof(struct sn_irq_info),
 			       GFP_ATOMIC);
 	if (new_irq_info == NULL)
 		return NULL;
 
+=======
+	new_irq_info = kmalloc(sizeof(struct sn_irq_info), GFP_ATOMIC);
+	if (new_irq_info == NULL)
+		return NULL;
+
+	memcpy(new_irq_info, sn_irq_info, sizeof(struct sn_irq_info));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Free the old PROM new_irq_info structure */
 	sn_intr_free(local_nasid, local_widget, new_irq_info);
 	unregister_intr_pda(new_irq_info);
@@ -174,7 +188,11 @@ struct sn_irq_info *sn_retarget_vector(struct sn_irq_info *sn_irq_info,
 	spin_lock(&sn_irq_info_lock);
 	list_replace_rcu(&sn_irq_info->list, &new_irq_info->list);
 	spin_unlock(&sn_irq_info_lock);
+<<<<<<< HEAD
 	kfree_rcu(sn_irq_info, rcu);
+=======
+	call_rcu(&sn_irq_info->rcu, sn_irq_info_free);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 finish_up:
@@ -335,6 +353,17 @@ static void unregister_intr_pda(struct sn_irq_info *sn_irq_info)
 	rcu_read_unlock();
 }
 
+<<<<<<< HEAD
+=======
+static void sn_irq_info_free(struct rcu_head *head)
+{
+	struct sn_irq_info *sn_irq_info;
+
+	sn_irq_info = container_of(head, struct sn_irq_info, rcu);
+	kfree(sn_irq_info);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void sn_irq_fixup(struct pci_dev *pci_dev, struct sn_irq_info *sn_irq_info)
 {
 	nasid_t nasid = sn_irq_info->irq_nasid;
@@ -352,8 +381,11 @@ void sn_irq_fixup(struct pci_dev *pci_dev, struct sn_irq_info *sn_irq_info)
 	spin_lock(&sn_irq_info_lock);
 	list_add_rcu(&sn_irq_info->list, sn_irq_lh[sn_irq_info->irq_irq]);
 	reserve_irq_vector(sn_irq_info->irq_irq);
+<<<<<<< HEAD
 	if (sn_irq_info->irq_int_bit != -1)
 		irq_set_handler(sn_irq_info->irq_irq, handle_level_irq);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&sn_irq_info_lock);
 
 	register_intr_pda(sn_irq_info);
@@ -390,7 +422,11 @@ void sn_irq_unfixup(struct pci_dev *pci_dev)
 	spin_unlock(&sn_irq_info_lock);
 	if (list_empty(sn_irq_lh[sn_irq_info->irq_irq]))
 		free_irq_vector(sn_irq_info->irq_irq);
+<<<<<<< HEAD
 	kfree_rcu(sn_irq_info, rcu);
+=======
+	call_rcu(&sn_irq_info->rcu, sn_irq_info_free);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pci_dev_put(pci_dev);
 
 }

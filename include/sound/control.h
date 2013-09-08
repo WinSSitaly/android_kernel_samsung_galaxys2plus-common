@@ -40,7 +40,11 @@ struct snd_kcontrol_new {
 	snd_ctl_elem_iface_t iface;	/* interface identifier */
 	unsigned int device;		/* device/client number */
 	unsigned int subdevice;		/* subdevice (substream) number */
+<<<<<<< HEAD
 	const unsigned char *name;	/* ASCII name of item */
+=======
+	unsigned char *name;		/* ASCII name of item */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int index;		/* index of item */
 	unsigned int access;		/* access rights */
 	unsigned int count;		/* count of same elements */
@@ -227,6 +231,7 @@ snd_ctl_add_slave_uncached(struct snd_kcontrol *master,
 	return _snd_ctl_add_slave(master, slave, SND_CTL_SLAVE_NEED_UPDATE);
 }
 
+<<<<<<< HEAD
 int snd_ctl_add_vmaster_hook(struct snd_kcontrol *kctl,
 			     void (*hook)(void *private_data, int),
 			     void *private_data);
@@ -240,4 +245,6 @@ snd_kctl_jack_new(const char *name, int idx, void *private_data);
 void snd_kctl_jack_report(struct snd_card *card,
 			  struct snd_kcontrol *kctl, bool status);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* __SOUND_CONTROL_H */

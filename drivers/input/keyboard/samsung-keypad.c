@@ -20,6 +20,7 @@
 #include <linux/io.h>
 #include <linux/module.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/pm.h>
 #include <linux/pm_runtime.h>
 #include <linux/slab.h>
@@ -27,6 +28,11 @@
 #include <linux/of_gpio.h>
 #include <linux/sched.h>
 #include <linux/input/samsung-keypad.h>
+=======
+#include <linux/slab.h>
+#include <linux/sched.h>
+#include <plat/keypad.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define SAMSUNG_KEYIFCON			0x00
 #define SAMSUNG_KEYIFSTSCLR			0x04
@@ -67,18 +73,26 @@ enum samsung_keypad_type {
 
 struct samsung_keypad {
 	struct input_dev *input_dev;
+<<<<<<< HEAD
 	struct platform_device *pdev;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct clk *clk;
 	void __iomem *base;
 	wait_queue_head_t wait;
 	bool stopped;
+<<<<<<< HEAD
 	bool wake_enabled;
 	int irq;
 	enum samsung_keypad_type type;
+=======
+	int irq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int row_shift;
 	unsigned int rows;
 	unsigned int cols;
 	unsigned int row_state[SAMSUNG_MAX_COLS];
+<<<<<<< HEAD
 #ifdef CONFIG_OF
 	int row_gpios[SAMSUNG_MAX_ROWS];
 	int col_gpios[SAMSUNG_MAX_COLS];
@@ -89,11 +103,33 @@ struct samsung_keypad {
 static void samsung_keypad_scan(struct samsung_keypad *keypad,
 				unsigned int *row_state)
 {
+=======
+	unsigned short keycodes[];
+};
+
+static int samsung_keypad_is_s5pv210(struct device *dev)
+{
+	struct platform_device *pdev = to_platform_device(dev);
+	enum samsung_keypad_type type =
+		platform_get_device_id(pdev)->driver_data;
+
+	return type == KEYPAD_TYPE_S5PV210;
+}
+
+static void samsung_keypad_scan(struct samsung_keypad *keypad,
+				unsigned int *row_state)
+{
+	struct device *dev = keypad->input_dev->dev.parent;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int col;
 	unsigned int val;
 
 	for (col = 0; col < keypad->cols; col++) {
+<<<<<<< HEAD
 		if (keypad->type == KEYPAD_TYPE_S5PV210) {
+=======
+		if (samsung_keypad_is_s5pv210(dev)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			val = S5PV210_KEYIFCOLEN_MASK;
 			val &= ~(1 << col) << 8;
 		} else {
@@ -159,8 +195,11 @@ static irqreturn_t samsung_keypad_irq(int irq, void *dev_id)
 	unsigned int val;
 	bool key_down;
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(&keypad->pdev->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do {
 		val = readl(keypad->base + SAMSUNG_KEYIFSTSCLR);
 		/* Clear interrupt. */
@@ -175,8 +214,11 @@ static irqreturn_t samsung_keypad_irq(int irq, void *dev_id)
 
 	} while (key_down && !keypad->stopped);
 
+<<<<<<< HEAD
 	pm_runtime_put(&keypad->pdev->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return IRQ_HANDLED;
 }
 
@@ -184,8 +226,11 @@ static void samsung_keypad_start(struct samsung_keypad *keypad)
 {
 	unsigned int val;
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(&keypad->pdev->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Tell IRQ thread that it may poll the device. */
 	keypad->stopped = false;
 
@@ -198,16 +243,22 @@ static void samsung_keypad_start(struct samsung_keypad *keypad)
 
 	/* KEYIFCOL reg clear. */
 	writel(0, keypad->base + SAMSUNG_KEYIFCOL);
+<<<<<<< HEAD
 
 	pm_runtime_put(&keypad->pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void samsung_keypad_stop(struct samsung_keypad *keypad)
 {
 	unsigned int val;
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(&keypad->pdev->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Signal IRQ thread to stop polling and disable the handler. */
 	keypad->stopped = true;
 	wake_up(&keypad->wait);
@@ -228,8 +279,11 @@ static void samsung_keypad_stop(struct samsung_keypad *keypad)
 	 * re-enable the handler.
 	 */
 	enable_irq(keypad->irq);
+<<<<<<< HEAD
 
 	pm_runtime_put(&keypad->pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int samsung_keypad_open(struct input_dev *input_dev)
@@ -248,6 +302,7 @@ static void samsung_keypad_close(struct input_dev *input_dev)
 	samsung_keypad_stop(keypad);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_OF
 static struct samsung_keypad_platdata *samsung_keypad_parse_dt(
 				struct device *dev)
@@ -368,6 +423,8 @@ static void samsung_keypad_dt_gpio_free(struct samsung_keypad *keypad)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit samsung_keypad_probe(struct platform_device *pdev)
 {
 	const struct samsung_keypad_platdata *pdata;
@@ -379,10 +436,14 @@ static int __devinit samsung_keypad_probe(struct platform_device *pdev)
 	unsigned int keymap_size;
 	int error;
 
+<<<<<<< HEAD
 	if (pdev->dev.of_node)
 		pdata = samsung_keypad_parse_dt(&pdev->dev);
 	else
 		pdata = pdev->dev.platform_data;
+=======
+	pdata = pdev->dev.platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!pdata) {
 		dev_err(&pdev->dev, "no platform data defined\n");
 		return -EINVAL;
@@ -434,6 +495,7 @@ static int __devinit samsung_keypad_probe(struct platform_device *pdev)
 	}
 
 	keypad->input_dev = input_dev;
+<<<<<<< HEAD
 	keypad->pdev = pdev;
 	keypad->row_shift = row_shift;
 	keypad->rows = pdata->rows;
@@ -451,6 +513,13 @@ static int __devinit samsung_keypad_probe(struct platform_device *pdev)
 		keypad->type = platform_get_device_id(pdev)->driver_data;
 	}
 
+=======
+	keypad->row_shift = row_shift;
+	keypad->rows = pdata->rows;
+	keypad->cols = pdata->cols;
+	init_waitqueue_head(&keypad->wait);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	input_dev->name = pdev->name;
 	input_dev->id.bustype = BUS_HOST;
 	input_dev->dev.parent = &pdev->dev;
@@ -485,29 +554,42 @@ static int __devinit samsung_keypad_probe(struct platform_device *pdev)
 		goto err_put_clk;
 	}
 
+<<<<<<< HEAD
 	device_init_wakeup(&pdev->dev, pdata->wakeup);
 	platform_set_drvdata(pdev, keypad);
 	pm_runtime_enable(&pdev->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	error = input_register_device(keypad->input_dev);
 	if (error)
 		goto err_free_irq;
 
+<<<<<<< HEAD
 	if (pdev->dev.of_node) {
 		devm_kfree(&pdev->dev, (void *)pdata->keymap_data->keymap);
 		devm_kfree(&pdev->dev, (void *)pdata->keymap_data);
 		devm_kfree(&pdev->dev, (void *)pdata);
 	}
+=======
+	device_init_wakeup(&pdev->dev, pdata->wakeup);
+	platform_set_drvdata(pdev, keypad);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 err_free_irq:
 	free_irq(keypad->irq, keypad);
+<<<<<<< HEAD
 	pm_runtime_disable(&pdev->dev);
 	device_init_wakeup(&pdev->dev, 0);
 	platform_set_drvdata(pdev, NULL);
 err_put_clk:
 	clk_put(keypad->clk);
 	samsung_keypad_dt_gpio_free(keypad);
+=======
+err_put_clk:
+	clk_put(keypad->clk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_unmap_base:
 	iounmap(keypad->base);
 err_free_mem:
@@ -521,7 +603,10 @@ static int __devexit samsung_keypad_remove(struct platform_device *pdev)
 {
 	struct samsung_keypad *keypad = platform_get_drvdata(pdev);
 
+<<<<<<< HEAD
 	pm_runtime_disable(&pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	device_init_wakeup(&pdev->dev, 0);
 	platform_set_drvdata(pdev, NULL);
 
@@ -534,7 +619,10 @@ static int __devexit samsung_keypad_remove(struct platform_device *pdev)
 	free_irq(keypad->irq, keypad);
 
 	clk_put(keypad->clk);
+<<<<<<< HEAD
 	samsung_keypad_dt_gpio_free(keypad);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	iounmap(keypad->base);
 	kfree(keypad);
@@ -542,6 +630,7 @@ static int __devexit samsung_keypad_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM_RUNTIME
 static int samsung_keypad_runtime_suspend(struct device *dev)
 {
@@ -593,6 +682,13 @@ static int samsung_keypad_runtime_resume(struct device *dev)
 static void samsung_keypad_toggle_wakeup(struct samsung_keypad *keypad,
 					 bool enable)
 {
+=======
+#ifdef CONFIG_PM
+static void samsung_keypad_toggle_wakeup(struct samsung_keypad *keypad,
+					 bool enable)
+{
+	struct device *dev = keypad->input_dev->dev.parent;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int val;
 
 	clk_enable(keypad->clk);
@@ -600,11 +696,19 @@ static void samsung_keypad_toggle_wakeup(struct samsung_keypad *keypad,
 	val = readl(keypad->base + SAMSUNG_KEYIFCON);
 	if (enable) {
 		val |= SAMSUNG_KEYIFCON_WAKEUPEN;
+<<<<<<< HEAD
 		if (device_may_wakeup(&keypad->pdev->dev))
 			enable_irq_wake(keypad->irq);
 	} else {
 		val &= ~SAMSUNG_KEYIFCON_WAKEUPEN;
 		if (device_may_wakeup(&keypad->pdev->dev))
+=======
+		if (device_may_wakeup(dev))
+			enable_irq_wake(keypad->irq);
+	} else {
+		val &= ~SAMSUNG_KEYIFCON_WAKEUPEN;
+		if (device_may_wakeup(dev))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			disable_irq_wake(keypad->irq);
 	}
 	writel(val, keypad->base + SAMSUNG_KEYIFCON);
@@ -647,6 +751,7 @@ static int samsung_keypad_resume(struct device *dev)
 
 	return 0;
 }
+<<<<<<< HEAD
 #endif
 
 static const struct dev_pm_ops samsung_keypad_pm_ops = {
@@ -664,6 +769,13 @@ static const struct of_device_id samsung_keypad_dt_match[] = {
 MODULE_DEVICE_TABLE(of, samsung_keypad_dt_match);
 #else
 #define samsung_keypad_dt_match NULL
+=======
+
+static const struct dev_pm_ops samsung_keypad_pm_ops = {
+	.suspend	= samsung_keypad_suspend,
+	.resume		= samsung_keypad_resume,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 static struct platform_device_id samsung_keypad_driver_ids[] = {
@@ -684,14 +796,39 @@ static struct platform_driver samsung_keypad_driver = {
 	.driver		= {
 		.name	= "samsung-keypad",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.of_match_table = samsung_keypad_dt_match,
 		.pm	= &samsung_keypad_pm_ops,
 	},
 	.id_table	= samsung_keypad_driver_ids,
 };
 module_platform_driver(samsung_keypad_driver);
+=======
+#ifdef CONFIG_PM
+		.pm	= &samsung_keypad_pm_ops,
+#endif
+	},
+	.id_table	= samsung_keypad_driver_ids,
+};
+
+static int __init samsung_keypad_init(void)
+{
+	return platform_driver_register(&samsung_keypad_driver);
+}
+module_init(samsung_keypad_init);
+
+static void __exit samsung_keypad_exit(void)
+{
+	platform_driver_unregister(&samsung_keypad_driver);
+}
+module_exit(samsung_keypad_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Samsung keypad driver");
 MODULE_AUTHOR("Joonyoung Shim <jy0922.shim@samsung.com>");
 MODULE_AUTHOR("Donghwa Lee <dh09.lee@samsung.com>");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+MODULE_ALIAS("platform:samsung-keypad");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

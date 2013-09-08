@@ -11,8 +11,11 @@
 
 #include <linux/clk.h>
 #include <linux/errno.h>
+<<<<<<< HEAD
 #include <linux/device.h>
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/interrupt.h>
 #include <linux/irq.h>
 #include <linux/debugfs.h>
@@ -21,6 +24,7 @@
 #include <linux/list.h>
 #include <linux/module.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/irqdomain.h>
 #include <linux/of_address.h>
 #include <linux/of_irq.h>
@@ -28,18 +32,31 @@
 
 #include <mach/hardware.h>
 #include <mach/at91_pio.h>
+=======
+
+#include <mach/hardware.h>
+#include <mach/at91_pio.h>
+#include <mach/gpio.h>
+
+#include <asm/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "generic.h"
 
 struct at91_gpio_chip {
 	struct gpio_chip	chip;
 	struct at91_gpio_chip	*next;		/* Bank sharing same clock */
+<<<<<<< HEAD
 	int			pioc_hwirq;	/* PIO bank interrupt identifier on AIC */
 	int			pioc_virq;	/* PIO bank Linux virtual interrupt */
 	int			pioc_idx;	/* PIO bank index */
 	void __iomem		*regbase;	/* PIO bank virtual address */
 	struct clk		*clock;		/* associated clock */
 	struct irq_domain	*domain;	/* associated irq domain */
+=======
+	struct at91_gpio_bank	*bank;		/* Bank definition */
+	void __iomem		*regbase;	/* Base of register bank */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define to_at91_gpio_chip(c) container_of(c, struct at91_gpio_chip, chip)
@@ -51,9 +68,14 @@ static int at91_gpiolib_direction_output(struct gpio_chip *chip,
 					 unsigned offset, int val);
 static int at91_gpiolib_direction_input(struct gpio_chip *chip,
 					unsigned offset);
+<<<<<<< HEAD
 static int at91_gpiolib_to_irq(struct gpio_chip *chip, unsigned offset);
 
 #define AT91_GPIO_CHIP(name, nr_gpio)					\
+=======
+
+#define AT91_GPIO_CHIP(name, base_gpio, nr_gpio)			\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{								\
 		.chip = {						\
 			.label		  = name,			\
@@ -62,12 +84,17 @@ static int at91_gpiolib_to_irq(struct gpio_chip *chip, unsigned offset);
 			.get		  = at91_gpiolib_get,		\
 			.set		  = at91_gpiolib_set,		\
 			.dbg_show	  = at91_gpiolib_dbg_show,	\
+<<<<<<< HEAD
 			.to_irq		  = at91_gpiolib_to_irq,	\
+=======
+			.base		  = base_gpio,			\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.ngpio		  = nr_gpio,			\
 		},							\
 	}
 
 static struct at91_gpio_chip gpio_chip[] = {
+<<<<<<< HEAD
 	AT91_GPIO_CHIP("pioA", 32),
 	AT91_GPIO_CHIP("pioB", 32),
 	AT91_GPIO_CHIP("pioC", 32),
@@ -87,6 +114,20 @@ static unsigned long at91_gpio_caps;
 
 static inline void __iomem *pin_to_controller(unsigned pin)
 {
+=======
+	AT91_GPIO_CHIP("A", 0x00 + PIN_BASE, 32),
+	AT91_GPIO_CHIP("B", 0x20 + PIN_BASE, 32),
+	AT91_GPIO_CHIP("C", 0x40 + PIN_BASE, 32),
+	AT91_GPIO_CHIP("D", 0x60 + PIN_BASE, 32),
+	AT91_GPIO_CHIP("E", 0x80 + PIN_BASE, 32),
+};
+
+static int gpio_banks;
+
+static inline void __iomem *pin_to_controller(unsigned pin)
+{
+	pin -= PIN_BASE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pin /= 32;
 	if (likely(pin < gpio_banks))
 		return gpio_chip[pin].regbase;
@@ -96,10 +137,15 @@ static inline void __iomem *pin_to_controller(unsigned pin)
 
 static inline unsigned pin_to_mask(unsigned pin)
 {
+<<<<<<< HEAD
+=======
+	pin -= PIN_BASE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1 << (pin % 32);
 }
 
 
+<<<<<<< HEAD
 static char peripheral_function(void __iomem *pio, unsigned mask)
 {
 	char	ret = 'X';
@@ -119,6 +165,8 @@ static char peripheral_function(void __iomem *pio, unsigned mask)
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*--------------------------------------------------------------------------*/
 
 /* Not all hardware capabilities are exposed through these calls; they
@@ -166,6 +214,7 @@ int __init_or_module at91_set_A_periph(unsigned pin, int use_pullup)
 
 	__raw_writel(mask, pio + PIO_IDR);
 	__raw_writel(mask, pio + (use_pullup ? PIO_PUER : PIO_PUDR));
+<<<<<<< HEAD
 	if (has_pio3()) {
 		__raw_writel(__raw_readl(pio + PIO_ABCDSR1) & ~mask,
 							pio + PIO_ABCDSR1);
@@ -174,6 +223,9 @@ int __init_or_module at91_set_A_periph(unsigned pin, int use_pullup)
 	} else {
 		__raw_writel(mask, pio + PIO_ASR);
 	}
+=======
+	__raw_writel(mask, pio + PIO_ASR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__raw_writel(mask, pio + PIO_PDR);
 	return 0;
 }
@@ -193,6 +245,7 @@ int __init_or_module at91_set_B_periph(unsigned pin, int use_pullup)
 
 	__raw_writel(mask, pio + PIO_IDR);
 	__raw_writel(mask, pio + (use_pullup ? PIO_PUER : PIO_PUDR));
+<<<<<<< HEAD
 	if (has_pio3()) {
 		__raw_writel(__raw_readl(pio + PIO_ABCDSR1) | mask,
 							pio + PIO_ABCDSR1);
@@ -201,6 +254,9 @@ int __init_or_module at91_set_B_periph(unsigned pin, int use_pullup)
 	} else {
 		__raw_writel(mask, pio + PIO_BSR);
 	}
+=======
+	__raw_writel(mask, pio + PIO_BSR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__raw_writel(mask, pio + PIO_PDR);
 	return 0;
 }
@@ -208,6 +264,7 @@ EXPORT_SYMBOL(at91_set_B_periph);
 
 
 /*
+<<<<<<< HEAD
  * mux the pin to the "C" internal peripheral role.
  */
 int __init_or_module at91_set_C_periph(unsigned pin, int use_pullup)
@@ -252,6 +309,10 @@ EXPORT_SYMBOL(at91_set_D_periph);
 /*
  * mux the pin to the gpio controller (instead of "A", "B", "C"
  * or "D" peripheral), and configure it for an input.
+=======
+ * mux the pin to the gpio controller (instead of "A" or "B" peripheral), and
+ * configure it for an input.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int __init_or_module at91_set_gpio_input(unsigned pin, int use_pullup)
 {
@@ -271,8 +332,13 @@ EXPORT_SYMBOL(at91_set_gpio_input);
 
 
 /*
+<<<<<<< HEAD
  * mux the pin to the gpio controller (instead of "A", "B", "C"
  * or "D" peripheral), and configure it for an output.
+=======
+ * mux the pin to the gpio controller (instead of "A" or "B" peripheral),
+ * and configure it for an output.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int __init_or_module at91_set_gpio_output(unsigned pin, int value)
 {
@@ -302,15 +368,19 @@ int __init_or_module at91_set_deglitch(unsigned pin, int is_on)
 
 	if (!pio)
 		return -EINVAL;
+<<<<<<< HEAD
 
 	if (has_pio3() && is_on)
 		__raw_writel(mask, pio + PIO_IFSCDR);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__raw_writel(mask, pio + (is_on ? PIO_IFER : PIO_IFDR));
 	return 0;
 }
 EXPORT_SYMBOL(at91_set_deglitch);
 
 /*
+<<<<<<< HEAD
  * enable/disable the debounce filter;
  */
 int __init_or_module at91_set_debounce(unsigned pin, int is_on, int div)
@@ -333,6 +403,8 @@ int __init_or_module at91_set_debounce(unsigned pin, int is_on, int div)
 EXPORT_SYMBOL(at91_set_debounce);
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * enable/disable the multi-driver; This is only valid for output and
  * allows the output pin to run as an open collector output.
  */
@@ -350,6 +422,7 @@ int __init_or_module at91_set_multi_drive(unsigned pin, int is_on)
 EXPORT_SYMBOL(at91_set_multi_drive);
 
 /*
+<<<<<<< HEAD
  * enable/disable the pull-down.
  * If pull-up already enabled while calling the function, we disable it.
  */
@@ -385,6 +458,8 @@ int __init_or_module at91_disable_schmitt_trig(unsigned pin)
 EXPORT_SYMBOL(at91_disable_schmitt_trig);
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * assuming the pin is muxed as a gpio output, set its value.
  */
 int at91_set_gpio_value(unsigned pin, int value)
@@ -425,9 +500,14 @@ static u32 backups[MAX_GPIO_BANKS];
 
 static int gpio_irq_set_wake(struct irq_data *d, unsigned state)
 {
+<<<<<<< HEAD
 	struct at91_gpio_chip *at91_gpio = irq_data_get_irq_chip_data(d);
 	unsigned	mask = 1 << d->hwirq;
 	unsigned	bank = at91_gpio->pioc_idx;
+=======
+	unsigned	mask = pin_to_mask(d->irq);
+	unsigned	bank = (d->irq - PIN_BASE) / 32;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (unlikely(bank >= MAX_GPIO_BANKS))
 		return -EINVAL;
@@ -437,7 +517,11 @@ static int gpio_irq_set_wake(struct irq_data *d, unsigned state)
 	else
 		wakeups[bank] &= ~mask;
 
+<<<<<<< HEAD
 	irq_set_irq_wake(at91_gpio->pioc_virq, state);
+=======
+	irq_set_irq_wake(gpio_chip[bank].bank->id, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -453,10 +537,16 @@ void at91_gpio_suspend(void)
 		__raw_writel(backups[i], pio + PIO_IDR);
 		__raw_writel(wakeups[i], pio + PIO_IER);
 
+<<<<<<< HEAD
 		if (!wakeups[i]) {
 			clk_unprepare(gpio_chip[i].clock);
 			clk_disable(gpio_chip[i].clock);
 		} else {
+=======
+		if (!wakeups[i])
+			clk_disable(gpio_chip[i].bank->clock);
+		else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PM_DEBUG
 			printk(KERN_DEBUG "GPIO-%c may wake for %08x\n", 'A'+i, wakeups[i]);
 #endif
@@ -471,10 +561,15 @@ void at91_gpio_resume(void)
 	for (i = 0; i < gpio_banks; i++) {
 		void __iomem	*pio = gpio_chip[i].regbase;
 
+<<<<<<< HEAD
 		if (!wakeups[i]) {
 			if (clk_prepare(gpio_chip[i].clock) == 0)
 				clk_enable(gpio_chip[i].clock);
 		}
+=======
+		if (!wakeups[i])
+			clk_enable(gpio_chip[i].bank->clock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		__raw_writel(wakeups[i], pio + PIO_IDR);
 		__raw_writel(backups[i], pio + PIO_IER);
@@ -490,10 +585,14 @@ void at91_gpio_resume(void)
  * To use any AT91_PIN_* as an externally triggered IRQ, first call
  * at91_set_gpio_input() then maybe enable its glitch filter.
  * Then just request_irq() with the pin ID; it works like any ARM IRQ
+<<<<<<< HEAD
  * handler.
  * First implementation always triggers on rising and falling edges
  * whereas the newer PIO3 can be additionally configured to trigger on
  * level, edge with any polarity.
+=======
+ * handler, though it always triggers on rising and falling edges.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Alternatively, certain pins may be used directly as IRQ0..IRQ6 after
  * configuring them with at91_set_a_periph() or at91_set_b_periph().
@@ -502,9 +601,14 @@ void at91_gpio_resume(void)
 
 static void gpio_irq_mask(struct irq_data *d)
 {
+<<<<<<< HEAD
 	struct at91_gpio_chip *at91_gpio = irq_data_get_irq_chip_data(d);
 	void __iomem	*pio = at91_gpio->regbase;
 	unsigned	mask = 1 << d->hwirq;
+=======
+	void __iomem	*pio = pin_to_controller(d->irq);
+	unsigned	mask = pin_to_mask(d->irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (pio)
 		__raw_writel(mask, pio + PIO_IDR);
@@ -512,9 +616,14 @@ static void gpio_irq_mask(struct irq_data *d)
 
 static void gpio_irq_unmask(struct irq_data *d)
 {
+<<<<<<< HEAD
 	struct at91_gpio_chip *at91_gpio = irq_data_get_irq_chip_data(d);
 	void __iomem	*pio = at91_gpio->regbase;
 	unsigned	mask = 1 << d->hwirq;
+=======
+	void __iomem	*pio = pin_to_controller(d->irq);
+	unsigned	mask = pin_to_mask(d->irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (pio)
 		__raw_writel(mask, pio + PIO_IER);
@@ -531,6 +640,7 @@ static int gpio_irq_type(struct irq_data *d, unsigned type)
 	}
 }
 
+<<<<<<< HEAD
 /* Alternate irq type for PIO3 support */
 static int alt_gpio_irq_type(struct irq_data *d, unsigned type)
 {
@@ -574,23 +684,37 @@ static int alt_gpio_irq_type(struct irq_data *d, unsigned type)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct irq_chip gpio_irqchip = {
 	.name		= "GPIO",
 	.irq_disable	= gpio_irq_mask,
 	.irq_mask	= gpio_irq_mask,
 	.irq_unmask	= gpio_irq_unmask,
+<<<<<<< HEAD
 	/* .irq_set_type is set dynamically */
+=======
+	.irq_set_type	= gpio_irq_type,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.irq_set_wake	= gpio_irq_set_wake,
 };
 
 static void gpio_irq_handler(unsigned irq, struct irq_desc *desc)
 {
+<<<<<<< HEAD
+=======
+	unsigned	pin;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct irq_data *idata = irq_desc_get_irq_data(desc);
 	struct irq_chip *chip = irq_data_get_irq_chip(idata);
 	struct at91_gpio_chip *at91_gpio = irq_data_get_irq_chip_data(idata);
 	void __iomem	*pio = at91_gpio->regbase;
+<<<<<<< HEAD
 	unsigned long	isr;
 	int		n;
+=======
+	u32		isr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* temporarily mask (level sensitive) parent IRQ */
 	chip->irq_ack(idata);
@@ -608,10 +732,20 @@ static void gpio_irq_handler(unsigned irq, struct irq_desc *desc)
 			continue;
 		}
 
+<<<<<<< HEAD
 		n = find_first_bit(&isr, BITS_PER_LONG);
 		while (n < BITS_PER_LONG) {
 			generic_handle_irq(irq_find_mapping(at91_gpio->domain, n));
 			n = find_next_bit(&isr, BITS_PER_LONG, n + 1);
+=======
+		pin = at91_gpio->chip.base;
+
+		while (isr) {
+			if (isr & 1)
+				generic_handle_irq(pin);
+			pin++;
+			isr >>= 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	chip->irq_unmask(idata);
@@ -622,6 +756,7 @@ static void gpio_irq_handler(unsigned irq, struct irq_desc *desc)
 
 #ifdef CONFIG_DEBUG_FS
 
+<<<<<<< HEAD
 static void gpio_printf(struct seq_file *s, void __iomem *pio, unsigned mask)
 {
 	char	*trigger = NULL;
@@ -649,6 +784,8 @@ static void gpio_printf(struct seq_file *s, void __iomem *pio, unsigned mask)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int at91_gpio_show(struct seq_file *s, void *unused)
 {
 	int bank, j;
@@ -656,7 +793,11 @@ static int at91_gpio_show(struct seq_file *s, void *unused)
 	/* print heading */
 	seq_printf(s, "Pin\t");
 	for (bank = 0; bank < gpio_banks; bank++) {
+<<<<<<< HEAD
 		seq_printf(s, "PIO%c\t\t", 'A' + bank);
+=======
+		seq_printf(s, "PIO%c\t", 'A' + bank);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	};
 	seq_printf(s, "\n\n");
 
@@ -665,15 +806,27 @@ static int at91_gpio_show(struct seq_file *s, void *unused)
 		seq_printf(s, "%i:\t", j);
 
 		for (bank = 0; bank < gpio_banks; bank++) {
+<<<<<<< HEAD
 			unsigned	pin  = (32 * bank) + j;
+=======
+			unsigned	pin  = PIN_BASE + (32 * bank) + j;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			void __iomem	*pio = pin_to_controller(pin);
 			unsigned	mask = pin_to_mask(pin);
 
 			if (__raw_readl(pio + PIO_PSR) & mask)
+<<<<<<< HEAD
 				gpio_printf(s, pio, mask);
 			else
 				seq_printf(s, "%c\t\t",
 						peripheral_function(pio, mask));
+=======
+				seq_printf(s, "GPIO:%s", __raw_readl(pio + PIO_PDSR) & mask ? "1" : "0");
+			else
+				seq_printf(s, "%s", __raw_readl(pio + PIO_ABSR) & mask ? "B" : "A");
+
+			seq_printf(s, "\t");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		seq_printf(s, "\n");
@@ -712,6 +865,7 @@ postcore_initcall(at91_gpio_debugfs_init);
  */
 static struct lock_class_key gpio_lock_class;
 
+<<<<<<< HEAD
 #if defined(CONFIG_OF)
 static int at91_gpio_irq_map(struct irq_domain *h, unsigned int virq,
 							irq_hw_number_t hw)
@@ -805,11 +959,14 @@ static void __init at91_gpio_irqdomain(struct at91_gpio_chip *at91_gpio)
 			at91_gpio->pioc_idx);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Called from the processor-specific init to enable GPIO interrupt support.
  */
 void __init at91_gpio_irq_setup(void)
 {
+<<<<<<< HEAD
 	unsigned		pioc;
 	int			gpio_irqnbr = 0;
 	struct at91_gpio_chip	*this, *prev;
@@ -833,11 +990,27 @@ void __init at91_gpio_irq_setup(void)
 		for (offset = 0; offset < this->chip.ngpio; offset++) {
 			unsigned int virq = irq_find_mapping(this->domain, offset);
 			irq_set_lockdep_class(virq, &gpio_lock_class);
+=======
+	unsigned		pioc, pin;
+	struct at91_gpio_chip	*this, *prev;
+
+	for (pioc = 0, pin = PIN_BASE, this = gpio_chip, prev = NULL;
+			pioc++ < gpio_banks;
+			prev = this, this++) {
+		unsigned	id = this->bank->id;
+		unsigned	i;
+
+		__raw_writel(~0, this->regbase + PIO_IDR);
+
+		for (i = 0, pin = this->chip.base; i < 32; i++, pin++) {
+			irq_set_lockdep_class(pin, &gpio_lock_class);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/*
 			 * Can use the "simple" and not "edge" handler since it's
 			 * shorter, and the AIC handles interrupts sanely.
 			 */
+<<<<<<< HEAD
 			irq_set_chip_and_handler(virq, &gpio_irqchip,
 						 handle_simple_irq);
 			set_irq_flags(virq, IRQF_VALID);
@@ -849,15 +1022,32 @@ void __init at91_gpio_irq_setup(void)
 		/* The toplevel handler handles one bank of GPIOs, except
 		 * on some SoC it can handles up to three...
 		 * We only set up the handler for the first of the list.
+=======
+			irq_set_chip_and_handler(pin, &gpio_irqchip,
+						 handle_simple_irq);
+			set_irq_flags(pin, IRQF_VALID);
+		}
+
+		/* The toplevel handler handles one bank of GPIOs, except
+		 * AT91SAM9263_ID_PIOCDE handles three... PIOC is first in
+		 * the list, so we only set up that handler.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 */
 		if (prev && prev->next == this)
 			continue;
 
+<<<<<<< HEAD
 		this->pioc_virq = irq_create_mapping(NULL, this->pioc_hwirq);
 		irq_set_chip_data(this->pioc_virq, this);
 		irq_set_chained_handler(this->pioc_virq, gpio_irq_handler);
 	}
 	pr_info("AT91: %d gpio irqs in %d banks\n", gpio_irqnbr, gpio_banks);
+=======
+		irq_set_chip_data(id, this);
+		irq_set_chained_handler(id, gpio_irq_handler);
+	}
+	pr_info("AT91: %d gpio irqs in %d banks\n", pin - PIN_BASE, gpio_banks);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* gpiolib support */
@@ -923,12 +1113,19 @@ static void at91_gpiolib_dbg_show(struct seq_file *s, struct gpio_chip *chip)
 					   at91_get_gpio_value(pin) ?
 					   "set" : "clear");
 			else
+<<<<<<< HEAD
 				seq_printf(s, "[periph %c]\n",
 					   peripheral_function(pio, mask));
+=======
+				seq_printf(s, "[periph %s]\n",
+					   __raw_readl(pio + PIO_ABSR) &
+					   mask ? "B" : "A");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }
 
+<<<<<<< HEAD
 static int at91_gpiolib_to_irq(struct gpio_chip *chip, unsigned offset)
 {
 	struct at91_gpio_chip *at91_gpio = to_at91_gpio_chip(chip);
@@ -1068,16 +1265,23 @@ ioremap_err:
 	iounmap(at91_gpio->regbase);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Called from the processor-specific init to enable GPIO pin support.
  */
 void __init at91_gpio_init(struct at91_gpio_bank *data, int nr_banks)
 {
+<<<<<<< HEAD
 	unsigned i;
+=======
+	unsigned		i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct at91_gpio_chip *at91_gpio, *last = NULL;
 
 	BUG_ON(nr_banks > MAX_GPIO_BANKS);
 
+<<<<<<< HEAD
 	if (of_at91_gpio_init() < 0) {
 		/* No GPIO controller found in device tree */
 		for (i = 0; i < nr_banks; i++)
@@ -1092,6 +1296,23 @@ void __init at91_gpio_init(struct at91_gpio_bank *data, int nr_banks)
 		 * PIOC, PIOD and PIOE can share the same IRQ line
 		 */
 		if (last && last->pioc_hwirq == at91_gpio->pioc_hwirq)
+=======
+	gpio_banks = nr_banks;
+
+	for (i = 0; i < nr_banks; i++) {
+		at91_gpio = &gpio_chip[i];
+
+		at91_gpio->bank = &data[i];
+		at91_gpio->chip.base = PIN_BASE + i * 32;
+		at91_gpio->regbase = at91_gpio->bank->offset +
+			(void __iomem *)AT91_VA_BASE_SYS;
+
+		/* enable PIO controller's clock */
+		clk_enable(at91_gpio->bank->clock);
+
+		/* AT91SAM9263_ID_PIOCDE groups PIOC, PIOD, PIOE */
+		if (last && last->bank->id == at91_gpio->bank->id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			last->next = at91_gpio;
 		last = at91_gpio;
 

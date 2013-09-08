@@ -14,7 +14,10 @@
 
 #include <asm/hardware/dec21285.h>
 #include <asm/mach/time.h>
+<<<<<<< HEAD
 #include <asm/system_info.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "common.h"
 

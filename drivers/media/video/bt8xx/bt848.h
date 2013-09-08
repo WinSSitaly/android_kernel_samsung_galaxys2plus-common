@@ -30,10 +30,13 @@
 #ifndef PCI_DEVICE_ID_BT849
 #define PCI_DEVICE_ID_BT849     0x351
 #endif
+<<<<<<< HEAD
 #ifndef PCI_DEVICE_ID_FUSION879
 #define PCI_DEVICE_ID_FUSION879	0x36c
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef PCI_DEVICE_ID_BT878
 #define PCI_DEVICE_ID_BT878     0x36e
 #endif
@@ -41,6 +44,10 @@
 #define PCI_DEVICE_ID_BT879     0x36f
 #endif
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Brooktree 848 registers */
 
 #define BT848_DSTATUS          0x000

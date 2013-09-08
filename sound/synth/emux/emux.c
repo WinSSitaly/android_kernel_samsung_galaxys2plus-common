@@ -24,7 +24,10 @@
 #include <sound/core.h>
 #include <sound/emux_synth.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "emux_voice.h"
 
 MODULE_AUTHOR("Takashi Iwai");

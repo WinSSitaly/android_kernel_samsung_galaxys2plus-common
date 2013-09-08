@@ -230,6 +230,7 @@ show_urbnum(struct device *dev, struct device_attribute *attr, char *buf)
 }
 static DEVICE_ATTR(urbnum, S_IRUGO, show_urbnum, NULL);
 
+<<<<<<< HEAD
 static ssize_t
 show_removable(struct device *dev, struct device_attribute *attr, char *buf)
 {
@@ -252,6 +253,8 @@ show_removable(struct device *dev, struct device_attribute *attr, char *buf)
 	return sprintf(buf, "%s\n", state);
 }
 static DEVICE_ATTR(removable, S_IRUGO, show_removable, NULL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef	CONFIG_PM
 
@@ -434,6 +437,7 @@ set_level(struct device *dev, struct device_attribute *attr,
 
 static DEVICE_ATTR(level, S_IRUGO | S_IWUSR, show_level, set_level);
 
+<<<<<<< HEAD
 static ssize_t
 show_usb2_hardware_lpm(struct device *dev, struct device_attribute *attr,
 				char *buf)
@@ -484,6 +488,8 @@ static struct attribute_group usb2_hardware_lpm_attr_group = {
 	.attrs	= usb2_hardware_lpm_attr,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct attribute *power_attrs[] = {
 	&dev_attr_autosuspend.attr,
 	&dev_attr_level.attr,
@@ -500,6 +506,7 @@ static int add_power_attributes(struct device *dev)
 {
 	int rc = 0;
 
+<<<<<<< HEAD
 	if (is_usb_device(dev)) {
 		struct usb_device *udev = to_usb_device(dev);
 		rc = sysfs_merge_group(&dev->kobj, &power_attr_group);
@@ -508,12 +515,19 @@ static int add_power_attributes(struct device *dev)
 					&usb2_hardware_lpm_attr_group);
 	}
 
+=======
+	if (is_usb_device(dev))
+		rc = sysfs_merge_group(&dev->kobj, &power_attr_group);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
 static void remove_power_attributes(struct device *dev)
 {
+<<<<<<< HEAD
 	sysfs_unmerge_group(&dev->kobj, &usb2_hardware_lpm_attr_group);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sysfs_unmerge_group(&dev->kobj, &power_attr_group);
 }
 
@@ -648,7 +662,10 @@ static struct attribute *dev_attrs[] = {
 	&dev_attr_avoid_reset_quirk.attr,
 	&dev_attr_authorized.attr,
 	&dev_attr_remove.attr,
+<<<<<<< HEAD
 	&dev_attr_removable.attr,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL,
 };
 static struct attribute_group dev_attr_grp = {
@@ -665,7 +682,11 @@ static struct attribute *dev_string_attrs[] = {
 	NULL
 };
 
+<<<<<<< HEAD
 static umode_t dev_string_attrs_are_visible(struct kobject *kobj,
+=======
+static mode_t dev_string_attrs_are_visible(struct kobject *kobj,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct attribute *a, int n)
 {
 	struct device *dev = container_of(kobj, struct device, kobj);
@@ -900,7 +921,11 @@ static struct attribute *intf_assoc_attrs[] = {
 	NULL,
 };
 
+<<<<<<< HEAD
 static umode_t intf_assoc_attrs_are_visible(struct kobject *kobj,
+=======
+static mode_t intf_assoc_attrs_are_visible(struct kobject *kobj,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct attribute *a, int n)
 {
 	struct device *dev = container_of(kobj, struct device, kobj);

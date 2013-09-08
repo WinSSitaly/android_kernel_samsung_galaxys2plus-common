@@ -5,8 +5,11 @@
  * Released under the terms of the GNU GPL v2.0.
  */
 
+<<<<<<< HEAD
 #include <stdarg.h>
 #include <stdlib.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <string.h>
 #include "lkc.h"
 

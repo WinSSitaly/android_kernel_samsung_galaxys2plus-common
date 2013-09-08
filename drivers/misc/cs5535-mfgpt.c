@@ -246,7 +246,11 @@ EXPORT_SYMBOL_GPL(cs5535_mfgpt_write);
  * Jordan tells me that he and Mitch once played w/ it, but it's unclear
  * what the results of that were (and they experienced some instability).
  */
+<<<<<<< HEAD
 static void __devinit reset_all_timers(void)
+=======
+static void __init reset_all_timers(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	uint32_t val, dummy;
 

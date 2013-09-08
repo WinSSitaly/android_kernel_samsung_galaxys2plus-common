@@ -110,7 +110,11 @@ static int __devinit ohci_hcd_ppc_of_probe(struct platform_device *op)
 		return -ENOMEM;
 
 	hcd->rsrc_start = res.start;
+<<<<<<< HEAD
 	hcd->rsrc_len = resource_size(&res);
+=======
+	hcd->rsrc_len = res.end - res.start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len, hcd_name)) {
 		printk(KERN_ERR "%s: request_mem_region failed\n", __FILE__);
@@ -143,7 +147,11 @@ static int __devinit ohci_hcd_ppc_of_probe(struct platform_device *op)
 
 	ohci_hcd_init(ohci);
 
+<<<<<<< HEAD
 	rv = usb_add_hcd(hcd, irq, 0);
+=======
+	rv = usb_add_hcd(hcd, irq, IRQF_DISABLED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rv == 0)
 		return 0;
 

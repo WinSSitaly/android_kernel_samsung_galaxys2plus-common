@@ -29,12 +29,16 @@
 
 #include <linux/platform_device.h>
 
+<<<<<<< HEAD
 #define ASUS_WMI_KEY_IGNORE (-1)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct module;
 struct key_entry;
 struct asus_wmi;
 
+<<<<<<< HEAD
 struct quirk_entry {
 	bool hotplug_wireless;
 	bool scalar_panel_brightness;
@@ -45,6 +49,10 @@ struct quirk_entry {
 struct asus_wmi_driver {
 	int			brightness;
 	int			panel_power;
+=======
+struct asus_wmi_driver {
+	bool			hotplug_wireless;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	const char		*name;
 	struct module		*owner;
@@ -54,6 +62,7 @@ struct asus_wmi_driver {
 	const struct key_entry	*keymap;
 	const char		*input_name;
 	const char		*input_phys;
+<<<<<<< HEAD
 	struct quirk_entry	*quirks;
 	/* Returns new code, value, and autorelease values in arguments.
 	 * Return ASUS_WMI_KEY_IGNORE in code if event should be ignored. */
@@ -62,6 +71,11 @@ struct asus_wmi_driver {
 
 	int (*probe) (struct platform_device *device);
 	void (*detect_quirks) (struct asus_wmi_driver *driver);
+=======
+
+	int (*probe) (struct platform_device *device);
+	void (*quirks) (struct asus_wmi_driver *driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct platform_driver	platform_driver;
 	struct platform_device *platform_device;

@@ -44,25 +44,41 @@ enum sis_family {
 	SIS_CHIP_315 = 1,
 };
 
+<<<<<<< HEAD
 #include "drm_mm.h"
 
 
 #define SIS_BASE (dev_priv->mmio)
 #define SIS_READ(reg)         DRM_READ32(SIS_BASE, reg)
 #define SIS_WRITE(reg, val)   DRM_WRITE32(SIS_BASE, reg, val)
+=======
+#include "drm_sman.h"
+
+
+#define SIS_BASE (dev_priv->mmio)
+#define SIS_READ(reg)         DRM_READ32(SIS_BASE, reg);
+#define SIS_WRITE(reg, val)   DRM_WRITE32(SIS_BASE, reg, val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct drm_sis_private {
 	drm_local_map_t *mmio;
 	unsigned int idle_fault;
+<<<<<<< HEAD
+=======
+	struct drm_sman sman;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int chipset;
 	int vram_initialized;
 	int agp_initialized;
 	unsigned long vram_offset;
 	unsigned long agp_offset;
+<<<<<<< HEAD
 	struct drm_mm vram_mm;
 	struct drm_mm agp_mm;
 	/** Mapping of userspace keys to mm objects */
 	struct idr object_idr;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } drm_sis_private_t;
 
 extern int sis_idle(struct drm_device *dev);

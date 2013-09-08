@@ -33,7 +33,11 @@
 
 #define ERST_DBG_PFX			"ERST DBG: "
 
+<<<<<<< HEAD
 #define ERST_DBG_RECORD_LEN_MAX		0x4000
+=======
+#define ERST_DBG_RECORD_LEN_MAX		4096
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void *erst_dbg_buf;
 static unsigned int erst_dbg_buf_len;
@@ -213,10 +217,13 @@ static struct miscdevice erst_dbg_dev = {
 
 static __init int erst_dbg_init(void)
 {
+<<<<<<< HEAD
 	if (erst_disable) {
 		pr_info(ERST_DBG_PFX "ERST support is disabled.\n");
 		return -ENODEV;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return misc_register(&erst_dbg_dev);
 }
 

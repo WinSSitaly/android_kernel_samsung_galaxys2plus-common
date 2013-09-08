@@ -11,7 +11,10 @@
 
 #include <linux/usb/input.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRIVER_DESC    "ATI/Philips USB RF remote driver"
 #define DRIVER_VERSION "0.3"
@@ -42,13 +45,21 @@ static int ati_remote2_set_mask(const char *val,
 				const struct kernel_param *kp,
 				unsigned int max)
 {
+<<<<<<< HEAD
 	unsigned int mask;
+=======
+	unsigned long mask;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	if (!val)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	ret = kstrtouint(val, 0, &mask);
+=======
+	ret = strict_strtoul(val, 0, &mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -720,12 +731,20 @@ static ssize_t ati_remote2_store_channel_mask(struct device *dev,
 	struct usb_device *udev = to_usb_device(dev);
 	struct usb_interface *intf = usb_ifnum_to_if(udev, 0);
 	struct ati_remote2 *ar2 = usb_get_intfdata(intf);
+<<<<<<< HEAD
 	unsigned int mask;
 	int r;
 
 	r = kstrtouint(buf, 0, &mask);
 	if (r)
 		return r;
+=======
+	unsigned long mask;
+	int r;
+
+	if (strict_strtoul(buf, 0, &mask))
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mask & ~ATI_REMOTE2_MAX_CHANNEL_MASK)
 		return -EINVAL;
@@ -770,12 +789,19 @@ static ssize_t ati_remote2_store_mode_mask(struct device *dev,
 	struct usb_device *udev = to_usb_device(dev);
 	struct usb_interface *intf = usb_ifnum_to_if(udev, 0);
 	struct ati_remote2 *ar2 = usb_get_intfdata(intf);
+<<<<<<< HEAD
 	unsigned int mask;
 	int err;
 
 	err = kstrtouint(buf, 0, &mask);
 	if (err)
 		return err;
+=======
+	unsigned long mask;
+
+	if (strict_strtoul(buf, 0, &mask))
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mask & ~ATI_REMOTE2_MAX_MODE_MASK)
 		return -EINVAL;
@@ -1013,4 +1039,27 @@ static int ati_remote2_post_reset(struct usb_interface *interface)
 	return r;
 }
 
+<<<<<<< HEAD
 module_usb_driver(ati_remote2_driver);
+=======
+static int __init ati_remote2_init(void)
+{
+	int r;
+
+	r = usb_register(&ati_remote2_driver);
+	if (r)
+		printk(KERN_ERR "ati_remote2: usb_register() = %d\n", r);
+	else
+		printk(KERN_INFO "ati_remote2: " DRIVER_DESC " " DRIVER_VERSION "\n");
+
+	return r;
+}
+
+static void __exit ati_remote2_exit(void)
+{
+	usb_deregister(&ati_remote2_driver);
+}
+
+module_init(ati_remote2_init);
+module_exit(ati_remote2_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

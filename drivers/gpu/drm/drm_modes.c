@@ -32,7 +32,10 @@
 
 #include <linux/list.h>
 #include <linux/list_sort.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drmP.h"
 #include "drm.h"
 #include "drm_crtc.h"
@@ -686,6 +689,11 @@ void drm_mode_set_crtcinfo(struct drm_display_mode *p, int adjust_flags)
 			p->crtc_vsync_end /= 2;
 			p->crtc_vtotal /= 2;
 		}
+<<<<<<< HEAD
+=======
+
+		p->crtc_vtotal |= 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (p->flags & DRM_MODE_FLAG_DBLSCAN) {
@@ -714,6 +722,7 @@ EXPORT_SYMBOL(drm_mode_set_crtcinfo);
 
 
 /**
+<<<<<<< HEAD
  * drm_mode_copy - copy the mode
  * @dst: mode to overwrite
  * @src: mode to copy
@@ -735,6 +744,8 @@ void drm_mode_copy(struct drm_display_mode *dst, const struct drm_display_mode *
 EXPORT_SYMBOL(drm_mode_copy);
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * drm_mode_duplicate - allocate and duplicate an existing mode
  * @m: mode to duplicate
  *
@@ -748,13 +759,24 @@ struct drm_display_mode *drm_mode_duplicate(struct drm_device *dev,
 					    const struct drm_display_mode *mode)
 {
 	struct drm_display_mode *nmode;
+<<<<<<< HEAD
+=======
+	int new_id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nmode = drm_mode_create(dev);
 	if (!nmode)
 		return NULL;
 
+<<<<<<< HEAD
 	drm_mode_copy(nmode, mode);
 
+=======
+	new_id = nmode->base.id;
+	*nmode = *mode;
+	nmode->base.id = new_id;
+	INIT_LIST_HEAD(&nmode->head);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return nmode;
 }
 EXPORT_SYMBOL(drm_mode_duplicate);
@@ -1011,10 +1033,16 @@ bool drm_mode_parse_command_line_for_connector(const char *mode_option,
 {
 	const char *name;
 	unsigned int namelen;
+<<<<<<< HEAD
 	bool res_specified = false, bpp_specified = false, refresh_specified = false;
 	unsigned int xres = 0, yres = 0, bpp = 32, refresh = 0;
 	bool yres_specified = false, cvt = false, rb = false;
 	bool interlace = false, margins = false, was_digit = false;
+=======
+	int res_specified = 0, bpp_specified = 0, refresh_specified = 0;
+	unsigned int xres = 0, yres = 0, bpp = 32, refresh = 0;
+	int yres_specified = 0, cvt = 0, rb = 0, interlace = 0, margins = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 	enum drm_connector_force force = DRM_FORCE_UNSPECIFIED;
 
@@ -1033,24 +1061,44 @@ bool drm_mode_parse_command_line_for_connector(const char *mode_option,
 	for (i = namelen-1; i >= 0; i--) {
 		switch (name[i]) {
 		case '@':
+<<<<<<< HEAD
 			if (!refresh_specified && !bpp_specified &&
 			    !yres_specified && !cvt && !rb && was_digit) {
 				refresh = simple_strtol(&name[i+1], NULL, 10);
 				refresh_specified = true;
 				was_digit = false;
+=======
+			namelen = i;
+			if (!refresh_specified && !bpp_specified &&
+			    !yres_specified) {
+				refresh = simple_strtol(&name[i+1], NULL, 10);
+				refresh_specified = 1;
+				if (cvt || rb)
+					cvt = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else
 				goto done;
 			break;
 		case '-':
+<<<<<<< HEAD
 			if (!bpp_specified && !yres_specified && !cvt &&
 			    !rb && was_digit) {
 				bpp = simple_strtol(&name[i+1], NULL, 10);
 				bpp_specified = true;
 				was_digit = false;
+=======
+			namelen = i;
+			if (!bpp_specified && !yres_specified) {
+				bpp = simple_strtol(&name[i+1], NULL, 10);
+				bpp_specified = 1;
+				if (cvt || rb)
+					cvt = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else
 				goto done;
 			break;
 		case 'x':
+<<<<<<< HEAD
 			if (!yres_specified && was_digit) {
 				yres = simple_strtol(&name[i+1], NULL, 10);
 				yres_specified = true;
@@ -1092,6 +1140,35 @@ bool drm_mode_parse_command_line_for_connector(const char *mode_option,
 			    was_digit || (force != DRM_FORCE_UNSPECIFIED))
 				goto done;
 
+=======
+			if (!yres_specified) {
+				yres = simple_strtol(&name[i+1], NULL, 10);
+				yres_specified = 1;
+			} else
+				goto done;
+		case '0' ... '9':
+			break;
+		case 'M':
+			if (!yres_specified)
+				cvt = 1;
+			break;
+		case 'R':
+			if (cvt)
+				rb = 1;
+			break;
+		case 'm':
+			if (!cvt)
+				margins = 1;
+			break;
+		case 'i':
+			if (!cvt)
+				interlace = 1;
+			break;
+		case 'e':
+			force = DRM_FORCE_ON;
+			break;
+		case 'D':
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if ((connector->connector_type != DRM_MODE_CONNECTOR_DVII) &&
 			    (connector->connector_type != DRM_MODE_CONNECTOR_HDMIB))
 				force = DRM_FORCE_ON;
@@ -1099,16 +1176,20 @@ bool drm_mode_parse_command_line_for_connector(const char *mode_option,
 				force = DRM_FORCE_ON_DIGITAL;
 			break;
 		case 'd':
+<<<<<<< HEAD
 			if (yres_specified || bpp_specified || refresh_specified ||
 			    was_digit || (force != DRM_FORCE_UNSPECIFIED))
 				goto done;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			force = DRM_FORCE_OFF;
 			break;
 		default:
 			goto done;
 		}
 	}
+<<<<<<< HEAD
 
 	if (i < 0 && yres_specified) {
 		char *ch;
@@ -1130,6 +1211,13 @@ done:
 		return false;
 	}
 
+=======
+	if (i < 0 && yres_specified) {
+		xres = simple_strtol(name, NULL, 10);
+		res_specified = 1;
+	}
+done:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (res_specified) {
 		mode->specified = true;
 		mode->xres = xres;
@@ -1145,10 +1233,16 @@ done:
 		mode->bpp_specified = true;
 		mode->bpp = bpp;
 	}
+<<<<<<< HEAD
 	mode->rb = rb;
 	mode->cvt = cvt;
 	mode->interlace = interlace;
 	mode->margins = margins;
+=======
+	mode->rb = rb ? true : false;
+	mode->cvt = cvt  ? true : false;
+	mode->interlace = interlace ? true : false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mode->force = force;
 
 	return true;

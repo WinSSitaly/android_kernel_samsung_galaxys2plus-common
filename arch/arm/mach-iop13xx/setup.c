@@ -17,7 +17,10 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/serial_8250.h>
 #include <linux/io.h>
 #ifdef CONFIG_MTD_PHYSMAP
@@ -606,6 +609,7 @@ static int __init iop13xx_init_adma_setup(char *str)
 __setup("iop13xx_init_adma", iop13xx_init_adma_setup);
 __setup("iop13xx_init_uart", iop13xx_init_uart_setup);
 __setup("iop13xx_init_i2c", iop13xx_init_i2c_setup);
+<<<<<<< HEAD
 
 void iop13xx_restart(char mode, const char *cmd)
 {
@@ -617,3 +621,5 @@ void iop13xx_restart(char mode, const char *cmd)
 	write_wdtsr(IOP13XX_WDTSR_WRITE_EN | IOP13XX_WDTCR_IB_RESET);
 	write_wdtcr(0x1000);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

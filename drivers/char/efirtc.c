@@ -37,6 +37,10 @@
 #include <linux/efi.h>
 #include <linux/uaccess.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define EFI_RTC_VERSION		"0.4"
 

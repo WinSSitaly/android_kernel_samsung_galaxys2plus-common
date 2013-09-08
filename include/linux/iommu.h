@@ -19,12 +19,16 @@
 #ifndef __LINUX_IOMMU_H
 #define __LINUX_IOMMU_H
 
+<<<<<<< HEAD
 #include <linux/errno.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define IOMMU_READ	(1)
 #define IOMMU_WRITE	(2)
 #define IOMMU_CACHE	(4) /* DMA cache coherency */
 
+<<<<<<< HEAD
 struct iommu_ops;
 struct bus_type;
 struct device;
@@ -41,11 +45,18 @@ struct iommu_domain {
 	struct iommu_ops *ops;
 	void *priv;
 	iommu_fault_handler_t handler;
+=======
+struct device;
+
+struct iommu_domain {
+	void *priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define IOMMU_CAP_CACHE_COHERENCY	0x1
 #define IOMMU_CAP_INTR_REMAP		0x2	/* isolates device intrs */
 
+<<<<<<< HEAD
 #ifdef CONFIG_IOMMU_API
 
 /**
@@ -61,19 +72,28 @@ struct iommu_domain {
  * @commit: commit iommu domain
  * @pgsize_bitmap: bitmap of supported page sizes
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct iommu_ops {
 	int (*domain_init)(struct iommu_domain *domain);
 	void (*domain_destroy)(struct iommu_domain *domain);
 	int (*attach_dev)(struct iommu_domain *domain, struct device *dev);
 	void (*detach_dev)(struct iommu_domain *domain, struct device *dev);
 	int (*map)(struct iommu_domain *domain, unsigned long iova,
+<<<<<<< HEAD
 		   phys_addr_t paddr, size_t size, int prot);
 	size_t (*unmap)(struct iommu_domain *domain, unsigned long iova,
 		     size_t size);
+=======
+		   phys_addr_t paddr, int gfp_order, int prot);
+	int (*unmap)(struct iommu_domain *domain, unsigned long iova,
+		     int gfp_order);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	phys_addr_t (*iova_to_phys)(struct iommu_domain *domain,
 				    unsigned long iova);
 	int (*domain_has_cap)(struct iommu_domain *domain,
 			      unsigned long cap);
+<<<<<<< HEAD
 	int (*device_group)(struct device *dev, unsigned int *groupid);
 	unsigned long pgsize_bitmap;
 };
@@ -81,19 +101,35 @@ struct iommu_ops {
 extern int bus_set_iommu(struct bus_type *bus, struct iommu_ops *ops);
 extern bool iommu_present(struct bus_type *bus);
 extern struct iommu_domain *iommu_domain_alloc(struct bus_type *bus);
+=======
+};
+
+#ifdef CONFIG_IOMMU_API
+
+extern void register_iommu(struct iommu_ops *ops);
+extern bool iommu_found(void);
+extern struct iommu_domain *iommu_domain_alloc(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void iommu_domain_free(struct iommu_domain *domain);
 extern int iommu_attach_device(struct iommu_domain *domain,
 			       struct device *dev);
 extern void iommu_detach_device(struct iommu_domain *domain,
 				struct device *dev);
 extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
+<<<<<<< HEAD
 		     phys_addr_t paddr, size_t size, int prot);
 extern size_t iommu_unmap(struct iommu_domain *domain, unsigned long iova,
 		       size_t size);
+=======
+		     phys_addr_t paddr, int gfp_order, int prot);
+extern int iommu_unmap(struct iommu_domain *domain, unsigned long iova,
+		       int gfp_order);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern phys_addr_t iommu_iova_to_phys(struct iommu_domain *domain,
 				      unsigned long iova);
 extern int iommu_domain_has_cap(struct iommu_domain *domain,
 				unsigned long cap);
+<<<<<<< HEAD
 extern void iommu_set_fault_handler(struct iommu_domain *domain,
 					iommu_fault_handler_t handler);
 extern int iommu_device_group(struct device *dev, unsigned int *groupid);
@@ -142,11 +178,25 @@ static inline int report_iommu_fault(struct iommu_domain *domain,
 struct iommu_ops {};
 
 static inline bool iommu_present(struct bus_type *bus)
+=======
+
+#else /* CONFIG_IOMMU_API */
+
+static inline void register_iommu(struct iommu_ops *ops)
+{
+}
+
+static inline bool iommu_found(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return false;
 }
 
+<<<<<<< HEAD
 static inline struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
+=======
+static inline struct iommu_domain *iommu_domain_alloc(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return NULL;
 }
@@ -190,6 +240,7 @@ static inline int domain_has_cap(struct iommu_domain *domain,
 	return 0;
 }
 
+<<<<<<< HEAD
 static inline void iommu_set_fault_handler(struct iommu_domain *domain,
 					iommu_fault_handler_t handler)
 {
@@ -200,6 +251,8 @@ static inline int iommu_device_group(struct device *dev, unsigned int *groupid)
 	return -ENODEV;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_IOMMU_API */
 
 #endif /* __LINUX_IOMMU_H */

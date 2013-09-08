@@ -1,6 +1,7 @@
 #ifndef __ASM_GENERIC_DELAY_H
 #define __ASM_GENERIC_DELAY_H
 
+<<<<<<< HEAD
 /* Undefined functions to get compile-time errors */
 extern void __bad_udelay(void);
 extern void __bad_ndelay(void);
@@ -40,5 +41,11 @@ extern void __delay(unsigned long loops);
 			__ndelay(n);					\
 		}							\
 	})
+=======
+extern void __udelay(unsigned long usecs);
+extern void __delay(unsigned long loops);
+
+#define udelay(n) __udelay(n)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __ASM_GENERIC_DELAY_H */

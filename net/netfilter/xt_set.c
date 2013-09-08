@@ -13,10 +13,17 @@
 
 #include <linux/module.h>
 #include <linux/skbuff.h>
+<<<<<<< HEAD
 
 #include <linux/netfilter/x_tables.h>
 #include <linux/netfilter/xt_set.h>
 #include <linux/netfilter/ipset/ip_set_timeout.h>
+=======
+#include <linux/version.h>
+
+#include <linux/netfilter/x_tables.h>
+#include <linux/netfilter/xt_set.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>");
@@ -29,14 +36,21 @@ MODULE_ALIAS("ip6t_SET");
 
 static inline int
 match_set(ip_set_id_t index, const struct sk_buff *skb,
+<<<<<<< HEAD
 	  const struct xt_action_param *par,
 	  const struct ip_set_adt_opt *opt, int inv)
 {
 	if (ip_set_test(index, skb, par, opt))
+=======
+	  u8 pf, u8 dim, u8 flags, int inv)
+{
+	if (ip_set_test(index, skb, pf, dim, flags))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		inv = !inv;
 	return inv;
 }
 
+<<<<<<< HEAD
 #define ADT_OPT(n, f, d, fs, cfs, t)	\
 const struct ip_set_adt_opt n = {	\
 	.family	= f,			\
@@ -54,16 +68,25 @@ struct ip_set_adt_opt n = {		\
 	.timeout = t,			\
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Revision 0 interface: backward compatible with netfilter/iptables */
 
 static bool
 set_match_v0(const struct sk_buff *skb, struct xt_action_param *par)
 {
 	const struct xt_set_info_match_v0 *info = par->matchinfo;
+<<<<<<< HEAD
 	ADT_OPT(opt, par->family, info->match_set.u.compat.dim,
 		info->match_set.u.compat.flags, 0, UINT_MAX);
 
 	return match_set(info->match_set.index, skb, par, &opt,
+=======
+
+	return match_set(info->match_set.index, skb, par->family,
+			 info->match_set.u.compat.dim,
+			 info->match_set.u.compat.flags,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 info->match_set.u.compat.flags & IPSET_INV_MATCH);
 }
 
@@ -121,6 +144,7 @@ static unsigned int
 set_target_v0(struct sk_buff *skb, const struct xt_action_param *par)
 {
 	const struct xt_set_info_target_v0 *info = par->targinfo;
+<<<<<<< HEAD
 	ADT_OPT(add_opt, par->family, info->add_set.u.compat.dim,
 		info->add_set.u.compat.flags, 0, UINT_MAX);
 	ADT_OPT(del_opt, par->family, info->del_set.u.compat.dim,
@@ -130,6 +154,17 @@ set_target_v0(struct sk_buff *skb, const struct xt_action_param *par)
 		ip_set_add(info->add_set.index, skb, par, &add_opt);
 	if (info->del_set.index != IPSET_INVALID_ID)
 		ip_set_del(info->del_set.index, skb, par, &del_opt);
+=======
+
+	if (info->add_set.index != IPSET_INVALID_ID)
+		ip_set_add(info->add_set.index, skb, par->family,
+			   info->add_set.u.compat.dim,
+			   info->add_set.u.compat.flags);
+	if (info->del_set.index != IPSET_INVALID_ID)
+		ip_set_del(info->del_set.index, skb, par->family,
+			   info->del_set.u.compat.dim,
+			   info->del_set.u.compat.flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return XT_CONTINUE;
 }
@@ -188,6 +223,7 @@ set_target_v0_destroy(const struct xt_tgdtor_param *par)
 		ip_set_nfnl_put(info->del_set.index);
 }
 
+<<<<<<< HEAD
 /* Revision 1 match and target */
 
 static bool
@@ -198,13 +234,31 @@ set_match_v1(const struct sk_buff *skb, struct xt_action_param *par)
 		info->match_set.flags, 0, UINT_MAX);
 
 	return match_set(info->match_set.index, skb, par, &opt,
+=======
+/* Revision 1: current interface to netfilter/iptables */
+
+static bool
+set_match(const struct sk_buff *skb, struct xt_action_param *par)
+{
+	const struct xt_set_info_match *info = par->matchinfo;
+
+	return match_set(info->match_set.index, skb, par->family,
+			 info->match_set.dim,
+			 info->match_set.flags,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 info->match_set.flags & IPSET_INV_MATCH);
 }
 
 static int
+<<<<<<< HEAD
 set_match_v1_checkentry(const struct xt_mtchk_param *par)
 {
 	struct xt_set_info_match_v1 *info = par->matchinfo;
+=======
+set_match_checkentry(const struct xt_mtchk_param *par)
+{
+	struct xt_set_info_match *info = par->matchinfo;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ip_set_id_t index;
 
 	index = ip_set_nfnl_get_byindex(info->match_set.index);
@@ -225,14 +279,21 @@ set_match_v1_checkentry(const struct xt_mtchk_param *par)
 }
 
 static void
+<<<<<<< HEAD
 set_match_v1_destroy(const struct xt_mtdtor_param *par)
 {
 	struct xt_set_info_match_v1 *info = par->matchinfo;
+=======
+set_match_destroy(const struct xt_mtdtor_param *par)
+{
+	struct xt_set_info_match *info = par->matchinfo;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ip_set_nfnl_put(info->match_set.index);
 }
 
 static unsigned int
+<<<<<<< HEAD
 set_target_v1(struct sk_buff *skb, const struct xt_action_param *par)
 {
 	const struct xt_set_info_target_v1 *info = par->targinfo;
@@ -245,14 +306,36 @@ set_target_v1(struct sk_buff *skb, const struct xt_action_param *par)
 		ip_set_add(info->add_set.index, skb, par, &add_opt);
 	if (info->del_set.index != IPSET_INVALID_ID)
 		ip_set_del(info->del_set.index, skb, par, &del_opt);
+=======
+set_target(struct sk_buff *skb, const struct xt_action_param *par)
+{
+	const struct xt_set_info_target *info = par->targinfo;
+
+	if (info->add_set.index != IPSET_INVALID_ID)
+		ip_set_add(info->add_set.index,
+			   skb, par->family,
+			   info->add_set.dim,
+			   info->add_set.flags);
+	if (info->del_set.index != IPSET_INVALID_ID)
+		ip_set_del(info->del_set.index,
+			   skb, par->family,
+			   info->del_set.dim,
+			   info->del_set.flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return XT_CONTINUE;
 }
 
 static int
+<<<<<<< HEAD
 set_target_v1_checkentry(const struct xt_tgchk_param *par)
 {
 	const struct xt_set_info_target_v1 *info = par->targinfo;
+=======
+set_target_checkentry(const struct xt_tgchk_param *par)
+{
+	const struct xt_set_info_target *info = par->targinfo;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ip_set_id_t index;
 
 	if (info->add_set.index != IPSET_INVALID_ID) {
@@ -289,9 +372,15 @@ set_target_v1_checkentry(const struct xt_tgchk_param *par)
 }
 
 static void
+<<<<<<< HEAD
 set_target_v1_destroy(const struct xt_tgdtor_param *par)
 {
 	const struct xt_set_info_target_v1 *info = par->targinfo;
+=======
+set_target_destroy(const struct xt_tgdtor_param *par)
+{
+	const struct xt_set_info_target *info = par->targinfo;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (info->add_set.index != IPSET_INVALID_ID)
 		ip_set_nfnl_put(info->add_set.index);
@@ -299,6 +388,7 @@ set_target_v1_destroy(const struct xt_tgdtor_param *par)
 		ip_set_nfnl_put(info->del_set.index);
 }
 
+<<<<<<< HEAD
 /* Revision 2 target */
 
 static unsigned int
@@ -325,6 +415,8 @@ set_target_v2(struct sk_buff *skb, const struct xt_action_param *par)
 #define set_target_v2_checkentry	set_target_v1_checkentry
 #define set_target_v2_destroy		set_target_v1_destroy
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct xt_match set_matches[] __read_mostly = {
 	{
 		.name		= "set",
@@ -340,20 +432,34 @@ static struct xt_match set_matches[] __read_mostly = {
 		.name		= "set",
 		.family		= NFPROTO_IPV4,
 		.revision	= 1,
+<<<<<<< HEAD
 		.match		= set_match_v1,
 		.matchsize	= sizeof(struct xt_set_info_match_v1),
 		.checkentry	= set_match_v1_checkentry,
 		.destroy	= set_match_v1_destroy,
+=======
+		.match		= set_match,
+		.matchsize	= sizeof(struct xt_set_info_match),
+		.checkentry	= set_match_checkentry,
+		.destroy	= set_match_destroy,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.me		= THIS_MODULE
 	},
 	{
 		.name		= "set",
 		.family		= NFPROTO_IPV6,
 		.revision	= 1,
+<<<<<<< HEAD
 		.match		= set_match_v1,
 		.matchsize	= sizeof(struct xt_set_info_match_v1),
 		.checkentry	= set_match_v1_checkentry,
 		.destroy	= set_match_v1_destroy,
+=======
+		.match		= set_match,
+		.matchsize	= sizeof(struct xt_set_info_match),
+		.checkentry	= set_match_checkentry,
+		.destroy	= set_match_destroy,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.me		= THIS_MODULE
 	},
 };
@@ -373,16 +479,24 @@ static struct xt_target set_targets[] __read_mostly = {
 		.name		= "SET",
 		.revision	= 1,
 		.family		= NFPROTO_IPV4,
+<<<<<<< HEAD
 		.target		= set_target_v1,
 		.targetsize	= sizeof(struct xt_set_info_target_v1),
 		.checkentry	= set_target_v1_checkentry,
 		.destroy	= set_target_v1_destroy,
+=======
+		.target		= set_target,
+		.targetsize	= sizeof(struct xt_set_info_target),
+		.checkentry	= set_target_checkentry,
+		.destroy	= set_target_destroy,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.me		= THIS_MODULE
 	},
 	{
 		.name		= "SET",
 		.revision	= 1,
 		.family		= NFPROTO_IPV6,
+<<<<<<< HEAD
 		.target		= set_target_v1,
 		.targetsize	= sizeof(struct xt_set_info_target_v1),
 		.checkentry	= set_target_v1_checkentry,
@@ -407,6 +521,12 @@ static struct xt_target set_targets[] __read_mostly = {
 		.targetsize	= sizeof(struct xt_set_info_target_v2),
 		.checkentry	= set_target_v2_checkentry,
 		.destroy	= set_target_v2_destroy,
+=======
+		.target		= set_target,
+		.targetsize	= sizeof(struct xt_set_info_target),
+		.checkentry	= set_target_checkentry,
+		.destroy	= set_target_destroy,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.me		= THIS_MODULE
 	},
 };

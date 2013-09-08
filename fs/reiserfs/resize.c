@@ -13,7 +13,12 @@
 #include <linux/vmalloc.h>
 #include <linux/string.h>
 #include <linux/errno.h>
+<<<<<<< HEAD
 #include "reiserfs.h"
+=======
+#include <linux/reiserfs_fs.h>
+#include <linux/reiserfs_fs_sb.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/buffer_head.h>
 
 int reiserfs_resize(struct super_block *s, unsigned long block_count_new)
@@ -110,13 +115,22 @@ int reiserfs_resize(struct super_block *s, unsigned long block_count_new)
 		/* allocate additional bitmap blocks, reallocate array of bitmap
 		 * block pointers */
 		bitmap =
+<<<<<<< HEAD
 		    vzalloc(sizeof(struct reiserfs_bitmap_info) * bmap_nr_new);
+=======
+		    vmalloc(sizeof(struct reiserfs_bitmap_info) * bmap_nr_new);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!bitmap) {
 			/* Journal bitmaps are still supersized, but the memory isn't
 			 * leaked, so I guess it's ok */
 			printk("reiserfs_resize: unable to allocate memory.\n");
 			return -ENOMEM;
 		}
+<<<<<<< HEAD
+=======
+		memset(bitmap, 0,
+		       sizeof(struct reiserfs_bitmap_info) * bmap_nr_new);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (i = 0; i < bmap_nr; i++)
 			bitmap[i] = old_bitmap[i];
 
@@ -133,7 +147,11 @@ int reiserfs_resize(struct super_block *s, unsigned long block_count_new)
 				return -EIO;
 			}
 			memset(bh->b_data, 0, sb_blocksize(sb));
+<<<<<<< HEAD
 			reiserfs_set_le_bit(0, bh->b_data);
+=======
+			reiserfs_test_and_set_le_bit(0, bh->b_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			reiserfs_cache_bitmap_metadata(s, bh, bitmap + i);
 
 			set_buffer_uptodate(bh);
@@ -169,7 +187,11 @@ int reiserfs_resize(struct super_block *s, unsigned long block_count_new)
 
 	reiserfs_prepare_for_journal(s, bh, 1);
 	for (i = block_r; i < s->s_blocksize * 8; i++)
+<<<<<<< HEAD
 		reiserfs_clear_le_bit(i, bh->b_data);
+=======
+		reiserfs_test_and_clear_le_bit(i, bh->b_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info->free_count += s->s_blocksize * 8 - block_r;
 
 	journal_mark_dirty(&th, s, bh);
@@ -187,7 +209,11 @@ int reiserfs_resize(struct super_block *s, unsigned long block_count_new)
 
 	reiserfs_prepare_for_journal(s, bh, 1);
 	for (i = block_r_new; i < s->s_blocksize * 8; i++)
+<<<<<<< HEAD
 		reiserfs_set_le_bit(i, bh->b_data);
+=======
+		reiserfs_test_and_set_le_bit(i, bh->b_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	journal_mark_dirty(&th, s, bh);
 	brelse(bh);
 

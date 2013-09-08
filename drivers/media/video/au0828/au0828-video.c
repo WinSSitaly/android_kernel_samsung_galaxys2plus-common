@@ -33,6 +33,10 @@
 #include <linux/init.h>
 #include <linux/device.h>
 #include <linux/suspend.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/v4l2-common.h>
 #include <media/v4l2-ioctl.h>
 #include <media/v4l2-chip-ident.h>
@@ -42,6 +46,11 @@
 
 static DEFINE_MUTEX(au0828_sysfs_lock);
 
+<<<<<<< HEAD
+=======
+#define AU0828_VERSION_CODE KERNEL_VERSION(0, 0, 1)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* ------------------------------------------------------------------
 	Videobuf operations
    ------------------------------------------------------------------*/
@@ -1251,6 +1260,11 @@ static int vidioc_querycap(struct file *file, void  *priv,
 	strlcpy(cap->card, dev->board.name, sizeof(cap->card));
 	strlcpy(cap->bus_info, dev->v4l2_dev.name, sizeof(cap->bus_info));
 
+<<<<<<< HEAD
+=======
+	cap->version = AU0828_VERSION_CODE;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*set the device capabilities */
 	cap->capabilities = V4L2_CAP_VIDEO_CAPTURE |
 		V4L2_CAP_VBI_CAPTURE |
@@ -1692,18 +1706,28 @@ static int vidioc_streamoff(struct file *file, void *priv,
 			(AUVI_INPUT(i).audio_setup)(dev, 0);
 		}
 
+<<<<<<< HEAD
 		if (res_check(fh, AU0828_RESOURCE_VIDEO)) {
 			videobuf_streamoff(&fh->vb_vidq);
 			res_free(fh, AU0828_RESOURCE_VIDEO);
 		}
+=======
+		videobuf_streamoff(&fh->vb_vidq);
+		res_free(fh, AU0828_RESOURCE_VIDEO);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (fh->type == V4L2_BUF_TYPE_VBI_CAPTURE) {
 		dev->vbi_timeout_running = 0;
 		del_timer_sync(&dev->vbi_timeout);
 
+<<<<<<< HEAD
 		if (res_check(fh, AU0828_RESOURCE_VBI)) {
 			videobuf_streamoff(&fh->vb_vbiq);
 			res_free(fh, AU0828_RESOURCE_VBI);
 		}
+=======
+		videobuf_streamoff(&fh->vb_vbiq);
+		res_free(fh, AU0828_RESOURCE_VBI);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;

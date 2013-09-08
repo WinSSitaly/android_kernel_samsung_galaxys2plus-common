@@ -22,7 +22,10 @@
 #include <linux/miscdevice.h>
 #include <linux/gfp.h>
 #include <linux/file.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/tcp.h>
 #include <scsi/scsi.h>
 #include <scsi/scsi_cmnd.h>

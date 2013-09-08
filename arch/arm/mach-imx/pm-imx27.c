@@ -10,7 +10,12 @@
 #include <linux/kernel.h>
 #include <linux/suspend.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <mach/hardware.h>
+=======
+#include <mach/system.h>
+#include <mach/mx27.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int mx27_suspend_enter(suspend_state_t state)
 {
@@ -22,7 +27,11 @@ static int mx27_suspend_enter(suspend_state_t state)
 		cscr &= 0xFFFFFFFC;
 		__raw_writel(cscr, MX27_IO_ADDRESS(MX27_CCM_BASE_ADDR));
 		/* Executes WFI */
+<<<<<<< HEAD
 		cpu_do_idle();
+=======
+		arch_idle();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	default:

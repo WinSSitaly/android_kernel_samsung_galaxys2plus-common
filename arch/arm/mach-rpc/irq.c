@@ -5,7 +5,10 @@
 #include <asm/mach/irq.h>
 #include <asm/hardware/iomd.h>
 #include <asm/irq.h>
+<<<<<<< HEAD
 #include <asm/fiq.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void iomd_ack_irq_a(struct irq_data *d)
 {
@@ -113,8 +116,11 @@ static struct irq_chip iomd_fiq_chip = {
 	.irq_unmask	= iomd_unmask_irq_fiq,
 };
 
+<<<<<<< HEAD
 extern unsigned char rpc_default_fiq_start, rpc_default_fiq_end;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init rpc_init_irq(void)
 {
 	unsigned int irq, flags;
@@ -124,9 +130,12 @@ void __init rpc_init_irq(void)
 	iomd_writeb(0, IOMD_FIQMASK);
 	iomd_writeb(0, IOMD_DMAMASK);
 
+<<<<<<< HEAD
 	set_fiq_handler(&rpc_default_fiq_start,
 		&rpc_default_fiq_end - &rpc_default_fiq_start);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (irq = 0; irq < NR_IRQS; irq++) {
 		flags = IRQF_VALID;
 

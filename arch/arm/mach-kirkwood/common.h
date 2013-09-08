@@ -30,6 +30,10 @@ void kirkwood_init(void);
 void kirkwood_init_early(void);
 void kirkwood_init_irq(void);
 
+<<<<<<< HEAD
+=======
+extern struct mbus_dram_target_info kirkwood_mbus_dram_info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void kirkwood_setup_cpu_mbus(void);
 
 void kirkwood_enable_pcie(void);
@@ -49,6 +53,7 @@ void kirkwood_uart1_init(void);
 void kirkwood_nand_init(struct mtd_partition *parts, int nr_parts, int delay);
 void kirkwood_nand_init_rnb(struct mtd_partition *parts, int nr_parts, int (*dev_ready)(struct mtd_info *));
 void kirkwood_audio_init(void);
+<<<<<<< HEAD
 void kirkwood_restart(char, const char *);
 
 /* board init functions for boards not fully converted to fdt */
@@ -65,6 +70,8 @@ void kirkwood_wdt_init(void);
 void kirkwood_xor0_init(void);
 void kirkwood_xor1_init(void);
 void kirkwood_crypto_init(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int kirkwood_tclk;
 extern struct sys_timer kirkwood_timer;

@@ -16,6 +16,10 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/elf.h>
 #include <linux/moduleloader.h>
 #include <linux/err.h>
@@ -30,6 +34,23 @@
 
 LIST_HEAD(module_bug_list);
 
+<<<<<<< HEAD
+=======
+void *module_alloc(unsigned long size)
+{
+	if (size == 0)
+		return NULL;
+
+	return vmalloc_exec(size);
+}
+
+/* Free memory returned from module_alloc */
+void module_free(struct module *mod, void *module_region)
+{
+	vfree(module_region);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const Elf_Shdr *find_section(const Elf_Ehdr *hdr,
 				    const Elf_Shdr *sechdrs,
 				    const char *name)
@@ -78,3 +99,10 @@ int module_finalize(const Elf_Ehdr *hdr,
 
 	return 0;
 }
+<<<<<<< HEAD
+=======
+
+void module_arch_cleanup(struct module *mod)
+{
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

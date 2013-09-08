@@ -27,7 +27,10 @@
  *   poll=<n>, default 128
  *     n : burst size of PH_DATA_IND at transparent rx data
  *
+<<<<<<< HEAD
  * Revision: 0.3.3 (socket), 2008-11-05
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/module.h>
@@ -37,6 +40,11 @@
 #include <linux/slab.h>
 #include "hfcsusb.h"
 
+<<<<<<< HEAD
+=======
+static const char *hfcsusb_rev = "Revision: 0.3.3 (socket), 2008-11-05";
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned int debug;
 static int poll = DEFAULT_TRANSP_BURST_SZ;
 
@@ -75,9 +83,15 @@ ctrl_start_transfer(struct hfcsusb *hw)
 		hw->ctrl_urb->transfer_buffer = NULL;
 		hw->ctrl_urb->transfer_buffer_length = 0;
 		hw->ctrl_write.wIndex =
+<<<<<<< HEAD
 			cpu_to_le16(hw->ctrl_buff[hw->ctrl_out_idx].hfcs_reg);
 		hw->ctrl_write.wValue =
 			cpu_to_le16(hw->ctrl_buff[hw->ctrl_out_idx].reg_val);
+=======
+		    cpu_to_le16(hw->ctrl_buff[hw->ctrl_out_idx].hfcs_reg);
+		hw->ctrl_write.wValue =
+		    cpu_to_le16(hw->ctrl_buff[hw->ctrl_out_idx].reg_val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		usb_submit_urb(hw->ctrl_urb, GFP_ATOMIC);
 	}
@@ -93,7 +107,11 @@ static int write_reg(struct hfcsusb *hw, __u8 reg, __u8 val)
 
 	if (debug & DBG_HFC_CALL_TRACE)
 		printk(KERN_DEBUG "%s: %s reg(0x%02x) val(0x%02x)\n",
+<<<<<<< HEAD
 		       hw->name, __func__, reg, val);
+=======
+			hw->name, __func__, reg, val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock(&hw->ctrl_lock);
 	if (hw->ctrl_cnt >= HFC_CTRL_BUFSIZE) {
@@ -196,8 +214,13 @@ handle_led(struct hfcsusb *hw, int event)
 	if (hw->led_state != tmpled) {
 		if (debug & DBG_HFC_CALL_TRACE)
 			printk(KERN_DEBUG "%s: %s reg(0x%02x) val(x%02x)\n",
+<<<<<<< HEAD
 			       hw->name, __func__,
 			       HFCUSB_P_DATA, hw->led_state);
+=======
+			    hw->name, __func__,
+			    HFCUSB_P_DATA, hw->led_state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		write_reg(hw, HFCUSB_P_DATA, hw->led_state);
 	}
@@ -225,7 +248,11 @@ hfcusb_l2l1B(struct mISDNchannel *ch, struct sk_buff *skb)
 		spin_unlock_irqrestore(&hw->lock, flags);
 		if (debug & DBG_HFC_CALL_TRACE)
 			printk(KERN_DEBUG "%s: %s PH_DATA_REQ ret(%i)\n",
+<<<<<<< HEAD
 			       hw->name, __func__, ret);
+=======
+				hw->name, __func__, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret > 0) {
 			/*
 			 * other l1 drivers don't send early confirms on
@@ -244,12 +271,20 @@ hfcusb_l2l1B(struct mISDNchannel *ch, struct sk_buff *skb)
 			ret = 0;
 		if (!ret)
 			_queue_data(ch, PH_ACTIVATE_IND, MISDN_ID_ANY,
+<<<<<<< HEAD
 				    0, NULL, GFP_KERNEL);
+=======
+				0, NULL, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case PH_DEACTIVATE_REQ:
 		deactivate_bchannel(bch);
 		_queue_data(ch, PH_DEACTIVATE_IND, MISDN_ID_ANY,
+<<<<<<< HEAD
 			    0, NULL, GFP_KERNEL);
+=======
+			0, NULL, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = 0;
 		break;
 	}
@@ -270,7 +305,11 @@ hfcsusb_ph_info(struct hfcsusb *hw)
 	int i;
 
 	phi = kzalloc(sizeof(struct ph_info) +
+<<<<<<< HEAD
 		      dch->dev.nrbchan * sizeof(struct ph_info_ch), GFP_ATOMIC);
+=======
+		dch->dev.nrbchan * sizeof(struct ph_info_ch), GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	phi->dch.ch.protocol = hw->protocol;
 	phi->dch.ch.Flags = dch->Flags;
 	phi->dch.state = dch->state;
@@ -280,8 +319,13 @@ hfcsusb_ph_info(struct hfcsusb *hw)
 		phi->bch[i].Flags = hw->bch[i].Flags;
 	}
 	_queue_data(&dch->dev.D, MPH_INFORMATION_IND, MISDN_ID_ANY,
+<<<<<<< HEAD
 		    sizeof(struct ph_info_dch) + dch->dev.nrbchan *
 		    sizeof(struct ph_info_ch), phi, GFP_ATOMIC);
+=======
+		sizeof(struct ph_info_dch) + dch->dev.nrbchan *
+		sizeof(struct ph_info_ch), phi, GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(phi);
 }
 
@@ -302,7 +346,11 @@ hfcusb_l2l1D(struct mISDNchannel *ch, struct sk_buff *skb)
 	case PH_DATA_REQ:
 		if (debug & DBG_HFC_CALL_TRACE)
 			printk(KERN_DEBUG "%s: %s: PH_DATA_REQ\n",
+<<<<<<< HEAD
 			       hw->name, __func__);
+=======
+				hw->name, __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		spin_lock_irqsave(&hw->lock, flags);
 		ret = dchannel_senddata(dch, skb);
@@ -316,13 +364,19 @@ hfcusb_l2l1D(struct mISDNchannel *ch, struct sk_buff *skb)
 	case PH_ACTIVATE_REQ:
 		if (debug & DBG_HFC_CALL_TRACE)
 			printk(KERN_DEBUG "%s: %s: PH_ACTIVATE_REQ %s\n",
+<<<<<<< HEAD
 			       hw->name, __func__,
 			       (hw->protocol == ISDN_P_NT_S0) ? "NT" : "TE");
+=======
+				hw->name, __func__,
+				(hw->protocol == ISDN_P_NT_S0) ? "NT" : "TE");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (hw->protocol == ISDN_P_NT_S0) {
 			ret = 0;
 			if (test_bit(FLG_ACTIVE, &dch->Flags)) {
 				_queue_data(&dch->dev.D,
+<<<<<<< HEAD
 					    PH_ACTIVATE_IND, MISDN_ID_ANY, 0,
 					    NULL, GFP_ATOMIC);
 			} else {
@@ -330,6 +384,15 @@ hfcusb_l2l1D(struct mISDNchannel *ch, struct sk_buff *skb)
 						   HFC_L1_ACTIVATE_NT);
 				test_and_set_bit(FLG_L2_ACTIVATED,
 						 &dch->Flags);
+=======
+					PH_ACTIVATE_IND, MISDN_ID_ANY, 0,
+					NULL, GFP_ATOMIC);
+			} else {
+				hfcsusb_ph_command(hw,
+					HFC_L1_ACTIVATE_NT);
+				test_and_set_bit(FLG_L2_ACTIVATED,
+					&dch->Flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		} else {
 			hfcsusb_ph_command(hw, HFC_L1_ACTIVATE_TE);
@@ -340,7 +403,11 @@ hfcusb_l2l1D(struct mISDNchannel *ch, struct sk_buff *skb)
 	case PH_DEACTIVATE_REQ:
 		if (debug & DBG_HFC_CALL_TRACE)
 			printk(KERN_DEBUG "%s: %s: PH_DEACTIVATE_REQ\n",
+<<<<<<< HEAD
 			       hw->name, __func__);
+=======
+				hw->name, __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		test_and_clear_bit(FLG_L2_ACTIVATED, &dch->Flags);
 
 		if (hw->protocol == ISDN_P_NT_S0) {
@@ -385,7 +452,11 @@ hfc_l1callback(struct dchannel *dch, u_int cmd)
 
 	if (debug & DBG_HFC_CALL_TRACE)
 		printk(KERN_DEBUG "%s: %s cmd 0x%x\n",
+<<<<<<< HEAD
 		       hw->name, __func__, cmd);
+=======
+			hw->name, __func__, cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (cmd) {
 	case INFO3_P8:
@@ -410,17 +481,29 @@ hfc_l1callback(struct dchannel *dch, u_int cmd)
 	case PH_ACTIVATE_IND:
 		test_and_set_bit(FLG_ACTIVE, &dch->Flags);
 		_queue_data(&dch->dev.D, cmd, MISDN_ID_ANY, 0, NULL,
+<<<<<<< HEAD
 			    GFP_ATOMIC);
+=======
+			GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case PH_DEACTIVATE_IND:
 		test_and_clear_bit(FLG_ACTIVE, &dch->Flags);
 		_queue_data(&dch->dev.D, cmd, MISDN_ID_ANY, 0, NULL,
+<<<<<<< HEAD
 			    GFP_ATOMIC);
+=======
+			GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		if (dch->debug & DEBUG_HW)
 			printk(KERN_DEBUG "%s: %s: unknown cmd %x\n",
+<<<<<<< HEAD
 			       hw->name, __func__, cmd);
+=======
+			hw->name, __func__, cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 	hfcsusb_ph_info(hw);
@@ -429,14 +512,23 @@ hfc_l1callback(struct dchannel *dch, u_int cmd)
 
 static int
 open_dchannel(struct hfcsusb *hw, struct mISDNchannel *ch,
+<<<<<<< HEAD
 	      struct channel_req *rq)
+=======
+    struct channel_req *rq)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err = 0;
 
 	if (debug & DEBUG_HW_OPEN)
 		printk(KERN_DEBUG "%s: %s: dev(%d) open addr(%i) from %p\n",
+<<<<<<< HEAD
 		       hw->name, __func__, hw->dch.dev.id, rq->adr.channel,
 		       __builtin_return_address(0));
+=======
+		    hw->name, __func__, hw->dch.dev.id, rq->adr.channel,
+		    __builtin_return_address(0));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rq->protocol == ISDN_P_NONE)
 		return -EINVAL;
 
@@ -450,7 +542,11 @@ open_dchannel(struct hfcsusb *hw, struct mISDNchannel *ch,
 			hfcsusb_start_endpoint(hw, HFC_CHAN_E);
 			set_bit(FLG_ACTIVE, &hw->ech.Flags);
 			_queue_data(&hw->ech.dev.D, PH_ACTIVATE_IND,
+<<<<<<< HEAD
 				    MISDN_ID_ANY, 0, NULL, GFP_ATOMIC);
+=======
+				     MISDN_ID_ANY, 0, NULL, GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else
 			return -EINVAL;
 	}
@@ -473,11 +569,19 @@ open_dchannel(struct hfcsusb *hw, struct mISDNchannel *ch,
 	if (((ch->protocol == ISDN_P_NT_S0) && (hw->dch.state == 3)) ||
 	    ((ch->protocol == ISDN_P_TE_S0) && (hw->dch.state == 7)))
 		_queue_data(ch, PH_ACTIVATE_IND, MISDN_ID_ANY,
+<<<<<<< HEAD
 			    0, NULL, GFP_KERNEL);
 	rq->ch = ch;
 	if (!try_module_get(THIS_MODULE))
 		printk(KERN_WARNING "%s: %s: cannot get module\n",
 		       hw->name, __func__);
+=======
+		    0, NULL, GFP_KERNEL);
+	rq->ch = ch;
+	if (!try_module_get(THIS_MODULE))
+		printk(KERN_WARNING "%s: %s: cannot get module\n",
+		    hw->name, __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -486,14 +590,22 @@ open_bchannel(struct hfcsusb *hw, struct channel_req *rq)
 {
 	struct bchannel		*bch;
 
+<<<<<<< HEAD
 	if (rq->adr.channel == 0 || rq->adr.channel > 2)
+=======
+	if (rq->adr.channel > 2)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	if (rq->protocol == ISDN_P_NONE)
 		return -EINVAL;
 
 	if (debug & DBG_HFC_CALL_TRACE)
 		printk(KERN_DEBUG "%s: %s B%i\n",
+<<<<<<< HEAD
 		       hw->name, __func__, rq->adr.channel);
+=======
+			hw->name, __func__, rq->adr.channel);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bch = &hw->bch[rq->adr.channel - 1];
 	if (test_and_set_bit(FLG_OPEN, &bch->Flags))
@@ -510,7 +622,11 @@ open_bchannel(struct hfcsusb *hw, struct channel_req *rq)
 
 	if (!try_module_get(THIS_MODULE))
 		printk(KERN_WARNING "%s: %s:cannot get module\n",
+<<<<<<< HEAD
 		       hw->name, __func__);
+=======
+		    hw->name, __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -521,16 +637,28 @@ channel_ctrl(struct hfcsusb *hw, struct mISDN_ctrl_req *cq)
 
 	if (debug & DBG_HFC_CALL_TRACE)
 		printk(KERN_DEBUG "%s: %s op(0x%x) channel(0x%x)\n",
+<<<<<<< HEAD
 		       hw->name, __func__, (cq->op), (cq->channel));
+=======
+		    hw->name, __func__, (cq->op), (cq->channel));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (cq->op) {
 	case MISDN_CTRL_GETOP:
 		cq->op = MISDN_CTRL_LOOP | MISDN_CTRL_CONNECT |
+<<<<<<< HEAD
 			MISDN_CTRL_DISCONNECT;
 		break;
 	default:
 		printk(KERN_WARNING "%s: %s: unknown Op %x\n",
 		       hw->name, __func__, cq->op);
+=======
+			 MISDN_CTRL_DISCONNECT;
+		break;
+	default:
+		printk(KERN_WARNING "%s: %s: unknown Op %x\n",
+			hw->name, __func__, cq->op);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EINVAL;
 		break;
 	}
@@ -551,7 +679,11 @@ hfc_dctrl(struct mISDNchannel *ch, u_int cmd, void *arg)
 
 	if (dch->debug & DEBUG_HW)
 		printk(KERN_DEBUG "%s: %s: cmd:%x %p\n",
+<<<<<<< HEAD
 		       hw->name, __func__, cmd, arg);
+=======
+		    hw->name, __func__, cmd, arg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (cmd) {
 	case OPEN_CHANNEL:
 		rq = arg;
@@ -567,9 +699,15 @@ hfc_dctrl(struct mISDNchannel *ch, u_int cmd, void *arg)
 		hw->open--;
 		if (debug & DEBUG_HW_OPEN)
 			printk(KERN_DEBUG
+<<<<<<< HEAD
 			       "%s: %s: dev(%d) close from %p (open %d)\n",
 			       hw->name, __func__, hw->dch.dev.id,
 			       __builtin_return_address(0), hw->open);
+=======
+				"%s: %s: dev(%d) close from %p (open %d)\n",
+				hw->name, __func__, hw->dch.dev.id,
+				__builtin_return_address(0), hw->open);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!hw->open) {
 			hfcsusb_stop_endpoint(hw, HFC_CHAN_D);
 			if (hw->fifos[HFCUSB_PCM_RX].pipe)
@@ -584,7 +722,11 @@ hfc_dctrl(struct mISDNchannel *ch, u_int cmd, void *arg)
 	default:
 		if (dch->debug & DEBUG_HW)
 			printk(KERN_DEBUG "%s: %s: unknown command %x\n",
+<<<<<<< HEAD
 			       hw->name, __func__, cmd);
+=======
+				hw->name, __func__, cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 	return err;
@@ -601,10 +743,17 @@ ph_state_te(struct dchannel *dch)
 	if (debug & DEBUG_HW) {
 		if (dch->state <= HFC_MAX_TE_LAYER1_STATE)
 			printk(KERN_DEBUG "%s: %s: %s\n", hw->name, __func__,
+<<<<<<< HEAD
 			       HFC_TE_LAYER1_STATES[dch->state]);
 		else
 			printk(KERN_DEBUG "%s: %s: TE F%d\n",
 			       hw->name, __func__, dch->state);
+=======
+			    HFC_TE_LAYER1_STATES[dch->state]);
+		else
+			printk(KERN_DEBUG "%s: %s: TE F%d\n",
+			    hw->name, __func__, dch->state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	switch (dch->state) {
@@ -642,12 +791,21 @@ ph_state_nt(struct dchannel *dch)
 	if (debug & DEBUG_HW) {
 		if (dch->state <= HFC_MAX_NT_LAYER1_STATE)
 			printk(KERN_DEBUG "%s: %s: %s\n",
+<<<<<<< HEAD
 			       hw->name, __func__,
 			       HFC_NT_LAYER1_STATES[dch->state]);
 
 		else
 			printk(KERN_INFO DRIVER_NAME "%s: %s: NT G%d\n",
 			       hw->name, __func__, dch->state);
+=======
+			    hw->name, __func__,
+			    HFC_NT_LAYER1_STATES[dch->state]);
+
+		else
+			printk(KERN_INFO DRIVER_NAME "%s: %s: NT G%d\n",
+			    hw->name, __func__, dch->state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	switch (dch->state) {
@@ -676,7 +834,11 @@ ph_state_nt(struct dchannel *dch)
 		hw->timers &= ~NT_ACTIVATION_TIMER;
 		test_and_set_bit(FLG_ACTIVE, &dch->Flags);
 		_queue_data(&dch->dev.D, PH_ACTIVATE_IND,
+<<<<<<< HEAD
 			    MISDN_ID_ANY, 0, NULL, GFP_ATOMIC);
+=======
+			MISDN_ID_ANY, 0, NULL, GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		handle_led(hw, LED_S0_ON);
 		break;
 	case (4):
@@ -711,8 +873,13 @@ hfcsusb_setup_bch(struct bchannel *bch, int protocol)
 
 	if (debug & DEBUG_HW)
 		printk(KERN_DEBUG "%s: %s: protocol %x-->%x B%d\n",
+<<<<<<< HEAD
 		       hw->name, __func__, bch->state, protocol,
 		       bch->nr);
+=======
+		    hw->name, __func__, bch->state, protocol,
+		    bch->nr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* setup val for CON_HDLC */
 	conhdlc = 0;
@@ -742,7 +909,11 @@ hfcsusb_setup_bch(struct bchannel *bch, int protocol)
 	default:
 		if (debug & DEBUG_HW)
 			printk(KERN_DEBUG "%s: %s: prot not known %x\n",
+<<<<<<< HEAD
 			       hw->name, __func__, protocol);
+=======
+				hw->name, __func__, protocol);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOPROTOOPT;
 	}
 
@@ -771,7 +942,11 @@ hfcsusb_setup_bch(struct bchannel *bch, int protocol)
 			handle_led(hw, (bch->nr == 1) ? LED_B1_ON : LED_B2_ON);
 		else
 			handle_led(hw, (bch->nr == 1) ? LED_B1_OFF :
+<<<<<<< HEAD
 				   LED_B2_OFF);
+=======
+				LED_B2_OFF);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	hfcsusb_ph_info(hw);
 	return 0;
@@ -782,7 +957,11 @@ hfcsusb_ph_command(struct hfcsusb *hw, u_char command)
 {
 	if (debug & DEBUG_HW)
 		printk(KERN_DEBUG "%s: %s: %x\n",
+<<<<<<< HEAD
 		       hw->name, __func__, command);
+=======
+		   hw->name, __func__, command);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (command) {
 	case HFC_L1_ACTIVATE_TE:
@@ -800,15 +979,26 @@ hfcsusb_ph_command(struct hfcsusb *hw, u_char command)
 	case HFC_L1_ACTIVATE_NT:
 		if (hw->dch.state == 3)
 			_queue_data(&hw->dch.dev.D, PH_ACTIVATE_IND,
+<<<<<<< HEAD
 				    MISDN_ID_ANY, 0, NULL, GFP_ATOMIC);
 		else
 			write_reg(hw, HFCUSB_STATES, HFCUSB_ACTIVATE |
 				  HFCUSB_DO_ACTION | HFCUSB_NT_G2_G3);
+=======
+				MISDN_ID_ANY, 0, NULL, GFP_ATOMIC);
+		else
+			write_reg(hw, HFCUSB_STATES, HFCUSB_ACTIVATE |
+				HFCUSB_DO_ACTION | HFCUSB_NT_G2_G3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case HFC_L1_DEACTIVATE_NT:
 		write_reg(hw, HFCUSB_STATES,
+<<<<<<< HEAD
 			  HFCUSB_DO_ACTION);
+=======
+			HFCUSB_DO_ACTION);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 }
@@ -829,7 +1019,11 @@ channel_bctrl(struct bchannel *bch, struct mISDN_ctrl_req *cq)
 		test_and_set_bit(FLG_FILLEMPTY, &bch->Flags);
 		if (debug & DEBUG_HW_OPEN)
 			printk(KERN_DEBUG "%s: FILL_EMPTY request (nr=%d "
+<<<<<<< HEAD
 			       "off=%d)\n", __func__, bch->nr, !!cq->p1);
+=======
+				"off=%d)\n", __func__, bch->nr, !!cq->p1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		printk(KERN_WARNING "%s: unknown Op %x\n", __func__, cq->op);
@@ -842,7 +1036,11 @@ channel_bctrl(struct bchannel *bch, struct mISDN_ctrl_req *cq)
 /* collect data from incoming interrupt or isochron USB data */
 static void
 hfcsusb_rx_frame(struct usb_fifo *fifo, __u8 *data, unsigned int len,
+<<<<<<< HEAD
 		 int finish)
+=======
+	int finish)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hfcsusb	*hw = fifo->hw;
 	struct sk_buff	*rx_skb = NULL;
@@ -853,9 +1051,15 @@ hfcsusb_rx_frame(struct usb_fifo *fifo, __u8 *data, unsigned int len,
 
 	if (debug & DBG_HFC_CALL_TRACE)
 		printk(KERN_DEBUG "%s: %s: fifo(%i) len(%i) "
+<<<<<<< HEAD
 		       "dch(%p) bch(%p) ech(%p)\n",
 		       hw->name, __func__, fifon, len,
 		       fifo->dch, fifo->bch, fifo->ech);
+=======
+		    "dch(%p) bch(%p) ech(%p)\n",
+		    hw->name, __func__, fifon, len,
+		    fifo->dch, fifo->bch, fifo->ech);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!len)
 		return;
@@ -895,7 +1099,11 @@ hfcsusb_rx_frame(struct usb_fifo *fifo, __u8 *data, unsigned int len,
 			skb_trim(rx_skb, 0);
 		} else {
 			printk(KERN_DEBUG "%s: %s: No mem for rx_skb\n",
+<<<<<<< HEAD
 			       hw->name, __func__);
+=======
+			    hw->name, __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			spin_unlock(&hw->lock);
 			return;
 		}
@@ -905,8 +1113,13 @@ hfcsusb_rx_frame(struct usb_fifo *fifo, __u8 *data, unsigned int len,
 		/* D/E-Channel SKB range check */
 		if ((rx_skb->len + len) >= MAX_DFRAME_LEN_L1) {
 			printk(KERN_DEBUG "%s: %s: sbk mem exceeded "
+<<<<<<< HEAD
 			       "for fifo(%d) HFCUSB_D_RX\n",
 			       hw->name, __func__, fifon);
+=======
+			    "for fifo(%d) HFCUSB_D_RX\n",
+			    hw->name, __func__, fifon);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			skb_trim(rx_skb, 0);
 			spin_unlock(&hw->lock);
 			return;
@@ -915,8 +1128,13 @@ hfcsusb_rx_frame(struct usb_fifo *fifo, __u8 *data, unsigned int len,
 		/* B-Channel SKB range check */
 		if ((rx_skb->len + len) >= (MAX_BCH_SIZE + 3)) {
 			printk(KERN_DEBUG "%s: %s: sbk mem exceeded "
+<<<<<<< HEAD
 			       "for fifo(%d) HFCUSB_B_RX\n",
 			       hw->name, __func__, fifon);
+=======
+			    "for fifo(%d) HFCUSB_B_RX\n",
+			    hw->name, __func__, fifon);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			skb_trim(rx_skb, 0);
 			spin_unlock(&hw->lock);
 			return;
@@ -929,6 +1147,7 @@ hfcsusb_rx_frame(struct usb_fifo *fifo, __u8 *data, unsigned int len,
 		/* we have a complete hdlc packet */
 		if (finish) {
 			if ((rx_skb->len > 3) &&
+<<<<<<< HEAD
 			    (!(rx_skb->data[rx_skb->len - 1]))) {
 				if (debug & DBG_HFC_FIFO_VERBOSE) {
 					printk(KERN_DEBUG "%s: %s: fifon(%i)"
@@ -939,6 +1158,18 @@ hfcsusb_rx_frame(struct usb_fifo *fifo, __u8 *data, unsigned int len,
 					while (i < rx_skb->len)
 						printk("%02x ",
 						       rx_skb->data[i++]);
+=======
+			   (!(rx_skb->data[rx_skb->len - 1]))) {
+				if (debug & DBG_HFC_FIFO_VERBOSE) {
+					printk(KERN_DEBUG "%s: %s: fifon(%i)"
+					    " new RX len(%i): ",
+					    hw->name, __func__, fifon,
+					    rx_skb->len);
+					i = 0;
+					while (i < rx_skb->len)
+						printk("%02x ",
+						    rx_skb->data[i++]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					printk("\n");
 				}
 
@@ -951,6 +1182,7 @@ hfcsusb_rx_frame(struct usb_fifo *fifo, __u8 *data, unsigned int len,
 					recv_Bchannel(fifo->bch, MISDN_ID_ANY);
 				if (fifo->ech)
 					recv_Echannel(fifo->ech,
+<<<<<<< HEAD
 						      &hw->dch);
 			} else {
 				if (debug & DBG_HFC_FIFO_VERBOSE) {
@@ -962,6 +1194,19 @@ hfcsusb_rx_frame(struct usb_fifo *fifo, __u8 *data, unsigned int len,
 					while (i < rx_skb->len)
 						printk("%02x ",
 						       rx_skb->data[i++]);
+=======
+						     &hw->dch);
+			} else {
+				if (debug & DBG_HFC_FIFO_VERBOSE) {
+					printk(KERN_DEBUG
+					    "%s: CRC or minlen ERROR fifon(%i) "
+					    "RX len(%i): ",
+					    hw->name, fifon, rx_skb->len);
+					i = 0;
+					while (i < rx_skb->len)
+						printk("%02x ",
+						    rx_skb->data[i++]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					printk("\n");
 				}
 				skb_trim(rx_skb, 0);
@@ -983,7 +1228,11 @@ fill_isoc_urb(struct urb *urb, struct usb_device *dev, unsigned int pipe,
 	int k;
 
 	usb_fill_bulk_urb(urb, dev, pipe, buf, packet_size * num_packets,
+<<<<<<< HEAD
 			  complete, context);
+=======
+	    complete, context);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	urb->number_of_packets = num_packets;
 	urb->transfer_flags = URB_ISO_ASAP;
@@ -1005,7 +1254,11 @@ rx_iso_complete(struct urb *urb)
 	struct usb_fifo *fifo = context_iso_urb->owner_fifo;
 	struct hfcsusb *hw = fifo->hw;
 	int k, len, errcode, offset, num_isoc_packets, fifon, maxlen,
+<<<<<<< HEAD
 		status, iso_status, i;
+=======
+	    status, iso_status, i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__u8 *buf;
 	static __u8 eof[8];
 	__u8 s0_state;
@@ -1029,8 +1282,13 @@ rx_iso_complete(struct urb *urb)
 	if (status == -EXDEV) {
 		if (debug & DEBUG_HW)
 			printk(KERN_DEBUG "%s: %s: with -EXDEV "
+<<<<<<< HEAD
 			       "urb->status %d, fifonum %d\n",
 			       hw->name, __func__,  status, fifon);
+=======
+			    "urb->status %d, fifonum %d\n",
+			    hw->name, __func__,  status, fifon);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* clear status, so go on with ISO transfers */
 		status = 0;
@@ -1049,18 +1307,30 @@ rx_iso_complete(struct urb *urb)
 
 			if (iso_status && (debug & DBG_HFC_FIFO_VERBOSE)) {
 				printk(KERN_DEBUG "%s: %s: "
+<<<<<<< HEAD
 				       "ISO packet %i, status: %i\n",
 				       hw->name, __func__, k, iso_status);
+=======
+				    "ISO packet %i, status: %i\n",
+				    hw->name, __func__, k, iso_status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 
 			/* USB data log for every D ISO in */
 			if ((fifon == HFCUSB_D_RX) &&
 			    (debug & DBG_HFC_USB_VERBOSE)) {
 				printk(KERN_DEBUG
+<<<<<<< HEAD
 				       "%s: %s: %d (%d/%d) len(%d) ",
 				       hw->name, __func__, urb->start_frame,
 				       k, num_isoc_packets - 1,
 				       len);
+=======
+				    "%s: %s: %d (%d/%d) len(%d) ",
+				    hw->name, __func__, urb->start_frame,
+				    k, num_isoc_packets-1,
+				    len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				for (i = 0; i < len; i++)
 					printk("%x ", buf[i]);
 				printk("\n");
@@ -1081,12 +1351,21 @@ rx_iso_complete(struct urb *urb)
 					eof[fifon] = buf[0] & 1;
 					if (len > 2)
 						hfcsusb_rx_frame(fifo, buf + 2,
+<<<<<<< HEAD
 								 len - 2, (len < maxlen)
 								 ? eof[fifon] : 0);
 				} else
 					hfcsusb_rx_frame(fifo, buf, len,
 							 (len < maxlen) ?
 							 eof[fifon] : 0);
+=======
+							len - 2, (len < maxlen)
+							? eof[fifon] : 0);
+				} else
+					hfcsusb_rx_frame(fifo, buf, len,
+						(len < maxlen) ?
+						eof[fifon] : 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				fifo->last_urblen = len;
 			}
 		}
@@ -1106,14 +1385,24 @@ rx_iso_complete(struct urb *urb)
 		if (errcode < 0) {
 			if (debug & DEBUG_HW)
 				printk(KERN_DEBUG "%s: %s: error submitting "
+<<<<<<< HEAD
 				       "ISO URB: %d\n",
 				       hw->name, __func__, errcode);
+=======
+				    "ISO URB: %d\n",
+				    hw->name, __func__, errcode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		if (status && (debug & DBG_HFC_URB_INFO))
 			printk(KERN_DEBUG "%s: %s: rx_iso_complete : "
+<<<<<<< HEAD
 			       "urb->status %d, fifonum %d\n",
 			       hw->name, __func__, status, fifon);
+=======
+			    "urb->status %d, fifonum %d\n",
+			    hw->name, __func__, status, fifon);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1140,8 +1429,13 @@ rx_int_complete(struct urb *urb)
 	if ((!fifo->active) || (urb->status)) {
 		if (debug & DBG_HFC_URB_ERROR)
 			printk(KERN_DEBUG
+<<<<<<< HEAD
 			       "%s: %s: RX-Fifo %i is going down (%i)\n",
 			       hw->name, __func__, fifon, urb->status);
+=======
+			    "%s: %s: RX-Fifo %i is going down (%i)\n",
+			    hw->name, __func__, fifon, urb->status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		fifo->urb->interval = 0; /* cancel automatic rescheduling */
 		return;
@@ -1153,7 +1447,11 @@ rx_int_complete(struct urb *urb)
 	/* USB data log for every D INT in */
 	if ((fifon == HFCUSB_D_RX) && (debug & DBG_HFC_USB_VERBOSE)) {
 		printk(KERN_DEBUG "%s: %s: D RX INT len(%d) ",
+<<<<<<< HEAD
 		       hw->name, __func__, len);
+=======
+		    hw->name, __func__, len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (i = 0; i < len; i++)
 			printk("%02x ", buf[i]);
 		printk("\n");
@@ -1173,8 +1471,13 @@ rx_int_complete(struct urb *urb)
 		/* if we have more than the 2 status bytes -> collect data */
 		if (len > 2)
 			hfcsusb_rx_frame(fifo, buf + 2,
+<<<<<<< HEAD
 					 urb->actual_length - 2,
 					 (len < maxlen) ? eof[fifon] : 0);
+=======
+			   urb->actual_length - 2,
+			   (len < maxlen) ? eof[fifon] : 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		hfcsusb_rx_frame(fifo, buf, urb->actual_length,
 				 (len < maxlen) ? eof[fifon] : 0);
@@ -1185,7 +1488,11 @@ rx_int_complete(struct urb *urb)
 	if (status) {
 		if (debug & DEBUG_HW)
 			printk(KERN_DEBUG "%s: %s: error resubmitting USB\n",
+<<<<<<< HEAD
 			       hw->name, __func__);
+=======
+			    hw->name, __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1198,7 +1505,11 @@ tx_iso_complete(struct urb *urb)
 	struct hfcsusb *hw = fifo->hw;
 	struct sk_buff *tx_skb;
 	int k, tx_offset, num_isoc_packets, sink, remain, current_len,
+<<<<<<< HEAD
 		errcode, hdlc, i;
+=======
+	    errcode, hdlc, i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int *tx_idx;
 	int frame_complete, fifon, status;
 	__u8 threshbit;
@@ -1221,7 +1532,11 @@ tx_iso_complete(struct urb *urb)
 		hdlc = test_bit(FLG_HDLC, &fifo->bch->Flags);
 	} else {
 		printk(KERN_DEBUG "%s: %s: neither BCH nor DCH\n",
+<<<<<<< HEAD
 		       hw->name, __func__);
+=======
+		    hw->name, __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock(&hw->lock);
 		return;
 	}
@@ -1238,8 +1553,13 @@ tx_iso_complete(struct urb *urb)
 	if (status == -EXDEV) {
 		if (debug & DBG_HFC_URB_ERROR)
 			printk(KERN_DEBUG "%s: %s: "
+<<<<<<< HEAD
 			       "-EXDEV (%i) fifon (%d)\n",
 			       hw->name, __func__, status, fifon);
+=======
+			    "-EXDEV (%i) fifon (%d)\n",
+			    hw->name, __func__, status, fifon);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* clear status, so go on with ISO transfers */
 		status = 0;
@@ -1269,8 +1589,13 @@ tx_iso_complete(struct urb *urb)
 				errcode = urb->iso_frame_desc[k].status;
 				if (errcode) {
 					printk(KERN_DEBUG "%s: %s: "
+<<<<<<< HEAD
 					       "ISO packet %i, status: %i\n",
 					       hw->name, __func__, k, errcode);
+=======
+					    "ISO packet %i, status: %i\n",
+					     hw->name, __func__, k, errcode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				}
 			}
 
@@ -1298,7 +1623,11 @@ tx_iso_complete(struct urb *urb)
 					if (hdlc) {
 						/* signal frame completion */
 						context_iso_urb->
+<<<<<<< HEAD
 							buffer[tx_offset] = 1;
+=======
+						    buffer[tx_offset] = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						/* add 2 byte flags and 16bit
 						 * CRC at end of ISDN frame */
 						fifo->bit_line += 32;
@@ -1318,6 +1647,7 @@ tx_iso_complete(struct urb *urb)
 				if ((fifon == HFCUSB_D_RX) &&
 				    (debug & DBG_HFC_USB_VERBOSE)) {
 					printk(KERN_DEBUG
+<<<<<<< HEAD
 					       "%s: %s (%d/%d) offs(%d) len(%d) ",
 					       hw->name, __func__,
 					       k, num_isoc_packets - 1,
@@ -1333,6 +1663,23 @@ tx_iso_complete(struct urb *urb)
 
 					printk(" skb->len(%i) tx-idx(%d)\n",
 					       tx_skb->len, *tx_idx);
+=======
+					    "%s: %s (%d/%d) offs(%d) len(%d) ",
+					    hw->name, __func__,
+					    k, num_isoc_packets-1,
+					    urb->iso_frame_desc[k].offset,
+					    urb->iso_frame_desc[k].length);
+
+					for (i = urb->iso_frame_desc[k].offset;
+					     i < (urb->iso_frame_desc[k].offset
+					     + urb->iso_frame_desc[k].length);
+					     i++)
+						printk("%x ",
+						    context_iso_urb->buffer[i]);
+
+					printk(" skb->len(%i) tx-idx(%d)\n",
+					    tx_skb->len, *tx_idx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				}
 
 				tx_offset += (current_len + 1);
@@ -1350,6 +1697,7 @@ tx_iso_complete(struct urb *urb)
 
 				if (debug & DBG_HFC_FIFO_VERBOSE) {
 					printk(KERN_DEBUG  "%s: %s: "
+<<<<<<< HEAD
 					       "fifon(%i) new TX len(%i): ",
 					       hw->name, __func__,
 					       fifon, tx_skb->len);
@@ -1357,6 +1705,15 @@ tx_iso_complete(struct urb *urb)
 					while (i < tx_skb->len)
 						printk("%02x ",
 						       tx_skb->data[i++]);
+=======
+					    "fifon(%i) new TX len(%i): ",
+					    hw->name, __func__,
+					    fifon, tx_skb->len);
+					i = 0;
+					while (i < tx_skb->len)
+						printk("%02x ",
+						    tx_skb->data[i++]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					printk("\n");
 				}
 
@@ -1365,9 +1722,15 @@ tx_iso_complete(struct urb *urb)
 				if (fifo->dch && get_next_dframe(fifo->dch))
 					tx_skb = fifo->dch->tx_skb;
 				else if (fifo->bch &&
+<<<<<<< HEAD
 					 get_next_bframe(fifo->bch)) {
 					if (test_bit(FLG_TRANSPARENT,
 						     &fifo->bch->Flags))
+=======
+				    get_next_bframe(fifo->bch)) {
+					if (test_bit(FLG_TRANSPARENT,
+					    &fifo->bch->Flags))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						confirm_Bsend(fifo->bch);
 					tx_skb = fifo->bch->tx_skb;
 				}
@@ -1377,8 +1740,13 @@ tx_iso_complete(struct urb *urb)
 		if (errcode < 0) {
 			if (debug & DEBUG_HW)
 				printk(KERN_DEBUG
+<<<<<<< HEAD
 				       "%s: %s: error submitting ISO URB: %d \n",
 				       hw->name, __func__, errcode);
+=======
+				    "%s: %s: error submitting ISO URB: %d \n",
+				    hw->name, __func__, errcode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/*
@@ -1395,9 +1763,15 @@ tx_iso_complete(struct urb *urb)
 	} else {
 		if (status && (debug & DBG_HFC_URB_ERROR))
 			printk(KERN_DEBUG  "%s: %s: urb->status %s (%i)"
+<<<<<<< HEAD
 			       "fifonum=%d\n",
 			       hw->name, __func__,
 			       symbolic(urb_errlist, status), status, fifon);
+=======
+			    "fifonum=%d\n",
+			    hw->name, __func__,
+			    symbolic(urb_errlist, status), status, fifon);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	spin_unlock(&hw->lock);
 }
@@ -1415,17 +1789,29 @@ start_isoc_chain(struct usb_fifo *fifo, int num_packets_per_urb,
 
 	if (debug)
 		printk(KERN_DEBUG "%s: %s: fifo %i\n",
+<<<<<<< HEAD
 		       hw->name, __func__, fifo->fifonum);
+=======
+		    hw->name, __func__, fifo->fifonum);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* allocate Memory for Iso out Urbs */
 	for (i = 0; i < 2; i++) {
 		if (!(fifo->iso[i].urb)) {
 			fifo->iso[i].urb =
+<<<<<<< HEAD
 				usb_alloc_urb(num_packets_per_urb, GFP_KERNEL);
 			if (!(fifo->iso[i].urb)) {
 				printk(KERN_DEBUG
 				       "%s: %s: alloc urb for fifo %i failed",
 				       hw->name, __func__, fifo->fifonum);
+=======
+			    usb_alloc_urb(num_packets_per_urb, GFP_KERNEL);
+			if (!(fifo->iso[i].urb)) {
+				printk(KERN_DEBUG
+				    "%s: %s: alloc urb for fifo %i failed",
+				    hw->name, __func__, fifo->fifonum);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			fifo->iso[i].owner_fifo = (struct usb_fifo *) fifo;
 			fifo->iso[i].indx = i;
@@ -1435,17 +1821,27 @@ start_isoc_chain(struct usb_fifo *fifo, int num_packets_per_urb,
 			    (fifo->usb_packet_maxlen *
 			     num_packets_per_urb)) {
 				fill_isoc_urb(fifo->iso[i].urb,
+<<<<<<< HEAD
 					      fifo->hw->dev, fifo->pipe,
 					      fifo->iso[i].buffer,
 					      num_packets_per_urb,
 					      fifo->usb_packet_maxlen,
 					      fifo->intervall, complete,
 					      &fifo->iso[i]);
+=======
+				    fifo->hw->dev, fifo->pipe,
+				    fifo->iso[i].buffer,
+				    num_packets_per_urb,
+				    fifo->usb_packet_maxlen,
+				    fifo->intervall, complete,
+				    &fifo->iso[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				memset(fifo->iso[i].buffer, 0,
 				       sizeof(fifo->iso[i].buffer));
 
 				for (k = 0; k < num_packets_per_urb; k++) {
 					fifo->iso[i].urb->
+<<<<<<< HEAD
 						iso_frame_desc[k].offset =
 						k * packet_size;
 					fifo->iso[i].urb->
@@ -1456,6 +1852,18 @@ start_isoc_chain(struct usb_fifo *fifo, int num_packets_per_urb,
 				printk(KERN_DEBUG
 				       "%s: %s: ISO Buffer size to small!\n",
 				       hw->name, __func__);
+=======
+					    iso_frame_desc[k].offset =
+					    k * packet_size;
+					fifo->iso[i].urb->
+					    iso_frame_desc[k].length =
+					    packet_size;
+				}
+			} else {
+				printk(KERN_DEBUG
+				    "%s: %s: ISO Buffer size to small!\n",
+				    hw->name, __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 		fifo->bit_line = BITLINE_INF;
@@ -1465,8 +1873,13 @@ start_isoc_chain(struct usb_fifo *fifo, int num_packets_per_urb,
 		fifo->stop_gracefull = 0;
 		if (errcode < 0) {
 			printk(KERN_DEBUG "%s: %s: %s URB nr:%d\n",
+<<<<<<< HEAD
 			       hw->name, __func__,
 			       symbolic(urb_errlist, errcode), i);
+=======
+			    hw->name, __func__,
+			    symbolic(urb_errlist, errcode), i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	return fifo->active;
@@ -1491,10 +1904,17 @@ stop_iso_gracefull(struct usb_fifo *fifo)
 	for (i = 0; i < 2; i++) {
 		timeout = 3;
 		while (fifo->stop_gracefull && timeout--)
+<<<<<<< HEAD
 			schedule_timeout_interruptible((HZ / 1000) * 16);
 		if (debug && fifo->stop_gracefull)
 			printk(KERN_DEBUG "%s: ERROR %s for fifo %i.%i\n",
 			       hw->name, __func__, fifo->fifonum, i);
+=======
+			schedule_timeout_interruptible((HZ/1000)*16);
+		if (debug && fifo->stop_gracefull)
+			printk(KERN_DEBUG "%s: ERROR %s for fifo %i.%i\n",
+				hw->name, __func__, fifo->fifonum, i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1514,7 +1934,11 @@ stop_int_gracefull(struct usb_fifo *fifo)
 
 	timeout = 3;
 	while (fifo->stop_gracefull && timeout--)
+<<<<<<< HEAD
 		schedule_timeout_interruptible((HZ / 1000) * 3);
+=======
+		schedule_timeout_interruptible((HZ/1000)*3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (debug && fifo->stop_gracefull)
 		printk(KERN_DEBUG "%s: ERROR %s for fifo %i\n",
 		       hw->name, __func__, fifo->fifonum);
@@ -1529,7 +1953,11 @@ start_int_fifo(struct usb_fifo *fifo)
 
 	if (debug)
 		printk(KERN_DEBUG "%s: %s: INT IN fifo:%d\n",
+<<<<<<< HEAD
 		       hw->name, __func__, fifo->fifonum);
+=======
+		    hw->name, __func__, fifo->fifonum);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!fifo->urb) {
 		fifo->urb = usb_alloc_urb(0, GFP_KERNEL);
@@ -1537,14 +1965,23 @@ start_int_fifo(struct usb_fifo *fifo)
 			return;
 	}
 	usb_fill_int_urb(fifo->urb, fifo->hw->dev, fifo->pipe,
+<<<<<<< HEAD
 			 fifo->buffer, fifo->usb_packet_maxlen,
 			 (usb_complete_t)rx_int_complete, fifo, fifo->intervall);
+=======
+	    fifo->buffer, fifo->usb_packet_maxlen,
+	    (usb_complete_t)rx_int_complete, fifo, fifo->intervall);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fifo->active = 1;
 	fifo->stop_gracefull = 0;
 	errcode = usb_submit_urb(fifo->urb, GFP_KERNEL);
 	if (errcode) {
 		printk(KERN_DEBUG "%s: %s: submit URB: status:%i\n",
+<<<<<<< HEAD
 		       hw->name, __func__, errcode);
+=======
+		    hw->name, __func__, errcode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fifo->active = 0;
 	}
 }
@@ -1554,7 +1991,11 @@ setPortMode(struct hfcsusb *hw)
 {
 	if (debug & DEBUG_HW)
 		printk(KERN_DEBUG "%s: %s %s\n", hw->name, __func__,
+<<<<<<< HEAD
 		       (hw->protocol == ISDN_P_TE_S0) ? "TE" : "NT");
+=======
+		   (hw->protocol == ISDN_P_TE_S0) ? "TE" : "NT");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (hw->protocol == ISDN_P_TE_S0) {
 		write_reg(hw, HFCUSB_SCTRL, 0x40);
@@ -1588,7 +2029,11 @@ reset_hfcsusb(struct hfcsusb *hw)
 
 	/* set USB_SIZE to match the wMaxPacketSize for INT or BULK transfers */
 	write_reg(hw, HFCUSB_USB_SIZE, (hw->packet_size / 8) |
+<<<<<<< HEAD
 		  ((hw->packet_size / 8) << 4));
+=======
+	    ((hw->packet_size / 8) << 4));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* set USB_SIZE_I to match the the wMaxPacketSize for ISO transfers */
 	write_reg(hw, HFCUSB_USB_SIZE_I, hw->iso_packet_size);
@@ -1599,13 +2044,21 @@ reset_hfcsusb(struct hfcsusb *hw)
 
 	/* init the fifos */
 	write_reg(hw, HFCUSB_F_THRES,
+<<<<<<< HEAD
 		  (HFCUSB_TX_THRESHOLD / 8) | ((HFCUSB_RX_THRESHOLD / 8) << 4));
+=======
+	    (HFCUSB_TX_THRESHOLD / 8) | ((HFCUSB_RX_THRESHOLD / 8) << 4));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fifo = hw->fifos;
 	for (i = 0; i < HFCUSB_NUM_FIFOS; i++) {
 		write_reg(hw, HFCUSB_FIFO, i);	/* select the desired fifo */
 		fifo[i].max_size =
+<<<<<<< HEAD
 			(i <= HFCUSB_B2_RX) ? MAX_BCH_SIZE : MAX_DFRAME_LEN;
+=======
+		    (i <= HFCUSB_B2_RX) ? MAX_BCH_SIZE : MAX_DFRAME_LEN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fifo[i].last_urblen = 0;
 
 		/* set 2 bit for D- & E-channel */
@@ -1614,7 +2067,11 @@ reset_hfcsusb(struct hfcsusb *hw)
 		/* enable all fifos */
 		if (i == HFCUSB_D_TX)
 			write_reg(hw, HFCUSB_CON_HDLC,
+<<<<<<< HEAD
 				  (hw->protocol == ISDN_P_NT_S0) ? 0x08 : 0x09);
+=======
+			    (hw->protocol == ISDN_P_NT_S0) ? 0x08 : 0x09);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		else
 			write_reg(hw, HFCUSB_CON_HDLC, 0x08);
 		write_reg(hw, HFCUSB_INC_RES_F, 2); /* reset the fifo */
@@ -1640,13 +2097,18 @@ hfcsusb_start_endpoint(struct hfcsusb *hw, int channel)
 
 	/* start rx endpoints using USB INT IN method */
 	if (hw->cfg_used == CNF_3INT3ISO || hw->cfg_used == CNF_4INT3ISO)
+<<<<<<< HEAD
 		start_int_fifo(hw->fifos + channel * 2 + 1);
+=======
+		start_int_fifo(hw->fifos + channel*2 + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* start rx endpoints using USB ISO IN method */
 	if (hw->cfg_used == CNF_3ISO3ISO || hw->cfg_used == CNF_4ISO3ISO) {
 		switch (channel) {
 		case HFC_CHAN_D:
 			start_isoc_chain(hw->fifos + HFCUSB_D_RX,
+<<<<<<< HEAD
 					 ISOC_PACKETS_D,
 					 (usb_complete_t)rx_iso_complete,
 					 16);
@@ -1668,6 +2130,29 @@ hfcsusb_start_endpoint(struct hfcsusb *hw, int channel)
 					 ISOC_PACKETS_B,
 					 (usb_complete_t)rx_iso_complete,
 					 16);
+=======
+				ISOC_PACKETS_D,
+				(usb_complete_t)rx_iso_complete,
+				16);
+			break;
+		case HFC_CHAN_E:
+			start_isoc_chain(hw->fifos + HFCUSB_PCM_RX,
+				ISOC_PACKETS_D,
+				(usb_complete_t)rx_iso_complete,
+				16);
+			break;
+		case HFC_CHAN_B1:
+			start_isoc_chain(hw->fifos + HFCUSB_B1_RX,
+				ISOC_PACKETS_B,
+				(usb_complete_t)rx_iso_complete,
+				16);
+			break;
+		case HFC_CHAN_B2:
+			start_isoc_chain(hw->fifos + HFCUSB_B2_RX,
+				ISOC_PACKETS_B,
+				(usb_complete_t)rx_iso_complete,
+				16);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	}
@@ -1676,6 +2161,7 @@ hfcsusb_start_endpoint(struct hfcsusb *hw, int channel)
 	switch (channel) {
 	case HFC_CHAN_D:
 		start_isoc_chain(hw->fifos + HFCUSB_D_TX,
+<<<<<<< HEAD
 				 ISOC_PACKETS_B,
 				 (usb_complete_t)tx_iso_complete, 1);
 		break;
@@ -1688,6 +2174,20 @@ hfcsusb_start_endpoint(struct hfcsusb *hw, int channel)
 		start_isoc_chain(hw->fifos + HFCUSB_B2_TX,
 				 ISOC_PACKETS_B,
 				 (usb_complete_t)tx_iso_complete, 1);
+=======
+			ISOC_PACKETS_B,
+			(usb_complete_t)tx_iso_complete, 1);
+		break;
+	case HFC_CHAN_B1:
+		start_isoc_chain(hw->fifos + HFCUSB_B1_TX,
+			ISOC_PACKETS_D,
+			(usb_complete_t)tx_iso_complete, 1);
+		break;
+	case HFC_CHAN_B2:
+		start_isoc_chain(hw->fifos + HFCUSB_B2_TX,
+			ISOC_PACKETS_B,
+			(usb_complete_t)tx_iso_complete, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 }
@@ -1708,6 +2208,7 @@ hfcsusb_stop_endpoint(struct hfcsusb *hw, int channel)
 
 	/* rx endpoints using USB INT IN method */
 	if (hw->cfg_used == CNF_3INT3ISO || hw->cfg_used == CNF_4INT3ISO)
+<<<<<<< HEAD
 		stop_int_gracefull(hw->fifos + channel * 2 + 1);
 
 	/* rx endpoints using USB ISO IN method */
@@ -1717,6 +2218,17 @@ hfcsusb_stop_endpoint(struct hfcsusb *hw, int channel)
 	/* tx endpoints using USB ISO OUT method */
 	if (channel != HFC_CHAN_E)
 		stop_iso_gracefull(hw->fifos + channel * 2);
+=======
+		stop_int_gracefull(hw->fifos + channel*2 + 1);
+
+	/* rx endpoints using USB ISO IN method */
+	if (hw->cfg_used == CNF_3ISO3ISO || hw->cfg_used == CNF_4ISO3ISO)
+		stop_iso_gracefull(hw->fifos + channel*2 + 1);
+
+	/* tx endpoints using USB ISO OUT method */
+	if (channel != HFC_CHAN_E)
+		stop_iso_gracefull(hw->fifos + channel*2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -1732,12 +2244,20 @@ setup_hfcsusb(struct hfcsusb *hw)
 	/* check the chip id */
 	if (read_reg_atomic(hw, HFCUSB_CHIP_ID, &b) != 1) {
 		printk(KERN_DEBUG "%s: %s: cannot read chip id\n",
+<<<<<<< HEAD
 		       hw->name, __func__);
+=======
+		    hw->name, __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 	}
 	if (b != HFCUSB_CHIPID) {
 		printk(KERN_DEBUG "%s: %s: Invalid chip id 0x%02x\n",
+<<<<<<< HEAD
 		       hw->name, __func__, b);
+=======
+		    hw->name, __func__, b);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 	}
 
@@ -1754,8 +2274,13 @@ setup_hfcsusb(struct hfcsusb *hw)
 	hw->ctrl_write.bRequest = 0;
 	hw->ctrl_write.wLength = 0;
 	usb_fill_control_urb(hw->ctrl_urb, hw->dev, hw->ctrl_out_pipe,
+<<<<<<< HEAD
 			     (u_char *)&hw->ctrl_write, NULL, 0,
 			     (usb_complete_t)ctrl_complete, hw);
+=======
+	    (u_char *)&hw->ctrl_write, NULL, 0,
+	    (usb_complete_t)ctrl_complete, hw);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	reset_hfcsusb(hw);
 	return 0;
@@ -1806,7 +2331,11 @@ deactivate_bchannel(struct bchannel *bch)
 
 	if (bch->debug & DEBUG_HW)
 		printk(KERN_DEBUG "%s: %s: bch->nr(%i)\n",
+<<<<<<< HEAD
 		       hw->name, __func__, bch->nr);
+=======
+		    hw->name, __func__, bch->nr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&hw->lock, flags);
 	mISDN_clear_bchannel(bch);
@@ -1848,7 +2377,11 @@ hfc_bctrl(struct mISDNchannel *ch, u_int cmd, void *arg)
 		break;
 	default:
 		printk(KERN_WARNING "%s: unknown prim(%x)\n",
+<<<<<<< HEAD
 		       __func__, cmd);
+=======
+			__func__, cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return ret;
 }
@@ -1877,7 +2410,11 @@ setup_instance(struct hfcsusb *hw, struct device *parent)
 		mISDN_initdchannel(&hw->ech, MAX_DFRAME_LEN_L1, NULL);
 
 	hw->dch.dev.Bprotocols = (1 << (ISDN_P_B_RAW & ISDN_P_B_MASK)) |
+<<<<<<< HEAD
 		(1 << (ISDN_P_B_HDLC & ISDN_P_B_MASK));
+=======
+	    (1 << (ISDN_P_B_HDLC & ISDN_P_B_MASK));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hw->dch.dev.nrbchan = 2;
 	for (i = 0; i < 2; i++) {
 		hw->bch[i].nr = i + 1;
@@ -1905,9 +2442,15 @@ setup_instance(struct hfcsusb *hw, struct device *parent)
 		goto out;
 
 	snprintf(hw->name, MISDN_MAX_IDLEN - 1, "%s.%d", DRIVER_NAME,
+<<<<<<< HEAD
 		 hfcsusb_cnt + 1);
 	printk(KERN_INFO "%s: registered as '%s'\n",
 	       DRIVER_NAME, hw->name);
+=======
+	    hfcsusb_cnt + 1);
+	printk(KERN_INFO "%s: registered as '%s'\n",
+	    DRIVER_NAME, hw->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = mISDN_register_device(&hw->dch.dev, parent, hw->name);
 	if (err)
@@ -1937,22 +2480,35 @@ hfcsusb_probe(struct usb_interface *intf, const struct usb_device_id *id)
 	struct usb_host_endpoint	*ep;
 	struct hfcsusb_vdata		*driver_info;
 	int ifnum = iface->desc.bInterfaceNumber, i, idx, alt_idx,
+<<<<<<< HEAD
 		probe_alt_setting, vend_idx, cfg_used, *vcf, attr, cfg_found,
 		ep_addr, cmptbl[16], small_match, iso_packet_size, packet_size,
 		alt_used = 0;
+=======
+	    probe_alt_setting, vend_idx, cfg_used, *vcf, attr, cfg_found,
+	    ep_addr, cmptbl[16], small_match, iso_packet_size, packet_size,
+	    alt_used = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	vend_idx = 0xffff;
 	for (i = 0; hfcsusb_idtab[i].idVendor; i++) {
 		if ((le16_to_cpu(dev->descriptor.idVendor)
+<<<<<<< HEAD
 		     == hfcsusb_idtab[i].idVendor) &&
 		    (le16_to_cpu(dev->descriptor.idProduct)
 		     == hfcsusb_idtab[i].idProduct)) {
+=======
+		       == hfcsusb_idtab[i].idVendor) &&
+		    (le16_to_cpu(dev->descriptor.idProduct)
+		       == hfcsusb_idtab[i].idProduct)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			vend_idx = i;
 			continue;
 		}
 	}
 
 	printk(KERN_DEBUG
+<<<<<<< HEAD
 	       "%s: interface(%d) actalt(%d) minor(%d) vend_idx(%d)\n",
 	       __func__, ifnum, iface->desc.bAlternateSetting,
 	       intf->minor, vend_idx);
@@ -1961,6 +2517,16 @@ hfcsusb_probe(struct usb_interface *intf, const struct usb_device_id *id)
 		printk(KERN_WARNING
 		       "%s: no valid vendor found in USB descriptor\n",
 		       __func__);
+=======
+	    "%s: interface(%d) actalt(%d) minor(%d) vend_idx(%d)\n",
+	    __func__, ifnum, iface->desc.bAlternateSetting,
+	    intf->minor, vend_idx);
+
+	if (vend_idx == 0xffff) {
+		printk(KERN_WARNING
+		    "%s: no valid vendor found in USB descriptor\n",
+		    __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	}
 	/* if vendor and product ID is OK, start probing alternate settings */
@@ -1996,6 +2562,7 @@ hfcsusb_probe(struct usb_interface *intf, const struct usb_device_id *id)
 					if (cmptbl[idx] == EP_NUL)
 						cfg_found = 0;
 					if (attr == USB_ENDPOINT_XFER_INT
+<<<<<<< HEAD
 					    && cmptbl[idx] == EP_INT)
 						cmptbl[idx] = EP_NUL;
 					if (attr == USB_ENDPOINT_XFER_BULK
@@ -2007,6 +2574,19 @@ hfcsusb_probe(struct usb_interface *intf, const struct usb_device_id *id)
 
 					if (attr == USB_ENDPOINT_XFER_INT &&
 					    ep->desc.bInterval < vcf[17]) {
+=======
+						&& cmptbl[idx] == EP_INT)
+						cmptbl[idx] = EP_NUL;
+					if (attr == USB_ENDPOINT_XFER_BULK
+						&& cmptbl[idx] == EP_BLK)
+						cmptbl[idx] = EP_NUL;
+					if (attr == USB_ENDPOINT_XFER_ISOC
+						&& cmptbl[idx] == EP_ISO)
+						cmptbl[idx] = EP_NUL;
+
+					if (attr == USB_ENDPOINT_XFER_INT &&
+						ep->desc.bInterval < vcf[17]) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						cfg_found = 0;
 					}
 				}
@@ -2060,27 +2640,45 @@ hfcsusb_probe(struct usb_interface *intf, const struct usb_device_id *id)
 		switch (ep->desc.bmAttributes) {
 		case USB_ENDPOINT_XFER_INT:
 			f->pipe = usb_rcvintpipe(dev,
+<<<<<<< HEAD
 						 ep->desc.bEndpointAddress);
+=======
+				ep->desc.bEndpointAddress);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			f->usb_transfer_mode = USB_INT;
 			packet_size = le16_to_cpu(ep->desc.wMaxPacketSize);
 			break;
 		case USB_ENDPOINT_XFER_BULK:
 			if (ep_addr & 0x80)
 				f->pipe = usb_rcvbulkpipe(dev,
+<<<<<<< HEAD
 							  ep->desc.bEndpointAddress);
 			else
 				f->pipe = usb_sndbulkpipe(dev,
 							  ep->desc.bEndpointAddress);
+=======
+					ep->desc.bEndpointAddress);
+			else
+				f->pipe = usb_sndbulkpipe(dev,
+					ep->desc.bEndpointAddress);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			f->usb_transfer_mode = USB_BULK;
 			packet_size = le16_to_cpu(ep->desc.wMaxPacketSize);
 			break;
 		case USB_ENDPOINT_XFER_ISOC:
 			if (ep_addr & 0x80)
 				f->pipe = usb_rcvisocpipe(dev,
+<<<<<<< HEAD
 							  ep->desc.bEndpointAddress);
 			else
 				f->pipe = usb_sndisocpipe(dev,
 							  ep->desc.bEndpointAddress);
+=======
+					ep->desc.bEndpointAddress);
+			else
+				f->pipe = usb_sndisocpipe(dev,
+					ep->desc.bEndpointAddress);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			f->usb_transfer_mode = USB_ISOC;
 			iso_packet_size = le16_to_cpu(ep->desc.wMaxPacketSize);
 			break;
@@ -2092,7 +2690,11 @@ hfcsusb_probe(struct usb_interface *intf, const struct usb_device_id *id)
 			f->fifonum = idx & 7;
 			f->hw = hw;
 			f->usb_packet_maxlen =
+<<<<<<< HEAD
 				le16_to_cpu(ep->desc.wMaxPacketSize);
+=======
+			    le16_to_cpu(ep->desc.wMaxPacketSize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			f->intervall = ep->desc.bInterval;
 		}
 		ep++;
@@ -2114,8 +2716,13 @@ hfcsusb_probe(struct usb_interface *intf, const struct usb_device_id *id)
 	driver_info =
 		(struct hfcsusb_vdata *)hfcsusb_idtab[vend_idx].driver_info;
 	printk(KERN_DEBUG "%s: %s: detected \"%s\" (%s, if=%d alt=%d)\n",
+<<<<<<< HEAD
 	       hw->name, __func__, driver_info->vend_name,
 	       conf_str[small_match], ifnum, alt_used);
+=======
+	    hw->name, __func__, driver_info->vend_name,
+	    conf_str[small_match], ifnum, alt_used);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (setup_instance(hw, dev->dev.parent))
 		return -EIO;
@@ -2153,4 +2760,34 @@ static struct usb_driver hfcsusb_drv = {
 	.disconnect = hfcsusb_disconnect,
 };
 
+<<<<<<< HEAD
 module_usb_driver(hfcsusb_drv);
+=======
+static int __init
+hfcsusb_init(void)
+{
+	printk(KERN_INFO DRIVER_NAME " driver Rev. %s debug(0x%x) poll(%i)\n",
+	    hfcsusb_rev, debug, poll);
+
+	if (usb_register(&hfcsusb_drv)) {
+		printk(KERN_INFO DRIVER_NAME
+		    ": Unable to register hfcsusb module at usb stack\n");
+		return -ENODEV;
+	}
+
+	return 0;
+}
+
+static void __exit
+hfcsusb_cleanup(void)
+{
+	if (debug & DBG_HFC_CALL_TRACE)
+		printk(KERN_INFO DRIVER_NAME ": %s\n", __func__);
+
+	/* unregister Hardware */
+	usb_deregister(&hfcsusb_drv);	/* release our driver */
+}
+
+module_init(hfcsusb_init);
+module_exit(hfcsusb_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

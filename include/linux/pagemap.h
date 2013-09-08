@@ -134,7 +134,11 @@ static inline int page_cache_get_speculative(struct page *page)
 	VM_BUG_ON(in_interrupt());
 
 #if !defined(CONFIG_SMP) && defined(CONFIG_TREE_RCU)
+<<<<<<< HEAD
 # ifdef CONFIG_PREEMPT_COUNT
+=======
+# ifdef CONFIG_PREEMPT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	VM_BUG_ON(!in_atomic());
 # endif
 	/*
@@ -172,7 +176,11 @@ static inline int page_cache_add_speculative(struct page *page, int count)
 	VM_BUG_ON(in_interrupt());
 
 #if !defined(CONFIG_SMP) && defined(CONFIG_TREE_RCU)
+<<<<<<< HEAD
 # ifdef CONFIG_PREEMPT_COUNT
+=======
+# ifdef CONFIG_PREEMPT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	VM_BUG_ON(!in_atomic());
 # endif
 	VM_BUG_ON(page_count(page) == 0);
@@ -255,24 +263,41 @@ static inline struct page *grab_cache_page(struct address_space *mapping,
 extern struct page * grab_cache_page_nowait(struct address_space *mapping,
 				pgoff_t index);
 extern struct page * read_cache_page_async(struct address_space *mapping,
+<<<<<<< HEAD
 				pgoff_t index, filler_t *filler, void *data);
 extern struct page * read_cache_page(struct address_space *mapping,
 				pgoff_t index, filler_t *filler, void *data);
+=======
+				pgoff_t index, filler_t *filler,
+				void *data);
+extern struct page * read_cache_page(struct address_space *mapping,
+				pgoff_t index, filler_t *filler,
+				void *data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct page * read_cache_page_gfp(struct address_space *mapping,
 				pgoff_t index, gfp_t gfp_mask);
 extern int read_cache_pages(struct address_space *mapping,
 		struct list_head *pages, filler_t *filler, void *data);
 
 static inline struct page *read_mapping_page_async(
+<<<<<<< HEAD
 				struct address_space *mapping,
 				pgoff_t index, void *data)
+=======
+						struct address_space *mapping,
+						     pgoff_t index, void *data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	filler_t *filler = (filler_t *)mapping->a_ops->readpage;
 	return read_cache_page_async(mapping, index, filler, data);
 }
 
 static inline struct page *read_mapping_page(struct address_space *mapping,
+<<<<<<< HEAD
 				pgoff_t index, void *data)
+=======
+					     pgoff_t index, void *data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	filler_t *filler = (filler_t *)mapping->a_ops->readpage;
 	return read_cache_page(mapping, index, filler, data);
@@ -446,6 +471,10 @@ static inline int fault_in_pages_readable(const char __user *uaddr, int size)
 		if (((unsigned long)uaddr & PAGE_MASK) !=
 				((unsigned long)end & PAGE_MASK)) {
 		 	ret = __get_user(c, end);
+<<<<<<< HEAD
+=======
+        	/* Fix "variable 'c' set but not used" warning. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			(void)c;
 		}
 	}

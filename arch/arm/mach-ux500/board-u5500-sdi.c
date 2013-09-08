@@ -7,9 +7,15 @@
 
 #include <linux/amba/mmci.h>
 #include <linux/mmc/host.h>
+<<<<<<< HEAD
 
 #include <plat/pincfg.h>
 #include <plat/gpio-nomadik.h>
+=======
+#include <linux/gpio.h>
+
+#include <plat/pincfg.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/db5500-regs.h>
 #include <plat/ste_dma40.h>
 
@@ -66,9 +72,17 @@ static struct mmci_platform_data u5500_sdi0_data = {
 #endif
 };
 
+<<<<<<< HEAD
 void __init u5500_sdi_init(struct device *parent)
 {
 	nmk_config_pins(u5500_sdi_pins, ARRAY_SIZE(u5500_sdi_pins));
 
 	db5500_add_sdi0(parent, &u5500_sdi0_data);
+=======
+void __init u5500_sdi_init(void)
+{
+	nmk_config_pins(u5500_sdi_pins, ARRAY_SIZE(u5500_sdi_pins));
+
+	db5500_add_sdi0(&u5500_sdi0_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

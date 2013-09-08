@@ -144,7 +144,11 @@ static struct davinci_nand_pdata nand_config = {
 	.parts		= nand_partitions,
 	.nr_parts	= ARRAY_SIZE(nand_partitions),
 	.ecc_mode	= NAND_ECC_HW,
+<<<<<<< HEAD
 	.bbt_options	= NAND_BBT_USE_FLASH,
+=======
+	.options	= NAND_USE_FLASH_BBT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ecc_bits	= 1,
 };
 
@@ -277,11 +281,18 @@ console_initcall(tnetv107x_evm_console_init);
 #endif
 
 MACHINE_START(TNETV107X, "TNETV107X EVM")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= (TNETV107X_DDR_BASE + 0x100),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io		= tnetv107x_init,
 	.init_irq	= cp_intc_init,
 	.timer		= &davinci_timer,
 	.init_machine	= tnetv107x_evm_board_init,
+<<<<<<< HEAD
 	.dma_zone_size	= SZ_128M,
 	.restart	= tnetv107x_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

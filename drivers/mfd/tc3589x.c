@@ -357,7 +357,10 @@ static int __devexit tc3589x_remove(struct i2c_client *client)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int tc3589x_suspend(struct device *dev)
 {
 	struct tc3589x *tc3589x = dev_get_drvdata(dev);
@@ -388,7 +391,10 @@ static int tc3589x_resume(struct device *dev)
 
 static const SIMPLE_DEV_PM_OPS(tc3589x_dev_pm_ops, tc3589x_suspend,
 						tc3589x_resume);
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const struct i2c_device_id tc3589x_id[] = {
 	{ "tc3589x", 24 },

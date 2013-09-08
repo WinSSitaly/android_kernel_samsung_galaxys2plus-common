@@ -10,7 +10,11 @@
  */
 #include <linux/rwsem.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/spinlock.h>
 #include <linux/debug_locks.h>
 

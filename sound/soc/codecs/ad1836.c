@@ -1,3 +1,4 @@
+<<<<<<< HEAD
  /*
  * Audio Codec driver supporting:
  *  AD1835A, AD1836, AD1837A, AD1838A, AD1839A
@@ -5,6 +6,24 @@
  * Copyright 2009-2011 Analog Devices Inc.
  *
  * Licensed under the GPL-2 or later.
+=======
+/*
+ * File:         sound/soc/codecs/ad1836.c
+ * Author:       Barry Song <Barry.Song@analog.com>
+ *
+ * Created:      Aug 04 2009
+ * Description:  Driver for AD1836 sound chip
+ *
+ * Modified:
+ *               Copyright 2009 Analog Devices Inc.
+ *
+ * Bugs:         Enter bugs at http://blackfin.uclinux.org/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/init.h>
@@ -21,6 +40,7 @@
 #include <linux/spi/spi.h>
 #include "ad1836.h"
 
+<<<<<<< HEAD
 enum ad1836_type {
 	AD1835,
 	AD1836,
@@ -30,6 +50,12 @@ enum ad1836_type {
 /* codec private data */
 struct ad1836_priv {
 	enum ad1836_type type;
+=======
+/* codec private data */
+struct ad1836_priv {
+	enum snd_soc_control_type control_type;
+	void *control_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -40,6 +66,7 @@ static const char *ad1836_deemp[] = {"None", "44.1kHz", "32kHz", "48kHz"};
 static const struct soc_enum ad1836_deemp_enum =
 	SOC_ENUM_SINGLE(AD1836_DAC_CTRL1, 8, 4, ad1836_deemp);
 
+<<<<<<< HEAD
 #define AD1836_DAC_VOLUME(x) \
 	SOC_DOUBLE_R("DAC" #x " Playback Volume", AD1836_DAC_L_VOL(x), \
 			AD1836_DAC_R_VOL(x), 0, 0x3FF, 0)
@@ -94,6 +121,31 @@ static const struct snd_soc_dapm_route ad183x_adc_routes[] = {
 };
 
 static const struct snd_kcontrol_new ad183x_controls[] = {
+=======
+static const struct snd_kcontrol_new ad1836_snd_controls[] = {
+	/* DAC volume control */
+	SOC_DOUBLE_R("DAC1 Volume", AD1836_DAC_L1_VOL,
+			AD1836_DAC_R1_VOL, 0, 0x3FF, 0),
+	SOC_DOUBLE_R("DAC2 Volume", AD1836_DAC_L2_VOL,
+			AD1836_DAC_R2_VOL, 0, 0x3FF, 0),
+	SOC_DOUBLE_R("DAC3 Volume", AD1836_DAC_L3_VOL,
+			AD1836_DAC_R3_VOL, 0, 0x3FF, 0),
+
+	/* ADC switch control */
+	SOC_DOUBLE("ADC1 Switch", AD1836_ADC_CTRL2, AD1836_ADCL1_MUTE,
+		AD1836_ADCR1_MUTE, 1, 1),
+	SOC_DOUBLE("ADC2 Switch", AD1836_ADC_CTRL2, AD1836_ADCL2_MUTE,
+		AD1836_ADCR2_MUTE, 1, 1),
+
+	/* DAC switch control */
+	SOC_DOUBLE("DAC1 Switch", AD1836_DAC_CTRL2, AD1836_DACL1_MUTE,
+		AD1836_DACR1_MUTE, 1, 1),
+	SOC_DOUBLE("DAC2 Switch", AD1836_DAC_CTRL2, AD1836_DACL2_MUTE,
+		AD1836_DACR2_MUTE, 1, 1),
+	SOC_DOUBLE("DAC3 Switch", AD1836_DAC_CTRL2, AD1836_DACL3_MUTE,
+		AD1836_DACR3_MUTE, 1, 1),
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* ADC high-pass filter */
 	SOC_SINGLE("ADC High Pass Filter Switch", AD1836_ADC_CTRL1,
 			AD1836_ADC_HIGHPASS_FILTER, 1, 0),
@@ -102,12 +154,17 @@ static const struct snd_kcontrol_new ad183x_controls[] = {
 	SOC_ENUM("Playback Deemphasis", ad1836_deemp_enum),
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dapm_widget ad183x_dapm_widgets[] = {
+=======
+static const struct snd_soc_dapm_widget ad1836_dapm_widgets[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	SND_SOC_DAPM_DAC("DAC", "Playback", AD1836_DAC_CTRL1,
 				AD1836_DAC_POWERDOWN, 1),
 	SND_SOC_DAPM_ADC("ADC", "Capture", SND_SOC_NOPM, 0, 0),
 	SND_SOC_DAPM_SUPPLY("ADC_PWR", AD1836_ADC_CTRL1,
 				AD1836_ADC_POWERDOWN, 1, NULL, 0),
+<<<<<<< HEAD
 };
 
 static const struct snd_soc_dapm_route ad183x_dapm_routes[] = {
@@ -120,6 +177,23 @@ static const DECLARE_TLV_DB_SCALE(ad1836_in_tlv, 0, 300, 0);
 static const struct snd_kcontrol_new ad1836_controls[] = {
 	SOC_DOUBLE_TLV("ADC2 Capture Volume", AD1836_ADC_CTRL1, 3, 0, 4, 0,
 	    ad1836_in_tlv),
+=======
+	SND_SOC_DAPM_OUTPUT("DAC1OUT"),
+	SND_SOC_DAPM_OUTPUT("DAC2OUT"),
+	SND_SOC_DAPM_OUTPUT("DAC3OUT"),
+	SND_SOC_DAPM_INPUT("ADC1IN"),
+	SND_SOC_DAPM_INPUT("ADC2IN"),
+};
+
+static const struct snd_soc_dapm_route audio_paths[] = {
+	{ "DAC", NULL, "ADC_PWR" },
+	{ "ADC", NULL, "ADC_PWR" },
+	{ "DAC1OUT", "DAC1 Switch", "DAC" },
+	{ "DAC2OUT", "DAC2 Switch", "DAC" },
+	{ "DAC3OUT", "DAC3 Switch", "DAC" },
+	{ "ADC", "ADC1 Switch", "ADC1IN" },
+	{ "ADC", "ADC2 Switch", "ADC2IN" },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -189,6 +263,7 @@ static int ad1836_hw_params(struct snd_pcm_substream *substream,
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops ad1836_dai_ops = {
 	.hw_params = ad1836_hw_params,
 	.set_fmt = ad1836_set_dai_fmt,
@@ -241,10 +316,64 @@ static int ad1836_resume(struct snd_soc_codec *codec)
 #define ad1836_resume  NULL
 #endif
 
+=======
+#ifdef CONFIG_PM
+static int ad1836_soc_suspend(struct snd_soc_codec *codec,
+		pm_message_t state)
+{
+	/* reset clock control mode */
+	u16 adc_ctrl2 = snd_soc_read(codec, AD1836_ADC_CTRL2);
+	adc_ctrl2 &= ~AD1836_ADC_SERFMT_MASK;
+
+	return snd_soc_write(codec, AD1836_ADC_CTRL2, adc_ctrl2);
+}
+
+static int ad1836_soc_resume(struct snd_soc_codec *codec)
+{
+	/* restore clock control mode */
+	u16 adc_ctrl2 = snd_soc_read(codec, AD1836_ADC_CTRL2);
+	adc_ctrl2 |= AD1836_ADC_AUX;
+
+	return snd_soc_write(codec, AD1836_ADC_CTRL2, adc_ctrl2);
+}
+#else
+#define ad1836_soc_suspend NULL
+#define ad1836_soc_resume  NULL
+#endif
+
+static struct snd_soc_dai_ops ad1836_dai_ops = {
+	.hw_params = ad1836_hw_params,
+	.set_fmt = ad1836_set_dai_fmt,
+};
+
+/* codec DAI instance */
+static struct snd_soc_dai_driver ad1836_dai = {
+	.name = "ad1836-hifi",
+	.playback = {
+		.stream_name = "Playback",
+		.channels_min = 2,
+		.channels_max = 6,
+		.rates = SNDRV_PCM_RATE_48000,
+		.formats = SNDRV_PCM_FMTBIT_S32_LE | SNDRV_PCM_FMTBIT_S16_LE |
+			SNDRV_PCM_FMTBIT_S20_3LE | SNDRV_PCM_FMTBIT_S24_LE,
+	},
+	.capture = {
+		.stream_name = "Capture",
+		.channels_min = 2,
+		.channels_max = 4,
+		.rates = SNDRV_PCM_RATE_48000,
+		.formats = SNDRV_PCM_FMTBIT_S32_LE | SNDRV_PCM_FMTBIT_S16_LE |
+			SNDRV_PCM_FMTBIT_S20_3LE | SNDRV_PCM_FMTBIT_S24_LE,
+	},
+	.ops = &ad1836_dai_ops,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ad1836_probe(struct snd_soc_codec *codec)
 {
 	struct ad1836_priv *ad1836 = snd_soc_codec_get_drvdata(codec);
 	struct snd_soc_dapm_context *dapm = &codec->dapm;
+<<<<<<< HEAD
 	int num_dacs, num_adcs;
 	int ret = 0;
 	int i;
@@ -252,6 +381,11 @@ static int ad1836_probe(struct snd_soc_codec *codec)
 	num_dacs = ad183x_dais[ad1836->type].playback.channels_max / 2;
 	num_adcs = ad183x_dais[ad1836->type].capture.channels_max / 2;
 
+=======
+	int ret = 0;
+
+	codec->control_data = ad1836->control_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = snd_soc_codec_set_cache_io(codec, 4, 12, SND_SOC_SPI);
 	if (ret < 0) {
 		dev_err(codec->dev, "failed to set cache I/O: %d\n",
@@ -268,6 +402,7 @@ static int ad1836_probe(struct snd_soc_codec *codec)
 	snd_soc_write(codec, AD1836_ADC_CTRL1, 0x100);
 	/* unmute adc channles, adc aux mode */
 	snd_soc_write(codec, AD1836_ADC_CTRL2, 0x180);
+<<<<<<< HEAD
 	/* volume */
 	for (i = 1; i <= num_dacs; ++i) {
 		snd_soc_write(codec, AD1836_DAC_L_VOL(i), 0x3FF);
@@ -308,6 +443,23 @@ static int ad1836_probe(struct snd_soc_codec *codec)
 	ret = snd_soc_dapm_add_routes(dapm, ad183x_adc_routes, num_adcs);
 	if (ret)
 		return ret;
+=======
+	/* left/right diff:PGA/MUX */
+	snd_soc_write(codec, AD1836_ADC_CTRL3, 0x3A);
+	/* volume */
+	snd_soc_write(codec, AD1836_DAC_L1_VOL, 0x3FF);
+	snd_soc_write(codec, AD1836_DAC_R1_VOL, 0x3FF);
+	snd_soc_write(codec, AD1836_DAC_L2_VOL, 0x3FF);
+	snd_soc_write(codec, AD1836_DAC_R2_VOL, 0x3FF);
+	snd_soc_write(codec, AD1836_DAC_L3_VOL, 0x3FF);
+	snd_soc_write(codec, AD1836_DAC_R3_VOL, 0x3FF);
+
+	snd_soc_add_controls(codec, ad1836_snd_controls,
+			     ARRAY_SIZE(ad1836_snd_controls));
+	snd_soc_dapm_new_controls(dapm, ad1836_dapm_widgets,
+				  ARRAY_SIZE(ad1836_dapm_widgets));
+	snd_soc_dapm_add_routes(dapm, audio_paths, ARRAY_SIZE(audio_paths));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -316,6 +468,7 @@ static int ad1836_probe(struct snd_soc_codec *codec)
 static int ad1836_remove(struct snd_soc_codec *codec)
 {
 	/* reset clock control mode */
+<<<<<<< HEAD
 	return snd_soc_update_bits(codec, AD1836_ADC_CTRL2,
 		AD1836_ADC_SERFMT_MASK, 0);
 }
@@ -334,6 +487,21 @@ static struct snd_soc_codec_driver soc_codec_dev_ad1836 = {
 	.num_dapm_widgets = ARRAY_SIZE(ad183x_dapm_widgets),
 	.dapm_routes = ad183x_dapm_routes,
 	.num_dapm_routes = ARRAY_SIZE(ad183x_dapm_routes),
+=======
+	u16 adc_ctrl2 = snd_soc_read(codec, AD1836_ADC_CTRL2);
+	adc_ctrl2 &= ~AD1836_ADC_SERFMT_MASK;
+
+	return snd_soc_write(codec, AD1836_ADC_CTRL2, adc_ctrl2);
+}
+
+static struct snd_soc_codec_driver soc_codec_dev_ad1836 = {
+	.probe = 	ad1836_probe,
+	.remove = 	ad1836_remove,
+	.suspend =      ad1836_soc_suspend,
+	.resume =       ad1836_soc_resume,
+	.reg_cache_size = AD1836_NUM_REGS,
+	.reg_word_size = sizeof(u16),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __devinit ad1836_spi_probe(struct spi_device *spi)
@@ -341,6 +509,7 @@ static int __devinit ad1836_spi_probe(struct spi_device *spi)
 	struct ad1836_priv *ad1836;
 	int ret;
 
+<<<<<<< HEAD
 	ad1836 = devm_kzalloc(&spi->dev, sizeof(struct ad1836_priv),
 			      GFP_KERNEL);
 	if (ad1836 == NULL)
@@ -352,12 +521,27 @@ static int __devinit ad1836_spi_probe(struct spi_device *spi)
 
 	ret = snd_soc_register_codec(&spi->dev,
 			&soc_codec_dev_ad1836, &ad183x_dais[ad1836->type], 1);
+=======
+	ad1836 = kzalloc(sizeof(struct ad1836_priv), GFP_KERNEL);
+	if (ad1836 == NULL)
+		return -ENOMEM;
+
+	spi_set_drvdata(spi, ad1836);
+	ad1836->control_data = spi;
+	ad1836->control_type = SND_SOC_SPI;
+
+	ret = snd_soc_register_codec(&spi->dev,
+			&soc_codec_dev_ad1836, &ad1836_dai, 1);
+	if (ret < 0)
+		kfree(ad1836);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devexit ad1836_spi_remove(struct spi_device *spi)
 {
 	snd_soc_unregister_codec(&spi->dev);
+<<<<<<< HEAD
 	return 0;
 }
 
@@ -374,16 +558,40 @@ MODULE_DEVICE_TABLE(spi, ad1836_ids);
 static struct spi_driver ad1836_spi_driver = {
 	.driver = {
 		.name	= "ad1836",
+=======
+	kfree(spi_get_drvdata(spi));
+	return 0;
+}
+
+static struct spi_driver ad1836_spi_driver = {
+	.driver = {
+		.name	= "ad1836-codec",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.owner	= THIS_MODULE,
 	},
 	.probe		= ad1836_spi_probe,
 	.remove		= __devexit_p(ad1836_spi_remove),
+<<<<<<< HEAD
 	.id_table	= ad1836_ids,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init ad1836_init(void)
 {
+<<<<<<< HEAD
 	return spi_register_driver(&ad1836_spi_driver);
+=======
+	int ret;
+
+	ret = spi_register_driver(&ad1836_spi_driver);
+	if (ret != 0) {
+		printk(KERN_ERR "Failed to register ad1836 SPI driver: %d\n",
+				ret);
+	}
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 module_init(ad1836_init);
 

@@ -42,6 +42,10 @@
 #include <linux/notifier.h>
 #include <linux/slab.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/net_namespace.h>
 #include <net/neighbour.h>
 #include <net/dst.h>
@@ -436,6 +440,7 @@ int dn_dev_ioctl(unsigned int cmd, void __user *arg)
 
 	dev_load(&init_net, ifr->ifr_name);
 
+<<<<<<< HEAD
 	switch (cmd) {
 	case SIOCGIFADDR:
 		break;
@@ -447,6 +452,19 @@ int dn_dev_ioctl(unsigned int cmd, void __user *arg)
 		break;
 	default:
 		return -EINVAL;
+=======
+	switch(cmd) {
+		case SIOCGIFADDR:
+			break;
+		case SIOCSIFADDR:
+			if (!capable(CAP_NET_ADMIN))
+				return -EACCES;
+			if (sdn->sdn_family != AF_DECnet)
+				return -EINVAL;
+			break;
+		default:
+			return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	rtnl_lock();
@@ -469,6 +487,7 @@ int dn_dev_ioctl(unsigned int cmd, void __user *arg)
 		goto done;
 	}
 
+<<<<<<< HEAD
 	switch (cmd) {
 	case SIOCGIFADDR:
 		*((__le16 *)sdn->sdn_nodeaddr) = ifa->ifa_local;
@@ -490,6 +509,29 @@ int dn_dev_ioctl(unsigned int cmd, void __user *arg)
 		ifa->ifa_local = ifa->ifa_address = dn_saddr2dn(sdn);
 
 		ret = dn_dev_set_ifa(dev, ifa);
+=======
+	switch(cmd) {
+		case SIOCGIFADDR:
+			*((__le16 *)sdn->sdn_nodeaddr) = ifa->ifa_local;
+			goto rarok;
+
+		case SIOCSIFADDR:
+			if (!ifa) {
+				if ((ifa = dn_dev_alloc_ifa()) == NULL) {
+					ret = -ENOBUFS;
+					break;
+				}
+				memcpy(ifa->ifa_label, dev->name, IFNAMSIZ);
+			} else {
+				if (ifa->ifa_local == dn_saddr2dn(sdn))
+					break;
+				dn_dev_del_ifa(dn_db, ifap, 0);
+			}
+
+			ifa->ifa_local = ifa->ifa_address = dn_saddr2dn(sdn);
+
+			ret = dn_dev_set_ifa(dev, ifa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 done:
 	rtnl_unlock();
@@ -1100,7 +1142,11 @@ static struct dn_dev *dn_dev_create(struct net_device *dev, int *err)
 
 	dn_db->neigh_parms = neigh_parms_alloc(dev, &dn_neigh_table);
 	if (!dn_db->neigh_parms) {
+<<<<<<< HEAD
 		RCU_INIT_POINTER(dev->dn_ptr, NULL);
+=======
+		rcu_assign_pointer(dev->dn_ptr, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(dn_db);
 		return NULL;
 	}
@@ -1312,7 +1358,11 @@ static void *dn_dev_seq_next(struct seq_file *seq, void *v, loff_t *pos)
 
 	++*pos;
 
+<<<<<<< HEAD
 	dev = v;
+=======
+	dev = (struct net_device *)v;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (v == SEQ_START_TOKEN)
 		dev = net_device_entry(&init_net.dev_base_head);
 
@@ -1334,6 +1384,7 @@ static void dn_dev_seq_stop(struct seq_file *seq, void *v)
 
 static char *dn_type2asc(char type)
 {
+<<<<<<< HEAD
 	switch (type) {
 	case DN_DEV_BCAST:
 		return "B";
@@ -1341,6 +1392,15 @@ static char *dn_type2asc(char type)
 		return "U";
 	case DN_DEV_MPOINT:
 		return "M";
+=======
+	switch(type) {
+		case DN_DEV_BCAST:
+			return "B";
+		case DN_DEV_UCAST:
+			return "U";
+		case DN_DEV_MPOINT:
+			return "M";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return "?";
@@ -1413,9 +1473,15 @@ void __init dn_dev_init(void)
 
 	dn_dev_devices_on();
 
+<<<<<<< HEAD
 	rtnl_register(PF_DECnet, RTM_NEWADDR, dn_nl_newaddr, NULL, NULL);
 	rtnl_register(PF_DECnet, RTM_DELADDR, dn_nl_deladdr, NULL, NULL);
 	rtnl_register(PF_DECnet, RTM_GETADDR, NULL, dn_nl_dump_ifaddr, NULL);
+=======
+	rtnl_register(PF_DECnet, RTM_NEWADDR, dn_nl_newaddr, NULL);
+	rtnl_register(PF_DECnet, RTM_DELADDR, dn_nl_deladdr, NULL);
+	rtnl_register(PF_DECnet, RTM_GETADDR, NULL, dn_nl_dump_ifaddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	proc_net_fops_create(&init_net, "decnet_dev", S_IRUGO, &dn_dev_seq_fops);
 

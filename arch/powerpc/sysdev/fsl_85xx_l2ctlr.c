@@ -21,7 +21,10 @@
  */
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/of_platform.h>
 #include <asm/io.h>
 
@@ -201,9 +204,12 @@ static struct of_device_id mpc85xx_l2ctlr_of_match[] = {
 	{
 		.compatible = "fsl,p1022-l2-cache-controller",
 	},
+<<<<<<< HEAD
 	{
 		.compatible = "fsl,mpc8548-l2-cache-controller",
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{},
 };
 

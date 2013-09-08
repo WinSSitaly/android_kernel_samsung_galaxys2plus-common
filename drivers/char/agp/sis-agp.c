@@ -17,7 +17,11 @@
 #define PCI_DEVICE_ID_SI_662	0x0662
 #define PCI_DEVICE_ID_SI_671	0x0671
 
+<<<<<<< HEAD
 static bool __devinitdata agp_sis_force_delay = 0;
+=======
+static int __devinitdata agp_sis_force_delay = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinitdata agp_sis_agp_spec = -1;
 
 static int sis_fetch_size(void)

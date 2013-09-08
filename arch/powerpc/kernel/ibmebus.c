@@ -37,14 +37,20 @@
  */
 
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/console.h>
 #include <linux/kobject.h>
 #include <linux/dma-mapping.h>
 #include <linux/interrupt.h>
 #include <linux/of.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/stat.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/of_platform.h>
 #include <asm/ibmebus.h>
 #include <asm/abs_addr.h>
@@ -65,8 +71,12 @@ static struct of_device_id __initdata ibmebus_matches[] = {
 static void *ibmebus_alloc_coherent(struct device *dev,
 				    size_t size,
 				    dma_addr_t *dma_handle,
+<<<<<<< HEAD
 				    gfp_t flag,
 				    struct dma_attrs *attrs)
+=======
+				    gfp_t flag)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	void *mem;
 
@@ -78,8 +88,12 @@ static void *ibmebus_alloc_coherent(struct device *dev,
 
 static void ibmebus_free_coherent(struct device *dev,
 				  size_t size, void *vaddr,
+<<<<<<< HEAD
 				  dma_addr_t dma_handle,
 				  struct dma_attrs *attrs)
+=======
+				  dma_addr_t dma_handle)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	kfree(vaddr);
 }
@@ -129,6 +143,7 @@ static void ibmebus_unmap_sg(struct device *dev,
 
 static int ibmebus_dma_supported(struct device *dev, u64 mask)
 {
+<<<<<<< HEAD
 	return mask == DMA_BIT_MASK(64);
 }
 
@@ -146,6 +161,19 @@ static struct dma_map_ops ibmebus_dma_ops = {
 	.get_required_mask  = ibmebus_dma_get_required_mask,
 	.map_page           = ibmebus_map_page,
 	.unmap_page         = ibmebus_unmap_page,
+=======
+	return 1;
+}
+
+static struct dma_map_ops ibmebus_dma_ops = {
+	.alloc_coherent = ibmebus_alloc_coherent,
+	.free_coherent  = ibmebus_free_coherent,
+	.map_sg         = ibmebus_map_sg,
+	.unmap_sg       = ibmebus_unmap_sg,
+	.dma_supported  = ibmebus_dma_supported,
+	.map_page       = ibmebus_map_page,
+	.unmap_page     = ibmebus_unmap_page,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int ibmebus_match_path(struct device *dev, void *data)
@@ -715,7 +743,11 @@ static struct dev_pm_ops ibmebus_bus_dev_pm_ops = {
 
 struct bus_type ibmebus_bus_type = {
 	.name      = "ibmebus",
+<<<<<<< HEAD
 	.uevent    = of_device_uevent_modalias,
+=======
+	.uevent    = of_device_uevent,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bus_attrs = ibmebus_bus_attrs,
 	.match     = ibmebus_bus_bus_match,
 	.probe     = ibmebus_bus_device_probe,

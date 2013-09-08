@@ -31,13 +31,19 @@
 #include <linux/errno.h>
 #include <linux/err.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/pm_runtime.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/clk.h>
 #include <linux/cpufreq.h>
 #include <linux/slab.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/of_i2c.h>
 #include <linux/of_gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/irq.h>
 
@@ -81,8 +87,11 @@ struct s3c24xx_i2c {
 	struct resource		*ioarea;
 	struct i2c_adapter	adap;
 
+<<<<<<< HEAD
 	struct s3c2410_platform_i2c	*pdata;
 	int			gpios[2];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_CPU_FREQ
 	struct notifier_block	freq_transition;
 #endif
@@ -100,12 +109,15 @@ static inline int s3c24xx_i2c_is2440(struct s3c24xx_i2c *i2c)
 	struct platform_device *pdev = to_platform_device(i2c->dev);
 	enum s3c24xx_i2c_type type;
 
+<<<<<<< HEAD
 #ifdef CONFIG_OF
 	if (i2c->dev->of_node)
 		return of_device_is_compatible(i2c->dev->of_node,
 				"samsung,s3c2440-i2c");
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	type = platform_get_device_id(pdev)->driver_data;
 	return type == TYPE_S3C2440;
 }
@@ -535,7 +547,10 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
 
 	/* first, try busy waiting briefly */
 	do {
+<<<<<<< HEAD
 		cpu_relax();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iicstat = readl(i2c->regs + S3C2410_IICSTAT);
 	} while ((iicstat & S3C2410_IICSTAT_START) && --spins);
 
@@ -565,7 +580,10 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
 	int retry;
 	int ret;
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(&adap->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clk_enable(i2c->clk);
 
 	for (retry = 0; retry < adap->retries; retry++) {
@@ -574,7 +592,10 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
 
 		if (ret != -EAGAIN) {
 			clk_disable(i2c->clk);
+<<<<<<< HEAD
 			pm_runtime_put_sync(&adap->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return ret;
 		}
 
@@ -584,7 +605,10 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
 	}
 
 	clk_disable(i2c->clk);
+<<<<<<< HEAD
 	pm_runtime_put_sync(&adap->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -EREMOTEIO;
 }
 
@@ -640,7 +664,11 @@ static int s3c24xx_i2c_calcdivisor(unsigned long clkin, unsigned int wanted,
 
 static int s3c24xx_i2c_clockrate(struct s3c24xx_i2c *i2c, unsigned int *got)
 {
+<<<<<<< HEAD
 	struct s3c2410_platform_i2c *pdata = i2c->pdata;
+=======
+	struct s3c2410_platform_i2c *pdata = i2c->dev->platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long clkin = clk_get_rate(i2c->clk);
 	unsigned int divs, div1;
 	unsigned long target_frequency;
@@ -756,6 +784,7 @@ static inline void s3c24xx_i2c_deregister_cpufreq(struct s3c24xx_i2c *i2c)
 }
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_OF
 static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
 {
@@ -799,6 +828,8 @@ static void s3c24xx_i2c_dt_gpio_free(struct s3c24xx_i2c *i2c)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* s3c24xx_i2c_init
  *
  * initialise the controller, set the IO lines and frequency
@@ -812,15 +843,22 @@ static int s3c24xx_i2c_init(struct s3c24xx_i2c *i2c)
 
 	/* get the plafrom data */
 
+<<<<<<< HEAD
 	pdata = i2c->pdata;
+=======
+	pdata = i2c->dev->platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* inititalise the gpio */
 
 	if (pdata->cfg_gpio)
 		pdata->cfg_gpio(to_platform_device(i2c->dev));
+<<<<<<< HEAD
 	else
 		if (s3c24xx_i2c_parse_dt_gpio(i2c))
 			return -EINVAL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* write slave address */
 
@@ -846,6 +884,7 @@ static int s3c24xx_i2c_init(struct s3c24xx_i2c *i2c)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_OF
 /* s3c24xx_i2c_parse_dt
  *
@@ -874,6 +913,8 @@ s3c24xx_i2c_parse_dt(struct device_node *np, struct s3c24xx_i2c *i2c)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* s3c24xx_i2c_probe
  *
  * called by the bus driver when a suitable device is found
@@ -882,6 +923,7 @@ s3c24xx_i2c_parse_dt(struct device_node *np, struct s3c24xx_i2c *i2c)
 static int s3c24xx_i2c_probe(struct platform_device *pdev)
 {
 	struct s3c24xx_i2c *i2c;
+<<<<<<< HEAD
 	struct s3c2410_platform_i2c *pdata = NULL;
 	struct resource *res;
 	int ret;
@@ -895,11 +937,25 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
 	}
 
 	i2c = devm_kzalloc(&pdev->dev, sizeof(struct s3c24xx_i2c), GFP_KERNEL);
+=======
+	struct s3c2410_platform_i2c *pdata;
+	struct resource *res;
+	int ret;
+
+	pdata = pdev->dev.platform_data;
+	if (!pdata) {
+		dev_err(&pdev->dev, "no platform data\n");
+		return -EINVAL;
+	}
+
+	i2c = kzalloc(sizeof(struct s3c24xx_i2c), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!i2c) {
 		dev_err(&pdev->dev, "no memory for state\n");
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	i2c->pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
 	if (!i2c->pdata) {
 		ret = -ENOMEM;
@@ -911,6 +967,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
 	else
 		s3c24xx_i2c_parse_dt(pdev->dev.of_node, i2c);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	strlcpy(i2c->adap.name, "s3c2410-i2c", sizeof(i2c->adap.name));
 	i2c->adap.owner   = THIS_MODULE;
 	i2c->adap.algo    = &s3c24xx_i2c_algorithm;
@@ -985,7 +1043,11 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
 		goto err_iomap;
 	}
 
+<<<<<<< HEAD
 	ret = request_irq(i2c->irq, s3c24xx_i2c_irq, 0,
+=======
+	ret = request_irq(i2c->irq, s3c24xx_i2c_irq, IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  dev_name(&pdev->dev), i2c);
 
 	if (ret != 0) {
@@ -1005,8 +1067,12 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
 	 * being bus 0.
 	 */
 
+<<<<<<< HEAD
 	i2c->adap.nr = i2c->pdata->bus_num;
 	i2c->adap.dev.of_node = pdev->dev.of_node;
+=======
+	i2c->adap.nr = pdata->bus_num;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = i2c_add_numbered_adapter(&i2c->adap);
 	if (ret < 0) {
@@ -1014,12 +1080,17 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
 		goto err_cpufreq;
 	}
 
+<<<<<<< HEAD
 	of_i2c_register_devices(&i2c->adap);
 	platform_set_drvdata(pdev, i2c);
 
 	pm_runtime_enable(&pdev->dev);
 	pm_runtime_enable(&i2c->adap.dev);
 
+=======
+	platform_set_drvdata(pdev, i2c);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_info(&pdev->dev, "%s: S3C I2C adapter\n", dev_name(&i2c->adap.dev));
 	clk_disable(i2c->clk);
 	return 0;
@@ -1042,6 +1113,10 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
 	clk_put(i2c->clk);
 
  err_noclk:
+<<<<<<< HEAD
+=======
+	kfree(i2c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1054,9 +1129,12 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
 {
 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
 
+<<<<<<< HEAD
 	pm_runtime_disable(&i2c->adap.dev);
 	pm_runtime_disable(&pdev->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	s3c24xx_i2c_deregister_cpufreq(i2c);
 
 	i2c_del_adapter(&i2c->adap);
@@ -1068,8 +1146,13 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
 	iounmap(i2c->regs);
 
 	release_resource(i2c->ioarea);
+<<<<<<< HEAD
 	s3c24xx_i2c_dt_gpio_free(i2c);
 	kfree(i2c->ioarea);
+=======
+	kfree(i2c->ioarea);
+	kfree(i2c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1121,6 +1204,7 @@ static struct platform_device_id s3c24xx_driver_ids[] = {
 };
 MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
 
+<<<<<<< HEAD
 #ifdef CONFIG_OF
 static const struct of_device_id s3c24xx_i2c_match[] = {
 	{ .compatible = "samsung,s3c2410-i2c" },
@@ -1132,6 +1216,8 @@ MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
 #define s3c24xx_i2c_match NULL
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver s3c24xx_i2c_driver = {
 	.probe		= s3c24xx_i2c_probe,
 	.remove		= s3c24xx_i2c_remove,
@@ -1140,7 +1226,10 @@ static struct platform_driver s3c24xx_i2c_driver = {
 		.owner	= THIS_MODULE,
 		.name	= "s3c-i2c",
 		.pm	= S3C24XX_DEV_PM_OPS,
+<<<<<<< HEAD
 		.of_match_table = s3c24xx_i2c_match,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

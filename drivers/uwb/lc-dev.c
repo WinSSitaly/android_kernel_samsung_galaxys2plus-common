@@ -25,11 +25,17 @@
 #include <linux/kernel.h>
 #include <linux/slab.h>
 #include <linux/device.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/err.h>
 #include <linux/kdev_t.h>
 #include <linux/random.h>
 #include <linux/stat.h>
+=======
+#include <linux/err.h>
+#include <linux/kdev_t.h>
+#include <linux/random.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "uwb-internal.h"
 
 /* We initialize addresses to 0xff (invalid, as it is bcast) */

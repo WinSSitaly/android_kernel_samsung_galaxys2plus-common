@@ -98,7 +98,11 @@ static int palmz71_panel_resume(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct platform_driver palmz71_panel_driver = {
+=======
+struct platform_driver palmz71_panel_driver = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.probe		= palmz71_panel_probe,
 	.remove		= palmz71_panel_remove,
 	.suspend	= palmz71_panel_suspend,
@@ -109,4 +113,19 @@ static struct platform_driver palmz71_panel_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(palmz71_panel_driver);
+=======
+static int __init palmz71_panel_drv_init(void)
+{
+	return platform_driver_register(&palmz71_panel_driver);
+}
+
+static void __exit palmz71_panel_drv_cleanup(void)
+{
+	platform_driver_unregister(&palmz71_panel_driver);
+}
+
+module_init(palmz71_panel_drv_init);
+module_exit(palmz71_panel_drv_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

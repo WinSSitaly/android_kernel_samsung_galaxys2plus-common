@@ -25,6 +25,7 @@
  */
 
 #include <linux/delay.h>
+<<<<<<< HEAD
 
 #define RCU_KTHREAD_PRIO 1
 
@@ -33,6 +34,9 @@
 #else
 #define RCU_BOOST_PRIO RCU_KTHREAD_PRIO
 #endif
+=======
+#include <linux/stop_machine.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Check the RCU kernel configuration parameters and print informative
@@ -62,10 +66,14 @@ static void __init rcu_bootup_announce_oddness(void)
 	printk(KERN_INFO "\tRCU torture testing starts during boot.\n");
 #endif
 #if defined(CONFIG_TREE_PREEMPT_RCU) && !defined(CONFIG_RCU_CPU_STALL_VERBOSE)
+<<<<<<< HEAD
 	printk(KERN_INFO "\tDump stacks of tasks blocking RCU-preempt GP.\n");
 #endif
 #if defined(CONFIG_RCU_CPU_STALL_INFO)
 	printk(KERN_INFO "\tAdditional per-CPU info printed with stalls.\n");
+=======
+	printk(KERN_INFO "\tVerbose stalled-CPUs detection is disabled.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 #if NUM_RCU_LVL_4 != 0
 	printk(KERN_INFO "\tExperimental four-level hierarchy is enabled.\n");
@@ -74,7 +82,11 @@ static void __init rcu_bootup_announce_oddness(void)
 
 #ifdef CONFIG_TREE_PREEMPT_RCU
 
+<<<<<<< HEAD
 struct rcu_state rcu_preempt_state = RCU_STATE_INITIALIZER(rcu_preempt);
+=======
+struct rcu_state rcu_preempt_state = RCU_STATE_INITIALIZER(rcu_preempt_state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 DEFINE_PER_CPU(struct rcu_data, rcu_preempt_data);
 static struct rcu_state *rcu_state = &rcu_preempt_state;
 
@@ -132,11 +144,17 @@ static void rcu_preempt_qs(int cpu)
 {
 	struct rcu_data *rdp = &per_cpu(rcu_preempt_data, cpu);
 
+<<<<<<< HEAD
 	rdp->passed_quiesce_gpnum = rdp->gpnum;
 	barrier();
 	if (rdp->passed_quiesce == 0)
 		trace_rcu_grace_period("rcu_preempt", rdp->gpnum, "cpuqs");
 	rdp->passed_quiesce = 1;
+=======
+	rdp->passed_quiesc_completed = rdp->gpnum - 1;
+	barrier();
+	rdp->passed_quiesc = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	current->rcu_read_unlock_special &= ~RCU_READ_UNLOCK_NEED_QS;
 }
 
@@ -202,11 +220,14 @@ static void rcu_preempt_note_context_switch(int cpu)
 			if (rnp->qsmask & rdp->grpmask)
 				rnp->gp_tasks = &t->rcu_node_entry;
 		}
+<<<<<<< HEAD
 		trace_rcu_preempt_task(rdp->rsp->name,
 				       t->pid,
 				       (rnp->qsmask & rdp->grpmask)
 				       ? rnp->gpnum
 				       : rnp->gpnum + 1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		raw_spin_unlock_irqrestore(&rnp->lock, flags);
 	} else if (t->rcu_read_lock_nesting < 0 &&
 		   t->rcu_read_unlock_special) {
@@ -314,12 +335,17 @@ static noinline void rcu_read_unlock_special(struct task_struct *t)
 {
 	int empty;
 	int empty_exp;
+<<<<<<< HEAD
 	int empty_exp_now;
 	unsigned long flags;
 	struct list_head *np;
 #ifdef CONFIG_RCU_BOOST
 	struct rt_mutex *rbmp = NULL;
 #endif /* #ifdef CONFIG_RCU_BOOST */
+=======
+	unsigned long flags;
+	struct list_head *np;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct rcu_node *rnp;
 	int special;
 
@@ -365,9 +391,12 @@ static noinline void rcu_read_unlock_special(struct task_struct *t)
 		smp_mb(); /* ensure expedited fastpath sees end of RCU c-s. */
 		np = rcu_next_node_entry(t, rnp);
 		list_del_init(&t->rcu_node_entry);
+<<<<<<< HEAD
 		t->rcu_blocked_node = NULL;
 		trace_rcu_unlock_preempted_task("rcu_preempt",
 						rnp->gpnum, t->pid);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (&t->rcu_node_entry == rnp->gp_tasks)
 			rnp->gp_tasks = np;
 		if (&t->rcu_node_entry == rnp->exp_tasks)
@@ -375,16 +404,27 @@ static noinline void rcu_read_unlock_special(struct task_struct *t)
 #ifdef CONFIG_RCU_BOOST
 		if (&t->rcu_node_entry == rnp->boost_tasks)
 			rnp->boost_tasks = np;
+<<<<<<< HEAD
 		/* Snapshot/clear ->rcu_boost_mutex with rcu_node lock held. */
 		if (t->rcu_boost_mutex) {
 			rbmp = t->rcu_boost_mutex;
 			t->rcu_boost_mutex = NULL;
 		}
 #endif /* #ifdef CONFIG_RCU_BOOST */
+=======
+		/* Snapshot and clear ->rcu_boosted with rcu_node lock held. */
+		if (t->rcu_boosted) {
+			special |= RCU_READ_UNLOCK_BOOSTED;
+			t->rcu_boosted = 0;
+		}
+#endif /* #ifdef CONFIG_RCU_BOOST */
+		t->rcu_blocked_node = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * If this was the last task on the current list, and if
 		 * we aren't waiting on any CPUs, report the quiescent state.
+<<<<<<< HEAD
 		 * Note that rcu_report_unblock_qs_rnp() releases rnp->lock,
 		 * so we must take a snapshot of the expedited state.
 		 */
@@ -405,14 +445,34 @@ static noinline void rcu_read_unlock_special(struct task_struct *t)
 		/* Unboost if we were boosted. */
 		if (rbmp)
 			rt_mutex_unlock(rbmp);
+=======
+		 * Note that rcu_report_unblock_qs_rnp() releases rnp->lock.
+		 */
+		if (empty)
+			raw_spin_unlock_irqrestore(&rnp->lock, flags);
+		else
+			rcu_report_unblock_qs_rnp(rnp, flags);
+
+#ifdef CONFIG_RCU_BOOST
+		/* Unboost if we were boosted. */
+		if (special & RCU_READ_UNLOCK_BOOSTED) {
+			rt_mutex_unlock(t->rcu_boost_mutex);
+			t->rcu_boost_mutex = NULL;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* #ifdef CONFIG_RCU_BOOST */
 
 		/*
 		 * If this was the last task on the expedited lists,
 		 * then we need to report up the rcu_node hierarchy.
 		 */
+<<<<<<< HEAD
 		if (!empty_exp && empty_exp_now)
 			rcu_report_exp_rnp(&rcu_preempt_state, rnp, true);
+=======
+		if (!empty_exp && !rcu_preempted_readers_exp(rnp))
+			rcu_report_exp_rnp(&rcu_preempt_state, rnp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		local_irq_restore(flags);
 	}
@@ -429,10 +489,17 @@ void __rcu_read_unlock(void)
 {
 	struct task_struct *t = current;
 
+<<<<<<< HEAD
 	if (t->rcu_read_lock_nesting != 1)
 		--t->rcu_read_lock_nesting;
 	else {
 		barrier();  /* critical section before exit code. */
+=======
+	barrier();  /* needed if we ever invoke rcu_read_unlock in rcutree.c */
+	if (t->rcu_read_lock_nesting != 1)
+		--t->rcu_read_lock_nesting;
+	else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		t->rcu_read_lock_nesting = INT_MIN;
 		barrier();  /* assign before ->rcu_read_unlock_special load */
 		if (unlikely(ACCESS_ONCE(t->rcu_read_unlock_special)))
@@ -492,6 +559,7 @@ static void rcu_print_detail_task_stall(struct rcu_state *rsp)
 
 #endif /* #else #ifdef CONFIG_RCU_CPU_STALL_VERBOSE */
 
+<<<<<<< HEAD
 #ifdef CONFIG_RCU_CPU_STALL_INFO
 
 static void rcu_print_task_stall_begin(struct rcu_node *rnp)
@@ -517,10 +585,13 @@ static void rcu_print_task_stall_end(void)
 
 #endif /* #else #ifdef CONFIG_RCU_CPU_STALL_INFO */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Scan the current list of tasks blocked within RCU read-side critical
  * sections, printing out the tid of each.
  */
+<<<<<<< HEAD
 static int rcu_print_task_stall(struct rcu_node *rnp)
 {
 	struct task_struct *t;
@@ -537,6 +608,18 @@ static int rcu_print_task_stall(struct rcu_node *rnp)
 	}
 	rcu_print_task_stall_end();
 	return ndetected;
+=======
+static void rcu_print_task_stall(struct rcu_node *rnp)
+{
+	struct task_struct *t;
+
+	if (!rcu_preempt_blocked_readers_cgp(rnp))
+		return;
+	t = list_entry(rnp->gp_tasks,
+		       struct task_struct, rcu_node_entry);
+	list_for_each_entry_continue(t, &rnp->blkd_tasks, rcu_node_entry)
+		printk(" P%d", t->pid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -610,7 +693,11 @@ static int rcu_preempt_offline_tasks(struct rcu_state *rsp,
 	 * absolutely necessary, but this is a good performance/complexity
 	 * tradeoff.
 	 */
+<<<<<<< HEAD
 	if (rcu_preempt_blocked_readers_cgp(rnp) && rnp->qsmask == 0)
+=======
+	if (rcu_preempt_blocked_readers_cgp(rnp))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		retval |= RCU_OFL_TASKS_NORM_GP;
 	if (rcu_preempted_readers_exp(rnp))
 		retval |= RCU_OFL_TASKS_EXP_GP;
@@ -647,6 +734,7 @@ static int rcu_preempt_offline_tasks(struct rcu_state *rsp,
 	return retval;
 }
 
+<<<<<<< HEAD
 #endif /* #ifdef CONFIG_HOTPLUG_CPU */
 
 /*
@@ -657,6 +745,18 @@ static void rcu_preempt_cleanup_dead_cpu(int cpu)
 	rcu_cleanup_dead_cpu(cpu, &rcu_preempt_state);
 }
 
+=======
+/*
+ * Do CPU-offline processing for preemptible RCU.
+ */
+static void rcu_preempt_offline_cpu(int cpu)
+{
+	__rcu_offline_cpu(cpu, &rcu_preempt_state);
+}
+
+#endif /* #ifdef CONFIG_HOTPLUG_CPU */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Check for a quiescent state from the current CPU.  When a task blocks,
  * the task is recorded in the corresponding CPU's rcu_node structure,
@@ -700,6 +800,7 @@ static void rcu_preempt_do_callbacks(void)
  */
 void call_rcu(struct rcu_head *head, void (*func)(struct rcu_head *rcu))
 {
+<<<<<<< HEAD
 	__call_rcu(head, func, &rcu_preempt_state, 0);
 }
 EXPORT_SYMBOL_GPL(call_rcu);
@@ -718,6 +819,12 @@ void kfree_call_rcu(struct rcu_head *head,
 }
 EXPORT_SYMBOL_GPL(kfree_call_rcu);
 
+=======
+	__call_rcu(head, func, &rcu_preempt_state);
+}
+EXPORT_SYMBOL_GPL(call_rcu);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * synchronize_rcu - wait until a grace period has elapsed.
  *
@@ -731,6 +838,7 @@ EXPORT_SYMBOL_GPL(kfree_call_rcu);
  */
 void synchronize_rcu(void)
 {
+<<<<<<< HEAD
 	rcu_lockdep_assert(!lock_is_held(&rcu_bh_lock_map) &&
 			   !lock_is_held(&rcu_lock_map) &&
 			   !lock_is_held(&rcu_sched_lock_map),
@@ -738,6 +846,20 @@ void synchronize_rcu(void)
 	if (!rcu_scheduler_active)
 		return;
 	wait_rcu_gp(call_rcu);
+=======
+	struct rcu_synchronize rcu;
+
+	if (!rcu_scheduler_active)
+		return;
+
+	init_rcu_head_on_stack(&rcu.head);
+	init_completion(&rcu.completion);
+	/* Will wake me after RCU finished. */
+	call_rcu(&rcu.head, wakeme_after_rcu);
+	/* Wait for it. */
+	wait_for_completion(&rcu.completion);
+	destroy_rcu_head_on_stack(&rcu.head);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(synchronize_rcu);
 
@@ -779,6 +901,7 @@ static int sync_rcu_preempt_exp_done(struct rcu_node *rnp)
  * recursively up the tree.  (Calm down, calm down, we do the recursion
  * iteratively!)
  *
+<<<<<<< HEAD
  * Most callers will set the "wake" flag, but the task initiating the
  * expedited grace period need not wake itself.
  *
@@ -786,6 +909,11 @@ static int sync_rcu_preempt_exp_done(struct rcu_node *rnp)
  */
 static void rcu_report_exp_rnp(struct rcu_state *rsp, struct rcu_node *rnp,
 			       bool wake)
+=======
+ * Caller must hold sync_rcu_preempt_exp_mutex.
+ */
+static void rcu_report_exp_rnp(struct rcu_state *rsp, struct rcu_node *rnp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags;
 	unsigned long mask;
@@ -798,8 +926,12 @@ static void rcu_report_exp_rnp(struct rcu_state *rsp, struct rcu_node *rnp,
 		}
 		if (rnp->parent == NULL) {
 			raw_spin_unlock_irqrestore(&rnp->lock, flags);
+<<<<<<< HEAD
 			if (wake)
 				wake_up(&sync_rcu_preempt_exp_wq);
+=======
+			wake_up(&sync_rcu_preempt_exp_wq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 		mask = rnp->grpmask;
@@ -832,6 +964,7 @@ sync_rcu_preempt_exp_init(struct rcu_state *rsp, struct rcu_node *rnp)
 		must_wait = 1;
 	}
 	if (!must_wait)
+<<<<<<< HEAD
 		rcu_report_exp_rnp(rsp, rnp, false); /* Don't wake self. */
 }
 
@@ -851,6 +984,15 @@ sync_rcu_preempt_exp_init(struct rcu_state *rsp, struct rcu_node *rnp)
  * that is acquired by a CPU-hotplug notifier.  And yes, it is also illegal
  * to call this function from a CPU-hotplug notifier.  Failing to observe
  * these restriction will result in deadlock.
+=======
+		rcu_report_exp_rnp(rsp, rnp);
+}
+
+/*
+ * Wait for an rcu-preempt grace period, but expedite it.  The basic idea
+ * is to invoke synchronize_sched_expedited() to push all the tasks to
+ * the ->blkd_tasks lists and wait for this list to drain.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void synchronize_rcu_expedited(void)
 {
@@ -928,9 +1070,15 @@ static int rcu_preempt_pending(int cpu)
 }
 
 /*
+<<<<<<< HEAD
  * Does preemptible RCU have callbacks on this CPU?
  */
 static int rcu_preempt_cpu_has_callbacks(int cpu)
+=======
+ * Does preemptible RCU need the CPU to stay out of dynticks mode?
+ */
+static int rcu_preempt_needs_cpu(int cpu)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return !!per_cpu(rcu_preempt_data, cpu).nxtlist;
 }
@@ -953,12 +1101,20 @@ static void __cpuinit rcu_preempt_init_percpu_data(int cpu)
 }
 
 /*
+<<<<<<< HEAD
  * Move preemptible RCU's callbacks from dying CPU to other online CPU
  * and record a quiescent state.
  */
 static void rcu_preempt_cleanup_dying_cpu(void)
 {
 	rcu_cleanup_dying_cpu(&rcu_preempt_state);
+=======
+ * Move preemptible RCU's callbacks from dying CPU to other online CPU.
+ */
+static void rcu_preempt_send_cbs_to_online(void)
+{
+	rcu_send_cbs_to_online(&rcu_preempt_state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1056,9 +1212,14 @@ static void rcu_print_detail_task_stall(struct rcu_state *rsp)
  * Because preemptible RCU does not exist, we never have to check for
  * tasks blocked within RCU read-side critical sections.
  */
+<<<<<<< HEAD
 static int rcu_print_task_stall(struct rcu_node *rnp)
 {
 	return 0;
+=======
+static void rcu_print_task_stall(struct rcu_node *rnp)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1094,16 +1255,28 @@ static int rcu_preempt_offline_tasks(struct rcu_state *rsp,
 	return 0;
 }
 
+<<<<<<< HEAD
 #endif /* #ifdef CONFIG_HOTPLUG_CPU */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Because preemptible RCU does not exist, it never needs CPU-offline
  * processing.
  */
+<<<<<<< HEAD
 static void rcu_preempt_cleanup_dead_cpu(int cpu)
 {
 }
 
+=======
+static void rcu_preempt_offline_cpu(int cpu)
+{
+}
+
+#endif /* #ifdef CONFIG_HOTPLUG_CPU */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Because preemptible RCU does not exist, it never has any callbacks
  * to check.
@@ -1121,6 +1294,7 @@ static void rcu_preempt_process_callbacks(void)
 }
 
 /*
+<<<<<<< HEAD
  * Queue an RCU callback for lazy invocation after a grace period.
  * This will likely be later named something like "call_rcu_lazy()",
  * but this change will require some way of tagging the lazy RCU
@@ -1137,6 +1311,8 @@ void kfree_call_rcu(struct rcu_head *head,
 EXPORT_SYMBOL_GPL(kfree_call_rcu);
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Wait for an rcu-preempt grace period, but make it happen quickly.
  * But because preemptible RCU does not exist, map to rcu-sched.
  */
@@ -1153,9 +1329,15 @@ EXPORT_SYMBOL_GPL(synchronize_rcu_expedited);
  * report on tasks preempted in RCU read-side critical sections during
  * expedited RCU grace periods.
  */
+<<<<<<< HEAD
 static void rcu_report_exp_rnp(struct rcu_state *rsp, struct rcu_node *rnp,
 			       bool wake)
 {
+=======
+static void rcu_report_exp_rnp(struct rcu_state *rsp, struct rcu_node *rnp)
+{
+	return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #endif /* #ifdef CONFIG_HOTPLUG_CPU */
@@ -1169,9 +1351,15 @@ static int rcu_preempt_pending(int cpu)
 }
 
 /*
+<<<<<<< HEAD
  * Because preemptible RCU does not exist, it never has callbacks
  */
 static int rcu_preempt_cpu_has_callbacks(int cpu)
+=======
+ * Because preemptible RCU does not exist, it never needs any CPU.
+ */
+static int rcu_preempt_needs_cpu(int cpu)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
@@ -1195,9 +1383,15 @@ static void __cpuinit rcu_preempt_init_percpu_data(int cpu)
 }
 
 /*
+<<<<<<< HEAD
  * Because there is no preemptible RCU, there is no cleanup to do.
  */
 static void rcu_preempt_cleanup_dying_cpu(void)
+=======
+ * Because there is no preemptible RCU, there are no callbacks to move.
+ */
+static void rcu_preempt_send_cbs_to_online(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 }
 
@@ -1304,12 +1498,20 @@ static int rcu_boost(struct rcu_node *rnp)
 	t = container_of(tb, struct task_struct, rcu_node_entry);
 	rt_mutex_init_proxy_locked(&mtx, t);
 	t->rcu_boost_mutex = &mtx;
+<<<<<<< HEAD
+=======
+	t->rcu_boosted = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	raw_spin_unlock_irqrestore(&rnp->lock, flags);
 	rt_mutex_lock(&mtx);  /* Side effect: boosts task t's priority. */
 	rt_mutex_unlock(&mtx);  /* Keep lockdep happy. */
 
+<<<<<<< HEAD
 	return ACCESS_ONCE(rnp->exp_tasks) != NULL ||
 	       ACCESS_ONCE(rnp->boost_tasks) != NULL;
+=======
+	return rnp->exp_tasks != NULL || rnp->boost_tasks != NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1333,12 +1535,18 @@ static int rcu_boost_kthread(void *arg)
 	int spincnt = 0;
 	int more2boost;
 
+<<<<<<< HEAD
 	trace_rcu_utilization("Start boost kthread@init");
 	for (;;) {
 		rnp->boost_kthread_status = RCU_KTHREAD_WAITING;
 		trace_rcu_utilization("End boost kthread@rcu_wait");
 		rcu_wait(rnp->boost_tasks || rnp->exp_tasks);
 		trace_rcu_utilization("Start boost kthread@rcu_wait");
+=======
+	for (;;) {
+		rnp->boost_kthread_status = RCU_KTHREAD_WAITING;
+		rcu_wait(rnp->boost_tasks || rnp->exp_tasks);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rnp->boost_kthread_status = RCU_KTHREAD_RUNNING;
 		more2boost = rcu_boost(rnp);
 		if (more2boost)
@@ -1346,14 +1554,21 @@ static int rcu_boost_kthread(void *arg)
 		else
 			spincnt = 0;
 		if (spincnt > 10) {
+<<<<<<< HEAD
 			trace_rcu_utilization("End boost kthread@rcu_yield");
 			rcu_yield(rcu_boost_kthread_timer, (unsigned long)rnp);
 			trace_rcu_utilization("Start boost kthread@rcu_yield");
+=======
+			rcu_yield(rcu_boost_kthread_timer, (unsigned long)rnp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			spincnt = 0;
 		}
 	}
 	/* NOTREACHED */
+<<<<<<< HEAD
 	trace_rcu_utilization("End boost kthread@notreached");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1402,13 +1617,22 @@ static void invoke_rcu_callbacks_kthread(void)
 
 	local_irq_save(flags);
 	__this_cpu_write(rcu_cpu_has_work, 1);
+<<<<<<< HEAD
 	if (__this_cpu_read(rcu_cpu_kthread_task) != NULL &&
 	    current != __this_cpu_read(rcu_cpu_kthread_task))
 		wake_up_process(__this_cpu_read(rcu_cpu_kthread_task));
+=======
+	if (__this_cpu_read(rcu_cpu_kthread_task) == NULL) {
+		local_irq_restore(flags);
+		return;
+	}
+	wake_up_process(__this_cpu_read(rcu_cpu_kthread_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_irq_restore(flags);
 }
 
 /*
+<<<<<<< HEAD
  * Is the current CPU running the RCU-callbacks kthread?
  * Caller must have preemption disabled.
  */
@@ -1418,6 +1642,8 @@ static bool rcu_is_callbacks_kthread(void)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Set the affinity of the boost kthread.  The CPU-hotplug locks are
  * held, so no one should be messing with the existence of the boost
  * kthread.
@@ -1461,13 +1687,21 @@ static int __cpuinit rcu_spawn_one_boost_kthread(struct rcu_state *rsp,
 	if (rnp->boost_kthread_task != NULL)
 		return 0;
 	t = kthread_create(rcu_boost_kthread, (void *)rnp,
+<<<<<<< HEAD
 			   "rcub/%d", rnp_index);
+=======
+			   "rcub%d", rnp_index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(t))
 		return PTR_ERR(t);
 	raw_spin_lock_irqsave(&rnp->lock, flags);
 	rnp->boost_kthread_task = t;
 	raw_spin_unlock_irqrestore(&rnp->lock, flags);
+<<<<<<< HEAD
 	sp.sched_priority = RCU_BOOST_PRIO;
+=======
+	sp.sched_priority = RCU_KTHREAD_PRIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
 	wake_up_process(t); /* get to TASK_INTERRUPTIBLE quickly. */
 	return 0;
@@ -1562,7 +1796,10 @@ static void rcu_yield(void (*f)(unsigned long), unsigned long arg)
 {
 	struct sched_param sp;
 	struct timer_list yield_timer;
+<<<<<<< HEAD
 	int prio = current->rt_priority;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	setup_timer_on_stack(&yield_timer, f, arg);
 	mod_timer(&yield_timer, jiffies + 2);
@@ -1570,8 +1807,12 @@ static void rcu_yield(void (*f)(unsigned long), unsigned long arg)
 	sched_setscheduler_nocheck(current, SCHED_NORMAL, &sp);
 	set_user_nice(current, 19);
 	schedule();
+<<<<<<< HEAD
 	set_user_nice(current, 0);
 	sp.sched_priority = prio;
+=======
+	sp.sched_priority = RCU_KTHREAD_PRIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sched_setscheduler_nocheck(current, SCHED_FIFO, &sp);
 	del_timer(&yield_timer);
 }
@@ -1609,8 +1850,12 @@ static int rcu_cpu_kthread_should_stop(int cpu)
 
 /*
  * Per-CPU kernel thread that invokes RCU callbacks.  This replaces the
+<<<<<<< HEAD
  * RCU softirq used in flavors and configurations of RCU that do not
  * support RCU priority boosting.
+=======
+ * earlier RCU softirq.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int rcu_cpu_kthread(void *arg)
 {
@@ -1621,12 +1866,18 @@ static int rcu_cpu_kthread(void *arg)
 	char work;
 	char *workp = &per_cpu(rcu_cpu_has_work, cpu);
 
+<<<<<<< HEAD
 	trace_rcu_utilization("Start CPU kthread@init");
 	for (;;) {
 		*statusp = RCU_KTHREAD_WAITING;
 		trace_rcu_utilization("End CPU kthread@rcu_wait");
 		rcu_wait(*workp != 0 || kthread_should_stop());
 		trace_rcu_utilization("Start CPU kthread@rcu_wait");
+=======
+	for (;;) {
+		*statusp = RCU_KTHREAD_WAITING;
+		rcu_wait(*workp != 0 || kthread_should_stop());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		local_bh_disable();
 		if (rcu_cpu_kthread_should_stop(cpu)) {
 			local_bh_enable();
@@ -1647,14 +1898,21 @@ static int rcu_cpu_kthread(void *arg)
 			spincnt = 0;
 		if (spincnt > 10) {
 			*statusp = RCU_KTHREAD_YIELDING;
+<<<<<<< HEAD
 			trace_rcu_utilization("End CPU kthread@rcu_yield");
 			rcu_yield(rcu_cpu_kthread_timer, (unsigned long)cpu);
 			trace_rcu_utilization("Start CPU kthread@rcu_yield");
+=======
+			rcu_yield(rcu_cpu_kthread_timer, (unsigned long)cpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			spincnt = 0;
 		}
 	}
 	*statusp = RCU_KTHREAD_STOPPED;
+<<<<<<< HEAD
 	trace_rcu_utilization("End CPU kthread@term");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1687,10 +1945,14 @@ static int __cpuinit rcu_spawn_one_cpu_kthread(int cpu)
 	if (!rcu_scheduler_fully_active ||
 	    per_cpu(rcu_cpu_kthread_task, cpu) != NULL)
 		return 0;
+<<<<<<< HEAD
 	t = kthread_create_on_node(rcu_cpu_kthread,
 				   (void *)(long)cpu,
 				   cpu_to_node(cpu),
 				   "rcuc/%d", cpu);
+=======
+	t = kthread_create(rcu_cpu_kthread, (void *)(long)cpu, "rcuc%d", cpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(t))
 		return PTR_ERR(t);
 	if (cpu_online(cpu))
@@ -1799,7 +2061,11 @@ static int __cpuinit rcu_spawn_one_node_kthread(struct rcu_state *rsp,
 		return 0;
 	if (rnp->node_kthread_task == NULL) {
 		t = kthread_create(rcu_node_kthread, (void *)rnp,
+<<<<<<< HEAD
 				   "rcun/%d", rnp_index);
+=======
+				   "rcun%d", rnp_index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (IS_ERR(t))
 			return PTR_ERR(t);
 		raw_spin_lock_irqsave(&rnp->lock, flags);
@@ -1861,11 +2127,14 @@ static void invoke_rcu_callbacks_kthread(void)
 	WARN_ON_ONCE(1);
 }
 
+<<<<<<< HEAD
 static bool rcu_is_callbacks_kthread(void)
 {
 	return false;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void rcu_preempt_boost_start_gp(struct rcu_node *rnp)
 {
 }
@@ -1899,6 +2168,7 @@ static void __cpuinit rcu_prepare_kthreads(int cpu)
 
 #endif /* #else #ifdef CONFIG_RCU_BOOST */
 
+<<<<<<< HEAD
 #if !defined(CONFIG_RCU_FAST_NO_HZ)
 
 /*
@@ -2098,11 +2368,183 @@ static void rcu_cleanup_after_idle(int cpu)
  * at the end of the grace period by whatever CPU ends the grace period.
  * This allows CPUs to go dyntick-idle more quickly, and to reduce the
  * number of wakeups by a modest integer factor.
+=======
+#ifndef CONFIG_SMP
+
+void synchronize_sched_expedited(void)
+{
+	cond_resched();
+}
+EXPORT_SYMBOL_GPL(synchronize_sched_expedited);
+
+#else /* #ifndef CONFIG_SMP */
+
+static atomic_t sync_sched_expedited_started = ATOMIC_INIT(0);
+static atomic_t sync_sched_expedited_done = ATOMIC_INIT(0);
+
+static int synchronize_sched_expedited_cpu_stop(void *data)
+{
+	/*
+	 * There must be a full memory barrier on each affected CPU
+	 * between the time that try_stop_cpus() is called and the
+	 * time that it returns.
+	 *
+	 * In the current initial implementation of cpu_stop, the
+	 * above condition is already met when the control reaches
+	 * this point and the following smp_mb() is not strictly
+	 * necessary.  Do smp_mb() anyway for documentation and
+	 * robustness against future implementation changes.
+	 */
+	smp_mb(); /* See above comment block. */
+	return 0;
+}
+
+/*
+ * Wait for an rcu-sched grace period to elapse, but use "big hammer"
+ * approach to force grace period to end quickly.  This consumes
+ * significant time on all CPUs, and is thus not recommended for
+ * any sort of common-case code.
+ *
+ * Note that it is illegal to call this function while holding any
+ * lock that is acquired by a CPU-hotplug notifier.  Failing to
+ * observe this restriction will result in deadlock.
+ *
+ * This implementation can be thought of as an application of ticket
+ * locking to RCU, with sync_sched_expedited_started and
+ * sync_sched_expedited_done taking on the roles of the halves
+ * of the ticket-lock word.  Each task atomically increments
+ * sync_sched_expedited_started upon entry, snapshotting the old value,
+ * then attempts to stop all the CPUs.  If this succeeds, then each
+ * CPU will have executed a context switch, resulting in an RCU-sched
+ * grace period.  We are then done, so we use atomic_cmpxchg() to
+ * update sync_sched_expedited_done to match our snapshot -- but
+ * only if someone else has not already advanced past our snapshot.
+ *
+ * On the other hand, if try_stop_cpus() fails, we check the value
+ * of sync_sched_expedited_done.  If it has advanced past our
+ * initial snapshot, then someone else must have forced a grace period
+ * some time after we took our snapshot.  In this case, our work is
+ * done for us, and we can simply return.  Otherwise, we try again,
+ * but keep our initial snapshot for purposes of checking for someone
+ * doing our work for us.
+ *
+ * If we fail too many times in a row, we fall back to synchronize_sched().
+ */
+void synchronize_sched_expedited(void)
+{
+	int firstsnap, s, snap, trycount = 0;
+
+	/* Note that atomic_inc_return() implies full memory barrier. */
+	firstsnap = snap = atomic_inc_return(&sync_sched_expedited_started);
+	get_online_cpus();
+
+	/*
+	 * Each pass through the following loop attempts to force a
+	 * context switch on each CPU.
+	 */
+	while (try_stop_cpus(cpu_online_mask,
+			     synchronize_sched_expedited_cpu_stop,
+			     NULL) == -EAGAIN) {
+		put_online_cpus();
+
+		/* No joy, try again later.  Or just synchronize_sched(). */
+		if (trycount++ < 10)
+			udelay(trycount * num_online_cpus());
+		else {
+			synchronize_sched();
+			return;
+		}
+
+		/* Check to see if someone else did our work for us. */
+		s = atomic_read(&sync_sched_expedited_done);
+		if (UINT_CMP_GE((unsigned)s, (unsigned)firstsnap)) {
+			smp_mb(); /* ensure test happens before caller kfree */
+			return;
+		}
+
+		/*
+		 * Refetching sync_sched_expedited_started allows later
+		 * callers to piggyback on our grace period.  We subtract
+		 * 1 to get the same token that the last incrementer got.
+		 * We retry after they started, so our grace period works
+		 * for them, and they started after our first try, so their
+		 * grace period works for us.
+		 */
+		get_online_cpus();
+		snap = atomic_read(&sync_sched_expedited_started) - 1;
+		smp_mb(); /* ensure read is before try_stop_cpus(). */
+	}
+
+	/*
+	 * Everyone up to our most recent fetch is covered by our grace
+	 * period.  Update the counter, but only if our work is still
+	 * relevant -- which it won't be if someone who started later
+	 * than we did beat us to the punch.
+	 */
+	do {
+		s = atomic_read(&sync_sched_expedited_done);
+		if (UINT_CMP_GE((unsigned)s, (unsigned)snap)) {
+			smp_mb(); /* ensure test happens before caller kfree */
+			break;
+		}
+	} while (atomic_cmpxchg(&sync_sched_expedited_done, s, snap) != s);
+
+	put_online_cpus();
+}
+EXPORT_SYMBOL_GPL(synchronize_sched_expedited);
+
+#endif /* #else #ifndef CONFIG_SMP */
+
+#if !defined(CONFIG_RCU_FAST_NO_HZ)
+
+/*
+ * Check to see if any future RCU-related work will need to be done
+ * by the current CPU, even if none need be done immediately, returning
+ * 1 if so.  This function is part of the RCU implementation; it is -not-
+ * an exported member of the RCU API.
+ *
+ * Because we have preemptible RCU, just check whether this CPU needs
+ * any flavor of RCU.  Do not chew up lots of CPU cycles with preemption
+ * disabled in a most-likely vain attempt to cause RCU not to need this CPU.
+ */
+int rcu_needs_cpu(int cpu)
+{
+	return rcu_needs_cpu_quick_check(cpu);
+}
+
+/*
+ * Check to see if we need to continue a callback-flush operations to
+ * allow the last CPU to enter dyntick-idle mode.  But fast dyntick-idle
+ * entry is not configured, so we never do need to.
+ */
+static void rcu_needs_cpu_flush(void)
+{
+}
+
+#else /* #if !defined(CONFIG_RCU_FAST_NO_HZ) */
+
+#define RCU_NEEDS_CPU_FLUSHES 5
+static DEFINE_PER_CPU(int, rcu_dyntick_drain);
+static DEFINE_PER_CPU(unsigned long, rcu_dyntick_holdoff);
+
+/*
+ * Check to see if any future RCU-related work will need to be done
+ * by the current CPU, even if none need be done immediately, returning
+ * 1 if so.  This function is part of the RCU implementation; it is -not-
+ * an exported member of the RCU API.
+ *
+ * Because we are not supporting preemptible RCU, attempt to accelerate
+ * any current grace periods so that RCU no longer needs this CPU, but
+ * only if all other CPUs are already in dynticks-idle mode.  This will
+ * allow the CPU cores to be powered down immediately, as opposed to after
+ * waiting many milliseconds for grace periods to elapse.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Because it is not legal to invoke rcu_process_callbacks() with irqs
  * disabled, we do one pass of force_quiescent_state(), then do a
  * invoke_rcu_core() to cause rcu_process_callbacks() to be invoked
  * later.  The per-cpu rcu_dyntick_drain variable controls the sequencing.
+<<<<<<< HEAD
  *
  * The caller must have disabled interrupts.
  */
@@ -2126,11 +2568,37 @@ static void rcu_prepare_for_idle(int cpu)
 	if (per_cpu(rcu_dyntick_holdoff, cpu) == jiffies) {
 		trace_rcu_prep_idle("In holdoff");
 		return;
+=======
+ */
+int rcu_needs_cpu(int cpu)
+{
+	int c = 0;
+	int snap;
+	int thatcpu;
+
+	/* Check for being in the holdoff period. */
+	if (per_cpu(rcu_dyntick_holdoff, cpu) == jiffies)
+		return rcu_needs_cpu_quick_check(cpu);
+
+	/* Don't bother unless we are the last non-dyntick-idle CPU. */
+	for_each_online_cpu(thatcpu) {
+		if (thatcpu == cpu)
+			continue;
+		snap = atomic_add_return(0, &per_cpu(rcu_dynticks,
+						     thatcpu).dynticks);
+		smp_mb(); /* Order sampling of snap with end of grace period. */
+		if ((snap & 0x1) != 0) {
+			per_cpu(rcu_dyntick_drain, cpu) = 0;
+			per_cpu(rcu_dyntick_holdoff, cpu) = jiffies - 1;
+			return rcu_needs_cpu_quick_check(cpu);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Check and update the rcu_dyntick_drain sequencing. */
 	if (per_cpu(rcu_dyntick_drain, cpu) <= 0) {
 		/* First time through, initialize the counter. */
+<<<<<<< HEAD
 		per_cpu(rcu_dyntick_drain, cpu) = RCU_IDLE_FLUSHES;
 	} else if (per_cpu(rcu_dyntick_drain, cpu) <= RCU_IDLE_OPT_FLUSHES &&
 		   !rcu_pending(cpu) &&
@@ -2167,10 +2635,25 @@ static void rcu_prepare_for_idle(int cpu)
 	if (per_cpu(rcu_sched_data, cpu).nxtlist) {
 		rcu_sched_qs(cpu);
 		force_quiescent_state(&rcu_sched_state, 0);
+=======
+		per_cpu(rcu_dyntick_drain, cpu) = RCU_NEEDS_CPU_FLUSHES;
+	} else if (--per_cpu(rcu_dyntick_drain, cpu) <= 0) {
+		/* We have hit the limit, so time to give up. */
+		per_cpu(rcu_dyntick_holdoff, cpu) = jiffies;
+		return rcu_needs_cpu_quick_check(cpu);
+	}
+
+	/* Do one step pushing remaining RCU callbacks through. */
+	if (per_cpu(rcu_sched_data, cpu).nxtlist) {
+		rcu_sched_qs(cpu);
+		force_quiescent_state(&rcu_sched_state, 0);
+		c = c || per_cpu(rcu_sched_data, cpu).nxtlist;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (per_cpu(rcu_bh_data, cpu).nxtlist) {
 		rcu_bh_qs(cpu);
 		force_quiescent_state(&rcu_bh_state, 0);
+<<<<<<< HEAD
 	}
 
 	/*
@@ -2299,3 +2782,31 @@ static void increment_cpu_stall_ticks(void)
 }
 
 #endif /* #else #ifdef CONFIG_RCU_CPU_STALL_INFO */
+=======
+		c = c || per_cpu(rcu_bh_data, cpu).nxtlist;
+	}
+
+	/* If RCU callbacks are still pending, RCU still needs this CPU. */
+	if (c)
+		invoke_rcu_core();
+	return c;
+}
+
+/*
+ * Check to see if we need to continue a callback-flush operations to
+ * allow the last CPU to enter dyntick-idle mode.
+ */
+static void rcu_needs_cpu_flush(void)
+{
+	int cpu = smp_processor_id();
+	unsigned long flags;
+
+	if (per_cpu(rcu_dyntick_drain, cpu) <= 0)
+		return;
+	local_irq_save(flags);
+	(void)rcu_needs_cpu(cpu);
+	local_irq_restore(flags);
+}
+
+#endif /* #else #if !defined(CONFIG_RCU_FAST_NO_HZ) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

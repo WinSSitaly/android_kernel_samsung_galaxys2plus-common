@@ -98,7 +98,11 @@ struct dib3000_state {
 	int timing_offset;
 	int timing_offset_comp_done;
 
+<<<<<<< HEAD
 	u32 last_tuned_bw;
+=======
+	fe_bandwidth_t last_tuned_bw;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 last_tuned_freq;
 };
 

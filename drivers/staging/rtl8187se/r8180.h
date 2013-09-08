@@ -18,7 +18,10 @@
 #ifndef R8180H
 #define R8180H
 
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define RTL8180_MODULE_NAME "r8180"
 #define DMESG(x,a...) printk(KERN_INFO RTL8180_MODULE_NAME ": " x "\n", ## a)

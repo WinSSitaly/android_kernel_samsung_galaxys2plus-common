@@ -199,6 +199,7 @@ ENTRY(startup_64)
 	 * an identity mapped page table being provied that maps our
 	 * entire text+data+bss and hopefully all of memory.
 	 */
+<<<<<<< HEAD
 #ifdef CONFIG_EFI_STUB
 	/*
 	 * The entry point for the PE/COFF executable is 0x210, so only
@@ -229,6 +230,8 @@ ENTRY(startup_64)
 
 preferred_addr:
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Setup data segments. */
 	xorl	%eax, %eax

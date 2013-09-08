@@ -384,7 +384,11 @@ static int usb_hcd_s3c2410_probe(const struct hc_driver *driver,
 
 	ohci_hcd_init(hcd_to_ohci(hcd));
 
+<<<<<<< HEAD
 	retval = usb_add_hcd(hcd, dev->resource[1].start, 0);
+=======
+	retval = usb_add_hcd(hcd, dev->resource[1].start, IRQF_DISABLED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval != 0)
 		goto err_ioremap;
 
@@ -486,6 +490,7 @@ static int __devexit ohci_hcd_s3c2410_drv_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 static int ohci_hcd_s3c2410_drv_suspend(struct device *dev)
 {
@@ -538,14 +543,24 @@ static const struct dev_pm_ops ohci_hcd_s3c2410_pm_ops = {
 	.resume		= ohci_hcd_s3c2410_drv_resume,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver ohci_hcd_s3c2410_driver = {
 	.probe		= ohci_hcd_s3c2410_drv_probe,
 	.remove		= __devexit_p(ohci_hcd_s3c2410_drv_remove),
 	.shutdown	= usb_hcd_platform_shutdown,
+<<<<<<< HEAD
 	.driver		= {
 		.owner	= THIS_MODULE,
 		.name	= "s3c2410-ohci",
 		.pm	= &ohci_hcd_s3c2410_pm_ops,
+=======
+	/*.suspend	= ohci_hcd_s3c2410_drv_suspend, */
+	/*.resume	= ohci_hcd_s3c2410_drv_resume, */
+	.driver		= {
+		.owner	= THIS_MODULE,
+		.name	= "s3c2410-ohci",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

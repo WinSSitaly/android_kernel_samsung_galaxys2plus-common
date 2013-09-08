@@ -61,6 +61,7 @@
 
 @ VFP hardware support entry point.
 @
+<<<<<<< HEAD
 @  r0  = instruction opcode (32-bit ARM or two 16-bit Thumb)
 @  r2  = PC value to resume execution after successful emulation
 @  r9  = normal "successful" return address
@@ -68,6 +69,15 @@
 @  r11 = CPU number
 @  lr  = unrecognised instruction return address
 @  IRQs enabled.
+=======
+@  r0  = faulted instruction
+@  r2  = faulted PC+4
+@  r9  = successful return
+@  r10 = vfp_state union
+@  r11 = CPU number
+@  lr  = failure return
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ENTRY(vfp_support_entry)
 	DBGSTR3	"instr %08x pc %08x state %p", r0, r2, r10
 
@@ -82,6 +92,7 @@ ENTRY(vfp_support_entry)
 	ldr	r4, [r3, r11, lsl #2]	@ vfp_current_hw_state pointer
 	bic	r5, r1, #FPEXC_EX	@ make sure exceptions are disabled
 	cmp	r4, r10			@ this thread owns the hw context?
+<<<<<<< HEAD
 #ifndef CONFIG_SMP
 	@ For UP, checking that this thread owns the hw context is
 	@ sufficient to determine that the hardware state is valid.
@@ -91,13 +102,27 @@ ENTRY(vfp_support_entry)
 	@ thread wants ownership of the VFP hardware, save the old
 	@ state if there was a previous (valid) owner.
 
+=======
+	beq	vfp_hw_state_valid
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	VFPFMXR	FPEXC, r5		@ enable VFP, disable any pending
 					@ exceptions, so we can get at the
 					@ rest of it
 
+<<<<<<< HEAD
 	DBGSTR1	"save old state %p", r4
 	cmp	r4, #0			@ if the vfp_current_hw_state is NULL
 	beq	vfp_reload_hw		@ then the hw state needs reloading
+=======
+#ifndef CONFIG_SMP
+	@ Save out the current registers to the old thread state
+	@ No need for SMP since this is not done lazily
+
+	DBGSTR1	"save old state %p", r4
+	cmp	r4, #0
+	beq	no_old_VFP_process
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	VFPFSTMIA r4, r5		@ save the working registers
 	VFPFMRX	r5, FPSCR		@ current status
 #ifndef CONFIG_CPU_FEROCEON
@@ -110,6 +135,7 @@ ENTRY(vfp_support_entry)
 1:
 #endif
 	stmia	r4, {r1, r5, r6, r8}	@ save FPEXC, FPSCR, FPINST, FPINST2
+<<<<<<< HEAD
 vfp_reload_hw:
 
 #else
@@ -137,6 +163,13 @@ vfp_reload_hw:
 					@ rest of it
 #endif
 
+=======
+					@ and point r4 at the word at the
+					@ start of the register dump
+#endif
+
+no_old_VFP_process:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DBGSTR1	"load state %p", r10
 	str	r10, [r3, r11, lsl #2]	@ update the vfp_current_hw_state pointer
 					@ Load the saved state back into the VFP
@@ -161,6 +194,7 @@ vfp_hw_state_valid:
 					@ exception before retrying branch
 					@ out before setting an FPEXC that
 					@ stops us reading stuff
+<<<<<<< HEAD
 	VFPFMXR	FPEXC, r1		@ Restore FPEXC last
 	sub	r2, r2, #4		@ Retry current instruction - if Thumb
 	str	r2, [sp, #S_PC]		@ mode it's two 16-bit instructions,
@@ -168,6 +202,12 @@ vfp_hw_state_valid:
 					@ always subtract 4 from the following
 					@ instruction address.
 #ifdef CONFIG_PREEMPT_COUNT
+=======
+	VFPFMXR	FPEXC, r1		@ restore FPEXC last
+	sub	r2, r2, #4
+	str	r2, [sp, #S_PC]		@ retry the instruction
+#ifdef CONFIG_PREEMPT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	get_thread_info	r10
 	ldr	r4, [r10, #TI_PREEMPT]	@ get preempt count
 	sub	r11, r4, #1		@ decrement it
@@ -191,7 +231,11 @@ look_for_VFP_exceptions:
 	@ not recognised by VFP
 
 	DBGSTR	"not VFP"
+<<<<<<< HEAD
 #ifdef CONFIG_PREEMPT_COUNT
+=======
+#ifdef CONFIG_PREEMPT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	get_thread_info	r10
 	ldr	r4, [r10, #TI_PREEMPT]	@ get preempt count
 	sub	r11, r4, #1		@ decrement it

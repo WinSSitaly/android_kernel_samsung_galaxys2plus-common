@@ -218,7 +218,11 @@ static int __devinit z2_batt_probe(struct i2c_client *client,
 		irq_set_irq_type(gpio_to_irq(info->charge_gpio),
 				 IRQ_TYPE_EDGE_BOTH);
 		ret = request_irq(gpio_to_irq(info->charge_gpio),
+<<<<<<< HEAD
 				z2_charge_switch_irq, 0,
+=======
+				z2_charge_switch_irq, IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"AC Detect", charger);
 		if (ret)
 			goto err3;
@@ -313,10 +317,29 @@ static struct i2c_driver z2_batt_driver = {
 		.pm	= Z2_BATTERY_PM_OPS
 	},
 	.probe		= z2_batt_probe,
+<<<<<<< HEAD
 	.remove		= __devexit_p(z2_batt_remove),
 	.id_table	= z2_batt_id,
 };
 module_i2c_driver(z2_batt_driver);
+=======
+	.remove		= z2_batt_remove,
+	.id_table	= z2_batt_id,
+};
+
+static int __init z2_batt_init(void)
+{
+	return i2c_add_driver(&z2_batt_driver);
+}
+
+static void __exit z2_batt_exit(void)
+{
+	i2c_del_driver(&z2_batt_driver);
+}
+
+module_init(z2_batt_init);
+module_exit(z2_batt_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Peter Edwards <sweetlilmre@gmail.com>");

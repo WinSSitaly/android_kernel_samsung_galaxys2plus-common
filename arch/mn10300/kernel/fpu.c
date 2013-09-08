@@ -12,6 +12,10 @@
 #include <asm/fpu.h>
 #include <asm/elf.h>
 #include <asm/exceptions.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_LAZY_SAVE_FPU
 struct task_struct *fpu_state_owner;

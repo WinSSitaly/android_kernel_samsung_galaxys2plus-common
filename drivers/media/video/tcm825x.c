@@ -27,7 +27,10 @@
  */
 
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/v4l2-int-device.h>
 
 #include "tcm825x.h"

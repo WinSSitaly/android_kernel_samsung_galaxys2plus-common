@@ -50,10 +50,15 @@ SECTIONS
 	. = KERNEL_BINARY_TEXT_START;
 
 	_text = .;		/* Text and read-only data */
+<<<<<<< HEAD
 	.head ALIGN(16) : {
 		HEAD_TEXT
 	} = 0
 	.text ALIGN(16) : {
+=======
+	.text ALIGN(16) : {
+		HEAD_TEXT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		TEXT_TEXT
 		SCHED_TEXT
 		LOCK_TEXT
@@ -67,7 +72,11 @@ SECTIONS
 		*(.fixup)
 		*(.lock.text)		/* out-of-line lock text */
 		*(.gnu.warning)
+<<<<<<< HEAD
 	}
+=======
+	} = 0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* End of text section */
 	_etext = .;
 

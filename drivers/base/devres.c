@@ -397,7 +397,10 @@ static int remove_nodes(struct device *dev,
 
 static int release_nodes(struct device *dev, struct list_head *first,
 			 struct list_head *end, unsigned long flags)
+<<<<<<< HEAD
 	__releases(&dev->devres_lock)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	LIST_HEAD(todo);
 	int cnt;
@@ -639,7 +642,11 @@ EXPORT_SYMBOL_GPL(devm_kzalloc);
  * @dev: Device this memory belongs to
  * @p: Memory to free
  *
+<<<<<<< HEAD
  * Free memory allocated with devm_kzalloc().
+=======
+ * Free memory allocated with dev_kzalloc().
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void devm_kfree(struct device *dev, void *p)
 {

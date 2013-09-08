@@ -1,9 +1,14 @@
 #ifndef __CEPH_DECODE_H
 #define __CEPH_DECODE_H
 
+<<<<<<< HEAD
 #include <linux/bug.h>
 #include <linux/time.h>
 #include <asm/unaligned.h>
+=======
+#include <asm/unaligned.h>
+#include <linux/time.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "types.h"
 

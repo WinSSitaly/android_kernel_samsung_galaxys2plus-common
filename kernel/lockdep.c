@@ -44,7 +44,10 @@
 #include <linux/stringify.h>
 #include <linux/bitops.h>
 #include <linux/gfp.h>
+<<<<<<< HEAD
 #include <linux/kmemcheck.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/sections.h>
 
@@ -97,6 +100,7 @@ static int graph_lock(void)
 
 static inline int graph_unlock(void)
 {
+<<<<<<< HEAD
 	if (debug_locks && !arch_spin_is_locked(&lockdep_lock)) {
 		/*
 		 * The lockdep graph lock isn't locked while we expect it to
@@ -104,6 +108,10 @@ static inline int graph_unlock(void)
 		 */
 		return DEBUG_LOCKS_WARN_ON(1);
 	}
+=======
+	if (debug_locks && !arch_spin_is_locked(&lockdep_lock))
+		return DEBUG_LOCKS_WARN_ON(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	current->lockdep_recursion--;
 	arch_spin_unlock(&lockdep_lock);
@@ -140,9 +148,12 @@ static struct lock_class lock_classes[MAX_LOCKDEP_KEYS];
 static inline struct lock_class *hlock_class(struct held_lock *hlock)
 {
 	if (!hlock->class_idx) {
+<<<<<<< HEAD
 		/*
 		 * Someone passed in garbage, we give up.
 		 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		DEBUG_LOCKS_WARN_ON(1);
 		return NULL;
 	}
@@ -431,7 +442,10 @@ unsigned int max_lockdep_depth;
  * about it later on, in lockdep_info().
  */
 static int lockdep_init_error;
+<<<<<<< HEAD
 static const char *lock_init_error;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned long lockdep_init_trace_data[20];
 static struct stack_trace lockdep_init_trace = {
 	.max_entries = ARRAY_SIZE(lockdep_init_trace_data),
@@ -500,12 +514,17 @@ void get_usage_chars(struct lock_class *class, char usage[LOCK_USAGE_CHARS])
 	usage[i] = '\0';
 }
 
+<<<<<<< HEAD
 static void __print_lock_name(struct lock_class *class)
+=======
+static int __print_lock_name(struct lock_class *class)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	char str[KSYM_NAME_LEN];
 	const char *name;
 
 	name = class->name;
+<<<<<<< HEAD
 	if (!name) {
 		name = __get_key_name(class->key, str);
 		printk("%s", name);
@@ -516,16 +535,41 @@ static void __print_lock_name(struct lock_class *class)
 		if (class->subclass)
 			printk("/%d", class->subclass);
 	}
+=======
+	if (!name)
+		name = __get_key_name(class->key, str);
+
+	return printk("%s", name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void print_lock_name(struct lock_class *class)
 {
+<<<<<<< HEAD
 	char usage[LOCK_USAGE_CHARS];
 
 	get_usage_chars(class, usage);
 
 	printk(" (");
 	__print_lock_name(class);
+=======
+	char str[KSYM_NAME_LEN], usage[LOCK_USAGE_CHARS];
+	const char *name;
+
+	get_usage_chars(class, usage);
+
+	name = class->name;
+	if (!name) {
+		name = __get_key_name(class->key, str);
+		printk(" (%s", name);
+	} else {
+		printk(" (%s", name);
+		if (class->name_version > 1)
+			printk("#%d", class->name_version);
+		if (class->subclass)
+			printk("/%d", class->subclass);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk("){%s}", usage);
 }
 
@@ -565,12 +609,20 @@ static void lockdep_print_held_locks(struct task_struct *curr)
 	}
 }
 
+<<<<<<< HEAD
 static void print_kernel_ident(void)
 {
 	printk("%s %.*s %s\n", init_utsname()->release,
 		(int)strcspn(init_utsname()->version, " "),
 		init_utsname()->version,
 		print_tainted());
+=======
+static void print_kernel_version(void)
+{
+	printk("%s %.*s\n", init_utsname()->release,
+		(int)strcspn(init_utsname()->version, " "),
+		init_utsname()->version);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int very_verbose(struct lock_class *class)
@@ -654,7 +706,10 @@ look_up_lock_class(struct lockdep_map *lock, unsigned int subclass)
 	if (unlikely(!lockdep_initialized)) {
 		lockdep_init();
 		lockdep_init_error = 1;
+<<<<<<< HEAD
 		lock_init_error = lock->name;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		save_stack_trace(&lockdep_init_trace);
 	}
 #endif
@@ -695,10 +750,13 @@ look_up_lock_class(struct lockdep_map *lock, unsigned int subclass)
 	 */
 	list_for_each_entry(class, hash_head, hash_entry) {
 		if (class->key == key) {
+<<<<<<< HEAD
 			/*
 			 * Huh! same key, different name? Did someone trample
 			 * on some memory? We're most confused.
 			 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			WARN_ON_ONCE(class->name != lock->name);
 			return class;
 		}
@@ -722,7 +780,11 @@ register_lock_class(struct lockdep_map *lock, unsigned int subclass, int force)
 
 	class = look_up_lock_class(lock, subclass);
 	if (likely(class))
+<<<<<<< HEAD
 		goto out_set_class_cache;
+=======
+		return class;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Debug-check: all keys must be persistent!
@@ -807,16 +869,22 @@ out_unlock_set:
 	graph_unlock();
 	raw_local_irq_restore(flags);
 
+<<<<<<< HEAD
 out_set_class_cache:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!subclass || force)
 		lock->class_cache[0] = class;
 	else if (subclass < NR_LOCKDEP_CACHING_CLASSES)
 		lock->class_cache[subclass] = class;
 
+<<<<<<< HEAD
 	/*
 	 * Hash collision, did we smoke some? We found a class with a matching
 	 * hash but the subclass -- which is hashed in -- didn't match.
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(class->subclass != subclass))
 		return NULL;
 
@@ -943,7 +1011,11 @@ static inline void mark_lock_accessed(struct lock_list *lock,
 	unsigned long nr;
 
 	nr = lock - list_entries;
+<<<<<<< HEAD
 	WARN_ON(nr >= nr_list_entries); /* Out-of-bounds, input fail */
+=======
+	WARN_ON(nr >= nr_list_entries);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lock->parent = parent;
 	lock->class->dep_gen_id = lockdep_dependency_gen_id;
 }
@@ -953,7 +1025,11 @@ static inline unsigned long lock_accessed(struct lock_list *lock)
 	unsigned long nr;
 
 	nr = lock - list_entries;
+<<<<<<< HEAD
 	WARN_ON(nr >= nr_list_entries); /* Out-of-bounds, input fail */
+=======
+	WARN_ON(nr >= nr_list_entries);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return lock->class->dep_gen_id == lockdep_dependency_gen_id;
 }
 
@@ -1146,11 +1222,18 @@ print_circular_bug_header(struct lock_list *entry, unsigned int depth,
 	if (debug_locks_silent)
 		return 0;
 
+<<<<<<< HEAD
 	printk("\n");
 	printk("======================================================\n");
 	printk("[ INFO: possible circular locking dependency detected ]\n");
 	print_kernel_ident();
 	printk("-------------------------------------------------------\n");
+=======
+	printk("\n=======================================================\n");
+	printk(  "[ INFO: possible circular locking dependency detected ]\n");
+	print_kernel_version();
+	printk(  "-------------------------------------------------------\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk("%s/%d is trying to acquire lock:\n",
 		curr->comm, task_pid_nr(curr));
 	print_lock(check_src);
@@ -1214,9 +1297,12 @@ static noinline int print_bfs_bug(int ret)
 	if (!debug_locks_off_graph_unlock())
 		return 0;
 
+<<<<<<< HEAD
 	/*
 	 * Breadth-first-search failed, graph got corrupted?
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	WARN(1, "lockdep bfs error:%d\n", ret);
 
 	return 0;
@@ -1484,12 +1570,20 @@ print_bad_irq_dependency(struct task_struct *curr,
 	if (!debug_locks_off_graph_unlock() || debug_locks_silent)
 		return 0;
 
+<<<<<<< HEAD
 	printk("\n");
 	printk("======================================================\n");
 	printk("[ INFO: %s-safe -> %s-unsafe lock order detected ]\n",
 		irqclass, irqclass);
 	print_kernel_ident();
 	printk("------------------------------------------------------\n");
+=======
+	printk("\n======================================================\n");
+	printk(  "[ INFO: %s-safe -> %s-unsafe lock order detected ]\n",
+		irqclass, irqclass);
+	print_kernel_version();
+	printk(  "------------------------------------------------------\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk("%s/%d [HC%u[%lu]:SC%u[%lu]:HE%u:SE%u] is trying to acquire:\n",
 		curr->comm, task_pid_nr(curr),
 		curr->hardirq_context, hardirq_count() >> HARDIRQ_SHIFT,
@@ -1714,11 +1808,18 @@ print_deadlock_bug(struct task_struct *curr, struct held_lock *prev,
 	if (!debug_locks_off_graph_unlock() || debug_locks_silent)
 		return 0;
 
+<<<<<<< HEAD
 	printk("\n");
 	printk("=============================================\n");
 	printk("[ INFO: possible recursive locking detected ]\n");
 	print_kernel_ident();
 	printk("---------------------------------------------\n");
+=======
+	printk("\n=============================================\n");
+	printk(  "[ INFO: possible recursive locking detected ]\n");
+	print_kernel_version();
+	printk(  "---------------------------------------------\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk("%s/%d is trying to acquire lock:\n",
 		curr->comm, task_pid_nr(curr));
 	print_lock(next);
@@ -1967,11 +2068,14 @@ out_bug:
 	if (!debug_locks_off_graph_unlock())
 		return 0;
 
+<<<<<<< HEAD
 	/*
 	 * Clearly we all shouldn't be here, but since we made it we
 	 * can reliable say we messed up our state. See the above two
 	 * gotos for reasons why we could possibly end up here.
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	WARN_ON(1);
 
 	return 0;
@@ -2003,11 +2107,14 @@ static inline int lookup_chain_cache(struct task_struct *curr,
 	struct held_lock *hlock_curr, *hlock_next;
 	int i, j;
 
+<<<<<<< HEAD
 	/*
 	 * We might need to take the graph lock, ensure we've got IRQs
 	 * disabled to make this an IRQ-safe lock.. for recursion reasons
 	 * lockdep won't complain about its own locking errors.
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(!irqs_disabled()))
 		return 0;
 	/*
@@ -2159,10 +2266,13 @@ static void check_chain_key(struct task_struct *curr)
 		hlock = curr->held_locks + i;
 		if (chain_key != hlock->prev_chain_key) {
 			debug_locks_off();
+<<<<<<< HEAD
 			/*
 			 * We got mighty confused, our chain keys don't match
 			 * with what we expect, someone trample on our task state?
 			 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			WARN(1, "hm#1, depth: %u [%u], %016Lx != %016Lx\n",
 				curr->lockdep_depth, i,
 				(unsigned long long)chain_key,
@@ -2170,9 +2280,12 @@ static void check_chain_key(struct task_struct *curr)
 			return;
 		}
 		id = hlock->class_idx - 1;
+<<<<<<< HEAD
 		/*
 		 * Whoops ran out of static storage again?
 		 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (DEBUG_LOCKS_WARN_ON(id >= MAX_LOCKDEP_KEYS))
 			return;
 
@@ -2184,10 +2297,13 @@ static void check_chain_key(struct task_struct *curr)
 	}
 	if (chain_key != curr->curr_chain_key) {
 		debug_locks_off();
+<<<<<<< HEAD
 		/*
 		 * More smoking hash instead of calculating it, damn see these
 		 * numbers float.. I bet that a pink elephant stepped on my memory.
 		 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		WARN(1, "hm#2, depth: %u [%u], %016Lx != %016Lx\n",
 			curr->lockdep_depth, i,
 			(unsigned long long)chain_key,
@@ -2221,11 +2337,18 @@ print_usage_bug(struct task_struct *curr, struct held_lock *this,
 	if (!debug_locks_off_graph_unlock() || debug_locks_silent)
 		return 0;
 
+<<<<<<< HEAD
 	printk("\n");
 	printk("=================================\n");
 	printk("[ INFO: inconsistent lock state ]\n");
 	print_kernel_ident();
 	printk("---------------------------------\n");
+=======
+	printk("\n=================================\n");
+	printk(  "[ INFO: inconsistent lock state ]\n");
+	print_kernel_version();
+	printk(  "---------------------------------\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	printk("inconsistent {%s} -> {%s} usage.\n",
 		usage_str[prev_bit], usage_str[new_bit]);
@@ -2286,11 +2409,18 @@ print_irq_inversion_bug(struct task_struct *curr,
 	if (!debug_locks_off_graph_unlock() || debug_locks_silent)
 		return 0;
 
+<<<<<<< HEAD
 	printk("\n");
 	printk("=========================================================\n");
 	printk("[ INFO: possible irq lock inversion dependency detected ]\n");
 	print_kernel_ident();
 	printk("---------------------------------------------------------\n");
+=======
+	printk("\n=========================================================\n");
+	printk(  "[ INFO: possible irq lock inversion dependency detected ]\n");
+	print_kernel_version();
+	printk(  "---------------------------------------------------------\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk("%s/%d just changed the state of lock:\n",
 		curr->comm, task_pid_nr(curr));
 	print_lock(this);
@@ -2514,9 +2644,12 @@ mark_held_locks(struct task_struct *curr, enum mark_type mark)
 
 		BUG_ON(usage_bit >= LOCK_USAGE_STATES);
 
+<<<<<<< HEAD
 		if (hlock_class(hlock)->key == __lockdep_no_validate__.subkeys)
 			continue;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!mark_lock(curr, hlock, usage_bit))
 			return 0;
 	}
@@ -2527,6 +2660,7 @@ mark_held_locks(struct task_struct *curr, enum mark_type mark)
 /*
  * Hardirqs will be enabled:
  */
+<<<<<<< HEAD
 static void __trace_hardirqs_on_caller(unsigned long ip)
 {
 	struct task_struct *curr = current;
@@ -2556,12 +2690,25 @@ static void __trace_hardirqs_on_caller(unsigned long ip)
 
 void trace_hardirqs_on_caller(unsigned long ip)
 {
+=======
+void trace_hardirqs_on_caller(unsigned long ip)
+{
+	struct task_struct *curr = current;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	time_hardirqs_on(CALLER_ADDR0, ip);
 
 	if (unlikely(!debug_locks || current->lockdep_recursion))
 		return;
 
+<<<<<<< HEAD
 	if (unlikely(current->hardirqs_enabled)) {
+=======
+	if (DEBUG_LOCKS_WARN_ON(unlikely(early_boot_irqs_disabled)))
+		return;
+
+	if (unlikely(curr->hardirqs_enabled)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Neither irq nor preemption are disabled here
 		 * so this is racy by nature but losing one hit
@@ -2570,6 +2717,7 @@ void trace_hardirqs_on_caller(unsigned long ip)
 		__debug_atomic_inc(redundant_hardirqs_on);
 		return;
 	}
+<<<<<<< HEAD
 
 	/*
 	 * We're enabling irqs and according to our state above irqs weren't
@@ -2595,6 +2743,33 @@ void trace_hardirqs_on_caller(unsigned long ip)
 	current->lockdep_recursion = 1;
 	__trace_hardirqs_on_caller(ip);
 	current->lockdep_recursion = 0;
+=======
+	/* we'll do an OFF -> ON transition: */
+	curr->hardirqs_enabled = 1;
+
+	if (DEBUG_LOCKS_WARN_ON(!irqs_disabled()))
+		return;
+	if (DEBUG_LOCKS_WARN_ON(current->hardirq_context))
+		return;
+	/*
+	 * We are going to turn hardirqs on, so set the
+	 * usage bit for all held locks:
+	 */
+	if (!mark_held_locks(curr, HARDIRQ))
+		return;
+	/*
+	 * If we have softirqs enabled, then set the usage
+	 * bit for all held locks. (disabled hardirqs prevented
+	 * this bit from being set before)
+	 */
+	if (curr->softirqs_enabled)
+		if (!mark_held_locks(curr, SOFTIRQ))
+			return;
+
+	curr->hardirq_enable_ip = ip;
+	curr->hardirq_enable_event = ++curr->irq_events;
+	debug_atomic_inc(hardirqs_on_events);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(trace_hardirqs_on_caller);
 
@@ -2616,10 +2791,13 @@ void trace_hardirqs_off_caller(unsigned long ip)
 	if (unlikely(!debug_locks || current->lockdep_recursion))
 		return;
 
+<<<<<<< HEAD
 	/*
 	 * So we're supposed to get called after you mask local IRQs, but for
 	 * some reason the hardware doesn't quite think you did a proper job.
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(!irqs_disabled()))
 		return;
 
@@ -2649,6 +2827,7 @@ void trace_softirqs_on(unsigned long ip)
 {
 	struct task_struct *curr = current;
 
+<<<<<<< HEAD
 	if (unlikely(!debug_locks || current->lockdep_recursion))
 		return;
 
@@ -2656,6 +2835,11 @@ void trace_softirqs_on(unsigned long ip)
 	 * We fancy IRQs being disabled here, see softirq.c, avoids
 	 * funny state and nesting things.
 	 */
+=======
+	if (unlikely(!debug_locks))
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(!irqs_disabled()))
 		return;
 
@@ -2664,7 +2848,10 @@ void trace_softirqs_on(unsigned long ip)
 		return;
 	}
 
+<<<<<<< HEAD
 	current->lockdep_recursion = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * We'll do an OFF -> ON transition:
 	 */
@@ -2679,7 +2866,10 @@ void trace_softirqs_on(unsigned long ip)
 	 */
 	if (curr->hardirqs_enabled)
 		mark_held_locks(curr, SOFTIRQ);
+<<<<<<< HEAD
 	current->lockdep_recursion = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2689,12 +2879,18 @@ void trace_softirqs_off(unsigned long ip)
 {
 	struct task_struct *curr = current;
 
+<<<<<<< HEAD
 	if (unlikely(!debug_locks || current->lockdep_recursion))
 		return;
 
 	/*
 	 * We fancy IRQs being disabled here, see softirq.c
 	 */
+=======
+	if (unlikely(!debug_locks))
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(!irqs_disabled()))
 		return;
 
@@ -2706,9 +2902,12 @@ void trace_softirqs_off(unsigned long ip)
 		curr->softirq_disable_ip = ip;
 		curr->softirq_disable_event = ++curr->irq_events;
 		debug_atomic_inc(softirqs_off_events);
+<<<<<<< HEAD
 		/*
 		 * Whoops, we wanted softirqs off, so why aren't they?
 		 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		DEBUG_LOCKS_WARN_ON(!softirq_count());
 	} else
 		debug_atomic_inc(redundant_softirqs_off);
@@ -2733,9 +2932,12 @@ static void __lockdep_trace_alloc(gfp_t gfp_mask, unsigned long flags)
 	if (!(gfp_mask & __GFP_FS))
 		return;
 
+<<<<<<< HEAD
 	/*
 	 * Oi! Can't be having __GFP_FS allocations with IRQs disabled.
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(irqs_disabled_flags(flags)))
 		return;
 
@@ -2848,13 +3050,21 @@ static int separate_irq_context(struct task_struct *curr,
 	return 0;
 }
 
+<<<<<<< HEAD
 #else /* defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING) */
+=======
+#else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline
 int mark_lock_irq(struct task_struct *curr, struct held_lock *this,
 		enum lock_usage_bit new_bit)
 {
+<<<<<<< HEAD
 	WARN_ON(1); /* Impossible innit? when we don't have TRACE_IRQFLAG */
+=======
+	WARN_ON(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
@@ -2874,7 +3084,11 @@ void lockdep_trace_alloc(gfp_t gfp_mask)
 {
 }
 
+<<<<<<< HEAD
 #endif /* defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING) */
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Mark a lock with a usage bit, and validate the state transition:
@@ -2951,8 +3165,11 @@ void lockdep_init_map(struct lockdep_map *lock, const char *name,
 {
 	int i;
 
+<<<<<<< HEAD
 	kmemcheck_mark_initialized(lock, sizeof(*lock));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < NR_LOCKDEP_CACHING_CLASSES; i++)
 		lock->class_cache[i] = NULL;
 
@@ -2960,9 +3177,12 @@ void lockdep_init_map(struct lockdep_map *lock, const char *name,
 	lock->cpu = raw_smp_processor_id();
 #endif
 
+<<<<<<< HEAD
 	/*
 	 * Can't be having no nameless bastards around this place!
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(!name)) {
 		lock->name = "NULL";
 		return;
@@ -2970,9 +3190,12 @@ void lockdep_init_map(struct lockdep_map *lock, const char *name,
 
 	lock->name = name;
 
+<<<<<<< HEAD
 	/*
 	 * No key, no joy, we need to hash something.
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(!key))
 		return;
 	/*
@@ -2980,9 +3203,12 @@ void lockdep_init_map(struct lockdep_map *lock, const char *name,
 	 */
 	if (!static_obj(key)) {
 		printk("BUG: key %p not in .data!\n", key);
+<<<<<<< HEAD
 		/*
 		 * What it says above ^^^^^, I suggest you read it.
 		 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		DEBUG_LOCKS_WARN_ON(1);
 		return;
 	}
@@ -3021,11 +3247,14 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
 	if (unlikely(!debug_locks))
 		return 0;
 
+<<<<<<< HEAD
 	/*
 	 * Lockdep should run with IRQs disabled, otherwise we could
 	 * get an interrupt which would want to take locks, which would
 	 * end up in lockdep and have you got a head-ache already?
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(!irqs_disabled()))
 		return 0;
 
@@ -3057,9 +3286,12 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
 	 * dependency checks are done)
 	 */
 	depth = curr->lockdep_depth;
+<<<<<<< HEAD
 	/*
 	 * Ran out of static storage for our per-task lock stack again have we?
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(depth >= MAX_LOCK_DEPTH))
 		return 0;
 
@@ -3078,10 +3310,13 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
 	}
 
 	hlock = curr->held_locks + depth;
+<<<<<<< HEAD
 	/*
 	 * Plain impossible, we just registered it and checked it weren't no
 	 * NULL like.. I bet this mushroom I ate was good!
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(!class))
 		return 0;
 	hlock->class_idx = class_idx;
@@ -3116,17 +3351,23 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
 	 * the hash, not class->key.
 	 */
 	id = class - lock_classes;
+<<<<<<< HEAD
 	/*
 	 * Whoops, we did it again.. ran straight out of our static allocation.
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(id >= MAX_LOCKDEP_KEYS))
 		return 0;
 
 	chain_key = curr->curr_chain_key;
 	if (!depth) {
+<<<<<<< HEAD
 		/*
 		 * How can we have a chain hash when we ain't got no keys?!
 		 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (DEBUG_LOCKS_WARN_ON(chain_key != 0))
 			return 0;
 		chain_head = 1;
@@ -3172,11 +3413,17 @@ print_unlock_inbalance_bug(struct task_struct *curr, struct lockdep_map *lock,
 	if (debug_locks_silent)
 		return 0;
 
+<<<<<<< HEAD
 	printk("\n");
 	printk("=====================================\n");
 	printk("[ BUG: bad unlock balance detected! ]\n");
 	print_kernel_ident();
 	printk("-------------------------------------\n");
+=======
+	printk("\n=====================================\n");
+	printk(  "[ BUG: bad unlock balance detected! ]\n");
+	printk(  "-------------------------------------\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk("%s/%d is trying to release lock (",
 		curr->comm, task_pid_nr(curr));
 	print_lockdep_cache(lock);
@@ -3200,9 +3447,12 @@ static int check_unlock(struct task_struct *curr, struct lockdep_map *lock,
 {
 	if (unlikely(!debug_locks))
 		return 0;
+<<<<<<< HEAD
 	/*
 	 * Lockdep should run with IRQs disabled, recursion, head-ache, etc..
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(!irqs_disabled()))
 		return 0;
 
@@ -3223,6 +3473,7 @@ static int match_held_lock(struct held_lock *hlock, struct lockdep_map *lock)
 		if (!class)
 			class = look_up_lock_class(lock, 0);
 
+<<<<<<< HEAD
 		/*
 		 * If look_up_lock_class() failed to find a class, we're trying
 		 * to test if we hold a lock that has never yet been acquired.
@@ -3237,6 +3488,11 @@ static int match_held_lock(struct held_lock *hlock, struct lockdep_map *lock)
 		 * State got messed up, follow the sites that change ->references
 		 * and try to make sense of it.
 		 */
+=======
+		if (DEBUG_LOCKS_WARN_ON(!class))
+			return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (DEBUG_LOCKS_WARN_ON(!hlock->nest_lock))
 			return 0;
 
@@ -3259,10 +3515,13 @@ __lock_set_class(struct lockdep_map *lock, const char *name,
 	int i;
 
 	depth = curr->lockdep_depth;
+<<<<<<< HEAD
 	/*
 	 * This function is about (re)setting the class of a held lock,
 	 * yet we're not actually holding any locks. Naughty user!
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(!depth))
 		return 0;
 
@@ -3298,10 +3557,13 @@ found_it:
 			return 0;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * I took it apart and put it back together again, except now I have
 	 * these 'spare' parts.. where shall I put them.
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(curr->lockdep_depth != depth))
 		return 0;
 	return 1;
@@ -3326,10 +3588,13 @@ lock_release_non_nested(struct task_struct *curr,
 	 * of held locks:
 	 */
 	depth = curr->lockdep_depth;
+<<<<<<< HEAD
 	/*
 	 * So we're all set to release this lock.. wait what lock? We don't
 	 * own any locks, you've been drinking again?
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(!depth))
 		return 0;
 
@@ -3382,10 +3647,13 @@ found_it:
 			return 0;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * We had N bottles of beer on the wall, we drank one, but now
 	 * there's not N-1 bottles of beer left on the wall...
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(curr->lockdep_depth != depth - 1))
 		return 0;
 	return 1;
@@ -3416,9 +3684,12 @@ static int lock_release_nested(struct task_struct *curr,
 		return lock_release_non_nested(curr, lock, ip);
 	curr->lockdep_depth--;
 
+<<<<<<< HEAD
 	/*
 	 * No more locks, but somehow we've got hash left over, who left it?
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(!depth && (hlock->prev_chain_key != 0)))
 		return 0;
 
@@ -3501,6 +3772,7 @@ static void check_flags(unsigned long flags)
 	 * check if not in hardirq contexts:
 	 */
 	if (!hardirq_count()) {
+<<<<<<< HEAD
 		if (softirq_count()) {
 			/* like the above, but with softirqs */
 			DEBUG_LOCKS_WARN_ON(current->softirqs_enabled);
@@ -3508,6 +3780,12 @@ static void check_flags(unsigned long flags)
 			/* lick the above, does it taste good? */
 			DEBUG_LOCKS_WARN_ON(!current->softirqs_enabled);
 		}
+=======
+		if (softirq_count())
+			DEBUG_LOCKS_WARN_ON(current->softirqs_enabled);
+		else
+			DEBUG_LOCKS_WARN_ON(!current->softirqs_enabled);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (!debug_locks)
@@ -3617,11 +3895,17 @@ print_lock_contention_bug(struct task_struct *curr, struct lockdep_map *lock,
 	if (debug_locks_silent)
 		return 0;
 
+<<<<<<< HEAD
 	printk("\n");
 	printk("=================================\n");
 	printk("[ BUG: bad contention detected! ]\n");
 	print_kernel_ident();
 	printk("---------------------------------\n");
+=======
+	printk("\n=================================\n");
+	printk(  "[ BUG: bad contention detected! ]\n");
+	printk(  "---------------------------------\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk("%s/%d is trying to contend lock (",
 		curr->comm, task_pid_nr(curr));
 	print_lockdep_cache(lock);
@@ -3647,10 +3931,13 @@ __lock_contended(struct lockdep_map *lock, unsigned long ip)
 	int i, contention_point, contending_point;
 
 	depth = curr->lockdep_depth;
+<<<<<<< HEAD
 	/*
 	 * Whee, we contended on this lock, except it seems we're not
 	 * actually trying to acquire anything much at all..
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(!depth))
 		return;
 
@@ -3700,10 +3987,13 @@ __lock_acquired(struct lockdep_map *lock, unsigned long ip)
 	int i, cpu;
 
 	depth = curr->lockdep_depth;
+<<<<<<< HEAD
 	/*
 	 * Yay, we acquired ownership of this lock we didn't try to
 	 * acquire, how the heck did that happen?
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (DEBUG_LOCKS_WARN_ON(!depth))
 		return;
 
@@ -3908,12 +4198,17 @@ void lockdep_reset_lock(struct lockdep_map *lock)
 				match |= class == lock->class_cache[j];
 
 			if (unlikely(match)) {
+<<<<<<< HEAD
 				if (debug_locks_off_graph_unlock()) {
 					/*
 					 * We all just reset everything, how did it match?
 					 */
 					WARN_ON(1);
 				}
+=======
+				if (debug_locks_off_graph_unlock())
+					WARN_ON(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto out_restore;
 			}
 		}
@@ -3976,8 +4271,12 @@ void __init lockdep_info(void)
 
 #ifdef CONFIG_DEBUG_LOCKDEP
 	if (lockdep_init_error) {
+<<<<<<< HEAD
 		printk("WARNING: lockdep init error! lock-%s was acquired"
 			"before lockdep_init\n", lock_init_error);
+=======
+		printk("WARNING: lockdep init error! Arch code didn't call lockdep_init() early enough?\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk("Call stack leading to lockdep invocation was:\n");
 		print_stack_trace(&lockdep_init_trace, 0);
 	}
@@ -3993,11 +4292,17 @@ print_freed_lock_bug(struct task_struct *curr, const void *mem_from,
 	if (debug_locks_silent)
 		return;
 
+<<<<<<< HEAD
 	printk("\n");
 	printk("=========================\n");
 	printk("[ BUG: held lock freed! ]\n");
 	print_kernel_ident();
 	printk("-------------------------\n");
+=======
+	printk("\n=========================\n");
+	printk(  "[ BUG: held lock freed! ]\n");
+	printk(  "-------------------------\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk("%s/%d is freeing memory %p-%p, with a lock still held there!\n",
 		curr->comm, task_pid_nr(curr), mem_from, mem_to-1);
 	print_lock(hlock);
@@ -4051,11 +4356,17 @@ static void print_held_locks_bug(struct task_struct *curr)
 	if (debug_locks_silent)
 		return;
 
+<<<<<<< HEAD
 	printk("\n");
 	printk("=====================================\n");
 	printk("[ BUG: lock held at task exit time! ]\n");
 	print_kernel_ident();
 	printk("-------------------------------------\n");
+=======
+	printk("\n=====================================\n");
+	printk(  "[ BUG: lock held at task exit time! ]\n");
+	printk(  "-------------------------------------\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk("%s/%d is exiting with locks still held!\n",
 		curr->comm, task_pid_nr(curr));
 	lockdep_print_held_locks(curr);
@@ -4149,18 +4460,28 @@ void lockdep_sys_exit(void)
 	if (unlikely(curr->lockdep_depth)) {
 		if (!debug_locks_off())
 			return;
+<<<<<<< HEAD
 		printk("\n");
 		printk("================================================\n");
 		printk("[ BUG: lock held when returning to user space! ]\n");
 		print_kernel_ident();
 		printk("------------------------------------------------\n");
+=======
+		printk("\n================================================\n");
+		printk(  "[ BUG: lock held when returning to user space! ]\n");
+		printk(  "------------------------------------------------\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk("%s/%d is leaving the kernel with locks still held!\n",
 				curr->comm, curr->pid);
 		lockdep_print_held_locks(curr);
 	}
 }
 
+<<<<<<< HEAD
 void lockdep_rcu_suspicious(const char *file, const int line, const char *s)
+=======
+void lockdep_rcu_dereference(const char *file, const int line)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct task_struct *curr = current;
 
@@ -4169,6 +4490,7 @@ void lockdep_rcu_suspicious(const char *file, const int line, const char *s)
 		return;
 #endif /* #ifdef CONFIG_PROVE_RCU_REPEATEDLY */
 	/* Note: the following can be executed concurrently, so be careful. */
+<<<<<<< HEAD
 	printk("\n");
 	printk("===============================\n");
 	printk("[ INFO: suspicious RCU usage. ]\n");
@@ -4205,8 +4527,21 @@ void lockdep_rcu_suspicious(const char *file, const int line, const char *s)
 	if (rcu_is_cpu_idle())
 		printk("RCU used illegally from extended quiescent state!\n");
 
+=======
+	printk("\n===================================================\n");
+	printk(  "[ INFO: suspicious rcu_dereference_check() usage. ]\n");
+	printk(  "---------------------------------------------------\n");
+	printk("%s:%d invoked rcu_dereference_check() without protection!\n",
+			file, line);
+	printk("\nother info that might help us debug this:\n\n");
+	printk("\nrcu_scheduler_active = %d, debug_locks = %d\n", rcu_scheduler_active, debug_locks);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lockdep_print_held_locks(curr);
 	printk("\nstack backtrace:\n");
 	dump_stack();
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(lockdep_rcu_suspicious);
+=======
+EXPORT_SYMBOL_GPL(lockdep_rcu_dereference);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

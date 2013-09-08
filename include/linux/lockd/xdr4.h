@@ -42,6 +42,10 @@ int	nlmclt_encode_lockargs(struct rpc_rqst *, u32 *, struct nlm_args *);
 int	nlmclt_encode_cancargs(struct rpc_rqst *, u32 *, struct nlm_args *);
 int	nlmclt_encode_unlockargs(struct rpc_rqst *, u32 *, struct nlm_args *);
  */
+<<<<<<< HEAD
 extern const struct rpc_version nlm_version4;
+=======
+extern struct rpc_version nlm_version4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* LOCKD_XDR4_H */

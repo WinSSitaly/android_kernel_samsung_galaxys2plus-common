@@ -30,7 +30,11 @@
 #include <linux/interrupt.h>
 #include <linux/delay.h>
 #include <linux/mfd/abx500.h>
+<<<<<<< HEAD
 #include <linux/mfd/abx500/ab8500.h>
+=======
+#include <linux/mfd/ab8500.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AB8500_MAIN_WD_CTRL_REG 0x01
 #define AB8500_USB_LINE_STAT_REG 0x80
@@ -68,7 +72,11 @@ enum ab8500_usb_link_status {
 };
 
 struct ab8500_usb {
+<<<<<<< HEAD
 	struct usb_phy phy;
+=======
+	struct otg_transceiver otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct device *dev;
 	int irq_num_id_rise;
 	int irq_num_id_fall;
@@ -82,9 +90,15 @@ struct ab8500_usb {
 	int rev;
 };
 
+<<<<<<< HEAD
 static inline struct ab8500_usb *phy_to_ab(struct usb_phy *x)
 {
 	return container_of(x, struct ab8500_usb, phy);
+=======
+static inline struct ab8500_usb *xceiv_to_ab(struct otg_transceiver *x)
+{
+	return container_of(x, struct ab8500_usb, otg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void ab8500_usb_wd_workaround(struct ab8500_usb *ab)
@@ -153,7 +167,11 @@ static int ab8500_usb_link_status_update(struct ab8500_usb *ab)
 	u8 reg;
 	enum ab8500_usb_link_status lsts;
 	void *v = NULL;
+<<<<<<< HEAD
 	enum usb_phy_events event;
+=======
+	enum usb_xceiv_events event;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	abx500_get_register_interruptible(ab->dev,
 			AB8500_USB,
@@ -169,8 +187,13 @@ static int ab8500_usb_link_status_update(struct ab8500_usb *ab)
 		/* TODO: Disable regulators. */
 		ab8500_usb_host_phy_dis(ab);
 		ab8500_usb_peri_phy_dis(ab);
+<<<<<<< HEAD
 		ab->phy.state = OTG_STATE_B_IDLE;
 		ab->phy.otg->default_a = false;
+=======
+		ab->otg.state = OTG_STATE_B_IDLE;
+		ab->otg.default_a = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ab->vbus_draw = 0;
 		event = USB_EVENT_NONE;
 		break;
@@ -181,15 +204,23 @@ static int ab8500_usb_link_status_update(struct ab8500_usb *ab)
 	case USB_LINK_HOST_CHG_NM:
 	case USB_LINK_HOST_CHG_HS:
 	case USB_LINK_HOST_CHG_HS_CHIRP:
+<<<<<<< HEAD
 		if (ab->phy.otg->gadget) {
 			/* TODO: Enable regulators. */
 			ab8500_usb_peri_phy_en(ab);
 			v = ab->phy.otg->gadget;
+=======
+		if (ab->otg.gadget) {
+			/* TODO: Enable regulators. */
+			ab8500_usb_peri_phy_en(ab);
+			v = ab->otg.gadget;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		event = USB_EVENT_VBUS;
 		break;
 
 	case USB_LINK_HM_IDGND:
+<<<<<<< HEAD
 		if (ab->phy.otg->host) {
 			/* TODO: Enable regulators. */
 			ab8500_usb_host_phy_en(ab);
@@ -197,6 +228,15 @@ static int ab8500_usb_link_status_update(struct ab8500_usb *ab)
 		}
 		ab->phy.state = OTG_STATE_A_IDLE;
 		ab->phy.otg->default_a = true;
+=======
+		if (ab->otg.host) {
+			/* TODO: Enable regulators. */
+			ab8500_usb_host_phy_en(ab);
+			v = ab->otg.host;
+		}
+		ab->otg.state = OTG_STATE_A_IDLE;
+		ab->otg.default_a = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		event = USB_EVENT_ID;
 		break;
 
@@ -212,7 +252,11 @@ static int ab8500_usb_link_status_update(struct ab8500_usb *ab)
 		break;
 	}
 
+<<<<<<< HEAD
 	atomic_notifier_call_chain(&ab->phy.notifier, event, v);
+=======
+	atomic_notifier_call_chain(&ab->otg.notifier, event, v);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -262,6 +306,7 @@ static void ab8500_usb_phy_disable_work(struct work_struct *work)
 	struct ab8500_usb *ab = container_of(work, struct ab8500_usb,
 						phy_dis_work);
 
+<<<<<<< HEAD
 	if (!ab->phy.otg->host)
 		ab8500_usb_host_phy_dis(ab);
 
@@ -277,12 +322,34 @@ static int ab8500_usb_set_power(struct usb_phy *phy, unsigned mA)
 		return -ENODEV;
 
 	ab = phy_to_ab(phy);
+=======
+	if (!ab->otg.host)
+		ab8500_usb_host_phy_dis(ab);
+
+	if (!ab->otg.gadget)
+		ab8500_usb_peri_phy_dis(ab);
+}
+
+static int ab8500_usb_set_power(struct otg_transceiver *otg, unsigned mA)
+{
+	struct ab8500_usb *ab;
+
+	if (!otg)
+		return -ENODEV;
+
+	ab = xceiv_to_ab(otg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ab->vbus_draw = mA;
 
 	if (mA)
+<<<<<<< HEAD
 		atomic_notifier_call_chain(&ab->phy.notifier,
 				USB_EVENT_ENUMERATED, ab->phy.otg->gadget);
+=======
+		atomic_notifier_call_chain(&ab->otg.notifier,
+				USB_EVENT_ENUMERATED, ab->otg.gadget);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -290,21 +357,34 @@ static int ab8500_usb_set_power(struct usb_phy *phy, unsigned mA)
  * ab->vbus_draw.
  */
 
+<<<<<<< HEAD
 static int ab8500_usb_set_suspend(struct usb_phy *x, int suspend)
+=======
+static int ab8500_usb_set_suspend(struct otg_transceiver *x, int suspend)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* TODO */
 	return 0;
 }
 
+<<<<<<< HEAD
 static int ab8500_usb_set_peripheral(struct usb_otg *otg,
 					struct usb_gadget *gadget)
+=======
+static int ab8500_usb_set_peripheral(struct otg_transceiver *otg,
+		struct usb_gadget *gadget)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ab8500_usb *ab;
 
 	if (!otg)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	ab = phy_to_ab(otg->phy);
+=======
+	ab = xceiv_to_ab(otg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Some drivers call this function in atomic context.
 	 * Do not update ab8500 registers directly till this
@@ -313,11 +393,19 @@ static int ab8500_usb_set_peripheral(struct usb_otg *otg,
 
 	if (!gadget) {
 		/* TODO: Disable regulators. */
+<<<<<<< HEAD
 		otg->gadget = NULL;
 		schedule_work(&ab->phy_dis_work);
 	} else {
 		otg->gadget = gadget;
 		otg->phy->state = OTG_STATE_B_IDLE;
+=======
+		ab->otg.gadget = NULL;
+		schedule_work(&ab->phy_dis_work);
+	} else {
+		ab->otg.gadget = gadget;
+		ab->otg.state = OTG_STATE_B_IDLE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Phy will not be enabled if cable is already
 		 * plugged-in. Schedule to enable phy.
@@ -329,14 +417,23 @@ static int ab8500_usb_set_peripheral(struct usb_otg *otg,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int ab8500_usb_set_host(struct usb_otg *otg, struct usb_bus *host)
+=======
+static int ab8500_usb_set_host(struct otg_transceiver *otg,
+					struct usb_bus *host)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ab8500_usb *ab;
 
 	if (!otg)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	ab = phy_to_ab(otg->phy);
+=======
+	ab = xceiv_to_ab(otg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Some drivers call this function in atomic context.
 	 * Do not update ab8500 registers directly till this
@@ -345,10 +442,17 @@ static int ab8500_usb_set_host(struct usb_otg *otg, struct usb_bus *host)
 
 	if (!host) {
 		/* TODO: Disable regulators. */
+<<<<<<< HEAD
 		otg->host = NULL;
 		schedule_work(&ab->phy_dis_work);
 	} else {
 		otg->host = host;
+=======
+		ab->otg.host = NULL;
+		schedule_work(&ab->phy_dis_work);
+	} else {
+		ab->otg.host = host;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Phy will not be enabled if cable is already
 		 * plugged-in. Schedule to enable phy.
 		 * Use same delay to avoid any race condition.
@@ -471,7 +575,10 @@ static int ab8500_usb_v2_res_setup(struct platform_device *pdev,
 static int __devinit ab8500_usb_probe(struct platform_device *pdev)
 {
 	struct ab8500_usb	*ab;
+<<<<<<< HEAD
 	struct usb_otg		*otg;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err;
 	int rev;
 
@@ -488,6 +595,7 @@ static int __devinit ab8500_usb_probe(struct platform_device *pdev)
 	if (!ab)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	otg = kzalloc(sizeof *otg, GFP_KERNEL);
 	if (!otg) {
 		kfree(ab);
@@ -510,6 +618,21 @@ static int __devinit ab8500_usb_probe(struct platform_device *pdev)
 	platform_set_drvdata(pdev, ab);
 
 	ATOMIC_INIT_NOTIFIER_HEAD(&ab->phy.notifier);
+=======
+	ab->dev			= &pdev->dev;
+	ab->rev			= rev;
+	ab->otg.dev		= ab->dev;
+	ab->otg.label		= "ab8500";
+	ab->otg.state		= OTG_STATE_UNDEFINED;
+	ab->otg.set_host	= ab8500_usb_set_host;
+	ab->otg.set_peripheral	= ab8500_usb_set_peripheral;
+	ab->otg.set_suspend	= ab8500_usb_set_suspend;
+	ab->otg.set_power	= ab8500_usb_set_power;
+
+	platform_set_drvdata(pdev, ab);
+
+	ATOMIC_INIT_NOTIFIER_HEAD(&ab->otg.notifier);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* v1: Wait for link status to become stable.
 	 * all: Updates form set_host and set_peripheral as they are atomic.
@@ -529,7 +652,11 @@ static int __devinit ab8500_usb_probe(struct platform_device *pdev)
 	if (err < 0)
 		goto fail0;
 
+<<<<<<< HEAD
 	err = usb_set_transceiver(&ab->phy);
+=======
+	err = otg_set_transceiver(&ab->otg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err) {
 		dev_err(&pdev->dev, "Can't register transceiver\n");
 		goto fail1;
@@ -541,7 +668,10 @@ static int __devinit ab8500_usb_probe(struct platform_device *pdev)
 fail1:
 	ab8500_usb_irq_free(ab);
 fail0:
+<<<<<<< HEAD
 	kfree(otg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(ab);
 	return err;
 }
@@ -556,14 +686,21 @@ static int __devexit ab8500_usb_remove(struct platform_device *pdev)
 
 	cancel_work_sync(&ab->phy_dis_work);
 
+<<<<<<< HEAD
 	usb_set_transceiver(NULL);
+=======
+	otg_set_transceiver(NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ab8500_usb_host_phy_dis(ab);
 	ab8500_usb_peri_phy_dis(ab);
 
 	platform_set_drvdata(pdev, NULL);
 
+<<<<<<< HEAD
 	kfree(ab->phy.otg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(ab);
 
 	return 0;

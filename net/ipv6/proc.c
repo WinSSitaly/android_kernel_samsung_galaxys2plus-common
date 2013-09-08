@@ -21,7 +21,10 @@
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
 #include <linux/stddef.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/net_namespace.h>
 #include <net/ip.h>
 #include <net/sock.h>
@@ -142,7 +145,15 @@ static const struct snmp_mib snmp6_udplite6_list[] = {
 	SNMP_MIB_SENTINEL
 };
 
+<<<<<<< HEAD
 static void snmp6_seq_show_icmpv6msg(struct seq_file *seq, atomic_long_t *smib)
+=======
+/* can be called either with percpu mib (pcpumib != NULL),
+ * or shared one (smib != NULL)
+ */
+static void snmp6_seq_show_icmpv6msg(struct seq_file *seq, void __percpu **pcpumib,
+				     atomic_long_t *smib)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	char name[32];
 	int i;
@@ -159,14 +170,22 @@ static void snmp6_seq_show_icmpv6msg(struct seq_file *seq, atomic_long_t *smib)
 		snprintf(name, sizeof(name), "Icmp6%s%s",
 			i & 0x100 ? "Out" : "In", p);
 		seq_printf(seq, "%-32s\t%lu\n", name,
+<<<<<<< HEAD
 			   atomic_long_read(smib + i));
+=======
+			pcpumib ? snmp_fold_field(pcpumib, i) : atomic_long_read(smib + i));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* print by number (nonzero only) - ICMPMsgStat format */
 	for (i = 0; i < ICMP6MSG_MIB_MAX; i++) {
 		unsigned long val;
 
+<<<<<<< HEAD
 		val = atomic_long_read(smib + i);
+=======
+		val = pcpumib ? snmp_fold_field(pcpumib, i) : atomic_long_read(smib + i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!val)
 			continue;
 		snprintf(name, sizeof(name), "Icmp6%sType%u",
@@ -211,7 +230,12 @@ static int snmp6_seq_show(struct seq_file *seq, void *v)
 			    snmp6_ipstats_list, offsetof(struct ipstats_mib, syncp));
 	snmp6_seq_show_item(seq, (void __percpu **)net->mib.icmpv6_statistics,
 			    NULL, snmp6_icmp6_list);
+<<<<<<< HEAD
 	snmp6_seq_show_icmpv6msg(seq, net->mib.icmpv6msg_statistics->mibs);
+=======
+	snmp6_seq_show_icmpv6msg(seq,
+			    (void __percpu **)net->mib.icmpv6msg_statistics, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snmp6_seq_show_item(seq, (void __percpu **)net->mib.udp_stats_in6,
 			    NULL, snmp6_udp6_list);
 	snmp6_seq_show_item(seq, (void __percpu **)net->mib.udplite_stats_in6,
@@ -237,11 +261,19 @@ static int snmp6_dev_seq_show(struct seq_file *seq, void *v)
 	struct inet6_dev *idev = (struct inet6_dev *)seq->private;
 
 	seq_printf(seq, "%-32s\t%u\n", "ifIndex", idev->dev->ifindex);
+<<<<<<< HEAD
 	snmp6_seq_show_item64(seq, (void __percpu **)idev->stats.ipv6,
 			    snmp6_ipstats_list, offsetof(struct ipstats_mib, syncp));
 	snmp6_seq_show_item(seq, NULL, idev->stats.icmpv6dev->mibs,
 			    snmp6_icmp6_list);
 	snmp6_seq_show_icmpv6msg(seq, idev->stats.icmpv6msgdev->mibs);
+=======
+	snmp6_seq_show_item(seq, (void __percpu **)idev->stats.ipv6, NULL,
+			    snmp6_ipstats_list);
+	snmp6_seq_show_item(seq, NULL, idev->stats.icmpv6dev->mibs,
+			    snmp6_icmp6_list);
+	snmp6_seq_show_icmpv6msg(seq, NULL, idev->stats.icmpv6msgdev->mibs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

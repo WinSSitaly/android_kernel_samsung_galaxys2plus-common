@@ -1,12 +1,20 @@
 /*
  * adm9240.c	Part of lm_sensors, Linux kernel modules for hardware
+<<<<<<< HEAD
  *		monitoring
+=======
+ * 		monitoring
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Copyright (C) 1999	Frodo Looijaard <frodol@dds.nl>
  *			Philip Edelbrock <phil@netroedge.com>
  * Copyright (C) 2003	Michiel Rook <michiel@grendelproject.nl>
  * Copyright (C) 2005	Grant Coady <gcoady.lk@gmail.com> with valuable
+<<<<<<< HEAD
  *				guidance from Jean Delvare
+=======
+ * 				guidance from Jean Delvare
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Driver supports	Analog Devices		ADM9240
  *			Dallas Semiconductor	DS1780
@@ -204,12 +212,16 @@ static ssize_t set_max(struct device *dev, struct device_attribute *devattr,
 	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
 	struct i2c_client *client = to_i2c_client(dev);
 	struct adm9240_data *data = i2c_get_clientdata(client);
+<<<<<<< HEAD
 	long val;
 	int err;
 
 	err = kstrtol(buf, 10, &val);
 	if (err)
 		return err;
+=======
+	long val = simple_strtol(buf, NULL, 10);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&data->update_lock);
 	data->temp_max[attr->index] = TEMP_TO_REG(val);
@@ -260,12 +272,16 @@ static ssize_t set_in_min(struct device *dev,
 	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
 	struct i2c_client *client = to_i2c_client(dev);
 	struct adm9240_data *data = i2c_get_clientdata(client);
+<<<<<<< HEAD
 	unsigned long val;
 	int err;
 
 	err = kstrtoul(buf, 10, &val);
 	if (err)
 		return err;
+=======
+	unsigned long val = simple_strtoul(buf, NULL, 10);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&data->update_lock);
 	data->in_min[attr->index] = IN_TO_REG(val, attr->index);
@@ -282,12 +298,16 @@ static ssize_t set_in_max(struct device *dev,
 	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
 	struct i2c_client *client = to_i2c_client(dev);
 	struct adm9240_data *data = i2c_get_clientdata(client);
+<<<<<<< HEAD
 	unsigned long val;
 	int err;
 
 	err = kstrtoul(buf, 10, &val);
 	if (err)
 		return err;
+=======
+	unsigned long val = simple_strtoul(buf, NULL, 10);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&data->update_lock);
 	data->in_max[attr->index] = IN_TO_REG(val, attr->index);
@@ -298,7 +318,11 @@ static ssize_t set_in_max(struct device *dev,
 }
 
 #define vin(nr)							\
+<<<<<<< HEAD
 static SENSOR_DEVICE_ATTR(in##nr##_input, S_IRUGO,		\
+=======
+static SENSOR_DEVICE_ATTR(in##nr##_input, S_IRUGO, 		\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		show_in, NULL, nr);				\
 static SENSOR_DEVICE_ATTR(in##nr##_min, S_IRUGO | S_IWUSR,	\
 		show_in_min, set_in_min, nr);			\
@@ -372,6 +396,7 @@ static ssize_t set_fan_min(struct device *dev,
 	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
 	struct i2c_client *client = to_i2c_client(dev);
 	struct adm9240_data *data = i2c_get_clientdata(client);
+<<<<<<< HEAD
 	int nr = attr->index;
 	u8 new_div;
 	unsigned long val;
@@ -380,6 +405,11 @@ static ssize_t set_fan_min(struct device *dev,
 	err = kstrtoul(buf, 10, &val);
 	if (err)
 		return err;
+=======
+	unsigned long val = simple_strtoul(buf, NULL, 10);
+	int nr = attr->index;
+	u8 new_div;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&data->update_lock);
 
@@ -485,12 +515,16 @@ static ssize_t set_aout(struct device *dev,
 {
 	struct i2c_client *client = to_i2c_client(dev);
 	struct adm9240_data *data = i2c_get_clientdata(client);
+<<<<<<< HEAD
 	long val;
 	int err;
 
 	err = kstrtol(buf, 10, &val);
 	if (err)
 		return err;
+=======
+	unsigned long val = simple_strtol(buf, NULL, 10);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&data->update_lock);
 	data->aout = AOUT_TO_REG(val);
@@ -506,12 +540,16 @@ static ssize_t chassis_clear_legacy(struct device *dev,
 		const char *buf, size_t count)
 {
 	struct i2c_client *client = to_i2c_client(dev);
+<<<<<<< HEAD
 	long val;
 	int err;
 
 	err = kstrtol(buf, 10, &val);
 	if (err)
 		return err;
+=======
+	unsigned long val = simple_strtol(buf, NULL, 10);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_warn(dev, "Attribute chassis_clear is deprecated, "
 		 "use intrusion0_alarm instead\n");
@@ -533,7 +571,11 @@ static ssize_t chassis_clear(struct device *dev,
 	struct adm9240_data *data = i2c_get_clientdata(client);
 	unsigned long val;
 
+<<<<<<< HEAD
 	if (kstrtoul(buf, 10, &val) || val != 0)
+=======
+	if (strict_strtoul(buf, 10, &val) || val != 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	mutex_lock(&data->update_lock);
@@ -662,8 +704,12 @@ static int adm9240_probe(struct i2c_client *new_client,
 	adm9240_init_client(new_client);
 
 	/* populate sysfs filesystem */
+<<<<<<< HEAD
 	err = sysfs_create_group(&new_client->dev.kobj, &adm9240_group);
 	if (err)
+=======
+	if ((err = sysfs_create_group(&new_client->dev.kobj, &adm9240_group)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto exit_free;
 
 	data->hwmon_dev = hwmon_device_register(&new_client->dev);
@@ -712,7 +758,12 @@ static void adm9240_init_client(struct i2c_client *client)
 	} else { /* cold start: open limits before starting chip */
 		int i;
 
+<<<<<<< HEAD
 		for (i = 0; i < 6; i++) {
+=======
+		for (i = 0; i < 6; i++)
+		{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			i2c_smbus_write_byte_data(client,
 					ADM9240_REG_IN_MIN(i), 0);
 			i2c_smbus_write_byte_data(client,
@@ -747,7 +798,12 @@ static struct adm9240_data *adm9240_update_device(struct device *dev)
 	if (time_after(jiffies, data->last_updated_measure + (HZ * 7 / 4))
 			|| !data->valid) {
 
+<<<<<<< HEAD
 		for (i = 0; i < 6; i++) { /* read voltages */
+=======
+		for (i = 0; i < 6; i++) /* read voltages */
+		{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			data->in[i] = i2c_smbus_read_byte_data(client,
 					ADM9240_REG_IN(i));
 		}
@@ -756,17 +812,28 @@ static struct adm9240_data *adm9240_update_device(struct device *dev)
 					i2c_smbus_read_byte_data(client,
 					ADM9240_REG_INT(1)) << 8;
 
+<<<<<<< HEAD
 		/*
 		 * read temperature: assume temperature changes less than
 		 * 0.5'C per two measurement cycles thus ignore possible
 		 * but unlikely aliasing error on lsb reading. --Grant
 		 */
+=======
+		/* read temperature: assume temperature changes less than
+		 * 0.5'C per two measurement cycles thus ignore possible
+		 * but unlikely aliasing error on lsb reading. --Grant */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		data->temp = ((i2c_smbus_read_byte_data(client,
 					ADM9240_REG_TEMP) << 8) |
 					i2c_smbus_read_byte_data(client,
 					ADM9240_REG_TEMP_CONF)) / 128;
 
+<<<<<<< HEAD
 		for (i = 0; i < 2; i++) { /* read fans */
+=======
+		for (i = 0; i < 2; i++) /* read fans */
+		{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			data->fan[i] = i2c_smbus_read_byte_data(client,
 					ADM9240_REG_FAN(i));
 
@@ -790,13 +857,23 @@ static struct adm9240_data *adm9240_update_device(struct device *dev)
 	if (time_after(jiffies, data->last_updated_config + (HZ * 300))
 			|| !data->valid) {
 
+<<<<<<< HEAD
 		for (i = 0; i < 6; i++) {
+=======
+		for (i = 0; i < 6; i++)
+		{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			data->in_min[i] = i2c_smbus_read_byte_data(client,
 					ADM9240_REG_IN_MIN(i));
 			data->in_max[i] = i2c_smbus_read_byte_data(client,
 					ADM9240_REG_IN_MAX(i));
 		}
+<<<<<<< HEAD
 		for (i = 0; i < 2; i++) {
+=======
+		for (i = 0; i < 2; i++)
+		{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			data->fan_min[i] = i2c_smbus_read_byte_data(client,
 					ADM9240_REG_FAN_MIN(i));
 		}
@@ -823,9 +900,28 @@ static struct adm9240_data *adm9240_update_device(struct device *dev)
 	return data;
 }
 
+<<<<<<< HEAD
 module_i2c_driver(adm9240_driver);
+=======
+static int __init sensors_adm9240_init(void)
+{
+	return i2c_add_driver(&adm9240_driver);
+}
+
+static void __exit sensors_adm9240_exit(void)
+{
+	i2c_del_driver(&adm9240_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Michiel Rook <michiel@grendelproject.nl>, "
 		"Grant Coady <gcoady.lk@gmail.com> and others");
 MODULE_DESCRIPTION("ADM9240/DS1780/LM81 driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(sensors_adm9240_init);
+module_exit(sensors_adm9240_exit);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

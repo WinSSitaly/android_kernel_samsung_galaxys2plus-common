@@ -28,6 +28,21 @@ config NFSD
 
 	  If unsure, say N.
 
+<<<<<<< HEAD
+=======
+config NFSD_DEPRECATED
+	bool "Include support for deprecated syscall interface to NFSD"
+	depends on NFSD
+	default y
+	help
+	  The syscall interface to nfsd was obsoleted in 2.6.0 by a new
+	  filesystem based interface.  The old interface is due for removal
+	  in 2.6.40.  If you wish to remove the interface before then
+	  say N.
+
+	  In unsure, say Y.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config NFSD_V2_ACL
 	bool
 	depends on NFSD
@@ -80,6 +95,7 @@ config NFSD_V4
 	  available from http://linux-nfs.org/.
 
 	  If unsure, say N.
+<<<<<<< HEAD
 
 config NFSD_FAULT_INJECTION
 	bool "NFS server manual fault injection"
@@ -90,3 +106,5 @@ config NFSD_FAULT_INJECTION
 	  testing error recovery on the NFS client.
 
 	  If unsure, say N.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

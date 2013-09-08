@@ -151,6 +151,21 @@ int iwctl_giwname(struct net_device *dev,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+int iwctl_giwnwid(struct net_device *dev,
+             struct iw_request_info *info,
+			 struct iw_param *wrq,
+                   char *extra)
+{
+ 	//wrq->value = 0x100;
+	//wrq->disabled = 0;
+	//wrq->fixed = 1;
+	//return 0;
+  return -EOPNOTSUPP;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Wireless Handler : set scan
  */

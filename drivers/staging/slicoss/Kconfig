@@ -1,6 +1,10 @@
 config SLICOSS
 	tristate "Alacritech Gigabit IS-NIC support"
+<<<<<<< HEAD
 	depends on PCI && X86 && NET
+=======
+	depends on PCI && X86 && NETDEV_1000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default n
 	help
 	  This driver supports Alacritech's IS-NIC gigabit ethernet cards.

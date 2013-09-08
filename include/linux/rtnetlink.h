@@ -585,8 +585,11 @@ enum rtnetlink_groups {
 #define RTNLGRP_PHONET_IFADDR	RTNLGRP_PHONET_IFADDR
 	RTNLGRP_PHONET_ROUTE,
 #define RTNLGRP_PHONET_ROUTE	RTNLGRP_PHONET_ROUTE
+<<<<<<< HEAD
 	RTNLGRP_DCB,
 #define RTNLGRP_DCB		RTNLGRP_DCB
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__RTNLGRP_MAX
 };
 #define RTNLGRP_MAX	(__RTNLGRP_MAX - 1)
@@ -602,9 +605,12 @@ struct tcamsg {
 #define TCA_ACT_TAB 1 /* attr type must be >=1 */	
 #define TCAA_MAX 1
 
+<<<<<<< HEAD
 /* New extended info filters for IFLA_EXT_MASK */
 #define RTEXT_FILTER_VF		(1 << 0)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* End of information exported to user level */
 
 #ifdef __KERNEL__
@@ -763,7 +769,12 @@ extern int lockdep_rtnl_is_held(void);
  * or RTNL. Note : Please prefer rtnl_dereference() or rcu_dereference()
  */
 #define rcu_dereference_rtnl(p)					\
+<<<<<<< HEAD
 	rcu_dereference_check(p, lockdep_rtnl_is_held())
+=======
+	rcu_dereference_check(p, rcu_read_lock_held() ||	\
+				 lockdep_rtnl_is_held())
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * rtnl_dereference - fetch RCU pointer when updates are prevented by RTNL

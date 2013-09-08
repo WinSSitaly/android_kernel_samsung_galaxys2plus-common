@@ -381,6 +381,7 @@ static __always_inline unsigned long *stack_pointer(struct task_struct *task)
 	return sp;
 }
 
+<<<<<<< HEAD
 static inline void spill_registers(void)
 {
 	unsigned int a0, ps;
@@ -400,6 +401,8 @@ static inline void spill_registers(void)
 		: "a2", "a3", "a4", "a7", "a11", "a12", "a13", "a14", "a15", "memory");
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void show_trace(struct task_struct *task, unsigned long *sp)
 {
 	unsigned long a0, a1, pc;

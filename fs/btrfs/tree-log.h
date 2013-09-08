@@ -38,7 +38,11 @@ int btrfs_del_inode_ref_in_log(struct btrfs_trans_handle *trans,
 			       struct btrfs_root *root,
 			       const char *name, int name_len,
 			       struct inode *inode, u64 dirid);
+<<<<<<< HEAD
 void btrfs_end_log_trans(struct btrfs_root *root);
+=======
+int btrfs_end_log_trans(struct btrfs_root *root);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int btrfs_pin_log_trans(struct btrfs_root *root);
 int btrfs_log_inode_parent(struct btrfs_trans_handle *trans,
 		    struct btrfs_root *root, struct inode *inode,

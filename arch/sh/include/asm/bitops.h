@@ -7,6 +7,10 @@
 #error only <linux/bitops.h> can be included directly
 #endif
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* For __swab32 */
 #include <asm/byteorder.h>
 

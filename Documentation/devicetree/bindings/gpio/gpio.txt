@@ -4,6 +4,7 @@ Specifying GPIO information for devices
 1) gpios property
 -----------------
 
+<<<<<<< HEAD
 Nodes that makes use of GPIOs should specify them using one or more
 properties, each containing a 'gpio-list':
 
@@ -43,6 +44,19 @@ gpio-specifier may encode: bank, pin position inside the bank,
 whether pin is open-drain and whether pin is logically inverted.
 Exact meaning of each specifier cell is controller specific, and must
 be documented in the device tree binding for the device.
+=======
+Nodes that makes use of GPIOs should define them using `gpios' property,
+format of which is: <&gpio-controller1-phandle gpio1-specifier
+		     &gpio-controller2-phandle gpio2-specifier
+		     0 /* holes are permitted, means no GPIO 3 */
+		     &gpio-controller4-phandle gpio4-specifier
+		     ...>;
+
+Note that gpio-specifier length is controller dependent.
+
+gpio-specifier may encode: bank, pin position inside the bank,
+whether pin is open-drain and whether pin is logically inverted.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 Example of the node using GPIOs:
 
@@ -56,8 +70,13 @@ and empty GPIO flags as accepted by the "qe_pio_e" gpio-controller.
 2) gpio-controller nodes
 ------------------------
 
+<<<<<<< HEAD
 Every GPIO controller node must both an empty "gpio-controller"
 property, and have #gpio-cells contain the size of the gpio-specifier.
+=======
+Every GPIO controller node must have #gpio-cells property defined,
+this information will be used to translate gpio-specifiers.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 Example of two SOC GPIO banks defined as gpio-controller nodes:
 

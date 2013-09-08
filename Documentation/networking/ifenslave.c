@@ -260,7 +260,11 @@ int main(int argc, char *argv[])
 		case 'V': opt_V++; exclusive++; break;
 
 		case '?':
+<<<<<<< HEAD
 			fprintf(stderr, "%s", usage_msg);
+=======
+			fprintf(stderr, usage_msg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			res = 2;
 			goto out;
 		}
@@ -268,13 +272,21 @@ int main(int argc, char *argv[])
 
 	/* options check */
 	if (exclusive > 1) {
+<<<<<<< HEAD
 		fprintf(stderr, "%s", usage_msg);
+=======
+		fprintf(stderr, usage_msg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		res = 2;
 		goto out;
 	}
 
 	if (opt_v || opt_V) {
+<<<<<<< HEAD
 		printf("%s", version);
+=======
+		printf(version);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (opt_V) {
 			res = 0;
 			goto out;
@@ -282,14 +294,23 @@ int main(int argc, char *argv[])
 	}
 
 	if (opt_u) {
+<<<<<<< HEAD
 		printf("%s", usage_msg);
+=======
+		printf(usage_msg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		res = 0;
 		goto out;
 	}
 
 	if (opt_h) {
+<<<<<<< HEAD
 		printf("%s", usage_msg);
 		printf("%s", help_msg);
+=======
+		printf(usage_msg);
+		printf(help_msg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		res = 0;
 		goto out;
 	}
@@ -309,7 +330,11 @@ int main(int argc, char *argv[])
 			goto out;
 		} else {
 			/* Just show usage */
+<<<<<<< HEAD
 			fprintf(stderr, "%s", usage_msg);
+=======
+			fprintf(stderr, usage_msg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			res = 2;
 			goto out;
 		}
@@ -320,7 +345,11 @@ int main(int argc, char *argv[])
 	master_ifname = *spp++;
 
 	if (master_ifname == NULL) {
+<<<<<<< HEAD
 		fprintf(stderr, "%s", usage_msg);
+=======
+		fprintf(stderr, usage_msg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		res = 2;
 		goto out;
 	}
@@ -339,7 +368,11 @@ int main(int argc, char *argv[])
 
 	if (slave_ifname == NULL) {
 		if (opt_d || opt_c) {
+<<<<<<< HEAD
 			fprintf(stderr, "%s", usage_msg);
+=======
+			fprintf(stderr, usage_msg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			res = 2;
 			goto out;
 		}
@@ -539,14 +572,20 @@ static int if_getconfig(char *ifname)
 		metric = 0;
 	} else
 		metric = ifr.ifr_metric;
+<<<<<<< HEAD
 	printf("The result of SIOCGIFMETRIC is %d\n", metric);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	strcpy(ifr.ifr_name, ifname);
 	if (ioctl(skfd, SIOCGIFMTU, &ifr) < 0)
 		mtu = 0;
 	else
 		mtu = ifr.ifr_mtu;
+<<<<<<< HEAD
 	printf("The result of SIOCGIFMTU is %d\n", mtu);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	strcpy(ifr.ifr_name, ifname);
 	if (ioctl(skfd, SIOCGIFDSTADDR, &ifr) < 0) {

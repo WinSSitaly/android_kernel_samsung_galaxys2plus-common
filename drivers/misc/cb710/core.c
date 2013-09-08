@@ -33,7 +33,11 @@ EXPORT_SYMBOL_GPL(cb710_pci_update_config_reg);
 static int __devinit cb710_pci_configure(struct pci_dev *pdev)
 {
 	unsigned int devfn = PCI_DEVFN(PCI_SLOT(pdev->devfn), 0);
+<<<<<<< HEAD
 	struct pci_dev *pdev0;
+=======
+	struct pci_dev *pdev0 = pci_get_slot(pdev->bus, devfn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 val;
 
 	cb710_pci_update_config_reg(pdev, 0x48,
@@ -43,7 +47,10 @@ static int __devinit cb710_pci_configure(struct pci_dev *pdev)
 	if (val & 0x80000000)
 		return 0;
 
+<<<<<<< HEAD
 	pdev0 = pci_get_slot(pdev->bus, devfn);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!pdev0)
 		return -ENODEV;
 

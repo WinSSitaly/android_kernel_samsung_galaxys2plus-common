@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <linux/perf_event.h>
 #include <linux/types.h>
 
@@ -6,6 +7,9 @@
 #include <asm/insn.h>
 
 #include "perf_event.h"
+=======
+#ifdef CONFIG_CPU_SUP_INTEL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum {
 	LBR_FORMAT_32		= 0x00,
@@ -15,6 +19,7 @@ enum {
 };
 
 /*
+<<<<<<< HEAD
  * Intel LBR_SELECT bits
  * Intel Vol3a, April 2011, Section 16.7 Table 16-10
  *
@@ -109,6 +114,8 @@ enum {
 static void intel_pmu_lbr_filter(struct cpu_hw_events *cpuc);
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * We only support LBR implementations that have FREEZE_LBRS_ON_PMI
  * otherwise it becomes near impossible to get a reliable stack.
  */
@@ -116,10 +123,13 @@ static void intel_pmu_lbr_filter(struct cpu_hw_events *cpuc);
 static void __intel_pmu_lbr_enable(void)
 {
 	u64 debugctl;
+<<<<<<< HEAD
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 
 	if (cpuc->lbr_sel)
 		wrmsrl(MSR_LBR_SELECT, cpuc->lbr_sel->config);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rdmsrl(MSR_IA32_DEBUGCTLMSR, debugctl);
 	debugctl |= (DEBUGCTLMSR_LBR | DEBUGCTLMSR_FREEZE_LBRS_ON_PMI);
@@ -153,7 +163,11 @@ static void intel_pmu_lbr_reset_64(void)
 	}
 }
 
+<<<<<<< HEAD
 void intel_pmu_lbr_reset(void)
+=======
+static void intel_pmu_lbr_reset(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (!x86_pmu.lbr_nr)
 		return;
@@ -164,27 +178,47 @@ void intel_pmu_lbr_reset(void)
 		intel_pmu_lbr_reset_64();
 }
 
+<<<<<<< HEAD
 void intel_pmu_lbr_enable(struct perf_event *event)
+=======
+static void intel_pmu_lbr_enable(struct perf_event *event)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 
 	if (!x86_pmu.lbr_nr)
 		return;
 
+<<<<<<< HEAD
+=======
+	WARN_ON_ONCE(cpuc->enabled);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Reset the LBR stack if we changed task context to
 	 * avoid data leaks.
 	 */
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (event->ctx->task && cpuc->lbr_context != event->ctx) {
 		intel_pmu_lbr_reset();
 		cpuc->lbr_context = event->ctx;
 	}
+<<<<<<< HEAD
 	cpuc->br_sel = event->hw.branch_reg.reg;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cpuc->lbr_users++;
 }
 
+<<<<<<< HEAD
 void intel_pmu_lbr_disable(struct perf_event *event)
+=======
+static void intel_pmu_lbr_disable(struct perf_event *event)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 
@@ -194,6 +228,7 @@ void intel_pmu_lbr_disable(struct perf_event *event)
 	cpuc->lbr_users--;
 	WARN_ON_ONCE(cpuc->lbr_users < 0);
 
+<<<<<<< HEAD
 	if (cpuc->enabled && !cpuc->lbr_users) {
 		__intel_pmu_lbr_disable();
 		/* avoid stale pointer */
@@ -202,6 +237,13 @@ void intel_pmu_lbr_disable(struct perf_event *event)
 }
 
 void intel_pmu_lbr_enable_all(void)
+=======
+	if (cpuc->enabled && !cpuc->lbr_users)
+		__intel_pmu_lbr_disable();
+}
+
+static void intel_pmu_lbr_enable_all(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 
@@ -209,7 +251,11 @@ void intel_pmu_lbr_enable_all(void)
 		__intel_pmu_lbr_enable();
 }
 
+<<<<<<< HEAD
 void intel_pmu_lbr_disable_all(void)
+=======
+static void intel_pmu_lbr_disable_all(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 
@@ -217,9 +263,12 @@ void intel_pmu_lbr_disable_all(void)
 		__intel_pmu_lbr_disable();
 }
 
+<<<<<<< HEAD
 /*
  * TOS = most recently recorded branch
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline u64 intel_pmu_lbr_tos(void)
 {
 	u64 tos;
@@ -247,15 +296,26 @@ static void intel_pmu_lbr_read_32(struct cpu_hw_events *cpuc)
 
 		rdmsrl(x86_pmu.lbr_from + lbr_idx, msr_lastbranch.lbr);
 
+<<<<<<< HEAD
 		cpuc->lbr_entries[i].from	= msr_lastbranch.from;
 		cpuc->lbr_entries[i].to		= msr_lastbranch.to;
 		cpuc->lbr_entries[i].mispred	= 0;
 		cpuc->lbr_entries[i].predicted	= 0;
 		cpuc->lbr_entries[i].reserved	= 0;
+=======
+		cpuc->lbr_entries[i].from  = msr_lastbranch.from;
+		cpuc->lbr_entries[i].to    = msr_lastbranch.to;
+		cpuc->lbr_entries[i].flags = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	cpuc->lbr_stack.nr = i;
 }
 
+<<<<<<< HEAD
+=======
+#define LBR_FROM_FLAG_MISPRED  (1ULL << 63)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Due to lack of segmentation in Linux the effective address (offset)
  * is the same as the linear address, allowing us to merge the LIP and EIP
@@ -270,12 +330,17 @@ static void intel_pmu_lbr_read_64(struct cpu_hw_events *cpuc)
 
 	for (i = 0; i < x86_pmu.lbr_nr; i++) {
 		unsigned long lbr_idx = (tos - i) & mask;
+<<<<<<< HEAD
 		u64 from, to, mis = 0, pred = 0;
+=======
+		u64 from, to, flags = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		rdmsrl(x86_pmu.lbr_from + lbr_idx, from);
 		rdmsrl(x86_pmu.lbr_to   + lbr_idx, to);
 
 		if (lbr_format == LBR_FORMAT_EIP_FLAGS) {
+<<<<<<< HEAD
 			mis = !!(from & LBR_FROM_FLAG_MISPRED);
 			pred = !mis;
 			from = (u64)((((s64)from) << 1) >> 1);
@@ -286,11 +351,24 @@ static void intel_pmu_lbr_read_64(struct cpu_hw_events *cpuc)
 		cpuc->lbr_entries[i].mispred	= mis;
 		cpuc->lbr_entries[i].predicted	= pred;
 		cpuc->lbr_entries[i].reserved	= 0;
+=======
+			flags = !!(from & LBR_FROM_FLAG_MISPRED);
+			from = (u64)((((s64)from) << 1) >> 1);
+		}
+
+		cpuc->lbr_entries[i].from  = from;
+		cpuc->lbr_entries[i].to    = to;
+		cpuc->lbr_entries[i].flags = flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	cpuc->lbr_stack.nr = i;
 }
 
+<<<<<<< HEAD
 void intel_pmu_lbr_read(void)
+=======
+static void intel_pmu_lbr_read(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 
@@ -301,6 +379,7 @@ void intel_pmu_lbr_read(void)
 		intel_pmu_lbr_read_32(cpuc);
 	else
 		intel_pmu_lbr_read_64(cpuc);
+<<<<<<< HEAD
 
 	intel_pmu_lbr_filter(cpuc);
 }
@@ -719,3 +798,32 @@ void intel_pmu_lbr_init_atom(void)
 	 */
 	pr_cont("8-deep LBR, ");
 }
+=======
+}
+
+static void intel_pmu_lbr_init_core(void)
+{
+	x86_pmu.lbr_nr     = 4;
+	x86_pmu.lbr_tos    = 0x01c9;
+	x86_pmu.lbr_from   = 0x40;
+	x86_pmu.lbr_to     = 0x60;
+}
+
+static void intel_pmu_lbr_init_nhm(void)
+{
+	x86_pmu.lbr_nr     = 16;
+	x86_pmu.lbr_tos    = 0x01c9;
+	x86_pmu.lbr_from   = 0x680;
+	x86_pmu.lbr_to     = 0x6c0;
+}
+
+static void intel_pmu_lbr_init_atom(void)
+{
+	x86_pmu.lbr_nr	   = 8;
+	x86_pmu.lbr_tos    = 0x01c9;
+	x86_pmu.lbr_from   = 0x40;
+	x86_pmu.lbr_to     = 0x60;
+}
+
+#endif /* CONFIG_CPU_SUP_INTEL */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

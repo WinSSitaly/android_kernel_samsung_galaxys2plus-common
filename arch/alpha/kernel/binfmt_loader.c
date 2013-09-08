@@ -46,7 +46,11 @@ static struct linux_binfmt loader_format = {
 
 static int __init init_loader_binfmt(void)
 {
+<<<<<<< HEAD
 	insert_binfmt(&loader_format);
 	return 0;
+=======
+	return insert_binfmt(&loader_format);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 arch_initcall(init_loader_binfmt);

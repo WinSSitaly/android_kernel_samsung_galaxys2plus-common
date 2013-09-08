@@ -32,6 +32,7 @@ struct mbus_dram_target_info
 	} cs[4];
 };
 
+<<<<<<< HEAD
 /*
  * The Marvell mbus is to be found only on SOCs from the Orion family
  * at the moment.  Provide a dummy stub for other architectures.
@@ -44,4 +45,7 @@ static inline const struct mbus_dram_target_info *mv_mbus_dram_info(void)
 	return NULL;
 }
 #endif
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

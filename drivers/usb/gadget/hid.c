@@ -9,6 +9,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 
@@ -75,6 +87,7 @@ static struct usb_device_descriptor device_desc = {
 	.bNumConfigurations =	1,
 };
 
+<<<<<<< HEAD
 static struct usb_otg_descriptor otg_descriptor = {
 	.bLength =		sizeof otg_descriptor,
 	.bDescriptorType =	USB_DT_OTG,
@@ -91,6 +104,8 @@ static const struct usb_descriptor_header *otg_desc[] = {
 };
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* string IDs are assigned dynamically */
 
 #define STRING_MANUFACTURER_IDX		0
@@ -123,11 +138,14 @@ static int __init do_config(struct usb_configuration *c)
 	struct hidg_func_node *e;
 	int func = 0, status = 0;
 
+<<<<<<< HEAD
 	if (gadget_is_otg(c->cdev->gadget)) {
 		c->descriptors = otg_desc;
 		c->bmAttributes |= USB_CONFIG_ATT_WAKEUP;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(e, &hidg_func_list, node) {
 		status = hidg_bind_config(c, e->func, func++);
 		if (status)
@@ -246,7 +264,10 @@ static struct usb_composite_driver hidg_driver = {
 	.name		= "g_hid",
 	.dev		= &device_desc,
 	.strings	= dev_strings,
+<<<<<<< HEAD
 	.max_speed	= USB_SPEED_HIGH,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.unbind		= __exit_p(hid_unbind),
 };
 

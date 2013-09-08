@@ -1,5 +1,8 @@
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ide.h>
 
 static void ide_legacy_init_one(struct ide_hw **hws, struct ide_hw *hw,

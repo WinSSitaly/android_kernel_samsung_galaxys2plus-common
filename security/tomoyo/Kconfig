@@ -1,16 +1,22 @@
 config SECURITY_TOMOYO
 	bool "TOMOYO Linux Support"
 	depends on SECURITY
+<<<<<<< HEAD
 	depends on NET
 	select SECURITYFS
 	select SECURITY_PATH
 	select SECURITY_NETWORK
+=======
+	select SECURITYFS
+	select SECURITY_PATH
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default n
 	help
 	  This selects TOMOYO Linux, pathname-based access control.
 	  Required userspace tools and further information may be
 	  found at <http://tomoyo.sourceforge.jp/>.
 	  If you are unsure how to answer this question, answer N.
+<<<<<<< HEAD
 
 config SECURITY_TOMOYO_MAX_ACCEPT_ENTRY
 	int "Default maximal count for learning mode"
@@ -72,3 +78,5 @@ config SECURITY_TOMOYO_ACTIVATION_TRIGGER
 	  You can override this setting via TOMOYO_trigger= kernel command line
 	  option. For example, if you pass init=/bin/systemd option, you may
 	  want to also pass TOMOYO_trigger=/bin/systemd option.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -9,7 +9,10 @@
 
 #include <net/caif/caif_layer.h>
 #include <net/caif/cfcnfg.h>
+<<<<<<< HEAD
 #include <net/caif/caif_device.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/caif/caif_socket.h>
 #include <linux/if.h>
 #include <linux/net.h>
@@ -105,6 +108,7 @@ void caif_client_register_refcnt(struct cflayer *adapt_layer,
  */
 void caif_free_client(struct cflayer *adap_layer);
 
+<<<<<<< HEAD
 /**
  * struct caif_enroll_dev - Enroll a net-device as a CAIF Link layer
  * @dev:		Network device to enroll.
@@ -125,4 +129,6 @@ void caif_enroll_dev(struct net_device *dev, struct caif_dev_common *caifdev,
 				struct sk_buff *, struct net_device *,
 				struct packet_type *, struct net_device *));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CAIF_DEV_H_ */

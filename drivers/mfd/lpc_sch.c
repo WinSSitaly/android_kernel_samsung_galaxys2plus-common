@@ -37,9 +37,12 @@
 #define GPIOBASE	0x44
 #define GPIO_IO_SIZE	64
 
+<<<<<<< HEAD
 #define WDTBASE		0x84
 #define WDT_IO_SIZE	64
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct resource smbus_sch_resource = {
 		.flags = IORESOURCE_IO,
 };
@@ -62,6 +65,7 @@ static struct mfd_cell lpc_sch_cells[] = {
 	},
 };
 
+<<<<<<< HEAD
 static struct resource wdt_sch_resource = {
 		.flags = IORESOURCE_IO,
 };
@@ -75,6 +79,9 @@ static struct mfd_cell tunnelcreek_cells[] = {
 };
 
 static DEFINE_PCI_DEVICE_TABLE(lpc_sch_ids) = {
+=======
+static struct pci_device_id lpc_sch_ids[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_SCH_LPC) },
 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ITC_LPC) },
 	{ 0, }
@@ -87,7 +94,10 @@ static int __devinit lpc_sch_probe(struct pci_dev *dev,
 	unsigned int base_addr_cfg;
 	unsigned short base_addr;
 	int i;
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pci_read_config_dword(dev, SMBASE, &base_addr_cfg);
 	if (!(base_addr_cfg & (1 << 31))) {
@@ -120,6 +130,7 @@ static int __devinit lpc_sch_probe(struct pci_dev *dev,
 	for (i=0; i < ARRAY_SIZE(lpc_sch_cells); i++)
 		lpc_sch_cells[i].id = id->device;
 
+<<<<<<< HEAD
 	ret = mfd_add_devices(&dev->dev, 0,
 			lpc_sch_cells, ARRAY_SIZE(lpc_sch_cells), NULL, 0);
 	if (ret)
@@ -153,6 +164,10 @@ static int __devinit lpc_sch_probe(struct pci_dev *dev,
 out_dev:
 	mfd_remove_devices(&dev->dev);
 	return ret;
+=======
+	return mfd_add_devices(&dev->dev, 0,
+			lpc_sch_cells, ARRAY_SIZE(lpc_sch_cells), NULL, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __devexit lpc_sch_remove(struct pci_dev *dev)

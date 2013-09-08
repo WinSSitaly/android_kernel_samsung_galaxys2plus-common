@@ -239,6 +239,10 @@
 #include <asm/irq.h>
 #include <linux/io.h>
 #include <linux/blkdev.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/completion.h>
 #include <linux/errno.h>
 #include <linux/string.h>
@@ -421,6 +425,7 @@ MODULE_PARM_DESC(aha152x1, "parameters for second controller");
 
 #ifdef __ISAPNP__
 static struct isapnp_device_id id_table[] __devinitdata = {
+<<<<<<< HEAD
 	{ ISAPNP_ANY_ID, ISAPNP_ANY_ID,	ISAPNP_VENDOR('A', 'D', 'P'), ISAPNP_FUNCTION(0x1502), 0 },
 	{ ISAPNP_ANY_ID, ISAPNP_ANY_ID,	ISAPNP_VENDOR('A', 'D', 'P'), ISAPNP_FUNCTION(0x1505), 0 },
 	{ ISAPNP_ANY_ID, ISAPNP_ANY_ID,	ISAPNP_VENDOR('A', 'D', 'P'), ISAPNP_FUNCTION(0x1510), 0 },
@@ -434,6 +439,12 @@ static struct isapnp_device_id id_table[] __devinitdata = {
 	{ ISAPNP_ANY_ID, ISAPNP_ANY_ID,	ISAPNP_VENDOR('A', 'D', 'P'), ISAPNP_FUNCTION(0x1532), 0 },
 	{ ISAPNP_ANY_ID, ISAPNP_ANY_ID,	ISAPNP_VENDOR('A', 'D', 'P'), ISAPNP_FUNCTION(0x3215), 0 },
 	{ ISAPNP_ANY_ID, ISAPNP_ANY_ID,	ISAPNP_VENDOR('A', 'D', 'P'), ISAPNP_FUNCTION(0x6360), 0 },
+=======
+	{ ISAPNP_ANY_ID, ISAPNP_ANY_ID,
+		ISAPNP_VENDOR('A','D','P'), ISAPNP_FUNCTION(0x1505), 0 },
+	{ ISAPNP_ANY_ID, ISAPNP_ANY_ID,
+		ISAPNP_VENDOR('A','D','P'), ISAPNP_FUNCTION(0x1530), 0 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ ISAPNP_DEVICE_SINGLE_END, }
 };
 MODULE_DEVICE_TABLE(isapnp, id_table);
@@ -2984,8 +2995,13 @@ static int get_command(char *pos, Scsi_Cmnd * ptr)
 	char *start = pos;
 	int i;
 
+<<<<<<< HEAD
 	SPRINTF("%p: target=%d; lun=%d; cmnd=( ",
 		ptr, ptr->device->id, ptr->device->lun);
+=======
+	SPRINTF("0x%08x: target=%d; lun=%d; cmnd=( ",
+		(unsigned int) ptr, ptr->device->id, ptr->device->lun);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < COMMAND_SIZE(ptr->cmnd[0]); i++)
 		SPRINTF("0x%02x ", ptr->cmnd[i]);

@@ -2,7 +2,11 @@
 /**
 
     AudioScience HPI driver
+<<<<<<< HEAD
     Copyright (C) 1997-2011  AudioScience Inc. <support@audioscience.com>
+=======
+    Copyright (C) 1997-2010  AudioScience Inc. <support@audioscience.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of version 2 of the GNU General Public License as
@@ -20,6 +24,22 @@
 \file
 Functions for reading DSP code to load into DSP
 
+<<<<<<< HEAD
+=======
+ hpi_dspcode_defines HPI DSP code loading method
+Define exactly one of these to select how the DSP code is supplied to
+the adapter.
+
+End users writing applications that use the HPI interface do not have to
+use any of the below defines; they are only necessary for building drivers
+
+HPI_DSPCODE_FILE:
+DSP code is supplied as a file that is opened and read from by the driver.
+
+HPI_DSPCODE_FIRMWARE:
+DSP code is read using the hotplug firmware loader module.
+     Only valid when compiling the HPI kernel driver under Linux.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 */
 /***********************************************************************/
 #ifndef _HPIDSPCD_H_
@@ -27,6 +47,7 @@ Functions for reading DSP code to load into DSP
 
 #include "hpi_internal.h"
 
+<<<<<<< HEAD
 /** Header structure for dsp firmware file
  This structure must match that used in s2bin.c for generation of asidsp.bin
  */
@@ -67,12 +88,43 @@ struct dsp_code {
 
 /** Prepare *psDspCode to refer to the requested adapter's firmware.
 Code file name is obtained from HpiOs_GetDspCodePath
+=======
+#ifndef DISABLE_PRAGMA_PACK1
+#pragma pack(push, 1)
+#endif
+
+/** Descriptor for dspcode from firmware loader */
+struct dsp_code {
+	/**  Firmware descriptor */
+	const struct firmware *ps_firmware;
+	struct pci_dev *ps_dev;
+	/** Expected number of words in the whole dsp code,INCL header */
+	long int block_length;
+	/** Number of words read so far */
+	long int word_count;
+	/** Version read from dsp code file */
+	u32 version;
+	/** CRC read from dsp code file */
+	u32 crc;
+};
+
+#ifndef DISABLE_PRAGMA_PACK1
+#pragma pack(pop)
+#endif
+
+/** Prepare *psDspCode to refer to the requuested adapter.
+ Searches the file, or selects the appropriate linked array
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 \return 0 for success, or error code if requested code is not available
 */
 short hpi_dsp_code_open(
 	/** Code identifier, usually adapter family */
+<<<<<<< HEAD
 	u32 adapter, void *pci_dev,
+=======
+	u32 adapter,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/** Pointer to DSP code control structure */
 	struct dsp_code *ps_dsp_code,
 	/** Pointer to dword to receive OS specific error code */

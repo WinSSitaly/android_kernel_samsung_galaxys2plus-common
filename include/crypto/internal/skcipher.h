@@ -34,8 +34,11 @@ static inline void crypto_set_skcipher_spawn(
 int crypto_grab_skcipher(struct crypto_skcipher_spawn *spawn, const char *name,
 			 u32 type, u32 mask);
 
+<<<<<<< HEAD
 struct crypto_alg *crypto_lookup_skcipher(const char *name, u32 type, u32 mask);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void crypto_drop_skcipher(struct crypto_skcipher_spawn *spawn)
 {
 	crypto_drop_spawn(&spawn->base);

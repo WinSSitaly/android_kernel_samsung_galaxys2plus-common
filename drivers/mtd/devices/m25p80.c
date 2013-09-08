@@ -30,7 +30,10 @@
 #include <linux/mtd/cfi.h>
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/partitions.h>
+<<<<<<< HEAD
 #include <linux/of_platform.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/spi/spi.h>
 #include <linux/spi/flash.h>
@@ -89,6 +92,10 @@ struct m25p {
 	struct spi_device	*spi;
 	struct mutex		lock;
 	struct mtd_info		mtd;
+<<<<<<< HEAD
+=======
+	unsigned		partitioned:1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16			page_size;
 	u16			addr_width;
 	u8			erase_opcode;
@@ -209,8 +216,14 @@ static int wait_till_ready(struct m25p *flash)
  */
 static int erase_chip(struct m25p *flash)
 {
+<<<<<<< HEAD
 	pr_debug("%s: %s %lldKiB\n", dev_name(&flash->spi->dev), __func__,
 			(long long)(flash->mtd.size >> 10));
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "%s: %s %lldKiB\n",
+	      dev_name(&flash->spi->dev), __func__,
+	      (long long)(flash->mtd.size >> 10));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Wait until finished previous write command. */
 	if (wait_till_ready(flash))
@@ -249,8 +262,14 @@ static int m25p_cmdsz(struct m25p *flash)
  */
 static int erase_sector(struct m25p *flash, u32 offset)
 {
+<<<<<<< HEAD
 	pr_debug("%s: %s %dKiB at 0x%08x\n", dev_name(&flash->spi->dev),
 			__func__, flash->mtd.erasesize / 1024, offset);
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "%s: %s %dKiB at 0x%08x\n",
+			dev_name(&flash->spi->dev), __func__,
+			flash->mtd.erasesize / 1024, offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Wait until finished previous write command. */
 	if (wait_till_ready(flash))
@@ -284,10 +303,20 @@ static int m25p80_erase(struct mtd_info *mtd, struct erase_info *instr)
 	u32 addr,len;
 	uint32_t rem;
 
+<<<<<<< HEAD
 	pr_debug("%s: %s at 0x%llx, len %lld\n", dev_name(&flash->spi->dev),
 			__func__, (long long)instr->addr,
 			(long long)instr->len);
 
+=======
+	DEBUG(MTD_DEBUG_LEVEL2, "%s: %s %s 0x%llx, len %lld\n",
+	      dev_name(&flash->spi->dev), __func__, "at",
+	      (long long)instr->addr, (long long)instr->len);
+
+	/* sanity checks */
+	if (instr->addr + instr->len > flash->mtd.size)
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	div_u64_rem(instr->len, mtd->erasesize, &rem);
 	if (rem)
 		return -EINVAL;
@@ -343,8 +372,21 @@ static int m25p80_read(struct mtd_info *mtd, loff_t from, size_t len,
 	struct spi_transfer t[2];
 	struct spi_message m;
 
+<<<<<<< HEAD
 	pr_debug("%s: %s from 0x%08x, len %zd\n", dev_name(&flash->spi->dev),
 			__func__, (u32)from, len);
+=======
+	DEBUG(MTD_DEBUG_LEVEL2, "%s: %s %s 0x%08x, len %zd\n",
+			dev_name(&flash->spi->dev), __func__, "from",
+			(u32)from, len);
+
+	/* sanity checks */
+	if (!len)
+		return 0;
+
+	if (from + len > flash->mtd.size)
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spi_message_init(&m);
 	memset(t, 0, (sizeof t));
@@ -361,6 +403,12 @@ static int m25p80_read(struct mtd_info *mtd, loff_t from, size_t len,
 	t[1].len = len;
 	spi_message_add_tail(&t[1], &m);
 
+<<<<<<< HEAD
+=======
+	/* Byte count starts at zero. */
+	*retlen = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&flash->lock);
 
 	/* Wait till previous write/erase is done. */
@@ -401,8 +449,23 @@ static int m25p80_write(struct mtd_info *mtd, loff_t to, size_t len,
 	struct spi_transfer t[2];
 	struct spi_message m;
 
+<<<<<<< HEAD
 	pr_debug("%s: %s to 0x%08x, len %zd\n", dev_name(&flash->spi->dev),
 			__func__, (u32)to, len);
+=======
+	DEBUG(MTD_DEBUG_LEVEL2, "%s: %s %s 0x%08x, len %zd\n",
+			dev_name(&flash->spi->dev), __func__, "to",
+			(u32)to, len);
+
+	*retlen = 0;
+
+	/* sanity checks */
+	if (!len)
+		return(0);
+
+	if (to + len > flash->mtd.size)
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spi_message_init(&m);
 	memset(t, 0, (sizeof t));
@@ -484,8 +547,23 @@ static int sst_write(struct mtd_info *mtd, loff_t to, size_t len,
 	size_t actual;
 	int cmd_sz, ret;
 
+<<<<<<< HEAD
 	pr_debug("%s: %s to 0x%08x, len %zd\n", dev_name(&flash->spi->dev),
 			__func__, (u32)to, len);
+=======
+	DEBUG(MTD_DEBUG_LEVEL2, "%s: %s %s 0x%08x, len %zd\n",
+			dev_name(&flash->spi->dev), __func__, "to",
+			(u32)to, len);
+
+	*retlen = 0;
+
+	/* sanity checks */
+	if (!len)
+		return 0;
+
+	if (to + len > flash->mtd.size)
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spi_message_init(&m);
 	memset(t, 0, (sizeof t));
@@ -625,7 +703,10 @@ static const struct spi_device_id m25p_ids[] = {
 	{ "at25fs040",  INFO(0x1f6604, 0, 64 * 1024,   8, SECT_4K) },
 
 	{ "at25df041a", INFO(0x1f4401, 0, 64 * 1024,   8, SECT_4K) },
+<<<<<<< HEAD
 	{ "at25df321a", INFO(0x1f4701, 0, 64 * 1024,  64, SECT_4K) },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ "at25df641",  INFO(0x1f4800, 0, 64 * 1024, 128, SECT_4K) },
 
 	{ "at26f004",   INFO(0x1f0400, 0, 64 * 1024,  8, SECT_4K) },
@@ -636,7 +717,10 @@ static const struct spi_device_id m25p_ids[] = {
 	/* EON -- en25xxx */
 	{ "en25f32", INFO(0x1c3116, 0, 64 * 1024,  64, SECT_4K) },
 	{ "en25p32", INFO(0x1c2016, 0, 64 * 1024,  64, 0) },
+<<<<<<< HEAD
 	{ "en25q32b", INFO(0x1c3016, 0, 64 * 1024,  64, 0) },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ "en25p64", INFO(0x1c2017, 0, 64 * 1024, 128, 0) },
 
 	/* Intel/Numonyx -- xxxs33b */
@@ -754,8 +838,13 @@ static const struct spi_device_id *__devinit jedec_probe(struct spi_device *spi)
 	 */
 	tmp = spi_write_then_read(spi, &code, 1, id, 5);
 	if (tmp < 0) {
+<<<<<<< HEAD
 		pr_debug("%s: error %d reading JEDEC ID\n",
 				dev_name(&spi->dev), tmp);
+=======
+		DEBUG(MTD_DEBUG_LEVEL0, "%s: error %d reading JEDEC ID\n",
+			dev_name(&spi->dev), tmp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ERR_PTR(tmp);
 	}
 	jedec = id[0];
@@ -791,12 +880,17 @@ static int __devinit m25p_probe(struct spi_device *spi)
 	struct m25p			*flash;
 	struct flash_info		*info;
 	unsigned			i;
+<<<<<<< HEAD
 	struct mtd_part_parser_data	ppdata;
 
 #ifdef CONFIG_MTD_OF_PARTS
 	if (!of_device_is_available(spi->dev.of_node))
 		return -ENODEV;
 #endif
+=======
+	struct mtd_partition		*parts = NULL;
+	int				nr_parts = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Platform data helps sort out which chip type we have, as
 	 * well as how this board partitions it.  If we don't have
@@ -877,6 +971,7 @@ static int __devinit m25p_probe(struct spi_device *spi)
 	flash->mtd.writesize = 1;
 	flash->mtd.flags = MTD_CAP_NORFLASH;
 	flash->mtd.size = info->sector_size * info->n_sectors;
+<<<<<<< HEAD
 	flash->mtd._erase = m25p80_erase;
 	flash->mtd._read = m25p80_read;
 
@@ -885,6 +980,16 @@ static int __devinit m25p_probe(struct spi_device *spi)
 		flash->mtd._write = sst_write;
 	else
 		flash->mtd._write = m25p80_write;
+=======
+	flash->mtd.erase = m25p80_erase;
+	flash->mtd.read = m25p80_read;
+
+	/* sst flash chips use AAI word program */
+	if (JEDEC_MFR(info->jedec_id) == CFI_MFR_SST)
+		flash->mtd.write = sst_write;
+	else
+		flash->mtd.write = m25p80_write;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* prefer "small sector" erase if possible */
 	if (info->flags & SECT_4K) {
@@ -898,7 +1003,10 @@ static int __devinit m25p_probe(struct spi_device *spi)
 	if (info->flags & M25P_NO_ERASE)
 		flash->mtd.flags |= MTD_NO_ERASE;
 
+<<<<<<< HEAD
 	ppdata.of_node = spi->dev.of_node;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	flash->mtd.dev.parent = &spi->dev;
 	flash->page_size = info->page_size;
 	flash->mtd.writebufsize = flash->page_size;
@@ -917,7 +1025,12 @@ static int __devinit m25p_probe(struct spi_device *spi)
 	dev_info(&spi->dev, "%s (%lld Kbytes)\n", id->name,
 			(long long)flash->mtd.size >> 10);
 
+<<<<<<< HEAD
 	pr_debug("mtd .name = %s, .size = 0x%llx (%lldMiB) "
+=======
+	DEBUG(MTD_DEBUG_LEVEL2,
+		"mtd .name = %s, .size = 0x%llx (%lldMiB) "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			".erasesize = 0x%.8x (%uKiB) .numeraseregions = %d\n",
 		flash->mtd.name,
 		(long long)flash->mtd.size, (long long)(flash->mtd.size >> 20),
@@ -926,7 +1039,12 @@ static int __devinit m25p_probe(struct spi_device *spi)
 
 	if (flash->mtd.numeraseregions)
 		for (i = 0; i < flash->mtd.numeraseregions; i++)
+<<<<<<< HEAD
 			pr_debug("mtd.eraseregions[%d] = { .offset = 0x%llx, "
+=======
+			DEBUG(MTD_DEBUG_LEVEL2,
+				"mtd.eraseregions[%d] = { .offset = 0x%llx, "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				".erasesize = 0x%.8x (%uKiB), "
 				".numblocks = %d }\n",
 				i, (long long)flash->mtd.eraseregions[i].offset,
@@ -938,9 +1056,47 @@ static int __devinit m25p_probe(struct spi_device *spi)
 	/* partitions should match sector boundaries; and it may be good to
 	 * use readonly partitions for writeprotected sectors (BP2..BP0).
 	 */
+<<<<<<< HEAD
 	return mtd_device_parse_register(&flash->mtd, NULL, &ppdata,
 			data ? data->parts : NULL,
 			data ? data->nr_parts : 0);
+=======
+	if (mtd_has_cmdlinepart()) {
+		static const char *part_probes[]
+			= { "cmdlinepart", NULL, };
+
+		nr_parts = parse_mtd_partitions(&flash->mtd,
+						part_probes, &parts, 0);
+	}
+
+	if (nr_parts <= 0 && data && data->parts) {
+		parts = data->parts;
+		nr_parts = data->nr_parts;
+	}
+
+#ifdef CONFIG_MTD_OF_PARTS
+	if (nr_parts <= 0 && spi->dev.of_node) {
+		nr_parts = of_mtd_parse_partitions(&spi->dev,
+						   spi->dev.of_node, &parts);
+	}
+#endif
+
+	if (nr_parts > 0) {
+		for (i = 0; i < nr_parts; i++) {
+			DEBUG(MTD_DEBUG_LEVEL2, "partitions[%d] = "
+			      "{.name = %s, .offset = 0x%llx, "
+			      ".size = 0x%llx (%lldKiB) }\n",
+			      i, parts[i].name,
+			      (long long)parts[i].offset,
+			      (long long)parts[i].size,
+			      (long long)(parts[i].size >> 10));
+		}
+		flash->partitioned = 1;
+	}
+
+	return mtd_device_register(&flash->mtd, parts, nr_parts) == 1 ?
+		-ENODEV : 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -962,6 +1118,10 @@ static int __devexit m25p_remove(struct spi_device *spi)
 static struct spi_driver m25p80_driver = {
 	.driver = {
 		.name	= "m25p80",
+<<<<<<< HEAD
+=======
+		.bus	= &spi_bus_type,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.owner	= THIS_MODULE,
 	},
 	.id_table	= m25p_ids,
@@ -974,7 +1134,25 @@ static struct spi_driver m25p80_driver = {
 	 */
 };
 
+<<<<<<< HEAD
 module_spi_driver(m25p80_driver);
+=======
+
+static int __init m25p80_init(void)
+{
+	return spi_register_driver(&m25p80_driver);
+}
+
+
+static void __exit m25p80_exit(void)
+{
+	spi_unregister_driver(&m25p80_driver);
+}
+
+
+module_init(m25p80_init);
+module_exit(m25p80_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Mike Lavender");

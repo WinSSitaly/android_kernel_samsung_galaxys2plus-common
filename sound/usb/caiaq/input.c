@@ -67,6 +67,7 @@ static unsigned short keycode_kore[] = {
 	KEY_BRL_DOT5
 };
 
+<<<<<<< HEAD
 #define MASCHINE_BUTTONS   (42)
 #define MASCHINE_BUTTON(X) ((X) + BTN_MISC)
 #define MASCHINE_PADS      (16)
@@ -122,6 +123,8 @@ static unsigned short keycode_maschine[] = {
 	MASCHINE_BUTTON(29)  /* play        */
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define KONTROLX1_INPUTS	(40)
 #define KONTROLS4_BUTTONS	(12 * 8)
 #define KONTROLS4_AXIS		(46)
@@ -273,6 +276,7 @@ static void snd_caiaq_input_read_erp(struct snd_usb_caiaqdev *dev,
 		input_report_abs(input_dev, ABS_HAT3Y, i);
 		input_sync(input_dev);
 		break;
+<<<<<<< HEAD
 
 	case USB_ID(USB_VID_NATIVEINSTRUMENTS, USB_PID_MASCHINECONTROLLER):
 		/* 4 under the left screen */
@@ -296,6 +300,8 @@ static void snd_caiaq_input_read_erp(struct snd_usb_caiaqdev *dev,
 
 		input_sync(input_dev);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -478,6 +484,7 @@ static void snd_usb_caiaq_tks4_dispatch(struct snd_usb_caiaqdev *dev,
 	input_sync(dev->input_dev);
 }
 
+<<<<<<< HEAD
 #define MASCHINE_MSGBLOCK_SIZE 2
 
 static void snd_usb_caiaq_maschine_dispatch(struct snd_usb_caiaqdev *dev,
@@ -497,6 +504,8 @@ static void snd_usb_caiaq_maschine_dispatch(struct snd_usb_caiaqdev *dev,
 	input_sync(dev->input_dev);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void snd_usb_caiaq_ep4_reply_dispatch(struct urb *urb)
 {
 	struct snd_usb_caiaqdev *dev = urb->context;
@@ -522,6 +531,7 @@ static void snd_usb_caiaq_ep4_reply_dispatch(struct urb *urb)
 	case USB_ID(USB_VID_NATIVEINSTRUMENTS, USB_PID_TRAKTORKONTROLS4):
 		snd_usb_caiaq_tks4_dispatch(dev, buf, urb->actual_length);
 		break;
+<<<<<<< HEAD
 
 	case USB_ID(USB_VID_NATIVEINSTRUMENTS, USB_PID_MASCHINECONTROLLER):
 		if (urb->actual_length < (MASCHINE_PADS * MASCHINE_MSGBLOCK_SIZE))
@@ -529,6 +539,8 @@ static void snd_usb_caiaq_ep4_reply_dispatch(struct urb *urb)
 
 		snd_usb_caiaq_maschine_dispatch(dev, buf, urb->actual_length);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 requeue:
@@ -548,7 +560,10 @@ static int snd_usb_caiaq_input_open(struct input_dev *idev)
 	switch (dev->chip.usb_id) {
 	case USB_ID(USB_VID_NATIVEINSTRUMENTS, USB_PID_TRAKTORKONTROLX1):
 	case USB_ID(USB_VID_NATIVEINSTRUMENTS, USB_PID_TRAKTORKONTROLS4):
+<<<<<<< HEAD
 	case USB_ID(USB_VID_NATIVEINSTRUMENTS, USB_PID_MASCHINECONTROLLER):
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (usb_submit_urb(dev->ep4_in_urb, GFP_KERNEL) != 0)
 			return -EIO;
 		break;
@@ -567,7 +582,10 @@ static void snd_usb_caiaq_input_close(struct input_dev *idev)
 	switch (dev->chip.usb_id) {
 	case USB_ID(USB_VID_NATIVEINSTRUMENTS, USB_PID_TRAKTORKONTROLX1):
 	case USB_ID(USB_VID_NATIVEINSTRUMENTS, USB_PID_TRAKTORKONTROLS4):
+<<<<<<< HEAD
 	case USB_ID(USB_VID_NATIVEINSTRUMENTS, USB_PID_MASCHINECONTROLLER):
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		usb_kill_urb(dev->ep4_in_urb);
 		break;
 	}
@@ -758,6 +776,7 @@ int snd_usb_caiaq_input_init(struct snd_usb_caiaqdev *dev)
 
 		break;
 
+<<<<<<< HEAD
 	case USB_ID(USB_VID_NATIVEINSTRUMENTS, USB_PID_MASCHINECONTROLLER):
 		input->evbit[0] = BIT_MASK(EV_KEY) | BIT_MASK(EV_ABS);
 		input->absbit[0] = BIT_MASK(ABS_HAT0X) | BIT_MASK(ABS_HAT0Y) |
@@ -802,6 +821,8 @@ int snd_usb_caiaq_input_init(struct snd_usb_caiaqdev *dev)
 		snd_usb_caiaq_set_auto_msg(dev, 1, 10, 5);
 		break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		/* no input methods supported on this device */
 		goto exit_free_idev;
@@ -814,17 +835,27 @@ int snd_usb_caiaq_input_init(struct snd_usb_caiaqdev *dev)
 	for (i = 0; i < input->keycodemax; i++)
 		__set_bit(dev->keycode[i], input->keybit);
 
+<<<<<<< HEAD
 	dev->input_dev = input;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = input_register_device(input);
 	if (ret < 0)
 		goto exit_free_idev;
 
+<<<<<<< HEAD
+=======
+	dev->input_dev = input;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 exit_free_idev:
 	input_free_device(input);
+<<<<<<< HEAD
 	dev->input_dev = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -840,3 +871,7 @@ void snd_usb_caiaq_input_free(struct snd_usb_caiaqdev *dev)
 	input_unregister_device(dev->input_dev);
 	dev->input_dev = NULL;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

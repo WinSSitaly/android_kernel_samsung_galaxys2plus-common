@@ -7,7 +7,10 @@
 #include <linux/acpi.h>
 #include <linux/device.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pci.h>
 
 static void pci_note_irq_problem(struct pci_dev *pdev, const char *reason)

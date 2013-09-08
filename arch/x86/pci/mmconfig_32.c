@@ -117,7 +117,11 @@ static int pci_mmcfg_write(unsigned int seg, unsigned int bus,
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct pci_raw_ops pci_mmcfg = {
+=======
+static struct pci_raw_ops pci_mmcfg = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.read =		pci_mmcfg_read,
 	.write =	pci_mmcfg_write,
 };

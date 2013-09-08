@@ -7,7 +7,10 @@
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License version 2 as
    published by the Free Software Foundation;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF THIRD PARTY RIGHTS.
@@ -21,7 +24,15 @@
    COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS, RELATING TO USE OF THIS
    SOFTWARE IS DISCLAIMED.
 */
+<<<<<<< HEAD
 
+=======
+#ifdef CONFIG_BT_MGMT
+#include "hci_mgmt.h"
+#elif defined(CONFIG_BT_TIZEN)
+#include "tizen/hci.h"
+#else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __HCI_H
 #define __HCI_H
 
@@ -51,6 +62,10 @@
 #define HCI_RS232	4
 #define HCI_PCI		5
 #define HCI_SDIO	6
+<<<<<<< HEAD
+=======
+#define HCI_SMD		7
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* HCI controller types */
 #define HCI_BREDR	0x00
@@ -77,6 +92,7 @@ enum {
 
 	HCI_RAW,
 
+<<<<<<< HEAD
 	HCI_RESET,
 };
 
@@ -85,6 +101,8 @@ enum {
  * states from the controller.
  */
 enum {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	HCI_SETUP,
 	HCI_AUTO_OFF,
 	HCI_MGMT,
@@ -94,6 +112,7 @@ enum {
 	HCI_DEBUG_KEYS,
 	HCI_UNREGISTER,
 
+<<<<<<< HEAD
 	HCI_LE_SCAN,
 	HCI_SSP_ENABLED,
 	HCI_HS_ENABLED,
@@ -102,6 +121,9 @@ enum {
 	HCI_DISCOVERABLE,
 	HCI_LINK_SECURITY,
 	HCI_PENDING_CLASS,
+=======
+	HCI_RESET,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* HCI ioctl defines */
@@ -138,7 +160,10 @@ enum {
 #define HCI_IDLE_TIMEOUT	(6000)	/* 6 seconds */
 #define HCI_INIT_TIMEOUT	(10000)	/* 10 seconds */
 #define HCI_CMD_TIMEOUT		(1000)	/* 1 seconds */
+<<<<<<< HEAD
 #define HCI_ACL_TX_TIMEOUT	(45000)	/* 45 seconds */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* HCI data types */
 #define HCI_COMMAND_PKT		0x01
@@ -174,8 +199,23 @@ enum {
 #define ESCO_2EV5	0x0100
 #define ESCO_3EV5	0x0200
 
+<<<<<<< HEAD
 #define SCO_ESCO_MASK  (ESCO_HV1 | ESCO_HV2 | ESCO_HV3)
 #define EDR_ESCO_MASK  (ESCO_2EV3 | ESCO_3EV3 | ESCO_2EV5 | ESCO_3EV5)
+=======
+#define SCO_ESCO_MASK	(ESCO_HV1 | ESCO_HV2 | ESCO_HV3)
+#define EDR_ESCO_MASK	(ESCO_2EV3 | ESCO_3EV3 | ESCO_2EV5 | ESCO_3EV5)
+/* SS_BLUETOOTH(is80.hwang) 2012.03.02 */
+/* change applied EDR ESCO packet */
+#ifdef CONFIG_BT_CSR8811
+#define ALL_ESCO_MASK (SCO_ESCO_MASK | ESCO_EV3 | ESCO_EV4 | ESCO_EV5 | \
+   ESCO_2EV3 /*EDR_ESCO_MASK*/)
+#else
+#define ALL_ESCO_MASK	(SCO_ESCO_MASK | ESCO_EV3 | ESCO_EV4 | ESCO_EV5 | \
+			EDR_ESCO_MASK)
+#endif
+/* SS_BLUEZ_BT(is80.hwang) End */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* ACL flags */
 #define ACL_START_NO_FLUSH	0x00
@@ -219,7 +259,10 @@ enum {
 
 #define LMP_EV4		0x01
 #define LMP_EV5		0x02
+<<<<<<< HEAD
 #define LMP_NO_BREDR	0x20
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define LMP_LE		0x40
 
 #define LMP_SNIFF_SUBR	0x02
@@ -238,9 +281,13 @@ enum {
 #define LMP_EXTFEATURES	0x80
 
 /* Extended LMP features */
+<<<<<<< HEAD
 #define LMP_HOST_SSP		0x01
 #define LMP_HOST_LE		0x02
 #define LMP_HOST_LE_BREDR	0x04
+=======
+#define LMP_HOST_LE	0x02
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Connection modes */
 #define HCI_CM_ACTIVE	0x0000
@@ -279,6 +326,7 @@ enum {
 #define HCI_LK_UNAUTH_COMBINATION	0x04
 #define HCI_LK_AUTH_COMBINATION		0x05
 #define HCI_LK_CHANGED_COMBINATION	0x06
+<<<<<<< HEAD
 /* The spec doesn't define types for SMP keys, the _MASTER suffix is implied */
 #define HCI_SMP_STK			0x80
 #define HCI_SMP_STK_SLAVE		0x81
@@ -311,6 +359,12 @@ enum {
 #define EIR_SSP_HASH_C		0x0E /* Simple Pairing Hash C */
 #define EIR_SSP_RAND_R		0x0F /* Simple Pairing Randomizer R */
 #define EIR_DEVICE_ID		0x10 /* device ID */
+=======
+/* The spec doesn't define types for SMP keys */
+#define HCI_LK_SMP_LTK			0x81
+#define HCI_LK_SMP_IRK			0x82
+#define HCI_LK_SMP_CSRK			0x83
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* -----  HCI Commands ---- */
 #define HCI_OP_NOP			0x0000
@@ -494,6 +548,7 @@ struct hci_rp_user_confirm_reply {
 
 #define HCI_OP_USER_CONFIRM_NEG_REPLY	0x042d
 
+<<<<<<< HEAD
 #define HCI_OP_USER_PASSKEY_REPLY		0x042e
 struct hci_cp_user_passkey_reply {
 	bdaddr_t bdaddr;
@@ -502,6 +557,8 @@ struct hci_cp_user_passkey_reply {
 
 #define HCI_OP_USER_PASSKEY_NEG_REPLY	0x042f
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define HCI_OP_REMOTE_OOB_DATA_REPLY	0x0430
 struct hci_cp_remote_oob_data_reply {
 	bdaddr_t bdaddr;
@@ -694,8 +751,13 @@ struct hci_cp_host_buffer_size {
 
 #define HCI_OP_WRITE_EIR		0x0c52
 struct hci_cp_write_eir {
+<<<<<<< HEAD
 	__u8	fec;
 	__u8	data[HCI_MAX_EIR_LENGTH];
+=======
+	uint8_t		fec;
+	uint8_t		data[HCI_MAX_EIR_LENGTH];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } __packed;
 
 #define HCI_OP_READ_SSP_MODE		0x0c55
@@ -718,6 +780,7 @@ struct hci_rp_read_local_oob_data {
 
 #define HCI_OP_READ_INQ_RSP_TX_POWER	0x0c58
 
+<<<<<<< HEAD
 #define HCI_OP_READ_FLOW_CONTROL_MODE	0x0c66
 struct hci_rp_read_flow_control_mode {
 	__u8     status;
@@ -728,6 +791,12 @@ struct hci_rp_read_flow_control_mode {
 struct hci_cp_write_le_host_supported {
 	__u8	le;
 	__u8	simul;
+=======
+#define HCI_OP_WRITE_LE_HOST_SUPPORTED	0x0c6d
+struct hci_cp_write_le_host_supported {
+	__u8 le;
+	__u8 simul;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } __packed;
 
 #define HCI_OP_READ_LOCAL_VERSION	0x1001
@@ -778,6 +847,7 @@ struct hci_rp_read_bd_addr {
 	bdaddr_t bdaddr;
 } __packed;
 
+<<<<<<< HEAD
 #define HCI_OP_READ_DATA_BLOCK_SIZE	0x100a
 struct hci_rp_read_data_block_size {
 	__u8     status;
@@ -811,6 +881,8 @@ struct hci_rp_read_local_amp_info {
 	__le32   be_flush_to;
 } __packed;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define HCI_OP_LE_SET_EVENT_MASK	0x2001
 struct hci_cp_le_set_event_mask {
 	__u8     mask[8];
@@ -823,6 +895,7 @@ struct hci_rp_le_read_buffer_size {
 	__u8     le_max_pkt;
 } __packed;
 
+<<<<<<< HEAD
 #define HCI_OP_LE_SET_SCAN_PARAM	0x200b
 struct hci_cp_le_set_scan_param {
 	__u8    type;
@@ -835,6 +908,8 @@ struct hci_cp_le_set_scan_param {
 #define LE_SCANNING_DISABLED		0x00
 #define LE_SCANNING_ENABLED		0x01
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define HCI_OP_LE_SET_SCAN_ENABLE	0x200c
 struct hci_cp_le_set_scan_enable {
 	__u8     enable;
@@ -1010,6 +1085,7 @@ struct hci_ev_role_change {
 } __packed;
 
 #define HCI_EV_NUM_COMP_PKTS		0x13
+<<<<<<< HEAD
 struct hci_comp_pkts_info {
 	__le16   handle;
 	__le16   count;
@@ -1018,6 +1094,11 @@ struct hci_comp_pkts_info {
 struct hci_ev_num_comp_pkts {
 	__u8     num_hndl;
 	struct hci_comp_pkts_info handles[0];
+=======
+struct hci_ev_num_comp_pkts {
+	__u8     num_hndl;
+	/* variable length part */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } __packed;
 
 #define HCI_EV_MODE_CHANGE		0x14
@@ -1156,11 +1237,14 @@ struct hci_ev_user_confirm_req {
 	__le32		passkey;
 } __packed;
 
+<<<<<<< HEAD
 #define HCI_EV_USER_PASSKEY_REQUEST	0x34
 struct hci_ev_user_passkey_req {
 	bdaddr_t	bdaddr;
 } __packed;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define HCI_EV_REMOTE_OOB_DATA_REQUEST	0x35
 struct hci_ev_remote_oob_data_request {
 	bdaddr_t bdaddr;
@@ -1183,6 +1267,7 @@ struct hci_ev_le_meta {
 	__u8     subevent;
 } __packed;
 
+<<<<<<< HEAD
 #define HCI_EV_NUM_COMP_BLOCKS		0x48
 struct hci_comp_blocks_info {
 	__le16   handle;
@@ -1196,6 +1281,8 @@ struct hci_ev_num_comp_blocks {
 	struct hci_comp_blocks_info handles[0];
 } __packed;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Low energy meta events */
 #define HCI_EV_LE_CONN_COMPLETE		0x01
 struct hci_ev_le_conn_complete {
@@ -1328,8 +1415,12 @@ struct sockaddr_hci {
 #define HCI_DEV_NONE	0xffff
 
 #define HCI_CHANNEL_RAW		0
+<<<<<<< HEAD
 #define HCI_CHANNEL_MONITOR	2
 #define HCI_CHANNEL_CONTROL	3
+=======
+#define HCI_CHANNEL_CONTROL	1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct hci_filter {
 	unsigned long type_mask;
@@ -1392,6 +1483,12 @@ struct hci_conn_info {
 	__u8     out;
 	__u16    state;
 	__u32    link_mode;
+<<<<<<< HEAD
+=======
+	__u32    mtu;
+	__u32    cnt;
+	__u32    pkts;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct hci_dev_req {
@@ -1430,7 +1527,13 @@ struct hci_inquiry_req {
 };
 #define IREQ_CACHE_FLUSH 0x0001
 
+<<<<<<< HEAD
 extern bool enable_hs;
 extern bool enable_le;
 
 #endif /* __HCI_H */
+=======
+#endif /* __HCI_H */
+
+#endif /* BT_MGMT */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

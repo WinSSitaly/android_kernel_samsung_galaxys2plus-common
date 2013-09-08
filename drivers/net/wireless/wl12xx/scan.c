@@ -24,20 +24,29 @@
 #include <linux/ieee80211.h>
 
 #include "wl12xx.h"
+<<<<<<< HEAD
 #include "debug.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "cmd.h"
 #include "scan.h"
 #include "acx.h"
 #include "ps.h"
+<<<<<<< HEAD
 #include "tx.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void wl1271_scan_complete_work(struct work_struct *work)
 {
 	struct delayed_work *dwork;
 	struct wl1271 *wl;
+<<<<<<< HEAD
 	struct ieee80211_vif *vif;
 	struct wl12xx_vif *wlvif;
 	int ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dwork = container_of(work, struct delayed_work, work);
 	wl = container_of(dwork, struct wl1271, scan_complete_work);
@@ -52,6 +61,7 @@ void wl1271_scan_complete_work(struct work_struct *work)
 	if (wl->scan.state == WL1271_SCAN_STATE_IDLE)
 		goto out;
 
+<<<<<<< HEAD
 	vif = wl->scan_vif;
 	wlvif = wl12xx_vif_to_data(vif);
 
@@ -84,6 +94,26 @@ void wl1271_scan_complete_work(struct work_struct *work)
 
 	ieee80211_scan_completed(wl->hw, false);
 
+=======
+	wl->scan.state = WL1271_SCAN_STATE_IDLE;
+	memset(wl->scan.scanned_ch, 0, sizeof(wl->scan.scanned_ch));
+	wl->scan.req = NULL;
+	ieee80211_scan_completed(wl->hw, false);
+
+	/* restore hardware connection monitoring template */
+	if (test_bit(WL1271_FLAG_STA_ASSOCIATED, &wl->flags)) {
+		if (wl1271_ps_elp_wakeup(wl) == 0) {
+			wl1271_cmd_build_ap_probe_req(wl, wl->probereq);
+			wl1271_ps_elp_sleep(wl);
+		}
+	}
+
+	if (wl->scan.failed) {
+		wl1271_info("Scan completed due to error.");
+		ieee80211_queue_work(wl->hw, &wl->recovery_work);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	mutex_unlock(&wl->mutex);
 
@@ -157,11 +187,17 @@ static int wl1271_get_scan_channels(struct wl1271 *wl,
 
 #define WL1271_NOTHING_TO_SCAN 1
 
+<<<<<<< HEAD
 static int wl1271_scan_send(struct wl1271 *wl, struct ieee80211_vif *vif,
 			    enum ieee80211_band band,
 			    bool passive, u32 basic_rate)
 {
 	struct wl12xx_vif *wlvif = wl12xx_vif_to_data(vif);
+=======
+static int wl1271_scan_send(struct wl1271 *wl, enum ieee80211_band band,
+			     bool passive, u32 basic_rate)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct wl1271_cmd_scan *cmd;
 	struct wl1271_cmd_trigger_scan_to *trigger;
 	int ret;
@@ -178,12 +214,18 @@ static int wl1271_scan_send(struct wl1271 *wl, struct ieee80211_vif *vif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	if (wl->conf.scan.split_scan_timeout)
 		scan_options |= WL1271_SCAN_OPT_SPLIT_SCAN;
+=======
+	/* We always use high priority scans */
+	scan_options = WL1271_SCAN_OPT_PRIORITY_HIGH;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (passive)
 		scan_options |= WL1271_SCAN_OPT_PASSIVE;
 
+<<<<<<< HEAD
 	if (wlvif->bss_type == BSS_TYPE_AP_BSS ||
 	    test_bit(WLVIF_FLAG_STA_ASSOCIATED, &wlvif->flags))
 		cmd->params.role_id = wlvif->role_id;
@@ -195,6 +237,8 @@ static int wl1271_scan_send(struct wl1271 *wl, struct ieee80211_vif *vif,
 		goto out;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmd->params.scan_options = cpu_to_le16(scan_options);
 
 	cmd->params.n_ch = wl1271_get_scan_channels(wl, wl->scan.req,
@@ -206,8 +250,18 @@ static int wl1271_scan_send(struct wl1271 *wl, struct ieee80211_vif *vif,
 	}
 
 	cmd->params.tx_rate = cpu_to_le32(basic_rate);
+<<<<<<< HEAD
 	cmd->params.n_probe_reqs = wl->conf.scan.num_probe_reqs;
 	cmd->params.tid_trigger = CONF_TX_AC_ANY_TID;
+=======
+	cmd->params.rx_config_options = cpu_to_le32(CFG_RX_ALL_GOOD);
+	cmd->params.rx_filter_options =
+		cpu_to_le32(CFG_RX_PRSP_EN | CFG_RX_MGMT_EN | CFG_RX_BCN_EN);
+
+	cmd->params.n_probe_reqs = wl->conf.scan.num_probe_reqs;
+	cmd->params.tx_rate = cpu_to_le32(basic_rate);
+	cmd->params.tid_trigger = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmd->params.scan_tag = WL1271_SCAN_DEFAULT_TAG;
 
 	if (band == IEEE80211_BAND_2GHZ)
@@ -220,6 +274,7 @@ static int wl1271_scan_send(struct wl1271 *wl, struct ieee80211_vif *vif,
 		memcpy(cmd->params.ssid, wl->scan.ssid, wl->scan.ssid_len);
 	}
 
+<<<<<<< HEAD
 	memcpy(cmd->addr, vif->addr, ETH_ALEN);
 
 	ret = wl12xx_cmd_build_probe_req(wl, wlvif,
@@ -227,12 +282,22 @@ static int wl1271_scan_send(struct wl1271 *wl, struct ieee80211_vif *vif,
 					 wl->scan.ssid, wl->scan.ssid_len,
 					 wl->scan.req->ie,
 					 wl->scan.req->ie_len);
+=======
+	ret = wl1271_cmd_build_probe_req(wl, wl->scan.ssid, wl->scan.ssid_len,
+					 wl->scan.req->ie, wl->scan.req->ie_len,
+					 band);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		wl1271_error("PROBE request template failed");
 		goto out;
 	}
 
+<<<<<<< HEAD
 	trigger->timeout = cpu_to_le32(wl->conf.scan.split_scan_timeout);
+=======
+	/* disable the timeout */
+	trigger->timeout = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = wl1271_cmd_send(wl, CMD_TRIGGER_SCAN_TO, trigger,
 			      sizeof(*trigger), 0);
 	if (ret < 0) {
@@ -254,18 +319,25 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 void wl1271_scan_stm(struct wl1271 *wl, struct ieee80211_vif *vif)
 {
 	struct wl12xx_vif *wlvif = wl12xx_vif_to_data(vif);
 	int ret = 0;
 	enum ieee80211_band band;
 	u32 rate, mask;
+=======
+void wl1271_scan_stm(struct wl1271 *wl)
+{
+	int ret = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (wl->scan.state) {
 	case WL1271_SCAN_STATE_IDLE:
 		break;
 
 	case WL1271_SCAN_STATE_2GHZ_ACTIVE:
+<<<<<<< HEAD
 		band = IEEE80211_BAND_2GHZ;
 		mask = wlvif->bitrate_masks[band];
 		if (wl->scan.req->no_cck) {
@@ -278,11 +350,19 @@ void wl1271_scan_stm(struct wl1271 *wl, struct ieee80211_vif *vif)
 		if (ret == WL1271_NOTHING_TO_SCAN) {
 			wl->scan.state = WL1271_SCAN_STATE_2GHZ_PASSIVE;
 			wl1271_scan_stm(wl, vif);
+=======
+		ret = wl1271_scan_send(wl, IEEE80211_BAND_2GHZ, false,
+				       wl->conf.tx.basic_rate);
+		if (ret == WL1271_NOTHING_TO_SCAN) {
+			wl->scan.state = WL1271_SCAN_STATE_2GHZ_PASSIVE;
+			wl1271_scan_stm(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		break;
 
 	case WL1271_SCAN_STATE_2GHZ_PASSIVE:
+<<<<<<< HEAD
 		band = IEEE80211_BAND_2GHZ;
 		mask = wlvif->bitrate_masks[band];
 		if (wl->scan.req->no_cck) {
@@ -292,34 +372,58 @@ void wl1271_scan_stm(struct wl1271 *wl, struct ieee80211_vif *vif)
 		}
 		rate = wl1271_tx_min_rate_get(wl, mask);
 		ret = wl1271_scan_send(wl, vif, band, true, rate);
+=======
+		ret = wl1271_scan_send(wl, IEEE80211_BAND_2GHZ, true,
+				       wl->conf.tx.basic_rate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret == WL1271_NOTHING_TO_SCAN) {
 			if (wl->enable_11a)
 				wl->scan.state = WL1271_SCAN_STATE_5GHZ_ACTIVE;
 			else
 				wl->scan.state = WL1271_SCAN_STATE_DONE;
+<<<<<<< HEAD
 			wl1271_scan_stm(wl, vif);
+=======
+			wl1271_scan_stm(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		break;
 
 	case WL1271_SCAN_STATE_5GHZ_ACTIVE:
+<<<<<<< HEAD
 		band = IEEE80211_BAND_5GHZ;
 		rate = wl1271_tx_min_rate_get(wl, wlvif->bitrate_masks[band]);
 		ret = wl1271_scan_send(wl, vif, band, false, rate);
 		if (ret == WL1271_NOTHING_TO_SCAN) {
 			wl->scan.state = WL1271_SCAN_STATE_5GHZ_PASSIVE;
 			wl1271_scan_stm(wl, vif);
+=======
+		ret = wl1271_scan_send(wl, IEEE80211_BAND_5GHZ, false,
+				       wl->conf.tx.basic_rate_5);
+		if (ret == WL1271_NOTHING_TO_SCAN) {
+			wl->scan.state = WL1271_SCAN_STATE_5GHZ_PASSIVE;
+			wl1271_scan_stm(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		break;
 
 	case WL1271_SCAN_STATE_5GHZ_PASSIVE:
+<<<<<<< HEAD
 		band = IEEE80211_BAND_5GHZ;
 		rate = wl1271_tx_min_rate_get(wl, wlvif->bitrate_masks[band]);
 		ret = wl1271_scan_send(wl, vif, band, true, rate);
 		if (ret == WL1271_NOTHING_TO_SCAN) {
 			wl->scan.state = WL1271_SCAN_STATE_DONE;
 			wl1271_scan_stm(wl, vif);
+=======
+		ret = wl1271_scan_send(wl, IEEE80211_BAND_5GHZ, true,
+				       wl->conf.tx.basic_rate_5);
+		if (ret == WL1271_NOTHING_TO_SCAN) {
+			wl->scan.state = WL1271_SCAN_STATE_DONE;
+			wl1271_scan_stm(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		break;
@@ -343,8 +447,12 @@ void wl1271_scan_stm(struct wl1271 *wl, struct ieee80211_vif *vif)
 	}
 }
 
+<<<<<<< HEAD
 int wl1271_scan(struct wl1271 *wl, struct ieee80211_vif *vif,
 		const u8 *ssid, size_t ssid_len,
+=======
+int wl1271_scan(struct wl1271 *wl, const u8 *ssid, size_t ssid_len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct cfg80211_scan_request *req)
 {
 	/*
@@ -365,7 +473,10 @@ int wl1271_scan(struct wl1271 *wl, struct ieee80211_vif *vif,
 		wl->scan.ssid_len = 0;
 	}
 
+<<<<<<< HEAD
 	wl->scan_vif = vif;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wl->scan.req = req;
 	memset(wl->scan.scanned_ch, 0, sizeof(wl->scan.scanned_ch));
 
@@ -374,11 +485,16 @@ int wl1271_scan(struct wl1271 *wl, struct ieee80211_vif *vif,
 	ieee80211_queue_delayed_work(wl->hw, &wl->scan_complete_work,
 				     msecs_to_jiffies(WL1271_SCAN_TIMEOUT));
 
+<<<<<<< HEAD
 	wl1271_scan_stm(wl, vif);
+=======
+	wl1271_scan_stm(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 int wl1271_scan_stop(struct wl1271 *wl)
 {
 	struct wl1271_cmd_header *cmd = NULL;
@@ -406,12 +522,18 @@ out:
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int
 wl1271_scan_get_sched_scan_channels(struct wl1271 *wl,
 				    struct cfg80211_sched_scan_request *req,
 				    struct conn_scan_ch_params *channels,
 				    u32 band, bool radar, bool passive,
+<<<<<<< HEAD
 				    int start, int max_channels)
+=======
+				    int start)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct conf_sched_scan_settings *c = &wl->conf.sched_scan;
 	int i, j;
@@ -419,7 +541,11 @@ wl1271_scan_get_sched_scan_channels(struct wl1271 *wl,
 	bool force_passive = !req->n_ssids;
 
 	for (i = 0, j = start;
+<<<<<<< HEAD
 	     i < req->n_channels && j < max_channels;
+=======
+	     i < req->n_channels && j < MAX_CHANNELS_ALL_BANDS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	     i++) {
 		flags = req->channels[i]->flags;
 
@@ -443,6 +569,7 @@ wl1271_scan_get_sched_scan_channels(struct wl1271 *wl,
 
 			if (flags & IEEE80211_CHAN_RADAR) {
 				channels[j].flags |= SCAN_CHANNEL_FLAGS_DFS;
+<<<<<<< HEAD
 
 				channels[j].passive_duration =
 					cpu_to_le16(c->dwell_time_dfs);
@@ -456,6 +583,20 @@ wl1271_scan_get_sched_scan_channels(struct wl1271 *wl,
 			channels[j].max_duration =
 				cpu_to_le16(c->max_dwell_time_active);
 
+=======
+				channels[j].passive_duration =
+					cpu_to_le16(c->dwell_time_dfs);
+			}
+			else if (flags & IEEE80211_CHAN_PASSIVE_SCAN) {
+				channels[j].passive_duration =
+					cpu_to_le16(c->dwell_time_passive);
+			} else {
+				channels[j].min_duration =
+					cpu_to_le16(c->min_dwell_time_active);
+				channels[j].max_duration =
+					cpu_to_le16(c->max_dwell_time_active);
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			channels[j].tx_power_att = req->channels[i]->max_power;
 			channels[j].channel = req->channels[i]->hw_value;
 
@@ -466,11 +607,16 @@ wl1271_scan_get_sched_scan_channels(struct wl1271 *wl,
 	return j - start;
 }
 
+<<<<<<< HEAD
 static bool
+=======
+static int
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 wl1271_scan_sched_scan_channels(struct wl1271 *wl,
 				struct cfg80211_sched_scan_request *req,
 				struct wl1271_cmd_sched_scan_config *cfg)
 {
+<<<<<<< HEAD
 	cfg->passive[0] =
 		wl1271_scan_get_sched_scan_channels(wl, req, cfg->channels_2,
 						    IEEE80211_BAND_2GHZ,
@@ -502,6 +648,43 @@ wl1271_scan_sched_scan_channels(struct wl1271 *wl,
 	/* 802.11j channels are not supported yet */
 	cfg->passive[2] = 0;
 	cfg->active[2] = 0;
+=======
+	int idx = 0;
+
+	cfg->passive[0] =
+		wl1271_scan_get_sched_scan_channels(wl, req, cfg->channels,
+						    IEEE80211_BAND_2GHZ,
+						    false, true, idx);
+	idx += cfg->passive[0];
+
+	cfg->active[0] =
+		wl1271_scan_get_sched_scan_channels(wl, req, cfg->channels,
+						    IEEE80211_BAND_2GHZ,
+						    false, false, idx);
+	/*
+	 * 5GHz channels always start at position 14, not immediately
+	 * after the last 2.4GHz channel
+	 */
+	idx = 14;
+
+	cfg->passive[1] =
+		wl1271_scan_get_sched_scan_channels(wl, req, cfg->channels,
+						    IEEE80211_BAND_5GHZ,
+						    false, true, idx);
+	idx += cfg->passive[1];
+
+	cfg->dfs =
+		wl1271_scan_get_sched_scan_channels(wl, req, cfg->channels,
+						    IEEE80211_BAND_5GHZ,
+						    true, true, idx);
+	idx += cfg->dfs;
+
+	cfg->active[1] =
+		wl1271_scan_get_sched_scan_channels(wl, req, cfg->channels,
+						    IEEE80211_BAND_5GHZ,
+						    false, false, idx);
+	idx += cfg->active[1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wl1271_debug(DEBUG_SCAN, "    2.4GHz: active %d passive %d",
 		     cfg->active[0], cfg->passive[0]);
@@ -509,6 +692,7 @@ wl1271_scan_sched_scan_channels(struct wl1271 *wl,
 		     cfg->active[1], cfg->passive[1]);
 	wl1271_debug(DEBUG_SCAN, "    DFS: %d", cfg->dfs);
 
+<<<<<<< HEAD
 	return  cfg->passive[0] || cfg->active[0] ||
 		cfg->passive[1] || cfg->active[1] || cfg->dfs ||
 		cfg->passive[2] || cfg->active[2];
@@ -618,12 +802,22 @@ out:
 
 int wl1271_scan_sched_scan_config(struct wl1271 *wl,
 				  struct wl12xx_vif *wlvif,
+=======
+	return idx;
+}
+
+int wl1271_scan_sched_scan_config(struct wl1271 *wl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  struct cfg80211_sched_scan_request *req,
 				  struct ieee80211_sched_scan_ies *ies)
 {
 	struct wl1271_cmd_sched_scan_config *cfg = NULL;
 	struct conf_sched_scan_settings *c = &wl->conf.sched_scan;
+<<<<<<< HEAD
 	int i, ret;
+=======
+	int i, total_channels, ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool force_passive = !req->n_ssids;
 
 	wl1271_debug(DEBUG_CMD, "cmd sched_scan scan config");
@@ -648,6 +842,7 @@ int wl1271_scan_sched_scan_config(struct wl1271 *wl,
 	for (i = 0; i < SCAN_MAX_CYCLE_INTERVALS; i++)
 		cfg->intervals[i] = cpu_to_le32(req->interval);
 
+<<<<<<< HEAD
 	cfg->ssid_len = 0;
 	ret = wl12xx_scan_sched_scan_ssid_list(wl, req);
 	if (ret < 0)
@@ -658,12 +853,27 @@ int wl1271_scan_sched_scan_config(struct wl1271 *wl,
 	wl1271_debug(DEBUG_SCAN, "filter_type = %d", cfg->filter_type);
 
 	if (!wl1271_scan_sched_scan_channels(wl, req, cfg)) {
+=======
+	if (!force_passive && req->ssids[0].ssid_len && req->ssids[0].ssid) {
+		cfg->filter_type = SCAN_SSID_FILTER_SPECIFIC;
+		cfg->ssid_len = req->ssids[0].ssid_len;
+		memcpy(cfg->ssid, req->ssids[0].ssid,
+		       req->ssids[0].ssid_len);
+	} else {
+		cfg->filter_type = SCAN_SSID_FILTER_ANY;
+		cfg->ssid_len = 0;
+	}
+
+	total_channels = wl1271_scan_sched_scan_channels(wl, req, cfg);
+	if (total_channels == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wl1271_error("scan channel list is empty");
 		ret = -EINVAL;
 		goto out;
 	}
 
 	if (!force_passive && cfg->active[0]) {
+<<<<<<< HEAD
 		u8 band = IEEE80211_BAND_2GHZ;
 		ret = wl12xx_cmd_build_probe_req(wl, wlvif,
 						 wlvif->dev_role_id, band,
@@ -671,6 +881,13 @@ int wl1271_scan_sched_scan_config(struct wl1271 *wl,
 						 req->ssids[0].ssid_len,
 						 ies->ie[band],
 						 ies->len[band]);
+=======
+		ret = wl1271_cmd_build_probe_req(wl, req->ssids[0].ssid,
+						 req->ssids[0].ssid_len,
+						 ies->ie[IEEE80211_BAND_2GHZ],
+						 ies->len[IEEE80211_BAND_2GHZ],
+						 IEEE80211_BAND_2GHZ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0) {
 			wl1271_error("2.4GHz PROBE request template failed");
 			goto out;
@@ -678,6 +895,7 @@ int wl1271_scan_sched_scan_config(struct wl1271 *wl,
 	}
 
 	if (!force_passive && cfg->active[1]) {
+<<<<<<< HEAD
 		u8 band = IEEE80211_BAND_5GHZ;
 		ret = wl12xx_cmd_build_probe_req(wl, wlvif,
 						 wlvif->dev_role_id, band,
@@ -685,6 +903,13 @@ int wl1271_scan_sched_scan_config(struct wl1271 *wl,
 						 req->ssids[0].ssid_len,
 						 ies->ie[band],
 						 ies->len[band]);
+=======
+		ret = wl1271_cmd_build_probe_req(wl,  req->ssids[0].ssid,
+						 req->ssids[0].ssid_len,
+						 ies->ie[IEEE80211_BAND_5GHZ],
+						 ies->len[IEEE80211_BAND_5GHZ],
+						 IEEE80211_BAND_5GHZ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0) {
 			wl1271_error("5GHz PROBE request template failed");
 			goto out;
@@ -704,17 +929,28 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_scan_sched_scan_start(struct wl1271 *wl, struct wl12xx_vif *wlvif)
+=======
+int wl1271_scan_sched_scan_start(struct wl1271 *wl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct wl1271_cmd_sched_scan_start *start;
 	int ret = 0;
 
 	wl1271_debug(DEBUG_CMD, "cmd periodic scan start");
 
+<<<<<<< HEAD
 	if (wlvif->bss_type != BSS_TYPE_STA_BSS)
 		return -EOPNOTSUPP;
 
 	if (test_bit(WLVIF_FLAG_IN_USE, &wlvif->flags))
+=======
+	if (wl->bss_type != BSS_TYPE_STA_BSS)
+		return -EOPNOTSUPP;
+
+	if (!test_bit(WL1271_FLAG_IDLE, &wl->flags))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EBUSY;
 
 	start = kzalloc(sizeof(*start), GFP_KERNEL);
@@ -764,6 +1000,10 @@ void wl1271_scan_sched_scan_stop(struct wl1271 *wl)
 		wl1271_error("failed to send sched scan stop command");
 		goto out_free;
 	}
+<<<<<<< HEAD
+=======
+	wl->sched_scanning = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out_free:
 	kfree(stop);

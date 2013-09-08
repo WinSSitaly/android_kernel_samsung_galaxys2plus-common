@@ -4,7 +4,10 @@
  *
  *  Copyright (C) 2002-2005 Julien Lerouge, 2003-2006 Karol Kozimor
  *  Copyright (C) 2006-2007 Corentin Chary
+<<<<<<< HEAD
  *  Copyright (C) 2011 Wind River Systems
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -49,7 +52,10 @@
 #include <linux/uaccess.h>
 #include <linux/input.h>
 #include <linux/input/sparse-keymap.h>
+<<<<<<< HEAD
 #include <linux/input-polldev.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/rfkill.h>
 #include <linux/slab.h>
 #include <linux/dmi.h>
@@ -72,15 +78,24 @@ MODULE_LICENSE("GPL");
  * WAPF defines the behavior of the Fn+Fx wlan key
  * The significance of values is yet to be found, but
  * most of the time:
+<<<<<<< HEAD
  * Bit | Bluetooth | WLAN
  *  0  | Hardware  | Hardware
  *  1  | Hardware  | Software
  *  4  | Software  | Software
+=======
+ * 0x0 will do nothing
+ * 0x1 will allow to control the device with Fn+Fx key.
+ * 0x4 will send an ACPI event (0x88) while pressing the Fn+Fx key
+ * 0x5 like 0x1 or 0x4
+ * So, if something doesn't work as you want, just try other values =)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static uint wapf = 1;
 module_param(wapf, uint, 0444);
 MODULE_PARM_DESC(wapf, "WAPF value");
 
+<<<<<<< HEAD
 static char *wled_type = "unknown";
 static char *bled_type = "unknown";
 
@@ -94,36 +109,57 @@ MODULE_PARM_DESC(bled_type, "Set the bled type on boot "
 		 "(unknown, led or rfkill). "
 		 "default is unknown");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int wlan_status = 1;
 static int bluetooth_status = 1;
 static int wimax_status = -1;
 static int wwan_status = -1;
+<<<<<<< HEAD
 static int als_status;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(wlan_status, int, 0444);
 MODULE_PARM_DESC(wlan_status, "Set the wireless status on boot "
 		 "(0 = disabled, 1 = enabled, -1 = don't do anything). "
+<<<<<<< HEAD
 		 "default is -1");
+=======
+		 "default is 1");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(bluetooth_status, int, 0444);
 MODULE_PARM_DESC(bluetooth_status, "Set the wireless status on boot "
 		 "(0 = disabled, 1 = enabled, -1 = don't do anything). "
+<<<<<<< HEAD
 		 "default is -1");
+=======
+		 "default is 1");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(wimax_status, int, 0444);
 MODULE_PARM_DESC(wimax_status, "Set the wireless status on boot "
 		 "(0 = disabled, 1 = enabled, -1 = don't do anything). "
+<<<<<<< HEAD
 		 "default is -1");
+=======
+		 "default is 1");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(wwan_status, int, 0444);
 MODULE_PARM_DESC(wwan_status, "Set the wireless status on boot "
 		 "(0 = disabled, 1 = enabled, -1 = don't do anything). "
+<<<<<<< HEAD
 		 "default is -1");
 
 module_param(als_status, int, 0444);
 MODULE_PARM_DESC(als_status, "Set the ALS status on boot "
 		 "(0 = disabled, 1 = enabled). "
 		 "default is 0");
+=======
+		 "default is 1");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Some events we use, same for all Asus
@@ -150,11 +186,14 @@ MODULE_PARM_DESC(als_status, "Set the ALS status on boot "
 #define WM_RSTS		0x08    /* internal wimax */
 #define WW_RSTS		0x20    /* internal wwan */
 
+<<<<<<< HEAD
 /* WLED and BLED type */
 #define TYPE_UNKNOWN	0
 #define TYPE_LED	1
 #define TYPE_RFKILL	2
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* LED */
 #define METHOD_MLED		"MLED"
 #define METHOD_TLED		"TLED"
@@ -199,6 +238,7 @@ MODULE_PARM_DESC(als_status, "Set the ALS status on boot "
 #define METHOD_KBD_LIGHT_SET	"SLKB"
 #define METHOD_KBD_LIGHT_GET	"GLKB"
 
+<<<<<<< HEAD
 /* For Pegatron Lucid tablet */
 #define DEVICE_NAME_PEGA	"Lucid"
 
@@ -222,6 +262,8 @@ MODULE_PARM_DESC(als_status, "Set the ALS status on boot "
 #define PEGA_ACC_CLAMP 512 /* 1G accel is reported as ~256, so clamp to 2G */
 #define PEGA_ACC_RETRIES 3
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Define a specific led structure to keep the main structure clean
  */
@@ -234,6 +276,7 @@ struct asus_led {
 };
 
 /*
+<<<<<<< HEAD
  * Same thing for rfkill
  */
 struct asus_rfkill {
@@ -244,6 +287,8 @@ struct asus_rfkill {
 };
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This is the main structure, we can use it to store anything interesting
  * about the hotk device
  */
@@ -257,10 +302,14 @@ struct asus_laptop {
 
 	struct input_dev *inputdev;
 	struct key_entry *keymap;
+<<<<<<< HEAD
 	struct input_polled_dev *pega_accel_poll;
 
 	struct asus_led wled;
 	struct asus_led bled;
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct asus_led mled;
 	struct asus_led tled;
 	struct asus_led rled;
@@ -269,6 +318,7 @@ struct asus_laptop {
 	struct asus_led kled;
 	struct workqueue_struct *led_workqueue;
 
+<<<<<<< HEAD
 	int wled_type;
 	int bled_type;
 	int wireless_status;
@@ -284,6 +334,12 @@ struct asus_laptop {
 	struct asus_rfkill wwan;
 	struct asus_rfkill wimax;
 	struct asus_rfkill gps;
+=======
+	int wireless_status;
+	bool have_rsts;
+
+	struct rfkill *gps_rfkill;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	acpi_handle handle;	/* the handle of the hotk device */
 	u32 ledd_status;	/* status of the LED display */
@@ -297,7 +353,10 @@ static const struct key_entry asus_keymap[] = {
 	{KE_KEY, 0x02, { KEY_SCREENLOCK } },
 	{KE_KEY, 0x05, { KEY_WLAN } },
 	{KE_KEY, 0x08, { KEY_F13 } },
+<<<<<<< HEAD
 	{KE_KEY, 0x09, { KEY_PROG2 } }, /* Dock */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{KE_KEY, 0x17, { KEY_ZOOM } },
 	{KE_KEY, 0x1f, { KEY_BATTERY } },
 	/* End of Lenovo SL Specific keycodes */
@@ -323,8 +382,11 @@ static const struct key_entry asus_keymap[] = {
 	{KE_KEY, 0x62, { KEY_SWITCHVIDEOMODE } },
 	{KE_KEY, 0x63, { KEY_SWITCHVIDEOMODE } },
 	{KE_KEY, 0x6B, { KEY_F13 } }, /* Lock Touchpad */
+<<<<<<< HEAD
 	{KE_KEY, 0x6C, { KEY_SLEEP } }, /* Suspend */
 	{KE_KEY, 0x6D, { KEY_SLEEP } }, /* Hibernate */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{KE_KEY, 0x7E, { KEY_BLUETOOTH } },
 	{KE_KEY, 0x7D, { KEY_BLUETOOTH } },
 	{KE_KEY, 0x82, { KEY_CAMERA } },
@@ -399,6 +461,7 @@ static int acpi_check_handle(acpi_handle handle, const char *method,
 	return 0;
 }
 
+<<<<<<< HEAD
 static bool asus_check_pega_lucid(struct asus_laptop *asus)
 {
 	return !strcmp(asus->name, DEVICE_NAME_PEGA) &&
@@ -520,6 +583,8 @@ exit:
 	return err;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Generic LED function */
 static int asus_led_set(struct asus_laptop *asus, const char *method,
 			 int value)
@@ -627,6 +692,7 @@ static enum led_brightness asus_kled_cdev_get(struct led_classdev *led_cdev)
 
 static void asus_led_exit(struct asus_laptop *asus)
 {
+<<<<<<< HEAD
 	if (!IS_ERR_OR_NULL(asus->wled.led.dev))
 		led_classdev_unregister(&asus->wled.led);
 	if (!IS_ERR_OR_NULL(asus->bled.led.dev))
@@ -642,6 +708,19 @@ static void asus_led_exit(struct asus_laptop *asus)
 	if (!IS_ERR_OR_NULL(asus->gled.led.dev))
 		led_classdev_unregister(&asus->gled.led);
 	if (!IS_ERR_OR_NULL(asus->kled.led.dev))
+=======
+	if (asus->mled.led.dev)
+		led_classdev_unregister(&asus->mled.led);
+	if (asus->tled.led.dev)
+		led_classdev_unregister(&asus->tled.led);
+	if (asus->pled.led.dev)
+		led_classdev_unregister(&asus->pled.led);
+	if (asus->rled.led.dev)
+		led_classdev_unregister(&asus->rled.led);
+	if (asus->gled.led.dev)
+		led_classdev_unregister(&asus->gled.led);
+	if (asus->kled.led.dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		led_classdev_unregister(&asus->kled.led);
 	if (asus->led_workqueue) {
 		destroy_workqueue(asus->led_workqueue);
@@ -672,6 +751,7 @@ static int asus_led_register(struct asus_laptop *asus,
 
 static int asus_led_init(struct asus_laptop *asus)
 {
+<<<<<<< HEAD
 	int r = 0;
 
 	/*
@@ -680,6 +760,9 @@ static int asus_led_init(struct asus_laptop *asus)
 	 */
 	if (asus->is_pega_lucid)
 		return 0;
+=======
+	int r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Functions that actually update the LED's are called from a
@@ -691,6 +774,7 @@ static int asus_led_init(struct asus_laptop *asus)
 	if (!asus->led_workqueue)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	if (asus->wled_type == TYPE_LED)
 		r = asus_led_register(asus, &asus->wled, "asus::wlan",
 				      METHOD_WLAN);
@@ -701,6 +785,8 @@ static int asus_led_init(struct asus_laptop *asus)
 				      METHOD_BLUETOOTH);
 	if (r)
 		goto error;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = asus_led_register(asus, &asus->mled, "asus::mail", METHOD_MLED);
 	if (r)
 		goto error;
@@ -860,6 +946,7 @@ static ssize_t show_infos(struct device *dev,
 	/*
 	 * The HWRS method return informations about the hardware.
 	 * 0x80 bit is for WLAN, 0x100 for Bluetooth.
+<<<<<<< HEAD
 	 * 0x40 for WWAN, 0x10 for WIMAX.
 	 * The significance of others is yet to be found.
 	 * We don't currently use this for device detection, and it
@@ -868,6 +955,14 @@ static ssize_t show_infos(struct device *dev,
 	rv = acpi_evaluate_integer(asus->handle, "HWRS", NULL, &temp);
 	if (!ACPI_FAILURE(rv))
 		len += sprintf(page + len, "HWRS value         : %#x\n",
+=======
+	 * The significance of others is yet to be found.
+	 * If we don't find the method, we assume the device are present.
+	 */
+	rv = acpi_evaluate_integer(asus->handle, "HRWS", NULL, &temp);
+	if (!ACPI_FAILURE(rv))
+		len += sprintf(page + len, "HRWS value         : %#x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       (uint) temp);
 	/*
 	 * Another value for userspace: the ASYM method returns 0x02 for
@@ -1005,7 +1100,11 @@ static ssize_t store_wlan(struct device *dev, struct device_attribute *attr,
 	return sysfs_acpi_set(asus, buf, count, METHOD_WLAN);
 }
 
+<<<<<<< HEAD
 /*e
+=======
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Bluetooth
  */
 static int asus_bluetooth_set(struct asus_laptop *asus, int status)
@@ -1127,6 +1226,7 @@ static ssize_t store_disp(struct device *dev, struct device_attribute *attr,
  */
 static void asus_als_switch(struct asus_laptop *asus, int value)
 {
+<<<<<<< HEAD
 	int ret;
 
 	if (asus->is_pega_lucid) {
@@ -1139,6 +1239,10 @@ static void asus_als_switch(struct asus_laptop *asus, int value)
 	if (ret)
 		pr_warning("Error setting light sensor switch\n");
 
+=======
+	if (write_acpi_int(asus->handle, METHOD_ALS_CONTROL, value))
+		pr_warn("Error setting light sensor switch\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	asus->light_switch = value;
 }
 
@@ -1194,6 +1298,7 @@ static ssize_t store_lslvl(struct device *dev, struct device_attribute *attr,
 	return rv;
 }
 
+<<<<<<< HEAD
 static int pega_int_read(struct asus_laptop *asus, int arg, int *result)
 {
 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
@@ -1223,6 +1328,8 @@ static ssize_t show_lsvalue(struct device *dev,
 	return err;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * GPS
  */
@@ -1270,7 +1377,11 @@ static ssize_t store_gps(struct device *dev, struct device_attribute *attr,
 	ret = asus_gps_switch(asus, !!value);
 	if (ret)
 		return ret;
+<<<<<<< HEAD
 	rfkill_set_sw_state(asus->gps.rfkill, !value);
+=======
+	rfkill_set_sw_state(asus->gps_rfkill, !value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rv;
 }
 
@@ -1288,6 +1399,7 @@ static const struct rfkill_ops asus_gps_rfkill_ops = {
 	.set_block = asus_gps_rfkill_set,
 };
 
+<<<<<<< HEAD
 static int asus_rfkill_set(void *data, bool blocked)
 {
 	struct asus_rfkill *rfk = data;
@@ -1344,11 +1456,42 @@ static int asus_rfkill_setup(struct asus_laptop *asus, struct asus_rfkill *rfk,
 	if (result) {
 		rfkill_destroy(rfk->rfkill);
 		rfk->rfkill = NULL;
+=======
+static void asus_rfkill_exit(struct asus_laptop *asus)
+{
+	if (asus->gps_rfkill) {
+		rfkill_unregister(asus->gps_rfkill);
+		rfkill_destroy(asus->gps_rfkill);
+		asus->gps_rfkill = NULL;
+	}
+}
+
+static int asus_rfkill_init(struct asus_laptop *asus)
+{
+	int result;
+
+	if (acpi_check_handle(asus->handle, METHOD_GPS_ON, NULL) ||
+	    acpi_check_handle(asus->handle, METHOD_GPS_OFF, NULL) ||
+	    acpi_check_handle(asus->handle, METHOD_GPS_STATUS, NULL))
+		return 0;
+
+	asus->gps_rfkill = rfkill_alloc("asus-gps", &asus->platform_device->dev,
+					RFKILL_TYPE_GPS,
+					&asus_gps_rfkill_ops, asus);
+	if (!asus->gps_rfkill)
+		return -EINVAL;
+
+	result = rfkill_register(asus->gps_rfkill);
+	if (result) {
+		rfkill_destroy(asus->gps_rfkill);
+		asus->gps_rfkill = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return result;
 }
 
+<<<<<<< HEAD
 static int asus_rfkill_init(struct asus_laptop *asus)
 {
 	int result = 0;
@@ -1450,15 +1593,22 @@ exit:
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Input device (i.e. hotkeys)
  */
 static void asus_input_notify(struct asus_laptop *asus, int event)
 {
+<<<<<<< HEAD
 	if (!asus->inputdev)
 		return ;
 	if (!sparse_keymap_report_event(asus->inputdev, event, 1, true))
 		pr_info("Unknown key %x pressed\n", event);
+=======
+	if (asus->inputdev)
+		sparse_keymap_report_event(asus->inputdev, event, 1, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int asus_input_init(struct asus_laptop *asus)
@@ -1468,7 +1618,11 @@ static int asus_input_init(struct asus_laptop *asus)
 
 	input = input_allocate_device();
 	if (!input) {
+<<<<<<< HEAD
 		pr_warn("Unable to allocate input device\n");
+=======
+		pr_info("Unable to allocate input device\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 	input->name = "Asus Laptop extra buttons";
@@ -1483,7 +1637,11 @@ static int asus_input_init(struct asus_laptop *asus)
 	}
 	error = input_register_device(input);
 	if (error) {
+<<<<<<< HEAD
 		pr_warn("Unable to register input device\n");
+=======
+		pr_info("Unable to register input device\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_free_keymap;
 	}
 
@@ -1531,6 +1689,7 @@ static void asus_acpi_notify(struct acpi_device *device, u32 event)
 		}
 		return ;
 	}
+<<<<<<< HEAD
 
 	/* Accelerometer "coarse orientation change" event */
 	if (asus->pega_accel_poll && event == 0xEA) {
@@ -1539,6 +1698,8 @@ static void asus_acpi_notify(struct acpi_device *device, u32 event)
 		return ;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	asus_input_notify(asus, event);
 }
 
@@ -1550,7 +1711,10 @@ static DEVICE_ATTR(wimax, S_IRUGO | S_IWUSR, show_wimax, store_wimax);
 static DEVICE_ATTR(wwan, S_IRUGO | S_IWUSR, show_wwan, store_wwan);
 static DEVICE_ATTR(display, S_IWUSR, NULL, store_disp);
 static DEVICE_ATTR(ledd, S_IRUGO | S_IWUSR, show_ledd, store_ledd);
+<<<<<<< HEAD
 static DEVICE_ATTR(ls_value, S_IRUGO, show_lsvalue, NULL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEVICE_ATTR(ls_level, S_IRUGO | S_IWUSR, show_lslvl, store_lslvl);
 static DEVICE_ATTR(ls_switch, S_IRUGO | S_IWUSR, show_lssw, store_lssw);
 static DEVICE_ATTR(gps, S_IRUGO | S_IWUSR, show_gps, store_gps);
@@ -1563,14 +1727,21 @@ static struct attribute *asus_attributes[] = {
 	&dev_attr_wwan.attr,
 	&dev_attr_display.attr,
 	&dev_attr_ledd.attr,
+<<<<<<< HEAD
 	&dev_attr_ls_value.attr,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&dev_attr_ls_level.attr,
 	&dev_attr_ls_switch.attr,
 	&dev_attr_gps.attr,
 	NULL
 };
 
+<<<<<<< HEAD
 static umode_t asus_sysfs_is_visible(struct kobject *kobj,
+=======
+static mode_t asus_sysfs_is_visible(struct kobject *kobj,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    struct attribute *attr,
 				    int idx)
 {
@@ -1580,6 +1751,7 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
 	acpi_handle handle = asus->handle;
 	bool supported;
 
+<<<<<<< HEAD
 	if (asus->is_pega_lucid) {
 		/* no ls_level interface on the Lucid */
 		if (attr == &dev_attr_ls_switch.attr)
@@ -1593,6 +1765,8 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
 	}
 
 normal:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (attr == &dev_attr_wlan.attr) {
 		supported = !acpi_check_handle(handle, METHOD_WLAN, NULL);
 
@@ -1615,9 +1789,14 @@ normal:
 	} else if (attr == &dev_attr_ls_switch.attr ||
 		   attr == &dev_attr_ls_level.attr) {
 		supported = !acpi_check_handle(handle, METHOD_ALS_CONTROL, NULL) &&
+<<<<<<< HEAD
 			!acpi_check_handle(handle, METHOD_ALS_LEVEL, NULL);
 	} else if (attr == &dev_attr_ls_value.attr) {
 		supported = asus->is_pega_lucid;
+=======
+			    !acpi_check_handle(handle, METHOD_ALS_LEVEL, NULL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (attr == &dev_attr_gps.attr) {
 		supported = !acpi_check_handle(handle, METHOD_GPS_ON, NULL) &&
 			    !acpi_check_handle(handle, METHOD_GPS_OFF, NULL) &&
@@ -1672,7 +1851,11 @@ static struct platform_driver platform_driver = {
 	.driver = {
 		.name = ASUS_LAPTOP_FILE,
 		.owner = THIS_MODULE,
+<<<<<<< HEAD
 	},
+=======
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -1684,7 +1867,11 @@ static int asus_laptop_get_info(struct asus_laptop *asus)
 {
 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
 	union acpi_object *model = NULL;
+<<<<<<< HEAD
 	unsigned long long bsts_result;
+=======
+	unsigned long long bsts_result, hwrs_result;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *string = NULL;
 	acpi_status status;
 
@@ -1746,6 +1933,20 @@ static int asus_laptop_get_info(struct asus_laptop *asus)
 	if (*string)
 		pr_notice("  %s model detected\n", string);
 
+<<<<<<< HEAD
+=======
+	/*
+	 * The HWRS method return informations about the hardware.
+	 * 0x80 bit is for WLAN, 0x100 for Bluetooth,
+	 * 0x40 for WWAN, 0x10 for WIMAX.
+	 * The significance of others is yet to be found.
+	 */
+	status =
+	    acpi_evaluate_integer(asus->handle, "HRWS", NULL, &hwrs_result);
+	if (!ACPI_FAILURE(status))
+		pr_notice("  HRWS returned %x", (int)hwrs_result);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!acpi_check_handle(asus->handle, METHOD_WL_STATUS, NULL))
 		asus->have_rsts = true;
 
@@ -1770,6 +1971,7 @@ static int __devinit asus_acpi_init(struct asus_laptop *asus)
 	if (result)
 		return result;
 
+<<<<<<< HEAD
 	if (!strcmp(bled_type, "led"))
 		asus->bled_type = TYPE_LED;
 	else if (!strcmp(bled_type, "rfkill"))
@@ -1780,6 +1982,9 @@ static int __devinit asus_acpi_init(struct asus_laptop *asus)
 	else if (!strcmp(wled_type, "rfkill"))
 		asus->wled_type = TYPE_RFKILL;
 
+=======
+	/* WLED and BLED are on by default */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (bluetooth_status >= 0)
 		asus_bluetooth_set(asus, !!bluetooth_status);
 
@@ -1800,6 +2005,7 @@ static int __devinit asus_acpi_init(struct asus_laptop *asus)
 	asus->ledd_status = 0xFFF;
 
 	/* Set initial values of light sensor and level */
+<<<<<<< HEAD
 	asus->light_switch = !!als_status;
 	asus->light_level = 5;	/* level 5 for sensor sensitivity */
 
@@ -1807,6 +2013,13 @@ static int __devinit asus_acpi_init(struct asus_laptop *asus)
 		asus_als_switch(asus, asus->light_switch);
 	} else if (!acpi_check_handle(asus->handle, METHOD_ALS_CONTROL, NULL) &&
 		   !acpi_check_handle(asus->handle, METHOD_ALS_LEVEL, NULL)) {
+=======
+	asus->light_switch = 0;	/* Default to light sensor disabled */
+	asus->light_level = 5;	/* level 5 for sensor sensitivity */
+
+	if (!acpi_check_handle(asus->handle, METHOD_ALS_CONTROL, NULL) &&
+	    !acpi_check_handle(asus->handle, METHOD_ALS_LEVEL, NULL)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		asus_als_switch(asus, asus->light_switch);
 		asus_als_level(asus, asus->light_level);
 	}
@@ -1853,10 +2066,16 @@ static int __devinit asus_acpi_add(struct acpi_device *device)
 		goto fail_platform;
 
 	/*
+<<<<<<< HEAD
 	 * Need platform type detection first, then the platform
 	 * device.  It is used as a parent for the sub-devices below.
 	 */
 	asus->is_pega_lucid = asus_check_pega_lucid(asus);
+=======
+	 * Register the platform device first.  It is used as a parent for the
+	 * sub-devices below.
+	 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	result = asus_platform_init(asus);
 	if (result)
 		goto fail_platform;
@@ -1877,6 +2096,7 @@ static int __devinit asus_acpi_add(struct acpi_device *device)
 		goto fail_led;
 
 	result = asus_rfkill_init(asus);
+<<<<<<< HEAD
 	if (result && result != -ENODEV)
 		goto fail_rfkill;
 
@@ -1895,6 +2115,14 @@ fail_pega_rfkill:
 	pega_accel_exit(asus);
 fail_pega_accel:
 	asus_rfkill_exit(asus);
+=======
+	if (result)
+		goto fail_rfkill;
+
+	asus_device_present = true;
+	return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 fail_rfkill:
 	asus_led_exit(asus);
 fail_led:
@@ -1918,7 +2146,10 @@ static int asus_acpi_remove(struct acpi_device *device, int type)
 	asus_rfkill_exit(asus);
 	asus_led_exit(asus);
 	asus_input_exit(asus);
+<<<<<<< HEAD
 	pega_accel_exit(asus);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	asus_platform_exit(asus);
 
 	kfree(asus->name);

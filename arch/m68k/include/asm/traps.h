@@ -18,11 +18,18 @@
 
 typedef void (*e_vector)(void);
 extern e_vector vectors[];
+<<<<<<< HEAD
 extern e_vector *_ramvec;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 asmlinkage void auto_inthandler(void);
 asmlinkage void user_inthandler(void);
 asmlinkage void bad_inthandler(void);
+<<<<<<< HEAD
+=======
+extern void init_vectors(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif
 

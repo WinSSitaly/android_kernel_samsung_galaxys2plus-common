@@ -89,12 +89,19 @@ static ssize_t trackpoint_set_int_attr(struct psmouse *psmouse, void *data,
 	struct trackpoint_data *tp = psmouse->private;
 	struct trackpoint_attr_data *attr = data;
 	unsigned char *field = (unsigned char *)((char *)tp + attr->field_offset);
+<<<<<<< HEAD
 	unsigned char value;
 	int err;
 
 	err = kstrtou8(buf, 10, &value);
 	if (err)
 		return err;
+=======
+	unsigned long value;
+
+	if (strict_strtoul(buf, 10, &value) || value > 255)
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	*field = value;
 	trackpoint_write(&psmouse->ps2dev, attr->command, value);
@@ -117,6 +124,7 @@ static ssize_t trackpoint_set_bit_attr(struct psmouse *psmouse, void *data,
 	struct trackpoint_data *tp = psmouse->private;
 	struct trackpoint_attr_data *attr = data;
 	unsigned char *field = (unsigned char *)((char *)tp + attr->field_offset);
+<<<<<<< HEAD
 	unsigned int value;
 	int err;
 
@@ -125,6 +133,11 @@ static ssize_t trackpoint_set_bit_attr(struct psmouse *psmouse, void *data,
 		return err;
 
 	if (value > 1)
+=======
+	unsigned long value;
+
+	if (strict_strtoul(buf, 10, &value) || value > 1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	if (attr->inverted)
@@ -304,7 +317,11 @@ int trackpoint_detect(struct psmouse *psmouse, bool set_properties)
 		return 0;
 
 	if (trackpoint_read(&psmouse->ps2dev, TP_EXT_BTN, &button_info)) {
+<<<<<<< HEAD
 		psmouse_warn(psmouse, "failed to get extended button data\n");
+=======
+		printk(KERN_WARNING "trackpoint.c: failed to get extended button data\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		button_info = 0;
 	}
 
@@ -326,18 +343,29 @@ int trackpoint_detect(struct psmouse *psmouse, bool set_properties)
 
 	error = sysfs_create_group(&ps2dev->serio->dev.kobj, &trackpoint_attr_group);
 	if (error) {
+<<<<<<< HEAD
 		psmouse_err(psmouse,
 			    "failed to create sysfs attributes, error: %d\n",
 			    error);
+=======
+		printk(KERN_ERR
+			"trackpoint.c: failed to create sysfs attributes, error: %d\n",
+			error);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(psmouse->private);
 		psmouse->private = NULL;
 		return -1;
 	}
 
+<<<<<<< HEAD
 	psmouse_info(psmouse,
 		     "IBM TrackPoint firmware: 0x%02x, buttons: %d/%d\n",
 		     firmware_id,
 		     (button_info & 0xf0) >> 4, button_info & 0x0f);
+=======
+	printk(KERN_INFO "IBM TrackPoint firmware: 0x%02x, buttons: %d/%d\n",
+		firmware_id, (button_info & 0xf0) >> 4, button_info & 0x0f);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

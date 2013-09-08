@@ -1,7 +1,11 @@
 /*
  * Xen implementation for transcendent memory (tmem)
  *
+<<<<<<< HEAD
  * Copyright (C) 2009-2011 Oracle Corp.  All rights reserved.
+=======
+ * Copyright (C) 2009-2010 Oracle Corp.  All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Author: Dan Magenheimer
  */
 
@@ -11,11 +15,14 @@
 #include <linux/pagemap.h>
 #include <linux/cleancache.h>
 
+<<<<<<< HEAD
 /* temporary ifdef until include/linux/frontswap.h is upstream */
 #ifdef CONFIG_FRONTSWAP
 #include <linux/frontswap.h>
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <xen/xen.h>
 #include <xen/interface/xen.h>
 #include <asm/xen/hypercall.h>
@@ -127,6 +134,7 @@ static int xen_tmem_flush_object(u32 pool_id, struct tmem_oid oid)
 	return xen_tmem_op(TMEM_FLUSH_OBJECT, pool_id, oid, 0, 0, 0, 0, 0);
 }
 
+<<<<<<< HEAD
 bool __read_mostly tmem_enabled = false;
 
 static int __init enable_tmem(char *s)
@@ -137,6 +145,8 @@ static int __init enable_tmem(char *s)
 __setup("tmem", enable_tmem);
 
 #ifdef CONFIG_CLEANCACHE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int xen_tmem_destroy_pool(u32 pool_id)
 {
 	struct tmem_oid oid = { { 0 } };
@@ -144,6 +154,19 @@ static int xen_tmem_destroy_pool(u32 pool_id)
 	return xen_tmem_op(TMEM_DESTROY_POOL, pool_id, oid, 0, 0, 0, 0, 0);
 }
 
+<<<<<<< HEAD
+=======
+int tmem_enabled;
+
+static int __init enable_tmem(char *s)
+{
+	tmem_enabled = 1;
+	return 1;
+}
+
+__setup("tmem", enable_tmem);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* cleancache ops */
 
 static void tmem_cleancache_put_page(int pool, struct cleancache_filekey key,
@@ -226,6 +249,7 @@ static int tmem_cleancache_init_shared_fs(char *uuid, size_t pagesize)
 	return xen_tmem_new_pool(shared_uuid, TMEM_POOL_SHARED, pagesize);
 }
 
+<<<<<<< HEAD
 static bool __initdata use_cleancache = true;
 
 static int __init no_cleancache(char *s)
@@ -387,12 +411,44 @@ static int __init xen_tmem_init(void)
 				 "Xen Transcendent Memory\n");
 	}
 #endif
+=======
+static int use_cleancache = 1;
+
+static int __init no_cleancache(char *s)
+{
+	use_cleancache = 0;
+	return 1;
+}
+
+__setup("nocleancache", no_cleancache);
+
+static struct cleancache_ops tmem_cleancache_ops = {
+	.put_page = tmem_cleancache_put_page,
+	.get_page = tmem_cleancache_get_page,
+	.flush_page = tmem_cleancache_flush_page,
+	.flush_inode = tmem_cleancache_flush_inode,
+	.flush_fs = tmem_cleancache_flush_fs,
+	.init_shared_fs = tmem_cleancache_init_shared_fs,
+	.init_fs = tmem_cleancache_init_fs
+};
+
+static int __init xen_tmem_init(void)
+{
+	struct cleancache_ops old_ops;
+
+	if (!xen_domain())
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_CLEANCACHE
 	BUG_ON(sizeof(struct cleancache_filekey) != sizeof(struct tmem_oid));
 	if (tmem_enabled && use_cleancache) {
 		char *s = "";
+<<<<<<< HEAD
 		struct cleancache_ops old_ops =
 			cleancache_register_ops(&tmem_cleancache_ops);
+=======
+		old_ops = cleancache_register_ops(&tmem_cleancache_ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (old_ops.init_fs != NULL)
 			s = " (WARNING: cleancache_ops overridden)";
 		printk(KERN_INFO "cleancache enabled, RAM provided by "

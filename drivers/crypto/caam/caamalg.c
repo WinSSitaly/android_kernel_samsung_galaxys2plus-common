@@ -62,6 +62,7 @@
 #define CAAM_MAX_IV_LENGTH		16
 
 /* length of descriptors text */
+<<<<<<< HEAD
 #define DESC_JOB_IO_LEN			(CAAM_CMD_SZ * 3 + CAAM_PTR_SZ * 3)
 
 #define DESC_AEAD_BASE			(4 * CAAM_CMD_SZ)
@@ -78,6 +79,12 @@
 #define DESC_MAX_USED_BYTES		(DESC_AEAD_GIVENC_LEN + \
 					 CAAM_MAX_KEY_SIZE)
 #define DESC_MAX_USED_LEN		(DESC_MAX_USED_BYTES / CAAM_CMD_SZ)
+=======
+#define DESC_AEAD_SHARED_TEXT_LEN	4
+#define DESC_AEAD_ENCRYPT_TEXT_LEN 	21
+#define DESC_AEAD_DECRYPT_TEXT_LEN 	24
+#define DESC_AEAD_GIVENCRYPT_TEXT_LEN 	27
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef DEBUG
 /* for print_hex_dumps with line references */
@@ -88,6 +95,7 @@
 #define debug(format, arg...)
 #endif
 
+<<<<<<< HEAD
 /* Set DK bit in class 1 operation if shared */
 static inline void append_dec_op1(u32 *desc, u32 type)
 {
@@ -157,11 +165,14 @@ static inline void ablkcipher_append_src_dst(u32 *desc)
 #define GIV_SRC_CONTIG		1
 #define GIV_DST_CONTIG		(1 << 1)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * per-session context
  */
 struct caam_ctx {
 	struct device *jrdev;
+<<<<<<< HEAD
 	u32 sh_desc_enc[DESC_MAX_USED_LEN];
 	u32 sh_desc_dec[DESC_MAX_USED_LEN];
 	u32 sh_desc_givenc[DESC_MAX_USED_LEN];
@@ -173,12 +184,22 @@ struct caam_ctx {
 	u32 alg_op;
 	u8 key[CAAM_MAX_KEY_SIZE];
 	dma_addr_t key_dma;
+=======
+	u32 *sh_desc;
+	dma_addr_t shared_desc_phys;
+	u32 class1_alg_type;
+	u32 class2_alg_type;
+	u32 alg_op;
+	u8 *key;
+	dma_addr_t key_phys;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int enckeylen;
 	unsigned int split_key_len;
 	unsigned int split_key_pad_len;
 	unsigned int authsize;
 };
 
+<<<<<<< HEAD
 static void append_key_aead(u32 *desc, struct caam_ctx *ctx,
 			    int keys_fit_inline)
 {
@@ -442,12 +463,18 @@ static int aead_set_sh_desc(struct crypto_aead *aead)
 }
 
 static int aead_setauthsize(struct crypto_aead *authenc,
+=======
+static int aead_authenc_setauthsize(struct crypto_aead *authenc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    unsigned int authsize)
 {
 	struct caam_ctx *ctx = crypto_aead_ctx(authenc);
 
 	ctx->authsize = authsize;
+<<<<<<< HEAD
 	aead_set_sh_desc(authenc);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -465,7 +492,10 @@ static void split_key_done(struct device *dev, u32 *desc, u32 err,
 #ifdef DEBUG
 	dev_err(dev, "%s %d: err 0x%x\n", __func__, __LINE__, err);
 #endif
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err) {
 		char tmp[CAAM_ERROR_STR_MAX];
 
@@ -569,7 +599,77 @@ static u32 gen_split_key(struct caam_ctx *ctx, const u8 *key_in, u32 authkeylen)
 	return ret;
 }
 
+<<<<<<< HEAD
 static int aead_setkey(struct crypto_aead *aead,
+=======
+static int build_sh_desc_ipsec(struct caam_ctx *ctx)
+{
+	struct device *jrdev = ctx->jrdev;
+	u32 *sh_desc;
+	u32 *jump_cmd;
+	bool keys_fit_inline = 0;
+
+	/*
+	 * largest Job Descriptor and its Shared Descriptor
+	 * must both fit into the 64-word Descriptor h/w Buffer
+	 */
+	if ((DESC_AEAD_GIVENCRYPT_TEXT_LEN +
+	     DESC_AEAD_SHARED_TEXT_LEN) * CAAM_CMD_SZ +
+	    ctx->split_key_pad_len + ctx->enckeylen <= CAAM_DESC_BYTES_MAX)
+		keys_fit_inline = 1;
+
+	/* build shared descriptor for this session */
+	sh_desc = kmalloc(CAAM_CMD_SZ * DESC_AEAD_SHARED_TEXT_LEN +
+			  (keys_fit_inline ?
+			   ctx->split_key_pad_len + ctx->enckeylen :
+			   CAAM_PTR_SZ * 2), GFP_DMA | GFP_KERNEL);
+	if (!sh_desc) {
+		dev_err(jrdev, "could not allocate shared descriptor\n");
+		return -ENOMEM;
+	}
+
+	init_sh_desc(sh_desc, HDR_SAVECTX | HDR_SHARE_SERIAL);
+
+	jump_cmd = append_jump(sh_desc, CLASS_BOTH | JUMP_TEST_ALL |
+			       JUMP_COND_SHRD | JUMP_COND_SELF);
+
+	/*
+	 * process keys, starting with class 2/authentication.
+	 */
+	if (keys_fit_inline) {
+		append_key_as_imm(sh_desc, ctx->key, ctx->split_key_pad_len,
+				  ctx->split_key_len,
+				  CLASS_2 | KEY_DEST_MDHA_SPLIT | KEY_ENC);
+
+		append_key_as_imm(sh_desc, (void *)ctx->key +
+				  ctx->split_key_pad_len, ctx->enckeylen,
+				  ctx->enckeylen, CLASS_1 | KEY_DEST_CLASS_REG);
+	} else {
+		append_key(sh_desc, ctx->key_phys, ctx->split_key_len, CLASS_2 |
+			   KEY_DEST_MDHA_SPLIT | KEY_ENC);
+		append_key(sh_desc, ctx->key_phys + ctx->split_key_pad_len,
+			   ctx->enckeylen, CLASS_1 | KEY_DEST_CLASS_REG);
+	}
+
+	/* update jump cmd now that we are at the jump target */
+	set_jump_tgt_here(sh_desc, jump_cmd);
+
+	ctx->shared_desc_phys = dma_map_single(jrdev, sh_desc,
+					       desc_bytes(sh_desc),
+					       DMA_TO_DEVICE);
+	if (dma_mapping_error(jrdev, ctx->shared_desc_phys)) {
+		dev_err(jrdev, "unable to map shared descriptor\n");
+		kfree(sh_desc);
+		return -ENOMEM;
+	}
+
+	ctx->sh_desc = sh_desc;
+
+	return 0;
+}
+
+static int aead_authenc_setkey(struct crypto_aead *aead,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       const u8 *key, unsigned int keylen)
 {
 	/* Sizes for MDHA pads (*not* keys): MD5, SHA1, 224, 256, 384, 512 */
@@ -609,19 +709,40 @@ static int aead_setkey(struct crypto_aead *aead,
 	print_hex_dump(KERN_ERR, "key in @"xstr(__LINE__)": ",
 		       DUMP_PREFIX_ADDRESS, 16, 4, key, keylen, 1);
 #endif
+<<<<<<< HEAD
 
 	ret = gen_split_key(ctx, key, authkeylen);
 	if (ret) {
+=======
+	ctx->key = kmalloc(ctx->split_key_pad_len + enckeylen,
+			   GFP_KERNEL | GFP_DMA);
+	if (!ctx->key) {
+		dev_err(jrdev, "could not allocate key output memory\n");
+		return -ENOMEM;
+	}
+
+	ret = gen_split_key(ctx, key, authkeylen);
+	if (ret) {
+		kfree(ctx->key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto badkey;
 	}
 
 	/* postpend encryption key to auth split key */
 	memcpy(ctx->key + ctx->split_key_pad_len, key + authkeylen, enckeylen);
 
+<<<<<<< HEAD
 	ctx->key_dma = dma_map_single(jrdev, ctx->key, ctx->split_key_pad_len +
 				       enckeylen, DMA_TO_DEVICE);
 	if (dma_mapping_error(jrdev, ctx->key_dma)) {
 		dev_err(jrdev, "unable to map key i/o memory\n");
+=======
+	ctx->key_phys = dma_map_single(jrdev, ctx->key, ctx->split_key_pad_len +
+				       enckeylen, DMA_TO_DEVICE);
+	if (dma_mapping_error(jrdev, ctx->key_phys)) {
+		dev_err(jrdev, "unable to map key i/o memory\n");
+		kfree(ctx->key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 #ifdef DEBUG
@@ -632,10 +753,18 @@ static int aead_setkey(struct crypto_aead *aead,
 
 	ctx->enckeylen = enckeylen;
 
+<<<<<<< HEAD
 	ret = aead_set_sh_desc(aead);
 	if (ret) {
 		dma_unmap_single(jrdev, ctx->key_dma, ctx->split_key_pad_len +
 				 enckeylen, DMA_TO_DEVICE);
+=======
+	ret = build_sh_desc_ipsec(ctx);
+	if (ret) {
+		dma_unmap_single(jrdev, ctx->key_phys, ctx->split_key_pad_len +
+				 enckeylen, DMA_TO_DEVICE);
+		kfree(ctx->key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;
@@ -644,6 +773,7 @@ badkey:
 	return -EINVAL;
 }
 
+<<<<<<< HEAD
 static int ablkcipher_setkey(struct crypto_ablkcipher *ablkcipher,
 			     const u8 *key, unsigned int keylen)
 {
@@ -757,6 +887,8 @@ static int ablkcipher_setkey(struct crypto_ablkcipher *ablkcipher,
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct link_tbl_entry {
 	u64 ptr;
 	u32 len;
@@ -766,16 +898,24 @@ struct link_tbl_entry {
 };
 
 /*
+<<<<<<< HEAD
  * aead_edesc - s/w-extended aead descriptor
  * @assoc_nents: number of segments in associated data (SPI+Seq) scatterlist
  * @src_nents: number of segments in input scatterlist
  * @dst_nents: number of segments in output scatterlist
  * @iv_dma: dma address of iv for checking continuity and link table
+=======
+ * ipsec_esp_edesc - s/w-extended ipsec_esp descriptor
+ * @src_nents: number of segments in input scatterlist
+ * @dst_nents: number of segments in output scatterlist
+ * @assoc_nents: number of segments in associated data (SPI+Seq) scatterlist
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @desc: h/w descriptor (variable length; must not exceed MAX_CAAM_DESCSIZE)
  * @link_tbl_bytes: length of dma mapped link_tbl space
  * @link_tbl_dma: bus physical mapped address of h/w link table
  * @hw_desc: the h/w job descriptor followed by any referenced link tables
  */
+<<<<<<< HEAD
 struct aead_edesc {
 	int assoc_nents;
 	int src_nents;
@@ -801,12 +941,19 @@ struct ablkcipher_edesc {
 	int src_nents;
 	int dst_nents;
 	dma_addr_t iv_dma;
+=======
+struct ipsec_esp_edesc {
+	int assoc_nents;
+	int src_nents;
+	int dst_nents;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int link_tbl_bytes;
 	dma_addr_t link_tbl_dma;
 	struct link_tbl_entry *link_tbl;
 	u32 hw_desc[0];
 };
 
+<<<<<<< HEAD
 static void caam_unmap(struct device *dev, struct scatterlist *src,
 		       struct scatterlist *dst, int src_nents, int dst_nents,
 		       dma_addr_t iv_dma, int ivsize, dma_addr_t link_tbl_dma,
@@ -869,6 +1016,47 @@ static void aead_encrypt_done(struct device *jrdev, u32 *desc, u32 err,
 
 	edesc = (struct aead_edesc *)((char *)desc -
 		 offsetof(struct aead_edesc, hw_desc));
+=======
+static void ipsec_esp_unmap(struct device *dev,
+			    struct ipsec_esp_edesc *edesc,
+			    struct aead_request *areq)
+{
+	dma_unmap_sg(dev, areq->assoc, edesc->assoc_nents, DMA_TO_DEVICE);
+
+	if (unlikely(areq->dst != areq->src)) {
+		dma_unmap_sg(dev, areq->src, edesc->src_nents,
+			     DMA_TO_DEVICE);
+		dma_unmap_sg(dev, areq->dst, edesc->dst_nents,
+			     DMA_FROM_DEVICE);
+	} else {
+		dma_unmap_sg(dev, areq->src, edesc->src_nents,
+			     DMA_BIDIRECTIONAL);
+	}
+
+	if (edesc->link_tbl_bytes)
+		dma_unmap_single(dev, edesc->link_tbl_dma,
+				 edesc->link_tbl_bytes,
+				 DMA_TO_DEVICE);
+}
+
+/*
+ * ipsec_esp descriptor callbacks
+ */
+static void ipsec_esp_encrypt_done(struct device *jrdev, u32 *desc, u32 err,
+				   void *context)
+{
+	struct aead_request *areq = context;
+	struct ipsec_esp_edesc *edesc;
+#ifdef DEBUG
+	struct crypto_aead *aead = crypto_aead_reqtfm(areq);
+	int ivsize = crypto_aead_ivsize(aead);
+	struct caam_ctx *ctx = crypto_aead_ctx(aead);
+
+	dev_err(jrdev, "%s %d: err 0x%x\n", __func__, __LINE__, err);
+#endif
+	edesc = (struct ipsec_esp_edesc *)((char *)desc -
+		 offsetof(struct ipsec_esp_edesc, hw_desc));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (err) {
 		char tmp[CAAM_ERROR_STR_MAX];
@@ -876,6 +1064,7 @@ static void aead_encrypt_done(struct device *jrdev, u32 *desc, u32 err,
 		dev_err(jrdev, "%08x: %s\n", err, caam_jr_strstatus(tmp, err));
 	}
 
+<<<<<<< HEAD
 	aead_unmap(jrdev, edesc, req);
 
 #ifdef DEBUG
@@ -888,11 +1077,26 @@ static void aead_encrypt_done(struct device *jrdev, u32 *desc, u32 err,
 	print_hex_dump(KERN_ERR, "dst    @"xstr(__LINE__)": ",
 		       DUMP_PREFIX_ADDRESS, 16, 4, sg_virt(req->src),
 		       edesc->src_nents ? 100 : req->cryptlen +
+=======
+	ipsec_esp_unmap(jrdev, edesc, areq);
+
+#ifdef DEBUG
+	print_hex_dump(KERN_ERR, "assoc  @"xstr(__LINE__)": ",
+		       DUMP_PREFIX_ADDRESS, 16, 4, sg_virt(areq->assoc),
+		       areq->assoclen , 1);
+	print_hex_dump(KERN_ERR, "dstiv  @"xstr(__LINE__)": ",
+		       DUMP_PREFIX_ADDRESS, 16, 4, sg_virt(areq->src) - ivsize,
+		       edesc->src_nents ? 100 : ivsize, 1);
+	print_hex_dump(KERN_ERR, "dst    @"xstr(__LINE__)": ",
+		       DUMP_PREFIX_ADDRESS, 16, 4, sg_virt(areq->src),
+		       edesc->src_nents ? 100 : areq->cryptlen +
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       ctx->authsize + 4, 1);
 #endif
 
 	kfree(edesc);
 
+<<<<<<< HEAD
 	aead_request_complete(req, err);
 }
 
@@ -920,6 +1124,24 @@ static void aead_decrypt_done(struct device *jrdev, u32 *desc, u32 err,
 		       DUMP_PREFIX_ADDRESS, 16, 4, sg_virt(req->dst),
 		       req->cryptlen, 1);
 #endif
+=======
+	aead_request_complete(areq, err);
+}
+
+static void ipsec_esp_decrypt_done(struct device *jrdev, u32 *desc, u32 err,
+				   void *context)
+{
+	struct aead_request *areq = context;
+	struct ipsec_esp_edesc *edesc;
+#ifdef DEBUG
+	struct crypto_aead *aead = crypto_aead_reqtfm(areq);
+	struct caam_ctx *ctx = crypto_aead_ctx(aead);
+
+	dev_err(jrdev, "%s %d: err 0x%x\n", __func__, __LINE__, err);
+#endif
+	edesc = (struct ipsec_esp_edesc *)((char *)desc -
+		 offsetof(struct ipsec_esp_edesc, hw_desc));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (err) {
 		char tmp[CAAM_ERROR_STR_MAX];
@@ -927,7 +1149,11 @@ static void aead_decrypt_done(struct device *jrdev, u32 *desc, u32 err,
 		dev_err(jrdev, "%08x: %s\n", err, caam_jr_strstatus(tmp, err));
 	}
 
+<<<<<<< HEAD
 	aead_unmap(jrdev, edesc, req);
+=======
+	ipsec_esp_unmap(jrdev, edesc, areq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * verify hw auth check passed else return -EBADMSG
@@ -938,17 +1164,27 @@ static void aead_decrypt_done(struct device *jrdev, u32 *desc, u32 err,
 #ifdef DEBUG
 	print_hex_dump(KERN_ERR, "iphdrout@"xstr(__LINE__)": ",
 		       DUMP_PREFIX_ADDRESS, 16, 4,
+<<<<<<< HEAD
 		       ((char *)sg_virt(req->assoc) - sizeof(struct iphdr)),
 		       sizeof(struct iphdr) + req->assoclen +
 		       ((req->cryptlen > 1500) ? 1500 : req->cryptlen) +
 		       ctx->authsize + 36, 1);
 	if (!err && edesc->link_tbl_bytes) {
 		struct scatterlist *sg = sg_last(req->src, edesc->src_nents);
+=======
+		       ((char *)sg_virt(areq->assoc) - sizeof(struct iphdr)),
+		       sizeof(struct iphdr) + areq->assoclen +
+		       ((areq->cryptlen > 1500) ? 1500 : areq->cryptlen) +
+		       ctx->authsize + 36, 1);
+	if (!err && edesc->link_tbl_bytes) {
+		struct scatterlist *sg = sg_last(areq->src, edesc->src_nents);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		print_hex_dump(KERN_ERR, "sglastout@"xstr(__LINE__)": ",
 			       DUMP_PREFIX_ADDRESS, 16, 4, sg_virt(sg),
 			sg->length + ctx->authsize + 16, 1);
 	}
 #endif
+<<<<<<< HEAD
 
 	kfree(edesc);
 
@@ -1039,10 +1275,16 @@ static void sg_to_link_tbl_one(struct link_tbl_entry *link_tbl_ptr,
 		       DUMP_PREFIX_ADDRESS, 16, 4, link_tbl_ptr,
 		       sizeof(struct link_tbl_entry), 1);
 #endif
+=======
+	kfree(edesc);
+
+	aead_request_complete(areq, err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * convert scatterlist to h/w link table format
+<<<<<<< HEAD
  * but does not have final bit; instead, returns last entry
  */
 static struct link_tbl_entry *sg_to_link_tbl(struct scatterlist *sg,
@@ -1052,10 +1294,24 @@ static struct link_tbl_entry *sg_to_link_tbl(struct scatterlist *sg,
 	while (sg_count) {
 		sg_to_link_tbl_one(link_tbl_ptr, sg_dma_address(sg),
 				   sg_dma_len(sg), offset);
+=======
+ * scatterlist must have been previously dma mapped
+ */
+static void sg_to_link_tbl(struct scatterlist *sg, int sg_count,
+			   struct link_tbl_entry *link_tbl_ptr, u32 offset)
+{
+	while (sg_count) {
+		link_tbl_ptr->ptr = sg_dma_address(sg);
+		link_tbl_ptr->len = sg_dma_len(sg);
+		link_tbl_ptr->reserved = 0;
+		link_tbl_ptr->buf_pool_id = 0;
+		link_tbl_ptr->offset = offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		link_tbl_ptr++;
 		sg = sg_next(sg);
 		sg_count--;
 	}
+<<<<<<< HEAD
 	return link_tbl_ptr - 1;
 }
 
@@ -1067,10 +1323,16 @@ static void sg_to_link_tbl_last(struct scatterlist *sg, int sg_count,
 				struct link_tbl_entry *link_tbl_ptr, u32 offset)
 {
 	link_tbl_ptr = sg_to_link_tbl(sg, sg_count, link_tbl_ptr, offset);
+=======
+
+	/* set Final bit (marks end of link table) */
+	link_tbl_ptr--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	link_tbl_ptr->len |= 0x40000000;
 }
 
 /*
+<<<<<<< HEAD
  * Fill in aead job descriptor
  */
 static void init_aead_job(u32 *sh_desc, dma_addr_t ptr,
@@ -1099,10 +1361,42 @@ static void init_aead_job(u32 *sh_desc, dma_addr_t ptr,
 	print_hex_dump(KERN_ERR, "src    @"xstr(__LINE__)": ",
 		       DUMP_PREFIX_ADDRESS, 16, 4, sg_virt(req->src),
 			edesc->src_nents ? 100 : req->cryptlen, 1);
+=======
+ * fill in and submit ipsec_esp job descriptor
+ */
+static int ipsec_esp(struct ipsec_esp_edesc *edesc, struct aead_request *areq,
+		     u32 encrypt,
+		     void (*callback) (struct device *dev, u32 *desc,
+				       u32 err, void *context))
+{
+	struct crypto_aead *aead = crypto_aead_reqtfm(areq);
+	struct caam_ctx *ctx = crypto_aead_ctx(aead);
+	struct device *jrdev = ctx->jrdev;
+	u32 *desc = edesc->hw_desc, options;
+	int ret, sg_count, assoc_sg_count;
+	int ivsize = crypto_aead_ivsize(aead);
+	int authsize = ctx->authsize;
+	dma_addr_t ptr, dst_dma, src_dma;
+#ifdef DEBUG
+	u32 *sh_desc = ctx->sh_desc;
+
+	debug("assoclen %d cryptlen %d authsize %d\n",
+	      areq->assoclen, areq->cryptlen, authsize);
+	print_hex_dump(KERN_ERR, "assoc  @"xstr(__LINE__)": ",
+		       DUMP_PREFIX_ADDRESS, 16, 4, sg_virt(areq->assoc),
+		       areq->assoclen , 1);
+	print_hex_dump(KERN_ERR, "presciv@"xstr(__LINE__)": ",
+		       DUMP_PREFIX_ADDRESS, 16, 4, sg_virt(areq->src) - ivsize,
+		       edesc->src_nents ? 100 : ivsize, 1);
+	print_hex_dump(KERN_ERR, "src    @"xstr(__LINE__)": ",
+		       DUMP_PREFIX_ADDRESS, 16, 4, sg_virt(areq->src),
+			edesc->src_nents ? 100 : areq->cryptlen + authsize, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	print_hex_dump(KERN_ERR, "shrdesc@"xstr(__LINE__)": ",
 		       DUMP_PREFIX_ADDRESS, 16, 4, sh_desc,
 		       desc_bytes(sh_desc), 1);
 #endif
+<<<<<<< HEAD
 
 	len = desc_len(sh_desc);
 	init_job_desc_shared(desc, ptr, len, HDR_SHARE_DEFER | HDR_REVERSE);
@@ -1462,6 +1756,119 @@ static int aead_decrypt(struct aead_request *req)
 		ret = -EINPROGRESS;
 	} else {
 		aead_unmap(jrdev, edesc, req);
+=======
+	assoc_sg_count = dma_map_sg(jrdev, areq->assoc, edesc->assoc_nents ?: 1,
+				    DMA_TO_DEVICE);
+	if (areq->src == areq->dst)
+		sg_count = dma_map_sg(jrdev, areq->src, edesc->src_nents ? : 1,
+				      DMA_BIDIRECTIONAL);
+	else
+		sg_count = dma_map_sg(jrdev, areq->src, edesc->src_nents ? : 1,
+				      DMA_TO_DEVICE);
+
+	/* start auth operation */
+	append_operation(desc, ctx->class2_alg_type | OP_ALG_AS_INITFINAL |
+			 (encrypt ? : OP_ALG_ICV_ON));
+
+	/* Load FIFO with data for Class 2 CHA */
+	options = FIFOLD_CLASS_CLASS2 | FIFOLD_TYPE_MSG;
+	if (!edesc->assoc_nents) {
+		ptr = sg_dma_address(areq->assoc);
+	} else {
+		sg_to_link_tbl(areq->assoc, edesc->assoc_nents,
+			       edesc->link_tbl, 0);
+		ptr = edesc->link_tbl_dma;
+		options |= LDST_SGF;
+	}
+	append_fifo_load(desc, ptr, areq->assoclen, options);
+
+	/* copy iv from cipher/class1 input context to class2 infifo */
+	append_move(desc, MOVE_SRC_CLASS1CTX | MOVE_DEST_CLASS2INFIFO | ivsize);
+
+	if (!encrypt) {
+		u32 *jump_cmd, *uncond_jump_cmd;
+
+		/* JUMP if shared */
+		jump_cmd = append_jump(desc, JUMP_TEST_ALL | JUMP_COND_SHRD);
+
+		/* start class 1 (cipher) operation, non-shared version */
+		append_operation(desc, ctx->class1_alg_type |
+				 OP_ALG_AS_INITFINAL);
+
+		uncond_jump_cmd = append_jump(desc, 0);
+
+		set_jump_tgt_here(desc, jump_cmd);
+
+		/* start class 1 (cipher) operation, shared version */
+		append_operation(desc, ctx->class1_alg_type |
+				 OP_ALG_AS_INITFINAL | OP_ALG_AAI_DK);
+		set_jump_tgt_here(desc, uncond_jump_cmd);
+	} else
+		append_operation(desc, ctx->class1_alg_type |
+				 OP_ALG_AS_INITFINAL | encrypt);
+
+	/* load payload & instruct to class2 to snoop class 1 if encrypting */
+	options = 0;
+	if (!edesc->src_nents) {
+		src_dma = sg_dma_address(areq->src);
+	} else {
+		sg_to_link_tbl(areq->src, edesc->src_nents, edesc->link_tbl +
+			       edesc->assoc_nents, 0);
+		src_dma = edesc->link_tbl_dma + edesc->assoc_nents *
+			  sizeof(struct link_tbl_entry);
+		options |= LDST_SGF;
+	}
+	append_seq_in_ptr(desc, src_dma, areq->cryptlen + authsize, options);
+	append_seq_fifo_load(desc, areq->cryptlen, FIFOLD_CLASS_BOTH |
+			     FIFOLD_TYPE_LASTBOTH |
+			     (encrypt ? FIFOLD_TYPE_MSG1OUT2
+				      : FIFOLD_TYPE_MSG));
+
+	/* specify destination */
+	if (areq->src == areq->dst) {
+		dst_dma = src_dma;
+	} else {
+		sg_count = dma_map_sg(jrdev, areq->dst, edesc->dst_nents ? : 1,
+				      DMA_FROM_DEVICE);
+		if (!edesc->dst_nents) {
+			dst_dma = sg_dma_address(areq->dst);
+			options = 0;
+		} else {
+			sg_to_link_tbl(areq->dst, edesc->dst_nents,
+				       edesc->link_tbl + edesc->assoc_nents +
+				       edesc->src_nents, 0);
+			dst_dma = edesc->link_tbl_dma + (edesc->assoc_nents +
+				  edesc->src_nents) *
+				  sizeof(struct link_tbl_entry);
+			options = LDST_SGF;
+		}
+	}
+	append_seq_out_ptr(desc, dst_dma, areq->cryptlen + authsize, options);
+	append_seq_fifo_store(desc, areq->cryptlen, FIFOST_TYPE_MESSAGE_DATA);
+
+	/* ICV */
+	if (encrypt)
+		append_seq_store(desc, authsize, LDST_CLASS_2_CCB |
+				 LDST_SRCDST_BYTE_CONTEXT);
+	else
+		append_seq_fifo_load(desc, authsize, FIFOLD_CLASS_CLASS2 |
+				     FIFOLD_TYPE_LAST2 | FIFOLD_TYPE_ICV);
+
+#ifdef DEBUG
+	debug("job_desc_len %d\n", desc_len(desc));
+	print_hex_dump(KERN_ERR, "jobdesc@"xstr(__LINE__)": ",
+		       DUMP_PREFIX_ADDRESS, 16, 4, desc, desc_bytes(desc) , 1);
+	print_hex_dump(KERN_ERR, "jdlinkt@"xstr(__LINE__)": ",
+		       DUMP_PREFIX_ADDRESS, 16, 4, edesc->link_tbl,
+			edesc->link_tbl_bytes, 1);
+#endif
+
+	ret = caam_jr_enqueue(jrdev, desc, callback, areq);
+	if (!ret)
+		ret = -EINPROGRESS;
+	else {
+		ipsec_esp_unmap(jrdev, edesc, areq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(edesc);
 	}
 
@@ -1469,6 +1876,7 @@ static int aead_decrypt(struct aead_request *req)
 }
 
 /*
+<<<<<<< HEAD
  * allocate and map the aead extended descriptor for aead givencrypt
  */
 static struct aead_edesc *aead_giv_edesc_alloc(struct aead_givcrypt_request
@@ -1531,6 +1939,66 @@ static struct aead_edesc *aead_giv_edesc_alloc(struct aead_givcrypt_request
 
 	/* allocate space for base edesc and hw desc commands, link tables */
 	edesc = kmalloc(sizeof(struct aead_edesc) + desc_bytes +
+=======
+ * derive number of elements in scatterlist
+ */
+static int sg_count(struct scatterlist *sg_list, int nbytes, int *chained)
+{
+	struct scatterlist *sg = sg_list;
+	int sg_nents = 0;
+
+	*chained = 0;
+	while (nbytes > 0) {
+		sg_nents++;
+		nbytes -= sg->length;
+		if (!sg_is_last(sg) && (sg + 1)->length == 0)
+			*chained = 1;
+		sg = scatterwalk_sg_next(sg);
+	}
+
+	return sg_nents;
+}
+
+/*
+ * allocate and map the ipsec_esp extended descriptor
+ */
+static struct ipsec_esp_edesc *ipsec_esp_edesc_alloc(struct aead_request *areq,
+						     int desc_bytes)
+{
+	struct crypto_aead *aead = crypto_aead_reqtfm(areq);
+	struct caam_ctx *ctx = crypto_aead_ctx(aead);
+	struct device *jrdev = ctx->jrdev;
+	gfp_t flags = areq->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP ? GFP_KERNEL :
+		      GFP_ATOMIC;
+	int assoc_nents, src_nents, dst_nents = 0, chained, link_tbl_bytes;
+	struct ipsec_esp_edesc *edesc;
+
+	assoc_nents = sg_count(areq->assoc, areq->assoclen, &chained);
+	BUG_ON(chained);
+	if (likely(assoc_nents == 1))
+		assoc_nents = 0;
+
+	src_nents = sg_count(areq->src, areq->cryptlen + ctx->authsize,
+			     &chained);
+	BUG_ON(chained);
+	if (src_nents == 1)
+		src_nents = 0;
+
+	if (unlikely(areq->dst != areq->src)) {
+		dst_nents = sg_count(areq->dst, areq->cryptlen + ctx->authsize,
+				     &chained);
+		BUG_ON(chained);
+		if (dst_nents == 1)
+			dst_nents = 0;
+	}
+
+	link_tbl_bytes = (assoc_nents + src_nents + dst_nents) *
+			 sizeof(struct link_tbl_entry);
+	debug("link_tbl_bytes %d\n", link_tbl_bytes);
+
+	/* allocate space for base edesc and hw desc commands, link tables */
+	edesc = kmalloc(sizeof(struct ipsec_esp_edesc) + desc_bytes +
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			link_tbl_bytes, GFP_DMA | flags);
 	if (!edesc) {
 		dev_err(jrdev, "could not allocate extended descriptor\n");
@@ -1540,6 +2008,7 @@ static struct aead_edesc *aead_giv_edesc_alloc(struct aead_givcrypt_request
 	edesc->assoc_nents = assoc_nents;
 	edesc->src_nents = src_nents;
 	edesc->dst_nents = dst_nents;
+<<<<<<< HEAD
 	edesc->iv_dma = iv_dma;
 	edesc->link_tbl_bytes = link_tbl_bytes;
 	edesc->link_tbl = (void *)edesc + sizeof(struct aead_edesc) +
@@ -1569,10 +2038,18 @@ static struct aead_edesc *aead_giv_edesc_alloc(struct aead_givcrypt_request
 		sg_to_link_tbl_last(req->dst, dst_nents,
 				    edesc->link_tbl + link_tbl_index, 0);
 	}
+=======
+	edesc->link_tbl = (void *)edesc + sizeof(struct ipsec_esp_edesc) +
+			  desc_bytes;
+	edesc->link_tbl_dma = dma_map_single(jrdev, edesc->link_tbl,
+					     link_tbl_bytes, DMA_TO_DEVICE);
+	edesc->link_tbl_bytes = link_tbl_bytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return edesc;
 }
 
+<<<<<<< HEAD
 static int aead_givencrypt(struct aead_givcrypt_request *areq)
 {
 	struct aead_request *req = &areq->areq;
@@ -1785,10 +2262,135 @@ static int ablkcipher_decrypt(struct ablkcipher_request *req)
 
 #define template_aead		template_u.aead
 #define template_ablkcipher	template_u.ablkcipher
+=======
+static int aead_authenc_encrypt(struct aead_request *areq)
+{
+	struct ipsec_esp_edesc *edesc;
+	struct crypto_aead *aead = crypto_aead_reqtfm(areq);
+	struct caam_ctx *ctx = crypto_aead_ctx(aead);
+	struct device *jrdev = ctx->jrdev;
+	int ivsize = crypto_aead_ivsize(aead);
+	u32 *desc;
+	dma_addr_t iv_dma;
+
+	/* allocate extended descriptor */
+	edesc = ipsec_esp_edesc_alloc(areq, DESC_AEAD_ENCRYPT_TEXT_LEN *
+				      CAAM_CMD_SZ);
+	if (IS_ERR(edesc))
+		return PTR_ERR(edesc);
+
+	desc = edesc->hw_desc;
+
+	/* insert shared descriptor pointer */
+	init_job_desc_shared(desc, ctx->shared_desc_phys,
+			     desc_len(ctx->sh_desc), HDR_SHARE_DEFER);
+
+	iv_dma = dma_map_single(jrdev, areq->iv, ivsize, DMA_TO_DEVICE);
+	/* check dma error */
+
+	append_load(desc, iv_dma, ivsize,
+		    LDST_CLASS_1_CCB | LDST_SRCDST_BYTE_CONTEXT);
+
+	return ipsec_esp(edesc, areq, OP_ALG_ENCRYPT, ipsec_esp_encrypt_done);
+}
+
+static int aead_authenc_decrypt(struct aead_request *req)
+{
+	struct crypto_aead *aead = crypto_aead_reqtfm(req);
+	int ivsize = crypto_aead_ivsize(aead);
+	struct caam_ctx *ctx = crypto_aead_ctx(aead);
+	struct device *jrdev = ctx->jrdev;
+	struct ipsec_esp_edesc *edesc;
+	u32 *desc;
+	dma_addr_t iv_dma;
+
+	req->cryptlen -= ctx->authsize;
+
+	/* allocate extended descriptor */
+	edesc = ipsec_esp_edesc_alloc(req, DESC_AEAD_DECRYPT_TEXT_LEN *
+				      CAAM_CMD_SZ);
+	if (IS_ERR(edesc))
+		return PTR_ERR(edesc);
+
+	desc = edesc->hw_desc;
+
+	/* insert shared descriptor pointer */
+	init_job_desc_shared(desc, ctx->shared_desc_phys,
+			     desc_len(ctx->sh_desc), HDR_SHARE_DEFER);
+
+	iv_dma = dma_map_single(jrdev, req->iv, ivsize, DMA_TO_DEVICE);
+	/* check dma error */
+
+	append_load(desc, iv_dma, ivsize,
+		    LDST_CLASS_1_CCB | LDST_SRCDST_BYTE_CONTEXT);
+
+	return ipsec_esp(edesc, req, !OP_ALG_ENCRYPT, ipsec_esp_decrypt_done);
+}
+
+static int aead_authenc_givencrypt(struct aead_givcrypt_request *req)
+{
+	struct aead_request *areq = &req->areq;
+	struct ipsec_esp_edesc *edesc;
+	struct crypto_aead *aead = crypto_aead_reqtfm(areq);
+	struct caam_ctx *ctx = crypto_aead_ctx(aead);
+	struct device *jrdev = ctx->jrdev;
+	int ivsize = crypto_aead_ivsize(aead);
+	dma_addr_t iv_dma;
+	u32 *desc;
+
+	iv_dma = dma_map_single(jrdev, req->giv, ivsize, DMA_FROM_DEVICE);
+
+	debug("%s: giv %p\n", __func__, req->giv);
+
+	/* allocate extended descriptor */
+	edesc = ipsec_esp_edesc_alloc(areq, DESC_AEAD_GIVENCRYPT_TEXT_LEN *
+				      CAAM_CMD_SZ);
+	if (IS_ERR(edesc))
+		return PTR_ERR(edesc);
+
+	desc = edesc->hw_desc;
+
+	/* insert shared descriptor pointer */
+	init_job_desc_shared(desc, ctx->shared_desc_phys,
+			     desc_len(ctx->sh_desc), HDR_SHARE_DEFER);
+
+	/*
+	 * LOAD IMM Info FIFO
+	 * to DECO, Last, Padding, Random, Message, 16 bytes
+	 */
+	append_load_imm_u32(desc, NFIFOENTRY_DEST_DECO | NFIFOENTRY_LC1 |
+			    NFIFOENTRY_STYPE_PAD | NFIFOENTRY_DTYPE_MSG |
+			    NFIFOENTRY_PTYPE_RND | ivsize,
+			    LDST_SRCDST_WORD_INFO_FIFO);
+
+	/*
+	 * disable info fifo entries since the above serves as the entry
+	 * this way, the MOVE command won't generate an entry.
+	 * Note that this isn't required in more recent versions of
+	 * SEC as a MOVE that doesn't do info FIFO entries is available.
+	 */
+	append_cmd(desc, CMD_LOAD | DISABLE_AUTO_INFO_FIFO);
+
+	/* MOVE DECO Alignment -> C1 Context 16 bytes */
+	append_move(desc, MOVE_SRC_INFIFO | MOVE_DEST_CLASS1CTX | ivsize);
+
+	/* re-enable info fifo entries */
+	append_cmd(desc, CMD_LOAD | ENABLE_AUTO_INFO_FIFO);
+
+	/* MOVE C1 Context -> OFIFO 16 bytes */
+	append_move(desc, MOVE_SRC_CLASS1CTX | MOVE_DEST_OUTFIFO | ivsize);
+
+	append_fifo_store(desc, iv_dma, ivsize, FIFOST_TYPE_MESSAGE_DATA);
+
+	return ipsec_esp(edesc, areq, OP_ALG_ENCRYPT, ipsec_esp_encrypt_done);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct caam_alg_template {
 	char name[CRYPTO_MAX_ALG_NAME];
 	char driver_name[CRYPTO_MAX_ALG_NAME];
 	unsigned int blocksize;
+<<<<<<< HEAD
 	u32 type;
 	union {
 		struct ablkcipher_alg ablkcipher;
@@ -1798,6 +2400,9 @@ struct caam_alg_template {
 		struct compress_alg compress;
 		struct rng_alg rng;
 	} template_u;
+=======
+	struct aead_alg aead;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 class1_alg_type;
 	u32 class2_alg_type;
 	u32 alg_op;
@@ -1806,6 +2411,7 @@ struct caam_alg_template {
 static struct caam_alg_template driver_algs[] = {
 	/* single-pass ipsec_esp descriptor */
 	{
+<<<<<<< HEAD
 		.name = "authenc(hmac(md5),cbc(aes))",
 		.driver_name = "authenc-hmac-md5-cbc-aes-caam",
 		.blocksize = AES_BLOCK_SIZE,
@@ -1835,6 +2441,17 @@ static struct caam_alg_template driver_algs[] = {
 			.encrypt = aead_encrypt,
 			.decrypt = aead_decrypt,
 			.givencrypt = aead_givencrypt,
+=======
+		.name = "authenc(hmac(sha1),cbc(aes))",
+		.driver_name = "authenc-hmac-sha1-cbc-aes-caam",
+		.blocksize = AES_BLOCK_SIZE,
+		.aead = {
+			.setkey = aead_authenc_setkey,
+			.setauthsize = aead_authenc_setauthsize,
+			.encrypt = aead_authenc_encrypt,
+			.decrypt = aead_authenc_decrypt,
+			.givencrypt = aead_authenc_givencrypt,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.geniv = "<built-in>",
 			.ivsize = AES_BLOCK_SIZE,
 			.maxauthsize = SHA1_DIGEST_SIZE,
@@ -1844,6 +2461,7 @@ static struct caam_alg_template driver_algs[] = {
 		.alg_op = OP_ALG_ALGSEL_SHA1 | OP_ALG_AAI_HMAC,
 	},
 	{
+<<<<<<< HEAD
 		.name = "authenc(hmac(sha224),cbc(aes))",
 		.driver_name = "authenc-hmac-sha224-cbc-aes-caam",
 		.blocksize = AES_BLOCK_SIZE,
@@ -1873,6 +2491,17 @@ static struct caam_alg_template driver_algs[] = {
 			.encrypt = aead_encrypt,
 			.decrypt = aead_decrypt,
 			.givencrypt = aead_givencrypt,
+=======
+		.name = "authenc(hmac(sha256),cbc(aes))",
+		.driver_name = "authenc-hmac-sha256-cbc-aes-caam",
+		.blocksize = AES_BLOCK_SIZE,
+		.aead = {
+			.setkey = aead_authenc_setkey,
+			.setauthsize = aead_authenc_setauthsize,
+			.encrypt = aead_authenc_encrypt,
+			.decrypt = aead_authenc_decrypt,
+			.givencrypt = aead_authenc_givencrypt,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.geniv = "<built-in>",
 			.ivsize = AES_BLOCK_SIZE,
 			.maxauthsize = SHA256_DIGEST_SIZE,
@@ -1883,6 +2512,7 @@ static struct caam_alg_template driver_algs[] = {
 		.alg_op = OP_ALG_ALGSEL_SHA256 | OP_ALG_AAI_HMAC,
 	},
 	{
+<<<<<<< HEAD
 		.name = "authenc(hmac(sha384),cbc(aes))",
 		.driver_name = "authenc-hmac-sha384-cbc-aes-caam",
 		.blocksize = AES_BLOCK_SIZE,
@@ -1913,6 +2543,17 @@ static struct caam_alg_template driver_algs[] = {
 			.encrypt = aead_encrypt,
 			.decrypt = aead_decrypt,
 			.givencrypt = aead_givencrypt,
+=======
+		.name = "authenc(hmac(sha512),cbc(aes))",
+		.driver_name = "authenc-hmac-sha512-cbc-aes-caam",
+		.blocksize = AES_BLOCK_SIZE,
+		.aead = {
+			.setkey = aead_authenc_setkey,
+			.setauthsize = aead_authenc_setauthsize,
+			.encrypt = aead_authenc_encrypt,
+			.decrypt = aead_authenc_decrypt,
+			.givencrypt = aead_authenc_givencrypt,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.geniv = "<built-in>",
 			.ivsize = AES_BLOCK_SIZE,
 			.maxauthsize = SHA512_DIGEST_SIZE,
@@ -1923,6 +2564,7 @@ static struct caam_alg_template driver_algs[] = {
 		.alg_op = OP_ALG_ALGSEL_SHA512 | OP_ALG_AAI_HMAC,
 	},
 	{
+<<<<<<< HEAD
 		.name = "authenc(hmac(md5),cbc(des3_ede))",
 		.driver_name = "authenc-hmac-md5-cbc-des3_ede-caam",
 		.blocksize = DES3_EDE_BLOCK_SIZE,
@@ -1952,6 +2594,17 @@ static struct caam_alg_template driver_algs[] = {
 			.encrypt = aead_encrypt,
 			.decrypt = aead_decrypt,
 			.givencrypt = aead_givencrypt,
+=======
+		.name = "authenc(hmac(sha1),cbc(des3_ede))",
+		.driver_name = "authenc-hmac-sha1-cbc-des3_ede-caam",
+		.blocksize = DES3_EDE_BLOCK_SIZE,
+		.aead = {
+			.setkey = aead_authenc_setkey,
+			.setauthsize = aead_authenc_setauthsize,
+			.encrypt = aead_authenc_encrypt,
+			.decrypt = aead_authenc_decrypt,
+			.givencrypt = aead_authenc_givencrypt,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.geniv = "<built-in>",
 			.ivsize = DES3_EDE_BLOCK_SIZE,
 			.maxauthsize = SHA1_DIGEST_SIZE,
@@ -1961,6 +2614,7 @@ static struct caam_alg_template driver_algs[] = {
 		.alg_op = OP_ALG_ALGSEL_SHA1 | OP_ALG_AAI_HMAC,
 	},
 	{
+<<<<<<< HEAD
 		.name = "authenc(hmac(sha224),cbc(des3_ede))",
 		.driver_name = "authenc-hmac-sha224-cbc-des3_ede-caam",
 		.blocksize = DES3_EDE_BLOCK_SIZE,
@@ -1990,6 +2644,17 @@ static struct caam_alg_template driver_algs[] = {
 			.encrypt = aead_encrypt,
 			.decrypt = aead_decrypt,
 			.givencrypt = aead_givencrypt,
+=======
+		.name = "authenc(hmac(sha256),cbc(des3_ede))",
+		.driver_name = "authenc-hmac-sha256-cbc-des3_ede-caam",
+		.blocksize = DES3_EDE_BLOCK_SIZE,
+		.aead = {
+			.setkey = aead_authenc_setkey,
+			.setauthsize = aead_authenc_setauthsize,
+			.encrypt = aead_authenc_encrypt,
+			.decrypt = aead_authenc_decrypt,
+			.givencrypt = aead_authenc_givencrypt,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.geniv = "<built-in>",
 			.ivsize = DES3_EDE_BLOCK_SIZE,
 			.maxauthsize = SHA256_DIGEST_SIZE,
@@ -2000,6 +2665,7 @@ static struct caam_alg_template driver_algs[] = {
 		.alg_op = OP_ALG_ALGSEL_SHA256 | OP_ALG_AAI_HMAC,
 	},
 	{
+<<<<<<< HEAD
 		.name = "authenc(hmac(sha384),cbc(des3_ede))",
 		.driver_name = "authenc-hmac-sha384-cbc-des3_ede-caam",
 		.blocksize = DES3_EDE_BLOCK_SIZE,
@@ -2029,6 +2695,17 @@ static struct caam_alg_template driver_algs[] = {
 			.encrypt = aead_encrypt,
 			.decrypt = aead_decrypt,
 			.givencrypt = aead_givencrypt,
+=======
+		.name = "authenc(hmac(sha512),cbc(des3_ede))",
+		.driver_name = "authenc-hmac-sha512-cbc-des3_ede-caam",
+		.blocksize = DES3_EDE_BLOCK_SIZE,
+		.aead = {
+			.setkey = aead_authenc_setkey,
+			.setauthsize = aead_authenc_setauthsize,
+			.encrypt = aead_authenc_encrypt,
+			.decrypt = aead_authenc_decrypt,
+			.givencrypt = aead_authenc_givencrypt,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.geniv = "<built-in>",
 			.ivsize = DES3_EDE_BLOCK_SIZE,
 			.maxauthsize = SHA512_DIGEST_SIZE,
@@ -2039,6 +2716,7 @@ static struct caam_alg_template driver_algs[] = {
 		.alg_op = OP_ALG_ALGSEL_SHA512 | OP_ALG_AAI_HMAC,
 	},
 	{
+<<<<<<< HEAD
 		.name = "authenc(hmac(md5),cbc(des))",
 		.driver_name = "authenc-hmac-md5-cbc-des-caam",
 		.blocksize = DES_BLOCK_SIZE,
@@ -2068,6 +2746,17 @@ static struct caam_alg_template driver_algs[] = {
 			.encrypt = aead_encrypt,
 			.decrypt = aead_decrypt,
 			.givencrypt = aead_givencrypt,
+=======
+		.name = "authenc(hmac(sha1),cbc(des))",
+		.driver_name = "authenc-hmac-sha1-cbc-des-caam",
+		.blocksize = DES_BLOCK_SIZE,
+		.aead = {
+			.setkey = aead_authenc_setkey,
+			.setauthsize = aead_authenc_setauthsize,
+			.encrypt = aead_authenc_encrypt,
+			.decrypt = aead_authenc_decrypt,
+			.givencrypt = aead_authenc_givencrypt,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.geniv = "<built-in>",
 			.ivsize = DES_BLOCK_SIZE,
 			.maxauthsize = SHA1_DIGEST_SIZE,
@@ -2077,6 +2766,7 @@ static struct caam_alg_template driver_algs[] = {
 		.alg_op = OP_ALG_ALGSEL_SHA1 | OP_ALG_AAI_HMAC,
 	},
 	{
+<<<<<<< HEAD
 		.name = "authenc(hmac(sha224),cbc(des))",
 		.driver_name = "authenc-hmac-sha224-cbc-des-caam",
 		.blocksize = DES_BLOCK_SIZE,
@@ -2106,6 +2796,17 @@ static struct caam_alg_template driver_algs[] = {
 			.encrypt = aead_encrypt,
 			.decrypt = aead_decrypt,
 			.givencrypt = aead_givencrypt,
+=======
+		.name = "authenc(hmac(sha256),cbc(des))",
+		.driver_name = "authenc-hmac-sha256-cbc-des-caam",
+		.blocksize = DES_BLOCK_SIZE,
+		.aead = {
+			.setkey = aead_authenc_setkey,
+			.setauthsize = aead_authenc_setauthsize,
+			.encrypt = aead_authenc_encrypt,
+			.decrypt = aead_authenc_decrypt,
+			.givencrypt = aead_authenc_givencrypt,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.geniv = "<built-in>",
 			.ivsize = DES_BLOCK_SIZE,
 			.maxauthsize = SHA256_DIGEST_SIZE,
@@ -2116,6 +2817,7 @@ static struct caam_alg_template driver_algs[] = {
 		.alg_op = OP_ALG_ALGSEL_SHA256 | OP_ALG_AAI_HMAC,
 	},
 	{
+<<<<<<< HEAD
 		.name = "authenc(hmac(sha384),cbc(des))",
 		.driver_name = "authenc-hmac-sha384-cbc-des-caam",
 		.blocksize = DES_BLOCK_SIZE,
@@ -2145,6 +2847,17 @@ static struct caam_alg_template driver_algs[] = {
 			.encrypt = aead_encrypt,
 			.decrypt = aead_decrypt,
 			.givencrypt = aead_givencrypt,
+=======
+		.name = "authenc(hmac(sha512),cbc(des))",
+		.driver_name = "authenc-hmac-sha512-cbc-des-caam",
+		.blocksize = DES_BLOCK_SIZE,
+		.aead = {
+			.setkey = aead_authenc_setkey,
+			.setauthsize = aead_authenc_setauthsize,
+			.encrypt = aead_authenc_encrypt,
+			.decrypt = aead_authenc_decrypt,
+			.givencrypt = aead_authenc_givencrypt,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.geniv = "<built-in>",
 			.ivsize = DES_BLOCK_SIZE,
 			.maxauthsize = SHA512_DIGEST_SIZE,
@@ -2154,6 +2867,7 @@ static struct caam_alg_template driver_algs[] = {
 				   OP_ALG_AAI_HMAC_PRECOMP,
 		.alg_op = OP_ALG_ALGSEL_SHA512 | OP_ALG_AAI_HMAC,
 	},
+<<<<<<< HEAD
 	/* ablkcipher descriptor */
 	{
 		.name = "cbc(aes)",
@@ -2203,6 +2917,8 @@ static struct caam_alg_template driver_algs[] = {
 			},
 		.class1_alg_type = OP_ALG_ALGSEL_DES | OP_ALG_AAI_CBC,
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct caam_crypto_alg {
@@ -2241,6 +2957,7 @@ static void caam_cra_exit(struct crypto_tfm *tfm)
 {
 	struct caam_ctx *ctx = crypto_tfm_ctx(tfm);
 
+<<<<<<< HEAD
 	if (ctx->sh_desc_enc_dma &&
 	    !dma_mapping_error(ctx->jrdev, ctx->sh_desc_enc_dma))
 		dma_unmap_single(ctx->jrdev, ctx->sh_desc_enc_dma,
@@ -2254,6 +2971,18 @@ static void caam_cra_exit(struct crypto_tfm *tfm)
 		dma_unmap_single(ctx->jrdev, ctx->sh_desc_givenc_dma,
 				 desc_bytes(ctx->sh_desc_givenc),
 				 DMA_TO_DEVICE);
+=======
+	if (!dma_mapping_error(ctx->jrdev, ctx->shared_desc_phys))
+		dma_unmap_single(ctx->jrdev, ctx->shared_desc_phys,
+				 desc_bytes(ctx->sh_desc), DMA_TO_DEVICE);
+	kfree(ctx->sh_desc);
+
+	if (!dma_mapping_error(ctx->jrdev, ctx->key_phys))
+		dma_unmap_single(ctx->jrdev, ctx->key_phys,
+				 ctx->split_key_pad_len + ctx->enckeylen,
+				 DMA_TO_DEVICE);
+	kfree(ctx->key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit caam_algapi_exit(void)
@@ -2317,6 +3046,7 @@ static struct caam_crypto_alg *caam_alg_alloc(struct device *ctrldev,
 	alg->cra_init = caam_cra_init;
 	alg->cra_exit = caam_cra_exit;
 	alg->cra_priority = CAAM_CRA_PRIORITY;
+<<<<<<< HEAD
 	alg->cra_blocksize = template->blocksize;
 	alg->cra_alignmask = 0;
 	alg->cra_ctxsize = sizeof(struct caam_ctx);
@@ -2332,6 +3062,14 @@ static struct caam_crypto_alg *caam_alg_alloc(struct device *ctrldev,
 		alg->cra_aead = template->template_aead;
 		break;
 	}
+=======
+	alg->cra_flags = CRYPTO_ALG_TYPE_AEAD | CRYPTO_ALG_ASYNC;
+	alg->cra_blocksize = template->blocksize;
+	alg->cra_alignmask = 0;
+	alg->cra_type = &crypto_aead_type;
+	alg->cra_ctxsize = sizeof(struct caam_ctx);
+	alg->cra_u.aead = template->aead;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	t_alg->class1_alg_type = template->class1_alg_type;
 	t_alg->class2_alg_type = template->class2_alg_type;
@@ -2401,12 +3139,21 @@ static int __init caam_algapi_init(void)
 			dev_warn(ctrldev, "%s alg registration failed\n",
 				t_alg->crypto_alg.cra_driver_name);
 			kfree(t_alg);
+<<<<<<< HEAD
 		} else
 			list_add_tail(&t_alg->entry, &priv->alg_list);
 	}
 	if (!list_empty(&priv->alg_list))
 		dev_info(ctrldev, "%s algorithms registered in /proc/crypto\n",
 			 (char *)of_get_property(dev_node, "compatible", NULL));
+=======
+		} else {
+			list_add_tail(&t_alg->entry, &priv->alg_list);
+			dev_info(ctrldev, "%s\n",
+				 t_alg->crypto_alg.cra_driver_name);
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }

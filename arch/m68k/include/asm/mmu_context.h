@@ -8,6 +8,7 @@ static inline void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk)
 }
 
 #ifdef CONFIG_MMU
+<<<<<<< HEAD
 
 #if defined(CONFIG_COLDFIRE)
 
@@ -208,6 +209,9 @@ static inline void activate_mm(struct mm_struct *prev_mm,
 }
 
 #else
+=======
+#ifndef CONFIG_SUN3
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/setup.h>
 #include <asm/page.h>
@@ -302,8 +306,60 @@ static inline void activate_mm(struct mm_struct *prev_mm,
 		switch_mm_0460(next_mm);
 }
 
+<<<<<<< HEAD
 #endif
 
+=======
+#else  /* CONFIG_SUN3 */
+#include <asm/sun3mmu.h>
+#include <linux/sched.h>
+
+extern unsigned long get_free_context(struct mm_struct *mm);
+extern void clear_context(unsigned long context);
+
+/* set the context for a new task to unmapped */
+static inline int init_new_context(struct task_struct *tsk, struct mm_struct *mm)
+{
+	mm->context = SUN3_INVALID_CONTEXT;
+	return 0;
+}
+
+/* find the context given to this process, and if it hasn't already
+   got one, go get one for it. */
+static inline void get_mmu_context(struct mm_struct *mm)
+{
+	if(mm->context == SUN3_INVALID_CONTEXT)
+		mm->context = get_free_context(mm);
+}
+
+/* flush context if allocated... */
+static inline void destroy_context(struct mm_struct *mm)
+{
+	if(mm->context != SUN3_INVALID_CONTEXT)
+		clear_context(mm->context);
+}
+
+static inline void activate_context(struct mm_struct *mm)
+{
+	get_mmu_context(mm);
+	sun3_put_context(mm->context);
+}
+
+static inline void switch_mm(struct mm_struct *prev, struct mm_struct *next, struct task_struct *tsk)
+{
+	activate_context(tsk->mm);
+}
+
+#define deactivate_mm(tsk,mm)	do { } while (0)
+
+static inline void activate_mm(struct mm_struct *prev_mm,
+			       struct mm_struct *next_mm)
+{
+	activate_context(next_mm);
+}
+
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else /* !CONFIG_MMU */
 
 static inline int init_new_context(struct task_struct *tsk, struct mm_struct *mm)

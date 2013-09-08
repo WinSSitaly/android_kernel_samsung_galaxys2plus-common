@@ -196,6 +196,7 @@ DEFINE_EVENT(kvm_mmu_page_class, kvm_mmu_prepare_zap_page,
 	TP_ARGS(sp)
 );
 
+<<<<<<< HEAD
 DEFINE_EVENT(kvm_mmu_page_class, kvm_mmu_delay_free_pages,
 	TP_PROTO(struct kvm_mmu_page *sp),
 
@@ -242,6 +243,25 @@ TRACE_EVENT(
 
 	TP_printk("addr:%llx gfn %llx access %x", __entry->addr, __entry->gfn,
 		  __entry->access)
+=======
+TRACE_EVENT(
+	kvm_mmu_audit,
+	TP_PROTO(struct kvm_vcpu *vcpu, int audit_point),
+	TP_ARGS(vcpu, audit_point),
+
+	TP_STRUCT__entry(
+		__field(struct kvm_vcpu *, vcpu)
+		__field(int, audit_point)
+	),
+
+	TP_fast_assign(
+		__entry->vcpu = vcpu;
+		__entry->audit_point = audit_point;
+	),
+
+	TP_printk("vcpu:%d %s", __entry->vcpu->cpu,
+		  audit_point_name[__entry->audit_point])
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 #endif /* _TRACE_KVMMMU_H */
 

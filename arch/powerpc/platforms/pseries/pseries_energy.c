@@ -15,7 +15,11 @@
 #include <linux/errno.h>
 #include <linux/init.h>
 #include <linux/seq_file.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/cpu.h>
 #include <linux/of.h>
 #include <asm/cputhreads.h>
@@ -184,7 +188,11 @@ static ssize_t get_best_energy_list(char *page, int activate)
 	return s-page;
 }
 
+<<<<<<< HEAD
 static ssize_t get_best_energy_data(struct device *dev,
+=======
+static ssize_t get_best_energy_data(struct sys_device *dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					char *page, int activate)
 {
 	int rc;
@@ -207,26 +215,46 @@ static ssize_t get_best_energy_data(struct device *dev,
 
 /* Wrapper functions */
 
+<<<<<<< HEAD
 static ssize_t cpu_activate_hint_list_show(struct device *dev,
 			struct device_attribute *attr, char *page)
+=======
+static ssize_t cpu_activate_hint_list_show(struct sysdev_class *class,
+			struct sysdev_class_attribute *attr, char *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return get_best_energy_list(page, 1);
 }
 
+<<<<<<< HEAD
 static ssize_t cpu_deactivate_hint_list_show(struct device *dev,
 			struct device_attribute *attr, char *page)
+=======
+static ssize_t cpu_deactivate_hint_list_show(struct sysdev_class *class,
+			struct sysdev_class_attribute *attr, char *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return get_best_energy_list(page, 0);
 }
 
+<<<<<<< HEAD
 static ssize_t percpu_activate_hint_show(struct device *dev,
 			struct device_attribute *attr, char *page)
+=======
+static ssize_t percpu_activate_hint_show(struct sys_device *dev,
+			struct sysdev_attribute *attr, char *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return get_best_energy_data(dev, page, 1);
 }
 
+<<<<<<< HEAD
 static ssize_t percpu_deactivate_hint_show(struct device *dev,
 			struct device_attribute *attr, char *page)
+=======
+static ssize_t percpu_deactivate_hint_show(struct sys_device *dev,
+			struct sysdev_attribute *attr, char *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return get_best_energy_data(dev, page, 0);
 }
@@ -241,6 +269,7 @@ static ssize_t percpu_deactivate_hint_show(struct device *dev,
  *	Per-cpu value of the hint
  */
 
+<<<<<<< HEAD
 struct device_attribute attr_cpu_activate_hint_list =
 		__ATTR(pseries_activate_hint_list, 0444,
 		cpu_activate_hint_list_show, NULL);
@@ -255,27 +284,56 @@ struct device_attribute attr_percpu_activate_hint =
 
 struct device_attribute attr_percpu_deactivate_hint =
 		__ATTR(pseries_deactivate_hint, 0444,
+=======
+struct sysdev_class_attribute attr_cpu_activate_hint_list =
+		_SYSDEV_CLASS_ATTR(pseries_activate_hint_list, 0444,
+		cpu_activate_hint_list_show, NULL);
+
+struct sysdev_class_attribute attr_cpu_deactivate_hint_list =
+		_SYSDEV_CLASS_ATTR(pseries_deactivate_hint_list, 0444,
+		cpu_deactivate_hint_list_show, NULL);
+
+struct sysdev_attribute attr_percpu_activate_hint =
+		_SYSDEV_ATTR(pseries_activate_hint, 0444,
+		percpu_activate_hint_show, NULL);
+
+struct sysdev_attribute attr_percpu_deactivate_hint =
+		_SYSDEV_ATTR(pseries_deactivate_hint, 0444,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		percpu_deactivate_hint_show, NULL);
 
 static int __init pseries_energy_init(void)
 {
 	int cpu, err;
+<<<<<<< HEAD
 	struct device *cpu_dev;
+=======
+	struct sys_device *cpu_sys_dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!check_for_h_best_energy()) {
 		printk(KERN_INFO "Hypercall H_BEST_ENERGY not supported\n");
 		return 0;
 	}
 	/* Create the sysfs files */
+<<<<<<< HEAD
 	err = device_create_file(cpu_subsys.dev_root,
 				&attr_cpu_activate_hint_list);
 	if (!err)
 		err = device_create_file(cpu_subsys.dev_root,
 				&attr_cpu_deactivate_hint_list);
+=======
+	err = sysfs_create_file(&cpu_sysdev_class.kset.kobj,
+				&attr_cpu_activate_hint_list.attr);
+	if (!err)
+		err = sysfs_create_file(&cpu_sysdev_class.kset.kobj,
+				&attr_cpu_deactivate_hint_list.attr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (err)
 		return err;
 	for_each_possible_cpu(cpu) {
+<<<<<<< HEAD
 		cpu_dev = get_cpu_device(cpu);
 		err = device_create_file(cpu_dev,
 				&attr_percpu_activate_hint);
@@ -283,6 +341,15 @@ static int __init pseries_energy_init(void)
 			break;
 		err = device_create_file(cpu_dev,
 				&attr_percpu_deactivate_hint);
+=======
+		cpu_sys_dev = get_cpu_sysdev(cpu);
+		err = sysfs_create_file(&cpu_sys_dev->kobj,
+				&attr_percpu_activate_hint.attr);
+		if (err)
+			break;
+		err = sysfs_create_file(&cpu_sys_dev->kobj,
+				&attr_percpu_deactivate_hint.attr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err)
 			break;
 	}
@@ -298,12 +365,17 @@ static int __init pseries_energy_init(void)
 static void __exit pseries_energy_cleanup(void)
 {
 	int cpu;
+<<<<<<< HEAD
 	struct device *cpu_dev;
+=======
+	struct sys_device *cpu_sys_dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!sysfs_entries)
 		return;
 
 	/* Remove the sysfs files */
+<<<<<<< HEAD
 	device_remove_file(cpu_subsys.dev_root, &attr_cpu_activate_hint_list);
 	device_remove_file(cpu_subsys.dev_root, &attr_cpu_deactivate_hint_list);
 
@@ -312,6 +384,19 @@ static void __exit pseries_energy_cleanup(void)
 		sysfs_remove_file(&cpu_dev->kobj,
 				&attr_percpu_activate_hint.attr);
 		sysfs_remove_file(&cpu_dev->kobj,
+=======
+	sysfs_remove_file(&cpu_sysdev_class.kset.kobj,
+				&attr_cpu_activate_hint_list.attr);
+
+	sysfs_remove_file(&cpu_sysdev_class.kset.kobj,
+				&attr_cpu_deactivate_hint_list.attr);
+
+	for_each_possible_cpu(cpu) {
+		cpu_sys_dev = get_cpu_sysdev(cpu);
+		sysfs_remove_file(&cpu_sys_dev->kobj,
+				&attr_percpu_activate_hint.attr);
+		sysfs_remove_file(&cpu_sys_dev->kobj,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				&attr_percpu_deactivate_hint.attr);
 	}
 }

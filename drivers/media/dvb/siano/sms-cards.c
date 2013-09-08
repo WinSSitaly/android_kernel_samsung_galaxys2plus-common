@@ -19,7 +19,10 @@
 
 #include "sms-cards.h"
 #include "smsir.h"
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int sms_dbg;
 module_param_named(cards_dbg, sms_dbg, int, 0644);

@@ -68,10 +68,15 @@ static int hash_sendmsg(struct kiocb *unused, struct socket *sock,
 			int newlen;
 
 			newlen = af_alg_make_sg(&ctx->sgl, from, len, 0);
+<<<<<<< HEAD
 			if (newlen < 0) {
 				err = copied ? 0 : newlen;
 				goto unlock;
 			}
+=======
+			if (newlen < 0)
+				goto unlock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			ahash_request_set_crypt(&ctx->req, ctx->sgl.sg, NULL,
 						newlen);
@@ -161,8 +166,11 @@ static int hash_recvmsg(struct kiocb *unused, struct socket *sock,
 	else if (len < ds)
 		msg->msg_flags |= MSG_TRUNC;
 
+<<<<<<< HEAD
 	msg->msg_namelen = 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lock_sock(sk);
 	if (ctx->more) {
 		ctx->more = 0;

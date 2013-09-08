@@ -22,9 +22,16 @@
 #include <linux/capability.h>
 #include <linux/atm_suni.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <asm/param.h>
 #include <asm/uaccess.h>
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <asm/param.h>
+#include <asm/uaccess.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "suni.h"
 

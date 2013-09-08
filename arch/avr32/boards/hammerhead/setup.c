@@ -102,7 +102,11 @@ struct eth_addr {
 };
 
 static struct eth_addr __initdata hw_addr[1];
+<<<<<<< HEAD
 static struct macb_platform_data __initdata eth_data[1];
+=======
+static struct eth_platform_data __initdata eth_data[1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * The next two functions should go away as the boot loader is

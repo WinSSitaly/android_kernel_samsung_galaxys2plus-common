@@ -18,6 +18,40 @@
 #include <asm/pgtable.h>
 #include <asm/cacheflush.h>
 
+<<<<<<< HEAD
+=======
+void *module_alloc(unsigned long size)
+{
+	void *ret;
+	ret = (size == 0) ? NULL : vmalloc(size);
+	pr_debug("module_alloc (%08lx@%08lx)\n", size, (unsigned long int)ret);
+	return ret;
+}
+
+void module_free(struct module *module, void *region)
+{
+	pr_debug("module_free(%s,%08lx)\n", module->name,
+					(unsigned long)region);
+	vfree(region);
+}
+
+int module_frob_arch_sections(Elf_Ehdr *hdr,
+				Elf_Shdr *sechdrs,
+				char *secstrings,
+				struct module *mod)
+{
+	return 0;
+}
+
+int apply_relocate(Elf32_Shdr *sechdrs, const char *strtab,
+	unsigned int symindex, unsigned int relsec, struct module *module)
+{
+	printk(KERN_ERR "module %s: ADD RELOCATION unsupported\n",
+		module->name);
+	return -ENOEXEC;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int apply_relocate_add(Elf32_Shdr *sechdrs, const char *strtab,
 	unsigned int symindex, unsigned int relsec, struct module *module)
 {
@@ -100,7 +134,11 @@ int apply_relocate_add(Elf32_Shdr *sechdrs, const char *strtab,
 			break;
 
 		case R_MICROBLAZE_64_NONE:
+<<<<<<< HEAD
 			pr_debug("R_MICROBLAZE_64_NONE\n");
+=======
+			pr_debug("R_MICROBLAZE_NONE\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case R_MICROBLAZE_NONE:
@@ -124,3 +162,10 @@ int module_finalize(const Elf32_Ehdr *hdr, const Elf_Shdr *sechdrs,
 	flush_dcache();
 	return 0;
 }
+<<<<<<< HEAD
+=======
+
+void module_arch_cleanup(struct module *mod)
+{
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

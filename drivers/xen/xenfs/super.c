@@ -16,8 +16,11 @@
 #include <xen/xen.h>
 
 #include "xenfs.h"
+<<<<<<< HEAD
 #include "../privcmd.h"
 #include "../xenbus/xenbus_comms.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/xen/hypervisor.h>
 
@@ -84,9 +87,15 @@ static int xenfs_fill_super(struct super_block *sb, void *data, int silent)
 {
 	static struct tree_descr xenfs_files[] = {
 		[1] = {},
+<<<<<<< HEAD
 		{ "xenbus", &xen_xenbus_fops, S_IRUSR|S_IWUSR },
 		{ "capabilities", &capabilities_file_ops, S_IRUGO },
 		{ "privcmd", &xen_privcmd_fops, S_IRUSR|S_IWUSR },
+=======
+		{ "xenbus", &xenbus_file_ops, S_IRUSR|S_IWUSR },
+		{ "capabilities", &capabilities_file_ops, S_IRUGO },
+		{ "privcmd", &privcmd_file_ops, S_IRUSR|S_IWUSR },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		{""},
 	};
 	int rc;

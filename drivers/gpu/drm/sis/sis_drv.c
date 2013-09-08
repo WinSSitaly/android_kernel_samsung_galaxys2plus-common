@@ -25,8 +25,11 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/module.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drmP.h"
 #include "sis_drm.h"
 #include "sis_drv.h"
@@ -40,32 +43,51 @@ static struct pci_device_id pciidlist[] = {
 static int sis_driver_load(struct drm_device *dev, unsigned long chipset)
 {
 	drm_sis_private_t *dev_priv;
+<<<<<<< HEAD
 
 	pci_set_master(dev->pdev);
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_priv = kzalloc(sizeof(drm_sis_private_t), GFP_KERNEL);
 	if (dev_priv == NULL)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	idr_init(&dev_priv->object_idr);
 	dev->dev_private = (void *)dev_priv;
 	dev_priv->chipset = chipset;
 
 	return 0;
+=======
+	dev->dev_private = (void *)dev_priv;
+	dev_priv->chipset = chipset;
+	ret = drm_sman_init(&dev_priv->sman, 2, 12, 8);
+	if (ret)
+		kfree(dev_priv);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int sis_driver_unload(struct drm_device *dev)
 {
 	drm_sis_private_t *dev_priv = dev->dev_private;
 
+<<<<<<< HEAD
 	idr_remove_all(&dev_priv->object_idr);
 	idr_destroy(&dev_priv->object_idr);
 
+=======
+	drm_sman_takedown(&dev_priv->sman);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(dev_priv);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct file_operations sis_driver_fops = {
 	.owner = THIS_MODULE,
 	.open = drm_open,
@@ -100,18 +122,37 @@ void sis_driver_postclose(struct drm_device *dev, struct drm_file *file)
 	kfree(file_priv);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct drm_driver driver = {
 	.driver_features = DRIVER_USE_AGP | DRIVER_USE_MTRR,
 	.load = sis_driver_load,
 	.unload = sis_driver_unload,
+<<<<<<< HEAD
 	.open = sis_driver_open,
 	.postclose = sis_driver_postclose,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dma_quiescent = sis_idle,
 	.reclaim_buffers = NULL,
 	.reclaim_buffers_idlelocked = sis_reclaim_buffers_locked,
 	.lastclose = sis_lastclose,
 	.ioctls = sis_ioctls,
+<<<<<<< HEAD
 	.fops = &sis_driver_fops,
+=======
+	.fops = {
+		 .owner = THIS_MODULE,
+		 .open = drm_open,
+		 .release = drm_release,
+		 .unlocked_ioctl = drm_ioctl,
+		 .mmap = drm_mmap,
+		 .poll = drm_poll,
+		 .fasync = drm_fasync,
+		 .llseek = noop_llseek,
+	},
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name = DRIVER_NAME,
 	.desc = DRIVER_DESC,
 	.date = DRIVER_DATE,

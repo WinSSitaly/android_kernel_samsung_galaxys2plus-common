@@ -102,7 +102,14 @@
 /*
  * Version Information
  */
+<<<<<<< HEAD
 #define DRIVER_VERSION "0.4.7"
+=======
+#include <linux/version.h>	/* for KERNEL_VERSION MACRO	*/
+
+#define DRIVER_VERSION "v0.46"
+#define RADIO_VERSION KERNEL_VERSION(0, 4, 6)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRIVER_AUTHOR "Markus Demleitner <msdemlei@tucana.harvard.edu>"
 #define DRIVER_DESC "D-Link DSB-R100 USB FM radio driver"
@@ -332,6 +339,10 @@ static int vidioc_querycap(struct file *file, void *priv,
 	strlcpy(v->driver, "dsbr100", sizeof(v->driver));
 	strlcpy(v->card, "D-Link R-100 USB FM Radio", sizeof(v->card));
 	usb_make_path(radio->usbdev, v->bus_info, sizeof(v->bus_info));
+<<<<<<< HEAD
+=======
+	v->version = RADIO_VERSION;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	v->capabilities = V4L2_CAP_TUNER;
 	return 0;
 }
@@ -624,9 +635,30 @@ static int usb_dsbr100_probe(struct usb_interface *intf,
 	return 0;
 }
 
+<<<<<<< HEAD
 module_usb_driver(usb_dsbr100_driver);
+=======
+static int __init dsbr100_init(void)
+{
+	int retval = usb_register(&usb_dsbr100_driver);
+	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_VERSION ":"
+	       DRIVER_DESC "\n");
+	return retval;
+}
+
+static void __exit dsbr100_exit(void)
+{
+	usb_deregister(&usb_dsbr100_driver);
+}
+
+module_init (dsbr100_init);
+module_exit (dsbr100_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR( DRIVER_AUTHOR );
 MODULE_DESCRIPTION( DRIVER_DESC );
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_VERSION(DRIVER_VERSION);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

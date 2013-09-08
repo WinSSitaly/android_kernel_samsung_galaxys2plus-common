@@ -20,17 +20,23 @@
 
 #include <linux/err.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <linux/regulator/driver.h>
 #include <linux/regulator/fixed.h>
 #include <linux/gpio.h>
 #include <linux/delay.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/of.h>
 #include <linux/of_gpio.h>
 #include <linux/regulator/of_regulator.h>
 #include <linux/regulator/machine.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct fixed_voltage_data {
 	struct regulator_desc desc;
@@ -42,6 +48,7 @@ struct fixed_voltage_data {
 	bool is_enabled;
 };
 
+<<<<<<< HEAD
 
 /**
  * of_get_fixed_voltage_config - extract fixed_voltage_config structure info
@@ -94,6 +101,8 @@ of_get_fixed_voltage_config(struct device *dev)
 	return config;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int fixed_voltage_is_enabled(struct regulator_dev *dev)
 {
 	struct fixed_voltage_data *data = rdev_get_drvdata(dev);
@@ -136,10 +145,14 @@ static int fixed_voltage_get_voltage(struct regulator_dev *dev)
 {
 	struct fixed_voltage_data *data = rdev_get_drvdata(dev);
 
+<<<<<<< HEAD
 	if (data->microvolts)
 		return data->microvolts;
 	else
 		return -EINVAL;
+=======
+	return data->microvolts;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int fixed_voltage_list_voltage(struct regulator_dev *dev,
@@ -164,6 +177,7 @@ static struct regulator_ops fixed_voltage_ops = {
 
 static int __devinit reg_fixed_voltage_probe(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct fixed_voltage_config *config;
 	struct fixed_voltage_data *drvdata;
 	int ret;
@@ -176,6 +190,12 @@ static int __devinit reg_fixed_voltage_probe(struct platform_device *pdev)
 	if (!config)
 		return -ENOMEM;
 
+=======
+	struct fixed_voltage_config *config = pdev->dev.platform_data;
+	struct fixed_voltage_data *drvdata;
+	int ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	drvdata = kzalloc(sizeof(struct fixed_voltage_data), GFP_KERNEL);
 	if (drvdata == NULL) {
 		dev_err(&pdev->dev, "Failed to allocate device data\n");
@@ -192,9 +212,13 @@ static int __devinit reg_fixed_voltage_probe(struct platform_device *pdev)
 	drvdata->desc.type = REGULATOR_VOLTAGE;
 	drvdata->desc.owner = THIS_MODULE;
 	drvdata->desc.ops = &fixed_voltage_ops;
+<<<<<<< HEAD
 
 	if (config->microvolts)
 		drvdata->desc.n_voltages = 1;
+=======
+	drvdata->desc.n_voltages = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	drvdata->microvolts = config->microvolts;
 	drvdata->gpio = config->gpio;
@@ -249,8 +273,12 @@ static int __devinit reg_fixed_voltage_probe(struct platform_device *pdev)
 	}
 
 	drvdata->dev = regulator_register(&drvdata->desc, &pdev->dev,
+<<<<<<< HEAD
 					  config->init_data, drvdata,
 					  pdev->dev.of_node);
+=======
+					  config->init_data, drvdata);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(drvdata->dev)) {
 		ret = PTR_ERR(drvdata->dev);
 		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
@@ -287,6 +315,7 @@ static int __devexit reg_fixed_voltage_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #if defined(CONFIG_OF)
 static const struct of_device_id fixed_of_match[] __devinitconst = {
 	{ .compatible = "regulator-fixed", },
@@ -297,13 +326,18 @@ MODULE_DEVICE_TABLE(of, fixed_of_match);
 #define fixed_of_match NULL
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver regulator_fixed_voltage_driver = {
 	.probe		= reg_fixed_voltage_probe,
 	.remove		= __devexit_p(reg_fixed_voltage_remove),
 	.driver		= {
 		.name		= "reg-fixed-voltage",
 		.owner		= THIS_MODULE,
+<<<<<<< HEAD
 		.of_match_table = fixed_of_match,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

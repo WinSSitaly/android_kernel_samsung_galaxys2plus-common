@@ -22,6 +22,7 @@
  */
 
 #include <linux/gfp.h>
+<<<<<<< HEAD
 #include <linux/sched.h>
 
 #include "wl12xx.h"
@@ -33,19 +34,34 @@
 #include "io.h"
 
 static u8 wl12xx_rx_get_mem_block(struct wl12xx_fw_status *status,
+=======
+
+#include "wl12xx.h"
+#include "acx.h"
+#include "reg.h"
+#include "rx.h"
+#include "io.h"
+
+static u8 wl1271_rx_get_mem_block(struct wl1271_fw_common_status *status,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  u32 drv_rx_counter)
 {
 	return le32_to_cpu(status->rx_pkt_descs[drv_rx_counter]) &
 		RX_MEM_BLOCK_MASK;
 }
 
+<<<<<<< HEAD
 static u32 wl12xx_rx_get_buf_size(struct wl12xx_fw_status *status,
+=======
+static u32 wl1271_rx_get_buf_size(struct wl1271_fw_common_status *status,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 u32 drv_rx_counter)
 {
 	return (le32_to_cpu(status->rx_pkt_descs[drv_rx_counter]) &
 		RX_BUF_SIZE_MASK) >> RX_BUF_SIZE_SHIFT_DIV;
 }
 
+<<<<<<< HEAD
 static bool wl12xx_rx_get_unaligned(struct wl12xx_fw_status *status,
 				    u32 drv_rx_counter)
 {
@@ -54,6 +70,8 @@ static bool wl12xx_rx_get_unaligned(struct wl12xx_fw_status *status,
 		RX_BUF_UNALIGNED_PAYLOAD);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void wl1271_rx_status(struct wl1271 *wl,
 			     struct wl1271_rx_descriptor *desc,
 			     struct ieee80211_rx_status *status,
@@ -68,9 +86,17 @@ static void wl1271_rx_status(struct wl1271 *wl,
 
 	status->rate_idx = wl1271_rate_to_idx(desc->rate, status->band);
 
+<<<<<<< HEAD
 	/* 11n support */
 	if (desc->rate <= CONF_HW_RXTX_RATE_MCS0)
 		status->flag |= RX_FLAG_HT;
+=======
+#ifdef CONFIG_WL12XX_HT
+	/* 11n support */
+	if (desc->rate <= CONF_HW_RXTX_RATE_MCS0)
+		status->flag |= RX_FLAG_HT;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	status->signal = desc->rssi;
 
@@ -97,28 +123,40 @@ static void wl1271_rx_status(struct wl1271 *wl,
 	}
 }
 
+<<<<<<< HEAD
 static int wl1271_rx_handle_data(struct wl1271 *wl, u8 *data, u32 length,
 				 bool unaligned, u8 *hlid)
+=======
+static int wl1271_rx_handle_data(struct wl1271 *wl, u8 *data, u32 length)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct wl1271_rx_descriptor *desc;
 	struct sk_buff *skb;
 	struct ieee80211_hdr *hdr;
 	u8 *buf;
 	u8 beacon = 0;
+<<<<<<< HEAD
 	u8 is_data = 0;
 	u8 reserved = unaligned ? NET_IP_ALIGN : 0;
 	u16 seq_num;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * In PLT mode we seem to get frames and mac80211 warns about them,
 	 * workaround this by not retrieving them at all.
 	 */
+<<<<<<< HEAD
 	if (unlikely(wl->plt))
+=======
+	if (unlikely(wl->state == WL1271_STATE_PLT))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	/* the data read starts with the descriptor */
 	desc = (struct wl1271_rx_descriptor *) data;
 
+<<<<<<< HEAD
 	if (desc->packet_class == WL12XX_RX_CLASS_LOGGER) {
 		size_t len = length - sizeof(*desc);
 		wl12xx_copy_fwlog(wl, data + sizeof(*desc), len);
@@ -126,6 +164,8 @@ static int wl1271_rx_handle_data(struct wl1271 *wl, u8 *data, u32 length,
 		return 0;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (desc->status & WL1271_RX_DESC_STATUS_MASK) {
 	/* discard corrupted packets */
 	case WL1271_RX_DESC_DRIVER_RX_Q_FAIL:
@@ -142,13 +182,18 @@ static int wl1271_rx_handle_data(struct wl1271 *wl, u8 *data, u32 length,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	/* skb length not included rx descriptor */
 	skb = __dev_alloc_skb(length + reserved - sizeof(*desc), GFP_KERNEL);
+=======
+	skb = __dev_alloc_skb(length, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!skb) {
 		wl1271_error("Couldn't allocate RX frame");
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	/* reserve the unaligned payload(if any) */
 	skb_reserve(skb, reserved);
 
@@ -162,10 +207,18 @@ static int wl1271_rx_handle_data(struct wl1271 *wl, u8 *data, u32 length,
 	 */
 	memcpy(buf, data + sizeof(*desc), length - sizeof(*desc));
 	*hlid = desc->hlid;
+=======
+	buf = skb_put(skb, length);
+	memcpy(buf, data, length);
+
+	/* now we pull the descriptor out of the buffer */
+	skb_pull(skb, sizeof(*desc));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hdr = (struct ieee80211_hdr *)skb->data;
 	if (ieee80211_is_beacon(hdr->frame_control))
 		beacon = 1;
+<<<<<<< HEAD
 	if (ieee80211_is_data_present(hdr->frame_control))
 		is_data = 1;
 
@@ -176,10 +229,19 @@ static int wl1271_rx_handle_data(struct wl1271 *wl, u8 *data, u32 length,
 		     skb->len - desc->pad_len,
 		     beacon ? "beacon" : "",
 		     seq_num, *hlid);
+=======
+
+	wl1271_rx_status(wl, desc, IEEE80211_SKB_RXCB(skb), beacon);
+
+	wl1271_debug(DEBUG_RX, "rx skb 0x%p: %d B %s", skb,
+		     skb->len - desc->pad_len,
+		     beacon ? "beacon" : "");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	skb_trim(skb, skb->len - desc->pad_len);
 
 	skb_queue_tail(&wl->deferred_rx_queue, skb);
+<<<<<<< HEAD
 	queue_work(wl->freezable_wq, &wl->netstack_work);
 
 	return is_data;
@@ -189,6 +251,16 @@ void wl12xx_rx(struct wl1271 *wl, struct wl12xx_fw_status *status)
 {
 	struct wl1271_acx_mem_map *wl_mem_map = wl->target_mem_map;
 	unsigned long active_hlids[BITS_TO_LONGS(WL12XX_MAX_LINKS)] = {0};
+=======
+	ieee80211_queue_work(wl->hw, &wl->netstack_work);
+
+	return 0;
+}
+
+void wl1271_rx(struct wl1271 *wl, struct wl1271_fw_common_status *status)
+{
+	struct wl1271_acx_mem_map *wl_mem_map = wl->target_mem_map;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 buf_size;
 	u32 fw_rx_counter  = status->fw_rx_counter & NUM_RX_PKT_DESC_MOD_MASK;
 	u32 drv_rx_counter = wl->rx_counter & NUM_RX_PKT_DESC_MOD_MASK;
@@ -196,14 +268,21 @@ void wl12xx_rx(struct wl1271 *wl, struct wl12xx_fw_status *status)
 	u32 mem_block;
 	u32 pkt_length;
 	u32 pkt_offset;
+<<<<<<< HEAD
 	u8 hlid;
 	bool unaligned = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (drv_rx_counter != fw_rx_counter) {
 		buf_size = 0;
 		rx_counter = drv_rx_counter;
 		while (rx_counter != fw_rx_counter) {
+<<<<<<< HEAD
 			pkt_length = wl12xx_rx_get_buf_size(status, rx_counter);
+=======
+			pkt_length = wl1271_rx_get_buf_size(status, rx_counter);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (buf_size + pkt_length > WL1271_AGGR_BUFFER_SIZE)
 				break;
 			buf_size += pkt_length;
@@ -222,7 +301,11 @@ void wl12xx_rx(struct wl1271 *wl, struct wl12xx_fw_status *status)
 			 * For aggregated packets, only the first memory block
 			 * should be retrieved. The FW takes care of the rest.
 			 */
+<<<<<<< HEAD
 			mem_block = wl12xx_rx_get_mem_block(status,
+=======
+			mem_block = wl1271_rx_get_mem_block(status,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 							    drv_rx_counter);
 
 			wl->rx_mem_pool_addr.addr = (mem_block << 8) +
@@ -243,17 +326,23 @@ void wl12xx_rx(struct wl1271 *wl, struct wl12xx_fw_status *status)
 		/* Split data into separate packets */
 		pkt_offset = 0;
 		while (pkt_offset < buf_size) {
+<<<<<<< HEAD
 			pkt_length = wl12xx_rx_get_buf_size(status,
 					drv_rx_counter);
 
 			unaligned = wl12xx_rx_get_unaligned(status,
 					drv_rx_counter);
 
+=======
+			pkt_length = wl1271_rx_get_buf_size(status,
+					drv_rx_counter);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * the handle data call can only fail in memory-outage
 			 * conditions, in that case the received frame will just
 			 * be dropped.
 			 */
+<<<<<<< HEAD
 			if (wl1271_rx_handle_data(wl,
 						  wl->aggr_buf + pkt_offset,
 						  pkt_length, unaligned,
@@ -266,6 +355,11 @@ void wl12xx_rx(struct wl1271 *wl, struct wl12xx_fw_status *status)
 					     "(%d)\n", hlid);
 			}
 
+=======
+			wl1271_rx_handle_data(wl,
+					      wl->aggr_buf + pkt_offset,
+					      pkt_length);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			wl->rx_counter++;
 			drv_rx_counter++;
 			drv_rx_counter &= NUM_RX_PKT_DESC_MOD_MASK;
@@ -279,6 +373,20 @@ void wl12xx_rx(struct wl1271 *wl, struct wl12xx_fw_status *status)
 	 */
 	if (wl->quirks & WL12XX_QUIRK_END_OF_TRANSACTION)
 		wl1271_write32(wl, RX_DRIVER_COUNTER_ADDRESS, wl->rx_counter);
+<<<<<<< HEAD
 
 	wl12xx_rearm_rx_streaming(wl, active_hlids);
+=======
+}
+
+void wl1271_set_default_filters(struct wl1271 *wl)
+{
+	if (wl->bss_type == BSS_TYPE_AP_BSS) {
+		wl->rx_config = WL1271_DEFAULT_AP_RX_CONFIG;
+		wl->rx_filter = WL1271_DEFAULT_AP_RX_FILTER;
+	} else {
+		wl->rx_config = WL1271_DEFAULT_STA_RX_CONFIG;
+		wl->rx_filter = WL1271_DEFAULT_STA_RX_FILTER;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

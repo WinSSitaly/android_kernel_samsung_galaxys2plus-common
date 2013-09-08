@@ -525,9 +525,16 @@ static int setup_fbmem(struct msmfb_info *msmfb, struct platform_device *pdev)
 		return -ENOMEM;
 	}
 	fb->fix.smem_start = resource->start;
+<<<<<<< HEAD
 	fb->fix.smem_len = resource_size(resource);
 	fbram = ioremap(resource->start, resource_size(resource));
 	if (fbram == NULL) {
+=======
+	fb->fix.smem_len = resource->end - resource->start;
+	fbram = ioremap(resource->start,
+			resource->end - resource->start);
+	if (fbram == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR "msmfb: cannot allocate fbram!\n");
 		return -ENOMEM;
 	}

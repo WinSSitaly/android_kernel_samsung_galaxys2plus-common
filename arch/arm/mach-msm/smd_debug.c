@@ -203,6 +203,7 @@ static ssize_t debug_read(struct file *file, char __user *buf,
 	return simple_read_from_buffer(buf, count, ppos, debug_buffer, bsize);
 }
 
+<<<<<<< HEAD
 static const struct file_operations debug_ops = {
 	.read = debug_read,
 	.open = simple_open,
@@ -210,6 +211,21 @@ static const struct file_operations debug_ops = {
 };
 
 static void debug_create(const char *name, umode_t mode,
+=======
+static int debug_open(struct inode *inode, struct file *file)
+{
+	file->private_data = inode->i_private;
+	return 0;
+}
+
+static const struct file_operations debug_ops = {
+	.read = debug_read,
+	.open = debug_open,
+	.llseek = default_llseek,
+};
+
+static void debug_create(const char *name, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 struct dentry *dent,
 			 int (*fill)(char *buf, int max))
 {

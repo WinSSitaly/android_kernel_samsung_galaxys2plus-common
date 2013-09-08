@@ -173,6 +173,12 @@ extern void pci_restore_srm_config(void);
 extern struct pci_controller *hose_head, **hose_tail;
 extern struct pci_controller *pci_isa_hose;
 
+<<<<<<< HEAD
+=======
+/* Indicate that we trust the console to configure things properly.  */
+extern int pci_probe_only;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern unsigned long alpha_agpgart_size;
 
 extern void common_init_pci(void);

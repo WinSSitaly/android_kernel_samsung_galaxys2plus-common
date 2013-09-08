@@ -3,6 +3,7 @@
 /*
  * regulatory support structures
  *
+<<<<<<< HEAD
  * Copyright 2008-2009	Luis R. Rodriguez <mcgrof@qca.qualcomm.com>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -16,6 +17,13 @@
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+=======
+ * Copyright 2008-2009	Luis R. Rodriguez <lrodriguez@atheros.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 
@@ -48,10 +56,13 @@ enum environment_cap {
  * 	99 - built by driver but a specific alpha2 cannot be determined
  * 	98 - result of an intersection between two regulatory domains
  *	97 - regulatory domain has not yet been configured
+<<<<<<< HEAD
  * @dfs_region: If CRDA responded with a regulatory domain that requires
  *	DFS master operation on a known DFS region (NL80211_DFS_*),
  *	dfs_region represents that region. Drivers can use this and the
  *	@alpha2 to adjust their device's DFS parameters as required.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @intersect: indicates whether the wireless core should intersect
  * 	the requested regulatory domain with the presently set regulatory
  * 	domain.
@@ -71,7 +82,10 @@ struct regulatory_request {
 	int wiphy_idx;
 	enum nl80211_reg_initiator initiator;
 	char alpha2[2];
+<<<<<<< HEAD
 	u8 dfs_region;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool intersect;
 	bool processed;
 	enum environment_cap country_ie_env;
@@ -98,7 +112,10 @@ struct ieee80211_reg_rule {
 struct ieee80211_regdomain {
 	u32 n_reg_rules;
 	char alpha2[2];
+<<<<<<< HEAD
 	u8 dfs_region;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ieee80211_reg_rule reg_rules[];
 };
 

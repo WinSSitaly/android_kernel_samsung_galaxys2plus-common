@@ -25,7 +25,10 @@
 #include <linux/interrupt.h>
 #include <linux/mutex.h>
 #include <linux/aer.h>
+<<<<<<< HEAD
 #include <linux/bsg-lib.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <net/tcp.h>
 #include <scsi/scsi.h>
@@ -34,6 +37,7 @@
 #include <scsi/scsi_cmnd.h>
 #include <scsi/scsi_transport.h>
 #include <scsi/scsi_transport_iscsi.h>
+<<<<<<< HEAD
 #include <scsi/scsi_bsg_iscsi.h>
 #include <scsi/scsi_netlink.h>
 #include <scsi/libiscsi.h>
@@ -42,6 +46,11 @@
 #include "ql4_nx.h"
 #include "ql4_fw.h"
 #include "ql4_nvram.h"
+=======
+
+#include "ql4_dbg.h"
+#include "ql4_nx.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifndef PCI_DEVICE_ID_QLOGIC_ISP4010
 #define PCI_DEVICE_ID_QLOGIC_ISP4010	0x4010
@@ -115,7 +124,11 @@
 #define MAX_BUSES		1
 #define MAX_TARGETS		MAX_DEV_DB_ENTRIES
 #define MAX_LUNS		0xffff
+<<<<<<< HEAD
 #define MAX_AEN_ENTRIES		MAX_DEV_DB_ENTRIES
+=======
+#define MAX_AEN_ENTRIES		256 /* should be > EXT_DEF_MAX_AEN_QUEUE */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MAX_DDB_ENTRIES		MAX_DEV_DB_ENTRIES
 #define MAX_PDU_ENTRIES		32
 #define INVALID_ENTRY		0xFFFF
@@ -147,7 +160,11 @@
 #define ISCSI_ALIAS_SIZE		32	/* ISCSI Alias name size */
 #define ISCSI_NAME_SIZE			0xE0	/* ISCSI Name size */
 
+<<<<<<< HEAD
 #define QL4_SESS_RECOVERY_TMO		120	/* iSCSI session */
+=======
+#define QL4_SESS_RECOVERY_TMO		30	/* iSCSI session */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						/* recovery timeout */
 
 #define LSDW(x) ((u32)((u64)(x)))
@@ -172,12 +189,17 @@
 #define RELOGIN_TOV			18
 #define ISNS_DEREG_TOV			5
 #define HBA_ONLINE_TOV			30
+<<<<<<< HEAD
 #define DISABLE_ACB_TOV			30
 #define IP_CONFIG_TOV			30
 #define LOGIN_TOV			12
 
 #define MAX_RESET_HA_RETRIES		2
 #define FW_ALIVE_WAIT_TOV		3
+=======
+
+#define MAX_RESET_HA_RETRIES		2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define CMD_SP(Cmnd)			((Cmnd)->SCp.ptr)
 
@@ -221,6 +243,7 @@ struct srb {
 	uint16_t reserved2;
 };
 
+<<<<<<< HEAD
 /* Mailbox request block structure */
 struct mrb {
 	struct scsi_qla_host *ha;
@@ -230,6 +253,8 @@ struct mrb {
 	uint32_t pid;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Asynchronous Event Queue structure
  */
@@ -246,10 +271,15 @@ struct ql4_aen_log {
  * Device Database (DDB) structure
  */
 struct ddb_entry {
+<<<<<<< HEAD
+=======
+	struct list_head list;	/* ddb list */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct scsi_qla_host *ha;
 	struct iscsi_cls_session *sess;
 	struct iscsi_cls_conn *conn;
 
+<<<<<<< HEAD
 	uint16_t fw_ddb_index;	/* DDB firmware index */
 	uint32_t fw_ddb_device_state; /* F/W Device State  -- see ql4_fw.h */
 	uint16_t ddb_type;
@@ -292,6 +322,49 @@ struct ql4_tuple_ddb {
 #define DDB_OPT_IPV6 0x0e0e
 #define DDB_OPT_IPV4 0x0f0f
 	uint8_t isid[6];
+=======
+	atomic_t state;		/* DDB State */
+
+	unsigned long flags;	/* DDB Flags */
+
+	uint16_t fw_ddb_index;	/* DDB firmware index */
+	uint16_t options;
+	uint32_t fw_ddb_device_state; /* F/W Device State  -- see ql4_fw.h */
+
+	uint32_t CmdSn;
+	uint16_t target_session_id;
+	uint16_t connection_id;
+	uint16_t exe_throttle;	/* Max mumber of cmds outstanding
+				 * simultaneously */
+	uint16_t task_mgmt_timeout; /* Min time for task mgmt cmds to
+				     * complete */
+	uint16_t default_relogin_timeout; /*  Max time to wait for
+					   *  relogin to complete */
+	uint16_t tcp_source_port_num;
+	uint32_t default_time2wait; /* Default Min time between
+				     * relogins (+aens) */
+
+	atomic_t retry_relogin_timer; /* Min Time between relogins
+				       * (4000 only) */
+	atomic_t relogin_timer;	/* Max Time to wait for relogin to complete */
+	atomic_t relogin_retry_count; /* Num of times relogin has been
+				       * retried */
+
+	uint16_t port;
+	uint32_t tpgt;
+	uint8_t ip_addr[IP_ADDR_LEN];
+	uint8_t iscsi_name[ISCSI_NAME_SIZE];	/* 72 x48 */
+	uint8_t iscsi_alias[0x20];
+	uint8_t isid[6];
+	uint16_t iscsi_max_burst_len;
+	uint16_t iscsi_max_outsnd_r2t;
+	uint16_t iscsi_first_burst_len;
+	uint16_t iscsi_max_rcv_data_seg_len;
+	uint16_t iscsi_max_snd_data_seg_len;
+
+	struct in6_addr remote_ipv6_addr;
+	struct in6_addr link_local_ipv6_addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -311,6 +384,7 @@ struct ql4_tuple_ddb {
 #define DF_ISNS_DISCOVERED	2	/* Device was discovered via iSNS */
 #define DF_FO_MASKED		3
 
+<<<<<<< HEAD
 enum qla4_work_type {
 	QLA4_EVENT_AEN,
 	QLA4_EVENT_PING_STATUS,
@@ -333,6 +407,11 @@ struct qla4_work_evt {
 		} ping;
 	} u;
 };
+=======
+
+#include "ql4_fw.h"
+#include "ql4_nvram.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct ql82xx_hw_data {
 	/* Offsets for flash/nvram access (set to ~0 if not used). */
@@ -350,10 +429,14 @@ struct ql82xx_hw_data {
 	uint32_t flt_region_boot;
 	uint32_t flt_region_bootload;
 	uint32_t flt_region_fw;
+<<<<<<< HEAD
 
 	uint32_t flt_iscsi_param;
 	uint32_t flt_region_chap;
 	uint32_t flt_chap_size;
+=======
+	uint32_t reserved;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct qla4_8xxx_legacy_intr_set {
@@ -398,6 +481,7 @@ struct isp_operations {
 	int (*get_sys_info) (struct scsi_qla_host *);
 };
 
+<<<<<<< HEAD
 /*qla4xxx ipaddress configuration details */
 struct ipaddress_config {
 	uint16_t ipv4_options;
@@ -460,6 +544,8 @@ struct ql4_boot_tgt_info {
 	struct ql4_boot_session_info boot_sec_sess;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Linux Host Adapter structure
  */
@@ -484,7 +570,11 @@ struct scsi_qla_host {
 #define AF_FW_RECOVERY			19 /* 0x00080000 */
 #define AF_EEH_BUSY			20 /* 0x00100000 */
 #define AF_PCI_CHANNEL_IO_PERM_FAILURE	21 /* 0x00200000 */
+<<<<<<< HEAD
 #define AF_BUILD_DDB_LIST		22 /* 0x00400000 */
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long dpc_flags;
 
 #define DPC_RESET_HA			1 /* 0x00000002 */
@@ -554,6 +644,13 @@ struct scsi_qla_host {
 	/* --- From Init_FW --- */
 	/* init_cb_t *init_cb; */
 	uint16_t firmware_options;
+<<<<<<< HEAD
+=======
+	uint16_t tcp_options;
+	uint8_t ip_address[IP_ADDR_LEN];
+	uint8_t subnet_mask[IP_ADDR_LEN];
+	uint8_t gateway[IP_ADDR_LEN];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint8_t alias[32];
 	uint8_t name_string[256];
 	uint8_t heartbeat_interval;
@@ -561,7 +658,11 @@ struct scsi_qla_host {
 	/* --- From FlashSysInfo --- */
 	uint8_t my_mac[MAC_ADDR_LEN];
 	uint8_t serial_number[16];
+<<<<<<< HEAD
 	uint16_t port_num;
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* --- From GetFwState --- */
 	uint32_t firmware_state;
 	uint32_t addl_fw_state;
@@ -623,13 +724,39 @@ struct scsi_qla_host {
 	volatile uint8_t mbox_status_count;
 	volatile uint32_t mbox_status[MBOX_REG_COUNT];
 
+<<<<<<< HEAD
 	/* FW ddb index map */
+=======
+	/* local device database list (contains internal ddb entries) */
+	struct list_head ddb_list;
+
+	/* Map ddb_list entry by FW ddb index */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ddb_entry *fw_ddb_index_map[MAX_DDB_ENTRIES];
 
 	/* Saved srb for status continuation entry processing */
 	struct srb *status_srb;
 
+<<<<<<< HEAD
 	uint8_t acb_version;
+=======
+	/* IPv6 support info from InitFW */
+	uint8_t acb_version;
+	uint8_t ipv4_addr_state;
+	uint16_t ipv4_options;
+
+	uint32_t resvd2;
+	uint32_t ipv6_options;
+	uint32_t ipv6_addl_options;
+	uint8_t ipv6_link_local_state;
+	uint8_t ipv6_addr0_state;
+	uint8_t ipv6_addr1_state;
+	uint8_t ipv6_default_router_state;
+	struct in6_addr ipv6_link_local_addr;
+	struct in6_addr ipv6_addr0;
+	struct in6_addr ipv6_addr1;
+	struct in6_addr ipv6_default_router_addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* qla82xx specific fields */
 	struct device_reg_82xx  __iomem *qla4_8xxx_reg; /* Base I/O address */
@@ -665,11 +792,14 @@ struct scsi_qla_host {
 
 	struct completion mbx_intr_comp;
 
+<<<<<<< HEAD
 	struct ipaddress_config ip_config;
 	struct iscsi_iface *iface_ipv4;
 	struct iscsi_iface *iface_ipv6_0;
 	struct iscsi_iface *iface_ipv6_1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* --- From About Firmware --- */
 	uint16_t iscsi_major;
 	uint16_t iscsi_minor;
@@ -677,6 +807,7 @@ struct scsi_qla_host {
 	uint16_t bootload_minor;
 	uint16_t bootload_patch;
 	uint16_t bootload_build;
+<<<<<<< HEAD
 	uint16_t def_timeout; /* Default login timeout */
 
 	uint32_t flash_state;
@@ -737,17 +868,27 @@ struct qla_endpoint {
 
 struct qla_conn {
 	struct qla_endpoint *qla_ep;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline int is_ipv4_enabled(struct scsi_qla_host *ha)
 {
+<<<<<<< HEAD
 	return ((ha->ip_config.ipv4_options & IPOPT_IPV4_PROTOCOL_ENABLE) != 0);
+=======
+	return ((ha->ipv4_options & IPOPT_IPv4_PROTOCOL_ENABLE) != 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int is_ipv6_enabled(struct scsi_qla_host *ha)
 {
+<<<<<<< HEAD
 	return ((ha->ip_config.ipv6_options &
 		IPV6_OPT_IPV6_PROTOCOL_ENABLE) != 0);
+=======
+	return ((ha->ipv6_options & IPV6_OPT_IPV6_PROTOCOL_ENABLE) != 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int is_qla4010(struct scsi_qla_host *ha)
@@ -765,11 +906,14 @@ static inline int is_qla4032(struct scsi_qla_host *ha)
 	return ha->pdev->device == PCI_DEVICE_ID_QLOGIC_ISP4032;
 }
 
+<<<<<<< HEAD
 static inline int is_qla40XX(struct scsi_qla_host *ha)
 {
 	return is_qla4032(ha) || is_qla4022(ha) || is_qla4010(ha);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int is_qla8022(struct scsi_qla_host *ha)
 {
 	return ha->pdev->device == PCI_DEVICE_ID_QLOGIC_ISP8022;
@@ -792,7 +936,11 @@ static inline int adapter_up(struct scsi_qla_host *ha)
 
 static inline struct scsi_qla_host* to_qla_host(struct Scsi_Host *shost)
 {
+<<<<<<< HEAD
 	return (struct scsi_qla_host *)iscsi_host_priv(shost);
+=======
+	return (struct scsi_qla_host *)shost->hostdata;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void __iomem* isp_semaphore(struct scsi_qla_host *ha)
@@ -912,6 +1060,7 @@ static inline void ql4xxx_unlock_drvr(struct scsi_qla_host *a)
 		ql4xxx_sem_unlock(a, QL4022_DRVR_SEM_MASK);
 }
 
+<<<<<<< HEAD
 static inline int ql4xxx_reset_active(struct scsi_qla_host *ha)
 {
 	return test_bit(DPC_RESET_ACTIVE, &ha->dpc_flags) ||
@@ -929,6 +1078,11 @@ static inline int ql4xxx_reset_active(struct scsi_qla_host *ha)
 #define INIT_ADAPTER    0
 #define RESET_ADAPTER   1
 
+=======
+/*---------------------------------------------------------------------------*/
+
+/* Defines for qla4xxx_initialize_adapter() and qla4xxx_recover_adapter() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PRESERVE_DDB_LIST	0
 #define REBUILD_DDB_LIST	1
 

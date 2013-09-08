@@ -28,6 +28,10 @@
 
 #include <linux/compiler.h>
 #include <linux/types.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/list.h>
 #include <linux/sched.h>
 #include <linux/bitops.h>
@@ -59,8 +63,13 @@
 
 /* module parameter, defined in drbd_main.c */
 extern unsigned int minor_count;
+<<<<<<< HEAD
 extern bool disable_sendpage;
 extern bool allow_oos;
+=======
+extern int disable_sendpage;
+extern int allow_oos;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern unsigned int cn_idx;
 
 #ifdef CONFIG_DRBD_FAULT_INJECTION
@@ -927,7 +936,11 @@ struct drbd_md {
 #define NL_INT64(pn,pr,member) __u64 member;
 #define NL_BIT(pn,pr,member)   unsigned member:1;
 #define NL_STRING(pn,pr,member,len) unsigned char member[len]; int member ## _len;
+<<<<<<< HEAD
 #include <linux/drbd_nl.h>
+=======
+#include "linux/drbd_nl.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct drbd_backing_dev {
 	struct block_device *backing_bdev;
@@ -1506,7 +1519,11 @@ extern void drbd_free_mdev(struct drbd_conf *mdev);
 extern int proc_details;
 
 /* drbd_req */
+<<<<<<< HEAD
 extern void drbd_make_request(struct request_queue *q, struct bio *bio);
+=======
+extern int drbd_make_request(struct request_queue *q, struct bio *bio);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int drbd_read_remote(struct drbd_conf *mdev, struct drbd_request *req);
 extern int drbd_merge_bvec(struct request_queue *q, struct bvec_merge_data *bvm, struct bio_vec *bvec);
 extern int is_valid_ar_handle(struct drbd_request *, sector_t);

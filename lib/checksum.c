@@ -32,7 +32,11 @@
 /* Revised by Kenneth Albanowski for m68knommu. Basic problem: unaligned access
  kills, so most of the assembly has to go. */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/checksum.h>
 
 #include <asm/byteorder.h>
@@ -49,7 +53,11 @@ static inline unsigned short from32to16(unsigned int x)
 
 static unsigned int do_csum(const unsigned char *buff, int len)
 {
+<<<<<<< HEAD
 	int odd;
+=======
+	int odd, count;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int result = 0;
 
 	if (len <= 0)
@@ -64,6 +72,7 @@ static unsigned int do_csum(const unsigned char *buff, int len)
 		len--;
 		buff++;
 	}
+<<<<<<< HEAD
 	if (len >= 2) {
 		if (2 & (unsigned long) buff) {
 			result += *(unsigned short *) buff;
@@ -75,11 +84,31 @@ static unsigned int do_csum(const unsigned char *buff, int len)
 			unsigned int carry = 0;
 			do {
 				unsigned int w = *(unsigned int *) buff;
+=======
+	count = len >> 1;		/* nr of 16-bit words.. */
+	if (count) {
+		if (2 & (unsigned long) buff) {
+			result += *(unsigned short *) buff;
+			count--;
+			len -= 2;
+			buff += 2;
+		}
+		count >>= 1;		/* nr of 32-bit words.. */
+		if (count) {
+			unsigned int carry = 0;
+			do {
+				unsigned int w = *(unsigned int *) buff;
+				count--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				buff += 4;
 				result += carry;
 				result += w;
 				carry = (w > result);
+<<<<<<< HEAD
 			} while (buff < end);
+=======
+			} while (count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			result += carry;
 			result = (result & 0xffff) + (result >> 16);
 		}

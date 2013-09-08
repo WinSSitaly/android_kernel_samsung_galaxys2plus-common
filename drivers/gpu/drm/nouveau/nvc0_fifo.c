@@ -210,10 +210,17 @@ nvc0_fifo_unload_context(struct drm_device *dev)
 	int i;
 
 	for (i = 0; i < 128; i++) {
+<<<<<<< HEAD
 		if (!(nv_rd32(dev, 0x003004 + (i * 8)) & 1))
 			continue;
 
 		nv_mask(dev, 0x003004 + (i * 8), 0x00000001, 0x00000000);
+=======
+		if (!(nv_rd32(dev, 0x003004 + (i * 4)) & 1))
+			continue;
+
+		nv_mask(dev, 0x003004 + (i * 4), 0x00000001, 0x00000000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nv_wr32(dev, 0x002634, i);
 		if (!nv_wait(dev, 0x002634, 0xffffffff, i)) {
 			NV_INFO(dev, "PFIFO: kick ch %d failed: 0x%08x\n",
@@ -322,7 +329,11 @@ nvc0_fifo_init(struct drm_device *dev)
 	}
 
 	/* PSUBFIFO[n] */
+<<<<<<< HEAD
 	for (i = 0; i < priv->spoon_nr; i++) {
+=======
+	for (i = 0; i < 3; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nv_mask(dev, 0x04013c + (i * 0x2000), 0x10000100, 0x00000000);
 		nv_wr32(dev, 0x040108 + (i * 0x2000), 0xffffffff); /* INTR */
 		nv_wr32(dev, 0x04010c + (i * 0x2000), 0xfffffeff); /* INTR_EN */
@@ -436,6 +447,7 @@ nvc0_fifo_isr_vm_fault(struct drm_device *dev, int unit)
 	printk(" on channel 0x%010llx\n", (u64)inst << 12);
 }
 
+<<<<<<< HEAD
 static int
 nvc0_fifo_page_flip(struct drm_device *dev, u32 chid)
 {
@@ -454,6 +466,8 @@ nvc0_fifo_page_flip(struct drm_device *dev, u32 chid)
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 nvc0_fifo_isr_subfifo_intr(struct drm_device *dev, int unit)
 {
@@ -463,6 +477,7 @@ nvc0_fifo_isr_subfifo_intr(struct drm_device *dev, int unit)
 	u32 chid = nv_rd32(dev, 0x040120 + (unit * 0x2000)) & 0x7f;
 	u32 subc = (addr & 0x00070000);
 	u32 mthd = (addr & 0x00003ffc);
+<<<<<<< HEAD
 	u32 show = stat;
 
 	if (stat & 0x00200000) {
@@ -478,6 +493,13 @@ nvc0_fifo_isr_subfifo_intr(struct drm_device *dev, int unit)
 		NV_INFO(dev, "PFIFO%d: ch %d subc %d mthd 0x%04x data 0x%08x\n",
 			     unit, chid, subc, mthd, data);
 	}
+=======
+
+	NV_INFO(dev, "PSUBFIFO %d:", unit);
+	nouveau_bitfield_print(nvc0_fifo_subfifo_intr, stat);
+	NV_INFO(dev, "PSUBFIFO %d: ch %d subc %d mthd 0x%04x data 0x%08x\n",
+		unit, chid, subc, mthd, data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nv_wr32(dev, 0x0400c0 + (unit * 0x2000), 0x80600008);
 	nv_wr32(dev, 0x040108 + (unit * 0x2000), stat);

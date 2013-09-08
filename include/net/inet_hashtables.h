@@ -33,7 +33,11 @@
 #include <net/tcp_states.h>
 #include <net/netns/hash.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/byteorder.h>
 
 /* This is for all connections with a full identity, no wildcards.

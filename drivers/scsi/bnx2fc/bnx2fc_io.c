@@ -1,7 +1,11 @@
 /* bnx2fc_io.c: Broadcom NetXtreme II Linux FCoE offload driver.
  * IO manager and SCSI IO processing.
  *
+<<<<<<< HEAD
  * Copyright (c) 2008 - 2011 Broadcom Corporation
+=======
+ * Copyright (c) 2008 - 2010 Broadcom Corporation
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +21,13 @@
 static int bnx2fc_split_bd(struct bnx2fc_cmd *io_req, u64 addr, int sg_len,
 			   int bd_index);
 static int bnx2fc_map_sg(struct bnx2fc_cmd *io_req);
+<<<<<<< HEAD
 static int bnx2fc_build_bd_list_from_sg(struct bnx2fc_cmd *io_req);
+=======
+static void bnx2fc_build_bd_list_from_sg(struct bnx2fc_cmd *io_req);
+static int bnx2fc_post_io_req(struct bnx2fc_rport *tgt,
+			       struct bnx2fc_cmd *io_req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void bnx2fc_unmap_sg_list(struct bnx2fc_cmd *io_req);
 static void bnx2fc_free_mp_resc(struct bnx2fc_cmd *io_req);
 static void bnx2fc_parse_fcp_rsp(struct bnx2fc_cmd *io_req,
@@ -27,11 +37,18 @@ static void bnx2fc_parse_fcp_rsp(struct bnx2fc_cmd *io_req,
 void bnx2fc_cmd_timer_set(struct bnx2fc_cmd *io_req,
 			  unsigned int timer_msec)
 {
+<<<<<<< HEAD
 	struct bnx2fc_interface *interface = io_req->port->priv;
 
 	if (queue_delayed_work(interface->timer_work_queue,
 			       &io_req->timeout_work,
 			       msecs_to_jiffies(timer_msec)))
+=======
+	struct bnx2fc_hba *hba = io_req->port->priv;
+
+	if (queue_delayed_work(hba->timer_work_queue, &io_req->timeout_work,
+				  msecs_to_jiffies(timer_msec)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kref_get(&io_req->refcount);
 }
 
@@ -216,11 +233,14 @@ static void bnx2fc_scsi_done(struct bnx2fc_cmd *io_req, int err_code)
 		return;
 
 	BNX2FC_IO_DBG(io_req, "scsi_done. err_code = 0x%x\n", err_code);
+<<<<<<< HEAD
 	if (test_bit(BNX2FC_FLAG_CMD_LOST, &io_req->req_flags)) {
 		/* Do not call scsi done for this IO */
 		return;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bnx2fc_unmap_sg_list(io_req);
 	io_req->sc_cmd = NULL;
 	if (!sc_cmd) {
@@ -423,13 +443,21 @@ free_cmgr:
 struct bnx2fc_cmd *bnx2fc_elstm_alloc(struct bnx2fc_rport *tgt, int type)
 {
 	struct fcoe_port *port = tgt->port;
+<<<<<<< HEAD
 	struct bnx2fc_interface *interface = port->priv;
 	struct bnx2fc_cmd_mgr *cmd_mgr = interface->hba->cmd_mgr;
+=======
+	struct bnx2fc_hba *hba = port->priv;
+	struct bnx2fc_cmd_mgr *cmd_mgr = hba->cmd_mgr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bnx2fc_cmd *io_req;
 	struct list_head *listp;
 	struct io_bdt *bd_tbl;
 	int index = RESERVE_FREE_LIST_INDEX;
+<<<<<<< HEAD
 	u32 free_sqes;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 max_sqes;
 	u16 xid;
 
@@ -450,10 +478,15 @@ struct bnx2fc_cmd *bnx2fc_elstm_alloc(struct bnx2fc_rport *tgt, int type)
 	 * cmgr lock
 	 */
 	spin_lock_bh(&cmd_mgr->free_list_lock[index]);
+<<<<<<< HEAD
 	free_sqes = atomic_read(&tgt->free_sqes);
 	if ((list_empty(&(cmd_mgr->free_list[index]))) ||
 	    (tgt->num_active_ios.counter  >= max_sqes) ||
 	    (free_sqes + max_sqes <= BNX2FC_SQ_WQES_MAX)) {
+=======
+	if ((list_empty(&(cmd_mgr->free_list[index]))) ||
+	    (tgt->num_active_ios.counter  >= max_sqes)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		BNX2FC_TGT_DBG(tgt, "No free els_tm cmds available "
 			"ios(%d):sqes(%d)\n",
 			tgt->num_active_ios.counter, tgt->max_sqes);
@@ -470,7 +503,10 @@ struct bnx2fc_cmd *bnx2fc_elstm_alloc(struct bnx2fc_rport *tgt, int type)
 	xid = io_req->xid;
 	cmd_mgr->cmds[xid] = io_req;
 	atomic_inc(&tgt->num_active_ios);
+<<<<<<< HEAD
 	atomic_dec(&tgt->free_sqes);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_bh(&cmd_mgr->free_list_lock[index]);
 
 	INIT_LIST_HEAD(&io_req->link);
@@ -489,6 +525,7 @@ struct bnx2fc_cmd *bnx2fc_elstm_alloc(struct bnx2fc_rport *tgt, int type)
 	kref_init(&io_req->refcount);
 	return io_req;
 }
+<<<<<<< HEAD
 
 struct bnx2fc_cmd *bnx2fc_cmd_alloc(struct bnx2fc_rport *tgt)
 {
@@ -499,6 +536,16 @@ struct bnx2fc_cmd *bnx2fc_cmd_alloc(struct bnx2fc_rport *tgt)
 	struct list_head *listp;
 	struct io_bdt *bd_tbl;
 	u32 free_sqes;
+=======
+static struct bnx2fc_cmd *bnx2fc_cmd_alloc(struct bnx2fc_rport *tgt)
+{
+	struct fcoe_port *port = tgt->port;
+	struct bnx2fc_hba *hba = port->priv;
+	struct bnx2fc_cmd_mgr *cmd_mgr = hba->cmd_mgr;
+	struct bnx2fc_cmd *io_req;
+	struct list_head *listp;
+	struct io_bdt *bd_tbl;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 max_sqes;
 	u16 xid;
 	int index = get_cpu();
@@ -509,10 +556,15 @@ struct bnx2fc_cmd *bnx2fc_cmd_alloc(struct bnx2fc_rport *tgt)
 	 * cmgr lock
 	 */
 	spin_lock_bh(&cmd_mgr->free_list_lock[index]);
+<<<<<<< HEAD
 	free_sqes = atomic_read(&tgt->free_sqes);
 	if ((list_empty(&cmd_mgr->free_list[index])) ||
 	    (tgt->num_active_ios.counter  >= max_sqes) ||
 	    (free_sqes + max_sqes <= BNX2FC_SQ_WQES_MAX)) {
+=======
+	if ((list_empty(&cmd_mgr->free_list[index])) ||
+	    (tgt->num_active_ios.counter  >= max_sqes)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock_bh(&cmd_mgr->free_list_lock[index]);
 		put_cpu();
 		return NULL;
@@ -525,7 +577,10 @@ struct bnx2fc_cmd *bnx2fc_cmd_alloc(struct bnx2fc_rport *tgt)
 	xid = io_req->xid;
 	cmd_mgr->cmds[xid] = io_req;
 	atomic_inc(&tgt->num_active_ios);
+<<<<<<< HEAD
 	atomic_dec(&tgt->free_sqes);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_bh(&cmd_mgr->free_list_lock[index]);
 	put_cpu();
 
@@ -575,8 +630,12 @@ void bnx2fc_cmd_release(struct kref *ref)
 static void bnx2fc_free_mp_resc(struct bnx2fc_cmd *io_req)
 {
 	struct bnx2fc_mp_req *mp_req = &(io_req->mp_req);
+<<<<<<< HEAD
 	struct bnx2fc_interface *interface = io_req->port->priv;
 	struct bnx2fc_hba *hba = interface->hba;
+=======
+	struct bnx2fc_hba *hba = io_req->port->priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	size_t sz = sizeof(struct fcoe_bd_ctx);
 
 	/* clear tm flags */
@@ -612,8 +671,12 @@ int bnx2fc_init_mp_req(struct bnx2fc_cmd *io_req)
 	struct bnx2fc_mp_req *mp_req;
 	struct fcoe_bd_ctx *mp_req_bd;
 	struct fcoe_bd_ctx *mp_resp_bd;
+<<<<<<< HEAD
 	struct bnx2fc_interface *interface = io_req->port->priv;
 	struct bnx2fc_hba *hba = interface->hba;
+=======
+	struct bnx2fc_hba *hba = io_req->port->priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dma_addr_t addr;
 	size_t sz;
 
@@ -689,7 +752,11 @@ static int bnx2fc_initiate_tmf(struct scsi_cmnd *sc_cmd, u8 tm_flags)
 	struct fc_rport *rport = starget_to_rport(scsi_target(sc_cmd->device));
 	struct fc_rport_libfc_priv *rp = rport->dd_data;
 	struct fcoe_port *port;
+<<<<<<< HEAD
 	struct bnx2fc_interface *interface;
+=======
+	struct bnx2fc_hba *hba;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bnx2fc_rport *tgt;
 	struct bnx2fc_cmd *io_req;
 	struct bnx2fc_mp_req *tm_req;
@@ -706,10 +773,17 @@ static int bnx2fc_initiate_tmf(struct scsi_cmnd *sc_cmd, u8 tm_flags)
 
 	lport = shost_priv(host);
 	port = lport_priv(lport);
+<<<<<<< HEAD
 	interface = port->priv;
 
 	if (rport == NULL) {
 		printk(KERN_ERR PFX "device_reset: rport is NULL\n");
+=======
+	hba = port->priv;
+
+	if (rport == NULL) {
+		printk(KERN_ALERT PFX "device_reset: rport is NULL\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = FAILED;
 		goto tmf_err;
 	}
@@ -752,9 +826,13 @@ retry_tmf:
 	rc = bnx2fc_init_mp_req(io_req);
 	if (rc == FAILED) {
 		printk(KERN_ERR PFX "Task mgmt MP request init failed\n");
+<<<<<<< HEAD
 		spin_lock_bh(&tgt->tgt_lock);
 		kref_put(&io_req->refcount, bnx2fc_cmd_release);
 		spin_unlock_bh(&tgt->tgt_lock);
+=======
+		kref_put(&io_req->refcount, bnx2fc_cmd_release);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto tmf_err;
 	}
 
@@ -783,8 +861,12 @@ retry_tmf:
 	index = xid % BNX2FC_TASKS_PER_PAGE;
 
 	/* Initialize task context for this IO request */
+<<<<<<< HEAD
 	task_page = (struct fcoe_task_ctx_entry *)
 			interface->hba->task_ctx[task_idx];
+=======
+	task_page = (struct fcoe_task_ctx_entry *) hba->task_ctx[task_idx];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	task = &(task_page[index]);
 	bnx2fc_init_mp_task(io_req, task);
 
@@ -816,10 +898,17 @@ retry_tmf:
 	spin_unlock_bh(&tgt->tgt_lock);
 
 	if (!rc) {
+<<<<<<< HEAD
 		BNX2FC_TGT_DBG(tgt, "task mgmt command failed...\n");
 		rc = FAILED;
 	} else {
 		BNX2FC_TGT_DBG(tgt, "task mgmt command success...\n");
+=======
+		printk(KERN_ERR PFX "task mgmt command failed...\n");
+		rc = FAILED;
+	} else {
+		printk(KERN_ERR PFX "task mgmt command success...\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = SUCCESS;
 	}
 tmf_err:
@@ -832,7 +921,11 @@ int bnx2fc_initiate_abts(struct bnx2fc_cmd *io_req)
 	struct bnx2fc_rport *tgt = io_req->tgt;
 	struct fc_rport *rport = tgt->rport;
 	struct fc_rport_priv *rdata = tgt->rdata;
+<<<<<<< HEAD
 	struct bnx2fc_interface *interface;
+=======
+	struct bnx2fc_hba *hba;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct fcoe_port *port;
 	struct bnx2fc_cmd *abts_io_req;
 	struct fcoe_task_ctx_entry *task;
@@ -849,7 +942,11 @@ int bnx2fc_initiate_abts(struct bnx2fc_cmd *io_req)
 	BNX2FC_IO_DBG(io_req, "Entered bnx2fc_initiate_abts\n");
 
 	port = io_req->port;
+<<<<<<< HEAD
 	interface = port->priv;
+=======
+	hba = port->priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lport = port->lport;
 
 	if (!test_bit(BNX2FC_FLAG_SESSION_READY, &tgt->flags)) {
@@ -859,7 +956,11 @@ int bnx2fc_initiate_abts(struct bnx2fc_cmd *io_req)
 	}
 
 	if (rport == NULL) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "initiate_abts: rport is NULL\n");
+=======
+		printk(KERN_ALERT PFX "initiate_abts: rport is NULL\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = FAILED;
 		goto abts_err;
 	}
@@ -891,7 +992,11 @@ int bnx2fc_initiate_abts(struct bnx2fc_cmd *io_req)
 
 	/* Obtain oxid and rxid for the original exchange to be aborted */
 	fc_hdr->fh_ox_id = htons(io_req->xid);
+<<<<<<< HEAD
 	fc_hdr->fh_rx_id = htons(io_req->task->rxwr_txrd.var_ctx.rx_id);
+=======
+	fc_hdr->fh_rx_id = htons(io_req->task->rx_wr_tx_rd.rx_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sid = tgt->sid;
 	did = rport->port_id;
@@ -906,8 +1011,12 @@ int bnx2fc_initiate_abts(struct bnx2fc_cmd *io_req)
 	index = xid % BNX2FC_TASKS_PER_PAGE;
 
 	/* Initialize task context for this IO request */
+<<<<<<< HEAD
 	task_page = (struct fcoe_task_ctx_entry *)
 			interface->hba->task_ctx[task_idx];
+=======
+	task_page = (struct fcoe_task_ctx_entry *) hba->task_ctx[task_idx];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	task = &(task_page[index]);
 	bnx2fc_init_mp_task(abts_io_req, task);
 
@@ -935,6 +1044,7 @@ abts_err:
 	return rc;
 }
 
+<<<<<<< HEAD
 int bnx2fc_initiate_seq_cleanup(struct bnx2fc_cmd *orig_io_req, u32 offset,
 				enum fc_rctl r_ctl)
 {
@@ -1005,11 +1115,17 @@ cleanup_err:
 	return rc;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int bnx2fc_initiate_cleanup(struct bnx2fc_cmd *io_req)
 {
 	struct fc_lport *lport;
 	struct bnx2fc_rport *tgt = io_req->tgt;
+<<<<<<< HEAD
 	struct bnx2fc_interface *interface;
+=======
+	struct bnx2fc_hba *hba;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct fcoe_port *port;
 	struct bnx2fc_cmd *cleanup_io_req;
 	struct fcoe_task_ctx_entry *task;
@@ -1022,7 +1138,11 @@ int bnx2fc_initiate_cleanup(struct bnx2fc_cmd *io_req)
 	BNX2FC_IO_DBG(io_req, "Entered bnx2fc_initiate_cleanup\n");
 
 	port = io_req->port;
+<<<<<<< HEAD
 	interface = port->priv;
+=======
+	hba = port->priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lport = port->lport;
 
 	cleanup_io_req = bnx2fc_elstm_alloc(tgt, BNX2FC_CLEANUP);
@@ -1044,8 +1164,12 @@ int bnx2fc_initiate_cleanup(struct bnx2fc_cmd *io_req)
 	index = xid % BNX2FC_TASKS_PER_PAGE;
 
 	/* Initialize task context for this IO request */
+<<<<<<< HEAD
 	task_page = (struct fcoe_task_ctx_entry *)
 			interface->hba->task_ctx[task_idx];
+=======
+	task_page = (struct fcoe_task_ctx_entry *) hba->task_ctx[task_idx];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	task = &(task_page[index]);
 	orig_xid = io_req->xid;
 
@@ -1103,10 +1227,14 @@ int bnx2fc_eh_abort(struct scsi_cmnd *sc_cmd)
 	struct fc_rport_libfc_priv *rp = rport->dd_data;
 	struct bnx2fc_cmd *io_req;
 	struct fc_lport *lport;
+<<<<<<< HEAD
 	struct fc_rport_priv *rdata;
 	struct bnx2fc_rport *tgt;
 	int logo_issued;
 	int wait_cnt = 0;
+=======
+	struct bnx2fc_rport *tgt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rc = FAILED;
 
 
@@ -1116,7 +1244,11 @@ int bnx2fc_eh_abort(struct scsi_cmnd *sc_cmd)
 
 	lport = shost_priv(sc_cmd->device->host);
 	if ((lport->state != LPORT_ST_READY) || !(lport->link_up)) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "eh_abort: link not ready\n");
+=======
+		printk(KERN_ALERT PFX "eh_abort: link not ready\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return rc;
 	}
 
@@ -1147,7 +1279,11 @@ int bnx2fc_eh_abort(struct scsi_cmnd *sc_cmd)
 	 * io_req is no longer in the active_q.
 	 */
 	if (tgt->flush_in_prog) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "eh_abort: io_req (xid = 0x%x) "
+=======
+		printk(KERN_ALERT PFX "eh_abort: io_req (xid = 0x%x) "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"flush in progress\n", io_req->xid);
 		kref_put(&io_req->refcount, bnx2fc_cmd_release);
 		spin_unlock_bh(&tgt->tgt_lock);
@@ -1155,7 +1291,11 @@ int bnx2fc_eh_abort(struct scsi_cmnd *sc_cmd)
 	}
 
 	if (io_req->on_active_queue == 0) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "eh_abort: io_req (xid = 0x%x) "
+=======
+		printk(KERN_ALERT PFX "eh_abort: io_req (xid = 0x%x) "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"not on active_q\n", io_req->xid);
 		/*
 		 * This condition can happen only due to the FW bug,
@@ -1193,6 +1333,7 @@ int bnx2fc_eh_abort(struct scsi_cmnd *sc_cmd)
 		set_bit(BNX2FC_FLAG_EH_ABORT, &io_req->req_flags);
 		rc = bnx2fc_initiate_abts(io_req);
 	} else {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "eh_abort: io_req (xid = 0x%x) "
 				"already in abts processing\n", io_req->xid);
 		if (cancel_delayed_work(&io_req->timeout_work))
@@ -1229,6 +1370,12 @@ int bnx2fc_eh_abort(struct scsi_cmnd *sc_cmd)
 			} while (!test_bit(BNX2FC_FLAG_SESSION_READY,
 					   &tgt->flags));
 		}
+=======
+		printk(KERN_ALERT PFX "eh_abort: io_req (xid = 0x%x) "
+				"already in abts processing\n", io_req->xid);
+		kref_put(&io_req->refcount, bnx2fc_cmd_release);
+		spin_unlock_bh(&tgt->tgt_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SUCCESS;
 	}
 	if (rc == FAILED) {
@@ -1266,6 +1413,7 @@ int bnx2fc_eh_abort(struct scsi_cmnd *sc_cmd)
 	return rc;
 }
 
+<<<<<<< HEAD
 void bnx2fc_process_seq_cleanup_compl(struct bnx2fc_cmd *seq_clnp_req,
 				      struct fcoe_task_ctx_entry *task,
 				      u8 rx_state)
@@ -1301,6 +1449,8 @@ free_cb_arg:
 	return;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void bnx2fc_process_cleanup_compl(struct bnx2fc_cmd *io_req,
 				  struct fcoe_task_ctx_entry *task,
 				  u8 num_rq)
@@ -1310,8 +1460,11 @@ void bnx2fc_process_cleanup_compl(struct bnx2fc_cmd *io_req,
 		   io_req->refcount.refcount.counter, io_req->cmd_type);
 	bnx2fc_scsi_done(io_req, DID_ERROR);
 	kref_put(&io_req->refcount, bnx2fc_cmd_release);
+<<<<<<< HEAD
 	if (io_req->wait_for_comp)
 		complete(&io_req->tm_done);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void bnx2fc_process_abts_compl(struct bnx2fc_cmd *io_req,
@@ -1351,7 +1504,11 @@ void bnx2fc_process_abts_compl(struct bnx2fc_cmd *io_req,
 			kref_put(&io_req->refcount,
 				 bnx2fc_cmd_release); /* drop timer hold */
 
+<<<<<<< HEAD
 	r_ctl = (u8)task->rxwr_only.union_ctx.comp_info.abts_rsp.r_ctl;
+=======
+	r_ctl = task->cmn.general.rsp_info.abts_rsp.r_ctl;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (r_ctl) {
 	case FC_RCTL_BA_ACC:
@@ -1506,13 +1663,21 @@ void bnx2fc_process_tm_compl(struct bnx2fc_cmd *io_req,
 	fc_hdr = &(tm_req->resp_fc_hdr);
 	hdr = (u64 *)fc_hdr;
 	temp_hdr = (u64 *)
+<<<<<<< HEAD
 		&task->rxwr_only.union_ctx.comp_info.mp_rsp.fc_hdr;
+=======
+		&task->cmn.general.cmd_info.mp_fc_frame.fc_hdr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hdr[0] = cpu_to_be64(temp_hdr[0]);
 	hdr[1] = cpu_to_be64(temp_hdr[1]);
 	hdr[2] = cpu_to_be64(temp_hdr[2]);
 
+<<<<<<< HEAD
 	tm_req->resp_len =
 		task->rxwr_only.union_ctx.comp_info.mp_rsp.mp_payload_len;
+=======
+	tm_req->resp_len = task->rx_wr_only.sgl_ctx.mul_sges.cur_sge_off;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rsp_buf = tm_req->resp_buf;
 
@@ -1532,7 +1697,11 @@ void bnx2fc_process_tm_compl(struct bnx2fc_cmd *io_req,
 			fc_hdr->fh_r_ctl);
 	}
 	if (!sc_cmd->SCp.ptr) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "tm_compl: SCp.ptr is NULL\n");
+=======
+		printk(KERN_ALERT PFX "tm_compl: SCp.ptr is NULL\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 	switch (io_req->fcp_status) {
@@ -1564,7 +1733,11 @@ void bnx2fc_process_tm_compl(struct bnx2fc_cmd *io_req,
 		io_req->on_tmf_queue = 0;
 	} else {
 
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "Command not on active_cmd_queue!\n");
+=======
+		printk(KERN_ALERT PFX "Command not on active_cmd_queue!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -1605,8 +1778,11 @@ static int bnx2fc_split_bd(struct bnx2fc_cmd *io_req, u64 addr, int sg_len,
 
 static int bnx2fc_map_sg(struct bnx2fc_cmd *io_req)
 {
+<<<<<<< HEAD
 	struct bnx2fc_interface *interface = io_req->port->priv;
 	struct bnx2fc_hba *hba = interface->hba;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct scsi_cmnd *sc = io_req->sc_cmd;
 	struct fcoe_bd_ctx *bd = io_req->bd_tbl->bd_tbl;
 	struct scatterlist *sg;
@@ -1618,8 +1794,12 @@ static int bnx2fc_map_sg(struct bnx2fc_cmd *io_req)
 	u64 addr;
 	int i;
 
+<<<<<<< HEAD
 	sg_count = dma_map_sg(&hba->pcidev->dev, scsi_sglist(sc),
 			      scsi_sg_count(sc), sc->sc_data_direction);
+=======
+	sg_count = scsi_dma_map(sc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	scsi_for_each_sg(sc, sg, sg_count, i) {
 		sg_len = sg_dma_len(sg);
 		addr = sg_dma_address(sg);
@@ -1644,24 +1824,37 @@ static int bnx2fc_map_sg(struct bnx2fc_cmd *io_req)
 	return bd_count;
 }
 
+<<<<<<< HEAD
 static int bnx2fc_build_bd_list_from_sg(struct bnx2fc_cmd *io_req)
+=======
+static void bnx2fc_build_bd_list_from_sg(struct bnx2fc_cmd *io_req)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct scsi_cmnd *sc = io_req->sc_cmd;
 	struct fcoe_bd_ctx *bd = io_req->bd_tbl->bd_tbl;
 	int bd_count;
 
+<<<<<<< HEAD
 	if (scsi_sg_count(sc)) {
 		bd_count = bnx2fc_map_sg(io_req);
 		if (bd_count == 0)
 			return -ENOMEM;
 	} else {
+=======
+	if (scsi_sg_count(sc))
+		bd_count = bnx2fc_map_sg(io_req);
+	else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bd_count = 0;
 		bd[0].buf_addr_lo = bd[0].buf_addr_hi = 0;
 		bd[0].buf_len = bd[0].flags = 0;
 	}
 	io_req->bd_tbl->bd_valid = bd_count;
+<<<<<<< HEAD
 
 	return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void bnx2fc_unmap_sg_list(struct bnx2fc_cmd *io_req)
@@ -1682,7 +1875,13 @@ void bnx2fc_build_fcp_cmnd(struct bnx2fc_cmd *io_req,
 
 	memset(fcp_cmnd, 0, sizeof(struct fcp_cmnd));
 
+<<<<<<< HEAD
 	int_to_scsilun(sc_cmd->device->lun, &fcp_cmnd->fc_lun);
+=======
+	int_to_scsilun(sc_cmd->device->lun,
+			(struct scsi_lun *) fcp_cmnd->fc_lun);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fcp_cmnd->fc_dl = htonl(io_req->data_xfer_len);
 	memcpy(fcp_cmnd->fc_cdb, sc_cmd->cmnd, sc_cmd->cmd_len);
@@ -1756,7 +1955,11 @@ static void bnx2fc_parse_fcp_rsp(struct bnx2fc_cmd *io_req,
 
 		if (rq_buff_len > num_rq * BNX2FC_RQ_BUF_SZ) {
 			/* Invalid sense sense length. */
+<<<<<<< HEAD
 			printk(KERN_ERR PFX "invalid sns length %d\n",
+=======
+			printk(KERN_ALERT PFX "invalid sns length %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				rq_buff_len);
 			/* reset rq_buff_len */
 			rq_buff_len =  num_rq * BNX2FC_RQ_BUF_SZ;
@@ -1786,7 +1989,11 @@ static void bnx2fc_parse_fcp_rsp(struct bnx2fc_cmd *io_req,
 			fcp_sns_len = SCSI_SENSE_BUFFERSIZE;
 		}
 
+<<<<<<< HEAD
 		memset(sc_cmd->sense_buffer, 0, SCSI_SENSE_BUFFERSIZE);
+=======
+		memset(sc_cmd->sense_buffer, 0, sizeof(sc_cmd->sense_buffer));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (fcp_sns_len)
 			memcpy(sc_cmd->sense_buffer, rq_data, fcp_sns_len);
 
@@ -1831,6 +2038,15 @@ int bnx2fc_queuecommand(struct Scsi_Host *host,
 	tgt = (struct bnx2fc_rport *)&rp[1];
 
 	if (!test_bit(BNX2FC_FLAG_SESSION_READY, &tgt->flags)) {
+<<<<<<< HEAD
+=======
+		if (test_bit(BNX2FC_FLAG_UPLD_REQ_COMPL, &tgt->flags))  {
+			sc_cmd->result = DID_NO_CONNECT << 16;
+			sc_cmd->scsi_done(sc_cmd);
+			return 0;
+
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Session is not offloaded yet. Let SCSI-ml retry
 		 * the command.
@@ -1886,7 +2102,11 @@ void bnx2fc_process_scsi_cmd_compl(struct bnx2fc_cmd *io_req,
 
 	/* Fetch fcp_rsp from task context and perform cmd completion */
 	fcp_rsp = (struct fcoe_fcp_rsp_payload *)
+<<<<<<< HEAD
 		   &(task->rxwr_only.union_ctx.comp_info.fcp_rsp.payload);
+=======
+		   &(task->cmn.general.rsp_info.fcp_rsp.payload);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* parse fcp_rsp and obtain sense data from RQ if available */
 	bnx2fc_parse_fcp_rsp(io_req, fcp_rsp, num_rq);
@@ -1933,7 +2153,11 @@ void bnx2fc_process_scsi_cmd_compl(struct bnx2fc_cmd *io_req,
 			scsi_set_resid(sc_cmd, io_req->fcp_resid);
 		break;
 	default:
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "scsi_cmd_compl: fcp_status = %d\n",
+=======
+		printk(KERN_ALERT PFX "scsi_cmd_compl: fcp_status = %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			io_req->fcp_status);
 		break;
 	}
@@ -1942,15 +2166,23 @@ void bnx2fc_process_scsi_cmd_compl(struct bnx2fc_cmd *io_req,
 	kref_put(&io_req->refcount, bnx2fc_cmd_release);
 }
 
+<<<<<<< HEAD
 int bnx2fc_post_io_req(struct bnx2fc_rport *tgt,
+=======
+static int bnx2fc_post_io_req(struct bnx2fc_rport *tgt,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       struct bnx2fc_cmd *io_req)
 {
 	struct fcoe_task_ctx_entry *task;
 	struct fcoe_task_ctx_entry *task_page;
 	struct scsi_cmnd *sc_cmd = io_req->sc_cmd;
 	struct fcoe_port *port = tgt->port;
+<<<<<<< HEAD
 	struct bnx2fc_interface *interface = port->priv;
 	struct bnx2fc_hba *hba = interface->hba;
+=======
+	struct bnx2fc_hba *hba = port->priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct fc_lport *lport = port->lport;
 	struct fcoe_dev_stats *stats;
 	int task_idx, index;
@@ -1981,6 +2213,7 @@ int bnx2fc_post_io_req(struct bnx2fc_rport *tgt,
 	xid = io_req->xid;
 
 	/* Build buffer descriptor list for firmware from sg list */
+<<<<<<< HEAD
 	if (bnx2fc_build_bd_list_from_sg(io_req)) {
 		printk(KERN_ERR PFX "BD list creation failed\n");
 		spin_lock_bh(&tgt->tgt_lock);
@@ -1988,6 +2221,9 @@ int bnx2fc_post_io_req(struct bnx2fc_rport *tgt,
 		spin_unlock_bh(&tgt->tgt_lock);
 		return -EAGAIN;
 	}
+=======
+	bnx2fc_build_bd_list_from_sg(io_req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	task_idx = xid / BNX2FC_TASKS_PER_PAGE;
 	index = xid % BNX2FC_TASKS_PER_PAGE;
@@ -2014,8 +2250,12 @@ int bnx2fc_post_io_req(struct bnx2fc_rport *tgt,
 	}
 
 	/* Time IO req */
+<<<<<<< HEAD
 	if (tgt->io_timeout)
 		bnx2fc_cmd_timer_set(io_req, BNX2FC_IO_TIMEOUT);
+=======
+	bnx2fc_cmd_timer_set(io_req, BNX2FC_IO_TIMEOUT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Obtain free SQ entry */
 	bnx2fc_add_2_sq(tgt, xid);
 

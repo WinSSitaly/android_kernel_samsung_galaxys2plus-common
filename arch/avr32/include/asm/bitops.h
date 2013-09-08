@@ -13,6 +13,10 @@
 #endif
 
 #include <asm/byteorder.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * clear_bit() doesn't provide any barrier for the compiler

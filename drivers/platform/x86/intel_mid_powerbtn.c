@@ -23,6 +23,7 @@
 #include <linux/slab.h>
 #include <linux/platform_device.h>
 #include <linux/input.h>
+<<<<<<< HEAD
 #include <linux/mfd/intel_msic.h>
 
 #define DRIVER_NAME "msic_power_btn"
@@ -35,15 +36,29 @@
  */
 #define MSIC_PWRBTNM    (1 << 0)
 
+=======
+
+#include <asm/intel_scu_ipc.h>
+
+#define DRIVER_NAME "msic_power_btn"
+
+#define MSIC_PB_STATUS	0x3f
+#define MSIC_PB_LEVEL	(1 << 3) /* 1 - release, 0 - press */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static irqreturn_t mfld_pb_isr(int irq, void *dev_id)
 {
 	struct input_dev *input = dev_id;
 	int ret;
 	u8 pbstat;
 
+<<<<<<< HEAD
 	ret = intel_msic_reg_read(INTEL_MSIC_PBSTATUS, &pbstat);
 	dev_dbg(input->dev.parent, "PB_INT status= %d\n", pbstat);
 
+=======
+	ret = intel_scu_ipc_ioread8(MSIC_PB_STATUS, &pbstat);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		dev_err(input->dev.parent, "Read error %d while reading"
 			       " MSIC_PB_STATUS\n", ret);
@@ -78,7 +93,11 @@ static int __devinit mfld_pb_probe(struct platform_device *pdev)
 
 	input_set_capability(input, EV_KEY, KEY_POWER);
 
+<<<<<<< HEAD
 	error = request_threaded_irq(irq, NULL, mfld_pb_isr, IRQF_NO_SUSPEND,
+=======
+	error = request_threaded_irq(irq, NULL, mfld_pb_isr, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			DRIVER_NAME, input);
 	if (error) {
 		dev_err(&pdev->dev, "Unable to request irq %d for mfld power"
@@ -94,6 +113,7 @@ static int __devinit mfld_pb_probe(struct platform_device *pdev)
 	}
 
 	platform_set_drvdata(pdev, input);
+<<<<<<< HEAD
 
 	/*
 	 * SCU firmware might send power button interrupts to IA core before
@@ -112,6 +132,8 @@ static int __devinit mfld_pb_probe(struct platform_device *pdev)
 		goto err_free_irq;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 err_free_irq:
@@ -142,7 +164,21 @@ static struct platform_driver mfld_pb_driver = {
 	.remove	= __devexit_p(mfld_pb_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(mfld_pb_driver);
+=======
+static int __init mfld_pb_init(void)
+{
+	return platform_driver_register(&mfld_pb_driver);
+}
+module_init(mfld_pb_init);
+
+static void __exit mfld_pb_exit(void)
+{
+	platform_driver_unregister(&mfld_pb_driver);
+}
+module_exit(mfld_pb_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Hong Liu <hong.liu@intel.com>");
 MODULE_DESCRIPTION("Intel Medfield Power Button Driver");

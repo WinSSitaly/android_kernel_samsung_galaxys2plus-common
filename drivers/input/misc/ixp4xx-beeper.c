@@ -111,7 +111,11 @@ static int __devinit ixp4xx_spkr_probe(struct platform_device *dev)
 	input_dev->event = ixp4xx_spkr_event;
 
 	err = request_irq(IRQ_IXP4XX_TIMER2, &ixp4xx_spkr_interrupt,
+<<<<<<< HEAD
 			  IRQF_NO_SUSPEND, "ixp4xx-beeper",
+=======
+			  IRQF_DISABLED | IRQF_NO_SUSPEND, "ixp4xx-beeper",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  (void *) dev->id);
 	if (err)
 		goto err_free_device;
@@ -168,5 +172,21 @@ static struct platform_driver ixp4xx_spkr_platform_driver = {
 	.remove		= __devexit_p(ixp4xx_spkr_remove),
 	.shutdown	= ixp4xx_spkr_shutdown,
 };
+<<<<<<< HEAD
 module_platform_driver(ixp4xx_spkr_platform_driver);
 
+=======
+
+static int __init ixp4xx_spkr_init(void)
+{
+	return platform_driver_register(&ixp4xx_spkr_platform_driver);
+}
+
+static void __exit ixp4xx_spkr_exit(void)
+{
+	platform_driver_unregister(&ixp4xx_spkr_platform_driver);
+}
+
+module_init(ixp4xx_spkr_init);
+module_exit(ixp4xx_spkr_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

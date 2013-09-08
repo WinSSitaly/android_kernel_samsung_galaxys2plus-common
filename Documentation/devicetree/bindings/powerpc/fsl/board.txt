@@ -1,8 +1,11 @@
+<<<<<<< HEAD
 Freescale Reference Board Bindings
 
 This document describes device tree bindings for various devices that
 exist on some Freescale reference boards.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 * Board Control and Status (BCSR)
 
 Required properties:
@@ -17,11 +20,16 @@ Example:
 		reg = <f8000000 8000>;
 	};
 
+<<<<<<< HEAD
 * Freescale on-board FPGA
+=======
+* Freescale on board FPGA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 This is the memory-mapped registers for on board FPGA.
 
 Required properities:
+<<<<<<< HEAD
 - compatible: should be a board-specific string followed by a string
   indicating the type of FPGA.  Example:
 	"fsl,<board>-fpga", "fsl,fpga-pixis"
@@ -37,6 +45,22 @@ Example (P1022DS):
 		 interrupt-parent = <&mpic>;
 		 interrupts = <8 8 0 0>;
 	 };
+=======
+- compatible : should be "fsl,fpga-pixis".
+- reg : should contain the address and the length of the FPPGA register
+  set.
+- interrupt-parent: should specify phandle for the interrupt controller.
+- interrupts : should specify event (wakeup) IRQ.
+
+Example (MPC8610HPCD):
+
+	board-control@e8000000 {
+		compatible = "fsl,fpga-pixis";
+		reg = <0xe8000000 32>;
+		interrupt-parent = <&mpic>;
+		interrupts = <8 8>;
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 * Freescale BCSR GPIO banks
 

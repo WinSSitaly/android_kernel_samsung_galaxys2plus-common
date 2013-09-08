@@ -71,13 +71,20 @@
 __DEFINE_GUEST_HANDLE(uchar, unsigned char);
 __DEFINE_GUEST_HANDLE(uint, unsigned int);
 __DEFINE_GUEST_HANDLE(ulong, unsigned long);
+<<<<<<< HEAD
 
+=======
+__DEFINE_GUEST_HANDLE(u64, unsigned long);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 DEFINE_GUEST_HANDLE(char);
 DEFINE_GUEST_HANDLE(int);
 DEFINE_GUEST_HANDLE(long);
 DEFINE_GUEST_HANDLE(void);
+<<<<<<< HEAD
 DEFINE_GUEST_HANDLE(uint64_t);
 DEFINE_GUEST_HANDLE(uint32_t);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef unsigned long xen_pfn_t;
 DEFINE_GUEST_HANDLE(xen_pfn_t);

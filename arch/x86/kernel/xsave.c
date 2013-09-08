@@ -6,7 +6,10 @@
 #include <linux/bootmem.h>
 #include <linux/compat.h>
 #include <asm/i387.h>
+<<<<<<< HEAD
 #include <asm/fpu-internal.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_IA32_EMULATION
 #include <asm/sigcontext32.h>
 #endif

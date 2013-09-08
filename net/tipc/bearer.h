@@ -39,6 +39,7 @@
 
 #include "bcast.h"
 
+<<<<<<< HEAD
 #define MAX_BEARERS	2
 #define MAX_MEDIA	2
 
@@ -52,6 +53,10 @@
 
 #define TIPC_MEDIA_ADDR_SIZE	20
 #define TIPC_MEDIA_TYPE_OFFSET	3
+=======
+#define MAX_BEARERS 8
+#define MAX_MEDIA 4
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Identifiers of supported TIPC media types
@@ -59,6 +64,7 @@
 #define TIPC_MEDIA_TYPE_ETH	1
 
 /*
+<<<<<<< HEAD
  * struct tipc_media_addr - destination address used by TIPC bearers
  * @value: address info (format defined by media)
  * @media_id: TIPC media type identifier
@@ -69,11 +75,25 @@ struct tipc_media_addr {
 	u8 value[TIPC_MEDIA_ADDR_SIZE];
 	u8 media_id;
 	u8 broadcast;
+=======
+ * Destination address structure used by TIPC bearers when sending messages
+ *
+ * IMPORTANT: The fields of this structure MUST be stored using the specified
+ * byte order indicated below, as the structure is exchanged between nodes
+ * as part of a link setup process.
+ */
+struct tipc_media_addr {
+	__be32  type;			/* bearer type (network byte order) */
+	union {
+		__u8   eth_addr[6];	/* 48 bit Ethernet addr (byte array) */
+	} dev_addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct tipc_bearer;
 
 /**
+<<<<<<< HEAD
  * struct tipc_media - TIPC media information available to internal users
  * @send_msg: routine which handles buffer transmission
  * @enable_bearer: routine which enables a bearer
@@ -82,6 +102,13 @@ struct tipc_bearer;
  * @str2addr: routine which converts media address from string
  * @addr2msg: routine which converts media address to protocol message area
  * @msg2addr: routine which converts media address from protocol message area
+=======
+ * struct media - TIPC media information available to internal users
+ * @send_msg: routine which handles buffer transmission
+ * @enable_bearer: routine which enables a bearer
+ * @disable_bearer: routine which disables a bearer
+ * @addr2str: routine which converts bearer's address to string form
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @bcast_addr: media address used in broadcasting
  * @priority: default link (and bearer) priority
  * @tolerance: default time (in ms) before declaring link failure
@@ -90,16 +117,25 @@ struct tipc_bearer;
  * @name: media name
  */
 
+<<<<<<< HEAD
 struct tipc_media {
+=======
+struct media {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*send_msg)(struct sk_buff *buf,
 			struct tipc_bearer *b_ptr,
 			struct tipc_media_addr *dest);
 	int (*enable_bearer)(struct tipc_bearer *b_ptr);
 	void (*disable_bearer)(struct tipc_bearer *b_ptr);
+<<<<<<< HEAD
 	int (*addr2str)(struct tipc_media_addr *a, char *str_buf, int str_size);
 	int (*str2addr)(struct tipc_media_addr *a, char *str_buf);
 	int (*addr2msg)(struct tipc_media_addr *a, char *msg_area);
 	int (*msg2addr)(struct tipc_media_addr *a, char *msg_area);
+=======
+	char *(*addr2str)(struct tipc_media_addr *a,
+			  char *str_buf, int str_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct tipc_media_addr bcast_addr;
 	u32 priority;
 	u32 tolerance;
@@ -118,12 +154,19 @@ struct tipc_media {
  * @name: bearer name (format = media:interface)
  * @media: ptr to media structure associated with bearer
  * @priority: default link priority for bearer
+<<<<<<< HEAD
  * @window: default window size for bearer
  * @tolerance: default link tolerance for bearer
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @identity: array index of this bearer within TIPC bearer array
  * @link_req: ptr to (optional) structure making periodic link setup requests
  * @links: list of non-congested links associated with bearer
  * @cong_links: list of congested links associated with bearer
+<<<<<<< HEAD
+=======
+ * @continue_count: # of times bearer has resumed after congestion or blocking
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @active: non-zero if bearer structure is represents a bearer
  * @net_plane: network plane ('A' through 'H') currently associated with bearer
  * @nodes: indicates which nodes in cluster can be reached through bearer
@@ -139,6 +182,7 @@ struct tipc_bearer {
 	struct tipc_media_addr addr;		/* initalized by media */
 	char name[TIPC_MAX_BEARER_NAME];
 	spinlock_t lock;
+<<<<<<< HEAD
 	struct tipc_media *media;
 	u32 priority;
 	u32 window;
@@ -147,24 +191,54 @@ struct tipc_bearer {
 	struct tipc_link_req *link_req;
 	struct list_head links;
 	struct list_head cong_links;
+=======
+	struct media *media;
+	u32 priority;
+	u32 identity;
+	struct link_req *link_req;
+	struct list_head links;
+	struct list_head cong_links;
+	u32 continue_count;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int active;
 	char net_plane;
 	struct tipc_node_map nodes;
 };
 
+<<<<<<< HEAD
 struct tipc_bearer_names {
+=======
+struct bearer_name {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char media_name[TIPC_MAX_MEDIA_NAME];
 	char if_name[TIPC_MAX_IF_NAME];
 };
 
+<<<<<<< HEAD
 struct tipc_link;
+=======
+struct link;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern struct tipc_bearer tipc_bearers[];
 
 /*
  * TIPC routines available to supported media types
  */
+<<<<<<< HEAD
 int tipc_register_media(struct tipc_media *m_ptr);
+=======
+int tipc_register_media(u32 media_type,
+		 char *media_name, int (*enable)(struct tipc_bearer *),
+		 void (*disable)(struct tipc_bearer *),
+		 int (*send_msg)(struct sk_buff *,
+			struct tipc_bearer *, struct tipc_media_addr *),
+		 char *(*addr2str)(struct tipc_media_addr *a,
+			char *str_buf, int str_size),
+		 struct tipc_media_addr *bcast_addr, const u32 bearer_priority,
+		 const u32 link_tolerance,  /* [ms] */
+		 const u32 send_window_limit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void tipc_recv_msg(struct sk_buff *buf, struct tipc_bearer *tb_ptr);
 
@@ -180,14 +254,18 @@ int tipc_disable_bearer(const char *name);
 int  tipc_eth_media_start(void);
 void tipc_eth_media_stop(void);
 
+<<<<<<< HEAD
 int tipc_media_set_priority(const char *name, u32 new_value);
 int tipc_media_set_window(const char *name, u32 new_value);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void tipc_media_addr_printf(struct print_buf *pb, struct tipc_media_addr *a);
 struct sk_buff *tipc_media_get_names(void);
 
 struct sk_buff *tipc_bearer_get_names(void);
 void tipc_bearer_add_dest(struct tipc_bearer *b_ptr, u32 dest);
 void tipc_bearer_remove_dest(struct tipc_bearer *b_ptr, u32 dest);
+<<<<<<< HEAD
 void tipc_bearer_schedule(struct tipc_bearer *b_ptr, struct tipc_link *l_ptr);
 struct tipc_bearer *tipc_bearer_find(const char *name);
 struct tipc_bearer *tipc_bearer_find_interface(const char *if_name);
@@ -195,6 +273,12 @@ struct tipc_media *tipc_media_find(const char *name);
 int tipc_bearer_resolve_congestion(struct tipc_bearer *b_ptr,
 				   struct tipc_link *l_ptr);
 int tipc_bearer_congested(struct tipc_bearer *b_ptr, struct tipc_link *l_ptr);
+=======
+void tipc_bearer_schedule(struct tipc_bearer *b_ptr, struct link *l_ptr);
+struct tipc_bearer *tipc_bearer_find_interface(const char *if_name);
+int tipc_bearer_resolve_congestion(struct tipc_bearer *b_ptr, struct link *l_ptr);
+int tipc_bearer_congested(struct tipc_bearer *b_ptr, struct link *l_ptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void tipc_bearer_stop(void);
 void tipc_bearer_lock_push(struct tipc_bearer *b_ptr);
 

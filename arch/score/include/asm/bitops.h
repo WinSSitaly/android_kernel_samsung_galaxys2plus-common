@@ -2,6 +2,10 @@
 #define _ASM_SCORE_BITOPS_H
 
 #include <asm/byteorder.h> /* swab32 */
+<<<<<<< HEAD
+=======
+#include <asm/system.h> /* save_flags */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * clear_bit() doesn't provide any barrier for the compiler.

@@ -25,23 +25,38 @@
 
 #include <linux/module.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
+=======
+#include <linux/crc7.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/spi/spi.h>
 #include <linux/slab.h>
 
 #include "wl12xx.h"
+<<<<<<< HEAD
 #include "debug.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "wl12xx_80211.h"
 #include "reg.h"
 #include "ps.h"
 
+<<<<<<< HEAD
 int wl1271_acx_wake_up_conditions(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 				  u8 wake_up_event, u8 listen_interval)
+=======
+int wl1271_acx_wake_up_conditions(struct wl1271 *wl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct acx_wake_up_condition *wake_up;
 	int ret;
 
+<<<<<<< HEAD
 	wl1271_debug(DEBUG_ACX, "acx wake up conditions (wake_up_event %d listen_interval %d)",
 		     wake_up_event, listen_interval);
+=======
+	wl1271_debug(DEBUG_ACX, "acx wake up conditions");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wake_up = kzalloc(sizeof(*wake_up), GFP_KERNEL);
 	if (!wake_up) {
@@ -49,9 +64,14 @@ int wl1271_acx_wake_up_conditions(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	wake_up->role_id = wlvif->role_id;
 	wake_up->wake_up_event = wake_up_event;
 	wake_up->listen_interval = listen_interval;
+=======
+	wake_up->wake_up_event = wl->conf.conn.wake_up_event;
+	wake_up->listen_interval = wl->conf.conn.listen_interval;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = wl1271_cmd_configure(wl, ACX_WAKE_UP_CONDITIONS,
 				   wake_up, sizeof(*wake_up));
@@ -81,19 +101,32 @@ int wl1271_acx_sleep_auth(struct wl1271 *wl, u8 sleep_auth)
 	auth->sleep_auth = sleep_auth;
 
 	ret = wl1271_cmd_configure(wl, ACX_SLEEP_AUTH, auth, sizeof(*auth));
+<<<<<<< HEAD
+=======
+	if (ret < 0)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	kfree(auth);
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_tx_power(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			int power)
+=======
+int wl1271_acx_tx_power(struct wl1271 *wl, int power)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct acx_current_tx_power *acx;
 	int ret;
 
+<<<<<<< HEAD
 	wl1271_debug(DEBUG_ACX, "acx dot11_cur_tx_pwr %d", power);
+=======
+	wl1271_debug(DEBUG_ACX, "acx dot11_cur_tx_pwr");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (power < 0 || power > 25)
 		return -EINVAL;
@@ -104,7 +137,10 @@ int wl1271_acx_tx_power(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	acx->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx->current_tx_power = power * 10;
 
 	ret = wl1271_cmd_configure(wl, DOT11_CUR_TX_PWR, acx, sizeof(*acx));
@@ -118,7 +154,11 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_feature_cfg(struct wl1271 *wl, struct wl12xx_vif *wlvif)
+=======
+int wl1271_acx_feature_cfg(struct wl1271 *wl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct acx_feature_config *feature;
 	int ret;
@@ -132,7 +172,10 @@ int wl1271_acx_feature_cfg(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 	}
 
 	/* DF_ENCRYPTION_DISABLE and DF_SNIFF_MODE_ENABLE are disabled */
+<<<<<<< HEAD
 	feature->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	feature->data_flow_options = 0;
 	feature->options = 0;
 
@@ -188,8 +231,66 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_slot(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		    enum acx_slot_type slot_time)
+=======
+int wl1271_acx_rx_config(struct wl1271 *wl, u32 config, u32 filter)
+{
+	struct acx_rx_config *rx_config;
+	int ret;
+
+	wl1271_debug(DEBUG_ACX, "acx rx config");
+
+	rx_config = kzalloc(sizeof(*rx_config), GFP_KERNEL);
+	if (!rx_config) {
+		ret = -ENOMEM;
+		goto out;
+	}
+
+	rx_config->config_options = cpu_to_le32(config);
+	rx_config->filter_options = cpu_to_le32(filter);
+
+	ret = wl1271_cmd_configure(wl, ACX_RX_CFG,
+				   rx_config, sizeof(*rx_config));
+	if (ret < 0) {
+		wl1271_warning("failed to set rx config: %d", ret);
+		goto out;
+	}
+
+out:
+	kfree(rx_config);
+	return ret;
+}
+
+int wl1271_acx_pd_threshold(struct wl1271 *wl)
+{
+	struct acx_packet_detection *pd;
+	int ret;
+
+	wl1271_debug(DEBUG_ACX, "acx data pd threshold");
+
+	pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+	if (!pd) {
+		ret = -ENOMEM;
+		goto out;
+	}
+
+	pd->threshold = cpu_to_le32(wl->conf.rx.packet_detection_threshold);
+
+	ret = wl1271_cmd_configure(wl, ACX_PD_THRESHOLD, pd, sizeof(*pd));
+	if (ret < 0) {
+		wl1271_warning("failed to set pd threshold: %d", ret);
+		goto out;
+	}
+
+out:
+	kfree(pd);
+	return ret;
+}
+
+int wl1271_acx_slot(struct wl1271 *wl, enum acx_slot_type slot_time)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct acx_slot *slot;
 	int ret;
@@ -202,7 +303,10 @@ int wl1271_acx_slot(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	slot->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	slot->wone_index = STATION_WONE_INDEX;
 	slot->slot_time = slot_time;
 
@@ -217,8 +321,13 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_group_address_tbl(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 				 bool enable, void *mc_list, u32 mc_list_len)
+=======
+int wl1271_acx_group_address_tbl(struct wl1271 *wl, bool enable,
+				 void *mc_list, u32 mc_list_len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct acx_dot11_grp_addr_tbl *acx;
 	int ret;
@@ -232,7 +341,10 @@ int wl1271_acx_group_address_tbl(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	}
 
 	/* MAC filtering */
+<<<<<<< HEAD
 	acx->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx->enabled = enable;
 	acx->num_groups = mc_list_len;
 	memcpy(acx->mac_table, mc_list, mc_list_len * ETH_ALEN);
@@ -249,8 +361,12 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_service_period_timeout(struct wl1271 *wl,
 				      struct wl12xx_vif *wlvif)
+=======
+int wl1271_acx_service_period_timeout(struct wl1271 *wl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct acx_rx_timeout *rx_timeout;
 	int ret;
@@ -263,7 +379,10 @@ int wl1271_acx_service_period_timeout(struct wl1271 *wl,
 
 	wl1271_debug(DEBUG_ACX, "acx service period timeout");
 
+<<<<<<< HEAD
 	rx_timeout->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rx_timeout->ps_poll_timeout = cpu_to_le16(wl->conf.rx.ps_poll_timeout);
 	rx_timeout->upsd_timeout = cpu_to_le16(wl->conf.rx.upsd_timeout);
 
@@ -280,8 +399,12 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_rts_threshold(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			     u32 rts_threshold)
+=======
+int wl1271_acx_rts_threshold(struct wl1271 *wl, u32 rts_threshold)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct acx_rts_threshold *rts;
 	int ret;
@@ -301,7 +424,10 @@ int wl1271_acx_rts_threshold(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	rts->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rts->threshold = cpu_to_le16((u16)rts_threshold);
 
 	ret = wl1271_cmd_configure(wl, DOT11_RTS_THRESHOLD, rts, sizeof(*rts));
@@ -344,8 +470,12 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_beacon_filter_opt(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 				 bool enable_filter)
+=======
+int wl1271_acx_beacon_filter_opt(struct wl1271 *wl, bool enable_filter)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct acx_beacon_filter_option *beacon_filter = NULL;
 	int ret = 0;
@@ -362,7 +492,10 @@ int wl1271_acx_beacon_filter_opt(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	beacon_filter->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	beacon_filter->enable = enable_filter;
 
 	/*
@@ -383,8 +516,12 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_beacon_filter_table(struct wl1271 *wl,
 				   struct wl12xx_vif *wlvif)
+=======
+int wl1271_acx_beacon_filter_table(struct wl1271 *wl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct acx_beacon_filter_ie_table *ie_table;
 	int i, idx = 0;
@@ -400,7 +537,10 @@ int wl1271_acx_beacon_filter_table(struct wl1271 *wl,
 	}
 
 	/* configure default beacon pass-through rules */
+<<<<<<< HEAD
 	ie_table->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ie_table->num_ie = 0;
 	for (i = 0; i < wl->conf.conn.bcn_filt_ie_count; i++) {
 		struct conf_bcn_filt_rule *r = &(wl->conf.conn.bcn_filt_ie[i]);
@@ -441,8 +581,12 @@ out:
 
 #define ACX_CONN_MONIT_DISABLE_VALUE  0xffffffff
 
+<<<<<<< HEAD
 int wl1271_acx_conn_monit_params(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 				 bool enable)
+=======
+int wl1271_acx_conn_monit_params(struct wl1271 *wl, bool enable)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct acx_conn_monit_params *acx;
 	u32 threshold = ACX_CONN_MONIT_DISABLE_VALUE;
@@ -463,7 +607,10 @@ int wl1271_acx_conn_monit_params(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		timeout = wl->conf.conn.bss_lose_timeout;
 	}
 
+<<<<<<< HEAD
 	acx->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx->synch_fail_thold = cpu_to_le32(threshold);
 	acx->bss_lose_timeout = cpu_to_le32(timeout);
 
@@ -510,6 +657,7 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl12xx_acx_sg_cfg(struct wl1271 *wl)
 {
 	struct acx_bt_wlan_coex_param *param;
@@ -517,6 +665,14 @@ int wl12xx_acx_sg_cfg(struct wl1271 *wl)
 	int i, ret;
 
 	wl1271_debug(DEBUG_ACX, "acx sg cfg");
+=======
+int wl1271_acx_sta_sg_cfg(struct wl1271 *wl)
+{
+	struct acx_sta_bt_wlan_coex_param *param;
+	struct conf_sg_settings *c = &wl->conf.sg;
+	int i, ret;
+
+	wl1271_debug(DEBUG_ACX, "acx sg sta cfg");
 
 	param = kzalloc(sizeof(*param), GFP_KERNEL);
 	if (!param) {
@@ -525,8 +681,44 @@ int wl12xx_acx_sg_cfg(struct wl1271 *wl)
 	}
 
 	/* BT-WLAN coext parameters */
+	for (i = 0; i < CONF_SG_STA_PARAMS_MAX; i++)
+		param->params[i] = cpu_to_le32(c->sta_params[i]);
+	param->param_idx = CONF_SG_PARAMS_ALL;
+
+	ret = wl1271_cmd_configure(wl, ACX_SG_CFG, param, sizeof(*param));
+	if (ret < 0) {
+		wl1271_warning("failed to set sg config: %d", ret);
+		goto out;
+	}
+
+out:
+	kfree(param);
+	return ret;
+}
+
+int wl1271_acx_ap_sg_cfg(struct wl1271 *wl)
+{
+	struct acx_ap_bt_wlan_coex_param *param;
+	struct conf_sg_settings *c = &wl->conf.sg;
+	int i, ret;
+
+	wl1271_debug(DEBUG_ACX, "acx sg ap cfg");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+
+	param = kzalloc(sizeof(*param), GFP_KERNEL);
+	if (!param) {
+		ret = -ENOMEM;
+		goto out;
+	}
+
+	/* BT-WLAN coext parameters */
+<<<<<<< HEAD
 	for (i = 0; i < CONF_SG_PARAMS_MAX; i++)
 		param->params[i] = cpu_to_le32(c->params[i]);
+=======
+	for (i = 0; i < CONF_SG_AP_PARAMS_MAX; i++)
+		param->params[i] = cpu_to_le32(c->ap_params[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	param->param_idx = CONF_SG_PARAMS_ALL;
 
 	ret = wl1271_cmd_configure(wl, ACX_SG_CFG, param, sizeof(*param));
@@ -558,15 +750,26 @@ int wl1271_acx_cca_threshold(struct wl1271 *wl)
 
 	ret = wl1271_cmd_configure(wl, ACX_CCA_THRESHOLD,
 				   detection, sizeof(*detection));
+<<<<<<< HEAD
 	if (ret < 0)
 		wl1271_warning("failed to set cca threshold: %d", ret);
+=======
+	if (ret < 0) {
+		wl1271_warning("failed to set cca threshold: %d", ret);
+		return ret;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	kfree(detection);
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_bcn_dtim_options(struct wl1271 *wl, struct wl12xx_vif *wlvif)
+=======
+int wl1271_acx_bcn_dtim_options(struct wl1271 *wl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct acx_beacon_broadcast *bb;
 	int ret;
@@ -579,7 +782,10 @@ int wl1271_acx_bcn_dtim_options(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	bb->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bb->beacon_rx_timeout = cpu_to_le16(wl->conf.conn.beacon_rx_timeout);
 	bb->broadcast_timeout = cpu_to_le16(wl->conf.conn.broadcast_timeout);
 	bb->rx_broadcast_in_ps = wl->conf.conn.rx_broadcast_in_ps;
@@ -596,7 +802,11 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_aid(struct wl1271 *wl, struct wl12xx_vif *wlvif, u16 aid)
+=======
+int wl1271_acx_aid(struct wl1271 *wl, u16 aid)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct acx_aid *acx_aid;
 	int ret;
@@ -609,7 +819,10 @@ int wl1271_acx_aid(struct wl1271 *wl, struct wl12xx_vif *wlvif, u16 aid)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	acx_aid->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx_aid->aid = cpu_to_le16(aid);
 
 	ret = wl1271_cmd_configure(wl, ACX_AID, acx_aid, sizeof(*acx_aid));
@@ -652,8 +865,12 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_set_preamble(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			    enum acx_preamble_type preamble)
+=======
+int wl1271_acx_set_preamble(struct wl1271 *wl, enum acx_preamble_type preamble)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct acx_preamble *acx;
 	int ret;
@@ -666,7 +883,10 @@ int wl1271_acx_set_preamble(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	acx->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx->preamble = preamble;
 
 	ret = wl1271_cmd_configure(wl, ACX_PREAMBLE_TYPE, acx, sizeof(*acx));
@@ -680,7 +900,11 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_cts_protect(struct wl1271 *wl, struct wl12xx_vif *wlvif,
+=======
+int wl1271_acx_cts_protect(struct wl1271 *wl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   enum acx_ctsprotect_type ctsprotect)
 {
 	struct acx_ctsprotect *acx;
@@ -694,7 +918,10 @@ int wl1271_acx_cts_protect(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	acx->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx->ctsprotect = ctsprotect;
 
 	ret = wl1271_cmd_configure(wl, ACX_CTS_PROTECTION, acx, sizeof(*acx));
@@ -724,10 +951,18 @@ int wl1271_acx_statistics(struct wl1271 *wl, struct acx_statistics *stats)
 	return 0;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_sta_rate_policies(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 {
 	struct acx_rate_policy *acx;
 	struct conf_tx_rate_class *c = &wl->conf.tx.sta_rc_conf;
+=======
+int wl1271_acx_sta_rate_policies(struct wl1271 *wl)
+{
+	struct acx_sta_rate_policy *acx;
+	struct conf_tx_rate_class *c = &wl->conf.tx.sta_rc_conf;
+	int idx = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	wl1271_debug(DEBUG_ACX, "acx rate policies");
@@ -739,6 +974,7 @@ int wl1271_acx_sta_rate_policies(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	wl1271_debug(DEBUG_ACX, "basic_rate: 0x%x, full_rate: 0x%x",
 		wlvif->basic_rate, wlvif->rate_set);
 
@@ -779,6 +1015,27 @@ int wl1271_acx_sta_rate_policies(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 	acx->rate_policy.short_retry_limit = c->short_retry_limit;
 	acx->rate_policy.long_retry_limit = c->long_retry_limit;
 	acx->rate_policy.aflags = c->aflags;
+=======
+	/* configure one basic rate class */
+	idx = ACX_TX_BASIC_RATE;
+	acx->rate_class[idx].enabled_rates = cpu_to_le32(wl->basic_rate);
+	acx->rate_class[idx].short_retry_limit = c->short_retry_limit;
+	acx->rate_class[idx].long_retry_limit = c->long_retry_limit;
+	acx->rate_class[idx].aflags = c->aflags;
+
+	/* configure one AP supported rate class */
+	idx = ACX_TX_AP_FULL_RATE;
+	acx->rate_class[idx].enabled_rates = cpu_to_le32(wl->rate_set);
+	acx->rate_class[idx].short_retry_limit = c->short_retry_limit;
+	acx->rate_class[idx].long_retry_limit = c->long_retry_limit;
+	acx->rate_class[idx].aflags = c->aflags;
+
+	acx->rate_class_cnt = cpu_to_le32(ACX_TX_RATE_POLICY_CNT);
+
+	wl1271_debug(DEBUG_ACX, "basic_rate: 0x%x, full_rate: 0x%x",
+		acx->rate_class[ACX_TX_BASIC_RATE].enabled_rates,
+		acx->rate_class[ACX_TX_AP_FULL_RATE].enabled_rates);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = wl1271_cmd_configure(wl, ACX_RATE_POLICY, acx, sizeof(*acx));
 	if (ret < 0) {
@@ -794,7 +1051,11 @@ out:
 int wl1271_acx_ap_rate_policy(struct wl1271 *wl, struct conf_tx_rate_class *c,
 		      u8 idx)
 {
+<<<<<<< HEAD
 	struct acx_rate_policy *acx;
+=======
+	struct acx_ap_rate_policy *acx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	wl1271_debug(DEBUG_ACX, "acx ap rate policy %d rates 0x%x",
@@ -824,8 +1085,13 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_ac_cfg(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		      u8 ac, u8 cw_min, u16 cw_max, u8 aifsn, u16 txop)
+=======
+int wl1271_acx_ac_cfg(struct wl1271 *wl, u8 ac, u8 cw_min, u16 cw_max,
+		      u8 aifsn, u16 txop)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct acx_ac_cfg *acx;
 	int ret = 0;
@@ -840,7 +1106,10 @@ int wl1271_acx_ac_cfg(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	acx->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx->ac = ac;
 	acx->cw_min = cw_min;
 	acx->cw_max = cpu_to_le16(cw_max);
@@ -858,8 +1127,12 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_tid_cfg(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		       u8 queue_id, u8 channel_type,
+=======
+int wl1271_acx_tid_cfg(struct wl1271 *wl, u8 queue_id, u8 channel_type,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       u8 tsid, u8 ps_scheme, u8 ack_policy,
 		       u32 apsd_conf0, u32 apsd_conf1)
 {
@@ -875,7 +1148,10 @@ int wl1271_acx_tid_cfg(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	acx->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx->queue_id = queue_id;
 	acx->channel_type = channel_type;
 	acx->tsid = tsid;
@@ -955,9 +1231,58 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl12xx_acx_mem_cfg(struct wl1271 *wl)
 {
 	struct wl12xx_acx_config_memory *mem_conf;
+=======
+int wl1271_acx_ap_mem_cfg(struct wl1271 *wl)
+{
+	struct wl1271_acx_ap_config_memory *mem_conf;
+	struct conf_memory_settings *mem;
+	int ret;
+
+	wl1271_debug(DEBUG_ACX, "wl1271 mem cfg");
+
+	mem_conf = kzalloc(sizeof(*mem_conf), GFP_KERNEL);
+	if (!mem_conf) {
+		ret = -ENOMEM;
+		goto out;
+	}
+
+	if (wl->chip.id == CHIP_ID_1283_PG20)
+		/*
+		 * FIXME: The 128x AP FW does not yet support dynamic memory.
+		 * Use the base memory configuration for 128x for now. This
+		 * should be fine tuned in the future.
+		 */
+		mem = &wl->conf.mem_wl128x;
+	else
+		mem = &wl->conf.mem_wl127x;
+
+	/* memory config */
+	mem_conf->num_stations = mem->num_stations;
+	mem_conf->rx_mem_block_num = mem->rx_block_num;
+	mem_conf->tx_min_mem_block_num = mem->tx_min_block_num;
+	mem_conf->num_ssid_profiles = mem->ssid_profiles;
+	mem_conf->total_tx_descriptors = cpu_to_le32(ACX_TX_DESCRIPTORS);
+
+	ret = wl1271_cmd_configure(wl, ACX_MEM_CFG, mem_conf,
+				   sizeof(*mem_conf));
+	if (ret < 0) {
+		wl1271_warning("wl1271 mem config failed: %d", ret);
+		goto out;
+	}
+
+out:
+	kfree(mem_conf);
+	return ret;
+}
+
+int wl1271_acx_sta_mem_cfg(struct wl1271 *wl)
+{
+	struct wl1271_acx_sta_config_memory *mem_conf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct conf_memory_settings *mem;
 	int ret;
 
@@ -984,7 +1309,10 @@ int wl12xx_acx_mem_cfg(struct wl1271 *wl)
 	mem_conf->tx_free_req = mem->min_req_tx_blocks;
 	mem_conf->rx_free_req = mem->min_req_rx_blocks;
 	mem_conf->tx_min = mem->tx_min;
+<<<<<<< HEAD
 	mem_conf->fwlog_blocks = wl->conf.fwlog.mem_blocks;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = wl1271_cmd_configure(wl, ACX_MEM_CFG, mem_conf,
 				   sizeof(*mem_conf));
@@ -1084,8 +1412,12 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_bet_enable(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			  bool enable)
+=======
+int wl1271_acx_bet_enable(struct wl1271 *wl, bool enable)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct wl1271_acx_bet_enable *acx = NULL;
 	int ret = 0;
@@ -1101,7 +1433,10 @@ int wl1271_acx_bet_enable(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	acx->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx->enable = enable ? CONF_BET_MODE_ENABLE : CONF_BET_MODE_DISABLE;
 	acx->max_consecutive = wl->conf.conn.bet_max_consecutive;
 
@@ -1116,8 +1451,12 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_arp_ip_filter(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			     u8 enable, __be32 address)
+=======
+int wl1271_acx_arp_ip_filter(struct wl1271 *wl, u8 enable, __be32 address)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct wl1271_acx_arp_filter *acx;
 	int ret;
@@ -1130,7 +1469,10 @@ int wl1271_acx_arp_ip_filter(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	acx->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx->version = ACX_IPV4_VERSION;
 	acx->enable = enable;
 
@@ -1177,8 +1519,12 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_keep_alive_mode(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			       bool enable)
+=======
+int wl1271_acx_keep_alive_mode(struct wl1271 *wl, bool enable)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct wl1271_acx_keep_alive_mode *acx = NULL;
 	int ret = 0;
@@ -1191,7 +1537,10 @@ int wl1271_acx_keep_alive_mode(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	acx->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx->enabled = enable;
 
 	ret = wl1271_cmd_configure(wl, ACX_KEEP_ALIVE_MODE, acx, sizeof(*acx));
@@ -1205,8 +1554,12 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_keep_alive_config(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 				 u8 index, u8 tpl_valid)
+=======
+int wl1271_acx_keep_alive_config(struct wl1271 *wl, u8 index, u8 tpl_valid)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct wl1271_acx_keep_alive_config *acx = NULL;
 	int ret = 0;
@@ -1219,7 +1572,10 @@ int wl1271_acx_keep_alive_config(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	acx->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx->period = cpu_to_le32(wl->conf.conn.keep_alive_interval);
 	acx->index = index;
 	acx->tpl_validation = tpl_valid;
@@ -1237,8 +1593,13 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_rssi_snr_trigger(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 				bool enable, s16 thold, u8 hyst)
+=======
+int wl1271_acx_rssi_snr_trigger(struct wl1271 *wl, bool enable,
+				s16 thold, u8 hyst)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct wl1271_acx_rssi_snr_trigger *acx = NULL;
 	int ret = 0;
@@ -1251,9 +1612,14 @@ int wl1271_acx_rssi_snr_trigger(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	wlvif->last_rssi_event = -1;
 
 	acx->role_id = wlvif->role_id;
+=======
+	wl->last_rssi_event = -1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx->pacing = cpu_to_le16(wl->conf.roam_trigger.trigger_pacing);
 	acx->metric = WL1271_ACX_TRIG_METRIC_RSSI_BEACON;
 	acx->type = WL1271_ACX_TRIG_TYPE_EDGE;
@@ -1278,8 +1644,12 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_rssi_snr_avg_weights(struct wl1271 *wl,
 				    struct wl12xx_vif *wlvif)
+=======
+int wl1271_acx_rssi_snr_avg_weights(struct wl1271 *wl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct wl1271_acx_rssi_snr_avg_weights *acx = NULL;
 	struct conf_roam_trigger_settings *c = &wl->conf.roam_trigger;
@@ -1293,7 +1663,10 @@ int wl1271_acx_rssi_snr_avg_weights(struct wl1271 *wl,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	acx->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx->rssi_beacon = c->avg_weight_rssi_beacon;
 	acx->rssi_data = c->avg_weight_rssi_data;
 	acx->snr_beacon = c->avg_weight_snr_beacon;
@@ -1312,6 +1685,7 @@ out:
 
 int wl1271_acx_set_ht_capabilities(struct wl1271 *wl,
 				    struct ieee80211_sta_ht_cap *ht_cap,
+<<<<<<< HEAD
 				    bool allow_ht_operation, u8 hlid)
 {
 	struct wl1271_acx_ht_capabilities *acx;
@@ -1321,6 +1695,16 @@ int wl1271_acx_set_ht_capabilities(struct wl1271 *wl,
 	wl1271_debug(DEBUG_ACX, "acx ht capabilities setting "
 		     "sta supp: %d sta cap: %d", ht_cap->ht_supported,
 		     ht_cap->cap);
+=======
+				    bool allow_ht_operation)
+{
+	struct wl1271_acx_ht_capabilities *acx;
+	u8 mac_address[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+	int ret = 0;
+	u32 ht_capabilites = 0;
+
+	wl1271_debug(DEBUG_ACX, "acx ht capabilities setting");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	acx = kzalloc(sizeof(*acx), GFP_KERNEL);
 	if (!acx) {
@@ -1328,6 +1712,7 @@ int wl1271_acx_set_ht_capabilities(struct wl1271 *wl,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	if (allow_ht_operation && ht_cap->ht_supported) {
 		/* no need to translate capabilities - use the spec values */
 		ht_capabilites = ht_cap->cap;
@@ -1337,13 +1722,32 @@ int wl1271_acx_set_ht_capabilities(struct wl1271 *wl,
 		 * indicate peer HT support
 		 */
 		ht_capabilites |= WL12XX_HT_CAP_HT_OPERATION;
+=======
+	/* Allow HT Operation ? */
+	if (allow_ht_operation) {
+		ht_capabilites =
+			WL1271_ACX_FW_CAP_HT_OPERATION;
+		if (ht_cap->cap & IEEE80211_HT_CAP_GRN_FLD)
+			ht_capabilites |=
+				WL1271_ACX_FW_CAP_GREENFIELD_FRAME_FORMAT;
+		if (ht_cap->cap & IEEE80211_HT_CAP_SGI_20)
+			ht_capabilites |=
+				WL1271_ACX_FW_CAP_SHORT_GI_FOR_20MHZ_PACKETS;
+		if (ht_cap->cap & IEEE80211_HT_CAP_LSIG_TXOP_PROT)
+			ht_capabilites |=
+				WL1271_ACX_FW_CAP_LSIG_TXOP_PROTECTION;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* get data from A-MPDU parameters field */
 		acx->ampdu_max_length = ht_cap->ampdu_factor;
 		acx->ampdu_min_spacing = ht_cap->ampdu_density;
 	}
 
+<<<<<<< HEAD
 	acx->hlid = hlid;
+=======
+	memcpy(acx->mac_address, mac_address, ETH_ALEN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx->ht_capabilites = cpu_to_le32(ht_capabilites);
 
 	ret = wl1271_cmd_configure(wl, ACX_PEER_HT_CAP, acx, sizeof(*acx));
@@ -1358,7 +1762,10 @@ out:
 }
 
 int wl1271_acx_set_ht_information(struct wl1271 *wl,
+<<<<<<< HEAD
 				   struct wl12xx_vif *wlvif,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   u16 ht_operation_mode)
 {
 	struct wl1271_acx_ht_information *acx;
@@ -1372,7 +1779,10 @@ int wl1271_acx_set_ht_information(struct wl1271 *wl,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	acx->role_id = wlvif->role_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx->ht_protection =
 		(u8)(ht_operation_mode & IEEE80211_HT_OP_MODE_PROTECTION);
 	acx->rifs_mode = 0;
@@ -1394,6 +1804,7 @@ out:
 }
 
 /* Configure BA session initiator/receiver parameters setting in the FW. */
+<<<<<<< HEAD
 int wl12xx_acx_set_ba_initiator_policy(struct wl1271 *wl,
 				       struct wl12xx_vif *wlvif)
 {
@@ -1401,6 +1812,16 @@ int wl12xx_acx_set_ba_initiator_policy(struct wl1271 *wl,
 	int ret;
 
 	wl1271_debug(DEBUG_ACX, "acx ba initiator policy");
+=======
+int wl1271_acx_set_ba_session(struct wl1271 *wl,
+			       enum ieee80211_back_parties direction,
+			       u8 tid_index, u8 policy)
+{
+	struct wl1271_acx_ba_session_policy *acx;
+	int ret;
+
+	wl1271_debug(DEBUG_ACX, "acx ba session setting");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	acx = kzalloc(sizeof(*acx), GFP_KERNEL);
 	if (!acx) {
@@ -1408,6 +1829,7 @@ int wl12xx_acx_set_ba_initiator_policy(struct wl1271 *wl,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	/* set for the current role */
 	acx->role_id = wlvif->role_id;
 	acx->tid_bitmap = wl->conf.ht.tx_ba_tid_bitmap;
@@ -1420,6 +1842,35 @@ int wl12xx_acx_set_ba_initiator_policy(struct wl1271 *wl,
 				   sizeof(*acx));
 	if (ret < 0) {
 		wl1271_warning("acx ba initiator policy failed: %d", ret);
+=======
+	/* ANY role */
+	acx->role_id = 0xff;
+	acx->tid = tid_index;
+	acx->enable = policy;
+	acx->ba_direction = direction;
+
+	switch (direction) {
+	case WLAN_BACK_INITIATOR:
+		acx->win_size = wl->conf.ht.tx_ba_win_size;
+		acx->inactivity_timeout = wl->conf.ht.inactivity_timeout;
+		break;
+	case WLAN_BACK_RECIPIENT:
+		acx->win_size = RX_BA_WIN_SIZE;
+		acx->inactivity_timeout = 0;
+		break;
+	default:
+		wl1271_error("Incorrect acx command id=%x\n", direction);
+		ret = -EINVAL;
+		goto out;
+	}
+
+	ret = wl1271_cmd_configure(wl,
+				   ACX_BA_SESSION_POLICY_CFG,
+				   acx,
+				   sizeof(*acx));
+	if (ret < 0) {
+		wl1271_warning("acx ba session setting failed: %d", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
@@ -1429,8 +1880,13 @@ out:
 }
 
 /* setup BA session receiver setting in the FW. */
+<<<<<<< HEAD
 int wl12xx_acx_set_ba_receiver_session(struct wl1271 *wl, u8 tid_index,
 				       u16 ssn, bool enable, u8 peer_hlid)
+=======
+int wl1271_acx_set_ba_receiver_session(struct wl1271 *wl, u8 tid_index, u16 ssn,
+					bool enable)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct wl1271_acx_ba_receiver_setup *acx;
 	int ret;
@@ -1443,10 +1899,18 @@ int wl12xx_acx_set_ba_receiver_session(struct wl1271 *wl, u8 tid_index,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	acx->hlid = peer_hlid;
 	acx->tid = tid_index;
 	acx->enable = enable;
 	acx->win_size = wl->conf.ht.rx_ba_win_size;
+=======
+	/* Single link for now */
+	acx->link_id = 1;
+	acx->tid = tid_index;
+	acx->enable = enable;
+	acx->win_size = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acx->ssn = ssn;
 
 	ret = wl1271_cmd_configure(wl, ACX_BA_SESSION_RX_SETUP, acx,
@@ -1461,10 +1925,16 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl12xx_acx_tsf_info(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			u64 *mactime)
 {
 	struct wl12xx_acx_fw_tsf_information *tsf_info;
+=======
+int wl1271_acx_tsf_info(struct wl1271 *wl, u64 *mactime)
+{
+	struct wl1271_acx_fw_tsf_information *tsf_info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	tsf_info = kzalloc(sizeof(*tsf_info), GFP_KERNEL);
@@ -1473,8 +1943,11 @@ int wl12xx_acx_tsf_info(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	tsf_info->role_id = wlvif->role_id;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = wl1271_cmd_interrogate(wl, ACX_TSF_INFO,
 				     tsf_info, sizeof(*tsf_info));
 	if (ret < 0) {
@@ -1490,6 +1963,7 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl1271_acx_ps_rx_streaming(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			       bool enable)
 {
@@ -1545,17 +2019,33 @@ int wl1271_acx_ap_max_tx_retry(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 	int ret;
 
 	wl1271_debug(DEBUG_ACX, "acx ap max tx retry");
+=======
+int wl1271_acx_max_tx_retry(struct wl1271 *wl)
+{
+	struct wl1271_acx_max_tx_retry *acx = NULL;
+	int ret;
+
+	wl1271_debug(DEBUG_ACX, "acx max tx retry");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	acx = kzalloc(sizeof(*acx), GFP_KERNEL);
 	if (!acx)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	acx->role_id = wlvif->role_id;
 	acx->max_tx_retry = cpu_to_le16(wl->conf.tx.max_tx_retries);
 
 	ret = wl1271_cmd_configure(wl, ACX_MAX_TX_FAILURE, acx, sizeof(*acx));
 	if (ret < 0) {
 		wl1271_warning("acx ap max tx retry failed: %d", ret);
+=======
+	acx->max_tx_retry = cpu_to_le16(wl->conf.tx.ap_max_tx_retries);
+
+	ret = wl1271_cmd_configure(wl, ACX_MAX_TX_FAILURE, acx, sizeof(*acx));
+	if (ret < 0) {
+		wl1271_warning("acx max tx retry failed: %d", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
@@ -1564,7 +2054,11 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 int wl12xx_acx_config_ps(struct wl1271 *wl, struct wl12xx_vif *wlvif)
+=======
+int wl1271_acx_config_ps(struct wl1271 *wl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct wl1271_acx_config_ps *config_ps;
 	int ret;
@@ -1579,7 +2073,11 @@ int wl12xx_acx_config_ps(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 
 	config_ps->exit_retries = wl->conf.conn.psm_exit_retries;
 	config_ps->enter_retries = wl->conf.conn.psm_entry_retries;
+<<<<<<< HEAD
 	config_ps->null_data_rate = cpu_to_le32(wlvif->basic_rate);
+=======
+	config_ps->null_data_rate = cpu_to_le32(wl->basic_rate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = wl1271_cmd_configure(wl, ACX_CONFIG_PS, config_ps,
 				   sizeof(*config_ps));
@@ -1619,6 +2117,34 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+int wl1271_acx_set_ap_beacon_filter(struct wl1271 *wl, bool enable)
+{
+	struct acx_ap_beacon_filter *acx = NULL;
+	int ret;
+
+	wl1271_debug(DEBUG_ACX, "acx set ap beacon filter: %d", enable);
+
+	acx = kzalloc(sizeof(*acx), GFP_KERNEL);
+	if (!acx)
+		return -ENOMEM;
+
+	acx->enable = enable ? 1 : 0;
+
+	ret = wl1271_cmd_configure(wl, ACX_AP_BEACON_FILTER_OPT,
+				   acx, sizeof(*acx));
+	if (ret < 0) {
+		wl1271_warning("acx set ap beacon filter failed: %d", ret);
+		goto out;
+	}
+
+out:
+	kfree(acx);
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int wl1271_acx_fm_coex(struct wl1271 *wl)
 {
 	struct wl1271_acx_fm_coex *acx;
@@ -1658,6 +2184,7 @@ out:
 	kfree(acx);
 	return ret;
 }
+<<<<<<< HEAD
 
 int wl12xx_acx_set_rate_mgmt_params(struct wl1271 *wl)
 {
@@ -1740,3 +2267,5 @@ out:
 	return ret;
 
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

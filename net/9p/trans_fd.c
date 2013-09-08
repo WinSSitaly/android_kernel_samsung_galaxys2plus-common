@@ -25,8 +25,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/in.h>
 #include <linux/module.h>
 #include <linux/net.h>
@@ -193,7 +196,11 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
 	unsigned long flags;
 	LIST_HEAD(cancel_list);
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_ERROR, "mux %p err %d\n", m, err);
+=======
+	P9_DPRINTK(P9_DEBUG_ERROR, "mux %p err %d\n", m, err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&m->client->lock, flags);
 
@@ -219,7 +226,11 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
 	spin_unlock_irqrestore(&m->client->lock, flags);
 
 	list_for_each_entry_safe(req, rtmp, &cancel_list, req_list) {
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_ERROR, "call back req %p\n", req);
+=======
+		P9_DPRINTK(P9_DEBUG_ERROR, "call back req %p\n", req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_del(&req->req_list);
 		p9_client_cb(m->client, req);
 	}
@@ -277,7 +288,11 @@ static int p9_fd_read(struct p9_client *client, void *v, int len)
 		return -EREMOTEIO;
 
 	if (!(ts->rd->f_flags & O_NONBLOCK))
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_ERROR, "blocking read ...\n");
+=======
+		P9_DPRINTK(P9_DEBUG_ERROR, "blocking read ...\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = kernel_read(ts->rd, ts->rd->f_pos, v, len);
 	if (ret <= 0 && ret != -ERESTARTSYS && ret != -EAGAIN)
@@ -301,7 +316,11 @@ static void p9_read_work(struct work_struct *work)
 	if (m->err < 0)
 		return;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_TRANS, "start mux %p pos %d\n", m, m->rpos);
+=======
+	P9_DPRINTK(P9_DEBUG_TRANS, "start mux %p pos %d\n", m, m->rpos);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!m->rbuf) {
 		m->rbuf = m->tmp_buf;
@@ -310,11 +329,19 @@ static void p9_read_work(struct work_struct *work)
 	}
 
 	clear_bit(Rpending, &m->wsched);
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_TRANS, "read mux %p pos %d size: %d = %d\n",
 		 m, m->rpos, m->rsize, m->rsize-m->rpos);
 	err = p9_fd_read(m->client, m->rbuf + m->rpos,
 						m->rsize - m->rpos);
 	p9_debug(P9_DEBUG_TRANS, "mux %p got %d bytes\n", m, err);
+=======
+	P9_DPRINTK(P9_DEBUG_TRANS, "read mux %p pos %d size: %d = %d\n", m,
+					m->rpos, m->rsize, m->rsize-m->rpos);
+	err = p9_fd_read(m->client, m->rbuf + m->rpos,
+						m->rsize - m->rpos);
+	P9_DPRINTK(P9_DEBUG_TRANS, "mux %p got %d bytes\n", m, err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err == -EAGAIN) {
 		clear_bit(Rworksched, &m->wsched);
 		return;
@@ -327,25 +354,44 @@ static void p9_read_work(struct work_struct *work)
 
 	if ((!m->req) && (m->rpos == m->rsize)) { /* header read in */
 		u16 tag;
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_TRANS, "got new header\n");
 
 		n = le32_to_cpu(*(__le32 *) m->rbuf); /* read packet size */
 		if (n >= m->client->msize) {
 			p9_debug(P9_DEBUG_ERROR,
 				 "requested packet size too big: %d\n", n);
+=======
+		P9_DPRINTK(P9_DEBUG_TRANS, "got new header\n");
+
+		n = le32_to_cpu(*(__le32 *) m->rbuf); /* read packet size */
+		if (n >= m->client->msize) {
+			P9_DPRINTK(P9_DEBUG_ERROR,
+				"requested packet size too big: %d\n", n);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			err = -EIO;
 			goto error;
 		}
 
 		tag = le16_to_cpu(*(__le16 *) (m->rbuf+5)); /* read tag */
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_TRANS,
 			 "mux %p pkt: size: %d bytes tag: %d\n", m, n, tag);
+=======
+		P9_DPRINTK(P9_DEBUG_TRANS,
+			"mux %p pkt: size: %d bytes tag: %d\n", m, n, tag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		m->req = p9_tag_lookup(m->client, tag);
 		if (!m->req || (m->req->status != REQ_STATUS_SENT &&
 					m->req->status != REQ_STATUS_FLSH)) {
+<<<<<<< HEAD
 			p9_debug(P9_DEBUG_ERROR, "Unexpected packet tag %d\n",
 				 tag);
+=======
+			P9_DPRINTK(P9_DEBUG_ERROR, "Unexpected packet tag %d\n",
+								 tag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			err = -EIO;
 			goto error;
 		}
@@ -366,7 +412,11 @@ static void p9_read_work(struct work_struct *work)
 
 	/* not an else because some packets (like clunk) have no payload */
 	if ((m->req) && (m->rpos == m->rsize)) { /* packet is read in */
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_TRANS, "got new packet\n");
+=======
+		P9_DPRINTK(P9_DEBUG_TRANS, "got new packet\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_lock(&m->client->lock);
 		if (m->req->status != REQ_STATUS_ERROR)
 			m->req->status = REQ_STATUS_RCVD;
@@ -386,7 +436,11 @@ static void p9_read_work(struct work_struct *work)
 			n = p9_fd_poll(m->client, NULL);
 
 		if (n & POLLIN) {
+<<<<<<< HEAD
 			p9_debug(P9_DEBUG_TRANS, "sched read work %p\n", m);
+=======
+			P9_DPRINTK(P9_DEBUG_TRANS, "sched read work %p\n", m);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			schedule_work(&m->rq);
 		} else
 			clear_bit(Rworksched, &m->wsched);
@@ -420,7 +474,11 @@ static int p9_fd_write(struct p9_client *client, void *v, int len)
 		return -EREMOTEIO;
 
 	if (!(ts->wr->f_flags & O_NONBLOCK))
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_ERROR, "blocking write ...\n");
+=======
+		P9_DPRINTK(P9_DEBUG_ERROR, "blocking write ...\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	oldfs = get_fs();
 	set_fs(get_ds());
@@ -462,7 +520,11 @@ static void p9_write_work(struct work_struct *work)
 		req = list_entry(m->unsent_req_list.next, struct p9_req_t,
 			       req_list);
 		req->status = REQ_STATUS_SENT;
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_TRANS, "move req %p\n", req);
+=======
+		P9_DPRINTK(P9_DEBUG_TRANS, "move req %p\n", req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_move_tail(&req->req_list, &m->req_list);
 
 		m->wbuf = req->tc->sdata;
@@ -471,11 +533,19 @@ static void p9_write_work(struct work_struct *work)
 		spin_unlock(&m->client->lock);
 	}
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_TRANS, "mux %p pos %d size %d\n",
 		 m, m->wpos, m->wsize);
 	clear_bit(Wpending, &m->wsched);
 	err = p9_fd_write(m->client, m->wbuf + m->wpos, m->wsize - m->wpos);
 	p9_debug(P9_DEBUG_TRANS, "mux %p sent %d bytes\n", m, err);
+=======
+	P9_DPRINTK(P9_DEBUG_TRANS, "mux %p pos %d size %d\n", m, m->wpos,
+								m->wsize);
+	clear_bit(Wpending, &m->wsched);
+	err = p9_fd_write(m->client, m->wbuf + m->wpos, m->wsize - m->wpos);
+	P9_DPRINTK(P9_DEBUG_TRANS, "mux %p sent %d bytes\n", m, err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err == -EAGAIN) {
 		clear_bit(Wworksched, &m->wsched);
 		return;
@@ -499,7 +569,11 @@ static void p9_write_work(struct work_struct *work)
 			n = p9_fd_poll(m->client, NULL);
 
 		if (n & POLLOUT) {
+<<<<<<< HEAD
 			p9_debug(P9_DEBUG_TRANS, "sched write work %p\n", m);
+=======
+			P9_DPRINTK(P9_DEBUG_TRANS, "sched write work %p\n", m);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			schedule_work(&m->wq);
 		} else
 			clear_bit(Wworksched, &m->wsched);
@@ -553,7 +627,11 @@ p9_pollwait(struct file *filp, wait_queue_head_t *wait_address, poll_table *p)
 	}
 
 	if (!pwait) {
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_ERROR, "not enough wait_address slots\n");
+=======
+		P9_DPRINTK(P9_DEBUG_ERROR, "not enough wait_address slots\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -575,7 +653,12 @@ static struct p9_conn *p9_conn_create(struct p9_client *client)
 	int n;
 	struct p9_conn *m;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_TRANS, "client %p msize %d\n", client, client->msize);
+=======
+	P9_DPRINTK(P9_DEBUG_TRANS, "client %p msize %d\n", client,
+								client->msize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	m = kzalloc(sizeof(struct p9_conn), GFP_KERNEL);
 	if (!m)
 		return ERR_PTR(-ENOMEM);
@@ -592,12 +675,20 @@ static struct p9_conn *p9_conn_create(struct p9_client *client)
 
 	n = p9_fd_poll(client, &m->pt);
 	if (n & POLLIN) {
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_TRANS, "mux %p can read\n", m);
+=======
+		P9_DPRINTK(P9_DEBUG_TRANS, "mux %p can read\n", m);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_bit(Rpending, &m->wsched);
 	}
 
 	if (n & POLLOUT) {
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_TRANS, "mux %p can write\n", m);
+=======
+		P9_DPRINTK(P9_DEBUG_TRANS, "mux %p can write\n", m);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_bit(Wpending, &m->wsched);
 	}
 
@@ -619,7 +710,11 @@ static void p9_poll_mux(struct p9_conn *m)
 
 	n = p9_fd_poll(m->client, NULL);
 	if (n < 0 || n & (POLLERR | POLLHUP | POLLNVAL)) {
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_TRANS, "error mux %p err %d\n", m, n);
+=======
+		P9_DPRINTK(P9_DEBUG_TRANS, "error mux %p err %d\n", m, n);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (n >= 0)
 			n = -ECONNRESET;
 		p9_conn_cancel(m, n);
@@ -627,19 +722,32 @@ static void p9_poll_mux(struct p9_conn *m)
 
 	if (n & POLLIN) {
 		set_bit(Rpending, &m->wsched);
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_TRANS, "mux %p can read\n", m);
 		if (!test_and_set_bit(Rworksched, &m->wsched)) {
 			p9_debug(P9_DEBUG_TRANS, "sched read work %p\n", m);
+=======
+		P9_DPRINTK(P9_DEBUG_TRANS, "mux %p can read\n", m);
+		if (!test_and_set_bit(Rworksched, &m->wsched)) {
+			P9_DPRINTK(P9_DEBUG_TRANS, "sched read work %p\n", m);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			schedule_work(&m->rq);
 		}
 	}
 
 	if (n & POLLOUT) {
 		set_bit(Wpending, &m->wsched);
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_TRANS, "mux %p can write\n", m);
 		if ((m->wsize || !list_empty(&m->unsent_req_list)) &&
 		    !test_and_set_bit(Wworksched, &m->wsched)) {
 			p9_debug(P9_DEBUG_TRANS, "sched write work %p\n", m);
+=======
+		P9_DPRINTK(P9_DEBUG_TRANS, "mux %p can write\n", m);
+		if ((m->wsize || !list_empty(&m->unsent_req_list)) &&
+		    !test_and_set_bit(Wworksched, &m->wsched)) {
+			P9_DPRINTK(P9_DEBUG_TRANS, "sched write work %p\n", m);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			schedule_work(&m->wq);
 		}
 	}
@@ -662,8 +770,13 @@ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
 	struct p9_trans_fd *ts = client->trans;
 	struct p9_conn *m = ts->conn;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_TRANS, "mux %p task %p tcall %p id %d\n",
 		 m, current, req->tc, req->tc->id);
+=======
+	P9_DPRINTK(P9_DEBUG_TRANS, "mux %p task %p tcall %p id %d\n", m,
+						current, req->tc, req->tc->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (m->err < 0)
 		return m->err;
 
@@ -687,7 +800,11 @@ static int p9_fd_cancel(struct p9_client *client, struct p9_req_t *req)
 {
 	int ret = 1;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_TRANS, "client %p req %p\n", client, req);
+=======
+	P9_DPRINTK(P9_DEBUG_TRANS, "client %p req %p\n", client, req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock(&client->lock);
 
@@ -727,8 +844,13 @@ static int parse_opts(char *params, struct p9_fd_opts *opts)
 
 	tmp_options = kstrdup(params, GFP_KERNEL);
 	if (!tmp_options) {
+<<<<<<< HEAD
 		p9_debug(P9_DEBUG_ERROR,
 			 "failed to allocate copy of option string\n");
+=======
+		P9_DPRINTK(P9_DEBUG_ERROR,
+				"failed to allocate copy of option string\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 	options = tmp_options;
@@ -742,8 +864,13 @@ static int parse_opts(char *params, struct p9_fd_opts *opts)
 		if (token != Opt_err) {
 			r = match_int(&args[0], &option);
 			if (r < 0) {
+<<<<<<< HEAD
 				p9_debug(P9_DEBUG_ERROR,
 					 "integer field, but no integer?\n");
+=======
+				P9_DPRINTK(P9_DEBUG_ERROR,
+				"integer field, but no integer?\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				continue;
 			}
 		}
@@ -802,8 +929,12 @@ static int p9_socket_open(struct p9_client *client, struct socket *csocket)
 	csocket->sk->sk_allocation = GFP_NOIO;
 	fd = sock_map_fd(csocket, 0);
 	if (fd < 0) {
+<<<<<<< HEAD
 		pr_err("%s (%d): failed to map fd\n",
 		       __func__, task_pid_nr(current));
+=======
+		P9_EPRINTK(KERN_ERR, "p9_socket_open: failed to map fd\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sock_release(csocket);
 		kfree(p);
 		return fd;
@@ -839,8 +970,13 @@ static int p9_socket_open(struct p9_client *client, struct socket *csocket)
 
 static void p9_conn_destroy(struct p9_conn *m)
 {
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_TRANS, "mux %p prev %p next %p\n",
 		 m, m->mux_list.prev, m->mux_list.next);
+=======
+	P9_DPRINTK(P9_DEBUG_TRANS, "mux %p prev %p next %p\n", m,
+		m->mux_list.prev, m->mux_list.next);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	p9_mux_poll_stop(m);
 	cancel_work_sync(&m->rq);
@@ -921,8 +1057,12 @@ p9_fd_create_tcp(struct p9_client *client, const char *addr, char *args)
 	err = __sock_create(read_pnet(&current->nsproxy->net_ns), PF_INET,
 			    SOCK_STREAM, IPPROTO_TCP, &csocket, 1);
 	if (err) {
+<<<<<<< HEAD
 		pr_err("%s (%d): problem creating socket\n",
 		       __func__, task_pid_nr(current));
+=======
+		P9_EPRINTK(KERN_ERR, "p9_trans_tcp: problem creating socket\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 	}
 
@@ -930,8 +1070,14 @@ p9_fd_create_tcp(struct p9_client *client, const char *addr, char *args)
 				    (struct sockaddr *)&sin_server,
 				    sizeof(struct sockaddr_in), 0);
 	if (err < 0) {
+<<<<<<< HEAD
 		pr_err("%s (%d): problem connecting socket to %s\n",
 		       __func__, task_pid_nr(current), addr);
+=======
+		P9_EPRINTK(KERN_ERR,
+			"p9_trans_tcp: problem connecting socket to %s\n",
+			addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sock_release(csocket);
 		return err;
 	}
@@ -949,8 +1095,13 @@ p9_fd_create_unix(struct p9_client *client, const char *addr, char *args)
 	csocket = NULL;
 
 	if (strlen(addr) >= UNIX_PATH_MAX) {
+<<<<<<< HEAD
 		pr_err("%s (%d): address too long: %s\n",
 		       __func__, task_pid_nr(current), addr);
+=======
+		P9_EPRINTK(KERN_ERR, "p9_trans_unix: address too long: %s\n",
+			addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENAMETOOLONG;
 	}
 
@@ -959,16 +1110,26 @@ p9_fd_create_unix(struct p9_client *client, const char *addr, char *args)
 	err = __sock_create(read_pnet(&current->nsproxy->net_ns), PF_UNIX,
 			    SOCK_STREAM, 0, &csocket, 1);
 	if (err < 0) {
+<<<<<<< HEAD
 		pr_err("%s (%d): problem creating socket\n",
 		       __func__, task_pid_nr(current));
 
+=======
+		P9_EPRINTK(KERN_ERR, "p9_trans_unix: problem creating socket\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 	}
 	err = csocket->ops->connect(csocket, (struct sockaddr *)&sun_server,
 			sizeof(struct sockaddr_un) - 1, 0);
 	if (err < 0) {
+<<<<<<< HEAD
 		pr_err("%s (%d): problem connecting socket: %s: %d\n",
 		       __func__, task_pid_nr(current), addr, err);
+=======
+		P9_EPRINTK(KERN_ERR,
+			"p9_trans_unix: problem connecting socket: %s: %d\n",
+			addr, err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sock_release(csocket);
 		return err;
 	}
@@ -986,7 +1147,11 @@ p9_fd_create(struct p9_client *client, const char *addr, char *args)
 	parse_opts(args, &opts);
 
 	if (opts.rfd == ~0 || opts.wfd == ~0) {
+<<<<<<< HEAD
 		pr_err("Insufficient options for proto=fd\n");
+=======
+		printk(KERN_ERR "v9fs: Insufficient options for proto=fd\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOPROTOOPT;
 	}
 
@@ -1053,7 +1218,11 @@ static void p9_poll_workfn(struct work_struct *work)
 {
 	unsigned long flags;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_TRANS, "start %p\n", current);
+=======
+	P9_DPRINTK(P9_DEBUG_TRANS, "start %p\n", current);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&p9_poll_lock, flags);
 	while (!list_empty(&p9_poll_pending_list)) {
@@ -1069,7 +1238,11 @@ static void p9_poll_workfn(struct work_struct *work)
 	}
 	spin_unlock_irqrestore(&p9_poll_lock, flags);
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_TRANS, "finish\n");
+=======
+	P9_DPRINTK(P9_DEBUG_TRANS, "finish\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int p9_trans_fd_init(void)

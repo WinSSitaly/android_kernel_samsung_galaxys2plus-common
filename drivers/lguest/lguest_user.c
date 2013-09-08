@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*P:200 This contains all the /dev/lguest code, whereby the userspace
  * launcher controls and communicates with the Guest.  For example,
  * the first write will tell us the Guest's memory layout and entry
@@ -5,6 +6,13 @@
  * a signal or the Guest doing a NOTIFY out to the Launcher.  There is
  * also a way for the Launcher to attach eventfds to particular NOTIFY
  * values instead of returning from the read() call.
+=======
+/*P:200 This contains all the /dev/lguest code, whereby the userspace launcher
+ * controls and communicates with the Guest.  For example, the first write will
+ * tell us the Guest's memory layout and entry point.  A read will run the
+ * Guest until something happens, such as a signal or the Guest doing a NOTIFY
+ * out to the Launcher.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 :*/
 #include <linux/uaccess.h>
 #include <linux/miscdevice.h>
@@ -13,7 +21,10 @@
 #include <linux/eventfd.h>
 #include <linux/file.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "lg.h"
 
 /*L:056
@@ -360,8 +371,13 @@ static int initialize(struct file *file, const unsigned long __user *input)
 		goto free_eventfds;
 
 	/*
+<<<<<<< HEAD
 	 * Initialize the Guest's shadow page tables.  This allocates
 	 * memory, so can fail.
+=======
+	 * Initialize the Guest's shadow page tables, using the toplevel
+	 * address the Launcher gave us.  This allocates memory, so can fail.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	err = init_guest_pagetable(lg);
 	if (err)
@@ -519,7 +535,10 @@ static const struct file_operations lguest_fops = {
 	.read	 = read,
 	.llseek  = default_llseek,
 };
+<<<<<<< HEAD
 /*:*/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * This is a textbook example of a "misc" character device.  Populate a "struct

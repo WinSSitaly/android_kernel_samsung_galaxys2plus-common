@@ -7,8 +7,11 @@ config FRV
 	select HAVE_PERF_EVENTS
 	select HAVE_GENERIC_HARDIRQS
 	select GENERIC_IRQ_SHOW
+<<<<<<< HEAD
 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
 	select GENERIC_CPU_DEVICES
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config ZONE_DMA
 	bool
@@ -318,7 +321,10 @@ config PCI
 	bool "Use PCI"
 	depends on MB93090_MB00
 	default y
+<<<<<<< HEAD
 	select GENERIC_PCI_IOMAP
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Some FR-V systems (such as the MB93090-MB00 VDK) have PCI
 	  onboard. If you have one of these boards and you wish to use the PCI
@@ -343,6 +349,19 @@ source "drivers/pci/Kconfig"
 
 source "drivers/pcmcia/Kconfig"
 
+<<<<<<< HEAD
+=======
+#config MATH_EMULATION
+#	bool "Math emulation support (EXPERIMENTAL)"
+#	depends on EXPERIMENTAL
+#	help
+#	  At some point in the future, this will cause floating-point math
+#	  instructions to be emulated by the kernel on machines that lack a
+#	  floating-point math coprocessor.  Thrill-seekers and chronically
+#	  sleep-deprived psychotic hacker types can say Y now, everyone else
+#	  should probably wait a while.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 menu "Power management options"
 
 config ARCH_SUSPEND_POSSIBLE

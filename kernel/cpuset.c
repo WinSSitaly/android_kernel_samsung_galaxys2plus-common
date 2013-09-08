@@ -37,7 +37,11 @@
 #include <linux/mempolicy.h>
 #include <linux/mm.h>
 #include <linux/memory.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mount.h>
 #include <linux/namei.h>
 #include <linux/pagemap.h>
@@ -55,7 +59,11 @@
 #include <linux/sort.h>
 
 #include <asm/uaccess.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mutex.h>
 #include <linux/workqueue.h>
 #include <linux/cgroup.h>
@@ -123,6 +131,7 @@ static inline struct cpuset *task_cs(struct task_struct *task)
 			    struct cpuset, css);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_NUMA
 static inline bool task_has_mempolicy(struct task_struct *task)
 {
@@ -136,6 +145,8 @@ static inline bool task_has_mempolicy(struct task_struct *task)
 #endif
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* bits in struct cpuset flags field */
 typedef enum {
 	CS_CPU_EXCLUSIVE,
@@ -270,11 +281,19 @@ static struct file_system_type cpuset_fs_type = {
  * are online.  If none are online, walk up the cpuset hierarchy
  * until we find one that does have some online cpus.  If we get
  * all the way to the top and still haven't found any online cpus,
+<<<<<<< HEAD
  * return cpu_online_mask.  Or if passed a NULL cs from an exit'ing
  * task, return cpu_online_mask.
  *
  * One way or another, we guarantee to return some non-empty subset
  * of cpu_online_mask.
+=======
+ * return cpu_online_map.  Or if passed a NULL cs from an exit'ing
+ * task, return cpu_online_map.
+ *
+ * One way or another, we guarantee to return some non-empty subset
+ * of cpu_online_map.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Call with callback_mutex held.
  */
@@ -867,7 +886,11 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
 	int retval;
 	int is_load_balanced;
 
+<<<<<<< HEAD
 	/* top_cpuset.cpus_allowed tracks cpu_online_mask; it's read-only */
+=======
+	/* top_cpuset.cpus_allowed tracks cpu_online_map; it's read-only */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cs == &top_cpuset)
 		return -EACCES;
 
@@ -962,8 +985,12 @@ static void cpuset_migrate_mm(struct mm_struct *mm, const nodemask_t *from,
 static void cpuset_change_task_nodemask(struct task_struct *tsk,
 					nodemask_t *newmems)
 {
+<<<<<<< HEAD
 	bool need_loop;
 
+=======
+repeat:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Allow tasks that have access to memory reserves because they have
 	 * been OOM killed to get memory anywhere.
@@ -974,6 +1001,7 @@ static void cpuset_change_task_nodemask(struct task_struct *tsk,
 		return;
 
 	task_lock(tsk);
+<<<<<<< HEAD
 	/*
 	 * Determine if a loop is necessary if another thread is doing
 	 * get_mems_allowed().  If at least one node remains unchanged and
@@ -995,6 +1023,48 @@ static void cpuset_change_task_nodemask(struct task_struct *tsk,
 	if (need_loop)
 		write_seqcount_end(&tsk->mems_allowed_seq);
 
+=======
+	nodes_or(tsk->mems_allowed, tsk->mems_allowed, *newmems);
+	mpol_rebind_task(tsk, newmems, MPOL_REBIND_STEP1);
+
+
+	/*
+	 * ensure checking ->mems_allowed_change_disable after setting all new
+	 * allowed nodes.
+	 *
+	 * the read-side task can see an nodemask with new allowed nodes and
+	 * old allowed nodes. and if it allocates page when cpuset clears newly
+	 * disallowed ones continuous, it can see the new allowed bits.
+	 *
+	 * And if setting all new allowed nodes is after the checking, setting
+	 * all new allowed nodes and clearing newly disallowed ones will be done
+	 * continuous, and the read-side task may find no node to alloc page.
+	 */
+	smp_mb();
+
+	/*
+	 * Allocation of memory is very fast, we needn't sleep when waiting
+	 * for the read-side.
+	 */
+	while (ACCESS_ONCE(tsk->mems_allowed_change_disable)) {
+		task_unlock(tsk);
+		if (!task_curr(tsk))
+			yield();
+		goto repeat;
+	}
+
+	/*
+	 * ensure checking ->mems_allowed_change_disable before clearing all new
+	 * disallowed nodes.
+	 *
+	 * if clearing newly disallowed bits before the checking, the read-side
+	 * task may find no node to alloc page.
+	 */
+	smp_mb();
+
+	mpol_rebind_task(tsk, newmems, MPOL_REBIND_STEP2);
+	tsk->mems_allowed = *newmems;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	task_unlock(tsk);
 }
 
@@ -1362,15 +1432,51 @@ static int fmeter_getrate(struct fmeter *fmp)
 	return val;
 }
 
+<<<<<<< HEAD
 /*
  * Protected by cgroup_lock. The nodemasks must be stored globally because
  * dynamically allocating them is not allowed in can_attach, and they must
  * persist until attach.
+=======
+/* Called by cgroups to determine if a cpuset is usable; cgroup_mutex held */
+static int cpuset_can_attach(struct cgroup_subsys *ss, struct cgroup *cont,
+			     struct task_struct *tsk)
+{
+	struct cpuset *cs = cgroup_cs(cont);
+
+	if (cpumask_empty(cs->cpus_allowed) || nodes_empty(cs->mems_allowed))
+		return -ENOSPC;
+
+	/*
+	 * Kthreads bound to specific cpus cannot be moved to a new cpuset; we
+	 * cannot change their cpu affinity and isolating such threads by their
+	 * set of allowed nodes is unnecessary.  Thus, cpusets are not
+	 * applicable for such threads.  This prevents checking for success of
+	 * set_cpus_allowed_ptr() on all attached tasks before cpus_allowed may
+	 * be changed.
+	 */
+	if (tsk->flags & PF_THREAD_BOUND)
+		return -EINVAL;
+
+	return 0;
+}
+
+static int cpuset_can_attach_task(struct cgroup *cgrp, struct task_struct *task)
+{
+	return security_task_setscheduler(task);
+}
+
+/*
+ * Protected by cgroup_lock. The nodemasks must be stored globally because
+ * dynamically allocating them is not allowed in pre_attach, and they must
+ * persist among pre_attach, attach_task, and attach.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static cpumask_var_t cpus_attach;
 static nodemask_t cpuset_attach_nodemask_from;
 static nodemask_t cpuset_attach_nodemask_to;
 
+<<<<<<< HEAD
 /* Called by cgroups to determine if a cpuset is usable; cgroup_mutex held */
 static int cpuset_can_attach(struct cgroup *cgrp, struct cgroup_taskset *tset)
 {
@@ -1398,12 +1504,20 @@ static int cpuset_can_attach(struct cgroup *cgrp, struct cgroup_taskset *tset)
 	}
 
 	/* prepare for attach */
+=======
+/* Set-up work for before attaching each task. */
+static void cpuset_pre_attach(struct cgroup *cont)
+{
+	struct cpuset *cs = cgroup_cs(cont);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cs == &top_cpuset)
 		cpumask_copy(cpus_attach, cpu_possible_mask);
 	else
 		guarantee_online_cpus(cs, cpus_attach);
 
 	guarantee_online_mems(cs, &cpuset_attach_nodemask_to);
+<<<<<<< HEAD
 
 	return 0;
 }
@@ -1427,6 +1541,33 @@ static void cpuset_attach(struct cgroup *cgrp, struct cgroup_taskset *tset)
 		cpuset_change_task_nodemask(task, &cpuset_attach_nodemask_to);
 		cpuset_update_task_spread_flag(cs, task);
 	}
+=======
+}
+
+/* Per-thread attachment work. */
+static void cpuset_attach_task(struct cgroup *cont, struct task_struct *tsk)
+{
+	int err;
+	struct cpuset *cs = cgroup_cs(cont);
+
+	/*
+	 * can_attach beforehand should guarantee that this doesn't fail.
+	 * TODO: have a better way to handle failure here
+	 */
+	err = set_cpus_allowed_ptr(tsk, cpus_attach);
+	WARN_ON_ONCE(err);
+
+	cpuset_change_task_nodemask(tsk, &cpuset_attach_nodemask_to);
+	cpuset_update_task_spread_flag(cs, tsk);
+}
+
+static void cpuset_attach(struct cgroup_subsys *ss, struct cgroup *cont,
+			  struct cgroup *oldcont, struct task_struct *tsk)
+{
+	struct mm_struct *mm;
+	struct cpuset *cs = cgroup_cs(cont);
+	struct cpuset *oldcs = cgroup_cs(oldcont);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Change mm, possibly for multiple threads in a threadgroup. This is
@@ -1434,7 +1575,11 @@ static void cpuset_attach(struct cgroup *cgrp, struct cgroup_taskset *tset)
 	 */
 	cpuset_attach_nodemask_from = oldcs->mems_allowed;
 	cpuset_attach_nodemask_to = cs->mems_allowed;
+<<<<<<< HEAD
 	mm = get_task_mm(leader);
+=======
+	mm = get_task_mm(tsk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (mm) {
 		mpol_rebind_mm(mm, &cpuset_attach_nodemask_to);
 		if (is_memory_migrate(cs))
@@ -1804,7 +1949,12 @@ static int cpuset_populate(struct cgroup_subsys *ss, struct cgroup *cont)
  * (and likewise for mems) to the new cgroup. Called with cgroup_mutex
  * held.
  */
+<<<<<<< HEAD
 static void cpuset_post_clone(struct cgroup *cgroup)
+=======
+static void cpuset_post_clone(struct cgroup_subsys *ss,
+			      struct cgroup *cgroup)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cgroup *parent, *child;
 	struct cpuset *cs, *parent_cs;
@@ -1827,10 +1977,20 @@ static void cpuset_post_clone(struct cgroup *cgroup)
 
 /*
  *	cpuset_create - create a cpuset
+<<<<<<< HEAD
  *	cont:	control group that the new cpuset will be part of
  */
 
 static struct cgroup_subsys_state *cpuset_create(struct cgroup *cont)
+=======
+ *	ss:	cpuset cgroup subsystem
+ *	cont:	control group that the new cpuset will be part of
+ */
+
+static struct cgroup_subsys_state *cpuset_create(
+	struct cgroup_subsys *ss,
+	struct cgroup *cont)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cpuset *cs;
 	struct cpuset *parent;
@@ -1869,7 +2029,11 @@ static struct cgroup_subsys_state *cpuset_create(struct cgroup *cont)
  * will call async_rebuild_sched_domains().
  */
 
+<<<<<<< HEAD
 static void cpuset_destroy(struct cgroup *cont)
+=======
+static void cpuset_destroy(struct cgroup_subsys *ss, struct cgroup *cont)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cpuset *cs = cgroup_cs(cont);
 
@@ -1886,6 +2050,12 @@ struct cgroup_subsys cpuset_subsys = {
 	.create = cpuset_create,
 	.destroy = cpuset_destroy,
 	.can_attach = cpuset_can_attach,
+<<<<<<< HEAD
+=======
+	.can_attach_task = cpuset_can_attach_task,
+	.pre_attach = cpuset_pre_attach,
+	.attach_task = cpuset_attach_task,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.attach = cpuset_attach,
 	.populate = cpuset_populate,
 	.post_clone = cpuset_post_clone,
@@ -2065,9 +2235,12 @@ static void scan_for_empty_cpusets(struct cpuset *root)
  * (of no affect) on systems that are actively using CPU hotplug
  * but making no active use of cpusets.
  *
+<<<<<<< HEAD
  * The only exception to this is suspend/resume, where we don't
  * modify cpusets at all.
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This routine ensures that top_cpuset.cpus_allowed tracks
  * cpu_active_mask on each CPU hotplug (cpuhp) event.
  *
@@ -2152,7 +2325,11 @@ void __init cpuset_init_smp(void)
  *
  * Description: Returns the cpumask_var_t cpus_allowed of the cpuset
  * attached to the specified @tsk.  Guaranteed to return some non-empty
+<<<<<<< HEAD
  * subset of cpu_online_mask, even if this means going outside the
+=======
+ * subset of cpu_online_map, even if this means going outside the
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * tasks cpuset.
  **/
 
@@ -2165,9 +2342,16 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
 	mutex_unlock(&callback_mutex);
 }
 
+<<<<<<< HEAD
 void cpuset_cpus_allowed_fallback(struct task_struct *tsk)
 {
 	const struct cpuset *cs;
+=======
+int cpuset_cpus_allowed_fallback(struct task_struct *tsk)
+{
+	const struct cpuset *cs;
+	int cpu;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rcu_read_lock();
 	cs = task_cs(tsk);
@@ -2188,10 +2372,29 @@ void cpuset_cpus_allowed_fallback(struct task_struct *tsk)
 	 * changes in tsk_cs()->cpus_allowed. Otherwise we can temporary
 	 * set any mask even if it is not right from task_cs() pov,
 	 * the pending set_cpus_allowed_ptr() will fix things.
+<<<<<<< HEAD
 	 *
 	 * select_fallback_rq() will fix things ups and set cpu_possible_mask
 	 * if required.
 	 */
+=======
+	 */
+
+	cpu = cpumask_any_and(&tsk->cpus_allowed, cpu_active_mask);
+	if (cpu >= nr_cpu_ids) {
+		/*
+		 * Either tsk->cpus_allowed is wrong (see above) or it
+		 * is actually empty. The latter case is only possible
+		 * if we are racing with remove_tasks_in_empty_cpuset().
+		 * Like above we can temporary set any mask and rely on
+		 * set_cpus_allowed_ptr() as synchronization point.
+		 */
+		do_set_cpus_allowed(tsk, cpu_possible_mask);
+		cpu = cpumask_any(cpu_active_mask);
+	}
+
+	return cpu;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void cpuset_init_current_mems_allowed(void)
@@ -2430,19 +2633,25 @@ static int cpuset_spread_node(int *rotor)
 
 int cpuset_mem_spread_node(void)
 {
+<<<<<<< HEAD
 	if (current->cpuset_mem_spread_rotor == NUMA_NO_NODE)
 		current->cpuset_mem_spread_rotor =
 			node_random(&current->mems_allowed);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return cpuset_spread_node(&current->cpuset_mem_spread_rotor);
 }
 
 int cpuset_slab_spread_node(void)
 {
+<<<<<<< HEAD
 	if (current->cpuset_slab_spread_rotor == NUMA_NO_NODE)
 		current->cpuset_slab_spread_rotor =
 			node_random(&current->mems_allowed);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return cpuset_spread_node(&current->cpuset_slab_spread_rotor);
 }
 
@@ -2479,6 +2688,7 @@ void cpuset_print_task_mems_allowed(struct task_struct *tsk)
 
 	dentry = task_cs(tsk)->css.cgroup->dentry;
 	spin_lock(&cpuset_buffer_lock);
+<<<<<<< HEAD
 
 	if (!dentry) {
 		strcpy(cpuset_name, "/");
@@ -2489,6 +2699,10 @@ void cpuset_print_task_mems_allowed(struct task_struct *tsk)
 		spin_unlock(&dentry->d_lock);
 	}
 
+=======
+	snprintf(cpuset_name, CPUSET_NAME_LEN,
+		 dentry ? (const char *)dentry->d_name.name : "/");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nodelist_scnprintf(cpuset_nodelist, CPUSET_NODELIST_LEN,
 			   tsk->mems_allowed);
 	printk(KERN_INFO "%s cpuset=%s mems_allowed=%s\n",

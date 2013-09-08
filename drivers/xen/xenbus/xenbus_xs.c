@@ -45,7 +45,10 @@
 #include <linux/module.h>
 #include <linux/mutex.h>
 #include <xen/xenbus.h>
+<<<<<<< HEAD
 #include <xen/xen.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "xenbus_comms.h"
 
 struct xs_stored_msg {
@@ -532,6 +535,7 @@ int xenbus_printf(struct xenbus_transaction t,
 {
 	va_list ap;
 	int ret;
+<<<<<<< HEAD
 	char *buf;
 
 	va_start(ap, fmt);
@@ -544,6 +548,23 @@ int xenbus_printf(struct xenbus_transaction t,
 	ret = xenbus_write(t, dir, node, buf);
 
 	kfree(buf);
+=======
+#define PRINTF_BUFFER_SIZE 4096
+	char *printf_buffer;
+
+	printf_buffer = kmalloc(PRINTF_BUFFER_SIZE, GFP_NOIO | __GFP_HIGH);
+	if (printf_buffer == NULL)
+		return -ENOMEM;
+
+	va_start(ap, fmt);
+	ret = vsnprintf(printf_buffer, PRINTF_BUFFER_SIZE, fmt, ap);
+	va_end(ap);
+
+	BUG_ON(ret > PRINTF_BUFFER_SIZE-1);
+	ret = xenbus_write(t, dir, node, printf_buffer);
+
+	kfree(printf_buffer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -636,7 +657,12 @@ int register_xenbus_watch(struct xenbus_watch *watch)
 
 	err = xs_watch(watch->node, token);
 
+<<<<<<< HEAD
 	if (err) {
+=======
+	/* Ignore errors due to multiple registration. */
+	if ((err != 0) && (err != -EEXIST)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_lock(&watches_lock);
 		list_del(&watch->list);
 		spin_unlock(&watches_lock);

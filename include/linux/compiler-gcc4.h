@@ -29,7 +29,10 @@
    the kernel context */
 #define __cold			__attribute__((__cold__))
 
+<<<<<<< HEAD
 #define __linktime_error(message) __attribute__((__error__(message)))
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if __GNUC_MINOR__ >= 5
 /*

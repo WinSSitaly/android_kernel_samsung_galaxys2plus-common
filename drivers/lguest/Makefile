@@ -18,7 +18,11 @@ Mastery: PREFIX=M
 Beer:
 	@for f in Preparation Guest Drivers Launcher Host Switcher Mastery; do echo "{==- $$f -==}"; make -s $$f; done; echo "{==-==}"
 Preparation Preparation! Guest Drivers Launcher Host Switcher Mastery:
+<<<<<<< HEAD
 	@sh ../../tools/lguest/extract $(PREFIX) `find ../../* -name '*.[chS]' -wholename '*lguest*'`
+=======
+	@sh ../../Documentation/virtual/lguest/extract $(PREFIX) `find ../../* -name '*.[chS]' -wholename '*lguest*'`
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Puppy:
 	@clear
 	@printf "      __  \n (___()'\`;\n /,    /\`\n \\\\\\\"--\\\\\\   \n"

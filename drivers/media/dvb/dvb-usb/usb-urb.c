@@ -148,7 +148,11 @@ static int usb_bulk_urb_init(struct usb_data_stream *stream)
 		if (!stream->urb_list[i]) {
 			deb_mem("not enough memory for urb_alloc_urb!.\n");
 			for (j = 0; j < i; j++)
+<<<<<<< HEAD
 				usb_free_urb(stream->urb_list[j]);
+=======
+				usb_free_urb(stream->urb_list[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ENOMEM;
 		}
 		usb_fill_bulk_urb( stream->urb_list[i], stream->udev,
@@ -181,7 +185,11 @@ static int usb_isoc_urb_init(struct usb_data_stream *stream)
 		if (!stream->urb_list[i]) {
 			deb_mem("not enough memory for urb_alloc_urb!\n");
 			for (j = 0; j < i; j++)
+<<<<<<< HEAD
 				usb_free_urb(stream->urb_list[j]);
+=======
+				usb_free_urb(stream->urb_list[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ENOMEM;
 		}
 

@@ -43,6 +43,7 @@ static struct severity {
 	unsigned char covered;
 	char *msg;
 } severities[] = {
+<<<<<<< HEAD
 #define MCESEV(s, m, c...) { .sev = MCE_ ## s ## _SEVERITY, .msg = m, ## c }
 #define  KERNEL		.context = IN_KERNEL
 #define  USER		.context = IN_USER
@@ -189,6 +190,86 @@ int mce_severity(struct mce *m, int tolerant, char **msg)
 		if ((m->status & s->mask) != s->result)
 			continue;
 		if ((m->mcgstatus & s->mcgmask) != s->mcgres)
+=======
+#define KERNEL .context = IN_KERNEL
+#define USER .context = IN_USER
+#define SER .ser = SER_REQUIRED
+#define NOSER .ser = NO_SER
+#define SEV(s) .sev = MCE_ ## s ## _SEVERITY
+#define BITCLR(x, s, m, r...) { .mask = x, .result = 0, SEV(s), .msg = m, ## r }
+#define BITSET(x, s, m, r...) { .mask = x, .result = x, SEV(s), .msg = m, ## r }
+#define MCGMASK(x, res, s, m, r...) \
+	{ .mcgmask = x, .mcgres = res, SEV(s), .msg = m, ## r }
+#define MASK(x, y, s, m, r...) \
+	{ .mask = x, .result = y, SEV(s), .msg = m, ## r }
+#define MCI_UC_S (MCI_STATUS_UC|MCI_STATUS_S)
+#define MCI_UC_SAR (MCI_STATUS_UC|MCI_STATUS_S|MCI_STATUS_AR)
+#define MCACOD 0xffff
+
+	BITCLR(MCI_STATUS_VAL, NO, "Invalid"),
+	BITCLR(MCI_STATUS_EN, NO, "Not enabled"),
+	BITSET(MCI_STATUS_PCC, PANIC, "Processor context corrupt"),
+	/* When MCIP is not set something is very confused */
+	MCGMASK(MCG_STATUS_MCIP, 0, PANIC, "MCIP not set in MCA handler"),
+	/* Neither return not error IP -- no chance to recover -> PANIC */
+	MCGMASK(MCG_STATUS_RIPV|MCG_STATUS_EIPV, 0, PANIC,
+		"Neither restart nor error IP"),
+	MCGMASK(MCG_STATUS_RIPV, 0, PANIC, "In kernel and no restart IP",
+		KERNEL),
+	BITCLR(MCI_STATUS_UC, KEEP, "Corrected error", NOSER),
+	MASK(MCI_STATUS_OVER|MCI_STATUS_UC|MCI_STATUS_EN, MCI_STATUS_UC, SOME,
+	     "Spurious not enabled", SER),
+
+	/* ignore OVER for UCNA */
+	MASK(MCI_UC_SAR, MCI_STATUS_UC, KEEP,
+	     "Uncorrected no action required", SER),
+	MASK(MCI_STATUS_OVER|MCI_UC_SAR, MCI_STATUS_UC|MCI_STATUS_AR, PANIC,
+	     "Illegal combination (UCNA with AR=1)", SER),
+	MASK(MCI_STATUS_S, 0, KEEP, "Non signalled machine check", SER),
+
+	/* AR add known MCACODs here */
+	MASK(MCI_STATUS_OVER|MCI_UC_SAR, MCI_STATUS_OVER|MCI_UC_SAR, PANIC,
+	     "Action required with lost events", SER),
+	MASK(MCI_STATUS_OVER|MCI_UC_SAR|MCACOD, MCI_UC_SAR, PANIC,
+	     "Action required; unknown MCACOD", SER),
+
+	/* known AO MCACODs: */
+	MASK(MCI_UC_SAR|MCI_STATUS_OVER|0xfff0, MCI_UC_S|0xc0, AO,
+	     "Action optional: memory scrubbing error", SER),
+	MASK(MCI_UC_SAR|MCI_STATUS_OVER|MCACOD, MCI_UC_S|0x17a, AO,
+	     "Action optional: last level cache writeback error", SER),
+
+	MASK(MCI_STATUS_OVER|MCI_UC_SAR, MCI_UC_S, SOME,
+	     "Action optional unknown MCACOD", SER),
+	MASK(MCI_STATUS_OVER|MCI_UC_SAR, MCI_UC_S|MCI_STATUS_OVER, SOME,
+	     "Action optional with lost events", SER),
+	BITSET(MCI_STATUS_UC|MCI_STATUS_OVER, PANIC, "Overflowed uncorrected"),
+	BITSET(MCI_STATUS_UC, UC, "Uncorrected"),
+	BITSET(0, SOME, "No match")	/* always matches. keep at end */
+};
+
+/*
+ * If the EIPV bit is set, it means the saved IP is the
+ * instruction which caused the MCE.
+ */
+static int error_context(struct mce *m)
+{
+	if (m->mcgstatus & MCG_STATUS_EIPV)
+		return (m->ip && (m->cs & 3) == 3) ? IN_USER : IN_KERNEL;
+	/* Unknown, assume kernel */
+	return IN_KERNEL;
+}
+
+int mce_severity(struct mce *a, int tolerant, char **msg)
+{
+	enum context ctx = error_context(a);
+	struct severity *s;
+
+	for (s = severities;; s++) {
+		if ((a->status & s->mask) != s->result)
+			continue;
+		if ((a->mcgstatus & s->mcgmask) != s->mcgres)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		if (s->ser == SER_REQUIRED && !mce_ser)
 			continue;
@@ -265,6 +346,7 @@ static const struct file_operations severities_coverage_fops = {
 
 static int __init severities_debugfs_init(void)
 {
+<<<<<<< HEAD
 	struct dentry *dmce, *fsev;
 
 	dmce = mce_get_debugfs_dir();
@@ -274,6 +356,17 @@ static int __init severities_debugfs_init(void)
 	fsev = debugfs_create_file("severities-coverage", 0444, dmce, NULL,
 				   &severities_coverage_fops);
 	if (!fsev)
+=======
+	struct dentry *dmce = NULL, *fseverities_coverage = NULL;
+
+	dmce = mce_get_debugfs_dir();
+	if (dmce == NULL)
+		goto err_out;
+	fseverities_coverage = debugfs_create_file("severities-coverage",
+						   0444, dmce, NULL,
+						   &severities_coverage_fops);
+	if (fseverities_coverage == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_out;
 
 	return 0;
@@ -282,4 +375,8 @@ err_out:
 	return -ENOMEM;
 }
 late_initcall(severities_debugfs_init);
+<<<<<<< HEAD
 #endif /* CONFIG_DEBUG_FS */
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

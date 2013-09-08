@@ -26,8 +26,11 @@
 #include <linux/platform_device.h>
 #include <linux/memory.h>
 #include <plat/mv_xor.h>
+<<<<<<< HEAD
 
 #include "dmaengine.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "mv_xor.h"
 
 static void mv_xor_issue_pending(struct dma_chan *chan);
@@ -437,7 +440,11 @@ static void __mv_xor_slot_cleanup(struct mv_xor_chan *mv_chan)
 	}
 
 	if (cookie > 0)
+<<<<<<< HEAD
 		mv_chan->common.completed_cookie = cookie;
+=======
+		mv_chan->completed_cookie = cookie;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -536,6 +543,21 @@ retry:
 	return NULL;
 }
 
+<<<<<<< HEAD
+=======
+static dma_cookie_t
+mv_desc_assign_cookie(struct mv_xor_chan *mv_chan,
+		      struct mv_xor_desc_slot *desc)
+{
+	dma_cookie_t cookie = mv_chan->common.cookie;
+
+	if (++cookie < 0)
+		cookie = 1;
+	mv_chan->common.cookie = desc->async_tx.cookie = cookie;
+	return cookie;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /************************ DMA engine API functions ****************************/
 static dma_cookie_t
 mv_xor_tx_submit(struct dma_async_tx_descriptor *tx)
@@ -553,7 +575,11 @@ mv_xor_tx_submit(struct dma_async_tx_descriptor *tx)
 	grp_start = sw_desc->group_head;
 
 	spin_lock_bh(&mv_chan->lock);
+<<<<<<< HEAD
 	cookie = dma_cookie_assign(tx);
+=======
+	cookie = mv_desc_assign_cookie(mv_chan, sw_desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (list_empty(&mv_chan->chain))
 		list_splice_init(&sw_desc->tx_list, &mv_chan->chain);
@@ -810,16 +836,37 @@ static enum dma_status mv_xor_status(struct dma_chan *chan,
 					  struct dma_tx_state *txstate)
 {
 	struct mv_xor_chan *mv_chan = to_mv_xor_chan(chan);
+<<<<<<< HEAD
 	enum dma_status ret;
 
 	ret = dma_cookie_status(chan, cookie, txstate);
+=======
+	dma_cookie_t last_used;
+	dma_cookie_t last_complete;
+	enum dma_status ret;
+
+	last_used = chan->cookie;
+	last_complete = mv_chan->completed_cookie;
+	mv_chan->is_complete_cookie = cookie;
+	dma_set_tx_state(txstate, last_complete, last_used, 0);
+
+	ret = dma_async_is_complete(cookie, last_complete, last_used);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret == DMA_SUCCESS) {
 		mv_xor_clean_completed_slots(mv_chan);
 		return ret;
 	}
 	mv_xor_slot_cleanup(mv_chan);
 
+<<<<<<< HEAD
 	return dma_cookie_status(chan, cookie, txstate);
+=======
+	last_used = chan->cookie;
+	last_complete = mv_chan->completed_cookie;
+
+	dma_set_tx_state(txstate, last_complete, last_used, 0);
+	return dma_async_is_complete(cookie, last_complete, last_used);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void mv_dump_xor_regs(struct mv_xor_chan *chan)
@@ -1193,7 +1240,10 @@ static int __devinit mv_xor_probe(struct platform_device *pdev)
 	INIT_LIST_HEAD(&mv_chan->completed_slots);
 	INIT_LIST_HEAD(&mv_chan->all_slots);
 	mv_chan->common.device = dma_dev;
+<<<<<<< HEAD
 	dma_cookie_init(&mv_chan->common);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_add_tail(&mv_chan->common.device_node, &dma_dev->channels);
 
@@ -1230,7 +1280,11 @@ static int __devinit mv_xor_probe(struct platform_device *pdev)
 
 static void
 mv_xor_conf_mbus_windows(struct mv_xor_shared_private *msp,
+<<<<<<< HEAD
 			 const struct mbus_dram_target_info *dram)
+=======
+			 struct mbus_dram_target_info *dram)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	void __iomem *base = msp->xor_base;
 	u32 win_enable = 0;
@@ -1244,7 +1298,11 @@ mv_xor_conf_mbus_windows(struct mv_xor_shared_private *msp,
 	}
 
 	for (i = 0; i < dram->num_cs; i++) {
+<<<<<<< HEAD
 		const struct mbus_dram_window *cs = dram->cs + i;
+=======
+		struct mbus_dram_window *cs = dram->cs + i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		writel((cs->base & 0xffff0000) |
 		       (cs->mbus_attr << 8) |
@@ -1270,7 +1328,11 @@ static struct platform_driver mv_xor_driver = {
 
 static int mv_xor_shared_probe(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	const struct mbus_dram_target_info *dram;
+=======
+	struct mv_xor_platform_shared_data *msd = pdev->dev.platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mv_xor_shared_private *msp;
 	struct resource *res;
 
@@ -1285,7 +1347,11 @@ static int mv_xor_shared_probe(struct platform_device *pdev)
 		return -ENODEV;
 
 	msp->xor_base = devm_ioremap(&pdev->dev, res->start,
+<<<<<<< HEAD
 				     resource_size(res));
+=======
+				     res->end - res->start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!msp->xor_base)
 		return -EBUSY;
 
@@ -1294,7 +1360,11 @@ static int mv_xor_shared_probe(struct platform_device *pdev)
 		return -ENODEV;
 
 	msp->xor_high_base = devm_ioremap(&pdev->dev, res->start,
+<<<<<<< HEAD
 					  resource_size(res));
+=======
+					  res->end - res->start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!msp->xor_high_base)
 		return -EBUSY;
 
@@ -1303,9 +1373,14 @@ static int mv_xor_shared_probe(struct platform_device *pdev)
 	/*
 	 * (Re-)program MBUS remapping windows if we are asked to.
 	 */
+<<<<<<< HEAD
 	dram = mv_mbus_dram_info();
 	if (dram)
 		mv_xor_conf_mbus_windows(msp, dram);
+=======
+	if (msd != NULL && msd->dram != NULL)
+		mv_xor_conf_mbus_windows(msp, msd->dram);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

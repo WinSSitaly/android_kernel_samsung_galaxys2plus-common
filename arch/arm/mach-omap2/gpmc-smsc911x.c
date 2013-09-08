@@ -24,6 +24,11 @@
 #include <plat/gpmc.h>
 #include <plat/gpmc-smsc911x.h>
 
+<<<<<<< HEAD
+=======
+static struct omap_smsc911x_platform_data *gpmc_cfg;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct resource gpmc_smsc911x_resources[] = {
 	[0] = {
 		.flags		= IORESOURCE_MEM,
@@ -37,6 +42,10 @@ static struct smsc911x_platform_config gpmc_smsc911x_config = {
 	.phy_interface	= PHY_INTERFACE_MODE_MII,
 	.irq_polarity	= SMSC911X_IRQ_POLARITY_ACTIVE_LOW,
 	.irq_type	= SMSC911X_IRQ_TYPE_OPEN_DRAIN,
+<<<<<<< HEAD
+=======
+	.flags		= SMSC911X_USE_16BIT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -44,12 +53,21 @@ static struct smsc911x_platform_config gpmc_smsc911x_config = {
  * assume that pin multiplexing is done in the board-*.c file,
  * or in the bootloader.
  */
+<<<<<<< HEAD
 void __init gpmc_smsc911x_init(struct omap_smsc911x_platform_data *gpmc_cfg)
+=======
+void __init gpmc_smsc911x_init(struct omap_smsc911x_platform_data *board_data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct platform_device *pdev;
 	unsigned long cs_mem_base;
 	int ret;
 
+<<<<<<< HEAD
+=======
+	gpmc_cfg = board_data;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (gpmc_cs_request(gpmc_cfg->cs, SZ_16M, &cs_mem_base) < 0) {
 		pr_err("Failed to request GPMC mem region\n");
 		return;
@@ -79,7 +97,12 @@ void __init gpmc_smsc911x_init(struct omap_smsc911x_platform_data *gpmc_cfg)
 		gpio_set_value(gpmc_cfg->gpio_reset, 1);
 	}
 
+<<<<<<< HEAD
 	gpmc_smsc911x_config.flags = gpmc_cfg->flags ? : SMSC911X_USE_16BIT;
+=======
+	if (gpmc_cfg->flags)
+		gpmc_smsc911x_config.flags = gpmc_cfg->flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pdev = platform_device_register_resndata(NULL, "smsc911x", gpmc_cfg->id,
 		 gpmc_smsc911x_resources, ARRAY_SIZE(gpmc_smsc911x_resources),

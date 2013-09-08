@@ -24,8 +24,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MODULE_NAME "jeilinj"
 
 #include <linux/slab.h>
@@ -115,8 +118,13 @@ static void jlj_write2(struct gspca_dev *gspca_dev, unsigned char *command)
 			usb_sndbulkpipe(gspca_dev->dev, 3),
 			gspca_dev->usb_buf, 2, NULL, 500);
 	if (retval < 0) {
+<<<<<<< HEAD
 		pr_err("command write [%02x] error %d\n",
 		       gspca_dev->usb_buf[0], retval);
+=======
+		err("command write [%02x] error %d",
+				gspca_dev->usb_buf[0], retval);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gspca_dev->usb_err = retval;
 	}
 }
@@ -133,8 +141,13 @@ static void jlj_read1(struct gspca_dev *gspca_dev, unsigned char response)
 				gspca_dev->usb_buf, 1, NULL, 500);
 	response = gspca_dev->usb_buf[0];
 	if (retval < 0) {
+<<<<<<< HEAD
 		pr_err("read command [%02x] error %d\n",
 		       gspca_dev->usb_buf[0], retval);
+=======
+		err("read command [%02x] error %d",
+				gspca_dev->usb_buf[0], retval);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gspca_dev->usb_err = retval;
 	}
 }
@@ -405,7 +418,17 @@ static int sd_config(struct gspca_dev *gspca_dev,
 	dev->type = id->driver_info;
 	gspca_dev->cam.ctrls = dev->ctrls;
 	dev->quality = QUALITY_DEF;
+<<<<<<< HEAD
 
+=======
+	dev->ctrls[LIGHTFREQ].def = V4L2_CID_POWER_LINE_FREQUENCY_60HZ;
+	dev->ctrls[RED].def = RED_BALANCE_DEF;
+	dev->ctrls[GREEN].def = GREEN_BALANCE_DEF;
+	dev->ctrls[BLUE].def = BLUE_BALANCE_DEF;
+	PDEBUG(D_PROBE,
+		"JEILINJ camera detected"
+		" (vid/pid 0x%04X:0x%04X)", id->idVendor, id->idProduct);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cam->cam_mode = jlj_mode;
 	cam->nmodes = ARRAY_SIZE(jlj_mode);
 	cam->bulk = 1;
@@ -418,7 +441,11 @@ static void sd_stopN(struct gspca_dev *gspca_dev)
 {
 	int i;
 	u8 *buf;
+<<<<<<< HEAD
 	static u8 stop_commands[][2] = {
+=======
+	u8 stop_commands[][2] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		{0x71, 0x00},
 		{0x70, 0x09},
 		{0x71, 0x80},
@@ -582,4 +609,20 @@ static struct usb_driver sd_driver = {
 #endif
 };
 
+<<<<<<< HEAD
 module_usb_driver(sd_driver);
+=======
+/* -- module insert / remove -- */
+static int __init sd_mod_init(void)
+{
+	return usb_register(&sd_driver);
+}
+
+static void __exit sd_mod_exit(void)
+{
+	usb_deregister(&sd_driver);
+}
+
+module_init(sd_mod_init);
+module_exit(sd_mod_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -38,6 +38,45 @@ static struct mcf_gpio_chip mcf_gpio_chips[] = {
 	},
 	{
 		.gpio_chip			= {
+<<<<<<< HEAD
+=======
+			.label			= "BUSCTL",
+			.request		= mcf_gpio_request,
+			.free			= mcf_gpio_free,
+			.direction_input	= mcf_gpio_direction_input,
+			.direction_output	= mcf_gpio_direction_output,
+			.get			= mcf_gpio_get_value,
+			.set			= mcf_gpio_set_value_fast,
+			.base			= 8,
+			.ngpio			= 4,
+		},
+		.pddr				= (void __iomem *) MCFGPIO_PDDR_BUSCTL,
+		.podr				= (void __iomem *) MCFGPIO_PODR_BUSCTL,
+		.ppdr				= (void __iomem *) MCFGPIO_PPDSDR_BUSCTL,
+		.setr				= (void __iomem *) MCFGPIO_PPDSDR_BUSCTL,
+		.clrr				= (void __iomem *) MCFGPIO_PCLRR_BUSCTL,
+	},
+	{
+		.gpio_chip			= {
+			.label			= "BE",
+			.request		= mcf_gpio_request,
+			.free			= mcf_gpio_free,
+			.direction_input	= mcf_gpio_direction_input,
+			.direction_output	= mcf_gpio_direction_output,
+			.get			= mcf_gpio_get_value,
+			.set			= mcf_gpio_set_value_fast,
+			.base			= 16,
+			.ngpio			= 4,
+		},
+		.pddr				= (void __iomem *) MCFGPIO_PDDR_BE,
+		.podr				= (void __iomem *) MCFGPIO_PODR_BE,
+		.ppdr				= (void __iomem *) MCFGPIO_PPDSDR_BE,
+		.setr				= (void __iomem *) MCFGPIO_PPDSDR_BE,
+		.clrr				= (void __iomem *) MCFGPIO_PCLRR_BE,
+	},
+	{
+		.gpio_chip			= {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.label			= "CS",
 			.request		= mcf_gpio_request,
 			.free			= mcf_gpio_free,
@@ -45,7 +84,11 @@ static struct mcf_gpio_chip mcf_gpio_chips[] = {
 			.direction_output	= mcf_gpio_direction_output,
 			.get			= mcf_gpio_get_value,
 			.set			= mcf_gpio_set_value_fast,
+<<<<<<< HEAD
 			.base			= 9,
+=======
+			.base			= 25,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.ngpio			= 3,
 		},
 		.pddr				= (void __iomem *) MCFGPIO_PDDR_CS,
@@ -63,7 +106,11 @@ static struct mcf_gpio_chip mcf_gpio_chips[] = {
 			.direction_output	= mcf_gpio_direction_output,
 			.get			= mcf_gpio_get_value,
 			.set			= mcf_gpio_set_value_fast,
+<<<<<<< HEAD
 			.base			= 16,
+=======
+			.base			= 32,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.ngpio			= 4,
 		},
 		.pddr				= (void __iomem *) MCFGPIO_PDDR_FECI2C,
@@ -81,7 +128,11 @@ static struct mcf_gpio_chip mcf_gpio_chips[] = {
 			.direction_output	= mcf_gpio_direction_output,
 			.get			= mcf_gpio_get_value,
 			.set			= mcf_gpio_set_value_fast,
+<<<<<<< HEAD
 			.base			= 24,
+=======
+			.base			= 40,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.ngpio			= 4,
 		},
 		.pddr				= (void __iomem *) MCFGPIO_PDDR_QSPI,
@@ -99,7 +150,11 @@ static struct mcf_gpio_chip mcf_gpio_chips[] = {
 			.direction_output	= mcf_gpio_direction_output,
 			.get			= mcf_gpio_get_value,
 			.set			= mcf_gpio_set_value_fast,
+<<<<<<< HEAD
 			.base			= 32,
+=======
+			.base			= 48,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.ngpio			= 4,
 		},
 		.pddr				= (void __iomem *) MCFGPIO_PDDR_TIMER,
@@ -117,7 +172,11 @@ static struct mcf_gpio_chip mcf_gpio_chips[] = {
 			.direction_output	= mcf_gpio_direction_output,
 			.get			= mcf_gpio_get_value,
 			.set			= mcf_gpio_set_value_fast,
+<<<<<<< HEAD
 			.base			= 40,
+=======
+			.base			= 56,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.ngpio			= 8,
 		},
 		.pddr				= (void __iomem *) MCFGPIO_PDDR_UART,
@@ -135,7 +194,11 @@ static struct mcf_gpio_chip mcf_gpio_chips[] = {
 			.direction_output	= mcf_gpio_direction_output,
 			.get			= mcf_gpio_get_value,
 			.set			= mcf_gpio_set_value_fast,
+<<<<<<< HEAD
 			.base			= 48,
+=======
+			.base			= 64,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.ngpio			= 8,
 		},
 		.pddr				= (void __iomem *) MCFGPIO_PDDR_FECH,
@@ -153,7 +216,11 @@ static struct mcf_gpio_chip mcf_gpio_chips[] = {
 			.direction_output	= mcf_gpio_direction_output,
 			.get			= mcf_gpio_get_value,
 			.set			= mcf_gpio_set_value_fast,
+<<<<<<< HEAD
 			.base			= 56,
+=======
+			.base			= 72,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.ngpio			= 8,
 		},
 		.pddr				= (void __iomem *) MCFGPIO_PDDR_FECL,

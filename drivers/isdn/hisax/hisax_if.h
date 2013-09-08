@@ -1,10 +1,18 @@
 /*
+<<<<<<< HEAD
  * Interface between low level (hardware) drivers and
+=======
+ * Interface between low level (hardware) drivers and 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * HiSax protocol stack
  *
  * Author       Kai Germaschewski
  * Copyright    2001 by Kai Germaschewski  <kai.germaschewski@gmx.de>
+<<<<<<< HEAD
  *
+=======
+ * 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This software may be used and distributed according to the terms
  * of the GNU General Public License, incorporated herein by reference.
  *

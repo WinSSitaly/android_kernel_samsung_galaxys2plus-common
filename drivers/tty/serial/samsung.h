@@ -19,25 +19,39 @@ struct s3c24xx_uart_info {
 	unsigned long		tx_fifomask;
 	unsigned long		tx_fifoshift;
 	unsigned long		tx_fifofull;
+<<<<<<< HEAD
 	unsigned int		def_clk_sel;
 	unsigned long		num_clks;
 	unsigned long		clksel_mask;
 	unsigned long		clksel_shift;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* uart port features */
 
 	unsigned int		has_divslot:1;
 
+<<<<<<< HEAD
+=======
+	/* clock source control */
+
+	int (*get_clksrc)(struct uart_port *, struct s3c24xx_uart_clksrc *clk);
+	int (*set_clksrc)(struct uart_port *, struct s3c24xx_uart_clksrc *clk);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* uart controls */
 	int (*reset_port)(struct uart_port *, struct s3c2410_uartcfg *);
 };
 
+<<<<<<< HEAD
 struct s3c24xx_serial_drv_data {
 	struct s3c24xx_uart_info	*info;
 	struct s3c2410_uartcfg		*def_cfg;
 	unsigned int			fifosize[CONFIG_SERIAL_SAMSUNG_UARTS];
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct s3c24xx_uart_port {
 	unsigned char			rx_claimed;
 	unsigned char			tx_claimed;
@@ -48,6 +62,7 @@ struct s3c24xx_uart_port {
 	unsigned int			tx_irq;
 
 	struct s3c24xx_uart_info	*info;
+<<<<<<< HEAD
 	struct clk			*clk;
 	struct clk			*baudclk;
 	struct uart_port		port;
@@ -55,6 +70,12 @@ struct s3c24xx_uart_port {
 
 	/* reference to platform data */
 	struct s3c2410_uartcfg		*cfg;
+=======
+	struct s3c24xx_uart_clksrc	*clksrc;
+	struct clk			*clk;
+	struct clk			*baudclk;
+	struct uart_port		port;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_CPU_FREQ
 	struct notifier_block		freq_transition;
@@ -64,11 +85,18 @@ struct s3c24xx_uart_port {
 /* conversion functions */
 
 #define s3c24xx_dev_to_port(__dev) (struct uart_port *)dev_get_drvdata(__dev)
+<<<<<<< HEAD
+=======
+#define s3c24xx_dev_to_cfg(__dev) (struct s3c2410_uartcfg *)((__dev)->platform_data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* register access controls */
 
 #define portaddr(port, reg) ((port)->membase + (reg))
+<<<<<<< HEAD
 #define portaddrl(port, reg) ((unsigned long *)((port)->membase + (reg)))
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define rd_regb(port, reg) (__raw_readb(portaddr(port, reg)))
 #define rd_regl(port, reg) (__raw_readl(portaddr(port, reg)))
@@ -76,6 +104,39 @@ struct s3c24xx_uart_port {
 #define wr_regb(port, reg, val) __raw_writeb(val, portaddr(port, reg))
 #define wr_regl(port, reg, val) __raw_writel(val, portaddr(port, reg))
 
+<<<<<<< HEAD
+=======
+extern int s3c24xx_serial_probe(struct platform_device *dev,
+				struct s3c24xx_uart_info *uart);
+
+extern int __devexit s3c24xx_serial_remove(struct platform_device *dev);
+
+extern int s3c24xx_serial_initconsole(struct platform_driver *drv,
+				      struct s3c24xx_uart_info **uart);
+
+extern int s3c24xx_serial_init(struct platform_driver *drv,
+			       struct s3c24xx_uart_info *info);
+
+#ifdef CONFIG_SERIAL_SAMSUNG_CONSOLE
+
+#define s3c24xx_console_init(__drv, __inf)				\
+static int __init s3c_serial_console_init(void)				\
+{									\
+	struct s3c24xx_uart_info *uinfo[CONFIG_SERIAL_SAMSUNG_UARTS];	\
+	int i;								\
+									\
+	for (i = 0; i < CONFIG_SERIAL_SAMSUNG_UARTS; i++)		\
+		uinfo[i] = __inf;					\
+	return s3c24xx_serial_initconsole(__drv, uinfo);		\
+}									\
+									\
+console_initcall(s3c_serial_console_init)
+
+#else
+#define s3c24xx_console_init(drv, inf) extern void no_console(void)
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SERIAL_SAMSUNG_DEBUG
 
 extern void printascii(const char *);

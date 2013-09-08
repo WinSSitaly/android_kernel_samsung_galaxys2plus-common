@@ -149,6 +149,7 @@ static ssize_t store_stp_state(struct device *d,
 static DEVICE_ATTR(stp_state, S_IRUGO | S_IWUSR, show_stp_state,
 		   store_stp_state);
 
+<<<<<<< HEAD
 static ssize_t show_group_fwd_mask(struct device *d,
 			      struct device_attribute *attr, char *buf)
 {
@@ -182,6 +183,8 @@ static ssize_t store_group_fwd_mask(struct device *d,
 static DEVICE_ATTR(group_fwd_mask, S_IRUGO | S_IWUSR, show_group_fwd_mask,
 		   store_group_fwd_mask);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t show_priority(struct device *d, struct device_attribute *attr,
 			     char *buf)
 {
@@ -685,7 +688,10 @@ static struct attribute *bridge_attrs[] = {
 	&dev_attr_max_age.attr,
 	&dev_attr_ageing_time.attr,
 	&dev_attr_stp_state.attr,
+<<<<<<< HEAD
 	&dev_attr_group_fwd_mask.attr,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&dev_attr_priority.attr,
 	&dev_attr_bridge_id.attr,
 	&dev_attr_root_id.attr,

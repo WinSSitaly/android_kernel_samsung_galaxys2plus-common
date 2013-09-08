@@ -1465,7 +1465,10 @@ static int usbdux_ao_inttrig(struct comedi_device *dev,
 		dev_err(&this_usbduxsub->interface->dev,
 			"comedi%d: usbdux_ao_inttrig: invalid trignum\n",
 			dev->minor);
+<<<<<<< HEAD
 		up(&this_usbduxsub->sem);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 	if (!(this_usbduxsub->ao_cmd_running)) {
@@ -1936,8 +1939,16 @@ static int usbdux_pwm_cancel(struct comedi_device *dev,
 	dev_dbg(&this_usbduxsub->interface->dev,
 		"comedi %d: sending pwm off command to the usb device.\n",
 		dev->minor);
+<<<<<<< HEAD
 
 	return send_dux_commands(this_usbduxsub, SENDPWMOFF);
+=======
+	res = send_dux_commands(this_usbduxsub, SENDPWMOFF);
+	if (res < 0)
+		return res;
+
+	return res;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void usbduxsub_pwm_irq(struct urb *urb)
@@ -2672,7 +2683,10 @@ static int usbdux_attach(struct comedi_device *dev, struct comedi_devconfig *it)
 	if (ret < 0) {
 		dev_err(&udev->interface->dev,
 			"comedi%d: error alloc space for subdev\n", dev->minor);
+<<<<<<< HEAD
 		up(&udev->sem);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		up(&start_stop_sem);
 		return ret;
 	}

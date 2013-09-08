@@ -123,6 +123,7 @@ static void qla4xxx_status_entry(struct scsi_qla_host *ha,
 
 	srb = qla4xxx_del_from_active_array(ha, le32_to_cpu(sts_entry->handle));
 	if (!srb) {
+<<<<<<< HEAD
 		ql4_printk(KERN_WARNING, ha, "%s invalid status entry: "
 			   "handle=0x%0x, srb=%p\n", __func__,
 			   sts_entry->handle, srb);
@@ -130,6 +131,15 @@ static void qla4xxx_status_entry(struct scsi_qla_host *ha,
 			set_bit(DPC_RESET_HA_FW_CONTEXT, &ha->dpc_flags);
 		else
 			set_bit(DPC_RESET_HA, &ha->dpc_flags);
+=======
+		DEBUG2(printk(KERN_WARNING "scsi%ld: %s: Status Entry invalid "
+			      "handle 0x%x, sp=%p. This cmd may have already "
+			      "been completed.\n", ha->host_no, __func__,
+			      le32_to_cpu(sts_entry->handle), srb));
+		ql4_printk(KERN_WARNING, ha, "%s invalid status entry:"
+		    " handle=0x%0x\n", __func__, sts_entry->handle);
+		set_bit(DPC_RESET_HA, &ha->dpc_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -224,8 +234,13 @@ static void qla4xxx_status_entry(struct scsi_qla_host *ha,
 		 * I/O to this device.	We should get a ddb state change
 		 * AEN soon.
 		 */
+<<<<<<< HEAD
 		if (iscsi_is_session_online(ddb_entry->sess))
 			qla4xxx_mark_device_missing(ddb_entry->sess);
+=======
+		if (atomic_read(&ddb_entry->state) == DDB_STATE_ONLINE)
+			qla4xxx_mark_device_missing(ha, ddb_entry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case SCS_DATA_UNDERRUN:
@@ -306,8 +321,13 @@ static void qla4xxx_status_entry(struct scsi_qla_host *ha,
 		 * send I/O to this device.  We should get a ddb
 		 * state change AEN soon.
 		 */
+<<<<<<< HEAD
 		if (iscsi_is_session_online(ddb_entry->sess))
 			qla4xxx_mark_device_missing(ddb_entry->sess);
+=======
+		if (atomic_read(&ddb_entry->state) == DDB_STATE_ONLINE)
+			qla4xxx_mark_device_missing(ha, ddb_entry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		cmd->result = DID_TRANSPORT_DISRUPTED << 16;
 		break;
@@ -341,6 +361,7 @@ status_entry_exit:
 }
 
 /**
+<<<<<<< HEAD
  * qla4xxx_passthru_status_entry - processes passthru status IOCBs (0x3C)
  * @ha: Pointer to host adapter structure.
  * @sts_entry: Pointer to status entry structure.
@@ -451,6 +472,8 @@ static void qla4xxx_mbox_status_entry(struct scsi_qla_host *ha,
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * qla4xxx_process_response_queue - process response queue completions
  * @ha: Pointer to host adapter structure.
  *
@@ -485,6 +508,7 @@ void qla4xxx_process_response_queue(struct scsi_qla_host *ha)
 			break;
 
 		case ET_PASSTHRU_STATUS:
+<<<<<<< HEAD
 			if (sts_entry->hdr.systemDefined == SD_ISCSI_PDU)
 				qla4xxx_passthru_status_entry(ha,
 					(struct passthru_status *)sts_entry);
@@ -493,6 +517,8 @@ void qla4xxx_process_response_queue(struct scsi_qla_host *ha)
 					   "%s: Invalid status received\n",
 					   __func__);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case ET_STATUS_CONTINUATION:
@@ -526,6 +552,7 @@ void qla4xxx_process_response_queue(struct scsi_qla_host *ha)
 				      "ignoring\n", ha->host_no, __func__));
 			break;
 
+<<<<<<< HEAD
 		case ET_MBOX_STATUS:
 			DEBUG2(ql4_printk(KERN_INFO, ha,
 					  "%s: mbox status IOCB\n", __func__));
@@ -533,6 +560,8 @@ void qla4xxx_process_response_queue(struct scsi_qla_host *ha)
 					(struct mbox_status_iocb *)sts_entry);
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			/*
 			 * Invalid entry in response queue, reset RISC
@@ -635,11 +664,15 @@ static void qla4xxx_isr_decode_mailbox(struct scsi_qla_host * ha,
 		case MBOX_ASTS_DHCP_LEASE_EXPIRED:
 			DEBUG2(printk("scsi%ld: AEN %04x, ERROR Status, "
 				      "Reset HA\n", ha->host_no, mbox_status));
+<<<<<<< HEAD
 			if (is_qla8022(ha))
 				set_bit(DPC_RESET_HA_FW_CONTEXT,
 					&ha->dpc_flags);
 			else
 				set_bit(DPC_RESET_HA, &ha->dpc_flags);
+=======
+			set_bit(DPC_RESET_HA, &ha->dpc_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case MBOX_ASTS_LINK_UP:
@@ -648,9 +681,12 @@ static void qla4xxx_isr_decode_mailbox(struct scsi_qla_host * ha,
 				set_bit(DPC_LINK_CHANGED, &ha->dpc_flags);
 
 			ql4_printk(KERN_INFO, ha, "%s: LINK UP\n", __func__);
+<<<<<<< HEAD
 			qla4xxx_post_aen_work(ha, ISCSI_EVENT_LINKUP,
 					      sizeof(mbox_sts),
 					      (uint8_t *) mbox_sts);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case MBOX_ASTS_LINK_DOWN:
@@ -659,9 +695,12 @@ static void qla4xxx_isr_decode_mailbox(struct scsi_qla_host * ha,
 				set_bit(DPC_LINK_CHANGED, &ha->dpc_flags);
 
 			ql4_printk(KERN_INFO, ha, "%s: LINK DOWN\n", __func__);
+<<<<<<< HEAD
 			qla4xxx_post_aen_work(ha, ISCSI_EVENT_LINKDOWN,
 					      sizeof(mbox_sts),
 					      (uint8_t *) mbox_sts);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case MBOX_ASTS_HEARTBEAT:
@@ -699,6 +738,7 @@ static void qla4xxx_isr_decode_mailbox(struct scsi_qla_host * ha,
 			    (mbox_sts[2] == ACB_STATE_ACQUIRING)))
 				set_bit(DPC_GET_DHCP_IP_ADDR, &ha->dpc_flags);
 			else if ((mbox_sts[3] == ACB_STATE_ACQUIRING) &&
+<<<<<<< HEAD
 				 (mbox_sts[2] == ACB_STATE_VALID)) {
 				if (is_qla8022(ha))
 					set_bit(DPC_RESET_HA_FW_CONTEXT,
@@ -707,6 +747,10 @@ static void qla4xxx_isr_decode_mailbox(struct scsi_qla_host * ha,
 					set_bit(DPC_RESET_HA, &ha->dpc_flags);
 			} else if ((mbox_sts[3] == ACB_STATE_UNCONFIGURED))
 				complete(&ha->disable_acb_comp);
+=======
+			    (mbox_sts[2] == ACB_STATE_VALID))
+				set_bit(DPC_RESET_HA, &ha->dpc_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case MBOX_ASTS_MAC_ADDRESS_CHANGED:
@@ -1150,14 +1194,19 @@ void qla4xxx_process_aen(struct scsi_qla_host * ha, uint8_t process_aen)
 
 		switch (mbox_sts[0]) {
 		case MBOX_ASTS_DATABASE_CHANGED:
+<<<<<<< HEAD
 			switch (process_aen) {
 			case FLUSH_DDB_CHANGED_AENS:
+=======
+			if (process_aen == FLUSH_DDB_CHANGED_AENS) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				DEBUG2(printk("scsi%ld: AEN[%d] %04x, index "
 					      "[%d] state=%04x FLUSHED!\n",
 					      ha->host_no, ha->aen_out,
 					      mbox_sts[0], mbox_sts[2],
 					      mbox_sts[3]));
 				break;
+<<<<<<< HEAD
 			case PROCESS_ALL_AENS:
 			default:
 				/* Specific device. */
@@ -1167,6 +1216,18 @@ void qla4xxx_process_aen(struct scsi_qla_host * ha, uint8_t process_aen)
 						mbox_sts[4]);
 				break;
 			}
+=======
+			}
+		case PROCESS_ALL_AENS:
+		default:
+			if (mbox_sts[1] == 0) {	/* Global DB change. */
+				qla4xxx_reinitialize_ddb_list(ha);
+			} else if (mbox_sts[1] == 1) {	/* Specific device. */
+				qla4xxx_process_ddb_changed(ha, mbox_sts[2],
+						mbox_sts[3], mbox_sts[4]);
+			}
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		spin_lock_irqsave(&ha->hardware_lock, flags);
 	}

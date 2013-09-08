@@ -80,6 +80,10 @@ static int e800_ac97_init(struct snd_soc_pcm_runtime *rtd)
 					ARRAY_SIZE(e800_dapm_widgets));
 
 	snd_soc_dapm_add_routes(dapm, audio_map, ARRAY_SIZE(audio_map));
+<<<<<<< HEAD
+=======
+	snd_soc_dapm_sync(dapm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -106,11 +110,15 @@ static struct snd_soc_dai_link e800_dai[] = {
 
 static struct snd_soc_card e800 = {
 	.name = "Toshiba e800",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link = e800_dai,
 	.num_links = ARRAY_SIZE(e800_dai),
 };
 
+<<<<<<< HEAD
 static struct gpio e800_audio_gpios[] = {
 	{ GPIO_E800_SPK_AMP_ON, GPIOF_OUT_INIT_HIGH, "Headphone amp" },
 	{ GPIO_E800_HP_AMP_OFF, GPIOF_OUT_INIT_HIGH, "Speaker amp" },
@@ -156,9 +164,68 @@ static struct platform_driver e800_driver = {
 };
 
 module_platform_driver(e800_driver);
+=======
+static struct platform_device *e800_snd_device;
+
+static int __init e800_init(void)
+{
+	int ret;
+
+	if (!machine_is_e800())
+		return -ENODEV;
+
+	ret = gpio_request(GPIO_E800_HP_AMP_OFF,  "Headphone amp");
+	if (ret)
+		return ret;
+
+	ret = gpio_request(GPIO_E800_SPK_AMP_ON, "Speaker amp");
+	if (ret)
+		goto free_hp_amp_gpio;
+
+	ret = gpio_direction_output(GPIO_E800_HP_AMP_OFF, 1);
+	if (ret)
+		goto free_spk_amp_gpio;
+
+	ret = gpio_direction_output(GPIO_E800_SPK_AMP_ON, 1);
+	if (ret)
+		goto free_spk_amp_gpio;
+
+	e800_snd_device = platform_device_alloc("soc-audio", -1);
+	if (!e800_snd_device)
+		return -ENOMEM;
+
+	platform_set_drvdata(e800_snd_device, &e800);
+	ret = platform_device_add(e800_snd_device);
+
+	if (!ret)
+		return 0;
+
+/* Fail gracefully */
+	platform_device_put(e800_snd_device);
+free_spk_amp_gpio:
+	gpio_free(GPIO_E800_SPK_AMP_ON);
+free_hp_amp_gpio:
+	gpio_free(GPIO_E800_HP_AMP_OFF);
+
+	return ret;
+}
+
+static void __exit e800_exit(void)
+{
+	platform_device_unregister(e800_snd_device);
+	gpio_free(GPIO_E800_SPK_AMP_ON);
+	gpio_free(GPIO_E800_HP_AMP_OFF);
+}
+
+module_init(e800_init);
+module_exit(e800_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Module information */
 MODULE_AUTHOR("Ian Molton <spyro@f2s.com>");
 MODULE_DESCRIPTION("ALSA SoC driver for e800");
 MODULE_LICENSE("GPL v2");
+<<<<<<< HEAD
 MODULE_ALIAS("platform:e800-audio");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -40,8 +40,11 @@ static void pxa3xx_smemc_resume(void)
 	__raw_writel(csadrcfg[1], CSADRCFG1);
 	__raw_writel(csadrcfg[2], CSADRCFG2);
 	__raw_writel(csadrcfg[3], CSADRCFG3);
+<<<<<<< HEAD
 	/* CSMSADRCFG wakes up in its default state (0), so we need to set it */
 	__raw_writel(0x2, CSMSADRCFG);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct syscore_ops smemc_syscore_ops = {
@@ -51,6 +54,7 @@ static struct syscore_ops smemc_syscore_ops = {
 
 static int __init smemc_init(void)
 {
+<<<<<<< HEAD
 	if (cpu_is_pxa3xx()) {
 		/*
 		 * The only documentation we have on the
@@ -64,6 +68,10 @@ static int __init smemc_init(void)
 
 		register_syscore_ops(&smemc_syscore_ops);
 	}
+=======
+	if (cpu_is_pxa3xx())
+		register_syscore_ops(&smemc_syscore_ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

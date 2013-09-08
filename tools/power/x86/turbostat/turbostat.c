@@ -2,7 +2,11 @@
  * turbostat -- show CPU frequency and C-state residency
  * on modern Intel turbo-capable processors.
  *
+<<<<<<< HEAD
  * Copyright (c) 2012 Intel Corporation.
+=======
+ * Copyright (c) 2010, Intel Corporation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Len Brown <len.brown@intel.com>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -19,7 +23,10 @@
  * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+<<<<<<< HEAD
 #define _GNU_SOURCE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -33,7 +40,10 @@
 #include <dirent.h>
 #include <string.h>
 #include <ctype.h>
+<<<<<<< HEAD
 #include <sched.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MSR_TSC	0x10
 #define MSR_NEHALEM_PLATFORM_INFO	0xCE
@@ -51,7 +61,10 @@
 char *proc_stat = "/proc/stat";
 unsigned int interval_sec = 5;	/* set with -i interval_sec */
 unsigned int verbose;		/* set with -v */
+<<<<<<< HEAD
 unsigned int summary_only;	/* set with -s */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 unsigned int skip_c0;
 unsigned int skip_c1;
 unsigned int do_nhm_cstates;
@@ -71,10 +84,16 @@ unsigned int show_cpu;
 int aperf_mperf_unstable;
 int backwards_count;
 char *progname;
+<<<<<<< HEAD
 
 int num_cpus;
 cpu_set_t *cpu_mask;
 size_t cpu_mask_size;
+=======
+int need_reinitialize;
+
+int num_cpus;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct counters {
 	unsigned long long tsc;		/* per thread */
@@ -103,6 +122,7 @@ struct timeval tv_even;
 struct timeval tv_odd;
 struct timeval tv_delta;
 
+<<<<<<< HEAD
 /*
  * cpu_mask_init(ncpus)
  *
@@ -140,11 +160,18 @@ int cpu_migrate(int cpu)
 int get_msr(int cpu, off_t offset, unsigned long long *msr)
 {
 	ssize_t retval;
+=======
+unsigned long long get_msr(int cpu, off_t offset)
+{
+	ssize_t retval;
+	unsigned long long msr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char pathname[32];
 	int fd;
 
 	sprintf(pathname, "/dev/cpu/%d/msr", cpu);
 	fd = open(pathname, O_RDONLY);
+<<<<<<< HEAD
 	if (fd < 0)
 		return -1;
 
@@ -155,11 +182,29 @@ int get_msr(int cpu, off_t offset, unsigned long long *msr)
 		return -1;
 
 	return 0;
+=======
+	if (fd < 0) {
+		perror(pathname);
+		need_reinitialize = 1;
+		return 0;
+	}
+
+	retval = pread(fd, &msr, sizeof msr, offset);
+	if (retval != sizeof msr) {
+		fprintf(stderr, "cpu%d pread(..., 0x%zx) = %jd\n",
+			cpu, offset, retval);
+		exit(-2);
+	}
+
+	close(fd);
+	return msr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void print_header(void)
 {
 	if (show_pkg)
+<<<<<<< HEAD
 		fprintf(stderr, "pk");
 	if (show_pkg)
 		fprintf(stderr, " ");
@@ -171,10 +216,20 @@ void print_header(void)
 		fprintf(stderr, " ");
 	if (do_nhm_cstates)
 		fprintf(stderr, "   %%c0");
+=======
+		fprintf(stderr, "pkg ");
+	if (show_core)
+		fprintf(stderr, "core");
+	if (show_cpu)
+		fprintf(stderr, " CPU");
+	if (do_nhm_cstates)
+		fprintf(stderr, "   %%c0 ");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (has_aperf)
 		fprintf(stderr, "  GHz");
 	fprintf(stderr, "  TSC");
 	if (do_nhm_cstates)
+<<<<<<< HEAD
 		fprintf(stderr, "    %%c1");
 	if (do_nhm_cstates)
 		fprintf(stderr, "    %%c3");
@@ -192,12 +247,32 @@ void print_header(void)
 		fprintf(stderr, "   %%pc7");
 	if (extra_msr_offset)
 		fprintf(stderr, "        MSR 0x%x ", extra_msr_offset);
+=======
+		fprintf(stderr, "   %%c1 ");
+	if (do_nhm_cstates)
+		fprintf(stderr, "   %%c3 ");
+	if (do_nhm_cstates)
+		fprintf(stderr, "   %%c6 ");
+	if (do_snb_cstates)
+		fprintf(stderr, "   %%c7 ");
+	if (do_snb_cstates)
+		fprintf(stderr, "  %%pc2 ");
+	if (do_nhm_cstates)
+		fprintf(stderr, "  %%pc3 ");
+	if (do_nhm_cstates)
+		fprintf(stderr, "  %%pc6 ");
+	if (do_snb_cstates)
+		fprintf(stderr, "  %%pc7 ");
+	if (extra_msr_offset)
+		fprintf(stderr, "       MSR 0x%x ", extra_msr_offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	putc('\n', stderr);
 }
 
 void dump_cnt(struct counters *cnt)
 {
+<<<<<<< HEAD
 	if (!cnt)
 		return;
 	if (cnt->pkg) fprintf(stderr, "package: %d ", cnt->pkg);
@@ -213,6 +288,21 @@ void dump_cnt(struct counters *cnt)
 	if (cnt->pc6) fprintf(stderr, "pc6: %016llX\n", cnt->pc6);
 	if (cnt->pc7) fprintf(stderr, "pc7: %016llX\n", cnt->pc7);
 	if (cnt->extra_msr) fprintf(stderr, "msr0x%x: %016llX\n", extra_msr_offset, cnt->extra_msr);
+=======
+	fprintf(stderr, "package: %d ", cnt->pkg);
+	fprintf(stderr, "core:: %d ", cnt->core);
+	fprintf(stderr, "CPU: %d ", cnt->cpu);
+	fprintf(stderr, "TSC: %016llX\n", cnt->tsc);
+	fprintf(stderr, "c3: %016llX\n", cnt->c3);
+	fprintf(stderr, "c6: %016llX\n", cnt->c6);
+	fprintf(stderr, "c7: %016llX\n", cnt->c7);
+	fprintf(stderr, "aperf: %016llX\n", cnt->aperf);
+	fprintf(stderr, "pc2: %016llX\n", cnt->pc2);
+	fprintf(stderr, "pc3: %016llX\n", cnt->pc3);
+	fprintf(stderr, "pc6: %016llX\n", cnt->pc6);
+	fprintf(stderr, "pc7: %016llX\n", cnt->pc7);
+	fprintf(stderr, "msr0x%x: %016llX\n", extra_msr_offset, cnt->extra_msr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void dump_list(struct counters *cnt)
@@ -223,6 +313,7 @@ void dump_list(struct counters *cnt)
 		dump_cnt(cnt);
 }
 
+<<<<<<< HEAD
 /*
  * column formatting convention & formats
  * package: "pk" 2 columns %2d
@@ -232,6 +323,8 @@ void dump_list(struct counters *cnt)
  * TSC: "TSC" 3 columns %3.2
  * percentage " %pc3" %6.2
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void print_cnt(struct counters *p)
 {
 	double interval_float;
@@ -241,6 +334,7 @@ void print_cnt(struct counters *p)
 	/* topology columns, print blanks on 1st (average) line */
 	if (p == cnt_average) {
 		if (show_pkg)
+<<<<<<< HEAD
 			fprintf(stderr, "  ");
 		if (show_pkg && show_core)
 			fprintf(stderr, " ");
@@ -257,29 +351,60 @@ void print_cnt(struct counters *p)
 			fprintf(stderr, "%3d", p->core);
 		if (show_cpu)
 			fprintf(stderr, " %3d", p->cpu);
+=======
+			fprintf(stderr, "    ");
+		if (show_core)
+			fprintf(stderr, "    ");
+		if (show_cpu)
+			fprintf(stderr, "    ");
+	} else {
+		if (show_pkg)
+			fprintf(stderr, "%4d", p->pkg);
+		if (show_core)
+			fprintf(stderr, "%4d", p->core);
+		if (show_cpu)
+			fprintf(stderr, "%4d", p->cpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* %c0 */
 	if (do_nhm_cstates) {
+<<<<<<< HEAD
 		if (show_pkg || show_core || show_cpu)
 			fprintf(stderr, " ");
 		if (!skip_c0)
 			fprintf(stderr, "%6.2f", 100.0 * p->mperf/p->tsc);
 		else
 			fprintf(stderr, "  ****");
+=======
+		if (!skip_c0)
+			fprintf(stderr, "%7.2f", 100.0 * p->mperf/p->tsc);
+		else
+			fprintf(stderr, "   ****");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* GHz */
 	if (has_aperf) {
 		if (!aperf_mperf_unstable) {
+<<<<<<< HEAD
 			fprintf(stderr, " %3.2f",
+=======
+			fprintf(stderr, "%5.2f",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				1.0 * p->tsc / units * p->aperf /
 				p->mperf / interval_float);
 		} else {
 			if (p->aperf > p->tsc || p->mperf > p->tsc) {
+<<<<<<< HEAD
 				fprintf(stderr, " ***");
 			} else {
 				fprintf(stderr, "%3.1f*",
+=======
+				fprintf(stderr, " ****");
+			} else {
+				fprintf(stderr, "%4.1f*",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					1.0 * p->tsc /
 					units * p->aperf /
 					p->mperf / interval_float);
@@ -292,6 +417,7 @@ void print_cnt(struct counters *p)
 
 	if (do_nhm_cstates) {
 		if (!skip_c1)
+<<<<<<< HEAD
 			fprintf(stderr, " %6.2f", 100.0 * p->c1/p->tsc);
 		else
 			fprintf(stderr, "  ****");
@@ -310,6 +436,26 @@ void print_cnt(struct counters *p)
 		fprintf(stderr, " %6.2f", 100.0 * p->pc6/p->tsc);
 	if (do_snb_cstates)
 		fprintf(stderr, " %6.2f", 100.0 * p->pc7/p->tsc);
+=======
+			fprintf(stderr, "%7.2f", 100.0 * p->c1/p->tsc);
+		else
+			fprintf(stderr, "   ****");
+	}
+	if (do_nhm_cstates)
+		fprintf(stderr, "%7.2f", 100.0 * p->c3/p->tsc);
+	if (do_nhm_cstates)
+		fprintf(stderr, "%7.2f", 100.0 * p->c6/p->tsc);
+	if (do_snb_cstates)
+		fprintf(stderr, "%7.2f", 100.0 * p->c7/p->tsc);
+	if (do_snb_cstates)
+		fprintf(stderr, "%7.2f", 100.0 * p->pc2/p->tsc);
+	if (do_nhm_cstates)
+		fprintf(stderr, "%7.2f", 100.0 * p->pc3/p->tsc);
+	if (do_nhm_cstates)
+		fprintf(stderr, "%7.2f", 100.0 * p->pc6/p->tsc);
+	if (do_snb_cstates)
+		fprintf(stderr, "%7.2f", 100.0 * p->pc7/p->tsc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (extra_msr_offset)
 		fprintf(stderr, "  0x%016llx", p->extra_msr);
 	putc('\n', stderr);
@@ -318,20 +464,28 @@ void print_cnt(struct counters *p)
 void print_counters(struct counters *counters)
 {
 	struct counters *cnt;
+<<<<<<< HEAD
 	static int printed;
 
 
 	if (!printed || !summary_only)
 		print_header();
+=======
+
+	print_header();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (num_cpus > 1)
 		print_cnt(cnt_average);
 
+<<<<<<< HEAD
 	printed = 1;
 
 	if (summary_only)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (cnt = counters; cnt != NULL; cnt = cnt->next)
 		print_cnt(cnt);
 
@@ -499,6 +653,7 @@ void compute_average(struct counters *delta, struct counters *avg)
 	free(sum);
 }
 
+<<<<<<< HEAD
 int get_counters(struct counters *cnt)
 {
 	for ( ; cnt; cnt = cnt->next) {
@@ -544,6 +699,33 @@ int get_counters(struct counters *cnt)
 				return -1;
 	}
 	return 0;
+=======
+void get_counters(struct counters *cnt)
+{
+	for ( ; cnt; cnt = cnt->next) {
+		cnt->tsc = get_msr(cnt->cpu, MSR_TSC);
+		if (do_nhm_cstates)
+			cnt->c3 = get_msr(cnt->cpu, MSR_CORE_C3_RESIDENCY);
+		if (do_nhm_cstates)
+			cnt->c6 = get_msr(cnt->cpu, MSR_CORE_C6_RESIDENCY);
+		if (do_snb_cstates)
+			cnt->c7 = get_msr(cnt->cpu, MSR_CORE_C7_RESIDENCY);
+		if (has_aperf)
+			cnt->aperf = get_msr(cnt->cpu, MSR_APERF);
+		if (has_aperf)
+			cnt->mperf = get_msr(cnt->cpu, MSR_MPERF);
+		if (do_snb_cstates)
+			cnt->pc2 = get_msr(cnt->cpu, MSR_PKG_C2_RESIDENCY);
+		if (do_nhm_cstates)
+			cnt->pc3 = get_msr(cnt->cpu, MSR_PKG_C3_RESIDENCY);
+		if (do_nhm_cstates)
+			cnt->pc6 = get_msr(cnt->cpu, MSR_PKG_C6_RESIDENCY);
+		if (do_snb_cstates)
+			cnt->pc7 = get_msr(cnt->cpu, MSR_PKG_C7_RESIDENCY);
+		if (extra_msr_offset)
+			cnt->extra_msr = get_msr(cnt->cpu, extra_msr_offset);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void print_nehalem_info(void)
@@ -554,7 +736,11 @@ void print_nehalem_info(void)
 	if (!do_nehalem_platform_info)
 		return;
 
+<<<<<<< HEAD
 	get_msr(0, MSR_NEHALEM_PLATFORM_INFO, &msr);
+=======
+	msr = get_msr(0, MSR_NEHALEM_PLATFORM_INFO);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ratio = (msr >> 40) & 0xFF;
 	fprintf(stderr, "%d * %.0f = %.0f MHz max efficiency\n",
@@ -570,7 +756,11 @@ void print_nehalem_info(void)
 	if (!do_nehalem_turbo_ratio_limit)
 		return;
 
+<<<<<<< HEAD
 	get_msr(0, MSR_NEHALEM_TURBO_RATIO_LIMIT, &msr);
+=======
+	msr = get_msr(0, MSR_NEHALEM_TURBO_RATIO_LIMIT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ratio = (msr >> 24) & 0xFF;
 	if (ratio)
@@ -636,8 +826,12 @@ void insert_counters(struct counters **list,
 		return;
 	}
 
+<<<<<<< HEAD
 	if (!summary_only)
 		show_cpu = 1;	/* there is more than one CPU */
+=======
+	show_cpu = 1;	/* there is more than one CPU */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * insert on front of list.
@@ -655,15 +849,23 @@ void insert_counters(struct counters **list,
 
 	while (prev->next && (prev->next->pkg < new->pkg)) {
 		prev = prev->next;
+<<<<<<< HEAD
 		if (!summary_only)
 			show_pkg = 1;	/* there is more than 1 package */
+=======
+		show_pkg = 1;	/* there is more than 1 package */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	while (prev->next && (prev->next->pkg == new->pkg)
 		&& (prev->next->core < new->core)) {
 		prev = prev->next;
+<<<<<<< HEAD
 		if (!summary_only)
 			show_core = 1;	/* there is more than 1 core */
+=======
+		show_core = 1;	/* there is more than 1 core */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	while (prev->next && (prev->next->pkg == new->pkg)
@@ -763,7 +965,11 @@ int get_core_id(int cpu)
 }
 
 /*
+<<<<<<< HEAD
  * run func(pkg, core, cpu) on every cpu in /proc/stat
+=======
+ * run func(index, cpu) on every cpu in /proc/stat
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 int for_all_cpus(void (func)(int, int, int))
@@ -799,18 +1005,30 @@ int for_all_cpus(void (func)(int, int, int))
 
 void re_initialize(void)
 {
+<<<<<<< HEAD
 	free_all_counters();
 	num_cpus = for_all_cpus(alloc_new_counters);
 	cpu_mask_uninit();
 	cpu_mask_init(num_cpus);
 	printf("turbostat: re-initialized with num_cpus %d\n", num_cpus);
+=======
+	printf("turbostat: topology changed, re-initializing.\n");
+	free_all_counters();
+	num_cpus = for_all_cpus(alloc_new_counters);
+	need_reinitialize = 0;
+	printf("num_cpus is now %d\n", num_cpus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void dummy(int pkg, int core, int cpu) { return; }
 /*
  * check to see if a cpu came on-line
  */
+<<<<<<< HEAD
 int verify_num_cpus(void)
+=======
+void verify_num_cpus(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int new_num_cpus;
 
@@ -820,9 +1038,14 @@ int verify_num_cpus(void)
 		if (verbose)
 			printf("num_cpus was %d, is now  %d\n",
 				num_cpus, new_num_cpus);
+<<<<<<< HEAD
 		return -1;
 	}
 	return 0;
+=======
+		need_reinitialize = 1;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void turbostat_loop()
@@ -832,25 +1055,45 @@ restart:
 	gettimeofday(&tv_even, (struct timezone *)NULL);
 
 	while (1) {
+<<<<<<< HEAD
 		if (verify_num_cpus()) {
+=======
+		verify_num_cpus();
+		if (need_reinitialize) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			re_initialize();
 			goto restart;
 		}
 		sleep(interval_sec);
+<<<<<<< HEAD
 		if (get_counters(cnt_odd)) {
 			re_initialize();
 			goto restart;
 		}
 		gettimeofday(&tv_odd, (struct timezone *)NULL);
+=======
+		get_counters(cnt_odd);
+		gettimeofday(&tv_odd, (struct timezone *)NULL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		compute_delta(cnt_odd, cnt_even, cnt_delta);
 		timersub(&tv_odd, &tv_even, &tv_delta);
 		compute_average(cnt_delta, cnt_average);
 		print_counters(cnt_delta);
+<<<<<<< HEAD
 		sleep(interval_sec);
 		if (get_counters(cnt_even)) {
 			re_initialize();
 			goto restart;
 		}
+=======
+		if (need_reinitialize) {
+			re_initialize();
+			goto restart;
+		}
+		sleep(interval_sec);
+		get_counters(cnt_even);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gettimeofday(&tv_even, (struct timezone *)NULL);
 		compute_delta(cnt_even, cnt_odd, cnt_delta);
 		timersub(&tv_even, &tv_odd, &tv_delta);
@@ -894,8 +1137,11 @@ int has_nehalem_turbo_ratio_limit(unsigned int family, unsigned int model)
 	case 0x2C:	/* Westmere EP - Gulftown */
 	case 0x2A:	/* SNB */
 	case 0x2D:	/* SNB Xeon */
+<<<<<<< HEAD
 	case 0x3A:	/* IVB */
 	case 0x3D:	/* IVB Xeon */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 	case 0x2E:	/* Nehalem-EX Xeon - Beckton */
 	case 0x2F:	/* Westmere-EX Xeon - Eagleton */
@@ -1036,7 +1282,10 @@ void turbostat_init()
 	check_super_user();
 
 	num_cpus = for_all_cpus(alloc_new_counters);
+<<<<<<< HEAD
 	cpu_mask_init(num_cpus);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (verbose)
 		print_nehalem_info();
@@ -1089,11 +1338,16 @@ void cmdline(int argc, char **argv)
 
 	progname = argv[0];
 
+<<<<<<< HEAD
 	while ((opt = getopt(argc, argv, "+svi:M:")) != -1) {
 		switch (opt) {
 		case 's':
 			summary_only++;
 			break;
+=======
+	while ((opt = getopt(argc, argv, "+vi:M:")) != -1) {
+		switch (opt) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case 'v':
 			verbose++;
 			break;

@@ -26,6 +26,10 @@
 #include <linux/module.h>
 #include <linux/device.h>
 #include <linux/sched.h>
+<<<<<<< HEAD
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/fs.h>
 #include <linux/types.h>
 #include <linux/string.h>
@@ -54,8 +58,13 @@ static ssize_t bonding_show_bonds(struct class *cls,
 				  struct class_attribute *attr,
 				  char *buf)
 {
+<<<<<<< HEAD
 	struct bond_net *bn =
 		container_of(attr, struct bond_net, class_attr_bonding_masters);
+=======
+	struct net *net = current->nsproxy->net_ns;
+	struct bond_net *bn = net_generic(net, bond_net_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int res = 0;
 	struct bonding *bond;
 
@@ -78,8 +87,14 @@ static ssize_t bonding_show_bonds(struct class *cls,
 	return res;
 }
 
+<<<<<<< HEAD
 static struct net_device *bond_get_by_name(struct bond_net *bn, const char *ifname)
 {
+=======
+static struct net_device *bond_get_by_name(struct net *net, const char *ifname)
+{
+	struct bond_net *bn = net_generic(net, bond_net_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bonding *bond;
 
 	list_for_each_entry(bond, &bn->dev_list, bond_list) {
@@ -101,8 +116,12 @@ static ssize_t bonding_store_bonds(struct class *cls,
 				   struct class_attribute *attr,
 				   const char *buffer, size_t count)
 {
+<<<<<<< HEAD
 	struct bond_net *bn =
 		container_of(attr, struct bond_net, class_attr_bonding_masters);
+=======
+	struct net *net = current->nsproxy->net_ns;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char command[IFNAMSIZ + 1] = {0, };
 	char *ifname;
 	int rv, res = count;
@@ -115,7 +134,11 @@ static ssize_t bonding_store_bonds(struct class *cls,
 
 	if (command[0] == '+') {
 		pr_info("%s is being created...\n", ifname);
+<<<<<<< HEAD
 		rv = bond_create(bn->net, ifname);
+=======
+		rv = bond_create(net, ifname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rv) {
 			if (rv == -EEXIST)
 				pr_info("%s already exists.\n", ifname);
@@ -127,7 +150,11 @@ static ssize_t bonding_store_bonds(struct class *cls,
 		struct net_device *bond_dev;
 
 		rtnl_lock();
+<<<<<<< HEAD
 		bond_dev = bond_get_by_name(bn, ifname);
+=======
+		bond_dev = bond_get_by_name(net, ifname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (bond_dev) {
 			pr_info("%s is being deleted...\n", ifname);
 			unregister_netdevice(bond_dev);
@@ -149,6 +176,7 @@ err_no_cmd:
 	return -EPERM;
 }
 
+<<<<<<< HEAD
 static const void *bonding_namespace(struct class *cls,
 				     const struct class_attribute *attr)
 {
@@ -167,6 +195,11 @@ static const struct class_attribute class_attr_bonding_masters = {
 	.store = bonding_store_bonds,
 	.namespace = bonding_namespace,
 };
+=======
+/* class attribute for bond_masters file.  This ends up in /sys/class/net */
+static CLASS_ATTR(bonding_masters,  S_IWUSR | S_IRUGO,
+		  bonding_show_bonds, bonding_store_bonds);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int bond_create_slave_symlinks(struct net_device *master,
 			       struct net_device *slave)
@@ -183,11 +216,14 @@ int bond_create_slave_symlinks(struct net_device *master,
 	sprintf(linkname, "slave_%s", slave->name);
 	ret = sysfs_create_link(&(master->dev.kobj), &(slave->dev.kobj),
 				linkname);
+<<<<<<< HEAD
 
 	/* free the master link created earlier in case of error */
 	if (ret)
 		sysfs_remove_link(&(slave->dev.kobj), "master");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 
 }
@@ -323,6 +359,7 @@ static ssize_t bonding_store_mode(struct device *d,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	if (bond->slave_cnt > 0) {
 		pr_err("unable to update mode of %s because it has slaves.\n",
 			bond->dev->name);
@@ -330,6 +367,8 @@ static ssize_t bonding_store_mode(struct device *d,
 		goto out;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	new_value = bond_parse_parm(buf, bond_mode_tbl);
 	if (new_value < 0)  {
 		pr_err("%s: Ignoring invalid mode value %.*s.\n",
@@ -518,8 +557,11 @@ static ssize_t bonding_store_arp_interval(struct device *d,
 	int new_value, ret = count;
 	struct bonding *bond = to_bond(d);
 
+<<<<<<< HEAD
 	if (!rtnl_trylock())
 		return restart_syscall();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (sscanf(buf, "%d", &new_value) != 1) {
 		pr_err("%s: no arp_interval value specified.\n",
 		       bond->dev->name);
@@ -527,7 +569,11 @@ static ssize_t bonding_store_arp_interval(struct device *d,
 		goto out;
 	}
 	if (new_value < 0) {
+<<<<<<< HEAD
 		pr_err("%s: Invalid arp_interval value %d not in range 0-%d; rejected.\n",
+=======
+		pr_err("%s: Invalid arp_interval value %d not in range 1-%d; rejected.\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       bond->dev->name, new_value, INT_MAX);
 		ret = -EINVAL;
 		goto out;
@@ -542,6 +588,7 @@ static ssize_t bonding_store_arp_interval(struct device *d,
 	pr_info("%s: Setting ARP monitoring interval to %d.\n",
 		bond->dev->name, new_value);
 	bond->params.arp_interval = new_value;
+<<<<<<< HEAD
 	if (new_value) {
 		if (bond->params.miimon) {
 			pr_info("%s: ARP monitoring cannot be used with MII monitoring. %s Disabling MII monitoring.\n",
@@ -551,6 +598,20 @@ static ssize_t bonding_store_arp_interval(struct device *d,
 		if (!bond->params.arp_targets[0])
 			pr_info("%s: ARP monitoring has been set up, but no ARP targets have been specified.\n",
 				bond->dev->name);
+=======
+	if (bond->params.miimon) {
+		pr_info("%s: ARP monitoring cannot be used with MII monitoring. %s Disabling MII monitoring.\n",
+			bond->dev->name, bond->dev->name);
+		bond->params.miimon = 0;
+		if (delayed_work_pending(&bond->mii_work)) {
+			cancel_delayed_work(&bond->mii_work);
+			flush_workqueue(bond->wq);
+		}
+	}
+	if (!bond->params.arp_targets[0]) {
+		pr_info("%s: ARP monitoring has been set up, but no ARP targets have been specified.\n",
+			bond->dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (bond->dev->flags & IFF_UP) {
 		/* If the interface is up, we may need to fire off
@@ -558,6 +619,7 @@ static ssize_t bonding_store_arp_interval(struct device *d,
 		 * timer will get fired off when the open function
 		 * is called.
 		 */
+<<<<<<< HEAD
 		if (!new_value) {
 			cancel_delayed_work_sync(&bond->arp_work);
 		} else {
@@ -567,6 +629,21 @@ static ssize_t bonding_store_arp_interval(struct device *d,
 	}
 out:
 	rtnl_unlock();
+=======
+		if (!delayed_work_pending(&bond->arp_work)) {
+			if (bond->params.mode == BOND_MODE_ACTIVEBACKUP)
+				INIT_DELAYED_WORK(&bond->arp_work,
+						  bond_activebackup_arp_mon);
+			else
+				INIT_DELAYED_WORK(&bond->arp_work,
+						  bond_loadbalance_arp_mon);
+
+			queue_delayed_work(bond->wq, &bond->arp_work, 0);
+		}
+	}
+
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 static DEVICE_ATTR(arp_interval, S_IRUGO | S_IWUSR,
@@ -706,7 +783,11 @@ static ssize_t bonding_store_downdelay(struct device *d,
 	}
 	if (new_value < 0) {
 		pr_err("%s: Invalid down delay value %d not in range %d-%d; rejected.\n",
+<<<<<<< HEAD
 		       bond->dev->name, new_value, 0, INT_MAX);
+=======
+		       bond->dev->name, new_value, 1, INT_MAX);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EINVAL;
 		goto out;
 	} else {
@@ -761,8 +842,13 @@ static ssize_t bonding_store_updelay(struct device *d,
 		goto out;
 	}
 	if (new_value < 0) {
+<<<<<<< HEAD
 		pr_err("%s: Invalid up delay value %d not in range %d-%d; rejected.\n",
 		       bond->dev->name, new_value, 0, INT_MAX);
+=======
+		pr_err("%s: Invalid down delay value %d not in range %d-%d; rejected.\n",
+		       bond->dev->name, new_value, 1, INT_MAX);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EINVAL;
 		goto out;
 	} else {
@@ -825,7 +911,10 @@ static ssize_t bonding_store_lacp(struct device *d,
 
 	if ((new_value == 1) || (new_value == 0)) {
 		bond->params.lacp_fast = new_value;
+<<<<<<< HEAD
 		bond_3ad_update_lacp_rate(bond);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_info("%s: Setting LACP rate to %s (%d).\n",
 			bond->dev->name, bond_lacp_tbl[new_value].modename,
 			new_value);
@@ -840,6 +929,7 @@ out:
 static DEVICE_ATTR(lacp_rate, S_IRUGO | S_IWUSR,
 		   bonding_show_lacp, bonding_store_lacp);
 
+<<<<<<< HEAD
 static ssize_t bonding_show_min_links(struct device *d,
 				      struct device_attribute *attr,
 				      char *buf)
@@ -872,6 +962,8 @@ static ssize_t bonding_store_min_links(struct device *d,
 static DEVICE_ATTR(min_links, S_IRUGO | S_IWUSR,
 		   bonding_show_min_links, bonding_store_min_links);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t bonding_show_ad_select(struct device *d,
 				      struct device_attribute *attr,
 				      char *buf)
@@ -962,8 +1054,11 @@ static ssize_t bonding_store_miimon(struct device *d,
 	int new_value, ret = count;
 	struct bonding *bond = to_bond(d);
 
+<<<<<<< HEAD
 	if (!rtnl_trylock())
 		return restart_syscall();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (sscanf(buf, "%d", &new_value) != 1) {
 		pr_err("%s: no miimon value specified.\n",
 		       bond->dev->name);
@@ -972,6 +1067,7 @@ static ssize_t bonding_store_miimon(struct device *d,
 	}
 	if (new_value < 0) {
 		pr_err("%s: Invalid miimon value %d not in range %d-%d; rejected.\n",
+<<<<<<< HEAD
 		       bond->dev->name, new_value, 0, INT_MAX);
 		ret = -EINVAL;
 		goto out;
@@ -1009,6 +1105,52 @@ static ssize_t bonding_store_miimon(struct device *d,
 	}
 out:
 	rtnl_unlock();
+=======
+		       bond->dev->name, new_value, 1, INT_MAX);
+		ret = -EINVAL;
+		goto out;
+	} else {
+		pr_info("%s: Setting MII monitoring interval to %d.\n",
+			bond->dev->name, new_value);
+		bond->params.miimon = new_value;
+		if (bond->params.updelay)
+			pr_info("%s: Note: Updating updelay (to %d) since it is a multiple of the miimon value.\n",
+				bond->dev->name,
+				bond->params.updelay * bond->params.miimon);
+		if (bond->params.downdelay)
+			pr_info("%s: Note: Updating downdelay (to %d) since it is a multiple of the miimon value.\n",
+				bond->dev->name,
+				bond->params.downdelay * bond->params.miimon);
+		if (bond->params.arp_interval) {
+			pr_info("%s: MII monitoring cannot be used with ARP monitoring. Disabling ARP monitoring...\n",
+				bond->dev->name);
+			bond->params.arp_interval = 0;
+			if (bond->params.arp_validate) {
+				bond->params.arp_validate =
+					BOND_ARP_VALIDATE_NONE;
+			}
+			if (delayed_work_pending(&bond->arp_work)) {
+				cancel_delayed_work(&bond->arp_work);
+				flush_workqueue(bond->wq);
+			}
+		}
+
+		if (bond->dev->flags & IFF_UP) {
+			/* If the interface is up, we may need to fire off
+			 * the MII timer. If the interface is down, the
+			 * timer will get fired off when the open function
+			 * is called.
+			 */
+			if (!delayed_work_pending(&bond->mii_work)) {
+				INIT_DELAYED_WORK(&bond->mii_work,
+						  bond_mii_monitor);
+				queue_delayed_work(bond->wq,
+						   &bond->mii_work, 0);
+			}
+		}
+	}
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 static DEVICE_ATTR(miimon, S_IRUGO | S_IWUSR,
@@ -1573,7 +1715,10 @@ static ssize_t bonding_store_slaves_active(struct device *d,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	read_lock(&bond->lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bond_for_each_slave(bond, slave, i) {
 		if (!bond_is_active_slave(slave)) {
 			if (new_value)
@@ -1582,7 +1727,10 @@ static ssize_t bonding_store_slaves_active(struct device *d,
 				slave->inactive = 1;
 		}
 	}
+<<<<<<< HEAD
 	read_unlock(&bond->lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return ret;
 }
@@ -1660,7 +1808,10 @@ static struct attribute *per_bond_attrs[] = {
 	&dev_attr_queue_id.attr,
 	&dev_attr_all_slaves_active.attr,
 	&dev_attr_resend_igmp.attr,
+<<<<<<< HEAD
 	&dev_attr_min_links.attr,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL,
 };
 
@@ -1673,6 +1824,7 @@ static struct attribute_group bonding_group = {
  * Initialize sysfs.  This sets up the bonding_masters file in
  * /sys/class/net.
  */
+<<<<<<< HEAD
 int bond_create_sysfs(struct bond_net *bn)
 {
 	int ret;
@@ -1681,6 +1833,13 @@ int bond_create_sysfs(struct bond_net *bn)
 	sysfs_attr_init(&bn->class_attr_bonding_masters.attr);
 
 	ret = netdev_class_create_file(&bn->class_attr_bonding_masters);
+=======
+int bond_create_sysfs(void)
+{
+	int ret;
+
+	ret = netdev_class_create_file(&class_attr_bonding_masters);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Permit multiple loads of the module by ignoring failures to
 	 * create the bonding_masters sysfs file.  Bonding devices
@@ -1694,7 +1853,11 @@ int bond_create_sysfs(struct bond_net *bn)
 	 */
 	if (ret == -EEXIST) {
 		/* Is someone being kinky and naming a device bonding_master? */
+<<<<<<< HEAD
 		if (__dev_get_by_name(bn->net,
+=======
+		if (__dev_get_by_name(&init_net,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      class_attr_bonding_masters.attr.name))
 			pr_err("network device named %s already exists in sysfs",
 			       class_attr_bonding_masters.attr.name);
@@ -1708,9 +1871,15 @@ int bond_create_sysfs(struct bond_net *bn)
 /*
  * Remove /sys/class/net/bonding_masters.
  */
+<<<<<<< HEAD
 void bond_destroy_sysfs(struct bond_net *bn)
 {
 	netdev_class_remove_file(&bn->class_attr_bonding_masters);
+=======
+void bond_destroy_sysfs(void)
+{
+	netdev_class_remove_file(&class_attr_bonding_masters);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*

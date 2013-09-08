@@ -17,7 +17,11 @@
 #include <linux/errno.h>
 #include <linux/types.h>
 #include <linux/rcupdate.h>
+<<<<<<< HEAD
 #include <linux/static_key.h>
+=======
+#include <linux/jump_label.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct module;
 struct tracepoint;
@@ -29,7 +33,11 @@ struct tracepoint_func {
 
 struct tracepoint {
 	const char *name;		/* Tracepoint name */
+<<<<<<< HEAD
 	struct static_key key;
+=======
+	struct jump_label_key key;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void (*regfunc)(void);
 	void (*unregfunc)(void);
 	struct tracepoint_func __rcu *funcs;
@@ -54,6 +62,7 @@ extern int tracepoint_probe_unregister_noupdate(const char *name, void *probe,
 						void *data);
 extern void tracepoint_probe_update_all(void);
 
+<<<<<<< HEAD
 #ifdef CONFIG_MODULES
 struct tp_module {
 	struct list_head list;
@@ -66,6 +75,10 @@ struct tracepoint_iter {
 #ifdef CONFIG_MODULES
 	struct tp_module *module;
 #endif /* CONFIG_MODULES */
+=======
+struct tracepoint_iter {
+	struct module *module;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct tracepoint * const *tracepoint;
 };
 
@@ -73,6 +86,11 @@ extern void tracepoint_iter_start(struct tracepoint_iter *iter);
 extern void tracepoint_iter_next(struct tracepoint_iter *iter);
 extern void tracepoint_iter_stop(struct tracepoint_iter *iter);
 extern void tracepoint_iter_reset(struct tracepoint_iter *iter);
+<<<<<<< HEAD
+=======
+extern int tracepoint_get_iter_range(struct tracepoint * const **tracepoint,
+	struct tracepoint * const *begin, struct tracepoint * const *end);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * tracepoint_synchronize_unregister must be called between the last tracepoint
@@ -86,6 +104,20 @@ static inline void tracepoint_synchronize_unregister(void)
 
 #define PARAMS(args...) args
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_TRACEPOINTS
+extern
+void tracepoint_update_probe_range(struct tracepoint * const *begin,
+	struct tracepoint * const *end);
+#else
+static inline
+void tracepoint_update_probe_range(struct tracepoint * const *begin,
+	struct tracepoint * const *end)
+{ }
+#endif /* CONFIG_TRACEPOINTS */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _LINUX_TRACEPOINT_H */
 
 /*
@@ -114,7 +146,11 @@ static inline void tracepoint_synchronize_unregister(void)
  * as "(void *, void)". The DECLARE_TRACE_NOARGS() will pass in just
  * "void *data", where as the DECLARE_TRACE() will pass in "void *data, proto".
  */
+<<<<<<< HEAD
 #define __DO_TRACE(tp, proto, args, cond, prercu, postrcu)		\
+=======
+#define __DO_TRACE(tp, proto, args, cond)				\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do {								\
 		struct tracepoint_func *it_func_ptr;			\
 		void *it_func;						\
@@ -122,7 +158,10 @@ static inline void tracepoint_synchronize_unregister(void)
 									\
 		if (!(cond))						\
 			return;						\
+<<<<<<< HEAD
 		prercu;							\
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rcu_read_lock_sched_notrace();				\
 		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
 		if (it_func_ptr) {					\
@@ -133,7 +172,10 @@ static inline void tracepoint_synchronize_unregister(void)
 			} while ((++it_func_ptr)->func);		\
 		}							\
 		rcu_read_unlock_sched_notrace();			\
+<<<<<<< HEAD
 		postrcu;						\
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} while (0)
 
 /*
@@ -141,6 +183,7 @@ static inline void tracepoint_synchronize_unregister(void)
  * not add unwanted padding between the beginning of the section and the
  * structure. Force alignment to the same alignment as the section start.
  */
+<<<<<<< HEAD
 #define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args) \
 	extern struct tracepoint __tracepoint_##name;			\
 	static inline void trace_##name(proto)				\
@@ -153,13 +196,23 @@ static inline void tracepoint_synchronize_unregister(void)
 	}								\
 	static inline void trace_##name##_rcuidle(proto)		\
 	{								\
+=======
+#define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args)	\
+	extern struct tracepoint __tracepoint_##name;			\
+	static inline void trace_##name(proto)				\
+	{								\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (static_branch(&__tracepoint_##name.key))		\
 			__DO_TRACE(&__tracepoint_##name,		\
 				TP_PROTO(data_proto),			\
 				TP_ARGS(data_args),			\
+<<<<<<< HEAD
 				TP_CONDITION(cond),			\
 				rcu_idle_exit(),			\
 				rcu_idle_enter());			\
+=======
+				TP_CONDITION(cond));			\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}								\
 	static inline int						\
 	register_trace_##name(void (*probe)(data_proto), void *data)	\
@@ -188,7 +241,11 @@ static inline void tracepoint_synchronize_unregister(void)
 	__attribute__((section("__tracepoints_strings"))) = #name;	 \
 	struct tracepoint __tracepoint_##name				 \
 	__attribute__((section("__tracepoints"))) =			 \
+<<<<<<< HEAD
 		{ __tpstrtab_##name, STATIC_KEY_INIT_FALSE, reg, unreg, NULL };\
+=======
+		{ __tpstrtab_##name, JUMP_LABEL_INIT, reg, unreg, NULL };\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	static struct tracepoint * const __tracepoint_ptr_##name __used	 \
 	__attribute__((section("__tracepoints_ptrs"))) =		 \
 		&__tracepoint_##name;
@@ -202,11 +259,17 @@ static inline void tracepoint_synchronize_unregister(void)
 	EXPORT_SYMBOL(__tracepoint_##name)
 
 #else /* !CONFIG_TRACEPOINTS */
+<<<<<<< HEAD
 #define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args) \
 	static inline void trace_##name(proto)				\
 	{ }								\
 	static inline void trace_##name##_rcuidle(proto)		\
 	{ }								\
+=======
+#define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args)	\
+	static inline void trace_##name(proto)				\
+	{ }								\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	static inline int						\
 	register_trace_##name(void (*probe)(data_proto),		\
 			      void *data)				\

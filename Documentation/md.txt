@@ -357,6 +357,7 @@ Each directory contains:
         written to, that device.
 
       state
+<<<<<<< HEAD
 	A file recording the current state of the device in the array
 	which can be a comma separated list of
 	      faulty   - device has been kicked from active use due to
@@ -368,11 +369,24 @@ Each directory contains:
 			 This applies only to raid1 arrays.
 	      blocked  - device has failed, and the failure hasn't been
 			 acknowledged yet by the metadata handler.
+=======
+        A file recording the current state of the device in the array
+	which can be a comma separated list of
+	      faulty   - device has been kicked from active use due to
+                         a detected fault
+	      in_sync  - device is a fully in-sync member of the array
+	      writemostly - device will only be subject to read
+		         requests if there are no other options.
+			 This applies only to raid1 arrays.
+	      blocked  - device has failed, metadata is "external",
+	                 and the failure hasn't been acknowledged yet.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 Writes that would write to this device if
 			 it were not faulty are blocked.
 	      spare    - device is working, but not a full member.
 			 This includes spares that are in the process
 			 of being recovered to
+<<<<<<< HEAD
 	      write_error - device has ever seen a write error.
 	      want_replacement - device is (mostly) working but probably
 			 should be replaced, either due to errors or
@@ -381,6 +395,8 @@ Each directory contains:
 			 device with same raid_disk.
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	This list may grow in future.
 	This can be written to.
 	Writing "faulty"  simulates a failure on the device.
@@ -388,6 +404,7 @@ Each directory contains:
 	Writing "writemostly" sets the writemostly flag.
 	Writing "-writemostly" clears the writemostly flag.
 	Writing "blocked" sets the "blocked" flag.
+<<<<<<< HEAD
 	Writing "-blocked" clears the "blocked" flags and allows writes
 		to complete and possibly simulates an error.
 	Writing "in_sync" sets the in_sync flag.
@@ -400,6 +417,11 @@ Each directory contains:
 	Writing "replacement" or "-replacement" is only allowed before
 		starting the array.  It sets or clears the flag.
 
+=======
+	Writing "-blocked" clears the "blocked" flag and allows writes
+		to complete.
+	Writing "in_sync" sets the in_sync flag.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	This file responds to select/poll. Any change to 'faulty'
 	or 'blocked' causes an event.
@@ -437,6 +459,10 @@ Each directory contains:
         written, it will be rejected.
 
       recovery_start
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         When the device is not 'in_sync', this records the number of
 	sectors from the start of the device which are known to be
 	correct.  This is normally zero, but during a recovery
@@ -452,6 +478,7 @@ Each directory contains:
 	Setting this to 'none' is equivalent to setting 'in_sync'.
 	Setting to any other value also clears the 'in_sync' flag.
 	
+<<<<<<< HEAD
       bad_blocks
 	This gives the list of all known bad blocks in the form of
 	start address and length (in sectors respectively). If output
@@ -466,6 +493,8 @@ Each directory contains:
 	adds bad blocks without acknowledging them. This is largely
 	for testing.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 An active md device will also contain and entry for each active device

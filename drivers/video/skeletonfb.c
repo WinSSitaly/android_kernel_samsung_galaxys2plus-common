@@ -989,7 +989,11 @@ static struct platform_device *xxxfb_device;
  */
 int __init xxxfb_setup(char *options)
 {
+<<<<<<< HEAD
     /* Parse user specified options (`video=xxxfb:') */
+=======
+    /* Parse user speficied options (`video=xxxfb:') */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif /* MODULE */
 

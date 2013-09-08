@@ -20,7 +20,11 @@
  * Debug output is hardcoded to standard UART 5
 */
 
+<<<<<<< HEAD
 	.macro	addruart, rp, rv, tmp
+=======
+	.macro	addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ldreq	\rp, =0x40090000
 	ldrne	\rv, =0xF4090000
 	.endm

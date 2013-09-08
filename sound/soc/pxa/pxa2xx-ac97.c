@@ -11,7 +11,10 @@
  */
 
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/io.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/platform_device.h>
 
@@ -104,7 +107,11 @@ static int pxa2xx_ac97_resume(struct snd_soc_dai *dai)
 #define pxa2xx_ac97_resume	NULL
 #endif
 
+<<<<<<< HEAD
 static int __devinit pxa2xx_ac97_probe(struct snd_soc_dai *dai)
+=======
+static int pxa2xx_ac97_probe(struct snd_soc_dai *dai)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return pxa2xx_ac97_hw_probe(to_platform_device(dai->dev));
 }
@@ -164,6 +171,7 @@ static int pxa2xx_ac97_hw_mic_params(struct snd_pcm_substream *substream,
 		SNDRV_PCM_RATE_16000 | SNDRV_PCM_RATE_22050 | SNDRV_PCM_RATE_44100 | \
 		SNDRV_PCM_RATE_48000)
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops pxa_ac97_hifi_dai_ops = {
 	.hw_params	= pxa2xx_ac97_hw_params,
 };
@@ -173,6 +181,17 @@ static const struct snd_soc_dai_ops pxa_ac97_aux_dai_ops = {
 };
 
 static const struct snd_soc_dai_ops pxa_ac97_mic_dai_ops = {
+=======
+static struct snd_soc_dai_ops pxa_ac97_hifi_dai_ops = {
+	.hw_params	= pxa2xx_ac97_hw_params,
+};
+
+static struct snd_soc_dai_ops pxa_ac97_aux_dai_ops = {
+	.hw_params	= pxa2xx_ac97_hw_aux_params,
+};
+
+static struct snd_soc_dai_ops pxa_ac97_mic_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params	= pxa2xx_ac97_hw_mic_params,
 };
 
@@ -180,7 +199,11 @@ static const struct snd_soc_dai_ops pxa_ac97_mic_dai_ops = {
  * There is only 1 physical AC97 interface for pxa2xx, but it
  * has extra fifo's that can be used for aux DACs and ADCs.
  */
+<<<<<<< HEAD
 static struct snd_soc_dai_driver pxa_ac97_dai_driver[] = {
+=======
+static struct snd_soc_dai_driver pxa_ac97_dai[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	.name = "pxa2xx-ac97",
 	.ac97_control = 1,
@@ -245,13 +268,22 @@ static __devinit int pxa2xx_ac97_dev_probe(struct platform_device *pdev)
 	 * driver to do interesting things with the clocking to get us up
 	 * and running.
 	 */
+<<<<<<< HEAD
 	return snd_soc_register_dais(&pdev->dev, pxa_ac97_dai_driver,
 			ARRAY_SIZE(pxa_ac97_dai_driver));
+=======
+	return snd_soc_register_dais(&pdev->dev, pxa_ac97_dai,
+			ARRAY_SIZE(pxa_ac97_dai));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __devexit pxa2xx_ac97_dev_remove(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	snd_soc_unregister_dais(&pdev->dev, ARRAY_SIZE(pxa_ac97_dai_driver));
+=======
+	snd_soc_unregister_dais(&pdev->dev, ARRAY_SIZE(pxa_ac97_dai));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -264,7 +296,21 @@ static struct platform_driver pxa2xx_ac97_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(pxa2xx_ac97_driver);
+=======
+static int __init pxa_ac97_init(void)
+{
+	return platform_driver_register(&pxa2xx_ac97_driver);
+}
+module_init(pxa_ac97_init);
+
+static void __exit pxa_ac97_exit(void)
+{
+	platform_driver_unregister(&pxa2xx_ac97_driver);
+}
+module_exit(pxa_ac97_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Nicolas Pitre");
 MODULE_DESCRIPTION("AC97 driver for the Intel PXA2xx chip");

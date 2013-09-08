@@ -18,11 +18,18 @@
 #include <linux/delay.h>
 #include <linux/backlight.h>
 #include <linux/gfp.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 
 #include <mach/board.h>
 #include <mach/cpu.h>
 #include <asm/gpio.h>
+=======
+
+#include <mach/board.h>
+#include <mach/cpu.h>
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <video/atmel_lcdc.h>
 
@@ -40,8 +47,12 @@
 					 | FBINFO_HWACCEL_YPAN)
 
 static inline void atmel_lcdfb_update_dma2d(struct atmel_lcdfb_info *sinfo,
+<<<<<<< HEAD
 					struct fb_var_screeninfo *var,
 					struct fb_info *info)
+=======
+					struct fb_var_screeninfo *var)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 
 }
@@ -52,16 +63,26 @@ static inline void atmel_lcdfb_update_dma2d(struct atmel_lcdfb_info *sinfo,
 					| FBINFO_HWACCEL_YPAN)
 
 static void atmel_lcdfb_update_dma2d(struct atmel_lcdfb_info *sinfo,
+<<<<<<< HEAD
 				     struct fb_var_screeninfo *var,
 				     struct fb_info *info)
+=======
+				     struct fb_var_screeninfo *var)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 dma2dcfg;
 	u32 pixeloff;
 
+<<<<<<< HEAD
 	pixeloff = (var->xoffset * info->var.bits_per_pixel) & 0x1f;
 
 	dma2dcfg = (info->var.xres_virtual - info->var.xres)
 		 * info->var.bits_per_pixel / 8;
+=======
+	pixeloff = (var->xoffset * var->bits_per_pixel) & 0x1f;
+
+	dma2dcfg = ((var->xres_virtual - var->xres) * var->bits_per_pixel) / 8;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dma2dcfg |= pixeloff << ATMEL_LCDC_PIXELOFF_OFFSET;
 	lcdc_writel(sinfo, ATMEL_LCDC_DMA2DCFG, dma2dcfg);
 
@@ -100,11 +121,16 @@ static int atmel_bl_update_status(struct backlight_device *bl)
 		brightness = 0;
 
 	lcdc_writel(sinfo, ATMEL_LCDC_CONTRAST_VAL, brightness);
+<<<<<<< HEAD
 	if (contrast_ctr & ATMEL_LCDC_POL_POSITIVE)
 		lcdc_writel(sinfo, ATMEL_LCDC_CONTRAST_CTR,
 			brightness ? contrast_ctr : 0);
 	else
 		lcdc_writel(sinfo, ATMEL_LCDC_CONTRAST_CTR, contrast_ctr);
+=======
+	lcdc_writel(sinfo, ATMEL_LCDC_CONTRAST_CTR,
+			brightness ? contrast_ctr : 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bl->props.fb_blank = bl->props.power = sinfo->bl_power = power;
 
@@ -256,14 +282,22 @@ static void atmel_lcdfb_update_dma(struct fb_info *info,
 	unsigned long dma_addr;
 
 	dma_addr = (fix->smem_start + var->yoffset * fix->line_length
+<<<<<<< HEAD
 		    + var->xoffset * info->var.bits_per_pixel / 8);
+=======
+		    + var->xoffset * var->bits_per_pixel / 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dma_addr &= ~3UL;
 
 	/* Set framebuffer DMA base address and pixel offset */
 	lcdc_writel(sinfo, ATMEL_LCDC_DMABADDR1, dma_addr);
 
+<<<<<<< HEAD
 	atmel_lcdfb_update_dma2d(sinfo, var, info);
+=======
+	atmel_lcdfb_update_dma2d(sinfo, var);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void atmel_lcdfb_free_video_memory(struct atmel_lcdfb_info *sinfo)
@@ -421,6 +455,7 @@ static int atmel_lcdfb_check_var(struct fb_var_screeninfo *var,
 		var->red.length = var->green.length = var->blue.length
 			= var->bits_per_pixel;
 		break;
+<<<<<<< HEAD
 	case 16:
 		/* Older SOCs use IBGR:555 rather than BGR:565. */
 		if (sinfo->have_intensity_bit)
@@ -436,6 +471,24 @@ static int atmel_lcdfb_check_var(struct fb_var_screeninfo *var,
 			/* BGR:5X5 mode */
 			var->red.offset = 0;
 			var->blue.offset = var->green.length + 5;
+=======
+	case 15:
+	case 16:
+		if (sinfo->lcd_wiring_mode == ATMEL_LCDC_WIRING_RGB) {
+			/* RGB:565 mode */
+			var->red.offset = 11;
+			var->blue.offset = 0;
+			var->green.length = 6;
+		} else if (sinfo->lcd_wiring_mode == ATMEL_LCDC_WIRING_RGB555) {
+			var->red.offset = 10;
+			var->blue.offset = 0;
+			var->green.length = 5;
+		} else {
+			/* BGR:555 mode */
+			var->red.offset = 0;
+			var->blue.offset = 10;
+			var->green.length = 5;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		var->green.offset = 5;
 		var->red.length = var->blue.length = 5;
@@ -684,6 +737,7 @@ static int atmel_lcdfb_setcolreg(unsigned int regno, unsigned int red,
 
 	case FB_VISUAL_PSEUDOCOLOR:
 		if (regno < 256) {
+<<<<<<< HEAD
 			if (sinfo->have_intensity_bit) {
 				/* old style I+BGR:555 */
 				val  = ((red   >> 11) & 0x001f);
@@ -707,6 +761,16 @@ static int atmel_lcdfb_setcolreg(unsigned int regno, unsigned int red,
 
 				val |= ((green >>  5) & 0x07e0);
 			}
+=======
+			val  = ((red   >> 11) & 0x001f);
+			val |= ((green >>  6) & 0x03e0);
+			val |= ((blue  >>  1) & 0x7c00);
+
+			/*
+			 * TODO: intensity bit. Maybe something like
+			 *   ~(red[10] ^ green[10] ^ blue[10]) & 1
+			 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			lcdc_writel(sinfo, ATMEL_LCDC_LUT(regno), val);
 			ret = 0;
@@ -874,10 +938,13 @@ static int __init atmel_lcdfb_probe(struct platform_device *pdev)
 	}
 	sinfo->info = info;
 	sinfo->pdev = pdev;
+<<<<<<< HEAD
 	if (cpu_is_at91sam9261() || cpu_is_at91sam9263() ||
 							cpu_is_at91sam9rl()) {
 		sinfo->have_intensity_bit = true;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	strcpy(info->fix.id, sinfo->pdev->name);
 	info->flags = ATMEL_LCDFB_FBINFO_DEFAULT;
@@ -931,7 +998,11 @@ static int __init atmel_lcdfb_probe(struct platform_device *pdev)
 	if (map) {
 		/* use a pre-allocated memory buffer */
 		info->fix.smem_start = map->start;
+<<<<<<< HEAD
 		info->fix.smem_len = resource_size(map);
+=======
+		info->fix.smem_len = map->end - map->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!request_mem_region(info->fix.smem_start,
 					info->fix.smem_len, pdev->name)) {
 			ret = -EBUSY;
@@ -957,7 +1028,11 @@ static int __init atmel_lcdfb_probe(struct platform_device *pdev)
 
 	/* LCDC registers */
 	info->fix.mmio_start = regs->start;
+<<<<<<< HEAD
 	info->fix.mmio_len = resource_size(regs);
+=======
+	info->fix.mmio_len = regs->end - regs->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!request_mem_region(info->fix.mmio_start,
 				info->fix.mmio_len, pdev->name)) {

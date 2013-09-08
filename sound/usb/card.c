@@ -47,7 +47,16 @@
 #include <linux/mutex.h>
 #include <linux/usb/audio.h>
 #include <linux/usb/audio-v2.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+
+#ifdef CONFIG_SWITCH
+#include <linux/switch.h>
+#define USB_HEADSET_NONE 0
+#define USB_HEADSET_DGTL 2
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <sound/control.h>
 #include <sound/core.h>
@@ -66,9 +75,15 @@
 #include "helper.h"
 #include "debug.h"
 #include "pcm.h"
+<<<<<<< HEAD
 #include "format.h"
 #include "power.h"
 #include "stream.h"
+=======
+#include "urb.h"
+#include "format.h"
+#include "power.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Takashi Iwai <tiwai@suse.de>");
 MODULE_DESCRIPTION("USB Audio");
@@ -78,14 +93,24 @@ MODULE_SUPPORTED_DEVICE("{{Generic,USB Audio}}");
 
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;	/* Index 0-MAX */
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;	/* ID for this card */
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;/* Enable this card */
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;/* Enable this card */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Vendor/product IDs for this card */
 static int vid[SNDRV_CARDS] = { [0 ... (SNDRV_CARDS-1)] = -1 };
 static int pid[SNDRV_CARDS] = { [0 ... (SNDRV_CARDS-1)] = -1 };
 static int nrpacks = 8;		/* max. number of packets per urb */
+<<<<<<< HEAD
 static bool async_unlink = 1;
 static int device_setup[SNDRV_CARDS]; /* device parameter for this card */
 static bool ignore_ctl_error;
+=======
+static int async_unlink = 1;
+static int device_setup[SNDRV_CARDS]; /* device parameter for this card */
+static int ignore_ctl_error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_array(index, int, NULL, 0444);
 MODULE_PARM_DESC(index, "Index value for the USB audio adapter.");
@@ -116,6 +141,13 @@ static DEFINE_MUTEX(register_mutex);
 static struct snd_usb_audio *usb_chip[SNDRV_CARDS];
 static struct usb_driver usb_audio_driver;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SWITCH
+static struct switch_dev usb_audio_switch;
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * disconnect streams
  * called from snd_usb_audio_disconnect()
@@ -149,6 +181,7 @@ static int snd_usb_create_stream(struct snd_usb_audio *chip, int ctrlif, int int
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	alts = &iface->altsetting[0];
 	altsd = get_iface_desc(alts);
 
@@ -169,12 +202,19 @@ static int snd_usb_create_stream(struct snd_usb_audio *chip, int ctrlif, int int
 		altsd = get_iface_desc(alts);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (usb_interface_claimed(iface)) {
 		snd_printdd(KERN_INFO "%d:%d:%d: skipping, already claimed\n",
 						dev->devnum, ctrlif, interface);
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
+=======
+	alts = &iface->altsetting[0];
+	altsd = get_iface_desc(alts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((altsd->bInterfaceClass == USB_CLASS_AUDIO ||
 	     altsd->bInterfaceClass == USB_CLASS_VENDOR_SPEC) &&
 	    altsd->bInterfaceSubClass == USB_SUBCLASS_MIDISTREAMING) {
@@ -204,7 +244,11 @@ static int snd_usb_create_stream(struct snd_usb_audio *chip, int ctrlif, int int
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	if (! snd_usb_parse_audio_interface(chip, interface)) {
+=======
+	if (! snd_usb_parse_audio_endpoints(chip, interface)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		usb_set_interface(dev, interface, 0); /* reset the current interface */
 		usb_driver_claim_interface(&usb_audio_driver, iface, (void *)-1L);
 		return -EINVAL;
@@ -354,7 +398,11 @@ static int snd_usb_audio_create(struct usb_device *dev, int idx,
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	init_rwsem(&chip->shutdown_rwsem);
+=======
+	mutex_init(&chip->shutdown_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	chip->index = idx;
 	chip->dev = dev;
 	chip->card = card;
@@ -452,10 +500,16 @@ static int snd_usb_audio_create(struct usb_device *dev, int idx,
  * only at the first time.  the successive calls of this function will
  * append the pcm interface to the corresponding card.
  */
+<<<<<<< HEAD
 static struct snd_usb_audio *
 snd_usb_audio_probe(struct usb_device *dev,
 		    struct usb_interface *intf,
 		    const struct usb_device_id *usb_id)
+=======
+static void *snd_usb_audio_probe(struct usb_device *dev,
+				 struct usb_interface *intf,
+				 const struct usb_device_id *usb_id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const struct snd_usb_audio_quirk *quirk = (const struct snd_usb_audio_quirk *)usb_id->driver_info;
 	int i, err;
@@ -464,6 +518,11 @@ snd_usb_audio_probe(struct usb_device *dev,
 	int ifnum;
 	u32 id;
 
+<<<<<<< HEAD
+=======
+	printk("USBD][%s] Probe USB Audio (if=%d)\n",__func__,
+			intf->altsetting->desc.bInterfaceNumber);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	alts = &intf->altsetting[0];
 	ifnum = get_iface_desc(alts)->bInterfaceNumber;
 	id = USB_ID(le16_to_cpu(dev->descriptor.idVendor),
@@ -545,6 +604,35 @@ snd_usb_audio_probe(struct usb_device *dev,
 	usb_chip[chip->index] = chip;
 	chip->num_interfaces++;
 	chip->probing = 0;
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SWITCH
+	if (chip->index == 0) {
+		struct list_head *p;
+		struct snd_usb_stream *as;
+		struct snd_usb_substream *subs;
+		int playback = 0, capture = 0;
+
+		list_for_each(p, &chip->pcm_list) {
+			as = list_entry(p, struct snd_usb_stream, list);
+
+			subs = &as->substream[SNDRV_PCM_STREAM_PLAYBACK];
+			if (subs->num_formats)
+				playback++;
+
+			subs = &as->substream[SNDRV_PCM_STREAM_CAPTURE];
+			if (subs->num_formats)
+				capture++;
+
+			if (playback && capture) {
+				switch_set_state(&usb_audio_switch,
+						 USB_HEADSET_DGTL);
+				break;
+			}
+		}
+	}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&register_mutex);
 	return chip;
 
@@ -563,6 +651,7 @@ snd_usb_audio_probe(struct usb_device *dev,
  * we need to take care of counter, since disconnection can be called also
  * many times as well as usb_audio_probe().
  */
+<<<<<<< HEAD
 static void snd_usb_audio_disconnect(struct usb_device *dev,
 				     struct snd_usb_audio *chip)
 {
@@ -580,6 +669,28 @@ static void snd_usb_audio_disconnect(struct usb_device *dev,
 	mutex_lock(&register_mutex);
 	chip->num_interfaces--;
 	if (chip->num_interfaces <= 0) {
+=======
+static void snd_usb_audio_disconnect(struct usb_device *dev, void *ptr)
+{
+	struct snd_usb_audio *chip;
+	struct snd_card *card;
+	struct list_head *p;
+
+	if (ptr == (void *)-1L)
+		return;
+
+	chip = ptr;
+	card = chip->card;
+	mutex_lock(&register_mutex);
+	mutex_lock(&chip->shutdown_mutex);
+	chip->shutdown = 1;
+	chip->num_interfaces--;
+	if (chip->num_interfaces <= 0) {
+#ifdef CONFIG_SWITCH
+		if (chip->index == 0)
+			switch_set_state(&usb_audio_switch, USB_HEADSET_NONE);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_card_disconnect(card);
 		/* release the pcm resources */
 		list_for_each(p, &chip->pcm_list) {
@@ -594,9 +705,17 @@ static void snd_usb_audio_disconnect(struct usb_device *dev,
 			snd_usb_mixer_disconnect(p);
 		}
 		usb_chip[chip->index] = NULL;
+<<<<<<< HEAD
 		mutex_unlock(&register_mutex);
 		snd_card_free_when_closed(card);
 	} else {
+=======
+		mutex_unlock(&chip->shutdown_mutex);
+		mutex_unlock(&register_mutex);
+		snd_card_free_when_closed(card);
+	} else {
+		mutex_unlock(&chip->shutdown_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mutex_unlock(&register_mutex);
 	}
 }
@@ -607,7 +726,11 @@ static void snd_usb_audio_disconnect(struct usb_device *dev,
 static int usb_audio_probe(struct usb_interface *intf,
 			   const struct usb_device_id *id)
 {
+<<<<<<< HEAD
 	struct snd_usb_audio *chip;
+=======
+	void *chip;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	chip = snd_usb_audio_probe(interface_to_usbdev(intf), intf, id);
 	if (chip) {
 		usb_set_intfdata(intf, chip);
@@ -628,22 +751,32 @@ int snd_usb_autoresume(struct snd_usb_audio *chip)
 {
 	int err = -ENODEV;
 
+<<<<<<< HEAD
 	down_read(&chip->shutdown_rwsem);
 	if (chip->probing)
 		err = 0;
 	else if (!chip->shutdown)
 		err = usb_autopm_get_interface(chip->pm_intf);
 	up_read(&chip->shutdown_rwsem);
+=======
+	if (!chip->shutdown && !chip->probing)
+		err = usb_autopm_get_interface(chip->pm_intf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }
 
 void snd_usb_autosuspend(struct snd_usb_audio *chip)
 {
+<<<<<<< HEAD
 	down_read(&chip->shutdown_rwsem);
 	if (!chip->shutdown && !chip->probing)
 		usb_autopm_put_interface(chip->pm_intf);
 	up_read(&chip->shutdown_rwsem);
+=======
+	if (!chip->shutdown && !chip->probing)
+		usb_autopm_put_interface(chip->pm_intf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int usb_audio_suspend(struct usb_interface *intf, pm_message_t message)
@@ -656,7 +789,11 @@ static int usb_audio_suspend(struct usb_interface *intf, pm_message_t message)
 	if (chip == (void *)-1L)
 		return 0;
 
+<<<<<<< HEAD
 	if (!PMSG_IS_AUTO(message)) {
+=======
+	if (!(message.event & PM_EVENT_AUTO)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_power_change_state(chip->card, SNDRV_CTL_POWER_D3hot);
 		if (!chip->num_suspended_intf++) {
 			list_for_each(p, &chip->pcm_list) {
@@ -741,11 +878,28 @@ static int __init snd_usb_audio_init(void)
 		printk(KERN_WARNING "invalid nrpacks value.\n");
 		return -EINVAL;
 	}
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SWITCH
+	usb_audio_switch.name = "usb_audio";
+
+	if (switch_dev_register(&usb_audio_switch) < 0) {
+		printk(KERN_ERR "failed to register switch dev\n");
+		return -EFAULT;
+	}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return usb_register(&usb_audio_driver);
 }
 
 static void __exit snd_usb_audio_cleanup(void)
 {
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SWITCH
+	switch_dev_unregister(&usb_audio_switch);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usb_deregister(&usb_audio_driver);
 }
 

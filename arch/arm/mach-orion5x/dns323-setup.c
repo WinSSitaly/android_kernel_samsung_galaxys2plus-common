@@ -13,7 +13,11 @@
  * License, or (at your option) any later version.
  *
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/delay.h>
@@ -30,9 +34,15 @@
 #include <linux/phy.h>
 #include <linux/marvell_phy.h>
 #include <asm/mach-types.h>
+<<<<<<< HEAD
 #include <asm/mach/arch.h>
 #include <asm/mach/pci.h>
 #include <asm/system_info.h>
+=======
+#include <asm/gpio.h>
+#include <asm/mach/arch.h>
+#include <asm/mach/pci.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/orion5x.h>
 #include "common.h"
 #include "mpp.h"
@@ -70,7 +80,11 @@ enum {
  * PCI setup
  */
 
+<<<<<<< HEAD
 static int __init dns323_pci_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+static int __init dns323_pci_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int irq;
 
@@ -730,12 +744,19 @@ static void __init dns323_init(void)
 /* Warning: D-Link uses a wrong mach-type (=526) in their bootloader */
 MACHINE_START(DNS323, "D-Link DNS-323")
 	/* Maintainer: Herbert Valerio Riedel <hvr@gnu.org> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= 0x00000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= dns323_init,
 	.map_io		= orion5x_map_io,
 	.init_early	= orion5x_init_early,
 	.init_irq	= orion5x_init_irq,
 	.timer		= &orion5x_timer,
 	.fixup		= tag_fixup_mem32,
+<<<<<<< HEAD
 	.restart	= orion5x_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

@@ -123,6 +123,10 @@ struct kirkwood_dma_data {
 	void __iomem *io;
 	int irq;
 	int burst;
+<<<<<<< HEAD
+=======
+	struct mbus_dram_target_info *dram;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif

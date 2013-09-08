@@ -16,7 +16,11 @@
 #include <linux/usb/serial.h>
 #include <linux/uaccess.h>
 
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Version Information */
 #define DRIVER_VERSION "v2.00"
@@ -135,6 +139,10 @@ static struct usb_driver quausb2_usb_driver = {
 	.probe = usb_serial_probe,
 	.disconnect = usb_serial_disconnect,
 	.id_table = quausb2_id_table,
+<<<<<<< HEAD
+=======
+	.no_dynamic_id = 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -1941,6 +1949,10 @@ static struct usb_serial_driver quatech2_device = {
 		.name = "quatech_usb2",
 	},
 	.description = DRIVER_DESC,
+<<<<<<< HEAD
+=======
+	.usb_driver = &quausb2_usb_driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table = quausb2_id_table,
 	.num_ports = 8,
 	.open = qt2_open,
@@ -1962,11 +1974,49 @@ static struct usb_serial_driver quatech2_device = {
 	.write_bulk_callback = qt2_write_bulk_callback,
 };
 
+<<<<<<< HEAD
 static struct usb_serial_driver * const serial_drivers[] = {
 	&quatech2_device, NULL
 };
 
 module_usb_serial_driver(quausb2_usb_driver, serial_drivers);
+=======
+static int __init quausb2_usb_init(void)
+{
+	int retval;
+
+	dbg("%s\n", __func__);
+
+	/* register with usb-serial */
+	retval = usb_serial_register(&quatech2_device);
+
+	if (retval)
+		goto failed_usb_serial_register;
+
+	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_VERSION ":"
+			DRIVER_DESC "\n");
+
+	/* register with usb */
+
+	retval = usb_register(&quausb2_usb_driver);
+	if (retval == 0)
+		return 0;
+
+	/* if we're here, usb_register() failed */
+	usb_serial_deregister(&quatech2_device);
+failed_usb_serial_register:
+		return retval;
+}
+
+static void __exit quausb2_usb_exit(void)
+{
+	usb_deregister(&quausb2_usb_driver);
+	usb_serial_deregister(&quatech2_device);
+}
+
+module_init(quausb2_usb_init);
+module_exit(quausb2_usb_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR(DRIVER_AUTHOR);
 MODULE_DESCRIPTION(DRIVER_DESC);

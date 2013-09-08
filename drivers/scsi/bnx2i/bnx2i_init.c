@@ -1,6 +1,10 @@
 /* bnx2i.c: Broadcom NetXtreme II iSCSI driver.
  *
+<<<<<<< HEAD
  * Copyright (c) 2006 - 2011 Broadcom Corporation
+=======
+ * Copyright (c) 2006 - 2010 Broadcom Corporation
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (c) 2007, 2008 Red Hat, Inc.  All rights reserved.
  * Copyright (c) 2007, 2008 Mike Christie
  *
@@ -18,8 +22,13 @@ static struct list_head adapter_list = LIST_HEAD_INIT(adapter_list);
 static u32 adapter_count;
 
 #define DRV_MODULE_NAME		"bnx2i"
+<<<<<<< HEAD
 #define DRV_MODULE_VERSION	"2.7.0.3"
 #define DRV_MODULE_RELDATE	"Jun 15, 2011"
+=======
+#define DRV_MODULE_VERSION	"2.6.2.3"
+#define DRV_MODULE_RELDATE	"Dec 31, 2010"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static char version[] __devinitdata =
 		"Broadcom NetXtreme II iSCSI Driver " DRV_MODULE_NAME \
@@ -30,7 +39,11 @@ MODULE_AUTHOR("Anil Veerabhadrappa <anilgv@broadcom.com> and "
 	      "Eddie Wai <eddie.wai@broadcom.com>");
 
 MODULE_DESCRIPTION("Broadcom NetXtreme II BCM5706/5708/5709/57710/57711/57712"
+<<<<<<< HEAD
 		   "/57800/57810/57840 iSCSI Driver");
+=======
+		   " iSCSI Driver");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("GPL");
 MODULE_VERSION(DRV_MODULE_VERSION);
 
@@ -40,7 +53,11 @@ unsigned int event_coal_min = 24;
 module_param(event_coal_min, int, 0664);
 MODULE_PARM_DESC(event_coal_min, "Event Coalescing Minimum Commands");
 
+<<<<<<< HEAD
 unsigned int event_coal_div = 2;
+=======
+unsigned int event_coal_div = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(event_coal_div, int, 0664);
 MODULE_PARM_DESC(event_coal_div, "Event Coalescing Divide Factor");
 
@@ -49,11 +66,19 @@ module_param(en_tcp_dack, int, 0664);
 MODULE_PARM_DESC(en_tcp_dack, "Enable TCP Delayed ACK");
 
 unsigned int error_mask1 = 0x00;
+<<<<<<< HEAD
 module_param(error_mask1, uint, 0664);
 MODULE_PARM_DESC(error_mask1, "Config FW iSCSI Error Mask #1");
 
 unsigned int error_mask2 = 0x00;
 module_param(error_mask2, uint, 0664);
+=======
+module_param(error_mask1, int, 0664);
+MODULE_PARM_DESC(error_mask1, "Config FW iSCSI Error Mask #1");
+
+unsigned int error_mask2 = 0x00;
+module_param(error_mask2, int, 0664);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(error_mask2, "Config FW iSCSI Error Mask #2");
 
 unsigned int sq_size;
@@ -66,6 +91,7 @@ MODULE_PARM_DESC(rq_size, "Configure RQ size");
 
 u64 iscsi_error_mask = 0x00;
 
+<<<<<<< HEAD
 DEFINE_PER_CPU(struct bnx2i_percpu_s, bnx2i_percpu);
 
 static int bnx2i_cpu_callback(struct notifier_block *nfb,
@@ -75,6 +101,8 @@ static struct notifier_block bnx2i_cpu_notifier = {
 	.notifier_call = bnx2i_cpu_callback,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * bnx2i_identify_device - identifies NetXtreme II device type
@@ -97,6 +125,7 @@ void bnx2i_identify_device(struct bnx2i_hba *hba)
 	    (hba->pci_did == PCI_DEVICE_ID_NX2_5709S)) {
 		set_bit(BNX2I_NX2_DEV_5709, &hba->cnic_dev_type);
 		hba->mail_queue_access = BNX2I_MQ_BIN_MODE;
+<<<<<<< HEAD
 	} else if (hba->pci_did == PCI_DEVICE_ID_NX2_57710    ||
 		   hba->pci_did == PCI_DEVICE_ID_NX2_57711    ||
 		   hba->pci_did == PCI_DEVICE_ID_NX2_57711E   ||
@@ -111,6 +140,13 @@ void bnx2i_identify_device(struct bnx2i_hba *hba)
 		   hba->pci_did == PCI_DEVICE_ID_NX2_57840    ||
 		   hba->pci_did == PCI_DEVICE_ID_NX2_57840_MF ||
 		   hba->pci_did == PCI_DEVICE_ID_NX2_57840_VF)
+=======
+	} else if (hba->pci_did == PCI_DEVICE_ID_NX2_57710  ||
+		   hba->pci_did == PCI_DEVICE_ID_NX2_57711  ||
+		   hba->pci_did == PCI_DEVICE_ID_NX2_57711E ||
+		   hba->pci_did == PCI_DEVICE_ID_NX2_57712  ||
+		   hba->pci_did == PCI_DEVICE_ID_NX2_57712E)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_bit(BNX2I_NX2_DEV_57710, &hba->cnic_dev_type);
 	else
 		printk(KERN_ALERT "bnx2i: unknown device, 0x%x\n",
@@ -181,6 +217,7 @@ void bnx2i_start(void *handle)
 	struct bnx2i_hba *hba = handle;
 	int i = HZ;
 
+<<<<<<< HEAD
 	/*
 	 * We should never register devices that don't support iSCSI
 	 * (see bnx2i_init_one), so something is wrong if we try to
@@ -189,6 +226,23 @@ void bnx2i_start(void *handle)
 	 */
 	BUG_ON(!hba->cnic->max_iscsi_conn);
 
+=======
+	if (!hba->cnic->max_iscsi_conn) {
+		printk(KERN_ALERT "bnx2i: dev %s does not support "
+			"iSCSI\n", hba->netdev->name);
+
+		if (test_bit(BNX2I_CNIC_REGISTERED, &hba->reg_with_cnic)) {
+			mutex_lock(&bnx2i_dev_lock);
+			list_del_init(&hba->link);
+			adapter_count--;
+			hba->cnic->unregister_device(hba->cnic, CNIC_ULP_ISCSI);
+			clear_bit(BNX2I_CNIC_REGISTERED, &hba->reg_with_cnic);
+			mutex_unlock(&bnx2i_dev_lock);
+			bnx2i_free_hba(hba);
+		}
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bnx2i_send_fw_iscsi_init_msg(hba);
 	while (!test_bit(ADAPTER_STATE_UP, &hba->adapter_state) && i--)
 		msleep(BNX2I_INIT_POLL_TIME);
@@ -292,6 +346,7 @@ static int bnx2i_init_one(struct bnx2i_hba *hba, struct cnic_dev *cnic)
 	int rc;
 
 	mutex_lock(&bnx2i_dev_lock);
+<<<<<<< HEAD
 	if (!cnic->max_iscsi_conn) {
 		printk(KERN_ALERT "bnx2i: dev %s does not support "
 			"iSCSI\n", hba->netdev->name);
@@ -299,6 +354,8 @@ static int bnx2i_init_one(struct bnx2i_hba *hba, struct cnic_dev *cnic)
 		goto out;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hba->cnic = cnic;
 	rc = cnic->register_device(cnic, CNIC_ULP_ISCSI, hba);
 	if (!rc) {
@@ -316,7 +373,10 @@ static int bnx2i_init_one(struct bnx2i_hba *hba, struct cnic_dev *cnic)
 	else
 		printk(KERN_ERR "bnx2i dev reg, unknown error, %d\n", rc);
 
+<<<<<<< HEAD
 out:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&bnx2i_dev_lock);
 
 	return rc;
@@ -381,6 +441,7 @@ void bnx2i_ulp_exit(struct cnic_dev *dev)
 
 
 /**
+<<<<<<< HEAD
  * bnx2i_percpu_thread_create - Create a receive thread for an
  *				online CPU
  *
@@ -467,6 +528,8 @@ static int bnx2i_cpu_callback(struct notifier_block *nfb,
 
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * bnx2i_mod_init - module init entry point
  *
  * initialize any driver wide global data structures such as endpoint pool,
@@ -476,8 +539,11 @@ static int bnx2i_cpu_callback(struct notifier_block *nfb,
 static int __init bnx2i_mod_init(void)
 {
 	int err;
+<<<<<<< HEAD
 	unsigned cpu = 0;
 	struct bnx2i_percpu_s *p;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	printk(KERN_INFO "%s", version);
 
@@ -500,6 +566,7 @@ static int __init bnx2i_mod_init(void)
 		goto unreg_xport;
 	}
 
+<<<<<<< HEAD
 	/* Create percpu kernel threads to handle iSCSI I/O completions */
 	for_each_possible_cpu(cpu) {
 		p = &per_cpu(bnx2i_percpu, cpu);
@@ -514,6 +581,8 @@ static int __init bnx2i_mod_init(void)
 	/* Initialize per CPU interrupt thread */
 	register_hotcpu_notifier(&bnx2i_cpu_notifier);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 unreg_xport:
@@ -534,7 +603,10 @@ out:
 static void __exit bnx2i_mod_exit(void)
 {
 	struct bnx2i_hba *hba;
+<<<<<<< HEAD
 	unsigned cpu = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&bnx2i_dev_lock);
 	while (!list_empty(&adapter_list)) {
@@ -552,11 +624,14 @@ static void __exit bnx2i_mod_exit(void)
 	}
 	mutex_unlock(&bnx2i_dev_lock);
 
+<<<<<<< HEAD
 	unregister_hotcpu_notifier(&bnx2i_cpu_notifier);
 
 	for_each_online_cpu(cpu)
 		bnx2i_percpu_thread_destroy(cpu);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iscsi_unregister_transport(&bnx2i_iscsi_transport);
 	cnic_unregister_driver(CNIC_ULP_ISCSI);
 }

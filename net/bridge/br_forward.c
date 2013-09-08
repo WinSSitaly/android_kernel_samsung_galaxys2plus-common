@@ -47,7 +47,10 @@ int br_dev_queue_push_xmit(struct sk_buff *skb)
 		kfree_skb(skb);
 	} else {
 		skb_push(skb, ETH_HLEN);
+<<<<<<< HEAD
 		br_drop_fake_rtable(skb);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_queue_xmit(skb);
 	}
 
@@ -99,7 +102,11 @@ static void __br_forward(const struct net_bridge_port *to, struct sk_buff *skb)
 /* called with rcu_read_lock */
 void br_deliver(const struct net_bridge_port *to, struct sk_buff *skb)
 {
+<<<<<<< HEAD
 	if (to && should_deliver(to, skb)) {
+=======
+	if (should_deliver(to, skb)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__br_deliver(to, skb);
 		return;
 	}

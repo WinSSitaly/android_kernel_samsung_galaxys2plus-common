@@ -125,6 +125,7 @@
  * The current exported interfaces for gathering environmental noise
  * from the devices are:
  *
+<<<<<<< HEAD
  *	void add_device_randomness(const void *buf, unsigned int size);
  * 	void add_input_randomness(unsigned int type, unsigned int code,
  *                                unsigned int value);
@@ -145,6 +146,23 @@
  * add_interrupt_randomness() uses the interrupt timing as random
  * inputs to the entropy pool. Using the cycle counters and the irq source
  * as inputs, it feeds the randomness roughly once a second.
+=======
+ * 	void add_input_randomness(unsigned int type, unsigned int code,
+ *                                unsigned int value);
+ * 	void add_interrupt_randomness(int irq);
+ * 	void add_disk_randomness(struct gendisk *disk);
+ *
+ * add_input_randomness() uses the input layer interrupt timing, as well as
+ * the event type information from the hardware.
+ *
+ * add_interrupt_randomness() uses the inter-interrupt timing as random
+ * inputs to the entropy pool.  Note that not all interrupts are good
+ * sources of randomness!  For example, the timer interrupts is not a
+ * good choice, because the periodicity of the interrupts is too
+ * regular, and hence predictable to an attacker.  Network Interface
+ * Controller interrupts are a better measure, since the timing of the
+ * NIC interrupts are more unpredictable.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * add_disk_randomness() uses what amounts to the seek time of block
  * layer request events, on a per-disk_devt basis, as input to the
@@ -253,8 +271,11 @@
 #include <linux/percpu.h>
 #include <linux/cryptohash.h>
 #include <linux/fips.h>
+<<<<<<< HEAD
 #include <linux/ptrace.h>
 #include <linux/kmemcheck.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_GENERIC_HARDIRQS
 # include <linux/irq.h>
@@ -263,12 +284,17 @@
 #include <asm/processor.h>
 #include <asm/uaccess.h>
 #include <asm/irq.h>
+<<<<<<< HEAD
 #include <asm/irq_regs.h>
 #include <asm/io.h>
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/random.h>
 
+=======
+#include <asm/io.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Configuration information
  */
@@ -277,8 +303,11 @@
 #define SEC_XFER_SIZE 512
 #define EXTRACT_SIZE 10
 
+<<<<<<< HEAD
 #define LONGS(x) (((x) + sizeof(unsigned long) - 1)/sizeof(unsigned long))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The minimum number of bits of entropy before we wake up a read on
  * /dev/random.  Should be enough to do a significant reseed.
@@ -400,7 +429,11 @@ static DECLARE_WAIT_QUEUE_HEAD(random_write_wait);
 static struct fasync_struct *fasync;
 
 #if 0
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(debug, bool, 0644);
 #define DEBUG_ENT(fmt, arg...) do { \
 	if (debug) \
@@ -433,10 +466,15 @@ struct entropy_store {
 	/* read-write data: */
 	spinlock_t lock;
 	unsigned add_ptr;
+<<<<<<< HEAD
 	unsigned input_rotate;
 	int entropy_count;
 	int entropy_total;
 	unsigned int initialized:1;
+=======
+	int entropy_count;
+	int input_rotate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__u8 last_data[EXTRACT_SIZE];
 };
 
@@ -469,10 +507,13 @@ static struct entropy_store nonblocking_pool = {
 	.pool = nonblocking_pool_data
 };
 
+<<<<<<< HEAD
 static __u32 const twist_table[8] = {
 	0x00000000, 0x3b6e20c8, 0x76dc4190, 0x4db26158,
 	0xedb88320, 0xd6d6a3e8, 0x9b64c2b0, 0xa00ae278 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This function adds bytes into the entropy "pool".  It does not
  * update the entropy estimate.  The caller should call
@@ -483,24 +524,45 @@ static __u32 const twist_table[8] = {
  * it's cheap to do so and helps slightly in the expected case where
  * the entropy is concentrated in the low-order bits.
  */
+<<<<<<< HEAD
 static void _mix_pool_bytes(struct entropy_store *r, const void *in,
 			    int nbytes, __u8 out[64])
 {
+=======
+static void mix_pool_bytes_extract(struct entropy_store *r, const void *in,
+				   int nbytes, __u8 out[64])
+{
+	static __u32 const twist_table[8] = {
+		0x00000000, 0x3b6e20c8, 0x76dc4190, 0x4db26158,
+		0xedb88320, 0xd6d6a3e8, 0x9b64c2b0, 0xa00ae278 };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long i, j, tap1, tap2, tap3, tap4, tap5;
 	int input_rotate;
 	int wordmask = r->poolinfo->poolwords - 1;
 	const char *bytes = in;
 	__u32 w;
+<<<<<<< HEAD
 
+=======
+	unsigned long flags;
+
+	/* Taps are constant, so we can load them without holding r->lock.  */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tap1 = r->poolinfo->tap1;
 	tap2 = r->poolinfo->tap2;
 	tap3 = r->poolinfo->tap3;
 	tap4 = r->poolinfo->tap4;
 	tap5 = r->poolinfo->tap5;
 
+<<<<<<< HEAD
 	smp_rmb();
 	input_rotate = ACCESS_ONCE(r->input_rotate);
 	i = ACCESS_ONCE(r->add_ptr);
+=======
+	spin_lock_irqsave(&r->lock, flags);
+	input_rotate = r->input_rotate;
+	i = r->add_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* mix one byte at a time to simplify size handling and churn faster */
 	while (nbytes--) {
@@ -527,13 +589,19 @@ static void _mix_pool_bytes(struct entropy_store *r, const void *in,
 		input_rotate += i ? 7 : 14;
 	}
 
+<<<<<<< HEAD
 	ACCESS_ONCE(r->input_rotate) = input_rotate;
 	ACCESS_ONCE(r->add_ptr) = i;
 	smp_wmb();
+=======
+	r->input_rotate = input_rotate;
+	r->add_ptr = i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (out)
 		for (j = 0; j < 16; j++)
 			((__u32 *)out)[j] = r->pool[(i - j) & wordmask];
+<<<<<<< HEAD
 }
 
 static void __mix_pool_bytes(struct entropy_store *r, const void *in,
@@ -582,6 +650,15 @@ static void fast_mix(struct fast_pool *f, const void *in, int nbytes)
 	}
 	f->count = i;
 	f->rotate = input_rotate;
+=======
+
+	spin_unlock_irqrestore(&r->lock, flags);
+}
+
+static void mix_pool_bytes(struct entropy_store *r, const void *in, int bytes)
+{
+       mix_pool_bytes_extract(r, in, bytes, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -589,21 +666,35 @@ static void fast_mix(struct fast_pool *f, const void *in, int nbytes)
  */
 static void credit_entropy_bits(struct entropy_store *r, int nbits)
 {
+<<<<<<< HEAD
 	int entropy_count, orig;
+=======
+	unsigned long flags;
+	int entropy_count;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!nbits)
 		return;
 
+<<<<<<< HEAD
 	DEBUG_ENT("added %d entropy credits to %s\n", nbits, r->name);
 retry:
 	entropy_count = orig = ACCESS_ONCE(r->entropy_count);
 	entropy_count += nbits;
 
+=======
+	spin_lock_irqsave(&r->lock, flags);
+
+	DEBUG_ENT("added %d entropy credits to %s\n", nbits, r->name);
+	entropy_count = r->entropy_count;
+	entropy_count += nbits;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (entropy_count < 0) {
 		DEBUG_ENT("negative entropy/overflow\n");
 		entropy_count = 0;
 	} else if (entropy_count > r->poolinfo->POOLBITS)
 		entropy_count = r->poolinfo->POOLBITS;
+<<<<<<< HEAD
 	if (cmpxchg(&r->entropy_count, orig, entropy_count) != orig)
 		goto retry;
 
@@ -615,12 +706,19 @@ retry:
 
 	trace_credit_entropy_bits(r->name, nbits, entropy_count,
 				  r->entropy_total, _RET_IP_);
+=======
+	r->entropy_count = entropy_count;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* should we wake readers? */
 	if (r == &input_pool && entropy_count >= random_read_wakeup_thresh) {
 		wake_up_interruptible(&random_read_wait);
 		kill_fasync(&fasync, SIGIO, POLL_IN);
 	}
+<<<<<<< HEAD
+=======
+	spin_unlock_irqrestore(&r->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*********************************************************************
@@ -636,6 +734,7 @@ struct timer_rand_state {
 	unsigned dont_count_entropy:1;
 };
 
+<<<<<<< HEAD
 /*
  * Add device- or boot-specific data to the input and nonblocking
  * pools to help initialize them to unique values.
@@ -654,6 +753,44 @@ void add_device_randomness(const void *buf, unsigned int size)
 	mix_pool_bytes(&nonblocking_pool, &time, sizeof(time), NULL);
 }
 EXPORT_SYMBOL(add_device_randomness);
+=======
+#ifndef CONFIG_GENERIC_HARDIRQS
+
+static struct timer_rand_state *irq_timer_state[NR_IRQS];
+
+static struct timer_rand_state *get_timer_rand_state(unsigned int irq)
+{
+	return irq_timer_state[irq];
+}
+
+static void set_timer_rand_state(unsigned int irq,
+				 struct timer_rand_state *state)
+{
+	irq_timer_state[irq] = state;
+}
+
+#else
+
+static struct timer_rand_state *get_timer_rand_state(unsigned int irq)
+{
+	struct irq_desc *desc;
+
+	desc = irq_to_desc(irq);
+
+	return desc->timer_rand_state;
+}
+
+static void set_timer_rand_state(unsigned int irq,
+				 struct timer_rand_state *state)
+{
+	struct irq_desc *desc;
+
+	desc = irq_to_desc(irq);
+
+	desc->timer_rand_state = state;
+}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct timer_rand_state input_timer_state;
 
@@ -670,8 +807,13 @@ static struct timer_rand_state input_timer_state;
 static void add_timer_randomness(struct timer_rand_state *state, unsigned num)
 {
 	struct {
+<<<<<<< HEAD
 		long jiffies;
 		unsigned cycles;
+=======
+		cycles_t cycles;
+		long jiffies;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned num;
 	} sample;
 	long delta, delta2, delta3;
@@ -685,7 +827,11 @@ static void add_timer_randomness(struct timer_rand_state *state, unsigned num)
 	sample.jiffies = jiffies;
 	sample.cycles = get_cycles();
 	sample.num = num;
+<<<<<<< HEAD
 	mix_pool_bytes(&input_pool, &sample, sizeof(sample), NULL);
+=======
+	mix_pool_bytes(&input_pool, &sample, sizeof(sample));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Calculate number of bits of randomness we probably added.
@@ -742,6 +888,7 @@ void add_input_randomness(unsigned int type, unsigned int code,
 }
 EXPORT_SYMBOL_GPL(add_input_randomness);
 
+<<<<<<< HEAD
 static DEFINE_PER_CPU(struct fast_pool, irq_randomness);
 
 void add_interrupt_randomness(int irq, int irq_flags)
@@ -784,6 +931,19 @@ void add_interrupt_randomness(int irq, int irq_flags)
 			fast_pool->last_timer_intr = 0;
 	}
 	credit_entropy_bits(r, 1);
+=======
+void add_interrupt_randomness(int irq)
+{
+	struct timer_rand_state *state;
+
+	state = get_timer_rand_state(irq);
+
+	if (state == NULL)
+		return;
+
+	DEBUG_ENT("irq event %d\n", irq);
+	add_timer_randomness(state, 0x100 + irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_BLOCK
@@ -815,7 +975,11 @@ static ssize_t extract_entropy(struct entropy_store *r, void *buf,
  */
 static void xfer_secondary_pool(struct entropy_store *r, size_t nbytes)
 {
+<<<<<<< HEAD
 	__u32	tmp[OUTPUT_POOL_WORDS];
+=======
+	__u32 tmp[OUTPUT_POOL_WORDS];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (r->pull && r->entropy_count < nbytes * 8 &&
 	    r->entropy_count < r->poolinfo->POOLBITS) {
@@ -834,7 +998,11 @@ static void xfer_secondary_pool(struct entropy_store *r, size_t nbytes)
 
 		bytes = extract_entropy(r->pull, tmp, bytes,
 					random_read_wakeup_thresh / 8, rsvd);
+<<<<<<< HEAD
 		mix_pool_bytes(r, tmp, bytes, NULL);
+=======
+		mix_pool_bytes(r, tmp, bytes);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		credit_entropy_bits(r, bytes*8);
 	}
 }
@@ -893,6 +1061,7 @@ static size_t account(struct entropy_store *r, size_t nbytes, int min,
 static void extract_buf(struct entropy_store *r, __u8 *out)
 {
 	int i;
+<<<<<<< HEAD
 	union {
 		__u32 w[5];
 		unsigned long l[LONGS(EXTRACT_SIZE)];
@@ -906,6 +1075,15 @@ static void extract_buf(struct entropy_store *r, __u8 *out)
 	spin_lock_irqsave(&r->lock, flags);
 	for (i = 0; i < r->poolinfo->poolwords; i += 16)
 		sha_transform(hash.w, (__u8 *)(r->pool + i), workspace);
+=======
+	__u32 hash[5], workspace[SHA_WORKSPACE_WORDS];
+	__u8 extract[64];
+
+	/* Generate a hash across the pool, 16 words (512 bits) at a time */
+	sha_init(hash);
+	for (i = 0; i < r->poolinfo->poolwords; i += 16)
+		sha_transform(hash, (__u8 *)(r->pool + i), workspace);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * We mix the hash back into the pool to prevent backtracking
@@ -916,14 +1094,22 @@ static void extract_buf(struct entropy_store *r, __u8 *out)
 	 * brute-forcing the feedback as hard as brute-forcing the
 	 * hash.
 	 */
+<<<<<<< HEAD
 	__mix_pool_bytes(r, hash.w, sizeof(hash.w), extract);
 	spin_unlock_irqrestore(&r->lock, flags);
+=======
+	mix_pool_bytes_extract(r, hash, sizeof(hash), extract);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * To avoid duplicates, we atomically extract a portion of the
 	 * pool while mixing, and hash one final time.
 	 */
+<<<<<<< HEAD
 	sha_transform(hash.w, extract, workspace);
+=======
+	sha_transform(hash, extract, workspace);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(extract, 0, sizeof(extract));
 	memset(workspace, 0, sizeof(workspace));
 
@@ -932,6 +1118,7 @@ static void extract_buf(struct entropy_store *r, __u8 *out)
 	 * pattern, we fold it in half. Thus, we always feed back
 	 * twice as much data as we output.
 	 */
+<<<<<<< HEAD
 	hash.w[0] ^= hash.w[3];
 	hash.w[1] ^= hash.w[4];
 	hash.w[2] ^= rol32(hash.w[2], 16);
@@ -958,6 +1145,22 @@ static ssize_t extract_entropy(struct entropy_store *r, void *buf,
 	__u8 tmp[EXTRACT_SIZE];
 
 	trace_extract_entropy(r->name, nbytes, r->entropy_count, _RET_IP_);
+=======
+	hash[0] ^= hash[3];
+	hash[1] ^= hash[4];
+	hash[2] ^= rol32(hash[2], 16);
+	memcpy(out, hash, EXTRACT_SIZE);
+	memset(hash, 0, sizeof(hash));
+}
+
+static ssize_t extract_entropy(struct entropy_store *r, void *buf,
+			       size_t nbytes, int min, int reserved)
+{
+	ssize_t ret = 0, i;
+	__u8 tmp[EXTRACT_SIZE];
+	unsigned long flags;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	xfer_secondary_pool(r, nbytes);
 	nbytes = account(r, nbytes, min, reserved);
 
@@ -965,8 +1168,11 @@ static ssize_t extract_entropy(struct entropy_store *r, void *buf,
 		extract_buf(r, tmp);
 
 		if (fips_enabled) {
+<<<<<<< HEAD
 			unsigned long flags;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			spin_lock_irqsave(&r->lock, flags);
 			if (!memcmp(tmp, r->last_data, EXTRACT_SIZE))
 				panic("Hardware RNG duplicated output!\n");
@@ -992,7 +1198,10 @@ static ssize_t extract_entropy_user(struct entropy_store *r, void __user *buf,
 	ssize_t ret = 0, i;
 	__u8 tmp[EXTRACT_SIZE];
 
+<<<<<<< HEAD
 	trace_extract_entropy_user(r->name, nbytes, r->entropy_count, _RET_IP_);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	xfer_secondary_pool(r, nbytes);
 	nbytes = account(r, nbytes, 0, 0);
 
@@ -1026,9 +1235,14 @@ static ssize_t extract_entropy_user(struct entropy_store *r, void __user *buf,
 
 /*
  * This function is the exported kernel interface.  It returns some
+<<<<<<< HEAD
  * number of good random numbers, suitable for key generation, seeding
  * TCP sequence numbers, etc.  It does not use the hw random number
  * generator, if available; use get_random_bytes_arch() for that.
+=======
+ * number of good random numbers, suitable for seeding TCP sequence
+ * numbers, etc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void get_random_bytes(void *buf, int nbytes)
 {
@@ -1037,6 +1251,7 @@ void get_random_bytes(void *buf, int nbytes)
 EXPORT_SYMBOL(get_random_bytes);
 
 /*
+<<<<<<< HEAD
  * This function will use the architecture-specific hardware random
  * number generator if it is available.  The arch-specific hw RNG will
  * almost certainly be faster than what we can do in software, but it
@@ -1070,6 +1285,8 @@ EXPORT_SYMBOL(get_random_bytes_arch);
 
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * init_std_data - initialize pool with system data
  *
  * @r: pool to initialize
@@ -1080,6 +1297,7 @@ EXPORT_SYMBOL(get_random_bytes_arch);
  */
 static void init_std_data(struct entropy_store *r)
 {
+<<<<<<< HEAD
 	int i;
 	ktime_t now = ktime_get_real();
 	unsigned long rv;
@@ -1105,6 +1323,20 @@ static void init_std_data(struct entropy_store *r)
  * take care not to overwrite the precious per platform data
  * we were given.
  */
+=======
+	ktime_t now;
+	unsigned long flags;
+
+	spin_lock_irqsave(&r->lock, flags);
+	r->entropy_count = 0;
+	spin_unlock_irqrestore(&r->lock, flags);
+
+	now = ktime_get_real();
+	mix_pool_bytes(r, &now, sizeof(now));
+	mix_pool_bytes(r, utsname(), sizeof(*(utsname())));
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int rand_initialize(void)
 {
 	init_std_data(&input_pool);
@@ -1114,6 +1346,27 @@ static int rand_initialize(void)
 }
 module_init(rand_initialize);
 
+<<<<<<< HEAD
+=======
+void rand_initialize_irq(int irq)
+{
+	struct timer_rand_state *state;
+
+	state = get_timer_rand_state(irq);
+
+	if (state)
+		return;
+
+	/*
+	 * If kzalloc returns null, we just won't use that entropy
+	 * source.
+	 */
+	state = kzalloc(sizeof(struct timer_rand_state), GFP_KERNEL);
+	if (state)
+		set_timer_rand_state(irq, state);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_BLOCK
 void rand_initialize_disk(struct gendisk *disk)
 {
@@ -1221,7 +1474,11 @@ write_pool(struct entropy_store *r, const char __user *buffer, size_t count)
 		count -= bytes;
 		p += bytes;
 
+<<<<<<< HEAD
 		mix_pool_bytes(r, buf, bytes, NULL);
+=======
+		mix_pool_bytes(r, buf, bytes);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cond_resched();
 	}
 
@@ -1364,6 +1621,7 @@ static int proc_do_uuid(ctl_table *table, int write,
 	uuid = table->data;
 	if (!uuid) {
 		uuid = tmp_uuid;
+<<<<<<< HEAD
 		generate_random_uuid(uuid);
 	} else {
 		static DEFINE_SPINLOCK(bootid_spinlock);
@@ -1373,6 +1631,12 @@ static int proc_do_uuid(ctl_table *table, int write,
 			generate_random_uuid(uuid);
 		spin_unlock(&bootid_spinlock);
 	}
+=======
+		uuid[8] = 0;
+	}
+	if (uuid[8] == 0)
+		generate_random_uuid(uuid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sprintf(buf, "%pU", uuid);
 
@@ -1451,6 +1715,7 @@ late_initcall(random_int_secret_init);
 DEFINE_PER_CPU(__u32 [MD5_DIGEST_WORDS], get_random_int_hash);
 unsigned int get_random_int(void)
 {
+<<<<<<< HEAD
 	__u32 *hash;
 	unsigned int ret;
 
@@ -1459,6 +1724,11 @@ unsigned int get_random_int(void)
 
 	hash = get_cpu_var(get_random_int_hash);
 
+=======
+	__u32 *hash = get_cpu_var(get_random_int_hash);
+	unsigned int ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hash[0] += current->pid + jiffies + get_cycles();
 	md5_transform(hash, random_int_secret);
 	ret = hash[0];

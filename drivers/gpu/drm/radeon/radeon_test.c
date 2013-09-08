@@ -40,6 +40,7 @@ void radeon_test_moves(struct radeon_device *rdev)
 	size = 1024 * 1024;
 
 	/* Number of tests =
+<<<<<<< HEAD
 	 * (Total GTT - IB pool - writeback page - ring buffers) / test size
 	 */
 	n = rdev->mc.gtt_size - RADEON_IB_POOL_SIZE*64*1024;
@@ -50,6 +51,12 @@ void radeon_test_moves(struct radeon_device *rdev)
 	if (rdev->ih.ring_obj)
 		n -= rdev->ih.ring_size;
 	n /= size;
+=======
+	 * (Total GTT - IB pool - writeback page - ring buffer) / test size
+	 */
+	n = ((u32)(rdev->mc.gtt_size - RADEON_IB_POOL_SIZE*64*1024 - RADEON_GPU_PAGE_SIZE -
+	     rdev->cp.ring_size)) / size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	gtt_obj = kzalloc(n * sizeof(*gtt_obj), GFP_KERNEL);
 	if (!gtt_obj) {
@@ -106,7 +113,11 @@ void radeon_test_moves(struct radeon_device *rdev)
 
 		radeon_bo_kunmap(gtt_obj[i]);
 
+<<<<<<< HEAD
 		r = radeon_fence_create(rdev, &fence, RADEON_RING_TYPE_GFX_INDEX);
+=======
+		r = radeon_fence_create(rdev, &fence);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (r) {
 			DRM_ERROR("Failed to create GTT->VRAM fence %d\n", i);
 			goto out_cleanup;
@@ -138,6 +149,7 @@ void radeon_test_moves(struct radeon_device *rdev)
 		     gtt_start++, vram_start++) {
 			if (*vram_start != gtt_start) {
 				DRM_ERROR("Incorrect GTT->VRAM copy %d: Got 0x%p, "
+<<<<<<< HEAD
 					  "expected 0x%p (GTT/VRAM offset "
 					  "0x%16llx/0x%16llx)\n",
 					  i, *vram_start, gtt_start,
@@ -147,6 +159,11 @@ void radeon_test_moves(struct radeon_device *rdev)
 					  (unsigned long long)
 					  (vram_addr - rdev->mc.vram_start +
 					   (void*)gtt_start - gtt_map));
+=======
+					  "expected 0x%p (GTT map 0x%p-0x%p)\n",
+					  i, *vram_start, gtt_start, gtt_map,
+					  gtt_end);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				radeon_bo_kunmap(vram_obj);
 				goto out_cleanup;
 			}
@@ -155,7 +172,11 @@ void radeon_test_moves(struct radeon_device *rdev)
 
 		radeon_bo_kunmap(vram_obj);
 
+<<<<<<< HEAD
 		r = radeon_fence_create(rdev, &fence, RADEON_RING_TYPE_GFX_INDEX);
+=======
+		r = radeon_fence_create(rdev, &fence);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (r) {
 			DRM_ERROR("Failed to create VRAM->GTT fence %d\n", i);
 			goto out_cleanup;
@@ -187,6 +208,7 @@ void radeon_test_moves(struct radeon_device *rdev)
 		     gtt_start++, vram_start++) {
 			if (*gtt_start != vram_start) {
 				DRM_ERROR("Incorrect VRAM->GTT copy %d: Got 0x%p, "
+<<<<<<< HEAD
 					  "expected 0x%p (VRAM/GTT offset "
 					  "0x%16llx/0x%16llx)\n",
 					  i, *gtt_start, vram_start,
@@ -196,6 +218,11 @@ void radeon_test_moves(struct radeon_device *rdev)
 					  (unsigned long long)
 					  (gtt_addr - rdev->mc.gtt_start +
 					   (void*)vram_start - vram_map));
+=======
+					  "expected 0x%p (VRAM map 0x%p-0x%p)\n",
+					  i, *gtt_start, vram_start, vram_map,
+					  vram_end);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				radeon_bo_kunmap(gtt_obj[i]);
 				goto out_cleanup;
 			}
@@ -234,6 +261,7 @@ out_cleanup:
 		printk(KERN_WARNING "Error while testing BO move.\n");
 	}
 }
+<<<<<<< HEAD
 
 void radeon_test_ring_sync(struct radeon_device *rdev,
 			   struct radeon_ring *ringA,
@@ -495,3 +523,5 @@ void radeon_test_syncing(struct radeon_device *rdev)
 		}
 	}
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

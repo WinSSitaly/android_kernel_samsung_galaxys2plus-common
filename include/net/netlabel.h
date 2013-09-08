@@ -4,7 +4,11 @@
  * The NetLabel system manages static and dynamic label mappings for network
  * protocols such as CIPSO and RIPSO.
  *
+<<<<<<< HEAD
  * Author: Paul Moore <paul@paul-moore.com>
+=======
+ * Author: Paul Moore <paul.moore@hp.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  */
 
@@ -38,7 +42,11 @@
 #include <linux/in6.h>
 #include <net/netlink.h>
 #include <net/request_sock.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct cipso_v4_doi;
 

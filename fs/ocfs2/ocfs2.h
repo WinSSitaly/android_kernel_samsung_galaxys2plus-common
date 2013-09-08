@@ -836,19 +836,28 @@ static inline unsigned int ocfs2_clusters_to_megabytes(struct super_block *sb,
 
 static inline void _ocfs2_set_bit(unsigned int bit, unsigned long *bitmap)
 {
+<<<<<<< HEAD
 	__set_bit_le(bit, bitmap);
+=======
+	__test_and_set_bit_le(bit, bitmap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #define ocfs2_set_bit(bit, addr) _ocfs2_set_bit((bit), (unsigned long *)(addr))
 
 static inline void _ocfs2_clear_bit(unsigned int bit, unsigned long *bitmap)
 {
+<<<<<<< HEAD
 	__clear_bit_le(bit, bitmap);
+=======
+	__test_and_clear_bit_le(bit, bitmap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #define ocfs2_clear_bit(bit, addr) _ocfs2_clear_bit((bit), (unsigned long *)(addr))
 
 #define ocfs2_test_bit test_bit_le
 #define ocfs2_find_next_zero_bit find_next_zero_bit_le
 #define ocfs2_find_next_bit find_next_bit_le
+<<<<<<< HEAD
 
 static inline void *correct_addr_and_bit_unaligned(int *bit, void *addr)
 {
@@ -896,5 +905,7 @@ static inline int ocfs2_find_next_zero_bit_unaligned(void *bitmap, int max,
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif  /* OCFS2_H */
 

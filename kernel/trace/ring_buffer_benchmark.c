@@ -106,7 +106,11 @@ static enum event_status read_page(int cpu)
 	int inc;
 	int i;
 
+<<<<<<< HEAD
 	bpage = ring_buffer_alloc_read_page(buffer, cpu);
+=======
+	bpage = ring_buffer_alloc_read_page(buffer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!bpage)
 		return EVENT_DROPPED;
 

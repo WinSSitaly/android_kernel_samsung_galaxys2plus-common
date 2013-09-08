@@ -261,9 +261,14 @@ static int wm9713_poll_sample(struct wm97xx *wm, int adcsel, int *sample)
 {
 	u16 dig1;
 	int timeout = 5 * delay;
+<<<<<<< HEAD
 	bool wants_pen = adcsel & WM97XX_PEN_DOWN;
 
 	if (wants_pen && !wm->pen_probably_down) {
+=======
+
+	if (!wm->pen_probably_down) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u16 data = wm97xx_reg_read(wm, AC97_WM97XX_DIGITISER_RD);
 		if (!(data & WM97XX_PEN_DOWN))
 			return RC_PENUP;
@@ -271,6 +276,7 @@ static int wm9713_poll_sample(struct wm97xx *wm, int adcsel, int *sample)
 	}
 
 	/* set up digitiser */
+<<<<<<< HEAD
 	dig1 = wm97xx_reg_read(wm, AC97_WM9713_DIG1);
 	dig1 &= ~WM9713_ADCSEL_MASK;
 	/* WM97XX_ADCSEL_* channels need to be converted to WM9713 format */
@@ -279,6 +285,17 @@ static int wm9713_poll_sample(struct wm97xx *wm, int adcsel, int *sample)
 	if (wm->mach_ops && wm->mach_ops->pre_sample)
 		wm->mach_ops->pre_sample(adcsel);
 	wm97xx_reg_write(wm, AC97_WM9713_DIG1, dig1 | WM9713_POLL);
+=======
+	if (adcsel & 0x8000)
+		adcsel = 1 << ((adcsel & 0x7fff) + 3);
+
+	dig1 = wm97xx_reg_read(wm, AC97_WM9713_DIG1);
+	dig1 &= ~WM9713_ADCSEL_MASK;
+
+	if (wm->mach_ops && wm->mach_ops->pre_sample)
+		wm->mach_ops->pre_sample(adcsel);
+	wm97xx_reg_write(wm, AC97_WM9713_DIG1, dig1 | adcsel | WM9713_POLL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* wait 3 AC97 time slots + delay for conversion */
 	poll_delay(delay);
@@ -304,6 +321,7 @@ static int wm9713_poll_sample(struct wm97xx *wm, int adcsel, int *sample)
 		wm->mach_ops->post_sample(adcsel);
 
 	/* check we have correct sample */
+<<<<<<< HEAD
 	if ((*sample ^ adcsel) & WM97XX_ADCSEL_MASK) {
 		dev_dbg(wm->dev, "adc wrong sample, wanted %x got %x",
 			adcsel & WM97XX_ADCSEL_MASK,
@@ -312,6 +330,15 @@ static int wm9713_poll_sample(struct wm97xx *wm, int adcsel, int *sample)
 	}
 
 	if (wants_pen && !(*sample & WM97XX_PEN_DOWN)) {
+=======
+	if ((*sample & WM97XX_ADCSRC_MASK) != ffs(adcsel >> 1) << 12) {
+		dev_dbg(wm->dev, "adc wrong sample, read %x got %x", adcsel,
+			*sample & WM97XX_ADCSRC_MASK);
+		return RC_PENUP;
+	}
+
+	if (!(*sample & WM97XX_PEN_DOWN)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wm->pen_probably_down = 0;
 		return RC_PENUP;
 	}
@@ -401,6 +428,7 @@ static int wm9713_poll_touch(struct wm97xx *wm, struct wm97xx_data *data)
 		if (rc != RC_VALID)
 			return rc;
 	} else {
+<<<<<<< HEAD
 		rc = wm9713_poll_sample(wm, WM97XX_ADCSEL_X | WM97XX_PEN_DOWN, &data->x);
 		if (rc != RC_VALID)
 			return rc;
@@ -409,6 +437,16 @@ static int wm9713_poll_touch(struct wm97xx *wm, struct wm97xx_data *data)
 			return rc;
 		if (pil) {
 			rc = wm9713_poll_sample(wm, WM97XX_ADCSEL_PRES | WM97XX_PEN_DOWN,
+=======
+		rc = wm9713_poll_sample(wm, WM9713_ADCSEL_X, &data->x);
+		if (rc != RC_VALID)
+			return rc;
+		rc = wm9713_poll_sample(wm, WM9713_ADCSEL_Y, &data->y);
+		if (rc != RC_VALID)
+			return rc;
+		if (pil) {
+			rc = wm9713_poll_sample(wm, WM9713_ADCSEL_PRES,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						&data->p);
 			if (rc != RC_VALID)
 				return rc;

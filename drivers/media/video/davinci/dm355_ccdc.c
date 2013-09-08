@@ -39,7 +39,10 @@
 #include <linux/videodev2.h>
 #include <linux/clk.h>
 #include <linux/err.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <media/davinci/dm355_ccdc.h>
 #include <media/davinci/vpss.h>
@@ -292,7 +295,11 @@ static int validate_ccdc_param(struct ccdc_config_params_raw *ccdcparam)
 	if ((ccdcparam->med_filt_thres < 0) ||
 	   (ccdcparam->med_filt_thres > CCDC_MED_FILT_THRESH)) {
 		dev_dbg(ccdc_cfg.dev,
+<<<<<<< HEAD
 			"Invalid value of median filter threshold\n");
+=======
+			"Invalid value of median filter thresold\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -1069,4 +1076,19 @@ static struct platform_driver dm355_ccdc_driver = {
 	.probe = dm355_ccdc_probe,
 };
 
+<<<<<<< HEAD
 module_platform_driver(dm355_ccdc_driver);
+=======
+static int __init dm355_ccdc_init(void)
+{
+	return platform_driver_register(&dm355_ccdc_driver);
+}
+
+static void __exit dm355_ccdc_exit(void)
+{
+	platform_driver_unregister(&dm355_ccdc_driver);
+}
+
+module_init(dm355_ccdc_init);
+module_exit(dm355_ccdc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

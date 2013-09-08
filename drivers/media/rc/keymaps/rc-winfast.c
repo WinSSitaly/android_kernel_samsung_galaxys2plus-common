@@ -11,7 +11,10 @@
  */
 
 #include <media/rc-map.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Table for Leadtek Winfast Remote Controls - used by both bttv and cx88 */
 

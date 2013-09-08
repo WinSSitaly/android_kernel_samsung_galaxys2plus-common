@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2007-2012 B.A.T.M.A.N. contributors:
+=======
+ * Copyright (C) 2007-2011 B.A.T.M.A.N. contributors:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Marek Lindner, Simon Wunderlich
  *
@@ -27,9 +31,14 @@
 #define DRIVER_DESC   "B.A.T.M.A.N. advanced"
 #define DRIVER_DEVICE "batman-adv"
 
+<<<<<<< HEAD
 #ifndef SOURCE_VERSION
 #define SOURCE_VERSION "2012.1.0"
 #endif
+=======
+#define SOURCE_VERSION "next"
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* B.A.T.M.A.N. parameters */
 
@@ -41,6 +50,7 @@
 
 /* purge originators after time in seconds if no valid packet comes in
  * -> TODO: check influence on TQ_LOCAL_WINDOW_SIZE */
+<<<<<<< HEAD
 #define PURGE_TIMEOUT 200000 /* 200 seconds */
 #define TT_LOCAL_TIMEOUT 3600000 /* in miliseconds */
 #define TT_CLIENT_ROAM_TIMEOUT 600000 /* in miliseconds */
@@ -50,11 +60,20 @@
 #define TT_REQUEST_TIMEOUT 3000 /* miliseconds we have to keep
 				 * pending tt_req */
 
+=======
+#define PURGE_TIMEOUT 200
+#define TT_LOCAL_TIMEOUT 3600 /* in seconds */
+
+/* sliding packet range of received originator messages in squence numbers
+ * (should be a multiple of our word size) */
+#define TQ_LOCAL_WINDOW_SIZE 64
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define TQ_GLOBAL_WINDOW_SIZE 5
 #define TQ_LOCAL_BIDRECT_SEND_MINIMUM 1
 #define TQ_LOCAL_BIDRECT_RECV_MINIMUM 1
 #define TQ_TOTAL_BIDRECT_LIMIT 1
 
+<<<<<<< HEAD
 #define TT_OGM_APPEND_MAX 3 /* number of OGMs sent with the last tt diff */
 
 #define ROAMING_MAX_TIME 20000 /* Time in which a client can roam at most
@@ -65,6 +84,8 @@
 
 #define NULL_IFINDEX 0 /* dummy ifindex used to avoid iface checks */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NUM_WORDS (TQ_LOCAL_WINDOW_SIZE / WORD_BIT_SIZE)
 
 #define LOG_BUF_LEN 8192	  /* has to be a power of 2 */
@@ -86,15 +107,22 @@
 #define RESET_PROTECTION_MS 30000
 #define EXPECTED_SEQNO_RANGE	65536
 
+<<<<<<< HEAD
 enum mesh_state {
 	MESH_INACTIVE,
 	MESH_ACTIVE,
 	MESH_DEACTIVATING
 };
+=======
+#define MESH_INACTIVE 0
+#define MESH_ACTIVE 1
+#define MESH_DEACTIVATING 2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define BCAST_QUEUE_LEN		256
 #define BATMAN_QUEUE_LEN	256
 
+<<<<<<< HEAD
 enum uev_action {
 	UEV_ADD = 0,
 	UEV_DEL,
@@ -108,6 +136,11 @@ enum uev_type {
 #define GW_THRESHOLD	50
 
 /* Debug Messages */
+=======
+/*
+ * Debug Messages
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef pr_fmt
 #undef pr_fmt
 #endif
@@ -115,6 +148,7 @@ enum uev_type {
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
 /* all messages related to routing / flooding / broadcasting / etc */
+<<<<<<< HEAD
 enum dbg_level {
 	DBG_BATMAN = 1 << 0,
 	DBG_ROUTES = 1 << 1, /* route added / changed / deleted */
@@ -123,11 +157,30 @@ enum dbg_level {
 };
 
 /* Kernel headers */
+=======
+#define DBG_BATMAN 1
+/* route or tt entry added / changed / deleted */
+#define DBG_ROUTES 2
+#define DBG_ALL 3
+
+
+/*
+ *  Vis
+ */
+
+/*
+ * Kernel headers
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/mutex.h>	/* mutex */
 #include <linux/module.h>	/* needed by all modules */
 #include <linux/netdevice.h>	/* netdevice */
+<<<<<<< HEAD
 #include <linux/etherdevice.h>  /* ethernet address classification */
+=======
+#include <linux/etherdevice.h>  /* ethernet address classifaction */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/if_ether.h>	/* ethernet header */
 #include <linux/poll.h>		/* poll_table */
 #include <linux/kthread.h>	/* kernel threads */
@@ -139,7 +192,16 @@ enum dbg_level {
 #include <linux/seq_file.h>
 #include "types.h"
 
+<<<<<<< HEAD
 extern char bat_routing_algo[];
+=======
+#ifndef REVISION_VERSION
+#define REVISION_VERSION_STR ""
+#else
+#define REVISION_VERSION_STR " "REVISION_VERSION
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct list_head hardif_list;
 
 extern unsigned char broadcast_addr[];
@@ -149,6 +211,7 @@ int mesh_init(struct net_device *soft_iface);
 void mesh_free(struct net_device *soft_iface);
 void inc_module_count(void);
 void dec_module_count(void);
+<<<<<<< HEAD
 int is_my_mac(const uint8_t *addr);
 int bat_algo_register(struct bat_algo_ops *bat_algo_ops);
 int bat_algo_select(struct bat_priv *bat_priv, char *name);
@@ -156,6 +219,12 @@ int bat_algo_seq_print_text(struct seq_file *seq, void *offset);
 
 #ifdef CONFIG_BATMAN_ADV_DEBUG
 int debug_log(struct bat_priv *bat_priv, const char *fmt, ...) __printf(2, 3);
+=======
+int is_my_mac(uint8_t *addr);
+
+#ifdef CONFIG_BATMAN_ADV_DEBUG
+int debug_log(struct bat_priv *bat_priv, char *fmt, ...);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define bat_dbg(type, bat_priv, fmt, arg...)			\
 	do {							\
@@ -164,10 +233,16 @@ int debug_log(struct bat_priv *bat_priv, const char *fmt, ...) __printf(2, 3);
 	}							\
 	while (0)
 #else /* !CONFIG_BATMAN_ADV_DEBUG */
+<<<<<<< HEAD
 __printf(3, 4)
 static inline void bat_dbg(int type __always_unused,
 			   struct bat_priv *bat_priv __always_unused,
 			   const char *fmt __always_unused, ...)
+=======
+static inline void bat_dbg(char type __always_unused,
+			   struct bat_priv *bat_priv __always_unused,
+			   char *fmt __always_unused, ...)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 }
 #endif
@@ -192,12 +267,17 @@ static inline void bat_dbg(int type __always_unused,
  *
  * note: can't use compare_ether_addr() as it requires aligned memory
  */
+<<<<<<< HEAD
 
 static inline int compare_eth(const void *data1, const void *data2)
+=======
+static inline int compare_eth(void *data1, void *data2)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return (memcmp(data1, data2, ETH_ALEN) == 0 ? 1 : 0);
 }
 
+<<<<<<< HEAD
 /**
  * has_timed_out - compares current time (jiffies) and timestamp + timeout
  * @timestamp:		base value to compare with (in jiffies)
@@ -231,4 +311,8 @@ static inline bool has_timed_out(unsigned long timestamp, unsigned int timeout)
 			  _dummy > smallest_signed_int(_dummy); })
 #define seq_after(x, y) seq_before(y, x)
 
+=======
+#define atomic_dec_not_zero(v)	atomic_add_unless((v), -1, 0)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _NET_BATMAN_ADV_MAIN_H_ */

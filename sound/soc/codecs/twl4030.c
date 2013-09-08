@@ -36,7 +36,11 @@
 #include <sound/tlv.h>
 
 /* Register descriptions are here */
+<<<<<<< HEAD
 #include <linux/mfd/twl4030-audio.h>
+=======
+#include <linux/mfd/twl4030-codec.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Shadow register used by the audio driver */
 #define TWL4030_REG_SW_SHADOW		0x4A
@@ -251,9 +255,15 @@ static void twl4030_codec_enable(struct snd_soc_codec *codec, int enable)
 		return;
 
 	if (enable)
+<<<<<<< HEAD
 		mode = twl4030_audio_enable_resource(TWL4030_AUDIO_RES_POWER);
 	else
 		mode = twl4030_audio_disable_resource(TWL4030_AUDIO_RES_POWER);
+=======
+		mode = twl4030_codec_enable_resource(TWL4030_CODEC_RES_POWER);
+	else
+		mode = twl4030_codec_disable_resource(TWL4030_CODEC_RES_POWER);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mode >= 0) {
 		twl4030_write_reg_cache(codec, TWL4030_REG_CODEC_MODE, mode);
@@ -297,7 +307,11 @@ static inline void twl4030_reset_registers(struct snd_soc_codec *codec)
 
 static void twl4030_init_chip(struct snd_soc_codec *codec)
 {
+<<<<<<< HEAD
 	struct twl4030_codec_data *pdata = dev_get_platdata(codec->dev);
+=======
+	struct twl4030_codec_audio_data *pdata = dev_get_platdata(codec->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct twl4030_priv *twl4030 = snd_soc_codec_get_drvdata(codec);
 	u8 reg, byte;
 	int i = 0;
@@ -375,6 +389,7 @@ static void twl4030_apll_enable(struct snd_soc_codec *codec, int enable)
 	if (enable) {
 		twl4030->apll_enabled++;
 		if (twl4030->apll_enabled == 1)
+<<<<<<< HEAD
 			status = twl4030_audio_enable_resource(
 							TWL4030_AUDIO_RES_APLL);
 	} else {
@@ -382,6 +397,15 @@ static void twl4030_apll_enable(struct snd_soc_codec *codec, int enable)
 		if (!twl4030->apll_enabled)
 			status = twl4030_audio_disable_resource(
 							TWL4030_AUDIO_RES_APLL);
+=======
+			status = twl4030_codec_enable_resource(
+							TWL4030_CODEC_RES_APLL);
+	} else {
+		twl4030->apll_enabled--;
+		if (!twl4030->apll_enabled)
+			status = twl4030_codec_disable_resource(
+							TWL4030_CODEC_RES_APLL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (status >= 0)
@@ -732,7 +756,11 @@ static int aif_event(struct snd_soc_dapm_widget *w,
 
 static void headset_ramp(struct snd_soc_codec *codec, int ramp)
 {
+<<<<<<< HEAD
 	struct twl4030_codec_data *pdata = codec->dev->platform_data;
+=======
+	struct twl4030_codec_audio_data *pdata = codec->dev->platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char hs_gain, hs_pop;
 	struct twl4030_priv *twl4030 = snd_soc_codec_get_drvdata(codec);
 	/* Base values for ramp delay calculation: 2^19 - 2^26 */
@@ -863,6 +891,37 @@ static int digimic_event(struct snd_soc_dapm_widget *w,
  * Inverting not going to help with these.
  * Custom volsw and volsw_2r get/put functions to handle these gain bits.
  */
+<<<<<<< HEAD
+=======
+#define SOC_DOUBLE_TLV_TWL4030(xname, xreg, shift_left, shift_right, xmax,\
+			       xinvert, tlv_array) \
+{	.iface = SNDRV_CTL_ELEM_IFACE_MIXER, .name = (xname),\
+	.access = SNDRV_CTL_ELEM_ACCESS_TLV_READ |\
+		 SNDRV_CTL_ELEM_ACCESS_READWRITE,\
+	.tlv.p = (tlv_array), \
+	.info = snd_soc_info_volsw, \
+	.get = snd_soc_get_volsw_twl4030, \
+	.put = snd_soc_put_volsw_twl4030, \
+	.private_value = (unsigned long)&(struct soc_mixer_control) \
+		{.reg = xreg, .shift = shift_left, .rshift = shift_right,\
+		 .max = xmax, .invert = xinvert} }
+#define SOC_DOUBLE_R_TLV_TWL4030(xname, reg_left, reg_right, xshift, xmax,\
+				 xinvert, tlv_array) \
+{	.iface = SNDRV_CTL_ELEM_IFACE_MIXER, .name = (xname),\
+	.access = SNDRV_CTL_ELEM_ACCESS_TLV_READ |\
+		 SNDRV_CTL_ELEM_ACCESS_READWRITE,\
+	.tlv.p = (tlv_array), \
+	.info = snd_soc_info_volsw_2r, \
+	.get = snd_soc_get_volsw_r2_twl4030,\
+	.put = snd_soc_put_volsw_r2_twl4030, \
+	.private_value = (unsigned long)&(struct soc_mixer_control) \
+		{.reg = reg_left, .rreg = reg_right, .shift = xshift, \
+		 .rshift = xshift, .max = xmax, .invert = xinvert} }
+#define SOC_SINGLE_TLV_TWL4030(xname, xreg, xshift, xmax, xinvert, tlv_array) \
+	SOC_DOUBLE_TLV_TWL4030(xname, xreg, xshift, xshift, xmax, \
+			       xinvert, tlv_array)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int snd_soc_get_volsw_twl4030(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
@@ -1002,8 +1061,13 @@ static int snd_soc_put_twl4030_opmode_enum_double(struct snd_kcontrol *kcontrol,
 	unsigned short mask, bitmask;
 
 	if (twl4030->configured) {
+<<<<<<< HEAD
 		dev_err(codec->dev,
 			"operation mode cannot be changed on-the-fly\n");
+=======
+		printk(KERN_ERR "twl4030 operation mode cannot be "
+			"changed on-the-fly\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EBUSY;
 	}
 
@@ -1169,6 +1233,7 @@ static const struct snd_kcontrol_new twl4030_snd_controls[] = {
 		TWL4030_REG_VDL_APGA_CTL, 1, 1, 0),
 
 	/* Separate output gain controls */
+<<<<<<< HEAD
 	SOC_DOUBLE_R_EXT_TLV("PreDriv Playback Volume",
 		TWL4030_REG_PREDL_CTL, TWL4030_REG_PREDR_CTL,
 		4, 3, 0, snd_soc_get_volsw_r2_twl4030,
@@ -1186,6 +1251,21 @@ static const struct snd_kcontrol_new twl4030_snd_controls[] = {
 	SOC_SINGLE_EXT_TLV("Earpiece Playback Volume",
 		TWL4030_REG_EAR_CTL, 4, 3, 0, snd_soc_get_volsw_twl4030,
 		snd_soc_put_volsw_twl4030, output_ear_tvl),
+=======
+	SOC_DOUBLE_R_TLV_TWL4030("PreDriv Playback Volume",
+		TWL4030_REG_PREDL_CTL, TWL4030_REG_PREDR_CTL,
+		4, 3, 0, output_tvl),
+
+	SOC_DOUBLE_TLV_TWL4030("Headset Playback Volume",
+		TWL4030_REG_HS_GAIN_SET, 0, 2, 3, 0, output_tvl),
+
+	SOC_DOUBLE_R_TLV_TWL4030("Carkit Playback Volume",
+		TWL4030_REG_PRECKL_CTL, TWL4030_REG_PRECKR_CTL,
+		4, 3, 0, output_tvl),
+
+	SOC_SINGLE_TLV_TWL4030("Earpiece Playback Volume",
+		TWL4030_REG_EAR_CTL, 4, 3, 0, output_ear_tvl),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Common capture gain controls */
 	SOC_DOUBLE_R_TLV("TX1 Digital Capture Volume",
@@ -1609,6 +1689,20 @@ static const struct snd_soc_dapm_route intercon[] = {
 
 };
 
+<<<<<<< HEAD
+=======
+static int twl4030_add_widgets(struct snd_soc_codec *codec)
+{
+	struct snd_soc_dapm_context *dapm = &codec->dapm;
+
+	snd_soc_dapm_new_controls(dapm, twl4030_dapm_widgets,
+				 ARRAY_SIZE(twl4030_dapm_widgets));
+	snd_soc_dapm_add_routes(dapm, intercon, ARRAY_SIZE(intercon));
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int twl4030_set_bias_level(struct snd_soc_codec *codec,
 				  enum snd_soc_bias_level level)
 {
@@ -1689,6 +1783,10 @@ static int twl4030_startup(struct snd_pcm_substream *substream,
 	struct snd_soc_codec *codec = rtd->codec;
 	struct twl4030_priv *twl4030 = snd_soc_codec_get_drvdata(codec);
 
+<<<<<<< HEAD
+=======
+	snd_pcm_hw_constraint_msbits(substream->runtime, 0, 32, 24);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (twl4030->master_substream) {
 		twl4030->slave_substream = substream;
 		/* The DAI has one configuration for playback and capture, so
@@ -1800,7 +1898,11 @@ static int twl4030_hw_params(struct snd_pcm_substream *substream,
 		mode |= TWL4030_APLL_RATE_96000;
 		break;
 	default:
+<<<<<<< HEAD
 		dev_err(codec->dev, "%s: unknown rate %d\n", __func__,
+=======
+		printk(KERN_ERR "TWL4030 hw params: unknown rate %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			params_rate(params));
 		return -EINVAL;
 	}
@@ -1817,7 +1919,11 @@ static int twl4030_hw_params(struct snd_pcm_substream *substream,
 		format |= TWL4030_DATA_WIDTH_32S_24W;
 		break;
 	default:
+<<<<<<< HEAD
 		dev_err(codec->dev, "%s: unknown format %d\n", __func__,
+=======
+		printk(KERN_ERR "TWL4030 hw params: unknown format %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			params_format(params));
 		return -EINVAL;
 	}
@@ -1867,13 +1973,21 @@ static int twl4030_set_dai_sysclk(struct snd_soc_dai *codec_dai,
 	case 38400000:
 		break;
 	default:
+<<<<<<< HEAD
 		dev_err(codec->dev, "Unsupported HFCLKIN: %u\n", freq);
+=======
+		dev_err(codec->dev, "Unsupported APLL mclk: %u\n", freq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
 	if ((freq / 1000) != twl4030->sysclk) {
 		dev_err(codec->dev,
+<<<<<<< HEAD
 			"Mismatch in HFCLKIN: %u (configured: %u)\n",
+=======
+			"Mismatch in APLL mclk: %u (configured: %u)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			freq, twl4030->sysclk * 1000);
 		return -EINVAL;
 	}
@@ -1983,9 +2097,15 @@ static int twl4030_voice_startup(struct snd_pcm_substream *substream,
 	 * not available.
 	 */
 	if (twl4030->sysclk != 26000) {
+<<<<<<< HEAD
 		dev_err(codec->dev,
 			"%s: HFCLKIN is %u KHz, voice interface needs 26MHz\n",
 			__func__, twl4030->sysclk);
+=======
+		dev_err(codec->dev, "The board is configured for %u Hz, while"
+			"the Voice interface needs 26MHz APLL mclk\n",
+			twl4030->sysclk * 1000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -1996,8 +2116,13 @@ static int twl4030_voice_startup(struct snd_pcm_substream *substream,
 		& TWL4030_OPT_MODE;
 
 	if (mode != TWL4030_OPTION_2) {
+<<<<<<< HEAD
 		dev_err(codec->dev, "%s: the codec mode is not option2\n",
 			__func__);
+=======
+		printk(KERN_ERR "TWL4030 voice startup: "
+			"the codec mode is not option2\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -2038,7 +2163,11 @@ static int twl4030_voice_hw_params(struct snd_pcm_substream *substream,
 		mode |= TWL4030_SEL_16K;
 		break;
 	default:
+<<<<<<< HEAD
 		dev_err(codec->dev, "%s: unknown rate %d\n", __func__,
+=======
+		printk(KERN_ERR "TWL4030 voice hw params: unknown rate %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			params_rate(params));
 		return -EINVAL;
 	}
@@ -2067,14 +2196,23 @@ static int twl4030_voice_set_dai_sysclk(struct snd_soc_dai *codec_dai,
 	struct twl4030_priv *twl4030 = snd_soc_codec_get_drvdata(codec);
 
 	if (freq != 26000000) {
+<<<<<<< HEAD
 		dev_err(codec->dev,
 			"%s: HFCLKIN is %u KHz, voice interface needs 26MHz\n",
 			__func__, freq / 1000);
+=======
+		dev_err(codec->dev, "Unsupported APLL mclk: %u, the Voice"
+			"interface needs 26MHz APLL mclk\n", freq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 	if ((freq / 1000) != twl4030->sysclk) {
 		dev_err(codec->dev,
+<<<<<<< HEAD
 			"Mismatch in HFCLKIN: %u (configured: %u)\n",
+=======
+			"Mismatch in APLL mclk: %u (configured: %u)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			freq, twl4030->sysclk * 1000);
 		return -EINVAL;
 	}
@@ -2149,7 +2287,11 @@ static int twl4030_voice_set_tristate(struct snd_soc_dai *dai, int tristate)
 #define TWL4030_RATES	 (SNDRV_PCM_RATE_8000_48000)
 #define TWL4030_FORMATS	 (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S32_LE)
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops twl4030_dai_hifi_ops = {
+=======
+static struct snd_soc_dai_ops twl4030_dai_hifi_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.startup	= twl4030_startup,
 	.shutdown	= twl4030_shutdown,
 	.hw_params	= twl4030_hw_params,
@@ -2158,7 +2300,11 @@ static const struct snd_soc_dai_ops twl4030_dai_hifi_ops = {
 	.set_tristate	= twl4030_set_tristate,
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops twl4030_dai_voice_ops = {
+=======
+static struct snd_soc_dai_ops twl4030_dai_voice_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.startup	= twl4030_voice_startup,
 	.shutdown	= twl4030_voice_shutdown,
 	.hw_params	= twl4030_voice_hw_params,
@@ -2175,15 +2321,23 @@ static struct snd_soc_dai_driver twl4030_dai[] = {
 		.channels_min = 2,
 		.channels_max = 4,
 		.rates = TWL4030_RATES | SNDRV_PCM_RATE_96000,
+<<<<<<< HEAD
 		.formats = TWL4030_FORMATS,
 		.sig_bits = 24,},
+=======
+		.formats = TWL4030_FORMATS,},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.capture = {
 		.stream_name = "Capture",
 		.channels_min = 2,
 		.channels_max = 4,
 		.rates = TWL4030_RATES,
+<<<<<<< HEAD
 		.formats = TWL4030_FORMATS,
 		.sig_bits = 24,},
+=======
+		.formats = TWL4030_FORMATS,},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ops = &twl4030_dai_hifi_ops,
 },
 {
@@ -2204,7 +2358,11 @@ static struct snd_soc_dai_driver twl4030_dai[] = {
 },
 };
 
+<<<<<<< HEAD
 static int twl4030_soc_suspend(struct snd_soc_codec *codec)
+=======
+static int twl4030_soc_suspend(struct snd_soc_codec *codec, pm_message_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	twl4030_set_bias_level(codec, SND_SOC_BIAS_OFF);
 	return 0;
@@ -2222,15 +2380,30 @@ static int twl4030_soc_probe(struct snd_soc_codec *codec)
 
 	twl4030 = kzalloc(sizeof(struct twl4030_priv), GFP_KERNEL);
 	if (twl4030 == NULL) {
+<<<<<<< HEAD
 		dev_err(codec->dev, "Can not allocate memory\n");
+=======
+		printk("Can not allocate memroy\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 	snd_soc_codec_set_drvdata(codec, twl4030);
 	/* Set the defaults, and power up the codec */
+<<<<<<< HEAD
 	twl4030->sysclk = twl4030_audio_get_mclk() / 1000;
 
 	twl4030_init_chip(codec);
 
+=======
+	twl4030->sysclk = twl4030_codec_get_mclk() / 1000;
+	codec->dapm.idle_bias_off = 1;
+
+	twl4030_init_chip(codec);
+
+	snd_soc_add_controls(codec, twl4030_snd_controls,
+				ARRAY_SIZE(twl4030_snd_controls));
+	twl4030_add_widgets(codec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -2253,6 +2426,7 @@ static struct snd_soc_codec_driver soc_codec_dev_twl4030 = {
 	.read = twl4030_read_reg_cache,
 	.write = twl4030_write,
 	.set_bias_level = twl4030_set_bias_level,
+<<<<<<< HEAD
 	.idle_bias_off = true,
 	.reg_cache_size = sizeof(twl4030_reg),
 	.reg_word_size = sizeof(u8),
@@ -2264,11 +2438,20 @@ static struct snd_soc_codec_driver soc_codec_dev_twl4030 = {
 	.num_dapm_widgets = ARRAY_SIZE(twl4030_dapm_widgets),
 	.dapm_routes = intercon,
 	.num_dapm_routes = ARRAY_SIZE(intercon),
+=======
+	.reg_cache_size = sizeof(twl4030_reg),
+	.reg_word_size = sizeof(u8),
+	.reg_cache_default = twl4030_reg,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __devinit twl4030_codec_probe(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct twl4030_codec_data *pdata = pdev->dev.platform_data;
+=======
+	struct twl4030_codec_audio_data *pdata = pdev->dev.platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!pdata) {
 		dev_err(&pdev->dev, "platform_data is missing\n");
@@ -2296,7 +2479,21 @@ static struct platform_driver twl4030_codec_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(twl4030_codec_driver);
+=======
+static int __init twl4030_modinit(void)
+{
+	return platform_driver_register(&twl4030_codec_driver);
+}
+module_init(twl4030_modinit);
+
+static void __exit twl4030_exit(void)
+{
+	platform_driver_unregister(&twl4030_codec_driver);
+}
+module_exit(twl4030_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("ASoC TWL4030 codec driver");
 MODULE_AUTHOR("Steve Sakoman");

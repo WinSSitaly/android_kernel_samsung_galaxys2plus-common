@@ -28,7 +28,10 @@
  * Authors: Thomas Hellström <thomas-at-tungstengraphics-dot-com>
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drmP.h"
 
 #if defined(CONFIG_X86)
@@ -41,10 +44,17 @@ drm_clflush_page(struct page *page)
 	if (unlikely(page == NULL))
 		return;
 
+<<<<<<< HEAD
 	page_virtual = kmap_atomic(page);
 	for (i = 0; i < PAGE_SIZE; i += boot_cpu_data.x86_clflush_size)
 		clflush(page_virtual + i);
 	kunmap_atomic(page_virtual);
+=======
+	page_virtual = kmap_atomic(page, KM_USER0);
+	for (i = 0; i < PAGE_SIZE; i += boot_cpu_data.x86_clflush_size)
+		clflush(page_virtual + i);
+	kunmap_atomic(page_virtual, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void drm_cache_flush_clflush(struct page *pages[],
@@ -87,10 +97,17 @@ drm_clflush_pages(struct page *pages[], unsigned long num_pages)
 		if (unlikely(page == NULL))
 			continue;
 
+<<<<<<< HEAD
 		page_virtual = kmap_atomic(page);
 		flush_dcache_range((unsigned long)page_virtual,
 				   (unsigned long)page_virtual + PAGE_SIZE);
 		kunmap_atomic(page_virtual);
+=======
+		page_virtual = kmap_atomic(page, KM_USER0);
+		flush_dcache_range((unsigned long)page_virtual,
+				   (unsigned long)page_virtual + PAGE_SIZE);
+		kunmap_atomic(page_virtual, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 #else
 	printk(KERN_ERR "Architecture has no drm_cache.c support\n");

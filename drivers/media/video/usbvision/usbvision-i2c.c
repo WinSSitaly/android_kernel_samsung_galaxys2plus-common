@@ -110,6 +110,7 @@ static inline int usb_find_address(struct i2c_adapter *i2c_adap,
 
 	unsigned char addr;
 	int ret;
+<<<<<<< HEAD
 
 	addr = (msg->addr << 1);
 	if (flags & I2C_M_RD)
@@ -124,6 +125,44 @@ static inline int usb_find_address(struct i2c_adapter *i2c_adap,
 	if (ret != 1)
 		return -EREMOTEIO;
 
+=======
+	if ((flags & I2C_M_TEN)) {
+		/* a ten bit address */
+		addr = 0xf0 | ((msg->addr >> 7) & 0x03);
+		/* try extended address code... */
+		ret = try_write_address(i2c_adap, addr, retries);
+		if (ret != 1) {
+			dev_err(&i2c_adap->dev,
+				"died at extended address code,	while writing\n");
+			return -EREMOTEIO;
+		}
+		add[0] = addr;
+		if (flags & I2C_M_RD) {
+			/* okay, now switch into reading mode */
+			addr |= 0x01;
+			ret = try_read_address(i2c_adap, addr, retries);
+			if (ret != 1) {
+				dev_err(&i2c_adap->dev,
+					"died at extended address code, while reading\n");
+				return -EREMOTEIO;
+			}
+		}
+
+	} else {		/* normal 7bit address  */
+		addr = (msg->addr << 1);
+		if (flags & I2C_M_RD)
+			addr |= 1;
+
+		add[0] = addr;
+		if (flags & I2C_M_RD)
+			ret = try_read_address(i2c_adap, addr, retries);
+		else
+			ret = try_write_address(i2c_adap, addr, retries);
+
+		if (ret != 1)
+			return -EREMOTEIO;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -162,7 +201,11 @@ usbvision_i2c_xfer(struct i2c_adapter *i2c_adap, struct i2c_msg msgs[], int num)
 
 static u32 functionality(struct i2c_adapter *adap)
 {
+<<<<<<< HEAD
 	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
+=======
+	return I2C_FUNC_SMBUS_EMUL | I2C_FUNC_10BIT_ADDR;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* -----exported algorithm data: -------------------------------------	*/

@@ -164,7 +164,11 @@ static int __devinit ps3_ohci_probe(struct ps3_system_bus_device *dev)
 
 	ps3_system_bus_set_drvdata(dev, hcd);
 
+<<<<<<< HEAD
 	result = usb_add_hcd(hcd, virq, 0);
+=======
+	result = usb_add_hcd(hcd, virq, IRQF_DISABLED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (result) {
 		dev_dbg(&dev->core, "%s:%d: usb_add_hcd failed (%d)\n",

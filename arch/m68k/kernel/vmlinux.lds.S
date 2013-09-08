@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #if defined(CONFIG_MMU) && !defined(CONFIG_COLDFIRE)
 PHDRS
 {
@@ -11,4 +12,10 @@ PHDRS
 #endif
 #else
 #include "vmlinux-nommu.lds"
+=======
+#ifdef CONFIG_MMU
+#include "vmlinux.lds_mm.S"
+#else
+#include "vmlinux.lds_no.S"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

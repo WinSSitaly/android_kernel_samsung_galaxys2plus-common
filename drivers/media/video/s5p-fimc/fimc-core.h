@@ -11,16 +11,23 @@
 
 /*#define DEBUG*/
 
+<<<<<<< HEAD
 #include <linux/platform_device.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/spinlock.h>
 #include <linux/types.h>
 #include <linux/videodev2.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 
 #include <media/media-entity.h>
 #include <media/videobuf2-core.h>
 #include <media/v4l2-ctrls.h>
+=======
+#include <media/videobuf2-core.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/v4l2-device.h>
 #include <media/v4l2-mem2mem.h>
 #include <media/v4l2-mediabus.h>
@@ -36,19 +43,28 @@
 
 /* Time to wait for next frame VSYNC interrupt while stopping operation. */
 #define FIMC_SHUTDOWN_TIMEOUT	((100*HZ)/1000)
+<<<<<<< HEAD
 #define MAX_FIMC_CLOCKS		2
 #define FIMC_MODULE_NAME	"s5p-fimc"
+=======
+#define MAX_FIMC_CLOCKS		3
+#define MODULE_NAME		"s5p-fimc"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define FIMC_MAX_DEVS		4
 #define FIMC_MAX_OUT_BUFS	4
 #define SCALER_MAX_HRATIO	64
 #define SCALER_MAX_VRATIO	64
 #define DMA_MIN_SIZE		8
+<<<<<<< HEAD
 #define FIMC_CAMIF_MAX_HEIGHT	0x2000
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* indices to the clocks array */
 enum {
 	CLK_BUS,
 	CLK_GATE,
+<<<<<<< HEAD
 };
 
 enum fimc_dev_flags {
@@ -71,11 +87,32 @@ enum fimc_dev_flags {
 };
 
 #define fimc_m2m_active(dev) test_bit(ST_M2M_RUN, &(dev)->state)
+=======
+	CLK_CAM,
+};
+
+enum fimc_dev_flags {
+	/* for m2m node */
+	ST_IDLE,
+	ST_OUTDMA_RUN,
+	ST_M2M_PEND,
+	/* for capture node */
+	ST_CAPT_PEND,
+	ST_CAPT_RUN,
+	ST_CAPT_STREAM,
+	ST_CAPT_SHUT,
+};
+
+#define fimc_m2m_active(dev) test_bit(ST_OUTDMA_RUN, &(dev)->state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define fimc_m2m_pending(dev) test_bit(ST_M2M_PEND, &(dev)->state)
 
 #define fimc_capture_running(dev) test_bit(ST_CAPT_RUN, &(dev)->state)
 #define fimc_capture_pending(dev) test_bit(ST_CAPT_PEND, &(dev)->state)
+<<<<<<< HEAD
 #define fimc_capture_busy(dev) test_bit(ST_CAPT_BUSY, &(dev)->state)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum fimc_datapath {
 	FIMC_CAMERA,
@@ -85,9 +122,13 @@ enum fimc_datapath {
 };
 
 enum fimc_color_fmt {
+<<<<<<< HEAD
 	S5P_FIMC_RGB444 = 0x10,
 	S5P_FIMC_RGB555,
 	S5P_FIMC_RGB565,
+=======
+	S5P_FIMC_RGB565 = 0x10,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	S5P_FIMC_RGB666,
 	S5P_FIMC_RGB888,
 	S5P_FIMC_RGB30_LOCAL,
@@ -97,6 +138,7 @@ enum fimc_color_fmt {
 	S5P_FIMC_CBYCRY422,
 	S5P_FIMC_CRYCBY422,
 	S5P_FIMC_YCBCR444_LOCAL,
+<<<<<<< HEAD
 	S5P_FIMC_JPEG = 0x40,
 };
 
@@ -105,6 +147,11 @@ enum fimc_color_fmt {
 
 #define IS_M2M(__strt) ((__strt) == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE || \
 			__strt == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
+=======
+};
+
+#define fimc_fmt_is_rgb(x) ((x) & 0x10)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Cb/Cr chrominance components order for 2 plane Y/CbCr 4:2:2 formats. */
 #define	S5P_FIMC_LSB_CRCB	S5P_CIOCTRL_ORDER422_2P_LSB_CRCB
@@ -123,10 +170,16 @@ enum fimc_color_fmt {
 #define	FIMC_DST_ADDR		(1 << 2)
 #define	FIMC_SRC_FMT		(1 << 3)
 #define	FIMC_DST_FMT		(1 << 4)
+<<<<<<< HEAD
 #define	FIMC_DST_CROP		(1 << 5)
 #define	FIMC_CTX_M2M		(1 << 16)
 #define	FIMC_CTX_CAP		(1 << 17)
 #define	FIMC_CTX_SHUT		(1 << 18)
+=======
+#define	FIMC_CTX_M2M		(1 << 5)
+#define	FIMC_CTX_CAP		(1 << 6)
+#define	FIMC_CTX_SHUT		(1 << 7)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Image conversion flags */
 #define	FIMC_IN_DMA_ACCESS_TILED	(1 << 0)
@@ -142,6 +195,14 @@ enum fimc_color_fmt {
 /* Y (16 ~ 235), Cb/Cr (16 ~ 240) */
 #define	FIMC_COLOR_RANGE_NARROW		(1 << 3)
 
+<<<<<<< HEAD
+=======
+#define	FLIP_NONE			0
+#define	FLIP_X_AXIS			1
+#define	FLIP_Y_AXIS			2
+#define	FLIP_XY_AXIS			(FLIP_X_AXIS | FLIP_Y_AXIS)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct fimc_fmt - the driver's internal color format data
  * @mbus_code: Media Bus pixel code, -1 if not applicable
@@ -162,11 +223,16 @@ struct fimc_fmt {
 	u16	colplanes;
 	u8	depth[VIDEO_MAX_PLANES];
 	u16	flags;
+<<<<<<< HEAD
 #define FMT_FLAGS_CAM		(1 << 0)
 #define FMT_FLAGS_M2M_IN	(1 << 1)
 #define FMT_FLAGS_M2M_OUT	(1 << 2)
 #define FMT_FLAGS_M2M		(1 << 1 | 1 << 2)
 #define FMT_HAS_ALPHA		(1 << 3)
+=======
+#define FMT_FLAGS_CAM	(1 << 0)
+#define FMT_FLAGS_M2M	(1 << 1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -288,35 +354,55 @@ struct fimc_frame {
 	struct fimc_addr	paddr;
 	struct fimc_dma_offset	dma_offset;
 	struct fimc_fmt		*fmt;
+<<<<<<< HEAD
 	u8			alpha;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
  * struct fimc_m2m_device - v4l2 memory-to-memory device data
  * @vfd: the video device node for v4l2 m2m mode
+<<<<<<< HEAD
+=======
+ * @v4l2_dev: v4l2 device for m2m mode
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @m2m_dev: v4l2 memory-to-memory device data
  * @ctx: hardware context data
  * @refcnt: the reference counter
  */
 struct fimc_m2m_device {
 	struct video_device	*vfd;
+<<<<<<< HEAD
+=======
+	struct v4l2_device	v4l2_dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct v4l2_m2m_dev	*m2m_dev;
 	struct fimc_ctx		*ctx;
 	int			refcnt;
 };
 
+<<<<<<< HEAD
 #define FIMC_SD_PAD_SINK	0
 #define FIMC_SD_PAD_SOURCE	1
 #define FIMC_SD_PADS_NUM	2
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct fimc_vid_cap - camera capture device information
  * @ctx: hardware context data
  * @vfd: video device node for camera capture mode
+<<<<<<< HEAD
  * @subdev: subdev exposing the FIMC processing block
  * @vd_pad: fimc video capture node pad
  * @sd_pads: fimc video processing block pads
  * @mf: media bus format at the FIMC camera input (and the scaler output) pad
+=======
+ * @v4l2_dev: v4l2_device struct to manage subdevs
+ * @sd: pointer to camera sensor subdevice currently in use
+ * @fmt: Media Bus format configured at selected image sensor
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @pending_buf_q: the pending buffer queue head
  * @active_buf_q: the queue head of buffers scheduled in hardware
  * @vbq: the capture am video buffer queue
@@ -326,17 +412,26 @@ struct fimc_m2m_device {
  * @reqbufs_count: the number of buffers requested in REQBUFS ioctl
  * @input_index: input (camera sensor) index
  * @refcnt: driver's private reference counter
+<<<<<<< HEAD
  * @input: capture input type, grp_id of the attached subdev
  * @user_subdev_api: true if subdevs are not configured by the host driver
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct fimc_vid_cap {
 	struct fimc_ctx			*ctx;
 	struct vb2_alloc_ctx		*alloc_ctx;
 	struct video_device		*vfd;
+<<<<<<< HEAD
 	struct v4l2_subdev		*subdev;
 	struct media_pad		vd_pad;
 	struct v4l2_mbus_framefmt	mf;
 	struct media_pad		sd_pads[FIMC_SD_PADS_NUM];
+=======
+	struct v4l2_device		v4l2_dev;
+	struct v4l2_subdev		*sd;;
+	struct v4l2_mbus_framefmt	fmt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head		pending_buf_q;
 	struct list_head		active_buf_q;
 	struct vb2_queue		vbq;
@@ -346,8 +441,11 @@ struct fimc_vid_cap {
 	unsigned int			reqbufs_count;
 	int				input_index;
 	int				refcnt;
+<<<<<<< HEAD
 	u32				input;
 	bool				user_subdev_api;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -378,12 +476,18 @@ struct fimc_pix_limit {
  * @has_cistatus2: 1 if CISTATUS2 register is present in this IP revision
  * @has_mainscaler_ext: 1 if extended mainscaler ratios in CIEXTEN register
  *			 are present in this IP revision
+<<<<<<< HEAD
  * @has_cam_if: set if this instance has a camera input interface
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @pix_limit: pixel size constraints for the scaler
  * @min_inp_pixsize: minimum input pixel size
  * @min_out_pixsize: minimum output pixel size
  * @hor_offs_align: horizontal pixel offset aligment
+<<<<<<< HEAD
  * @min_vsize_align: minimum vertical pixel size alignment
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @out_buf_count: the number of buffers in output DMA sequence
  */
 struct samsung_fimc_variant {
@@ -392,13 +496,19 @@ struct samsung_fimc_variant {
 	unsigned int	has_out_rot:1;
 	unsigned int	has_cistatus2:1;
 	unsigned int	has_mainscaler_ext:1;
+<<<<<<< HEAD
 	unsigned int	has_cam_if:1;
 	unsigned int	has_alpha:1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct fimc_pix_limit *pix_limit;
 	u16		min_inp_pixsize;
 	u16		min_out_pixsize;
 	u16		hor_offs_align;
+<<<<<<< HEAD
 	u16		min_vsize_align;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16		out_buf_count;
 };
 
@@ -415,12 +525,15 @@ struct samsung_fimc_driverdata {
 	int		num_entities;
 };
 
+<<<<<<< HEAD
 struct fimc_pipeline {
 	struct media_pipeline *pipe;
 	struct v4l2_subdev *sensor;
 	struct v4l2_subdev *csis;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct fimc_ctx;
 
 /**
@@ -434,14 +547,23 @@ struct fimc_ctx;
  * @num_clocks: the number of clocks managed by this device instance
  * @clock:	clocks required for FIMC operation
  * @regs:	the mapped hardware registers
+<<<<<<< HEAD
  * @irq:	FIMC interrupt number
  * @irq_queue:	interrupt handler waitqueue
  * @v4l2_dev:	root v4l2_device
+=======
+ * @regs_res:	the resource claimed for IO registers
+ * @irq:	FIMC interrupt number
+ * @irq_queue:	interrupt handler waitqueue
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @m2m:	memory-to-memory V4L2 device information
  * @vid_cap:	camera capture device information
  * @state:	flags used to synchronize m2m and capture mode operation
  * @alloc_ctx:	videobuf2 memory allocator context
+<<<<<<< HEAD
  * @pipeline:	fimc video capture pipeline data structure
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct fimc_dev {
 	spinlock_t			slock;
@@ -453,14 +575,23 @@ struct fimc_dev {
 	u16				num_clocks;
 	struct clk			*clock[MAX_FIMC_CLOCKS];
 	void __iomem			*regs;
+<<<<<<< HEAD
 	int				irq;
 	wait_queue_head_t		irq_queue;
 	struct v4l2_device		*v4l2_dev;
+=======
+	struct resource			*regs_res;
+	int				irq;
+	wait_queue_head_t		irq_queue;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct fimc_m2m_device		m2m;
 	struct fimc_vid_cap		vid_cap;
 	unsigned long			state;
 	struct vb2_alloc_ctx		*alloc_ctx;
+<<<<<<< HEAD
 	struct fimc_pipeline		pipeline;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -477,12 +608,17 @@ struct fimc_dev {
  * @scaler:		image scaler properties
  * @effect:		image effect
  * @rotation:		image clockwise rotation in degrees
+<<<<<<< HEAD
  * @hflip:		indicates image horizontal flip if set
  * @vflip:		indicates image vertical flip if set
+=======
+ * @flip:		image flip mode
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @flags:		additional flags for image conversion
  * @state:		flags to keep track of user configuration
  * @fimc_dev:		the FIMC device this context applies to
  * @m2m_ctx:		memory-to-memory device context
+<<<<<<< HEAD
  * @fh:			v4l2 file handle
  * @ctrl_handler:	v4l2 controls handler
  * @ctrl_rotate		image rotation control
@@ -490,6 +626,8 @@ struct fimc_dev {
  * @ctrl_vflip		vertical flip control
  * @ctrl_alpha		RGB alpha control
  * @ctrls_rdy:		true if the control handler is initialized
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct fimc_ctx {
 	spinlock_t		slock;
@@ -504,12 +642,17 @@ struct fimc_ctx {
 	struct fimc_scaler	scaler;
 	struct fimc_effect	effect;
 	int			rotation;
+<<<<<<< HEAD
 	unsigned int		hflip:1;
 	unsigned int		vflip:1;
+=======
+	u32			flip;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32			flags;
 	u32			state;
 	struct fimc_dev		*fimc_dev;
 	struct v4l2_m2m_ctx	*m2m_ctx;
+<<<<<<< HEAD
 	struct v4l2_fh		fh;
 	struct v4l2_ctrl_handler ctrl_handler;
 	struct v4l2_ctrl	*ctrl_rotate;
@@ -548,6 +691,10 @@ static inline u32 fimc_get_format_depth(struct fimc_fmt *ff)
 	return depth;
 }
 
+=======
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline bool fimc_capture_active(struct fimc_dev *fimc)
 {
 	unsigned long flags;
@@ -585,6 +732,7 @@ static inline int tiled_fmt(struct fimc_fmt *fmt)
 	return fmt->fourcc == V4L2_PIX_FMT_NV12MT;
 }
 
+<<<<<<< HEAD
 /* Return the alpha component bit mask */
 static inline int fimc_get_alpha_mask(struct fimc_fmt *fmt)
 {
@@ -596,6 +744,8 @@ static inline int fimc_get_alpha_mask(struct fimc_fmt *fmt)
 	};
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void fimc_hw_clear_irq(struct fimc_dev *dev)
 {
 	u32 cfg = readl(dev->regs + S5P_CIGCTRL);
@@ -657,7 +807,11 @@ static inline struct fimc_frame *ctx_get_frame(struct fimc_ctx *ctx,
 	} else if (V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE == type) {
 		frame = &ctx->d_frame;
 	} else {
+<<<<<<< HEAD
 		v4l2_err(ctx->fimc_dev->v4l2_dev,
+=======
+		v4l2_err(&ctx->fimc_dev->m2m.v4l2_dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"Wrong buffer/video queue type (%d)\n", type);
 		return ERR_PTR(-EINVAL);
 	}
@@ -691,8 +845,12 @@ void fimc_hw_en_irq(struct fimc_dev *fimc, int enable);
 void fimc_hw_set_prescaler(struct fimc_ctx *ctx);
 void fimc_hw_set_mainscaler(struct fimc_ctx *ctx);
 void fimc_hw_en_capture(struct fimc_ctx *ctx);
+<<<<<<< HEAD
 void fimc_hw_set_effect(struct fimc_ctx *ctx, bool active);
 void fimc_hw_set_rgb_alpha(struct fimc_ctx *ctx);
+=======
+void fimc_hw_set_effect(struct fimc_ctx *ctx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void fimc_hw_set_in_dma(struct fimc_ctx *ctx);
 void fimc_hw_set_input_path(struct fimc_ctx *ctx);
 void fimc_hw_set_output_path(struct fimc_ctx *ctx);
@@ -711,6 +869,7 @@ int fimc_hw_set_camera_type(struct fimc_dev *fimc,
 /* fimc-core.c */
 int fimc_vidioc_enum_fmt_mplane(struct file *file, void *priv,
 				struct v4l2_fmtdesc *f);
+<<<<<<< HEAD
 int fimc_ctrls_create(struct fimc_ctx *ctx);
 void fimc_ctrls_delete(struct fimc_ctx *ctx);
 void fimc_ctrls_activate(struct fimc_ctx *ctx, bool active);
@@ -723,10 +882,31 @@ struct fimc_fmt *fimc_find_format(const u32 *pixelformat, const u32 *mbus_code,
 
 int fimc_check_scaler_ratio(struct fimc_ctx *ctx, int sw, int sh,
 			    int dw, int dh, int rotation);
+=======
+int fimc_vidioc_g_fmt_mplane(struct file *file, void *priv,
+			     struct v4l2_format *f);
+int fimc_vidioc_try_fmt_mplane(struct file *file, void *priv,
+			       struct v4l2_format *f);
+int fimc_vidioc_queryctrl(struct file *file, void *priv,
+			  struct v4l2_queryctrl *qc);
+int fimc_vidioc_g_ctrl(struct file *file, void *priv,
+		       struct v4l2_control *ctrl);
+
+int fimc_try_crop(struct fimc_ctx *ctx, struct v4l2_crop *cr);
+int check_ctrl_val(struct fimc_ctx *ctx,  struct v4l2_control *ctrl);
+int fimc_s_ctrl(struct fimc_ctx *ctx, struct v4l2_control *ctrl);
+
+struct fimc_fmt *find_format(struct v4l2_format *f, unsigned int mask);
+struct fimc_fmt *find_mbus_format(struct v4l2_mbus_framefmt *f,
+				  unsigned int mask);
+
+int fimc_check_scaler_ratio(int sw, int sh, int dw, int dh, int rot);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int fimc_set_scaler_info(struct fimc_ctx *ctx);
 int fimc_prepare_config(struct fimc_ctx *ctx, u32 flags);
 int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
 		      struct fimc_frame *frame, struct fimc_addr *paddr);
+<<<<<<< HEAD
 void fimc_prepare_dma_offset(struct fimc_ctx *ctx, struct fimc_frame *f);
 void fimc_set_yuv_order(struct fimc_ctx *ctx);
 void fimc_fill_frame(struct fimc_frame *frame, struct v4l2_format *f);
@@ -751,6 +931,16 @@ void fimc_sensor_notify(struct v4l2_subdev *sd, unsigned int notification,
 int fimc_capture_suspend(struct fimc_dev *fimc);
 int fimc_capture_resume(struct fimc_dev *fimc);
 int fimc_capture_config_update(struct fimc_ctx *ctx);
+=======
+
+/* -----------------------------------------------------*/
+/* fimc-capture.c					*/
+int fimc_register_capture_device(struct fimc_dev *fimc);
+void fimc_unregister_capture_device(struct fimc_dev *fimc);
+int fimc_sensor_sd_init(struct fimc_dev *fimc, int index);
+int fimc_vid_cap_buf_queue(struct fimc_dev *fimc,
+			     struct fimc_vid_buffer *fimc_vb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Locking: the caller holds fimc->slock */
 static inline void fimc_activate_capture(struct fimc_ctx *ctx)
@@ -768,6 +958,7 @@ static inline void fimc_deactivate_capture(struct fimc_dev *fimc)
 }
 
 /*
+<<<<<<< HEAD
  * Buffer list manipulation functions. Must be called with fimc.slock held.
  */
 
@@ -777,11 +968,19 @@ static inline void fimc_deactivate_capture(struct fimc_dev *fimc)
  */
 static inline void fimc_active_queue_add(struct fimc_vid_cap *vid_cap,
 					 struct fimc_vid_buffer *buf)
+=======
+ * Add buf to the capture active buffers queue.
+ * Locking: Need to be called with fimc_dev::slock held.
+ */
+static inline void active_queue_add(struct fimc_vid_cap *vid_cap,
+				    struct fimc_vid_buffer *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	list_add_tail(&buf->list, &vid_cap->active_buf_q);
 	vid_cap->active_buf_cnt++;
 }
 
+<<<<<<< HEAD
 /**
  * fimc_active_queue_pop - pop buffer from the capture active buffers queue
  *
@@ -789,6 +988,14 @@ static inline void fimc_active_queue_add(struct fimc_vid_cap *vid_cap,
  */
 static inline struct fimc_vid_buffer *fimc_active_queue_pop(
 				    struct fimc_vid_cap *vid_cap)
+=======
+/*
+ * Pop a video buffer from the capture active buffers queue
+ * Locking: Need to be called with fimc_dev::slock held.
+ */
+static inline struct fimc_vid_buffer *
+active_queue_pop(struct fimc_vid_cap *vid_cap)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct fimc_vid_buffer *buf;
 	buf = list_entry(vid_cap->active_buf_q.next,
@@ -798,16 +1005,21 @@ static inline struct fimc_vid_buffer *fimc_active_queue_pop(
 	return buf;
 }
 
+<<<<<<< HEAD
 /**
  * fimc_pending_queue_add - add buffer to the capture pending buffers queue
  * @buf: buffer to add to the pending buffers list
  */
+=======
+/* Add video buffer to the capture pending buffers queue */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void fimc_pending_queue_add(struct fimc_vid_cap *vid_cap,
 					  struct fimc_vid_buffer *buf)
 {
 	list_add_tail(&buf->list, &vid_cap->pending_buf_q);
 }
 
+<<<<<<< HEAD
 /**
  * fimc_pending_queue_pop - pop buffer from the capture pending buffers queue
  *
@@ -815,6 +1027,11 @@ static inline void fimc_pending_queue_add(struct fimc_vid_cap *vid_cap,
  */
 static inline struct fimc_vid_buffer *fimc_pending_queue_pop(
 				     struct fimc_vid_cap *vid_cap)
+=======
+/* Add video buffer to the capture pending buffers queue */
+static inline struct fimc_vid_buffer *
+pending_queue_pop(struct fimc_vid_cap *vid_cap)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct fimc_vid_buffer *buf;
 	buf = list_entry(vid_cap->pending_buf_q.next,

@@ -5,7 +5,11 @@
  ******************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -70,8 +74,11 @@ acpi_rs_convert_aml_to_resources(u8 * aml,
 	struct acpi_resource **resource_ptr =
 	    ACPI_CAST_INDIRECT_PTR(struct acpi_resource, context);
 	struct acpi_resource *resource;
+<<<<<<< HEAD
 	union aml_resource *aml_resource;
 	struct acpi_rsconvert_info *conversion_table;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acpi_status status;
 
 	ACPI_FUNCTION_TRACE(rs_convert_aml_to_resources);
@@ -86,6 +93,7 @@ acpi_rs_convert_aml_to_resources(u8 * aml,
 			      "Misaligned resource pointer %p", resource));
 	}
 
+<<<<<<< HEAD
 	/* Get the appropriate conversion info table */
 
 	aml_resource = ACPI_CAST_PTR(union aml_resource, aml);
@@ -117,6 +125,16 @@ acpi_rs_convert_aml_to_resources(u8 * aml,
 	status =
 	    acpi_rs_convert_aml_to_resource(resource, aml_resource,
 					    conversion_table);
+=======
+	/* Convert the AML byte stream resource to a local resource struct */
+
+	status =
+	    acpi_rs_convert_aml_to_resource(resource,
+					    ACPI_CAST_PTR(union aml_resource,
+							  aml),
+					    acpi_gbl_get_resource_dispatch
+					    [resource_index]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ACPI_FAILURE(status)) {
 		ACPI_EXCEPTION((AE_INFO, status,
 				"Could not convert AML resource (Type 0x%X)",
@@ -131,7 +149,11 @@ acpi_rs_convert_aml_to_resources(u8 * aml,
 
 	/* Point to the next structure in the output buffer */
 
+<<<<<<< HEAD
 	*resource_ptr = ACPI_NEXT_RESOURCE(resource);
+=======
+	*resource_ptr = ACPI_ADD_PTR(void, resource, resource->length);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return_ACPI_STATUS(AE_OK);
 }
 
@@ -160,7 +182,10 @@ acpi_rs_convert_resources_to_aml(struct acpi_resource *resource,
 {
 	u8 *aml = output_buffer;
 	u8 *end_aml = output_buffer + aml_size_needed;
+<<<<<<< HEAD
 	struct acpi_rsconvert_info *conversion_table;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acpi_status status;
 
 	ACPI_FUNCTION_TRACE(rs_convert_resources_to_aml);
@@ -180,6 +205,7 @@ acpi_rs_convert_resources_to_aml(struct acpi_resource *resource,
 
 		/* Perform the conversion */
 
+<<<<<<< HEAD
 		if (resource->type == ACPI_RESOURCE_TYPE_SERIAL_BUS) {
 			if (resource->data.common_serial_bus.type >
 			    AML_RESOURCE_MAX_SERIALBUSTYPE) {
@@ -208,6 +234,13 @@ acpi_rs_convert_resources_to_aml(struct acpi_resource *resource,
 								       aml_resource,
 								       aml),
 							 conversion_table);
+=======
+		status = acpi_rs_convert_resource_to_aml(resource, ACPI_CAST_PTR(union
+										 aml_resource,
+										 aml),
+							 acpi_gbl_set_resource_dispatch
+							 [resource->type]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ACPI_FAILURE(status)) {
 			ACPI_EXCEPTION((AE_INFO, status,
 					"Could not convert resource (type 0x%X) to AML",
@@ -241,7 +274,13 @@ acpi_rs_convert_resources_to_aml(struct acpi_resource *resource,
 
 		/* Point to the next input resource descriptor */
 
+<<<<<<< HEAD
 		resource = ACPI_NEXT_RESOURCE(resource);
+=======
+		resource =
+		    ACPI_ADD_PTR(struct acpi_resource, resource,
+				 resource->length);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Completed buffer, but did not find an end_tag resource descriptor */

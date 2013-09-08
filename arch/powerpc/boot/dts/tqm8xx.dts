@@ -57,7 +57,10 @@
 
 		ranges = <
 			0x0 0x0 0x40000000 0x800000
+<<<<<<< HEAD
 			0x3 0x0 0xc0000000 0x200
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		>;
 
 		flash@0,0 {
@@ -68,6 +71,7 @@
 			bank-width = <4>;
 			device-width = <2>;
 		};
+<<<<<<< HEAD
 
 		/* Note: CAN support needs be enabled in U-Boot */
 		can@3,0 {
@@ -92,6 +96,8 @@
 			bosch,disconnect-tx1-output;
 			bosch,iso-low-speed-mux;
 		};
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	};
 
 	soc@fff00000 {

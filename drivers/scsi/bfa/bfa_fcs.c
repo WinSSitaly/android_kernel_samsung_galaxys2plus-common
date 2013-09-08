@@ -20,7 +20,10 @@
  */
 
 #include "bfad_drv.h"
+<<<<<<< HEAD
 #include "bfad_im.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "bfa_fcs.h"
 #include "bfa_fcbuild.h"
 
@@ -93,14 +96,21 @@ bfa_fcs_attach(struct bfa_fcs_s *fcs, struct bfa_s *bfa, struct bfad_s *bfad,
 void
 bfa_fcs_init(struct bfa_fcs_s *fcs)
 {
+<<<<<<< HEAD
 	int	i;
 	struct bfa_fcs_mod_s  *mod;
+=======
+	int		i, npbc_vports;
+	struct bfa_fcs_mod_s  *mod;
+	struct bfi_pbc_vport_s pbc_vports[BFI_PBC_MAX_VPORTS];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < sizeof(fcs_modules) / sizeof(fcs_modules[0]); i++) {
 		mod = &fcs_modules[i];
 		if (mod->modinit)
 			mod->modinit(fcs);
 	}
+<<<<<<< HEAD
 }
 
 /*
@@ -131,11 +141,21 @@ bfa_fcs_pbc_vport_init(struct bfa_fcs_s *fcs)
 	if (!fcs->min_cfg) {
 		npbc_vports =
 			bfa_iocfc_get_pbc_vports(fcs->bfa, pbc_vports);
+=======
+	/* Initialize pbc vports */
+	if (!fcs->min_cfg) {
+		npbc_vports =
+		    bfa_iocfc_get_pbc_vports(fcs->bfa, pbc_vports);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (i = 0; i < npbc_vports; i++)
 			bfa_fcb_pbc_vport_create(fcs->bfa->bfad, pbc_vports[i]);
 	}
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *	brief
  *		FCS driver details initialization.
@@ -193,6 +213,7 @@ bfa_fcs_exit(struct bfa_fcs_s *fcs)
 #define BFA_FCS_FABRIC_CLEANUP_DELAY	(10000)	/* Milliseconds */
 
 #define bfa_fcs_fabric_set_opertype(__fabric) do {			\
+<<<<<<< HEAD
 	if (bfa_fcport_get_topology((__fabric)->fcs->bfa)		\
 				== BFA_PORT_TOPOLOGY_P2P) {		\
 		if (fabric->fab_type == BFA_FCS_FABRIC_SWITCHED)	\
@@ -201,6 +222,13 @@ bfa_fcs_exit(struct bfa_fcs_s *fcs)
 			(__fabric)->oper_type = BFA_PORT_TYPE_P2P;	\
 	} else								\
 		(__fabric)->oper_type = BFA_PORT_TYPE_NLPORT;		\
+=======
+		if (bfa_fcport_get_topology((__fabric)->fcs->bfa)	\
+		    == BFA_PORT_TOPOLOGY_P2P)				\
+			(__fabric)->oper_type = BFA_PORT_TYPE_NPORT;	\
+		else							\
+			(__fabric)->oper_type = BFA_PORT_TYPE_NLPORT;	\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } while (0)
 
 /*
@@ -224,9 +252,12 @@ static void bfa_fcs_fabric_flogiacc_comp(void *fcsarg,
 					 u32 rsp_len,
 					 u32 resid_len,
 					 struct fchs_s *rspfchs);
+<<<<<<< HEAD
 static u8 bfa_fcs_fabric_oper_bbscn(struct bfa_fcs_fabric_s *fabric);
 static bfa_boolean_t bfa_fcs_fabric_is_bbscn_enabled(
 				struct bfa_fcs_fabric_s *fabric);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void	bfa_fcs_fabric_sm_uninit(struct bfa_fcs_fabric_s *fabric,
 					 enum bfa_fcs_fabric_event event);
@@ -300,8 +331,13 @@ bfa_fcs_fabric_sm_created(struct bfa_fcs_fabric_s *fabric,
 		break;
 
 	case BFA_FCS_FABRIC_SM_DELETE:
+<<<<<<< HEAD
 		bfa_sm_set_state(fabric, bfa_fcs_fabric_sm_deleting);
 		bfa_fcs_fabric_delete(fabric);
+=======
+		bfa_sm_set_state(fabric, bfa_fcs_fabric_sm_uninit);
+		bfa_wc_down(&fabric->fcs->wc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	default:
@@ -353,8 +389,12 @@ bfa_fcs_fabric_sm_flogi(struct bfa_fcs_fabric_s *fabric,
 	case BFA_FCS_FABRIC_SM_CONT_OP:
 
 		bfa_fcport_set_tx_bbcredit(fabric->fcs->bfa,
+<<<<<<< HEAD
 					   fabric->bb_credit,
 					   bfa_fcs_fabric_oper_bbscn(fabric));
+=======
+					   fabric->bb_credit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fabric->fab_type = BFA_FCS_FABRIC_SWITCHED;
 
 		if (fabric->auth_reqd && fabric->is_auth) {
@@ -382,8 +422,12 @@ bfa_fcs_fabric_sm_flogi(struct bfa_fcs_fabric_s *fabric,
 	case BFA_FCS_FABRIC_SM_NO_FABRIC:
 		fabric->fab_type = BFA_FCS_FABRIC_N2N;
 		bfa_fcport_set_tx_bbcredit(fabric->fcs->bfa,
+<<<<<<< HEAD
 					   fabric->bb_credit,
 					   bfa_fcs_fabric_oper_bbscn(fabric));
+=======
+					   fabric->bb_credit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bfa_fcs_fabric_notify_online(fabric);
 		bfa_sm_set_state(fabric, bfa_fcs_fabric_sm_nofabric);
 		break;
@@ -551,11 +595,15 @@ bfa_fcs_fabric_sm_nofabric(struct bfa_fcs_fabric_s *fabric,
 	case BFA_FCS_FABRIC_SM_NO_FABRIC:
 		bfa_trc(fabric->fcs, fabric->bb_credit);
 		bfa_fcport_set_tx_bbcredit(fabric->fcs->bfa,
+<<<<<<< HEAD
 					   fabric->bb_credit,
 					   bfa_fcs_fabric_oper_bbscn(fabric));
 		break;
 
 	case BFA_FCS_FABRIC_SM_RETRY_OP:
+=======
+					   fabric->bb_credit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	default:
@@ -801,10 +849,13 @@ bfa_cb_lps_flogi_comp(void *bfad, void *uarg, bfa_status_t status)
 
 	case BFA_STATUS_FABRIC_RJT:
 		fabric->stats.flogi_rejects++;
+<<<<<<< HEAD
 		if (fabric->lps->lsrjt_rsn == FC_LS_RJT_RSN_LOGICAL_ERROR &&
 		    fabric->lps->lsrjt_expl == FC_LS_RJT_EXP_NO_ADDL_INFO)
 			fabric->fcs->bbscn_flogi_rjt = BFA_TRUE;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bfa_sm_send_event(fabric, BFA_FCS_FABRIC_SM_RETRY_OP);
 		return;
 
@@ -834,7 +885,10 @@ bfa_cb_lps_flogi_comp(void *bfad, void *uarg, bfa_status_t status)
 		 */
 		fabric->bport.port_topo.pn2n.rem_port_wwn =
 			fabric->lps->pr_pwwn;
+<<<<<<< HEAD
 		fabric->fab_type = BFA_FCS_FABRIC_N2N;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bfa_sm_send_event(fabric, BFA_FCS_FABRIC_SM_NO_FABRIC);
 	}
 
@@ -850,17 +904,26 @@ bfa_fcs_fabric_login(struct bfa_fcs_fabric_s *fabric)
 {
 	struct bfa_s		*bfa = fabric->fcs->bfa;
 	struct bfa_lport_cfg_s	*pcfg = &fabric->bport.port_cfg;
+<<<<<<< HEAD
 	u8			alpa = 0, bb_scn = 0;
+=======
+	u8			alpa = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (bfa_fcport_get_topology(bfa) == BFA_PORT_TOPOLOGY_LOOP)
 		alpa = bfa_fcport_get_myalpa(bfa);
 
+<<<<<<< HEAD
 	if (bfa_fcs_fabric_is_bbscn_enabled(fabric) &&
 	    (!fabric->fcs->bbscn_flogi_rjt))
 		bb_scn = BFA_FCS_PORT_DEF_BB_SCN;
 
 	bfa_lps_flogi(fabric->lps, fabric, alpa, bfa_fcport_get_maxfrsize(bfa),
 		      pcfg->pwwn, pcfg->nwwn, fabric->auth_reqd, bb_scn);
+=======
+	bfa_lps_flogi(fabric->lps, fabric, alpa, bfa_fcport_get_maxfrsize(bfa),
+		      pcfg->pwwn, pcfg->nwwn, fabric->auth_reqd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fabric->stats.flogi_sent++;
 }
@@ -919,6 +982,7 @@ bfa_fcs_fabric_delay(void *cbarg)
 }
 
 /*
+<<<<<<< HEAD
  * Computes operating BB_SCN value
  */
 static u8
@@ -953,6 +1017,8 @@ bfa_fcs_fabric_is_bbscn_enabled(struct bfa_fcs_fabric_s *fabric)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Delete all vports and wait for vport delete completions.
  */
 static void
@@ -1069,7 +1135,10 @@ void
 bfa_fcs_fabric_link_down(struct bfa_fcs_fabric_s *fabric)
 {
 	bfa_trc(fabric->fcs, fabric->bport.port_cfg.pwwn);
+<<<<<<< HEAD
 	fabric->fcs->bbscn_flogi_rjt = BFA_FALSE;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_sm_send_event(fabric, BFA_FCS_FABRIC_SM_LINK_DOWN);
 }
 
@@ -1273,7 +1342,10 @@ bfa_fcs_fabric_process_flogi(struct bfa_fcs_fabric_s *fabric,
 	}
 
 	fabric->bb_credit = be16_to_cpu(flogi->csp.bbcred);
+<<<<<<< HEAD
 	fabric->lps->pr_bbscn = (be16_to_cpu(flogi->csp.rxsz) >> 12);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bport->port_topo.pn2n.rem_port_wwn = flogi->port_name;
 	bport->port_topo.pn2n.reply_oxid = fchs->ox_id;
 
@@ -1306,10 +1378,16 @@ bfa_fcs_fabric_send_flogi_acc(struct bfa_fcs_fabric_s *fabric)
 				    n2n_port->reply_oxid, pcfg->pwwn,
 				    pcfg->nwwn,
 				    bfa_fcport_get_maxfrsize(bfa),
+<<<<<<< HEAD
 				    bfa_fcport_get_rx_bbcredit(bfa),
 				    bfa_fcs_fabric_oper_bbscn(fabric));
 
 	bfa_fcxp_send(fcxp, NULL, fabric->vf_id, fabric->lps->bfa_tag,
+=======
+				    bfa_fcport_get_rx_bbcredit(bfa));
+
+	bfa_fcxp_send(fcxp, NULL, fabric->vf_id, fabric->lps->lp_tag,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      BFA_FALSE, FC_CLASS_3,
 		      reqlen, &fchs, bfa_fcs_fabric_flogiacc_comp, fabric,
 		      FC_MAX_PDUSZ, 0);
@@ -1328,6 +1406,7 @@ bfa_fcs_fabric_flogiacc_comp(void *fcsarg, struct bfa_fcxp_s *fcxp, void *cbarg,
 	bfa_trc(fabric->fcs, status);
 }
 
+<<<<<<< HEAD
 
 /*
  * Send AEN notification
@@ -1351,6 +1430,8 @@ bfa_fcs_fabric_aen_post(struct bfa_fcs_lport_s *port,
 				  BFA_AEN_CAT_PORT, event);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *
  * @param[in] fabric - fabric
@@ -1382,8 +1463,11 @@ bfa_fcs_fabric_set_fabric_name(struct bfa_fcs_fabric_s *fabric,
 		BFA_LOG(KERN_WARNING, bfad, bfa_log_level,
 			"Base port WWN = %s Fabric WWN = %s\n",
 			pwwn_ptr, fwwn_ptr);
+<<<<<<< HEAD
 		bfa_fcs_fabric_aen_post(&fabric->bport,
 				BFA_PORT_AEN_FABRIC_NAME_CHANGE);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1406,6 +1490,7 @@ bfa_fcs_vf_lookup(struct bfa_fcs_s *fcs, u16 vf_id)
 }
 
 /*
+<<<<<<< HEAD
  *	Return the list of local logical ports present in the given VF.
  *
  *	@param[in]	vf	vf for which logical ports are returned
@@ -1445,6 +1530,8 @@ bfa_fcs_vf_get_ports(bfa_fcs_vf_t *vf, wwn_t lpwwn[], int *nlports)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * BFA FCS PPORT ( physical port)
  */
 static void

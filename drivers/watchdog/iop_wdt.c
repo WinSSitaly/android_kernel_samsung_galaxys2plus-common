@@ -24,8 +24,11 @@
  *	Dan Williams <dan.j.williams@intel.com>
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/fs.h>
@@ -36,10 +39,17 @@
 #include <linux/uaccess.h>
 #include <mach/hardware.h>
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 static unsigned long wdt_status;
 static unsigned long boot_status;
 static DEFINE_SPINLOCK(wdt_lock);
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+static unsigned long wdt_status;
+static unsigned long boot_status;
+static spinlock_t wdt_lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define WDT_IN_USE		0
 #define WDT_OK_TO_CLOSE		1
@@ -87,7 +97,11 @@ static int wdt_disable(void)
 		write_wdtcr(IOP_WDTCR_DIS);
 		clear_bit(WDT_ENABLED, &wdt_status);
 		spin_unlock(&wdt_lock);
+<<<<<<< HEAD
 		pr_info("Disabled\n");
+=======
+		printk(KERN_INFO "WATCHDOG: Disabled\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	} else
 		return 1;
@@ -199,8 +213,13 @@ static int iop_wdt_release(struct inode *inode, struct file *file)
 	 */
 	if (state != 0) {
 		wdt_enable();
+<<<<<<< HEAD
 		pr_crit("Device closed unexpectedly - reset in %lu seconds\n",
 			iop_watchdog_timeout());
+=======
+		printk(KERN_CRIT "WATCHDOG: Device closed unexpectedly - "
+		       "reset in %lu seconds\n", iop_watchdog_timeout());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	clear_bit(WDT_IN_USE, &wdt_status);
@@ -228,6 +247,12 @@ static int __init iop_wdt_init(void)
 {
 	int ret;
 
+<<<<<<< HEAD
+=======
+	spin_lock_init(&wdt_lock);
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* check if the reset was caused by the watchdog timer */
 	boot_status = (read_rcsr() & IOP_RCSR_WDT) ? WDIOF_CARDRESET : 0;
 
@@ -240,7 +265,12 @@ static int __init iop_wdt_init(void)
 	   with an open */
 	ret = misc_register(&iop_wdt_miscdev);
 	if (ret == 0)
+<<<<<<< HEAD
 		pr_info("timeout %lu sec\n", iop_watchdog_timeout());
+=======
+		printk(KERN_INFO "iop watchdog timer: timeout %lu sec\n",
+		       iop_watchdog_timeout());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -253,7 +283,11 @@ static void __exit iop_wdt_exit(void)
 module_init(iop_wdt_init);
 module_exit(iop_wdt_exit);
 
+<<<<<<< HEAD
 module_param(nowayout, bool, 0);
+=======
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started");
 
 MODULE_AUTHOR("Curt E Bruns <curt.e.bruns@intel.com>");

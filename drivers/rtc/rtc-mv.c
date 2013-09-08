@@ -12,10 +12,15 @@
 #include <linux/bcd.h>
 #include <linux/io.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/of.h>
 #include <linux/delay.h>
 #include <linux/gfp.h>
 #include <linux/module.h>
+=======
+#include <linux/delay.h>
+#include <linux/gfp.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 #define RTC_TIME_REG_OFFS	0
@@ -274,7 +279,11 @@ static int __devinit mv_rtc_probe(struct platform_device *pdev)
 	if (pdata->irq >= 0) {
 		writel(0, pdata->ioaddr + RTC_ALARM_INTERRUPT_MASK_REG_OFFS);
 		if (devm_request_irq(&pdev->dev, pdata->irq, mv_rtc_interrupt,
+<<<<<<< HEAD
 				     IRQF_SHARED,
+=======
+				     IRQF_DISABLED | IRQF_SHARED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     pdev->name, pdata) < 0) {
 			dev_warn(&pdev->dev, "interrupt not available.\n");
 			pdata->irq = -1;
@@ -295,6 +304,7 @@ static int __exit mv_rtc_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_OF
 static struct of_device_id rtc_mv_of_match_table[] = {
 	{ .compatible = "mrvl,orion-rtc", },
@@ -302,12 +312,17 @@ static struct of_device_id rtc_mv_of_match_table[] = {
 };
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver mv_rtc_driver = {
 	.remove		= __exit_p(mv_rtc_remove),
 	.driver		= {
 		.name	= "rtc-mv",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.of_match_table = of_match_ptr(rtc_mv_of_match_table),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

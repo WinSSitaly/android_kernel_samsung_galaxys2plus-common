@@ -42,8 +42,14 @@ static void _init_stainfo(struct sta_info *psta)
 	_init_listhead(&psta->hash_list);
 	_r8712_init_sta_xmit_priv(&psta->sta_xmitpriv);
 	_r8712_init_sta_recv_priv(&psta->sta_recvpriv);
+<<<<<<< HEAD
 	_init_listhead(&psta->asoc_list);
 	_init_listhead(&psta->auth_list);
+=======
+#ifdef CONFIG_R8712_AP
+	_init_listhead(&psta->auth_list);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 u32 _r8712_init_sta_priv(struct	sta_priv *pstapriv)
@@ -70,8 +76,15 @@ u32 _r8712_init_sta_priv(struct	sta_priv *pstapriv)
 				 get_list_head(&pstapriv->free_sta_queue));
 		psta++;
 	}
+<<<<<<< HEAD
 	_init_listhead(&pstapriv->asoc_list);
 	_init_listhead(&pstapriv->auth_list);
+=======
+#ifdef CONFIG_R8712_AP
+	_init_listhead(&pstapriv->asoc_list);
+	_init_listhead(&pstapriv->auth_list);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return _SUCCESS;
 }
 

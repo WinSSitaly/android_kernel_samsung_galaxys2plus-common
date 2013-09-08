@@ -47,7 +47,10 @@ struct mtd_blktrans_dev {
 	struct request_queue *rq;
 	spinlock_t queue_lock;
 	void *priv;
+<<<<<<< HEAD
 	fmode_t file_mode;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct mtd_blktrans_ops {

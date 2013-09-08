@@ -1,11 +1,16 @@
 /*
  * i8253 PIT clocksource
  */
+<<<<<<< HEAD
 #include <linux/clockchips.h>
+=======
+#include <linux/clocksource.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/io.h>
 #include <linux/spinlock.h>
 #include <linux/timex.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/i8253.h>
 #include <linux/smp.h>
@@ -20,6 +25,11 @@ DEFINE_RAW_SPINLOCK(i8253_lock);
 EXPORT_SYMBOL(i8253_lock);
 
 #ifdef CONFIG_CLKSRC_I8253
+=======
+
+#include <asm/i8253.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Since the PIT overflows every tick, its not very useful
  * to just read by itself. So use jiffies to emulate a free
@@ -48,6 +58,7 @@ static cycle_t i8253_read(struct clocksource *cs)
 	 * count), it cannot be newer.
 	 */
 	jifs = jiffies;
+<<<<<<< HEAD
 	outb_p(0x00, PIT_MODE);	/* latch the count ASAP */
 	count = inb_p(PIT_CH0);	/* read the latched count */
 	count |= inb_p(PIT_CH0) << 8;
@@ -57,6 +68,17 @@ static cycle_t i8253_read(struct clocksource *cs)
 		outb_p(0x34, PIT_MODE);
 		outb_p(PIT_LATCH & 0xff, PIT_CH0);
 		outb_p(PIT_LATCH >> 8, PIT_CH0);
+=======
+	outb_pit(0x00, PIT_MODE);	/* latch the count ASAP */
+	count = inb_pit(PIT_CH0);	/* read the latched count */
+	count |= inb_pit(PIT_CH0) << 8;
+
+	/* VIA686a test code... reset the latch if count > max + 1 */
+	if (count > LATCH) {
+		outb_pit(0x34, PIT_MODE);
+		outb_pit(PIT_LATCH & 0xff, PIT_CH0);
+		outb_pit(PIT_LATCH >> 8, PIT_CH0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		count = PIT_LATCH - 1;
 	}
 
@@ -97,6 +119,7 @@ int __init clocksource_i8253_init(void)
 {
 	return clocksource_register_hz(&i8253_cs, PIT_TICK_RATE);
 }
+<<<<<<< HEAD
 #endif
 
 #ifdef CONFIG_CLKEVT_I8253
@@ -184,3 +207,5 @@ void __init clockevent_i8253_init(bool oneshot)
 					0xF, 0x7FFF);
 }
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

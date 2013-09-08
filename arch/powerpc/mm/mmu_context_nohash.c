@@ -292,11 +292,14 @@ int init_new_context(struct task_struct *t, struct mm_struct *mm)
 	mm->context.id = MMU_NO_CONTEXT;
 	mm->context.active = 0;
 
+<<<<<<< HEAD
 #ifdef CONFIG_PPC_MM_SLICES
 	if (slice_mm_new_context(mm))
 		slice_set_user_psize(mm, mmu_virtual_psize);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

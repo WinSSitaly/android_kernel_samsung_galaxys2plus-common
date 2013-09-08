@@ -30,6 +30,7 @@
 
 #define MAX_LINK_RATE		SAS_LINK_RATE_6_0_GBPS
 
+<<<<<<< HEAD
 enum VANIR_REVISION_ID {
 	VANIR_A0_REV		= 0xA0,
 	VANIR_B0_REV		= 0x01,
@@ -38,6 +39,8 @@ enum VANIR_REVISION_ID {
 	VANIR_C2_REV		= 0xC2,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum hw_registers {
 	MVS_GBL_CTL		= 0x04,  /* global control */
 	MVS_GBL_INT_STAT	= 0x00,  /* global irq status */
@@ -109,7 +112,10 @@ enum hw_registers {
 	MVS_P4_VSR_DATA 	= 0x254, /* phy4 VSR data */
 	MVS_PA_VSR_ADDR		= 0x290, /* All port VSR addr */
 	MVS_PA_VSR_PORT		= 0x294, /* All port VSR data */
+<<<<<<< HEAD
 	MVS_COMMAND_ACTIVE	= 0x300,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum pci_cfg_registers {
@@ -121,6 +127,7 @@ enum pci_cfg_registers {
 
 /*  SAS/SATA Vendor Specific Port Registers */
 enum sas_sata_vsp_regs {
+<<<<<<< HEAD
 	VSR_PHY_STAT		= 0x00 * 4, /* Phy Interrupt Status */
 	VSR_PHY_MODE1		= 0x01 * 4, /* phy Interrupt Enable */
 	VSR_PHY_MODE2		= 0x02 * 4, /* Phy Configuration */
@@ -138,12 +145,33 @@ enum sas_sata_vsp_regs {
 	VSR_PHY_FFE_CONTROL	= 0x10C,
 	VSR_PHY_DFE_UPDATE_CRTL	= 0x110,
 	VSR_REF_CLOCK_CRTL	= 0x1A0,
+=======
+	VSR_PHY_STAT		= 0x00 * 4, /* Phy Status */
+	VSR_PHY_MODE1		= 0x01 * 4, /* phy tx */
+	VSR_PHY_MODE2		= 0x02 * 4, /* tx scc */
+	VSR_PHY_MODE3		= 0x03 * 4, /* pll */
+	VSR_PHY_MODE4		= 0x04 * 4, /* VCO */
+	VSR_PHY_MODE5		= 0x05 * 4, /* Rx */
+	VSR_PHY_MODE6		= 0x06 * 4, /* CDR */
+	VSR_PHY_MODE7		= 0x07 * 4, /* Impedance */
+	VSR_PHY_MODE8		= 0x08 * 4, /* Voltage */
+	VSR_PHY_MODE9		= 0x09 * 4, /* Test */
+	VSR_PHY_MODE10		= 0x0A * 4, /* Power */
+	VSR_PHY_MODE11		= 0x0B * 4, /* Phy Mode */
+	VSR_PHY_VS0		= 0x0C * 4, /* Vednor Specific 0 */
+	VSR_PHY_VS1		= 0x0D * 4, /* Vednor Specific 1 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum chip_register_bits {
 	PHY_MIN_SPP_PHYS_LINK_RATE_MASK = (0x7 << 8),
+<<<<<<< HEAD
 	PHY_MAX_SPP_PHYS_LINK_RATE_MASK = (0x7 << 12),
 	PHY_NEG_SPP_PHYS_LINK_RATE_MASK_OFFSET = (16),
+=======
+	PHY_MAX_SPP_PHYS_LINK_RATE_MASK = (0x7 << 8),
+	PHY_NEG_SPP_PHYS_LINK_RATE_MASK_OFFSET = (12),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	PHY_NEG_SPP_PHYS_LINK_RATE_MASK =
 			(0x3 << PHY_NEG_SPP_PHYS_LINK_RATE_MASK_OFFSET),
 };
@@ -181,6 +209,7 @@ enum pci_interrupt_cause {
 	IRQ_PCIE_ERR                   = (1 << 31),
 };
 
+<<<<<<< HEAD
 union reg_phy_cfg {
 	u32 v;
 	struct {
@@ -220,22 +249,31 @@ union reg_phy_cfg {
 
 struct mvs_prd_imt {
 #ifndef __BIG_ENDIAN
+=======
+#define MAX_SG_ENTRY		255
+
+struct mvs_prd_imt {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__le32			len:22;
 	u8			_r_a:2;
 	u8			misc_ctl:4;
 	u8			inter_sel:4;
+<<<<<<< HEAD
 #else
 	u32			inter_sel:4;
 	u32			misc_ctl:4;
 	u32			_r_a:2;
 	u32			len:22;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct mvs_prd {
 	/* 64-bit buffer address */
 	__le64			addr;
 	/* 22-bit length */
+<<<<<<< HEAD
 	__le32			im_len;
 } __attribute__ ((packed));
 
@@ -250,6 +288,11 @@ enum sas_sata_phy_regs {
 	GENERATION_3_4_SETTING		= 0x124,
 };
 
+=======
+	struct mvs_prd_imt	im_len;
+} __attribute__ ((packed));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SPI_CTRL_REG_94XX           	0xc800
 #define SPI_ADDR_REG_94XX            	0xc804
 #define SPI_WR_DATA_REG_94XX         0xc808
@@ -258,11 +301,29 @@ enum sas_sata_phy_regs {
 #define SPI_ADDR_VLD_94XX         	(1U << 1)
 #define SPI_CTRL_SpiStart_94XX     	(1U << 0)
 
+<<<<<<< HEAD
 static inline int
 mv_ffc64(u64 v)
 {
 	u64 x = ~v;
 	return x ? __ffs64(x) : -1;
+=======
+#define mv_ffc(x)   ffz(x)
+
+static inline int
+mv_ffc64(u64 v)
+{
+	int i;
+	i = mv_ffc((u32)v);
+	if (i >= 0)
+		return i;
+	i = mv_ffc((u32)(v>>32));
+
+	if (i != 0)
+		return 32 + i;
+
+	return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #define r_reg_set_enable(i) \

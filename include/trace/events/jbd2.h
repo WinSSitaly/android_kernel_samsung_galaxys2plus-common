@@ -26,8 +26,13 @@ TRACE_EVENT(jbd2_checkpoint,
 		__entry->result		= result;
 	),
 
+<<<<<<< HEAD
 	TP_printk("dev %d,%d result %d",
 		  MAJOR(__entry->dev), MINOR(__entry->dev), __entry->result)
+=======
+	TP_printk("dev %s result %d",
+		  jbd2_dev_to_name(__entry->dev), __entry->result)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 DECLARE_EVENT_CLASS(jbd2_commit,
@@ -48,9 +53,15 @@ DECLARE_EVENT_CLASS(jbd2_commit,
 		__entry->transaction	= commit_transaction->t_tid;
 	),
 
+<<<<<<< HEAD
 	TP_printk("dev %d,%d transaction %d sync %d",
 		  MAJOR(__entry->dev), MINOR(__entry->dev),
 		  __entry->transaction, __entry->sync_commit)
+=======
+	TP_printk("dev %s transaction %d sync %d",
+		  jbd2_dev_to_name(__entry->dev), __entry->transaction,
+		  __entry->sync_commit)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 DEFINE_EVENT(jbd2_commit, jbd2_start_commit,
@@ -81,6 +92,7 @@ DEFINE_EVENT(jbd2_commit, jbd2_commit_logging,
 	TP_ARGS(journal, commit_transaction)
 );
 
+<<<<<<< HEAD
 DEFINE_EVENT(jbd2_commit, jbd2_drop_transaction,
 
 	TP_PROTO(journal_t *journal, transaction_t *commit_transaction),
@@ -88,6 +100,8 @@ DEFINE_EVENT(jbd2_commit, jbd2_drop_transaction,
 	TP_ARGS(journal, commit_transaction)
 );
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 TRACE_EVENT(jbd2_end_commit,
 	TP_PROTO(journal_t *journal, transaction_t *commit_transaction),
 
@@ -107,9 +121,15 @@ TRACE_EVENT(jbd2_end_commit,
 		__entry->head		= journal->j_tail_sequence;
 	),
 
+<<<<<<< HEAD
 	TP_printk("dev %d,%d transaction %d sync %d head %d",
 		  MAJOR(__entry->dev), MINOR(__entry->dev),
 		  __entry->transaction, __entry->sync_commit, __entry->head)
+=======
+	TP_printk("dev %s transaction %d sync %d head %d",
+		  jbd2_dev_to_name(__entry->dev), __entry->transaction,
+		  __entry->sync_commit, __entry->head)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 TRACE_EVENT(jbd2_submit_inode_data,
@@ -127,9 +147,14 @@ TRACE_EVENT(jbd2_submit_inode_data,
 		__entry->ino	= inode->i_ino;
 	),
 
+<<<<<<< HEAD
 	TP_printk("dev %d,%d ino %lu",
 		  MAJOR(__entry->dev), MINOR(__entry->dev),
 		  (unsigned long) __entry->ino)
+=======
+	TP_printk("dev %s ino %lu",
+		  jbd2_dev_to_name(__entry->dev), (unsigned long) __entry->ino)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 TRACE_EVENT(jbd2_run_stats,
@@ -164,9 +189,15 @@ TRACE_EVENT(jbd2_run_stats,
 		__entry->blocks_logged	= stats->rs_blocks_logged;
 	),
 
+<<<<<<< HEAD
 	TP_printk("dev %d,%d tid %lu wait %u running %u locked %u flushing %u "
 		  "logging %u handle_count %u blocks %u blocks_logged %u",
 		  MAJOR(__entry->dev), MINOR(__entry->dev), __entry->tid,
+=======
+	TP_printk("dev %s tid %lu wait %u running %u locked %u flushing %u "
+		  "logging %u handle_count %u blocks %u blocks_logged %u",
+		  jbd2_dev_to_name(__entry->dev), __entry->tid,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  jiffies_to_msecs(__entry->wait),
 		  jiffies_to_msecs(__entry->running),
 		  jiffies_to_msecs(__entry->locked),
@@ -200,14 +231,24 @@ TRACE_EVENT(jbd2_checkpoint_stats,
 		__entry->dropped	= stats->cs_dropped;
 	),
 
+<<<<<<< HEAD
 	TP_printk("dev %d,%d tid %lu chp_time %u forced_to_close %u "
 		  "written %u dropped %u",
 		  MAJOR(__entry->dev), MINOR(__entry->dev), __entry->tid,
+=======
+	TP_printk("dev %s tid %lu chp_time %u forced_to_close %u "
+		  "written %u dropped %u",
+		  jbd2_dev_to_name(__entry->dev), __entry->tid,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  jiffies_to_msecs(__entry->chp_time),
 		  __entry->forced_to_close, __entry->written, __entry->dropped)
 );
 
+<<<<<<< HEAD
 TRACE_EVENT(jbd2_update_log_tail,
+=======
+TRACE_EVENT(jbd2_cleanup_journal_tail,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	TP_PROTO(journal_t *journal, tid_t first_tid,
 		 unsigned long block_nr, unsigned long freed),
@@ -230,6 +271,7 @@ TRACE_EVENT(jbd2_update_log_tail,
 		__entry->freed		= freed;
 	),
 
+<<<<<<< HEAD
 	TP_printk("dev %d,%d from %u to %u offset %lu freed %lu",
 		  MAJOR(__entry->dev), MINOR(__entry->dev),
 		  __entry->tail_sequence, __entry->first_tid,
@@ -254,6 +296,11 @@ TRACE_EVENT(jbd2_write_superblock,
 
 	TP_printk("dev %d,%d write_op %x", MAJOR(__entry->dev),
 		  MINOR(__entry->dev), __entry->write_op)
+=======
+	TP_printk("dev %s from %u to %u offset %lu freed %lu",
+		  jbd2_dev_to_name(__entry->dev), __entry->tail_sequence,
+		  __entry->first_tid, __entry->block_nr, __entry->freed)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 #endif /* _TRACE_JBD2_H */

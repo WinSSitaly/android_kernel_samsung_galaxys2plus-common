@@ -44,7 +44,11 @@ extern unsigned long init_bootmem_node(pg_data_t *pgdat,
 				       unsigned long endpfn);
 extern unsigned long init_bootmem(unsigned long addr, unsigned long memend);
 
+<<<<<<< HEAD
 extern unsigned long free_low_memory_core_early(int nodeid);
+=======
+unsigned long free_all_memory_core_early(int nodeid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern unsigned long free_all_bootmem_node(pg_data_t *pgdat);
 extern unsigned long free_all_bootmem(void);
 

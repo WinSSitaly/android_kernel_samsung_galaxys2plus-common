@@ -30,11 +30,16 @@ extern void *l1sram_alloc_max(void*);
 static inline void free_l1stack(void)
 {
 	nr_l1stack_tasks--;
+<<<<<<< HEAD
 	if (nr_l1stack_tasks == 0) {
 		l1sram_free(l1_stack_base);
 		l1_stack_base = NULL;
 		l1_stack_len = 0;
 	}
+=======
+	if (nr_l1stack_tasks == 0)
+		l1sram_free(l1_stack_base);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline unsigned long

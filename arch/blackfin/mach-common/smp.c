@@ -14,7 +14,10 @@
 #include <linux/sched.h>
 #include <linux/interrupt.h>
 #include <linux/cache.h>
+<<<<<<< HEAD
 #include <linux/clockchips.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/profile.h>
 #include <linux/errno.h>
 #include <linux/mm.h>
@@ -24,7 +27,11 @@
 #include <linux/seq_file.h>
 #include <linux/irq.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/cacheflush.h>
 #include <asm/irq_handler.h>
 #include <asm/mmu_context.h>
@@ -46,12 +53,22 @@ struct corelock_slot corelock __attribute__ ((__section__(".l2.bss")));
 unsigned long blackfin_iflush_l1_entry[NR_CPUS];
 #endif
 
+<<<<<<< HEAD
 struct blackfin_initial_pda __cpuinitdata initial_pda_coreb;
 
 #define BFIN_IPI_TIMER	      0
 #define BFIN_IPI_RESCHEDULE   1
 #define BFIN_IPI_CALL_FUNC    2
 #define BFIN_IPI_CPU_STOP     3
+=======
+void __cpuinitdata *init_retx_coreb, *init_saved_retx_coreb,
+	*init_saved_seqstat_coreb, *init_saved_icplb_fault_addr_coreb,
+	*init_saved_dcplb_fault_addr_coreb;
+
+#define BFIN_IPI_RESCHEDULE   0
+#define BFIN_IPI_CALL_FUNC    1
+#define BFIN_IPI_CPU_STOP     2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct blackfin_flush_data {
 	unsigned long start;
@@ -162,6 +179,7 @@ static irqreturn_t ipi_handler_int0(int irq, void *dev_instance)
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
 DECLARE_PER_CPU(struct clock_event_device, coretmr_events);
 void ipi_timer(void)
 {
@@ -170,6 +188,8 @@ void ipi_timer(void)
 	evt->event_handler(evt);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static irqreturn_t ipi_handler_int1(int irq, void *dev_instance)
 {
 	struct ipi_message *msg;
@@ -186,17 +206,31 @@ static irqreturn_t ipi_handler_int1(int irq, void *dev_instance)
 	while (msg_queue->count) {
 		msg = &msg_queue->ipi_message[msg_queue->head];
 		switch (msg->type) {
+<<<<<<< HEAD
 		case BFIN_IPI_TIMER:
 			ipi_timer();
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case BFIN_IPI_RESCHEDULE:
 			scheduler_ipi();
 			break;
 		case BFIN_IPI_CALL_FUNC:
+<<<<<<< HEAD
 			ipi_call_function(cpu, msg);
 			break;
 		case BFIN_IPI_CPU_STOP:
 			ipi_cpu_stop(cpu);
+=======
+			spin_unlock_irqrestore(&msg_queue->lock, flags);
+			ipi_call_function(cpu, msg);
+			spin_lock_irqsave(&msg_queue->lock, flags);
+			break;
+		case BFIN_IPI_CPU_STOP:
+			spin_unlock_irqrestore(&msg_queue->lock, flags);
+			ipi_cpu_stop(cpu);
+			spin_lock_irqsave(&msg_queue->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		default:
 			printk(KERN_CRIT "CPU%u: Unknown IPI message 0x%lx\n",
@@ -304,6 +338,7 @@ EXPORT_SYMBOL_GPL(smp_call_function_single);
 
 void smp_send_reschedule(int cpu)
 {
+<<<<<<< HEAD
 	cpumask_t callmap;
 	/* simply trigger an ipi */
 
@@ -311,10 +346,17 @@ void smp_send_reschedule(int cpu)
 	cpumask_set_cpu(cpu, &callmap);
 
 	smp_send_message(callmap, BFIN_IPI_RESCHEDULE, NULL, NULL, 0);
+=======
+	/* simply trigger an ipi */
+	if (cpu_is_offline(cpu))
+		return;
+	platform_send_ipi_cpu(cpu, IRQ_SUPPLE_0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return;
 }
 
+<<<<<<< HEAD
 void smp_send_msg(const struct cpumask *mask, unsigned long type)
 {
 	smp_send_message(*mask, type, NULL, NULL, 0);
@@ -325,6 +367,8 @@ void smp_timer_broadcast(const struct cpumask *mask)
 	smp_send_msg(mask, BFIN_IPI_TIMER);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void smp_send_stop(void)
 {
 	cpumask_t callmap;
@@ -343,6 +387,7 @@ void smp_send_stop(void)
 int __cpuinit __cpu_up(unsigned int cpu)
 {
 	int ret;
+<<<<<<< HEAD
 	struct blackfin_cpudata *ci = &per_cpu(cpu_data, cpu);
 	struct task_struct *idle = ci->idle;
 
@@ -361,6 +406,19 @@ int __cpuinit __cpu_up(unsigned int cpu)
 	} else {
 		init_idle(idle, cpu);
 	}
+=======
+	static struct task_struct *idle;
+
+	if (idle)
+		free_task(idle);
+
+	idle = fork_idle(cpu);
+	if (IS_ERR(idle)) {
+		printk(KERN_ERR "CPU%u: fork() failed\n", cpu);
+		return PTR_ERR(idle);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	secondary_stack = task_stack_page(idle) + THREAD_SIZE;
 
 	ret = platform_boot_secondary(cpu, idle);
@@ -396,6 +454,7 @@ void __cpuinit secondary_start_kernel(void)
 	if (_bfin_swrst & SWRST_DBL_FAULT_B) {
 		printk(KERN_EMERG "CoreB Recovering from DOUBLE FAULT event\n");
 #ifdef CONFIG_DEBUG_DOUBLEFAULT
+<<<<<<< HEAD
 		printk(KERN_EMERG " While handling exception (EXCAUSE = %#x) at %pF\n",
 			initial_pda_coreb.seqstat_doublefault & SEQSTAT_EXCAUSE,
 			initial_pda_coreb.retx_doublefault);
@@ -406,6 +465,15 @@ void __cpuinit secondary_start_kernel(void)
 #endif
 		printk(KERN_NOTICE " The instruction at %pF caused a double exception\n",
 			initial_pda_coreb.retx);
+=======
+		printk(KERN_EMERG " While handling exception (EXCAUSE = 0x%x) at %pF\n",
+			(int)init_saved_seqstat_coreb & SEQSTAT_EXCAUSE, init_saved_retx_coreb);
+		printk(KERN_NOTICE "   DCPLB_FAULT_ADDR: %pF\n", init_saved_dcplb_fault_addr_coreb);
+		printk(KERN_NOTICE "   ICPLB_FAULT_ADDR: %pF\n", init_saved_icplb_fault_addr_coreb);
+#endif
+		printk(KERN_NOTICE " The instruction at %pF caused a double exception\n",
+			init_retx_coreb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -435,7 +503,10 @@ void __cpuinit secondary_start_kernel(void)
 
 	bfin_setup_caches(cpu);
 
+<<<<<<< HEAD
 	notify_cpu_starting(cpu);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Calibrate loops per jiffy value.
 	 * IRQs need to be enabled here - D-cache can be invalidated
@@ -478,10 +549,15 @@ void smp_icache_flush_range_others(unsigned long start, unsigned long end)
 	smp_flush_data.start = start;
 	smp_flush_data.end = end;
 
+<<<<<<< HEAD
 	preempt_disable();
 	if (smp_call_function(&ipi_flush_icache, &smp_flush_data, 1))
 		printk(KERN_WARNING "SMP: failed to run I-cache flush request on other CPUs\n");
 	preempt_enable();
+=======
+	if (smp_call_function(&ipi_flush_icache, &smp_flush_data, 0))
+		printk(KERN_WARNING "SMP: failed to run I-cache flush request on other CPUs\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(smp_icache_flush_range_others);
 

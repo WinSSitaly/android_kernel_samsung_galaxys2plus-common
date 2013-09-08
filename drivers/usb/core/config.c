@@ -124,9 +124,15 @@ static void usb_parse_ss_endpoint_companion(struct device *ddev, int cfgno,
 
 	if (usb_endpoint_xfer_isoc(&ep->desc))
 		max_tx = (desc->bMaxBurst + 1) * (desc->bmAttributes + 1) *
+<<<<<<< HEAD
 			usb_endpoint_maxp(&ep->desc);
 	else if (usb_endpoint_xfer_int(&ep->desc))
 		max_tx = usb_endpoint_maxp(&ep->desc) *
+=======
+			le16_to_cpu(ep->desc.wMaxPacketSize);
+	else if (usb_endpoint_xfer_int(&ep->desc))
+		max_tx = le16_to_cpu(ep->desc.wMaxPacketSize) *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			(desc->bMaxBurst + 1);
 	else
 		max_tx = 999999;
@@ -241,7 +247,11 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno, int inum,
 		    cfgno, inum, asnum, d->bEndpointAddress);
 		endpoint->desc.bmAttributes = USB_ENDPOINT_XFER_INT;
 		endpoint->desc.bInterval = 1;
+<<<<<<< HEAD
 		if (usb_endpoint_maxp(&endpoint->desc) > 8)
+=======
+		if (le16_to_cpu(endpoint->desc.wMaxPacketSize) > 8)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			endpoint->desc.wMaxPacketSize = cpu_to_le16(8);
 	}
 
@@ -254,7 +264,11 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno, int inum,
 			&& usb_endpoint_xfer_bulk(d)) {
 		unsigned maxp;
 
+<<<<<<< HEAD
 		maxp = usb_endpoint_maxp(&endpoint->desc) & 0x07ff;
+=======
+		maxp = le16_to_cpu(endpoint->desc.wMaxPacketSize) & 0x07ff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (maxp != 512)
 			dev_warn(ddev, "config %d interface %d altsetting %d "
 				"bulk endpoint 0x%X has invalid maxpacket %d\n",
@@ -424,8 +438,12 @@ static int usb_parse_configuration(struct usb_device *dev, int cfgidx,
 
 	memcpy(&config->desc, buffer, USB_DT_CONFIG_SIZE);
 	if (config->desc.bDescriptorType != USB_DT_CONFIG ||
+<<<<<<< HEAD
 	    config->desc.bLength < USB_DT_CONFIG_SIZE ||
 	    config->desc.bLength > size) {
+=======
+	    config->desc.bLength < USB_DT_CONFIG_SIZE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_err(ddev, "invalid descriptor for config index %d: "
 		    "type = 0x%X, length = %d\n", cfgidx,
 		    config->desc.bDescriptorType, config->desc.bLength);
@@ -756,6 +774,7 @@ err2:
 		dev_err(ddev, "out of memory\n");
 	return result;
 }
+<<<<<<< HEAD
 
 void usb_release_bos_descriptor(struct usb_device *dev)
 {
@@ -859,3 +878,5 @@ err:
 	usb_release_bos_descriptor(dev);
 	return ret;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

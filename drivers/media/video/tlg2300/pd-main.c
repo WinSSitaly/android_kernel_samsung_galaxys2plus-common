@@ -374,7 +374,11 @@ static inline void set_map_flags(struct poseidon *pd, struct usb_device *udev)
 }
 #endif
 
+<<<<<<< HEAD
 static int check_firmware(struct usb_device *udev, int *down_firmware)
+=======
+static bool check_firmware(struct usb_device *udev, int *down_firmware)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	void *buf;
 	int ret;
@@ -398,7 +402,11 @@ static int check_firmware(struct usb_device *udev, int *down_firmware)
 		*down_firmware = 1;
 		return firmware_download(udev);
 	}
+<<<<<<< HEAD
 	return 0;
+=======
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int poseidon_probe(struct usb_interface *interface,
@@ -531,4 +539,7 @@ module_exit(poseidon_exit);
 MODULE_AUTHOR("Telegent Systems");
 MODULE_DESCRIPTION("For tlg2300-based USB device ");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_VERSION("0.0.2");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

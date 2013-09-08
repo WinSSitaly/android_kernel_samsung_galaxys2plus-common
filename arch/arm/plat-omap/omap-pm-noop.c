@@ -27,7 +27,11 @@
 #include <plat/omap_device.h>
 
 static bool off_mode_enabled;
+<<<<<<< HEAD
 static int dummy_context_loss_counter;
+=======
+static u32 dummy_context_loss_counter;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Device-driver-originated constraints (via board-*.c files)
@@ -311,6 +315,7 @@ void omap_pm_disable_off_mode(void)
 
 #ifdef CONFIG_ARCH_OMAP2PLUS
 
+<<<<<<< HEAD
 int omap_pm_get_dev_context_loss_count(struct device *dev)
 {
 	struct platform_device *pdev = to_platform_device(dev);
@@ -320,10 +325,22 @@ int omap_pm_get_dev_context_loss_count(struct device *dev)
 		return -ENODEV;
 
 	if (dev->pm_domain == &omap_device_pm_domain) {
+=======
+u32 omap_pm_get_dev_context_loss_count(struct device *dev)
+{
+	struct platform_device *pdev = to_platform_device(dev);
+	u32 count;
+
+	if (WARN_ON(!dev))
+		return 0;
+
+	if (dev->parent == &omap_device_parent) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		count = omap_device_get_context_loss_count(pdev);
 	} else {
 		WARN_ONCE(off_mode_enabled, "omap_pm: using dummy context loss counter; device %s should be converted to omap_device",
 			  dev_name(dev));
+<<<<<<< HEAD
 
 		count = dummy_context_loss_counter;
 
@@ -337,6 +354,11 @@ int omap_pm_get_dev_context_loss_count(struct device *dev)
 			count &= INT_MAX;
 			dummy_context_loss_counter = count;
 		}
+=======
+		if (off_mode_enabled)
+			dummy_context_loss_counter++;
+		count = dummy_context_loss_counter;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	pr_debug("OMAP PM: context loss count for dev %s = %d\n",
@@ -347,7 +369,11 @@ int omap_pm_get_dev_context_loss_count(struct device *dev)
 
 #else
 
+<<<<<<< HEAD
 int omap_pm_get_dev_context_loss_count(struct device *dev)
+=======
+u32 omap_pm_get_dev_context_loss_count(struct device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return dummy_context_loss_counter;
 }

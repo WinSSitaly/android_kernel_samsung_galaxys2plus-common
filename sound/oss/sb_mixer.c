@@ -232,7 +232,11 @@ static int detect_mixer(sb_devc * devc)
 	return 1;
 }
 
+<<<<<<< HEAD
 static void oss_change_bits(sb_devc *devc, unsigned char *regval, int dev, int chn, int newval)
+=======
+static void change_bits(sb_devc * devc, unsigned char *regval, int dev, int chn, int newval)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned char mask;
 	int shift;
@@ -284,7 +288,11 @@ int sb_common_mixer_set(sb_devc * devc, int dev, int left, int right)
 		return -EINVAL;
 
 	val = sb_getmixer(devc, regoffs);
+<<<<<<< HEAD
 	oss_change_bits(devc, &val, dev, LEFT_CHN, left);
+=======
+	change_bits(devc, &val, dev, LEFT_CHN, left);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((*devc->iomap)[dev][RIGHT_CHN].regno != regoffs)	/*
 								 * Change register
@@ -304,7 +312,11 @@ int sb_common_mixer_set(sb_devc * devc, int dev, int left, int right)
 							 * Read the new one
 							 */
 	}
+<<<<<<< HEAD
 	oss_change_bits(devc, &val, dev, RIGHT_CHN, right);
+=======
+	change_bits(devc, &val, dev, RIGHT_CHN, right);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sb_setmixer(devc, regoffs, val);
 

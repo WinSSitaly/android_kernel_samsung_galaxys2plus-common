@@ -40,7 +40,10 @@ parameter is applicable:
 	ALSA	ALSA sound support is enabled.
 	APIC	APIC support is enabled.
 	APM	Advanced Power Management support is enabled.
+<<<<<<< HEAD
 	ARM	ARM architecture is enabled.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	AVR32	AVR32 architecture is enabled.
 	AX25	Appropriate AX.25 support is enabled.
 	BLACKFIN Blackfin architecture is enabled.
@@ -49,9 +52,13 @@ parameter is applicable:
 	EDD	BIOS Enhanced Disk Drive Services (EDD) is enabled
 	EFI	EFI Partitioning (GPT) is enabled
 	EIDE	EIDE/ATAPI support is enabled.
+<<<<<<< HEAD
 	EVM	Extended Verification Module
 	FB	The frame buffer device is enabled.
 	FTRACE	Function tracing enabled.
+=======
+	FB	The frame buffer device is enabled.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	GCOV	GCOV profiling is enabled.
 	HW	Appropriate hardware is enabled.
 	IA-64	IA-64 architecture is enabled.
@@ -72,7 +79,10 @@ parameter is applicable:
 			Documentation/m68k/kernel-options.txt.
 	MCA	MCA bus support is enabled.
 	MDA	MDA console support is enabled.
+<<<<<<< HEAD
 	MIPS	MIPS architecture is enabled.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	MOUSE	Appropriate mouse support is enabled.
 	MSI	Message Signaled Interrupts (PCI).
 	MTD	MTD (Memory Technology Device) support is enabled.
@@ -104,6 +114,10 @@ parameter is applicable:
 	SPARC	Sparc architecture is enabled.
 	SWSUSP	Software suspend (hibernation) is enabled.
 	SUSPEND	System suspend states are enabled.
+<<<<<<< HEAD
+=======
+	FTRACE	Function tracing enabled.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	TPM	TPM drivers are enabled.
 	TS	Appropriate touchscreen support is enabled.
 	UMS	USB Mass Storage support is enabled.
@@ -118,7 +132,11 @@ parameter is applicable:
 	X86-64	X86-64 architecture is enabled.
 			More X86-64 boot options can be found in
 			Documentation/x86/x86_64/boot-options.txt .
+<<<<<<< HEAD
 	X86	Either 32-bit or 64-bit x86 (same as X86-32+X86-64)
+=======
+	X86	Either 32bit or 64bit x86 (same as X86-32+X86-64)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	XEN	Xen support is enabled
 
 In addition, the following text indicates that the option:
@@ -164,12 +182,16 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			rsdt -- prefer RSDT over (default) XSDT
 			copy_dsdt -- copy DSDT to memory
 
+<<<<<<< HEAD
 			See also Documentation/power/runtime_pm.txt, pci=noacpi
 
 	acpi_rsdp=	[ACPI,EFI,KEXEC]
 			Pass the RSDP address to the kernel, mostly used
 			on machines running EFI runtime service to boot the
 			second kernel for kdump.
+=======
+			See also Documentation/power/pm.txt, pci=noacpi
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	acpi_apic_instance=	[ACPI, IOAPIC]
 			Format: <int>
@@ -307,6 +329,7 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			behaviour to be specified.  Bit 0 enables warnings,
 			bit 1 enables fixups, and bit 2 sends a segfault.
 
+<<<<<<< HEAD
 	align_va_addr=	[X86-64]
 			Align virtual addresses by clearing slice [14:12] when
 			allocating a VMA at process creation time. This option
@@ -321,6 +344,9 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			off: disable for both 32- and 64-bit processes
 
 	amd_iommu=	[HW,X86-64]
+=======
+	amd_iommu=	[HW,X86-84]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			Pass parameters to the AMD IOMMU driver in the system.
 			Possible values are:
 			fullflush - enable flushing of IO/TLB entries when
@@ -329,16 +355,23 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 				    is a lot of faster
 			off	  - do not initialize any AMD IOMMU found in
 				    the system
+<<<<<<< HEAD
 			force_isolation - Force device isolation for all
 					  devices. The IOMMU driver is not
 					  allowed anymore to lift isolation
 					  requirements as needed. This option
 					  does not override iommu=pt
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	amijoy.map=	[HW,JOY] Amiga joystick support
 			Map of devices attached to JOY0DAT and JOY1DAT
 			Format: <a>,<b>
+<<<<<<< HEAD
 			See also Documentation/input/joystick.txt
+=======
+			See also Documentation/kernel/input/joystick.txt
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	analog.map=	[HW,JOY] Analog joystick and gamepad support
 			Specifies type or capabilities of an analog joystick
@@ -397,7 +430,11 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 	atkbd.softrepeat= [HW]
 			Use software keyboard repeat
 
+<<<<<<< HEAD
 	autotest	[IA-64]
+=======
+	autotest	[IA64]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	baycom_epp=	[HW,AX25]
 			Format: <io>,<mode>
@@ -427,7 +464,11 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 	bttv.radio=	Most important insmod options are available as
 			kernel args too.
 	bttv.pll=	See Documentation/video4linux/bttv/Insmod-options
+<<<<<<< HEAD
 	bttv.tuner=
+=======
+	bttv.tuner=	and Documentation/video4linux/bttv/CARDLIST
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bulk_remove=off	[PPC]  This parameter disables the use of the pSeries
 			firmware feature for flushing multiple hpte entries
@@ -508,6 +549,14 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			Also note the kernel might malfunction if you disable
 			some critical bits.
 
+<<<<<<< HEAD
+=======
+	cma=nn[MG]	[ARM,KNL]
+			Sets the size of kernel global memory area for contiguous
+			memory allocations. For more information, see
+			include/linux/dma-contiguous.h
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmo_free_hint=	[PPC] Format: { yes | no }
 			Specify whether pages are marked as being inactive
 			when they are freed.  This is used in CMO environments
@@ -515,6 +564,13 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			a hypervisor.
 			Default: yes
 
+<<<<<<< HEAD
+=======
+	coherent_pool=nn[KMG]	[ARM,KNL]
+			Sets the size of memory pool for coherent, atomic dma
+			allocations if Contiguous Memory Allocator (CMA) is used.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	code_bytes	[X86] How many bytes of object code to print
 			in an oops report.
 			Range: 0 - 8192
@@ -557,8 +613,11 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			UART at the specified I/O port or MMIO address,
 			switching to the matching ttyS device later.  The
 			options are the same as for ttyS, above.
+<<<<<<< HEAD
 		hvc<n>	Use the hypervisor console device <n>. This is for
 			both Xen and PowerPC hypervisors.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
                 If the device connected to the port is not a TTY but a braille
                 device, prepend "brl," before the device type, for instance
@@ -574,9 +633,12 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			/proc/<pid>/coredump_filter.
 			See also Documentation/filesystems/proc.txt.
 
+<<<<<<< HEAD
 	cpuidle.off=1	[CPU_IDLE]
 			disable the cpuidle sub-system
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cpcihp_generic=	[HW,PCI] Generic port I/O CompactPCI driver
 			Format:
 			<first_slot>,<last_slot>,<port>,<enum_bit>[,<debug>]
@@ -630,6 +692,7 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 	no_debug_objects
 			[KNL] Disable object debugging
 
+<<<<<<< HEAD
 	debug_guardpage_minorder=
 			[KNL] When CONFIG_DEBUG_PAGEALLOC is set, this
 			parameter allows control of the order of pages that will
@@ -649,6 +712,8 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			CONFIG_DEBUG_PAGEALLOC, hence this option will not help
 			tracking down these problems.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	debugpat	[X86] Enable PAT debugging
 
 	decnet.addr=	[HW,NET]
@@ -715,6 +780,7 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			The filter can be disabled or changed to another
 			driver later using sysfs.
 
+<<<<<<< HEAD
 	drm_kms_helper.edid_firmware=[<connector>:]<file>
 			Broken monitors, graphic adapters and KVMs may
 			send no or incorrect EDID data sets. This parameter
@@ -730,6 +796,8 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			if its name and a colon are prepended to the EDID
 			name.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dscc4.setup=	[NET]
 
 	earlycon=	[KNL] Output early console device and options.
@@ -738,13 +806,21 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 		uart[8250],mmio32,<addr>[,options]
 			Start an early, polled-mode console on the 8250/16550
 			UART at the specified I/O port or MMIO address.
+<<<<<<< HEAD
 			MMIO inter-register address stride is either 8-bit
 			(mmio) or 32-bit (mmio32).
+=======
+			MMIO inter-register address stride is either 8bit (mmio)
+                        or 32bit (mmio32).
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			The options are the same as for ttyS, above.
 
 	earlyprintk=	[X86,SH,BLACKFIN]
 			earlyprintk=vga
+<<<<<<< HEAD
 			earlyprintk=xen
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			earlyprintk=serial[,ttySn[,baudrate]]
 			earlyprintk=ttySn[,baudrate]
 			earlyprintk=dbgp[debugController#]
@@ -762,8 +838,11 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			The VGA output is eventually overwritten by the real
 			console.
 
+<<<<<<< HEAD
 			The xen output can only be used by Xen PV guests.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ekgdboc=	[X86,KGDB] Allow early kernel console debugging
 			ekgdboc=kbd
 
@@ -782,6 +861,7 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 
 	elevator=	[IOSCHED]
 			Format: {"cfq" | "deadline" | "noop"}
+<<<<<<< HEAD
 			See Documentation/block/cfq-iosched.txt and
 			Documentation/block/deadline-iosched.txt for details.
 
@@ -789,6 +869,15 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			Specifies physical address of start of kernel core
 			image elf header and optionally the size. Generally
 			kexec loader will pass this option to capture kernel.
+=======
+			See Documentation/block/as-iosched.txt and
+			Documentation/block/deadline-iosched.txt for details.
+
+	elfcorehdr=	[IA64,PPC,SH,X86]
+			Specifies physical address of start of kernel core
+			image elf header. Generally kexec loader will
+			pass this option to capture kernel.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			See Documentation/kdump/kdump.txt for details.
 
 	enable_mtrr_cleanup [X86]
@@ -818,17 +907,24 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			This option is obsoleted by the "netdev=" option, which
 			has equivalent usage. See its documentation for details.
 
+<<<<<<< HEAD
 	evm=		[EVM]
 			Format: { "fix" }
 			Permit 'security.evm' to be updated regardless of
 			current integrity status.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	failslab=
 	fail_page_alloc=
 	fail_make_request=[KNL]
 			General fault injection mechanism.
 			Format: <interval>,<probability>,<space>,<times>
+<<<<<<< HEAD
 			See also Documentation/fault-injection/.
+=======
+			See also /Documentation/fault-injection/.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	floppy=		[HW]
 			See Documentation/blockdev/floppy.txt.
@@ -856,7 +952,11 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			tracer at boot up. function-list is a comma separated
 			list of functions. This list can be changed at run
 			time by the set_ftrace_filter file in the debugfs
+<<<<<<< HEAD
 			tracing directory.
+=======
+			tracing directory. 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ftrace_notrace=[function-list]
 			[FTRACE] Do not trace the functions specified in
@@ -894,7 +994,11 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 
 	hashdist=	[KNL,NUMA] Large hashes allocated during boot
 			are distributed across NUMA nodes.  Defaults on
+<<<<<<< HEAD
 			for 64-bit NUMA, off otherwise.
+=======
+			for 64bit NUMA, off otherwise.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			Format: 0 | 1 (for off | on)
 
 	hcl=		[IA-64] SGI's Hardware Graph compatibility layer
@@ -970,7 +1074,11 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			     controller
 	i8042.nopnp	[HW] Don't use ACPIPnP / PnPBIOS to discover KBD/AUX
 			     controllers
+<<<<<<< HEAD
 	i8042.notimeout	[HW] Ignore timeout condition signalled by controller
+=======
+	i8042.notimeout	[HW] Ignore timeout condition signalled by conroller
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	i8042.reset	[HW] Reset the controller during init and cleanup
 	i8042.unlock	[HW] Unlock (ignore) the keylock
 
@@ -1017,9 +1125,12 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 	ignore_loglevel	[KNL]
 			Ignore loglevel setting - this will print /all/
 			kernel messages to the console. Useful for debugging.
+<<<<<<< HEAD
 			We also add it as printk module parameter, so users
 			could change it dynamically, usually by
 			/sys/module/printk/parameters/ignore_loglevel.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ihash_entries=	[KNL]
 			Set number of hash buckets for inode cache.
@@ -1066,10 +1177,17 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			DMA.
 		forcedac [x86_64]
 			With this option iommu will not optimize to look
+<<<<<<< HEAD
 			for io virtual address below 32-bit forcing dual
 			address cycle on pci bus for cards supporting greater
 			than 32-bit addressing. The default is to look
 			for translation below 32-bit and if not available
+=======
+			for io virtual address below 32 bit forcing dual
+			address cycle on pci bus for cards supporting greater
+			than 32 bit addressing. The default is to look
+			for translation below 32 bit and if not available
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			then look in the higher range.
 		strict [Default Off]
 			With this option on every unmap_single operation will
@@ -1079,6 +1197,7 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			By default, super page will be supported if Intel IOMMU
 			has the capability. With this option, super page will
 			not be supported.
+<<<<<<< HEAD
 
 	intel_idle.max_cstate=	[KNL,HW,ACPI,X86]
 			0	disables intel_idle and fall back on acpi_idle.
@@ -1090,6 +1209,15 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			nosid	disable Source ID checking
 			no_x2apic_optout
 				BIOS x2APIC opt-out request will be ignored
+=======
+	intremap=	[X86-64, Intel-IOMMU]
+			Format: { on (default) | off | nosid }
+			on	enable Interrupt Remapping (default)
+			off	disable Interrupt Remapping
+			nosid	disable Source ID checking
+
+	inttest=	[IA64]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	iomem=		Disable strict checking of access to MMIO memory
 		strict	regions from userspace.
@@ -1106,9 +1234,13 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 		nomerge
 		forcesac
 		soft
+<<<<<<< HEAD
 		pt		[x86, IA-64]
 		group_mf	[x86, IA-64]
 
+=======
+		pt	[x86, IA64]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	io7=		[HW] IO7 for Marvel based alpha systems
 			See comment before marvel_specify_io7 in
@@ -1227,6 +1359,12 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 	kvm.ignore_msrs=[KVM] Ignore guest accesses to unhandled MSRs.
 			Default is 0 (don't ignore, but inject #GP)
 
+<<<<<<< HEAD
+=======
+	kvm.oos_shadow=	[KVM] Disable out-of-sync shadow paging.
+			Default is 1 (enabled)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kvm.mmu_audit=	[KVM] This is a R/W parameter which allows audit
 			KVM MMU at runtime.
 			Default is 0 (off)
@@ -1236,7 +1374,15 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 
 	kvm-amd.npt=	[KVM,AMD] Disable nested paging (virtualized MMU)
 			for all guests.
+<<<<<<< HEAD
 			Default is 1 (enabled) if in 64-bit or 32-bit PAE mode.
+=======
+			Default is 1 (enabled) if in 64bit or 32bit-PAE mode
+
+	kvm-intel.bypass_guest_pf=
+			[KVM,Intel] Disables bypassing of guest page faults
+			on Intel chips. Default is 1 (enabled)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kvm-intel.ept=	[KVM,Intel] Disable extended page tables
 			(virtualized MMU) support on capable Intel chips.
@@ -1250,10 +1396,13 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			[KVM,Intel] Disable FlexPriority feature (TPR shadow).
 			Default is 1 (enabled)
 
+<<<<<<< HEAD
 	kvm-intel.nested=
 			[KVM,Intel] Enable VMX nesting (nVMX).
 			Default is 0 (disabled)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kvm-intel.unrestricted_guest=
 			[KVM,Intel] Disable unrestricted guest feature
 			(virtualized real and unpaged mode) on capable
@@ -1277,10 +1426,17 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			libata.dma=0	  Disable all PATA and SATA DMA
 			libata.dma=1	  PATA and SATA Disk DMA only
 			libata.dma=2	  ATAPI (CDROM) DMA only
+<<<<<<< HEAD
 			libata.dma=4	  Compact Flash DMA only
 			Combinations also work, so libata.dma=3 enables DMA
 			for disks and CDROMs, but not CFs.
 
+=======
+			libata.dma=4	  Compact Flash DMA only 
+			Combinations also work, so libata.dma=3 enables DMA
+			for disks and CDROMs, but not CFs.
+	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	libata.ignore_hpa=	[LIBATA] Ignore HPA limit
 			libata.ignore_hpa=0	  keep BIOS limits (default)
 			libata.ignore_hpa=1	  ignore limits, using full disk
@@ -1406,7 +1562,11 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 	ltpc=		[NET]
 			Format: <io>,<irq>,<dma>
 
+<<<<<<< HEAD
 	machvec=	[IA-64] Force the use of a particular machine-vector
+=======
+	machvec=	[IA64] Force the use of a particular machine-vector
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			(machvec) in a generic kernel.
 			Example: machvec=hpzx1_swiotlb
 
@@ -1423,12 +1583,18 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			it is equivalent to "nosmp", which also disables
 			the IO APIC.
 
+<<<<<<< HEAD
 	max_loop=	[LOOP] The number of loop block devices that get
 	(loop.max_loop)	unconditionally pre-created at init time. The default
 			number is configured by BLK_DEV_LOOP_MIN_COUNT. Instead
 			of statically allocating a predefined number, loop
 			devices can be requested on-demand with the
 			/dev/loop-control interface.
+=======
+	max_loop=	[LOOP] Maximum number of loopback devices that can
+			be mounted
+			Format: <1-256>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mcatest=	[IA-64]
 
@@ -1675,6 +1841,7 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			of returning the full 64-bit number.
 			The default is to return 64-bit inode numbers.
 
+<<<<<<< HEAD
 	nfs.max_session_slots=
 			[NFSv4.1] Sets the maximum number of session slots
 			the client will attempt to negotiate with the server.
@@ -1716,6 +1883,15 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			is used to automatically discover and login into new
 			osd-targets. Please see:
 			Documentation/filesystems/pnfs.txt for more explanations
+=======
+	nfs.nfs4_disable_idmapping=
+			[NFSv4] When set, this option disables the NFSv4
+			idmapper on the client, but only if the mount
+			is using the 'sec=sys' security flavour. This may
+			make migration from legacy NFSv2/v3 systems easier
+			provided that the server has the appropriate support.
+			The default is to always enable NFSv4 idmapping.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nmi_debug=	[KNL,AVR32,SH] Specify one or more actions to take
 			when a NMI is triggered.
@@ -1749,11 +1925,14 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			debugging driver suspend/resume hooks).  This may
 			not work reliably with all consoles, but is known
 			to work with serial and VGA consoles.
+<<<<<<< HEAD
 			To facilitate more flexible debugging, we also add
 			console_suspend, a printk module parameter to control
 			it. Users could use console_suspend (usually
 			/sys/module/printk/parameters/console_suspend) to
 			turn on/off it dynamically.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	noaliencache	[MM, NUMA, SLAB] Disables the allocation of alien
 			caches in the slab allocator.  Saves per-node memory,
@@ -1851,17 +2030,24 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 
 	nointroute	[IA-64]
 
+<<<<<<< HEAD
 	nojitter	[IA-64] Disables jitter checking for ITC timers.
+=======
+	nojitter	[IA64] Disables jitter checking for ITC timers.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	no-kvmclock	[X86,KVM] Disable paravirtualized KVM clock driver
 
 	no-kvmapf	[X86,KVM] Disable paravirtualized asynchronous page
 			fault handling.
 
+<<<<<<< HEAD
 	no-steal-acc    [X86,KVM] Disable paravirtualized steal time accounting.
 			steal time is computed, but won't influence scheduler
 			behaviour
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nolapic		[X86-32,APIC] Do not enable or use the local APIC.
 
 	nolapic_timer	[X86-32,APIC] Do not use the local APIC timer.
@@ -1876,12 +2062,15 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 	nomfgpt		[X86-32] Disable Multi-Function General Purpose
 			Timer usage (for AMD Geode machines).
 
+<<<<<<< HEAD
 	nonmi_ipi	[X86] Disable using NMI IPIs during panic/reboot to
 			shutdown the other cpus.  Instead use the REBOOT_VECTOR
 			irq.
 
 	nomodule	Disable module load
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nopat		[X86] Disable PAT (page attribute table extension of
 			pagetables) support.
 
@@ -1895,11 +2084,14 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 
 	noresidual	[PPC] Don't use residual data on PReP machines.
 
+<<<<<<< HEAD
 	nordrand	[X86] Disable the direct use of the RDRAND
 			instruction even if it is supported by the
 			processor.  RDRAND is still available to user
 			space applications.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	noresume	[SWSUSP] Disables resume and restores original swap
 			space.
 
@@ -1928,7 +2120,11 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 
 	nox2apic	[X86-64,APIC] Do not enable x2APIC mode.
 
+<<<<<<< HEAD
 	nptcg=		[IA-64] Override max number of concurrent global TLB
+=======
+	nptcg=		[IA64] Override max number of concurrent global TLB
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			purges which is reported from either PAL_VM_SUMMARY or
 			SAL PALO.
 
@@ -1971,11 +2167,14 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			arch_perfmon: [X86] Force use of architectural
 				perfmon on Intel CPUs instead of the
 				CPU specific event set.
+<<<<<<< HEAD
 			timer: [X86] Force use of architectural NMI
 				timer mode (see also oprofile.timer
 				for generic hr timer mode)
 				[s390] Force legacy basic mode sampling
                                 (report cpu_type "timer")
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	oops=panic	Always panic on oopses. Default is to just kill the
 			process, but there is a small probability of
@@ -1987,9 +2186,13 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			See Documentation/sound/oss/oss-parameters.txt
 
 	panic=		[KNL] Kernel behaviour on panic: delay <timeout>
+<<<<<<< HEAD
 			timeout > 0: seconds before rebooting
 			timeout = 0: wait forever
 			timeout < 0: reboot immediately
+=======
+			seconds before rebooting
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			Format: <timeout>
 
 	parkbd.port=	[HW] Parallel port number the keyboard adapter is
@@ -2158,6 +2361,7 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 				the default.
 				off: Turn ECRC off
 				on: Turn ECRC on.
+<<<<<<< HEAD
 		realloc=	Enable/disable reallocating PCI bridge resources
 				if allocations done by BIOS are too small to
 				accommodate resources required by all child
@@ -2166,6 +2370,10 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 				on: Turn realloc on
 		realloc		same as realloc=on
 		noari		do not use PCIe ARI.
+=======
+		realloc		reallocate PCI resources if allocations done by BIOS
+				are erroneous.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pcie_aspm=	[PCIE] Forcibly enable or disable PCIe Active State Power
 			Management.
@@ -2173,10 +2381,13 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 		force	Enable ASPM even on devices that claim not to support it.
 			WARNING: Forcing ASPM on may cause system lockups.
 
+<<<<<<< HEAD
 	pcie_hp=	[PCIE] PCI Express Hotplug driver options:
 		nomsi	Do not use MSI for PCI Express Native Hotplug (this
 			makes all PCIe ports use INTx for hotplug services).
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pcie_ports=	[PCIE] PCIe ports handling:
 		auto	Ask the BIOS whether or not to use native PCIe services
 			associated with PCIe ports (PME, hot-plug, AER).  Use
@@ -2220,6 +2431,7 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			Format: { parport<nr> | timid | 0 }
 			See also Documentation/parport.txt.
 
+<<<<<<< HEAD
 	pmtmr=		[X86] Manual setup of pmtmr I/O Port.
 			Override pmtimer IOPort with a hex value.
 			e.g. pmtmr=0x508
@@ -2230,6 +2442,15 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			via /sys/module/pnp/parameters/debug.  We always show
 			current resource usage; turning this on also shows
 			possible settings and some assignment information.
+=======
+	pmtmr=		[X86] Manual setup of pmtmr I/O Port. 
+			Override pmtimer IOPort with a hex value.
+			e.g. pmtmr=0x508
+
+	pnp.debug	[PNP]
+			Enable PNP debug messages.  This depends on the
+			CONFIG_PNP_DEBUG_MESSAGES option.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pnpacpi=	[ACPI]
 			{ off }
@@ -2270,12 +2491,15 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 
 			default: off.
 
+<<<<<<< HEAD
 	printk.always_kmsg_dump=
 			Trigger kmsg_dump for cases other than kernel oops or
 			panics
 			Format: <bool>  (1/Y/y=enable, 0/N/n=disable)
 			default: disabled
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk.time=	Show timing data prefixed to each printk message line
 			Format: <bool>  (1/Y/y=enable, 0/N/n=disable)
 
@@ -2313,8 +2537,11 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			[HW,MOUSE] Controls Logitech smartscroll autorepeat.
 			0 = disabled, 1 = enabled (default).
 
+<<<<<<< HEAD
 	pstore.backend=	Specify the name of the pstore backend to use
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pt.		[PARIDE]
 			See Documentation/blockdev/paride.txt.
 
@@ -2384,6 +2611,7 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			in <PAGE_SIZE> units (needed only for swap files).
 			See  Documentation/power/swsusp-and-swap-files.txt
 
+<<<<<<< HEAD
 	resumedelay=	[HIBERNATION] Delay (in seconds) to pause before attempting to
 			read the resume files
 
@@ -2391,6 +2619,8 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			Useful for devices that are detected asynchronously
 			(e.g. USB and MMC devices).
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hibernate=	[HIBERNATION]
 		noresume	Don't check if there's a hibernation image
 				present during boot.
@@ -2407,7 +2637,10 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 	ro		[KNL] Mount root device read-only on boot
 
 	root=		[KNL] Root filesystem
+<<<<<<< HEAD
 			See name_to_dev_t comment in init/do_mounts.c.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rootdelay=	[KNL] Delay (in seconds) to pause before attempting to
 			mount the root filesystem
@@ -2469,12 +2702,15 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 
 	slram=		[HW,MTD]
 
+<<<<<<< HEAD
 	slab_max_order=	[MM, SLAB]
 			Determines the maximum allowed order for slabs.
 			A high setting may cause OOMs due to memory
 			fragmentation.  Defaults to 1 for systems with
 			more than 32MB of RAM, 0 otherwise.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	slub_debug[=options[,slabs]]	[MM, SLUB]
 			Enabling slub_debug allows one to determine the
 			culprit if slab objects become corrupted. Enabling
@@ -2499,7 +2735,11 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			For more information see Documentation/vm/slub.txt.
 
 	slub_min_order=	[MM, SLUB]
+<<<<<<< HEAD
 			Determines the minimum page order for slabs. Must be
+=======
+			Determines the mininum page order for slabs. Must be
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			lower than slub_max_order.
 			For more information see Documentation/vm/slub.txt.
 
@@ -2532,7 +2772,11 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			Format: <integer>
 
 	sonypi.*=	[HW] Sony Programmable I/O Control Device driver
+<<<<<<< HEAD
 			See Documentation/laptops/sonypi.txt
+=======
+			See Documentation/sonypi.txt
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	specialix=	[HW,SERIAL] Specialix multi-serial port adapter
 			See Documentation/serial/specialix.txt.
@@ -2545,6 +2789,7 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 	stacktrace	[FTRACE]
 			Enabled the stack tracer on boot up.
 
+<<<<<<< HEAD
 	stacktrace_filter=[function-list]
 			[FTRACE] Limit the functions that the stack tracer
 			will trace at boot up. function-list is a comma separated
@@ -2553,6 +2798,8 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			tracing directory. Note, this enables stack tracing
 			and the stacktrace above is not needed.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sti=		[PARISC,HW]
 			Format: <num>
 			Set the STI (builtin display/keyboard on the HP-PARISC
@@ -2665,7 +2912,11 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 
 	threadirqs	[KNL]
 			Force threading of all interrupt handlers except those
+<<<<<<< HEAD
 			marked explicitly IRQF_NO_THREAD.
+=======
+			marked explicitely IRQF_NO_THREAD.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	topology=	[S390]
 			Format: {off | on}
@@ -2694,6 +2945,7 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			to facilitate early boot debugging.
 			See also Documentation/trace/events.txt
 
+<<<<<<< HEAD
 	transparent_hugepage=
 			[KNL]
 			Format: [always|madvise|never]
@@ -2701,6 +2953,8 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			with respect to transparent hugepages.
 			See Documentation/vm/transhuge.txt for more details.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tsc=		Disable clocksource stability checks for TSC.
 			Format: <string>
 			[x86] reliable: mark tsc clocksource as reliable, this
@@ -2719,11 +2973,14 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			<port#>,<js1>,<js2>,<js3>,<js4>,<js5>,<js6>,<js7>
 			See also Documentation/input/joystick-parport.txt
 
+<<<<<<< HEAD
 	udbg-immortal	[PPC] When debugging early kernel crashes that
 			happen after console_init() and before a proper 
 			console driver takes over, this boot options might
 			help "seeing" what's going on.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uhash_entries=	[KNL,NET]
 			Set number of hash buckets for UDP/UDP-Lite connections
 
@@ -2738,11 +2995,14 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 	unknown_nmi_panic
 			[X86] Cause panic on unknown NMI.
 
+<<<<<<< HEAD
 	usbcore.authorized_default=
 			[USB] Default USB device authorization:
 			(default -1 = authorized except for wireless USB,
 			0 = not authorized, 1 = authorized)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usbcore.autosuspend=
 			[USB] The autosuspend time delay (in seconds) used
 			for newly-detected USB devices (default 2).  This
@@ -2760,10 +3020,13 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			[USB] Start with the old device initialization
 			scheme (default 0 = off).
 
+<<<<<<< HEAD
 	usbcore.usbfs_memory_mb=
 			[USB] Memory limit (in MB) for buffers allocated by
 			usbfs (default = 16, 0 = max = 2047).
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usbcore.use_both_schemes=
 			[USB] Try the other device initialization scheme
 			if the first one fails (default 1 = enabled).
@@ -2819,6 +3082,7 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 					medium is write-protected).
 			Example: quirks=0419:aaf5:rl,0421:0433:rc
 
+<<<<<<< HEAD
 	user_debug=	[KNL,ARM]
 			Format: <int>
 			See arch/arm/Kconfig.debug help text.
@@ -2829,6 +3093,8 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 				16 - SIGBUS faults
 			Example: user_debug=31
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	userpte=
 			[X86] Flags controlling user PTE allocations.
 
@@ -2874,6 +3140,7 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 	vmpoff=		[KNL,S390] Perform z/VM CP command after power off.
 			Format: <command>
 
+<<<<<<< HEAD
 	vsyscall=	[X86-64]
 			Controls the behavior of vsyscalls (i.e. calls to
 			fixed addresses of 0xffffffffff600x00 from legacy
@@ -2895,6 +3162,8 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
 			            them quite hard to use for exploits but
 			            might break your system.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vt.cur_default=	[VT] Default cursor shape.
 			Format: 0xCCBBAA, where AA, BB, and CC are the same as
 			the parameters of the <Esc>[?A;B;Cc escape sequence;

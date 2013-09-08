@@ -98,6 +98,10 @@ static struct inode *affs_alloc_inode(struct super_block *sb)
 static void affs_i_callback(struct rcu_head *head)
 {
 	struct inode *inode = container_of(head, struct inode, i_rcu);
+<<<<<<< HEAD
+=======
+	INIT_LIST_HEAD(&inode->i_dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kmem_cache_free(affs_inode_cachep, AFFS_I(inode));
 }
 
@@ -473,7 +477,11 @@ got_root:
 	root_inode = affs_iget(sb, root_block);
 	if (IS_ERR(root_inode)) {
 		ret = PTR_ERR(root_inode);
+<<<<<<< HEAD
 		goto out_error;
+=======
+		goto out_error_noinode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (AFFS_SB(sb)->s_flags & SF_INTL)
@@ -481,7 +489,11 @@ got_root:
 	else
 		sb->s_d_op = &affs_dentry_operations;
 
+<<<<<<< HEAD
 	sb->s_root = d_make_root(root_inode);
+=======
+	sb->s_root = d_alloc_root(root_inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!sb->s_root) {
 		printk(KERN_ERR "AFFS: Get root inode failed\n");
 		goto out_error;
@@ -494,6 +506,12 @@ got_root:
 	 * Begin the cascaded cleanup ...
 	 */
 out_error:
+<<<<<<< HEAD
+=======
+	if (root_inode)
+		iput(root_inode);
+out_error_noinode:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(sbi->s_bitmap);
 	affs_brelse(root_bh);
 	kfree(sbi->s_prefix);

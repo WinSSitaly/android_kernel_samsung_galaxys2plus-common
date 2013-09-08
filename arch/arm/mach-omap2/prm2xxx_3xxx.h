@@ -1,7 +1,11 @@
 /*
  * OMAP2/3 Power/Reset Management (PRM) register definitions
  *
+<<<<<<< HEAD
  * Copyright (C) 2007-2009, 2011 Texas Instruments, Inc.
+=======
+ * Copyright (C) 2007-2009 Texas Instruments, Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (C) 2008-2010 Nokia Corporation
  * Paul Walmsley
  *
@@ -303,6 +307,7 @@ extern int omap2_prm_is_hardreset_asserted(s16 prm_mod, u8 shift);
 extern int omap2_prm_assert_hardreset(s16 prm_mod, u8 shift);
 extern int omap2_prm_deassert_hardreset(s16 prm_mod, u8 rst_shift, u8 st_shift);
 
+<<<<<<< HEAD
 /* OMAP3-specific VP functions */
 u32 omap3_prm_vp_check_txdone(u8 vp_id);
 void omap3_prm_vp_clear_txdone(u8 vp_id);
@@ -323,6 +328,9 @@ extern void omap3xxx_prm_restore_irqen(u32 *saved_mask);
 
 #endif	/* CONFIG_ARCH_OMAP4 */
 
+=======
+#endif	/* CONFIG_ARCH_OMAP4 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /*

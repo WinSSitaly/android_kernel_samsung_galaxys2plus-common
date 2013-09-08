@@ -12,7 +12,10 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/mac80211.h>
 #include "ieee80211_i.h"
 #include "driver-trace.h"
@@ -103,7 +106,12 @@ static void ieee80211_offchannel_ps_disable(struct ieee80211_sub_if_data *sdata)
 	ieee80211_sta_reset_conn_monitor(sdata);
 }
 
+<<<<<<< HEAD
 void ieee80211_offchannel_stop_vifs(struct ieee80211_local *local)
+=======
+void ieee80211_offchannel_stop_vifs(struct ieee80211_local *local,
+				    bool offchannel_ps_enable)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ieee80211_sub_if_data *sdata;
 
@@ -128,7 +136,12 @@ void ieee80211_offchannel_stop_vifs(struct ieee80211_local *local)
 
 		if (sdata->vif.type != NL80211_IFTYPE_MONITOR) {
 			netif_tx_stop_all_queues(sdata->dev);
+<<<<<<< HEAD
 			if (sdata->vif.type == NL80211_IFTYPE_STATION &&
+=======
+			if (offchannel_ps_enable &&
+			    (sdata->vif.type == NL80211_IFTYPE_STATION) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    sdata->u.mgd.associated)
 				ieee80211_offchannel_ps_enable(sdata, true);
 		}
@@ -136,12 +149,18 @@ void ieee80211_offchannel_stop_vifs(struct ieee80211_local *local)
 	mutex_unlock(&local->iflist_mtx);
 }
 
+<<<<<<< HEAD
 void ieee80211_offchannel_return(struct ieee80211_local *local)
+=======
+void ieee80211_offchannel_enable_all_ps(struct ieee80211_local *local,
+					bool tell_ap)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ieee80211_sub_if_data *sdata;
 
 	mutex_lock(&local->iflist_mtx);
 	list_for_each_entry(sdata, &local->interfaces, list) {
+<<<<<<< HEAD
 		if (sdata->vif.type != NL80211_IFTYPE_MONITOR)
 			clear_bit(SDATA_STATE_OFFCHANNEL, &sdata->state);
 
@@ -154,6 +173,38 @@ void ieee80211_offchannel_return(struct ieee80211_local *local)
 			ieee80211_offchannel_ps_disable(sdata);
 
 		if (sdata->vif.type != NL80211_IFTYPE_MONITOR) {
+=======
+		if (!ieee80211_sdata_running(sdata))
+			continue;
+
+		if (sdata->vif.type == NL80211_IFTYPE_STATION &&
+		    sdata->u.mgd.associated)
+			ieee80211_offchannel_ps_enable(sdata, tell_ap);
+	}
+	mutex_unlock(&local->iflist_mtx);
+}
+
+void ieee80211_offchannel_return(struct ieee80211_local *local,
+				 bool enable_beaconing,
+				 bool offchannel_ps_disable)
+{
+	struct ieee80211_sub_if_data *sdata;
+
+	mutex_lock(&local->iflist_mtx);
+	list_for_each_entry(sdata, &local->interfaces, list) {
+		if (!ieee80211_sdata_running(sdata))
+			continue;
+
+		/* Tell AP we're back */
+		if (offchannel_ps_disable &&
+		    sdata->vif.type == NL80211_IFTYPE_STATION) {
+			if (sdata->u.mgd.associated)
+				ieee80211_offchannel_ps_disable(sdata);
+		}
+
+		if (sdata->vif.type != NL80211_IFTYPE_MONITOR) {
+			clear_bit(SDATA_STATE_OFFCHANNEL, &sdata->state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * This may wake up queues even though the driver
 			 * currently has them stopped. This is not very
@@ -167,9 +218,17 @@ void ieee80211_offchannel_return(struct ieee80211_local *local)
 			netif_tx_wake_all_queues(sdata->dev);
 		}
 
+<<<<<<< HEAD
 		if (sdata->vif.type == NL80211_IFTYPE_AP ||
 		    sdata->vif.type == NL80211_IFTYPE_ADHOC ||
 		    sdata->vif.type == NL80211_IFTYPE_MESH_POINT)
+=======
+		/* Check to see if we should re-enable beaconing */
+		if (enable_beaconing &&
+		    (sdata->vif.type == NL80211_IFTYPE_AP ||
+		     sdata->vif.type == NL80211_IFTYPE_ADHOC ||
+		     sdata->vif.type == NL80211_IFTYPE_MESH_POINT))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ieee80211_bss_info_change_notify(
 				sdata, BSS_CHANGED_BEACON_ENABLED);
 	}
@@ -189,6 +248,11 @@ static void ieee80211_hw_roc_start(struct work_struct *work)
 		return;
 	}
 
+<<<<<<< HEAD
+=======
+	ieee80211_recalc_idle(local);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (local->hw_roc_skb) {
 		sdata = IEEE80211_DEV_TO_SUB_IF(local->hw_roc_dev);
 		ieee80211_tx_skb(sdata, local->hw_roc_skb);
@@ -202,8 +266,11 @@ static void ieee80211_hw_roc_start(struct work_struct *work)
 					  GFP_KERNEL);
 	}
 
+<<<<<<< HEAD
 	ieee80211_recalc_idle(local);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&local->mtx);
 }
 
@@ -229,6 +296,7 @@ static void ieee80211_hw_roc_done(struct work_struct *work)
 		return;
 	}
 
+<<<<<<< HEAD
 	/* was never transmitted */
 	if (local->hw_roc_skb) {
 		u64 cookie;
@@ -245,6 +313,8 @@ static void ieee80211_hw_roc_done(struct work_struct *work)
 		local->hw_roc_skb_for_status = NULL;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!local->hw_roc_for_tx)
 		cfg80211_remain_on_channel_expired(local->hw_roc_dev,
 						   local->hw_roc_cookie,

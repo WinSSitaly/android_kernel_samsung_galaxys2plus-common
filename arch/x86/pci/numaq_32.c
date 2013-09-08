@@ -34,7 +34,10 @@ static int pci_conf1_mq_read(unsigned int seg, unsigned int bus,
 	unsigned long flags;
 	void *adr __iomem = XQUAD_PORT_ADDR(0xcfc, BUS2QUAD(bus));
 
+<<<<<<< HEAD
 	WARN_ON(seg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!value || (bus >= MAX_MP_BUSSES) || (devfn > 255) || (reg > 255))
 		return -EINVAL;
 
@@ -74,7 +77,10 @@ static int pci_conf1_mq_write(unsigned int seg, unsigned int bus,
 	unsigned long flags;
 	void *adr __iomem = XQUAD_PORT_ADDR(0xcfc, BUS2QUAD(bus));
 
+<<<<<<< HEAD
 	WARN_ON(seg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((bus >= MAX_MP_BUSSES) || (devfn > 255) || (reg > 255)) 
 		return -EINVAL;
 
@@ -110,7 +116,11 @@ static int pci_conf1_mq_write(unsigned int seg, unsigned int bus,
 
 #undef PCI_CONF1_MQ_ADDRESS
 
+<<<<<<< HEAD
 static const struct pci_raw_ops pci_direct_conf1_mq = {
+=======
+static struct pci_raw_ops pci_direct_conf1_mq = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.read	= pci_conf1_mq_read,
 	.write	= pci_conf1_mq_write
 };
@@ -153,6 +163,11 @@ int __init pci_numaq_init(void)
 	raw_pci_ops = &pci_direct_conf1_mq;
 
 	pci_root_bus = pcibios_scan_root(0);
+<<<<<<< HEAD
+=======
+	if (pci_root_bus)
+		pci_bus_add_devices(pci_root_bus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (num_online_nodes() > 1)
 		for_each_online_node(quad) {
 			if (quad == 0)

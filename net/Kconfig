@@ -79,6 +79,23 @@ source "net/netlabel/Kconfig"
 
 endif # if INET
 
+<<<<<<< HEAD
+=======
+config ANDROID_PARANOID_NETWORK
+	bool "Only allow certain groups to create sockets"
+	default y
+	help
+		none
+
+config NET_ACTIVITY_STATS
+	bool "Network activity statistics tracking"
+	default y
+	help
+	 Network activity statistics are useful for tracking wireless
+	 modem activity on 2G, 3G, 4G wireless networks. Counts number of
+	 transmissions and groups them in specified time buckets.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config NETWORK_SECMARK
 	bool "Security Marking"
 	help
@@ -215,10 +232,16 @@ source "net/sched/Kconfig"
 source "net/dcb/Kconfig"
 source "net/dns_resolver/Kconfig"
 source "net/batman-adv/Kconfig"
+<<<<<<< HEAD
 source "net/openvswitch/Kconfig"
 
 config RPS
 	boolean
+=======
+
+config RPS
+	boolean "RPS"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	depends on SMP && SYSFS && USE_GENERIC_SMP_HELPERS
 	default y
 
@@ -233,6 +256,7 @@ config XPS
 	depends on SMP && SYSFS && USE_GENERIC_SMP_HELPERS
 	default y
 
+<<<<<<< HEAD
 config NETPRIO_CGROUP
 	tristate "Network priority cgroup"
 	depends on CGROUPS
@@ -246,6 +270,8 @@ config BQL
 	select DQL
 	default y
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config HAVE_BPF_JIT
 	bool
 
@@ -336,7 +362,10 @@ source "net/rfkill/Kconfig"
 source "net/9p/Kconfig"
 source "net/caif/Kconfig"
 source "net/ceph/Kconfig"
+<<<<<<< HEAD
 source "net/nfc/Kconfig"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 endif   # if NET

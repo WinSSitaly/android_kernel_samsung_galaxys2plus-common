@@ -52,7 +52,11 @@ the PCMCIA interface.
 #include <pcmcia/cisreg.h>
 #include <pcmcia/ds.h>
 
+<<<<<<< HEAD
 static struct pcmcia_device *pcmcia_cur_dev;
+=======
+static struct pcmcia_device *pcmcia_cur_dev = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DIO24_SIZE 4		/*  size of io region used by board */
 
@@ -133,6 +137,7 @@ static int dio24_attach(struct comedi_device *dev, struct comedi_devconfig *it)
 #endif
 		break;
 	default:
+<<<<<<< HEAD
 		pr_err("bug! couldn't determine board type\n");
 		return -EINVAL;
 		break;
@@ -146,6 +151,24 @@ static int dio24_attach(struct comedi_device *dev, struct comedi_devconfig *it)
 
 	if (iobase == 0) {
 		pr_err("io base address is zero!\n");
+=======
+		printk("bug! couldn't determine board type\n");
+		return -EINVAL;
+		break;
+	}
+	printk("comedi%d: ni_daq_dio24: %s, io 0x%lx", dev->minor,
+	       thisboard->name, iobase);
+#ifdef incomplete
+	if (irq) {
+		printk(", irq %u", irq);
+	}
+#endif
+
+	printk("\n");
+
+	if (iobase == 0) {
+		printk("io base address is zero!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -170,7 +193,11 @@ static int dio24_attach(struct comedi_device *dev, struct comedi_devconfig *it)
 
 static int dio24_detach(struct comedi_device *dev)
 {
+<<<<<<< HEAD
 	dev_info(dev->hw_dev, "comedi%d: ni_daq_dio24: remove\n", dev->minor);
+=======
+	printk("comedi%d: ni_daq_dio24: remove\n", dev->minor);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dev->subdevices)
 		subdev_8255_cleanup(dev, dev->subdevices + 0);

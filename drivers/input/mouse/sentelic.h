@@ -2,7 +2,11 @@
  * Finger Sensing Pad PS/2 mouse driver.
  *
  * Copyright (C) 2005-2007 Asia Vital Components Co., Ltd.
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Tai-hwa Liang, Sentelic Corporation.
+=======
+ * Copyright (C) 2005-2009 Tai-hwa Liang, Sentelic Corporation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *   This program is free software; you can redistribute it and/or
  *   modify it under the terms of the GNU General Public License
@@ -33,7 +37,10 @@
 /* Finger-sensing Pad control registers */
 #define	FSP_REG_SYSCTL1		0x10
 #define	FSP_BIT_EN_REG_CLK	BIT(5)
+<<<<<<< HEAD
 #define	FSP_REG_TMOD_STATUS	0x20
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define	FSP_REG_OPC_QDOWN	0x31
 #define	FSP_BIT_EN_OPC_TAG	BIT(7)
 #define	FSP_REG_OPTZ_XLO	0x34
@@ -55,6 +62,7 @@
 #define	FSP_BIT_FIX_HSCR	BIT(5)
 #define	FSP_BIT_DRAG_LOCK	BIT(6)
 
+<<<<<<< HEAD
 #define	FSP_REG_SWC1		(0x90)
 #define	FSP_BIT_SWC1_EN_ABS_1F	BIT(0)
 #define	FSP_BIT_SWC1_EN_GID	BIT(1)
@@ -65,6 +73,8 @@
 #define	FSP_BIT_SWC1_GST_GRP1	BIT(6)
 #define	FSP_BIT_SWC1_BX_COMPAT	BIT(7)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Finger-sensing Pad packet formating related definitions */
 
 /* absolute packet type */
@@ -74,6 +84,7 @@
 #define	FSP_PKT_TYPE_NORMAL_OPC	(0x03)
 #define	FSP_PKT_TYPE_SHIFT	(6)
 
+<<<<<<< HEAD
 /* bit definitions for the first byte of report packet */
 #define	FSP_PB0_LBTN		BIT(0)
 #define	FSP_PB0_RBTN		BIT(1)
@@ -94,12 +105,18 @@
 #define	FSP_VER_STL3888_D1	(0xE3)
 #define	FSP_VER_STL3888_E0	(0xE4)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef __KERNEL__
 
 struct fsp_data {
 	unsigned char	ver;		/* hardware version */
 	unsigned char	rev;		/* hardware revison */
+<<<<<<< HEAD
 	unsigned int	buttons;	/* Number of buttons */
+=======
+	unsigned char	buttons;	/* Number of buttons */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int	flags;
 #define	FSPDRV_FLAG_EN_OPC	(0x001)	/* enable on-pad clicking */
 
@@ -108,7 +125,10 @@ struct fsp_data {
 
 	unsigned char	last_reg;	/* Last register we requested read from */
 	unsigned char	last_val;
+<<<<<<< HEAD
 	unsigned int	last_mt_fgr;	/* Last seen finger(multitouch) */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #ifdef CONFIG_MOUSE_PS2_SENTELIC

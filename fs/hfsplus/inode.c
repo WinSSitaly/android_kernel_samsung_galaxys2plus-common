@@ -119,8 +119,13 @@ static ssize_t hfsplus_direct_IO(int rw, struct kiocb *iocb,
 	struct inode *inode = file->f_path.dentry->d_inode->i_mapping->host;
 	ssize_t ret;
 
+<<<<<<< HEAD
 	ret = blockdev_direct_IO(rw, iocb, inode, iov, offset, nr_segs,
 				 hfsplus_get_block);
+=======
+	ret = blockdev_direct_IO(rw, iocb, inode, inode->i_sb->s_bdev, iov,
+				  offset, nr_segs, hfsplus_get_block, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * In case of error extending write may have instantiated a few
@@ -193,6 +198,7 @@ static struct dentry *hfsplus_file_lookup(struct inode *dir,
 	mutex_init(&hip->extents_lock);
 	hip->extent_state = 0;
 	hip->flags = 0;
+<<<<<<< HEAD
 	hip->userflags = 0;
 	set_bit(HFSPLUS_I_RSRC, &hip->flags);
 
@@ -203,6 +209,15 @@ static struct dentry *hfsplus_file_lookup(struct inode *dir,
 			err = hfsplus_cat_read_inode(inode, &fd);
 		hfs_find_exit(&fd);
 	}
+=======
+	set_bit(HFSPLUS_I_RSRC, &hip->flags);
+
+	hfs_find_init(HFSPLUS_SB(sb)->cat_tree, &fd);
+	err = hfsplus_find_cat(sb, dir->i_ino, &fd);
+	if (!err)
+		err = hfsplus_cat_read_inode(inode, &fd);
+	hfs_find_exit(&fd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err) {
 		iput(inode);
 		return ERR_PTR(err);
@@ -299,8 +314,11 @@ static int hfsplus_setattr(struct dentry *dentry, struct iattr *attr)
 
 	if ((attr->ia_valid & ATTR_SIZE) &&
 	    attr->ia_size != i_size_read(inode)) {
+<<<<<<< HEAD
 		inode_dio_wait(inode);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		error = vmtruncate(inode, attr->ia_size);
 		if (error)
 			return error;
@@ -311,19 +329,26 @@ static int hfsplus_setattr(struct dentry *dentry, struct iattr *attr)
 	return 0;
 }
 
+<<<<<<< HEAD
 int hfsplus_file_fsync(struct file *file, loff_t start, loff_t end,
 		       int datasync)
+=======
+int hfsplus_file_fsync(struct file *file, int datasync)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inode *inode = file->f_mapping->host;
 	struct hfsplus_inode_info *hip = HFSPLUS_I(inode);
 	struct hfsplus_sb_info *sbi = HFSPLUS_SB(inode->i_sb);
 	int error = 0, error2;
 
+<<<<<<< HEAD
 	error = filemap_write_and_wait_range(inode->i_mapping, start, end);
 	if (error)
 		return error;
 	mutex_lock(&inode->i_mutex);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Sync inode metadata into the catalog and extent trees.
 	 */
@@ -351,8 +376,11 @@ int hfsplus_file_fsync(struct file *file, loff_t start, loff_t end,
 	if (!test_bit(HFSPLUS_SB_NOBARRIER, &sbi->flags))
 		blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL, NULL);
 
+<<<<<<< HEAD
 	mutex_unlock(&inode->i_mutex);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error;
 }
 
@@ -379,7 +407,11 @@ static const struct file_operations hfsplus_file_operations = {
 	.unlocked_ioctl = hfsplus_ioctl,
 };
 
+<<<<<<< HEAD
 struct inode *hfsplus_new_inode(struct super_block *sb, umode_t mode)
+=======
+struct inode *hfsplus_new_inode(struct super_block *sb, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hfsplus_sb_info *sbi = HFSPLUS_SB(sb);
 	struct inode *inode = new_inode(sb);
@@ -392,7 +424,11 @@ struct inode *hfsplus_new_inode(struct super_block *sb, umode_t mode)
 	inode->i_mode = mode;
 	inode->i_uid = current_fsuid();
 	inode->i_gid = current_fsgid();
+<<<<<<< HEAD
 	set_nlink(inode, 1);
+=======
+	inode->i_nlink = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	inode->i_mtime = inode->i_atime = inode->i_ctime = CURRENT_TIME_SEC;
 
 	hip = HFSPLUS_I(inode);
@@ -401,7 +437,10 @@ struct inode *hfsplus_new_inode(struct super_block *sb, umode_t mode)
 	atomic_set(&hip->opencnt, 0);
 	hip->extent_state = 0;
 	hip->flags = 0;
+<<<<<<< HEAD
 	hip->userflags = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(hip->first_extents, 0, sizeof(hfsplus_extent_rec));
 	memset(hip->cached_extents, 0, sizeof(hfsplus_extent_rec));
 	hip->alloc_blocks = 0;
@@ -514,7 +553,11 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
 		hfs_bnode_read(fd->bnode, &entry, fd->entryoffset,
 					sizeof(struct hfsplus_cat_folder));
 		hfsplus_get_perms(inode, &folder->permissions, 1);
+<<<<<<< HEAD
 		set_nlink(inode, 1);
+=======
+		inode->i_nlink = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		inode->i_size = 2 + be32_to_cpu(folder->valence);
 		inode->i_atime = hfsp_mt2ut(folder->access_date);
 		inode->i_mtime = hfsp_mt2ut(folder->content_mod_date);
@@ -534,11 +577,19 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
 		hfsplus_inode_read_fork(inode, HFSPLUS_IS_RSRC(inode) ?
 					&file->rsrc_fork : &file->data_fork);
 		hfsplus_get_perms(inode, &file->permissions, 0);
+<<<<<<< HEAD
 		set_nlink(inode, 1);
 		if (S_ISREG(inode->i_mode)) {
 			if (file->permissions.dev)
 				set_nlink(inode,
 					  be32_to_cpu(file->permissions.dev));
+=======
+		inode->i_nlink = 1;
+		if (S_ISREG(inode->i_mode)) {
+			if (file->permissions.dev)
+				inode->i_nlink =
+					be32_to_cpu(file->permissions.dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			inode->i_op = &hfsplus_file_inode_operations;
 			inode->i_fop = &hfsplus_file_operations;
 			inode->i_mapping->a_ops = &hfsplus_aops;

@@ -34,6 +34,7 @@ config KVM
 
 	  If unsure, say N.
 
+<<<<<<< HEAD
 config KVM_S390_UCONTROL
 	bool "Userspace controlled virtual machines"
 	depends on KVM
@@ -46,5 +47,11 @@ config KVM_S390_UCONTROL
 # OK, it's a little counter-intuitive to do this, but it puts it neatly under
 # the virtualization menu.
 source drivers/vhost/Kconfig
+=======
+# OK, it's a little counter-intuitive to do this, but it puts it neatly under
+# the virtualization menu.
+source drivers/vhost/Kconfig
+source drivers/virtio/Kconfig
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 endif # VIRTUALIZATION

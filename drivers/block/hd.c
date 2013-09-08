@@ -44,6 +44,10 @@
 #define HD_IRQ 14
 
 #define REALLY_SLOW_IO
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/uaccess.h>
 
@@ -154,7 +158,11 @@ else \
 
 #if (HD_DELAY > 0)
 
+<<<<<<< HEAD
 #include <linux/i8253.h>
+=======
+#include <asm/i8253.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unsigned long last_req;
 

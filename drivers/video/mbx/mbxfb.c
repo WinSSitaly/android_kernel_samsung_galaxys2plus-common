@@ -34,7 +34,11 @@
 #include "regs.h"
 #include "reg_bits.h"
 
+<<<<<<< HEAD
 static void __iomem *virt_base_2700;
+=======
+static unsigned long virt_base_2700;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define write_reg(val, reg) do { writel((val), (reg)); } while(0)
 
@@ -850,7 +854,11 @@ static int mbxfb_suspend(struct platform_device *dev, pm_message_t state)
 {
 	/* make frame buffer memory enter self-refresh mode */
 	write_reg_dly(LMPWR_MC_PWR_SRM, LMPWR);
+<<<<<<< HEAD
 	while (readl(LMPWRSTAT) != LMPWRSTAT_MC_PWR_SRM)
+=======
+	while (LMPWRSTAT != LMPWRSTAT_MC_PWR_SRM)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		; /* empty statement */
 
 	/* reset the device, since it's initial state is 'mostly sleeping' */
@@ -946,7 +954,11 @@ static int __devinit mbxfb_probe(struct platform_device *dev)
 		ret = -EINVAL;
 		goto err3;
 	}
+<<<<<<< HEAD
 	virt_base_2700 = mfbi->reg_virt_addr;
+=======
+	virt_base_2700 = (unsigned long)mfbi->reg_virt_addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mfbi->fb_virt_addr = ioremap_nocache(mfbi->fb_phys_addr,
 					     res_size(mfbi->fb_req));
@@ -1053,7 +1065,22 @@ static struct platform_driver mbxfb_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(mbxfb_driver);
+=======
+int __devinit mbxfb_init(void)
+{
+	return platform_driver_register(&mbxfb_driver);
+}
+
+static void __devexit mbxfb_exit(void)
+{
+	platform_driver_unregister(&mbxfb_driver);
+}
+
+module_init(mbxfb_init);
+module_exit(mbxfb_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("loadable framebuffer driver for Marathon device");
 MODULE_AUTHOR("Mike Rapoport, Compulab");

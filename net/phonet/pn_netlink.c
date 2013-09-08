@@ -289,16 +289,28 @@ out:
 
 int __init phonet_netlink_register(void)
 {
+<<<<<<< HEAD
 	int err = __rtnl_register(PF_PHONET, RTM_NEWADDR, addr_doit,
 				  NULL, NULL);
+=======
+	int err = __rtnl_register(PF_PHONET, RTM_NEWADDR, addr_doit, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		return err;
 
 	/* Further __rtnl_register() cannot fail */
+<<<<<<< HEAD
 	__rtnl_register(PF_PHONET, RTM_DELADDR, addr_doit, NULL, NULL);
 	__rtnl_register(PF_PHONET, RTM_GETADDR, NULL, getaddr_dumpit, NULL);
 	__rtnl_register(PF_PHONET, RTM_NEWROUTE, route_doit, NULL, NULL);
 	__rtnl_register(PF_PHONET, RTM_DELROUTE, route_doit, NULL, NULL);
 	__rtnl_register(PF_PHONET, RTM_GETROUTE, NULL, route_dumpit, NULL);
+=======
+	__rtnl_register(PF_PHONET, RTM_DELADDR, addr_doit, NULL);
+	__rtnl_register(PF_PHONET, RTM_GETADDR, NULL, getaddr_dumpit);
+	__rtnl_register(PF_PHONET, RTM_NEWROUTE, route_doit, NULL);
+	__rtnl_register(PF_PHONET, RTM_DELROUTE, route_doit, NULL);
+	__rtnl_register(PF_PHONET, RTM_GETROUTE, NULL, route_dumpit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }

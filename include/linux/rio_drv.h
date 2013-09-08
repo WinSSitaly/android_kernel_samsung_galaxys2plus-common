@@ -17,6 +17,10 @@
 #include <linux/ioport.h>
 #include <linux/list.h>
 #include <linux/errno.h>
+<<<<<<< HEAD
+=======
+#include <linux/device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/string.h>
 #include <linux/rio.h>
 

@@ -296,8 +296,12 @@ static void carl9170_tx_release(struct kref *ref)
 			super = (void *)skb->data;
 			txinfo->status.ampdu_len = super->s.rix;
 			txinfo->status.ampdu_ack_len = super->s.cnt;
+<<<<<<< HEAD
 		} else if ((txinfo->flags & IEEE80211_TX_STAT_ACK) &&
 			   !(txinfo->flags & IEEE80211_TX_CTL_REQ_TX_STATUS)) {
+=======
+		} else if (txinfo->flags & IEEE80211_TX_STAT_ACK) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * drop redundant tx_status reports:
 			 *
@@ -309,6 +313,7 @@ static void carl9170_tx_release(struct kref *ref)
 			 *
 			 * 3. minstrel_ht is picky, it only accepts
 			 *    reports of frames with the TX_STATUS_AMPDU flag.
+<<<<<<< HEAD
 			 *
 			 * 4. mac80211 is not particularly interested in
 			 *    feedback either [CTL_REQ_TX_STATUS not set]
@@ -320,6 +325,17 @@ static void carl9170_tx_release(struct kref *ref)
 			/*
 			 * Either the frame transmission has failed or
 			 * mac80211 requested tx status.
+=======
+			 */
+
+			dev_kfree_skb_any(skb);
+			return;
+		} else {
+			/*
+			 * Frame has failed, but we want to keep it in
+			 * case it was lost due to a power-state
+			 * transition.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 */
 		}
 	}
@@ -664,6 +680,7 @@ void carl9170_tx_process_status(struct ar9170 *ar,
 	}
 }
 
+<<<<<<< HEAD
 static void carl9170_tx_rate_tpc_chains(struct ar9170 *ar,
 	struct ieee80211_tx_info *info,	struct ieee80211_tx_rate *txrate,
 	unsigned int *phyrate, unsigned int *tpc, unsigned int *chains)
@@ -727,6 +744,13 @@ static __le32 carl9170_tx_physet(struct ar9170 *ar,
 	struct ieee80211_tx_info *info, struct ieee80211_tx_rate *txrate)
 {
 	unsigned int power = 0, chains = 0, phyrate = 0;
+=======
+static __le32 carl9170_tx_physet(struct ar9170 *ar,
+	struct ieee80211_tx_info *info, struct ieee80211_tx_rate *txrate)
+{
+	struct ieee80211_rate *rate = NULL;
+	u32 power, chains;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__le32 tmp;
 
 	tmp = cpu_to_le32(0);
@@ -743,12 +767,44 @@ static __le32 carl9170_tx_physet(struct ar9170 *ar,
 		tmp |= cpu_to_le32(AR9170_TX_PHY_SHORT_GI);
 
 	if (txrate->flags & IEEE80211_TX_RC_MCS) {
+<<<<<<< HEAD
 		SET_VAL(AR9170_TX_PHY_MCS, phyrate, txrate->idx);
 
 		/* heavy clip control */
 		tmp |= cpu_to_le32((txrate->idx & 0x7) <<
 			AR9170_TX_PHY_TX_HEAVY_CLIP_S);
 
+=======
+		u32 r = txrate->idx;
+		u8 *txpower;
+
+		/* heavy clip control */
+		tmp |= cpu_to_le32((r & 0x7) <<
+			AR9170_TX_PHY_TX_HEAVY_CLIP_S);
+
+		if (txrate->flags & IEEE80211_TX_RC_40_MHZ_WIDTH) {
+			if (info->band == IEEE80211_BAND_5GHZ)
+				txpower = ar->power_5G_ht40;
+			else
+				txpower = ar->power_2G_ht40;
+		} else {
+			if (info->band == IEEE80211_BAND_5GHZ)
+				txpower = ar->power_5G_ht20;
+			else
+				txpower = ar->power_2G_ht20;
+		}
+
+		power = txpower[r & 7];
+
+		/* +1 dBm for HT40 */
+		if (txrate->flags & IEEE80211_TX_RC_40_MHZ_WIDTH)
+			power += 2;
+
+		r <<= AR9170_TX_PHY_MCS_S;
+		BUG_ON(r & ~AR9170_TX_PHY_MCS);
+
+		tmp |= cpu_to_le32(r & AR9170_TX_PHY_MCS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tmp |= cpu_to_le32(AR9170_TX_PHY_MOD_HT);
 
 		/*
@@ -758,6 +814,7 @@ static __le32 carl9170_tx_physet(struct ar9170 *ar,
 		 * tmp |= cpu_to_le32(AR9170_TX_PHY_GREENFIELD);
 		 */
 	} else {
+<<<<<<< HEAD
 		if (info->band == IEEE80211_BAND_2GHZ) {
 			if (txrate->idx <= AR9170_TX_PHY_RATE_CCK_11M)
 				tmp |= cpu_to_le32(AR9170_TX_PHY_MOD_CCK);
@@ -767,6 +824,36 @@ static __le32 carl9170_tx_physet(struct ar9170 *ar,
 			tmp |= cpu_to_le32(AR9170_TX_PHY_MOD_OFDM);
 		}
 
+=======
+		u8 *txpower;
+		u32 mod;
+		u32 phyrate;
+		u8 idx = txrate->idx;
+
+		if (info->band != IEEE80211_BAND_2GHZ) {
+			idx += 4;
+			txpower = ar->power_5G_leg;
+			mod = AR9170_TX_PHY_MOD_OFDM;
+		} else {
+			if (idx < 4) {
+				txpower = ar->power_2G_cck;
+				mod = AR9170_TX_PHY_MOD_CCK;
+			} else {
+				mod = AR9170_TX_PHY_MOD_OFDM;
+				txpower = ar->power_2G_ofdm;
+			}
+		}
+
+		rate = &__carl9170_ratetable[idx];
+
+		phyrate = rate->hw_value & 0xF;
+		power = txpower[(rate->hw_value & 0x30) >> 4];
+		phyrate <<= AR9170_TX_PHY_MCS_S;
+
+		tmp |= cpu_to_le32(mod);
+		tmp |= cpu_to_le32(phyrate);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * short preamble seems to be broken too.
 		 *
@@ -774,12 +861,32 @@ static __le32 carl9170_tx_physet(struct ar9170 *ar,
 		 *	tmp |= cpu_to_le32(AR9170_TX_PHY_SHORT_PREAMBLE);
 		 */
 	}
+<<<<<<< HEAD
 	carl9170_tx_rate_tpc_chains(ar, info, txrate,
 				    &phyrate, &power, &chains);
 
 	tmp |= cpu_to_le32(SET_CONSTVAL(AR9170_TX_PHY_MCS, phyrate));
 	tmp |= cpu_to_le32(SET_CONSTVAL(AR9170_TX_PHY_TX_PWR, power));
 	tmp |= cpu_to_le32(SET_CONSTVAL(AR9170_TX_PHY_TXCHAIN, chains));
+=======
+	power <<= AR9170_TX_PHY_TX_PWR_S;
+	power &= AR9170_TX_PHY_TX_PWR;
+	tmp |= cpu_to_le32(power);
+
+	/* set TX chains */
+	if (ar->eeprom.tx_mask == 1) {
+		chains = AR9170_TX_PHY_TXCHAIN_1;
+	} else {
+		chains = AR9170_TX_PHY_TXCHAIN_2;
+
+		/* >= 36M legacy OFDM - use only one chain */
+		if (rate && rate->bitrate >= 360 &&
+		    !(txrate->flags & IEEE80211_TX_RC_MCS))
+			chains = AR9170_TX_PHY_TXCHAIN_1;
+	}
+	tmp |= cpu_to_le32(chains << AR9170_TX_PHY_TXCHAIN_S);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return tmp;
 }
 
@@ -1236,7 +1343,10 @@ static bool carl9170_tx_ps_drop(struct ar9170 *ar, struct sk_buff *skb)
 {
 	struct ieee80211_sta *sta;
 	struct carl9170_sta_info *sta_info;
+<<<<<<< HEAD
 	struct ieee80211_tx_info *tx_info;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rcu_read_lock();
 	sta = __carl9170_get_tx_sta(ar, skb);
@@ -1244,6 +1354,7 @@ static bool carl9170_tx_ps_drop(struct ar9170 *ar, struct sk_buff *skb)
 		goto out_rcu;
 
 	sta_info = (void *) sta->drv_priv;
+<<<<<<< HEAD
 	tx_info = IEEE80211_SKB_CB(skb);
 
 	if (unlikely(sta_info->sleeping) &&
@@ -1251,6 +1362,14 @@ static bool carl9170_tx_ps_drop(struct ar9170 *ar, struct sk_buff *skb)
 				IEEE80211_TX_CTL_CLEAR_PS_FILT))) {
 		rcu_read_unlock();
 
+=======
+	if (unlikely(sta_info->sleeping)) {
+		struct ieee80211_tx_info *tx_info;
+
+		rcu_read_unlock();
+
+		tx_info = IEEE80211_SKB_CB(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (tx_info->flags & IEEE80211_TX_CTL_AMPDU)
 			atomic_dec(&ar->tx_ampdu_upload);
 
@@ -1437,7 +1556,11 @@ void carl9170_op_tx(struct ieee80211_hw *hw, struct sk_buff *skb)
 
 err_free:
 	ar->tx_dropped++;
+<<<<<<< HEAD
 	ieee80211_free_txskb(ar->hw, skb);
+=======
+	dev_kfree_skb_any(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void carl9170_tx_scheduler(struct ar9170 *ar)
@@ -1449,6 +1572,7 @@ void carl9170_tx_scheduler(struct ar9170 *ar)
 	if (ar->tx_schedule)
 		carl9170_tx(ar);
 }
+<<<<<<< HEAD
 
 int carl9170_update_beacon(struct ar9170 *ar, const bool submit)
 {
@@ -1600,3 +1724,5 @@ err_free:
 	dev_kfree_skb_any(skb);
 	return err;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -248,10 +248,15 @@ int __devinit mantis_dvb_init(struct mantis_pci *mantis)
 err5:
 	tasklet_kill(&mantis->tasklet);
 	dvb_net_release(&mantis->dvbnet);
+<<<<<<< HEAD
 	if (mantis->fe) {
 		dvb_unregister_frontend(mantis->fe);
 		dvb_frontend_detach(mantis->fe);
 	}
+=======
+	dvb_unregister_frontend(mantis->fe);
+	dvb_frontend_detach(mantis->fe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err4:
 	mantis->demux.dmx.remove_frontend(&mantis->demux.dmx, &mantis->fe_mem);
 

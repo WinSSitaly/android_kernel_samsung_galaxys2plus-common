@@ -19,7 +19,11 @@
 struct page;
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <asm/vm-flags.h>
+=======
+#include <sysdep/vm-flags.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * These are used to make use of C type-checking..

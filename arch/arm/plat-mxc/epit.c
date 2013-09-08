@@ -203,7 +203,11 @@ static int __init epit_clockevent_init(struct clk *timer_clk)
 
 void __init epit_timer_init(struct clk *timer_clk, void __iomem *base, int irq)
 {
+<<<<<<< HEAD
 	clk_prepare_enable(timer_clk);
+=======
+	clk_enable(timer_clk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	timer_base = base;
 

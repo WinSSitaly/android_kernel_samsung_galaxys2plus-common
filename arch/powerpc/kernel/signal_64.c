@@ -23,6 +23,10 @@
 #include <linux/stddef.h>
 #include <linux/elf.h>
 #include <linux/ptrace.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ratelimit.h>
 
 #include <asm/sigcontext.h>
@@ -33,7 +37,10 @@
 #include <asm/cacheflush.h>
 #include <asm/syscalls.h>
 #include <asm/vdso.h>
+<<<<<<< HEAD
 #include <asm/switch_to.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "signal.h"
 

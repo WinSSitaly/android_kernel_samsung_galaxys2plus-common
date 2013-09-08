@@ -37,6 +37,10 @@
 #include <linux/slab.h>
 #include <linux/blkdev.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/completion.h>
 #include <linux/time.h>
 #include <linux/interrupt.h>
@@ -96,6 +100,7 @@ static irqreturn_t aac_src_intr_message(int irq, void *dev_id)
 			our_interrupt = 1;
 			/* handle AIF */
 			aac_intr_normal(dev, 0, 2, 0, NULL);
+<<<<<<< HEAD
 		} else if (bellbits_shifted & OUTBOUNDDOORBELL_0) {
 			unsigned long sflags;
 			struct list_head *entry;
@@ -128,6 +133,8 @@ static irqreturn_t aac_src_intr_message(int irq, void *dev_id)
 						NULL, NULL, NULL, NULL, NULL);
 				}
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -209,6 +216,7 @@ static int src_sync_cmd(struct aac_dev *dev, u32 command,
 	 */
 	src_writel(dev, MUnit.IDR, INBOUNDDOORBELL_0 << SRC_IDR_SHIFT);
 
+<<<<<<< HEAD
 	if (!dev->sync_mode || command != SEND_SYNCHRONOUS_FIB) {
 		ok = 0;
 		start = jiffies;
@@ -266,6 +274,58 @@ static int src_sync_cmd(struct aac_dev *dev, u32 command,
 	 */
 	aac_adapter_enable_int(dev);
 	return 0;
+=======
+	ok = 0;
+	start = jiffies;
+
+	/*
+	 *	Wait up to 30 seconds
+	 */
+	while (time_before(jiffies, start+30*HZ)) {
+		/* Delay 5 microseconds to let Mon960 get info. */
+		udelay(5);
+
+		/* Mon960 will set doorbell0 bit
+		 * when it has completed the command
+		 */
+		if ((src_readl(dev, MUnit.ODR_R) >> SRC_ODR_SHIFT) & OUTBOUNDDOORBELL_0) {
+			/* Clear the doorbell */
+			src_writel(dev,
+				MUnit.ODR_C,
+				OUTBOUNDDOORBELL_0 << SRC_ODR_SHIFT);
+			ok = 1;
+			break;
+		}
+
+		 /* Yield the processor in case we are slow */
+		msleep(1);
+	}
+	if (unlikely(ok != 1)) {
+		 /* Restore interrupt mask even though we timed out */
+		aac_adapter_enable_int(dev);
+		return -ETIMEDOUT;
+	}
+
+	 /* Pull the synch status from Mailbox 0 */
+	if (status)
+		*status = readl(&dev->IndexRegs->Mailbox[0]);
+	if (r1)
+		*r1 = readl(&dev->IndexRegs->Mailbox[1]);
+	if (r2)
+		*r2 = readl(&dev->IndexRegs->Mailbox[2]);
+	if (r3)
+		*r3 = readl(&dev->IndexRegs->Mailbox[3]);
+	if (r4)
+		*r4 = readl(&dev->IndexRegs->Mailbox[4]);
+
+	 /* Clear the synch command doorbell */
+	src_writel(dev, MUnit.ODR_C, OUTBOUNDDOORBELL_0 << SRC_ODR_SHIFT);
+
+	 /* Restore interrupt mask */
+	aac_adapter_enable_int(dev);
+	return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -425,7 +485,13 @@ static int aac_src_ioremap(struct aac_dev *dev, u32 size)
 {
 	if (!size) {
 		iounmap(dev->regs.src.bar0);
+<<<<<<< HEAD
 		dev->base = dev->regs.src.bar0 = NULL;
+=======
+		dev->regs.src.bar0 = NULL;
+		iounmap(dev->base);
+		dev->base = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 	dev->regs.src.bar1 = ioremap(pci_resource_start(dev->pdev, 2),
@@ -441,6 +507,7 @@ static int aac_src_ioremap(struct aac_dev *dev, u32 size)
 		return -1;
 	}
 	dev->IndexRegs = &((struct src_registers __iomem *)
+<<<<<<< HEAD
 		dev->base)->u.tupelo.IndexRegs;
 	return 0;
 }
@@ -462,6 +529,9 @@ static int aac_srcv_ioremap(struct aac_dev *dev, u32 size)
 		return -1;
 	dev->IndexRegs = &((struct src_registers __iomem *)
 		dev->base)->u.denali.IndexRegs;
+=======
+		dev->base)->IndexRegs;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -476,7 +546,11 @@ static int aac_src_restart_adapter(struct aac_dev *dev, int bled)
 		bled = aac_adapter_sync_cmd(dev, IOP_RESET_ALWAYS,
 			0, 0, 0, 0, 0, 0, &var, &reset_mask, NULL, NULL, NULL);
 			if (bled || (var != 0x00000001))
+<<<<<<< HEAD
 				return -EINVAL;
+=======
+				bled = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (dev->supplement_adapter_info.SupportedOptions2 &
 			AAC_OPTION_DOORBELL_RESET) {
 			src_writel(dev, MUnit.IDR, reset_mask);
@@ -636,6 +710,7 @@ int aac_src_init(struct aac_dev *dev)
 	dev->dbg_size = AAC_MIN_SRC_BAR1_SIZE;
 
 	aac_adapter_enable_int(dev);
+<<<<<<< HEAD
 
 	if (!dev->sync_mode) {
 		/*
@@ -775,10 +850,21 @@ int aac_srcv_init(struct aac_dev *dev)
 		 */
 		aac_src_start_adapter(dev);
 	}
+=======
+	/*
+	 *	Tell the adapter that all is configured, and it can
+	 * start accepting requests
+	 */
+	aac_src_start_adapter(dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 error_iounmap:
 
 	return -1;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

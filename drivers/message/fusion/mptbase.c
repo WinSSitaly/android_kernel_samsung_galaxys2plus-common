@@ -63,8 +63,11 @@
 #ifdef CONFIG_MTRR
 #include <asm/mtrr.h>
 #endif
+<<<<<<< HEAD
 #include <linux/kthread.h>
 #include <scsi/scsi_host.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "mptbase.h"
 #include "lsi/mpi_log_fc.h"
@@ -115,8 +118,12 @@ module_param(mpt_fwfault_debug, int, 0600);
 MODULE_PARM_DESC(mpt_fwfault_debug,
 		 "Enable detection of Firmware fault and halt Firmware on fault - (default=0)");
 
+<<<<<<< HEAD
 static char	MptCallbacksName[MPT_MAX_PROTOCOL_DRIVERS]
 				[MPT_MAX_CALLBACKNAME_LEN+1];
+=======
+static char	MptCallbacksName[MPT_MAX_PROTOCOL_DRIVERS][50];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef MFCNT
 static int mfcounter = 0;
@@ -326,6 +333,7 @@ mpt_is_discovery_complete(MPT_ADAPTER *ioc)
 	return rc;
 }
 
+<<<<<<< HEAD
 
 /**
  *  mpt_remove_dead_ioc_func - kthread context to remove dead ioc
@@ -352,6 +360,8 @@ static int mpt_remove_dead_ioc_func(void *arg)
 
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  *	mpt_fault_reset_work - work performed on workq after ioc fault
  *	@work: input argument, used to derive ioc
@@ -365,12 +375,16 @@ mpt_fault_reset_work(struct work_struct *work)
 	u32		 ioc_raw_state;
 	int		 rc;
 	unsigned long	 flags;
+<<<<<<< HEAD
 	MPT_SCSI_HOST	*hd;
 	struct task_struct *p;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ioc->ioc_reset_in_progress || !ioc->active)
 		goto out;
 
+<<<<<<< HEAD
 
 	ioc_raw_state = mpt_GetIocState(ioc, 0);
 	if ((ioc_raw_state & MPI_IOC_STATE_MASK) == MPI_IOC_STATE_MASK) {
@@ -404,6 +418,10 @@ mpt_fault_reset_work(struct work_struct *work)
 
 	if ((ioc_raw_state & MPI_IOC_STATE_MASK)
 			== MPI_IOC_STATE_FAULT) {
+=======
+	ioc_raw_state = mpt_GetIocState(ioc, 0);
+	if ((ioc_raw_state & MPI_IOC_STATE_MASK) == MPI_IOC_STATE_FAULT) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(MYIOC_s_WARN_FMT "IOC is in FAULT state (%04xh)!!!\n",
 		       ioc->name, ioc_raw_state & MPI_DOORBELL_DATA_MASK);
 		printk(MYIOC_s_WARN_FMT "Issuing HardReset from %s!!\n",
@@ -718,8 +736,13 @@ mpt_register(MPT_CALLBACK cbfunc, MPT_DRIVER_CLASS dclass, char *func_name)
 			MptDriverClass[cb_idx] = dclass;
 			MptEvHandlers[cb_idx] = NULL;
 			last_drv_idx = cb_idx;
+<<<<<<< HEAD
 			strlcpy(MptCallbacksName[cb_idx], func_name,
 				MPT_MAX_CALLBACKNAME_LEN+1);
+=======
+			memcpy(MptCallbacksName[cb_idx], func_name,
+			    strlen(func_name) > 50 ? 50 : strlen(func_name));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	}
@@ -6475,6 +6498,7 @@ mpt_config(MPT_ADAPTER *ioc, CONFIGPARMS *pCfg)
 			pReq->Action, ioc->mptbase_cmds.status, timeleft));
 		if (ioc->mptbase_cmds.status & MPT_MGMT_STATUS_DID_IOCRESET)
 			goto out;
+<<<<<<< HEAD
 		if (!timeleft) {
 			spin_lock_irqsave(&ioc->taskmgmt_lock, flags);
 			if (ioc->ioc_reset_in_progress) {
@@ -6488,6 +6512,10 @@ mpt_config(MPT_ADAPTER *ioc, CONFIGPARMS *pCfg)
 			spin_unlock_irqrestore(&ioc->taskmgmt_lock, flags);
 			issue_hard_reset = 1;
 		}
+=======
+		if (!timeleft)
+			issue_hard_reset = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
@@ -7201,6 +7229,7 @@ mpt_HardResetHandler(MPT_ADAPTER *ioc, int sleepFlag)
 	spin_lock_irqsave(&ioc->taskmgmt_lock, flags);
 	if (ioc->ioc_reset_in_progress) {
 		spin_unlock_irqrestore(&ioc->taskmgmt_lock, flags);
+<<<<<<< HEAD
 		ioc->wait_on_reset_completion = 1;
 		do {
 			ssleep(1);
@@ -7213,6 +7242,9 @@ mpt_HardResetHandler(MPT_ADAPTER *ioc, int sleepFlag)
 		rc = 0;
 		time_count = jiffies;
 		goto exit;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	ioc->ioc_reset_in_progress = 1;
 	if (ioc->alt_ioc)
@@ -7249,7 +7281,10 @@ mpt_HardResetHandler(MPT_ADAPTER *ioc, int sleepFlag)
 	ioc->ioc_reset_in_progress = 0;
 	ioc->taskmgmt_quiesce_io = 0;
 	ioc->taskmgmt_in_progress = 0;
+<<<<<<< HEAD
 	ioc->reset_status = rc;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ioc->alt_ioc) {
 		ioc->alt_ioc->ioc_reset_in_progress = 0;
 		ioc->alt_ioc->taskmgmt_quiesce_io = 0;
@@ -7265,7 +7300,11 @@ mpt_HardResetHandler(MPT_ADAPTER *ioc, int sleepFlag)
 					ioc->alt_ioc, MPT_IOC_POST_RESET);
 		}
 	}
+<<<<<<< HEAD
 exit:
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dtmprintk(ioc,
 	    printk(MYIOC_s_DEBUG_FMT
 		"HardResetHandler: completed (%d seconds): %s\n", ioc->name,

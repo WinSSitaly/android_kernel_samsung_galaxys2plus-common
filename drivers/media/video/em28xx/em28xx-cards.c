@@ -60,7 +60,11 @@ static unsigned int card[]     = {[0 ... (EM28XX_MAXBOARDS - 1)] = UNSET };
 module_param_array(card,  int, NULL, 0444);
 MODULE_PARM_DESC(card,     "card type");
 
+<<<<<<< HEAD
 /* Bitmask marking allocated devices from 0 to EM28XX_MAXBOARDS - 1 */
+=======
+/* Bitmask marking allocated devices from 0 to EM28XX_MAXBOARDS */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned long em28xx_devused;
 
 struct em28xx_hash_table {
@@ -289,7 +293,11 @@ static struct em28xx_reg_seq leadership_reset[] = {
 	{	-1,		-1,	-1,	-1},
 };
 
+<<<<<<< HEAD
 /* 2013:024f PCTV nanoStick T2 290e
+=======
+/* 2013:024f PCTV Systems nanoStick T2 290e
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * GPIO_6 - demod reset
  * GPIO_7 - LED
  */
@@ -300,6 +308,7 @@ static struct em28xx_reg_seq pctv_290e[] = {
 	{-1,			-1,	-1,		-1},
 };
 
+<<<<<<< HEAD
 #if 0
 static struct em28xx_reg_seq terratec_h5_gpio[] = {
 	{EM28XX_R08_GPIO,	0xff,	0xff,	10},
@@ -391,6 +400,8 @@ static struct em28xx_reg_seq pctv_520e[] = {
 	{             -1,   -1,   -1,  -1},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *  Board definitions
  */
@@ -894,10 +905,13 @@ struct em28xx_board em28xx_boards[] = {
 	[EM2870_BOARD_KWORLD_355U] = {
 		.name         = "Kworld 355 U DVB-T",
 		.valid        = EM28XX_BOARD_NOT_VALIDATED,
+<<<<<<< HEAD
 		.tuner_type   = TUNER_ABSENT,
 		.tuner_gpio   = default_tuner_gpio,
 		.has_dvb      = 1,
 		.dvb_gpio     = default_digital,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	[EM2870_BOARD_PINNACLE_PCTV_DVB] = {
 		.name         = "Pinnacle PCTV DVB-T",
@@ -938,6 +952,7 @@ struct em28xx_board em28xx_boards[] = {
 			.gpio     = terratec_cinergy_USB_XS_FR_analog,
 		} },
 	},
+<<<<<<< HEAD
 	[EM2884_BOARD_TERRATEC_H5] = {
 		.name         = "Terratec Cinergy H5",
 		.has_dvb      = 1,
@@ -982,6 +997,8 @@ struct em28xx_board em28xx_boards[] = {
 				EM28XX_I2C_CLK_WAIT_ENABLE |
 				EM28XX_I2C_FREQ_400_KHZ,
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[EM2880_BOARD_HAUPPAUGE_WINTV_HVR_900] = {
 		.name         = "Hauppauge WinTV HVR 900",
 		.tda9887_conf = TDA9887_PRESENT,
@@ -1217,7 +1234,11 @@ struct em28xx_board em28xx_boards[] = {
 		.name         = "Terratec Cinergy 200 USB",
 		.is_em2800    = 1,
 		.has_ir_i2c   = 1,
+<<<<<<< HEAD
 		.tuner_type   = TUNER_LG_TALN,
+=======
+		.tuner_type   = TUNER_LG_PAL_NEW_TAPC,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.tda9887_conf = TDA9887_PRESENT,
 		.decoder      = EM28XX_SAA711X,
 		.input        = { {
@@ -1308,7 +1329,11 @@ struct em28xx_board em28xx_boards[] = {
 	},
 	[EM2820_BOARD_PINNACLE_DVC_90] = {
 		.name         = "Pinnacle Dazzle DVC 90/100/101/107 / Kaiser Baas Video to DVD maker "
+<<<<<<< HEAD
 			       "/ Kworld DVD Maker 2 / Plextor ConvertX PX-AV100U",
+=======
+				"/ Kworld DVD Maker 2",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.tuner_type   = TUNER_ABSENT, /* capture only board */
 		.decoder      = EM28XX_SAA711X,
 		.input        = { {
@@ -1398,7 +1423,11 @@ struct em28xx_board em28xx_boards[] = {
 		} },
 	},
 
+<<<<<<< HEAD
 	[EM2874_BOARD_LEADERSHIP_ISDBT] = {
+=======
+	[EM2874_LEADERSHIP_ISDBT] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.i2c_speed      = EM2874_I2C_SECONDARY_BUS_SELECT |
 				  EM28XX_I2C_CLK_WAIT_ENABLE |
 				  EM28XX_I2C_FREQ_100_KHZ,
@@ -1458,6 +1487,10 @@ struct em28xx_board em28xx_boards[] = {
 	},
 	[EM2880_BOARD_KWORLD_DVB_305U] = {
 		.name	      = "KWorld DVB-T 305U",
+<<<<<<< HEAD
+=======
+		.valid        = EM28XX_BOARD_NOT_VALIDATED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.tuner_type   = TUNER_XC2028,
 		.tuner_gpio   = default_tuner_gpio,
 		.decoder      = EM28XX_TVP5150,
@@ -1908,6 +1941,7 @@ struct em28xx_board em28xx_boards[] = {
 		.dvb_gpio   = kworld_a340_digital,
 		.tuner_gpio = default_tuner_gpio,
 	},
+<<<<<<< HEAD
 	/* 2013:024f PCTV nanoStick T2 290e.
 	 * Empia EM28174, Sony CXD2820R and NXP TDA18271HD/C2 */
 	[EM28174_BOARD_PCTV_290E] = {
@@ -1980,6 +2014,18 @@ struct em28xx_board em28xx_boards[] = {
 		.i2c_speed     = EM2874_I2C_SECONDARY_BUS_SELECT |
 				EM28XX_I2C_CLK_WAIT_ENABLE |
 				EM28XX_I2C_FREQ_400_KHZ,
+=======
+	/* 2013:024f PCTV Systems nanoStick T2 290e.
+	 * Empia EM28174, Sony CXD2820R and NXP TDA18271HD/C2 */
+	[EM28174_BOARD_PCTV_290E] = {
+		.i2c_speed      = EM2874_I2C_SECONDARY_BUS_SELECT |
+			EM28XX_I2C_CLK_WAIT_ENABLE | EM28XX_I2C_FREQ_100_KHZ,
+		.xclk          = EM28XX_XCLK_FREQUENCY_12MHZ,
+		.name          = "PCTV Systems nanoStick T2 290e",
+		.tuner_type    = TUNER_ABSENT,
+		.tuner_gpio    = pctv_290e,
+		.has_dvb       = 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 const unsigned int em28xx_bcount = ARRAY_SIZE(em28xx_boards);
@@ -2040,8 +2086,11 @@ struct usb_device_id em28xx_id_table[] = {
 			.driver_info = EM2800_BOARD_GRABBEEX_USB2800 },
 	{ USB_DEVICE(0xeb1a, 0xe357),
 			.driver_info = EM2870_BOARD_KWORLD_355U },
+<<<<<<< HEAD
 	{ USB_DEVICE(0xeb1a, 0xe359),
 			.driver_info = EM2870_BOARD_KWORLD_355U },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ USB_DEVICE(0x1b80, 0xe302),
 			.driver_info = EM2820_BOARD_PINNACLE_DVC_90 }, /* Kaiser Baas Video to DVD maker */
 	{ USB_DEVICE(0x1b80, 0xe304),
@@ -2058,6 +2107,7 @@ struct usb_device_id em28xx_id_table[] = {
 			.driver_info = EM2882_BOARD_TERRATEC_HYBRID_XS },
 	{ USB_DEVICE(0x0ccd, 0x0043),
 			.driver_info = EM2870_BOARD_TERRATEC_XS },
+<<<<<<< HEAD
 	{ USB_DEVICE(0x0ccd, 0x008e),	/* Cinergy HTC USB XS Rev. 1 */
 			.driver_info = EM2884_BOARD_TERRATEC_H5 },
 	{ USB_DEVICE(0x0ccd, 0x00ac),	/* Cinergy HTC USB XS Rev. 2 */
@@ -2066,14 +2116,21 @@ struct usb_device_id em28xx_id_table[] = {
 			.driver_info = EM2884_BOARD_TERRATEC_H5 },
 	{ USB_DEVICE(0x0ccd, 0x10ad),	/* H5 Rev. 2 */
 			.driver_info = EM2884_BOARD_TERRATEC_H5 },
+=======
+	{ USB_DEVICE(0x0ccd, 0x0047),
+			.driver_info = EM2880_BOARD_TERRATEC_PRODIGY_XS },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ USB_DEVICE(0x0ccd, 0x0084),
 			.driver_info = EM2860_BOARD_TERRATEC_AV350 },
 	{ USB_DEVICE(0x0ccd, 0x0096),
 			.driver_info = EM2860_BOARD_TERRATEC_GRABBY },
+<<<<<<< HEAD
 	{ USB_DEVICE(0x0ccd, 0x10AF),
 			.driver_info = EM2860_BOARD_TERRATEC_GRABBY },
 	{ USB_DEVICE(0x0ccd, 0x00b2),
 			.driver_info = EM2884_BOARD_CINERGY_HTC_STICK },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ USB_DEVICE(0x0fd9, 0x0033),
 			.driver_info = EM2860_BOARD_ELGATO_VIDEO_CAPTURE},
 	{ USB_DEVICE(0x185b, 0x2870),
@@ -2112,8 +2169,11 @@ struct usb_device_id em28xx_id_table[] = {
 			.driver_info = EM2880_BOARD_PINNACLE_PCTV_HD_PRO },
 	{ USB_DEVICE(0x0413, 0x6023),
 			.driver_info = EM2800_BOARD_LEADTEK_WINFAST_USBII },
+<<<<<<< HEAD
 	{ USB_DEVICE(0x093b, 0xa003),
 		       .driver_info = EM2820_BOARD_PINNACLE_DVC_90 },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ USB_DEVICE(0x093b, 0xa005),
 			.driver_info = EM2861_BOARD_PLEXTOR_PX_TV100U },
 	{ USB_DEVICE(0x04bb, 0x0515),
@@ -2124,6 +2184,7 @@ struct usb_device_id em28xx_id_table[] = {
 			.driver_info = EM2870_BOARD_KWORLD_A340 },
 	{ USB_DEVICE(0x2013, 0x024f),
 			.driver_info = EM28174_BOARD_PCTV_290E },
+<<<<<<< HEAD
 	{ USB_DEVICE(0x2013, 0x024c),
 			.driver_info = EM28174_BOARD_PCTV_460E },
 	{ USB_DEVICE(0x2040, 0x1605),
@@ -2138,6 +2199,8 @@ struct usb_device_id em28xx_id_table[] = {
 			.driver_info = EM2884_BOARD_PCTV_510E },
 	{ USB_DEVICE(0x2013, 0x0251),
 			.driver_info = EM2884_BOARD_PCTV_520E },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ },
 };
 MODULE_DEVICE_TABLE(usb, em28xx_id_table);
@@ -2165,7 +2228,11 @@ static struct em28xx_hash_table em28xx_i2c_hash[] = {
 	{0x77800080, EM2860_BOARD_TVP5150_REFERENCE_DESIGN, TUNER_ABSENT},
 	{0xc51200e3, EM2820_BOARD_GADMEI_TVR200, TUNER_LG_PAL_NEW_TAPC},
 	{0x4ba50080, EM2861_BOARD_GADMEI_UTV330PLUS, TUNER_TNF_5335MF},
+<<<<<<< HEAD
 	{0x6b800080, EM2874_BOARD_LEADERSHIP_ISDBT, TUNER_ABSENT},
+=======
+	{0x6b800080, EM2874_LEADERSHIP_ISDBT, TUNER_ABSENT},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* I2C possible address to saa7115, tvp5150, msp3400, tvaudio */
@@ -2191,10 +2258,17 @@ int em28xx_tuner_callback(void *ptr, int component, int command, int arg)
 	int rc = 0;
 	struct em28xx *dev = ptr;
 
+<<<<<<< HEAD
 	if (dev->tuner_type != TUNER_XC2028 && dev->tuner_type != TUNER_XC5000)
 		return 0;
 
 	if (command != XC2028_TUNER_RESET && command != XC5000_TUNER_RESET)
+=======
+	if (dev->tuner_type != TUNER_XC2028)
+		return 0;
+
+	if (command != XC2028_TUNER_RESET)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	rc = em28xx_gpio_set(dev, dev->board.tuner_gpio);
@@ -2366,8 +2440,12 @@ void em28xx_pre_card_setup(struct em28xx *dev)
 	/* Set the initial XCLK and I2C clock values based on the board
 	   definition */
 	em28xx_write_reg(dev, EM28XX_R0F_XCLK, dev->board.xclk & 0x7f);
+<<<<<<< HEAD
 	if (!dev->board.is_em2800)
 		em28xx_write_reg(dev, EM28XX_R06_I2C_CLK, dev->board.i2c_speed);
+=======
+	em28xx_write_reg(dev, EM28XX_R06_I2C_CLK, dev->board.i2c_speed);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	msleep(50);
 
 	/* request some modules */
@@ -2889,9 +2967,16 @@ void em28xx_card_setup(struct em28xx *dev)
 			.addr = 0xba >> 1,
 			.platform_data = &pdata,
 		};
+<<<<<<< HEAD
 
 		pdata.xtal = dev->sensor_xtal;
 		v4l2_i2c_new_subdev_board(&dev->v4l2_dev, &dev->i2c_adap,
+=======
+		struct v4l2_subdev *sd;
+
+		pdata.xtal = dev->sensor_xtal;
+		sd = v4l2_i2c_new_subdev_board(&dev->v4l2_dev, &dev->i2c_adap,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				&mt9v011_info, NULL);
 	}
 
@@ -2966,9 +3051,15 @@ static void flush_request_modules(struct em28xx *dev)
 #endif /* CONFIG_MODULES */
 
 /*
+<<<<<<< HEAD
  * em28xx_release_resources()
  * unregisters the v4l2,i2c and usb devices
  * called when the device gets disconnected or at module unload
+=======
+ * em28xx_realease_resources()
+ * unregisters the v4l2,i2c and usb devices
+ * called when the device gets disconected or at module unload
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 */
 void em28xx_release_resources(struct em28xx *dev)
 {
@@ -2982,6 +3073,11 @@ void em28xx_release_resources(struct em28xx *dev)
 
 	em28xx_release_analog_resources(dev);
 
+<<<<<<< HEAD
+=======
+	em28xx_remove_from_devlist(dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	em28xx_i2c_unregister(dev);
 
 	v4l2_device_unregister(&dev->v4l2_dev);
@@ -2989,18 +3085,32 @@ void em28xx_release_resources(struct em28xx *dev)
 	usb_put_dev(dev->udev);
 
 	/* Mark device as unused */
+<<<<<<< HEAD
 	clear_bit(dev->devno, &em28xx_devused);
+=======
+	em28xx_devused &= ~(1 << dev->devno);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
  * em28xx_init_dev()
  * allocates and inits the device structs, registers i2c bus and v4l device
  */
+<<<<<<< HEAD
 static int em28xx_init_dev(struct em28xx *dev, struct usb_device *udev,
 			   struct usb_interface *interface,
 			   int minor)
 {
 	int retval;
+=======
+static int em28xx_init_dev(struct em28xx **devhandle, struct usb_device *udev,
+			   struct usb_interface *interface,
+			   int minor)
+{
+	struct em28xx *dev = *devhandle;
+	int retval;
+	int errCode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev->udev = udev;
 	mutex_init(&dev->ctrl_urb_lock);
@@ -3066,16 +3176,20 @@ static int em28xx_init_dev(struct em28xx *dev, struct usb_device *udev,
 			em28xx_info("chip ID is em2882/em2883\n");
 			dev->wait_after_write = 0;
 			break;
+<<<<<<< HEAD
 		case CHIP_ID_EM2884:
 			em28xx_info("chip ID is em2884\n");
 			dev->reg_gpio_num = EM2874_R80_GPIO;
 			dev->wait_after_write = 0;
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			em28xx_info("em28xx chip ID = %d\n", dev->chip_id);
 		}
 	}
 
+<<<<<<< HEAD
 	if (dev->is_audio_only) {
 		retval = em28xx_audio_setup(dev);
 		if (retval)
@@ -3085,6 +3199,8 @@ static int em28xx_init_dev(struct em28xx *dev, struct usb_device *udev,
 		return 0;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Prepopulate cached GPO register content */
 	retval = em28xx_read_reg(dev, dev->reg_gpo_num);
 	if (retval >= 0)
@@ -3094,9 +3210,15 @@ static int em28xx_init_dev(struct em28xx *dev, struct usb_device *udev,
 
 	if (!dev->board.is_em2800) {
 		/* Resets I2C speed */
+<<<<<<< HEAD
 		retval = em28xx_write_reg(dev, EM28XX_R06_I2C_CLK, dev->board.i2c_speed);
 		if (retval < 0) {
 			em28xx_errdev("%s: em28xx_write_reg failed!"
+=======
+		em28xx_write_reg(dev, EM28XX_R06_I2C_CLK, dev->board.i2c_speed);
+		if (retval < 0) {
+			em28xx_errdev("%s: em28xx_write_regs_req failed!"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      " retval [%d]\n",
 				      __func__, retval);
 			return retval;
@@ -3110,11 +3232,20 @@ static int em28xx_init_dev(struct em28xx *dev, struct usb_device *udev,
 	}
 
 	/* register i2c bus */
+<<<<<<< HEAD
 	retval = em28xx_i2c_register(dev);
 	if (retval < 0) {
 		em28xx_errdev("%s: em28xx_i2c_register - error [%d]!\n",
 			__func__, retval);
 		goto unregister_dev;
+=======
+	errCode = em28xx_i2c_register(dev);
+	if (errCode < 0) {
+		v4l2_device_unregister(&dev->v4l2_dev);
+		em28xx_errdev("%s: em28xx_i2c_register - errCode [%d]!\n",
+			__func__, errCode);
+		return errCode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -3128,11 +3259,19 @@ static int em28xx_init_dev(struct em28xx *dev, struct usb_device *udev,
 	em28xx_card_setup(dev);
 
 	/* Configure audio */
+<<<<<<< HEAD
 	retval = em28xx_audio_setup(dev);
 	if (retval < 0) {
 		em28xx_errdev("%s: Error while setting audio - error [%d]!\n",
 			__func__, retval);
 		goto fail;
+=======
+	errCode = em28xx_audio_setup(dev);
+	if (errCode < 0) {
+		v4l2_device_unregister(&dev->v4l2_dev);
+		em28xx_errdev("%s: Error while setting audio - errCode [%d]!\n",
+			__func__, errCode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* wake i2c devices */
@@ -3146,6 +3285,7 @@ static int em28xx_init_dev(struct em28xx *dev, struct usb_device *udev,
 
 	if (dev->board.has_msp34xx) {
 		/* Send a reset to other chips via gpio */
+<<<<<<< HEAD
 		retval = em28xx_write_reg(dev, EM28XX_R08_GPIO, 0xf7);
 		if (retval < 0) {
 			em28xx_errdev("%s: em28xx_write_reg - "
@@ -3161,20 +3301,51 @@ static int em28xx_init_dev(struct em28xx *dev, struct usb_device *udev,
 				      "msp34xx(2) failed! error [%d]\n",
 				      __func__, retval);
 			goto fail;
+=======
+		errCode = em28xx_write_reg(dev, EM28XX_R08_GPIO, 0xf7);
+		if (errCode < 0) {
+			em28xx_errdev("%s: em28xx_write_regs_req - "
+				      "msp34xx(1) failed! errCode [%d]\n",
+				      __func__, errCode);
+			return errCode;
+		}
+		msleep(3);
+
+		errCode = em28xx_write_reg(dev, EM28XX_R08_GPIO, 0xff);
+		if (errCode < 0) {
+			em28xx_errdev("%s: em28xx_write_regs_req - "
+				      "msp34xx(2) failed! errCode [%d]\n",
+				      __func__, errCode);
+			return errCode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		msleep(3);
 	}
 
+<<<<<<< HEAD
 	retval = em28xx_register_analog_devices(dev);
 	if (retval < 0) {
 		goto fail;
 	}
 
+=======
+	em28xx_add_into_devlist(dev);
+
+	retval = em28xx_register_analog_devices(dev);
+	if (retval < 0) {
+		em28xx_release_resources(dev);
+		goto fail_reg_devices;
+	}
+
+	em28xx_init_extension(dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Save some power by putting tuner to sleep */
 	v4l2_device_call_all(&dev->v4l2_dev, 0, core, s_power, 0);
 
 	return 0;
 
+<<<<<<< HEAD
 fail:
 	em28xx_i2c_unregister(dev);
 
@@ -3187,6 +3358,12 @@ unregister_dev:
 /* high bandwidth multiplier, as encoded in highspeed endpoint descriptors */
 #define hb_mult(wMaxPacketSize) (1 + (((wMaxPacketSize) >> 11) & 0x03))
 
+=======
+fail_reg_devices:
+	return retval;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * em28xx_usb_probe()
  * checks for supported devices
@@ -3194,6 +3371,7 @@ unregister_dev:
 static int em28xx_usb_probe(struct usb_interface *interface,
 			    const struct usb_device_id *id)
 {
+<<<<<<< HEAD
 	struct usb_device *udev;
 	struct em28xx *dev = NULL;
 	int retval;
@@ -3215,6 +3393,23 @@ static int em28xx_usb_probe(struct usb_interface *interface,
 			goto err_no_slot;
 		}
 	} while (test_and_set_bit(nr, &em28xx_devused));
+=======
+	const struct usb_endpoint_descriptor *endpoint;
+	struct usb_device *udev;
+	struct usb_interface *uif;
+	struct em28xx *dev = NULL;
+	int retval;
+	int i, nr, ifnum, isoc_pipe;
+	char *speed;
+	char descr[255] = "";
+
+	udev = usb_get_dev(interface_to_usbdev(interface));
+	ifnum = interface->altsetting[0].desc.bInterfaceNumber;
+
+	/* Check to see next free device and mark as used */
+	nr = find_first_zero_bit(&em28xx_devused, EM28XX_MAXBOARDS);
+	em28xx_devused |= 1<<nr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Don't register audio interfaces */
 	if (interface->altsetting[0].desc.bInterfaceClass == USB_CLASS_AUDIO) {
@@ -3225,10 +3420,15 @@ static int em28xx_usb_probe(struct usb_interface *interface,
 			ifnum,
 			interface->altsetting[0].desc.bInterfaceClass);
 
+<<<<<<< HEAD
+=======
+		em28xx_devused &= ~(1<<nr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		retval = -ENODEV;
 		goto err;
 	}
 
+<<<<<<< HEAD
 	/* allocate memory for our device state and initialize it */
 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
 	if (dev == NULL) {
@@ -3290,6 +3490,43 @@ static int em28xx_usb_probe(struct usb_interface *interface,
 		goto err_free;
 	}
 
+=======
+	endpoint = &interface->cur_altsetting->endpoint[0].desc;
+
+	/* check if the device has the iso in endpoint at the correct place */
+	if (usb_endpoint_xfer_isoc(endpoint)
+	    &&
+	    (interface->altsetting[1].endpoint[0].desc.wMaxPacketSize == 940)) {
+		/* It's a newer em2874/em2875 device */
+		isoc_pipe = 0;
+	} else {
+		int check_interface = 1;
+		isoc_pipe = 1;
+		endpoint = &interface->cur_altsetting->endpoint[1].desc;
+		if (!usb_endpoint_xfer_isoc(endpoint))
+			check_interface = 0;
+
+		if (usb_endpoint_dir_out(endpoint))
+			check_interface = 0;
+
+		if (!check_interface) {
+			em28xx_err(DRIVER_NAME " video device (%04x:%04x): "
+				"interface %i, class %i found.\n",
+				le16_to_cpu(udev->descriptor.idVendor),
+				le16_to_cpu(udev->descriptor.idProduct),
+				ifnum,
+				interface->altsetting[0].desc.bInterfaceClass);
+
+			em28xx_err(DRIVER_NAME " This is an anciliary "
+				"interface not used by the driver\n");
+
+			em28xx_devused &= ~(1<<nr);
+			retval = -ENODEV;
+			goto err;
+		}
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (udev->speed) {
 	case USB_SPEED_LOW:
 		speed = "1.5";
@@ -3305,17 +3542,35 @@ static int em28xx_usb_probe(struct usb_interface *interface,
 		speed = "unknown";
 	}
 
+<<<<<<< HEAD
 	printk(KERN_INFO DRIVER_NAME
 		": New device %s %s @ %s Mbps "
 		"(%04x:%04x, interface %d, class %d)\n",
 		udev->manufacturer ? udev->manufacturer : "",
 		udev->product ? udev->product : "",
+=======
+	if (udev->manufacturer)
+		strlcpy(descr, udev->manufacturer, sizeof(descr));
+
+	if (udev->product) {
+		if (*descr)
+			strlcat(descr, " ", sizeof(descr));
+		strlcat(descr, udev->product, sizeof(descr));
+	}
+	if (*descr)
+		strlcat(descr, " ", sizeof(descr));
+
+	printk(DRIVER_NAME ": New device %s@ %s Mbps "
+		"(%04x:%04x, interface %d, class %d)\n",
+		descr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		speed,
 		le16_to_cpu(udev->descriptor.idVendor),
 		le16_to_cpu(udev->descriptor.idProduct),
 		ifnum,
 		interface->altsetting->desc.bInterfaceNumber);
 
+<<<<<<< HEAD
 	if (has_audio)
 		printk(KERN_INFO DRIVER_NAME
 		       ": Audio Vendor Class interface %i found\n",
@@ -3329,6 +3584,8 @@ static int em28xx_usb_probe(struct usb_interface *interface,
 		       ": DVB interface %i found\n",
 		       ifnum);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Make sure we have 480 Mbps of bandwidth, otherwise things like
 	 * video stream wouldn't likely work, since 12 Mbps is generally
@@ -3338,6 +3595,7 @@ static int em28xx_usb_probe(struct usb_interface *interface,
 		printk(DRIVER_NAME ": Device initialization failed.\n");
 		printk(DRIVER_NAME ": Device must be connected to a high-speed"
 		       " USB 2.0 port.\n");
+<<<<<<< HEAD
 		retval = -ENODEV;
 		goto err_free;
 	}
@@ -3353,17 +3611,72 @@ static int em28xx_usb_probe(struct usb_interface *interface,
 	/* Checks if audio is provided by some interface */
 	for (i = 0; i < udev->config->desc.bNumInterfaces; i++) {
 		struct usb_interface *uif = udev->config->interface[i];
+=======
+		em28xx_devused &= ~(1<<nr);
+		retval = -ENODEV;
+		goto err;
+	}
+
+	if (nr >= EM28XX_MAXBOARDS) {
+		printk(DRIVER_NAME ": Supports only %i em28xx boards.\n",
+				EM28XX_MAXBOARDS);
+		em28xx_devused &= ~(1<<nr);
+		retval = -ENOMEM;
+		goto err;
+	}
+
+	/* allocate memory for our device state and initialize it */
+	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+	if (dev == NULL) {
+		em28xx_err(DRIVER_NAME ": out of memory!\n");
+		em28xx_devused &= ~(1<<nr);
+		retval = -ENOMEM;
+		goto err;
+	}
+
+	snprintf(dev->name, 29, "em28xx #%d", nr);
+	dev->devno = nr;
+	dev->model = id->driver_info;
+	dev->alt   = -1;
+
+	/* Checks if audio is provided by some interface */
+	for (i = 0; i < udev->config->desc.bNumInterfaces; i++) {
+		uif = udev->config->interface[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (uif->altsetting[0].desc.bInterfaceClass == USB_CLASS_AUDIO) {
 			dev->has_audio_class = 1;
 			break;
 		}
 	}
 
+<<<<<<< HEAD
 	dev->num_alt = interface->num_altsetting;
+=======
+	/* compute alternate max packet sizes */
+	uif = udev->actconfig->interface[0];
+
+	dev->num_alt = uif->num_altsetting;
+	dev->alt_max_pkt_size = kmalloc(32 * dev->num_alt, GFP_KERNEL);
+
+	if (dev->alt_max_pkt_size == NULL) {
+		em28xx_errdev("out of memory!\n");
+		em28xx_devused &= ~(1<<nr);
+		kfree(dev);
+		retval = -ENOMEM;
+		goto err;
+	}
+
+	for (i = 0; i < dev->num_alt ; i++) {
+		u16 tmp = le16_to_cpu(uif->altsetting[i].endpoint[isoc_pipe].desc.wMaxPacketSize);
+		dev->alt_max_pkt_size[i] =
+		    (tmp & 0x07ff) * (((tmp & 0x1800) >> 11) + 1);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((card[nr] >= 0) && (card[nr] < em28xx_bcount))
 		dev->model = card[nr];
 
+<<<<<<< HEAD
 	/* save our data pointer in this interface device */
 	usb_set_intfdata(interface, dev);
 
@@ -3385,6 +3698,21 @@ static int em28xx_usb_probe(struct usb_interface *interface,
 			goto unlock_and_free;
 		}
 	}
+=======
+	/* allocate device struct */
+	mutex_init(&dev->lock);
+	mutex_lock(&dev->lock);
+	retval = em28xx_init_dev(&dev, udev, interface, nr);
+	if (retval) {
+		em28xx_devused &= ~(1<<dev->devno);
+		mutex_unlock(&dev->lock);
+		kfree(dev);
+		goto err;
+	}
+
+	/* save our data pointer in this interface device */
+	usb_set_intfdata(interface, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	request_modules(dev);
 
@@ -3393,6 +3721,7 @@ static int em28xx_usb_probe(struct usb_interface *interface,
 	 */
 	mutex_unlock(&dev->lock);
 
+<<<<<<< HEAD
 	/*
 	 * These extensions can be modules. If the modules are already
 	 * loaded then we can initialise the device now, otherwise we
@@ -3414,12 +3743,21 @@ err:
 
 err_no_slot:
 	usb_put_dev(udev);
+=======
+	return 0;
+
+err:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return retval;
 }
 
 /*
  * em28xx_usb_disconnect()
+<<<<<<< HEAD
  * called when the device gets disconnected
+=======
+ * called when the device gets diconencted
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * video device will be unregistered on v4l2_close in case it is still open
  */
 static void em28xx_usb_disconnect(struct usb_interface *interface)
@@ -3432,6 +3770,7 @@ static void em28xx_usb_disconnect(struct usb_interface *interface)
 	if (!dev)
 		return;
 
+<<<<<<< HEAD
 	if (dev->is_audio_only) {
 		mutex_lock(&dev->lock);
 		em28xx_close_extension(dev);
@@ -3439,6 +3778,8 @@ static void em28xx_usb_disconnect(struct usb_interface *interface)
 		return;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	em28xx_info("disconnecting %s\n", dev->vdev->name);
 
 	flush_request_modules(dev);
@@ -3458,7 +3799,11 @@ static void em28xx_usb_disconnect(struct usb_interface *interface)
 		     video_device_node_name(dev->vdev));
 
 		dev->state |= DEV_MISCONFIGURED;
+<<<<<<< HEAD
 		em28xx_uninit_isoc(dev, dev->mode);
+=======
+		em28xx_uninit_isoc(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev->state |= DEV_DISCONNECTED;
 		wake_up_interruptible(&dev->wait_frame);
 		wake_up_interruptible(&dev->wait_stream);
@@ -3467,6 +3812,7 @@ static void em28xx_usb_disconnect(struct usb_interface *interface)
 		em28xx_release_resources(dev);
 	}
 
+<<<<<<< HEAD
 	/* free DVB isoc buffers */
 	em28xx_uninit_isoc(dev, EM28XX_DIGITAL_MODE);
 
@@ -3474,6 +3820,12 @@ static void em28xx_usb_disconnect(struct usb_interface *interface)
 
 	em28xx_close_extension(dev);
 
+=======
+	em28xx_close_extension(dev);
+
+	mutex_unlock(&dev->lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!dev->users) {
 		kfree(dev->alt_max_pkt_size);
 		kfree(dev);
@@ -3487,4 +3839,30 @@ static struct usb_driver em28xx_usb_driver = {
 	.id_table = em28xx_id_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(em28xx_usb_driver);
+=======
+static int __init em28xx_module_init(void)
+{
+	int result;
+
+	/* register this driver with the USB subsystem */
+	result = usb_register(&em28xx_usb_driver);
+	if (result)
+		em28xx_err(DRIVER_NAME
+			   " usb_register failed. Error number %d.\n", result);
+
+	printk(KERN_INFO DRIVER_NAME " driver loaded\n");
+
+	return result;
+}
+
+static void __exit em28xx_module_exit(void)
+{
+	/* deregister this driver with the USB subsystem */
+	usb_deregister(&em28xx_usb_driver);
+}
+
+module_init(em28xx_module_init);
+module_exit(em28xx_module_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

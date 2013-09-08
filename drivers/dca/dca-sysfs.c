@@ -27,7 +27,10 @@
 #include <linux/err.h>
 #include <linux/dca.h>
 #include <linux/gfp.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct class *dca_class;
 static struct idr dca_idr;

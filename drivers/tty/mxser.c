@@ -39,8 +39,13 @@
 #include <linux/pci.h>
 #include <linux/bitops.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/ratelimit.h>
 
+=======
+
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/irq.h>
 #include <asm/uaccess.h>
@@ -1009,6 +1014,11 @@ static int mxser_open(struct tty_struct *tty, struct file *filp)
 	line = tty->index;
 	if (line == MXSER_PORTS)
 		return 0;
+<<<<<<< HEAD
+=======
+	if (line < 0 || line > MXSER_PORTS)
+		return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info = &mxser_boards[line / MXSER_PORTS_PER_BOARD].ports[line % MXSER_PORTS_PER_BOARD];
 	if (!info->ioaddr)
 		return -ENODEV;
@@ -1488,7 +1498,12 @@ static int mxser_ioctl_special(unsigned int cmd, void __user *argp)
 
 	switch (cmd) {
 	case MOXA_GET_MAJOR:
+<<<<<<< HEAD
 		printk_ratelimited(KERN_WARNING "mxser: '%s' uses deprecated ioctl "
+=======
+		if (printk_ratelimit())
+			printk(KERN_WARNING "mxser: '%s' uses deprecated ioctl "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"%x (GET_MAJOR), fix your userspace\n",
 					current->comm, cmd);
 		return put_user(ttymajor, (int __user *)argp);
@@ -2002,9 +2017,22 @@ static void mxser_wait_until_sent(struct tty_struct *tty, int timeout)
 	 */
 	if (!timeout || timeout > 2 * info->timeout)
 		timeout = 2 * info->timeout;
+<<<<<<< HEAD
 
 	spin_lock_irqsave(&info->slock, flags);
 	while (!((lsr = inb(info->ioaddr + UART_LSR)) & UART_LSR_TEMT)) {
+=======
+#ifdef SERIAL_DEBUG_RS_WAIT_UNTIL_SENT
+	printk(KERN_DEBUG "In rs_wait_until_sent(%d) check=%lu...",
+		timeout, char_time);
+	printk("jiff=%lu...", jiffies);
+#endif
+	spin_lock_irqsave(&info->slock, flags);
+	while (!((lsr = inb(info->ioaddr + UART_LSR)) & UART_LSR_TEMT)) {
+#ifdef SERIAL_DEBUG_RS_WAIT_UNTIL_SENT
+		printk("lsr = %d (jiff=%lu)...", lsr, jiffies);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock_irqrestore(&info->slock, flags);
 		schedule_timeout_interruptible(char_time);
 		spin_lock_irqsave(&info->slock, flags);
@@ -2015,6 +2043,13 @@ static void mxser_wait_until_sent(struct tty_struct *tty, int timeout)
 	}
 	spin_unlock_irqrestore(&info->slock, flags);
 	set_current_state(TASK_RUNNING);
+<<<<<<< HEAD
+=======
+
+#ifdef SERIAL_DEBUG_RS_WAIT_UNTIL_SENT
+	printk("lsr = %d (jiff=%lu)...done\n", lsr, jiffies);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2655,9 +2690,18 @@ static int __init mxser_module_init(void)
 		MXSER_VERSION);
 
 	/* Initialize the tty_driver structure */
+<<<<<<< HEAD
 	mxvar_sdriver->name = "ttyMI";
 	mxvar_sdriver->major = ttymajor;
 	mxvar_sdriver->minor_start = 0;
+=======
+	mxvar_sdriver->owner = THIS_MODULE;
+	mxvar_sdriver->magic = TTY_DRIVER_MAGIC;
+	mxvar_sdriver->name = "ttyMI";
+	mxvar_sdriver->major = ttymajor;
+	mxvar_sdriver->minor_start = 0;
+	mxvar_sdriver->num = MXSER_PORTS + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mxvar_sdriver->type = TTY_DRIVER_TYPE_SERIAL;
 	mxvar_sdriver->subtype = SERIAL_TYPE_NORMAL;
 	mxvar_sdriver->init_termios = tty_std_termios;

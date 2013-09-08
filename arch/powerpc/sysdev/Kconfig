@@ -29,7 +29,10 @@ config SCOM_DEBUGFS
 	bool "Expose SCOM controllers via debugfs"
 	depends on PPC_SCOM
 	default n
+<<<<<<< HEAD
 
 config GE_FPGA
 	bool
 	default n
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

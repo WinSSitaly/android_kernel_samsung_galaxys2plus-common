@@ -30,8 +30,11 @@ struct ath9k_platform_data {
 	u32 gpio_val;
 
 	bool is_clk_25mhz;
+<<<<<<< HEAD
 	int (*get_mac_revision)(void);
 	int (*external_reset)(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif /* _LINUX_ATH9K_PLATFORM_H */

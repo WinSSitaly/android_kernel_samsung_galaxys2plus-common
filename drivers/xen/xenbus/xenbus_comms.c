@@ -212,9 +212,13 @@ int xb_init_comms(void)
 		printk(KERN_WARNING "XENBUS response ring is not quiescent "
 		       "(%08x:%08x): fixing up\n",
 		       intf->rsp_cons, intf->rsp_prod);
+<<<<<<< HEAD
 		/* breaks kdump */
 		if (!reset_devices)
 			intf->rsp_cons = intf->rsp_prod;
+=======
+		intf->rsp_cons = intf->rsp_prod;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (xenbus_irq) {

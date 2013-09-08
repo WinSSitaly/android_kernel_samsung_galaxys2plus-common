@@ -5,7 +5,11 @@
  ******************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -293,10 +297,21 @@ acpi_status acpi_ut_acquire_mutex(acpi_mutex_handle mutex_id)
 
 acpi_status acpi_ut_release_mutex(acpi_mutex_handle mutex_id)
 {
+<<<<<<< HEAD
 	ACPI_FUNCTION_NAME(ut_release_mutex);
 
 	ACPI_DEBUG_PRINT((ACPI_DB_MUTEX, "Thread %u releasing Mutex [%s]\n",
 			  (u32)acpi_os_get_thread_id(),
+=======
+	acpi_thread_id this_thread_id;
+
+	ACPI_FUNCTION_NAME(ut_release_mutex);
+
+	this_thread_id = acpi_os_get_thread_id();
+
+	ACPI_DEBUG_PRINT((ACPI_DB_MUTEX, "Thread %u releasing Mutex [%s]\n",
+			  (u32)this_thread_id,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  acpi_ut_get_mutex_name(mutex_id)));
 
 	if (mutex_id > ACPI_MAX_MUTEX) {
@@ -325,8 +340,12 @@ acpi_status acpi_ut_release_mutex(acpi_mutex_handle mutex_id)
 		 * the ACPI subsystem code.
 		 */
 		for (i = mutex_id; i < ACPI_NUM_MUTEX; i++) {
+<<<<<<< HEAD
 			if (acpi_gbl_mutex_info[i].thread_id ==
 			    acpi_os_get_thread_id()) {
+=======
+			if (acpi_gbl_mutex_info[i].thread_id == this_thread_id) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				if (i == mutex_id) {
 					continue;
 				}

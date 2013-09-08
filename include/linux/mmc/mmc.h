@@ -21,8 +21,13 @@
  *          15 May 2002
  */
 
+<<<<<<< HEAD
 #ifndef LINUX_MMC_MMC_H
 #define LINUX_MMC_MMC_H
+=======
+#ifndef MMC_MMC_H
+#define MMC_MMC_H
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Standard MMC commands (4.1)           type  argument     response */
    /* class 1 */
@@ -51,7 +56,10 @@
 #define MMC_READ_SINGLE_BLOCK    17   /* adtc [31:0] data addr   R1  */
 #define MMC_READ_MULTIPLE_BLOCK  18   /* adtc [31:0] data addr   R1  */
 #define MMC_SEND_TUNING_BLOCK    19   /* adtc                    R1  */
+<<<<<<< HEAD
 #define MMC_SEND_TUNING_BLOCK_HS200	21	/* adtc R1  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
   /* class 3 */
 #define MMC_WRITE_DAT_UNTIL_STOP 20   /* adtc [31:0] data addr   R1  */
@@ -270,6 +278,7 @@ struct _mmc_csd {
 /*
  * EXT_CSD fields
  */
+<<<<<<< HEAD
 
 #define EXT_CSD_FLUSH_CACHE		32      /* W */
 #define EXT_CSD_CACHE_CTRL		33      /* R/W */
@@ -283,11 +292,21 @@ struct _mmc_csd {
 #define EXT_CSD_SANITIZE_START		165     /* W */
 #define EXT_CSD_WR_REL_PARAM		166	/* RO */
 #define EXT_CSD_BOOT_WP			173	/* R/W */
+=======
+#ifdef CONFIG_MMC_DISCARD_SAMSUNG_eMMC_SUPPORT
+#define EXT_CSD_OPTIMIZED_FEATURES	64	/* RO */
+#endif
+#define EXT_CSD_PARTITION_ATTRIBUTE	156	/* R/W */
+#define EXT_CSD_PARTITION_SUPPORT	160	/* RO */
+#define EXT_CSD_WR_REL_PARAM		166	/* RO */
+#define EXT_CSD_RPMB_SIZE_MULT		168 /* RO */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define EXT_CSD_ERASE_GROUP_DEF		175	/* R/W */
 #define EXT_CSD_PART_CONFIG		179	/* R/W */
 #define EXT_CSD_ERASED_MEM_CONT		181	/* RO */
 #define EXT_CSD_BUS_WIDTH		183	/* R/W */
 #define EXT_CSD_HS_TIMING		185	/* R/W */
+<<<<<<< HEAD
 #define EXT_CSD_POWER_CLASS		187	/* R/W */
 #define EXT_CSD_REV			192	/* RO */
 #define EXT_CSD_STRUCTURE		194	/* RO */
@@ -298,6 +317,12 @@ struct _mmc_csd {
 #define EXT_CSD_PWR_CL_26_195		201	/* RO */
 #define EXT_CSD_PWR_CL_52_360		202	/* RO */
 #define EXT_CSD_PWR_CL_26_360		203	/* RO */
+=======
+#define EXT_CSD_REV			192	/* RO */
+#define EXT_CSD_STRUCTURE		194	/* RO */
+#define EXT_CSD_CARD_TYPE		196	/* RO */
+#define EXT_CSD_PART_SWITCH_TIME        199     /* RO */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define EXT_CSD_SEC_CNT			212	/* RO, 4 bytes */
 #define EXT_CSD_S_A_TIMEOUT		217	/* RO */
 #define EXT_CSD_REL_WR_SEC_C		222	/* RO */
@@ -309,6 +334,7 @@ struct _mmc_csd {
 #define EXT_CSD_SEC_ERASE_MULT		230	/* RO */
 #define EXT_CSD_SEC_FEATURE_SUPPORT	231	/* RO */
 #define EXT_CSD_TRIM_MULT		232	/* RO */
+<<<<<<< HEAD
 #define EXT_CSD_PWR_CL_200_195		236	/* RO */
 #define EXT_CSD_PWR_CL_200_360		237	/* RO */
 #define EXT_CSD_PWR_CL_DDR_52_195	238	/* RO */
@@ -319,6 +345,8 @@ struct _mmc_csd {
 #define EXT_CSD_TAG_UNIT_SIZE		498	/* RO */
 #define EXT_CSD_DATA_TAG_SUPPORT	499	/* RO */
 #define EXT_CSD_HPI_FEATURES		503	/* RO */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * EXT_CSD field definitions
@@ -326,6 +354,7 @@ struct _mmc_csd {
 
 #define EXT_CSD_WR_REL_PARAM_EN		(1<<2)
 
+<<<<<<< HEAD
 #define EXT_CSD_BOOT_WP_B_PWR_WP_DIS	(0x40)
 #define EXT_CSD_BOOT_WP_B_PERM_WP_DIS	(0x10)
 #define EXT_CSD_BOOT_WP_B_PERM_WP_EN	(0x04)
@@ -336,6 +365,12 @@ struct _mmc_csd {
 #define EXT_CSD_PART_CONFIG_ACC_GP0	(0x4)
 
 #define EXT_CSD_PART_SUPPORT_PART_EN	(0x1)
+=======
+#define EXT_CSD_PART_CONFIG_ACC_MASK	(0x7)
+#define EXT_CSD_PART_CONFIG_ACC_BOOT0	(0x1)
+#define EXT_CSD_PART_CONFIG_ACC_BOOT1	(0x2)
+#define EXT_CSD_PART_CONFIG_ACC_RPMB	(0x3)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define EXT_CSD_CMD_SET_NORMAL		(1<<0)
 #define EXT_CSD_CMD_SET_SECURE		(1<<1)
@@ -343,13 +378,18 @@ struct _mmc_csd {
 
 #define EXT_CSD_CARD_TYPE_26	(1<<0)	/* Card can run at 26MHz */
 #define EXT_CSD_CARD_TYPE_52	(1<<1)	/* Card can run at 52MHz */
+<<<<<<< HEAD
 #define EXT_CSD_CARD_TYPE_MASK	0x3F	/* Mask out reserved bits */
+=======
+#define EXT_CSD_CARD_TYPE_MASK	0xF	/* Mask out reserved bits */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define EXT_CSD_CARD_TYPE_DDR_1_8V  (1<<2)   /* Card can run at 52MHz */
 					     /* DDR mode @1.8V or 3V I/O */
 #define EXT_CSD_CARD_TYPE_DDR_1_2V  (1<<3)   /* Card can run at 52MHz */
 					     /* DDR mode @1.2V I/O */
 #define EXT_CSD_CARD_TYPE_DDR_52       (EXT_CSD_CARD_TYPE_DDR_1_8V  \
 					| EXT_CSD_CARD_TYPE_DDR_1_2V)
+<<<<<<< HEAD
 #define EXT_CSD_CARD_TYPE_SDR_1_8V	(1<<4)	/* Card can run at 200MHz */
 #define EXT_CSD_CARD_TYPE_SDR_1_2V	(1<<5)	/* Card can run at 200MHz */
 						/* SDR mode @1.2V I/O */
@@ -413,6 +453,8 @@ struct _mmc_csd {
 						 EXT_CSD_CARD_TYPE_DDR_52 | \
 						 EXT_CSD_CARD_TYPE_52 | \
 						 EXT_CSD_CARD_TYPE_26)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define EXT_CSD_BUS_WIDTH_1	0	/* Card is in 1 bit mode */
 #define EXT_CSD_BUS_WIDTH_4	1	/* Card is in 4 bit mode */
@@ -423,6 +465,7 @@ struct _mmc_csd {
 #define EXT_CSD_SEC_ER_EN	BIT(0)
 #define EXT_CSD_SEC_BD_BLK_EN	BIT(2)
 #define EXT_CSD_SEC_GB_CL_EN	BIT(4)
+<<<<<<< HEAD
 #define EXT_CSD_SEC_SANITIZE	BIT(6)  /* v4.5 only */
 
 #define EXT_CSD_RST_N_EN_MASK	0x3
@@ -437,6 +480,12 @@ struct _mmc_csd {
 #define EXT_CSD_PWR_CL_4BIT_MASK	0x0F	/* 8 bit PWR CLS */
 #define EXT_CSD_PWR_CL_8BIT_SHIFT	4
 #define EXT_CSD_PWR_CL_4BIT_SHIFT	0
+=======
+#ifdef CONFIG_MMC_45_FEATURE_SUPPORT
+#define EXT_CSD_SEC_SANITIZE	BIT(6)  /* v4.5 only */
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * MMC_SWITCH access modes
  */
@@ -446,4 +495,9 @@ struct _mmc_csd {
 #define MMC_SWITCH_MODE_CLEAR_BITS	0x02	/* Clear bits which are 1 in value */
 #define MMC_SWITCH_MODE_WRITE_BYTE	0x03	/* Set target to value */
 
+<<<<<<< HEAD
 #endif /* LINUX_MMC_MMC_H */
+=======
+#endif  /* MMC_MMC_PROTOCOL_H */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

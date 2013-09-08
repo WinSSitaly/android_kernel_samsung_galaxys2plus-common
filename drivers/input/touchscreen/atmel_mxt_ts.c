@@ -20,6 +20,16 @@
 #include <linux/input/mt.h>
 #include <linux/interrupt.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
+=======
+#include <linux/io.h>
+#include <asm/gpio.h>
+#ifdef CONFIG_HAS_EARLYSUSPEND
+#include <linux/earlysuspend.h>
+#endif
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Version */
 #define MXT_VER_20		20
@@ -48,6 +58,7 @@
 #define MXT_OBJECT_SIZE		6
 
 /* Object types */
+<<<<<<< HEAD
 #define MXT_DEBUG_DIAGNOSTIC_T37	37
 #define MXT_GEN_MESSAGE_T5		5
 #define MXT_GEN_COMMAND_T6		6
@@ -77,18 +88,51 @@
 #define MXT_SPT_CTECONFIG_T46		46
 
 /* MXT_GEN_COMMAND_T6 field */
+=======
+#define MXT_DEBUG_DIAGNOSTIC	37
+#define MXT_GEN_MESSAGE		5
+#define MXT_GEN_COMMAND		6
+#define MXT_GEN_POWER		7
+#define MXT_GEN_ACQUIRE		8
+#define MXT_TOUCH_MULTI		9
+#define MXT_TOUCH_KEYARRAY	15
+#define MXT_TOUCH_PROXIMITY	23
+#define MXT_PROCI_GRIPFACE	20
+#define MXT_PROCG_NOISE		22
+#define MXT_PROCI_ONETOUCH	24
+#define MXT_PROCI_TWOTOUCH	27
+#define MXT_PROCI_GRIP		40
+#define MXT_PROCI_PALM		41
+#define MXT_SPT_COMMSCONFIG	18
+#define MXT_SPT_GPIOPWM		19
+#define MXT_SPT_SELFTEST	25
+#define MXT_SPT_CTECONFIG	28
+#define MXT_SPT_USERDATA	38
+#define MXT_SPT_DIGITIZER	43
+#define MXT_SPT_MESSAGECOUNT	44
+
+/* MXT_GEN_COMMAND field */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MXT_COMMAND_RESET	0
 #define MXT_COMMAND_BACKUPNV	1
 #define MXT_COMMAND_CALIBRATE	2
 #define MXT_COMMAND_REPORTALL	3
 #define MXT_COMMAND_DIAGNOSTIC	5
 
+<<<<<<< HEAD
 /* MXT_GEN_POWER_T7 field */
+=======
+/* MXT_GEN_POWER field */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MXT_POWER_IDLEACQINT	0
 #define MXT_POWER_ACTVACQINT	1
 #define MXT_POWER_ACTV2IDLETO	2
 
+<<<<<<< HEAD
 /* MXT_GEN_ACQUIRE_T8 field */
+=======
+/* MXT_GEN_ACQUIRE field */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MXT_ACQUIRE_CHRGTIME	0
 #define MXT_ACQUIRE_TCHDRIFT	2
 #define MXT_ACQUIRE_DRIFTST	3
@@ -97,7 +141,11 @@
 #define MXT_ACQUIRE_ATCHCALST	6
 #define MXT_ACQUIRE_ATCHCALSTHR	7
 
+<<<<<<< HEAD
 /* MXT_TOUCH_MULTI_T9 field */
+=======
+/* MXT_TOUCH_MULTI field */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MXT_TOUCH_CTRL		0
 #define MXT_TOUCH_XORIGIN	1
 #define MXT_TOUCH_YORIGIN	2
@@ -127,7 +175,11 @@
 #define MXT_TOUCH_YEDGEDIST	29
 #define MXT_TOUCH_JUMPLIMIT	30
 
+<<<<<<< HEAD
 /* MXT_PROCI_GRIPFACE_T20 field */
+=======
+/* MXT_PROCI_GRIPFACE field */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MXT_GRIPFACE_CTRL	0
 #define MXT_GRIPFACE_XLOGRIP	1
 #define MXT_GRIPFACE_XHIGRIP	2
@@ -157,11 +209,19 @@
 #define MXT_NOISE_FREQ4		15
 #define MXT_NOISE_IDLEGCAFVALID	16
 
+<<<<<<< HEAD
 /* MXT_SPT_COMMSCONFIG_T18 */
 #define MXT_COMMS_CTRL		0
 #define MXT_COMMS_CMD		1
 
 /* MXT_SPT_CTECONFIG_T28 field */
+=======
+/* MXT_SPT_COMMSCONFIG */
+#define MXT_COMMS_CTRL		0
+#define MXT_COMMS_CMD		1
+
+/* MXT_SPT_CTECONFIG field */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MXT_CTE_CTRL		0
 #define MXT_CTE_CMD		1
 #define MXT_CTE_MODE		2
@@ -172,7 +232,11 @@
 #define MXT_VOLTAGE_DEFAULT	2700000
 #define MXT_VOLTAGE_STEP	10000
 
+<<<<<<< HEAD
 /* Define for MXT_GEN_COMMAND_T6 */
+=======
+/* Define for MXT_GEN_COMMAND */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MXT_BOOT_VALUE		0xa5
 #define MXT_BACKUP_VALUE	0x55
 #define MXT_BACKUP_TIME		25	/* msec */
@@ -244,7 +308,10 @@ struct mxt_finger {
 	int x;
 	int y;
 	int area;
+<<<<<<< HEAD
 	int pressure;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Each client has this additional data */
@@ -258,6 +325,7 @@ struct mxt_data {
 	unsigned int irq;
 	unsigned int max_x;
 	unsigned int max_y;
+<<<<<<< HEAD
 };
 
 static bool mxt_object_readable(unsigned int type)
@@ -288,6 +356,40 @@ static bool mxt_object_readable(unsigned int type)
 	case MXT_SPT_USERDATA_T38:
 	case MXT_SPT_DIGITIZER_T43:
 	case MXT_SPT_CTECONFIG_T46:
+=======
+#ifdef CONFIG_HAS_EARLYSUSPEND
+	struct early_suspend suspend_desc;
+#endif
+
+};
+
+#ifdef CONFIG_HAS_EARLYSUSPEND
+static void mxt_early_suspend(struct early_suspend *h);
+static void mxt_late_resume(struct early_suspend *h);
+#endif /* CONFIG_HAS_EARLYSUSPEND */
+
+static bool mxt_object_readable(unsigned int type)
+{
+	switch (type) {
+	case MXT_GEN_MESSAGE:
+	case MXT_GEN_COMMAND:
+	case MXT_GEN_POWER:
+	case MXT_GEN_ACQUIRE:
+	case MXT_TOUCH_MULTI:
+	case MXT_TOUCH_KEYARRAY:
+	case MXT_TOUCH_PROXIMITY:
+	case MXT_PROCI_GRIPFACE:
+	case MXT_PROCG_NOISE:
+	case MXT_PROCI_ONETOUCH:
+	case MXT_PROCI_TWOTOUCH:
+	case MXT_PROCI_GRIP:
+	case MXT_PROCI_PALM:
+	case MXT_SPT_COMMSCONFIG:
+	case MXT_SPT_GPIOPWM:
+	case MXT_SPT_SELFTEST:
+	case MXT_SPT_CTECONFIG:
+	case MXT_SPT_USERDATA:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return true;
 	default:
 		return false;
@@ -297,6 +399,7 @@ static bool mxt_object_readable(unsigned int type)
 static bool mxt_object_writable(unsigned int type)
 {
 	switch (type) {
+<<<<<<< HEAD
 	case MXT_GEN_COMMAND_T6:
 	case MXT_GEN_POWER_T7:
 	case MXT_GEN_ACQUIRE_T8:
@@ -319,6 +422,23 @@ static bool mxt_object_writable(unsigned int type)
 	case MXT_SPT_CTECONFIG_T28:
 	case MXT_SPT_DIGITIZER_T43:
 	case MXT_SPT_CTECONFIG_T46:
+=======
+	case MXT_GEN_COMMAND:
+	case MXT_GEN_POWER:
+	case MXT_GEN_ACQUIRE:
+	case MXT_TOUCH_MULTI:
+	case MXT_TOUCH_KEYARRAY:
+	case MXT_TOUCH_PROXIMITY:
+	case MXT_PROCI_GRIPFACE:
+	case MXT_PROCG_NOISE:
+	case MXT_PROCI_ONETOUCH:
+	case MXT_PROCI_TWOTOUCH:
+	case MXT_PROCI_GRIP:
+	case MXT_PROCI_PALM:
+	case MXT_SPT_GPIOPWM:
+	case MXT_SPT_SELFTEST:
+	case MXT_SPT_CTECONFIG:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return true;
 	default:
 		return false;
@@ -459,13 +579,19 @@ mxt_get_object(struct mxt_data *data, u8 type)
 {
 	struct mxt_object *object;
 	int i;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < data->info.object_num; i++) {
 		object = data->object_table + i;
 		if (object->type == type)
 			return object;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_err(&data->client->dev, "Invalid object type\n");
 	return NULL;
 }
@@ -476,7 +602,11 @@ static int mxt_read_message(struct mxt_data *data,
 	struct mxt_object *object;
 	u16 reg;
 
+<<<<<<< HEAD
 	object = mxt_get_object(data, MXT_GEN_MESSAGE_T5);
+=======
+	object = mxt_get_object(data, MXT_GEN_MESSAGE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!object)
 		return -EINVAL;
 
@@ -537,8 +667,11 @@ static void mxt_input_report(struct mxt_data *data, int single_id)
 					finger[id].x);
 			input_report_abs(input_dev, ABS_MT_POSITION_Y,
 					finger[id].y);
+<<<<<<< HEAD
 			input_report_abs(input_dev, ABS_MT_PRESSURE,
 					finger[id].pressure);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			finger[id].status = 0;
 		}
@@ -549,8 +682,11 @@ static void mxt_input_report(struct mxt_data *data, int single_id)
 	if (status != MXT_RELEASE) {
 		input_report_abs(input_dev, ABS_X, finger[single_id].x);
 		input_report_abs(input_dev, ABS_Y, finger[single_id].y);
+<<<<<<< HEAD
 		input_report_abs(input_dev,
 				 ABS_PRESSURE, finger[single_id].pressure);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	input_sync(input_dev);
@@ -565,7 +701,10 @@ static void mxt_input_touchevent(struct mxt_data *data,
 	int x;
 	int y;
 	int area;
+<<<<<<< HEAD
 	int pressure;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Check the touch is present on the screen */
 	if (!(status & MXT_DETECT)) {
@@ -590,7 +729,10 @@ static void mxt_input_touchevent(struct mxt_data *data,
 		y = y >> 2;
 
 	area = message->message[4];
+<<<<<<< HEAD
 	pressure = message->message[5];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_dbg(dev, "[%d] %s x: %d, y: %d, area: %d\n", id,
 		status & MXT_MOVE ? "moved" : "pressed",
@@ -601,7 +743,10 @@ static void mxt_input_touchevent(struct mxt_data *data,
 	finger[id].x = x;
 	finger[id].y = y;
 	finger[id].area = area;
+<<<<<<< HEAD
 	finger[id].pressure = pressure;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mxt_input_report(data, id);
 }
@@ -617,6 +762,10 @@ static irqreturn_t mxt_interrupt(int irq, void *dev_id)
 	u8 max_reportid;
 	u8 min_reportid;
 
+<<<<<<< HEAD
+=======
+	/*printk(KERN_ERR"mxt_interrupt: irq = %d\n", irq);*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do {
 		if (mxt_read_message(data, &message)) {
 			dev_err(dev, "Failed to read message\n");
@@ -625,8 +774,13 @@ static irqreturn_t mxt_interrupt(int irq, void *dev_id)
 
 		reportid = message.reportid;
 
+<<<<<<< HEAD
 		/* whether reportid is thing of MXT_TOUCH_MULTI_T9 */
 		object = mxt_get_object(data, MXT_TOUCH_MULTI_T9);
+=======
+		/* whether reportid is thing of MXT_TOUCH_MULTI */
+		object = mxt_get_object(data, MXT_TOUCH_MULTI);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!object)
 			goto end;
 
@@ -663,9 +817,13 @@ static int mxt_check_reg_init(struct mxt_data *data)
 		if (!mxt_object_writable(object->type))
 			continue;
 
+<<<<<<< HEAD
 		for (j = 0;
 		     j < (object->size + 1) * (object->instances + 1);
 		     j++) {
+=======
+		for (j = 0; j < object->size + 1; j++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			config_offset = index + j;
 			if (config_offset > pdata->config_length) {
 				dev_err(dev, "Not enough config data!\n");
@@ -674,7 +832,11 @@ static int mxt_check_reg_init(struct mxt_data *data)
 			mxt_write_object(data, object->type, j,
 					 pdata->config[config_offset]);
 		}
+<<<<<<< HEAD
 		index += (object->size + 1) * (object->instances + 1);
+=======
+		index += object->size + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -708,6 +870,7 @@ static void mxt_handle_pdata(struct mxt_data *data)
 	u8 voltage;
 
 	/* Set touchscreen lines */
+<<<<<<< HEAD
 	mxt_write_object(data, MXT_TOUCH_MULTI_T9, MXT_TOUCH_XSIZE,
 			pdata->x_line);
 	mxt_write_object(data, MXT_TOUCH_MULTI_T9, MXT_TOUCH_YSIZE,
@@ -733,6 +896,33 @@ static void mxt_handle_pdata(struct mxt_data *data)
 	mxt_write_object(data, MXT_TOUCH_MULTI_T9,
 			MXT_TOUCH_YRANGE_LSB, (pdata->y_size - 1) & 0xff);
 	mxt_write_object(data, MXT_TOUCH_MULTI_T9,
+=======
+	mxt_write_object(data, MXT_TOUCH_MULTI, MXT_TOUCH_XSIZE,
+			pdata->x_line);
+	mxt_write_object(data, MXT_TOUCH_MULTI, MXT_TOUCH_YSIZE,
+			pdata->y_line);
+
+	/* Set touchscreen orient */
+	mxt_write_object(data, MXT_TOUCH_MULTI, MXT_TOUCH_ORIENT,
+			pdata->orient);
+
+	/* Set touchscreen burst length */
+	mxt_write_object(data, MXT_TOUCH_MULTI,
+			MXT_TOUCH_BLEN, pdata->blen);
+
+	/* Set touchscreen threshold */
+	mxt_write_object(data, MXT_TOUCH_MULTI,
+			MXT_TOUCH_TCHTHR, pdata->threshold);
+
+	/* Set touchscreen resolution */
+	mxt_write_object(data, MXT_TOUCH_MULTI,
+			MXT_TOUCH_XRANGE_LSB, (pdata->x_size - 1) & 0xff);
+	mxt_write_object(data, MXT_TOUCH_MULTI,
+			MXT_TOUCH_XRANGE_MSB, (pdata->x_size - 1) >> 8);
+	mxt_write_object(data, MXT_TOUCH_MULTI,
+			MXT_TOUCH_YRANGE_LSB, (pdata->y_size - 1) & 0xff);
+	mxt_write_object(data, MXT_TOUCH_MULTI,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			MXT_TOUCH_YRANGE_MSB, (pdata->y_size - 1) >> 8);
 
 	/* Set touchscreen voltage */
@@ -745,7 +935,11 @@ static void mxt_handle_pdata(struct mxt_data *data)
 			voltage = (pdata->voltage - MXT_VOLTAGE_DEFAULT) /
 				MXT_VOLTAGE_STEP;
 
+<<<<<<< HEAD
 		mxt_write_object(data, MXT_SPT_CTECONFIG_T28,
+=======
+		mxt_write_object(data, MXT_SPT_CTECONFIG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				MXT_CTE_VOLTAGE, voltage);
 	}
 }
@@ -849,6 +1043,7 @@ static int mxt_initialize(struct mxt_data *data)
 	mxt_handle_pdata(data);
 
 	/* Backup to memory */
+<<<<<<< HEAD
 	mxt_write_object(data, MXT_GEN_COMMAND_T6,
 			MXT_COMMAND_BACKUPNV,
 			MXT_BACKUP_VALUE);
@@ -859,6 +1054,23 @@ static int mxt_initialize(struct mxt_data *data)
 			MXT_COMMAND_RESET, 1);
 	msleep(MXT_RESET_TIME);
 
+=======
+	error = mxt_write_object(data, MXT_GEN_COMMAND,
+			MXT_COMMAND_BACKUPNV,
+			MXT_BACKUP_VALUE);
+	msleep(MXT_BACKUP_TIME);
+	if(error) {
+		printk(KERN_ERR"write obj MXT_COMMAND_BACKUPNV failed\n");
+	}
+	/* Soft reset */
+	error = mxt_write_object(data, MXT_GEN_COMMAND,
+			MXT_COMMAND_RESET, 1);
+	msleep(MXT_RESET_TIME);
+
+	if(error) {
+		printk(KERN_ERR"write obj MXT_COMMAND_RESET failed\n");
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Update matrix size at info struct */
 	error = mxt_read_reg(client, MXT_MATRIX_X_SIZE, &val);
 	if (error)
@@ -879,7 +1091,10 @@ static int mxt_initialize(struct mxt_data *data)
 			"Matrix X Size: %d Matrix Y Size: %d Object Num: %d\n",
 			info->matrix_xsize, info->matrix_ysize,
 			info->object_num);
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -910,6 +1125,7 @@ static ssize_t mxt_object_show(struct device *dev,
 	for (i = 0; i < data->info.object_num; i++) {
 		object = data->object_table + i;
 
+<<<<<<< HEAD
 		count += snprintf(buf + count, PAGE_SIZE - count,
 				"Object[%d] (Type %d)\n",
 				i + 1, object->type);
@@ -921,6 +1137,14 @@ static ssize_t mxt_object_show(struct device *dev,
 					"\n");
 			if (count >= PAGE_SIZE)
 				return PAGE_SIZE - 1;
+=======
+		count += sprintf(buf + count,
+				"Object Table Element %d(Type %d)\n",
+				i + 1, object->type);
+
+		if (!mxt_object_readable(object->type)) {
+			count += sprintf(buf + count, "\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 
@@ -930,6 +1154,7 @@ static ssize_t mxt_object_show(struct device *dev,
 			if (error)
 				return error;
 
+<<<<<<< HEAD
 			count += snprintf(buf + count, PAGE_SIZE - count,
 					"\t[%2d]: %02x (%d)\n", j, val, val);
 			if (count >= PAGE_SIZE)
@@ -939,6 +1164,13 @@ static ssize_t mxt_object_show(struct device *dev,
 		count += snprintf(buf + count, PAGE_SIZE - count, "\n");
 		if (count >= PAGE_SIZE)
 			return PAGE_SIZE - 1;
+=======
+			count += sprintf(buf + count,
+					"  Byte %d: 0x%x (%d)\n", j, val, val);
+		}
+
+		count += sprintf(buf + count, "\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return count;
@@ -960,7 +1192,11 @@ static int mxt_load_fw(struct device *dev, const char *fn)
 	}
 
 	/* Change to the bootloader mode */
+<<<<<<< HEAD
 	mxt_write_object(data, MXT_GEN_COMMAND_T6,
+=======
+	mxt_write_object(data, MXT_GEN_COMMAND,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			MXT_COMMAND_RESET, MXT_BOOT_VALUE);
 	msleep(MXT_RESET_TIME);
 
@@ -1066,14 +1302,22 @@ static void mxt_start(struct mxt_data *data)
 {
 	/* Touch enable */
 	mxt_write_object(data,
+<<<<<<< HEAD
 			MXT_TOUCH_MULTI_T9, MXT_TOUCH_CTRL, 0x83);
+=======
+			MXT_TOUCH_MULTI, MXT_TOUCH_CTRL, 0x83);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void mxt_stop(struct mxt_data *data)
 {
 	/* Touch disable */
 	mxt_write_object(data,
+<<<<<<< HEAD
 			MXT_TOUCH_MULTI_T9, MXT_TOUCH_CTRL, 0);
+=======
+			MXT_TOUCH_MULTI, MXT_TOUCH_CTRL, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int mxt_input_open(struct input_dev *dev)
@@ -1092,6 +1336,30 @@ static void mxt_input_close(struct input_dev *dev)
 	mxt_stop(data);
 }
 
+<<<<<<< HEAD
+=======
+#define MXT224_INT_GPIO_PIN      2 /* skip expander chip */
+
+static int mxt224_platform_init_hw(void)
+{
+	int rc;
+	rc = gpio_request(MXT224_INT_GPIO_PIN, "ts_mxt224");
+	if (rc < 0)
+	{
+		printk(KERN_ERR "unable to request GPIO pin %d\n", MXT224_INT_GPIO_PIN);
+		return rc;
+	}
+	gpio_direction_input(MXT224_INT_GPIO_PIN);
+
+	return 0;
+}
+
+static void mxt224_platform_exit_hw(void)
+{
+	gpio_free(MXT224_INT_GPIO_PIN);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit mxt_probe(struct i2c_client *client,
 		const struct i2c_device_id *id)
 {
@@ -1099,9 +1367,28 @@ static int __devinit mxt_probe(struct i2c_client *client,
 	struct mxt_data *data;
 	struct input_dev *input_dev;
 	int error;
+<<<<<<< HEAD
 
 	if (!pdata)
 		return -EINVAL;
+=======
+	unsigned int vir, gpio, offset;
+
+	if (!pdata)
+		return -EINVAL;
+	/*turn LDO on */
+	vir = (unsigned int)ioremap(0x35003000, 4096);
+	gpio=129;
+	offset = 0x100+gpio*4;
+	writel(1<<1, vir + 0x50);
+	/*printk(KERN_ERR"GPOR%d=0x%x\n", gpio/32, readl(vir+(gpio/32)*4));*/
+	/*turn on mux */
+	gpio=14;
+	offset = 0x100+gpio*4;
+	writel(0, vir+offset);
+	writel(1<<14, vir + 0x40);
+	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	data = kzalloc(sizeof(struct mxt_data), GFP_KERNEL);
 	input_dev = input_allocate_device();
@@ -1125,16 +1412,25 @@ static int __devinit mxt_probe(struct i2c_client *client,
 	mxt_calc_resolution(data);
 
 	__set_bit(EV_ABS, input_dev->evbit);
+<<<<<<< HEAD
 	__set_bit(EV_KEY, input_dev->evbit);
 	__set_bit(BTN_TOUCH, input_dev->keybit);
+=======
+	__set_bit(EV_SYN, input_dev->evbit);
+	//__set_bit(EV_KEY, input_dev->evbit);
+	//__set_bit(BTN_TOUCH, input_dev->keybit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* For single touch */
 	input_set_abs_params(input_dev, ABS_X,
 			     0, data->max_x, 0, 0);
 	input_set_abs_params(input_dev, ABS_Y,
 			     0, data->max_y, 0, 0);
+<<<<<<< HEAD
 	input_set_abs_params(input_dev, ABS_PRESSURE,
 			     0, 255, 0, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* For multi touch */
 	input_mt_init_slots(input_dev, MXT_MAX_FINGER);
@@ -1144,9 +1440,13 @@ static int __devinit mxt_probe(struct i2c_client *client,
 			     0, data->max_x, 0, 0);
 	input_set_abs_params(input_dev, ABS_MT_POSITION_Y,
 			     0, data->max_y, 0, 0);
+<<<<<<< HEAD
 	input_set_abs_params(input_dev, ABS_MT_PRESSURE,
 			     0, 255, 0, 0);
 
+=======
+	__set_bit(INPUT_PROP_DIRECT,(volatile long unsigned int *) &input_dev->propbit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	input_set_drvdata(input_dev, data);
 	i2c_set_clientdata(client, data);
 
@@ -1154,8 +1454,17 @@ static int __devinit mxt_probe(struct i2c_client *client,
 	if (error)
 		goto err_free_object;
 
+<<<<<<< HEAD
 	error = request_threaded_irq(client->irq, NULL, mxt_interrupt,
 			pdata->irqflags, client->dev.driver->name, data);
+=======
+	
+	/*Config GPIO for interrupt */
+	mxt224_platform_init_hw();
+	error = request_threaded_irq(client->irq, NULL, mxt_interrupt,
+			IRQF_TRIGGER_FALLING, client->dev.driver->name, data);
+	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error) {
 		dev_err(&client->dev, "Failed to register interrupt\n");
 		goto err_free_object;
@@ -1172,6 +1481,16 @@ static int __devinit mxt_probe(struct i2c_client *client,
 	error = sysfs_create_group(&client->dev.kobj, &mxt_attr_group);
 	if (error)
 		goto err_unregister_device;
+<<<<<<< HEAD
+=======
+	
+#ifdef CONFIG_HAS_EARLYSUSPEND
+			data->suspend_desc.level = EARLY_SUSPEND_LEVEL_BLANK_SCREEN,
+			data->suspend_desc.suspend = mxt_early_suspend,
+			data->suspend_desc.resume = mxt_late_resume,
+			register_early_suspend(&data->suspend_desc);
+#endif /* CONFIG_HAS_EARLYSUSPEND */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
@@ -1201,11 +1520,19 @@ static int __devexit mxt_remove(struct i2c_client *client)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 static int mxt_suspend(struct device *dev)
 {
 	struct i2c_client *client = to_i2c_client(dev);
 	struct mxt_data *data = i2c_get_clientdata(client);
+=======
+#if defined(CONFIG_PM) || defined(CONFIG_HAS_EARLYSUSPEND)
+static int mxt_suspend(struct mxt_data *data)
+{
+	/*struct i2c_client *client = to_i2c_client(dev);*/
+	/*struct mxt_data *data = i2c_get_clientdata(client);*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct input_dev *input_dev = data->input_dev;
 
 	mutex_lock(&input_dev->mutex);
@@ -1218,6 +1545,7 @@ static int mxt_suspend(struct device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int mxt_resume(struct device *dev)
 {
 	struct i2c_client *client = to_i2c_client(dev);
@@ -1226,6 +1554,16 @@ static int mxt_resume(struct device *dev)
 
 	/* Soft reset */
 	mxt_write_object(data, MXT_GEN_COMMAND_T6,
+=======
+static int mxt_resume(struct mxt_data *data)
+{
+	/*struct i2c_client *client = to_i2c_client(dev);*/
+	/*struct mxt_data *data = i2c_get_clientdata(client);*/
+	struct input_dev *input_dev = data->input_dev;
+
+	/* Soft reset */
+	mxt_write_object(data, MXT_GEN_COMMAND,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			MXT_COMMAND_RESET, 1);
 
 	msleep(MXT_RESET_TIME);
@@ -1240,12 +1578,47 @@ static int mxt_resume(struct device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct dev_pm_ops mxt_pm_ops = {
 	.suspend	= mxt_suspend,
 	.resume		= mxt_resume,
 };
+<<<<<<< HEAD
 #endif
 
+=======
+*/
+
+#else
+#define mxt_suspend	NULL
+#define mxt_resume	NULL
+#endif
+
+
+#ifdef CONFIG_HAS_EARLYSUSPEND
+static void mxt_early_suspend(struct early_suspend *h)
+{
+	struct mxt_data *data = container_of(h, struct mxt_data, suspend_desc);
+	/*pm_message_t mesg = { .event = PM_EVENT_SUSPEND, };*/
+	printk(KERN_INFO"mxt_early_suspend++\n");
+	mxt_suspend(data);
+}
+
+static void mxt_late_resume(struct early_suspend *h)
+{
+	struct mxt_data *data = container_of(h, struct mxt_data, suspend_desc);
+	printk(KERN_INFO"mxt_late_resume++\n");
+	mxt_resume(data);
+}
+
+
+#endif /* CONFIG_HAS_EARLYSUSPEND */
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct i2c_device_id mxt_id[] = {
 	{ "qt602240_ts", 0 },
 	{ "atmel_mxt_ts", 0 },
@@ -1258,7 +1631,11 @@ static struct i2c_driver mxt_driver = {
 	.driver = {
 		.name	= "atmel_mxt_ts",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 #ifdef CONFIG_PM
+=======
+#ifndef CONFIG_HAS_EARLYSUSPEND
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.pm	= &mxt_pm_ops,
 #endif
 	},
@@ -1267,7 +1644,22 @@ static struct i2c_driver mxt_driver = {
 	.id_table	= mxt_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(mxt_driver);
+=======
+static int __init mxt_init(void)
+{
+	return i2c_add_driver(&mxt_driver);
+}
+
+static void __exit mxt_exit(void)
+{
+	i2c_del_driver(&mxt_driver);
+}
+
+module_init(mxt_init);
+module_exit(mxt_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Module information */
 MODULE_AUTHOR("Joonyoung Shim <jy0922.shim@samsung.com>");

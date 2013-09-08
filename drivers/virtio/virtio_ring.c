@@ -21,14 +21,18 @@
 #include <linux/virtio_config.h>
 #include <linux/device.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/hrtimer.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* virtio guest is communicating with a virtual "device" that actually runs on
  * a host processor.  Memory barriers are used to control SMP effects. */
 #ifdef CONFIG_SMP
 /* Where possible, use SMP barriers which are more lightweight than mandatory
  * barriers, because mandatory barriers control MMIO effects on accesses
+<<<<<<< HEAD
  * through relaxed memory I/O windows (which virtio-pci does not use). */
 #define virtio_mb(vq) \
 	do { if ((vq)->weak_barriers) smp_mb(); else mb(); } while(0)
@@ -36,13 +40,25 @@
 	do { if ((vq)->weak_barriers) smp_rmb(); else rmb(); } while(0)
 #define virtio_wmb(vq) \
 	do { if ((vq)->weak_barriers) smp_wmb(); else wmb(); } while(0)
+=======
+ * through relaxed memory I/O windows (which virtio does not use). */
+#define virtio_mb() smp_mb()
+#define virtio_rmb() smp_rmb()
+#define virtio_wmb() smp_wmb()
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 /* We must force memory ordering even if guest is UP since host could be
  * running on another CPU, but SMP barriers are defined to barrier() in that
  * configuration. So fall back to mandatory barriers instead. */
+<<<<<<< HEAD
 #define virtio_mb(vq) mb()
 #define virtio_rmb(vq) rmb()
 #define virtio_wmb(vq) wmb()
+=======
+#define virtio_mb() mb()
+#define virtio_rmb() rmb()
+#define virtio_wmb() wmb()
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifdef DEBUG
@@ -81,9 +97,12 @@ struct vring_virtqueue
 	/* Actual memory layout for this queue */
 	struct vring vring;
 
+<<<<<<< HEAD
 	/* Can we use weak barriers? */
 	bool weak_barriers;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Other side has made a mess, don't try any more. */
 	bool broken;
 
@@ -109,10 +128,13 @@ struct vring_virtqueue
 #ifdef DEBUG
 	/* They're supposed to lock for us. */
 	unsigned int in_use;
+<<<<<<< HEAD
 
 	/* Figure out if their kicks are too delayed. */
 	bool last_add_time_valid;
 	ktime_t last_add_time;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	/* Tokens for callbacks. */
@@ -132,6 +154,7 @@ static int vring_add_indirect(struct vring_virtqueue *vq,
 	unsigned head;
 	int i;
 
+<<<<<<< HEAD
 	/*
 	 * We require lowmem mappings for the descriptors because
 	 * otherwise virt_to_phys will give us bogus addresses in the
@@ -139,6 +162,8 @@ static int vring_add_indirect(struct vring_virtqueue *vq,
 	 */
 	gfp &= ~(__GFP_HIGHMEM | __GFP_HIGH);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	desc = kmalloc((out + in) * sizeof(struct vring_desc), gfp);
 	if (!desc)
 		return -ENOMEM;
@@ -178,6 +203,7 @@ static int vring_add_indirect(struct vring_virtqueue *vq,
 	return head;
 }
 
+<<<<<<< HEAD
 /**
  * virtqueue_add_buf - expose buffer to other end
  * @vq: the struct virtqueue we're talking about.
@@ -201,6 +227,14 @@ int virtqueue_add_buf(struct virtqueue *_vq,
 		      unsigned int in,
 		      void *data,
 		      gfp_t gfp)
+=======
+int virtqueue_add_buf_gfp(struct virtqueue *_vq,
+			  struct scatterlist sg[],
+			  unsigned int out,
+			  unsigned int in,
+			  void *data,
+			  gfp_t gfp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct vring_virtqueue *vq = to_vvq(_vq);
 	unsigned int i, avail, uninitialized_var(prev);
@@ -210,6 +244,7 @@ int virtqueue_add_buf(struct virtqueue *_vq,
 
 	BUG_ON(data == NULL);
 
+<<<<<<< HEAD
 #ifdef DEBUG
 	{
 		ktime_t now = ktime_get();
@@ -223,6 +258,8 @@ int virtqueue_add_buf(struct virtqueue *_vq,
 	}
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* If the host supports indirect descriptor tables, and we have multiple
 	 * buffers, then go indirect. FIXME: tune this threshold */
 	if (vq->indirect && (out + in) > 1 && vq->num_free) {
@@ -275,6 +312,7 @@ add_head:
 	vq->data[head] = data;
 
 	/* Put entry in available array (but don't update avail->idx until they
+<<<<<<< HEAD
 	 * do sync). */
 	avail = (vq->vring.avail->idx & (vq->vring.num-1));
 	vq->vring.avail->ring[avail] = head;
@@ -290,11 +328,18 @@ add_head:
 	if (unlikely(vq->num_added == (1 << 16) - 1))
 		virtqueue_kick(_vq);
 
+=======
+	 * do sync).  FIXME: avoid modulus here? */
+	avail = (vq->vring.avail->idx + vq->num_added++) % vq->vring.num;
+	vq->vring.avail->ring[avail] = head;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pr_debug("Added buffer head %i to %p\n", head, vq);
 	END_USE(vq);
 
 	return vq->num_free;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(virtqueue_add_buf);
 
 /**
@@ -371,6 +416,33 @@ void virtqueue_kick(struct virtqueue *vq)
 {
 	if (virtqueue_kick_prepare(vq))
 		virtqueue_notify(vq);
+=======
+EXPORT_SYMBOL_GPL(virtqueue_add_buf_gfp);
+
+void virtqueue_kick(struct virtqueue *_vq)
+{
+	struct vring_virtqueue *vq = to_vvq(_vq);
+	u16 new, old;
+	START_USE(vq);
+	/* Descriptors and available array need to be set before we expose the
+	 * new available array entries. */
+	virtio_wmb();
+
+	old = vq->vring.avail->idx;
+	new = vq->vring.avail->idx = old + vq->num_added;
+	vq->num_added = 0;
+
+	/* Need to update avail index before checking if we should notify */
+	virtio_mb();
+
+	if (vq->event ?
+	    vring_need_event(vring_avail_event(&vq->vring), new, old) :
+	    !(vq->vring.used->flags & VRING_USED_F_NO_NOTIFY))
+		/* Prod other side to tell it about changes. */
+		vq->notify(&vq->vq);
+
+	END_USE(vq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(virtqueue_kick);
 
@@ -404,6 +476,7 @@ static inline bool more_used(const struct vring_virtqueue *vq)
 	return vq->last_used_idx != vq->vring.used->idx;
 }
 
+<<<<<<< HEAD
 /**
  * virtqueue_get_buf - get the next used buffer
  * @vq: the struct virtqueue we're talking about.
@@ -420,12 +493,17 @@ static inline bool more_used(const struct vring_virtqueue *vq)
  * Returns NULL if there are no used buffers, or the "data" token
  * handed to virtqueue_add_buf().
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void *virtqueue_get_buf(struct virtqueue *_vq, unsigned int *len)
 {
 	struct vring_virtqueue *vq = to_vvq(_vq);
 	void *ret;
 	unsigned int i;
+<<<<<<< HEAD
 	u16 last_used;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	START_USE(vq);
 
@@ -441,11 +519,18 @@ void *virtqueue_get_buf(struct virtqueue *_vq, unsigned int *len)
 	}
 
 	/* Only get used array entries after they have been exposed by host. */
+<<<<<<< HEAD
 	virtio_rmb(vq);
 
 	last_used = (vq->last_used_idx & (vq->vring.num - 1));
 	i = vq->vring.used->ring[last_used].id;
 	*len = vq->vring.used->ring[last_used].len;
+=======
+	virtio_rmb();
+
+	i = vq->vring.used->ring[vq->last_used_idx%vq->vring.num].id;
+	*len = vq->vring.used->ring[vq->last_used_idx%vq->vring.num].len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (unlikely(i >= vq->vring.num)) {
 		BAD_RING(vq, "id %u out of range\n", i);
@@ -465,6 +550,7 @@ void *virtqueue_get_buf(struct virtqueue *_vq, unsigned int *len)
 	 * the read in the next get_buf call. */
 	if (!(vq->vring.avail->flags & VRING_AVAIL_F_NO_INTERRUPT)) {
 		vring_used_event(&vq->vring) = vq->last_used_idx;
+<<<<<<< HEAD
 		virtio_mb(vq);
 	}
 
@@ -472,11 +558,17 @@ void *virtqueue_get_buf(struct virtqueue *_vq, unsigned int *len)
 	vq->last_add_time_valid = false;
 #endif
 
+=======
+		virtio_mb();
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	END_USE(vq);
 	return ret;
 }
 EXPORT_SYMBOL_GPL(virtqueue_get_buf);
 
+<<<<<<< HEAD
 /**
  * virtqueue_disable_cb - disable callbacks
  * @vq: the struct virtqueue we're talking about.
@@ -486,6 +578,8 @@ EXPORT_SYMBOL_GPL(virtqueue_get_buf);
  *
  * Unlike other operations, this need not be serialized.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void virtqueue_disable_cb(struct virtqueue *_vq)
 {
 	struct vring_virtqueue *vq = to_vvq(_vq);
@@ -494,6 +588,7 @@ void virtqueue_disable_cb(struct virtqueue *_vq)
 }
 EXPORT_SYMBOL_GPL(virtqueue_disable_cb);
 
+<<<<<<< HEAD
 /**
  * virtqueue_enable_cb - restart callbacks after disable_cb.
  * @vq: the struct virtqueue we're talking about.
@@ -510,6 +605,11 @@ unsigned virtqueue_enable_cb_prepare(struct virtqueue *_vq)
 {
 	struct vring_virtqueue *vq = to_vvq(_vq);
 	u16 last_used_idx;
+=======
+bool virtqueue_enable_cb(struct virtqueue *_vq)
+{
+	struct vring_virtqueue *vq = to_vvq(_vq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	START_USE(vq);
 
@@ -519,6 +619,7 @@ unsigned virtqueue_enable_cb_prepare(struct virtqueue *_vq)
 	 * either clear the flags bit or point the event index at the next
 	 * entry. Always do both to keep code simple. */
 	vq->vring.avail->flags &= ~VRING_AVAIL_F_NO_INTERRUPT;
+<<<<<<< HEAD
 	vring_used_event(&vq->vring) = last_used_idx = vq->last_used_idx;
 	END_USE(vq);
 	return last_used_idx;
@@ -574,6 +675,20 @@ EXPORT_SYMBOL_GPL(virtqueue_enable_cb);
  * Caller must ensure we don't call this with other virtqueue
  * operations at the same time (except where noted).
  */
+=======
+	vring_used_event(&vq->vring) = vq->last_used_idx;
+	virtio_mb();
+	if (unlikely(more_used(vq))) {
+		END_USE(vq);
+		return false;
+	}
+
+	END_USE(vq);
+	return true;
+}
+EXPORT_SYMBOL_GPL(virtqueue_enable_cb);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bool virtqueue_enable_cb_delayed(struct virtqueue *_vq)
 {
 	struct vring_virtqueue *vq = to_vvq(_vq);
@@ -590,7 +705,11 @@ bool virtqueue_enable_cb_delayed(struct virtqueue *_vq)
 	/* TODO: tune this threshold */
 	bufs = (u16)(vq->vring.avail->idx - vq->last_used_idx) * 3 / 4;
 	vring_used_event(&vq->vring) = vq->last_used_idx + bufs;
+<<<<<<< HEAD
 	virtio_mb(vq);
+=======
+	virtio_mb();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely((u16)(vq->vring.used->idx - vq->last_used_idx) > bufs)) {
 		END_USE(vq);
 		return false;
@@ -601,6 +720,7 @@ bool virtqueue_enable_cb_delayed(struct virtqueue *_vq)
 }
 EXPORT_SYMBOL_GPL(virtqueue_enable_cb_delayed);
 
+<<<<<<< HEAD
 /**
  * virtqueue_detach_unused_buf - detach first unused buffer
  * @vq: the struct virtqueue we're talking about.
@@ -609,6 +729,8 @@ EXPORT_SYMBOL_GPL(virtqueue_enable_cb_delayed);
  * This is not valid on an active queue; it is useful only for device
  * shutdown.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void *virtqueue_detach_unused_buf(struct virtqueue *_vq)
 {
 	struct vring_virtqueue *vq = to_vvq(_vq);
@@ -658,7 +780,10 @@ EXPORT_SYMBOL_GPL(vring_interrupt);
 struct virtqueue *vring_new_virtqueue(unsigned int num,
 				      unsigned int vring_align,
 				      struct virtio_device *vdev,
+<<<<<<< HEAD
 				      bool weak_barriers,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      void *pages,
 				      void (*notify)(struct virtqueue *),
 				      void (*callback)(struct virtqueue *),
@@ -682,14 +807,20 @@ struct virtqueue *vring_new_virtqueue(unsigned int num,
 	vq->vq.vdev = vdev;
 	vq->vq.name = name;
 	vq->notify = notify;
+<<<<<<< HEAD
 	vq->weak_barriers = weak_barriers;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vq->broken = false;
 	vq->last_used_idx = 0;
 	vq->num_added = 0;
 	list_add_tail(&vq->vq.list, &vdev->vqs);
 #ifdef DEBUG
 	vq->in_use = false;
+<<<<<<< HEAD
 	vq->last_add_time_valid = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC);
@@ -738,6 +869,7 @@ void vring_transport_features(struct virtio_device *vdev)
 }
 EXPORT_SYMBOL_GPL(vring_transport_features);
 
+<<<<<<< HEAD
 /**
  * virtqueue_get_vring_size - return the size of the virtqueue's vring
  * @vq: the struct virtqueue containing the vring of interest.
@@ -754,4 +886,6 @@ unsigned int virtqueue_get_vring_size(struct virtqueue *_vq)
 }
 EXPORT_SYMBOL_GPL(virtqueue_get_vring_size);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("GPL");

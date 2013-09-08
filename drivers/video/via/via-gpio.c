@@ -10,7 +10,10 @@
 #include <linux/platform_device.h>
 #include <linux/via-core.h>
 #include <linux/via-gpio.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * The ports we know about.  Note that the port-25 gpios are not

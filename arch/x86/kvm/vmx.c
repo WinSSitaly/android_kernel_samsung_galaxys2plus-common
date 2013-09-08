@@ -18,7 +18,10 @@
 
 #include "irq.h"
 #include "mmu.h"
+<<<<<<< HEAD
 #include "cpuid.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/kvm_host.h>
 #include <linux/module.h>
@@ -40,17 +43,24 @@
 #include <asm/mce.h>
 #include <asm/i387.h>
 #include <asm/xcr.h>
+<<<<<<< HEAD
 #include <asm/perf_event.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "trace.h"
 
 #define __ex(x) __kvm_handle_fault_on_reboot(x)
+<<<<<<< HEAD
 #define __ex_clear(x, reg) \
 	____kvm_handle_fault_on_reboot(x, "xor " reg " , " reg)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Qumranet");
 MODULE_LICENSE("GPL");
 
+<<<<<<< HEAD
 static bool __read_mostly enable_vpid = 1;
 module_param_named(vpid, enable_vpid, bool, 0444);
 
@@ -80,6 +90,32 @@ module_param(fasteoi, bool, S_IRUGO);
  */
 static bool __read_mostly nested = 0;
 module_param(nested, bool, S_IRUGO);
+=======
+static int __read_mostly bypass_guest_pf = 1;
+module_param(bypass_guest_pf, bool, S_IRUGO);
+
+static int __read_mostly enable_vpid = 1;
+module_param_named(vpid, enable_vpid, bool, 0444);
+
+static int __read_mostly flexpriority_enabled = 1;
+module_param_named(flexpriority, flexpriority_enabled, bool, S_IRUGO);
+
+static int __read_mostly enable_ept = 1;
+module_param_named(ept, enable_ept, bool, S_IRUGO);
+
+static int __read_mostly enable_unrestricted_guest = 1;
+module_param_named(unrestricted_guest,
+			enable_unrestricted_guest, bool, S_IRUGO);
+
+static int __read_mostly emulate_invalid_guest_state = 0;
+module_param(emulate_invalid_guest_state, bool, S_IRUGO);
+
+static int __read_mostly vmm_exclusive = 1;
+module_param(vmm_exclusive, bool, S_IRUGO);
+
+static int __read_mostly yield_on_hlt = 1;
+module_param(yield_on_hlt, bool, S_IRUGO);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define KVM_GUEST_CR0_MASK_UNRESTRICTED_GUEST				\
 	(X86_CR0_WP | X86_CR0_NE | X86_CR0_NW | X86_CR0_CD)
@@ -117,8 +153,12 @@ module_param(ple_gap, int, S_IRUGO);
 static int ple_window = KVM_VMX_DEFAULT_PLE_WINDOW;
 module_param(ple_window, int, S_IRUGO);
 
+<<<<<<< HEAD
 #define NR_AUTOLOAD_MSRS 8
 #define VMCS02_POOL_SIZE 1
+=======
+#define NR_AUTOLOAD_MSRS 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct vmcs {
 	u32 revision_id;
@@ -126,6 +166,7 @@ struct vmcs {
 	char data[0];
 };
 
+<<<<<<< HEAD
 /*
  * Track a VMCS that may be loaded on a certain CPU. If it is (cpu!=-1), also
  * remember whether it was VMLAUNCHed, and maintain a linked list of all VMCSs
@@ -138,12 +179,15 @@ struct loaded_vmcs {
 	struct list_head loaded_vmcss_on_cpu_link;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct shared_msr_entry {
 	unsigned index;
 	u64 data;
 	u64 mask;
 };
 
+<<<<<<< HEAD
 /*
  * struct vmcs12 describes the state that our guest hypervisor (L1) keeps for a
  * single nested guest (L2), hence the name vmcs12. Any VMX implementation has
@@ -357,6 +401,13 @@ struct nested_vmx {
 struct vcpu_vmx {
 	struct kvm_vcpu       vcpu;
 	unsigned long         host_rsp;
+=======
+struct vcpu_vmx {
+	struct kvm_vcpu       vcpu;
+	struct list_head      local_vcpus_link;
+	unsigned long         host_rsp;
+	int                   launched;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8                    fail;
 	u8                    cpl;
 	bool                  nmi_known_unmasked;
@@ -370,6 +421,7 @@ struct vcpu_vmx {
 	u64 		      msr_host_kernel_gs_base;
 	u64 		      msr_guest_kernel_gs_base;
 #endif
+<<<<<<< HEAD
 	/*
 	 * loaded_vmcs points to the VMCS currently used in this vcpu. For a
 	 * non-nested (L1) guest, it always points to vmcs01. For a nested
@@ -378,6 +430,9 @@ struct vcpu_vmx {
 	struct loaded_vmcs    vmcs01;
 	struct loaded_vmcs   *loaded_vmcs;
 	bool                  __launched; /* temporary, used in vmx_vcpu_run */
+=======
+	struct vmcs          *vmcs;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct msr_autoload {
 		unsigned nr;
 		struct vmx_msr_entry guest[NR_AUTOLOAD_MSRS];
@@ -413,9 +468,12 @@ struct vcpu_vmx {
 	u32 exit_reason;
 
 	bool rdtscp_enabled;
+<<<<<<< HEAD
 
 	/* Support for a guest hypervisor (nested VMX) */
 	struct nested_vmx nested;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum segment_cache_field {
@@ -432,6 +490,7 @@ static inline struct vcpu_vmx *to_vmx(struct kvm_vcpu *vcpu)
 	return container_of(vcpu, struct vcpu_vmx, vcpu);
 }
 
+<<<<<<< HEAD
 #define VMCS12_OFFSET(x) offsetof(struct vmcs12, x)
 #define FIELD(number, name)	[number] = VMCS12_OFFSET(name)
 #define FIELD64(number, name)	[number] = VMCS12_OFFSET(name), \
@@ -600,6 +659,8 @@ static void nested_release_page_clean(struct page *page)
 	kvm_release_page_clean(page);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u64 construct_eptp(unsigned long root_hpa);
 static void kvm_cpu_vmxon(u64 addr);
 static void kvm_cpu_vmxoff(void);
@@ -608,11 +669,15 @@ static int vmx_set_tss_addr(struct kvm *kvm, unsigned int addr);
 
 static DEFINE_PER_CPU(struct vmcs *, vmxarea);
 static DEFINE_PER_CPU(struct vmcs *, current_vmcs);
+<<<<<<< HEAD
 /*
  * We maintain a per-CPU linked-list of VMCS loaded on that CPU. This is needed
  * when a CPU is brought down, and we need to VMCLEAR all VMCSs loaded on it.
  */
 static DEFINE_PER_CPU(struct list_head, loaded_vmcss_on_cpu);
+=======
+static DEFINE_PER_CPU(struct list_head, vcpus_on_cpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEFINE_PER_CPU(struct desc_ptr, host_gdt);
 
 static unsigned long *vmx_io_bitmap_a;
@@ -621,7 +686,10 @@ static unsigned long *vmx_msr_bitmap_legacy;
 static unsigned long *vmx_msr_bitmap_longmode;
 
 static bool cpu_has_load_ia32_efer;
+<<<<<<< HEAD
 static bool cpu_has_load_perf_global_ctrl;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static DECLARE_BITMAP(vmx_vpid_bitmap, VMX_NR_VPIDS);
 static DEFINE_SPINLOCK(vmx_vpid_lock);
@@ -855,6 +923,7 @@ static inline bool report_flexpriority(void)
 	return flexpriority_enabled;
 }
 
+<<<<<<< HEAD
 static inline bool nested_cpu_has(struct vmcs12 *vmcs12, u32 bit)
 {
 	return vmcs12->cpu_based_vm_exec_control & bit;
@@ -884,6 +953,8 @@ static void nested_vmx_entry_failure(struct kvm_vcpu *vcpu,
 			struct vmcs12 *vmcs12,
 			u32 reason, unsigned long qualification);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __find_msr_index(struct vcpu_vmx *vmx, u32 msr)
 {
 	int i;
@@ -943,6 +1014,7 @@ static void vmcs_clear(struct vmcs *vmcs)
 		       vmcs, phys_addr);
 }
 
+<<<<<<< HEAD
 static inline void loaded_vmcs_init(struct loaded_vmcs *loaded_vmcs)
 {
 	vmcs_clear(loaded_vmcs->vmcs);
@@ -950,6 +1022,8 @@ static inline void loaded_vmcs_init(struct loaded_vmcs *loaded_vmcs)
 	loaded_vmcs->launched = 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void vmcs_load(struct vmcs *vmcs)
 {
 	u64 phys_addr = __pa(vmcs);
@@ -959,6 +1033,7 @@ static void vmcs_load(struct vmcs *vmcs)
 			: "=qm"(error) : "a"(&phys_addr), "m"(phys_addr)
 			: "cc", "memory");
 	if (error)
+<<<<<<< HEAD
 		printk(KERN_ERR "kvm: vmptrld %p/%llx failed\n",
 		       vmcs, phys_addr);
 }
@@ -981,6 +1056,31 @@ static void loaded_vmcs_clear(struct loaded_vmcs *loaded_vmcs)
 	if (loaded_vmcs->cpu != -1)
 		smp_call_function_single(
 			loaded_vmcs->cpu, __loaded_vmcs_clear, loaded_vmcs, 1);
+=======
+		printk(KERN_ERR "kvm: vmptrld %p/%llx fail\n",
+		       vmcs, phys_addr);
+}
+
+static void __vcpu_clear(void *arg)
+{
+	struct vcpu_vmx *vmx = arg;
+	int cpu = raw_smp_processor_id();
+
+	if (vmx->vcpu.cpu == cpu)
+		vmcs_clear(vmx->vmcs);
+	if (per_cpu(current_vmcs, cpu) == vmx->vmcs)
+		per_cpu(current_vmcs, cpu) = NULL;
+	list_del(&vmx->local_vcpus_link);
+	vmx->vcpu.cpu = -1;
+	vmx->launched = 0;
+}
+
+static void vcpu_clear(struct vcpu_vmx *vmx)
+{
+	if (vmx->vcpu.cpu == -1)
+		return;
+	smp_call_function_single(vmx->vcpu.cpu, __vcpu_clear, vmx, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void vpid_sync_vcpu_single(struct vcpu_vmx *vmx)
@@ -1033,6 +1133,7 @@ static inline void ept_sync_individual_addr(u64 eptp, gpa_t gpa)
 	}
 }
 
+<<<<<<< HEAD
 static __always_inline unsigned long vmcs_readl(unsigned long field)
 {
 	unsigned long value;
@@ -1043,16 +1144,36 @@ static __always_inline unsigned long vmcs_readl(unsigned long field)
 }
 
 static __always_inline u16 vmcs_read16(unsigned long field)
+=======
+static unsigned long vmcs_readl(unsigned long field)
+{
+	unsigned long value = 0;
+
+	asm volatile (__ex(ASM_VMX_VMREAD_RDX_RAX)
+		      : "+a"(value) : "d"(field) : "cc");
+	return value;
+}
+
+static u16 vmcs_read16(unsigned long field)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return vmcs_readl(field);
 }
 
+<<<<<<< HEAD
 static __always_inline u32 vmcs_read32(unsigned long field)
+=======
+static u32 vmcs_read32(unsigned long field)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return vmcs_readl(field);
 }
 
+<<<<<<< HEAD
 static __always_inline u64 vmcs_read64(unsigned long field)
+=======
+static u64 vmcs_read64(unsigned long field)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 #ifdef CONFIG_X86_64
 	return vmcs_readl(field);
@@ -1179,6 +1300,7 @@ static void update_exception_bitmap(struct kvm_vcpu *vcpu)
 		eb &= ~(1u << PF_VECTOR); /* bypass_guest_pf = 0 */
 	if (vcpu->fpu_active)
 		eb &= ~(1u << NM_VECTOR);
+<<<<<<< HEAD
 
 	/* When we are running a nested L2 guest and L1 specified for it a
 	 * certain exception bitmap, we must trap the same exceptions and pass
@@ -1198,11 +1320,17 @@ static void clear_atomic_switch_msr_special(unsigned long entry,
 	vmcs_clear_bits(VM_EXIT_CONTROLS, exit);
 }
 
+=======
+	vmcs_write32(EXCEPTION_BITMAP, eb);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void clear_atomic_switch_msr(struct vcpu_vmx *vmx, unsigned msr)
 {
 	unsigned i;
 	struct msr_autoload *m = &vmx->msr_autoload;
 
+<<<<<<< HEAD
 	switch (msr) {
 	case MSR_EFER:
 		if (cpu_has_load_ia32_efer) {
@@ -1219,6 +1347,12 @@ static void clear_atomic_switch_msr(struct vcpu_vmx *vmx, unsigned msr)
 			return;
 		}
 		break;
+=======
+	if (msr == MSR_EFER && cpu_has_load_ia32_efer) {
+		vmcs_clear_bits(VM_ENTRY_CONTROLS, VM_ENTRY_LOAD_IA32_EFER);
+		vmcs_clear_bits(VM_EXIT_CONTROLS, VM_EXIT_LOAD_IA32_EFER);
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	for (i = 0; i < m->nr; ++i)
@@ -1234,6 +1368,7 @@ static void clear_atomic_switch_msr(struct vcpu_vmx *vmx, unsigned msr)
 	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m->nr);
 }
 
+<<<<<<< HEAD
 static void add_atomic_switch_msr_special(unsigned long entry,
 		unsigned long exit, unsigned long guest_val_vmcs,
 		unsigned long host_val_vmcs, u64 guest_val, u64 host_val)
@@ -1244,12 +1379,15 @@ static void add_atomic_switch_msr_special(unsigned long entry,
 	vmcs_set_bits(VM_EXIT_CONTROLS, exit);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void add_atomic_switch_msr(struct vcpu_vmx *vmx, unsigned msr,
 				  u64 guest_val, u64 host_val)
 {
 	unsigned i;
 	struct msr_autoload *m = &vmx->msr_autoload;
 
+<<<<<<< HEAD
 	switch (msr) {
 	case MSR_EFER:
 		if (cpu_has_load_ia32_efer) {
@@ -1272,17 +1410,29 @@ static void add_atomic_switch_msr(struct vcpu_vmx *vmx, unsigned msr,
 			return;
 		}
 		break;
+=======
+	if (msr == MSR_EFER && cpu_has_load_ia32_efer) {
+		vmcs_write64(GUEST_IA32_EFER, guest_val);
+		vmcs_write64(HOST_IA32_EFER, host_val);
+		vmcs_set_bits(VM_ENTRY_CONTROLS, VM_ENTRY_LOAD_IA32_EFER);
+		vmcs_set_bits(VM_EXIT_CONTROLS, VM_EXIT_LOAD_IA32_EFER);
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	for (i = 0; i < m->nr; ++i)
 		if (m->guest[i].index == msr)
 			break;
 
+<<<<<<< HEAD
 	if (i == NR_AUTOLOAD_MSRS) {
 		printk_once(KERN_WARNING"Not enough mst switch entries. "
 				"Can't add msr %x\n", msr);
 		return;
 	} else if (i == m->nr) {
+=======
+	if (i == m->nr) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		++m->nr;
 		vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, m->nr);
 		vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m->nr);
@@ -1454,7 +1604,11 @@ static void __vmx_load_host_state(struct vcpu_vmx *vmx)
 #ifdef CONFIG_X86_64
 	wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_host_kernel_gs_base);
 #endif
+<<<<<<< HEAD
 	if (user_has_fpu())
+=======
+	if (__thread_has_fpu(current))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		clts();
 	load_gdt(&__get_cpu_var(host_gdt));
 }
@@ -1477,6 +1631,7 @@ static void vmx_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
 
 	if (!vmm_exclusive)
 		kvm_cpu_vmxon(phys_addr);
+<<<<<<< HEAD
 	else if (vmx->loaded_vmcs->cpu != cpu)
 		loaded_vmcs_clear(vmx->loaded_vmcs);
 
@@ -1486,13 +1641,29 @@ static void vmx_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
 	}
 
 	if (vmx->loaded_vmcs->cpu != cpu) {
+=======
+	else if (vcpu->cpu != cpu)
+		vcpu_clear(vmx);
+
+	if (per_cpu(current_vmcs, cpu) != vmx->vmcs) {
+		per_cpu(current_vmcs, cpu) = vmx->vmcs;
+		vmcs_load(vmx->vmcs);
+	}
+
+	if (vcpu->cpu != cpu) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct desc_ptr *gdt = &__get_cpu_var(host_gdt);
 		unsigned long sysenter_esp;
 
 		kvm_make_request(KVM_REQ_TLB_FLUSH, vcpu);
 		local_irq_disable();
+<<<<<<< HEAD
 		list_add(&vmx->loaded_vmcs->loaded_vmcss_on_cpu_link,
 			 &per_cpu(loaded_vmcss_on_cpu, cpu));
+=======
+		list_add(&vmx->local_vcpus_link,
+			 &per_cpu(vcpus_on_cpu, cpu));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		local_irq_enable();
 
 		/*
@@ -1504,7 +1675,10 @@ static void vmx_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
 
 		rdmsrl(MSR_IA32_SYSENTER_ESP, sysenter_esp);
 		vmcs_writel(HOST_IA32_SYSENTER_ESP, sysenter_esp); /* 22.2.3 */
+<<<<<<< HEAD
 		vmx->loaded_vmcs->cpu = cpu;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1512,8 +1686,12 @@ static void vmx_vcpu_put(struct kvm_vcpu *vcpu)
 {
 	__vmx_load_host_state(to_vmx(vcpu));
 	if (!vmm_exclusive) {
+<<<<<<< HEAD
 		__loaded_vmcs_clear(to_vmx(vcpu)->loaded_vmcs);
 		vcpu->cpu = -1;
+=======
+		__vcpu_clear(to_vmx(vcpu));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kvm_cpu_vmxoff();
 	}
 }
@@ -1531,14 +1709,18 @@ static void vmx_fpu_activate(struct kvm_vcpu *vcpu)
 	vmcs_writel(GUEST_CR0, cr0);
 	update_exception_bitmap(vcpu);
 	vcpu->arch.cr0_guest_owned_bits = X86_CR0_TS;
+<<<<<<< HEAD
 	if (is_guest_mode(vcpu))
 		vcpu->arch.cr0_guest_owned_bits &=
 			~get_vmcs12(vcpu)->cr0_guest_host_mask;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vmcs_writel(CR0_GUEST_HOST_MASK, ~vcpu->arch.cr0_guest_owned_bits);
 }
 
 static void vmx_decache_cr0_guest_bits(struct kvm_vcpu *vcpu);
 
+<<<<<<< HEAD
 /*
  * Return the cr0 value that a nested guest would read. This is a combination
  * of the real cr0 used to run the guest (guest_cr0), and the bits shadowed by
@@ -1560,11 +1742,16 @@ static void vmx_fpu_deactivate(struct kvm_vcpu *vcpu)
 	/* Note that there is no vcpu->fpu_active = 0 here. The caller must
 	 * set this *before* calling this function.
 	 */
+=======
+static void vmx_fpu_deactivate(struct kvm_vcpu *vcpu)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vmx_decache_cr0_guest_bits(vcpu);
 	vmcs_set_bits(GUEST_CR0, X86_CR0_TS | X86_CR0_MP);
 	update_exception_bitmap(vcpu);
 	vcpu->arch.cr0_guest_owned_bits = 0;
 	vmcs_writel(CR0_GUEST_HOST_MASK, ~vcpu->arch.cr0_guest_owned_bits);
+<<<<<<< HEAD
 	if (is_guest_mode(vcpu)) {
 		/*
 		 * L1's specified read shadow might not contain the TS bit,
@@ -1580,6 +1767,9 @@ static void vmx_fpu_deactivate(struct kvm_vcpu *vcpu)
 		vmcs_writel(CR0_READ_SHADOW, nested_read_cr0(vmcs12));
 	} else
 		vmcs_writel(CR0_READ_SHADOW, vcpu->arch.cr0);
+=======
+	vmcs_writel(CR0_READ_SHADOW, vcpu->arch.cr0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static unsigned long vmx_get_rflags(struct kvm_vcpu *vcpu)
@@ -1652,6 +1842,7 @@ static void skip_emulated_instruction(struct kvm_vcpu *vcpu)
 	vmx_set_interrupt_shadow(vcpu, 0);
 }
 
+<<<<<<< HEAD
 /*
  * KVM wants to inject page-faults which it got to the guest. This function
  * checks whether in a nested guest, we need to inject them to L1 or L2.
@@ -1669,6 +1860,17 @@ static int nested_pf_handled(struct kvm_vcpu *vcpu)
 
 	nested_vmx_vmexit(vcpu);
 	return 1;
+=======
+static void vmx_clear_hlt(struct kvm_vcpu *vcpu)
+{
+	/* Ensure that we clear the HLT state in the VMCS.  We don't need to
+	 * explicitly skip the instruction because if the HLT state is set, then
+	 * the instruction is already executing and RIP has already been
+	 * advanced. */
+	if (!yield_on_hlt &&
+	    vmcs_read32(GUEST_ACTIVITY_STATE) == GUEST_ACTIVITY_HLT)
+		vmcs_write32(GUEST_ACTIVITY_STATE, GUEST_ACTIVITY_ACTIVE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void vmx_queue_exception(struct kvm_vcpu *vcpu, unsigned nr,
@@ -1678,10 +1880,13 @@ static void vmx_queue_exception(struct kvm_vcpu *vcpu, unsigned nr,
 	struct vcpu_vmx *vmx = to_vmx(vcpu);
 	u32 intr_info = nr | INTR_INFO_VALID_MASK;
 
+<<<<<<< HEAD
 	if (nr == PF_VECTOR && is_guest_mode(vcpu) &&
 		nested_pf_handled(vcpu))
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (has_error_code) {
 		vmcs_write32(VM_ENTRY_EXCEPTION_ERROR_CODE, error_code);
 		intr_info |= INTR_INFO_DELIVER_CODE_MASK;
@@ -1704,6 +1909,10 @@ static void vmx_queue_exception(struct kvm_vcpu *vcpu, unsigned nr,
 		intr_info |= INTR_TYPE_HARD_EXCEPTION;
 
 	vmcs_write32(VM_ENTRY_INTR_INFO_FIELD, intr_info);
+<<<<<<< HEAD
+=======
+	vmx_clear_hlt(vcpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static bool vmx_rdtscp_supported(void)
@@ -1733,6 +1942,10 @@ static void setup_msrs(struct vcpu_vmx *vmx)
 	int save_nmsrs, index;
 	unsigned long *msr_bitmap;
 
+<<<<<<< HEAD
+=======
+	vmx_load_host_state(vmx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	save_nmsrs = 0;
 #ifdef CONFIG_X86_64
 	if (is_long_mode(&vmx->vcpu)) {
@@ -1787,6 +2000,7 @@ static u64 guest_read_tsc(void)
 }
 
 /*
+<<<<<<< HEAD
  * Like guest_read_tsc, but always returns L1's notion of the timestamp
  * counter, even if a nested guest (L2) is currently running.
  */
@@ -1815,6 +2029,15 @@ static void vmx_set_tsc_khz(struct kvm_vcpu *vcpu, u32 user_tsc_khz, bool scale)
 		vcpu->arch.tsc_always_catchup = 1;
 	} else
 		WARN(1, "user requested TSC rate below hardware speed\n");
+=======
+ * Empty call-back. Needs to be implemented when VMX enables the SET_TSC_KHZ
+ * ioctl. In this case the call-back should update internal vmx state to make
+ * the changes effective.
+ */
+static void vmx_set_tsc_khz(struct kvm_vcpu *vcpu, u32 user_tsc_khz)
+{
+	/* Nothing to do here */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1822,6 +2045,7 @@ static void vmx_set_tsc_khz(struct kvm_vcpu *vcpu, u32 user_tsc_khz, bool scale)
  */
 static void vmx_write_tsc_offset(struct kvm_vcpu *vcpu, u64 offset)
 {
+<<<<<<< HEAD
 	if (is_guest_mode(vcpu)) {
 		/*
 		 * We're here if L1 chose not to trap WRMSR to TSC. According
@@ -1849,6 +2073,15 @@ static void vmx_adjust_tsc_offset(struct kvm_vcpu *vcpu, s64 adjustment, bool ho
 		/* Even when running L2, the adjustment needs to apply to L1 */
 		to_vmx(vcpu)->nested.vmcs01_tsc_offset += adjustment;
 	}
+=======
+	vmcs_write64(TSC_OFFSET, offset);
+}
+
+static void vmx_adjust_tsc_offset(struct kvm_vcpu *vcpu, s64 adjustment)
+{
+	u64 offset = vmcs_read64(TSC_OFFSET);
+	vmcs_write64(TSC_OFFSET, offset + adjustment);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static u64 vmx_compute_tsc_offset(struct kvm_vcpu *vcpu, u64 target_tsc)
@@ -1856,6 +2089,7 @@ static u64 vmx_compute_tsc_offset(struct kvm_vcpu *vcpu, u64 target_tsc)
 	return target_tsc - native_read_tsc();
 }
 
+<<<<<<< HEAD
 static bool guest_cpuid_has_vmx(struct kvm_vcpu *vcpu)
 {
 	struct kvm_cpuid_entry2 *best = kvm_find_cpuid_entry(vcpu, 1, 0);
@@ -2087,6 +2321,8 @@ static int vmx_set_vmx_msr(struct kvm_vcpu *vcpu, u32 msr_index, u64 data)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Reads an msr value (of 'msr_index') into 'pdata'.
  * Returns 0 on success, non-0 otherwise.
@@ -2134,10 +2370,17 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, u32 msr_index, u64 *pdata)
 			return 1;
 		/* Otherwise falls through */
 	default:
+<<<<<<< HEAD
 		if (vmx_get_vmx_msr(vcpu, msr_index, pdata))
 			return 0;
 		msr = find_msr_entry(to_vmx(vcpu), msr_index);
 		if (msr) {
+=======
+		vmx_load_host_state(to_vmx(vcpu));
+		msr = find_msr_entry(to_vmx(vcpu), msr_index);
+		if (msr) {
+			vmx_load_host_state(to_vmx(vcpu));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			data = msr->data;
 			break;
 		}
@@ -2161,6 +2404,10 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, u32 msr_index, u64 data)
 
 	switch (msr_index) {
 	case MSR_EFER:
+<<<<<<< HEAD
+=======
+		vmx_load_host_state(vmx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = kvm_set_msr_common(vcpu, msr_index, data);
 		break;
 #ifdef CONFIG_X86_64
@@ -2205,6 +2452,7 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, u32 msr_index, u64 data)
 			return 1;
 		/* Otherwise falls through */
 	default:
+<<<<<<< HEAD
 		if (vmx_set_vmx_msr(vcpu, msr_index, data))
 			break;
 		msr = find_msr_entry(vmx, msr_index);
@@ -2216,6 +2464,12 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, u32 msr_index, u64 data)
 						   msr->mask);
 				preempt_enable();
 			}
+=======
+		msr = find_msr_entry(vmx, msr_index);
+		if (msr) {
+			vmx_load_host_state(vmx);
+			msr->data = data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 		ret = kvm_set_msr_common(vcpu, msr_index, data);
@@ -2301,7 +2555,11 @@ static int hardware_enable(void *garbage)
 	if (read_cr4() & X86_CR4_VMXE)
 		return -EBUSY;
 
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&per_cpu(loaded_vmcss_on_cpu, cpu));
+=======
+	INIT_LIST_HEAD(&per_cpu(vcpus_on_cpu, cpu));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rdmsrl(MSR_IA32_FEATURE_CONTROL, old);
 
 	test_bits = FEATURE_CONTROL_LOCKED;
@@ -2325,6 +2583,7 @@ static int hardware_enable(void *garbage)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void vmclear_local_loaded_vmcss(void)
 {
 	int cpu = raw_smp_processor_id();
@@ -2333,6 +2592,16 @@ static void vmclear_local_loaded_vmcss(void)
 	list_for_each_entry_safe(v, n, &per_cpu(loaded_vmcss_on_cpu, cpu),
 				 loaded_vmcss_on_cpu_link)
 		__loaded_vmcs_clear(v);
+=======
+static void vmclear_local_vcpus(void)
+{
+	int cpu = raw_smp_processor_id();
+	struct vcpu_vmx *vmx, *n;
+
+	list_for_each_entry_safe(vmx, n, &per_cpu(vcpus_on_cpu, cpu),
+				 local_vcpus_link)
+		__vcpu_clear(vmx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -2347,7 +2616,11 @@ static void kvm_cpu_vmxoff(void)
 static void hardware_disable(void *garbage)
 {
 	if (vmm_exclusive) {
+<<<<<<< HEAD
 		vmclear_local_loaded_vmcss();
+=======
+		vmclear_local_vcpus();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kvm_cpu_vmxoff();
 	}
 	write_cr4(read_cr4() & ~X86_CR4_VMXE);
@@ -2396,7 +2669,11 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf)
 				&_pin_based_exec_control) < 0)
 		return -EIO;
 
+<<<<<<< HEAD
 	min = CPU_BASED_HLT_EXITING |
+=======
+	min =
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_X86_64
 	      CPU_BASED_CR8_LOAD_EXITING |
 	      CPU_BASED_CR8_STORE_EXITING |
@@ -2408,8 +2685,15 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf)
 	      CPU_BASED_USE_TSC_OFFSETING |
 	      CPU_BASED_MWAIT_EXITING |
 	      CPU_BASED_MONITOR_EXITING |
+<<<<<<< HEAD
 	      CPU_BASED_INVLPG_EXITING |
 	      CPU_BASED_RDPMC_EXITING;
+=======
+	      CPU_BASED_INVLPG_EXITING;
+
+	if (yield_on_hlt)
+		min |= CPU_BASED_HLT_EXITING;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	opt = CPU_BASED_TPR_SHADOW |
 	      CPU_BASED_USE_MSR_BITMAPS |
@@ -2498,6 +2782,7 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf)
 		&& allow_1_setting(MSR_IA32_VMX_EXIT_CTLS,
 				   VM_EXIT_LOAD_IA32_EFER);
 
+<<<<<<< HEAD
 	cpu_has_load_perf_global_ctrl =
 		allow_1_setting(MSR_IA32_VMX_ENTRY_CTLS,
 				VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL)
@@ -2534,6 +2819,8 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -2562,6 +2849,7 @@ static void free_vmcs(struct vmcs *vmcs)
 	free_pages((unsigned long)vmcs, vmcs_config.order);
 }
 
+<<<<<<< HEAD
 /*
  * Free a VMCS, but before that VMCLEAR it on the CPU where it was last loaded
  */
@@ -2574,6 +2862,8 @@ static void free_loaded_vmcs(struct loaded_vmcs *loaded_vmcs)
 	loaded_vmcs->vmcs = NULL;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void free_kvm_area(void)
 {
 	int cpu;
@@ -2634,9 +2924,12 @@ static __init int hardware_setup(void)
 	if (!cpu_has_vmx_ple())
 		ple_gap = 0;
 
+<<<<<<< HEAD
 	if (nested)
 		nested_vmx_setup_ctls_msrs();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return alloc_kvm_area();
 }
 
@@ -2708,6 +3001,7 @@ static gva_t rmode_tss_base(struct kvm *kvm)
 {
 	if (!kvm->arch.tss_addr) {
 		struct kvm_memslots *slots;
+<<<<<<< HEAD
 		struct kvm_memory_slot *slot;
 		gfn_t base_gfn;
 
@@ -2715,6 +3009,13 @@ static gva_t rmode_tss_base(struct kvm *kvm)
 		slot = id_to_memslot(slots, 0);
 		base_gfn = slot->base_gfn + slot->npages - 3;
 
+=======
+		gfn_t base_gfn;
+
+		slots = kvm_memslots(kvm);
+		base_gfn = slots->memslots[0].base_gfn +
+				 kvm->memslots->memslots[0].npages - 3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return base_gfn << PAGE_SHIFT;
 	}
 	return kvm->arch.tss_addr;
@@ -2843,8 +3144,13 @@ static void enter_lmode(struct kvm_vcpu *vcpu)
 
 	guest_tr_ar = vmcs_read32(GUEST_TR_AR_BYTES);
 	if ((guest_tr_ar & AR_TYPE_MASK) != AR_TYPE_BUSY_64_TSS) {
+<<<<<<< HEAD
 		pr_debug_ratelimited("%s: tss fixup for long mode. \n",
 				     __func__);
+=======
+		printk(KERN_DEBUG "%s: tss fixup for long mode. \n",
+		       __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		vmcs_write32(GUEST_TR_AR_BYTES,
 			     (guest_tr_ar & ~AR_TYPE_MASK)
 			     | AR_TYPE_BUSY_64_TSS);
@@ -2924,7 +3230,11 @@ static void ept_save_pdptrs(struct kvm_vcpu *vcpu)
 		  (unsigned long *)&vcpu->arch.regs_dirty);
 }
 
+<<<<<<< HEAD
 static int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4);
+=======
+static void vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void ept_update_paging_mode_cr0(unsigned long *hw_cr0,
 					unsigned long cr0,
@@ -3022,11 +3332,16 @@ static void vmx_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
 	vmcs_writel(GUEST_CR3, guest_cr3);
 }
 
+<<<<<<< HEAD
 static int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+=======
+static void vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long hw_cr4 = cr4 | (to_vmx(vcpu)->rmode.vm86_active ?
 		    KVM_RMODE_VM_CR4_ALWAYS_ON : KVM_PMODE_VM_CR4_ALWAYS_ON);
 
+<<<<<<< HEAD
 	if (cr4 & X86_CR4_VMXE) {
 		/*
 		 * To use VMXON (and later other VMX instructions), a guest
@@ -3039,6 +3354,8 @@ static int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
 	} else if (to_vmx(vcpu)->nested.vmxon)
 		return 1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vcpu->arch.cr4 = cr4;
 	if (enable_ept) {
 		if (!is_paging(vcpu)) {
@@ -3051,7 +3368,10 @@ static int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
 
 	vmcs_writel(CR4_READ_SHADOW, cr4);
 	vmcs_writel(GUEST_CR4, hw_cr4);
+<<<<<<< HEAD
 	return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void vmx_get_segment(struct kvm_vcpu *vcpu,
@@ -3617,6 +3937,7 @@ static void vmx_disable_intercept_for_msr(u32 msr, bool longmode_only)
 }
 
 /*
+<<<<<<< HEAD
  * Set up the vmcs's constant host-state fields, i.e., host-state fields that
  * will not change in the lifetime of the guest.
  * Note that host-state that does change is set elsewhere. E.g., host-state
@@ -3669,6 +3990,35 @@ static void set_cr4_guest_host_mask(struct vcpu_vmx *vmx)
 static u32 vmx_exec_control(struct vcpu_vmx *vmx)
 {
 	u32 exec_control = vmcs_config.cpu_based_exec_ctrl;
+=======
+ * Sets up the vmcs for emulated real mode.
+ */
+static int vmx_vcpu_setup(struct vcpu_vmx *vmx)
+{
+	u32 host_sysenter_cs, msr_low, msr_high;
+	u32 junk;
+	u64 host_pat;
+	unsigned long a;
+	struct desc_ptr dt;
+	int i;
+	unsigned long kvm_vmx_return;
+	u32 exec_control;
+
+	/* I/O */
+	vmcs_write64(IO_BITMAP_A, __pa(vmx_io_bitmap_a));
+	vmcs_write64(IO_BITMAP_B, __pa(vmx_io_bitmap_b));
+
+	if (cpu_has_vmx_msr_bitmap())
+		vmcs_write64(MSR_BITMAP, __pa(vmx_msr_bitmap_legacy));
+
+	vmcs_write64(VMCS_LINK_POINTER, -1ull); /* 22.3.1.5 */
+
+	/* Control */
+	vmcs_write32(PIN_BASED_VM_EXEC_CONTROL,
+		vmcs_config.pin_based_exec_ctrl);
+
+	exec_control = vmcs_config.cpu_based_exec_ctrl;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!vm_need_tpr_shadow(vmx->vcpu.kvm)) {
 		exec_control &= ~CPU_BASED_TPR_SHADOW;
 #ifdef CONFIG_X86_64
@@ -3680,6 +4030,7 @@ static u32 vmx_exec_control(struct vcpu_vmx *vmx)
 		exec_control |= CPU_BASED_CR3_STORE_EXITING |
 				CPU_BASED_CR3_LOAD_EXITING  |
 				CPU_BASED_INVLPG_EXITING;
+<<<<<<< HEAD
 	return exec_control;
 }
 
@@ -3740,6 +4091,26 @@ static int vmx_vcpu_setup(struct vcpu_vmx *vmx)
 	if (cpu_has_secondary_exec_ctrls()) {
 		vmcs_write32(SECONDARY_VM_EXEC_CONTROL,
 				vmx_secondary_exec_control(vmx));
+=======
+	vmcs_write32(CPU_BASED_VM_EXEC_CONTROL, exec_control);
+
+	if (cpu_has_secondary_exec_ctrls()) {
+		exec_control = vmcs_config.cpu_based_2nd_exec_ctrl;
+		if (!vm_need_virtualize_apic_accesses(vmx->vcpu.kvm))
+			exec_control &=
+				~SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES;
+		if (vmx->vpid == 0)
+			exec_control &= ~SECONDARY_EXEC_ENABLE_VPID;
+		if (!enable_ept) {
+			exec_control &= ~SECONDARY_EXEC_ENABLE_EPT;
+			enable_unrestricted_guest = 0;
+		}
+		if (!enable_unrestricted_guest)
+			exec_control &= ~SECONDARY_EXEC_UNRESTRICTED_GUEST;
+		if (!ple_gap)
+			exec_control &= ~SECONDARY_EXEC_PAUSE_LOOP_EXITING;
+		vmcs_write32(SECONDARY_VM_EXEC_CONTROL, exec_control);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (ple_gap) {
@@ -3747,6 +4118,7 @@ static int vmx_vcpu_setup(struct vcpu_vmx *vmx)
 		vmcs_write32(PLE_WINDOW, ple_window);
 	}
 
+<<<<<<< HEAD
 	vmcs_write32(PAGE_FAULT_ERROR_CODE_MASK, 0);
 	vmcs_write32(PAGE_FAULT_ERROR_CODE_MATCH, 0);
 	vmcs_write32(CR3_TARGET_COUNT, 0);           /* 22.2.1 */
@@ -3754,6 +4126,22 @@ static int vmx_vcpu_setup(struct vcpu_vmx *vmx)
 	vmcs_write16(HOST_FS_SELECTOR, 0);            /* 22.2.4 */
 	vmcs_write16(HOST_GS_SELECTOR, 0);            /* 22.2.4 */
 	vmx_set_constant_host_state();
+=======
+	vmcs_write32(PAGE_FAULT_ERROR_CODE_MASK, !!bypass_guest_pf);
+	vmcs_write32(PAGE_FAULT_ERROR_CODE_MATCH, !!bypass_guest_pf);
+	vmcs_write32(CR3_TARGET_COUNT, 0);           /* 22.2.1 */
+
+	vmcs_writel(HOST_CR0, read_cr0() | X86_CR0_TS);  /* 22.2.3 */
+	vmcs_writel(HOST_CR4, read_cr4());  /* 22.2.3, 22.2.5 */
+	vmcs_writel(HOST_CR3, read_cr3());  /* 22.2.3  FIXME: shadow tables */
+
+	vmcs_write16(HOST_CS_SELECTOR, __KERNEL_CS);  /* 22.2.4 */
+	vmcs_write16(HOST_DS_SELECTOR, __KERNEL_DS);  /* 22.2.4 */
+	vmcs_write16(HOST_ES_SELECTOR, __KERNEL_DS);  /* 22.2.4 */
+	vmcs_write16(HOST_FS_SELECTOR, 0);            /* 22.2.4 */
+	vmcs_write16(HOST_GS_SELECTOR, 0);            /* 22.2.4 */
+	vmcs_write16(HOST_SS_SELECTOR, __KERNEL_DS);  /* 22.2.4 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_X86_64
 	rdmsrl(MSR_FS_BASE, a);
 	vmcs_writel(HOST_FS_BASE, a); /* 22.2.4 */
@@ -3764,15 +4152,41 @@ static int vmx_vcpu_setup(struct vcpu_vmx *vmx)
 	vmcs_writel(HOST_GS_BASE, 0); /* 22.2.4 */
 #endif
 
+<<<<<<< HEAD
+=======
+	vmcs_write16(HOST_TR_SELECTOR, GDT_ENTRY_TSS*8);  /* 22.2.4 */
+
+	native_store_idt(&dt);
+	vmcs_writel(HOST_IDTR_BASE, dt.address);   /* 22.2.4 */
+
+	asm("mov $.Lkvm_vmx_return, %0" : "=r"(kvm_vmx_return));
+	vmcs_writel(HOST_RIP, kvm_vmx_return); /* 22.2.5 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vmcs_write32(VM_EXIT_MSR_STORE_COUNT, 0);
 	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, 0);
 	vmcs_write64(VM_EXIT_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.host));
 	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, 0);
 	vmcs_write64(VM_ENTRY_MSR_LOAD_ADDR, __pa(vmx->msr_autoload.guest));
 
+<<<<<<< HEAD
 	if (vmcs_config.vmentry_ctrl & VM_ENTRY_LOAD_IA32_PAT) {
 		u32 msr_low, msr_high;
 		u64 host_pat;
+=======
+	rdmsr(MSR_IA32_SYSENTER_CS, host_sysenter_cs, junk);
+	vmcs_write32(HOST_IA32_SYSENTER_CS, host_sysenter_cs);
+	rdmsrl(MSR_IA32_SYSENTER_ESP, a);
+	vmcs_writel(HOST_IA32_SYSENTER_ESP, a);   /* 22.2.3 */
+	rdmsrl(MSR_IA32_SYSENTER_EIP, a);
+	vmcs_writel(HOST_IA32_SYSENTER_EIP, a);   /* 22.2.3 */
+
+	if (vmcs_config.vmexit_ctrl & VM_EXIT_LOAD_IA32_PAT) {
+		rdmsr(MSR_IA32_CR_PAT, msr_low, msr_high);
+		host_pat = msr_low | ((u64) msr_high << 32);
+		vmcs_write64(HOST_IA32_PAT, host_pat);
+	}
+	if (vmcs_config.vmentry_ctrl & VM_ENTRY_LOAD_IA32_PAT) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rdmsr(MSR_IA32_CR_PAT, msr_low, msr_high);
 		host_pat = msr_low | ((u64) msr_high << 32);
 		/* Write the default value follow host pat */
@@ -3802,7 +4216,14 @@ static int vmx_vcpu_setup(struct vcpu_vmx *vmx)
 	vmcs_write32(VM_ENTRY_CONTROLS, vmcs_config.vmentry_ctrl);
 
 	vmcs_writel(CR0_GUEST_HOST_MASK, ~0UL);
+<<<<<<< HEAD
 	set_cr4_guest_host_mask(vmx);
+=======
+	vmx->vcpu.arch.cr4_guest_owned_bits = KVM_CR4_GUEST_OWNED_BITS;
+	if (enable_ept)
+		vmx->vcpu.arch.cr4_guest_owned_bits |= X86_CR4_PGE;
+	vmcs_writel(CR4_GUEST_HOST_MASK, ~vmx->vcpu.arch.cr4_guest_owned_bits);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kvm_write_tsc(&vmx->vcpu, 0);
 
@@ -3909,9 +4330,13 @@ static int vmx_vcpu_reset(struct kvm_vcpu *vcpu)
 		vmcs_write16(VIRTUAL_PROCESSOR_ID, vmx->vpid);
 
 	vmx->vcpu.arch.cr0 = X86_CR0_NW | X86_CR0_CD | X86_CR0_ET;
+<<<<<<< HEAD
 	vcpu->srcu_idx = srcu_read_lock(&vcpu->kvm->srcu);
 	vmx_set_cr0(&vmx->vcpu, kvm_read_cr0(vcpu)); /* enter rmode */
 	srcu_read_unlock(&vcpu->kvm->srcu, vcpu->srcu_idx);
+=======
+	vmx_set_cr0(&vmx->vcpu, kvm_read_cr0(vcpu)); /* enter rmode */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vmx_set_cr4(&vmx->vcpu, 0);
 	vmx_set_efer(&vmx->vcpu, 0);
 	vmx_fpu_activate(&vmx->vcpu);
@@ -3928,6 +4353,7 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 /*
  * In nested virtualization, check if L1 asked to exit on external interrupts.
  * For most existing hypervisors, this will always return true.
@@ -3950,6 +4376,11 @@ static void enable_irq_window(struct kvm_vcpu *vcpu)
 		kvm_make_request(KVM_REQ_IMMEDIATE_EXIT, vcpu);
 		return;
 	}
+=======
+static void enable_irq_window(struct kvm_vcpu *vcpu)
+{
+	u32 cpu_based_vm_exec_control;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cpu_based_vm_exec_control = vmcs_read32(CPU_BASED_VM_EXEC_CONTROL);
 	cpu_based_vm_exec_control |= CPU_BASED_VIRTUAL_INTR_PENDING;
@@ -3999,15 +4430,22 @@ static void vmx_inject_irq(struct kvm_vcpu *vcpu)
 	} else
 		intr |= INTR_TYPE_EXT_INTR;
 	vmcs_write32(VM_ENTRY_INTR_INFO_FIELD, intr);
+<<<<<<< HEAD
+=======
+	vmx_clear_hlt(vcpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void vmx_inject_nmi(struct kvm_vcpu *vcpu)
 {
 	struct vcpu_vmx *vmx = to_vmx(vcpu);
 
+<<<<<<< HEAD
 	if (is_guest_mode(vcpu))
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!cpu_has_virtual_nmis()) {
 		/*
 		 * Tracking the NMI-blocked state in software is built upon
@@ -4030,6 +4468,10 @@ static void vmx_inject_nmi(struct kvm_vcpu *vcpu)
 	}
 	vmcs_write32(VM_ENTRY_INTR_INFO_FIELD,
 			INTR_TYPE_NMI_INTR | INTR_INFO_VALID_MASK | NMI_VECTOR);
+<<<<<<< HEAD
+=======
+	vmx_clear_hlt(vcpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int vmx_nmi_allowed(struct kvm_vcpu *vcpu)
@@ -4073,6 +4515,7 @@ static void vmx_set_nmi_mask(struct kvm_vcpu *vcpu, bool masked)
 
 static int vmx_interrupt_allowed(struct kvm_vcpu *vcpu)
 {
+<<<<<<< HEAD
 	if (is_guest_mode(vcpu) && nested_exit_on_intr(vcpu)) {
 		struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
 		if (to_vmx(vcpu)->nested.nested_run_pending ||
@@ -4085,6 +4528,8 @@ static int vmx_interrupt_allowed(struct kvm_vcpu *vcpu)
 		/* fall through to normal code, but now in L1, not L2 */
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return (vmcs_readl(GUEST_RFLAGS) & X86_EFLAGS_IF) &&
 		!(vmcs_read32(GUEST_INTERRUPTIBILITY_INFO) &
 			(GUEST_INTR_STATE_STI | GUEST_INTR_STATE_MOV_SS));
@@ -4226,7 +4671,12 @@ static int handle_exception(struct kvm_vcpu *vcpu)
 		error_code = vmcs_read32(VM_EXIT_INTR_ERROR_CODE);
 	if (is_page_fault(intr_info)) {
 		/* EPT won't cause page fault directly */
+<<<<<<< HEAD
 		BUG_ON(enable_ept);
+=======
+		if (enable_ept)
+			BUG();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cr2 = vmcs_readl(EXIT_QUALIFICATION);
 		trace_kvm_page_fault(cr2, error_code);
 
@@ -4325,6 +4775,7 @@ vmx_patch_hypercall(struct kvm_vcpu *vcpu, unsigned char *hypercall)
 	hypercall[2] = 0xc1;
 }
 
+<<<<<<< HEAD
 /* called to set cr0 as approriate for a mov-to-cr0 exit. */
 static int handle_set_cr0(struct kvm_vcpu *vcpu, unsigned long val)
 {
@@ -4377,6 +4828,8 @@ static void handle_clts(struct kvm_vcpu *vcpu)
 		vmx_set_cr0(vcpu, kvm_read_cr0_bits(vcpu, ~X86_CR0_TS));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int handle_cr(struct kvm_vcpu *vcpu)
 {
 	unsigned long exit_qualification, val;
@@ -4393,7 +4846,11 @@ static int handle_cr(struct kvm_vcpu *vcpu)
 		trace_kvm_cr_write(cr, val);
 		switch (cr) {
 		case 0:
+<<<<<<< HEAD
 			err = handle_set_cr0(vcpu, val);
+=======
+			err = kvm_set_cr0(vcpu, val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			kvm_complete_insn_gp(vcpu, err);
 			return 1;
 		case 3:
@@ -4401,7 +4858,11 @@ static int handle_cr(struct kvm_vcpu *vcpu)
 			kvm_complete_insn_gp(vcpu, err);
 			return 1;
 		case 4:
+<<<<<<< HEAD
 			err = handle_set_cr4(vcpu, val);
+=======
+			err = kvm_set_cr4(vcpu, val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			kvm_complete_insn_gp(vcpu, err);
 			return 1;
 		case 8: {
@@ -4419,7 +4880,11 @@ static int handle_cr(struct kvm_vcpu *vcpu)
 		};
 		break;
 	case 2: /* clts */
+<<<<<<< HEAD
 		handle_clts(vcpu);
+=======
+		vmx_set_cr0(vcpu, kvm_read_cr0_bits(vcpu, ~X86_CR0_TS));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		trace_kvm_cr_write(0, kvm_read_cr0(vcpu));
 		skip_emulated_instruction(vcpu);
 		vmx_fpu_activate(vcpu);
@@ -4595,6 +5060,15 @@ static int handle_vmcall(struct kvm_vcpu *vcpu)
 	return 1;
 }
 
+<<<<<<< HEAD
+=======
+static int handle_vmx_insn(struct kvm_vcpu *vcpu)
+{
+	kvm_queue_exception(vcpu, UD_VECTOR);
+	return 1;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int handle_invd(struct kvm_vcpu *vcpu)
 {
 	return emulate_instruction(vcpu, 0) == EMULATE_DONE;
@@ -4609,6 +5083,7 @@ static int handle_invlpg(struct kvm_vcpu *vcpu)
 	return 1;
 }
 
+<<<<<<< HEAD
 static int handle_rdpmc(struct kvm_vcpu *vcpu)
 {
 	int err;
@@ -4619,6 +5094,8 @@ static int handle_rdpmc(struct kvm_vcpu *vcpu)
 	return 1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int handle_wbinvd(struct kvm_vcpu *vcpu)
 {
 	skip_emulated_instruction(vcpu);
@@ -4638,6 +5115,7 @@ static int handle_xsetbv(struct kvm_vcpu *vcpu)
 
 static int handle_apic_access(struct kvm_vcpu *vcpu)
 {
+<<<<<<< HEAD
 	if (likely(fasteoi)) {
 		unsigned long exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
 		int access_type, offset;
@@ -4656,6 +5134,8 @@ static int handle_apic_access(struct kvm_vcpu *vcpu)
 			return 1;
 		}
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return emulate_instruction(vcpu, 0) == EMULATE_DONE;
 }
 
@@ -4666,10 +5146,16 @@ static int handle_task_switch(struct kvm_vcpu *vcpu)
 	bool has_error_code = false;
 	u32 error_code = 0;
 	u16 tss_selector;
+<<<<<<< HEAD
 	int reason, type, idt_v, idt_index;
 
 	idt_v = (vmx->idt_vectoring_info & VECTORING_INFO_VALID_MASK);
 	idt_index = (vmx->idt_vectoring_info & VECTORING_INFO_VECTOR_MASK);
+=======
+	int reason, type, idt_v;
+
+	idt_v = (vmx->idt_vectoring_info & VECTORING_INFO_VALID_MASK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	type = (vmx->idt_vectoring_info & VECTORING_INFO_TYPE_MASK);
 
 	exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
@@ -4707,9 +5193,14 @@ static int handle_task_switch(struct kvm_vcpu *vcpu)
 		       type != INTR_TYPE_NMI_INTR))
 		skip_emulated_instruction(vcpu);
 
+<<<<<<< HEAD
 	if (kvm_task_switch(vcpu, tss_selector,
 			    type == INTR_TYPE_SOFT_INTR ? idt_index : -1, reason,
 			    has_error_code, error_code) == EMULATE_FAIL) {
+=======
+	if (kvm_task_switch(vcpu, tss_selector, reason,
+				has_error_code, error_code) == EMULATE_FAIL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
 		vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_EMULATION;
 		vcpu->run->internal.ndata = 0;
@@ -4822,11 +5313,16 @@ static void ept_misconfig_inspect_spte(struct kvm_vcpu *vcpu, u64 spte,
 static int handle_ept_misconfig(struct kvm_vcpu *vcpu)
 {
 	u64 sptes[4];
+<<<<<<< HEAD
 	int nr_sptes, i, ret;
+=======
+	int nr_sptes, i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gpa_t gpa;
 
 	gpa = vmcs_read64(GUEST_PHYSICAL_ADDRESS);
 
+<<<<<<< HEAD
 	ret = handle_mmio_page_fault_common(vcpu, gpa, true);
 	if (likely(ret == 1))
 		return x86_emulate_instruction(vcpu, gpa, 0, NULL, 0) ==
@@ -4835,6 +5331,8 @@ static int handle_ept_misconfig(struct kvm_vcpu *vcpu)
 		return 1;
 
 	/* It is the real ept misconfig */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk(KERN_ERR "EPT: Misconfiguration.\n");
 	printk(KERN_ERR "EPT: GPA: 0x%llx\n", gpa);
 
@@ -4889,12 +5387,15 @@ static int handle_invalid_guest_state(struct kvm_vcpu *vcpu)
 		if (err != EMULATE_DONE)
 			return 0;
 
+<<<<<<< HEAD
 		if (vcpu->arch.halt_request) {
 			vcpu->arch.halt_request = 0;
 			ret = kvm_emulate_halt(vcpu);
 			goto out;
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (signal_pending(current))
 			goto out;
 		if (need_resched())
@@ -4925,6 +5426,7 @@ static int handle_invalid_op(struct kvm_vcpu *vcpu)
 }
 
 /*
+<<<<<<< HEAD
  * To run an L2 guest, we need a vmcs02 based on the L1-specified vmcs12.
  * We could reuse a single VMCS for all the L2 guests, but we also want the
  * option to allocate a separate vmcs02 for each separate loaded vmcs12 - this
@@ -5877,6 +6379,86 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu)
 		vcpu->run->exit_reason = KVM_EXIT_FAIL_ENTRY;
 		vcpu->run->fail_entry.hardware_entry_failure_reason
 			= vmcs_read32(VM_INSTRUCTION_ERROR);
+=======
+ * The exit handlers return 1 if the exit was handled fully and guest execution
+ * may resume.  Otherwise they set the kvm_run parameter to indicate what needs
+ * to be done to userspace and return 0.
+ */
+static int (*kvm_vmx_exit_handlers[])(struct kvm_vcpu *vcpu) = {
+	[EXIT_REASON_EXCEPTION_NMI]           = handle_exception,
+	[EXIT_REASON_EXTERNAL_INTERRUPT]      = handle_external_interrupt,
+	[EXIT_REASON_TRIPLE_FAULT]            = handle_triple_fault,
+	[EXIT_REASON_NMI_WINDOW]	      = handle_nmi_window,
+	[EXIT_REASON_IO_INSTRUCTION]          = handle_io,
+	[EXIT_REASON_CR_ACCESS]               = handle_cr,
+	[EXIT_REASON_DR_ACCESS]               = handle_dr,
+	[EXIT_REASON_CPUID]                   = handle_cpuid,
+	[EXIT_REASON_MSR_READ]                = handle_rdmsr,
+	[EXIT_REASON_MSR_WRITE]               = handle_wrmsr,
+	[EXIT_REASON_PENDING_INTERRUPT]       = handle_interrupt_window,
+	[EXIT_REASON_HLT]                     = handle_halt,
+	[EXIT_REASON_INVD]		      = handle_invd,
+	[EXIT_REASON_INVLPG]		      = handle_invlpg,
+	[EXIT_REASON_VMCALL]                  = handle_vmcall,
+	[EXIT_REASON_VMCLEAR]	              = handle_vmx_insn,
+	[EXIT_REASON_VMLAUNCH]                = handle_vmx_insn,
+	[EXIT_REASON_VMPTRLD]                 = handle_vmx_insn,
+	[EXIT_REASON_VMPTRST]                 = handle_vmx_insn,
+	[EXIT_REASON_VMREAD]                  = handle_vmx_insn,
+	[EXIT_REASON_VMRESUME]                = handle_vmx_insn,
+	[EXIT_REASON_VMWRITE]                 = handle_vmx_insn,
+	[EXIT_REASON_VMOFF]                   = handle_vmx_insn,
+	[EXIT_REASON_VMON]                    = handle_vmx_insn,
+	[EXIT_REASON_TPR_BELOW_THRESHOLD]     = handle_tpr_below_threshold,
+	[EXIT_REASON_APIC_ACCESS]             = handle_apic_access,
+	[EXIT_REASON_WBINVD]                  = handle_wbinvd,
+	[EXIT_REASON_XSETBV]                  = handle_xsetbv,
+	[EXIT_REASON_TASK_SWITCH]             = handle_task_switch,
+	[EXIT_REASON_MCE_DURING_VMENTRY]      = handle_machine_check,
+	[EXIT_REASON_EPT_VIOLATION]	      = handle_ept_violation,
+	[EXIT_REASON_EPT_MISCONFIG]           = handle_ept_misconfig,
+	[EXIT_REASON_PAUSE_INSTRUCTION]       = handle_pause,
+	[EXIT_REASON_MWAIT_INSTRUCTION]	      = handle_invalid_op,
+	[EXIT_REASON_MONITOR_INSTRUCTION]     = handle_invalid_op,
+};
+
+static const int kvm_vmx_max_exit_handlers =
+	ARRAY_SIZE(kvm_vmx_exit_handlers);
+
+static void vmx_get_exit_info(struct kvm_vcpu *vcpu, u64 *info1, u64 *info2)
+{
+	*info1 = vmcs_readl(EXIT_QUALIFICATION);
+	*info2 = vmcs_read32(VM_EXIT_INTR_INFO);
+}
+
+/*
+ * The guest has exited.  See if we can fix it or if we need userspace
+ * assistance.
+ */
+static int vmx_handle_exit(struct kvm_vcpu *vcpu)
+{
+	struct vcpu_vmx *vmx = to_vmx(vcpu);
+	u32 exit_reason = vmx->exit_reason;
+	u32 vectoring_info = vmx->idt_vectoring_info;
+
+	trace_kvm_exit(exit_reason, vcpu, KVM_ISA_VMX);
+
+	/* If guest state is invalid, start emulating */
+	if (vmx->emulation_required && emulate_invalid_guest_state)
+		return handle_invalid_guest_state(vcpu);
+
+	if (exit_reason & VMX_EXIT_REASONS_FAILED_VMENTRY) {
+		vcpu->run->exit_reason = KVM_EXIT_FAIL_ENTRY;
+		vcpu->run->fail_entry.hardware_entry_failure_reason
+			= exit_reason;
+		return 0;
+	}
+
+	if (unlikely(vmx->fail)) {
+		vcpu->run->exit_reason = KVM_EXIT_FAIL_ENTRY;
+		vcpu->run->fail_entry.hardware_entry_failure_reason
+			= vmcs_read32(VM_INSTRUCTION_ERROR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
@@ -5888,9 +6470,13 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu)
 		       "(0x%x) and exit reason is 0x%x\n",
 		       __func__, vectoring_info, exit_reason);
 
+<<<<<<< HEAD
 	if (unlikely(!cpu_has_virtual_nmis() && vmx->soft_vnmi_blocked &&
 	    !(is_guest_mode(vcpu) && nested_cpu_has_virtual_nmis(
 	                                get_vmcs12(vcpu), vcpu)))) {
+=======
+	if (unlikely(!cpu_has_virtual_nmis() && vmx->soft_vnmi_blocked)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (vmx_interrupt_allowed(vcpu)) {
 			vmx->soft_vnmi_blocked = 0;
 		} else if (vmx->vnmi_blocked_time > 1000000000LL &&
@@ -6053,8 +6639,11 @@ static void __vmx_complete_interrupts(struct vcpu_vmx *vmx,
 
 static void vmx_complete_interrupts(struct vcpu_vmx *vmx)
 {
+<<<<<<< HEAD
 	if (is_guest_mode(&vmx->vcpu))
 		return;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__vmx_complete_interrupts(vmx, vmx->idt_vectoring_info,
 				  VM_EXIT_INSTRUCTION_LEN,
 				  IDT_VECTORING_ERROR_CODE);
@@ -6062,8 +6651,11 @@ static void vmx_complete_interrupts(struct vcpu_vmx *vmx)
 
 static void vmx_cancel_injection(struct kvm_vcpu *vcpu)
 {
+<<<<<<< HEAD
 	if (is_guest_mode(vcpu))
 		return;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__vmx_complete_interrupts(to_vmx(vcpu),
 				  vmcs_read32(VM_ENTRY_INTR_INFO_FIELD),
 				  VM_ENTRY_INSTRUCTION_LEN,
@@ -6072,6 +6664,7 @@ static void vmx_cancel_injection(struct kvm_vcpu *vcpu)
 	vmcs_write32(VM_ENTRY_INTR_INFO_FIELD, 0);
 }
 
+<<<<<<< HEAD
 static void atomic_switch_perf_msrs(struct vcpu_vmx *vmx)
 {
 	int i, nr_msrs;
@@ -6090,6 +6683,8 @@ static void atomic_switch_perf_msrs(struct vcpu_vmx *vmx)
 					msrs[i].host);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_X86_64
 #define R "r"
 #define Q "q"
@@ -6102,6 +6697,7 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
 {
 	struct vcpu_vmx *vmx = to_vmx(vcpu);
 
+<<<<<<< HEAD
 	if (is_guest_mode(vcpu) && !vmx->nested.nested_run_pending) {
 		struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
 		if (vmcs12->idt_vectoring_info_field &
@@ -6117,6 +6713,8 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Record the guest's net vcpu time for enforced NMI injections. */
 	if (unlikely(!cpu_has_virtual_nmis() && vmx->soft_vnmi_blocked))
 		vmx->entry_time = ktime_get();
@@ -6139,9 +6737,12 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
 	if (vcpu->guest_debug & KVM_GUESTDBG_SINGLESTEP)
 		vmx_set_interrupt_shadow(vcpu, 0);
 
+<<<<<<< HEAD
 	atomic_switch_perf_msrs(vmx);
 
 	vmx->__launched = vmx->loaded_vmcs->launched;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	asm(
 		/* Store host registers */
 		"push %%"R"dx; push %%"R"bp;"
@@ -6212,7 +6813,11 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
 		"pop  %%"R"bp; pop  %%"R"dx \n\t"
 		"setbe %c[fail](%0) \n\t"
 	      : : "c"(vmx), "d"((unsigned long)HOST_RSP),
+<<<<<<< HEAD
 		[launched]"i"(offsetof(struct vcpu_vmx, __launched)),
+=======
+		[launched]"i"(offsetof(struct vcpu_vmx, launched)),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		[fail]"i"(offsetof(struct vcpu_vmx, fail)),
 		[host_rsp]"i"(offsetof(struct vcpu_vmx, host_rsp)),
 		[rax]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_RAX])),
@@ -6251,6 +6856,7 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
 
 	vmx->idt_vectoring_info = vmcs_read32(IDT_VECTORING_INFO_FIELD);
 
+<<<<<<< HEAD
 	if (is_guest_mode(vcpu)) {
 		struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
 		vmcs12->idt_vectoring_info_field = vmx->idt_vectoring_info;
@@ -6267,6 +6873,12 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
 
 	vmx->exit_reason = vmcs_read32(VM_EXIT_REASON);
 	trace_kvm_exit(vmx->exit_reason, vcpu, KVM_ISA_VMX);
+=======
+	asm("mov %0, %%ds; mov %0, %%es" : : "r"(__USER_DS));
+	vmx->launched = 1;
+
+	vmx->exit_reason = vmcs_read32(VM_EXIT_REASON);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	vmx_complete_atomic_exit(vmx);
 	vmx_recover_nmi_blocking(vmx);
@@ -6276,18 +6888,52 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
 #undef R
 #undef Q
 
+<<<<<<< HEAD
+=======
+static void vmx_free_vmcs(struct kvm_vcpu *vcpu)
+{
+	struct vcpu_vmx *vmx = to_vmx(vcpu);
+
+	if (vmx->vmcs) {
+		vcpu_clear(vmx);
+		free_vmcs(vmx->vmcs);
+		vmx->vmcs = NULL;
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void vmx_free_vcpu(struct kvm_vcpu *vcpu)
 {
 	struct vcpu_vmx *vmx = to_vmx(vcpu);
 
 	free_vpid(vmx);
+<<<<<<< HEAD
 	free_nested(vmx);
 	free_loaded_vmcs(vmx->loaded_vmcs);
+=======
+	vmx_free_vmcs(vcpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(vmx->guest_msrs);
 	kvm_vcpu_uninit(vcpu);
 	kmem_cache_free(kvm_vcpu_cache, vmx);
 }
 
+<<<<<<< HEAD
+=======
+static inline void vmcs_init(struct vmcs *vmcs)
+{
+	u64 phys_addr = __pa(per_cpu(vmxarea, raw_smp_processor_id()));
+
+	if (!vmm_exclusive)
+		kvm_cpu_vmxon(phys_addr);
+
+	vmcs_clear(vmcs);
+
+	if (!vmm_exclusive)
+		kvm_cpu_vmxoff();
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
 {
 	int err;
@@ -6309,6 +6955,7 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
 		goto uninit_vcpu;
 	}
 
+<<<<<<< HEAD
 	vmx->loaded_vmcs = &vmx->vmcs01;
 	vmx->loaded_vmcs->vmcs = alloc_vmcs();
 	if (!vmx->loaded_vmcs->vmcs)
@@ -6318,6 +6965,13 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
 	loaded_vmcs_init(vmx->loaded_vmcs);
 	if (!vmm_exclusive)
 		kvm_cpu_vmxoff();
+=======
+	vmx->vmcs = alloc_vmcs();
+	if (!vmx->vmcs)
+		goto free_msrs;
+
+	vmcs_init(vmx->vmcs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cpu = get_cpu();
 	vmx_vcpu_load(&vmx->vcpu, cpu);
@@ -6343,6 +6997,7 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
 			goto free_vmcs;
 	}
 
+<<<<<<< HEAD
 	vmx->nested.current_vmptr = -1ull;
 	vmx->nested.current_vmcs12 = NULL;
 
@@ -6350,6 +7005,12 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
 
 free_vmcs:
 	free_vmcs(vmx->loaded_vmcs->vmcs);
+=======
+	return &vmx->vcpu;
+
+free_vmcs:
+	free_vmcs(vmx->vmcs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 free_msrs:
 	kfree(vmx->guest_msrs);
 uninit_vcpu:
@@ -6407,6 +7068,52 @@ static u64 vmx_get_mt_mask(struct kvm_vcpu *vcpu, gfn_t gfn, bool is_mmio)
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+#define _ER(x) { EXIT_REASON_##x, #x }
+
+static const struct trace_print_flags vmx_exit_reasons_str[] = {
+	_ER(EXCEPTION_NMI),
+	_ER(EXTERNAL_INTERRUPT),
+	_ER(TRIPLE_FAULT),
+	_ER(PENDING_INTERRUPT),
+	_ER(NMI_WINDOW),
+	_ER(TASK_SWITCH),
+	_ER(CPUID),
+	_ER(HLT),
+	_ER(INVLPG),
+	_ER(RDPMC),
+	_ER(RDTSC),
+	_ER(VMCALL),
+	_ER(VMCLEAR),
+	_ER(VMLAUNCH),
+	_ER(VMPTRLD),
+	_ER(VMPTRST),
+	_ER(VMREAD),
+	_ER(VMRESUME),
+	_ER(VMWRITE),
+	_ER(VMOFF),
+	_ER(VMON),
+	_ER(CR_ACCESS),
+	_ER(DR_ACCESS),
+	_ER(IO_INSTRUCTION),
+	_ER(MSR_READ),
+	_ER(MSR_WRITE),
+	_ER(MWAIT_INSTRUCTION),
+	_ER(MONITOR_INSTRUCTION),
+	_ER(PAUSE_INSTRUCTION),
+	_ER(MCE_DURING_VMENTRY),
+	_ER(TPR_BELOW_THRESHOLD),
+	_ER(APIC_ACCESS),
+	_ER(EPT_VIOLATION),
+	_ER(EPT_MISCONFIG),
+	_ER(WBINVD),
+	{ -1, NULL }
+};
+
+#undef _ER
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int vmx_get_lpage_level(void)
 {
 	if (enable_ept && !cpu_has_vmx_ept_1g_page())
@@ -6440,6 +7147,7 @@ static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
 
 static void vmx_set_supported_cpuid(u32 func, struct kvm_cpuid_entry2 *entry)
 {
+<<<<<<< HEAD
 	if (func == 1 && nested)
 		entry->ecx |= bit(X86_FEATURE_VMX);
 }
@@ -7086,6 +7794,8 @@ static void nested_vmx_entry_failure(struct kvm_vcpu *vcpu,
 	vmcs12->vm_exit_reason = reason | VMX_EXIT_REASONS_FAILED_VMENTRY;
 	vmcs12->exit_qualification = qualification;
 	nested_vmx_succeed(vcpu);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int vmx_check_intercept(struct kvm_vcpu *vcpu,
@@ -7164,6 +7874,10 @@ static struct kvm_x86_ops vmx_x86_ops = {
 	.get_mt_mask = vmx_get_mt_mask,
 
 	.get_exit_info = vmx_get_exit_info,
+<<<<<<< HEAD
+=======
+	.exit_reasons_str = vmx_exit_reasons_str,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.get_lpage_level = vmx_get_lpage_level,
 
@@ -7179,7 +7893,10 @@ static struct kvm_x86_ops vmx_x86_ops = {
 	.write_tsc_offset = vmx_write_tsc_offset,
 	.adjust_tsc_offset = vmx_adjust_tsc_offset,
 	.compute_tsc_offset = vmx_compute_tsc_offset,
+<<<<<<< HEAD
 	.read_l1_tsc = vmx_read_l1_tsc,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.set_tdp_cr3 = vmx_set_cr3,
 
@@ -7244,13 +7961,25 @@ static int __init vmx_init(void)
 	vmx_disable_intercept_for_msr(MSR_IA32_SYSENTER_EIP, false);
 
 	if (enable_ept) {
+<<<<<<< HEAD
 		kvm_mmu_set_mask_ptes(0ull, 0ull, 0ull, 0ull,
 				VMX_EPT_EXECUTABLE_MASK);
 		ept_set_mmio_spte_mask();
+=======
+		bypass_guest_pf = 0;
+		kvm_mmu_set_mask_ptes(0ull, 0ull, 0ull, 0ull,
+				VMX_EPT_EXECUTABLE_MASK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kvm_enable_tdp();
 	} else
 		kvm_disable_tdp();
 
+<<<<<<< HEAD
+=======
+	if (bypass_guest_pf)
+		kvm_mmu_set_nonpresent_ptes(~0xffeull, 0ull);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 out3:

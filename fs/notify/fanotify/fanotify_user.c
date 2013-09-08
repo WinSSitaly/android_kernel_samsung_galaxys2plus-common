@@ -16,8 +16,11 @@
 
 #include <asm/ioctls.h>
 
+<<<<<<< HEAD
 #include "../../mount.h"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define FANOTIFY_DEFAULT_MAX_EVENTS	16384
 #define FANOTIFY_DEFAULT_MAX_MARKS	8192
 #define FANOTIFY_DEFAULT_MAX_LISTENERS	128
@@ -120,7 +123,10 @@ static int fill_event_metadata(struct fsnotify_group *group,
 	metadata->event_len = FAN_EVENT_METADATA_LEN;
 	metadata->metadata_len = FAN_EVENT_METADATA_LEN;
 	metadata->vers = FANOTIFY_METADATA_VERSION;
+<<<<<<< HEAD
 	metadata->reserved = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	metadata->mask = event->mask & FAN_ALL_OUTGOING_EVENTS;
 	metadata->pid = pid_vnr(event->tgid);
 	if (unlikely(event->mask & FAN_Q_OVERFLOW))
@@ -549,7 +555,11 @@ static int fanotify_remove_vfsmount_mark(struct fsnotify_group *group,
 
 	removed = fanotify_mark_remove_from_mask(fsn_mark, mask, flags);
 	fsnotify_put_mark(fsn_mark);
+<<<<<<< HEAD
 	if (removed & real_mount(mnt)->mnt_fsnotify_mask)
+=======
+	if (removed & mnt->mnt_fsnotify_mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fsnotify_recalc_vfsmount_mask(mnt);
 
 	return 0;
@@ -626,7 +636,11 @@ static int fanotify_add_vfsmount_mark(struct fsnotify_group *group,
 	}
 	added = fanotify_mark_add_to_mask(fsn_mark, mask, flags);
 
+<<<<<<< HEAD
 	if (added & ~real_mount(mnt)->mnt_fsnotify_mask)
+=======
+	if (added & ~mnt->mnt_fsnotify_mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fsnotify_recalc_vfsmount_mask(mnt);
 err:
 	fsnotify_put_mark(fsn_mark);

@@ -24,6 +24,10 @@
 #include <linux/io.h>
 #include <linux/gfp.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/hardware.h>
 #include <mach/dma.h>
 #include <asm/dma-mapping.h>

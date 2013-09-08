@@ -33,20 +33,29 @@
 #include <linux/i2c.h>
 #include <linux/i2c-gpio.h>
 #include <linux/spi/spi.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/hardware.h>
 #include <mach/fb.h>
 #include <mach/ep93xx_keypad.h>
 #include <mach/ep93xx_spi.h>
+<<<<<<< HEAD
 #include <mach/gpio-ep93xx.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach/map.h>
 #include <asm/mach/time.h>
 
 #include <asm/hardware/vic.h>
 
+<<<<<<< HEAD
 #include "soc.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*************************************************************************
  * Static I/O mappings that are needed for all EP93xx platforms
@@ -177,10 +186,20 @@ struct sys_timer ep93xx_timer = {
 /*************************************************************************
  * EP93xx IRQ handling
  *************************************************************************/
+<<<<<<< HEAD
+=======
+extern void ep93xx_gpio_init_irq(void);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init ep93xx_init_irq(void)
 {
 	vic_init(EP93XX_VIC1_BASE, 0, EP93XX_VIC1_VALID_IRQ_MASK, 0);
 	vic_init(EP93XX_VIC2_BASE, 32, EP93XX_VIC2_VALID_IRQ_MASK, 0);
+<<<<<<< HEAD
+=======
+
+	ep93xx_gpio_init_irq();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -205,6 +224,10 @@ void ep93xx_syscon_swlocked_write(unsigned int val, void __iomem *reg)
 
 	spin_unlock_irqrestore(&syscon_swlock, flags);
 }
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL(ep93xx_syscon_swlocked_write);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void ep93xx_devcfg_set_clear(unsigned int set_bits, unsigned int clear_bits)
 {
@@ -221,6 +244,10 @@ void ep93xx_devcfg_set_clear(unsigned int set_bits, unsigned int clear_bits)
 
 	spin_unlock_irqrestore(&syscon_swlock, flags);
 }
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL(ep93xx_devcfg_set_clear);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * ep93xx_chip_revision() - returns the EP93xx chip revision
@@ -238,6 +265,7 @@ unsigned int ep93xx_chip_revision(void)
 }
 
 /*************************************************************************
+<<<<<<< HEAD
  * EP93xx GPIO
  *************************************************************************/
 static struct resource ep93xx_gpio_resource[] = {
@@ -256,6 +284,8 @@ static struct platform_device ep93xx_gpio_device = {
 };
 
 /*************************************************************************
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * EP93xx peripheral handling
  *************************************************************************/
 #define EP93XX_UART_MCR_OFFSET		(0x0100)
@@ -278,6 +308,7 @@ static struct amba_pl010_data ep93xx_uart_data = {
 	.set_mctrl	= ep93xx_uart_set_mctrl,
 };
 
+<<<<<<< HEAD
 static AMBA_APB_DEVICE(uart1, "apb:uart1", 0x00041010, EP93XX_UART1_PHYS_BASE,
 	{ IRQ_EP93XX_UART1 }, &ep93xx_uart_data);
 
@@ -286,6 +317,50 @@ static AMBA_APB_DEVICE(uart2, "apb:uart2", 0x00041010, EP93XX_UART2_PHYS_BASE,
 
 static AMBA_APB_DEVICE(uart3, "apb:uart3", 0x00041010, EP93XX_UART3_PHYS_BASE,
 	{ IRQ_EP93XX_UART3 }, &ep93xx_uart_data);
+=======
+static struct amba_device uart1_device = {
+	.dev		= {
+		.init_name	= "apb:uart1",
+		.platform_data	= &ep93xx_uart_data,
+	},
+	.res		= {
+		.start	= EP93XX_UART1_PHYS_BASE,
+		.end	= EP93XX_UART1_PHYS_BASE + 0x0fff,
+		.flags	= IORESOURCE_MEM,
+	},
+	.irq		= { IRQ_EP93XX_UART1, NO_IRQ },
+	.periphid	= 0x00041010,
+};
+
+static struct amba_device uart2_device = {
+	.dev		= {
+		.init_name	= "apb:uart2",
+		.platform_data	= &ep93xx_uart_data,
+	},
+	.res		= {
+		.start	= EP93XX_UART2_PHYS_BASE,
+		.end	= EP93XX_UART2_PHYS_BASE + 0x0fff,
+		.flags	= IORESOURCE_MEM,
+	},
+	.irq		= { IRQ_EP93XX_UART2, NO_IRQ },
+	.periphid	= 0x00041010,
+};
+
+static struct amba_device uart3_device = {
+	.dev		= {
+		.init_name	= "apb:uart3",
+		.platform_data	= &ep93xx_uart_data,
+	},
+	.res		= {
+		.start	= EP93XX_UART3_PHYS_BASE,
+		.end	= EP93XX_UART3_PHYS_BASE + 0x0fff,
+		.flags	= IORESOURCE_MEM,
+	},
+	.irq		= { IRQ_EP93XX_UART3, NO_IRQ },
+	.periphid	= 0x00041010,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct resource ep93xx_rtc_resource[] = {
 	{
@@ -473,15 +548,22 @@ static struct resource ep93xx_spi_resources[] = {
 	},
 };
 
+<<<<<<< HEAD
 static u64 ep93xx_spi_dma_mask = DMA_BIT_MASK(32);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_device ep93xx_spi_device = {
 	.name		= "ep93xx-spi",
 	.id		= 0,
 	.dev		= {
+<<<<<<< HEAD
 		.platform_data		= &ep93xx_spi_master_data,
 		.coherent_dma_mask	= DMA_BIT_MASK(32),
 		.dma_mask		= &ep93xx_spi_dma_mask,
+=======
+		.platform_data = &ep93xx_spi_master_data,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.num_resources	= ARRAY_SIZE(ep93xx_spi_resources),
 	.resource	= ep93xx_spi_resources,
@@ -647,6 +729,7 @@ static struct platform_device ep93xx_fb_device = {
 	.resource		= ep93xx_fb_resource,
 };
 
+<<<<<<< HEAD
 /* The backlight use a single register in the framebuffer's register space */
 #define EP93XX_RASTER_REG_BRIGHTNESS 0x20
 
@@ -660,6 +743,11 @@ static struct platform_device ep93xx_bl_device = {
 	.id		= -1,
 	.num_resources	= ARRAY_SIZE(ep93xx_bl_resources),
 	.resource	= ep93xx_bl_resources,
+=======
+static struct platform_device ep93xx_bl_device = {
+	.name		= "ep93xx-bl",
+	.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -792,12 +880,32 @@ void __init ep93xx_register_i2s(void)
 #define EP93XX_I2SCLKDIV_MASK		(EP93XX_SYSCON_I2SCLKDIV_ORIDE | \
 					 EP93XX_SYSCON_I2SCLKDIV_SPOL)
 
+<<<<<<< HEAD
 int ep93xx_i2s_acquire(void)
 {
 	unsigned val;
 
 	ep93xx_devcfg_set_clear(EP93XX_SYSCON_DEVCFG_I2SONAC97,
 			EP93XX_SYSCON_DEVCFG_I2S_MASK);
+=======
+int ep93xx_i2s_acquire(unsigned i2s_pins, unsigned i2s_config)
+{
+	unsigned val;
+
+	/* Sanity check */
+	if (i2s_pins & ~EP93XX_SYSCON_DEVCFG_I2S_MASK)
+		return -EINVAL;
+	if (i2s_config & ~EP93XX_I2SCLKDIV_MASK)
+		return -EINVAL;
+
+	/* Must have only one of I2SONSSP/I2SONAC97 set */
+	if ((i2s_pins & EP93XX_SYSCON_DEVCFG_I2SONSSP) ==
+	    (i2s_pins & EP93XX_SYSCON_DEVCFG_I2SONAC97))
+		return -EINVAL;
+
+	ep93xx_devcfg_clear_bits(EP93XX_SYSCON_DEVCFG_I2S_MASK);
+	ep93xx_devcfg_set_bits(i2s_pins);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * This is potentially racy with the clock api for i2s_mclk, sclk and 
@@ -807,7 +915,11 @@ int ep93xx_i2s_acquire(void)
 	 */
 	val = __raw_readl(EP93XX_SYSCON_I2SCLKDIV);
 	val &= ~EP93XX_I2SCLKDIV_MASK;
+<<<<<<< HEAD
 	val |= EP93XX_SYSCON_I2SCLKDIV_ORIDE | EP93XX_SYSCON_I2SCLKDIV_SPOL;
+=======
+	val |= i2s_config;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ep93xx_syscon_swlocked_write(val, EP93XX_SYSCON_I2SCLKDIV);
 
 	return 0;
@@ -854,6 +966,7 @@ void __init ep93xx_register_ac97(void)
 	platform_device_register(&ep93xx_pcm_device);
 }
 
+<<<<<<< HEAD
 /*************************************************************************
  * EP93xx Watchdog
  *************************************************************************/
@@ -867,12 +980,16 @@ static struct platform_device ep93xx_wdt_device = {
 	.num_resources	= ARRAY_SIZE(ep93xx_wdt_resources),
 	.resource	= ep93xx_wdt_resources,
 };
+=======
+extern void ep93xx_gpio_init(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void __init ep93xx_init_devices(void)
 {
 	/* Disallow access to MaverickCrunch initially */
 	ep93xx_devcfg_clear_bits(EP93XX_SYSCON_DEVCFG_CPENA);
 
+<<<<<<< HEAD
 	/* Default all ports to GPIO */
 	ep93xx_devcfg_set_bits(EP93XX_SYSCON_DEVCFG_KEYS |
 			       EP93XX_SYSCON_DEVCFG_GONK |
@@ -882,6 +999,9 @@ void __init ep93xx_init_devices(void)
 
 	/* Get the GPIO working early, other devices need it */
 	platform_device_register(&ep93xx_gpio_device);
+=======
+	ep93xx_gpio_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	amba_device_register(&uart1_device, &iomem_resource);
 	amba_device_register(&uart2_device, &iomem_resource);
@@ -890,6 +1010,7 @@ void __init ep93xx_init_devices(void)
 	platform_device_register(&ep93xx_rtc_device);
 	platform_device_register(&ep93xx_ohci_device);
 	platform_device_register(&ep93xx_leds);
+<<<<<<< HEAD
 	platform_device_register(&ep93xx_wdt_device);
 }
 
@@ -903,4 +1024,6 @@ void ep93xx_restart(char mode, const char *cmd)
 
 	while (1)
 		;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

@@ -33,9 +33,12 @@
 #else
 #include <asm/kvm_booke.h>
 #endif
+<<<<<<< HEAD
 #ifdef CONFIG_KVM_BOOK3S_64_HANDLER
 #include <asm/paca.h>
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum emulation_result {
 	EMULATE_DONE,         /* no further processing */
@@ -45,7 +48,10 @@ enum emulation_result {
 	EMULATE_AGAIN,        /* something went wrong. go again */
 };
 
+<<<<<<< HEAD
 extern int kvmppc_vcpu_run(struct kvm_run *kvm_run, struct kvm_vcpu *vcpu);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int __kvmppc_vcpu_run(struct kvm_run *kvm_run, struct kvm_vcpu *vcpu);
 extern char kvmppc_handlers_start[];
 extern unsigned long kvmppc_handler_len;
@@ -66,8 +72,11 @@ extern int kvmppc_emulate_instruction(struct kvm_run *run,
 extern int kvmppc_emulate_mmio(struct kvm_run *run, struct kvm_vcpu *vcpu);
 extern void kvmppc_emulate_dec(struct kvm_vcpu *vcpu);
 extern u32 kvmppc_get_dec(struct kvm_vcpu *vcpu, u64 tb);
+<<<<<<< HEAD
 extern void kvmppc_decrementer_func(unsigned long data);
 extern int kvmppc_sanity_check(struct kvm_vcpu *vcpu);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Core-specific hooks */
 
@@ -95,7 +104,11 @@ extern int kvmppc_core_vcpu_translate(struct kvm_vcpu *vcpu,
 extern void kvmppc_core_vcpu_load(struct kvm_vcpu *vcpu, int cpu);
 extern void kvmppc_core_vcpu_put(struct kvm_vcpu *vcpu);
 
+<<<<<<< HEAD
 extern void kvmppc_core_prepare_to_enter(struct kvm_vcpu *vcpu);
+=======
+extern void kvmppc_core_deliver_interrupts(struct kvm_vcpu *vcpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int kvmppc_core_pending_dec(struct kvm_vcpu *vcpu);
 extern void kvmppc_core_queue_program(struct kvm_vcpu *vcpu, ulong flags);
 extern void kvmppc_core_queue_dec(struct kvm_vcpu *vcpu);
@@ -115,6 +128,7 @@ extern void kvmppc_booke_exit(void);
 
 extern void kvmppc_core_destroy_mmu(struct kvm_vcpu *vcpu);
 extern int kvmppc_kvm_pv(struct kvm_vcpu *vcpu);
+<<<<<<< HEAD
 extern void kvmppc_map_magic(struct kvm_vcpu *vcpu);
 
 extern long kvmppc_alloc_hpt(struct kvm *kvm);
@@ -138,6 +152,8 @@ extern int kvmppc_core_prepare_memory_region(struct kvm *kvm,
 				struct kvm_userspace_memory_region *mem);
 extern void kvmppc_core_commit_memory_region(struct kvm *kvm,
 				struct kvm_userspace_memory_region *mem);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Cuts out inst bits with ordering according to spec.
@@ -178,6 +194,7 @@ int kvmppc_core_set_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs);
 void kvmppc_get_sregs_ivor(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs);
 int kvmppc_set_sregs_ivor(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs);
 
+<<<<<<< HEAD
 int kvm_vcpu_ioctl_get_one_reg(struct kvm_vcpu *vcpu, struct kvm_one_reg *reg);
 int kvm_vcpu_ioctl_set_one_reg(struct kvm_vcpu *vcpu, struct kvm_one_reg *reg);
 
@@ -204,4 +221,8 @@ int kvm_vcpu_ioctl_config_tlb(struct kvm_vcpu *vcpu,
 int kvm_vcpu_ioctl_dirty_tlb(struct kvm_vcpu *vcpu,
 			     struct kvm_dirty_tlb *cfg);
 
+=======
+void kvmppc_set_pid(struct kvm_vcpu *vcpu, u32 pid);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __POWERPC_KVM_PPC_H__ */

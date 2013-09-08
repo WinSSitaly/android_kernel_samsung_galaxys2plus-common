@@ -18,7 +18,10 @@
 #include <linux/termios.h>
 #include <linux/dmaengine.h>
 #include <linux/amba/bus.h>
+<<<<<<< HEAD
 #include <linux/amba/mmci.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/amba/serial.h>
 #include <linux/platform_device.h>
 #include <linux/gpio.h>
@@ -26,10 +29,13 @@
 #include <linux/err.h>
 #include <linux/mtd/nand.h>
 #include <linux/mtd/fsmc.h>
+<<<<<<< HEAD
 #include <linux/pinctrl/machine.h>
 #include <linux/pinctrl/consumer.h>
 #include <linux/pinctrl/pinconf-generic.h>
 #include <linux/dma-mapping.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/types.h>
 #include <asm/setup.h>
@@ -42,12 +48,20 @@
 #include <mach/hardware.h>
 #include <mach/syscon.h>
 #include <mach/dma_channels.h>
+<<<<<<< HEAD
 #include <mach/gpio-u300.h>
 
 #include "clock.h"
 #include "spi.h"
 #include "i2c.h"
 #include "u300-gpio.h"
+=======
+
+#include "clock.h"
+#include "mmc.h"
+#include "spi.h"
+#include "i2c.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Static I/O mappings that are needed for booting the U300 platforms. The
@@ -74,13 +88,38 @@ static struct map_desc u300_io_desc[] __initdata = {
 		.length		= SZ_32K,
 		.type		= MT_DEVICE,
 	},
+<<<<<<< HEAD
+=======
+	{
+		.virtual	= 0xffff2000, /* TCM memory */
+		.pfn		= __phys_to_pfn(0xffff2000),
+		.length		= SZ_16K,
+		.type		= MT_DEVICE,
+	},
+
+	/*
+	 * This overlaps with the IRQ vectors etc at 0xffff0000, so these
+	 * may have to be moved to 0x00000000 in order to use the ROM.
+	 */
+	/*
+	{
+		.virtual	= U300_BOOTROM_VIRT_BASE,
+		.pfn		= __phys_to_pfn(U300_BOOTROM_PHYS_BASE),
+		.length		= SZ_64K,
+		.type		= MT_ROM,
+	},
+	*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void __init u300_map_io(void)
 {
 	iotable_init(u300_io_desc, ARRAY_SIZE(u300_io_desc));
+<<<<<<< HEAD
 	/* We enable a real big DMA buffer if need be. */
 	init_consistent_dma_size(SZ_4M);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -96,9 +135,25 @@ static struct amba_pl011_data uart0_plat_data = {
 #endif
 };
 
+<<<<<<< HEAD
 /* Slow device at 0x3000 offset */
 static AMBA_APB_DEVICE(uart0, "uart0", 0, U300_UART0_BASE,
 	{ IRQ_U300_UART0 }, &uart0_plat_data);
+=======
+static struct amba_device uart0_device = {
+	.dev = {
+		.coherent_dma_mask = ~0,
+		.init_name = "uart0", /* Slow device at 0x3000 offset */
+		.platform_data = &uart0_plat_data,
+	},
+	.res = {
+		.start = U300_UART0_BASE,
+		.end   = U300_UART0_BASE + SZ_4K - 1,
+		.flags = IORESOURCE_MEM,
+	},
+	.irq = { IRQ_U300_UART0, NO_IRQ },
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* The U335 have an additional UART1 on the APP CPU */
 #ifdef CONFIG_MACH_U300_BS335
@@ -110,6 +165,7 @@ static struct amba_pl011_data uart1_plat_data = {
 #endif
 };
 
+<<<<<<< HEAD
 /* Fast device at 0x7000 offset */
 static AMBA_APB_DEVICE(uart1, "uart1", 0, U300_UART1_BASE,
 	{ IRQ_U300_UART1 }, &uart1_plat_data);
@@ -145,6 +201,73 @@ static struct mmci_platform_data mmcsd_platform_data = {
 
 static AMBA_APB_DEVICE(mmcsd, "mmci", 0, U300_MMCSD_BASE,
 	U300_MMCSD_IRQS, &mmcsd_platform_data);
+=======
+static struct amba_device uart1_device = {
+	.dev = {
+		.coherent_dma_mask = ~0,
+		.init_name = "uart1", /* Fast device at 0x7000 offset */
+		.platform_data = &uart1_plat_data,
+	},
+	.res = {
+		.start = U300_UART1_BASE,
+		.end   = U300_UART1_BASE + SZ_4K - 1,
+		.flags = IORESOURCE_MEM,
+	},
+	.irq = { IRQ_U300_UART1, NO_IRQ },
+};
+#endif
+
+static struct amba_device pl172_device = {
+	.dev = {
+		.init_name = "pl172", /* AHB device at 0x4000 offset */
+		.platform_data = NULL,
+	},
+	.res = {
+		.start = U300_EMIF_CFG_BASE,
+		.end   = U300_EMIF_CFG_BASE + SZ_4K - 1,
+		.flags = IORESOURCE_MEM,
+	},
+};
+
+
+/*
+ * Everything within this next ifdef deals with external devices connected to
+ * the APP SPI bus.
+ */
+static struct amba_device pl022_device = {
+	.dev = {
+		.coherent_dma_mask = ~0,
+		.init_name = "pl022", /* Fast device at 0x6000 offset */
+	},
+	.res = {
+		.start = U300_SPI_BASE,
+		.end   = U300_SPI_BASE + SZ_4K - 1,
+		.flags = IORESOURCE_MEM,
+	},
+	.irq = {IRQ_U300_SPI, NO_IRQ },
+	/*
+	 * This device has a DMA channel but the Linux driver does not use
+	 * it currently.
+	 */
+};
+
+static struct amba_device mmcsd_device = {
+	.dev = {
+		.init_name = "mmci", /* Fast device at 0x1000 offset */
+		.platform_data = NULL, /* Added later */
+	},
+	.res = {
+		.start = U300_MMCSD_BASE,
+		.end   = U300_MMCSD_BASE + SZ_4K - 1,
+		.flags = IORESOURCE_MEM,
+	},
+	.irq = {IRQ_U300_MMCSD_MCIINTR0, IRQ_U300_MMCSD_MCIINTR1 },
+	/*
+	 * This device has a DMA channel but the Linux driver does not use
+	 * it currently.
+	 */
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * The order of device declaration may be important, since some devices
@@ -188,7 +311,11 @@ static struct resource gpio_resources[] = {
 		.end   = IRQ_U300_GPIO_PORT2,
 		.flags = IORESOURCE_IRQ,
 	},
+<<<<<<< HEAD
 #if defined(CONFIG_MACH_U300_BS365) || defined(CONFIG_MACH_U300_BS335)
+=======
+#ifdef U300_COH901571_3
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.name  = "gpio3",
 		.start = IRQ_U300_GPIO_PORT3,
@@ -201,7 +328,10 @@ static struct resource gpio_resources[] = {
 		.end   = IRQ_U300_GPIO_PORT4,
 		.flags = IORESOURCE_IRQ,
 	},
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_MACH_U300_BS335
 	{
 		.name  = "gpio5",
@@ -216,6 +346,10 @@ static struct resource gpio_resources[] = {
 		.flags = IORESOURCE_IRQ,
 	},
 #endif /* CONFIG_MACH_U300_BS335 */
+<<<<<<< HEAD
+=======
+#endif /* U300_COH901571_3 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct resource keypad_resources[] = {
@@ -310,6 +444,54 @@ static struct resource wdog_resources[] = {
 	}
 };
 
+<<<<<<< HEAD
+=======
+/* TODO: These should be protected by suitable #ifdef's */
+static struct resource ave_resources[] = {
+	{
+		.name  = "AVE3e I/O Area",
+		.start = U300_VIDEOENC_BASE,
+		.end   = U300_VIDEOENC_BASE + SZ_512K - 1,
+		.flags = IORESOURCE_MEM,
+	},
+	{
+		.name  = "AVE3e IRQ0",
+		.start = IRQ_U300_VIDEO_ENC_0,
+		.end   = IRQ_U300_VIDEO_ENC_0,
+		.flags = IORESOURCE_IRQ,
+	},
+	{
+		.name  = "AVE3e IRQ1",
+		.start = IRQ_U300_VIDEO_ENC_1,
+		.end   = IRQ_U300_VIDEO_ENC_1,
+		.flags = IORESOURCE_IRQ,
+	},
+	{
+		.name  = "AVE3e Physmem Area",
+		.start = 0, /* 0 will be remapped to reserved memory */
+		.end   = SZ_1M - 1,
+		.flags = IORESOURCE_MEM,
+	},
+	/*
+	 * The AVE3e requires two regions of 256MB that it considers
+	 * "invisible". The hardware will not be able to access these
+	 * addresses, so they should never point to system RAM.
+	 */
+	{
+		.name  = "AVE3e Reserved 0",
+		.start = 0xd0000000,
+		.end   = 0xd0000000 + SZ_256M - 1,
+		.flags = IORESOURCE_MEM,
+	},
+	{
+		.name  = "AVE3e Reserved 1",
+		.start = 0xe0000000,
+		.end   = 0xe0000000 + SZ_256M - 1,
+		.flags = IORESOURCE_MEM,
+	},
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct resource dma_resource[] = {
 	{
 		.start = U300_DMAC_BASE,
@@ -1439,6 +1621,7 @@ static struct coh901318_platform coh901318_platform = {
 	.max_channels = U300_DMA_CHANNELS,
 };
 
+<<<<<<< HEAD
 static struct resource pinctrl_resources[] = {
 	{
 		.start = U300_SYSCON_BASE,
@@ -1447,6 +1630,8 @@ static struct resource pinctrl_resources[] = {
 	},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_device wdog_device = {
 	.name = "coh901327_wdog",
 	.id = -1,
@@ -1468,6 +1653,7 @@ static struct platform_device i2c1_device = {
 	.resource = i2c1_resources,
 };
 
+<<<<<<< HEAD
 static struct platform_device pinctrl_device = {
 	.name = "pinctrl-u300",
 	.id = -1,
@@ -1497,14 +1683,19 @@ static struct u300_gpio_platform u300_gpio_plat = {
 	.pinctrl_device = &pinctrl_device,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_device gpio_device = {
 	.name = "u300-gpio",
 	.id = -1,
 	.num_resources = ARRAY_SIZE(gpio_resources),
 	.resource = gpio_resources,
+<<<<<<< HEAD
 	.dev = {
 		.platform_data = &u300_gpio_plat,
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device keypad_device = {
@@ -1544,8 +1735,11 @@ static struct fsmc_nand_platform_data nand_platform_data = {
 	.nr_partitions = ARRAY_SIZE(u300_partitions),
 	.options = NAND_SKIP_BBTSCAN,
 	.width = FSMC_NAND_BW8,
+<<<<<<< HEAD
 	.ale_off = PLAT_NAND_ALE,
 	.cle_off = PLAT_NAND_CLE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device nand_device = {
@@ -1558,6 +1752,16 @@ static struct platform_device nand_device = {
 	},
 };
 
+<<<<<<< HEAD
+=======
+static struct platform_device ave_device = {
+	.name = "video_enc",
+	.id = -1,
+	.num_resources = ARRAY_SIZE(ave_resources),
+	.resource = ave_resources,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_device dma_device = {
 	.name		= "coh901318",
 	.id		= -1,
@@ -1569,6 +1773,7 @@ static struct platform_device dma_device = {
 	},
 };
 
+<<<<<<< HEAD
 static unsigned long pin_pullup_conf[] = {
 	PIN_CONF_PACKED(PIN_CONFIG_BIAS_PULL_UP, 1),
 };
@@ -1631,6 +1836,8 @@ static int __init u300_pinctrl_fetch(void)
 }
 subsys_initcall(u300_pinctrl_fetch);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Notice that AMBA devices are initialized before platform devices.
  *
@@ -1644,8 +1851,15 @@ static struct platform_device *platform_devs[] __initdata = {
 	&gpio_device,
 	&nand_device,
 	&wdog_device,
+<<<<<<< HEAD
 };
 
+=======
+	&ave_device
+};
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Interrupts: the U300 platforms have two pl190 ARM PrimeCells connected
  * together so some interrupts are connected to the first one and some
@@ -1665,12 +1879,19 @@ void __init u300_init_irq(void)
 	BUG_ON(IS_ERR(clk));
 	clk_enable(clk);
 
+<<<<<<< HEAD
 	for (i = 0; i < U300_VIC_IRQS_END; i++)
 		set_bit(i, (unsigned long *) &mask[0]);
 	vic_init((void __iomem *) U300_INTCON0_VBASE, IRQ_U300_INTCON0_START,
 		 mask[0], mask[0]);
 	vic_init((void __iomem *) U300_INTCON1_VBASE, IRQ_U300_INTCON1_START,
 		 mask[1], mask[1]);
+=======
+	for (i = 0; i < NR_IRQS; i++)
+		set_bit(i, (unsigned long *) &mask[0]);
+	vic_init((void __iomem *) U300_INTCON0_VBASE, 0, mask[0], mask[0]);
+	vic_init((void __iomem *) U300_INTCON1_VBASE, 32, mask[1], mask[1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -1792,7 +2013,11 @@ static void __init u300_assign_physmem(void)
 				     0 == res->start) {
 				res->start  = curr_start;
 				res->end   += curr_start;
+<<<<<<< HEAD
 				curr_start += resource_size(res);
+=======
+				curr_start += (res->end - res->start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				printk(KERN_INFO "core.c: Mapping RAM " \
 				       "%#x-%#x to device %s:%s\n",
@@ -1829,10 +2054,13 @@ void __init u300_init_devices(void)
 
 	u300_assign_physmem();
 
+<<<<<<< HEAD
 	/* Initialize pinmuxing */
 	pinctrl_register_mappings(u300_pinmux_map,
 				  ARRAY_SIZE(u300_pinmux_map));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Register subdevices on the I2C buses */
 	u300_i2c_register_board_devices();
 
@@ -1842,6 +2070,7 @@ void __init u300_init_devices(void)
 	/* Register subdevices on the SPI bus */
 	u300_spi_register_board_devices();
 
+<<<<<<< HEAD
 	/* Enable SEMI self refresh */
 	val = readw(U300_SYSCON_VBASE + U300_SYSCON_SMCR) |
 		U300_SYSCON_SMCR_SEMI_SREFREQ_ENABLE;
@@ -1867,3 +2096,27 @@ void u300_restart(char mode, const char *cmd)
 	/* Wait for system do die/reset. */
 	while (1);
 }
+=======
+#ifndef CONFIG_MACH_U300_SEMI_IS_SHARED
+	/*
+	 * Enable SEMI self refresh. Self-refresh of the SDRAM is entered when
+	 * both subsystems are requesting this mode.
+	 * If we not share the Acc SDRAM, this is never the case. Therefore
+	 * enable it here from the App side.
+	 */
+	val = readw(U300_SYSCON_VBASE + U300_SYSCON_SMCR) |
+		U300_SYSCON_SMCR_SEMI_SREFREQ_ENABLE;
+	writew(val, U300_SYSCON_VBASE + U300_SYSCON_SMCR);
+#endif /* CONFIG_MACH_U300_SEMI_IS_SHARED */
+}
+
+static int core_module_init(void)
+{
+	/*
+	 * This needs to be initialized later: it needs the input framework
+	 * to be initialized first.
+	 */
+	return mmc_init(&mmcsd_device);
+}
+module_init(core_module_init);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

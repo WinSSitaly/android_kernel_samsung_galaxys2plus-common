@@ -9,7 +9,10 @@
 #include <linux/kernel.h>
 #include <linux/sched.h>
 #include <linux/signal.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/branch.h>
 #include <asm/cpu.h>
 #include <asm/cpu-features.h>
@@ -18,6 +21,7 @@
 #include <asm/ptrace.h>
 #include <asm/uaccess.h>
 
+<<<<<<< HEAD
 /**
  * __compute_return_epc_for_insn - Computes the return address and do emulate
  *				    branch simulation, if required.
@@ -34,6 +38,30 @@ int __compute_return_epc_for_insn(struct pt_regs *regs,
 	unsigned int bit, fcr31, dspcontrol;
 	long epc = regs->cp0_epc;
 	int ret = 0;
+=======
+/*
+ * Compute the return address and do emulate branch simulation, if required.
+ */
+int __compute_return_epc(struct pt_regs *regs)
+{
+	unsigned int __user *addr;
+	unsigned int bit, fcr31, dspcontrol;
+	long epc;
+	union mips_instruction insn;
+
+	epc = regs->cp0_epc;
+	if (epc & 3)
+		goto unaligned;
+
+	/*
+	 * Read the instruction
+	 */
+	addr = (unsigned int __user *) epc;
+	if (__get_user(insn.word, addr)) {
+		force_sig(SIGSEGV, current);
+		return -EFAULT;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (insn.i_format.opcode) {
 	/*
@@ -59,22 +87,34 @@ int __compute_return_epc_for_insn(struct pt_regs *regs,
 		switch (insn.i_format.rt) {
 	 	case bltz_op:
 		case bltzl_op:
+<<<<<<< HEAD
 			if ((long)regs->regs[insn.i_format.rs] < 0) {
 				epc = epc + 4 + (insn.i_format.simmediate << 2);
 				if (insn.i_format.rt == bltzl_op)
 					ret = BRANCH_LIKELY_TAKEN;
 			} else
+=======
+			if ((long)regs->regs[insn.i_format.rs] < 0)
+				epc = epc + 4 + (insn.i_format.simmediate << 2);
+			else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				epc += 8;
 			regs->cp0_epc = epc;
 			break;
 
 		case bgez_op:
 		case bgezl_op:
+<<<<<<< HEAD
 			if ((long)regs->regs[insn.i_format.rs] >= 0) {
 				epc = epc + 4 + (insn.i_format.simmediate << 2);
 				if (insn.i_format.rt == bgezl_op)
 					ret = BRANCH_LIKELY_TAKEN;
 			} else
+=======
+			if ((long)regs->regs[insn.i_format.rs] >= 0)
+				epc = epc + 4 + (insn.i_format.simmediate << 2);
+			else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				epc += 8;
 			regs->cp0_epc = epc;
 			break;
@@ -82,11 +122,17 @@ int __compute_return_epc_for_insn(struct pt_regs *regs,
 		case bltzal_op:
 		case bltzall_op:
 			regs->regs[31] = epc + 8;
+<<<<<<< HEAD
 			if ((long)regs->regs[insn.i_format.rs] < 0) {
 				epc = epc + 4 + (insn.i_format.simmediate << 2);
 				if (insn.i_format.rt == bltzall_op)
 					ret = BRANCH_LIKELY_TAKEN;
 			} else
+=======
+			if ((long)regs->regs[insn.i_format.rs] < 0)
+				epc = epc + 4 + (insn.i_format.simmediate << 2);
+			else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				epc += 8;
 			regs->cp0_epc = epc;
 			break;
@@ -94,6 +140,7 @@ int __compute_return_epc_for_insn(struct pt_regs *regs,
 		case bgezal_op:
 		case bgezall_op:
 			regs->regs[31] = epc + 8;
+<<<<<<< HEAD
 			if ((long)regs->regs[insn.i_format.rs] >= 0) {
 				epc = epc + 4 + (insn.i_format.simmediate << 2);
 				if (insn.i_format.rt == bgezall_op)
@@ -103,6 +150,14 @@ int __compute_return_epc_for_insn(struct pt_regs *regs,
 			regs->cp0_epc = epc;
 			break;
 
+=======
+			if ((long)regs->regs[insn.i_format.rs] >= 0)
+				epc = epc + 4 + (insn.i_format.simmediate << 2);
+			else
+				epc += 8;
+			regs->cp0_epc = epc;
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case bposge32_op:
 			if (!cpu_has_dsp)
 				goto sigill;
@@ -137,11 +192,17 @@ int __compute_return_epc_for_insn(struct pt_regs *regs,
 	case beq_op:
 	case beql_op:
 		if (regs->regs[insn.i_format.rs] ==
+<<<<<<< HEAD
 		    regs->regs[insn.i_format.rt]) {
 			epc = epc + 4 + (insn.i_format.simmediate << 2);
 			if (insn.i_format.rt == beql_op)
 				ret = BRANCH_LIKELY_TAKEN;
 		} else
+=======
+		    regs->regs[insn.i_format.rt])
+			epc = epc + 4 + (insn.i_format.simmediate << 2);
+		else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			epc += 8;
 		regs->cp0_epc = epc;
 		break;
@@ -149,11 +210,17 @@ int __compute_return_epc_for_insn(struct pt_regs *regs,
 	case bne_op:
 	case bnel_op:
 		if (regs->regs[insn.i_format.rs] !=
+<<<<<<< HEAD
 		    regs->regs[insn.i_format.rt]) {
 			epc = epc + 4 + (insn.i_format.simmediate << 2);
 			if (insn.i_format.rt == bnel_op)
 				ret = BRANCH_LIKELY_TAKEN;
 		} else
+=======
+		    regs->regs[insn.i_format.rt])
+			epc = epc + 4 + (insn.i_format.simmediate << 2);
+		else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			epc += 8;
 		regs->cp0_epc = epc;
 		break;
@@ -161,11 +228,17 @@ int __compute_return_epc_for_insn(struct pt_regs *regs,
 	case blez_op: /* not really i_format */
 	case blezl_op:
 		/* rt field assumed to be zero */
+<<<<<<< HEAD
 		if ((long)regs->regs[insn.i_format.rs] <= 0) {
 			epc = epc + 4 + (insn.i_format.simmediate << 2);
 			if (insn.i_format.rt == bnel_op)
 				ret = BRANCH_LIKELY_TAKEN;
 		} else
+=======
+		if ((long)regs->regs[insn.i_format.rs] <= 0)
+			epc = epc + 4 + (insn.i_format.simmediate << 2);
+		else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			epc += 8;
 		regs->cp0_epc = epc;
 		break;
@@ -173,11 +246,17 @@ int __compute_return_epc_for_insn(struct pt_regs *regs,
 	case bgtz_op:
 	case bgtzl_op:
 		/* rt field assumed to be zero */
+<<<<<<< HEAD
 		if ((long)regs->regs[insn.i_format.rs] > 0) {
 			epc = epc + 4 + (insn.i_format.simmediate << 2);
 			if (insn.i_format.rt == bnel_op)
 				ret = BRANCH_LIKELY_TAKEN;
 		} else
+=======
+		if ((long)regs->regs[insn.i_format.rs] > 0)
+			epc = epc + 4 + (insn.i_format.simmediate << 2);
+		else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			epc += 8;
 		regs->cp0_epc = epc;
 		break;
@@ -199,22 +278,34 @@ int __compute_return_epc_for_insn(struct pt_regs *regs,
 		switch (insn.i_format.rt & 3) {
 		case 0:	/* bc1f */
 		case 2:	/* bc1fl */
+<<<<<<< HEAD
 			if (~fcr31 & (1 << bit)) {
 				epc = epc + 4 + (insn.i_format.simmediate << 2);
 				if (insn.i_format.rt == 2)
 					ret = BRANCH_LIKELY_TAKEN;
 			} else
+=======
+			if (~fcr31 & (1 << bit))
+				epc = epc + 4 + (insn.i_format.simmediate << 2);
+			else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				epc += 8;
 			regs->cp0_epc = epc;
 			break;
 
 		case 1:	/* bc1t */
 		case 3:	/* bc1tl */
+<<<<<<< HEAD
 			if (fcr31 & (1 << bit)) {
 				epc = epc + 4 + (insn.i_format.simmediate << 2);
 				if (insn.i_format.rt == 3)
 					ret = BRANCH_LIKELY_TAKEN;
 			} else
+=======
+			if (fcr31 & (1 << bit))
+				epc = epc + 4 + (insn.i_format.simmediate << 2);
+			else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				epc += 8;
 			regs->cp0_epc = epc;
 			break;
@@ -255,6 +346,7 @@ int __compute_return_epc_for_insn(struct pt_regs *regs,
 #endif
 	}
 
+<<<<<<< HEAD
 	return ret;
 
 sigill:
@@ -284,10 +376,20 @@ int __compute_return_epc(struct pt_regs *regs)
 	}
 
 	return __compute_return_epc_for_insn(regs, insn);
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unaligned:
 	printk("%s: unaligned epc - sending SIGBUS.\n", current->comm);
 	force_sig(SIGBUS, current);
 	return -EFAULT;
 
+<<<<<<< HEAD
+=======
+sigill:
+	printk("%s: DSP branch but not DSP ASE - sending SIGBUS.\n", current->comm);
+	force_sig(SIGBUS, current);
+	return -EFAULT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

@@ -3,7 +3,11 @@
 
 #include <linux/init.h>
 #include <linux/sh_intc.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern atomic_t irq_err_count;
 

@@ -208,7 +208,11 @@ static ssize_t set_temp_max(struct device *dev,
 	unsigned long val;
 	int res;
 
+<<<<<<< HEAD
 	res = kstrtoul(buf, 10, &val);
+=======
+	res = strict_strtoul(buf, 10, &val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (res)
 		return res;
 
@@ -241,7 +245,11 @@ static ssize_t set_temp_crit(struct device *dev,
 	unsigned long val;
 	int res;
 
+<<<<<<< HEAD
 	res = kstrtoul(buf, 10, &val);
+=======
+	res = strict_strtoul(buf, 10, &val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (res)
 		return res;
 
@@ -275,7 +283,11 @@ static ssize_t set_temp_emergency(struct device *dev,
 	unsigned long val;
 	int res;
 
+<<<<<<< HEAD
 	res = kstrtoul(buf, 10, &val);
+=======
+	res = strict_strtoul(buf, 10, &val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (res)
 		return res;
 
@@ -308,7 +320,11 @@ static ssize_t set_pwm(struct device *dev,
 	unsigned long val;
 	int res;
 
+<<<<<<< HEAD
 	res = kstrtoul(buf, 10, &val);
+=======
+	res = strict_strtoul(buf, 10, &val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (res)
 		return res;
 
@@ -596,10 +612,15 @@ static int max6639_remove(struct i2c_client *client)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM_SLEEP
 static int max6639_suspend(struct device *dev)
 {
 	struct i2c_client *client = to_i2c_client(dev);
+=======
+static int max6639_suspend(struct i2c_client *client, pm_message_t mesg)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int data = i2c_smbus_read_byte_data(client, MAX6639_REG_GCONFIG);
 	if (data < 0)
 		return data;
@@ -608,9 +629,14 @@ static int max6639_suspend(struct device *dev)
 			MAX6639_REG_GCONFIG, data | MAX6639_GCONFIG_STANDBY);
 }
 
+<<<<<<< HEAD
 static int max6639_resume(struct device *dev)
 {
 	struct i2c_client *client = to_i2c_client(dev);
+=======
+static int max6639_resume(struct i2c_client *client)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int data = i2c_smbus_read_byte_data(client, MAX6639_REG_GCONFIG);
 	if (data < 0)
 		return data;
@@ -618,7 +644,10 @@ static int max6639_resume(struct device *dev)
 	return i2c_smbus_write_byte_data(client,
 			MAX6639_REG_GCONFIG, data & ~MAX6639_GCONFIG_STANDBY);
 }
+<<<<<<< HEAD
 #endif /* CONFIG_PM_SLEEP */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const struct i2c_device_id max6639_id[] = {
 	{"max6639", 0},
@@ -627,25 +656,54 @@ static const struct i2c_device_id max6639_id[] = {
 
 MODULE_DEVICE_TABLE(i2c, max6639_id);
 
+<<<<<<< HEAD
 static const struct dev_pm_ops max6639_pm_ops = {
 	SET_SYSTEM_SLEEP_PM_OPS(max6639_suspend, max6639_resume)
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct i2c_driver max6639_driver = {
 	.class = I2C_CLASS_HWMON,
 	.driver = {
 		   .name = "max6639",
+<<<<<<< HEAD
 		   .pm = &max6639_pm_ops,
 		   },
 	.probe = max6639_probe,
 	.remove = max6639_remove,
+=======
+		   },
+	.probe = max6639_probe,
+	.remove = max6639_remove,
+	.suspend = max6639_suspend,
+	.resume = max6639_resume,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table = max6639_id,
 	.detect = max6639_detect,
 	.address_list = normal_i2c,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(max6639_driver);
+=======
+static int __init max6639_init(void)
+{
+	return i2c_add_driver(&max6639_driver);
+}
+
+static void __exit max6639_exit(void)
+{
+	i2c_del_driver(&max6639_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Roland Stigge <stigge@antcom.de>");
 MODULE_DESCRIPTION("max6639 driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(max6639_init);
+module_exit(max6639_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -32,7 +32,10 @@
  */
 
 #include <linux/ctype.h>
+<<<<<<< HEAD
 #include <linux/stat.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "ipath_kernel.h"
 #include "ipath_verbs.h"

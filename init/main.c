@@ -87,6 +87,10 @@ extern void mca_init(void);
 extern void sbus_init(void);
 extern void prio_tree_init(void);
 extern void radix_tree_init(void);
+<<<<<<< HEAD
+=======
+extern void free_initmem(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef CONFIG_DEBUG_RODATA
 static inline void mark_rodata_ro(void) { }
 #endif
@@ -128,6 +132,11 @@ static char *static_command_line;
 static char *execute_command;
 static char *ramdisk_execute_command;
 
+<<<<<<< HEAD
+=======
+int bootmode_recovery;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * If set, this is an indication to the drivers that reset the underlying
  * device before going ahead with the initialization otherwise driver might
@@ -162,7 +171,11 @@ static int __init obsolete_checksetup(char *line)
 	p = __setup_start;
 	do {
 		int n = strlen(p->str);
+<<<<<<< HEAD
 		if (parameqn(line, p->str, n)) {
+=======
+		if (!strncmp(line, p->str, n)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (p->early) {
 				/* Already done in parse_early_param?
 				 * (Needs exact match on param part).
@@ -208,6 +221,7 @@ early_param("quiet", quiet_kernel);
 
 static int __init loglevel(char *str)
 {
+<<<<<<< HEAD
 	int newlevel;
 
 	/*
@@ -228,6 +242,40 @@ early_param("loglevel", loglevel);
 /* Change NUL term back to "=", to make "param" the whole string. */
 static int __init repair_env_string(char *param, char *val)
 {
+=======
+	get_option(&str, &console_loglevel);
+	return 0;
+}
+
+early_param("loglevel", loglevel);
+
+
+
+
+
+static int __init get_bootmode(char *str)
+{
+ 	get_option(&str, &bootmode_recovery);
+ 	return 0;
+}
+early_param("bootmode", get_bootmode);
+
+bool boot_is_recoverymode(void)
+{
+	if(bootmode_recovery == 2)
+		return true;
+	else
+		return false;
+}
+
+/*
+ * Unknown boot options get handed to init, unless they look like
+ * unused parameters (modprobe will find them in /proc/cmdline).
+ */
+static int __init unknown_bootoption(char *param, char *val)
+{
+	/* Change NUL term back to "=", to make "param" the whole string. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (val) {
 		/* param=val or param="val"? */
 		if (val == param+strlen(param)+1)
@@ -239,6 +287,7 @@ static int __init repair_env_string(char *param, char *val)
 		} else
 			BUG();
 	}
+<<<<<<< HEAD
 	return 0;
 }
 
@@ -249,6 +298,8 @@ static int __init repair_env_string(char *param, char *val)
 static int __init unknown_bootoption(char *param, char *val)
 {
 	repair_env_string(param, val);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Handle obsolete-style parameters */
 	if (obsolete_checksetup(param))
@@ -287,6 +338,13 @@ static int __init unknown_bootoption(char *param, char *val)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_DEBUG_PAGEALLOC
+int __read_mostly debug_pagealloc_enabled = 0;
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init init_setup(char *str)
 {
 	unsigned int i;
@@ -379,7 +437,14 @@ static noinline void __init_refok rest_init(void)
 	 * at least once to get things moving:
 	 */
 	init_idle_bootup_task(current);
+<<<<<<< HEAD
 	schedule_preempt_disabled();
+=======
+	preempt_enable_no_resched();
+	schedule();
+	preempt_disable();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Call into cpu_idle with preempt disabled */
 	cpu_idle();
 }
@@ -390,7 +455,11 @@ static int __init do_early_param(char *param, char *val)
 	const struct obs_kernel_param *p;
 
 	for (p = __setup_start; p < __setup_end; p++) {
+<<<<<<< HEAD
 		if ((p->early && parameq(param, p->str)) ||
+=======
+		if ((p->early && strcmp(param, p->str) == 0) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    (strcmp(param, "console") == 0 &&
 		     strcmp(p->str, "earlycon") == 0)
 		) {
@@ -405,7 +474,11 @@ static int __init do_early_param(char *param, char *val)
 
 void __init parse_early_options(char *cmdline)
 {
+<<<<<<< HEAD
 	parse_args("early options", cmdline, NULL, 0, 0, 0, do_early_param);
+=======
+	parse_args("early options", cmdline, NULL, 0, do_early_param);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Arch code calls this early on, or if not, just before other parsing. */
@@ -451,8 +524,13 @@ void __init __weak thread_info_cache_init(void)
 static void __init mm_init(void)
 {
 	/*
+<<<<<<< HEAD
 	 * page_cgroup requires contiguous pages,
 	 * bigger than MAX_ORDER unless SPARSEMEM.
+=======
+	 * page_cgroup requires countinous pages as memmap
+	 * and it's bigger than MAX_ORDER unless SPARSEMEM.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	page_cgroup_init_flatmem();
 	mem_init();
@@ -467,12 +545,20 @@ asmlinkage void __init start_kernel(void)
 	char * command_line;
 	extern const struct kernel_param __start___param[], __stop___param[];
 
+<<<<<<< HEAD
+=======
+	smp_setup_processor_id();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Need to run as early as possible, to initialize the
 	 * lockdep hash:
 	 */
 	lockdep_init();
+<<<<<<< HEAD
 	smp_setup_processor_id();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	debug_objects_early_init();
 
 	/*
@@ -508,10 +594,14 @@ asmlinkage void __init start_kernel(void)
 	parse_early_param();
 	parse_args("Booting kernel", static_command_line, __start___param,
 		   __stop___param - __start___param,
+<<<<<<< HEAD
 		   -1, -1, &unknown_bootoption);
 
 	jump_label_init();
 
+=======
+		   &unknown_bootoption);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * These use large bootmem allocations and must precede
 	 * kmem_cache_init()
@@ -560,6 +650,12 @@ asmlinkage void __init start_kernel(void)
 	early_boot_irqs_disabled = false;
 	local_irq_enable();
 
+<<<<<<< HEAD
+=======
+	/* Interrupts are enabled now so all GFP allocations are safe. */
+	gfp_allowed_mask = __GFP_BITS_MASK;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kmem_cache_init_late();
 
 	/*
@@ -591,6 +687,10 @@ asmlinkage void __init start_kernel(void)
 	}
 #endif
 	page_cgroup_init();
+<<<<<<< HEAD
+=======
+	enable_debug_pagealloc();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	debug_objects_mem_init();
 	kmemleak_init();
 	setup_per_cpu_pageset();
@@ -602,7 +702,11 @@ asmlinkage void __init start_kernel(void)
 	pidmap_init();
 	anon_vma_init();
 #ifdef CONFIG_X86
+<<<<<<< HEAD
 	if (efi_enabled(EFI_RUNTIME_SERVICES))
+=======
+	if (efi_enabled)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		efi_enter_virtual_mode();
 #endif
 	thread_info_cache_init();
@@ -630,9 +734,12 @@ asmlinkage void __init start_kernel(void)
 	acpi_early_init(); /* before LAPIC and SMP init */
 	sfi_init_late();
 
+<<<<<<< HEAD
 	if (efi_enabled(EFI_RUNTIME_SERVICES))
 		efi_free_boot_services();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ftrace_init();
 
 	/* Do the rest non-__init'ed, we're now alive */
@@ -650,7 +757,11 @@ static void __init do_ctors(void)
 #endif
 }
 
+<<<<<<< HEAD
 bool initcall_debug;
+=======
+int initcall_debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 core_param(initcall_debug, initcall_debug, bool, 0644);
 
 static char msgbuf[64];
@@ -704,6 +815,7 @@ int __init_or_module do_one_initcall(initcall_t fn)
 }
 
 
+<<<<<<< HEAD
 extern initcall_t __initcall_start[];
 extern initcall_t __initcall0_start[];
 extern initcall_t __initcall1_start[];
@@ -760,6 +872,16 @@ static void __init do_initcalls(void)
 
 	for (level = 0; level < ARRAY_SIZE(initcall_levels) - 1; level++)
 		do_initcall_level(level);
+=======
+extern initcall_t __initcall_start[], __initcall_end[], __early_initcall_end[];
+
+static void __init do_initcalls(void)
+{
+	initcall_t *fn;
+
+	for (fn = __early_initcall_end; fn < __initcall_end; fn++)
+		do_one_initcall(*fn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -773,11 +895,18 @@ static void __init do_basic_setup(void)
 {
 	cpuset_init_smp();
 	usermodehelper_init();
+<<<<<<< HEAD
 	shmem_init();
 	driver_init();
 	init_irq_proc();
 	do_ctors();
 	usermodehelper_enable();
+=======
+	init_tmpfs();
+	driver_init();
+	init_irq_proc();
+	do_ctors();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do_initcalls();
 }
 
@@ -785,7 +914,11 @@ static void __init do_pre_smp_initcalls(void)
 {
 	initcall_t *fn;
 
+<<<<<<< HEAD
 	for (fn = __initcall_start; fn < __initcall0_start; fn++)
+=======
+	for (fn = __initcall_start; fn < __early_initcall_end; fn++)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		do_one_initcall(*fn);
 }
 
@@ -830,6 +963,10 @@ static noinline int init_post(void)
 	run_init_process("/sbin/init");
 	run_init_process("/etc/init");
 	run_init_process("/bin/init");
+<<<<<<< HEAD
+=======
+	run_init_process("/bin/systemd");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	run_init_process("/bin/sh");
 
 	panic("No init found.  Try passing init= option to kernel. "
@@ -842,10 +979,13 @@ static int __init kernel_init(void * unused)
 	 * Wait until kthreadd is all set-up.
 	 */
 	wait_for_completion(&kthreadd_done);
+<<<<<<< HEAD
 
 	/* Now the scheduler is fully set up and can do blocking allocations */
 	gfp_allowed_mask = __GFP_BITS_MASK;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * init can allocate pages on any node
 	 */

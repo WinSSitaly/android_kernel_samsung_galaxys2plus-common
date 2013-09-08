@@ -15,8 +15,12 @@
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
+<<<<<<< HEAD
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
     MA 02110-1301 USA.
+=======
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * ------------------------------------------------------------------------- */
 
 /* With some changes from Frodo Looijaard <frodol@dds.nl>, Kyösti Mälkki
@@ -48,8 +52,13 @@
 /* ----- global variables ---------------------------------------------	*/
 
 static int bit_test;	/* see if the line-setting functions work	*/
+<<<<<<< HEAD
 module_param(bit_test, int, S_IRUGO);
 MODULE_PARM_DESC(bit_test, "lines testing - 0 off; 1 report; 2 fail if stuck");
+=======
+module_param(bit_test, bool, 0);
+MODULE_PARM_DESC(bit_test, "Test the lines of the bus to see if it is stuck");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef DEBUG
 static int i2c_debug = 1;
@@ -112,7 +121,11 @@ static int sclhi(struct i2c_algo_bit_data *adap)
 				break;
 			return -ETIMEDOUT;
 		}
+<<<<<<< HEAD
 		cpu_relax();
+=======
+		cond_resched();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 #ifdef DEBUG
 	if (jiffies != start && i2c_debug >= 3)
@@ -257,9 +270,13 @@ static int test_bus(struct i2c_adapter *i2c_adap)
 	sda = getsda(adap);
 	scl = (adap->getscl == NULL) ? 1 : getscl(adap);
 	if (!scl || !sda) {
+<<<<<<< HEAD
 		printk(KERN_WARNING
 		       "%s: bus seems to be busy (scl=%d, sda=%d)\n",
 		       name, scl, sda);
+=======
+		printk(KERN_WARNING "%s: bus seems to be busy\n", name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto bailout;
 	}
 
@@ -450,7 +467,11 @@ static int readbytes(struct i2c_adapter *i2c_adap, struct i2c_msg *msg)
 					acknak(i2c_adap, 0);
 				dev_err(&i2c_adap->dev, "readbytes: invalid "
 					"block length (%d)\n", inval);
+<<<<<<< HEAD
 				return -EPROTO;
+=======
+				return -EREMOTEIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			/* The original count value accounts for the extra
 			   bytes, that is, either 1 for a regular transaction,
@@ -479,7 +500,11 @@ static int readbytes(struct i2c_adapter *i2c_adap, struct i2c_msg *msg)
  * reads, writes as well as 10bit-addresses.
  * returns:
  *  0 everything went okay, the chip ack'ed, or IGNORE_NAK flag was set
+<<<<<<< HEAD
  * -x an error occurred (like: -ENXIO if the device did not answer, or
+=======
+ * -x an error occurred (like: -EREMOTEIO if the device did not answer, or
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	-ETIMEDOUT, for example if the lines are stuck...)
  */
 static int bit_doAddress(struct i2c_adapter *i2c_adap, struct i2c_msg *msg)
@@ -502,14 +527,22 @@ static int bit_doAddress(struct i2c_adapter *i2c_adap, struct i2c_msg *msg)
 		if ((ret != 1) && !nak_ok)  {
 			dev_err(&i2c_adap->dev,
 				"died at extended address code\n");
+<<<<<<< HEAD
 			return -ENXIO;
+=======
+			return -EREMOTEIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		/* the remaining 8 bit address */
 		ret = i2c_outb(i2c_adap, msg->addr & 0xff);
 		if ((ret != 1) && !nak_ok) {
 			/* the chip did not ack / xmission error occurred */
 			dev_err(&i2c_adap->dev, "died at 2nd address code\n");
+<<<<<<< HEAD
 			return -ENXIO;
+=======
+			return -EREMOTEIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		if (flags & I2C_M_RD) {
 			bit_dbg(3, &i2c_adap->dev, "emitting repeated "
@@ -521,7 +554,11 @@ static int bit_doAddress(struct i2c_adapter *i2c_adap, struct i2c_msg *msg)
 			if ((ret != 1) && !nak_ok) {
 				dev_err(&i2c_adap->dev,
 					"died at repeated address code\n");
+<<<<<<< HEAD
 				return -EIO;
+=======
+				return -EREMOTEIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 	} else {		/* normal 7bit address	*/
@@ -579,7 +616,11 @@ static int bit_xfer(struct i2c_adapter *i2c_adap,
 					ret, ret == 1 ? "" : "s");
 			if (ret < pmsg->len) {
 				if (ret >= 0)
+<<<<<<< HEAD
 					ret = -EIO;
+=======
+					ret = -EREMOTEIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto bailout;
 			}
 		} else {
@@ -590,7 +631,11 @@ static int bit_xfer(struct i2c_adapter *i2c_adap,
 					ret, ret == 1 ? "" : "s");
 			if (ret < pmsg->len) {
 				if (ret >= 0)
+<<<<<<< HEAD
 					ret = -EIO;
+=======
+					ret = -EREMOTEIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto bailout;
 			}
 		}
@@ -617,11 +662,18 @@ static u32 bit_func(struct i2c_adapter *adap)
 
 /* -----exported algorithm data: -------------------------------------	*/
 
+<<<<<<< HEAD
 const struct i2c_algorithm i2c_bit_algo = {
 	.master_xfer	= bit_xfer,
 	.functionality	= bit_func,
 };
 EXPORT_SYMBOL(i2c_bit_algo);
+=======
+static const struct i2c_algorithm i2c_bit_algo = {
+	.master_xfer	= bit_xfer,
+	.functionality	= bit_func,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * registering functions to load algorithms at runtime
@@ -634,7 +686,11 @@ static int __i2c_bit_add_bus(struct i2c_adapter *adap,
 
 	if (bit_test) {
 		ret = test_bus(adap);
+<<<<<<< HEAD
 		if (bit_test >= 2 && ret < 0)
+=======
+		if (ret < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ENODEV;
 	}
 

@@ -276,9 +276,27 @@ static struct i2c_driver rx8581_driver = {
 	.id_table	= rx8581_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(rx8581_driver);
+=======
+static int __init rx8581_init(void)
+{
+	return i2c_add_driver(&rx8581_driver);
+}
+
+static void __exit rx8581_exit(void)
+{
+	i2c_del_driver(&rx8581_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Martyn Welch <martyn.welch@ge.com>");
 MODULE_DESCRIPTION("Epson RX-8581 RTC driver");
 MODULE_LICENSE("GPL");
 MODULE_VERSION(DRV_VERSION);
+<<<<<<< HEAD
+=======
+
+module_init(rx8581_init);
+module_exit(rx8581_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

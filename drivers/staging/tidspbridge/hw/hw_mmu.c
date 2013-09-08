@@ -558,5 +558,9 @@ static hw_status mmu_set_ram_entry(const void __iomem *base_address,
 
 void hw_mmu_tlb_flush_all(const void __iomem *base)
 {
+<<<<<<< HEAD
 	__raw_writel(1, base + MMU_GFLUSH);
+=======
+	__raw_writeb(1, base + MMU_GFLUSH);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

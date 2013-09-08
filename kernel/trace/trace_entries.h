@@ -55,7 +55,11 @@
 /*
  * Function trace entry - function address and parent function address:
  */
+<<<<<<< HEAD
 FTRACE_ENTRY_REG(function, ftrace_entry,
+=======
+FTRACE_ENTRY(function, ftrace_entry,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	TRACE_FN,
 
@@ -64,11 +68,15 @@ FTRACE_ENTRY_REG(function, ftrace_entry,
 		__field(	unsigned long,	parent_ip	)
 	),
 
+<<<<<<< HEAD
 	F_printk(" %lx <-- %lx", __entry->ip, __entry->parent_ip),
 
 	FILTER_TRACE_FN,
 
 	perf_ftrace_event_register
+=======
+	F_printk(" %lx <-- %lx", __entry->ip, __entry->parent_ip)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 /* Function call entry */
@@ -82,9 +90,13 @@ FTRACE_ENTRY(funcgraph_entry, ftrace_graph_ent_entry,
 		__field_desc(	int,		graph_ent,	depth		)
 	),
 
+<<<<<<< HEAD
 	F_printk("--> %lx (%d)", __entry->func, __entry->depth),
 
 	FILTER_OTHER
+=======
+	F_printk("--> %lx (%d)", __entry->func, __entry->depth)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 /* Function return entry */
@@ -104,9 +116,13 @@ FTRACE_ENTRY(funcgraph_exit, ftrace_graph_ret_entry,
 	F_printk("<-- %lx (%d) (start: %llx  end: %llx) over: %d",
 		 __entry->func, __entry->depth,
 		 __entry->calltime, __entry->rettime,
+<<<<<<< HEAD
 		 __entry->depth),
 
 	FILTER_OTHER
+=======
+		 __entry->depth)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 /*
@@ -135,9 +151,14 @@ FTRACE_ENTRY(context_switch, ctx_switch_entry,
 	F_printk("%u:%u:%u  ==> %u:%u:%u [%03u]",
 		 __entry->prev_pid, __entry->prev_prio, __entry->prev_state,
 		 __entry->next_pid, __entry->next_prio, __entry->next_state,
+<<<<<<< HEAD
 		 __entry->next_cpu),
 
 	FILTER_OTHER
+=======
+		 __entry->next_cpu
+		)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 /*
@@ -155,9 +176,14 @@ FTRACE_ENTRY_DUP(wakeup, ctx_switch_entry,
 	F_printk("%u:%u:%u  ==+ %u:%u:%u [%03u]",
 		 __entry->prev_pid, __entry->prev_prio, __entry->prev_state,
 		 __entry->next_pid, __entry->next_prio, __entry->next_state,
+<<<<<<< HEAD
 		 __entry->next_cpu),
 
 	FILTER_OTHER
+=======
+		 __entry->next_cpu
+		)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 /*
@@ -177,8 +203,12 @@ FTRACE_ENTRY(kernel_stack, stack_entry,
 	TRACE_STACK,
 
 	F_STRUCT(
+<<<<<<< HEAD
 		__field(	int,		size	)
 		__dynamic_array(unsigned long,	caller	)
+=======
+		__array(	unsigned long,	caller, FTRACE_STACK_ENTRIES	)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	),
 
 	F_printk("\t=> (" IP_FMT ")\n\t=> (" IP_FMT ")\n\t=> (" IP_FMT ")\n"
@@ -186,9 +216,13 @@ FTRACE_ENTRY(kernel_stack, stack_entry,
 		 "\t=> (" IP_FMT ")\n\t=> (" IP_FMT ")\n",
 		 __entry->caller[0], __entry->caller[1], __entry->caller[2],
 		 __entry->caller[3], __entry->caller[4], __entry->caller[5],
+<<<<<<< HEAD
 		 __entry->caller[6], __entry->caller[7]),
 
 	FILTER_OTHER
+=======
+		 __entry->caller[6], __entry->caller[7])
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 FTRACE_ENTRY(user_stack, userstack_entry,
@@ -205,9 +239,13 @@ FTRACE_ENTRY(user_stack, userstack_entry,
 		 "\t=> (" IP_FMT ")\n\t=> (" IP_FMT ")\n",
 		 __entry->caller[0], __entry->caller[1], __entry->caller[2],
 		 __entry->caller[3], __entry->caller[4], __entry->caller[5],
+<<<<<<< HEAD
 		 __entry->caller[6], __entry->caller[7]),
 
 	FILTER_OTHER
+=======
+		 __entry->caller[6], __entry->caller[7])
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 /*
@@ -224,9 +262,13 @@ FTRACE_ENTRY(bprint, bprint_entry,
 	),
 
 	F_printk("%08lx fmt:%p",
+<<<<<<< HEAD
 		 __entry->ip, __entry->fmt),
 
 	FILTER_OTHER
+=======
+		 __entry->ip, __entry->fmt)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 FTRACE_ENTRY(print, print_entry,
@@ -239,9 +281,13 @@ FTRACE_ENTRY(print, print_entry,
 	),
 
 	F_printk("%08lx %s",
+<<<<<<< HEAD
 		 __entry->ip, __entry->buf),
 
 	FILTER_OTHER
+=======
+		 __entry->ip, __entry->buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 FTRACE_ENTRY(mmiotrace_rw, trace_mmiotrace_rw,
@@ -260,9 +306,13 @@ FTRACE_ENTRY(mmiotrace_rw, trace_mmiotrace_rw,
 
 	F_printk("%lx %lx %lx %d %x %x",
 		 (unsigned long)__entry->phys, __entry->value, __entry->pc,
+<<<<<<< HEAD
 		 __entry->map_id, __entry->opcode, __entry->width),
 
 	FILTER_OTHER
+=======
+		 __entry->map_id, __entry->opcode, __entry->width)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 FTRACE_ENTRY(mmiotrace_map, trace_mmiotrace_map,
@@ -280,9 +330,13 @@ FTRACE_ENTRY(mmiotrace_map, trace_mmiotrace_map,
 
 	F_printk("%lx %lx %lx %d %x",
 		 (unsigned long)__entry->phys, __entry->virt, __entry->len,
+<<<<<<< HEAD
 		 __entry->map_id, __entry->opcode),
 
 	FILTER_OTHER
+=======
+		 __entry->map_id, __entry->opcode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 
@@ -302,8 +356,12 @@ FTRACE_ENTRY(branch, trace_branch,
 
 	F_printk("%u:%s:%s (%u)",
 		 __entry->line,
+<<<<<<< HEAD
 		 __entry->func, __entry->file, __entry->correct),
 
 	FILTER_OTHER
+=======
+		 __entry->func, __entry->file, __entry->correct)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 

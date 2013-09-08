@@ -85,6 +85,7 @@ static int getmac_tt(u8 * decodedMAC, u8 * encodedMAC)
 	return 0;
 }
 
+<<<<<<< HEAD
 int ttpci_eeprom_decode_mac(u8 *decodedMAC, u8 *encodedMAC)
 {
 	u8 xor[20] = { 0x72, 0x23, 0x68, 0x19, 0x5c, 0xa8, 0x71, 0x2c,
@@ -114,6 +115,8 @@ int ttpci_eeprom_decode_mac(u8 *decodedMAC, u8 *encodedMAC)
 }
 EXPORT_SYMBOL(ttpci_eeprom_decode_mac);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ttpci_eeprom_read_encodedMAC(struct i2c_adapter *adapter, u8 * encodedMAC)
 {
 	int ret;

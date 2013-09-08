@@ -3,7 +3,11 @@
  *
  * Author: Scott Wood <scottwood@freescale.com>
  *
+<<<<<<< HEAD
  * Copyright 2007-2008,2010 Freescale Semiconductor, Inc.
+=======
+ * Copyright 2007 Freescale Semiconductor, Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Some parts derived from commproc.c/cpm2_common.c, which is:
  * Copyright (c) 1997 Dan error_act (dmalek@jlc.net)
@@ -20,12 +24,19 @@
 #include <linux/init.h>
 #include <linux/of_device.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/of.h>
 #include <linux/slab.h>
 
 #include <asm/udbg.h>
 #include <asm/io.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/rheap.h>
 #include <asm/cpm.h>
 
@@ -115,7 +126,11 @@ int cpm_muram_init(void)
 			max = r.end;
 
 		rh_attach_region(&cpm_muram_info, r.start - muram_pbase,
+<<<<<<< HEAD
 				 resource_size(&r));
+=======
+		                 r.end - r.start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	muram_vbase = ioremap(muram_pbase, max - muram_pbase + 1);
@@ -146,7 +161,10 @@ unsigned long cpm_muram_alloc(unsigned long size, unsigned long align)
 	spin_lock_irqsave(&cpm_muram_lock, flags);
 	cpm_muram_info.alignment = align;
 	start = rh_alloc(&cpm_muram_info, size, "commproc");
+<<<<<<< HEAD
 	memset(cpm_muram_addr(start), 0, size);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&cpm_muram_lock, flags);
 
 	return start;

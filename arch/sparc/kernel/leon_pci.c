@@ -9,12 +9,16 @@
 #include <linux/of_device.h>
 #include <linux/kernel.h>
 #include <linux/pci.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/leon.h>
 #include <asm/leon_pci.h>
 
 /* The LEON architecture does not rely on a BIOS or bootloader to setup
  * PCI for us. The Linux generic routines are used to setup resources,
+<<<<<<< HEAD
  * reset values of configuration-space register settings are preserved.
  *
  * PCI Memory and Prefetchable Memory is direct-mapped. However I/O Space is
@@ -33,11 +37,29 @@ void leon_pci_init(struct platform_device *ofdev, struct leon_pci_info *info)
 	root_bus = pci_scan_root_bus(&ofdev->dev, 0, info->ops, info,
 				     &resources);
 	if (root_bus) {
+=======
+ * reset values of confuration-space registers settings ae preseved.
+ */
+void leon_pci_init(struct platform_device *ofdev, struct leon_pci_info *info)
+{
+	struct pci_bus *root_bus;
+
+	root_bus = pci_scan_bus_parented(&ofdev->dev, 0, info->ops, info);
+	if (root_bus) {
+		root_bus->resource[0] = &info->io_space;
+		root_bus->resource[1] = &info->mem_space;
+		root_bus->resource[2] = NULL;
+
+		/* Init all PCI devices into PCI tree */
+		pci_bus_add_devices(root_bus);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Setup IRQs of all devices using custom routines */
 		pci_fixup_irqs(pci_common_swizzle, info->map_irq);
 
 		/* Assign devices with resources */
 		pci_assign_unassigned_resources();
+<<<<<<< HEAD
 	} else {
 		pci_free_resource_list(&resources);
 	}
@@ -45,10 +67,68 @@ void leon_pci_init(struct platform_device *ofdev, struct leon_pci_info *info)
 
 void __devinit pcibios_fixup_bus(struct pci_bus *pbus)
 {
+=======
+	}
+}
+
+/* PCI Memory and Prefetchable Memory is direct-mapped. However I/O Space is
+ * accessed through a Window which is translated to low 64KB in PCI space, the
+ * first 4KB is not used so 60KB is available.
+ *
+ * This function is used by generic code to translate resource addresses into
+ * PCI addresses.
+ */
+void pcibios_resource_to_bus(struct pci_dev *dev, struct pci_bus_region *region,
+			     struct resource *res)
+{
+	struct leon_pci_info *info = dev->bus->sysdata;
+
+	region->start = res->start;
+	region->end = res->end;
+
+	if (res->flags & IORESOURCE_IO) {
+		region->start -= (info->io_space.start - 0x1000);
+		region->end -= (info->io_space.start - 0x1000);
+	}
+}
+EXPORT_SYMBOL(pcibios_resource_to_bus);
+
+/* see pcibios_resource_to_bus() comment */
+void pcibios_bus_to_resource(struct pci_dev *dev, struct resource *res,
+			     struct pci_bus_region *region)
+{
+	struct leon_pci_info *info = dev->bus->sysdata;
+
+	res->start = region->start;
+	res->end = region->end;
+
+	if (res->flags & IORESOURCE_IO) {
+		res->start += (info->io_space.start - 0x1000);
+		res->end += (info->io_space.start - 0x1000);
+	}
+}
+EXPORT_SYMBOL(pcibios_bus_to_resource);
+
+void __devinit pcibios_fixup_bus(struct pci_bus *pbus)
+{
+	struct leon_pci_info *info = pbus->sysdata;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pci_dev *dev;
 	int i, has_io, has_mem;
 	u16 cmd;
 
+<<<<<<< HEAD
+=======
+	/* Generic PCI bus probing sets these to point at
+	 * &io{port,mem}_resouce which is wrong for us.
+	 */
+	if (pbus->self == NULL) {
+		pbus->resource[0] = &info->io_space;
+		pbus->resource[1] = &info->mem_space;
+		pbus->resource[2] = NULL;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(dev, &pbus->devices, bus_list) {
 		/*
 		 * We can not rely on that the bootloader has enabled I/O
@@ -110,6 +190,21 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
 	return pci_enable_resources(dev, mask);
 }
 
+<<<<<<< HEAD
+=======
+struct device_node *pci_device_to_OF_node(struct pci_dev *pdev)
+{
+	/*
+	 * Currently the OpenBoot nodes are not connected with the PCI device,
+	 * this is because the LEON PROM does not create PCI nodes. Eventually
+	 * this will change and the same approach as pcic.c can be used to
+	 * match PROM nodes with pci devices.
+	 */
+	return NULL;
+}
+EXPORT_SYMBOL(pci_device_to_OF_node);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __devinit pcibios_update_irq(struct pci_dev *dev, int irq)
 {
 #ifdef CONFIG_PCI_DEBUG

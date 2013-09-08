@@ -50,8 +50,11 @@ static const int mx27ipcam_pins[] __initconst = {
 
 static void __init mx27ipcam_init(void)
 {
+<<<<<<< HEAD
 	imx27_soc_init();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mxc_gpio_setup_multiple_pins(mx27ipcam_pins, ARRAY_SIZE(mx27ipcam_pins),
 		"mx27ipcam");
 
@@ -71,6 +74,7 @@ static struct sys_timer mx27ipcam_timer = {
 
 MACHINE_START(IMX27IPCAM, "Freescale IMX27IPCAM")
 	/* maintainer: Freescale Semiconductor, Inc. */
+<<<<<<< HEAD
 	.atag_offset = 0x100,
 	.map_io = mx27_map_io,
 	.init_early = imx27_init_early,
@@ -79,4 +83,12 @@ MACHINE_START(IMX27IPCAM, "Freescale IMX27IPCAM")
 	.timer = &mx27ipcam_timer,
 	.init_machine = mx27ipcam_init,
 	.restart	= mxc_restart,
+=======
+	.boot_params = MX27_PHYS_OFFSET + 0x100,
+	.map_io = mx27_map_io,
+	.init_early = imx27_init_early,
+	.init_irq = mx27_init_irq,
+	.timer = &mx27ipcam_timer,
+	.init_machine = mx27ipcam_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

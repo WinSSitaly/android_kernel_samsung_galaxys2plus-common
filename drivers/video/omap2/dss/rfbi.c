@@ -24,7 +24,10 @@
 
 #include <linux/kernel.h>
 #include <linux/dma-mapping.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/vmalloc.h>
 #include <linux/clk.h>
 #include <linux/io.h>
@@ -34,8 +37,11 @@
 #include <linux/hrtimer.h>
 #include <linux/seq_file.h>
 #include <linux/semaphore.h>
+<<<<<<< HEAD
 #include <linux/platform_device.h>
 #include <linux/pm_runtime.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <video/omapdss.h>
 #include "dss.h"
@@ -123,6 +129,7 @@ static inline u32 rfbi_read_reg(const struct rfbi_reg idx)
 	return __raw_readl(rfbi.base + idx.idx);
 }
 
+<<<<<<< HEAD
 static int rfbi_runtime_get(void)
 {
 	int r;
@@ -142,6 +149,14 @@ static void rfbi_runtime_put(void)
 
 	r = pm_runtime_put_sync(&rfbi.pdev->dev);
 	WARN_ON(r < 0);
+=======
+static void rfbi_enable_clocks(bool enable)
+{
+	if (enable)
+		dss_clk_enable(DSS_CLK_ICK | DSS_CLK_FCK);
+	else
+		dss_clk_disable(DSS_CLK_ICK | DSS_CLK_FCK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void rfbi_bus_lock(void)
@@ -310,9 +325,15 @@ static void rfbi_transfer_area(struct omap_dss_device *dssdev, u16 width,
 
 	DSSDBG("rfbi_transfer_area %dx%d\n", width, height);
 
+<<<<<<< HEAD
 	dispc_mgr_set_lcd_size(dssdev->manager->id, width, height);
 
 	dispc_mgr_enable(dssdev->manager->id, true);
+=======
+	dispc_set_lcd_size(dssdev->manager->id, width, height);
+
+	dispc_enable_channel(dssdev->manager->id, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rfbi.framedone_callback = callback;
 	rfbi.framedone_callback_data = data;
@@ -784,7 +805,14 @@ int omap_rfbi_prepare_update(struct omap_dss_device *dssdev,
 	if (*w == 0 || *h == 0)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	dispc_mgr_set_lcd_size(dssdev->manager->id, *w, *h);
+=======
+	if (dssdev->manager->caps & OMAP_DSS_OVL_MGR_CAP_DISPC) {
+		dss_setup_partial_planes(dssdev, x, y, w, h, true);
+		dispc_set_lcd_size(dssdev->manager->id, *w, *h);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -794,7 +822,26 @@ int omap_rfbi_update(struct omap_dss_device *dssdev,
 		u16 x, u16 y, u16 w, u16 h,
 		void (*callback)(void *), void *data)
 {
+<<<<<<< HEAD
 	rfbi_transfer_area(dssdev, w, h, callback, data);
+=======
+	if (dssdev->manager->caps & OMAP_DSS_OVL_MGR_CAP_DISPC) {
+		rfbi_transfer_area(dssdev, w, h, callback, data);
+	} else {
+		struct omap_overlay *ovl;
+		void __iomem *addr;
+		int scr_width;
+
+		ovl = dssdev->manager->overlays[0];
+		scr_width = ovl->info.screen_width;
+		addr = ovl->info.vaddr;
+
+		omap_rfbi_write_pixels(addr, scr_width, x, y, w, h);
+
+		callback(data);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL(omap_rfbi_update);
@@ -803,8 +850,12 @@ void rfbi_dump_regs(struct seq_file *s)
 {
 #define DUMPREG(r) seq_printf(s, "%-35s %08x\n", #r, rfbi_read_reg(r))
 
+<<<<<<< HEAD
 	if (rfbi_runtime_get())
 		return;
+=======
+	dss_clk_enable(DSS_CLK_ICK | DSS_CLK_FCK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	DUMPREG(RFBI_REVISION);
 	DUMPREG(RFBI_SYSCONFIG);
@@ -835,7 +886,11 @@ void rfbi_dump_regs(struct seq_file *s)
 	DUMPREG(RFBI_VSYNC_WIDTH);
 	DUMPREG(RFBI_HSYNC_WIDTH);
 
+<<<<<<< HEAD
 	rfbi_runtime_put();
+=======
+	dss_clk_disable(DSS_CLK_ICK | DSS_CLK_FCK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #undef DUMPREG
 }
 
@@ -843,6 +898,7 @@ int omapdss_rfbi_display_enable(struct omap_dss_device *dssdev)
 {
 	int r;
 
+<<<<<<< HEAD
 	if (dssdev->manager == NULL) {
 		DSSERR("failed to enable display: no manager\n");
 		return -ENODEV;
@@ -851,6 +907,9 @@ int omapdss_rfbi_display_enable(struct omap_dss_device *dssdev)
 	r = rfbi_runtime_get();
 	if (r)
 		return r;
+=======
+	rfbi_enable_clocks(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	r = omap_dss_start_device(dssdev);
 	if (r) {
@@ -865,6 +924,7 @@ int omapdss_rfbi_display_enable(struct omap_dss_device *dssdev)
 		goto err1;
 	}
 
+<<<<<<< HEAD
 	dispc_mgr_set_lcd_display_type(dssdev->manager->id,
 			OMAP_DSS_LCD_DISPLAY_TFT);
 
@@ -872,6 +932,15 @@ int omapdss_rfbi_display_enable(struct omap_dss_device *dssdev)
 	dispc_mgr_enable_stallmode(dssdev->manager->id, true);
 
 	dispc_mgr_set_tft_data_lines(dssdev->manager->id, dssdev->ctrl.pixel_size);
+=======
+	dispc_set_lcd_display_type(dssdev->manager->id,
+			OMAP_DSS_LCD_DISPLAY_TFT);
+
+	dispc_set_parallel_interface_mode(dssdev->manager->id,
+			OMAP_DSS_PARALLELMODE_RFBI);
+
+	dispc_set_tft_data_lines(dssdev->manager->id, dssdev->ctrl.pixel_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rfbi_configure(dssdev->phy.rfbi.channel,
 			       dssdev->ctrl.pixel_size,
@@ -885,7 +954,10 @@ int omapdss_rfbi_display_enable(struct omap_dss_device *dssdev)
 err1:
 	omap_dss_stop_device(dssdev);
 err0:
+<<<<<<< HEAD
 	rfbi_runtime_put();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return r;
 }
 EXPORT_SYMBOL(omapdss_rfbi_display_enable);
@@ -896,7 +968,11 @@ void omapdss_rfbi_display_disable(struct omap_dss_device *dssdev)
 			DISPC_IRQ_FRAMEDONE);
 	omap_dss_stop_device(dssdev);
 
+<<<<<<< HEAD
 	rfbi_runtime_put();
+=======
+	rfbi_enable_clocks(0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(omapdss_rfbi_display_disable);
 
@@ -911,9 +987,14 @@ int rfbi_init_display(struct omap_dss_device *dssdev)
 static int omap_rfbihw_probe(struct platform_device *pdev)
 {
 	u32 rev;
+<<<<<<< HEAD
 	struct resource *rfbi_mem;
 	struct clk *clk;
 	int r;
+=======
+	u32 l;
+	struct resource *rfbi_mem;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rfbi.pdev = pdev;
 
@@ -924,14 +1005,19 @@ static int omap_rfbihw_probe(struct platform_device *pdev)
 		DSSERR("can't get IORESOURCE_MEM RFBI\n");
 		return -EINVAL;
 	}
+<<<<<<< HEAD
 
 	rfbi.base = devm_ioremap(&pdev->dev, rfbi_mem->start,
 				 resource_size(rfbi_mem));
+=======
+	rfbi.base = ioremap(rfbi_mem->start, resource_size(rfbi_mem));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!rfbi.base) {
 		DSSERR("can't ioremap RFBI\n");
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	clk = clk_get(&pdev->dev, "ick");
 	if (IS_ERR(clk)) {
 		DSSERR("can't get ick\n");
@@ -949,11 +1035,24 @@ static int omap_rfbihw_probe(struct platform_device *pdev)
 		goto err_runtime_get;
 
 	msleep(10);
+=======
+	rfbi_enable_clocks(1);
+
+	msleep(10);
+
+	rfbi.l4_khz = dss_clk_get_rate(DSS_CLK_ICK) / 1000;
+
+	/* Enable autoidle and smart-idle */
+	l = rfbi_read_reg(RFBI_SYSCONFIG);
+	l |= (1 << 0) | (2 << 3);
+	rfbi_write_reg(RFBI_SYSCONFIG, l);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rev = rfbi_read_reg(RFBI_REVISION);
 	dev_dbg(&pdev->dev, "OMAP RFBI rev %d.%d\n",
 	       FLD_GET(rev, 7, 4), FLD_GET(rev, 3, 0));
 
+<<<<<<< HEAD
 	rfbi_runtime_put();
 
 	return 0;
@@ -961,10 +1060,16 @@ static int omap_rfbihw_probe(struct platform_device *pdev)
 err_runtime_get:
 	pm_runtime_disable(&pdev->dev);
 	return r;
+=======
+	rfbi_enable_clocks(0);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int omap_rfbihw_remove(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	pm_runtime_disable(&pdev->dev);
 	return 0;
 }
@@ -1002,13 +1107,22 @@ static const struct dev_pm_ops rfbi_pm_ops = {
 	.runtime_resume = rfbi_runtime_resume,
 };
 
+=======
+	iounmap(rfbi.base);
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver omap_rfbihw_driver = {
 	.probe          = omap_rfbihw_probe,
 	.remove         = omap_rfbihw_remove,
 	.driver         = {
 		.name   = "omapdss_rfbi",
 		.owner  = THIS_MODULE,
+<<<<<<< HEAD
 		.pm	= &rfbi_pm_ops,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

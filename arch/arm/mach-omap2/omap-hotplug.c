@@ -19,10 +19,14 @@
 #include <linux/smp.h>
 
 #include <asm/cacheflush.h>
+<<<<<<< HEAD
 
 #include "common.h"
 
 #include "powerdomain.h"
+=======
+#include <mach/omap4-common.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int platform_cpu_kill(unsigned int cpu)
 {
@@ -33,10 +37,15 @@ int platform_cpu_kill(unsigned int cpu)
  * platform-specific code to shutdown a CPU
  * Called with IRQs disabled
  */
+<<<<<<< HEAD
 void __ref platform_cpu_die(unsigned int cpu)
 {
 	unsigned int this_cpu;
 
+=======
+void platform_cpu_die(unsigned int cpu)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	flush_cache_all();
 	dsb();
 
@@ -44,6 +53,7 @@ void __ref platform_cpu_die(unsigned int cpu)
 	 * we're ready for shutdown now, so do it
 	 */
 	if (omap_modify_auxcoreboot0(0x0, 0x200) != 0x0)
+<<<<<<< HEAD
 		pr_err("Secure clear status failed\n");
 
 	for (;;) {
@@ -53,6 +63,17 @@ void __ref platform_cpu_die(unsigned int cpu)
 		omap4_hotplug_cpu(cpu, PWRDM_POWER_OFF);
 		this_cpu = smp_processor_id();
 		if (omap_read_auxcoreboot0() == this_cpu) {
+=======
+		printk(KERN_CRIT "Secure clear status failed\n");
+
+	for (;;) {
+		/*
+		 * Execute WFI
+		 */
+		do_wfi();
+
+		if (omap_read_auxcoreboot0() == cpu) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * OK, proper wakeup, we're done
 			 */

@@ -26,16 +26,23 @@ $(error Set TILERA_ROOT or CROSS_COMPILE when building $(ARCH) on $(HOST_ARCH))
   endif
 endif
 
+<<<<<<< HEAD
 # The tile compiler may emit .eh_frame information for backtracing.
 # In kernel modules, this causes load failures due to unsupported relocations.
 KBUILD_CFLAGS   += -fno-asynchronous-unwind-tables
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ifneq ($(CONFIG_DEBUG_EXTRA_FLAGS),"")
 KBUILD_CFLAGS   += $(CONFIG_DEBUG_EXTRA_FLAGS)
 endif
 
+<<<<<<< HEAD
 LIBGCC_PATH     := \
   $(shell $(CC) $(KBUILD_CFLAGS) $(KCFLAGS) -print-libgcc-file-name)
+=======
+LIBGCC_PATH     := $(shell $(CC) $(KBUILD_CFLAGS) -print-libgcc-file-name)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # Provide the path to use for "make defconfig".
 KBUILD_DEFCONFIG := $(ARCH)_defconfig
@@ -58,6 +65,11 @@ libs-y		+= $(LIBGCC_PATH)
 # See arch/tile/Kbuild for content of core part of the kernel
 core-y		+= arch/tile/
 
+<<<<<<< HEAD
+=======
+core-$(CONFIG_KVM) += arch/tile/kvm/
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ifdef TILERA_ROOT
 INSTALL_PATH ?= $(TILERA_ROOT)/tile/boot
 endif

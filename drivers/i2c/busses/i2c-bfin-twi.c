@@ -631,7 +631,11 @@ static int i2c_bfin_twi_resume(struct platform_device *pdev)
 	struct bfin_twi_iface *iface = platform_get_drvdata(pdev);
 
 	int rc = request_irq(iface->irq, bfin_twi_interrupt_entry,
+<<<<<<< HEAD
 		0, pdev->name, iface);
+=======
+		IRQF_DISABLED, pdev->name, iface);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc) {
 		dev_err(&pdev->dev, "Can't get IRQ %d !\n", iface->irq);
 		return -ENODEV;
@@ -702,7 +706,11 @@ static int i2c_bfin_twi_probe(struct platform_device *pdev)
 	}
 
 	rc = request_irq(iface->irq, bfin_twi_interrupt_entry,
+<<<<<<< HEAD
 		0, pdev->name, iface);
+=======
+		IRQF_DISABLED, pdev->name, iface);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc) {
 		dev_err(&pdev->dev, "Can't get IRQ %d !\n", iface->irq);
 		rc = -ENODEV;

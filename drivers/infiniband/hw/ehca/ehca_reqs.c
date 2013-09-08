@@ -42,6 +42,10 @@
  */
 
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "ehca_classes.h"
 #include "ehca_tools.h"
 #include "ehca_qes.h"

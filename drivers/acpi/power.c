@@ -40,11 +40,17 @@
 #include <linux/init.h>
 #include <linux/types.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/pm_runtime.h>
 #include <acpi/acpi_bus.h>
 #include <acpi/acpi_drivers.h>
 #include "sleep.h"
 #include "internal.h"
+=======
+#include <acpi/acpi_bus.h>
+#include <acpi/acpi_drivers.h>
+#include "sleep.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PREFIX "ACPI: "
 
@@ -79,6 +85,7 @@ static struct acpi_driver acpi_power_driver = {
 		},
 };
 
+<<<<<<< HEAD
 /*
  * A power managed device
  * A device may rely on multiple power resources.
@@ -93,6 +100,8 @@ struct acpi_power_resource_device {
 	struct acpi_power_resource_device *next;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct acpi_power_resource {
 	struct acpi_device * device;
 	acpi_bus_id name;
@@ -100,10 +109,13 @@ struct acpi_power_resource {
 	u32 order;
 	unsigned int ref_count;
 	struct mutex resource_lock;
+<<<<<<< HEAD
 
 	/* List of devices relying on this power resource */
 	struct acpi_power_resource_device *devices;
 	struct mutex devices_lock;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct list_head acpi_power_resource_list;
@@ -203,6 +215,7 @@ static int acpi_power_get_list_state(struct acpi_handle_list *list, int *state)
 	return 0;
 }
 
+<<<<<<< HEAD
 /* Resume the device when all power resources in _PR0 are on */
 static void acpi_power_on_device(struct acpi_power_managed_device *device)
 {
@@ -220,6 +233,8 @@ static void acpi_power_on_device(struct acpi_power_managed_device *device)
 		pm_request_resume(device->dev);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __acpi_power_on(struct acpi_power_resource *resource)
 {
 	acpi_status status = AE_OK;
@@ -240,9 +255,13 @@ static int __acpi_power_on(struct acpi_power_resource *resource)
 static int acpi_power_on(acpi_handle handle)
 {
 	int result = 0;
+<<<<<<< HEAD
 	bool resume_device = false;
 	struct acpi_power_resource *resource = NULL;
 	struct acpi_power_resource_device *device_list;
+=======
+	struct acpi_power_resource *resource = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	result = acpi_power_get_context(handle, &resource);
 	if (result)
@@ -258,12 +277,16 @@ static int acpi_power_on(acpi_handle handle)
 		result = __acpi_power_on(resource);
 		if (result)
 			resource->ref_count--;
+<<<<<<< HEAD
 		else
 			resume_device = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	mutex_unlock(&resource->resource_lock);
 
+<<<<<<< HEAD
 	if (!resume_device)
 		return result;
 
@@ -277,6 +300,8 @@ static int acpi_power_on(acpi_handle handle)
 
 	mutex_unlock(&resource->devices_lock);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return result;
 }
 
@@ -353,6 +378,7 @@ static int acpi_power_on_list(struct acpi_handle_list *list)
 	return result;
 }
 
+<<<<<<< HEAD
 static void __acpi_power_resource_unregister_device(struct device *dev,
 		acpi_handle res_handle)
 {
@@ -472,6 +498,8 @@ no_power_resource:
 	return -ENODEV;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * acpi_device_sleep_wake - execute _DSW (Device Sleep Wake) or (deprecated in
  *                          ACPI 3.0) _PSW (Power State Wake)
@@ -642,7 +670,11 @@ int acpi_power_get_inferred_state(struct acpi_device *device, int *state)
 	 * We know a device's inferred power state when all the resources
 	 * required for a given D-state are 'on'.
 	 */
+<<<<<<< HEAD
 	for (i = ACPI_STATE_D0; i < ACPI_STATE_D3_HOT; i++) {
+=======
+	for (i = ACPI_STATE_D0; i < ACPI_STATE_D3; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list = &device->power.states[i].resources;
 		if (list->count < 1)
 			continue;
@@ -671,16 +703,26 @@ int acpi_power_on_resources(struct acpi_device *device, int state)
 
 int acpi_power_transition(struct acpi_device *device, int state)
 {
+<<<<<<< HEAD
 	int result = 0;
 
 	if (!device || (state < ACPI_STATE_D0) || (state > ACPI_STATE_D3_COLD))
+=======
+	int result;
+
+	if (!device || (state < ACPI_STATE_D0) || (state > ACPI_STATE_D3))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	if (device->power.state == state)
 		return 0;
 
 	if ((device->power.state < ACPI_STATE_D0)
+<<<<<<< HEAD
 	    || (device->power.state > ACPI_STATE_D3_COLD))
+=======
+	    || (device->power.state > ACPI_STATE_D3))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 
 	/* TBD: Resources must be ordered. */
@@ -690,11 +732,16 @@ int acpi_power_transition(struct acpi_device *device, int state)
 	 * (e.g. so the device doesn't lose power while transitioning).  Then,
 	 * we dereference all power resources used in the current list.
 	 */
+<<<<<<< HEAD
 	if (state < ACPI_STATE_D3_COLD)
 		result = acpi_power_on_list(
 			&device->power.states[state].resources);
 
 	if (!result && device->power.state < ACPI_STATE_D3_COLD)
+=======
+	result = acpi_power_on_list(&device->power.states[state].resources);
+	if (!result)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		acpi_power_off_list(
 			&device->power.states[device->power.state].resources);
 
@@ -726,7 +773,10 @@ static int acpi_power_add(struct acpi_device *device)
 
 	resource->device = device;
 	mutex_init(&resource->resource_lock);
+<<<<<<< HEAD
 	mutex_init(&resource->devices_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	strcpy(resource->name, device->pnp.bus_id);
 	strcpy(acpi_device_name(device), ACPI_POWER_DEVICE_NAME);
 	strcpy(acpi_device_class(device), ACPI_POWER_CLASS);

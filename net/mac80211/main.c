@@ -19,7 +19,11 @@
 #include <linux/if_arp.h>
 #include <linux/rtnetlink.h>
 #include <linux/bitmap.h>
+<<<<<<< HEAD
 #include <linux/pm_qos.h>
+=======
+#include <linux/pm_qos_params.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/inetdevice.h>
 #include <net/net_namespace.h>
 #include <net/cfg80211.h>
@@ -47,7 +51,11 @@ void ieee80211_configure_filter(struct ieee80211_local *local)
 	if (atomic_read(&local->iff_allmultis))
 		new_flags |= FIF_ALLMULTI;
 
+<<<<<<< HEAD
 	if (local->monitors || test_bit(SCAN_SW_SCANNING, &local->scanning))
+=======
+	if (local->monitors || local->scanning)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		new_flags |= FIF_BCN_PRBRESP_PROMISC;
 
 	if (local->fif_probe_req || local->probe_req_reg)
@@ -92,17 +100,23 @@ static void ieee80211_reconfig_filter(struct work_struct *work)
 	ieee80211_configure_filter(local);
 }
 
+<<<<<<< HEAD
 int ieee80211_hw_config(struct ieee80211_local *local, u32 changed)
 {
 	struct ieee80211_channel *chan;
-	int ret = 0;
-	int power;
+=======
+/*
+ * Returns true if we are logically configured to be on
+ * the operating channel AND the hardware-conf is currently
+ * configured on the operating channel.  Compares channel-type
+ * as well.
+ */
+bool ieee80211_cfg_on_oper_channel(struct ieee80211_local *local)
+{
+	struct ieee80211_channel *chan, *scan_chan;
 	enum nl80211_channel_type channel_type;
-	u32 offchannel_flag;
 
-	might_sleep();
-
-	offchannel_flag = local->hw.conf.flags & IEEE80211_CONF_OFFCHANNEL;
+	/* This logic needs to match logic in ieee80211_hw_config */
 	if (local->scan_channel) {
 		chan = local->scan_channel;
 		/* If scanning on oper channel, use whatever channel-type
@@ -113,7 +127,63 @@ int ieee80211_hw_config(struct ieee80211_local *local, u32 changed)
 		else
 			channel_type = NL80211_CHAN_NO_HT;
 	} else if (local->tmp_channel) {
+		chan = scan_chan = local->tmp_channel;
+		channel_type = local->tmp_channel_type;
+	} else {
+		chan = local->oper_channel;
+		channel_type = local->_oper_channel_type;
+	}
+
+	if (chan != local->oper_channel ||
+	    channel_type != local->_oper_channel_type)
+		return false;
+
+	/* Check current hardware-config against oper_channel. */
+	if ((local->oper_channel != local->hw.conf.channel) ||
+	    (local->_oper_channel_type != local->hw.conf.channel_type))
+		return false;
+
+	return true;
+}
+
+int ieee80211_hw_config(struct ieee80211_local *local, u32 changed)
+{
+	struct ieee80211_channel *chan, *scan_chan;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+	int ret = 0;
+	int power;
+	enum nl80211_channel_type channel_type;
+	u32 offchannel_flag;
+
+	might_sleep();
+
+<<<<<<< HEAD
+	offchannel_flag = local->hw.conf.flags & IEEE80211_CONF_OFFCHANNEL;
+	if (local->scan_channel) {
+		chan = local->scan_channel;
+=======
+	scan_chan = local->scan_channel;
+
+	/* If this off-channel logic ever changes,  ieee80211_on_oper_channel
+	 * may need to change as well.
+	 */
+	offchannel_flag = local->hw.conf.flags & IEEE80211_CONF_OFFCHANNEL;
+	if (scan_chan) {
+		chan = scan_chan;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+		/* If scanning on oper channel, use whatever channel-type
+		 * is currently in use.
+		 */
+		if (chan == local->oper_channel)
+			channel_type = local->_oper_channel_type;
+		else
+			channel_type = NL80211_CHAN_NO_HT;
+	} else if (local->tmp_channel) {
+<<<<<<< HEAD
 		chan = local->tmp_channel;
+=======
+		chan = scan_chan = local->tmp_channel;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		channel_type = local->tmp_channel_type;
 	} else {
 		chan = local->oper_channel;
@@ -147,6 +217,7 @@ int ieee80211_hw_config(struct ieee80211_local *local, u32 changed)
 		changed |= IEEE80211_CONF_CHANGE_SMPS;
 	}
 
+<<<<<<< HEAD
 	if (test_bit(SCAN_SW_SCANNING, &local->scanning) ||
 	    test_bit(SCAN_HW_SCANNING, &local->scanning))
 		power = chan->max_power;
@@ -154,6 +225,14 @@ int ieee80211_hw_config(struct ieee80211_local *local, u32 changed)
 		power = local->power_constr_level ?
 			min(chan->max_power,
 				(chan->max_reg_power  - local->power_constr_level)) :
+=======
+	if ((local->scanning & SCAN_SW_SCANNING) ||
+	    (local->scanning & SCAN_HW_SCANNING))
+		power = chan->max_power;
+	else
+		power = local->power_constr_level ?
+			(chan->max_power - local->power_constr_level) :
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			chan->max_power;
 
 	if (local->user_power_level >= 0)
@@ -196,7 +275,19 @@ void ieee80211_bss_info_change_notify(struct ieee80211_sub_if_data *sdata,
 		return;
 
 	if (sdata->vif.type == NL80211_IFTYPE_STATION) {
+<<<<<<< HEAD
 		sdata->vif.bss_conf.bssid = sdata->u.mgd.bssid;
+=======
+		/*
+		 * While not associated, claim a BSSID of all-zeroes
+		 * so that drivers don't do any weird things with the
+		 * BSSID at that time.
+		 */
+		if (sdata->vif.bss_conf.assoc)
+			sdata->vif.bss_conf.bssid = sdata->u.mgd.bssid;
+		else
+			sdata->vif.bss_conf.bssid = zero;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (sdata->vif.type == NL80211_IFTYPE_ADHOC)
 		sdata->vif.bss_conf.bssid = sdata->u.ibss.bssid;
 	else if (sdata->vif.type == NL80211_IFTYPE_AP)
@@ -272,8 +363,11 @@ u32 ieee80211_reset_erp_info(struct ieee80211_sub_if_data *sdata)
 static void ieee80211_tasklet_handler(unsigned long data)
 {
 	struct ieee80211_local *local = (struct ieee80211_local *) data;
+<<<<<<< HEAD
 	struct sta_info *sta, *tmp;
 	struct skb_eosp_msg_data *eosp_data;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sk_buff *skb;
 
 	while ((skb = skb_dequeue(&local->skb_queue)) ||
@@ -283,6 +377,7 @@ static void ieee80211_tasklet_handler(unsigned long data)
 			/* Clear skb->pkt_type in order to not confuse kernel
 			 * netstack. */
 			skb->pkt_type = 0;
+<<<<<<< HEAD
 			ieee80211_rx(&local->hw, skb);
 			break;
 		case IEEE80211_TX_STATUS_MSG:
@@ -300,6 +395,13 @@ static void ieee80211_tasklet_handler(unsigned long data)
 				break;
 			}
 			dev_kfree_skb(skb);
+=======
+			ieee80211_rx(local_to_hw(local), skb);
+			break;
+		case IEEE80211_TX_STATUS_MSG:
+			skb->pkt_type = 0;
+			ieee80211_tx_status(local_to_hw(local), skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		default:
 			WARN(1, "mac80211: Packet is of unknown type %d\n",
@@ -383,6 +485,12 @@ static int ieee80211_ifa_changed(struct notifier_block *nb,
 	sdata = IEEE80211_DEV_TO_SUB_IF(ndev);
 	bss_conf = &sdata->vif.bss_conf;
 
+<<<<<<< HEAD
+=======
+	if (!ieee80211_sdata_running(sdata))
+		return NOTIFY_DONE;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* ARP filtering is only supported in managed mode */
 	if (sdata->vif.type != NL80211_IFTYPE_STATION)
 		return NOTIFY_DONE;
@@ -411,7 +519,11 @@ static int ieee80211_ifa_changed(struct notifier_block *nb,
 	}
 	bss_conf->arp_addr_cnt = c;
 
+<<<<<<< HEAD
 	/* Configure driver only if associated (which also implies it is up) */
+=======
+	/* Configure driver only if associated */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ifmgd->associated) {
 		bss_conf->arp_filter_enabled = sdata->arp_filter_state;
 		ieee80211_bss_info_change_notify(sdata,
@@ -504,6 +616,7 @@ ieee80211_default_mgmt_stypes[NUM_NL80211_IFTYPES] = {
 	},
 };
 
+<<<<<<< HEAD
 static const struct ieee80211_ht_cap mac80211_ht_capa_mod_mask = {
 	.ampdu_params_info = IEEE80211_HT_AMPDU_PARM_FACTOR |
 			     IEEE80211_HT_AMPDU_PARM_DENSITY,
@@ -517,6 +630,8 @@ static const struct ieee80211_ht_cap mac80211_ht_capa_mod_mask = {
 	},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ieee80211_hw *ieee80211_alloc_hw(size_t priv_data_len,
 					const struct ieee80211_ops *ops)
 {
@@ -524,9 +639,12 @@ struct ieee80211_hw *ieee80211_alloc_hw(size_t priv_data_len,
 	int priv_size, i;
 	struct wiphy *wiphy;
 
+<<<<<<< HEAD
 	if (WARN_ON(ops->sta_state && (ops->sta_add || ops->sta_remove)))
 		return NULL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Ensure 32-byte alignment of our private data and hw private data.
 	 * We use the wiphy priv data for both our ieee80211_local and for
 	 * the driver's private data
@@ -555,6 +673,7 @@ struct ieee80211_hw *ieee80211_alloc_hw(size_t priv_data_len,
 
 	wiphy->flags |= WIPHY_FLAG_NETNS_OK |
 			WIPHY_FLAG_4ADDR_AP |
+<<<<<<< HEAD
 			WIPHY_FLAG_4ADDR_STATION |
 			WIPHY_FLAG_REPORTS_OBSS |
 			WIPHY_FLAG_OFFCHAN_TX |
@@ -562,6 +681,9 @@ struct ieee80211_hw *ieee80211_alloc_hw(size_t priv_data_len,
 
 	wiphy->features = NL80211_FEATURE_SK_TX_STATUS |
 			  NL80211_FEATURE_HT_IBSS;
+=======
+			WIPHY_FLAG_4ADDR_STATION;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!ops->set_key)
 		wiphy->flags |= WIPHY_FLAG_IBSS_RSN;
@@ -574,7 +696,11 @@ struct ieee80211_hw *ieee80211_alloc_hw(size_t priv_data_len,
 
 	local->hw.priv = (char *)local + ALIGN(sizeof(*local), NETDEV_ALIGN);
 
+<<<<<<< HEAD
 	BUG_ON(!ops->tx && !ops->tx_frags);
+=======
+	BUG_ON(!ops->tx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BUG_ON(!ops->start);
 	BUG_ON(!ops->stop);
 	BUG_ON(!ops->config);
@@ -588,11 +714,19 @@ struct ieee80211_hw *ieee80211_alloc_hw(size_t priv_data_len,
 	local->hw.max_rates = 1;
 	local->hw.max_report_rates = 0;
 	local->hw.max_rx_aggregation_subframes = IEEE80211_MAX_AMPDU_BUF;
+<<<<<<< HEAD
 	local->hw.max_tx_aggregation_subframes = IEEE80211_MAX_AMPDU_BUF;
 	local->hw.conf.long_frame_max_tx_count = wiphy->retry_long;
 	local->hw.conf.short_frame_max_tx_count = wiphy->retry_short;
 	local->user_power_level = -1;
 	wiphy->ht_capa_mod_mask = &mac80211_ht_capa_mod_mask;
+=======
+	local->hw.conf.long_frame_max_tx_count = wiphy->retry_long;
+	local->hw.conf.short_frame_max_tx_count = wiphy->retry_short;
+	local->user_power_level = -1;
+	local->uapsd_queues = IEEE80211_DEFAULT_UAPSD_QUEUES;
+	local->uapsd_max_sp_len = IEEE80211_DEFAULT_MAX_SP_LEN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	INIT_LIST_HEAD(&local->interfaces);
 
@@ -635,11 +769,14 @@ struct ieee80211_hw *ieee80211_alloc_hw(size_t priv_data_len,
 	INIT_WORK(&local->sched_scan_stopped_work,
 		  ieee80211_sched_scan_stopped_work);
 
+<<<<<<< HEAD
 	spin_lock_init(&local->ack_status_lock);
 	idr_init(&local->ack_status_frames);
 	/* preallocate at least one entry */
 	idr_pre_get(&local->ack_status_frames, GFP_KERNEL);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sta_info_init(local);
 
 	for (i = 0; i < IEEE80211_MAX_QUEUES; i++) {
@@ -663,7 +800,11 @@ struct ieee80211_hw *ieee80211_alloc_hw(size_t priv_data_len,
 
 	ieee80211_hw_roc_setup(local);
 
+<<<<<<< HEAD
 	return &local->hw;
+=======
+	return local_to_hw(local);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(ieee80211_alloc_hw);
 
@@ -692,9 +833,12 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
 	    )
 		return -EINVAL;
 
+<<<<<<< HEAD
 	if ((hw->flags & IEEE80211_HW_SCAN_WHILE_IDLE) && !local->ops->hw_scan)
 		return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (hw->max_report_rates == 0)
 		hw->max_report_rates = hw->max_rates;
 
@@ -730,12 +874,15 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
 	if (!local->int_scan_req)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	for (band = 0; band < IEEE80211_NUM_BANDS; band++) {
 		if (!local->hw.wiphy->bands[band])
 			continue;
 		local->int_scan_req->rates[band] = (u32) -1;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* if low-level driver supports AP, we also support VLAN */
 	if (local->hw.wiphy->interface_modes & BIT(NL80211_IFTYPE_AP)) {
 		hw->wiphy->interface_modes |= BIT(NL80211_IFTYPE_AP_VLAN);
@@ -856,10 +1003,13 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
 	if (local->ops->sched_scan_start)
 		local->hw.wiphy->flags |= WIPHY_FLAG_SUPPORTS_SCHED_SCAN;
 
+<<<<<<< HEAD
 	/* mac80211 based drivers don't support internal TDLS setup */
 	if (local->hw.wiphy->flags & WIPHY_FLAG_SUPPORTS_TDLS)
 		local->hw.wiphy->flags |= WIPHY_FLAG_TDLS_EXTERNAL_SETUP;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	result = wiphy_register(local->hw.wiphy);
 	if (result < 0)
 		goto fail_wiphy_register;
@@ -883,8 +1033,17 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
 	 * and we need some headroom for passing the frame to monitor
 	 * interfaces, but never both at the same time.
 	 */
+<<<<<<< HEAD
 	local->tx_headroom = max_t(unsigned int , local->hw.extra_tx_headroom,
 				   IEEE80211_TX_STATUS_HEADROOM);
+=======
+#ifndef __CHECKER__
+	BUILD_BUG_ON(IEEE80211_TX_STATUS_HEADROOM !=
+			sizeof(struct ieee80211_tx_status_rtap_hdr));
+#endif
+	local->tx_headroom = max_t(unsigned int , local->hw.extra_tx_headroom,
+				   sizeof(struct ieee80211_tx_status_rtap_hdr));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	debugfs_hw_add(local);
 
@@ -1006,6 +1165,10 @@ void ieee80211_unregister_hw(struct ieee80211_hw *hw)
 	cancel_work_sync(&local->reconfig_filter);
 
 	ieee80211_clear_tx_pending(local);
+<<<<<<< HEAD
+=======
+	sta_info_stop(local);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rate_control_deinitialize(local);
 
 	if (skb_queue_len(&local->skb_queue) ||
@@ -1017,13 +1180,17 @@ void ieee80211_unregister_hw(struct ieee80211_hw *hw)
 
 	destroy_workqueue(local->workqueue);
 	wiphy_unregister(local->hw.wiphy);
+<<<<<<< HEAD
 	sta_info_stop(local);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ieee80211_wep_free(local);
 	ieee80211_led_exit(local);
 	kfree(local->int_scan_req);
 }
 EXPORT_SYMBOL(ieee80211_unregister_hw);
 
+<<<<<<< HEAD
 static int ieee80211_free_ack_frame(int id, void *p, void *data)
 {
 	WARN_ONCE(1, "Have pending ack frames!\n");
@@ -1031,6 +1198,8 @@ static int ieee80211_free_ack_frame(int id, void *p, void *data)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void ieee80211_free_hw(struct ieee80211_hw *hw)
 {
 	struct ieee80211_local *local = hw_to_local(hw);
@@ -1041,10 +1210,13 @@ void ieee80211_free_hw(struct ieee80211_hw *hw)
 	if (local->wiphy_ciphers_allocated)
 		kfree(local->hw.wiphy->cipher_suites);
 
+<<<<<<< HEAD
 	idr_for_each(&local->ack_status_frames,
 		     ieee80211_free_ack_frame, NULL);
 	idr_destroy(&local->ack_status_frames);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wiphy_free(local->hw.wiphy);
 }
 EXPORT_SYMBOL(ieee80211_free_hw);

@@ -9,6 +9,10 @@
 #include <linux/namei.h>
 #include <linux/writeback.h>
 #include <linux/vmalloc.h>
+<<<<<<< HEAD
+=======
+#include <linux/pagevec.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "super.h"
 #include "mds_client.h"
@@ -297,8 +301,11 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
 
 	dout("alloc_inode %p\n", &ci->vfs_inode);
 
+<<<<<<< HEAD
 	spin_lock_init(&ci->i_ceph_lock);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ci->i_version = 0;
 	ci->i_time_warp_seq = 0;
 	ci->i_ceph_flags = 0;
@@ -384,6 +391,10 @@ static void ceph_i_callback(struct rcu_head *head)
 	struct inode *inode = container_of(head, struct inode, i_rcu);
 	struct ceph_inode_info *ci = ceph_inode(inode);
 
+<<<<<<< HEAD
+=======
+	INIT_LIST_HEAD(&inode->i_dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kmem_cache_free(ceph_inode_cachep, ci);
 }
 
@@ -560,8 +571,12 @@ static int fill_inode(struct inode *inode,
 	struct ceph_mds_reply_inode *info = iinfo->in;
 	struct ceph_inode_info *ci = ceph_inode(inode);
 	int i;
+<<<<<<< HEAD
 	int issued = 0, implemented;
 	int updating_inode = 0;
+=======
+	int issued, implemented;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct timespec mtime, atime, ctime;
 	u32 nsplits;
 	struct ceph_buffer *xattr_blob = NULL;
@@ -584,7 +599,11 @@ static int fill_inode(struct inode *inode,
 			       iinfo->xattr_len);
 	}
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * provided version will be odd if inode value is projected,
@@ -600,8 +619,12 @@ static int fill_inode(struct inode *inode,
 	if (le64_to_cpu(info->version) > 0 &&
 	    (ci->i_version & ~1) >= le64_to_cpu(info->version))
 		goto no_change;
+<<<<<<< HEAD
 	
 	updating_inode = 1;
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	issued = __ceph_caps_issued(ci, &implemented);
 	issued |= implemented | __ceph_caps_dirty(ci);
 
@@ -619,7 +642,11 @@ static int fill_inode(struct inode *inode,
 	}
 
 	if ((issued & CEPH_CAP_LINK_EXCL) == 0)
+<<<<<<< HEAD
 		set_nlink(inode, le32_to_cpu(info->nlink));
+=======
+		inode->i_nlink = le32_to_cpu(info->nlink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* be careful with mtime, atime, size */
 	ceph_decode_timespec(&atime, &info->atime);
@@ -677,6 +704,7 @@ static int fill_inode(struct inode *inode,
 	case S_IFLNK:
 		inode->i_op = &ceph_symlink_iops;
 		if (!ci->i_symlink) {
+<<<<<<< HEAD
 			u32 symlen = iinfo->symlink_len;
 			char *sym;
 
@@ -692,6 +720,22 @@ static int fill_inode(struct inode *inode,
 				goto out;
 
 			spin_lock(&ci->i_ceph_lock);
+=======
+			int symlen = iinfo->symlink_len;
+			char *sym;
+
+			BUG_ON(symlen != inode->i_size);
+			spin_unlock(&inode->i_lock);
+
+			err = -ENOMEM;
+			sym = kmalloc(symlen+1, GFP_NOFS);
+			if (!sym)
+				goto out;
+			memcpy(sym, iinfo->symlink, symlen);
+			sym[symlen] = 0;
+
+			spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!ci->i_symlink)
 				ci->i_symlink = sym;
 			else
@@ -710,6 +754,20 @@ static int fill_inode(struct inode *inode,
 		ci->i_rfiles = le64_to_cpu(info->rfiles);
 		ci->i_rsubdirs = le64_to_cpu(info->rsubdirs);
 		ceph_decode_timespec(&ci->i_rctime, &info->rctime);
+<<<<<<< HEAD
+=======
+
+		/* set dir completion flag? */
+		if (ci->i_files == 0 && ci->i_subdirs == 0 &&
+		    ceph_snap(inode) == CEPH_NOSNAP &&
+		    (le32_to_cpu(info->cap.caps) & CEPH_CAP_FILE_SHARED) &&
+		    (issued & CEPH_CAP_FILE_EXCL) == 0 &&
+		    (ci->i_ceph_flags & CEPH_I_COMPLETE) == 0) {
+			dout(" marking %p complete (empty)\n", inode);
+			/* ci->i_ceph_flags |= CEPH_I_COMPLETE; */
+			ci->i_max_offset = 2;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		pr_err("fill_inode %llx.%llx BAD mode 0%o\n",
@@ -717,7 +775,11 @@ static int fill_inode(struct inode *inode,
 	}
 
 no_change:
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* queue truncate if we saw i_size decrease */
 	if (queue_trunc)
@@ -752,13 +814,21 @@ no_change:
 				     info->cap.flags,
 				     caps_reservation);
 		} else {
+<<<<<<< HEAD
 			spin_lock(&ci->i_ceph_lock);
+=======
+			spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dout(" %p got snap_caps %s\n", inode,
 			     ceph_cap_string(le32_to_cpu(info->cap.caps)));
 			ci->i_snap_caps |= le32_to_cpu(info->cap.caps);
 			if (cap_fmode >= 0)
 				__ceph_get_fmode(ci, cap_fmode);
+<<<<<<< HEAD
 			spin_unlock(&ci->i_ceph_lock);
+=======
+			spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else if (cap_fmode >= 0) {
 		pr_warning("mds issued no caps on %llx.%llx\n",
@@ -766,6 +836,7 @@ no_change:
 		__ceph_get_fmode(ci, cap_fmode);
 	}
 
+<<<<<<< HEAD
 	/* set dir completion flag? */
 	if (S_ISDIR(inode->i_mode) &&
 	    updating_inode &&                 /* didn't jump to no_change */
@@ -779,6 +850,8 @@ no_change:
 		ci->i_max_offset = 2;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* update delegation info? */
 	if (dirinfo)
 		ceph_fill_dirfrag(inode, dirinfo);
@@ -810,14 +883,23 @@ static void update_dentry_lease(struct dentry *dentry,
 		return;
 
 	spin_lock(&dentry->d_lock);
+<<<<<<< HEAD
 	dout("update_dentry_lease %p duration %lu ms ttl %lu\n",
 	     dentry, duration, ttl);
+=======
+	dout("update_dentry_lease %p mask %d duration %lu ms ttl %lu\n",
+	     dentry, le16_to_cpu(lease->mask), duration, ttl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* make lease_rdcache_gen match directory */
 	dir = dentry->d_parent->d_inode;
 	di->lease_shared_gen = ceph_inode(dir)->i_shared_gen;
 
+<<<<<<< HEAD
 	if (duration == 0)
+=======
+	if (lease->mask == 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_unlock;
 
 	if (di->lease_gen == session->s_cap_gen &&
@@ -844,18 +926,26 @@ out_unlock:
 /*
  * Set dentry's directory position based on the current dir's max, and
  * order it in d_subdirs, so that dcache_readdir behaves.
+<<<<<<< HEAD
  *
  * Always called under directory's i_mutex.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void ceph_set_dentry_offset(struct dentry *dn)
 {
 	struct dentry *dir = dn->d_parent;
+<<<<<<< HEAD
 	struct inode *inode = dir->d_inode;
 	struct ceph_inode_info *ci;
+=======
+	struct inode *inode = dn->d_parent->d_inode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ceph_dentry_info *di;
 
 	BUG_ON(!inode);
 
+<<<<<<< HEAD
 	ci = ceph_inode(inode);
 	di = ceph_dentry(dn);
 
@@ -866,6 +956,17 @@ static void ceph_set_dentry_offset(struct dentry *dn)
 	}
 	di->offset = ceph_inode(inode)->i_max_offset++;
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	di = ceph_dentry(dn);
+
+	spin_lock(&inode->i_lock);
+	if ((ceph_inode(inode)->i_ceph_flags & CEPH_I_COMPLETE) == 0) {
+		spin_unlock(&inode->i_lock);
+		return;
+	}
+	di->offset = ceph_inode(inode)->i_max_offset++;
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock(&dir->d_lock);
 	spin_lock_nested(&dn->d_lock, DENTRY_D_LOCK_NESTED);
@@ -992,6 +1093,7 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req,
 	if (rinfo->head->is_dentry) {
 		struct inode *dir = req->r_locked_dir;
 
+<<<<<<< HEAD
 		if (dir) {
 			err = fill_inode(dir, &rinfo->diri, rinfo->dirfrag,
 					 session, req->r_request_started, -1,
@@ -1001,6 +1103,13 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req,
 		} else {
 			WARN_ON_ONCE(1);
 		}
+=======
+		err = fill_inode(dir, &rinfo->diri, rinfo->dirfrag,
+				 session, req->r_request_started, -1,
+				 &req->r_caps_reservation);
+		if (err < 0)
+			return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -1008,7 +1117,10 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req,
 	 * will have trouble splicing in the virtual snapdir later
 	 */
 	if (rinfo->head->is_dentry && !req->r_aborted &&
+<<<<<<< HEAD
 	    req->r_locked_dir &&
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    (rinfo->head->is_target || strncmp(req->r_dentry->d_name.name,
 					       fsc->mount_options->snapdir_name,
 					       req->r_dentry->d_name.len))) {
@@ -1036,7 +1148,13 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req,
 
 		/* do we have a dn lease? */
 		have_lease = have_dir_cap ||
+<<<<<<< HEAD
 			le32_to_cpu(rinfo->dlease->duration_ms);
+=======
+			(le16_to_cpu(rinfo->dlease->mask) &
+			 CEPH_LOCK_DN);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!have_lease)
 			dout("fill_trace  no dentry lease or dir cap\n");
 
@@ -1065,7 +1183,11 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req,
 			 * d_move() puts the renamed dentry at the end of
 			 * d_subdirs.  We need to assign it an appropriate
 			 * directory offset so we can behave when holding
+<<<<<<< HEAD
 			 * D_COMPLETE.
+=======
+			 * I_COMPLETE.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 */
 			ceph_set_dentry_offset(req->r_old_dentry);
 			dout("dn %p gets new offset %lld\n", req->r_old_dentry, 
@@ -1317,7 +1439,11 @@ int ceph_inode_set_size(struct inode *inode, loff_t size)
 	struct ceph_inode_info *ci = ceph_inode(inode);
 	int ret = 0;
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dout("set_size %p %llu -> %llu\n", inode, inode->i_size, size);
 	inode->i_size = size;
 	inode->i_blocks = (size + (1 << 9) - 1) >> 9;
@@ -1327,7 +1453,11 @@ int ceph_inode_set_size(struct inode *inode, loff_t size)
 	    (ci->i_reported_size << 1) < ci->i_max_size)
 		ret = 1;
 
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1337,6 +1467,7 @@ int ceph_inode_set_size(struct inode *inode, loff_t size)
  */
 void ceph_queue_writeback(struct inode *inode)
 {
+<<<<<<< HEAD
 	ihold(inode);
 	if (queue_work(ceph_inode_to_client(inode)->wb_wq,
 		       &ceph_inode(inode)->i_wb_work)) {
@@ -1344,6 +1475,14 @@ void ceph_queue_writeback(struct inode *inode)
 	} else {
 		dout("ceph_queue_writeback %p failed\n", inode);
 		iput(inode);
+=======
+	if (queue_work(ceph_inode_to_client(inode)->wb_wq,
+		       &ceph_inode(inode)->i_wb_work)) {
+		dout("ceph_queue_writeback %p\n", inode);
+		ihold(inode);
+	} else {
+		dout("ceph_queue_writeback %p failed\n", inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1363,6 +1502,7 @@ static void ceph_writeback_work(struct work_struct *work)
  */
 void ceph_queue_invalidate(struct inode *inode)
 {
+<<<<<<< HEAD
 	ihold(inode);
 	if (queue_work(ceph_inode_to_client(inode)->pg_inv_wq,
 		       &ceph_inode(inode)->i_pg_inv_work)) {
@@ -1370,6 +1510,57 @@ void ceph_queue_invalidate(struct inode *inode)
 	} else {
 		dout("ceph_queue_invalidate %p failed\n", inode);
 		iput(inode);
+=======
+	if (queue_work(ceph_inode_to_client(inode)->pg_inv_wq,
+		       &ceph_inode(inode)->i_pg_inv_work)) {
+		dout("ceph_queue_invalidate %p\n", inode);
+		ihold(inode);
+	} else {
+		dout("ceph_queue_invalidate %p failed\n", inode);
+	}
+}
+
+/*
+ * invalidate any pages that are not dirty or under writeback.  this
+ * includes pages that are clean and mapped.
+ */
+static void ceph_invalidate_nondirty_pages(struct address_space *mapping)
+{
+	struct pagevec pvec;
+	pgoff_t next = 0;
+	int i;
+
+	pagevec_init(&pvec, 0);
+	while (pagevec_lookup(&pvec, mapping, next, PAGEVEC_SIZE)) {
+		for (i = 0; i < pagevec_count(&pvec); i++) {
+			struct page *page = pvec.pages[i];
+			pgoff_t index;
+			int skip_page =
+				(PageDirty(page) || PageWriteback(page));
+
+			if (!skip_page)
+				skip_page = !trylock_page(page);
+
+			/*
+			 * We really shouldn't be looking at the ->index of an
+			 * unlocked page.  But we're not allowed to lock these
+			 * pages.  So we rely upon nobody altering the ->index
+			 * of this (pinned-by-us) page.
+			 */
+			index = page->index;
+			if (index > next)
+				next = index;
+			next++;
+
+			if (skip_page)
+				continue;
+
+			generic_error_remove_page(mapping, page);
+			unlock_page(page);
+		}
+		pagevec_release(&pvec);
+		cond_resched();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1385,11 +1576,16 @@ static void ceph_invalidate_work(struct work_struct *work)
 	u32 orig_gen;
 	int check = 0;
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dout("invalidate_pages %p gen %d revoking %d\n", inode,
 	     ci->i_rdcache_gen, ci->i_rdcache_revoking);
 	if (ci->i_rdcache_revoking != ci->i_rdcache_gen) {
 		/* nevermind! */
+<<<<<<< HEAD
 		spin_unlock(&ci->i_ceph_lock);
 		goto out;
 	}
@@ -1399,6 +1595,17 @@ static void ceph_invalidate_work(struct work_struct *work)
 	truncate_inode_pages(&inode->i_data, 0);
 
 	spin_lock(&ci->i_ceph_lock);
+=======
+		spin_unlock(&inode->i_lock);
+		goto out;
+	}
+	orig_gen = ci->i_rdcache_gen;
+	spin_unlock(&inode->i_lock);
+
+	ceph_invalidate_nondirty_pages(inode->i_mapping);
+
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (orig_gen == ci->i_rdcache_gen &&
 	    orig_gen == ci->i_rdcache_revoking) {
 		dout("invalidate_pages %p gen %d successful\n", inode,
@@ -1410,7 +1617,11 @@ static void ceph_invalidate_work(struct work_struct *work)
 		     inode, orig_gen, ci->i_rdcache_gen,
 		     ci->i_rdcache_revoking);
 	}
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (check)
 		ceph_check_caps(ci, 0, NULL);
@@ -1445,6 +1656,7 @@ void ceph_queue_vmtruncate(struct inode *inode)
 {
 	struct ceph_inode_info *ci = ceph_inode(inode);
 
+<<<<<<< HEAD
 	ihold(inode);
 	if (queue_work(ceph_sb_to_client(inode->i_sb)->trunc_wq,
 		       &ci->i_vmtruncate_work)) {
@@ -1453,6 +1665,15 @@ void ceph_queue_vmtruncate(struct inode *inode)
 		dout("ceph_queue_vmtruncate %p failed, pending=%d\n",
 		     inode, ci->i_truncate_pending);
 		iput(inode);
+=======
+	if (queue_work(ceph_sb_to_client(inode->i_sb)->trunc_wq,
+		       &ci->i_vmtruncate_work)) {
+		dout("ceph_queue_vmtruncate %p\n", inode);
+		ihold(inode);
+	} else {
+		dout("ceph_queue_vmtruncate %p failed, pending=%d\n",
+		     inode, ci->i_truncate_pending);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1466,6 +1687,7 @@ void __ceph_do_pending_vmtruncate(struct inode *inode)
 {
 	struct ceph_inode_info *ci = ceph_inode(inode);
 	u64 to;
+<<<<<<< HEAD
 	int wrbuffer_refs, finish = 0;
 
 retry:
@@ -1473,6 +1695,15 @@ retry:
 	if (ci->i_truncate_pending == 0) {
 		dout("__do_pending_vmtruncate %p none pending\n", inode);
 		spin_unlock(&ci->i_ceph_lock);
+=======
+	int wrbuffer_refs, wake = 0;
+
+retry:
+	spin_lock(&inode->i_lock);
+	if (ci->i_truncate_pending == 0) {
+		dout("__do_pending_vmtruncate %p none pending\n", inode);
+		spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -1483,7 +1714,11 @@ retry:
 	if (ci->i_wrbuffer_ref_head < ci->i_wrbuffer_ref) {
 		dout("__do_pending_vmtruncate %p flushing snaps first\n",
 		     inode);
+<<<<<<< HEAD
 		spin_unlock(&ci->i_ceph_lock);
+=======
+		spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		filemap_write_and_wait_range(&inode->i_data, 0,
 					     inode->i_sb->s_maxbytes);
 		goto retry;
@@ -1493,6 +1728,7 @@ retry:
 	wrbuffer_refs = ci->i_wrbuffer_ref;
 	dout("__do_pending_vmtruncate %p (%d) to %lld\n", inode,
 	     ci->i_truncate_pending, to);
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
 
 	truncate_inode_pages(inode->i_mapping, to);
@@ -1510,6 +1746,22 @@ retry:
 		ceph_check_caps(ci, CHECK_CAPS_AUTHONLY, NULL);
 
 	wake_up_all(&ci->i_cap_wq);
+=======
+	spin_unlock(&inode->i_lock);
+
+	truncate_inode_pages(inode->i_mapping, to);
+
+	spin_lock(&inode->i_lock);
+	ci->i_truncate_pending--;
+	if (ci->i_truncate_pending == 0)
+		wake = 1;
+	spin_unlock(&inode->i_lock);
+
+	if (wrbuffer_refs == 0)
+		ceph_check_caps(ci, CHECK_CAPS_AUTHONLY, NULL);
+	if (wake)
+		wake_up_all(&ci->i_cap_wq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -1535,7 +1787,11 @@ int ceph_setattr(struct dentry *dentry, struct iattr *attr)
 {
 	struct inode *inode = dentry->d_inode;
 	struct ceph_inode_info *ci = ceph_inode(inode);
+<<<<<<< HEAD
 	struct inode *parent_inode;
+=======
+	struct inode *parent_inode = dentry->d_parent->d_inode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const unsigned int ia_valid = attr->ia_valid;
 	struct ceph_mds_request *req;
 	struct ceph_mds_client *mdsc = ceph_sb_to_client(dentry->d_sb)->mdsc;
@@ -1559,7 +1815,11 @@ int ceph_setattr(struct dentry *dentry, struct iattr *attr)
 	if (IS_ERR(req))
 		return PTR_ERR(req);
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	issued = __ceph_caps_issued(ci, NULL);
 	dout("setattr %p issued %s\n", inode, ceph_cap_string(issued));
 
@@ -1707,7 +1967,11 @@ int ceph_setattr(struct dentry *dentry, struct iattr *attr)
 	}
 
 	release &= issued;
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (inode_dirty_flags)
 		__mark_inode_dirty(inode, inode_dirty_flags);
@@ -1718,9 +1982,13 @@ int ceph_setattr(struct dentry *dentry, struct iattr *attr)
 		req->r_inode_drop = release;
 		req->r_args.setattr.mask = cpu_to_le32(mask);
 		req->r_num_caps = 1;
+<<<<<<< HEAD
 		parent_inode = ceph_get_dentry_parent_inode(dentry);
 		err = ceph_mdsc_do_request(mdsc, parent_inode, req);
 		iput(parent_inode);
+=======
+		err = ceph_mdsc_do_request(mdsc, parent_inode, req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	dout("setattr %p result=%d (%s locally, %d remote)\n", inode, err,
 	     ceph_cap_string(dirtied), mask);
@@ -1729,7 +1997,11 @@ int ceph_setattr(struct dentry *dentry, struct iattr *attr)
 	__ceph_do_pending_vmtruncate(inode);
 	return err;
 out:
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ceph_mdsc_put_request(req);
 	return err;
 }
@@ -1772,17 +2044,29 @@ int ceph_do_getattr(struct inode *inode, int mask)
  * Check inode permissions.  We verify we have a valid value for
  * the AUTH cap, then call the generic handler.
  */
+<<<<<<< HEAD
 int ceph_permission(struct inode *inode, int mask)
 {
 	int err;
 
 	if (mask & MAY_NOT_BLOCK)
+=======
+int ceph_permission(struct inode *inode, int mask, unsigned int flags)
+{
+	int err;
+
+	if (flags & IPERM_FLAG_RCU)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ECHILD;
 
 	err = ceph_do_getattr(inode, CEPH_CAP_AUTH_SHARED);
 
 	if (!err)
+<<<<<<< HEAD
 		err = generic_permission(inode, mask);
+=======
+		err = generic_permission(inode, mask, flags, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 

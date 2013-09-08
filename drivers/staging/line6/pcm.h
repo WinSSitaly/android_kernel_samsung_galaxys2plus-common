@@ -39,6 +39,12 @@
 #define LINE6_IMPULSE_DEFAULT_PERIOD 100
 #endif
 
+<<<<<<< HEAD
+=======
+#define LINE6_BACKUP_MONITOR_SIGNAL 0
+#define LINE6_REUSE_DMA_AREA_FOR_PLAYBACK 0
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
 	Get substream from Line6 PCM data structure
 */
@@ -46,6 +52,7 @@
 		(line6pcm->pcm->streams[stream].substream)
 
 /*
+<<<<<<< HEAD
 	PCM mode bits.
 
 	There are several features of the Line6 USB driver which require PCM
@@ -171,6 +178,59 @@ enum {
 	LINE6_BITS_STREAM =
 	    LINE6_BITS_PLAYBACK_STREAM |
 	    LINE6_BITS_CAPTURE_STREAM
+=======
+	PCM mode bits and masks.
+	"ALSA": operations triggered by applications via ALSA
+	"MONITOR": software monitoring
+	"IMPULSE": optional impulse response operation
+*/
+enum {
+	/* individual bits: */
+	BIT_PCM_ALSA_PLAYBACK,
+	BIT_PCM_ALSA_CAPTURE,
+	BIT_PCM_MONITOR_PLAYBACK,
+	BIT_PCM_MONITOR_CAPTURE,
+#ifdef CONFIG_LINE6_USB_IMPULSE_RESPONSE
+	BIT_PCM_IMPULSE_PLAYBACK,
+	BIT_PCM_IMPULSE_CAPTURE,
+#endif
+	BIT_PAUSE_PLAYBACK,
+	BIT_PREPARED,
+
+	/* individual masks: */
+/* *INDENT-OFF* */
+	MASK_PCM_ALSA_PLAYBACK    = 1 << BIT_PCM_ALSA_PLAYBACK,
+	MASK_PCM_ALSA_CAPTURE     = 1 << BIT_PCM_ALSA_CAPTURE,
+	MASK_PCM_MONITOR_PLAYBACK = 1 << BIT_PCM_MONITOR_PLAYBACK,
+	MASK_PCM_MONITOR_CAPTURE  = 1 << BIT_PCM_MONITOR_CAPTURE,
+#ifdef CONFIG_LINE6_USB_IMPULSE_RESPONSE
+	MASK_PCM_IMPULSE_PLAYBACK = 1 << BIT_PCM_IMPULSE_PLAYBACK,
+	MASK_PCM_IMPULSE_CAPTURE  = 1 << BIT_PCM_IMPULSE_CAPTURE,
+#endif
+	MASK_PAUSE_PLAYBACK       = 1 << BIT_PAUSE_PLAYBACK,
+	MASK_PREPARED             = 1 << BIT_PREPARED,
+/* *INDENT-ON* */
+
+	/* combined masks (by operation): */
+	MASK_PCM_ALSA = MASK_PCM_ALSA_PLAYBACK | MASK_PCM_ALSA_CAPTURE,
+	MASK_PCM_MONITOR = MASK_PCM_MONITOR_PLAYBACK | MASK_PCM_MONITOR_CAPTURE,
+#ifdef CONFIG_LINE6_USB_IMPULSE_RESPONSE
+	MASK_PCM_IMPULSE = MASK_PCM_IMPULSE_PLAYBACK | MASK_PCM_IMPULSE_CAPTURE,
+#endif
+
+	/* combined masks (by direction): */
+#ifdef CONFIG_LINE6_USB_IMPULSE_RESPONSE
+	MASK_PLAYBACK =
+	    MASK_PCM_ALSA_PLAYBACK | MASK_PCM_MONITOR_PLAYBACK |
+	    MASK_PCM_IMPULSE_PLAYBACK,
+	MASK_CAPTURE =
+	    MASK_PCM_ALSA_CAPTURE | MASK_PCM_MONITOR_CAPTURE |
+	    MASK_PCM_IMPULSE_CAPTURE
+#else
+	MASK_PLAYBACK = MASK_PCM_ALSA_PLAYBACK | MASK_PCM_MONITOR_PLAYBACK,
+	MASK_CAPTURE = MASK_PCM_ALSA_CAPTURE | MASK_PCM_MONITOR_CAPTURE
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct line6_pcm_properties {
@@ -220,6 +280,14 @@ struct snd_line6_pcm {
 	unsigned char *buffer_in;
 
 	/**
+<<<<<<< HEAD
+=======
+		 Temporary buffer index for playback.
+	*/
+	int index_out;
+
+	/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 Previously captured frame (for software monitoring).
 	*/
 	unsigned char *prev_fbuf;
@@ -364,7 +432,11 @@ struct snd_line6_pcm {
 #endif
 
 	/**
+<<<<<<< HEAD
 		 Several status bits (see LINE6_BIT_*).
+=======
+		 Several status bits (see BIT_*).
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*/
 	unsigned long flags;
 
@@ -376,7 +448,21 @@ extern int line6_init_pcm(struct usb_line6 *line6,
 extern int snd_line6_trigger(struct snd_pcm_substream *substream, int cmd);
 extern int snd_line6_prepare(struct snd_pcm_substream *substream);
 extern void line6_pcm_disconnect(struct snd_line6_pcm *line6pcm);
+<<<<<<< HEAD
 extern int line6_pcm_acquire(struct snd_line6_pcm *line6pcm, int channels);
 extern int line6_pcm_release(struct snd_line6_pcm *line6pcm, int channels);
+=======
+extern int line6_pcm_start(struct snd_line6_pcm *line6pcm, int channels);
+extern int line6_pcm_stop(struct snd_line6_pcm *line6pcm, int channels);
+
+#define PRINT_FRAME_DIFF(op) {						\
+	static int diff_prev = 1000;					\
+	int diff = line6pcm->last_frame_out - line6pcm->last_frame_in;	\
+	if ((diff != diff_prev) && (abs(diff) < 100)) {			\
+		printk(KERN_INFO "%s frame diff = %d\n", op, diff);	\
+		diff_prev = diff;					\
+	}								\
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

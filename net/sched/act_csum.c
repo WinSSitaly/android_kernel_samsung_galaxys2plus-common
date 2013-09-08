@@ -500,7 +500,11 @@ fail:
 }
 
 static int tcf_csum(struct sk_buff *skb,
+<<<<<<< HEAD
 		    const struct tc_action *a, struct tcf_result *res)
+=======
+		    struct tc_action *a, struct tcf_result *res)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tcf_csum *p = a->priv;
 	int action;

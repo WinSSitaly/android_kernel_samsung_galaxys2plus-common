@@ -31,11 +31,18 @@
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 
+<<<<<<< HEAD
 #include <mach/pxa25x.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/audio.h>
 #include <mach/palmte2.h>
 #include <mach/mmc.h>
 #include <mach/pxafb.h>
+<<<<<<< HEAD
+=======
+#include <mach/mfp-pxa25x.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/irda.h>
 #include <mach/udc.h>
 #include <mach/palmasoc.h>
@@ -356,6 +363,7 @@ static void __init palmte2_init(void)
 }
 
 MACHINE_START(PALMTE2, "Palm Tungsten|E2")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= pxa25x_map_io,
 	.nr_irqs	= PXA_NR_IRQS,
@@ -364,4 +372,11 @@ MACHINE_START(PALMTE2, "Palm Tungsten|E2")
 	.timer		= &pxa_timer,
 	.init_machine	= palmte2_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params	= 0xa0000100,
+	.map_io		= pxa25x_map_io,
+	.init_irq	= pxa25x_init_irq,
+	.timer		= &pxa_timer,
+	.init_machine	= palmte2_init
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

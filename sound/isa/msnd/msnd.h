@@ -249,7 +249,11 @@ struct snd_msnd {
 
 	/* State variables */
 	enum { msndClassic, msndPinnacle } type;
+<<<<<<< HEAD
 	fmode_t mode;
+=======
+	mode_t mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 #define F_RESETTING			0
 #define F_HAVEDIGITAL			1

@@ -37,7 +37,10 @@
 
 static void dump_xframe(struct _adapter *padapter,
 			struct xmit_frame *pxmitframe);
+<<<<<<< HEAD
 static void update_txdesc(struct xmit_frame *pxmitframe, uint *pmem, int sz);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 sint _r8712_init_hw_txqueue(struct hw_txqueue *phw_txqueue, u8 ac_tag)
 {
@@ -239,6 +242,7 @@ exit_dequeue_xframe_ex:
 void r8712_do_queue_select(struct _adapter *padapter,
 			   struct pkt_attrib *pattrib)
 {
+<<<<<<< HEAD
 	unsigned int qsel = 0;
 	struct dvobj_priv *pdvobj = (struct dvobj_priv *)&padapter->dvobjpriv;
 
@@ -413,6 +417,18 @@ u8 r8712_dump_aggr_xframe(struct xmit_buf *pxmitbuf,
 
 #endif
 
+=======
+	u8 qsel = 0;
+	struct dvobj_priv *pdvobj = (struct dvobj_priv *)&padapter->dvobjpriv;
+
+	if (pdvobj->nr_endpoint == 6)
+		qsel = pattrib->priority;
+	else if (pdvobj->nr_endpoint == 4)
+		qsel = pattrib->priority;
+	pattrib->qsel = qsel;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void update_txdesc(struct xmit_frame *pxmitframe, uint *pmem, int sz)
 {
 	uint qsel;
@@ -423,9 +439,12 @@ static void update_txdesc(struct xmit_frame *pxmitframe, uint *pmem, int sz)
 	struct pkt_attrib *pattrib = &pxmitframe->attrib;
 	struct tx_desc *ptxdesc = (struct tx_desc *)pmem;
 	struct dvobj_priv *pdvobj = (struct dvobj_priv *)&padapter->dvobjpriv;
+<<<<<<< HEAD
 #ifdef CONFIG_R8712_TX_AGGR
 	struct cmd_priv *pcmdpriv = (struct cmd_priv *)&padapter->cmdpriv;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 blnSetTxDescOffset;
 	sint bmcst = IS_MCAST(pattrib->ra);
 	struct ht_priv *phtpriv = &pmlmepriv->htpriv;
@@ -459,6 +478,7 @@ static void update_txdesc(struct xmit_frame *pxmitframe, uint *pmem, int sz)
 	if (pxmitframe->frame_tag == DATA_FRAMETAG) {
 		/* offset 4 */
 		ptxdesc->txdw1 |= cpu_to_le32((pattrib->mac_id)&0x1f);
+<<<<<<< HEAD
 
 #ifdef CONFIG_R8712_TX_AGGR
 		/* dirty workaround, need to check if it is aggr cmd. */
@@ -493,6 +513,10 @@ static void update_txdesc(struct xmit_frame *pxmitframe, uint *pmem, int sz)
 		qsel = (uint)(pattrib->qsel & 0x0000001f);
 		ptxdesc->txdw1 |= cpu_to_le32((qsel << QSEL_SHT) & 0x00001f00);
 #endif
+=======
+		qsel = (uint)(pattrib->qsel & 0x0000001f);
+		ptxdesc->txdw1 |= cpu_to_le32((qsel << QSEL_SHT) & 0x00001f00);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!pqospriv->qos_option)
 			ptxdesc->txdw1 |= cpu_to_le32(BIT(16));/*Non-QoS*/
 		if ((pattrib->encrypt > 0) && !pattrib->bswenc) {
@@ -614,11 +638,15 @@ int r8712_xmitframe_complete(struct _adapter *padapter,
 	struct hw_xmit *phwxmits;
 	sint hwentry;
 	struct xmit_frame *pxmitframe = NULL;
+<<<<<<< HEAD
 #ifdef CONFIG_R8712_TX_AGGR
 	struct xmit_frame *p2ndxmitframe = NULL;
 #else
 	int res = _SUCCESS, xcnt = 0;
 #endif
+=======
+	int res = _SUCCESS, xcnt = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	phwxmits = pxmitpriv->hwxmits;
 	hwentry = pxmitpriv->hwxmit_entry;
@@ -626,6 +654,7 @@ int r8712_xmitframe_complete(struct _adapter *padapter,
 		pxmitbuf = r8712_alloc_xmitbuf(pxmitpriv);
 		if (!pxmitbuf)
 			return false;
+<<<<<<< HEAD
 #ifdef CONFIG_R8712_TX_AGGR
 		pxmitbuf->aggr_nr = 0;
 #endif
@@ -694,6 +723,34 @@ int r8712_xmitframe_complete(struct _adapter *padapter,
 		r8712_free_xmitbuf(pxmitpriv, pxmitbuf);
 		return false;
 	}
+=======
+	}
+	do {
+		pxmitframe = dequeue_xframe_ex(pxmitpriv, phwxmits, hwentry);
+		if (pxmitframe) {
+			pxmitframe->pxmitbuf = pxmitbuf;
+			pxmitframe->pxmit_urb[0] = pxmitbuf->pxmit_urb[0];
+			pxmitframe->buf_addr = pxmitbuf->pbuf;
+			if (pxmitframe->frame_tag == DATA_FRAMETAG) {
+				if (pxmitframe->attrib.priority <= 15)
+					res = r8712_xmitframe_coalesce(padapter,
+					      pxmitframe->pkt, pxmitframe);
+				/* always return ndis_packet after
+				 *  r8712_xmitframe_coalesce */
+				r8712_xmit_complete(padapter, pxmitframe);
+			}
+			if (res == _SUCCESS)
+				dump_xframe(padapter, pxmitframe);
+			else
+				r8712_free_xmitframe_ex(pxmitpriv, pxmitframe);
+			xcnt++;
+		} else {
+			r8712_free_xmitbuf(pxmitpriv, pxmitbuf);
+			return false;
+		}
+		break;
+	} while (0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return true;
 }
 
@@ -727,6 +784,7 @@ static void dump_xframe(struct _adapter *padapter,
 		pxmitframe->mem_addr = mem_addr;
 		pxmitframe->bpending[t] = false;
 		ff_hwaddr = get_ff_hwaddr(pxmitframe);
+<<<<<<< HEAD
 #ifdef CONFIG_R8712_TX_AGGR
 		r8712_write_port(padapter, RTL8712_DMA_H2CCMD, w_sz,
 				(unsigned char *)pxmitframe);
@@ -734,6 +792,10 @@ static void dump_xframe(struct _adapter *padapter,
 		r8712_write_port(padapter, ff_hwaddr, w_sz,
 			   (unsigned char *)pxmitframe);
 #endif
+=======
+		r8712_write_port(padapter, ff_hwaddr, w_sz,
+			   (unsigned char *)pxmitframe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mem_addr += w_sz;
 		mem_addr = (u8 *)RND4(((addr_t)(mem_addr)));
 	}

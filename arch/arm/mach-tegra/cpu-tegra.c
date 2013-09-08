@@ -30,7 +30,13 @@
 #include <linux/io.h>
 #include <linux/suspend.h>
 
+<<<<<<< HEAD
 
+=======
+#include <asm/system.h>
+
+#include <mach/hardware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/clk.h>
 
 /* Frequency table index must be sequential starting at 0 */
@@ -55,12 +61,20 @@ static unsigned long target_cpu_speed[NUM_CPUS];
 static DEFINE_MUTEX(tegra_cpu_lock);
 static bool is_suspended;
 
+<<<<<<< HEAD
 static int tegra_verify_speed(struct cpufreq_policy *policy)
+=======
+int tegra_verify_speed(struct cpufreq_policy *policy)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return cpufreq_frequency_table_verify(policy, freq_table);
 }
 
+<<<<<<< HEAD
 static unsigned int tegra_getspeed(unsigned int cpu)
+=======
+unsigned int tegra_getspeed(unsigned int cpu)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long rate;
 
@@ -128,7 +142,11 @@ static int tegra_target(struct cpufreq_policy *policy,
 		       unsigned int target_freq,
 		       unsigned int relation)
 {
+<<<<<<< HEAD
 	unsigned int idx;
+=======
+	int idx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int freq;
 	int ret = 0;
 

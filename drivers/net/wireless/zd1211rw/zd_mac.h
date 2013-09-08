@@ -165,7 +165,10 @@ struct housekeeping {
 
 struct beacon {
 	struct delayed_work watchdog_work;
+<<<<<<< HEAD
 	struct sk_buff *cur_beacon;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long last_update;
 	u16 interval;
 	u8 period;

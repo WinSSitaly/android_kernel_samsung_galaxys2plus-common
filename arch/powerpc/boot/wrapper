@@ -144,7 +144,10 @@ tmp=$tmpdir/zImage.$$.o
 ksection=.kernel:vmlinux.strip
 isection=.kernel:initrd
 link_address='0x400000'
+<<<<<<< HEAD
 make_space=y
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 case "$platform" in
 pseries)
@@ -164,7 +167,11 @@ coff)
     link_address='0x500000'
     pie=
     ;;
+<<<<<<< HEAD
 miboot|uboot*)
+=======
+miboot|uboot)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     # miboot and U-boot want just the bare bits, not an ELF binary
     ext=bin
     objflags="-O binary"
@@ -211,7 +218,10 @@ ps3)
     ksection=.kernel:vmlinux.bin
     isection=.kernel:initrd
     link_address=''
+<<<<<<< HEAD
     make_space=n
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     pie=
     ;;
 ep88xc|ep405|ep8248e)
@@ -246,9 +256,12 @@ gamecube|wii)
     link_address='0x600000'
     platformo="$object/$platform-head.o $object/$platform.o"
     ;;
+<<<<<<< HEAD
 treeboot-currituck)
     link_address='0x1000000'
     ;;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 treeboot-iss4xx-mpic)
     platformo="$object/treeboot-iss4xx.o"
     ;;
@@ -262,8 +275,11 @@ vmz="$tmpdir/`basename \"$kernel\"`.$ext"
 if [ -z "$cacheit" -o ! -f "$vmz$gzip" -o "$vmz$gzip" -ot "$kernel" ]; then
     ${CROSS}objcopy $objflags "$kernel" "$vmz.$$"
 
+<<<<<<< HEAD
     strip_size=$(stat -c %s $vmz.$$)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     if [ -n "$gzip" ]; then
         gzip -n -f -9 "$vmz.$$"
     fi
@@ -273,6 +289,7 @@ if [ -z "$cacheit" -o ! -f "$vmz$gzip" -o "$vmz$gzip" -ot "$kernel" ]; then
     else
 	vmz="$vmz.$$"
     fi
+<<<<<<< HEAD
 else
     # Calculate the vmlinux.strip size
     ${CROSS}objcopy $objflags "$kernel" "$vmz.$$"
@@ -293,6 +310,8 @@ if [ "$make_space" = "y" ]; then
 	    echo "INFO: Fixing the link_address of wrapper to ($round_size)"
 	    link_address=$round_size
 	fi
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 fi
 
 vmz="$vmz$gzip"
@@ -318,6 +337,7 @@ uboot)
     fi
     exit 0
     ;;
+<<<<<<< HEAD
 uboot-obs600)
     rm -f "$ofile"
     # obs600 wants a multi image with an initrd, so we need to put a fake
@@ -338,6 +358,8 @@ uboot-obs600)
     fi
     exit 0
     ;;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 esac
 
 addsec() {

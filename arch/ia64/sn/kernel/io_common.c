@@ -7,7 +7,10 @@
  */
 
 #include <linux/bootmem.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <asm/sn/types.h>
 #include <asm/sn/addrs.h>

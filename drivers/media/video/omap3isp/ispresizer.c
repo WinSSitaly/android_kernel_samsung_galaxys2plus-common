@@ -1038,7 +1038,11 @@ static void resizer_isr_buffer(struct isp_res_device *res)
 	/* Complete the output buffer and, if reading from memory, the input
 	 * buffer.
 	 */
+<<<<<<< HEAD
 	buffer = omap3isp_video_buffer_next(&res->video_out);
+=======
+	buffer = omap3isp_video_buffer_next(&res->video_out, res->error);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (buffer != NULL) {
 		resizer_set_outaddr(res, buffer->isp_addr);
 		restart = 1;
@@ -1047,7 +1051,11 @@ static void resizer_isr_buffer(struct isp_res_device *res)
 	pipe->state |= ISP_PIPELINE_IDLE_OUTPUT;
 
 	if (res->input == RESIZER_INPUT_MEMORY) {
+<<<<<<< HEAD
 		buffer = omap3isp_video_buffer_next(&res->video_in);
+=======
+		buffer = omap3isp_video_buffer_next(&res->video_in, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (buffer != NULL)
 			resizer_set_inaddr(res, buffer->isp_addr);
 		pipe->state |= ISP_PIPELINE_IDLE_INPUT;
@@ -1064,6 +1072,11 @@ static void resizer_isr_buffer(struct isp_res_device *res)
 		if (restart)
 			resizer_enable_oneshot(res);
 	}
+<<<<<<< HEAD
+=======
+
+	res->error = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1152,6 +1165,10 @@ static int resizer_set_stream(struct v4l2_subdev *sd, int enable)
 
 		omap3isp_subclk_enable(isp, OMAP3_ISP_SUBCLK_RESIZER);
 		resizer_configure(res);
+<<<<<<< HEAD
+=======
+		res->error = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		resizer_print_status(res);
 	}
 
@@ -1605,6 +1622,7 @@ static const struct media_entity_operations resizer_media_ops = {
 	.link_setup = resizer_link_setup,
 };
 
+<<<<<<< HEAD
 void omap3isp_resizer_unregister_entities(struct isp_res_device *res)
 {
 	v4l2_device_unregister_subdev(&res->subdev);
@@ -1641,6 +1659,8 @@ error:
  * ISP resizer initialization and cleanup
  */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * resizer_init_entities - Initialize resizer subdev and media entity.
  * @res : Pointer to resizer device structure
@@ -1685,21 +1705,34 @@ static int resizer_init_entities(struct isp_res_device *res)
 
 	ret = omap3isp_video_init(&res->video_in, "resizer");
 	if (ret < 0)
+<<<<<<< HEAD
 		goto error_video_in;
 
 	ret = omap3isp_video_init(&res->video_out, "resizer");
 	if (ret < 0)
 		goto error_video_out;
+=======
+		return ret;
+
+	ret = omap3isp_video_init(&res->video_out, "resizer");
+	if (ret < 0)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Connect the video nodes to the resizer subdev. */
 	ret = media_entity_create_link(&res->video_in.video.entity, 0,
 			&res->subdev.entity, RESZ_PAD_SINK, 0);
 	if (ret < 0)
+<<<<<<< HEAD
 		goto error_link;
+=======
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = media_entity_create_link(&res->subdev.entity, RESZ_PAD_SOURCE,
 			&res->video_out.video.entity, 0, 0);
 	if (ret < 0)
+<<<<<<< HEAD
 		goto error_link;
 
 	return 0;
@@ -1713,6 +1746,55 @@ error_video_in:
 	return ret;
 }
 
+=======
+		return ret;
+
+	return 0;
+}
+
+void omap3isp_resizer_unregister_entities(struct isp_res_device *res)
+{
+	media_entity_cleanup(&res->subdev.entity);
+
+	v4l2_device_unregister_subdev(&res->subdev);
+	omap3isp_video_unregister(&res->video_in);
+	omap3isp_video_unregister(&res->video_out);
+}
+
+int omap3isp_resizer_register_entities(struct isp_res_device *res,
+				       struct v4l2_device *vdev)
+{
+	int ret;
+
+	/* Register the subdev and video nodes. */
+	ret = v4l2_device_register_subdev(vdev, &res->subdev);
+	if (ret < 0)
+		goto error;
+
+	ret = omap3isp_video_register(&res->video_in, vdev);
+	if (ret < 0)
+		goto error;
+
+	ret = omap3isp_video_register(&res->video_out, vdev);
+	if (ret < 0)
+		goto error;
+
+	return 0;
+
+error:
+	omap3isp_resizer_unregister_entities(res);
+	return ret;
+}
+
+/* -----------------------------------------------------------------------------
+ * ISP resizer initialization and cleanup
+ */
+
+void omap3isp_resizer_cleanup(struct isp_device *isp)
+{
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * isp_resizer_init - Resizer initialization.
  * @isp : Pointer to ISP device
@@ -1721,6 +1803,7 @@ error_video_in:
 int omap3isp_resizer_init(struct isp_device *isp)
 {
 	struct isp_res_device *res = &isp->isp_res;
+<<<<<<< HEAD
 
 	init_waitqueue_head(&res->wait);
 	atomic_set(&res->stopping, 0);
@@ -1734,4 +1817,19 @@ void omap3isp_resizer_cleanup(struct isp_device *isp)
 	omap3isp_video_cleanup(&res->video_in);
 	omap3isp_video_cleanup(&res->video_out);
 	media_entity_cleanup(&res->subdev.entity);
+=======
+	int ret;
+
+	init_waitqueue_head(&res->wait);
+	atomic_set(&res->stopping, 0);
+	ret = resizer_init_entities(res);
+	if (ret < 0)
+		goto out;
+
+out:
+	if (ret)
+		omap3isp_resizer_cleanup(isp);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

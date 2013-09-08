@@ -15,7 +15,11 @@
 
 #include <linux/compiler.h>
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <asm/cmpxchg.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define ATOMIC_INIT(i)  { (i) }
 
@@ -93,7 +97,11 @@ static inline int atomic_cmpxchg(atomic_t *v, int old, int new)
 	return old;
 }
 
+<<<<<<< HEAD
 static inline int __atomic_add_unless(atomic_t *v, int a, int u)
+=======
+static inline int atomic_add_unless(atomic_t *v, int a, int u)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int c, old;
 	c = atomic_read(v);
@@ -105,9 +113,16 @@ static inline int __atomic_add_unless(atomic_t *v, int a, int u)
 			break;
 		c = old;
 	}
+<<<<<<< HEAD
 	return c;
 }
 
+=======
+	return c != u;
+}
+
+#define atomic_inc_not_zero(v) atomic_add_unless((v), 1, 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #undef __CS_LOOP
 
@@ -331,4 +346,9 @@ static inline long long atomic64_dec_if_positive(atomic64_t *v)
 #define smp_mb__before_atomic_inc()	smp_mb()
 #define smp_mb__after_atomic_inc()	smp_mb()
 
+<<<<<<< HEAD
+=======
+#include <asm-generic/atomic-long.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ARCH_S390_ATOMIC__  */

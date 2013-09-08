@@ -108,10 +108,17 @@ static int fd_request_irq(void)
 {
 	if (can_use_virtual_dma)
 		return request_irq(FLOPPY_IRQ, floppy_hardint,
+<<<<<<< HEAD
 				   0, "floppy", NULL);
 	else
 		return request_irq(FLOPPY_IRQ, floppy_interrupt,
 				   0, "floppy", NULL);
+=======
+				   IRQF_DISABLED, "floppy", NULL);
+	else
+		return request_irq(FLOPPY_IRQ, floppy_interrupt,
+				   IRQF_DISABLED, "floppy", NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int vdma_dma_setup(char *addr, unsigned long size, int mode, int io)

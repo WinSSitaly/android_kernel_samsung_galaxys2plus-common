@@ -54,7 +54,11 @@ enum armv6_perf_types {
 };
 
 enum armv6_counters {
+<<<<<<< HEAD
 	ARMV6_CYCLE_COUNTER = 0,
+=======
+	ARMV6_CYCLE_COUNTER = 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ARMV6_COUNTER0,
 	ARMV6_COUNTER1,
 };
@@ -65,6 +69,7 @@ enum armv6_counters {
  * accesses/misses in hardware.
  */
 static const unsigned armv6_perf_map[PERF_COUNT_HW_MAX] = {
+<<<<<<< HEAD
 	[PERF_COUNT_HW_CPU_CYCLES]		= ARMV6_PERFCTR_CPU_CYCLES,
 	[PERF_COUNT_HW_INSTRUCTIONS]		= ARMV6_PERFCTR_INSTR_EXEC,
 	[PERF_COUNT_HW_CACHE_REFERENCES]	= HW_OP_UNSUPPORTED,
@@ -74,6 +79,15 @@ static const unsigned armv6_perf_map[PERF_COUNT_HW_MAX] = {
 	[PERF_COUNT_HW_BUS_CYCLES]		= HW_OP_UNSUPPORTED,
 	[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND]	= ARMV6_PERFCTR_IBUF_STALL,
 	[PERF_COUNT_HW_STALLED_CYCLES_BACKEND]	= ARMV6_PERFCTR_LSU_FULL_STALL,
+=======
+	[PERF_COUNT_HW_CPU_CYCLES]	    = ARMV6_PERFCTR_CPU_CYCLES,
+	[PERF_COUNT_HW_INSTRUCTIONS]	    = ARMV6_PERFCTR_INSTR_EXEC,
+	[PERF_COUNT_HW_CACHE_REFERENCES]    = HW_OP_UNSUPPORTED,
+	[PERF_COUNT_HW_CACHE_MISSES]	    = HW_OP_UNSUPPORTED,
+	[PERF_COUNT_HW_BRANCH_INSTRUCTIONS] = ARMV6_PERFCTR_BR_EXEC,
+	[PERF_COUNT_HW_BRANCH_MISSES]	    = ARMV6_PERFCTR_BR_MISPREDICT,
+	[PERF_COUNT_HW_BUS_CYCLES]	    = HW_OP_UNSUPPORTED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const unsigned armv6_perf_cache_map[PERF_COUNT_HW_CACHE_MAX]
@@ -175,6 +189,7 @@ static const unsigned armv6_perf_cache_map[PERF_COUNT_HW_CACHE_MAX]
 			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
 		},
 	},
+<<<<<<< HEAD
 	[C(NODE)] = {
 		[C(OP_READ)] = {
 			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
@@ -189,6 +204,8 @@ static const unsigned armv6_perf_cache_map[PERF_COUNT_HW_CACHE_MAX]
 			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
 		},
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum armv6mpcore_perf_types {
@@ -220,6 +237,7 @@ enum armv6mpcore_perf_types {
  * accesses/misses in hardware.
  */
 static const unsigned armv6mpcore_perf_map[PERF_COUNT_HW_MAX] = {
+<<<<<<< HEAD
 	[PERF_COUNT_HW_CPU_CYCLES]		= ARMV6MPCORE_PERFCTR_CPU_CYCLES,
 	[PERF_COUNT_HW_INSTRUCTIONS]		= ARMV6MPCORE_PERFCTR_INSTR_EXEC,
 	[PERF_COUNT_HW_CACHE_REFERENCES]	= HW_OP_UNSUPPORTED,
@@ -229,6 +247,15 @@ static const unsigned armv6mpcore_perf_map[PERF_COUNT_HW_MAX] = {
 	[PERF_COUNT_HW_BUS_CYCLES]		= HW_OP_UNSUPPORTED,
 	[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND]	= ARMV6MPCORE_PERFCTR_IBUF_STALL,
 	[PERF_COUNT_HW_STALLED_CYCLES_BACKEND]	= ARMV6MPCORE_PERFCTR_LSU_FULL_STALL,
+=======
+	[PERF_COUNT_HW_CPU_CYCLES]	    = ARMV6MPCORE_PERFCTR_CPU_CYCLES,
+	[PERF_COUNT_HW_INSTRUCTIONS]	    = ARMV6MPCORE_PERFCTR_INSTR_EXEC,
+	[PERF_COUNT_HW_CACHE_REFERENCES]    = HW_OP_UNSUPPORTED,
+	[PERF_COUNT_HW_CACHE_MISSES]	    = HW_OP_UNSUPPORTED,
+	[PERF_COUNT_HW_BRANCH_INSTRUCTIONS] = ARMV6MPCORE_PERFCTR_BR_EXEC,
+	[PERF_COUNT_HW_BRANCH_MISSES]	    = ARMV6MPCORE_PERFCTR_BR_MISPREDICT,
+	[PERF_COUNT_HW_BUS_CYCLES]	    = HW_OP_UNSUPPORTED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const unsigned armv6mpcore_perf_cache_map[PERF_COUNT_HW_CACHE_MAX]
@@ -328,6 +355,7 @@ static const unsigned armv6mpcore_perf_cache_map[PERF_COUNT_HW_CACHE_MAX]
 			[C(RESULT_MISS)]    = CACHE_OP_UNSUPPORTED,
 		},
 	},
+<<<<<<< HEAD
 	[C(NODE)] = {
 		[C(OP_READ)] = {
 			[C(RESULT_ACCESS)]  = CACHE_OP_UNSUPPORTED,
@@ -342,6 +370,8 @@ static const unsigned armv6mpcore_perf_cache_map[PERF_COUNT_HW_CACHE_MAX]
 			[C(RESULT_MISS)]    = CACHE_OP_UNSUPPORTED,
 		},
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline unsigned long
@@ -437,7 +467,10 @@ armv6pmu_enable_event(struct hw_perf_event *hwc,
 		      int idx)
 {
 	unsigned long val, mask, evt, flags;
+<<<<<<< HEAD
 	struct pmu_hw_events *events = cpu_pmu->get_hw_events();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ARMV6_CYCLE_COUNTER == idx) {
 		mask	= 0;
@@ -459,12 +492,20 @@ armv6pmu_enable_event(struct hw_perf_event *hwc,
 	 * Mask out the current event and set the counter to count the event
 	 * that we're interested in.
 	 */
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&events->pmu_lock, flags);
+=======
+	raw_spin_lock_irqsave(&pmu_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	val = armv6_pmcr_read();
 	val &= ~mask;
 	val |= evt;
 	armv6_pmcr_write(val);
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
+=======
+	raw_spin_unlock_irqrestore(&pmu_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static irqreturn_t
@@ -473,7 +514,11 @@ armv6pmu_handle_irq(int irq_num,
 {
 	unsigned long pmcr = armv6_pmcr_read();
 	struct perf_sample_data data;
+<<<<<<< HEAD
 	struct pmu_hw_events *cpuc;
+=======
+	struct cpu_hw_events *cpuc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pt_regs *regs;
 	int idx;
 
@@ -492,12 +537,20 @@ armv6pmu_handle_irq(int irq_num,
 	perf_sample_data_init(&data, 0);
 
 	cpuc = &__get_cpu_var(cpu_hw_events);
+<<<<<<< HEAD
 	for (idx = 0; idx < cpu_pmu->num_events; ++idx) {
 		struct perf_event *event = cpuc->events[idx];
 		struct hw_perf_event *hwc;
 
 		/* Ignore if we don't have an event. */
 		if (!event)
+=======
+	for (idx = 0; idx <= armpmu->num_events; ++idx) {
+		struct perf_event *event = cpuc->events[idx];
+		struct hw_perf_event *hwc;
+
+		if (!test_bit(idx, cpuc->active_mask))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 
 		/*
@@ -508,13 +561,22 @@ armv6pmu_handle_irq(int irq_num,
 			continue;
 
 		hwc = &event->hw;
+<<<<<<< HEAD
 		armpmu_event_update(event, hwc, idx);
+=======
+		armpmu_event_update(event, hwc, idx, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		data.period = event->hw.last_period;
 		if (!armpmu_event_set_period(event, hwc, idx))
 			continue;
 
+<<<<<<< HEAD
 		if (perf_event_overflow(event, &data, regs))
 			cpu_pmu->disable(hwc, idx);
+=======
+		if (perf_event_overflow(event, 0, &data, regs))
+			armpmu->disable(hwc, idx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -533,6 +595,7 @@ static void
 armv6pmu_start(void)
 {
 	unsigned long flags, val;
+<<<<<<< HEAD
 	struct pmu_hw_events *events = cpu_pmu->get_hw_events();
 
 	raw_spin_lock_irqsave(&events->pmu_lock, flags);
@@ -540,12 +603,21 @@ armv6pmu_start(void)
 	val |= ARMV6_PMCR_ENABLE;
 	armv6_pmcr_write(val);
 	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
+=======
+
+	raw_spin_lock_irqsave(&pmu_lock, flags);
+	val = armv6_pmcr_read();
+	val |= ARMV6_PMCR_ENABLE;
+	armv6_pmcr_write(val);
+	raw_spin_unlock_irqrestore(&pmu_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
 armv6pmu_stop(void)
 {
 	unsigned long flags, val;
+<<<<<<< HEAD
 	struct pmu_hw_events *events = cpu_pmu->get_hw_events();
 
 	raw_spin_lock_irqsave(&events->pmu_lock, flags);
@@ -557,6 +629,18 @@ armv6pmu_stop(void)
 
 static int
 armv6pmu_get_event_idx(struct pmu_hw_events *cpuc,
+=======
+
+	raw_spin_lock_irqsave(&pmu_lock, flags);
+	val = armv6_pmcr_read();
+	val &= ~ARMV6_PMCR_ENABLE;
+	armv6_pmcr_write(val);
+	raw_spin_unlock_irqrestore(&pmu_lock, flags);
+}
+
+static int
+armv6pmu_get_event_idx(struct cpu_hw_events *cpuc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       struct hw_perf_event *event)
 {
 	/* Always place a cycle counter into the cycle counter. */
@@ -586,7 +670,10 @@ armv6pmu_disable_event(struct hw_perf_event *hwc,
 		       int idx)
 {
 	unsigned long val, mask, evt, flags;
+<<<<<<< HEAD
 	struct pmu_hw_events *events = cpu_pmu->get_hw_events();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ARMV6_CYCLE_COUNTER == idx) {
 		mask	= ARMV6_PMCR_CCOUNT_IEN;
@@ -607,12 +694,20 @@ armv6pmu_disable_event(struct hw_perf_event *hwc,
 	 * of ETM bus signal assertion cycles. The external reporting should
 	 * be disabled and so this should never increment.
 	 */
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&events->pmu_lock, flags);
+=======
+	raw_spin_lock_irqsave(&pmu_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	val = armv6_pmcr_read();
 	val &= ~mask;
 	val |= evt;
 	armv6_pmcr_write(val);
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
+=======
+	raw_spin_unlock_irqrestore(&pmu_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -620,7 +715,10 @@ armv6mpcore_pmu_disable_event(struct hw_perf_event *hwc,
 			      int idx)
 {
 	unsigned long val, mask, flags, evt = 0;
+<<<<<<< HEAD
 	struct pmu_hw_events *events = cpu_pmu->get_hw_events();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ARMV6_CYCLE_COUNTER == idx) {
 		mask	= ARMV6_PMCR_CCOUNT_IEN;
@@ -637,11 +735,16 @@ armv6mpcore_pmu_disable_event(struct hw_perf_event *hwc,
 	 * Unlike UP ARMv6, we don't have a way of stopping the counters. We
 	 * simply disable the interrupt reporting.
 	 */
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&events->pmu_lock, flags);
+=======
+	raw_spin_lock_irqsave(&pmu_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	val = armv6_pmcr_read();
 	val &= ~mask;
 	val |= evt;
 	armv6_pmcr_write(val);
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
 }
 
@@ -652,6 +755,12 @@ static int armv6_map_event(struct perf_event *event)
 }
 
 static struct arm_pmu armv6pmu = {
+=======
+	raw_spin_unlock_irqrestore(&pmu_lock, flags);
+}
+
+static const struct arm_pmu armv6pmu = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id			= ARM_PERF_PMU_ID_V6,
 	.name			= "v6",
 	.handle_irq		= armv6pmu_handle_irq,
@@ -662,12 +771,22 @@ static struct arm_pmu armv6pmu = {
 	.get_event_idx		= armv6pmu_get_event_idx,
 	.start			= armv6pmu_start,
 	.stop			= armv6pmu_stop,
+<<<<<<< HEAD
 	.map_event		= armv6_map_event,
+=======
+	.cache_map		= &armv6_perf_cache_map,
+	.event_map		= &armv6_perf_map,
+	.raw_event_mask		= 0xFF,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.num_events		= 3,
 	.max_period		= (1LLU << 32) - 1,
 };
 
+<<<<<<< HEAD
 static struct arm_pmu *__init armv6pmu_init(void)
+=======
+static const struct arm_pmu *__init armv6pmu_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return &armv6pmu;
 }
@@ -679,6 +798,7 @@ static struct arm_pmu *__init armv6pmu_init(void)
  * disable the interrupt reporting and update the event. When unthrottling we
  * reset the period and enable the interrupt reporting.
  */
+<<<<<<< HEAD
 
 static int armv6mpcore_map_event(struct perf_event *event)
 {
@@ -687,6 +807,9 @@ static int armv6mpcore_map_event(struct perf_event *event)
 }
 
 static struct arm_pmu armv6mpcore_pmu = {
+=======
+static const struct arm_pmu armv6mpcore_pmu = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id			= ARM_PERF_PMU_ID_V6MP,
 	.name			= "v6mpcore",
 	.handle_irq		= armv6pmu_handle_irq,
@@ -697,22 +820,40 @@ static struct arm_pmu armv6mpcore_pmu = {
 	.get_event_idx		= armv6pmu_get_event_idx,
 	.start			= armv6pmu_start,
 	.stop			= armv6pmu_stop,
+<<<<<<< HEAD
 	.map_event		= armv6mpcore_map_event,
+=======
+	.cache_map		= &armv6mpcore_perf_cache_map,
+	.event_map		= &armv6mpcore_perf_map,
+	.raw_event_mask		= 0xFF,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.num_events		= 3,
 	.max_period		= (1LLU << 32) - 1,
 };
 
+<<<<<<< HEAD
 static struct arm_pmu *__init armv6mpcore_pmu_init(void)
+=======
+static const struct arm_pmu *__init armv6mpcore_pmu_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return &armv6mpcore_pmu;
 }
 #else
+<<<<<<< HEAD
 static struct arm_pmu *__init armv6pmu_init(void)
+=======
+static const struct arm_pmu *__init armv6pmu_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return NULL;
 }
 
+<<<<<<< HEAD
 static struct arm_pmu *__init armv6mpcore_pmu_init(void)
+=======
+static const struct arm_pmu *__init armv6mpcore_pmu_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return NULL;
 }

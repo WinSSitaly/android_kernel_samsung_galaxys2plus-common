@@ -1,6 +1,7 @@
 #ifndef _RAID10_H
 #define _RAID10_H
 
+<<<<<<< HEAD
 struct mirror_info {
 	struct md_rdev	*rdev, *replacement;
 	sector_t	head_position;
@@ -14,10 +15,25 @@ struct mirror_info {
 struct r10conf {
 	struct mddev		*mddev;
 	struct mirror_info	*mirrors;
+=======
+typedef struct mirror_info mirror_info_t;
+
+struct mirror_info {
+	mdk_rdev_t	*rdev;
+	sector_t	head_position;
+};
+
+typedef struct r10bio_s r10bio_t;
+
+struct r10_private_data_s {
+	mddev_t			*mddev;
+	mirror_info_t		*mirrors;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			raid_disks;
 	spinlock_t		device_lock;
 
 	/* geometry */
+<<<<<<< HEAD
 	int			near_copies;  /* number of copies laid out
 					       * raid0 style */
 	int 			far_copies;   /* number of copies laid out
@@ -25,6 +41,14 @@ struct r10conf {
 					       */
 	int			far_offset;   /* far_copies are offset by 1
 					       * stripe instead of many
+=======
+	int			near_copies;  /* number of copies laid out raid0 style */
+	int 			far_copies;   /* number of copies laid out
+					       * at large strides across drives
+					       */
+	int			far_offset;   /* far_copies are offset by 1 stripe
+					       * instead of many
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					       */
 	int			copies;	      /* near_copies * far_copies.
 					       * must be <= raid_disks
@@ -35,15 +59,23 @@ struct r10conf {
 					       * 1 stripe.
 					       */
 
+<<<<<<< HEAD
 	sector_t		dev_sectors;  /* temp copy of
 					       * mddev->dev_sectors */
 
 	int			chunk_shift; /* shift from chunks to sectors */
 	sector_t		chunk_mask;
+=======
+	sector_t		dev_sectors;  /* temp copy of mddev->dev_sectors */
+
+	int chunk_shift; /* shift from chunks to sectors */
+	sector_t chunk_mask;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct list_head	retry_list;
 	/* queue pending writes and submit them on unplug */
 	struct bio_list		pending_bio_list;
+<<<<<<< HEAD
 	int			pending_count;
 
 	spinlock_t		resync_lock;
@@ -51,11 +83,21 @@ struct r10conf {
 	int			nr_waiting;
 	int			nr_queued;
 	int			barrier;
+=======
+
+
+	spinlock_t		resync_lock;
+	int nr_pending;
+	int nr_waiting;
+	int nr_queued;
+	int barrier;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sector_t		next_resync;
 	int			fullsync;  /* set to 1 if a full sync is needed,
 					    * (fresh device added).
 					    * Cleared when a sync completes.
 					    */
+<<<<<<< HEAD
 	int			have_replacement; /* There is at least one
 						   * replacement device.
 						   */
@@ -63,14 +105,29 @@ struct r10conf {
 
 	mempool_t		*r10bio_pool;
 	mempool_t		*r10buf_pool;
+=======
+
+	wait_queue_head_t	wait_barrier;
+
+	mempool_t *r10bio_pool;
+	mempool_t *r10buf_pool;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct page		*tmppage;
 
 	/* When taking over an array from a different personality, we store
 	 * the new thread here until we fully activate the array.
 	 */
+<<<<<<< HEAD
 	struct md_thread	*thread;
 };
 
+=======
+	struct mdk_thread_s	*thread;
+};
+
+typedef struct r10_private_data_s conf_t;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * this is our 'private' RAID10 bio.
  *
@@ -78,14 +135,22 @@ struct r10conf {
  * for this RAID10 operation, and about their status:
  */
 
+<<<<<<< HEAD
 struct r10bio {
+=======
+struct r10bio_s {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atomic_t		remaining; /* 'have we finished' count,
 					    * used from IRQ handlers
 					    */
 	sector_t		sector;	/* virtual sector number */
 	int			sectors;
 	unsigned long		state;
+<<<<<<< HEAD
 	struct mddev		*mddev;
+=======
+	mddev_t			*mddev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * original bio going to /dev/mdx
 	 */
@@ -102,6 +167,7 @@ struct r10bio {
 	 * When resyncing we also use one for each copy.
 	 * When reconstructing, we use 2 bios, one for read, one for write.
 	 * We choose the number when they are allocated.
+<<<<<<< HEAD
 	 * We sometimes need an extra bio to write to the replacement.
 	 */
 	struct r10dev {
@@ -114,6 +180,13 @@ struct r10bio {
 		};
 		sector_t	addr;
 		int		devnum;
+=======
+	 */
+	struct {
+		struct bio		*bio;
+		sector_t addr;
+		int devnum;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} devs[0];
 };
 
@@ -123,6 +196,7 @@ struct r10bio {
  * level, we store IO_BLOCKED in the appropriate 'bios' pointer
  */
 #define IO_BLOCKED ((struct bio*)1)
+<<<<<<< HEAD
 /* When we successfully write to a known bad-block, we need to remove the
  * bad-block marking which must be done from process context.  So we record
  * the success by setting devs[n].bio to IO_MADE_GOOD
@@ -147,4 +221,12 @@ enum r10bio_state {
 	R10BIO_MadeGood,
 	R10BIO_WriteError,
 };
+=======
+
+/* bits for r10bio.state */
+#define	R10BIO_Uptodate	0
+#define	R10BIO_IsSync	1
+#define	R10BIO_IsRecover 2
+#define	R10BIO_Degraded 3
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

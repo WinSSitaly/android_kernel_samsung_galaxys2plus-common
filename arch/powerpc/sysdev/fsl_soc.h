@@ -22,6 +22,7 @@ struct device_node;
 extern void fsl_rstcr_restart(char *cmd);
 
 #if defined(CONFIG_FB_FSL_DIU) || defined(CONFIG_FB_FSL_DIU_MODULE)
+<<<<<<< HEAD
 
 /* The different ports that the DIU can be connected to */
 enum fsl_diu_monitor_port {
@@ -40,13 +41,27 @@ struct platform_diu_data_ops {
 	enum fsl_diu_monitor_port (*valid_monitor_port)
 		(enum fsl_diu_monitor_port port);
 	void (*release_bootmem)(void);
+=======
+struct platform_diu_data_ops {
+	unsigned int (*get_pixel_format) (unsigned int bits_per_pixel,
+		int monitor_port);
+	void (*set_gamma_table) (int monitor_port, char *gamma_table_base);
+	void (*set_monitor_port) (int monitor_port);
+	void (*set_pixel_clock) (unsigned int pixclock);
+	ssize_t (*show_monitor_port) (int monitor_port, char *buf);
+	int (*set_sysfs_monitor_port) (int val);
+	void (*release_bootmem) (void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 extern struct platform_diu_data_ops diu_ops;
 #endif
 
+<<<<<<< HEAD
 void fsl_hv_restart(char *cmd);
 void fsl_hv_halt(void);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 #endif

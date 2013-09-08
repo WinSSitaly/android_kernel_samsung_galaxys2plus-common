@@ -316,11 +316,14 @@ static const struct usb_device_id	products [] = {
 	ZAURUS_MASTER_INTERFACE,
 	.driver_info = ZAURUS_PXA_INFO,
 }, {
+<<<<<<< HEAD
 	/* C-750/C-760/C-860/SL-C3000 PDA in MDLM mode */
 	USB_DEVICE_AND_INTERFACE_INFO(0x04DD, 0x9031, USB_CLASS_COMM,
 			USB_CDC_SUBCLASS_MDLM, USB_CDC_PROTO_NONE),
 	.driver_info = (unsigned long) &bogus_mdlm_info,
 }, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.match_flags    =   USB_DEVICE_ID_MATCH_INT_INFO
 		 | USB_DEVICE_ID_MATCH_DEVICE,
 	.idVendor               = 0x04DD,
@@ -379,7 +382,21 @@ static struct usb_driver zaurus_driver = {
 	.resume =	usbnet_resume,
 };
 
+<<<<<<< HEAD
 module_usb_driver(zaurus_driver);
+=======
+static int __init zaurus_init(void)
+{
+	return usb_register(&zaurus_driver);
+}
+module_init(zaurus_init);
+
+static void __exit zaurus_exit(void)
+{
+	usb_deregister(&zaurus_driver);
+}
+module_exit(zaurus_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Pavel Machek, David Brownell");
 MODULE_DESCRIPTION("Sharp Zaurus PDA, and compatible products");

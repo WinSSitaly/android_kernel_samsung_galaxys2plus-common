@@ -95,7 +95,11 @@ described as 'basic' will be available.
 Capability: basic
 Architectures: all
 Type: system ioctl
+<<<<<<< HEAD
 Parameters: machine type identifier (KVM_VM_*)
+=======
+Parameters: none
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Returns: a VM fd that can be used to control the new virtual machine.
 
 The new VM has no virtual cpus and no memory.  An mmap() of a VM fd
@@ -103,11 +107,14 @@ will access the virtual machine's physical address space; offset zero
 corresponds to guest physical address zero.  Use of mmap() on a VM fd
 is discouraged if userspace memory allocation (KVM_CAP_USER_MEMORY) is
 available.
+<<<<<<< HEAD
 You most certainly want to use 0 as machine type.
 
 In order to create user controlled virtual machines on S390, check
 KVM_CAP_S390_UCONTROL and use the flag KVM_VM_S390_UCONTROL as
 privileged user (CAP_SYS_ADMIN).
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 4.3 KVM_GET_MSR_INDEX_LIST
 
@@ -180,6 +187,7 @@ Parameters: vcpu id (apic id on x86)
 Returns: vcpu fd on success, -1 on error
 
 This API adds a vcpu to a virtual machine.  The vcpu id is a small integer
+<<<<<<< HEAD
 in the range [0, max_vcpus).
 
 The recommended max_vcpus value can be retrieved using the KVM_CAP_NR_VCPUS of
@@ -222,6 +230,12 @@ For virtual cpus that have been created with S390 user controlled virtual
 machines, the resulting vcpu fd can be memory mapped at page offset
 KVM_S390_SIE_PAGE_OFFSET in order to obtain a memory map of the virtual
 cpu's hardware control block.
+=======
+in the range [0, max_vcpus).  You can use KVM_CAP_NR_VCPUS of the
+KVM_CHECK_EXTENSION ioctl() to determine the value for max_vcpus at run-time.
+If the KVM_CAP_NR_VCPUS does not exist, you should assume that max_vcpus is 4
+cpus max.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 4.8 KVM_GET_DIRTY_LOG (vm ioctl)
 
@@ -1110,6 +1124,7 @@ emulate them efficiently. The fields in each entry are defined as follows:
    eax, ebx, ecx, edx: the values returned by the cpuid instruction for
          this function/index combination
 
+<<<<<<< HEAD
 The TSC deadline timer feature (CPUID leaf 1, ecx[24]) is always returned
 as false, since the feature depends on KVM_CREATE_IRQCHIP for local APIC
 support.  Instead it is reported via
@@ -1119,6 +1134,8 @@ support.  Instead it is reported via
 if that returns true and you use KVM_CREATE_IRQCHIP, or if you emulate the
 feature in userspace, then you can enable the feature for KVM_SET_CPUID2.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 4.47 KVM_PPC_GET_PVINFO
 
 Capability: KVM_CAP_PPC_GET_PVINFO
@@ -1169,6 +1186,7 @@ following flags are specified:
 
 /* Depends on KVM_CAP_IOMMU */
 #define KVM_DEV_ASSIGN_ENABLE_IOMMU	(1 << 0)
+<<<<<<< HEAD
 /* The following two depend on KVM_CAP_PCI_2_3 */
 #define KVM_DEV_ASSIGN_PCI_2_3		(1 << 1)
 #define KVM_DEV_ASSIGN_MASK_INTX	(1 << 2)
@@ -1184,6 +1202,8 @@ isolation of the device.  Usages not specifying this flag are deprecated.
 Only PCI header type 0 devices with PCI BAR resources are supported by
 device assignment.  The user requesting this ioctl must have read/write
 access to the PCI sysfs resource files associated with the device.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 4.49 KVM_DEASSIGN_PCI_DEVICE
 
@@ -1210,10 +1230,22 @@ Assigns an IRQ to a passed-through device.
 
 struct kvm_assigned_irq {
 	__u32 assigned_dev_id;
+<<<<<<< HEAD
 	__u32 host_irq; /* ignored (legacy field) */
 	__u32 guest_irq;
 	__u32 flags;
 	union {
+=======
+	__u32 host_irq;
+	__u32 guest_irq;
+	__u32 flags;
+	union {
+		struct {
+			__u32 addr_lo;
+			__u32 addr_hi;
+			__u32 data;
+		} guest_msi;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__u32 reserved[12];
 	};
 };
@@ -1301,10 +1333,15 @@ Type: vm ioctl
 Parameters: struct kvm_assigned_msix_nr (in)
 Returns: 0 on success, -1 on error
 
+<<<<<<< HEAD
 Set the number of MSI-X interrupts for an assigned device. The number is
 reset again by terminating the MSI-X assignment of the device via
 KVM_DEASSIGN_DEV_IRQ. Calling this service more than once at any earlier
 point will fail.
+=======
+Set the number of MSI-X interrupts for an assigned device. This service can
+only be called once in the lifetime of an assigned device.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct kvm_assigned_msix_nr {
 	__u32 assigned_dev_id;
@@ -1355,6 +1392,7 @@ Returns the tsc frequency of the guest. The unit of the return value is
 KHz. If the host has unstable tsc this ioctl returns -EIO instead as an
 error.
 
+<<<<<<< HEAD
 4.56 KVM_GET_LAPIC
 
 Capability: KVM_CAP_IRQCHIP
@@ -1669,6 +1707,8 @@ at the memory location pointed to by "addr".
 The list of registers accessible using this interface is identical to the
 list in 4.64.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 5. The kvm_run structure
 
 Application code obtains a pointer to the kvm_run structure by
@@ -1829,6 +1869,7 @@ s390 specific.
 
 s390 specific.
 
+<<<<<<< HEAD
 		/* KVM_EXIT_S390_UCONTROL */
 		struct {
 			__u64 trans_exc_code;
@@ -1843,6 +1884,8 @@ in the cpu's lowcore are presented here as defined by the z Architecture
 Principles of Operation Book in the Chapter for Dynamic Address Translation
 (DAT)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* KVM_EXIT_DCR */
 		struct {
 			__u32 dcrn;
@@ -1865,6 +1908,7 @@ Userspace can now handle the hypercall and when it's done modify the gprs as
 necessary. Upon guest entry all guest GPRs will then be replaced by the values
 in this struct.
 
+<<<<<<< HEAD
 		/* KVM_EXIT_PAPR_HCALL */
 		struct {
 			__u64 nr;
@@ -1998,3 +2042,9 @@ For mmu types KVM_MMU_FSL_BOOKE_NOHV and KVM_MMU_FSL_BOOKE_HV:
    where "num_sets" is the tlb_sizes[] value divided by the tlb_ways[] value.
  - The tsize field of mas1 shall be set to 4K on TLB0, even though the
    hardware ignores this value for TLB0.
+=======
+		/* Fix the size of the union. */
+		char padding[256];
+	};
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

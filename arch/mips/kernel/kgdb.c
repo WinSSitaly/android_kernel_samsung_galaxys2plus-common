@@ -283,6 +283,7 @@ static int kgdb_mips_notify(struct notifier_block *self, unsigned long cmd,
 	struct pt_regs *regs = args->regs;
 	int trap = (regs->cp0_cause & 0x7c) >> 2;
 
+<<<<<<< HEAD
 #ifdef CONFIG_KPROBES
 	/*
 	 * Return immediately if the kprobes fault notifier has set
@@ -292,6 +293,8 @@ static int kgdb_mips_notify(struct notifier_block *self, unsigned long cmd,
 		return NOTIFY_DONE;
 #endif /* CONFIG_KPROBES */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Userspace events, ignore. */
 	if (user_mode(regs))
 		return NOTIFY_DONE;

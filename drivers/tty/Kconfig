@@ -1,6 +1,10 @@
 config VT
 	bool "Virtual terminal" if EXPERT
+<<<<<<< HEAD
 	depends on !S390 && !UML
+=======
+	depends on !S390
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select INPUT
 	default y
 	---help---
@@ -60,6 +64,7 @@ config VT_CONSOLE
 
 	  If unsure, say Y.
 
+<<<<<<< HEAD
 config VT_CONSOLE_SLEEP
 	def_bool y
 	depends on VT_CONSOLE && PM_SLEEP
@@ -67,6 +72,11 @@ config VT_CONSOLE_SLEEP
 config HW_CONSOLE
 	bool
 	depends on VT && !UML
+=======
+config HW_CONSOLE
+	bool
+	depends on VT && !S390 && !UML
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default y
 
 config VT_HW_CONSOLE_BINDING
@@ -354,6 +364,7 @@ config TRACE_SINK
 
 	  If you select this option, you need to select
 	  "Trace data router for MIPI P1149.7 cJTAG standard".
+<<<<<<< HEAD
 
 config PPC_EPAPR_HV_BYTECHAN
 	tristate "ePAPR hypervisor byte channel driver"
@@ -388,3 +399,5 @@ config PPC_EARLY_DEBUG_EHV_BC_HANDLE
 	  If the number you specify is not a valid byte channel handle, then
 	  there simply will be no early console output.  This is true also
 	  if you don't boot under a hypervisor at all.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

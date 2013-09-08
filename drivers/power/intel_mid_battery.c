@@ -61,8 +61,12 @@ MODULE_PARM_DESC(debug, "Flag to enable PMIC Battery debug messages.");
 #define PMIC_BATT_CHR_SBATDET_MASK	(1 << 5)
 #define PMIC_BATT_CHR_SDCLMT_MASK	(1 << 6)
 #define PMIC_BATT_CHR_SUSBOVP_MASK	(1 << 7)
+<<<<<<< HEAD
 #define PMIC_BATT_CHR_EXCPT_MASK	0x86
 
+=======
+#define PMIC_BATT_CHR_EXCPT_MASK	0xC6
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PMIC_BATT_ADC_ACCCHRG_MASK	(1 << 31)
 #define PMIC_BATT_ADC_ACCCHRGVAL_MASK	0x7FFFFFFF
 
@@ -305,6 +309,14 @@ static void pmic_battery_read_status(struct pmic_power_module_info *pbi)
 			pbi->batt_status = POWER_SUPPLY_STATUS_NOT_CHARGING;
 			pmic_battery_log_event(BATT_EVENT_BATOVP_EXCPT);
 			batt_exception = 1;
+<<<<<<< HEAD
+=======
+		} else if (r8 & PMIC_BATT_CHR_SDCLMT_MASK) {
+			pbi->batt_health = POWER_SUPPLY_HEALTH_OVERVOLTAGE;
+			pbi->batt_status = POWER_SUPPLY_STATUS_NOT_CHARGING;
+			pmic_battery_log_event(BATT_EVENT_DCLMT_EXCPT);
+			batt_exception = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else if (r8 & PMIC_BATT_CHR_STEMP_MASK) {
 			pbi->batt_health = POWER_SUPPLY_HEALTH_OVERHEAT;
 			pbi->batt_status = POWER_SUPPLY_STATUS_NOT_CHARGING;
@@ -312,10 +324,13 @@ static void pmic_battery_read_status(struct pmic_power_module_info *pbi)
 			batt_exception = 1;
 		} else {
 			pbi->batt_health = POWER_SUPPLY_HEALTH_GOOD;
+<<<<<<< HEAD
 			if (r8 & PMIC_BATT_CHR_SDCLMT_MASK) {
 				/* PMIC will change charging current automatically */
 				pmic_battery_log_event(BATT_EVENT_DCLMT_EXCPT);
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -779,7 +794,22 @@ static struct platform_driver platform_pmic_battery_driver = {
 	.remove = __devexit_p(platform_pmic_battery_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(platform_pmic_battery_driver);
+=======
+static int __init platform_pmic_battery_module_init(void)
+{
+	return platform_driver_register(&platform_pmic_battery_driver);
+}
+
+static void __exit platform_pmic_battery_module_exit(void)
+{
+	platform_driver_unregister(&platform_pmic_battery_driver);
+}
+
+module_init(platform_pmic_battery_module_init);
+module_exit(platform_pmic_battery_module_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Nithish Mahalingam <nithish.mahalingam@intel.com>");
 MODULE_DESCRIPTION("Intel Moorestown PMIC Battery Driver");

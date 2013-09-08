@@ -92,6 +92,10 @@
 #include <asm/meminit.h>
 #include <asm/page.h>
 #include <asm/ptrace.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/sal.h>
 #include <asm/mca.h>
 #include <asm/kexec.h>
@@ -1446,8 +1450,11 @@ out:
 	/* Get the CMC error record and log it */
 	ia64_mca_log_sal_error_record(SAL_INFO_TYPE_CMC);
 
+<<<<<<< HEAD
 	local_irq_disable();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return IRQ_HANDLED;
 }
 
@@ -1514,8 +1521,12 @@ static void
 ia64_mca_cmc_poll (unsigned long dummy)
 {
 	/* Trigger a CMC interrupt cascade  */
+<<<<<<< HEAD
 	platform_send_ipi(cpumask_first(cpu_online_mask), IA64_CMCP_VECTOR,
 							IA64_IPI_DM_INT, 0);
+=======
+	platform_send_ipi(first_cpu(cpu_online_map), IA64_CMCP_VECTOR, IA64_IPI_DM_INT, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1591,8 +1602,12 @@ static void
 ia64_mca_cpe_poll (unsigned long dummy)
 {
 	/* Trigger a CPE interrupt cascade  */
+<<<<<<< HEAD
 	platform_send_ipi(cpumask_first(cpu_online_mask), IA64_CPEP_VECTOR,
 							IA64_IPI_DM_INT, 0);
+=======
+	platform_send_ipi(first_cpu(cpu_online_map), IA64_CPEP_VECTOR, IA64_IPI_DM_INT, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #endif /* CONFIG_ACPI */
@@ -2074,6 +2089,7 @@ ia64_mca_init(void)
 	printk(KERN_INFO "MCA related initialization done\n");
 }
 
+<<<<<<< HEAD
 
 /*
  * These pieces cannot be done in ia64_mca_init() because it is called before
@@ -2084,6 +2100,24 @@ ia64_mca_init(void)
  */
 void __init ia64_mca_irq_init(void)
 {
+=======
+/*
+ * ia64_mca_late_init
+ *
+ *	Opportunity to setup things that require initialization later
+ *	than ia64_mca_init.  Setup a timer to poll for CPEs if the
+ *	platform doesn't support an interrupt driven mechanism.
+ *
+ *  Inputs  :   None
+ *  Outputs :   Status
+ */
+static int __init
+ia64_mca_late_init(void)
+{
+	if (!mca_init)
+		return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 *  Configure the CMCI/P vector and handler. Interrupts for CMC are
 	 *  per-processor, so AP CMC interrupts are setup in smp_callin() (smpboot.c).
@@ -2102,6 +2136,7 @@ void __init ia64_mca_irq_init(void)
 	/* Setup the CPEI/P handler */
 	register_percpu_irq(IA64_CPEP_VECTOR, &mca_cpep_irqaction);
 #endif
+<<<<<<< HEAD
 }
 
 /*
@@ -2119,6 +2154,8 @@ ia64_mca_late_init(void)
 {
 	if (!mca_init)
 		return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	register_hotcpu_notifier(&mca_cpu_notifier);
 

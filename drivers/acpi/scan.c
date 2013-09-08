@@ -789,8 +789,13 @@ acpi_bus_extract_wakeup_device_power_package(acpi_handle handle,
 static void acpi_bus_set_run_wake_flags(struct acpi_device *device)
 {
 	struct acpi_device_id button_device_ids[] = {
+<<<<<<< HEAD
 		{"PNP0C0C", 0},
 		{"PNP0C0D", 0},
+=======
+		{"PNP0C0D", 0},
+		{"PNP0C0C", 0},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		{"PNP0C0E", 0},
 		{"", 0},
 	};
@@ -802,11 +807,14 @@ static void acpi_bus_set_run_wake_flags(struct acpi_device *device)
 	/* Power button, Lid switch always enable wakeup */
 	if (!acpi_match_device_ids(device, button_device_ids)) {
 		device->wakeup.flags.run_wake = 1;
+<<<<<<< HEAD
 		if (!acpi_match_device_ids(device, &button_device_ids[1])) {
 			/* Do not use Lid/sleep button for S5 wakeup */
 			if (device->wakeup.sleep_state == ACPI_STATE_S5)
 				device->wakeup.sleep_state = ACPI_STATE_S4;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		device_set_wakeup_capable(&device->dev, true);
 		return;
 	}
@@ -874,7 +882,11 @@ static int acpi_bus_get_power_flags(struct acpi_device *device)
 	/*
 	 * Enumerate supported power management states
 	 */
+<<<<<<< HEAD
 	for (i = ACPI_STATE_D0; i <= ACPI_STATE_D3_HOT; i++) {
+=======
+	for (i = ACPI_STATE_D0; i <= ACPI_STATE_D3; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct acpi_device_power_state *ps = &device->power.states[i];
 		char object_name[5] = { '_', 'P', 'R', '0' + i, '\0' };
 
@@ -885,6 +897,10 @@ static int acpi_bus_get_power_flags(struct acpi_device *device)
 			int j;
 
 			device->power.flags.power_resources = 1;
+<<<<<<< HEAD
+=======
+			ps->flags.valid = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			for (j = 0; j < ps->resources.count; j++)
 				acpi_bus_add_power_resource(ps->resources.handles[j]);
 		}
@@ -892,6 +908,7 @@ static int acpi_bus_get_power_flags(struct acpi_device *device)
 		/* Evaluate "_PSx" to see if we can do explicit sets */
 		object_name[2] = 'S';
 		status = acpi_get_handle(device->handle, object_name, &handle);
+<<<<<<< HEAD
 		if (ACPI_SUCCESS(status))
 			ps->flags.explicit_set = 1;
 
@@ -901,6 +918,15 @@ static int acpi_bus_get_power_flags(struct acpi_device *device)
 		 */
 		if (ps->resources.count ||
 		    (ps->flags.explicit_set && i < ACPI_STATE_D3_HOT))
+=======
+		if (ACPI_SUCCESS(status)) {
+			ps->flags.explicit_set = 1;
+			ps->flags.valid = 1;
+		}
+
+		/* State is valid if we have some power control */
+		if (ps->resources.count || ps->flags.explicit_set)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ps->flags.valid = 1;
 
 		ps->power = -1;	/* Unknown - driver assigned */
@@ -913,10 +939,13 @@ static int acpi_bus_get_power_flags(struct acpi_device *device)
 	device->power.states[ACPI_STATE_D3].flags.valid = 1;
 	device->power.states[ACPI_STATE_D3].power = 0;
 
+<<<<<<< HEAD
 	/* Set D3cold's explicit_set flag if _PS3 exists. */
 	if (device->power.states[ACPI_STATE_D3_HOT].flags.explicit_set)
 		device->power.states[ACPI_STATE_D3_COLD].flags.explicit_set = 1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acpi_bus_init_power(device);
 
 	return 0;
@@ -1072,12 +1101,20 @@ static void acpi_add_id(struct acpi_device *device, const char *dev_id)
 	if (!id)
 		return;
 
+<<<<<<< HEAD
 	id->id = kstrdup(dev_id, GFP_KERNEL);
+=======
+	id->id = kmalloc(strlen(dev_id) + 1, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!id->id) {
 		kfree(id);
 		return;
 	}
 
+<<<<<<< HEAD
+=======
+	strcpy(id->id, dev_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_add_tail(&id->list, &device->pnp.ids);
 }
 
@@ -1162,7 +1199,11 @@ static void acpi_device_set_id(struct acpi_device *device)
 			acpi_add_id(device, ACPI_DOCK_HID);
 		else if (!acpi_ibm_smbus_match(device))
 			acpi_add_id(device, ACPI_SMBUS_IBM_HID);
+<<<<<<< HEAD
 		else if (list_empty(&device->pnp.ids) &&
+=======
+		else if (!acpi_device_hid(device) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 ACPI_IS_ROOT_DEVICE(device->parent)) {
 			acpi_add_id(device, ACPI_BUS_HID); /* \_SB, LNXSYBUS */
 			strcpy(device->pnp.device_name, ACPI_BUS_DEVICE_NAME);

@@ -8,7 +8,10 @@
 
 struct list_head;
 struct perf_evsel;
+<<<<<<< HEAD
 struct perf_evlist;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct option;
 
@@ -25,14 +28,19 @@ const char *event_type(int type);
 const char *event_name(struct perf_evsel *event);
 extern const char *__event_name(int type, u64 config);
 
+<<<<<<< HEAD
 extern int parse_events_option(const struct option *opt, const char *str,
 			       int unset);
 extern int parse_events(struct perf_evlist *evlist, const char *str,
 			int unset);
+=======
+extern int parse_events(const struct option *opt, const char *str, int unset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int parse_filter(const struct option *opt, const char *str, int unset);
 
 #define EVENTS_HELP_MAX (128*1024)
 
+<<<<<<< HEAD
 enum {
 	PARSE_EVENTS__TERM_TYPE_CONFIG,
 	PARSE_EVENTS__TERM_TYPE_CONFIG1,
@@ -82,12 +90,18 @@ void parse_events_error(struct list_head *list_all,
 			struct list_head *list_event,
 			int *idx, char const *msg);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void print_events(const char *event_glob);
 void print_events_type(u8 type);
 void print_tracepoint_events(const char *subsys_glob, const char *event_glob);
 int print_hwcache_events(const char *event_glob);
 extern int is_valid_tracepoint(const char *event_string);
 
+<<<<<<< HEAD
+=======
+extern char debugfs_path[];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int valid_debugfs_mount(const char *debugfs);
 
 #endif /* __PERF_PARSE_EVENTS_H */

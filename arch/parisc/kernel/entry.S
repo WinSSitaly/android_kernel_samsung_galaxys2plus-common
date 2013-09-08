@@ -552,7 +552,11 @@
 	 * entry (identifying the physical page) and %r23 up with
 	 * the from tlb entry (or nothing if only a to entry---for
 	 * clear_user_page_asm) */
+<<<<<<< HEAD
 	.macro		do_alias	spc,tmp,tmp1,va,pte,prot,fault,patype
+=======
+	.macro		do_alias	spc,tmp,tmp1,va,pte,prot,fault
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmpib,COND(<>),n 0,\spc,\fault
 	ldil		L%(TMPALIAS_MAP_START),\tmp
 #if defined(CONFIG_64BIT) && (TMPALIAS_MAP_START >= 0x80000000)
@@ -581,6 +585,7 @@
 	 */
 	cmpiclr,=	0x01,\tmp,%r0
 	ldi		(_PAGE_DIRTY|_PAGE_READ|_PAGE_WRITE),\prot
+<<<<<<< HEAD
 .ifc \patype,20
 	depd,z		\prot,8,7,\prot
 .else
@@ -590,6 +595,9 @@
 	.error "undefined PA type to do_alias"
 .endif
 .endif
+=======
+	depd,z		\prot,8,7,\prot
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * OK, it is in the temp alias region, check whether "from" or "to".
 	 * Check "subtle" note in pacache.S re: r23/r26.
@@ -1193,7 +1201,11 @@ dtlb_miss_20w:
 	nop
 
 dtlb_check_alias_20w:
+<<<<<<< HEAD
 	do_alias	spc,t0,t1,va,pte,prot,dtlb_fault,20
+=======
+	do_alias	spc,t0,t1,va,pte,prot,dtlb_fault
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	idtlbt          pte,prot
 
@@ -1217,7 +1229,11 @@ nadtlb_miss_20w:
 	nop
 
 nadtlb_check_alias_20w:
+<<<<<<< HEAD
 	do_alias	spc,t0,t1,va,pte,prot,nadtlb_emulate,20
+=======
+	do_alias	spc,t0,t1,va,pte,prot,nadtlb_emulate
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	idtlbt          pte,prot
 
@@ -1249,7 +1265,11 @@ dtlb_miss_11:
 	nop
 
 dtlb_check_alias_11:
+<<<<<<< HEAD
 	do_alias	spc,t0,t1,va,pte,prot,dtlb_fault,11
+=======
+	do_alias	spc,t0,t1,va,pte,prot,dtlb_fault
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	idtlba          pte,(va)
 	idtlbp          prot,(va)
@@ -1281,7 +1301,11 @@ nadtlb_miss_11:
 	nop
 
 nadtlb_check_alias_11:
+<<<<<<< HEAD
 	do_alias	spc,t0,t1,va,pte,prot,nadtlb_emulate,11
+=======
+	do_alias	spc,t0,t1,va,pte,prot,nadtlb_emulate
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	idtlba          pte,(va)
 	idtlbp          prot,(va)
@@ -1308,7 +1332,11 @@ dtlb_miss_20:
 	nop
 
 dtlb_check_alias_20:
+<<<<<<< HEAD
 	do_alias	spc,t0,t1,va,pte,prot,dtlb_fault,20
+=======
+	do_alias	spc,t0,t1,va,pte,prot,dtlb_fault
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	
 	idtlbt          pte,prot
 
@@ -1334,7 +1362,11 @@ nadtlb_miss_20:
 	nop
 
 nadtlb_check_alias_20:
+<<<<<<< HEAD
 	do_alias	spc,t0,t1,va,pte,prot,nadtlb_emulate,20
+=======
+	do_alias	spc,t0,t1,va,pte,prot,nadtlb_emulate
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	idtlbt          pte,prot
 
@@ -1461,7 +1493,11 @@ naitlb_miss_20w:
 	nop
 
 naitlb_check_alias_20w:
+<<<<<<< HEAD
 	do_alias	spc,t0,t1,va,pte,prot,naitlb_fault,20
+=======
+	do_alias	spc,t0,t1,va,pte,prot,naitlb_fault
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	iitlbt		pte,prot
 
@@ -1515,7 +1551,11 @@ naitlb_miss_11:
 	nop
 
 naitlb_check_alias_11:
+<<<<<<< HEAD
 	do_alias	spc,t0,t1,va,pte,prot,itlb_fault,11
+=======
+	do_alias	spc,t0,t1,va,pte,prot,itlb_fault
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	iitlba          pte,(%sr0, va)
 	iitlbp          prot,(%sr0, va)
@@ -1561,7 +1601,11 @@ naitlb_miss_20:
 	nop
 
 naitlb_check_alias_20:
+<<<<<<< HEAD
 	do_alias	spc,t0,t1,va,pte,prot,naitlb_fault,20
+=======
+	do_alias	spc,t0,t1,va,pte,prot,naitlb_fault
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	iitlbt          pte,prot
 

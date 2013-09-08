@@ -6,7 +6,11 @@
 #ifndef __START_H__
 #define __START_H__
 
+<<<<<<< HEAD
 #include <generated/asm-offsets.h>
+=======
+#include "kern_constants.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Stolen from linux/const.h, which can't be directly included since

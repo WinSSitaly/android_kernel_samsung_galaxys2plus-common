@@ -31,7 +31,10 @@
 #include <linux/interrupt.h>
 #include <linux/slab.h>
 #include <linux/i2o.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "core.h"
 
 #define OSM_DESCRIPTION	"I2O-subsystem"

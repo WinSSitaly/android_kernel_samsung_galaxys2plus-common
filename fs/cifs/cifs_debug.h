@@ -26,13 +26,21 @@
 void cifs_dump_mem(char *label, void *data, int length);
 #ifdef CONFIG_CIFS_DEBUG2
 #define DBG2 2
+<<<<<<< HEAD
 void cifs_dump_detail(void *);
+=======
+void cifs_dump_detail(struct smb_hdr *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void cifs_dump_mids(struct TCP_Server_Info *);
 #else
 #define DBG2 0
 #endif
 extern int traceSMB;		/* flag which enables the function below */
+<<<<<<< HEAD
 void dump_smb(void *, int);
+=======
+void dump_smb(struct smb_hdr *, int);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define CIFS_INFO	0x01
 #define CIFS_RC		0x02
 #define CIFS_TIMER	0x04

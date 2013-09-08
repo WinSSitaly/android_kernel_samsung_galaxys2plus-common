@@ -81,20 +81,38 @@
 #define LP5521_MASTER_ENABLE		0x40	/* Chip master enable */
 #define LP5521_LOGARITHMIC_PWM		0x80	/* Logarithmic PWM adjustment */
 #define LP5521_EXEC_RUN			0x2A
+<<<<<<< HEAD
 #define LP5521_ENABLE_DEFAULT	\
 	(LP5521_MASTER_ENABLE | LP5521_LOGARITHMIC_PWM)
 #define LP5521_ENABLE_RUN_PROGRAM	\
 	(LP5521_ENABLE_DEFAULT | LP5521_EXEC_RUN)
+=======
+
+/* Bits in CONFIG register */
+#define LP5521_PWM_HF			0x40	/* PWM: 0 = 256Hz, 1 = 558Hz */
+#define LP5521_PWRSAVE_EN		0x20	/* 1 = Power save mode */
+#define LP5521_CP_MODE_OFF		0	/* Charge pump (CP) off */
+#define LP5521_CP_MODE_BYPASS		8	/* CP forced to bypass mode */
+#define LP5521_CP_MODE_1X5		0x10	/* CP forced to 1.5x mode */
+#define LP5521_CP_MODE_AUTO		0x18	/* Automatic mode selection */
+#define LP5521_R_TO_BATT		4	/* R out: 0 = CP, 1 = Vbat */
+#define LP5521_CLK_SRC_EXT		0	/* Ext-clk source (CLK_32K) */
+#define LP5521_CLK_INT			1	/* Internal clock */
+#define LP5521_CLK_AUTO			2	/* Automatic clock selection */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Status */
 #define LP5521_EXT_CLK_USED		0x08
 
+<<<<<<< HEAD
 /* default R channel current register value */
 #define LP5521_REG_R_CURR_DEFAULT	0xAF
 
 /* Pattern Mode */
 #define PATTERN_OFF	0
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct lp5521_engine {
 	int		id;
 	u8		mode;
@@ -173,14 +191,23 @@ static int lp5521_set_engine_mode(struct lp5521_engine *engine, u8 mode)
 		mode = LP5521_CMD_DIRECT;
 
 	ret = lp5521_read(client, LP5521_REG_OP_MODE, &engine_state);
+<<<<<<< HEAD
 	if (ret < 0)
 		return ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* set mode only for this engine */
 	engine_state &= ~(engine->engine_mask);
 	mode &= engine->engine_mask;
 	engine_state |= mode;
+<<<<<<< HEAD
 	return lp5521_write(client, LP5521_REG_OP_MODE, engine_state);
+=======
+	ret |= lp5521_write(client, LP5521_REG_OP_MODE, engine_state);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int lp5521_load_program(struct lp5521_engine *eng, const u8 *pattern)
@@ -193,6 +220,7 @@ static int lp5521_load_program(struct lp5521_engine *eng, const u8 *pattern)
 
 	/* move current engine to direct mode and remember the state */
 	ret = lp5521_set_engine_mode(eng, LP5521_CMD_DIRECT);
+<<<<<<< HEAD
 	if (ret)
 		return ret;
 
@@ -201,6 +229,11 @@ static int lp5521_load_program(struct lp5521_engine *eng, const u8 *pattern)
 	ret = lp5521_read(client, LP5521_REG_OP_MODE, &mode);
 	if (ret)
 		return ret;
+=======
+	/* Mode change requires min 500 us delay. 1 - 2 ms  with margin */
+	usleep_range(1000, 2000);
+	ret |= lp5521_read(client, LP5521_REG_OP_MODE, &mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* For loading, all the engines to load mode */
 	lp5521_write(client, LP5521_REG_OP_MODE, LP5521_CMD_DIRECT);
@@ -216,7 +249,12 @@ static int lp5521_load_program(struct lp5521_engine *eng, const u8 *pattern)
 				LP5521_PROG_MEM_SIZE,
 				pattern);
 
+<<<<<<< HEAD
 	return lp5521_write(client, LP5521_REG_OP_MODE, mode);
+=======
+	ret |= lp5521_write(client, LP5521_REG_OP_MODE, mode);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int lp5521_set_led_current(struct lp5521_chip *chip, int led, u8 curr)
@@ -240,16 +278,27 @@ static int lp5521_configure(struct i2c_client *client)
 {
 	struct lp5521_chip *chip = i2c_get_clientdata(client);
 	int ret;
+<<<<<<< HEAD
 	u8 cfg;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lp5521_init_engine(chip);
 
 	/* Set all PWMs to direct control mode */
+<<<<<<< HEAD
 	ret = lp5521_write(client, LP5521_REG_OP_MODE, LP5521_CMD_DIRECT);
 
 	cfg = chip->pdata->update_config ?
 		: (LP5521_PWRSAVE_EN | LP5521_CP_MODE_AUTO | LP5521_R_TO_BATT);
 	ret |= lp5521_write(client, LP5521_REG_CONFIG, cfg);
+=======
+	ret = lp5521_write(client, LP5521_REG_OP_MODE, 0x3F);
+
+	/* Enable auto-powersave, set charge pump to auto, red to battery */
+	ret |= lp5521_write(client, LP5521_REG_CONFIG,
+		LP5521_PWRSAVE_EN | LP5521_CP_MODE_AUTO | LP5521_R_TO_BATT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Initialize all channels PWM to zero -> leds off */
 	ret |= lp5521_write(client, LP5521_REG_R_PWM, 0);
@@ -258,7 +307,12 @@ static int lp5521_configure(struct i2c_client *client)
 
 	/* Set engines are set to run state when OP_MODE enables engines */
 	ret |= lp5521_write(client, LP5521_REG_ENABLE,
+<<<<<<< HEAD
 			LP5521_ENABLE_RUN_PROGRAM);
+=======
+			LP5521_MASTER_ENABLE | LP5521_LOGARITHMIC_PWM |
+			LP5521_EXEC_RUN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* enable takes 500us. 1 - 2 ms leaves some margin */
 	usleep_range(1000, 2000);
 
@@ -309,7 +363,12 @@ static int lp5521_detect(struct i2c_client *client)
 	int ret;
 	u8 buf;
 
+<<<<<<< HEAD
 	ret = lp5521_write(client, LP5521_REG_ENABLE, LP5521_ENABLE_DEFAULT);
+=======
+	ret = lp5521_write(client, LP5521_REG_ENABLE,
+			LP5521_MASTER_ENABLE | LP5521_LOGARITHMIC_PWM);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 	/* enable takes 500us. 1 - 2 ms leaves some margin */
@@ -317,7 +376,11 @@ static int lp5521_detect(struct i2c_client *client)
 	ret = lp5521_read(client, LP5521_REG_ENABLE, &buf);
 	if (ret)
 		return ret;
+<<<<<<< HEAD
 	if (buf != LP5521_ENABLE_DEFAULT)
+=======
+	if (buf != (LP5521_MASTER_ENABLE | LP5521_LOGARITHMIC_PWM))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 
 	return 0;
@@ -502,7 +565,11 @@ static ssize_t store_current(struct device *dev,
 	ssize_t ret;
 	unsigned long curr;
 
+<<<<<<< HEAD
 	if (kstrtoul(buf, 0, &curr))
+=======
+	if (strict_strtoul(buf, 0, &curr))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	if (curr > led->max_current)
@@ -534,6 +601,7 @@ static ssize_t lp5521_selftest(struct device *dev,
 	return sprintf(buf, "%s\n", ret ? "FAIL" : "OK");
 }
 
+<<<<<<< HEAD
 static void lp5521_clear_program_memory(struct i2c_client *cl)
 {
 	int i;
@@ -625,6 +693,8 @@ static ssize_t store_led_pattern(struct device *dev,
 	return len;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* led class device attributes */
 static DEVICE_ATTR(led_current, S_IRUGO | S_IWUSR, show_current, store_current);
 static DEVICE_ATTR(max_current, S_IRUGO , show_max_current, NULL);
@@ -650,7 +720,10 @@ static DEVICE_ATTR(engine1_load, S_IWUSR, NULL, store_engine1_load);
 static DEVICE_ATTR(engine2_load, S_IWUSR, NULL, store_engine2_load);
 static DEVICE_ATTR(engine3_load, S_IWUSR, NULL, store_engine3_load);
 static DEVICE_ATTR(selftest, S_IRUGO, lp5521_selftest, NULL);
+<<<<<<< HEAD
 static DEVICE_ATTR(led_pattern, S_IWUSR, NULL, store_led_pattern);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct attribute *lp5521_attributes[] = {
 	&dev_attr_engine1_mode.attr,
@@ -660,7 +733,10 @@ static struct attribute *lp5521_attributes[] = {
 	&dev_attr_engine1_load.attr,
 	&dev_attr_engine2_load.attr,
 	&dev_attr_engine3_load.attr,
+<<<<<<< HEAD
 	&dev_attr_led_pattern.attr,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL
 };
 
@@ -711,6 +787,7 @@ static int __devinit lp5521_init_led(struct lp5521_led *led,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	led->cdev.brightness_set = lp5521_set_brightness;
 	if (pdata->led_config[chan].name) {
 		led->cdev.name = pdata->led_config[chan].name;
@@ -720,6 +797,12 @@ static int __devinit lp5521_init_led(struct lp5521_led *led,
 		led->cdev.name = name;
 	}
 
+=======
+	snprintf(name, sizeof(name), "%s:channel%d",
+			pdata->label ?: client->name, chan);
+	led->cdev.brightness_set = lp5521_set_brightness;
+	led->cdev.name = name;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	res = led_classdev_register(dev, &led->cdev);
 	if (res < 0) {
 		dev_err(dev, "couldn't register led on channel %d\n", chan);
@@ -742,7 +825,10 @@ static int __devinit lp5521_probe(struct i2c_client *client,
 	struct lp5521_chip		*chip;
 	struct lp5521_platform_data	*pdata;
 	int ret, i, led;
+<<<<<<< HEAD
 	u8 buf;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
 	if (!chip)
@@ -781,6 +867,7 @@ static int __devinit lp5521_probe(struct i2c_client *client,
 				     * Exact value is not available. 10 - 20ms
 				     * appears to be enough for reset.
 				     */
+<<<<<<< HEAD
 
 	/*
 	 * Make sure that the chip is reset by reading back the r channel
@@ -795,6 +882,8 @@ static int __devinit lp5521_probe(struct i2c_client *client,
 	}
 	usleep_range(10000, 20000);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = lp5521_detect(client);
 
 	if (ret) {
@@ -858,12 +947,19 @@ fail1:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int __devexit lp5521_remove(struct i2c_client *client)
+=======
+static int lp5521_remove(struct i2c_client *client)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct lp5521_chip *chip = i2c_get_clientdata(client);
 	int i;
 
+<<<<<<< HEAD
 	lp5521_run_led_pattern(PATTERN_OFF, chip);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lp5521_unregister_sysfs(client);
 
 	for (i = 0; i < chip->num_leds; i++) {
@@ -890,11 +986,37 @@ static struct i2c_driver lp5521_driver = {
 		.name	= "lp5521",
 	},
 	.probe		= lp5521_probe,
+<<<<<<< HEAD
 	.remove		= __devexit_p(lp5521_remove),
 	.id_table	= lp5521_id,
 };
 
 module_i2c_driver(lp5521_driver);
+=======
+	.remove		= lp5521_remove,
+	.id_table	= lp5521_id,
+};
+
+static int __init lp5521_init(void)
+{
+	int ret;
+
+	ret = i2c_add_driver(&lp5521_driver);
+
+	if (ret < 0)
+		printk(KERN_ALERT "Adding lp5521 driver failed\n");
+
+	return ret;
+}
+
+static void __exit lp5521_exit(void)
+{
+	i2c_del_driver(&lp5521_driver);
+}
+
+module_init(lp5521_init);
+module_exit(lp5521_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Mathias Nyman, Yuri Zaporozhets, Samu Onkalo");
 MODULE_DESCRIPTION("LP5521 LED engine");

@@ -1,5 +1,8 @@
 /*
+<<<<<<< HEAD
  * @ubi: UBI device description object
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (c) International Business Machines Corp., 2006
  *
  * This program is free software; you can redistribute it and/or modify
@@ -164,6 +167,7 @@ struct ubi_work {
 
 #ifdef CONFIG_MTD_UBI_DEBUG
 static int paranoid_check_ec(struct ubi_device *ubi, int pnum, int ec);
+<<<<<<< HEAD
 static int paranoid_check_in_wl_tree(const struct ubi_device *ubi,
 				     struct ubi_wl_entry *e,
 				     struct rb_root *root);
@@ -172,6 +176,14 @@ static int paranoid_check_in_pq(const struct ubi_device *ubi,
 #else
 #define paranoid_check_ec(ubi, pnum, ec) 0
 #define paranoid_check_in_wl_tree(ubi, e, root)
+=======
+static int paranoid_check_in_wl_tree(struct ubi_wl_entry *e,
+				     struct rb_root *root);
+static int paranoid_check_in_pq(struct ubi_device *ubi, struct ubi_wl_entry *e);
+#else
+#define paranoid_check_ec(ubi, pnum, ec) 0
+#define paranoid_check_in_wl_tree(e, root)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define paranoid_check_in_pq(ubi, e) 0
 #endif
 
@@ -350,6 +362,7 @@ static void prot_queue_add(struct ubi_device *ubi, struct ubi_wl_entry *e)
 /**
  * find_wl_entry - find wear-leveling entry closest to certain erase counter.
  * @root: the RB-tree where to look for
+<<<<<<< HEAD
  * @diff: maximum possible difference from the smallest erase counter
  *
  * This function looks for a wear leveling entry with erase counter closest to
@@ -363,6 +376,20 @@ static struct ubi_wl_entry *find_wl_entry(struct rb_root *root, int diff)
 
 	e = rb_entry(rb_first(root), struct ubi_wl_entry, u.rb);
 	max = e->ec + diff;
+=======
+ * @max: highest possible erase counter
+ *
+ * This function looks for a wear leveling entry with erase counter closest to
+ * @max and less than @max.
+ */
+static struct ubi_wl_entry *find_wl_entry(struct rb_root *root, int max)
+{
+	struct rb_node *p;
+	struct ubi_wl_entry *e;
+
+	e = rb_entry(rb_first(root), struct ubi_wl_entry, u.rb);
+	max += e->ec;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	p = root->rb_node;
 	while (p) {
@@ -451,7 +478,11 @@ retry:
 		BUG();
 	}
 
+<<<<<<< HEAD
 	paranoid_check_in_wl_tree(ubi, e, &ubi->free);
+=======
+	paranoid_check_in_wl_tree(e, &ubi->free);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Move the physical eraseblock to the protection queue where it will
@@ -615,7 +646,11 @@ static void schedule_ubi_work(struct ubi_device *ubi, struct ubi_work *wrk)
 	list_add_tail(&wrk->list, &ubi->works);
 	ubi_assert(ubi->works_count >= 0);
 	ubi->works_count += 1;
+<<<<<<< HEAD
 	if (ubi->thread_enabled && !ubi_dbg_is_bgt_disabled(ubi))
+=======
+	if (ubi->thread_enabled && !ubi_dbg_is_bgt_disabled())
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wake_up_process(ubi->bgt_thread);
 	spin_unlock(&ubi->wl_lock);
 }
@@ -714,7 +749,11 @@ static int wear_leveling_worker(struct ubi_device *ubi, struct ubi_work *wrk,
 			       e1->ec, e2->ec);
 			goto out_cancel;
 		}
+<<<<<<< HEAD
 		paranoid_check_in_wl_tree(ubi, e1, &ubi->used);
+=======
+		paranoid_check_in_wl_tree(e1, &ubi->used);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rb_erase(&e1->u.rb, &ubi->used);
 		dbg_wl("move PEB %d EC %d to PEB %d EC %d",
 		       e1->pnum, e1->ec, e2->pnum, e2->ec);
@@ -723,12 +762,20 @@ static int wear_leveling_worker(struct ubi_device *ubi, struct ubi_work *wrk,
 		scrubbing = 1;
 		e1 = rb_entry(rb_first(&ubi->scrub), struct ubi_wl_entry, u.rb);
 		e2 = find_wl_entry(&ubi->free, WL_FREE_MAX_DIFF);
+<<<<<<< HEAD
 		paranoid_check_in_wl_tree(ubi, e1, &ubi->scrub);
+=======
+		paranoid_check_in_wl_tree(e1, &ubi->scrub);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rb_erase(&e1->u.rb, &ubi->scrub);
 		dbg_wl("scrub PEB %d to PEB %d", e1->pnum, e2->pnum);
 	}
 
+<<<<<<< HEAD
 	paranoid_check_in_wl_tree(ubi, e2, &ubi->free);
+=======
+	paranoid_check_in_wl_tree(e2, &ubi->free);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rb_erase(&e2->u.rb, &ubi->free);
 	ubi->move_from = e1;
 	ubi->move_to = e2;
@@ -798,7 +845,11 @@ static int wear_leveling_worker(struct ubi_device *ubi, struct ubi_work *wrk,
 			scrubbing = 1;
 			goto out_not_moved;
 		}
+<<<<<<< HEAD
 		if (err == MOVE_TARGET_BITFLIPS || err == MOVE_TARGET_WR_ERR ||
+=======
+		if (err == MOVE_CANCEL_BITFLIPS || err == MOVE_TARGET_WR_ERR ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    err == MOVE_TARGET_RD_ERR) {
 			/*
 			 * Target PEB had bit-flips or write error - torture it.
@@ -1175,6 +1226,7 @@ retry:
 		return 0;
 	} else {
 		if (in_wl_tree(e, &ubi->used)) {
+<<<<<<< HEAD
 			paranoid_check_in_wl_tree(ubi, e, &ubi->used);
 			rb_erase(&e->u.rb, &ubi->used);
 		} else if (in_wl_tree(e, &ubi->scrub)) {
@@ -1182,6 +1234,15 @@ retry:
 			rb_erase(&e->u.rb, &ubi->scrub);
 		} else if (in_wl_tree(e, &ubi->erroneous)) {
 			paranoid_check_in_wl_tree(ubi, e, &ubi->erroneous);
+=======
+			paranoid_check_in_wl_tree(e, &ubi->used);
+			rb_erase(&e->u.rb, &ubi->used);
+		} else if (in_wl_tree(e, &ubi->scrub)) {
+			paranoid_check_in_wl_tree(e, &ubi->scrub);
+			rb_erase(&e->u.rb, &ubi->scrub);
+		} else if (in_wl_tree(e, &ubi->erroneous)) {
+			paranoid_check_in_wl_tree(e, &ubi->erroneous);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rb_erase(&e->u.rb, &ubi->erroneous);
 			ubi->erroneous_peb_count -= 1;
 			ubi_assert(ubi->erroneous_peb_count >= 0);
@@ -1248,7 +1309,11 @@ retry:
 	}
 
 	if (in_wl_tree(e, &ubi->used)) {
+<<<<<<< HEAD
 		paranoid_check_in_wl_tree(ubi, e, &ubi->used);
+=======
+		paranoid_check_in_wl_tree(e, &ubi->used);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rb_erase(&e->u.rb, &ubi->used);
 	} else {
 		int err;
@@ -1370,7 +1435,11 @@ int ubi_thread(void *u)
 
 		spin_lock(&ubi->wl_lock);
 		if (list_empty(&ubi->works) || ubi->ro_mode ||
+<<<<<<< HEAD
 		    !ubi->thread_enabled || ubi_dbg_is_bgt_disabled(ubi)) {
+=======
+		    !ubi->thread_enabled || ubi_dbg_is_bgt_disabled()) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			set_current_state(TASK_INTERRUPTIBLE);
 			spin_unlock(&ubi->wl_lock);
 			schedule();
@@ -1585,7 +1654,11 @@ static int paranoid_check_ec(struct ubi_device *ubi, int pnum, int ec)
 	long long read_ec;
 	struct ubi_ec_hdr *ec_hdr;
 
+<<<<<<< HEAD
 	if (!ubi->dbg->chk_gen)
+=======
+	if (!(ubi_chk_flags & UBI_CHK_GEN))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	ec_hdr = kzalloc(ubi->ec_hdr_alsize, GFP_NOFS);
@@ -1615,18 +1688,28 @@ out_free:
 
 /**
  * paranoid_check_in_wl_tree - check that wear-leveling entry is in WL RB-tree.
+<<<<<<< HEAD
  * @ubi: UBI device description object
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @e: the wear-leveling entry to check
  * @root: the root of the tree
  *
  * This function returns zero if @e is in the @root RB-tree and %-EINVAL if it
  * is not.
  */
+<<<<<<< HEAD
 static int paranoid_check_in_wl_tree(const struct ubi_device *ubi,
 				     struct ubi_wl_entry *e,
 				     struct rb_root *root)
 {
 	if (!ubi->dbg->chk_gen)
+=======
+static int paranoid_check_in_wl_tree(struct ubi_wl_entry *e,
+				     struct rb_root *root)
+{
+	if (!(ubi_chk_flags & UBI_CHK_GEN))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	if (in_wl_tree(e, root))
@@ -1646,13 +1729,21 @@ static int paranoid_check_in_wl_tree(const struct ubi_device *ubi,
  *
  * This function returns zero if @e is in @ubi->pq and %-EINVAL if it is not.
  */
+<<<<<<< HEAD
 static int paranoid_check_in_pq(const struct ubi_device *ubi,
 				struct ubi_wl_entry *e)
+=======
+static int paranoid_check_in_pq(struct ubi_device *ubi, struct ubi_wl_entry *e)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ubi_wl_entry *p;
 	int i;
 
+<<<<<<< HEAD
 	if (!ubi->dbg->chk_gen)
+=======
+	if (!(ubi_chk_flags & UBI_CHK_GEN))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	for (i = 0; i < UBI_PROT_QUEUE_LEN; ++i)

@@ -198,7 +198,11 @@ struct cpu_vfs_cap_data {
 /* Allow modification of routing tables */
 /* Allow setting arbitrary process / process group ownership on
    sockets */
+<<<<<<< HEAD
 /* Allow binding to any address for transparent proxying (also via NET_RAW) */
+=======
+/* Allow binding to any address for transparent proxying */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Allow setting TOS (type of service) */
 /* Allow setting promiscuous mode */
 /* Allow clearing driver statistics */
@@ -210,7 +214,10 @@ struct cpu_vfs_cap_data {
 
 /* Allow use of RAW sockets */
 /* Allow use of PACKET sockets */
+<<<<<<< HEAD
 /* Allow binding to any address for transparent proxying (also via NET_ADMIN) */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define CAP_NET_RAW          13
 
@@ -380,6 +387,10 @@ struct user_namespace;
 struct user_namespace *current_user_ns(void);
 
 extern const kernel_cap_t __cap_empty_set;
+<<<<<<< HEAD
+=======
+extern const kernel_cap_t __cap_full_set;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern const kernel_cap_t __cap_init_eff_set;
 
 /*
@@ -543,10 +554,16 @@ extern bool has_capability(struct task_struct *t, int cap);
 extern bool has_ns_capability(struct task_struct *t,
 			      struct user_namespace *ns, int cap);
 extern bool has_capability_noaudit(struct task_struct *t, int cap);
+<<<<<<< HEAD
 extern bool has_ns_capability_noaudit(struct task_struct *t,
 				      struct user_namespace *ns, int cap);
 extern bool capable(int cap);
 extern bool ns_capable(struct user_namespace *ns, int cap);
+=======
+extern bool capable(int cap);
+extern bool ns_capable(struct user_namespace *ns, int cap);
+extern bool task_ns_capable(struct task_struct *t, int cap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern bool nsown_capable(int cap);
 
 /* audit system wants to get cap info from files as well */

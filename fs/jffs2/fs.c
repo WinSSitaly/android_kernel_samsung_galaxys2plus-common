@@ -10,8 +10,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/capability.h>
 #include <linux/kernel.h>
 #include <linux/sched.h>
@@ -41,7 +44,11 @@ int jffs2_do_setattr (struct inode *inode, struct iattr *iattr)
 	int ret;
 	int alloc_type = ALLOC_NORMAL;
 
+<<<<<<< HEAD
 	jffs2_dbg(1, "%s(): ino #%lu\n", __func__, inode->i_ino);
+=======
+	D1(printk(KERN_DEBUG "jffs2_setattr(): ino #%lu\n", inode->i_ino));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Special cases - we don't want more than one data node
 	   for these types on the medium at any time. So setattr
@@ -52,8 +59,12 @@ int jffs2_do_setattr (struct inode *inode, struct iattr *iattr)
 		/* For these, we don't actually need to read the old node */
 		mdatalen = jffs2_encode_dev(&dev, inode->i_rdev);
 		mdata = (char *)&dev;
+<<<<<<< HEAD
 		jffs2_dbg(1, "%s(): Writing %d bytes of kdev_t\n",
 			  __func__, mdatalen);
+=======
+		D1(printk(KERN_DEBUG "jffs2_setattr(): Writing %d bytes of kdev_t\n", mdatalen));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (S_ISLNK(inode->i_mode)) {
 		mutex_lock(&f->sem);
 		mdatalen = f->metadata->size;
@@ -69,8 +80,12 @@ int jffs2_do_setattr (struct inode *inode, struct iattr *iattr)
 			return ret;
 		}
 		mutex_unlock(&f->sem);
+<<<<<<< HEAD
 		jffs2_dbg(1, "%s(): Writing %d bytes of symlink target\n",
 			  __func__, mdatalen);
+=======
+		D1(printk(KERN_DEBUG "jffs2_setattr(): Writing %d bytes of symlink target\n", mdatalen));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ri = jffs2_alloc_raw_inode();
@@ -84,7 +99,11 @@ int jffs2_do_setattr (struct inode *inode, struct iattr *iattr)
 				  ALLOC_NORMAL, JFFS2_SUMMARY_INODE_SIZE);
 	if (ret) {
 		jffs2_free_raw_inode(ri);
+<<<<<<< HEAD
 		if (S_ISLNK(inode->i_mode))
+=======
+		if (S_ISLNK(inode->i_mode & S_IFMT))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 kfree(mdata);
 		return ret;
 	}
@@ -237,8 +256,12 @@ void jffs2_evict_inode (struct inode *inode)
 	struct jffs2_sb_info *c = JFFS2_SB_INFO(inode->i_sb);
 	struct jffs2_inode_info *f = JFFS2_INODE_INFO(inode);
 
+<<<<<<< HEAD
 	jffs2_dbg(1, "%s(): ino #%lu mode %o\n",
 		  __func__, inode->i_ino, inode->i_mode);
+=======
+	D1(printk(KERN_DEBUG "jffs2_evict_inode(): ino #%lu mode %o\n", inode->i_ino, inode->i_mode));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	truncate_inode_pages(&inode->i_data, 0);
 	end_writeback(inode);
 	jffs2_do_clear_inode(c, f);
@@ -254,7 +277,11 @@ struct inode *jffs2_iget(struct super_block *sb, unsigned long ino)
 	dev_t rdev = 0;
 	int ret;
 
+<<<<<<< HEAD
 	jffs2_dbg(1, "%s(): ino == %lu\n", __func__, ino);
+=======
+	D1(printk(KERN_DEBUG "jffs2_iget(): ino == %lu\n", ino));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	inode = iget_locked(sb, ino);
 	if (!inode)
@@ -283,7 +310,11 @@ struct inode *jffs2_iget(struct super_block *sb, unsigned long ino)
 	inode->i_mtime = ITIME(je32_to_cpu(latest_node.mtime));
 	inode->i_ctime = ITIME(je32_to_cpu(latest_node.ctime));
 
+<<<<<<< HEAD
 	set_nlink(inode, f->inocache->pino_nlink);
+=======
+	inode->i_nlink = f->inocache->pino_nlink;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	inode->i_blocks = (inode->i_size + 511) >> 9;
 
@@ -296,7 +327,11 @@ struct inode *jffs2_iget(struct super_block *sb, unsigned long ino)
 	case S_IFDIR:
 	{
 		struct jffs2_full_dirent *fd;
+<<<<<<< HEAD
 		set_nlink(inode, 2); /* parent and '.' */
+=======
+		inode->i_nlink = 2; /* parent and '.' */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		for (fd=f->dents; fd; fd = fd->next) {
 			if (fd->type == DT_DIR && fd->ino)
@@ -322,6 +357,7 @@ struct inode *jffs2_iget(struct super_block *sb, unsigned long ino)
 		/* Read the device numbers from the media */
 		if (f->metadata->size != sizeof(jdev.old_id) &&
 		    f->metadata->size != sizeof(jdev.new_id)) {
+<<<<<<< HEAD
 			pr_notice("Device node has strange size %d\n",
 				  f->metadata->size);
 			goto error_io;
@@ -332,6 +368,16 @@ struct inode *jffs2_iget(struct super_block *sb, unsigned long ino)
 			/* Eep */
 			pr_notice("Read device numbers for inode %lu failed\n",
 				  (unsigned long)inode->i_ino);
+=======
+			printk(KERN_NOTICE "Device node has strange size %d\n", f->metadata->size);
+			goto error_io;
+		}
+		D1(printk(KERN_DEBUG "Reading device numbers from flash\n"));
+		ret = jffs2_read_dnode(c, f, f->metadata, (char *)&jdev, 0, f->metadata->size);
+		if (ret < 0) {
+			/* Eep */
+			printk(KERN_NOTICE "Read device numbers for inode %lu failed\n", (unsigned long)inode->i_ino);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto error;
 		}
 		if (f->metadata->size == sizeof(jdev.old_id))
@@ -346,13 +392,21 @@ struct inode *jffs2_iget(struct super_block *sb, unsigned long ino)
 		break;
 
 	default:
+<<<<<<< HEAD
 		pr_warn("%s(): Bogus i_mode %o for ino %lu\n",
 			__func__, inode->i_mode, (unsigned long)inode->i_ino);
+=======
+		printk(KERN_WARNING "jffs2_read_inode(): Bogus imode %o for ino %lu\n", inode->i_mode, (unsigned long)inode->i_ino);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	mutex_unlock(&f->sem);
 
+<<<<<<< HEAD
 	jffs2_dbg(1, "jffs2_read_inode() returning\n");
+=======
+	D1(printk(KERN_DEBUG "jffs2_read_inode() returning\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unlock_new_inode(inode);
 	return inode;
 
@@ -370,6 +424,7 @@ void jffs2_dirty_inode(struct inode *inode, int flags)
 	struct iattr iattr;
 
 	if (!(inode->i_state & I_DIRTY_DATASYNC)) {
+<<<<<<< HEAD
 		jffs2_dbg(2, "%s(): not calling setattr() for ino #%lu\n",
 			  __func__, inode->i_ino);
 		return;
@@ -377,6 +432,13 @@ void jffs2_dirty_inode(struct inode *inode, int flags)
 
 	jffs2_dbg(1, "%s(): calling setattr() for ino #%lu\n",
 		  __func__, inode->i_ino);
+=======
+		D2(printk(KERN_DEBUG "jffs2_dirty_inode() not calling setattr() for ino #%lu\n", inode->i_ino));
+		return;
+	}
+
+	D1(printk(KERN_DEBUG "jffs2_dirty_inode() calling setattr() for ino #%lu\n", inode->i_ino));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	iattr.ia_valid = ATTR_MODE|ATTR_UID|ATTR_GID|ATTR_ATIME|ATTR_MTIME|ATTR_CTIME;
 	iattr.ia_mode = inode->i_mode;
@@ -389,7 +451,11 @@ void jffs2_dirty_inode(struct inode *inode, int flags)
 	jffs2_do_setattr(inode, &iattr);
 }
 
+<<<<<<< HEAD
 int jffs2_do_remount_fs(struct super_block *sb, int *flags, char *data)
+=======
+int jffs2_remount_fs (struct super_block *sb, int *flags, char *data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
 
@@ -416,7 +482,11 @@ int jffs2_do_remount_fs(struct super_block *sb, int *flags, char *data)
 
 /* jffs2_new_inode: allocate a new inode and inocache, add it to the hash,
    fill in the raw_inode while you're at it. */
+<<<<<<< HEAD
 struct inode *jffs2_new_inode (struct inode *dir_i, umode_t mode, struct jffs2_raw_inode *ri)
+=======
+struct inode *jffs2_new_inode (struct inode *dir_i, int mode, struct jffs2_raw_inode *ri)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inode *inode;
 	struct super_block *sb = dir_i->i_sb;
@@ -424,8 +494,12 @@ struct inode *jffs2_new_inode (struct inode *dir_i, umode_t mode, struct jffs2_r
 	struct jffs2_inode_info *f;
 	int ret;
 
+<<<<<<< HEAD
 	jffs2_dbg(1, "%s(): dir_i %ld, mode 0x%x\n",
 		  __func__, dir_i->i_ino, mode);
+=======
+	D1(printk(KERN_DEBUG "jffs2_new_inode(): dir_i %ld, mode 0x%x\n", dir_i->i_ino, mode));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	c = JFFS2_SB_INFO(sb);
 
@@ -464,7 +538,11 @@ struct inode *jffs2_new_inode (struct inode *dir_i, umode_t mode, struct jffs2_r
 		iput(inode);
 		return ERR_PTR(ret);
 	}
+<<<<<<< HEAD
 	set_nlink(inode, 1);
+=======
+	inode->i_nlink = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	inode->i_ino = je32_to_cpu(ri->ino);
 	inode->i_mode = jemode_to_cpu(ri->mode);
 	inode->i_gid = je16_to_cpu(ri->gid);
@@ -477,6 +555,10 @@ struct inode *jffs2_new_inode (struct inode *dir_i, umode_t mode, struct jffs2_r
 
 	if (insert_inode_locked(inode) < 0) {
 		make_bad_inode(inode);
+<<<<<<< HEAD
+=======
+		unlock_new_inode(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iput(inode);
 		return ERR_PTR(-EINVAL);
 	}
@@ -515,11 +597,19 @@ int jffs2_do_fill_super(struct super_block *sb, void *data, int silent)
 
 #ifndef CONFIG_JFFS2_FS_WRITEBUFFER
 	if (c->mtd->type == MTD_NANDFLASH) {
+<<<<<<< HEAD
 		pr_err("Cannot operate on NAND flash unless jffs2 NAND support is compiled in\n");
 		return -EINVAL;
 	}
 	if (c->mtd->type == MTD_DATAFLASH) {
 		pr_err("Cannot operate on DataFlash unless jffs2 DataFlash support is compiled in\n");
+=======
+		printk(KERN_ERR "jffs2: Cannot operate on NAND flash unless jffs2 NAND support is compiled in.\n");
+		return -EINVAL;
+	}
+	if (c->mtd->type == MTD_DATAFLASH) {
+		printk(KERN_ERR "jffs2: Cannot operate on DataFlash unless jffs2 DataFlash support is compiled in.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 #endif
@@ -533,13 +623,21 @@ int jffs2_do_fill_super(struct super_block *sb, void *data, int silent)
 	 */
 	if ((c->sector_size * blocks) != c->flash_size) {
 		c->flash_size = c->sector_size * blocks;
+<<<<<<< HEAD
 		pr_info("Flash size not aligned to erasesize, reducing to %dKiB\n",
+=======
+		printk(KERN_INFO "jffs2: Flash size not aligned to erasesize, reducing to %dKiB\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			c->flash_size / 1024);
 	}
 
 	if (c->flash_size < 5*c->sector_size) {
+<<<<<<< HEAD
 		pr_err("Too few erase blocks (%d)\n",
 		       c->flash_size / c->sector_size);
+=======
+		printk(KERN_ERR "jffs2: Too few erase blocks (%d)\n", c->flash_size / c->sector_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -562,20 +660,34 @@ int jffs2_do_fill_super(struct super_block *sb, void *data, int silent)
 	if ((ret = jffs2_do_mount_fs(c)))
 		goto out_inohash;
 
+<<<<<<< HEAD
 	jffs2_dbg(1, "%s(): Getting root inode\n", __func__);
 	root_i = jffs2_iget(sb, 1);
 	if (IS_ERR(root_i)) {
 		jffs2_dbg(1, "get root inode failed\n");
+=======
+	D1(printk(KERN_DEBUG "jffs2_do_fill_super(): Getting root inode\n"));
+	root_i = jffs2_iget(sb, 1);
+	if (IS_ERR(root_i)) {
+		D1(printk(KERN_WARNING "get root inode failed\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = PTR_ERR(root_i);
 		goto out_root;
 	}
 
 	ret = -ENOMEM;
 
+<<<<<<< HEAD
 	jffs2_dbg(1, "%s(): d_make_root()\n", __func__);
 	sb->s_root = d_make_root(root_i);
 	if (!sb->s_root)
 		goto out_root;
+=======
+	D1(printk(KERN_DEBUG "jffs2_do_fill_super(): d_alloc_root()\n"));
+	sb->s_root = d_alloc_root(root_i);
+	if (!sb->s_root)
+		goto out_root_i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sb->s_maxbytes = 0xFFFFFFFF;
 	sb->s_blocksize = PAGE_CACHE_SIZE;
@@ -585,6 +697,11 @@ int jffs2_do_fill_super(struct super_block *sb, void *data, int silent)
 		jffs2_start_garbage_collect_thread(c);
 	return 0;
 
+<<<<<<< HEAD
+=======
+ out_root_i:
+	iput(root_i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_root:
 	jffs2_free_ino_caches(c);
 	jffs2_free_raw_node_refs(c);
@@ -630,21 +747,35 @@ struct jffs2_inode_info *jffs2_gc_fetch_inode(struct jffs2_sb_info *c,
 		*/
 		inode = ilookup(OFNI_BS_2SFFJ(c), inum);
 		if (!inode) {
+<<<<<<< HEAD
 			jffs2_dbg(1, "ilookup() failed for ino #%u; inode is probably deleted.\n",
 				  inum);
+=======
+			D1(printk(KERN_DEBUG "ilookup() failed for ino #%u; inode is probably deleted.\n",
+				  inum));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			spin_lock(&c->inocache_lock);
 			ic = jffs2_get_ino_cache(c, inum);
 			if (!ic) {
+<<<<<<< HEAD
 				jffs2_dbg(1, "Inode cache for ino #%u is gone\n",
 					  inum);
+=======
+				D1(printk(KERN_DEBUG "Inode cache for ino #%u is gone.\n", inum));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				spin_unlock(&c->inocache_lock);
 				return NULL;
 			}
 			if (ic->state != INO_STATE_CHECKEDABSENT) {
 				/* Wait for progress. Don't just loop */
+<<<<<<< HEAD
 				jffs2_dbg(1, "Waiting for ino #%u in state %d\n",
 					  ic->ino, ic->state);
+=======
+				D1(printk(KERN_DEBUG "Waiting for ino #%u in state %d\n",
+					  ic->ino, ic->state));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				sleep_on_spinunlock(&c->inocache_wq, &c->inocache_lock);
 			} else {
 				spin_unlock(&c->inocache_lock);
@@ -662,8 +793,13 @@ struct jffs2_inode_info *jffs2_gc_fetch_inode(struct jffs2_sb_info *c,
 			return ERR_CAST(inode);
 	}
 	if (is_bad_inode(inode)) {
+<<<<<<< HEAD
 		pr_notice("Eep. read_inode() failed for ino #%u. unlinked %d\n",
 			  inum, unlinked);
+=======
+		printk(KERN_NOTICE "Eep. read_inode() failed for ino #%u. unlinked %d\n",
+		       inum, unlinked);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* NB. This will happen again. We need to do something appropriate here. */
 		iput(inode);
 		return ERR_PTR(-EIO);

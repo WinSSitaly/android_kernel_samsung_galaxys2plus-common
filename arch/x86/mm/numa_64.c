@@ -19,7 +19,11 @@ unsigned long __init numa_free_all_bootmem(void)
 	for_each_online_node(i)
 		pages += free_all_bootmem_node(NODE_DATA(i));
 
+<<<<<<< HEAD
 	pages += free_low_memory_core_early(MAX_NUMNODES);
+=======
+	pages += free_all_memory_core_early(MAX_NUMNODES);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return pages;
 }

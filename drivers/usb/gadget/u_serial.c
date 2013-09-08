@@ -25,7 +25,10 @@
 #include <linux/tty.h>
 #include <linux/tty_flip.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "u_serial.h"
 
@@ -110,8 +113,16 @@ struct gs_port {
 	int read_allocated;
 	struct list_head	read_queue;
 	unsigned		n_read;
+<<<<<<< HEAD
 	struct tasklet_struct	push;
 
+=======
+#ifndef CONFIG_USE_WORKQ_PUSH
+	struct tasklet_struct	push;
+#else
+	struct work_struct      push;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head	write_pool;
 	int write_started;
 	int write_allocated;
@@ -123,7 +134,11 @@ struct gs_port {
 };
 
 /* increase N_PORTS if you need more */
+<<<<<<< HEAD
 #define N_PORTS		4
+=======
+#define N_PORTS		8
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct portmaster {
 	struct mutex	lock;			/* protect open/close */
 	struct gs_port	*port;
@@ -478,6 +493,7 @@ __acquires(&port->port_lock)
  * So QUEUE_SIZE packets plus however many the FIFO holds (usually two)
  * can be buffered before the TTY layer's buffers (currently 64 KB).
  */
+<<<<<<< HEAD
 static void gs_rx_push(unsigned long _port)
 {
 	struct gs_port		*port = (void *)_port;
@@ -486,6 +502,28 @@ static void gs_rx_push(unsigned long _port)
 	bool			disconnect = false;
 	bool			do_push = false;
 
+=======
+#ifndef CONFIG_USE_WORKQ_PUSH
+static void gs_rx_push(unsigned long _port)
+{
+	struct gs_port	*port = (void *)_port;
+	struct list_head	*queue = &port->read_queue;
+#else
+static void gs_rx_push(struct work_struct *work)
+{
+	struct gs_port	*port;
+	struct list_head	*queue;
+#endif
+	struct tty_struct	*tty;
+	bool			disconnect = false;
+	bool			do_push = false;
+
+#ifdef CONFIG_USE_WORKQ_PUSH
+	port = container_of(work, struct gs_port, push);
+	queue = &port->read_queue;
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* hand any queued data to the tty */
 	spin_lock_irq(&port->port_lock);
 	tty = port->port_tty;
@@ -553,8 +591,14 @@ recycle:
 	/* Push from tty to ldisc; without low_latency set this is handled by
 	 * a workqueue, so we won't get callbacks and can hold port_lock
 	 */
+<<<<<<< HEAD
 	if (tty && do_push)
 		tty_flip_buffer_push(tty);
+=======
+	if (tty && do_push) {
+		tty_flip_buffer_push(tty);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 	/* We want our data queue to become empty ASAP, keeping data
@@ -568,7 +612,15 @@ recycle:
 	if (!list_empty(queue) && tty) {
 		if (!test_bit(TTY_THROTTLED, &tty->flags)) {
 			if (do_push)
+<<<<<<< HEAD
 				tasklet_schedule(&port->push);
+=======
+#ifndef CONFIG_USE_WORKQ_PUSH
+				tasklet_schedule(&port->push);
+#else
+				schedule_work(&port->push);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			else
 				pr_warning(PREFIX "%d: RX not scheduled?\n",
 					port->port_num);
@@ -589,7 +641,15 @@ static void gs_read_complete(struct usb_ep *ep, struct usb_request *req)
 	/* Queue all received data until the tty layer is ready for it. */
 	spin_lock(&port->port_lock);
 	list_add_tail(&req->list, &port->read_queue);
+<<<<<<< HEAD
 	tasklet_schedule(&port->push);
+=======
+#ifndef CONFIG_USE_WORKQ_PUSH
+	tasklet_schedule(&port->push);
+#else
+	schedule_work(&port->push);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&port->port_lock);
 }
 
@@ -725,6 +785,12 @@ static int gs_open(struct tty_struct *tty, struct file *file)
 	struct gs_port	*port;
 	int		status;
 
+<<<<<<< HEAD
+=======
+	if (port_num < 0 || port_num >= n_ports)
+		return -ENXIO;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do {
 		mutex_lock(&ports[port_num].lock);
 		port = ports[port_num].port;
@@ -810,7 +876,10 @@ static int gs_open(struct tty_struct *tty, struct file *file)
 	}
 
 	pr_debug("gs_open: ttyGS%d (%p,%p)\n", port->port_num, tty, file);
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = 0;
 
 exit_unlock_port:
@@ -985,7 +1054,15 @@ static void gs_unthrottle(struct tty_struct *tty)
 		 * rts/cts, or other handshaking with the host, but if the
 		 * read queue backs up enough we'll be NAKing OUT packets.
 		 */
+<<<<<<< HEAD
 		tasklet_schedule(&port->push);
+=======
+#ifndef CONFIG_USE_WORKQ_PUSH
+		tasklet_schedule(&port->push);
+#else
+		schedule_work(&port->push);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_vdebug(PREFIX "%d: unthrottle\n", port->port_num);
 	}
 	spin_unlock_irqrestore(&port->port_lock, flags);
@@ -1025,7 +1102,11 @@ static const struct tty_operations gs_tty_ops = {
 
 static struct tty_driver *gs_tty_driver;
 
+<<<<<<< HEAD
 static int __init
+=======
+static int
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 gs_port_alloc(unsigned port_num, struct usb_cdc_line_coding *coding)
 {
 	struct gs_port	*port;
@@ -1037,9 +1118,18 @@ gs_port_alloc(unsigned port_num, struct usb_cdc_line_coding *coding)
 	spin_lock_init(&port->port_lock);
 	init_waitqueue_head(&port->close_wait);
 	init_waitqueue_head(&port->drain_wait);
+<<<<<<< HEAD
 
 	tasklet_init(&port->push, gs_rx_push, (unsigned long) port);
 
+=======
+#ifndef CONFIG_USE_WORKQ_PUSH
+	tasklet_init(&port->push, gs_rx_push, (unsigned long) port);
+#else
+	pr_info("use workqueue push\n");
+	INIT_WORK(&port->push, gs_rx_push);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_LIST_HEAD(&port->read_pool);
 	INIT_LIST_HEAD(&port->read_queue);
 	INIT_LIST_HEAD(&port->write_pool);
@@ -1071,7 +1161,11 @@ gs_port_alloc(unsigned port_num, struct usb_cdc_line_coding *coding)
  *
  * Returns negative errno or zero.
  */
+<<<<<<< HEAD
 int __init gserial_setup(struct usb_gadget *g, unsigned count)
+=======
+int gserial_setup(struct usb_gadget *g, unsigned count)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned			i;
 	struct usb_cdc_line_coding	coding;
@@ -1084,6 +1178,10 @@ int __init gserial_setup(struct usb_gadget *g, unsigned count)
 	if (!gs_tty_driver)
 		return -ENOMEM;
 
+<<<<<<< HEAD
+=======
+	gs_tty_driver->owner = THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gs_tty_driver->driver_name = "g_serial";
 	gs_tty_driver->name = PREFIX;
 	/* uses dynamically assigned dev_t values */
@@ -1099,6 +1197,12 @@ int __init gserial_setup(struct usb_gadget *g, unsigned count)
 	 */
 	gs_tty_driver->init_termios.c_cflag =
 			B9600 | CS8 | CREAD | HUPCL | CLOCAL;
+<<<<<<< HEAD
+=======
+	gs_tty_driver->init_termios.c_iflag = IGNPAR;
+	gs_tty_driver->init_termios.c_oflag = 0;
+	gs_tty_driver->init_termios.c_lflag =  0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gs_tty_driver->init_termios.c_ispeed = 9600;
 	gs_tty_driver->init_termios.c_ospeed = 9600;
 
@@ -1190,9 +1294,17 @@ void gserial_cleanup(void)
 		port = ports[i].port;
 		ports[i].port = NULL;
 		mutex_unlock(&ports[i].lock);
+<<<<<<< HEAD
 
 		tasklet_kill(&port->push);
 
+=======
+#ifndef CONFIG_USE_WORKQ_PUSH
+		tasklet_kill(&port->push);
+#else
+		flush_work_sync(&port->push);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* wait for old opens to finish */
 		wait_event(port->close_wait, gs_closed(port));
 
@@ -1243,12 +1355,20 @@ int gserial_connect(struct gserial *gser, u8 port_num)
 	port = ports[port_num].port;
 
 	/* activate the endpoints */
+<<<<<<< HEAD
 	status = usb_ep_enable(gser->in);
+=======
+	status = usb_ep_enable(gser->in, gser->in_desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (status < 0)
 		return status;
 	gser->in->driver_data = port;
 
+<<<<<<< HEAD
 	status = usb_ep_enable(gser->out);
+=======
+	status = usb_ep_enable(gser->out, gser->out_desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (status < 0)
 		goto fail_out;
 	gser->out->driver_data = port;
@@ -1306,7 +1426,15 @@ void gserial_disconnect(struct gserial *gser)
 
 	if (!port)
 		return;
+<<<<<<< HEAD
 
+=======
+#ifdef CONFIG_BRCM_FUSE_LOG
+	if (port->port_num == ACM_LOGGING_PORT)
+		if (acm_logging_cb->stop)
+			acm_logging_cb->stop();
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* tell the TTY glue not to do I/O here any more */
 	spin_lock_irqsave(&port->port_lock, flags);
 

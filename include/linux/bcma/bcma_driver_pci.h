@@ -53,6 +53,7 @@ struct pci_dev;
 #define  BCMA_CORE_PCI_SBTOPCI1_MASK		0xFC000000
 #define BCMA_CORE_PCI_SBTOPCI2			0x0108	/* Backplane to PCI translation 2 (sbtopci2) */
 #define  BCMA_CORE_PCI_SBTOPCI2_MASK		0xC0000000
+<<<<<<< HEAD
 #define BCMA_CORE_PCI_CONFIG_ADDR		0x0120	/* pcie config space access */
 #define BCMA_CORE_PCI_CONFIG_DATA		0x0124	/* pcie config space access */
 #define BCMA_CORE_PCI_MDIO_CONTROL		0x0128	/* controls the mdio access */
@@ -82,6 +83,8 @@ struct pci_dev;
 #define BCMA_CORE_PCI_PCIEIND_ADDR		0x0130	/* indirect access to the internal register */
 #define BCMA_CORE_PCI_PCIEIND_DATA		0x0134	/* Data to/from the internal regsiter */
 #define BCMA_CORE_PCI_CLKREQENCTRL		0x0138	/*  >= rev 6, Clkreq rdma control */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define BCMA_CORE_PCI_PCICFG0			0x0400	/* PCI config space 0 (rev >= 8) */
 #define BCMA_CORE_PCI_PCICFG1			0x0500	/* PCI config space 1 (rev >= 8) */
 #define BCMA_CORE_PCI_PCICFG2			0x0600	/* PCI config space 2 (rev >= 8) */
@@ -101,6 +104,7 @@ struct pci_dev;
 #define  BCMA_CORE_PCI_SBTOPCI_RC_READL		0x00000010 /* Memory read line */
 #define  BCMA_CORE_PCI_SBTOPCI_RC_READM		0x00000020 /* Memory read multiple */
 
+<<<<<<< HEAD
 /* PCIE protocol PHY diagnostic registers */
 #define BCMA_CORE_PCI_PLP_MODEREG		0x200	/* Mode */
 #define BCMA_CORE_PCI_PLP_STATUSREG		0x204	/* Status */
@@ -198,17 +202,29 @@ struct bcma_drv_pci {
 #ifdef CONFIG_BCMA_DRIVER_PCI_HOSTMODE
 	struct bcma_drv_pci_host *host_controller;
 #endif
+=======
+/* PCIcore specific boardflags */
+#define BCMA_CORE_PCI_BFL_NOPCI			0x00000400 /* Board leaves PCI floating */
+
+struct bcma_drv_pci {
+	struct bcma_device *core;
+	u8 setup_done:1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Register access */
 #define pcicore_read32(pc, offset)		bcma_read32((pc)->core, offset)
 #define pcicore_write32(pc, offset, val)	bcma_write32((pc)->core, offset, val)
 
+<<<<<<< HEAD
 extern void __devinit bcma_core_pci_init(struct bcma_drv_pci *pc);
 extern int bcma_core_pci_irq_ctl(struct bcma_drv_pci *pc,
 				 struct bcma_device *core, bool enable);
 
 extern int bcma_core_pci_pcibios_map_irq(const struct pci_dev *dev);
 extern int bcma_core_pci_plat_dev_init(struct pci_dev *dev);
+=======
+extern void bcma_core_pci_init(struct bcma_drv_pci *pc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* LINUX_BCMA_DRIVER_PCI_H_ */

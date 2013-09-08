@@ -34,9 +34,16 @@ static void __init nuc960evb_init(void)
 
 MACHINE_START(W90N960EVB, "W90N960EVB")
 	/* Maintainer: Wan ZongShun */
+<<<<<<< HEAD
+=======
+	.boot_params	= 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io		= nuc960evb_map_io,
 	.init_irq	= nuc900_init_irq,
 	.init_machine	= nuc960evb_init,
 	.timer		= &nuc900_timer,
+<<<<<<< HEAD
 	.restart	= nuc9xx_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

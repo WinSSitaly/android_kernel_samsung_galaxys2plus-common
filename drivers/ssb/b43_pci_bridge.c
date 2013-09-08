@@ -5,13 +5,20 @@
  * because of its small size we include it in the SSB core
  * instead of creating a standalone module.
  *
+<<<<<<< HEAD
  * Copyright 2007  Michael Buesch <m@bues.ch>
+=======
+ * Copyright 2007  Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Licensed under the GNU/GPL. See COPYING for details.
  */
 
 #include <linux/pci.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ssb/ssb.h>
 
 #include "ssb_private.h"

@@ -9,6 +9,12 @@
  */
 #include <mach/iop33x.h>
 
+<<<<<<< HEAD
+=======
+	.macro	disable_fiq
+	.endm
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.macro get_irqnr_preamble, base, tmp
 	mrc	p15, 0, \tmp, c15, c1, 0
 	orr	\tmp, \tmp, #(1 << 6)

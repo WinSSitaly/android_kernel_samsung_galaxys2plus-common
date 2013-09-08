@@ -47,8 +47,11 @@
 #include <linux/srcu.h>
 #include <linux/hugetlb.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/sort.h>
 #include <linux/bsearch.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/processor.h>
 #include <asm/io.h>
@@ -86,10 +89,13 @@ struct dentry *kvm_debugfs_dir;
 
 static long kvm_vcpu_ioctl(struct file *file, unsigned int ioctl,
 			   unsigned long arg);
+<<<<<<< HEAD
 #ifdef CONFIG_COMPAT
 static long kvm_vcpu_compat_ioctl(struct file *file, unsigned int ioctl,
 				  unsigned long arg);
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int hardware_enable_all(void);
 static void hardware_disable_all(void);
 
@@ -103,8 +109,13 @@ static bool largepages_enabled = true;
 static struct page *hwpoison_page;
 static pfn_t hwpoison_pfn;
 
+<<<<<<< HEAD
 struct page *fault_page;
 pfn_t fault_pfn;
+=======
+static struct page *fault_page;
+static pfn_t fault_pfn;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 inline int kvm_is_mmio_pfn(pfn_t pfn)
 {
@@ -203,7 +214,11 @@ static bool make_all_cpus_request(struct kvm *kvm, unsigned int req)
 
 void kvm_flush_remote_tlbs(struct kvm *kvm)
 {
+<<<<<<< HEAD
 	long dirty_count = kvm->tlbs_dirty;
+=======
+	int dirty_count = kvm->tlbs_dirty;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	smp_mb();
 	if (make_all_cpus_request(kvm, KVM_REQ_TLB_FLUSH))
@@ -289,15 +304,26 @@ static void kvm_mmu_notifier_invalidate_page(struct mmu_notifier *mn,
 	 */
 	idx = srcu_read_lock(&kvm->srcu);
 	spin_lock(&kvm->mmu_lock);
+<<<<<<< HEAD
 
 	kvm->mmu_notifier_seq++;
 	need_tlb_flush = kvm_unmap_hva(kvm, address) | kvm->tlbs_dirty;
+=======
+	kvm->mmu_notifier_seq++;
+	need_tlb_flush = kvm_unmap_hva(kvm, address) | kvm->tlbs_dirty;
+	spin_unlock(&kvm->mmu_lock);
+	srcu_read_unlock(&kvm->srcu, idx);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* we've to flush the tlb before the pages can be freed */
 	if (need_tlb_flush)
 		kvm_flush_remote_tlbs(kvm);
 
+<<<<<<< HEAD
 	spin_unlock(&kvm->mmu_lock);
 	srcu_read_unlock(&kvm->srcu, idx);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void kvm_mmu_notifier_change_pte(struct mmu_notifier *mn,
@@ -335,12 +361,21 @@ static void kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
 	for (; start < end; start += PAGE_SIZE)
 		need_tlb_flush |= kvm_unmap_hva(kvm, start);
 	need_tlb_flush |= kvm->tlbs_dirty;
+<<<<<<< HEAD
 	/* we've to flush the tlb before the pages can be freed */
 	if (need_tlb_flush)
 		kvm_flush_remote_tlbs(kvm);
 
 	spin_unlock(&kvm->mmu_lock);
 	srcu_read_unlock(&kvm->srcu, idx);
+=======
+	spin_unlock(&kvm->mmu_lock);
+	srcu_read_unlock(&kvm->srcu, idx);
+
+	/* we've to flush the tlb before the pages can be freed */
+	if (need_tlb_flush)
+		kvm_flush_remote_tlbs(kvm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
@@ -357,11 +392,19 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
 	 * been freed.
 	 */
 	kvm->mmu_notifier_seq++;
+<<<<<<< HEAD
 	smp_wmb();
 	/*
 	 * The above sequence increase must be visible before the
 	 * below count decrease, which is ensured by the smp_wmb above
 	 * in conjunction with the smp_rmb in mmu_notifier_retry().
+=======
+	/*
+	 * The above sequence increase must be visible before the
+	 * below count decrease but both values are read by the kvm
+	 * page fault under mmu_lock spinlock so we don't need to add
+	 * a smb_wmb() here in between the two.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	kvm->mmu_notifier_count--;
 	spin_unlock(&kvm->mmu_lock);
@@ -378,6 +421,7 @@ static int kvm_mmu_notifier_clear_flush_young(struct mmu_notifier *mn,
 
 	idx = srcu_read_lock(&kvm->srcu);
 	spin_lock(&kvm->mmu_lock);
+<<<<<<< HEAD
 
 	young = kvm_age_hva(kvm, address);
 	if (young)
@@ -386,6 +430,15 @@ static int kvm_mmu_notifier_clear_flush_young(struct mmu_notifier *mn,
 	spin_unlock(&kvm->mmu_lock);
 	srcu_read_unlock(&kvm->srcu, idx);
 
+=======
+	young = kvm_age_hva(kvm, address);
+	spin_unlock(&kvm->mmu_lock);
+	srcu_read_unlock(&kvm->srcu, idx);
+
+	if (young)
+		kvm_flush_remote_tlbs(kvm);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return young;
 }
 
@@ -441,6 +494,7 @@ static int kvm_init_mmu_notifier(struct kvm *kvm)
 
 #endif /* CONFIG_MMU_NOTIFIER && KVM_ARCH_WANT_MMU_NOTIFIER */
 
+<<<<<<< HEAD
 static void kvm_init_memslots_id(struct kvm *kvm)
 {
 	int i;
@@ -451,6 +505,9 @@ static void kvm_init_memslots_id(struct kvm *kvm)
 }
 
 static struct kvm *kvm_create_vm(unsigned long type)
+=======
+static struct kvm *kvm_create_vm(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int r, i;
 	struct kvm *kvm = kvm_arch_alloc_vm();
@@ -458,7 +515,11 @@ static struct kvm *kvm_create_vm(unsigned long type)
 	if (!kvm)
 		return ERR_PTR(-ENOMEM);
 
+<<<<<<< HEAD
 	r = kvm_arch_init_vm(kvm, type);
+=======
+	r = kvm_arch_init_vm(kvm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (r)
 		goto out_err_nodisable;
 
@@ -475,7 +536,10 @@ static struct kvm *kvm_create_vm(unsigned long type)
 	kvm->memslots = kzalloc(sizeof(struct kvm_memslots), GFP_KERNEL);
 	if (!kvm->memslots)
 		goto out_err_nosrcu;
+<<<<<<< HEAD
 	kvm_init_memslots_id(kvm);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (init_srcu_struct(&kvm->srcu))
 		goto out_err_nosrcu;
 	for (i = 0; i < KVM_NR_BUSES; i++) {
@@ -536,13 +600,28 @@ static void kvm_destroy_dirty_bitmap(struct kvm_memory_slot *memslot)
 static void kvm_free_physmem_slot(struct kvm_memory_slot *free,
 				  struct kvm_memory_slot *dont)
 {
+<<<<<<< HEAD
+=======
+	int i;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!dont || free->rmap != dont->rmap)
 		vfree(free->rmap);
 
 	if (!dont || free->dirty_bitmap != dont->dirty_bitmap)
 		kvm_destroy_dirty_bitmap(free);
 
+<<<<<<< HEAD
 	kvm_arch_free_memslot(free, dont);
+=======
+
+	for (i = 0; i < KVM_NR_PAGE_SIZES - 1; ++i) {
+		if (!dont || free->lpage_info[i] != dont->lpage_info[i]) {
+			vfree(free->lpage_info[i]);
+			free->lpage_info[i] = NULL;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	free->npages = 0;
 	free->rmap = NULL;
@@ -550,11 +629,19 @@ static void kvm_free_physmem_slot(struct kvm_memory_slot *free,
 
 void kvm_free_physmem(struct kvm *kvm)
 {
+<<<<<<< HEAD
 	struct kvm_memslots *slots = kvm->memslots;
 	struct kvm_memory_slot *memslot;
 
 	kvm_for_each_memslot(memslot, slots)
 		kvm_free_physmem_slot(memslot, NULL);
+=======
+	int i;
+	struct kvm_memslots *slots = kvm->memslots;
+
+	for (i = 0; i < slots->nmemslots; ++i)
+		kvm_free_physmem_slot(&slots->memslots[i], NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kfree(kvm->memslots);
 }
@@ -609,6 +696,10 @@ static int kvm_vm_release(struct inode *inode, struct file *filp)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+#ifndef CONFIG_S390
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Allocation size is twice as large as the actual dirty bitmap size.
  * This makes it possible to do double buffering: see x86's
@@ -616,7 +707,10 @@ static int kvm_vm_release(struct inode *inode, struct file *filp)
  */
 static int kvm_create_dirty_bitmap(struct kvm_memory_slot *memslot)
 {
+<<<<<<< HEAD
 #ifndef CONFIG_S390
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long dirty_bytes = 2 * kvm_dirty_bitmap_bytes(memslot);
 
 	if (dirty_bytes > PAGE_SIZE)
@@ -628,6 +722,7 @@ static int kvm_create_dirty_bitmap(struct kvm_memory_slot *memslot)
 		return -ENOMEM;
 
 	memslot->dirty_bitmap_head = memslot->dirty_bitmap;
+<<<<<<< HEAD
 	memslot->nr_dirty_pages = 0;
 #endif /* !CONFIG_S390 */
 	return 0;
@@ -677,6 +772,11 @@ void update_memslots(struct kvm_memslots *slots, struct kvm_memory_slot *new)
 
 	slots->generation++;
 }
+=======
+	return 0;
+}
+#endif /* !CONFIG_S390 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Allocate some memory and give it an address in the guest physical address
@@ -693,7 +793,12 @@ int __kvm_set_memory_region(struct kvm *kvm,
 	int r;
 	gfn_t base_gfn;
 	unsigned long npages;
+<<<<<<< HEAD
 	struct kvm_memory_slot *memslot, *slot;
+=======
+	unsigned long i;
+	struct kvm_memory_slot *memslot;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct kvm_memory_slot old, new;
 	struct kvm_memslots *slots, *old_memslots;
 
@@ -710,12 +815,20 @@ int __kvm_set_memory_region(struct kvm *kvm,
 			(void __user *)(unsigned long)mem->userspace_addr,
 			mem->memory_size)))
 		goto out;
+<<<<<<< HEAD
 	if (mem->slot >= KVM_MEM_SLOTS_NUM)
+=======
+	if (mem->slot >= KVM_MEMORY_SLOTS + KVM_PRIVATE_MEM_SLOTS)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	if (mem->guest_phys_addr + mem->memory_size < mem->guest_phys_addr)
 		goto out;
 
+<<<<<<< HEAD
 	memslot = id_to_memslot(kvm->memslots, mem->slot);
+=======
+	memslot = &kvm->memslots->memslots[mem->slot];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	base_gfn = mem->guest_phys_addr >> PAGE_SHIFT;
 	npages = mem->memory_size >> PAGE_SHIFT;
 
@@ -740,11 +853,21 @@ int __kvm_set_memory_region(struct kvm *kvm,
 
 	/* Check for overlaps */
 	r = -EEXIST;
+<<<<<<< HEAD
 	kvm_for_each_memslot(slot, kvm->memslots) {
 		if (slot->id >= KVM_MEMORY_SLOTS || slot == memslot)
 			continue;
 		if (!((base_gfn + npages <= slot->base_gfn) ||
 		      (base_gfn >= slot->base_gfn + slot->npages)))
+=======
+	for (i = 0; i < KVM_MEMORY_SLOTS; ++i) {
+		struct kvm_memory_slot *s = &kvm->memslots->memslots[i];
+
+		if (s == memslot || !s->npages)
+			continue;
+		if (!((base_gfn + npages <= s->base_gfn) ||
+		      (base_gfn >= s->base_gfn + s->npages)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out_free;
 	}
 
@@ -755,6 +878,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
 	r = -ENOMEM;
 
 	/* Allocate if a slot is being created */
+<<<<<<< HEAD
 	if (npages && !old.npages) {
 		new.user_alloc = user_alloc;
 		new.userspace_addr = mem->userspace_addr;
@@ -767,12 +891,67 @@ int __kvm_set_memory_region(struct kvm *kvm,
 			goto out_free;
 	}
 
+=======
+#ifndef CONFIG_S390
+	if (npages && !new.rmap) {
+		new.rmap = vzalloc(npages * sizeof(*new.rmap));
+
+		if (!new.rmap)
+			goto out_free;
+
+		new.user_alloc = user_alloc;
+		new.userspace_addr = mem->userspace_addr;
+	}
+	if (!npages)
+		goto skip_lpage;
+
+	for (i = 0; i < KVM_NR_PAGE_SIZES - 1; ++i) {
+		unsigned long ugfn;
+		unsigned long j;
+		int lpages;
+		int level = i + 2;
+
+		/* Avoid unused variable warning if no large pages */
+		(void)level;
+
+		if (new.lpage_info[i])
+			continue;
+
+		lpages = 1 + ((base_gfn + npages - 1)
+			     >> KVM_HPAGE_GFN_SHIFT(level));
+		lpages -= base_gfn >> KVM_HPAGE_GFN_SHIFT(level);
+
+		new.lpage_info[i] = vzalloc(lpages * sizeof(*new.lpage_info[i]));
+
+		if (!new.lpage_info[i])
+			goto out_free;
+
+		if (base_gfn & (KVM_PAGES_PER_HPAGE(level) - 1))
+			new.lpage_info[i][0].write_count = 1;
+		if ((base_gfn+npages) & (KVM_PAGES_PER_HPAGE(level) - 1))
+			new.lpage_info[i][lpages - 1].write_count = 1;
+		ugfn = new.userspace_addr >> PAGE_SHIFT;
+		/*
+		 * If the gfn and userspace address are not aligned wrt each
+		 * other, or if explicitly asked to, disable large page
+		 * support for this slot
+		 */
+		if ((base_gfn ^ ugfn) & (KVM_PAGES_PER_HPAGE(level) - 1) ||
+		    !largepages_enabled)
+			for (j = 0; j < lpages; ++j)
+				new.lpage_info[i][j].write_count = 1;
+	}
+
+skip_lpage:
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Allocate page dirty bitmap if needed */
 	if ((new.flags & KVM_MEM_LOG_DIRTY_PAGES) && !new.dirty_bitmap) {
 		if (kvm_create_dirty_bitmap(&new) < 0)
 			goto out_free;
 		/* destroy any largepage mappings for dirty tracking */
 	}
+<<<<<<< HEAD
 
 	if (!npages) {
 		struct kvm_memory_slot *slot;
@@ -786,6 +965,24 @@ int __kvm_set_memory_region(struct kvm *kvm,
 		slot->flags |= KVM_MEMSLOT_INVALID;
 
 		update_memslots(slots, NULL);
+=======
+#else  /* not defined CONFIG_S390 */
+	new.user_alloc = user_alloc;
+	if (user_alloc)
+		new.userspace_addr = mem->userspace_addr;
+#endif /* not defined CONFIG_S390 */
+
+	if (!npages) {
+		r = -ENOMEM;
+		slots = kzalloc(sizeof(struct kvm_memslots), GFP_KERNEL);
+		if (!slots)
+			goto out_free;
+		memcpy(slots, kvm->memslots, sizeof(struct kvm_memslots));
+		if (mem->slot >= slots->nmemslots)
+			slots->nmemslots = mem->slot + 1;
+		slots->generation++;
+		slots->memslots[mem->slot].flags |= KVM_MEMSLOT_INVALID;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		old_memslots = kvm->memslots;
 		rcu_assign_pointer(kvm->memslots, slots);
@@ -814,25 +1011,44 @@ int __kvm_set_memory_region(struct kvm *kvm,
 		kvm_iommu_unmap_pages(kvm, &old);
 
 	r = -ENOMEM;
+<<<<<<< HEAD
 	slots = kmemdup(kvm->memslots, sizeof(struct kvm_memslots),
 			GFP_KERNEL);
 	if (!slots)
 		goto out_free;
+=======
+	slots = kzalloc(sizeof(struct kvm_memslots), GFP_KERNEL);
+	if (!slots)
+		goto out_free;
+	memcpy(slots, kvm->memslots, sizeof(struct kvm_memslots));
+	if (mem->slot >= slots->nmemslots)
+		slots->nmemslots = mem->slot + 1;
+	slots->generation++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* actual memory is freed via old in kvm_free_physmem_slot below */
 	if (!npages) {
 		new.rmap = NULL;
 		new.dirty_bitmap = NULL;
+<<<<<<< HEAD
 		memset(&new.arch, 0, sizeof(new.arch));
 	}
 
 	update_memslots(slots, &new);
+=======
+		for (i = 0; i < KVM_NR_PAGE_SIZES - 1; ++i)
+			new.lpage_info[i] = NULL;
+	}
+
+	slots->memslots[mem->slot] = new;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	old_memslots = kvm->memslots;
 	rcu_assign_pointer(kvm->memslots, slots);
 	synchronize_srcu_expedited(&kvm->srcu);
 
 	kvm_arch_commit_memory_region(kvm, mem, old, user_alloc);
 
+<<<<<<< HEAD
 	/*
 	 * If the new memory slot is created, we need to clear all
 	 * mmio sptes.
@@ -840,6 +1056,8 @@ int __kvm_set_memory_region(struct kvm *kvm,
 	if (npages && old.base_gfn != mem->guest_phys_addr >> PAGE_SHIFT)
 		kvm_arch_flush_shadow(kvm);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kvm_free_physmem_slot(&old, &new);
 	kfree(old_memslots);
 
@@ -888,7 +1106,11 @@ int kvm_get_dirty_log(struct kvm *kvm,
 	if (log->slot >= KVM_MEMORY_SLOTS)
 		goto out;
 
+<<<<<<< HEAD
 	memslot = id_to_memslot(kvm->memslots, log->slot);
+=======
+	memslot = &kvm->memslots->memslots[log->slot];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = -ENOENT;
 	if (!memslot->dirty_bitmap)
 		goto out;
@@ -910,11 +1132,14 @@ out:
 	return r;
 }
 
+<<<<<<< HEAD
 bool kvm_largepages_enabled(void)
 {
 	return largepages_enabled;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void kvm_disable_largepages(void)
 {
 	largepages_enabled = false;
@@ -945,6 +1170,7 @@ int is_fault_pfn(pfn_t pfn)
 }
 EXPORT_SYMBOL_GPL(is_fault_pfn);
 
+<<<<<<< HEAD
 int is_noslot_pfn(pfn_t pfn)
 {
 	return pfn == bad_pfn;
@@ -957,6 +1183,8 @@ int is_invalid_pfn(pfn_t pfn)
 }
 EXPORT_SYMBOL_GPL(is_invalid_pfn);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline unsigned long bad_hva(void)
 {
 	return PAGE_OFFSET;
@@ -968,6 +1196,24 @@ int kvm_is_error_hva(unsigned long addr)
 }
 EXPORT_SYMBOL_GPL(kvm_is_error_hva);
 
+<<<<<<< HEAD
+=======
+static struct kvm_memory_slot *__gfn_to_memslot(struct kvm_memslots *slots,
+						gfn_t gfn)
+{
+	int i;
+
+	for (i = 0; i < slots->nmemslots; ++i) {
+		struct kvm_memory_slot *memslot = &slots->memslots[i];
+
+		if (gfn >= memslot->base_gfn
+		    && gfn < memslot->base_gfn + memslot->npages)
+			return memslot;
+	}
+	return NULL;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct kvm_memory_slot *gfn_to_memslot(struct kvm *kvm, gfn_t gfn)
 {
 	return __gfn_to_memslot(kvm_memslots(kvm), gfn);
@@ -976,6 +1222,7 @@ EXPORT_SYMBOL_GPL(gfn_to_memslot);
 
 int kvm_is_visible_gfn(struct kvm *kvm, gfn_t gfn)
 {
+<<<<<<< HEAD
 	struct kvm_memory_slot *memslot = gfn_to_memslot(kvm, gfn);
 
 	if (!memslot || memslot->id >= KVM_MEMORY_SLOTS ||
@@ -983,6 +1230,22 @@ int kvm_is_visible_gfn(struct kvm *kvm, gfn_t gfn)
 		return 0;
 
 	return 1;
+=======
+	int i;
+	struct kvm_memslots *slots = kvm_memslots(kvm);
+
+	for (i = 0; i < KVM_MEMORY_SLOTS; ++i) {
+		struct kvm_memory_slot *memslot = &slots->memslots[i];
+
+		if (memslot->flags & KVM_MEMSLOT_INVALID)
+			continue;
+
+		if (gfn >= memslot->base_gfn
+		    && gfn < memslot->base_gfn + memslot->npages)
+			return 1;
+	}
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(kvm_is_visible_gfn);
 
@@ -1353,7 +1616,11 @@ int kvm_write_guest_page(struct kvm *kvm, gfn_t gfn, const void *data,
 	addr = gfn_to_hva(kvm, gfn);
 	if (kvm_is_error_hva(addr))
 		return -EFAULT;
+<<<<<<< HEAD
 	r = __copy_to_user((void __user *)addr + offset, data, len);
+=======
+	r = copy_to_user((void __user *)addr + offset, data, len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (r)
 		return -EFAULT;
 	mark_page_dirty(kvm, gfn);
@@ -1382,6 +1649,7 @@ int kvm_write_guest(struct kvm *kvm, gpa_t gpa, const void *data,
 }
 
 int kvm_gfn_to_hva_cache_init(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+<<<<<<< HEAD
 			      gpa_t gpa, unsigned long len)
 {
 	struct kvm_memslots *slots = kvm_memslots(kvm);
@@ -1414,6 +1682,23 @@ int kvm_gfn_to_hva_cache_init(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
 		/* Use the slow path for cross page reads and writes. */
 		ghc->memslot = NULL;
 	}
+=======
+			      gpa_t gpa)
+{
+	struct kvm_memslots *slots = kvm_memslots(kvm);
+	int offset = offset_in_page(gpa);
+	gfn_t gfn = gpa >> PAGE_SHIFT;
+
+	ghc->gpa = gpa;
+	ghc->generation = slots->generation;
+	ghc->memslot = __gfn_to_memslot(slots, gfn);
+	ghc->hva = gfn_to_hva_many(ghc->memslot, gfn, NULL);
+	if (!kvm_is_error_hva(ghc->hva))
+		ghc->hva += offset;
+	else
+		return -EFAULT;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL_GPL(kvm_gfn_to_hva_cache_init);
@@ -1424,6 +1709,7 @@ int kvm_write_guest_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
 	struct kvm_memslots *slots = kvm_memslots(kvm);
 	int r;
 
+<<<<<<< HEAD
 	BUG_ON(len > ghc->len);
 
 	if (slots->generation != ghc->generation)
@@ -1431,11 +1717,19 @@ int kvm_write_guest_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
 
 	if (unlikely(!ghc->memslot))
 		return kvm_write_guest(kvm, ghc->gpa, data, len);
+=======
+	if (slots->generation != ghc->generation)
+		kvm_gfn_to_hva_cache_init(kvm, ghc, ghc->gpa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (kvm_is_error_hva(ghc->hva))
 		return -EFAULT;
 
+<<<<<<< HEAD
 	r = __copy_to_user((void __user *)ghc->hva, data, len);
+=======
+	r = copy_to_user((void __user *)ghc->hva, data, len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (r)
 		return -EFAULT;
 	mark_page_dirty_in_slot(kvm, ghc->memslot, ghc->gpa >> PAGE_SHIFT);
@@ -1444,6 +1738,7 @@ int kvm_write_guest_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
 }
 EXPORT_SYMBOL_GPL(kvm_write_guest_cached);
 
+<<<<<<< HEAD
 int kvm_read_guest_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
 			   void *data, unsigned long len)
 {
@@ -1469,6 +1764,8 @@ int kvm_read_guest_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
 }
 EXPORT_SYMBOL_GPL(kvm_read_guest_cached);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int kvm_clear_guest_page(struct kvm *kvm, gfn_t gfn, int offset, int len)
 {
 	return kvm_write_guest_page(kvm, gfn, (const void *) empty_zero_page,
@@ -1501,8 +1798,12 @@ void mark_page_dirty_in_slot(struct kvm *kvm, struct kvm_memory_slot *memslot,
 	if (memslot && memslot->dirty_bitmap) {
 		unsigned long rel_gfn = gfn - memslot->base_gfn;
 
+<<<<<<< HEAD
 		if (!test_and_set_bit_le(rel_gfn, memslot->dirty_bitmap))
 			memslot->nr_dirty_pages++;
+=======
+		__set_bit_le(rel_gfn, memslot->dirty_bitmap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1615,7 +1916,11 @@ static int kvm_vcpu_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
 		page = virt_to_page(vcpu->kvm->coalesced_mmio_ring);
 #endif
 	else
+<<<<<<< HEAD
 		return kvm_arch_vcpu_fault(vcpu, vmf);
+=======
+		return VM_FAULT_SIGBUS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	get_page(page);
 	vmf->page = page;
 	return 0;
@@ -1642,9 +1947,13 @@ static int kvm_vcpu_release(struct inode *inode, struct file *filp)
 static struct file_operations kvm_vcpu_fops = {
 	.release        = kvm_vcpu_release,
 	.unlocked_ioctl = kvm_vcpu_ioctl,
+<<<<<<< HEAD
 #ifdef CONFIG_COMPAT
 	.compat_ioctl   = kvm_vcpu_compat_ioctl,
 #endif
+=======
+	.compat_ioctl   = kvm_vcpu_ioctl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.mmap           = kvm_vcpu_mmap,
 	.llseek		= noop_llseek,
 };
@@ -1673,6 +1982,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, u32 id)
 
 	r = kvm_arch_vcpu_setup(vcpu);
 	if (r)
+<<<<<<< HEAD
 		goto vcpu_destroy;
 
 	mutex_lock(&kvm->lock);
@@ -1683,12 +1993,24 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, u32 id)
 	if (atomic_read(&kvm->online_vcpus) == KVM_MAX_VCPUS) {
 		r = -EINVAL;
 		goto unlock_vcpu_destroy;
+=======
+		return r;
+
+	mutex_lock(&kvm->lock);
+	if (atomic_read(&kvm->online_vcpus) == KVM_MAX_VCPUS) {
+		r = -EINVAL;
+		goto vcpu_destroy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	kvm_for_each_vcpu(r, v, kvm)
 		if (v->vcpu_id == id) {
 			r = -EEXIST;
+<<<<<<< HEAD
 			goto unlock_vcpu_destroy;
+=======
+			goto vcpu_destroy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 	BUG_ON(kvm->vcpus[atomic_read(&kvm->online_vcpus)]);
@@ -1698,19 +2020,35 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, u32 id)
 	r = create_vcpu_fd(vcpu);
 	if (r < 0) {
 		kvm_put_kvm(kvm);
+<<<<<<< HEAD
 		goto unlock_vcpu_destroy;
+=======
+		goto vcpu_destroy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	kvm->vcpus[atomic_read(&kvm->online_vcpus)] = vcpu;
 	smp_wmb();
 	atomic_inc(&kvm->online_vcpus);
 
+<<<<<<< HEAD
 	mutex_unlock(&kvm->lock);
 	return r;
 
 unlock_vcpu_destroy:
 	mutex_unlock(&kvm->lock);
 vcpu_destroy:
+=======
+#ifdef CONFIG_KVM_APIC_ARCHITECTURE
+	if (kvm->bsp_vcpu_id == id)
+		kvm->bsp_vcpu = vcpu;
+#endif
+	mutex_unlock(&kvm->lock);
+	return r;
+
+vcpu_destroy:
+	mutex_unlock(&kvm->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kvm_arch_vcpu_destroy(vcpu);
 	return r;
 }
@@ -1779,11 +2117,20 @@ out_free1:
 		struct kvm_regs *kvm_regs;
 
 		r = -ENOMEM;
+<<<<<<< HEAD
 		kvm_regs = memdup_user(argp, sizeof(*kvm_regs));
 		if (IS_ERR(kvm_regs)) {
 			r = PTR_ERR(kvm_regs);
 			goto out;
 		}
+=======
+		kvm_regs = kzalloc(sizeof(struct kvm_regs), GFP_KERNEL);
+		if (!kvm_regs)
+			goto out;
+		r = -EFAULT;
+		if (copy_from_user(kvm_regs, argp, sizeof(struct kvm_regs)))
+			goto out_free2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r = kvm_arch_vcpu_ioctl_set_regs(vcpu, kvm_regs);
 		if (r)
 			goto out_free2;
@@ -1807,11 +2154,21 @@ out_free2:
 		break;
 	}
 	case KVM_SET_SREGS: {
+<<<<<<< HEAD
 		kvm_sregs = memdup_user(argp, sizeof(*kvm_sregs));
 		if (IS_ERR(kvm_sregs)) {
 			r = PTR_ERR(kvm_sregs);
 			goto out;
 		}
+=======
+		kvm_sregs = kmalloc(sizeof(struct kvm_sregs), GFP_KERNEL);
+		r = -ENOMEM;
+		if (!kvm_sregs)
+			goto out;
+		r = -EFAULT;
+		if (copy_from_user(kvm_sregs, argp, sizeof(struct kvm_sregs)))
+			goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r = kvm_arch_vcpu_ioctl_set_sregs(vcpu, kvm_sregs);
 		if (r)
 			goto out;
@@ -1907,11 +2264,21 @@ out_free2:
 		break;
 	}
 	case KVM_SET_FPU: {
+<<<<<<< HEAD
 		fpu = memdup_user(argp, sizeof(*fpu));
 		if (IS_ERR(fpu)) {
 			r = PTR_ERR(fpu);
 			goto out;
 		}
+=======
+		fpu = kmalloc(sizeof(struct kvm_fpu), GFP_KERNEL);
+		r = -ENOMEM;
+		if (!fpu)
+			goto out;
+		r = -EFAULT;
+		if (copy_from_user(fpu, argp, sizeof(struct kvm_fpu)))
+			goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r = kvm_arch_vcpu_ioctl_set_fpu(vcpu, fpu);
 		if (r)
 			goto out;
@@ -1928,6 +2295,7 @@ out:
 	return r;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_COMPAT
 static long kvm_vcpu_compat_ioctl(struct file *filp,
 				  unsigned int ioctl, unsigned long arg)
@@ -1972,6 +2340,8 @@ out:
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static long kvm_vm_ioctl(struct file *filp,
 			   unsigned int ioctl, unsigned long arg)
 {
@@ -2160,12 +2530,20 @@ static struct file_operations kvm_vm_fops = {
 	.llseek		= noop_llseek,
 };
 
+<<<<<<< HEAD
 static int kvm_dev_ioctl_create_vm(unsigned long type)
+=======
+static int kvm_dev_ioctl_create_vm(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int r;
 	struct kvm *kvm;
 
+<<<<<<< HEAD
 	kvm = kvm_create_vm(type);
+=======
+	kvm = kvm_create_vm();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(kvm))
 		return PTR_ERR(kvm);
 #ifdef KVM_COALESCED_MMIO_PAGE_OFFSET
@@ -2216,7 +2594,14 @@ static long kvm_dev_ioctl(struct file *filp,
 		r = KVM_API_VERSION;
 		break;
 	case KVM_CREATE_VM:
+<<<<<<< HEAD
 		r = kvm_dev_ioctl_create_vm(arg);
+=======
+		r = -EINVAL;
+		if (arg)
+			goto out;
+		r = kvm_dev_ioctl_create_vm();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case KVM_CHECK_EXTENSION:
 		r = kvm_dev_ioctl_check_extension_generic(arg);
@@ -2396,13 +2781,18 @@ static void kvm_io_bus_destroy(struct kvm_io_bus *bus)
 	int i;
 
 	for (i = 0; i < bus->dev_count; i++) {
+<<<<<<< HEAD
 		struct kvm_io_device *pos = bus->range[i].dev;
+=======
+		struct kvm_io_device *pos = bus->devs[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		kvm_iodevice_destructor(pos);
 	}
 	kfree(bus);
 }
 
+<<<<<<< HEAD
 int kvm_io_bus_sort_cmp(const void *p1, const void *p2)
 {
 	const struct kvm_io_range *r1 = p1;
@@ -2457,10 +2847,13 @@ int kvm_io_bus_get_first_dev(struct kvm_io_bus *bus,
 	return off;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* kvm_io_bus_write - called under kvm->slots_lock */
 int kvm_io_bus_write(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
 		     int len, const void *val)
 {
+<<<<<<< HEAD
 	int idx;
 	struct kvm_io_bus *bus;
 	struct kvm_io_range range;
@@ -2482,6 +2875,15 @@ int kvm_io_bus_write(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
 		idx++;
 	}
 
+=======
+	int i;
+	struct kvm_io_bus *bus;
+
+	bus = srcu_dereference(kvm->buses[bus_idx], &kvm->srcu);
+	for (i = 0; i < bus->dev_count; i++)
+		if (!kvm_iodevice_write(bus->devs[i], addr, len, val))
+			return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -EOPNOTSUPP;
 }
 
@@ -2489,6 +2891,7 @@ int kvm_io_bus_write(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
 int kvm_io_bus_read(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
 		    int len, void *val)
 {
+<<<<<<< HEAD
 	int idx;
 	struct kvm_io_bus *bus;
 	struct kvm_io_range range;
@@ -2510,12 +2913,26 @@ int kvm_io_bus_read(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
 		idx++;
 	}
 
+=======
+	int i;
+	struct kvm_io_bus *bus;
+
+	bus = srcu_dereference(kvm->buses[bus_idx], &kvm->srcu);
+	for (i = 0; i < bus->dev_count; i++)
+		if (!kvm_iodevice_read(bus->devs[i], addr, len, val))
+			return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -EOPNOTSUPP;
 }
 
 /* Caller must hold slots_lock. */
+<<<<<<< HEAD
 int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
 			    int len, struct kvm_io_device *dev)
+=======
+int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx,
+			    struct kvm_io_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct kvm_io_bus *new_bus, *bus;
 
@@ -2523,10 +2940,18 @@ int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
 	if (bus->dev_count > NR_IOBUS_DEVS-1)
 		return -ENOSPC;
 
+<<<<<<< HEAD
 	new_bus = kmemdup(bus, sizeof(struct kvm_io_bus), GFP_KERNEL);
 	if (!new_bus)
 		return -ENOMEM;
 	kvm_io_bus_insert_dev(new_bus, dev, addr, len);
+=======
+	new_bus = kzalloc(sizeof(struct kvm_io_bus), GFP_KERNEL);
+	if (!new_bus)
+		return -ENOMEM;
+	memcpy(new_bus, bus, sizeof(struct kvm_io_bus));
+	new_bus->devs[new_bus->dev_count++] = dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rcu_assign_pointer(kvm->buses[bus_idx], new_bus);
 	synchronize_srcu_expedited(&kvm->srcu);
 	kfree(bus);
@@ -2541,6 +2966,7 @@ int kvm_io_bus_unregister_dev(struct kvm *kvm, enum kvm_bus bus_idx,
 	int i, r;
 	struct kvm_io_bus *new_bus, *bus;
 
+<<<<<<< HEAD
 	bus = kvm->buses[bus_idx];
 
 	new_bus = kmemdup(bus, sizeof(*bus), GFP_KERNEL);
@@ -2556,6 +2982,20 @@ int kvm_io_bus_unregister_dev(struct kvm *kvm, enum kvm_bus bus_idx,
 			sort(new_bus->range, new_bus->dev_count,
 			     sizeof(struct kvm_io_range),
 			     kvm_io_bus_sort_cmp, NULL);
+=======
+	new_bus = kzalloc(sizeof(struct kvm_io_bus), GFP_KERNEL);
+	if (!new_bus)
+		return -ENOMEM;
+
+	bus = kvm->buses[bus_idx];
+	memcpy(new_bus, bus, sizeof(struct kvm_io_bus));
+
+	r = -ENOENT;
+	for (i = 0; i < new_bus->dev_count; i++)
+		if (new_bus->devs[i] == dev) {
+			r = 0;
+			new_bus->devs[i] = new_bus->devs[--new_bus->dev_count];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 
@@ -2613,6 +3053,7 @@ static const struct file_operations *stat_fops[] = {
 	[KVM_STAT_VM]   = &vm_stat_fops,
 };
 
+<<<<<<< HEAD
 static int kvm_init_debug(void)
 {
 	int r = -EFAULT;
@@ -2636,6 +3077,17 @@ out_dir:
 	debugfs_remove_recursive(kvm_debugfs_dir);
 out:
 	return r;
+=======
+static void kvm_init_debug(void)
+{
+	struct kvm_stats_debugfs_item *p;
+
+	kvm_debugfs_dir = debugfs_create_dir("kvm", NULL);
+	for (p = debugfs_entries; p->name; ++p)
+		p->dentry = debugfs_create_file(p->name, 0444, kvm_debugfs_dir,
+						(void *)(long)p->offset,
+						stat_fops[p->kind]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void kvm_exit_debug(void)
@@ -2779,6 +3231,7 @@ int kvm_init(void *opaque, unsigned vcpu_size, unsigned vcpu_align,
 	kvm_preempt_ops.sched_in = kvm_sched_in;
 	kvm_preempt_ops.sched_out = kvm_sched_out;
 
+<<<<<<< HEAD
 	r = kvm_init_debug();
 	if (r) {
 		printk(KERN_ERR "kvm: create debugfs files failed\n");
@@ -2789,6 +3242,12 @@ int kvm_init(void *opaque, unsigned vcpu_size, unsigned vcpu_align,
 
 out_undebugfs:
 	unregister_syscore_ops(&kvm_syscore_ops);
+=======
+	kvm_init_debug();
+
+	return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_unreg:
 	kvm_async_pf_deinit();
 out_free:

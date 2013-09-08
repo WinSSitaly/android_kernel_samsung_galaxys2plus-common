@@ -140,6 +140,10 @@
 #include <asm/pdc.h>
 #include <asm/pdcpat.h>
 #include <asm/page.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>		/* read/write functions */
 #ifdef CONFIG_SUPERIO
 #include <asm/superio.h>

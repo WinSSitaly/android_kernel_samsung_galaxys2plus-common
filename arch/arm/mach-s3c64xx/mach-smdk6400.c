@@ -22,7 +22,10 @@
 
 #include <asm/mach-types.h>
 
+<<<<<<< HEAD
 #include <asm/hardware/vic.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 #include <asm/mach/irq.h>
@@ -32,13 +35,20 @@
 
 #include <plat/regs-serial.h>
 
+<<<<<<< HEAD
+=======
+#include <mach/s3c6400.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/clock.h>
 #include <plat/devs.h>
 #include <plat/cpu.h>
 #include <plat/iic.h>
 
+<<<<<<< HEAD
 #include "common.h"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define UCON S3C2410_UCON_DEFAULT | S3C2410_UCON_UCLK
 #define ULCON S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB
 #define UFCON S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE
@@ -87,6 +97,7 @@ static void __init smdk6400_machine_init(void)
 
 MACHINE_START(SMDK6400, "SMDK6400")
 	/* Maintainer: Ben Dooks <ben-linux@fluff.org> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 
 	.init_irq	= s3c6400_init_irq,
@@ -95,4 +106,12 @@ MACHINE_START(SMDK6400, "SMDK6400")
 	.init_machine	= smdk6400_machine_init,
 	.timer		= &s3c24xx_timer,
 	.restart	= s3c64xx_restart,
+=======
+	.boot_params	= S3C64XX_PA_SDRAM + 0x100,
+
+	.init_irq	= s3c6400_init_irq,
+	.map_io		= smdk6400_map_io,
+	.init_machine	= smdk6400_machine_init,
+	.timer		= &s3c24xx_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

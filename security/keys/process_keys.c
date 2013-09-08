@@ -54,7 +54,11 @@ int install_user_keyrings(void)
 
 	kenter("%p{%u}", user, user->uid);
 
+<<<<<<< HEAD
 	if (user->uid_keyring && user->session_keyring) {
+=======
+	if (user->uid_keyring) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kleave(" = 0 [exist]");
 		return 0;
 	}
@@ -270,7 +274,11 @@ static int install_session_keyring(struct key *keyring)
 	if (!new)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	ret = install_session_keyring_to_cred(new, keyring);
+=======
+	ret = install_session_keyring_to_cred(new, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		abort_creds(new);
 		return ret;
@@ -589,15 +597,21 @@ try_again:
 			ret = install_user_keyrings();
 			if (ret < 0)
 				goto error;
+<<<<<<< HEAD
 			if (lflags & KEY_LOOKUP_CREATE)
 				ret = join_session_keyring(NULL);
 			else
 				ret = install_session_keyring(
 					cred->user->session_keyring);
+=======
+			ret = install_session_keyring(
+				cred->user->session_keyring);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (ret < 0)
 				goto error;
 			goto reget_creds;
+<<<<<<< HEAD
 		} else if (cred->tgcred->session_keyring ==
 			   cred->user->session_keyring &&
 			   lflags & KEY_LOOKUP_CREATE) {
@@ -605,6 +619,8 @@ try_again:
 			if (ret < 0)
 				goto error;
 			goto reget_creds;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		rcu_read_lock();
@@ -657,8 +673,12 @@ try_again:
 			goto error;
 
 		down_read(&cred->request_key_auth->sem);
+<<<<<<< HEAD
 		if (test_bit(KEY_FLAG_REVOKED,
 			     &cred->request_key_auth->flags)) {
+=======
+		if (cred->request_key_auth->flags & KEY_FLAG_REVOKED) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			key_ref = ERR_PTR(-EKEYREVOKED);
 			key = NULL;
 		} else {

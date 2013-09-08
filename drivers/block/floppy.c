@@ -188,6 +188,10 @@ static int print_unex = 1;
 #include <linux/init.h>
 #include <linux/platform_device.h>
 #include <linux/mod_devicetable.h>
+<<<<<<< HEAD
+=======
+#include <linux/buffer_head.h>	/* for invalidate_buffers() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mutex.h>
 #include <linux/io.h>
 #include <linux/uaccess.h>
@@ -202,6 +206,10 @@ static int slow_floppy;
 
 #include <asm/dma.h>
 #include <asm/irq.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int FLOPPY_IRQ = 6;
 static int FLOPPY_DMA = 2;
@@ -1030,6 +1038,40 @@ static int fd_wait_for_completion(unsigned long delay, timeout_fn function)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static DEFINE_SPINLOCK(floppy_hlt_lock);
+static int hlt_disabled;
+static void floppy_disable_hlt(void)
+{
+	unsigned long flags;
+
+	WARN_ONCE(1, "floppy_disable_hlt() scheduled for removal in 2012");
+	spin_lock_irqsave(&floppy_hlt_lock, flags);
+	if (!hlt_disabled) {
+		hlt_disabled = 1;
+#ifdef HAVE_DISABLE_HLT
+		disable_hlt();
+#endif
+	}
+	spin_unlock_irqrestore(&floppy_hlt_lock, flags);
+}
+
+static void floppy_enable_hlt(void)
+{
+	unsigned long flags;
+
+	spin_lock_irqsave(&floppy_hlt_lock, flags);
+	if (hlt_disabled) {
+		hlt_disabled = 0;
+#ifdef HAVE_DISABLE_HLT
+		enable_hlt();
+#endif
+	}
+	spin_unlock_irqrestore(&floppy_hlt_lock, flags);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void setup_DMA(void)
 {
 	unsigned long f;
@@ -1074,6 +1116,10 @@ static void setup_DMA(void)
 	fd_enable_dma();
 	release_dma_lock(f);
 #endif
+<<<<<<< HEAD
+=======
+	floppy_disable_hlt();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void show_floppy(void);
@@ -1675,6 +1721,10 @@ irqreturn_t floppy_interrupt(int irq, void *dev_id)
 	fd_disable_dma();
 	release_dma_lock(f);
 
+<<<<<<< HEAD
+=======
+	floppy_enable_hlt();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do_floppy = NULL;
 	if (fdc >= N_FDC || FDCS->address == -1) {
 		/* we don't even know which FDC is the culprit */
@@ -1823,6 +1873,11 @@ static void floppy_shutdown(unsigned long data)
 		show_floppy();
 	cancel_activity();
 
+<<<<<<< HEAD
+=======
+	floppy_enable_hlt();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	flags = claim_dma_lock();
 	fd_disable_dma();
 	release_dma_lock(flags);
@@ -3796,7 +3851,11 @@ static int __floppy_read_block_0(struct block_device *bdev)
 	bio.bi_size = size;
 	bio.bi_bdev = bdev;
 	bio.bi_sector = 0;
+<<<<<<< HEAD
 	bio.bi_flags = (1 << BIO_QUIET);
+=======
+	bio.bi_flags = BIO_QUIET;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	init_completion(&complete);
 	bio.bi_private = &complete;
 	bio.bi_end_io = floppy_rb0_complete;
@@ -4161,7 +4220,10 @@ static int __init floppy_init(void)
 
 		disks[dr]->queue = blk_init_queue(do_fd_request, &floppy_lock);
 		if (!disks[dr]->queue) {
+<<<<<<< HEAD
 			put_disk(disks[dr]);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			err = -ENOMEM;
 			goto out_put_disk;
 		}
@@ -4333,6 +4395,7 @@ out_unreg_blkdev:
 out_put_disk:
 	while (dr--) {
 		del_timer_sync(&motor_off_timer[dr]);
+<<<<<<< HEAD
 		if (disks[dr]->queue) {
 			blk_cleanup_queue(disks[dr]->queue);
 			/*
@@ -4341,6 +4404,10 @@ out_put_disk:
 			 */
 			disks[dr]->queue = NULL;
 		}
+=======
+		if (disks[dr]->queue)
+			blk_cleanup_queue(disks[dr]->queue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		put_disk(disks[dr]);
 	}
 	return err;
@@ -4474,6 +4541,10 @@ static void floppy_release_irq_and_dma(void)
 #if N_FDC > 1
 	set_dor(1, ~8, 0);
 #endif
+<<<<<<< HEAD
+=======
+	floppy_enable_hlt();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (floppy_track_buffer && max_buffer_sectors) {
 		tmpsize = max_buffer_sectors * 1024;
@@ -4549,6 +4620,7 @@ static void __exit floppy_module_exit(void)
 			platform_device_unregister(&floppy_device[drive]);
 		}
 		blk_cleanup_queue(disks[drive]->queue);
+<<<<<<< HEAD
 
 		/*
 		 * These disks have not called add_disk().  Don't put down
@@ -4558,6 +4630,8 @@ static void __exit floppy_module_exit(void)
 		    fdc_state[FDC(drive)].version == FDC_NONE)
 			disks[drive]->queue = NULL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		put_disk(disks[drive]);
 	}
 

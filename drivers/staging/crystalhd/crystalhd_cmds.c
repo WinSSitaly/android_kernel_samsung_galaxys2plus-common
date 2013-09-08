@@ -24,7 +24,12 @@
  * along with this driver.  If not, see <http://www.gnu.org/licenses/>.
  **********************************************************************/
 
+<<<<<<< HEAD
 #include "crystalhd.h"
+=======
+#include "crystalhd_cmds.h"
+#include "crystalhd_hw.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct crystalhd_user *bc_cproc_get_uid(struct crystalhd_cmd *ctx)
 {

@@ -68,7 +68,10 @@ cp -v -- "${objtree}/System.map" "${tmpdir}/boot/System.map-${KERNELRELEASE}"
 cp -v -- "${objtree}/.config" "${tmpdir}/boot/config-${KERNELRELEASE}"
 cp -v -- "${objtree}/vmlinux" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}"
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #
 # Install arch-specific kernel image(s)
 #
@@ -87,6 +90,12 @@ case "${ARCH}" in
 		[ -f "${objtree}/vmlinux.SYS" ] && cp -v -- "${objtree}/vmlinux.SYS" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}.SYS"
 		[ -f "${objtree}/vmlinux.dsk" ] && cp -v -- "${objtree}/vmlinux.dsk" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}.dsk"
 		;;
+<<<<<<< HEAD
+=======
+	arm)
+		[ -f "${objtree}/arch/arm/boot/uImage" ] && cp -v -- "${objtree}/arch/arm/boot/uImage" "${tmpdir}/boot/uImage"
+		;;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*)
 		[ -f "${KBUILD_IMAGE}" ] && cp -v -- "${KBUILD_IMAGE}" "${tmpdir}/boot/vmlinux-kbuild-${KERNELRELEASE}"
 		echo "" >&2
@@ -109,7 +118,11 @@ esac
 	if tar --owner=root --group=root --help >/dev/null 2>&1; then
 		opts="--owner=root --group=root"
 	fi
+<<<<<<< HEAD
 	tar cf - boot/* lib/* $opts | ${compress} > "${tarball}${file_ext}"
+=======
+	tar cf - . $opts | ${compress} > "${tarball}${file_ext}"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 )
 
 echo "Tarball successfully created in ${tarball}${file_ext}"

@@ -200,6 +200,7 @@ void rt2x00queue_remove_l2pad(struct sk_buff *skb, unsigned int header_length)
 	skb_pull(skb, l2pad);
 }
 
+<<<<<<< HEAD
 static void rt2x00queue_create_tx_descriptor_seq(struct rt2x00_dev *rt2x00dev,
 						 struct sk_buff *skb,
 						 struct txentry_desc *txdesc)
@@ -208,13 +209,26 @@ static void rt2x00queue_create_tx_descriptor_seq(struct rt2x00_dev *rt2x00dev,
 	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;
 	struct rt2x00_intf *intf = vif_to_intf(tx_info->control.vif);
 	u16 seqno;
+=======
+static void rt2x00queue_create_tx_descriptor_seq(struct queue_entry *entry,
+						 struct txentry_desc *txdesc)
+{
+	struct ieee80211_tx_info *tx_info = IEEE80211_SKB_CB(entry->skb);
+	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)entry->skb->data;
+	struct rt2x00_intf *intf = vif_to_intf(tx_info->control.vif);
+	unsigned long irqflags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!(tx_info->flags & IEEE80211_TX_CTL_ASSIGN_SEQ))
 		return;
 
 	__set_bit(ENTRY_TXD_GENERATE_SEQ, &txdesc->flags);
 
+<<<<<<< HEAD
 	if (!test_bit(REQUIRE_SW_SEQNO, &rt2x00dev->cap_flags))
+=======
+	if (!test_bit(REQUIRE_SW_SEQNO, &entry->queue->rt2x00dev->cap_flags))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	/*
@@ -228,6 +242,7 @@ static void rt2x00queue_create_tx_descriptor_seq(struct rt2x00_dev *rt2x00dev,
 	 * sequence counting per-frame, since those will override the
 	 * sequence counter given by mac80211.
 	 */
+<<<<<<< HEAD
 	if (test_bit(ENTRY_TXD_FIRST_FRAGMENT, &txdesc->flags))
 		seqno = atomic_add_return(0x10, &intf->seqno);
 	else
@@ -243,6 +258,25 @@ static void rt2x00queue_create_tx_descriptor_plcp(struct rt2x00_dev *rt2x00dev,
 						  const struct rt2x00_rate *hwrate)
 {
 	struct ieee80211_tx_info *tx_info = IEEE80211_SKB_CB(skb);
+=======
+	spin_lock_irqsave(&intf->seqlock, irqflags);
+
+	if (test_bit(ENTRY_TXD_FIRST_FRAGMENT, &txdesc->flags))
+		intf->seqno += 0x10;
+	hdr->seq_ctrl &= cpu_to_le16(IEEE80211_SCTL_FRAG);
+	hdr->seq_ctrl |= cpu_to_le16(intf->seqno);
+
+	spin_unlock_irqrestore(&intf->seqlock, irqflags);
+
+}
+
+static void rt2x00queue_create_tx_descriptor_plcp(struct queue_entry *entry,
+						  struct txentry_desc *txdesc,
+						  const struct rt2x00_rate *hwrate)
+{
+	struct rt2x00_dev *rt2x00dev = entry->queue->rt2x00dev;
+	struct ieee80211_tx_info *tx_info = IEEE80211_SKB_CB(entry->skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ieee80211_tx_rate *txrate = &tx_info->control.rates[0];
 	unsigned int data_length;
 	unsigned int duration;
@@ -259,8 +293,13 @@ static void rt2x00queue_create_tx_descriptor_plcp(struct rt2x00_dev *rt2x00dev,
 		txdesc->u.plcp.ifs = IFS_SIFS;
 
 	/* Data length + CRC + Crypto overhead (IV/EIV/ICV/MIC) */
+<<<<<<< HEAD
 	data_length = skb->len + 4;
 	data_length += rt2x00crypto_tx_overhead(rt2x00dev, skb);
+=======
+	data_length = entry->skb->len + 4;
+	data_length += rt2x00crypto_tx_overhead(rt2x00dev, entry->skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * PLCP setup
@@ -301,6 +340,7 @@ static void rt2x00queue_create_tx_descriptor_plcp(struct rt2x00_dev *rt2x00dev,
 	}
 }
 
+<<<<<<< HEAD
 static void rt2x00queue_create_tx_descriptor_ht(struct rt2x00_dev *rt2x00dev,
 						struct sk_buff *skb,
 						struct txentry_desc *txdesc,
@@ -319,6 +359,20 @@ static void rt2x00queue_create_tx_descriptor_ht(struct rt2x00_dev *rt2x00dev,
 		txdesc->u.ht.wcid = sta_priv->wcid;
 	}
 
+=======
+static void rt2x00queue_create_tx_descriptor_ht(struct queue_entry *entry,
+						struct txentry_desc *txdesc,
+						const struct rt2x00_rate *hwrate)
+{
+	struct ieee80211_tx_info *tx_info = IEEE80211_SKB_CB(entry->skb);
+	struct ieee80211_tx_rate *txrate = &tx_info->control.rates[0];
+	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)entry->skb->data;
+
+	if (tx_info->control.sta)
+		txdesc->u.ht.mpdu_density =
+		    tx_info->control.sta->ht_cap.ampdu_density;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	txdesc->u.ht.ba_size = 7;	/* FIXME: What value is needed? */
 
 	/*
@@ -386,12 +440,21 @@ static void rt2x00queue_create_tx_descriptor_ht(struct rt2x00_dev *rt2x00dev,
 		txdesc->u.ht.txop = TXOP_HTTXOP;
 }
 
+<<<<<<< HEAD
 static void rt2x00queue_create_tx_descriptor(struct rt2x00_dev *rt2x00dev,
 					     struct sk_buff *skb,
 					     struct txentry_desc *txdesc)
 {
 	struct ieee80211_tx_info *tx_info = IEEE80211_SKB_CB(skb);
 	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;
+=======
+static void rt2x00queue_create_tx_descriptor(struct queue_entry *entry,
+					     struct txentry_desc *txdesc)
+{
+	struct rt2x00_dev *rt2x00dev = entry->queue->rt2x00dev;
+	struct ieee80211_tx_info *tx_info = IEEE80211_SKB_CB(entry->skb);
+	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)entry->skb->data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ieee80211_tx_rate *txrate = &tx_info->control.rates[0];
 	struct ieee80211_rate *rate;
 	const struct rt2x00_rate *hwrate = NULL;
@@ -401,8 +464,13 @@ static void rt2x00queue_create_tx_descriptor(struct rt2x00_dev *rt2x00dev,
 	/*
 	 * Header and frame information.
 	 */
+<<<<<<< HEAD
 	txdesc->length = skb->len;
 	txdesc->header_length = ieee80211_get_hdrlen_from_skb(skb);
+=======
+	txdesc->length = entry->skb->len;
+	txdesc->header_length = ieee80211_get_hdrlen_from_skb(entry->skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Check whether this frame is to be acked.
@@ -477,6 +545,7 @@ static void rt2x00queue_create_tx_descriptor(struct rt2x00_dev *rt2x00dev,
 	/*
 	 * Apply TX descriptor handling by components
 	 */
+<<<<<<< HEAD
 	rt2x00crypto_create_tx_descriptor(rt2x00dev, skb, txdesc);
 	rt2x00queue_create_tx_descriptor_seq(rt2x00dev, skb, txdesc);
 
@@ -486,6 +555,15 @@ static void rt2x00queue_create_tx_descriptor(struct rt2x00_dev *rt2x00dev,
 	else
 		rt2x00queue_create_tx_descriptor_plcp(rt2x00dev, skb, txdesc,
 						      hwrate);
+=======
+	rt2x00crypto_create_tx_descriptor(entry, txdesc);
+	rt2x00queue_create_tx_descriptor_seq(entry, txdesc);
+
+	if (test_bit(REQUIRE_HT_TX_DESC, &rt2x00dev->cap_flags))
+		rt2x00queue_create_tx_descriptor_ht(entry, txdesc, hwrate);
+	else
+		rt2x00queue_create_tx_descriptor_plcp(entry, txdesc, hwrate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int rt2x00queue_write_tx_data(struct queue_entry *entry,
@@ -570,11 +648,43 @@ int rt2x00queue_write_tx_frame(struct data_queue *queue, struct sk_buff *skb,
 	int ret = 0;
 
 	/*
+<<<<<<< HEAD
+=======
+	 * That function must be called with bh disabled.
+	 */
+	spin_lock(&queue->tx_lock);
+
+	entry = rt2x00queue_get_entry(queue, Q_INDEX);
+
+	if (unlikely(rt2x00queue_full(queue))) {
+		ERROR(queue->rt2x00dev,
+		      "Dropping frame due to full tx queue %d.\n", queue->qid);
+		ret = -ENOBUFS;
+		goto out;
+	}
+
+	if (unlikely(test_and_set_bit(ENTRY_OWNER_DEVICE_DATA,
+				      &entry->flags))) {
+		ERROR(queue->rt2x00dev,
+		      "Arrived at non-free entry in the non-full queue %d.\n"
+		      "Please file bug report to %s.\n",
+		      queue->qid, DRV_PROJECT);
+		ret = -EINVAL;
+		goto out;
+	}
+
+	/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Copy all TX descriptor information into txdesc,
 	 * after that we are free to use the skb->cb array
 	 * for our information.
 	 */
+<<<<<<< HEAD
 	rt2x00queue_create_tx_descriptor(queue->rt2x00dev, skb, &txdesc);
+=======
+	entry->skb = skb;
+	rt2x00queue_create_tx_descriptor(entry, &txdesc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * All information is retrieved from the skb->cb array,
@@ -586,6 +696,10 @@ int rt2x00queue_write_tx_frame(struct data_queue *queue, struct sk_buff *skb,
 	rate_flags = tx_info->control.rates[0].flags;
 	skbdesc = get_skb_frame_desc(skb);
 	memset(skbdesc, 0, sizeof(*skbdesc));
+<<<<<<< HEAD
+=======
+	skbdesc->entry = entry;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skbdesc->tx_rate_idx = rate_idx;
 	skbdesc->tx_rate_flags = rate_flags;
 
@@ -614,6 +728,7 @@ int rt2x00queue_write_tx_frame(struct data_queue *queue, struct sk_buff *skb,
 	 * for PCI devices.
 	 */
 	if (test_bit(REQUIRE_L2PAD, &queue->rt2x00dev->cap_flags))
+<<<<<<< HEAD
 		rt2x00queue_insert_l2pad(skb, txdesc.header_length);
 	else if (test_bit(REQUIRE_DMA, &queue->rt2x00dev->cap_flags))
 		rt2x00queue_align_frame(skb);
@@ -644,6 +759,11 @@ int rt2x00queue_write_tx_frame(struct data_queue *queue, struct sk_buff *skb,
 
 	skbdesc->entry = entry;
 	entry->skb = skb;
+=======
+		rt2x00queue_insert_l2pad(entry->skb, txdesc.header_length);
+	else if (test_bit(REQUIRE_DMA, &queue->rt2x00dev->cap_flags))
+		rt2x00queue_align_frame(entry->skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * It could be possible that the queue was corrupted and this
@@ -719,7 +839,11 @@ int rt2x00queue_update_beacon_locked(struct rt2x00_dev *rt2x00dev,
 	 * after that we are free to use the skb->cb array
 	 * for our information.
 	 */
+<<<<<<< HEAD
 	rt2x00queue_create_tx_descriptor(rt2x00dev, intf->beacon->skb, &txdesc);
+=======
+	rt2x00queue_create_tx_descriptor(intf->beacon, &txdesc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Fill in skb descriptor
@@ -856,8 +980,18 @@ void rt2x00queue_index_inc(struct queue_entry *entry, enum queue_index index)
 	spin_unlock_irqrestore(&queue->index_lock, irqflags);
 }
 
+<<<<<<< HEAD
 void rt2x00queue_pause_queue_nocheck(struct data_queue *queue)
 {
+=======
+void rt2x00queue_pause_queue(struct data_queue *queue)
+{
+	if (!test_bit(DEVICE_STATE_PRESENT, &queue->rt2x00dev->flags) ||
+	    !test_bit(QUEUE_STARTED, &queue->flags) ||
+	    test_and_set_bit(QUEUE_PAUSED, &queue->flags))
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (queue->qid) {
 	case QID_AC_VO:
 	case QID_AC_VI:
@@ -873,6 +1007,7 @@ void rt2x00queue_pause_queue_nocheck(struct data_queue *queue)
 		break;
 	}
 }
+<<<<<<< HEAD
 void rt2x00queue_pause_queue(struct data_queue *queue)
 {
 	if (!test_bit(DEVICE_STATE_PRESENT, &queue->rt2x00dev->flags) ||
@@ -882,6 +1017,8 @@ void rt2x00queue_pause_queue(struct data_queue *queue)
 
 	rt2x00queue_pause_queue_nocheck(queue);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL_GPL(rt2x00queue_pause_queue);
 
 void rt2x00queue_unpause_queue(struct data_queue *queue)
@@ -943,7 +1080,11 @@ void rt2x00queue_stop_queue(struct data_queue *queue)
 		return;
 	}
 
+<<<<<<< HEAD
 	rt2x00queue_pause_queue_nocheck(queue);
+=======
+	rt2x00queue_pause_queue(queue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	queue->rt2x00dev->ops->lib->stop_queue(queue);
 

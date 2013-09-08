@@ -125,7 +125,22 @@ static struct i2c_driver cma3000_i2c_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_i2c_driver(cma3000_i2c_driver);
+=======
+static int __init cma3000_i2c_init(void)
+{
+	return i2c_add_driver(&cma3000_i2c_driver);
+}
+
+static void __exit cma3000_i2c_exit(void)
+{
+	i2c_del_driver(&cma3000_i2c_driver);
+}
+
+module_init(cma3000_i2c_init);
+module_exit(cma3000_i2c_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("CMA3000-D0x Accelerometer I2C Driver");
 MODULE_LICENSE("GPL");

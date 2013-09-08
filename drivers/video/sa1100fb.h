@@ -10,6 +10,7 @@
  * for more details.
  */
 
+<<<<<<< HEAD
 #define LCCR0           0x0000          /* LCD Control Reg. 0 */
 #define LCSR            0x0004          /* LCD Status Reg. */
 #define DBAR1           0x0010          /* LCD DMA Base Address Reg. channel 1 */
@@ -19,6 +20,46 @@
 #define LCCR1           0x0020          /* LCD Control Reg. 1 */
 #define LCCR2           0x0024          /* LCD Control Reg. 2 */
 #define LCCR3           0x0028          /* LCD Control Reg. 3 */
+=======
+/*
+ * These are the bitfields for each
+ * display depth that we support.
+ */
+struct sa1100fb_rgb {
+	struct fb_bitfield	red;
+	struct fb_bitfield	green;
+	struct fb_bitfield	blue;
+	struct fb_bitfield	transp;
+};
+
+/*
+ * This structure describes the machine which we are running on.
+ */
+struct sa1100fb_mach_info {
+	u_long		pixclock;
+
+	u_short		xres;
+	u_short		yres;
+
+	u_char		bpp;
+	u_char		hsync_len;
+	u_char		left_margin;
+	u_char		right_margin;
+
+	u_char		vsync_len;
+	u_char		upper_margin;
+	u_char		lower_margin;
+	u_char		sync;
+
+	u_int		cmap_greyscale:1,
+			cmap_inverse:1,
+			cmap_static:1,
+			unused:29;
+
+	u_int		lccr0;
+	u_int		lccr3;
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Shadows for LCD controller registers */
 struct sa1100fb_lcd_reg {
@@ -28,11 +69,27 @@ struct sa1100fb_lcd_reg {
 	unsigned long lccr3;
 };
 
+<<<<<<< HEAD
 struct sa1100fb_info {
 	struct fb_info		fb;
 	struct device		*dev;
 	const struct sa1100fb_rgb *rgb[NR_RGB];
 	void __iomem		*base;
+=======
+#define RGB_4	(0)
+#define RGB_8	(1)
+#define RGB_16	(2)
+#define NR_RGB	3
+
+struct sa1100fb_info {
+	struct fb_info		fb;
+	struct device		*dev;
+	struct sa1100fb_rgb	*rgb[NR_RGB];
+
+	u_int			max_bpp;
+	u_int			max_xres;
+	u_int			max_yres;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * These are the addresses we mapped
@@ -51,6 +108,15 @@ struct sa1100fb_info {
 	dma_addr_t		dbar1;
 	dma_addr_t		dbar2;
 
+<<<<<<< HEAD
+=======
+	u_int			lccr0;
+	u_int			lccr3;
+	u_int			cmap_inverse:1,
+				cmap_static:1,
+				unused:30;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u_int			reg_lccr0;
 	u_int			reg_lccr1;
 	u_int			reg_lccr2;
@@ -66,8 +132,11 @@ struct sa1100fb_info {
 	struct notifier_block	freq_transition;
 	struct notifier_block	freq_policy;
 #endif
+<<<<<<< HEAD
 
 	const struct sa1100fb_mach_info *inf;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define TO_INF(ptr,member)	container_of(ptr,struct sa1100fb_info,member)
@@ -89,6 +158,18 @@ struct sa1100fb_info {
 #define SA1100_NAME	"SA1100"
 
 /*
+<<<<<<< HEAD
+=======
+ *  Debug macros 
+ */
+#if DEBUG
+#  define DPRINTK(fmt, args...)	printk("%s: " fmt, __func__ , ## args)
+#else
+#  define DPRINTK(fmt, args...)
+#endif
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Minimum X and Y resolutions
  */
 #define MIN_XRES	64

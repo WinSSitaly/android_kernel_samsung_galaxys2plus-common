@@ -378,8 +378,13 @@ static int mc68x328fb_pan_display(struct fb_var_screeninfo *var,
 		    || var->xoffset)
 			return -EINVAL;
 	} else {
+<<<<<<< HEAD
 		if (var->xoffset + info->var.xres > info->var.xres_virtual ||
 		    var->yoffset + info->var.yres > info->var.yres_virtual)
+=======
+		if (var->xoffset + var->xres > info->var.xres_virtual ||
+		    var->yoffset + var->yres > info->var.yres_virtual)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EINVAL;
 	}
 	info->var.xoffset = var->xoffset;

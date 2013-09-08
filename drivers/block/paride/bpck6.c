@@ -20,6 +20,12 @@
 */
 
 
+<<<<<<< HEAD
+=======
+/* PARAMETERS */
+static int verbose; /* set this to 1 to see debugging messages and whatnot */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define BACKPACK_VERSION "2.0.2"
 
 #include <linux/module.h>
@@ -33,8 +39,11 @@
 #include "ppc6lnx.c"
 #include "paride.h"
 
+<<<<<<< HEAD
 /* PARAMETERS */
 static bool verbose; /* set this to 1 to see debugging messages and whatnot */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  
 
 #define PPCSTRUCT(pi) ((Interface *)(pi->private))

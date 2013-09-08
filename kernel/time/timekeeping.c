@@ -25,8 +25,11 @@
 struct timekeeper {
 	/* Current clocksource used for timekeeping. */
 	struct clocksource *clock;
+<<<<<<< HEAD
 	/* NTP adjusted clock multiplier */
 	u32	mult;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* The shift value of the current clocksource. */
 	int	shift;
 
@@ -47,6 +50,7 @@ struct timekeeper {
 	/* Shift conversion between clock shifted nano seconds and
 	 * ntp shifted nano seconds. */
 	int	ntp_error_shift;
+<<<<<<< HEAD
 
 	/* The current time */
 	struct timespec xtime;
@@ -78,10 +82,15 @@ struct timekeeper {
 
 	/* Seqlock for all timekeeper values */
 	seqlock_t lock;
+=======
+	/* NTP adjusted clock multiplier */
+	u32	mult;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct timekeeper timekeeper;
 
+<<<<<<< HEAD
 /*
  * This read-write spinlock protects us from races in SMP while
  * playing with xtime.
@@ -94,6 +103,8 @@ int __read_mostly timekeeping_suspended;
 
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * timekeeper_setup_internals - Set up internals to use clocksource clock.
  *
@@ -174,6 +185,7 @@ static inline s64 timekeeping_get_ns_raw(void)
 	/* calculate the delta since the last update_wall_time: */
 	cycle_delta = (cycle_now - clock->cycle_last) & clock->mask;
 
+<<<<<<< HEAD
 	/* return delta convert to nanoseconds. */
 	return clocksource_cyc2ns(cycle_delta, clock->mult, clock->shift);
 }
@@ -199,6 +211,55 @@ static void timekeeping_update(bool clearntp)
 }
 
 
+=======
+	/* return delta convert to nanoseconds using ntp adjusted mult. */
+	return clocksource_cyc2ns(cycle_delta, clock->mult, clock->shift);
+}
+
+/*
+ * This read-write spinlock protects us from races in SMP while
+ * playing with xtime.
+ */
+__cacheline_aligned_in_smp DEFINE_SEQLOCK(xtime_lock);
+
+
+/*
+ * The current time
+ * wall_to_monotonic is what we need to add to xtime (or xtime corrected
+ * for sub jiffie times) to get to monotonic time.  Monotonic is pegged
+ * at zero at system boot time, so wall_to_monotonic will be negative,
+ * however, we will ALWAYS keep the tv_nsec part positive so we can use
+ * the usual normalization.
+ *
+ * wall_to_monotonic is moved after resume from suspend for the monotonic
+ * time not to jump. We need to add total_sleep_time to wall_to_monotonic
+ * to get the real boot based time offset.
+ *
+ * - wall_to_monotonic is no longer the boot time, getboottime must be
+ * used instead.
+ */
+static struct timespec xtime __attribute__ ((aligned (16)));
+static struct timespec wall_to_monotonic __attribute__ ((aligned (16)));
+static struct timespec total_sleep_time;
+
+/*
+ * The raw monotonic time for the CLOCK_MONOTONIC_RAW posix clock.
+ */
+static struct timespec raw_time;
+
+/* flag for if timekeeping is suspended */
+int __read_mostly timekeeping_suspended;
+
+/* must hold xtime_lock */
+void timekeeping_leap_insert(int leapsecond)
+{
+	xtime.tv_sec += leapsecond;
+	wall_to_monotonic.tv_sec -= leapsecond;
+	update_vsyscall(&xtime, &wall_to_monotonic, timekeeper.clock,
+			timekeeper.mult);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * timekeeping_forward_now - update clock to the current time
  *
@@ -223,10 +284,17 @@ static void timekeeping_forward_now(void)
 	/* If arch requires, add in gettimeoffset() */
 	nsec += arch_gettimeoffset();
 
+<<<<<<< HEAD
 	timespec_add_ns(&timekeeper.xtime, nsec);
 
 	nsec = clocksource_cyc2ns(cycle_delta, clock->mult, clock->shift);
 	timespec_add_ns(&timekeeper.raw_time, nsec);
+=======
+	timespec_add_ns(&xtime, nsec);
+
+	nsec = clocksource_cyc2ns(cycle_delta, clock->mult, clock->shift);
+	timespec_add_ns(&raw_time, nsec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -243,15 +311,25 @@ void getnstimeofday(struct timespec *ts)
 	WARN_ON(timekeeping_suspended);
 
 	do {
+<<<<<<< HEAD
 		seq = read_seqbegin(&timekeeper.lock);
 
 		*ts = timekeeper.xtime;
+=======
+		seq = read_seqbegin(&xtime_lock);
+
+		*ts = xtime;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nsecs = timekeeping_get_ns();
 
 		/* If arch requires, add in gettimeoffset() */
 		nsecs += arch_gettimeoffset();
 
+<<<<<<< HEAD
 	} while (read_seqretry(&timekeeper.lock, seq));
+=======
+	} while (read_seqretry(&xtime_lock, seq));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	timespec_add_ns(ts, nsecs);
 }
@@ -266,16 +344,26 @@ ktime_t ktime_get(void)
 	WARN_ON(timekeeping_suspended);
 
 	do {
+<<<<<<< HEAD
 		seq = read_seqbegin(&timekeeper.lock);
 		secs = timekeeper.xtime.tv_sec +
 				timekeeper.wall_to_monotonic.tv_sec;
 		nsecs = timekeeper.xtime.tv_nsec +
 				timekeeper.wall_to_monotonic.tv_nsec;
+=======
+		seq = read_seqbegin(&xtime_lock);
+		secs = xtime.tv_sec + wall_to_monotonic.tv_sec;
+		nsecs = xtime.tv_nsec + wall_to_monotonic.tv_nsec;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nsecs += timekeeping_get_ns();
 		/* If arch requires, add in gettimeoffset() */
 		nsecs += arch_gettimeoffset();
 
+<<<<<<< HEAD
 	} while (read_seqretry(&timekeeper.lock, seq));
+=======
+	} while (read_seqretry(&xtime_lock, seq));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Use ktime_set/ktime_add_ns to create a proper ktime on
 	 * 32-bit architectures without CONFIG_KTIME_SCALAR.
@@ -301,14 +389,24 @@ void ktime_get_ts(struct timespec *ts)
 	WARN_ON(timekeeping_suspended);
 
 	do {
+<<<<<<< HEAD
 		seq = read_seqbegin(&timekeeper.lock);
 		*ts = timekeeper.xtime;
 		tomono = timekeeper.wall_to_monotonic;
+=======
+		seq = read_seqbegin(&xtime_lock);
+		*ts = xtime;
+		tomono = wall_to_monotonic;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nsecs = timekeeping_get_ns();
 		/* If arch requires, add in gettimeoffset() */
 		nsecs += arch_gettimeoffset();
 
+<<<<<<< HEAD
 	} while (read_seqretry(&timekeeper.lock, seq));
+=======
+	} while (read_seqretry(&xtime_lock, seq));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	set_normalized_timespec(ts, ts->tv_sec + tomono.tv_sec,
 				ts->tv_nsec + tomono.tv_nsec + nsecs);
@@ -336,10 +434,17 @@ void getnstime_raw_and_real(struct timespec *ts_raw, struct timespec *ts_real)
 	do {
 		u32 arch_offset;
 
+<<<<<<< HEAD
 		seq = read_seqbegin(&timekeeper.lock);
 
 		*ts_raw = timekeeper.raw_time;
 		*ts_real = timekeeper.xtime;
+=======
+		seq = read_seqbegin(&xtime_lock);
+
+		*ts_raw = raw_time;
+		*ts_real = xtime;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		nsecs_raw = timekeeping_get_ns_raw();
 		nsecs_real = timekeeping_get_ns();
@@ -349,7 +454,11 @@ void getnstime_raw_and_real(struct timespec *ts_raw, struct timespec *ts_real)
 		nsecs_raw += arch_offset;
 		nsecs_real += arch_offset;
 
+<<<<<<< HEAD
 	} while (read_seqretry(&timekeeper.lock, seq));
+=======
+	} while (read_seqretry(&xtime_lock, seq));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	timespec_add_ns(ts_raw, nsecs_raw);
 	timespec_add_ns(ts_real, nsecs_real);
@@ -385,6 +494,7 @@ int do_settimeofday(const struct timespec *tv)
 	struct timespec ts_delta;
 	unsigned long flags;
 
+<<<<<<< HEAD
 	if (!timespec_valid_strict(tv))
 		return -EINVAL;
 
@@ -401,6 +511,28 @@ int do_settimeofday(const struct timespec *tv)
 	timekeeping_update(true);
 
 	write_sequnlock_irqrestore(&timekeeper.lock, flags);
+=======
+	if ((unsigned long)tv->tv_nsec >= NSEC_PER_SEC)
+		return -EINVAL;
+
+	write_seqlock_irqsave(&xtime_lock, flags);
+
+	timekeeping_forward_now();
+
+	ts_delta.tv_sec = tv->tv_sec - xtime.tv_sec;
+	ts_delta.tv_nsec = tv->tv_nsec - xtime.tv_nsec;
+	wall_to_monotonic = timespec_sub(wall_to_monotonic, ts_delta);
+
+	xtime = *tv;
+
+	timekeeper.ntp_error = 0;
+	ntp_clear();
+
+	update_vsyscall(&xtime, &wall_to_monotonic, timekeeper.clock,
+				timekeeper.mult);
+
+	write_sequnlock_irqrestore(&xtime_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* signal hrtimers about time change */
 	clock_was_set();
@@ -420,12 +552,16 @@ EXPORT_SYMBOL(do_settimeofday);
 int timekeeping_inject_offset(struct timespec *ts)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	struct timespec tmp;
 	int ret = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((unsigned long)ts->tv_nsec >= NSEC_PER_SEC)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	write_seqlock_irqsave(&timekeeper.lock, flags);
 
 	timekeeping_forward_now();
@@ -444,11 +580,31 @@ error: /* even if we error out, we forwarded the time, so call update */
 	timekeeping_update(true);
 
 	write_sequnlock_irqrestore(&timekeeper.lock, flags);
+=======
+	write_seqlock_irqsave(&xtime_lock, flags);
+
+	timekeeping_forward_now();
+
+	xtime = timespec_add(xtime, *ts);
+	wall_to_monotonic = timespec_sub(wall_to_monotonic, *ts);
+
+	timekeeper.ntp_error = 0;
+	ntp_clear();
+
+	update_vsyscall(&xtime, &wall_to_monotonic, timekeeper.clock,
+				timekeeper.mult);
+
+	write_sequnlock_irqrestore(&xtime_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* signal hrtimers about time change */
 	clock_was_set();
 
+<<<<<<< HEAD
 	return ret;
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(timekeeping_inject_offset);
 
@@ -460,12 +616,18 @@ EXPORT_SYMBOL(timekeeping_inject_offset);
 static int change_clocksource(void *data)
 {
 	struct clocksource *new, *old;
+<<<<<<< HEAD
 	unsigned long flags;
 
 	new = (struct clocksource *) data;
 
 	write_seqlock_irqsave(&timekeeper.lock, flags);
 
+=======
+
+	new = (struct clocksource *) data;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	timekeeping_forward_now();
 	if (!new->enable || new->enable(new) == 0) {
 		old = timekeeper.clock;
@@ -473,10 +635,13 @@ static int change_clocksource(void *data)
 		if (old->disable)
 			old->disable(old);
 	}
+<<<<<<< HEAD
 	timekeeping_update(true);
 
 	write_sequnlock_irqrestore(&timekeeper.lock, flags);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -522,11 +687,19 @@ void getrawmonotonic(struct timespec *ts)
 	s64 nsecs;
 
 	do {
+<<<<<<< HEAD
 		seq = read_seqbegin(&timekeeper.lock);
 		nsecs = timekeeping_get_ns_raw();
 		*ts = timekeeper.raw_time;
 
 	} while (read_seqretry(&timekeeper.lock, seq));
+=======
+		seq = read_seqbegin(&xtime_lock);
+		nsecs = timekeeping_get_ns_raw();
+		*ts = raw_time;
+
+	} while (read_seqretry(&xtime_lock, seq));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	timespec_add_ns(ts, nsecs);
 }
@@ -542,17 +715,26 @@ int timekeeping_valid_for_hres(void)
 	int ret;
 
 	do {
+<<<<<<< HEAD
 		seq = read_seqbegin(&timekeeper.lock);
 
 		ret = timekeeper.clock->flags & CLOCK_SOURCE_VALID_FOR_HRES;
 
 	} while (read_seqretry(&timekeeper.lock, seq));
+=======
+		seq = read_seqbegin(&xtime_lock);
+
+		ret = timekeeper.clock->flags & CLOCK_SOURCE_VALID_FOR_HRES;
+
+	} while (read_seqretry(&xtime_lock, seq));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
 
 /**
  * timekeeping_max_deferment - Returns max time the clocksource can be deferred
+<<<<<<< HEAD
  */
 u64 timekeeping_max_deferment(void)
 {
@@ -566,6 +748,15 @@ u64 timekeeping_max_deferment(void)
 	} while (read_seqretry(&timekeeper.lock, seq));
 
 	return ret;
+=======
+ *
+ * Caller must observe xtime_lock via read_seqbegin/read_seqretry to
+ * ensure that the clocksource does not change!
+ */
+u64 timekeeping_max_deferment(void)
+{
+	return timekeeper.clock->max_idle_ns;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -608,6 +799,7 @@ void __init timekeeping_init(void)
 	struct timespec now, boot;
 
 	read_persistent_clock(&now);
+<<<<<<< HEAD
 	if (!timespec_valid_strict(&now)) {
 		pr_warn("WARNING: Persistent clock returned invalid value!\n"
 			"         Check your CMOS/BIOS settings.\n");
@@ -628,11 +820,20 @@ void __init timekeeping_init(void)
 	ntp_init();
 
 	write_seqlock_irqsave(&timekeeper.lock, flags);
+=======
+	read_boot_clock(&boot);
+
+	write_seqlock_irqsave(&xtime_lock, flags);
+
+	ntp_init();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clock = clocksource_default_clock();
 	if (clock->enable)
 		clock->enable(clock);
 	timekeeper_setup_internals(clock);
 
+<<<<<<< HEAD
 	timekeeper.xtime.tv_sec = now.tv_sec;
 	timekeeper.xtime.tv_nsec = now.tv_nsec;
 	timekeeper.raw_time.tv_sec = 0;
@@ -647,17 +848,35 @@ void __init timekeeping_init(void)
 	timekeeper.total_sleep_time.tv_sec = 0;
 	timekeeper.total_sleep_time.tv_nsec = 0;
 	write_sequnlock_irqrestore(&timekeeper.lock, flags);
+=======
+	xtime.tv_sec = now.tv_sec;
+	xtime.tv_nsec = now.tv_nsec;
+	raw_time.tv_sec = 0;
+	raw_time.tv_nsec = 0;
+	if (boot.tv_sec == 0 && boot.tv_nsec == 0) {
+		boot.tv_sec = xtime.tv_sec;
+		boot.tv_nsec = xtime.tv_nsec;
+	}
+	set_normalized_timespec(&wall_to_monotonic,
+				-boot.tv_sec, -boot.tv_nsec);
+	total_sleep_time.tv_sec = 0;
+	total_sleep_time.tv_nsec = 0;
+	write_sequnlock_irqrestore(&xtime_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* time in seconds when suspend began */
 static struct timespec timekeeping_suspend_time;
 
+<<<<<<< HEAD
 static void update_sleep_time(struct timespec t)
 {
 	timekeeper.total_sleep_time = t;
 	timekeeper.offs_boot = timespec_to_ktime(t);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * __timekeeping_inject_sleeptime - Internal function to add sleep interval
  * @delta: pointer to a timespec delta value
@@ -667,16 +886,26 @@ static void update_sleep_time(struct timespec t)
  */
 static void __timekeeping_inject_sleeptime(struct timespec *delta)
 {
+<<<<<<< HEAD
 	if (!timespec_valid_strict(delta)) {
+=======
+	if (!timespec_valid(delta)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_WARNING "__timekeeping_inject_sleeptime: Invalid "
 					"sleep delta value!\n");
 		return;
 	}
 
+<<<<<<< HEAD
 	timekeeper.xtime = timespec_add(timekeeper.xtime, *delta);
 	timekeeper.wall_to_monotonic =
 			timespec_sub(timekeeper.wall_to_monotonic, *delta);
 	update_sleep_time(timespec_add(timekeeper.total_sleep_time, *delta));
+=======
+	xtime = timespec_add(xtime, *delta);
+	wall_to_monotonic = timespec_sub(wall_to_monotonic, *delta);
+	total_sleep_time = timespec_add(total_sleep_time, *delta);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -700,15 +929,28 @@ void timekeeping_inject_sleeptime(struct timespec *delta)
 	if (!(ts.tv_sec == 0 && ts.tv_nsec == 0))
 		return;
 
+<<<<<<< HEAD
 	write_seqlock_irqsave(&timekeeper.lock, flags);
 
+=======
+	write_seqlock_irqsave(&xtime_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	timekeeping_forward_now();
 
 	__timekeeping_inject_sleeptime(delta);
 
+<<<<<<< HEAD
 	timekeeping_update(true);
 
 	write_sequnlock_irqrestore(&timekeeper.lock, flags);
+=======
+	timekeeper.ntp_error = 0;
+	ntp_clear();
+	update_vsyscall(&xtime, &wall_to_monotonic, timekeeper.clock,
+				timekeeper.mult);
+
+	write_sequnlock_irqrestore(&xtime_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* signal hrtimers about time change */
 	clock_was_set();
@@ -731,7 +973,11 @@ static void timekeeping_resume(void)
 
 	clocksource_resume();
 
+<<<<<<< HEAD
 	write_seqlock_irqsave(&timekeeper.lock, flags);
+=======
+	write_seqlock_irqsave(&xtime_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (timespec_compare(&ts, &timekeeping_suspend_time) > 0) {
 		ts = timespec_sub(ts, timekeeping_suspend_time);
@@ -741,8 +987,12 @@ static void timekeeping_resume(void)
 	timekeeper.clock->cycle_last = timekeeper.clock->read(timekeeper.clock);
 	timekeeper.ntp_error = 0;
 	timekeeping_suspended = 0;
+<<<<<<< HEAD
 	timekeeping_update(false);
 	write_sequnlock_irqrestore(&timekeeper.lock, flags);
+=======
+	write_sequnlock_irqrestore(&xtime_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	touch_softlockup_watchdog();
 
@@ -755,6 +1005,7 @@ static void timekeeping_resume(void)
 static int timekeeping_suspend(void)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	struct timespec		delta, delta_delta;
 	static struct timespec	old_delta;
 
@@ -784,6 +1035,15 @@ static int timekeeping_suspend(void)
 			timespec_add(timekeeping_suspend_time, delta_delta);
 	}
 	write_sequnlock_irqrestore(&timekeeper.lock, flags);
+=======
+
+	read_persistent_clock(&timekeeping_suspend_time);
+
+	write_seqlock_irqsave(&xtime_lock, flags);
+	timekeeping_forward_now();
+	timekeeping_suspended = 1;
+	write_sequnlock_irqrestore(&xtime_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	clockevents_notify(CLOCK_EVT_NOTIFY_SUSPEND, NULL);
 	clocksource_suspend();
@@ -834,7 +1094,11 @@ static __always_inline int timekeeping_bigadjust(s64 error, s64 *interval,
 	 * Now calculate the error in (1 << look_ahead) ticks, but first
 	 * remove the single look ahead already included in the error.
 	 */
+<<<<<<< HEAD
 	tick_error = ntp_tick_length() >> (timekeeper.ntp_error_shift + 1);
+=======
+	tick_error = tick_length >> (timekeeper.ntp_error_shift + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tick_error -= timekeeper.xtime_interval >> 1;
 	error = ((error - tick_error) >> look_ahead) + tick_error;
 
@@ -865,6 +1129,7 @@ static void timekeeping_adjust(s64 offset)
 	s64 error, interval = timekeeper.cycle_interval;
 	int adj;
 
+<<<<<<< HEAD
 	/*
 	 * The point of this is to check if the error is greater than half
 	 * an interval.
@@ -897,12 +1162,20 @@ static void timekeeping_adjust(s64 offset)
 		 * xtime.tv_nsec everywhere. Fixing this will take some
 		 * time.
 		 */
+=======
+	error = timekeeper.ntp_error >> (timekeeper.ntp_error_shift - 1);
+	if (error > interval) {
+		error >>= 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (likely(error <= interval))
 			adj = 1;
 		else
 			adj = timekeeping_bigadjust(error, &interval, &offset);
 	} else if (error < -interval) {
+<<<<<<< HEAD
 		/* See comment above, this is just switched for the negative */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		error >>= 2;
 		if (likely(error >= -interval)) {
 			adj = -1;
@@ -910,6 +1183,7 @@ static void timekeeping_adjust(s64 offset)
 			offset = -offset;
 		} else
 			adj = timekeeping_bigadjust(error, &interval, &offset);
+<<<<<<< HEAD
 	} else /* No adjustment needed */
 		return;
 
@@ -971,6 +1245,11 @@ static void timekeeping_adjust(s64 offset)
 	 *
 	 * XXX - TODO: Doc ntp_error calculation.
 	 */
+=======
+	} else
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	timekeeper.mult += adj;
 	timekeeper.xtime_interval += interval;
 	timekeeper.xtime_nsec -= offset;
@@ -993,7 +1272,11 @@ static cycle_t logarithmic_accumulation(cycle_t offset, int shift)
 	u64 nsecps = (u64)NSEC_PER_SEC << timekeeper.shift;
 	u64 raw_nsecs;
 
+<<<<<<< HEAD
 	/* If the offset is smaller than a shifted interval, do nothing */
+=======
+	/* If the offset is smaller then a shifted interval, do nothing */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (offset < timekeeper.cycle_interval<<shift)
 		return offset;
 
@@ -1003,6 +1286,7 @@ static cycle_t logarithmic_accumulation(cycle_t offset, int shift)
 
 	timekeeper.xtime_nsec += timekeeper.xtime_interval << shift;
 	while (timekeeper.xtime_nsec >= nsecps) {
+<<<<<<< HEAD
 		int leap;
 		timekeeper.xtime_nsec -= nsecps;
 		timekeeper.xtime.tv_sec++;
@@ -1025,6 +1309,25 @@ static cycle_t logarithmic_accumulation(cycle_t offset, int shift)
 
 	/* Accumulate error between NTP and clock interval */
 	timekeeper.ntp_error += ntp_tick_length() << shift;
+=======
+		timekeeper.xtime_nsec -= nsecps;
+		xtime.tv_sec++;
+		second_overflow();
+	}
+
+	/* Accumulate raw time */
+	raw_nsecs = timekeeper.raw_interval << shift;
+	raw_nsecs += raw_time.tv_nsec;
+	if (raw_nsecs >= NSEC_PER_SEC) {
+		u64 raw_secs = raw_nsecs;
+		raw_nsecs = do_div(raw_secs, NSEC_PER_SEC);
+		raw_time.tv_sec += raw_secs;
+	}
+	raw_time.tv_nsec = raw_nsecs;
+
+	/* Accumulate error between NTP and clock interval */
+	timekeeper.ntp_error += tick_length << shift;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	timekeeper.ntp_error -=
 	    (timekeeper.xtime_interval + timekeeper.xtime_remainder) <<
 				(timekeeper.ntp_error_shift + shift);
@@ -1036,12 +1339,17 @@ static cycle_t logarithmic_accumulation(cycle_t offset, int shift)
 /**
  * update_wall_time - Uses the current clocksource to increment the wall time
  *
+<<<<<<< HEAD
+=======
+ * Called from the timer interrupt, must hold a write on xtime_lock.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void update_wall_time(void)
 {
 	struct clocksource *clock;
 	cycle_t offset;
 	int shift = 0, maxshift;
+<<<<<<< HEAD
 	unsigned long flags;
 
 	write_seqlock_irqsave(&timekeeper.lock, flags);
@@ -1049,6 +1357,12 @@ static void update_wall_time(void)
 	/* Make sure we're fully resumed: */
 	if (unlikely(timekeeping_suspended))
 		goto out;
+=======
+
+	/* Make sure we're fully resumed: */
+	if (unlikely(timekeeping_suspended))
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	clock = timekeeper.clock;
 
@@ -1057,24 +1371,38 @@ static void update_wall_time(void)
 #else
 	offset = (clock->read(clock) - clock->cycle_last) & clock->mask;
 #endif
+<<<<<<< HEAD
 	/* Check if there's really nothing to do */
 	if (offset < timekeeper.cycle_interval)
 		goto out;
 
 	timekeeper.xtime_nsec = (s64)timekeeper.xtime.tv_nsec <<
 						timekeeper.shift;
+=======
+	timekeeper.xtime_nsec = (s64)xtime.tv_nsec << timekeeper.shift;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * With NO_HZ we may have to accumulate many cycle_intervals
 	 * (think "ticks") worth of time at once. To do this efficiently,
 	 * we calculate the largest doubling multiple of cycle_intervals
+<<<<<<< HEAD
 	 * that is smaller than the offset.  We then accumulate that
+=======
+	 * that is smaller then the offset. We then accumulate that
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * chunk in one go, and then try to consume the next smaller
 	 * doubled multiple.
 	 */
 	shift = ilog2(offset) - ilog2(timekeeper.cycle_interval);
 	shift = max(0, shift);
+<<<<<<< HEAD
 	/* Bound shift to one less than what overflows tick_length */
 	maxshift = (64 - (ilog2(ntp_tick_length())+1)) - 1;
+=======
+	/* Bound shift to one less then what overflows tick_length */
+	maxshift = (8*sizeof(tick_length) - (ilog2(tick_length)+1)) - 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	shift = min(shift, maxshift);
 	while (offset >= timekeeper.cycle_interval) {
 		offset = logarithmic_accumulation(offset, shift);
@@ -1112,15 +1440,21 @@ static void update_wall_time(void)
 	 * Store full nanoseconds into xtime after rounding it up and
 	 * add the remainder to the error difference.
 	 */
+<<<<<<< HEAD
 	timekeeper.xtime.tv_nsec = ((s64)timekeeper.xtime_nsec >>
 						timekeeper.shift) + 1;
 	timekeeper.xtime_nsec -= (s64)timekeeper.xtime.tv_nsec <<
 						timekeeper.shift;
+=======
+	xtime.tv_nsec =	((s64) timekeeper.xtime_nsec >> timekeeper.shift) + 1;
+	timekeeper.xtime_nsec -= (s64) xtime.tv_nsec << timekeeper.shift;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	timekeeper.ntp_error +=	timekeeper.xtime_nsec <<
 				timekeeper.ntp_error_shift;
 
 	/*
 	 * Finally, make sure that after the rounding
+<<<<<<< HEAD
 	 * xtime.tv_nsec isn't larger than NSEC_PER_SEC
 	 */
 	if (unlikely(timekeeper.xtime.tv_nsec >= NSEC_PER_SEC)) {
@@ -1139,6 +1473,19 @@ static void update_wall_time(void)
 out:
 	write_sequnlock_irqrestore(&timekeeper.lock, flags);
 
+=======
+	 * xtime.tv_nsec isn't larger then NSEC_PER_SEC
+	 */
+	if (unlikely(xtime.tv_nsec >= NSEC_PER_SEC)) {
+		xtime.tv_nsec -= NSEC_PER_SEC;
+		xtime.tv_sec++;
+		second_overflow();
+	}
+
+	/* check to see if there is a new clocksource to use */
+	update_vsyscall(&xtime, &wall_to_monotonic, timekeeper.clock,
+				timekeeper.mult);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1155,10 +1502,15 @@ out:
 void getboottime(struct timespec *ts)
 {
 	struct timespec boottime = {
+<<<<<<< HEAD
 		.tv_sec = timekeeper.wall_to_monotonic.tv_sec +
 				timekeeper.total_sleep_time.tv_sec,
 		.tv_nsec = timekeeper.wall_to_monotonic.tv_nsec +
 				timekeeper.total_sleep_time.tv_nsec
+=======
+		.tv_sec = wall_to_monotonic.tv_sec + total_sleep_time.tv_sec,
+		.tv_nsec = wall_to_monotonic.tv_nsec + total_sleep_time.tv_nsec
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	};
 
 	set_normalized_timespec(ts, -boottime.tv_sec, -boottime.tv_nsec);
@@ -1184,6 +1536,7 @@ void get_monotonic_boottime(struct timespec *ts)
 	WARN_ON(timekeeping_suspended);
 
 	do {
+<<<<<<< HEAD
 		seq = read_seqbegin(&timekeeper.lock);
 		*ts = timekeeper.xtime;
 		tomono = timekeeper.wall_to_monotonic;
@@ -1191,6 +1544,15 @@ void get_monotonic_boottime(struct timespec *ts)
 		nsecs = timekeeping_get_ns();
 
 	} while (read_seqretry(&timekeeper.lock, seq));
+=======
+		seq = read_seqbegin(&xtime_lock);
+		*ts = xtime;
+		tomono = wall_to_monotonic;
+		sleep = total_sleep_time;
+		nsecs = timekeeping_get_ns();
+
+	} while (read_seqretry(&xtime_lock, seq));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	set_normalized_timespec(ts, ts->tv_sec + tomono.tv_sec + sleep.tv_sec,
 			ts->tv_nsec + tomono.tv_nsec + sleep.tv_nsec + nsecs);
@@ -1220,19 +1582,31 @@ EXPORT_SYMBOL_GPL(ktime_get_boottime);
  */
 void monotonic_to_bootbased(struct timespec *ts)
 {
+<<<<<<< HEAD
 	*ts = timespec_add(*ts, timekeeper.total_sleep_time);
+=======
+	*ts = timespec_add(*ts, total_sleep_time);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(monotonic_to_bootbased);
 
 unsigned long get_seconds(void)
 {
+<<<<<<< HEAD
 	return timekeeper.xtime.tv_sec;
+=======
+	return xtime.tv_sec;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(get_seconds);
 
 struct timespec __current_kernel_time(void)
 {
+<<<<<<< HEAD
 	return timekeeper.xtime;
+=======
+	return xtime;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct timespec current_kernel_time(void)
@@ -1241,10 +1615,17 @@ struct timespec current_kernel_time(void)
 	unsigned long seq;
 
 	do {
+<<<<<<< HEAD
 		seq = read_seqbegin(&timekeeper.lock);
 
 		now = timekeeper.xtime;
 	} while (read_seqretry(&timekeeper.lock, seq));
+=======
+		seq = read_seqbegin(&xtime_lock);
+
+		now = xtime;
+	} while (read_seqretry(&xtime_lock, seq));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return now;
 }
@@ -1256,11 +1637,19 @@ struct timespec get_monotonic_coarse(void)
 	unsigned long seq;
 
 	do {
+<<<<<<< HEAD
 		seq = read_seqbegin(&timekeeper.lock);
 
 		now = timekeeper.xtime;
 		mono = timekeeper.wall_to_monotonic;
 	} while (read_seqretry(&timekeeper.lock, seq));
+=======
+		seq = read_seqbegin(&xtime_lock);
+
+		now = xtime;
+		mono = wall_to_monotonic;
+	} while (read_seqretry(&xtime_lock, seq));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	set_normalized_timespec(&now, now.tv_sec + mono.tv_sec,
 				now.tv_nsec + mono.tv_nsec);
@@ -1292,6 +1681,7 @@ void get_xtime_and_monotonic_and_sleep_offset(struct timespec *xtim,
 	unsigned long seq;
 
 	do {
+<<<<<<< HEAD
 		seq = read_seqbegin(&timekeeper.lock);
 		*xtim = timekeeper.xtime;
 		*wtom = timekeeper.wall_to_monotonic;
@@ -1332,6 +1722,14 @@ ktime_t ktime_get_update_offsets(ktime_t *offs_real, ktime_t *offs_boot)
 	return now;
 }
 #endif
+=======
+		seq = read_seqbegin(&xtime_lock);
+		*xtim = xtime;
+		*wtom = wall_to_monotonic;
+		*sleep = total_sleep_time;
+	} while (read_seqretry(&xtime_lock, seq));
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * ktime_get_monotonic_offset() - get wall_to_monotonic in ktime_t format
@@ -1342,6 +1740,7 @@ ktime_t ktime_get_monotonic_offset(void)
 	struct timespec wtom;
 
 	do {
+<<<<<<< HEAD
 		seq = read_seqbegin(&timekeeper.lock);
 		wtom = timekeeper.wall_to_monotonic;
 	} while (read_seqretry(&timekeeper.lock, seq));
@@ -1350,6 +1749,13 @@ ktime_t ktime_get_monotonic_offset(void)
 }
 EXPORT_SYMBOL_GPL(ktime_get_monotonic_offset);
 
+=======
+		seq = read_seqbegin(&xtime_lock);
+		wtom = wall_to_monotonic;
+	} while (read_seqretry(&xtime_lock, seq));
+	return timespec_to_ktime(wtom);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * xtime_update() - advances the timekeeping infrastructure

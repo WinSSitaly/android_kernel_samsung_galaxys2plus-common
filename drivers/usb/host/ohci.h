@@ -344,12 +344,15 @@ typedef struct urb_priv {
  * a subset of what the full implementation needs. (Linus)
  */
 
+<<<<<<< HEAD
 enum ohci_rh_state {
 	OHCI_RH_HALTED,
 	OHCI_RH_SUSPENDED,
 	OHCI_RH_RUNNING
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ohci_hcd {
 	spinlock_t		lock;
 
@@ -376,7 +379,11 @@ struct ohci_hcd {
 	 * OTG controllers and transceivers need software interaction;
 	 * other external transceivers should be software-transparent
 	 */
+<<<<<<< HEAD
 	struct usb_phy	*transceiver;
+=======
+	struct otg_transceiver	*transceiver;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void (*start_hnp)(struct ohci_hcd *ohci);
 
 	/*
@@ -390,7 +397,10 @@ struct ohci_hcd {
 	/*
 	 * driver state
 	 */
+<<<<<<< HEAD
 	enum ohci_rh_state	rh_state;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			num_ports;
 	int			load [NUM_INTS];
 	u32			hc_control;	/* copy of hc control reg */
@@ -686,6 +696,14 @@ static inline u16 ohci_hwPSW(const struct ohci_hcd *ohci,
 
 /*-------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
+=======
+static inline void disable (struct ohci_hcd *ohci)
+{
+	ohci_to_hcd(ohci)->state = HC_STATE_HALT;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define	FI			0x2edf		/* 12000 bits per frame (-1) */
 #define	FSMP(fi)		(0x7fff & ((6 * ((fi) - 210)) / 7))
 #define	FIT			(1 << 31)
@@ -709,7 +727,11 @@ static inline void periodic_reinit (struct ohci_hcd *ohci)
 #define read_roothub(hc, register, mask) ({ \
 	u32 temp = ohci_readl (hc, &hc->regs->roothub.register); \
 	if (temp == -1) \
+<<<<<<< HEAD
 		hc->rh_state = OHCI_RH_HALTED; \
+=======
+		disable (hc); \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else if (hc->flags & OHCI_QUIRK_AMD756) \
 		while (temp & mask) \
 			temp = ohci_readl (hc, &hc->regs->roothub.register); \

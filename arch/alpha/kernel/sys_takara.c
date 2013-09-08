@@ -16,6 +16,10 @@
 #include <linux/init.h>
 
 #include <asm/ptrace.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/dma.h>
 #include <asm/irq.h>
 #include <asm/mmu_context.h>
@@ -156,7 +160,11 @@ takara_init_irq(void)
  */
 
 static int __init
+<<<<<<< HEAD
 takara_map_irq_srm(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+takara_map_irq_srm(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static char irq_tab[15][5] __initdata = {
 		{ 16+3, 16+3, 16+3, 16+3, 16+3},   /* slot  6 == device 3 */
@@ -187,7 +195,11 @@ takara_map_irq_srm(const struct pci_dev *dev, u8 slot, u8 pin)
 }
 
 static int __init
+<<<<<<< HEAD
 takara_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+takara_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static char irq_tab[15][5] __initdata = {
 		{ 16+3, 16+3, 16+3, 16+3, 16+3},   /* slot  6 == device 3 */

@@ -2730,7 +2730,11 @@ static int get_ms_information(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		buf_len = data_len = 0x6A;
 	}
 
+<<<<<<< HEAD
 	buf = kmalloc(buf_len, GFP_KERNEL);
+=======
+	buf = (u8 *)kmalloc(buf_len, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!buf) {
 		TRACE_RET(chip, TRANSPORT_ERROR);
 	}

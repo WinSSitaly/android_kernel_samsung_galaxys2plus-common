@@ -292,6 +292,7 @@ struct usb_host_config {
 	int extralen;
 };
 
+<<<<<<< HEAD
 /* USB2.0 and USB3.0 device BOS descriptor set */
 struct usb_host_bos {
 	struct usb_bos_descriptor	*desc;
@@ -302,6 +303,8 @@ struct usb_host_bos {
 	struct usb_ss_container_id_descriptor	*ss_id;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int __usb_get_extra_descriptor(char *buffer, unsigned size,
 	unsigned char type, void **ptr);
 #define usb_get_extra_descriptor(ifpoint, type, ptr) \
@@ -331,6 +334,15 @@ struct usb_bus {
 	u8 otg_port;			/* 0, or number of OTG/HNP port */
 	unsigned is_b_host:1;		/* true during some HNP roleswitches */
 	unsigned b_hnp_enable:1;	/* OTG: did A-Host enable HNP? */
+<<<<<<< HEAD
+=======
+	unsigned hnp_support:1; 	/* OTG: HNP is supported on OTG port */
+#ifdef CONFIG_USB_OTG
+	bool otg_vbus_off; /* OTG: A-host must turn off Vbus within 5 seconds if B-device disconnects */
+	struct delayed_work hnp_polling; /* OTG: HNP polling work */
+	struct delayed_work maint_conf_session_for_td; /* OTG: Maintain configured session n test device */
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned sg_tablesize;		/* 0 or largest number of sg list entries */
 
 	int devnum_next;		/* Next open device number in
@@ -376,12 +388,15 @@ struct usb_bus {
 
 struct usb_tt;
 
+<<<<<<< HEAD
 enum usb_device_removable {
 	USB_DEVICE_REMOVABLE_UNKNOWN = 0,
 	USB_DEVICE_REMOVABLE,
 	USB_DEVICE_FIXED,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct usb_device - kernel's representation of a USB device
  * @devnum: device number; address on a USB bus
@@ -397,7 +412,10 @@ enum usb_device_removable {
  * @ep0: endpoint 0 data (default control pipe)
  * @dev: generic device interface
  * @descriptor: USB device descriptor
+<<<<<<< HEAD
  * @bos: USB device BOS descriptor set
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @config: all of the device's configs
  * @actconfig: the active configuration
  * @ep_in: array of IN endpoints
@@ -416,9 +434,12 @@ enum usb_device_removable {
  *	FIXME -- complete doc
  * @authenticated: Crypto authentication passed
  * @wusb: device is Wireless USB
+<<<<<<< HEAD
  * @lpm_capable: device supports LPM
  * @usb2_hw_lpm_capable: device can perform USB2 hardware LPM
  * @usb2_hw_lpm_enabled: USB2 hardware LPM enabled
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @string_langid: language ID for strings
  * @product: iProduct string, if present (static)
  * @manufacturer: iManufacturer string, if present (static)
@@ -438,7 +459,10 @@ enum usb_device_removable {
  * @wusb_dev: if this is a Wireless USB device, link to the WUSB
  *	specific data for the device.
  * @slot_id: Slot ID assigned by xHCI
+<<<<<<< HEAD
  * @removable: Device can be physically removed from this port
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Notes:
  * Usbcore drivers should not set usbdev->state directly.  Instead use
@@ -463,7 +487,10 @@ struct usb_device {
 	struct device dev;
 
 	struct usb_device_descriptor descriptor;
+<<<<<<< HEAD
 	struct usb_host_bos *bos;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct usb_host_config *config;
 
 	struct usb_host_config *actconfig;
@@ -482,9 +509,12 @@ struct usb_device {
 	unsigned authorized:1;
 	unsigned authenticated:1;
 	unsigned wusb:1;
+<<<<<<< HEAD
 	unsigned lpm_capable:1;
 	unsigned usb2_hw_lpm_capable:1;
 	unsigned usb2_hw_lpm_enabled:1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int string_langid;
 
 	/* static strings from the device */
@@ -501,7 +531,11 @@ struct usb_device {
 #endif
 
 	int maxchild;
+<<<<<<< HEAD
 	struct usb_device **children;
+=======
+	struct usb_device *children[USB_MAXCHILDREN];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	u32 quirks;
 	atomic_t urbnum;
@@ -516,7 +550,10 @@ struct usb_device {
 #endif
 	struct wusb_dev *wusb_dev;
 	int slot_id;
+<<<<<<< HEAD
 	enum usb_device_removable removable;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #define	to_usb_device(d) container_of(d, struct usb_device, dev)
 
@@ -783,6 +820,7 @@ static inline int usb_make_path(struct usb_device *dev, char *buf, size_t size)
 	.bInterfaceSubClass = (sc), \
 	.bInterfaceProtocol = (pr)
 
+<<<<<<< HEAD
 /**
  * USB_VENDOR_AND_INTERFACE_INFO - describe a specific usb vendor with a class of usb interfaces
  * @vend: the 16 bit USB Vendor ID
@@ -804,6 +842,8 @@ static inline int usb_make_path(struct usb_device *dev, char *buf, size_t size)
 	.bInterfaceSubClass = (sc), \
 	.bInterfaceProtocol = (pr)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* ----------------------------------------------------------------------- */
 
 /* Stuff for dynamic usb ids */
@@ -964,7 +1004,11 @@ extern struct bus_type usb_bus_type;
  */
 struct usb_class_driver {
 	char *name;
+<<<<<<< HEAD
 	char *(*devnode)(struct device *dev, umode_t *mode);
+=======
+	char *(*devnode)(struct device *dev, mode_t *mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const struct file_operations *fops;
 	int minor_base;
 };
@@ -975,6 +1019,7 @@ struct usb_class_driver {
  */
 extern int usb_register_driver(struct usb_driver *, struct module *,
 			       const char *);
+<<<<<<< HEAD
 
 /* use a define to avoid include chaining to get THIS_MODULE & friends */
 #define usb_register(driver) \
@@ -994,6 +1039,14 @@ extern void usb_deregister(struct usb_driver *);
 	module_driver(__usb_driver, usb_register, \
 		       usb_deregister)
 
+=======
+static inline int usb_register(struct usb_driver *driver)
+{
+	return usb_register_driver(driver, THIS_MODULE, KBUILD_MODNAME);
+}
+extern void usb_deregister(struct usb_driver *);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int usb_register_device_driver(struct usb_device_driver *,
 			struct module *);
 extern void usb_deregister_device_driver(struct usb_device_driver *);
@@ -1102,7 +1155,10 @@ typedef void (*usb_complete_t)(struct urb *);
  *	which the host controller driver should use in preference to the
  *	transfer_buffer.
  * @sg: scatter gather buffer list
+<<<<<<< HEAD
  * @num_mapped_sgs: (internal) number of mapped sg entries
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @num_sgs: number of entries in the sg list
  * @transfer_buffer_length: How big is transfer_buffer.  The transfer may
  *	be broken up into chunks according to the current maximum packet
@@ -1400,7 +1456,10 @@ extern int usb_unlink_urb(struct urb *urb);
 extern void usb_kill_urb(struct urb *urb);
 extern void usb_poison_urb(struct urb *urb);
 extern void usb_unpoison_urb(struct urb *urb);
+<<<<<<< HEAD
 extern void usb_block_urb(struct urb *urb);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void usb_kill_anchored_urbs(struct usb_anchor *anchor);
 extern void usb_poison_anchored_urbs(struct usb_anchor *anchor);
 extern void usb_unpoison_anchored_urbs(struct usb_anchor *anchor);
@@ -1413,8 +1472,11 @@ extern struct urb *usb_get_from_anchor(struct usb_anchor *anchor);
 extern void usb_scuttle_anchored_urbs(struct usb_anchor *anchor);
 extern int usb_anchor_empty(struct usb_anchor *anchor);
 
+<<<<<<< HEAD
 #define usb_unblock_urb	usb_unpoison_urb
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * usb_urb_dir_in - check if an URB describes an IN transfer
  * @urb: URB to be checked
@@ -1496,7 +1558,11 @@ extern int usb_driver_set_configuration(struct usb_device *udev, int config);
  * USB identifies 5 second timeouts, maybe more in a few cases, and a few
  * slow devices (like some MGE Ellipse UPSes) actually push that limit.
  */
+<<<<<<< HEAD
 #define USB_CTRL_GET_TIMEOUT	5000
+=======
+#define USB_CTRL_GET_TIMEOUT	7000 // increased to 7000 for some specific memory sticks
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define USB_CTRL_SET_TIMEOUT	5000
 
 
@@ -1639,11 +1705,16 @@ usb_maxpacket(struct usb_device *udev, int pipe, int is_out)
 		return 0;
 
 	/* NOTE:  only 0x07ff bits are for packet size... */
+<<<<<<< HEAD
 	return usb_endpoint_maxp(&ep->desc);
+=======
+	return le16_to_cpu(ep->desc.wMaxPacketSize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* ----------------------------------------------------------------------- */
 
+<<<<<<< HEAD
 /* translate USB error codes to codes user space understands */
 static inline int usb_translate_errors(int error_code)
 {
@@ -1657,6 +1728,8 @@ static inline int usb_translate_errors(int error_code)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Events from the usb core */
 #define USB_DEVICE_ADD		0x0001
 #define USB_DEVICE_REMOVE	0x0002

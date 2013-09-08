@@ -25,6 +25,10 @@
 #include <linux/seq_file.h>
 #include <linux/err.h>
 #include <linux/io.h>
+<<<<<<< HEAD
+=======
+#include <linux/debugfs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/cpufreq.h>
 #include <linux/clk.h>
 #include <linux/sh_clk.h>
@@ -33,9 +37,12 @@ static LIST_HEAD(clock_list);
 static DEFINE_SPINLOCK(clock_lock);
 static DEFINE_MUTEX(clock_list_sem);
 
+<<<<<<< HEAD
 /* clock disable operations are not passed on to hardware during boot */
 static int allow_disable;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void clk_rate_table_build(struct clk *clk,
 			  struct cpufreq_frequency_table *freq_table,
 			  int nr_freqs,
@@ -172,6 +179,7 @@ long clk_rate_div_range_round(struct clk *clk, unsigned int div_min,
 	return clk_rate_round_helper(&div_range_round);
 }
 
+<<<<<<< HEAD
 static long clk_rate_mult_range_iter(unsigned int pos,
 				      struct clk_rate_round_data *rounder)
 {
@@ -192,6 +200,8 @@ long clk_rate_mult_range_round(struct clk *clk, unsigned int mult_min,
 	return clk_rate_round_helper(&mult_range_round);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int clk_rate_table_find(struct clk *clk,
 			struct cpufreq_frequency_table *freq_table,
 			unsigned long rate)
@@ -224,6 +234,12 @@ int clk_reparent(struct clk *child, struct clk *parent)
 		list_add(&child->sibling, &parent->children);
 	child->parent = parent;
 
+<<<<<<< HEAD
+=======
+	/* now do the debugfs renaming to reattach the child
+	   to the proper parent */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -247,7 +263,11 @@ static void __clk_disable(struct clk *clk)
 		return;
 
 	if (!(--clk->usecount)) {
+<<<<<<< HEAD
 		if (likely(allow_disable && clk->ops && clk->ops->disable))
+=======
+		if (likely(clk->ops && clk->ops->disable))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			clk->ops->disable(clk);
 		if (likely(clk->parent))
 			__clk_disable(clk->parent);
@@ -355,7 +375,11 @@ static int clk_establish_mapping(struct clk *clk)
 		 */
 		if (!clk->parent) {
 			clk->mapping = &dummy_mapping;
+<<<<<<< HEAD
 			goto out;
+=======
+			return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/*
@@ -384,9 +408,12 @@ static int clk_establish_mapping(struct clk *clk)
 	}
 
 	clk->mapping = mapping;
+<<<<<<< HEAD
 out:
 	clk->mapped_reg = clk->mapping->base;
 	clk->mapped_reg += (phys_addr_t)clk->enable_reg - clk->mapping->phys;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -405,19 +432,30 @@ static void clk_teardown_mapping(struct clk *clk)
 
 	/* Nothing to do */
 	if (mapping == &dummy_mapping)
+<<<<<<< HEAD
 		goto out;
 
 	kref_put(&mapping->ref, clk_destroy_mapping);
 	clk->mapping = NULL;
 out:
 	clk->mapped_reg = NULL;
+=======
+		return;
+
+	kref_put(&mapping->ref, clk_destroy_mapping);
+	clk->mapping = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int clk_register(struct clk *clk)
 {
 	int ret;
 
+<<<<<<< HEAD
 	if (IS_ERR_OR_NULL(clk))
+=======
+	if (clk == NULL || IS_ERR(clk))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	/*
@@ -686,6 +724,7 @@ static int __init clk_syscore_init(void)
 subsys_initcall(clk_syscore_init);
 #endif
 
+<<<<<<< HEAD
 static int __init clk_late_init(void)
 {
 	unsigned long flags;
@@ -707,3 +746,90 @@ static int __init clk_late_init(void)
 	return 0;
 }
 late_initcall(clk_late_init);
+=======
+/*
+ *	debugfs support to trace clock tree hierarchy and attributes
+ */
+static struct dentry *clk_debugfs_root;
+
+static int clk_debugfs_register_one(struct clk *c)
+{
+	int err;
+	struct dentry *d, *child, *child_tmp;
+	struct clk *pa = c->parent;
+	char s[255];
+	char *p = s;
+
+	p += sprintf(p, "%p", c);
+	d = debugfs_create_dir(s, pa ? pa->dentry : clk_debugfs_root);
+	if (!d)
+		return -ENOMEM;
+	c->dentry = d;
+
+	d = debugfs_create_u8("usecount", S_IRUGO, c->dentry, (u8 *)&c->usecount);
+	if (!d) {
+		err = -ENOMEM;
+		goto err_out;
+	}
+	d = debugfs_create_u32("rate", S_IRUGO, c->dentry, (u32 *)&c->rate);
+	if (!d) {
+		err = -ENOMEM;
+		goto err_out;
+	}
+	d = debugfs_create_x32("flags", S_IRUGO, c->dentry, (u32 *)&c->flags);
+	if (!d) {
+		err = -ENOMEM;
+		goto err_out;
+	}
+	return 0;
+
+err_out:
+	d = c->dentry;
+	list_for_each_entry_safe(child, child_tmp, &d->d_subdirs, d_u.d_child)
+		debugfs_remove(child);
+	debugfs_remove(c->dentry);
+	return err;
+}
+
+static int clk_debugfs_register(struct clk *c)
+{
+	int err;
+	struct clk *pa = c->parent;
+
+	if (pa && !pa->dentry) {
+		err = clk_debugfs_register(pa);
+		if (err)
+			return err;
+	}
+
+	if (!c->dentry) {
+		err = clk_debugfs_register_one(c);
+		if (err)
+			return err;
+	}
+	return 0;
+}
+
+static int __init clk_debugfs_init(void)
+{
+	struct clk *c;
+	struct dentry *d;
+	int err;
+
+	d = debugfs_create_dir("clock", NULL);
+	if (!d)
+		return -ENOMEM;
+	clk_debugfs_root = d;
+
+	list_for_each_entry(c, &clock_list, node) {
+		err = clk_debugfs_register(c);
+		if (err)
+			goto err_out;
+	}
+	return 0;
+err_out:
+	debugfs_remove_recursive(clk_debugfs_root);
+	return err;
+}
+late_initcall(clk_debugfs_init);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

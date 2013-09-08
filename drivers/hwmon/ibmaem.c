@@ -88,7 +88,12 @@
 #define AEM_MIN_POWER_INTERVAL	200
 #define UJ_PER_MJ		1000L
 
+<<<<<<< HEAD
 static DEFINE_IDA(aem_ida);
+=======
+static DEFINE_IDR(aem_idr);
+static DEFINE_SPINLOCK(aem_idr_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct platform_driver aem_driver = {
 	.driver = {
@@ -147,9 +152,14 @@ struct aem_data {
 	int			id;
 	struct aem_ipmi_data	ipmi;
 
+<<<<<<< HEAD
 	/* Function and buffer to update sensors */
 	void (*update)(struct aem_data *data);
 	struct aem_read_sensor_resp *rs_resp;
+=======
+	/* Function to update sensors */
+	void (*update)(struct aem_data *data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * AEM 1.x sensors:
@@ -246,6 +256,11 @@ static void aem_bmc_gone(int iface);
 static void aem_msg_handler(struct ipmi_recv_msg *msg, void *user_msg_data);
 
 static void aem_remove_sensors(struct aem_data *data);
+<<<<<<< HEAD
+=======
+static int aem_init_aem1(struct aem_ipmi_data *probe);
+static int aem_init_aem2(struct aem_ipmi_data *probe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int aem1_find_sensors(struct aem_data *data);
 static int aem2_find_sensors(struct aem_data *data);
 static void update_aem1_sensors(struct aem_data *data);
@@ -354,16 +369,58 @@ static void aem_msg_handler(struct ipmi_recv_msg *msg, void *user_msg_data)
 	complete(&data->read_complete);
 }
 
+<<<<<<< HEAD
 /* Sensor support functions */
 
 /* Read a sensor value; must be called with data->lock held */
+=======
+/* ID functions */
+
+/* Obtain an id */
+static int aem_idr_get(int *id)
+{
+	int i, err;
+
+again:
+	if (unlikely(!idr_pre_get(&aem_idr, GFP_KERNEL)))
+		return -ENOMEM;
+
+	spin_lock(&aem_idr_lock);
+	err = idr_get_new(&aem_idr, NULL, &i);
+	spin_unlock(&aem_idr_lock);
+
+	if (unlikely(err == -EAGAIN))
+		goto again;
+	else if (unlikely(err))
+		return err;
+
+	*id = i & MAX_ID_MASK;
+	return 0;
+}
+
+/* Release an object ID */
+static void aem_idr_put(int id)
+{
+	spin_lock(&aem_idr_lock);
+	idr_remove(&aem_idr, id);
+	spin_unlock(&aem_idr_lock);
+}
+
+/* Sensor support functions */
+
+/* Read a sensor value */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int aem_read_sensor(struct aem_data *data, u8 elt, u8 reg,
 			   void *buf, size_t size)
 {
 	int rs_size, res;
 	struct aem_read_sensor_req rs_req;
+<<<<<<< HEAD
 	/* Use preallocated rx buffer */
 	struct aem_read_sensor_resp *rs_resp = data->rs_resp;
+=======
+	struct aem_read_sensor_resp *rs_resp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct aem_ipmi_data *ipmi = &data->ipmi;
 
 	/* AEM registers are 1, 2, 4 or 8 bytes */
@@ -389,6 +446,13 @@ static int aem_read_sensor(struct aem_data *data, u8 elt, u8 reg,
 	ipmi->tx_message.data_len = sizeof(rs_req);
 
 	rs_size = sizeof(*rs_resp) + size;
+<<<<<<< HEAD
+=======
+	rs_resp = kzalloc(rs_size, GFP_KERNEL);
+	if (!rs_resp)
+		return -ENOMEM;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ipmi->rx_msg_data = rs_resp;
 	ipmi->rx_msg_len = rs_size;
 
@@ -431,6 +495,10 @@ static int aem_read_sensor(struct aem_data *data, u8 elt, u8 reg,
 	res = 0;
 
 out:
+<<<<<<< HEAD
+=======
+	kfree(rs_resp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return res;
 }
 
@@ -488,12 +556,19 @@ static void aem_delete(struct aem_data *data)
 {
 	list_del(&data->list);
 	aem_remove_sensors(data);
+<<<<<<< HEAD
 	kfree(data->rs_resp);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hwmon_device_unregister(data->hwmon_dev);
 	ipmi_destroy_user(data->ipmi.user);
 	platform_set_drvdata(data->pdev, NULL);
 	platform_device_unregister(data->pdev);
+<<<<<<< HEAD
 	ida_simple_remove(&aem_ida, data->id);
+=======
+	aem_idr_put(data->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(data);
 }
 
@@ -550,8 +625,12 @@ static int aem_init_aem1_inst(struct aem_ipmi_data *probe, u8 module_handle)
 		data->power_period[i] = AEM_DEFAULT_POWER_INTERVAL;
 
 	/* Create sub-device for this fw instance */
+<<<<<<< HEAD
 	data->id = ida_simple_get(&aem_ida, 0, 0, GFP_KERNEL);
 	if (data->id < 0)
+=======
+	if (aem_idr_get(&data->id))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto id_err;
 
 	data->pdev = platform_device_alloc(DRVNAME, data->id);
@@ -566,22 +645,35 @@ static int aem_init_aem1_inst(struct aem_ipmi_data *probe, u8 module_handle)
 	platform_set_drvdata(data->pdev, data);
 
 	/* Set up IPMI interface */
+<<<<<<< HEAD
 	res = aem_init_ipmi_data(&data->ipmi, probe->interface,
 				 probe->bmc_device);
 	if (res)
+=======
+	if (aem_init_ipmi_data(&data->ipmi, probe->interface,
+			       probe->bmc_device))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto ipmi_err;
 
 	/* Register with hwmon */
 	data->hwmon_dev = hwmon_device_register(&data->pdev->dev);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(data->hwmon_dev)) {
 		dev_err(&data->pdev->dev, "Unable to register hwmon "
 			"device for IPMI interface %d\n",
 			probe->interface);
+<<<<<<< HEAD
 		res = PTR_ERR(data->hwmon_dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto hwmon_reg_err;
 	}
 
 	data->update = update_aem1_sensors;
+<<<<<<< HEAD
 	data->rs_resp = kzalloc(sizeof(*(data->rs_resp)) + 8, GFP_KERNEL);
 	if (!data->rs_resp) {
 		res = -ENOMEM;
@@ -591,6 +683,11 @@ static int aem_init_aem1_inst(struct aem_ipmi_data *probe, u8 module_handle)
 	/* Find sensors */
 	res = aem1_find_sensors(data);
 	if (res)
+=======
+
+	/* Find sensors */
+	if (aem1_find_sensors(data))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto sensor_err;
 
 	/* Add to our list of AEM devices */
@@ -602,8 +699,11 @@ static int aem_init_aem1_inst(struct aem_ipmi_data *probe, u8 module_handle)
 	return 0;
 
 sensor_err:
+<<<<<<< HEAD
 	kfree(data->rs_resp);
 alloc_resp_err:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hwmon_device_unregister(data->hwmon_dev);
 hwmon_reg_err:
 	ipmi_destroy_user(data->ipmi.user);
@@ -611,7 +711,11 @@ ipmi_err:
 	platform_set_drvdata(data->pdev, NULL);
 	platform_device_unregister(data->pdev);
 dev_err:
+<<<<<<< HEAD
 	ida_simple_remove(&aem_ida, data->id);
+=======
+	aem_idr_put(data->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 id_err:
 	kfree(data);
 
@@ -619,7 +723,11 @@ id_err:
 }
 
 /* Find and initialize all AEM1 instances */
+<<<<<<< HEAD
 static void aem_init_aem1(struct aem_ipmi_data *probe)
+=======
+static int aem_init_aem1(struct aem_ipmi_data *probe)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int num, i, err;
 
@@ -630,8 +738,16 @@ static void aem_init_aem1(struct aem_ipmi_data *probe)
 			dev_err(probe->bmc_device,
 				"Error %d initializing AEM1 0x%X\n",
 				err, i);
+<<<<<<< HEAD
 		}
 	}
+=======
+			return err;
+		}
+	}
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Probe functions for AEM2 devices */
@@ -690,8 +806,12 @@ static int aem_init_aem2_inst(struct aem_ipmi_data *probe,
 		data->power_period[i] = AEM_DEFAULT_POWER_INTERVAL;
 
 	/* Create sub-device for this fw instance */
+<<<<<<< HEAD
 	data->id = ida_simple_get(&aem_ida, 0, 0, GFP_KERNEL);
 	if (data->id < 0)
+=======
+	if (aem_idr_get(&data->id))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto id_err;
 
 	data->pdev = platform_device_alloc(DRVNAME, data->id);
@@ -706,22 +826,35 @@ static int aem_init_aem2_inst(struct aem_ipmi_data *probe,
 	platform_set_drvdata(data->pdev, data);
 
 	/* Set up IPMI interface */
+<<<<<<< HEAD
 	res = aem_init_ipmi_data(&data->ipmi, probe->interface,
 				 probe->bmc_device);
 	if (res)
+=======
+	if (aem_init_ipmi_data(&data->ipmi, probe->interface,
+			       probe->bmc_device))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto ipmi_err;
 
 	/* Register with hwmon */
 	data->hwmon_dev = hwmon_device_register(&data->pdev->dev);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(data->hwmon_dev)) {
 		dev_err(&data->pdev->dev, "Unable to register hwmon "
 			"device for IPMI interface %d\n",
 			probe->interface);
+<<<<<<< HEAD
 		res = PTR_ERR(data->hwmon_dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto hwmon_reg_err;
 	}
 
 	data->update = update_aem2_sensors;
+<<<<<<< HEAD
 	data->rs_resp = kzalloc(sizeof(*(data->rs_resp)) + 8, GFP_KERNEL);
 	if (!data->rs_resp) {
 		res = -ENOMEM;
@@ -731,6 +864,11 @@ static int aem_init_aem2_inst(struct aem_ipmi_data *probe,
 	/* Find sensors */
 	res = aem2_find_sensors(data);
 	if (res)
+=======
+
+	/* Find sensors */
+	if (aem2_find_sensors(data))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto sensor_err;
 
 	/* Add to our list of AEM devices */
@@ -742,8 +880,11 @@ static int aem_init_aem2_inst(struct aem_ipmi_data *probe,
 	return 0;
 
 sensor_err:
+<<<<<<< HEAD
 	kfree(data->rs_resp);
 alloc_resp_err:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hwmon_device_unregister(data->hwmon_dev);
 hwmon_reg_err:
 	ipmi_destroy_user(data->ipmi.user);
@@ -751,7 +892,11 @@ ipmi_err:
 	platform_set_drvdata(data->pdev, NULL);
 	platform_device_unregister(data->pdev);
 dev_err:
+<<<<<<< HEAD
 	ida_simple_remove(&aem_ida, data->id);
+=======
+	aem_idr_put(data->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 id_err:
 	kfree(data);
 
@@ -759,7 +904,11 @@ id_err:
 }
 
 /* Find and initialize all AEM2 instances */
+<<<<<<< HEAD
 static void aem_init_aem2(struct aem_ipmi_data *probe)
+=======
+static int aem_init_aem2(struct aem_ipmi_data *probe)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct aem_find_instance_resp fi_resp;
 	int err;
@@ -778,9 +927,18 @@ static void aem_init_aem2(struct aem_ipmi_data *probe)
 			dev_err(probe->bmc_device,
 				"Error %d initializing AEM2 0x%X\n",
 				err, fi_resp.module_handle);
+<<<<<<< HEAD
 		}
 		i++;
 	}
+=======
+			return err;
+		}
+		i++;
+	}
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Probe a BMC for AEM firmware instances */
@@ -904,7 +1062,11 @@ static ssize_t aem_set_power_period(struct device *dev,
 	unsigned long temp;
 	int res;
 
+<<<<<<< HEAD
 	res = kstrtoul(buf, 10, &temp);
+=======
+	res = strict_strtoul(buf, 10, &temp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (res)
 		return res;
 
@@ -1045,7 +1207,11 @@ static struct aem_ro_sensor_template aem2_ro_sensors[] = {
 {"power6_average",	  aem2_show_pcap_value,	POWER_CAP_MIN_WARNING},
 {"power7_average",	  aem2_show_pcap_value,	POWER_CAP_MIN},
 
+<<<<<<< HEAD
 {"power3_average",	  aem2_show_pcap_value,	POWER_AUX},
+=======
+{"power3_average", 	  aem2_show_pcap_value,	POWER_AUX},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {"power_cap",		  aem2_show_pcap_value,	POWER_CAP},
 {NULL,                    NULL,                 0},
 };

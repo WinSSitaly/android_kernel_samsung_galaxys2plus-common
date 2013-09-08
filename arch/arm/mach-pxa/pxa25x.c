@@ -16,8 +16,11 @@
  * initialization stuff for PXA machines which can be overridden later if
  * need be.
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
 #include <linux/gpio-pxa.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
@@ -27,9 +30,15 @@
 #include <linux/irq.h>
 
 #include <asm/mach/map.h>
+<<<<<<< HEAD
 #include <asm/suspend.h>
 #include <mach/hardware.h>
 #include <mach/irqs.h>
+=======
+#include <mach/hardware.h>
+#include <mach/irqs.h>
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/pxa25x.h>
 #include <mach/reset.h>
 #include <mach/pm.h>
@@ -208,7 +217,10 @@ static struct clk_lookup pxa25x_clkregs[] = {
 	INIT_CLKREG(&clk_pxa25x_gpio11, NULL, "GPIO11_CLK"),
 	INIT_CLKREG(&clk_pxa25x_gpio12, NULL, "GPIO12_CLK"),
 	INIT_CLKREG(&clk_pxa25x_mem, "pxa2xx-pcmcia", NULL),
+<<<<<<< HEAD
 	INIT_CLKREG(&clk_dummy, "pxa-gpio", NULL),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct clk_lookup pxa25x_hwuart_clkreg =
@@ -247,7 +259,11 @@ static void pxa25x_cpu_pm_enter(suspend_state_t state)
 
 	switch (state) {
 	case PM_SUSPEND_MEM:
+<<<<<<< HEAD
 		cpu_suspend(PWRMODE_SLEEP, pxa25x_finish_suspend);
+=======
+		pxa25x_cpu_suspend(PWRMODE_SLEEP, PLAT_PHYS_OFFSET - PAGE_OFFSET);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 }
@@ -288,7 +304,11 @@ static inline void pxa25x_init_pm(void) {}
 
 static int pxa25x_set_wake(struct irq_data *d, unsigned int on)
 {
+<<<<<<< HEAD
 	int gpio = pxa_irq_to_gpio(d->irq);
+=======
+	int gpio = irq_to_gpio(d->irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint32_t mask = 0;
 
 	if (gpio >= 0 && gpio < 85)
@@ -313,18 +333,30 @@ set_pwer:
 void __init pxa25x_init_irq(void)
 {
 	pxa_init_irq(32, pxa25x_set_wake);
+<<<<<<< HEAD
+=======
+	pxa_init_gpio(IRQ_GPIO_2_x, 2, 84, pxa25x_set_wake);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_CPU_PXA26x
 void __init pxa26x_init_irq(void)
 {
 	pxa_init_irq(32, pxa25x_set_wake);
+<<<<<<< HEAD
+=======
+	pxa_init_gpio(IRQ_GPIO_2_x, 2, 89, pxa25x_set_wake);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif
 
 static struct map_desc pxa25x_io_desc[] __initdata = {
 	{	/* Mem Ctl */
+<<<<<<< HEAD
 		.virtual	= (unsigned long)SMEMC_VIRT,
+=======
+		.virtual	= SMEMC_VIRT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.pfn		= __phys_to_pfn(PXA2XX_SMEMC_BASE),
 		.length		= 0x00200000,
 		.type		= MT_DEVICE
@@ -368,6 +400,10 @@ static int __init pxa25x_init(void)
 
 		register_syscore_ops(&pxa_irq_syscore_ops);
 		register_syscore_ops(&pxa2xx_mfp_syscore_ops);
+<<<<<<< HEAD
+=======
+		register_syscore_ops(&pxa_gpio_syscore_ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		register_syscore_ops(&pxa2xx_clock_syscore_ops);
 
 		ret = platform_add_devices(pxa25x_devices,

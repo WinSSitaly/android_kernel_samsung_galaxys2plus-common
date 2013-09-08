@@ -24,7 +24,10 @@
 #include <linux/sched.h>
 #include <linux/slab.h>
 #include <linux/ioport.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/delay.h>
 #include <sound/core.h>
 #include <sound/emu8000.h>

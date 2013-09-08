@@ -76,6 +76,7 @@ static LIST_HEAD(link_list);
 #define POLICY_DEFAULT 0	/* BIOS default setting */
 #define POLICY_PERFORMANCE 1	/* high performance */
 #define POLICY_POWERSAVE 2	/* high power saving */
+<<<<<<< HEAD
 
 #ifdef CONFIG_PCIEASPM_PERFORMANCE
 static int aspm_policy = POLICY_PERFORMANCE;
@@ -85,6 +86,9 @@ static int aspm_policy = POLICY_POWERSAVE;
 static int aspm_policy;
 #endif
 
+=======
+static int aspm_policy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const char *policy_str[] = {
 	[POLICY_DEFAULT] = "default",
 	[POLICY_PERFORMANCE] = "performance",
@@ -798,9 +802,12 @@ void pcie_clear_aspm(struct pci_bus *bus)
 {
 	struct pci_dev *child;
 
+<<<<<<< HEAD
 	if (aspm_force)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Clear any ASPM setup that the firmware has carried out on this bus
 	 */
@@ -975,7 +982,11 @@ static int __init pcie_aspm_disable(char *str)
 		printk(KERN_INFO "PCIe ASPM is disabled\n");
 	} else if (!strcmp(str, "force")) {
 		aspm_force = 1;
+<<<<<<< HEAD
 		printk(KERN_INFO "PCIe ASPM is forcibly enabled\n");
+=======
+		printk(KERN_INFO "PCIe ASPM is forcedly enabled\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 1;
 }

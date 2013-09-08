@@ -719,6 +719,7 @@ out:
 	crypto_free_ahash(tfm);
 }
 
+<<<<<<< HEAD
 static inline int do_one_acipher_op(struct ablkcipher_request *req, int ret)
 {
 	if (ret == -EINPROGRESS || ret == -EBUSY) {
@@ -920,6 +921,8 @@ out:
 	crypto_free_ablkcipher(tfm);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void test_available(void)
 {
 	char **name = check;
@@ -983,23 +986,32 @@ static int do_test(int m)
 	case 7:
 		ret += tcrypt_test("ecb(blowfish)");
 		ret += tcrypt_test("cbc(blowfish)");
+<<<<<<< HEAD
 		ret += tcrypt_test("ctr(blowfish)");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case 8:
 		ret += tcrypt_test("ecb(twofish)");
 		ret += tcrypt_test("cbc(twofish)");
+<<<<<<< HEAD
 		ret += tcrypt_test("ctr(twofish)");
 		ret += tcrypt_test("lrw(twofish)");
 		ret += tcrypt_test("xts(twofish)");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case 9:
 		ret += tcrypt_test("ecb(serpent)");
+<<<<<<< HEAD
 		ret += tcrypt_test("cbc(serpent)");
 		ret += tcrypt_test("ctr(serpent)");
 		ret += tcrypt_test("lrw(serpent)");
 		ret += tcrypt_test("xts(serpent)");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case 10:
@@ -1248,6 +1260,7 @@ static int do_test(int m)
 				speed_template_16_24_32);
 		test_cipher_speed("cbc(twofish)", DECRYPT, sec, NULL, 0,
 				speed_template_16_24_32);
+<<<<<<< HEAD
 		test_cipher_speed("ctr(twofish)", ENCRYPT, sec, NULL, 0,
 				speed_template_16_24_32);
 		test_cipher_speed("ctr(twofish)", DECRYPT, sec, NULL, 0,
@@ -1260,6 +1273,8 @@ static int do_test(int m)
 				speed_template_32_48_64);
 		test_cipher_speed("xts(twofish)", DECRYPT, sec, NULL, 0,
 				speed_template_32_48_64);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case 203:
@@ -1271,10 +1286,13 @@ static int do_test(int m)
 				  speed_template_8_32);
 		test_cipher_speed("cbc(blowfish)", DECRYPT, sec, NULL, 0,
 				  speed_template_8_32);
+<<<<<<< HEAD
 		test_cipher_speed("ctr(blowfish)", ENCRYPT, sec, NULL, 0,
 				  speed_template_8_32);
 		test_cipher_speed("ctr(blowfish)", DECRYPT, sec, NULL, 0,
 				  speed_template_8_32);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case 204:
@@ -1297,6 +1315,7 @@ static int do_test(int m)
 				speed_template_16_24_32);
 		test_cipher_speed("cbc(camellia)", DECRYPT, sec, NULL, 0,
 				speed_template_16_24_32);
+<<<<<<< HEAD
 		test_cipher_speed("ctr(camellia)", ENCRYPT, sec, NULL, 0,
 				speed_template_16_24_32);
 		test_cipher_speed("ctr(camellia)", DECRYPT, sec, NULL, 0,
@@ -1309,6 +1328,8 @@ static int do_test(int m)
 				speed_template_32_48_64);
 		test_cipher_speed("xts(camellia)", DECRYPT, sec, NULL, 0,
 				speed_template_32_48_64);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case 206:
@@ -1316,6 +1337,7 @@ static int do_test(int m)
 				  speed_template_16_32);
 		break;
 
+<<<<<<< HEAD
 	case 207:
 		test_cipher_speed("ecb(serpent)", ENCRYPT, sec, NULL, 0,
 				  speed_template_16_32);
@@ -1339,6 +1361,8 @@ static int do_test(int m)
 				  speed_template_32_64);
 		break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case 300:
 		/* fall through */
 
@@ -1491,6 +1515,7 @@ static int do_test(int m)
 	case 499:
 		break;
 
+<<<<<<< HEAD
 	case 500:
 		test_acipher_speed("ecb(aes)", ENCRYPT, sec, NULL, 0,
 				   speed_template_16_24_32);
@@ -1563,6 +1588,8 @@ static int do_test(int m)
 				   speed_template_32_64);
 		break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case 1000:
 		test_available();
 		break;

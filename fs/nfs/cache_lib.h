@@ -6,7 +6,11 @@
 
 #include <linux/completion.h>
 #include <linux/sunrpc/cache.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Deferred request handling
@@ -23,6 +27,7 @@ extern struct nfs_cache_defer_req *nfs_cache_defer_req_alloc(void);
 extern void nfs_cache_defer_req_put(struct nfs_cache_defer_req *dreq);
 extern int nfs_cache_wait_for_upcall(struct nfs_cache_defer_req *dreq);
 
+<<<<<<< HEAD
 extern void nfs_cache_init(struct cache_detail *cd);
 extern void nfs_cache_destroy(struct cache_detail *cd);
 extern int nfs_cache_register_net(struct net *net, struct cache_detail *cd);
@@ -31,3 +36,7 @@ extern int nfs_cache_register_sb(struct super_block *sb,
 				 struct cache_detail *cd);
 extern void nfs_cache_unregister_sb(struct super_block *sb,
 				    struct cache_detail *cd);
+=======
+extern int nfs_cache_register(struct cache_detail *cd);
+extern void nfs_cache_unregister(struct cache_detail *cd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -37,6 +37,7 @@
 
 #define ADDBA_RSP_STATUS_ACCEPT 0
 
+<<<<<<< HEAD
 #define MWIFIEX_DEF_11N_RX_SEQ_NUM	0xffff
 
 static inline void mwifiex_reset_11n_rx_seq_num(struct mwifiex_private *priv)
@@ -44,12 +45,20 @@ static inline void mwifiex_reset_11n_rx_seq_num(struct mwifiex_private *priv)
 	memset(priv->rx_seq, 0xff, sizeof(priv->rx_seq));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int mwifiex_11n_rx_reorder_pkt(struct mwifiex_private *,
 			       u16 seqNum,
 			       u16 tid, u8 *ta,
 			       u8 pkttype, void *payload);
+<<<<<<< HEAD
 void mwifiex_del_ba_tbl(struct mwifiex_private *priv, int Tid,
 			u8 *PeerMACAddr, u8 type, int initiator);
+=======
+void mwifiex_11n_delete_ba_stream_tbl(struct mwifiex_private *priv, int Tid,
+				     u8 *PeerMACAddr, u8 type,
+				     int initiator);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void mwifiex_11n_ba_stream_timeout(struct mwifiex_private *priv,
 				   struct host_cmd_ds_11n_batimeout *event);
 int mwifiex_ret_11n_addba_resp(struct mwifiex_private *priv,
@@ -58,9 +67,14 @@ int mwifiex_ret_11n_addba_resp(struct mwifiex_private *priv,
 int mwifiex_cmd_11n_delba(struct host_cmd_ds_command *cmd,
 			  void *data_buf);
 int mwifiex_cmd_11n_addba_rsp_gen(struct mwifiex_private *priv,
+<<<<<<< HEAD
 				  struct host_cmd_ds_command *cmd,
 				  struct host_cmd_ds_11n_addba_req
 				  *cmd_addba_req);
+=======
+				  struct host_cmd_ds_command
+				  *cmd, void *data_buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int mwifiex_cmd_11n_addba_req(struct host_cmd_ds_command *cmd,
 			      void *data_buf);
 void mwifiex_11n_cleanup_reorder_tbl(struct mwifiex_private *priv);

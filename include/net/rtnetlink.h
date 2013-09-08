@@ -6,6 +6,7 @@
 
 typedef int (*rtnl_doit_func)(struct sk_buff *, struct nlmsghdr *, void *);
 typedef int (*rtnl_dumpit_func)(struct sk_buff *, struct netlink_callback *);
+<<<<<<< HEAD
 typedef u16 (*rtnl_calcit_func)(struct sk_buff *, struct nlmsghdr *);
 
 extern int	__rtnl_register(int protocol, int msgtype,
@@ -14,6 +15,13 @@ extern int	__rtnl_register(int protocol, int msgtype,
 extern void	rtnl_register(int protocol, int msgtype,
 			      rtnl_doit_func, rtnl_dumpit_func,
 			      rtnl_calcit_func);
+=======
+
+extern int	__rtnl_register(int protocol, int msgtype,
+				rtnl_doit_func, rtnl_dumpit_func);
+extern void	rtnl_register(int protocol, int msgtype,
+			      rtnl_doit_func, rtnl_dumpit_func);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int	rtnl_unregister(int protocol, int msgtype);
 extern void	rtnl_unregister_all(int protocol);
 

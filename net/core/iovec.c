@@ -35,7 +35,11 @@
  *	in any case.
  */
 
+<<<<<<< HEAD
 int verify_iovec(struct msghdr *m, struct iovec *iov, struct sockaddr_storage *address, int mode)
+=======
+int verify_iovec(struct msghdr *m, struct iovec *iov, struct sockaddr *address, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int size, ct, err;
 

@@ -28,6 +28,10 @@
 #include <linux/bcd.h>
 
 #include <asm/bootinfo.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/pgtable.h>
 #include <asm/setup.h>
 #include <asm/irq.h>
@@ -85,7 +89,11 @@ static void bvme6000_get_model(char *model)
  */
 static void __init bvme6000_init_IRQ(void)
 {
+<<<<<<< HEAD
 	m68k_setup_user_interrupt(VEC_USER, 192);
+=======
+	m68k_setup_user_interrupt(VEC_USER, 192, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __init config_bvme6000(void)

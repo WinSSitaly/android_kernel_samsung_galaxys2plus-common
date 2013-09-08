@@ -6,7 +6,10 @@
 #include <linux/slab.h>
 #include <linux/firmware.h>
 #include <linux/device.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "hermes.h"
 #include "hermes_dld.h"
@@ -101,7 +104,11 @@ orinoco_dl_firmware(struct orinoco_private *priv,
 	/* Plug Data Area (PDA) */
 	__le16 *pda;
 
+<<<<<<< HEAD
 	struct hermes *hw = &priv->hw;
+=======
+	hermes_t *hw = &priv->hw;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const struct firmware *fw_entry;
 	const struct orinoco_fw_header *hdr;
 	const unsigned char *first_block;
@@ -206,7 +213,11 @@ symbol_dl_image(struct orinoco_private *priv, const struct fw_info *fw,
 		const unsigned char *image, const void *end,
 		int secondary)
 {
+<<<<<<< HEAD
 	struct hermes *hw = &priv->hw;
+=======
+	hermes_t *hw = &priv->hw;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 	const unsigned char *ptr;
 	const unsigned char *first_block;
@@ -323,8 +334,14 @@ symbol_dl_firmware(struct orinoco_private *priv,
 			      fw_entry->data + fw_entry->size, 1);
 	if (!orinoco_cached_fw_get(priv, false))
 		release_firmware(fw_entry);
+<<<<<<< HEAD
 	if (ret)
 		dev_err(dev, "Secondary firmware download failed\n");
+=======
+	if (ret) {
+		dev_err(dev, "Secondary firmware download failed\n");
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }

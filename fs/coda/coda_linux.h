@@ -39,7 +39,11 @@ extern const struct file_operations coda_ioctl_operations;
 /* operations shared over more than one file */
 int coda_open(struct inode *i, struct file *f);
 int coda_release(struct inode *i, struct file *f);
+<<<<<<< HEAD
 int coda_permission(struct inode *inode, int mask);
+=======
+int coda_permission(struct inode *inode, int mask, unsigned int flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int coda_revalidate_inode(struct dentry *);
 int coda_getattr(struct vfsmount *, struct dentry *, struct kstat *);
 int coda_setattr(struct dentry *, struct iattr *);
@@ -59,11 +63,20 @@ void coda_sysctl_clean(void);
 
 #define CODA_ALLOC(ptr, cast, size) do { \
     if (size < PAGE_SIZE) \
+<<<<<<< HEAD
         ptr = kzalloc((unsigned long) size, GFP_KERNEL); \
     else \
         ptr = (cast)vzalloc((unsigned long) size); \
     if (!ptr) \
         printk("kernel malloc returns 0 at %s:%d\n", __FILE__, __LINE__); \
+=======
+        ptr = kmalloc((unsigned long) size, GFP_KERNEL); \
+    else \
+        ptr = (cast)vmalloc((unsigned long) size); \
+    if (!ptr) \
+        printk("kernel malloc returns 0 at %s:%d\n", __FILE__, __LINE__); \
+    else memset( ptr, 0, size ); \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } while (0)
 
 

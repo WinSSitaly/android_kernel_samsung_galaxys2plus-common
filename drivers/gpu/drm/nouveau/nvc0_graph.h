@@ -57,7 +57,12 @@ struct nvc0_graph_priv {
 	struct nouveau_gpuobj *unk4188b4;
 	struct nouveau_gpuobj *unk4188b8;
 
+<<<<<<< HEAD
 	u8 magic_not_rop_nr;
+=======
+	u8  magic_not_rop_nr;
+	u32 magicgpc918;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct nvc0_graph_chan {
@@ -71,6 +76,7 @@ struct nvc0_graph_chan {
 
 int nvc0_grctx_generate(struct nouveau_channel *);
 
+<<<<<<< HEAD
 /* nvc0_graph.c uses this also to determine supported chipsets */
 static inline u32
 nvc0_graph_class(struct drm_device *dev)
@@ -94,4 +100,6 @@ nvc0_graph_class(struct drm_device *dev)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

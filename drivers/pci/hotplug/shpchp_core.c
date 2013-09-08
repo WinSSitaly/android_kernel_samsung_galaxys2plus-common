@@ -36,10 +36,18 @@
 #include "shpchp.h"
 
 /* Global variables */
+<<<<<<< HEAD
 bool shpchp_debug;
 bool shpchp_poll_mode;
 int shpchp_poll_time;
 struct workqueue_struct *shpchp_wq;
+=======
+int shpchp_debug;
+int shpchp_poll_mode;
+int shpchp_poll_time;
+struct workqueue_struct *shpchp_wq;
+struct workqueue_struct *shpchp_ordered_wq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRIVER_VERSION	"0.4"
 #define DRIVER_AUTHOR	"Dan Zink <dan.zink@compaq.com>, Greg Kroah-Hartman <greg@kroah.com>, Dely Sy <dely.l.sy@intel.com>"
@@ -174,6 +182,10 @@ void cleanup_slots(struct controller *ctrl)
 		list_del(&slot->slot_list);
 		cancel_delayed_work(&slot->work);
 		flush_workqueue(shpchp_wq);
+<<<<<<< HEAD
+=======
+		flush_workqueue(shpchp_ordered_wq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pci_hp_deregister(slot->hotplug_slot);
 	}
 }
@@ -362,10 +374,23 @@ static int __init shpcd_init(void)
 	if (!shpchp_wq)
 		return -ENOMEM;
 
+<<<<<<< HEAD
+=======
+	shpchp_ordered_wq = alloc_ordered_workqueue("shpchp_ordered", 0);
+	if (!shpchp_ordered_wq) {
+		destroy_workqueue(shpchp_wq);
+		return -ENOMEM;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	retval = pci_register_driver(&shpc_driver);
 	dbg("%s: pci_register_driver = %d\n", __func__, retval);
 	info(DRIVER_DESC " version: " DRIVER_VERSION "\n");
 	if (retval) {
+<<<<<<< HEAD
+=======
+		destroy_workqueue(shpchp_ordered_wq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		destroy_workqueue(shpchp_wq);
 	}
 	return retval;
@@ -375,6 +400,10 @@ static void __exit shpcd_cleanup(void)
 {
 	dbg("unload_shpchpd()\n");
 	pci_unregister_driver(&shpc_driver);
+<<<<<<< HEAD
+=======
+	destroy_workqueue(shpchp_ordered_wq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	destroy_workqueue(shpchp_wq);
 	info(DRIVER_DESC " version: " DRIVER_VERSION " unloaded\n");
 }

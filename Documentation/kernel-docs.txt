@@ -300,7 +300,11 @@
        
      * Title: "The Kernel Hacking HOWTO"
        Author: Various Talented People, and Rusty.
+<<<<<<< HEAD
        Location: in kernel tree, Documentation/DocBook/kernel-hacking.tmpl
+=======
+       Location: in kernel tree, Documentation/DocBook/kernel-hacking/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
        (must be built as "make {htmldocs | psdocs | pdfdocs})
        Keywords: HOWTO, kernel contexts, deadlock, locking, modules,
        symbols, return conventions.
@@ -351,7 +355,11 @@
        
      * Title: "Linux Kernel Locking HOWTO"
        Author: Various Talented People, and Rusty.
+<<<<<<< HEAD
        Location: in kernel tree, Documentation/DocBook/kernel-locking.tmpl
+=======
+       Location: in kernel tree, Documentation/DocBook/kernel-locking/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
        (must be built as "make {htmldocs | psdocs | pdfdocs})
        Keywords: locks, locking, spinlock, semaphore, atomic, race
        condition, bottom halves, tasklets, softirqs.
@@ -620,6 +628,20 @@
        (including this document itself) have been moved there, and might
        be more up to date than the web version.
 
+<<<<<<< HEAD
+=======
+     * Name: "Linux Source Driver"
+       URL: http://lsd.linux.cz
+       Keywords: Browsing source code.
+       Description: "Linux Source Driver (LSD) is an application, which
+       can make browsing source codes of Linux kernel easier than you can
+       imagine. You can select between multiple versions of kernel (e.g.
+       0.01, 1.0.0, 2.0.33, 2.0.34pre13, 2.0.0, 2.1.101 etc.). With LSD
+       you can search Linux kernel (fulltext, macros, types, functions
+       and variables) and LSD can generate patches for you on the fly
+       (files, directories or kernel)".
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
      * Name: "Linux Kernel Source Reference"
        Author: Thomas Graichen.
        URL: http://marc.info/?l=linux-kernel&m=96446640102205&w=4

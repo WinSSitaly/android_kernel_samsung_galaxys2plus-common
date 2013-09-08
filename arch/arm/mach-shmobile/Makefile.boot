@@ -1,7 +1,11 @@
 __ZRELADDR	:= $(shell /bin/bash -c 'printf "0x%08x" \
 		     $$[$(CONFIG_MEMORY_START) + 0x8000]')
 
+<<<<<<< HEAD
    zreladdr-y   += $(__ZRELADDR)
+=======
+   zreladdr-y   := $(__ZRELADDR)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # Unsupported legacy stuff
 #

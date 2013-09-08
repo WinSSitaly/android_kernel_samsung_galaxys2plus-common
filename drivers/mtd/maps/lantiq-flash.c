@@ -45,7 +45,10 @@ struct ltq_mtd {
 };
 
 static char ltq_map_name[] = "ltq_nor";
+<<<<<<< HEAD
 static const char *ltq_probe_types[] __devinitconst = { "cmdlinepart", NULL };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static map_word
 ltq_read16(struct map_info *map, unsigned long adr)
@@ -108,12 +111,23 @@ ltq_copy_to(struct map_info *map, unsigned long to,
 	spin_unlock_irqrestore(&ebu_lock, flags);
 }
 
+<<<<<<< HEAD
+=======
+static const char const *part_probe_types[] = { "cmdlinepart", NULL };
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init
 ltq_mtd_probe(struct platform_device *pdev)
 {
 	struct physmap_flash_data *ltq_mtd_data = dev_get_platdata(&pdev->dev);
 	struct ltq_mtd *ltq_mtd;
+<<<<<<< HEAD
 	struct resource *res;
+=======
+	struct mtd_partition *parts;
+	struct resource *res;
+	int nr_parts = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct cfi_private *cfi;
 	int err;
 
@@ -160,7 +174,11 @@ ltq_mtd_probe(struct platform_device *pdev)
 	if (!ltq_mtd->mtd) {
 		dev_err(&pdev->dev, "probing failed\n");
 		err = -ENXIO;
+<<<<<<< HEAD
 		goto err_free;
+=======
+		goto err_unmap;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ltq_mtd->mtd->owner = THIS_MODULE;
@@ -169,9 +187,23 @@ ltq_mtd_probe(struct platform_device *pdev)
 	cfi->addr_unlock1 ^= 1;
 	cfi->addr_unlock2 ^= 1;
 
+<<<<<<< HEAD
 	err = mtd_device_parse_register(ltq_mtd->mtd, ltq_probe_types, NULL,
 					ltq_mtd_data->parts,
 					ltq_mtd_data->nr_parts);
+=======
+	nr_parts = parse_mtd_partitions(ltq_mtd->mtd,
+				part_probe_types, &parts, 0);
+	if (nr_parts > 0) {
+		dev_info(&pdev->dev,
+			"using %d partitions from cmdline", nr_parts);
+	} else {
+		nr_parts = ltq_mtd_data->nr_parts;
+		parts = ltq_mtd_data->parts;
+	}
+
+	err = add_mtd_partitions(ltq_mtd->mtd, parts, nr_parts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err) {
 		dev_err(&pdev->dev, "failed to add partitions\n");
 		goto err_destroy;
@@ -181,6 +213,11 @@ ltq_mtd_probe(struct platform_device *pdev)
 
 err_destroy:
 	map_destroy(ltq_mtd->mtd);
+<<<<<<< HEAD
+=======
+err_unmap:
+	iounmap(ltq_mtd->map->virt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_free:
 	kfree(ltq_mtd->map);
 err_out:
@@ -195,9 +232,17 @@ ltq_mtd_remove(struct platform_device *pdev)
 
 	if (ltq_mtd) {
 		if (ltq_mtd->mtd) {
+<<<<<<< HEAD
 			mtd_device_unregister(ltq_mtd->mtd);
 			map_destroy(ltq_mtd->mtd);
 		}
+=======
+			del_mtd_partitions(ltq_mtd->mtd);
+			map_destroy(ltq_mtd->mtd);
+		}
+		if (ltq_mtd->map->virt)
+			iounmap(ltq_mtd->map->virt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(ltq_mtd->map);
 		kfree(ltq_mtd);
 	}

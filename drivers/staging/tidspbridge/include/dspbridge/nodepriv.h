@@ -96,6 +96,10 @@ struct node_createargs {
  *      -EINVAL:     The node's stream corresponding to index and dir
  *                      is not a stream to or from the host.
  *  Requires:
+<<<<<<< HEAD
+=======
+ *      node_init(void) called.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *      Valid dir.
  *      chan_id != NULL.
  *  Ensures:

@@ -5,6 +5,20 @@
 #include <net/mac80211.h>
 #include "ieee80211_i.h"
 
+<<<<<<< HEAD
+=======
+#if !defined(CONFIG_MAC80211_DRIVER_API_TRACER) || defined(__CHECKER__)
+#undef TRACE_EVENT
+#define TRACE_EVENT(name, proto, ...) \
+static inline void trace_ ## name(proto) {}
+#undef DECLARE_EVENT_CLASS
+#define DECLARE_EVENT_CLASS(...)
+#undef DEFINE_EVENT
+#define DEFINE_EVENT(evt_class, name, proto, ...) \
+static inline void trace_ ## name(proto) {}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #undef TRACE_SYSTEM
 #define TRACE_SYSTEM mac80211
 
@@ -296,7 +310,11 @@ TRACE_EVENT(drv_bss_info_changed,
 		__entry->dtimper = info->dtim_period;
 		__entry->bcnint = info->beacon_int;
 		__entry->assoc_cap = info->assoc_capability;
+<<<<<<< HEAD
 		__entry->timestamp = info->last_tsf;
+=======
+		__entry->timestamp = info->timestamp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__entry->basic_rates = info->basic_rates;
 		__entry->enable_beacon = info->enable_beacon;
 		__entry->ht_operation_mode = info->ht_operation_mode;
@@ -449,12 +467,15 @@ DEFINE_EVENT(local_sdata_evt, drv_hw_scan,
 	TP_ARGS(local, sdata)
 );
 
+<<<<<<< HEAD
 DEFINE_EVENT(local_sdata_evt, drv_cancel_hw_scan,
 	TP_PROTO(struct ieee80211_local *local,
 		 struct ieee80211_sub_if_data *sdata),
 	TP_ARGS(local, sdata)
 );
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 DEFINE_EVENT(local_sdata_evt, drv_sched_scan_start,
 	TP_PROTO(struct ieee80211_local *local,
 		 struct ieee80211_sub_if_data *sdata),
@@ -592,6 +613,7 @@ TRACE_EVENT(drv_sta_notify,
 	)
 );
 
+<<<<<<< HEAD
 TRACE_EVENT(drv_sta_state,
 	TP_PROTO(struct ieee80211_local *local,
 		 struct ieee80211_sub_if_data *sdata,
@@ -624,6 +646,8 @@ TRACE_EVENT(drv_sta_state,
 	)
 );
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 TRACE_EVENT(drv_sta_add,
 	TP_PROTO(struct ieee80211_local *local,
 		 struct ieee80211_sub_if_data *sdata,
@@ -675,6 +699,7 @@ TRACE_EVENT(drv_sta_remove,
 );
 
 TRACE_EVENT(drv_conf_tx,
+<<<<<<< HEAD
 	TP_PROTO(struct ieee80211_local *local,
 		 struct ieee80211_sub_if_data *sdata,
 		 u16 queue,
@@ -685,22 +710,38 @@ TRACE_EVENT(drv_conf_tx,
 	TP_STRUCT__entry(
 		LOCAL_ENTRY
 		VIF_ENTRY
+=======
+	TP_PROTO(struct ieee80211_local *local, u16 queue,
+		 const struct ieee80211_tx_queue_params *params),
+
+	TP_ARGS(local, queue, params),
+
+	TP_STRUCT__entry(
+		LOCAL_ENTRY
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__field(u16, queue)
 		__field(u16, txop)
 		__field(u16, cw_min)
 		__field(u16, cw_max)
 		__field(u8, aifs)
+<<<<<<< HEAD
 		__field(bool, uapsd)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	),
 
 	TP_fast_assign(
 		LOCAL_ASSIGN;
+<<<<<<< HEAD
 		VIF_ASSIGN;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__entry->queue = queue;
 		__entry->txop = params->txop;
 		__entry->cw_max = params->cw_max;
 		__entry->cw_min = params->cw_min;
 		__entry->aifs = params->aifs;
+<<<<<<< HEAD
 		__entry->uapsd = params->uapsd;
 	),
 
@@ -726,16 +767,42 @@ TRACE_EVENT(drv_set_tsf,
 	TP_STRUCT__entry(
 		LOCAL_ENTRY
 		VIF_ENTRY
+=======
+	),
+
+	TP_printk(
+		LOCAL_PR_FMT " queue:%d",
+		LOCAL_PR_ARG, __entry->queue
+	)
+);
+
+DEFINE_EVENT(local_only_evt, drv_get_tsf,
+	TP_PROTO(struct ieee80211_local *local),
+	TP_ARGS(local)
+);
+
+TRACE_EVENT(drv_set_tsf,
+	TP_PROTO(struct ieee80211_local *local, u64 tsf),
+
+	TP_ARGS(local, tsf),
+
+	TP_STRUCT__entry(
+		LOCAL_ENTRY
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__field(u64, tsf)
 	),
 
 	TP_fast_assign(
 		LOCAL_ASSIGN;
+<<<<<<< HEAD
 		VIF_ASSIGN;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__entry->tsf = tsf;
 	),
 
 	TP_printk(
+<<<<<<< HEAD
 		LOCAL_PR_FMT  VIF_PR_FMT  " tsf:%llu",
 		LOCAL_PR_ARG, VIF_PR_ARG, (unsigned long long)__entry->tsf
 	)
@@ -745,6 +812,16 @@ DEFINE_EVENT(local_sdata_evt, drv_reset_tsf,
 	TP_PROTO(struct ieee80211_local *local,
 		 struct ieee80211_sub_if_data *sdata),
 	TP_ARGS(local, sdata)
+=======
+		LOCAL_PR_FMT " tsf:%llu",
+		LOCAL_PR_ARG, (unsigned long long)__entry->tsf
+	)
+);
+
+DEFINE_EVENT(local_only_evt, drv_reset_tsf,
+	TP_PROTO(struct ieee80211_local *local),
+	TP_ARGS(local)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 );
 
 DEFINE_EVENT(local_only_evt, drv_tx_last_beacon,
@@ -1057,6 +1134,7 @@ TRACE_EVENT(drv_set_bitrate_mask,
 	)
 );
 
+<<<<<<< HEAD
 TRACE_EVENT(drv_set_rekey_data,
 	TP_PROTO(struct ieee80211_local *local,
 		 struct ieee80211_sub_if_data *sdata,
@@ -1162,6 +1240,8 @@ DEFINE_EVENT(release_evt, drv_allow_buffered_frames,
 	TP_ARGS(local, sta, tids, num_frames, reason, more_data)
 );
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Tracing for API calls that drivers call.
  */
@@ -1431,6 +1511,7 @@ DEFINE_EVENT(local_only_evt, api_remain_on_channel_expired,
 	TP_ARGS(local)
 );
 
+<<<<<<< HEAD
 TRACE_EVENT(api_gtk_rekey_notify,
 	TP_PROTO(struct ieee80211_sub_if_data *sdata,
 		 const u8 *bssid, const u8 *replay_ctr),
@@ -1498,6 +1579,8 @@ TRACE_EVENT(api_eosp,
 	)
 );
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Tracing for internal functions
  * (which may also be called in response to driver calls)

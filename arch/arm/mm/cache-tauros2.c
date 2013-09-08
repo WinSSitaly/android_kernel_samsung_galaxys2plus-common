@@ -16,7 +16,10 @@
 
 #include <linux/init.h>
 #include <asm/cacheflush.h>
+<<<<<<< HEAD
 #include <asm/cp15.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/hardware/cache-tauros2.h>
 
 

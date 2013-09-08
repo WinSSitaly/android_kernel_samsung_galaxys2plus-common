@@ -10,6 +10,15 @@
 
 #include <mach/bridge-regs.h>
 
+<<<<<<< HEAD
+=======
+	.macro  disable_fiq
+	.endm
+
+	.macro  arch_ret_to_user, tmp1, tmp2
+	.endm
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.macro  get_irqnr_preamble, base, tmp
 	ldr	\base, =IRQ_VIRT_BASE
 	.endm

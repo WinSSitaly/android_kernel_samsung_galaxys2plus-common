@@ -17,6 +17,10 @@
 #include <asm/cpm2.h>
 #include <asm/io.h>
 #include <asm/pci-bridge.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <platforms/82xx/pq2.h>
 
@@ -52,7 +56,11 @@ static void __init pq2_pci_add_bridge(struct device_node *np)
 	if (of_address_to_resource(np, 0, &r) || r.end - r.start < 0x10b)
 		goto err;
 
+<<<<<<< HEAD
 	pci_add_flags(PCI_REASSIGN_ALL_BUS);
+=======
+	ppc_pci_add_flags(PPC_PCI_REASSIGN_ALL_BUS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hose = pcibios_alloc_controller(np);
 	if (!hose)

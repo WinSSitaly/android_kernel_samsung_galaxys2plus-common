@@ -8,6 +8,7 @@
 #include <linux/etherdevice.h>
 #include <linux/kernel.h>
 #include <linux/of_net.h>
+<<<<<<< HEAD
 #include <linux/phy.h>
 #include <linux/export.h>
 
@@ -54,6 +55,8 @@ const int of_get_phy_mode(struct device_node *np)
 	return -ENODEV;
 }
 EXPORT_SYMBOL_GPL(of_get_phy_mode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * Search the device tree for the best MAC address to use.  'mac-address' is

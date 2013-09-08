@@ -28,7 +28,13 @@ enum {
 
 /* Different peripheral ids */
 #define OMAP_TAG_CLOCK		0x4f01
+<<<<<<< HEAD
 #define OMAP_TAG_GPIO_SWITCH	0x4f06
+=======
+#define OMAP_TAG_LCD		0x4f05
+#define OMAP_TAG_GPIO_SWITCH	0x4f06
+#define OMAP_TAG_FBMEM		0x4f08
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define OMAP_TAG_STI_CONSOLE	0x4f09
 #define OMAP_TAG_CAMERA_SENSOR	0x4f0a
 

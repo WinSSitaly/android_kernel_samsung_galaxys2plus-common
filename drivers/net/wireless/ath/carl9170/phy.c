@@ -578,10 +578,18 @@ static int carl9170_init_phy(struct ar9170 *ar, enum ieee80211_band band)
 	if (err)
 		return err;
 
+<<<<<<< HEAD
 	if (!ar->fw.hw_counters) {
 		err = carl9170_write_reg(ar, AR9170_PWR_REG_PLL_ADDAC,
 					 is_2ghz ? 0x5163 : 0x5143);
 	}
+=======
+	/* XXX: remove magic! */
+	if (is_2ghz)
+		err = carl9170_write_reg(ar, AR9170_PWR_REG_PLL_ADDAC, 0x5163);
+	else
+		err = carl9170_write_reg(ar, AR9170_PWR_REG_PLL_ADDAC, 0x5143);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }
@@ -1097,7 +1105,11 @@ static u8 carl9170_interpolate_u8(u8 x, u8 x1, u8 y1, u8 x2, u8 y2)
 	 *	Isn't it just DIV_ROUND_UP(y, 1<<SHIFT)?
 	 *	Can we rely on the compiler to optimise away the div?
 	 */
+<<<<<<< HEAD
 	return (y >> SHIFT) + ((y & (1 << (SHIFT - 1))) >> (SHIFT - 1));
+=======
+	return (y >> SHIFT) + ((y & (1<<(SHIFT-1))) >> (SHIFT - 1));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #undef SHIFT
 }
 
@@ -1378,7 +1390,11 @@ static void carl9170_calc_ctl(struct ar9170 *ar, u32 freq, enum carl9170_bw bw)
 
 			modes[i].max_power =
 				carl9170_get_max_edge_power(ar,
+<<<<<<< HEAD
 					freq + f_off, EDGES(ctl_idx, 1));
+=======
+					freq+f_off, EDGES(ctl_idx, 1));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/*
 			 * TODO: check if the regulatory max. power is
@@ -1426,21 +1442,34 @@ static void carl9170_calc_ctl(struct ar9170 *ar, u32 freq, enum carl9170_bw bw)
 #undef EDGES
 }
 
+<<<<<<< HEAD
 static void carl9170_set_power_cal(struct ar9170 *ar, u32 freq,
 				   enum carl9170_bw bw)
+=======
+static int carl9170_set_power_cal(struct ar9170 *ar, u32 freq,
+				  enum carl9170_bw bw)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ar9170_calibration_target_power_legacy *ctpl;
 	struct ar9170_calibration_target_power_ht *ctph;
 	u8 *ctpres;
 	int ntargets;
 	int idx, i, n;
+<<<<<<< HEAD
 	u8 f;
+=======
+	u8 ackpower, ackchains, f;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 pwr_freqs[AR5416_MAX_NUM_TGT_PWRS];
 
 	if (freq < 3000)
 		f = freq - 2300;
 	else
+<<<<<<< HEAD
 		f = (freq - 4800) / 5;
+=======
+		f = (freq - 4800)/5;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * cycle through the various modes
@@ -1523,6 +1552,35 @@ static void carl9170_set_power_cal(struct ar9170 *ar, u32 freq,
 
 	/* calc. conformance test limits and apply to ar->power*[] */
 	carl9170_calc_ctl(ar, freq, bw);
+<<<<<<< HEAD
+=======
+
+	/* set ACK/CTS TX power */
+	carl9170_regwrite_begin(ar);
+
+	if (ar->eeprom.tx_mask != 1)
+		ackchains = AR9170_TX_PHY_TXCHAIN_2;
+	else
+		ackchains = AR9170_TX_PHY_TXCHAIN_1;
+
+	if (freq < 3000)
+		ackpower = ar->power_2G_ofdm[0] & 0x3f;
+	else
+		ackpower = ar->power_5G_leg[0] & 0x3f;
+
+	carl9170_regwrite(AR9170_MAC_REG_ACK_TPC,
+			  0x3c1e | ackpower << 20 | ackchains << 26);
+	carl9170_regwrite(AR9170_MAC_REG_RTS_CTS_TPC,
+			  ackpower << 5 | ackchains << 11 |
+			  ackpower << 21 | ackchains << 27);
+
+	carl9170_regwrite(AR9170_MAC_REG_CFEND_QOSNULL_TPC,
+			  ackpower << 5 | ackchains << 11 |
+			  ackpower << 21 | ackchains << 27);
+
+	carl9170_regwrite_finish();
+	return carl9170_regwrite_result();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int carl9170_get_noisefloor(struct ar9170 *ar)
@@ -1547,9 +1605,12 @@ int carl9170_get_noisefloor(struct ar9170 *ar)
 			AR9170_PHY_EXT_CCA_MIN_PWR, phy_res[i + 2]), 8);
 	}
 
+<<<<<<< HEAD
 	if (ar->channel)
 		ar->survey[ar->channel->hw_value].noise = ar->noise[0];
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1686,9 +1747,13 @@ int carl9170_set_channel(struct ar9170 *ar, struct ieee80211_channel *channel,
 	if (err)
 		return err;
 
+<<<<<<< HEAD
 	carl9170_set_power_cal(ar, channel->center_freq, bw);
 
 	err = carl9170_set_mac_tpc(ar, channel);
+=======
+	err = carl9170_set_power_cal(ar, channel->center_freq, bw);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		return err;
 
@@ -1744,6 +1809,13 @@ int carl9170_set_channel(struct ar9170 *ar, struct ieee80211_channel *channel,
 		ar->chan_fail = 0;
 	}
 
+<<<<<<< HEAD
+=======
+	err = carl9170_get_noisefloor(ar);
+	if (err)
+		return err;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ar->heavy_clip) {
 		err = carl9170_write_reg(ar, AR9170_PHY_REG_HEAVY_CLIP_ENABLE,
 					 0x200 | ar->heavy_clip);
@@ -1757,6 +1829,15 @@ int carl9170_set_channel(struct ar9170 *ar, struct ieee80211_channel *channel,
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	/* FIXME: PSM does not work in 5GHz Band */
+	if (channel->band == IEEE80211_BAND_5GHZ)
+		ar->ps.off_override |= PS_OFF_5GHZ;
+	else
+		ar->ps.off_override &= ~PS_OFF_5GHZ;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ar->channel = channel;
 	ar->ht_settings = new_ht;
 	return 0;

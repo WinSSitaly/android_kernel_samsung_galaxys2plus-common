@@ -1,7 +1,11 @@
 /*******************************************************************
  * This file is part of the Emulex Linux Device Driver for         *
  * Fibre Channel Host Bus Adapters.                                *
+<<<<<<< HEAD
  * Copyright (C) 2007-2012 Emulex.  All rights reserved.           *
+=======
+ * Copyright (C) 2007-2011 Emulex.  All rights reserved.           *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * EMULEX and SLI are trademarks of Emulex.                        *
  * www.emulex.com                                                  *
  *                                                                 *
@@ -20,7 +24,10 @@
 
 #include <linux/blkdev.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/dma-mapping.h>
 #include <linux/idr.h>
 #include <linux/interrupt.h>
@@ -49,7 +56,10 @@
 #include "lpfc_version.h"
 #include "lpfc_compat.h"
 #include "lpfc_debugfs.h"
+<<<<<<< HEAD
 #include "lpfc_bsg.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_SCSI_LPFC_DEBUG_FS
 /*
@@ -137,11 +147,15 @@ lpfc_debugfs_disc_trc_data(struct lpfc_vport *vport, char *buf, int size)
 	int i, index, len, enable;
 	uint32_t ms;
 	struct lpfc_debugfs_trc *dtp;
+<<<<<<< HEAD
 	char *buffer;
 
 	buffer = kmalloc(LPFC_DEBUG_TRC_ENTRY_SIZE, GFP_KERNEL);
 	if (!buffer)
 		return 0;
+=======
+	char buffer[LPFC_DEBUG_TRC_ENTRY_SIZE];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	enable = lpfc_debugfs_enable;
 	lpfc_debugfs_enable = 0;
@@ -173,8 +187,11 @@ lpfc_debugfs_disc_trc_data(struct lpfc_vport *vport, char *buf, int size)
 	}
 
 	lpfc_debugfs_enable = enable;
+<<<<<<< HEAD
 	kfree(buffer);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return len;
 }
 
@@ -203,11 +220,16 @@ lpfc_debugfs_slow_ring_trc_data(struct lpfc_hba *phba, char *buf, int size)
 	int i, index, len, enable;
 	uint32_t ms;
 	struct lpfc_debugfs_trc *dtp;
+<<<<<<< HEAD
 	char *buffer;
 
 	buffer = kmalloc(LPFC_DEBUG_TRC_ENTRY_SIZE, GFP_KERNEL);
 	if (!buffer)
 		return 0;
+=======
+	char buffer[LPFC_DEBUG_TRC_ENTRY_SIZE];
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	enable = lpfc_debugfs_enable;
 	lpfc_debugfs_enable = 0;
@@ -239,8 +261,11 @@ lpfc_debugfs_slow_ring_trc_data(struct lpfc_hba *phba, char *buf, int size)
 	}
 
 	lpfc_debugfs_enable = enable;
+<<<<<<< HEAD
 	kfree(buffer);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return len;
 }
 
@@ -391,11 +416,15 @@ lpfc_debugfs_dumpHBASlim_data(struct lpfc_hba *phba, char *buf, int size)
 	int len = 0;
 	int i, off;
 	uint32_t *ptr;
+<<<<<<< HEAD
 	char *buffer;
 
 	buffer = kmalloc(1024, GFP_KERNEL);
 	if (!buffer)
 		return 0;
+=======
+	char buffer[1024];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	off = 0;
 	spin_lock_irq(&phba->hbalock);
@@ -424,8 +453,11 @@ lpfc_debugfs_dumpHBASlim_data(struct lpfc_hba *phba, char *buf, int size)
 	}
 
 	spin_unlock_irq(&phba->hbalock);
+<<<<<<< HEAD
 	kfree(buffer);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return len;
 }
 
@@ -997,6 +1029,7 @@ lpfc_debugfs_dumpDataDif_write(struct file *file, const char __user *buf,
 	return nbytes;
 }
 
+<<<<<<< HEAD
 static ssize_t
 lpfc_debugfs_dif_err_read(struct file *file, char __user *buf,
 	size_t nbytes, loff_t *ppos)
@@ -1093,6 +1126,8 @@ lpfc_debugfs_dif_err_release(struct inode *inode, struct file *file)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * lpfc_debugfs_nodelist_open - Open the nodelist debugfs file
  * @inode: The inode pointer that contains a vport pointer.
@@ -1262,8 +1297,12 @@ static int lpfc_idiag_cmd_get(const char __user *buf, size_t nbytes,
 {
 	char mybuf[64];
 	char *pbuf, *step_str;
+<<<<<<< HEAD
 	int i;
 	size_t bsize;
+=======
+	int bsize, i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Protect copy from user */
 	if (!access_ok(VERIFY_READ, buf, nbytes))
@@ -1442,8 +1481,13 @@ lpfc_idiag_pcicfg_read(struct file *file, char __user *buf, size_t nbytes,
 		return 0;
 
 	if (idiag.cmd.opcode == LPFC_IDIAG_CMD_PCICFG_RD) {
+<<<<<<< HEAD
 		where = idiag.cmd.data[IDIAG_PCICFG_WHERE_INDX];
 		count = idiag.cmd.data[IDIAG_PCICFG_COUNT_INDX];
+=======
+		where = idiag.cmd.data[0];
+		count = idiag.cmd.data[1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		return 0;
 
@@ -1488,11 +1532,14 @@ pcicfg_browse:
 		len += snprintf(pbuffer+len, LPFC_PCI_CFG_SIZE-len,
 				"%08x ", u32val);
 		offset += sizeof(uint32_t);
+<<<<<<< HEAD
 		if (offset >= LPFC_PCI_CFG_SIZE) {
 			len += snprintf(pbuffer+len,
 					LPFC_PCI_CFG_SIZE-len, "\n");
 			break;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		index -= sizeof(uint32_t);
 		if (!index)
 			len += snprintf(pbuffer+len, LPFC_PCI_CFG_SIZE-len,
@@ -1505,11 +1552,16 @@ pcicfg_browse:
 	}
 
 	/* Set up the offset for next portion of pci cfg read */
+<<<<<<< HEAD
 	if (index == 0) {
 		idiag.offset.last_rd += LPFC_PCI_CFG_RD_SIZE;
 		if (idiag.offset.last_rd >= LPFC_PCI_CFG_SIZE)
 			idiag.offset.last_rd = 0;
 	} else
+=======
+	idiag.offset.last_rd += LPFC_PCI_CFG_RD_SIZE;
+	if (idiag.offset.last_rd >= LPFC_PCI_CFG_SIZE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		idiag.offset.last_rd = 0;
 
 	return simple_read_from_buffer(buf, nbytes, ppos, pbuffer, len);
@@ -1562,8 +1614,13 @@ lpfc_idiag_pcicfg_write(struct file *file, const char __user *buf,
 		if (rc != LPFC_PCI_CFG_RD_CMD_ARG)
 			goto error_out;
 		/* Read command from PCI config space, set up command fields */
+<<<<<<< HEAD
 		where = idiag.cmd.data[IDIAG_PCICFG_WHERE_INDX];
 		count = idiag.cmd.data[IDIAG_PCICFG_COUNT_INDX];
+=======
+		where = idiag.cmd.data[0];
+		count = idiag.cmd.data[1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (count == LPFC_PCI_CFG_BROWSE) {
 			if (where % sizeof(uint32_t))
 				goto error_out;
@@ -1598,9 +1655,15 @@ lpfc_idiag_pcicfg_write(struct file *file, const char __user *buf,
 		if (rc != LPFC_PCI_CFG_WR_CMD_ARG)
 			goto error_out;
 		/* Write command to PCI config space, read-modify-write */
+<<<<<<< HEAD
 		where = idiag.cmd.data[IDIAG_PCICFG_WHERE_INDX];
 		count = idiag.cmd.data[IDIAG_PCICFG_COUNT_INDX];
 		value = idiag.cmd.data[IDIAG_PCICFG_VALUE_INDX];
+=======
+		where = idiag.cmd.data[0];
+		count = idiag.cmd.data[1];
+		value = idiag.cmd.data[2];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Sanity checks */
 		if ((count != sizeof(uint8_t)) &&
 		    (count != sizeof(uint16_t)) &&
@@ -1693,6 +1756,7 @@ error_out:
 }
 
 /**
+<<<<<<< HEAD
  * lpfc_idiag_baracc_read - idiag debugfs pci bar access read
  * @file: The file pointer to read from.
  * @buf: The buffer to copy the data to.
@@ -1979,6 +2043,8 @@ error_out:
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * lpfc_idiag_queinfo_read - idiag debugfs read queue information
  * @file: The file pointer to read from.
  * @buf: The buffer to copy the data to.
@@ -2014,8 +2080,12 @@ lpfc_idiag_queinfo_read(struct file *file, char __user *buf, size_t nbytes,
 	/* Get slow-path event queue information */
 	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
 			"Slow-path EQ information:\n");
+<<<<<<< HEAD
 	if (phba->sli4_hba.sp_eq) {
 		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+=======
+	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"\tEQID[%02d], "
 			"QE-COUNT[%04d], QE-SIZE[%04d], "
 			"HOST-INDEX[%04d], PORT-INDEX[%04d]\n\n",
@@ -2024,17 +2094,25 @@ lpfc_idiag_queinfo_read(struct file *file, char __user *buf, size_t nbytes,
 			phba->sli4_hba.sp_eq->entry_size,
 			phba->sli4_hba.sp_eq->host_index,
 			phba->sli4_hba.sp_eq->hba_index);
+<<<<<<< HEAD
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Get fast-path event queue information */
 	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
 			"Fast-path EQ information:\n");
+<<<<<<< HEAD
 	if (phba->sli4_hba.fp_eq) {
 		for (fcp_qidx = 0; fcp_qidx < phba->cfg_fcp_eq_count;
 		     fcp_qidx++) {
 			if (phba->sli4_hba.fp_eq[fcp_qidx]) {
 				len += snprintf(pbuffer+len,
 					LPFC_QUE_INFO_GET_BUF_SIZE-len,
+=======
+	for (fcp_qidx = 0; fcp_qidx < phba->cfg_fcp_eq_count; fcp_qidx++) {
+		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"\tEQID[%02d], "
 				"QE-COUNT[%04d], QE-SIZE[%04d], "
 				"HOST-INDEX[%04d], PORT-INDEX[%04d]\n",
@@ -2043,19 +2121,29 @@ lpfc_idiag_queinfo_read(struct file *file, char __user *buf, size_t nbytes,
 				phba->sli4_hba.fp_eq[fcp_qidx]->entry_size,
 				phba->sli4_hba.fp_eq[fcp_qidx]->host_index,
 				phba->sli4_hba.fp_eq[fcp_qidx]->hba_index);
+<<<<<<< HEAD
 			}
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len, "\n");
 
 	/* Get mailbox complete queue information */
 	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
 			"Slow-path MBX CQ information:\n");
+<<<<<<< HEAD
 	if (phba->sli4_hba.mbx_cq) {
 		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
 			"Associated EQID[%02d]:\n",
 			phba->sli4_hba.mbx_cq->assoc_qid);
 		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+=======
+	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+			"Associated EQID[%02d]:\n",
+			phba->sli4_hba.mbx_cq->assoc_qid);
+	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"\tCQID[%02d], "
 			"QE-COUNT[%04d], QE-SIZE[%04d], "
 			"HOST-INDEX[%04d], PORT-INDEX[%04d]\n\n",
@@ -2064,16 +2152,26 @@ lpfc_idiag_queinfo_read(struct file *file, char __user *buf, size_t nbytes,
 			phba->sli4_hba.mbx_cq->entry_size,
 			phba->sli4_hba.mbx_cq->host_index,
 			phba->sli4_hba.mbx_cq->hba_index);
+<<<<<<< HEAD
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Get slow-path complete queue information */
 	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
 			"Slow-path ELS CQ information:\n");
+<<<<<<< HEAD
 	if (phba->sli4_hba.els_cq) {
 		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
 			"Associated EQID[%02d]:\n",
 			phba->sli4_hba.els_cq->assoc_qid);
 		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+=======
+	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+			"Associated EQID[%02d]:\n",
+			phba->sli4_hba.els_cq->assoc_qid);
+	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"\tCQID [%02d], "
 			"QE-COUNT[%04d], QE-SIZE[%04d], "
 			"HOST-INDEX[%04d], PORT-INDEX[%04d]\n\n",
@@ -2082,12 +2180,16 @@ lpfc_idiag_queinfo_read(struct file *file, char __user *buf, size_t nbytes,
 			phba->sli4_hba.els_cq->entry_size,
 			phba->sli4_hba.els_cq->host_index,
 			phba->sli4_hba.els_cq->hba_index);
+<<<<<<< HEAD
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Get fast-path complete queue information */
 	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
 			"Fast-path FCP CQ information:\n");
 	fcp_qidx = 0;
+<<<<<<< HEAD
 	if (phba->sli4_hba.fcp_cq) {
 		do {
 			if (phba->sli4_hba.fcp_cq[fcp_qidx]) {
@@ -2097,6 +2199,13 @@ lpfc_idiag_queinfo_read(struct file *file, char __user *buf, size_t nbytes,
 				phba->sli4_hba.fcp_cq[fcp_qidx]->assoc_qid);
 				len += snprintf(pbuffer+len,
 					LPFC_QUE_INFO_GET_BUF_SIZE-len,
+=======
+	do {
+		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+				"Associated EQID[%02d]:\n",
+				phba->sli4_hba.fcp_cq[fcp_qidx]->assoc_qid);
+		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"\tCQID[%02d], "
 				"QE-COUNT[%04d], QE-SIZE[%04d], "
 				"HOST-INDEX[%04d], PORT-INDEX[%04d]\n",
@@ -2105,20 +2214,32 @@ lpfc_idiag_queinfo_read(struct file *file, char __user *buf, size_t nbytes,
 				phba->sli4_hba.fcp_cq[fcp_qidx]->entry_size,
 				phba->sli4_hba.fcp_cq[fcp_qidx]->host_index,
 				phba->sli4_hba.fcp_cq[fcp_qidx]->hba_index);
+<<<<<<< HEAD
 			}
 		} while (++fcp_qidx < phba->cfg_fcp_eq_count);
 		len += snprintf(pbuffer+len,
 				LPFC_QUE_INFO_GET_BUF_SIZE-len, "\n");
 	}
+=======
+	} while (++fcp_qidx < phba->cfg_fcp_eq_count);
+	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len, "\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Get mailbox queue information */
 	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
 			"Slow-path MBX MQ information:\n");
+<<<<<<< HEAD
 	if (phba->sli4_hba.mbx_wq) {
 		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
 			"Associated CQID[%02d]:\n",
 			phba->sli4_hba.mbx_wq->assoc_qid);
 		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+=======
+	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+			"Associated CQID[%02d]:\n",
+			phba->sli4_hba.mbx_wq->assoc_qid);
+	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"\tWQID[%02d], "
 			"QE-COUNT[%04d], QE-SIZE[%04d], "
 			"HOST-INDEX[%04d], PORT-INDEX[%04d]\n\n",
@@ -2127,16 +2248,26 @@ lpfc_idiag_queinfo_read(struct file *file, char __user *buf, size_t nbytes,
 			phba->sli4_hba.mbx_wq->entry_size,
 			phba->sli4_hba.mbx_wq->host_index,
 			phba->sli4_hba.mbx_wq->hba_index);
+<<<<<<< HEAD
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Get slow-path work queue information */
 	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
 			"Slow-path ELS WQ information:\n");
+<<<<<<< HEAD
 	if (phba->sli4_hba.els_wq) {
 		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
 			"Associated CQID[%02d]:\n",
 			phba->sli4_hba.els_wq->assoc_qid);
 		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+=======
+	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+			"Associated CQID[%02d]:\n",
+			phba->sli4_hba.els_wq->assoc_qid);
+	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"\tWQID[%02d], "
 			"QE-COUNT[%04d], QE-SIZE[%04d], "
 			"HOST-INDEX[%04d], PORT-INDEX[%04d]\n\n",
@@ -2145,11 +2276,15 @@ lpfc_idiag_queinfo_read(struct file *file, char __user *buf, size_t nbytes,
 			phba->sli4_hba.els_wq->entry_size,
 			phba->sli4_hba.els_wq->host_index,
 			phba->sli4_hba.els_wq->hba_index);
+<<<<<<< HEAD
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Get fast-path work queue information */
 	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
 			"Fast-path FCP WQ information:\n");
+<<<<<<< HEAD
 	if (phba->sli4_hba.fcp_wq) {
 		for (fcp_qidx = 0; fcp_qidx < phba->cfg_fcp_wq_count;
 		     fcp_qidx++) {
@@ -2161,6 +2296,13 @@ lpfc_idiag_queinfo_read(struct file *file, char __user *buf, size_t nbytes,
 				phba->sli4_hba.fcp_wq[fcp_qidx]->assoc_qid);
 			len += snprintf(pbuffer+len,
 					LPFC_QUE_INFO_GET_BUF_SIZE-len,
+=======
+	for (fcp_qidx = 0; fcp_qidx < phba->cfg_fcp_wq_count; fcp_qidx++) {
+		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+				"Associated CQID[%02d]:\n",
+				phba->sli4_hba.fcp_wq[fcp_qidx]->assoc_qid);
+		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"\tWQID[%02d], "
 				"QE-COUNT[%04d], WQE-SIZE[%04d], "
 				"HOST-INDEX[%04d], PORT-INDEX[%04d]\n",
@@ -2169,19 +2311,31 @@ lpfc_idiag_queinfo_read(struct file *file, char __user *buf, size_t nbytes,
 				phba->sli4_hba.fcp_wq[fcp_qidx]->entry_size,
 				phba->sli4_hba.fcp_wq[fcp_qidx]->host_index,
 				phba->sli4_hba.fcp_wq[fcp_qidx]->hba_index);
+<<<<<<< HEAD
 		}
 		len += snprintf(pbuffer+len,
 				LPFC_QUE_INFO_GET_BUF_SIZE-len, "\n");
 	}
+=======
+	}
+	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len, "\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Get receive queue information */
 	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
 			"Slow-path RQ information:\n");
+<<<<<<< HEAD
 	if (phba->sli4_hba.hdr_rq && phba->sli4_hba.dat_rq) {
 		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
 			"Associated CQID[%02d]:\n",
 			phba->sli4_hba.hdr_rq->assoc_qid);
 		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+=======
+	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+			"Associated CQID[%02d]:\n",
+			phba->sli4_hba.hdr_rq->assoc_qid);
+	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"\tHQID[%02d], "
 			"QE-COUNT[%04d], QE-SIZE[%04d], "
 			"HOST-INDEX[%04d], PORT-INDEX[%04d]\n",
@@ -2190,7 +2344,11 @@ lpfc_idiag_queinfo_read(struct file *file, char __user *buf, size_t nbytes,
 			phba->sli4_hba.hdr_rq->entry_size,
 			phba->sli4_hba.hdr_rq->host_index,
 			phba->sli4_hba.hdr_rq->hba_index);
+<<<<<<< HEAD
 		len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+=======
+	len += snprintf(pbuffer+len, LPFC_QUE_INFO_GET_BUF_SIZE-len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"\tDQID[%02d], "
 			"QE-COUNT[%04d], QE-SIZE[%04d], "
 			"HOST-INDEX[%04d], PORT-INDEX[%04d]\n",
@@ -2199,7 +2357,11 @@ lpfc_idiag_queinfo_read(struct file *file, char __user *buf, size_t nbytes,
 			phba->sli4_hba.dat_rq->entry_size,
 			phba->sli4_hba.dat_rq->host_index,
 			phba->sli4_hba.dat_rq->hba_index);
+<<<<<<< HEAD
 	}
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return simple_read_from_buffer(buf, nbytes, ppos, pbuffer, len);
 }
 
@@ -2312,8 +2474,13 @@ lpfc_idiag_queacc_read(struct file *file, char __user *buf, size_t nbytes,
 		return 0;
 
 	if (idiag.cmd.opcode == LPFC_IDIAG_CMD_QUEACC_RD) {
+<<<<<<< HEAD
 		index = idiag.cmd.data[IDIAG_QUEACC_INDEX_INDX];
 		count = idiag.cmd.data[IDIAG_QUEACC_COUNT_INDX];
+=======
+		index = idiag.cmd.data[2];
+		count = idiag.cmd.data[3];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pque = (struct lpfc_queue *)idiag.ptr_private;
 	} else
 		return 0;
@@ -2385,12 +2552,21 @@ lpfc_idiag_queacc_write(struct file *file, const char __user *buf,
 		return rc;
 
 	/* Get and sanity check on command feilds */
+<<<<<<< HEAD
 	quetp  = idiag.cmd.data[IDIAG_QUEACC_QUETP_INDX];
 	queid  = idiag.cmd.data[IDIAG_QUEACC_QUEID_INDX];
 	index  = idiag.cmd.data[IDIAG_QUEACC_INDEX_INDX];
 	count  = idiag.cmd.data[IDIAG_QUEACC_COUNT_INDX];
 	offset = idiag.cmd.data[IDIAG_QUEACC_OFFST_INDX];
 	value  = idiag.cmd.data[IDIAG_QUEACC_VALUE_INDX];
+=======
+	quetp  = idiag.cmd.data[0];
+	queid  = idiag.cmd.data[1];
+	index  = idiag.cmd.data[2];
+	count  = idiag.cmd.data[3];
+	offset = idiag.cmd.data[4];
+	value  = idiag.cmd.data[5];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Sanity check on command line arguments */
 	if (idiag.cmd.opcode == LPFC_IDIAG_CMD_QUEACC_WR ||
@@ -2409,8 +2585,12 @@ lpfc_idiag_queacc_write(struct file *file, const char __user *buf,
 	switch (quetp) {
 	case LPFC_IDIAG_EQ:
 		/* Slow-path event queue */
+<<<<<<< HEAD
 		if (phba->sli4_hba.sp_eq &&
 		    phba->sli4_hba.sp_eq->queue_id == queid) {
+=======
+		if (phba->sli4_hba.sp_eq->queue_id == queid) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Sanity check */
 			rc = lpfc_idiag_que_param_check(
 					phba->sli4_hba.sp_eq, index, count);
@@ -2420,6 +2600,7 @@ lpfc_idiag_queacc_write(struct file *file, const char __user *buf,
 			goto pass_check;
 		}
 		/* Fast-path event queue */
+<<<<<<< HEAD
 		if (phba->sli4_hba.fp_eq) {
 			for (qidx = 0; qidx < phba->cfg_fcp_eq_count; qidx++) {
 				if (phba->sli4_hba.fp_eq[qidx] &&
@@ -2435,14 +2616,30 @@ lpfc_idiag_queacc_write(struct file *file, const char __user *buf,
 						phba->sli4_hba.fp_eq[qidx];
 					goto pass_check;
 				}
+=======
+		for (qidx = 0; qidx < phba->cfg_fcp_eq_count; qidx++) {
+			if (phba->sli4_hba.fp_eq[qidx]->queue_id == queid) {
+				/* Sanity check */
+				rc = lpfc_idiag_que_param_check(
+						phba->sli4_hba.fp_eq[qidx],
+						index, count);
+				if (rc)
+					goto error_out;
+				idiag.ptr_private = phba->sli4_hba.fp_eq[qidx];
+				goto pass_check;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 		goto error_out;
 		break;
 	case LPFC_IDIAG_CQ:
 		/* MBX complete queue */
+<<<<<<< HEAD
 		if (phba->sli4_hba.mbx_cq &&
 		    phba->sli4_hba.mbx_cq->queue_id == queid) {
+=======
+		if (phba->sli4_hba.mbx_cq->queue_id == queid) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Sanity check */
 			rc = lpfc_idiag_que_param_check(
 					phba->sli4_hba.mbx_cq, index, count);
@@ -2452,8 +2649,12 @@ lpfc_idiag_queacc_write(struct file *file, const char __user *buf,
 			goto pass_check;
 		}
 		/* ELS complete queue */
+<<<<<<< HEAD
 		if (phba->sli4_hba.els_cq &&
 		    phba->sli4_hba.els_cq->queue_id == queid) {
+=======
+		if (phba->sli4_hba.els_cq->queue_id == queid) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Sanity check */
 			rc = lpfc_idiag_que_param_check(
 					phba->sli4_hba.els_cq, index, count);
@@ -2463,6 +2664,7 @@ lpfc_idiag_queacc_write(struct file *file, const char __user *buf,
 			goto pass_check;
 		}
 		/* FCP complete queue */
+<<<<<<< HEAD
 		if (phba->sli4_hba.fcp_cq) {
 			qidx = 0;
 			do {
@@ -2481,12 +2683,32 @@ lpfc_idiag_queacc_write(struct file *file, const char __user *buf,
 				}
 			} while (++qidx < phba->cfg_fcp_eq_count);
 		}
+=======
+		qidx = 0;
+		do {
+			if (phba->sli4_hba.fcp_cq[qidx]->queue_id == queid) {
+				/* Sanity check */
+				rc = lpfc_idiag_que_param_check(
+						phba->sli4_hba.fcp_cq[qidx],
+						index, count);
+				if (rc)
+					goto error_out;
+				idiag.ptr_private =
+						phba->sli4_hba.fcp_cq[qidx];
+				goto pass_check;
+			}
+		} while (++qidx < phba->cfg_fcp_eq_count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error_out;
 		break;
 	case LPFC_IDIAG_MQ:
 		/* MBX work queue */
+<<<<<<< HEAD
 		if (phba->sli4_hba.mbx_wq &&
 		    phba->sli4_hba.mbx_wq->queue_id == queid) {
+=======
+		if (phba->sli4_hba.mbx_wq->queue_id == queid) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Sanity check */
 			rc = lpfc_idiag_que_param_check(
 					phba->sli4_hba.mbx_wq, index, count);
@@ -2495,12 +2717,19 @@ lpfc_idiag_queacc_write(struct file *file, const char __user *buf,
 			idiag.ptr_private = phba->sli4_hba.mbx_wq;
 			goto pass_check;
 		}
+<<<<<<< HEAD
 		goto error_out;
 		break;
 	case LPFC_IDIAG_WQ:
 		/* ELS work queue */
 		if (phba->sli4_hba.els_wq &&
 		    phba->sli4_hba.els_wq->queue_id == queid) {
+=======
+		break;
+	case LPFC_IDIAG_WQ:
+		/* ELS work queue */
+		if (phba->sli4_hba.els_wq->queue_id == queid) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Sanity check */
 			rc = lpfc_idiag_que_param_check(
 					phba->sli4_hba.els_wq, index, count);
@@ -2510,6 +2739,7 @@ lpfc_idiag_queacc_write(struct file *file, const char __user *buf,
 			goto pass_check;
 		}
 		/* FCP work queue */
+<<<<<<< HEAD
 		if (phba->sli4_hba.fcp_wq) {
 			for (qidx = 0; qidx < phba->cfg_fcp_wq_count; qidx++) {
 				if (!phba->sli4_hba.fcp_wq[qidx])
@@ -2526,14 +2756,31 @@ lpfc_idiag_queacc_write(struct file *file, const char __user *buf,
 						phba->sli4_hba.fcp_wq[qidx];
 					goto pass_check;
 				}
+=======
+		for (qidx = 0; qidx < phba->cfg_fcp_wq_count; qidx++) {
+			if (phba->sli4_hba.fcp_wq[qidx]->queue_id == queid) {
+				/* Sanity check */
+				rc = lpfc_idiag_que_param_check(
+						phba->sli4_hba.fcp_wq[qidx],
+						index, count);
+				if (rc)
+					goto error_out;
+				idiag.ptr_private =
+					phba->sli4_hba.fcp_wq[qidx];
+				goto pass_check;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 		goto error_out;
 		break;
 	case LPFC_IDIAG_RQ:
 		/* HDR queue */
+<<<<<<< HEAD
 		if (phba->sli4_hba.hdr_rq &&
 		    phba->sli4_hba.hdr_rq->queue_id == queid) {
+=======
+		if (phba->sli4_hba.hdr_rq->queue_id == queid) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Sanity check */
 			rc = lpfc_idiag_que_param_check(
 					phba->sli4_hba.hdr_rq, index, count);
@@ -2543,8 +2790,12 @@ lpfc_idiag_queacc_write(struct file *file, const char __user *buf,
 			goto pass_check;
 		}
 		/* DAT queue */
+<<<<<<< HEAD
 		if (phba->sli4_hba.dat_rq &&
 		    phba->sli4_hba.dat_rq->queue_id == queid) {
+=======
+		if (phba->sli4_hba.dat_rq->queue_id == queid) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Sanity check */
 			rc = lpfc_idiag_que_param_check(
 					phba->sli4_hba.dat_rq, index, count);
@@ -2681,7 +2932,11 @@ lpfc_idiag_drbacc_read(struct file *file, char __user *buf, size_t nbytes,
 		return 0;
 
 	if (idiag.cmd.opcode == LPFC_IDIAG_CMD_DRBACC_RD)
+<<<<<<< HEAD
 		drb_reg_id = idiag.cmd.data[IDIAG_DRBACC_REGID_INDX];
+=======
+		drb_reg_id = idiag.cmd.data[0];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		return 0;
 
@@ -2720,7 +2975,11 @@ lpfc_idiag_drbacc_write(struct file *file, const char __user *buf,
 {
 	struct lpfc_debug *debug = file->private_data;
 	struct lpfc_hba *phba = (struct lpfc_hba *)debug->i_private;
+<<<<<<< HEAD
 	uint32_t drb_reg_id, value, reg_val = 0;
+=======
+	uint32_t drb_reg_id, value, reg_val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void __iomem *drb_reg;
 	int rc;
 
@@ -2732,8 +2991,13 @@ lpfc_idiag_drbacc_write(struct file *file, const char __user *buf,
 		return rc;
 
 	/* Sanity check on command line arguments */
+<<<<<<< HEAD
 	drb_reg_id = idiag.cmd.data[IDIAG_DRBACC_REGID_INDX];
 	value = idiag.cmd.data[IDIAG_DRBACC_VALUE_INDX];
+=======
+	drb_reg_id = idiag.cmd.data[0];
+	value = idiag.cmd.data[1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (idiag.cmd.opcode == LPFC_IDIAG_CMD_DRBACC_WR ||
 	    idiag.cmd.opcode == LPFC_IDIAG_CMD_DRBACC_ST ||
@@ -2793,6 +3057,7 @@ error_out:
 	return -EINVAL;
 }
 
+<<<<<<< HEAD
 /**
  * lpfc_idiag_ctlacc_read_reg - idiag debugfs read a control registers
  * @phba: The pointer to hba structure.
@@ -3474,6 +3739,16 @@ static const struct file_operations lpfc_debugfs_op_disc_trc = {
 	.read =         lpfc_debugfs_read,
 	.release =      lpfc_debugfs_release,
 };
+=======
+#undef lpfc_debugfs_op_disc_trc
+static const struct file_operations lpfc_debugfs_op_disc_trc = {
+	.owner =        THIS_MODULE,
+	.open =         lpfc_debugfs_disc_trc_open,
+	.llseek =       lpfc_debugfs_lseek,
+	.read =         lpfc_debugfs_read,
+	.release =      lpfc_debugfs_release,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #undef lpfc_debugfs_op_nodelist
 static const struct file_operations lpfc_debugfs_op_nodelist = {
@@ -3531,6 +3806,7 @@ static const struct file_operations lpfc_debugfs_op_dumpDif = {
 	.release =      lpfc_debugfs_dumpDataDif_release,
 };
 
+<<<<<<< HEAD
 #undef lpfc_debugfs_op_dif_err
 static const struct file_operations lpfc_debugfs_op_dif_err = {
 	.owner =	THIS_MODULE,
@@ -3541,6 +3817,8 @@ static const struct file_operations lpfc_debugfs_op_dif_err = {
 	.release =	lpfc_debugfs_dif_err_release,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #undef lpfc_debugfs_op_slow_ring_trc
 static const struct file_operations lpfc_debugfs_op_slow_ring_trc = {
 	.owner =        THIS_MODULE,
@@ -3566,6 +3844,7 @@ static const struct file_operations lpfc_idiag_op_pciCfg = {
 	.release =      lpfc_idiag_cmd_release,
 };
 
+<<<<<<< HEAD
 #undef lpfc_idiag_op_barAcc
 static const struct file_operations lpfc_idiag_op_barAcc = {
 	.owner =        THIS_MODULE,
@@ -3576,6 +3855,8 @@ static const struct file_operations lpfc_idiag_op_barAcc = {
 	.release =      lpfc_idiag_cmd_release,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #undef lpfc_idiag_op_queInfo
 static const struct file_operations lpfc_idiag_op_queInfo = {
 	.owner =        THIS_MODULE,
@@ -3584,7 +3865,11 @@ static const struct file_operations lpfc_idiag_op_queInfo = {
 	.release =      lpfc_idiag_release,
 };
 
+<<<<<<< HEAD
 #undef lpfc_idiag_op_queAcc
+=======
+#undef lpfc_idiag_op_queacc
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct file_operations lpfc_idiag_op_queAcc = {
 	.owner =        THIS_MODULE,
 	.open =         lpfc_idiag_open,
@@ -3594,7 +3879,11 @@ static const struct file_operations lpfc_idiag_op_queAcc = {
 	.release =      lpfc_idiag_cmd_release,
 };
 
+<<<<<<< HEAD
 #undef lpfc_idiag_op_drbAcc
+=======
+#undef lpfc_idiag_op_drbacc
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct file_operations lpfc_idiag_op_drbAcc = {
 	.owner =        THIS_MODULE,
 	.open =         lpfc_idiag_open,
@@ -3604,6 +3893,7 @@ static const struct file_operations lpfc_idiag_op_drbAcc = {
 	.release =      lpfc_idiag_cmd_release,
 };
 
+<<<<<<< HEAD
 #undef lpfc_idiag_op_ctlAcc
 static const struct file_operations lpfc_idiag_op_ctlAcc = {
 	.owner =        THIS_MODULE,
@@ -3831,6 +4121,9 @@ lpfc_idiag_mbxacc_dump_issue_mbox(struct lpfc_hba *phba, MAILBOX_t *pmbox)
 	return;
 #endif
 }
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * lpfc_debugfs_initialize - Initialize debugfs for a vport
@@ -3949,6 +4242,7 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
 			goto debug_failed;
 		}
 
+<<<<<<< HEAD
 		/* Setup DIF Error Injections */
 		snprintf(name, sizeof(name), "InjErrLBA");
 		phba->debug_InjErrLBA =
@@ -4050,6 +4344,8 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
 			goto debug_failed;
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Setup slow ring trace */
 		if (lpfc_debugfs_max_slow_ring_trc) {
 			num = lpfc_debugfs_max_slow_ring_trc - 1;
@@ -4156,7 +4452,11 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
 				 vport, &lpfc_debugfs_op_nodelist);
 	if (!vport->debug_nodelist) {
 		lpfc_printf_vlog(vport, KERN_ERR, LOG_INIT,
+<<<<<<< HEAD
 				 "2985 Can't create debugfs nodelist\n");
+=======
+				 "0409 Can't create debugfs nodelist\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto debug_failed;
 	}
 
@@ -4193,6 +4493,7 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
 		idiag.offset.last_rd = 0;
 	}
 
+<<<<<<< HEAD
 	/* iDiag PCI BAR access */
 	snprintf(name, sizeof(name), "barAcc");
 	if (!phba->idiag_bar_acc) {
@@ -4207,6 +4508,8 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
 		idiag.offset.last_rd = 0;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* iDiag get PCI function queue information */
 	snprintf(name, sizeof(name), "queInfo");
 	if (!phba->idiag_que_info) {
@@ -4246,6 +4549,7 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
 		}
 	}
 
+<<<<<<< HEAD
 	/* iDiag access PCI function control registers */
 	snprintf(name, sizeof(name), "ctlAcc");
 	if (!phba->idiag_ctl_acc) {
@@ -4290,6 +4594,8 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 debug_failed:
 	return;
 #endif
@@ -4324,6 +4630,10 @@ lpfc_debugfs_terminate(struct lpfc_vport *vport)
 		debugfs_remove(vport->debug_nodelist); /* nodelist */
 		vport->debug_nodelist = NULL;
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (vport->vport_debugfs_root) {
 		debugfs_remove(vport->vport_debugfs_root); /* vportX */
 		vport->vport_debugfs_root = NULL;
@@ -4352,6 +4662,7 @@ lpfc_debugfs_terminate(struct lpfc_vport *vport)
 			debugfs_remove(phba->debug_dumpDif); /* dumpDif */
 			phba->debug_dumpDif = NULL;
 		}
+<<<<<<< HEAD
 		if (phba->debug_InjErrLBA) {
 			debugfs_remove(phba->debug_InjErrLBA); /* InjErrLBA */
 			phba->debug_InjErrLBA = NULL;
@@ -4388,6 +4699,8 @@ lpfc_debugfs_terminate(struct lpfc_vport *vport)
 			debugfs_remove(phba->debug_readRef); /* readRef */
 			phba->debug_readRef = NULL;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (phba->slow_ring_trc) {
 			kfree(phba->slow_ring_trc);
@@ -4403,6 +4716,7 @@ lpfc_debugfs_terminate(struct lpfc_vport *vport)
 		 * iDiag release
 		 */
 		if (phba->sli_rev == LPFC_SLI_REV4) {
+<<<<<<< HEAD
 			if (phba->idiag_ext_acc) {
 				/* iDiag extAcc */
 				debugfs_remove(phba->idiag_ext_acc);
@@ -4418,6 +4732,8 @@ lpfc_debugfs_terminate(struct lpfc_vport *vport)
 				debugfs_remove(phba->idiag_ctl_acc);
 				phba->idiag_ctl_acc = NULL;
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (phba->idiag_drb_acc) {
 				/* iDiag drbAcc */
 				debugfs_remove(phba->idiag_drb_acc);
@@ -4433,11 +4749,14 @@ lpfc_debugfs_terminate(struct lpfc_vport *vport)
 				debugfs_remove(phba->idiag_que_info);
 				phba->idiag_que_info = NULL;
 			}
+<<<<<<< HEAD
 			if (phba->idiag_bar_acc) {
 				/* iDiag barAcc */
 				debugfs_remove(phba->idiag_bar_acc);
 				phba->idiag_bar_acc = NULL;
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (phba->idiag_pci_cfg) {
 				/* iDiag pciCfg */
 				debugfs_remove(phba->idiag_pci_cfg);

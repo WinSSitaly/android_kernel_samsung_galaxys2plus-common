@@ -7,9 +7,13 @@
 
 #ifdef CONFIG_MMU
 #include <asm/virtconvert.h>
+<<<<<<< HEAD
 #if defined(CONFIG_COLDFIRE)
 #include <asm/mcf_pgalloc.h>
 #elif defined(CONFIG_SUN3)
+=======
+#ifdef CONFIG_SUN3
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/sun3_pgalloc.h>
 #else
 #include <asm/motorola_pgalloc.h>

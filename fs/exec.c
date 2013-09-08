@@ -59,6 +59,7 @@
 #include <asm/uaccess.h>
 #include <asm/mmu_context.h>
 #include <asm/tlb.h>
+<<<<<<< HEAD
 #include <asm/exec.h>
 
 #include <trace/events/task.h>
@@ -66,6 +67,10 @@
 
 #include <trace/events/sched.h>
 
+=======
+#include "internal.h"
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int core_uses_pid;
 char core_pattern[CORENAME_MAX_SIZE] = "core";
 unsigned int core_pipe_limit;
@@ -82,13 +87,24 @@ static atomic_t call_count = ATOMIC_INIT(1);
 static LIST_HEAD(formats);
 static DEFINE_RWLOCK(binfmt_lock);
 
+<<<<<<< HEAD
 void __register_binfmt(struct linux_binfmt * fmt, int insert)
 {
 	BUG_ON(!fmt);
+=======
+int __register_binfmt(struct linux_binfmt * fmt, int insert)
+{
+	if (!fmt)
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	write_lock(&binfmt_lock);
 	insert ? list_add(&fmt->lh, &formats) :
 		 list_add_tail(&fmt->lh, &formats);
 	write_unlock(&binfmt_lock);
+<<<<<<< HEAD
+=======
+	return 0;	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 EXPORT_SYMBOL(__register_binfmt);
@@ -184,7 +200,18 @@ static void acct_arg_size(struct linux_binprm *bprm, unsigned long pages)
 		return;
 
 	bprm->vma_pages = pages;
+<<<<<<< HEAD
 	add_mm_counter(mm, MM_ANONPAGES, diff);
+=======
+
+#ifdef SPLIT_RSS_COUNTING
+	add_mm_counter(mm, MM_ANONPAGES, diff);
+#else
+	spin_lock(&mm->page_table_lock);
+	add_mm_counter(mm, MM_ANONPAGES, diff);
+	spin_unlock(&mm->page_table_lock);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct page *get_arg_page(struct linux_binprm *bprm, unsigned long pos,
@@ -273,7 +300,11 @@ static int __bprm_mm_init(struct linux_binprm *bprm)
 	 * use STACK_TOP because that can depend on attributes which aren't
 	 * configured yet.
 	 */
+<<<<<<< HEAD
 	BUILD_BUG_ON(VM_STACK_FLAGS & VM_STACK_INCOMPLETE_SETUP);
+=======
+	BUG_ON(VM_STACK_FLAGS & VM_STACK_INCOMPLETE_SETUP);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vma->vm_end = STACK_TOP_MAX;
 	vma->vm_start = vma->vm_end - PAGE_SIZE;
 	vma->vm_flags = VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP;
@@ -627,7 +658,11 @@ static int shift_arg_pages(struct vm_area_struct *vma, unsigned long shift)
 		 * when the old and new regions overlap clear from new_end.
 		 */
 		free_pgd_range(&tlb, new_end, old_end, new_end,
+<<<<<<< HEAD
 			vma->vm_next ? vma->vm_next->vm_start : USER_PGTABLES_CEILING);
+=======
+			vma->vm_next ? vma->vm_next->vm_start : 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		/*
 		 * otherwise, clean from old_start; this is done to not touch
@@ -636,7 +671,11 @@ static int shift_arg_pages(struct vm_area_struct *vma, unsigned long shift)
 		 * for the others its just a little faster.
 		 */
 		free_pgd_range(&tlb, old_start, old_end, new_end,
+<<<<<<< HEAD
 			vma->vm_next ? vma->vm_next->vm_start : USER_PGTABLES_CEILING);
+=======
+			vma->vm_next ? vma->vm_next->vm_start : 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	tlb_finish_mmu(&tlb, new_end, old_end);
 
@@ -823,10 +862,17 @@ static int exec_mmap(struct mm_struct *mm)
 	/* Notify parent that we're no longer interested in the old VM */
 	tsk = current;
 	old_mm = current->mm;
+<<<<<<< HEAD
 	mm_release(tsk, old_mm);
 
 	if (old_mm) {
 		sync_mm_rss(old_mm);
+=======
+	sync_mm_rss(tsk, old_mm);
+	mm_release(tsk, old_mm);
+
+	if (old_mm) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Make sure that if there is a core dump in progress
 		 * for the old mm, we get out and die instead of going
@@ -844,12 +890,22 @@ static int exec_mmap(struct mm_struct *mm)
 	tsk->mm = mm;
 	tsk->active_mm = mm;
 	activate_mm(active_mm, mm);
+<<<<<<< HEAD
+=======
+	if (old_mm && tsk->signal->oom_score_adj == OOM_SCORE_ADJ_MIN) {
+		atomic_dec(&old_mm->oom_disable_count);
+		atomic_inc(&tsk->mm->oom_disable_count);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	task_unlock(tsk);
 	arch_pick_mmap_layout(mm);
 	if (old_mm) {
 		up_read(&old_mm->mmap_sem);
 		BUG_ON(active_mm != old_mm);
+<<<<<<< HEAD
 		setmax_mm_hiwater_rss(&tsk->signal->maxrss, old_mm);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mm_update_next_owner(old_mm);
 		mmput(old_mm);
 		return 0;
@@ -956,6 +1012,7 @@ static int de_thread(struct task_struct *tsk)
 		leader->group_leader = tsk;
 
 		tsk->exit_signal = SIGCHLD;
+<<<<<<< HEAD
 		leader->exit_signal = -1;
 
 		BUG_ON(leader->exit_state != EXIT_ZOMBIE);
@@ -968,6 +1025,11 @@ static int de_thread(struct task_struct *tsk)
 		 */
 		if (unlikely(leader->ptrace))
 			__wake_up_parent(leader, leader->parent);
+=======
+
+		BUG_ON(leader->exit_state != EXIT_ZOMBIE);
+		leader->exit_state = EXIT_DEAD;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		write_unlock_irq(&tasklist_lock);
 
 		release_task(leader);
@@ -977,8 +1039,13 @@ static int de_thread(struct task_struct *tsk)
 	sig->notify_count = 0;
 
 no_thread_group:
+<<<<<<< HEAD
 	/* we have changed execution domain */
 	tsk->exit_signal = SIGCHLD;
+=======
+	if (current->mm)
+		setmax_mm_hiwater_rss(&sig->maxrss, current->mm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	exit_itimers(sig);
 	flush_itimer_signals();
@@ -1024,6 +1091,7 @@ static void flush_old_files(struct files_struct * files)
 		unsigned long set, i;
 
 		j++;
+<<<<<<< HEAD
 		i = j * BITS_PER_LONG;
 		fdt = files_fdtable(files);
 		if (i >= fdt->max_fds)
@@ -1032,6 +1100,16 @@ static void flush_old_files(struct files_struct * files)
 		if (!set)
 			continue;
 		fdt->close_on_exec[j] = 0;
+=======
+		i = j * __NFDBITS;
+		fdt = files_fdtable(files);
+		if (i >= fdt->max_fds)
+			break;
+		set = fdt->close_on_exec->fds_bits[j];
+		if (!set)
+			continue;
+		fdt->close_on_exec->fds_bits[j] = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock(&files->file_lock);
 		for ( ; set ; i++,set >>= 1) {
 			if (set & 1) {
@@ -1058,8 +1136,11 @@ void set_task_comm(struct task_struct *tsk, char *buf)
 {
 	task_lock(tsk);
 
+<<<<<<< HEAD
 	trace_task_rename(tsk, buf);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Threads may access current->comm without holding
 	 * the task lock, so write the string carefully.
@@ -1073,6 +1154,7 @@ void set_task_comm(struct task_struct *tsk, char *buf)
 	perf_event_comm(tsk);
 }
 
+<<<<<<< HEAD
 static void filename_to_taskname(char *tcomm, const char *fn, unsigned int len)
 {
 	int i, ch;
@@ -1088,6 +1170,8 @@ static void filename_to_taskname(char *tcomm, const char *fn, unsigned int len)
 	tcomm[i] = '\0';
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int flush_old_exec(struct linux_binprm * bprm)
 {
 	int retval;
@@ -1102,7 +1186,10 @@ int flush_old_exec(struct linux_binprm * bprm)
 
 	set_mm_exe_file(bprm->mm, bprm->file);
 
+<<<<<<< HEAD
 	filename_to_taskname(bprm->tcomm, bprm->filename, sizeof(bprm->tcomm));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Release all of the old mmap stuff
 	 */
@@ -1114,8 +1201,12 @@ int flush_old_exec(struct linux_binprm * bprm)
 	bprm->mm = NULL;		/* We're using it now */
 
 	set_fs(USER_DS);
+<<<<<<< HEAD
 	current->flags &=
 		~(PF_RANDOMIZE | PF_FORKNOEXEC | PF_KTHREAD | PF_NOFREEZE);
+=======
+	current->flags &= ~(PF_RANDOMIZE | PF_KTHREAD);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	flush_thread();
 	current->personality &= ~bprm->per_clear;
 
@@ -1126,6 +1217,7 @@ out:
 }
 EXPORT_SYMBOL(flush_old_exec);
 
+<<<<<<< HEAD
 void would_dump(struct linux_binprm *bprm, struct file *file)
 {
 	if (inode_permission(file->f_path.dentry->d_inode, MAY_READ) < 0)
@@ -1135,6 +1227,14 @@ EXPORT_SYMBOL(would_dump);
 
 void setup_new_exec(struct linux_binprm * bprm)
 {
+=======
+void setup_new_exec(struct linux_binprm * bprm)
+{
+	int i, ch;
+	const char *name;
+	char tcomm[sizeof(current->comm)];
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	arch_pick_mmap_layout(current->mm);
 
 	/* This is the point of no return */
@@ -1145,7 +1245,22 @@ void setup_new_exec(struct linux_binprm * bprm)
 	else
 		set_dumpable(current->mm, suid_dumpable);
 
+<<<<<<< HEAD
 	set_task_comm(current, bprm->tcomm);
+=======
+	name = bprm->filename;
+
+	/* Copies the binary name from after last slash */
+	for (i=0; (ch = *(name++)) != '\0';) {
+		if (ch == '/')
+			i = 0; /* overwrite what we wrote */
+		else
+			if (i < (sizeof(tcomm) - 1))
+				tcomm[i++] = ch;
+	}
+	tcomm[i] = '\0';
+	set_task_comm(current, tcomm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Set the new mm task size. We have to do that late because it may
 	 * depend on TIF_32BIT which is only updated in flush_thread() on
@@ -1157,12 +1272,27 @@ void setup_new_exec(struct linux_binprm * bprm)
 	if (bprm->cred->uid != current_euid() ||
 	    bprm->cred->gid != current_egid()) {
 		current->pdeath_signal = 0;
+<<<<<<< HEAD
 	} else {
 		would_dump(bprm, bprm->file);
 		if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP)
 			set_dumpable(current->mm, suid_dumpable);
 	}
 
+=======
+	} else if (file_permission(bprm->file, MAY_READ) ||
+		   bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP) {
+		set_dumpable(current->mm, suid_dumpable);
+	}
+
+	/*
+	 * Flush performance counters when crossing a
+	 * security domain:
+	 */
+	if (!get_dumpable(current->mm))
+		perf_event_exit_task(current);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* An exec changes our domain. We are no longer part of the thread
 	   group */
 
@@ -1199,6 +1329,7 @@ void free_bprm(struct linux_binprm *bprm)
 		mutex_unlock(&current->signal->cred_guard_mutex);
 		abort_creds(bprm->cred);
 	}
+<<<<<<< HEAD
 	/* If a binfmt changed the interp, free it. */
 	if (bprm->interp != bprm->filename)
 		kfree(bprm->interp);
@@ -1217,6 +1348,11 @@ int bprm_change_interp(char *interp, struct linux_binprm *bprm)
 }
 EXPORT_SYMBOL(bprm_change_interp);
 
+=======
+	kfree(bprm);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * install the new credentials for this executable
  */
@@ -1226,6 +1362,7 @@ void install_exec_creds(struct linux_binprm *bprm)
 
 	commit_creds(bprm->cred);
 	bprm->cred = NULL;
+<<<<<<< HEAD
 
 	/*
 	 * Disable monitoring for regular users
@@ -1235,6 +1372,8 @@ void install_exec_creds(struct linux_binprm *bprm)
 	 */
 	if (get_dumpable(current->mm) != SUID_DUMP_USER)
 		perf_event_exit_task(current);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * cred_guard_mutex must be held at least to this point to prevent
 	 * ptrace_attach() from altering our determination of the task's
@@ -1250,18 +1389,26 @@ EXPORT_SYMBOL(install_exec_creds);
  * - the caller must hold ->cred_guard_mutex to protect against
  *   PTRACE_ATTACH
  */
+<<<<<<< HEAD
 static int check_unsafe_exec(struct linux_binprm *bprm)
+=======
+int check_unsafe_exec(struct linux_binprm *bprm)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct task_struct *p = current, *t;
 	unsigned n_fs;
 	int res = 0;
 
+<<<<<<< HEAD
 	if (p->ptrace) {
 		if (p->ptrace & PT_PTRACE_CAP)
 			bprm->unsafe |= LSM_UNSAFE_PTRACE_CAP;
 		else
 			bprm->unsafe |= LSM_UNSAFE_PTRACE;
 	}
+=======
+	bprm->unsafe = tracehook_unsafe_exec(p);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	n_fs = 1;
 	spin_lock(&p->fs->lock);
@@ -1359,13 +1506,21 @@ int remove_arg_zero(struct linux_binprm *bprm)
 			ret = -EFAULT;
 			goto out;
 		}
+<<<<<<< HEAD
 		kaddr = kmap_atomic(page);
+=======
+		kaddr = kmap_atomic(page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		for (; offset < PAGE_SIZE && kaddr[offset];
 				offset++, bprm->p++)
 			;
 
+<<<<<<< HEAD
 		kunmap_atomic(kaddr);
+=======
+		kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		put_arg_page(page);
 
 		if (offset == PAGE_SIZE)
@@ -1389,11 +1544,14 @@ int search_binary_handler(struct linux_binprm *bprm,struct pt_regs *regs)
 	unsigned int depth = bprm->recursion_depth;
 	int try,retval;
 	struct linux_binfmt *fmt;
+<<<<<<< HEAD
 	pid_t old_pid, old_vpid;
 
 	/* This allows 4 levels of binfmt rewrites before failing hard. */
 	if (depth > 5)
 		return -ELOOP;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	retval = security_bprm_check(bprm);
 	if (retval)
@@ -1403,12 +1561,15 @@ int search_binary_handler(struct linux_binprm *bprm,struct pt_regs *regs)
 	if (retval)
 		return retval;
 
+<<<<<<< HEAD
 	/* Need to fetch pid before load_binary changes it */
 	old_pid = current->pid;
 	rcu_read_lock();
 	old_vpid = task_pid_nr_ns(current, task_active_pid_ns(current->parent));
 	rcu_read_unlock();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	retval = -ENOENT;
 	for (try=0; try<2; try++) {
 		read_lock(&binfmt_lock);
@@ -1419,6 +1580,7 @@ int search_binary_handler(struct linux_binprm *bprm,struct pt_regs *regs)
 			if (!try_module_get(fmt->module))
 				continue;
 			read_unlock(&binfmt_lock);
+<<<<<<< HEAD
 			bprm->recursion_depth = depth + 1;
 			retval = fn(bprm, regs);
 			bprm->recursion_depth = depth;
@@ -1427,6 +1589,18 @@ int search_binary_handler(struct linux_binprm *bprm,struct pt_regs *regs)
 					trace_sched_process_exec(current, old_pid, bprm);
 					ptrace_event(PTRACE_EVENT_EXEC, old_vpid);
 				}
+=======
+			retval = fn(bprm, regs);
+			/*
+			 * Restore the depth counter to its starting value
+			 * in this call, so we don't have to rely on every
+			 * load_binary function to restore it on return.
+			 */
+			bprm->recursion_depth = depth;
+			if (retval >= 0) {
+				if (depth == 0)
+					tracehook_report_exec(fmt, bprm, regs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				put_binfmt(fmt);
 				allow_write_access(bprm->file);
 				if (bprm->file)
@@ -1446,9 +1620,15 @@ int search_binary_handler(struct linux_binprm *bprm,struct pt_regs *regs)
 			}
 		}
 		read_unlock(&binfmt_lock);
+<<<<<<< HEAD
 #ifdef CONFIG_MODULES
 		if (retval != -ENOEXEC || bprm->mm == NULL) {
 			break;
+=======
+		if (retval != -ENOEXEC || bprm->mm == NULL) {
+			break;
+#ifdef CONFIG_MODULES
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 #define printable(c) (((c)=='\t') || ((c)=='\n') || (0x20<=(c) && (c)<=0x7e))
 			if (printable(bprm->buf[0]) &&
@@ -1459,10 +1639,15 @@ int search_binary_handler(struct linux_binprm *bprm,struct pt_regs *regs)
 			if (try)
 				break; /* -ENOEXEC */
 			request_module("binfmt-%04x", *(unsigned short *)(&bprm->buf[2]));
+<<<<<<< HEAD
 		}
 #else
 		break;
 #endif
+=======
+#endif
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return retval;
 }
@@ -1482,6 +1667,7 @@ static int do_execve_common(const char *filename,
 	struct files_struct *displaced;
 	bool clear_in_exec;
 	int retval;
+<<<<<<< HEAD
 	const struct cred *cred = current_cred();
 
 	/*
@@ -1499,6 +1685,8 @@ static int do_execve_common(const char *filename,
 	/* We're below the limit (still or again), so we don't want to make
 	 * further execve() calls fail. */
 	current->flags &= ~PF_NPROC_EXCEEDED;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	retval = unshare_files(&displaced);
 	if (retval)
@@ -1686,6 +1874,7 @@ expand_fail:
 	return ret;
 }
 
+<<<<<<< HEAD
 static void cn_escape(char *str)
 {
 	for (; *str; str++)
@@ -1706,6 +1895,17 @@ static int cn_print_exe_file(struct core_name *cn)
 		cn_escape(commstart);
 		return ret;
 	}
+=======
+static int cn_print_exe_file(struct core_name *cn)
+{
+	struct file *exe_file;
+	char *pathbuf, *path, *p;
+	int ret;
+
+	exe_file = get_mm_exe_file(current->mm);
+	if (!exe_file)
+		return cn_printf(cn, "(unknown)");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pathbuf = kmalloc(PATH_MAX, GFP_TEMPORARY);
 	if (!pathbuf) {
@@ -1719,7 +1919,13 @@ static int cn_print_exe_file(struct core_name *cn)
 		goto free_buf;
 	}
 
+<<<<<<< HEAD
 	cn_escape(path);
+=======
+	for (p = path; *p; p++)
+		if (*p == '/')
+			*p = '!';
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = cn_printf(cn, "%s", path);
 
@@ -1791,12 +1997,17 @@ static int format_corename(struct core_name *cn, long signr)
 				break;
 			}
 			/* hostname */
+<<<<<<< HEAD
 			case 'h': {
 				char *namestart = cn->corename + cn->used;
+=======
+			case 'h':
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				down_read(&uts_sem);
 				err = cn_printf(cn, "%s",
 					      utsname()->nodename);
 				up_read(&uts_sem);
+<<<<<<< HEAD
 				cn_escape(namestart);
 				break;
 			}
@@ -1807,6 +2018,13 @@ static int format_corename(struct core_name *cn, long signr)
 				cn_escape(commstart);
 				break;
 			}
+=======
+				break;
+			/* executable */
+			case 'e':
+				err = cn_printf(cn, "%s", current->comm);
+				break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			case 'E':
 				err = cn_print_exe_file(cn);
 				break;
@@ -1850,7 +2068,11 @@ static int zap_process(struct task_struct *start, int exit_code)
 
 	t = start;
 	do {
+<<<<<<< HEAD
 		task_clear_jobctl_pending(t, JOBCTL_PENDING_MASK);
+=======
+		task_clear_group_stop_pending(t);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (t != current && t->mm) {
 			sigaddset(&t->pending.signal, SIGKILL);
 			signal_wake_up(t, 1);
@@ -1937,6 +2159,10 @@ static int coredump_wait(int exit_code, struct core_state *core_state)
 {
 	struct task_struct *tsk = current;
 	struct mm_struct *mm = tsk->mm;
+<<<<<<< HEAD
+=======
+	struct completion *vfork_done;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int core_waiters = -EBUSY;
 
 	init_completion(&core_state->startup);
@@ -1948,9 +2174,28 @@ static int coredump_wait(int exit_code, struct core_state *core_state)
 		core_waiters = zap_threads(tsk, mm, core_state, exit_code);
 	up_write(&mm->mmap_sem);
 
+<<<<<<< HEAD
 	if (core_waiters > 0)
 		wait_for_completion(&core_state->startup);
 
+=======
+	if (unlikely(core_waiters < 0))
+		goto fail;
+
+	/*
+	 * Make sure nobody is waiting for us to release the VM,
+	 * otherwise we can deadlock when we wait on each other
+	 */
+	vfork_done = tsk->vfork_done;
+	if (vfork_done) {
+		tsk->vfork_done = NULL;
+		complete(vfork_done);
+	}
+
+	if (core_waiters)
+		wait_for_completion(&core_state->startup);
+fail:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return core_waiters;
 }
 
@@ -2086,8 +2331,13 @@ static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
 	fd_install(0, rp);
 	spin_lock(&cf->file_lock);
 	fdt = files_fdtable(cf);
+<<<<<<< HEAD
 	__set_open_fd(0, fdt);
 	__clear_close_on_exec(0, fdt);
+=======
+	FD_SET(0, fdt->open_fds);
+	FD_CLR(0, fdt->close_on_exec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&cf->file_lock);
 
 	/* and disallow core files too */
@@ -2156,16 +2406,28 @@ void do_coredump(long signr, int exit_code, struct pt_regs *regs)
 
 	ispipe = format_corename(&cn, signr);
 
+<<<<<<< HEAD
+=======
+	if (ispipe == -ENOMEM) {
+		printk(KERN_WARNING "format_corename failed\n");
+		printk(KERN_WARNING "Aborting core\n");
+		goto fail_corename;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  	if (ispipe) {
 		int dump_count;
 		char **helper_argv;
 
+<<<<<<< HEAD
 		if (ispipe < 0) {
 			printk(KERN_WARNING "format_corename failed\n");
 			printk(KERN_WARNING "Aborting core\n");
 			goto fail_corename;
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (cprm.limit == 1) {
 			/*
 			 * Normally core limits are irrelevant to pipes, since

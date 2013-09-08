@@ -54,15 +54,24 @@ sw_usp:
 .globl ret_from_signal
 .globl sys_call_table
 .globl inthandler
+<<<<<<< HEAD
+=======
+.globl fasthandler
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enosys:
 	mov.l	#sys_ni_syscall,%d3
 	bra	1f
 
 ENTRY(system_call)
+<<<<<<< HEAD
 	SAVE_ALL_SYS
 	move	#0x2000,%sr		/* enable intrs again */
 	GET_CURRENT(%d2)
+=======
+	SAVE_ALL
+	move	#0x2000,%sr		/* enable intrs again */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cmpl	#NR_syscalls,%d0
 	jcc	enosys
@@ -136,7 +145,11 @@ Luser_return:
 	movel	%sp,%d1			/* get thread_info pointer */
 	andl	#-THREAD_SIZE,%d1	/* at base of kernel stack */
 	movel	%d1,%a0
+<<<<<<< HEAD
 	moveb	%a0@(TINFO_FLAGS+3),%d1	/* thread_info->flags (low 8 bits) */
+=======
+	movel	%a0@(TINFO_FLAGS),%d1	/* get thread_info->flags */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	jne	Lwork_to_do		/* still work to do */
 
 Lreturn:
@@ -148,6 +161,11 @@ Lwork_to_do:
 	btst	#TIF_NEED_RESCHED,%d1
 	jne	reschedule
 
+<<<<<<< HEAD
+=======
+	/* GERG: do we need something here for TRACEing?? */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Lsignal_return:
 	subql	#4,%sp			/* dummy return address */
 	SAVE_SWITCH_STACK
@@ -163,8 +181,14 @@ Lsignal_return:
  * sources). Calls up to high level code to do all the work.
  */
 ENTRY(inthandler)
+<<<<<<< HEAD
 	SAVE_ALL_INT
 	GET_CURRENT(%d2)
+=======
+	SAVE_ALL
+	moveq	#-1,%d0
+	movel	%d0,%sp@(PT_OFF_ORIG_D0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	movew	%sp@(PT_OFF_FORMATVEC),%d0 /* put exception # in d0 */
 	andl	#0x03fc,%d0		/* mask out vector only */
@@ -179,6 +203,7 @@ ENTRY(inthandler)
 
 /*
  * Beware - when entering resume, prev (the current task) is
+<<<<<<< HEAD
  * in a0, next (the new task) is in a1, so don't change these
  * registers until their contents are no longer needed.
  */
@@ -201,3 +226,23 @@ ENTRY(resume)
 	RESTORE_SWITCH_STACK
 	rts
 
+=======
+ * in a0, next (the new task) is in a1,so don't change these
+ * registers until their contents are no longer needed.
+ * This is always called in supervisor mode, so don't bother to save
+ * and restore sr; user's process sr is actually in the stack.
+ */
+ENTRY(resume)
+	movel	%a0, %d1			/* get prev thread in d1 */
+	RDUSP
+	movel	%a2,%a0@(TASK_THREAD+THREAD_USP)
+
+	SAVE_SWITCH_STACK
+	movel	%sp,%a0@(TASK_THREAD+THREAD_KSP) /* save kernel stack pointer */
+	movel	%a1@(TASK_THREAD+THREAD_KSP),%sp /* restore new thread stack */
+	RESTORE_SWITCH_STACK
+
+	movel	%a1@(TASK_THREAD+THREAD_USP),%a0 /* restore thread user stack */
+	WRUSP
+	rts
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

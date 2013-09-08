@@ -11,6 +11,10 @@
 
 #include <linux/slab.h>
 #include <linux/mount.h>
+<<<<<<< HEAD
+=======
+#include <linux/buffer_head.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "internal.h"
 
 #define list_to_page(head) (list_entry((head)->prev, struct page, lru))

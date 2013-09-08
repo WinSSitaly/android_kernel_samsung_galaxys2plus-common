@@ -387,10 +387,15 @@ static void kvmppc_44x_invalidate(struct kvm_vcpu *vcpu,
 	}
 }
 
+<<<<<<< HEAD
 void kvmppc_mmu_msr_notify(struct kvm_vcpu *vcpu, u32 old_msr)
 {
 	int usermode = vcpu->arch.shared->msr & MSR_PR;
 
+=======
+void kvmppc_mmu_priv_switch(struct kvm_vcpu *vcpu, int usermode)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vcpu->arch.shadow_pid = !usermode;
 }
 

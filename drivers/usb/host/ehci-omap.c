@@ -41,8 +41,11 @@
 #include <linux/usb/ulpi.h>
 #include <plat/usb.h>
 #include <linux/regulator/consumer.h>
+<<<<<<< HEAD
 #include <linux/pm_runtime.h>
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* EHCI Register Set */
 #define EHCI_INSNREG04					(0xA0)
@@ -100,6 +103,7 @@ static void omap_ehci_soft_phy_reset(struct platform_device *pdev, u8 port)
 	}
 }
 
+<<<<<<< HEAD
 static void disable_put_regulator(
 		struct ehci_hcd_omap_platform_data *pdata)
 {
@@ -112,6 +116,8 @@ static void disable_put_regulator(
 		}
 	}
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* configure so an HC device and id are always provided */
 /* always called with process context; sleeping is OK */
@@ -192,6 +198,7 @@ static int ehci_hcd_omap_probe(struct platform_device *pdev)
 		}
 	}
 
+<<<<<<< HEAD
 	if (pdata->phy_reset) {
 		if (gpio_is_valid(pdata->reset_gpio_port[0]))
 			gpio_request_one(pdata->reset_gpio_port[0],
@@ -208,6 +215,14 @@ static int ehci_hcd_omap_probe(struct platform_device *pdev)
 	pm_runtime_enable(dev);
 	pm_runtime_get_sync(dev);
 
+=======
+	ret = omap_usbhs_enable(dev);
+	if (ret) {
+		dev_err(dev, "failed to start usbhs with err %d\n", ret);
+		goto err_enable;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * An undocumented "feature" in the OMAP3 EHCI controller,
 	 * causes suspended ports to be taken out of suspend when
@@ -240,6 +255,7 @@ static int ehci_hcd_omap_probe(struct platform_device *pdev)
 	/* cache this readonly data; minimize chip reads */
 	omap_ehci->hcs_params = readl(&omap_ehci->caps->hcs_params);
 
+<<<<<<< HEAD
 	ehci_reset(omap_ehci);
 
 	if (pdata->phy_reset) {
@@ -256,6 +272,9 @@ static int ehci_hcd_omap_probe(struct platform_device *pdev)
 	}
 
 	ret = usb_add_hcd(hcd, irq, IRQF_SHARED);
+=======
+	ret = usb_add_hcd(hcd, irq, IRQF_DISABLED | IRQF_SHARED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret) {
 		dev_err(dev, "failed to add hcd with err %d\n", ret);
 		goto err_add_hcd;
@@ -267,11 +286,20 @@ static int ehci_hcd_omap_probe(struct platform_device *pdev)
 	return 0;
 
 err_add_hcd:
+<<<<<<< HEAD
 	disable_put_regulator(pdata);
 	pm_runtime_put_sync(dev);
 
 err_io:
 	iounmap(regs);
+=======
+	omap_usbhs_disable(dev);
+
+err_enable:
+	usb_put_hcd(hcd);
+
+err_io:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -286,6 +314,7 @@ err_io:
  */
 static int ehci_hcd_omap_remove(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct device *dev				= &pdev->dev;
 	struct usb_hcd *hcd				= dev_get_drvdata(dev);
 	struct ehci_hcd_omap_platform_data *pdata	= dev->platform_data;
@@ -304,6 +333,14 @@ static int ehci_hcd_omap_remove(struct platform_device *pdev)
 		if (gpio_is_valid(pdata->reset_gpio_port[1]))
 			gpio_free(pdata->reset_gpio_port[1]);
 	}
+=======
+	struct device *dev	= &pdev->dev;
+	struct usb_hcd *hcd	= dev_get_drvdata(dev);
+
+	usb_remove_hcd(hcd);
+	omap_usbhs_disable(dev);
+	usb_put_hcd(hcd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -371,7 +408,11 @@ static const struct hc_driver ehci_omap_hc_driver = {
 	.clear_tt_buffer_complete = ehci_clear_tt_buffer_complete,
 };
 
+<<<<<<< HEAD
 MODULE_ALIAS("platform:ehci-omap");
+=======
+MODULE_ALIAS("platform:omap-ehci");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_AUTHOR("Texas Instruments, Inc.");
 MODULE_AUTHOR("Felipe Balbi <felipe.balbi@nokia.com>");
 

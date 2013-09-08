@@ -68,6 +68,30 @@ config MMC_SDHCI_PCI
 
 	  If unsure, say N.
 
+<<<<<<< HEAD
+=======
+config MMC_SDHCI_PLTFM_KONA
+	tristate "SDHCI support on KONA platform bus"
+	depends on MMC_SDHCI && !MMC_SDHCI_PCI && ARCH_KONA
+	help
+	  This selects the platform Secure Digital Host Controller Interface.
+
+	  If you have a controller with this interface, say Y or M here.
+
+	  If unsure, say N.
+
+config MMC_KONA_SDIO_WIFI
+       tristate "SDIO Wifi support on KONA platform bus"
+       depends on MMC_SDHCI_PLTFM_KONA
+       default n
+       select CONFIG_BCM_SDIOWL
+       help
+         This selects the Broadcom SDIO Wifi control driver for the KONA platform.
+
+         If you have a controller with this interface, say Y or M here.
+
+         If unsure, say N.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config MMC_RICOH_MMC
 	bool "Ricoh MMC Controller Disabler  (EXPERIMENTAL)"
 	depends on MMC_SDHCI_PCI
@@ -81,6 +105,7 @@ config MMC_RICOH_MMC
 
 	  If unsure, say Y.
 
+<<<<<<< HEAD
 config MMC_SDHCI_PLTFM
 	tristate "SDHCI platform and OF driver helper"
 	depends on MMC_SDHCI
@@ -89,17 +114,31 @@ config MMC_SDHCI_PLTFM
 	  Host Controller Interface based platform and OF drivers.
 
 	  If you have a controller with this interface, say Y or M here.
+=======
+config MMC_SDHCI_OF
+	tristate "SDHCI support on OpenFirmware platforms"
+	depends on MMC_SDHCI && OF
+	help
+	  This selects the OF support for Secure Digital Host Controller
+	  Interfaces.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	  If unsure, say N.
 
 config MMC_SDHCI_OF_ESDHC
+<<<<<<< HEAD
 	tristate "SDHCI OF support for the Freescale eSDHC controller"
 	depends on MMC_SDHCI_PLTFM
+=======
+	bool "SDHCI OF support for the Freescale eSDHC controller"
+	depends on MMC_SDHCI_OF
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	depends on PPC_OF
 	select MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPER
 	help
 	  This selects the Freescale eSDHC controller support.
 
+<<<<<<< HEAD
 	  If you have a controller with this interface, say Y or M here.
 
 	  If unsure, say N.
@@ -107,6 +146,13 @@ config MMC_SDHCI_OF_ESDHC
 config MMC_SDHCI_OF_HLWD
 	tristate "SDHCI OF support for the Nintendo Wii SDHCI controllers"
 	depends on MMC_SDHCI_PLTFM
+=======
+	  If unsure, say N.
+
+config MMC_SDHCI_OF_HLWD
+	bool "SDHCI OF support for the Nintendo Wii SDHCI controllers"
+	depends on MMC_SDHCI_OF
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	depends on PPC_OF
 	select MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPER
 	help
@@ -114,17 +160,34 @@ config MMC_SDHCI_OF_HLWD
 	  found in the "Hollywood" chipset of the Nintendo Wii video game
 	  console.
 
+<<<<<<< HEAD
+=======
+	  If unsure, say N.
+
+config MMC_SDHCI_PLTFM
+	tristate "SDHCI support on the platform specific bus"
+	depends on MMC_SDHCI
+	help
+	  This selects the platform specific bus support for Secure Digital Host
+	  Controller Interface.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	  If you have a controller with this interface, say Y or M here.
 
 	  If unsure, say N.
 
 config MMC_SDHCI_CNS3XXX
+<<<<<<< HEAD
 	tristate "SDHCI support on the Cavium Networks CNS3xxx SoC"
+=======
+	bool "SDHCI support on the Cavium Networks CNS3xxx SoC"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	depends on ARCH_CNS3XXX
 	depends on MMC_SDHCI_PLTFM
 	help
 	  This selects the SDHCI support for CNS3xxx System-on-Chip devices.
 
+<<<<<<< HEAD
 	  If you have a controller with this interface, say Y or M here.
 
 	  If unsure, say N.
@@ -139,11 +202,26 @@ config MMC_SDHCI_ESDHC_IMX
 	  found on i.MX25, i.MX35 i.MX5x and i.MX6x.
 
 	  If you have a controller with this interface, say Y or M here.
+=======
+	  If unsure, say N.
+
+config MMC_SDHCI_ESDHC_IMX
+	bool "SDHCI platform support for the Freescale eSDHC i.MX controller"
+	depends on MMC_SDHCI_PLTFM && (ARCH_MX25 || ARCH_MX35 || ARCH_MX5)
+	select MMC_SDHCI_IO_ACCESSORS
+	help
+	  This selects the Freescale eSDHC controller support on the platform
+	  bus, found on platforms like mx35/51.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	  If unsure, say N.
 
 config MMC_SDHCI_DOVE
+<<<<<<< HEAD
 	tristate "SDHCI support on Marvell's Dove SoC"
+=======
+	bool "SDHCI support on Marvell's Dove SoC"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	depends on ARCH_DOVE
 	depends on MMC_SDHCI_PLTFM
 	select MMC_SDHCI_IO_ACCESSORS
@@ -151,6 +229,7 @@ config MMC_SDHCI_DOVE
 	  This selects the Secure Digital Host Controller Interface in
 	  Marvell's Dove SoC.
 
+<<<<<<< HEAD
 	  If you have a controller with this interface, say Y or M here.
 
 	  If unsure, say N.
@@ -159,6 +238,13 @@ config MMC_SDHCI_TEGRA
 	tristate "SDHCI platform support for the Tegra SD/MMC Controller"
 	depends on ARCH_TEGRA
 	depends on MMC_SDHCI_PLTFM
+=======
+	  If unsure, say N.
+
+config MMC_SDHCI_TEGRA
+	bool "SDHCI platform support for the Tegra SD/MMC Controller"
+	depends on MMC_SDHCI_PLTFM && ARCH_TEGRA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select MMC_SDHCI_IO_ACCESSORS
 	help
 	  This selects the Tegra SD/MMC controller. If you have a Tegra
@@ -181,6 +267,7 @@ config MMC_SDHCI_S3C
 
 	  If unsure, say N.
 
+<<<<<<< HEAD
 config MMC_SDHCI_PXAV3
 	tristate "Marvell MMP2 SD Host Controller support (PXAV3)"
 	depends on CLKDEV_LOOKUP
@@ -203,6 +290,16 @@ config MMC_SDHCI_PXAV2
 	help
 	  This selects the Marvell(R) PXAV2 SD Host Controller.
 	  If you have a PXA9XX platform with SD Host Controller
+=======
+config MMC_SDHCI_PXA
+	tristate "Marvell PXA168/PXA910/MMP2 SD Host Controller support"
+	depends on ARCH_PXA || ARCH_MMP
+	select MMC_SDHCI
+	select MMC_SDHCI_IO_ACCESSORS
+	help
+	  This selects the Marvell(R) PXA168/PXA910/MMP2 SD Host Controller.
+	  If you have a PXA168/PXA910/MMP2 platform with SD Host Controller
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	  and a card slot, say Y or M here.
 
 	  If unsure, say N.
@@ -263,7 +360,11 @@ config MMC_WBSD
 
 config MMC_AU1X
 	tristate "Alchemy AU1XX0 MMC Card Interface support"
+<<<<<<< HEAD
 	depends on MIPS_ALCHEMY
+=======
+	depends on SOC_AU1200
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  This selects the AMD Alchemy(R) Multimedia card interface.
 	  If you have a Alchemy platform with a MMC slot, say Y or M here.
@@ -297,6 +398,20 @@ config MMC_ATMELMCI
 
 endchoice
 
+<<<<<<< HEAD
+=======
+config MMC_ATMELMCI_DMA
+	bool "Atmel MCI DMA support (EXPERIMENTAL)"
+	depends on MMC_ATMELMCI && (AVR32 || ARCH_AT91SAM9G45) && DMA_ENGINE && EXPERIMENTAL
+	help
+	  Say Y here to have the Atmel MCI driver use a DMA engine to
+	  do data transfers and thus increase the throughput and
+	  reduce the CPU utilization. Note that this is highly
+	  experimental and may cause the driver to lock up.
+
+	  If unsure, say N.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config MMC_IMX
 	tristate "Motorola i.MX Multimedia Card Interface support"
 	depends on ARCH_MX1
@@ -316,11 +431,19 @@ config MMC_MSM
 	  support for SDIO devices.
 
 config MMC_MXC
+<<<<<<< HEAD
 	tristate "Freescale i.MX21/27/31 Multimedia Card Interface support"
 	depends on ARCH_MXC
 	help
 	  This selects the Freescale i.MX21, i.MX27 and i.MX31 Multimedia card
 	  Interface. If you have a i.MX platform with a Multimedia Card slot,
+=======
+	tristate "Freescale i.MX2/3 Multimedia Card Interface support"
+	depends on MACH_MX21 || MACH_MX27 || ARCH_MX31
+	help
+	  This selects the Freescale i.MX2/3 Multimedia card Interface.
+	  If you have a i.MX platform with a Multimedia Card slot,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	  say Y or M here.
 
 	  If unsure, say N.
@@ -385,7 +508,11 @@ config MMC_SPI
 
 config MMC_S3C
 	tristate "Samsung S3C SD/MMC Card Interface support"
+<<<<<<< HEAD
 	depends on ARCH_S3C24XX
+=======
+	depends on ARCH_S3C2410
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  This selects a driver for the MCI interface found in
           Samsung's S3C2410, S3C2412, S3C2440, S3C2442 CPUs.
@@ -464,9 +591,27 @@ config MMC_SDHI
 	  This provides support for the SDHI SD/SDIO controller found in
 	  SuperH and ARM SH-Mobile SoCs
 
+<<<<<<< HEAD
 config MMC_CB710
 	tristate "ENE CB710 MMC/SD Interface support"
 	depends on PCI
+=======
+config MMC_BCM_SD
+	tristate "Broadcom MMC/SD/SDIO Card Interface support"
+	depends on MMC && MMC_SDHCI_PLTFM_KONA
+	help
+	  This selects a driver for the MMC/SD/SDIO interface found in
+	  BCM2820, BCM2152, BCM2850 and BCMRING... CPUs.
+	  If you have a board based on one of those and a MMC/SD
+	  slot, say Y or M here.
+
+	  If unsure, say N.
+
+config MMC_CB710
+	tristate "ENE CB710 MMC/SD Interface support"
+	depends on PCI
+	select MISC_DEVICES
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select CB710_CORE
 	help
 	  This option enables support for MMC/SD part of ENE CB710/720 Flash
@@ -523,6 +668,7 @@ config MMC_DW_IDMAC
 	  Designware Mobile Storage IP block. This disables the external DMA
 	  interface.
 
+<<<<<<< HEAD
 config MMC_DW_PLTFM
 	tristate "Synopsys Designware MCI Support as platform device"
 	depends on MMC_DW
@@ -548,6 +694,8 @@ config MMC_DW_PCI
 
 	  If unsure, say N.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config MMC_SH_MMCIF
 	tristate "SuperH Internal MMCIF support"
 	depends on MMC_BLOCK && (SUPERH || ARCH_SHMOBILE)
@@ -609,3 +757,16 @@ config MMC_USHC
 
 	  Note: These controllers only support SDIO cards and do not
 	  support MMC or SD memory cards.
+<<<<<<< HEAD
+=======
+
+config BCM_SDIOWL
+	tristate "Fixes/Workarounds for Broadcom SDIO WL Card Interface support"
+	depends on MMC
+	default n
+	help
+	  This is an option to apply the software workaround for some of the
+	  hardware workarounds with Broadcom SDIOWL card.
+
+	  If unsure, say N.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

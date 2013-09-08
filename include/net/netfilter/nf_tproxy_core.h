@@ -131,7 +131,11 @@ nf_tproxy_get_sock_v4(struct net *net, const u8 protocol,
 	return sk;
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline struct sock *
 nf_tproxy_get_sock_v6(struct net *net, const u8 protocol,
 		      const struct in6_addr *saddr, const struct in6_addr *daddr,

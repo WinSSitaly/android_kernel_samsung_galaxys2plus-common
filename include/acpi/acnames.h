@@ -46,7 +46,10 @@
 
 /* Method names - these methods can appear anywhere in the namespace */
 
+<<<<<<< HEAD
 #define METHOD_NAME__SB_        "_SB_"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define METHOD_NAME__HID        "_HID"
 #define METHOD_NAME__CID        "_CID"
 #define METHOD_NAME__UID        "_UID"
@@ -59,17 +62,28 @@
 #define METHOD_NAME__PRT        "_PRT"
 #define METHOD_NAME__CRS        "_CRS"
 #define METHOD_NAME__PRS        "_PRS"
+<<<<<<< HEAD
 #define METHOD_NAME__AEI        "_AEI"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define METHOD_NAME__PRW        "_PRW"
 #define METHOD_NAME__SRS        "_SRS"
 
 /* Method names - these methods must appear at the namespace root */
 
+<<<<<<< HEAD
 #define METHOD_PATHNAME__BFS    "\\_BFS"
 #define METHOD_PATHNAME__GTS    "\\_GTS"
 #define METHOD_PATHNAME__PTS    "\\_PTS"
 #define METHOD_PATHNAME__SST    "\\_SI._SST"
 #define METHOD_PATHNAME__WAK    "\\_WAK"
+=======
+#define METHOD_NAME__BFS        "\\_BFS"
+#define METHOD_NAME__GTS        "\\_GTS"
+#define METHOD_NAME__PTS        "\\_PTS"
+#define METHOD_NAME__SST        "\\_SI._SST"
+#define METHOD_NAME__WAK        "\\_WAK"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Definitions of the predefined namespace names  */
 
@@ -80,5 +94,9 @@
 #define ACPI_PREFIX_LOWER       (u32) 0x69706361	/* "acpi" */
 
 #define ACPI_NS_ROOT_PATH       "\\"
+<<<<<<< HEAD
+=======
+#define ACPI_NS_SYSTEM_BUS      "_SB_"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif				/* __ACNAMES_H__  */

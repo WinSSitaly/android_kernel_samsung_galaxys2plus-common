@@ -17,6 +17,10 @@
 #include "net_user.h"
 #include "os.h"
 #include "um_malloc.h"
+<<<<<<< HEAD
+=======
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum request_type { REQ_NEW_CONTROL };
 

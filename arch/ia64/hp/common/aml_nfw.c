@@ -31,7 +31,11 @@ MODULE_AUTHOR("Bjorn Helgaas <bjorn.helgaas@hp.com>");
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("ACPI opregion handler for native firmware calls");
 
+<<<<<<< HEAD
 static bool force_register;
+=======
+static int force_register;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(force, force_register, bool, 0);
 MODULE_PARM_DESC(force, "Install opregion handler even without HPQ5001 device");
 

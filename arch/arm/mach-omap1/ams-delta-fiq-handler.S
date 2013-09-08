@@ -14,14 +14,22 @@
  */
 
 #include <linux/linkage.h>
+<<<<<<< HEAD
 #include <asm/assembler.h>
 
+=======
+
+#include <plat/io.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/board-ams-delta.h>
 
 #include <mach/ams-delta-fiq.h>
 
+<<<<<<< HEAD
 #include "iomap.h"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * GPIO related definitions, copied from arch/arm/plat-omap/gpio.c.
  * Unfortunately, those were not placed in a separate header file.

@@ -342,6 +342,7 @@ static void __init palmld_init(void)
 }
 
 MACHINE_START(PALMLD, "Palm LifeDrive")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= palmld_map_io,
 	.nr_irqs	= PXA_NR_IRQS,
@@ -350,4 +351,11 @@ MACHINE_START(PALMLD, "Palm LifeDrive")
 	.timer		= &pxa_timer,
 	.init_machine	= palmld_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params	= 0xa0000100,
+	.map_io		= palmld_map_io,
+	.init_irq	= pxa27x_init_irq,
+	.timer		= &pxa_timer,
+	.init_machine	= palmld_init
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

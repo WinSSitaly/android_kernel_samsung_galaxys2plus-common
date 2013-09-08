@@ -10,6 +10,10 @@
 #include <linux/mutex.h>
 #include <scsi/scsi_host.h>
 #include "common.h"
+<<<<<<< HEAD
+=======
+#include "ms.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct us_data;
 struct scsi_cmnd;
@@ -200,7 +204,11 @@ struct us_data {
 	//----- MS Control Data ----------------
 	BOOLEAN             MS_SWWP;
 	DWORD               MSP_TotalBlock;
+<<<<<<< HEAD
 	/* MS_LibControl       MS_Lib; */
+=======
+	MS_LibControl       MS_Lib;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BOOLEAN             MS_IsRWPage;
 	WORD                MS_Model;
 

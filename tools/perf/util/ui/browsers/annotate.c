@@ -1,31 +1,55 @@
+<<<<<<< HEAD
 #include "../../util.h"
 #include "../browser.h"
 #include "../helpline.h"
 #include "../libslang.h"
 #include "../ui.h"
 #include "../util.h"
+=======
+#include "../browser.h"
+#include "../helpline.h"
+#include "../libslang.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "../../annotate.h"
 #include "../../hist.h"
 #include "../../sort.h"
 #include "../../symbol.h"
 #include <pthread.h>
+<<<<<<< HEAD
 #include <newt.h>
+=======
+
+static void ui__error_window(const char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	newtWinMessagev((char *)"Error", (char *)"Ok", (char *)fmt, ap);
+	va_end(ap);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct annotate_browser {
 	struct ui_browser b;
 	struct rb_root	  entries;
 	struct rb_node	  *curr_hot;
+<<<<<<< HEAD
 	struct objdump_line *selection;
 	int		    nr_asm_entries;
 	int		    nr_entries;
 	bool		    hide_src_code;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct objdump_line_rb_node {
 	struct rb_node	rb_node;
 	double		percent;
 	u32		idx;
+<<<<<<< HEAD
 	int		idx_asm;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline
@@ -34,6 +58,7 @@ struct objdump_line_rb_node *objdump_line__rb(struct objdump_line *self)
 	return (struct objdump_line_rb_node *)(self + 1);
 }
 
+<<<<<<< HEAD
 static bool objdump_line__filter(struct ui_browser *browser, void *entry)
 {
 	struct annotate_browser *ab = container_of(browser, struct annotate_browser, b);
@@ -50,6 +75,11 @@ static void annotate_browser__write(struct ui_browser *self, void *entry, int ro
 {
 	struct annotate_browser *ab = container_of(self, struct annotate_browser, b);
 	struct objdump_line *ol = list_entry(entry, struct objdump_line, node);
+=======
+static void annotate_browser__write(struct ui_browser *self, void *entry, int row)
+{
+	struct objdump_line *ol = rb_entry(entry, struct objdump_line, node);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool current_entry = ui_browser__is_current_entry(self, row);
 	int width = self->width;
 
@@ -64,6 +94,7 @@ static void annotate_browser__write(struct ui_browser *self, void *entry, int ro
 
 	SLsmg_write_char(':');
 	slsmg_write_nstring(" ", 8);
+<<<<<<< HEAD
 
 	/* The scroll bar isn't being used */
 	if (!self->navkeypressed)
@@ -74,13 +105,20 @@ static void annotate_browser__write(struct ui_browser *self, void *entry, int ro
 				       !self->navkeypressed))
 			ui_browser__set_color(self, HE_COLORSET_CODE);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!*ol->line)
 		slsmg_write_nstring(" ", width - 18);
 	else
 		slsmg_write_nstring(ol->line, width - 18);
 
+<<<<<<< HEAD
 	if (current_entry)
 		ab->selection = ol;
+=======
+	if (!current_entry)
+		ui_browser__set_color(self, HE_COLORSET_CODE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static double objdump_line__calc_percent(struct objdump_line *self,
@@ -164,8 +202,12 @@ static void annotate_browser__set_top(struct annotate_browser *self,
 static void annotate_browser__calc_percent(struct annotate_browser *browser,
 					   int evidx)
 {
+<<<<<<< HEAD
 	struct map_symbol *ms = browser->b.priv;
 	struct symbol *sym = ms->sym;
+=======
+	struct symbol *sym = browser->b.priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct annotation *notes = symbol__annotation(sym);
 	struct objdump_line *pos;
 
@@ -187,6 +229,7 @@ static void annotate_browser__calc_percent(struct annotate_browser *browser,
 	browser->curr_hot = rb_last(&browser->entries);
 }
 
+<<<<<<< HEAD
 static bool annotate_browser__toggle_source(struct annotate_browser *browser)
 {
 	struct objdump_line *ol;
@@ -241,6 +284,27 @@ static int annotate_browser__run(struct annotate_browser *self, int evidx,
 	if (ui_browser__show(&self->b, sym->name, help) < 0)
 		return -1;
 
+=======
+static int annotate_browser__run(struct annotate_browser *self, int evidx,
+				 int refresh)
+{
+	struct rb_node *nd = NULL;
+	struct symbol *sym = self->b.priv;
+	/*
+	 * RIGHT To allow builtin-annotate to cycle thru multiple symbols by
+	 * examining the exit key for this function.
+	 */
+	int exit_keys[] = { 'H', NEWT_KEY_TAB, NEWT_KEY_UNTAB,
+			    NEWT_KEY_RIGHT, 0 };
+	int key;
+
+	if (ui_browser__show(&self->b, sym->name,
+			     "<-, -> or ESC: exit, TAB/shift+TAB: "
+			     "cycle hottest lines, H: Hottest") < 0)
+		return -1;
+
+	ui_browser__add_exit_keys(&self->b, exit_keys);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	annotate_browser__calc_percent(self, evidx);
 
 	if (self->curr_hot)
@@ -248,10 +312,20 @@ static int annotate_browser__run(struct annotate_browser *self, int evidx,
 
 	nd = self->curr_hot;
 
+<<<<<<< HEAD
 	while (1) {
 		key = ui_browser__run(&self->b, delay_secs);
 
 		if (delay_secs != 0) {
+=======
+	if (refresh != 0)
+		newtFormSetTimer(self->b.form, refresh);
+
+	while (1) {
+		key = ui_browser__run(&self->b);
+
+		if (refresh != 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			annotate_browser__calc_percent(self, evidx);
 			/*
 			 * Current line focus got out of the list of most active
@@ -263,6 +337,7 @@ static int annotate_browser__run(struct annotate_browser *self, int evidx,
 		}
 
 		switch (key) {
+<<<<<<< HEAD
 		case K_TIMER:
 			if (timer != NULL)
 				timer(arg);
@@ -271,6 +346,17 @@ static int annotate_browser__run(struct annotate_browser *self, int evidx,
 				symbol__annotate_decay_histogram(sym, evidx);
 			continue;
 		case K_TAB:
+=======
+		case -1:
+			/*
+ 			 * FIXME we need to check if it was
+ 			 * es.reason == NEWT_EXIT_TIMER
+ 			 */
+			if (refresh != 0)
+				symbol__annotate_decay_histogram(sym, evidx);
+			continue;
+		case NEWT_KEY_TAB:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (nd != NULL) {
 				nd = rb_prev(nd);
 				if (nd == NULL)
@@ -278,7 +364,11 @@ static int annotate_browser__run(struct annotate_browser *self, int evidx,
 			} else
 				nd = self->curr_hot;
 			break;
+<<<<<<< HEAD
 		case K_UNTAB:
+=======
+		case NEWT_KEY_UNTAB:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (nd != NULL)
 				nd = rb_next(nd);
 				if (nd == NULL)
@@ -287,6 +377,7 @@ static int annotate_browser__run(struct annotate_browser *self, int evidx,
 				nd = self->curr_hot;
 			break;
 		case 'H':
+<<<<<<< HEAD
 		case 'h':
 			nd = self->curr_hot;
 			break;
@@ -353,6 +444,12 @@ static int annotate_browser__run(struct annotate_browser *self, int evidx,
 			goto out;
 		default:
 			continue;
+=======
+			nd = self->curr_hot;
+			break;
+		default:
+			goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (nd != NULL)
@@ -363,6 +460,7 @@ out:
 	return key;
 }
 
+<<<<<<< HEAD
 int hist_entry__tui_annotate(struct hist_entry *he, int evidx,
 			     void(*timer)(void *arg), void *arg, int delay_secs)
 {
@@ -380,14 +478,30 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map, int evidx,
 		.map = map,
 		.sym = sym,
 	};
+=======
+int hist_entry__tui_annotate(struct hist_entry *he, int evidx)
+{
+	return symbol__tui_annotate(he->ms.sym, he->ms.map, evidx, 0);
+}
+
+int symbol__tui_annotate(struct symbol *sym, struct map *map, int evidx,
+			 int refresh)
+{
+	struct objdump_line *pos, *n;
+	struct annotation *notes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct annotate_browser browser = {
 		.b = {
 			.refresh = ui_browser__list_head_refresh,
 			.seek	 = ui_browser__list_head_seek,
 			.write	 = annotate_browser__write,
+<<<<<<< HEAD
 			.filter  = objdump_line__filter,
 			.priv	 = &ms,
 			.use_navkeypressed = true,
+=======
+			.priv	 = sym,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 	};
 	int ret;
@@ -399,7 +513,11 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map, int evidx,
 		return -1;
 
 	if (symbol__annotate(sym, map, sizeof(struct objdump_line_rb_node)) < 0) {
+<<<<<<< HEAD
 		ui__error("%s", ui_helpline__last_msg);
+=======
+		ui__error_window(ui_helpline__last_msg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
@@ -414,6 +532,7 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map, int evidx,
 		if (browser.b.width < line_len)
 			browser.b.width = line_len;
 		rbpos = objdump_line__rb(pos);
+<<<<<<< HEAD
 		rbpos->idx = browser.nr_entries++;
 		if (pos->offset != -1)
 			rbpos->idx_asm = browser.nr_asm_entries++;
@@ -425,6 +544,14 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map, int evidx,
 	browser.b.entries = &notes->src->source,
 	browser.b.width += 18; /* Percentage */
 	ret = annotate_browser__run(&browser, evidx, timer, arg, delay_secs);
+=======
+		rbpos->idx = browser.b.nr_entries++;
+	}
+
+	browser.b.entries = &notes->src->source,
+	browser.b.width += 18; /* Percentage */
+	ret = annotate_browser__run(&browser, evidx, refresh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry_safe(pos, n, &notes->src->source, node) {
 		list_del(&pos->node);
 		objdump_line__free(pos);

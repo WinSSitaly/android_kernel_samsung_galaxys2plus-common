@@ -87,9 +87,16 @@ struct exception_table_entry;
 void sort_ex_table(struct exception_table_entry *start,
 		   struct exception_table_entry *finish);
 
+<<<<<<< HEAD
 #if defined(CONFIG_MODVERSIONS) && defined(CONFIG_PPC64)
 #define ARCH_RELOCATES_KCRCTAB
 #define reloc_start PHYSICAL_START
+=======
+#ifdef CONFIG_MODVERSIONS
+#define ARCH_RELOCATES_KCRCTAB
+
+extern const unsigned long reloc_start[];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 #endif /* __KERNEL__ */
 #endif	/* _ASM_POWERPC_MODULE_H */

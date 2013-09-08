@@ -4,12 +4,21 @@
  */
 #include <linux/kernel.h>
 #include <linux/reboot.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/pm.h>
 
 #include <asm/oplib.h>
 #include <asm/prom.h>
 #include <asm/setup.h>
+=======
+#include <linux/module.h>
+#include <linux/pm.h>
+
+#include <asm/system.h>
+#include <asm/oplib.h>
+#include <asm/prom.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* sysctl - toggle power-off restriction for serial console
  * systems in machine_power_off()

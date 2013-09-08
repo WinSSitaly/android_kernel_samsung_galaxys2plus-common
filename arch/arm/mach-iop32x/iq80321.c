@@ -71,7 +71,11 @@ void __init iq80321_map_io(void)
  * IQ80321 PCI.
  */
 static int __init
+<<<<<<< HEAD
 iq80321_pci_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+iq80321_pci_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int irq;
 
@@ -186,10 +190,17 @@ static void __init iq80321_init_machine(void)
 
 MACHINE_START(IQ80321, "Intel IQ80321")
 	/* Maintainer: Intel Corp. */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= 0xa0000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io		= iq80321_map_io,
 	.init_irq	= iop32x_init_irq,
 	.timer		= &iq80321_timer,
 	.init_machine	= iq80321_init_machine,
+<<<<<<< HEAD
 	.restart	= iop3xx_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

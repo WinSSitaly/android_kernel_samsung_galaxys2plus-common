@@ -34,7 +34,11 @@ struct svc_sock {
 /*
  * Function prototypes.
  */
+<<<<<<< HEAD
 void		svc_close_net(struct svc_serv *, struct net *);
+=======
+void		svc_close_all(struct svc_serv *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int		svc_recv(struct svc_rqst *, long);
 int		svc_send(struct svc_rqst *);
 void		svc_drop(struct svc_rqst *);

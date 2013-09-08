@@ -26,7 +26,10 @@
  * Scatter-gather DMA related defines
  */
 #define BFA_SGPG_MIN	(16)
+<<<<<<< HEAD
 #define BFA_SGPG_MAX	(8192)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Alignment macro for SG page allocation
@@ -55,14 +58,18 @@ struct bfa_sgpg_s {
  */
 #define BFA_SGPG_NPAGE(_nsges)  (((_nsges) / BFI_SGPG_DATA_SGES) + 1)
 
+<<<<<<< HEAD
 /* Max SGPG dma segs required */
 #define BFA_SGPG_DMA_SEGS	\
 	BFI_MEM_DMA_NSEGS(BFA_SGPG_MAX, (uint32_t)sizeof(struct bfi_sgpg_s))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct bfa_sgpg_mod_s {
 	struct bfa_s *bfa;
 	int		num_sgpgs;	/*  number of SG pages		*/
 	int		free_sgpgs;	/*  number of free SG pages	*/
+<<<<<<< HEAD
 	struct list_head	sgpg_q;		/*  queue of free SG pages */
 	struct list_head	sgpg_wait_q;	/*  wait queue for SG pages */
 	struct bfa_mem_dma_s	dma_seg[BFA_SGPG_DMA_SEGS];
@@ -70,6 +77,15 @@ struct bfa_sgpg_mod_s {
 };
 #define BFA_SGPG_MOD(__bfa)	(&(__bfa)->modules.sgpg_mod)
 #define BFA_MEM_SGPG_KVA(__bfa) (&(BFA_SGPG_MOD(__bfa)->kva_seg))
+=======
+	struct bfa_sgpg_s	*hsgpg_arr;	/*  BFA SG page array	*/
+	struct bfi_sgpg_s *sgpg_arr;	/*  actual SG page array	*/
+	u64	sgpg_arr_pa;	/*  SG page array DMA addr	*/
+	struct list_head	sgpg_q;		/*  queue of free SG pages */
+	struct list_head	sgpg_wait_q;	/*  wait queue for SG pages */
+};
+#define BFA_SGPG_MOD(__bfa)	(&(__bfa)->modules.sgpg_mod)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 bfa_status_t bfa_sgpg_malloc(struct bfa_s *bfa, struct list_head *sgpg_q,
 			     int nsgpgs);
@@ -84,6 +100,7 @@ void bfa_sgpg_wcancel(struct bfa_s *bfa, struct bfa_sgpg_wqe_s *wqe);
  * FCXP related defines
  */
 #define BFA_FCXP_MIN		(1)
+<<<<<<< HEAD
 #define BFA_FCXP_MAX		(256)
 #define BFA_FCXP_MAX_IBUF_SZ	(2 * 1024 + 256)
 #define BFA_FCXP_MAX_LBUF_SZ	(4 * 1024 + 256)
@@ -93,23 +110,41 @@ void bfa_sgpg_wcancel(struct bfa_s *bfa, struct bfa_sgpg_wqe_s *wqe);
 	BFI_MEM_DMA_NSEGS(BFA_FCXP_MAX,					\
 		(u32)BFA_FCXP_MAX_IBUF_SZ + BFA_FCXP_MAX_LBUF_SZ)
 
+=======
+#define BFA_FCXP_MAX_IBUF_SZ	(2 * 1024 + 256)
+#define BFA_FCXP_MAX_LBUF_SZ	(4 * 1024 + 256)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct bfa_fcxp_mod_s {
 	struct bfa_s      *bfa;		/* backpointer to BFA */
 	struct bfa_fcxp_s *fcxp_list;	/* array of FCXPs */
 	u16	num_fcxps;	/* max num FCXP requests */
 	struct list_head  fcxp_free_q;	/* free FCXPs */
 	struct list_head  fcxp_active_q;	/* active FCXPs */
+<<<<<<< HEAD
 	struct list_head  wait_q;		/* wait queue for free fcxp */
 	struct list_head fcxp_unused_q; /* unused fcxps */
 	u32	req_pld_sz;
 	u32	rsp_pld_sz;
 	struct bfa_mem_dma_s dma_seg[BFA_FCXP_DMA_SEGS];
 	struct bfa_mem_kva_s kva_seg;
+=======
+	void		*req_pld_list_kva;	/* list of FCXP req pld */
+	u64	req_pld_list_pa;	/* list of FCXP req pld */
+	void		*rsp_pld_list_kva;	/* list of FCXP resp pld */
+	u64	rsp_pld_list_pa;	/* list of FCXP resp pld */
+	struct list_head  wait_q;		/* wait queue for free fcxp */
+	u32	req_pld_sz;
+	u32	rsp_pld_sz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define BFA_FCXP_MOD(__bfa)		(&(__bfa)->modules.fcxp_mod)
 #define BFA_FCXP_FROM_TAG(__mod, __tag)	(&(__mod)->fcxp_list[__tag])
+<<<<<<< HEAD
 #define BFA_MEM_FCXP_KVA(__bfa) (&(BFA_FCXP_MOD(__bfa)->kva_seg))
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef void    (*fcxp_send_cb_t) (struct bfa_s *ioc, struct bfa_fcxp_s *fcxp,
 				   void *cb_arg, bfa_status_t req_status,
@@ -217,6 +252,7 @@ struct bfa_fcxp_wqe_s {
 #define BFA_FCXP_RSP_FCHS(_fcxp)	(&((_fcxp)->rsp_info.fchs))
 #define BFA_FCXP_RSP_PLD(_fcxp)		(bfa_fcxp_get_rspbuf(_fcxp))
 
+<<<<<<< HEAD
 #define BFA_FCXP_REQ_PLD_PA(_fcxp)					      \
 	bfa_mem_get_dmabuf_pa((_fcxp)->fcxp_mod, (_fcxp)->fcxp_tag,	      \
 		(_fcxp)->fcxp_mod->req_pld_sz + (_fcxp)->fcxp_mod->rsp_pld_sz)
@@ -226,6 +262,15 @@ struct bfa_fcxp_wqe_s {
 	(bfa_mem_get_dmabuf_pa((_fcxp)->fcxp_mod, (_fcxp)->fcxp_tag,	       \
 	      (_fcxp)->fcxp_mod->req_pld_sz + (_fcxp)->fcxp_mod->rsp_pld_sz) + \
 	      (_fcxp)->fcxp_mod->req_pld_sz)
+=======
+#define BFA_FCXP_REQ_PLD_PA(_fcxp)				\
+	((_fcxp)->fcxp_mod->req_pld_list_pa +			\
+	 ((_fcxp)->fcxp_mod->req_pld_sz  * (_fcxp)->fcxp_tag))
+
+#define BFA_FCXP_RSP_PLD_PA(_fcxp)				\
+	((_fcxp)->fcxp_mod->rsp_pld_list_pa +			\
+	 ((_fcxp)->fcxp_mod->rsp_pld_sz * (_fcxp)->fcxp_tag))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void	bfa_fcxp_isr(struct bfa_s *bfa, struct bfi_msg_s *msg);
 
@@ -251,6 +296,7 @@ struct bfa_rport_mod_s {
 	struct bfa_rport_s *rps_list;	/*  list of rports	*/
 	struct list_head	rp_free_q;	/*  free bfa_rports	*/
 	struct list_head	rp_active_q;	/*  free bfa_rports	*/
+<<<<<<< HEAD
 	struct list_head	rp_unused_q;	/*  unused bfa rports  */
 	u16	num_rports;	/*  number of rports	*/
 	struct bfa_mem_kva_s	kva_seg;
@@ -258,6 +304,12 @@ struct bfa_rport_mod_s {
 
 #define BFA_RPORT_MOD(__bfa)	(&(__bfa)->modules.rport_mod)
 #define BFA_MEM_RPORT_KVA(__bfa) (&(BFA_RPORT_MOD(__bfa)->kva_seg))
+=======
+	u16	num_rports;	/*  number of rports	*/
+};
+
+#define BFA_RPORT_MOD(__bfa)	(&(__bfa)->modules.rport_mod)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Convert rport tag to RPORT
@@ -270,7 +322,10 @@ struct bfa_rport_mod_s {
  * protected functions
  */
 void	bfa_rport_isr(struct bfa_s *bfa, struct bfi_msg_s *msg);
+<<<<<<< HEAD
 void	bfa_rport_res_recfg(struct bfa_s *bfa, u16 num_rport_fw);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  *	BFA rport information.
@@ -297,7 +352,10 @@ struct bfa_rport_s {
 	void		*rport_drv;	/*  fcs/driver rport object	    */
 	u16	fw_handle;	/*  firmware rport handle	    */
 	u16	rport_tag;	/*  BFA rport tag		    */
+<<<<<<< HEAD
 	u8	lun_mask;	/*  LUN mask flag		    */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfa_rport_info_s rport_info; /*  rport info from fcs/driver */
 	struct bfa_reqq_wait_s reqq_wait; /*  to wait for room in reqq     */
 	struct bfa_cb_qe_s hcb_qe;	/*  BFA callback qelem		    */
@@ -316,7 +374,11 @@ struct bfa_rport_s {
  */
 
 #define BFA_UF_MIN	(4)
+<<<<<<< HEAD
 #define BFA_UF_MAX	(256)
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct bfa_uf_s {
 	struct list_head	qe;	/*  queue element		*/
@@ -344,6 +406,7 @@ struct bfa_uf_s {
  */
 typedef void (*bfa_cb_uf_recv_t) (void *cbarg, struct bfa_uf_s *uf);
 
+<<<<<<< HEAD
 #define BFA_UF_BUFSZ	(2 * 1024 + 256)
 
 struct bfa_uf_buf_s {
@@ -356,17 +419,25 @@ struct bfa_uf_buf_s {
 /* Max UF dma segs required */
 #define BFA_UF_DMA_SEGS BFI_MEM_DMA_NSEGS(BFA_UF_MAX, BFA_PER_UF_DMA_SZ)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct bfa_uf_mod_s {
 	struct bfa_s *bfa;		/*  back pointer to BFA */
 	struct bfa_uf_s *uf_list;	/*  array of UFs */
 	u16	num_ufs;	/*  num unsolicited rx frames */
 	struct list_head	uf_free_q;	/*  free UFs */
 	struct list_head	uf_posted_q;	/*  UFs posted to IOC */
+<<<<<<< HEAD
 	struct list_head	uf_unused_q;	/*  unused UF's */
+=======
+	struct bfa_uf_buf_s *uf_pbs_kva;	/*  list UF bufs request pld */
+	u64	uf_pbs_pa;	/*  phy addr for UF bufs */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfi_uf_buf_post_s *uf_buf_posts;
 	/*  pre-built UF post msgs */
 	bfa_cb_uf_recv_t ufrecv;	/*  uf recv handler function */
 	void		*cbarg;		/*  uf receive handler arg */
+<<<<<<< HEAD
 	struct bfa_mem_dma_s	dma_seg[BFA_UF_DMA_SEGS];
 	struct bfa_mem_kva_s	kva_seg;
 };
@@ -379,6 +450,26 @@ struct bfa_uf_mod_s {
 
 void	bfa_uf_isr(struct bfa_s *bfa, struct bfi_msg_s *msg);
 void	bfa_uf_res_recfg(struct bfa_s *bfa, u16 num_uf_fw);
+=======
+};
+
+#define BFA_UF_MOD(__bfa)	(&(__bfa)->modules.uf_mod)
+
+#define ufm_pbs_pa(_ufmod, _uftag)					\
+	((_ufmod)->uf_pbs_pa + sizeof(struct bfa_uf_buf_s) * (_uftag))
+
+void	bfa_uf_isr(struct bfa_s *bfa, struct bfi_msg_s *msg);
+
+#define BFA_UF_BUFSZ	(2 * 1024 + 256)
+
+/*
+ * @todo private
+ */
+struct bfa_uf_buf_s {
+	u8		d[BFA_UF_BUFSZ];
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * LPS - bfa lport login/logout service interface
@@ -387,8 +478,12 @@ struct bfa_lps_s {
 	struct list_head	qe;	/*  queue element		*/
 	struct bfa_s	*bfa;		/*  parent bfa instance	*/
 	bfa_sm_t	sm;		/*  finite state machine	*/
+<<<<<<< HEAD
 	u8		bfa_tag;	/*  lport tag		*/
 	u8		fw_tag;		/*  lport fw tag                */
+=======
+	u8		lp_tag;		/*  lport tag			*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8		reqq;		/*  lport request queue	*/
 	u8		alpa;		/*  ALPA for loop topologies	*/
 	u32	lp_pid;		/*  lport port ID		*/
@@ -401,11 +496,16 @@ struct bfa_lps_s {
 	bfa_status_t	status;		/*  login status		*/
 	u16		pdusz;		/*  max receive PDU size	*/
 	u16		pr_bbcred;	/*  BB_CREDIT from peer		*/
+<<<<<<< HEAD
 	u8		pr_bbscn;	/*  BB_SCN from peer		*/
 	u8		bb_scn;		/*  local BB_SCN		*/
 	u8		lsrjt_rsn;	/*  LSRJT reason		*/
 	u8		lsrjt_expl;	/*  LSRJT explanation		*/
 	u8		lun_mask;	/*  LUN mask flag		*/
+=======
+	u8		lsrjt_rsn;	/*  LSRJT reason		*/
+	u8		lsrjt_expl;	/*  LSRJT explanation		*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wwn_t		pwwn;		/*  port wwn of lport		*/
 	wwn_t		nwwn;		/*  node wwn of lport		*/
 	wwn_t		pr_pwwn;	/*  port wwn of lport peer	*/
@@ -422,15 +522,23 @@ struct bfa_lps_s {
 struct bfa_lps_mod_s {
 	struct list_head		lps_free_q;
 	struct list_head		lps_active_q;
+<<<<<<< HEAD
 	struct list_head		lps_login_q;
 	struct bfa_lps_s	*lps_arr;
 	int			num_lps;
 	struct bfa_mem_kva_s	kva_seg;
+=======
+	struct bfa_lps_s	*lps_arr;
+	int			num_lps;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define BFA_LPS_MOD(__bfa)		(&(__bfa)->modules.lps_mod)
 #define BFA_LPS_FROM_TAG(__mod, __tag)	(&(__mod)->lps_arr[__tag])
+<<<<<<< HEAD
 #define BFA_MEM_LPS_KVA(__bfa)	(&(BFA_LPS_MOD(__bfa)->kva_seg))
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * external functions
@@ -443,6 +551,10 @@ void	bfa_lps_isr(struct bfa_s *bfa, struct bfi_msg_s *msg);
  */
 
 #define BFA_FCPORT(_bfa)	(&((_bfa)->modules.port))
+<<<<<<< HEAD
+=======
+typedef void (*bfa_cb_port_t) (void *cbarg, enum bfa_status status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Link notification data structure
@@ -496,6 +608,7 @@ struct bfa_fcport_s {
 	u8			*stats_kva;
 	u64		stats_pa;
 	union bfa_fcport_stats_u *stats;
+<<<<<<< HEAD
 	bfa_status_t		stats_status; /*  stats/statsclr status */
 	struct list_head	stats_pending_q;
 	struct list_head	statsclr_pending_q;
@@ -512,6 +625,23 @@ struct bfa_fcport_s {
 
 #define BFA_FCPORT_MOD(__bfa)	(&(__bfa)->modules.fcport)
 #define BFA_MEM_FCPORT_DMA(__bfa) (&(BFA_FCPORT_MOD(__bfa)->fcport_dma))
+=======
+	union bfa_fcport_stats_u *stats_ret; /*  driver stats location */
+	bfa_status_t		stats_status; /*  stats/statsclr status */
+	bfa_boolean_t		stats_busy; /*  outstanding stats/statsclr */
+	bfa_boolean_t		stats_qfull;
+	u32		stats_reset_time; /*  stats reset time stamp */
+	bfa_cb_port_t		stats_cbfn; /*  driver callback function */
+	void			*stats_cbarg; /* *!< user callback arg */
+	bfa_boolean_t		diag_busy; /*  diag busy status */
+	bfa_boolean_t		beacon; /*  port beacon status */
+	bfa_boolean_t		link_e2e_beacon; /*  link beacon status */
+	struct bfa_fcport_trunk_s trunk;
+	u16		fcoe_vlan;
+};
+
+#define BFA_FCPORT_MOD(__bfa)	(&(__bfa)->modules.fcport)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * protected functions
@@ -545,6 +675,7 @@ void bfa_fcport_event_register(struct bfa_s *bfa,
 bfa_boolean_t bfa_fcport_is_disabled(struct bfa_s *bfa);
 enum bfa_port_speed bfa_fcport_get_ratelim_speed(struct bfa_s *bfa);
 
+<<<<<<< HEAD
 void bfa_fcport_set_tx_bbcredit(struct bfa_s *bfa, u16 tx_bbcredit, u8 bb_scn);
 bfa_boolean_t     bfa_fcport_is_ratelim(struct bfa_s *bfa);
 void bfa_fcport_beacon(void *dev, bfa_boolean_t beacon,
@@ -558,6 +689,17 @@ bfa_boolean_t bfa_fcport_is_qos_enabled(struct bfa_s *bfa);
 bfa_boolean_t bfa_fcport_is_trunk_enabled(struct bfa_s *bfa);
 bfa_status_t bfa_fcport_is_pbcdisabled(struct bfa_s *bfa);
 void bfa_fcport_cfg_faa(struct bfa_s *bfa, u8 state);
+=======
+void bfa_fcport_set_tx_bbcredit(struct bfa_s *bfa, u16 tx_bbcredit);
+bfa_boolean_t     bfa_fcport_is_ratelim(struct bfa_s *bfa);
+bfa_boolean_t	bfa_fcport_is_linkup(struct bfa_s *bfa);
+bfa_status_t bfa_fcport_get_stats(struct bfa_s *bfa,
+				  union bfa_fcport_stats_u *stats,
+				  bfa_cb_port_t cbfn, void *cbarg);
+bfa_status_t bfa_fcport_clear_stats(struct bfa_s *bfa, bfa_cb_port_t cbfn,
+				    void *cbarg);
+bfa_boolean_t bfa_fcport_is_qos_enabled(struct bfa_s *bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * bfa rport API functions
@@ -576,6 +718,7 @@ void bfa_cb_rport_qos_scn_prio(void *rport,
 			       struct bfa_rport_qos_attr_s new_qos_attr);
 
 /*
+<<<<<<< HEAD
  *	Rport LUN masking related
  */
 #define BFA_RPORT_TAG_INVALID	0xffff
@@ -584,6 +727,8 @@ void	bfa_rport_set_lunmask(struct bfa_s *bfa, struct bfa_rport_s *rp);
 void	bfa_rport_unset_lunmask(struct bfa_s *bfa, struct bfa_rport_s *rp);
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * bfa fcxp API functions
  */
 struct bfa_fcxp_s *bfa_fcxp_alloc(void *bfad_fcxp, struct bfa_s *bfa,
@@ -619,7 +764,10 @@ void bfa_fcxp_send(struct bfa_fcxp_s *fcxp, struct bfa_rport_s *rport,
 bfa_status_t bfa_fcxp_abort(struct bfa_fcxp_s *fcxp);
 u32 bfa_fcxp_get_reqbufsz(struct bfa_fcxp_s *fcxp);
 u32 bfa_fcxp_get_maxrsp(struct bfa_s *bfa);
+<<<<<<< HEAD
 void bfa_fcxp_res_recfg(struct bfa_s *bfa, u16 num_fcxp_fw);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void *
 bfa_uf_get_frmbuf(struct bfa_uf_s *uf)
@@ -649,12 +797,19 @@ struct bfa_lps_s *bfa_lps_alloc(struct bfa_s *bfa);
 void bfa_lps_delete(struct bfa_lps_s *lps);
 void bfa_lps_flogi(struct bfa_lps_s *lps, void *uarg, u8 alpa,
 		   u16 pdusz, wwn_t pwwn, wwn_t nwwn,
+<<<<<<< HEAD
 		   bfa_boolean_t auth_en, u8 bb_scn);
+=======
+		   bfa_boolean_t auth_en);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void bfa_lps_fdisc(struct bfa_lps_s *lps, void *uarg, u16 pdusz,
 		   wwn_t pwwn, wwn_t nwwn);
 void bfa_lps_fdisclogo(struct bfa_lps_s *lps);
 void bfa_lps_set_n2n_pid(struct bfa_lps_s *lps, u32 n2n_pid);
+<<<<<<< HEAD
 u8 bfa_lps_get_fwtag(struct bfa_s *bfa, u8 lp_tag);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u32 bfa_lps_get_base_pid(struct bfa_s *bfa);
 u8 bfa_lps_get_tag_from_pid(struct bfa_s *bfa, u32 pid);
 void bfa_cb_lps_flogi_comp(void *bfad, void *uarg, bfa_status_t status);
@@ -662,6 +817,7 @@ void bfa_cb_lps_fdisc_comp(void *bfad, void *uarg, bfa_status_t status);
 void bfa_cb_lps_fdisclogo_comp(void *bfad, void *uarg);
 void bfa_cb_lps_cvl_event(void *bfad, void *uarg);
 
+<<<<<<< HEAD
 /* FAA specific APIs */
 bfa_status_t bfa_faa_query(struct bfa_s *bfa, struct bfa_faa_attr_s *attr,
 			bfa_cb_iocfc_t cbfn, void *cbarg);
@@ -711,4 +867,6 @@ bfa_status_t	bfa_fcdiag_queuetest(struct bfa_s *bfa, u32 ignore,
 			bfa_cb_diag_t cbfn, void *cbarg);
 bfa_status_t	bfa_fcdiag_lb_is_running(struct bfa_s *bfa);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __BFA_SVC_H__ */

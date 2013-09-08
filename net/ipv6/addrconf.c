@@ -87,7 +87,10 @@
 
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Set to 3 to get tracing... */
 #define ACONF_DEBUG 2
@@ -375,8 +378,13 @@ static struct inet6_dev * ipv6_add_dev(struct net_device *dev)
 			"%s(): cannot allocate memory for statistics; dev=%s.\n",
 			__func__, dev->name));
 		neigh_parms_release(&nd_tbl, ndev->nd_parms);
+<<<<<<< HEAD
 		dev_put(dev);
 		kfree(ndev);
+=======
+		ndev->dead = 1;
+		in6_dev_finish_destroy(ndev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 	}
 
@@ -435,7 +443,11 @@ static struct inet6_dev * ipv6_add_dev(struct net_device *dev)
 	ipv6_dev_mc_inc(dev, &in6addr_linklocal_allnodes);
 
 	/* Join all-router multicast group if forwarding is set */
+<<<<<<< HEAD
 	if (ndev->cnf.forwarding && (dev->flags & IFF_MULTICAST))
+=======
+	if (ndev->cnf.forwarding && dev && (dev->flags & IFF_MULTICAST))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ipv6_dev_mc_inc(dev, &in6addr_linklocal_allrouters);
 
 	return ndev;
@@ -493,7 +505,12 @@ static void addrconf_forward_change(struct net *net, __s32 newf)
 	struct net_device *dev;
 	struct inet6_dev *idev;
 
+<<<<<<< HEAD
 	for_each_netdev(net, dev) {
+=======
+	rcu_read_lock();
+	for_each_netdev_rcu(net, dev) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		idev = __in6_dev_get(dev);
 		if (idev) {
 			int changed = (!idev->cnf.forwarding) ^ (!newf);
@@ -502,6 +519,7 @@ static void addrconf_forward_change(struct net *net, __s32 newf)
 				dev_forward_change(idev);
 		}
 	}
+<<<<<<< HEAD
 }
 
 static int addrconf_fixup_forwarding(struct ctl_table *table, int *p, int newf)
@@ -529,6 +547,34 @@ static int addrconf_fixup_forwarding(struct ctl_table *table, int *p, int newf)
 	rtnl_unlock();
 
 	if (newf)
+=======
+	rcu_read_unlock();
+}
+
+static int addrconf_fixup_forwarding(struct ctl_table *table, int *p, int old)
+{
+	struct net *net;
+
+	net = (struct net *)table->extra2;
+	if (p == &net->ipv6.devconf_dflt->forwarding)
+		return 0;
+
+	if (!rtnl_trylock()) {
+		/* Restore the original values before restarting */
+		*p = old;
+		return restart_syscall();
+	}
+
+	if (p == &net->ipv6.devconf_all->forwarding) {
+		__s32 newf = net->ipv6.devconf_all->forwarding;
+		net->ipv6.devconf_dflt->forwarding = newf;
+		addrconf_forward_change(net, newf);
+	} else if ((!*p) ^ (!old))
+		dev_forward_change((struct inet6_dev *)table->extra1);
+	rtnl_unlock();
+
+	if (*p)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt6_purge_dflt_routers(net);
 	return 1;
 }
@@ -634,13 +680,21 @@ ipv6_add_addr(struct inet6_dev *idev, const struct in6_addr *addr, int pfxlen,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	rt = addrconf_dst_alloc(idev, addr, false);
+=======
+	rt = addrconf_dst_alloc(idev, addr, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(rt)) {
 		err = PTR_ERR(rt);
 		goto out;
 	}
 
+<<<<<<< HEAD
 	ifa->addr = *addr;
+=======
+	ipv6_addr_copy(&ifa->addr, addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_init(&ifa->lock);
 	spin_lock_init(&ifa->state_lock);
@@ -654,6 +708,19 @@ ipv6_add_addr(struct inet6_dev *idev, const struct in6_addr *addr, int pfxlen,
 
 	ifa->rt = rt;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * part one of RFC 4429, section 3.3
+	 * We should not configure an address as
+	 * optimistic if we do not yet know the link
+	 * layer address of our nexhop router
+	 */
+
+	if (dst_get_neighbour_raw(&rt->dst) == NULL)
+		ifa->flags &= ~IFA_F_OPTIMISTIC;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ifa->idev = idev;
 	in6_dev_hold(idev);
 	/* For caller */
@@ -793,6 +860,7 @@ static void ipv6_del_addr(struct inet6_ifaddr *ifp)
 		struct in6_addr prefix;
 		struct rt6_info *rt;
 		struct net *net = dev_net(ifp->idev->dev);
+<<<<<<< HEAD
 		struct flowi6 fl6 = {};
 
 		ipv6_addr_prefix(&prefix, &ifp->addr, ifp->prefix_len);
@@ -803,11 +871,22 @@ static void ipv6_del_addr(struct inet6_ifaddr *ifp)
 
 		if (rt != net->ipv6.ip6_null_entry &&
 		    addrconf_is_prefix_route(rt)) {
+=======
+		ipv6_addr_prefix(&prefix, &ifp->addr, ifp->prefix_len);
+		rt = rt6_lookup(net, &prefix, NULL, ifp->idev->dev->ifindex, 1);
+
+		if (rt && addrconf_is_prefix_route(rt)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (onlink == 0) {
 				ip6_del_rt(rt);
 				rt = NULL;
 			} else if (!(rt->rt6i_flags & RTF_EXPIRES)) {
+<<<<<<< HEAD
 				rt6_set_expires(rt, expires);
+=======
+				rt->rt6i_expires = expires;
+				rt->rt6i_flags |= RTF_EXPIRES;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 		dst_release(&rt->dst);
@@ -910,10 +989,19 @@ retry:
 	if (ifp->flags & IFA_F_OPTIMISTIC)
 		addr_flags |= IFA_F_OPTIMISTIC;
 
+<<<<<<< HEAD
 	ift = ipv6_add_addr(idev, &addr, tmp_plen,
 			    ipv6_addr_type(&addr)&IPV6_ADDR_SCOPE_MASK,
 			    addr_flags);
 	if (IS_ERR(ift)) {
+=======
+	ift = !max_addresses ||
+	      ipv6_count_addresses(idev) < max_addresses ?
+		ipv6_add_addr(idev, &addr, tmp_plen,
+			      ipv6_addr_type(&addr)&IPV6_ADDR_SCOPE_MASK,
+			      addr_flags) : NULL;
+	if (!ift || IS_ERR(ift)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		in6_ifa_put(ifp);
 		in6_dev_put(idev);
 		printk(KERN_INFO
@@ -1225,12 +1313,17 @@ try_nextdev:
 	if (!hiscore->ifa)
 		return -EADDRNOTAVAIL;
 
+<<<<<<< HEAD
 	*saddr = hiscore->ifa->addr;
+=======
+	ipv6_addr_copy(saddr, &hiscore->ifa->addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	in6_ifa_put(hiscore->ifa);
 	return 0;
 }
 EXPORT_SYMBOL(ipv6_dev_get_saddr);
 
+<<<<<<< HEAD
 int __ipv6_get_lladdr(struct inet6_dev *idev, struct in6_addr *addr,
 		      unsigned char banned_flags)
 {
@@ -1248,6 +1341,8 @@ int __ipv6_get_lladdr(struct inet6_dev *idev, struct in6_addr *addr,
 	return err;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int ipv6_get_lladdr(struct net_device *dev, struct in6_addr *addr,
 		    unsigned char banned_flags)
 {
@@ -1257,8 +1352,22 @@ int ipv6_get_lladdr(struct net_device *dev, struct in6_addr *addr,
 	rcu_read_lock();
 	idev = __in6_dev_get(dev);
 	if (idev) {
+<<<<<<< HEAD
 		read_lock_bh(&idev->lock);
 		err = __ipv6_get_lladdr(idev, addr, banned_flags);
+=======
+		struct inet6_ifaddr *ifp;
+
+		read_lock_bh(&idev->lock);
+		list_for_each_entry(ifp, &idev->addr_list, if_list) {
+			if (ifp->scope == IFA_LINK &&
+			    !(ifp->flags & banned_flags)) {
+				ipv6_addr_copy(addr, &ifp->addr);
+				err = 0;
+				break;
+			}
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		read_unlock_bh(&idev->lock);
 	}
 	rcu_read_unlock();
@@ -1476,8 +1585,11 @@ void addrconf_leave_solict(struct inet6_dev *idev, const struct in6_addr *addr)
 static void addrconf_join_anycast(struct inet6_ifaddr *ifp)
 {
 	struct in6_addr addr;
+<<<<<<< HEAD
 	if (ifp->prefix_len == 127) /* RFC 6164 */
 		return;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ipv6_addr_prefix(&addr, &ifp->addr, ifp->prefix_len);
 	if (ipv6_addr_any(&addr))
 		return;
@@ -1487,8 +1599,11 @@ static void addrconf_join_anycast(struct inet6_ifaddr *ifp)
 static void addrconf_leave_anycast(struct inet6_ifaddr *ifp)
 {
 	struct in6_addr addr;
+<<<<<<< HEAD
 	if (ifp->prefix_len == 127) /* RFC 6164 */
 		return;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ipv6_addr_prefix(&addr, &ifp->addr, ifp->prefix_len);
 	if (ipv6_addr_any(&addr))
 		return;
@@ -1569,11 +1684,14 @@ static int addrconf_ifid_sit(u8 *eui, struct net_device *dev)
 	return -1;
 }
 
+<<<<<<< HEAD
 static int addrconf_ifid_gre(u8 *eui, struct net_device *dev)
 {
 	return __ipv6_isatap_ifid(eui, *(__be32 *)dev->dev_addr);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ipv6_generate_eui64(u8 *eui, struct net_device *dev)
 {
 	switch (dev->type) {
@@ -1587,8 +1705,11 @@ static int ipv6_generate_eui64(u8 *eui, struct net_device *dev)
 		return addrconf_ifid_infiniband(eui, dev);
 	case ARPHRD_SIT:
 		return addrconf_ifid_sit(eui, dev);
+<<<<<<< HEAD
 	case ARPHRD_IPGRE:
 		return addrconf_ifid_gre(eui, dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return -1;
 }
@@ -1705,7 +1826,11 @@ addrconf_prefix_route(struct in6_addr *pfx, int plen, struct net_device *dev,
 		.fc_protocol = RTPROT_KERNEL,
 	};
 
+<<<<<<< HEAD
 	cfg.fc_dst = *pfx;
+=======
+	ipv6_addr_copy(&cfg.fc_dst, pfx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Prevent useless cloning on PtP SIT.
 	   This thing is done here expecting that the whole
@@ -1719,6 +1844,7 @@ addrconf_prefix_route(struct in6_addr *pfx, int plen, struct net_device *dev,
 	ip6_route_add(&cfg);
 }
 
+<<<<<<< HEAD
 
 static struct rt6_info *addrconf_get_prefix_route(const struct in6_addr *pfx,
 						  int plen,
@@ -1753,6 +1879,8 @@ out:
 }
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Create "default" multicast route to the interface */
 
 static void addrconf_add_mroute(struct net_device *dev)
@@ -1810,15 +1938,23 @@ static struct inet6_dev *addrconf_add_dev(struct net_device *dev)
 		return ERR_PTR(-EACCES);
 
 	/* Add default multicast route */
+<<<<<<< HEAD
 	if (!(dev->flags & IFF_LOOPBACK))
 		addrconf_add_mroute(dev);
+=======
+	addrconf_add_mroute(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Add link local route */
 	addrconf_add_lroute(dev);
 	return idev;
 }
 
+<<<<<<< HEAD
 void addrconf_prefix_rcv(struct net_device *dev, u8 *opt, int len, bool sllao)
+=======
+void addrconf_prefix_rcv(struct net_device *dev, u8 *opt, int len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct prefix_info *pinfo;
 	__u32 valid_lft;
@@ -1883,6 +2019,7 @@ void addrconf_prefix_rcv(struct net_device *dev, u8 *opt, int len, bool sllao)
 		if (addrconf_finite_timeout(rt_expires))
 			rt_expires *= HZ;
 
+<<<<<<< HEAD
 		rt = addrconf_get_prefix_route(&pinfo->prefix,
 					       pinfo->prefix_len,
 					       dev,
@@ -1890,15 +2027,29 @@ void addrconf_prefix_rcv(struct net_device *dev, u8 *opt, int len, bool sllao)
 					       RTF_GATEWAY | RTF_DEFAULT);
 
 		if (rt) {
+=======
+		rt = rt6_lookup(net, &pinfo->prefix, NULL,
+				dev->ifindex, 1);
+
+		if (rt && addrconf_is_prefix_route(rt)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Autoconf prefix route */
 			if (valid_lft == 0) {
 				ip6_del_rt(rt);
 				rt = NULL;
 			} else if (addrconf_finite_timeout(rt_expires)) {
 				/* not infinity */
+<<<<<<< HEAD
 				rt6_set_expires(rt, jiffies + rt_expires);
 			} else {
 				rt6_clean_expires(rt);
+=======
+				rt->rt6i_expires = jiffies + rt_expires;
+				rt->rt6i_flags |= RTF_EXPIRES;
+			} else {
+				rt->rt6i_flags &= ~RTF_EXPIRES;
+				rt->rt6i_expires = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		} else if (valid_lft) {
 			clock_t expires = 0;
@@ -1947,7 +2098,11 @@ ok:
 
 #ifdef CONFIG_IPV6_OPTIMISTIC_DAD
 			if (in6_dev->cnf.optimistic_dad &&
+<<<<<<< HEAD
 			    !net->ipv6.devconf_all->forwarding && sllao)
+=======
+			    !net->ipv6.devconf_all->forwarding)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				addr_flags = IFA_F_OPTIMISTIC;
 #endif
 
@@ -2405,9 +2560,12 @@ static void sit_add_v4_addrs(struct inet6_dev *idev)
 static void init_loopback(struct net_device *dev)
 {
 	struct inet6_dev  *idev;
+<<<<<<< HEAD
 	struct net_device *sp_dev;
 	struct inet6_ifaddr *sp_ifa;
 	struct rt6_info *sp_rt;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* ::1 */
 
@@ -2419,6 +2577,7 @@ static void init_loopback(struct net_device *dev)
 	}
 
 	add_addr(idev, &in6addr_loopback, 128, IFA_HOST);
+<<<<<<< HEAD
 
 	/* Add routes to other interface's IPv6 addresses */
 	for_each_netdev(dev_net(dev), sp_dev) {
@@ -2448,6 +2607,8 @@ static void init_loopback(struct net_device *dev)
 		}
 		read_unlock_bh(&idev->lock);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void addrconf_add_linklocal(struct inet6_dev *idev, const struct in6_addr *addr)
@@ -2535,6 +2696,7 @@ static void addrconf_sit_config(struct net_device *dev)
 }
 #endif
 
+<<<<<<< HEAD
 #if defined(CONFIG_NET_IPGRE) || defined(CONFIG_NET_IPGRE_MODULE)
 static void addrconf_gre_config(struct net_device *dev)
 {
@@ -2558,6 +2720,8 @@ static void addrconf_gre_config(struct net_device *dev)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int
 ipv6_inherit_linklocal(struct inet6_dev *idev, struct net_device *link_dev)
 {
@@ -2674,11 +2838,14 @@ static int addrconf_notify(struct notifier_block *this, unsigned long event,
 			addrconf_sit_config(dev);
 			break;
 #endif
+<<<<<<< HEAD
 #if defined(CONFIG_NET_IPGRE) || defined(CONFIG_NET_IPGRE_MODULE)
 		case ARPHRD_IPGRE:
 			addrconf_gre_config(dev);
 			break;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case ARPHRD_TUNNEL6:
 			addrconf_ip6_tnl_config(dev);
 			break;
@@ -2807,7 +2974,11 @@ static int addrconf_ifdown(struct net_device *dev, int how)
 		idev->dead = 1;
 
 		/* protected by rtnl_lock */
+<<<<<<< HEAD
 		RCU_INIT_POINTER(dev->ip6_ptr, NULL);
+=======
+		rcu_assign_pointer(dev->ip6_ptr, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Step 1.5: remove snmp6 entry */
 		snmp6_unregister_dev(idev);
@@ -3070,12 +3241,21 @@ static void addrconf_dad_completed(struct inet6_ifaddr *ifp)
 
 	ipv6_ifa_notify(RTM_NEWADDR, ifp);
 
+<<<<<<< HEAD
 	/* If added prefix is link local and we are prepared to process
 	   router advertisements, start sending router solicitations.
 	 */
 
 	if (((ifp->idev->cnf.accept_ra == 1 && !ifp->idev->cnf.forwarding) ||
 	     ifp->idev->cnf.accept_ra == 2) &&
+=======
+	/* If added prefix is link local and forwarding is off,
+	   start sending router solicitations.
+	 */
+
+	if ((ifp->idev->cnf.forwarding == 0 ||
+	     ifp->idev->cnf.forwarding == 2) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    ifp->idev->cnf.rtr_solicits > 0 &&
 	    (dev->flags&IFF_LOOPBACK) == 0 &&
 	    (ipv6_addr_type(&ifp->addr) & IPV6_ADDR_LINKLOCAL)) {
@@ -3113,14 +3293,21 @@ static void addrconf_dad_run(struct inet6_dev *idev)
 struct if6_iter_state {
 	struct seq_net_private p;
 	int bucket;
+<<<<<<< HEAD
 	int offset;
 };
 
 static struct inet6_ifaddr *if6_get_first(struct seq_file *seq, loff_t pos)
+=======
+};
+
+static struct inet6_ifaddr *if6_get_first(struct seq_file *seq)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inet6_ifaddr *ifa = NULL;
 	struct if6_iter_state *state = seq->private;
 	struct net *net = seq_file_net(seq);
+<<<<<<< HEAD
 	int p = 0;
 
 	/* initial bucket if pos is 0 */
@@ -3147,6 +3334,15 @@ static struct inet6_ifaddr *if6_get_first(struct seq_file *seq, loff_t pos)
 		/* prepare for next bucket */
 		state->offset = 0;
 		p = 0;
+=======
+
+	for (state->bucket = 0; state->bucket < IN6_ADDR_HSIZE; ++state->bucket) {
+		struct hlist_node *n;
+		hlist_for_each_entry_rcu_bh(ifa, n, &inet6_addr_lst[state->bucket],
+					 addr_lst)
+			if (net_eq(dev_net(ifa->idev->dev), net))
+				return ifa;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return NULL;
 }
@@ -3158,6 +3354,7 @@ static struct inet6_ifaddr *if6_get_next(struct seq_file *seq,
 	struct net *net = seq_file_net(seq);
 	struct hlist_node *n = &ifa->addr_lst;
 
+<<<<<<< HEAD
 	hlist_for_each_entry_continue_rcu_bh(ifa, n, addr_lst) {
 		if (!net_eq(dev_net(ifa->idev->dev), net))
 			continue;
@@ -3173,17 +3370,45 @@ static struct inet6_ifaddr *if6_get_next(struct seq_file *seq,
 				continue;
 			state->offset++;
 			return ifa;
+=======
+	hlist_for_each_entry_continue_rcu_bh(ifa, n, addr_lst)
+		if (net_eq(dev_net(ifa->idev->dev), net))
+			return ifa;
+
+	while (++state->bucket < IN6_ADDR_HSIZE) {
+		hlist_for_each_entry_rcu_bh(ifa, n,
+				     &inet6_addr_lst[state->bucket], addr_lst) {
+			if (net_eq(dev_net(ifa->idev->dev), net))
+				return ifa;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
 	return NULL;
 }
 
+<<<<<<< HEAD
+=======
+static struct inet6_ifaddr *if6_get_idx(struct seq_file *seq, loff_t pos)
+{
+	struct inet6_ifaddr *ifa = if6_get_first(seq);
+
+	if (ifa)
+		while (pos && (ifa = if6_get_next(seq, ifa)) != NULL)
+			--pos;
+	return pos ? NULL : ifa;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void *if6_seq_start(struct seq_file *seq, loff_t *pos)
 	__acquires(rcu_bh)
 {
 	rcu_read_lock_bh();
+<<<<<<< HEAD
 	return if6_get_first(seq, *pos);
+=======
+	return if6_get_idx(seq, *pos);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void *if6_seq_next(struct seq_file *seq, void *v, loff_t *pos)
@@ -4308,6 +4533,7 @@ int addrconf_sysctl_forward(ctl_table *ctl, int write,
 	int *valp = ctl->data;
 	int val = *valp;
 	loff_t pos = *ppos;
+<<<<<<< HEAD
 	ctl_table lctl;
 	int ret;
 
@@ -4319,6 +4545,11 @@ int addrconf_sysctl_forward(ctl_table *ctl, int write,
 	lctl.data = &val;
 
 	ret = proc_dointvec(&lctl, write, buffer, lenp, ppos);
+=======
+	int ret;
+
+	ret = proc_dointvec(ctl, write, buffer, lenp, ppos);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (write)
 		ret = addrconf_fixup_forwarding(ctl, valp, val);
@@ -4356,6 +4587,7 @@ static void addrconf_disable_change(struct net *net, __s32 newf)
 	rcu_read_unlock();
 }
 
+<<<<<<< HEAD
 static int addrconf_disable_ipv6(struct ctl_table *table, int *p, int newf)
 {
 	struct net *net;
@@ -4377,6 +4609,28 @@ static int addrconf_disable_ipv6(struct ctl_table *table, int *p, int newf)
 		net->ipv6.devconf_dflt->disable_ipv6 = newf;
 		addrconf_disable_change(net, newf);
 	} else if ((!newf) ^ (!old))
+=======
+static int addrconf_disable_ipv6(struct ctl_table *table, int *p, int old)
+{
+	struct net *net;
+
+	net = (struct net *)table->extra2;
+
+	if (p == &net->ipv6.devconf_dflt->disable_ipv6)
+		return 0;
+
+	if (!rtnl_trylock()) {
+		/* Restore the original values before restarting */
+		*p = old;
+		return restart_syscall();
+	}
+
+	if (p == &net->ipv6.devconf_all->disable_ipv6) {
+		__s32 newf = net->ipv6.devconf_all->disable_ipv6;
+		net->ipv6.devconf_dflt->disable_ipv6 = newf;
+		addrconf_disable_change(net, newf);
+	} else if ((!*p) ^ (!old))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_disable_change((struct inet6_dev *)table->extra1);
 
 	rtnl_unlock();
@@ -4390,6 +4644,7 @@ int addrconf_sysctl_disable(ctl_table *ctl, int write,
 	int *valp = ctl->data;
 	int val = *valp;
 	loff_t pos = *ppos;
+<<<<<<< HEAD
 	ctl_table lctl;
 	int ret;
 
@@ -4401,6 +4656,11 @@ int addrconf_sysctl_disable(ctl_table *ctl, int write,
 	lctl.data = &val;
 
 	ret = proc_dointvec(&lctl, write, buffer, lenp, ppos);
+=======
+	int ret;
+
+	ret = proc_dointvec(ctl, write, buffer, lenp, ppos);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (write)
 		ret = addrconf_disable_ipv6(ctl, valp, val);
@@ -4724,6 +4984,7 @@ static void addrconf_sysctl_unregister(struct inet6_dev *idev)
 
 static int __net_init addrconf_init_net(struct net *net)
 {
+<<<<<<< HEAD
 	int err = -ENOMEM;
 	struct ipv6_devconf *all, *dflt;
 
@@ -4738,6 +4999,28 @@ static int __net_init addrconf_init_net(struct net *net)
 	/* these will be inherited by all namespaces */
 	dflt->autoconf = ipv6_defaults.autoconf;
 	dflt->disable_ipv6 = ipv6_defaults.disable_ipv6;
+=======
+	int err;
+	struct ipv6_devconf *all, *dflt;
+
+	err = -ENOMEM;
+	all = &ipv6_devconf;
+	dflt = &ipv6_devconf_dflt;
+
+	if (!net_eq(net, &init_net)) {
+		all = kmemdup(all, sizeof(ipv6_devconf), GFP_KERNEL);
+		if (all == NULL)
+			goto err_alloc_all;
+
+		dflt = kmemdup(dflt, sizeof(ipv6_devconf_dflt), GFP_KERNEL);
+		if (dflt == NULL)
+			goto err_alloc_dflt;
+	} else {
+		/* these will be inherited by all namespaces */
+		dflt->autoconf = ipv6_defaults.autoconf;
+		dflt->disable_ipv6 = ipv6_defaults.disable_ipv6;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	net->ipv6.devconf_all = all;
 	net->ipv6.devconf_dflt = dflt;
@@ -4859,12 +5142,17 @@ int __init addrconf_init(void)
 	if (err < 0)
 		goto errout_af;
 
+<<<<<<< HEAD
 	err = __rtnl_register(PF_INET6, RTM_GETLINK, NULL, inet6_dump_ifinfo,
 			      NULL);
+=======
+	err = __rtnl_register(PF_INET6, RTM_GETLINK, NULL, inet6_dump_ifinfo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0)
 		goto errout;
 
 	/* Only the first call to __rtnl_register can fail */
+<<<<<<< HEAD
 	__rtnl_register(PF_INET6, RTM_NEWADDR, inet6_rtm_newaddr, NULL, NULL);
 	__rtnl_register(PF_INET6, RTM_DELADDR, inet6_rtm_deladdr, NULL, NULL);
 	__rtnl_register(PF_INET6, RTM_GETADDR, inet6_rtm_getaddr,
@@ -4873,6 +5161,13 @@ int __init addrconf_init(void)
 			inet6_dump_ifmcaddr, NULL);
 	__rtnl_register(PF_INET6, RTM_GETANYCAST, NULL,
 			inet6_dump_ifacaddr, NULL);
+=======
+	__rtnl_register(PF_INET6, RTM_NEWADDR, inet6_rtm_newaddr, NULL);
+	__rtnl_register(PF_INET6, RTM_DELADDR, inet6_rtm_deladdr, NULL);
+	__rtnl_register(PF_INET6, RTM_GETADDR, inet6_rtm_getaddr, inet6_dump_ifaddr);
+	__rtnl_register(PF_INET6, RTM_GETMULTICAST, NULL, inet6_dump_ifmcaddr);
+	__rtnl_register(PF_INET6, RTM_GETANYCAST, NULL, inet6_dump_ifacaddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ipv6_addr_label_rtnl_register();
 

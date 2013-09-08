@@ -720,6 +720,7 @@ static int dt2801_dio_insn_config(struct comedi_device *dev,
 		which = 1;
 
 	/* configure */
+<<<<<<< HEAD
 	switch (data[0]) {
 	case INSN_CONFIG_DIO_OUTPUT:
 		s->io_bits = 0xff;
@@ -734,6 +735,14 @@ static int dt2801_dio_insn_config(struct comedi_device *dev,
 		return insn->n;
 	default:
 		return -EINVAL;
+=======
+	if (data[0]) {
+		s->io_bits = 0xff;
+		dt2801_writecmd(dev, DT_C_SET_DIGOUT);
+	} else {
+		s->io_bits = 0;
+		dt2801_writecmd(dev, DT_C_SET_DIGIN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	dt2801_writedata(dev, which);
 

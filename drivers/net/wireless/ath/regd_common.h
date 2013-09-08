@@ -332,7 +332,11 @@ static struct country_code_to_enum_rd allCountries[] = {
 	{CTRY_GERMANY, ETSI1_WORLD, "DE"},
 	{CTRY_GREECE, ETSI1_WORLD, "GR"},
 	{CTRY_GREENLAND, ETSI1_WORLD, "GL"},
+<<<<<<< HEAD
 	{CTRY_GRENADA, FCC3_FCCA, "GD"},
+=======
+	{CTRY_GRENEDA, FCC3_FCCA, "GD"},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{CTRY_GUAM, FCC1_FCCA, "GU"},
 	{CTRY_GUATEMALA, FCC1_FCCA, "GT"},
 	{CTRY_HAITI, ETSI1_WORLD, "HT"},

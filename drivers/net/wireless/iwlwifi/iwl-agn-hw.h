@@ -5,7 +5,11 @@
  *
  * GPL LICENSE SUMMARY
  *
+<<<<<<< HEAD
  * Copyright(c) 2007 - 2012 Intel Corporation. All rights reserved.
+=======
+ * Copyright(c) 2007 - 2011 Intel Corporation. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -30,7 +34,11 @@
  *
  * BSD LICENSE
  *
+<<<<<<< HEAD
  * Copyright(c) 2005 - 2012 Intel Corporation. All rights reserved.
+=======
+ * Copyright(c) 2005 - 2011 Intel Corporation. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -78,6 +86,7 @@
 #define IWLAGN_RTC_DATA_SIZE (IWLAGN_RTC_DATA_UPPER_BOUND - \
 				IWLAGN_RTC_DATA_LOWER_BOUND)
 
+<<<<<<< HEAD
 #define IWL60_RTC_INST_LOWER_BOUND		(0x000000)
 #define IWL60_RTC_INST_UPPER_BOUND		(0x040000)
 #define IWL60_RTC_DATA_LOWER_BOUND		(0x800000)
@@ -95,6 +104,19 @@
 #define IWLAGN_RTS_DFAULT_RETRY_LIMIT		60
 #define IWLAGN_BAR_DFAULT_RETRY_LIMIT		60
 #define IWLAGN_LOW_RETRY_LIMIT			7
+=======
+/* RSSI to dBm */
+#define IWLAGN_RSSI_OFFSET	44
+
+/* PCI registers */
+#define PCI_CFG_RETRY_TIMEOUT	0x041
+
+/* PCI register values */
+#define PCI_CFG_LINK_CTRL_VAL_L0S_EN	0x01
+#define PCI_CFG_LINK_CTRL_VAL_L1_EN	0x02
+
+#define IWLAGN_DEFAULT_TX_RETRY  15
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Limit range of txpower output target to be between these values */
 #define IWLAGN_TX_POWER_TARGET_POWER_MIN	(0)	/* 0 dBm: 1 milliwatt */
@@ -105,7 +127,25 @@
 
 #define IWLAGN_CMD_FIFO_NUM		7
 #define IWLAGN_NUM_QUEUES		20
+<<<<<<< HEAD
 #define IWLAGN_NUM_AMPDU_QUEUES		9
 #define IWLAGN_FIRST_AMPDU_QUEUE	11
+=======
+#define IWLAGN_NUM_AMPDU_QUEUES		10
+#define IWLAGN_FIRST_AMPDU_QUEUE	10
+
+/* Fixed (non-configurable) rx data from phy */
+
+/**
+ * struct iwlagn_schedq_bc_tbl scheduler byte count table
+ *	base physical address provided by SCD_DRAM_BASE_ADDR
+ * @tfd_offset  0-12 - tx command byte count
+ *	       12-16 - station index
+ */
+struct iwlagn_scd_bc_tbl {
+	__le16 tfd_offset[TFD_QUEUE_BC_SIZE];
+} __packed;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __iwl_agn_hw_h__ */

@@ -26,7 +26,10 @@
 
 #include <linux/types.h>
 #include <linux/elf-em.h>
+<<<<<<< HEAD
 #include <linux/ptrace.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* The netlink messages for the audit system is divided into blocks:
  * 1000 - 1099 are for commanding the audit system
@@ -182,6 +185,7 @@
  * AUDIT_UNUSED_BITS is updated if need be. */
 #define AUDIT_UNUSED_BITS	0x07FFFC00
 
+<<<<<<< HEAD
 /* AUDIT_FIELD_COMPARE rule list */
 #define AUDIT_COMPARE_UID_TO_OBJ_UID	1
 #define AUDIT_COMPARE_GID_TO_OBJ_GID	2
@@ -216,6 +220,8 @@
 #define AUDIT_COMPARE_SGID_TO_FSGID	25
 
 #define AUDIT_MAX_FIELD_COMPARE		AUDIT_COMPARE_SGID_TO_FSGID
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Rule fields */
 				/* These are useful when checking the
@@ -257,9 +263,12 @@
 #define AUDIT_PERM	106
 #define AUDIT_DIR	107
 #define AUDIT_FILETYPE	108
+<<<<<<< HEAD
 #define AUDIT_OBJ_UID	109
 #define AUDIT_OBJ_GID	110
 #define AUDIT_FIELD_COMPARE	111
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AUDIT_ARG0      200
 #define AUDIT_ARG1      (AUDIT_ARG0+1)
@@ -446,24 +455,44 @@ struct audit_field {
 	void				*lsm_rule;
 };
 
+<<<<<<< HEAD
+=======
+#define AUDITSC_INVALID 0
+#define AUDITSC_SUCCESS 1
+#define AUDITSC_FAILURE 2
+#define AUDITSC_RESULT(x) ( ((long)(x))<0?AUDITSC_FAILURE:AUDITSC_SUCCESS )
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int __init audit_register_class(int class, unsigned *list);
 extern int audit_classify_syscall(int abi, unsigned syscall);
 extern int audit_classify_arch(int arch);
 #ifdef CONFIG_AUDITSYSCALL
 /* These are defined in auditsc.c */
 				/* Public API */
+<<<<<<< HEAD
 extern int  audit_alloc(struct task_struct *task);
 extern void __audit_free(struct task_struct *task);
 extern void __audit_syscall_entry(int arch,
 				  int major, unsigned long a0, unsigned long a1,
 				  unsigned long a2, unsigned long a3);
 extern void __audit_syscall_exit(int ret_success, long ret_value);
+=======
+extern void audit_finish_fork(struct task_struct *child);
+extern int  audit_alloc(struct task_struct *task);
+extern void audit_free(struct task_struct *task);
+extern void audit_syscall_entry(int arch,
+				int major, unsigned long a0, unsigned long a1,
+				unsigned long a2, unsigned long a3);
+extern void audit_syscall_exit(int failed, long return_code);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void __audit_getname(const char *name);
 extern void audit_putname(const char *name);
 extern void __audit_inode(const char *name, const struct dentry *dentry);
 extern void __audit_inode_child(const struct dentry *dentry,
 				const struct inode *parent);
+<<<<<<< HEAD
 extern void __audit_seccomp(unsigned long syscall);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void __audit_ptrace(struct task_struct *t);
 
 static inline int audit_dummy_context(void)
@@ -471,6 +500,7 @@ static inline int audit_dummy_context(void)
 	void *p = current->audit_context;
 	return !p || *(int *)p;
 }
+<<<<<<< HEAD
 static inline void audit_free(struct task_struct *task)
 {
 	if (unlikely(task->audit_context))
@@ -492,6 +522,8 @@ static inline void audit_syscall_exit(void *pt_regs)
 		__audit_syscall_exit(success, return_code);
 	}
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void audit_getname(const char *name)
 {
 	if (unlikely(!audit_dummy_context()))
@@ -508,12 +540,15 @@ static inline void audit_inode_child(const struct dentry *dentry,
 }
 void audit_core_dumps(long signr);
 
+<<<<<<< HEAD
 static inline void audit_seccomp(unsigned long syscall)
 {
 	if (unlikely(!audit_dummy_context()))
 		__audit_seccomp(syscall);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void audit_ptrace(struct task_struct *t)
 {
 	if (unlikely(!audit_dummy_context()))
@@ -524,17 +559,31 @@ static inline void audit_ptrace(struct task_struct *t)
 extern unsigned int audit_serial(void);
 extern int auditsc_get_stamp(struct audit_context *ctx,
 			      struct timespec *t, unsigned int *serial);
+<<<<<<< HEAD
 extern int  audit_set_loginuid(uid_t loginuid);
+=======
+extern int  audit_set_loginuid(struct task_struct *task, uid_t loginuid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define audit_get_loginuid(t) ((t)->loginuid)
 #define audit_get_sessionid(t) ((t)->sessionid)
 extern void audit_log_task_context(struct audit_buffer *ab);
 extern void __audit_ipc_obj(struct kern_ipc_perm *ipcp);
+<<<<<<< HEAD
 extern void __audit_ipc_set_perm(unsigned long qbytes, uid_t uid, gid_t gid, umode_t mode);
 extern int __audit_bprm(struct linux_binprm *bprm);
 extern void __audit_socketcall(int nargs, unsigned long *args);
 extern int __audit_sockaddr(int len, void *addr);
 extern void __audit_fd_pair(int fd1, int fd2);
 extern void __audit_mq_open(int oflag, umode_t mode, struct mq_attr *attr);
+=======
+extern void __audit_ipc_set_perm(unsigned long qbytes, uid_t uid, gid_t gid, mode_t mode);
+extern int audit_bprm(struct linux_binprm *bprm);
+extern void audit_socketcall(int nargs, unsigned long *args);
+extern int audit_sockaddr(int len, void *addr);
+extern void __audit_fd_pair(int fd1, int fd2);
+extern int audit_set_macxattr(const char *name);
+extern void __audit_mq_open(int oflag, mode_t mode, struct mq_attr *attr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void __audit_mq_sendrecv(mqd_t mqdes, size_t msg_len, unsigned int msg_prio, const struct timespec *abs_timeout);
 extern void __audit_mq_notify(mqd_t mqdes, const struct sigevent *notification);
 extern void __audit_mq_getsetattr(mqd_t mqdes, struct mq_attr *mqstat);
@@ -554,11 +603,16 @@ static inline void audit_fd_pair(int fd1, int fd2)
 	if (unlikely(!audit_dummy_context()))
 		__audit_fd_pair(fd1, fd2);
 }
+<<<<<<< HEAD
 static inline void audit_ipc_set_perm(unsigned long qbytes, uid_t uid, gid_t gid, umode_t mode)
+=======
+static inline void audit_ipc_set_perm(unsigned long qbytes, uid_t uid, gid_t gid, mode_t mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (unlikely(!audit_dummy_context()))
 		__audit_ipc_set_perm(qbytes, uid, gid, mode);
 }
+<<<<<<< HEAD
 static inline int audit_bprm(struct linux_binprm *bprm)
 {
 	if (unlikely(!audit_dummy_context()))
@@ -577,6 +631,9 @@ static inline int audit_sockaddr(int len, void *addr)
 	return 0;
 }
 static inline void audit_mq_open(int oflag, umode_t mode, struct mq_attr *attr)
+=======
+static inline void audit_mq_open(int oflag, mode_t mode, struct mq_attr *attr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (unlikely(!audit_dummy_context()))
 		__audit_mq_open(oflag, mode, attr);
@@ -621,11 +678,20 @@ static inline void audit_mmap_fd(int fd, int flags)
 
 extern int audit_n_rules;
 extern int audit_signals;
+<<<<<<< HEAD
 #else /* CONFIG_AUDITSYSCALL */
 #define audit_alloc(t) ({ 0; })
 #define audit_free(t) do { ; } while (0)
 #define audit_syscall_entry(ta,a,b,c,d,e) do { ; } while (0)
 #define audit_syscall_exit(r) do { ; } while (0)
+=======
+#else
+#define audit_finish_fork(t)
+#define audit_alloc(t) ({ 0; })
+#define audit_free(t) do { ; } while (0)
+#define audit_syscall_entry(ta,a,b,c,d,e) do { ; } while (0)
+#define audit_syscall_exit(f,r) do { ; } while (0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define audit_dummy_context() 1
 #define audit_getname(n) do { ; } while (0)
 #define audit_putname(n) do { ; } while (0)
@@ -634,7 +700,10 @@ extern int audit_signals;
 #define audit_inode(n,d) do { (void)(d); } while (0)
 #define audit_inode_child(i,p) do { ; } while (0)
 #define audit_core_dumps(i) do { ; } while (0)
+<<<<<<< HEAD
 #define audit_seccomp(i) do { ; } while (0)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define auditsc_get_stamp(c,t,s) (0)
 #define audit_get_loginuid(t) (-1)
 #define audit_get_sessionid(t) (-1)
@@ -645,6 +714,10 @@ extern int audit_signals;
 #define audit_socketcall(n,a) ((void)0)
 #define audit_fd_pair(n,a) ((void)0)
 #define audit_sockaddr(len, addr) ({ 0; })
+<<<<<<< HEAD
+=======
+#define audit_set_macxattr(n) do { ; } while (0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define audit_mq_open(o,m,a) ((void)0)
 #define audit_mq_sendrecv(d,l,p,t) ((void)0)
 #define audit_mq_notify(d,n) ((void)0)
@@ -655,11 +728,16 @@ extern int audit_signals;
 #define audit_ptrace(t) ((void)0)
 #define audit_n_rules 0
 #define audit_signals 0
+<<<<<<< HEAD
 #endif /* CONFIG_AUDITSYSCALL */
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_AUDIT
 /* These are defined in audit.c */
 				/* Public API */
+<<<<<<< HEAD
 extern __printf(4, 5)
 void audit_log(struct audit_context *ctx, gfp_t gfp_mask, int type,
 	       const char *fmt, ...);
@@ -667,6 +745,16 @@ void audit_log(struct audit_context *ctx, gfp_t gfp_mask, int type,
 extern struct audit_buffer *audit_log_start(struct audit_context *ctx, gfp_t gfp_mask, int type);
 extern __printf(2, 3)
 void audit_log_format(struct audit_buffer *ab, const char *fmt, ...);
+=======
+extern void		    audit_log(struct audit_context *ctx, gfp_t gfp_mask,
+				      int type, const char *fmt, ...)
+				      __attribute__((format(printf,4,5)));
+
+extern struct audit_buffer *audit_log_start(struct audit_context *ctx, gfp_t gfp_mask, int type);
+extern void		    audit_log_format(struct audit_buffer *ab,
+					     const char *fmt, ...)
+			    __attribute__((format(printf,2,3)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void		    audit_log_end(struct audit_buffer *ab);
 extern int		    audit_string_contains_control(const char *string,
 							  size_t len);
@@ -684,6 +772,7 @@ extern void		    audit_log_untrustedstring(struct audit_buffer *ab,
 						      const char *string);
 extern void		    audit_log_d_path(struct audit_buffer *ab,
 					     const char *prefix,
+<<<<<<< HEAD
 					     const struct path *path);
 extern void		    audit_log_key(struct audit_buffer *ab,
 					  char *key);
@@ -694,6 +783,12 @@ extern void 		    audit_log_secctx(struct audit_buffer *ab, u32 secid);
 #define audit_log_secctx(b,s) do { ; } while (0)
 #endif
 
+=======
+					     struct path *path);
+extern void		    audit_log_key(struct audit_buffer *ab,
+					  char *key);
+extern void		    audit_log_lost(const char *message);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int		    audit_update_lsm_rules(void);
 
 				/* Private API (for audit.c only) */
@@ -716,7 +811,10 @@ extern int audit_enabled;
 #define audit_log_untrustedstring(a,s) do { ; } while (0)
 #define audit_log_d_path(b, p, d) do { ; } while (0)
 #define audit_log_key(b, k) do { ; } while (0)
+<<<<<<< HEAD
 #define audit_log_secctx(b,s) do { ; } while (0)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define audit_enabled 0
 #endif
 #endif

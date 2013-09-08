@@ -69,6 +69,10 @@
 #include <net/rtnetlink.h>
 #include <net/sock.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 
 /* Uncomment to enable debugging */
@@ -122,7 +126,11 @@ struct tun_struct {
 	gid_t			group;
 
 	struct net_device	*dev;
+<<<<<<< HEAD
 	netdev_features_t	set_features;
+=======
+	u32			set_features;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define TUN_USER_FEATURES (NETIF_F_HW_CSUM|NETIF_F_TSO_ECN|NETIF_F_TSO| \
 			  NETIF_F_TSO6|NETIF_F_UFO)
 	struct fasync_struct	*fasync;
@@ -185,6 +193,10 @@ static void __tun_detach(struct tun_struct *tun)
 	netif_tx_lock_bh(tun->dev);
 	netif_carrier_off(tun->dev);
 	tun->tfile = NULL;
+<<<<<<< HEAD
+=======
+	tun->socket.file = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	netif_tx_unlock_bh(tun->dev);
 
 	/* Drop read queue */
@@ -357,9 +369,13 @@ static void tun_free_netdev(struct net_device *dev)
 {
 	struct tun_struct *tun = netdev_priv(dev);
 
+<<<<<<< HEAD
 	BUG_ON(!test_bit(SOCK_EXTERNALLY_ALLOCATED, &tun->socket.flags));
 
 	sk_release_kernel(tun->socket.sk);
+=======
+	sock_put(tun->socket.sk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Net device open. */
@@ -417,8 +433,11 @@ static netdev_tx_t tun_net_xmit(struct sk_buff *skb, struct net_device *dev)
 	 * for indefinite time. */
 	skb_orphan(skb);
 
+<<<<<<< HEAD
 	nf_reset(skb);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Enqueue packet */
 	skb_queue_tail(&tun->socket.sk->sk_receive_queue, skb);
 
@@ -456,8 +475,12 @@ tun_net_change_mtu(struct net_device *dev, int new_mtu)
 	return 0;
 }
 
+<<<<<<< HEAD
 static netdev_features_t tun_net_fix_features(struct net_device *dev,
 	netdev_features_t features)
+=======
+static u32 tun_net_fix_features(struct net_device *dev, u32 features)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tun_struct *tun = netdev_priv(dev);
 
@@ -499,7 +522,11 @@ static const struct net_device_ops tap_netdev_ops = {
 	.ndo_start_xmit		= tun_net_xmit,
 	.ndo_change_mtu		= tun_net_change_mtu,
 	.ndo_fix_features	= tun_net_fix_features,
+<<<<<<< HEAD
 	.ndo_set_rx_mode	= tun_net_mclist,
+=======
+	.ndo_set_multicast_list	= tun_net_mclist,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ndo_set_mac_address	= eth_mac_addr,
 	.ndo_validate_addr	= eth_validate_addr,
 #ifdef CONFIG_NET_POLL_CONTROLLER
@@ -533,7 +560,11 @@ static void tun_net_init(struct net_device *dev)
 		ether_setup(dev);
 		dev->priv_flags &= ~IFF_TX_SKB_SHARING;
 
+<<<<<<< HEAD
 		eth_hw_addr_random(dev);
+=======
+		random_ether_addr(dev->dev_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		dev->tx_queue_len = TUN_READQ_SIZE;  /* We prefer our own queue length */
 		break;
@@ -576,9 +607,15 @@ static unsigned int tun_chr_poll(struct file *file, poll_table * wait)
 
 /* prepad is the amount to reserve at front.  len is length after that.
  * linear is a hint as to how much to copy (usually headers). */
+<<<<<<< HEAD
 static struct sk_buff *tun_alloc_skb(struct tun_struct *tun,
 				     size_t prepad, size_t len,
 				     size_t linear, int noblock)
+=======
+static inline struct sk_buff *tun_alloc_skb(struct tun_struct *tun,
+					    size_t prepad, size_t len,
+					    size_t linear, int noblock)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sock *sk = tun->socket.sk;
 	struct sk_buff *skb;
@@ -604,6 +641,7 @@ static struct sk_buff *tun_alloc_skb(struct tun_struct *tun,
 }
 
 /* Get packet from user space buffer */
+<<<<<<< HEAD
 static ssize_t tun_get_user(struct tun_struct *tun,
 			    const struct iovec *iv, size_t count,
 			    int noblock)
@@ -611,13 +649,27 @@ static ssize_t tun_get_user(struct tun_struct *tun,
 	struct tun_pi pi = { 0, cpu_to_be16(ETH_P_IP) };
 	struct sk_buff *skb;
 	size_t len = count, align = NET_SKB_PAD;
+=======
+static __inline__ ssize_t tun_get_user(struct tun_struct *tun,
+				       const struct iovec *iv, size_t count,
+				       int noblock)
+{
+	struct tun_pi pi = { 0, cpu_to_be16(ETH_P_IP) };
+	struct sk_buff *skb;
+	size_t len = count, align = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct virtio_net_hdr gso = { 0 };
 	int offset = 0;
 
 	if (!(tun->flags & TUN_NO_PI)) {
+<<<<<<< HEAD
 		if (len < sizeof(pi))
 			return -EINVAL;
 		len -= sizeof(pi);
+=======
+		if ((len -= sizeof(pi)) > count)
+			return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (memcpy_fromiovecend((void *)&pi, iv, 0, sizeof(pi)))
 			return -EFAULT;
@@ -625,9 +677,14 @@ static ssize_t tun_get_user(struct tun_struct *tun,
 	}
 
 	if (tun->flags & TUN_VNET_HDR) {
+<<<<<<< HEAD
 		if (len < tun->vnet_hdr_sz)
 			return -EINVAL;
 		len -= tun->vnet_hdr_sz;
+=======
+		if ((len -= tun->vnet_hdr_sz) > count)
+			return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (memcpy_fromiovecend((void *)&gso, iv, offset, sizeof(gso)))
 			return -EFAULT;
@@ -642,7 +699,11 @@ static ssize_t tun_get_user(struct tun_struct *tun,
 	}
 
 	if ((tun->flags & TUN_TYPE_MASK) == TUN_TAP_DEV) {
+<<<<<<< HEAD
 		align += NET_IP_ALIGN;
+=======
+		align = NET_IP_ALIGN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (unlikely(len < ETH_HLEN ||
 			     (gso.hdr_len && gso.hdr_len < ETH_HLEN)))
 			return -EINVAL;
@@ -694,7 +755,11 @@ static ssize_t tun_get_user(struct tun_struct *tun,
 	case TUN_TAP_DEV:
 		skb->protocol = eth_type_trans(skb, tun->dev);
 		break;
+<<<<<<< HEAD
 	}
+=======
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (gso.gso_type != VIRTIO_NET_HDR_GSO_NONE) {
 		pr_debug("GSO!\n");
@@ -757,9 +822,15 @@ static ssize_t tun_chr_aio_write(struct kiocb *iocb, const struct iovec *iv,
 }
 
 /* Put packet to the user space buffer */
+<<<<<<< HEAD
 static ssize_t tun_put_user(struct tun_struct *tun,
 			    struct sk_buff *skb,
 			    const struct iovec *iv, int len)
+=======
+static __inline__ ssize_t tun_put_user(struct tun_struct *tun,
+				       struct sk_buff *skb,
+				       const struct iovec *iv, int len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tun_pi pi = { 0, skb->protocol };
 	ssize_t total = 0;
@@ -816,8 +887,11 @@ static ssize_t tun_put_user(struct tun_struct *tun,
 			gso.flags = VIRTIO_NET_HDR_F_NEEDS_CSUM;
 			gso.csum_start = skb_checksum_start_offset(skb);
 			gso.csum_offset = skb->csum_offset;
+<<<<<<< HEAD
 		} else if (skb->ip_summed == CHECKSUM_UNNECESSARY) {
 			gso.flags = VIRTIO_NET_HDR_F_DATA_VALID;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} /* else everything is zero */
 
 		if (unlikely(memcpy_toiovecend(iv, (void *)&gso, total,
@@ -847,8 +921,12 @@ static ssize_t tun_do_read(struct tun_struct *tun,
 
 	tun_debug(KERN_INFO, tun, "tun_chr_read\n");
 
+<<<<<<< HEAD
 	if (unlikely(!noblock))
 		add_wait_queue(&tun->wq.wait, &wait);
+=======
+	add_wait_queue(&tun->wq.wait, &wait);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (len) {
 		current->state = TASK_INTERRUPTIBLE;
 
@@ -879,8 +957,12 @@ static ssize_t tun_do_read(struct tun_struct *tun,
 	}
 
 	current->state = TASK_RUNNING;
+<<<<<<< HEAD
 	if (unlikely(!noblock))
 		remove_wait_queue(&tun->wq.wait, &wait);
+=======
+	remove_wait_queue(&tun->wq.wait, &wait);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -984,6 +1066,7 @@ static int tun_recvmsg(struct kiocb *iocb, struct socket *sock,
 	return ret;
 }
 
+<<<<<<< HEAD
 static int tun_release(struct socket *sock)
 {
 	if (sock->sk)
@@ -991,11 +1074,16 @@ static int tun_release(struct socket *sock)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Ops structure to mimic raw sockets with tun */
 static const struct proto_ops tun_socket_ops = {
 	.sendmsg = tun_sendmsg,
 	.recvmsg = tun_recvmsg,
+<<<<<<< HEAD
 	.release = tun_release,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct proto tun_proto = {
@@ -1120,6 +1208,7 @@ static int tun_set_iff(struct net *net, struct file *file, struct ifreq *ifr)
 		tun->flags = flags;
 		tun->txflt.count = 0;
 		tun->vnet_hdr_sz = sizeof(struct virtio_net_hdr);
+<<<<<<< HEAD
 		set_bit(SOCK_EXTERNALLY_ALLOCATED, &tun->socket.flags);
 
 		err = -ENOMEM;
@@ -1128,6 +1217,14 @@ static int tun_set_iff(struct net *net, struct file *file, struct ifreq *ifr)
 			goto err_free_dev;
 
 		sk_change_net(sk, net);
+=======
+
+		err = -ENOMEM;
+		sk = sk_alloc(net, AF_UNSPEC, GFP_KERNEL, &tun_proto);
+		if (!sk)
+			goto err_free_dev;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tun->socket.wq = &tun->wq;
 		init_waitqueue_head(&tun->wq.wait);
 		tun->socket.ops = &tun_socket_ops;
@@ -1188,7 +1285,11 @@ static int tun_set_iff(struct net *net, struct file *file, struct ifreq *ifr)
 	return 0;
 
  err_free_sk:
+<<<<<<< HEAD
 	tun_free_netdev(dev);
+=======
+	sock_put(sk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  err_free_dev:
 	free_netdev(dev);
  failed:
@@ -1211,7 +1312,11 @@ static int tun_get_iff(struct net *net, struct tun_struct *tun,
  * privs required. */
 static int set_offload(struct tun_struct *tun, unsigned long arg)
 {
+<<<<<<< HEAD
 	netdev_features_t features = 0;
+=======
+	u32 features = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (arg & TUN_F_CSUM) {
 		features |= NETIF_F_HW_CSUM;
@@ -1258,12 +1363,25 @@ static long __tun_chr_ioctl(struct file *file, unsigned int cmd,
 	int vnet_hdr_sz;
 	int ret;
 
+<<<<<<< HEAD
 	if (cmd == TUNSETIFF || _IOC_TYPE(cmd) == 0x89) {
 		if (copy_from_user(&ifr, argp, ifreq_len))
 			return -EFAULT;
 	} else {
 		memset(&ifr, 0, sizeof(ifr));
 	}
+=======
+#ifdef CONFIG_ANDROID_PARANOID_NETWORK
+	if (cmd != TUNGETIFF && !capable(CAP_NET_ADMIN)) {
+		return -EPERM;
+	}
+#endif
+
+	if (cmd == TUNSETIFF || _IOC_TYPE(cmd) == 0x89)
+		if (copy_from_user(&ifr, argp, ifreq_len))
+			return -EFAULT;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cmd == TUNGETFEATURES) {
 		/* Currently this just means: "what IFF flags are valid?".
 		 * This is needed because we never checked for invalid flags on
@@ -1606,6 +1724,7 @@ static void tun_get_drvinfo(struct net_device *dev, struct ethtool_drvinfo *info
 {
 	struct tun_struct *tun = netdev_priv(dev);
 
+<<<<<<< HEAD
 	strlcpy(info->driver, DRV_NAME, sizeof(info->driver));
 	strlcpy(info->version, DRV_VERSION, sizeof(info->version));
 
@@ -1615,6 +1734,18 @@ static void tun_get_drvinfo(struct net_device *dev, struct ethtool_drvinfo *info
 		break;
 	case TUN_TAP_DEV:
 		strlcpy(info->bus_info, "tap", sizeof(info->bus_info));
+=======
+	strcpy(info->driver, DRV_NAME);
+	strcpy(info->version, DRV_VERSION);
+	strcpy(info->fw_version, "N/A");
+
+	switch (tun->flags & TUN_TYPE_MASK) {
+	case TUN_TUN_DEV:
+		strcpy(info->bus_info, "tun");
+		break;
+	case TUN_TAP_DEV:
+		strcpy(info->bus_info, "tap");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 }

@@ -77,8 +77,12 @@ struct rdma_ucm_create_id {
 	__u64 uid;
 	__u64 response;
 	__u16 ps;
+<<<<<<< HEAD
 	__u8  qp_type;
 	__u8  reserved[5];
+=======
+	__u8  reserved[6];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct rdma_ucm_create_id_resp {

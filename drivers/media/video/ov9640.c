@@ -24,6 +24,7 @@
 #include <linux/i2c.h>
 #include <linux/slab.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/v4l2-mediabus.h>
 #include <linux/videodev2.h>
 
@@ -31,6 +32,12 @@
 #include <media/v4l2-chip-ident.h>
 #include <media/v4l2-common.h>
 #include <media/v4l2-ctrls.h>
+=======
+#include <linux/videodev2.h>
+#include <media/v4l2-chip-ident.h>
+#include <media/v4l2-common.h>
+#include <media/soc_camera.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "ov9640.h"
 
@@ -165,6 +172,30 @@ static enum v4l2_mbus_pixelcode ov9640_codes[] = {
 	V4L2_MBUS_FMT_RGB565_2X8_LE,
 };
 
+<<<<<<< HEAD
+=======
+static const struct v4l2_queryctrl ov9640_controls[] = {
+	{
+		.id		= V4L2_CID_VFLIP,
+		.type		= V4L2_CTRL_TYPE_BOOLEAN,
+		.name		= "Flip Vertically",
+		.minimum	= 0,
+		.maximum	= 1,
+		.step		= 1,
+		.default_value	= 0,
+	},
+	{
+		.id		= V4L2_CID_HFLIP,
+		.type		= V4L2_CTRL_TYPE_BOOLEAN,
+		.name		= "Flip Horizontally",
+		.minimum	= 0,
+		.maximum	= 1,
+		.step		= 1,
+		.default_value	= 0,
+	},
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* read a register */
 static int ov9640_reg_read(struct i2c_client *client, u8 reg, u8 *val)
 {
@@ -266,6 +297,7 @@ static int ov9640_s_stream(struct v4l2_subdev *sd, int enable)
 	return 0;
 }
 
+<<<<<<< HEAD
 /* Set status of additional camera capabilities */
 static int ov9640_s_ctrl(struct v4l2_ctrl *ctrl)
 {
@@ -285,6 +317,77 @@ static int ov9640_s_ctrl(struct v4l2_ctrl *ctrl)
 		return ov9640_reg_rmw(client, OV9640_MVFP, 0, OV9640_MVFP_H);
 	}
 	return -EINVAL;
+=======
+/* Alter bus settings on camera side */
+static int ov9640_set_bus_param(struct soc_camera_device *icd,
+				unsigned long flags)
+{
+	return 0;
+}
+
+/* Request bus settings on camera side */
+static unsigned long ov9640_query_bus_param(struct soc_camera_device *icd)
+{
+	struct soc_camera_link *icl = to_soc_camera_link(icd);
+
+	/*
+	 * REVISIT: the camera probably can do 10 bit transfers, but I don't
+	 *          have those pins connected on my hardware.
+	 */
+	unsigned long flags = SOCAM_PCLK_SAMPLE_RISING | SOCAM_MASTER |
+		SOCAM_VSYNC_ACTIVE_HIGH | SOCAM_HSYNC_ACTIVE_HIGH |
+		SOCAM_DATA_ACTIVE_HIGH | SOCAM_DATAWIDTH_8;
+
+	return soc_camera_apply_sensor_flags(icl, flags);
+}
+
+/* Get status of additional camera capabilities */
+static int ov9640_g_ctrl(struct v4l2_subdev *sd, struct v4l2_control *ctrl)
+{
+	struct ov9640_priv *priv = to_ov9640_sensor(sd);
+
+	switch (ctrl->id) {
+	case V4L2_CID_VFLIP:
+		ctrl->value = priv->flag_vflip;
+		break;
+	case V4L2_CID_HFLIP:
+		ctrl->value = priv->flag_hflip;
+		break;
+	}
+	return 0;
+}
+
+/* Set status of additional camera capabilities */
+static int ov9640_s_ctrl(struct v4l2_subdev *sd, struct v4l2_control *ctrl)
+{
+	struct i2c_client *client = v4l2_get_subdevdata(sd);
+	struct ov9640_priv *priv = to_ov9640_sensor(sd);
+
+	int ret = 0;
+
+	switch (ctrl->id) {
+	case V4L2_CID_VFLIP:
+		priv->flag_vflip = ctrl->value;
+		if (ctrl->value)
+			ret = ov9640_reg_rmw(client, OV9640_MVFP,
+							OV9640_MVFP_V, 0);
+		else
+			ret = ov9640_reg_rmw(client, OV9640_MVFP,
+							0, OV9640_MVFP_V);
+		break;
+	case V4L2_CID_HFLIP:
+		priv->flag_hflip = ctrl->value;
+		if (ctrl->value)
+			ret = ov9640_reg_rmw(client, OV9640_MVFP,
+							OV9640_MVFP_H, 0);
+		else
+			ret = ov9640_reg_rmw(client, OV9640_MVFP,
+							0, OV9640_MVFP_H);
+		break;
+	}
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Get chip identification */
@@ -578,7 +681,14 @@ static int ov9640_cropcap(struct v4l2_subdev *sd, struct v4l2_cropcap *a)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int ov9640_video_probe(struct i2c_client *client)
+=======
+
+
+static int ov9640_video_probe(struct soc_camera_device *icd,
+				struct i2c_client *client)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct v4l2_subdev *sd = i2c_get_clientdata(client);
 	struct ov9640_priv *priv = to_ov9640_sensor(sd);
@@ -587,10 +697,25 @@ static int ov9640_video_probe(struct i2c_client *client)
 	int		ret = 0;
 
 	/*
+<<<<<<< HEAD
+=======
+	 * We must have a parent by now. And it cannot be a wrong one.
+	 * So this entire test is completely redundant.
+	 */
+	if (!icd->dev.parent ||
+	    to_soc_camera_host(icd->dev.parent)->nr != icd->iface) {
+		dev_err(&client->dev, "Parent missing or invalid!\n");
+		ret = -ENODEV;
+		goto err;
+	}
+
+	/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * check and show product ID and manufacturer ID
 	 */
 
 	ret = ov9640_reg_read(client, OV9640_PID, &pid);
+<<<<<<< HEAD
 	if (!ret)
 		ret = ov9640_reg_read(client, OV9640_VER, &ver);
 	if (!ret)
@@ -599,6 +724,22 @@ static int ov9640_video_probe(struct i2c_client *client)
 		ret = ov9640_reg_read(client, OV9640_MIDL, &midl);
 	if (ret)
 		return ret;
+=======
+	if (ret)
+		goto err;
+
+	ret = ov9640_reg_read(client, OV9640_VER, &ver);
+	if (ret)
+		goto err;
+
+	ret = ov9640_reg_read(client, OV9640_MIDH, &midh);
+	if (ret)
+		goto err;
+
+	ret = ov9640_reg_read(client, OV9640_MIDL, &midl);
+	if (ret)
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (VERSION(pid, ver)) {
 	case OV9640_V2:
@@ -612,12 +753,18 @@ static int ov9640_video_probe(struct i2c_client *client)
 		break;
 	default:
 		dev_err(&client->dev, "Product ID error %x:%x\n", pid, ver);
+<<<<<<< HEAD
 		return -ENODEV;
+=======
+		ret = -ENODEV;
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	dev_info(&client->dev, "%s Product ID %0x:%0x Manufacturer ID %x:%x\n",
 		 devname, pid, ver, midh, midl);
 
+<<<<<<< HEAD
 	return v4l2_ctrl_handler_setup(&priv->hdl);
 }
 
@@ -626,6 +773,22 @@ static const struct v4l2_ctrl_ops ov9640_ctrl_ops = {
 };
 
 static struct v4l2_subdev_core_ops ov9640_core_ops = {
+=======
+err:
+	return ret;
+}
+
+static struct soc_camera_ops ov9640_ops = {
+	.set_bus_param		= ov9640_set_bus_param,
+	.query_bus_param	= ov9640_query_bus_param,
+	.controls		= ov9640_controls,
+	.num_controls		= ARRAY_SIZE(ov9640_controls),
+};
+
+static struct v4l2_subdev_core_ops ov9640_core_ops = {
+	.g_ctrl			= ov9640_g_ctrl,
+	.s_ctrl			= ov9640_s_ctrl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.g_chip_ident		= ov9640_g_chip_ident,
 #ifdef CONFIG_VIDEO_ADV_DEBUG
 	.g_register		= ov9640_get_register,
@@ -634,6 +797,7 @@ static struct v4l2_subdev_core_ops ov9640_core_ops = {
 
 };
 
+<<<<<<< HEAD
 /* Request bus settings on camera side */
 static int ov9640_g_mbus_config(struct v4l2_subdev *sd,
 				struct v4l2_mbus_config *cfg)
@@ -650,6 +814,8 @@ static int ov9640_g_mbus_config(struct v4l2_subdev *sd,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct v4l2_subdev_video_ops ov9640_video_ops = {
 	.s_stream	= ov9640_s_stream,
 	.s_mbus_fmt	= ov9640_s_fmt,
@@ -657,7 +823,11 @@ static struct v4l2_subdev_video_ops ov9640_video_ops = {
 	.enum_mbus_fmt	= ov9640_enum_fmt,
 	.cropcap	= ov9640_cropcap,
 	.g_crop		= ov9640_g_crop,
+<<<<<<< HEAD
 	.g_mbus_config	= ov9640_g_mbus_config,
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct v4l2_subdev_ops ov9640_subdev_ops = {
@@ -672,9 +842,22 @@ static int ov9640_probe(struct i2c_client *client,
 			const struct i2c_device_id *did)
 {
 	struct ov9640_priv *priv;
+<<<<<<< HEAD
 	struct soc_camera_link *icl = soc_camera_i2c_to_link(client);
 	int ret;
 
+=======
+	struct soc_camera_device *icd	= client->dev.platform_data;
+	struct soc_camera_link *icl;
+	int ret;
+
+	if (!icd) {
+		dev_err(&client->dev, "Missing soc-camera data!\n");
+		return -EINVAL;
+	}
+
+	icl = to_soc_camera_link(icd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!icl) {
 		dev_err(&client->dev, "Missing platform_data for driver\n");
 		return -EINVAL;
@@ -689,6 +872,7 @@ static int ov9640_probe(struct i2c_client *client,
 
 	v4l2_i2c_subdev_init(&priv->subdev, client, &ov9640_subdev_ops);
 
+<<<<<<< HEAD
 	v4l2_ctrl_handler_init(&priv->hdl, 2);
 	v4l2_ctrl_new_std(&priv->hdl, &ov9640_ctrl_ops,
 			V4L2_CID_VFLIP, 0, 1, 1, 0);
@@ -706,6 +890,14 @@ static int ov9640_probe(struct i2c_client *client,
 
 	if (ret) {
 		v4l2_ctrl_handler_free(&priv->hdl);
+=======
+	icd->ops	= &ov9640_ops;
+
+	ret = ov9640_video_probe(icd, client);
+
+	if (ret) {
+		icd->ops = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(priv);
 	}
 
@@ -717,8 +909,11 @@ static int ov9640_remove(struct i2c_client *client)
 	struct v4l2_subdev *sd = i2c_get_clientdata(client);
 	struct ov9640_priv *priv = to_ov9640_sensor(sd);
 
+<<<<<<< HEAD
 	v4l2_device_unregister_subdev(&priv->subdev);
 	v4l2_ctrl_handler_free(&priv->hdl);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(priv);
 	return 0;
 }
@@ -738,7 +933,22 @@ static struct i2c_driver ov9640_i2c_driver = {
 	.id_table = ov9640_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(ov9640_i2c_driver);
+=======
+static int __init ov9640_module_init(void)
+{
+	return i2c_add_driver(&ov9640_i2c_driver);
+}
+
+static void __exit ov9640_module_exit(void)
+{
+	i2c_del_driver(&ov9640_i2c_driver);
+}
+
+module_init(ov9640_module_init);
+module_exit(ov9640_module_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("SoC Camera driver for OmniVision OV96xx");
 MODULE_AUTHOR("Marek Vasut <marek.vasut@gmail.com>");

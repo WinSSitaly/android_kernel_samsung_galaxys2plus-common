@@ -41,6 +41,13 @@ struct zoran_sync {
 };
 
 
+<<<<<<< HEAD
+=======
+#define MAJOR_VERSION 0		/* driver major version */
+#define MINOR_VERSION 10	/* driver minor version */
+#define RELEASE_VERSION 0	/* release version */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ZORAN_NAME    "ZORAN"	/* name of the device */
 
 #define ZR_DEVNAME(zr) ((zr)->name)

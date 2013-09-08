@@ -26,7 +26,10 @@
 #include <linux/etherdevice.h>
 #include <linux/spinlock.h>
 #include <linux/device.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "i2400m.h"
 
 
@@ -53,6 +56,20 @@ struct dentry *debugfs_create_netdev_queue_stopped(
 				   &fops_netdev_queue_stopped);
 }
 
+<<<<<<< HEAD
+=======
+
+/*
+ * inode->i_private has the @data argument to debugfs_create_file()
+ */
+static
+int i2400m_stats_open(struct inode *inode, struct file *filp)
+{
+	filp->private_data = inode->i_private;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * We don't allow partial reads of this file, as then the reader would
  * get weirdly confused data as it is updated.
@@ -106,7 +123,11 @@ ssize_t i2400m_rx_stats_write(struct file *filp, const char __user *buffer,
 static
 const struct file_operations i2400m_rx_stats_fops = {
 	.owner =	THIS_MODULE,
+<<<<<<< HEAD
 	.open =		simple_open,
+=======
+	.open =		i2400m_stats_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.read =		i2400m_rx_stats_read,
 	.write =	i2400m_rx_stats_write,
 	.llseek =	default_llseek,
@@ -159,7 +180,11 @@ ssize_t i2400m_tx_stats_write(struct file *filp, const char __user *buffer,
 static
 const struct file_operations i2400m_tx_stats_fops = {
 	.owner =	THIS_MODULE,
+<<<<<<< HEAD
 	.open =		simple_open,
+=======
+	.open =		i2400m_stats_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.read =		i2400m_tx_stats_read,
 	.write =	i2400m_tx_stats_write,
 	.llseek =	default_llseek,

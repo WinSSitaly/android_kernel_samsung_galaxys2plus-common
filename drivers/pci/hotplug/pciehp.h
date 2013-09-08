@@ -40,10 +40,19 @@
 
 #define MY_NAME	"pciehp"
 
+<<<<<<< HEAD
 extern bool pciehp_poll_mode;
 extern int pciehp_poll_time;
 extern bool pciehp_debug;
 extern bool pciehp_force;
+=======
+extern int pciehp_poll_mode;
+extern int pciehp_poll_time;
+extern int pciehp_debug;
+extern int pciehp_force;
+extern struct workqueue_struct *pciehp_wq;
+extern struct workqueue_struct *pciehp_ordered_wq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define dbg(format, arg...)						\
 do {									\
@@ -77,7 +86,10 @@ struct slot {
 	struct hotplug_slot *hotplug_slot;
 	struct delayed_work work;	/* work for button event */
 	struct mutex lock;
+<<<<<<< HEAD
 	struct workqueue_struct *wq;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct event_info {

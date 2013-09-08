@@ -254,9 +254,13 @@ static int saa7134_i2c_xfer(struct i2c_adapter *i2c_adap,
 			addr  = msgs[i].addr << 1;
 			if (msgs[i].flags & I2C_M_RD)
 				addr |= 1;
+<<<<<<< HEAD
 			if (i > 0 && msgs[i].flags &
 			    I2C_M_RD && msgs[i].addr != 0x40 &&
 			    msgs[i].addr != 0x19) {
+=======
+			if (i > 0 && msgs[i].flags & I2C_M_RD && msgs[i].addr != 0x40) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/* workaround for a saa7134 i2c bug
 				 * needed to talk to the mt352 demux
 				 * thanks to pinnacle for the hint */
@@ -281,6 +285,7 @@ static int saa7134_i2c_xfer(struct i2c_adapter *i2c_adap,
 				d1printk("%02x", rc);
 				msgs[i].buf[byte] = rc;
 			}
+<<<<<<< HEAD
 			/* discard mysterious extra byte when reading
 			   from Samsung S5H1411.  i2c bus gets error
 			   if we do not. */
@@ -291,6 +296,8 @@ static int saa7134_i2c_xfer(struct i2c_adapter *i2c_adap,
 					goto err;
 				d1printk("%02x", rc);
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			/* write bytes */
 			d2printk("write bytes\n");

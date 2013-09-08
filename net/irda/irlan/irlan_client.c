@@ -37,6 +37,10 @@
 #include <linux/bitops.h>
 #include <net/arp.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/byteorder.h>
 
 #include <net/irda/irda.h>
@@ -197,7 +201,11 @@ static int irlan_client_ctrl_data_indication(void *instance, void *sap,
 
 	IRDA_DEBUG(2, "%s()\n", __func__ );
 
+<<<<<<< HEAD
 	self = instance;
+=======
+	self = (struct irlan_cb *) instance;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	IRDA_ASSERT(self != NULL, return -1;);
 	IRDA_ASSERT(self->magic == IRLAN_MAGIC, return -1;);
@@ -225,8 +233,13 @@ static void irlan_client_ctrl_disconnect_indication(void *instance, void *sap,
 
 	IRDA_DEBUG(4, "%s(), reason=%d\n", __func__ , reason);
 
+<<<<<<< HEAD
 	self = instance;
 	tsap = sap;
+=======
+	self = (struct irlan_cb *) instance;
+	tsap = (struct tsap_cb *) sap;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	IRDA_ASSERT(self != NULL, return;);
 	IRDA_ASSERT(self->magic == IRLAN_MAGIC, return;);
@@ -297,7 +310,11 @@ static void irlan_client_ctrl_connect_confirm(void *instance, void *sap,
 
 	IRDA_DEBUG(4, "%s()\n", __func__ );
 
+<<<<<<< HEAD
 	self = instance;
+=======
+	self = (struct irlan_cb *) instance;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	IRDA_ASSERT(self != NULL, return;);
 	IRDA_ASSERT(self->magic == IRLAN_MAGIC, return;);
@@ -541,7 +558,11 @@ void irlan_client_get_value_confirm(int result, __u16 obj_id,
 
 	IRDA_ASSERT(priv != NULL, return;);
 
+<<<<<<< HEAD
 	self = priv;
+=======
+	self = (struct irlan_cb *) priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	IRDA_ASSERT(self->magic == IRLAN_MAGIC, return;);
 
 	/* We probably don't need to make any more queries */

@@ -1,7 +1,11 @@
 #ifndef __ASM_MACH_MMP2_H
 #define __ASM_MACH_MMP2_H
 
+<<<<<<< HEAD
 #include <linux/platform_data/pxa_sdhci.h>
+=======
+#include <plat/sdhci.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct sys_timer;
 
@@ -13,7 +17,10 @@ extern void mmp2_clear_pmic_int(void);
 #include <linux/i2c.h>
 #include <linux/i2c/pxa-i2c.h>
 #include <mach/devices.h>
+<<<<<<< HEAD
 #include <mach/sram.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern struct pxa_device_desc mmp2_device_uart1;
 extern struct pxa_device_desc mmp2_device_uart2;
@@ -29,10 +36,13 @@ extern struct pxa_device_desc mmp2_device_sdh0;
 extern struct pxa_device_desc mmp2_device_sdh1;
 extern struct pxa_device_desc mmp2_device_sdh2;
 extern struct pxa_device_desc mmp2_device_sdh3;
+<<<<<<< HEAD
 extern struct pxa_device_desc mmp2_device_asram;
 extern struct pxa_device_desc mmp2_device_isram;
 
 extern struct platform_device mmp2_device_gpio;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int mmp2_add_uart(int id)
 {
@@ -90,6 +100,7 @@ static inline int mmp2_add_sdhost(int id, struct sdhci_pxa_platdata *data)
 	return pxa_register_device(d, data, sizeof(*data));
 }
 
+<<<<<<< HEAD
 static inline int mmp2_add_asram(struct sram_platdata *data)
 {
 	return pxa_register_device(&mmp2_device_asram, data, sizeof(*data));
@@ -100,5 +111,7 @@ static inline int mmp2_add_isram(struct sram_platdata *data)
 	return pxa_register_device(&mmp2_device_isram, data, sizeof(*data));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ASM_MACH_MMP2_H */
 

@@ -84,7 +84,11 @@ const struct file_operations bfs_dir_operations = {
 
 extern void dump_imap(const char *, struct super_block *);
 
+<<<<<<< HEAD
 static int bfs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+=======
+static int bfs_create(struct inode *dir, struct dentry *dentry, int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						struct nameidata *nd)
 {
 	int err;
@@ -199,7 +203,11 @@ static int bfs_unlink(struct inode *dir, struct dentry *dentry)
 		printf("unlinking non-existent file %s:%lu (nlink=%d)\n",
 					inode->i_sb->s_id, inode->i_ino,
 					inode->i_nlink);
+<<<<<<< HEAD
 		set_nlink(inode, 1);
+=======
+		inode->i_nlink = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	de->ino = 0;
 	mark_buffer_dirty_inode(bh, dir);

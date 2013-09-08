@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2010 Realtek Corporation. All rights reserved.
@@ -23,6 +24,8 @@
  * Larry Finger <Larry.Finger@lwfinger.net>
  *
  ******************************************************************************/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef _RTL871X_MP_IOCTL_H
 #define _RTL871X_MP_IOCTL_H
 
@@ -332,6 +335,10 @@ struct rfintfs_parm {
 
 struct mp_xmit_packet {
 	unsigned int len;
+<<<<<<< HEAD
+=======
+	unsigned int mem[MAX_MP_XMITBUF_SZ >> 2];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct psmode_param {
@@ -434,7 +441,12 @@ static struct mp_ioctl_handler mp_ioctl_hdl[] = {
 	{sizeof(struct psmode_param), NULL, 0},/*13*/
 	{sizeof(struct eeprom_rw_param), NULL, 0},/*14*/
 	{sizeof(struct eeprom_rw_param), NULL, 0},/*15*/
+<<<<<<< HEAD
 	{sizeof(unsigned char), NULL, 0},/*16*/
+=======
+	{sizeof(u8), oid_rt_pro_set_power_tracking_hdl,
+			     OID_RT_PRO_SET_POWER_TRACKING},/*16*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{sizeof(u32), NULL, 0},/*17*/
 	{sizeof(u32), oid_rt_pro_set_continuous_tx_hdl,
 			     OID_RT_PRO_SET_CONTINUOUS_TX},/*18*/

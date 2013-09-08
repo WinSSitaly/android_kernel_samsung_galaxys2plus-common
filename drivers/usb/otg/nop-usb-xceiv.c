@@ -33,7 +33,11 @@
 #include <linux/slab.h>
 
 struct nop_usb_xceiv {
+<<<<<<< HEAD
 	struct usb_phy		phy;
+=======
+	struct otg_transceiver	otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct device		*dev;
 };
 
@@ -58,11 +62,21 @@ void usb_nop_xceiv_unregister(void)
 }
 EXPORT_SYMBOL(usb_nop_xceiv_unregister);
 
+<<<<<<< HEAD
 static int nop_set_suspend(struct usb_phy *x, int suspend)
+=======
+static inline struct nop_usb_xceiv *xceiv_to_nop(struct otg_transceiver *x)
+{
+	return container_of(x, struct nop_usb_xceiv, otg);
+}
+
+static int nop_set_suspend(struct otg_transceiver *x, int suspend)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
 
+<<<<<<< HEAD
 static int nop_set_peripheral(struct usb_otg *otg, struct usb_gadget *gadget)
 {
 	if (!otg)
@@ -89,6 +103,43 @@ static int nop_set_host(struct usb_otg *otg, struct usb_bus *host)
 	}
 
 	otg->host = host;
+=======
+static int nop_set_peripheral(struct otg_transceiver *x,
+		struct usb_gadget *gadget)
+{
+	struct nop_usb_xceiv *nop;
+
+	if (!x)
+		return -ENODEV;
+
+	nop = xceiv_to_nop(x);
+
+	if (!gadget) {
+		nop->otg.gadget = NULL;
+		return -ENODEV;
+	}
+
+	nop->otg.gadget = gadget;
+	nop->otg.state = OTG_STATE_B_IDLE;
+	return 0;
+}
+
+static int nop_set_host(struct otg_transceiver *x, struct usb_bus *host)
+{
+	struct nop_usb_xceiv *nop;
+
+	if (!x)
+		return -ENODEV;
+
+	nop = xceiv_to_nop(x);
+
+	if (!host) {
+		nop->otg.host = NULL;
+		return -ENODEV;
+	}
+
+	nop->otg.host = host;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -101,6 +152,7 @@ static int __devinit nop_usb_xceiv_probe(struct platform_device *pdev)
 	if (!nop)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	nop->phy.otg = kzalloc(sizeof *nop->phy.otg, GFP_KERNEL);
 	if (!nop->phy.otg) {
 		kfree(nop);
@@ -118,6 +170,17 @@ static int __devinit nop_usb_xceiv_probe(struct platform_device *pdev)
 	nop->phy.otg->set_peripheral	= nop_set_peripheral;
 
 	err = usb_set_transceiver(&nop->phy);
+=======
+	nop->dev		= &pdev->dev;
+	nop->otg.dev		= nop->dev;
+	nop->otg.label		= "nop-xceiv";
+	nop->otg.state		= OTG_STATE_UNDEFINED;
+	nop->otg.set_host	= nop_set_host;
+	nop->otg.set_peripheral	= nop_set_peripheral;
+	nop->otg.set_suspend	= nop_set_suspend;
+
+	err = otg_set_transceiver(&nop->otg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err) {
 		dev_err(&pdev->dev, "can't register transceiver, err: %d\n",
 			err);
@@ -126,11 +189,18 @@ static int __devinit nop_usb_xceiv_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, nop);
 
+<<<<<<< HEAD
 	ATOMIC_INIT_NOTIFIER_HEAD(&nop->phy.notifier);
 
 	return 0;
 exit:
 	kfree(nop->phy.otg);
+=======
+	ATOMIC_INIT_NOTIFIER_HEAD(&nop->otg.notifier);
+
+	return 0;
+exit:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(nop);
 	return err;
 }
@@ -139,10 +209,16 @@ static int __devexit nop_usb_xceiv_remove(struct platform_device *pdev)
 {
 	struct nop_usb_xceiv *nop = platform_get_drvdata(pdev);
 
+<<<<<<< HEAD
 	usb_set_transceiver(NULL);
 
 	platform_set_drvdata(pdev, NULL);
 	kfree(nop->phy.otg);
+=======
+	otg_set_transceiver(NULL);
+
+	platform_set_drvdata(pdev, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(nop);
 
 	return 0;

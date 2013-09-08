@@ -71,7 +71,11 @@ struct fuse_mount_data {
 	unsigned blksize;
 };
 
+<<<<<<< HEAD
 struct fuse_forget_link *fuse_alloc_forget(void)
+=======
+struct fuse_forget_link *fuse_alloc_forget()
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return kzalloc(sizeof(struct fuse_forget_link), GFP_KERNEL);
 }
@@ -91,7 +95,10 @@ static struct inode *fuse_alloc_inode(struct super_block *sb)
 	fi->nlookup = 0;
 	fi->attr_version = 0;
 	fi->writectr = 0;
+<<<<<<< HEAD
 	fi->orig_ino = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_LIST_HEAD(&fi->write_files);
 	INIT_LIST_HEAD(&fi->queued_writes);
 	INIT_LIST_HEAD(&fi->writepages);
@@ -108,6 +115,10 @@ static struct inode *fuse_alloc_inode(struct super_block *sb)
 static void fuse_i_callback(struct rcu_head *head)
 {
 	struct inode *inode = container_of(head, struct inode, i_rcu);
+<<<<<<< HEAD
+=======
+	INIT_LIST_HEAD(&inode->i_dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kmem_cache_free(fuse_inode_cachep, inode);
 }
 
@@ -140,6 +151,7 @@ static int fuse_remount_fs(struct super_block *sb, int *flags, char *data)
 	return 0;
 }
 
+<<<<<<< HEAD
 /*
  * ino_t is 32-bits on 32-bit arch. We have to squash the 64-bit value down
  * so that it will fit.
@@ -152,6 +164,8 @@ static ino_t fuse_squash_ino(u64 ino64)
 	return ino;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
 				   u64 attr_valid)
 {
@@ -161,9 +175,15 @@ void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
 	fi->attr_version = ++fc->attr_version;
 	fi->i_time = attr_valid;
 
+<<<<<<< HEAD
 	inode->i_ino     = fuse_squash_ino(attr->ino);
 	inode->i_mode    = (inode->i_mode & S_IFMT) | (attr->mode & 07777);
 	set_nlink(inode, attr->nlink);
+=======
+	inode->i_ino     = attr->ino;
+	inode->i_mode    = (inode->i_mode & S_IFMT) | (attr->mode & 07777);
+	inode->i_nlink   = attr->nlink;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	inode->i_uid     = attr->uid;
 	inode->i_gid     = attr->gid;
 	inode->i_blocks  = attr->blocks;
@@ -187,8 +207,11 @@ void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
 	fi->orig_i_mode = inode->i_mode;
 	if (!(fc->flags & FUSE_DEFAULT_PERMISSIONS))
 		inode->i_mode &= ~S_ISVTX;
+<<<<<<< HEAD
 
 	fi->orig_ino = attr->ino;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
@@ -343,7 +366,12 @@ void fuse_conn_kill(struct fuse_conn *fc)
 	spin_unlock(&fc->lock);
 	/* Flush all readers on this fs */
 	kill_fasync(&fc->fasync, SIGIO, POLL_IN);
+<<<<<<< HEAD
 	wake_up_all(&fc->waitq);
+=======
+	wake_up_all(&fc->waitq[0]);
+	wake_up_all(&fc->waitq[1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wake_up_all(&fc->blocked_waitq);
 	wake_up_all(&fc->reserved_req_waitq);
 	mutex_lock(&fuse_mutex);
@@ -419,6 +447,10 @@ enum {
 	OPT_ALLOW_OTHER,
 	OPT_MAX_READ,
 	OPT_BLKSIZE,
+<<<<<<< HEAD
+=======
+	OPT_HANDLE_RT_CLASS,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	OPT_ERR
 };
 
@@ -431,6 +463,10 @@ static const match_table_t tokens = {
 	{OPT_ALLOW_OTHER,		"allow_other"},
 	{OPT_MAX_READ,			"max_read=%u"},
 	{OPT_BLKSIZE,			"blksize=%u"},
+<<<<<<< HEAD
+=======
+	{OPT_HANDLE_RT_CLASS,		"handle_rt_class"},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{OPT_ERR,			NULL}
 };
 
@@ -466,6 +502,13 @@ static int parse_fuse_opt(char *opt, struct fuse_mount_data *d, int is_bdev)
 			d->rootmode_present = 1;
 			break;
 
+<<<<<<< HEAD
+=======
+		case OPT_HANDLE_RT_CLASS:
+			d->flags |= FUSE_HANDLE_RT_CLASS;
+			break;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case OPT_USER_ID:
 			if (match_int(&args[0], &value))
 				return 0;
@@ -512,10 +555,16 @@ static int parse_fuse_opt(char *opt, struct fuse_mount_data *d, int is_bdev)
 	return 1;
 }
 
+<<<<<<< HEAD
 static int fuse_show_options(struct seq_file *m, struct dentry *root)
 {
 	struct super_block *sb = root->d_sb;
 	struct fuse_conn *fc = get_fuse_conn_super(sb);
+=======
+static int fuse_show_options(struct seq_file *m, struct vfsmount *mnt)
+{
+	struct fuse_conn *fc = get_fuse_conn_super(mnt->mnt_sb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	seq_printf(m, ",user_id=%u", fc->user_id);
 	seq_printf(m, ",group_id=%u", fc->group_id);
@@ -525,8 +574,14 @@ static int fuse_show_options(struct seq_file *m, struct dentry *root)
 		seq_puts(m, ",allow_other");
 	if (fc->max_read != ~0)
 		seq_printf(m, ",max_read=%u", fc->max_read);
+<<<<<<< HEAD
 	if (sb->s_bdev && sb->s_blocksize != FUSE_DEFAULT_BLKSIZE)
 		seq_printf(m, ",blksize=%lu", sb->s_blocksize);
+=======
+	if (mnt->mnt_sb->s_bdev &&
+	    mnt->mnt_sb->s_blocksize != FUSE_DEFAULT_BLKSIZE)
+		seq_printf(m, ",blksize=%lu", mnt->mnt_sb->s_blocksize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -537,6 +592,7 @@ void fuse_conn_init(struct fuse_conn *fc)
 	mutex_init(&fc->inst_mutex);
 	init_rwsem(&fc->killsb);
 	atomic_set(&fc->count, 1);
+<<<<<<< HEAD
 	init_waitqueue_head(&fc->waitq);
 	init_waitqueue_head(&fc->blocked_waitq);
 	init_waitqueue_head(&fc->reserved_req_waitq);
@@ -544,6 +600,18 @@ void fuse_conn_init(struct fuse_conn *fc)
 	INIT_LIST_HEAD(&fc->processing);
 	INIT_LIST_HEAD(&fc->io);
 	INIT_LIST_HEAD(&fc->interrupts);
+=======
+	init_waitqueue_head(&fc->waitq[0]);
+	init_waitqueue_head(&fc->waitq[1]);
+	init_waitqueue_head(&fc->blocked_waitq);
+	init_waitqueue_head(&fc->reserved_req_waitq);
+	INIT_LIST_HEAD(&fc->pending[0]);
+	INIT_LIST_HEAD(&fc->pending[1]);
+	INIT_LIST_HEAD(&fc->processing);
+	INIT_LIST_HEAD(&fc->io);
+	INIT_LIST_HEAD(&fc->interrupts[0]);
+	INIT_LIST_HEAD(&fc->interrupts[1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_LIST_HEAD(&fc->bg_queue);
 	INIT_LIST_HEAD(&fc->entry);
 	fc->forget_list_tail = &fc->forget_list_head;
@@ -823,6 +891,7 @@ static void process_init_reply(struct fuse_conn *fc, struct fuse_req *req)
 				fc->async_read = 1;
 			if (!(arg->flags & FUSE_POSIX_LOCKS))
 				fc->no_lock = 1;
+<<<<<<< HEAD
 			if (arg->minor >= 17) {
 				if (!(arg->flags & FUSE_FLOCK_LOCKS))
 					fc->no_flock = 1;
@@ -830,6 +899,8 @@ static void process_init_reply(struct fuse_conn *fc, struct fuse_req *req)
 				if (!(arg->flags & FUSE_POSIX_LOCKS))
 					fc->no_flock = 1;
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (arg->flags & FUSE_ATOMIC_O_TRUNC)
 				fc->atomic_o_trunc = 1;
 			if (arg->minor >= 9) {
@@ -844,7 +915,10 @@ static void process_init_reply(struct fuse_conn *fc, struct fuse_req *req)
 		} else {
 			ra_pages = fc->max_read / PAGE_CACHE_SIZE;
 			fc->no_lock = 1;
+<<<<<<< HEAD
 			fc->no_flock = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		fc->bdi.ra_pages = min(fc->bdi.ra_pages, ra_pages);
@@ -865,8 +939,12 @@ static void fuse_send_init(struct fuse_conn *fc, struct fuse_req *req)
 	arg->minor = FUSE_KERNEL_MINOR_VERSION;
 	arg->max_readahead = fc->bdi.ra_pages * PAGE_CACHE_SIZE;
 	arg->flags |= FUSE_ASYNC_READ | FUSE_POSIX_LOCKS | FUSE_ATOMIC_O_TRUNC |
+<<<<<<< HEAD
 		FUSE_EXPORT_SUPPORT | FUSE_BIG_WRITES | FUSE_DONT_MASK |
 		FUSE_FLOCK_LOCKS;
+=======
+		FUSE_EXPORT_SUPPORT | FUSE_BIG_WRITES | FUSE_DONT_MASK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	req->in.h.opcode = FUSE_INIT;
 	req->in.numargs = 1;
 	req->in.args[0].size = sizeof(*arg);
@@ -962,7 +1040,10 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
 	sb->s_magic = FUSE_SUPER_MAGIC;
 	sb->s_op = &fuse_super_operations;
 	sb->s_maxbytes = MAX_LFS_FILESIZE;
+<<<<<<< HEAD
 	sb->s_time_gran = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sb->s_export_op = &fuse_export_operations;
 
 	file = fget(d.fd);
@@ -1004,9 +1085,20 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
 
 	err = -ENOMEM;
 	root = fuse_get_root_inode(sb, d.rootmode);
+<<<<<<< HEAD
 	root_dentry = d_make_root(root);
 	if (!root_dentry)
 		goto err_put_conn;
+=======
+	if (!root)
+		goto err_put_conn;
+
+	root_dentry = d_alloc_root(root);
+	if (!root_dentry) {
+		iput(root);
+		goto err_put_conn;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* only now - we want root dentry with NULL ->d_op */
 	sb->s_d_op = &fuse_dentry_operations;
 
@@ -1148,12 +1240,24 @@ static int __init fuse_fs_init(void)
 {
 	int err;
 
+<<<<<<< HEAD
+=======
+	err = register_filesystem(&fuse_fs_type);
+	if (err)
+		goto out;
+
+	err = register_fuseblk();
+	if (err)
+		goto out_unreg;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fuse_inode_cachep = kmem_cache_create("fuse_inode",
 					      sizeof(struct fuse_inode),
 					      0, SLAB_HWCACHE_ALIGN,
 					      fuse_inode_init_once);
 	err = -ENOMEM;
 	if (!fuse_inode_cachep)
+<<<<<<< HEAD
 		goto out;
 
 	err = register_fuseblk();
@@ -1170,6 +1274,16 @@ static int __init fuse_fs_init(void)
 	unregister_fuseblk();
  out2:
 	kmem_cache_destroy(fuse_inode_cachep);
+=======
+		goto out_unreg2;
+
+	return 0;
+
+ out_unreg2:
+	unregister_fuseblk();
+ out_unreg:
+	unregister_filesystem(&fuse_fs_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  out:
 	return err;
 }

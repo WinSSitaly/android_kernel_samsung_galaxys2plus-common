@@ -19,7 +19,11 @@
 extern void mfp_set_groupf(struct device *dev);
 extern void mfp_set_groupc(struct device *dev);
 extern void mfp_set_groupi(struct device *dev);
+<<<<<<< HEAD
 extern void mfp_set_groupg(struct device *dev, const char *subname);
 extern void mfp_set_groupd(struct device *dev, const char *subname);
+=======
+extern void mfp_set_groupg(struct device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __ASM_ARCH_MFP_H */

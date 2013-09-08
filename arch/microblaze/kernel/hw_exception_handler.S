@@ -820,6 +820,7 @@ ex_handler_done:
  *	Upon exit, we reload everything and RFI.
  * A common place to load the TLB.
  */
+<<<<<<< HEAD
 .section .data
 .align 4
 .global tlb_skip
@@ -829,17 +830,29 @@ ex_handler_done:
 		/* MS: storing last used tlb index */
 		.long	MICROBLAZE_TLB_SIZE/2
 .previous
+=======
+	tlb_index:
+		.long	1 /* MS: storing last used tlb index */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	finish_tlb_load:
 		/* MS: load the last used TLB index. */
 		lwi	r5, r0, TOPHYS(tlb_index)
 		addik	r5, r5, 1 /* MS: inc tlb_index -> use next one */
 
 /* MS: FIXME this is potential fault, because this is mask not count */
+<<<<<<< HEAD
 		andi	r5, r5, MICROBLAZE_TLB_SIZE - 1
 		ori	r6, r0, 1
 		cmp	r31, r5, r6
 		blti	r31, ex12
 		lwi	r5, r0, TOPHYS(tlb_skip)
+=======
+		andi	r5, r5, (MICROBLAZE_TLB_SIZE-1)
+		ori	r6, r0, 1
+		cmp	r31, r5, r6
+		blti	r31, ex12
+		addik	r5, r6, 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ex12:
 		/* MS: save back current TLB index */
 		swi	r5, r0, TOPHYS(tlb_index)
@@ -1120,6 +1133,7 @@ lw_r10_vm:	R3_TO_LWREG_VM_V	(10);
 lw_r11_vm:	R3_TO_LWREG_VM_V	(11);
 lw_r12_vm:	R3_TO_LWREG_VM_V	(12);
 lw_r13_vm:	R3_TO_LWREG_VM_V	(13);
+<<<<<<< HEAD
 lw_r14_vm:	R3_TO_LWREG_VM_V	(14);
 lw_r15_vm:	R3_TO_LWREG_VM_V	(15);
 lw_r16_vm:	R3_TO_LWREG_VM_V	(16);
@@ -1137,6 +1151,25 @@ lw_r27_vm:	R3_TO_LWREG_VM_V	(27);
 lw_r28_vm:	R3_TO_LWREG_VM_V	(28);
 lw_r29_vm:	R3_TO_LWREG_VM_V	(29);
 lw_r30_vm:	R3_TO_LWREG_VM_V	(30);
+=======
+lw_r14_vm:	R3_TO_LWREG_VM		(14);
+lw_r15_vm:	R3_TO_LWREG_VM_V	(15);
+lw_r16_vm:	R3_TO_LWREG_VM		(16);
+lw_r17_vm:	R3_TO_LWREG_VM_V	(17);
+lw_r18_vm:	R3_TO_LWREG_VM_V	(18);
+lw_r19_vm:	R3_TO_LWREG_VM		(19);
+lw_r20_vm:	R3_TO_LWREG_VM		(20);
+lw_r21_vm:	R3_TO_LWREG_VM		(21);
+lw_r22_vm:	R3_TO_LWREG_VM		(22);
+lw_r23_vm:	R3_TO_LWREG_VM		(23);
+lw_r24_vm:	R3_TO_LWREG_VM		(24);
+lw_r25_vm:	R3_TO_LWREG_VM		(25);
+lw_r26_vm:	R3_TO_LWREG_VM		(26);
+lw_r27_vm:	R3_TO_LWREG_VM		(27);
+lw_r28_vm:	R3_TO_LWREG_VM		(28);
+lw_r29_vm:	R3_TO_LWREG_VM		(29);
+lw_r30_vm:	R3_TO_LWREG_VM		(30);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 lw_r31_vm:	R3_TO_LWREG_VM_V	(31);
 
 sw_table_vm:
@@ -1154,6 +1187,7 @@ sw_r10_vm:	SWREG_TO_R3_VM_V	(10);
 sw_r11_vm:	SWREG_TO_R3_VM_V	(11);
 sw_r12_vm:	SWREG_TO_R3_VM_V	(12);
 sw_r13_vm:	SWREG_TO_R3_VM_V	(13);
+<<<<<<< HEAD
 sw_r14_vm:	SWREG_TO_R3_VM_V	(14);
 sw_r15_vm:	SWREG_TO_R3_VM_V	(15);
 sw_r16_vm:	SWREG_TO_R3_VM_V	(16);
@@ -1171,6 +1205,25 @@ sw_r27_vm:	SWREG_TO_R3_VM_V	(27);
 sw_r28_vm:	SWREG_TO_R3_VM_V	(28);
 sw_r29_vm:	SWREG_TO_R3_VM_V	(29);
 sw_r30_vm:	SWREG_TO_R3_VM_V	(30);
+=======
+sw_r14_vm:	SWREG_TO_R3_VM		(14);
+sw_r15_vm:	SWREG_TO_R3_VM_V	(15);
+sw_r16_vm:	SWREG_TO_R3_VM		(16);
+sw_r17_vm:	SWREG_TO_R3_VM_V	(17);
+sw_r18_vm:	SWREG_TO_R3_VM_V	(18);
+sw_r19_vm:	SWREG_TO_R3_VM		(19);
+sw_r20_vm:	SWREG_TO_R3_VM		(20);
+sw_r21_vm:	SWREG_TO_R3_VM		(21);
+sw_r22_vm:	SWREG_TO_R3_VM		(22);
+sw_r23_vm:	SWREG_TO_R3_VM		(23);
+sw_r24_vm:	SWREG_TO_R3_VM		(24);
+sw_r25_vm:	SWREG_TO_R3_VM		(25);
+sw_r26_vm:	SWREG_TO_R3_VM		(26);
+sw_r27_vm:	SWREG_TO_R3_VM		(27);
+sw_r28_vm:	SWREG_TO_R3_VM		(28);
+sw_r29_vm:	SWREG_TO_R3_VM		(29);
+sw_r30_vm:	SWREG_TO_R3_VM		(30);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 sw_r31_vm:	SWREG_TO_R3_VM_V	(31);
 #endif /* CONFIG_MMU */
 

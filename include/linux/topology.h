@@ -201,10 +201,13 @@ int arch_update_cpu_topology(void);
 	.balance_interval	= 64,					\
 }
 
+<<<<<<< HEAD
 #ifndef SD_NODES_PER_DOMAIN
 #define SD_NODES_PER_DOMAIN 16
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SCHED_BOOK
 #ifndef SD_BOOK_INIT
 #error Please define an appropriate SD_BOOK_INIT in include/asm/topology.h!!!

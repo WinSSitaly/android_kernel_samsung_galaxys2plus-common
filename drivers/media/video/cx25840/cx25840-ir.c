@@ -23,7 +23,10 @@
 
 #include <linux/slab.h>
 #include <linux/kfifo.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/cx25840.h>
 #include <media/rc-core.h>
 
@@ -669,7 +672,11 @@ static int cx25840_ir_rx_read(struct v4l2_subdev *sd, u8 *buf, size_t count,
 	u16 divider;
 	unsigned int i, n;
 	union cx25840_ir_fifo_rec *p;
+<<<<<<< HEAD
 	unsigned u, v, w;
+=======
+	unsigned u, v;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ir_state == NULL)
 		return -ENODEV;
@@ -695,12 +702,19 @@ static int cx25840_ir_rx_read(struct v4l2_subdev *sd, u8 *buf, size_t count,
 		if ((p->hw_fifo_data & FIFO_RXTX_RTO) == FIFO_RXTX_RTO) {
 			/* Assume RTO was because of no IR light input */
 			u = 0;
+<<<<<<< HEAD
 			w = 1;
+=======
+			v4l2_dbg(2, ir_debug, sd, "rx read: end of rx\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			u = (p->hw_fifo_data & FIFO_RXTX_LVL) ? 1 : 0;
 			if (invert)
 				u = u ? 0 : 1;
+<<<<<<< HEAD
 			w = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		v = (unsigned) pulse_width_count_to_ns(
@@ -711,12 +725,18 @@ static int cx25840_ir_rx_read(struct v4l2_subdev *sd, u8 *buf, size_t count,
 		init_ir_raw_event(&p->ir_core_data);
 		p->ir_core_data.pulse = u;
 		p->ir_core_data.duration = v;
+<<<<<<< HEAD
 		p->ir_core_data.timeout = w;
 
 		v4l2_dbg(2, ir_debug, sd, "rx read: %10u ns  %s  %s\n",
 			 v, u ? "mark" : "space", w ? "(timed out)" : "");
 		if (w)
 			v4l2_dbg(2, ir_debug, sd, "rx read: end of rx\n");
+=======
+
+		v4l2_dbg(2, ir_debug, sd, "rx read: %10u ns  %s\n",
+			 v, u ? "mark" : "space");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }

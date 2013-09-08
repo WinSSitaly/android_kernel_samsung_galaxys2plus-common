@@ -23,7 +23,10 @@
  * information.
  */
 
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/plist.h>
 #include <linux/spinlock.h>
 

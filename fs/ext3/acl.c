@@ -4,7 +4,17 @@
  * Copyright (C) 2001-2003 Andreas Gruenbacher, <agruen@suse.de>
  */
 
+<<<<<<< HEAD
 #include "ext3.h"
+=======
+#include <linux/init.h>
+#include <linux/sched.h>
+#include <linux/slab.h>
+#include <linux/capability.h>
+#include <linux/fs.h>
+#include <linux/ext3_jbd.h>
+#include <linux/ext3_fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "xattr.h"
 #include "acl.h"
 
@@ -125,7 +135,11 @@ fail:
  *
  * inode->i_mutex: don't care
  */
+<<<<<<< HEAD
 struct posix_acl *
+=======
+static struct posix_acl *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ext3_get_acl(struct inode *inode, int type)
 {
 	int name_index;
@@ -193,10 +207,19 @@ ext3_set_acl(handle_t *handle, struct inode *inode, int type,
 		case ACL_TYPE_ACCESS:
 			name_index = EXT3_XATTR_INDEX_POSIX_ACL_ACCESS;
 			if (acl) {
+<<<<<<< HEAD
 				error = posix_acl_equiv_mode(acl, &inode->i_mode);
 				if (error < 0)
 					return error;
 				else {
+=======
+				mode_t mode = inode->i_mode;
+				error = posix_acl_equiv_mode(acl, &mode);
+				if (error < 0)
+					return error;
+				else {
+					inode->i_mode = mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					inode->i_ctime = CURRENT_TIME_SEC;
 					ext3_mark_inode_dirty(handle, inode);
 					if (error == 0)
@@ -231,6 +254,32 @@ ext3_set_acl(handle_t *handle, struct inode *inode, int type,
 	return error;
 }
 
+<<<<<<< HEAD
+=======
+int
+ext3_check_acl(struct inode *inode, int mask, unsigned int flags)
+{
+	struct posix_acl *acl;
+
+	if (flags & IPERM_FLAG_RCU) {
+		if (!negative_cached_acl(inode, ACL_TYPE_ACCESS))
+			return -ECHILD;
+		return -EAGAIN;
+	}
+
+	acl = ext3_get_acl(inode, ACL_TYPE_ACCESS);
+	if (IS_ERR(acl))
+		return PTR_ERR(acl);
+	if (acl) {
+		int error = posix_acl_permission(inode, acl, mask);
+		posix_acl_release(acl);
+		return error;
+	}
+
+	return -EAGAIN;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Initialize the ACLs of a new inode. Called from ext3_new_inode.
  *
@@ -253,12 +302,19 @@ ext3_init_acl(handle_t *handle, struct inode *inode, struct inode *dir)
 			inode->i_mode &= ~current_umask();
 	}
 	if (test_opt(inode->i_sb, POSIX_ACL) && acl) {
+<<<<<<< HEAD
+=======
+		struct posix_acl *clone;
+		mode_t mode;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (S_ISDIR(inode->i_mode)) {
 			error = ext3_set_acl(handle, inode,
 					     ACL_TYPE_DEFAULT, acl);
 			if (error)
 				goto cleanup;
 		}
+<<<<<<< HEAD
 		error = posix_acl_create(&acl, GFP_NOFS, &inode->i_mode);
 		if (error < 0)
 			return error;
@@ -267,6 +323,24 @@ ext3_init_acl(handle_t *handle, struct inode *inode, struct inode *dir)
 			/* This is an extended ACL */
 			error = ext3_set_acl(handle, inode, ACL_TYPE_ACCESS, acl);
 		}
+=======
+		clone = posix_acl_clone(acl, GFP_NOFS);
+		error = -ENOMEM;
+		if (!clone)
+			goto cleanup;
+
+		mode = inode->i_mode;
+		error = posix_acl_create_masq(clone, &mode);
+		if (error >= 0) {
+			inode->i_mode = mode;
+			if (error > 0) {
+				/* This is an extended ACL */
+				error = ext3_set_acl(handle, inode,
+						     ACL_TYPE_ACCESS, clone);
+			}
+		}
+		posix_acl_release(clone);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 cleanup:
 	posix_acl_release(acl);
@@ -290,9 +364,13 @@ cleanup:
 int
 ext3_acl_chmod(struct inode *inode)
 {
+<<<<<<< HEAD
 	struct posix_acl *acl;
 	handle_t *handle;
 	int retries = 0;
+=======
+	struct posix_acl *acl, *clone;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         int error;
 
 	if (S_ISLNK(inode->i_mode))
@@ -302,6 +380,7 @@ ext3_acl_chmod(struct inode *inode)
 	acl = ext3_get_acl(inode, ACL_TYPE_ACCESS);
 	if (IS_ERR(acl) || !acl)
 		return PTR_ERR(acl);
+<<<<<<< HEAD
 	error = posix_acl_chmod(&acl, GFP_KERNEL, inode->i_mode);
 	if (error)
 		return error;
@@ -320,6 +399,33 @@ retry:
 		goto retry;
 out:
 	posix_acl_release(acl);
+=======
+	clone = posix_acl_clone(acl, GFP_KERNEL);
+	posix_acl_release(acl);
+	if (!clone)
+		return -ENOMEM;
+	error = posix_acl_chmod_masq(clone, inode->i_mode);
+	if (!error) {
+		handle_t *handle;
+		int retries = 0;
+
+	retry:
+		handle = ext3_journal_start(inode,
+				EXT3_DATA_TRANS_BLOCKS(inode->i_sb));
+		if (IS_ERR(handle)) {
+			error = PTR_ERR(handle);
+			ext3_std_error(inode->i_sb, error);
+			goto out;
+		}
+		error = ext3_set_acl(handle, inode, ACL_TYPE_ACCESS, clone);
+		ext3_journal_stop(handle);
+		if (error == -ENOSPC &&
+		    ext3_should_retry_alloc(inode->i_sb, &retries))
+			goto retry;
+	}
+out:
+	posix_acl_release(clone);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error;
 }
 

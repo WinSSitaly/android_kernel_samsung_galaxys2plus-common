@@ -190,7 +190,10 @@ enum qeth_ipa_return_codes {
 	IPA_RC_MC_ADDR_ALREADY_DEFINED	= 0xe013,
 	IPA_RC_LAN_OFFLINE		= 0xe080,
 	IPA_RC_INVALID_IP_VERSION2	= 0xf001,
+<<<<<<< HEAD
 	IPA_RC_ENOMEM			= 0xfffe,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	IPA_RC_FFFF			= 0xffff
 };
 /* for DELIP */
@@ -250,7 +253,10 @@ enum qeth_ipa_setadp_cmd {
 	IPA_SETADP_SET_PROMISC_MODE		= 0x00000800L,
 	IPA_SETADP_SET_DIAG_ASSIST		= 0x00002000L,
 	IPA_SETADP_SET_ACCESS_CONTROL		= 0x00010000L,
+<<<<<<< HEAD
 	IPA_SETADP_QUERY_OAT			= 0x00080000L,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 enum qeth_ipa_mac_ops {
 	CHANGE_ADDR_READ_MAC		= 0,
@@ -400,6 +406,7 @@ struct qeth_set_access_ctrl {
 	__u32 subcmd_code;
 } __attribute__((packed));
 
+<<<<<<< HEAD
 struct qeth_query_oat {
 	__u32 subcmd_code;
 	__u8 reserved[12];
@@ -411,6 +418,8 @@ struct qeth_qoat_priv {
 	char *buffer;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct qeth_ipacmd_setadpparms_hdr {
 	__u32 supp_hw_cmds;
 	__u32 reserved1;
@@ -430,7 +439,10 @@ struct qeth_ipacmd_setadpparms {
 		struct qeth_change_addr change_addr;
 		struct qeth_snmp_cmd snmp;
 		struct qeth_set_access_ctrl set_access_ctrl;
+<<<<<<< HEAD
 		struct qeth_query_oat query_oat;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__u32 mode;
 	} data;
 } __attribute__ ((packed));

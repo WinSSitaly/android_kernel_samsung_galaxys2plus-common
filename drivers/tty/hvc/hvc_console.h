@@ -73,10 +73,13 @@ struct hv_ops {
 	int (*notifier_add)(struct hvc_struct *hp, int irq);
 	void (*notifier_del)(struct hvc_struct *hp, int irq);
 	void (*notifier_hangup)(struct hvc_struct *hp, int irq);
+<<<<<<< HEAD
 
 	/* tiocmget/set implementation */
 	int (*tiocmget)(struct hvc_struct *hp);
 	int (*tiocmset)(struct hvc_struct *hp, unsigned int set, unsigned int clear);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Register a vterm and a slot index for use as a console (console_init) */

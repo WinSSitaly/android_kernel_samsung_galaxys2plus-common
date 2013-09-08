@@ -3,7 +3,11 @@
 #
 
 # Common support
+<<<<<<< HEAD
 obj-y := clock.o generic.o irq.o time.o #nmi-oopser.o
+=======
+obj-y := clock.o generic.o gpio.o irq.o dma.o time.o #nmi-oopser.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-m :=
 obj-n :=
 obj-  :=
@@ -45,6 +49,10 @@ obj-$(CONFIG_SA1100_PLEB)		+= pleb.o
 obj-$(CONFIG_SA1100_SHANNON)		+= shannon.o
 
 obj-$(CONFIG_SA1100_SIMPAD)		+= simpad.o
+<<<<<<< HEAD
+=======
+led-$(CONFIG_SA1100_SIMPAD)		+= leds-simpad.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # LEDs support
 obj-$(CONFIG_LEDS) += $(led-y)

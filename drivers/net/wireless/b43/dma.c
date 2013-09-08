@@ -4,7 +4,11 @@
 
   DMA ringbuffer and descriptor allocation/management
 
+<<<<<<< HEAD
   Copyright (c) 2005, 2006 Michael Buesch <m@bues.ch>
+=======
+  Copyright (c) 2005, 2006 Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
   Some code in this file is derived from the b44.c driver
   Copyright (C) 2002 David S. Miller
@@ -47,6 +51,7 @@
  * into separate slots. */
 #define TX_SLOTS_PER_FRAME	2
 
+<<<<<<< HEAD
 static u32 b43_dma_address(struct b43_dma *dma, dma_addr_t dmaaddr,
 			   enum b43_addrtype addrtype)
 {
@@ -79,6 +84,8 @@ static u32 b43_dma_address(struct b43_dma *dma, dma_addr_t dmaaddr,
 
 	return addr;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* 32bit DMA ops. */
 static
@@ -109,9 +116,16 @@ static void op32_fill_descriptor(struct b43_dmaring *ring,
 	slot = (int)(&(desc->dma32) - descbase);
 	B43_WARN_ON(!(slot >= 0 && slot < ring->nr_slots));
 
+<<<<<<< HEAD
 	addr = b43_dma_address(&ring->dev->dma, dmaaddr, B43_DMA_ADDR_LOW);
 	addrext = b43_dma_address(&ring->dev->dma, dmaaddr, B43_DMA_ADDR_EXT);
 
+=======
+	addr = (u32) (dmaaddr & ~SSB_DMA_TRANSLATION_MASK);
+	addrext = (u32) (dmaaddr & SSB_DMA_TRANSLATION_MASK)
+	    >> SSB_DMA_TRANSLATION_SHIFT;
+	addr |= ring->dev->dma.translation;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ctl = bufsize & B43_DMA32_DCTL_BYTECNT;
 	if (slot == ring->nr_slots - 1)
 		ctl |= B43_DMA32_DCTL_DTABLEEND;
@@ -201,10 +215,18 @@ static void op64_fill_descriptor(struct b43_dmaring *ring,
 	slot = (int)(&(desc->dma64) - descbase);
 	B43_WARN_ON(!(slot >= 0 && slot < ring->nr_slots));
 
+<<<<<<< HEAD
 	addrlo = b43_dma_address(&ring->dev->dma, dmaaddr, B43_DMA_ADDR_LOW);
 	addrhi = b43_dma_address(&ring->dev->dma, dmaaddr, B43_DMA_ADDR_HIGH);
 	addrext = b43_dma_address(&ring->dev->dma, dmaaddr, B43_DMA_ADDR_EXT);
 
+=======
+	addrlo = (u32) (dmaaddr & 0xFFFFFFFF);
+	addrhi = (((u64) dmaaddr >> 32) & ~SSB_DMA_TRANSLATION_MASK);
+	addrext = (((u64) dmaaddr >> 32) & SSB_DMA_TRANSLATION_MASK)
+	    >> SSB_DMA_TRANSLATION_SHIFT;
+	addrhi |= (ring->dev->dma.translation << 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (slot == ring->nr_slots - 1)
 		ctl0 |= B43_DMA64_DCTL0_DTABLEEND;
 	if (start)
@@ -363,10 +385,17 @@ static inline
 	dma_addr_t dmaaddr;
 
 	if (tx) {
+<<<<<<< HEAD
 		dmaaddr = dma_map_single(ring->dev->dev->dma_dev,
 					 buf, len, DMA_TO_DEVICE);
 	} else {
 		dmaaddr = dma_map_single(ring->dev->dev->dma_dev,
+=======
+		dmaaddr = dma_map_single(ring->dev->sdev->dma_dev,
+					 buf, len, DMA_TO_DEVICE);
+	} else {
+		dmaaddr = dma_map_single(ring->dev->sdev->dma_dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					 buf, len, DMA_FROM_DEVICE);
 	}
 
@@ -378,10 +407,17 @@ static inline
 			  dma_addr_t addr, size_t len, int tx)
 {
 	if (tx) {
+<<<<<<< HEAD
 		dma_unmap_single(ring->dev->dev->dma_dev,
 				 addr, len, DMA_TO_DEVICE);
 	} else {
 		dma_unmap_single(ring->dev->dev->dma_dev,
+=======
+		dma_unmap_single(ring->dev->sdev->dma_dev,
+				 addr, len, DMA_TO_DEVICE);
+	} else {
+		dma_unmap_single(ring->dev->sdev->dma_dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 addr, len, DMA_FROM_DEVICE);
 	}
 }
@@ -391,7 +427,11 @@ static inline
 				 dma_addr_t addr, size_t len)
 {
 	B43_WARN_ON(ring->tx);
+<<<<<<< HEAD
 	dma_sync_single_for_cpu(ring->dev->dev->dma_dev,
+=======
+	dma_sync_single_for_cpu(ring->dev->sdev->dma_dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    addr, len, DMA_FROM_DEVICE);
 }
 
@@ -400,7 +440,11 @@ static inline
 				    dma_addr_t addr, size_t len)
 {
 	B43_WARN_ON(ring->tx);
+<<<<<<< HEAD
 	dma_sync_single_for_device(ring->dev->dev->dma_dev,
+=======
+	dma_sync_single_for_device(ring->dev->sdev->dma_dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   addr, len, DMA_FROM_DEVICE);
 }
 
@@ -409,10 +453,14 @@ static inline
 				struct b43_dmadesc_meta *meta)
 {
 	if (meta->skb) {
+<<<<<<< HEAD
 		if (ring->tx)
 			ieee80211_free_txskb(ring->dev->wl->hw, meta->skb);
 		else
 			dev_kfree_skb_any(meta->skb);
+=======
+		dev_kfree_skb_any(meta->skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		meta->skb = NULL;
 	}
 }
@@ -422,6 +470,7 @@ static int alloc_ringmemory(struct b43_dmaring *ring)
 	gfp_t flags = GFP_KERNEL;
 
 	/* The specs call for 4K buffers for 30- and 32-bit DMA with 4K
+<<<<<<< HEAD
 	 * alignment and 8K buffers for 64-bit DMA with 8K alignment.
 	 * In practice we could use smaller buffers for the latter, but the
 	 * alignment is really important because of the hardware bug. If bit
@@ -436,20 +485,45 @@ static int alloc_ringmemory(struct b43_dmaring *ring)
 	ring->descbase = dma_alloc_coherent(ring->dev->dev->dma_dev,
 					    ring_mem_size, &(ring->dmabase),
 					    flags);
+=======
+	 * alignment and 8K buffers for 64-bit DMA with 8K alignment. Testing
+	 * has shown that 4K is sufficient for the latter as long as the buffer
+	 * does not cross an 8K boundary.
+	 *
+	 * For unknown reasons - possibly a hardware error - the BCM4311 rev
+	 * 02, which uses 64-bit DMA, needs the ring buffer in very low memory,
+	 * which accounts for the GFP_DMA flag below.
+	 *
+	 * The flags here must match the flags in free_ringmemory below!
+	 */
+	if (ring->type == B43_DMA_64BIT)
+		flags |= GFP_DMA;
+	ring->descbase = dma_alloc_coherent(ring->dev->sdev->dma_dev,
+					    B43_DMA_RINGMEMSIZE,
+					    &(ring->dmabase), flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ring->descbase) {
 		b43err(ring->dev->wl, "DMA ringmemory allocation failed\n");
 		return -ENOMEM;
 	}
+<<<<<<< HEAD
 	memset(ring->descbase, 0, ring_mem_size);
+=======
+	memset(ring->descbase, 0, B43_DMA_RINGMEMSIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 static void free_ringmemory(struct b43_dmaring *ring)
 {
+<<<<<<< HEAD
 	u16 ring_mem_size = (ring->type == B43_DMA_64BIT) ?
 				B43_DMA64_RINGMEMSIZE : B43_DMA32_RINGMEMSIZE;
 	dma_free_coherent(ring->dev->dev->dma_dev, ring_mem_size,
+=======
+	dma_free_coherent(ring->dev->sdev->dma_dev, B43_DMA_RINGMEMSIZE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  ring->descbase, ring->dmabase);
 }
 
@@ -557,7 +631,11 @@ static bool b43_dma_mapping_error(struct b43_dmaring *ring,
 				  dma_addr_t addr,
 				  size_t buffersize, bool dma_to_device)
 {
+<<<<<<< HEAD
 	if (unlikely(dma_mapping_error(ring->dev->dev->dma_dev, addr)))
+=======
+	if (unlikely(dma_mapping_error(ring->dev->sdev->dma_dev, addr)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 
 	switch (ring->type) {
@@ -692,13 +770,18 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
 	int err = 0;
 	u32 value;
 	u32 addrext;
+<<<<<<< HEAD
 	bool parity = ring->dev->dma.parity;
 	u32 addrlo;
 	u32 addrhi;
+=======
+	u32 trans = ring->dev->dma.translation;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ring->tx) {
 		if (ring->type == B43_DMA_64BIT) {
 			u64 ringbase = (u64) (ring->dmabase);
+<<<<<<< HEAD
 			addrext = b43_dma_address(&ring->dev->dma, ringbase, B43_DMA_ADDR_EXT);
 			addrlo = b43_dma_address(&ring->dev->dma, ringbase, B43_DMA_ADDR_LOW);
 			addrhi = b43_dma_address(&ring->dev->dma, ringbase, B43_DMA_ADDR_HIGH);
@@ -723,6 +806,33 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
 				value |= B43_DMA32_TXPARITYDISABLE;
 			b43_dma_write(ring, B43_DMA32_TXCTL, value);
 			b43_dma_write(ring, B43_DMA32_TXRING, addrlo);
+=======
+
+			addrext = ((ringbase >> 32) & SSB_DMA_TRANSLATION_MASK)
+			    >> SSB_DMA_TRANSLATION_SHIFT;
+			value = B43_DMA64_TXENABLE;
+			value |= (addrext << B43_DMA64_TXADDREXT_SHIFT)
+			    & B43_DMA64_TXADDREXT_MASK;
+			b43_dma_write(ring, B43_DMA64_TXCTL, value);
+			b43_dma_write(ring, B43_DMA64_TXRINGLO,
+				      (ringbase & 0xFFFFFFFF));
+			b43_dma_write(ring, B43_DMA64_TXRINGHI,
+				      ((ringbase >> 32) &
+				       ~SSB_DMA_TRANSLATION_MASK)
+				      | (trans << 1));
+		} else {
+			u32 ringbase = (u32) (ring->dmabase);
+
+			addrext = (ringbase & SSB_DMA_TRANSLATION_MASK)
+			    >> SSB_DMA_TRANSLATION_SHIFT;
+			value = B43_DMA32_TXENABLE;
+			value |= (addrext << B43_DMA32_TXADDREXT_SHIFT)
+			    & B43_DMA32_TXADDREXT_MASK;
+			b43_dma_write(ring, B43_DMA32_TXCTL, value);
+			b43_dma_write(ring, B43_DMA32_TXRING,
+				      (ringbase & ~SSB_DMA_TRANSLATION_MASK)
+				      | trans);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		err = alloc_initial_descbuffers(ring);
@@ -730,34 +840,63 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
 			goto out;
 		if (ring->type == B43_DMA_64BIT) {
 			u64 ringbase = (u64) (ring->dmabase);
+<<<<<<< HEAD
 			addrext = b43_dma_address(&ring->dev->dma, ringbase, B43_DMA_ADDR_EXT);
 			addrlo = b43_dma_address(&ring->dev->dma, ringbase, B43_DMA_ADDR_LOW);
 			addrhi = b43_dma_address(&ring->dev->dma, ringbase, B43_DMA_ADDR_HIGH);
 
+=======
+
+			addrext = ((ringbase >> 32) & SSB_DMA_TRANSLATION_MASK)
+			    >> SSB_DMA_TRANSLATION_SHIFT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			value = (ring->frameoffset << B43_DMA64_RXFROFF_SHIFT);
 			value |= B43_DMA64_RXENABLE;
 			value |= (addrext << B43_DMA64_RXADDREXT_SHIFT)
 			    & B43_DMA64_RXADDREXT_MASK;
+<<<<<<< HEAD
 			if (!parity)
 				value |= B43_DMA64_RXPARITYDISABLE;
 			b43_dma_write(ring, B43_DMA64_RXCTL, value);
 			b43_dma_write(ring, B43_DMA64_RXRINGLO, addrlo);
 			b43_dma_write(ring, B43_DMA64_RXRINGHI, addrhi);
+=======
+			b43_dma_write(ring, B43_DMA64_RXCTL, value);
+			b43_dma_write(ring, B43_DMA64_RXRINGLO,
+				      (ringbase & 0xFFFFFFFF));
+			b43_dma_write(ring, B43_DMA64_RXRINGHI,
+				      ((ringbase >> 32) &
+				       ~SSB_DMA_TRANSLATION_MASK)
+				      | (trans << 1));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			b43_dma_write(ring, B43_DMA64_RXINDEX, ring->nr_slots *
 				      sizeof(struct b43_dmadesc64));
 		} else {
 			u32 ringbase = (u32) (ring->dmabase);
+<<<<<<< HEAD
 			addrext = b43_dma_address(&ring->dev->dma, ringbase, B43_DMA_ADDR_EXT);
 			addrlo = b43_dma_address(&ring->dev->dma, ringbase, B43_DMA_ADDR_LOW);
 
+=======
+
+			addrext = (ringbase & SSB_DMA_TRANSLATION_MASK)
+			    >> SSB_DMA_TRANSLATION_SHIFT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			value = (ring->frameoffset << B43_DMA32_RXFROFF_SHIFT);
 			value |= B43_DMA32_RXENABLE;
 			value |= (addrext << B43_DMA32_RXADDREXT_SHIFT)
 			    & B43_DMA32_RXADDREXT_MASK;
+<<<<<<< HEAD
 			if (!parity)
 				value |= B43_DMA32_RXPARITYDISABLE;
 			b43_dma_write(ring, B43_DMA32_RXCTL, value);
 			b43_dma_write(ring, B43_DMA32_RXRING, addrlo);
+=======
+			b43_dma_write(ring, B43_DMA32_RXCTL, value);
+			b43_dma_write(ring, B43_DMA32_RXRING,
+				      (ringbase & ~SSB_DMA_TRANSLATION_MASK)
+				      | trans);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			b43_dma_write(ring, B43_DMA32_RXINDEX, ring->nr_slots *
 				      sizeof(struct b43_dmadesc32));
 		}
@@ -791,14 +930,22 @@ static void dmacontroller_cleanup(struct b43_dmaring *ring)
 
 static void free_all_descbuffers(struct b43_dmaring *ring)
 {
+<<<<<<< HEAD
+=======
+	struct b43_dmadesc_generic *desc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct b43_dmadesc_meta *meta;
 	int i;
 
 	if (!ring->used_slots)
 		return;
 	for (i = 0; i < ring->nr_slots; i++) {
+<<<<<<< HEAD
 		/* get meta - ignore returned value */
 		ring->ops->idx2desc(ring, i, &meta);
+=======
+		desc = ring->ops->idx2desc(ring, i, &meta);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (!meta->skb || b43_dma_ptr_is_poisoned(meta->skb)) {
 			B43_WARN_ON(!ring->tx);
@@ -820,6 +967,7 @@ static u64 supported_dma_mask(struct b43_wldev *dev)
 	u32 tmp;
 	u16 mmio_base;
 
+<<<<<<< HEAD
 	switch (dev->dev->bus_type) {
 #ifdef CONFIG_B43_BCMA
 	case B43_BUS_BCMA:
@@ -837,6 +985,11 @@ static u64 supported_dma_mask(struct b43_wldev *dev)
 #endif
 	}
 
+=======
+	tmp = b43_read32(dev, SSB_TMSHIGH);
+	if (tmp & SSB_TMSHIGH_DMA64)
+		return DMA_BIT_MASK(64);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mmio_base = b43_dmacontroller_base(0, 0);
 	b43_write32(dev, mmio_base + B43_DMA32_TXCTL, B43_DMA32_TXADDREXT_MASK);
 	tmp = b43_read32(dev, mmio_base + B43_DMA32_TXCTL);
@@ -893,6 +1046,7 @@ struct b43_dmaring *b43_setup_dmaring(struct b43_wldev *dev,
 	else
 		ring->ops = &dma32_ops;
 	if (for_tx) {
+<<<<<<< HEAD
 		ring->tx = true;
 		ring->current_slot = -1;
 	} else {
@@ -908,6 +1062,14 @@ struct b43_dmaring *b43_setup_dmaring(struct b43_wldev *dev,
 				ring->frameoffset = B43_DMA0_RX_FW351_FO;
 				break;
 			}
+=======
+		ring->tx = 1;
+		ring->current_slot = -1;
+	} else {
+		if (ring->index == 0) {
+			ring->rx_buffersize = B43_DMA0_RX_BUFFERSIZE;
+			ring->frameoffset = B43_DMA0_RX_FRAMEOFFSET;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else
 			B43_WARN_ON(1);
 	}
@@ -926,7 +1088,11 @@ struct b43_dmaring *b43_setup_dmaring(struct b43_wldev *dev,
 			goto err_kfree_meta;
 
 		/* test for ability to dma to txhdr_cache */
+<<<<<<< HEAD
 		dma_test = dma_map_single(dev->dev->dma_dev,
+=======
+		dma_test = dma_map_single(dev->sdev->dma_dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					  ring->txhdr_cache,
 					  b43_txhdr_size(dev),
 					  DMA_TO_DEVICE);
@@ -941,7 +1107,11 @@ struct b43_dmaring *b43_setup_dmaring(struct b43_wldev *dev,
 			if (!ring->txhdr_cache)
 				goto err_kfree_meta;
 
+<<<<<<< HEAD
 			dma_test = dma_map_single(dev->dev->dma_dev,
+=======
+			dma_test = dma_map_single(dev->sdev->dma_dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						  ring->txhdr_cache,
 						  b43_txhdr_size(dev),
 						  DMA_TO_DEVICE);
@@ -955,7 +1125,11 @@ struct b43_dmaring *b43_setup_dmaring(struct b43_wldev *dev,
 			}
 		}
 
+<<<<<<< HEAD
 		dma_unmap_single(dev->dev->dma_dev,
+=======
+		dma_unmap_single(dev->sdev->dma_dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 dma_test, b43_txhdr_size(dev),
 				 DMA_TO_DEVICE);
 	}
@@ -1064,26 +1238,44 @@ void b43_dma_free(struct b43_wldev *dev)
 static int b43_dma_set_mask(struct b43_wldev *dev, u64 mask)
 {
 	u64 orig_mask = mask;
+<<<<<<< HEAD
 	bool fallback = false;
+=======
+	bool fallback = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err;
 
 	/* Try to set the DMA mask. If it fails, try falling back to a
 	 * lower mask, as we can always also support a lower one. */
 	while (1) {
+<<<<<<< HEAD
 		err = dma_set_mask(dev->dev->dma_dev, mask);
 		if (!err) {
 			err = dma_set_coherent_mask(dev->dev->dma_dev, mask);
+=======
+		err = dma_set_mask(dev->sdev->dma_dev, mask);
+		if (!err) {
+			err = dma_set_coherent_mask(dev->sdev->dma_dev, mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!err)
 				break;
 		}
 		if (mask == DMA_BIT_MASK(64)) {
 			mask = DMA_BIT_MASK(32);
+<<<<<<< HEAD
 			fallback = true;
+=======
+			fallback = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 		if (mask == DMA_BIT_MASK(32)) {
 			mask = DMA_BIT_MASK(30);
+<<<<<<< HEAD
 			fallback = true;
+=======
+			fallback = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 		b43err(dev->wl, "The machine/kernel does not support "
@@ -1100,6 +1292,7 @@ static int b43_dma_set_mask(struct b43_wldev *dev, u64 mask)
 	return 0;
 }
 
+<<<<<<< HEAD
 /* Some hardware with 64-bit DMA seems to be bugged and looks for translation
  * bit in low address word instead of high one.
  */
@@ -1119,6 +1312,8 @@ static bool b43_dma_translation_in_low_word(struct b43_wldev *dev,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int b43_dma_init(struct b43_wldev *dev)
 {
 	struct b43_dma *dma = &dev->dma;
@@ -1131,6 +1326,7 @@ int b43_dma_init(struct b43_wldev *dev)
 	err = b43_dma_set_mask(dev, dmamask);
 	if (err)
 		return err;
+<<<<<<< HEAD
 
 	switch (dev->dev->bus_type) {
 #ifdef CONFIG_B43_BCMA
@@ -1152,6 +1348,9 @@ int b43_dma_init(struct b43_wldev *dev)
 	if (dev->dev->bus_type == B43_BUS_BCMA)
 		dma->parity = false;
 #endif
+=======
+	dma->translation = ssb_dma_translation(dev->sdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = -ENOMEM;
 	/* setup TX DMA channels. */
@@ -1181,7 +1380,11 @@ int b43_dma_init(struct b43_wldev *dev)
 		goto err_destroy_mcast;
 
 	/* No support for the TX status DMA ring. */
+<<<<<<< HEAD
 	B43_WARN_ON(dev->dev->core_rev < 5);
+=======
+	B43_WARN_ON(dev->sdev->id.revision < 5);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	b43dbg(dev->wl, "%u-bit DMA initialized\n",
 	       (unsigned int)type);
@@ -1310,7 +1513,11 @@ static int dma_tx_fragment(struct b43_dmaring *ring,
 	memset(meta, 0, sizeof(*meta));
 
 	meta->skb = skb;
+<<<<<<< HEAD
 	meta->is_last_fragment = true;
+=======
+	meta->is_last_fragment = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	priv_info->bouncebuffer = NULL;
 
 	meta->dmaaddr = map_descbuffer(ring, skb->data, skb->len, 1);
@@ -1457,7 +1664,11 @@ int b43_dma_tx(struct b43_wldev *dev, struct sk_buff *skb)
 	if (unlikely(err == -ENOKEY)) {
 		/* Drop this packet, as we don't have the encryption key
 		 * anymore and must not transmit it unencrypted. */
+<<<<<<< HEAD
 		ieee80211_free_txskb(dev->wl->hw, skb);
+=======
+		dev_kfree_skb_any(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = 0;
 		goto out;
 	}
@@ -1468,10 +1679,15 @@ int b43_dma_tx(struct b43_wldev *dev, struct sk_buff *skb)
 	if ((free_slots(ring) < TX_SLOTS_PER_FRAME) ||
 	    should_inject_overflow(ring)) {
 		/* This TX ring is full. */
+<<<<<<< HEAD
 		unsigned int skb_mapping = skb_get_queue_mapping(skb);
 		ieee80211_stop_queue(dev->wl->hw, skb_mapping);
 		dev->wl->tx_queue_stopped[skb_mapping] = 1;
 		ring->stopped = true;
+=======
+		ieee80211_stop_queue(dev->wl->hw, skb_get_queue_mapping(skb));
+		ring->stopped = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (b43_debug(dev, B43_DBG_DMAVERBOSE)) {
 			b43dbg(dev->wl, "Stopped TX ring %d\n", ring->index);
 		}
@@ -1486,6 +1702,7 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
 {
 	const struct b43_dma_ops *ops;
 	struct b43_dmaring *ring;
+<<<<<<< HEAD
 	struct b43_dmadesc_meta *meta;
 	static const struct b43_txstatus fake; /* filled with 0 */
 	const struct b43_txstatus *txstat;
@@ -1493,6 +1710,12 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
 	bool frame_succeed;
 	int skip;
 	static u8 err_out1, err_out2;
+=======
+	struct b43_dmadesc_generic *desc;
+	struct b43_dmadesc_meta *meta;
+	int slot, firstused;
+	bool frame_succeed;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ring = parse_cookie(dev, status->cookie, &slot);
 	if (unlikely(!ring))
@@ -1505,6 +1728,7 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
 	firstused = ring->current_slot - ring->used_slots + 1;
 	if (firstused < 0)
 		firstused = ring->nr_slots + firstused;
+<<<<<<< HEAD
 
 	skip = 0;
 	if (unlikely(slot != firstused)) {
@@ -1535,13 +1759,26 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
 			err_out2 = 1;
 			return;
 		}
+=======
+	if (unlikely(slot != firstused)) {
+		/* This possibly is a firmware bug and will result in
+		 * malfunction, memory leaks and/or stall of DMA functionality. */
+		b43dbg(dev->wl, "Out of order TX status report on DMA ring %d. "
+		       "Expected %d, but got %d\n",
+		       ring->index, firstused, slot);
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ops = ring->ops;
 	while (1) {
 		B43_WARN_ON(slot < 0 || slot >= ring->nr_slots);
+<<<<<<< HEAD
 		/* get meta - ignore returned value */
 		ops->idx2desc(ring, slot, &meta);
+=======
+		desc = ops->idx2desc(ring, slot, &meta);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (b43_dma_ptr_is_poisoned(meta->skb)) {
 			b43dbg(dev->wl, "Poisoned TX slot %d (first=%d) "
@@ -1549,6 +1786,7 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
 			       slot, firstused, ring->index);
 			break;
 		}
+<<<<<<< HEAD
 
 		if (meta->skb) {
 			struct b43_private_tx_info *priv_info =
@@ -1556,6 +1794,13 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
 
 			unmap_descbuffer(ring, meta->dmaaddr,
 					 meta->skb->len, 1);
+=======
+		if (meta->skb) {
+			struct b43_private_tx_info *priv_info =
+				b43_get_priv_tx_info(IEEE80211_SKB_CB(meta->skb));
+
+			unmap_descbuffer(ring, meta->dmaaddr, meta->skb->len, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			kfree(priv_info->bouncebuffer);
 			priv_info->bouncebuffer = NULL;
 		} else {
@@ -1567,9 +1812,14 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
 			struct ieee80211_tx_info *info;
 
 			if (unlikely(!meta->skb)) {
+<<<<<<< HEAD
 				/* This is a scatter-gather fragment of a frame,
 				 * so the skb pointer must not be NULL.
 				 */
+=======
+				/* This is a scatter-gather fragment of a frame, so
+				 * the skb pointer must not be NULL. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				b43dbg(dev->wl, "TX status unexpected NULL skb "
 				       "at slot %d (first=%d) on ring %d\n",
 				       slot, firstused, ring->index);
@@ -1580,6 +1830,7 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
 
 			/*
 			 * Call back to inform the ieee80211 subsystem about
+<<<<<<< HEAD
 			 * the status of the transmission. When skipping over
 			 * a missed TX status report, use a status structure
 			 * filled with zeros to indicate that the frame was not
@@ -1592,6 +1843,11 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
 
 			frame_succeed = b43_fill_txstatus_report(dev, info,
 								 txstat);
+=======
+			 * the status of the transmission.
+			 */
+			frame_succeed = b43_fill_txstatus_report(dev, info, status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_B43_DEBUG
 			if (frame_succeed)
 				ring->nr_succeed_tx_packets++;
@@ -1619,12 +1875,17 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
 		/* Everything unmapped and free'd. So it's not used anymore. */
 		ring->used_slots--;
 
+<<<<<<< HEAD
 		if (meta->is_last_fragment && !skip) {
+=======
+		if (meta->is_last_fragment) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* This is the last scatter-gather
 			 * fragment of the frame. We are done. */
 			break;
 		}
 		slot = next_slot(ring, slot);
+<<<<<<< HEAD
 		if (skip > 0)
 			--skip;
 	}
@@ -1639,12 +1900,22 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
 		/* If the driver queue is running wake the corresponding
 		 * mac80211 queue. */
 		ieee80211_wake_queue(dev->wl->hw, ring->queue_prio);
+=======
+	}
+	if (ring->stopped) {
+		B43_WARN_ON(free_slots(ring) < TX_SLOTS_PER_FRAME);
+		ieee80211_wake_queue(dev->wl->hw, ring->queue_prio);
+		ring->stopped = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (b43_debug(dev, B43_DBG_DMAVERBOSE)) {
 			b43dbg(dev->wl, "Woke up TX ring %d\n", ring->index);
 		}
 	}
+<<<<<<< HEAD
 	/* Add work to the queue. */
 	ieee80211_queue_work(dev->wl->hw, &dev->wl->tx_work);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void dma_rx(struct b43_dmaring *ring, int *slot)
@@ -1733,6 +2004,7 @@ drop_recycle_buffer:
 	sync_descbuffer_for_device(ring, dmaaddr, ring->rx_buffersize);
 }
 
+<<<<<<< HEAD
 void b43_dma_handle_rx_overflow(struct b43_dmaring *ring)
 {
 	int current_slot, previous_slot;
@@ -1752,6 +2024,8 @@ void b43_dma_handle_rx_overflow(struct b43_dmaring *ring)
 	ring->ops->set_current_rxslot(ring, previous_slot);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void b43_dma_rx(struct b43_dmaring *ring)
 {
 	const struct b43_dma_ops *ops = ring->ops;
@@ -1767,7 +2041,10 @@ void b43_dma_rx(struct b43_dmaring *ring)
 		dma_rx(ring, &slot);
 		update_max_used_slots(ring, ++used_slots);
 	}
+<<<<<<< HEAD
 	wmb();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ops->set_current_rxslot(ring, slot);
 	ring->current_slot = slot;
 }

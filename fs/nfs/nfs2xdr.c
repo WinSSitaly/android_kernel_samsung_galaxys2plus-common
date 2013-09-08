@@ -1150,7 +1150,11 @@ struct rpc_procinfo	nfs_procedures[] = {
 	PROC(STATFS,	fhandle,	statfsres,	0),
 };
 
+<<<<<<< HEAD
 const struct rpc_version nfs_version2 = {
+=======
+struct rpc_version		nfs_version2 = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.number			= 2,
 	.nrprocs		= ARRAY_SIZE(nfs_procedures),
 	.procs			= nfs_procedures

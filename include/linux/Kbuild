@@ -3,7 +3,10 @@ header-y += can/
 header-y += caif/
 header-y += dvb/
 header-y += hdlc/
+<<<<<<< HEAD
 header-y += hsi/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 header-y += isdn/
 header-y += mmc/
 header-y += nfsd/
@@ -100,6 +103,10 @@ header-y += cramfs_fs.h
 header-y += cuda.h
 header-y += cyclades.h
 header-y += cycx_cfm.h
+<<<<<<< HEAD
+=======
+header-${CONFIG_I2C_DAC6571} += dac6571.h
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 header-y += dcbnl.h
 header-y += dccp.h
 header-y += dlm.h
@@ -121,6 +128,10 @@ header-y += errno.h
 header-y += errqueue.h
 header-y += ethtool.h
 header-y += eventpoll.h
+<<<<<<< HEAD
+=======
+header-y += ext2_fs.h
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 header-y += fadvise.h
 header-y += falloc.h
 header-y += fanotify.h
@@ -135,7 +146,10 @@ header-y += firewire-cdev.h
 header-y += firewire-constants.h
 header-y += flat.h
 header-y += fs.h
+<<<<<<< HEAD
 header-y += fsl_hypervisor.h
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 header-y += fuse.h
 header-y += futex.h
 header-y += gameport.h
@@ -185,7 +199,10 @@ header-y += if_pppol2tp.h
 header-y += if_pppox.h
 header-y += if_slip.h
 header-y += if_strip.h
+<<<<<<< HEAD
 header-y += if_team.h
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 header-y += if_tr.h
 header-y += if_tun.h
 header-y += if_tunnel.h
@@ -195,9 +212,13 @@ header-y += igmp.h
 header-y += in.h
 header-y += in6.h
 header-y += in_route.h
+<<<<<<< HEAD
 header-y += sock_diag.h
 header-y += inet_diag.h
 header-y += unix_diag.h
+=======
+header-y += inet_diag.h
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 header-y += inotify.h
 header-y += input.h
 header-y += ioctl.h
@@ -227,7 +248,10 @@ header-y += kd.h
 header-y += kdev_t.h
 header-y += kernel.h
 header-y += kernelcapi.h
+<<<<<<< HEAD
 header-y += kernel-page-flags.h
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 header-y += keyboard.h
 header-y += keyctl.h
 header-y += l2tp.h
@@ -239,7 +263,10 @@ header-y += magic.h
 header-y += major.h
 header-y += map_to_7segment.h
 header-y += matroxfb.h
+<<<<<<< HEAD
 header-y += mdio.h
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 header-y += media.h
 header-y += mempolicy.h
 header-y += meye.h
@@ -272,7 +299,10 @@ header-y += netfilter_ipv4.h
 header-y += netfilter_ipv6.h
 header-y += netlink.h
 header-y += netrom.h
+<<<<<<< HEAD
 header-y += nfc.h
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 header-y += nfs.h
 header-y += nfs2.h
 header-y += nfs3.h
@@ -307,7 +337,10 @@ header-y += poll.h
 header-y += posix_types.h
 header-y += ppdev.h
 header-y += ppp-comp.h
+<<<<<<< HEAD
 header-y += ppp-ioctl.h
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 header-y += ppp_defs.h
 header-y += pps.h
 header-y += prctl.h
@@ -359,7 +392,10 @@ header-y += suspend_ioctls.h
 header-y += swab.h
 header-y += synclink.h
 header-y += sysctl.h
+<<<<<<< HEAD
 header-y += sysinfo.h
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 header-y += taskstats.h
 header-y += tcp.h
 header-y += telephony.h
@@ -408,3 +444,8 @@ header-y += wireless.h
 header-y += x25.h
 header-y += xattr.h
 header-y += xfrm.h
+<<<<<<< HEAD
+=======
+
+header-y += broadcom/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

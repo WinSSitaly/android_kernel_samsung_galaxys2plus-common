@@ -187,7 +187,21 @@ static struct i2c_driver bq32k_driver = {
 	.id_table	= bq32k_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(bq32k_driver);
+=======
+static __init int bq32k_init(void)
+{
+	return i2c_add_driver(&bq32k_driver);
+}
+module_init(bq32k_init);
+
+static __exit void bq32k_exit(void)
+{
+	i2c_del_driver(&bq32k_driver);
+}
+module_exit(bq32k_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Semihalf, Piotr Ziecik <kosmo@semihalf.com>");
 MODULE_DESCRIPTION("TI BQ32000 I2C RTC driver");

@@ -15,19 +15,31 @@
 #include <linux/serial_8250.h>
 #include <linux/serial_reg.h>
 
+<<<<<<< HEAD
 #include <asm/netlogic/haldefs.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/netlogic/xlr/iomap.h>
 #include <asm/netlogic/xlr/pic.h>
 #include <asm/netlogic/xlr/xlr.h>
 
 unsigned int nlm_xlr_uart_in(struct uart_port *p, int offset)
 {
+<<<<<<< HEAD
 	uint64_t uartbase;
 	unsigned int value;
 
 	/* sign extend to 64 bits, if needed */
 	uartbase = (uint64_t)(long)p->membase;
 	value = nlm_read_reg(uartbase, offset);
+=======
+	nlm_reg_t *mmio;
+	unsigned int value;
+
+	/* XLR uart does not need any mapping of regs */
+	mmio = (nlm_reg_t *)(p->membase + (offset << p->regshift));
+	value = netlogic_read_reg(mmio, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* See XLR/XLS errata */
 	if (offset == UART_MSR)
@@ -40,10 +52,17 @@ unsigned int nlm_xlr_uart_in(struct uart_port *p, int offset)
 
 void nlm_xlr_uart_out(struct uart_port *p, int offset, int value)
 {
+<<<<<<< HEAD
 	uint64_t uartbase;
 
 	/* sign extend to 64 bits, if needed */
 	uartbase = (uint64_t)(long)p->membase;
+=======
+	nlm_reg_t *mmio;
+
+	/* XLR uart does not need any mapping of regs */
+	mmio = (nlm_reg_t *)(p->membase + (offset << p->regshift));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* See XLR/XLS errata */
 	if (offset == UART_MSR)
@@ -51,7 +70,11 @@ void nlm_xlr_uart_out(struct uart_port *p, int offset, int value)
 	else if (offset == UART_MCR)
 		value ^= 0x3;
 
+<<<<<<< HEAD
 	nlm_write_reg(uartbase, offset, value);
+=======
+	netlogic_write_reg(mmio, 0, value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #define PORT(_irq)					\
@@ -83,6 +106,7 @@ static struct platform_device uart_device = {
 
 static int __init nlm_uart_init(void)
 {
+<<<<<<< HEAD
 	unsigned long uartbase;
 
 	uartbase = (unsigned long)nlm_mmio_base(NETLOGIC_IO_UART_0_OFFSET);
@@ -92,6 +116,17 @@ static int __init nlm_uart_init(void)
 	uartbase = (unsigned long)nlm_mmio_base(NETLOGIC_IO_UART_1_OFFSET);
 	xlr_uart_data[1].membase = (void __iomem *)uartbase;
 	xlr_uart_data[1].mapbase = CPHYSADDR(uartbase);
+=======
+	nlm_reg_t *mmio;
+
+	mmio = netlogic_io_mmio(NETLOGIC_IO_UART_0_OFFSET);
+	xlr_uart_data[0].membase = (void __iomem *)mmio;
+	xlr_uart_data[0].mapbase = CPHYSADDR((unsigned long)mmio);
+
+	mmio = netlogic_io_mmio(NETLOGIC_IO_UART_1_OFFSET);
+	xlr_uart_data[1].membase = (void __iomem *)mmio;
+	xlr_uart_data[1].mapbase = CPHYSADDR((unsigned long)mmio);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return platform_device_register(&uart_device);
 }

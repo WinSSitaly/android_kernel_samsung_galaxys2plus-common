@@ -36,7 +36,11 @@ get_vm_block(struct ct_vm *vm, unsigned int size)
 
 	size = CT_PAGE_ALIGN(size);
 	if (size > vm->size) {
+<<<<<<< HEAD
 		printk(KERN_ERR "ctxfi: Fail! No sufficient device virtual "
+=======
+		printk(KERN_ERR "ctxfi: Fail! No sufficient device virtural "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  "memory space available!\n");
 		return NULL;
 	}

@@ -15,4 +15,9 @@
 
 #define __io(a)                 ((void __iomem *)(0xe0000000 + (a)))
 
+<<<<<<< HEAD
+=======
+#define __mem_pci(addr) (addr)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

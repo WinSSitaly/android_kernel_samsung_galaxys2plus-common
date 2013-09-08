@@ -23,7 +23,10 @@
 #include <linux/sysctl.h>
 #include <linux/hardirq.h>
 #include <linux/mman.h>
+<<<<<<< HEAD
 #include <asm/unaligned.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/pgtable.h>
 #include <asm/processor.h>
 #include <asm/sections.h>
@@ -146,6 +149,10 @@ static ctl_table unaligned_table[] = {
 	},
 	{}
 };
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct ctl_path tile_path[] = {
 	{ .procname = "tile" },
@@ -154,9 +161,18 @@ static struct ctl_path tile_path[] = {
 
 static int __init proc_sys_tile_init(void)
 {
+<<<<<<< HEAD
 	register_sysctl_paths(tile_path, unaligned_table);
+=======
+#ifndef __tilegx__  /* FIXME: GX: no support for unaligned access yet */
+	register_sysctl_paths(tile_path, unaligned_table);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 arch_initcall(proc_sys_tile_init);
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

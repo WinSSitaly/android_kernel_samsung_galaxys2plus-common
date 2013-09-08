@@ -80,7 +80,10 @@ static struct edma_soc_info edma_cc0_info = {
 	.n_cc			= 1,
 	.queue_tc_mapping	= edma_tc_mapping,
 	.queue_priority_mapping	= edma_priority_mapping,
+<<<<<<< HEAD
 	.default_queue		= EVENTQ_1,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct edma_soc_info *tnetv107x_edma_info[EDMA_MAX_CC] = {

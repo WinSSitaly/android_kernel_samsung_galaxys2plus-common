@@ -6,13 +6,18 @@
  */
 
 #include "bcma_private.h"
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/bcma/bcma.h>
 #include <linux/slab.h>
+=======
+#include <linux/bcma/bcma.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Broadcom's specific AMBA driver");
 MODULE_LICENSE("GPL");
 
+<<<<<<< HEAD
 /* contains the number the next bus should get. */
 static unsigned int bcma_bus_next_num = 0;
 
@@ -23,6 +28,11 @@ static int bcma_bus_match(struct device *dev, struct device_driver *drv);
 static int bcma_device_probe(struct device *dev);
 static int bcma_device_remove(struct device *dev);
 static int bcma_device_uevent(struct device *dev, struct kobj_uevent_env *env);
+=======
+static int bcma_bus_match(struct device *dev, struct device_driver *drv);
+static int bcma_device_probe(struct device *dev);
+static int bcma_device_remove(struct device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static ssize_t manuf_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
@@ -57,11 +67,18 @@ static struct bus_type bcma_bus_type = {
 	.match		= bcma_bus_match,
 	.probe		= bcma_device_probe,
 	.remove		= bcma_device_remove,
+<<<<<<< HEAD
 	.uevent		= bcma_device_uevent,
 	.dev_attrs	= bcma_device_attrs,
 };
 
 struct bcma_device *bcma_find_core(struct bcma_bus *bus, u16 coreid)
+=======
+	.dev_attrs	= bcma_device_attrs,
+};
+
+static struct bcma_device *bcma_find_core(struct bcma_bus *bus, u16 coreid)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bcma_device *core;
 
@@ -71,15 +88,21 @@ struct bcma_device *bcma_find_core(struct bcma_bus *bus, u16 coreid)
 	}
 	return NULL;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(bcma_find_core);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void bcma_release_core_dev(struct device *dev)
 {
 	struct bcma_device *core = container_of(dev, struct bcma_device, dev);
+<<<<<<< HEAD
 	if (core->io_addr)
 		iounmap(core->io_addr);
 	if (core->io_wrap)
 		iounmap(core->io_wrap);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(core);
 }
 
@@ -94,17 +117,25 @@ static int bcma_register_cores(struct bcma_bus *bus)
 		case BCMA_CORE_CHIPCOMMON:
 		case BCMA_CORE_PCI:
 		case BCMA_CORE_PCIE:
+<<<<<<< HEAD
 		case BCMA_CORE_MIPS_74K:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 
 		core->dev.release = bcma_release_core_dev;
 		core->dev.bus = &bcma_bus_type;
+<<<<<<< HEAD
 		dev_set_name(&core->dev, "bcma%d:%d", bus->num, dev_id);
+=======
+		dev_set_name(&core->dev, "bcma%d:%d", 0/*bus->num*/, dev_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		switch (bus->hosttype) {
 		case BCMA_HOSTTYPE_PCI:
 			core->dev.parent = &bus->host_pci->dev;
+<<<<<<< HEAD
 			core->dma_dev = &bus->host_pci->dev;
 			core->irq = bus->host_pci->irq;
 			break;
@@ -112,6 +143,10 @@ static int bcma_register_cores(struct bcma_bus *bus)
 			core->dev.dma_mask = &core->dev.coherent_dma_mask;
 			core->dma_dev = &core->dev;
 			break;
+=======
+			break;
+		case BCMA_HOSTTYPE_NONE:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case BCMA_HOSTTYPE_SDIO:
 			break;
 		}
@@ -131,24 +166,37 @@ static int bcma_register_cores(struct bcma_bus *bus)
 
 static void bcma_unregister_cores(struct bcma_bus *bus)
 {
+<<<<<<< HEAD
 	struct bcma_device *core, *tmp;
 
 	list_for_each_entry_safe(core, tmp, &bus->cores, list) {
 		list_del(&core->list);
+=======
+	struct bcma_device *core;
+
+	list_for_each_entry(core, &bus->cores, list) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (core->dev_registered)
 			device_unregister(&core->dev);
 	}
 }
 
+<<<<<<< HEAD
 int __devinit bcma_bus_register(struct bcma_bus *bus)
+=======
+int bcma_bus_register(struct bcma_bus *bus)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 	struct bcma_device *core;
 
+<<<<<<< HEAD
 	mutex_lock(&bcma_buses_mutex);
 	bus->num = bcma_bus_next_num++;
 	mutex_unlock(&bcma_buses_mutex);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Scan for devices (cores) */
 	err = bcma_bus_scan(bus);
 	if (err) {
@@ -163,6 +211,7 @@ int __devinit bcma_bus_register(struct bcma_bus *bus)
 		bcma_core_chipcommon_init(&bus->drv_cc);
 	}
 
+<<<<<<< HEAD
 	/* Init MIPS core */
 	core = bcma_find_core(bus, BCMA_CORE_MIPS_74K);
 	if (core) {
@@ -170,6 +219,8 @@ int __devinit bcma_bus_register(struct bcma_bus *bus)
 		bcma_core_mips_init(&bus->drv_mips);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Init PCIE core */
 	core = bcma_find_core(bus, BCMA_CORE_PCIE);
 	if (core) {
@@ -177,6 +228,7 @@ int __devinit bcma_bus_register(struct bcma_bus *bus)
 		bcma_core_pci_init(&bus->drv_pci);
 	}
 
+<<<<<<< HEAD
 	/* Try to get SPROM */
 	err = bcma_sprom_get(bus);
 	if (err == -ENOENT) {
@@ -184,6 +236,8 @@ int __devinit bcma_bus_register(struct bcma_bus *bus)
 	} else if (err)
 		pr_err("Failed to get SPROM: %d\n", err);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Register found cores */
 	bcma_register_cores(bus);
 
@@ -191,11 +245,16 @@ int __devinit bcma_bus_register(struct bcma_bus *bus)
 
 	return 0;
 }
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL_GPL(bcma_bus_register);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void bcma_bus_unregister(struct bcma_bus *bus)
 {
 	bcma_unregister_cores(bus);
 }
+<<<<<<< HEAD
 
 int __init bcma_bus_early_register(struct bcma_bus *bus,
 				   struct bcma_device *core_cc,
@@ -289,6 +348,9 @@ int bcma_bus_resume(struct bcma_bus *bus)
 	return 0;
 }
 #endif
+=======
+EXPORT_SYMBOL_GPL(bcma_bus_unregister);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int __bcma_driver_register(struct bcma_driver *drv, struct module *owner)
 {
@@ -348,6 +410,7 @@ static int bcma_device_remove(struct device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int bcma_device_uevent(struct device *dev, struct kobj_uevent_env *env)
 {
 	struct bcma_device *core = container_of(dev, struct bcma_device, dev);
@@ -358,6 +421,8 @@ static int bcma_device_uevent(struct device *dev, struct kobj_uevent_env *env)
 			      core->id.rev, core->id.class);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init bcma_modinit(void)
 {
 	int err;

@@ -6,7 +6,11 @@
  */
 
 #ifndef _ASM_S390_ITCW_H
+<<<<<<< HEAD
 #define _ASM_S390_ITCW_H
+=======
+#define _ASM_S390_ITCW_H _ASM_S390_ITCW_H
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/types.h>
 #include <asm/fcx.h>

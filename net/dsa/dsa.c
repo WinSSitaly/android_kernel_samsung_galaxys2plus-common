@@ -12,7 +12,10 @@
 #include <linux/netdevice.h>
 #include <linux/platform_device.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/dsa.h>
 #include "dsa_priv.h"
 
@@ -29,7 +32,10 @@ void register_switch_driver(struct dsa_switch_driver *drv)
 	list_add_tail(&drv->list, &dsa_switch_drivers);
 	mutex_unlock(&dsa_switch_drivers_mutex);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(register_switch_driver);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void unregister_switch_driver(struct dsa_switch_driver *drv)
 {
@@ -37,7 +43,10 @@ void unregister_switch_driver(struct dsa_switch_driver *drv)
 	list_del_init(&drv->list);
 	mutex_unlock(&dsa_switch_drivers_mutex);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(unregister_switch_driver);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct dsa_switch_driver *
 dsa_switch_probe(struct mii_bus *bus, int sw_addr, char **_name)
@@ -201,6 +210,32 @@ static void dsa_switch_destroy(struct dsa_switch *ds)
 }
 
 
+<<<<<<< HEAD
+=======
+/* hooks for ethertype-less tagging formats *********************************/
+/*
+ * The original DSA tag format and some other tag formats have no
+ * ethertype, which means that we need to add a little hack to the
+ * networking receive path to make sure that received frames get
+ * the right ->protocol assigned to them when one of those tag
+ * formats is in use.
+ */
+bool dsa_uses_dsa_tags(void *dsa_ptr)
+{
+	struct dsa_switch_tree *dst = dsa_ptr;
+
+	return !!(dst->tag_protocol == htons(ETH_P_DSA));
+}
+
+bool dsa_uses_trailer_tags(void *dsa_ptr)
+{
+	struct dsa_switch_tree *dst = dsa_ptr;
+
+	return !!(dst->tag_protocol == htons(ETH_P_TRAILER));
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* link polling *************************************************************/
 static void dsa_link_poll_work(struct work_struct *ugly)
 {
@@ -398,6 +433,7 @@ static struct platform_driver dsa_driver = {
 
 static int __init dsa_init_module(void)
 {
+<<<<<<< HEAD
 	int rc;
 
 	rc = platform_driver_register(&dsa_driver);
@@ -414,11 +450,15 @@ static int __init dsa_init_module(void)
 	dev_add_pack(&trailer_packet_type);
 #endif
 	return 0;
+=======
+	return platform_driver_register(&dsa_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 module_init(dsa_init_module);
 
 static void __exit dsa_cleanup_module(void)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_NET_DSA_TAG_TRAILER
 	dev_remove_pack(&trailer_packet_type);
 #endif
@@ -428,6 +468,8 @@ static void __exit dsa_cleanup_module(void)
 #ifdef CONFIG_NET_DSA_TAG_DSA
 	dev_remove_pack(&dsa_packet_type);
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_driver_unregister(&dsa_driver);
 }
 module_exit(dsa_cleanup_module);

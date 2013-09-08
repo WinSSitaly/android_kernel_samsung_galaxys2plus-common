@@ -155,6 +155,10 @@ static void keyring_destroy(struct key *keyring)
 	}
 
 	klist = rcu_dereference_check(keyring->payload.subscriptions,
+<<<<<<< HEAD
+=======
+				      rcu_read_lock_held() ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      atomic_read(&keyring->usage) == 0);
 	if (klist) {
 		for (loop = klist->nkeys - 1; loop >= 0; loop--)
@@ -319,7 +323,11 @@ key_ref_t keyring_search_aux(key_ref_t keyring_ref,
 	struct key *keyring, *key;
 	key_ref_t key_ref;
 	long err;
+<<<<<<< HEAD
 	int sp, nkeys, kix;
+=======
+	int sp, kix;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	keyring = key_ref_to_ptr(keyring_ref);
 	possessed = is_key_possessed(keyring_ref);
@@ -380,9 +388,13 @@ descend:
 		goto not_this_keyring;
 
 	/* iterate through the keys in this keyring first */
+<<<<<<< HEAD
 	nkeys = keylist->nkeys;
 	smp_rmb();
 	for (kix = 0; kix < nkeys; kix++) {
+=======
+	for (kix = 0; kix < keylist->nkeys; kix++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		key = keylist->keys[kix];
 		kflags = key->flags;
 
@@ -423,9 +435,13 @@ descend:
 	/* search through the keyrings nested in this one */
 	kix = 0;
 ascend:
+<<<<<<< HEAD
 	nkeys = keylist->nkeys;
 	smp_rmb();
 	for (; kix < nkeys; kix++) {
+=======
+	for (; kix < keylist->nkeys; kix++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		key = keylist->keys[kix];
 		if (key->type != &key_type_keyring)
 			continue;
@@ -519,7 +535,11 @@ key_ref_t __keyring_search_one(key_ref_t keyring_ref,
 	struct keyring_list *klist;
 	unsigned long possessed;
 	struct key *keyring, *key;
+<<<<<<< HEAD
 	int nkeys, loop;
+=======
+	int loop;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	keyring = key_ref_to_ptr(keyring_ref);
 	possessed = is_key_possessed(keyring_ref);
@@ -528,9 +548,13 @@ key_ref_t __keyring_search_one(key_ref_t keyring_ref,
 
 	klist = rcu_dereference(keyring->payload.subscriptions);
 	if (klist) {
+<<<<<<< HEAD
 		nkeys = klist->nkeys;
 		smp_rmb();
 		for (loop = 0; loop < nkeys ; loop++) {
+=======
+		for (loop = 0; loop < klist->nkeys; loop++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			key = klist->keys[loop];
 
 			if (key->type == ktype &&
@@ -628,7 +652,11 @@ static int keyring_detect_cycle(struct key *A, struct key *B)
 
 	struct keyring_list *keylist;
 	struct key *subtree, *key;
+<<<<<<< HEAD
 	int sp, nkeys, kix, ret;
+=======
+	int sp, kix, ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rcu_read_lock();
 
@@ -651,9 +679,13 @@ descend:
 
 ascend:
 	/* iterate through the remaining keys in this keyring */
+<<<<<<< HEAD
 	nkeys = keylist->nkeys;
 	smp_rmb();
 	for (; kix < nkeys; kix++) {
+=======
+	for (; kix < keylist->nkeys; kix++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		key = keylist->keys[kix];
 
 		if (key == A)
@@ -868,7 +900,12 @@ void __key_link(struct key *keyring, struct key *key,
 
 	kenter("%d,%d,%p", keyring->serial, key->serial, nklist);
 
+<<<<<<< HEAD
 	klist = rcu_dereference_locked_keyring(keyring);
+=======
+	klist = rcu_dereference_protected(keyring->payload.subscriptions,
+					  rwsem_is_locked(&keyring->sem));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	atomic_inc(&key->usage);
 

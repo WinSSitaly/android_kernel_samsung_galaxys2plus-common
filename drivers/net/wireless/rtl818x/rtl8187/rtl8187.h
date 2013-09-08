@@ -89,6 +89,7 @@ enum {
 	DEVICE_RTL8187B
 };
 
+<<<<<<< HEAD
 struct rtl8187_vif {
 	struct ieee80211_hw *dev;
 
@@ -97,6 +98,8 @@ struct rtl8187_vif {
 	bool enable_beacon;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct rtl8187_priv {
 	/* common between rtl818x drivers */
 	struct rtl818x_csr *map;
@@ -149,7 +152,10 @@ struct rtl8187_priv {
 		__le32 bits32;
 	} *io_dmabuf;
 	bool rfkill_off;
+<<<<<<< HEAD
 	u16 seqno;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void rtl8187_write_phy(struct ieee80211_hw *dev, u8 addr, u32 data);

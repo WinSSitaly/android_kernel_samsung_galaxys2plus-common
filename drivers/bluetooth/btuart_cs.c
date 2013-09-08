@@ -38,6 +38,10 @@
 #include <linux/serial.h>
 #include <linux/serial_reg.h>
 #include <linux/bitops.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 
 #include <pcmcia/cistpl.h>
@@ -396,7 +400,11 @@ static void btuart_change_speed(btuart_info_t *info, unsigned int speed)
 
 static int btuart_hci_flush(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	btuart_info_t *info = hci_get_drvdata(hdev);
+=======
+	btuart_info_t *info = (btuart_info_t *)(hdev->driver_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Drop TX queue */
 	skb_queue_purge(&(info->txq));
@@ -434,7 +442,11 @@ static int btuart_hci_send_frame(struct sk_buff *skb)
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	info = hci_get_drvdata(hdev);
+=======
+	info = (btuart_info_t *)(hdev->driver_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (bt_cb(skb)->pkt_type) {
 	case HCI_COMMAND_PKT:
@@ -458,6 +470,14 @@ static int btuart_hci_send_frame(struct sk_buff *skb)
 }
 
 
+<<<<<<< HEAD
+=======
+static void btuart_hci_destruct(struct hci_dev *hdev)
+{
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int btuart_hci_ioctl(struct hci_dev *hdev, unsigned int cmd, unsigned long arg)
 {
 	return -ENOIOCTLCMD;
@@ -492,15 +512,27 @@ static int btuart_open(btuart_info_t *info)
 	info->hdev = hdev;
 
 	hdev->bus = HCI_PCCARD;
+<<<<<<< HEAD
 	hci_set_drvdata(hdev, info);
+=======
+	hdev->driver_data = info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	SET_HCIDEV_DEV(hdev, &info->p_dev->dev);
 
 	hdev->open     = btuart_hci_open;
 	hdev->close    = btuart_hci_close;
 	hdev->flush    = btuart_hci_flush;
 	hdev->send     = btuart_hci_send_frame;
+<<<<<<< HEAD
 	hdev->ioctl    = btuart_hci_ioctl;
 
+=======
+	hdev->destruct = btuart_hci_destruct;
+	hdev->ioctl    = btuart_hci_ioctl;
+
+	hdev->owner = THIS_MODULE;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&(info->lock), flags);
 
 	/* Reset UART */
@@ -556,7 +588,13 @@ static int btuart_close(btuart_info_t *info)
 
 	spin_unlock_irqrestore(&(info->lock), flags);
 
+<<<<<<< HEAD
 	hci_unregister_dev(hdev);
+=======
+	if (hci_unregister_dev(hdev) < 0)
+		BT_ERR("Can't unregister HCI device %s", hdev->name);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hci_free_dev(hdev);
 
 	return 0;

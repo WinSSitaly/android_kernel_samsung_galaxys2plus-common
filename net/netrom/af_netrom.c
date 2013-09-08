@@ -31,6 +31,10 @@
 #include <net/net_namespace.h>
 #include <net/sock.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/fcntl.h>
 #include <linux/termios.h>	/* For TIOCINQ/OUTQ */
 #include <linux/mm.h>
@@ -305,26 +309,45 @@ static int nr_setsockopt(struct socket *sock, int level, int optname,
 {
 	struct sock *sk = sock->sk;
 	struct nr_sock *nr = nr_sk(sk);
+<<<<<<< HEAD
 	unsigned long opt;
+=======
+	int opt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (level != SOL_NETROM)
 		return -ENOPROTOOPT;
 
+<<<<<<< HEAD
 	if (optlen < sizeof(unsigned int))
 		return -EINVAL;
 
 	if (get_user(opt, (unsigned int __user *)optval))
+=======
+	if (optlen < sizeof(int))
+		return -EINVAL;
+
+	if (get_user(opt, (int __user *)optval))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EFAULT;
 
 	switch (optname) {
 	case NETROM_T1:
+<<<<<<< HEAD
 		if (opt < 1 || opt > ULONG_MAX / HZ)
+=======
+		if (opt < 1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EINVAL;
 		nr->t1 = opt * HZ;
 		return 0;
 
 	case NETROM_T2:
+<<<<<<< HEAD
 		if (opt < 1 || opt > ULONG_MAX / HZ)
+=======
+		if (opt < 1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EINVAL;
 		nr->t2 = opt * HZ;
 		return 0;
@@ -336,13 +359,21 @@ static int nr_setsockopt(struct socket *sock, int level, int optname,
 		return 0;
 
 	case NETROM_T4:
+<<<<<<< HEAD
 		if (opt < 1 || opt > ULONG_MAX / HZ)
+=======
+		if (opt < 1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EINVAL;
 		nr->t4 = opt * HZ;
 		return 0;
 
 	case NETROM_IDLE:
+<<<<<<< HEAD
 		if (opt > ULONG_MAX / (60 * HZ))
+=======
+		if (opt < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EINVAL;
 		nr->idle = opt * 60 * HZ;
 		return 0;
@@ -1169,6 +1200,7 @@ static int nr_recvmsg(struct kiocb *iocb, struct socket *sock,
 		msg->msg_flags |= MSG_TRUNC;
 	}
 
+<<<<<<< HEAD
 	er = skb_copy_datagram_iovec(skb, 0, msg->msg_iov, copied);
 	if (er < 0) {
 		skb_free_datagram(sk, skb);
@@ -1178,6 +1210,11 @@ static int nr_recvmsg(struct kiocb *iocb, struct socket *sock,
 
 	if (sax != NULL) {
 		memset(sax, 0, sizeof(*sax));
+=======
+	skb_copy_datagram_iovec(skb, 0, msg->msg_iov, copied);
+
+	if (sax != NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sax->sax25_family = AF_NETROM;
 		skb_copy_from_linear_data_offset(skb, 7, sax->sax25_call.ax25_call,
 			      AX25_ADDR_LEN);
@@ -1249,8 +1286,12 @@ static int nr_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
 	case SIOCADDRT:
 	case SIOCDELRT:
 	case SIOCNRDECOBS:
+<<<<<<< HEAD
 		if (!capable(CAP_NET_ADMIN))
 			return -EPERM;
+=======
+		if (!capable(CAP_NET_ADMIN)) return -EPERM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return nr_rt_ioctl(cmd, argp);
 
 	default:

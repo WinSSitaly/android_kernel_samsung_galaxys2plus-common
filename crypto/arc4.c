@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /*
+=======
+/* 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Cryptographic API
  *
  * ARC4 Cipher Algorithm
@@ -33,15 +37,27 @@ static int arc4_set_key(struct crypto_tfm *tfm, const u8 *in_key,
 	ctx->x = 1;
 	ctx->y = 0;
 
+<<<<<<< HEAD
 	for (i = 0; i < 256; i++)
 		ctx->S[i] = i;
 
 	for (i = 0; i < 256; i++) {
+=======
+	for(i = 0; i < 256; i++)
+		ctx->S[i] = i;
+
+	for(i = 0; i < 256; i++)
+	{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u8 a = ctx->S[i];
 		j = (j + in_key[k] + a) & 0xff;
 		ctx->S[i] = ctx->S[j];
 		ctx->S[j] = a;
+<<<<<<< HEAD
 		if (++k >= key_len)
+=======
+		if(++k >= key_len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			k = 0;
 	}
 
@@ -79,9 +95,15 @@ static struct crypto_alg arc4_alg = {
 	.cra_u			=	{ .cipher = {
 	.cia_min_keysize	=	ARC4_MIN_KEY_SIZE,
 	.cia_max_keysize	=	ARC4_MAX_KEY_SIZE,
+<<<<<<< HEAD
 	.cia_setkey		=	arc4_set_key,
 	.cia_encrypt		=	arc4_crypt,
 	.cia_decrypt		=	arc4_crypt } }
+=======
+	.cia_setkey	   	= 	arc4_set_key,
+	.cia_encrypt	 	=	arc4_crypt,
+	.cia_decrypt	  	=	arc4_crypt } }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init arc4_init(void)

@@ -136,6 +136,7 @@ static int apparmor_capget(struct task_struct *target, kernel_cap_t *effective,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int apparmor_capable(const struct cred *cred, struct user_namespace *ns,
 			    int cap, int audit)
 {
@@ -146,6 +147,18 @@ static int apparmor_capable(const struct cred *cred, struct user_namespace *ns,
 		profile = aa_cred_profile(cred);
 		if (!unconfined(profile))
 			error = aa_capable(current, profile, cap, audit);
+=======
+static int apparmor_capable(struct task_struct *task, const struct cred *cred,
+			    struct user_namespace *ns, int cap, int audit)
+{
+	struct aa_profile *profile;
+	/* cap_capable returns 0 on success, else -EPERM */
+	int error = cap_capable(task, cred, ns, cap, audit);
+	if (!error) {
+		profile = aa_cred_profile(cred);
+		if (!unconfined(profile))
+			error = aa_capable(task, profile, cap, audit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return error;
 }
@@ -262,7 +275,11 @@ static int apparmor_path_unlink(struct path *dir, struct dentry *dentry)
 }
 
 static int apparmor_path_mkdir(struct path *dir, struct dentry *dentry,
+<<<<<<< HEAD
 			       umode_t mode)
+=======
+			       int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return common_perm_create(OP_MKDIR, dir, dentry, AA_MAY_CREATE,
 				  S_IFDIR);
@@ -274,7 +291,11 @@ static int apparmor_path_rmdir(struct path *dir, struct dentry *dentry)
 }
 
 static int apparmor_path_mknod(struct path *dir, struct dentry *dentry,
+<<<<<<< HEAD
 			       umode_t mode, unsigned int dev)
+=======
+			       int mode, unsigned int dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return common_perm_create(OP_MKNOD, dir, dentry, AA_MAY_CREATE, mode);
 }
@@ -344,12 +365,22 @@ static int apparmor_path_rename(struct path *old_dir, struct dentry *old_dentry,
 	return error;
 }
 
+<<<<<<< HEAD
 static int apparmor_path_chmod(struct path *path, umode_t mode)
 {
 	if (!mediated_filesystem(path->dentry->d_inode))
 		return 0;
 
 	return common_perm_mnt_dentry(OP_CHMOD, path->mnt, path->dentry, AA_MAY_CHMOD);
+=======
+static int apparmor_path_chmod(struct dentry *dentry, struct vfsmount *mnt,
+			       mode_t mode)
+{
+	if (!mediated_filesystem(dentry->d_inode))
+		return 0;
+
+	return common_perm_mnt_dentry(OP_CHMOD, mnt, dentry, AA_MAY_CHMOD);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int apparmor_path_chown(struct path *path, uid_t uid, gid_t gid)
@@ -588,12 +619,19 @@ static int apparmor_setprocattr(struct task_struct *task, char *name,
 			error = aa_setprocattr_permipc(args);
 		} else {
 			struct common_audit_data sa;
+<<<<<<< HEAD
 			struct apparmor_audit_data aad = {0,};
 			COMMON_AUDIT_DATA_INIT(&sa, NONE);
 			sa.aad = &aad;
 			aad.op = OP_SETPROCATTR;
 			aad.info = name;
 			aad.error = -EINVAL;
+=======
+			COMMON_AUDIT_DATA_INIT(&sa, NONE);
+			sa.aad.op = OP_SETPROCATTR;
+			sa.aad.info = name;
+			sa.aad.error = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return aa_audit(AUDIT_APPARMOR_DENIED,
 					__aa_current_profile(), GFP_KERNEL,
 					&sa, NULL);
@@ -672,7 +710,11 @@ static struct security_operations apparmor_ops = {
 
 static int param_set_aabool(const char *val, const struct kernel_param *kp);
 static int param_get_aabool(char *buffer, const struct kernel_param *kp);
+<<<<<<< HEAD
 #define param_check_aabool param_check_bool
+=======
+#define param_check_aabool(name, p) __param_check(name, p, int)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct kernel_param_ops param_ops_aabool = {
 	.set = param_set_aabool,
 	.get = param_get_aabool
@@ -680,7 +722,11 @@ static struct kernel_param_ops param_ops_aabool = {
 
 static int param_set_aauint(const char *val, const struct kernel_param *kp);
 static int param_get_aauint(char *buffer, const struct kernel_param *kp);
+<<<<<<< HEAD
 #define param_check_aauint param_check_uint
+=======
+#define param_check_aauint(name, p) __param_check(name, p, int)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct kernel_param_ops param_ops_aauint = {
 	.set = param_set_aauint,
 	.get = param_get_aauint
@@ -688,7 +734,11 @@ static struct kernel_param_ops param_ops_aauint = {
 
 static int param_set_aalockpolicy(const char *val, const struct kernel_param *kp);
 static int param_get_aalockpolicy(char *buffer, const struct kernel_param *kp);
+<<<<<<< HEAD
 #define param_check_aalockpolicy param_check_bool
+=======
+#define param_check_aalockpolicy(name, p) __param_check(name, p, int)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct kernel_param_ops param_ops_aalockpolicy = {
 	.set = param_set_aalockpolicy,
 	.get = param_get_aalockpolicy
@@ -710,7 +760,11 @@ module_param_call(mode, param_set_mode, param_get_mode,
 		  &aa_g_profile_mode, S_IRUSR | S_IWUSR);
 
 /* Debug mode */
+<<<<<<< HEAD
 bool aa_g_debug;
+=======
+int aa_g_debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(debug, aa_g_debug, aabool, S_IRUSR | S_IWUSR);
 
 /* Audit mode */
@@ -721,7 +775,11 @@ module_param_call(audit, param_set_audit, param_get_audit,
 /* Determines if audit header is included in audited messages.  This
  * provides more context if the audit daemon is not running
  */
+<<<<<<< HEAD
 bool aa_g_audit_header = 1;
+=======
+int aa_g_audit_header = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(audit_header, aa_g_audit_header, aabool,
 		   S_IRUSR | S_IWUSR);
 
@@ -729,12 +787,20 @@ module_param_named(audit_header, aa_g_audit_header, aabool,
  * TODO: add in at boot loading of policy, which is the only way to
  *       load policy, if lock_policy is set
  */
+<<<<<<< HEAD
 bool aa_g_lock_policy;
+=======
+int aa_g_lock_policy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(lock_policy, aa_g_lock_policy, aalockpolicy,
 		   S_IRUSR | S_IWUSR);
 
 /* Syscall logging mode */
+<<<<<<< HEAD
 bool aa_g_logsyscall;
+=======
+int aa_g_logsyscall;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(logsyscall, aa_g_logsyscall, aabool, S_IRUSR | S_IWUSR);
 
 /* Maximum pathname length before accesses will start getting rejected */
@@ -744,12 +810,20 @@ module_param_named(path_max, aa_g_path_max, aauint, S_IRUSR | S_IWUSR);
 /* Determines how paranoid loading of policy is and how much verification
  * on the loaded policy is done.
  */
+<<<<<<< HEAD
 bool aa_g_paranoid_load = 1;
+=======
+int aa_g_paranoid_load = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(paranoid_load, aa_g_paranoid_load, aabool,
 		   S_IRUSR | S_IWUSR);
 
 /* Boot time disable flag */
+<<<<<<< HEAD
 static bool apparmor_enabled = CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE;
+=======
+static unsigned int apparmor_enabled = CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(enabled, apparmor_enabled, aabool, S_IRUSR);
 
 static int __init apparmor_enabled_setup(char *str)

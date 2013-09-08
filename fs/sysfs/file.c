@@ -466,6 +466,12 @@ void sysfs_notify(struct kobject *k, const char *dir, const char *attr)
 	mutex_lock(&sysfs_mutex);
 
 	if (sd && dir)
+<<<<<<< HEAD
+=======
+		/* Only directories are tagged, so no need to pass
+		 * a tag explicitly.
+		 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sd = sysfs_find_dirent(sd, NULL, dir);
 	if (sd && attr)
 		sd = sysfs_find_dirent(sd, NULL, attr);
@@ -485,6 +491,7 @@ const struct file_operations sysfs_file_operations = {
 	.poll		= sysfs_poll,
 };
 
+<<<<<<< HEAD
 int sysfs_attr_ns(struct kobject *kobj, const struct attribute *attr,
 		  const void **pns)
 {
@@ -525,10 +532,15 @@ out:
 
 int sysfs_add_file_mode(struct sysfs_dirent *dir_sd,
 			const struct attribute *attr, int type, umode_t amode)
+=======
+int sysfs_add_file_mode(struct sysfs_dirent *dir_sd,
+			const struct attribute *attr, int type, mode_t amode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	umode_t mode = (amode & S_IALLUGO) | S_IFREG;
 	struct sysfs_addrm_cxt acxt;
 	struct sysfs_dirent *sd;
+<<<<<<< HEAD
 	const void *ns;
 	int rc;
 
@@ -541,6 +553,13 @@ int sysfs_add_file_mode(struct sysfs_dirent *dir_sd,
 		return -ENOMEM;
 
 	sd->s_ns = ns;
+=======
+	int rc;
+
+	sd = sysfs_new_dirent(attr->name, mode, type);
+	if (!sd)
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sd->s_attr.attr = (void *)attr;
 	sysfs_dirent_init_lockdep(sd);
 
@@ -624,6 +643,7 @@ EXPORT_SYMBOL_GPL(sysfs_add_file_to_group);
  *
  */
 int sysfs_chmod_file(struct kobject *kobj, const struct attribute *attr,
+<<<<<<< HEAD
 		     umode_t mode)
 {
 	struct sysfs_dirent *sd;
@@ -639,6 +659,18 @@ int sysfs_chmod_file(struct kobject *kobj, const struct attribute *attr,
 
 	rc = -ENOENT;
 	sd = sysfs_find_dirent(kobj->sd, ns, attr->name);
+=======
+		     mode_t mode)
+{
+	struct sysfs_dirent *sd;
+	struct iattr newattrs;
+	int rc;
+
+	mutex_lock(&sysfs_mutex);
+
+	rc = -ENOENT;
+	sd = sysfs_find_dirent(kobj->sd, NULL, attr->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!sd)
 		goto out;
 
@@ -663,12 +695,16 @@ EXPORT_SYMBOL_GPL(sysfs_chmod_file);
 
 void sysfs_remove_file(struct kobject * kobj, const struct attribute * attr)
 {
+<<<<<<< HEAD
 	const void *ns;
 
 	if (sysfs_attr_ns(kobj, attr, &ns))
 		return;
 
 	sysfs_hash_and_remove(kobj->sd, ns, attr->name);
+=======
+	sysfs_hash_and_remove(kobj->sd, NULL, attr->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void sysfs_remove_files(struct kobject * kobj, const struct attribute **ptr)

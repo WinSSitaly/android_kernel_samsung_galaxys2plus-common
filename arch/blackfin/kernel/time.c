@@ -25,6 +25,10 @@
 
 static struct irqaction bfin_timer_irq = {
 	.name = "Blackfin Timer Tick",
+<<<<<<< HEAD
+=======
+	.flags = IRQF_DISABLED
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #if defined(CONFIG_IPIPE)
@@ -50,7 +54,11 @@ void __init setup_core_timer(void)
 	u32 tcount;
 
 	/* power up the timer, but don't enable it just yet */
+<<<<<<< HEAD
 	bfin_write_TCNTL(TMPWR);
+=======
+	bfin_write_TCNTL(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CSYNC();
 
 	/* the TSCALE prescaler counter */
@@ -63,7 +71,11 @@ void __init setup_core_timer(void)
 	/* now enable the timer */
 	CSYNC();
 
+<<<<<<< HEAD
 	bfin_write_TCNTL(TAUTORLD | TMREN | TMPWR);
+=======
+	bfin_write_TCNTL(7);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif
 

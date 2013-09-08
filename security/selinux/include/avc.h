@@ -15,6 +15,10 @@
 #include <linux/audit.h>
 #include <linux/lsm_audit.h>
 #include <linux/in6.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "flask.h"
 #include "av_permissions.h"
 #include "security.h"
@@ -47,6 +51,7 @@ struct avc_cache_stats {
 };
 
 /*
+<<<<<<< HEAD
  * We only need this data after we have decided to send an audit message.
  */
 struct selinux_late_audit_data {
@@ -72,6 +77,8 @@ struct selinux_audit_data {
 };
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * AVC operations
  */
 

@@ -58,7 +58,11 @@ int btrfs_del_orphan_item(struct btrfs_trans_handle *trans,
 	ret = btrfs_search_slot(trans, root, &key, path, -1, 1);
 	if (ret < 0)
 		goto out;
+<<<<<<< HEAD
 	if (ret) { /* JDM: Really? */
+=======
+	if (ret) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -ENOENT;
 		goto out;
 	}

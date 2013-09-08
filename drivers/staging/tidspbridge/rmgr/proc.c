@@ -25,6 +25,12 @@
 /*  ----------------------------------- DSP/BIOS Bridge */
 #include <dspbridge/dbdefs.h>
 
+<<<<<<< HEAD
+=======
+/*  ----------------------------------- Trace & Debug */
+#include <dspbridge/dbc.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*  ----------------------------------- OS Adaptation Layer */
 #include <dspbridge/ntfy.h>
 #include <dspbridge/sync.h>
@@ -98,6 +104,11 @@ struct proc_object {
 	struct list_head proc_list;
 };
 
+<<<<<<< HEAD
+=======
+static u32 refs;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 DEFINE_MUTEX(proc_lock);	/* For critical sections */
 
 /*  ----------------------------------- Function Prototypes */
@@ -276,6 +287,12 @@ proc_attach(u32 processor_id,
 	struct drv_data *drv_datap = dev_get_drvdata(bridge);
 	u8 dev_type;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+	DBC_REQUIRE(ph_processor != NULL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pr_ctxt->processor) {
 		*ph_processor = pr_ctxt->processor;
 		return status;
@@ -374,6 +391,13 @@ proc_attach(u32 processor_id,
 		kfree(p_proc_object);
 	}
 func_end:
+<<<<<<< HEAD
+=======
+	DBC_ENSURE((status == -EPERM && *ph_processor == NULL) ||
+		   (!status && p_proc_object) ||
+		   (status == 0 && p_proc_object));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return status;
 }
 
@@ -433,6 +457,13 @@ int proc_auto_start(struct cfg_devnode *dev_node_obj,
 	struct drv_data *drv_datap = dev_get_drvdata(bridge);
 	u8 dev_type;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+	DBC_REQUIRE(dev_node_obj != NULL);
+	DBC_REQUIRE(hdev_obj != NULL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Create a Dummy PROC Object */
 	if (!drv_datap || !drv_datap->mgr_object) {
 		status = -ENODATA;
@@ -500,6 +531,11 @@ int proc_ctrl(void *hprocessor, u32 dw_cmd, struct dsp_cbdata * arg)
 	struct proc_object *p_proc_object = hprocessor;
 	u32 timeout = 0;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (p_proc_object) {
 		/* intercept PWR deep sleep command */
 		if (dw_cmd == BRDIOCTL_DEEPSLEEP) {
@@ -547,6 +583,11 @@ int proc_detach(struct process_context *pr_ctxt)
 	int status = 0;
 	struct proc_object *p_proc_object = NULL;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	p_proc_object = (struct proc_object *)pr_ctxt->processor;
 
 	if (p_proc_object) {
@@ -587,6 +628,14 @@ int proc_enum_nodes(void *hprocessor, void **node_tab,
 	struct proc_object *p_proc_object = (struct proc_object *)hprocessor;
 	struct node_mgr *hnode_mgr = NULL;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+	DBC_REQUIRE(node_tab != NULL || node_tab_size == 0);
+	DBC_REQUIRE(pu_num_nodes != NULL);
+	DBC_REQUIRE(pu_allocated != NULL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (p_proc_object) {
 		if (!(dev_get_node_manager(p_proc_object->dev_obj,
 						       &hnode_mgr))) {
@@ -743,6 +792,11 @@ int proc_begin_dma(void *hprocessor, void *pmpu_addr, u32 ul_size,
 	struct process_context *pr_ctxt = (struct process_context *) hprocessor;
 	struct dmm_map_object *map_obj;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!pr_ctxt) {
 		status = -EFAULT;
 		goto err_out;
@@ -783,6 +837,11 @@ int proc_end_dma(void *hprocessor, void *pmpu_addr, u32 ul_size,
 	struct process_context *pr_ctxt = (struct process_context *) hprocessor;
 	struct dmm_map_object *map_obj;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!pr_ctxt) {
 		status = -EFAULT;
 		goto err_out;
@@ -855,6 +914,13 @@ int proc_get_resource_info(void *hprocessor, u32 resource_type,
 	struct rmm_target_obj *rmm = NULL;
 	struct io_mgr *hio_mgr = NULL;	/* IO manager handle */
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+	DBC_REQUIRE(resource_info != NULL);
+	DBC_REQUIRE(resource_info_size >= sizeof(struct dsp_resourceinfo));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!p_proc_object) {
 		status = -EFAULT;
 		goto func_end;
@@ -907,6 +973,24 @@ func_end:
 }
 
 /*
+<<<<<<< HEAD
+=======
+ *  ======== proc_exit ========
+ *  Purpose:
+ *      Decrement reference count, and free resources when reference count is
+ *      0.
+ */
+void proc_exit(void)
+{
+	DBC_REQUIRE(refs > 0);
+
+	refs--;
+
+	DBC_ENSURE(refs >= 0);
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  ======== proc_get_dev_object ========
  *  Purpose:
  *      Return the Dev Object handle for a given Processor.
@@ -918,6 +1002,12 @@ int proc_get_dev_object(void *hprocessor,
 	int status = -EPERM;
 	struct proc_object *p_proc_object = (struct proc_object *)hprocessor;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+	DBC_REQUIRE(device_obj != NULL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (p_proc_object) {
 		*device_obj = p_proc_object->dev_obj;
 		status = 0;
@@ -926,6 +1016,12 @@ int proc_get_dev_object(void *hprocessor,
 		status = -EFAULT;
 	}
 
+<<<<<<< HEAD
+=======
+	DBC_ENSURE((!status && *device_obj != NULL) ||
+		   (status && *device_obj == NULL));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return status;
 }
 
@@ -942,6 +1038,13 @@ int proc_get_state(void *hprocessor,
 	struct proc_object *p_proc_object = (struct proc_object *)hprocessor;
 	int brd_status;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+	DBC_REQUIRE(proc_state_obj != NULL);
+	DBC_REQUIRE(state_info_size >= sizeof(struct dsp_processorstate));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (p_proc_object) {
 		/* First, retrieve BRD state information */
 		status = (*p_proc_object->intf_fxns->brd_status)
@@ -997,6 +1100,28 @@ int proc_get_trace(void *hprocessor, u8 * pbuf, u32 max_size)
 }
 
 /*
+<<<<<<< HEAD
+=======
+ *  ======== proc_init ========
+ *  Purpose:
+ *      Initialize PROC's private state, keeping a reference count on each call
+ */
+bool proc_init(void)
+{
+	bool ret = true;
+
+	DBC_REQUIRE(refs >= 0);
+
+	if (ret)
+		refs++;
+
+	DBC_ENSURE((ret && (refs > 0)) || (!ret && (refs >= 0)));
+
+	return ret;
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  ======== proc_load ========
  *  Purpose:
  *      Reset a processor and load a new base program image.
@@ -1034,6 +1159,13 @@ int proc_load(void *hprocessor, const s32 argc_index,
 	    omap_dspbridge_dev->dev.platform_data;
 #endif
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+	DBC_REQUIRE(argc_index > 0);
+	DBC_REQUIRE(user_args != NULL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef OPT_LOAD_TIME_INSTRUMENTATION
 	do_gettimeofday(&tv1);
 #endif
@@ -1121,6 +1253,11 @@ int proc_load(void *hprocessor, const s32 argc_index,
 			if (status) {
 				status = -EPERM;
 			} else {
+<<<<<<< HEAD
+=======
+				DBC_ASSERT(p_proc_object->last_coff ==
+					   NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/* Allocate memory for pszLastCoff */
 				p_proc_object->last_coff =
 						kzalloc((strlen(user_args[0]) +
@@ -1143,6 +1280,10 @@ int proc_load(void *hprocessor, const s32 argc_index,
 		if (!hmsg_mgr) {
 			status = msg_create(&hmsg_mgr, p_proc_object->dev_obj,
 					    (msg_onexit) node_on_exit);
+<<<<<<< HEAD
+=======
+			DBC_ASSERT(!status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev_set_msg_mgr(p_proc_object->dev_obj, hmsg_mgr);
 		}
 	}
@@ -1238,6 +1379,10 @@ int proc_load(void *hprocessor, const s32 argc_index,
 							strlen(pargv0) + 1);
 			else
 				status = -ENOMEM;
+<<<<<<< HEAD
+=======
+			DBC_ASSERT(brd_state == BRD_LOADED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -1246,6 +1391,12 @@ func_end:
 		pr_err("%s: Processor failed to load\n", __func__);
 		proc_stop(p_proc_object);
 	}
+<<<<<<< HEAD
+=======
+	DBC_ENSURE((!status
+		    && p_proc_object->proc_state == PROC_LOADED)
+		   || status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef OPT_LOAD_TIME_INSTRUMENTATION
 	do_gettimeofday(&tv2);
 	if (tv2.tv_usec < tv1.tv_usec) {
@@ -1355,6 +1506,12 @@ int proc_register_notify(void *hprocessor, u32 event_mask,
 	struct proc_object *p_proc_object = (struct proc_object *)hprocessor;
 	struct deh_mgr *hdeh_mgr;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(hnotification != NULL);
+	DBC_REQUIRE(refs > 0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Check processor handle */
 	if (!p_proc_object) {
 		status = -EFAULT;
@@ -1476,6 +1633,10 @@ int proc_start(void *hprocessor)
 	u32 dw_dsp_addr;	/* Loaded code's entry point. */
 	int brd_state;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!p_proc_object) {
 		status = -EFAULT;
 		goto func_end;
@@ -1524,6 +1685,10 @@ func_cont:
 		if (!((*p_proc_object->intf_fxns->brd_status)
 				(p_proc_object->bridge_context, &brd_state))) {
 			pr_info("%s: dsp in running state\n", __func__);
+<<<<<<< HEAD
+=======
+			DBC_ASSERT(brd_state != BRD_HIBERNATION);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		pr_err("%s: Failed to start the dsp\n", __func__);
@@ -1531,6 +1696,11 @@ func_cont:
 	}
 
 func_end:
+<<<<<<< HEAD
+=======
+	DBC_ENSURE((!status && p_proc_object->proc_state ==
+		    PROC_RUNNING) || status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return status;
 }
 
@@ -1549,7 +1719,13 @@ int proc_stop(void *hprocessor)
 	u32 node_tab_size = 1;
 	u32 num_nodes = 0;
 	u32 nodes_allocated = 0;
+<<<<<<< HEAD
 
+=======
+	int brd_state;
+
+	DBC_REQUIRE(refs > 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!p_proc_object) {
 		status = -EFAULT;
 		goto func_end;
@@ -1581,6 +1757,14 @@ int proc_stop(void *hprocessor)
 				msg_delete(hmsg_mgr);
 				dev_set_msg_mgr(p_proc_object->dev_obj, NULL);
 			}
+<<<<<<< HEAD
+=======
+			if (!((*p_proc_object->
+			      intf_fxns->brd_status) (p_proc_object->
+							  bridge_context,
+							  &brd_state)))
+				DBC_ASSERT(brd_state == BRD_STOPPED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		pr_err("%s: Failed to stop the processor\n", __func__);
@@ -1718,6 +1902,13 @@ static int proc_monitor(struct proc_object *proc_obj)
 {
 	int status = -EPERM;
 	struct msg_mgr *hmsg_mgr;
+<<<<<<< HEAD
+=======
+	int brd_state;
+
+	DBC_REQUIRE(refs > 0);
+	DBC_REQUIRE(proc_obj);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* This is needed only when Device is loaded when it is
 	 * already 'ACTIVE' */
@@ -1734,8 +1925,18 @@ static int proc_monitor(struct proc_object *proc_obj)
 	if (!((*proc_obj->intf_fxns->brd_monitor)
 			  (proc_obj->bridge_context))) {
 		status = 0;
+<<<<<<< HEAD
 	}
 
+=======
+		if (!((*proc_obj->intf_fxns->brd_status)
+				  (proc_obj->bridge_context, &brd_state)))
+			DBC_ASSERT(brd_state == BRD_IDLE);
+	}
+
+	DBC_ENSURE((!status && brd_state == BRD_IDLE) ||
+		   status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return status;
 }
 
@@ -1769,6 +1970,11 @@ static char **prepend_envp(char **new_envp, char **envp, s32 envp_elems,
 {
 	char **pp_envp = new_envp;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(new_envp);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Prepend new environ var=value string */
 	*new_envp++ = sz_var;
 
@@ -1793,6 +1999,12 @@ int proc_notify_clients(void *proc, u32 events)
 	int status = 0;
 	struct proc_object *p_proc_object = (struct proc_object *)proc;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(p_proc_object);
+	DBC_REQUIRE(is_valid_proc_event(events));
+	DBC_REQUIRE(refs > 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!p_proc_object) {
 		status = -EFAULT;
 		goto func_end;
@@ -1814,6 +2026,12 @@ int proc_notify_all_clients(void *proc, u32 events)
 	int status = 0;
 	struct proc_object *p_proc_object = (struct proc_object *)proc;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(is_valid_proc_event(events));
+	DBC_REQUIRE(refs > 0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!p_proc_object) {
 		status = -EFAULT;
 		goto func_end;

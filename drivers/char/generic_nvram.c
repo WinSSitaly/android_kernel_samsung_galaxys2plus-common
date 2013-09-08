@@ -34,16 +34,22 @@ static ssize_t nvram_len;
 static loff_t nvram_llseek(struct file *file, loff_t offset, int origin)
 {
 	switch (origin) {
+<<<<<<< HEAD
 	case 0:
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case 1:
 		offset += file->f_pos;
 		break;
 	case 2:
 		offset += nvram_len;
 		break;
+<<<<<<< HEAD
 	default:
 		offset = -1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (offset < 0)
 		return -EINVAL;

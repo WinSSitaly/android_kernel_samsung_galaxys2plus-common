@@ -20,6 +20,10 @@
  * Timberdale FPGA LogiWin Video In
  */
 
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 #include <linux/dmaengine.h>
@@ -27,7 +31,10 @@
 #include <linux/interrupt.h>
 #include <linux/list.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/v4l2-ioctl.h>
 #include <media/v4l2-device.h>
 #include <media/videobuf-dma-contig.h>
@@ -564,8 +571,13 @@ static void buffer_queue(struct videobuf_queue *vq, struct videobuf_buffer *vb)
 
 	spin_unlock_irq(&fh->queue_lock);
 
+<<<<<<< HEAD
 	desc = dmaengine_prep_slave_sg(fh->chan,
 		buf->sg, sg_elems, DMA_DEV_TO_MEM,
+=======
+	desc = fh->chan->device->device_prep_slave_sg(fh->chan,
+		buf->sg, sg_elems, DMA_FROM_DEVICE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		DMA_PREP_INTERRUPT | DMA_COMPL_SKIP_SRC_UNMAP);
 	if (!desc) {
 		spin_lock_irq(&fh->queue_lock);
@@ -872,7 +884,24 @@ static struct platform_driver timblogiw_platform_driver = {
 	.remove		= __devexit_p(timblogiw_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(timblogiw_platform_driver);
+=======
+/* Module functions */
+
+static int __init timblogiw_init(void)
+{
+	return platform_driver_register(&timblogiw_platform_driver);
+}
+
+static void __exit timblogiw_exit(void)
+{
+	platform_driver_unregister(&timblogiw_platform_driver);
+}
+
+module_init(timblogiw_init);
+module_exit(timblogiw_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION(TIMBLOGIWIN_NAME);
 MODULE_AUTHOR("Pelagicore AB <info@pelagicore.com>");

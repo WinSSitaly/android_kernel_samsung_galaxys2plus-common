@@ -17,15 +17,25 @@
 
 #define HP300_LEDS		0xf001ffff
 
+<<<<<<< HEAD
 extern unsigned char hp300_ledstate;
+=======
+extern unsigned char ledstate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static __inline__ void blinken_leds(int on, int off)
 {
 	if (MACH_IS_HP300)
 	{
+<<<<<<< HEAD
 		hp300_ledstate |= on;
 		hp300_ledstate &= ~off;
 		out_8(HP300_LEDS, ~hp300_ledstate);
+=======
+		ledstate |= on;
+		ledstate &= ~off;
+		out_8(HP300_LEDS, ~ledstate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 

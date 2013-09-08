@@ -48,6 +48,11 @@ struct drxd_config {
 	u8 disable_i2c_gate_ctrl;
 
 	u32 IF;
+<<<<<<< HEAD
+=======
+	int (*pll_set) (void *priv, void *priv_params,
+			u8 pll_addr, u8 demoda_addr, s32 *off);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 s16(*osc_deviation) (void *priv, s16 dev, int flag);
 };
 

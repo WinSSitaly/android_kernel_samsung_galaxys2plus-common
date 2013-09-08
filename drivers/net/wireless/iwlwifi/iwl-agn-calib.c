@@ -5,7 +5,11 @@
  *
  * GPL LICENSE SUMMARY
  *
+<<<<<<< HEAD
  * Copyright(c) 2008 - 2012 Intel Corporation. All rights reserved.
+=======
+ * Copyright(c) 2008 - 2011 Intel Corporation. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -30,7 +34,11 @@
  *
  * BSD LICENSE
  *
+<<<<<<< HEAD
  * Copyright(c) 2005 - 2012 Intel Corporation. All rights reserved.
+=======
+ * Copyright(c) 2005 - 2011 Intel Corporation. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -66,13 +74,17 @@
 #include "iwl-dev.h"
 #include "iwl-core.h"
 #include "iwl-agn-calib.h"
+<<<<<<< HEAD
 #include "iwl-trans.h"
 #include "iwl-agn.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*****************************************************************************
  * INIT calibrations framework
  *****************************************************************************/
 
+<<<<<<< HEAD
 /* Opaque calibration results */
 struct iwl_calib_result {
 	struct list_head list;
@@ -81,6 +93,8 @@ struct iwl_calib_result {
 	/* data follows */
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct statistics_general_data {
 	u32 beacon_silence_rssi_a;
 	u32 beacon_silence_rssi_b;
@@ -92,6 +106,7 @@ struct statistics_general_data {
 
 int iwl_send_calib_results(struct iwl_priv *priv)
 {
+<<<<<<< HEAD
 	struct iwl_host_cmd hcmd = {
 		.id = REPLY_PHY_CALIBRATION_CMD,
 		.flags = CMD_SYNC,
@@ -138,16 +153,63 @@ int iwl_calib_set(struct iwl_priv *priv,
 	/* wasn't in list already */
 	list_add_tail(&res->list, &priv->calib_results);
 
+=======
+	int ret = 0;
+	int i = 0;
+
+	struct iwl_host_cmd hcmd = {
+		.id = REPLY_PHY_CALIBRATION_CMD,
+	};
+
+	for (i = 0; i < IWL_CALIB_MAX; i++) {
+		if ((BIT(i) & priv->hw_params.calib_init_cfg) &&
+		    priv->calib_results[i].buf) {
+			hcmd.len[0] = priv->calib_results[i].buf_len;
+			hcmd.data[0] = priv->calib_results[i].buf;
+			hcmd.dataflags[0] = IWL_HCMD_DFL_NOCOPY;
+			ret = iwl_send_cmd_sync(priv, &hcmd);
+			if (ret) {
+				IWL_ERR(priv, "Error %d iteration %d\n",
+					ret, i);
+				break;
+			}
+		}
+	}
+
+	return ret;
+}
+
+int iwl_calib_set(struct iwl_calib_result *res, const u8 *buf, int len)
+{
+	if (res->buf_len != len) {
+		kfree(res->buf);
+		res->buf = kzalloc(len, GFP_ATOMIC);
+	}
+	if (unlikely(res->buf == NULL))
+		return -ENOMEM;
+
+	res->buf_len = len;
+	memcpy(res->buf, buf, len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 void iwl_calib_free_results(struct iwl_priv *priv)
 {
+<<<<<<< HEAD
 	struct iwl_calib_result *res, *tmp;
 
 	list_for_each_entry_safe(res, tmp, &priv->calib_results, list) {
 		list_del(&res->list);
 		kfree(res);
+=======
+	int i;
+
+	for (i = 0; i < IWL_CALIB_MAX; i++) {
+		kfree(priv->calib_results[i].buf);
+		priv->calib_results[i].buf = NULL;
+		priv->calib_results[i].buf_len = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -190,7 +252,11 @@ static int iwl_sens_energy_cck(struct iwl_priv *priv,
 	u32 max_false_alarms = MAX_FA_CCK * rx_enable_time;
 	u32 min_false_alarms = MIN_FA_CCK * rx_enable_time;
 	struct iwl_sensitivity_data *data = NULL;
+<<<<<<< HEAD
 	const struct iwl_sensitivity_ranges *ranges = hw_params(priv).sens;
+=======
+	const struct iwl_sensitivity_ranges *ranges = priv->hw_params.sens;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	data = &(priv->sensitivity_data);
 
@@ -373,7 +439,11 @@ static int iwl_sens_auto_corr_ofdm(struct iwl_priv *priv,
 	u32 max_false_alarms = MAX_FA_OFDM * rx_enable_time;
 	u32 min_false_alarms = MIN_FA_OFDM * rx_enable_time;
 	struct iwl_sensitivity_data *data = NULL;
+<<<<<<< HEAD
 	const struct iwl_sensitivity_ranges *ranges = hw_params(priv).sens;
+=======
+	const struct iwl_sensitivity_ranges *ranges = priv->hw_params.sens;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	data = &(priv->sensitivity_data);
 
@@ -500,7 +570,11 @@ static int iwl_sensitivity_write(struct iwl_priv *priv)
 	memcpy(&(priv->sensitivity_tbl[0]), &(cmd.table[0]),
 	       sizeof(u16)*HD_TABLE_SIZE);
 
+<<<<<<< HEAD
 	return iwl_dvm_send_cmd(priv, &cmd_out);
+=======
+	return iwl_send_cmd(priv, &cmd_out);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Prepare a SENSITIVITY_CMD, send to uCode if values have changed */
@@ -521,6 +595,7 @@ static int iwl_enhance_sensitivity_write(struct iwl_priv *priv)
 
 	iwl_prepare_legacy_sensitivity_tbl(priv, data, &cmd.enhance_table[0]);
 
+<<<<<<< HEAD
 	if (cfg(priv)->base_params->hd_v2) {
 		cmd.enhance_table[HD_INA_NON_SQUARE_DET_OFDM_INDEX] =
 			HD_INA_NON_SQUARE_DET_OFDM_DATA_V2;
@@ -568,6 +643,30 @@ static int iwl_enhance_sensitivity_write(struct iwl_priv *priv)
 		cmd.enhance_table[HD_CCK_NON_SQUARE_DET_INTERCEPT_INDEX] =
 			HD_CCK_NON_SQUARE_DET_INTERCEPT_DATA_V1;
 	}
+=======
+	cmd.enhance_table[HD_INA_NON_SQUARE_DET_OFDM_INDEX] =
+		HD_INA_NON_SQUARE_DET_OFDM_DATA;
+	cmd.enhance_table[HD_INA_NON_SQUARE_DET_CCK_INDEX] =
+		HD_INA_NON_SQUARE_DET_CCK_DATA;
+	cmd.enhance_table[HD_CORR_11_INSTEAD_OF_CORR_9_EN_INDEX] =
+		HD_CORR_11_INSTEAD_OF_CORR_9_EN_DATA;
+	cmd.enhance_table[HD_OFDM_NON_SQUARE_DET_SLOPE_MRC_INDEX] =
+		HD_OFDM_NON_SQUARE_DET_SLOPE_MRC_DATA;
+	cmd.enhance_table[HD_OFDM_NON_SQUARE_DET_INTERCEPT_MRC_INDEX] =
+		HD_OFDM_NON_SQUARE_DET_INTERCEPT_MRC_DATA;
+	cmd.enhance_table[HD_OFDM_NON_SQUARE_DET_SLOPE_INDEX] =
+		HD_OFDM_NON_SQUARE_DET_SLOPE_DATA;
+	cmd.enhance_table[HD_OFDM_NON_SQUARE_DET_INTERCEPT_INDEX] =
+		HD_OFDM_NON_SQUARE_DET_INTERCEPT_DATA;
+	cmd.enhance_table[HD_CCK_NON_SQUARE_DET_SLOPE_MRC_INDEX] =
+		HD_CCK_NON_SQUARE_DET_SLOPE_MRC_DATA;
+	cmd.enhance_table[HD_CCK_NON_SQUARE_DET_INTERCEPT_MRC_INDEX] =
+		HD_CCK_NON_SQUARE_DET_INTERCEPT_MRC_DATA;
+	cmd.enhance_table[HD_CCK_NON_SQUARE_DET_SLOPE_INDEX] =
+		HD_CCK_NON_SQUARE_DET_SLOPE_DATA;
+	cmd.enhance_table[HD_CCK_NON_SQUARE_DET_INTERCEPT_INDEX] =
+		HD_CCK_NON_SQUARE_DET_INTERCEPT_DATA;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Update uCode's "work" table, and copy it to DSP */
 	cmd.control = SENSITIVITY_CMD_CONTROL_WORK_TABLE;
@@ -589,7 +688,11 @@ static int iwl_enhance_sensitivity_write(struct iwl_priv *priv)
 	       &(cmd.enhance_table[HD_INA_NON_SQUARE_DET_OFDM_INDEX]),
 	       sizeof(u16)*ENHANCE_HD_TABLE_ENTRIES);
 
+<<<<<<< HEAD
 	return iwl_dvm_send_cmd(priv, &cmd_out);
+=======
+	return iwl_send_cmd(priv, &cmd_out);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void iwl_init_sensitivity(struct iwl_priv *priv)
@@ -597,7 +700,11 @@ void iwl_init_sensitivity(struct iwl_priv *priv)
 	int ret = 0;
 	int i;
 	struct iwl_sensitivity_data *data = NULL;
+<<<<<<< HEAD
 	const struct iwl_sensitivity_ranges *ranges = hw_params(priv).sens;
+=======
+	const struct iwl_sensitivity_ranges *ranges = priv->hw_params.sens;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (priv->disable_sens_cal)
 		return;
@@ -642,7 +749,11 @@ void iwl_init_sensitivity(struct iwl_priv *priv)
 	data->last_bad_plcp_cnt_cck = 0;
 	data->last_fa_cnt_cck = 0;
 
+<<<<<<< HEAD
 	if (priv->fw->enhance_sensitivity_table)
+=======
+	if (priv->enhance_sensitivity_table)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret |= iwl_enhance_sensitivity_write(priv);
 	else
 		ret |= iwl_sensitivity_write(priv);
@@ -661,6 +772,10 @@ void iwl_sensitivity_calibration(struct iwl_priv *priv)
 	struct iwl_sensitivity_data *data = NULL;
 	struct statistics_rx_non_phy *rx_info;
 	struct statistics_rx_phy *ofdm, *cck;
+<<<<<<< HEAD
+=======
+	unsigned long flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct statistics_general_data statis;
 
 	if (priv->disable_sens_cal)
@@ -673,13 +788,21 @@ void iwl_sensitivity_calibration(struct iwl_priv *priv)
 		return;
 	}
 
+<<<<<<< HEAD
 	spin_lock_bh(&priv->statistics.lock);
+=======
+	spin_lock_irqsave(&priv->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rx_info = &priv->statistics.rx_non_phy;
 	ofdm = &priv->statistics.rx_ofdm;
 	cck = &priv->statistics.rx_cck;
 	if (rx_info->interference_data_flag != INTERFERENCE_DATA_AVAILABLE) {
 		IWL_DEBUG_CALIB(priv, "<< invalid data.\n");
+<<<<<<< HEAD
 		spin_unlock_bh(&priv->statistics.lock);
+=======
+		spin_unlock_irqrestore(&priv->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -703,7 +826,11 @@ void iwl_sensitivity_calibration(struct iwl_priv *priv)
 	statis.beacon_energy_c =
 			le32_to_cpu(rx_info->beacon_energy_c);
 
+<<<<<<< HEAD
 	spin_unlock_bh(&priv->statistics.lock);
+=======
+	spin_unlock_irqrestore(&priv->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	IWL_DEBUG_CALIB(priv, "rx_enable_time = %u usecs\n", rx_enable_time);
 
@@ -752,7 +879,11 @@ void iwl_sensitivity_calibration(struct iwl_priv *priv)
 
 	iwl_sens_auto_corr_ofdm(priv, norm_fa_ofdm, rx_enable_time);
 	iwl_sens_energy_cck(priv, norm_fa_cck, rx_enable_time, &statis);
+<<<<<<< HEAD
 	if (priv->fw->enhance_sensitivity_table)
+=======
+	if (priv->enhance_sensitivity_table)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iwl_enhance_sensitivity_write(priv);
 	else
 		iwl_sensitivity_write(priv);
@@ -781,9 +912,18 @@ static void iwl_find_disconn_antenna(struct iwl_priv *priv, u32* average_sig,
 	u8 first_chain;
 	u16 i = 0;
 
+<<<<<<< HEAD
 	average_sig[0] = data->chain_signal_a / IWL_CAL_NUM_BEACONS;
 	average_sig[1] = data->chain_signal_b / IWL_CAL_NUM_BEACONS;
 	average_sig[2] = data->chain_signal_c / IWL_CAL_NUM_BEACONS;
+=======
+	average_sig[0] = data->chain_signal_a /
+			 priv->cfg->base_params->chain_noise_num_beacons;
+	average_sig[1] = data->chain_signal_b /
+			 priv->cfg->base_params->chain_noise_num_beacons;
+	average_sig[2] = data->chain_signal_c /
+			 priv->cfg->base_params->chain_noise_num_beacons;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (average_sig[0] >= average_sig[1]) {
 		max_average_sig = average_sig[0];
@@ -833,28 +973,44 @@ static void iwl_find_disconn_antenna(struct iwl_priv *priv, u32* average_sig,
 	 * To be safe, simply mask out any chains that we know
 	 * are not on the device.
 	 */
+<<<<<<< HEAD
 	active_chains &= hw_params(priv).valid_rx_ant;
+=======
+	active_chains &= priv->hw_params.valid_rx_ant;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	num_tx_chains = 0;
 	for (i = 0; i < NUM_RX_CHAINS; i++) {
 		/* loops on all the bits of
 		 * priv->hw_setting.valid_tx_ant */
 		u8 ant_msk = (1 << i);
+<<<<<<< HEAD
 		if (!(hw_params(priv).valid_tx_ant & ant_msk))
+=======
+		if (!(priv->hw_params.valid_tx_ant & ant_msk))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 
 		num_tx_chains++;
 		if (data->disconn_array[i] == 0)
 			/* there is a Tx antenna connected */
 			break;
+<<<<<<< HEAD
 		if (num_tx_chains == hw_params(priv).tx_chains_num &&
+=======
+		if (num_tx_chains == priv->hw_params.tx_chains_num &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    data->disconn_array[i]) {
 			/*
 			 * If all chains are disconnected
 			 * connect the first valid tx chain
 			 */
 			first_chain =
+<<<<<<< HEAD
 				find_first_chain(hw_params(priv).valid_tx_ant);
+=======
+				find_first_chain(priv->cfg->valid_tx_ant);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			data->disconn_array[first_chain] = 0;
 			active_chains |= BIT(first_chain);
 			IWL_DEBUG_CALIB(priv,
@@ -864,13 +1020,21 @@ static void iwl_find_disconn_antenna(struct iwl_priv *priv, u32* average_sig,
 		}
 	}
 
+<<<<<<< HEAD
 	if (active_chains != hw_params(priv).valid_rx_ant &&
+=======
+	if (active_chains != priv->hw_params.valid_rx_ant &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    active_chains != priv->chain_noise_data.active_chains)
 		IWL_DEBUG_CALIB(priv,
 				"Detected that not all antennas are connected! "
 				"Connected: %#x, valid: %#x.\n",
+<<<<<<< HEAD
 				active_chains,
 				hw_params(priv).valid_rx_ant);
+=======
+				active_chains, priv->hw_params.valid_rx_ant);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Save for use within RXON, TX, SCAN commands, etc. */
 	data->active_chains = active_chains;
@@ -878,6 +1042,7 @@ static void iwl_find_disconn_antenna(struct iwl_priv *priv, u32* average_sig,
 			active_chains);
 }
 
+<<<<<<< HEAD
 static void iwlagn_gain_computation(struct iwl_priv *priv,
 				    u32 average_noise[NUM_RX_CHAINS],
 				    u8 default_chain)
@@ -935,6 +1100,8 @@ static void iwlagn_gain_computation(struct iwl_priv *priv,
 		data->state = IWL_CHAIN_NOISE_CALIBRATED;
 	}
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Accumulate 16 beacons of signal and noise statistics for each of
@@ -961,6 +1128,10 @@ void iwl_chain_noise_calibration(struct iwl_priv *priv)
 	u16 stat_chnum = INITIALIZATION_VALUE;
 	u8 rxon_band24;
 	u8 stat_band24;
+<<<<<<< HEAD
+=======
+	unsigned long flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct statistics_rx_non_phy *rx_info;
 
 	/*
@@ -985,13 +1156,21 @@ void iwl_chain_noise_calibration(struct iwl_priv *priv)
 		return;
 	}
 
+<<<<<<< HEAD
 	spin_lock_bh(&priv->statistics.lock);
+=======
+	spin_lock_irqsave(&priv->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rx_info = &priv->statistics.rx_non_phy;
 
 	if (rx_info->interference_data_flag != INTERFERENCE_DATA_AVAILABLE) {
 		IWL_DEBUG_CALIB(priv, " << Interference data unavailable\n");
+<<<<<<< HEAD
 		spin_unlock_bh(&priv->statistics.lock);
+=======
+		spin_unlock_irqrestore(&priv->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -1006,7 +1185,11 @@ void iwl_chain_noise_calibration(struct iwl_priv *priv)
 	if ((rxon_chnum != stat_chnum) || (rxon_band24 != stat_band24)) {
 		IWL_DEBUG_CALIB(priv, "Stats not from chan=%d, band24=%d\n",
 				rxon_chnum, rxon_band24);
+<<<<<<< HEAD
 		spin_unlock_bh(&priv->statistics.lock);
+=======
+		spin_unlock_irqrestore(&priv->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -1025,7 +1208,11 @@ void iwl_chain_noise_calibration(struct iwl_priv *priv)
 	chain_sig_b = le32_to_cpu(rx_info->beacon_rssi_b) & IN_BAND_FILTER;
 	chain_sig_c = le32_to_cpu(rx_info->beacon_rssi_c) & IN_BAND_FILTER;
 
+<<<<<<< HEAD
 	spin_unlock_bh(&priv->statistics.lock);
+=======
+	spin_unlock_irqrestore(&priv->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	data->beacon_count++;
 
@@ -1047,6 +1234,7 @@ void iwl_chain_noise_calibration(struct iwl_priv *priv)
 	/* If this is the "chain_noise_num_beacons", determine:
 	 * 1)  Disconnected antennas (using signal strengths)
 	 * 2)  Differential gain (using silence noise) to balance receivers */
+<<<<<<< HEAD
 	if (data->beacon_count != IWL_CAL_NUM_BEACONS)
 		return;
 
@@ -1056,6 +1244,18 @@ void iwl_chain_noise_calibration(struct iwl_priv *priv)
 		/* Disable disconnected antenna algorithm for advanced
 		   bt coex, assuming valid antennas are connected */
 		data->active_chains = hw_params(priv).valid_rx_ant;
+=======
+	if (data->beacon_count !=
+		priv->cfg->base_params->chain_noise_num_beacons)
+		return;
+
+	/* Analyze signal for disconnected antenna */
+	if (priv->cfg->bt_params &&
+	    priv->cfg->bt_params->advanced_bt_coexist) {
+		/* Disable disconnected antenna algorithm for advanced
+		   bt coex, assuming valid antennas are connected */
+		data->active_chains = priv->hw_params.valid_rx_ant;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (i = 0; i < NUM_RX_CHAINS; i++)
 			if (!(data->active_chains & (1<<i)))
 				data->disconn_array[i] = 1;
@@ -1063,9 +1263,18 @@ void iwl_chain_noise_calibration(struct iwl_priv *priv)
 		iwl_find_disconn_antenna(priv, average_sig, data);
 
 	/* Analyze noise for rx balance */
+<<<<<<< HEAD
 	average_noise[0] = data->chain_noise_a / IWL_CAL_NUM_BEACONS;
 	average_noise[1] = data->chain_noise_b / IWL_CAL_NUM_BEACONS;
 	average_noise[2] = data->chain_noise_c / IWL_CAL_NUM_BEACONS;
+=======
+	average_noise[0] = data->chain_noise_a /
+			   priv->cfg->base_params->chain_noise_num_beacons;
+	average_noise[1] = data->chain_noise_b /
+			   priv->cfg->base_params->chain_noise_num_beacons;
+	average_noise[2] = data->chain_noise_c /
+			   priv->cfg->base_params->chain_noise_num_beacons;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < NUM_RX_CHAINS; i++) {
 		if (!(data->disconn_array[i]) &&
@@ -1084,13 +1293,25 @@ void iwl_chain_noise_calibration(struct iwl_priv *priv)
 	IWL_DEBUG_CALIB(priv, "min_average_noise = %d, antenna %d\n",
 			min_average_noise, min_average_noise_antenna_i);
 
+<<<<<<< HEAD
 	iwlagn_gain_computation(priv, average_noise,
 				find_first_chain(hw_params(priv).valid_rx_ant));
+=======
+	if (priv->cfg->ops->utils->gain_computation)
+		priv->cfg->ops->utils->gain_computation(priv, average_noise,
+				min_average_noise_antenna_i, min_average_noise,
+				find_first_chain(priv->cfg->valid_rx_ant));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Some power changes may have been made during the calibration.
 	 * Update and commit the RXON
 	 */
+<<<<<<< HEAD
 	iwl_update_chain_flags(priv);
+=======
+	if (priv->cfg->ops->lib->update_chain_flags)
+		priv->cfg->ops->lib->update_chain_flags(priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	data->state = IWL_CHAIN_NOISE_DONE;
 	iwl_power_update_mode(priv, false);

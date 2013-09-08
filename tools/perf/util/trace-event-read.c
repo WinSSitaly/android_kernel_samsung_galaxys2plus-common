@@ -33,6 +33,10 @@
 #include <pthread.h>
 #include <fcntl.h>
 #include <unistd.h>
+<<<<<<< HEAD
+=======
+#include <ctype.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <errno.h>
 
 #include "../perf.h"

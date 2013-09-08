@@ -342,8 +342,12 @@ int futex_atomic_op_pt(int op, u32 __user *uaddr, int oparg, int *old)
 	if (segment_eq(get_fs(), KERNEL_DS))
 		return __futex_atomic_op_pt(op, uaddr, oparg, old);
 	spin_lock(&current->mm->page_table_lock);
+<<<<<<< HEAD
 	uaddr = (u32 __force __user *)
 		__dat_user_addr((__force unsigned long) uaddr);
+=======
+	uaddr = (int __user *) __dat_user_addr((unsigned long) uaddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!uaddr) {
 		spin_unlock(&current->mm->page_table_lock);
 		return -EFAULT;
@@ -379,8 +383,12 @@ int futex_atomic_cmpxchg_pt(u32 *uval, u32 __user *uaddr,
 	if (segment_eq(get_fs(), KERNEL_DS))
 		return __futex_atomic_cmpxchg_pt(uval, uaddr, oldval, newval);
 	spin_lock(&current->mm->page_table_lock);
+<<<<<<< HEAD
 	uaddr = (u32 __force __user *)
 		__dat_user_addr((__force unsigned long) uaddr);
+=======
+	uaddr = (int __user *) __dat_user_addr((unsigned long) uaddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!uaddr) {
 		spin_unlock(&current->mm->page_table_lock);
 		return -EFAULT;

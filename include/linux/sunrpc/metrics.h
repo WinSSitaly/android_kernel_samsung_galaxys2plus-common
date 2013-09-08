@@ -74,16 +74,24 @@ struct rpc_clnt;
 #ifdef CONFIG_PROC_FS
 
 struct rpc_iostats *	rpc_alloc_iostats(struct rpc_clnt *);
+<<<<<<< HEAD
 void			rpc_count_iostats(const struct rpc_task *,
 					  struct rpc_iostats *);
+=======
+void			rpc_count_iostats(struct rpc_task *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void			rpc_print_iostats(struct seq_file *, struct rpc_clnt *);
 void			rpc_free_iostats(struct rpc_iostats *);
 
 #else  /*  CONFIG_PROC_FS  */
 
 static inline struct rpc_iostats *rpc_alloc_iostats(struct rpc_clnt *clnt) { return NULL; }
+<<<<<<< HEAD
 static inline void rpc_count_iostats(const struct rpc_task *task,
 				     struct rpc_iostats *stats) {}
+=======
+static inline void rpc_count_iostats(struct rpc_task *task) {}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void rpc_print_iostats(struct seq_file *seq, struct rpc_clnt *clnt) {}
 static inline void rpc_free_iostats(struct rpc_iostats *stats) {}
 

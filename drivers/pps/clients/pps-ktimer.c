@@ -52,6 +52,20 @@ static void pps_ktimer_event(unsigned long ptr)
 }
 
 /*
+<<<<<<< HEAD
+=======
+ * The echo function
+ */
+
+static void pps_ktimer_echo(struct pps_device *pps, int event, void *data)
+{
+	dev_info(pps->dev, "echo %s %s\n",
+		event & PPS_CAPTUREASSERT ? "assert" : "",
+		event & PPS_CAPTURECLEAR ? "clear" : "");
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * The PPS info struct
  */
 
@@ -61,6 +75,10 @@ static struct pps_source_info pps_ktimer_info = {
 	.mode		= PPS_CAPTUREASSERT | PPS_OFFSETASSERT |
 			  PPS_ECHOASSERT |
 			  PPS_CANWAIT | PPS_TSFMT_TSPEC,
+<<<<<<< HEAD
+=======
+	.echo		= pps_ktimer_echo,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner		= THIS_MODULE,
 };
 

@@ -7,7 +7,10 @@
  *
  * Copyright (C) 1996 David S. Miller (davem@davemloft.net)
  */
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/string.h>

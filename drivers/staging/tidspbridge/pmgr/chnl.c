@@ -24,6 +24,12 @@
 /*  ----------------------------------- DSP/BIOS Bridge */
 #include <dspbridge/dbdefs.h>
 
+<<<<<<< HEAD
+=======
+/*  ----------------------------------- Trace & Debug */
+#include <dspbridge/dbc.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*  ----------------------------------- OS Adaptation Layer */
 #include <dspbridge/sync.h>
 
@@ -38,6 +44,12 @@
 /*  ----------------------------------- This */
 #include <dspbridge/chnl.h>
 
+<<<<<<< HEAD
+=======
+/*  ----------------------------------- Globals */
+static u32 refs;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *  ======== chnl_create ========
  *  Purpose:
@@ -52,6 +64,13 @@ int chnl_create(struct chnl_mgr **channel_mgr,
 	struct chnl_mgr *hchnl_mgr;
 	struct chnl_mgr_ *chnl_mgr_obj = NULL;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+	DBC_REQUIRE(channel_mgr != NULL);
+	DBC_REQUIRE(mgr_attrts != NULL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*channel_mgr = NULL;
 
 	/* Validate args: */
@@ -89,6 +108,11 @@ int chnl_create(struct chnl_mgr **channel_mgr,
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	DBC_ENSURE(status || chnl_mgr_obj);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return status;
 }
 
@@ -103,6 +127,11 @@ int chnl_destroy(struct chnl_mgr *hchnl_mgr)
 	struct bridge_drv_interface *intf_fxns;
 	int status;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (chnl_mgr_obj) {
 		intf_fxns = chnl_mgr_obj->intf_fxns;
 		/* Let Bridge channel module destroy the chnl_mgr: */
@@ -113,3 +142,39 @@ int chnl_destroy(struct chnl_mgr *hchnl_mgr)
 
 	return status;
 }
+<<<<<<< HEAD
+=======
+
+/*
+ *  ======== chnl_exit ========
+ *  Purpose:
+ *      Discontinue usage of the CHNL module.
+ */
+void chnl_exit(void)
+{
+	DBC_REQUIRE(refs > 0);
+
+	refs--;
+
+	DBC_ENSURE(refs >= 0);
+}
+
+/*
+ *  ======== chnl_init ========
+ *  Purpose:
+ *      Initialize the CHNL module's private state.
+ */
+bool chnl_init(void)
+{
+	bool ret = true;
+
+	DBC_REQUIRE(refs >= 0);
+
+	if (ret)
+		refs++;
+
+	DBC_ENSURE((ret && (refs > 0)) || (!ret && (refs >= 0)));
+
+	return ret;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

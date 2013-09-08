@@ -16,7 +16,10 @@
 #include <linux/interrupt.h>
 #include <linux/module.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/types.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 
 #include <sound/core.h>
@@ -134,7 +137,11 @@ static int atmel_abdac_prepare_dma(struct atmel_abdac *dac,
 	period_len = frames_to_bytes(runtime, runtime->period_size);
 
 	cdesc = dw_dma_cyclic_prep(chan, runtime->dma_addr, buffer_len,
+<<<<<<< HEAD
 			period_len, DMA_MEM_TO_DEV);
+=======
+			period_len, DMA_TO_DEVICE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(cdesc)) {
 		dev_dbg(&dac->pdev->dev, "could not prepare cyclic DMA\n");
 		return PTR_ERR(cdesc);
@@ -449,7 +456,11 @@ static int __devinit atmel_abdac_probe(struct platform_device *pdev)
 		goto out_free_card;
 	}
 
+<<<<<<< HEAD
 	dac->regs = ioremap(regs->start, resource_size(regs));
+=======
+	dac->regs = ioremap(regs->start, regs->end - regs->start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!dac->regs) {
 		dev_dbg(&pdev->dev, "could not remap register memory\n");
 		goto out_free_card;
@@ -468,6 +479,7 @@ static int __devinit atmel_abdac_probe(struct platform_device *pdev)
 	snd_card_set_dev(card, &pdev->dev);
 
 	if (pdata->dws.dma_dev) {
+<<<<<<< HEAD
 		dma_cap_mask_t mask;
 
 		dma_cap_zero(mask);
@@ -486,6 +498,17 @@ static int __devinit atmel_abdac_probe(struct platform_device *pdev)
 
 			dmaengine_slave_config(dac->dma.chan, &dma_conf);
 		}
+=======
+		struct dw_dma_slave *dws = &pdata->dws;
+		dma_cap_mask_t mask;
+
+		dws->tx_reg = regs->start + DAC_DATA;
+
+		dma_cap_zero(mask);
+		dma_cap_set(DMA_SLAVE, mask);
+
+		dac->dma.chan = dma_request_channel(mask, filter, dws);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (!pdata->dws.dma_dev || !dac->dma.chan) {
 		dev_dbg(&pdev->dev, "DMA not available\n");

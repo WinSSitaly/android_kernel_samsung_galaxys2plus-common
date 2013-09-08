@@ -39,6 +39,10 @@
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/hdreg.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 #include <linux/slab.h>
 #include <asm/irq.h>
@@ -4102,10 +4106,17 @@ static long pmcraid_chr_ioctl(
 	struct pmcraid_ioctl_header *hdr = NULL;
 	int retval = -ENOTTY;
 
+<<<<<<< HEAD
 	hdr = kmalloc(sizeof(struct pmcraid_ioctl_header), GFP_KERNEL);
 
 	if (!hdr) {
 		pmcraid_err("failed to allocate memory for ioctl header\n");
+=======
+	hdr = kmalloc(GFP_KERNEL, sizeof(struct pmcraid_ioctl_header));
+
+	if (!hdr) {
+		pmcraid_err("faile to allocate memory for ioctl header\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 

@@ -23,11 +23,15 @@ qla2x00_sysfs_read_fw_dump(struct file *filp, struct kobject *kobj,
 	struct scsi_qla_host *vha = shost_priv(dev_to_shost(container_of(kobj,
 	    struct device, kobj)));
 	struct qla_hw_data *ha = vha->hw;
+<<<<<<< HEAD
 	int rval = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ha->fw_dump_reading == 0)
 		return 0;
 
+<<<<<<< HEAD
 	if (IS_QLA82XX(ha)) {
 		if (off < ha->md_template_size) {
 			rval = memory_read_from_buffer(buf, count,
@@ -40,6 +44,9 @@ qla2x00_sysfs_read_fw_dump(struct file *filp, struct kobject *kobj,
 		return rval;
 	} else
 		return memory_read_from_buffer(buf, count, &off, ha->fw_dump,
+=======
+	return memory_read_from_buffer(buf, count, &off, ha->fw_dump,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					ha->fw_dump_len);
 }
 
@@ -53,6 +60,15 @@ qla2x00_sysfs_write_fw_dump(struct file *filp, struct kobject *kobj,
 	struct qla_hw_data *ha = vha->hw;
 	int reading;
 
+<<<<<<< HEAD
+=======
+	if (IS_QLA82XX(ha)) {
+		DEBUG2(qla_printk(KERN_INFO, ha,
+			"Firmware dump not supported for ISP82xx\n"));
+		return count;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (off != 0)
 		return (0);
 
@@ -62,6 +78,7 @@ qla2x00_sysfs_write_fw_dump(struct file *filp, struct kobject *kobj,
 		if (!ha->fw_dump_reading)
 			break;
 
+<<<<<<< HEAD
 		ql_log(ql_log_info, vha, 0x705d,
 		    "Firmware dump cleared on (%ld).\n", vha->host_no);
 
@@ -69,6 +86,11 @@ qla2x00_sysfs_write_fw_dump(struct file *filp, struct kobject *kobj,
 			qla82xx_md_free(vha);
 			qla82xx_md_prep(vha);
 		}
+=======
+		qla_printk(KERN_INFO, ha,
+		    "Firmware dump cleared on (%ld).\n", vha->host_no);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ha->fw_dump_reading = 0;
 		ha->fw_dumped = 0;
 		break;
@@ -76,7 +98,11 @@ qla2x00_sysfs_write_fw_dump(struct file *filp, struct kobject *kobj,
 		if (ha->fw_dumped && !ha->fw_dump_reading) {
 			ha->fw_dump_reading = 1;
 
+<<<<<<< HEAD
 			ql_log(ql_log_info, vha, 0x705e,
+=======
+			qla_printk(KERN_INFO, ha,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    "Raw firmware dump ready for read on (%ld).\n",
 			    vha->host_no);
 		}
@@ -85,6 +111,7 @@ qla2x00_sysfs_write_fw_dump(struct file *filp, struct kobject *kobj,
 		qla2x00_alloc_fw_dump(vha);
 		break;
 	case 3:
+<<<<<<< HEAD
 		if (IS_QLA82XX(ha)) {
 			qla82xx_idc_lock(ha);
 			qla82xx_set_reset_owner(vha);
@@ -108,6 +135,12 @@ qla2x00_sysfs_write_fw_dump(struct file *filp, struct kobject *kobj,
 		break;
 	}
 	return count;
+=======
+		qla2x00_system_error(vha);
+		break;
+	}
+	return (count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct bin_attribute sysfs_fw_dump_attr = {
@@ -151,7 +184,11 @@ qla2x00_sysfs_write_nvram(struct file *filp, struct kobject *kobj,
 
 	if (!capable(CAP_SYS_ADMIN) || off != 0 || count != ha->nvram_size ||
 	    !ha->isp_ops->write_nvram)
+<<<<<<< HEAD
 		return -EINVAL;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Checksum NVRAM. */
 	if (IS_FWI2_CAPABLE(ha)) {
@@ -177,7 +214,11 @@ qla2x00_sysfs_write_nvram(struct file *filp, struct kobject *kobj,
 	}
 
 	if (qla2x00_wait_for_hba_online(vha) != QLA_SUCCESS) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0x705f,
+=======
+		qla_printk(KERN_WARNING, ha,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    "HBA not online, failing NVRAM update.\n");
 		return -EAGAIN;
 	}
@@ -187,14 +228,21 @@ qla2x00_sysfs_write_nvram(struct file *filp, struct kobject *kobj,
 	ha->isp_ops->read_nvram(vha, (uint8_t *)ha->nvram, ha->nvram_base,
 	    count);
 
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_user, vha, 0x7060,
 	    "Setting ISP_ABORT_NEEDED\n");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* NVRAM settings take effect immediately. */
 	set_bit(ISP_ABORT_NEEDED, &vha->dpc_flags);
 	qla2xxx_wake_dpc(vha);
 	qla2x00_wait_for_chip_reset(vha);
 
+<<<<<<< HEAD
 	return count;
+=======
+	return (count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct bin_attribute sysfs_nvram_attr = {
@@ -268,10 +316,17 @@ qla2x00_sysfs_write_optrom_ctl(struct file *filp, struct kobject *kobj,
 	int val, valid;
 
 	if (off)
+<<<<<<< HEAD
 		return -EINVAL;
 
 	if (unlikely(pci_channel_offline(ha->pdev)))
 		return -EAGAIN;
+=======
+		return 0;
+
+	if (unlikely(pci_channel_offline(ha->pdev)))
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (sscanf(buf, "%d:%x:%x", &val, &start, &size) < 1)
 		return -EINVAL;
@@ -282,6 +337,7 @@ qla2x00_sysfs_write_optrom_ctl(struct file *filp, struct kobject *kobj,
 	case 0:
 		if (ha->optrom_state != QLA_SREADING &&
 		    ha->optrom_state != QLA_SWRITING)
+<<<<<<< HEAD
 			return -EINVAL;
 
 		ha->optrom_state = QLA_SWAITING;
@@ -289,13 +345,26 @@ qla2x00_sysfs_write_optrom_ctl(struct file *filp, struct kobject *kobj,
 		ql_dbg(ql_dbg_user, vha, 0x7061,
 		    "Freeing flash region allocation -- 0x%x bytes.\n",
 		    ha->optrom_region_size);
+=======
+			break;
+
+		ha->optrom_state = QLA_SWAITING;
+
+		DEBUG2(qla_printk(KERN_INFO, ha,
+		    "Freeing flash region allocation -- 0x%x bytes.\n",
+		    ha->optrom_region_size));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		vfree(ha->optrom_buffer);
 		ha->optrom_buffer = NULL;
 		break;
 	case 1:
 		if (ha->optrom_state != QLA_SWAITING)
+<<<<<<< HEAD
 			return -EINVAL;
+=======
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ha->optrom_region_start = start;
 		ha->optrom_region_size = start + size > ha->optrom_size ?
@@ -304,11 +373,16 @@ qla2x00_sysfs_write_optrom_ctl(struct file *filp, struct kobject *kobj,
 		ha->optrom_state = QLA_SREADING;
 		ha->optrom_buffer = vmalloc(ha->optrom_region_size);
 		if (ha->optrom_buffer == NULL) {
+<<<<<<< HEAD
 			ql_log(ql_log_warn, vha, 0x7062,
+=======
+			qla_printk(KERN_WARNING, ha,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    "Unable to allocate memory for optrom retrieval "
 			    "(%x).\n", ha->optrom_region_size);
 
 			ha->optrom_state = QLA_SWAITING;
+<<<<<<< HEAD
 			return -ENOMEM;
 		}
 
@@ -321,6 +395,20 @@ qla2x00_sysfs_write_optrom_ctl(struct file *filp, struct kobject *kobj,
 		ql_dbg(ql_dbg_user, vha, 0x7064,
 		    "Reading flash region -- 0x%x/0x%x.\n",
 		    ha->optrom_region_start, ha->optrom_region_size);
+=======
+			return count;
+		}
+
+		if (qla2x00_wait_for_hba_online(vha) != QLA_SUCCESS) {
+			qla_printk(KERN_WARNING, ha,
+				"HBA not online, failing NVRAM update.\n");
+			return -EAGAIN;
+		}
+
+		DEBUG2(qla_printk(KERN_INFO, ha,
+		    "Reading flash region -- 0x%x/0x%x.\n",
+		    ha->optrom_region_start, ha->optrom_region_size));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		memset(ha->optrom_buffer, 0, ha->optrom_region_size);
 		ha->isp_ops->read_optrom(vha, ha->optrom_buffer,
@@ -328,7 +416,11 @@ qla2x00_sysfs_write_optrom_ctl(struct file *filp, struct kobject *kobj,
 		break;
 	case 2:
 		if (ha->optrom_state != QLA_SWAITING)
+<<<<<<< HEAD
 			return -EINVAL;
+=======
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * We need to be more restrictive on which FLASH regions are
@@ -356,11 +448,18 @@ qla2x00_sysfs_write_optrom_ctl(struct file *filp, struct kobject *kobj,
 		else if (start == (ha->flt_region_boot * 4) ||
 		    start == (ha->flt_region_fw * 4))
 			valid = 1;
+<<<<<<< HEAD
 		else if (IS_QLA24XX_TYPE(ha) || IS_QLA25XX(ha)
 			|| IS_CNA_CAPABLE(ha) || IS_QLA2031(ha))
 			valid = 1;
 		if (!valid) {
 			ql_log(ql_log_warn, vha, 0x7065,
+=======
+		else if (IS_QLA25XX(ha) || IS_QLA8XXX_TYPE(ha))
+			valid = 1;
+		if (!valid) {
+			qla_printk(KERN_WARNING, ha,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    "Invalid start region 0x%x/0x%x.\n", start, size);
 			return -EINVAL;
 		}
@@ -372,6 +471,7 @@ qla2x00_sysfs_write_optrom_ctl(struct file *filp, struct kobject *kobj,
 		ha->optrom_state = QLA_SWRITING;
 		ha->optrom_buffer = vmalloc(ha->optrom_region_size);
 		if (ha->optrom_buffer == NULL) {
+<<<<<<< HEAD
 			ql_log(ql_log_warn, vha, 0x7066,
 			    "Unable to allocate memory for optrom update "
 			    "(%x)\n", ha->optrom_region_size);
@@ -383,28 +483,58 @@ qla2x00_sysfs_write_optrom_ctl(struct file *filp, struct kobject *kobj,
 		ql_dbg(ql_dbg_user, vha, 0x7067,
 		    "Staging flash region write -- 0x%x/0x%x.\n",
 		    ha->optrom_region_start, ha->optrom_region_size);
+=======
+			qla_printk(KERN_WARNING, ha,
+			    "Unable to allocate memory for optrom update "
+			    "(%x).\n", ha->optrom_region_size);
+
+			ha->optrom_state = QLA_SWAITING;
+			return count;
+		}
+
+		DEBUG2(qla_printk(KERN_INFO, ha,
+		    "Staging flash region write -- 0x%x/0x%x.\n",
+		    ha->optrom_region_start, ha->optrom_region_size));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		memset(ha->optrom_buffer, 0, ha->optrom_region_size);
 		break;
 	case 3:
 		if (ha->optrom_state != QLA_SWRITING)
+<<<<<<< HEAD
 			return -EINVAL;
 
 		if (qla2x00_wait_for_hba_online(vha) != QLA_SUCCESS) {
 			ql_log(ql_log_warn, vha, 0x7068,
+=======
+			break;
+
+		if (qla2x00_wait_for_hba_online(vha) != QLA_SUCCESS) {
+			qla_printk(KERN_WARNING, ha,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    "HBA not online, failing flash update.\n");
 			return -EAGAIN;
 		}
 
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_user, vha, 0x7069,
 		    "Writing flash region -- 0x%x/0x%x.\n",
 		    ha->optrom_region_start, ha->optrom_region_size);
+=======
+		DEBUG2(qla_printk(KERN_INFO, ha,
+		    "Writing flash region -- 0x%x/0x%x.\n",
+		    ha->optrom_region_start, ha->optrom_region_size));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ha->isp_ops->write_optrom(vha, ha->optrom_buffer,
 		    ha->optrom_region_start, ha->optrom_region_size);
 		break;
 	default:
+<<<<<<< HEAD
 		return -EINVAL;
+=======
+		count = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return count;
 }
@@ -428,10 +558,17 @@ qla2x00_sysfs_read_vpd(struct file *filp, struct kobject *kobj,
 	struct qla_hw_data *ha = vha->hw;
 
 	if (unlikely(pci_channel_offline(ha->pdev)))
+<<<<<<< HEAD
 		return -EAGAIN;
 
 	if (!capable(CAP_SYS_ADMIN))
 		return -EINVAL;
+=======
+		return 0;
+
+	if (!capable(CAP_SYS_ADMIN))
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (IS_NOCACHE_VPD_TYPE(ha))
 		ha->isp_ops->read_optrom(vha, ha->vpd, ha->flt_region_vpd << 2,
@@ -457,7 +594,11 @@ qla2x00_sysfs_write_vpd(struct file *filp, struct kobject *kobj,
 		return 0;
 
 	if (qla2x00_wait_for_hba_online(vha) != QLA_SUCCESS) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0x706a,
+=======
+		qla_printk(KERN_WARNING, ha,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    "HBA not online, failing VPD update.\n");
 		return -EAGAIN;
 	}
@@ -468,6 +609,7 @@ qla2x00_sysfs_write_vpd(struct file *filp, struct kobject *kobj,
 
 	/* Update flash version information for 4Gb & above. */
 	if (!IS_FWI2_CAPABLE(ha))
+<<<<<<< HEAD
 		return -EINVAL;
 
 	tmp_data = vmalloc(256);
@@ -479,6 +621,19 @@ qla2x00_sysfs_write_vpd(struct file *filp, struct kobject *kobj,
 	ha->isp_ops->get_flash_version(vha, tmp_data);
 	vfree(tmp_data);
 
+=======
+		goto done;
+
+	tmp_data = vmalloc(256);
+	if (!tmp_data) {
+		qla_printk(KERN_WARNING, ha,
+		    "Unable to allocate memory for VPD information update.\n");
+		goto done;
+	}
+	ha->isp_ops->get_flash_version(vha, tmp_data);
+	vfree(tmp_data);
+done:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return count;
 }
 
@@ -512,7 +667,11 @@ qla2x00_sysfs_read_sfp(struct file *filp, struct kobject *kobj,
 	ha->sfp_data = dma_pool_alloc(ha->s_dma_pool, GFP_KERNEL,
 	    &ha->sfp_data_dma);
 	if (!ha->sfp_data) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0x706c,
+=======
+		qla_printk(KERN_WARNING, ha,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    "Unable to allocate memory for SFP read-data.\n");
 		return 0;
 	}
@@ -531,11 +690,19 @@ do_read:
 		rval = qla2x00_read_sfp(vha, ha->sfp_data_dma, ha->sfp_data,
 		    addr, offset, SFP_BLOCK_SIZE, 0);
 		if (rval != QLA_SUCCESS) {
+<<<<<<< HEAD
 			ql_log(ql_log_warn, vha, 0x706d,
 			    "Unable to read SFP data (%x/%x/%x).\n", rval,
 			    addr, offset);
 
 			return -EIO;
+=======
+			qla_printk(KERN_WARNING, ha,
+			    "Unable to read SFP data (%x/%x/%x).\n", rval,
+			    addr, offset);
+			count = 0;
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		memcpy(buf, ha->sfp_data, SFP_BLOCK_SIZE);
 		buf += SFP_BLOCK_SIZE;
@@ -565,11 +732,16 @@ qla2x00_sysfs_write_reset(struct file *filp, struct kobject *kobj,
 	int type;
 
 	if (off != 0)
+<<<<<<< HEAD
 		return -EINVAL;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	type = simple_strtol(buf, NULL, 10);
 	switch (type) {
 	case 0x2025c:
+<<<<<<< HEAD
 		ql_log(ql_log_info, vha, 0x706e,
 		    "Issuing ISP reset.\n");
 
@@ -580,16 +752,30 @@ qla2x00_sysfs_write_reset(struct file *filp, struct kobject *kobj,
 			qla82xx_set_reset_owner(vha);
 			qla82xx_idc_unlock(ha);
 		}
+=======
+		qla_printk(KERN_INFO, ha,
+		    "Issuing ISP reset on (%ld).\n", vha->host_no);
+
+		scsi_block_requests(vha->host);
+		set_bit(ISP_ABORT_NEEDED, &vha->dpc_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		qla2xxx_wake_dpc(vha);
 		qla2x00_wait_for_chip_reset(vha);
 		scsi_unblock_requests(vha->host);
 		break;
 	case 0x2025d:
 		if (!IS_QLA81XX(ha))
+<<<<<<< HEAD
 			return -EPERM;
 
 		ql_log(ql_log_info, vha, 0x706f,
 		    "Issuing MPI reset.\n");
+=======
+			break;
+
+		qla_printk(KERN_INFO, ha,
+		    "Issuing MPI reset on (%ld).\n", vha->host_no);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Make sure FC side is not in reset */
 		qla2x00_wait_for_hba_online(vha);
@@ -597,12 +783,18 @@ qla2x00_sysfs_write_reset(struct file *filp, struct kobject *kobj,
 		/* Issue MPI reset */
 		scsi_block_requests(vha->host);
 		if (qla81xx_restart_mpi_firmware(vha) != QLA_SUCCESS)
+<<<<<<< HEAD
 			ql_log(ql_log_warn, vha, 0x7070,
 			    "MPI reset failed.\n");
+=======
+			qla_printk(KERN_WARNING, ha,
+			    "MPI reset failed on (%ld).\n", vha->host_no);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		scsi_unblock_requests(vha->host);
 		break;
 	case 0x2025e:
 		if (!IS_QLA82XX(ha) || vha != base_vha) {
+<<<<<<< HEAD
 			ql_log(ql_log_info, vha, 0x7071,
 			    "FCoE ctx reset no supported.\n");
 			return -EPERM;
@@ -610,6 +802,16 @@ qla2x00_sysfs_write_reset(struct file *filp, struct kobject *kobj,
 
 		ql_log(ql_log_info, vha, 0x7072,
 		    "Issuing FCoE ctx reset.\n");
+=======
+			qla_printk(KERN_INFO, ha,
+			    "FCoE ctx reset not supported for host%ld.\n",
+			    vha->host_no);
+			return count;
+		}
+
+		qla_printk(KERN_INFO, ha,
+		    "Issuing FCoE CTX reset on host%ld.\n", vha->host_no);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_bit(FCOE_CTX_RESET_NEEDED, &vha->dpc_flags);
 		qla2xxx_wake_dpc(vha);
 		qla2x00_wait_for_fcoe_ctx_reset(vha);
@@ -628,6 +830,147 @@ static struct bin_attribute sysfs_reset_attr = {
 };
 
 static ssize_t
+<<<<<<< HEAD
+=======
+qla2x00_sysfs_write_edc(struct file *filp, struct kobject *kobj,
+			struct bin_attribute *bin_attr,
+			char *buf, loff_t off, size_t count)
+{
+	struct scsi_qla_host *vha = shost_priv(dev_to_shost(container_of(kobj,
+	    struct device, kobj)));
+	struct qla_hw_data *ha = vha->hw;
+	uint16_t dev, adr, opt, len;
+	int rval;
+
+	ha->edc_data_len = 0;
+
+	if (!capable(CAP_SYS_ADMIN) || off != 0 || count < 8)
+		return 0;
+
+	if (!ha->edc_data) {
+		ha->edc_data = dma_pool_alloc(ha->s_dma_pool, GFP_KERNEL,
+		    &ha->edc_data_dma);
+		if (!ha->edc_data) {
+			DEBUG2(qla_printk(KERN_INFO, ha,
+			    "Unable to allocate memory for EDC write.\n"));
+			return 0;
+		}
+	}
+
+	dev = le16_to_cpup((void *)&buf[0]);
+	adr = le16_to_cpup((void *)&buf[2]);
+	opt = le16_to_cpup((void *)&buf[4]);
+	len = le16_to_cpup((void *)&buf[6]);
+
+	if (!(opt & BIT_0))
+		if (len == 0 || len > DMA_POOL_SIZE || len > count - 8)
+			return -EINVAL;
+
+	memcpy(ha->edc_data, &buf[8], len);
+
+	rval = qla2x00_write_sfp(vha, ha->edc_data_dma, ha->edc_data,
+	    dev, adr, len, opt);
+	if (rval != QLA_SUCCESS) {
+		DEBUG2(qla_printk(KERN_INFO, ha,
+		    "Unable to write EDC (%x) %02x:%02x:%04x:%02x:%02x.\n",
+		    rval, dev, adr, opt, len, buf[8]));
+		return 0;
+	}
+
+	return count;
+}
+
+static struct bin_attribute sysfs_edc_attr = {
+	.attr = {
+		.name = "edc",
+		.mode = S_IWUSR,
+	},
+	.size = 0,
+	.write = qla2x00_sysfs_write_edc,
+};
+
+static ssize_t
+qla2x00_sysfs_write_edc_status(struct file *filp, struct kobject *kobj,
+			struct bin_attribute *bin_attr,
+			char *buf, loff_t off, size_t count)
+{
+	struct scsi_qla_host *vha = shost_priv(dev_to_shost(container_of(kobj,
+	    struct device, kobj)));
+	struct qla_hw_data *ha = vha->hw;
+	uint16_t dev, adr, opt, len;
+	int rval;
+
+	ha->edc_data_len = 0;
+
+	if (!capable(CAP_SYS_ADMIN) || off != 0 || count < 8)
+		return 0;
+
+	if (!ha->edc_data) {
+		ha->edc_data = dma_pool_alloc(ha->s_dma_pool, GFP_KERNEL,
+		    &ha->edc_data_dma);
+		if (!ha->edc_data) {
+			DEBUG2(qla_printk(KERN_INFO, ha,
+			    "Unable to allocate memory for EDC status.\n"));
+			return 0;
+		}
+	}
+
+	dev = le16_to_cpup((void *)&buf[0]);
+	adr = le16_to_cpup((void *)&buf[2]);
+	opt = le16_to_cpup((void *)&buf[4]);
+	len = le16_to_cpup((void *)&buf[6]);
+
+	if (!(opt & BIT_0))
+		if (len == 0 || len > DMA_POOL_SIZE)
+			return -EINVAL;
+
+	memset(ha->edc_data, 0, len);
+	rval = qla2x00_read_sfp(vha, ha->edc_data_dma, ha->edc_data,
+			dev, adr, len, opt);
+	if (rval != QLA_SUCCESS) {
+		DEBUG2(qla_printk(KERN_INFO, ha,
+		    "Unable to write EDC status (%x) %02x:%02x:%04x:%02x.\n",
+		    rval, dev, adr, opt, len));
+		return 0;
+	}
+
+	ha->edc_data_len = len;
+
+	return count;
+}
+
+static ssize_t
+qla2x00_sysfs_read_edc_status(struct file *filp, struct kobject *kobj,
+			   struct bin_attribute *bin_attr,
+			   char *buf, loff_t off, size_t count)
+{
+	struct scsi_qla_host *vha = shost_priv(dev_to_shost(container_of(kobj,
+	    struct device, kobj)));
+	struct qla_hw_data *ha = vha->hw;
+
+	if (!capable(CAP_SYS_ADMIN) || off != 0 || count == 0)
+		return 0;
+
+	if (!ha->edc_data || ha->edc_data_len == 0 || ha->edc_data_len > count)
+		return -EINVAL;
+
+	memcpy(buf, ha->edc_data, ha->edc_data_len);
+
+	return ha->edc_data_len;
+}
+
+static struct bin_attribute sysfs_edc_status_attr = {
+	.attr = {
+		.name = "edc_status",
+		.mode = S_IRUSR | S_IWUSR,
+	},
+	.size = 0,
+	.write = qla2x00_sysfs_write_edc_status,
+	.read = qla2x00_sysfs_read_edc_status,
+};
+
+static ssize_t
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 qla2x00_sysfs_read_xgmac_stats(struct file *filp, struct kobject *kobj,
 		       struct bin_attribute *bin_attr,
 		       char *buf, loff_t off, size_t count)
@@ -647,7 +990,11 @@ qla2x00_sysfs_read_xgmac_stats(struct file *filp, struct kobject *kobj,
 	ha->xgmac_data = dma_alloc_coherent(&ha->pdev->dev, XGMAC_DATA_SIZE,
 	    &ha->xgmac_data_dma, GFP_KERNEL);
 	if (!ha->xgmac_data) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0x7076,
+=======
+		qla_printk(KERN_WARNING, ha,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    "Unable to allocate memory for XGMAC read-data.\n");
 		return 0;
 	}
@@ -659,7 +1006,11 @@ do_read:
 	rval = qla2x00_get_xgmac_stats(vha, ha->xgmac_data_dma,
 	    XGMAC_DATA_SIZE, &actual_size);
 	if (rval != QLA_SUCCESS) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0x7077,
+=======
+		qla_printk(KERN_WARNING, ha,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    "Unable to read XGMAC data (%x).\n", rval);
 		count = 0;
 	}
@@ -699,9 +1050,15 @@ qla2x00_sysfs_read_dcbx_tlv(struct file *filp, struct kobject *kobj,
 	ha->dcbx_tlv = dma_alloc_coherent(&ha->pdev->dev, DCBX_TLV_DATA_SIZE,
 	    &ha->dcbx_tlv_dma, GFP_KERNEL);
 	if (!ha->dcbx_tlv) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0x7078,
 		    "Unable to allocate memory for DCBX TLV read-data.\n");
 		return -ENOMEM;
+=======
+		qla_printk(KERN_WARNING, ha,
+		    "Unable to allocate memory for DCBX TLV read-data.\n");
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 do_read:
@@ -711,9 +1068,15 @@ do_read:
 	rval = qla2x00_get_dcbx_params(vha, ha->dcbx_tlv_dma,
 	    DCBX_TLV_DATA_SIZE);
 	if (rval != QLA_SUCCESS) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0x7079,
 		    "Unable to read DCBX TLV (%x).\n", rval);
 		return -EIO;
+=======
+		qla_printk(KERN_WARNING, ha,
+		    "Unable to read DCBX TLV data (%x).\n", rval);
+		count = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	memcpy(buf, ha->dcbx_tlv, count);
@@ -742,6 +1105,11 @@ static struct sysfs_entry {
 	{ "vpd", &sysfs_vpd_attr, 1 },
 	{ "sfp", &sysfs_sfp_attr, 1 },
 	{ "reset", &sysfs_reset_attr, },
+<<<<<<< HEAD
+=======
+	{ "edc", &sysfs_edc_attr, 2 },
+	{ "edc_status", &sysfs_edc_status_attr, 2 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ "xgmac_stats", &sysfs_xgmac_stats_attr, 3 },
 	{ "dcbx_tlv", &sysfs_dcbx_tlv_attr, 3 },
 	{ NULL },
@@ -759,12 +1127,17 @@ qla2x00_alloc_sysfs_attr(scsi_qla_host_t *vha)
 			continue;
 		if (iter->is4GBp_only == 2 && !IS_QLA25XX(vha->hw))
 			continue;
+<<<<<<< HEAD
 		if (iter->is4GBp_only == 3 && !(IS_CNA_CAPABLE(vha->hw)))
+=======
+		if (iter->is4GBp_only == 3 && !(IS_QLA8XXX_TYPE(vha->hw)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 
 		ret = sysfs_create_bin_file(&host->shost_gendev.kobj,
 		    iter->attr);
 		if (ret)
+<<<<<<< HEAD
 			ql_log(ql_log_warn, vha, 0x00f3,
 			    "Unable to create sysfs %s binary attribute (%d).\n",
 			    iter->name, ret);
@@ -772,6 +1145,11 @@ qla2x00_alloc_sysfs_attr(scsi_qla_host_t *vha)
 			ql_dbg(ql_dbg_init, vha, 0x00f4,
 			    "Successfully created sysfs %s binary attribure.\n",
 			    iter->name);
+=======
+			qla_printk(KERN_INFO, vha->hw,
+			    "Unable to create sysfs %s binary attribute "
+			    "(%d).\n", iter->name, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -787,7 +1165,11 @@ qla2x00_free_sysfs_attr(scsi_qla_host_t *vha)
 			continue;
 		if (iter->is4GBp_only == 2 && !IS_QLA25XX(ha))
 			continue;
+<<<<<<< HEAD
 		if (iter->is4GBp_only == 3 && !(IS_CNA_CAPABLE(vha->hw)))
+=======
+		if (iter->is4GBp_only == 3 && !!(IS_QLA8XXX_TYPE(vha->hw)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 
 		sysfs_remove_bin_file(&host->shost_gendev.kobj,
@@ -897,7 +1279,12 @@ qla2x00_link_state_show(struct device *dev, struct device_attribute *attr,
 	    vha->device_flags & DFLG_NO_CABLE)
 		len = snprintf(buf, PAGE_SIZE, "Link Down\n");
 	else if (atomic_read(&vha->loop_state) != LOOP_READY ||
+<<<<<<< HEAD
 	    qla2x00_reset_active(vha))
+=======
+	    test_bit(ABORT_ISP_ACTIVE, &vha->dpc_flags) ||
+	    test_bit(ISP_ABORT_NEEDED, &vha->dpc_flags))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		len = snprintf(buf, PAGE_SIZE, "Unknown Link State\n");
 	else {
 		len = snprintf(buf, PAGE_SIZE, "Link Up - ");
@@ -1025,7 +1412,11 @@ qla2x00_beacon_store(struct device *dev, struct device_attribute *attr,
 		return -EPERM;
 
 	if (test_bit(ABORT_ISP_ACTIVE, &vha->dpc_flags)) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0x707a,
+=======
+		qla_printk(KERN_WARNING, ha,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    "Abort ISP active -- ignoring beacon request.\n");
 		return -EBUSY;
 	}
@@ -1092,7 +1483,11 @@ qla2x00_optrom_gold_fw_version_show(struct device *dev,
 	scsi_qla_host_t *vha = shost_priv(class_to_shost(dev));
 	struct qla_hw_data *ha = vha->hw;
 
+<<<<<<< HEAD
 	if (!IS_QLA81XX(ha) && !IS_QLA83XX(ha))
+=======
+	if (!IS_QLA81XX(ha))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return snprintf(buf, PAGE_SIZE, "\n");
 
 	return snprintf(buf, PAGE_SIZE, "%d.%02d.%02d (%d)\n",
@@ -1139,7 +1534,11 @@ qla2x00_mpi_version_show(struct device *dev, struct device_attribute *attr,
 	scsi_qla_host_t *vha = shost_priv(class_to_shost(dev));
 	struct qla_hw_data *ha = vha->hw;
 
+<<<<<<< HEAD
 	if (!IS_QLA81XX(ha) && !IS_QLA8031(ha))
+=======
+	if (!IS_QLA81XX(ha))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return snprintf(buf, PAGE_SIZE, "\n");
 
 	return snprintf(buf, PAGE_SIZE, "%d.%02d.%02d (%x)\n",
@@ -1154,7 +1553,11 @@ qla2x00_phy_version_show(struct device *dev, struct device_attribute *attr,
 	scsi_qla_host_t *vha = shost_priv(class_to_shost(dev));
 	struct qla_hw_data *ha = vha->hw;
 
+<<<<<<< HEAD
 	if (!IS_QLA81XX(ha) && !IS_QLA83XX(ha))
+=======
+	if (!IS_QLA81XX(ha))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return snprintf(buf, PAGE_SIZE, "\n");
 
 	return snprintf(buf, PAGE_SIZE, "%d.%02d.%02d\n",
@@ -1177,7 +1580,11 @@ qla2x00_vlan_id_show(struct device *dev, struct device_attribute *attr,
 {
 	scsi_qla_host_t *vha = shost_priv(class_to_shost(dev));
 
+<<<<<<< HEAD
 	if (!IS_CNA_CAPABLE(vha->hw))
+=======
+	if (!IS_QLA8XXX_TYPE(vha->hw))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return snprintf(buf, PAGE_SIZE, "\n");
 
 	return snprintf(buf, PAGE_SIZE, "%d\n", vha->fcoe_vlan_id);
@@ -1189,7 +1596,11 @@ qla2x00_vn_port_mac_address_show(struct device *dev,
 {
 	scsi_qla_host_t *vha = shost_priv(class_to_shost(dev));
 
+<<<<<<< HEAD
 	if (!IS_CNA_CAPABLE(vha->hw))
+=======
+	if (!IS_QLA8XXX_TYPE(vha->hw))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return snprintf(buf, PAGE_SIZE, "\n");
 
 	return snprintf(buf, PAGE_SIZE, "%02x:%02x:%02x:%02x:%02x:%02x\n",
@@ -1219,6 +1630,7 @@ qla2x00_thermal_temp_show(struct device *dev,
 		return snprintf(buf, PAGE_SIZE, "\n");
 
 	temp = frac = 0;
+<<<<<<< HEAD
 	if (qla2x00_reset_active(vha))
 		ql_log(ql_log_warn, vha, 0x707b,
 		    "ISP reset active.\n");
@@ -1226,6 +1638,17 @@ qla2x00_thermal_temp_show(struct device *dev,
 		rval = qla2x00_get_thermal_temp(vha, &temp, &frac);
 	if (rval != QLA_SUCCESS)
 		return snprintf(buf, PAGE_SIZE, "\n");
+=======
+	if (test_bit(ABORT_ISP_ACTIVE, &vha->dpc_flags) ||
+	    test_bit(ISP_ABORT_NEEDED, &vha->dpc_flags))
+		DEBUG2_3_11(printk(KERN_WARNING
+		    "%s(%ld): isp reset in progress.\n",
+		    __func__, vha->host_no));
+	else if (!vha->hw->flags.eeh_busy)
+		rval = qla2x00_get_thermal_temp(vha, &temp, &frac);
+	if (rval != QLA_SUCCESS)
+		temp = frac = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return snprintf(buf, PAGE_SIZE, "%d.%02d\n", temp, frac);
 }
@@ -1238,9 +1661,16 @@ qla2x00_fw_state_show(struct device *dev, struct device_attribute *attr,
 	int rval = QLA_FUNCTION_FAILED;
 	uint16_t state[5];
 
+<<<<<<< HEAD
 	if (qla2x00_reset_active(vha))
 		ql_log(ql_log_warn, vha, 0x707c,
 		    "ISP reset active.\n");
+=======
+	if (test_bit(ABORT_ISP_ACTIVE, &vha->dpc_flags) ||
+		test_bit(ISP_ABORT_NEEDED, &vha->dpc_flags))
+		DEBUG2_3_11(printk("%s(%ld): isp reset in progress.\n",
+			__func__, vha->host_no));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else if (!vha->hw->flags.eeh_busy)
 		rval = qla2x00_get_firmware_state(vha, state);
 	if (rval != QLA_SUCCESS)
@@ -1354,9 +1784,12 @@ qla2x00_get_host_speed(struct Scsi_Host *shost)
 	case PORT_SPEED_10GB:
 		speed = FC_PORTSPEED_10GBIT;
 		break;
+<<<<<<< HEAD
 	case PORT_SPEED_16GB:
 		speed = FC_PORTSPEED_16GBIT;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	fc_host_speed(shost) = speed;
 }
@@ -1507,6 +1940,7 @@ qla2x00_terminate_rport_io(struct fc_rport *rport)
 	 * final cleanup of firmware resources (PCBs and XCBs).
 	 */
 	if (fcport->loop_id != FC_NO_LOOP_ID &&
+<<<<<<< HEAD
 	    !test_bit(UNLOADING, &fcport->vha->dpc_flags)) {
 		if (IS_FWI2_CAPABLE(fcport->vha->hw))
 			fcport->vha->hw->isp_ops->fabric_logout(fcport->vha,
@@ -1515,6 +1949,12 @@ qla2x00_terminate_rport_io(struct fc_rport *rport)
 		else
 			qla2x00_port_logout(fcport->vha, fcport);
 	}
+=======
+	    !test_bit(UNLOADING, &fcport->vha->dpc_flags))
+		fcport->vha->hw->isp_ops->fabric_logout(fcport->vha,
+			fcport->loop_id, fcport->d_id.b.domain,
+			fcport->d_id.b.area, fcport->d_id.b.al_pa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -1548,8 +1988,13 @@ qla2x00_get_fc_host_stats(struct Scsi_Host *shost)
 
 	stats = dma_pool_alloc(ha->s_dma_pool, GFP_KERNEL, &stats_dma);
 	if (stats == NULL) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0x707d,
 		    "Failed to allocate memory for stats.\n");
+=======
+		DEBUG2_3_11(printk("%s(%ld): Failed to allocate memory.\n",
+		    __func__, base_vha->host_no));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto done;
 	}
 	memset(stats, 0, DMA_POOL_SIZE);
@@ -1558,7 +2003,13 @@ qla2x00_get_fc_host_stats(struct Scsi_Host *shost)
 	if (IS_FWI2_CAPABLE(ha)) {
 		rval = qla24xx_get_isp_stats(base_vha, stats, stats_dma);
 	} else if (atomic_read(&base_vha->loop_state) == LOOP_READY &&
+<<<<<<< HEAD
 	    !qla2x00_reset_active(vha) && !ha->dpc_active) {
+=======
+		    !test_bit(ABORT_ISP_ACTIVE, &base_vha->dpc_flags) &&
+		    !test_bit(ISP_ABORT_NEEDED, &base_vha->dpc_flags) &&
+		    !ha->dpc_active) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Must be in a 'READY' state for statistics retrieval. */
 		rval = qla2x00_get_link_status(base_vha, base_vha->loop_id,
 						stats, stats_dma);
@@ -1625,6 +2076,7 @@ qla2x00_get_host_port_state(struct Scsi_Host *shost)
 	scsi_qla_host_t *vha = shost_priv(shost);
 	struct scsi_qla_host *base_vha = pci_get_drvdata(vha->hw->pdev);
 
+<<<<<<< HEAD
 	if (!base_vha->flags.online) {
 		fc_host_port_state(shost) = FC_PORTSTATE_OFFLINE;
 		return;
@@ -1650,6 +2102,14 @@ qla2x00_get_host_port_state(struct Scsi_Host *shost)
 		fc_host_port_state(shost) = FC_PORTSTATE_UNKNOWN;
 		break;
 	}
+=======
+	if (!base_vha->flags.online)
+		fc_host_port_state(shost) = FC_PORTSTATE_OFFLINE;
+	else if (atomic_read(&base_vha->loop_state) == LOOP_TIMEOUT)
+		fc_host_port_state(shost) = FC_PORTSTATE_UNKNOWN;
+	else
+		fc_host_port_state(shost) = FC_PORTSTATE_ONLINE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -1666,14 +2126,24 @@ qla24xx_vport_create(struct fc_vport *fc_vport, bool disable)
 
 	ret = qla24xx_vport_create_req_sanity_check(fc_vport);
 	if (ret) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0x707e,
 		    "Vport sanity check failed, status %x\n", ret);
+=======
+		DEBUG15(printk("qla24xx_vport_create_req_sanity_check failed, "
+		    "status %x\n", ret));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return (ret);
 	}
 
 	vha = qla24xx_create_vhost(fc_vport);
 	if (vha == NULL) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0x707f, "Vport create host failed.\n");
+=======
+		DEBUG15(printk ("qla24xx_create_vhost failed, vha = %p\n",
+		    vha));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return FC_VPORT_FAILED;
 	}
 	if (disable) {
@@ -1683,8 +2153,13 @@ qla24xx_vport_create(struct fc_vport *fc_vport, bool disable)
 		atomic_set(&vha->vp_state, VP_FAILED);
 
 	/* ready to create vport */
+<<<<<<< HEAD
 	ql_log(ql_log_info, vha, 0x7080,
 	    "VP entry id %d assigned.\n", vha->vp_idx);
+=======
+	qla_printk(KERN_INFO, vha->hw, "VP entry id %d assigned.\n",
+							vha->vp_idx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* initialized vport states */
 	atomic_set(&vha->loop_state, LOOP_DOWN);
@@ -1694,13 +2169,19 @@ qla24xx_vport_create(struct fc_vport *fc_vport, bool disable)
 	if (atomic_read(&base_vha->loop_state) == LOOP_DOWN ||
 	    atomic_read(&base_vha->loop_state) == LOOP_DEAD) {
 		/* Don't retry or attempt login of this virtual port */
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_user, vha, 0x7081,
 		    "Vport loop state is not UP.\n");
+=======
+		DEBUG15(printk ("scsi(%ld): pport loop_state is not UP.\n",
+		    base_vha->host_no));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		atomic_set(&vha->loop_state, LOOP_DEAD);
 		if (!disable)
 			fc_vport_set_state(fc_vport, FC_VPORT_LINKDOWN);
 	}
 
+<<<<<<< HEAD
 	if (IS_T10_PI_CAPABLE(ha) && ql2xenabledif) {
 		if (ha->fw_attributes & BIT_4) {
 			int prot = 0;
@@ -1711,6 +2192,16 @@ qla24xx_vport_create(struct fc_vport *fc_vport, bool disable)
 				prot = SHOST_DIX_TYPE0_PROTECTION;
 			scsi_host_set_prot(vha->host,
 			    prot | SHOST_DIF_TYPE1_PROTECTION
+=======
+	if ((IS_QLA25XX(ha) || IS_QLA81XX(ha)) && ql2xenabledif) {
+		if (ha->fw_attributes & BIT_4) {
+			vha->flags.difdix_supported = 1;
+			DEBUG18(qla_printk(KERN_INFO, ha,
+			    "Registering for DIF/DIX type 1 and 3"
+			    " protection.\n"));
+			scsi_host_set_prot(vha->host,
+			    SHOST_DIF_TYPE1_PROTECTION
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    | SHOST_DIF_TYPE2_PROTECTION
 			    | SHOST_DIF_TYPE3_PROTECTION
 			    | SHOST_DIX_TYPE1_PROTECTION
@@ -1723,8 +2214,13 @@ qla24xx_vport_create(struct fc_vport *fc_vport, bool disable)
 
 	if (scsi_add_host_with_dma(vha->host, &fc_vport->dev,
 				   &ha->pdev->dev)) {
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_user, vha, 0x7083,
 		    "scsi_add_host failure for VP[%d].\n", vha->vp_idx);
+=======
+		DEBUG15(printk("scsi(%ld): scsi_add_host failure for VP[%d].\n",
+			vha->host_no, vha->vp_idx));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto vport_create_failed_2;
 	}
 
@@ -1741,10 +2237,13 @@ qla24xx_vport_create(struct fc_vport *fc_vport, bool disable)
 
 	if (ha->flags.cpu_affinity_enabled) {
 		req = ha->req_q_map[1];
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_multiq, vha, 0xc000,
 		    "Request queue %p attached with "
 		    "VP[%d], cpu affinity =%d\n",
 		    req, vha->vp_idx, ha->flags.cpu_affinity_enabled);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto vport_queue;
 	} else if (ql2xmaxqueues == 1 || !ha->npiv_info)
 		goto vport_queue;
@@ -1757,11 +2256,15 @@ qla24xx_vport_create(struct fc_vport *fc_vport, bool disable)
 			break;
 		}
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (qos) {
 		ret = qla25xx_create_req_que(ha, options, vha->vp_idx, 0, 0,
 			qos);
 		if (!ret)
+<<<<<<< HEAD
 			ql_log(ql_log_warn, vha, 0x7084,
 			    "Can't create request queue for VP[%d]\n",
 			    vha->vp_idx);
@@ -1772,6 +2275,15 @@ qla24xx_vport_create(struct fc_vport *fc_vport, bool disable)
 			ql_dbg(ql_dbg_user, vha, 0x7085,
 			    "Request Que:%d Q0s: %d) created for VP[%d]\n",
 			    ret, qos, vha->vp_idx);
+=======
+			qla_printk(KERN_WARNING, ha,
+			"Can't create request queue for vp_idx:%d\n",
+			vha->vp_idx);
+		else {
+			DEBUG2(qla_printk(KERN_INFO, ha,
+			"Request Que:%d (QoS: %d) created for vp_idx:%d\n",
+			ret, qos, vha->vp_idx));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			req = ha->req_q_map[ret];
 		}
 	}
@@ -1811,6 +2323,7 @@ qla24xx_vport_delete(struct fc_vport *fc_vport)
 
 	if (vha->timer_active) {
 		qla2x00_vp_stop_timer(vha);
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_user, vha, 0x7086,
 		    "Timer for the VP[%d] has stopped\n", vha->vp_idx);
 	}
@@ -1818,6 +2331,14 @@ qla24xx_vport_delete(struct fc_vport *fc_vport)
 	/* No pending activities shall be there on the vha now */
 	if (ql2xextended_error_logging & ql_dbg_user)
 		msleep(random32()%10);  /* Just to see if something falls on
+=======
+		DEBUG15(printk(KERN_INFO "scsi(%ld): timer for the vport[%d]"
+		" = %p has stopped\n", vha->host_no, vha->vp_idx, vha));
+	}
+
+	/* No pending activities shall be there on the vha now */
+	DEBUG(msleep(random32()%10));  /* Just to see if something falls on
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					* the net we have placed below */
 
 	BUG_ON(atomic_read(&vha->vref_count));
@@ -1831,12 +2352,21 @@ qla24xx_vport_delete(struct fc_vport *fc_vport)
 
 	if (vha->req->id && !ha->flags.cpu_affinity_enabled) {
 		if (qla25xx_delete_req_que(vha, vha->req) != QLA_SUCCESS)
+<<<<<<< HEAD
 			ql_log(ql_log_warn, vha, 0x7087,
 			    "Queue delete failed.\n");
 	}
 
 	ql_log(ql_log_info, vha, 0x7088, "VP[%d] deleted.\n", id);
 	scsi_host_put(vha->host);
+=======
+			qla_printk(KERN_WARNING, ha,
+				"Queue delete failed.\n");
+	}
+
+	scsi_host_put(vha->host);
+	qla_printk(KERN_INFO, ha, "vport %d deleted\n", id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1955,7 +2485,11 @@ qla2x00_init_host_attr(scsi_qla_host_t *vha)
 	fc_host_max_npiv_vports(vha->host) = ha->max_npiv_vports;
 	fc_host_npiv_vports_inuse(vha->host) = ha->cur_vport_count;
 
+<<<<<<< HEAD
 	if (IS_CNA_CAPABLE(ha))
+=======
+	if (IS_QLA8XXX_TYPE(ha))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		speed = FC_PORTSPEED_10GBIT;
 	else if (IS_QLA25XX(ha))
 		speed = FC_PORTSPEED_8GBIT | FC_PORTSPEED_4GBIT |

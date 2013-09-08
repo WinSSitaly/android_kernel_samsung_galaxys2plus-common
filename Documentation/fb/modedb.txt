@@ -20,7 +20,11 @@ in a video= option, fbmem considers that to be a global video mode option.
 
 Valid mode specifiers (mode_option argument):
 
+<<<<<<< HEAD
     <xres>x<yres>[M][R][-<bpp>][@<refresh>][i][m][eDd]
+=======
+    <xres>x<yres>[M][R][-<bpp>][@<refresh>][i][m]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     <name>[-<bpp>][@<refresh>]
 
 with <xres>, <yres>, <bpp> and <refresh> decimal numbers and <name> a string.
@@ -36,6 +40,7 @@ pixels and 1.8% of yres).
 
        Sample usage: 1024x768M@60m - CVT timing with margins
 
+<<<<<<< HEAD
 DRM drivers also add options to enable or disable outputs:
 
 'e' will force the display to be enabled, i.e. it will override the detection
@@ -51,6 +56,8 @@ To force the VGA output to be enabled and drive a specific mode say:
 Specifying the option multiple times for different ports is possible, e.g.:
     video=LVDS-1:d video=HDMI-1:D
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ***** oOo ***** oOo ***** oOo ***** oOo ***** oOo ***** oOo ***** oOo *****
 
 What is the VESA(TM) Coordinated Video Timings (CVT)?
@@ -147,5 +154,10 @@ There may be more modes.
     tridentfb	- Trident (Cyber)blade chipset frame buffer
     vt8623fb	- VIA 8623 frame buffer
 
+<<<<<<< HEAD
 BTW, only a few fb drivers use this at the moment. Others are to follow
 (feel free to send patches). The DRM drivers also support this.
+=======
+BTW, only a few drivers use this at the moment. Others are to follow
+(feel free to send patches).
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

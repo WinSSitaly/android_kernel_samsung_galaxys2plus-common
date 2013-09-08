@@ -13,7 +13,10 @@
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/device.h>
+<<<<<<< HEAD
 #include <linux/io.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/hardware.h>
 #include <mach/pxa2xx-regs.h>

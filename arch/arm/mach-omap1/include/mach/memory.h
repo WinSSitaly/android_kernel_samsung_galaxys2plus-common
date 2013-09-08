@@ -2,6 +2,7 @@
  * arch/arm/mach-omap1/include/mach/memory.h
  */
 
+<<<<<<< HEAD
 #ifndef __ASM_ARCH_MEMORY_H
 #define __ASM_ARCH_MEMORY_H
 
@@ -55,3 +56,6 @@
 #endif	/* CONFIG_ARCH_OMAP15XX */
 
 #endif
+=======
+#include <plat/memory.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

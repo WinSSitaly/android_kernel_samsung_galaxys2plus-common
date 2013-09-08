@@ -12,7 +12,12 @@
 #include <linux/time.h>
 #include <linux/seq_file.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
 #include "reiserfs.h"
+=======
+#include <linux/reiserfs_fs.h>
+#include <linux/reiserfs_fs_sb.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/proc_fs.h>
 

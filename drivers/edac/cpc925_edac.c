@@ -90,7 +90,10 @@ enum apimask_bits {
 	ECC_MASK_ENABLE = (APIMASK_ECC_UE_H | APIMASK_ECC_CE_H |
 			   APIMASK_ECC_UE_L | APIMASK_ECC_CE_L),
 };
+<<<<<<< HEAD
 #define APIMASK_ADI(n)		CPC925_BIT(((n)+1))
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /************************************************************
  *	Processor Interface Exception Register (APIEXCP)
@@ -582,6 +585,7 @@ static void cpc925_mc_check(struct mem_ctl_info *mci)
 }
 
 /******************** CPU err device********************************/
+<<<<<<< HEAD
 static u32 cpc925_cpu_mask_disabled(void)
 {
 	struct device_node *cpus;
@@ -630,10 +634,13 @@ static u32 cpc925_cpu_mask_disabled(void)
 	return mask;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Enable CPU Errors detection */
 static void cpc925_cpu_init(struct cpc925_dev_info *dev_info)
 {
 	u32 apimask;
+<<<<<<< HEAD
 	u32 cpumask;
 
 	apimask = __raw_readl(dev_info->vbase + REG_APIMASK_OFFSET);
@@ -649,6 +656,14 @@ static void cpc925_cpu_init(struct cpc925_dev_info *dev_info)
 		apimask |= CPU_MASK_ENABLE;
 
 	__raw_writel(apimask, dev_info->vbase + REG_APIMASK_OFFSET);
+=======
+
+	apimask = __raw_readl(dev_info->vbase + REG_APIMASK_OFFSET);
+	if ((apimask & CPU_MASK_ENABLE) == 0) {
+		apimask |= CPU_MASK_ENABLE;
+		__raw_writel(apimask, dev_info->vbase + REG_APIMASK_OFFSET);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Disable CPU Errors detection */
@@ -680,9 +695,12 @@ static void cpc925_cpu_check(struct edac_device_ctl_info *edac_dev)
 	if ((apiexcp & CPU_EXCP_DETECTED) == 0)
 		return;
 
+<<<<<<< HEAD
 	if ((apiexcp & ~cpc925_cpu_mask_disabled()) == 0)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	apimask = __raw_readl(dev_info->vbase + REG_APIMASK_OFFSET);
 	cpc925_printk(KERN_INFO, "Processor Interface Fault\n"
 				 "Processor Interface register dump:\n");

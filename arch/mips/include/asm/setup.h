@@ -5,6 +5,7 @@
 
 #ifdef  __KERNEL__
 extern void setup_early_printk(void);
+<<<<<<< HEAD
 
 extern void set_handler(unsigned long offset, void *addr, unsigned long len);
 extern void set_uncached_handler(unsigned long offset, void *addr, unsigned long len);
@@ -16,6 +17,8 @@ extern void *set_except_vector(int n, void *addr);
 extern unsigned long ebase;
 extern void per_cpu_trap_init(void);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __KERNEL__ */
 
 #endif /* __SETUP_H */

@@ -50,10 +50,14 @@
 #define MPU401_INFO_INTEGRATED	(1 << 2)	/* integrated h/w port */
 #define MPU401_INFO_MMIO	(1 << 3)	/* MMIO access */
 #define MPU401_INFO_TX_IRQ	(1 << 4)	/* independent TX irq */
+<<<<<<< HEAD
 #define MPU401_INFO_IRQ_HOOK	(1 << 5)	/* mpu401 irq handler is called
 						   from driver irq handler */
 #define MPU401_INFO_NO_ACK	(1 << 6)	/* No ACK cmd needed */
 #define MPU401_INFO_USE_TIMER	(1 << 15)	/* internal */
+=======
+#define MPU401_INFO_NO_ACK	(1 << 6)	/* No ACK cmd needed */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MPU401_MODE_BIT_INPUT		0
 #define MPU401_MODE_BIT_OUTPUT		1
@@ -76,7 +80,12 @@ struct snd_mpu401 {
 	unsigned long port;		/* base port of MPU-401 chip */
 	unsigned long cport;		/* port + 1 (usually) */
 	struct resource *res;		/* port resource */
+<<<<<<< HEAD
 	int irq;			/* IRQ number of MPU-401 chip */
+=======
+	int irq;			/* IRQ number of MPU-401 chip (-1 = poll) */
+	int irq_flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	unsigned long mode;		/* MPU401_MODE_XXXX */
 	int timer_invoked;
@@ -133,6 +142,10 @@ int snd_mpu401_uart_new(struct snd_card *card,
 			unsigned long port,
 			unsigned int info_flags,
 			int irq,
+<<<<<<< HEAD
+=======
+			int irq_flags,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			struct snd_rawmidi ** rrawmidi);
 
 #endif /* __SOUND_MPU401_H */

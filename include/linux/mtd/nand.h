@@ -42,10 +42,17 @@ extern void nand_release(struct mtd_info *mtd);
 /* Internal helper for board drivers which need to override command function */
 extern void nand_wait_ready(struct mtd_info *mtd);
 
+<<<<<<< HEAD
 /* locks all blocks present in the device */
 extern int nand_lock(struct mtd_info *mtd, loff_t ofs, uint64_t len);
 
 /* unlocks specified locked blocks */
+=======
+/* locks all blockes present in the device */
+extern int nand_lock(struct mtd_info *mtd, loff_t ofs, uint64_t len);
+
+/* unlocks specified locked blockes */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int nand_unlock(struct mtd_info *mtd, loff_t ofs, uint64_t len);
 
 /* The maximum number of NAND chips in an array */
@@ -150,7 +157,11 @@ typedef enum {
 #define NAND_ECC_READ		0
 /* Reset Hardware ECC for write */
 #define NAND_ECC_WRITE		1
+<<<<<<< HEAD
 /* Enable Hardware ECC before syndrome is read back from flash */
+=======
+/* Enable Hardware ECC before syndrom is read back from flash */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NAND_ECC_READSYN	2
 
 /* Bit mask for flags passed to do_nand_read_ecc */
@@ -163,7 +174,11 @@ typedef enum {
  */
 /* Chip can not auto increment pages */
 #define NAND_NO_AUTOINCR	0x00000001
+<<<<<<< HEAD
 /* Buswidth is 16 bit */
+=======
+/* Buswitdh is 16 bit */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NAND_BUSWIDTH_16	0x00000002
 /* Device supports partial programming without padding */
 #define NAND_NO_PADDING		0x00000004
@@ -215,16 +230,43 @@ typedef enum {
 #define NAND_SUBPAGE_READ(chip) ((chip->ecc.mode == NAND_ECC_SOFT) \
 					&& (chip->page_shift > 9))
 
+<<<<<<< HEAD
 /* Non chip related options */
 /* This option skips the bbt scan during initialization. */
 #define NAND_SKIP_BBTSCAN	0x00010000
+=======
+/* Mask to zero out the chip options, which come from the id table */
+#define NAND_CHIPOPTIONS_MSK	(0x0000ffff & ~NAND_NO_AUTOINCR)
+
+/* Non chip related options */
+/*
+ * Use a flash based bad block table. OOB identifier is saved in OOB area.
+ * This option is passed to the default bad block table function.
+ */
+#define NAND_USE_FLASH_BBT	0x00010000
+/* This option skips the bbt scan during initialization. */
+#define NAND_SKIP_BBTSCAN	0x00020000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This option is defined if the board driver allocates its own buffers
  * (e.g. because it needs them DMA-coherent).
  */
+<<<<<<< HEAD
 #define NAND_OWN_BUFFERS	0x00020000
 /* Chip may not exist, so silence any errors in scan */
 #define NAND_SCAN_SILENT_NODEV	0x00040000
+=======
+#define NAND_OWN_BUFFERS	0x00040000
+/* Chip may not exist, so silence any errors in scan */
+#define NAND_SCAN_SILENT_NODEV	0x00080000
+/*
+ * If passed additionally to NAND_USE_FLASH_BBT then BBT code will not touch
+ * the OOB area.
+ */
+#define NAND_USE_FLASH_BBT_NO_OOB	0x00800000
+/* Create an empty BBT with no vendor information if the BBT is available */
+#define NAND_CREATE_EMPTY_BBT		0x01000000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Options set by nand scan */
 /* Nand scan has allocated controller struct */
@@ -316,6 +358,7 @@ struct nand_hw_control {
 };
 
 /**
+<<<<<<< HEAD
  * struct nand_ecc_ctrl - Control structure for ECC
  * @mode:	ECC mode
  * @steps:	number of ECC steps per page
@@ -340,6 +383,29 @@ struct nand_hw_control {
  *		requirements.
  * @write_oob_raw:	function to write chip OOB data without ECC
  * @read_oob_raw:	function to read chip OOB data without ECC
+=======
+ * struct nand_ecc_ctrl - Control structure for ecc
+ * @mode:	ecc mode
+ * @steps:	number of ecc steps per page
+ * @size:	data bytes per ecc step
+ * @bytes:	ecc bytes per step
+ * @total:	total number of ecc bytes per page
+ * @prepad:	padding information for syndrome based ecc generators
+ * @postpad:	padding information for syndrome based ecc generators
+ * @layout:	ECC layout control struct pointer
+ * @priv:	pointer to private ecc control data
+ * @hwctl:	function to control hardware ecc generator. Must only
+ *		be provided if an hardware ECC is available
+ * @calculate:	function for ecc calculation or readback from ecc hardware
+ * @correct:	function for ecc correction, matching to ecc generator (sw/hw)
+ * @read_page_raw:	function to read a raw page without ECC
+ * @write_page_raw:	function to write a raw page without ECC
+ * @read_page:	function to read a page according to the ecc generator
+ *		requirements.
+ * @read_subpage:	function to read parts of the page covered by ECC.
+ * @write_page:	function to write a page according to the ecc generator
+ *		requirements.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @read_oob:	function to read chip OOB data
  * @write_oob:	function to write chip OOB data
  */
@@ -349,7 +415,10 @@ struct nand_ecc_ctrl {
 	int size;
 	int bytes;
 	int total;
+<<<<<<< HEAD
 	int strength;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int prepad;
 	int postpad;
 	struct nand_ecclayout	*layout;
@@ -369,10 +438,13 @@ struct nand_ecc_ctrl {
 			uint32_t offs, uint32_t len, uint8_t *buf);
 	void (*write_page)(struct mtd_info *mtd, struct nand_chip *chip,
 			const uint8_t *buf);
+<<<<<<< HEAD
 	int (*write_oob_raw)(struct mtd_info *mtd, struct nand_chip *chip,
 			int page);
 	int (*read_oob_raw)(struct mtd_info *mtd, struct nand_chip *chip,
 			int page, int sndcmd);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*read_oob)(struct mtd_info *mtd, struct nand_chip *chip, int page,
 			int sndcmd);
 	int (*write_oob)(struct mtd_info *mtd, struct nand_chip *chip,
@@ -381,8 +453,13 @@ struct nand_ecc_ctrl {
 
 /**
  * struct nand_buffers - buffer structure for read/write
+<<<<<<< HEAD
  * @ecccalc:	buffer for calculated ECC
  * @ecccode:	buffer for ECC read from flash
+=======
+ * @ecccalc:	buffer for calculated ecc
+ * @ecccode:	buffer for ecc read from flash
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @databuf:	buffer for data - dynamically sized
  *
  * Do not change the order of buffers. databuf and oobrbuf must be in
@@ -415,7 +492,11 @@ struct nand_buffers {
  *			mtd->oobsize, mtd->writesize and so on.
  *			@id_data contains the 8 bytes values of NAND_CMD_READID.
  *			Return with the bus width.
+<<<<<<< HEAD
  * @dev_ready:		[BOARDSPECIFIC] hardwarespecific function for accessing
+=======
+ * @dev_ready:		[BOARDSPECIFIC] hardwarespecific function for accesing
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *			device ready/busy line. If set to NULL no access to
  *			ready/busy is available and the ready/busy information
  *			is read from the chip status register.
@@ -423,17 +504,28 @@ struct nand_buffers {
  *			commands to the chip.
  * @waitfunc:		[REPLACEABLE] hardwarespecific function for wait on
  *			ready.
+<<<<<<< HEAD
  * @ecc:		[BOARDSPECIFIC] ECC control structure
  * @buffers:		buffer structure for read/write
  * @hwcontrol:		platform-specific hardware control structure
+=======
+ * @ecc:		[BOARDSPECIFIC] ecc control ctructure
+ * @buffers:		buffer structure for read/write
+ * @hwcontrol:		platform-specific hardware control structure
+ * @ops:		oob operation operands
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @erase_cmd:		[INTERN] erase command write function, selectable due
  *			to AND support.
  * @scan_bbt:		[REPLACEABLE] function to scan bad block table
  * @chip_delay:		[BOARDSPECIFIC] chip dependent delay for transferring
  *			data from array to read regs (tR).
  * @state:		[INTERN] the current state of the NAND device
+<<<<<<< HEAD
  * @oob_poi:		"poison value buffer," used for laying out OOB data
  *			before writing
+=======
+ * @oob_poi:		poison value buffer
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @page_shift:		[INTERN] number of address bits in a page (column
  *			address bits).
  * @phys_erase_shift:	[INTERN] number of address bits in a physical eraseblock
@@ -442,6 +534,7 @@ struct nand_buffers {
  * @options:		[BOARDSPECIFIC] various chip options. They can partly
  *			be set to inform nand_scan about special functionality.
  *			See the defines for further explanation.
+<<<<<<< HEAD
  * @bbt_options:	[INTERN] bad block specific options. All options used
  *			here must come from bbm.h. By default, these options
  *			will be copied to the appropriate nand_bbt_descr's.
@@ -450,6 +543,12 @@ struct nand_buffers {
  * @badblockbits:	[INTERN] minimum number of set bits in a good block's
  *			bad block marker position; i.e., BBM == 11110111b is
  *			not bad when badblockbits == 7
+=======
+ * @badblockpos:	[INTERN] position of the bad block marker in the oob
+ *			area.
+ * @badblockbits:	[INTERN] number of bits to left-shift the bad block
+ *			number
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @cellinfo:		[INTERN] MLC/multichip data from chip ident
  * @numchips:		[INTERN] number of physical chips
  * @chipsize:		[INTERN] the size of one chip for multichip arrays
@@ -461,7 +560,11 @@ struct nand_buffers {
  *			non 0 if ONFI supported.
  * @onfi_params:	[INTERN] holds the ONFI page parameter when ONFI is
  *			supported, 0 otherwise.
+<<<<<<< HEAD
  * @ecclayout:		[REPLACEABLE] the default ECC placement scheme
+=======
+ * @ecclayout:		[REPLACEABLE] the default ecc placement scheme
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @bbt:		[INTERN] bad block table pointer
  * @bbt_td:		[REPLACEABLE] bad block table descriptor for flash
  *			lookup.
@@ -469,9 +572,15 @@ struct nand_buffers {
  * @badblock_pattern:	[REPLACEABLE] bad block scan pattern used for initial
  *			bad block scan.
  * @controller:		[REPLACEABLE] a pointer to a hardware controller
+<<<<<<< HEAD
  *			structure which is shared among multiple independent
  *			devices.
  * @priv:		[OPTIONAL] pointer to private chip data
+=======
+ *			structure which is shared among multiple independend
+ *			devices.
+ * @priv:		[OPTIONAL] pointer to private chip date
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @errstat:		[OPTIONAL] hardware specific function to perform
  *			additional error status checks (determine if errors are
  *			correctable).
@@ -506,7 +615,10 @@ struct nand_chip {
 
 	int chip_delay;
 	unsigned int options;
+<<<<<<< HEAD
 	unsigned int bbt_options;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int page_shift;
 	int phys_erase_shift;
@@ -534,6 +646,11 @@ struct nand_chip {
 	struct nand_buffers *buffers;
 	struct nand_hw_control hwcontrol;
 
+<<<<<<< HEAD
+=======
+	struct mtd_oob_ops ops;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint8_t *bbt;
 	struct nand_bbt_descr *bbt_td;
 	struct nand_bbt_descr *bbt_md;
@@ -555,7 +672,10 @@ struct nand_chip {
 #define NAND_MFR_HYNIX		0xad
 #define NAND_MFR_MICRON		0x2c
 #define NAND_MFR_AMD		0x01
+<<<<<<< HEAD
 #define NAND_MFR_MACRONIX	0xc2
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * struct nand_flash_dev - NAND Flash Device ID Structure
@@ -608,9 +728,16 @@ extern int nand_do_read(struct mtd_info *mtd, loff_t from, size_t len,
  * @partitions:		mtd partition list
  * @chip_delay:		R/B delay value in us
  * @options:		Option flags, e.g. 16bit buswidth
+<<<<<<< HEAD
  * @bbt_options:	BBT option flags, e.g. NAND_BBT_USE_FLASH
  * @ecclayout:		ECC layout info structure
  * @part_probe_types:	NULL-terminated array of probe types
+=======
+ * @ecclayout:		ecc layout info structure
+ * @part_probe_types:	NULL-terminated array of probe types
+ * @set_parts:		platform specific function to set partitions
+ * @priv:		hardware controller specific settings
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct platform_nand_chip {
 	int nr_chips;
@@ -620,8 +747,14 @@ struct platform_nand_chip {
 	struct nand_ecclayout *ecclayout;
 	int chip_delay;
 	unsigned int options;
+<<<<<<< HEAD
 	unsigned int bbt_options;
 	const char **part_probe_types;
+=======
+	const char **part_probe_types;
+	void (*set_parts)(uint64_t size, struct platform_nand_chip *chip);
+	void *priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Keep gcc happy */

@@ -343,7 +343,11 @@ static int do_ipv6_setsockopt(struct sock *sk, int level, int optname,
 		break;
 
 	case IPV6_TRANSPARENT:
+<<<<<<< HEAD
 		if (valbool && !capable(CAP_NET_ADMIN) && !capable(CAP_NET_RAW)) {
+=======
+		if (!capable(CAP_NET_ADMIN)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			retv = -EPERM;
 			break;
 		}
@@ -435,7 +439,11 @@ sticky_done:
 			goto e_inval;
 
 		np->sticky_pktinfo.ipi6_ifindex = pkt.ipi6_ifindex;
+<<<<<<< HEAD
 		np->sticky_pktinfo.ipi6_addr = pkt.ipi6_addr;
+=======
+		ipv6_addr_copy(&np->sticky_pktinfo.ipi6_addr, &pkt.ipi6_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		retv = 0;
 		break;
 	}
@@ -475,7 +483,11 @@ sticky_done:
 		msg.msg_controllen = optlen;
 		msg.msg_control = (void*)(opt+1);
 
+<<<<<<< HEAD
 		retv = datagram_send_ctl(net, sk, &msg, &fl6, opt, &junk, &junk,
+=======
+		retv = datagram_send_ctl(net, &msg, &fl6, opt, &junk, &junk,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					 &junk);
 		if (retv)
 			goto done;
@@ -503,7 +515,11 @@ done:
 			goto e_inval;
 		if (val > 255 || val < -1)
 			goto e_inval;
+<<<<<<< HEAD
 		np->mcast_hops = (val == -1 ? IPV6_DEFAULT_MCASTHOPS : val);
+=======
+		np->mcast_hops = val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		retv = 0;
 		break;
 
@@ -516,6 +532,7 @@ done:
 		retv = 0;
 		break;
 
+<<<<<<< HEAD
 	case IPV6_UNICAST_IF:
 	{
 		struct net_device *dev = NULL;
@@ -546,6 +563,8 @@ done:
 		break;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case IPV6_MULTICAST_IF:
 		if (sk->sk_type == SOCK_STREAM)
 			break;
@@ -828,7 +847,10 @@ pref_skip_coa:
 		if (val < 0 || val > 255)
 			goto e_inval;
 		np->min_hopcount = val;
+<<<<<<< HEAD
 		retv = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case IPV6_DONTFRAG:
 		np->dontfrag = valbool;
@@ -1011,22 +1033,35 @@ static int do_ipv6_getsockopt(struct sock *sk, int level, int optname,
 				struct in6_pktinfo src_info;
 				src_info.ipi6_ifindex = np->mcast_oif ? np->mcast_oif :
 					np->sticky_pktinfo.ipi6_ifindex;
+<<<<<<< HEAD
 				src_info.ipi6_addr = np->mcast_oif ? np->daddr : np->sticky_pktinfo.ipi6_addr;
+=======
+				np->mcast_oif? ipv6_addr_copy(&src_info.ipi6_addr, &np->daddr) :
+					ipv6_addr_copy(&src_info.ipi6_addr, &(np->sticky_pktinfo.ipi6_addr));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				put_cmsg(&msg, SOL_IPV6, IPV6_PKTINFO, sizeof(src_info), &src_info);
 			}
 			if (np->rxopt.bits.rxhlim) {
 				int hlim = np->mcast_hops;
 				put_cmsg(&msg, SOL_IPV6, IPV6_HOPLIMIT, sizeof(hlim), &hlim);
 			}
+<<<<<<< HEAD
 			if (np->rxopt.bits.rxtclass) {
 				int tclass = np->rcv_tclass;
 				put_cmsg(&msg, SOL_IPV6, IPV6_TCLASS, sizeof(tclass), &tclass);
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (np->rxopt.bits.rxoinfo) {
 				struct in6_pktinfo src_info;
 				src_info.ipi6_ifindex = np->mcast_oif ? np->mcast_oif :
 					np->sticky_pktinfo.ipi6_ifindex;
+<<<<<<< HEAD
 				src_info.ipi6_addr = np->mcast_oif ? np->daddr : np->sticky_pktinfo.ipi6_addr;
+=======
+				np->mcast_oif? ipv6_addr_copy(&src_info.ipi6_addr, &np->daddr) :
+					ipv6_addr_copy(&src_info.ipi6_addr, &(np->sticky_pktinfo.ipi6_addr));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				put_cmsg(&msg, SOL_IPV6, IPV6_2292PKTINFO, sizeof(src_info), &src_info);
 			}
 			if (np->rxopt.bits.rxohlim) {
@@ -1195,10 +1230,13 @@ static int do_ipv6_getsockopt(struct sock *sk, int level, int optname,
 		val = np->mcast_oif;
 		break;
 
+<<<<<<< HEAD
 	case IPV6_UNICAST_IF:
 		val = (__force int)htonl((__u32) np->ucast_oif);
 		break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case IPV6_MTU_DISCOVER:
 		val = np->pmtudisc;
 		break;

@@ -1,7 +1,10 @@
 /*
  * mac80211_hwsim - software simulator of 802.11 radio(s) for mac80211
  * Copyright (c) 2008, Jouni Malinen <j@w1.fi>
+<<<<<<< HEAD
  * Copyright (c) 2011, Javier Lopez <jlopex@gmail.com>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -26,6 +29,7 @@
 #include <linux/rtnetlink.h>
 #include <linux/etherdevice.h>
 #include <linux/debugfs.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/ktime.h>
 #include <net/genetlink.h>
@@ -33,13 +37,18 @@
 
 #define WARN_QUEUE 100
 #define MAX_QUEUE 200
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Jouni Malinen");
 MODULE_DESCRIPTION("Software simulator of 802.11 radio(s) for mac80211");
 MODULE_LICENSE("GPL");
 
+<<<<<<< HEAD
 static u32 wmediumd_pid;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int radios = 2;
 module_param(radios, int, 0444);
 MODULE_PARM_DESC(radios, "Number of simulated radios");
@@ -312,7 +321,10 @@ struct mac80211_hwsim_data {
 	struct dentry *debugfs;
 	struct dentry *debugfs_ps;
 
+<<<<<<< HEAD
 	struct sk_buff_head pending;	/* packets pending */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Only radios in the same group can communicate together (the
 	 * channel has to match too). Each bit represents a group. A
@@ -322,21 +334,28 @@ struct mac80211_hwsim_data {
 	struct dentry *debugfs_group;
 
 	int power_level;
+<<<<<<< HEAD
 
 	/* difference between this hw's clock and the real clock, in usecs */
 	u64 tsf_offset;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
 struct hwsim_radiotap_hdr {
 	struct ieee80211_radiotap_header hdr;
+<<<<<<< HEAD
 	__le64 rt_tsft;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 rt_flags;
 	u8 rt_rate;
 	__le16 rt_channel;
 	__le16 rt_chbitmask;
 } __packed;
 
+<<<<<<< HEAD
 /* MAC80211_HWSIM netlinf family */
 static struct genl_family hwsim_genl_family = {
 	.id = GENL_ID_GENERATE,
@@ -363,6 +382,8 @@ static struct nla_policy hwsim_genl_policy[HWSIM_ATTR_MAX + 1] = {
 					struct hwsim_tx_rate)},
 	[HWSIM_ATTR_COOKIE] = { .type = NLA_U64 },
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static netdev_tx_t hwsim_mon_xmit(struct sk_buff *skb,
 					struct net_device *dev)
@@ -372,6 +393,7 @@ static netdev_tx_t hwsim_mon_xmit(struct sk_buff *skb,
 	return NETDEV_TX_OK;
 }
 
+<<<<<<< HEAD
 static __le64 __mac80211_hwsim_get_tsf(struct mac80211_hwsim_data *data)
 {
 	struct timeval tv = ktime_to_timeval(ktime_get_real());
@@ -394,6 +416,8 @@ static void mac80211_hwsim_set_tsf(struct ieee80211_hw *hw,
 	u64 now = tv.tv_sec * USEC_PER_SEC + tv.tv_usec;
 	data->tsf_offset = tsf - now;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void mac80211_hwsim_monitor_rx(struct ieee80211_hw *hw,
 				      struct sk_buff *tx_skb)
@@ -418,9 +442,13 @@ static void mac80211_hwsim_monitor_rx(struct ieee80211_hw *hw,
 	hdr->hdr.it_len = cpu_to_le16(sizeof(*hdr));
 	hdr->hdr.it_present = cpu_to_le32((1 << IEEE80211_RADIOTAP_FLAGS) |
 					  (1 << IEEE80211_RADIOTAP_RATE) |
+<<<<<<< HEAD
 					  (1 << IEEE80211_RADIOTAP_TSFT) |
 					  (1 << IEEE80211_RADIOTAP_CHANNEL));
 	hdr->rt_tsft = __mac80211_hwsim_get_tsf(data);
+=======
+					  (1 << IEEE80211_RADIOTAP_CHANNEL));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hdr->rt_flags = 0;
 	hdr->rt_rate = txrate->bitrate / 5;
 	hdr->rt_channel = cpu_to_le16(data->channel->center_freq);
@@ -543,6 +571,7 @@ static bool mac80211_hwsim_addr_match(struct mac80211_hwsim_data *data,
 	return md.ret;
 }
 
+<<<<<<< HEAD
 static void mac80211_hwsim_tx_frame_nl(struct ieee80211_hw *hw,
 				       struct sk_buff *my_skb,
 				       int dst_pid)
@@ -626,6 +655,11 @@ nla_put_failure:
 
 static bool mac80211_hwsim_tx_frame_no_nl(struct ieee80211_hw *hw,
 					  struct sk_buff *skb)
+=======
+
+static bool mac80211_hwsim_tx_frame(struct ieee80211_hw *hw,
+				    struct sk_buff *skb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct mac80211_hwsim_data *data = hw->priv, *data2;
 	bool ack = false;
@@ -639,6 +673,7 @@ static bool mac80211_hwsim_tx_frame_no_nl(struct ieee80211_hw *hw,
 	}
 
 	memset(&rx_status, 0, sizeof(rx_status));
+<<<<<<< HEAD
 	rx_status.flag |= RX_FLAG_MACTIME_MPDU;
 	rx_status.freq = data->channel->center_freq;
 	rx_status.band = data->channel->band;
@@ -649,6 +684,12 @@ static bool mac80211_hwsim_tx_frame_no_nl(struct ieee80211_hw *hw,
 		rx_status.flag |= RX_FLAG_40MHZ;
 	if (info->control.rates[0].flags & IEEE80211_TX_RC_SHORT_GI)
 		rx_status.flag |= RX_FLAG_SHORT_GI;
+=======
+	/* TODO: set mactime */
+	rx_status.freq = data->channel->center_freq;
+	rx_status.band = data->channel->band;
+	rx_status.rate_idx = info->control.rates[0].idx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* TODO: simulate real signal strength (and optional packet loss) */
 	rx_status.signal = data->power_level - 50;
 
@@ -683,8 +724,11 @@ static bool mac80211_hwsim_tx_frame_no_nl(struct ieee80211_hw *hw,
 
 		if (mac80211_hwsim_addr_match(data2, hdr->addr1))
 			ack = true;
+<<<<<<< HEAD
 		rx_status.mactime =
 			le64_to_cpu(__mac80211_hwsim_get_tsf(data2));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		memcpy(IEEE80211_SKB_RXCB(nskb), &rx_status, sizeof(rx_status));
 		ieee80211_rx_irqsafe(data2->hw, nskb);
 	}
@@ -693,10 +737,15 @@ static bool mac80211_hwsim_tx_frame_no_nl(struct ieee80211_hw *hw,
 	return ack;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void mac80211_hwsim_tx(struct ieee80211_hw *hw, struct sk_buff *skb)
 {
 	bool ack;
 	struct ieee80211_tx_info *txi;
+<<<<<<< HEAD
 	u32 _pid;
 	struct ieee80211_mgmt *mgmt = (struct ieee80211_mgmt *) skb->data;
 	struct mac80211_hwsim_data *data = hw->priv;
@@ -704,6 +753,8 @@ static void mac80211_hwsim_tx(struct ieee80211_hw *hw, struct sk_buff *skb)
 	if (ieee80211_is_beacon(mgmt->frame_control) ||
 	    ieee80211_is_probe_resp(mgmt->frame_control))
 		mgmt->u.beacon.timestamp = __mac80211_hwsim_get_tsf(data);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mac80211_hwsim_monitor_rx(hw, skb);
 
@@ -713,6 +764,7 @@ static void mac80211_hwsim_tx(struct ieee80211_hw *hw, struct sk_buff *skb)
 		return;
 	}
 
+<<<<<<< HEAD
 	/* wmediumd mode check */
 	_pid = ACCESS_ONCE(wmediumd_pid);
 
@@ -722,6 +774,9 @@ static void mac80211_hwsim_tx(struct ieee80211_hw *hw, struct sk_buff *skb)
 	/* NO wmediumd detected, perfect medium simulation */
 	ack = mac80211_hwsim_tx_frame_no_nl(hw, skb);
 
+=======
+	ack = mac80211_hwsim_tx_frame(hw, skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ack && skb->len >= 16) {
 		struct ieee80211_hdr *hdr = (struct ieee80211_hdr *) skb->data;
 		mac80211_hwsim_monitor_ack(hw, hdr->addr2);
@@ -745,7 +800,11 @@ static int mac80211_hwsim_start(struct ieee80211_hw *hw)
 {
 	struct mac80211_hwsim_data *data = hw->priv;
 	wiphy_debug(hw->wiphy, "%s\n", __func__);
+<<<<<<< HEAD
 	data->started = true;
+=======
+	data->started = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -753,7 +812,11 @@ static int mac80211_hwsim_start(struct ieee80211_hw *hw)
 static void mac80211_hwsim_stop(struct ieee80211_hw *hw)
 {
 	struct mac80211_hwsim_data *data = hw->priv;
+<<<<<<< HEAD
 	data->started = false;
+=======
+	data->started = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	del_timer(&data->beacon_timer);
 	wiphy_debug(hw->wiphy, "%s\n", __func__);
 }
@@ -800,11 +863,16 @@ static void mac80211_hwsim_beacon_tx(void *arg, u8 *mac,
 				     struct ieee80211_vif *vif)
 {
 	struct ieee80211_hw *hw = arg;
+<<<<<<< HEAD
 	struct mac80211_hwsim_data *data = hw->priv;
 	struct sk_buff *skb;
 	struct ieee80211_tx_info *info;
 	u32 _pid;
 	struct ieee80211_mgmt *mgmt;
+=======
+	struct sk_buff *skb;
+	struct ieee80211_tx_info *info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hwsim_check_magic(vif);
 
@@ -818,6 +886,7 @@ static void mac80211_hwsim_beacon_tx(void *arg, u8 *mac,
 		return;
 	info = IEEE80211_SKB_CB(skb);
 
+<<<<<<< HEAD
 	mgmt = (struct ieee80211_mgmt *) skb->data;
 	mgmt->u.beacon.timestamp = __mac80211_hwsim_get_tsf(data);
 
@@ -830,6 +899,10 @@ static void mac80211_hwsim_beacon_tx(void *arg, u8 *mac,
 		return mac80211_hwsim_tx_frame_nl(hw, skb, _pid);
 
 	mac80211_hwsim_tx_frame_no_nl(hw, skb);
+=======
+	mac80211_hwsim_monitor_rx(hw, skb);
+	mac80211_hwsim_tx_frame(hw, skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_kfree_skb(skb);
 }
 
@@ -1014,8 +1087,12 @@ static int mac80211_hwsim_set_tim(struct ieee80211_hw *hw,
 }
 
 static int mac80211_hwsim_conf_tx(
+<<<<<<< HEAD
 	struct ieee80211_hw *hw,
 	struct ieee80211_vif *vif, u16 queue,
+=======
+	struct ieee80211_hw *hw, u16 queue,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const struct ieee80211_tx_queue_params *params)
 {
 	wiphy_debug(hw->wiphy,
@@ -1147,7 +1224,16 @@ static int mac80211_hwsim_ampdu_action(struct ieee80211_hw *hw,
 
 static void mac80211_hwsim_flush(struct ieee80211_hw *hw, bool drop)
 {
+<<<<<<< HEAD
 	/* Not implemented, queues only on kernel side */
+=======
+	/*
+	 * In this special case, there's nothing we need to
+	 * do because hwsim does transmission synchronously.
+	 * In the future, when it does transmissions via
+	 * userspace, we may need to do something.
+	 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct hw_scan_done {
@@ -1181,8 +1267,11 @@ static int mac80211_hwsim_hw_scan(struct ieee80211_hw *hw,
 	for (i = 0; i < req->n_channels; i++)
 		printk(KERN_DEBUG "hwsim hw_scan freq %d\n",
 			req->channels[i]->center_freq);
+<<<<<<< HEAD
 	print_hex_dump(KERN_DEBUG, "scan IEs: ", DUMP_PREFIX_OFFSET,
 			16, 1, req->ie, req->ie_len, 1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ieee80211_queue_delayed_work(hw, &hsd->w, 2 * HZ);
 
@@ -1241,8 +1330,11 @@ static struct ieee80211_ops mac80211_hwsim_ops =
 	.sw_scan_start = mac80211_hwsim_sw_scan,
 	.sw_scan_complete = mac80211_hwsim_sw_scan_complete,
 	.flush = mac80211_hwsim_flush,
+<<<<<<< HEAD
 	.get_tsf = mac80211_hwsim_get_tsf,
 	.set_tsf = mac80211_hwsim_set_tsf,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -1299,7 +1391,10 @@ static void hwsim_send_ps_poll(void *dat, u8 *mac, struct ieee80211_vif *vif)
 	struct hwsim_vif_priv *vp = (void *)vif->drv_priv;
 	struct sk_buff *skb;
 	struct ieee80211_pspoll *pspoll;
+<<<<<<< HEAD
 	u32 _pid;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!vp->assoc)
 		return;
@@ -1318,6 +1413,7 @@ static void hwsim_send_ps_poll(void *dat, u8 *mac, struct ieee80211_vif *vif)
 	pspoll->aid = cpu_to_le16(0xc000 | vp->aid);
 	memcpy(pspoll->bssid, vp->bssid, ETH_ALEN);
 	memcpy(pspoll->ta, mac, ETH_ALEN);
+<<<<<<< HEAD
 
 	/* wmediumd mode check */
 	_pid = ACCESS_ONCE(wmediumd_pid);
@@ -1327,6 +1423,10 @@ static void hwsim_send_ps_poll(void *dat, u8 *mac, struct ieee80211_vif *vif)
 
 	if (!mac80211_hwsim_tx_frame_no_nl(data->hw, skb))
 		printk(KERN_DEBUG "%s: PS-poll frame not ack'ed\n", __func__);
+=======
+	if (!mac80211_hwsim_tx_frame(data->hw, skb))
+		printk(KERN_DEBUG "%s: PS-Poll frame not ack'ed\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_kfree_skb(skb);
 }
 
@@ -1337,7 +1437,10 @@ static void hwsim_send_nullfunc(struct mac80211_hwsim_data *data, u8 *mac,
 	struct hwsim_vif_priv *vp = (void *)vif->drv_priv;
 	struct sk_buff *skb;
 	struct ieee80211_hdr *hdr;
+<<<<<<< HEAD
 	u32 _pid;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!vp->assoc)
 		return;
@@ -1357,6 +1460,7 @@ static void hwsim_send_nullfunc(struct mac80211_hwsim_data *data, u8 *mac,
 	memcpy(hdr->addr1, vp->bssid, ETH_ALEN);
 	memcpy(hdr->addr2, mac, ETH_ALEN);
 	memcpy(hdr->addr3, vp->bssid, ETH_ALEN);
+<<<<<<< HEAD
 
 	/* wmediumd mode check */
 	_pid = ACCESS_ONCE(wmediumd_pid);
@@ -1365,6 +1469,9 @@ static void hwsim_send_nullfunc(struct mac80211_hwsim_data *data, u8 *mac,
 		return mac80211_hwsim_tx_frame_nl(data->hw, skb, _pid);
 
 	if (!mac80211_hwsim_tx_frame_no_nl(data->hw, skb))
+=======
+	if (!mac80211_hwsim_tx_frame(data->hw, skb))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_DEBUG "%s: nullfunc frame not ack'ed\n", __func__);
 	dev_kfree_skb(skb);
 }
@@ -1444,6 +1551,7 @@ DEFINE_SIMPLE_ATTRIBUTE(hwsim_fops_group,
 			hwsim_fops_group_read, hwsim_fops_group_write,
 			"%llx\n");
 
+<<<<<<< HEAD
 struct mac80211_hwsim_data *get_hwsim_data_ref_from_addr(
 			     struct mac_address *addr)
 {
@@ -1709,6 +1817,8 @@ static void hwsim_exit_netlink(void)
 		       "unregister family %i\n", ret);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init init_mac80211_hwsim(void)
 {
 	int i, err = 0;
@@ -1759,7 +1869,10 @@ static int __init init_mac80211_hwsim(void)
 			goto failed_drvdata;
 		}
 		data->dev->driver = &mac80211_hwsim_driver;
+<<<<<<< HEAD
 		skb_queue_head_init(&data->pending);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		SET_IEEE80211_DEV(hw, data->dev);
 		addr[3] = i >> 8;
@@ -1791,8 +1904,11 @@ static int __init init_mac80211_hwsim(void)
 			    IEEE80211_HW_SUPPORTS_DYNAMIC_SMPS |
 			    IEEE80211_HW_AMPDU_AGGREGATION;
 
+<<<<<<< HEAD
 		hw->wiphy->flags |= WIPHY_FLAG_SUPPORTS_TDLS;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* ask mac80211 to reserve space for magic */
 		hw->vif_data_size = sizeof(struct hwsim_vif_priv);
 		hw->sta_data_size = sizeof(struct hwsim_sta_priv);
@@ -1843,10 +1959,13 @@ static int __init init_mac80211_hwsim(void)
 		data->group = 1;
 		mutex_init(&data->mutex);
 
+<<<<<<< HEAD
 		/* Enable frame retransmissions for lossy channels */
 		hw->max_rates = 4;
 		hw->max_rate_tries = 11;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Work to be done prior to ieee80211_register_hw() */
 		switch (regtest) {
 		case HWSIM_REGTEST_DISABLED:
@@ -1983,6 +2102,7 @@ static int __init init_mac80211_hwsim(void)
 	if (hwsim_mon == NULL)
 		goto failed;
 
+<<<<<<< HEAD
 	rtnl_lock();
 
 	err = dev_alloc_name(hwsim_mon, hwsim_mon->name);
@@ -2006,6 +2126,14 @@ failed_nl:
 	printk(KERN_DEBUG "mac_80211_hwsim: failed initializing netlink\n");
 	return err;
 
+=======
+	err = register_netdev(hwsim_mon);
+	if (err < 0)
+		goto failed_mon;
+
+	return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 failed_mon:
 	rtnl_unlock();
 	free_netdev(hwsim_mon);
@@ -2026,8 +2154,11 @@ static void __exit exit_mac80211_hwsim(void)
 {
 	printk(KERN_DEBUG "mac80211_hwsim: unregister radios\n");
 
+<<<<<<< HEAD
 	hwsim_exit_netlink();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mac80211_hwsim_free();
 	unregister_netdev(hwsim_mon);
 }

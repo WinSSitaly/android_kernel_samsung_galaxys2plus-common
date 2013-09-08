@@ -5,7 +5,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -86,7 +90,10 @@ acpi_ex_setup_region(union acpi_operand_object *obj_desc,
 {
 	acpi_status status = AE_OK;
 	union acpi_operand_object *rgn_desc;
+<<<<<<< HEAD
 	u8 space_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ACPI_FUNCTION_TRACE_U32(ex_setup_region, field_datum_byte_offset);
 
@@ -102,6 +109,7 @@ acpi_ex_setup_region(union acpi_operand_object *obj_desc,
 		return_ACPI_STATUS(AE_AML_OPERAND_TYPE);
 	}
 
+<<<<<<< HEAD
 	space_id = rgn_desc->region.space_id;
 
 	/* Validate the Space ID */
@@ -113,6 +121,8 @@ acpi_ex_setup_region(union acpi_operand_object *obj_desc,
 		return_ACPI_STATUS(AE_AML_INVALID_SPACE_ID);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * If the Region Address and Length have not been previously evaluated,
 	 * evaluate them now and save the results.
@@ -131,12 +141,20 @@ acpi_ex_setup_region(union acpi_operand_object *obj_desc,
 	}
 
 	/*
+<<<<<<< HEAD
 	 * Exit now for SMBus, GSBus or IPMI address space, it has a non-linear
 	 * address space and the request cannot be directly validated
 	 */
 	if (space_id == ACPI_ADR_SPACE_SMBUS ||
 	    space_id == ACPI_ADR_SPACE_GSBUS ||
 	    space_id == ACPI_ADR_SPACE_IPMI) {
+=======
+	 * Exit now for SMBus or IPMI address space, it has a non-linear
+	 * address space and the request cannot be directly validated
+	 */
+	if (rgn_desc->region.space_id == ACPI_ADR_SPACE_SMBUS ||
+	    rgn_desc->region.space_id == ACPI_ADR_SPACE_IPMI) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* SMBus or IPMI has a non-linear address space */
 
@@ -284,12 +302,20 @@ acpi_ex_access_region(union acpi_operand_object *obj_desc,
 
 	/* Invoke the appropriate address_space/op_region handler */
 
+<<<<<<< HEAD
 	status = acpi_ev_address_space_dispatch(rgn_desc, obj_desc,
 						function, region_offset,
 						ACPI_MUL_8(obj_desc->
 							   common_field.
 							   access_byte_width),
 						value);
+=======
+	status =
+	    acpi_ev_address_space_dispatch(rgn_desc, function, region_offset,
+					   ACPI_MUL_8(obj_desc->common_field.
+						      access_byte_width),
+					   value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ACPI_FAILURE(status)) {
 		if (status == AE_NOT_IMPLEMENTED) {
@@ -330,7 +356,10 @@ acpi_ex_access_region(union acpi_operand_object *obj_desc,
 static u8
 acpi_ex_register_overflow(union acpi_operand_object *obj_desc, u64 value)
 {
+<<<<<<< HEAD
 	ACPI_FUNCTION_NAME(ex_register_overflow);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (obj_desc->common_field.bit_length >= ACPI_INTEGER_BIT_SIZE) {
 		/*
@@ -345,11 +374,14 @@ acpi_ex_register_overflow(union acpi_operand_object *obj_desc, u64 value)
 		 * The Value is larger than the maximum value that can fit into
 		 * the register.
 		 */
+<<<<<<< HEAD
 		ACPI_ERROR((AE_INFO,
 			    "Index value 0x%8.8X%8.8X overflows field width 0x%X",
 			    ACPI_FORMAT_UINT64(value),
 			    obj_desc->common_field.bit_length));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return (TRUE);
 	}
 
@@ -722,6 +754,7 @@ acpi_ex_extract_from_field(union acpi_operand_object *obj_desc,
 
 	if ((obj_desc->common_field.start_field_bit_offset == 0) &&
 	    (obj_desc->common_field.bit_length == access_bit_width)) {
+<<<<<<< HEAD
 		if (buffer_length >= sizeof(u64)) {
 			status =
 			    acpi_ex_field_datum_io(obj_desc, 0, buffer,
@@ -735,6 +768,9 @@ acpi_ex_extract_from_field(union acpi_operand_object *obj_desc,
 			ACPI_MEMCPY(buffer, &raw_datum, buffer_length);
 		}
 
+=======
+		status = acpi_ex_field_datum_io(obj_desc, 0, buffer, ACPI_READ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return_ACPI_STATUS(status);
 	}
 

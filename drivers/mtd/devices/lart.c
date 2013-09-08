@@ -34,6 +34,12 @@
 /* debugging */
 //#define LART_DEBUG
 
+<<<<<<< HEAD
+=======
+/* partition support */
+#define HAVE_PARTITIONS
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/types.h>
@@ -41,7 +47,13 @@
 #include <linux/errno.h>
 #include <linux/string.h>
 #include <linux/mtd/mtd.h>
+<<<<<<< HEAD
 #include <linux/mtd/partitions.h>
+=======
+#ifdef HAVE_PARTITIONS
+#include <linux/mtd/partitions.h>
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifndef CONFIG_SA1100_LART
 #error This is for LART architecture only
@@ -367,6 +379,12 @@ static int flash_erase (struct mtd_info *mtd,struct erase_info *instr)
    printk (KERN_DEBUG "%s(addr = 0x%.8x, len = %d)\n", __func__, instr->addr, instr->len);
 #endif
 
+<<<<<<< HEAD
+=======
+   /* sanity checks */
+   if (instr->addr + instr->len > mtd->size) return (-EINVAL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    /*
 	* check that both start and end of the requested erase are
 	* aligned with the erasesize at the appropriate addresses.
@@ -437,6 +455,13 @@ static int flash_read (struct mtd_info *mtd,loff_t from,size_t len,size_t *retle
    printk (KERN_DEBUG "%s(from = 0x%.8x, len = %d)\n", __func__, (__u32)from, len);
 #endif
 
+<<<<<<< HEAD
+=======
+   /* sanity checks */
+   if (!len) return (0);
+   if (from + len > mtd->size) return (-EINVAL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    /* we always read len bytes */
    *retlen = len;
 
@@ -515,8 +540,16 @@ static int flash_write (struct mtd_info *mtd,loff_t to,size_t len,size_t *retlen
    printk (KERN_DEBUG "%s(to = 0x%.8x, len = %d)\n", __func__, (__u32)to, len);
 #endif
 
+<<<<<<< HEAD
    /* sanity checks */
    if (!len) return (0);
+=======
+   *retlen = 0;
+
+   /* sanity checks */
+   if (!len) return (0);
+   if (to + len > mtd->size) return (-EINVAL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
    /* first, we write a 0xFF.... padded byte until we reach a dword boundary */
    if (to & (BUSWIDTH - 1))
@@ -583,6 +616,10 @@ static struct mtd_erase_region_info erase_regions[] = {
 	}
 };
 
+<<<<<<< HEAD
+=======
+#ifdef HAVE_PARTITIONS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct mtd_partition lart_partitions[] = {
 	/* blob */
 	{
@@ -603,7 +640,11 @@ static struct mtd_partition lart_partitions[] = {
 		.size	= INITRD_LEN,		/* MTDPART_SIZ_FULL */
 	}
 };
+<<<<<<< HEAD
 #define NUM_PARTITIONS ARRAY_SIZE(lart_partitions)
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __init lart_flash_init (void)
 {
@@ -626,9 +667,15 @@ static int __init lart_flash_init (void)
    mtd.erasesize = FLASH_BLOCKSIZE_MAIN;
    mtd.numeraseregions = ARRAY_SIZE(erase_regions);
    mtd.eraseregions = erase_regions;
+<<<<<<< HEAD
    mtd._erase = flash_erase;
    mtd._read = flash_read;
    mtd._write = flash_write;
+=======
+   mtd.erase = flash_erase;
+   mtd.read = flash_read;
+   mtd.write = flash_write;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    mtd.owner = THIS_MODULE;
 
 #ifdef LART_DEBUG
@@ -653,6 +700,10 @@ static int __init lart_flash_init (void)
 			   result,mtd.eraseregions[result].erasesize,mtd.eraseregions[result].erasesize / 1024,
 			   result,mtd.eraseregions[result].numblocks);
 
+<<<<<<< HEAD
+=======
+#ifdef HAVE_PARTITIONS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    printk ("\npartitions = %d\n", ARRAY_SIZE(lart_partitions));
 
    for (result = 0; result < ARRAY_SIZE(lart_partitions); result++)
@@ -665,16 +716,35 @@ static int __init lart_flash_init (void)
 			 result,lart_partitions[result].offset,
 			 result,lart_partitions[result].size,lart_partitions[result].size / 1024);
 #endif
+<<<<<<< HEAD
 
    result = mtd_device_register(&mtd, lart_partitions,
                                 ARRAY_SIZE(lart_partitions));
+=======
+#endif
+
+#ifndef HAVE_PARTITIONS
+   result = mtd_device_register(&mtd, NULL, 0);
+#else
+   result = mtd_device_register(&mtd, lart_partitions,
+                                ARRAY_SIZE(lart_partitions));
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
    return (result);
 }
 
 static void __exit lart_flash_exit (void)
 {
+<<<<<<< HEAD
    mtd_device_unregister(&mtd);
+=======
+#ifndef HAVE_PARTITIONS
+   mtd_device_unregister(&mtd);
+#else
+   mtd_device_unregister(&mtd);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init (lart_flash_init);

@@ -1,8 +1,11 @@
 #ifndef _ASM_CRIS_ELF_H
 #define _ASM_CRIS_ELF_H
 
+<<<<<<< HEAD
 #include <arch/system.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ELF_CORE_EFLAGS EF_CRIS_VARIANT_V32
 
 /*

@@ -51,7 +51,11 @@ struct prcm_config {
 	unsigned long cm_clksel2_pll;	/* dpllx1 or x2 out */
 	unsigned long cm_clksel_mdm;	/* modem dividers 2430 only */
 	unsigned long base_sdrc_rfr;	/* base refresh timing for a set */
+<<<<<<< HEAD
 	unsigned short flags;
+=======
+	unsigned char flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 

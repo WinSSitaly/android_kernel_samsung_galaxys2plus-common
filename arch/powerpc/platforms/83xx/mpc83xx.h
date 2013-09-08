@@ -70,6 +70,7 @@ extern long mpc83xx_time_init(void);
 extern int mpc837x_usb_cfg(void);
 extern int mpc834x_usb_cfg(void);
 extern int mpc831x_usb_cfg(void);
+<<<<<<< HEAD
 extern void mpc83xx_ipic_init_IRQ(void);
 #ifdef CONFIG_QUICC_ENGINE
 extern void mpc83xx_qe_init_IRQ(void);
@@ -86,5 +87,7 @@ extern void mpc83xx_setup_pci(void);
 #endif
 
 extern int mpc83xx_declare_of_platform_devices(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif				/* __MPC83XX_H__ */

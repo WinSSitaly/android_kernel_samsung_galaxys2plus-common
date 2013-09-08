@@ -74,7 +74,10 @@ void shm_init_ns(struct ipc_namespace *ns)
 	ns->shm_ctlmax = SHMMAX;
 	ns->shm_ctlall = SHMALL;
 	ns->shm_ctlmni = SHMMNI;
+<<<<<<< HEAD
 	ns->shm_rmid_forced = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ns->shm_tot = 0;
 	ipc_init_ids(&shm_ids(ns));
 }
@@ -105,6 +108,7 @@ void shm_exit_ns(struct ipc_namespace *ns)
 }
 #endif
 
+<<<<<<< HEAD
 static int __init ipc_ns_init(void)
 {
 	shm_init_ns(&init_ipc_ns);
@@ -115,6 +119,11 @@ pure_initcall(ipc_ns_init);
 
 void __init shm_init (void)
 {
+=======
+void __init shm_init (void)
+{
+	shm_init_ns(&init_ipc_ns);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ipc_init_proc_interface("sysvipc/shm",
 #if BITS_PER_LONG <= 32
 				"       key      shmid perms       size  cpid  lpid nattch   uid   gid  cuid  cgid      atime      dtime      ctime        rss       swap\n",
@@ -138,12 +147,15 @@ static inline struct shmid_kernel *shm_lock(struct ipc_namespace *ns, int id)
 	return container_of(ipcp, struct shmid_kernel, shm_perm);
 }
 
+<<<<<<< HEAD
 static inline void shm_lock_by_ptr(struct shmid_kernel *ipcp)
 {
 	rcu_read_lock();
 	spin_lock(&ipcp->shm_perm.lock);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline struct shmid_kernel *shm_lock_check(struct ipc_namespace *ns,
 						int id)
 {
@@ -201,6 +213,7 @@ static void shm_destroy(struct ipc_namespace *ns, struct shmid_kernel *shp)
 }
 
 /*
+<<<<<<< HEAD
  * shm_may_destroy - identifies whether shm segment should be destroyed now
  *
  * Returns true if and only if there are no active users of the segment and
@@ -218,6 +231,8 @@ static bool shm_may_destroy(struct ipc_namespace *ns, struct shmid_kernel *shp)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * remove the attach descriptor vma.
  * free memory for segment if it is marked destroyed.
  * The descriptor has already been removed from the current->mm->mmap list
@@ -237,13 +252,19 @@ static void shm_close(struct vm_area_struct *vma)
 	shp->shm_lprid = task_tgid_vnr(current);
 	shp->shm_dtim = get_seconds();
 	shp->shm_nattch--;
+<<<<<<< HEAD
 	if (shm_may_destroy(ns, shp))
+=======
+	if(shp->shm_nattch == 0 &&
+	   shp->shm_perm.mode & SHM_DEST)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		shm_destroy(ns, shp);
 	else
 		shm_unlock(shp);
 	up_write(&shm_ids(ns).rw_mutex);
 }
 
+<<<<<<< HEAD
 /* Called with ns->shm_ids(ns).rw_mutex locked */
 static int shm_try_destroy_current(int id, void *p, void *data)
 {
@@ -321,6 +342,8 @@ void exit_shm(struct task_struct *task)
 	up_write(&shm_ids(ns).rw_mutex);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int shm_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
 {
 	struct file *file = vma->vm_file;
@@ -384,13 +407,21 @@ static int shm_release(struct inode *ino, struct file *file)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int shm_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+=======
+static int shm_fsync(struct file *file, int datasync)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct shm_file_data *sfd = shm_file_data(file);
 
 	if (!sfd->file->f_op->fsync)
 		return -EINVAL;
+<<<<<<< HEAD
 	return sfd->file->f_op->fsync(sfd->file, start, end, datasync);
+=======
+	return sfd->file->f_op->fsync(sfd->file, datasync);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static unsigned long shm_get_unmapped_area(struct file *file,
@@ -450,7 +481,11 @@ static int newseg(struct ipc_namespace *ns, struct ipc_params *params)
 	size_t size = params->u.size;
 	int error;
 	struct shmid_kernel *shp;
+<<<<<<< HEAD
 	size_t numpages = (size + PAGE_SIZE - 1) >> PAGE_SHIFT;
+=======
+	int numpages = (size + PAGE_SIZE -1) >> PAGE_SHIFT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct file * file;
 	char name[13];
 	int id;
@@ -479,12 +514,19 @@ static int newseg(struct ipc_namespace *ns, struct ipc_params *params)
 
 	sprintf (name, "SYSV%08x", key);
 	if (shmflg & SHM_HUGETLB) {
+<<<<<<< HEAD
 		size_t hugesize = ALIGN(size, huge_page_size(&default_hstate));
 
 		/* hugetlb_file_setup applies strict accounting */
 		if (shmflg & SHM_NORESERVE)
 			acctflag = VM_NORESERVE;
 		file = hugetlb_file_setup(name, hugesize, acctflag,
+=======
+		/* hugetlb_file_setup applies strict accounting */
+		if (shmflg & SHM_NORESERVE)
+			acctflag = VM_NORESERVE;
+		file = hugetlb_file_setup(name, size, acctflag,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					&shp->mlock_user, HUGETLB_SHMFS_INODE);
 	} else {
 		/*
@@ -513,7 +555,10 @@ static int newseg(struct ipc_namespace *ns, struct ipc_params *params)
 	shp->shm_segsz = size;
 	shp->shm_nattch = 0;
 	shp->shm_file = file;
+<<<<<<< HEAD
 	shp->shm_creator = current;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * shmid gets reported as "inode#" in /proc/pid/maps.
 	 * proc-ps tools use this. Changing this will break them.
@@ -872,7 +917,13 @@ SYSCALL_DEFINE3(shmctl, int, shmid, int, cmd, struct shmid_ds __user *, buf)
 	case SHM_LOCK:
 	case SHM_UNLOCK:
 	{
+<<<<<<< HEAD
 		struct file *shm_file;
+=======
+		struct file *uninitialized_var(shm_file);
+
+		lru_add_drain_all();  /* drain pagevecs to lru lists */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		shp = shm_lock_check(ns, shmid);
 		if (IS_ERR(shp)) {
@@ -895,6 +946,7 @@ SYSCALL_DEFINE3(shmctl, int, shmid, int, cmd, struct shmid_ds __user *, buf)
 		err = security_shm_shmctl(shp, cmd);
 		if (err)
 			goto out_unlock;
+<<<<<<< HEAD
 
 		shm_file = shp->shm_file;
 		if (is_file_hugepages(shm_file))
@@ -920,6 +972,24 @@ SYSCALL_DEFINE3(shmctl, int, shmid, int, cmd, struct shmid_ds __user *, buf)
 		shm_unlock(shp);
 		shmem_unlock_mapping(shm_file->f_mapping);
 		fput(shm_file);
+=======
+		
+		if(cmd==SHM_LOCK) {
+			struct user_struct *user = current_user();
+			if (!is_file_hugepages(shp->shm_file)) {
+				err = shmem_lock(shp->shm_file, 1, user);
+				if (!err && !(shp->shm_perm.mode & SHM_LOCKED)){
+					shp->shm_perm.mode |= SHM_LOCKED;
+					shp->mlock_user = user;
+				}
+			}
+		} else if (!is_file_hugepages(shp->shm_file)) {
+			shmem_lock(shp->shm_file, 0, shp->mlock_user);
+			shp->shm_perm.mode &= ~SHM_LOCKED;
+			shp->mlock_user = NULL;
+		}
+		shm_unlock(shp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 	case IPC_RMID:
@@ -1067,7 +1137,12 @@ out_nattch:
 	shp = shm_lock(ns, shmid);
 	BUG_ON(IS_ERR(shp));
 	shp->shm_nattch--;
+<<<<<<< HEAD
 	if (shm_may_destroy(ns, shp))
+=======
+	if(shp->shm_nattch == 0 &&
+	   shp->shm_perm.mode & SHM_DEST)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		shm_destroy(ns, shp);
 	else
 		shm_unlock(shp);

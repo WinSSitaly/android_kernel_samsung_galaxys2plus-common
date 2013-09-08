@@ -13,6 +13,7 @@ enum alarmtimer_type {
 	ALARM_NUMTYPE,
 };
 
+<<<<<<< HEAD
 enum alarmtimer_restart {
 	ALARMTIMER_NORESTART,
 	ALARMTIMER_RESTART,
@@ -23,6 +24,8 @@ enum alarmtimer_restart {
 #define ALARMTIMER_STATE_ENQUEUED	0x01
 #define ALARMTIMER_STATE_CALLBACK	0x02
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct alarm - Alarm timer structure
  * @node:	timerqueue node for adding to the event list this value
@@ -35,13 +38,21 @@ enum alarmtimer_restart {
  */
 struct alarm {
 	struct timerqueue_node	node;
+<<<<<<< HEAD
 	enum alarmtimer_restart	(*function)(struct alarm *, ktime_t now);
 	enum alarmtimer_type	type;
 	int			state;
+=======
+	ktime_t			period;
+	void			(*function)(struct alarm *);
+	enum alarmtimer_type	type;
+	bool			enabled;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void			*data;
 };
 
 void alarm_init(struct alarm *alarm, enum alarmtimer_type type,
+<<<<<<< HEAD
 		enum alarmtimer_restart (*function)(struct alarm *, ktime_t));
 void alarm_start(struct alarm *alarm, ktime_t start);
 int alarm_try_to_cancel(struct alarm *alarm);
@@ -75,5 +86,10 @@ static inline int alarmtimer_callback_running(struct alarm *timer)
 	return timer->state & ALARMTIMER_STATE_CALLBACK;
 }
 
+=======
+		void (*function)(struct alarm *));
+void alarm_start(struct alarm *alarm, ktime_t start, ktime_t period);
+void alarm_cancel(struct alarm *alarm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

@@ -16,7 +16,10 @@
 #include <linux/smp.h>
 
 #include <asm/cacheflush.h>
+<<<<<<< HEAD
 #include <asm/smp_plat.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/hardware/gic.h>
 
 /*
@@ -78,7 +81,11 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
 	 * since we haven't sent them a soft interrupt, they shouldn't
 	 * be there.
 	 */
+<<<<<<< HEAD
 	write_pen_release(cpu_logical_map(cpu));
+=======
+	write_pen_release(cpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Send the secondary CPU a soft interrupt, thereby causing

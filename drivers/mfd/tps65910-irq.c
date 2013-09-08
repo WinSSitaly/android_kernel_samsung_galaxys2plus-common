@@ -145,6 +145,7 @@ static void tps65910_irq_disable(struct irq_data *data)
 	tps65910->irq_mask |= ( 1 << irq_to_tps65910_irq(tps65910, data->irq));
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM_SLEEP
 static int tps65910_irq_set_wake(struct irq_data *data, unsigned int enable)
 {
@@ -155,13 +156,18 @@ static int tps65910_irq_set_wake(struct irq_data *data, unsigned int enable)
 #define tps65910_irq_set_wake NULL
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct irq_chip tps65910_irq_chip = {
 	.name = "tps65910",
 	.irq_bus_lock = tps65910_irq_lock,
 	.irq_bus_sync_unlock = tps65910_irq_sync_unlock,
 	.irq_disable = tps65910_irq_disable,
 	.irq_enable = tps65910_irq_enable,
+<<<<<<< HEAD
 	.irq_set_wake = tps65910_irq_set_wake,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int tps65910_irq_init(struct tps65910 *tps65910, int irq,
@@ -226,7 +232,11 @@ int tps65910_irq_init(struct tps65910 *tps65910, int irq,
 
 int tps65910_irq_exit(struct tps65910 *tps65910)
 {
+<<<<<<< HEAD
 	if (tps65910->chip_irq)
 		free_irq(tps65910->chip_irq, tps65910);
+=======
+	free_irq(tps65910->chip_irq, tps65910);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }

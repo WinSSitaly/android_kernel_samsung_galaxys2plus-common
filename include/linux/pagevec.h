@@ -21,7 +21,13 @@ struct pagevec {
 };
 
 void __pagevec_release(struct pagevec *pvec);
+<<<<<<< HEAD
 void __pagevec_lru_add(struct pagevec *pvec, enum lru_list lru);
+=======
+void __pagevec_free(struct pagevec *pvec);
+void ____pagevec_lru_add(struct pagevec *pvec, enum lru_list lru);
+void pagevec_strip(struct pagevec *pvec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 unsigned pagevec_lookup(struct pagevec *pvec, struct address_space *mapping,
 		pgoff_t start, unsigned nr_pages);
 unsigned pagevec_lookup_tag(struct pagevec *pvec,
@@ -58,30 +64,58 @@ static inline unsigned pagevec_add(struct pagevec *pvec, struct page *page)
 	return pagevec_space(pvec);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void pagevec_release(struct pagevec *pvec)
 {
 	if (pagevec_count(pvec))
 		__pagevec_release(pvec);
 }
 
+<<<<<<< HEAD
 static inline void __pagevec_lru_add_anon(struct pagevec *pvec)
 {
 	__pagevec_lru_add(pvec, LRU_INACTIVE_ANON);
+=======
+static inline void pagevec_free(struct pagevec *pvec)
+{
+	if (pagevec_count(pvec))
+		__pagevec_free(pvec);
+}
+
+static inline void __pagevec_lru_add_anon(struct pagevec *pvec)
+{
+	____pagevec_lru_add(pvec, LRU_INACTIVE_ANON);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void __pagevec_lru_add_active_anon(struct pagevec *pvec)
 {
+<<<<<<< HEAD
 	__pagevec_lru_add(pvec, LRU_ACTIVE_ANON);
+=======
+	____pagevec_lru_add(pvec, LRU_ACTIVE_ANON);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void __pagevec_lru_add_file(struct pagevec *pvec)
 {
+<<<<<<< HEAD
 	__pagevec_lru_add(pvec, LRU_INACTIVE_FILE);
+=======
+	____pagevec_lru_add(pvec, LRU_INACTIVE_FILE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void __pagevec_lru_add_active_file(struct pagevec *pvec)
 {
+<<<<<<< HEAD
 	__pagevec_lru_add(pvec, LRU_ACTIVE_FILE);
+=======
+	____pagevec_lru_add(pvec, LRU_ACTIVE_FILE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void pagevec_lru_add_file(struct pagevec *pvec)

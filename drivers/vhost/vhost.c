@@ -37,8 +37,11 @@ enum {
 	VHOST_MEMORY_F_LOG = 0x1,
 };
 
+<<<<<<< HEAD
 static unsigned vhost_zcopy_mask __read_mostly;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define vhost_used_event(vq) ((u16 __user *)&vq->avail->ring[vq->num])
 #define vhost_avail_event(vq) ((u16 __user *)&vq->used->ring[vq->num])
 
@@ -181,9 +184,12 @@ static void vhost_vq_reset(struct vhost_dev *dev,
 	vq->call_ctx = NULL;
 	vq->call = NULL;
 	vq->log_ctx = NULL;
+<<<<<<< HEAD
 	vq->upend_idx = 0;
 	vq->done_idx = 0;
 	vq->ubufs = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int vhost_worker(void *data)
@@ -222,8 +228,11 @@ static int vhost_worker(void *data)
 		if (work) {
 			__set_current_state(TASK_RUNNING);
 			work->fn(work);
+<<<<<<< HEAD
 			if (need_resched())
 				schedule();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else
 			schedule();
 
@@ -232,6 +241,7 @@ static int vhost_worker(void *data)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void vhost_vq_free_iovecs(struct vhost_virtqueue *vq)
 {
 	kfree(vq->indirect);
@@ -249,11 +259,16 @@ void vhost_enable_zcopy(int vq)
 	vhost_zcopy_mask |= 0x1 << vq;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Helper to allocate iovec buffers for all vqs. */
 static long vhost_dev_alloc_iovecs(struct vhost_dev *dev)
 {
 	int i;
+<<<<<<< HEAD
 	bool zcopy;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < dev->nvqs; ++i) {
 		dev->vqs[i].indirect = kmalloc(sizeof *dev->vqs[i].indirect *
@@ -262,6 +277,7 @@ static long vhost_dev_alloc_iovecs(struct vhost_dev *dev)
 					  GFP_KERNEL);
 		dev->vqs[i].heads = kmalloc(sizeof *dev->vqs[i].heads *
 					    UIO_MAXIOV, GFP_KERNEL);
+<<<<<<< HEAD
 		zcopy = vhost_zcopy_mask & (0x1 << i);
 		if (zcopy)
 			dev->vqs[i].ubuf_info =
@@ -270,13 +286,26 @@ static long vhost_dev_alloc_iovecs(struct vhost_dev *dev)
 		if (!dev->vqs[i].indirect || !dev->vqs[i].log ||
 			!dev->vqs[i].heads ||
 			(zcopy && !dev->vqs[i].ubuf_info))
+=======
+
+		if (!dev->vqs[i].indirect || !dev->vqs[i].log ||
+			!dev->vqs[i].heads)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto err_nomem;
 	}
 	return 0;
 
 err_nomem:
+<<<<<<< HEAD
 	for (; i >= 0; --i)
 		vhost_vq_free_iovecs(&dev->vqs[i]);
+=======
+	for (; i >= 0; --i) {
+		kfree(dev->vqs[i].indirect);
+		kfree(dev->vqs[i].log);
+		kfree(dev->vqs[i].heads);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -ENOMEM;
 }
 
@@ -284,8 +313,19 @@ static void vhost_dev_free_iovecs(struct vhost_dev *dev)
 {
 	int i;
 
+<<<<<<< HEAD
 	for (i = 0; i < dev->nvqs; ++i)
 		vhost_vq_free_iovecs(&dev->vqs[i]);
+=======
+	for (i = 0; i < dev->nvqs; ++i) {
+		kfree(dev->vqs[i].indirect);
+		dev->vqs[i].indirect = NULL;
+		kfree(dev->vqs[i].log);
+		dev->vqs[i].log = NULL;
+		kfree(dev->vqs[i].heads);
+		dev->vqs[i].heads = NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 long vhost_dev_init(struct vhost_dev *dev,
@@ -308,7 +348,10 @@ long vhost_dev_init(struct vhost_dev *dev,
 		dev->vqs[i].log = NULL;
 		dev->vqs[i].indirect = NULL;
 		dev->vqs[i].heads = NULL;
+<<<<<<< HEAD
 		dev->vqs[i].ubuf_info = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev->vqs[i].dev = dev;
 		mutex_init(&dev->vqs[i].mutex);
 		vhost_vq_reset(dev, dev->vqs + i);
@@ -405,13 +448,18 @@ long vhost_dev_reset_owner(struct vhost_dev *dev)
 	if (!memory)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	vhost_dev_cleanup(dev, true);
+=======
+	vhost_dev_cleanup(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memory->nregions = 0;
 	RCU_INIT_POINTER(dev->memory, memory);
 	return 0;
 }
 
+<<<<<<< HEAD
 /* In case of DMA done not in order in lower device driver for some reason.
  * upend_idx is used to track end of used idx, done_idx is used to track head
  * of used idx. Once lower device DMA done contiguously, we will signal KVM
@@ -438,6 +486,10 @@ int vhost_zerocopy_signal_used(struct vhost_virtqueue *vq)
 
 /* Caller should have device mutex if and only if locked is set */
 void vhost_dev_cleanup(struct vhost_dev *dev, bool locked)
+=======
+/* Caller should have device mutex */
+void vhost_dev_cleanup(struct vhost_dev *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 
@@ -446,6 +498,7 @@ void vhost_dev_cleanup(struct vhost_dev *dev, bool locked)
 			vhost_poll_stop(&dev->vqs[i].poll);
 			vhost_poll_flush(&dev->vqs[i].poll);
 		}
+<<<<<<< HEAD
 		/* Wait for all lower device DMAs done. */
 		if (dev->vqs[i].ubufs)
 			vhost_ubuf_put_and_wait(dev->vqs[i].ubufs);
@@ -453,6 +506,8 @@ void vhost_dev_cleanup(struct vhost_dev *dev, bool locked)
 		/* Signal guest as appropriate. */
 		vhost_zerocopy_signal_used(&dev->vqs[i]);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (dev->vqs[i].error_ctx)
 			eventfd_ctx_put(dev->vqs[i].error_ctx);
 		if (dev->vqs[i].error)
@@ -474,8 +529,12 @@ void vhost_dev_cleanup(struct vhost_dev *dev, bool locked)
 	dev->log_file = NULL;
 	/* No one will access memory at this point */
 	kfree(rcu_dereference_protected(dev->memory,
+<<<<<<< HEAD
 					locked ==
 						lockdep_is_held(&dev->mutex)));
+=======
+					lockdep_is_held(&dev->mutex)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	RCU_INIT_POINTER(dev->memory, NULL);
 	WARN_ON(!list_empty(&dev->work_list));
 	if (dev->worker) {
@@ -632,6 +691,20 @@ static long vhost_set_memory(struct vhost_dev *d, struct vhost_memory __user *m)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int init_used(struct vhost_virtqueue *vq,
+		     struct vring_used __user *used)
+{
+	int r = put_user(vq->used_flags, &used->flags);
+
+	if (r)
+		return r;
+	vq->signalled_used_valid = false;
+	return get_user(vq->last_used_idx, &used->idx);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static long vhost_set_vring(struct vhost_dev *d, int ioctl, void __user *argp)
 {
 	struct file *eventfp, *filep = NULL,
@@ -744,6 +817,13 @@ static long vhost_set_vring(struct vhost_dev *d, int ioctl, void __user *argp)
 			}
 		}
 
+<<<<<<< HEAD
+=======
+		r = init_used(vq, (struct vring_used __user *)(unsigned long)
+			      a.used_user_addr);
+		if (r)
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		vq->log_used = !!(a.flags & (0x1 << VHOST_VRING_F_LOG));
 		vq->desc = (void __user *)(unsigned long)a.desc_user_addr;
 		vq->avail = (void __user *)(unsigned long)a.avail_user_addr;
@@ -940,9 +1020,15 @@ static int set_bit_to_user(int nr, void __user *addr)
 	if (r < 0)
 		return r;
 	BUG_ON(r != 1);
+<<<<<<< HEAD
 	base = kmap_atomic(page);
 	set_bit(bit, base);
 	kunmap_atomic(base);
+=======
+	base = kmap_atomic(page, KM_USER0);
+	set_bit(bit, base);
+	kunmap_atomic(base, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_page_dirty_lock(page);
 	put_page(page);
 	return 0;
@@ -998,6 +1084,7 @@ int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int vhost_update_used_flags(struct vhost_virtqueue *vq)
 {
 	void __user *used;
@@ -1049,6 +1136,8 @@ int vhost_init_used(struct vhost_virtqueue *vq)
 	return get_user(vq->last_used_idx, &vq->used->idx);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int translate_desc(struct vhost_dev *dev, u64 addr, u32 len,
 			  struct iovec iov[], int iov_size)
 {
@@ -1074,7 +1163,11 @@ static int translate_desc(struct vhost_dev *dev, u64 addr, u32 len,
 		}
 		_iov = iov + ret;
 		size = reg->memory_size - addr + reg->guest_phys_addr;
+<<<<<<< HEAD
 		_iov->iov_len = min((u64)len - s, size);
+=======
+		_iov->iov_len = min((u64)len, size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		_iov->iov_base = (void __user *)(unsigned long)
 			(reg->userspace_addr + addr - reg->guest_phys_addr);
 		s += size;
@@ -1520,20 +1613,45 @@ bool vhost_enable_notify(struct vhost_dev *dev, struct vhost_virtqueue *vq)
 		return false;
 	vq->used_flags &= ~VRING_USED_F_NO_NOTIFY;
 	if (!vhost_has_feature(dev, VIRTIO_RING_F_EVENT_IDX)) {
+<<<<<<< HEAD
 		r = vhost_update_used_flags(vq);
+=======
+		r = put_user(vq->used_flags, &vq->used->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (r) {
 			vq_err(vq, "Failed to enable notification at %p: %d\n",
 			       &vq->used->flags, r);
 			return false;
 		}
 	} else {
+<<<<<<< HEAD
 		r = vhost_update_avail_event(vq, vq->avail_idx);
+=======
+		r = put_user(vq->avail_idx, vhost_avail_event(vq));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (r) {
 			vq_err(vq, "Failed to update avail event index at %p: %d\n",
 			       vhost_avail_event(vq), r);
 			return false;
 		}
 	}
+<<<<<<< HEAD
+=======
+	if (unlikely(vq->log_used)) {
+		void __user *used;
+		/* Make sure data is seen before log. */
+		smp_wmb();
+		used = vhost_has_feature(dev, VIRTIO_RING_F_EVENT_IDX) ?
+			&vq->used->flags : vhost_avail_event(vq);
+		/* Log used flags or event index entry write. Both are 16 bit
+		 * fields. */
+		log_write(vq->log_base, vq->log_addr +
+			   (used - (void __user *)vq->used),
+			  sizeof(u16));
+		if (vq->log_ctx)
+			eventfd_signal(vq->log_ctx, 1);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* They could have slipped one in as we were doing that: make
 	 * sure it's written, then check again. */
 	smp_mb();
@@ -1556,12 +1674,17 @@ void vhost_disable_notify(struct vhost_dev *dev, struct vhost_virtqueue *vq)
 		return;
 	vq->used_flags |= VRING_USED_F_NO_NOTIFY;
 	if (!vhost_has_feature(dev, VIRTIO_RING_F_EVENT_IDX)) {
+<<<<<<< HEAD
 		r = vhost_update_used_flags(vq);
+=======
+		r = put_user(vq->used_flags, &vq->used->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (r)
 			vq_err(vq, "Failed to enable notification at %p: %d\n",
 			       &vq->used->flags, r);
 	}
 }
+<<<<<<< HEAD
 
 static void vhost_zerocopy_done_signal(struct kref *kref)
 {
@@ -1608,3 +1731,5 @@ void vhost_zerocopy_callback(struct ubuf_info *ubuf)
 	vq->heads[ubuf->desc].len = VHOST_DMA_DONE_LEN;
 	kref_put(&ubufs->kref, vhost_zerocopy_done_signal);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

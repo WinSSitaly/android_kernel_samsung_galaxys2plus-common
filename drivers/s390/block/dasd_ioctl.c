@@ -240,7 +240,11 @@ dasd_ioctl_format(struct block_device *bdev, void __user *argp)
  */
 static int dasd_ioctl_reset_profile(struct dasd_block *block)
 {
+<<<<<<< HEAD
 	dasd_profile_reset(&block->profile);
+=======
+	memset(&block->profile, 0, sizeof(struct dasd_profile_info_t));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -249,6 +253,7 @@ static int dasd_ioctl_reset_profile(struct dasd_block *block)
  */
 static int dasd_ioctl_read_profile(struct dasd_block *block, void __user *argp)
 {
+<<<<<<< HEAD
 	struct dasd_profile_info_t *data;
 	int rc = 0;
 
@@ -289,6 +294,14 @@ static int dasd_ioctl_read_profile(struct dasd_block *block, void __user *argp)
 out:
 	kfree(data);
 	return rc;
+=======
+	if (dasd_profile_level == DASD_PROFILE_OFF)
+		return -EIO;
+	if (copy_to_user(argp, &block->profile,
+			 sizeof(struct dasd_profile_info_t)))
+		return -EFAULT;
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #else
 static int dasd_ioctl_reset_profile(struct dasd_block *block)

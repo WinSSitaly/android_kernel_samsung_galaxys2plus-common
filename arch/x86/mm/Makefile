@@ -27,4 +27,9 @@ obj-$(CONFIG_AMD_NUMA)		+= amdtopology.o
 obj-$(CONFIG_ACPI_NUMA)		+= srat.o
 obj-$(CONFIG_NUMA_EMU)		+= numa_emulation.o
 
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_HAVE_MEMBLOCK)		+= memblock.o
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_MEMTEST)		+= memtest.o

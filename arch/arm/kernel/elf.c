@@ -1,9 +1,16 @@
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/personality.h>
 #include <linux/binfmts.h>
 #include <linux/elf.h>
+<<<<<<< HEAD
 #include <asm/system_info.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int elf_check_arch(const struct elf32_hdr *x)
 {

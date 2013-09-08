@@ -27,7 +27,10 @@
 #include <linux/sched.h>
 #include <linux/delay.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bio.h>
 #include <linux/dma-mapping.h>
 #include <linux/crc7.h>
@@ -1525,6 +1528,10 @@ static struct of_device_id mmc_spi_of_match_table[] __devinitdata = {
 static struct spi_driver mmc_spi_driver = {
 	.driver = {
 		.name =		"mmc_spi",
+<<<<<<< HEAD
+=======
+		.bus =		&spi_bus_type,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.owner =	THIS_MODULE,
 		.of_match_table = mmc_spi_of_match_table,
 	},

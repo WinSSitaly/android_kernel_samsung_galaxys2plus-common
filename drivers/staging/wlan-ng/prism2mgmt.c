@@ -406,7 +406,10 @@ int prism2mgmt_scan_results(wlandevice_t *wlandev, void *msgp)
 	/* SSID */
 	req->ssid.status = P80211ENUM_msgitem_status_data_ok;
 	req->ssid.data.len = le16_to_cpu(item->ssid.len);
+<<<<<<< HEAD
 	req->ssid.data.len = min_t(u16, req->ssid.data.len, WLAN_SSID_MAXLEN);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy(req->ssid.data.data, item->ssid.data, req->ssid.data.len);
 
 	/* supported rates */

@@ -8,7 +8,11 @@ config RTC_LIB
 menuconfig RTC_CLASS
 	bool "Real Time Clock"
 	default n
+<<<<<<< HEAD
 	depends on !S390 && !UML
+=======
+	depends on !S390
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select RTC_LIB
 	help
 	  Generic RTC class support. If you say yes here, you will
@@ -106,6 +110,36 @@ config RTC_INTF_DEV_UIE_EMUL
 	  clock several times per second, please enable this option
 	  only if you know that you really need it.
 
+<<<<<<< HEAD
+=======
+config RTC_INTF_ALARM
+	bool "Android alarm driver"
+	depends on RTC_CLASS
+	default y
+	help
+	  Provides non-wakeup and rtc backed wakeup alarms based on rtc or
+	  elapsed realtime, and a non-wakeup alarm on the monotonic clock.
+	  Also provides an interface to set the wall time which must be used
+	  for elapsed realtime to work.
+
+config RTC_INTF_ALARM_DEV
+	bool "Android alarm device"
+	depends on RTC_INTF_ALARM
+	default y
+	help
+	  Exports the alarm interface to user-space.
+
+config BCM_RTC_ALARM_BOOT
+	bool "RTC Alarm Boot"
+	depends on RTC_CLASS
+	default n
+        help
+	  If you say yes then, it provides power-up alarm based on RTC.
+	  The phone will be powered up and ring the alarm.
+          In the power-on alarm status, the phone will not turn on CP
+          and be shut down after the alarm is done.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config RTC_DRV_TEST
 	tristate "Test driver/device"
 	help
@@ -135,6 +169,20 @@ config RTC_DRV_88PM860X
 	  This driver can also be built as a module. If so, the module
 	  will be called rtc-88pm860x.
 
+<<<<<<< HEAD
+=======
+config RTC_DRV_BCM59055
+        tristate "Broadcom BCM59055 PMU RTC"
+        depends on MFD_BCM_PMU590XX
+        select RTC_ANDROID_ALARM_WORKAROUND
+        help
+          If you say yes here you will get support for the RTC subsystem
+          of Broadcom BCM59035 PMU chip
+
+          This driver can also be built as a module. If so, the module
+          will be called "rtc-bcm59055".
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config RTC_DRV_DS1307
 	tristate "Dallas/Maxim DS1307/37/38/39/40, ST M41T00, EPSON RX-8025"
 	help
@@ -498,9 +546,15 @@ config RTC_DRV_CMOS
 	  will be called rtc-cmos.
 
 config RTC_DRV_VRTC
+<<<<<<< HEAD
 	tristate "Virtual RTC for Intel MID platforms"
 	depends on X86_INTEL_MID
 	default y if X86_INTEL_MID
+=======
+	tristate "Virtual RTC for Moorestown platforms"
+	depends on X86_MRST
+	default y if X86_MRST
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	help
 	Say "yes" here to get direct support for the real time clock
@@ -554,6 +608,7 @@ config RTC_DRV_DS1742
 	  This driver can also be built as a module. If so, the module
 	  will be called rtc-ds1742.
 
+<<<<<<< HEAD
 config RTC_DRV_DA9052
 	tristate "Dialog DA9052/DA9053 RTC"
 	depends on PMIC_DA9052
@@ -561,6 +616,8 @@ config RTC_DRV_DA9052
 	  Say y here to support the RTC driver for Dialog Semiconductor
 	  DA9052-BC and DA9053-AA/Bx PMICs.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config RTC_DRV_EFI
 	tristate "EFI RTC"
 	depends on IA64
@@ -755,7 +812,11 @@ config HAVE_S3C_RTC
 
 config RTC_DRV_S3C
 	tristate "Samsung S3C series SoC RTC"
+<<<<<<< HEAD
 	depends on ARCH_S3C64XX || HAVE_S3C_RTC
+=======
+	depends on ARCH_S3C2410 || ARCH_S3C64XX || HAVE_S3C_RTC
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  RTC (Realtime Clock) driver for the clock inbuilt into the
 	  Samsung S3C24XX series of SoCs. This can provide periodic
@@ -780,8 +841,13 @@ config RTC_DRV_EP93XX
 	  will be called rtc-ep93xx.
 
 config RTC_DRV_SA1100
+<<<<<<< HEAD
 	tristate "SA11x0/PXA2xx/PXA910"
 	depends on ARCH_SA1100 || ARCH_PXA || ARCH_MMP
+=======
+	tristate "SA11x0/PXA2xx"
+	depends on ARCH_SA1100 || ARCH_PXA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  If you say Y here you will get access to the real time clock
 	  built into your SA11x0 or PXA2xx CPU.
@@ -836,6 +902,15 @@ config RTC_DRV_AT32AP700X
 	  Driver for the internal RTC (Realtime Clock) on Atmel AVR32
 	  AT32AP700x family processors.
 
+<<<<<<< HEAD
+=======
+config RTC_DRV_ISLAND
+	tristate "AT32AP700X series RTC"
+	help
+	  Driver for the internal RTC (Realtime Clock) on Atmel AVR32
+	  AT32AP700x family processors.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config RTC_DRV_AT91RM9200
 	tristate "AT91RM9200 or some AT91SAM9 RTC"
 	depends on ARCH_AT91RM9200 || ARCH_AT91SAM9RL || ARCH_AT91SAM9G45
@@ -988,11 +1063,19 @@ config RTC_DRV_COH901331
 
 
 config RTC_DRV_STMP
+<<<<<<< HEAD
 	tristate "Freescale STMP3xxx/i.MX23/i.MX28 RTC"
 	depends on ARCH_MXS
 	help
 	  If you say yes here you will get support for the onboard
 	  STMP3xxx/i.MX23/i.MX28 RTC.
+=======
+	tristate "Freescale STMP3xxx RTC"
+	depends on ARCH_STMP3XXX
+	help
+	  If you say yes here you will get support for the onboard
+	  STMP3xxx RTC.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	  This driver can also be built as a module. If so, the module
 	  will be called rtc-stmp3xxx.
@@ -1013,10 +1096,17 @@ config RTC_DRV_MC13XXX
 
 config RTC_DRV_MPC5121
 	tristate "Freescale MPC5121 built-in RTC"
+<<<<<<< HEAD
 	depends on PPC_MPC512x || PPC_MPC52xx
 	help
 	  If you say yes here you will get support for the
 	  built-in RTC on MPC5121 or on MPC5200.
+=======
+	depends on PPC_MPC512x && RTC_CLASS
+	help
+	  If you say yes here you will get support for the
+	  built-in RTC MPC5121.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	  This driver can also be built as a module. If so, the module
 	  will be called rtc-mpc5121.
@@ -1041,6 +1131,7 @@ config RTC_DRV_LPC32XX
 	  This driver can also be buillt as a module. If so, the module
 	  will be called rtc-lpc32xx.
 
+<<<<<<< HEAD
 config RTC_DRV_PM8XXX
 	tristate "Qualcomm PMIC8XXX RTC"
 	depends on MFD_PM8XXX
@@ -1051,6 +1142,8 @@ config RTC_DRV_PM8XXX
 	  To compile this driver as a module, choose M here: the
 	  module will be called rtc-pm8xxx.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config RTC_DRV_TEGRA
 	tristate "NVIDIA Tegra Internal RTC driver"
 	depends on RTC_CLASS && ARCH_TEGRA
@@ -1077,6 +1170,7 @@ config RTC_DRV_PUV3
 	  This drive can also be built as a module. If so, the module
 	  will be called rtc-puv3.
 
+<<<<<<< HEAD
 config RTC_DRV_LOONGSON1
 	tristate "loongson1 RTC support"
 	depends on MACH_LOONGSON1
@@ -1086,5 +1180,12 @@ config RTC_DRV_LOONGSON1
 
 	  This driver can also be built as a module. If so, the module
 	  will be called rtc-ls1x.
+=======
+config RTC_DRV_BCMPMU
+	tristate "BCM PMU RTC"
+	depends on MFD_BCMPMU
+	help
+	  To support RTC driver on BCM PMUs
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 endif # RTC_CLASS

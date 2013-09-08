@@ -38,11 +38,14 @@
 #define HPAGE_SIZE	(_AC(1,UL) << HPAGE_SHIFT)
 #define HPAGE_MASK	(~(HPAGE_SIZE - 1))
 #define HUGETLB_PAGE_ORDER	(HPAGE_SHIFT - PAGE_SHIFT)
+<<<<<<< HEAD
 #else /* !CONFIG_HUGETLB_PAGE */
 #define HPAGE_SHIFT	({BUILD_BUG(); 0; })
 #define HPAGE_SIZE	({BUILD_BUG(); 0; })
 #define HPAGE_MASK	({BUILD_BUG(); 0; })
 #define HUGETLB_PAGE_ORDER	({BUILD_BUG(); 0; })
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_HUGETLB_PAGE */
 
 #ifndef __ASSEMBLY__
@@ -175,6 +178,7 @@ typedef struct { unsigned long pgprot; } pgprot_t;
 
 #ifdef CONFIG_FLATMEM
 
+<<<<<<< HEAD
 #ifndef __ASSEMBLY__
 static inline int pfn_valid(unsigned long pfn)
 {
@@ -184,6 +188,16 @@ static inline int pfn_valid(unsigned long pfn)
 	return pfn >= ARCH_PFN_OFFSET && pfn < max_mapnr;
 }
 #endif
+=======
+#define pfn_valid(pfn)							\
+({									\
+	unsigned long __pfn = (pfn);					\
+	/* avoid <linux/bootmem.h> include hell */			\
+	extern unsigned long min_low_pfn;				\
+									\
+	__pfn >= min_low_pfn && __pfn < max_mapnr;			\
+})
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #elif defined(CONFIG_SPARSEMEM)
 

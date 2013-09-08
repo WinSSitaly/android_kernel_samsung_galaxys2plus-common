@@ -18,7 +18,10 @@
 #include <linux/rtc.h>
 #include <linux/platform_device.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRV_VERSION "0.3"
 
@@ -320,7 +323,11 @@ static int __devinit ds1553_rtc_probe(struct platform_device *pdev)
 		writeb(0, ioaddr + RTC_INTERRUPTS);
 		if (devm_request_irq(&pdev->dev, pdata->irq,
 				ds1553_rtc_interrupt,
+<<<<<<< HEAD
 				0, pdev->name, pdev) < 0) {
+=======
+				IRQF_DISABLED, pdev->name, pdev) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev_warn(&pdev->dev, "interrupt not available.\n");
 			pdata->irq = 0;
 		}
@@ -361,7 +368,22 @@ static struct platform_driver ds1553_rtc_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(ds1553_rtc_driver);
+=======
+static __init int ds1553_init(void)
+{
+	return platform_driver_register(&ds1553_rtc_driver);
+}
+
+static __exit void ds1553_exit(void)
+{
+	platform_driver_unregister(&ds1553_rtc_driver);
+}
+
+module_init(ds1553_init);
+module_exit(ds1553_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Atsushi Nemoto <anemo@mba.ocn.ne.jp>");
 MODULE_DESCRIPTION("Dallas DS1553 RTC driver");

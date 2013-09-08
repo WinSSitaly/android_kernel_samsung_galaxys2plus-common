@@ -23,7 +23,10 @@
 #include <linux/spinlock.h>
 #include <linux/list.h>
 #include <linux/rcupdate.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/neighbour.h>
 #include <net/dst.h>
 #include <net/flow.h>

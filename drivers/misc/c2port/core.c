@@ -984,9 +984,15 @@ static int __init c2port_init(void)
 		" - (C) 2007 Rodolfo Giometti\n");
 
 	c2port_class = class_create(THIS_MODULE, "c2port");
+<<<<<<< HEAD
 	if (IS_ERR(c2port_class)) {
 		printk(KERN_ERR "c2port: failed to allocate class\n");
 		return PTR_ERR(c2port_class);
+=======
+	if (!c2port_class) {
+		printk(KERN_ERR "c2port: failed to allocate class\n");
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	c2port_class->dev_attrs = c2port_attrs;
 

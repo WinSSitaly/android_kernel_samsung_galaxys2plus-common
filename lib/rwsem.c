@@ -6,7 +6,11 @@
 #include <linux/rwsem.h>
 #include <linux/sched.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Initialize an rwsem:
@@ -22,7 +26,11 @@ void __init_rwsem(struct rw_semaphore *sem, const char *name,
 	lockdep_init_map(&sem->dep_map, name, key, 0);
 #endif
 	sem->count = RWSEM_UNLOCKED_VALUE;
+<<<<<<< HEAD
 	raw_spin_lock_init(&sem->wait_lock);
+=======
+	spin_lock_init(&sem->wait_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_LIST_HEAD(&sem->wait_list);
 }
 
@@ -180,7 +188,11 @@ rwsem_down_failed_common(struct rw_semaphore *sem,
 	set_task_state(tsk, TASK_UNINTERRUPTIBLE);
 
 	/* set up my own style of waitqueue */
+<<<<<<< HEAD
 	raw_spin_lock_irq(&sem->wait_lock);
+=======
+	spin_lock_irq(&sem->wait_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	waiter.task = tsk;
 	waiter.flags = flags;
 	get_task_struct(tsk);
@@ -204,7 +216,11 @@ rwsem_down_failed_common(struct rw_semaphore *sem,
 		 adjustment == -RWSEM_ACTIVE_WRITE_BIAS)
 		sem = __rwsem_do_wake(sem, RWSEM_WAKE_READ_OWNED);
 
+<<<<<<< HEAD
 	raw_spin_unlock_irq(&sem->wait_lock);
+=======
+	spin_unlock_irq(&sem->wait_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* wait to be given the lock */
 	for (;;) {
@@ -245,13 +261,21 @@ struct rw_semaphore *rwsem_wake(struct rw_semaphore *sem)
 {
 	unsigned long flags;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&sem->wait_lock, flags);
+=======
+	spin_lock_irqsave(&sem->wait_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* do nothing if list empty */
 	if (!list_empty(&sem->wait_list))
 		sem = __rwsem_do_wake(sem, RWSEM_WAKE_ANY);
 
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&sem->wait_lock, flags);
+=======
+	spin_unlock_irqrestore(&sem->wait_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return sem;
 }
@@ -265,13 +289,21 @@ struct rw_semaphore *rwsem_downgrade_wake(struct rw_semaphore *sem)
 {
 	unsigned long flags;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&sem->wait_lock, flags);
+=======
+	spin_lock_irqsave(&sem->wait_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* do nothing if list empty */
 	if (!list_empty(&sem->wait_list))
 		sem = __rwsem_do_wake(sem, RWSEM_WAKE_READ_OWNED);
 
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&sem->wait_lock, flags);
+=======
+	spin_unlock_irqrestore(&sem->wait_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return sem;
 }

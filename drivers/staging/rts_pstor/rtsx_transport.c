@@ -335,7 +335,10 @@ static int rtsx_transfer_sglist_adma_partial(struct rtsx_chip *chip, u8 card,
 	int sg_cnt, i, resid;
 	int err = 0;
 	long timeleft;
+<<<<<<< HEAD
 	struct scatterlist *sg_ptr;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 val = TRIG_DMA;
 
 	if ((sg == NULL) || (num_sg <= 0) || !offset || !index)
@@ -372,7 +375,11 @@ static int rtsx_transfer_sglist_adma_partial(struct rtsx_chip *chip, u8 card,
 	sg_cnt = dma_map_sg(&(rtsx->pci->dev), sg, num_sg, dma_dir);
 
 	resid = size;
+<<<<<<< HEAD
 	sg_ptr = sg;
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	chip->sgi = 0;
 	/* Usually the next entry will be @sg@ + 1, but if this sg element
 	 * is part of a chained scatterlist, it could jump to the start of
@@ -380,14 +387,23 @@ static int rtsx_transfer_sglist_adma_partial(struct rtsx_chip *chip, u8 card,
 	 * the proper sg
 	 */
 	for (i = 0; i < *index; i++)
+<<<<<<< HEAD
 		sg_ptr = sg_next(sg_ptr);
+=======
+		sg = sg_next(sg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = *index; i < sg_cnt; i++) {
 		dma_addr_t addr;
 		unsigned int len;
 		u8 option;
 
+<<<<<<< HEAD
 		addr = sg_dma_address(sg_ptr);
 		len = sg_dma_len(sg_ptr);
+=======
+		addr = sg_dma_address(sg);
+		len = sg_dma_len(sg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		RTSX_DEBUGP("DMA addr: 0x%x, Len: 0x%x\n",
 			     (unsigned int)addr, len);
@@ -416,7 +432,11 @@ static int rtsx_transfer_sglist_adma_partial(struct rtsx_chip *chip, u8 card,
 		if (!resid)
 			break;
 
+<<<<<<< HEAD
 		sg_ptr = sg_next(sg_ptr);
+=======
+		sg = sg_next(sg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	RTSX_DEBUGP("SG table count = %d\n", chip->sgi);

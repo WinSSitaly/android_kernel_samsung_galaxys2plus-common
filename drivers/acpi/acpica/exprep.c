@@ -6,7 +6,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,7 +51,10 @@
 #include "acinterp.h"
 #include "amlcode.h"
 #include "acnamesp.h"
+<<<<<<< HEAD
 #include "acdispat.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define _COMPONENT          ACPI_EXECUTER
 ACPI_MODULE_NAME("exprep")
@@ -456,6 +463,7 @@ acpi_status acpi_ex_prep_field_value(struct acpi_create_field_info *info)
 		obj_desc->field.region_obj =
 		    acpi_ns_get_attached_object(info->region_node);
 
+<<<<<<< HEAD
 		/* Fields specific to generic_serial_bus fields */
 
 		obj_desc->field.access_length = info->access_length;
@@ -480,6 +488,8 @@ acpi_status acpi_ex_prep_field_value(struct acpi_create_field_info *info)
 			obj_desc->field.resource_length = info->resource_length;
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Allow full data read from EC address space */
 
 		if ((obj_desc->field.region_obj->region.space_id ==

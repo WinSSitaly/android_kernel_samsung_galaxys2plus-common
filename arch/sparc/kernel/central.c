@@ -6,7 +6,10 @@
 #include <linux/kernel.h>
 #include <linux/types.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/string.h>
 #include <linux/init.h>
 #include <linux/of_device.h>
@@ -269,4 +272,8 @@ static int __init sunfire_init(void)
 	return 0;
 }
 
+<<<<<<< HEAD
 fs_initcall(sunfire_init);
+=======
+subsys_initcall(sunfire_init);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

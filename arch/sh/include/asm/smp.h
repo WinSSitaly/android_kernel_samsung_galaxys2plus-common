@@ -8,7 +8,11 @@
 #ifdef CONFIG_SMP
 
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/current.h>
 #include <asm/percpu.h>
 

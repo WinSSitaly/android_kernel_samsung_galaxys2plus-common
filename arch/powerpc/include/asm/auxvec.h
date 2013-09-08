@@ -16,6 +16,9 @@
  */
 #define AT_SYSINFO_EHDR		33
 
+<<<<<<< HEAD
 #define AT_VECTOR_SIZE_ARCH 6 /* entries in ARCH_DLINFO */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

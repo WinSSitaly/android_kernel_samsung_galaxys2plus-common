@@ -243,7 +243,11 @@ done:
 	spin_unlock_irqrestore(&pmlmepriv->lock, irqL);
 }
 
+<<<<<<< HEAD
 void r8712_set_802_11_infrastructure_mode(struct _adapter *padapter,
+=======
+u8 r8712_set_802_11_infrastructure_mode(struct _adapter *padapter,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	enum NDIS_802_11_NETWORK_INFRASTRUCTURE networktype)
 {
 	unsigned long irqL;
@@ -290,6 +294,10 @@ void r8712_set_802_11_infrastructure_mode(struct _adapter *padapter,
 		}
 		spin_unlock_irqrestore(&pmlmepriv->lock, irqL);
 	}
+<<<<<<< HEAD
+=======
+	return true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 u8 r8712_set_802_11_disassociate(struct _adapter *padapter)

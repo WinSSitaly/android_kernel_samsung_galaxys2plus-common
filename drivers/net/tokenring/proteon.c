@@ -31,6 +31,10 @@ static const char version[] = "proteon.c: v1.00 02/01/2003 by Jochen Friedrich\n
 #include <linux/trdevice.h>
 #include <linux/platform_device.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/irq.h>
 #include <asm/pci.h>

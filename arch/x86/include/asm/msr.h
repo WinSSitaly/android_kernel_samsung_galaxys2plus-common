@@ -169,6 +169,7 @@ static inline int wrmsr_safe(unsigned msr, unsigned low, unsigned high)
 	return native_write_msr_safe(msr, low, high);
 }
 
+<<<<<<< HEAD
 /*
  * rdmsr with exception handling.
  *
@@ -177,6 +178,9 @@ static inline int wrmsr_safe(unsigned msr, unsigned low, unsigned high)
  * exception tables - using this macro earlier than that causes machine
  * hangs on boxes which do not implement the @msr in the first argument.
  */
+=======
+/* rdmsr with exception handling */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define rdmsr_safe(msr, p1, p2)					\
 ({								\
 	int __err;						\

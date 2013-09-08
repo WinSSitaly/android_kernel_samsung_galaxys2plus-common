@@ -141,8 +141,12 @@ static int omapbl_probe(struct platform_device *pdev)
 	if (!pdata)
 		return -ENXIO;
 
+<<<<<<< HEAD
 	bl = devm_kzalloc(&pdev->dev, sizeof(struct omap_backlight),
 			  GFP_KERNEL);
+=======
+	bl = kzalloc(sizeof(struct omap_backlight), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(!bl))
 		return -ENOMEM;
 
@@ -151,8 +155,15 @@ static int omapbl_probe(struct platform_device *pdev)
 	props.max_brightness = OMAPBL_MAX_INTENSITY;
 	dev = backlight_device_register("omap-bl", &pdev->dev, bl, &omapbl_ops,
 					&props);
+<<<<<<< HEAD
 	if (IS_ERR(dev))
 		return PTR_ERR(dev);
+=======
+	if (IS_ERR(dev)) {
+		kfree(bl);
+		return PTR_ERR(dev);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bl->powermode = FB_BLANK_POWERDOWN;
 	bl->current_intensity = 0;
@@ -176,8 +187,15 @@ static int omapbl_probe(struct platform_device *pdev)
 static int omapbl_remove(struct platform_device *pdev)
 {
 	struct backlight_device *dev = platform_get_drvdata(pdev);
+<<<<<<< HEAD
 
 	backlight_device_unregister(dev);
+=======
+	struct omap_backlight *bl = dev_get_drvdata(&dev->dev);
+
+	backlight_device_unregister(dev);
+	kfree(bl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -192,7 +210,22 @@ static struct platform_driver omapbl_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(omapbl_driver);
+=======
+static int __init omapbl_init(void)
+{
+	return platform_driver_register(&omapbl_driver);
+}
+
+static void __exit omapbl_exit(void)
+{
+	platform_driver_unregister(&omapbl_driver);
+}
+
+module_init(omapbl_init);
+module_exit(omapbl_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Andrzej Zaborowski <balrog@zabor.org>");
 MODULE_DESCRIPTION("OMAP LCD Backlight driver");

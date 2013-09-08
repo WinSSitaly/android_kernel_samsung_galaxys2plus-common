@@ -84,7 +84,11 @@ out:
 
 struct irqaction c0_compare_irqaction = {
 	.handler = c0_compare_interrupt,
+<<<<<<< HEAD
 	.flags = IRQF_PERCPU | IRQF_TIMER,
+=======
+	.flags = IRQF_DISABLED | IRQF_PERCPU | IRQF_TIMER,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name = "timer",
 };
 
@@ -103,10 +107,26 @@ static int c0_compare_int_pending(void)
 
 /*
  * Compare interrupt can be routed and latched outside the core,
+<<<<<<< HEAD
  * so wait up to worst case number of cycle counter ticks for timer interrupt
  * changes to propagate to the cause register.
  */
 #define COMPARE_INT_SEEN_TICKS 50
+=======
+ * so a single execution hazard barrier may not be enough to give
+ * it time to clear as seen in the Cause register.  4 time the
+ * pipeline depth seems reasonably conservative, and empirically
+ * works better in configurations with high CPU/bus clock ratios.
+ */
+
+#define compare_change_hazard() \
+	do { \
+		irq_disable_hazard(); \
+		irq_disable_hazard(); \
+		irq_disable_hazard(); \
+		irq_disable_hazard(); \
+	} while (0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int c0_compare_int_usable(void)
 {
@@ -117,12 +137,17 @@ int c0_compare_int_usable(void)
 	 * IP7 already pending?  Try to clear it by acking the timer.
 	 */
 	if (c0_compare_int_pending()) {
+<<<<<<< HEAD
 		cnt = read_c0_count();
 		write_c0_compare(cnt);
 		back_to_back_c0_hazard();
 		while (read_c0_count() < (cnt  + COMPARE_INT_SEEN_TICKS))
 			if (!c0_compare_int_pending())
 				break;
+=======
+		write_c0_compare(read_c0_count());
+		compare_change_hazard();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (c0_compare_int_pending())
 			return 0;
 	}
@@ -131,7 +156,11 @@ int c0_compare_int_usable(void)
 		cnt = read_c0_count();
 		cnt += delta;
 		write_c0_compare(cnt);
+<<<<<<< HEAD
 		back_to_back_c0_hazard();
+=======
+		compare_change_hazard();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if ((int)(read_c0_count() - cnt) < 0)
 		    break;
 		/* increase delta if the timer was already expired */
@@ -140,6 +169,7 @@ int c0_compare_int_usable(void)
 	while ((int)(read_c0_count() - cnt) <= 0)
 		;	/* Wait for expiry  */
 
+<<<<<<< HEAD
 	while (read_c0_count() < (cnt + COMPARE_INT_SEEN_TICKS))
 		if (c0_compare_int_pending())
 			break;
@@ -151,6 +181,14 @@ int c0_compare_int_usable(void)
 	while (read_c0_count() < (cnt + COMPARE_INT_SEEN_TICKS))
 		if (!c0_compare_int_pending())
 			break;
+=======
+	compare_change_hazard();
+	if (!c0_compare_int_pending())
+		return 0;
+
+	write_c0_compare(read_c0_count());
+	compare_change_hazard();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (c0_compare_int_pending())
 		return 0;
 

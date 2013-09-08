@@ -33,7 +33,11 @@ static ssize_t sta_ ##name## _read(struct file *file,			\
 #define STA_OPS(name)							\
 static const struct file_operations sta_ ##name## _ops = {		\
 	.read = sta_##name##_read,					\
+<<<<<<< HEAD
 	.open = simple_open,						\
+=======
+	.open = mac80211_open_file_generic,				\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek = generic_file_llseek,					\
 }
 
@@ -41,7 +45,11 @@ static const struct file_operations sta_ ##name## _ops = {		\
 static const struct file_operations sta_ ##name## _ops = {		\
 	.read = sta_##name##_read,					\
 	.write = sta_##name##_write,					\
+<<<<<<< HEAD
 	.open = simple_open,						\
+=======
+	.open = mac80211_open_file_generic,				\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek = generic_file_llseek,					\
 }
 
@@ -56,6 +64,7 @@ STA_FILE(last_signal, last_signal, D);
 static ssize_t sta_flags_read(struct file *file, char __user *userbuf,
 			      size_t count, loff_t *ppos)
 {
+<<<<<<< HEAD
 	char buf[121];
 	struct sta_info *sta = file->private_data;
 
@@ -73,6 +82,21 @@ static ssize_t sta_flags_read(struct file *file, char __user *userbuf,
 			    TEST(TDLS_PEER_AUTH), TEST(4ADDR_EVENT),
 			    TEST(INSERTED), TEST(RATE_CONTROL));
 #undef TEST
+=======
+	char buf[100];
+	struct sta_info *sta = file->private_data;
+	u32 staflags = get_sta_flags(sta);
+	int res = scnprintf(buf, sizeof(buf), "%s%s%s%s%s%s%s%s%s",
+		staflags & WLAN_STA_AUTH ? "AUTH\n" : "",
+		staflags & WLAN_STA_ASSOC ? "ASSOC\n" : "",
+		staflags & WLAN_STA_PS_STA ? "PS (sta)\n" : "",
+		staflags & WLAN_STA_PS_DRIVER ? "PS (driver)\n" : "",
+		staflags & WLAN_STA_AUTHORIZED ? "AUTHORIZED\n" : "",
+		staflags & WLAN_STA_SHORT_PREAMBLE ? "SHORT PREAMBLE\n" : "",
+		staflags & WLAN_STA_WME ? "WME\n" : "",
+		staflags & WLAN_STA_WDS ? "WDS\n" : "",
+		staflags & WLAN_STA_MFP ? "MFP\n" : "");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return simple_read_from_buffer(userbuf, count, ppos, buf, res);
 }
 STA_OPS(flags);
@@ -82,6 +106,7 @@ static ssize_t sta_num_ps_buf_frames_read(struct file *file,
 					  size_t count, loff_t *ppos)
 {
 	struct sta_info *sta = file->private_data;
+<<<<<<< HEAD
 	char buf[17*IEEE80211_NUM_ACS], *p = buf;
 	int ac;
 
@@ -90,6 +115,10 @@ static ssize_t sta_num_ps_buf_frames_read(struct file *file,
 			       skb_queue_len(&sta->ps_tx_buf[ac]) +
 			       skb_queue_len(&sta->tx_filtered[ac]));
 	return simple_read_from_buffer(userbuf, count, ppos, buf, p - buf);
+=======
+	return mac80211_format_buffer(userbuf, count, ppos, "%u\n",
+				      skb_queue_len(&sta->ps_tx_buf));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 STA_OPS(num_ps_buf_frames);
 
@@ -275,9 +304,15 @@ static ssize_t sta_ht_capa_read(struct file *file, char __user *userbuf,
 
 		PRINT_HT_CAP((htc->cap & BIT(10)), "HT Delayed Block Ack");
 
+<<<<<<< HEAD
 		PRINT_HT_CAP(!(htc->cap & BIT(11)), "Max AMSDU length: "
 			     "3839 bytes");
 		PRINT_HT_CAP((htc->cap & BIT(11)), "Max AMSDU length: "
+=======
+		PRINT_HT_CAP((htc->cap & BIT(11)), "Max AMSDU length: "
+			     "3839 bytes");
+		PRINT_HT_CAP(!(htc->cap & BIT(11)), "Max AMSDU length: "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     "7935 bytes");
 
 		/*

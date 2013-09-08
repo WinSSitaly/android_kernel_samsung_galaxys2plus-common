@@ -36,11 +36,19 @@
 
 #include <linux/ipmi_msgdefs.h>
 #include <linux/proc_fs.h>
+<<<<<<< HEAD
 #include <linux/platform_device.h>
 #include <linux/ipmi.h>
 
 struct device;
 
+=======
+#include <linux/module.h>
+#include <linux/device.h>
+#include <linux/platform_device.h>
+#include <linux/ipmi.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* This files describes the interface for IPMI system management interface
    drivers to bind into the IPMI message handler. */
 

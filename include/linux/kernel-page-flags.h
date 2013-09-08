@@ -30,9 +30,12 @@
 #define KPF_NOPAGE		20
 
 #define KPF_KSM			21
+<<<<<<< HEAD
 #define KPF_THP			22
 
 #ifdef __KERNEL__
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* kernel hacking assistances
  * WARNING: subject to change, never rely on them!
@@ -46,6 +49,9 @@
 #define KPF_ARCH		38
 #define KPF_UNCACHED		39
 
+<<<<<<< HEAD
 #endif /* __KERNEL__ */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* LINUX_KERNEL_PAGE_FLAGS_H */

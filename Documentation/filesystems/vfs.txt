@@ -114,7 +114,11 @@ members are defined:
 struct file_system_type {
 	const char *name;
 	int fs_flags;
+<<<<<<< HEAD
         struct dentry *(*mount) (struct file_system_type *, int,
+=======
+        struct dentry (*mount) (struct file_system_type *, int,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
                        const char *, void *);
         void (*kill_sb) (struct super_block *);
         struct module *owner;
@@ -225,12 +229,19 @@ struct super_operations {
         void (*clear_inode) (struct inode *);
         void (*umount_begin) (struct super_block *);
 
+<<<<<<< HEAD
         int (*show_options)(struct seq_file *, struct dentry *);
 
         ssize_t (*quota_read)(struct super_block *, int, char *, size_t, loff_t);
         ssize_t (*quota_write)(struct super_block *, int, const char *, size_t, loff_t);
 	int (*nr_cached_objects)(struct super_block *);
 	void (*free_cached_objects)(struct super_block *, int);
+=======
+        int (*show_options)(struct seq_file *, struct vfsmount *);
+
+        ssize_t (*quota_read)(struct super_block *, int, char *, size_t, loff_t);
+        ssize_t (*quota_write)(struct super_block *, int, const char *, size_t, loff_t);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 All methods are called without any locks being held, unless otherwise
@@ -303,6 +314,7 @@ or bottom half).
 
   quota_write: called by the VFS to write to filesystem quota file.
 
+<<<<<<< HEAD
   nr_cached_objects: called by the sb cache shrinking function for the
 	filesystem to return the number of freeable cached objects it contains.
 	Optional.
@@ -323,6 +335,8 @@ or bottom half).
 	implementations will cause holdoff problems due to large scan batch
 	sizes.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Whoever sets up the inode is responsible for filling in the "i_op" field. This
 is a pointer to a "struct inode_operations" which describes the methods that
 can be performed on individual inodes.
@@ -341,22 +355,37 @@ This describes how the VFS can manipulate an inode in your
 filesystem. As of kernel 2.6.22, the following members are defined:
 
 struct inode_operations {
+<<<<<<< HEAD
 	int (*create) (struct inode *,struct dentry *, umode_t, struct nameidata *);
+=======
+	int (*create) (struct inode *,struct dentry *,int, struct nameidata *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dentry * (*lookup) (struct inode *,struct dentry *, struct nameidata *);
 	int (*link) (struct dentry *,struct inode *,struct dentry *);
 	int (*unlink) (struct inode *,struct dentry *);
 	int (*symlink) (struct inode *,struct dentry *,const char *);
+<<<<<<< HEAD
 	int (*mkdir) (struct inode *,struct dentry *,umode_t);
 	int (*rmdir) (struct inode *,struct dentry *);
 	int (*mknod) (struct inode *,struct dentry *,umode_t,dev_t);
+=======
+	int (*mkdir) (struct inode *,struct dentry *,int);
+	int (*rmdir) (struct inode *,struct dentry *);
+	int (*mknod) (struct inode *,struct dentry *,int,dev_t);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*rename) (struct inode *, struct dentry *,
 			struct inode *, struct dentry *);
 	int (*readlink) (struct dentry *, char __user *,int);
         void * (*follow_link) (struct dentry *, struct nameidata *);
         void (*put_link) (struct dentry *, struct nameidata *, void *);
 	void (*truncate) (struct inode *);
+<<<<<<< HEAD
 	int (*permission) (struct inode *, int);
 	int (*get_acl)(struct inode *, int);
+=======
+	int (*permission) (struct inode *, int, unsigned int);
+	int (*check_acl)(struct inode *, int, unsigned int);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*setattr) (struct dentry *, struct iattr *);
 	int (*getattr) (struct vfsmount *mnt, struct dentry *, struct kstat *);
 	int (*setxattr) (struct dentry *, const char *,const void *,size_t,int);
@@ -445,7 +474,11 @@ otherwise noted.
   permission: called by the VFS to check for access rights on a POSIX-like
   	filesystem.
 
+<<<<<<< HEAD
 	May be called in rcu-walk mode (mask & MAY_NOT_BLOCK). If in rcu-walk
+=======
+	May be called in rcu-walk mode (flags & IPERM_FLAG_RCU). If in rcu-walk
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         mode, the filesystem must check the permission without blocking or
 	storing to the inode.
 
@@ -777,7 +810,11 @@ struct file_operations {
 	int (*open) (struct inode *, struct file *);
 	int (*flush) (struct file *);
 	int (*release) (struct inode *, struct file *);
+<<<<<<< HEAD
 	int (*fsync) (struct file *, loff_t, loff_t, int datasync);
+=======
+	int (*fsync) (struct file *, int datasync);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*aio_fsync) (struct kiocb *, int datasync);
 	int (*fasync) (int, struct file *, int);
 	int (*lock) (struct file *, int, struct file_lock *);
@@ -993,7 +1030,11 @@ struct dentry_operations {
 
 	If the 'rcu_walk' parameter is true, then the caller is doing a
 	pathwalk in RCU-walk mode.  Sleeping is not permitted in this mode,
+<<<<<<< HEAD
 	and the caller can be asked to leave it and call again by returning
+=======
+	and the caller can be asked to leave it and call again by returing
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	-ECHILD.
 
 	This function is only used if DCACHE_MANAGE_TRANSIT is set on the
@@ -1053,6 +1094,12 @@ manipulate dentries:
 	and the dentry is returned. The caller must use dput()
 	to free the dentry when it finishes using it.
 
+<<<<<<< HEAD
+=======
+For further information on dentry locking, please refer to the document
+Documentation/filesystems/dentry-locking.txt.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Mount Options
 =============
 

@@ -6,8 +6,11 @@
 #include <linux/kernel.h>
 #include <linux/tty.h>
 
+<<<<<<< HEAD
 #include <video/sa1100fb.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/hardware.h>
 #include <asm/setup.h>
 #include <asm/mach-types.h>
@@ -17,7 +20,10 @@
 #include <asm/mach/map.h>
 #include <asm/mach/serial_sa1100.h>
 #include <mach/mcp.h>
+<<<<<<< HEAD
 #include <mach/irqs.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "generic.h"
 
@@ -29,6 +35,7 @@ static struct mcp_plat_data lart_mcp_data = {
 	.sclk_rate	= 11981000,
 };
 
+<<<<<<< HEAD
 #ifdef LART_GREY_LCD
 static struct sa1100fb_mach_info lart_grey_info = {
 	.pixclock	= 150000,	.bpp		= 4,
@@ -109,6 +116,10 @@ static void __init lart_init(void)
 		sa11x0_register_lcd(inf);
 
 	sa11x0_ppc_configure_mcp();
+=======
+static void __init lart_init(void)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sa11x0_register_mcp(&lart_mcp_data);
 }
 
@@ -142,6 +153,7 @@ static void __init lart_map_io(void)
 }
 
 MACHINE_START(LART, "LART")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= lart_map_io,
 	.nr_irqs	= SA1100_NR_IRQS,
@@ -149,4 +161,11 @@ MACHINE_START(LART, "LART")
 	.init_machine	= lart_init,
 	.timer		= &sa1100_timer,
 	.restart	= sa11x0_restart,
+=======
+	.boot_params	= 0xc0000100,
+	.map_io		= lart_map_io,
+	.init_irq	= sa1100_init_irq,
+	.init_machine	= lart_init,
+	.timer		= &sa1100_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

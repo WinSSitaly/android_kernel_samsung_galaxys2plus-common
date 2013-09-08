@@ -1,6 +1,10 @@
 #ifndef PD_COMMON_H
 #define PD_COMMON_H
 
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/fs.h>
 #include <linux/wait.h>
 #include <linux/list.h>
@@ -140,7 +144,11 @@ struct pd_dvb_adapter {
 	u8			reserved[3];
 
 	/* data for power resume*/
+<<<<<<< HEAD
 	struct dtv_frontend_properties fe_param;
+=======
+	struct dvb_frontend_parameters fe_param;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* for channel scanning */
 	int		prev_freq;

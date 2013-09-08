@@ -22,8 +22,15 @@
 #define STATIC
 #define DEBUG 1
 #define XFS_BUF_LOCK_TRACKING 1
+<<<<<<< HEAD
 #endif
 
 #include "xfs_linux.h"
 
+=======
+/* #define QUOTADEBUG 1 */
+#endif
+
+#include <linux-2.6/xfs_linux.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* __XFS_H__ */

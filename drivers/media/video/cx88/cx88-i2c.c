@@ -132,7 +132,11 @@ static void do_i2c_scan(const char *name, struct i2c_client *c)
 	}
 }
 
+<<<<<<< HEAD
 /* init + register i2c adapter */
+=======
+/* init + register i2c algo-bit adapter */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int cx88_i2c_init(struct cx88_core *core, struct pci_dev *pci)
 {
 	/* Prevents usage of invalid delay values */

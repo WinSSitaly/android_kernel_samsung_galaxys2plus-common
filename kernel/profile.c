@@ -13,7 +13,11 @@
  *	to resolve timer interrupt livelocks, William Irwin, Oracle, 2004
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/profile.h>
 #include <linux/bootmem.h>
 #include <linux/notifier.h>

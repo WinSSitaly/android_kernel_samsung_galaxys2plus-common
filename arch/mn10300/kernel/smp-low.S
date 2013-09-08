@@ -13,9 +13,15 @@
 #include <linux/sys.h>
 #include <linux/linkage.h>
 #include <asm/smp.h>
+<<<<<<< HEAD
 #include <asm/thread_info.h>
 #include <asm/cpu-regs.h>
 #include <asm/intctl-regs.h>
+=======
+#include <asm/system.h>
+#include <asm/thread_info.h>
+#include <asm/cpu-regs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <proc/smp-regs.h>
 #include <asm/asm-offsets.h>
 #include <asm/frame.inc>

@@ -31,6 +31,11 @@ struct clk;
 #define HDMI_SND_SRC_HBR	(3 << 0)
 
 struct sh_mobile_hdmi_info {
+<<<<<<< HEAD
+=======
+	struct sh_mobile_lcdc_chan_cfg	*lcd_chan;
+	struct device			*lcd_dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int			 flags;
 	long (*clk_optimize_parent)(unsigned long target, unsigned long *best_freq,
 				    unsigned long *parent_freq);

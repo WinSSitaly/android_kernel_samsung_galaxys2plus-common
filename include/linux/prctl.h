@@ -102,6 +102,7 @@
 
 #define PR_MCE_KILL_GET 34
 
+<<<<<<< HEAD
 /*
  * Tune up process memory map specifics.
  */
@@ -124,4 +125,6 @@
 #define PR_SET_CHILD_SUBREAPER 36
 #define PR_GET_CHILD_SUBREAPER 37
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _LINUX_PRCTL_H */

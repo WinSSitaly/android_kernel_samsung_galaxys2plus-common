@@ -71,6 +71,10 @@ extern unsigned int num_io_spaces;
 #include <asm/intrinsics.h>
 #include <asm/machvec.h>
 #include <asm/page.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm-generic/iomap.h>
 
 /*

@@ -29,7 +29,11 @@
 #include <linux/backlight.h>
 #include <linux/timer.h>
 #include <linux/workqueue.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define APPLE_VENDOR_ID		0x05AC
 
@@ -63,7 +67,10 @@ static const struct usb_device_id appledisplay_table[] = {
 	{ APPLEDISPLAY_DEVICE(0x9219) },
 	{ APPLEDISPLAY_DEVICE(0x921c) },
 	{ APPLEDISPLAY_DEVICE(0x921d) },
+<<<<<<< HEAD
 	{ APPLEDISPLAY_DEVICE(0x9236) },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Terminating entry */
 	{ }

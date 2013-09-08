@@ -5,7 +5,11 @@
  ******************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -76,10 +80,14 @@ struct acpi_rsconvert_info *acpi_gbl_set_resource_dispatch[] = {
 	acpi_rs_convert_address64,	/* 0x0D, ACPI_RESOURCE_TYPE_ADDRESS64 */
 	acpi_rs_convert_ext_address64,	/* 0x0E, ACPI_RESOURCE_TYPE_EXTENDED_ADDRESS64 */
 	acpi_rs_convert_ext_irq,	/* 0x0F, ACPI_RESOURCE_TYPE_EXTENDED_IRQ */
+<<<<<<< HEAD
 	acpi_rs_convert_generic_reg,	/* 0x10, ACPI_RESOURCE_TYPE_GENERIC_REGISTER */
 	acpi_rs_convert_gpio,	/* 0x11, ACPI_RESOURCE_TYPE_GPIO */
 	acpi_rs_convert_fixed_dma,	/* 0x12, ACPI_RESOURCE_TYPE_FIXED_DMA */
 	NULL,			/* 0x13, ACPI_RESOURCE_TYPE_SERIAL_BUS - Use subtype table below */
+=======
+	acpi_rs_convert_generic_reg	/* 0x10, ACPI_RESOURCE_TYPE_GENERIC_REGISTER */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Dispatch tables for AML-to-resource (Get Resource) conversion functions */
@@ -97,7 +105,11 @@ struct acpi_rsconvert_info *acpi_gbl_get_resource_dispatch[] = {
 	acpi_rs_convert_end_dpf,	/* 0x07, ACPI_RESOURCE_NAME_END_DEPENDENT */
 	acpi_rs_convert_io,	/* 0x08, ACPI_RESOURCE_NAME_IO */
 	acpi_rs_convert_fixed_io,	/* 0x09, ACPI_RESOURCE_NAME_FIXED_IO */
+<<<<<<< HEAD
 	acpi_rs_convert_fixed_dma,	/* 0x0A, ACPI_RESOURCE_NAME_FIXED_DMA */
+=======
+	NULL,			/* 0x0A, Reserved */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL,			/* 0x0B, Reserved */
 	NULL,			/* 0x0C, Reserved */
 	NULL,			/* 0x0D, Reserved */
@@ -117,6 +129,7 @@ struct acpi_rsconvert_info *acpi_gbl_get_resource_dispatch[] = {
 	acpi_rs_convert_address16,	/* 0x08, ACPI_RESOURCE_NAME_ADDRESS16 */
 	acpi_rs_convert_ext_irq,	/* 0x09, ACPI_RESOURCE_NAME_EXTENDED_IRQ */
 	acpi_rs_convert_address64,	/* 0x0A, ACPI_RESOURCE_NAME_ADDRESS64 */
+<<<<<<< HEAD
 	acpi_rs_convert_ext_address64,	/* 0x0B, ACPI_RESOURCE_NAME_EXTENDED_ADDRESS64 */
 	acpi_rs_convert_gpio,	/* 0x0C, ACPI_RESOURCE_NAME_GPIO */
 	NULL,			/* 0x0D, Reserved */
@@ -130,6 +143,9 @@ struct acpi_rsconvert_info *acpi_gbl_convert_resource_serial_bus_dispatch[] = {
 	acpi_rs_convert_i2c_serial_bus,
 	acpi_rs_convert_spi_serial_bus,
 	acpi_rs_convert_uart_serial_bus,
+=======
+	acpi_rs_convert_ext_address64	/* 0x0B, ACPI_RESOURCE_NAME_EXTENDED_ADDRESS64 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #ifdef ACPI_FUTURE_USAGE
@@ -155,6 +171,7 @@ struct acpi_rsdump_info *acpi_gbl_dump_resource_dispatch[] = {
 	acpi_rs_dump_ext_address64,	/* ACPI_RESOURCE_TYPE_EXTENDED_ADDRESS64 */
 	acpi_rs_dump_ext_irq,	/* ACPI_RESOURCE_TYPE_EXTENDED_IRQ */
 	acpi_rs_dump_generic_reg,	/* ACPI_RESOURCE_TYPE_GENERIC_REGISTER */
+<<<<<<< HEAD
 	acpi_rs_dump_gpio,	/* ACPI_RESOURCE_TYPE_GPIO */
 	acpi_rs_dump_fixed_dma,	/* ACPI_RESOURCE_TYPE_FIXED_DMA */
 	NULL,			/* ACPI_RESOURCE_TYPE_SERIAL_BUS */
@@ -165,6 +182,8 @@ struct acpi_rsdump_info *acpi_gbl_dump_serial_bus_dispatch[] = {
 	acpi_rs_dump_i2c_serial_bus,	/* AML_RESOURCE_I2C_BUS_TYPE */
 	acpi_rs_dump_spi_serial_bus,	/* AML_RESOURCE_SPI_BUS_TYPE */
 	acpi_rs_dump_uart_serial_bus,	/* AML_RESOURCE_UART_BUS_TYPE */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #endif
 
@@ -191,10 +210,14 @@ const u8 acpi_gbl_aml_resource_sizes[] = {
 	sizeof(struct aml_resource_address64),	/* ACPI_RESOURCE_TYPE_ADDRESS64 */
 	sizeof(struct aml_resource_extended_address64),	/*ACPI_RESOURCE_TYPE_EXTENDED_ADDRESS64 */
 	sizeof(struct aml_resource_extended_irq),	/* ACPI_RESOURCE_TYPE_EXTENDED_IRQ */
+<<<<<<< HEAD
 	sizeof(struct aml_resource_generic_register),	/* ACPI_RESOURCE_TYPE_GENERIC_REGISTER */
 	sizeof(struct aml_resource_gpio),	/* ACPI_RESOURCE_TYPE_GPIO */
 	sizeof(struct aml_resource_fixed_dma),	/* ACPI_RESOURCE_TYPE_FIXED_DMA */
 	sizeof(struct aml_resource_common_serialbus),	/* ACPI_RESOURCE_TYPE_SERIAL_BUS */
+=======
+	sizeof(struct aml_resource_generic_register)	/* ACPI_RESOURCE_TYPE_GENERIC_REGISTER */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 const u8 acpi_gbl_resource_struct_sizes[] = {
@@ -210,7 +233,11 @@ const u8 acpi_gbl_resource_struct_sizes[] = {
 	ACPI_RS_SIZE_MIN,
 	ACPI_RS_SIZE(struct acpi_resource_io),
 	ACPI_RS_SIZE(struct acpi_resource_fixed_io),
+<<<<<<< HEAD
 	ACPI_RS_SIZE(struct acpi_resource_fixed_dma),
+=======
+	0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	0,
 	0,
 	0,
@@ -230,6 +257,7 @@ const u8 acpi_gbl_resource_struct_sizes[] = {
 	ACPI_RS_SIZE(struct acpi_resource_address16),
 	ACPI_RS_SIZE(struct acpi_resource_extended_irq),
 	ACPI_RS_SIZE(struct acpi_resource_address64),
+<<<<<<< HEAD
 	ACPI_RS_SIZE(struct acpi_resource_extended_address64),
 	ACPI_RS_SIZE(struct acpi_resource_gpio),
 	ACPI_RS_SIZE(struct acpi_resource_common_serialbus)
@@ -247,4 +275,7 @@ const u8 acpi_gbl_resource_struct_serial_bus_sizes[] = {
 	ACPI_RS_SIZE(struct acpi_resource_i2c_serialbus),
 	ACPI_RS_SIZE(struct acpi_resource_spi_serialbus),
 	ACPI_RS_SIZE(struct acpi_resource_uart_serialbus),
+=======
+	ACPI_RS_SIZE(struct acpi_resource_extended_address64)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };

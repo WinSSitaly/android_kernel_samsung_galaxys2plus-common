@@ -2,7 +2,11 @@
  * Finger Sensing Pad PS/2 mouse driver.
  *
  * Copyright (C) 2005-2007 Asia Vital Components Co., Ltd.
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Tai-hwa Liang, Sentelic Corporation.
+=======
+ * Copyright (C) 2005-2010 Tai-hwa Liang, Sentelic Corporation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *   This program is free software; you can redistribute it and/or
  *   modify it under the terms of the GNU General Public License
@@ -20,8 +24,13 @@
  */
 
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/input.h>
 #include <linux/input/mt.h>
+=======
+#include <linux/version.h>
+#include <linux/input.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ctype.h>
 #include <linux/libps2.h>
 #include <linux/serio.h>
@@ -37,9 +46,12 @@
 #define	FSP_CMD_TIMEOUT		200
 #define	FSP_CMD_TIMEOUT2	30
 
+<<<<<<< HEAD
 #define	GET_ABS_X(packet)	((packet[1] << 2) | ((packet[3] >> 2) & 0x03))
 #define	GET_ABS_Y(packet)	((packet[2] << 2) | (packet[3] & 0x03))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /** Driver version. */
 static const char fsp_drv_ver[] = "1.0.0-K";
 
@@ -94,7 +106,12 @@ static int fsp_reg_read(struct psmouse *psmouse, int reg_addr, int *reg_val)
 	 * to do that for writes because sysfs set helper does this for
 	 * us.
 	 */
+<<<<<<< HEAD
 	psmouse_deactivate(psmouse);
+=======
+	ps2_command(ps2dev, NULL, PSMOUSE_CMD_DISABLE);
+	psmouse_set_state(psmouse, PSMOUSE_CMD_MODE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ps2_begin_command(ps2dev);
 
@@ -131,10 +148,17 @@ static int fsp_reg_read(struct psmouse *psmouse, int reg_addr, int *reg_val)
 
  out:
 	ps2_end_command(ps2dev);
+<<<<<<< HEAD
 	psmouse_activate(psmouse);
 	psmouse_dbg(psmouse,
 		    "READ REG: 0x%02x is 0x%02x (rc = %d)\n",
 		    reg_addr, *reg_val, rc);
+=======
+	ps2_command(ps2dev, NULL, PSMOUSE_CMD_ENABLE);
+	psmouse_set_state(psmouse, PSMOUSE_ACTIVATED);
+	dev_dbg(&ps2dev->serio->dev, "READ REG: 0x%02x is 0x%02x (rc = %d)\n",
+		reg_addr, *reg_val, rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -165,7 +189,11 @@ static int fsp_reg_write(struct psmouse *psmouse, int reg_addr, int reg_val)
 	ps2_sendbyte(ps2dev, v, FSP_CMD_TIMEOUT2);
 
 	if (ps2_sendbyte(ps2dev, 0xf3, FSP_CMD_TIMEOUT) < 0)
+<<<<<<< HEAD
 		goto out;
+=======
+		return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((v = fsp_test_invert_cmd(reg_val)) != reg_val) {
 		/* inversion is required */
@@ -184,9 +212,14 @@ static int fsp_reg_write(struct psmouse *psmouse, int reg_addr, int reg_val)
 
  out:
 	ps2_end_command(ps2dev);
+<<<<<<< HEAD
 	psmouse_dbg(psmouse,
 		    "WRITE REG: 0x%02x to 0x%02x (rc = %d)\n",
 		    reg_addr, reg_val, rc);
+=======
+	dev_dbg(&ps2dev->serio->dev, "WRITE REG: 0x%02x to 0x%02x (rc = %d)\n",
+		reg_addr, reg_val, rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -217,7 +250,12 @@ static int fsp_page_reg_read(struct psmouse *psmouse, int *reg_val)
 	unsigned char param[3];
 	int rc = -1;
 
+<<<<<<< HEAD
 	psmouse_deactivate(psmouse);
+=======
+	ps2_command(ps2dev, NULL, PSMOUSE_CMD_DISABLE);
+	psmouse_set_state(psmouse, PSMOUSE_CMD_MODE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ps2_begin_command(ps2dev);
 
@@ -242,10 +280,17 @@ static int fsp_page_reg_read(struct psmouse *psmouse, int *reg_val)
 
  out:
 	ps2_end_command(ps2dev);
+<<<<<<< HEAD
 	psmouse_activate(psmouse);
 	psmouse_dbg(psmouse,
 		    "READ PAGE REG: 0x%02x (rc = %d)\n",
 		    *reg_val, rc);
+=======
+	ps2_command(ps2dev, NULL, PSMOUSE_CMD_ENABLE);
+	psmouse_set_state(psmouse, PSMOUSE_ACTIVATED);
+	dev_dbg(&ps2dev->serio->dev, "READ PAGE REG: 0x%02x (rc = %d)\n",
+		*reg_val, rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -264,7 +309,11 @@ static int fsp_page_reg_write(struct psmouse *psmouse, int reg_val)
 	ps2_sendbyte(ps2dev, 0x88, FSP_CMD_TIMEOUT2);
 
 	if (ps2_sendbyte(ps2dev, 0xf3, FSP_CMD_TIMEOUT) < 0)
+<<<<<<< HEAD
 		goto out;
+=======
+		return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((v = fsp_test_invert_cmd(reg_val)) != reg_val) {
 		ps2_sendbyte(ps2dev, 0x47, FSP_CMD_TIMEOUT2);
@@ -281,9 +330,14 @@ static int fsp_page_reg_write(struct psmouse *psmouse, int reg_val)
 
  out:
 	ps2_end_command(ps2dev);
+<<<<<<< HEAD
 	psmouse_dbg(psmouse,
 		    "WRITE PAGE REG: to 0x%02x (rc = %d)\n",
 		    reg_val, rc);
+=======
+	dev_dbg(&ps2dev->serio->dev, "WRITE PAGE REG: to 0x%02x (rc = %d)\n",
+		reg_val, rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -313,7 +367,11 @@ static int fsp_get_buttons(struct psmouse *psmouse, int *btn)
 	};
 	int val;
 
+<<<<<<< HEAD
 	if (fsp_reg_read(psmouse, FSP_REG_TMOD_STATUS, &val) == -1)
+=======
+	if (fsp_reg_read(psmouse, FSP_REG_TMOD_STATUS1, &val) == -1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 
 	*btn = buttons[(val & 0x30) >> 4];
@@ -327,7 +385,11 @@ static int fsp_opc_tag_enable(struct psmouse *psmouse, bool enable)
 	int res = 0;
 
 	if (fsp_reg_read(psmouse, FSP_REG_OPC_QDOWN, &v) == -1) {
+<<<<<<< HEAD
 		psmouse_err(psmouse, "Unable get OPC state.\n");
+=======
+		dev_err(&psmouse->ps2dev.serio->dev, "Unable get OPC state.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	}
 
@@ -344,7 +406,12 @@ static int fsp_opc_tag_enable(struct psmouse *psmouse, bool enable)
 	}
 
 	if (res != 0) {
+<<<<<<< HEAD
 		psmouse_err(psmouse, "Unable to enable OPC tag.\n");
+=======
+		dev_err(&psmouse->ps2dev.serio->dev,
+			"Unable to enable OPC tag.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		res = -EIO;
 	}
 
@@ -411,7 +478,11 @@ static int fsp_onpad_hscr(struct psmouse *psmouse, bool enable)
 static ssize_t fsp_attr_set_setreg(struct psmouse *psmouse, void *data,
 				   const char *buf, size_t count)
 {
+<<<<<<< HEAD
 	int reg, val;
+=======
+	unsigned long reg, val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *rest;
 	ssize_t retval;
 
@@ -419,11 +490,15 @@ static ssize_t fsp_attr_set_setreg(struct psmouse *psmouse, void *data,
 	if (rest == buf || *rest != ' ' || reg > 0xff)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	retval = kstrtoint(rest + 1, 16, &val);
 	if (retval)
 		return retval;
 
 	if (val > 0xff)
+=======
+	if (strict_strtoul(rest + 1, 16, &val) || val > 0xff)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	if (fsp_reg_write_enable(psmouse, true))
@@ -455,6 +530,7 @@ static ssize_t fsp_attr_set_getreg(struct psmouse *psmouse, void *data,
 					const char *buf, size_t count)
 {
 	struct fsp_data *pad = psmouse->private;
+<<<<<<< HEAD
 	int reg, val, err;
 
 	err = kstrtoint(buf, 16, &reg);
@@ -462,6 +538,12 @@ static ssize_t fsp_attr_set_getreg(struct psmouse *psmouse, void *data,
 		return err;
 
 	if (reg > 0xff)
+=======
+	unsigned long reg;
+	int val;
+
+	if (strict_strtoul(buf, 16, &reg) || reg > 0xff)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	if (fsp_reg_read(psmouse, reg, &val))
@@ -490,6 +572,7 @@ static ssize_t fsp_attr_show_pagereg(struct psmouse *psmouse,
 static ssize_t fsp_attr_set_pagereg(struct psmouse *psmouse, void *data,
 					const char *buf, size_t count)
 {
+<<<<<<< HEAD
 	int val, err;
 
 	err = kstrtoint(buf, 16, &val);
@@ -497,6 +580,11 @@ static ssize_t fsp_attr_set_pagereg(struct psmouse *psmouse, void *data,
 		return err;
 
 	if (val > 0xff)
+=======
+	unsigned long val;
+
+	if (strict_strtoul(buf, 16, &val) || val > 0xff)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	if (fsp_page_reg_write(psmouse, val))
@@ -519,6 +607,7 @@ static ssize_t fsp_attr_show_vscroll(struct psmouse *psmouse,
 static ssize_t fsp_attr_set_vscroll(struct psmouse *psmouse, void *data,
 					const char *buf, size_t count)
 {
+<<<<<<< HEAD
 	unsigned int val;
 	int err;
 
@@ -527,6 +616,11 @@ static ssize_t fsp_attr_set_vscroll(struct psmouse *psmouse, void *data,
 		return err;
 
 	if (val > 1)
+=======
+	unsigned long val;
+
+	if (strict_strtoul(buf, 10, &val) || val > 1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	fsp_onpad_vscr(psmouse, val);
@@ -548,6 +642,7 @@ static ssize_t fsp_attr_show_hscroll(struct psmouse *psmouse,
 static ssize_t fsp_attr_set_hscroll(struct psmouse *psmouse, void *data,
 					const char *buf, size_t count)
 {
+<<<<<<< HEAD
 	unsigned int val;
 	int err;
 
@@ -556,6 +651,11 @@ static ssize_t fsp_attr_set_hscroll(struct psmouse *psmouse, void *data,
 		return err;
 
 	if (val > 1)
+=======
+	unsigned long val;
+
+	if (strict_strtoul(buf, 10, &val) || val > 1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	fsp_onpad_hscr(psmouse, val);
@@ -622,12 +722,18 @@ static struct attribute_group fsp_attribute_group = {
 	.attrs = fsp_attributes,
 };
 
+<<<<<<< HEAD
 #ifdef	FSP_DEBUG
 static void fsp_packet_debug(struct psmouse *psmouse, unsigned char packet[])
+=======
+#ifdef FSP_DEBUG
+static void fsp_packet_debug(unsigned char packet[])
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static unsigned int ps2_packet_cnt;
 	static unsigned int ps2_last_second;
 	unsigned int jiffies_msec;
+<<<<<<< HEAD
 	const char *packet_type = "UNKNOWN";
 	unsigned short abs_x = 0, abs_y = 0;
 
@@ -659,16 +765,31 @@ static void fsp_packet_debug(struct psmouse *psmouse, unsigned char packet[])
 
 	if (jiffies_msec - ps2_last_second > 1000) {
 		psmouse_dbg(psmouse, "PS/2 packets/sec = %d\n", ps2_packet_cnt);
+=======
+
+	ps2_packet_cnt++;
+	jiffies_msec = jiffies_to_msecs(jiffies);
+	printk(KERN_DEBUG "%08dms PS/2 packets: %02x, %02x, %02x, %02x\n",
+		jiffies_msec, packet[0], packet[1], packet[2], packet[3]);
+
+	if (jiffies_msec - ps2_last_second > 1000) {
+		printk(KERN_DEBUG "PS/2 packets/sec = %d\n", ps2_packet_cnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ps2_packet_cnt = 0;
 		ps2_last_second = jiffies_msec;
 	}
 }
 #else
+<<<<<<< HEAD
 static void fsp_packet_debug(struct psmouse *psmouse, unsigned char packet[])
+=======
+static void fsp_packet_debug(unsigned char packet[])
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 }
 #endif
 
+<<<<<<< HEAD
 static void fsp_set_slot(struct input_dev *dev, int slot, bool active,
 			 unsigned int x, unsigned int y)
 {
@@ -680,13 +801,18 @@ static void fsp_set_slot(struct input_dev *dev, int slot, bool active,
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static psmouse_ret_t fsp_process_byte(struct psmouse *psmouse)
 {
 	struct input_dev *dev = psmouse->dev;
 	struct fsp_data *ad = psmouse->private;
 	unsigned char *packet = psmouse->packet;
 	unsigned char button_status = 0, lscroll = 0, rscroll = 0;
+<<<<<<< HEAD
 	unsigned short abs_x, abs_y, fgrs = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rel_x, rel_y;
 
 	if (psmouse->pktcnt < 4)
@@ -696,6 +822,7 @@ static psmouse_ret_t fsp_process_byte(struct psmouse *psmouse)
 	 * Full packet accumulated, process it
 	 */
 
+<<<<<<< HEAD
 	fsp_packet_debug(psmouse, packet);
 
 	switch (psmouse->packet[0] >> FSP_PKT_TYPE_SHIFT) {
@@ -768,12 +895,22 @@ static psmouse_ret_t fsp_process_byte(struct psmouse *psmouse)
 		input_report_key(dev, BTN_TOUCH, fgrs);
 		input_report_key(dev, BTN_TOOL_FINGER, fgrs == 1);
 		input_report_key(dev, BTN_TOOL_DOUBLETAP, fgrs == 2);
+=======
+	switch (psmouse->packet[0] >> FSP_PKT_TYPE_SHIFT) {
+	case FSP_PKT_TYPE_ABS:
+		dev_warn(&psmouse->ps2dev.serio->dev,
+			 "Unexpected absolute mode packet, ignored.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case FSP_PKT_TYPE_NORMAL_OPC:
 		/* on-pad click, filter it if necessary */
 		if ((ad->flags & FSPDRV_FLAG_EN_OPC) != FSPDRV_FLAG_EN_OPC)
+<<<<<<< HEAD
 			packet[0] &= ~FSP_PB0_LBTN;
+=======
+			packet[0] &= ~BIT(0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* fall through */
 
 	case FSP_PKT_TYPE_NORMAL:
@@ -820,6 +957,11 @@ static psmouse_ret_t fsp_process_byte(struct psmouse *psmouse)
 
 	input_sync(dev);
 
+<<<<<<< HEAD
+=======
+	fsp_packet_debug(packet);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return PSMOUSE_FULL_PACKET;
 }
 
@@ -843,6 +985,7 @@ static int fsp_activate_protocol(struct psmouse *psmouse)
 
 	ps2_command(ps2dev, param, PSMOUSE_CMD_GETID);
 	if (param[0] != 0x04) {
+<<<<<<< HEAD
 		psmouse_err(psmouse,
 			    "Unable to enable 4 bytes packet format.\n");
 		return -EIO;
@@ -943,6 +1086,44 @@ static int fsp_set_input_params(struct psmouse *psmouse)
 		input_set_abs_params(dev, ABS_MT_POSITION_X, 0, abs_x, 0, 0);
 		input_set_abs_params(dev, ABS_MT_POSITION_Y, 0, abs_y, 0, 0);
 	}
+=======
+		dev_err(&psmouse->ps2dev.serio->dev,
+			"Unable to enable 4 bytes packet format.\n");
+		return -EIO;
+	}
+
+	if (fsp_reg_read(psmouse, FSP_REG_SYSCTL5, &val)) {
+		dev_err(&psmouse->ps2dev.serio->dev,
+			"Unable to read SYSCTL5 register.\n");
+		return -EIO;
+	}
+
+	val &= ~(FSP_BIT_EN_MSID7 | FSP_BIT_EN_MSID8 | FSP_BIT_EN_AUTO_MSID8);
+	/* Ensure we are not in absolute mode */
+	val &= ~FSP_BIT_EN_PKT_G0;
+	if (pad->buttons == 0x06) {
+		/* Left/Middle/Right & Scroll Up/Down/Right/Left */
+		val |= FSP_BIT_EN_MSID6;
+	}
+
+	if (fsp_reg_write(psmouse, FSP_REG_SYSCTL5, val)) {
+		dev_err(&psmouse->ps2dev.serio->dev,
+			"Unable to set up required mode bits.\n");
+		return -EIO;
+	}
+
+	/*
+	 * Enable OPC tags such that driver can tell the difference between
+	 * on-pad and real button click
+	 */
+	if (fsp_opc_tag_enable(psmouse, true))
+		dev_warn(&psmouse->ps2dev.serio->dev,
+			 "Failed to enable OPC tag mode.\n");
+
+	/* Enable on-pad vertical and horizontal scrolling */
+	fsp_onpad_vscr(psmouse, true);
+	fsp_onpad_hscr(psmouse, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1000,6 +1181,7 @@ static int fsp_reconnect(struct psmouse *psmouse)
 int fsp_init(struct psmouse *psmouse)
 {
 	struct fsp_data *priv;
+<<<<<<< HEAD
 	int ver, rev;
 	int error;
 
@@ -1010,6 +1192,20 @@ int fsp_init(struct psmouse *psmouse)
 
 	psmouse_info(psmouse, "Finger Sensing Pad, hw: %d.%d.%d, sw: %s\n",
 		     ver >> 4, ver & 0x0F, rev, fsp_drv_ver);
+=======
+	int ver, rev, buttons;
+	int error;
+
+	if (fsp_get_version(psmouse, &ver) ||
+	    fsp_get_revision(psmouse, &rev) ||
+	    fsp_get_buttons(psmouse, &buttons)) {
+		return -ENODEV;
+	}
+
+	printk(KERN_INFO
+		"Finger Sensing Pad, hw: %d.%d.%d, sw: %s, buttons: %d\n",
+		ver >> 4, ver & 0x0F, rev, fsp_drv_ver, buttons & 7);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	psmouse->private = priv = kzalloc(sizeof(struct fsp_data), GFP_KERNEL);
 	if (!priv)
@@ -1017,6 +1213,20 @@ int fsp_init(struct psmouse *psmouse)
 
 	priv->ver = ver;
 	priv->rev = rev;
+<<<<<<< HEAD
+=======
+	priv->buttons = buttons;
+
+	/* enable on-pad click by default */
+	priv->flags |= FSPDRV_FLAG_EN_OPC;
+
+	/* Set up various supported input event bits */
+	__set_bit(BTN_MIDDLE, psmouse->dev->keybit);
+	__set_bit(BTN_BACK, psmouse->dev->keybit);
+	__set_bit(BTN_FORWARD, psmouse->dev->keybit);
+	__set_bit(REL_WHEEL, psmouse->dev->relbit);
+	__set_bit(REL_HWHEEL, psmouse->dev->relbit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	psmouse->protocol_handler = fsp_process_byte;
 	psmouse->disconnect = fsp_disconnect;
@@ -1024,10 +1234,15 @@ int fsp_init(struct psmouse *psmouse)
 	psmouse->cleanup = fsp_reset;
 	psmouse->pktsize = 4;
 
+<<<<<<< HEAD
+=======
+	/* set default packet output based on number of buttons we found */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	error = fsp_activate_protocol(psmouse);
 	if (error)
 		goto err_out;
 
+<<<<<<< HEAD
 	/* Set up various supported input event bits */
 	error = fsp_set_input_params(psmouse);
 	if (error)
@@ -1038,6 +1253,13 @@ int fsp_init(struct psmouse *psmouse)
 	if (error) {
 		psmouse_err(psmouse,
 			    "Failed to create sysfs attributes (%d)", error);
+=======
+	error = sysfs_create_group(&psmouse->ps2dev.serio->dev.kobj,
+				   &fsp_attribute_group);
+	if (error) {
+		dev_err(&psmouse->ps2dev.serio->dev,
+			"Failed to create sysfs attributes (%d)", error);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_out;
 	}
 

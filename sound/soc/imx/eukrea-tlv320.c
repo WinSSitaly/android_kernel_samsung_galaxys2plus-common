@@ -26,7 +26,10 @@
 
 #include "../codecs/tlv320aic23.h"
 #include "imx-ssi.h"
+<<<<<<< HEAD
 #include "imx-audmux.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define CODEC_CLOCK 12000000
 
@@ -88,7 +91,10 @@ static struct snd_soc_dai_link eukrea_tlv320_dai = {
 
 static struct snd_soc_card eukrea_tlv320 = {
 	.name		= "cpuimx-audio",
+<<<<<<< HEAD
 	.owner		= THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link	= &eukrea_tlv320_dai,
 	.num_links	= 1,
 };
@@ -98,6 +104,7 @@ static struct platform_device *eukrea_tlv320_snd_device;
 static int __init eukrea_tlv320_init(void)
 {
 	int ret;
+<<<<<<< HEAD
 	int int_port = 0, ext_port;
 
 	if (machine_is_eukrea_cpuimx27()) {
@@ -135,6 +142,14 @@ static int __init eukrea_tlv320_init(void)
 		/* return happy. We might run on a totally different machine */
 		return 0;
 	}
+=======
+
+	if (!machine_is_eukrea_cpuimx27() && !machine_is_eukrea_cpuimx25sd()
+		&& !machine_is_eukrea_cpuimx35sd()
+		&& !machine_is_eukrea_cpuimx51sd())
+		/* return happy. We might run on a totally different machine */
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	eukrea_tlv320_snd_device = platform_device_alloc("soc-audio", -1);
 	if (!eukrea_tlv320_snd_device)

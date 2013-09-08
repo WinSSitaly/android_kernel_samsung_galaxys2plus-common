@@ -20,15 +20,23 @@
 #include <linux/slab.h>
 #include <linux/mtd/partitions.h>
 
+<<<<<<< HEAD
 static int parse_ofpart_partitions(struct mtd_info *master,
 				   struct mtd_partition **pparts,
 				   struct mtd_part_parser_data *data)
 {
 	struct device_node *node;
+=======
+int __devinit of_mtd_parse_partitions(struct device *dev,
+                                      struct device_node *node,
+                                      struct mtd_partition **pparts)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const char *partname;
 	struct device_node *pp;
 	int nr_parts, i;
 
+<<<<<<< HEAD
 
 	if (!data)
 		return 0;
@@ -37,6 +45,8 @@ static int parse_ofpart_partitions(struct mtd_info *master,
 	if (!node)
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* First count the subnodes */
 	pp = NULL;
 	nr_parts = 0;
@@ -78,7 +88,11 @@ static int parse_ofpart_partitions(struct mtd_info *master,
 
 	if (!i) {
 		of_node_put(pp);
+<<<<<<< HEAD
 		pr_err("No valid partition found on %s\n", node->full_name);
+=======
+		dev_err(dev, "No valid partition found on %s\n", node->full_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(*pparts);
 		*pparts = NULL;
 		return -EINVAL;
@@ -86,6 +100,7 @@ static int parse_ofpart_partitions(struct mtd_info *master,
 
 	return nr_parts;
 }
+<<<<<<< HEAD
 
 static struct mtd_part_parser ofpart_parser = {
 	.owner = THIS_MODULE,
@@ -182,3 +197,8 @@ MODULE_AUTHOR("Vitaly Wool, David Gibson");
  * the corresponding alias.
  */
 MODULE_ALIAS("ofoldpart");
+=======
+EXPORT_SYMBOL(of_mtd_parse_partitions);
+
+MODULE_LICENSE("GPL");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

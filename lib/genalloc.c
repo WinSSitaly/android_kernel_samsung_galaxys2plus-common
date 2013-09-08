@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
  * Basic general purpose allocator for managing special purpose
  * memory, for example, memory that is not managed by the regular
  * kmalloc/kfree interface.  Uses for this includes on-device special
@@ -21,6 +22,12 @@
  * the allocator can NOT be used in NMI handler.  So code uses the
  * allocator in NMI handler should depend on
  * CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG.
+=======
+ * Basic general purpose allocator for managing special purpose memory
+ * not managed by the regular kmalloc/kfree interface.
+ * Uses for this includes on-device special memory, uncached memory
+ * etc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Copyright 2005 (C) Jes Sorensen <jes@trained-monkey.org>
  *
@@ -29,6 +36,7 @@
  */
 
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/bitmap.h>
 #include <linux/rculist.h>
@@ -134,6 +142,12 @@ static int bitmap_clear_ll(unsigned long *map, int start, int nr)
 
 	return 0;
 }
+=======
+#include <linux/module.h>
+#include <linux/bitmap.h>
+#include <linux/genalloc.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * gen_pool_create - create a new special memory pool
@@ -149,7 +163,11 @@ struct gen_pool *gen_pool_create(int min_alloc_order, int nid)
 
 	pool = kmalloc_node(sizeof(struct gen_pool), GFP_KERNEL, nid);
 	if (pool != NULL) {
+<<<<<<< HEAD
 		spin_lock_init(&pool->lock);
+=======
+		rwlock_init(&pool->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		INIT_LIST_HEAD(&pool->chunks);
 		pool->min_alloc_order = min_alloc_order;
 	}
@@ -176,12 +194,17 @@ int gen_pool_add_virt(struct gen_pool *pool, unsigned long virt, phys_addr_t phy
 	struct gen_pool_chunk *chunk;
 	int nbits = size >> pool->min_alloc_order;
 	int nbytes = sizeof(struct gen_pool_chunk) +
+<<<<<<< HEAD
 				BITS_TO_LONGS(nbits) * sizeof(long);
+=======
+				(nbits + BITS_PER_BYTE - 1) / BITS_PER_BYTE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	chunk = kmalloc_node(nbytes, GFP_KERNEL | __GFP_ZERO, nid);
 	if (unlikely(chunk == NULL))
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	chunk->phys_addr = phys;
 	chunk->start_addr = virt;
 	chunk->end_addr = virt + size;
@@ -190,6 +213,16 @@ int gen_pool_add_virt(struct gen_pool *pool, unsigned long virt, phys_addr_t phy
 	spin_lock(&pool->lock);
 	list_add_rcu(&chunk->next_chunk, &pool->chunks);
 	spin_unlock(&pool->lock);
+=======
+	spin_lock_init(&chunk->lock);
+	chunk->phys_addr = phys;
+	chunk->start_addr = virt;
+	chunk->end_addr = virt + size;
+
+	write_lock(&pool->lock);
+	list_add(&chunk->next_chunk, &pool->chunks);
+	write_unlock(&pool->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -204,6 +237,7 @@ EXPORT_SYMBOL(gen_pool_add_virt);
  */
 phys_addr_t gen_pool_virt_to_phys(struct gen_pool *pool, unsigned long addr)
 {
+<<<<<<< HEAD
 	struct gen_pool_chunk *chunk;
 	phys_addr_t paddr = -1;
 
@@ -217,6 +251,21 @@ phys_addr_t gen_pool_virt_to_phys(struct gen_pool *pool, unsigned long addr)
 	rcu_read_unlock();
 
 	return paddr;
+=======
+	struct list_head *_chunk;
+	struct gen_pool_chunk *chunk;
+
+	read_lock(&pool->lock);
+	list_for_each(_chunk, &pool->chunks) {
+		chunk = list_entry(_chunk, struct gen_pool_chunk, next_chunk);
+
+		if (addr >= chunk->start_addr && addr < chunk->end_addr)
+			return chunk->phys_addr + addr - chunk->start_addr;
+	}
+	read_unlock(&pool->lock);
+
+	return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(gen_pool_virt_to_phys);
 
@@ -234,6 +283,10 @@ void gen_pool_destroy(struct gen_pool *pool)
 	int order = pool->min_alloc_order;
 	int bit, end_bit;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_safe(_chunk, _next_chunk, &pool->chunks) {
 		chunk = list_entry(_chunk, struct gen_pool_chunk, next_chunk);
 		list_del(&chunk->next_chunk);
@@ -255,6 +308,7 @@ EXPORT_SYMBOL(gen_pool_destroy);
  * @size: number of bytes to allocate from the pool
  *
  * Allocate the requested number of bytes from the specified pool.
+<<<<<<< HEAD
  * Uses a first-fit algorithm. Can not be used in NMI handler on
  * architectures without NMI-safe cmpxchg implementation.
  */
@@ -268,11 +322,23 @@ unsigned long gen_pool_alloc(struct gen_pool *pool, size_t size)
 #ifndef CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG
 	BUG_ON(in_nmi());
 #endif
+=======
+ * Uses a first-fit algorithm.
+ */
+unsigned long gen_pool_alloc(struct gen_pool *pool, size_t size)
+{
+	struct list_head *_chunk;
+	struct gen_pool_chunk *chunk;
+	unsigned long addr, flags;
+	int order = pool->min_alloc_order;
+	int nbits, start_bit, end_bit;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (size == 0)
 		return 0;
 
 	nbits = (size + (1UL << order) - 1) >> order;
+<<<<<<< HEAD
 	rcu_read_lock();
 	list_for_each_entry_rcu(chunk, &pool->chunks, next_chunk) {
 		if (size > atomic_read(&chunk->avail))
@@ -299,6 +365,32 @@ retry:
 	}
 	rcu_read_unlock();
 	return addr;
+=======
+
+	read_lock(&pool->lock);
+	list_for_each(_chunk, &pool->chunks) {
+		chunk = list_entry(_chunk, struct gen_pool_chunk, next_chunk);
+
+		end_bit = (chunk->end_addr - chunk->start_addr) >> order;
+
+		spin_lock_irqsave(&chunk->lock, flags);
+		start_bit = bitmap_find_next_zero_area(chunk->bits, end_bit, 0,
+						nbits, 0);
+		if (start_bit >= end_bit) {
+			spin_unlock_irqrestore(&chunk->lock, flags);
+			continue;
+		}
+
+		addr = chunk->start_addr + ((unsigned long)start_bit << order);
+
+		bitmap_set(chunk->bits, start_bit, nbits);
+		spin_unlock_irqrestore(&chunk->lock, flags);
+		read_unlock(&pool->lock);
+		return addr;
+	}
+	read_unlock(&pool->lock);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(gen_pool_alloc);
 
@@ -308,6 +400,7 @@ EXPORT_SYMBOL(gen_pool_alloc);
  * @addr: starting address of memory to free back to pool
  * @size: size in bytes of memory to free
  *
+<<<<<<< HEAD
  * Free previously allocated special memory back to the specified
  * pool.  Can not be used in NMI handler on architectures without
  * NMI-safe cmpxchg implementation.
@@ -400,3 +493,35 @@ size_t gen_pool_size(struct gen_pool *pool)
 	return size;
 }
 EXPORT_SYMBOL_GPL(gen_pool_size);
+=======
+ * Free previously allocated special memory back to the specified pool.
+ */
+void gen_pool_free(struct gen_pool *pool, unsigned long addr, size_t size)
+{
+	struct list_head *_chunk;
+	struct gen_pool_chunk *chunk;
+	unsigned long flags;
+	int order = pool->min_alloc_order;
+	int bit, nbits;
+
+	nbits = (size + (1UL << order) - 1) >> order;
+
+	read_lock(&pool->lock);
+	list_for_each(_chunk, &pool->chunks) {
+		chunk = list_entry(_chunk, struct gen_pool_chunk, next_chunk);
+
+		if (addr >= chunk->start_addr && addr < chunk->end_addr) {
+			BUG_ON(addr + size > chunk->end_addr);
+			spin_lock_irqsave(&chunk->lock, flags);
+			bit = (addr - chunk->start_addr) >> order;
+			while (nbits--)
+				__clear_bit(bit++, chunk->bits);
+			spin_unlock_irqrestore(&chunk->lock, flags);
+			break;
+		}
+	}
+	BUG_ON(nbits > 0);
+	read_unlock(&pool->lock);
+}
+EXPORT_SYMBOL(gen_pool_free);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

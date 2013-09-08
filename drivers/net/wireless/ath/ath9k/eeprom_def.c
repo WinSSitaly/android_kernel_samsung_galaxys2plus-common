@@ -14,7 +14,10 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+<<<<<<< HEAD
 #include <asm/unaligned.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "hw.h"
 #include "ar9002_phy.h"
 
@@ -121,7 +124,12 @@ static bool ath9k_hw_def_fill_eeprom(struct ath_hw *ah)
 	struct ath_common *common = ath9k_hw_common(ah);
 
 	if (!ath9k_hw_use_flash(ah)) {
+<<<<<<< HEAD
 		ath_dbg(common, EEPROM, "Reading from EEPROM, not flash\n");
+=======
+		ath_dbg(common, ATH_DBG_EEPROM,
+			"Reading from EEPROM, not flash\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (common->bus_ops->ath_bus_type == ATH_USB)
@@ -132,6 +140,7 @@ static bool ath9k_hw_def_fill_eeprom(struct ath_hw *ah)
 
 #undef SIZE_EEPROM_DEF
 
+<<<<<<< HEAD
 #if defined(CONFIG_ATH9K_DEBUGFS) || defined(CONFIG_ATH9K_HTC_DEBUGFS)
 static u32 ath9k_def_dump_modal_eeprom(char *buf, u32 len, u32 size,
 				       struct modal_eep_header *modal_hdr)
@@ -262,6 +271,8 @@ static u32 ath9k_hw_def_dump_eeprom(struct ath_hw *ah, bool dump_base_hdr,
 #endif
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ath9k_hw_def_check_eeprom(struct ath_hw *ah)
 {
 	struct ar5416_eeprom_def *eep =
@@ -278,7 +289,12 @@ static int ath9k_hw_def_check_eeprom(struct ath_hw *ah)
 	}
 
 	if (!ath9k_hw_use_flash(ah)) {
+<<<<<<< HEAD
 		ath_dbg(common, EEPROM, "Read Magic = 0x%04X\n", magic);
+=======
+		ath_dbg(common, ATH_DBG_EEPROM,
+			"Read Magic = 0x%04X\n", magic);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (magic != AR5416_EEPROM_MAGIC) {
 			magic2 = swab16(magic);
@@ -301,7 +317,11 @@ static int ath9k_hw_def_check_eeprom(struct ath_hw *ah)
 		}
 	}
 
+<<<<<<< HEAD
 	ath_dbg(common, EEPROM, "need_swap = %s\n",
+=======
+	ath_dbg(common, ATH_DBG_EEPROM, "need_swap = %s.\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		need_swap ? "True" : "False");
 
 	if (need_swap)
@@ -323,7 +343,11 @@ static int ath9k_hw_def_check_eeprom(struct ath_hw *ah)
 		u32 integer, j;
 		u16 word;
 
+<<<<<<< HEAD
 		ath_dbg(common, EEPROM,
+=======
+		ath_dbg(common, ATH_DBG_EEPROM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"EEPROM Endianness is not native.. Changing.\n");
 
 		word = swab16(eep->baseEepHeader.length);
@@ -383,7 +407,11 @@ static int ath9k_hw_def_check_eeprom(struct ath_hw *ah)
 	if ((ah->hw_version.devid == AR9280_DEVID_PCI) &&
 	    ((eep->baseEepHeader.version & 0xff) > 0x0a) &&
 	    (eep->baseEepHeader.pwdclkind == 0))
+<<<<<<< HEAD
 		ah->need_an_top2_fixup = true;
+=======
+		ah->need_an_top2_fixup = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((common->bus_ops->ath_bus_type == ATH_USB) &&
 	    (AR_SREV_9280(ah)))
@@ -398,7 +426,10 @@ static u32 ath9k_hw_def_get_eeprom(struct ath_hw *ah,
 	struct ar5416_eeprom_def *eep = &ah->eeprom.def;
 	struct modal_eep_header *pModal = eep->modalHeader;
 	struct base_eep_header *pBase = &eep->baseEepHeader;
+<<<<<<< HEAD
 	int band = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (param) {
 	case EEP_NFTHRESH_5:
@@ -406,6 +437,7 @@ static u32 ath9k_hw_def_get_eeprom(struct ath_hw *ah,
 	case EEP_NFTHRESH_2:
 		return pModal[1].noiseFloorThreshCh[0];
 	case EEP_MAC_LSW:
+<<<<<<< HEAD
 		return get_unaligned_be16(pBase->macAddr);
 	case EEP_MAC_MID:
 		return get_unaligned_be16(pBase->macAddr + 2);
@@ -413,6 +445,17 @@ static u32 ath9k_hw_def_get_eeprom(struct ath_hw *ah,
 		return get_unaligned_be16(pBase->macAddr + 4);
 	case EEP_REG_0:
 		return pBase->regDmn[0];
+=======
+		return pBase->macAddr[0] << 8 | pBase->macAddr[1];
+	case EEP_MAC_MID:
+		return pBase->macAddr[2] << 8 | pBase->macAddr[3];
+	case EEP_MAC_MSW:
+		return pBase->macAddr[4] << 8 | pBase->macAddr[5];
+	case EEP_REG_0:
+		return pBase->regDmn[0];
+	case EEP_REG_1:
+		return pBase->regDmn[1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case EEP_OP_CAP:
 		return pBase->deviceCap;
 	case EEP_OP_MODE:
@@ -464,6 +507,7 @@ static u32 ath9k_hw_def_get_eeprom(struct ath_hw *ah,
 			return pBase->pwr_table_offset;
 		else
 			return AR5416_PWR_TABLE_OFFSET_DB;
+<<<<<<< HEAD
 	case EEP_ANTENNA_GAIN_2G:
 		band = 1;
 		/* fall through */
@@ -472,6 +516,8 @@ static u32 ath9k_hw_def_get_eeprom(struct ath_hw *ah,
 			pModal[band].antennaGainCh[0],
 			pModal[band].antennaGainCh[1]),
 			pModal[band].antennaGainCh[2]);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return 0;
 	}
@@ -552,7 +598,12 @@ static void ath9k_hw_def_set_board_values(struct ath_hw *ah,
 				break;
 		}
 
+<<<<<<< HEAD
 		if ((ah->rxchainmask == 5 || ah->txchainmask == 5) && (i != 0))
+=======
+		if (AR_SREV_5416_20_OR_LATER(ah) &&
+		    (ah->rxchainmask == 5 || ah->txchainmask == 5) && (i != 0))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			regChainOffset = (i == 1) ? 0x2000 : 0x1000;
 		else
 			regChainOffset = i * 0x1000;
@@ -569,8 +620,14 @@ static void ath9k_hw_def_set_board_values(struct ath_hw *ah,
 			  SM(pModal->iqCalQCh[i],
 			     AR_PHY_TIMING_CTRL4_IQCORR_Q_Q_COFF));
 
+<<<<<<< HEAD
 		ath9k_hw_def_set_gain(ah, pModal, eep, txRxAttenLocal,
 				      regChainOffset, i);
+=======
+		if ((i == 0) || AR_SREV_5416_20_OR_LATER(ah))
+			ath9k_hw_def_set_gain(ah, pModal, eep, txRxAttenLocal,
+					      regChainOffset, i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (AR_SREV_9280_20_OR_LATER(ah)) {
@@ -826,7 +883,12 @@ static void ath9k_adjust_pdadc_values(struct ath_hw *ah,
 }
 
 static void ath9k_hw_set_def_power_cal_table(struct ath_hw *ah,
+<<<<<<< HEAD
 				  struct ath9k_channel *chan)
+=======
+				  struct ath9k_channel *chan,
+				  int16_t *pTxPowerIndexOffset)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 #define SM_PD_GAIN(x) SM(0x38, AR_PHY_TPCRG5_PD_GAIN_BOUNDARY_##x)
 #define SM_PDGAIN_B(x, y) \
@@ -896,7 +958,12 @@ static void ath9k_hw_set_def_power_cal_table(struct ath_hw *ah,
 		      xpdGainValues[2]);
 
 	for (i = 0; i < AR5416_MAX_CHAINS; i++) {
+<<<<<<< HEAD
 		if ((ah->rxchainmask == 5 || ah->txchainmask == 5) &&
+=======
+		if (AR_SREV_5416_20_OR_LATER(ah) &&
+		    (ah->rxchainmask == 5 || ah->txchainmask == 5) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    (i != 0)) {
 			regChainOffset = (i == 1) ? 0x2000 : 0x1000;
 		} else
@@ -937,6 +1004,7 @@ static void ath9k_hw_set_def_power_cal_table(struct ath_hw *ah,
 
 			ENABLE_REGWRITE_BUFFER(ah);
 
+<<<<<<< HEAD
 			if (OLC_FOR_AR9280_20_LATER) {
 				REG_WRITE(ah,
 					AR_PHY_TPCRG5 + regChainOffset,
@@ -955,11 +1023,35 @@ static void ath9k_hw_set_def_power_cal_table(struct ath_hw *ah,
 					SM_PDGAIN_B(3, 4));
 			}
 
+=======
+			if ((i == 0) || AR_SREV_5416_20_OR_LATER(ah)) {
+				if (OLC_FOR_AR9280_20_LATER) {
+					REG_WRITE(ah,
+						AR_PHY_TPCRG5 + regChainOffset,
+						SM(0x6,
+						AR_PHY_TPCRG5_PD_GAIN_OVERLAP) |
+						SM_PD_GAIN(1) | SM_PD_GAIN(2) |
+						SM_PD_GAIN(3) | SM_PD_GAIN(4));
+				} else {
+					REG_WRITE(ah,
+						AR_PHY_TPCRG5 + regChainOffset,
+						SM(pdGainOverlap_t2,
+						AR_PHY_TPCRG5_PD_GAIN_OVERLAP)|
+						SM_PDGAIN_B(0, 1) |
+						SM_PDGAIN_B(1, 2) |
+						SM_PDGAIN_B(2, 3) |
+						SM_PDGAIN_B(3, 4));
+				}
+			}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ath9k_adjust_pdadc_values(ah, pwr_table_offset,
 						  diff, pdadcValues);
 
 			regOffset = AR_PHY_BASE + (672 << 2) + regChainOffset;
 			for (j = 0; j < 32; j++) {
+<<<<<<< HEAD
 				reg32 = get_unaligned_le32(&pdadcValues[4 * j]);
 				REG_WRITE(ah, regOffset, reg32);
 
@@ -969,6 +1061,23 @@ static void ath9k_hw_set_def_power_cal_table(struct ath_hw *ah,
 					reg32);
 				ath_dbg(common, EEPROM,
 					"PDADC: Chain %d | PDADC %3d Value %3d | PDADC %3d Value %3d | PDADC %3d Value %3d | PDADC %3d Value %3d |\n",
+=======
+				reg32 = ((pdadcValues[4 * j + 0] & 0xFF) << 0) |
+					((pdadcValues[4 * j + 1] & 0xFF) << 8) |
+					((pdadcValues[4 * j + 2] & 0xFF) << 16)|
+					((pdadcValues[4 * j + 3] & 0xFF) << 24);
+				REG_WRITE(ah, regOffset, reg32);
+
+				ath_dbg(common, ATH_DBG_EEPROM,
+					"PDADC (%d,%4x): %4.4x %8.8x\n",
+					i, regChainOffset, regOffset,
+					reg32);
+				ath_dbg(common, ATH_DBG_EEPROM,
+					"PDADC: Chain %d | PDADC %3d "
+					"Value %3d | PDADC %3d Value %3d | "
+					"PDADC %3d Value %3d | PDADC %3d "
+					"Value %3d |\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					i, 4 * j, pdadcValues[4 * j],
 					4 * j + 1, pdadcValues[4 * j + 1],
 					4 * j + 2, pdadcValues[4 * j + 2],
@@ -980,6 +1089,10 @@ static void ath9k_hw_set_def_power_cal_table(struct ath_hw *ah,
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	*pTxPowerIndexOffset = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #undef SM_PD_GAIN
 #undef SM_PDGAIN_B
 }
@@ -988,15 +1101,31 @@ static void ath9k_hw_set_def_power_per_rate_table(struct ath_hw *ah,
 						  struct ath9k_channel *chan,
 						  int16_t *ratesArray,
 						  u16 cfgCtl,
+<<<<<<< HEAD
 						  u16 antenna_reduction,
+=======
+						  u16 AntennaReduction,
+						  u16 twiceMaxRegulatoryPower,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						  u16 powerLimit)
 {
 #define REDUCE_SCALED_POWER_BY_TWO_CHAIN     6  /* 10*log10(2)*2 */
 #define REDUCE_SCALED_POWER_BY_THREE_CHAIN   9 /* 10*log10(3)*2 */
 
+<<<<<<< HEAD
 	struct ar5416_eeprom_def *pEepData = &ah->eeprom.def;
 	u16 twiceMaxEdgePower;
 	int i;
+=======
+	struct ath_regulatory *regulatory = ath9k_hw_regulatory(ah);
+	struct ar5416_eeprom_def *pEepData = &ah->eeprom.def;
+	u16 twiceMaxEdgePower = MAX_RATE_POWER;
+	static const u16 tpScaleReductionTable[5] =
+		{ 0, 3, 6, 9, MAX_RATE_POWER };
+
+	int i;
+	int16_t twiceLargestAntenna;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct cal_ctl_data *rep;
 	struct cal_target_power_leg targetPowerOfdm, targetPowerCck = {
 		0, { 0, 0, 0, 0}
@@ -1008,7 +1137,11 @@ static void ath9k_hw_set_def_power_per_rate_table(struct ath_hw *ah,
 	struct cal_target_power_ht targetPowerHt20, targetPowerHt40 = {
 		0, {0, 0, 0, 0}
 	};
+<<<<<<< HEAD
 	u16 scaledPower = 0, minCtlPower;
+=======
+	u16 scaledPower = 0, minCtlPower, maxRegAllowedPower;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	static const u16 ctlModesFor11a[] = {
 		CTL_11A, CTL_5GHT20, CTL_11A_EXT, CTL_5GHT40
 	};
@@ -1027,7 +1160,31 @@ static void ath9k_hw_set_def_power_per_rate_table(struct ath_hw *ah,
 
 	ath9k_hw_get_channel_centers(ah, chan, &centers);
 
+<<<<<<< HEAD
 	scaledPower = powerLimit - antenna_reduction;
+=======
+	twiceLargestAntenna = max(
+		pEepData->modalHeader
+			[IS_CHAN_2GHZ(chan)].antennaGainCh[0],
+		pEepData->modalHeader
+			[IS_CHAN_2GHZ(chan)].antennaGainCh[1]);
+
+	twiceLargestAntenna = max((u8)twiceLargestAntenna,
+				  pEepData->modalHeader
+				  [IS_CHAN_2GHZ(chan)].antennaGainCh[2]);
+
+	twiceLargestAntenna = (int16_t)min(AntennaReduction -
+					   twiceLargestAntenna, 0);
+
+	maxRegAllowedPower = twiceMaxRegulatoryPower + twiceLargestAntenna;
+
+	if (regulatory->tp_scale != ATH9K_TP_SCALE_MAX) {
+		maxRegAllowedPower -=
+			(tpScaleReductionTable[(regulatory->tp_scale)] * 2);
+	}
+
+	scaledPower = min(powerLimit, maxRegAllowedPower);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (ar5416_get_ntxchains(tx_chainmask)) {
 	case 1:
@@ -1116,7 +1273,13 @@ static void ath9k_hw_set_def_power_per_rate_table(struct ath_hw *ah,
 		else
 			freq = centers.ctl_center;
 
+<<<<<<< HEAD
 		twiceMaxEdgePower = MAX_RATE_POWER;
+=======
+		if (ah->eep_ops->get_eeprom_ver(ah) == 14 &&
+		    ah->eep_ops->get_eeprom_rev(ah) <= 2)
+			twiceMaxEdgePower = MAX_RATE_POWER;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		for (i = 0; (i < AR5416_NUM_CTLS) && pEepData->ctlIndex[i]; i++) {
 			if ((((cfgCtl & ~CTL_MODE_M) |
@@ -1230,6 +1393,10 @@ static void ath9k_hw_def_set_txpower(struct ath_hw *ah,
 				    struct ath9k_channel *chan,
 				    u16 cfgCtl,
 				    u8 twiceAntennaReduction,
+<<<<<<< HEAD
+=======
+				    u8 twiceMaxRegulatoryPower,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    u8 powerLimit, bool test)
 {
 #define RT_AR_DELTA(x) (ratesArray[x] - cck_ofdm_delta)
@@ -1238,6 +1405,10 @@ static void ath9k_hw_def_set_txpower(struct ath_hw *ah,
 	struct modal_eep_header *pModal =
 		&(pEepData->modalHeader[IS_CHAN_2GHZ(chan)]);
 	int16_t ratesArray[Ar5416RateSize];
+<<<<<<< HEAD
+=======
+	int16_t txPowerIndexOffset = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 ht40PowerIncForPdadc = 2;
 	int i, cck_ofdm_delta = 0;
 
@@ -1251,18 +1422,43 @@ static void ath9k_hw_def_set_txpower(struct ath_hw *ah,
 	ath9k_hw_set_def_power_per_rate_table(ah, chan,
 					       &ratesArray[0], cfgCtl,
 					       twiceAntennaReduction,
+<<<<<<< HEAD
 					       powerLimit);
 
 	ath9k_hw_set_def_power_cal_table(ah, chan);
 
 	regulatory->max_power_level = 0;
 	for (i = 0; i < ARRAY_SIZE(ratesArray); i++) {
+=======
+					       twiceMaxRegulatoryPower,
+					       powerLimit);
+
+	ath9k_hw_set_def_power_cal_table(ah, chan, &txPowerIndexOffset);
+
+	regulatory->max_power_level = 0;
+	for (i = 0; i < ARRAY_SIZE(ratesArray); i++) {
+		ratesArray[i] =	(int16_t)(txPowerIndexOffset + ratesArray[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ratesArray[i] > MAX_RATE_POWER)
 			ratesArray[i] = MAX_RATE_POWER;
 		if (ratesArray[i] > regulatory->max_power_level)
 			regulatory->max_power_level = ratesArray[i];
 	}
 
+<<<<<<< HEAD
+=======
+	if (!test) {
+		i = rate6mb;
+
+		if (IS_CHAN_HT40(chan))
+			i = rateHt40_0;
+		else if (IS_CHAN_HT20(chan))
+			i = rateHt20_0;
+
+		regulatory->max_power_level = ratesArray[i];
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch(ar5416_get_ntxchains(ah->txchainmask)) {
 	case 1:
 		break;
@@ -1273,7 +1469,11 @@ static void ath9k_hw_def_set_txpower(struct ath_hw *ah,
 		regulatory->max_power_level += INCREASE_MAXPOW_BY_THREE_CHAIN;
 		break;
 	default:
+<<<<<<< HEAD
 		ath_dbg(ath9k_hw_common(ah), EEPROM,
+=======
+		ath_dbg(ath9k_hw_common(ah), ATH_DBG_EEPROM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"Invalid chainmask configuration\n");
 		break;
 	}
@@ -1391,7 +1591,12 @@ static u16 ath9k_hw_def_get_spur_channel(struct ath_hw *ah, u16 i, bool is2GHz)
 
 	u16 spur_val = AR_NO_SPUR;
 
+<<<<<<< HEAD
 	ath_dbg(common, ANI, "Getting spur idx:%d is2Ghz:%d val:%x\n",
+=======
+	ath_dbg(common, ATH_DBG_ANI,
+		"Getting spur idx:%d is2Ghz:%d val:%x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		i, is2GHz, ah->config.spurchans[i][is2GHz]);
 
 	switch (ah->config.spurmode) {
@@ -1399,8 +1604,13 @@ static u16 ath9k_hw_def_get_spur_channel(struct ath_hw *ah, u16 i, bool is2GHz)
 		break;
 	case SPUR_ENABLE_IOCTL:
 		spur_val = ah->config.spurchans[i][is2GHz];
+<<<<<<< HEAD
 		ath_dbg(common, ANI, "Getting spur val from new loc. %d\n",
 			spur_val);
+=======
+		ath_dbg(common, ATH_DBG_ANI,
+			"Getting spur val from new loc. %d\n", spur_val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case SPUR_ENABLE_EEPROM:
 		spur_val = EEP_DEF_SPURCHAN;
@@ -1416,7 +1626,10 @@ const struct eeprom_ops eep_def_ops = {
 	.check_eeprom		= ath9k_hw_def_check_eeprom,
 	.get_eeprom		= ath9k_hw_def_get_eeprom,
 	.fill_eeprom		= ath9k_hw_def_fill_eeprom,
+<<<<<<< HEAD
 	.dump_eeprom		= ath9k_hw_def_dump_eeprom,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.get_eeprom_ver		= ath9k_hw_def_get_eeprom_ver,
 	.get_eeprom_rev		= ath9k_hw_def_get_eeprom_rev,
 	.set_board_values	= ath9k_hw_def_set_board_values,

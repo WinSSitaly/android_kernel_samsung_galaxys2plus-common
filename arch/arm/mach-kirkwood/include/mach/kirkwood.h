@@ -80,7 +80,10 @@
 #define  UART1_VIRT_BASE	(DEV_BUS_VIRT_BASE | 0x2100)
 
 #define BRIDGE_VIRT_BASE	(KIRKWOOD_REGS_VIRT_BASE | 0x20000)
+<<<<<<< HEAD
 #define BRIDGE_PHYS_BASE	(KIRKWOOD_REGS_PHYS_BASE | 0x20000)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define CRYPTO_PHYS_BASE	(KIRKWOOD_REGS_PHYS_BASE | 0x30000)
 
@@ -136,5 +139,8 @@
 
 #define MV88F6282_DEV_ID	0x6282
 #define MV88F6282_REV_A0	0
+<<<<<<< HEAD
 #define MV88F6282_REV_A1	1
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

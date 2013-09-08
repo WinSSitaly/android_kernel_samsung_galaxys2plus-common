@@ -12,6 +12,10 @@
 #include <linux/mbus.h>
 
 struct mvsdio_platform_data {
+<<<<<<< HEAD
+=======
+	struct mbus_dram_target_info *dram;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int clock;
 	int gpio_card_detect;
 	int gpio_write_protect;

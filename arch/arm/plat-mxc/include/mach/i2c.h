@@ -11,10 +11,20 @@
 
 /**
  * struct imxi2c_platform_data - structure of platform data for MXC I2C driver
+<<<<<<< HEAD
+=======
+ * @init:	Initialise gpio's and other board specific things
+ * @exit:	Free everything initialised by @init
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @bitrate:	Bus speed measured in Hz
  *
  **/
 struct imxi2c_platform_data {
+<<<<<<< HEAD
+=======
+	int (*init)(struct device *dev);
+	void (*exit)(struct device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int bitrate;
 };
 

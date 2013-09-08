@@ -1,7 +1,11 @@
 /*
  * MPC85xx RDB Board Setup
  *
+<<<<<<< HEAD
  * Copyright 2009,2012 Freescale Semiconductor Inc.
+=======
+ * Copyright 2009 Freescale Semiconductor Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute  it and/or modify it
  * under  the terms of  the GNU General  Public License as published by the
@@ -18,6 +22,10 @@
 #include <linux/interrupt.h>
 #include <linux/of_platform.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/time.h>
 #include <asm/machdep.h>
 #include <asm/pci-bridge.h>
@@ -25,6 +33,7 @@
 #include <asm/prom.h>
 #include <asm/udbg.h>
 #include <asm/mpic.h>
+<<<<<<< HEAD
 #include <asm/qe.h>
 #include <asm/qe_ic.h>
 #include <asm/fsl_guts.h>
@@ -34,6 +43,11 @@
 #include "smp.h"
 
 #include "mpc85xx.h"
+=======
+
+#include <sysdev/fsl_soc.h>
+#include <sysdev/fsl_pci.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #undef DEBUG
 
@@ -47,6 +61,7 @@
 void __init mpc85xx_rdb_pic_init(void)
 {
 	struct mpic *mpic;
+<<<<<<< HEAD
 	unsigned long root = of_get_flat_dt_root();
 
 #ifdef CONFIG_QUICC_ENGINE
@@ -61,11 +76,39 @@ void __init mpc85xx_rdb_pic_init(void)
 	} else {
 		mpic = mpic_alloc(NULL, 0,
 		  MPIC_BIG_ENDIAN |
+=======
+	struct resource r;
+	struct device_node *np;
+	unsigned long root = of_get_flat_dt_root();
+
+	np = of_find_node_by_type(NULL, "open-pic");
+	if (np == NULL) {
+		printk(KERN_ERR "Could not find open-pic node\n");
+		return;
+	}
+
+	if (of_address_to_resource(np, 0, &r)) {
+		printk(KERN_ERR "Failed to map mpic register space\n");
+		of_node_put(np);
+		return;
+	}
+
+	if (of_flat_dt_is_compatible(root, "fsl,85XXRDB-CAMP")) {
+		mpic = mpic_alloc(np, r.start,
+			MPIC_PRIMARY |
+			MPIC_BIG_ENDIAN | MPIC_BROKEN_FRR_NIRQS,
+			0, 256, " OpenPIC  ");
+	} else {
+		mpic = mpic_alloc(np, r.start,
+		  MPIC_PRIMARY | MPIC_WANTS_RESET |
+		  MPIC_BIG_ENDIAN | MPIC_BROKEN_FRR_NIRQS |
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  MPIC_SINGLE_DEST_CPU,
 		  0, 256, " OpenPIC  ");
 	}
 
 	BUG_ON(mpic == NULL);
+<<<<<<< HEAD
 	mpic_init(mpic);
 
 #ifdef CONFIG_QUICC_ENGINE
@@ -78,15 +121,29 @@ void __init mpc85xx_rdb_pic_init(void)
 	} else
 		pr_err("%s: Could not find qe-ic node\n", __func__);
 #endif
+=======
+	of_node_put(np);
+
+	mpic_init(mpic);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 }
 
 /*
  * Setup the architecture
  */
+<<<<<<< HEAD
 static void __init mpc85xx_rdb_setup_arch(void)
 {
 #if defined(CONFIG_PCI) || defined(CONFIG_QUICC_ENGINE)
+=======
+#ifdef CONFIG_SMP
+extern void __init mpc85xx_smp_init(void);
+#endif
+static void __init mpc85xx_rdb_setup_arch(void)
+{
+#ifdef CONFIG_PCI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct device_node *np;
 #endif
 
@@ -101,6 +158,7 @@ static void __init mpc85xx_rdb_setup_arch(void)
 
 #endif
 
+<<<<<<< HEAD
 	mpc85xx_smp_init();
 
 #ifdef CONFIG_QUICC_ENGINE
@@ -169,6 +227,29 @@ machine_device_initcall(p1020_rdb_pc, mpc85xx_common_publish_devices);
 machine_device_initcall(p1020_utm_pc, mpc85xx_common_publish_devices);
 machine_device_initcall(p1021_rdb_pc, mpc85xx_common_publish_devices);
 machine_device_initcall(p1025_rdb, mpc85xx_common_publish_devices);
+=======
+#ifdef CONFIG_SMP
+	mpc85xx_smp_init();
+#endif
+
+	printk(KERN_INFO "MPC85xx RDB board from Freescale Semiconductor\n");
+}
+
+static struct of_device_id __initdata mpc85xxrdb_ids[] = {
+	{ .type = "soc", },
+	{ .compatible = "soc", },
+	{ .compatible = "simple-bus", },
+	{ .compatible = "gianfar", },
+	{},
+};
+
+static int __init mpc85xxrdb_publish_devices(void)
+{
+	return of_platform_bus_probe(NULL, mpc85xxrdb_ids, NULL);
+}
+machine_device_initcall(p2020_rdb, mpc85xxrdb_publish_devices);
+machine_device_initcall(p1020_rdb, mpc85xxrdb_publish_devices);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Called very early, device-tree isn't unflattened
@@ -191,6 +272,7 @@ static int __init p1020_rdb_probe(void)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int __init p1020_rdb_pc_probe(void)
 {
 	unsigned long root = of_get_flat_dt_root();
@@ -237,6 +319,8 @@ static int __init p1020_utm_pc_probe(void)
 	return of_flat_dt_is_compatible(root, "fsl,P1020UTM-PC");
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 define_machine(p2020_rdb) {
 	.name			= "P2020 RDB",
 	.probe			= p2020_rdb_probe,
@@ -264,6 +348,7 @@ define_machine(p1020_rdb) {
 	.calibrate_decr		= generic_calibrate_decr,
 	.progress		= udbg_progress,
 };
+<<<<<<< HEAD
 
 define_machine(p1021_rdb_pc) {
 	.name			= "P1021 RDB-PC",
@@ -348,3 +433,5 @@ define_machine(p1020_rdb_pc) {
 	.calibrate_decr		= generic_calibrate_decr,
 	.progress		= udbg_progress,
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

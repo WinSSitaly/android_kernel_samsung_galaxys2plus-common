@@ -26,7 +26,10 @@
 #include <linux/interrupt.h>
 #include <linux/irq.h>
 #include <asm/irq_cpu.h>
+<<<<<<< HEAD
 #include <bcm47xx.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void plat_irq_dispatch(void)
 {
@@ -52,6 +55,7 @@ void plat_irq_dispatch(void)
 
 void __init arch_init_irq(void)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_BCM47XX_BCMA
 	if (bcm47xx_bus_type == BCM47XX_BUS_TYPE_BCMA) {
 		bcma_write32(bcm47xx_bus.bcma.bus.drv_mips.core,
@@ -63,5 +67,7 @@ void __init arch_init_irq(void)
 		cp0_compare_irq = 7;
 	}
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mips_cpu_irq_init();
 }

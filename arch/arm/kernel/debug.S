@@ -10,7 +10,10 @@
  *  32-bit debugging code
  */
 #include <linux/linkage.h>
+<<<<<<< HEAD
 #include <asm/assembler.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		.text
 
@@ -23,7 +26,11 @@
 #if defined(CONFIG_DEBUG_ICEDCC)
 		@@ debug using ARM EmbeddedICE DCC channel
 
+<<<<<<< HEAD
 		.macro	addruart, rp, rv, tmp
+=======
+		.macro	addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.endm
 
 #if defined(CONFIG_CPU_V6) || defined(CONFIG_CPU_V6K) || defined(CONFIG_CPU_V7)
@@ -101,13 +108,21 @@
 
 #endif	/* CONFIG_CPU_V6 */
 
+<<<<<<< HEAD
 #elif !defined(CONFIG_DEBUG_SEMIHOSTING)
+=======
+#else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/debug-macro.S>
 #endif	/* CONFIG_DEBUG_ICEDCC */
 
 #ifdef CONFIG_MMU
 		.macro	addruart_current, rx, tmp1, tmp2
+<<<<<<< HEAD
 		addruart	\tmp1, \tmp2, \rx
+=======
+		addruart	\tmp1, \tmp2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mrc		p15, 0, \rx, c1, c0
 		tst		\rx, #1
 		moveq		\rx, \tmp1
@@ -152,12 +167,17 @@ printhex:	adr	r2, hexbuf
 		b	printascii
 ENDPROC(printhex2)
 
+<<<<<<< HEAD
 hexbuf:		.space 16
 
 		.ltorg
 
 #ifndef CONFIG_DEBUG_SEMIHOSTING
 
+=======
+		.ltorg
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ENTRY(printascii)
 		addruart_current r3, r1, r2
 		b	2f
@@ -181,6 +201,7 @@ ENTRY(printch)
 		b	1b
 ENDPROC(printch)
 
+<<<<<<< HEAD
 #else
 
 ENTRY(printascii)
@@ -201,3 +222,6 @@ ENTRY(printch)
 ENDPROC(printch)
 
 #endif
+=======
+hexbuf:		.space 16
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

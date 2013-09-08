@@ -4,7 +4,10 @@
 #include <linux/io.h>
 #include <linux/atmel_pwm.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 struct pwmled {
@@ -35,7 +38,11 @@ static void pwmled_brightness(struct led_classdev *cdev, enum led_brightness b)
  * NOTE:  we reuse the platform_data structure of GPIO leds,
  * but repurpose its "gpio" number as a PWM channel number.
  */
+<<<<<<< HEAD
 static int __devinit pwmled_probe(struct platform_device *pdev)
+=======
+static int __init pwmled_probe(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const struct gpio_led_platform_data	*pdata;
 	struct pwmled				*leds;
@@ -134,12 +141,19 @@ static int __exit pwmled_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+/* work with hotplug and coldplug */
+MODULE_ALIAS("platform:leds-atmel-pwm");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver pwmled_driver = {
 	.driver = {
 		.name =		"leds-atmel-pwm",
 		.owner =	THIS_MODULE,
 	},
 	/* REVISIT add suspend() and resume() methods */
+<<<<<<< HEAD
 	.probe =	pwmled_probe,
 	.remove =	__exit_p(pwmled_remove),
 };
@@ -149,3 +163,22 @@ module_platform_driver(pwmled_driver);
 MODULE_DESCRIPTION("Driver for LEDs with PWM-controlled brightness");
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:leds-atmel-pwm");
+=======
+	.remove =	__exit_p(pwmled_remove),
+};
+
+static int __init modinit(void)
+{
+	return platform_driver_probe(&pwmled_driver, pwmled_probe);
+}
+module_init(modinit);
+
+static void __exit modexit(void)
+{
+	platform_driver_unregister(&pwmled_driver);
+}
+module_exit(modexit);
+
+MODULE_DESCRIPTION("Driver for LEDs with PWM-controlled brightness");
+MODULE_LICENSE("GPL");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

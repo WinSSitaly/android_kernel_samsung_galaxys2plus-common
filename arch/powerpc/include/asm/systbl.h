@@ -171,7 +171,11 @@ SYSCALL_SPU(setresuid)
 SYSCALL_SPU(getresuid)
 SYSCALL(ni_syscall)
 SYSCALL_SPU(poll)
+<<<<<<< HEAD
 SYSCALL(ni_syscall)
+=======
+COMPAT_SYS(nfsservctl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 SYSCALL_SPU(setresgid)
 SYSCALL_SPU(getresgid)
 COMPAT_SYS_SPU(prctl)
@@ -354,5 +358,8 @@ COMPAT_SYS_SPU(clock_adjtime)
 SYSCALL_SPU(syncfs)
 COMPAT_SYS_SPU(sendmmsg)
 SYSCALL_SPU(setns)
+<<<<<<< HEAD
 COMPAT_SYS(process_vm_readv)
 COMPAT_SYS(process_vm_writev)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

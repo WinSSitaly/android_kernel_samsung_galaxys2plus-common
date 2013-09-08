@@ -812,7 +812,11 @@ acpi_thermal_unbind_cooling_device(struct thermal_zone_device *thermal,
 				thermal_zone_unbind_cooling_device);
 }
 
+<<<<<<< HEAD
 static const struct thermal_zone_device_ops acpi_thermal_zone_ops = {
+=======
+static struct thermal_zone_device_ops acpi_thermal_zone_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bind = acpi_thermal_bind_cooling_device,
 	.unbind	= acpi_thermal_unbind_cooling_device,
 	.get_temp = thermal_get_temp,
@@ -941,6 +945,7 @@ static int acpi_thermal_get_info(struct acpi_thermal *tz)
 	if (!tz)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	/* Get trip points [_CRT, _PSV, etc.] (required) */
 	result = acpi_thermal_get_trip_points(tz);
 	if (result)
@@ -948,6 +953,15 @@ static int acpi_thermal_get_info(struct acpi_thermal *tz)
 
 	/* Get temperature [_TMP] (required) */
 	result = acpi_thermal_get_temperature(tz);
+=======
+	/* Get temperature [_TMP] (required) */
+	result = acpi_thermal_get_temperature(tz);
+	if (result)
+		return result;
+
+	/* Get trip points [_CRT, _PSV, etc.] (required) */
+	result = acpi_thermal_get_trip_points(tz);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (result)
 		return result;
 

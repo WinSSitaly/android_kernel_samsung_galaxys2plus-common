@@ -411,7 +411,11 @@ unlock:
 
 static int bfusb_open(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	struct bfusb_data *data = hci_get_drvdata(hdev);
+=======
+	struct bfusb_data *data = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 	int i, err;
 
@@ -437,7 +441,11 @@ static int bfusb_open(struct hci_dev *hdev)
 
 static int bfusb_flush(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	struct bfusb_data *data = hci_get_drvdata(hdev);
+=======
+	struct bfusb_data *data = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BT_DBG("hdev %p bfusb %p", hdev, data);
 
@@ -448,7 +456,11 @@ static int bfusb_flush(struct hci_dev *hdev)
 
 static int bfusb_close(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	struct bfusb_data *data = hci_get_drvdata(hdev);
+=======
+	struct bfusb_data *data = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	BT_DBG("hdev %p bfusb %p", hdev, data);
@@ -483,7 +495,11 @@ static int bfusb_send_frame(struct sk_buff *skb)
 	if (!test_bit(HCI_RUNNING, &hdev->flags))
 		return -EBUSY;
 
+<<<<<<< HEAD
 	data = hci_get_drvdata(hdev);
+=======
+	data = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (bt_cb(skb)->pkt_type) {
 	case HCI_COMMAND_PKT:
@@ -544,6 +560,18 @@ static int bfusb_send_frame(struct sk_buff *skb)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void bfusb_destruct(struct hci_dev *hdev)
+{
+	struct bfusb_data *data = hdev->driver_data;
+
+	BT_DBG("hdev %p bfusb %p", hdev, data);
+
+	kfree(data);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int bfusb_ioctl(struct hci_dev *hdev, unsigned int cmd, unsigned long arg)
 {
 	return -ENOIOCTLCMD;
@@ -559,23 +587,38 @@ static int bfusb_load_firmware(struct bfusb_data *data,
 
 	BT_INFO("BlueFRITZ! USB loading firmware");
 
+<<<<<<< HEAD
 	buf = kmalloc(BFUSB_MAX_BLOCK_SIZE + 3, GFP_KERNEL);
 	if (!buf) {
 		BT_ERR("Can't allocate memory chunk for firmware");
 		return -ENOMEM;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pipe = usb_sndctrlpipe(data->udev, 0);
 
 	if (usb_control_msg(data->udev, pipe, USB_REQ_SET_CONFIGURATION,
 				0, 1, 0, NULL, 0, USB_CTRL_SET_TIMEOUT) < 0) {
 		BT_ERR("Can't change to loading configuration");
+<<<<<<< HEAD
 		kfree(buf);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EBUSY;
 	}
 
 	data->udev->toggle[0] = data->udev->toggle[1] = 0;
 
+<<<<<<< HEAD
+=======
+	buf = kmalloc(BFUSB_MAX_BLOCK_SIZE + 3, GFP_ATOMIC);
+	if (!buf) {
+		BT_ERR("Can't allocate memory chunk for firmware");
+		return -ENOMEM;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pipe = usb_sndbulkpipe(data->udev, data->bulk_out_ep);
 
 	while (count) {
@@ -696,15 +739,27 @@ static int bfusb_probe(struct usb_interface *intf, const struct usb_device_id *i
 	data->hdev = hdev;
 
 	hdev->bus = HCI_USB;
+<<<<<<< HEAD
 	hci_set_drvdata(hdev, data);
+=======
+	hdev->driver_data = data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	SET_HCIDEV_DEV(hdev, &intf->dev);
 
 	hdev->open     = bfusb_open;
 	hdev->close    = bfusb_close;
 	hdev->flush    = bfusb_flush;
 	hdev->send     = bfusb_send_frame;
+<<<<<<< HEAD
 	hdev->ioctl    = bfusb_ioctl;
 
+=======
+	hdev->destruct = bfusb_destruct;
+	hdev->ioctl    = bfusb_ioctl;
+
+	hdev->owner = THIS_MODULE;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (hci_register_dev(hdev) < 0) {
 		BT_ERR("Can't register HCI device");
 		hci_free_dev(hdev);
@@ -739,9 +794,16 @@ static void bfusb_disconnect(struct usb_interface *intf)
 
 	bfusb_close(hdev);
 
+<<<<<<< HEAD
 	hci_unregister_dev(hdev);
 	hci_free_dev(hdev);
 	kfree(data);
+=======
+	if (hci_unregister_dev(hdev) < 0)
+		BT_ERR("Can't unregister HCI device %s", hdev->name);
+
+	hci_free_dev(hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct usb_driver bfusb_driver = {
@@ -751,7 +813,30 @@ static struct usb_driver bfusb_driver = {
 	.id_table	= bfusb_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(bfusb_driver);
+=======
+static int __init bfusb_init(void)
+{
+	int err;
+
+	BT_INFO("BlueFRITZ! USB driver ver %s", VERSION);
+
+	err = usb_register(&bfusb_driver);
+	if (err < 0)
+		BT_ERR("Failed to register BlueFRITZ! USB driver");
+
+	return err;
+}
+
+static void __exit bfusb_exit(void)
+{
+	usb_deregister(&bfusb_driver);
+}
+
+module_init(bfusb_init);
+module_exit(bfusb_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Marcel Holtmann <marcel@holtmann.org>");
 MODULE_DESCRIPTION("BlueFRITZ! USB driver ver " VERSION);

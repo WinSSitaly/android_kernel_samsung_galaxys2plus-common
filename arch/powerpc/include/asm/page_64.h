@@ -64,6 +64,20 @@ extern void copy_page(void *to, void *from);
 /* Log 2 of page table size */
 extern u64 ppc64_pft_size;
 
+<<<<<<< HEAD
+=======
+/* Large pages size */
+#ifdef CONFIG_HUGETLB_PAGE
+extern unsigned int HPAGE_SHIFT;
+#else
+#define HPAGE_SHIFT PAGE_SHIFT
+#endif
+#define HPAGE_SIZE		((1UL) << HPAGE_SHIFT)
+#define HPAGE_MASK		(~(HPAGE_SIZE - 1))
+#define HUGETLB_PAGE_ORDER	(HPAGE_SHIFT - PAGE_SHIFT)
+#define HUGE_MAX_HSTATE		(MMU_PAGE_COUNT-1)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ASSEMBLY__ */
 
 #ifdef CONFIG_PPC_MM_SLICES
@@ -130,9 +144,13 @@ do {						\
 
 #ifdef CONFIG_HUGETLB_PAGE
 
+<<<<<<< HEAD
 #ifdef CONFIG_PPC_MM_SLICES
 #define HAVE_ARCH_HUGETLB_UNMAPPED_AREA
 #endif
+=======
+#define HAVE_ARCH_HUGETLB_UNMAPPED_AREA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* !CONFIG_HUGETLB_PAGE */
 

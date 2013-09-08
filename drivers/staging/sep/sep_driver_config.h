@@ -2,8 +2,13 @@
  *
  *  sep_driver_config.h - Security Processor Driver configuration
  *
+<<<<<<< HEAD
  *  Copyright(c) 2009-2011 Intel Corporation. All rights reserved.
  *  Contributions(c) 2009-2011 Discretix. All rights reserved.
+=======
+ *  Copyright(c) 2009,2010 Intel Corporation. All rights reserved.
+ *  Contributions(c) 2009,2010 Discretix. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -26,7 +31,10 @@
  *  CHANGES:
  *
  *  2010.06.26	Upgrade to Medfield
+<<<<<<< HEAD
  *  2011.02.22  Enable kernel crypto
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  */
 
@@ -49,8 +57,11 @@
 /* the mode for running on the ARM1172 Evaluation platform (flag is 1) */
 #define SEP_DRIVER_ARM_DEBUG_MODE                       0
 
+<<<<<<< HEAD
 /* Critical message area contents for sanity checking */
 #define SEP_START_MSG_TOKEN				0x02558808
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*-------------------------------------------
 	INTERNAL DATA CONFIGURATION
 	-------------------------------------------*/
@@ -68,17 +79,32 @@
 #define SEP_DRIVER_MIN_DATA_SIZE_PER_TABLE		16
 
 /* flag that signifies tah the lock is
+<<<<<<< HEAD
 currently held by the proccess (struct file) */
 #define SEP_DRIVER_OWN_LOCK_FLAG                        1
 
 /* flag that signifies tah the lock is currently NOT
 held by the proccess (struct file) */
+=======
+currently held by the process (struct file) */
+#define SEP_DRIVER_OWN_LOCK_FLAG                        1
+
+/* flag that signifies tah the lock is currently NOT
+held by the process (struct file) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SEP_DRIVER_DISOWN_LOCK_FLAG                     0
 
 /* indicates whether driver has mapped/unmapped shared area */
 #define SEP_REQUEST_DAEMON_MAPPED 1
 #define SEP_REQUEST_DAEMON_UNMAPPED 0
 
+<<<<<<< HEAD
+=======
+#define SEP_DEV_NAME "sep_sec_driver"
+#define SEP_DEV_SINGLETON "sep_sec_singleton_driver"
+#define SEP_DEV_DAEMON "sep_req_daemon_driver"
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*--------------------------------------------------------
 	SHARED AREA  memory total size is 36K
 	it is divided is following:
@@ -89,7 +115,11 @@ held by the proccess (struct file) */
 									}
 	DATA_POOL_AREA                          12K        }
 
+<<<<<<< HEAD
 	SYNCHRONIC_DMA_TABLES_AREA              29K
+=======
+	SYNCHRONIC_DMA_TABLES_AREA              5K
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	placeholder until drver changes
 	FLOW_DMA_TABLES_AREA                    4K
@@ -108,12 +138,15 @@ held by the proccess (struct file) */
 
 
 /*
+<<<<<<< HEAD
 	the minimum length of the message - includes 2 reserved fields
 	at the start, then token, message size and opcode fields. all dwords
 */
 #define SEP_DRIVER_MIN_MESSAGE_SIZE_IN_BYTES			(5*sizeof(u32))
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	the maximum length of the message - the rest of the message shared
 	area will be dedicated to the dma lli tables
 */
@@ -129,7 +162,11 @@ held by the proccess (struct file) */
 #define SEP_DRIVER_DATA_POOL_SHARED_AREA_SIZE_IN_BYTES		(16 * 1024)
 
 /* the size of the message shared area in pages */
+<<<<<<< HEAD
 #define SYNCHRONIC_DMA_TABLES_AREA_SIZE_BYTES	(1024 * 29)
+=======
+#define SYNCHRONIC_DMA_TABLES_AREA_SIZE_BYTES	(1024 * 5)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Placeholder until driver changes */
 #define SEP_DRIVER_FLOW_DMA_TABLES_AREA_SIZE_IN_BYTES		(1024 * 4)
@@ -137,9 +174,12 @@ held by the proccess (struct file) */
 /* system data (time, caller id etc') pool */
 #define SEP_DRIVER_SYSTEM_DATA_MEMORY_SIZE_IN_BYTES		(1024 * 3)
 
+<<<<<<< HEAD
 /* Offset of the sep printf buffer in the message area */
 #define SEP_DRIVER_PRINTF_OFFSET_IN_BYTES			(5888)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* the size in bytes of the time memory */
 #define SEP_DRIVER_TIME_MEMORY_SIZE_IN_BYTES			8
 
@@ -188,7 +228,11 @@ held by the proccess (struct file) */
 /* offset of the caller id area */
 #define SEP_CALLER_ID_OFFSET_BYTES \
 	(SEP_DRIVER_SYSTEM_RAR_MEMORY_OFFSET_IN_BYTES + \
+<<<<<<< HEAD
 	SEP_DRIVER_SYSTEM_RAR_MEMORY_SIZE_IN_BYTES)
+=======
+    SEP_DRIVER_SYSTEM_RAR_MEMORY_SIZE_IN_BYTES)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* offset of the DCB area */
 #define SEP_DRIVER_SYSTEM_DCB_MEMORY_OFFSET_IN_BYTES \
@@ -231,10 +275,17 @@ held by the proccess (struct file) */
 #define SEP_ALREADY_INITIALIZED_ERR                           12
 
 /* bit that locks access to the shared area */
+<<<<<<< HEAD
 #define SEP_TRANSACTION_STARTED_LOCK_BIT                      0
 
 /* bit that lock access to the poll  - after send_command */
 #define SEP_WORKING_LOCK_BIT                                  1
+=======
+#define SEP_MMAP_LOCK_BIT                                     0
+
+/* bit that lock access to the poll  - after send_command */
+#define SEP_SEND_MSG_LOCK_BIT                                 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* the token that defines the static pool address address */
 #define SEP_STATIC_POOL_VAL_TOKEN                             0xABBAABBA
@@ -248,6 +299,7 @@ held by the proccess (struct file) */
 /* Time limit for SEP to finish */
 #define WAIT_TIME 10
 
+<<<<<<< HEAD
 /* Delay for pm runtime suspend (reduces pm thrashing with bursty traffic */
 #define SUSPEND_DELAY 10
 
@@ -295,4 +347,6 @@ held by the proccess (struct file) */
  */
 #define SEP_ENABLE_RUNTIME_PM
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* SEP DRIVER CONFIG */

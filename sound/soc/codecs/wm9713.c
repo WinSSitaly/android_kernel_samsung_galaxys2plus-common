@@ -1026,19 +1026,31 @@ static int ac97_aux_prepare(struct snd_pcm_substream *substream,
 	(SNDRV_PCM_FORMAT_S16_LE | SNDRV_PCM_FORMAT_S20_3LE | \
 	 SNDRV_PCM_FORMAT_S24_LE)
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops wm9713_dai_ops_hifi = {
+=======
+static struct snd_soc_dai_ops wm9713_dai_ops_hifi = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.prepare	= ac97_hifi_prepare,
 	.set_clkdiv	= wm9713_set_dai_clkdiv,
 	.set_pll	= wm9713_set_dai_pll,
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops wm9713_dai_ops_aux = {
+=======
+static struct snd_soc_dai_ops wm9713_dai_ops_aux = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.prepare	= ac97_aux_prepare,
 	.set_clkdiv	= wm9713_set_dai_clkdiv,
 	.set_pll	= wm9713_set_dai_pll,
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops wm9713_dai_ops_voice = {
+=======
+static struct snd_soc_dai_ops wm9713_dai_ops_voice = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params	= wm9713_pcm_hw_params,
 	.set_clkdiv	= wm9713_set_dai_clkdiv,
 	.set_pll	= wm9713_set_dai_pll,
@@ -1140,7 +1152,12 @@ static int wm9713_set_bias_level(struct snd_soc_codec *codec,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int wm9713_soc_suspend(struct snd_soc_codec *codec)
+=======
+static int wm9713_soc_suspend(struct snd_soc_codec *codec,
+	pm_message_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u16 reg;
 
@@ -1216,7 +1233,11 @@ static int wm9713_soc_probe(struct snd_soc_codec *codec)
 	reg = ac97_read(codec, AC97_CD) & 0x7fff;
 	ac97_write(codec, AC97_CD, reg);
 
+<<<<<<< HEAD
 	snd_soc_add_codec_controls(codec, wm9713_snd_ac97_controls,
+=======
+	snd_soc_add_controls(codec, wm9713_snd_ac97_controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ARRAY_SIZE(wm9713_snd_ac97_controls));
 
 	return 0;
@@ -1276,7 +1297,21 @@ static struct platform_driver wm9713_codec_driver = {
 	.remove = __devexit_p(wm9713_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(wm9713_codec_driver);
+=======
+static int __init wm9713_init(void)
+{
+	return platform_driver_register(&wm9713_codec_driver);
+}
+module_init(wm9713_init);
+
+static void __exit wm9713_exit(void)
+{
+	platform_driver_unregister(&wm9713_codec_driver);
+}
+module_exit(wm9713_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("ASoC WM9713/WM9714 driver");
 MODULE_AUTHOR("Liam Girdwood");

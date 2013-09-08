@@ -32,7 +32,10 @@
 #include <linux/init.h>
 #include <linux/slab.h>
 #include <linux/string.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/seq_kernel.h>
 #include <sound/seq_midi_emul.h>

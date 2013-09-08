@@ -111,7 +111,11 @@ static irqreturn_t timer_interrupt(int irq, void *dev_id)
 
 static struct irqaction irq5 = {
 	.handler = timer_interrupt,
+<<<<<<< HEAD
 	.flags = IRQF_NOBALANCING | IRQF_TIMER,
+=======
+	.flags = IRQF_DISABLED | IRQF_NOBALANCING | IRQF_TIMER,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name = "timer"
 };
 

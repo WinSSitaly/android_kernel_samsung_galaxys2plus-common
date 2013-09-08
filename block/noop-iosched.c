@@ -94,7 +94,13 @@ static struct elevator_type elevator_noop = {
 
 static int __init noop_init(void)
 {
+<<<<<<< HEAD
 	return elv_register(&elevator_noop);
+=======
+	elv_register(&elevator_noop);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit noop_exit(void)

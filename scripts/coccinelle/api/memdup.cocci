@@ -1,17 +1,26 @@
 /// Use kmemdup rather than duplicating its implementation
 ///
 // Confidence: High
+<<<<<<< HEAD
 // Copyright: (C) 2010-2012 Nicolas Palix.  GPLv2.
 // Copyright: (C) 2010-2012 Julia Lawall, INRIA/LIP6.  GPLv2.
 // Copyright: (C) 2010-2012 Gilles Muller, INRIA/LiP6.  GPLv2.
+=======
+// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
+// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
+// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 // URL: http://coccinelle.lip6.fr/
 // Comments:
 // Options: -no_includes -include_headers
 
 virtual patch
+<<<<<<< HEAD
 virtual context
 virtual org
 virtual report
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 @r1@
 expression from,to;
@@ -31,7 +40,11 @@ position p;
     ... when != \( x = E1 \| from = E1 \)
     to = \(kmalloc@p\|kzalloc@p\)(x,flag);
 
+<<<<<<< HEAD
 @depends on patch@
+=======
+@@
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 expression from,to,size,flag;
 position p != {r1.p,r2.p};
 statement S;
@@ -41,6 +54,7 @@ statement S;
 +  to = kmemdup(from,size,flag);
    if (to==NULL || ...) S
 -  memcpy(to, from, size);
+<<<<<<< HEAD
 
 @r depends on !patch@
 expression from,to,size,flag;
@@ -64,3 +78,5 @@ p << r.p;
 @@
 
 coccilib.report.print_report(p[0], "WARNING opportunity for kmemdep")
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

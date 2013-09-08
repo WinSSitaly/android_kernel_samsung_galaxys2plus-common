@@ -180,7 +180,22 @@ static struct platform_driver pwm_beeper_driver = {
 		.pm	= PWM_BEEPER_PM_OPS,
 	},
 };
+<<<<<<< HEAD
 module_platform_driver(pwm_beeper_driver);
+=======
+
+static int __init pwm_beeper_init(void)
+{
+	return platform_driver_register(&pwm_beeper_driver);
+}
+module_init(pwm_beeper_init);
+
+static void __exit pwm_beeper_exit(void)
+{
+	platform_driver_unregister(&pwm_beeper_driver);
+}
+module_exit(pwm_beeper_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Lars-Peter Clausen <lars@metafoo.de>");
 MODULE_DESCRIPTION("PWM beeper driver");

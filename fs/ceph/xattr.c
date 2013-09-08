@@ -8,12 +8,18 @@
 #include <linux/xattr.h>
 #include <linux/slab.h>
 
+<<<<<<< HEAD
 #define XATTR_CEPH_PREFIX "ceph."
 #define XATTR_CEPH_PREFIX_LEN (sizeof (XATTR_CEPH_PREFIX) - 1)
 
 static bool ceph_is_valid_xattr(const char *name)
 {
 	return !strncmp(name, XATTR_CEPH_PREFIX, XATTR_CEPH_PREFIX_LEN) ||
+=======
+static bool ceph_is_valid_xattr(const char *name)
+{
+	return !strncmp(name, "ceph.", 5) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       !strncmp(name, XATTR_SECURITY_PREFIX,
 			XATTR_SECURITY_PREFIX_LEN) ||
 	       !strncmp(name, XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN) ||
@@ -24,58 +30,95 @@ static bool ceph_is_valid_xattr(const char *name)
  * These define virtual xattrs exposing the recursive directory
  * statistics and layout metadata.
  */
+<<<<<<< HEAD
 struct ceph_vxattr {
 	char *name;
 	size_t name_size;	/* strlen(name) + 1 (for '\0') */
 	size_t (*getxattr_cb)(struct ceph_inode_info *ci, char *val,
 			      size_t size);
 	bool readonly;
+=======
+struct ceph_vxattr_cb {
+	bool readonly;
+	char *name;
+	size_t (*getxattr_cb)(struct ceph_inode_info *ci, char *val,
+			      size_t size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* directories */
 
+<<<<<<< HEAD
 static size_t ceph_vxattrcb_dir_entries(struct ceph_inode_info *ci, char *val,
+=======
+static size_t ceph_vxattrcb_entries(struct ceph_inode_info *ci, char *val,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					size_t size)
 {
 	return snprintf(val, size, "%lld", ci->i_files + ci->i_subdirs);
 }
 
+<<<<<<< HEAD
 static size_t ceph_vxattrcb_dir_files(struct ceph_inode_info *ci, char *val,
+=======
+static size_t ceph_vxattrcb_files(struct ceph_inode_info *ci, char *val,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      size_t size)
 {
 	return snprintf(val, size, "%lld", ci->i_files);
 }
 
+<<<<<<< HEAD
 static size_t ceph_vxattrcb_dir_subdirs(struct ceph_inode_info *ci, char *val,
+=======
+static size_t ceph_vxattrcb_subdirs(struct ceph_inode_info *ci, char *val,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					size_t size)
 {
 	return snprintf(val, size, "%lld", ci->i_subdirs);
 }
 
+<<<<<<< HEAD
 static size_t ceph_vxattrcb_dir_rentries(struct ceph_inode_info *ci, char *val,
+=======
+static size_t ceph_vxattrcb_rentries(struct ceph_inode_info *ci, char *val,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					 size_t size)
 {
 	return snprintf(val, size, "%lld", ci->i_rfiles + ci->i_rsubdirs);
 }
 
+<<<<<<< HEAD
 static size_t ceph_vxattrcb_dir_rfiles(struct ceph_inode_info *ci, char *val,
+=======
+static size_t ceph_vxattrcb_rfiles(struct ceph_inode_info *ci, char *val,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				       size_t size)
 {
 	return snprintf(val, size, "%lld", ci->i_rfiles);
 }
 
+<<<<<<< HEAD
 static size_t ceph_vxattrcb_dir_rsubdirs(struct ceph_inode_info *ci, char *val,
+=======
+static size_t ceph_vxattrcb_rsubdirs(struct ceph_inode_info *ci, char *val,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					 size_t size)
 {
 	return snprintf(val, size, "%lld", ci->i_rsubdirs);
 }
 
+<<<<<<< HEAD
 static size_t ceph_vxattrcb_dir_rbytes(struct ceph_inode_info *ci, char *val,
+=======
+static size_t ceph_vxattrcb_rbytes(struct ceph_inode_info *ci, char *val,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				       size_t size)
 {
 	return snprintf(val, size, "%lld", ci->i_rbytes);
 }
 
+<<<<<<< HEAD
 static size_t ceph_vxattrcb_dir_rctime(struct ceph_inode_info *ci, char *val,
 				       size_t size)
 {
@@ -109,6 +152,30 @@ static size_t ceph_dir_vxattrs_name_size;	/* total size of all names */
 /* files */
 
 static size_t ceph_vxattrcb_file_layout(struct ceph_inode_info *ci, char *val,
+=======
+static size_t ceph_vxattrcb_rctime(struct ceph_inode_info *ci, char *val,
+				       size_t size)
+{
+	return snprintf(val, size, "%ld.%ld", (long)ci->i_rctime.tv_sec,
+			(long)ci->i_rctime.tv_nsec);
+}
+
+static struct ceph_vxattr_cb ceph_dir_vxattrs[] = {
+	{ true, "ceph.dir.entries", ceph_vxattrcb_entries},
+	{ true, "ceph.dir.files", ceph_vxattrcb_files},
+	{ true, "ceph.dir.subdirs", ceph_vxattrcb_subdirs},
+	{ true, "ceph.dir.rentries", ceph_vxattrcb_rentries},
+	{ true, "ceph.dir.rfiles", ceph_vxattrcb_rfiles},
+	{ true, "ceph.dir.rsubdirs", ceph_vxattrcb_rsubdirs},
+	{ true, "ceph.dir.rbytes", ceph_vxattrcb_rbytes},
+	{ true, "ceph.dir.rctime", ceph_vxattrcb_rctime},
+	{ true, NULL, NULL }
+};
+
+/* files */
+
+static size_t ceph_vxattrcb_layout(struct ceph_inode_info *ci, char *val,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   size_t size)
 {
 	int ret;
@@ -118,6 +185,7 @@ static size_t ceph_vxattrcb_file_layout(struct ceph_inode_info *ci, char *val,
 		(unsigned long long)ceph_file_layout_su(ci->i_layout),
 		(unsigned long long)ceph_file_layout_stripe_count(ci->i_layout),
 		(unsigned long long)ceph_file_layout_object_size(ci->i_layout));
+<<<<<<< HEAD
 
 	if (ceph_file_layout_pg_preferred(ci->i_layout) >= 0) {
 		val += ret;
@@ -144,6 +212,21 @@ static struct ceph_vxattr ceph_file_vxattrs[] = {
 static size_t ceph_file_vxattrs_name_size;	/* total size of all names */
 
 static struct ceph_vxattr *ceph_inode_vxattrs(struct inode *inode)
+=======
+	if (ceph_file_layout_pg_preferred(ci->i_layout))
+		ret += snprintf(val + ret, size, "preferred_osd=%lld\n",
+			    (unsigned long long)ceph_file_layout_pg_preferred(
+				    ci->i_layout));
+	return ret;
+}
+
+static struct ceph_vxattr_cb ceph_file_vxattrs[] = {
+	{ true, "ceph.layout", ceph_vxattrcb_layout},
+	{ NULL, NULL }
+};
+
+static struct ceph_vxattr_cb *ceph_inode_vxattrs(struct inode *inode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (S_ISDIR(inode->i_mode))
 		return ceph_dir_vxattrs;
@@ -152,6 +235,7 @@ static struct ceph_vxattr *ceph_inode_vxattrs(struct inode *inode)
 	return NULL;
 }
 
+<<<<<<< HEAD
 static size_t ceph_vxattrs_name_size(struct ceph_vxattr *vxattrs)
 {
 	if (vxattrs == ceph_dir_vxattrs)
@@ -205,6 +289,16 @@ static struct ceph_vxattr *ceph_match_vxattr(struct inode *inode,
 		}
 	}
 
+=======
+static struct ceph_vxattr_cb *ceph_match_vxattr(struct ceph_vxattr_cb *vxattr,
+						const char *name)
+{
+	do {
+		if (strcmp(vxattr->name, name) == 0)
+			return vxattr;
+		vxattr++;
+	} while (vxattr->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NULL;
 }
 
@@ -416,8 +510,13 @@ void __ceph_destroy_xattrs(struct ceph_inode_info *ci)
 }
 
 static int __build_xattrs(struct inode *inode)
+<<<<<<< HEAD
 	__releases(ci->i_ceph_lock)
 	__acquires(ci->i_ceph_lock)
+=======
+	__releases(inode->i_lock)
+	__acquires(inode->i_lock)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 namelen;
 	u32 numattr = 0;
@@ -445,7 +544,11 @@ start:
 		end = p + ci->i_xattrs.blob->vec.iov_len;
 		ceph_decode_32_safe(&p, end, numattr, bad);
 		xattr_version = ci->i_xattrs.version;
+<<<<<<< HEAD
 		spin_unlock(&ci->i_ceph_lock);
+=======
+		spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		xattrs = kcalloc(numattr, sizeof(struct ceph_xattr *),
 				 GFP_NOFS);
@@ -460,7 +563,11 @@ start:
 				goto bad_lock;
 		}
 
+<<<<<<< HEAD
 		spin_lock(&ci->i_ceph_lock);
+=======
+		spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ci->i_xattrs.version != xattr_version) {
 			/* lost a race, retry */
 			for (i = 0; i < numattr; i++)
@@ -491,7 +598,11 @@ start:
 
 	return err;
 bad_lock:
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bad:
 	if (xattrs) {
 		for (i = 0; i < numattr; i++)
@@ -573,17 +684,31 @@ ssize_t ceph_getxattr(struct dentry *dentry, const char *name, void *value,
 {
 	struct inode *inode = dentry->d_inode;
 	struct ceph_inode_info *ci = ceph_inode(inode);
+<<<<<<< HEAD
 	int err;
 	struct ceph_inode_xattr *xattr;
 	struct ceph_vxattr *vxattr = NULL;
+=======
+	struct ceph_vxattr_cb *vxattrs = ceph_inode_vxattrs(inode);
+	int err;
+	struct ceph_inode_xattr *xattr;
+	struct ceph_vxattr_cb *vxattr = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!ceph_is_valid_xattr(name))
 		return -ENODATA;
 
 	/* let's see if a virtual xattr was requested */
+<<<<<<< HEAD
 	vxattr = ceph_match_vxattr(inode, name);
 
 	spin_lock(&ci->i_ceph_lock);
+=======
+	if (vxattrs)
+		vxattr = ceph_match_vxattr(vxattrs, name);
+
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dout("getxattr %p ver=%lld index_ver=%lld\n", inode,
 	     ci->i_xattrs.version, ci->i_xattrs.index_version);
 
@@ -591,14 +716,22 @@ ssize_t ceph_getxattr(struct dentry *dentry, const char *name, void *value,
 	    (ci->i_xattrs.index_version >= ci->i_xattrs.version)) {
 		goto get_xattr;
 	} else {
+<<<<<<< HEAD
 		spin_unlock(&ci->i_ceph_lock);
+=======
+		spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* get xattrs from mds (if we don't already have them) */
 		err = ceph_do_getattr(inode, CEPH_STAT_CAP_XATTR);
 		if (err)
 			return err;
 	}
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (vxattr && vxattr->readonly) {
 		err = vxattr->getxattr_cb(ci, value, size);
@@ -629,7 +762,11 @@ get_xattr:
 	memcpy(value, xattr->val, xattr->val_len);
 
 out:
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -637,14 +774,22 @@ ssize_t ceph_listxattr(struct dentry *dentry, char *names, size_t size)
 {
 	struct inode *inode = dentry->d_inode;
 	struct ceph_inode_info *ci = ceph_inode(inode);
+<<<<<<< HEAD
 	struct ceph_vxattr *vxattrs = ceph_inode_vxattrs(inode);
+=======
+	struct ceph_vxattr_cb *vxattrs = ceph_inode_vxattrs(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 vir_namelen = 0;
 	u32 namelen;
 	int err;
 	u32 len;
 	int i;
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dout("listxattr %p ver=%lld index_ver=%lld\n", inode,
 	     ci->i_xattrs.version, ci->i_xattrs.index_version);
 
@@ -652,25 +797,41 @@ ssize_t ceph_listxattr(struct dentry *dentry, char *names, size_t size)
 	    (ci->i_xattrs.index_version >= ci->i_xattrs.version)) {
 		goto list_xattr;
 	} else {
+<<<<<<< HEAD
 		spin_unlock(&ci->i_ceph_lock);
+=======
+		spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = ceph_do_getattr(inode, CEPH_STAT_CAP_XATTR);
 		if (err)
 			return err;
 	}
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = __build_xattrs(inode);
 	if (err < 0)
 		goto out;
 
 list_xattr:
+<<<<<<< HEAD
 	/*
 	 * Start with virtual dir xattr names (if any) (including
 	 * terminating '\0' characters for each).
 	 */
 	vir_namelen = ceph_vxattrs_name_size(vxattrs);
 
+=======
+	vir_namelen = 0;
+	/* include virtual dir xattrs */
+	if (vxattrs)
+		for (i = 0; vxattrs[i].name; i++)
+			vir_namelen += strlen(vxattrs[i].name) + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* adding 1 byte per each variable due to the null termination */
 	namelen = vir_namelen + ci->i_xattrs.names_size + ci->i_xattrs.count;
 	err = -ERANGE;
@@ -691,7 +852,11 @@ list_xattr:
 		}
 
 out:
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -701,7 +866,11 @@ static int ceph_sync_setxattr(struct dentry *dentry, const char *name,
 	struct ceph_fs_client *fsc = ceph_sb_to_client(dentry->d_sb);
 	struct inode *inode = dentry->d_inode;
 	struct ceph_inode_info *ci = ceph_inode(inode);
+<<<<<<< HEAD
 	struct inode *parent_inode;
+=======
+	struct inode *parent_inode = dentry->d_parent->d_inode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ceph_mds_request *req;
 	struct ceph_mds_client *mdsc = fsc->mdsc;
 	int err;
@@ -749,9 +918,13 @@ static int ceph_sync_setxattr(struct dentry *dentry, const char *name,
 	req->r_data_len = size;
 
 	dout("xattr.ver (before): %lld\n", ci->i_xattrs.version);
+<<<<<<< HEAD
 	parent_inode = ceph_get_dentry_parent_inode(dentry);
 	err = ceph_mdsc_do_request(mdsc, parent_inode, req);
 	iput(parent_inode);
+=======
+	err = ceph_mdsc_do_request(mdsc, parent_inode, req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ceph_mdsc_put_request(req);
 	dout("xattr.ver (after): %lld\n", ci->i_xattrs.version);
 
@@ -768,17 +941,29 @@ int ceph_setxattr(struct dentry *dentry, const char *name,
 		  const void *value, size_t size, int flags)
 {
 	struct inode *inode = dentry->d_inode;
+<<<<<<< HEAD
 	struct ceph_vxattr *vxattr;
 	struct ceph_inode_info *ci = ceph_inode(inode);
 	int issued;
 	int err;
 	int dirty;
+=======
+	struct ceph_inode_info *ci = ceph_inode(inode);
+	struct ceph_vxattr_cb *vxattrs = ceph_inode_vxattrs(inode);
+	int err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int name_len = strlen(name);
 	int val_len = size;
 	char *newname = NULL;
 	char *newval = NULL;
 	struct ceph_inode_xattr *xattr = NULL;
+<<<<<<< HEAD
 	int required_blob_size;
+=======
+	int issued;
+	int required_blob_size;
+	int dirty;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ceph_snap(inode) != CEPH_NOSNAP)
 		return -EROFS;
@@ -786,9 +971,18 @@ int ceph_setxattr(struct dentry *dentry, const char *name,
 	if (!ceph_is_valid_xattr(name))
 		return -EOPNOTSUPP;
 
+<<<<<<< HEAD
 	vxattr = ceph_match_vxattr(inode, name);
 	if (vxattr && vxattr->readonly)
 		return -EOPNOTSUPP;
+=======
+	if (vxattrs) {
+		struct ceph_vxattr_cb *vxattr =
+			ceph_match_vxattr(vxattrs, name);
+		if (vxattr && vxattr->readonly)
+			return -EOPNOTSUPP;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* preallocate memory for xattr name, value, index node */
 	err = -ENOMEM;
@@ -797,19 +991,33 @@ int ceph_setxattr(struct dentry *dentry, const char *name,
 		goto out;
 
 	if (val_len) {
+<<<<<<< HEAD
 		newval = kmemdup(value, val_len, GFP_NOFS);
 		if (!newval)
 			goto out;
+=======
+		newval = kmalloc(val_len + 1, GFP_NOFS);
+		if (!newval)
+			goto out;
+		memcpy(newval, value, val_len);
+		newval[val_len] = '\0';
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	xattr = kmalloc(sizeof(struct ceph_inode_xattr), GFP_NOFS);
 	if (!xattr)
 		goto out;
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
 retry:
 	issued = __ceph_caps_issued(ci, NULL);
 	dout("setxattr %p issued %s\n", inode, ceph_cap_string(issued));
+=======
+	spin_lock(&inode->i_lock);
+retry:
+	issued = __ceph_caps_issued(ci, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!(issued & CEPH_CAP_XATTR_EXCL))
 		goto do_sync;
 	__build_xattrs(inode);
@@ -818,20 +1026,31 @@ retry:
 
 	if (!ci->i_xattrs.prealloc_blob ||
 	    required_blob_size > ci->i_xattrs.prealloc_blob->alloc_len) {
+<<<<<<< HEAD
 		struct ceph_buffer *blob;
 
 		spin_unlock(&ci->i_ceph_lock);
+=======
+		struct ceph_buffer *blob = NULL;
+
+		spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dout(" preaallocating new blob size=%d\n", required_blob_size);
 		blob = ceph_buffer_new(required_blob_size, GFP_NOFS);
 		if (!blob)
 			goto out;
+<<<<<<< HEAD
 		spin_lock(&ci->i_ceph_lock);
+=======
+		spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ci->i_xattrs.prealloc_blob)
 			ceph_buffer_put(ci->i_xattrs.prealloc_blob);
 		ci->i_xattrs.prealloc_blob = blob;
 		goto retry;
 	}
 
+<<<<<<< HEAD
 	err = __set_xattr(ci, newname, name_len, newval,
 			  val_len, 1, 1, 1, &xattr);
 
@@ -840,12 +1059,25 @@ retry:
 	inode->i_ctime = CURRENT_TIME;
 
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	dout("setxattr %p issued %s\n", inode, ceph_cap_string(issued));
+	err = __set_xattr(ci, newname, name_len, newval,
+			  val_len, 1, 1, 1, &xattr);
+	dirty = __ceph_mark_dirty_caps(ci, CEPH_CAP_XATTR_EXCL);
+	ci->i_xattrs.dirty = true;
+	inode->i_ctime = CURRENT_TIME;
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dirty)
 		__mark_inode_dirty(inode, dirty);
 	return err;
 
 do_sync:
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = ceph_sync_setxattr(dentry, name, value, size, flags);
 out:
 	kfree(newname);
@@ -859,7 +1091,11 @@ static int ceph_send_removexattr(struct dentry *dentry, const char *name)
 	struct ceph_fs_client *fsc = ceph_sb_to_client(dentry->d_sb);
 	struct ceph_mds_client *mdsc = fsc->mdsc;
 	struct inode *inode = dentry->d_inode;
+<<<<<<< HEAD
 	struct inode *parent_inode;
+=======
+	struct inode *parent_inode = dentry->d_parent->d_inode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ceph_mds_request *req;
 	int err;
 
@@ -873,9 +1109,13 @@ static int ceph_send_removexattr(struct dentry *dentry, const char *name)
 	req->r_num_caps = 1;
 	req->r_path2 = kstrdup(name, GFP_NOFS);
 
+<<<<<<< HEAD
 	parent_inode = ceph_get_dentry_parent_inode(dentry);
 	err = ceph_mdsc_do_request(mdsc, parent_inode, req);
 	iput(parent_inode);
+=======
+	err = ceph_mdsc_do_request(mdsc, parent_inode, req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ceph_mdsc_put_request(req);
 	return err;
 }
@@ -883,11 +1123,18 @@ static int ceph_send_removexattr(struct dentry *dentry, const char *name)
 int ceph_removexattr(struct dentry *dentry, const char *name)
 {
 	struct inode *inode = dentry->d_inode;
+<<<<<<< HEAD
 	struct ceph_vxattr *vxattr;
 	struct ceph_inode_info *ci = ceph_inode(inode);
 	int issued;
 	int err;
 	int required_blob_size;
+=======
+	struct ceph_inode_info *ci = ceph_inode(inode);
+	struct ceph_vxattr_cb *vxattrs = ceph_inode_vxattrs(inode);
+	int issued;
+	int err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int dirty;
 
 	if (ceph_snap(inode) != CEPH_NOSNAP)
@@ -896,6 +1143,7 @@ int ceph_removexattr(struct dentry *dentry, const char *name)
 	if (!ceph_is_valid_xattr(name))
 		return -EOPNOTSUPP;
 
+<<<<<<< HEAD
 	vxattr = ceph_match_vxattr(inode, name);
 	if (vxattr && vxattr->readonly)
 		return -EOPNOTSUPP;
@@ -903,11 +1151,23 @@ int ceph_removexattr(struct dentry *dentry, const char *name)
 	err = -ENOMEM;
 	spin_lock(&ci->i_ceph_lock);
 retry:
+=======
+	if (vxattrs) {
+		struct ceph_vxattr_cb *vxattr =
+			ceph_match_vxattr(vxattrs, name);
+		if (vxattr && vxattr->readonly)
+			return -EOPNOTSUPP;
+	}
+
+	spin_lock(&inode->i_lock);
+	__build_xattrs(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	issued = __ceph_caps_issued(ci, NULL);
 	dout("removexattr %p issued %s\n", inode, ceph_cap_string(issued));
 
 	if (!(issued & CEPH_CAP_XATTR_EXCL))
 		goto do_sync;
+<<<<<<< HEAD
 	__build_xattrs(inode);
 
 	required_blob_size = __get_required_blob_size(ci, 0, 0);
@@ -934,13 +1194,27 @@ retry:
 	ci->i_xattrs.dirty = true;
 	inode->i_ctime = CURRENT_TIME;
 	spin_unlock(&ci->i_ceph_lock);
+=======
+
+	err = __remove_xattr_by_name(ceph_inode(inode), name);
+	dirty = __ceph_mark_dirty_caps(ci, CEPH_CAP_XATTR_EXCL);
+	ci->i_xattrs.dirty = true;
+	inode->i_ctime = CURRENT_TIME;
+
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dirty)
 		__mark_inode_dirty(inode, dirty);
 	return err;
 do_sync:
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
 	err = ceph_send_removexattr(dentry, name);
 out:
+=======
+	spin_unlock(&inode->i_lock);
+	err = ceph_send_removexattr(dentry, name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 

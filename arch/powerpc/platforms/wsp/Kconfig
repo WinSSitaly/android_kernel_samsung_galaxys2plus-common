@@ -1,5 +1,6 @@
 config PPC_WSP
 	bool
+<<<<<<< HEAD
 	select PPC_A2
 	select GENERIC_TBSYNC
 	select PPC_ICSWX
@@ -10,12 +11,15 @@ config PPC_WSP
 	select PPC_IO_WORKAROUNDS if PCI
 	select PPC_INDIRECT_PIO if PCI
 	select PPC_WSP_COPRO
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default n
 
 menu "WSP platform selection"
 	depends on PPC_BOOK3E_64
 
 config PPC_PSR2
+<<<<<<< HEAD
 	bool "PowerEN System Reference Platform 2"
 	select EPAPR_BOOT
 	select PPC_WSP
@@ -26,6 +30,16 @@ config PPC_CHROMA
 	select EPAPR_BOOT
 	select PPC_WSP
 	select OF_DYNAMIC
+=======
+	bool "PSR-2 platform"
+	select PPC_A2
+	select GENERIC_TBSYNC
+	select PPC_SCOM
+	select EPAPR_BOOT
+	select PPC_WSP
+	select PPC_XICS
+	select PPC_ICP_NATIVE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default y
 
 endmenu
@@ -33,3 +47,11 @@ endmenu
 config PPC_A2_DD2
 	bool "Support for DD2 based A2/WSP systems"
 	depends on PPC_A2
+<<<<<<< HEAD
+=======
+
+config WORKAROUND_ERRATUM_463
+	depends on PPC_A2_DD2
+	bool "Workaround erratum 463"
+	default y
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Alchemy GPIO support.
  *
@@ -82,5 +83,15 @@ static inline int __au_irq_to_gpio(unsigned int irq)
 
 
 #endif	/* CONFIG_GPIOLIB */
+=======
+#ifndef _ALCHEMY_GPIO_H_
+#define _ALCHEMY_GPIO_H_
+
+#if defined(CONFIG_ALCHEMY_GPIOINT_AU1000)
+
+#include <asm/mach-au1x00/gpio-au1000.h>
+
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif	/* _ALCHEMY_GPIO_H_ */

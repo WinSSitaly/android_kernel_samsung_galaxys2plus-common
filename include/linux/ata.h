@@ -937,7 +937,11 @@ static inline int atapi_cdb_len(const u16 *dev_id)
 	}
 }
 
+<<<<<<< HEAD
 static inline int atapi_command_packet_set(const u16 *dev_id)
+=======
+static inline bool atapi_command_packet_set(const u16 *dev_id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return (dev_id[ATA_ID_CONFIG] >> 8) & 0x1f;
 }

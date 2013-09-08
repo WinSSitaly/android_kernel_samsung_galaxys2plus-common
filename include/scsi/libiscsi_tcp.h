@@ -128,7 +128,11 @@ extern void iscsi_tcp_conn_teardown(struct iscsi_cls_conn *cls_conn);
 /* misc helpers */
 extern int iscsi_tcp_r2tpool_alloc(struct iscsi_session *session);
 extern void iscsi_tcp_r2tpool_free(struct iscsi_session *session);
+<<<<<<< HEAD
 extern int iscsi_tcp_set_max_r2t(struct iscsi_conn *conn, char *buf);
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void iscsi_tcp_conn_get_stats(struct iscsi_cls_conn *cls_conn,
 				     struct iscsi_stats *stats);
 #endif /* LIBISCSI_TCP_H */

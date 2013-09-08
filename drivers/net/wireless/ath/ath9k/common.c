@@ -161,16 +161,24 @@ EXPORT_SYMBOL(ath9k_cmn_count_streams);
 void ath9k_cmn_update_txpow(struct ath_hw *ah, u16 cur_txpow,
 			    u16 new_txpow, u16 *txpower)
 {
+<<<<<<< HEAD
 	struct ath_regulatory *reg = ath9k_hw_regulatory(ah);
 
 	if (reg->power_limit != new_txpow) {
 		ath9k_hw_set_txpowerlimit(ah, new_txpow, false);
 		/* read back in case value is clamped */
 		*txpower = reg->max_power_level;
+=======
+	if (cur_txpow != new_txpow) {
+		ath9k_hw_set_txpowerlimit(ah, new_txpow, false);
+		/* read back in case value is clamped */
+		*txpower = ath9k_hw_regulatory(ah)->power_limit;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 EXPORT_SYMBOL(ath9k_cmn_update_txpow);
 
+<<<<<<< HEAD
 void ath9k_cmn_init_crypto(struct ath_hw *ah)
 {
 	struct ath_common *common = ath9k_hw_common(ah);
@@ -197,6 +205,8 @@ void ath9k_cmn_init_crypto(struct ath_hw *ah)
 }
 EXPORT_SYMBOL(ath9k_cmn_init_crypto);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init ath9k_cmn_init(void)
 {
 	return 0;

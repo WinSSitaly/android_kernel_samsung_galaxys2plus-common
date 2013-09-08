@@ -8,6 +8,10 @@ ifdef CONFIG_DEBUG_FS
 endif
 
 obj-$(CONFIG_HID)		+= hid.o
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_UHID)              += uhid.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 hid-$(CONFIG_HIDRAW)		+= hidraw.o
 
@@ -21,6 +25,7 @@ endif
 ifdef CONFIG_LOGIG940_FF
 	hid-logitech-y	+= hid-lg3ff.o
 endif
+<<<<<<< HEAD
 ifdef CONFIG_LOGIWHEELS_FF
 	hid-logitech-y	+= hid-lg4ff.o
 endif
@@ -33,6 +38,12 @@ ifdef CONFIG_DEBUG_FS
 	hid-wiimote-y	+= hid-wiimote-debug.o
 endif
 
+=======
+ifdef CONFIG_LOGIWII_FF
+	hid-logitech-y	+= hid-lg4ff.o
+endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_HID_A4TECH)	+= hid-a4tech.o
 obj-$(CONFIG_HID_ACRUX)		+= hid-axff.o
 obj-$(CONFIG_HID_APPLE)		+= hid-apple.o
@@ -45,14 +56,20 @@ obj-$(CONFIG_HID_EMS_FF)	+= hid-emsff.o
 obj-$(CONFIG_HID_ELECOM)	+= hid-elecom.o
 obj-$(CONFIG_HID_EZKEY)		+= hid-ezkey.o
 obj-$(CONFIG_HID_GYRATION)	+= hid-gyration.o
+<<<<<<< HEAD
 obj-$(CONFIG_HID_HOLTEK)	+= hid-holtekff.o
 obj-$(CONFIG_HID_HYPERV_MOUSE)	+= hid-hyperv.o
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_HID_KENSINGTON)	+= hid-kensington.o
 obj-$(CONFIG_HID_KEYTOUCH)	+= hid-keytouch.o
 obj-$(CONFIG_HID_KYE)		+= hid-kye.o
 obj-$(CONFIG_HID_LCPOWER)       += hid-lcpower.o
 obj-$(CONFIG_HID_LOGITECH)	+= hid-logitech.o
+<<<<<<< HEAD
 obj-$(CONFIG_HID_LOGITECH_DJ)	+= hid-logitech-dj.o
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_HID_MAGICMOUSE)    += hid-magicmouse.o
 obj-$(CONFIG_HID_MICROSOFT)	+= hid-microsoft.o
 obj-$(CONFIG_HID_MONTEREY)	+= hid-monterey.o
@@ -60,6 +77,7 @@ obj-$(CONFIG_HID_MULTITOUCH)	+= hid-multitouch.o
 obj-$(CONFIG_HID_NTRIG)		+= hid-ntrig.o
 obj-$(CONFIG_HID_ORTEK)		+= hid-ortek.o
 obj-$(CONFIG_HID_PRODIKEYS)	+= hid-prodikeys.o
+<<<<<<< HEAD
 obj-$(CONFIG_HID_PANTHERLORD)	+= hid-pl.o
 obj-$(CONFIG_HID_PETALYNX)	+= hid-petalynx.o
 obj-$(CONFIG_HID_PICOLCD)	+= hid-picolcd.o
@@ -76,6 +94,25 @@ obj-$(CONFIG_HID_SUNPLUS)	+= hid-sunplus.o
 obj-$(CONFIG_HID_GREENASIA)	+= hid-gaff.o
 obj-$(CONFIG_HID_THRUSTMASTER)	+= hid-tmff.o
 obj-$(CONFIG_HID_TIVO)		+= hid-tivo.o
+=======
+obj-$(CONFIG_HID_QUANTA)	+= hid-quanta.o
+obj-$(CONFIG_HID_PANTHERLORD)	+= hid-pl.o
+obj-$(CONFIG_HID_PETALYNX)	+= hid-petalynx.o
+obj-$(CONFIG_HID_PICOLCD)	+= hid-picolcd.o
+obj-$(CONFIG_HID_ROCCAT)	+= hid-roccat.o
+obj-$(CONFIG_HID_ROCCAT_COMMON)	+= hid-roccat-common.o
+obj-$(CONFIG_HID_ROCCAT_ARVO)	+= hid-roccat-arvo.o
+obj-$(CONFIG_HID_ROCCAT_KONE)	+= hid-roccat-kone.o
+obj-$(CONFIG_HID_ROCCAT_KONEPLUS)	+= hid-roccat-koneplus.o
+obj-$(CONFIG_HID_ROCCAT_KOVAPLUS)	+= hid-roccat-kovaplus.o
+obj-$(CONFIG_HID_ROCCAT_PYRA)	+= hid-roccat-pyra.o
+obj-$(CONFIG_HID_SAMSUNG)	+= hid-samsung.o
+obj-$(CONFIG_HID_SMARTJOYPLUS)	+= hid-sjoy.o
+obj-$(CONFIG_HID_SONY)		+= hid-sony.o
+obj-$(CONFIG_HID_SUNPLUS)	+= hid-sunplus.o
+obj-$(CONFIG_HID_GREENASIA)	+= hid-gaff.o
+obj-$(CONFIG_HID_THRUSTMASTER)	+= hid-tmff.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_HID_TOPSEED)	+= hid-topseed.o
 obj-$(CONFIG_HID_TWINHAN)	+= hid-twinhan.o
 obj-$(CONFIG_HID_UCLOGIC)	+= hid-uclogic.o
@@ -83,7 +120,10 @@ obj-$(CONFIG_HID_ZEROPLUS)	+= hid-zpff.o
 obj-$(CONFIG_HID_ZYDACRON)	+= hid-zydacron.o
 obj-$(CONFIG_HID_WACOM)		+= hid-wacom.o
 obj-$(CONFIG_HID_WALTOP)	+= hid-waltop.o
+<<<<<<< HEAD
 obj-$(CONFIG_HID_WIIMOTE)	+= hid-wiimote.o
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 obj-$(CONFIG_USB_HID)		+= usbhid/
 obj-$(CONFIG_USB_MOUSE)		+= usbhid/

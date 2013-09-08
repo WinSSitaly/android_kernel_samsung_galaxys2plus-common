@@ -21,7 +21,10 @@
 
 #include <linux/platform_device.h>
 #include <linux/gpio.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/pcm.h>
 #include <sound/soc.h>
@@ -29,6 +32,15 @@
 #include <mach/hardware.h>
 #include "ep93xx-pcm.h"
 
+<<<<<<< HEAD
+=======
+#define edb93xx_has_audio() (machine_is_edb9301() ||	\
+			     machine_is_edb9302() ||	\
+			     machine_is_edb9302a() ||	\
+			     machine_is_edb9307a() ||	\
+			     machine_is_edb9315a())
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int edb93xx_hw_params(struct snd_pcm_substream *substream,
 			     struct snd_pcm_hw_params *params)
 {
@@ -48,6 +60,21 @@ static int edb93xx_hw_params(struct snd_pcm_substream *substream,
 	else
 		mclk_rate = rate * 64 * 2;
 
+<<<<<<< HEAD
+=======
+	err = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_I2S |
+				  SND_SOC_DAIFMT_NB_IF |
+				  SND_SOC_DAIFMT_CBS_CFS);
+	if (err)
+		return err;
+
+	err = snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_I2S |
+				  SND_SOC_DAIFMT_NB_IF |
+				  SND_SOC_DAIFMT_CBS_CFS);
+	if (err)
+		return err;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = snd_soc_dai_set_sysclk(codec_dai, 0, mclk_rate,
 				     SND_SOC_CLOCK_IN);
 	if (err)
@@ -68,18 +95,25 @@ static struct snd_soc_dai_link edb93xx_dai = {
 	.cpu_dai_name	= "ep93xx-i2s",
 	.codec_name	= "spi0.0",
 	.codec_dai_name	= "cs4271-hifi",
+<<<<<<< HEAD
 	.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_IF |
 			  SND_SOC_DAIFMT_CBS_CFS,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ops		= &edb93xx_ops,
 };
 
 static struct snd_soc_card snd_soc_edb93xx = {
 	.name		= "EDB93XX",
+<<<<<<< HEAD
 	.owner		= THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link	= &edb93xx_dai,
 	.num_links	= 1,
 };
 
+<<<<<<< HEAD
 static int __devinit edb93xx_probe(struct platform_device *pdev)
 {
 	struct snd_soc_card *card = &snd_soc_edb93xx;
@@ -121,8 +155,55 @@ static struct platform_driver edb93xx_driver = {
 };
 
 module_platform_driver(edb93xx_driver);
+=======
+static struct platform_device *edb93xx_snd_device;
+
+static int __init edb93xx_init(void)
+{
+	int ret;
+
+	if (!edb93xx_has_audio())
+		return -ENODEV;
+
+	ret = ep93xx_i2s_acquire(EP93XX_SYSCON_DEVCFG_I2SONAC97,
+				 EP93XX_SYSCON_I2SCLKDIV_ORIDE |
+				 EP93XX_SYSCON_I2SCLKDIV_SPOL);
+	if (ret)
+		return ret;
+
+	edb93xx_snd_device = platform_device_alloc("soc-audio", -1);
+	if (!edb93xx_snd_device) {
+		ret = -ENOMEM;
+		goto free_i2s;
+	}
+
+	platform_set_drvdata(edb93xx_snd_device, &snd_soc_edb93xx);
+	ret = platform_device_add(edb93xx_snd_device);
+	if (ret)
+		goto device_put;
+
+	return 0;
+
+device_put:
+	platform_device_put(edb93xx_snd_device);
+free_i2s:
+	ep93xx_i2s_release();
+	return ret;
+}
+module_init(edb93xx_init);
+
+static void __exit edb93xx_exit(void)
+{
+	platform_device_unregister(edb93xx_snd_device);
+	ep93xx_i2s_release();
+}
+module_exit(edb93xx_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Alexander Sverdlin <subaparts@yandex.ru>");
 MODULE_DESCRIPTION("ALSA SoC EDB93xx");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_ALIAS("platform:edb93xx-audio");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

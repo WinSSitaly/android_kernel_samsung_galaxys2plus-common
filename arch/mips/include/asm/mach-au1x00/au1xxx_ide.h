@@ -58,7 +58,10 @@ typedef struct {
 #endif
 	int			irq;
 	u32			regbase;
+<<<<<<< HEAD
 	int			ddma_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } _auide_hwif;
 
 /******************************************************************************/

@@ -27,19 +27,37 @@
 #include <linux/platform_device.h>
 #include <linux/uaccess.h>
 #include <linux/mfd/core.h>
+<<<<<<< HEAD
 #include <linux/mfd/dbx500-prcmu.h>
 #include <linux/regulator/db8500-prcmu.h>
 #include <linux/regulator/machine.h>
 #include <asm/hardware/gic.h>
+=======
+#include <linux/mfd/db8500-prcmu.h>
+#include <linux/regulator/db8500-prcmu.h>
+#include <linux/regulator/machine.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/hardware.h>
 #include <mach/irqs.h>
 #include <mach/db8500-regs.h>
 #include <mach/id.h>
+<<<<<<< HEAD
 #include "dbx500-prcmu-regs.h"
+=======
+#include "db8500-prcmu-regs.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Offset for the firmware version within the TCPM */
 #define PRCMU_FW_VERSION_OFFSET 0xA4
 
+<<<<<<< HEAD
+=======
+/* PRCMU project numbers, defined by PRCMU FW */
+#define PRCMU_PROJECT_ID_8500V1_0 1
+#define PRCMU_PROJECT_ID_8500V2_0 2
+#define PRCMU_PROJECT_ID_8400V2_0 3
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Index of different voltages to be used when accessing AVSData */
 #define PRCM_AVS_BASE		0x2FC
 #define PRCM_AVS_VBB_RET	(PRCM_AVS_BASE + 0x0)
@@ -127,16 +145,24 @@
 #define MB1H_REQUEST_APE_OPP_100_VOLT 0x3
 #define MB1H_RELEASE_APE_OPP_100_VOLT 0x4
 #define MB1H_RELEASE_USB_WAKEUP 0x5
+<<<<<<< HEAD
 #define MB1H_PLL_ON_OFF 0x6
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Mailbox 1 Requests */
 #define PRCM_REQ_MB1_ARM_OPP			(PRCM_REQ_MB1 + 0x0)
 #define PRCM_REQ_MB1_APE_OPP			(PRCM_REQ_MB1 + 0x1)
+<<<<<<< HEAD
 #define PRCM_REQ_MB1_PLL_ON_OFF			(PRCM_REQ_MB1 + 0x4)
 #define PLL_SOC0_OFF	0x1
 #define PLL_SOC0_ON	0x2
 #define PLL_SOC1_OFF	0x4
 #define PLL_SOC1_ON	0x8
+=======
+#define PRCM_REQ_MB1_APE_OPP_100_RESTORE	(PRCM_REQ_MB1 + 0x4)
+#define PRCM_REQ_MB1_ARM_OPP_100_RESTORE	(PRCM_REQ_MB1 + 0x8)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Mailbox 1 ACKs */
 #define PRCM_ACK_MB1_CURRENT_ARM_OPP	(PRCM_ACK_MB1 + 0x0)
@@ -184,11 +210,14 @@
 #define MB4H_HOTDOG	0x12
 #define MB4H_HOTMON	0x13
 #define MB4H_HOT_PERIOD	0x14
+<<<<<<< HEAD
 #define MB4H_A9WDOG_CONF 0x16
 #define MB4H_A9WDOG_EN   0x17
 #define MB4H_A9WDOG_DIS  0x18
 #define MB4H_A9WDOG_LOAD 0x19
 #define MB4H_A9WDOG_KICK 0x20
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Mailbox 4 Requests */
 #define PRCM_REQ_MB4_DDR_ST_AP_SLEEP_IDLE	(PRCM_REQ_MB4 + 0x0)
@@ -201,6 +230,7 @@
 #define PRCM_REQ_MB4_HOT_PERIOD			(PRCM_REQ_MB4 + 0x0)
 #define HOTMON_CONFIG_LOW			BIT(0)
 #define HOTMON_CONFIG_HIGH			BIT(1)
+<<<<<<< HEAD
 #define PRCM_REQ_MB4_A9WDOG_0			(PRCM_REQ_MB4 + 0x0)
 #define PRCM_REQ_MB4_A9WDOG_1			(PRCM_REQ_MB4 + 0x1)
 #define PRCM_REQ_MB4_A9WDOG_2			(PRCM_REQ_MB4 + 0x2)
@@ -208,6 +238,8 @@
 #define A9WDOG_AUTO_OFF_EN			BIT(7)
 #define A9WDOG_AUTO_OFF_DIS			0
 #define A9WDOG_ID_MASK				0xf
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Mailbox 5 Requests */
 #define PRCM_REQ_MB5_I2C_SLAVE_OP	(PRCM_REQ_MB5 + 0x0)
@@ -264,11 +296,14 @@
 #define WAKEUP_BIT_GPIO7 BIT(30)
 #define WAKEUP_BIT_GPIO8 BIT(31)
 
+<<<<<<< HEAD
 static struct {
 	bool valid;
 	struct prcmu_fw_version version;
 } fw_info;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This vector maps irq numbers to the bits in the bit field used in
  * communication with the PRCMU firmware.
@@ -344,13 +379,19 @@ static struct {
  * mb1_transfer - state needed for mailbox 1 communication.
  * @lock:	The transaction lock.
  * @work:	The transaction completion structure.
+<<<<<<< HEAD
  * @ape_opp:	The current APE OPP.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ack:	Reply ("acknowledge") data.
  */
 static struct {
 	struct mutex lock;
 	struct completion work;
+<<<<<<< HEAD
 	u8 ape_opp;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct {
 		u8 header;
 		u8 arm_opp;
@@ -418,13 +459,19 @@ static struct {
 static atomic_t ac_wake_req_state = ATOMIC_INIT(0);
 
 /* Spinlocks */
+<<<<<<< HEAD
 static DEFINE_SPINLOCK(prcmu_lock);
 static DEFINE_SPINLOCK(clkout_lock);
+=======
+static DEFINE_SPINLOCK(clkout_lock);
+static DEFINE_SPINLOCK(gpiocr_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Global var to runtime determine TCDM base for v2 or v1 */
 static __iomem void *tcdm_base;
 
 struct clk_mgt {
+<<<<<<< HEAD
 	void __iomem *reg;
 	u32 pllsw;
 	int branch;
@@ -435,10 +482,15 @@ enum {
 	PLL_RAW,
 	PLL_FIX,
 	PLL_DIV
+=======
+	unsigned int offset;
+	u32 pllsw;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static DEFINE_SPINLOCK(clk_mgt_lock);
 
+<<<<<<< HEAD
 #define CLK_MGT_ENTRY(_name, _branch, _clk38div)[PRCMU_##_name] = \
 	{ (PRCM_##_name##_MGT), 0 , _branch, _clk38div}
 struct clk_mgt clk_mgt[PRCMU_NUM_REG_CLOCKS] = {
@@ -514,6 +566,39 @@ static struct dsiescclk dsiescclk[3] = {
 		.div_mask = PRCM_DSITVCLK_DIV_DSI2_ESC_CLK_DIV_MASK,
 		.div_shift = PRCM_DSITVCLK_DIV_DSI2_ESC_CLK_DIV_SHIFT,
 	}
+=======
+#define CLK_MGT_ENTRY(_name)[PRCMU_##_name] = { (PRCM_##_name##_MGT), 0 }
+struct clk_mgt clk_mgt[PRCMU_NUM_REG_CLOCKS] = {
+	CLK_MGT_ENTRY(SGACLK),
+	CLK_MGT_ENTRY(UARTCLK),
+	CLK_MGT_ENTRY(MSP02CLK),
+	CLK_MGT_ENTRY(MSP1CLK),
+	CLK_MGT_ENTRY(I2CCLK),
+	CLK_MGT_ENTRY(SDMMCCLK),
+	CLK_MGT_ENTRY(SLIMCLK),
+	CLK_MGT_ENTRY(PER1CLK),
+	CLK_MGT_ENTRY(PER2CLK),
+	CLK_MGT_ENTRY(PER3CLK),
+	CLK_MGT_ENTRY(PER5CLK),
+	CLK_MGT_ENTRY(PER6CLK),
+	CLK_MGT_ENTRY(PER7CLK),
+	CLK_MGT_ENTRY(LCDCLK),
+	CLK_MGT_ENTRY(BMLCLK),
+	CLK_MGT_ENTRY(HSITXCLK),
+	CLK_MGT_ENTRY(HSIRXCLK),
+	CLK_MGT_ENTRY(HDMICLK),
+	CLK_MGT_ENTRY(APEATCLK),
+	CLK_MGT_ENTRY(APETRACECLK),
+	CLK_MGT_ENTRY(MCDECLK),
+	CLK_MGT_ENTRY(IPI2CCLK),
+	CLK_MGT_ENTRY(DSIALTCLK),
+	CLK_MGT_ENTRY(DMACLK),
+	CLK_MGT_ENTRY(B2R2CLK),
+	CLK_MGT_ENTRY(TVCLK),
+	CLK_MGT_ENTRY(SSPCLK),
+	CLK_MGT_ENTRY(RNGCLK),
+	CLK_MGT_ENTRY(UICCCLK),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -531,6 +616,12 @@ static struct dsiescclk dsiescclk[3] = {
 /* PLLDIV=12, PLLSW=4 (PLLDDR) */
 #define PRCMU_DSI_CLOCK_SETTING		0x0000008C
 
+<<<<<<< HEAD
+=======
+/* PLLDIV=8, PLLSW=4 (PLLDDR) */
+#define PRCMU_DSI_CLOCK_SETTING_U8400	0x00000088
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* DPI 50000000 Hz */
 #define PRCMU_DPI_CLOCK_SETTING		((1 << PRCMU_CLK_PLL_SW_SHIFT) | \
 					  (16 << PRCMU_CLK_PLL_DIV_SHIFT))
@@ -539,6 +630,12 @@ static struct dsiescclk dsiescclk[3] = {
 /* D=101, N=1, R=4, SELDIV2=0 */
 #define PRCMU_PLLDSI_FREQ_SETTING	0x00040165
 
+<<<<<<< HEAD
+=======
+/* D=70, N=1, R=3, SELDIV2=0 */
+#define PRCMU_PLLDSI_FREQ_SETTING_U8400	0x00030146
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PRCMU_ENABLE_PLLDSI		0x00000001
 #define PRCMU_DISABLE_PLLDSI		0x00000000
 #define PRCMU_RELEASE_RESET_DSS		0x0000400C
@@ -550,6 +647,7 @@ static struct dsiescclk dsiescclk[3] = {
 
 #define PRCMU_PLLDSI_LOCKP_LOCKED	0x3
 
+<<<<<<< HEAD
 int db8500_prcmu_enable_dsipll(void)
 {
 	int i;
@@ -571,11 +669,51 @@ int db8500_prcmu_enable_dsipll(void)
 	writel(PRCMU_DSI_RESET_SW, PRCM_DSI_SW_RESET);
 	for (i = 0; i < 10; i++) {
 		if ((readl(PRCM_PLLDSI_LOCKP) & PRCMU_PLLDSI_LOCKP_LOCKED)
+=======
+static struct {
+	u8 project_number;
+	u8 api_version;
+	u8 func_version;
+	u8 errata;
+} prcmu_version;
+
+
+int prcmu_enable_dsipll(void)
+{
+	int i;
+	unsigned int plldsifreq;
+
+	/* Clear DSIPLL_RESETN */
+	writel(PRCMU_RESET_DSIPLL, (_PRCMU_BASE + PRCM_APE_RESETN_CLR));
+	/* Unclamp DSIPLL in/out */
+	writel(PRCMU_UNCLAMP_DSIPLL, (_PRCMU_BASE + PRCM_MMIP_LS_CLAMP_CLR));
+
+	if (prcmu_is_u8400())
+		plldsifreq = PRCMU_PLLDSI_FREQ_SETTING_U8400;
+	else
+		plldsifreq = PRCMU_PLLDSI_FREQ_SETTING;
+	/* Set DSI PLL FREQ */
+	writel(plldsifreq, (_PRCMU_BASE + PRCM_PLLDSI_FREQ));
+	writel(PRCMU_DSI_PLLOUT_SEL_SETTING,
+		(_PRCMU_BASE + PRCM_DSI_PLLOUT_SEL));
+	/* Enable Escape clocks */
+	writel(PRCMU_ENABLE_ESCAPE_CLOCK_DIV,
+					(_PRCMU_BASE + PRCM_DSITVCLK_DIV));
+
+	/* Start DSI PLL */
+	writel(PRCMU_ENABLE_PLLDSI, (_PRCMU_BASE + PRCM_PLLDSI_ENABLE));
+	/* Reset DSI PLL */
+	writel(PRCMU_DSI_RESET_SW, (_PRCMU_BASE + PRCM_DSI_SW_RESET));
+	for (i = 0; i < 10; i++) {
+		if ((readl(_PRCMU_BASE + PRCM_PLLDSI_LOCKP) &
+			PRCMU_PLLDSI_LOCKP_LOCKED)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					== PRCMU_PLLDSI_LOCKP_LOCKED)
 			break;
 		udelay(100);
 	}
 	/* Set DSIPLL_RESETN */
+<<<<<<< HEAD
 	writel(PRCMU_RESET_DSIPLL, PRCM_APE_RESETN_SET);
 	return 0;
 }
@@ -592,10 +730,36 @@ int db8500_prcmu_disable_dsipll(void)
 int db8500_prcmu_set_display_clocks(void)
 {
 	unsigned long flags;
+=======
+	writel(PRCMU_RESET_DSIPLL, (_PRCMU_BASE + PRCM_APE_RESETN_SET));
+	return 0;
+}
+
+int prcmu_disable_dsipll(void)
+{
+	/* Disable dsi pll */
+	writel(PRCMU_DISABLE_PLLDSI, (_PRCMU_BASE + PRCM_PLLDSI_ENABLE));
+	/* Disable  escapeclock */
+	writel(PRCMU_DISABLE_ESCAPE_CLOCK_DIV,
+					(_PRCMU_BASE + PRCM_DSITVCLK_DIV));
+	return 0;
+}
+
+int prcmu_set_display_clocks(void)
+{
+	unsigned long flags;
+	unsigned int dsiclk;
+
+	if (prcmu_is_u8400())
+		dsiclk = PRCMU_DSI_CLOCK_SETTING_U8400;
+	else
+		dsiclk = PRCMU_DSI_CLOCK_SETTING;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&clk_mgt_lock, flags);
 
 	/* Grab the HW semaphore. */
+<<<<<<< HEAD
 	while ((readl(PRCM_SEM) & PRCM_SEM_PRCM_SEM) != 0)
 		cpu_relax();
 
@@ -605,12 +769,24 @@ int db8500_prcmu_set_display_clocks(void)
 
 	/* Release the HW semaphore. */
 	writel(0, PRCM_SEM);
+=======
+	while ((readl(_PRCMU_BASE + PRCM_SEM) & PRCM_SEM_PRCM_SEM) != 0)
+		cpu_relax();
+
+	writel(dsiclk, (_PRCMU_BASE + PRCM_HDMICLK_MGT));
+	writel(PRCMU_DSI_LP_CLOCK_SETTING, (_PRCMU_BASE + PRCM_TVCLK_MGT));
+	writel(PRCMU_DPI_CLOCK_SETTING, (_PRCMU_BASE + PRCM_LCDCLK_MGT));
+
+	/* Release the HW semaphore. */
+	writel(0, (_PRCMU_BASE + PRCM_SEM));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_irqrestore(&clk_mgt_lock, flags);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 u32 db8500_prcmu_read(unsigned int reg)
 {
 	return readl(_PRCMU_BASE + reg);
@@ -640,6 +816,34 @@ void db8500_prcmu_write_masked(unsigned int reg, u32 mask, u32 value)
 struct prcmu_fw_version *prcmu_get_fw_version(void)
 {
 	return fw_info.valid ? &fw_info.version : NULL;
+=======
+/**
+ * prcmu_enable_spi2 - Enables pin muxing for SPI2 on OtherAlternateC1.
+ */
+void prcmu_enable_spi2(void)
+{
+	u32 reg;
+	unsigned long flags;
+
+	spin_lock_irqsave(&gpiocr_lock, flags);
+	reg = readl(_PRCMU_BASE + PRCM_GPIOCR);
+	writel(reg | PRCM_GPIOCR_SPI2_SELECT, _PRCMU_BASE + PRCM_GPIOCR);
+	spin_unlock_irqrestore(&gpiocr_lock, flags);
+}
+
+/**
+ * prcmu_disable_spi2 - Disables pin muxing for SPI2 on OtherAlternateC1.
+ */
+void prcmu_disable_spi2(void)
+{
+	u32 reg;
+	unsigned long flags;
+
+	spin_lock_irqsave(&gpiocr_lock, flags);
+	reg = readl(_PRCMU_BASE + PRCM_GPIOCR);
+	writel(reg & ~PRCM_GPIOCR_SPI2_SELECT, _PRCMU_BASE + PRCM_GPIOCR);
+	spin_unlock_irqrestore(&gpiocr_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 bool prcmu_has_arm_maxopp(void)
@@ -648,6 +852,14 @@ bool prcmu_has_arm_maxopp(void)
 		PRCM_AVS_ISMODEENABLE_MASK) == PRCM_AVS_ISMODEENABLE_MASK;
 }
 
+<<<<<<< HEAD
+=======
+bool prcmu_is_u8400(void)
+{
+	return prcmu_version.project_number == PRCMU_PROJECT_ID_8400V2_0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * prcmu_get_boot_status - PRCMU boot status checking
  * Returns: the current PRCMU boot status
@@ -741,7 +953,11 @@ int prcmu_config_clkout(u8 clkout, u8 source, u8 div)
 
 	spin_lock_irqsave(&clkout_lock, flags);
 
+<<<<<<< HEAD
 	val = readl(PRCM_CLKOCR);
+=======
+	val = readl(_PRCMU_BASE + PRCM_CLKOCR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (val & div_mask) {
 		if (div) {
 			if ((val & mask) != bits) {
@@ -755,7 +971,11 @@ int prcmu_config_clkout(u8 clkout, u8 source, u8 div)
 			}
 		}
 	}
+<<<<<<< HEAD
 	writel((bits | (val & ~mask)), PRCM_CLKOCR);
+=======
+	writel((bits | (val & ~mask)), (_PRCMU_BASE + PRCM_CLKOCR));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	requests[clkout] += (div ? 1 : -1);
 
 unlock_and_return:
@@ -764,7 +984,11 @@ unlock_and_return:
 	return r;
 }
 
+<<<<<<< HEAD
 int db8500_prcmu_set_power_state(u8 state, bool keep_ulp_clk, bool keep_ap_pll)
+=======
+int prcmu_set_power_state(u8 state, bool keep_ulp_clk, bool keep_ap_pll)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags;
 
@@ -772,7 +996,11 @@ int db8500_prcmu_set_power_state(u8 state, bool keep_ulp_clk, bool keep_ap_pll)
 
 	spin_lock_irqsave(&mb0_transfer.lock, flags);
 
+<<<<<<< HEAD
 	while (readl(PRCM_MBOX_CPU_VAL) & MBOX_BIT(0))
+=======
+	while (readl(_PRCMU_BASE + PRCM_MBOX_CPU_VAL) & MBOX_BIT(0))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cpu_relax();
 
 	writeb(MB0H_POWER_STATE_TRANS, (tcdm_base + PRCM_MBOX_HEADER_REQ_MB0));
@@ -781,13 +1009,18 @@ int db8500_prcmu_set_power_state(u8 state, bool keep_ulp_clk, bool keep_ap_pll)
 	writeb((keep_ulp_clk ? 1 : 0),
 		(tcdm_base + PRCM_REQ_MB0_ULP_CLOCK_STATE));
 	writeb(0, (tcdm_base + PRCM_REQ_MB0_DO_NOT_WFI));
+<<<<<<< HEAD
 	writel(MBOX_BIT(0), PRCM_MBOX_CPU_SET);
+=======
+	writel(MBOX_BIT(0), (_PRCMU_BASE + PRCM_MBOX_CPU_SET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_irqrestore(&mb0_transfer.lock, flags);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 u8 db8500_prcmu_get_power_state_result(void)
 {
 	return readb(tcdm_base + PRCM_ACK_MB0_AP_PWRSTTR_STATUS);
@@ -906,6 +1139,8 @@ int db8500_prcmu_copy_gic_settings(void)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* This function should only be called while mb0_transfer.lock is held. */
 static void config_wakeups(void)
 {
@@ -928,18 +1163,30 @@ static void config_wakeups(void)
 		return;
 
 	for (i = 0; i < 2; i++) {
+<<<<<<< HEAD
 		while (readl(PRCM_MBOX_CPU_VAL) & MBOX_BIT(0))
+=======
+		while (readl(_PRCMU_BASE + PRCM_MBOX_CPU_VAL) & MBOX_BIT(0))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cpu_relax();
 		writel(dbb_events, (tcdm_base + PRCM_REQ_MB0_WAKEUP_8500));
 		writel(abb_events, (tcdm_base + PRCM_REQ_MB0_WAKEUP_4500));
 		writeb(header[i], (tcdm_base + PRCM_MBOX_HEADER_REQ_MB0));
+<<<<<<< HEAD
 		writel(MBOX_BIT(0), PRCM_MBOX_CPU_SET);
+=======
+		writel(MBOX_BIT(0), (_PRCMU_BASE + PRCM_MBOX_CPU_SET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	last_dbb_events = dbb_events;
 	last_abb_events = abb_events;
 }
 
+<<<<<<< HEAD
 void db8500_prcmu_enable_wakeups(u32 wakeups)
+=======
+void prcmu_enable_wakeups(u32 wakeups)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags;
 	u32 bits;
@@ -960,7 +1207,11 @@ void db8500_prcmu_enable_wakeups(u32 wakeups)
 	spin_unlock_irqrestore(&mb0_transfer.lock, flags);
 }
 
+<<<<<<< HEAD
 void db8500_prcmu_config_abb_event_readout(u32 abb_events)
+=======
+void prcmu_config_abb_event_readout(u32 abb_events)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags;
 
@@ -972,7 +1223,11 @@ void db8500_prcmu_config_abb_event_readout(u32 abb_events)
 	spin_unlock_irqrestore(&mb0_transfer.lock, flags);
 }
 
+<<<<<<< HEAD
 void db8500_prcmu_get_abb_event_buffer(void __iomem **buf)
+=======
+void prcmu_get_abb_event_buffer(void __iomem **buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (readb(tcdm_base + PRCM_ACK_MB0_READ_POINTER) & 1)
 		*buf = (tcdm_base + PRCM_ACK_MB0_WAKEUP_1_4500);
@@ -981,13 +1236,21 @@ void db8500_prcmu_get_abb_event_buffer(void __iomem **buf)
 }
 
 /**
+<<<<<<< HEAD
  * db8500_prcmu_set_arm_opp - set the appropriate ARM OPP
+=======
+ * prcmu_set_arm_opp - set the appropriate ARM OPP
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @opp: The new ARM operating point to which transition is to be made
  * Returns: 0 on success, non-zero on failure
  *
  * This function sets the the operating point of the ARM.
  */
+<<<<<<< HEAD
 int db8500_prcmu_set_arm_opp(u8 opp)
+=======
+int prcmu_set_arm_opp(u8 opp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int r;
 
@@ -998,14 +1261,22 @@ int db8500_prcmu_set_arm_opp(u8 opp)
 
 	mutex_lock(&mb1_transfer.lock);
 
+<<<<<<< HEAD
 	while (readl(PRCM_MBOX_CPU_VAL) & MBOX_BIT(1))
+=======
+	while (readl(_PRCMU_BASE + PRCM_MBOX_CPU_VAL) & MBOX_BIT(1))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cpu_relax();
 
 	writeb(MB1H_ARM_APE_OPP, (tcdm_base + PRCM_MBOX_HEADER_REQ_MB1));
 	writeb(opp, (tcdm_base + PRCM_REQ_MB1_ARM_OPP));
 	writeb(APE_NO_CHANGE, (tcdm_base + PRCM_REQ_MB1_APE_OPP));
 
+<<<<<<< HEAD
 	writel(MBOX_BIT(1), PRCM_MBOX_CPU_SET);
+=======
+	writel(MBOX_BIT(1), (_PRCMU_BASE + PRCM_MBOX_CPU_SET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wait_for_completion(&mb1_transfer.work);
 
 	if ((mb1_transfer.ack.header != MB1H_ARM_APE_OPP) ||
@@ -1018,16 +1289,25 @@ int db8500_prcmu_set_arm_opp(u8 opp)
 }
 
 /**
+<<<<<<< HEAD
  * db8500_prcmu_get_arm_opp - get the current ARM OPP
  *
  * Returns: the current ARM OPP
  */
 int db8500_prcmu_get_arm_opp(void)
+=======
+ * prcmu_get_arm_opp - get the current ARM OPP
+ *
+ * Returns: the current ARM OPP
+ */
+int prcmu_get_arm_opp(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return readb(tcdm_base + PRCM_ACK_MB1_CURRENT_ARM_OPP);
 }
 
 /**
+<<<<<<< HEAD
  * db8500_prcmu_get_ddr_opp - get the current DDR OPP
  *
  * Returns: the current DDR OPP
@@ -1039,17 +1319,35 @@ int db8500_prcmu_get_ddr_opp(void)
 
 /**
  * db8500_set_ddr_opp - set the appropriate DDR OPP
+=======
+ * prcmu_get_ddr_opp - get the current DDR OPP
+ *
+ * Returns: the current DDR OPP
+ */
+int prcmu_get_ddr_opp(void)
+{
+	return readb(_PRCMU_BASE + PRCM_DDR_SUBSYS_APE_MINBW);
+}
+
+/**
+ * set_ddr_opp - set the appropriate DDR OPP
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @opp: The new DDR operating point to which transition is to be made
  * Returns: 0 on success, non-zero on failure
  *
  * This function sets the operating point of the DDR.
  */
+<<<<<<< HEAD
 int db8500_prcmu_set_ddr_opp(u8 opp)
+=======
+int prcmu_set_ddr_opp(u8 opp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (opp < DDR_100_OPP || opp > DDR_25_OPP)
 		return -EINVAL;
 	/* Changing the DDR OPP can hang the hardware pre-v21 */
 	if (cpu_is_u8500v20_or_later() && !cpu_is_u8500v20())
+<<<<<<< HEAD
 		writeb(opp, PRCM_DDR_SUBSYS_APE_MINBW);
 
 	return 0;
@@ -1103,11 +1401,20 @@ unlock_and_return:
 
 /**
  * db8500_set_ape_opp - set the appropriate APE OPP
+=======
+		writeb(opp, (_PRCMU_BASE + PRCM_DDR_SUBSYS_APE_MINBW));
+
+	return 0;
+}
+/**
+ * set_ape_opp - set the appropriate APE OPP
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @opp: The new APE operating point to which transition is to be made
  * Returns: 0 on success, non-zero on failure
  *
  * This function sets the operating point of the APE.
  */
+<<<<<<< HEAD
 int db8500_prcmu_set_ape_opp(u8 opp)
 {
 	int r = 0;
@@ -1124,20 +1431,36 @@ int db8500_prcmu_set_ape_opp(u8 opp)
 		goto skip_message;
 
 	while (readl(PRCM_MBOX_CPU_VAL) & MBOX_BIT(1))
+=======
+int prcmu_set_ape_opp(u8 opp)
+{
+	int r = 0;
+
+	mutex_lock(&mb1_transfer.lock);
+
+	while (readl(_PRCMU_BASE + PRCM_MBOX_CPU_VAL) & MBOX_BIT(1))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cpu_relax();
 
 	writeb(MB1H_ARM_APE_OPP, (tcdm_base + PRCM_MBOX_HEADER_REQ_MB1));
 	writeb(ARM_NO_CHANGE, (tcdm_base + PRCM_REQ_MB1_ARM_OPP));
+<<<<<<< HEAD
 	writeb(((opp == APE_50_PARTLY_25_OPP) ? APE_50_OPP : opp),
 		(tcdm_base + PRCM_REQ_MB1_APE_OPP));
 
 	writel(MBOX_BIT(1), PRCM_MBOX_CPU_SET);
+=======
+	writeb(opp, (tcdm_base + PRCM_REQ_MB1_APE_OPP));
+
+	writel(MBOX_BIT(1), (_PRCMU_BASE + PRCM_MBOX_CPU_SET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wait_for_completion(&mb1_transfer.work);
 
 	if ((mb1_transfer.ack.header != MB1H_ARM_APE_OPP) ||
 		(mb1_transfer.ack.ape_opp != opp))
 		r = -EIO;
 
+<<<<<<< HEAD
 skip_message:
 	if ((!r && (opp == APE_50_PARTLY_25_OPP)) ||
 		(r && (mb1_transfer.ape_opp == APE_50_PARTLY_25_OPP)))
@@ -1145,17 +1468,27 @@ skip_message:
 	if (!r)
 		mb1_transfer.ape_opp = opp;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&mb1_transfer.lock);
 
 	return r;
 }
 
 /**
+<<<<<<< HEAD
  * db8500_prcmu_get_ape_opp - get the current APE OPP
  *
  * Returns: the current APE OPP
  */
 int db8500_prcmu_get_ape_opp(void)
+=======
+ * prcmu_get_ape_opp - get the current APE OPP
+ *
+ * Returns: the current APE OPP
+ */
+int prcmu_get_ape_opp(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return readb(tcdm_base + PRCM_ACK_MB1_CURRENT_APE_OPP);
 }
@@ -1188,12 +1521,20 @@ int prcmu_request_ape_opp_100_voltage(bool enable)
 		header = MB1H_RELEASE_APE_OPP_100_VOLT;
 	}
 
+<<<<<<< HEAD
 	while (readl(PRCM_MBOX_CPU_VAL) & MBOX_BIT(1))
+=======
+	while (readl(_PRCMU_BASE + PRCM_MBOX_CPU_VAL) & MBOX_BIT(1))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cpu_relax();
 
 	writeb(header, (tcdm_base + PRCM_MBOX_HEADER_REQ_MB1));
 
+<<<<<<< HEAD
 	writel(MBOX_BIT(1), PRCM_MBOX_CPU_SET);
+=======
+	writel(MBOX_BIT(1), (_PRCMU_BASE + PRCM_MBOX_CPU_SET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wait_for_completion(&mb1_transfer.work);
 
 	if ((mb1_transfer.ack.header != header) ||
@@ -1217,13 +1558,21 @@ int prcmu_release_usb_wakeup_state(void)
 
 	mutex_lock(&mb1_transfer.lock);
 
+<<<<<<< HEAD
 	while (readl(PRCM_MBOX_CPU_VAL) & MBOX_BIT(1))
+=======
+	while (readl(_PRCMU_BASE + PRCM_MBOX_CPU_VAL) & MBOX_BIT(1))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cpu_relax();
 
 	writeb(MB1H_RELEASE_USB_WAKEUP,
 		(tcdm_base + PRCM_MBOX_HEADER_REQ_MB1));
 
+<<<<<<< HEAD
 	writel(MBOX_BIT(1), PRCM_MBOX_CPU_SET);
+=======
+	writel(MBOX_BIT(1), (_PRCMU_BASE + PRCM_MBOX_CPU_SET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wait_for_completion(&mb1_transfer.work);
 
 	if ((mb1_transfer.ack.header != MB1H_RELEASE_USB_WAKEUP) ||
@@ -1235,6 +1584,7 @@ int prcmu_release_usb_wakeup_state(void)
 	return r;
 }
 
+<<<<<<< HEAD
 static int request_pll(u8 clock, bool enable)
 {
 	int r = 0;
@@ -1267,13 +1617,21 @@ static int request_pll(u8 clock, bool enable)
 
 /**
  * db8500_prcmu_set_epod - set the state of a EPOD (power domain)
+=======
+/**
+ * prcmu_set_epod - set the state of a EPOD (power domain)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @epod_id: The EPOD to set
  * @epod_state: The new EPOD state
  *
  * This function sets the state of a EPOD (power domain). It may not be called
  * from interrupt context.
  */
+<<<<<<< HEAD
 int db8500_prcmu_set_epod(u16 epod_id, u8 epod_state)
+=======
+int prcmu_set_epod(u16 epod_id, u8 epod_state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int r = 0;
 	bool ram_retention = false;
@@ -1300,7 +1658,11 @@ int db8500_prcmu_set_epod(u16 epod_id, u8 epod_state)
 	mutex_lock(&mb2_transfer.lock);
 
 	/* wait for mailbox */
+<<<<<<< HEAD
 	while (readl(PRCM_MBOX_CPU_VAL) & MBOX_BIT(2))
+=======
+	while (readl(_PRCMU_BASE + PRCM_MBOX_CPU_VAL) & MBOX_BIT(2))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cpu_relax();
 
 	/* fill in mailbox */
@@ -1310,7 +1672,11 @@ int db8500_prcmu_set_epod(u16 epod_id, u8 epod_state)
 
 	writeb(MB2H_DPS, (tcdm_base + PRCM_MBOX_HEADER_REQ_MB2));
 
+<<<<<<< HEAD
 	writel(MBOX_BIT(2), PRCM_MBOX_CPU_SET);
+=======
+	writel(MBOX_BIT(2), (_PRCMU_BASE + PRCM_MBOX_CPU_SET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * The current firmware version does not handle errors correctly,
@@ -1397,13 +1763,21 @@ static int request_sysclk(bool enable)
 
 	spin_lock_irqsave(&mb3_transfer.lock, flags);
 
+<<<<<<< HEAD
 	while (readl(PRCM_MBOX_CPU_VAL) & MBOX_BIT(3))
+=======
+	while (readl(_PRCMU_BASE + PRCM_MBOX_CPU_VAL) & MBOX_BIT(3))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cpu_relax();
 
 	writeb((enable ? ON : OFF), (tcdm_base + PRCM_REQ_MB3_SYSCLK_MGT));
 
 	writeb(MB3H_SYSCLK, (tcdm_base + PRCM_MBOX_HEADER_REQ_MB3));
+<<<<<<< HEAD
 	writel(MBOX_BIT(3), PRCM_MBOX_CPU_SET);
+=======
+	writel(MBOX_BIT(3), (_PRCMU_BASE + PRCM_MBOX_CPU_SET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_irqrestore(&mb3_transfer.lock, flags);
 
@@ -1429,12 +1803,20 @@ static int request_timclk(bool enable)
 
 	if (!enable)
 		val |= PRCM_TCR_STOP_TIMERS;
+<<<<<<< HEAD
 	writel(val, PRCM_TCR);
+=======
+	writel(val, (_PRCMU_BASE + PRCM_TCR));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int request_clock(u8 clock, bool enable)
+=======
+static int request_reg_clock(u8 clock, bool enable)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 val;
 	unsigned long flags;
@@ -1442,26 +1824,41 @@ static int request_clock(u8 clock, bool enable)
 	spin_lock_irqsave(&clk_mgt_lock, flags);
 
 	/* Grab the HW semaphore. */
+<<<<<<< HEAD
 	while ((readl(PRCM_SEM) & PRCM_SEM_PRCM_SEM) != 0)
 		cpu_relax();
 
 	val = readl(clk_mgt[clock].reg);
+=======
+	while ((readl(_PRCMU_BASE + PRCM_SEM) & PRCM_SEM_PRCM_SEM) != 0)
+		cpu_relax();
+
+	val = readl(_PRCMU_BASE + clk_mgt[clock].offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (enable) {
 		val |= (PRCM_CLK_MGT_CLKEN | clk_mgt[clock].pllsw);
 	} else {
 		clk_mgt[clock].pllsw = (val & PRCM_CLK_MGT_CLKPLLSW_MASK);
 		val &= ~(PRCM_CLK_MGT_CLKEN | PRCM_CLK_MGT_CLKPLLSW_MASK);
 	}
+<<<<<<< HEAD
 	writel(val, clk_mgt[clock].reg);
 
 	/* Release the HW semaphore. */
 	writel(0, PRCM_SEM);
+=======
+	writel(val, (_PRCMU_BASE + clk_mgt[clock].offset));
+
+	/* Release the HW semaphore. */
+	writel(0, (_PRCMU_BASE + PRCM_SEM));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_irqrestore(&clk_mgt_lock, flags);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int request_sga_clock(u8 clock, bool enable)
 {
 	u32 val;
@@ -1556,12 +1953,17 @@ static int request_dsiescclk(u8 n, bool enable)
 
 /**
  * db8500_prcmu_request_clock() - Request for a clock to be enabled or disabled.
+=======
+/**
+ * prcmu_request_clock() - Request for a clock to be enabled or disabled.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @clock:      The clock for which the request is made.
  * @enable:     Whether the clock should be enabled (true) or disabled (false).
  *
  * This function should only be used by the clock implementation.
  * Do not use it from any other place!
  */
+<<<<<<< HEAD
 int db8500_prcmu_request_clock(u8 clock, bool enable)
 {
 	if (clock == PRCMU_SGACLK)
@@ -1996,6 +2398,21 @@ int prcmu_set_clock_rate(u8 clock, unsigned long rate)
 }
 
 int db8500_prcmu_config_esram0_deep_sleep(u8 state)
+=======
+int prcmu_request_clock(u8 clock, bool enable)
+{
+	if (clock < PRCMU_NUM_REG_CLOCKS)
+		return request_reg_clock(clock, enable);
+	else if (clock == PRCMU_TIMCLK)
+		return request_timclk(enable);
+	else if (clock == PRCMU_SYSCLK)
+		return request_sysclk(enable);
+	else
+		return -EINVAL;
+}
+
+int prcmu_config_esram0_deep_sleep(u8 state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if ((state > ESRAM0_DEEP_SLEEP_STATE_RET) ||
 	    (state < ESRAM0_DEEP_SLEEP_STATE_OFF))
@@ -2003,7 +2420,11 @@ int db8500_prcmu_config_esram0_deep_sleep(u8 state)
 
 	mutex_lock(&mb4_transfer.lock);
 
+<<<<<<< HEAD
 	while (readl(PRCM_MBOX_CPU_VAL) & MBOX_BIT(4))
+=======
+	while (readl(_PRCMU_BASE + PRCM_MBOX_CPU_VAL) & MBOX_BIT(4))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cpu_relax();
 
 	writeb(MB4H_MEM_ST, (tcdm_base + PRCM_MBOX_HEADER_REQ_MB4));
@@ -2013,7 +2434,11 @@ int db8500_prcmu_config_esram0_deep_sleep(u8 state)
 	       (tcdm_base + PRCM_REQ_MB4_DDR_ST_AP_DEEP_IDLE));
 	writeb(state, (tcdm_base + PRCM_REQ_MB4_ESRAM0_ST));
 
+<<<<<<< HEAD
 	writel(MBOX_BIT(4), PRCM_MBOX_CPU_SET);
+=======
+	writel(MBOX_BIT(4), (_PRCMU_BASE + PRCM_MBOX_CPU_SET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wait_for_completion(&mb4_transfer.work);
 
 	mutex_unlock(&mb4_transfer.lock);
@@ -2021,17 +2446,29 @@ int db8500_prcmu_config_esram0_deep_sleep(u8 state)
 	return 0;
 }
 
+<<<<<<< HEAD
 int db8500_prcmu_config_hotdog(u8 threshold)
 {
 	mutex_lock(&mb4_transfer.lock);
 
 	while (readl(PRCM_MBOX_CPU_VAL) & MBOX_BIT(4))
+=======
+int prcmu_config_hotdog(u8 threshold)
+{
+	mutex_lock(&mb4_transfer.lock);
+
+	while (readl(_PRCMU_BASE + PRCM_MBOX_CPU_VAL) & MBOX_BIT(4))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cpu_relax();
 
 	writeb(threshold, (tcdm_base + PRCM_REQ_MB4_HOTDOG_THRESHOLD));
 	writeb(MB4H_HOTDOG, (tcdm_base + PRCM_MBOX_HEADER_REQ_MB4));
 
+<<<<<<< HEAD
 	writel(MBOX_BIT(4), PRCM_MBOX_CPU_SET);
+=======
+	writel(MBOX_BIT(4), (_PRCMU_BASE + PRCM_MBOX_CPU_SET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wait_for_completion(&mb4_transfer.work);
 
 	mutex_unlock(&mb4_transfer.lock);
@@ -2039,11 +2476,19 @@ int db8500_prcmu_config_hotdog(u8 threshold)
 	return 0;
 }
 
+<<<<<<< HEAD
 int db8500_prcmu_config_hotmon(u8 low, u8 high)
 {
 	mutex_lock(&mb4_transfer.lock);
 
 	while (readl(PRCM_MBOX_CPU_VAL) & MBOX_BIT(4))
+=======
+int prcmu_config_hotmon(u8 low, u8 high)
+{
+	mutex_lock(&mb4_transfer.lock);
+
+	while (readl(_PRCMU_BASE + PRCM_MBOX_CPU_VAL) & MBOX_BIT(4))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cpu_relax();
 
 	writeb(low, (tcdm_base + PRCM_REQ_MB4_HOTMON_LOW));
@@ -2052,7 +2497,11 @@ int db8500_prcmu_config_hotmon(u8 low, u8 high)
 		(tcdm_base + PRCM_REQ_MB4_HOTMON_CONFIG));
 	writeb(MB4H_HOTMON, (tcdm_base + PRCM_MBOX_HEADER_REQ_MB4));
 
+<<<<<<< HEAD
 	writel(MBOX_BIT(4), PRCM_MBOX_CPU_SET);
+=======
+	writel(MBOX_BIT(4), (_PRCMU_BASE + PRCM_MBOX_CPU_SET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wait_for_completion(&mb4_transfer.work);
 
 	mutex_unlock(&mb4_transfer.lock);
@@ -2064,13 +2513,21 @@ static int config_hot_period(u16 val)
 {
 	mutex_lock(&mb4_transfer.lock);
 
+<<<<<<< HEAD
 	while (readl(PRCM_MBOX_CPU_VAL) & MBOX_BIT(4))
+=======
+	while (readl(_PRCMU_BASE + PRCM_MBOX_CPU_VAL) & MBOX_BIT(4))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cpu_relax();
 
 	writew(val, (tcdm_base + PRCM_REQ_MB4_HOT_PERIOD));
 	writeb(MB4H_HOT_PERIOD, (tcdm_base + PRCM_MBOX_HEADER_REQ_MB4));
 
+<<<<<<< HEAD
 	writel(MBOX_BIT(4), PRCM_MBOX_CPU_SET);
+=======
+	writel(MBOX_BIT(4), (_PRCMU_BASE + PRCM_MBOX_CPU_SET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wait_for_completion(&mb4_transfer.work);
 
 	mutex_unlock(&mb4_transfer.lock);
@@ -2078,7 +2535,11 @@ static int config_hot_period(u16 val)
 	return 0;
 }
 
+<<<<<<< HEAD
 int db8500_prcmu_start_temp_sense(u16 cycles32k)
+=======
+int prcmu_start_temp_sense(u16 cycles32k)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (cycles32k == 0xFFFF)
 		return -EINVAL;
@@ -2086,11 +2547,16 @@ int db8500_prcmu_start_temp_sense(u16 cycles32k)
 	return config_hot_period(cycles32k);
 }
 
+<<<<<<< HEAD
 int db8500_prcmu_stop_temp_sense(void)
+=======
+int prcmu_stop_temp_sense(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return config_hot_period(0xFFFF);
 }
 
+<<<<<<< HEAD
 static int prcmu_a9wdog(u8 cmd, u8 d0, u8 d1, u8 d2, u8 d3)
 {
 
@@ -2153,6 +2619,41 @@ int db8500_prcmu_load_a9wdog(u8 id, u32 timeout)
 			    (u8)((timeout >> 4) & 0xff),
 			    (u8)((timeout >> 12) & 0xff),
 			    (u8)((timeout >> 20) & 0xff));
+=======
+/**
+ * prcmu_set_clock_divider() - Configure the clock divider.
+ * @clock:	The clock for which the request is made.
+ * @divider:	The clock divider. (< 32)
+ *
+ * This function should only be used by the clock implementation.
+ * Do not use it from any other place!
+ */
+int prcmu_set_clock_divider(u8 clock, u8 divider)
+{
+	u32 val;
+	unsigned long flags;
+
+	if ((clock >= PRCMU_NUM_REG_CLOCKS) || (divider < 1) || (31 < divider))
+		return -EINVAL;
+
+	spin_lock_irqsave(&clk_mgt_lock, flags);
+
+	/* Grab the HW semaphore. */
+	while ((readl(_PRCMU_BASE + PRCM_SEM) & PRCM_SEM_PRCM_SEM) != 0)
+		cpu_relax();
+
+	val = readl(_PRCMU_BASE + clk_mgt[clock].offset);
+	val &= ~(PRCM_CLK_MGT_CLKPLLDIV_MASK);
+	val |= (u32)divider;
+	writel(val, (_PRCMU_BASE + clk_mgt[clock].offset));
+
+	/* Release the HW semaphore. */
+	writel(0, (_PRCMU_BASE + PRCM_SEM));
+
+	spin_unlock_irqrestore(&clk_mgt_lock, flags);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -2174,16 +2675,26 @@ int prcmu_abb_read(u8 slave, u8 reg, u8 *value, u8 size)
 
 	mutex_lock(&mb5_transfer.lock);
 
+<<<<<<< HEAD
 	while (readl(PRCM_MBOX_CPU_VAL) & MBOX_BIT(5))
 		cpu_relax();
 
 	writeb(0, (tcdm_base + PRCM_MBOX_HEADER_REQ_MB5));
+=======
+	while (readl(_PRCMU_BASE + PRCM_MBOX_CPU_VAL) & MBOX_BIT(5))
+		cpu_relax();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writeb(PRCMU_I2C_READ(slave), (tcdm_base + PRCM_REQ_MB5_I2C_SLAVE_OP));
 	writeb(PRCMU_I2C_STOP_EN, (tcdm_base + PRCM_REQ_MB5_I2C_HW_BITS));
 	writeb(reg, (tcdm_base + PRCM_REQ_MB5_I2C_REG));
 	writeb(0, (tcdm_base + PRCM_REQ_MB5_I2C_VAL));
 
+<<<<<<< HEAD
 	writel(MBOX_BIT(5), PRCM_MBOX_CPU_SET);
+=======
+	writel(MBOX_BIT(5), (_PRCMU_BASE + PRCM_MBOX_CPU_SET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!wait_for_completion_timeout(&mb5_transfer.work,
 				msecs_to_jiffies(20000))) {
@@ -2203,6 +2714,7 @@ int prcmu_abb_read(u8 slave, u8 reg, u8 *value, u8 size)
 }
 
 /**
+<<<<<<< HEAD
  * prcmu_abb_write_masked() - Write masked register value(s) to the ABB.
  * @slave:	The I2C slave address.
  * @reg:	The (start) register address.
@@ -2216,6 +2728,18 @@ int prcmu_abb_read(u8 slave, u8 reg, u8 *value, u8 size)
  * @size has to be 1 for the current firmware version.
  */
 int prcmu_abb_write_masked(u8 slave, u8 reg, u8 *value, u8 *mask, u8 size)
+=======
+ * prcmu_abb_write() - Write register value(s) to the ABB.
+ * @slave:	The I2C slave address.
+ * @reg:	The (start) register address.
+ * @value:	The value(s) to write.
+ * @size:	The number of registers to write.
+ *
+ * Reads register value(s) from the ABB.
+ * @size has to be 1 for the current firmware version.
+ */
+int prcmu_abb_write(u8 slave, u8 reg, u8 *value, u8 size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int r;
 
@@ -2224,16 +2748,26 @@ int prcmu_abb_write_masked(u8 slave, u8 reg, u8 *value, u8 *mask, u8 size)
 
 	mutex_lock(&mb5_transfer.lock);
 
+<<<<<<< HEAD
 	while (readl(PRCM_MBOX_CPU_VAL) & MBOX_BIT(5))
 		cpu_relax();
 
 	writeb(~*mask, (tcdm_base + PRCM_MBOX_HEADER_REQ_MB5));
+=======
+	while (readl(_PRCMU_BASE + PRCM_MBOX_CPU_VAL) & MBOX_BIT(5))
+		cpu_relax();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writeb(PRCMU_I2C_WRITE(slave), (tcdm_base + PRCM_REQ_MB5_I2C_SLAVE_OP));
 	writeb(PRCMU_I2C_STOP_EN, (tcdm_base + PRCM_REQ_MB5_I2C_HW_BITS));
 	writeb(reg, (tcdm_base + PRCM_REQ_MB5_I2C_REG));
 	writeb(*value, (tcdm_base + PRCM_REQ_MB5_I2C_VAL));
 
+<<<<<<< HEAD
 	writel(MBOX_BIT(5), PRCM_MBOX_CPU_SET);
+=======
+	writel(MBOX_BIT(5), (_PRCMU_BASE + PRCM_MBOX_CPU_SET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!wait_for_completion_timeout(&mb5_transfer.work,
 				msecs_to_jiffies(20000))) {
@@ -2250,6 +2784,7 @@ int prcmu_abb_write_masked(u8 slave, u8 reg, u8 *value, u8 *mask, u8 size)
 }
 
 /**
+<<<<<<< HEAD
  * prcmu_abb_write() - Write register value(s) to the ABB.
  * @slave:	The I2C slave address.
  * @reg:	The (start) register address.
@@ -2267,21 +2802,31 @@ int prcmu_abb_write(u8 slave, u8 reg, u8 *value, u8 size)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * prcmu_ac_wake_req - should be called whenever ARM wants to wakeup Modem
  */
 void prcmu_ac_wake_req(void)
 {
 	u32 val;
+<<<<<<< HEAD
 	u32 status;
 
 	mutex_lock(&mb0_transfer.ac_wake_lock);
 
 	val = readl(PRCM_HOSTACCESS_REQ);
+=======
+
+	mutex_lock(&mb0_transfer.ac_wake_lock);
+
+	val = readl(_PRCMU_BASE + PRCM_HOSTACCESS_REQ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (val & PRCM_HOSTACCESS_REQ_HOSTACCESS_REQ)
 		goto unlock_and_return;
 
 	atomic_set(&ac_wake_req_state, 1);
 
+<<<<<<< HEAD
 retry:
 	writel((val | PRCM_HOSTACCESS_REQ_HOSTACCESS_REQ), PRCM_HOSTACCESS_REQ);
 
@@ -2310,6 +2855,14 @@ retry:
 				msecs_to_jiffies(5000)))
 			goto retry;
 		pr_crit("prcmu: %s timed out (5 s) waiting for AC_SLEEP_ACK.\n",
+=======
+	writel((val | PRCM_HOSTACCESS_REQ_HOSTACCESS_REQ),
+		(_PRCMU_BASE + PRCM_HOSTACCESS_REQ));
+
+	if (!wait_for_completion_timeout(&mb0_transfer.ac_wake_work,
+			msecs_to_jiffies(20000))) {
+		pr_err("prcmu: %s timed out (20 s) waiting for a reply.\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			__func__);
 	}
 
@@ -2326,16 +2879,28 @@ void prcmu_ac_sleep_req()
 
 	mutex_lock(&mb0_transfer.ac_wake_lock);
 
+<<<<<<< HEAD
 	val = readl(PRCM_HOSTACCESS_REQ);
+=======
+	val = readl(_PRCMU_BASE + PRCM_HOSTACCESS_REQ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!(val & PRCM_HOSTACCESS_REQ_HOSTACCESS_REQ))
 		goto unlock_and_return;
 
 	writel((val & ~PRCM_HOSTACCESS_REQ_HOSTACCESS_REQ),
+<<<<<<< HEAD
 		PRCM_HOSTACCESS_REQ);
 
 	if (!wait_for_completion_timeout(&mb0_transfer.ac_wake_work,
 			msecs_to_jiffies(5000))) {
 		pr_crit("prcmu: %s timed out (5 s) waiting for a reply.\n",
+=======
+		(_PRCMU_BASE + PRCM_HOSTACCESS_REQ));
+
+	if (!wait_for_completion_timeout(&mb0_transfer.ac_wake_work,
+			msecs_to_jiffies(20000))) {
+		pr_err("prcmu: %s timed out (20 s) waiting for a reply.\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			__func__);
 	}
 
@@ -2345,12 +2910,17 @@ unlock_and_return:
 	mutex_unlock(&mb0_transfer.ac_wake_lock);
 }
 
+<<<<<<< HEAD
 bool db8500_prcmu_is_ac_wake_requested(void)
+=======
+bool prcmu_is_ac_wake_requested(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return (atomic_read(&ac_wake_req_state) != 0);
 }
 
 /**
+<<<<<<< HEAD
  * db8500_prcmu_system_reset - System reset
  *
  * Saves the reset reason code and then sets the APE_SOFTRST register which
@@ -2385,6 +2955,31 @@ void db8500_prcmu_modem_reset(void)
 
 	writeb(MB1H_RESET_MODEM, (tcdm_base + PRCM_MBOX_HEADER_REQ_MB1));
 	writel(MBOX_BIT(1), PRCM_MBOX_CPU_SET);
+=======
+ * prcmu_system_reset - System reset
+ *
+ * Saves the reset reason code and then sets the APE_SOFRST register which
+ * fires interrupt to fw
+ */
+void prcmu_system_reset(u16 reset_code)
+{
+	writew(reset_code, (tcdm_base + PRCM_SW_RST_REASON));
+	writel(1, (_PRCMU_BASE + PRCM_APE_SOFTRST));
+}
+
+/**
+ * prcmu_reset_modem - ask the PRCMU to reset modem
+ */
+void prcmu_modem_reset(void)
+{
+	mutex_lock(&mb1_transfer.lock);
+
+	while (readl(_PRCMU_BASE + PRCM_MBOX_CPU_VAL) & MBOX_BIT(1))
+		cpu_relax();
+
+	writeb(MB1H_RESET_MODEM, (tcdm_base + PRCM_MBOX_HEADER_REQ_MB1));
+	writel(MBOX_BIT(1), (_PRCMU_BASE + PRCM_MBOX_CPU_SET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wait_for_completion(&mb1_transfer.work);
 
 	/*
@@ -2401,11 +2996,19 @@ static void ack_dbb_wakeup(void)
 
 	spin_lock_irqsave(&mb0_transfer.lock, flags);
 
+<<<<<<< HEAD
 	while (readl(PRCM_MBOX_CPU_VAL) & MBOX_BIT(0))
 		cpu_relax();
 
 	writeb(MB0H_READ_WAKEUP_ACK, (tcdm_base + PRCM_MBOX_HEADER_REQ_MB0));
 	writel(MBOX_BIT(0), PRCM_MBOX_CPU_SET);
+=======
+	while (readl(_PRCMU_BASE + PRCM_MBOX_CPU_VAL) & MBOX_BIT(0))
+		cpu_relax();
+
+	writeb(MB0H_READ_WAKEUP_ACK, (tcdm_base + PRCM_MBOX_HEADER_REQ_MB0));
+	writel(MBOX_BIT(0), (_PRCMU_BASE + PRCM_MBOX_CPU_SET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_irqrestore(&mb0_transfer.lock, flags);
 }
@@ -2450,7 +3053,11 @@ static bool read_mailbox_0(void)
 		r = false;
 		break;
 	}
+<<<<<<< HEAD
 	writel(MBOX_BIT(0), PRCM_ARM_IT1_CLR);
+=======
+	writel(MBOX_BIT(0), (_PRCMU_BASE + PRCM_ARM_IT1_CLR));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return r;
 }
 
@@ -2463,7 +3070,11 @@ static bool read_mailbox_1(void)
 		PRCM_ACK_MB1_CURRENT_APE_OPP);
 	mb1_transfer.ack.ape_voltage_status = readb(tcdm_base +
 		PRCM_ACK_MB1_APE_VOLTAGE_STATUS);
+<<<<<<< HEAD
 	writel(MBOX_BIT(1), PRCM_ARM_IT1_CLR);
+=======
+	writel(MBOX_BIT(1), (_PRCMU_BASE + PRCM_ARM_IT1_CLR));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	complete(&mb1_transfer.work);
 	return false;
 }
@@ -2471,14 +3082,22 @@ static bool read_mailbox_1(void)
 static bool read_mailbox_2(void)
 {
 	mb2_transfer.ack.status = readb(tcdm_base + PRCM_ACK_MB2_DPS_STATUS);
+<<<<<<< HEAD
 	writel(MBOX_BIT(2), PRCM_ARM_IT1_CLR);
+=======
+	writel(MBOX_BIT(2), (_PRCMU_BASE + PRCM_ARM_IT1_CLR));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	complete(&mb2_transfer.work);
 	return false;
 }
 
 static bool read_mailbox_3(void)
 {
+<<<<<<< HEAD
 	writel(MBOX_BIT(3), PRCM_ARM_IT1_CLR);
+=======
+	writel(MBOX_BIT(3), (_PRCMU_BASE + PRCM_ARM_IT1_CLR));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return false;
 }
 
@@ -2493,11 +3112,14 @@ static bool read_mailbox_4(void)
 	case MB4H_HOTDOG:
 	case MB4H_HOTMON:
 	case MB4H_HOT_PERIOD:
+<<<<<<< HEAD
 	case MB4H_A9WDOG_CONF:
 	case MB4H_A9WDOG_EN:
 	case MB4H_A9WDOG_DIS:
 	case MB4H_A9WDOG_LOAD:
 	case MB4H_A9WDOG_KICK:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		print_unknown_header_warning(4, header);
@@ -2505,7 +3127,11 @@ static bool read_mailbox_4(void)
 		break;
 	}
 
+<<<<<<< HEAD
 	writel(MBOX_BIT(4), PRCM_ARM_IT1_CLR);
+=======
+	writel(MBOX_BIT(4), (_PRCMU_BASE + PRCM_ARM_IT1_CLR));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (do_complete)
 		complete(&mb4_transfer.work);
@@ -2517,20 +3143,32 @@ static bool read_mailbox_5(void)
 {
 	mb5_transfer.ack.status = readb(tcdm_base + PRCM_ACK_MB5_I2C_STATUS);
 	mb5_transfer.ack.value = readb(tcdm_base + PRCM_ACK_MB5_I2C_VAL);
+<<<<<<< HEAD
 	writel(MBOX_BIT(5), PRCM_ARM_IT1_CLR);
+=======
+	writel(MBOX_BIT(5), (_PRCMU_BASE + PRCM_ARM_IT1_CLR));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	complete(&mb5_transfer.work);
 	return false;
 }
 
 static bool read_mailbox_6(void)
 {
+<<<<<<< HEAD
 	writel(MBOX_BIT(6), PRCM_ARM_IT1_CLR);
+=======
+	writel(MBOX_BIT(6), (_PRCMU_BASE + PRCM_ARM_IT1_CLR));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return false;
 }
 
 static bool read_mailbox_7(void)
 {
+<<<<<<< HEAD
 	writel(MBOX_BIT(7), PRCM_ARM_IT1_CLR);
+=======
+	writel(MBOX_BIT(7), (_PRCMU_BASE + PRCM_ARM_IT1_CLR));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return false;
 }
 
@@ -2551,7 +3189,11 @@ static irqreturn_t prcmu_irq_handler(int irq, void *data)
 	u8 n;
 	irqreturn_t r;
 
+<<<<<<< HEAD
 	bits = (readl(PRCM_ARM_IT1_VAL) & ALL_MBOX_BITS);
+=======
+	bits = (readl(_PRCMU_BASE + PRCM_ARM_IT1_VAL) & ALL_MBOX_BITS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(!bits))
 		return IRQ_NONE;
 
@@ -2623,6 +3265,7 @@ static struct irq_chip prcmu_irq_chip = {
 	.irq_unmask	= prcmu_irq_unmask,
 };
 
+<<<<<<< HEAD
 static char *fw_project_name(u8 project)
 {
 	switch (project) {
@@ -2659,6 +3302,25 @@ void __init db8500_prcmu_early_init(void)
 			fw_info.valid = true;
 			pr_info("PRCMU firmware: %s, version %d.%d.%d\n",
 				fw_project_name(fw_info.version.project),
+=======
+void __init prcmu_early_init(void)
+{
+	unsigned int i;
+
+	if (cpu_is_u8500v1()) {
+		tcdm_base = __io_address(U8500_PRCMU_TCDM_BASE_V1);
+	} else if (cpu_is_u8500v2()) {
+		void *tcpm_base = ioremap_nocache(U8500_PRCMU_TCPM_BASE, SZ_4K);
+
+		if (tcpm_base != NULL) {
+			int version;
+			version = readl(tcpm_base + PRCMU_FW_VERSION_OFFSET);
+			prcmu_version.project_number = version & 0xFF;
+			prcmu_version.api_version = (version >> 8) & 0xFF;
+			prcmu_version.func_version = (version >> 16) & 0xFF;
+			prcmu_version.errata = (version >> 24) & 0xFF;
+			pr_info("PRCMU firmware version %d.%d.%d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				(version >> 8) & 0xFF, (version >> 16) & 0xFF,
 				(version >> 24) & 0xFF);
 			iounmap(tcpm_base);
@@ -2676,7 +3338,10 @@ void __init db8500_prcmu_early_init(void)
 	init_completion(&mb0_transfer.ac_wake_work);
 	mutex_init(&mb1_transfer.lock);
 	init_completion(&mb1_transfer.work);
+<<<<<<< HEAD
 	mb1_transfer.ape_opp = APE_NO_CHANGE;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_init(&mb2_transfer.lock);
 	init_completion(&mb2_transfer.work);
 	spin_lock_init(&mb2_transfer.auto_pm_lock);
@@ -2701,6 +3366,7 @@ void __init db8500_prcmu_early_init(void)
 	}
 }
 
+<<<<<<< HEAD
 static void __init init_prcm_registers(void)
 {
 	u32 val;
@@ -2711,6 +3377,8 @@ static void __init init_prcm_registers(void)
 	writel(val, (PRCM_A9PL_FORCE_CLKEN));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Power domain switches (ePODs) modeled as regulators for the DB8500 SoC
  */
@@ -2733,16 +3401,26 @@ static struct regulator_consumer_supply db8500_vape_consumers[] = {
 	REGULATOR_SUPPLY("vcore", "uart1"),
 	REGULATOR_SUPPLY("vcore", "uart2"),
 	REGULATOR_SUPPLY("v-ape", "nmk-ske-keypad.0"),
+<<<<<<< HEAD
 	REGULATOR_SUPPLY("v-hsi", "ste_hsi.0"),
 };
 
 static struct regulator_consumer_supply db8500_vsmps2_consumers[] = {
+=======
+};
+
+static struct regulator_consumer_supply db8500_vsmps2_consumers[] = {
+	/* CG2900 and CW1200 power to off-chip peripherals */
+	REGULATOR_SUPPLY("gbf_1v8", "cg2900-uart.0"),
+	REGULATOR_SUPPLY("wlan_1v8", "cw1200.0"),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	REGULATOR_SUPPLY("musb_1v8", "ab8500-usb.0"),
 	/* AV8100 regulator */
 	REGULATOR_SUPPLY("hdmi_1v8", "0-0070"),
 };
 
 static struct regulator_consumer_supply db8500_b2r2_mcde_consumers[] = {
+<<<<<<< HEAD
 	REGULATOR_SUPPLY("vsupply", "b2r2_bus"),
 	REGULATOR_SUPPLY("vsupply", "mcde"),
 };
@@ -2781,6 +3459,10 @@ static struct regulator_consumer_supply db8500_esram34_consumers[] = {
 	REGULATOR_SUPPLY("v-esram34", "mcde"),
 	REGULATOR_SUPPLY("esram34", "cm_control"),
 	REGULATOR_SUPPLY("lcla_esram", "dma40.0"),
+=======
+	REGULATOR_SUPPLY("vsupply", "b2r2.0"),
+	REGULATOR_SUPPLY("vsupply", "mcde.0"),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct regulator_init_data db8500_regulators[DB8500_NUM_REGULATORS] = {
@@ -2788,7 +3470,10 @@ static struct regulator_init_data db8500_regulators[DB8500_NUM_REGULATORS] = {
 		.constraints = {
 			.name = "db8500-vape",
 			.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+<<<<<<< HEAD
 			.always_on = true,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 		.consumer_supplies = db8500_vape_consumers,
 		.num_consumer_supplies = ARRAY_SIZE(db8500_vape_consumers),
@@ -2838,13 +3523,20 @@ static struct regulator_init_data db8500_regulators[DB8500_NUM_REGULATORS] = {
 		},
 	},
 	[DB8500_REGULATOR_SWITCH_SVAMMDSP] = {
+<<<<<<< HEAD
 		/* dependency to u8500-vape is handled outside regulator framework */
+=======
+		.supply_regulator = "db8500-vape",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.constraints = {
 			.name = "db8500-sva-mmdsp",
 			.valid_ops_mask = REGULATOR_CHANGE_STATUS,
 		},
+<<<<<<< HEAD
 		.consumer_supplies = db8500_svammdsp_consumers,
 		.num_consumer_supplies = ARRAY_SIZE(db8500_svammdsp_consumers),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	[DB8500_REGULATOR_SWITCH_SVAMMDSPRET] = {
 		.constraints = {
@@ -2854,22 +3546,35 @@ static struct regulator_init_data db8500_regulators[DB8500_NUM_REGULATORS] = {
 		},
 	},
 	[DB8500_REGULATOR_SWITCH_SVAPIPE] = {
+<<<<<<< HEAD
 		/* dependency to u8500-vape is handled outside regulator framework */
+=======
+		.supply_regulator = "db8500-vape",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.constraints = {
 			.name = "db8500-sva-pipe",
 			.valid_ops_mask = REGULATOR_CHANGE_STATUS,
 		},
+<<<<<<< HEAD
 		.consumer_supplies = db8500_svapipe_consumers,
 		.num_consumer_supplies = ARRAY_SIZE(db8500_svapipe_consumers),
 	},
 	[DB8500_REGULATOR_SWITCH_SIAMMDSP] = {
 		/* dependency to u8500-vape is handled outside regulator framework */
+=======
+	},
+	[DB8500_REGULATOR_SWITCH_SIAMMDSP] = {
+		.supply_regulator = "db8500-vape",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.constraints = {
 			.name = "db8500-sia-mmdsp",
 			.valid_ops_mask = REGULATOR_CHANGE_STATUS,
 		},
+<<<<<<< HEAD
 		.consumer_supplies = db8500_siammdsp_consumers,
 		.num_consumer_supplies = ARRAY_SIZE(db8500_siammdsp_consumers),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	[DB8500_REGULATOR_SWITCH_SIAMMDSPRET] = {
 		.constraints = {
@@ -2878,13 +3583,20 @@ static struct regulator_init_data db8500_regulators[DB8500_NUM_REGULATORS] = {
 		},
 	},
 	[DB8500_REGULATOR_SWITCH_SIAPIPE] = {
+<<<<<<< HEAD
 		/* dependency to u8500-vape is handled outside regulator framework */
+=======
+		.supply_regulator = "db8500-vape",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.constraints = {
 			.name = "db8500-sia-pipe",
 			.valid_ops_mask = REGULATOR_CHANGE_STATUS,
 		},
+<<<<<<< HEAD
 		.consumer_supplies = db8500_siapipe_consumers,
 		.num_consumer_supplies = ARRAY_SIZE(db8500_siapipe_consumers),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	[DB8500_REGULATOR_SWITCH_SGA] = {
 		.supply_regulator = "db8500-vape",
@@ -2892,9 +3604,12 @@ static struct regulator_init_data db8500_regulators[DB8500_NUM_REGULATORS] = {
 			.name = "db8500-sga",
 			.valid_ops_mask = REGULATOR_CHANGE_STATUS,
 		},
+<<<<<<< HEAD
 		.consumer_supplies = db8500_sga_consumers,
 		.num_consumer_supplies = ARRAY_SIZE(db8500_sga_consumers),
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	[DB8500_REGULATOR_SWITCH_B2R2_MCDE] = {
 		.supply_regulator = "db8500-vape",
@@ -2906,16 +3621,23 @@ static struct regulator_init_data db8500_regulators[DB8500_NUM_REGULATORS] = {
 		.num_consumer_supplies = ARRAY_SIZE(db8500_b2r2_mcde_consumers),
 	},
 	[DB8500_REGULATOR_SWITCH_ESRAM12] = {
+<<<<<<< HEAD
 		/*
 		 * esram12 is set in retention and supplied by Vsafe when Vape is off,
 		 * no need to hold Vape
 		 */
+=======
+		.supply_regulator = "db8500-vape",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.constraints = {
 			.name = "db8500-esram12",
 			.valid_ops_mask = REGULATOR_CHANGE_STATUS,
 		},
+<<<<<<< HEAD
 		.consumer_supplies = db8500_esram12_consumers,
 		.num_consumer_supplies = ARRAY_SIZE(db8500_esram12_consumers),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	[DB8500_REGULATOR_SWITCH_ESRAM12RET] = {
 		.constraints = {
@@ -2924,16 +3646,23 @@ static struct regulator_init_data db8500_regulators[DB8500_NUM_REGULATORS] = {
 		},
 	},
 	[DB8500_REGULATOR_SWITCH_ESRAM34] = {
+<<<<<<< HEAD
 		/*
 		 * esram34 is set in retention and supplied by Vsafe when Vape is off,
 		 * no need to hold Vape
 		 */
+=======
+		.supply_regulator = "db8500-vape",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.constraints = {
 			.name = "db8500-esram34",
 			.valid_ops_mask = REGULATOR_CHANGE_STATUS,
 		},
+<<<<<<< HEAD
 		.consumer_supplies = db8500_esram34_consumers,
 		.num_consumer_supplies = ARRAY_SIZE(db8500_esram34_consumers),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	[DB8500_REGULATOR_SWITCH_ESRAM34RET] = {
 		.constraints = {
@@ -2965,10 +3694,15 @@ static int __init db8500_prcmu_probe(struct platform_device *pdev)
 	if (ux500_is_svp())
 		return -ENODEV;
 
+<<<<<<< HEAD
 	init_prcm_registers();
 
 	/* Clean up the mailbox interrupts after pre-kernel code. */
 	writel(ALL_MBOX_BITS, PRCM_ARM_IT1_CLR);
+=======
+	/* Clean up the mailbox interrupts after pre-kernel code. */
+	writel(ALL_MBOX_BITS, (_PRCMU_BASE + PRCM_ARM_IT1_CLR));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = request_threaded_irq(IRQ_DB8500_PRCMU1, prcmu_irq_handler,
 		prcmu_irq_thread_fn, IRQF_NO_SUSPEND, "prcmu", NULL);

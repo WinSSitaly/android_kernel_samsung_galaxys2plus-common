@@ -271,7 +271,11 @@ static int __init davinci_ks_probe(struct platform_device *pdev)
 	}
 
 	error = request_irq(davinci_ks->irq, davinci_ks_interrupt,
+<<<<<<< HEAD
 			  0, pdev->name, davinci_ks);
+=======
+			  IRQF_DISABLED, pdev->name, davinci_ks);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error < 0) {
 		dev_err(dev, "unable to register davinci key scan interrupt\n");
 		goto fail5;

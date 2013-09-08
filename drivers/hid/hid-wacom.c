@@ -9,7 +9,10 @@
  *  Copyright (c) 2008 Jiri Slaby <jirislaby@gmail.com>
  *  Copyright (c) 2006 Andrew Zabolotny <zap@homelink.ru>
  *  Copyright (c) 2009 Bastien Nocera <hadess@hadess.net>
+<<<<<<< HEAD
  *  Copyright (c) 2011 Przemysław Firszt <przemo@firszt.eu>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 /*
@@ -31,6 +34,7 @@
 
 #include "hid-ids.h"
 
+<<<<<<< HEAD
 #define PAD_DEVICE_ID	0x0F
 
 struct wacom_data {
@@ -40,6 +44,11 @@ struct wacom_data {
 	__u8 features;
 	__u32 id;
 	__u32 serial;
+=======
+struct wacom_data {
+	__u16 tool;
+	unsigned char butstate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char high_speed;
 #ifdef CONFIG_HID_WACOM_POWER_SUPPLY
 	int battery_capacity;
@@ -54,14 +63,22 @@ static unsigned short batcap[8] = { 1, 15, 25, 35, 50, 70, 100, 0 };
 
 static enum power_supply_property wacom_battery_props[] = {
 	POWER_SUPPLY_PROP_PRESENT,
+<<<<<<< HEAD
 	POWER_SUPPLY_PROP_CAPACITY,
 	POWER_SUPPLY_PROP_SCOPE,
+=======
+	POWER_SUPPLY_PROP_CAPACITY
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static enum power_supply_property wacom_ac_props[] = {
 	POWER_SUPPLY_PROP_PRESENT,
+<<<<<<< HEAD
 	POWER_SUPPLY_PROP_ONLINE,
 	POWER_SUPPLY_PROP_SCOPE,
+=======
+	POWER_SUPPLY_PROP_ONLINE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int wacom_battery_get_property(struct power_supply *psy,
@@ -77,9 +94,12 @@ static int wacom_battery_get_property(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_PRESENT:
 		val->intval = 1;
 		break;
+<<<<<<< HEAD
 	case POWER_SUPPLY_PROP_SCOPE:
 		val->intval = POWER_SUPPLY_SCOPE_DEVICE;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case POWER_SUPPLY_PROP_CAPACITY:
 		/* show 100% battery capacity when charging */
 		if (power_state == 0)
@@ -111,9 +131,12 @@ static int wacom_ac_get_property(struct power_supply *psy,
 		else
 			val->intval = 0;
 		break;
+<<<<<<< HEAD
 	case POWER_SUPPLY_PROP_SCOPE:
 		val->intval = POWER_SUPPLY_SCOPE_DEVICE;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		ret = -EINVAL;
 		break;
@@ -122,6 +145,7 @@ static int wacom_ac_get_property(struct power_supply *psy,
 }
 #endif
 
+<<<<<<< HEAD
 static void wacom_set_features(struct hid_device *hdev)
 {
 	int ret;
@@ -135,6 +159,8 @@ static void wacom_set_features(struct hid_device *hdev)
 	return;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void wacom_poke(struct hid_device *hdev, u8 speed)
 {
 	struct wacom_data *wdata = hid_get_drvdata(hdev);
@@ -205,6 +231,7 @@ static ssize_t wacom_store_speed(struct device *dev,
 static DEVICE_ATTR(speed, S_IRUGO | S_IWUSR | S_IWGRP,
 		wacom_show_speed, wacom_store_speed);
 
+<<<<<<< HEAD
 static int wacom_gr_parse_report(struct hid_device *hdev,
 			struct wacom_data *wdata,
 			struct input_dev *input, unsigned char *data)
@@ -212,6 +239,28 @@ static int wacom_gr_parse_report(struct hid_device *hdev,
 	int tool, x, y, rw;
 
 	tool = 0;
+=======
+static int wacom_raw_event(struct hid_device *hdev, struct hid_report *report,
+		u8 *raw_data, int size)
+{
+	struct wacom_data *wdata = hid_get_drvdata(hdev);
+	struct hid_input *hidinput;
+	struct input_dev *input;
+	unsigned char *data = (unsigned char *) raw_data;
+	int tool, x, y, rw;
+
+	if (!(hdev->claimed & HID_CLAIMED_INPUT))
+		return 0;
+
+	tool = 0;
+	hidinput = list_entry(hdev->inputs.next, struct hid_input, list);
+	input = hidinput->input;
+
+	/* Check if this is a tablet report */
+	if (data[0] != 0x03)
+		return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Get X & Y positions */
 	x = le16_to_cpu(*(__le16 *) &data[2]);
 	y = le16_to_cpu(*(__le16 *) &data[4]);
@@ -319,6 +368,7 @@ static int wacom_gr_parse_report(struct hid_device *hdev,
 	return 1;
 }
 
+<<<<<<< HEAD
 static void wacom_i4_parse_button_report(struct wacom_data *wdata,
 			struct input_dev *input, unsigned char *data)
 {
@@ -555,6 +605,13 @@ static int wacom_input_mapped(struct hid_device *hdev, struct hid_input *hi,
 static int wacom_probe(struct hid_device *hdev,
 		const struct hid_device_id *id)
 {
+=======
+static int wacom_probe(struct hid_device *hdev,
+		const struct hid_device_id *id)
+{
+	struct hid_input *hidinput;
+	struct input_dev *input;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct wacom_data *wdata;
 	int ret;
 
@@ -584,6 +641,7 @@ static int wacom_probe(struct hid_device *hdev,
 		hid_warn(hdev,
 			 "can't create sysfs speed attribute err: %d\n", ret);
 
+<<<<<<< HEAD
 	switch (hdev->product) {
 	case USB_DEVICE_ID_WACOM_GRAPHIRE_BLUETOOTH:
 		/* Set Wacom mode 2 with high reporting speed */
@@ -595,6 +653,10 @@ static int wacom_probe(struct hid_device *hdev,
 		wacom_set_features(hdev);
 		break;
 	}
+=======
+	/* Set Wacom mode 2 with high reporting speed */
+	wacom_poke(hdev, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_HID_WACOM_POWER_SUPPLY
 	wdata->battery.properties = wacom_battery_props;
@@ -604,16 +666,29 @@ static int wacom_probe(struct hid_device *hdev,
 	wdata->battery.type = POWER_SUPPLY_TYPE_BATTERY;
 	wdata->battery.use_for_apm = 0;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = power_supply_register(&hdev->dev, &wdata->battery);
 	if (ret) {
 		hid_warn(hdev, "can't create sysfs battery attribute, err: %d\n",
 			 ret);
+<<<<<<< HEAD
 		goto err_battery;
 	}
 
 	power_supply_powers(&wdata->battery, &hdev->dev);
 
+=======
+		/*
+		 * battery attribute is not critical for the tablet, but if it
+		 * failed then there is no need to create ac attribute
+		 */
+		goto move_on;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wdata->ac.properties = wacom_ac_props;
 	wdata->ac.num_properties = ARRAY_SIZE(wacom_ac_props);
 	wdata->ac.get_property = wacom_ac_get_property;
@@ -625,6 +700,7 @@ static int wacom_probe(struct hid_device *hdev,
 	if (ret) {
 		hid_warn(hdev,
 			 "can't create ac battery attribute, err: %d\n", ret);
+<<<<<<< HEAD
 		goto err_ac;
 	}
 
@@ -639,6 +715,53 @@ err_battery:
 	device_remove_file(&hdev->dev, &dev_attr_speed);
 	hid_hw_stop(hdev);
 #endif
+=======
+		/*
+		 * ac attribute is not critical for the tablet, but if it
+		 * failed then we don't want to battery attribute to exist
+		 */
+		power_supply_unregister(&wdata->battery);
+	}
+
+move_on:
+#endif
+	hidinput = list_entry(hdev->inputs.next, struct hid_input, list);
+	input = hidinput->input;
+
+	/* Basics */
+	input->evbit[0] |= BIT(EV_KEY) | BIT(EV_ABS) | BIT(EV_REL);
+
+	__set_bit(REL_WHEEL, input->relbit);
+
+	__set_bit(BTN_TOOL_PEN, input->keybit);
+	__set_bit(BTN_TOUCH, input->keybit);
+	__set_bit(BTN_STYLUS, input->keybit);
+	__set_bit(BTN_STYLUS2, input->keybit);
+	__set_bit(BTN_LEFT, input->keybit);
+	__set_bit(BTN_RIGHT, input->keybit);
+	__set_bit(BTN_MIDDLE, input->keybit);
+
+	/* Pad */
+	input->evbit[0] |= BIT(EV_MSC);
+
+	__set_bit(MSC_SERIAL, input->mscbit);
+
+	__set_bit(BTN_0, input->keybit);
+	__set_bit(BTN_1, input->keybit);
+	__set_bit(BTN_TOOL_FINGER, input->keybit);
+
+	/* Distance, rubber and mouse */
+	__set_bit(BTN_TOOL_RUBBER, input->keybit);
+	__set_bit(BTN_TOOL_MOUSE, input->keybit);
+
+	input_set_abs_params(input, ABS_X, 0, 16704, 4, 0);
+	input_set_abs_params(input, ABS_Y, 0, 12064, 4, 0);
+	input_set_abs_params(input, ABS_PRESSURE, 0, 511, 0, 0);
+	input_set_abs_params(input, ABS_DISTANCE, 0, 32, 0, 0);
+
+	return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_free:
 	kfree(wdata);
 	return ret;
@@ -649,7 +772,10 @@ static void wacom_remove(struct hid_device *hdev)
 #ifdef CONFIG_HID_WACOM_POWER_SUPPLY
 	struct wacom_data *wdata = hid_get_drvdata(hdev);
 #endif
+<<<<<<< HEAD
 	device_remove_file(&hdev->dev, &dev_attr_speed);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hid_hw_stop(hdev);
 
 #ifdef CONFIG_HID_WACOM_POWER_SUPPLY
@@ -661,7 +787,10 @@ static void wacom_remove(struct hid_device *hdev)
 
 static const struct hid_device_id wacom_devices[] = {
 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_WACOM, USB_DEVICE_ID_WACOM_GRAPHIRE_BLUETOOTH) },
+<<<<<<< HEAD
 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_WACOM, USB_DEVICE_ID_WACOM_INTUOS4_BLUETOOTH) },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	{ }
 };
@@ -673,7 +802,10 @@ static struct hid_driver wacom_driver = {
 	.probe = wacom_probe,
 	.remove = wacom_remove,
 	.raw_event = wacom_raw_event,
+<<<<<<< HEAD
 	.input_mapped = wacom_input_mapped,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init wacom_init(void)

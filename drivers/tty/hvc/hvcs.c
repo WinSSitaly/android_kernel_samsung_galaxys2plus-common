@@ -879,7 +879,14 @@ static struct vio_driver hvcs_vio_driver = {
 	.id_table	= hvcs_driver_table,
 	.probe		= hvcs_probe,
 	.remove		= __devexit_p(hvcs_remove),
+<<<<<<< HEAD
 	.name		= hvcs_driver_name,
+=======
+	.driver		= {
+		.name	= hvcs_driver_name,
+		.owner	= THIS_MODULE,
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Only called from hvcs_get_pi please */
@@ -1054,7 +1061,11 @@ static int hvcs_enable_device(struct hvcs_struct *hvcsd, uint32_t unit_address,
 	 * the conn was registered and now.
 	 */
 	if (!(rc = request_irq(irq, &hvcs_handle_interrupt,
+<<<<<<< HEAD
 				0, "ibmhvcs", hvcsd))) {
+=======
+				IRQF_DISABLED, "ibmhvcs", hvcsd))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * It is possible the vty-server was removed after the irq was
 		 * requested but before we have time to enable interrupts.
@@ -1087,6 +1098,7 @@ static int hvcs_enable_device(struct hvcs_struct *hvcsd, uint32_t unit_address,
  */
 static struct hvcs_struct *hvcs_get_by_index(int index)
 {
+<<<<<<< HEAD
 	struct hvcs_struct *hvcsd;
 	unsigned long flags;
 
@@ -1104,6 +1116,29 @@ static struct hvcs_struct *hvcs_get_by_index(int index)
 	spin_unlock(&hvcs_structs_lock);
 
 	return NULL;
+=======
+	struct hvcs_struct *hvcsd = NULL;
+	unsigned long flags;
+
+	spin_lock(&hvcs_structs_lock);
+	/* We can immediately discard OOB requests */
+	if (index >= 0 && index < HVCS_MAX_SERVER_ADAPTERS) {
+		list_for_each_entry(hvcsd, &hvcs_structs, next) {
+			spin_lock_irqsave(&hvcsd->lock, flags);
+			if (hvcsd->index == index) {
+				kref_get(&hvcsd->kref);
+				spin_unlock_irqrestore(&hvcsd->lock, flags);
+				spin_unlock(&hvcs_structs_lock);
+				return hvcsd;
+			}
+			spin_unlock_irqrestore(&hvcsd->lock, flags);
+		}
+		hvcsd = NULL;
+	}
+
+	spin_unlock(&hvcs_structs_lock);
+	return hvcsd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1196,7 +1231,11 @@ static void hvcs_close(struct tty_struct *tty, struct file *filp)
 {
 	struct hvcs_struct *hvcsd;
 	unsigned long flags;
+<<<<<<< HEAD
 	int irq;
+=======
+	int irq = NO_IRQ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Is someone trying to close the file associated with this device after
@@ -1230,7 +1269,11 @@ static void hvcs_close(struct tty_struct *tty, struct file *filp)
 		irq = hvcsd->vdev->irq;
 		spin_unlock_irqrestore(&hvcsd->lock, flags);
 
+<<<<<<< HEAD
 		tty_wait_until_sent_from_close(tty, HVCS_CLOSE_WAIT);
+=======
+		tty_wait_until_sent(tty, HVCS_CLOSE_WAIT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * This line is important because it tells hvcs_open that this
@@ -1257,7 +1300,11 @@ static void hvcs_hangup(struct tty_struct * tty)
 	struct hvcs_struct *hvcsd = tty->driver_data;
 	unsigned long flags;
 	int temp_open_count;
+<<<<<<< HEAD
 	int irq;
+=======
+	int irq = NO_IRQ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&hvcsd->lock, flags);
 	/* Preserve this so that we know how many kref refs to put */
@@ -1492,6 +1539,11 @@ static int __devinit hvcs_initialize(void)
 		goto index_fail;
 	}
 
+<<<<<<< HEAD
+=======
+	hvcs_tty_driver->owner = THIS_MODULE;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hvcs_tty_driver->driver_name = hvcs_driver_name;
 	hvcs_tty_driver->name = hvcs_device_node;
 
@@ -1523,7 +1575,11 @@ static int __devinit hvcs_initialize(void)
 		goto register_fail;
 	}
 
+<<<<<<< HEAD
 	hvcs_pi_buff = (unsigned long *) __get_free_page(GFP_KERNEL);
+=======
+	hvcs_pi_buff = kmalloc(PAGE_SIZE, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!hvcs_pi_buff) {
 		rc = -ENOMEM;
 		goto buff_alloc_fail;
@@ -1539,7 +1595,11 @@ static int __devinit hvcs_initialize(void)
 	return 0;
 
 kthread_fail:
+<<<<<<< HEAD
 	free_page((unsigned long)hvcs_pi_buff);
+=======
+	kfree(hvcs_pi_buff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 buff_alloc_fail:
 	tty_unregister_driver(hvcs_tty_driver);
 register_fail:
@@ -1588,7 +1648,11 @@ static void __exit hvcs_module_exit(void)
 	kthread_stop(hvcs_task);
 
 	spin_lock(&hvcs_pi_lock);
+<<<<<<< HEAD
 	free_page((unsigned long)hvcs_pi_buff);
+=======
+	kfree(hvcs_pi_buff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hvcs_pi_buff = NULL;
 	spin_unlock(&hvcs_pi_lock);
 

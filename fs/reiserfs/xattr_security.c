@@ -1,10 +1,18 @@
+<<<<<<< HEAD
 #include "reiserfs.h"
+=======
+#include <linux/reiserfs_fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/errno.h>
 #include <linux/fs.h>
 #include <linux/pagemap.h>
 #include <linux/xattr.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include "xattr.h"
+=======
+#include <linux/reiserfs_xattr.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/security.h>
 #include <asm/uaccess.h>
 
@@ -66,8 +74,13 @@ int reiserfs_security_init(struct inode *dir, struct inode *inode,
 	if (IS_PRIVATE(dir))
 		return 0;
 
+<<<<<<< HEAD
 	error = security_old_inode_init_security(inode, dir, qstr, &sec->name,
 						 &sec->value, &sec->length);
+=======
+	error = security_inode_init_security(inode, dir, qstr, &sec->name,
+					     &sec->value, &sec->length);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error) {
 		if (error == -EOPNOTSUPP)
 			error = 0;

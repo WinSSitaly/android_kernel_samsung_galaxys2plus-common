@@ -15,7 +15,10 @@
 #include <linux/pfkeyv2.h>
 #include <linux/ipsec.h>
 #include <linux/netfilter_ipv6.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/dsfield.h>
 #include <net/ipv6.h>
 #include <net/addrconf.h>
@@ -27,8 +30,13 @@ __xfrm6_init_tempsel(struct xfrm_selector *sel, const struct flowi *fl)
 
 	/* Initialize temporary selector matching only
 	 * to current session. */
+<<<<<<< HEAD
 	*(struct in6_addr *)&sel->daddr = fl6->daddr;
 	*(struct in6_addr *)&sel->saddr = fl6->saddr;
+=======
+	ipv6_addr_copy((struct in6_addr *)&sel->daddr, &fl6->daddr);
+	ipv6_addr_copy((struct in6_addr *)&sel->saddr, &fl6->saddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sel->dport = xfrm_flowi_dport(fl, &fl6->uli);
 	sel->dport_mask = htons(0xffff);
 	sel->sport = xfrm_flowi_sport(fl, &fl6->uli);

@@ -361,16 +361,31 @@ static const struct xenbus_device_id xenkbd_ids[] = {
 	{ "" }
 };
 
+<<<<<<< HEAD
 static DEFINE_XENBUS_DRIVER(xenkbd, ,
+=======
+static struct xenbus_driver xenkbd_driver = {
+	.name = "vkbd",
+	.owner = THIS_MODULE,
+	.ids = xenkbd_ids,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.probe = xenkbd_probe,
 	.remove = xenkbd_remove,
 	.resume = xenkbd_resume,
 	.otherend_changed = xenkbd_backend_changed,
+<<<<<<< HEAD
 );
 
 static int __init xenkbd_init(void)
 {
 	if (!xen_domain())
+=======
+};
+
+static int __init xenkbd_init(void)
+{
+	if (!xen_pv_domain())
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 
 	/* Nothing to do if running in dom0. */

@@ -16,7 +16,10 @@
 #include <linux/compiler.h>
 #include <linux/completion.h>
 #include <linux/if_alg.h>
+<<<<<<< HEAD
 #include <linux/scatterlist.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/types.h>
 #include <net/sock.h>
 

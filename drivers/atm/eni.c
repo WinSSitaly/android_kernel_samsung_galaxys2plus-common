@@ -19,8 +19,14 @@
 #include <linux/atm_eni.h>
 #include <linux/bitops.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <asm/io.h>
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <asm/io.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <asm/string.h>
 #include <asm/byteorder.h>
@@ -155,6 +161,12 @@ static int tx_complete = 0,dma_complete = 0,queued = 0,requeued = 0,
 
 static struct atm_dev *eni_boards = NULL;
 
+<<<<<<< HEAD
+=======
+static u32 *cpu_zeroes = NULL; /* aligned "magic" zeroes */
+static dma_addr_t zeroes;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Read/write registers on card */
 #define eni_in(r)	readl(eni_dev->reg+(r)*4)
 #define eni_out(v,r)	writel((v),eni_dev->reg+(r)*4)
@@ -1130,6 +1142,7 @@ DPRINTK("doing direct send\n"); /* @@@ well, this doesn't work anyway */
 				    skb_headlen(skb));
 			else
 				put_dma(tx->index,eni_dev->dma,&j,(unsigned long)
+<<<<<<< HEAD
 				    skb_frag_page(&skb_shinfo(skb)->frags[i]) +
 					skb_shinfo(skb)->frags[i].page_offset,
 				    skb_frag_size(&skb_shinfo(skb)->frags[i]));
@@ -1138,6 +1151,13 @@ DPRINTK("doing direct send\n"); /* @@@ well, this doesn't work anyway */
 		put_dma(tx->index, eni_dev->dma, &j, eni_dev->zero.dma,
 			4 - (skb->len & 3));
 	}
+=======
+				    skb_shinfo(skb)->frags[i].page + skb_shinfo(skb)->frags[i].page_offset,
+				    skb_shinfo(skb)->frags[i].size);
+	}
+	if (skb->len & 3)
+		put_dma(tx->index,eni_dev->dma,&j,zeroes,4-(skb->len & 3));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* JK for AAL5 trailer - AAL0 doesn't need it, but who cares ... */
 	eni_dev->dma[j++] = (((tx->tx_pos+size) & (tx->words-1)) <<
 	     MID_DMA_COUNT_SHIFT) | (tx->index << MID_DMA_CHAN_SHIFT) |
@@ -1726,7 +1746,10 @@ static int __devinit eni_do_init(struct atm_dev *dev)
 		    "mapping\n",dev->number);
 		return error;
 	}
+<<<<<<< HEAD
 	eni_dev->ioaddr = base;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	eni_dev->base_diff = real_base - (unsigned long) base;
 	/* id may not be present in ASIC Tonga boards - check this @@@ */
 	if (!eni_dev->asic) {
@@ -1788,6 +1811,7 @@ unmap:
 	goto out;
 }
 
+<<<<<<< HEAD
 static void eni_do_release(struct atm_dev *dev)
 {
 	struct eni_dev *ed = ENI_DEV(dev);
@@ -1796,6 +1820,8 @@ static void eni_do_release(struct atm_dev *dev)
 	dev->phy = NULL;
 	iounmap(ed->ioaddr);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __devinit eni_start(struct atm_dev *dev)
 {
@@ -1880,7 +1906,11 @@ free_list:
 	kfree(eni_dev->free_list);
 
 free_irq:
+<<<<<<< HEAD
 	free_irq(eni_dev->irq, dev);
+=======
+	free_irq(eni_dev->irq, eni_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	return error;
@@ -2227,6 +2257,7 @@ static const struct atmdev_ops ops = {
 
 
 static int __devinit eni_init_one(struct pci_dev *pci_dev,
+<<<<<<< HEAD
 				  const struct pci_device_id *ent)
 {
 	struct atm_dev *dev;
@@ -2281,6 +2312,50 @@ err_kfree:
 err_disable:
 	pci_disable_device(pci_dev);
 	goto out;
+=======
+    const struct pci_device_id *ent)
+{
+	struct atm_dev *dev;
+	struct eni_dev *eni_dev;
+	int error = -ENOMEM;
+
+	DPRINTK("eni_init_one\n");
+
+	if (pci_enable_device(pci_dev)) {
+		error = -EIO;
+		goto out0;
+	}
+
+	eni_dev = kmalloc(sizeof(struct eni_dev),GFP_KERNEL);
+	if (!eni_dev) goto out0;
+	if (!cpu_zeroes) {
+		cpu_zeroes = pci_alloc_consistent(pci_dev,ENI_ZEROES_SIZE,
+		    &zeroes);
+		if (!cpu_zeroes) goto out1;
+	}
+	dev = atm_dev_register(DEV_LABEL, &pci_dev->dev, &ops, -1, NULL);
+	if (!dev) goto out2;
+	pci_set_drvdata(pci_dev, dev);
+	eni_dev->pci_dev = pci_dev;
+	dev->dev_data = eni_dev;
+	eni_dev->asic = ent->driver_data;
+	error = eni_do_init(dev);
+	if (error) goto out3;
+	error = eni_start(dev);
+	if (error) goto out3;
+	eni_dev->more = eni_boards;
+	eni_boards = dev;
+	return 0;
+out3:
+	atm_dev_deregister(dev);
+out2:
+	pci_free_consistent(eni_dev->pci_dev,ENI_ZEROES_SIZE,cpu_zeroes,zeroes);
+	cpu_zeroes = NULL;
+out1:
+	kfree(eni_dev);
+out0:
+	return error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -2292,6 +2367,7 @@ static struct pci_device_id eni_pci_tbl[] = {
 MODULE_DEVICE_TABLE(pci,eni_pci_tbl);
 
 
+<<<<<<< HEAD
 static void __devexit eni_remove_one(struct pci_dev *pdev)
 {
 	struct atm_dev *dev = pci_get_drvdata(pdev);
@@ -2303,6 +2379,11 @@ static void __devexit eni_remove_one(struct pci_dev *pdev)
 	pci_free_consistent(pdev, ENI_ZEROES_SIZE, zero->addr, zero->dma);
 	kfree(ed);
 	pci_disable_device(pdev);
+=======
+static void __devexit eni_remove_one(struct pci_dev *pci_dev)
+{
+	/* grrr */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 

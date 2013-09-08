@@ -47,7 +47,11 @@ extern void reserve_standard_io_resources(void);
 extern void i386_reserve_resources(void);
 extern void setup_default_timer_irq(void);
 
+<<<<<<< HEAD
 #ifdef CONFIG_X86_INTEL_MID
+=======
+#ifdef CONFIG_X86_MRST
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void x86_mrst_early_setup(void);
 #else
 static inline void x86_mrst_early_setup(void) { }

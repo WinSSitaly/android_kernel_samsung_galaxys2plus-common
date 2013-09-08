@@ -17,8 +17,11 @@
 
 #include <linux/completion.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/list.h>
 #include <linux/regmap.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Register values.
@@ -236,6 +239,7 @@
 #define WM831X_ON_PIN_TO_SHIFT                       0  /* ON_PIN_TO - [1:0] */
 #define WM831X_ON_PIN_TO_WIDTH                       2  /* ON_PIN_TO - [1:0] */
 
+<<<<<<< HEAD
 /*
  * R16528 (0x4090) - Clock Control 1
  */
@@ -341,6 +345,11 @@ struct regulator_dev;
 
 #define WM831X_NUM_IRQ_REGS 5
 #define WM831X_NUM_GPIO_REGS 16
+=======
+struct regulator_dev;
+
+#define WM831X_NUM_IRQ_REGS 5
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum wm831x_parent {
 	WM8310 = 0x8310,
@@ -352,16 +361,20 @@ enum wm831x_parent {
 	WM8326 = 0x8326,
 };
 
+<<<<<<< HEAD
 struct wm831x;
 enum wm831x_auxadc;
 
 typedef int (*wm831x_auxadc_read_fn)(struct wm831x *wm831x,
 				     enum wm831x_auxadc input);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct wm831x {
 	struct mutex io_lock;
 
 	struct device *dev;
+<<<<<<< HEAD
 
 	struct regmap *regmap;
 
@@ -373,6 +386,21 @@ struct wm831x {
 
 	bool soft_shutdown;
 
+=======
+	int (*read_dev)(struct wm831x *wm831x, unsigned short reg,
+			int bytes, void *dest);
+	int (*write_dev)(struct wm831x *wm831x, unsigned short reg,
+			 int bytes, void *src);
+
+	void *control_data;
+
+	int irq;  /* Our chip IRQ */
+	struct mutex irq_lock;
+	unsigned int irq_base;
+	int irq_masks_cur[WM831X_NUM_IRQ_REGS];   /* Currently active value */
+	int irq_masks_cache[WM831X_NUM_IRQ_REGS]; /* Cached hardware value */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Chip revision based flags */
 	unsigned has_gpio_ena:1;         /* Has GPIO enable bit */
 	unsigned has_cs_sts:1;           /* Has current sink status bit */
@@ -380,6 +408,7 @@ struct wm831x {
 
 	int num_gpio;
 
+<<<<<<< HEAD
 	/* Used by the interrupt controller code to post writes */
 	int gpio_update[WM831X_NUM_GPIO_REGS];
 	bool gpio_level[WM831X_NUM_GPIO_REGS];
@@ -388,6 +417,10 @@ struct wm831x {
 	struct list_head auxadc_pending;
 	u16 auxadc_active;
 	wm831x_auxadc_read_fn auxadc_read;
+=======
+	struct mutex auxadc_lock;
+	struct completion auxadc_done;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* The WM831x has a security key blocking access to certain
 	 * registers.  The mutex is taken by the accessors for locking
@@ -412,11 +445,16 @@ int wm831x_bulk_read(struct wm831x *wm831x, unsigned short reg,
 int wm831x_device_init(struct wm831x *wm831x, unsigned long id, int irq);
 void wm831x_device_exit(struct wm831x *wm831x);
 int wm831x_device_suspend(struct wm831x *wm831x);
+<<<<<<< HEAD
 void wm831x_device_shutdown(struct wm831x *wm831x);
 int wm831x_irq_init(struct wm831x *wm831x, int irq);
 void wm831x_irq_exit(struct wm831x *wm831x);
 void wm831x_auxadc_init(struct wm831x *wm831x);
 
 extern struct regmap_config wm831x_regmap_config;
+=======
+int wm831x_irq_init(struct wm831x *wm831x, int irq);
+void wm831x_irq_exit(struct wm831x *wm831x);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

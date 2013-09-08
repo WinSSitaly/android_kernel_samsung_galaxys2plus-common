@@ -35,7 +35,11 @@
 void __init stamp9g20_init_early(void)
 {
 	/* Initialize processor: 18.432 MHz crystal */
+<<<<<<< HEAD
 	at91_initialize(18432000);
+=======
+	at91sam9260_initialize(18432000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* DGBU on ttyS0. (Rx & Tx only) */
 	at91_register_uart(0, 0, 0);
@@ -76,6 +80,15 @@ static void __init portuxg20_init_early(void)
 	at91_register_uart(AT91SAM9260_ID_US5, 6, 0);
 }
 
+<<<<<<< HEAD
+=======
+static void __init init_irq(void)
+{
+	at91sam9260_init_interrupts(NULL);
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * NAND flash
  */
@@ -85,8 +98,11 @@ static struct atmel_nand_data __initdata nand_data = {
 	.rdy_pin	= AT91_PIN_PC13,
 	.enable_pin	= AT91_PIN_PC14,
 	.bus_width_16	= 0,
+<<<<<<< HEAD
 	.det_pin	= -EINVAL,
 	.ecc_mode	= NAND_ECC_SOFT,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct sam9_smc_config __initdata nand_smc_config = {
@@ -110,7 +126,11 @@ static struct sam9_smc_config __initdata nand_smc_config = {
 static void __init add_device_nand(void)
 {
 	/* configure chip-select 3 (NAND) */
+<<<<<<< HEAD
 	sam9_smc_configure(0, 3, &nand_smc_config);
+=======
+	sam9_smc_configure(3, &nand_smc_config);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	at91_add_device_nand(&nand_data);
 }
@@ -124,17 +144,23 @@ static void __init add_device_nand(void)
 static struct mci_platform_data __initdata mmc_data = {
 	.slot[0] = {
 		.bus_width	= 4,
+<<<<<<< HEAD
 		.detect_pin	= -1,
 		.wp_pin		= -1,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 #else
 static struct at91_mmc_data __initdata mmc_data = {
 	.slot_b		= 0,
 	.wire4		= 1,
+<<<<<<< HEAD
 	.det_pin	= -EINVAL,
 	.wp_pin		= -EINVAL,
 	.vcc_pin	= -EINVAL,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #endif
 
@@ -144,8 +170,11 @@ static struct at91_mmc_data __initdata mmc_data = {
  */
 static struct at91_usbh_data __initdata usbh_data = {
 	.ports		= 2,
+<<<<<<< HEAD
 	.vbus_pin	= {-EINVAL, -EINVAL},
 	.overcurrent_pin= {-EINVAL, -EINVAL},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -154,19 +183,31 @@ static struct at91_usbh_data __initdata usbh_data = {
  */
 static struct at91_udc_data __initdata portuxg20_udc_data = {
 	.vbus_pin	= AT91_PIN_PC7,
+<<<<<<< HEAD
 	.pullup_pin	= -EINVAL,		/* pull-up driven by UDC */
+=======
+	.pullup_pin	= 0,		/* pull-up driven by UDC */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct at91_udc_data __initdata stamp9g20evb_udc_data = {
 	.vbus_pin	= AT91_PIN_PA22,
+<<<<<<< HEAD
 	.pullup_pin	= -EINVAL,		/* pull-up driven by UDC */
+=======
+	.pullup_pin	= 0,		/* pull-up driven by UDC */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
 /*
  * MACB Ethernet device
  */
+<<<<<<< HEAD
 static struct macb_platform_data __initdata macb_data = {
+=======
+static struct at91_eth_data __initdata macb_data = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.phy_irq_pin	= AT91_PIN_PA28,
 	.is_rmii	= 1,
 };
@@ -302,17 +343,29 @@ static void __init stamp9g20evb_board_init(void)
 MACHINE_START(PORTUXG20, "taskit PortuxG20")
 	/* Maintainer: taskit GmbH */
 	.timer		= &at91sam926x_timer,
+<<<<<<< HEAD
 	.map_io		= at91_map_io,
 	.init_early	= portuxg20_init_early,
 	.init_irq	= at91_init_irq_default,
+=======
+	.map_io		= at91sam9260_map_io,
+	.init_early	= portuxg20_init_early,
+	.init_irq	= init_irq,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= portuxg20_board_init,
 MACHINE_END
 
 MACHINE_START(STAMP9G20, "taskit Stamp9G20")
 	/* Maintainer: taskit GmbH */
 	.timer		= &at91sam926x_timer,
+<<<<<<< HEAD
 	.map_io		= at91_map_io,
 	.init_early	= stamp9g20evb_init_early,
 	.init_irq	= at91_init_irq_default,
+=======
+	.map_io		= at91sam9260_map_io,
+	.init_early	= stamp9g20evb_init_early,
+	.init_irq	= init_irq,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= stamp9g20evb_board_init,
 MACHINE_END

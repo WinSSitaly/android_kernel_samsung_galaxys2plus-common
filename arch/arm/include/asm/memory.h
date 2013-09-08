@@ -16,11 +16,16 @@
 #include <linux/compiler.h>
 #include <linux/const.h>
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <asm/sizes.h>
 
 #ifdef CONFIG_NEED_MACH_MEMORY_H
 #include <mach/memory.h>
 #endif
+=======
+#include <mach/memory.h>
+#include <asm/sizes.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Allow for constants defined here to be used from assembly code
@@ -116,8 +121,11 @@
 #define MODULES_END		(END_MEM)
 #define MODULES_VADDR		(PHYS_OFFSET)
 
+<<<<<<< HEAD
 #define XIP_VIRT_ADDR(physaddr)  (physaddr)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* !CONFIG_MMU */
 
 /*
@@ -156,6 +164,10 @@
  * so that all we need to do is modify the 8-bit constant field.
  */
 #define __PV_BITS_31_24	0x81000000
+<<<<<<< HEAD
+=======
+#define __PV_BITS_23_16	0x00810000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern unsigned long __pv_phys_offset;
 #define PHYS_OFFSET __pv_phys_offset
@@ -173,6 +185,12 @@ static inline unsigned long __virt_to_phys(unsigned long x)
 {
 	unsigned long t;
 	__pv_stub(x, t, "add", __PV_BITS_31_24);
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ARM_PATCH_PHYS_VIRT_16BIT
+	__pv_stub(t, t, "add", __PV_BITS_23_16);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return t;
 }
 
@@ -180,6 +198,12 @@ static inline unsigned long __phys_to_virt(unsigned long x)
 {
 	unsigned long t;
 	__pv_stub(x, t, "sub", __PV_BITS_31_24);
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ARM_PATCH_PHYS_VIRT_16BIT
+	__pv_stub(t, t, "sub", __PV_BITS_23_16);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return t;
 }
 #else
@@ -189,11 +213,15 @@ static inline unsigned long __phys_to_virt(unsigned long x)
 #endif
 
 #ifndef PHYS_OFFSET
+<<<<<<< HEAD
 #ifdef PLAT_PHYS_OFFSET
 #define PHYS_OFFSET	PLAT_PHYS_OFFSET
 #else
 #define PHYS_OFFSET	UL(CONFIG_PHYS_OFFSET)
 #endif
+=======
+#define PHYS_OFFSET	PLAT_PHYS_OFFSET
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /*

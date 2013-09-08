@@ -22,7 +22,10 @@
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/irq.h>
 #include <linux/interrupt.h>
 #include <linux/io.h>
@@ -123,9 +126,15 @@ static int wm97xx_acc_pen_down(struct wm97xx *wm)
 			x, y, p);
 
 		/* are samples valid */
+<<<<<<< HEAD
 		if ((x & WM97XX_ADCSEL_MASK) != WM97XX_ADCSEL_X ||
 		    (y & WM97XX_ADCSEL_MASK) != WM97XX_ADCSEL_Y ||
 		    (p & WM97XX_ADCSEL_MASK) != WM97XX_ADCSEL_PRES)
+=======
+		if ((x & WM97XX_ADCSRC_MASK) != WM97XX_ADCSEL_X ||
+		    (y & WM97XX_ADCSRC_MASK) != WM97XX_ADCSEL_Y ||
+		    (p & WM97XX_ADCSRC_MASK) != WM97XX_ADCSEL_PRES)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto up;
 
 		/* coordinate is good */
@@ -193,8 +202,13 @@ static int zylonite_wm97xx_probe(struct platform_device *pdev)
 	else
 		gpio_touch_irq = mfp_to_gpio(MFP_PIN_GPIO26);
 
+<<<<<<< HEAD
 	wm->pen_irq = gpio_to_irq(gpio_touch_irq);
 	irq_set_irq_type(wm->pen_irq, IRQ_TYPE_EDGE_BOTH);
+=======
+	wm->pen_irq = IRQ_GPIO(gpio_touch_irq);
+	irq_set_irq_type(IRQ_GPIO(gpio_touch_irq), IRQ_TYPE_EDGE_BOTH);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wm97xx_config_gpio(wm, WM97XX_GPIO_13, WM97XX_GPIO_IN,
 			   WM97XX_GPIO_POL_HIGH,
@@ -224,7 +238,23 @@ static struct platform_driver zylonite_wm97xx_driver = {
 		.name	= "wm97xx-touch",
 	},
 };
+<<<<<<< HEAD
 module_platform_driver(zylonite_wm97xx_driver);
+=======
+
+static int __init zylonite_wm97xx_init(void)
+{
+	return platform_driver_register(&zylonite_wm97xx_driver);
+}
+
+static void __exit zylonite_wm97xx_exit(void)
+{
+	platform_driver_unregister(&zylonite_wm97xx_driver);
+}
+
+module_init(zylonite_wm97xx_init);
+module_exit(zylonite_wm97xx_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Module information */
 MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");

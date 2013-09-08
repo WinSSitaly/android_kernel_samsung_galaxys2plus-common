@@ -99,6 +99,7 @@ enum af9015_ir_mode {
 };
 
 struct af9015_state {
+<<<<<<< HEAD
 	u8 rc_repeat;
 	u32 rc_keycode;
 	u8 rc_last[4];
@@ -110,6 +111,12 @@ struct af9015_state {
 	int (*sleep[2]) (struct dvb_frontend *fe);
 	int (*tuner_init[2]) (struct dvb_frontend *fe);
 	int (*tuner_sleep[2]) (struct dvb_frontend *fe);
+=======
+	struct i2c_adapter i2c_adap; /* I2C adapter for 2nd FE */
+	u8 rc_repeat;
+	u32 rc_keycode;
+	u8 rc_last[4];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct af9015_config {

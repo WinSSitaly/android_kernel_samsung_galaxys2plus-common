@@ -18,8 +18,11 @@
  *		2 of the License, or (at your option) any later version.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/capability.h>
 #include <linux/module.h>
 #include <linux/netdevice.h>
@@ -51,6 +54,30 @@ const char vlan_version[] = DRV_VERSION;
 
 /* End of global variables definitions. */
 
+<<<<<<< HEAD
+=======
+static void vlan_group_free(struct vlan_group *grp)
+{
+	int i;
+
+	for (i = 0; i < VLAN_GROUP_ARRAY_SPLIT_PARTS; i++)
+		kfree(grp->vlan_devices_arrays[i]);
+	kfree(grp);
+}
+
+static struct vlan_group *vlan_group_alloc(struct net_device *real_dev)
+{
+	struct vlan_group *grp;
+
+	grp = kzalloc(sizeof(struct vlan_group), GFP_KERNEL);
+	if (!grp)
+		return NULL;
+
+	grp->real_dev = real_dev;
+	return grp;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int vlan_group_prealloc_vid(struct vlan_group *vg, u16 vlan_id)
 {
 	struct net_device **array;
@@ -71,22 +98,49 @@ static int vlan_group_prealloc_vid(struct vlan_group *vg, u16 vlan_id)
 	return 0;
 }
 
+<<<<<<< HEAD
 void unregister_vlan_dev(struct net_device *dev, struct list_head *head)
 {
 	struct vlan_dev_priv *vlan = vlan_dev_priv(dev);
 	struct net_device *real_dev = vlan->real_dev;
 	struct vlan_info *vlan_info;
+=======
+static void vlan_rcu_free(struct rcu_head *rcu)
+{
+	vlan_group_free(container_of(rcu, struct vlan_group, rcu));
+}
+
+void unregister_vlan_dev(struct net_device *dev, struct list_head *head)
+{
+	struct vlan_dev_info *vlan = vlan_dev_info(dev);
+	struct net_device *real_dev = vlan->real_dev;
+	const struct net_device_ops *ops = real_dev->netdev_ops;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct vlan_group *grp;
 	u16 vlan_id = vlan->vlan_id;
 
 	ASSERT_RTNL();
 
+<<<<<<< HEAD
 	vlan_info = rtnl_dereference(real_dev->vlan_info);
 	BUG_ON(!vlan_info);
 
 	grp = &vlan_info->grp;
 
 	grp->nr_vlan_devs--;
+=======
+	grp = rtnl_dereference(real_dev->vlgrp);
+	BUG_ON(!grp);
+
+	/* Take it out of our own structures, but be sure to interlock with
+	 * HW accelerating devices or SW vlan input packet processing if
+	 * VLAN is not 0 (leave it there for 802.1p).
+	 */
+	if (vlan_id && (real_dev->features & NETIF_F_HW_VLAN_FILTER))
+		ops->ndo_vlan_rx_kill_vid(real_dev, vlan_id);
+
+	grp->nr_vlans--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (vlan->flags & VLAN_FLAG_GVRP)
 		vlan_gvrp_request_leave(dev);
@@ -98,6 +152,7 @@ void unregister_vlan_dev(struct net_device *dev, struct list_head *head)
 	 */
 	unregister_netdevice_queue(dev, head);
 
+<<<<<<< HEAD
 	if (grp->nr_vlan_devs == 0)
 		vlan_gvrp_uninit_applicant(real_dev);
 
@@ -107,6 +162,19 @@ void unregister_vlan_dev(struct net_device *dev, struct list_head *head)
 	 */
 	if (vlan_id)
 		vlan_vid_del(real_dev, vlan_id);
+=======
+	/* If the group is now empty, kill off the group. */
+	if (grp->nr_vlans == 0) {
+		vlan_gvrp_uninit_applicant(real_dev);
+
+		rcu_assign_pointer(real_dev->vlgrp, NULL);
+		if (ops->ndo_vlan_rx_register)
+			ops->ndo_vlan_rx_register(real_dev, NULL);
+
+		/* Free the group, after all cpu's are done. */
+		call_rcu(&grp->rcu, vlan_rcu_free);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Get rid of the vlan's reference to real_dev */
 	dev_put(real_dev);
@@ -118,13 +186,21 @@ int vlan_check_real_dev(struct net_device *real_dev, u16 vlan_id)
 	const struct net_device_ops *ops = real_dev->netdev_ops;
 
 	if (real_dev->features & NETIF_F_VLAN_CHALLENGED) {
+<<<<<<< HEAD
 		pr_info("VLANs not supported on %s\n", name);
+=======
+		pr_info("8021q: VLANs not supported on %s\n", name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EOPNOTSUPP;
 	}
 
 	if ((real_dev->features & NETIF_F_HW_VLAN_FILTER) &&
 	    (!ops->ndo_vlan_rx_add_vid || !ops->ndo_vlan_rx_kill_vid)) {
+<<<<<<< HEAD
 		pr_info("Device %s has buggy VLAN hw accel\n", name);
+=======
+		pr_info("8021q: Device %s has buggy VLAN hw accel\n", name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EOPNOTSUPP;
 	}
 
@@ -136,6 +212,7 @@ int vlan_check_real_dev(struct net_device *real_dev, u16 vlan_id)
 
 int register_vlan_dev(struct net_device *dev)
 {
+<<<<<<< HEAD
 	struct vlan_dev_priv *vlan = vlan_dev_priv(dev);
 	struct net_device *real_dev = vlan->real_dev;
 	u16 vlan_id = vlan->vlan_id;
@@ -156,6 +233,23 @@ int register_vlan_dev(struct net_device *dev)
 		err = vlan_gvrp_init_applicant(real_dev);
 		if (err < 0)
 			goto out_vid_del;
+=======
+	struct vlan_dev_info *vlan = vlan_dev_info(dev);
+	struct net_device *real_dev = vlan->real_dev;
+	const struct net_device_ops *ops = real_dev->netdev_ops;
+	u16 vlan_id = vlan->vlan_id;
+	struct vlan_group *grp, *ngrp = NULL;
+	int err;
+
+	grp = rtnl_dereference(real_dev->vlgrp);
+	if (!grp) {
+		ngrp = grp = vlan_group_alloc(real_dev);
+		if (!grp)
+			return -ENOBUFS;
+		err = vlan_gvrp_init_applicant(real_dev);
+		if (err < 0)
+			goto out_free_group;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	err = vlan_group_prealloc_vid(grp, vlan_id);
@@ -166,7 +260,11 @@ int register_vlan_dev(struct net_device *dev)
 	if (err < 0)
 		goto out_uninit_applicant;
 
+<<<<<<< HEAD
 	/* Account for reference in struct vlan_dev_priv */
+=======
+	/* Account for reference in struct vlan_dev_info */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_hold(real_dev);
 
 	netif_stacked_transfer_operstate(real_dev, dev);
@@ -176,15 +274,37 @@ int register_vlan_dev(struct net_device *dev)
 	 * it into our local structure.
 	 */
 	vlan_group_set_device(grp, vlan_id, dev);
+<<<<<<< HEAD
 	grp->nr_vlan_devs++;
+=======
+	grp->nr_vlans++;
+
+	if (ngrp) {
+		if (ops->ndo_vlan_rx_register && (real_dev->features & NETIF_F_HW_VLAN_RX))
+			ops->ndo_vlan_rx_register(real_dev, ngrp);
+		rcu_assign_pointer(real_dev->vlgrp, ngrp);
+	}
+	if (real_dev->features & NETIF_F_HW_VLAN_FILTER)
+		ops->ndo_vlan_rx_add_vid(real_dev, vlan_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
 out_uninit_applicant:
+<<<<<<< HEAD
 	if (grp->nr_vlan_devs == 0)
 		vlan_gvrp_uninit_applicant(real_dev);
 out_vid_del:
 	vlan_vid_del(real_dev, vlan_id);
+=======
+	if (ngrp)
+		vlan_gvrp_uninit_applicant(real_dev);
+out_free_group:
+	if (ngrp) {
+		/* Free the group, after all cpu's are done. */
+		call_rcu(&ngrp->rcu, vlan_rcu_free);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -232,7 +352,11 @@ static int register_vlan_device(struct net_device *real_dev, u16 vlan_id)
 		snprintf(name, IFNAMSIZ, "vlan%.4i", vlan_id);
 	}
 
+<<<<<<< HEAD
 	new_dev = alloc_netdev(sizeof(struct vlan_dev_priv), name, vlan_setup);
+=======
+	new_dev = alloc_netdev(sizeof(struct vlan_dev_info), name, vlan_setup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (new_dev == NULL)
 		return -ENOBUFS;
@@ -243,10 +367,17 @@ static int register_vlan_device(struct net_device *real_dev, u16 vlan_id)
 	 */
 	new_dev->mtu = real_dev->mtu;
 
+<<<<<<< HEAD
 	vlan_dev_priv(new_dev)->vlan_id = vlan_id;
 	vlan_dev_priv(new_dev)->real_dev = real_dev;
 	vlan_dev_priv(new_dev)->dent = NULL;
 	vlan_dev_priv(new_dev)->flags = VLAN_FLAG_REORDER_HDR;
+=======
+	vlan_dev_info(new_dev)->vlan_id = vlan_id;
+	vlan_dev_info(new_dev)->real_dev = real_dev;
+	vlan_dev_info(new_dev)->dent = NULL;
+	vlan_dev_info(new_dev)->flags = VLAN_FLAG_REORDER_HDR;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	new_dev->rtnl_link_ops = &vlan_link_ops;
 	err = register_vlan_dev(new_dev);
@@ -263,7 +394,11 @@ out_free_newdev:
 static void vlan_sync_address(struct net_device *dev,
 			      struct net_device *vlandev)
 {
+<<<<<<< HEAD
 	struct vlan_dev_priv *vlan = vlan_dev_priv(vlandev);
+=======
+	struct vlan_dev_info *vlan = vlan_dev_info(vlandev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* May be called without an actual change */
 	if (!compare_ether_addr(vlan->real_dev_addr, dev->dev_addr))
@@ -307,12 +442,22 @@ static void __vlan_device_event(struct net_device *dev, unsigned long event)
 	case NETDEV_CHANGENAME:
 		vlan_proc_rem_dev(dev);
 		if (vlan_proc_add_dev(dev) < 0)
+<<<<<<< HEAD
 			pr_warn("failed to change proc name for %s\n",
 				dev->name);
 		break;
 	case NETDEV_REGISTER:
 		if (vlan_proc_add_dev(dev) < 0)
 			pr_warn("failed to add proc entry for %s\n", dev->name);
+=======
+			pr_warning("8021q: failed to change proc name for %s\n",
+					dev->name);
+		break;
+	case NETDEV_REGISTER:
+		if (vlan_proc_add_dev(dev) < 0)
+			pr_warning("8021q: failed to add proc entry for %s\n",
+					dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case NETDEV_UNREGISTER:
 		vlan_proc_rem_dev(dev);
@@ -325,16 +470,23 @@ static int vlan_device_event(struct notifier_block *unused, unsigned long event,
 {
 	struct net_device *dev = ptr;
 	struct vlan_group *grp;
+<<<<<<< HEAD
 	struct vlan_info *vlan_info;
 	int i, flgs;
 	struct net_device *vlandev;
 	struct vlan_dev_priv *vlan;
+=======
+	int i, flgs;
+	struct net_device *vlandev;
+	struct vlan_dev_info *vlan;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	LIST_HEAD(list);
 
 	if (is_vlan_dev(dev))
 		__vlan_device_event(dev, event);
 
 	if ((event == NETDEV_UP) &&
+<<<<<<< HEAD
 	    (dev->features & NETIF_F_HW_VLAN_FILTER)) {
 		pr_info("adding VLAN 0 to HW filter on device %s\n",
 			dev->name);
@@ -345,6 +497,18 @@ static int vlan_device_event(struct notifier_block *unused, unsigned long event,
 	if (!vlan_info)
 		goto out;
 	grp = &vlan_info->grp;
+=======
+	    (dev->features & NETIF_F_HW_VLAN_FILTER) &&
+	    dev->netdev_ops->ndo_vlan_rx_add_vid) {
+		pr_info("8021q: adding VLAN 0 to HW filter on device %s\n",
+			dev->name);
+		dev->netdev_ops->ndo_vlan_rx_add_vid(dev, 0);
+	}
+
+	grp = rtnl_dereference(dev->vlgrp);
+	if (!grp)
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* It is OK that we do not hold the group lock right now,
 	 * as we run under the RTNL lock.
@@ -403,9 +567,12 @@ static int vlan_device_event(struct notifier_block *unused, unsigned long event,
 		break;
 
 	case NETDEV_DOWN:
+<<<<<<< HEAD
 		if (dev->features & NETIF_F_HW_VLAN_FILTER)
 			vlan_vid_del(dev, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Put all VLANs for this dev in the down state too.  */
 		for (i = 0; i < VLAN_N_VID; i++) {
 			vlandev = vlan_group_get_device(grp, i);
@@ -416,7 +583,11 @@ static int vlan_device_event(struct notifier_block *unused, unsigned long event,
 			if (!(flgs & IFF_UP))
 				continue;
 
+<<<<<<< HEAD
 			vlan = vlan_dev_priv(vlandev);
+=======
+			vlan = vlan_dev_info(vlandev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!(vlan->flags & VLAN_FLAG_LOOSE_BINDING))
 				dev_change_flags(vlandev, flgs & ~IFF_UP);
 			netif_stacked_transfer_operstate(dev, vlandev);
@@ -434,7 +605,11 @@ static int vlan_device_event(struct notifier_block *unused, unsigned long event,
 			if (flgs & IFF_UP)
 				continue;
 
+<<<<<<< HEAD
 			vlan = vlan_dev_priv(vlandev);
+=======
+			vlan = vlan_dev_info(vlandev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!(vlan->flags & VLAN_FLAG_LOOSE_BINDING))
 				dev_change_flags(vlandev, flgs | IFF_UP);
 			netif_stacked_transfer_operstate(dev, vlandev);
@@ -451,9 +626,15 @@ static int vlan_device_event(struct notifier_block *unused, unsigned long event,
 			if (!vlandev)
 				continue;
 
+<<<<<<< HEAD
 			/* removal of last vid destroys vlan_info, abort
 			 * afterwards */
 			if (vlan_info->nr_vids == 1)
+=======
+			/* unregistration of last vlan destroys group, abort
+			 * afterwards */
+			if (grp->nr_vlans == 1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				i = VLAN_N_VID;
 
 			unregister_vlan_dev(vlandev, &list);

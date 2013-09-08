@@ -21,7 +21,11 @@
 #include <media/videobuf-dma-sg.h>
 #include <linux/delay.h>
 #include <linux/dma-mapping.h>
+<<<<<<< HEAD
 #include <linux/pm_qos.h>
+=======
+#include <linux/pm_qos_params.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/via-core.h>
 #include <linux/via-gpio.h>
 #include <linux/via_i2c.h>
@@ -34,13 +38,21 @@ MODULE_AUTHOR("Jonathan Corbet <corbet@lwn.net>");
 MODULE_DESCRIPTION("VIA framebuffer-based camera controller driver");
 MODULE_LICENSE("GPL");
 
+<<<<<<< HEAD
 static bool flip_image;
+=======
+static int flip_image;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(flip_image, bool, 0444);
 MODULE_PARM_DESC(flip_image,
 		"If set, the sensor will be instructed to flip the image "
 		"vertically.");
 
+<<<<<<< HEAD
 static bool override_serial;
+=======
+static int override_serial;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(override_serial, bool, 0444);
 MODULE_PARM_DESC(override_serial,
 		"The camera driver will normally refuse to load if "
@@ -69,7 +81,11 @@ struct via_camera {
 	struct mutex lock;
 	enum viacam_opstate opstate;
 	unsigned long flags;
+<<<<<<< HEAD
 	struct pm_qos_request qos_request;
+=======
+	struct pm_qos_request_list qos_request;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * GPIO info for power/reset management
 	 */
@@ -156,10 +172,21 @@ static struct via_format {
 		.mbus_code	= V4L2_MBUS_FMT_YUYV8_2X8,
 		.bpp		= 2,
 	},
+<<<<<<< HEAD
 	/* RGB444 and Bayer should be doable, but have never been
 	   tested with this driver. RGB565 seems to work at the default
 	   resolution, but results in color corruption when being scaled by
 	   viacam_set_scaled(), and is disabled as a result. */
+=======
+	{
+		.desc		= "RGB 565",
+		.pixelformat	= V4L2_PIX_FMT_RGB565,
+		.mbus_code	= V4L2_MBUS_FMT_RGB565_2X8_LE,
+		.bpp		= 2,
+	},
+	/* RGB444 and Bayer should be doable, but have never been
+	   tested with this driver. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #define N_VIA_FMTS ARRAY_SIZE(via_formats)
 
@@ -1328,8 +1355,11 @@ static __devinit bool viacam_serial_is_enabled(void)
 	struct pci_bus *pbus = pci_find_bus(0, 0);
 	u8 cbyte;
 
+<<<<<<< HEAD
 	if (!pbus)
 		return false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pci_bus_read_config_byte(pbus, VIACAM_SERIAL_DEVFN,
 			VIACAM_SERIAL_CREG, &cbyte);
 	if ((cbyte & VIACAM_SERIAL_BIT) == 0)
@@ -1500,4 +1530,18 @@ static struct platform_driver viacam_driver = {
 	.remove = viacam_remove,
 };
 
+<<<<<<< HEAD
 module_platform_driver(viacam_driver);
+=======
+static int viacam_init(void)
+{
+	return platform_driver_register(&viacam_driver);
+}
+module_init(viacam_init);
+
+static void viacam_exit(void)
+{
+	platform_driver_unregister(&viacam_driver);
+}
+module_exit(viacam_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

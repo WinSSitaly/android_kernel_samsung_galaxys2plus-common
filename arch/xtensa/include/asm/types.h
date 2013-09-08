@@ -23,6 +23,11 @@
 
 #ifndef __ASSEMBLY__
 
+<<<<<<< HEAD
+=======
+typedef unsigned short umode_t;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * These aren't exported outside the kernel to avoid name space clashes
  */

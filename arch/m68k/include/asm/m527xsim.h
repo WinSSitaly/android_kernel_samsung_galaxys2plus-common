@@ -38,6 +38,7 @@
 #define	MCFINT_UART1		14		/* Interrupt number for UART1 */
 #define	MCFINT_UART2		15		/* Interrupt number for UART2 */
 #define	MCFINT_QSPI		18		/* Interrupt number for QSPI */
+<<<<<<< HEAD
 #define	MCFINT_FECRX0		23		/* Interrupt number for FEC0 */
 #define	MCFINT_FECTX0		27		/* Interrupt number for FEC0 */
 #define	MCFINT_FECENTC0		29		/* Interrupt number for FEC0 */
@@ -61,6 +62,10 @@
 
 #define	MCF_IRQ_QSPI		(MCFINT_VECBASE + MCFINT_QSPI)
 
+=======
+#define	MCFINT_PIT1		36		/* Interrupt number for PIT1 */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *	SDRAM configuration registers.
  */
@@ -93,9 +98,15 @@
 /*
  *	UART module.
  */
+<<<<<<< HEAD
 #define MCFUART_BASE0		(MCF_IPSBAR + 0x200)
 #define MCFUART_BASE1		(MCF_IPSBAR + 0x240)
 #define MCFUART_BASE2		(MCF_IPSBAR + 0x280)
+=======
+#define MCFUART_BASE1		(MCF_IPSBAR + 0x200)
+#define MCFUART_BASE2		(MCF_IPSBAR + 0x240)
+#define MCFUART_BASE3		(MCF_IPSBAR + 0x280)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  *	FEC ethernet module.
@@ -105,6 +116,7 @@
 #define	MCFFEC_BASE1		(MCF_IPSBAR + 0x1800)
 #define	MCFFEC_SIZE1		0x800
 
+<<<<<<< HEAD
 /*
  *	QSPI module.
  */
@@ -127,6 +139,8 @@
 /*
  *	GPIO module.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_M5271
 #define MCFGPIO_PODR_ADDR	(MCF_IPSBAR + 0x100000)
 #define MCFGPIO_PODR_DATAH	(MCF_IPSBAR + 0x100001)
@@ -328,8 +342,13 @@
 /*
  *  Reset Control Unit (relative to IPSBAR).
  */
+<<<<<<< HEAD
 #define	MCF_RCR			(MCF_IPSBAR + 0x110000)
 #define	MCF_RSR			(MCF_IPSBAR + 0x110001)
+=======
+#define	MCF_RCR			0x110000
+#define	MCF_RSR			0x110001
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define	MCF_RCR_SWRESET		0x80		/* Software reset bit */
 #define	MCF_RCR_FRCSTOUT	0x40		/* Force external reset */

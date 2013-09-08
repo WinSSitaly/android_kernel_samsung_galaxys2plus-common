@@ -12,7 +12,11 @@
  */
 #include <mach/ixp23xx.h>
 
+<<<<<<< HEAD
 		.macro	addruart, rp, rv, tmp
+=======
+		.macro	addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ldr	\rp, =IXP23XX_PERIPHERAL_PHYS 	@ physical
 		ldr	\rv, =IXP23XX_PERIPHERAL_VIRT	@ virtual
 #ifdef __ARMEB__

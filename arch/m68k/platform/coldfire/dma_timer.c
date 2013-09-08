@@ -44,6 +44,10 @@ static struct clocksource clocksource_cf_dt = {
 	.rating		= 200,
 	.read		= cf_dt_get_cycles,
 	.mask		= CLOCKSOURCE_MASK(32),
+<<<<<<< HEAD
+=======
+	.shift		= 20,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
 };
 
@@ -59,7 +63,13 @@ static int __init  init_cf_dt_clocksource(void)
 	__raw_writeb(0x00, DTER0);
 	__raw_writel(0x00000000, DTRR0);
 	__raw_writew(DMA_DTMR_CLK_DIV_16 | DMA_DTMR_ENABLE, DTMR0);
+<<<<<<< HEAD
 	return clocksource_register_hz(&clocksource_cf_dt, DMA_FREQ);
+=======
+	clocksource_cf_dt.mult = clocksource_hz2mult(DMA_FREQ,
+						     clocksource_cf_dt.shift);
+	return clocksource_register(&clocksource_cf_dt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 arch_initcall(init_cf_dt_clocksource);

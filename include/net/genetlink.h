@@ -128,6 +128,7 @@ extern int genl_register_mc_group(struct genl_family *family,
 				  struct genl_multicast_group *grp);
 extern void genl_unregister_mc_group(struct genl_family *family,
 				     struct genl_multicast_group *grp);
+<<<<<<< HEAD
 extern void genl_notify(struct sk_buff *skb, struct net *net, u32 pid,
 			u32 group, struct nlmsghdr *nlh, gfp_t flags);
 
@@ -164,6 +165,37 @@ static inline void genl_dump_check_consistent(struct netlink_callback *cb,
 					      struct genl_family *family)
 {
 	nl_dump_check_consistent(cb, genlmsg_nlhdr(user_hdr, family));
+=======
+
+/**
+ * genlmsg_put - Add generic netlink header to netlink message
+ * @skb: socket buffer holding the message
+ * @pid: netlink pid the message is addressed to
+ * @seq: sequence number (usually the one of the sender)
+ * @family: generic netlink family
+ * @flags netlink message flags
+ * @cmd: generic netlink command
+ *
+ * Returns pointer to user specific header
+ */
+static inline void *genlmsg_put(struct sk_buff *skb, u32 pid, u32 seq,
+				struct genl_family *family, int flags, u8 cmd)
+{
+	struct nlmsghdr *nlh;
+	struct genlmsghdr *hdr;
+
+	nlh = nlmsg_put(skb, pid, seq, family->id, GENL_HDRLEN +
+			family->hdrsize, flags);
+	if (nlh == NULL)
+		return NULL;
+
+	hdr = nlmsg_data(nlh);
+	hdr->cmd = cmd;
+	hdr->version = family->version;
+	hdr->reserved = 0;
+
+	return (char *) hdr + GENL_HDRLEN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**

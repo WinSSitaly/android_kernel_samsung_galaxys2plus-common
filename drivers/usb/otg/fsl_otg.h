@@ -369,7 +369,11 @@ inline struct fsl_otg_timer *otg_timer_initializer
 }
 
 struct fsl_otg {
+<<<<<<< HEAD
 	struct usb_phy phy;
+=======
+	struct otg_transceiver otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct otg_fsm fsm;
 	struct usb_dr_mmap *dr_mem_map;
 	struct delayed_work otg_event;

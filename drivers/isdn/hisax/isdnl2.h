@@ -23,3 +23,7 @@
 #define RSP    1
 
 #define LC_FLUSH_WAIT 1
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

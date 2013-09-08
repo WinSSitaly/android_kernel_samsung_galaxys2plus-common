@@ -20,6 +20,10 @@
 #include <linux/stddef.h>
 #include <linux/list.h>
 #include <linux/timer.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 
 #include <mach/hardware.h>

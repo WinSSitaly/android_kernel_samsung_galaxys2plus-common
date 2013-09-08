@@ -125,6 +125,7 @@ config IP6_NF_MATCH_MH
 
 	  To compile it as a module, choose M here.  If unsure, say N.
 
+<<<<<<< HEAD
 config IP6_NF_MATCH_RPFILTER
 	tristate '"rpfilter" reverse path filter match support'
 	depends on NETFILTER_ADVANCED
@@ -135,6 +136,8 @@ config IP6_NF_MATCH_RPFILTER
 	  To compile it as a module, choose M here.  If unsure, say N.
 	  The module will be called ip6t_rpfilter.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config IP6_NF_MATCH_RT
 	tristate '"rt" Routing header match support'
 	depends on NETFILTER_ADVANCED
@@ -154,6 +157,18 @@ config IP6_NF_TARGET_HL
 	(e.g. when running oldconfig). It selects
 	CONFIG_NETFILTER_XT_TARGET_HL.
 
+<<<<<<< HEAD
+=======
+config IP6_NF_TARGET_LOG
+	tristate "LOG target support"
+	default m if NETFILTER_ADVANCED=n
+	help
+	  This option adds a `LOG' target, which allows you to create rules in
+	  any iptables table which records the packet header to the syslog.
+
+	  To compile it as a module, choose M here.  If unsure, say N.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config IP6_NF_FILTER
 	tristate "Packet filtering"
 	default m if NETFILTER_ADVANCED=n
@@ -175,6 +190,21 @@ config IP6_NF_TARGET_REJECT
 
 	  To compile it as a module, choose M here.  If unsure, say N.
 
+<<<<<<< HEAD
+=======
+config IP6_NF_TARGET_REJECT_SKERR
+	bool "Force socket error when rejecting with icmp*"
+	depends on IP6_NF_TARGET_REJECT
+	default n
+	help
+          This option enables turning a "--reject-with icmp*" into a matching
+          socket error also.
+	  The REJECT target normally allows sending an ICMP message. But it
+          leaves the local socket unaware of any ingress rejects.
+
+	  If unsure, say N.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config IP6_NF_MANGLE
 	tristate "Packet mangling"
 	default m if NETFILTER_ADVANCED=n
@@ -187,6 +217,10 @@ config IP6_NF_MANGLE
 
 config IP6_NF_RAW
 	tristate  'raw table support (required for TRACE)'
+<<<<<<< HEAD
+=======
+	depends on NETFILTER_ADVANCED
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  This option adds a `raw' table to ip6tables. This table is the very
 	  first in the netfilter framework and hooks in at the PREROUTING

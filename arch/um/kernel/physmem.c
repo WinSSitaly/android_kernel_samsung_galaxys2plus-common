@@ -3,6 +3,7 @@
  * Licensed under the GPL
  */
 
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/bootmem.h>
 #include <linux/mm.h>
@@ -13,12 +14,26 @@
 #include <kern.h>
 #include <mem_user.h>
 #include <os.h>
+=======
+#include "linux/bootmem.h"
+#include "linux/mm.h"
+#include "linux/pfn.h"
+#include "asm/page.h"
+#include "as-layout.h"
+#include "init.h"
+#include "kern.h"
+#include "mem_user.h"
+#include "os.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int physmem_fd = -1;
 
 /* Changed during early boot */
 unsigned long high_physmem;
+<<<<<<< HEAD
 EXPORT_SYMBOL(high_physmem);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern unsigned long long physmem_size;
 
@@ -186,7 +201,10 @@ unsigned long find_iomem(char *driver, unsigned long *len_out)
 
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(find_iomem);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int setup_iomem(void)
 {

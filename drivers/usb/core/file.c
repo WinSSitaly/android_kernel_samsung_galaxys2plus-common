@@ -66,7 +66,11 @@ static struct usb_class {
 	struct class *class;
 } *usb_class;
 
+<<<<<<< HEAD
 static char *usb_devnode(struct device *dev, umode_t *mode)
+=======
+static char *usb_devnode(struct device *dev, mode_t *mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct usb_class_driver *drv;
 

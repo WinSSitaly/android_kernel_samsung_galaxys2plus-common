@@ -1,5 +1,8 @@
 #include <linux/proc_fs.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/net_namespace.h>
 #include <net/netns/generic.h>
 #include "bonding.h"
@@ -126,7 +129,10 @@ static void bond_info_show_master(struct seq_file *seq)
 		seq_puts(seq, "\n802.3ad info\n");
 		seq_printf(seq, "LACP rate: %s\n",
 			   (bond->params.lacp_fast) ? "fast" : "slow");
+<<<<<<< HEAD
 		seq_printf(seq, "Min links: %d\n", bond->params.min_links);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		seq_printf(seq, "Aggregator selection policy (ad_select): %s\n",
 			   ad_select_tbl[bond->params.ad_select].modename);
 
@@ -158,6 +164,7 @@ static void bond_info_show_slave(struct seq_file *seq,
 	seq_printf(seq, "\nSlave Interface: %s\n", slave->dev->name);
 	seq_printf(seq, "MII Status: %s\n",
 		   (slave->link == BOND_LINK_UP) ?  "up" : "down");
+<<<<<<< HEAD
 	if (slave->speed == SPEED_UNKNOWN)
 		seq_printf(seq, "Speed: %s\n", "Unknown");
 	else
@@ -168,6 +175,10 @@ static void bond_info_show_slave(struct seq_file *seq,
 	else
 		seq_printf(seq, "Duplex: %s\n", slave->duplex ? "full" : "half");
 
+=======
+	seq_printf(seq, "Speed: %d Mbps\n", slave->speed);
+	seq_printf(seq, "Duplex: %s\n", slave->duplex ? "full" : "half");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	seq_printf(seq, "Link Failure Count: %u\n",
 		   slave->link_failure_count);
 

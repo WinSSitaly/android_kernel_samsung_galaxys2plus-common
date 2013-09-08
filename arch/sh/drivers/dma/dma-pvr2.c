@@ -70,6 +70,10 @@ static int pvr2_xfer_dma(struct dma_channel *chan)
 static struct irqaction pvr2_dma_irq = {
 	.name		= "pvr2 DMA handler",
 	.handler	= pvr2_dma_interrupt,
+<<<<<<< HEAD
+=======
+	.flags		= IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct dma_ops pvr2_dma_ops = {

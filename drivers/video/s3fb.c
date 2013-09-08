@@ -727,7 +727,11 @@ static int s3fb_set_par(struct fb_info *info)
 	if (par->chip == CHIP_988_VIRGE_VX) {
 		vga_wcrt(par->state.vgabase, 0x50, 0x00);
 		vga_wcrt(par->state.vgabase, 0x67, 0x50);
+<<<<<<< HEAD
 		msleep(10); /* screen remains blank sometimes without this */
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		vga_wcrt(par->state.vgabase, 0x63, (mode <= 2) ? 0x90 : 0x09);
 		vga_wcrt(par->state.vgabase, 0x66, 0x90);
 	}
@@ -901,8 +905,12 @@ static int s3fb_set_par(struct fb_info *info)
 
 	/* Set Data Transfer Position */
 	hsstart = ((info->var.xres + info->var.right_margin) * hmul) / 8;
+<<<<<<< HEAD
 	/* + 2 is needed for Virge/VX, does no harm on other cards */
 	value = clamp((htotal + hsstart + 1) / 2 + 2, hsstart + 4, htotal + 1);
+=======
+	value = clamp((htotal + hsstart + 1) / 2, hsstart + 4, htotal + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	svga_wcrt_multi(par->state.vgabase, s3_dtpc_regs, value);
 
 	memset_io(info->screen_base, 0x00, screen_size);
@@ -1020,6 +1028,7 @@ static int s3fb_pan_display(struct fb_var_screeninfo *var, struct fb_info *info)
 	unsigned int offset;
 
 	/* Calculate the offset */
+<<<<<<< HEAD
 	if (info->var.bits_per_pixel == 0) {
 		offset = (var->yoffset / 16) * (info->var.xres_virtual / 2)
 		       + (var->xoffset / 2);
@@ -1027,6 +1036,14 @@ static int s3fb_pan_display(struct fb_var_screeninfo *var, struct fb_info *info)
 	} else {
 		offset = (var->yoffset * info->fix.line_length) +
 			 (var->xoffset * info->var.bits_per_pixel / 8);
+=======
+	if (var->bits_per_pixel == 0) {
+		offset = (var->yoffset / 16) * (var->xres_virtual / 2) + (var->xoffset / 2);
+		offset = offset >> 2;
+	} else {
+		offset = (var->yoffset * info->fix.line_length) +
+			 (var->xoffset * var->bits_per_pixel / 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		offset = offset >> 2;
 	}
 
@@ -1217,6 +1234,7 @@ static int __devinit s3_pci_probe(struct pci_dev *dev, const struct pci_device_i
 			info->screen_size = 2 << 20;
 			break;
 		}
+<<<<<<< HEAD
 	} else if (par->chip == CHIP_988_VIRGE_VX) {
 		switch ((regval & 0x60) >> 5) {
 		case 0: /* 2MB */
@@ -1242,6 +1260,8 @@ static int __devinit s3_pci_probe(struct pci_dev *dev, const struct pci_device_i
 			info->screen_size -= 2 << 20;
 			break;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		info->screen_size = s3_memsizes[regval >> 5] << 10;
 	info->fix.smem_len = info->screen_size;
@@ -1531,7 +1551,11 @@ static struct pci_driver s3fb_pci_driver = {
 	.resume		= s3_pci_resume,
 };
 
+<<<<<<< HEAD
 /* Parse user specified options */
+=======
+/* Parse user speficied options */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifndef MODULE
 static int  __init s3fb_setup(char *options)

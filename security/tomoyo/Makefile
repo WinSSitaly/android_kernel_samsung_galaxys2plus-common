@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 obj-y = audit.o common.o condition.o domain.o environ.o file.o gc.o group.o load_policy.o memory.o mount.o network.o realpath.o securityfs_if.o tomoyo.o util.o
 
 $(obj)/policy/profile.conf:
@@ -46,3 +47,6 @@ $(obj)/builtin-policy.h: $(obj)/policy/profile.conf $(obj)/policy/exception_poli
 	@mv $@.tmp $@
 
 $(obj)/common.o: $(obj)/builtin-policy.h
+=======
+obj-y = common.o domain.o file.o gc.o group.o load_policy.o memory.o mount.o realpath.o securityfs_if.o tomoyo.o util.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

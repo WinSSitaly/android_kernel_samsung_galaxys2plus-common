@@ -13,7 +13,10 @@
  * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Copyright IBM Corp. 2007
+<<<<<<< HEAD
  * Copyright 2011 Freescale Semiconductor, Inc.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Authors: Hollis Blanchard <hollisb@us.ibm.com>
  */
@@ -70,6 +73,7 @@
 #define OP_STH  44
 #define OP_STHU 45
 
+<<<<<<< HEAD
 void kvmppc_emulate_dec(struct kvm_vcpu *vcpu)
 {
 	unsigned long dec_nsec;
@@ -78,16 +82,40 @@ void kvmppc_emulate_dec(struct kvm_vcpu *vcpu)
 	pr_debug("mtDEC: %x\n", vcpu->arch.dec);
 	hrtimer_try_to_cancel(&vcpu->arch.dec_timer);
 
+=======
+#ifdef CONFIG_PPC_BOOK3S
+static int kvmppc_dec_enabled(struct kvm_vcpu *vcpu)
+{
+	return 1;
+}
+#else
+static int kvmppc_dec_enabled(struct kvm_vcpu *vcpu)
+{
+	return vcpu->arch.tcr & TCR_DIE;
+}
+#endif
+
+void kvmppc_emulate_dec(struct kvm_vcpu *vcpu)
+{
+	unsigned long dec_nsec;
+
+	pr_debug("mtDEC: %x\n", vcpu->arch.dec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PPC_BOOK3S
 	/* mtdec lowers the interrupt line when positive. */
 	kvmppc_core_dequeue_dec(vcpu);
 
 	/* POWER4+ triggers a dec interrupt if the value is < 0 */
 	if (vcpu->arch.dec & 0x80000000) {
+<<<<<<< HEAD
+=======
+		hrtimer_try_to_cancel(&vcpu->arch.dec_timer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kvmppc_core_queue_dec(vcpu);
 		return;
 	}
 #endif
+<<<<<<< HEAD
 
 #ifdef CONFIG_BOOKE
 	/* On BOOKE, DEC = 0 is as good as decrementer not enabled */
@@ -108,17 +136,37 @@ void kvmppc_emulate_dec(struct kvm_vcpu *vcpu)
 	hrtimer_start(&vcpu->arch.dec_timer,
 		ktime_set(dec_time, dec_nsec), HRTIMER_MODE_REL);
 	vcpu->arch.dec_jiffies = get_tb();
+=======
+	if (kvmppc_dec_enabled(vcpu)) {
+		/* The decrementer ticks at the same rate as the timebase, so
+		 * that's how we convert the guest DEC value to the number of
+		 * host ticks. */
+
+		hrtimer_try_to_cancel(&vcpu->arch.dec_timer);
+		dec_nsec = vcpu->arch.dec;
+		dec_nsec *= 1000;
+		dec_nsec /= tb_ticks_per_usec;
+		hrtimer_start(&vcpu->arch.dec_timer, ktime_set(0, dec_nsec),
+			      HRTIMER_MODE_REL);
+		vcpu->arch.dec_jiffies = get_tb();
+	} else {
+		hrtimer_try_to_cancel(&vcpu->arch.dec_timer);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 u32 kvmppc_get_dec(struct kvm_vcpu *vcpu, u64 tb)
 {
 	u64 jd = tb - vcpu->arch.dec_jiffies;
+<<<<<<< HEAD
 
 #ifdef CONFIG_BOOKE
 	if (vcpu->arch.dec < jd)
 		return 0;
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return vcpu->arch.dec - jd;
 }
 
@@ -161,8 +209,12 @@ int kvmppc_emulate_instruction(struct kvm_run *run, struct kvm_vcpu *vcpu)
 	case OP_TRAP_64:
 		kvmppc_core_queue_program(vcpu, SRR1_PROGTRAP);
 #else
+<<<<<<< HEAD
 		kvmppc_core_queue_program(vcpu,
 					  vcpu->arch.shared->esr | ESR_PTR);
+=======
+		kvmppc_core_queue_program(vcpu, vcpu->arch.esr | ESR_PTR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 		advance = 0;
 		break;

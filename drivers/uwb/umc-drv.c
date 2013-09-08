@@ -6,7 +6,10 @@
  * This file is released under the GNU GPL v2.
  */
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/uwb/umc.h>
 
 int __umc_driver_register(struct umc_driver *umc_drv, struct module *module,

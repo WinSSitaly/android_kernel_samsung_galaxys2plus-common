@@ -149,12 +149,20 @@ static int param_get_debug_level(char *buffer, const struct kernel_param *kp)
 	return result;
 }
 
+<<<<<<< HEAD
 static const struct kernel_param_ops param_ops_debug_layer = {
+=======
+static struct kernel_param_ops param_ops_debug_layer = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.set = param_set_uint,
 	.get = param_get_debug_layer,
 };
 
+<<<<<<< HEAD
 static const struct kernel_param_ops param_ops_debug_level = {
+=======
+static struct kernel_param_ops param_ops_debug_level = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.set = param_set_uint,
 	.get = param_get_debug_level,
 };
@@ -173,7 +181,11 @@ static int param_set_trace_state(const char *val, struct kernel_param *kp)
 {
 	int result = 0;
 
+<<<<<<< HEAD
 	if (!strncmp(val, "enable", strlen("enable"))) {
+=======
+	if (!strncmp(val, "enable", strlen("enable") - 1)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		result = acpi_debug_trace(trace_method_name, trace_debug_level,
 					  trace_debug_layer, 0);
 		if (result)
@@ -181,7 +193,11 @@ static int param_set_trace_state(const char *val, struct kernel_param *kp)
 		goto exit;
 	}
 
+<<<<<<< HEAD
 	if (!strncmp(val, "disable", strlen("disable"))) {
+=======
+	if (!strncmp(val, "disable", strlen("disable") - 1)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int name = 0;
 		result = acpi_debug_trace((char *)&name, trace_debug_level,
 					  trace_debug_layer, 0);
@@ -706,6 +722,7 @@ static void __exit interrupt_stats_exit(void)
 	return;
 }
 
+<<<<<<< HEAD
 static ssize_t
 acpi_show_profile(struct device *dev, struct device_attribute *attr,
 		  char *buf)
@@ -716,13 +733,19 @@ acpi_show_profile(struct device *dev, struct device_attribute *attr,
 static const struct device_attribute pm_profile_attr =
 	__ATTR(pm_profile, S_IRUGO, acpi_show_profile, NULL);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int __init acpi_sysfs_init(void)
 {
 	int result;
 
 	result = acpi_tables_sysfs_init();
+<<<<<<< HEAD
 	if (result)
 		return result;
 	result = sysfs_create_file(acpi_kobj, &pm_profile_attr.attr);
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return result;
 }

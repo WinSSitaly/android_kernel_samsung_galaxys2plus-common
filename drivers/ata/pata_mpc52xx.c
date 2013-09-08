@@ -687,11 +687,19 @@ mpc52xx_ata_probe(struct platform_device *op)
 	int ata_irq = 0;
 	struct mpc52xx_ata __iomem *ata_regs;
 	struct mpc52xx_ata_priv *priv = NULL;
+<<<<<<< HEAD
 	int rv, task_irq;
 	int mwdma_mask = 0, udma_mask = 0;
 	const __be32 *prop;
 	int proplen;
 	struct bcom_task *dmatsk;
+=======
+	int rv, ret, task_irq = 0;
+	int mwdma_mask = 0, udma_mask = 0;
+	const __be32 *prop;
+	int proplen;
+	struct bcom_task *dmatsk = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Get ipb frequency */
 	ipb_freq = mpc5xxx_get_bus_frequency(op->dev.of_node);
@@ -717,7 +725,12 @@ mpc52xx_ata_probe(struct platform_device *op)
 	ata_regs = devm_ioremap(&op->dev, res_mem.start, sizeof(*ata_regs));
 	if (!ata_regs) {
 		dev_err(&op->dev, "error mapping device registers\n");
+<<<<<<< HEAD
 		return -ENOMEM;
+=======
+		rv = -ENOMEM;
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -752,7 +765,11 @@ mpc52xx_ata_probe(struct platform_device *op)
 	if (!priv) {
 		dev_err(&op->dev, "error allocating private structure\n");
 		rv = -ENOMEM;
+<<<<<<< HEAD
 		goto err1;
+=======
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	priv->ipb_period = 1000000000 / (ipb_freq / 1000);
@@ -775,6 +792,7 @@ mpc52xx_ata_probe(struct platform_device *op)
 	if (!dmatsk) {
 		dev_err(&op->dev, "bestcomm initialization failed\n");
 		rv = -ENOMEM;
+<<<<<<< HEAD
 		goto err1;
 	}
 
@@ -784,6 +802,17 @@ mpc52xx_ata_probe(struct platform_device *op)
 	if (rv) {
 		dev_err(&op->dev, "error requesting DMA IRQ\n");
 		goto err2;
+=======
+		goto err;
+	}
+
+	task_irq = bcom_get_task_irq(dmatsk);
+	ret = request_irq(task_irq, &mpc52xx_ata_task_irq, IRQF_DISABLED,
+				"ATA task", priv);
+	if (ret) {
+		dev_err(&op->dev, "error requesting DMA IRQ\n");
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	priv->dmatsk = dmatsk;
 
@@ -791,7 +820,11 @@ mpc52xx_ata_probe(struct platform_device *op)
 	rv = mpc52xx_ata_hw_init(priv);
 	if (rv) {
 		dev_err(&op->dev, "error initializing hardware\n");
+<<<<<<< HEAD
 		goto err2;
+=======
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Register ourselves to libata */
@@ -799,16 +832,35 @@ mpc52xx_ata_probe(struct platform_device *op)
 				  mwdma_mask, udma_mask);
 	if (rv) {
 		dev_err(&op->dev, "error registering with ATA layer\n");
+<<<<<<< HEAD
 		goto err2;
+=======
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
 
+<<<<<<< HEAD
  err2:
 	irq_dispose_mapping(task_irq);
 	bcom_ata_release(dmatsk);
  err1:
 	irq_dispose_mapping(ata_irq);
+=======
+ err:
+	devm_release_mem_region(&op->dev, res_mem.start, sizeof(*ata_regs));
+	if (ata_irq)
+		irq_dispose_mapping(ata_irq);
+	if (task_irq)
+		irq_dispose_mapping(task_irq);
+	if (dmatsk)
+		bcom_ata_release(dmatsk);
+	if (ata_regs)
+		devm_iounmap(&op->dev, ata_regs);
+	if (priv)
+		devm_kfree(&op->dev, priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rv;
 }
 
@@ -827,6 +879,15 @@ mpc52xx_ata_remove(struct platform_device *op)
 	bcom_ata_release(priv->dmatsk);
 	irq_dispose_mapping(priv->ata_irq);
 
+<<<<<<< HEAD
+=======
+	/* Clear up IO allocations */
+	devm_iounmap(&op->dev, priv->ata_regs);
+	devm_release_mem_region(&op->dev, priv->ata_regs_pa,
+				sizeof(*priv->ata_regs));
+	devm_kfree(&op->dev, priv);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -883,7 +944,30 @@ static struct platform_driver mpc52xx_ata_of_platform_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(mpc52xx_ata_of_platform_driver);
+=======
+
+/* ======================================================================== */
+/* Module                                                                   */
+/* ======================================================================== */
+
+static int __init
+mpc52xx_ata_init(void)
+{
+	printk(KERN_INFO "ata: MPC52xx IDE/ATA libata driver\n");
+	return platform_driver_register(&mpc52xx_ata_of_platform_driver);
+}
+
+static void __exit
+mpc52xx_ata_exit(void)
+{
+	platform_driver_unregister(&mpc52xx_ata_of_platform_driver);
+}
+
+module_init(mpc52xx_ata_init);
+module_exit(mpc52xx_ata_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Sylvain Munaut <tnt@246tNt.com>");
 MODULE_DESCRIPTION("Freescale MPC52xx IDE/ATA libata driver");

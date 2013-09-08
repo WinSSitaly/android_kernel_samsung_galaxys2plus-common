@@ -19,8 +19,14 @@
 #include <linux/pci.h>
 
 #include <asm/irq.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
 #include <asm/setup.h>
+=======
+#include <asm/atomic.h>
+#include <asm/setup.h>
+#include <asm/irq_controller.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_OF
 extern int of_ioapic;
@@ -29,6 +35,20 @@ extern void add_dtb(u64 data);
 extern void x86_add_irq_domains(void);
 void __cpuinit x86_of_pci_init(void);
 void x86_dtb_init(void);
+<<<<<<< HEAD
+=======
+
+static inline struct device_node *pci_device_to_OF_node(struct pci_dev *pdev)
+{
+	return pdev ? pdev->dev.of_node : NULL;
+}
+
+static inline struct device_node *pci_bus_to_OF_node(struct pci_bus *bus)
+{
+	return pci_device_to_OF_node(bus->self);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 static inline void add_dtb(u64 data) { }
 static inline void x86_add_irq_domains(void) { }
@@ -42,6 +62,18 @@ extern char cmd_line[COMMAND_LINE_SIZE];
 #define pci_address_to_pio pci_address_to_pio
 unsigned long pci_address_to_pio(phys_addr_t addr);
 
+<<<<<<< HEAD
+=======
+/**
+ * irq_dispose_mapping - Unmap an interrupt
+ * @virq: linux virq number of the interrupt to unmap
+ *
+ * FIXME: We really should implement proper virq handling like power,
+ * but that's going to be major surgery.
+ */
+static inline void irq_dispose_mapping(unsigned int virq) { }
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define HAVE_ARCH_DEVTREE_FIXUPS
 
 #endif /* __ASSEMBLY__ */

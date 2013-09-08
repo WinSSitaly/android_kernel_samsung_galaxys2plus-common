@@ -17,11 +17,18 @@
 */
 
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/ioport.h>
 #include <linux/init.h>
 #include <linux/serial.h>
 #include <linux/tty.h>
 #include <linux/tty_flip.h>
+=======
+#include <linux/tty.h>
+#include <linux/ioport.h>
+#include <linux/init.h>
+#include <linux/serial.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/console.h>
 #include <linux/delay.h> /* for udelay */
 #include <linux/device.h>
@@ -498,7 +505,11 @@ static int __init mux_probe(struct parisc_device *dev)
 		port->membase	= ioremap_nocache(port->mapbase, MUX_LINE_OFFSET);
 		port->iotype	= UPIO_MEM;
 		port->type	= PORT_MUX;
+<<<<<<< HEAD
 		port->irq	= 0;
+=======
+		port->irq	= NO_IRQ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		port->uartclk	= 0;
 		port->fifosize	= MUX_FIFO_SIZE;
 		port->ops	= &mux_pops;

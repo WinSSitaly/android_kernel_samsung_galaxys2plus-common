@@ -16,9 +16,14 @@
  */
 
 #include "bfad_drv.h"
+<<<<<<< HEAD
 #include "bfad_im.h"
 #include "bfa_ioc.h"
 #include "bfi_reg.h"
+=======
+#include "bfa_ioc.h"
+#include "bfi_ctreg.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "bfa_defs.h"
 #include "bfa_defs_svc.h"
 
@@ -30,8 +35,13 @@ BFA_TRC_FILE(CNA, IOC);
 #define BFA_IOC_TOV		3000	/* msecs */
 #define BFA_IOC_HWSEM_TOV	500	/* msecs */
 #define BFA_IOC_HB_TOV		500	/* msecs */
+<<<<<<< HEAD
 #define BFA_IOC_TOV_RECOVER	 BFA_IOC_HB_TOV
 #define BFA_IOC_POLL_TOV	BFA_TIMER_FREQ
+=======
+#define BFA_IOC_HWINIT_MAX	5
+#define BFA_IOC_TOV_RECOVER	 BFA_IOC_HB_TOV
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define bfa_ioc_timer_start(__ioc)					\
 	bfa_timer_begin((__ioc)->timer_mod, &(__ioc)->ioc_timer,	\
@@ -80,22 +90,35 @@ bfa_boolean_t bfa_auto_recover = BFA_TRUE;
 static void bfa_ioc_hw_sem_get(struct bfa_ioc_s *ioc);
 static void bfa_ioc_hwinit(struct bfa_ioc_s *ioc, bfa_boolean_t force);
 static void bfa_ioc_timeout(void *ioc);
+<<<<<<< HEAD
 static void bfa_ioc_poll_fwinit(struct bfa_ioc_s *ioc);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void bfa_ioc_send_enable(struct bfa_ioc_s *ioc);
 static void bfa_ioc_send_disable(struct bfa_ioc_s *ioc);
 static void bfa_ioc_send_getattr(struct bfa_ioc_s *ioc);
 static void bfa_ioc_hb_monitor(struct bfa_ioc_s *ioc);
 static void bfa_ioc_mbox_poll(struct bfa_ioc_s *ioc);
+<<<<<<< HEAD
 static void bfa_ioc_mbox_flush(struct bfa_ioc_s *ioc);
 static void bfa_ioc_recover(struct bfa_ioc_s *ioc);
 static void bfa_ioc_event_notify(struct bfa_ioc_s *ioc ,
 				enum bfa_ioc_event_e event);
+=======
+static void bfa_ioc_mbox_hbfail(struct bfa_ioc_s *ioc);
+static void bfa_ioc_recover(struct bfa_ioc_s *ioc);
+static void bfa_ioc_check_attr_wwns(struct bfa_ioc_s *ioc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void bfa_ioc_disable_comp(struct bfa_ioc_s *ioc);
 static void bfa_ioc_lpu_stop(struct bfa_ioc_s *ioc);
 static void bfa_ioc_debug_save_ftrc(struct bfa_ioc_s *ioc);
 static void bfa_ioc_fail_notify(struct bfa_ioc_s *ioc);
 static void bfa_ioc_pf_fwmismatch(struct bfa_ioc_s *ioc);
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * IOC state machine definitions/declarations
  */
@@ -107,11 +130,19 @@ enum ioc_event {
 	IOC_E_ENABLED		= 5,	/*  f/w enabled		*/
 	IOC_E_FWRSP_GETATTR	= 6,	/*  IOC get attribute response	*/
 	IOC_E_DISABLED		= 7,	/*  f/w disabled		*/
+<<<<<<< HEAD
 	IOC_E_PFFAILED		= 8,	/*  failure notice by iocpf sm	*/
 	IOC_E_HBFAIL		= 9,	/*  heartbeat failure		*/
 	IOC_E_HWERROR		= 10,	/*  hardware error interrupt	*/
 	IOC_E_TIMEOUT		= 11,	/*  timeout			*/
 	IOC_E_HWFAILED		= 12,	/*  PCI mapping failure notice	*/
+=======
+	IOC_E_INITFAILED	= 8,	/*  failure notice by iocpf sm	*/
+	IOC_E_PFFAILED		= 9,	/*  failure notice by iocpf sm	*/
+	IOC_E_HBFAIL		= 10,	/*  heartbeat failure		*/
+	IOC_E_HWERROR		= 11,	/*  hardware error interrupt	*/
+	IOC_E_TIMEOUT		= 12,	/*  timeout			*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 bfa_fsm_state_decl(bfa_ioc, uninit, struct bfa_ioc_s, enum ioc_event);
@@ -123,7 +154,10 @@ bfa_fsm_state_decl(bfa_ioc, fail_retry, struct bfa_ioc_s, enum ioc_event);
 bfa_fsm_state_decl(bfa_ioc, fail, struct bfa_ioc_s, enum ioc_event);
 bfa_fsm_state_decl(bfa_ioc, disabling, struct bfa_ioc_s, enum ioc_event);
 bfa_fsm_state_decl(bfa_ioc, disabled, struct bfa_ioc_s, enum ioc_event);
+<<<<<<< HEAD
 bfa_fsm_state_decl(bfa_ioc, hwfail, struct bfa_ioc_s, enum ioc_event);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct bfa_sm_table_s ioc_sm_table[] = {
 	{BFA_SM(bfa_ioc_sm_uninit), BFA_IOC_UNINIT},
@@ -135,7 +169,10 @@ static struct bfa_sm_table_s ioc_sm_table[] = {
 	{BFA_SM(bfa_ioc_sm_fail), BFA_IOC_FAIL},
 	{BFA_SM(bfa_ioc_sm_disabling), BFA_IOC_DISABLING},
 	{BFA_SM(bfa_ioc_sm_disabled), BFA_IOC_DISABLED},
+<<<<<<< HEAD
 	{BFA_SM(bfa_ioc_sm_hwfail), BFA_IOC_HWFAIL},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -147,9 +184,15 @@ static struct bfa_sm_table_s ioc_sm_table[] = {
 			bfa_iocpf_timeout, (__ioc), BFA_IOC_TOV)
 #define bfa_iocpf_timer_stop(__ioc)	bfa_timer_stop(&(__ioc)->ioc_timer)
 
+<<<<<<< HEAD
 #define bfa_iocpf_poll_timer_start(__ioc)				\
 	bfa_timer_begin((__ioc)->timer_mod, &(__ioc)->ioc_timer,	\
 			bfa_iocpf_poll_timeout, (__ioc), BFA_IOC_POLL_TOV)
+=======
+#define bfa_iocpf_recovery_timer_start(__ioc)				\
+	bfa_timer_begin((__ioc)->timer_mod, &(__ioc)->ioc_timer,	\
+			bfa_iocpf_timeout, (__ioc), BFA_IOC_TOV_RECOVER)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define bfa_sem_timer_start(__ioc)					\
 	bfa_timer_begin((__ioc)->timer_mod, &(__ioc)->sem_timer,	\
@@ -161,7 +204,10 @@ static struct bfa_sm_table_s ioc_sm_table[] = {
  */
 static void bfa_iocpf_timeout(void *ioc_arg);
 static void bfa_iocpf_sem_timeout(void *ioc_arg);
+<<<<<<< HEAD
 static void bfa_iocpf_poll_timeout(void *ioc_arg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * IOCPF state machine events
@@ -178,7 +224,10 @@ enum iocpf_event {
 	IOCPF_E_GETATTRFAIL	= 9,	/*  init fail notice by ioc sm	*/
 	IOCPF_E_SEMLOCKED	= 10,	/*  h/w semaphore is locked	*/
 	IOCPF_E_TIMEOUT		= 11,	/*  f/w response timeout	*/
+<<<<<<< HEAD
 	IOCPF_E_SEM_ERROR	= 12,	/*  h/w sem mapping error	*/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -320,16 +369,23 @@ bfa_ioc_sm_enabling(struct bfa_ioc_s *ioc, enum ioc_event event)
 		/* !!! fall through !!! */
 	case IOC_E_HWERROR:
 		ioc->cbfn->enable_cbfn(ioc->bfa, BFA_STATUS_IOC_FAILURE);
+<<<<<<< HEAD
 		bfa_fsm_set_state(ioc, bfa_ioc_sm_fail);
+=======
+		bfa_fsm_set_state(ioc, bfa_ioc_sm_fail_retry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (event != IOC_E_PFFAILED)
 			bfa_fsm_send_event(&ioc->iocpf, IOCPF_E_INITFAIL);
 		break;
 
+<<<<<<< HEAD
 	case IOC_E_HWFAILED:
 		ioc->cbfn->enable_cbfn(ioc->bfa, BFA_STATUS_IOC_FAILURE);
 		bfa_fsm_set_state(ioc, bfa_ioc_sm_hwfail);
 		break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case IOC_E_DISABLE:
 		bfa_fsm_set_state(ioc, bfa_ioc_sm_disabling);
 		break;
@@ -366,16 +422,28 @@ bfa_ioc_sm_getattr(struct bfa_ioc_s *ioc, enum ioc_event event)
 	switch (event) {
 	case IOC_E_FWRSP_GETATTR:
 		bfa_ioc_timer_stop(ioc);
+<<<<<<< HEAD
 		bfa_fsm_set_state(ioc, bfa_ioc_sm_op);
 		break;
 
+=======
+		bfa_ioc_check_attr_wwns(ioc);
+		bfa_fsm_set_state(ioc, bfa_ioc_sm_op);
+		break;
+
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case IOC_E_PFFAILED:
 	case IOC_E_HWERROR:
 		bfa_ioc_timer_stop(ioc);
 		/* !!! fall through !!! */
 	case IOC_E_TIMEOUT:
 		ioc->cbfn->enable_cbfn(ioc->bfa, BFA_STATUS_IOC_FAILURE);
+<<<<<<< HEAD
 		bfa_fsm_set_state(ioc, bfa_ioc_sm_fail);
+=======
+		bfa_fsm_set_state(ioc, bfa_ioc_sm_fail_retry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (event != IOC_E_PFFAILED)
 			bfa_fsm_send_event(&ioc->iocpf, IOCPF_E_GETATTRFAIL);
 		break;
@@ -393,16 +461,25 @@ bfa_ioc_sm_getattr(struct bfa_ioc_s *ioc, enum ioc_event event)
 	}
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 bfa_ioc_sm_op_entry(struct bfa_ioc_s *ioc)
 {
 	struct bfad_s *bfad = (struct bfad_s *)ioc->bfa->bfad;
 
 	ioc->cbfn->enable_cbfn(ioc->bfa, BFA_STATUS_OK);
+<<<<<<< HEAD
 	bfa_ioc_event_notify(ioc, BFA_IOC_E_ENABLED);
 	bfa_ioc_hb_monitor(ioc);
 	BFA_LOG(KERN_INFO, bfad, bfa_log_level, "IOC enabled\n");
 	bfa_ioc_aen_post(ioc, BFA_IOC_AEN_ENABLE);
+=======
+	bfa_ioc_hb_monitor(ioc);
+	BFA_LOG(KERN_INFO, bfad, bfa_log_level, "IOC enabled\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -424,13 +501,21 @@ bfa_ioc_sm_op(struct bfa_ioc_s *ioc, enum ioc_event event)
 		bfa_hb_timer_stop(ioc);
 		/* !!! fall through !!! */
 	case IOC_E_HBFAIL:
+<<<<<<< HEAD
+=======
+		bfa_ioc_fail_notify(ioc);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ioc->iocpf.auto_recover)
 			bfa_fsm_set_state(ioc, bfa_ioc_sm_fail_retry);
 		else
 			bfa_fsm_set_state(ioc, bfa_ioc_sm_fail);
 
+<<<<<<< HEAD
 		bfa_ioc_fail_notify(ioc);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (event != IOC_E_PFFAILED)
 			bfa_fsm_send_event(&ioc->iocpf, IOCPF_E_FAIL);
 		break;
@@ -447,7 +532,10 @@ bfa_ioc_sm_disabling_entry(struct bfa_ioc_s *ioc)
 	struct bfad_s *bfad = (struct bfad_s *)ioc->bfa->bfad;
 	bfa_fsm_send_event(&ioc->iocpf, IOCPF_E_DISABLE);
 	BFA_LOG(KERN_INFO, bfad, bfa_log_level, "IOC disabled\n");
+<<<<<<< HEAD
 	bfa_ioc_aen_post(ioc, BFA_IOC_AEN_DISABLE);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -472,11 +560,14 @@ bfa_ioc_sm_disabling(struct bfa_ioc_s *ioc, enum ioc_event event)
 		bfa_fsm_send_event(&ioc->iocpf, IOCPF_E_FAIL);
 		break;
 
+<<<<<<< HEAD
 	case IOC_E_HWFAILED:
 		bfa_fsm_set_state(ioc, bfa_ioc_sm_hwfail);
 		bfa_ioc_disable_comp(ioc);
 		break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		bfa_sm_fault(ioc, event);
 	}
@@ -541,14 +632,22 @@ bfa_ioc_sm_fail_retry(struct bfa_ioc_s *ioc, enum ioc_event event)
 		 * Initialization retry failed.
 		 */
 		ioc->cbfn->enable_cbfn(ioc->bfa, BFA_STATUS_IOC_FAILURE);
+<<<<<<< HEAD
 		bfa_fsm_set_state(ioc, bfa_ioc_sm_fail);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (event != IOC_E_PFFAILED)
 			bfa_fsm_send_event(&ioc->iocpf, IOCPF_E_INITFAIL);
 		break;
 
+<<<<<<< HEAD
 	case IOC_E_HWFAILED:
 		ioc->cbfn->enable_cbfn(ioc->bfa, BFA_STATUS_IOC_FAILURE);
 		bfa_fsm_set_state(ioc, bfa_ioc_sm_hwfail);
+=======
+	case IOC_E_INITFAILED:
+		bfa_fsm_set_state(ioc, bfa_ioc_sm_fail);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case IOC_E_ENABLE:
@@ -608,6 +707,7 @@ bfa_ioc_sm_fail(struct bfa_ioc_s *ioc, enum ioc_event event)
 	}
 }
 
+<<<<<<< HEAD
 static void
 bfa_ioc_sm_hwfail_entry(struct bfa_ioc_s *ioc)
 {
@@ -637,6 +737,8 @@ bfa_ioc_sm_hwfail(struct bfa_ioc_s *ioc, enum ioc_event event)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * IOCPF State Machine
  */
@@ -647,7 +749,11 @@ bfa_ioc_sm_hwfail(struct bfa_ioc_s *ioc, enum ioc_event event)
 static void
 bfa_iocpf_sm_reset_entry(struct bfa_iocpf_s *iocpf)
 {
+<<<<<<< HEAD
 	iocpf->fw_mismatch_notified = BFA_FALSE;
+=======
+	iocpf->retry_count = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iocpf->auto_recover = bfa_auto_recover;
 }
 
@@ -680,6 +786,7 @@ bfa_iocpf_sm_reset(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 static void
 bfa_iocpf_sm_fwcheck_entry(struct bfa_iocpf_s *iocpf)
 {
+<<<<<<< HEAD
 	struct bfi_ioc_image_hdr_s	fwhdr;
 	u32	r32, fwstate, pgnum, pgoff, loff = 0;
 	int	i;
@@ -736,6 +843,8 @@ bfa_iocpf_sm_fwcheck_entry(struct bfa_iocpf_s *iocpf)
 	writel(1, iocpf->ioc->ioc_regs.ioc_init_sem_reg);
 
 sem_get:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_ioc_hw_sem_get(iocpf->ioc);
 }
 
@@ -753,6 +862,10 @@ bfa_iocpf_sm_fwcheck(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 	case IOCPF_E_SEMLOCKED:
 		if (bfa_ioc_firmware_lock(ioc)) {
 			if (bfa_ioc_sync_start(ioc)) {
+<<<<<<< HEAD
+=======
+				iocpf->retry_count = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				bfa_ioc_sync_join(ioc);
 				bfa_fsm_set_state(iocpf, bfa_iocpf_sm_hwinit);
 			} else {
@@ -766,11 +879,14 @@ bfa_iocpf_sm_fwcheck(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 		}
 		break;
 
+<<<<<<< HEAD
 	case IOCPF_E_SEM_ERROR:
 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_fail);
 		bfa_fsm_send_event(ioc, IOC_E_HWFAILED);
 		break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case IOCPF_E_DISABLE:
 		bfa_sem_timer_stop(ioc);
 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_reset);
@@ -796,10 +912,17 @@ bfa_iocpf_sm_mismatch_entry(struct bfa_iocpf_s *iocpf)
 	/*
 	 * Call only the first time sm enters fwmismatch state.
 	 */
+<<<<<<< HEAD
 	if (iocpf->fw_mismatch_notified == BFA_FALSE)
 		bfa_ioc_pf_fwmismatch(iocpf->ioc);
 
 	iocpf->fw_mismatch_notified = BFA_TRUE;
+=======
+	if (iocpf->retry_count == 0)
+		bfa_ioc_pf_fwmismatch(iocpf->ioc);
+
+	iocpf->retry_count++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_iocpf_timer_start(iocpf->ioc);
 }
 
@@ -864,11 +987,14 @@ bfa_iocpf_sm_semwait(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 		}
 		break;
 
+<<<<<<< HEAD
 	case IOCPF_E_SEM_ERROR:
 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_fail);
 		bfa_fsm_send_event(ioc, IOC_E_HWFAILED);
 		break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case IOCPF_E_DISABLE:
 		bfa_sem_timer_stop(ioc);
 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_disabling_sync);
@@ -882,7 +1008,11 @@ bfa_iocpf_sm_semwait(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 static void
 bfa_iocpf_sm_hwinit_entry(struct bfa_iocpf_s *iocpf)
 {
+<<<<<<< HEAD
 	iocpf->poll_time = 0;
+=======
+	bfa_iocpf_timer_start(iocpf->ioc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_ioc_hwinit(iocpf->ioc, BFA_FALSE);
 }
 
@@ -899,12 +1029,29 @@ bfa_iocpf_sm_hwinit(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 
 	switch (event) {
 	case IOCPF_E_FWREADY:
+<<<<<<< HEAD
 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_enabling);
 		break;
 
 	case IOCPF_E_TIMEOUT:
 		writel(1, ioc->ioc_regs.ioc_sem_reg);
 		bfa_fsm_send_event(ioc, IOC_E_PFFAILED);
+=======
+		bfa_iocpf_timer_stop(ioc);
+		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_enabling);
+		break;
+
+	case IOCPF_E_INITFAIL:
+		bfa_iocpf_timer_stop(ioc);
+		/*
+		 * !!! fall through !!!
+		 */
+
+	case IOCPF_E_TIMEOUT:
+		writel(1, ioc->ioc_regs.ioc_sem_reg);
+		if (event == IOCPF_E_TIMEOUT)
+			bfa_fsm_send_event(ioc, IOC_E_PFFAILED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_initfail_sync);
 		break;
 
@@ -924,10 +1071,13 @@ static void
 bfa_iocpf_sm_enabling_entry(struct bfa_iocpf_s *iocpf)
 {
 	bfa_iocpf_timer_start(iocpf->ioc);
+<<<<<<< HEAD
 	/*
 	 * Enable Interrupts before sending fw IOC ENABLE cmd.
 	 */
 	iocpf->ioc->cbfn->reset_cbfn(iocpf->ioc->bfa);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_ioc_send_enable(iocpf->ioc);
 }
 
@@ -968,6 +1118,13 @@ bfa_iocpf_sm_enabling(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_disabling);
 		break;
 
+<<<<<<< HEAD
+=======
+	case IOCPF_E_FWREADY:
+		bfa_ioc_send_enable(ioc);
+		break;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		bfa_sm_fault(ioc, event);
 	}
@@ -999,6 +1156,19 @@ bfa_iocpf_sm_ready(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_fail_sync);
 		break;
 
+<<<<<<< HEAD
+=======
+	case IOCPF_E_FWREADY:
+		if (bfa_ioc_is_operational(ioc)) {
+			bfa_fsm_send_event(ioc, IOC_E_PFFAILED);
+			bfa_fsm_set_state(iocpf, bfa_iocpf_sm_fail_sync);
+		} else {
+			bfa_fsm_send_event(ioc, IOC_E_PFFAILED);
+			bfa_fsm_set_state(iocpf, bfa_iocpf_sm_initfail_sync);
+		}
+		break;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		bfa_sm_fault(ioc, event);
 	}
@@ -1023,6 +1193,10 @@ bfa_iocpf_sm_disabling(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 
 	switch (event) {
 	case IOCPF_E_FWRSP_DISABLE:
+<<<<<<< HEAD
+=======
+	case IOCPF_E_FWREADY:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bfa_iocpf_timer_stop(ioc);
 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_disabling_sync);
 		break;
@@ -1069,11 +1243,14 @@ bfa_iocpf_sm_disabling_sync(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_disabled);
 		break;
 
+<<<<<<< HEAD
 	case IOCPF_E_SEM_ERROR:
 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_fail);
 		bfa_fsm_send_event(ioc, IOC_E_HWFAILED);
 		break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case IOCPF_E_FAIL:
 		break;
 
@@ -1088,7 +1265,10 @@ bfa_iocpf_sm_disabling_sync(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 static void
 bfa_iocpf_sm_disabled_entry(struct bfa_iocpf_s *iocpf)
 {
+<<<<<<< HEAD
 	bfa_ioc_mbox_flush(iocpf->ioc);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_fsm_send_event(iocpf->ioc, IOC_E_DISABLED);
 }
 
@@ -1101,6 +1281,10 @@ bfa_iocpf_sm_disabled(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 
 	switch (event) {
 	case IOCPF_E_ENABLE:
+<<<<<<< HEAD
+=======
+		iocpf->retry_count = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_semwait);
 		break;
 
@@ -1117,7 +1301,10 @@ bfa_iocpf_sm_disabled(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 static void
 bfa_iocpf_sm_initfail_sync_entry(struct bfa_iocpf_s *iocpf)
 {
+<<<<<<< HEAD
 	bfa_ioc_debug_save_ftrc(iocpf->ioc);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_ioc_hw_sem_get(iocpf->ioc);
 }
 
@@ -1134,6 +1321,7 @@ bfa_iocpf_sm_initfail_sync(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 	switch (event) {
 	case IOCPF_E_SEMLOCKED:
 		bfa_ioc_notify_fail(ioc);
+<<<<<<< HEAD
 		bfa_ioc_sync_leave(ioc);
 		writel(BFI_IOC_FAIL, ioc->ioc_regs.ioc_fwstate);
 		writel(1, ioc->ioc_regs.ioc_sem_reg);
@@ -1143,6 +1331,22 @@ bfa_iocpf_sm_initfail_sync(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 	case IOCPF_E_SEM_ERROR:
 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_fail);
 		bfa_fsm_send_event(ioc, IOC_E_HWFAILED);
+=======
+		bfa_ioc_sync_ack(ioc);
+		iocpf->retry_count++;
+		if (iocpf->retry_count >= BFA_IOC_HWINIT_MAX) {
+			bfa_ioc_sync_leave(ioc);
+			writel(1, ioc->ioc_regs.ioc_sem_reg);
+			bfa_fsm_set_state(iocpf, bfa_iocpf_sm_initfail);
+		} else {
+			if (bfa_ioc_sync_complete(ioc))
+				bfa_fsm_set_state(iocpf, bfa_iocpf_sm_hwinit);
+			else {
+				writel(1, ioc->ioc_regs.ioc_sem_reg);
+				bfa_fsm_set_state(iocpf, bfa_iocpf_sm_semwait);
+			}
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case IOCPF_E_DISABLE:
@@ -1167,7 +1371,11 @@ bfa_iocpf_sm_initfail_sync(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 static void
 bfa_iocpf_sm_initfail_entry(struct bfa_iocpf_s *iocpf)
 {
+<<<<<<< HEAD
 	bfa_trc(iocpf->ioc, 0);
+=======
+	bfa_fsm_send_event(iocpf->ioc, IOC_E_INITFAILED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1206,7 +1414,11 @@ bfa_iocpf_sm_fail_sync_entry(struct bfa_iocpf_s *iocpf)
 	/*
 	 * Flush any queued up mailbox requests.
 	 */
+<<<<<<< HEAD
 	bfa_ioc_mbox_flush(iocpf->ioc);
+=======
+	bfa_ioc_mbox_hbfail(iocpf->ioc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bfa_ioc_hw_sem_get(iocpf->ioc);
 }
@@ -1220,11 +1432,18 @@ bfa_iocpf_sm_fail_sync(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 
 	switch (event) {
 	case IOCPF_E_SEMLOCKED:
+<<<<<<< HEAD
+=======
+		iocpf->retry_count = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bfa_ioc_sync_ack(ioc);
 		bfa_ioc_notify_fail(ioc);
 		if (!iocpf->auto_recover) {
 			bfa_ioc_sync_leave(ioc);
+<<<<<<< HEAD
 			writel(BFI_IOC_FAIL, ioc->ioc_regs.ioc_fwstate);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			writel(1, ioc->ioc_regs.ioc_sem_reg);
 			bfa_fsm_set_state(iocpf, bfa_iocpf_sm_fail);
 		} else {
@@ -1237,11 +1456,14 @@ bfa_iocpf_sm_fail_sync(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 		}
 		break;
 
+<<<<<<< HEAD
 	case IOCPF_E_SEM_ERROR:
 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_fail);
 		bfa_fsm_send_event(ioc, IOC_E_HWFAILED);
 		break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case IOCPF_E_DISABLE:
 		bfa_sem_timer_stop(ioc);
 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_disabling_sync);
@@ -1258,7 +1480,10 @@ bfa_iocpf_sm_fail_sync(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
 static void
 bfa_iocpf_sm_fail_entry(struct bfa_iocpf_s *iocpf)
 {
+<<<<<<< HEAD
 	bfa_trc(iocpf->ioc, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1285,6 +1510,7 @@ bfa_iocpf_sm_fail(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
  *  BFA IOC private functions
  */
 
+<<<<<<< HEAD
 /*
  * Notify common modules registered for notification.
  */
@@ -1305,6 +1531,23 @@ bfa_ioc_disable_comp(struct bfa_ioc_s *ioc)
 {
 	ioc->cbfn->disable_cbfn(ioc->bfa);
 	bfa_ioc_event_notify(ioc, BFA_IOC_E_DISABLED);
+=======
+static void
+bfa_ioc_disable_comp(struct bfa_ioc_s *ioc)
+{
+	struct list_head			*qe;
+	struct bfa_ioc_hbfail_notify_s	*notify;
+
+	ioc->cbfn->disable_cbfn(ioc->bfa);
+
+	/*
+	 * Notify common modules registered for notification.
+	 */
+	list_for_each(qe, &ioc->hb_notify_q) {
+		notify = (struct bfa_ioc_hbfail_notify_s *) qe;
+		notify->cbfn(notify->cbarg);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 bfa_boolean_t
@@ -1316,15 +1559,26 @@ bfa_ioc_sem_get(void __iomem *sem_reg)
 
 	r32 = readl(sem_reg);
 
+<<<<<<< HEAD
 	while ((r32 & 1) && (cnt < BFA_SEM_SPINCNT)) {
+=======
+	while (r32 && (cnt < BFA_SEM_SPINCNT)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cnt++;
 		udelay(2);
 		r32 = readl(sem_reg);
 	}
 
+<<<<<<< HEAD
 	if (!(r32 & 1))
 		return BFA_TRUE;
 
+=======
+	if (r32 == 0)
+		return BFA_TRUE;
+
+	WARN_ON(cnt >= BFA_SEM_SPINCNT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return BFA_FALSE;
 }
 
@@ -1338,12 +1592,16 @@ bfa_ioc_hw_sem_get(struct bfa_ioc_s *ioc)
 	 * will return 1. Semaphore is released by writing 1 to the register
 	 */
 	r32 = readl(ioc->ioc_regs.ioc_sem_reg);
+<<<<<<< HEAD
 	if (r32 == ~0) {
 		WARN_ON(r32 == ~0);
 		bfa_fsm_send_event(&ioc->iocpf, IOCPF_E_SEM_ERROR);
 		return;
 	}
 	if (!(r32 & 1)) {
+=======
+	if (r32 == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bfa_fsm_send_event(&ioc->iocpf, IOCPF_E_SEMLOCKED);
 		return;
 	}
@@ -1452,7 +1710,11 @@ bfa_ioc_fwver_cmp(struct bfa_ioc_s *ioc, struct bfi_ioc_image_hdr_s *fwhdr)
 	int i;
 
 	drv_fwhdr = (struct bfi_ioc_image_hdr_s *)
+<<<<<<< HEAD
 		bfa_cb_image_get_chunk(bfa_ioc_asic_gen(ioc), 0);
+=======
+		bfa_cb_image_get_chunk(BFA_IOC_FWIMG_TYPE(ioc), 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < BFI_IOC_MD5SUM_SZ; i++) {
 		if (fwhdr->md5sum[i] != drv_fwhdr->md5sum[i]) {
@@ -1478,7 +1740,11 @@ bfa_ioc_fwver_valid(struct bfa_ioc_s *ioc, u32 boot_env)
 
 	bfa_ioc_fwver_get(ioc, &fwhdr);
 	drv_fwhdr = (struct bfi_ioc_image_hdr_s *)
+<<<<<<< HEAD
 		bfa_cb_image_get_chunk(bfa_ioc_asic_gen(ioc), 0);
+=======
+		bfa_cb_image_get_chunk(BFA_IOC_FWIMG_TYPE(ioc), 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (fwhdr.signature != drv_fwhdr->signature) {
 		bfa_trc(ioc, fwhdr.signature);
@@ -1486,8 +1752,13 @@ bfa_ioc_fwver_valid(struct bfa_ioc_s *ioc, u32 boot_env)
 		return BFA_FALSE;
 	}
 
+<<<<<<< HEAD
 	if (swab32(fwhdr.bootenv) != boot_env) {
 		bfa_trc(ioc, fwhdr.bootenv);
+=======
+	if (swab32(fwhdr.param) != boot_env) {
+		bfa_trc(ioc, fwhdr.param);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bfa_trc(ioc, boot_env);
 		return BFA_FALSE;
 	}
@@ -1523,8 +1794,13 @@ bfa_ioc_hwinit(struct bfa_ioc_s *ioc, bfa_boolean_t force)
 
 	bfa_trc(ioc, ioc_fwstate);
 
+<<<<<<< HEAD
 	boot_type = BFI_FWBOOT_TYPE_NORMAL;
 	boot_env = BFI_FWBOOT_ENV_OS;
+=======
+	boot_type = BFI_BOOT_TYPE_NORMAL;
+	boot_env = BFI_BOOT_LOADER_OS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * check if firmware is valid
@@ -1534,7 +1810,10 @@ bfa_ioc_hwinit(struct bfa_ioc_s *ioc, bfa_boolean_t force)
 
 	if (!fwvalid) {
 		bfa_ioc_boot(ioc, boot_type, boot_env);
+<<<<<<< HEAD
 		bfa_ioc_poll_fwinit(ioc);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -1543,7 +1822,11 @@ bfa_ioc_hwinit(struct bfa_ioc_s *ioc, bfa_boolean_t force)
 	 * just wait for an initialization completion interrupt.
 	 */
 	if (ioc_fwstate == BFI_IOC_INITING) {
+<<<<<<< HEAD
 		bfa_ioc_poll_fwinit(ioc);
+=======
+		ioc->cbfn->reset_cbfn(ioc->bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -1562,6 +1845,10 @@ bfa_ioc_hwinit(struct bfa_ioc_s *ioc, bfa_boolean_t force)
 		 * be flushed. Otherwise MSI-X interrupts are not delivered.
 		 */
 		bfa_ioc_msgflush(ioc);
+<<<<<<< HEAD
+=======
+		ioc->cbfn->reset_cbfn(ioc->bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bfa_fsm_send_event(&ioc->iocpf, IOCPF_E_FWREADY);
 		return;
 	}
@@ -1570,7 +1857,10 @@ bfa_ioc_hwinit(struct bfa_ioc_s *ioc, bfa_boolean_t force)
 	 * Initialize the h/w for any other states.
 	 */
 	bfa_ioc_boot(ioc, boot_type, boot_env);
+<<<<<<< HEAD
 	bfa_ioc_poll_fwinit(ioc);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -1618,7 +1908,11 @@ bfa_ioc_send_enable(struct bfa_ioc_s *ioc)
 
 	bfi_h2i_set(enable_req.mh, BFI_MC_IOC, BFI_IOC_H2I_ENABLE_REQ,
 		    bfa_ioc_portid(ioc));
+<<<<<<< HEAD
 	enable_req.clscode = cpu_to_be16(ioc->clscode);
+=======
+	enable_req.ioc_class = ioc->ioc_mc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do_gettimeofday(&tv);
 	enable_req.tv_sec = be32_to_cpu(tv.tv_sec);
 	bfa_ioc_mbox_send(ioc, &enable_req, sizeof(struct bfi_ioc_ctrl_req_s));
@@ -1682,21 +1976,40 @@ bfa_ioc_download_fw(struct bfa_ioc_s *ioc, u32 boot_type,
 	u32 loff = 0;
 	u32 chunkno = 0;
 	u32 i;
+<<<<<<< HEAD
 	u32 asicmode;
 
 	bfa_trc(ioc, bfa_cb_image_get_size(bfa_ioc_asic_gen(ioc)));
 	fwimg = bfa_cb_image_get_chunk(bfa_ioc_asic_gen(ioc), chunkno);
+=======
+
+	/*
+	 * Initialize LMEM first before code download
+	 */
+	bfa_ioc_lmem_init(ioc);
+
+	bfa_trc(ioc, bfa_cb_image_get_size(BFA_IOC_FWIMG_TYPE(ioc)));
+	fwimg = bfa_cb_image_get_chunk(BFA_IOC_FWIMG_TYPE(ioc), chunkno);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pgnum = PSS_SMEM_PGNUM(ioc->ioc_regs.smem_pg0, loff);
 	pgoff = PSS_SMEM_PGOFF(loff);
 
 	writel(pgnum, ioc->ioc_regs.host_page_num_fn);
 
+<<<<<<< HEAD
 	for (i = 0; i < bfa_cb_image_get_size(bfa_ioc_asic_gen(ioc)); i++) {
 
 		if (BFA_IOC_FLASH_CHUNK_NO(i) != chunkno) {
 			chunkno = BFA_IOC_FLASH_CHUNK_NO(i);
 			fwimg = bfa_cb_image_get_chunk(bfa_ioc_asic_gen(ioc),
+=======
+	for (i = 0; i < bfa_cb_image_get_size(BFA_IOC_FWIMG_TYPE(ioc)); i++) {
+
+		if (BFA_IOC_FLASH_CHUNK_NO(i) != chunkno) {
+			chunkno = BFA_IOC_FLASH_CHUNK_NO(i);
+			fwimg = bfa_cb_image_get_chunk(BFA_IOC_FWIMG_TYPE(ioc),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					BFA_IOC_FLASH_CHUNK_ADDR(chunkno));
 		}
 
@@ -1722,6 +2035,7 @@ bfa_ioc_download_fw(struct bfa_ioc_s *ioc, u32 boot_type,
 			ioc->ioc_regs.host_page_num_fn);
 
 	/*
+<<<<<<< HEAD
 	 * Set boot type and device mode at the end.
 	 */
 	asicmode = BFI_FWBOOT_DEVMODE(ioc->asic_gen, ioc->asic_mode,
@@ -1731,6 +2045,13 @@ bfa_ioc_download_fw(struct bfa_ioc_s *ioc, u32 boot_type,
 	bfa_mem_write(ioc->ioc_regs.smem_page_start, BFI_FWBOOT_TYPE_OFF,
 			swab32(boot_type));
 	bfa_mem_write(ioc->ioc_regs.smem_page_start, BFI_FWBOOT_ENV_OFF,
+=======
+	 * Set boot type and boot param at the end.
+	*/
+	bfa_mem_write(ioc->ioc_regs.smem_page_start, BFI_BOOT_TYPE_OFF,
+			swab32(boot_type));
+	bfa_mem_write(ioc->ioc_regs.smem_page_start, BFI_BOOT_LOADER_OFF,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			swab32(boot_env));
 }
 
@@ -1746,7 +2067,10 @@ bfa_ioc_getattr_reply(struct bfa_ioc_s *ioc)
 	attr->adapter_prop  = be32_to_cpu(attr->adapter_prop);
 	attr->card_type     = be32_to_cpu(attr->card_type);
 	attr->maxfrsize	    = be16_to_cpu(attr->maxfrsize);
+<<<<<<< HEAD
 	ioc->fcmode	= (attr->port_mode == BFI_PORT_MODE_FC);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bfa_fsm_send_event(ioc, IOC_E_FWRSP_GETATTR);
 }
@@ -1801,7 +2125,11 @@ bfa_ioc_mbox_poll(struct bfa_ioc_s *ioc)
  * Cleanup any pending requests.
  */
 static void
+<<<<<<< HEAD
 bfa_ioc_mbox_flush(struct bfa_ioc_s *ioc)
+=======
+bfa_ioc_mbox_hbfail(struct bfa_ioc_s *ioc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bfa_ioc_mbox_mod_s	*mod = &ioc->mbox_mod;
 	struct bfa_mbox_cmd_s		*cmd;
@@ -1863,7 +2191,10 @@ bfa_ioc_smem_read(struct bfa_ioc_s *ioc, void *tbuf, u32 soff, u32 sz)
 	/*
 	 *  release semaphore.
 	 */
+<<<<<<< HEAD
 	readl(ioc->ioc_regs.ioc_init_sem_reg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writel(1, ioc->ioc_regs.ioc_init_sem_reg);
 
 	bfa_trc(ioc, pgnum);
@@ -1920,7 +2251,10 @@ bfa_ioc_smem_clr(struct bfa_ioc_s *ioc, u32 soff, u32 sz)
 	/*
 	 *  release semaphore.
 	 */
+<<<<<<< HEAD
 	readl(ioc->ioc_regs.ioc_init_sem_reg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writel(1, ioc->ioc_regs.ioc_init_sem_reg);
 	bfa_trc(ioc, pgnum);
 	return BFA_STATUS_OK;
@@ -1929,19 +2263,34 @@ bfa_ioc_smem_clr(struct bfa_ioc_s *ioc, u32 soff, u32 sz)
 static void
 bfa_ioc_fail_notify(struct bfa_ioc_s *ioc)
 {
+<<<<<<< HEAD
+=======
+	struct list_head		*qe;
+	struct bfa_ioc_hbfail_notify_s	*notify;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfad_s *bfad = (struct bfad_s *)ioc->bfa->bfad;
 
 	/*
 	 * Notify driver and common modules registered for notification.
 	 */
 	ioc->cbfn->hbfail_cbfn(ioc->bfa);
+<<<<<<< HEAD
 	bfa_ioc_event_notify(ioc, BFA_IOC_E_FAILED);
+=======
+	list_for_each(qe, &ioc->hb_notify_q) {
+		notify = (struct bfa_ioc_hbfail_notify_s *) qe;
+		notify->cbfn(notify->cbarg);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bfa_ioc_debug_save_ftrc(ioc);
 
 	BFA_LOG(KERN_CRIT, bfad, bfa_log_level,
 		"Heart Beat of IOC has failed\n");
+<<<<<<< HEAD
 	bfa_ioc_aen_post(ioc, BFA_IOC_AEN_HBFAIL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 }
 
@@ -1956,7 +2305,10 @@ bfa_ioc_pf_fwmismatch(struct bfa_ioc_s *ioc)
 	BFA_LOG(KERN_WARNING, bfad, bfa_log_level,
 		"Running firmware version is incompatible "
 		"with the driver version\n");
+<<<<<<< HEAD
 	bfa_ioc_aen_post(ioc, BFA_IOC_AEN_FWMISMATCH);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 bfa_status_t
@@ -1971,6 +2323,7 @@ bfa_ioc_pll_init(struct bfa_ioc_s *ioc)
 	bfa_ioc_pll_init_asic(ioc);
 
 	ioc->pllinit = BFA_TRUE;
+<<<<<<< HEAD
 
 	/*
 	 * Initialize LMEM
@@ -1981,6 +2334,11 @@ bfa_ioc_pll_init(struct bfa_ioc_s *ioc)
 	 *  release semaphore.
 	 */
 	readl(ioc->ioc_regs.ioc_init_sem_reg);
+=======
+	/*
+	 *  release semaphore.
+	 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writel(1, ioc->ioc_regs.ioc_init_sem_reg);
 
 	return BFA_STATUS_OK;
@@ -1993,6 +2351,11 @@ bfa_ioc_pll_init(struct bfa_ioc_s *ioc)
 void
 bfa_ioc_boot(struct bfa_ioc_s *ioc, u32 boot_type, u32 boot_env)
 {
+<<<<<<< HEAD
+=======
+	void __iomem *rb;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_ioc_stats(ioc, ioc_boots);
 
 	if (bfa_ioc_pll_init(ioc) != BFA_STATUS_OK)
@@ -2001,16 +2364,34 @@ bfa_ioc_boot(struct bfa_ioc_s *ioc, u32 boot_type, u32 boot_env)
 	/*
 	 * Initialize IOC state of all functions on a chip reset.
 	 */
+<<<<<<< HEAD
 	if (boot_type == BFI_FWBOOT_TYPE_MEMTEST) {
 		writel(BFI_IOC_MEMTEST, ioc->ioc_regs.ioc_fwstate);
 		writel(BFI_IOC_MEMTEST, ioc->ioc_regs.alt_ioc_fwstate);
 	} else {
 		writel(BFI_IOC_INITING, ioc->ioc_regs.ioc_fwstate);
 		writel(BFI_IOC_INITING, ioc->ioc_regs.alt_ioc_fwstate);
+=======
+	rb = ioc->pcidev.pci_bar_kva;
+	if (boot_type == BFI_BOOT_TYPE_MEMTEST) {
+		writel(BFI_IOC_MEMTEST, (rb + BFA_IOC0_STATE_REG));
+		writel(BFI_IOC_MEMTEST, (rb + BFA_IOC1_STATE_REG));
+	} else {
+		writel(BFI_IOC_INITING, (rb + BFA_IOC0_STATE_REG));
+		writel(BFI_IOC_INITING, (rb + BFA_IOC1_STATE_REG));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	bfa_ioc_msgflush(ioc);
 	bfa_ioc_download_fw(ioc, boot_type, boot_env);
+<<<<<<< HEAD
+=======
+
+	/*
+	 * Enable interrupts just before starting LPU
+	 */
+	ioc->cbfn->reset_cbfn(ioc->bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_ioc_lpu_start(ioc);
 }
 
@@ -2041,17 +2422,24 @@ bfa_ioc_is_initialized(struct bfa_ioc_s *ioc)
 		(r32 != BFI_IOC_MEMTEST));
 }
 
+<<<<<<< HEAD
 bfa_boolean_t
+=======
+void
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bfa_ioc_msgget(struct bfa_ioc_s *ioc, void *mbmsg)
 {
 	__be32	*msgp = mbmsg;
 	u32	r32;
 	int		i;
 
+<<<<<<< HEAD
 	r32 = readl(ioc->ioc_regs.lpu_mbox_cmd);
 	if ((r32 & 1) == 0)
 		return BFA_FALSE;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * read the MBOX msg
 	 */
@@ -2067,8 +2455,11 @@ bfa_ioc_msgget(struct bfa_ioc_s *ioc, void *mbmsg)
 	 */
 	writel(1, ioc->ioc_regs.lpu_mbox_cmd);
 	readl(ioc->ioc_regs.lpu_mbox_cmd);
+<<<<<<< HEAD
 
 	return BFA_TRUE;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void
@@ -2085,10 +2476,18 @@ bfa_ioc_isr(struct bfa_ioc_s *ioc, struct bfi_mbmsg_s *m)
 	case BFI_IOC_I2H_HBEAT:
 		break;
 
+<<<<<<< HEAD
 	case BFI_IOC_I2H_ENABLE_REPLY:
 		ioc->port_mode = ioc->port_mode_cfg =
 				(enum bfa_mode_s)msg->fw_event.port_mode;
 		ioc->ad_cap_bm = msg->fw_event.cap_bm;
+=======
+	case BFI_IOC_I2H_READY_EVENT:
+		bfa_fsm_send_event(iocpf, IOCPF_E_FWREADY);
+		break;
+
+	case BFI_IOC_I2H_ENABLE_REPLY:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bfa_fsm_send_event(iocpf, IOCPF_E_FWRSP_ENABLE);
 		break;
 
@@ -2125,7 +2524,11 @@ bfa_ioc_attach(struct bfa_ioc_s *ioc, void *bfa, struct bfa_ioc_cbfn_s *cbfn,
 	ioc->iocpf.ioc	= ioc;
 
 	bfa_ioc_mbox_attach(ioc);
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&ioc->notify_q);
+=======
+	INIT_LIST_HEAD(&ioc->hb_notify_q);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bfa_fsm_set_state(ioc, bfa_ioc_sm_uninit);
 	bfa_fsm_send_event(ioc, IOC_E_RESET);
@@ -2138,7 +2541,10 @@ void
 bfa_ioc_detach(struct bfa_ioc_s *ioc)
 {
 	bfa_fsm_send_event(ioc, IOC_E_DETACH);
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&ioc->notify_q);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2148,6 +2554,7 @@ bfa_ioc_detach(struct bfa_ioc_s *ioc)
  */
 void
 bfa_ioc_pci_init(struct bfa_ioc_s *ioc, struct bfa_pcidev_s *pcidev,
+<<<<<<< HEAD
 		enum bfi_pcifn_class clscode)
 {
 	ioc->clscode	= clscode;
@@ -2209,10 +2616,19 @@ bfa_ioc_pci_init(struct bfa_ioc_s *ioc, struct bfa_pcidev_s *pcidev,
 	default:
 		WARN_ON(1);
 	}
+=======
+		 enum bfi_mclass mc)
+{
+	ioc->ioc_mc	= mc;
+	ioc->pcidev	= *pcidev;
+	ioc->ctdev	= bfa_asic_id_ct(ioc->pcidev.device_id);
+	ioc->cna	= ioc->ctdev && !ioc->fcmode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Set asic specific interfaces. See bfa_ioc_cb.c and bfa_ioc_ct.c
 	 */
+<<<<<<< HEAD
 	if (ioc->asic_gen == BFI_ASIC_GEN_CB)
 		bfa_ioc_set_cb_hwif(ioc);
 	else if (ioc->asic_gen == BFI_ASIC_GEN_CT)
@@ -2222,6 +2638,12 @@ bfa_ioc_pci_init(struct bfa_ioc_s *ioc, struct bfa_pcidev_s *pcidev,
 		bfa_ioc_set_ct2_hwif(ioc);
 		bfa_ioc_ct2_poweron(ioc);
 	}
+=======
+	if (ioc->ctdev)
+		bfa_ioc_set_ct_hwif(ioc);
+	else
+		bfa_ioc_set_cb_hwif(ioc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bfa_ioc_map_port(ioc);
 	bfa_ioc_reg_init(ioc);
@@ -2347,6 +2769,7 @@ bfa_ioc_mbox_isr(struct bfa_ioc_s *ioc)
 	struct bfi_mbmsg_s		m;
 	int				mc;
 
+<<<<<<< HEAD
 	if (bfa_ioc_msgget(ioc, &m)) {
 		/*
 		 * Treat IOC message class as special.
@@ -2369,16 +2792,46 @@ bfa_ioc_mbox_isr(struct bfa_ioc_s *ioc)
 	 * Try to send pending mailbox commands
 	 */
 	bfa_ioc_mbox_poll(ioc);
+=======
+	bfa_ioc_msgget(ioc, &m);
+
+	/*
+	 * Treat IOC message class as special.
+	 */
+	mc = m.mh.msg_class;
+	if (mc == BFI_MC_IOC) {
+		bfa_ioc_isr(ioc, &m);
+		return;
+	}
+
+	if ((mc > BFI_MC_MAX) || (mod->mbhdlr[mc].cbfn == NULL))
+		return;
+
+	mod->mbhdlr[mc].cbfn(mod->mbhdlr[mc].cbarg, &m);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void
 bfa_ioc_error_isr(struct bfa_ioc_s *ioc)
 {
+<<<<<<< HEAD
 	bfa_ioc_stats(ioc, ioc_hbfails);
 	ioc->stats.hb_count = ioc->hb_count;
 	bfa_fsm_send_event(ioc, IOC_E_HWERROR);
 }
 
+=======
+	bfa_fsm_send_event(ioc, IOC_E_HWERROR);
+}
+
+void
+bfa_ioc_set_fcmode(struct bfa_ioc_s *ioc)
+{
+	ioc->fcmode  = BFA_TRUE;
+	ioc->port_id = bfa_ioc_pcifn(ioc);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * return true if IOC is disabled
  */
@@ -2416,16 +2869,28 @@ bfa_boolean_t
 bfa_ioc_adapter_is_disabled(struct bfa_ioc_s *ioc)
 {
 	u32	ioc_state;
+<<<<<<< HEAD
+=======
+	void __iomem *rb = ioc->pcidev.pci_bar_kva;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!bfa_fsm_cmp_state(ioc, bfa_ioc_sm_disabled))
 		return BFA_FALSE;
 
+<<<<<<< HEAD
 	ioc_state = readl(ioc->ioc_regs.ioc_fwstate);
+=======
+	ioc_state = readl(rb + BFA_IOC0_STATE_REG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!bfa_ioc_state_disabled(ioc_state))
 		return BFA_FALSE;
 
 	if (ioc->pcidev.device_id != BFA_PCI_DEVICE_ID_FC_8G1P) {
+<<<<<<< HEAD
 		ioc_state = readl(ioc->ioc_regs.alt_ioc_fwstate);
+=======
+		ioc_state = readl(rb + BFA_IOC1_STATE_REG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!bfa_ioc_state_disabled(ioc_state))
 			return BFA_FALSE;
 	}
@@ -2484,14 +2949,21 @@ bfa_ioc_get_adapter_attr(struct bfa_ioc_s *ioc,
 
 	bfa_ioc_get_pci_chip_rev(ioc, ad_attr->hw_ver);
 
+<<<<<<< HEAD
 	ad_attr->cna_capable = bfa_ioc_is_cna(ioc);
 	ad_attr->trunk_capable = (ad_attr->nports > 1) &&
 				  !bfa_ioc_is_cna(ioc) && !ad_attr->is_mezz;
+=======
+	ad_attr->cna_capable = ioc->cna;
+	ad_attr->trunk_capable = (ad_attr->nports > 1) && !ioc->cna &&
+				!ad_attr->is_mezz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 enum bfa_ioc_type_e
 bfa_ioc_get_type(struct bfa_ioc_s *ioc)
 {
+<<<<<<< HEAD
 	if (ioc->clscode == BFI_PCIFN_CLASS_ETH)
 		return BFA_IOC_TYPE_LL;
 
@@ -2499,6 +2971,18 @@ bfa_ioc_get_type(struct bfa_ioc_s *ioc)
 
 	return (ioc->attr->port_mode == BFI_PORT_MODE_FC)
 		? BFA_IOC_TYPE_FC : BFA_IOC_TYPE_FCoE;
+=======
+	if (!ioc->ctdev || ioc->fcmode)
+		return BFA_IOC_TYPE_FC;
+	else if (ioc->ioc_mc == BFI_MC_IOCFC)
+		return BFA_IOC_TYPE_FCoE;
+	else if (ioc->ioc_mc == BFI_MC_LL)
+		return BFA_IOC_TYPE_LL;
+	else {
+		WARN_ON(ioc->ioc_mc != BFI_MC_LL);
+		return BFA_IOC_TYPE_LL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void
@@ -2557,8 +3041,16 @@ bfa_ioc_get_adapter_model(struct bfa_ioc_s *ioc, char *model)
 
 	ioc_attr = ioc->attr;
 
+<<<<<<< HEAD
 	snprintf(model, BFA_ADAPTER_MODEL_NAME_LEN, "%s-%u",
 			BFA_MFG_NAME, ioc_attr->card_type);
+=======
+	/*
+	 * model name
+	 */
+	snprintf(model, BFA_ADAPTER_MODEL_NAME_LEN, "%s-%u",
+		BFA_MFG_NAME, ioc_attr->card_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 enum bfa_ioc_state
@@ -2608,9 +3100,12 @@ bfa_ioc_get_attr(struct bfa_ioc_s *ioc, struct bfa_ioc_attr_s *ioc_attr)
 
 	ioc_attr->state = bfa_ioc_get_state(ioc);
 	ioc_attr->port_id = ioc->port_id;
+<<<<<<< HEAD
 	ioc_attr->port_mode = ioc->port_mode;
 	ioc_attr->port_mode_cfg = ioc->port_mode_cfg;
 	ioc_attr->cap_bm = ioc->ad_cap_bm;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ioc_attr->ioc_type = bfa_ioc_get_type(ioc);
 
@@ -2648,6 +3143,7 @@ bfa_ioc_get_mfg_mac(struct bfa_ioc_s *ioc)
 	return m;
 }
 
+<<<<<<< HEAD
 /*
  * Send AEN notification
  */
@@ -2683,6 +3179,12 @@ bfa_ioc_aen_post(struct bfa_ioc_s *ioc, enum bfa_ioc_aen_event event)
 	aen_entry->aen_data.ioc.ioc_type = ioc_type;
 	bfad_im_post_vendor_event(aen_entry, bfad, ++ioc->ioc_aen_seq,
 				  BFA_AEN_CAT_IOC, event);
+=======
+bfa_boolean_t
+bfa_ioc_get_fcmode(struct bfa_ioc_s *ioc)
+{
+	return ioc->fcmode || !bfa_asic_id_ct(ioc->pcidev.device_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2735,7 +3237,11 @@ bfa_ioc_send_fwsync(struct bfa_ioc_s *ioc)
 
 	bfi_h2i_set(req->mh, BFI_MC_IOC, BFI_IOC_H2I_DBG_SYNC,
 		    bfa_ioc_portid(ioc));
+<<<<<<< HEAD
 	req->clscode = cpu_to_be16(ioc->clscode);
+=======
+	req->ioc_class = ioc->ioc_mc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_ioc_mbox_queue(ioc, &cmd);
 }
 
@@ -2877,10 +3383,23 @@ static void
 bfa_ioc_recover(struct bfa_ioc_s *ioc)
 {
 	bfa_ioc_stats(ioc, ioc_hbfails);
+<<<<<<< HEAD
 	ioc->stats.hb_count = ioc->hb_count;
 	bfa_fsm_send_event(ioc, IOC_E_HBFAIL);
 }
 
+=======
+	bfa_fsm_send_event(ioc, IOC_E_HBFAIL);
+}
+
+static void
+bfa_ioc_check_attr_wwns(struct bfa_ioc_s *ioc)
+{
+	if (bfa_ioc_get_type(ioc) == BFA_IOC_TYPE_LL)
+		return;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *  BFA IOC PF private functions
  */
@@ -2901,6 +3420,7 @@ bfa_iocpf_sem_timeout(void *ioc_arg)
 	bfa_ioc_hw_sem_get(ioc);
 }
 
+<<<<<<< HEAD
 static void
 bfa_ioc_poll_fwinit(struct bfa_ioc_s *ioc)
 {
@@ -2929,6 +3449,8 @@ bfa_iocpf_poll_timeout(void *ioc_arg)
 	bfa_ioc_poll_fwinit(ioc);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *  bfa timer function
  */
@@ -2996,6 +3518,7 @@ bfa_timer_stop(struct bfa_timer_s *timer)
 
 	list_del(&timer->qe);
 }
+<<<<<<< HEAD
 
 /*
  *	ASIC block related
@@ -5935,3 +6458,5 @@ bfa_dconf_modexit(struct bfa_s *bfa)
 	struct bfa_dconf_mod_s *dconf = BFA_DCONF_MOD(bfa);
 	bfa_sm_send_event(dconf, BFA_DCONF_SM_EXIT);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

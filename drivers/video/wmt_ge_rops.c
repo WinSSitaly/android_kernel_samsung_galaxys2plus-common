@@ -167,7 +167,22 @@ static struct platform_driver wmt_ge_rops_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(wmt_ge_rops_driver);
+=======
+static int __init wmt_ge_rops_init(void)
+{
+	return platform_driver_register(&wmt_ge_rops_driver);
+}
+
+static void __exit wmt_ge_rops_exit(void)
+{
+	platform_driver_unregister(&wmt_ge_rops_driver);
+}
+
+module_init(wmt_ge_rops_init);
+module_exit(wmt_ge_rops_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Alexey Charkov <alchark@gmail.com");
 MODULE_DESCRIPTION("Accelerators for raster operations using "

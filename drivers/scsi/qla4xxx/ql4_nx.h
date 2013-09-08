@@ -19,6 +19,7 @@
 #define PHAN_PEG_RCV_INITIALIZED	0xff01
 
 /*CRB_RELATED*/
+<<<<<<< HEAD
 #define QLA82XX_CRB_BASE		(QLA82XX_CAM_RAM(0x200))
 #define QLA82XX_REG(X)			(QLA82XX_CRB_BASE+(X))
 #define CRB_CMDPEG_STATE		QLA82XX_REG(0x50)
@@ -41,6 +42,14 @@ enum {
 
 #define CRB_NIU_XG_PAUSE_CTL_P0		0x1
 #define CRB_NIU_XG_PAUSE_CTL_P1		0x8
+=======
+#define QLA82XX_CRB_BASE	QLA82XX_CAM_RAM(0x200)
+#define QLA82XX_REG(X)		(QLA82XX_CRB_BASE+(X))
+
+#define CRB_CMDPEG_STATE		QLA82XX_REG(0x50)
+#define CRB_RCVPEG_STATE		QLA82XX_REG(0x13c)
+#define CRB_DMA_SHIFT			QLA82XX_REG(0xcc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define QLA82XX_HW_H0_CH_HUB_ADR	0x05
 #define QLA82XX_HW_H1_CH_HUB_ADR	0x0E
@@ -623,7 +632,10 @@ struct crb_addr_pair {
 
 #define ADDR_ERROR	((unsigned long) 0xffffffff)
 #define MAX_CTL_CHECK	1000
+<<<<<<< HEAD
 #define QLA82XX_FWERROR_CODE(code)	((code >> 8) & 0x1fffff)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /***************************************************************************
  *		PCI related defines.

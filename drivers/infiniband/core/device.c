@@ -627,9 +627,12 @@ int ib_modify_device(struct ib_device *device,
 		     int device_modify_mask,
 		     struct ib_device_modify *device_modify)
 {
+<<<<<<< HEAD
 	if (!device->modify_device)
 		return -ENOSYS;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return device->modify_device(device, device_modify_mask,
 				     device_modify);
 }
@@ -650,9 +653,12 @@ int ib_modify_port(struct ib_device *device,
 		   u8 port_num, int port_modify_mask,
 		   struct ib_port_modify *port_modify)
 {
+<<<<<<< HEAD
 	if (!device->modify_port)
 		return -ENOSYS;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (port_num < start_port(device) || port_num > end_port(device))
 		return -EINVAL;
 

@@ -48,7 +48,11 @@ static void clock_source_select(const char *dev_id, unsigned int clkval)
 		offset = ATAOFFSET;
 	else if (strcmp(dev_id, "nuc900-lcd") == 0)
 		offset = LCDOFFSET;
+<<<<<<< HEAD
 	else if (strcmp(dev_id, "nuc900-ac97") == 0)
+=======
+	else if (strcmp(dev_id, "nuc900-audio") == 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		offset = AUDOFFSET;
 	else
 		offset = CPUOFFSET;

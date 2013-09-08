@@ -114,6 +114,7 @@ void radeon_agp_disable(struct radeon_device *rdev)
 			rdev->family == CHIP_R423) {
 		DRM_INFO("Forcing AGP to PCIE mode\n");
 		rdev->flags |= RADEON_IS_PCIE;
+<<<<<<< HEAD
 		rdev->asic->gart.tlb_flush = &rv370_pcie_gart_tlb_flush;
 		rdev->asic->gart.set_page = &rv370_pcie_gart_set_page;
 	} else {
@@ -121,6 +122,15 @@ void radeon_agp_disable(struct radeon_device *rdev)
 		rdev->flags |= RADEON_IS_PCI;
 		rdev->asic->gart.tlb_flush = &r100_pci_gart_tlb_flush;
 		rdev->asic->gart.set_page = &r100_pci_gart_set_page;
+=======
+		rdev->asic->gart_tlb_flush = &rv370_pcie_gart_tlb_flush;
+		rdev->asic->gart_set_page = &rv370_pcie_gart_set_page;
+	} else {
+		DRM_INFO("Forcing AGP to PCI mode\n");
+		rdev->flags |= RADEON_IS_PCI;
+		rdev->asic->gart_tlb_flush = &r100_pci_gart_tlb_flush;
+		rdev->asic->gart_set_page = &r100_pci_gart_set_page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	rdev->mc.gtt_size = radeon_gart_size * 1024 * 1024;
 }
@@ -136,6 +146,7 @@ static struct radeon_asic r100_asic = {
 	.vga_set_state = &r100_vga_set_state,
 	.gpu_is_lockup = &r100_gpu_is_lockup,
 	.asic_reset = &r100_asic_reset,
+<<<<<<< HEAD
 	.ioctl_wait_idle = NULL,
 	.gui_idle = &r100_gui_idle,
 	.mc_wait_for_idle = &r100_mc_wait_for_idle,
@@ -200,6 +211,46 @@ static struct radeon_asic r100_asic = {
 		.page_flip = &r100_page_flip,
 		.post_page_flip = &r100_post_page_flip,
 	},
+=======
+	.gart_tlb_flush = &r100_pci_gart_tlb_flush,
+	.gart_set_page = &r100_pci_gart_set_page,
+	.cp_commit = &r100_cp_commit,
+	.ring_start = &r100_ring_start,
+	.ring_test = &r100_ring_test,
+	.ring_ib_execute = &r100_ring_ib_execute,
+	.irq_set = &r100_irq_set,
+	.irq_process = &r100_irq_process,
+	.get_vblank_counter = &r100_get_vblank_counter,
+	.fence_ring_emit = &r100_fence_ring_emit,
+	.cs_parse = &r100_cs_parse,
+	.copy_blit = &r100_copy_blit,
+	.copy_dma = NULL,
+	.copy = &r100_copy_blit,
+	.get_engine_clock = &radeon_legacy_get_engine_clock,
+	.set_engine_clock = &radeon_legacy_set_engine_clock,
+	.get_memory_clock = &radeon_legacy_get_memory_clock,
+	.set_memory_clock = NULL,
+	.get_pcie_lanes = NULL,
+	.set_pcie_lanes = NULL,
+	.set_clock_gating = &radeon_legacy_set_clock_gating,
+	.set_surface_reg = r100_set_surface_reg,
+	.clear_surface_reg = r100_clear_surface_reg,
+	.bandwidth_update = &r100_bandwidth_update,
+	.hpd_init = &r100_hpd_init,
+	.hpd_fini = &r100_hpd_fini,
+	.hpd_sense = &r100_hpd_sense,
+	.hpd_set_polarity = &r100_hpd_set_polarity,
+	.ioctl_wait_idle = NULL,
+	.gui_idle = &r100_gui_idle,
+	.pm_misc = &r100_pm_misc,
+	.pm_prepare = &r100_pm_prepare,
+	.pm_finish = &r100_pm_finish,
+	.pm_init_profile = &r100_pm_init_profile,
+	.pm_get_dynpm_state = &r100_pm_get_dynpm_state,
+	.pre_page_flip = &r100_pre_page_flip,
+	.page_flip = &r100_page_flip,
+	.post_page_flip = &r100_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct radeon_asic r200_asic = {
@@ -210,6 +261,7 @@ static struct radeon_asic r200_asic = {
 	.vga_set_state = &r100_vga_set_state,
 	.gpu_is_lockup = &r100_gpu_is_lockup,
 	.asic_reset = &r100_asic_reset,
+<<<<<<< HEAD
 	.ioctl_wait_idle = NULL,
 	.gui_idle = &r100_gui_idle,
 	.mc_wait_for_idle = &r100_mc_wait_for_idle,
@@ -274,6 +326,45 @@ static struct radeon_asic r200_asic = {
 		.page_flip = &r100_page_flip,
 		.post_page_flip = &r100_post_page_flip,
 	},
+=======
+	.gart_tlb_flush = &r100_pci_gart_tlb_flush,
+	.gart_set_page = &r100_pci_gart_set_page,
+	.cp_commit = &r100_cp_commit,
+	.ring_start = &r100_ring_start,
+	.ring_test = &r100_ring_test,
+	.ring_ib_execute = &r100_ring_ib_execute,
+	.irq_set = &r100_irq_set,
+	.irq_process = &r100_irq_process,
+	.get_vblank_counter = &r100_get_vblank_counter,
+	.fence_ring_emit = &r100_fence_ring_emit,
+	.cs_parse = &r100_cs_parse,
+	.copy_blit = &r100_copy_blit,
+	.copy_dma = &r200_copy_dma,
+	.copy = &r100_copy_blit,
+	.get_engine_clock = &radeon_legacy_get_engine_clock,
+	.set_engine_clock = &radeon_legacy_set_engine_clock,
+	.get_memory_clock = &radeon_legacy_get_memory_clock,
+	.set_memory_clock = NULL,
+	.set_pcie_lanes = NULL,
+	.set_clock_gating = &radeon_legacy_set_clock_gating,
+	.set_surface_reg = r100_set_surface_reg,
+	.clear_surface_reg = r100_clear_surface_reg,
+	.bandwidth_update = &r100_bandwidth_update,
+	.hpd_init = &r100_hpd_init,
+	.hpd_fini = &r100_hpd_fini,
+	.hpd_sense = &r100_hpd_sense,
+	.hpd_set_polarity = &r100_hpd_set_polarity,
+	.ioctl_wait_idle = NULL,
+	.gui_idle = &r100_gui_idle,
+	.pm_misc = &r100_pm_misc,
+	.pm_prepare = &r100_pm_prepare,
+	.pm_finish = &r100_pm_finish,
+	.pm_init_profile = &r100_pm_init_profile,
+	.pm_get_dynpm_state = &r100_pm_get_dynpm_state,
+	.pre_page_flip = &r100_pre_page_flip,
+	.page_flip = &r100_page_flip,
+	.post_page_flip = &r100_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct radeon_asic r300_asic = {
@@ -284,6 +375,7 @@ static struct radeon_asic r300_asic = {
 	.vga_set_state = &r100_vga_set_state,
 	.gpu_is_lockup = &r300_gpu_is_lockup,
 	.asic_reset = &r300_asic_reset,
+<<<<<<< HEAD
 	.ioctl_wait_idle = NULL,
 	.gui_idle = &r100_gui_idle,
 	.mc_wait_for_idle = &r300_mc_wait_for_idle,
@@ -348,6 +440,46 @@ static struct radeon_asic r300_asic = {
 		.page_flip = &r100_page_flip,
 		.post_page_flip = &r100_post_page_flip,
 	},
+=======
+	.gart_tlb_flush = &r100_pci_gart_tlb_flush,
+	.gart_set_page = &r100_pci_gart_set_page,
+	.cp_commit = &r100_cp_commit,
+	.ring_start = &r300_ring_start,
+	.ring_test = &r100_ring_test,
+	.ring_ib_execute = &r100_ring_ib_execute,
+	.irq_set = &r100_irq_set,
+	.irq_process = &r100_irq_process,
+	.get_vblank_counter = &r100_get_vblank_counter,
+	.fence_ring_emit = &r300_fence_ring_emit,
+	.cs_parse = &r300_cs_parse,
+	.copy_blit = &r100_copy_blit,
+	.copy_dma = &r200_copy_dma,
+	.copy = &r100_copy_blit,
+	.get_engine_clock = &radeon_legacy_get_engine_clock,
+	.set_engine_clock = &radeon_legacy_set_engine_clock,
+	.get_memory_clock = &radeon_legacy_get_memory_clock,
+	.set_memory_clock = NULL,
+	.get_pcie_lanes = &rv370_get_pcie_lanes,
+	.set_pcie_lanes = &rv370_set_pcie_lanes,
+	.set_clock_gating = &radeon_legacy_set_clock_gating,
+	.set_surface_reg = r100_set_surface_reg,
+	.clear_surface_reg = r100_clear_surface_reg,
+	.bandwidth_update = &r100_bandwidth_update,
+	.hpd_init = &r100_hpd_init,
+	.hpd_fini = &r100_hpd_fini,
+	.hpd_sense = &r100_hpd_sense,
+	.hpd_set_polarity = &r100_hpd_set_polarity,
+	.ioctl_wait_idle = NULL,
+	.gui_idle = &r100_gui_idle,
+	.pm_misc = &r100_pm_misc,
+	.pm_prepare = &r100_pm_prepare,
+	.pm_finish = &r100_pm_finish,
+	.pm_init_profile = &r100_pm_init_profile,
+	.pm_get_dynpm_state = &r100_pm_get_dynpm_state,
+	.pre_page_flip = &r100_pre_page_flip,
+	.page_flip = &r100_page_flip,
+	.post_page_flip = &r100_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct radeon_asic r300_asic_pcie = {
@@ -358,6 +490,7 @@ static struct radeon_asic r300_asic_pcie = {
 	.vga_set_state = &r100_vga_set_state,
 	.gpu_is_lockup = &r300_gpu_is_lockup,
 	.asic_reset = &r300_asic_reset,
+<<<<<<< HEAD
 	.ioctl_wait_idle = NULL,
 	.gui_idle = &r100_gui_idle,
 	.mc_wait_for_idle = &r300_mc_wait_for_idle,
@@ -422,6 +555,45 @@ static struct radeon_asic r300_asic_pcie = {
 		.page_flip = &r100_page_flip,
 		.post_page_flip = &r100_post_page_flip,
 	},
+=======
+	.gart_tlb_flush = &rv370_pcie_gart_tlb_flush,
+	.gart_set_page = &rv370_pcie_gart_set_page,
+	.cp_commit = &r100_cp_commit,
+	.ring_start = &r300_ring_start,
+	.ring_test = &r100_ring_test,
+	.ring_ib_execute = &r100_ring_ib_execute,
+	.irq_set = &r100_irq_set,
+	.irq_process = &r100_irq_process,
+	.get_vblank_counter = &r100_get_vblank_counter,
+	.fence_ring_emit = &r300_fence_ring_emit,
+	.cs_parse = &r300_cs_parse,
+	.copy_blit = &r100_copy_blit,
+	.copy_dma = &r200_copy_dma,
+	.copy = &r100_copy_blit,
+	.get_engine_clock = &radeon_legacy_get_engine_clock,
+	.set_engine_clock = &radeon_legacy_set_engine_clock,
+	.get_memory_clock = &radeon_legacy_get_memory_clock,
+	.set_memory_clock = NULL,
+	.set_pcie_lanes = &rv370_set_pcie_lanes,
+	.set_clock_gating = &radeon_legacy_set_clock_gating,
+	.set_surface_reg = r100_set_surface_reg,
+	.clear_surface_reg = r100_clear_surface_reg,
+	.bandwidth_update = &r100_bandwidth_update,
+	.hpd_init = &r100_hpd_init,
+	.hpd_fini = &r100_hpd_fini,
+	.hpd_sense = &r100_hpd_sense,
+	.hpd_set_polarity = &r100_hpd_set_polarity,
+	.ioctl_wait_idle = NULL,
+	.gui_idle = &r100_gui_idle,
+	.pm_misc = &r100_pm_misc,
+	.pm_prepare = &r100_pm_prepare,
+	.pm_finish = &r100_pm_finish,
+	.pm_init_profile = &r100_pm_init_profile,
+	.pm_get_dynpm_state = &r100_pm_get_dynpm_state,
+	.pre_page_flip = &r100_pre_page_flip,
+	.page_flip = &r100_page_flip,
+	.post_page_flip = &r100_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct radeon_asic r420_asic = {
@@ -432,6 +604,7 @@ static struct radeon_asic r420_asic = {
 	.vga_set_state = &r100_vga_set_state,
 	.gpu_is_lockup = &r300_gpu_is_lockup,
 	.asic_reset = &r300_asic_reset,
+<<<<<<< HEAD
 	.ioctl_wait_idle = NULL,
 	.gui_idle = &r100_gui_idle,
 	.mc_wait_for_idle = &r300_mc_wait_for_idle,
@@ -496,6 +669,46 @@ static struct radeon_asic r420_asic = {
 		.page_flip = &r100_page_flip,
 		.post_page_flip = &r100_post_page_flip,
 	},
+=======
+	.gart_tlb_flush = &rv370_pcie_gart_tlb_flush,
+	.gart_set_page = &rv370_pcie_gart_set_page,
+	.cp_commit = &r100_cp_commit,
+	.ring_start = &r300_ring_start,
+	.ring_test = &r100_ring_test,
+	.ring_ib_execute = &r100_ring_ib_execute,
+	.irq_set = &r100_irq_set,
+	.irq_process = &r100_irq_process,
+	.get_vblank_counter = &r100_get_vblank_counter,
+	.fence_ring_emit = &r300_fence_ring_emit,
+	.cs_parse = &r300_cs_parse,
+	.copy_blit = &r100_copy_blit,
+	.copy_dma = &r200_copy_dma,
+	.copy = &r100_copy_blit,
+	.get_engine_clock = &radeon_atom_get_engine_clock,
+	.set_engine_clock = &radeon_atom_set_engine_clock,
+	.get_memory_clock = &radeon_atom_get_memory_clock,
+	.set_memory_clock = &radeon_atom_set_memory_clock,
+	.get_pcie_lanes = &rv370_get_pcie_lanes,
+	.set_pcie_lanes = &rv370_set_pcie_lanes,
+	.set_clock_gating = &radeon_atom_set_clock_gating,
+	.set_surface_reg = r100_set_surface_reg,
+	.clear_surface_reg = r100_clear_surface_reg,
+	.bandwidth_update = &r100_bandwidth_update,
+	.hpd_init = &r100_hpd_init,
+	.hpd_fini = &r100_hpd_fini,
+	.hpd_sense = &r100_hpd_sense,
+	.hpd_set_polarity = &r100_hpd_set_polarity,
+	.ioctl_wait_idle = NULL,
+	.gui_idle = &r100_gui_idle,
+	.pm_misc = &r100_pm_misc,
+	.pm_prepare = &r100_pm_prepare,
+	.pm_finish = &r100_pm_finish,
+	.pm_init_profile = &r420_pm_init_profile,
+	.pm_get_dynpm_state = &r100_pm_get_dynpm_state,
+	.pre_page_flip = &r100_pre_page_flip,
+	.page_flip = &r100_page_flip,
+	.post_page_flip = &r100_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct radeon_asic rs400_asic = {
@@ -506,6 +719,7 @@ static struct radeon_asic rs400_asic = {
 	.vga_set_state = &r100_vga_set_state,
 	.gpu_is_lockup = &r300_gpu_is_lockup,
 	.asic_reset = &r300_asic_reset,
+<<<<<<< HEAD
 	.ioctl_wait_idle = NULL,
 	.gui_idle = &r100_gui_idle,
 	.mc_wait_for_idle = &rs400_mc_wait_for_idle,
@@ -570,6 +784,46 @@ static struct radeon_asic rs400_asic = {
 		.page_flip = &r100_page_flip,
 		.post_page_flip = &r100_post_page_flip,
 	},
+=======
+	.gart_tlb_flush = &rs400_gart_tlb_flush,
+	.gart_set_page = &rs400_gart_set_page,
+	.cp_commit = &r100_cp_commit,
+	.ring_start = &r300_ring_start,
+	.ring_test = &r100_ring_test,
+	.ring_ib_execute = &r100_ring_ib_execute,
+	.irq_set = &r100_irq_set,
+	.irq_process = &r100_irq_process,
+	.get_vblank_counter = &r100_get_vblank_counter,
+	.fence_ring_emit = &r300_fence_ring_emit,
+	.cs_parse = &r300_cs_parse,
+	.copy_blit = &r100_copy_blit,
+	.copy_dma = &r200_copy_dma,
+	.copy = &r100_copy_blit,
+	.get_engine_clock = &radeon_legacy_get_engine_clock,
+	.set_engine_clock = &radeon_legacy_set_engine_clock,
+	.get_memory_clock = &radeon_legacy_get_memory_clock,
+	.set_memory_clock = NULL,
+	.get_pcie_lanes = NULL,
+	.set_pcie_lanes = NULL,
+	.set_clock_gating = &radeon_legacy_set_clock_gating,
+	.set_surface_reg = r100_set_surface_reg,
+	.clear_surface_reg = r100_clear_surface_reg,
+	.bandwidth_update = &r100_bandwidth_update,
+	.hpd_init = &r100_hpd_init,
+	.hpd_fini = &r100_hpd_fini,
+	.hpd_sense = &r100_hpd_sense,
+	.hpd_set_polarity = &r100_hpd_set_polarity,
+	.ioctl_wait_idle = NULL,
+	.gui_idle = &r100_gui_idle,
+	.pm_misc = &r100_pm_misc,
+	.pm_prepare = &r100_pm_prepare,
+	.pm_finish = &r100_pm_finish,
+	.pm_init_profile = &r100_pm_init_profile,
+	.pm_get_dynpm_state = &r100_pm_get_dynpm_state,
+	.pre_page_flip = &r100_pre_page_flip,
+	.page_flip = &r100_page_flip,
+	.post_page_flip = &r100_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct radeon_asic rs600_asic = {
@@ -580,6 +834,7 @@ static struct radeon_asic rs600_asic = {
 	.vga_set_state = &r100_vga_set_state,
 	.gpu_is_lockup = &r300_gpu_is_lockup,
 	.asic_reset = &rs600_asic_reset,
+<<<<<<< HEAD
 	.ioctl_wait_idle = NULL,
 	.gui_idle = &r100_gui_idle,
 	.mc_wait_for_idle = &rs600_mc_wait_for_idle,
@@ -644,6 +899,46 @@ static struct radeon_asic rs600_asic = {
 		.page_flip = &rs600_page_flip,
 		.post_page_flip = &rs600_post_page_flip,
 	},
+=======
+	.gart_tlb_flush = &rs600_gart_tlb_flush,
+	.gart_set_page = &rs600_gart_set_page,
+	.cp_commit = &r100_cp_commit,
+	.ring_start = &r300_ring_start,
+	.ring_test = &r100_ring_test,
+	.ring_ib_execute = &r100_ring_ib_execute,
+	.irq_set = &rs600_irq_set,
+	.irq_process = &rs600_irq_process,
+	.get_vblank_counter = &rs600_get_vblank_counter,
+	.fence_ring_emit = &r300_fence_ring_emit,
+	.cs_parse = &r300_cs_parse,
+	.copy_blit = &r100_copy_blit,
+	.copy_dma = &r200_copy_dma,
+	.copy = &r100_copy_blit,
+	.get_engine_clock = &radeon_atom_get_engine_clock,
+	.set_engine_clock = &radeon_atom_set_engine_clock,
+	.get_memory_clock = &radeon_atom_get_memory_clock,
+	.set_memory_clock = &radeon_atom_set_memory_clock,
+	.get_pcie_lanes = NULL,
+	.set_pcie_lanes = NULL,
+	.set_clock_gating = &radeon_atom_set_clock_gating,
+	.set_surface_reg = r100_set_surface_reg,
+	.clear_surface_reg = r100_clear_surface_reg,
+	.bandwidth_update = &rs600_bandwidth_update,
+	.hpd_init = &rs600_hpd_init,
+	.hpd_fini = &rs600_hpd_fini,
+	.hpd_sense = &rs600_hpd_sense,
+	.hpd_set_polarity = &rs600_hpd_set_polarity,
+	.ioctl_wait_idle = NULL,
+	.gui_idle = &r100_gui_idle,
+	.pm_misc = &rs600_pm_misc,
+	.pm_prepare = &rs600_pm_prepare,
+	.pm_finish = &rs600_pm_finish,
+	.pm_init_profile = &r420_pm_init_profile,
+	.pm_get_dynpm_state = &r100_pm_get_dynpm_state,
+	.pre_page_flip = &rs600_pre_page_flip,
+	.page_flip = &rs600_page_flip,
+	.post_page_flip = &rs600_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct radeon_asic rs690_asic = {
@@ -654,6 +949,7 @@ static struct radeon_asic rs690_asic = {
 	.vga_set_state = &r100_vga_set_state,
 	.gpu_is_lockup = &r300_gpu_is_lockup,
 	.asic_reset = &rs600_asic_reset,
+<<<<<<< HEAD
 	.ioctl_wait_idle = NULL,
 	.gui_idle = &r100_gui_idle,
 	.mc_wait_for_idle = &rs690_mc_wait_for_idle,
@@ -718,6 +1014,46 @@ static struct radeon_asic rs690_asic = {
 		.page_flip = &rs600_page_flip,
 		.post_page_flip = &rs600_post_page_flip,
 	},
+=======
+	.gart_tlb_flush = &rs400_gart_tlb_flush,
+	.gart_set_page = &rs400_gart_set_page,
+	.cp_commit = &r100_cp_commit,
+	.ring_start = &r300_ring_start,
+	.ring_test = &r100_ring_test,
+	.ring_ib_execute = &r100_ring_ib_execute,
+	.irq_set = &rs600_irq_set,
+	.irq_process = &rs600_irq_process,
+	.get_vblank_counter = &rs600_get_vblank_counter,
+	.fence_ring_emit = &r300_fence_ring_emit,
+	.cs_parse = &r300_cs_parse,
+	.copy_blit = &r100_copy_blit,
+	.copy_dma = &r200_copy_dma,
+	.copy = &r200_copy_dma,
+	.get_engine_clock = &radeon_atom_get_engine_clock,
+	.set_engine_clock = &radeon_atom_set_engine_clock,
+	.get_memory_clock = &radeon_atom_get_memory_clock,
+	.set_memory_clock = &radeon_atom_set_memory_clock,
+	.get_pcie_lanes = NULL,
+	.set_pcie_lanes = NULL,
+	.set_clock_gating = &radeon_atom_set_clock_gating,
+	.set_surface_reg = r100_set_surface_reg,
+	.clear_surface_reg = r100_clear_surface_reg,
+	.bandwidth_update = &rs690_bandwidth_update,
+	.hpd_init = &rs600_hpd_init,
+	.hpd_fini = &rs600_hpd_fini,
+	.hpd_sense = &rs600_hpd_sense,
+	.hpd_set_polarity = &rs600_hpd_set_polarity,
+	.ioctl_wait_idle = NULL,
+	.gui_idle = &r100_gui_idle,
+	.pm_misc = &rs600_pm_misc,
+	.pm_prepare = &rs600_pm_prepare,
+	.pm_finish = &rs600_pm_finish,
+	.pm_init_profile = &r420_pm_init_profile,
+	.pm_get_dynpm_state = &r100_pm_get_dynpm_state,
+	.pre_page_flip = &rs600_pre_page_flip,
+	.page_flip = &rs600_page_flip,
+	.post_page_flip = &rs600_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct radeon_asic rv515_asic = {
@@ -728,6 +1064,7 @@ static struct radeon_asic rv515_asic = {
 	.vga_set_state = &r100_vga_set_state,
 	.gpu_is_lockup = &r300_gpu_is_lockup,
 	.asic_reset = &rs600_asic_reset,
+<<<<<<< HEAD
 	.ioctl_wait_idle = NULL,
 	.gui_idle = &r100_gui_idle,
 	.mc_wait_for_idle = &rv515_mc_wait_for_idle,
@@ -792,6 +1129,46 @@ static struct radeon_asic rv515_asic = {
 		.page_flip = &rs600_page_flip,
 		.post_page_flip = &rs600_post_page_flip,
 	},
+=======
+	.gart_tlb_flush = &rv370_pcie_gart_tlb_flush,
+	.gart_set_page = &rv370_pcie_gart_set_page,
+	.cp_commit = &r100_cp_commit,
+	.ring_start = &rv515_ring_start,
+	.ring_test = &r100_ring_test,
+	.ring_ib_execute = &r100_ring_ib_execute,
+	.irq_set = &rs600_irq_set,
+	.irq_process = &rs600_irq_process,
+	.get_vblank_counter = &rs600_get_vblank_counter,
+	.fence_ring_emit = &r300_fence_ring_emit,
+	.cs_parse = &r300_cs_parse,
+	.copy_blit = &r100_copy_blit,
+	.copy_dma = &r200_copy_dma,
+	.copy = &r100_copy_blit,
+	.get_engine_clock = &radeon_atom_get_engine_clock,
+	.set_engine_clock = &radeon_atom_set_engine_clock,
+	.get_memory_clock = &radeon_atom_get_memory_clock,
+	.set_memory_clock = &radeon_atom_set_memory_clock,
+	.get_pcie_lanes = &rv370_get_pcie_lanes,
+	.set_pcie_lanes = &rv370_set_pcie_lanes,
+	.set_clock_gating = &radeon_atom_set_clock_gating,
+	.set_surface_reg = r100_set_surface_reg,
+	.clear_surface_reg = r100_clear_surface_reg,
+	.bandwidth_update = &rv515_bandwidth_update,
+	.hpd_init = &rs600_hpd_init,
+	.hpd_fini = &rs600_hpd_fini,
+	.hpd_sense = &rs600_hpd_sense,
+	.hpd_set_polarity = &rs600_hpd_set_polarity,
+	.ioctl_wait_idle = NULL,
+	.gui_idle = &r100_gui_idle,
+	.pm_misc = &rs600_pm_misc,
+	.pm_prepare = &rs600_pm_prepare,
+	.pm_finish = &rs600_pm_finish,
+	.pm_init_profile = &r420_pm_init_profile,
+	.pm_get_dynpm_state = &r100_pm_get_dynpm_state,
+	.pre_page_flip = &rs600_pre_page_flip,
+	.page_flip = &rs600_page_flip,
+	.post_page_flip = &rs600_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct radeon_asic r520_asic = {
@@ -802,6 +1179,7 @@ static struct radeon_asic r520_asic = {
 	.vga_set_state = &r100_vga_set_state,
 	.gpu_is_lockup = &r300_gpu_is_lockup,
 	.asic_reset = &rs600_asic_reset,
+<<<<<<< HEAD
 	.ioctl_wait_idle = NULL,
 	.gui_idle = &r100_gui_idle,
 	.mc_wait_for_idle = &r520_mc_wait_for_idle,
@@ -866,6 +1244,46 @@ static struct radeon_asic r520_asic = {
 		.page_flip = &rs600_page_flip,
 		.post_page_flip = &rs600_post_page_flip,
 	},
+=======
+	.gart_tlb_flush = &rv370_pcie_gart_tlb_flush,
+	.gart_set_page = &rv370_pcie_gart_set_page,
+	.cp_commit = &r100_cp_commit,
+	.ring_start = &rv515_ring_start,
+	.ring_test = &r100_ring_test,
+	.ring_ib_execute = &r100_ring_ib_execute,
+	.irq_set = &rs600_irq_set,
+	.irq_process = &rs600_irq_process,
+	.get_vblank_counter = &rs600_get_vblank_counter,
+	.fence_ring_emit = &r300_fence_ring_emit,
+	.cs_parse = &r300_cs_parse,
+	.copy_blit = &r100_copy_blit,
+	.copy_dma = &r200_copy_dma,
+	.copy = &r100_copy_blit,
+	.get_engine_clock = &radeon_atom_get_engine_clock,
+	.set_engine_clock = &radeon_atom_set_engine_clock,
+	.get_memory_clock = &radeon_atom_get_memory_clock,
+	.set_memory_clock = &radeon_atom_set_memory_clock,
+	.get_pcie_lanes = &rv370_get_pcie_lanes,
+	.set_pcie_lanes = &rv370_set_pcie_lanes,
+	.set_clock_gating = &radeon_atom_set_clock_gating,
+	.set_surface_reg = r100_set_surface_reg,
+	.clear_surface_reg = r100_clear_surface_reg,
+	.bandwidth_update = &rv515_bandwidth_update,
+	.hpd_init = &rs600_hpd_init,
+	.hpd_fini = &rs600_hpd_fini,
+	.hpd_sense = &rs600_hpd_sense,
+	.hpd_set_polarity = &rs600_hpd_set_polarity,
+	.ioctl_wait_idle = NULL,
+	.gui_idle = &r100_gui_idle,
+	.pm_misc = &rs600_pm_misc,
+	.pm_prepare = &rs600_pm_prepare,
+	.pm_finish = &rs600_pm_finish,
+	.pm_init_profile = &r420_pm_init_profile,
+	.pm_get_dynpm_state = &r100_pm_get_dynpm_state,
+	.pre_page_flip = &rs600_pre_page_flip,
+	.page_flip = &rs600_page_flip,
+	.post_page_flip = &rs600_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct radeon_asic r600_asic = {
@@ -873,6 +1291,7 @@ static struct radeon_asic r600_asic = {
 	.fini = &r600_fini,
 	.suspend = &r600_suspend,
 	.resume = &r600_resume,
+<<<<<<< HEAD
 	.vga_set_state = &r600_vga_set_state,
 	.gpu_is_lockup = &r600_gpu_is_lockup,
 	.asic_reset = &r600_asic_reset,
@@ -939,6 +1358,48 @@ static struct radeon_asic r600_asic = {
 		.page_flip = &rs600_page_flip,
 		.post_page_flip = &rs600_post_page_flip,
 	},
+=======
+	.cp_commit = &r600_cp_commit,
+	.vga_set_state = &r600_vga_set_state,
+	.gpu_is_lockup = &r600_gpu_is_lockup,
+	.asic_reset = &r600_asic_reset,
+	.gart_tlb_flush = &r600_pcie_gart_tlb_flush,
+	.gart_set_page = &rs600_gart_set_page,
+	.ring_test = &r600_ring_test,
+	.ring_ib_execute = &r600_ring_ib_execute,
+	.irq_set = &r600_irq_set,
+	.irq_process = &r600_irq_process,
+	.get_vblank_counter = &rs600_get_vblank_counter,
+	.fence_ring_emit = &r600_fence_ring_emit,
+	.cs_parse = &r600_cs_parse,
+	.copy_blit = &r600_copy_blit,
+	.copy_dma = &r600_copy_blit,
+	.copy = &r600_copy_blit,
+	.get_engine_clock = &radeon_atom_get_engine_clock,
+	.set_engine_clock = &radeon_atom_set_engine_clock,
+	.get_memory_clock = &radeon_atom_get_memory_clock,
+	.set_memory_clock = &radeon_atom_set_memory_clock,
+	.get_pcie_lanes = &r600_get_pcie_lanes,
+	.set_pcie_lanes = &r600_set_pcie_lanes,
+	.set_clock_gating = NULL,
+	.set_surface_reg = r600_set_surface_reg,
+	.clear_surface_reg = r600_clear_surface_reg,
+	.bandwidth_update = &rv515_bandwidth_update,
+	.hpd_init = &r600_hpd_init,
+	.hpd_fini = &r600_hpd_fini,
+	.hpd_sense = &r600_hpd_sense,
+	.hpd_set_polarity = &r600_hpd_set_polarity,
+	.ioctl_wait_idle = r600_ioctl_wait_idle,
+	.gui_idle = &r600_gui_idle,
+	.pm_misc = &r600_pm_misc,
+	.pm_prepare = &rs600_pm_prepare,
+	.pm_finish = &rs600_pm_finish,
+	.pm_init_profile = &r600_pm_init_profile,
+	.pm_get_dynpm_state = &r600_pm_get_dynpm_state,
+	.pre_page_flip = &rs600_pre_page_flip,
+	.page_flip = &rs600_page_flip,
+	.post_page_flip = &rs600_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct radeon_asic rs780_asic = {
@@ -946,6 +1407,7 @@ static struct radeon_asic rs780_asic = {
 	.fini = &r600_fini,
 	.suspend = &r600_suspend,
 	.resume = &r600_resume,
+<<<<<<< HEAD
 	.gpu_is_lockup = &r600_gpu_is_lockup,
 	.vga_set_state = &r600_vga_set_state,
 	.asic_reset = &r600_asic_reset,
@@ -1012,6 +1474,48 @@ static struct radeon_asic rs780_asic = {
 		.page_flip = &rs600_page_flip,
 		.post_page_flip = &rs600_post_page_flip,
 	},
+=======
+	.cp_commit = &r600_cp_commit,
+	.gpu_is_lockup = &r600_gpu_is_lockup,
+	.vga_set_state = &r600_vga_set_state,
+	.asic_reset = &r600_asic_reset,
+	.gart_tlb_flush = &r600_pcie_gart_tlb_flush,
+	.gart_set_page = &rs600_gart_set_page,
+	.ring_test = &r600_ring_test,
+	.ring_ib_execute = &r600_ring_ib_execute,
+	.irq_set = &r600_irq_set,
+	.irq_process = &r600_irq_process,
+	.get_vblank_counter = &rs600_get_vblank_counter,
+	.fence_ring_emit = &r600_fence_ring_emit,
+	.cs_parse = &r600_cs_parse,
+	.copy_blit = &r600_copy_blit,
+	.copy_dma = &r600_copy_blit,
+	.copy = &r600_copy_blit,
+	.get_engine_clock = &radeon_atom_get_engine_clock,
+	.set_engine_clock = &radeon_atom_set_engine_clock,
+	.get_memory_clock = NULL,
+	.set_memory_clock = NULL,
+	.get_pcie_lanes = NULL,
+	.set_pcie_lanes = NULL,
+	.set_clock_gating = NULL,
+	.set_surface_reg = r600_set_surface_reg,
+	.clear_surface_reg = r600_clear_surface_reg,
+	.bandwidth_update = &rs690_bandwidth_update,
+	.hpd_init = &r600_hpd_init,
+	.hpd_fini = &r600_hpd_fini,
+	.hpd_sense = &r600_hpd_sense,
+	.hpd_set_polarity = &r600_hpd_set_polarity,
+	.ioctl_wait_idle = r600_ioctl_wait_idle,
+	.gui_idle = &r600_gui_idle,
+	.pm_misc = &r600_pm_misc,
+	.pm_prepare = &rs600_pm_prepare,
+	.pm_finish = &rs600_pm_finish,
+	.pm_init_profile = &rs780_pm_init_profile,
+	.pm_get_dynpm_state = &r600_pm_get_dynpm_state,
+	.pre_page_flip = &rs600_pre_page_flip,
+	.page_flip = &rs600_page_flip,
+	.post_page_flip = &rs600_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct radeon_asic rv770_asic = {
@@ -1019,6 +1523,7 @@ static struct radeon_asic rv770_asic = {
 	.fini = &rv770_fini,
 	.suspend = &rv770_suspend,
 	.resume = &rv770_resume,
+<<<<<<< HEAD
 	.asic_reset = &r600_asic_reset,
 	.gpu_is_lockup = &r600_gpu_is_lockup,
 	.vga_set_state = &r600_vga_set_state,
@@ -1085,6 +1590,48 @@ static struct radeon_asic rv770_asic = {
 		.page_flip = &rv770_page_flip,
 		.post_page_flip = &rs600_post_page_flip,
 	},
+=======
+	.cp_commit = &r600_cp_commit,
+	.asic_reset = &r600_asic_reset,
+	.gpu_is_lockup = &r600_gpu_is_lockup,
+	.vga_set_state = &r600_vga_set_state,
+	.gart_tlb_flush = &r600_pcie_gart_tlb_flush,
+	.gart_set_page = &rs600_gart_set_page,
+	.ring_test = &r600_ring_test,
+	.ring_ib_execute = &r600_ring_ib_execute,
+	.irq_set = &r600_irq_set,
+	.irq_process = &r600_irq_process,
+	.get_vblank_counter = &rs600_get_vblank_counter,
+	.fence_ring_emit = &r600_fence_ring_emit,
+	.cs_parse = &r600_cs_parse,
+	.copy_blit = &r600_copy_blit,
+	.copy_dma = &r600_copy_blit,
+	.copy = &r600_copy_blit,
+	.get_engine_clock = &radeon_atom_get_engine_clock,
+	.set_engine_clock = &radeon_atom_set_engine_clock,
+	.get_memory_clock = &radeon_atom_get_memory_clock,
+	.set_memory_clock = &radeon_atom_set_memory_clock,
+	.get_pcie_lanes = &r600_get_pcie_lanes,
+	.set_pcie_lanes = &r600_set_pcie_lanes,
+	.set_clock_gating = &radeon_atom_set_clock_gating,
+	.set_surface_reg = r600_set_surface_reg,
+	.clear_surface_reg = r600_clear_surface_reg,
+	.bandwidth_update = &rv515_bandwidth_update,
+	.hpd_init = &r600_hpd_init,
+	.hpd_fini = &r600_hpd_fini,
+	.hpd_sense = &r600_hpd_sense,
+	.hpd_set_polarity = &r600_hpd_set_polarity,
+	.ioctl_wait_idle = r600_ioctl_wait_idle,
+	.gui_idle = &r600_gui_idle,
+	.pm_misc = &rv770_pm_misc,
+	.pm_prepare = &rs600_pm_prepare,
+	.pm_finish = &rs600_pm_finish,
+	.pm_init_profile = &r600_pm_init_profile,
+	.pm_get_dynpm_state = &r600_pm_get_dynpm_state,
+	.pre_page_flip = &rs600_pre_page_flip,
+	.page_flip = &rv770_page_flip,
+	.post_page_flip = &rs600_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct radeon_asic evergreen_asic = {
@@ -1092,6 +1639,7 @@ static struct radeon_asic evergreen_asic = {
 	.fini = &evergreen_fini,
 	.suspend = &evergreen_suspend,
 	.resume = &evergreen_resume,
+<<<<<<< HEAD
 	.gpu_is_lockup = &evergreen_gpu_is_lockup,
 	.asic_reset = &evergreen_asic_reset,
 	.vga_set_state = &r600_vga_set_state,
@@ -1158,6 +1706,48 @@ static struct radeon_asic evergreen_asic = {
 		.page_flip = &evergreen_page_flip,
 		.post_page_flip = &evergreen_post_page_flip,
 	},
+=======
+	.cp_commit = &r600_cp_commit,
+	.gpu_is_lockup = &evergreen_gpu_is_lockup,
+	.asic_reset = &evergreen_asic_reset,
+	.vga_set_state = &r600_vga_set_state,
+	.gart_tlb_flush = &evergreen_pcie_gart_tlb_flush,
+	.gart_set_page = &rs600_gart_set_page,
+	.ring_test = &r600_ring_test,
+	.ring_ib_execute = &evergreen_ring_ib_execute,
+	.irq_set = &evergreen_irq_set,
+	.irq_process = &evergreen_irq_process,
+	.get_vblank_counter = &evergreen_get_vblank_counter,
+	.fence_ring_emit = &r600_fence_ring_emit,
+	.cs_parse = &evergreen_cs_parse,
+	.copy_blit = &evergreen_copy_blit,
+	.copy_dma = &evergreen_copy_blit,
+	.copy = &evergreen_copy_blit,
+	.get_engine_clock = &radeon_atom_get_engine_clock,
+	.set_engine_clock = &radeon_atom_set_engine_clock,
+	.get_memory_clock = &radeon_atom_get_memory_clock,
+	.set_memory_clock = &radeon_atom_set_memory_clock,
+	.get_pcie_lanes = &r600_get_pcie_lanes,
+	.set_pcie_lanes = &r600_set_pcie_lanes,
+	.set_clock_gating = NULL,
+	.set_surface_reg = r600_set_surface_reg,
+	.clear_surface_reg = r600_clear_surface_reg,
+	.bandwidth_update = &evergreen_bandwidth_update,
+	.hpd_init = &evergreen_hpd_init,
+	.hpd_fini = &evergreen_hpd_fini,
+	.hpd_sense = &evergreen_hpd_sense,
+	.hpd_set_polarity = &evergreen_hpd_set_polarity,
+	.ioctl_wait_idle = r600_ioctl_wait_idle,
+	.gui_idle = &r600_gui_idle,
+	.pm_misc = &evergreen_pm_misc,
+	.pm_prepare = &evergreen_pm_prepare,
+	.pm_finish = &evergreen_pm_finish,
+	.pm_init_profile = &r600_pm_init_profile,
+	.pm_get_dynpm_state = &r600_pm_get_dynpm_state,
+	.pre_page_flip = &evergreen_pre_page_flip,
+	.page_flip = &evergreen_page_flip,
+	.post_page_flip = &evergreen_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct radeon_asic sumo_asic = {
@@ -1165,6 +1755,7 @@ static struct radeon_asic sumo_asic = {
 	.fini = &evergreen_fini,
 	.suspend = &evergreen_suspend,
 	.resume = &evergreen_resume,
+<<<<<<< HEAD
 	.gpu_is_lockup = &evergreen_gpu_is_lockup,
 	.asic_reset = &evergreen_asic_reset,
 	.vga_set_state = &r600_vga_set_state,
@@ -1231,6 +1822,48 @@ static struct radeon_asic sumo_asic = {
 		.page_flip = &evergreen_page_flip,
 		.post_page_flip = &evergreen_post_page_flip,
 	},
+=======
+	.cp_commit = &r600_cp_commit,
+	.gpu_is_lockup = &evergreen_gpu_is_lockup,
+	.asic_reset = &evergreen_asic_reset,
+	.vga_set_state = &r600_vga_set_state,
+	.gart_tlb_flush = &evergreen_pcie_gart_tlb_flush,
+	.gart_set_page = &rs600_gart_set_page,
+	.ring_test = &r600_ring_test,
+	.ring_ib_execute = &evergreen_ring_ib_execute,
+	.irq_set = &evergreen_irq_set,
+	.irq_process = &evergreen_irq_process,
+	.get_vblank_counter = &evergreen_get_vblank_counter,
+	.fence_ring_emit = &r600_fence_ring_emit,
+	.cs_parse = &evergreen_cs_parse,
+	.copy_blit = &evergreen_copy_blit,
+	.copy_dma = &evergreen_copy_blit,
+	.copy = &evergreen_copy_blit,
+	.get_engine_clock = &radeon_atom_get_engine_clock,
+	.set_engine_clock = &radeon_atom_set_engine_clock,
+	.get_memory_clock = NULL,
+	.set_memory_clock = NULL,
+	.get_pcie_lanes = NULL,
+	.set_pcie_lanes = NULL,
+	.set_clock_gating = NULL,
+	.set_surface_reg = r600_set_surface_reg,
+	.clear_surface_reg = r600_clear_surface_reg,
+	.bandwidth_update = &evergreen_bandwidth_update,
+	.hpd_init = &evergreen_hpd_init,
+	.hpd_fini = &evergreen_hpd_fini,
+	.hpd_sense = &evergreen_hpd_sense,
+	.hpd_set_polarity = &evergreen_hpd_set_polarity,
+	.ioctl_wait_idle = r600_ioctl_wait_idle,
+	.gui_idle = &r600_gui_idle,
+	.pm_misc = &evergreen_pm_misc,
+	.pm_prepare = &evergreen_pm_prepare,
+	.pm_finish = &evergreen_pm_finish,
+	.pm_init_profile = &rs780_pm_init_profile,
+	.pm_get_dynpm_state = &r600_pm_get_dynpm_state,
+	.pre_page_flip = &evergreen_pre_page_flip,
+	.page_flip = &evergreen_page_flip,
+	.post_page_flip = &evergreen_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct radeon_asic btc_asic = {
@@ -1238,6 +1871,7 @@ static struct radeon_asic btc_asic = {
 	.fini = &evergreen_fini,
 	.suspend = &evergreen_suspend,
 	.resume = &evergreen_resume,
+<<<<<<< HEAD
 	.gpu_is_lockup = &evergreen_gpu_is_lockup,
 	.asic_reset = &evergreen_asic_reset,
 	.vga_set_state = &r600_vga_set_state,
@@ -1314,6 +1948,48 @@ static const struct radeon_vm_funcs cayman_vm_funcs = {
 	.tlb_flush = &cayman_vm_tlb_flush,
 	.page_flags = &cayman_vm_page_flags,
 	.set_page = &cayman_vm_set_page,
+=======
+	.cp_commit = &r600_cp_commit,
+	.gpu_is_lockup = &evergreen_gpu_is_lockup,
+	.asic_reset = &evergreen_asic_reset,
+	.vga_set_state = &r600_vga_set_state,
+	.gart_tlb_flush = &evergreen_pcie_gart_tlb_flush,
+	.gart_set_page = &rs600_gart_set_page,
+	.ring_test = &r600_ring_test,
+	.ring_ib_execute = &evergreen_ring_ib_execute,
+	.irq_set = &evergreen_irq_set,
+	.irq_process = &evergreen_irq_process,
+	.get_vblank_counter = &evergreen_get_vblank_counter,
+	.fence_ring_emit = &r600_fence_ring_emit,
+	.cs_parse = &evergreen_cs_parse,
+	.copy_blit = &evergreen_copy_blit,
+	.copy_dma = &evergreen_copy_blit,
+	.copy = &evergreen_copy_blit,
+	.get_engine_clock = &radeon_atom_get_engine_clock,
+	.set_engine_clock = &radeon_atom_set_engine_clock,
+	.get_memory_clock = &radeon_atom_get_memory_clock,
+	.set_memory_clock = &radeon_atom_set_memory_clock,
+	.get_pcie_lanes = NULL,
+	.set_pcie_lanes = NULL,
+	.set_clock_gating = NULL,
+	.set_surface_reg = r600_set_surface_reg,
+	.clear_surface_reg = r600_clear_surface_reg,
+	.bandwidth_update = &evergreen_bandwidth_update,
+	.hpd_init = &evergreen_hpd_init,
+	.hpd_fini = &evergreen_hpd_fini,
+	.hpd_sense = &evergreen_hpd_sense,
+	.hpd_set_polarity = &evergreen_hpd_set_polarity,
+	.ioctl_wait_idle = r600_ioctl_wait_idle,
+	.gui_idle = &r600_gui_idle,
+	.pm_misc = &evergreen_pm_misc,
+	.pm_prepare = &evergreen_pm_prepare,
+	.pm_finish = &evergreen_pm_finish,
+	.pm_init_profile = &r600_pm_init_profile,
+	.pm_get_dynpm_state = &r600_pm_get_dynpm_state,
+	.pre_page_flip = &evergreen_pre_page_flip,
+	.page_flip = &evergreen_page_flip,
+	.post_page_flip = &evergreen_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct radeon_asic cayman_asic = {
@@ -1321,6 +1997,7 @@ static struct radeon_asic cayman_asic = {
 	.fini = &cayman_fini,
 	.suspend = &cayman_suspend,
 	.resume = &cayman_resume,
+<<<<<<< HEAD
 	.gpu_is_lockup = &cayman_gpu_is_lockup,
 	.asic_reset = &cayman_asic_reset,
 	.vga_set_state = &r600_vga_set_state,
@@ -1600,6 +2277,48 @@ static struct radeon_asic si_asic = {
 		.page_flip = &evergreen_page_flip,
 		.post_page_flip = &evergreen_post_page_flip,
 	},
+=======
+	.cp_commit = &r600_cp_commit,
+	.gpu_is_lockup = &cayman_gpu_is_lockup,
+	.asic_reset = &cayman_asic_reset,
+	.vga_set_state = &r600_vga_set_state,
+	.gart_tlb_flush = &cayman_pcie_gart_tlb_flush,
+	.gart_set_page = &rs600_gart_set_page,
+	.ring_test = &r600_ring_test,
+	.ring_ib_execute = &evergreen_ring_ib_execute,
+	.irq_set = &evergreen_irq_set,
+	.irq_process = &evergreen_irq_process,
+	.get_vblank_counter = &evergreen_get_vblank_counter,
+	.fence_ring_emit = &r600_fence_ring_emit,
+	.cs_parse = &evergreen_cs_parse,
+	.copy_blit = &evergreen_copy_blit,
+	.copy_dma = &evergreen_copy_blit,
+	.copy = &evergreen_copy_blit,
+	.get_engine_clock = &radeon_atom_get_engine_clock,
+	.set_engine_clock = &radeon_atom_set_engine_clock,
+	.get_memory_clock = &radeon_atom_get_memory_clock,
+	.set_memory_clock = &radeon_atom_set_memory_clock,
+	.get_pcie_lanes = NULL,
+	.set_pcie_lanes = NULL,
+	.set_clock_gating = NULL,
+	.set_surface_reg = r600_set_surface_reg,
+	.clear_surface_reg = r600_clear_surface_reg,
+	.bandwidth_update = &evergreen_bandwidth_update,
+	.hpd_init = &evergreen_hpd_init,
+	.hpd_fini = &evergreen_hpd_fini,
+	.hpd_sense = &evergreen_hpd_sense,
+	.hpd_set_polarity = &evergreen_hpd_set_polarity,
+	.ioctl_wait_idle = r600_ioctl_wait_idle,
+	.gui_idle = &r600_gui_idle,
+	.pm_misc = &evergreen_pm_misc,
+	.pm_prepare = &evergreen_pm_prepare,
+	.pm_finish = &evergreen_pm_finish,
+	.pm_init_profile = &r600_pm_init_profile,
+	.pm_get_dynpm_state = &r600_pm_get_dynpm_state,
+	.pre_page_flip = &evergreen_pre_page_flip,
+	.page_flip = &evergreen_page_flip,
+	.post_page_flip = &evergreen_post_page_flip,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int radeon_asic_init(struct radeon_device *rdev)
@@ -1641,10 +2360,17 @@ int radeon_asic_init(struct radeon_device *rdev)
 		rdev->asic = &r420_asic;
 		/* handle macs */
 		if (rdev->bios == NULL) {
+<<<<<<< HEAD
 			rdev->asic->pm.get_engine_clock = &radeon_legacy_get_engine_clock;
 			rdev->asic->pm.set_engine_clock = &radeon_legacy_set_engine_clock;
 			rdev->asic->pm.get_memory_clock = &radeon_legacy_get_memory_clock;
 			rdev->asic->pm.set_memory_clock = NULL;
+=======
+			rdev->asic->get_engine_clock = &radeon_legacy_get_engine_clock;
+			rdev->asic->set_engine_clock = &radeon_legacy_set_engine_clock;
+			rdev->asic->get_memory_clock = &radeon_legacy_get_memory_clock;
+			rdev->asic->set_memory_clock = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		break;
 	case CHIP_RS400:
@@ -1717,6 +2443,7 @@ int radeon_asic_init(struct radeon_device *rdev)
 		rdev->asic = &cayman_asic;
 		/* set num crtcs */
 		rdev->num_crtc = 6;
+<<<<<<< HEAD
 		rdev->vm_manager.funcs = &cayman_vm_funcs;
 		break;
 	case CHIP_ARUBA:
@@ -1732,6 +2459,8 @@ int radeon_asic_init(struct radeon_device *rdev)
 		/* set num crtcs */
 		rdev->num_crtc = 6;
 		rdev->vm_manager.funcs = &si_vm_funcs;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		/* FIXME: not supported yet */
@@ -1739,8 +2468,13 @@ int radeon_asic_init(struct radeon_device *rdev)
 	}
 
 	if (rdev->flags & RADEON_IS_IGP) {
+<<<<<<< HEAD
 		rdev->asic->pm.get_memory_clock = NULL;
 		rdev->asic->pm.set_memory_clock = NULL;
+=======
+		rdev->asic->get_memory_clock = NULL;
+		rdev->asic->set_memory_clock = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;

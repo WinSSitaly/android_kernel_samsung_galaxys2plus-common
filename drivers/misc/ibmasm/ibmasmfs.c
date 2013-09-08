@@ -17,7 +17,11 @@
  *
  * Copyright (C) IBM Corporation, 2004
  *
+<<<<<<< HEAD
  * Author: Max AsbÃ¶ck <amax@us.ibm.com>
+=======
+ * Author: Max Asböck <amax@us.ibm.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  */
 
@@ -87,7 +91,11 @@
 static LIST_HEAD(service_processors);
 
 static struct inode *ibmasmfs_make_inode(struct super_block *sb, int mode);
+<<<<<<< HEAD
 static void ibmasmfs_create_files (struct super_block *sb);
+=======
+static void ibmasmfs_create_files (struct super_block *sb, struct dentry *root);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ibmasmfs_fill_super (struct super_block *sb, void *data, int silent);
 
 
@@ -114,6 +122,10 @@ static struct file_system_type ibmasmfs_type = {
 static int ibmasmfs_fill_super (struct super_block *sb, void *data, int silent)
 {
 	struct inode *root;
+<<<<<<< HEAD
+=======
+	struct dentry *root_dentry;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sb->s_blocksize = PAGE_CACHE_SIZE;
 	sb->s_blocksize_bits = PAGE_CACHE_SHIFT;
@@ -128,11 +140,22 @@ static int ibmasmfs_fill_super (struct super_block *sb, void *data, int silent)
 	root->i_op = &simple_dir_inode_operations;
 	root->i_fop = ibmasmfs_dir_ops;
 
+<<<<<<< HEAD
 	sb->s_root = d_make_root(root);
 	if (!sb->s_root)
 		return -ENOMEM;
 
 	ibmasmfs_create_files(sb);
+=======
+	root_dentry = d_alloc_root(root);
+	if (!root_dentry) {
+		iput(root);
+		return -ENOMEM;
+	}
+	sb->s_root = root_dentry;
+
+	ibmasmfs_create_files(sb, root_dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -500,6 +523,15 @@ static ssize_t r_heartbeat_file_write(struct file *file, const char __user *buf,
 	return 1;
 }
 
+<<<<<<< HEAD
+=======
+static int remote_settings_file_open(struct inode *inode, struct file *file)
+{
+	file->private_data = inode->i_private;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int remote_settings_file_close(struct inode *inode, struct file *file)
 {
 	return 0;
@@ -594,7 +626,11 @@ static const struct file_operations r_heartbeat_fops = {
 };
 
 static const struct file_operations remote_settings_fops = {
+<<<<<<< HEAD
 	.open =		simple_open,
+=======
+	.open =		remote_settings_file_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.release =	remote_settings_file_close,
 	.read =		remote_settings_file_read,
 	.write =	remote_settings_file_write,
@@ -602,7 +638,11 @@ static const struct file_operations remote_settings_fops = {
 };
 
 
+<<<<<<< HEAD
 static void ibmasmfs_create_files (struct super_block *sb)
+=======
+static void ibmasmfs_create_files (struct super_block *sb, struct dentry *root)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct list_head *entry;
 	struct service_processor *sp;
@@ -611,7 +651,11 @@ static void ibmasmfs_create_files (struct super_block *sb)
 		struct dentry *dir;
 		struct dentry *remote_dir;
 		sp = list_entry(entry, struct service_processor, node);
+<<<<<<< HEAD
 		dir = ibmasmfs_create_dir(sb, sb->s_root, sp->dirname);
+=======
+		dir = ibmasmfs_create_dir(sb, root, sp->dirname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!dir)
 			continue;
 

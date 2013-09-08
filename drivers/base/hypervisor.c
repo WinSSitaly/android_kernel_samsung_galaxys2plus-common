@@ -10,7 +10,10 @@
 
 #include <linux/kobject.h>
 #include <linux/device.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "base.h"
 
 struct kobject *hypervisor_kobj;

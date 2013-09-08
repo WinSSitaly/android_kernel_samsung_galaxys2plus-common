@@ -16,7 +16,10 @@
  */
 #include <linux/sched.h>
 #include <linux/errno.h>
+<<<<<<< HEAD
 #include <asm/ctl_reg.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define VERIFY_READ     0
 #define VERIFY_WRITE    1
@@ -376,9 +379,12 @@ clear_user(void __user *to, unsigned long n)
 	return n;
 }
 
+<<<<<<< HEAD
 extern int memcpy_real(void *, void *, size_t);
 extern void copy_to_absolute_zero(void *dest, void *src, size_t count);
 extern int copy_to_user_real(void __user *dest, void *src, size_t count);
 extern int copy_from_user_real(void *dest, void __user *src, size_t count);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __S390_UACCESS_H */

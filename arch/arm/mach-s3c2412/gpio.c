@@ -28,7 +28,11 @@
 
 int s3c2412_gpio_set_sleepcfg(unsigned int pin, unsigned int state)
 {
+<<<<<<< HEAD
 	struct samsung_gpio_chip *chip = samsung_gpiolib_getchip(pin);
+=======
+	struct s3c_gpio_chip *chip = s3c_gpiolib_getchip(pin);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long offs = pin - chip->chip.base;
 	unsigned long flags;
 	unsigned long slpcon;

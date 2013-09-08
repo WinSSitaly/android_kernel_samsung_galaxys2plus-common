@@ -1,8 +1,15 @@
 /*
+<<<<<<< HEAD
  * CPU subsystem support
  */
 
 #include <linux/kernel.h>
+=======
+ * drivers/base/cpu.c - basic CPU class support
+ */
+
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/sched.h>
@@ -11,6 +18,7 @@
 #include <linux/device.h>
 #include <linux/node.h>
 #include <linux/gfp.h>
+<<<<<<< HEAD
 #include <linux/slab.h>
 #include <linux/percpu.h>
 
@@ -39,17 +47,53 @@ static ssize_t __ref store_online(struct device *dev,
 				  const char *buf, size_t count)
 {
 	struct cpu *cpu = container_of(dev, struct cpu, dev);
+=======
+
+#include "base.h"
+
+static struct sysdev_class_attribute *cpu_sysdev_class_attrs[];
+
+struct sysdev_class cpu_sysdev_class = {
+	.name = "cpu",
+	.attrs = cpu_sysdev_class_attrs,
+};
+EXPORT_SYMBOL(cpu_sysdev_class);
+
+static DEFINE_PER_CPU(struct sys_device *, cpu_sys_devices);
+
+#ifdef CONFIG_HOTPLUG_CPU
+static ssize_t show_online(struct sys_device *dev, struct sysdev_attribute *attr,
+			   char *buf)
+{
+	struct cpu *cpu = container_of(dev, struct cpu, sysdev);
+
+	return sprintf(buf, "%u\n", !!cpu_online(cpu->sysdev.id));
+}
+
+static ssize_t __ref store_online(struct sys_device *dev, struct sysdev_attribute *attr,
+				 const char *buf, size_t count)
+{
+	struct cpu *cpu = container_of(dev, struct cpu, sysdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ssize_t ret;
 
 	cpu_hotplug_driver_lock();
 	switch (buf[0]) {
 	case '0':
+<<<<<<< HEAD
 		ret = cpu_down(cpu->dev.id);
+=======
+		ret = cpu_down(cpu->sysdev.id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!ret)
 			kobject_uevent(&dev->kobj, KOBJ_OFFLINE);
 		break;
 	case '1':
+<<<<<<< HEAD
 		ret = cpu_up(cpu->dev.id);
+=======
+		ret = cpu_up(cpu->sysdev.id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!ret)
 			kobject_uevent(&dev->kobj, KOBJ_ONLINE);
 		break;
@@ -62,6 +106,7 @@ static ssize_t __ref store_online(struct device *dev,
 		ret = count;
 	return ret;
 }
+<<<<<<< HEAD
 static DEVICE_ATTR(online, 0644, show_online, store_online);
 
 static void __cpuinit register_cpu_control(struct cpu *cpu)
@@ -77,29 +122,61 @@ void unregister_cpu(struct cpu *cpu)
 	device_remove_file(&cpu->dev, &dev_attr_online);
 
 	device_unregister(&cpu->dev);
+=======
+static SYSDEV_ATTR(online, 0644, show_online, store_online);
+
+static void __cpuinit register_cpu_control(struct cpu *cpu)
+{
+	sysdev_create_file(&cpu->sysdev, &attr_online);
+}
+void unregister_cpu(struct cpu *cpu)
+{
+	int logical_cpu = cpu->sysdev.id;
+
+	unregister_cpu_under_node(logical_cpu, cpu_to_node(logical_cpu));
+
+	sysdev_remove_file(&cpu->sysdev, &attr_online);
+
+	sysdev_unregister(&cpu->sysdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	per_cpu(cpu_sys_devices, logical_cpu) = NULL;
 	return;
 }
 
 #ifdef CONFIG_ARCH_CPU_PROBE_RELEASE
+<<<<<<< HEAD
 static ssize_t cpu_probe_store(struct device *dev,
 			       struct device_attribute *attr,
+=======
+static ssize_t cpu_probe_store(struct sysdev_class *class,
+			       struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       const char *buf,
 			       size_t count)
 {
 	return arch_cpu_probe(buf, count);
 }
 
+<<<<<<< HEAD
 static ssize_t cpu_release_store(struct device *dev,
 				 struct device_attribute *attr,
+=======
+static ssize_t cpu_release_store(struct sysdev_class *class,
+				 struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 const char *buf,
 				 size_t count)
 {
 	return arch_cpu_release(buf, count);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(probe, S_IWUSR, NULL, cpu_probe_store);
 static DEVICE_ATTR(release, S_IWUSR, NULL, cpu_release_store);
+=======
+static SYSDEV_CLASS_ATTR(probe, S_IWUSR, NULL, cpu_probe_store);
+static SYSDEV_CLASS_ATTR(release, S_IWUSR, NULL, cpu_release_store);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_ARCH_CPU_PROBE_RELEASE */
 
 #else /* ... !CONFIG_HOTPLUG_CPU */
@@ -111,15 +188,26 @@ static inline void register_cpu_control(struct cpu *cpu)
 #ifdef CONFIG_KEXEC
 #include <linux/kexec.h>
 
+<<<<<<< HEAD
 static ssize_t show_crash_notes(struct device *dev, struct device_attribute *attr,
 				char *buf)
 {
 	struct cpu *cpu = container_of(dev, struct cpu, dev);
+=======
+static ssize_t show_crash_notes(struct sys_device *dev, struct sysdev_attribute *attr,
+				char *buf)
+{
+	struct cpu *cpu = container_of(dev, struct cpu, sysdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ssize_t rc;
 	unsigned long long addr;
 	int cpunum;
 
+<<<<<<< HEAD
 	cpunum = cpu->dev.id;
+=======
+	cpunum = cpu->sysdev.id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Might be reading other cpu's data based on which cpu read thread
@@ -131,7 +219,11 @@ static ssize_t show_crash_notes(struct device *dev, struct device_attribute *att
 	rc = sprintf(buf, "%Lx\n", addr);
 	return rc;
 }
+<<<<<<< HEAD
 static DEVICE_ATTR(crash_notes, 0400, show_crash_notes, NULL);
+=======
+static SYSDEV_ATTR(crash_notes, 0400, show_crash_notes, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /*
@@ -139,12 +231,21 @@ static DEVICE_ATTR(crash_notes, 0400, show_crash_notes, NULL);
  */
 
 struct cpu_attr {
+<<<<<<< HEAD
 	struct device_attribute attr;
 	const struct cpumask *const * const map;
 };
 
 static ssize_t show_cpus_attr(struct device *dev,
 			      struct device_attribute *attr,
+=======
+	struct sysdev_class_attribute attr;
+	const struct cpumask *const * const map;
+};
+
+static ssize_t show_cpus_attr(struct sysdev_class *class,
+			      struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      char *buf)
 {
 	struct cpu_attr *ca = container_of(attr, struct cpu_attr, attr);
@@ -155,10 +256,17 @@ static ssize_t show_cpus_attr(struct device *dev,
 	return n;
 }
 
+<<<<<<< HEAD
 #define _CPU_ATTR(name, map) \
 	{ __ATTR(name, 0444, show_cpus_attr, NULL), map }
 
 /* Keep in sync with cpu_subsys_attrs */
+=======
+#define _CPU_ATTR(name, map)						\
+	{ _SYSDEV_CLASS_ATTR(name, 0444, show_cpus_attr, NULL), map }
+
+/* Keep in sync with cpu_sysdev_class_attrs */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct cpu_attr cpu_attrs[] = {
 	_CPU_ATTR(online, &cpu_online_mask),
 	_CPU_ATTR(possible, &cpu_possible_mask),
@@ -168,19 +276,33 @@ static struct cpu_attr cpu_attrs[] = {
 /*
  * Print values for NR_CPUS and offlined cpus
  */
+<<<<<<< HEAD
 static ssize_t print_cpus_kernel_max(struct device *dev,
 				     struct device_attribute *attr, char *buf)
+=======
+static ssize_t print_cpus_kernel_max(struct sysdev_class *class,
+				     struct sysdev_class_attribute *attr, char *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int n = snprintf(buf, PAGE_SIZE-2, "%d\n", NR_CPUS - 1);
 	return n;
 }
+<<<<<<< HEAD
 static DEVICE_ATTR(kernel_max, 0444, print_cpus_kernel_max, NULL);
+=======
+static SYSDEV_CLASS_ATTR(kernel_max, 0444, print_cpus_kernel_max, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* arch-optional setting to enable display of offline cpus >= nr_cpu_ids */
 unsigned int total_cpus;
 
+<<<<<<< HEAD
 static ssize_t print_cpus_offline(struct device *dev,
 				  struct device_attribute *attr, char *buf)
+=======
+static ssize_t print_cpus_offline(struct sysdev_class *class,
+				  struct sysdev_class_attribute *attr, char *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int n = 0, len = PAGE_SIZE-2;
 	cpumask_var_t offline;
@@ -207,6 +329,7 @@ static ssize_t print_cpus_offline(struct device *dev,
 	n += snprintf(&buf[n], len - n, "\n");
 	return n;
 }
+<<<<<<< HEAD
 static DEVICE_ATTR(offline, 0444, print_cpus_offline, NULL);
 
 static void cpu_device_release(struct device *dev)
@@ -227,6 +350,9 @@ static void cpu_device_release(struct device *dev)
 	 * on the linux-kerenl list, you have been warned.
 	 */
 }
+=======
+static SYSDEV_CLASS_ATTR(offline, 0444, print_cpus_offline, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * register_cpu - Setup a sysfs device for a CPU.
@@ -239,6 +365,7 @@ static void cpu_device_release(struct device *dev)
 int __cpuinit register_cpu(struct cpu *cpu, int num)
 {
 	int error;
+<<<<<<< HEAD
 
 	cpu->node_id = cpu_to_node(num);
 	memset(&cpu->dev, 0x00, sizeof(struct device));
@@ -253,23 +380,44 @@ int __cpuinit register_cpu(struct cpu *cpu, int num)
 		register_cpu_control(cpu);
 	if (!error)
 		per_cpu(cpu_sys_devices, num) = &cpu->dev;
+=======
+	cpu->node_id = cpu_to_node(num);
+	cpu->sysdev.id = num;
+	cpu->sysdev.cls = &cpu_sysdev_class;
+
+	error = sysdev_register(&cpu->sysdev);
+
+	if (!error && cpu->hotpluggable)
+		register_cpu_control(cpu);
+	if (!error)
+		per_cpu(cpu_sys_devices, num) = &cpu->sysdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!error)
 		register_cpu_under_node(num, cpu_to_node(num));
 
 #ifdef CONFIG_KEXEC
 	if (!error)
+<<<<<<< HEAD
 		error = device_create_file(&cpu->dev, &dev_attr_crash_notes);
+=======
+		error = sysdev_create_file(&cpu->sysdev, &attr_crash_notes);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	return error;
 }
 
+<<<<<<< HEAD
 struct device *get_cpu_device(unsigned cpu)
+=======
+struct sys_device *get_cpu_sysdev(unsigned cpu)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (cpu < nr_cpu_ids && cpu_possible(cpu))
 		return per_cpu(cpu_sys_devices, cpu);
 	else
 		return NULL;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(get_cpu_device);
 
 #ifdef CONFIG_ARCH_HAS_CPU_AUTOPROBE
@@ -335,3 +483,32 @@ void __init cpu_dev_init(void)
 	sched_create_sysfs_power_savings_entries(cpu_subsys.dev_root);
 #endif
 }
+=======
+EXPORT_SYMBOL_GPL(get_cpu_sysdev);
+
+int __init cpu_dev_init(void)
+{
+	int err;
+
+	err = sysdev_class_register(&cpu_sysdev_class);
+#if defined(CONFIG_SCHED_MC) || defined(CONFIG_SCHED_SMT)
+	if (!err)
+		err = sched_create_sysfs_power_savings_entries(&cpu_sysdev_class);
+#endif
+
+	return err;
+}
+
+static struct sysdev_class_attribute *cpu_sysdev_class_attrs[] = {
+#ifdef CONFIG_ARCH_CPU_PROBE_RELEASE
+	&attr_probe,
+	&attr_release,
+#endif
+	&cpu_attrs[0].attr,
+	&cpu_attrs[1].attr,
+	&cpu_attrs[2].attr,
+	&attr_kernel_max,
+	&attr_offline,
+	NULL
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

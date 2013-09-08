@@ -85,8 +85,13 @@ static struct resource smc91x_resources[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 	[1] = {
+<<<<<<< HEAD
 		.start	= PXA_GPIO_TO_IRQ(mfp_to_gpio(MFP_PIN_GPIO47)),
 		.end	= PXA_GPIO_TO_IRQ(mfp_to_gpio(MFP_PIN_GPIO47)),
+=======
+		.start	= gpio_to_irq(mfp_to_gpio(MFP_PIN_GPIO47)),
+		.end	= gpio_to_irq(mfp_to_gpio(MFP_PIN_GPIO47)),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHEDGE,
 	}
 };
@@ -489,6 +494,7 @@ static void __init tavorevb_init(void)
 
 MACHINE_START(TAVOREVB, "PXA930 Evaluation Board (aka TavorEVB)")
 	/* Maintainer: Eric Miao <eric.miao@marvell.com> */
+<<<<<<< HEAD
 	.atag_offset    = 0x100,
 	.map_io         = pxa3xx_map_io,
 	.nr_irqs	= PXA_NR_IRQS,
@@ -497,4 +503,11 @@ MACHINE_START(TAVOREVB, "PXA930 Evaluation Board (aka TavorEVB)")
 	.timer          = &pxa_timer,
 	.init_machine   = tavorevb_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params    = 0xa0000100,
+	.map_io         = pxa3xx_map_io,
+	.init_irq       = pxa3xx_init_irq,
+	.timer          = &pxa_timer,
+	.init_machine   = tavorevb_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

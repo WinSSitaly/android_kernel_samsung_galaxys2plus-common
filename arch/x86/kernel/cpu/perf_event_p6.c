@@ -1,7 +1,11 @@
+<<<<<<< HEAD
 #include <linux/perf_event.h>
 #include <linux/types.h>
 
 #include "perf_event.h"
+=======
+#ifdef CONFIG_CPU_SUP_INTEL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Not sure about some of these
@@ -87,6 +91,7 @@ static void p6_pmu_enable_event(struct perf_event *event)
 	(void)checking_wrmsrl(hwc->config_base, val);
 }
 
+<<<<<<< HEAD
 PMU_FORMAT_ATTR(event,	"config:0-7"	);
 PMU_FORMAT_ATTR(umask,	"config:8-15"	);
 PMU_FORMAT_ATTR(edge,	"config:18"	);
@@ -104,6 +109,8 @@ static struct attribute *intel_p6_formats_attr[] = {
 	NULL,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __initconst const struct x86_pmu p6_pmu = {
 	.name			= "p6",
 	.handle_irq		= x86_pmu_handle_irq,
@@ -132,11 +139,17 @@ static __initconst const struct x86_pmu p6_pmu = {
 	.cntval_mask		= (1ULL << 32) - 1,
 	.get_event_constraints	= x86_get_event_constraints,
 	.event_constraints	= p6_event_constraints,
+<<<<<<< HEAD
 
 	.format_attrs		= intel_p6_formats_attr,
 };
 
 __init int p6_pmu_init(void)
+=======
+};
+
+static __init int p6_pmu_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	switch (boot_cpu_data.x86_model) {
 	case 1:
@@ -160,3 +173,8 @@ __init int p6_pmu_init(void)
 
 	return 0;
 }
+<<<<<<< HEAD
+=======
+
+#endif /* CONFIG_CPU_SUP_INTEL */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

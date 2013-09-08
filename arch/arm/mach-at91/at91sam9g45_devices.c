@@ -13,8 +13,11 @@
 #include <asm/mach/map.h>
 
 #include <linux/dma-mapping.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
 #include <linux/clk.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <linux/i2c-gpio.h>
 #include <linux/atmel-mci.h>
@@ -23,17 +26,27 @@
 #include <video/atmel_lcdc.h>
 
 #include <mach/board.h>
+<<<<<<< HEAD
 #include <mach/at91sam9g45.h>
 #include <mach/at91sam9g45_matrix.h>
 #include <mach/at91_matrix.h>
+=======
+#include <mach/gpio.h>
+#include <mach/at91sam9g45.h>
+#include <mach/at91sam9g45_matrix.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/at91sam9_smc.h>
 #include <mach/at_hdmac.h>
 #include <mach/atmel-mci.h>
 
+<<<<<<< HEAD
 #include <media/atmel-isi.h>
 
 #include "generic.h"
 #include "clock.h"
+=======
+#include "generic.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /* --------------------------------------------------------------------
@@ -43,10 +56,21 @@
 #if defined(CONFIG_AT_HDMAC) || defined(CONFIG_AT_HDMAC_MODULE)
 static u64 hdmac_dmamask = DMA_BIT_MASK(32);
 
+<<<<<<< HEAD
 static struct resource hdmac_resources[] = {
 	[0] = {
 		.start	= AT91SAM9G45_BASE_DMA,
 		.end	= AT91SAM9G45_BASE_DMA + SZ_512 - 1,
+=======
+static struct at_dma_platform_data atdma_pdata = {
+	.nr_channels	= 8,
+};
+
+static struct resource hdmac_resources[] = {
+	[0] = {
+		.start	= AT91_BASE_SYS + AT91_DMA,
+		.end	= AT91_BASE_SYS + AT91_DMA + SZ_512 - 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_MEM,
 	},
 	[1] = {
@@ -57,11 +81,19 @@ static struct resource hdmac_resources[] = {
 };
 
 static struct platform_device at_hdmac_device = {
+<<<<<<< HEAD
 	.name		= "at91sam9g45_dma",
+=======
+	.name		= "at_hdmac",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id		= -1,
 	.dev		= {
 				.dma_mask		= &hdmac_dmamask,
 				.coherent_dma_mask	= DMA_BIT_MASK(32),
+<<<<<<< HEAD
+=======
+				.platform_data		= &atdma_pdata,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.resource	= hdmac_resources,
 	.num_resources	= ARRAY_SIZE(hdmac_resources),
@@ -69,6 +101,7 @@ static struct platform_device at_hdmac_device = {
 
 void __init at91_add_device_hdmac(void)
 {
+<<<<<<< HEAD
 #if defined(CONFIG_OF)
 	struct device_node *of_node =
 		of_find_node_by_name(NULL, "dma-controller");
@@ -78,6 +111,11 @@ void __init at91_add_device_hdmac(void)
 	else
 #endif
 		platform_device_register(&at_hdmac_device);
+=======
+	dma_cap_set(DMA_MEMCPY, atdma_pdata.cap_mask);
+	dma_cap_set(DMA_SLAVE, atdma_pdata.cap_mask);
+	platform_device_register(&at_hdmac_device);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #else
 void __init at91_add_device_hdmac(void) {}
@@ -126,6 +164,7 @@ void __init at91_add_device_usbh_ohci(struct at91_usbh_data *data)
 
 	/* Enable VBus control for UHP ports */
 	for (i = 0; i < data->ports; i++) {
+<<<<<<< HEAD
 		if (gpio_is_valid(data->vbus_pin[i]))
 			at91_set_gpio_output(data->vbus_pin[i],
 					     data->vbus_pin_active_low[i]);
@@ -135,6 +174,10 @@ void __init at91_add_device_usbh_ohci(struct at91_usbh_data *data)
 	for (i = 0; i < data->ports; i++) {
 		if (gpio_is_valid(data->overcurrent_pin[i]))
 			at91_set_gpio_input(data->overcurrent_pin[i], 1);
+=======
+		if (data->vbus_pin[i])
+			at91_set_gpio_output(data->vbus_pin[i], 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	usbh_ohci_data = *data;
@@ -188,9 +231,14 @@ void __init at91_add_device_usbh_ehci(struct at91_usbh_data *data)
 
 	/* Enable VBus control for UHP ports */
 	for (i = 0; i < data->ports; i++) {
+<<<<<<< HEAD
 		if (gpio_is_valid(data->vbus_pin[i]))
 			at91_set_gpio_output(data->vbus_pin[i],
 					     data->vbus_pin_active_low[i]);
+=======
+		if (data->vbus_pin[i])
+			at91_set_gpio_output(data->vbus_pin[i], 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	usbh_ehci_data = *data;
@@ -205,7 +253,11 @@ void __init at91_add_device_usbh_ehci(struct at91_usbh_data *data) {}
  *  USB HS Device (Gadget)
  * -------------------------------------------------------------------- */
 
+<<<<<<< HEAD
 #if defined(CONFIG_USB_ATMEL_USBA) || defined(CONFIG_USB_ATMEL_USBA_MODULE)
+=======
+#if defined(CONFIG_USB_GADGET_ATMEL_USBA) || defined(CONFIG_USB_GADGET_ATMEL_USBA_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct resource usba_udc_resources[] = {
 	[0] = {
 		.start	= AT91SAM9G45_UDPHS_FIFO,
@@ -271,7 +323,11 @@ void __init at91_add_device_usba(struct usba_platform_data *data)
 	usba_udc_data.pdata.num_ep = ARRAY_SIZE(usba_udc_ep);
 	memcpy(usba_udc_data.ep, usba_udc_ep, sizeof(usba_udc_ep));
 
+<<<<<<< HEAD
 	if (data && gpio_is_valid(data->vbus_pin)) {
+=======
+	if (data && data->vbus_pin > 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		at91_set_gpio_input(data->vbus_pin, 0);
 		at91_set_deglitch(data->vbus_pin, 1);
 		usba_udc_data.pdata.vbus_pin = data->vbus_pin;
@@ -292,7 +348,11 @@ void __init at91_add_device_usba(struct usba_platform_data *data) {}
 
 #if defined(CONFIG_MACB) || defined(CONFIG_MACB_MODULE)
 static u64 eth_dmamask = DMA_BIT_MASK(32);
+<<<<<<< HEAD
 static struct macb_platform_data eth_data;
+=======
+static struct at91_eth_data eth_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct resource eth_resources[] = {
 	[0] = {
@@ -319,12 +379,20 @@ static struct platform_device at91sam9g45_eth_device = {
 	.num_resources	= ARRAY_SIZE(eth_resources),
 };
 
+<<<<<<< HEAD
 void __init at91_add_device_eth(struct macb_platform_data *data)
+=======
+void __init at91_add_device_eth(struct at91_eth_data *data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (!data)
 		return;
 
+<<<<<<< HEAD
 	if (gpio_is_valid(data->phy_irq_pin)) {
+=======
+	if (data->phy_irq_pin) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		at91_set_gpio_input(data->phy_irq_pin, 0);
 		at91_set_deglitch(data->phy_irq_pin, 1);
 	}
@@ -356,7 +424,11 @@ void __init at91_add_device_eth(struct macb_platform_data *data)
 	platform_device_register(&at91sam9g45_eth_device);
 }
 #else
+<<<<<<< HEAD
 void __init at91_add_device_eth(struct macb_platform_data *data) {}
+=======
+void __init at91_add_device_eth(struct at91_eth_data *data) {}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 
@@ -439,6 +511,10 @@ void __init at91_add_device_mci(short mmc_id, struct mci_platform_data *data)
 
 	/* DMA slave channel configuration */
 	atslave->dma_dev = &at_hdmac_device.dev;
+<<<<<<< HEAD
+=======
+	atslave->reg_width = AT_DMA_SLAVE_WIDTH_32BIT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atslave->cfg = ATC_FIFOCFG_HALFFIFO
 			| ATC_SRC_H2SEL_HW | ATC_DST_H2SEL_HW;
 	atslave->ctrla = ATC_SCSIZE_16 | ATC_DCSIZE_16;
@@ -456,11 +532,19 @@ void __init at91_add_device_mci(short mmc_id, struct mci_platform_data *data)
 
 
 	/* input/irq */
+<<<<<<< HEAD
 	if (gpio_is_valid(data->slot[0].detect_pin)) {
 		at91_set_gpio_input(data->slot[0].detect_pin, 1);
 		at91_set_deglitch(data->slot[0].detect_pin, 1);
 	}
 	if (gpio_is_valid(data->slot[0].wp_pin))
+=======
+	if (data->slot[0].detect_pin) {
+		at91_set_gpio_input(data->slot[0].detect_pin, 1);
+		at91_set_deglitch(data->slot[0].detect_pin, 1);
+	}
+	if (data->slot[0].wp_pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		at91_set_gpio_input(data->slot[0].wp_pin, 1);
 
 	if (mmc_id == 0) {		/* MCI0 */
@@ -536,8 +620,13 @@ static struct resource nand_resources[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 	[1] = {
+<<<<<<< HEAD
 		.start	= AT91SAM9G45_BASE_ECC,
 		.end	= AT91SAM9G45_BASE_ECC + SZ_512 - 1,
+=======
+		.start	= AT91_BASE_SYS + AT91_ECC,
+		.end	= AT91_BASE_SYS + AT91_ECC + SZ_512 - 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_MEM,
 	}
 };
@@ -559,6 +648,7 @@ void __init at91_add_device_nand(struct atmel_nand_data *data)
 	if (!data)
 		return;
 
+<<<<<<< HEAD
 	csa = at91_matrix_read(AT91_MATRIX_EBICSA);
 	at91_matrix_write(AT91_MATRIX_EBICSA, csa | AT91_MATRIX_EBI_CS3A_SMC_SMARTMEDIA);
 
@@ -572,6 +662,21 @@ void __init at91_add_device_nand(struct atmel_nand_data *data)
 
 	/* card detect pin */
 	if (gpio_is_valid(data->det_pin))
+=======
+	csa = at91_sys_read(AT91_MATRIX_EBICSA);
+	at91_sys_write(AT91_MATRIX_EBICSA, csa | AT91_MATRIX_EBI_CS3A_SMC_SMARTMEDIA);
+
+	/* enable pin */
+	if (data->enable_pin)
+		at91_set_gpio_output(data->enable_pin, 1);
+
+	/* ready/busy pin */
+	if (data->rdy_pin)
+		at91_set_gpio_input(data->rdy_pin, 1);
+
+	/* card detect pin */
+	if (data->det_pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		at91_set_gpio_input(data->det_pin, 1);
 
 	nand_data = *data;
@@ -787,9 +892,12 @@ void __init at91_add_device_spi(struct spi_board_info *devices, int nr_devices)
 		else
 			cs_pin = spi1_standard_cs[devices[i].chip_select];
 
+<<<<<<< HEAD
 		if (!gpio_is_valid(cs_pin))
 			continue;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (devices[i].bus_num == 0)
 			enable_spi0 = 1;
 		else
@@ -869,7 +977,11 @@ void __init at91_add_device_ac97(struct ac97c_platform_data *data)
 	at91_set_A_periph(AT91_PIN_PD6, 0);	/* AC97RX */
 
 	/* reset */
+<<<<<<< HEAD
 	if (gpio_is_valid(data->reset_pin))
+=======
+	if (data->reset_pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		at91_set_gpio_output(data->reset_pin, 0);
 
 	ac97_data = *data;
@@ -879,6 +991,7 @@ void __init at91_add_device_ac97(struct ac97c_platform_data *data)
 void __init at91_add_device_ac97(struct ac97c_platform_data *data) {}
 #endif
 
+<<<<<<< HEAD
 /* --------------------------------------------------------------------
  *  Image Sensor Interface
  * -------------------------------------------------------------------- */
@@ -969,6 +1082,8 @@ void __init at91_add_device_isi(struct isi_platform_data *data,
 		bool use_pck_as_mck) {}
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* --------------------------------------------------------------------
  *  LCD Controller
@@ -1056,7 +1171,11 @@ void __init at91_add_device_lcdc(struct atmel_lcdfb_info *data) {}
 static struct resource tcb0_resources[] = {
 	[0] = {
 		.start	= AT91SAM9G45_BASE_TCB0,
+<<<<<<< HEAD
 		.end	= AT91SAM9G45_BASE_TCB0 + SZ_256 - 1,
+=======
+		.end	= AT91SAM9G45_BASE_TCB0 + SZ_16K - 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_MEM,
 	},
 	[1] = {
@@ -1077,7 +1196,11 @@ static struct platform_device at91sam9g45_tcb0_device = {
 static struct resource tcb1_resources[] = {
 	[0] = {
 		.start	= AT91SAM9G45_BASE_TCB1,
+<<<<<<< HEAD
 		.end	= AT91SAM9G45_BASE_TCB1 + SZ_256 - 1,
+=======
+		.end	= AT91SAM9G45_BASE_TCB1 + SZ_16K - 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_MEM,
 	},
 	[1] = {
@@ -1094,6 +1217,7 @@ static struct platform_device at91sam9g45_tcb1_device = {
 	.num_resources	= ARRAY_SIZE(tcb1_resources),
 };
 
+<<<<<<< HEAD
 #if defined(CONFIG_OF)
 static struct of_device_id tcb_ids[] = {
 	{ .compatible = "atmel,at91rm9200-tcb" },
@@ -1113,6 +1237,10 @@ static void __init at91_add_device_tc(void)
 	}
 #endif
 
+=======
+static void __init at91_add_device_tc(void)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_device_register(&at91sam9g45_tcb0_device);
 	platform_device_register(&at91sam9g45_tcb1_device);
 }
@@ -1126,6 +1254,7 @@ static void __init at91_add_device_tc(void) { }
  * -------------------------------------------------------------------- */
 
 #if defined(CONFIG_RTC_DRV_AT91RM9200) || defined(CONFIG_RTC_DRV_AT91RM9200_MODULE)
+<<<<<<< HEAD
 static struct resource rtc_resources[] = {
 	[0] = {
 		.start	= AT91SAM9G45_BASE_RTC,
@@ -1144,6 +1273,12 @@ static struct platform_device at91sam9g45_rtc_device = {
 	.id		= -1,
 	.resource	= rtc_resources,
 	.num_resources	= ARRAY_SIZE(rtc_resources),
+=======
+static struct platform_device at91sam9g45_rtc_device = {
+	.name		= "at91_rtc",
+	.id		= -1,
+	.num_resources	= 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void __init at91_add_device_rtc(void)
@@ -1212,10 +1347,15 @@ void __init at91_add_device_tsadcc(struct at91_tsadcc_data *data) {}
 
 static struct resource rtt_resources[] = {
 	{
+<<<<<<< HEAD
 		.start	= AT91SAM9G45_BASE_RTT,
 		.end	= AT91SAM9G45_BASE_RTT + SZ_16 - 1,
 		.flags	= IORESOURCE_MEM,
 	}, {
+=======
+		.start	= AT91_BASE_SYS + AT91_RTT,
+		.end	= AT91_BASE_SYS + AT91_RTT + SZ_16 - 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_MEM,
 	}
 };
@@ -1224,6 +1364,7 @@ static struct platform_device at91sam9g45_rtt_device = {
 	.name		= "at91_rtt",
 	.id		= 0,
 	.resource	= rtt_resources,
+<<<<<<< HEAD
 };
 
 #if IS_ENABLED(CONFIG_RTC_DRV_AT91SAM9)
@@ -1250,11 +1391,19 @@ static void __init at91_add_device_rtt_rtc(void)
 static void __init at91_add_device_rtt(void)
 {
 	at91_add_device_rtt_rtc();
+=======
+	.num_resources	= ARRAY_SIZE(rtt_resources),
+};
+
+static void __init at91_add_device_rtt(void)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_device_register(&at91sam9g45_rtt_device);
 }
 
 
 /* --------------------------------------------------------------------
+<<<<<<< HEAD
  *  TRNG
  * -------------------------------------------------------------------- */
 
@@ -1283,10 +1432,13 @@ static void __init at91_add_device_trng(void) {}
 #endif
 
 /* --------------------------------------------------------------------
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  Watchdog
  * -------------------------------------------------------------------- */
 
 #if defined(CONFIG_AT91SAM9X_WATCHDOG) || defined(CONFIG_AT91SAM9X_WATCHDOG_MODULE)
+<<<<<<< HEAD
 static struct resource wdt_resources[] = {
 	{
 		.start	= AT91SAM9G45_BASE_WDT,
@@ -1300,6 +1452,12 @@ static struct platform_device at91sam9g45_wdt_device = {
 	.id		= -1,
 	.resource	= wdt_resources,
 	.num_resources	= ARRAY_SIZE(wdt_resources),
+=======
+static struct platform_device at91sam9g45_wdt_device = {
+	.name		= "at91_wdt",
+	.id		= -1,
+	.num_resources	= 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void __init at91_add_device_watchdog(void)
@@ -1495,8 +1653,13 @@ void __init at91_add_device_ssc(unsigned id, unsigned pins) {}
 #if defined(CONFIG_SERIAL_ATMEL)
 static struct resource dbgu_resources[] = {
 	[0] = {
+<<<<<<< HEAD
 		.start	= AT91SAM9G45_BASE_DBGU,
 		.end	= AT91SAM9G45_BASE_DBGU + SZ_512 - 1,
+=======
+		.start	= AT91_VA_BASE_SYS + AT91_DBGU,
+		.end	= AT91_VA_BASE_SYS + AT91_DBGU + SZ_512 - 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_MEM,
 	},
 	[1] = {
@@ -1509,6 +1672,10 @@ static struct resource dbgu_resources[] = {
 static struct atmel_uart_data dbgu_data = {
 	.use_dma_tx	= 0,
 	.use_dma_rx	= 0,
+<<<<<<< HEAD
+=======
+	.regs		= (void __iomem *)(AT91_VA_BASE_SYS + AT91_DBGU),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static u64 dbgu_dmamask = DMA_BIT_MASK(32);
@@ -1704,6 +1871,10 @@ static inline void configure_usart3_pins(unsigned pins)
 }
 
 static struct platform_device *__initdata at91_uarts[ATMEL_MAX_UART];	/* the UARTs to use */
+<<<<<<< HEAD
+=======
+struct platform_device *atmel_default_console_device;	/* the serial console device */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void __init at91_register_uart(unsigned id, unsigned portnr, unsigned pins)
 {
@@ -1778,7 +1949,10 @@ static int __init at91_add_standard_devices(void)
 	at91_add_device_hdmac();
 	at91_add_device_rtc();
 	at91_add_device_rtt();
+<<<<<<< HEAD
 	at91_add_device_trng();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	at91_add_device_watchdog();
 	at91_add_device_tc();
 	return 0;

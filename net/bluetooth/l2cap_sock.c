@@ -3,7 +3,10 @@
    Copyright (C) 2000-2001 Qualcomm Incorporated
    Copyright (C) 2009-2010 Gustavo F. Padovan <gustavo@padovan.org>
    Copyright (C) 2010 Google Inc.
+<<<<<<< HEAD
    Copyright (C) 2011 ProFUSION Embedded Systems
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
    Written 2000,2001 by Maxim Krasnyansky <maxk@qualcomm.com>
 
@@ -27,9 +30,12 @@
 
 /* Bluetooth L2CAP sockets. */
 
+<<<<<<< HEAD
 #include <linux/security.h>
 #include <linux/export.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/bluetooth/bluetooth.h>
 #include <net/bluetooth/hci_core.h>
 #include <net/bluetooth/l2cap.h>
@@ -82,7 +88,11 @@ static int l2cap_sock_bind(struct socket *sock, struct sockaddr *addr, int alen)
 	}
 
 	if (la.l2_cid)
+<<<<<<< HEAD
 		err = l2cap_add_scid(chan, __le16_to_cpu(la.l2_cid));
+=======
+		err = l2cap_add_scid(chan, la.l2_cid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		err = l2cap_add_psm(chan, &la.l2_bdaddr, la.l2_psm);
 
@@ -123,6 +133,7 @@ static int l2cap_sock_connect(struct socket *sock, struct sockaddr *addr, int al
 	if (la.l2_cid && la.l2_psm)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	err = l2cap_chan_connect(chan, la.l2_psm, __le16_to_cpu(la.l2_cid),
 				&la.l2_bdaddr);
 	if (err)
@@ -135,6 +146,72 @@ static int l2cap_sock_connect(struct socket *sock, struct sockaddr *addr, int al
 
 	release_sock(sk);
 
+=======
+	lock_sock(sk);
+
+	if (chan->chan_type == L2CAP_CHAN_CONN_ORIENTED
+			&& !(la.l2_psm || la.l2_cid)) {
+		err = -EINVAL;
+		goto done;
+	}
+
+	switch (chan->mode) {
+	case L2CAP_MODE_BASIC:
+		break;
+	case L2CAP_MODE_ERTM:
+	case L2CAP_MODE_STREAMING:
+		if (!disable_ertm)
+			break;
+		/* fall through */
+	default:
+		err = -ENOTSUPP;
+		goto done;
+	}
+
+	switch (sk->sk_state) {
+	case BT_CONNECT:
+	case BT_CONNECT2:
+	case BT_CONFIG:
+		/* Already connecting */
+		goto wait;
+
+	case BT_CONNECTED:
+		/* Already connected */
+		err = -EISCONN;
+		goto done;
+
+	case BT_OPEN:
+	case BT_BOUND:
+		/* Can connect */
+		break;
+
+	default:
+		err = -EBADFD;
+		goto done;
+	}
+
+	/* PSM must be odd and lsb of upper byte must be 0 */
+	if ((__le16_to_cpu(la.l2_psm) & 0x0101) != 0x0001 && !la.l2_cid &&
+					chan->chan_type != L2CAP_CHAN_RAW) {
+		err = -EINVAL;
+		goto done;
+	}
+
+	/* Set destination address and psm */
+	bacpy(&bt_sk(sk)->dst, &la.l2_bdaddr);
+	chan->psm = la.l2_psm;
+	chan->dcid = la.l2_cid;
+
+	err = l2cap_chan_connect(l2cap_pi(sk)->chan);
+	if (err)
+		goto done;
+
+wait:
+	err = bt_sock_wait_state(sk, BT_CONNECTED,
+			sock_sndtimeo(sk, flags & O_NONBLOCK));
+done:
+	release_sock(sk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -242,7 +319,10 @@ static int l2cap_sock_getname(struct socket *sock, struct sockaddr *addr, int *l
 
 	BT_DBG("sock %p, sk %p", sock, sk);
 
+<<<<<<< HEAD
 	memset(la, 0, sizeof(struct sockaddr_l2));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	addr->sa_family = AF_BLUETOOTH;
 	*len = sizeof(struct sockaddr_l2);
 
@@ -284,7 +364,11 @@ static int l2cap_sock_getsockopt_old(struct socket *sock, int optname, char __us
 		opts.mode     = chan->mode;
 		opts.fcs      = chan->fcs;
 		opts.max_tx   = chan->max_tx;
+<<<<<<< HEAD
 		opts.txwin_size = chan->tx_win;
+=======
+		opts.txwin_size = (__u16)chan->tx_win;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		len = min_t(unsigned int, len, sizeof(opts));
 		if (copy_to_user(optval, (char *) &opts, len))
@@ -309,10 +393,17 @@ static int l2cap_sock_getsockopt_old(struct socket *sock, int optname, char __us
 			break;
 		}
 
+<<<<<<< HEAD
 		if (test_bit(FLAG_ROLE_SWITCH, &chan->flags))
 			opt |= L2CAP_LM_MASTER;
 
 		if (test_bit(FLAG_FORCE_RELIABLE, &chan->flags))
+=======
+		if (chan->role_switch)
+			opt |= L2CAP_LM_MASTER;
+
+		if (chan->force_reliable)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			opt |= L2CAP_LM_RELIABLE;
 
 		if (put_user(opt, (u32 __user *) optval))
@@ -399,8 +490,12 @@ static int l2cap_sock_getsockopt(struct socket *sock, int level, int optname, ch
 		break;
 
 	case BT_FLUSHABLE:
+<<<<<<< HEAD
 		if (put_user(test_bit(FLAG_FLUSHABLE, &chan->flags),
 						(u32 __user *) optval))
+=======
+		if (put_user(chan->flushable, (u32 __user *) optval))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			err = -EFAULT;
 
 		break;
@@ -412,7 +507,11 @@ static int l2cap_sock_getsockopt(struct socket *sock, int level, int optname, ch
 			break;
 		}
 
+<<<<<<< HEAD
 		pwr.force_active = test_bit(FLAG_FORCE_ACTIVE, &chan->flags);
+=======
+		pwr.force_active = chan->force_active;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		len = min_t(unsigned int, len, sizeof(pwr));
 		if (copy_to_user(optval, (char *) &pwr, len))
@@ -420,6 +519,7 @@ static int l2cap_sock_getsockopt(struct socket *sock, int level, int optname, ch
 
 		break;
 
+<<<<<<< HEAD
 	case BT_CHANNEL_POLICY:
 		if (!enable_hs) {
 			err = -ENOPROTOOPT;
@@ -430,6 +530,8 @@ static int l2cap_sock_getsockopt(struct socket *sock, int level, int optname, ch
 			err = -EFAULT;
 		break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		err = -ENOPROTOOPT;
 		break;
@@ -464,7 +566,11 @@ static int l2cap_sock_setsockopt_old(struct socket *sock, int optname, char __us
 		opts.mode     = chan->mode;
 		opts.fcs      = chan->fcs;
 		opts.max_tx   = chan->max_tx;
+<<<<<<< HEAD
 		opts.txwin_size = chan->tx_win;
+=======
+		opts.txwin_size = (__u16)chan->tx_win;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		len = min_t(unsigned int, sizeof(opts), optlen);
 		if (copy_from_user((char *) &opts, optval, len)) {
@@ -472,7 +578,11 @@ static int l2cap_sock_setsockopt_old(struct socket *sock, int optname, char __us
 			break;
 		}
 
+<<<<<<< HEAD
 		if (opts.txwin_size > L2CAP_DEFAULT_EXT_WINDOW) {
+=======
+		if (opts.txwin_size > L2CAP_DEFAULT_TX_WINDOW) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			err = -EINVAL;
 			break;
 		}
@@ -496,7 +606,11 @@ static int l2cap_sock_setsockopt_old(struct socket *sock, int optname, char __us
 		chan->omtu = opts.omtu;
 		chan->fcs  = opts.fcs;
 		chan->max_tx = opts.max_tx;
+<<<<<<< HEAD
 		chan->tx_win = opts.txwin_size;
+=======
+		chan->tx_win = (__u8)opts.txwin_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case L2CAP_LM:
@@ -512,6 +626,7 @@ static int l2cap_sock_setsockopt_old(struct socket *sock, int optname, char __us
 		if (opt & L2CAP_LM_SECURE)
 			chan->sec_level = BT_SECURITY_HIGH;
 
+<<<<<<< HEAD
 		if (opt & L2CAP_LM_MASTER)
 			set_bit(FLAG_ROLE_SWITCH, &chan->flags);
 		else
@@ -521,6 +636,10 @@ static int l2cap_sock_setsockopt_old(struct socket *sock, int optname, char __us
 			set_bit(FLAG_FORCE_RELIABLE, &chan->flags);
 		else
 			clear_bit(FLAG_FORCE_RELIABLE, &chan->flags);
+=======
+		chan->role_switch    = (opt & L2CAP_LM_MASTER);
+		chan->force_reliable = (opt & L2CAP_LM_RELIABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	default:
@@ -576,6 +695,7 @@ static int l2cap_sock_setsockopt(struct socket *sock, int level, int optname, ch
 
 		chan->sec_level = sec.level;
 
+<<<<<<< HEAD
 		if (!chan->conn)
 			break;
 
@@ -583,11 +703,16 @@ static int l2cap_sock_setsockopt(struct socket *sock, int level, int optname, ch
 
 		/*change security for LE channels */
 		if (chan->scid == L2CAP_CID_LE_DATA) {
+=======
+		conn = chan->conn;
+		if (conn && chan->scid == L2CAP_CID_LE_DATA) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!conn->hcon->out) {
 				err = -EINVAL;
 				break;
 			}
 
+<<<<<<< HEAD
 			if (smp_conn_security(conn->hcon, sec.level))
 				break;
 			sk->sk_state = BT_CONFIG;
@@ -603,6 +728,13 @@ static int l2cap_sock_setsockopt(struct socket *sock, int level, int optname, ch
 				sk->sk_state_change(sk);
 		} else {
 			err = -EINVAL;
+=======
+			if (smp_conn_security(conn, sec.level))
+				break;
+
+			err = 0;
+			sk->sk_state = BT_CONFIG;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		break;
 
@@ -641,10 +773,14 @@ static int l2cap_sock_setsockopt(struct socket *sock, int level, int optname, ch
 			}
 		}
 
+<<<<<<< HEAD
 		if (opt)
 			set_bit(FLAG_FLUSHABLE, &chan->flags);
 		else
 			clear_bit(FLAG_FLUSHABLE, &chan->flags);
+=======
+		chan->flushable = opt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case BT_POWER:
@@ -661,6 +797,7 @@ static int l2cap_sock_setsockopt(struct socket *sock, int level, int optname, ch
 			err = -EFAULT;
 			break;
 		}
+<<<<<<< HEAD
 
 		if (pwr.force_active)
 			set_bit(FLAG_FORCE_ACTIVE, &chan->flags);
@@ -691,6 +828,9 @@ static int l2cap_sock_setsockopt(struct socket *sock, int level, int optname, ch
 		}
 
 		chan->chan_policy = (u8) opt;
+=======
+		chan->force_active = pwr.force_active;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	default:
@@ -724,7 +864,11 @@ static int l2cap_sock_sendmsg(struct kiocb *iocb, struct socket *sock, struct ms
 		return -ENOTCONN;
 	}
 
+<<<<<<< HEAD
 	err = l2cap_chan_send(chan, msg, len, sk->sk_priority);
+=======
+	err = l2cap_chan_send(chan, msg, len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	release_sock(sk);
 	return err;
@@ -740,7 +884,10 @@ static int l2cap_sock_recvmsg(struct kiocb *iocb, struct socket *sock, struct ms
 
 	if (sk->sk_state == BT_CONNECT2 && bt_sk(sk)->defer_setup) {
 		sk->sk_state = BT_CONFIG;
+<<<<<<< HEAD
 		pi->chan->state = BT_CONFIG;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		__l2cap_connect_rsp_defer(pi->chan);
 		release_sock(sk);
@@ -791,7 +938,11 @@ static void l2cap_sock_kill(struct sock *sk)
 	if (!sock_flag(sk, SOCK_ZAPPED) || sk->sk_socket)
 		return;
 
+<<<<<<< HEAD
 	BT_DBG("sk %p state %s", sk, state_to_string(sk->sk_state));
+=======
+	BT_DBG("sk %p state %d", sk, sk->sk_state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Kill poor orphan */
 
@@ -803,8 +954,12 @@ static void l2cap_sock_kill(struct sock *sk)
 static int l2cap_sock_shutdown(struct socket *sock, int how)
 {
 	struct sock *sk = sock->sk;
+<<<<<<< HEAD
 	struct l2cap_chan *chan;
 	struct l2cap_conn *conn;
+=======
+	struct l2cap_chan *chan = l2cap_pi(sk)->chan;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err = 0;
 
 	BT_DBG("sock %p, sk %p", sock, sk);
@@ -812,6 +967,7 @@ static int l2cap_sock_shutdown(struct socket *sock, int how)
 	if (!sk)
 		return 0;
 
+<<<<<<< HEAD
 	chan = l2cap_pi(sk)->chan;
 	conn = chan->conn;
 
@@ -821,15 +977,22 @@ static int l2cap_sock_shutdown(struct socket *sock, int how)
 	l2cap_chan_lock(chan);
 	lock_sock(sk);
 
+=======
+	lock_sock(sk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!sk->sk_shutdown) {
 		if (chan->mode == L2CAP_MODE_ERTM)
 			err = __l2cap_wait_ack(sk);
 
 		sk->sk_shutdown = SHUTDOWN_MASK;
+<<<<<<< HEAD
 
 		release_sock(sk);
 		l2cap_chan_close(chan, 0);
 		lock_sock(sk);
+=======
+		l2cap_chan_close(chan, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (sock_flag(sk, SOCK_LINGER) && sk->sk_lingertime)
 			err = bt_sock_wait_state(sk, BT_CLOSED,
@@ -840,11 +1003,14 @@ static int l2cap_sock_shutdown(struct socket *sock, int how)
 		err = -sk->sk_err;
 
 	release_sock(sk);
+<<<<<<< HEAD
 	l2cap_chan_unlock(chan);
 
 	if (conn)
 		mutex_unlock(&conn->chan_lock);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -874,8 +1040,11 @@ static struct l2cap_chan *l2cap_sock_new_connection_cb(void *data)
 	if (!sk)
 		return NULL;
 
+<<<<<<< HEAD
 	bt_sock_reclassify_lock(sk, BTPROTO_L2CAP);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	l2cap_sock_init(sk, parent);
 
 	return l2cap_pi(sk)->chan;
@@ -887,12 +1056,17 @@ static int l2cap_sock_recv_cb(void *data, struct sk_buff *skb)
 	struct sock *sk = data;
 	struct l2cap_pinfo *pi = l2cap_pi(sk);
 
+<<<<<<< HEAD
 	lock_sock(sk);
 
 	if (pi->rx_busy_skb) {
 		err = -ENOMEM;
 		goto done;
 	}
+=======
+	if (pi->rx_busy_skb)
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = sock_queue_rcv_skb(sk, skb);
 
@@ -911,9 +1085,12 @@ static int l2cap_sock_recv_cb(void *data, struct sk_buff *skb)
 		err = 0;
 	}
 
+<<<<<<< HEAD
 done:
 	release_sock(sk);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -931,6 +1108,7 @@ static void l2cap_sock_state_change_cb(void *data, int state)
 	sk->sk_state = state;
 }
 
+<<<<<<< HEAD
 static struct sk_buff *l2cap_sock_alloc_skb_cb(struct l2cap_chan *chan,
 					       unsigned long len, int nb,
 					       int *err)
@@ -940,13 +1118,18 @@ static struct sk_buff *l2cap_sock_alloc_skb_cb(struct l2cap_chan *chan,
 	return bt_skb_send_alloc(sk, len, nb, err);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct l2cap_ops l2cap_chan_ops = {
 	.name		= "L2CAP Socket Interface",
 	.new_connection	= l2cap_sock_new_connection_cb,
 	.recv		= l2cap_sock_recv_cb,
 	.close		= l2cap_sock_close_cb,
 	.state_change	= l2cap_sock_state_change_cb,
+<<<<<<< HEAD
 	.alloc_skb	= l2cap_sock_alloc_skb_cb,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void l2cap_sock_destruct(struct sock *sk)
@@ -983,11 +1166,19 @@ static void l2cap_sock_init(struct sock *sk, struct sock *parent)
 		chan->fcs  = pchan->fcs;
 		chan->max_tx = pchan->max_tx;
 		chan->tx_win = pchan->tx_win;
+<<<<<<< HEAD
 		chan->tx_win_max = pchan->tx_win_max;
 		chan->sec_level = pchan->sec_level;
 		chan->flags = pchan->flags;
 
 		security_sk_clone(parent, sk);
+=======
+		chan->sec_level = pchan->sec_level;
+		chan->role_switch = pchan->role_switch;
+		chan->force_reliable = pchan->force_reliable;
+		chan->flushable = pchan->flushable;
+		chan->force_active = pchan->force_active;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 
 		switch (sk->sk_type) {
@@ -1014,10 +1205,19 @@ static void l2cap_sock_init(struct sock *sk, struct sock *parent)
 		chan->max_tx = L2CAP_DEFAULT_MAX_TX;
 		chan->fcs  = L2CAP_FCS_CRC16;
 		chan->tx_win = L2CAP_DEFAULT_TX_WINDOW;
+<<<<<<< HEAD
 		chan->tx_win_max = L2CAP_DEFAULT_TX_WINDOW;
 		chan->sec_level = BT_SECURITY_LOW;
 		chan->flags = 0;
 		set_bit(FLAG_FORCE_ACTIVE, &chan->flags);
+=======
+		chan->sec_level = BT_SECURITY_LOW;
+		chan->role_switch = 0;
+		chan->force_reliable = 0;
+		chan->flushable = BT_FLUSHABLE_OFF;
+		chan->force_active = BT_POWER_FORCE_ACTIVE_ON;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Default config options */

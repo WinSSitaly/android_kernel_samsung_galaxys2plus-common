@@ -28,6 +28,10 @@
 #include <linux/delay.h>
 #include <linux/pm.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
+=======
+#include <linux/platform_device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/spi/spi.h>
 #include <linux/slab.h>
 #include <sound/core.h>
@@ -42,6 +46,7 @@
 struct wm8940_priv {
 	unsigned int sysclk;
 	enum snd_soc_control_type control_type;
+<<<<<<< HEAD
 };
 
 static int wm8940_volatile_register(struct snd_soc_codec *codec,
@@ -55,6 +60,11 @@ static int wm8940_volatile_register(struct snd_soc_codec *codec,
 	}
 }
 
+=======
+	void *control_data;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u16 wm8940_reg_defaults[] = {
 	0x8940, /* Soft Reset */
 	0x0000, /* Power 1 */
@@ -306,6 +316,11 @@ static int wm8940_add_widgets(struct snd_soc_codec *codec)
 	if (ret)
 		goto error_ret;
 	ret = snd_soc_dapm_add_routes(dapm, audio_map, ARRAY_SIZE(audio_map));
+<<<<<<< HEAD
+=======
+	if (ret)
+		goto error_ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 error_ret:
 	return ret;
@@ -469,6 +484,7 @@ static int wm8940_set_bias_level(struct snd_soc_codec *codec,
 		ret = snd_soc_write(codec, WM8940_POWER1, pwr_reg | 0x1);
 		break;
 	case SND_SOC_BIAS_STANDBY:
+<<<<<<< HEAD
 		if (codec->dapm.bias_level == SND_SOC_BIAS_OFF) {
 			ret = snd_soc_cache_sync(codec);
 			if (ret < 0) {
@@ -477,6 +493,8 @@ static int wm8940_set_bias_level(struct snd_soc_codec *codec,
 			}
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* ensure bufioen and biasen */
 		pwr_reg |= (1 << 2) | (1 << 3);
 		/* set vmid to 300k for standby */
@@ -620,7 +638,11 @@ static int wm8940_set_dai_clkdiv(struct snd_soc_dai *codec_dai,
 
 	switch (div_id) {
 	case WM8940_BCLKDIV:
+<<<<<<< HEAD
 		reg = snd_soc_read(codec, WM8940_CLOCK) & 0xFFE3;
+=======
+		reg = snd_soc_read(codec, WM8940_CLOCK) & 0xFFEF3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = snd_soc_write(codec, WM8940_CLOCK, reg | (div << 2));
 		break;
 	case WM8940_MCLKDIV:
@@ -628,8 +650,13 @@ static int wm8940_set_dai_clkdiv(struct snd_soc_dai *codec_dai,
 		ret = snd_soc_write(codec, WM8940_CLOCK, reg | (div << 5));
 		break;
 	case WM8940_OPCLKDIV:
+<<<<<<< HEAD
 		reg = snd_soc_read(codec, WM8940_GPIO) & 0xFFCF;
 		ret = snd_soc_write(codec, WM8940_GPIO, reg | (div << 4));
+=======
+		reg = snd_soc_read(codec, WM8940_ADDCNTRL) & 0xFFCF;
+		ret = snd_soc_write(codec, WM8940_ADDCNTRL, reg | (div << 4));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 	return ret;
@@ -643,7 +670,11 @@ static int wm8940_set_dai_clkdiv(struct snd_soc_dai *codec_dai,
 			SNDRV_PCM_FMTBIT_S24_LE |			\
 			SNDRV_PCM_FMTBIT_S32_LE)
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops wm8940_dai_ops = {
+=======
+static struct snd_soc_dai_ops wm8940_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params = wm8940_i2s_hw_params,
 	.set_sysclk = wm8940_set_dai_sysclk,
 	.digital_mute = wm8940_mute,
@@ -672,15 +703,48 @@ static struct snd_soc_dai_driver wm8940_dai = {
 	.symmetric_rates = 1,
 };
 
+<<<<<<< HEAD
 static int wm8940_suspend(struct snd_soc_codec *codec)
+=======
+static int wm8940_suspend(struct snd_soc_codec *codec, pm_message_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return wm8940_set_bias_level(codec, SND_SOC_BIAS_OFF);
 }
 
 static int wm8940_resume(struct snd_soc_codec *codec)
 {
+<<<<<<< HEAD
 	wm8940_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
 	return 0;
+=======
+	int i;
+	int ret;
+	u8 data[3];
+	u16 *cache = codec->reg_cache;
+
+	/* Sync reg_cache with the hardware
+	 * Could use auto incremented writes to speed this up
+	 */
+	for (i = 0; i < ARRAY_SIZE(wm8940_reg_defaults); i++) {
+		data[0] = i;
+		data[1] = (cache[i] & 0xFF00) >> 8;
+		data[2] = cache[i] & 0x00FF;
+		ret = codec->hw_write(codec->control_data, data, 3);
+		if (ret < 0)
+			goto error_ret;
+		else if (ret != 3) {
+			ret = -EIO;
+			goto error_ret;
+		}
+	}
+	ret = wm8940_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
+	if (ret)
+		goto error_ret;
+
+error_ret:
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int wm8940_probe(struct snd_soc_codec *codec)
@@ -690,6 +754,10 @@ static int wm8940_probe(struct snd_soc_codec *codec)
 	int ret;
 	u16 reg;
 
+<<<<<<< HEAD
+=======
+	codec->control_data = wm8940->control_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = snd_soc_codec_set_cache_io(codec, 8, 16, wm8940->control_type);
 	if (ret < 0) {
 		dev_err(codec->dev, "Failed to set cache I/O: %d\n", ret);
@@ -717,11 +785,21 @@ static int wm8940_probe(struct snd_soc_codec *codec)
 			return ret;
 	}
 
+<<<<<<< HEAD
 	ret = snd_soc_add_codec_controls(codec, wm8940_snd_controls,
+=======
+	ret = snd_soc_add_controls(codec, wm8940_snd_controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     ARRAY_SIZE(wm8940_snd_controls));
 	if (ret)
 		return ret;
 	ret = wm8940_add_widgets(codec);
+<<<<<<< HEAD
+=======
+	if (ret)
+		return ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -740,33 +818,56 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8940 = {
 	.reg_cache_size = ARRAY_SIZE(wm8940_reg_defaults),
 	.reg_word_size = sizeof(u16),
 	.reg_cache_default = wm8940_reg_defaults,
+<<<<<<< HEAD
 	.volatile_register = wm8940_volatile_register,
 };
 
+=======
+};
+
+#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __devinit int wm8940_i2c_probe(struct i2c_client *i2c,
 				      const struct i2c_device_id *id)
 {
 	struct wm8940_priv *wm8940;
 	int ret;
 
+<<<<<<< HEAD
 	wm8940 = devm_kzalloc(&i2c->dev, sizeof(struct wm8940_priv),
 			      GFP_KERNEL);
+=======
+	wm8940 = kzalloc(sizeof(struct wm8940_priv), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (wm8940 == NULL)
 		return -ENOMEM;
 
 	i2c_set_clientdata(i2c, wm8940);
+<<<<<<< HEAD
+=======
+	wm8940->control_data = i2c;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wm8940->control_type = SND_SOC_I2C;
 
 	ret = snd_soc_register_codec(&i2c->dev,
 			&soc_codec_dev_wm8940, &wm8940_dai, 1);
+<<<<<<< HEAD
 
+=======
+	if (ret < 0)
+		kfree(wm8940);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static __devexit int wm8940_i2c_remove(struct i2c_client *client)
 {
 	snd_soc_unregister_codec(&client->dev);
+<<<<<<< HEAD
 
+=======
+	kfree(i2c_get_clientdata(client));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -778,29 +879,51 @@ MODULE_DEVICE_TABLE(i2c, wm8940_i2c_id);
 
 static struct i2c_driver wm8940_i2c_driver = {
 	.driver = {
+<<<<<<< HEAD
 		.name = "wm8940",
+=======
+		.name = "wm8940-codec",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.owner = THIS_MODULE,
 	},
 	.probe =    wm8940_i2c_probe,
 	.remove =   __devexit_p(wm8940_i2c_remove),
 	.id_table = wm8940_i2c_id,
 };
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __init wm8940_modinit(void)
 {
 	int ret = 0;
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = i2c_add_driver(&wm8940_i2c_driver);
 	if (ret != 0) {
 		printk(KERN_ERR "Failed to register wm8940 I2C driver: %d\n",
 		       ret);
 	}
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 module_init(wm8940_modinit);
 
 static void __exit wm8940_exit(void)
 {
+<<<<<<< HEAD
 	i2c_del_driver(&wm8940_i2c_driver);
+=======
+#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
+	i2c_del_driver(&wm8940_i2c_driver);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 module_exit(wm8940_exit);
 

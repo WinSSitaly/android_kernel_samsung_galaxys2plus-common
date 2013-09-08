@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * File:         Documentation/blackfin/bfin-gpio-notes.txt
+=======
+ * File:         Documentation/blackfin/bfin-gpio-note.txt
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Based on:
  * Author:
  *

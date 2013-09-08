@@ -20,7 +20,11 @@
 #include <linux/clk.h>
 #include <linux/err.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sysfs.h>
 #include <linux/slab.h>
 

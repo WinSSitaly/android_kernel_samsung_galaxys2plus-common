@@ -24,7 +24,11 @@
 			.word	1b,4b,2b,4b;				\
 			.previous;"					\
 	: "=&r" (oldval), "=&r" (ret)					\
+<<<<<<< HEAD
 	: "r" (uaddr), "i" (-EFAULT), "r" (oparg)			\
+=======
+	: "b" (uaddr), "i" (-EFAULT), "r" (oparg)			\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	);								\
 })
 

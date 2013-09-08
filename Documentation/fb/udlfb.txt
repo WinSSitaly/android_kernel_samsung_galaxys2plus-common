@@ -87,6 +87,7 @@ Special configuration for udlfb is usually unnecessary. There are a few
 options, however.
 
 From the command line, pass options to modprobe
+<<<<<<< HEAD
 modprobe udlfb fb_defio=0 console=1 shadow=1
 
 Or modify options on the fly at /sys/module/udlfb/parameters directory via
@@ -119,6 +120,25 @@ shadow		Allocate a 2nd framebuffer to shadow what's currently across
 		do not transmit. Spends host memory to save USB transfers.
 		Enabled by default. Only disable on very low memory systems.
 		default: shadow=1
+=======
+modprobe udlfb defio=1 console=1
+
+Or for permanent option, create file like /etc/modprobe.d/options with text
+options udlfb defio=1 console=1
+
+Accepted options:
+
+fb_defio	Make use of the fb_defio (CONFIG_FB_DEFERRED_IO) kernel
+		module to track changed areas of the framebuffer by page faults.
+        	Standard fbdev applications that use mmap but that do not
+		report damage, may be able to work with this enabled.
+		Disabled by default because of overhead and other issues.
+
+console		Allow fbcon to attach to udlfb provided framebuffers. This
+		is disabled by default because fbcon will aggressively consume
+		the first framebuffer it finds, which isn't usually what the
+		user wants in the case of USB displays.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 Sysfs Attributes
 ================

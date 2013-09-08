@@ -19,6 +19,7 @@
  *
  */
 
+<<<<<<< HEAD
 /****************************\
   Reset function and helpers
 \****************************/
@@ -26,10 +27,20 @@
 #include <asm/unaligned.h>
 
 #include <linux/pci.h>		/* To determine if a card is pci-e */
+=======
+/*****************************\
+  Reset functions and helpers
+\*****************************/
+
+#include <asm/unaligned.h>
+
+#include <linux/pci.h> 		/* To determine if a card is pci-e */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/log2.h>
 #include <linux/platform_device.h>
 #include "ath5k.h"
 #include "reg.h"
+<<<<<<< HEAD
 #include "debug.h"
 
 
@@ -42,10 +53,17 @@
  */
 
 
+=======
+#include "base.h"
+#include "debug.h"
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /******************\
 * Helper functions *
 \******************/
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_register_timeout() - Poll a register for a flag/field change
  * @ah: The &struct ath5k_hw
@@ -63,6 +81,12 @@
  */
 int
 ath5k_hw_register_timeout(struct ath5k_hw *ah, u32 reg, u32 flag, u32 val,
+=======
+/*
+ * Check if a register write has been completed
+ */
+int ath5k_hw_register_timeout(struct ath5k_hw *ah, u32 reg, u32 flag, u32 val,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      bool is_set)
 {
 	int i;
@@ -86,6 +110,7 @@ ath5k_hw_register_timeout(struct ath5k_hw *ah, u32 reg, u32 flag, u32 val,
 \*************************/
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_htoclock() - Translate usec to hw clock units
  * @ah: The &struct ath5k_hw
  * @usec: value in microseconds
@@ -97,12 +122,21 @@ ath5k_hw_register_timeout(struct ath5k_hw *ah, u32 reg, u32 flag, u32 val,
  */
 unsigned int
 ath5k_hw_htoclock(struct ath5k_hw *ah, unsigned int usec)
+=======
+ * ath5k_hw_htoclock - Translate usec to hw clock units
+ *
+ * @ah: The &struct ath5k_hw
+ * @usec: value in microseconds
+ */
+unsigned int ath5k_hw_htoclock(struct ath5k_hw *ah, unsigned int usec)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath_common *common = ath5k_hw_common(ah);
 	return usec * common->clockrate;
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_clocktoh() - Translate hw clock units to usec
  * @ah: The &struct ath5k_hw
  * @clock: value in hw clock units
@@ -114,12 +148,19 @@ ath5k_hw_htoclock(struct ath5k_hw *ah, unsigned int usec)
  */
 unsigned int
 ath5k_hw_clocktoh(struct ath5k_hw *ah, unsigned int clock)
+=======
+ * ath5k_hw_clocktoh - Translate hw clock units to usec
+ * @clock: value in hw clock units
+ */
+unsigned int ath5k_hw_clocktoh(struct ath5k_hw *ah, unsigned int clock)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath_common *common = ath5k_hw_common(ah);
 	return clock / common->clockrate;
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_init_core_clock() - Initialize core clock
  * @ah: The &struct ath5k_hw
  *
@@ -128,6 +169,15 @@ ath5k_hw_clocktoh(struct ath5k_hw *ah, unsigned int clock)
  */
 static void
 ath5k_hw_init_core_clock(struct ath5k_hw *ah)
+=======
+ * ath5k_hw_init_core_clock - Initialize core clock
+ *
+ * @ah The &struct ath5k_hw
+ *
+ * Initialize core clock parameters (usec, usec32, latencies etc).
+ */
+static void ath5k_hw_init_core_clock(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ieee80211_channel *channel = ah->ah_current_channel;
 	struct ath_common *common = ath5k_hw_common(ah);
@@ -136,6 +186,7 @@ ath5k_hw_init_core_clock(struct ath5k_hw *ah)
 	/*
 	 * Set core clock frequency
 	 */
+<<<<<<< HEAD
 	switch (channel->hw_value) {
 	case AR5K_MODE_11A:
 		clock = 40;
@@ -148,6 +199,14 @@ ath5k_hw_init_core_clock(struct ath5k_hw *ah)
 		clock = 44;
 		break;
 	}
+=======
+	if (channel->hw_value & CHANNEL_5GHZ)
+		clock = 40; /* 802.11a */
+	else if (channel->hw_value & CHANNEL_CCK)
+		clock = 22; /* 802.11b */
+	else
+		clock = 44; /* 802.11g */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Use clock multiplier for non-default
 	 * bwmode */
@@ -182,11 +241,18 @@ ath5k_hw_init_core_clock(struct ath5k_hw *ah)
 
 	/* Set 32MHz USEC counter */
 	if ((ah->ah_radio == AR5K_RF5112) ||
+<<<<<<< HEAD
 	    (ah->ah_radio == AR5K_RF2413) ||
 	    (ah->ah_radio == AR5K_RF5413) ||
 	    (ah->ah_radio == AR5K_RF2316) ||
 	    (ah->ah_radio == AR5K_RF2317))
 		/* Remain on 40MHz clock ? */
+=======
+		(ah->ah_radio == AR5K_RF5413) ||
+		(ah->ah_radio == AR5K_RF2316) ||
+		(ah->ah_radio == AR5K_RF2317))
+	/* Remain on 40MHz clock ? */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sclock = 40 - 1;
 	else
 		sclock = 32 - 1;
@@ -254,7 +320,11 @@ ath5k_hw_init_core_clock(struct ath5k_hw *ah)
 	usec_reg = (usec | sclock | txlat | rxlat);
 	ath5k_hw_reg_write(ah, usec_reg, AR5K_USEC);
 
+<<<<<<< HEAD
 	/* On 5112 set tx frame to tx data start delay */
+=======
+	/* On 5112 set tx frane to tx data start delay */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ah->ah_radio == AR5K_RF5112) {
 		AR5K_REG_WRITE_BITS(ah, AR5K_PHY_RF_CTL2,
 					AR5K_PHY_RF_CTL2_TXF2TXD_START,
@@ -262,16 +332,21 @@ ath5k_hw_init_core_clock(struct ath5k_hw *ah)
 	}
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_set_sleep_clock() - Setup sleep clock operation
  * @ah: The &struct ath5k_hw
  * @enable: Enable sleep clock operation (false to disable)
  *
+=======
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * If there is an external 32KHz crystal available, use it
  * as ref. clock instead of 32/40MHz clock and baseband clocks
  * to save power during sleep or restore normal 32/40MHz
  * operation.
  *
+<<<<<<< HEAD
  * NOTE: When operating on 32KHz certain PHY registers (27 - 31,
  * 123 - 127) require delay on access.
  */
@@ -280,6 +355,15 @@ ath5k_hw_set_sleep_clock(struct ath5k_hw *ah, bool enable)
 {
 	struct ath5k_eeprom_info *ee = &ah->ah_capabilities.cap_eeprom;
 	u32 scal, spending, sclock;
+=======
+ * XXX: When operating on 32KHz certain PHY registers (27 - 31,
+ *	123 - 127) require delay on access.
+ */
+static void ath5k_hw_set_sleep_clock(struct ath5k_hw *ah, bool enable)
+{
+	struct ath5k_eeprom_info *ee = &ah->ah_capabilities.cap_eeprom;
+	u32 scal, spending;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Only set 32KHz settings if we have an external
 	 * 32KHz crystal present */
@@ -363,6 +447,7 @@ ath5k_hw_set_sleep_clock(struct ath5k_hw *ah, bool enable)
 
 		/* Set up tsf increment on each cycle */
 		AR5K_REG_WRITE_BITS(ah, AR5K_TSF_PARM, AR5K_TSF_PARM_INC, 1);
+<<<<<<< HEAD
 
 		if ((ah->ah_radio == AR5K_RF5112) ||
 			(ah->ah_radio == AR5K_RF5413) ||
@@ -372,6 +457,8 @@ ath5k_hw_set_sleep_clock(struct ath5k_hw *ah, bool enable)
 		else
 			sclock = 32 - 1;
 		AR5K_REG_WRITE_BITS(ah, AR5K_USEC_5211, AR5K_USEC_32, sclock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -380,6 +467,7 @@ ath5k_hw_set_sleep_clock(struct ath5k_hw *ah, bool enable)
 * Reset/Sleep control *
 \*********************/
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_nic_reset() - Reset the various chipset units
  * @ah: The &struct ath5k_hw
@@ -393,6 +481,12 @@ ath5k_hw_set_sleep_clock(struct ath5k_hw *ah, bool enable)
  */
 static int
 ath5k_hw_nic_reset(struct ath5k_hw *ah, u32 val)
+=======
+/*
+ * Reset chipset
+ */
+static int ath5k_hw_nic_reset(struct ath5k_hw *ah, u32 val)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 	u32 mask = val ? val : ~0U;
@@ -406,7 +500,11 @@ ath5k_hw_nic_reset(struct ath5k_hw *ah, u32 val)
 	ath5k_hw_reg_write(ah, val, AR5K_RESET_CTL);
 
 	/* Wait at least 128 PCI clocks */
+<<<<<<< HEAD
 	usleep_range(15, 20);
+=======
+	udelay(15);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ah->ah_version == AR5K_AR5210) {
 		val &= AR5K_RESET_CTL_PCU | AR5K_RESET_CTL_DMA
@@ -431,6 +529,7 @@ ath5k_hw_nic_reset(struct ath5k_hw *ah, u32 val)
 	return ret;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_wisoc_reset() -  Reset AHB chipset
  * @ah: The &struct ath5k_hw
@@ -445,19 +544,40 @@ ath5k_hw_wisoc_reset(struct ath5k_hw *ah, u32 flags)
 {
 	u32 mask = flags ? flags : ~0U;
 	u32 __iomem *reg;
+=======
+/*
+ * Reset AHB chipset
+ * AR5K_RESET_CTL_PCU flag resets WMAC
+ * AR5K_RESET_CTL_BASEBAND flag resets WBB
+ */
+static int ath5k_hw_wisoc_reset(struct ath5k_hw *ah, u32 flags)
+{
+	u32 mask = flags ? flags : ~0U;
+	volatile u32 *reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 regval;
 	u32 val = 0;
 
 	/* ah->ah_mac_srev is not available at this point yet */
+<<<<<<< HEAD
 	if (ah->devid >= AR5K_SREV_AR2315_R6) {
 		reg = (u32 __iomem *) AR5K_AR2315_RESET;
+=======
+	if (ah->ah_sc->devid >= AR5K_SREV_AR2315_R6) {
+		reg = (u32 *) AR5K_AR2315_RESET;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (mask & AR5K_RESET_CTL_PCU)
 			val |= AR5K_AR2315_RESET_WMAC;
 		if (mask & AR5K_RESET_CTL_BASEBAND)
 			val |= AR5K_AR2315_RESET_BB_WARM;
 	} else {
+<<<<<<< HEAD
 		reg = (u32 __iomem *) AR5K_AR5312_RESET;
 		if (to_platform_device(ah->dev)->id == 0) {
+=======
+		reg = (u32 *) AR5K_AR5312_RESET;
+		if (to_platform_device(ah->ah_sc->dev)->id == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (mask & AR5K_RESET_CTL_PCU)
 				val |= AR5K_AR5312_RESET_WMAC0;
 			if (mask & AR5K_RESET_CTL_BASEBAND)
@@ -473,6 +593,7 @@ ath5k_hw_wisoc_reset(struct ath5k_hw *ah, u32 flags)
 	}
 
 	/* Put BB/MAC into reset */
+<<<<<<< HEAD
 	regval = ioread32(reg);
 	iowrite32(regval | val, reg);
 	regval = ioread32(reg);
@@ -481,6 +602,16 @@ ath5k_hw_wisoc_reset(struct ath5k_hw *ah, u32 flags)
 	/* Bring BB/MAC out of reset */
 	iowrite32(regval & ~val, reg);
 	regval = ioread32(reg);
+=======
+	regval = __raw_readl(reg);
+	__raw_writel(regval | val, reg);
+	regval = __raw_readl(reg);
+	udelay(100);
+
+	/* Bring BB/MAC out of reset */
+	__raw_writel(regval & ~val, reg);
+	regval = __raw_readl(reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Reset configuration register (for hw byte-swap). Note that this
@@ -493,6 +624,7 @@ ath5k_hw_wisoc_reset(struct ath5k_hw *ah, u32 flags)
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_set_power_mode() - Set power mode
  * @ah: The &struct ath5k_hw
@@ -510,6 +642,13 @@ ath5k_hw_wisoc_reset(struct ath5k_hw *ah, u32 flags)
  */
 static int
 ath5k_hw_set_power_mode(struct ath5k_hw *ah, enum ath5k_power_mode mode,
+=======
+
+/*
+ * Sleep control
+ */
+static int ath5k_hw_set_power(struct ath5k_hw *ah, enum ath5k_power_mode mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      bool set_chip, u16 sleep_duration)
 {
 	unsigned int i;
@@ -559,7 +698,11 @@ ath5k_hw_set_power_mode(struct ath5k_hw *ah, enum ath5k_power_mode mode,
 
 		ath5k_hw_reg_write(ah, data | AR5K_SLEEP_CTL_SLE_WAKE,
 							AR5K_SLEEP_CTL);
+<<<<<<< HEAD
 		usleep_range(15, 20);
+=======
+		udelay(15);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		for (i = 200; i > 0; i--) {
 			/* Check if the chip did wake up */
@@ -568,7 +711,11 @@ ath5k_hw_set_power_mode(struct ath5k_hw *ah, enum ath5k_power_mode mode,
 				break;
 
 			/* Wait a bit and retry */
+<<<<<<< HEAD
 			usleep_range(50, 75);
+=======
+			udelay(50);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ath5k_hw_reg_write(ah, data | AR5K_SLEEP_CTL_SLE_WAKE,
 							AR5K_SLEEP_CTL);
 		}
@@ -589,6 +736,7 @@ commit:
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_on_hold() - Put device on hold
  * @ah: The &struct ath5k_hw
@@ -605,6 +753,21 @@ int
 ath5k_hw_on_hold(struct ath5k_hw *ah)
 {
 	struct pci_dev *pdev = ah->pdev;
+=======
+/*
+ * Put device on hold
+ *
+ * Put MAC and Baseband on warm reset and
+ * keep that state (don't clean sleep control
+ * register). After this MAC and Baseband are
+ * disabled and a full reset is needed to come
+ * back. This way we save as much power as possible
+ * without putting the card on full sleep.
+ */
+int ath5k_hw_on_hold(struct ath5k_hw *ah)
+{
+	struct pci_dev *pdev = ah->ah_sc->pdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 bus_flags;
 	int ret;
 
@@ -612,9 +775,15 @@ ath5k_hw_on_hold(struct ath5k_hw *ah)
 		return 0;
 
 	/* Make sure device is awake */
+<<<<<<< HEAD
 	ret = ath5k_hw_set_power_mode(ah, AR5K_PM_AWAKE, true, 0);
 	if (ret) {
 		ATH5K_ERR(ah, "failed to wakeup the MAC Chip\n");
+=======
+	ret = ath5k_hw_set_power(ah, AR5K_PM_AWAKE, true, 0);
+	if (ret) {
+		ATH5K_ERR(ah->ah_sc, "failed to wakeup the MAC Chip\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 
@@ -623,7 +792,11 @@ ath5k_hw_on_hold(struct ath5k_hw *ah)
 	 *
 	 * Note: putting PCI core on warm reset on PCI-E cards
 	 * results card to hang and always return 0xffff... so
+<<<<<<< HEAD
 	 * we ignore that flag for PCI-E cards. On PCI cards
+=======
+	 * we ingore that flag for PCI-E cards. On PCI cards
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * this flag gets cleared after 64 PCI clocks.
 	 */
 	bus_flags = (pdev && pci_is_pcie(pdev)) ? 0 : AR5K_RESET_CTL_PCI;
@@ -632,27 +805,42 @@ ath5k_hw_on_hold(struct ath5k_hw *ah)
 		ret = ath5k_hw_nic_reset(ah, AR5K_RESET_CTL_PCU |
 			AR5K_RESET_CTL_MAC | AR5K_RESET_CTL_DMA |
 			AR5K_RESET_CTL_PHY | AR5K_RESET_CTL_PCI);
+<<<<<<< HEAD
 			usleep_range(2000, 2500);
+=======
+			mdelay(2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		ret = ath5k_hw_nic_reset(ah, AR5K_RESET_CTL_PCU |
 			AR5K_RESET_CTL_BASEBAND | bus_flags);
 	}
 
 	if (ret) {
+<<<<<<< HEAD
 		ATH5K_ERR(ah, "failed to put device on warm reset\n");
+=======
+		ATH5K_ERR(ah->ah_sc, "failed to put device on warm reset\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	}
 
 	/* ...wakeup again!*/
+<<<<<<< HEAD
 	ret = ath5k_hw_set_power_mode(ah, AR5K_PM_AWAKE, true, 0);
 	if (ret) {
 		ATH5K_ERR(ah, "failed to put device on hold\n");
+=======
+	ret = ath5k_hw_set_power(ah, AR5K_PM_AWAKE, true, 0);
+	if (ret) {
+		ATH5K_ERR(ah->ah_sc, "failed to put device on hold\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 
 	return ret;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_nic_wakeup() - Force card out of sleep
  * @ah: The &struct ath5k_hw
@@ -667,6 +855,14 @@ int
 ath5k_hw_nic_wakeup(struct ath5k_hw *ah, struct ieee80211_channel *channel)
 {
 	struct pci_dev *pdev = ah->pdev;
+=======
+/*
+ * Bring up MAC + PHY Chips and program PLL
+ */
+int ath5k_hw_nic_wakeup(struct ath5k_hw *ah, int flags, bool initial)
+{
+	struct pci_dev *pdev = ah->ah_sc->pdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 turbo, mode, clock, bus_flags;
 	int ret;
 
@@ -674,11 +870,19 @@ ath5k_hw_nic_wakeup(struct ath5k_hw *ah, struct ieee80211_channel *channel)
 	mode = 0;
 	clock = 0;
 
+<<<<<<< HEAD
 	if ((ath5k_get_bus_type(ah) != ATH_AHB) || channel) {
 		/* Wakeup the device */
 		ret = ath5k_hw_set_power_mode(ah, AR5K_PM_AWAKE, true, 0);
 		if (ret) {
 			ATH5K_ERR(ah, "failed to wakeup the MAC Chip\n");
+=======
+	if ((ath5k_get_bus_type(ah) != ATH_AHB) || !initial) {
+		/* Wakeup the device */
+		ret = ath5k_hw_set_power(ah, AR5K_PM_AWAKE, true, 0);
+		if (ret) {
+			ATH5K_ERR(ah->ah_sc, "failed to wakeup the MAC Chip\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return ret;
 		}
 	}
@@ -688,7 +892,11 @@ ath5k_hw_nic_wakeup(struct ath5k_hw *ah, struct ieee80211_channel *channel)
 	 *
 	 * Note: putting PCI core on warm reset on PCI-E cards
 	 * results card to hang and always return 0xffff... so
+<<<<<<< HEAD
 	 * we ignore that flag for PCI-E cards. On PCI cards
+=======
+	 * we ingore that flag for PCI-E cards. On PCI cards
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * this flag gets cleared after 64 PCI clocks.
 	 */
 	bus_flags = (pdev && pci_is_pcie(pdev)) ? 0 : AR5K_RESET_CTL_PCI;
@@ -697,7 +905,11 @@ ath5k_hw_nic_wakeup(struct ath5k_hw *ah, struct ieee80211_channel *channel)
 		ret = ath5k_hw_nic_reset(ah, AR5K_RESET_CTL_PCU |
 			AR5K_RESET_CTL_MAC | AR5K_RESET_CTL_DMA |
 			AR5K_RESET_CTL_PHY | AR5K_RESET_CTL_PCI);
+<<<<<<< HEAD
 			usleep_range(2000, 2500);
+=======
+			mdelay(2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		if (ath5k_get_bus_type(ah) == ATH_AHB)
 			ret = ath5k_hw_wisoc_reset(ah, AR5K_RESET_CTL_PCU |
@@ -708,11 +920,16 @@ ath5k_hw_nic_wakeup(struct ath5k_hw *ah, struct ieee80211_channel *channel)
 	}
 
 	if (ret) {
+<<<<<<< HEAD
 		ATH5K_ERR(ah, "failed to reset the MAC Chip\n");
+=======
+		ATH5K_ERR(ah->ah_sc, "failed to reset the MAC Chip\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	}
 
 	/* ...wakeup again!...*/
+<<<<<<< HEAD
 	ret = ath5k_hw_set_power_mode(ah, AR5K_PM_AWAKE, true, 0);
 	if (ret) {
 		ATH5K_ERR(ah, "failed to resume the MAC Chip\n");
@@ -720,6 +937,15 @@ ath5k_hw_nic_wakeup(struct ath5k_hw *ah, struct ieee80211_channel *channel)
 	}
 
 	/* ...reset configuration register on Wisoc ...
+=======
+	ret = ath5k_hw_set_power(ah, AR5K_PM_AWAKE, true, 0);
+	if (ret) {
+		ATH5K_ERR(ah->ah_sc, "failed to resume the MAC Chip\n");
+		return ret;
+	}
+
+	/* ...reset configuration regiter on Wisoc ...
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * ...clear reset control register and pull device out of
 	 * warm reset on others */
 	if (ath5k_get_bus_type(ah) == ATH_AHB)
@@ -728,13 +954,21 @@ ath5k_hw_nic_wakeup(struct ath5k_hw *ah, struct ieee80211_channel *channel)
 		ret = ath5k_hw_nic_reset(ah, 0);
 
 	if (ret) {
+<<<<<<< HEAD
 		ATH5K_ERR(ah, "failed to warm reset the MAC Chip\n");
+=======
+		ATH5K_ERR(ah->ah_sc, "failed to warm reset the MAC Chip\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	}
 
 	/* On initialization skip PLL programming since we don't have
 	 * a channel / mode set yet */
+<<<<<<< HEAD
 	if (!channel)
+=======
+	if (initial)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	if (ah->ah_version != AR5K_AR5210) {
@@ -750,6 +984,7 @@ ath5k_hw_nic_wakeup(struct ath5k_hw *ah, struct ieee80211_channel *channel)
 			clock = AR5K_PHY_PLL_RF5111;		/*Zero*/
 		}
 
+<<<<<<< HEAD
 		if (channel->band == IEEE80211_BAND_2GHZ) {
 			mode |= AR5K_PHY_MODE_FREQ_2GHZ;
 			clock |= AR5K_PHY_PLL_44MHZ;
@@ -757,6 +992,15 @@ ath5k_hw_nic_wakeup(struct ath5k_hw *ah, struct ieee80211_channel *channel)
 			if (channel->hw_value == AR5K_MODE_11B) {
 				mode |= AR5K_PHY_MODE_MOD_CCK;
 			} else {
+=======
+		if (flags & CHANNEL_2GHZ) {
+			mode |= AR5K_PHY_MODE_FREQ_2GHZ;
+			clock |= AR5K_PHY_PLL_44MHZ;
+
+			if (flags & CHANNEL_CCK) {
+				mode |= AR5K_PHY_MODE_MOD_CCK;
+			} else if (flags & CHANNEL_OFDM) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/* XXX Dynamic OFDM/CCK is not supported by the
 				 * AR5211 so we set MOD_OFDM for plain g (no
 				 * CCK headers) operation. We need to test
@@ -768,24 +1012,51 @@ ath5k_hw_nic_wakeup(struct ath5k_hw *ah, struct ieee80211_channel *channel)
 					mode |= AR5K_PHY_MODE_MOD_OFDM;
 				else
 					mode |= AR5K_PHY_MODE_MOD_DYN;
+<<<<<<< HEAD
 			}
 		} else if (channel->band == IEEE80211_BAND_5GHZ) {
 			mode |= (AR5K_PHY_MODE_FREQ_5GHZ |
 				 AR5K_PHY_MODE_MOD_OFDM);
+=======
+			} else {
+				ATH5K_ERR(ah->ah_sc,
+					"invalid radio modulation mode\n");
+				return -EINVAL;
+			}
+		} else if (flags & CHANNEL_5GHZ) {
+			mode |= AR5K_PHY_MODE_FREQ_5GHZ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* Different PLL setting for 5413 */
 			if (ah->ah_radio == AR5K_RF5413)
 				clock = AR5K_PHY_PLL_40MHZ_5413;
 			else
 				clock |= AR5K_PHY_PLL_40MHZ;
+<<<<<<< HEAD
 		} else {
 			ATH5K_ERR(ah, "invalid radio frequency mode\n");
+=======
+
+			if (flags & CHANNEL_OFDM)
+				mode |= AR5K_PHY_MODE_MOD_OFDM;
+			else {
+				ATH5K_ERR(ah->ah_sc,
+					"invalid radio modulation mode\n");
+				return -EINVAL;
+			}
+		} else {
+			ATH5K_ERR(ah->ah_sc, "invalid radio frequency mode\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EINVAL;
 		}
 
 		/*XXX: Can bwmode be used with dynamic mode ?
 		 * (I don't think it supports 44MHz) */
+<<<<<<< HEAD
 		/* On 2425 initvals TURBO_SHORT is not present */
+=======
+		/* On 2425 initvals TURBO_SHORT is not pressent */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ah->ah_bwmode == AR5K_BWMODE_40MHZ) {
 			turbo = AR5K_PHY_TURBO_MODE |
 				(ah->ah_radio == AR5K_RF2425) ? 0 :
@@ -815,7 +1086,11 @@ ath5k_hw_nic_wakeup(struct ath5k_hw *ah, struct ieee80211_channel *channel)
 		/* ...update PLL if needed */
 		if (ath5k_hw_reg_read(ah, AR5K_PHY_PLL) != clock) {
 			ath5k_hw_reg_write(ah, clock, AR5K_PHY_PLL);
+<<<<<<< HEAD
 			usleep_range(300, 350);
+=======
+			udelay(300);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/* ...set the PHY operating mode */
@@ -831,6 +1106,7 @@ ath5k_hw_nic_wakeup(struct ath5k_hw *ah, struct ieee80211_channel *channel)
 * Post-initvals register modifications *
 \**************************************/
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_tweak_initval_settings() - Tweak initial settings
  * @ah: The &struct ath5k_hw
@@ -844,6 +1120,10 @@ ath5k_hw_nic_wakeup(struct ath5k_hw *ah, struct ieee80211_channel *channel)
  */
 static void
 ath5k_hw_tweak_initval_settings(struct ath5k_hw *ah,
+=======
+/* TODO: Half/Quarter rate */
+static void ath5k_hw_tweak_initval_settings(struct ath5k_hw *ah,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				struct ieee80211_channel *channel)
 {
 	if (ah->ah_version == AR5K_AR5212 &&
@@ -904,7 +1184,11 @@ ath5k_hw_tweak_initval_settings(struct ath5k_hw *ah,
 		u32 data;
 		ath5k_hw_reg_write(ah, AR5K_PHY_CCKTXCTL_WORLD,
 				AR5K_PHY_CCKTXCTL);
+<<<<<<< HEAD
 		if (channel->band == IEEE80211_BAND_5GHZ)
+=======
+		if (channel->hw_value & CHANNEL_5GHZ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			data = 0xffb81020;
 		else
 			data = 0xffb80d20;
@@ -962,6 +1246,7 @@ ath5k_hw_tweak_initval_settings(struct ath5k_hw *ah,
 	}
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_commit_eeprom_settings() - Commit settings from EEPROM
  * @ah: The &struct ath5k_hw
@@ -972,6 +1257,9 @@ ath5k_hw_tweak_initval_settings(struct ath5k_hw *ah,
  */
 static void
 ath5k_hw_commit_eeprom_settings(struct ath5k_hw *ah,
+=======
+static void ath5k_hw_commit_eeprom_settings(struct ath5k_hw *ah,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct ieee80211_channel *channel)
 {
 	struct ath5k_eeprom_info *ee = &ah->ah_capabilities.cap_eeprom;
@@ -996,7 +1284,11 @@ ath5k_hw_commit_eeprom_settings(struct ath5k_hw *ah,
 	/* Set CCK to OFDM power delta on tx power
 	 * adjustment register */
 	if (ah->ah_phy_revision >= AR5K_SREV_PHY_5212A) {
+<<<<<<< HEAD
 		if (channel->hw_value == AR5K_MODE_11G)
+=======
+		if (channel->hw_value == CHANNEL_G)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ath5k_hw_reg_write(ah,
 			AR5K_REG_SM((ee->ee_cck_ofdm_gain_delta * -1),
 				AR5K_PHY_TX_PWR_ADJ_CCK_GAIN_DELTA) |
@@ -1125,6 +1417,7 @@ ath5k_hw_commit_eeprom_settings(struct ath5k_hw *ah,
 * Main reset function *
 \*********************/
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_reset() - The main reset function
  * @ah: The &struct ath5k_hw
@@ -1142,6 +1435,9 @@ ath5k_hw_commit_eeprom_settings(struct ath5k_hw *ah,
  */
 int
 ath5k_hw_reset(struct ath5k_hw *ah, enum nl80211_iftype op_mode,
+=======
+int ath5k_hw_reset(struct ath5k_hw *ah, enum nl80211_iftype op_mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct ieee80211_channel *channel, bool fast, bool skip_pcu)
 {
 	u32 s_seq[10], s_led[3], tsf_up, tsf_lo;
@@ -1159,7 +1455,11 @@ ath5k_hw_reset(struct ath5k_hw *ah, enum nl80211_iftype op_mode,
 	 */
 	if (fast && (ah->ah_radio != AR5K_RF2413) &&
 	(ah->ah_radio != AR5K_RF5413))
+<<<<<<< HEAD
 		fast = false;
+=======
+		fast = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Disable sleep clock operation
 	 * to avoid register access delay on certain
@@ -1183,14 +1483,21 @@ ath5k_hw_reset(struct ath5k_hw *ah, enum nl80211_iftype op_mode,
 	/* RF Bus grant won't work if we have pending
 	 * frames */
 	if (ret && fast) {
+<<<<<<< HEAD
 		ATH5K_DBG(ah, ATH5K_DEBUG_RESET,
 			"DMA didn't stop, falling back to normal reset\n");
 		fast = false;
+=======
+		ATH5K_DBG(ah->ah_sc, ATH5K_DEBUG_RESET,
+			"DMA didn't stop, falling back to normal reset\n");
+		fast = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Non fatal, just continue with
 		 * normal reset */
 		ret = 0;
 	}
 
+<<<<<<< HEAD
 	mode = channel->hw_value;
 	switch (mode) {
 	case AR5K_MODE_11A:
@@ -1211,6 +1518,42 @@ ath5k_hw_reset(struct ath5k_hw *ah, enum nl80211_iftype op_mode,
 		break;
 	default:
 		ATH5K_ERR(ah,
+=======
+	switch (channel->hw_value & CHANNEL_MODES) {
+	case CHANNEL_A:
+		mode = AR5K_MODE_11A;
+		break;
+	case CHANNEL_G:
+
+		if (ah->ah_version <= AR5K_AR5211) {
+			ATH5K_ERR(ah->ah_sc,
+				"G mode not available on 5210/5211");
+			return -EINVAL;
+		}
+
+		mode = AR5K_MODE_11G;
+		break;
+	case CHANNEL_B:
+
+		if (ah->ah_version < AR5K_AR5211) {
+			ATH5K_ERR(ah->ah_sc,
+				"B mode not available on 5210");
+			return -EINVAL;
+		}
+
+		mode = AR5K_MODE_11B;
+		break;
+	case CHANNEL_XR:
+		if (ah->ah_version == AR5K_AR5211) {
+			ATH5K_ERR(ah->ah_sc,
+				"XR mode not available on 5211");
+			return -EINVAL;
+		}
+		mode = AR5K_MODE_XR;
+		break;
+	default:
+		ATH5K_ERR(ah->ah_sc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"invalid channel: %d\n", channel->center_freq);
 		return -EINVAL;
 	}
@@ -1222,13 +1565,21 @@ ath5k_hw_reset(struct ath5k_hw *ah, enum nl80211_iftype op_mode,
 	if (fast) {
 		ret = ath5k_hw_phy_init(ah, channel, mode, true);
 		if (ret) {
+<<<<<<< HEAD
 			ATH5K_DBG(ah, ATH5K_DEBUG_RESET,
+=======
+			ATH5K_DBG(ah->ah_sc, ATH5K_DEBUG_RESET,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"fast chan change failed, falling back to normal reset\n");
 			/* Non fatal, can happen eg.
 			 * on mode change */
 			ret = 0;
 		} else {
+<<<<<<< HEAD
 			ATH5K_DBG(ah, ATH5K_DEBUG_RESET,
+=======
+			ATH5K_DBG(ah->ah_sc, ATH5K_DEBUG_RESET,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"fast chan change successful\n");
 			return 0;
 		}
@@ -1293,7 +1644,11 @@ ath5k_hw_reset(struct ath5k_hw *ah, enum nl80211_iftype op_mode,
 	}
 
 	/* Wakeup the device */
+<<<<<<< HEAD
 	ret = ath5k_hw_nic_wakeup(ah, channel);
+=======
+	ret = ath5k_hw_nic_wakeup(ah, channel->hw_value, false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -1354,14 +1709,22 @@ ath5k_hw_reset(struct ath5k_hw *ah, enum nl80211_iftype op_mode,
 	/*
 	 * Initialize PCU
 	 */
+<<<<<<< HEAD
 	ath5k_hw_pcu_init(ah, op_mode);
+=======
+	ath5k_hw_pcu_init(ah, op_mode, mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Initialize PHY
 	 */
 	ret = ath5k_hw_phy_init(ah, channel, mode, false);
 	if (ret) {
+<<<<<<< HEAD
 		ATH5K_ERR(ah,
+=======
+		ATH5K_ERR(ah->ah_sc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"failed to initialize PHY (%i) !\n", ret);
 		return ret;
 	}
@@ -1380,6 +1743,7 @@ ath5k_hw_reset(struct ath5k_hw *ah, enum nl80211_iftype op_mode,
 	ath5k_hw_dma_init(ah);
 
 
+<<<<<<< HEAD
 	/*
 	 * Enable 32KHz clock function for AR5212+ chips
 	 * Set clocks to 32KHz operation and use an
@@ -1390,6 +1754,13 @@ ath5k_hw_reset(struct ath5k_hw *ah, enum nl80211_iftype op_mode,
 	 * issues on some devices
 	 */
 	if (ah->ah_use_32khz_clock && ah->ah_version == AR5K_AR5212 &&
+=======
+	/* Enable 32KHz clock function for AR5212+ chips
+	 * Set clocks to 32KHz operation and use an
+	 * external 32KHz crystal when sleeping if one
+	 * exists */
+	if (ah->ah_version == AR5K_AR5212 &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    op_mode != NL80211_IFTYPE_AP)
 		ath5k_hw_set_sleep_clock(ah, true);
 

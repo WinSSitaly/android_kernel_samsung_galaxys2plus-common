@@ -32,7 +32,11 @@
 #include <linux/init.h>
 #include <linux/pci.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/pcm.h>
 #include <sound/ac97_codec.h>
@@ -42,12 +46,15 @@
 #include <asm/pgtable.h>
 #include <asm/cacheflush.h>
 
+<<<<<<< HEAD
 #ifdef CONFIG_KVM_GUEST
 #include <linux/kvm_para.h>
 #else
 #define kvm_para_available() (0)
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_AUTHOR("Jaroslav Kysela <perex@perex.cz>");
 MODULE_DESCRIPTION("Intel 82801AA,82901AB,i810,i820,i830,i840,i845,MX440; SiS 7012; Ali 5455");
 MODULE_LICENSE("GPL");
@@ -79,11 +86,18 @@ static int index = SNDRV_DEFAULT_IDX1;	/* Index 0-MAX */
 static char *id = SNDRV_DEFAULT_STR1;	/* ID for this card */
 static int ac97_clock;
 static char *ac97_quirk;
+<<<<<<< HEAD
 static bool buggy_semaphore;
 static int buggy_irq = -1; /* auto-check */
 static bool xbox;
 static int spdif_aclink = -1;
 static int inside_vm = -1;
+=======
+static int buggy_semaphore;
+static int buggy_irq = -1; /* auto-check */
+static int xbox;
+static int spdif_aclink = -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(index, int, 0444);
 MODULE_PARM_DESC(index, "Index value for Intel i8x0 soundcard.");
@@ -95,17 +109,27 @@ module_param(ac97_quirk, charp, 0444);
 MODULE_PARM_DESC(ac97_quirk, "AC'97 workaround for strange hardware.");
 module_param(buggy_semaphore, bool, 0444);
 MODULE_PARM_DESC(buggy_semaphore, "Enable workaround for hardwares with problematic codec semaphores.");
+<<<<<<< HEAD
 module_param(buggy_irq, bint, 0444);
+=======
+module_param(buggy_irq, bool, 0444);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(buggy_irq, "Enable workaround for buggy interrupts on some motherboards.");
 module_param(xbox, bool, 0444);
 MODULE_PARM_DESC(xbox, "Set to 1 for Xbox, if you have problems with the AC'97 codec detection.");
 module_param(spdif_aclink, int, 0444);
 MODULE_PARM_DESC(spdif_aclink, "S/PDIF over AC-link.");
+<<<<<<< HEAD
 module_param(inside_vm, bint, 0444);
 MODULE_PARM_DESC(inside_vm, "KVM/Parallels optimization.");
 
 /* just for backward compatibility */
 static bool enable;
+=======
+
+/* just for backward compatibility */
+static int enable;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(enable, bool, 0444);
 static int joystick;
 module_param(joystick, int, 0444);
@@ -409,7 +433,10 @@ struct intel8x0 {
 	unsigned buggy_irq: 1;		/* workaround for buggy mobos */
 	unsigned xbox: 1;		/* workaround for Xbox AC'97 detection */
 	unsigned buggy_semaphore: 1;	/* workaround for buggy codec semaphore */
+<<<<<<< HEAD
 	unsigned inside_vm: 1;		/* enable VM optimization */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int spdif_idx;	/* SPDIF BAR index; *_SPBAR or -1 if use PCMOUT */
 	unsigned int sdm_saved;	/* SDM reg value */
@@ -1075,6 +1102,7 @@ static snd_pcm_uframes_t snd_intel8x0_pcm_pointer(struct snd_pcm_substream *subs
 			udelay(10);
 			continue;
 		}
+<<<<<<< HEAD
 		if (civ != igetbyte(chip, ichdev->reg_offset + ICH_REG_OFF_CIV))
 			continue;
 
@@ -1087,6 +1115,10 @@ static snd_pcm_uframes_t snd_intel8x0_pcm_pointer(struct snd_pcm_substream *subs
 		if (chip->inside_vm)
 			break;
 		if (ptr1 == igetword(chip, ichdev->reg_offset + ichdev->roff_picb))
+=======
+		if (civ == igetbyte(chip, ichdev->reg_offset + ICH_REG_OFF_CIV) &&
+		    ptr1 == igetword(chip, ichdev->reg_offset + ichdev->roff_picb))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 	} while (timeout--);
 	ptr = ichdev->last_pos;
@@ -1904,12 +1936,15 @@ static struct ac97_quirk ac97_quirks[] __devinitdata = {
 	},
 	{
 		.subvendor = 0x1028,
+<<<<<<< HEAD
 		.subdevice = 0x0189,
 		.name = "Dell Inspiron 9300",
 		.type = AC97_TUNE_HP_MUTE_LED
 	},
 	{
 		.subvendor = 0x1028,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.subdevice = 0x0191,
 		.name = "Dell Inspiron 8600",
 		.type = AC97_TUNE_HP_ONLY
@@ -2679,7 +2714,11 @@ static int intel8x0_resume(struct pci_dev *pci)
 	pci_set_master(pci);
 	snd_intel8x0_chip_init(chip, 0);
 	if (request_irq(pci->irq, snd_intel8x0_interrupt,
+<<<<<<< HEAD
 			IRQF_SHARED, KBUILD_MODNAME, chip)) {
+=======
+			IRQF_SHARED, card->shortname, chip)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR "intel8x0: unable to grab IRQ %d, "
 		       "disabling device\n", pci->irq);
 		snd_card_disconnect(card);
@@ -2943,6 +2982,7 @@ static unsigned int sis_codec_bits[3] = {
 	ICH_PCR, ICH_SCR, ICH_SIS_TCR
 };
 
+<<<<<<< HEAD
 static int __devinit snd_intel8x0_inside_vm(struct pci_dev *pci)
 {
 	int result  = inside_vm;
@@ -2982,6 +3022,8 @@ fini:
 	return result;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit snd_intel8x0_create(struct snd_card *card,
 					 struct pci_dev *pci,
 					 unsigned long device_type,
@@ -3049,8 +3091,11 @@ static int __devinit snd_intel8x0_create(struct snd_card *card,
 	if (xbox)
 		chip->xbox = 1;
 
+<<<<<<< HEAD
 	chip->inside_vm = snd_intel8x0_inside_vm(pci);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pci->vendor == PCI_VENDOR_ID_INTEL &&
 	    pci->device == PCI_DEVICE_ID_INTEL_440MX)
 		chip->fix_nocache = 1; /* enable workaround */
@@ -3179,7 +3224,11 @@ static int __devinit snd_intel8x0_create(struct snd_card *card,
 
 	/* request irq after initializaing int_sta_mask, etc */
 	if (request_irq(pci->irq, snd_intel8x0_interrupt,
+<<<<<<< HEAD
 			IRQF_SHARED, KBUILD_MODNAME, chip)) {
+=======
+			IRQF_SHARED, card->shortname, chip)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printk(KERN_ERR "unable to grab IRQ %d\n", pci->irq);
 		snd_intel8x0_free(chip);
 		return -EBUSY;
@@ -3339,7 +3388,11 @@ static void __devexit snd_intel8x0_remove(struct pci_dev *pci)
 }
 
 static struct pci_driver driver = {
+<<<<<<< HEAD
 	.name = KBUILD_MODNAME,
+=======
+	.name = "Intel ICH",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table = snd_intel8x0_ids,
 	.probe = snd_intel8x0_probe,
 	.remove = __devexit_p(snd_intel8x0_remove),

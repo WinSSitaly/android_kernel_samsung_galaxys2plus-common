@@ -26,7 +26,10 @@
 
 #include <linux/types.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pci.h>
 #include <linux/init.h>
 #include <linux/ioport.h>
@@ -39,6 +42,7 @@
 #include <asm/io_apic.h>
 
 
+<<<<<<< HEAD
 /*
  * This list of dynamic mappings is for temporarily maintaining
  * original BIOS BAR addresses for possible reinstatement.
@@ -120,6 +124,8 @@ static void pcibios_fw_addr_list_del(void)
 	spin_unlock_irqrestore(&pcibios_fwaddrmap_lock, flags);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int
 skip_isa_ioresource_align(struct pci_dev *dev) {
 
@@ -263,8 +269,12 @@ static void __init pcibios_allocate_resources(int pass)
 					idx, r, disabled, pass);
 				if (pci_claim_resource(dev, idx) < 0) {
 					/* We'll assign a new address later */
+<<<<<<< HEAD
 					pcibios_save_fw_addr(dev,
 							idx, r->start);
+=======
+					dev->fw_addr[idx] = r->start;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					r->end -= r->start;
 					r->start = 0;
 				}
@@ -310,7 +320,10 @@ static int __init pcibios_assign_resources(void)
 	}
 
 	pci_assign_unassigned_resources();
+<<<<<<< HEAD
 	pcibios_fw_addr_list_del();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -337,6 +350,29 @@ void __init pcibios_resource_survey(void)
  */
 fs_initcall(pcibios_assign_resources);
 
+<<<<<<< HEAD
+=======
+/*
+ *  If we set up a device for bus mastering, we need to check the latency
+ *  timer as certain crappy BIOSes forget to set it properly.
+ */
+unsigned int pcibios_max_latency = 255;
+
+void pcibios_set_master(struct pci_dev *dev)
+{
+	u8 lat;
+	pci_read_config_byte(dev, PCI_LATENCY_TIMER, &lat);
+	if (lat < 16)
+		lat = (64 <= pcibios_max_latency) ? 64 : pcibios_max_latency;
+	else if (lat > pcibios_max_latency)
+		lat = pcibios_max_latency;
+	else
+		return;
+	dev_printk(KERN_DEBUG, &dev->dev, "setting latency timer to %d\n", lat);
+	pci_write_config_byte(dev, PCI_LATENCY_TIMER, lat);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct vm_operations_struct pci_mmap_ops = {
 	.access = generic_access_phys,
 };

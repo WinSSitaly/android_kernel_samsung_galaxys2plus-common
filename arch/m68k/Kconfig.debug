@@ -2,6 +2,7 @@ menu "Kernel hacking"
 
 source "lib/Kconfig.debug"
 
+<<<<<<< HEAD
 config BOOTPARAM
 	bool 'Compiled-in Kernel Boot Parameter'
 
@@ -21,6 +22,8 @@ config EARLY_PRINTK
           early before the console code is initialized.
           You should normally say N here, unless you want to debug such a crash.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 if !MMU
 
 config FULLDEBUG
@@ -34,6 +37,17 @@ config HIGHPROFILE
 	help
 	  Use a fast secondary clock to produce profiling information.
 
+<<<<<<< HEAD
+=======
+config BOOTPARAM
+	bool 'Compiled-in Kernel Boot Parameter'
+
+config BOOTPARAM_STRING
+	string 'Kernel Boot Parameter'
+	default 'console=ttyS0,19200'
+	depends on BOOTPARAM
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config NO_KERNEL_MSG
 	bool "Suppress Kernel BUG Messages"
 	help

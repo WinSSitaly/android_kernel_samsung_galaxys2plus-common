@@ -45,7 +45,10 @@ $(obj)/cuboot-katmai.o: BOOTCFLAGS += -mcpu=405
 $(obj)/cuboot-acadia.o: BOOTCFLAGS += -mcpu=405
 $(obj)/treeboot-walnut.o: BOOTCFLAGS += -mcpu=405
 $(obj)/treeboot-iss4xx.o: BOOTCFLAGS += -mcpu=405
+<<<<<<< HEAD
 $(obj)/treeboot-currituck.o: BOOTCFLAGS += -mcpu=405
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 $(obj)/virtex405-head.o: BOOTAFLAGS += -mcpu=405
 
 
@@ -59,7 +62,11 @@ $(addprefix $(obj)/,$(zlib) cuboot-c2k.o gunzip_util.o main.o prpmc2800.o): \
 libfdt       := fdt.c fdt_ro.c fdt_wip.c fdt_sw.c fdt_rw.c fdt_strerror.c
 libfdtheader := fdt.h libfdt.h libfdt_internal.h
 
+<<<<<<< HEAD
 $(addprefix $(obj)/,$(libfdt) libfdt-wrapper.o simpleboot.o epapr.o): \
+=======
+$(addprefix $(obj)/,$(libfdt) libfdt-wrapper.o simpleboot.o): \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	$(addprefix $(obj)/,$(libfdtheader))
 
 src-wlib := string.S crt0.S crtsavres.S stdio.c main.c \
@@ -80,8 +87,12 @@ src-plat := of.c cuboot-52xx.c cuboot-824x.c cuboot-83xx.c cuboot-85xx.c holly.c
 		cuboot-warp.c cuboot-85xx-cpm2.c cuboot-yosemite.c simpleboot.c \
 		virtex405-head.S virtex.c redboot-83xx.c cuboot-sam440ep.c \
 		cuboot-acadia.c cuboot-amigaone.c cuboot-kilauea.c \
+<<<<<<< HEAD
 		gamecube-head.S gamecube.c wii-head.S wii.c treeboot-iss4xx.c \
 		treeboot-currituck.c
+=======
+		gamecube-head.S gamecube.c wii-head.S wii.c treeboot-iss4xx.c
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 src-boot := $(src-wlib) $(src-plat) empty.c
 
 src-boot := $(addprefix $(obj)/, $(src-boot))
@@ -173,7 +184,10 @@ quiet_cmd_wrap	= WRAP    $@
 		$(if $3, -s $3)$(if $4, -d $4)$(if $5, -i $5) vmlinux
 
 image-$(CONFIG_PPC_PSERIES)		+= zImage.pseries
+<<<<<<< HEAD
 image-$(CONFIG_PPC_POWERNV)		+= zImage.pseries
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 image-$(CONFIG_PPC_MAPLE)		+= zImage.maple
 image-$(CONFIG_PPC_IBM_CELL_BLADE)	+= zImage.pseries
 image-$(CONFIG_PPC_PS3)			+= dtbImage.ps3
@@ -184,6 +198,10 @@ image-$(CONFIG_PPC_EFIKA)		+= zImage.chrp
 image-$(CONFIG_PPC_PMAC)		+= zImage.pmac
 image-$(CONFIG_PPC_HOLLY)		+= dtbImage.holly
 image-$(CONFIG_PPC_PRPMC2800)		+= dtbImage.prpmc2800
+<<<<<<< HEAD
+=======
+image-$(CONFIG_PPC_ISERIES)		+= zImage.iseries
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 image-$(CONFIG_DEFAULT_UIMAGE)		+= uImage
 image-$(CONFIG_EPAPR_BOOT)		+= zImage.epapr
 
@@ -200,7 +218,10 @@ image-$(CONFIG_EP405)			+= dtbImage.ep405
 image-$(CONFIG_HOTFOOT)			+= cuImage.hotfoot
 image-$(CONFIG_WALNUT)			+= treeImage.walnut
 image-$(CONFIG_ACADIA)			+= cuImage.acadia
+<<<<<<< HEAD
 image-$(CONFIG_OBS600)			+= uImage.obs600
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # Board ports in arch/powerpc/platform/44x/Kconfig
 image-$(CONFIG_EBONY)			+= treeImage.ebony cuImage.ebony
@@ -214,7 +235,10 @@ image-$(CONFIG_WARP)			+= cuImage.warp
 image-$(CONFIG_YOSEMITE)		+= cuImage.yosemite
 image-$(CONFIG_ISS4xx)			+= treeImage.iss4xx \
 					   treeImage.iss4xx-mpic
+<<<<<<< HEAD
 image-$(CONFIG_CURRITUCK)			+= treeImage.currituck
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # Board ports in arch/powerpc/platform/8xx/Kconfig
 image-$(CONFIG_MPC86XADS)		+= cuImage.mpc866ads
@@ -246,7 +270,11 @@ image-$(CONFIG_ASP834x)			+= dtbImage.asp834x-redboot
 image-$(CONFIG_MPC8540_ADS)		+= cuImage.mpc8540ads
 image-$(CONFIG_MPC8560_ADS)		+= cuImage.mpc8560ads
 image-$(CONFIG_MPC85xx_CDS)		+= cuImage.mpc8541cds \
+<<<<<<< HEAD
 					   cuImage.mpc8548cds_32b \
+=======
+					   cuImage.mpc8548cds \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					   cuImage.mpc8555cds
 image-$(CONFIG_MPC85xx_MDS)		+= cuImage.mpc8568mds
 image-$(CONFIG_MPC85xx_DS)		+= cuImage.mpc8544ds \
@@ -310,6 +338,7 @@ $(obj)/dtbImage.%: vmlinux $(wrapperbits) $(obj)/%.dtb
 $(obj)/vmlinux.strip: vmlinux
 	$(STRIP) -s -R .comment $< -o $@
 
+<<<<<<< HEAD
 $(obj)/uImage: vmlinux $(wrapperbits)
 	$(call if_changed,wrap,uboot)
 
@@ -319,6 +348,17 @@ $(obj)/uImage.initrd.%: vmlinux $(obj)/%.dtb $(wrapperbits)
 $(obj)/uImage.%: vmlinux $(obj)/%.dtb $(wrapperbits)
 	$(call if_changed,wrap,uboot-$*,,$(obj)/$*.dtb)
 
+=======
+# The iseries hypervisor won't take an ET_DYN executable, so this
+# changes the type (byte 17) in the file to ET_EXEC (2).
+$(obj)/zImage.iseries: vmlinux
+	$(STRIP) -s -R .comment $< -o $@
+	printf "\x02" | dd of=$@ conv=notrunc bs=1 seek=17
+
+$(obj)/uImage: vmlinux $(wrapperbits)
+	$(call if_changed,wrap,uboot)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 $(obj)/cuImage.initrd.%: vmlinux $(obj)/%.dtb $(wrapperbits)
 	$(call if_changed,wrap,cuboot-$*,,$(obj)/$*.dtb,$(obj)/ramdisk.image.gz)
 
@@ -357,7 +397,11 @@ install: $(CONFIGURE) $(addprefix $(obj)/, $(image-y))
 # anything not in $(targets)
 clean-files += $(image-) $(initrd-) cuImage.* dtbImage.* treeImage.* \
 	zImage zImage.initrd zImage.chrp zImage.coff zImage.holly \
+<<<<<<< HEAD
 	zImage.miboot zImage.pmac zImage.pseries \
+=======
+	zImage.iseries zImage.miboot zImage.pmac zImage.pseries \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	zImage.maple simpleImage.* otheros.bld *.dtb
 
 # clean up files cached by wrapper

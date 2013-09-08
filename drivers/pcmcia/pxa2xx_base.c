@@ -29,6 +29,10 @@
 #include <mach/smemc.h>
 #include <asm/io.h>
 #include <asm/irq.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/pxa2xx-regs.h>
 #include <asm/mach-types.h>
 
@@ -230,7 +234,10 @@ void pxa2xx_configure_sockets(struct device *dev)
 
 	__raw_writel(mecr, MECR);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(pxa2xx_configure_sockets);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const char *skt_names[] = {
 	"PCMCIA socket 0",
@@ -317,22 +324,44 @@ static int pxa2xx_drv_pcmcia_probe(struct platform_device *dev)
 
 		skt->nr = ops->first + i;
 		skt->clk = clk;
+<<<<<<< HEAD
 		soc_pcmcia_init_one(skt, ops, &dev->dev);
+=======
+		skt->ops = ops;
+		skt->socket.owner = ops->owner;
+		skt->socket.dev.parent = &dev->dev;
+		skt->socket.pci_irq = NO_IRQ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ret = pxa2xx_drv_pcmcia_add_one(skt);
 		if (ret)
 			goto err1;
 	}
 
+<<<<<<< HEAD
 	pxa2xx_configure_sockets(&dev->dev);
 	dev_set_drvdata(&dev->dev, sinfo);
+=======
+	if (ret) {
+		while (--i >= 0)
+			soc_pcmcia_remove_one(&sinfo->skt[i]);
+		kfree(sinfo);
+		clk_put(clk);
+	} else {
+		pxa2xx_configure_sockets(&dev->dev);
+		dev_set_drvdata(&dev->dev, sinfo);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
 err1:
 	while (--i >= 0)
 		soc_pcmcia_remove_one(&sinfo->skt[i]);
+<<<<<<< HEAD
 	clk_put(clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(sinfo);
 err0:
 	return ret;

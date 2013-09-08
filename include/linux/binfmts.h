@@ -18,7 +18,11 @@ struct pt_regs;
 #define BINPRM_BUF_SIZE 128
 
 #ifdef __KERNEL__
+<<<<<<< HEAD
 #include <linux/sched.h>
+=======
+#include <linux/list.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define CORENAME_MAX_SIZE 128
 
@@ -58,7 +62,10 @@ struct linux_binprm {
 	unsigned interp_flags;
 	unsigned interp_data;
 	unsigned long loader, exec;
+<<<<<<< HEAD
 	char tcomm[TASK_COMM_LEN];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define BINPRM_FLAGS_ENFORCE_NONDUMP_BIT 0
@@ -68,6 +75,11 @@ struct linux_binprm {
 #define BINPRM_FLAGS_EXECFD_BIT 1
 #define BINPRM_FLAGS_EXECFD (1 << BINPRM_FLAGS_EXECFD_BIT)
 
+<<<<<<< HEAD
+=======
+#define BINPRM_MAX_RECURSION 4
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Function parameter for binfmt->coredump */
 struct coredump_params {
 	long signr;
@@ -90,6 +102,7 @@ struct linux_binfmt {
 	unsigned long min_coredump;	/* minimal dump size */
 };
 
+<<<<<<< HEAD
 extern void __register_binfmt(struct linux_binfmt *fmt, int insert);
 
 /* Registration of default binfmt handlers */
@@ -101,6 +114,19 @@ static inline void register_binfmt(struct linux_binfmt *fmt)
 static inline void insert_binfmt(struct linux_binfmt *fmt)
 {
 	__register_binfmt(fmt, 1);
+=======
+extern int __register_binfmt(struct linux_binfmt *fmt, int insert);
+
+/* Registration of default binfmt handlers */
+static inline int register_binfmt(struct linux_binfmt *fmt)
+{
+	return __register_binfmt(fmt, 0);
+}
+/* Same as above, but adds a new binfmt at the top of the list */
+static inline int insert_binfmt(struct linux_binfmt *fmt)
+{
+	return __register_binfmt(fmt, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 extern void unregister_binfmt(struct linux_binfmt *);
@@ -110,7 +136,10 @@ extern int __must_check remove_arg_zero(struct linux_binprm *);
 extern int search_binary_handler(struct linux_binprm *, struct pt_regs *);
 extern int flush_old_exec(struct linux_binprm * bprm);
 extern void setup_new_exec(struct linux_binprm * bprm);
+<<<<<<< HEAD
 extern void would_dump(struct linux_binprm *, struct file *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int suid_dumpable;
 #define SUID_DUMP_DISABLE	0	/* No setuid dumping */
@@ -126,7 +155,10 @@ extern int setup_arg_pages(struct linux_binprm * bprm,
 			   unsigned long stack_top,
 			   int executable_stack);
 extern int bprm_mm_init(struct linux_binprm *bprm);
+<<<<<<< HEAD
 extern int bprm_change_interp(char *interp, struct linux_binprm *bprm);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int copy_strings_kernel(int argc, const char *const *argv,
 			       struct linux_binprm *bprm);
 extern int prepare_bprm_creds(struct linux_binprm *bprm);

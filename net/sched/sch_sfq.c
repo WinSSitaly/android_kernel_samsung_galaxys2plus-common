@@ -17,14 +17,24 @@
 #include <linux/in.h>
 #include <linux/errno.h>
 #include <linux/init.h>
+<<<<<<< HEAD
+=======
+#include <linux/ipv6.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/skbuff.h>
 #include <linux/jhash.h>
 #include <linux/slab.h>
 #include <linux/vmalloc.h>
+<<<<<<< HEAD
 #include <net/netlink.h>
 #include <net/pkt_sched.h>
 #include <net/flow_keys.h>
 #include <net/red.h>
+=======
+#include <net/ip.h>
+#include <net/netlink.h>
+#include <net/pkt_sched.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /*	Stochastic Fairness Queuing algorithm.
@@ -67,6 +77,7 @@
 	SFQ is superior for this purpose.
 
 	IMPLEMENTATION:
+<<<<<<< HEAD
 	This implementation limits :
 	- maximal queue length per flow to 127 packets.
 	- max mtu to 2^18-1;
@@ -79,6 +90,18 @@
 #define SFQ_DEFAULT_FLOWS	128
 #define SFQ_MAX_FLOWS		(0x10000 - SFQ_MAX_DEPTH - 1) /* max number of flows */
 #define SFQ_EMPTY_SLOT		0xffff
+=======
+	This implementation limits maximal queue length to 128;
+	max mtu to 2^18-1; max 128 flows, number of hash buckets to 1024.
+	The only goal of this restrictions was that all data
+	fit into one 4K page on 32bit arches.
+
+	It is easy to increase these values, but not in flight.  */
+
+#define SFQ_DEPTH		128 /* max number of packets per flow */
+#define SFQ_SLOTS		128 /* max number of flows */
+#define SFQ_EMPTY_SLOT		255
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SFQ_DEFAULT_HASH_DIVISOR 1024
 
 /* We use 16 bits to store allot, and want to handle packets up to 64K
@@ -87,6 +110,7 @@
 #define SFQ_ALLOT_SHIFT		3
 #define SFQ_ALLOT_SIZE(X)	DIV_ROUND_UP(X, 1 << SFQ_ALLOT_SHIFT)
 
+<<<<<<< HEAD
 /* This type should contain at least SFQ_MAX_DEPTH + 1 + SFQ_MAX_FLOWS values */
 typedef u16 sfq_index;
 
@@ -94,6 +118,15 @@ typedef u16 sfq_index;
  * We dont use pointers to save space.
  * Small indexes [0 ... SFQ_MAX_FLOWS - 1] are 'pointers' to slots[] array
  * while following values [SFQ_MAX_FLOWS ... SFQ_MAX_FLOWS + SFQ_MAX_DEPTH]
+=======
+/* This type should contain at least SFQ_DEPTH + SFQ_SLOTS values */
+typedef unsigned char sfq_index;
+
+/*
+ * We dont use pointers to save space.
+ * Small indexes [0 ... SFQ_SLOTS - 1] are 'pointers' to slots[] array
+ * while following values [SFQ_SLOTS ... SFQ_SLOTS + SFQ_DEPTH - 1]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * are 'pointers' to dep[] array
  */
 struct sfq_head {
@@ -105,6 +138,7 @@ struct sfq_slot {
 	struct sk_buff	*skblist_next;
 	struct sk_buff	*skblist_prev;
 	sfq_index	qlen; /* number of skbs in skblist */
+<<<<<<< HEAD
 	sfq_index	next; /* next slot in sfq RR chain */
 	struct sfq_head dep; /* anchor in dep[] chains */
 	unsigned short	hash; /* hash value (index in ht[]) */
@@ -144,6 +178,30 @@ struct sfq_sched_data {
 	int		perturb_period;
 	unsigned int	quantum;	/* Allotment per round: MUST BE >= MTU */
 	struct timer_list perturb_timer;
+=======
+	sfq_index	next; /* next slot in sfq chain */
+	struct sfq_head dep; /* anchor in dep[] chains */
+	unsigned short	hash; /* hash value (index in ht[]) */
+	short		allot; /* credit for this slot */
+};
+
+struct sfq_sched_data {
+/* Parameters */
+	int		perturb_period;
+	unsigned int	quantum;	/* Allotment per round: MUST BE >= MTU */
+	int		limit;
+	unsigned int	divisor;	/* number of slots in hash table */
+/* Variables */
+	struct tcf_proto *filter_list;
+	struct timer_list perturb_timer;
+	u32		perturbation;
+	sfq_index	cur_depth;	/* depth of longest slot */
+	unsigned short  scaled_quantum; /* SFQ_ALLOT_SIZE(quantum) */
+	struct sfq_slot *tail;		/* current slot in round */
+	sfq_index	*ht;		/* Hash table (divisor slots) */
+	struct sfq_slot	slots[SFQ_SLOTS];
+	struct sfq_head	dep[SFQ_DEPTH];	/* Linked list of slots, indexed by depth */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -151,6 +209,7 @@ struct sfq_sched_data {
  */
 static inline struct sfq_head *sfq_dep_head(struct sfq_sched_data *q, sfq_index val)
 {
+<<<<<<< HEAD
 	if (val < SFQ_MAX_FLOWS)
 		return &q->slots[val].dep;
 	return &q->dep[val - SFQ_MAX_FLOWS];
@@ -180,6 +239,68 @@ static unsigned int sfq_hash(const struct sfq_sched_data *q,
 			    (__force u32)keys->src ^ keys->ip_proto,
 			    (__force u32)keys->ports, q->perturbation);
 	return hash & (q->divisor - 1);
+=======
+	if (val < SFQ_SLOTS)
+		return &q->slots[val].dep;
+	return &q->dep[val - SFQ_SLOTS];
+}
+
+static unsigned int sfq_fold_hash(struct sfq_sched_data *q, u32 h, u32 h1)
+{
+	return jhash_2words(h, h1, q->perturbation) & (q->divisor - 1);
+}
+
+static unsigned int sfq_hash(struct sfq_sched_data *q, struct sk_buff *skb)
+{
+	u32 h, h2;
+
+	switch (skb->protocol) {
+	case htons(ETH_P_IP):
+	{
+		const struct iphdr *iph;
+		int poff;
+
+		if (!pskb_network_may_pull(skb, sizeof(*iph)))
+			goto err;
+		iph = ip_hdr(skb);
+		h = (__force u32)iph->daddr;
+		h2 = (__force u32)iph->saddr ^ iph->protocol;
+		if (iph->frag_off & htons(IP_MF | IP_OFFSET))
+			break;
+		poff = proto_ports_offset(iph->protocol);
+		if (poff >= 0 &&
+		    pskb_network_may_pull(skb, iph->ihl * 4 + 4 + poff)) {
+			iph = ip_hdr(skb);
+			h2 ^= *(u32 *)((void *)iph + iph->ihl * 4 + poff);
+		}
+		break;
+	}
+	case htons(ETH_P_IPV6):
+	{
+		const struct ipv6hdr *iph;
+		int poff;
+
+		if (!pskb_network_may_pull(skb, sizeof(*iph)))
+			goto err;
+		iph = ipv6_hdr(skb);
+		h = (__force u32)iph->daddr.s6_addr32[3];
+		h2 = (__force u32)iph->saddr.s6_addr32[3] ^ iph->nexthdr;
+		poff = proto_ports_offset(iph->nexthdr);
+		if (poff >= 0 &&
+		    pskb_network_may_pull(skb, sizeof(*iph) + 4 + poff)) {
+			iph = ipv6_hdr(skb);
+			h2 ^= *(u32 *)((void *)iph + sizeof(*iph) + poff);
+		}
+		break;
+	}
+	default:
+err:
+		h = (unsigned long)skb_dst(skb) ^ (__force u32)skb->protocol;
+		h2 = (unsigned long)skb->sk;
+	}
+
+	return sfq_fold_hash(q, h, h2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static unsigned int sfq_classify(struct sk_buff *skb, struct Qdisc *sch,
@@ -194,10 +315,15 @@ static unsigned int sfq_classify(struct sk_buff *skb, struct Qdisc *sch,
 	    TC_H_MIN(skb->priority) <= q->divisor)
 		return TC_H_MIN(skb->priority);
 
+<<<<<<< HEAD
 	if (!q->filter_list) {
 		skb_flow_dissect(skb, &sfq_skb_cb(skb)->keys);
 		return sfq_hash(q, skb) + 1;
 	}
+=======
+	if (!q->filter_list)
+		return sfq_hash(q, skb) + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	*qerr = NET_XMIT_SUCCESS | __NET_XMIT_BYPASS;
 	result = tc_classify(skb, q->filter_list, &res);
@@ -218,11 +344,16 @@ static unsigned int sfq_classify(struct sk_buff *skb, struct Qdisc *sch,
 }
 
 /*
+<<<<<<< HEAD
  * x : slot number [0 .. SFQ_MAX_FLOWS - 1]
+=======
+ * x : slot number [0 .. SFQ_SLOTS - 1]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static inline void sfq_link(struct sfq_sched_data *q, sfq_index x)
 {
 	sfq_index p, n;
+<<<<<<< HEAD
 	struct sfq_slot *slot = &q->slots[x];
 	int qlen = slot->qlen;
 
@@ -231,6 +362,15 @@ static inline void sfq_link(struct sfq_sched_data *q, sfq_index x)
 
 	slot->dep.next = n;
 	slot->dep.prev = p;
+=======
+	int qlen = q->slots[x].qlen;
+
+	p = qlen + SFQ_SLOTS;
+	n = q->dep[qlen].next;
+
+	q->slots[x].dep.next = n;
+	q->slots[x].dep.prev = p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	q->dep[qlen].next = x;		/* sfq_dep_head(q, p)->next = x */
 	sfq_dep_head(q, n)->prev = x;
@@ -295,7 +435,10 @@ static inline struct sk_buff *slot_dequeue_head(struct sfq_slot *slot)
 
 static inline void slot_queue_init(struct sfq_slot *slot)
 {
+<<<<<<< HEAD
 	memset(slot, 0, sizeof(*slot));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	slot->skblist_prev = slot->skblist_next = (struct sk_buff *)slot;
 }
 
@@ -326,9 +469,14 @@ static unsigned int sfq_drop(struct Qdisc *sch)
 		x = q->dep[d].next;
 		slot = &q->slots[x];
 drop:
+<<<<<<< HEAD
 		skb = q->headdrop ? slot_dequeue_head(slot) : slot_dequeue_tail(slot);
 		len = qdisc_pkt_len(skb);
 		slot->backlog -= len;
+=======
+		skb = slot_dequeue_tail(slot);
+		len = qdisc_pkt_len(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sfq_dec(q, x);
 		kfree_skb(skb);
 		sch->q.qlen--;
@@ -349,6 +497,7 @@ drop:
 	return 0;
 }
 
+<<<<<<< HEAD
 /* Is ECN parameter configured */
 static int sfq_prob_mark(const struct sfq_sched_data *q)
 {
@@ -366,6 +515,8 @@ static int sfq_headdrop(const struct sfq_sched_data *q)
 	return q->headdrop;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int
 sfq_enqueue(struct sk_buff *skb, struct Qdisc *sch)
 {
@@ -374,8 +525,11 @@ sfq_enqueue(struct sk_buff *skb, struct Qdisc *sch)
 	sfq_index x, qlen;
 	struct sfq_slot *slot;
 	int uninitialized_var(ret);
+<<<<<<< HEAD
 	struct sk_buff *head;
 	int delta;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hash = sfq_classify(skb, sch, &ret);
 	if (hash == 0) {
@@ -390,6 +544,7 @@ sfq_enqueue(struct sk_buff *skb, struct Qdisc *sch)
 	slot = &q->slots[x];
 	if (x == SFQ_EMPTY_SLOT) {
 		x = q->dep[0].next; /* get a free slot */
+<<<<<<< HEAD
 		if (x >= SFQ_MAX_FLOWS)
 			return qdisc_drop(skb, sch);
 		q->ht[hash] = x;
@@ -464,6 +619,20 @@ congestion_drop:
 enqueue:
 	sch->qstats.backlog += qdisc_pkt_len(skb);
 	slot->backlog += qdisc_pkt_len(skb);
+=======
+		q->ht[hash] = x;
+		slot = &q->slots[x];
+		slot->hash = hash;
+	}
+
+	/* If selected queue has length q->limit, do simple tail drop,
+	 * i.e. drop _this_ packet.
+	 */
+	if (slot->qlen >= q->limit)
+		return qdisc_drop(skb, sch);
+
+	sch->qstats.backlog += qdisc_pkt_len(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	slot_queue_add(slot, skb);
 	sfq_inc(q, x);
 	if (slot->qlen == 1) {		/* The flow is new */
@@ -473,12 +642,16 @@ enqueue:
 			slot->next = q->tail->next;
 			q->tail->next = x;
 		}
+<<<<<<< HEAD
 		/* We put this flow at the end of our flow list.
 		 * This might sound unfair for a new flow to wait after old ones,
 		 * but we could endup servicing new flows only, and freeze old ones.
 		 */
 		q->tail = slot;
 		/* We could use a bigger initial quantum for new flows */
+=======
+		q->tail = slot;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		slot->allot = q->scaled_quantum;
 	}
 	if (++sch->q.qlen <= q->limit)
@@ -522,7 +695,11 @@ next_slot:
 	qdisc_bstats_update(sch, skb);
 	sch->q.qlen--;
 	sch->qstats.backlog -= qdisc_pkt_len(skb);
+<<<<<<< HEAD
 	slot->backlog -= qdisc_pkt_len(skb);
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Is the slot empty? */
 	if (slot->qlen == 0) {
 		q->ht[slot->hash] = SFQ_EMPTY_SLOT;
@@ -547,6 +724,7 @@ sfq_reset(struct Qdisc *sch)
 		kfree_skb(skb);
 }
 
+<<<<<<< HEAD
 /*
  * When q->perturbation is changed, we rehash all queued skbs
  * to avoid OOO (Out Of Order) effects.
@@ -620,10 +798,13 @@ drop:				sch->qstats.backlog -= qdisc_pkt_len(skb);
 	qdisc_tree_decrease_qlen(sch, dropped);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void sfq_perturbation(unsigned long arg)
 {
 	struct Qdisc *sch = (struct Qdisc *)arg;
 	struct sfq_sched_data *q = qdisc_priv(sch);
+<<<<<<< HEAD
 	spinlock_t *root_lock = qdisc_lock(qdisc_root_sleeping(sch));
 
 	spin_lock(root_lock);
@@ -631,6 +812,10 @@ static void sfq_perturbation(unsigned long arg)
 	if (!q->filter_list && q->tail)
 		sfq_rehash(sch);
 	spin_unlock(root_lock);
+=======
+
+	q->perturbation = net_random();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (q->perturb_period)
 		mod_timer(&q->perturb_timer, jiffies + q->perturb_period);
@@ -640,6 +825,7 @@ static int sfq_change(struct Qdisc *sch, struct nlattr *opt)
 {
 	struct sfq_sched_data *q = qdisc_priv(sch);
 	struct tc_sfq_qopt *ctl = nla_data(opt);
+<<<<<<< HEAD
 	struct tc_sfq_qopt_v1 *ctl_v1 = NULL;
 	unsigned int qlen;
 	struct red_parms *p = NULL;
@@ -688,6 +874,25 @@ static int sfq_change(struct Qdisc *sch, struct nlattr *opt)
 		q->maxflows = min_t(u32, q->maxflows, q->limit);
 	}
 
+=======
+	unsigned int qlen;
+
+	if (opt->nla_len < nla_attr_size(sizeof(*ctl)))
+		return -EINVAL;
+
+	if (ctl->divisor &&
+	    (!is_power_of_2(ctl->divisor) || ctl->divisor > 65536))
+		return -EINVAL;
+
+	sch_tree_lock(sch);
+	q->quantum = ctl->quantum ? : psched_mtu(qdisc_dev(sch));
+	q->scaled_quantum = SFQ_ALLOT_SIZE(q->quantum);
+	q->perturb_period = ctl->perturb_period * HZ;
+	if (ctl->limit)
+		q->limit = min_t(u32, ctl->limit, SFQ_DEPTH - 1);
+	if (ctl->divisor)
+		q->divisor = ctl->divisor;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	qlen = sch->q.qlen;
 	while (sch->q.qlen > q->limit)
 		sfq_drop(sch);
@@ -699,6 +904,7 @@ static int sfq_change(struct Qdisc *sch, struct nlattr *opt)
 		q->perturbation = net_random();
 	}
 	sch_tree_unlock(sch);
+<<<<<<< HEAD
 	kfree(p);
 	return 0;
 }
@@ -737,12 +943,22 @@ static void sfq_destroy(struct Qdisc *sch)
 static int sfq_init(struct Qdisc *sch, struct nlattr *opt)
 {
 	struct sfq_sched_data *q = qdisc_priv(sch);
+=======
+	return 0;
+}
+
+static int sfq_init(struct Qdisc *sch, struct nlattr *opt)
+{
+	struct sfq_sched_data *q = qdisc_priv(sch);
+	size_t sz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	q->perturb_timer.function = sfq_perturbation;
 	q->perturb_timer.data = (unsigned long)sch;
 	init_timer_deferrable(&q->perturb_timer);
 
+<<<<<<< HEAD
 	for (i = 0; i < SFQ_MAX_DEPTH + 1; i++) {
 		q->dep[i].next = i + SFQ_MAX_FLOWS;
 		q->dep[i].prev = i + SFQ_MAX_FLOWS;
@@ -760,11 +976,29 @@ static int sfq_init(struct Qdisc *sch, struct nlattr *opt)
 	q->perturbation = net_random();
 
 	if (opt) {
+=======
+	for (i = 0; i < SFQ_DEPTH; i++) {
+		q->dep[i].next = i + SFQ_SLOTS;
+		q->dep[i].prev = i + SFQ_SLOTS;
+	}
+
+	q->limit = SFQ_DEPTH - 1;
+	q->cur_depth = 0;
+	q->tail = NULL;
+	q->divisor = SFQ_DEFAULT_HASH_DIVISOR;
+	if (opt == NULL) {
+		q->quantum = psched_mtu(qdisc_dev(sch));
+		q->scaled_quantum = SFQ_ALLOT_SIZE(q->quantum);
+		q->perturb_period = 0;
+		q->perturbation = net_random();
+	} else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int err = sfq_change(sch, opt);
 		if (err)
 			return err;
 	}
 
+<<<<<<< HEAD
 	q->ht = sfq_alloc(sizeof(q->ht[0]) * q->divisor);
 	q->slots = sfq_alloc(sizeof(q->slots[0]) * q->maxflows);
 	if (!q->ht || !q->slots) {
@@ -775,6 +1009,18 @@ static int sfq_init(struct Qdisc *sch, struct nlattr *opt)
 		q->ht[i] = SFQ_EMPTY_SLOT;
 
 	for (i = 0; i < q->maxflows; i++) {
+=======
+	sz = sizeof(q->ht[0]) * q->divisor;
+	q->ht = kmalloc(sz, GFP_KERNEL);
+	if (!q->ht && sz > PAGE_SIZE)
+		q->ht = vmalloc(sz);
+	if (!q->ht)
+		return -ENOMEM;
+	for (i = 0; i < q->divisor; i++)
+		q->ht[i] = SFQ_EMPTY_SLOT;
+
+	for (i = 0; i < SFQ_SLOTS; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		slot_queue_init(&q->slots[i]);
 		sfq_link(q, i);
 	}
@@ -785,10 +1031,27 @@ static int sfq_init(struct Qdisc *sch, struct nlattr *opt)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void sfq_destroy(struct Qdisc *sch)
+{
+	struct sfq_sched_data *q = qdisc_priv(sch);
+
+	tcf_destroy_chain(&q->filter_list);
+	q->perturb_period = 0;
+	del_timer_sync(&q->perturb_timer);
+	if (is_vmalloc_addr(q->ht))
+		vfree(q->ht);
+	else
+		kfree(q->ht);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int sfq_dump(struct Qdisc *sch, struct sk_buff *skb)
 {
 	struct sfq_sched_data *q = qdisc_priv(sch);
 	unsigned char *b = skb_tail_pointer(skb);
+<<<<<<< HEAD
 	struct tc_sfq_qopt_v1 opt;
 	struct red_parms *p = q->red_parms;
 
@@ -811,6 +1074,16 @@ static int sfq_dump(struct Qdisc *sch, struct sk_buff *skb)
 	}
 	memcpy(&opt.stats, &q->stats, sizeof(opt.stats));
 	opt.flags	= q->flags;
+=======
+	struct tc_sfq_qopt opt;
+
+	opt.quantum = q->quantum;
+	opt.perturb_period = q->perturb_period / HZ;
+
+	opt.limit = q->limit;
+	opt.divisor = q->divisor;
+	opt.flows = q->limit;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	NLA_PUT(skb, TCA_OPTIONS, sizeof(opt), &opt);
 
@@ -866,13 +1139,22 @@ static int sfq_dump_class_stats(struct Qdisc *sch, unsigned long cl,
 	sfq_index idx = q->ht[cl - 1];
 	struct gnet_stats_queue qs = { 0 };
 	struct tc_sfq_xstats xstats = { 0 };
+<<<<<<< HEAD
+=======
+	struct sk_buff *skb;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (idx != SFQ_EMPTY_SLOT) {
 		const struct sfq_slot *slot = &q->slots[idx];
 
 		xstats.allot = slot->allot << SFQ_ALLOT_SHIFT;
 		qs.qlen = slot->qlen;
+<<<<<<< HEAD
 		qs.backlog = slot->backlog;
+=======
+		slot_queue_walk(slot, skb)
+			qs.backlog += qdisc_pkt_len(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (gnet_stats_copy_queue(d, &qs) < 0)
 		return -1;

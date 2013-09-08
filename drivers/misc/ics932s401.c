@@ -480,12 +480,30 @@ static int ics932s401_remove(struct i2c_client *client)
 	return 0;
 }
 
+<<<<<<< HEAD
 module_i2c_driver(ics932s401_driver);
+=======
+static int __init ics932s401_init(void)
+{
+	return i2c_add_driver(&ics932s401_driver);
+}
+
+static void __exit ics932s401_exit(void)
+{
+	i2c_del_driver(&ics932s401_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Darrick J. Wong <djwong@us.ibm.com>");
 MODULE_DESCRIPTION("ICS932S401 driver");
 MODULE_LICENSE("GPL");
 
+<<<<<<< HEAD
+=======
+module_init(ics932s401_init);
+module_exit(ics932s401_exit);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* IBM IntelliStation Z30 */
 MODULE_ALIAS("dmi:bvnIBM:*:rn9228:*");
 MODULE_ALIAS("dmi:bvnIBM:*:rn9232:*");

@@ -10,7 +10,10 @@
  * option) any later version.
  */
 
+<<<<<<< HEAD
 #include <linux/stat.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/rio.h>
 #include <linux/rio_drv.h>
 #include <linux/rio_ids.h>

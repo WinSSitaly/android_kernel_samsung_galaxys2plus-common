@@ -21,7 +21,10 @@
 #include <asm/irq.h>
 #include <asm/mach-types.h>
 #include <asm/setup.h>
+<<<<<<< HEAD
 #include <asm/system_misc.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/hardware/dec21285.h>
 
 #include <asm/mach/irq.h>
@@ -200,6 +203,7 @@ void __init footbridge_map_io(void)
 		iotable_init(ebsa285_host_io_desc, ARRAY_SIZE(ebsa285_host_io_desc));
 }
 
+<<<<<<< HEAD
 void footbridge_restart(char mode, const char *cmd)
 {
 	if (mode == 's') {
@@ -227,6 +231,8 @@ void footbridge_restart(char mode, const char *cmd)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_FOOTBRIDGE_ADDIN
 
 static inline unsigned long fb_bus_sdram_offset(void)

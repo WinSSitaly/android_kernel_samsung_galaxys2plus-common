@@ -101,7 +101,10 @@
 #define ATOM_LCD_SELFTEST_START									(ATOM_DISABLE+5)
 #define ATOM_LCD_SELFTEST_STOP									(ATOM_ENABLE+5)
 #define ATOM_ENCODER_INIT			                  (ATOM_DISABLE+7)
+<<<<<<< HEAD
 #define ATOM_INIT			                          (ATOM_DISABLE+7)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ATOM_GET_STATUS                         (ATOM_DISABLE+8)
 
 #define ATOM_BLANKING         1
@@ -252,25 +255,44 @@ typedef struct _ATOM_MASTER_LIST_OF_COMMAND_TABLES{
   USHORT SetEngineClock;                         //Function Table,directly used by various SW components,latest version 1.1
   USHORT SetMemoryClock;                         //Function Table,directly used by various SW components,latest version 1.1
   USHORT SetPixelClock;                          //Function Table,directly used by various SW components,latest version 1.2  
+<<<<<<< HEAD
   USHORT EnableDispPowerGating;                  //Atomic Table,  indirectly used by various SW components,called from ASIC_Init
   USHORT ResetMemoryDLL;                         //Atomic Table,  indirectly used by various SW components,called from SetMemoryClock
   USHORT ResetMemoryDevice;                      //Atomic Table,  indirectly used by various SW components,called from SetMemoryClock
   USHORT MemoryPLLInit;                          //Atomic Table,  used only by Bios
   USHORT AdjustDisplayPll;											 //Atomic Table,  used by various SW componentes. 
+=======
+  USHORT DynamicClockGating;                     //Atomic Table,  indirectly used by various SW components,called from ASIC_Init
+  USHORT ResetMemoryDLL;                         //Atomic Table,  indirectly used by various SW components,called from SetMemoryClock
+  USHORT ResetMemoryDevice;                      //Atomic Table,  indirectly used by various SW components,called from SetMemoryClock
+  USHORT MemoryPLLInit;
+  USHORT AdjustDisplayPll;												//only used by Bios
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   USHORT AdjustMemoryController;                 //Atomic Table,  indirectly used by various SW components,called from SetMemoryClock                
   USHORT EnableASIC_StaticPwrMgt;                //Atomic Table,  only used by Bios
   USHORT ASIC_StaticPwrMgtStatusChange;          //Obsolete ,     only used by Bios   
   USHORT DAC_LoadDetection;                      //Atomic Table,  directly used by various SW components,latest version 1.2  
   USHORT LVTMAEncoderControl;                    //Atomic Table,directly used by various SW components,latest version 1.3
+<<<<<<< HEAD
   USHORT HW_Misc_Operation;                      //Atomic Table,  directly used by various SW components,latest version 1.1 
+=======
+  USHORT LCD1OutputControl;                      //Atomic Table,  directly used by various SW components,latest version 1.1 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   USHORT DAC1EncoderControl;                     //Atomic Table,  directly used by various SW components,latest version 1.1  
   USHORT DAC2EncoderControl;                     //Atomic Table,  directly used by various SW components,latest version 1.1 
   USHORT DVOOutputControl;                       //Atomic Table,  directly used by various SW components,latest version 1.1 
   USHORT CV1OutputControl;                       //Atomic Table,  Atomic Table,  Obsolete from Ry6xx, use DAC2 Output instead 
+<<<<<<< HEAD
   USHORT GetConditionalGoldenSetting;            //Only used by Bios
   USHORT TVEncoderControl;                       //Function Table,directly used by various SW components,latest version 1.1
   USHORT PatchMCSetting;                         //only used by BIOS
   USHORT MC_SEQ_Control;                         //only used by BIOS
+=======
+  USHORT GetConditionalGoldenSetting;            //only used by Bios
+  USHORT TVEncoderControl;                       //Function Table,directly used by various SW components,latest version 1.1
+  USHORT TMDSAEncoderControl;                    //Atomic Table,  directly used by various SW components,latest version 1.3
+  USHORT LVDSEncoderControl;                     //Atomic Table,  directly used by various SW components,latest version 1.3
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   USHORT TV1OutputControl;                       //Atomic Table,  Obsolete from Ry6xx, use DAC2 Output instead
   USHORT EnableScaler;                           //Atomic Table,  used only by Bios
   USHORT BlankCRTC;                              //Atomic Table,  directly used by various SW components,latest version 1.1 
@@ -283,7 +305,11 @@ typedef struct _ATOM_MASTER_LIST_OF_COMMAND_TABLES{
   USHORT SetCRTC_Replication;                    //Atomic Table,  used only by Bios
   USHORT SelectCRTC_Source;                      //Atomic Table,  directly used by various SW components,latest version 1.1 
   USHORT EnableGraphSurfaces;                    //Atomic Table,  used only by Bios
+<<<<<<< HEAD
   USHORT UpdateCRTC_DoubleBufferRegisters;			 //Atomic Table,  used only by Bios
+=======
+  USHORT UpdateCRTC_DoubleBufferRegisters;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   USHORT LUT_AutoFill;                           //Atomic Table,  only used by Bios
   USHORT EnableHW_IconCursor;                    //Atomic Table,  only used by Bios
   USHORT GetMemoryClock;                         //Atomic Table,  directly used by various SW components,latest version 1.1 
@@ -309,28 +335,44 @@ typedef struct _ATOM_MASTER_LIST_OF_COMMAND_TABLES{
   USHORT SetVoltage;                             //Function Table,directly and/or indirectly used by various SW components,latest version 1.1
   USHORT DAC1OutputControl;                      //Atomic Table,  directly used by various SW components,latest version 1.1
   USHORT DAC2OutputControl;                      //Atomic Table,  directly used by various SW components,latest version 1.1
+<<<<<<< HEAD
   USHORT ComputeMemoryClockParam;                //Function Table,only used by Bios, obsolete soon.Switch to use "ReadEDIDFromHWAssistedI2C"
   USHORT ClockSource;                            //Atomic Table,  indirectly used by various SW components,called from ASIC_Init
   USHORT MemoryDeviceInit;                       //Atomic Table,  indirectly used by various SW components,called from SetMemoryClock
   USHORT GetDispObjectInfo;                      //Atomic Table,  indirectly used by various SW components,called from EnableVGARender
+=======
+  USHORT SetupHWAssistedI2CStatus;               //Function Table,only used by Bios, obsolete soon.Switch to use "ReadEDIDFromHWAssistedI2C"
+  USHORT ClockSource;                            //Atomic Table,  indirectly used by various SW components,called from ASIC_Init
+  USHORT MemoryDeviceInit;                       //Atomic Table,  indirectly used by various SW components,called from SetMemoryClock
+  USHORT EnableYUV;                              //Atomic Table,  indirectly used by various SW components,called from EnableVGARender
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   USHORT DIG1EncoderControl;                     //Atomic Table,directly used by various SW components,latest version 1.1
   USHORT DIG2EncoderControl;                     //Atomic Table,directly used by various SW components,latest version 1.1
   USHORT DIG1TransmitterControl;                 //Atomic Table,directly used by various SW components,latest version 1.1
   USHORT DIG2TransmitterControl;	               //Atomic Table,directly used by various SW components,latest version 1.1 
   USHORT ProcessAuxChannelTransaction;					 //Function Table,only used by Bios
   USHORT DPEncoderService;											 //Function Table,only used by Bios
+<<<<<<< HEAD
   USHORT GetVoltageInfo;                         //Function Table,only used by Bios since SI
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }ATOM_MASTER_LIST_OF_COMMAND_TABLES;   
 
 // For backward compatible 
 #define ReadEDIDFromHWAssistedI2C                ProcessI2cChannelTransaction
+<<<<<<< HEAD
 #define DPTranslatorControl                      DIG2EncoderControl
 #define UNIPHYTransmitterControl			     DIG1TransmitterControl
 #define LVTMATransmitterControl				     DIG2TransmitterControl
+=======
+#define UNIPHYTransmitterControl						     DIG1TransmitterControl
+#define LVTMATransmitterControl							     DIG2TransmitterControl
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SetCRTC_DPM_State                        GetConditionalGoldenSetting
 #define SetUniphyInstance                        ASIC_StaticPwrMgtStatusChange
 #define HPDInterruptService                      ReadHWAssistedI2CStatus
 #define EnableVGA_Access                         GetSCLKOverMCLKRatio
+<<<<<<< HEAD
 #define EnableYUV                                GetDispObjectInfo                         
 #define DynamicClockGating                       EnableDispPowerGating
 #define SetupHWAssistedI2CStatus                 ComputeMemoryClockParam
@@ -339,6 +381,9 @@ typedef struct _ATOM_MASTER_LIST_OF_COMMAND_TABLES{
 #define LVDSEncoderControl                       MC_SEQ_Control
 #define LCD1OutputControl                        HW_Misc_Operation
 
+=======
+#define GetDispObjectInfo                        EnableYUV 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct _ATOM_MASTER_COMMAND_TABLE
 {
@@ -505,6 +550,7 @@ typedef struct _COMPUTE_MEMORY_ENGINE_PLL_PARAMETERS_V5
 // ucInputFlag
 #define ATOM_PLL_INPUT_FLAG_PLL_STROBE_MODE_EN  1   // 1-StrobeMode, 0-PerformanceMode
 
+<<<<<<< HEAD
 // use for ComputeMemoryClockParamTable
 typedef struct _COMPUTE_MEMORY_CLOCK_PARAM_PARAMETERS_V2_1
 {
@@ -533,6 +579,8 @@ typedef struct _COMPUTE_MEMORY_CLOCK_PARAM_PARAMETERS_V2_1
 //MPLL_CNTL_FLAG_BYPASS_AD_PLL has a wrong name, should be BYPASS_DQ_PLL
 #define MPLL_CNTL_FLAG_BYPASS_AD_PLL            0x04
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef struct _DYNAMICE_MEMORY_SETTINGS_PARAMETER
 {
   ATOM_COMPUTE_CLOCK_FREQ ulClock;
@@ -600,6 +648,7 @@ typedef struct _DYNAMIC_CLOCK_GATING_PARAMETERS
 #define  DYNAMIC_CLOCK_GATING_PS_ALLOCATION  DYNAMIC_CLOCK_GATING_PARAMETERS
 
 /****************************************************************************/	
+<<<<<<< HEAD
 // Structure used by EnableDispPowerGatingTable.ctb
 /****************************************************************************/	
 typedef struct _ENABLE_DISP_POWER_GATING_PARAMETERS_V2_1 
@@ -610,6 +659,8 @@ typedef struct _ENABLE_DISP_POWER_GATING_PARAMETERS_V2_1
 }ENABLE_DISP_POWER_GATING_PARAMETERS_V2_1;
 
 /****************************************************************************/	
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 // Structure used by EnableASIC_StaticPwrMgtTable.ctb
 /****************************************************************************/	
 typedef struct _ENABLE_ASIC_STATIC_PWR_MGT_PARAMETERS
@@ -855,7 +906,10 @@ typedef struct _ATOM_DIG_ENCODER_CONFIG_V4
 #define ATOM_ENCODER_CONFIG_V4_DPLINKRATE_1_62GHZ		  0x00
 #define ATOM_ENCODER_CONFIG_V4_DPLINKRATE_2_70GHZ		  0x01
 #define ATOM_ENCODER_CONFIG_V4_DPLINKRATE_5_40GHZ		  0x02
+<<<<<<< HEAD
 #define ATOM_ENCODER_CONFIG_V4_DPLINKRATE_3_24GHZ		  0x03
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ATOM_ENCODER_CONFIG_V4_ENCODER_SEL					  0x70
 #define ATOM_ENCODER_CONFIG_V4_DIG0_ENCODER					  0x00
 #define ATOM_ENCODER_CONFIG_V4_DIG1_ENCODER					  0x10
@@ -863,7 +917,10 @@ typedef struct _ATOM_DIG_ENCODER_CONFIG_V4
 #define ATOM_ENCODER_CONFIG_V4_DIG3_ENCODER					  0x30
 #define ATOM_ENCODER_CONFIG_V4_DIG4_ENCODER					  0x40
 #define ATOM_ENCODER_CONFIG_V4_DIG5_ENCODER					  0x50
+<<<<<<< HEAD
 #define ATOM_ENCODER_CONFIG_V4_DIG6_ENCODER					  0x60
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct _DIG_ENCODER_CONTROL_PARAMETERS_V4
 {
@@ -1221,6 +1278,7 @@ typedef struct _DIG_TRANSMITTER_CONTROL_PARAMETERS_V4
 #define ATOM_TRANSMITTER_CONFIG_V4_TRANSMITTER3           	0x80	//EF
 
 
+<<<<<<< HEAD
 typedef struct _ATOM_DIG_TRANSMITTER_CONFIG_V5
 {
 #if ATOM_BIG_ENDIAN
@@ -1321,6 +1379,8 @@ typedef struct _DIG_TRANSMITTER_CONTROL_PARAMETERS_V1_5
 #define DIG_TRANSMITTER_CONTROL_PS_ALLOCATION_V1_5            DIG_TRANSMITTER_CONTROL_PARAMETERS_V1_5
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /****************************************************************************/	
 // Structures used by ExternalEncoderControlTable V1.3
 // ASIC Families: Evergreen, Llano, NI
@@ -1943,7 +2003,10 @@ typedef struct _ENABLE_SPREAD_SPECTRUM_ON_PPLL_V2
 #define ATOM_PPLL_SS_TYPE_V3_P1PLL            0x00
 #define ATOM_PPLL_SS_TYPE_V3_P2PLL            0x04
 #define ATOM_PPLL_SS_TYPE_V3_DCPLL            0x08
+<<<<<<< HEAD
 #define ATOM_PPLL_SS_TYPE_V3_P0PLL            ATOM_PPLL_SS_TYPE_V3_DCPLL
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ATOM_PPLL_SS_AMOUNT_V3_FBDIV_MASK     0x00FF
 #define ATOM_PPLL_SS_AMOUNT_V3_FBDIV_SHIFT    0
 #define ATOM_PPLL_SS_AMOUNT_V3_NFRAC_MASK     0x0F00
@@ -2181,6 +2244,7 @@ typedef struct	_SET_VOLTAGE_PARAMETERS_V2
   USHORT   usVoltageLevel;              // real voltage level
 }SET_VOLTAGE_PARAMETERS_V2;
 
+<<<<<<< HEAD
 
 typedef struct	_SET_VOLTAGE_PARAMETERS_V1_3
 {
@@ -2208,12 +2272,15 @@ typedef struct	_SET_VOLTAGE_PARAMETERS_V1_3
 #define ATOM_VIRTUAL_VOLTAGE_ID2             0xff03
 #define ATOM_VIRTUAL_VOLTAGE_ID3             0xff04
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef struct _SET_VOLTAGE_PS_ALLOCATION
 {
   SET_VOLTAGE_PARAMETERS sASICSetVoltage;
   WRITE_ONE_BYTE_HW_I2C_DATA_PS_ALLOCATION sReserved;
 }SET_VOLTAGE_PS_ALLOCATION;
 
+<<<<<<< HEAD
 // New Added from SI for GetVoltageInfoTable, input parameter structure
 typedef struct  _GET_VOLTAGE_INFO_INPUT_PARAMETER_V1_1
 {
@@ -2252,6 +2319,8 @@ typedef struct  _GET_LEAKAGE_VOLTAGE_INFO_OUTPUT_PARAMETER_V1_1
 #define	ATOM_GET_VOLTAGE_STATE2_LEAKAGE_VID 0x12
 #define	ATOM_GET_VOLTAGE_STATE3_LEAKAGE_VID 0x13
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /****************************************************************************/	
 // Structures used by TVEncoderControlTable
 /****************************************************************************/	
@@ -2281,9 +2350,15 @@ typedef struct _ATOM_MASTER_LIST_OF_DATA_TABLES
   USHORT        MultimediaConfigInfo;     // Only used by MM Lib,latest version 2.1, not configuable from Bios, need to include the table to build Bios
   USHORT        StandardVESA_Timing;      // Only used by Bios
   USHORT        FirmwareInfo;             // Shared by various SW components,latest version 1.4
+<<<<<<< HEAD
   USHORT        PaletteData;              // Only used by BIOS
   USHORT        LCD_Info;                 // Shared by various SW components,latest version 1.3, was called LVDS_Info 
   USHORT        DIGTransmitterInfo;       // Internal used by VBIOS only version 3.1
+=======
+  USHORT        DAC_Info;                 // Will be obsolete from R600
+  USHORT        LCD_Info;                 // Shared by various SW components,latest version 1.3, was called LVDS_Info 
+  USHORT        TMDS_Info;                // Will be obsolete from R600
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   USHORT        AnalogTV_Info;            // Shared by various SW components,latest version 1.1 
   USHORT        SupportedDevicesInfo;     // Will be obsolete from R600
   USHORT        GPIO_I2C_Info;            // Shared by various SW components,latest version 1.2 will be used from R600           
@@ -2312,16 +2387,25 @@ typedef struct _ATOM_MASTER_LIST_OF_DATA_TABLES
 	USHORT				PowerSourceInfo;					// Shared by various SW components, latest versoin 1.1
 }ATOM_MASTER_LIST_OF_DATA_TABLES;
 
+<<<<<<< HEAD
+=======
+// For backward compatible 
+#define LVDS_Info                LCD_Info
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef struct _ATOM_MASTER_DATA_TABLE
 { 
   ATOM_COMMON_TABLE_HEADER sHeader;  
   ATOM_MASTER_LIST_OF_DATA_TABLES   ListOfDataTables;
 }ATOM_MASTER_DATA_TABLE;
 
+<<<<<<< HEAD
 // For backward compatible 
 #define LVDS_Info                LCD_Info
 #define DAC_Info                 PaletteData
 #define TMDS_Info                DIGTransmitterInfo
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /****************************************************************************/	
 // Structure used in MultimediaCapabilityInfoTable
@@ -2388,9 +2472,13 @@ typedef struct _ATOM_MULTIMEDIA_CONFIG_INFO
 typedef struct _ATOM_FIRMWARE_CAPABILITY
 {
 #if ATOM_BIG_ENDIAN
+<<<<<<< HEAD
   USHORT Reserved:1;
   USHORT SCL2Redefined:1;
   USHORT PostWithoutModeSet:1;
+=======
+  USHORT Reserved:3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   USHORT HyperMemory_Size:4;
   USHORT HyperMemory_Support:1;
   USHORT PPMode_Assigned:1;
@@ -2412,9 +2500,13 @@ typedef struct _ATOM_FIRMWARE_CAPABILITY
   USHORT PPMode_Assigned:1;
   USHORT HyperMemory_Support:1;
   USHORT HyperMemory_Size:4;
+<<<<<<< HEAD
   USHORT PostWithoutModeSet:1;
   USHORT SCL2Redefined:1;
   USHORT Reserved:1;
+=======
+  USHORT Reserved:3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }ATOM_FIRMWARE_CAPABILITY;
 
@@ -2639,8 +2731,12 @@ typedef struct _ATOM_FIRMWARE_INFO_V2_2
   USHORT                          usLcdMaxPixelClockPLL_Output; // In MHz unit
   ULONG                           ulReserved4;                //Was ulAsicMaximumVoltage
   ULONG                           ulMinPixelClockPLL_Output;  //In 10Khz unit
+<<<<<<< HEAD
   UCHAR                           ucRemoteDisplayConfig;
   UCHAR                           ucReserved5[3];             //Was usMinEngineClockPLL_Input and usMaxEngineClockPLL_Input
+=======
+  ULONG                           ulReserved5;                //Was usMinEngineClockPLL_Input and usMaxEngineClockPLL_Input
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   ULONG                           ulReserved6;                //Was usMinEngineClockPLL_Output and usMinMemoryClockPLL_Input
   ULONG                           ulReserved7;                //Was usMaxMemoryClockPLL_Input and usMinMemoryClockPLL_Output
   USHORT                          usReserved11;               //Was usMaxPixelClock;  //In 10Khz unit, Max.  Pclk used only for DAC
@@ -2660,11 +2756,14 @@ typedef struct _ATOM_FIRMWARE_INFO_V2_2
 
 #define ATOM_FIRMWARE_INFO_LAST  ATOM_FIRMWARE_INFO_V2_2
 
+<<<<<<< HEAD
 
 // definition of ucRemoteDisplayConfig
 #define REMOTE_DISPLAY_DISABLE                   0x00
 #define REMOTE_DISPLAY_ENABLE                    0x01
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /****************************************************************************/	
 // Structures used in IntegratedSystemInfoTable
 /****************************************************************************/	
@@ -2887,9 +2986,14 @@ usMinDownStreamHTLinkWidth:  same as above.
 #define    INTEGRATED_SYSTEM_INFO__AMD_CPU__GREYHOUND      2
 #define    INTEGRATED_SYSTEM_INFO__AMD_CPU__K8             3
 #define    INTEGRATED_SYSTEM_INFO__AMD_CPU__PHARAOH        4
+<<<<<<< HEAD
 #define    INTEGRATED_SYSTEM_INFO__AMD_CPU__OROCHI         5
 
 #define    INTEGRATED_SYSTEM_INFO__AMD_CPU__MAX_CODE       INTEGRATED_SYSTEM_INFO__AMD_CPU__OROCHI    // this deff reflects max defined CPU code
+=======
+
+#define    INTEGRATED_SYSTEM_INFO__AMD_CPU__MAX_CODE       INTEGRATED_SYSTEM_INFO__AMD_CPU__PHARAOH    // this deff reflects max defined CPU code
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define SYSTEM_CONFIG_POWEREXPRESS_ENABLE                 0x00000001
 #define SYSTEM_CONFIG_RUN_AT_OVERDRIVE_ENGINE             0x00000002
@@ -2981,7 +3085,10 @@ typedef struct _ATOM_INTEGRATED_SYSTEM_INFO_V5
 #define ASIC_INT_DIG4_ENCODER_ID													0x0b
 #define ASIC_INT_DIG5_ENCODER_ID													0x0c
 #define ASIC_INT_DIG6_ENCODER_ID													0x0d
+<<<<<<< HEAD
 #define ASIC_INT_DIG7_ENCODER_ID													0x0e
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 //define Encoder attribute
 #define ATOM_ANALOG_ENCODER																0
@@ -3455,14 +3562,20 @@ typedef struct _ATOM_LCD_INFO_V13
 
   UCHAR               ucPowerSequenceDIGONtoDE_in4Ms;
   UCHAR               ucPowerSequenceDEtoVARY_BL_in4Ms;
+<<<<<<< HEAD
   UCHAR               ucPowerSequenceVARY_BLtoDE_in4Ms;
   UCHAR               ucPowerSequenceDEtoDIGON_in4Ms;
+=======
+  UCHAR               ucPowerSequenceDEtoDIGON_in4Ms;
+  UCHAR               ucPowerSequenceVARY_BLtoDE_in4Ms;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
   UCHAR               ucOffDelay_in4Ms;
   UCHAR               ucPowerSequenceVARY_BLtoBLON_in4Ms;
   UCHAR               ucPowerSequenceBLONtoVARY_BL_in4Ms;
   UCHAR               ucReserved1;
 
+<<<<<<< HEAD
   UCHAR               ucDPCD_eDP_CONFIGURATION_CAP;     // dpcd 0dh
   UCHAR               ucDPCD_MAX_LINK_RATE;             // dpcd 01h
   UCHAR               ucDPCD_MAX_LANE_COUNT;            // dpcd 02h
@@ -3472,6 +3585,9 @@ typedef struct _ATOM_LCD_INFO_V13
   UCHAR               uceDPToLVDSRxId;
   UCHAR               ucLcdReservd;
   ULONG               ulReserved[2];
+=======
+  ULONG               ulReserved[4];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }ATOM_LCD_INFO_V13;  
 
 #define ATOM_LCD_INFO_LAST  ATOM_LCD_INFO_V13    
@@ -3510,11 +3626,14 @@ typedef struct _ATOM_LCD_INFO_V13
 //Use this cap bit for a quick reference whether an embadded panel (LCD1 ) is LVDS or eDP.
 #define	LCDPANEL_CAP_V13_eDP                    0x4        // = LCDPANEL_CAP_eDP no change comparing to previous version
 
+<<<<<<< HEAD
 //uceDPToLVDSRxId
 #define eDP_TO_LVDS_RX_DISABLE                  0x00       // no eDP->LVDS translator chip 
 #define eDP_TO_LVDS_COMMON_ID                   0x01       // common eDP->LVDS translator chip without AMD SW init
 #define eDP_TO_LVDS_RT_ID                       0x02       // RT tanslator which require AMD SW init
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef struct  _ATOM_PATCH_RECORD_MODE
 {
   UCHAR     ucRecordType;
@@ -3559,7 +3678,10 @@ typedef struct  _ATOM_PANEL_RESOLUTION_PATCH_RECORD
 #define LCD_CAP_RECORD_TYPE                   3
 #define LCD_FAKE_EDID_PATCH_RECORD_TYPE       4
 #define LCD_PANEL_RESOLUTION_RECORD_TYPE      5
+<<<<<<< HEAD
 #define LCD_EDID_OFFSET_PATCH_RECORD_TYPE     6
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ATOM_RECORD_END_TYPE                  0xFF
 
 /****************************Spread Spectrum Info Table Definitions **********************/
@@ -3771,7 +3893,10 @@ else	//Non VGA case
 
 CAIL needs to claim an reserved area defined by FBAccessAreaOffset and usFBUsedbyDrvInKB in non VGA case.*/
 
+<<<<<<< HEAD
 /***********************************************************************************/	
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ATOM_MAX_FIRMWARE_VRAM_USAGE_INFO			1
 
 typedef struct _ATOM_FIRMWARE_VRAM_RESERVE_INFO
@@ -4062,17 +4187,25 @@ typedef struct _EXT_DISPLAY_PATH
     ATOM_DP_CONN_CHANNEL_MAPPING asDPMapping;
     ATOM_DVI_CONN_CHANNEL_MAPPING asDVIMapping;
   };
+<<<<<<< HEAD
   UCHAR   ucChPNInvert;                   // bit vector for up to 8 lanes, =0: P and N is not invert, =1 P and N is inverted
   USHORT  usCaps;
   USHORT  usReserved; 
+=======
+  UCHAR   ucReserved;
+  USHORT  usReserved[2]; 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }EXT_DISPLAY_PATH;
    
 #define NUMBER_OF_UCHAR_FOR_GUID          16
 #define MAX_NUMBER_OF_EXT_DISPLAY_PATH    7
 
+<<<<<<< HEAD
 //usCaps
 #define  EXT_DISPLAY_PATH_CAPS__HBR2_DISABLE          0x01
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef  struct _ATOM_EXTERNAL_DISPLAY_CONNECTION_INFO
 {
   ATOM_COMMON_TABLE_HEADER sHeader;
@@ -4080,9 +4213,13 @@ typedef  struct _ATOM_EXTERNAL_DISPLAY_CONNECTION_INFO
   EXT_DISPLAY_PATH         sPath[MAX_NUMBER_OF_EXT_DISPLAY_PATH]; // total of fixed 7 entries.
   UCHAR                    ucChecksum;                            // a  simple Checksum of the sum of whole structure equal to 0x0. 
   UCHAR                    uc3DStereoPinId;                       // use for eDP panel
+<<<<<<< HEAD
   UCHAR                    ucRemoteDisplayConfig;
   UCHAR                    uceDPToLVDSRxId;
   UCHAR                    Reserved[4];                           // for potential expansion
+=======
+  UCHAR                    Reserved [6];                          // for potential expansion
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }ATOM_EXTERNAL_DISPLAY_CONNECTION_INFO;
 
 //Related definitions, all records are different but they have a commond header
@@ -4227,7 +4364,10 @@ typedef struct  _ATOM_OBJECT_GPIO_CNTL_RECORD
 #define GPIO_PIN_STATE_ACTIVE_HIGH      0x1
 
 // Indexes to GPIO array in GLSync record 
+<<<<<<< HEAD
 // GLSync record is for Frame Lock/Gen Lock feature.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ATOM_GPIO_INDEX_GLSYNC_REFCLK    0
 #define ATOM_GPIO_INDEX_GLSYNC_HSYNC     1
 #define ATOM_GPIO_INDEX_GLSYNC_VSYNC     2
@@ -4235,9 +4375,13 @@ typedef struct  _ATOM_OBJECT_GPIO_CNTL_RECORD
 #define ATOM_GPIO_INDEX_GLSYNC_SWAP_GNT  4
 #define ATOM_GPIO_INDEX_GLSYNC_INTERRUPT 5
 #define ATOM_GPIO_INDEX_GLSYNC_V_RESET   6
+<<<<<<< HEAD
 #define ATOM_GPIO_INDEX_GLSYNC_SWAP_CNTL 7
 #define ATOM_GPIO_INDEX_GLSYNC_SWAP_SEL  8
 #define ATOM_GPIO_INDEX_GLSYNC_MAX       9
+=======
+#define ATOM_GPIO_INDEX_GLSYNC_MAX       7
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct  _ATOM_ENCODER_DVO_CF_RECORD
 {
@@ -4247,8 +4391,12 @@ typedef struct  _ATOM_ENCODER_DVO_CF_RECORD
 }ATOM_ENCODER_DVO_CF_RECORD;
 
 // Bit maps for ATOM_ENCODER_CAP_RECORD.ucEncoderCap
+<<<<<<< HEAD
 #define ATOM_ENCODER_CAP_RECORD_HBR2                  0x01         // DP1.2 HBR2 is supported by HW encoder
 #define ATOM_ENCODER_CAP_RECORD_HBR2_EN               0x02         // DP1.2 HBR2 setting is qualified and HBR2 can be enabled 
+=======
+#define ATOM_ENCODER_CAP_RECORD_HBR2     0x01         // DP1.2 HBR2 is supported by this path
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct  _ATOM_ENCODER_CAP_RECORD
 {
@@ -4257,6 +4405,7 @@ typedef struct  _ATOM_ENCODER_CAP_RECORD
     USHORT                    usEncoderCap;         
     struct {
 #if ATOM_BIG_ENDIAN
+<<<<<<< HEAD
       USHORT                  usReserved:14;        // Bit1-15 may be defined for other capability in future
       USHORT                  usHBR2En:1;           // Bit1 is for DP1.2 HBR2 enable
       USHORT                  usHBR2Cap:1;          // Bit0 is for DP1.2 HBR2 capability. 
@@ -4264,6 +4413,13 @@ typedef struct  _ATOM_ENCODER_CAP_RECORD
       USHORT                  usHBR2Cap:1;          // Bit0 is for DP1.2 HBR2 capability. 
       USHORT                  usHBR2En:1;           // Bit1 is for DP1.2 HBR2 enable
       USHORT                  usReserved:14;        // Bit1-15 may be defined for other capability in future
+=======
+      USHORT                  usReserved:15;        // Bit1-15 may be defined for other capability in future
+      USHORT                  usHBR2Cap:1;          // Bit0 is for DP1.2 HBR2 capability. 
+#else
+      USHORT                  usHBR2Cap:1;          // Bit0 is for DP1.2 HBR2 capability. 
+      USHORT                  usReserved:15;        // Bit1-15 may be defined for other capability in future
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
     };
   }; 
@@ -4413,7 +4569,10 @@ typedef struct _ATOM_VOLTAGE_CONTROL
 #define	VOLTAGE_CONTROL_ID_VT1556M						0x07									
 #define	VOLTAGE_CONTROL_ID_CHL822x						0x08									
 #define	VOLTAGE_CONTROL_ID_VT1586M						0x09
+<<<<<<< HEAD
 #define VOLTAGE_CONTROL_ID_UP1637 						0x0A
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct  _ATOM_VOLTAGE_OBJECT
 {
@@ -4450,6 +4609,7 @@ typedef struct  _ATOM_LEAKID_VOLTAGE
 	USHORT	usVoltage;
 }ATOM_LEAKID_VOLTAGE;
 
+<<<<<<< HEAD
 typedef struct _ATOM_VOLTAGE_OBJECT_HEADER_V3{
  	 UCHAR		ucVoltageType;									//Indicate Voltage Source: VDDC, MVDDC, MVDDQ or MVDDCI	 
    UCHAR		ucVoltageMode;							    //Indicate voltage control mode: Init/Set/Leakage/Set phase 
@@ -4513,6 +4673,8 @@ typedef struct  _ATOM_VOLTAGE_OBJECT_INFO_V3_1
 	 ATOM_VOLTAGE_OBJECT_V3			asVoltageObj[3];	//Info for Voltage control	  	 
 }ATOM_VOLTAGE_OBJECT_INFO_V3_1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef struct  _ATOM_ASIC_PROFILE_VOLTAGE
 {
 	UCHAR		ucProfileId;
@@ -4625,6 +4787,7 @@ typedef struct _ATOM_INTEGRATED_SYSTEM_INFO_V6
   USHORT usHDMISSpreadRateIn10Hz;
   USHORT usDVISSPercentage;
   USHORT usDVISSpreadRateIn10Hz;
+<<<<<<< HEAD
   ULONG  SclkDpmBoostMargin;
   ULONG  SclkDpmThrottleMargin;
   USHORT SclkDpmTdpLimitPG; 
@@ -4637,6 +4800,9 @@ typedef struct _ATOM_INTEGRATED_SYSTEM_INFO_V6
   UCHAR  ucLvdsMisc;
   UCHAR  ucLVDSReserved;
   ULONG  ulReserved3[15]; 
+=======
+  ULONG  ulReserved3[21]; 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   ATOM_EXTERNAL_DISPLAY_CONNECTION_INFO sExtDispConnInfo;   
 }ATOM_INTEGRATED_SYSTEM_INFO_V6;   
 
@@ -4644,6 +4810,7 @@ typedef struct _ATOM_INTEGRATED_SYSTEM_INFO_V6
 #define INTEGRATED_SYSTEM_INFO_V6_GPUCAPINFO__TMDSHDMI_COHERENT_SINGLEPLL_MODE       0x01
 #define INTEGRATED_SYSTEM_INFO_V6_GPUCAPINFO__DISABLE_AUX_HW_MODE_DETECTION          0x08
 
+<<<<<<< HEAD
 //ucLVDSMisc:                   
 #define SYS_INFO_LVDSMISC__888_FPDI_MODE                                             0x01
 #define SYS_INFO_LVDSMISC__DL_CH_SWAP                                                0x02
@@ -4654,6 +4821,11 @@ typedef struct _ATOM_INTEGRATED_SYSTEM_INFO_V6
 // not used any more
 #define SYS_INFO_LVDSMISC__VSYNC_ACTIVE_LOW                                          0x04
 #define SYS_INFO_LVDSMISC__HSYNC_ACTIVE_LOW                                          0x08
+=======
+// ulOtherDisplayMisc
+#define INTEGRATED_SYSTEM_INFO__GET_EDID_CALLBACK_FUNC_SUPPORT                       0x01
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**********************************************************************************************************************
   ATOM_INTEGRATED_SYSTEM_INFO_V6 Description
@@ -4722,6 +4894,7 @@ ucUMAChannelNumber:      	        System memory channel numbers.
 ulCSR_M3_ARB_CNTL_DEFAULT[10]:    Arrays with values for CSR M3 arbiter for default
 ulCSR_M3_ARB_CNTL_UVD[10]:        Arrays with values for CSR M3 arbiter for UVD playback.
 ulCSR_M3_ARB_CNTL_FS3D[10]:       Arrays with values for CSR M3 arbiter for Full Screen 3D applications.
+<<<<<<< HEAD
 sAvail_SCLK[5]:                   Arrays to provide availabe list of SLCK and corresponding voltage, order from low to high  
 ulGMCRestoreResetTime:            GMC power restore and GMC reset time to calculate data reconnection latency. Unit in ns. 
 ulMinimumNClk:                    Minimum NCLK speed among all NB-Pstates to calcualte data reconnection latency. Unit in 10kHz. 
@@ -4924,6 +5097,9 @@ ulCSR_M3_ARB_CNTL_DEFAULT[10]:    Arrays with values for CSR M3 arbiter for defa
 ulCSR_M3_ARB_CNTL_UVD[10]:        Arrays with values for CSR M3 arbiter for UVD playback.
 ulCSR_M3_ARB_CNTL_FS3D[10]:       Arrays with values for CSR M3 arbiter for Full Screen 3D applications.
 sAvail_SCLK[5]:                   Arrays to provide availabe list of SLCK and corresponding voltage, order from low to high  
+=======
+sAvail_SCLK[5]:                   Arrays to provide available list of SLCK and corresponding voltage, order from low to high  
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ulGMCRestoreResetTime:            GMC power restore and GMC reset time to calculate data reconnection latency. Unit in ns. 
 ulMinimumNClk:                    Minimum NCLK speed among all NB-Pstates to calcualte data reconnection latency. Unit in 10kHz. 
 ulIdleNClk:                       NCLK speed while memory runs in self-refresh state. Unit in 10kHz.
@@ -4937,6 +5113,7 @@ usHDMISSPercentage:               HDMI Spread Spectrum Percentage in unit 0.01%;
 usHDMISSpreadRateIn10Hz:          HDMI Spread Spectrum frequency in unit of 10Hz,  =0, use VBIOS default setting. 
 usDVISSPercentage:                DVI Spread Spectrum Percentage in unit 0.01%; 100 mean 1%,  =0, use VBIOS default setting. 
 usDVISSpreadRateIn10Hz:           DVI Spread Spectrum frequency in unit of 10Hz,  =0, use VBIOS default setting. 
+<<<<<<< HEAD
 usMaxLVDSPclkFreqInSingleLink:    Max pixel clock LVDS panel single link, if=0 means VBIOS use default threhold, right now it is 85Mhz
 ucLVDSMisc:                       [bit0] LVDS 888bit panel mode =0: LVDS 888 panel in LDI mode, =1: LVDS 888 panel in FPDI mode
                                   [bit1] LVDS panel lower and upper link mapping =0: lower link and upper link not swap, =1: lower link and upper link are swapped
@@ -4972,6 +5149,8 @@ ucLVDSPwrOffBLONtoVARY_BL_in4Ms:  LVDS power down sequence time in unit of 4ms. 
 
 ulNbpStateMemclkFreq[4]:          system memory clock frequncey in unit of 10Khz in different NB pstate. 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 **********************************************************************************************************************/
 
 /**************************************************************************/
@@ -5033,7 +5212,10 @@ typedef struct _ATOM_ASIC_SS_ASSIGNMENT
 #define ASIC_INTERNAL_SS_ON_DP      7
 #define ASIC_INTERNAL_SS_ON_DCPLL   8
 #define ASIC_EXTERNAL_SS_ON_DP_CLOCK 9
+<<<<<<< HEAD
 #define ASIC_INTERNAL_VCE_SS        10
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct _ATOM_ASIC_SS_ASSIGNMENT_V2
 {
@@ -5095,7 +5277,11 @@ typedef struct _ATOM_ASIC_INTERNAL_SS_INFO_V3
 #define ATOM_DOS_MODE_INFO_DEF        7
 #define ATOM_I2C_CHANNEL_STATUS_DEF   8
 #define ATOM_I2C_CHANNEL_STATUS1_DEF  9
+<<<<<<< HEAD
 #define ATOM_INTERNAL_TIMER_DEF       10
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 // BIOS_0_SCRATCH Definition 
 #define ATOM_S0_CRT1_MONO               0x00000001L
@@ -5223,7 +5409,10 @@ typedef struct _ATOM_ASIC_INTERNAL_SS_INFO_V3
 #define ATOM_S2_DEVICE_DPMS_MASKw1      0x3FF
 #define ATOM_S2_FORCEDLOWPWRMODE_STATE_MASKb3     0x0C
 #define ATOM_S2_FORCEDLOWPWRMODE_STATE_CHANGEb3   0x10
+<<<<<<< HEAD
 #define ATOM_S2_TMDS_COHERENT_MODEb3    0x10          // used by VBIOS code only, use coherent mode for TMDS/HDMI mode
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ATOM_S2_VRI_BRIGHT_ENABLEb3     0x20
 #define ATOM_S2_ROTATION_STATE_MASKb3   0xC0
 
@@ -5614,6 +5803,7 @@ typedef struct _ENABLE_GRAPH_SURFACE_PARAMETERS_V1_3
   USHORT usDeviceId;                  // Active Device Id for this surface. If no device, set to 0. 
 }ENABLE_GRAPH_SURFACE_PARAMETERS_V1_3;
 
+<<<<<<< HEAD
 typedef struct _ENABLE_GRAPH_SURFACE_PARAMETERS_V1_4
 {
   USHORT usHight;                     // Image Hight
@@ -5631,6 +5821,8 @@ typedef struct _ENABLE_GRAPH_SURFACE_PARAMETERS_V1_4
 #define ATOM_GRAPH_CONTROL_SET_PITCH             0x0f
 #define ATOM_GRAPH_CONTROL_SET_DISP_START        0x10
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef struct _ENABLE_GRAPH_SURFACE_PS_ALLOCATION
 {
   ENABLE_GRAPH_SURFACE_PARAMETERS sSetSurface;          
@@ -5650,6 +5842,7 @@ typedef struct  _GET_DISPLAY_SURFACE_SIZE_PARAMETERS
   USHORT  usY_Size;
 }GET_DISPLAY_SURFACE_SIZE_PARAMETERS; 
 
+<<<<<<< HEAD
 typedef struct  _GET_DISPLAY_SURFACE_SIZE_PARAMETERS_V2
 {
   union{
@@ -5702,6 +5895,8 @@ typedef struct _INTERRUPT_SERVICE_PARAMETERS_V2
 #define INTERRUPT_STATUS__INT_TRIGGER     1
 #define INTERRUPT_STATUS__HPD_HIGH        2
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef struct _INDIRECT_IO_ACCESS
 {
   ATOM_COMMON_TABLE_HEADER sHeader;  
@@ -5834,7 +6029,11 @@ typedef struct _ATOM_INIT_REG_BLOCK{
 
 #define END_OF_REG_INDEX_BLOCK  0x0ffff
 #define END_OF_REG_DATA_BLOCK   0x00000000
+<<<<<<< HEAD
 #define ATOM_INIT_REG_MASK_FLAG 0x80               //Not used in BIOS
+=======
+#define ATOM_INIT_REG_MASK_FLAG 0x80
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define	CLOCK_RANGE_HIGHEST			0x00ffffff
 
 #define VALUE_DWORD             SIZEOF ULONG
@@ -5874,7 +6073,10 @@ typedef struct _ATOM_MC_INIT_PARAM_TABLE
 #define _128Mx8             0x51
 #define _128Mx16            0x52
 #define _256Mx8             0x61
+<<<<<<< HEAD
 #define _256Mx16            0x62
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define SAMSUNG             0x1
 #define INFINEON            0x2
@@ -6231,7 +6433,11 @@ typedef struct _ATOM_VRAM_MODULE_V7
   ULONG	  ulChannelMapCfg;	                // mmMC_SHARED_CHREMAP
   USHORT  usModuleSize;                     // Size of ATOM_VRAM_MODULE_V7
   USHORT  usPrivateReserved;                // MC_ARB_RAMCFG (includes NOOFBANK,NOOFRANKS,NOOFROWS,NOOFCOLS)
+<<<<<<< HEAD
   USHORT  usEnableChannels;                 // bit vector which indicate which channels are enabled
+=======
+  USHORT  usReserved;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   UCHAR   ucExtMemoryID;                    // Current memory module ID
   UCHAR   ucMemoryType;                     // MEM_TYPE_DDR2/DDR3/GDDR3/GDDR5
   UCHAR   ucChannelNum;                     // Number of mem. channels supported in this module
@@ -6243,8 +6449,12 @@ typedef struct _ATOM_VRAM_MODULE_V7
   UCHAR   ucNPL_RT;                         // Round trip delay (MC_SEQ_CAS_TIMING [28:24]:TCL=CL+NPL_RT-2). Always 2.
   UCHAR	  ucPreamble;                       // [7:4] Write Preamble, [3:0] Read Preamble
   UCHAR   ucMemorySize;                     // Total memory size in unit of 16MB for CONFIG_MEMSIZE - bit[23:0] zeros
+<<<<<<< HEAD
   USHORT  usSEQSettingOffset;
   UCHAR   ucReserved;
+=======
+  UCHAR   ucReserved[3];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 // Memory Module specific values
   USHORT  usEMRS2Value;                     // EMRS2/MR2 Value. 
   USHORT  usEMRS3Value;                     // EMRS3/MR3 Value.
@@ -6280,10 +6490,17 @@ typedef struct _ATOM_VRAM_INFO_V3
 typedef struct _ATOM_VRAM_INFO_V4
 {
   ATOM_COMMON_TABLE_HEADER   sHeader;
+<<<<<<< HEAD
   USHORT                     usMemAdjustTblOffset;													 // offset of ATOM_INIT_REG_BLOCK structure for memory vendor specific MC adjust setting
   USHORT                     usMemClkPatchTblOffset;												 //	offset of ATOM_INIT_REG_BLOCK structure for memory clock specific MC setting
   USHORT										 usRerseved;
   UCHAR           	         ucMemDQ7_0ByteRemap;													   // DQ line byte remap, =0: Memory Data line BYTE0, =1: BYTE1, =2: BYTE2, =3: BYTE3
+=======
+	USHORT										 usMemAdjustTblOffset;													 // offset of ATOM_INIT_REG_BLOCK structure for memory vendor specific MC adjust setting
+	USHORT										 usMemClkPatchTblOffset;												 //	offset of ATOM_INIT_REG_BLOCK structure for memory clock specific MC setting
+	USHORT										 usRerseved;
+	UCHAR           	         ucMemDQ7_0ByteRemap;													   // DQ line byte remap, =0: Memory Data line BYTE0, =1: BYTE1, =2: BYTE2, =3: BYTE3
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   ULONG                      ulMemDQ7_0BitRemap;                             // each DQ line ( 7~0) use 3bits, like: DQ0=Bit[2:0], DQ1:[5:3], ... DQ7:[23:21]
   UCHAR                      ucReservde[4]; 
   UCHAR                      ucNumOfVRAMModule;
@@ -6295,10 +6512,16 @@ typedef struct _ATOM_VRAM_INFO_V4
 typedef struct _ATOM_VRAM_INFO_HEADER_V2_1
 {
   ATOM_COMMON_TABLE_HEADER   sHeader;
+<<<<<<< HEAD
   USHORT                     usMemAdjustTblOffset;													 // offset of ATOM_INIT_REG_BLOCK structure for memory vendor specific MC adjust setting
   USHORT                     usMemClkPatchTblOffset;												 //	offset of ATOM_INIT_REG_BLOCK structure for memory clock specific MC setting
   USHORT                     usPerBytePresetOffset;                          // offset of ATOM_INIT_REG_BLOCK structure for Per Byte Offset Preset Settings
   USHORT                     usReserved[3];
+=======
+	USHORT										 usMemAdjustTblOffset;													 // offset of ATOM_INIT_REG_BLOCK structure for memory vendor specific MC adjust setting
+	USHORT										 usMemClkPatchTblOffset;												 //	offset of ATOM_INIT_REG_BLOCK structure for memory clock specific MC setting
+	USHORT										 usReserved[4];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   UCHAR                      ucNumOfVRAMModule;                              // indicate number of VRAM module
   UCHAR                      ucMemoryClkPatchTblVer;                         // version of memory AC timing register list
   UCHAR                      ucVramModuleVer;                                // indicate ATOM_VRAM_MODUE version
@@ -6583,6 +6806,7 @@ typedef struct _ATOM_DISP_OUT_INFO_V2
 	ASIC_ENCODER_INFO      asEncoderInfo[1];
 }ATOM_DISP_OUT_INFO_V2;
 
+<<<<<<< HEAD
 
 typedef struct _ATOM_DISP_CLOCK_ID {
   UCHAR ucPpllId; 
@@ -6629,6 +6853,8 @@ typedef enum CORE_REF_CLK_SOURCE{
   CLOCK_SRC_XO_IN2=2,
 }CORE_REF_CLK_SOURCE;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 // DispDevicePriorityInfo
 typedef struct _ATOM_DISPLAY_DEVICE_PRIORITY_INFO
 {
@@ -6764,6 +6990,7 @@ typedef struct _PROCESS_I2C_CHANNEL_TRANSACTION_PARAMETERS
 #define HW_I2C_READ         0
 #define I2C_2BYTE_ADDR      0x02
 
+<<<<<<< HEAD
 /****************************************************************************/	
 // Structures used by HW_Misc_OperationTable
 /****************************************************************************/	
@@ -6797,6 +7024,8 @@ typedef struct _ATOM_HW_MISC_OPERATION_PS_ALLOCATION
 
 /****************************************************************************/	
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef struct _SET_HWBLOCK_INSTANCE_PARAMETER_V2
 {
    UCHAR ucHWBlkInst;                // HW block instance, 0, 1, 2, ...
@@ -6817,6 +7046,7 @@ typedef struct _SET_HWBLOCK_INSTANCE_PARAMETER_V2
 #define SELECT_CRTC_PIXEL_RATE        7
 #define SELECT_VGA_BLK                8
 
+<<<<<<< HEAD
 // DIGTransmitterInfoTable structure used to program UNIPHY settings 
 typedef struct _DIG_TRANSMITTER_INFO_HEADER_V3_1{  
   ATOM_COMMON_TABLE_HEADER sHeader;  
@@ -6863,6 +7093,8 @@ typedef struct _PHY_ANALOG_SETTING_INFO{
   PHY_CONDITION_REG_INFO  asAnalogSetting[1];
 }PHY_ANALOG_SETTING_INFO;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /****************************************************************************/	
 //Portion VI: Definitinos for vbios MC scratch registers that driver used
 /****************************************************************************/
@@ -7270,8 +7502,11 @@ typedef struct _ATOM_PPLIB_THERMALCONTROLLER
 #define ATOM_PP_THERMALCONTROLLER_EMC2103   13  /* 0x0D */ // Only fan control will be implemented, do NOT show this in PPGen.
 #define ATOM_PP_THERMALCONTROLLER_SUMO      14  /* 0x0E */ // Sumo type, used internally
 #define ATOM_PP_THERMALCONTROLLER_NISLANDS  15
+<<<<<<< HEAD
 #define ATOM_PP_THERMALCONTROLLER_SISLANDS  16
 #define ATOM_PP_THERMALCONTROLLER_LM96163   17
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 // Thermal controller 'combo type' to use an external controller for Fan control and an internal controller for thermal.
 // We probably should reserve the bit 0x80 for this use.
@@ -7287,7 +7522,10 @@ typedef struct _ATOM_PPLIB_STATE
     UCHAR ucClockStateIndices[1]; // variable-sized
 } ATOM_PPLIB_STATE;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef struct _ATOM_PPLIB_FANTABLE
 {
     UCHAR   ucFanTableFormat;                // Change this if the table format changes or version changes so that the other fields are not the same.
@@ -7300,20 +7538,26 @@ typedef struct _ATOM_PPLIB_FANTABLE
     USHORT  usPWMHigh;                       // The PWM value at THigh.
 } ATOM_PPLIB_FANTABLE;
 
+<<<<<<< HEAD
 typedef struct _ATOM_PPLIB_FANTABLE2
 {
     ATOM_PPLIB_FANTABLE basicTable;
     USHORT  usTMax;                          // The max temperature
 } ATOM_PPLIB_FANTABLE2;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef struct _ATOM_PPLIB_EXTENDEDHEADER
 {
     USHORT  usSize;
     ULONG   ulMaxEngineClock;   // For Overdrive.
     ULONG   ulMaxMemoryClock;   // For Overdrive.
     // Add extra system parameters here, always adjust size to include all fields.
+<<<<<<< HEAD
     USHORT  usVCETableOffset; //points to ATOM_PPLIB_VCE_Table
     USHORT  usUVDTableOffset;   //points to ATOM_PPLIB_UVD_Table
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } ATOM_PPLIB_EXTENDEDHEADER;
 
 //// ATOM_PPLIB_POWERPLAYTABLE::ulPlatformCaps
@@ -7336,7 +7580,10 @@ typedef struct _ATOM_PPLIB_EXTENDEDHEADER
 #define ATOM_PP_PLATFORM_CAP_REGULATOR_HOT 0x00010000               // Enable the 'regulator hot' feature.
 #define ATOM_PP_PLATFORM_CAP_BACO          0x00020000               // Does the driver supports BACO state.
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef struct _ATOM_PPLIB_POWERPLAYTABLE
 {
       ATOM_COMMON_TABLE_HEADER sHeader;
@@ -7395,8 +7642,12 @@ typedef struct _ATOM_PPLIB_POWERPLAYTABLE4
     USHORT                     usVddciDependencyOnMCLKOffset;
     USHORT                     usVddcDependencyOnMCLKOffset;
     USHORT                     usMaxClockVoltageOnDCOffset;
+<<<<<<< HEAD
     USHORT                     usVddcPhaseShedLimitsTableOffset;    // Points to ATOM_PPLIB_PhaseSheddingLimits_Table
     USHORT                     usReserved;  
+=======
+    USHORT                     usReserved[2];  
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } ATOM_PPLIB_POWERPLAYTABLE4, *LPATOM_PPLIB_POWERPLAYTABLE4;
 
 typedef struct _ATOM_PPLIB_POWERPLAYTABLE5
@@ -7406,9 +7657,14 @@ typedef struct _ATOM_PPLIB_POWERPLAYTABLE5
     ULONG                      ulNearTDPLimit;
     ULONG                      ulSQRampingThreshold;
     USHORT                     usCACLeakageTableOffset;         // Points to ATOM_PPLIB_CAC_Leakage_Table
+<<<<<<< HEAD
     ULONG                      ulCACLeakage;                    // The iLeakage for driver calculated CAC leakage table
     USHORT                     usTDPODLimit;
     USHORT                     usLoadLineSlope;                 // in milliOhms * 100
+=======
+    ULONG                      ulCACLeakage;                    // TBD, this parameter is still under discussion.  Change to ulReserved if not needed.
+    ULONG                      ulReserved;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } ATOM_PPLIB_POWERPLAYTABLE5, *LPATOM_PPLIB_POWERPLAYTABLE5;
 
 //// ATOM_PPLIB_NONCLOCK_INFO::usClassification
@@ -7437,7 +7693,10 @@ typedef struct _ATOM_PPLIB_POWERPLAYTABLE5
 //// ATOM_PPLIB_NONCLOCK_INFO::usClassification2
 #define ATOM_PPLIB_CLASSIFICATION2_LIMITEDPOWERSOURCE_2     0x0001
 #define ATOM_PPLIB_CLASSIFICATION2_ULV                      0x0002
+<<<<<<< HEAD
 #define ATOM_PPLIB_CLASSIFICATION2_MVC                      0x0004   //Multi-View Codec (BD-3D)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 //// ATOM_PPLIB_NONCLOCK_INFO::ulCapsAndSettings
 #define ATOM_PPLIB_SINGLE_DISPLAY_ONLY           0x00000001
@@ -7461,9 +7720,13 @@ typedef struct _ATOM_PPLIB_POWERPLAYTABLE5
 
 #define ATOM_PPLIB_SOFTWARE_DISABLE_LOADBALANCING        0x00001000
 #define ATOM_PPLIB_SOFTWARE_ENABLE_SLEEP_FOR_TIMESTAMPS  0x00002000
+<<<<<<< HEAD
 
 #define ATOM_PPLIB_DISALLOW_ON_DC                       0x00004000
 
+=======
+#define ATOM_PPLIB_DISALLOW_ON_DC                        0x00004000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ATOM_PPLIB_ENABLE_VARIBRIGHT                     0x00008000
 
 //memory related flags
@@ -7525,7 +7788,11 @@ typedef struct _ATOM_PPLIB_R600_CLOCK_INFO
 #define ATOM_PPLIB_R600_FLAGS_UVDSAFE           2
 #define ATOM_PPLIB_R600_FLAGS_BACKBIASENABLE    4
 #define ATOM_PPLIB_R600_FLAGS_MEMORY_ODT_OFF    8
+<<<<<<< HEAD
 #define ATOM_PPLIB_R600_FLAGS_MEMORY_DLL_OFF   16
+=======
+#define ATOM_PPLIB_R600_FLAGS_MEMORY_DLL_OFF    16
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ATOM_PPLIB_R600_FLAGS_LOWPOWER         32   // On the RV770 use 'low power' setting (sequencer S0).
 
 typedef struct _ATOM_PPLIB_EVERGREEN_CLOCK_INFO
@@ -7544,6 +7811,7 @@ typedef struct _ATOM_PPLIB_EVERGREEN_CLOCK_INFO
 
 } ATOM_PPLIB_EVERGREEN_CLOCK_INFO;
 
+<<<<<<< HEAD
 typedef struct _ATOM_PPLIB_SI_CLOCK_INFO
 {
       USHORT usEngineClockLow;
@@ -7562,6 +7830,8 @@ typedef struct _ATOM_PPLIB_SI_CLOCK_INFO
 } ATOM_PPLIB_SI_CLOCK_INFO;
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef struct _ATOM_PPLIB_RS780_CLOCK_INFO
 
 {
@@ -7574,7 +7844,11 @@ typedef struct _ATOM_PPLIB_RS780_CLOCK_INFO
       UCHAR  ucPadding;                   // For proper alignment and size.
       USHORT usVDDC;                      // For the 780, use: None, Low, High, Variable
       UCHAR  ucMaxHTLinkWidth;            // From SBIOS - {2, 4, 8, 16}
+<<<<<<< HEAD
       UCHAR  ucMinHTLinkWidth;            // From SBIOS - {2, 4, 8, 16}. Effective only if CDLW enabled. Minimum down stream width could be bigger as display BW requriement.
+=======
+      UCHAR  ucMinHTLinkWidth;            // From SBIOS - {2, 4, 8, 16}. Effective only if CDLW enabled. Minimum down stream width could be bigger as display BW requirement.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
       USHORT usHTLinkFreq;                // See definition ATOM_PPLIB_RS780_HTLINKFREQ_xxx or in MHz(>=200).
       ULONG  ulFlags; 
 } ATOM_PPLIB_RS780_CLOCK_INFO;
@@ -7596,7 +7870,13 @@ typedef struct _ATOM_PPLIB_SUMO_CLOCK_INFO{
       USHORT usEngineClockLow;  //clockfrequency & 0xFFFF. The unit is in 10khz
       UCHAR  ucEngineClockHigh; //clockfrequency >> 16. 
       UCHAR  vddcIndex;         //2-bit vddc index;
+<<<<<<< HEAD
       USHORT tdpLimit;
+=======
+      UCHAR  leakage;          //please use 8-bit absolute value, not the 6-bit % value 
+      //please initalize to 0
+      UCHAR  rsv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
       //please initalize to 0
       USHORT rsv1;
       //please initialize to 0s
@@ -7619,7 +7899,11 @@ typedef struct _ATOM_PPLIB_STATE_V2
       UCHAR clockInfoIndex[1];
 } ATOM_PPLIB_STATE_V2;
 
+<<<<<<< HEAD
 typedef struct _StateArray{
+=======
+typedef struct StateArray{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     //how many states we have 
     UCHAR ucNumEntries;
     
@@ -7627,6 +7911,7 @@ typedef struct _StateArray{
 }StateArray;
 
 
+<<<<<<< HEAD
 typedef struct _ClockInfoArray{
     //how many clock levels we have
     UCHAR ucNumEntries;
@@ -7638,6 +7923,20 @@ typedef struct _ClockInfoArray{
 }ClockInfoArray;
 
 typedef struct _NonClockInfoArray{
+=======
+typedef struct ClockInfoArray{
+    //how many clock levels we have
+    UCHAR ucNumEntries;
+    
+    //sizeof(ATOM_PPLIB_SUMO_CLOCK_INFO)
+    UCHAR ucEntrySize;
+    
+    //this is for Sumo
+    ATOM_PPLIB_SUMO_CLOCK_INFO clockInfo[1];
+}ClockInfoArray;
+
+typedef struct NonClockInfoArray{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
     //how many non-clock levels we have. normally should be same as number of states
     UCHAR ucNumEntries;
@@ -7676,6 +7975,7 @@ typedef struct _ATOM_PPLIB_Clock_Voltage_Limit_Table
     ATOM_PPLIB_Clock_Voltage_Limit_Record entries[1];                  // Dynamically allocate entries.
 }ATOM_PPLIB_Clock_Voltage_Limit_Table;
 
+<<<<<<< HEAD
 typedef struct _ATOM_PPLIB_CAC_Leakage_Record
 {
     USHORT usVddc;  // We use this field for the "fake" standardized VDDC for power calculations                                                  
@@ -7794,6 +8094,8 @@ typedef struct _ATOM_PPLIB_UVD_Table
 //    ATOM_PPLIB_UVD_State_Table states;
 }ATOM_PPLIB_UVD_Table;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**************************************************************************/
 
 
@@ -7943,6 +8245,7 @@ typedef struct _ATOM_PPLIB_UVD_Table
 
 #pragma pack() // BIOS data must use byte aligment
 
+<<<<<<< HEAD
 //
 // AMD ACPI Table
 //
@@ -8007,4 +8310,6 @@ typedef struct {
 #pragma pack()
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _ATOMBIOS_H */

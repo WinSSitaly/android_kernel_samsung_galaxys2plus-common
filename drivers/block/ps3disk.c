@@ -21,7 +21,10 @@
 #include <linux/ata.h>
 #include <linux/blkdev.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/lv1call.h>
 #include <asm/ps3stor.h>

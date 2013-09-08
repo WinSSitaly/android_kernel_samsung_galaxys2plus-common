@@ -1,7 +1,11 @@
 #ifndef __ALPHA_IRQFLAGS_H
 #define __ALPHA_IRQFLAGS_H
 
+<<<<<<< HEAD
 #include <asm/pal.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define IPL_MIN		0
 #define IPL_SW0		1

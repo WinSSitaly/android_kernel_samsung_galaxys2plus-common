@@ -18,16 +18,32 @@
 
 /* Header files */
 #include <linux/videodev2.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/v4l2-common.h>
 #include <media/v4l2-device.h>
 #include <media/videobuf-core.h>
 #include <media/videobuf-dma-contig.h>
+<<<<<<< HEAD
 #include <media/davinci/vpif_types.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "vpif.h"
 
 /* Macros */
+<<<<<<< HEAD
 #define VPIF_DISPLAY_VERSION	"0.0.2"
+=======
+#define VPIF_MAJOR_RELEASE	(0)
+#define VPIF_MINOR_RELEASE	(0)
+#define VPIF_BUILD		(1)
+
+#define VPIF_DISPLAY_VERSION_CODE \
+	((VPIF_MAJOR_RELEASE << 16) | (VPIF_MINOR_RELEASE << 8) | VPIF_BUILD)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define VPIF_VALID_FIELD(field) \
 	(((V4L2_FIELD_ANY == field) || (V4L2_FIELD_NONE == field)) || \

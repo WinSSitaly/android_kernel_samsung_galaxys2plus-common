@@ -31,9 +31,13 @@
 	no_printk(KERN_DEBUG FMT"\n", ##__VA_ARGS__)
 #endif
 
+<<<<<<< HEAD
 extern struct key_type key_type_dead;
 extern struct key_type key_type_user;
 extern struct key_type key_type_logon;
+=======
+extern struct key_type key_type_user;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*****************************************************************************/
 /*
@@ -77,7 +81,10 @@ extern unsigned key_quota_maxbytes;
 #define KEYQUOTA_LINK_BYTES	4		/* a link in a keyring is worth 4 bytes */
 
 
+<<<<<<< HEAD
 extern struct kmem_cache *key_jar;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct rb_root key_serial_tree;
 extern spinlock_t key_serial_lock;
 extern struct mutex key_construction_mutex;
@@ -149,11 +156,17 @@ extern key_ref_t lookup_user_key(key_serial_t id, unsigned long flags,
 
 extern long join_session_keyring(const char *name);
 
+<<<<<<< HEAD
 extern struct work_struct key_gc_work;
 extern unsigned key_gc_delay;
 extern void keyring_gc(struct key *keyring, time_t limit);
 extern void key_schedule_gc(time_t expiry_at);
 extern void key_gc_keytype(struct key_type *ktype);
+=======
+extern unsigned key_gc_delay;
+extern void keyring_gc(struct key *keyring, time_t limit);
+extern void key_schedule_gc(time_t expiry_at);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int key_task_permission(const key_ref_t key_ref,
 			       const struct cred *cred,

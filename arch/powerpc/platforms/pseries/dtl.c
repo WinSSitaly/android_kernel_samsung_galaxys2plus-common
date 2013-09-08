@@ -25,10 +25,17 @@
 #include <linux/debugfs.h>
 #include <linux/spinlock.h>
 #include <asm/smp.h>
+<<<<<<< HEAD
 #include <asm/uaccess.h>
 #include <asm/firmware.h>
 #include <asm/lppaca.h>
 #include <asm/debug.h>
+=======
+#include <asm/system.h>
+#include <asm/uaccess.h>
+#include <asm/firmware.h>
+#include <asm/lppaca.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "plpar_wrappers.h"
 

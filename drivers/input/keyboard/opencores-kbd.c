@@ -163,7 +163,22 @@ static struct platform_driver opencores_kbd_device_driver = {
 		.name = "opencores-kbd",
 	},
 };
+<<<<<<< HEAD
 module_platform_driver(opencores_kbd_device_driver);
+=======
+
+static int __init opencores_kbd_init(void)
+{
+	return platform_driver_register(&opencores_kbd_device_driver);
+}
+module_init(opencores_kbd_init);
+
+static void __exit opencores_kbd_exit(void)
+{
+	platform_driver_unregister(&opencores_kbd_device_driver);
+}
+module_exit(opencores_kbd_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Javier Herrero <jherrero@hvsistemas.es>");

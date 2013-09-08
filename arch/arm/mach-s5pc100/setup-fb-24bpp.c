@@ -15,6 +15,10 @@
 #include <linux/fb.h>
 #include <linux/gpio.h>
 
+<<<<<<< HEAD
+=======
+#include <mach/regs-fb.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/map.h>
 #include <plat/fb.h>
 #include <plat/gpio-cfg.h>

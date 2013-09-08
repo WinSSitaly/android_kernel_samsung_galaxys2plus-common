@@ -11,7 +11,10 @@
  */
 
 #include <media/rc-map.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Zogis Real Audio 220 - 32 keys IR */
 

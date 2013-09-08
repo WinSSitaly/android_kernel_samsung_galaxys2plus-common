@@ -87,7 +87,11 @@ struct bmp085_data {
 	u32 raw_temperature;
 	u32 raw_pressure;
 	unsigned char oversampling_setting;
+<<<<<<< HEAD
 	unsigned long last_temp_measurement;
+=======
+	u32 last_temp_measurement;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	s32 b6; /* calculated temperature correction coefficient */
 };
 
@@ -216,7 +220,11 @@ static s32 bmp085_get_temperature(struct bmp085_data *data, int *temperature)
 		*temperature = (x1+x2+8) >> 4;
 
 exit:
+<<<<<<< HEAD
 	return status;
+=======
+	return status;;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -234,8 +242,12 @@ static s32 bmp085_get_pressure(struct bmp085_data *data, int *pressure)
 	int status;
 
 	/* alt least every second force an update of the ambient temperature */
+<<<<<<< HEAD
 	if (data->last_temp_measurement == 0 ||
 			time_is_before_jiffies(data->last_temp_measurement + 1*HZ)) {
+=======
+	if (data->last_temp_measurement + 1*HZ < jiffies) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		status = bmp085_get_temperature(data, NULL);
 		if (status != 0)
 			goto exit;
@@ -465,8 +477,27 @@ static struct i2c_driver bmp085_driver = {
 	.address_list	= normal_i2c
 };
 
+<<<<<<< HEAD
 module_i2c_driver(bmp085_driver);
+=======
+static int __init bmp085_init(void)
+{
+	return i2c_add_driver(&bmp085_driver);
+}
+
+static void __exit bmp085_exit(void)
+{
+	i2c_del_driver(&bmp085_driver);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Christoph Mair <christoph.mair@gmail.com");
 MODULE_DESCRIPTION("BMP085 driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(bmp085_init);
+module_exit(bmp085_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

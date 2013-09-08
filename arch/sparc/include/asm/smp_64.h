@@ -27,7 +27,11 @@
  */
 
 #include <linux/bitops.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/percpu.h>
 
 DECLARE_PER_CPU(cpumask_t, cpu_sibling_map);

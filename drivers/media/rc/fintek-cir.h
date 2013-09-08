@@ -88,7 +88,10 @@ struct fintek_dev {
 	u8 chip_major;
 	u8 chip_minor;
 	u16 chip_vendor;
+<<<<<<< HEAD
 	u8 logical_dev_cir;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* hardware features */
 	bool hw_learning_capable;
@@ -173,8 +176,12 @@ struct fintek_dev {
 #define LOGICAL_DEV_ENABLE	0x01
 
 /* Logical device number of the CIR function */
+<<<<<<< HEAD
 #define LOGICAL_DEV_CIR_REV1	0x05
 #define LOGICAL_DEV_CIR_REV2	0x08
+=======
+#define LOGICAL_DEV_CIR		0x05
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* CIR Logical Device (LDN 0x08) config registers */
 #define CIR_CR_COMMAND_INDEX	0x04

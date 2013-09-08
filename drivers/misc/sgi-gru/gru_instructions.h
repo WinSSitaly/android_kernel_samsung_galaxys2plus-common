@@ -40,7 +40,10 @@ extern void gru_wait_abort_proc(void *cb);
 			*((volatile unsigned long *)(p)) = v; /* force st.rel */	\
 		} while (0)
 #elif defined(CONFIG_X86_64)
+<<<<<<< HEAD
 #include <asm/cacheflush.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define __flush_cache(p)		clflush(p)
 #define gru_ordered_store_ulong(p, v)					\
 		do {							\

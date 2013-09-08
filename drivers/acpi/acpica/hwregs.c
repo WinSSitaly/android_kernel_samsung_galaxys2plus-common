@@ -7,7 +7,11 @@
  ******************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,7 +55,10 @@
 #define _COMPONENT          ACPI_HARDWARE
 ACPI_MODULE_NAME("hwregs")
 
+<<<<<<< HEAD
 #if (!ACPI_REDUCED_HARDWARE)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Local Prototypes */
 static acpi_status
 acpi_hw_read_multiple(u32 *value,
@@ -63,8 +70,11 @@ acpi_hw_write_multiple(u32 value,
 		       struct acpi_generic_address *register_a,
 		       struct acpi_generic_address *register_b);
 
+<<<<<<< HEAD
 #endif				/* !ACPI_REDUCED_HARDWARE */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /******************************************************************************
  *
  * FUNCTION:    acpi_hw_validate_register
@@ -157,7 +167,10 @@ acpi_hw_validate_register(struct acpi_generic_address *reg,
 acpi_status acpi_hw_read(u32 *value, struct acpi_generic_address *reg)
 {
 	u64 address;
+<<<<<<< HEAD
 	u64 value64;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acpi_status status;
 
 	ACPI_FUNCTION_NAME(hw_read);
@@ -179,9 +192,13 @@ acpi_status acpi_hw_read(u32 *value, struct acpi_generic_address *reg)
 	 */
 	if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) {
 		status = acpi_os_read_memory((acpi_physical_address)
+<<<<<<< HEAD
 					     address, &value64, reg->bit_width);
 
 		*value = (u32)value64;
+=======
+					     address, value, reg->bit_width);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {		/* ACPI_ADR_SPACE_SYSTEM_IO, validated earlier */
 
 		status = acpi_hw_read_port((acpi_io_address)
@@ -231,8 +248,12 @@ acpi_status acpi_hw_write(u32 value, struct acpi_generic_address *reg)
 	 */
 	if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) {
 		status = acpi_os_write_memory((acpi_physical_address)
+<<<<<<< HEAD
 					      address, (u64)value,
 					      reg->bit_width);
+=======
+					      address, value, reg->bit_width);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {		/* ACPI_ADR_SPACE_SYSTEM_IO, validated earlier */
 
 		status = acpi_hw_write_port((acpi_io_address)
@@ -247,7 +268,10 @@ acpi_status acpi_hw_write(u32 value, struct acpi_generic_address *reg)
 	return (status);
 }
 
+<<<<<<< HEAD
 #if (!ACPI_REDUCED_HARDWARE)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*******************************************************************************
  *
  * FUNCTION:    acpi_hw_clear_acpi_status
@@ -277,23 +301,38 @@ acpi_status acpi_hw_clear_acpi_status(void)
 
 	status = acpi_hw_register_write(ACPI_REGISTER_PM1_STATUS,
 					ACPI_BITMASK_ALL_FIXED_STATUS);
+<<<<<<< HEAD
 
 	acpi_os_release_lock(acpi_gbl_hardware_lock, lock_flags);
 
 	if (ACPI_FAILURE(status))
 		goto exit;
+=======
+	if (ACPI_FAILURE(status)) {
+		goto unlock_and_exit;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Clear the GPE Bits in all GPE registers in all GPE blocks */
 
 	status = acpi_ev_walk_gpe_list(acpi_hw_clear_gpe_block, NULL);
 
+<<<<<<< HEAD
 exit:
+=======
+      unlock_and_exit:
+	acpi_os_release_lock(acpi_gbl_hardware_lock, lock_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return_ACPI_STATUS(status);
 }
 
 /*******************************************************************************
  *
+<<<<<<< HEAD
  * FUNCTION:    acpi_hw_get_bit_register_info
+=======
+ * FUNCTION:    acpi_hw_get_register_bit_mask
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * PARAMETERS:  register_id         - Index of ACPI Register to access
  *
@@ -666,5 +705,8 @@ acpi_hw_write_multiple(u32 value,
 
 	return (status);
 }
+<<<<<<< HEAD
 
 #endif				/* !ACPI_REDUCED_HARDWARE */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

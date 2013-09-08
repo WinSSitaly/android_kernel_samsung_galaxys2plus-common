@@ -125,7 +125,11 @@ static int ll_open(struct hci_uart *hu)
 
 	BT_DBG("hu %p", hu);
 
+<<<<<<< HEAD
 	ll = kzalloc(sizeof(*ll), GFP_KERNEL);
+=======
+	ll = kzalloc(sizeof(*ll), GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ll)
 		return -ENOMEM;
 

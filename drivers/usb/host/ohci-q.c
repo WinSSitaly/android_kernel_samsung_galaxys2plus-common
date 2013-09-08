@@ -428,7 +428,11 @@ static struct ed *ed_get (
 		ed->type = usb_pipetype(pipe);
 
 		info |= (ep->desc.bEndpointAddress & ~USB_DIR_IN) << 7;
+<<<<<<< HEAD
 		info |= usb_endpoint_maxp(&ep->desc) << 16;
+=======
+		info |= le16_to_cpu(ep->desc.wMaxPacketSize) << 16;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (udev->speed == USB_SPEED_LOW)
 			info |= ED_LOWSPEED;
 		/* only control transfers store pids in tds */
@@ -444,7 +448,11 @@ static struct ed *ed_get (
 				ed->load = usb_calc_bus_time (
 					udev->speed, !is_out,
 					ed->type == PIPE_ISOCHRONOUS,
+<<<<<<< HEAD
 					usb_endpoint_maxp(&ep->desc))
+=======
+					le16_to_cpu(ep->desc.wMaxPacketSize))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						/ 1000;
 			}
 		}
@@ -912,7 +920,11 @@ rescan_all:
 		/* only take off EDs that the HC isn't using, accounting for
 		 * frame counter wraps and EDs with partially retired TDs
 		 */
+<<<<<<< HEAD
 		if (likely(ohci->rh_state == OHCI_RH_RUNNING)) {
+=======
+		if (likely (HC_IS_RUNNING(ohci_to_hcd(ohci)->state))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (tick_before (tick, ed->tick)) {
 skip_ed:
 				last = &ed->ed_next;
@@ -1012,7 +1024,11 @@ rescan_this:
 
 		/* but if there's work queued, reschedule */
 		if (!list_empty (&ed->td_list)) {
+<<<<<<< HEAD
 			if (ohci->rh_state == OHCI_RH_RUNNING)
+=======
+			if (HC_IS_RUNNING(ohci_to_hcd(ohci)->state))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ed_schedule (ohci, ed);
 		}
 
@@ -1021,7 +1037,13 @@ rescan_this:
 	}
 
 	/* maybe reenable control and bulk lists */
+<<<<<<< HEAD
 	if (ohci->rh_state == OHCI_RH_RUNNING && !ohci->ed_rm_list) {
+=======
+	if (HC_IS_RUNNING(ohci_to_hcd(ohci)->state)
+			&& ohci_to_hcd(ohci)->state != HC_STATE_QUIESCING
+			&& !ohci->ed_rm_list) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u32	command = 0, control = 0;
 
 		if (ohci->ed_controltail) {
@@ -1128,6 +1150,7 @@ dl_done_list (struct ohci_hcd *ohci)
 
 	while (td) {
 		struct td	*td_next = td->next_dl_td;
+<<<<<<< HEAD
 		struct ed	*ed = td->ed;
 
 		/*
@@ -1147,6 +1170,8 @@ dl_done_list (struct ohci_hcd *ohci)
 			takeback_td(ohci, td2);
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		takeback_td(ohci, td);
 		td = td_next;
 	}

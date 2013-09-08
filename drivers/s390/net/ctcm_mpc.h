@@ -12,7 +12,10 @@
 #ifndef _CTC_MPC_H_
 #define _CTC_MPC_H_
 
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/skbuff.h>
 #include "fsm.h"
 

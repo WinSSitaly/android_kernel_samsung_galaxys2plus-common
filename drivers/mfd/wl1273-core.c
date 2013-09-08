@@ -22,7 +22,10 @@
 
 #include <linux/mfd/wl1273-core.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRIVER_DESC "WL1273 FM Radio Core"
 

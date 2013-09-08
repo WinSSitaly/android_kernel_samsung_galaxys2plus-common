@@ -8,6 +8,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 /* #define VERBOSE_DEBUG */
@@ -109,6 +121,7 @@ static struct usb_descriptor_header *hs_loopback_descs[] = {
 	NULL,
 };
 
+<<<<<<< HEAD
 /* super speed support: */
 
 static struct usb_endpoint_descriptor ss_loop_source_desc = {
@@ -152,6 +165,8 @@ static struct usb_descriptor_header *ss_loopback_descs[] = {
 	NULL,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* function-specific strings: */
 
 static struct usb_string strings_loopback[] = {
@@ -209,6 +224,7 @@ autoconf_fail:
 		f->hs_descriptors = hs_loopback_descs;
 	}
 
+<<<<<<< HEAD
 	/* support super speed hardware */
 	if (gadget_is_superspeed(c->cdev->gadget)) {
 		ss_loop_source_desc.bEndpointAddress =
@@ -221,6 +237,10 @@ autoconf_fail:
 	DBG(cdev, "%s speed %s: IN/%s, OUT/%s\n",
 	    (gadget_is_superspeed(c->cdev->gadget) ? "super" :
 	     (gadget_is_dualspeed(c->cdev->gadget) ? "dual" : "full")),
+=======
+	DBG(cdev, "%s speed %s: IN/%s, OUT/%s\n",
+			gadget_is_dualspeed(c->cdev->gadget) ? "dual" : "full",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			f->name, loop->in_ep->name, loop->out_ep->name);
 	return 0;
 }
@@ -294,27 +314,46 @@ static int
 enable_loopback(struct usb_composite_dev *cdev, struct f_loopback *loop)
 {
 	int					result = 0;
+<<<<<<< HEAD
+=======
+	const struct usb_endpoint_descriptor	*src, *sink;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct usb_ep				*ep;
 	struct usb_request			*req;
 	unsigned				i;
 
+<<<<<<< HEAD
 	/* one endpoint writes data back IN to the host */
 	ep = loop->in_ep;
 	result = config_ep_by_speed(cdev->gadget, &(loop->function), ep);
 	if (result)
 		return result;
 	result = usb_ep_enable(ep);
+=======
+	src = ep_choose(cdev->gadget,
+			&hs_loop_source_desc, &fs_loop_source_desc);
+	sink = ep_choose(cdev->gadget,
+			&hs_loop_sink_desc, &fs_loop_sink_desc);
+
+	/* one endpoint writes data back IN to the host */
+	ep = loop->in_ep;
+	result = usb_ep_enable(ep, src);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (result < 0)
 		return result;
 	ep->driver_data = loop;
 
 	/* one endpoint just reads OUT packets */
 	ep = loop->out_ep;
+<<<<<<< HEAD
 	result = config_ep_by_speed(cdev->gadget, &(loop->function), ep);
 	if (result)
 		goto fail0;
 
 	result = usb_ep_enable(ep);
+=======
+	result = usb_ep_enable(ep, sink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (result < 0) {
 fail0:
 		ep = loop->in_ep;

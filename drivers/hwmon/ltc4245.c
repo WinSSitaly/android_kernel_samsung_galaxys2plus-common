@@ -214,8 +214,12 @@ static unsigned int ltc4245_get_current(struct device *dev, u8 reg)
 	unsigned int voltage;
 	unsigned int curr;
 
+<<<<<<< HEAD
 	/*
 	 * The strange looking conversions that follow are fixed-point
+=======
+	/* The strange looking conversions that follow are fixed-point
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * math, since we cannot do floating point in the kernel.
 	 *
 	 * Step 1: convert sense register to microVolts
@@ -318,8 +322,12 @@ static ssize_t ltc4245_show_gpio(struct device *dev,
 	return snprintf(buf, PAGE_SIZE, "%u\n", val * 10);
 }
 
+<<<<<<< HEAD
 /*
  * These macros are used below in constructing device attribute objects
+=======
+/* These macros are used below in constructing device attribute objects
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * for use with sysfs_create_group() to make a sysfs device file
  * for each register.
  */
@@ -393,8 +401,12 @@ LTC4245_POWER(power2_input,			LTC4245_5VSENSE);
 LTC4245_POWER(power3_input,			LTC4245_3VSENSE);
 LTC4245_POWER(power4_input,			LTC4245_VEESENSE);
 
+<<<<<<< HEAD
 /*
  * Finally, construct an array of pointers to members of the above objects,
+=======
+/* Finally, construct an array of pointers to members of the above objects,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * as required for sysfs_create_group()
  */
 static struct attribute *ltc4245_std_attributes[] = {
@@ -581,8 +593,26 @@ static struct i2c_driver ltc4245_driver = {
 	.id_table	= ltc4245_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(ltc4245_driver);
+=======
+static int __init ltc4245_init(void)
+{
+	return i2c_add_driver(&ltc4245_driver);
+}
+
+static void __exit ltc4245_exit(void)
+{
+	i2c_del_driver(&ltc4245_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Ira W. Snyder <iws@ovro.caltech.edu>");
 MODULE_DESCRIPTION("LTC4245 driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(ltc4245_init);
+module_exit(ltc4245_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -952,7 +952,11 @@ static int ps3_vuart_bus_interrupt_get(void)
 	}
 
 	result = request_irq(vuart_bus_priv.virq, ps3_vuart_irq_handler,
+<<<<<<< HEAD
 		0, "vuart", &vuart_bus_priv);
+=======
+		IRQF_DISABLED, "vuart", &vuart_bus_priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (result) {
 		pr_debug("%s:%d: request_irq failed (%d)\n",

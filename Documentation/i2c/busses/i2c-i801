@@ -20,8 +20,11 @@ Supported adapters:
   * Intel Patsburg (PCH)
   * Intel DH89xxCC (PCH)
   * Intel Panther Point (PCH)
+<<<<<<< HEAD
   * Intel Lynx Point (PCH)
   * Intel Lynx Point-LP (PCH)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    Datasheets: Publicly available at the Intel website
 
 On Intel Patsburg and later chipsets, both the normal host SMBus controller

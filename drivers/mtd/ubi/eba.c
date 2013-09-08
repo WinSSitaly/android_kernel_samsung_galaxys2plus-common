@@ -443,7 +443,11 @@ retry:
 		if (err == UBI_IO_BITFLIPS) {
 			scrub = 1;
 			err = 0;
+<<<<<<< HEAD
 		} else if (mtd_is_eccerr(err)) {
+=======
+		} else if (err == -EBADMSG) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (vol->vol_type == UBI_DYNAMIC_VOLUME)
 				goto out_unlock;
 			scrub = 1;
@@ -529,18 +533,32 @@ retry:
 
 	data_size = offset + len;
 	mutex_lock(&ubi->buf_mutex);
+<<<<<<< HEAD
 	memset(ubi->peb_buf + offset, 0xFF, len);
 
 	/* Read everything before the area where the write failure happened */
 	if (offset > 0) {
 		err = ubi_io_read_data(ubi, ubi->peb_buf, pnum, 0, offset);
+=======
+	memset(ubi->peb_buf1 + offset, 0xFF, len);
+
+	/* Read everything before the area where the write failure happened */
+	if (offset > 0) {
+		err = ubi_io_read_data(ubi, ubi->peb_buf1, pnum, 0, offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err && err != UBI_IO_BITFLIPS)
 			goto out_unlock;
 	}
 
+<<<<<<< HEAD
 	memcpy(ubi->peb_buf + offset, buf, len);
 
 	err = ubi_io_write_data(ubi, ubi->peb_buf, new_pnum, 0, data_size);
+=======
+	memcpy(ubi->peb_buf1 + offset, buf, len);
+
+	err = ubi_io_write_data(ubi, ubi->peb_buf1, new_pnum, 0, data_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err) {
 		mutex_unlock(&ubi->buf_mutex);
 		goto write_error;
@@ -979,7 +997,11 @@ static int is_error_sane(int err)
  * physical eraseblock @to. The @vid_hdr buffer may be changed by this
  * function. Returns:
  *   o %0 in case of success;
+<<<<<<< HEAD
  *   o %MOVE_CANCEL_RACE, %MOVE_TARGET_WR_ERR, %MOVE_TARGET_BITFLIPS, etc;
+=======
+ *   o %MOVE_CANCEL_RACE, %MOVE_TARGET_WR_ERR, %MOVE_CANCEL_BITFLIPS, etc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *   o a negative error code in case of failure.
  */
 int ubi_eba_copy_leb(struct ubi_device *ubi, int from, int to,
@@ -1053,13 +1075,21 @@ int ubi_eba_copy_leb(struct ubi_device *ubi, int from, int to,
 
 	/*
 	 * OK, now the LEB is locked and we can safely start moving it. Since
+<<<<<<< HEAD
 	 * this function utilizes the @ubi->peb_buf buffer which is shared
+=======
+	 * this function utilizes the @ubi->peb_buf1 buffer which is shared
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * with some other functions - we lock the buffer by taking the
 	 * @ubi->buf_mutex.
 	 */
 	mutex_lock(&ubi->buf_mutex);
 	dbg_wl("read %d bytes of data", aldata_size);
+<<<<<<< HEAD
 	err = ubi_io_read_data(ubi, ubi->peb_buf, from, 0, aldata_size);
+=======
+	err = ubi_io_read_data(ubi, ubi->peb_buf1, from, 0, aldata_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err && err != UBI_IO_BITFLIPS) {
 		ubi_warn("error %d while reading data from PEB %d",
 			 err, from);
@@ -1079,10 +1109,17 @@ int ubi_eba_copy_leb(struct ubi_device *ubi, int from, int to,
 	 */
 	if (vid_hdr->vol_type == UBI_VID_DYNAMIC)
 		aldata_size = data_size =
+<<<<<<< HEAD
 			ubi_calc_data_len(ubi, ubi->peb_buf, data_size);
 
 	cond_resched();
 	crc = crc32(UBI_CRC32_INIT, ubi->peb_buf, data_size);
+=======
+			ubi_calc_data_len(ubi, ubi->peb_buf1, data_size);
+
+	cond_resched();
+	crc = crc32(UBI_CRC32_INIT, ubi->peb_buf1, data_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cond_resched();
 
 	/*
@@ -1116,12 +1153,20 @@ int ubi_eba_copy_leb(struct ubi_device *ubi, int from, int to,
 			if (is_error_sane(err))
 				err = MOVE_TARGET_RD_ERR;
 		} else
+<<<<<<< HEAD
 			err = MOVE_TARGET_BITFLIPS;
+=======
+			err = MOVE_CANCEL_BITFLIPS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_unlock_buf;
 	}
 
 	if (data_size > 0) {
+<<<<<<< HEAD
 		err = ubi_io_write_data(ubi, ubi->peb_buf, to, 0, aldata_size);
+=======
+		err = ubi_io_write_data(ubi, ubi->peb_buf1, to, 0, aldata_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err) {
 			if (err == -EIO)
 				err = MOVE_TARGET_WR_ERR;
@@ -1134,8 +1179,13 @@ int ubi_eba_copy_leb(struct ubi_device *ubi, int from, int to,
 		 * We've written the data and are going to read it back to make
 		 * sure it was written correctly.
 		 */
+<<<<<<< HEAD
 		memset(ubi->peb_buf, 0xFF, aldata_size);
 		err = ubi_io_read_data(ubi, ubi->peb_buf, to, 0, aldata_size);
+=======
+
+		err = ubi_io_read_data(ubi, ubi->peb_buf2, to, 0, aldata_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err) {
 			if (err != UBI_IO_BITFLIPS) {
 				ubi_warn("error %d while reading data back "
@@ -1143,13 +1193,21 @@ int ubi_eba_copy_leb(struct ubi_device *ubi, int from, int to,
 				if (is_error_sane(err))
 					err = MOVE_TARGET_RD_ERR;
 			} else
+<<<<<<< HEAD
 				err = MOVE_TARGET_BITFLIPS;
+=======
+				err = MOVE_CANCEL_BITFLIPS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out_unlock_buf;
 		}
 
 		cond_resched();
 
+<<<<<<< HEAD
 		if (crc != crc32(UBI_CRC32_INIT, ubi->peb_buf, data_size)) {
+=======
+		if (memcmp(ubi->peb_buf1, ubi->peb_buf2, aldata_size)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ubi_warn("read data back from PEB %d and it is "
 				 "different", to);
 			err = -EINVAL;

@@ -4,12 +4,21 @@
 #include <net/netfilter/nf_nat.h>
 #include <linux/netfilter/nfnetlink_conntrack.h>
 
+<<<<<<< HEAD
 struct nf_nat_ipv4_range;
+=======
+struct nf_nat_range;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct nf_nat_protocol {
 	/* Protocol number. */
 	unsigned int protonum;
 
+<<<<<<< HEAD
+=======
+	struct module *me;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Translate a packet to the target according to manip type.
 	   Return true if succeeded. */
 	bool (*manip_pkt)(struct sk_buff *skb,
@@ -28,12 +37,24 @@ struct nf_nat_protocol {
 	   possible.  Per-protocol part of tuple is initialized to the
 	   incoming packet. */
 	void (*unique_tuple)(struct nf_conntrack_tuple *tuple,
+<<<<<<< HEAD
 			     const struct nf_nat_ipv4_range *range,
 			     enum nf_nat_manip_type maniptype,
 			     const struct nf_conn *ct);
 
 	int (*nlattr_to_range)(struct nlattr *tb[],
 			       struct nf_nat_ipv4_range *range);
+=======
+			     const struct nf_nat_range *range,
+			     enum nf_nat_manip_type maniptype,
+			     const struct nf_conn *ct);
+
+	int (*range_to_nlattr)(struct sk_buff *skb,
+			       const struct nf_nat_range *range);
+
+	int (*nlattr_to_range)(struct nlattr *tb[],
+			       struct nf_nat_range *range);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Protocol registration. */
@@ -56,12 +77,23 @@ extern bool nf_nat_proto_in_range(const struct nf_conntrack_tuple *tuple,
 				  const union nf_conntrack_man_proto *max);
 
 extern void nf_nat_proto_unique_tuple(struct nf_conntrack_tuple *tuple,
+<<<<<<< HEAD
 				      const struct nf_nat_ipv4_range *range,
+=======
+				      const struct nf_nat_range *range,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      enum nf_nat_manip_type maniptype,
 				      const struct nf_conn *ct,
 				      u_int16_t *rover);
 
+<<<<<<< HEAD
 extern int nf_nat_proto_nlattr_to_range(struct nlattr *tb[],
 					struct nf_nat_ipv4_range *range);
+=======
+extern int nf_nat_proto_range_to_nlattr(struct sk_buff *skb,
+					const struct nf_nat_range *range);
+extern int nf_nat_proto_nlattr_to_range(struct nlattr *tb[],
+					struct nf_nat_range *range);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /*_NF_NAT_PROTO_H*/

@@ -9,10 +9,17 @@
  *   - contains two reports, one for each port (HID_QUIRK_MULTI_INPUT)
  *
  *  0e8f:0003 "GreenAsia Inc.    USB Joystick     "
+<<<<<<< HEAD
  *   - tested with KÃ¶nig Gaming gamepad
  *
  *  0e8f:0003 "GASIA USB Gamepad"
  *   - another version of the KÃ¶nig gamepad
+=======
+ *   - tested with König Gaming gamepad
+ *
+ *  0e8f:0003 "GASIA USB Gamepad"
+ *   - another version of the König gamepad
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *  Copyright (c) 2007, 2009 Anssi Hannula <anssi.hannula@gmail.com>
  */
@@ -40,7 +47,10 @@
 
 #include <linux/input.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/usb.h>
 #include <linux/hid.h>
 
@@ -129,6 +139,7 @@ static int plff_init(struct hid_device *hid)
 			strong = &report->field[0]->value[2];
 			weak = &report->field[0]->value[3];
 			debug("detected single-field device");
+<<<<<<< HEAD
 		} else if (report->field[0]->maxusage == 1 &&
 			   report->field[0]->usage[0].hid ==
 				(HID_UP_LED | 0x43) &&
@@ -137,6 +148,10 @@ static int plff_init(struct hid_device *hid)
 			   report->field[1]->report_count >= 1 &&
 			   report->field[2]->report_count >= 1 &&
 			   report->field[3]->report_count >= 1) {
+=======
+		} else if (report->maxfield >= 4 && report->field[0]->maxusage == 1 &&
+				report->field[0]->usage[0].hid == (HID_UP_LED | 0x43)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			report->field[0]->value[0] = 0x00;
 			report->field[1]->value[0] = 0x00;
 			strong = &report->field[2]->value[0];

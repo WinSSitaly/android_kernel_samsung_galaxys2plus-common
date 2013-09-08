@@ -87,6 +87,13 @@ config MV64X60
 config MPC10X_OPENPIC
 	bool
 
+<<<<<<< HEAD
+=======
+config MPC10X_STORE_GATHERING
+	bool "Enable MPC10x store gathering"
+	depends on MPC10X_BRIDGE
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config GAMECUBE_COMMON
 	bool
 

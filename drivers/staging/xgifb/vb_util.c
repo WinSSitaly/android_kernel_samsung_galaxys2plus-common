@@ -1,11 +1,19 @@
+<<<<<<< HEAD
 #include <linux/io.h>
 #include <linux/types.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "vb_def.h"
 #include "vgatypes.h"
 #include "vb_struct.h"
 
 #include "XGIfb.h"
+<<<<<<< HEAD
+=======
+#include <linux/io.h>
+#include <linux/types.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "vb_util.h"
 

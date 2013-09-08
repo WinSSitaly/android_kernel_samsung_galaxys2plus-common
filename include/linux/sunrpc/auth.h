@@ -15,7 +15,11 @@
 #include <linux/sunrpc/msg_prot.h>
 #include <linux/sunrpc/xdr.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/rcupdate.h>
 
 /* size of the nodename buffer */
@@ -26,7 +30,10 @@ struct auth_cred {
 	uid_t	uid;
 	gid_t	gid;
 	struct group_info *group_info;
+<<<<<<< HEAD
 	const char *principal;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char machine_cred : 1;
 };
 
@@ -99,8 +106,11 @@ struct rpc_authops {
 
 	struct rpc_cred *	(*lookup_cred)(struct rpc_auth *, struct auth_cred *, int);
 	struct rpc_cred *	(*crcreate)(struct rpc_auth*, struct auth_cred *, int);
+<<<<<<< HEAD
 	int			(*pipes_create)(struct rpc_auth *);
 	void			(*pipes_destroy)(struct rpc_auth *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct rpc_credops {
@@ -130,7 +140,11 @@ void			rpc_destroy_generic_auth(void);
 void 			rpc_destroy_authunix(void);
 
 struct rpc_cred *	rpc_lookup_cred(void);
+<<<<<<< HEAD
 struct rpc_cred *	rpc_lookup_machine_cred(const char *service_name);
+=======
+struct rpc_cred *	rpc_lookup_machine_cred(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int			rpcauth_register(const struct rpc_authops *);
 int			rpcauth_unregister(const struct rpc_authops *);
 struct rpc_auth *	rpcauth_create(rpc_authflavor_t, struct rpc_clnt *);

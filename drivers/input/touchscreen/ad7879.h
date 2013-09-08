@@ -21,8 +21,13 @@ struct ad7879_bus_ops {
 	int (*write)(struct device *dev, u8 reg, u16 val);
 };
 
+<<<<<<< HEAD
 extern const struct dev_pm_ops ad7879_pm_ops;
 
+=======
+void ad7879_suspend(struct ad7879 *);
+void ad7879_resume(struct ad7879 *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ad7879 *ad7879_probe(struct device *dev, u8 devid, unsigned irq,
 			    const struct ad7879_bus_ops *bops);
 void ad7879_remove(struct ad7879 *);

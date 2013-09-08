@@ -10,8 +10,11 @@
  *  2 of the License, or (at your option) any later version.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bitops.h>
 #include <linux/errno.h>
 #include <linux/fs.h>
@@ -52,8 +55,13 @@ static struct {
 static int expect_close;
 
 static int wdt_time = WDT_DEFAULT_TIME;
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 module_param(nowayout, bool, 0);
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
 	__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
 
@@ -84,7 +92,11 @@ static void bcm63xx_timer_tick(unsigned long unused)
 		bcm63xx_wdt_hw_start();
 		mod_timer(&bcm63xx_wdt_device.timer, jiffies + HZ);
 	} else
+<<<<<<< HEAD
 		pr_crit("watchdog will restart system\n");
+=======
+		printk(KERN_CRIT PFX ": watchdog will restart system\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void bcm63xx_wdt_pet(void)
@@ -128,7 +140,12 @@ static int bcm63xx_wdt_release(struct inode *inode, struct file *file)
 	if (expect_close == 42)
 		bcm63xx_wdt_pause();
 	else {
+<<<<<<< HEAD
 		pr_crit("Unexpected close, not stopping watchdog!\n");
+=======
+		printk(KERN_CRIT PFX
+			": Unexpected close, not stopping watchdog!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bcm63xx_wdt_start();
 	}
 	clear_bit(0, &bcm63xx_wdt_device.inuse);
@@ -312,7 +329,22 @@ static struct platform_driver bcm63xx_wdt = {
 	}
 };
 
+<<<<<<< HEAD
 module_platform_driver(bcm63xx_wdt);
+=======
+static int __init bcm63xx_wdt_init(void)
+{
+	return platform_driver_register(&bcm63xx_wdt);
+}
+
+static void __exit bcm63xx_wdt_exit(void)
+{
+	platform_driver_unregister(&bcm63xx_wdt);
+}
+
+module_init(bcm63xx_wdt_init);
+module_exit(bcm63xx_wdt_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Miguel Gaio <miguel.gaio@efixo.com>");
 MODULE_AUTHOR("Florian Fainelli <florian@openwrt.org>");

@@ -5,7 +5,11 @@
 
 #include <linux/mm.h>
 #include <linux/mmu_context.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 
 #include <asm/mmu_context.h>
@@ -53,7 +57,11 @@ void unuse_mm(struct mm_struct *mm)
 	struct task_struct *tsk = current;
 
 	task_lock(tsk);
+<<<<<<< HEAD
 	sync_mm_rss(mm);
+=======
+	sync_mm_rss(tsk, mm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tsk->mm = NULL;
 	/* active_mm is still 'mm' */
 	enter_lazy_tlb(mm, tsk);

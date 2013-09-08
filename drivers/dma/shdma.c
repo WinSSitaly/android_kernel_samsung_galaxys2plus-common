@@ -23,6 +23,10 @@
 #include <linux/interrupt.h>
 #include <linux/dmaengine.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
+=======
+#include <linux/dma-mapping.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <linux/pm_runtime.h>
 #include <linux/sh_dma.h>
@@ -30,8 +34,11 @@
 #include <linux/kdebug.h>
 #include <linux/spinlock.h>
 #include <linux/rculist.h>
+<<<<<<< HEAD
 
 #include "dmaengine.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "shdma.h"
 
 /* DMA descriptor control */
@@ -58,6 +65,7 @@ static LIST_HEAD(sh_dmae_devices);
 static unsigned long sh_dmae_slave_used[BITS_TO_LONGS(SH_DMA_SLAVE_NUMBER)];
 
 static void sh_dmae_chan_ld_cleanup(struct sh_dmae_chan *sh_chan, bool all);
+<<<<<<< HEAD
 static void sh_chan_xfer_ld_queue(struct sh_dmae_chan *sh_chan);
 
 static void chclr_write(struct sh_dmae_chan *sh_dc, u32 data)
@@ -67,6 +75,8 @@ static void chclr_write(struct sh_dmae_chan *sh_dc, u32 data)
 	__raw_writel(data, shdev->chan_reg +
 		     shdev->pdata->channel[sh_dc->id].chclr_offset);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void sh_dmae_writel(struct sh_dmae_chan *sh_dc, u32 data, u32 reg)
 {
@@ -80,16 +90,21 @@ static u32 sh_dmae_readl(struct sh_dmae_chan *sh_dc, u32 reg)
 
 static u16 dmaor_read(struct sh_dmae_device *shdev)
 {
+<<<<<<< HEAD
 	u32 __iomem *addr = shdev->chan_reg + DMAOR / sizeof(u32);
 
 	if (shdev->pdata->dmaor_is_32bit)
 		return __raw_readl(addr);
 	else
 		return __raw_readw(addr);
+=======
+	return __raw_readw(shdev->chan_reg + DMAOR / sizeof(u32));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void dmaor_write(struct sh_dmae_device *shdev, u16 data)
 {
+<<<<<<< HEAD
 	u32 __iomem *addr = shdev->chan_reg + DMAOR / sizeof(u32);
 
 	if (shdev->pdata->dmaor_is_32bit)
@@ -110,6 +125,9 @@ static u32 chcr_read(struct sh_dmae_chan *sh_dc)
 	struct sh_dmae_device *shdev = to_sh_dev(sh_dc);
 
 	return __raw_readl(sh_dc->base + shdev->chcr_offset / sizeof(u32));
+=======
+	__raw_writew(data, shdev->chan_reg + DMAOR / sizeof(u32));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -139,6 +157,7 @@ static int sh_dmae_rst(struct sh_dmae_device *shdev)
 
 	dmaor = dmaor_read(shdev) & ~(DMAOR_NMIF | DMAOR_AE | DMAOR_DME);
 
+<<<<<<< HEAD
 	if (shdev->pdata->chclr_present) {
 		int i;
 		for (i = 0; i < shdev->pdata->channel_num; i++) {
@@ -148,6 +167,8 @@ static int sh_dmae_rst(struct sh_dmae_device *shdev)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dmaor_write(shdev, dmaor | shdev->pdata->dmaor_init);
 
 	dmaor = dmaor_read(shdev);
@@ -158,16 +179,23 @@ static int sh_dmae_rst(struct sh_dmae_device *shdev)
 		dev_warn(shdev->common.dev, "Can't initialize DMAOR.\n");
 		return -EIO;
 	}
+<<<<<<< HEAD
 	if (shdev->pdata->dmaor_init & ~dmaor)
 		dev_warn(shdev->common.dev,
 			 "DMAOR=0x%x hasn't latched the initial value 0x%x.\n",
 			 dmaor, shdev->pdata->dmaor_init);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static bool dmae_is_busy(struct sh_dmae_chan *sh_chan)
 {
+<<<<<<< HEAD
 	u32 chcr = chcr_read(sh_chan);
+=======
+	u32 chcr = sh_dmae_readl(sh_chan, CHCR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((chcr & (CHCR_DE | CHCR_TE)) == CHCR_DE)
 		return true; /* working */
@@ -177,7 +205,12 @@ static bool dmae_is_busy(struct sh_dmae_chan *sh_chan)
 
 static unsigned int calc_xmit_shift(struct sh_dmae_chan *sh_chan, u32 chcr)
 {
+<<<<<<< HEAD
 	struct sh_dmae_device *shdev = to_sh_dev(sh_chan);
+=======
+	struct sh_dmae_device *shdev = container_of(sh_chan->common.device,
+						struct sh_dmae_device, common);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sh_dmae_pdata *pdata = shdev->pdata;
 	int cnt = ((chcr & pdata->ts_low_mask) >> pdata->ts_low_shift) |
 		((chcr & pdata->ts_high_mask) >> pdata->ts_high_shift);
@@ -190,7 +223,12 @@ static unsigned int calc_xmit_shift(struct sh_dmae_chan *sh_chan, u32 chcr)
 
 static u32 log2size_to_chcr(struct sh_dmae_chan *sh_chan, int l2size)
 {
+<<<<<<< HEAD
 	struct sh_dmae_device *shdev = to_sh_dev(sh_chan);
+=======
+	struct sh_dmae_device *shdev = container_of(sh_chan->common.device,
+						struct sh_dmae_device, common);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sh_dmae_pdata *pdata = shdev->pdata;
 	int i;
 
@@ -214,6 +252,7 @@ static void dmae_set_reg(struct sh_dmae_chan *sh_chan, struct sh_dmae_regs *hw)
 
 static void dmae_start(struct sh_dmae_chan *sh_chan)
 {
+<<<<<<< HEAD
 	struct sh_dmae_device *shdev = to_sh_dev(sh_chan);
 	u32 chcr = chcr_read(sh_chan);
 
@@ -222,15 +261,28 @@ static void dmae_start(struct sh_dmae_chan *sh_chan)
 
 	chcr |= CHCR_DE | shdev->chcr_ie_bit;
 	chcr_write(sh_chan, chcr & ~CHCR_TE);
+=======
+	u32 chcr = sh_dmae_readl(sh_chan, CHCR);
+
+	chcr |= CHCR_DE | CHCR_IE;
+	sh_dmae_writel(sh_chan, chcr & ~CHCR_TE, CHCR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void dmae_halt(struct sh_dmae_chan *sh_chan)
 {
+<<<<<<< HEAD
 	struct sh_dmae_device *shdev = to_sh_dev(sh_chan);
 	u32 chcr = chcr_read(sh_chan);
 
 	chcr &= ~(CHCR_DE | CHCR_TE | shdev->chcr_ie_bit);
 	chcr_write(sh_chan, chcr);
+=======
+	u32 chcr = sh_dmae_readl(sh_chan, CHCR);
+
+	chcr &= ~(CHCR_DE | CHCR_TE | CHCR_IE);
+	sh_dmae_writel(sh_chan, chcr, CHCR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void dmae_init(struct sh_dmae_chan *sh_chan)
@@ -242,7 +294,11 @@ static void dmae_init(struct sh_dmae_chan *sh_chan)
 	u32 chcr = DM_INC | SM_INC | 0x400 | log2size_to_chcr(sh_chan,
 						   LOG2_DEFAULT_XFER_SIZE);
 	sh_chan->xmit_shift = calc_xmit_shift(sh_chan, chcr);
+<<<<<<< HEAD
 	chcr_write(sh_chan, chcr);
+=======
+	sh_dmae_writel(sh_chan, chcr, CHCR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int dmae_set_chcr(struct sh_dmae_chan *sh_chan, u32 val)
@@ -252,25 +308,41 @@ static int dmae_set_chcr(struct sh_dmae_chan *sh_chan, u32 val)
 		return -EBUSY;
 
 	sh_chan->xmit_shift = calc_xmit_shift(sh_chan, val);
+<<<<<<< HEAD
 	chcr_write(sh_chan, val);
+=======
+	sh_dmae_writel(sh_chan, val, CHCR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 static int dmae_set_dmars(struct sh_dmae_chan *sh_chan, u16 val)
 {
+<<<<<<< HEAD
 	struct sh_dmae_device *shdev = to_sh_dev(sh_chan);
 	struct sh_dmae_pdata *pdata = shdev->pdata;
 	const struct sh_dmae_channel *chan_pdata = &pdata->channel[sh_chan->id];
 	u16 __iomem *addr = shdev->dmars;
 	unsigned int shift = chan_pdata->dmars_bit;
+=======
+	struct sh_dmae_device *shdev = container_of(sh_chan->common.device,
+						struct sh_dmae_device, common);
+	struct sh_dmae_pdata *pdata = shdev->pdata;
+	const struct sh_dmae_channel *chan_pdata = &pdata->channel[sh_chan->id];
+	u16 __iomem *addr = shdev->dmars;
+	int shift = chan_pdata->dmars_bit;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dmae_is_busy(sh_chan))
 		return -EBUSY;
 
+<<<<<<< HEAD
 	if (pdata->no_dmars)
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* in the case of a missing DMARS resource use first memory window */
 	if (!addr)
 		addr = (u16 __iomem *)shdev->chan_reg;
@@ -286,6 +358,7 @@ static dma_cookie_t sh_dmae_tx_submit(struct dma_async_tx_descriptor *tx)
 {
 	struct sh_desc *desc = tx_to_sh_desc(tx), *chunk, *last = desc, *c;
 	struct sh_dmae_chan *sh_chan = to_sh_chan(tx->chan);
+<<<<<<< HEAD
 	struct sh_dmae_slave *param = tx->chan->private;
 	dma_async_tx_callback callback = tx->callback;
 	dma_cookie_t cookie;
@@ -299,6 +372,20 @@ static dma_cookie_t sh_dmae_tx_submit(struct dma_async_tx_descriptor *tx)
 		power_up = false;
 
 	cookie = dma_cookie_assign(tx);
+=======
+	dma_async_tx_callback callback = tx->callback;
+	dma_cookie_t cookie;
+
+	spin_lock_bh(&sh_chan->desc_lock);
+
+	cookie = sh_chan->common.cookie;
+	cookie++;
+	if (cookie < 0)
+		cookie = 1;
+
+	sh_chan->common.cookie = cookie;
+	tx->cookie = cookie;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Mark all chunks of this descriptor as submitted, move to the queue */
 	list_for_each_entry_safe(chunk, c, desc->node.prev, node) {
@@ -326,6 +413,7 @@ static dma_cookie_t sh_dmae_tx_submit(struct dma_async_tx_descriptor *tx)
 		tx->cookie, &last->async_tx, sh_chan->id,
 		desc->hw.sar, desc->hw.tcr, desc->hw.dar);
 
+<<<<<<< HEAD
 	if (power_up) {
 		sh_chan->pm_state = DMAE_PM_BUSY;
 
@@ -360,6 +448,9 @@ static dma_cookie_t sh_dmae_tx_submit(struct dma_async_tx_descriptor *tx)
 	}
 
 	spin_unlock_irq(&sh_chan->desc_lock);
+=======
+	spin_unlock_bh(&sh_chan->desc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return cookie;
 }
@@ -382,7 +473,13 @@ static struct sh_desc *sh_dmae_get_desc(struct sh_dmae_chan *sh_chan)
 static const struct sh_dmae_slave_config *sh_dmae_find_slave(
 	struct sh_dmae_chan *sh_chan, struct sh_dmae_slave *param)
 {
+<<<<<<< HEAD
 	struct sh_dmae_device *shdev = to_sh_dev(sh_chan);
+=======
+	struct dma_device *dma_dev = sh_chan->common.device;
+	struct sh_dmae_device *shdev = container_of(dma_dev,
+					struct sh_dmae_device, common);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sh_dmae_pdata *pdata = shdev->pdata;
 	int i;
 
@@ -403,6 +500,11 @@ static int sh_dmae_alloc_chan_resources(struct dma_chan *chan)
 	struct sh_dmae_slave *param = chan->private;
 	int ret;
 
+<<<<<<< HEAD
+=======
+	pm_runtime_get_sync(sh_chan->dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * This relies on the guarantee from dmaengine that alloc_chan_resources
 	 * never runs concurrently with itself or free_chan_resources.
@@ -422,20 +524,46 @@ static int sh_dmae_alloc_chan_resources(struct dma_chan *chan)
 		}
 
 		param->config = cfg;
+<<<<<<< HEAD
 	}
 
 	while (sh_chan->descs_allocated < NR_DESCS_PER_CHANNEL) {
 		desc = kzalloc(sizeof(struct sh_desc), GFP_KERNEL);
 		if (!desc)
 			break;
+=======
+
+		dmae_set_dmars(sh_chan, cfg->mid_rid);
+		dmae_set_chcr(sh_chan, cfg->chcr);
+	} else {
+		dmae_init(sh_chan);
+	}
+
+	spin_lock_bh(&sh_chan->desc_lock);
+	while (sh_chan->descs_allocated < NR_DESCS_PER_CHANNEL) {
+		spin_unlock_bh(&sh_chan->desc_lock);
+		desc = kzalloc(sizeof(struct sh_desc), GFP_KERNEL);
+		if (!desc) {
+			spin_lock_bh(&sh_chan->desc_lock);
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dma_async_tx_descriptor_init(&desc->async_tx,
 					&sh_chan->common);
 		desc->async_tx.tx_submit = sh_dmae_tx_submit;
 		desc->mark = DESC_IDLE;
 
+<<<<<<< HEAD
 		list_add(&desc->node, &sh_chan->ld_free);
 		sh_chan->descs_allocated++;
 	}
+=======
+		spin_lock_bh(&sh_chan->desc_lock);
+		list_add(&desc->node, &sh_chan->ld_free);
+		sh_chan->descs_allocated++;
+	}
+	spin_unlock_bh(&sh_chan->desc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!sh_chan->descs_allocated) {
 		ret = -ENOMEM;
@@ -449,7 +577,11 @@ edescalloc:
 		clear_bit(param->slave_id, sh_dmae_slave_used);
 etestused:
 efindslave:
+<<<<<<< HEAD
 	chan->private = NULL;
+=======
+	pm_runtime_put(sh_chan->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -461,6 +593,10 @@ static void sh_dmae_free_chan_resources(struct dma_chan *chan)
 	struct sh_dmae_chan *sh_chan = to_sh_chan(chan);
 	struct sh_desc *desc, *_desc;
 	LIST_HEAD(list);
+<<<<<<< HEAD
+=======
+	int descs = sh_chan->descs_allocated;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Protect against ISR */
 	spin_lock_irq(&sh_chan->desc_lock);
@@ -480,12 +616,23 @@ static void sh_dmae_free_chan_resources(struct dma_chan *chan)
 		chan->private = NULL;
 	}
 
+<<<<<<< HEAD
 	spin_lock_irq(&sh_chan->desc_lock);
+=======
+	spin_lock_bh(&sh_chan->desc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_splice_init(&sh_chan->ld_free, &list);
 	sh_chan->descs_allocated = 0;
 
+<<<<<<< HEAD
 	spin_unlock_irq(&sh_chan->desc_lock);
+=======
+	spin_unlock_bh(&sh_chan->desc_lock);
+
+	if (descs > 0)
+		pm_runtime_put(sh_chan->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_for_each_entry_safe(desc, _desc, &list, node)
 		kfree(desc);
@@ -496,6 +643,7 @@ static void sh_dmae_free_chan_resources(struct dma_chan *chan)
  * @sh_chan:	DMA channel
  * @flags:	DMA transfer flags
  * @dest:	destination DMA address, incremented when direction equals
+<<<<<<< HEAD
  *		DMA_DEV_TO_MEM
  * @src:	source DMA address, incremented when direction equals
  *		DMA_MEM_TO_DEV
@@ -503,12 +651,25 @@ static void sh_dmae_free_chan_resources(struct dma_chan *chan)
  * @first:	if NULL, set to the current descriptor and cookie set to -EBUSY
  * @direction:	needed for slave DMA to decide which address to keep constant,
  *		equals DMA_MEM_TO_MEM for MEMCPY
+=======
+ *		DMA_FROM_DEVICE or DMA_BIDIRECTIONAL
+ * @src:	source DMA address, incremented when direction equals
+ *		DMA_TO_DEVICE or DMA_BIDIRECTIONAL
+ * @len:	DMA transfer length
+ * @first:	if NULL, set to the current descriptor and cookie set to -EBUSY
+ * @direction:	needed for slave DMA to decide which address to keep constant,
+ *		equals DMA_BIDIRECTIONAL for MEMCPY
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Returns 0 or an error
  * Locks: called with desc_lock held
  */
 static struct sh_desc *sh_dmae_add_desc(struct sh_dmae_chan *sh_chan,
 	unsigned long flags, dma_addr_t *dest, dma_addr_t *src, size_t *len,
+<<<<<<< HEAD
 	struct sh_desc **first, enum dma_transfer_direction direction)
+=======
+	struct sh_desc **first, enum dma_data_direction direction)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sh_desc *new;
 	size_t copy_size;
@@ -548,9 +709,15 @@ static struct sh_desc *sh_dmae_add_desc(struct sh_dmae_chan *sh_chan,
 	new->direction = direction;
 
 	*len -= copy_size;
+<<<<<<< HEAD
 	if (direction == DMA_MEM_TO_MEM || direction == DMA_MEM_TO_DEV)
 		*src += copy_size;
 	if (direction == DMA_MEM_TO_MEM || direction == DMA_DEV_TO_MEM)
+=======
+	if (direction == DMA_BIDIRECTIONAL || direction == DMA_TO_DEVICE)
+		*src += copy_size;
+	if (direction == DMA_BIDIRECTIONAL || direction == DMA_FROM_DEVICE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*dest += copy_size;
 
 	return new;
@@ -563,18 +730,29 @@ static struct sh_desc *sh_dmae_add_desc(struct sh_dmae_chan *sh_chan,
  * converted to scatter-gather to guarantee consistent locking and a correct
  * list manipulation. For slave DMA direction carries the usual meaning, and,
  * logically, the SG list is RAM and the addr variable contains slave address,
+<<<<<<< HEAD
  * e.g., the FIFO I/O register. For MEMCPY direction equals DMA_MEM_TO_MEM
+=======
+ * e.g., the FIFO I/O register. For MEMCPY direction equals DMA_BIDIRECTIONAL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * and the SG list contains only one element and points at the source buffer.
  */
 static struct dma_async_tx_descriptor *sh_dmae_prep_sg(struct sh_dmae_chan *sh_chan,
 	struct scatterlist *sgl, unsigned int sg_len, dma_addr_t *addr,
+<<<<<<< HEAD
 	enum dma_transfer_direction direction, unsigned long flags)
+=======
+	enum dma_data_direction direction, unsigned long flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct scatterlist *sg;
 	struct sh_desc *first = NULL, *new = NULL /* compiler... */;
 	LIST_HEAD(tx_list);
 	int chunks = 0;
+<<<<<<< HEAD
 	unsigned long irq_flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	if (!sg_len)
@@ -585,7 +763,11 @@ static struct dma_async_tx_descriptor *sh_dmae_prep_sg(struct sh_dmae_chan *sh_c
 			(SH_DMA_TCR_MAX + 1);
 
 	/* Have to lock the whole loop to protect against concurrent release */
+<<<<<<< HEAD
 	spin_lock_irqsave(&sh_chan->desc_lock, irq_flags);
+=======
+	spin_lock_bh(&sh_chan->desc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Chaining:
@@ -609,7 +791,11 @@ static struct dma_async_tx_descriptor *sh_dmae_prep_sg(struct sh_dmae_chan *sh_c
 			dev_dbg(sh_chan->dev, "Add SG #%d@%p[%d], dma %llx\n",
 				i, sg, len, (unsigned long long)sg_addr);
 
+<<<<<<< HEAD
 			if (direction == DMA_DEV_TO_MEM)
+=======
+			if (direction == DMA_FROM_DEVICE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				new = sh_dmae_add_desc(sh_chan, flags,
 						&sg_addr, addr, &len, &first,
 						direction);
@@ -631,7 +817,11 @@ static struct dma_async_tx_descriptor *sh_dmae_prep_sg(struct sh_dmae_chan *sh_c
 	/* Put them back on the free list, so, they don't get lost */
 	list_splice_tail(&tx_list, &sh_chan->ld_free);
 
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&sh_chan->desc_lock, irq_flags);
+=======
+	spin_unlock_bh(&sh_chan->desc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return &first->async_tx;
 
@@ -640,7 +830,11 @@ err_get_desc:
 		new->mark = DESC_IDLE;
 	list_splice(&tx_list, &sh_chan->ld_free);
 
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&sh_chan->desc_lock, irq_flags);
+=======
+	spin_unlock_bh(&sh_chan->desc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return NULL;
 }
@@ -663,14 +857,22 @@ static struct dma_async_tx_descriptor *sh_dmae_prep_memcpy(
 	sg_dma_address(&sg) = dma_src;
 	sg_dma_len(&sg) = len;
 
+<<<<<<< HEAD
 	return sh_dmae_prep_sg(sh_chan, &sg, 1, &dma_dest, DMA_MEM_TO_MEM,
+=======
+	return sh_dmae_prep_sg(sh_chan, &sg, 1, &dma_dest, DMA_BIDIRECTIONAL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       flags);
 }
 
 static struct dma_async_tx_descriptor *sh_dmae_prep_slave_sg(
 	struct dma_chan *chan, struct scatterlist *sgl, unsigned int sg_len,
+<<<<<<< HEAD
 	enum dma_transfer_direction direction, unsigned long flags,
 	void *context)
+=======
+	enum dma_data_direction direction, unsigned long flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sh_dmae_slave *param;
 	struct sh_dmae_chan *sh_chan;
@@ -703,7 +905,10 @@ static int sh_dmae_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
 			   unsigned long arg)
 {
 	struct sh_dmae_chan *sh_chan = to_sh_chan(chan);
+<<<<<<< HEAD
 	unsigned long flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Only supports DMA_TERMINATE_ALL */
 	if (cmd != DMA_TERMINATE_ALL)
@@ -712,7 +917,11 @@ static int sh_dmae_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
 	if (!chan)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&sh_chan->desc_lock, flags);
+=======
+	spin_lock_bh(&sh_chan->desc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dmae_halt(sh_chan);
 
 	if (!list_empty(&sh_chan->ld_queue)) {
@@ -721,8 +930,14 @@ static int sh_dmae_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
 						  struct sh_desc, node);
 		desc->partial = (desc->hw.tcr - sh_dmae_readl(sh_chan, TCR)) <<
 			sh_chan->xmit_shift;
+<<<<<<< HEAD
 	}
 	spin_unlock_irqrestore(&sh_chan->desc_lock, flags);
+=======
+
+	}
+	spin_unlock_bh(&sh_chan->desc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sh_dmae_chan_ld_cleanup(sh_chan, true);
 
@@ -737,9 +952,14 @@ static dma_async_tx_callback __ld_cleanup(struct sh_dmae_chan *sh_chan, bool all
 	dma_cookie_t cookie = 0;
 	dma_async_tx_callback callback = NULL;
 	void *param = NULL;
+<<<<<<< HEAD
 	unsigned long flags;
 
 	spin_lock_irqsave(&sh_chan->desc_lock, flags);
+=======
+
+	spin_lock_bh(&sh_chan->desc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry_safe(desc, _desc, &sh_chan->ld_queue, node) {
 		struct dma_async_tx_descriptor *tx = &desc->async_tx;
 
@@ -761,12 +981,21 @@ static dma_async_tx_callback __ld_cleanup(struct sh_dmae_chan *sh_chan, bool all
 			cookie = tx->cookie;
 
 		if (desc->mark == DESC_COMPLETED && desc->chunks == 1) {
+<<<<<<< HEAD
 			if (sh_chan->common.completed_cookie != desc->cookie - 1)
 				dev_dbg(sh_chan->dev,
 					"Completing cookie %d, expected %d\n",
 					desc->cookie,
 					sh_chan->common.completed_cookie + 1);
 			sh_chan->common.completed_cookie = desc->cookie;
+=======
+			if (sh_chan->completed_cookie != desc->cookie - 1)
+				dev_dbg(sh_chan->dev,
+					"Completing cookie %d, expected %d\n",
+					desc->cookie,
+					sh_chan->completed_cookie + 1);
+			sh_chan->completed_cookie = desc->cookie;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/* Call callback on the last chunk */
@@ -805,6 +1034,7 @@ static dma_async_tx_callback __ld_cleanup(struct sh_dmae_chan *sh_chan, bool all
 		     async_tx_test_ack(&desc->async_tx)) || all) {
 			/* Remove from ld_queue list */
 			desc->mark = DESC_IDLE;
+<<<<<<< HEAD
 
 			list_move(&desc->node, &sh_chan->ld_free);
 
@@ -812,6 +1042,9 @@ static dma_async_tx_callback __ld_cleanup(struct sh_dmae_chan *sh_chan, bool all
 				dev_dbg(sh_chan->dev, "Bring down channel %d\n", sh_chan->id);
 				pm_runtime_put(sh_chan->dev);
 			}
+=======
+			list_move(&desc->node, &sh_chan->ld_free);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -820,9 +1053,15 @@ static dma_async_tx_callback __ld_cleanup(struct sh_dmae_chan *sh_chan, bool all
 		 * Terminating and the loop completed normally: forgive
 		 * uncompleted cookies
 		 */
+<<<<<<< HEAD
 		sh_chan->common.completed_cookie = sh_chan->common.cookie;
 
 	spin_unlock_irqrestore(&sh_chan->desc_lock, flags);
+=======
+		sh_chan->completed_cookie = sh_chan->common.cookie;
+
+	spin_unlock_bh(&sh_chan->desc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (callback)
 		callback(param);
@@ -841,14 +1080,26 @@ static void sh_dmae_chan_ld_cleanup(struct sh_dmae_chan *sh_chan, bool all)
 		;
 }
 
+<<<<<<< HEAD
 /* Called under spin_lock_irq(&sh_chan->desc_lock) */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void sh_chan_xfer_ld_queue(struct sh_dmae_chan *sh_chan)
 {
 	struct sh_desc *desc;
 
+<<<<<<< HEAD
 	/* DMA work check */
 	if (dmae_is_busy(sh_chan))
 		return;
+=======
+	spin_lock_bh(&sh_chan->desc_lock);
+	/* DMA work check */
+	if (dmae_is_busy(sh_chan)) {
+		spin_unlock_bh(&sh_chan->desc_lock);
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Find the first not transferred descriptor */
 	list_for_each_entry(desc, &sh_chan->ld_queue, node)
@@ -861,11 +1112,17 @@ static void sh_chan_xfer_ld_queue(struct sh_dmae_chan *sh_chan)
 			dmae_start(sh_chan);
 			break;
 		}
+<<<<<<< HEAD
+=======
+
+	spin_unlock_bh(&sh_chan->desc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void sh_dmae_memcpy_issue_pending(struct dma_chan *chan)
 {
 	struct sh_dmae_chan *sh_chan = to_sh_chan(chan);
+<<<<<<< HEAD
 
 	spin_lock_irq(&sh_chan->desc_lock);
 	if (sh_chan->pm_state == DMAE_PM_ESTABLISHED)
@@ -873,6 +1130,9 @@ static void sh_dmae_memcpy_issue_pending(struct dma_chan *chan)
 	else
 		sh_chan->pm_state = DMAE_PM_PENDING;
 	spin_unlock_irq(&sh_chan->desc_lock);
+=======
+	sh_chan_xfer_ld_queue(sh_chan);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static enum dma_status sh_dmae_tx_status(struct dma_chan *chan,
@@ -880,6 +1140,7 @@ static enum dma_status sh_dmae_tx_status(struct dma_chan *chan,
 					struct dma_tx_state *txstate)
 {
 	struct sh_dmae_chan *sh_chan = to_sh_chan(chan);
+<<<<<<< HEAD
 	enum dma_status status;
 	unsigned long flags;
 
@@ -888,6 +1149,24 @@ static enum dma_status sh_dmae_tx_status(struct dma_chan *chan,
 	spin_lock_irqsave(&sh_chan->desc_lock, flags);
 
 	status = dma_cookie_status(chan, cookie, txstate);
+=======
+	dma_cookie_t last_used;
+	dma_cookie_t last_complete;
+	enum dma_status status;
+
+	sh_dmae_chan_ld_cleanup(sh_chan, false);
+
+	/* First read completed cookie to avoid a skew */
+	last_complete = sh_chan->completed_cookie;
+	rmb();
+	last_used = chan->cookie;
+	BUG_ON(last_complete < 0);
+	dma_set_tx_state(txstate, last_complete, last_used, 0);
+
+	spin_lock_bh(&sh_chan->desc_lock);
+
+	status = dma_async_is_complete(cookie, last_complete, last_used);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If we don't find cookie on the queue, it has been aborted and we have
@@ -903,7 +1182,11 @@ static enum dma_status sh_dmae_tx_status(struct dma_chan *chan,
 			}
 	}
 
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&sh_chan->desc_lock, flags);
+=======
+	spin_unlock_bh(&sh_chan->desc_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return status;
 }
@@ -916,7 +1199,11 @@ static irqreturn_t sh_dmae_interrupt(int irq, void *data)
 
 	spin_lock(&sh_chan->desc_lock);
 
+<<<<<<< HEAD
 	chcr = chcr_read(sh_chan);
+=======
+	chcr = sh_dmae_readl(sh_chan, CHCR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (chcr & CHCR_TE) {
 		/* DMA stop */
@@ -956,12 +1243,15 @@ static bool sh_dmae_reset(struct sh_dmae_device *shdev)
 
 		list_splice_init(&sh_chan->ld_queue, &dl);
 
+<<<<<<< HEAD
 		if (!list_empty(&dl)) {
 			dev_dbg(sh_chan->dev, "Bring down channel %d\n", sh_chan->id);
 			pm_runtime_put(sh_chan->dev);
 		}
 		sh_chan->pm_state = DMAE_PM_ESTABLISHED;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock(&sh_chan->desc_lock);
 
 		/* Complete all  */
@@ -1002,10 +1292,17 @@ static void dmae_do_tasklet(unsigned long data)
 	u32 sar_buf = sh_dmae_readl(sh_chan, SAR);
 	u32 dar_buf = sh_dmae_readl(sh_chan, DAR);
 
+<<<<<<< HEAD
 	spin_lock_irq(&sh_chan->desc_lock);
 	list_for_each_entry(desc, &sh_chan->ld_queue, node) {
 		if (desc->mark == DESC_SUBMITTED &&
 		    ((desc->direction == DMA_DEV_TO_MEM &&
+=======
+	spin_lock(&sh_chan->desc_lock);
+	list_for_each_entry(desc, &sh_chan->ld_queue, node) {
+		if (desc->mark == DESC_SUBMITTED &&
+		    ((desc->direction == DMA_FROM_DEVICE &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      (desc->hw.dar + desc->hw.tcr) == dar_buf) ||
 		     (desc->hw.sar + desc->hw.tcr) == sar_buf)) {
 			dev_dbg(sh_chan->dev, "done #%d@%p dst %u\n",
@@ -1015,10 +1312,17 @@ static void dmae_do_tasklet(unsigned long data)
 			break;
 		}
 	}
+<<<<<<< HEAD
 	/* Next desc */
 	sh_chan_xfer_ld_queue(sh_chan);
 	spin_unlock_irq(&sh_chan->desc_lock);
 
+=======
+	spin_unlock(&sh_chan->desc_lock);
+
+	/* Next desc */
+	sh_chan_xfer_ld_queue(sh_chan);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sh_dmae_chan_ld_cleanup(sh_chan, false);
 }
 
@@ -1086,11 +1390,16 @@ static int __devinit sh_dmae_chan_probe(struct sh_dmae_device *shdev, int id,
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	new_sh_chan->pm_state = DMAE_PM_ESTABLISHED;
 
 	/* reference struct dma_device */
 	new_sh_chan->common.device = &shdev->common;
 	dma_cookie_init(&new_sh_chan->common);
+=======
+	/* copy struct dma_device */
+	new_sh_chan->common.device = &shdev->common;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	new_sh_chan->dev = shdev->common.dev;
 	new_sh_chan->id = id;
@@ -1223,6 +1532,7 @@ static int __init sh_dmae_probe(struct platform_device *pdev)
 	/* platform data */
 	shdev->pdata = pdata;
 
+<<<<<<< HEAD
 	if (pdata->chcr_offset)
 		shdev->chcr_offset = pdata->chcr_offset;
 	else
@@ -1237,6 +1547,10 @@ static int __init sh_dmae_probe(struct platform_device *pdev)
 
 	shdev->common.dev = &pdev->dev;
 
+=======
+	platform_set_drvdata(pdev, shdev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pm_runtime_enable(&pdev->dev);
 	pm_runtime_get_sync(&pdev->dev);
 
@@ -1251,8 +1565,12 @@ static int __init sh_dmae_probe(struct platform_device *pdev)
 
 	INIT_LIST_HEAD(&shdev->common.channels);
 
+<<<<<<< HEAD
 	if (!pdata->slave_only)
 		dma_cap_set(DMA_MEMCPY, shdev->common.cap_mask);
+=======
+	dma_cap_set(DMA_MEMCPY, shdev->common.cap_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pdata->slave && pdata->slave_num)
 		dma_cap_set(DMA_SLAVE, shdev->common.cap_mask);
 
@@ -1267,6 +1585,10 @@ static int __init sh_dmae_probe(struct platform_device *pdev)
 	shdev->common.device_prep_slave_sg = sh_dmae_prep_slave_sg;
 	shdev->common.device_control = sh_dmae_control;
 
+<<<<<<< HEAD
+=======
+	shdev->common.dev = &pdev->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Default transfer size of 32 bytes requires 32-byte alignment */
 	shdev->common.copy_align = LOG2_DEFAULT_XFER_SIZE;
 
@@ -1447,17 +1769,33 @@ static int sh_dmae_runtime_resume(struct device *dev)
 #ifdef CONFIG_PM
 static int sh_dmae_suspend(struct device *dev)
 {
+<<<<<<< HEAD
+=======
+	struct sh_dmae_device *shdev = dev_get_drvdata(dev);
+	int i;
+
+	for (i = 0; i < shdev->pdata->channel_num; i++) {
+		struct sh_dmae_chan *sh_chan = shdev->chan[i];
+		if (sh_chan->descs_allocated)
+			sh_chan->pm_error = pm_runtime_put_sync(dev);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int sh_dmae_resume(struct device *dev)
 {
 	struct sh_dmae_device *shdev = dev_get_drvdata(dev);
+<<<<<<< HEAD
 	int i, ret;
 
 	ret = sh_dmae_rst(shdev);
 	if (ret < 0)
 		dev_err(dev, "Failed to reset!\n");
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < shdev->pdata->channel_num; i++) {
 		struct sh_dmae_chan *sh_chan = shdev->chan[i];
@@ -1466,6 +1804,12 @@ static int sh_dmae_resume(struct device *dev)
 		if (!sh_chan->descs_allocated)
 			continue;
 
+<<<<<<< HEAD
+=======
+		if (!sh_chan->pm_error)
+			pm_runtime_get_sync(dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (param) {
 			const struct sh_dmae_slave_config *cfg = param->config;
 			dmae_set_dmars(sh_chan, cfg->mid_rid);

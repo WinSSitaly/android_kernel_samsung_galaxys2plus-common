@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright Â© 2006 Intel Corporation
+=======
+ * Copyright © 2006 Intel Corporation
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -75,7 +79,11 @@ get_blocksize(void *p)
 
 static void
 fill_detail_timing_data(struct drm_display_mode *panel_fixed_mode,
+<<<<<<< HEAD
 			const struct lvds_dvo_timing *dvo_timing)
+=======
+			struct lvds_dvo_timing *dvo_timing)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	panel_fixed_mode->hdisplay = (dvo_timing->hactive_hi << 8) |
 		dvo_timing->hactive_lo;
@@ -116,6 +124,7 @@ fill_detail_timing_data(struct drm_display_mode *panel_fixed_mode,
 	drm_mode_set_name(panel_fixed_mode);
 }
 
+<<<<<<< HEAD
 static bool
 lvds_dvo_timing_equal_size(const struct lvds_dvo_timing *a,
 			   const struct lvds_dvo_timing *b)
@@ -196,11 +205,14 @@ get_lvds_fp_timing(const struct bdb_header *bdb,
 	return (const struct lvds_fp_timing *)((const u8 *)bdb + ofs);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Try to find integrated panel data */
 static void
 parse_lfp_panel_data(struct drm_i915_private *dev_priv,
 			    struct bdb_header *bdb)
 {
+<<<<<<< HEAD
 	const struct bdb_lvds_options *lvds_options;
 	const struct bdb_lvds_lfp_data *lvds_lfp_data;
 	const struct bdb_lvds_lfp_data_ptrs *lvds_lfp_data_ptrs;
@@ -208,6 +220,17 @@ parse_lfp_panel_data(struct drm_i915_private *dev_priv,
 	const struct lvds_fp_timing *fp_timing;
 	struct drm_display_mode *panel_fixed_mode;
 	int i, downclock;
+=======
+	struct bdb_lvds_options *lvds_options;
+	struct bdb_lvds_lfp_data *lvds_lfp_data;
+	struct bdb_lvds_lfp_data_ptrs *lvds_lfp_data_ptrs;
+	struct bdb_lvds_lfp_data_entry *entry;
+	struct lvds_dvo_timing *dvo_timing;
+	struct drm_display_mode *panel_fixed_mode;
+	int lfp_data_size, dvo_timing_offset;
+	int i, temp_downclock;
+	struct drm_display_mode *temp_mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lvds_options = find_section(bdb, BDB_LVDS_OPTIONS);
 	if (!lvds_options)
@@ -229,21 +252,44 @@ parse_lfp_panel_data(struct drm_i915_private *dev_priv,
 
 	dev_priv->lvds_vbt = 1;
 
+<<<<<<< HEAD
 	panel_dvo_timing = get_lvds_dvo_timing(lvds_lfp_data,
 					       lvds_lfp_data_ptrs,
 					       lvds_options->panel_type);
+=======
+	lfp_data_size = lvds_lfp_data_ptrs->ptr[1].dvo_timing_offset -
+		lvds_lfp_data_ptrs->ptr[0].dvo_timing_offset;
+	entry = (struct bdb_lvds_lfp_data_entry *)
+		((uint8_t *)lvds_lfp_data->data + (lfp_data_size *
+						   lvds_options->panel_type));
+	dvo_timing_offset = lvds_lfp_data_ptrs->ptr[0].dvo_timing_offset -
+		lvds_lfp_data_ptrs->ptr[0].fp_timing_offset;
+
+	/*
+	 * the size of fp_timing varies on the different platform.
+	 * So calculate the DVO timing relative offset in LVDS data
+	 * entry to get the DVO timing entry
+	 */
+	dvo_timing = (struct lvds_dvo_timing *)
+			((unsigned char *)entry + dvo_timing_offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	panel_fixed_mode = kzalloc(sizeof(*panel_fixed_mode), GFP_KERNEL);
 	if (!panel_fixed_mode)
 		return;
 
+<<<<<<< HEAD
 	fill_detail_timing_data(panel_fixed_mode, panel_dvo_timing);
+=======
+	fill_detail_timing_data(panel_fixed_mode, dvo_timing);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_priv->lfp_lvds_vbt_mode = panel_fixed_mode;
 
 	DRM_DEBUG_KMS("Found panel mode in BIOS VBT tables:\n");
 	drm_mode_debug_printmodeline(panel_fixed_mode);
 
+<<<<<<< HEAD
 	/*
 	 * Iterate over the LVDS panel timing info to find the lowest clock
 	 * for the native resolution.
@@ -280,6 +326,50 @@ parse_lfp_panel_data(struct drm_i915_private *dev_priv,
 				      dev_priv->bios_lvds_val);
 		}
 	}
+=======
+	temp_mode = kzalloc(sizeof(*temp_mode), GFP_KERNEL);
+	temp_downclock = panel_fixed_mode->clock;
+	/*
+	 * enumerate the LVDS panel timing info entry in VBT to check whether
+	 * the LVDS downclock is found.
+	 */
+	for (i = 0; i < 16; i++) {
+		entry = (struct bdb_lvds_lfp_data_entry *)
+			((uint8_t *)lvds_lfp_data->data + (lfp_data_size * i));
+		dvo_timing = (struct lvds_dvo_timing *)
+			((unsigned char *)entry + dvo_timing_offset);
+
+		fill_detail_timing_data(temp_mode, dvo_timing);
+
+		if (temp_mode->hdisplay == panel_fixed_mode->hdisplay &&
+		temp_mode->hsync_start == panel_fixed_mode->hsync_start &&
+		temp_mode->hsync_end == panel_fixed_mode->hsync_end &&
+		temp_mode->htotal == panel_fixed_mode->htotal &&
+		temp_mode->vdisplay == panel_fixed_mode->vdisplay &&
+		temp_mode->vsync_start == panel_fixed_mode->vsync_start &&
+		temp_mode->vsync_end == panel_fixed_mode->vsync_end &&
+		temp_mode->vtotal == panel_fixed_mode->vtotal &&
+		temp_mode->clock < temp_downclock) {
+			/*
+			 * downclock is already found. But we expect
+			 * to find the lower downclock.
+			 */
+			temp_downclock = temp_mode->clock;
+		}
+		/* clear it to zero */
+		memset(temp_mode, 0, sizeof(*temp_mode));
+	}
+	kfree(temp_mode);
+	if (temp_downclock < panel_fixed_mode->clock &&
+	    i915_lvds_downclock) {
+		dev_priv->lvds_downclock_avail = 1;
+		dev_priv->lvds_downclock = temp_downclock;
+		DRM_DEBUG_KMS("LVDS downclock is found in VBT. "
+			      "Normal Clock %dKHz, downclock %dKHz\n",
+			      temp_downclock, panel_fixed_mode->clock);
+	}
+	return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Try to find sdvo panel data */
@@ -346,6 +436,7 @@ parse_general_features(struct drm_i915_private *dev_priv,
 		dev_priv->lvds_use_ssc = general->enable_ssc;
 		dev_priv->lvds_ssc_freq =
 			intel_bios_ssc_frequency(dev, general->ssc_freq);
+<<<<<<< HEAD
 		dev_priv->display_clock_mode = general->display_clock_mode;
 		DRM_DEBUG_KMS("BDB_GENERAL_FEATURES int_tv_support %d int_crt_support %d lvds_use_ssc %d lvds_ssc_freq %d display_clock_mode %d\n",
 			      dev_priv->int_tv_support,
@@ -353,6 +444,8 @@ parse_general_features(struct drm_i915_private *dev_priv,
 			      dev_priv->lvds_use_ssc,
 			      dev_priv->lvds_ssc_freq,
 			      dev_priv->display_clock_mode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -425,7 +518,11 @@ parse_sdvo_device_mapping(struct drm_i915_private *dev_priv,
 		if (p_child->dvo_port != DEVICE_PORT_DVOB &&
 			p_child->dvo_port != DEVICE_PORT_DVOC) {
 			/* skip the incorrect SDVO port */
+<<<<<<< HEAD
 			DRM_DEBUG_KMS("Incorrect SDVO port. Skip it\n");
+=======
+			DRM_DEBUG_KMS("Incorrect SDVO port. Skip it \n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 		DRM_DEBUG_KMS("the SDVO device with slave addr %2x is found on"
@@ -440,13 +537,24 @@ parse_sdvo_device_mapping(struct drm_i915_private *dev_priv,
 			p_mapping->dvo_wiring = p_child->dvo_wiring;
 			p_mapping->ddc_pin = p_child->ddc_pin;
 			p_mapping->i2c_pin = p_child->i2c_pin;
+<<<<<<< HEAD
 			p_mapping->initialized = 1;
 			DRM_DEBUG_KMS("SDVO device: dvo=%x, addr=%x, wiring=%d, ddc_pin=%d, i2c_pin=%d\n",
+=======
+			p_mapping->i2c_speed = p_child->i2c_speed;
+			p_mapping->initialized = 1;
+			DRM_DEBUG_KMS("SDVO device: dvo=%x, addr=%x, wiring=%d, ddc_pin=%d, i2c_pin=%d, i2c_speed=%d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      p_mapping->dvo_port,
 				      p_mapping->slave_addr,
 				      p_mapping->dvo_wiring,
 				      p_mapping->ddc_pin,
+<<<<<<< HEAD
 				      p_mapping->i2c_pin);
+=======
+				      p_mapping->i2c_pin,
+				      p_mapping->i2c_speed);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			DRM_DEBUG_KMS("Maybe one SDVO port is shared by "
 					 "two SDVO device.\n");
@@ -495,8 +603,17 @@ parse_edp(struct drm_i915_private *dev_priv, struct bdb_header *bdb)
 
 	edp = find_section(bdb, BDB_EDP);
 	if (!edp) {
+<<<<<<< HEAD
 		if (SUPPORTS_EDP(dev_priv->dev) && dev_priv->edp.support)
 			DRM_DEBUG_KMS("No eDP BDB found but eDP panel supported.\n");
+=======
+		if (SUPPORTS_EDP(dev_priv->dev) && dev_priv->edp.support) {
+			DRM_DEBUG_KMS("No eDP BDB found but eDP panel "
+				      "supported, assume %dbpp panel color "
+				      "depth.\n",
+				      dev_priv->edp.bpp);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -602,10 +719,17 @@ parse_device_mapping(struct drm_i915_private *dev_priv,
 		count++;
 	}
 	if (!count) {
+<<<<<<< HEAD
 		DRM_DEBUG_KMS("no child dev is parsed from VBT\n");
 		return;
 	}
 	dev_priv->child_dev = kcalloc(count, sizeof(*p_child), GFP_KERNEL);
+=======
+		DRM_DEBUG_KMS("no child dev is parsed from VBT \n");
+		return;
+	}
+	dev_priv->child_dev = kzalloc(sizeof(*p_child) * count, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!dev_priv->child_dev) {
 		DRM_DEBUG_KMS("No memory space for child device\n");
 		return;
@@ -648,7 +772,14 @@ init_vbt_defaults(struct drm_i915_private *dev_priv)
 	/* Default to using SSC */
 	dev_priv->lvds_use_ssc = 1;
 	dev_priv->lvds_ssc_freq = intel_bios_ssc_frequency(dev, 1);
+<<<<<<< HEAD
 	DRM_DEBUG_KMS("Set default to SSC at %dMHz\n", dev_priv->lvds_ssc_freq);
+=======
+	DRM_DEBUG("Set default to SSC at %dMHz\n", dev_priv->lvds_ssc_freq);
+
+	/* eDP data */
+	dev_priv->edp.bpp = 18;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __init intel_no_opregion_vbt_callback(const struct dmi_system_id *id)
@@ -694,7 +825,11 @@ intel_parse_bios(struct drm_device *dev)
 	if (!dmi_check_system(intel_no_opregion_vbt) && dev_priv->opregion.vbt) {
 		struct vbt_header *vbt = dev_priv->opregion.vbt;
 		if (memcmp(vbt->signature, "$VBT", 4) == 0) {
+<<<<<<< HEAD
 			DRM_DEBUG_KMS("Using VBT from OpRegion: %20s\n",
+=======
+			DRM_DEBUG_DRIVER("Using VBT from OpRegion: %20s\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					 vbt->signature);
 			bdb = (struct bdb_header *)((char *)vbt + vbt->bdb_offset);
 		} else
@@ -719,7 +854,11 @@ intel_parse_bios(struct drm_device *dev)
 		}
 
 		if (!vbt) {
+<<<<<<< HEAD
 			DRM_DEBUG_DRIVER("VBT signature missing\n");
+=======
+			DRM_ERROR("VBT signature missing\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pci_unmap_rom(pdev, bios);
 			return -1;
 		}

@@ -25,7 +25,10 @@
 #include <linux/syscalls.h>
 #include <linux/perf_event.h>
 
+<<<<<<< HEAD
 #include <asm/opcodes.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/traps.h>
 #include <asm/uaccess.h>
 
@@ -109,12 +112,18 @@ static void set_segfault(struct pt_regs *regs, unsigned long addr)
 {
 	siginfo_t info;
 
+<<<<<<< HEAD
 	down_read(&current->mm->mmap_sem);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (find_vma(current->mm, addr) == NULL)
 		info.si_code = SEGV_MAPERR;
 	else
 		info.si_code = SEGV_ACCERR;
+<<<<<<< HEAD
 	up_read(&current->mm->mmap_sem);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	info.si_signo = SIGSEGV;
 	info.si_errno = 0;
@@ -186,6 +195,7 @@ static int swp_handler(struct pt_regs *regs, unsigned int instr)
 	unsigned int address, destreg, data, type;
 	unsigned int res = 0;
 
+<<<<<<< HEAD
 	perf_sw_event(PERF_COUNT_SW_EMULATION_FAULTS, 1, regs, regs->ARM_pc);
 
 	res = arm_check_condition(instr, regs->ARM_cpsr);
@@ -202,6 +212,9 @@ static int swp_handler(struct pt_regs *regs, unsigned int instr)
 	default:
 		return -EINVAL;
 	}
+=======
+	perf_sw_event(PERF_COUNT_SW_EMULATION_FAULTS, 1, 0, regs, regs->ARM_pc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (current->pid != previous_pid) {
 		pr_debug("\"%s\" (%ld) uses deprecated SWP{B} instruction\n",

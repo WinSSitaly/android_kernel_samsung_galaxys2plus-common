@@ -20,6 +20,7 @@
 #include <asm/uaccess.h>
 #include "hfsplus_fs.h"
 
+<<<<<<< HEAD
 /*
  * "Blessing" an HFS+ filesystem writes metadata to the superblock informing
  * the platform firmware which file to boot from
@@ -57,6 +58,8 @@ static int hfsplus_ioctl_bless(struct file *file, int __user *user_flags)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int hfsplus_ioctl_getflags(struct file *file, int __user *user_flags)
 {
 	struct inode *inode = file->f_path.dentry->d_inode;
@@ -80,7 +83,11 @@ static int hfsplus_ioctl_setflags(struct file *file, int __user *user_flags)
 	unsigned int flags;
 	int err = 0;
 
+<<<<<<< HEAD
 	err = mnt_want_write_file(file);
+=======
+	err = mnt_want_write(file->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		goto out;
 
@@ -131,7 +138,11 @@ static int hfsplus_ioctl_setflags(struct file *file, int __user *user_flags)
 out_unlock_inode:
 	mutex_unlock(&inode->i_mutex);
 out_drop_write:
+<<<<<<< HEAD
 	mnt_drop_write_file(file);
+=======
+	mnt_drop_write(file->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return err;
 }
@@ -145,8 +156,11 @@ long hfsplus_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		return hfsplus_ioctl_getflags(file, argp);
 	case HFSPLUS_IOC_EXT2_SETFLAGS:
 		return hfsplus_ioctl_setflags(file, argp);
+<<<<<<< HEAD
 	case HFSPLUS_IOC_BLESS:
 		return hfsplus_ioctl_bless(file, argp);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return -ENOTTY;
 	}

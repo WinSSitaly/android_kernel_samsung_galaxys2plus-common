@@ -11,6 +11,7 @@
 
 #include <linux/stddef.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/of_platform.h>
 #include <linux/pci.h>
 
@@ -20,6 +21,12 @@
 #include <asm/qe_ic.h>
 #include <sysdev/fsl_soc.h>
 #include <sysdev/fsl_pci.h>
+=======
+
+#include <asm/io.h>
+#include <asm/hw_irq.h>
+#include <sysdev/fsl_soc.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "mpc83xx.h"
 
@@ -70,6 +77,7 @@ long __init mpc83xx_time_init(void)
 
 	return 0;
 }
+<<<<<<< HEAD
 
 void __init mpc83xx_ipic_init_IRQ(void)
 {
@@ -142,3 +150,5 @@ void __init mpc83xx_setup_pci(void)
 		mpc83xx_add_bridge(np);
 }
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

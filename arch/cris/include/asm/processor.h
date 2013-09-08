@@ -10,10 +10,17 @@
 #ifndef __ASM_CRIS_PROCESSOR_H
 #define __ASM_CRIS_PROCESSOR_H
 
+<<<<<<< HEAD
 #include <asm/page.h>
 #include <asm/ptrace.h>
 #include <arch/processor.h>
 #include <arch/system.h>
+=======
+#include <asm/system.h>
+#include <asm/page.h>
+#include <asm/ptrace.h>
+#include <arch/processor.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct task_struct;
 
@@ -72,6 +79,7 @@ static inline void release_thread(struct task_struct *dead_task)
 
 #define cpu_relax()     barrier()
 
+<<<<<<< HEAD
 /*
  * disable hlt during certain critical i/o operations
  */
@@ -81,4 +89,6 @@ void enable_hlt(void);
 
 void default_idle(void);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ASM_CRIS_PROCESSOR_H */

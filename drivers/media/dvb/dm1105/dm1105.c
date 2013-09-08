@@ -22,7 +22,10 @@
 #include <linux/i2c.h>
 #include <linux/i2c-algo-bit.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/proc_fs.h>
@@ -1115,6 +1118,7 @@ static int __devinit dm1105_probe(struct pci_dev *pdev,
 	if (ret < 0)
 		goto err_remove_mem_frontend;
 
+<<<<<<< HEAD
 	ret = dvb_net_init(dvb_adapter, &dev->dvbnet, dmx);
 	if (ret < 0)
 		goto err_disconnect_frontend;
@@ -1123,6 +1127,13 @@ static int __devinit dm1105_probe(struct pci_dev *pdev,
 	if (ret < 0)
 		goto err_dvb_net;
 
+=======
+	ret = frontend_init(dev);
+	if (ret < 0)
+		goto err_disconnect_frontend;
+
+	dvb_net_init(dvb_adapter, &dev->dvbnet, dmx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dm1105_ir_init(dev);
 
 	INIT_WORK(&dev->work, dm1105_dmx_buffer);

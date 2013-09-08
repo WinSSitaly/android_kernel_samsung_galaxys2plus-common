@@ -28,7 +28,10 @@
 #include <linux/delay.h>
 #include <linux/init.h>
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/irq.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/bootinfo.h>
 #include <asm/macintosh.h>
@@ -63,6 +66,7 @@ static int gIER,gIFR,gBufA,gBufB;
 #define MAC_CLOCK_LOW		(MAC_CLOCK_TICK&0xFF)
 #define MAC_CLOCK_HIGH		(MAC_CLOCK_TICK>>8)
 
+<<<<<<< HEAD
 
 /*
  * On Macs with a genuine VIA chip there is no way to mask an individual slot
@@ -107,6 +111,29 @@ static int gIER,gIFR,gBufA,gBufB;
 static u8 nubus_disabled;
 
 void via_debug_dump(void);
+=======
+/* To disable a NuBus slot on Quadras we make that slot IRQ line an output set
+ * high. On RBV we just use the slot interrupt enable register. On Macs with
+ * genuine VIA chips we must use nubus_disabled to keep track of disabled slot
+ * interrupts. When any slot IRQ is disabled we mask the (edge triggered) CA1
+ * or "SLOTS" interrupt. When no slot is disabled, we unmask the CA1 interrupt.
+ * So, on genuine VIAs, having more than one NuBus IRQ can mean trouble,
+ * because closing one of those drivers can mask all of the NuBus interrupts.
+ * Also, since we can't mask the unregistered slot IRQs on genuine VIAs, it's
+ * possible to get interrupts from cards that MacOS or the ROM has configured
+ * but we have not. FWIW, "Designing Cards and Drivers for Macintosh II and
+ * Macintosh SE", page 9-8, says, a slot IRQ with no driver would crash MacOS.
+ */
+static u8 nubus_disabled;
+
+void via_debug_dump(void);
+irqreturn_t via1_irq(int, void *);
+irqreturn_t via2_irq(int, void *);
+irqreturn_t via_nubus_irq(int, void *);
+void via_irq_enable(int irq);
+void via_irq_disable(int irq);
+void via_irq_clear(int irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Initialize the VIAs
@@ -126,7 +153,11 @@ void __init via_init(void)
 
 		/* IIci, IIsi, IIvx, IIvi (P6xx), LC series */
 
+<<<<<<< HEAD
 		case MAC_VIA_IICI:
+=======
+		case MAC_VIA_IIci:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			via1 = (void *) VIA1_BASE;
 			if (macintosh_config->ident == MAC_MODEL_IIFX) {
 				via2 = NULL;
@@ -223,6 +254,7 @@ void __init via_init(void)
 	if (oss_present)
 		return;
 
+<<<<<<< HEAD
 	if ((macintosh_config->via_type == MAC_VIA_QUADRA) &&
 	    (macintosh_config->adb_type != MAC_ADB_PB1) &&
 	    (macintosh_config->adb_type != MAC_ADB_PB2) &&
@@ -234,6 +266,40 @@ void __init via_init(void)
 	} else {
 		via_alt_mapping = 0;
 	}
+=======
+	/* Some machines support an alternate IRQ mapping that spreads  */
+	/* Ethernet and Sound out to their own autolevel IRQs and moves */
+	/* VIA1 to level 6. A/UX uses this mapping and we do too.  Note */
+	/* that the IIfx emulates this alternate mapping using the OSS. */
+
+	via_alt_mapping = 0;
+	if (macintosh_config->via_type == MAC_VIA_QUADRA)
+		switch (macintosh_config->ident) {
+		case MAC_MODEL_C660:
+		case MAC_MODEL_Q840:
+			/* not applicable */
+			break;
+		case MAC_MODEL_P588:
+		case MAC_MODEL_TV:
+		case MAC_MODEL_PB140:
+		case MAC_MODEL_PB145:
+		case MAC_MODEL_PB160:
+		case MAC_MODEL_PB165:
+		case MAC_MODEL_PB165C:
+		case MAC_MODEL_PB170:
+		case MAC_MODEL_PB180:
+		case MAC_MODEL_PB180C:
+		case MAC_MODEL_PB190:
+		case MAC_MODEL_PB520:
+			/* not yet tested */
+			break;
+		default:
+			via_alt_mapping = 1;
+			via1[vDirB] |= 0x40;
+			via1[vBufB] &= ~0x40;
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Now initialize VIA2. For RBV we just kill all interrupts;
@@ -253,6 +319,7 @@ void __init via_init(void)
 		via2[vACR] &= ~0x03; /* disable port A & B latches */
 	}
 
+<<<<<<< HEAD
 	/* Everything below this point is VIA2 only... */
 
 	if (rbv_present)
@@ -275,6 +342,24 @@ void __init via_init(void)
 	} else {
 		/* CA2 (SCSI DRQ), CB2 (SCSI IRQ): indep. input, neg. edge */
 		via2[vPCR] = 0x22;
+=======
+	/*
+	 * Set vPCR for control line interrupts (but not on RBV)
+	 */
+	if (!rbv_present) {
+		/* For all VIA types, CA1 (SLOTS IRQ) and CB1 (ASC IRQ)
+		 * are made negative edge triggered here.
+		 */
+		if (macintosh_config->scsi_type == MAC_SCSI_OLD) {
+			/* CB2 (IRQ) indep. input, positive edge */
+			/* CA2 (DRQ) indep. input, positive edge */
+			via2[vPCR] = 0x66;
+		} else {
+			/* CB2 (IRQ) indep. input, negative edge */
+			/* CA2 (DRQ) indep. input, negative edge */
+			via2[vPCR] = 0x22;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -290,11 +375,47 @@ void __init via_init_clock(irq_handler_t func)
 	via1[vT1CL] = MAC_CLOCK_LOW;
 	via1[vT1CH] = MAC_CLOCK_HIGH;
 
+<<<<<<< HEAD
 	if (request_irq(IRQ_MAC_TIMER_1, func, 0, "timer", func))
+=======
+	if (request_irq(IRQ_MAC_TIMER_1, func, IRQ_FLG_LOCK, "timer", func))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_err("Couldn't register %s interrupt\n", "timer");
 }
 
 /*
+<<<<<<< HEAD
+=======
+ * Register the interrupt dispatchers for VIA or RBV machines only.
+ */
+
+void __init via_register_interrupts(void)
+{
+	if (via_alt_mapping) {
+		if (request_irq(IRQ_AUTO_1, via1_irq,
+				IRQ_FLG_LOCK|IRQ_FLG_FAST, "software",
+				(void *) via1))
+			pr_err("Couldn't register %s interrupt\n", "software");
+		if (request_irq(IRQ_AUTO_6, via1_irq,
+				IRQ_FLG_LOCK|IRQ_FLG_FAST, "via1",
+				(void *) via1))
+			pr_err("Couldn't register %s interrupt\n", "via1");
+	} else {
+		if (request_irq(IRQ_AUTO_1, via1_irq,
+				IRQ_FLG_LOCK|IRQ_FLG_FAST, "via1",
+				(void *) via1))
+			pr_err("Couldn't register %s interrupt\n", "via1");
+	}
+	if (request_irq(IRQ_AUTO_2, via2_irq, IRQ_FLG_LOCK|IRQ_FLG_FAST,
+			"via2", (void *) via2))
+		pr_err("Couldn't register %s interrupt\n", "via2");
+	if (request_irq(IRQ_MAC_NUBUS, via_nubus_irq,
+			IRQ_FLG_LOCK|IRQ_FLG_FAST, "nubus", (void *) via2))
+		pr_err("Couldn't register %s interrupt\n", "nubus");
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Debugging dump, used in various places to see what's going on.
  */
 
@@ -389,6 +510,7 @@ void __init via_nubus_init(void)
 		via2[gBufB] |= 0x02;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * Disable the slot interrupts. On some hardware that's not possible.
 	 * On some hardware it's unclear what all of these I/O lines do.
@@ -438,6 +560,36 @@ void via_nubus_irq_shutdown(int irq)
 		break;
 	case MAC_VIA_IICI:
 		via_irq_disable(irq);
+=======
+	/* Disable all the slot interrupts (where possible). */
+
+	switch (macintosh_config->via_type) {
+	case MAC_VIA_II:
+		/* Just make the port A lines inputs. */
+		switch(macintosh_config->ident) {
+		case MAC_MODEL_II:
+		case MAC_MODEL_IIX:
+		case MAC_MODEL_IICX:
+		case MAC_MODEL_SE30:
+			/* The top two bits are RAM size outputs. */
+			via2[vDirA] &= 0xC0;
+			break;
+		default:
+			via2[vDirA] &= 0x80;
+		}
+		break;
+	case MAC_VIA_IIci:
+		/* RBV. Disable all the slot interrupts. SIER works like IER. */
+		via2[rSIER] = 0x7F;
+		break;
+	case MAC_VIA_QUADRA:
+		/* Disable the inactive slot interrupts by making those lines outputs. */
+		if ((macintosh_config->adb_type != MAC_ADB_PB1) &&
+		    (macintosh_config->adb_type != MAC_ADB_PB2)) {
+			via2[vBufA] |= 0x7F;
+			via2[vDirA] |= 0x7F;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 }
@@ -447,46 +599,77 @@ void via_nubus_irq_shutdown(int irq)
  * via6522.c :-), disable/pending masks added.
  */
 
+<<<<<<< HEAD
 void via1_irq(unsigned int irq, struct irq_desc *desc)
+=======
+irqreturn_t via1_irq(int irq, void *dev_id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int irq_num;
 	unsigned char irq_bit, events;
 
 	events = via1[vIFR] & via1[vIER] & 0x7F;
 	if (!events)
+<<<<<<< HEAD
 		return;
+=======
+		return IRQ_NONE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	irq_num = VIA1_SOURCE_BASE;
 	irq_bit = 1;
 	do {
 		if (events & irq_bit) {
 			via1[vIFR] = irq_bit;
+<<<<<<< HEAD
 			generic_handle_irq(irq_num);
+=======
+			m68k_handle_int(irq_num);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		++irq_num;
 		irq_bit <<= 1;
 	} while (events >= irq_bit);
+<<<<<<< HEAD
 }
 
 static void via2_irq(unsigned int irq, struct irq_desc *desc)
+=======
+	return IRQ_HANDLED;
+}
+
+irqreturn_t via2_irq(int irq, void *dev_id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int irq_num;
 	unsigned char irq_bit, events;
 
 	events = via2[gIFR] & via2[gIER] & 0x7F;
 	if (!events)
+<<<<<<< HEAD
 		return;
+=======
+		return IRQ_NONE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	irq_num = VIA2_SOURCE_BASE;
 	irq_bit = 1;
 	do {
 		if (events & irq_bit) {
 			via2[gIFR] = irq_bit | rbv_clear;
+<<<<<<< HEAD
 			generic_handle_irq(irq_num);
+=======
+			m68k_handle_int(irq_num);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		++irq_num;
 		irq_bit <<= 1;
 	} while (events >= irq_bit);
+<<<<<<< HEAD
+=======
+	return IRQ_HANDLED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -494,7 +677,11 @@ static void via2_irq(unsigned int irq, struct irq_desc *desc)
  * VIA2 dispatcher as a fast interrupt handler.
  */
 
+<<<<<<< HEAD
 void via_nubus_irq(unsigned int irq, struct irq_desc *desc)
+=======
+irqreturn_t via_nubus_irq(int irq, void *dev_id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int slot_irq;
 	unsigned char slot_bit, events;
@@ -505,7 +692,11 @@ void via_nubus_irq(unsigned int irq, struct irq_desc *desc)
 	else
 		events &= ~via2[vDirA];
 	if (!events)
+<<<<<<< HEAD
 		return;
+=======
+		return IRQ_NONE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	do {
 		slot_irq = IRQ_NUBUS_F;
@@ -513,7 +704,11 @@ void via_nubus_irq(unsigned int irq, struct irq_desc *desc)
 		do {
 			if (events & slot_bit) {
 				events &= ~slot_bit;
+<<<<<<< HEAD
 				generic_handle_irq(slot_irq);
+=======
+				m68k_handle_int(slot_irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			--slot_irq;
 			slot_bit >>= 1;
@@ -527,6 +722,7 @@ void via_nubus_irq(unsigned int irq, struct irq_desc *desc)
 		else
 			events &= ~via2[vDirA];
 	} while (events);
+<<<<<<< HEAD
 }
 
 /*
@@ -545,6 +741,9 @@ void __init via_register_interrupts(void)
 	}
 	irq_set_chained_handler(IRQ_AUTO_2, via2_irq);
 	irq_set_chained_handler(IRQ_MAC_NUBUS, via_nubus_irq);
+=======
+	return IRQ_HANDLED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void via_irq_enable(int irq) {
@@ -563,18 +762,36 @@ void via_irq_enable(int irq) {
 	} else if (irq_src == 7) {
 		switch (macintosh_config->via_type) {
 		case MAC_VIA_II:
+<<<<<<< HEAD
 		case MAC_VIA_QUADRA:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			nubus_disabled &= ~(1 << irq_idx);
 			/* Enable the CA1 interrupt when no slot is disabled. */
 			if (!nubus_disabled)
 				via2[gIER] = IER_SET_BIT(1);
 			break;
+<<<<<<< HEAD
 		case MAC_VIA_IICI:
+=======
+		case MAC_VIA_IIci:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* On RBV, enable the slot interrupt.
 			 * SIER works like IER.
 			 */
 			via2[rSIER] = IER_SET_BIT(irq_idx);
 			break;
+<<<<<<< HEAD
+=======
+		case MAC_VIA_QUADRA:
+			/* Make the port A line an input to enable the slot irq.
+			 * But not on PowerBooks, that's ADB.
+			 */
+			if ((macintosh_config->adb_type != MAC_ADB_PB1) &&
+			    (macintosh_config->adb_type != MAC_ADB_PB2))
+				via2[vDirA] &= ~(1 << irq_idx);
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }
@@ -594,18 +811,73 @@ void via_irq_disable(int irq) {
 	} else if (irq_src == 7) {
 		switch (macintosh_config->via_type) {
 		case MAC_VIA_II:
+<<<<<<< HEAD
 		case MAC_VIA_QUADRA:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			nubus_disabled |= 1 << irq_idx;
 			if (nubus_disabled)
 				via2[gIER] = IER_CLR_BIT(1);
 			break;
+<<<<<<< HEAD
 		case MAC_VIA_IICI:
 			via2[rSIER] = IER_CLR_BIT(irq_idx);
 			break;
+=======
+		case MAC_VIA_IIci:
+			via2[rSIER] = IER_CLR_BIT(irq_idx);
+			break;
+		case MAC_VIA_QUADRA:
+			if ((macintosh_config->adb_type != MAC_ADB_PB1) &&
+			    (macintosh_config->adb_type != MAC_ADB_PB2))
+				via2[vDirA] |= 1 << irq_idx;
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }
 
+<<<<<<< HEAD
+=======
+void via_irq_clear(int irq) {
+	int irq_src	= IRQ_SRC(irq);
+	int irq_idx	= IRQ_IDX(irq);
+	int irq_bit	= 1 << irq_idx;
+
+	if (irq_src == 1) {
+		via1[vIFR] = irq_bit;
+	} else if (irq_src == 2) {
+		via2[gIFR] = irq_bit | rbv_clear;
+	} else if (irq_src == 7) {
+		/* FIXME: There is no way to clear an individual nubus slot
+		 * IRQ flag, other than getting the device to do it.
+		 */
+	}
+}
+
+/*
+ * Returns nonzero if an interrupt is pending on the given
+ * VIA/IRQ combination.
+ */
+
+int via_irq_pending(int irq)
+{
+	int irq_src	= IRQ_SRC(irq);
+	int irq_idx	= IRQ_IDX(irq);
+	int irq_bit	= 1 << irq_idx;
+
+	if (irq_src == 1) {
+		return via1[vIFR] & irq_bit;
+	} else if (irq_src == 2) {
+		return via2[gIFR] & irq_bit;
+	} else if (irq_src == 7) {
+		/* Always 0 for MAC_VIA_QUADRA if the slot irq is disabled. */
+		return ~via2[gBufA] & irq_bit;
+	}
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void via1_set_head(int head)
 {
 	if (head == 0)
@@ -614,9 +886,12 @@ void via1_set_head(int head)
 		via1[vBufA] |= VIA1A_vHeadSel;
 }
 EXPORT_SYMBOL(via1_set_head);
+<<<<<<< HEAD
 
 int via2_scsi_drq_pending(void)
 {
 	return via2[gIFR] & (1 << IRQ_IDX(IRQ_MAC_SCSIDRQ));
 }
 EXPORT_SYMBOL(via2_scsi_drq_pending);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -41,11 +41,24 @@
 #include <linux/cpu.h>
 #include <linux/notifier.h>
 #include <linux/rculist.h>
+<<<<<<< HEAD
 
 #include <asm/uaccess.h>
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/printk.h>
+=======
+#include <trace/stm.h>
+
+#include <asm/uaccess.h>
+
+#if defined (CONFIG_SEC_DEBUG)
+#include <mach/sec_debug.h>
+#endif
+
+void (* BrcmLogString)(const char *inLogString,
+				unsigned short inSender) = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Architectures can override it:
@@ -103,7 +116,11 @@ static int console_locked, console_suspended;
  * It is also used in interesting ways to provide interlocking in
  * console_unlock();.
  */
+<<<<<<< HEAD
 static DEFINE_RAW_SPINLOCK(logbuf_lock);
+=======
+static DEFINE_SPINLOCK(logbuf_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define LOG_BUF_MASK (log_buf_len-1)
 #define LOG_BUF(idx) (log_buf[(idx) & LOG_BUF_MASK])
@@ -148,8 +165,13 @@ static int console_may_schedule;
 #ifdef CONFIG_PRINTK
 
 static char __log_buf[__LOG_BUF_LEN];
+<<<<<<< HEAD
 static char *log_buf = __log_buf;
 static int log_buf_len = __LOG_BUF_LEN;
+=======
+char *log_buf = __log_buf;
+int log_buf_len = __LOG_BUF_LEN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned logged_chars; /* Number of chars produced since last read+clear operation */
 static int saved_console_loglevel = -1;
 
@@ -195,14 +217,30 @@ void __init setup_log_buf(int early)
 	char *new_log_buf;
 	int free;
 
+<<<<<<< HEAD
 	if (!new_log_buf_len)
 		return;
+=======
+	if (!new_log_buf_len){
+#if defined(CONFIG_SEC_DEBUG)
+		//{{ Mark for GetLog
+		sec_getlog_supply_kloginfo(__log_buf);
+		//}} Mark for GetLog
+#endif
+  
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (early) {
 		unsigned long mem;
 
 		mem = memblock_alloc(new_log_buf_len, PAGE_SIZE);
+<<<<<<< HEAD
 		if (!mem)
+=======
+		if (mem == MEMBLOCK_ERROR)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 		new_log_buf = __va(mem);
 	} else {
@@ -215,7 +253,11 @@ void __init setup_log_buf(int early)
 		return;
 	}
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&logbuf_lock, flags);
+=======
+	spin_lock_irqsave(&logbuf_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	log_buf_len = new_log_buf_len;
 	log_buf = new_log_buf;
 	new_log_buf_len = 0;
@@ -233,8 +275,17 @@ void __init setup_log_buf(int early)
 	log_start -= offset;
 	con_start -= offset;
 	log_end -= offset;
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&logbuf_lock, flags);
 
+=======
+	spin_unlock_irqrestore(&logbuf_lock, flags);
+#if defined(CONFIG_SEC_DEBUG)
+	//{{ Mark for GetLog
+	sec_getlog_supply_kloginfo(__log_buf);
+	//}} Mark for GetLog
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pr_info("log_buf_len: %d\n", log_buf_len);
 	pr_info("early log buf free: %d(%d%%)\n",
 		free, (free * 100) / __LOG_BUF_LEN);
@@ -293,6 +344,56 @@ static inline void boot_delay_msec(void)
 }
 #endif
 
+<<<<<<< HEAD
+=======
+/*
+ * Return the number of unread characters in the log buffer.
+ */
+static int log_buf_get_len(void)
+{
+	return logged_chars;
+}
+
+/*
+ * Clears the ring-buffer
+ */
+void log_buf_clear(void)
+{
+	logged_chars = 0;
+}
+
+/*
+ * Copy a range of characters from the log buffer.
+ */
+int log_buf_copy(char *dest, int idx, int len)
+{
+	int ret, max;
+	bool took_lock = false;
+
+	if (!oops_in_progress) {
+		spin_lock_irq(&logbuf_lock);
+		took_lock = true;
+	}
+
+	max = log_buf_get_len();
+	if (idx < 0 || idx >= max) {
+		ret = -1;
+	} else {
+		if (len > max - idx)
+			len = max - idx;
+		ret = len;
+		idx += (log_end - max);
+		while (len-- > 0)
+			dest[len] = LOG_BUF(idx + len);
+	}
+
+	if (took_lock)
+		spin_unlock_irq(&logbuf_lock);
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SECURITY_DMESG_RESTRICT
 int dmesg_restrict = 1;
 #else
@@ -368,18 +469,32 @@ int do_syslog(int type, char __user *buf, int len, bool from_file)
 		if (error)
 			goto out;
 		i = 0;
+<<<<<<< HEAD
 		raw_spin_lock_irq(&logbuf_lock);
 		while (!error && (log_start != log_end) && i < len) {
 			c = LOG_BUF(log_start);
 			log_start++;
 			raw_spin_unlock_irq(&logbuf_lock);
+=======
+		spin_lock_irq(&logbuf_lock);
+		while (!error && (log_start != log_end) && i < len) {
+			c = LOG_BUF(log_start);
+			log_start++;
+			spin_unlock_irq(&logbuf_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			error = __put_user(c,buf);
 			buf++;
 			i++;
 			cond_resched();
+<<<<<<< HEAD
 			raw_spin_lock_irq(&logbuf_lock);
 		}
 		raw_spin_unlock_irq(&logbuf_lock);
+=======
+			spin_lock_irq(&logbuf_lock);
+		}
+		spin_unlock_irq(&logbuf_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!error)
 			error = i;
 		break;
@@ -402,7 +517,11 @@ int do_syslog(int type, char __user *buf, int len, bool from_file)
 		count = len;
 		if (count > log_buf_len)
 			count = log_buf_len;
+<<<<<<< HEAD
 		raw_spin_lock_irq(&logbuf_lock);
+=======
+		spin_lock_irq(&logbuf_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (count > logged_chars)
 			count = logged_chars;
 		if (do_clear)
@@ -419,12 +538,21 @@ int do_syslog(int type, char __user *buf, int len, bool from_file)
 			if (j + log_buf_len < log_end)
 				break;
 			c = LOG_BUF(j);
+<<<<<<< HEAD
 			raw_spin_unlock_irq(&logbuf_lock);
 			error = __put_user(c,&buf[count-1-i]);
 			cond_resched();
 			raw_spin_lock_irq(&logbuf_lock);
 		}
 		raw_spin_unlock_irq(&logbuf_lock);
+=======
+			spin_unlock_irq(&logbuf_lock);
+			error = __put_user(c,&buf[count-1-i]);
+			cond_resched();
+			spin_lock_irq(&logbuf_lock);
+		}
+		spin_unlock_irq(&logbuf_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (error)
 			break;
 		error = i;
@@ -524,7 +652,11 @@ static void __call_console_drivers(unsigned start, unsigned end)
 	}
 }
 
+<<<<<<< HEAD
 static bool __read_mostly ignore_loglevel;
+=======
+static int __read_mostly ignore_loglevel;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __init ignore_loglevel_setup(char *str)
 {
@@ -535,9 +667,12 @@ static int __init ignore_loglevel_setup(char *str)
 }
 
 early_param("ignore_loglevel", ignore_loglevel_setup);
+<<<<<<< HEAD
 module_param(ignore_loglevel, bool, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(ignore_loglevel, "ignore loglevel setting, to"
 	"print all kernel messages to the console.");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Write out chars from start to end - 1 inclusive
@@ -545,8 +680,11 @@ MODULE_PARM_DESC(ignore_loglevel, "ignore loglevel setting, to"
 static void _call_console_drivers(unsigned start,
 				unsigned end, int msg_log_level)
 {
+<<<<<<< HEAD
 	trace_console(&LOG_BUF(0), start, end, log_buf_len);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((msg_log_level < console_loglevel || ignore_loglevel) &&
 			console_drivers && start != end) {
 		if ((start & LOG_BUF_MASK) > (end & LOG_BUF_MASK)) {
@@ -600,6 +738,12 @@ static size_t log_prefix(const char *p, unsigned int *level, char *special)
 		/* multi digit including the level and facility number */
 		char *endp = NULL;
 
+<<<<<<< HEAD
+=======
+		if (p[1] < '0' && p[1] > '9')
+			return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		lev = (simple_strtoul(&p[1], &endp, 10) & 7);
 		if (endp == NULL || endp[0] != '>')
 			return 0;
@@ -638,6 +782,7 @@ static void call_console_drivers(unsigned start, unsigned end)
 	start_print = start;
 	while (cur_index != end) {
 		if (msg_level < 0 && ((end - cur_index) > 2)) {
+<<<<<<< HEAD
 			/*
 			 * prepare buf_prefix, as a contiguous array,
 			 * to be processed by log_prefix function
@@ -651,6 +796,10 @@ static void call_console_drivers(unsigned start, unsigned end)
 
 			/* strip log prefix */
 			cur_index += log_prefix((const char *)&buf_prefix, &msg_level, NULL);
+=======
+			/* strip log prefix */
+			cur_index += log_prefix(&LOG_BUF(cur_index), &msg_level, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			start_print = cur_index;
 		}
 		while (cur_index != end) {
@@ -704,14 +853,20 @@ static void zap_locks(void)
 
 	oops_timestamp = jiffies;
 
+<<<<<<< HEAD
 	debug_locks_off();
 	/* If a crash is occurring, make sure we can't deadlock */
 	raw_spin_lock_init(&logbuf_lock);
+=======
+	/* If a crash is occurring, make sure we can't deadlock */
+	spin_lock_init(&logbuf_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* And make sure that we print immediately */
 	sema_init(&console_sem, 1);
 }
 
 #if defined(CONFIG_PRINTK_TIME)
+<<<<<<< HEAD
 static bool printk_time = 1;
 #else
 static bool printk_time = 0;
@@ -721,6 +876,14 @@ module_param_named(time, printk_time, bool, S_IRUGO | S_IWUSR);
 static bool always_kmsg_dump;
 module_param_named(always_kmsg_dump, always_kmsg_dump, bool, S_IRUGO | S_IWUSR);
 
+=======
+static int printk_time = 1;
+#else
+static int printk_time = 0;
+#endif
+module_param_named(time, printk_time, bool, S_IRUGO | S_IWUSR);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Check if we have any console registered that can be called early in boot. */
 static int have_callable_console(void)
 {
@@ -804,7 +967,11 @@ static inline int can_use_console(unsigned int cpu)
 static int console_trylock_for_printk(unsigned int cpu)
 	__releases(&logbuf_lock)
 {
+<<<<<<< HEAD
 	int retval = 0, wake = 0;
+=======
+	int retval = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (console_trylock()) {
 		retval = 1;
@@ -817,14 +984,22 @@ static int console_trylock_for_printk(unsigned int cpu)
 		 */
 		if (!can_use_console(cpu)) {
 			console_locked = 0;
+<<<<<<< HEAD
 			wake = 1;
+=======
+			up(&console_sem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			retval = 0;
 		}
 	}
 	printk_cpu = UINT_MAX;
+<<<<<<< HEAD
 	if (wake)
 		up(&console_sem);
 	raw_spin_unlock(&logbuf_lock);
+=======
+	spin_unlock(&logbuf_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return retval;
 }
 static const char recursion_bug_msg [] =
@@ -847,21 +1022,25 @@ static inline void printk_delay(void)
 	}
 }
 
-asmlinkage int vprintk(const char *fmt, va_list args)
+<<<<<<< HEAD
+=======
+//#ifdef CONFIG_BRCM_UNIFIED_LOGGING
+/* Unified logging */
+
+int bcmlog_mtt_on;
+unsigned short bcmlog_log_ulogging_id;
+
+/* ------------------------------------------------------------ */
+int brcm_retrive_early_printk(void)
 {
-	int printed_len = 0;
-	int current_log_level = default_message_loglevel;
+	/* int printed_len = length; */
 	unsigned long flags;
 	int this_cpu;
-	char *p;
-	size_t plen;
-	char special;
+	/* char *p = data; */
 
-	boot_delay_msec();
-	printk_delay();
-
-	/* This stops the holder of console_sem just where we want him */
-	local_irq_save(flags);
+	preempt_disable();
+	/* This stops the holder of brcm_console_sem just where we want him */
+	raw_local_irq_save(flags);
 	this_cpu = smp_processor_id();
 
 	/*
@@ -875,7 +1054,82 @@ asmlinkage int vprintk(const char *fmt, va_list args)
 		 * recursion and return - but flag the recursion so that
 		 * it can be printed at the next appropriate moment:
 		 */
+		if (!oops_in_progress) {
+			recursion_bug = 1;
+			goto end_restore_irqs;
+		}
+		zap_locks();
+	}
+
+	lockdep_off();
+	spin_lock(&logbuf_lock);
+	printk_cpu = this_cpu;
+
+	if (bcmlog_log_ulogging_id > 0 && BrcmLogString)
+		BrcmLogString(log_buf, bcmlog_log_ulogging_id);
+
+	/*
+	 * Try to acquire and then immediately release the
+	 * brcm_console semaphore. The release will do all the
+	 * actual magic (print out buffers, wake up klogd,
+	 * etc).
+	 *
+	 * The acquire_brcm_console_semaphore_for_printk() function
+	 * will release 'logbuf_lock' regardless of whether it
+	 * actually gets the semaphore or not.
+	 */
+	if (console_trylock_for_printk(this_cpu))
+		console_unlock();
+
+	lockdep_on();
+
+end_restore_irqs:
+	raw_local_irq_restore(flags);
+
+	preempt_enable();
+	return 0;
+}//#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+asmlinkage int vprintk(const char *fmt, va_list args)
+{
+	int printed_len = 0;
+	int current_log_level = default_message_loglevel;
+	unsigned long flags;
+	int this_cpu;
+	char *p;
+	size_t plen;
+	char special;
+
+	boot_delay_msec();
+	printk_delay();
+
+<<<<<<< HEAD
+	/* This stops the holder of console_sem just where we want him */
+	local_irq_save(flags);
+=======
+	preempt_disable();
+	/* This stops the holder of console_sem just where we want him */
+	raw_local_irq_save(flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+	this_cpu = smp_processor_id();
+
+	/*
+	 * Ouch, printk recursed into itself!
+	 */
+	if (unlikely(printk_cpu == this_cpu)) {
+		/*
+		 * If a crash is occurring during printk() on this CPU,
+		 * then try to get the crash message out but make sure
+		 * we can't deadlock. Otherwise just return to avoid the
+		 * recursion and return - but flag the recursion so that
+		 * it can be printed at the next appropriate moment:
+		 */
+<<<<<<< HEAD
 		if (!oops_in_progress && !lockdep_recursing(current)) {
+=======
+		if (!oops_in_progress) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			recursion_bug = 1;
 			goto out_restore_irqs;
 		}
@@ -883,7 +1137,11 @@ asmlinkage int vprintk(const char *fmt, va_list args)
 	}
 
 	lockdep_off();
+<<<<<<< HEAD
 	raw_spin_lock(&logbuf_lock);
+=======
+	spin_lock(&logbuf_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk_cpu = this_cpu;
 
 	if (recursion_bug) {
@@ -895,8 +1153,14 @@ asmlinkage int vprintk(const char *fmt, va_list args)
 	printed_len += vscnprintf(printk_buf + printed_len,
 				  sizeof(printk_buf) - printed_len, fmt, args);
 
+<<<<<<< HEAD
 	p = printk_buf;
 
+=======
+
+	p = printk_buf;
+	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Read log level and handle special printk prefix */
 	plen = log_prefix(p, &current_log_level, &special);
 	if (plen) {
@@ -916,6 +1180,13 @@ asmlinkage int vprintk(const char *fmt, va_list args)
 		}
 	}
 
+<<<<<<< HEAD
+=======
+//#ifdef CONFIG_BRCM_UNIFIED_LOGGING
+if (bcmlog_mtt_on == 1 && bcmlog_log_ulogging_id > 0 && BrcmLogString)
+	BrcmLogString(printk_buf, bcmlog_log_ulogging_id);
+//#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Copy the output into log_buf. If the caller didn't provide
 	 * the appropriate log prefix, we insert them here
@@ -948,9 +1219,16 @@ asmlinkage int vprintk(const char *fmt, va_list args)
 
 				t = cpu_clock(printk_cpu);
 				nanosec_rem = do_div(t, 1000000000);
+<<<<<<< HEAD
 				tlen = sprintf(tbuf, "[%5lu.%06lu] ",
 						(unsigned long) t,
 						nanosec_rem / 1000);
+=======
+				tlen = sprintf(tbuf, "[%5lu.%06lu] {%lu}",
+						(unsigned long) t,
+						nanosec_rem / 1000,
+						jiffies);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				for (tp = tbuf; tp < tbuf + tlen; tp++)
 					emit_log_char(*tp);
@@ -981,8 +1259,14 @@ asmlinkage int vprintk(const char *fmt, va_list args)
 
 	lockdep_on();
 out_restore_irqs:
+<<<<<<< HEAD
 	local_irq_restore(flags);
 
+=======
+	raw_local_irq_restore(flags);
+
+	preempt_enable();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return printed_len;
 }
 EXPORT_SYMBOL(printk);
@@ -1117,7 +1401,11 @@ int update_console_cmdline(char *name, int idx, char *name_new, int idx_new, cha
 	return -1;
 }
 
+<<<<<<< HEAD
 bool console_suspend_enabled = 1;
+=======
+int console_suspend_enabled = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL(console_suspend_enabled);
 
 static int __init console_suspend_disable(char *str)
@@ -1126,10 +1414,13 @@ static int __init console_suspend_disable(char *str)
 	return 1;
 }
 __setup("no_console_suspend", console_suspend_disable);
+<<<<<<< HEAD
 module_param_named(console_suspend, console_suspend_enabled,
 		bool, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(console_suspend, "suspend console during suspend"
 	" and hibernate operations");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * suspend_console - suspend the console subsystem
@@ -1155,6 +1446,18 @@ void resume_console(void)
 	console_unlock();
 }
 
+<<<<<<< HEAD
+=======
+#if defined( CONFIG_MACH_CAPRI_SS_BAFFIN_CMCC)||defined( CONFIG_MACH_CAPRI_SS_CRATER_CMCC)
+int get_console_suspended(void)
+{
+	return console_suspended ;
+}
+
+EXPORT_SYMBOL(get_console_suspended);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * console_cpu_notify - print deferred console messages after CPU hotplug
  * @self: notifier struct
@@ -1172,7 +1475,10 @@ static int __cpuinit console_cpu_notify(struct notifier_block *self,
 	switch (action) {
 	case CPU_ONLINE:
 	case CPU_DEAD:
+<<<<<<< HEAD
 	case CPU_DYING:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case CPU_DOWN_FAILED:
 	case CPU_UP_CANCELED:
 		console_lock();
@@ -1199,6 +1505,10 @@ void console_lock(void)
 	console_may_schedule = 1;
 }
 EXPORT_SYMBOL(console_lock);
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL(BrcmLogString);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * console_trylock - try to lock the console system for exclusive use.
@@ -1227,6 +1537,7 @@ int is_console_locked(void)
 	return console_locked;
 }
 
+<<<<<<< HEAD
 /*
  * Delayed printk facility, for scheduler-internal messages:
  */
@@ -1237,10 +1548,14 @@ int is_console_locked(void)
 
 static DEFINE_PER_CPU(int, printk_pending);
 static DEFINE_PER_CPU(char [PRINTK_BUF_SIZE], printk_sched_buf);
+=======
+static DEFINE_PER_CPU(int, printk_pending);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void printk_tick(void)
 {
 	if (__this_cpu_read(printk_pending)) {
+<<<<<<< HEAD
 		int pending = __this_cpu_xchg(printk_pending, 0);
 		if (pending & PRINTK_PENDING_SCHED) {
 			char *buf = __get_cpu_var(printk_sched_buf);
@@ -1248,6 +1563,10 @@ void printk_tick(void)
 		}
 		if (pending & PRINTK_PENDING_WAKEUP)
 			wake_up_interruptible(&log_wait);
+=======
+		__this_cpu_write(printk_pending, 0);
+		wake_up_interruptible(&log_wait);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1261,7 +1580,11 @@ int printk_needs_cpu(int cpu)
 void wake_up_klogd(void)
 {
 	if (waitqueue_active(&log_wait))
+<<<<<<< HEAD
 		this_cpu_or(printk_pending, PRINTK_PENDING_WAKEUP);
+=======
+		this_cpu_write(printk_pending, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1282,7 +1605,11 @@ void console_unlock(void)
 {
 	unsigned long flags;
 	unsigned _con_start, _log_end;
+<<<<<<< HEAD
 	unsigned wake_klogd = 0, retry = 0;
+=======
+	unsigned wake_klogd = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (console_suspended) {
 		up(&console_sem);
@@ -1291,16 +1618,25 @@ void console_unlock(void)
 
 	console_may_schedule = 0;
 
+<<<<<<< HEAD
 again:
 	for ( ; ; ) {
 		raw_spin_lock_irqsave(&logbuf_lock, flags);
+=======
+	for ( ; ; ) {
+		spin_lock_irqsave(&logbuf_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wake_klogd |= log_start - log_end;
 		if (con_start == log_end)
 			break;			/* Nothing to print */
 		_con_start = con_start;
 		_log_end = log_end;
 		con_start = log_end;		/* Flush */
+<<<<<<< HEAD
 		raw_spin_unlock(&logbuf_lock);
+=======
+		spin_unlock(&logbuf_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		stop_critical_timings();	/* don't trace print latency */
 		call_console_drivers(_con_start, _log_end);
 		start_critical_timings();
@@ -1312,6 +1648,7 @@ again:
 	if (unlikely(exclusive_console))
 		exclusive_console = NULL;
 
+<<<<<<< HEAD
 	raw_spin_unlock(&logbuf_lock);
 
 	up(&console_sem);
@@ -1330,6 +1667,10 @@ again:
 	if (retry && console_trylock())
 		goto again;
 
+=======
+	up(&console_sem);
+	spin_unlock_irqrestore(&logbuf_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (wake_klogd)
 		wake_up_klogd();
 }
@@ -1559,9 +1900,15 @@ void register_console(struct console *newcon)
 		 * console_unlock(); will print out the buffered messages
 		 * for us.
 		 */
+<<<<<<< HEAD
 		raw_spin_lock_irqsave(&logbuf_lock, flags);
 		con_start = log_start;
 		raw_spin_unlock_irqrestore(&logbuf_lock, flags);
+=======
+		spin_lock_irqsave(&logbuf_lock, flags);
+		con_start = log_start;
+		spin_unlock_irqrestore(&logbuf_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * We're about to replay the log buffer.  Only do this to the
 		 * just-registered console to avoid excessive message spam to
@@ -1654,6 +2001,7 @@ late_initcall(printk_late_init);
 
 #if defined CONFIG_PRINTK
 
+<<<<<<< HEAD
 int printk_sched(const char *fmt, ...)
 {
 	unsigned long flags;
@@ -1674,6 +2022,8 @@ int printk_sched(const char *fmt, ...)
 	return r;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * printk rate limiting, lifted from the networking subsystem.
  *
@@ -1785,6 +2135,7 @@ void kmsg_dump(enum kmsg_dump_reason reason)
 	unsigned long l1, l2;
 	unsigned long flags;
 
+<<<<<<< HEAD
 	if ((reason > KMSG_DUMP_OOPS) && !always_kmsg_dump)
 		return;
 
@@ -1795,6 +2146,15 @@ void kmsg_dump(enum kmsg_dump_reason reason)
 	end = log_end & LOG_BUF_MASK;
 	chars = logged_chars;
 	raw_spin_unlock_irqrestore(&logbuf_lock, flags);
+=======
+	/* Theoretically, the log could move on after we do this, but
+	   there's not a lot we can do about that. The new messages
+	   will overwrite the start of what we dump. */
+	spin_lock_irqsave(&logbuf_lock, flags);
+	end = log_end & LOG_BUF_MASK;
+	chars = logged_chars;
+	spin_unlock_irqrestore(&logbuf_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (chars > end) {
 		s1 = log_buf + log_buf_len - chars + end;

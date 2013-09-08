@@ -6,11 +6,19 @@
 
 /*
  *
+<<<<<<< HEAD
  * Each stripe contains one buffer per device.  Each buffer can be in
  * one of a number of states stored in "flags".  Changes between
  * these states happen *almost* exclusively under the protection of the
  * STRIPE_ACTIVE flag.  Some very specific changes can happen in bi_end_io, and
  * these are not protected by STRIPE_ACTIVE.
+=======
+ * Each stripe contains one buffer per disc.  Each buffer can be in
+ * one of a number of states stored in "flags".  Changes between
+ * these states happen *almost* exclusively under a per-stripe
+ * spinlock.  Some very specific changes can happen in bi_end_io, and
+ * these are not protected by the spin lock.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * The flag bits that are used to represent these states are:
  *   R5_UPTODATE and R5_LOCKED
@@ -27,7 +35,11 @@
  * The possible state transitions are:
  *
  *  Empty -> Want   - on read or write to get old data for  parity calc
+<<<<<<< HEAD
  *  Empty -> Dirty  - on compute_parity to satisfy write/sync request.
+=======
+ *  Empty -> Dirty  - on compute_parity to satisfy write/sync request.(RECONSTRUCT_WRITE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  Empty -> Clean  - on compute_block when computing a block for failed drive
  *  Want  -> Empty  - on failed read
  *  Want  -> Clean  - on successful completion of read request
@@ -76,10 +88,19 @@
  * block and the cached buffer are successfully written, any buffer on
  * a written list can be returned with b_end_io.
  *
+<<<<<<< HEAD
  * The write list and read list both act as fifos.  The read list,
  * write list and written list are protected by the device_lock.
  * The device_lock is only for list manipulations and will only be
  * held for a very short time.  It can be claimed from interrupts.
+=======
+ * The write list and read list both act as fifos.  The read list is
+ * protected by the device_lock.  The write and written lists are
+ * protected by the stripe lock.  The device_lock, which can be
+ * claimed while the stipe lock is held, is only for list
+ * manipulations and will only be held for a very short time.  It can
+ * be claimed from interrupts.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *
  * Stripes in the stripe cache can be on one of two lists (or on
@@ -94,6 +115,10 @@
  *
  * The inactive_list, handle_list and hash bucket lists are all protected by the
  * device_lock.
+<<<<<<< HEAD
+=======
+ *  - stripes on the inactive_list never have their stripe_lock held.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  - stripes have a reference counter. If count==0, they are on a list.
  *  - If a stripe might need handling, STRIPE_HANDLE is set.
  *  - When refcount reaches zero, then if STRIPE_HANDLE it is put on
@@ -113,10 +138,17 @@
  *  attach a request to an active stripe (add_stripe_bh())
  *     lockdev attach-buffer unlockdev
  *  handle a stripe (handle_stripe())
+<<<<<<< HEAD
  *     setSTRIPE_ACTIVE,  clrSTRIPE_HANDLE ...
  *		(lockdev check-buffers unlockdev) ..
  *		change-state ..
  *		record io/ops needed clearSTRIPE_ACTIVE schedule io/ops
+=======
+ *     lockstripe clrSTRIPE_HANDLE ...
+ *		(lockdev check-buffers unlockdev) ..
+ *		change-state ..
+ *		record io/ops needed unlockstripe schedule io/ops
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  release an active stripe (release_stripe())
  *     lockdev if (!--cnt) { if  STRIPE_HANDLE, add to handle_list else add to inactive-list } unlockdev
  *
@@ -125,7 +157,12 @@
  * on a cached buffer, and plus one if the stripe is undergoing stripe
  * operations.
  *
+<<<<<<< HEAD
  * The stripe operations are:
+=======
+ * Stripe operations are performed outside the stripe lock,
+ * the stripe operations are:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * -copying data between the stripe cache and user application buffers
  * -computing blocks to save a disk access, or to recover a missing block
  * -updating the parity on a write operation (reconstruct write and
@@ -155,8 +192,12 @@
  */
 
 /*
+<<<<<<< HEAD
  * Operations state - intermediate states that are visible outside of 
  *   STRIPE_ACTIVE.
+=======
+ * Operations state - intermediate states that are visible outside of sh->lock
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * In general _idle indicates nothing is running, _run indicates a data
  * processing operation is active, and _result means the data processing result
  * is stable and can be acted upon.  For simple operations like biofill and
@@ -197,7 +238,11 @@ enum reconstruct_states {
 struct stripe_head {
 	struct hlist_node	hash;
 	struct list_head	lru;	      /* inactive_list or handle_list */
+<<<<<<< HEAD
 	struct r5conf		*raid_conf;
+=======
+	struct raid5_private_data *raid_conf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	short			generation;	/* increments with every
 						 * reshape */
 	sector_t		sector;		/* sector of this row */
@@ -206,6 +251,10 @@ struct stripe_head {
 	short			ddf_layout;/* use DDF ordering to calculate Q */
 	unsigned long		state;		/* state flags */
 	atomic_t		count;	      /* nr of active thread/requests */
+<<<<<<< HEAD
+=======
+	spinlock_t		lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			bm_seq;	/* sequence number for bitmap flushes */
 	int			disks;		/* disks in stripe */
 	enum check_states	check_state;
@@ -226,11 +275,16 @@ struct stripe_head {
 		#endif
 	} ops;
 	struct r5dev {
+<<<<<<< HEAD
 		/* rreq and rvec are used for the replacement device when
 		 * writing data to both devices.
 		 */
 		struct bio	req, rreq;
 		struct bio_vec	vec, rvec;
+=======
+		struct bio	req;
+		struct bio_vec	vec;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct page	*page;
 		struct bio	*toread, *read, *towrite, *written;
 		sector_t	sector;			/* sector of this page */
@@ -239,6 +293,7 @@ struct stripe_head {
 };
 
 /* stripe_head_state - collects and tracks the dynamic state of a stripe_head
+<<<<<<< HEAD
  *     for handle_stripe.
  */
 struct stripe_head_state {
@@ -296,10 +351,58 @@ enum r5dev_flags {
 			 * data in, and now is a good time to write it out.
 			 */
 };
+=======
+ *     for handle_stripe.  It is only valid under spin_lock(sh->lock);
+ */
+struct stripe_head_state {
+	int syncing, expanding, expanded;
+	int locked, uptodate, to_read, to_write, failed, written;
+	int to_fill, compute, req_compute, non_overwrite;
+	int failed_num;
+	unsigned long ops_request;
+};
+
+/* r6_state - extra state data only relevant to r6 */
+struct r6_state {
+	int p_failed, q_failed, failed_num[2];
+};
+
+/* Flags */
+#define	R5_UPTODATE	0	/* page contains current data */
+#define	R5_LOCKED	1	/* IO has been submitted on "req" */
+#define	R5_OVERWRITE	2	/* towrite covers whole page */
+/* and some that are internal to handle_stripe */
+#define	R5_Insync	3	/* rdev && rdev->in_sync at start */
+#define	R5_Wantread	4	/* want to schedule a read */
+#define	R5_Wantwrite	5
+#define	R5_Overlap	7	/* There is a pending overlapping request on this block */
+#define	R5_ReadError	8	/* seen a read error here recently */
+#define	R5_ReWrite	9	/* have tried to over-write the readerror */
+
+#define	R5_Expanded	10	/* This block now has post-expand data */
+#define	R5_Wantcompute	11 /* compute_block in progress treat as
+				    * uptodate
+				    */
+#define	R5_Wantfill	12 /* dev->toread contains a bio that needs
+				    * filling
+				    */
+#define R5_Wantdrain	13 /* dev->towrite needs to be drained */
+#define R5_WantFUA	14	/* Write should be FUA */
+/*
+ * Write method
+ */
+#define RECONSTRUCT_WRITE	1
+#define READ_MODIFY_WRITE	2
+/* not a write method, but a compute_parity mode */
+#define	CHECK_PARITY		3
+/* Additional compute_parity mode -- updates the parity w/o LOCKING */
+#define UPDATE_PARITY		4
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Stripe state
  */
+<<<<<<< HEAD
 enum {
 	STRIPE_ACTIVE,
 	STRIPE_HANDLE,
@@ -320,10 +423,28 @@ enum {
 	STRIPE_COMPUTE_RUN,
 	STRIPE_OPS_REQ_PENDING,
 };
+=======
+#define STRIPE_HANDLE		2
+#define	STRIPE_SYNCING		3
+#define	STRIPE_INSYNC		4
+#define	STRIPE_PREREAD_ACTIVE	5
+#define	STRIPE_DELAYED		6
+#define	STRIPE_DEGRADED		7
+#define	STRIPE_BIT_DELAY	8
+#define	STRIPE_EXPANDING	9
+#define	STRIPE_EXPAND_SOURCE	10
+#define	STRIPE_EXPAND_READY	11
+#define	STRIPE_IO_STARTED	12 /* do not count towards 'bypass_count' */
+#define	STRIPE_FULL_WRITE	13 /* all blocks are set to be overwritten */
+#define	STRIPE_BIOFILL_RUN	14
+#define	STRIPE_COMPUTE_RUN	15
+#define	STRIPE_OPS_REQ_PENDING	16
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Operation request flags
  */
+<<<<<<< HEAD
 enum {
 	STRIPE_OP_BIOFILL,
 	STRIPE_OP_COMPUTE_BLK,
@@ -332,6 +453,15 @@ enum {
 	STRIPE_OP_RECONSTRUCT,
 	STRIPE_OP_CHECK,
 };
+=======
+#define STRIPE_OP_BIOFILL	0
+#define STRIPE_OP_COMPUTE_BLK	1
+#define STRIPE_OP_PREXOR	2
+#define STRIPE_OP_BIODRAIN	3
+#define STRIPE_OP_RECONSTRUCT	4
+#define STRIPE_OP_CHECK	5
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Plugging:
  *
@@ -353,17 +483,31 @@ enum {
  * PREREAD_ACTIVE.
  * In stripe_handle, if we find pre-reading is necessary, we do it if
  * PREREAD_ACTIVE is set, else we set DELAYED which will send it to the delayed queue.
+<<<<<<< HEAD
  * HANDLE gets cleared if stripe_handle leaves nothing locked.
+=======
+ * HANDLE gets cleared if stripe_handle leave nothing locked.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 
 struct disk_info {
+<<<<<<< HEAD
 	struct md_rdev	*rdev, *replacement;
 };
 
 struct r5conf {
 	struct hlist_head	*stripe_hashtbl;
 	struct mddev		*mddev;
+=======
+	mdk_rdev_t	*rdev;
+};
+
+struct raid5_private_data {
+	struct hlist_head	*stripe_hashtbl;
+	mddev_t			*mddev;
+	struct disk_info	*spare;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			chunk_sectors;
 	int			level, algorithm;
 	int			max_degraded;
@@ -415,7 +559,11 @@ struct r5conf {
 					    * (fresh device added).
 					    * Cleared when a sync completes.
 					    */
+<<<<<<< HEAD
 	int			recovery_disabled;
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* per cpu variables */
 	struct raid5_percpu {
 		struct page	*spare_page; /* Used when checking P/Q in raid6 */
@@ -449,9 +597,17 @@ struct r5conf {
 	/* When taking over an array from a different personality, we store
 	 * the new thread here until we fully activate the array.
 	 */
+<<<<<<< HEAD
 	struct md_thread	*thread;
 };
 
+=======
+	struct mdk_thread_s	*thread;
+};
+
+typedef struct raid5_private_data raid5_conf_t;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Our supported algorithms
  */
@@ -514,7 +670,13 @@ static inline int algorithm_is_DDF(int layout)
 	return layout >= 8 && layout <= 10;
 }
 
+<<<<<<< HEAD
 extern int md_raid5_congested(struct mddev *mddev, int bits);
 extern void md_raid5_kick_device(struct r5conf *conf);
 extern int raid5_set_cache_size(struct mddev *mddev, int size);
+=======
+extern int md_raid5_congested(mddev_t *mddev, int bits);
+extern void md_raid5_kick_device(raid5_conf_t *conf);
+extern int raid5_set_cache_size(mddev_t *mddev, int size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

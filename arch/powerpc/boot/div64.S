@@ -57,6 +57,7 @@ __div64_32:
 	stw	r8,4(r3)
 	mr	r3,r6		# return the remainder in r3
 	blr
+<<<<<<< HEAD
 
 /*
  * Extended precision shifts.
@@ -109,3 +110,5 @@ __lshrdi3:
 	srw	r3,r3,r5	# MSW = MSW >> count
 	or	r4,r4,r7	# LSW |= t2
 	blr
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

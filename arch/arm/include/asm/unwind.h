@@ -30,15 +30,24 @@ enum unwind_reason_code {
 };
 
 struct unwind_idx {
+<<<<<<< HEAD
 	unsigned long addr_offset;
+=======
+	unsigned long addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long insn;
 };
 
 struct unwind_table {
 	struct list_head list;
+<<<<<<< HEAD
 	const struct unwind_idx *start;
 	const struct unwind_idx *origin;
 	const struct unwind_idx *stop;
+=======
+	struct unwind_idx *start;
+	struct unwind_idx *stop;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long begin_addr;
 	unsigned long end_addr;
 };
@@ -50,6 +59,18 @@ extern struct unwind_table *unwind_table_add(unsigned long start,
 extern void unwind_table_del(struct unwind_table *tab);
 extern void unwind_backtrace(struct pt_regs *regs, struct task_struct *tsk);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ARM_UNWIND
+extern int __init unwind_init(void);
+#else
+static inline int __init unwind_init(void)
+{
+	return 0;
+}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* !__ASSEMBLY__ */
 
 #ifdef CONFIG_ARM_UNWIND

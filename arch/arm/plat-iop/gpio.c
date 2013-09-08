@@ -15,7 +15,10 @@
 #include <linux/types.h>
 #include <linux/errno.h>
 #include <linux/gpio.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/hardware/iop3xx.h>
 
 void gpio_line_config(int line, int direction)

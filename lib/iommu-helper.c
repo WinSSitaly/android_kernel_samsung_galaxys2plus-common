@@ -2,9 +2,14 @@
  * IOMMU helper functions for the free area management
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/bitmap.h>
 #include <linux/bug.h>
+=======
+#include <linux/module.h>
+#include <linux/bitmap.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int iommu_is_span_boundary(unsigned int index, unsigned int nr,
 			   unsigned long shift,

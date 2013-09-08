@@ -30,7 +30,10 @@
 #include <linux/types.h>
 #include <linux/highmem.h>
 #include <linux/dma-mapping.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/tlbflush.h>
 
@@ -365,11 +368,20 @@ static inline void __dma_sync_page_highmem(struct page *page,
 	local_irq_save(flags);
 
 	do {
+<<<<<<< HEAD
 		start = (unsigned long)kmap_atomic(page + seg_nr) + seg_offset;
 
 		/* Sync this buffer segment */
 		__dma_sync((void *)start, seg_size, direction);
 		kunmap_atomic((void *)start);
+=======
+		start = (unsigned long)kmap_atomic(page + seg_nr,
+				KM_PPC_SYNC_PAGE) + seg_offset;
+
+		/* Sync this buffer segment */
+		__dma_sync((void *)start, seg_size, direction);
+		kunmap_atomic((void *)start, KM_PPC_SYNC_PAGE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		seg_nr++;
 
 		/* Calculate next buffer segment size */

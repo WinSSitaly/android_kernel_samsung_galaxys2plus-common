@@ -14,6 +14,7 @@
 #define GPIOF_OUT_INIT_LOW	(GPIOF_DIR_OUT | GPIOF_INIT_LOW)
 #define GPIOF_OUT_INIT_HIGH	(GPIOF_DIR_OUT | GPIOF_INIT_HIGH)
 
+<<<<<<< HEAD
 /* Gpio pin is open drain */
 #define GPIOF_OPEN_DRAIN	(1 << 2)
 
@@ -32,6 +33,8 @@ struct gpio {
 	const char	*label;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_GENERIC_GPIO
 #include <asm/gpio.h>
 
@@ -40,11 +43,28 @@ struct gpio {
 #include <linux/kernel.h>
 #include <linux/types.h>
 #include <linux/errno.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
 
 struct device;
 struct gpio_chip;
 
+=======
+
+struct device;
+struct gpio;
+struct gpio_chip;
+
+/*
+ * Some platforms don't support the GPIO programming interface.
+ *
+ * In case some driver uses it anyway (it should normally have
+ * depended on GENERIC_GPIO), these routines help the compiler
+ * optimize out much GPIO-related code ... or trigger a runtime
+ * warning when something is wrongly called.
+ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline bool gpio_is_valid(int number)
 {
 	return false;

@@ -162,7 +162,11 @@ ready:
 		printk(KERN_INFO "swprobe: padde %x\n", paddr_calc);
 	if (paddr)
 		*paddr = paddr_calc;
+<<<<<<< HEAD
 	return pte;
+=======
+	return paddrbase;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void leon_flush_icache_all(void)

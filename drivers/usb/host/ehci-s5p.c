@@ -14,6 +14,7 @@
 
 #include <linux/clk.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <plat/ehci.h>
 #include <plat/usb-phy.h>
 
@@ -26,6 +27,13 @@
 	(EHCI_INSNREG00_ENA_INCR16 | EHCI_INSNREG00_ENA_INCR8 |	\
 	 EHCI_INSNREG00_ENA_INCR4 | EHCI_INSNREG00_ENA_INCRX_ALIGN)
 
+=======
+#include <mach/regs-pmu.h>
+#include <plat/cpu.h>
+#include <plat/ehci.h>
+#include <plat/usb-phy.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct s5p_ehci_hcd {
 	struct device *dev;
 	struct usb_hcd *hcd;
@@ -137,18 +145,25 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
 	ehci->regs = hcd->regs +
 		HC_LENGTH(ehci, readl(&ehci->caps->hc_capbase));
 
+<<<<<<< HEAD
 	/* DMA burst Enable */
 	writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dbg_hcs_params(ehci, "reset");
 	dbg_hcc_params(ehci, "reset");
 
 	/* cache this readonly data; minimize chip reads */
 	ehci->hcs_params = readl(&ehci->caps->hcs_params);
 
+<<<<<<< HEAD
 	ehci_reset(ehci);
 
 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
+=======
+	err = usb_add_hcd(hcd, irq, IRQF_DISABLED | IRQF_SHARED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err) {
 		dev_err(&pdev->dev, "Failed to add USB HCD\n");
 		goto fail;
@@ -202,6 +217,7 @@ static void s5p_ehci_shutdown(struct platform_device *pdev)
 		hcd->driver->shutdown(hcd);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 static int s5p_ehci_suspend(struct device *dev)
 {
@@ -299,6 +315,8 @@ static const struct dev_pm_ops s5p_ehci_pm_ops = {
 	.resume		= s5p_ehci_resume,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver s5p_ehci_driver = {
 	.probe		= s5p_ehci_probe,
 	.remove		= __devexit_p(s5p_ehci_remove),
@@ -306,7 +324,10 @@ static struct platform_driver s5p_ehci_driver = {
 	.driver = {
 		.name	= "s5p-ehci",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.pm	= &s5p_ehci_pm_ops,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 };
 

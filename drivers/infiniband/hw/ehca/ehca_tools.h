@@ -58,7 +58,11 @@
 #include <linux/cpu.h>
 #include <linux/device.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/abs_addr.h>
 #include <asm/ibmebus.h>
 #include <asm/io.h>

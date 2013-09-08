@@ -64,10 +64,19 @@ static void show_cpuinfo_misc(struct seq_file *m, struct cpuinfo_x86 *c)
 static int show_cpuinfo(struct seq_file *m, void *v)
 {
 	struct cpuinfo_x86 *c = v;
+<<<<<<< HEAD
 	unsigned int cpu;
 	int i;
 
 	cpu = c->cpu_index;
+=======
+	unsigned int cpu = 0;
+	int i;
+
+#ifdef CONFIG_SMP
+	cpu = c->cpu_index;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	seq_printf(m, "processor\t: %u\n"
 		   "vendor_id\t: %s\n"
 		   "cpu family\t: %d\n"
@@ -83,8 +92,11 @@ static int show_cpuinfo(struct seq_file *m, void *v)
 		seq_printf(m, "stepping\t: %d\n", c->x86_mask);
 	else
 		seq_printf(m, "stepping\t: unknown\n");
+<<<<<<< HEAD
 	if (c->microcode)
 		seq_printf(m, "microcode\t: 0x%x\n", c->microcode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (cpu_has(c, X86_FEATURE_TSC)) {
 		unsigned int freq = cpufreq_quick_get(cpu);

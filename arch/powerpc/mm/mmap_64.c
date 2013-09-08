@@ -53,6 +53,17 @@ static inline int mmap_is_legacy(void)
 	return sysctl_legacy_va_layout;
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * Since get_random_int() returns the same value within a 1 jiffy window,
+ * we will almost always get the same randomisation for the stack and mmap
+ * region. This will mean the relative distance between stack and mmap will
+ * be the same.
+ *
+ * To avoid this we can shift the randomness by 1 bit.
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned long mmap_rnd(void)
 {
 	unsigned long rnd = 0;
@@ -60,11 +71,19 @@ static unsigned long mmap_rnd(void)
 	if (current->flags & PF_RANDOMIZE) {
 		/* 8MB for 32bit, 1GB for 64bit */
 		if (is_32bit_task())
+<<<<<<< HEAD
 			rnd = (long)(get_random_int() % (1<<(23-PAGE_SHIFT)));
 		else
 			rnd = (long)(get_random_int() % (1<<(30-PAGE_SHIFT)));
 	}
 	return rnd << PAGE_SHIFT;
+=======
+			rnd = (long)(get_random_int() % (1<<(22-PAGE_SHIFT)));
+		else
+			rnd = (long)(get_random_int() % (1<<(29-PAGE_SHIFT)));
+	}
+	return (rnd << PAGE_SHIFT) * 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline unsigned long mmap_base(void)

@@ -260,7 +260,14 @@ asmlinkage long xtensa_rt_sigreturn(long a0, long a1, long a2, long a3,
 		goto badframe;
 
 	sigdelsetmask(&set, ~_BLOCKABLE);
+<<<<<<< HEAD
 	set_current_blocked(&set);
+=======
+	spin_lock_irq(&current->sighand->siglock);
+	current->blocked = set;
+	recalc_sigpending();
+	spin_unlock_irq(&current->sighand->siglock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (restore_sigcontext(regs, frame))
 		goto badframe;
@@ -333,8 +340,13 @@ gen_return_code(unsigned char *codemem)
 }
 
 
+<<<<<<< HEAD
 static int setup_frame(int sig, struct k_sigaction *ka, siginfo_t *info,
 		       sigset_t *set, struct pt_regs *regs)
+=======
+static void setup_frame(int sig, struct k_sigaction *ka, siginfo_t *info,
+			sigset_t *set, struct pt_regs *regs)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct rt_sigframe *frame;
 	int err = 0;
@@ -419,11 +431,20 @@ static int setup_frame(int sig, struct k_sigaction *ka, siginfo_t *info,
 		current->comm, current->pid, signal, frame, regs->pc);
 #endif
 
+<<<<<<< HEAD
 	return 0;
 
 give_sigsegv:
 	force_sigsegv(sig, current);
 	return -EFAULT;
+=======
+	return;
+
+give_sigsegv:
+	if (sig == SIGSEGV)
+		ka->sa.sa_handler = SIG_DFL;
+	force_sig(SIGSEGV, current);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -445,8 +466,16 @@ asmlinkage long xtensa_rt_sigsuspend(sigset_t __user *unewset,
 		return -EFAULT;
 
 	sigdelsetmask(&newset, ~_BLOCKABLE);
+<<<<<<< HEAD
 	saveset = current->blocked;
 	set_current_blocked(&newset);
+=======
+	spin_lock_irq(&current->sighand->siglock);
+	saveset = current->blocked;
+	current->blocked = newset;
+	recalc_sigpending();
+	spin_unlock_irq(&current->sighand->siglock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	regs->areg[2] = -EINTR;
 	while (1) {
@@ -496,7 +525,10 @@ int do_signal(struct pt_regs *regs, sigset_t *oldset)
 	signr = get_signal_to_deliver(&info, &ka, regs, NULL);
 
 	if (signr > 0) {
+<<<<<<< HEAD
 		int ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Are we from a system call? */
 
@@ -530,11 +562,25 @@ int do_signal(struct pt_regs *regs, sigset_t *oldset)
 
 		/* Whee!  Actually deliver the signal.  */
 		/* Set up the stack frame */
+<<<<<<< HEAD
 		ret = setup_frame(signr, &ka, &info, oldset, regs);
 		if (ret)
 			return ret;
 
 		block_sigmask(&ka, signr);
+=======
+		setup_frame(signr, &ka, &info, oldset, regs);
+
+		if (ka.sa.sa_flags & SA_ONESHOT)
+			ka.sa.sa_handler = SIG_DFL;
+
+		spin_lock_irq(&current->sighand->siglock);
+		sigorsets(&current->blocked, &current->blocked, &ka.sa.sa_mask);
+		if (!(ka.sa.sa_flags & SA_NODEFER))
+			sigaddset(&current->blocked, signr);
+		recalc_sigpending();
+		spin_unlock_irq(&current->sighand->siglock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (current->ptrace & PT_SINGLESTEP)
 			task_pt_regs(current)->icountlevel = 1;
 

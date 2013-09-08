@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2010 Realtek Corporation. All rights reserved.
@@ -23,6 +24,8 @@
  * Larry Finger <Larry.Finger@lwfinger.net>
  *
  ******************************************************************************/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*---------------------------------------------------------------------
 
 	For type defines and data structure defines
@@ -37,8 +40,11 @@ struct _adapter;
 #include "wlan_bssdef.h"
 #include "rtl8712_spec.h"
 #include "rtl8712_hal.h"
+<<<<<<< HEAD
 #include <linux/mutex.h>
 #include <linux/completion.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum _NIC_VERSION {
 	RTL8711_NIC,
@@ -56,6 +62,10 @@ struct	qos_priv	{
 
 #include "rtl871x_ht.h"
 #include "rtl871x_cmd.h"
+<<<<<<< HEAD
+=======
+#include "wlan_bssdef.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "rtl871x_xmit.h"
 #include "rtl871x_recv.h"
 #include "rtl871x_security.h"
@@ -140,6 +150,7 @@ struct dvobj_priv {
 	u8   ishighspeed;
 	uint(*inirp_init)(struct _adapter *adapter);
 	uint(*inirp_deinit)(struct _adapter *adapter);
+<<<<<<< HEAD
 	struct usb_device *pusbdev;
 };
 
@@ -148,6 +159,12 @@ struct dvobj_priv {
  *
  * bup: True indicates that the interface is Up.
  */
+=======
+	struct semaphore usb_suspend_sema;
+	struct usb_device *pusbdev;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct _adapter {
 	struct	dvobj_priv dvobjpriv;
 	struct	mlme_priv mlmepriv;
@@ -169,7 +186,10 @@ struct _adapter {
 	s32	bSurpriseRemoved;
 	u32	IsrContent;
 	u32	ImrContent;
+<<<<<<< HEAD
 	bool	fw_found;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8	EepromAddressSize;
 	u8	hw_init_completed;
 	struct task_struct *cmdThread;
@@ -183,6 +203,7 @@ struct _adapter {
 	struct net_device_stats stats;
 	struct iw_statistics iwstats;
 	int pid; /*process id from UI*/
+<<<<<<< HEAD
 	_workitem wkFilterRxFF0;
 	u8 blnEnableRxFF0Filter;
 	spinlock_t lockRxFF0Filter;
@@ -190,6 +211,8 @@ struct _adapter {
 	struct usb_interface *pusb_intf;
 	struct mutex mutex_start;
 	struct completion rtl8712_fw_ready;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline u8 *myid(struct eeprom_priv *peepriv)

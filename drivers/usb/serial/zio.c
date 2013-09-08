@@ -27,6 +27,10 @@ static struct usb_driver zio_driver = {
 	.probe =	usb_serial_probe,
 	.disconnect =	usb_serial_disconnect,
 	.id_table =	id_table,
+<<<<<<< HEAD
+=======
+	.no_dynamic_id =	1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct usb_serial_driver zio_device = {
@@ -35,6 +39,7 @@ static struct usb_serial_driver zio_device = {
 		.name =		"zio",
 	},
 	.id_table =		id_table,
+<<<<<<< HEAD
 	.num_ports =		1,
 };
 
@@ -43,4 +48,31 @@ static struct usb_serial_driver * const serial_drivers[] = {
 };
 
 module_usb_serial_driver(zio_driver, serial_drivers);
+=======
+	.usb_driver =		&zio_driver,
+	.num_ports =		1,
+};
+
+static int __init zio_init(void)
+{
+	int retval;
+
+	retval = usb_serial_register(&zio_device);
+	if (retval)
+		return retval;
+	retval = usb_register(&zio_driver);
+	if (retval)
+		usb_serial_deregister(&zio_device);
+	return retval;
+}
+
+static void __exit zio_exit(void)
+{
+	usb_deregister(&zio_driver);
+	usb_serial_deregister(&zio_device);
+}
+
+module_init(zio_init);
+module_exit(zio_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("GPL");

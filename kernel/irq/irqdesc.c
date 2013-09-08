@@ -9,7 +9,11 @@
  */
 #include <linux/irq.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/interrupt.h>
 #include <linux/kernel_stat.h>
 #include <linux/radix-tree.h>
@@ -70,8 +74,12 @@ static inline void desc_smp_init(struct irq_desc *desc, int node) { }
 static inline int desc_node(struct irq_desc *desc) { return 0; }
 #endif
 
+<<<<<<< HEAD
 static void desc_set_defaults(unsigned int irq, struct irq_desc *desc, int node,
 		struct module *owner)
+=======
+static void desc_set_defaults(unsigned int irq, struct irq_desc *desc, int node)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int cpu;
 
@@ -87,7 +95,10 @@ static void desc_set_defaults(unsigned int irq, struct irq_desc *desc, int node,
 	desc->irq_count = 0;
 	desc->irqs_unhandled = 0;
 	desc->name = NULL;
+<<<<<<< HEAD
 	desc->owner = owner;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for_each_possible_cpu(cpu)
 		*per_cpu_ptr(desc->kstat_irqs, cpu) = 0;
 	desc_smp_init(desc, node);
@@ -112,7 +123,10 @@ struct irq_desc *irq_to_desc(unsigned int irq)
 {
 	return radix_tree_lookup(&irq_desc_tree, irq);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(irq_to_desc);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void delete_irq_desc(unsigned int irq)
 {
@@ -131,7 +145,11 @@ static void free_masks(struct irq_desc *desc)
 static inline void free_masks(struct irq_desc *desc) { }
 #endif
 
+<<<<<<< HEAD
 static struct irq_desc *alloc_desc(int irq, int node, struct module *owner)
+=======
+static struct irq_desc *alloc_desc(int irq, int node)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct irq_desc *desc;
 	gfp_t gfp = GFP_KERNEL;
@@ -150,7 +168,11 @@ static struct irq_desc *alloc_desc(int irq, int node, struct module *owner)
 	raw_spin_lock_init(&desc->lock);
 	lockdep_set_class(&desc->lock, &irq_desc_lock_class);
 
+<<<<<<< HEAD
 	desc_set_defaults(irq, desc, node, owner);
+=======
+	desc_set_defaults(irq, desc, node);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return desc;
 
@@ -176,14 +198,22 @@ static void free_desc(unsigned int irq)
 	kfree(desc);
 }
 
+<<<<<<< HEAD
 static int alloc_descs(unsigned int start, unsigned int cnt, int node,
 		       struct module *owner)
+=======
+static int alloc_descs(unsigned int start, unsigned int cnt, int node)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct irq_desc *desc;
 	int i;
 
 	for (i = 0; i < cnt; i++) {
+<<<<<<< HEAD
 		desc = alloc_desc(start + i, node, owner);
+=======
+		desc = alloc_desc(start + i, node);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!desc)
 			goto err;
 		mutex_lock(&sparse_irq_lock);
@@ -231,7 +261,11 @@ int __init early_irq_init(void)
 		nr_irqs = initcnt;
 
 	for (i = 0; i < initcnt; i++) {
+<<<<<<< HEAD
 		desc = alloc_desc(i, node, NULL);
+=======
+		desc = alloc_desc(i, node);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_bit(i, allocated_irqs);
 		irq_insert_desc(i, desc);
 	}
@@ -265,7 +299,11 @@ int __init early_irq_init(void)
 		alloc_masks(&desc[i], GFP_KERNEL, node);
 		raw_spin_lock_init(&desc[i].lock);
 		lockdep_set_class(&desc[i].lock, &irq_desc_lock_class);
+<<<<<<< HEAD
 		desc_set_defaults(i, &desc[i], node, NULL);
+=======
+		desc_set_defaults(i, &desc[i], node);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return arch_early_irq_init();
 }
@@ -280,6 +318,7 @@ static void free_desc(unsigned int irq)
 	dynamic_irq_cleanup(irq);
 }
 
+<<<<<<< HEAD
 static inline int alloc_descs(unsigned int start, unsigned int cnt, int node,
 			      struct module *owner)
 {
@@ -290,6 +329,10 @@ static inline int alloc_descs(unsigned int start, unsigned int cnt, int node,
 
 		desc->owner = owner;
 	}
+=======
+static inline int alloc_descs(unsigned int start, unsigned int cnt, int node)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return start;
 }
 
@@ -345,13 +388,20 @@ EXPORT_SYMBOL_GPL(irq_free_descs);
  * @from:	Start the search from this irq number
  * @cnt:	Number of consecutive irqs to allocate.
  * @node:	Preferred node on which the irq descriptor should be allocated
+<<<<<<< HEAD
  * @owner:	Owning module (can be NULL)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Returns the first irq number or error code
  */
 int __ref
+<<<<<<< HEAD
 __irq_alloc_descs(int irq, unsigned int from, unsigned int cnt, int node,
 		  struct module *owner)
+=======
+irq_alloc_descs(int irq, unsigned int from, unsigned int cnt, int node)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int start, ret;
 
@@ -380,13 +430,21 @@ __irq_alloc_descs(int irq, unsigned int from, unsigned int cnt, int node,
 
 	bitmap_set(allocated_irqs, start, cnt);
 	mutex_unlock(&sparse_irq_lock);
+<<<<<<< HEAD
 	return alloc_descs(start, cnt, node, owner);
+=======
+	return alloc_descs(start, cnt, node);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 err:
 	mutex_unlock(&sparse_irq_lock);
 	return ret;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(__irq_alloc_descs);
+=======
+EXPORT_SYMBOL_GPL(irq_alloc_descs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * irq_reserve_irqs - mark irqs allocated
@@ -425,12 +483,17 @@ unsigned int irq_get_next_irq(unsigned int offset)
 }
 
 struct irq_desc *
+<<<<<<< HEAD
 __irq_get_desc_lock(unsigned int irq, unsigned long *flags, bool bus,
 		    unsigned int check)
+=======
+__irq_get_desc_lock(unsigned int irq, unsigned long *flags, bool bus)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct irq_desc *desc = irq_to_desc(irq);
 
 	if (desc) {
+<<<<<<< HEAD
 		if (check & _IRQ_DESC_CHECK) {
 			if ((check & _IRQ_DESC_PERCPU) &&
 			    !irq_settings_is_per_cpu_devid(desc))
@@ -441,6 +504,8 @@ __irq_get_desc_lock(unsigned int irq, unsigned long *flags, bool bus,
 				return NULL;
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (bus)
 			chip_bus_lock(desc);
 		raw_spin_lock_irqsave(&desc->lock, *flags);
@@ -455,6 +520,7 @@ void __irq_put_desc_unlock(struct irq_desc *desc, unsigned long flags, bool bus)
 		chip_bus_sync_unlock(desc);
 }
 
+<<<<<<< HEAD
 int irq_set_percpu_devid(unsigned int irq)
 {
 	struct irq_desc *desc = irq_to_desc(irq);
@@ -474,6 +540,8 @@ int irq_set_percpu_devid(unsigned int irq)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * dynamic_irq_cleanup - cleanup a dynamically allocated irq
  * @irq:	irq number to initialize
@@ -484,7 +552,11 @@ void dynamic_irq_cleanup(unsigned int irq)
 	unsigned long flags;
 
 	raw_spin_lock_irqsave(&desc->lock, flags);
+<<<<<<< HEAD
 	desc_set_defaults(irq, desc, desc_node(desc), NULL);
+=======
+	desc_set_defaults(irq, desc, desc_node(desc));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	raw_spin_unlock_irqrestore(&desc->lock, flags);
 }
 

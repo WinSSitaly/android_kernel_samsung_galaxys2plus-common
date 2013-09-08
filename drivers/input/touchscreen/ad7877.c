@@ -45,7 +45,10 @@
 #include <linux/slab.h>
 #include <linux/spi/spi.h>
 #include <linux/spi/ad7877.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/irq.h>
 
 #define	TS_PEN_UP_TIMEOUT	msecs_to_jiffies(100)
@@ -488,10 +491,17 @@ static ssize_t ad7877_disable_store(struct device *dev,
 				     const char *buf, size_t count)
 {
 	struct ad7877 *ts = dev_get_drvdata(dev);
+<<<<<<< HEAD
 	unsigned int val;
 	int error;
 
 	error = kstrtouint(buf, 10, &val);
+=======
+	unsigned long val;
+	int error;
+
+	error = strict_strtoul(buf, 10, &val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error)
 		return error;
 
@@ -518,10 +528,17 @@ static ssize_t ad7877_dac_store(struct device *dev,
 				     const char *buf, size_t count)
 {
 	struct ad7877 *ts = dev_get_drvdata(dev);
+<<<<<<< HEAD
 	unsigned int val;
 	int error;
 
 	error = kstrtouint(buf, 10, &val);
+=======
+	unsigned long val;
+	int error;
+
+	error = strict_strtoul(buf, 10, &val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error)
 		return error;
 
@@ -548,10 +565,17 @@ static ssize_t ad7877_gpio3_store(struct device *dev,
 				     const char *buf, size_t count)
 {
 	struct ad7877 *ts = dev_get_drvdata(dev);
+<<<<<<< HEAD
 	unsigned int val;
 	int error;
 
 	error = kstrtouint(buf, 10, &val);
+=======
+	unsigned long val;
+	int error;
+
+	error = strict_strtoul(buf, 10, &val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error)
 		return error;
 
@@ -579,10 +603,17 @@ static ssize_t ad7877_gpio4_store(struct device *dev,
 				     const char *buf, size_t count)
 {
 	struct ad7877 *ts = dev_get_drvdata(dev);
+<<<<<<< HEAD
 	unsigned int val;
 	int error;
 
 	error = kstrtouint(buf, 10, &val);
+=======
+	unsigned long val;
+	int error;
+
+	error = strict_strtoul(buf, 10, &val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error)
 		return error;
 
@@ -612,10 +643,17 @@ static struct attribute *ad7877_attributes[] = {
 	NULL
 };
 
+<<<<<<< HEAD
 static umode_t ad7877_attr_is_visible(struct kobject *kobj,
 				     struct attribute *attr, int n)
 {
 	umode_t mode = attr->mode;
+=======
+static mode_t ad7877_attr_is_visible(struct kobject *kobj,
+				     struct attribute *attr, int n)
+{
+	mode_t mode = attr->mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (attr == &dev_attr_aux3.attr) {
 		if (gpio3)
@@ -853,6 +891,10 @@ static SIMPLE_DEV_PM_OPS(ad7877_pm, ad7877_suspend, ad7877_resume);
 static struct spi_driver ad7877_driver = {
 	.driver = {
 		.name	= "ad7877",
+<<<<<<< HEAD
+=======
+		.bus	= &spi_bus_type,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.owner	= THIS_MODULE,
 		.pm	= &ad7877_pm,
 	},
@@ -860,7 +902,21 @@ static struct spi_driver ad7877_driver = {
 	.remove		= __devexit_p(ad7877_remove),
 };
 
+<<<<<<< HEAD
 module_spi_driver(ad7877_driver);
+=======
+static int __init ad7877_init(void)
+{
+	return spi_register_driver(&ad7877_driver);
+}
+module_init(ad7877_init);
+
+static void __exit ad7877_exit(void)
+{
+	spi_unregister_driver(&ad7877_driver);
+}
+module_exit(ad7877_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Michael Hennerich <hennerich@blackfin.uclinux.org>");
 MODULE_DESCRIPTION("AD7877 touchscreen Driver");

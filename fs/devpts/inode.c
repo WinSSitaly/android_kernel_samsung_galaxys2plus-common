@@ -36,6 +36,7 @@
 #define DEVPTS_DEFAULT_PTMX_MODE 0000
 #define PTMX_MINOR	2
 
+<<<<<<< HEAD
 /*
  * sysctl support for setting limits on the number of Unix98 ptys allocated.
  * Otherwise one can eat up all kernel memory by opening /dev/ptmx repeatedly.
@@ -91,6 +92,9 @@ static struct ctl_table pty_root_table[] = {
 	{}
 };
 
+=======
+extern int pty_limit;			/* Config limit on Unix98 ptys */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEFINE_MUTEX(allocated_ptys_lock);
 
 static struct vfsmount *devpts_mnt;
@@ -103,11 +107,18 @@ struct pts_mount_opts {
 	umode_t mode;
 	umode_t ptmxmode;
 	int newinstance;
+<<<<<<< HEAD
 	int max;
 };
 
 enum {
 	Opt_uid, Opt_gid, Opt_mode, Opt_ptmxmode, Opt_newinstance,  Opt_max,
+=======
+};
+
+enum {
+	Opt_uid, Opt_gid, Opt_mode, Opt_ptmxmode, Opt_newinstance,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	Opt_err
 };
 
@@ -118,7 +129,10 @@ static const match_table_t tokens = {
 #ifdef CONFIG_DEVPTS_MULTIPLE_INSTANCES
 	{Opt_ptmxmode, "ptmxmode=%o"},
 	{Opt_newinstance, "newinstance"},
+<<<<<<< HEAD
 	{Opt_max, "max=%d"},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	{Opt_err, NULL}
 };
@@ -165,7 +179,10 @@ static int parse_mount_options(char *data, int op, struct pts_mount_opts *opts)
 	opts->gid     = 0;
 	opts->mode    = DEVPTS_DEFAULT_MODE;
 	opts->ptmxmode = DEVPTS_DEFAULT_PTMX_MODE;
+<<<<<<< HEAD
 	opts->max     = NR_UNIX98_PTY_MAX;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* newinstance makes sense only on initial mount */
 	if (op == PARSE_MOUNT)
@@ -209,12 +226,15 @@ static int parse_mount_options(char *data, int op, struct pts_mount_opts *opts)
 			if (op == PARSE_MOUNT)
 				opts->newinstance = 1;
 			break;
+<<<<<<< HEAD
 		case Opt_max:
 			if (match_int(&args[0], &option) ||
 			    option < 0 || option > NR_UNIX98_PTY_MAX)
 				return -EINVAL;
 			opts->max = option;
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 		default:
 			printk(KERN_ERR "devpts: called with bogus options\n");
@@ -309,9 +329,15 @@ static int devpts_remount(struct super_block *sb, int *flags, char *data)
 	return err;
 }
 
+<<<<<<< HEAD
 static int devpts_show_options(struct seq_file *seq, struct dentry *root)
 {
 	struct pts_fs_info *fsi = DEVPTS_SB(root->d_sb);
+=======
+static int devpts_show_options(struct seq_file *seq, struct vfsmount *vfs)
+{
+	struct pts_fs_info *fsi = DEVPTS_SB(vfs->mnt_sb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pts_mount_opts *opts = &fsi->mount_opts;
 
 	if (opts->setuid)
@@ -321,8 +347,11 @@ static int devpts_show_options(struct seq_file *seq, struct dentry *root)
 	seq_printf(seq, ",mode=%03o", opts->mode);
 #ifdef CONFIG_DEVPTS_MULTIPLE_INSTANCES
 	seq_printf(seq, ",ptmxmode=%03o", opts->ptmxmode);
+<<<<<<< HEAD
 	if (opts->max < NR_UNIX98_PTY_MAX)
 		seq_printf(seq, ",max=%d", opts->max);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	return 0;
@@ -366,20 +395,37 @@ devpts_fill_super(struct super_block *s, void *data, int silent)
 
 	inode = new_inode(s);
 	if (!inode)
+<<<<<<< HEAD
 		goto fail;
+=======
+		goto free_fsi;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	inode->i_ino = 1;
 	inode->i_mtime = inode->i_atime = inode->i_ctime = CURRENT_TIME;
 	inode->i_mode = S_IFDIR | S_IRUGO | S_IXUGO | S_IWUSR;
 	inode->i_op = &simple_dir_inode_operations;
 	inode->i_fop = &simple_dir_operations;
+<<<<<<< HEAD
 	set_nlink(inode, 2);
 
 	s->s_root = d_make_root(inode);
+=======
+	inode->i_nlink = 2;
+
+	s->s_root = d_alloc_root(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (s->s_root)
 		return 0;
 
 	printk(KERN_ERR "devpts: get root dentry failed\n");
+<<<<<<< HEAD
 
+=======
+	iput(inode);
+
+free_fsi:
+	kfree(s->s_fs_info);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 fail:
 	return -ENOMEM;
 }
@@ -502,12 +548,15 @@ retry:
 		return -ENOMEM;
 
 	mutex_lock(&allocated_ptys_lock);
+<<<<<<< HEAD
 	if (pty_count >= pty_limit -
 			(fsi->mount_opts.newinstance ? pty_reserve : 0)) {
 		mutex_unlock(&allocated_ptys_lock);
 		return -ENOSPC;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ida_ret = ida_get_new(&fsi->allocated_ptys, &index);
 	if (ida_ret < 0) {
 		mutex_unlock(&allocated_ptys_lock);
@@ -516,12 +565,20 @@ retry:
 		return -EIO;
 	}
 
+<<<<<<< HEAD
 	if (index >= fsi->mount_opts.max) {
 		ida_remove(&fsi->allocated_ptys, index);
 		mutex_unlock(&allocated_ptys_lock);
 		return -ENOSPC;
 	}
 	pty_count++;
+=======
+	if (index >= pty_limit) {
+		ida_remove(&fsi->allocated_ptys, index);
+		mutex_unlock(&allocated_ptys_lock);
+		return -EIO;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&allocated_ptys_lock);
 	return index;
 }
@@ -533,7 +590,10 @@ void devpts_kill_index(struct inode *ptmx_inode, int idx)
 
 	mutex_lock(&allocated_ptys_lock);
 	ida_remove(&fsi->allocated_ptys, idx);
+<<<<<<< HEAD
 	pty_count--;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&allocated_ptys_lock);
 }
 
@@ -619,7 +679,11 @@ void devpts_pty_kill(struct tty_struct *tty)
 
 	dentry = d_find_alias(inode);
 
+<<<<<<< HEAD
 	drop_nlink(inode);
+=======
+	inode->i_nlink--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	d_delete(dentry);
 	dput(dentry);	/* d_alloc_name() in devpts_pty_new() */
 	dput(dentry);		/* d_find_alias above */
@@ -630,15 +694,22 @@ void devpts_pty_kill(struct tty_struct *tty)
 static int __init init_devpts_fs(void)
 {
 	int err = register_filesystem(&devpts_fs_type);
+<<<<<<< HEAD
 	struct ctl_table_header *table;
 
 	if (!err) {
 		table = register_sysctl_table(pty_root_table);
+=======
+	if (!err) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		devpts_mnt = kern_mount(&devpts_fs_type);
 		if (IS_ERR(devpts_mnt)) {
 			err = PTR_ERR(devpts_mnt);
 			unregister_filesystem(&devpts_fs_type);
+<<<<<<< HEAD
 			unregister_sysctl_table(table);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	return err;

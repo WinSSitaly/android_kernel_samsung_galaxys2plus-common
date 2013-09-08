@@ -10,6 +10,7 @@
 /*
  * Flags for nfsd_permission
  */
+<<<<<<< HEAD
 #define NFSD_MAY_NOP			0
 #define NFSD_MAY_EXEC			0x001 /* == MAY_EXEC */
 #define NFSD_MAY_WRITE			0x002 /* == MAY_WRITE */
@@ -28,6 +29,24 @@
 #define NFSD_MAY_READ_IF_EXEC		0x800
 
 #define NFSD_MAY_64BIT_COOKIE		0x1000 /* 64 bit readdir cookies for >= NFSv3 */
+=======
+#define NFSD_MAY_NOP		0
+#define NFSD_MAY_EXEC		1 /* == MAY_EXEC */
+#define NFSD_MAY_WRITE		2 /* == MAY_WRITE */
+#define NFSD_MAY_READ		4 /* == MAY_READ */
+#define NFSD_MAY_SATTR		8
+#define NFSD_MAY_TRUNC		16
+#define NFSD_MAY_LOCK		32
+#define NFSD_MAY_MASK		63
+
+/* extra hints to permission and open routines: */
+#define NFSD_MAY_OWNER_OVERRIDE	64
+#define NFSD_MAY_LOCAL_ACCESS	128 /* IRIX doing local access check on device special file*/
+#define NFSD_MAY_BYPASS_GSS_ON_ROOT 256
+#define NFSD_MAY_NOT_BREAK_LEASE 512
+#define NFSD_MAY_BYPASS_GSS	1024
+#define NFSD_MAY_READ_IF_EXEC	2048
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define NFSD_MAY_CREATE		(NFSD_MAY_EXEC|NFSD_MAY_WRITE)
 #define NFSD_MAY_REMOVE		(NFSD_MAY_EXEC|NFSD_MAY_WRITE|NFSD_MAY_TRUNC)
@@ -64,11 +83,19 @@ __be32		nfsd_access(struct svc_rqst *, struct svc_fh *, u32 *, u32 *);
 __be32		do_nfsd_create(struct svc_rqst *, struct svc_fh *,
 				char *name, int len, struct iattr *attrs,
 				struct svc_fh *res, int createmode,
+<<<<<<< HEAD
 				u32 *verifier, bool *truncp, bool *created);
 __be32		nfsd_commit(struct svc_rqst *, struct svc_fh *,
 				loff_t, unsigned long);
 #endif /* CONFIG_NFSD_V3 */
 __be32		nfsd_open(struct svc_rqst *, struct svc_fh *, umode_t,
+=======
+				u32 *verifier, int *truncp, int *created);
+__be32		nfsd_commit(struct svc_rqst *, struct svc_fh *,
+				loff_t, unsigned long);
+#endif /* CONFIG_NFSD_V3 */
+__be32		nfsd_open(struct svc_rqst *, struct svc_fh *, int,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				int, struct file **);
 void		nfsd_close(struct file *);
 __be32 		nfsd_read(struct svc_rqst *, struct svc_fh *,
@@ -108,6 +135,7 @@ struct posix_acl *nfsd_get_posix_acl(struct svc_fh *, int);
 int nfsd_set_posix_acl(struct svc_fh *, int, struct posix_acl *);
 #endif
 
+<<<<<<< HEAD
 static inline int fh_want_write(struct svc_fh *fh)
 {
 	return mnt_want_write(fh->fh_export->ex_path.mnt);
@@ -118,4 +146,6 @@ static inline void fh_drop_write(struct svc_fh *fh)
 	mnt_drop_write(fh->fh_export->ex_path.mnt);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* LINUX_NFSD_VFS_H */

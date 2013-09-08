@@ -26,12 +26,17 @@
 #include <linux/kernel.h>
 #include <linux/list.h>
 #include <linux/clk.h>
+<<<<<<< HEAD
 #include <linux/io.h>
 
 #include <plat/hardware.h>
 #include <plat/clkdev_omap.h>
 
 #include "iomap.h"
+=======
+#include <plat/clkdev_omap.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "clock.h"
 #include "clock44xx.h"
 #include "cm1_44xx.h"
@@ -57,9 +62,15 @@ static struct clk extalt_clkin_ck = {
 static struct clk pad_clks_ck = {
 	.name		= "pad_clks_ck",
 	.rate		= 12000000,
+<<<<<<< HEAD
 	.ops		= &clkops_omap2_dflt,
 	.enable_reg	= OMAP4430_CM_CLKSEL_ABE,
 	.enable_bit	= OMAP4430_PAD_CLKS_GATE_SHIFT,
+=======
+	.ops            = &clkops_omap2_dflt,
+	.enable_reg     = OMAP4430_CM_CLKSEL_ABE,
+	.enable_bit     = OMAP4430_PAD_CLKS_GATE_SHIFT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct clk pad_slimbus_core_clks_ck = {
@@ -77,9 +88,15 @@ static struct clk secure_32k_clk_src_ck = {
 static struct clk slimbus_clk = {
 	.name		= "slimbus_clk",
 	.rate		= 12000000,
+<<<<<<< HEAD
 	.ops		= &clkops_omap2_dflt,
 	.enable_reg	= OMAP4430_CM_CLKSEL_ABE,
 	.enable_bit	= OMAP4430_SLIMBUS_CLK_GATE_SHIFT,
+=======
+	.ops            = &clkops_omap2_dflt,
+	.enable_reg     = OMAP4430_CM_CLKSEL_ABE,
+	.enable_bit     = OMAP4430_SLIMBUS_CLK_GATE_SHIFT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct clk sys_32k_ck = {
@@ -262,8 +279,13 @@ static struct dpll_data dpll_abe_dd = {
 	.enable_mask	= OMAP4430_DPLL_EN_MASK,
 	.autoidle_mask	= OMAP4430_AUTO_DPLL_MODE_MASK,
 	.idlest_mask	= OMAP4430_ST_DPLL_CLK_MASK,
+<<<<<<< HEAD
 	.max_multiplier	= 2047,
 	.max_divider	= 128,
+=======
+	.max_multiplier	= OMAP4430_MAX_DPLL_MULT,
+	.max_divider	= OMAP4430_MAX_DPLL_DIV,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.min_divider	= 1,
 };
 
@@ -274,18 +296,30 @@ static struct clk dpll_abe_ck = {
 	.dpll_data	= &dpll_abe_dd,
 	.init		= &omap2_init_dpll_parent,
 	.ops		= &clkops_omap3_noncore_dpll_ops,
+<<<<<<< HEAD
 	.recalc		= &omap4_dpll_regm4xen_recalc,
 	.round_rate	= &omap4_dpll_regm4xen_round_rate,
+=======
+	.recalc		= &omap3_dpll_recalc,
+	.round_rate	= &omap2_dpll_round_rate,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.set_rate	= &omap3_noncore_dpll_set_rate,
 };
 
 static struct clk dpll_abe_x2_ck = {
 	.name		= "dpll_abe_x2_ck",
 	.parent		= &dpll_abe_ck,
+<<<<<<< HEAD
 	.clksel_reg	= OMAP4430_CM_DIV_M2_DPLL_ABE,
 	.flags		= CLOCK_CLKOUTX2,
 	.ops		= &clkops_omap4_dpllmx_ops,
 	.recalc		= &omap3_clkoutx2_recalc,
+=======
+	.flags		= CLOCK_CLKOUTX2,
+	.ops		= &clkops_omap4_dpllmx_ops,
+	.recalc		= &omap3_clkoutx2_recalc,
+	.clksel_reg	= OMAP4430_CM_DIV_M2_DPLL_ABE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct clksel_rate div31_1to31_rates[] = {
@@ -438,8 +472,13 @@ static struct dpll_data dpll_core_dd = {
 	.enable_mask	= OMAP4430_DPLL_EN_MASK,
 	.autoidle_mask	= OMAP4430_AUTO_DPLL_MODE_MASK,
 	.idlest_mask	= OMAP4430_ST_DPLL_CLK_MASK,
+<<<<<<< HEAD
 	.max_multiplier	= 2047,
 	.max_divider	= 128,
+=======
+	.max_multiplier	= OMAP4430_MAX_DPLL_MULT,
+	.max_divider	= OMAP4430_MAX_DPLL_DIV,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.min_divider	= 1,
 };
 
@@ -626,11 +665,19 @@ static struct clk dpll_core_m3x2_ck = {
 	.clksel_reg	= OMAP4430_CM_DIV_M3_DPLL_CORE,
 	.clksel_mask	= OMAP4430_DPLL_CLKOUTHIF_DIV_MASK,
 	.ops		= &clkops_omap2_dflt,
+<<<<<<< HEAD
 	.recalc		= &omap2_clksel_recalc,
 	.round_rate	= &omap2_clksel_round_rate,
 	.set_rate	= &omap2_clksel_set_rate,
 	.enable_reg	= OMAP4430_CM_DIV_M3_DPLL_CORE,
 	.enable_bit	= OMAP4430_DPLL_CLKOUTHIF_GATE_CTRL_SHIFT,
+=======
+	.enable_reg	= OMAP4430_CM_DIV_M3_DPLL_CORE,
+	.enable_bit	= OMAP4430_DPLL_CLKOUTHIF_GATE_CTRL_SHIFT,
+	.recalc		= &omap2_clksel_recalc,
+	.round_rate	= &omap2_clksel_round_rate,
+	.set_rate	= &omap2_clksel_set_rate,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct clk dpll_core_m7x2_ck = {
@@ -676,8 +723,13 @@ static struct dpll_data dpll_iva_dd = {
 	.enable_mask	= OMAP4430_DPLL_EN_MASK,
 	.autoidle_mask	= OMAP4430_AUTO_DPLL_MODE_MASK,
 	.idlest_mask	= OMAP4430_ST_DPLL_CLK_MASK,
+<<<<<<< HEAD
 	.max_multiplier	= 2047,
 	.max_divider	= 128,
+=======
+	.max_multiplier	= OMAP4430_MAX_DPLL_MULT,
+	.max_divider	= OMAP4430_MAX_DPLL_DIV,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.min_divider	= 1,
 };
 
@@ -744,8 +796,13 @@ static struct dpll_data dpll_mpu_dd = {
 	.enable_mask	= OMAP4430_DPLL_EN_MASK,
 	.autoidle_mask	= OMAP4430_AUTO_DPLL_MODE_MASK,
 	.idlest_mask	= OMAP4430_ST_DPLL_CLK_MASK,
+<<<<<<< HEAD
 	.max_multiplier	= 2047,
 	.max_divider	= 128,
+=======
+	.max_multiplier	= OMAP4430_MAX_DPLL_MULT,
+	.max_divider	= OMAP4430_MAX_DPLL_DIV,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.min_divider	= 1,
 };
 
@@ -817,8 +874,13 @@ static struct dpll_data dpll_per_dd = {
 	.enable_mask	= OMAP4430_DPLL_EN_MASK,
 	.autoidle_mask	= OMAP4430_AUTO_DPLL_MODE_MASK,
 	.idlest_mask	= OMAP4430_ST_DPLL_CLK_MASK,
+<<<<<<< HEAD
 	.max_multiplier	= 2047,
 	.max_divider	= 128,
+=======
+	.max_multiplier	= OMAP4430_MAX_DPLL_MULT,
+	.max_divider	= OMAP4430_MAX_DPLL_DIV,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.min_divider	= 1,
 };
 
@@ -854,10 +916,17 @@ static struct clk dpll_per_m2_ck = {
 static struct clk dpll_per_x2_ck = {
 	.name		= "dpll_per_x2_ck",
 	.parent		= &dpll_per_ck,
+<<<<<<< HEAD
 	.clksel_reg	= OMAP4430_CM_DIV_M2_DPLL_PER,
 	.flags		= CLOCK_CLKOUTX2,
 	.ops		= &clkops_omap4_dpllmx_ops,
 	.recalc		= &omap3_clkoutx2_recalc,
+=======
+	.flags		= CLOCK_CLKOUTX2,
+	.ops		= &clkops_omap4_dpllmx_ops,
+	.recalc		= &omap3_clkoutx2_recalc,
+	.clksel_reg	= OMAP4430_CM_DIV_M2_DPLL_PER,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct clksel dpll_per_m2x2_div[] = {
@@ -884,11 +953,19 @@ static struct clk dpll_per_m3x2_ck = {
 	.clksel_reg	= OMAP4430_CM_DIV_M3_DPLL_PER,
 	.clksel_mask	= OMAP4430_DPLL_CLKOUTHIF_DIV_MASK,
 	.ops		= &clkops_omap2_dflt,
+<<<<<<< HEAD
 	.recalc		= &omap2_clksel_recalc,
 	.round_rate	= &omap2_clksel_round_rate,
 	.set_rate	= &omap2_clksel_set_rate,
 	.enable_reg	= OMAP4430_CM_DIV_M3_DPLL_PER,
 	.enable_bit	= OMAP4430_DPLL_CLKOUTHIF_GATE_CTRL_SHIFT,
+=======
+	.enable_reg	= OMAP4430_CM_DIV_M3_DPLL_PER,
+	.enable_bit	= OMAP4430_DPLL_CLKOUTHIF_GATE_CTRL_SHIFT,
+	.recalc		= &omap2_clksel_recalc,
+	.round_rate	= &omap2_clksel_round_rate,
+	.set_rate	= &omap2_clksel_set_rate,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct clk dpll_per_m4x2_ck = {
@@ -939,6 +1016,66 @@ static struct clk dpll_per_m7x2_ck = {
 	.set_rate	= &omap2_clksel_set_rate,
 };
 
+<<<<<<< HEAD
+=======
+/* DPLL_UNIPRO */
+static struct dpll_data dpll_unipro_dd = {
+	.mult_div1_reg	= OMAP4430_CM_CLKSEL_DPLL_UNIPRO,
+	.clk_bypass	= &sys_clkin_ck,
+	.clk_ref	= &sys_clkin_ck,
+	.control_reg	= OMAP4430_CM_CLKMODE_DPLL_UNIPRO,
+	.modes		= (1 << DPLL_LOW_POWER_BYPASS) | (1 << DPLL_LOCKED),
+	.autoidle_reg	= OMAP4430_CM_AUTOIDLE_DPLL_UNIPRO,
+	.idlest_reg	= OMAP4430_CM_IDLEST_DPLL_UNIPRO,
+	.mult_mask	= OMAP4430_DPLL_MULT_MASK,
+	.div1_mask	= OMAP4430_DPLL_DIV_MASK,
+	.enable_mask	= OMAP4430_DPLL_EN_MASK,
+	.autoidle_mask	= OMAP4430_AUTO_DPLL_MODE_MASK,
+	.idlest_mask	= OMAP4430_ST_DPLL_CLK_MASK,
+	.sddiv_mask	= OMAP4430_DPLL_SD_DIV_MASK,
+	.max_multiplier	= OMAP4430_MAX_DPLL_MULT,
+	.max_divider	= OMAP4430_MAX_DPLL_DIV,
+	.min_divider	= 1,
+};
+
+
+static struct clk dpll_unipro_ck = {
+	.name		= "dpll_unipro_ck",
+	.parent		= &sys_clkin_ck,
+	.dpll_data	= &dpll_unipro_dd,
+	.init		= &omap2_init_dpll_parent,
+	.ops		= &clkops_omap3_noncore_dpll_ops,
+	.recalc		= &omap3_dpll_recalc,
+	.round_rate	= &omap2_dpll_round_rate,
+	.set_rate	= &omap3_noncore_dpll_set_rate,
+};
+
+static struct clk dpll_unipro_x2_ck = {
+	.name		= "dpll_unipro_x2_ck",
+	.parent		= &dpll_unipro_ck,
+	.flags		= CLOCK_CLKOUTX2,
+	.ops		= &clkops_null,
+	.recalc		= &omap3_clkoutx2_recalc,
+};
+
+static const struct clksel dpll_unipro_m2x2_div[] = {
+	{ .parent = &dpll_unipro_x2_ck, .rates = div31_1to31_rates },
+	{ .parent = NULL },
+};
+
+static struct clk dpll_unipro_m2x2_ck = {
+	.name		= "dpll_unipro_m2x2_ck",
+	.parent		= &dpll_unipro_x2_ck,
+	.clksel		= dpll_unipro_m2x2_div,
+	.clksel_reg	= OMAP4430_CM_DIV_M2_DPLL_UNIPRO,
+	.clksel_mask	= OMAP4430_DPLL_CLKOUT_DIV_MASK,
+	.ops		= &clkops_omap4_dpllmx_ops,
+	.recalc		= &omap2_clksel_recalc,
+	.round_rate	= &omap2_clksel_round_rate,
+	.set_rate	= &omap2_clksel_set_rate,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct clk usb_hs_clk_div_ck = {
 	.name		= "usb_hs_clk_div_ck",
 	.parent		= &dpll_abe_m3x2_ck,
@@ -957,6 +1094,7 @@ static struct dpll_data dpll_usb_dd = {
 	.modes		= (1 << DPLL_LOW_POWER_BYPASS) | (1 << DPLL_LOCKED),
 	.autoidle_reg	= OMAP4430_CM_AUTOIDLE_DPLL_USB,
 	.idlest_reg	= OMAP4430_CM_IDLEST_DPLL_USB,
+<<<<<<< HEAD
 	.mult_mask	= OMAP4430_DPLL_MULT_USB_MASK,
 	.div1_mask	= OMAP4430_DPLL_DIV_0_7_MASK,
 	.enable_mask	= OMAP4430_DPLL_EN_MASK,
@@ -965,6 +1103,15 @@ static struct dpll_data dpll_usb_dd = {
 	.sddiv_mask	= OMAP4430_DPLL_SD_DIV_MASK,
 	.max_multiplier	= 4095,
 	.max_divider	= 256,
+=======
+	.mult_mask	= OMAP4430_DPLL_MULT_MASK,
+	.div1_mask	= OMAP4430_DPLL_DIV_MASK,
+	.enable_mask	= OMAP4430_DPLL_EN_MASK,
+	.autoidle_mask	= OMAP4430_AUTO_DPLL_MODE_MASK,
+	.idlest_mask	= OMAP4430_ST_DPLL_CLK_MASK,
+	.max_multiplier	= OMAP4430_MAX_DPLL_MULT,
+	.max_divider	= OMAP4430_MAX_DPLL_DIV,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.min_divider	= 1,
 };
 
@@ -978,14 +1125,22 @@ static struct clk dpll_usb_ck = {
 	.recalc		= &omap3_dpll_recalc,
 	.round_rate	= &omap2_dpll_round_rate,
 	.set_rate	= &omap3_noncore_dpll_set_rate,
+<<<<<<< HEAD
 	.clkdm_name	= "l3_init_clkdm",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct clk dpll_usb_clkdcoldo_ck = {
 	.name		= "dpll_usb_clkdcoldo_ck",
 	.parent		= &dpll_usb_ck,
+<<<<<<< HEAD
 	.clksel_reg	= OMAP4430_CM_CLKDCOLDO_DPLL_USB,
 	.ops		= &clkops_omap4_dpllmx_ops,
+=======
+	.ops		= &clkops_omap4_dpllmx_ops,
+	.clksel_reg	= OMAP4430_CM_CLKDCOLDO_DPLL_USB,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.recalc		= &followparent_recalc,
 };
 
@@ -1118,6 +1273,22 @@ static struct clk func_96m_fclk = {
 	.set_rate	= &omap2_clksel_set_rate,
 };
 
+<<<<<<< HEAD
+=======
+static const struct clksel hsmmc6_fclk_sel[] = {
+	{ .parent = &func_64m_fclk, .rates = div_1_0_rates },
+	{ .parent = &func_96m_fclk, .rates = div_1_1_rates },
+	{ .parent = NULL },
+};
+
+static struct clk hsmmc6_fclk = {
+	.name		= "hsmmc6_fclk",
+	.parent		= &func_64m_fclk,
+	.ops		= &clkops_null,
+	.recalc		= &followparent_recalc,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct clksel_rate div2_1to8_rates[] = {
 	{ .div = 1, .val = 0, .flags = RATE_IN_4430 },
 	{ .div = 8, .val = 1, .flags = RATE_IN_4430 },
@@ -1200,6 +1371,7 @@ static struct clk l4_wkup_clk_mux_ck = {
 	.recalc		= &omap2_clksel_recalc,
 };
 
+<<<<<<< HEAD
 static const struct clksel_rate div2_2to1_rates[] = {
 	{ .div = 1, .val = 1, .flags = RATE_IN_4430 },
 	{ .div = 2, .val = 0, .flags = RATE_IN_4430 },
@@ -1217,26 +1389,7 @@ static struct clk mpu_periphclk = {
 	.ops		= &clkops_null,
 	.fixed_div	= 2,
 	.recalc		= &omap_fixed_divisor_recalc,
-};
-
-static struct clk ocp_abe_iclk = {
-	.name		= "ocp_abe_iclk",
-	.parent		= &aess_fclk,
-	.clksel		= ocp_abe_iclk_div,
-	.clksel_reg	= OMAP4430_CM1_ABE_AESS_CLKCTRL,
-	.clksel_mask	= OMAP4430_CLKSEL_AESS_FCLK_MASK,
-	.ops		= &clkops_null,
-	.recalc		= &omap2_clksel_recalc,
-};
-
-static struct clk per_abe_24m_fclk = {
-	.name		= "per_abe_24m_fclk",
-	.parent		= &dpll_abe_m2_ck,
-	.ops		= &clkops_null,
-	.fixed_div	= 4,
-	.recalc		= &omap_fixed_divisor_recalc,
-};
-
+=======
 static const struct clksel per_abe_nc_fclk_div[] = {
 	{ .parent = &dpll_abe_m2_ck, .rates = div2_1to2_rates },
 	{ .parent = NULL },
@@ -1254,6 +1407,70 @@ static struct clk per_abe_nc_fclk = {
 	.set_rate	= &omap2_clksel_set_rate,
 };
 
+static const struct clksel mcasp2_fclk_sel[] = {
+	{ .parent = &func_96m_fclk, .rates = div_1_0_rates },
+	{ .parent = &per_abe_nc_fclk, .rates = div_1_1_rates },
+	{ .parent = NULL },
+};
+
+static struct clk mcasp2_fclk = {
+	.name		= "mcasp2_fclk",
+	.parent		= &func_96m_fclk,
+	.ops		= &clkops_null,
+	.recalc		= &followparent_recalc,
+};
+
+static struct clk mcasp3_fclk = {
+	.name		= "mcasp3_fclk",
+	.parent		= &func_96m_fclk,
+	.ops		= &clkops_null,
+	.recalc		= &followparent_recalc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+};
+
+static struct clk ocp_abe_iclk = {
+	.name		= "ocp_abe_iclk",
+	.parent		= &aess_fclk,
+<<<<<<< HEAD
+	.clksel		= ocp_abe_iclk_div,
+	.clksel_reg	= OMAP4430_CM1_ABE_AESS_CLKCTRL,
+	.clksel_mask	= OMAP4430_CLKSEL_AESS_FCLK_MASK,
+	.ops		= &clkops_null,
+	.recalc		= &omap2_clksel_recalc,
+=======
+	.ops		= &clkops_null,
+	.recalc		= &followparent_recalc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+};
+
+static struct clk per_abe_24m_fclk = {
+	.name		= "per_abe_24m_fclk",
+	.parent		= &dpll_abe_m2_ck,
+	.ops		= &clkops_null,
+	.fixed_div	= 4,
+	.recalc		= &omap_fixed_divisor_recalc,
+};
+
+<<<<<<< HEAD
+static const struct clksel per_abe_nc_fclk_div[] = {
+	{ .parent = &dpll_abe_m2_ck, .rates = div2_1to2_rates },
+	{ .parent = NULL },
+};
+
+static struct clk per_abe_nc_fclk = {
+	.name		= "per_abe_nc_fclk",
+	.parent		= &dpll_abe_m2_ck,
+	.clksel		= per_abe_nc_fclk_div,
+	.clksel_reg	= OMAP4430_CM_SCALE_FCLK,
+	.clksel_mask	= OMAP4430_SCALE_FCLK_MASK,
+	.ops		= &clkops_null,
+	.recalc		= &omap2_clksel_recalc,
+	.round_rate	= &omap2_clksel_round_rate,
+	.set_rate	= &omap2_clksel_set_rate,
+};
+
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct clksel pmd_stm_clock_mux_sel[] = {
 	{ .parent = &sys_clkin_ck, .rates = div_1_0_rates },
 	{ .parent = &dpll_core_m6x2_ck, .rates = div_1_1_rates },
@@ -1424,6 +1641,7 @@ static struct clk dss_dss_clk = {
 	.recalc		= &followparent_recalc,
 };
 
+<<<<<<< HEAD
 static const struct clksel_rate div3_8to32_rates[] = {
 	{ .div = 8, .val = 0, .flags = RATE_IN_4460 },
 	{ .div = 16, .val = 1, .flags = RATE_IN_4460 },
@@ -1458,6 +1676,8 @@ static struct clk bandgap_ts_fclk = {
 	.recalc		= &followparent_recalc,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct clk dss_48mhz_clk = {
 	.name		= "dss_48mhz_clk",
 	.ops		= &clkops_omap2_dflt,
@@ -1666,7 +1886,10 @@ static struct clk gpmc_ick = {
 	.ops		= &clkops_omap2_dflt,
 	.enable_reg	= OMAP4430_CM_L3_2_GPMC_CLKCTRL,
 	.enable_bit	= OMAP4430_MODULEMODE_HWCTRL,
+<<<<<<< HEAD
 	.flags		= ENABLE_ON_INIT,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.clkdm_name	= "l3_2_clkdm",
 	.parent		= &l3_div_ck,
 	.recalc		= &followparent_recalc,
@@ -1819,8 +2042,13 @@ static struct clk l3_instr_ick = {
 	.ops		= &clkops_omap2_dflt,
 	.enable_reg	= OMAP4430_CM_L3INSTR_L3_INSTR_CLKCTRL,
 	.enable_bit	= OMAP4430_MODULEMODE_HWCTRL,
+<<<<<<< HEAD
 	.flags		= ENABLE_ON_INIT,
 	.clkdm_name	= "l3_instr_clkdm",
+=======
+	.clkdm_name	= "l3_instr_clkdm",
+	.flags		= ENABLE_ON_INIT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.parent		= &l3_div_ck,
 	.recalc		= &followparent_recalc,
 };
@@ -1830,8 +2058,13 @@ static struct clk l3_main_3_ick = {
 	.ops		= &clkops_omap2_dflt,
 	.enable_reg	= OMAP4430_CM_L3INSTR_L3_3_CLKCTRL,
 	.enable_bit	= OMAP4430_MODULEMODE_HWCTRL,
+<<<<<<< HEAD
 	.flags		= ENABLE_ON_INIT,
 	.clkdm_name	= "l3_instr_clkdm",
+=======
+	.clkdm_name	= "l3_instr_clkdm",
+	.flags		= ENABLE_ON_INIT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.parent		= &l3_div_ck,
 	.recalc		= &followparent_recalc,
 };
@@ -1968,6 +2201,7 @@ static struct clk mcbsp3_fck = {
 	.clkdm_name	= "abe_clkdm",
 };
 
+<<<<<<< HEAD
 static const struct clksel mcbsp4_sync_mux_sel[] = {
 	{ .parent = &func_96m_fclk, .rates = div_1_0_rates },
 	{ .parent = &per_abe_nc_fclk, .rates = div_1_1_rates },
@@ -1978,6 +2212,12 @@ static struct clk mcbsp4_sync_mux_ck = {
 	.name		= "mcbsp4_sync_mux_ck",
 	.parent		= &func_96m_fclk,
 	.clksel		= mcbsp4_sync_mux_sel,
+=======
+static struct clk mcbsp4_sync_mux_ck = {
+	.name		= "mcbsp4_sync_mux_ck",
+	.parent		= &func_96m_fclk,
+	.clksel		= mcasp2_fclk_sel,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init		= &omap2_init_clksel_parent,
 	.clksel_reg	= OMAP4430_CM_L4PER_MCBSP4_CLKCTRL,
 	.clksel_mask	= OMAP4430_CLKSEL_INTERNAL_SOURCE_MASK,
@@ -2056,17 +2296,24 @@ static struct clk mcspi4_fck = {
 	.recalc		= &followparent_recalc,
 };
 
+<<<<<<< HEAD
 static const struct clksel hsmmc1_fclk_sel[] = {
 	{ .parent = &func_64m_fclk, .rates = div_1_0_rates },
 	{ .parent = &func_96m_fclk, .rates = div_1_1_rates },
 	{ .parent = NULL },
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Merged hsmmc1_fclk into mmc1 */
 static struct clk mmc1_fck = {
 	.name		= "mmc1_fck",
 	.parent		= &func_64m_fclk,
+<<<<<<< HEAD
 	.clksel		= hsmmc1_fclk_sel,
+=======
+	.clksel		= hsmmc6_fclk_sel,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init		= &omap2_init_clksel_parent,
 	.clksel_reg	= OMAP4430_CM_L3INIT_MMC1_CLKCTRL,
 	.clksel_mask	= OMAP4430_CLKSEL_MASK,
@@ -2081,7 +2328,11 @@ static struct clk mmc1_fck = {
 static struct clk mmc2_fck = {
 	.name		= "mmc2_fck",
 	.parent		= &func_64m_fclk,
+<<<<<<< HEAD
 	.clksel		= hsmmc1_fclk_sel,
+=======
+	.clksel		= hsmmc6_fclk_sel,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init		= &omap2_init_clksel_parent,
 	.clksel_reg	= OMAP4430_CM_L3INIT_MMC2_CLKCTRL,
 	.clksel_mask	= OMAP4430_CLKSEL_MASK,
@@ -2147,8 +2398,13 @@ static struct clk ocp_wp_noc_ick = {
 	.ops		= &clkops_omap2_dflt,
 	.enable_reg	= OMAP4430_CM_L3INSTR_OCP_WP1_CLKCTRL,
 	.enable_bit	= OMAP4430_MODULEMODE_HWCTRL,
+<<<<<<< HEAD
 	.flags		= ENABLE_ON_INIT,
 	.clkdm_name	= "l3_instr_clkdm",
+=======
+	.clkdm_name	= "l3_instr_clkdm",
+	.flags		= ENABLE_ON_INIT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.parent		= &l3_div_ck,
 	.recalc		= &followparent_recalc,
 };
@@ -2835,13 +3091,18 @@ static struct clk trace_clk_div_ck = {
 
 /* SCRM aux clk nodes */
 
+<<<<<<< HEAD
 static const struct clksel auxclk_src_sel[] = {
+=======
+static const struct clksel auxclk_sel[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ .parent = &sys_clkin_ck, .rates = div_1_0_rates },
 	{ .parent = &dpll_core_m3x2_ck, .rates = div_1_1_rates },
 	{ .parent = &dpll_per_m3x2_ck, .rates = div_1_2_rates },
 	{ .parent = NULL },
 };
 
+<<<<<<< HEAD
 static const struct clksel_rate div16_1to16_rates[] = {
 	{ .div = 1, .val = 0, .flags = RATE_IN_4430 },
 	{ .div = 2, .val = 1, .flags = RATE_IN_4430 },
@@ -2868,6 +3129,14 @@ static struct clk auxclk0_src_ck = {
 	.init		= &omap2_init_clksel_parent,
 	.ops		= &clkops_omap2_dflt,
 	.clksel		= auxclk_src_sel,
+=======
+static struct clk auxclk0_ck = {
+	.name		= "auxclk0_ck",
+	.parent		= &sys_clkin_ck,
+	.init		= &omap2_init_clksel_parent,
+	.ops		= &clkops_omap2_dflt,
+	.clksel		= auxclk_sel,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.clksel_reg	= OMAP4_SCRM_AUXCLK0,
 	.clksel_mask	= OMAP4_SRCSELECT_MASK,
 	.recalc		= &omap2_clksel_recalc,
@@ -2875,6 +3144,7 @@ static struct clk auxclk0_src_ck = {
 	.enable_bit	= OMAP4_ENABLE_SHIFT,
 };
 
+<<<<<<< HEAD
 static const struct clksel auxclk0_sel[] = {
 	{ .parent = &auxclk0_src_ck, .rates = div16_1to16_rates },
 	{ .parent = NULL },
@@ -2898,6 +3168,14 @@ static struct clk auxclk1_src_ck = {
 	.init		= &omap2_init_clksel_parent,
 	.ops		= &clkops_omap2_dflt,
 	.clksel		= auxclk_src_sel,
+=======
+static struct clk auxclk1_ck = {
+	.name		= "auxclk1_ck",
+	.parent		= &sys_clkin_ck,
+	.init		= &omap2_init_clksel_parent,
+	.ops		= &clkops_omap2_dflt,
+	.clksel		= auxclk_sel,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.clksel_reg	= OMAP4_SCRM_AUXCLK1,
 	.clksel_mask	= OMAP4_SRCSELECT_MASK,
 	.recalc		= &omap2_clksel_recalc,
@@ -2905,6 +3183,7 @@ static struct clk auxclk1_src_ck = {
 	.enable_bit	= OMAP4_ENABLE_SHIFT,
 };
 
+<<<<<<< HEAD
 static const struct clksel auxclk1_sel[] = {
 	{ .parent = &auxclk1_src_ck, .rates = div16_1to16_rates },
 	{ .parent = NULL },
@@ -2928,12 +3207,21 @@ static struct clk auxclk2_src_ck = {
 	.init		= &omap2_init_clksel_parent,
 	.ops		= &clkops_omap2_dflt,
 	.clksel		= auxclk_src_sel,
+=======
+static struct clk auxclk2_ck = {
+	.name		= "auxclk2_ck",
+	.parent		= &sys_clkin_ck,
+	.init		= &omap2_init_clksel_parent,
+	.ops		= &clkops_omap2_dflt,
+	.clksel		= auxclk_sel,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.clksel_reg	= OMAP4_SCRM_AUXCLK2,
 	.clksel_mask	= OMAP4_SRCSELECT_MASK,
 	.recalc		= &omap2_clksel_recalc,
 	.enable_reg	= OMAP4_SCRM_AUXCLK2,
 	.enable_bit	= OMAP4_ENABLE_SHIFT,
 };
+<<<<<<< HEAD
 
 static const struct clksel auxclk2_sel[] = {
 	{ .parent = &auxclk2_src_ck, .rates = div16_1to16_rates },
@@ -2958,6 +3246,14 @@ static struct clk auxclk3_src_ck = {
 	.init		= &omap2_init_clksel_parent,
 	.ops		= &clkops_omap2_dflt,
 	.clksel		= auxclk_src_sel,
+=======
+static struct clk auxclk3_ck = {
+	.name		= "auxclk3_ck",
+	.parent		= &sys_clkin_ck,
+	.init		= &omap2_init_clksel_parent,
+	.ops		= &clkops_omap2_dflt,
+	.clksel		= auxclk_sel,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.clksel_reg	= OMAP4_SCRM_AUXCLK3,
 	.clksel_mask	= OMAP4_SRCSELECT_MASK,
 	.recalc		= &omap2_clksel_recalc,
@@ -2965,6 +3261,7 @@ static struct clk auxclk3_src_ck = {
 	.enable_bit	= OMAP4_ENABLE_SHIFT,
 };
 
+<<<<<<< HEAD
 static const struct clksel auxclk3_sel[] = {
 	{ .parent = &auxclk3_src_ck, .rates = div16_1to16_rates },
 	{ .parent = NULL },
@@ -2988,6 +3285,14 @@ static struct clk auxclk4_src_ck = {
 	.init		= &omap2_init_clksel_parent,
 	.ops		= &clkops_omap2_dflt,
 	.clksel		= auxclk_src_sel,
+=======
+static struct clk auxclk4_ck = {
+	.name		= "auxclk4_ck",
+	.parent		= &sys_clkin_ck,
+	.init		= &omap2_init_clksel_parent,
+	.ops		= &clkops_omap2_dflt,
+	.clksel		= auxclk_sel,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.clksel_reg	= OMAP4_SCRM_AUXCLK4,
 	.clksel_mask	= OMAP4_SRCSELECT_MASK,
 	.recalc		= &omap2_clksel_recalc,
@@ -2995,6 +3300,7 @@ static struct clk auxclk4_src_ck = {
 	.enable_bit	= OMAP4_ENABLE_SHIFT,
 };
 
+<<<<<<< HEAD
 static const struct clksel auxclk4_sel[] = {
 	{ .parent = &auxclk4_src_ck, .rates = div16_1to16_rates },
 	{ .parent = NULL },
@@ -3018,6 +3324,14 @@ static struct clk auxclk5_src_ck = {
 	.init		= &omap2_init_clksel_parent,
 	.ops		= &clkops_omap2_dflt,
 	.clksel		= auxclk_src_sel,
+=======
+static struct clk auxclk5_ck = {
+	.name		= "auxclk5_ck",
+	.parent		= &sys_clkin_ck,
+	.init		= &omap2_init_clksel_parent,
+	.ops		= &clkops_omap2_dflt,
+	.clksel		= auxclk_sel,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.clksel_reg	= OMAP4_SCRM_AUXCLK5,
 	.clksel_mask	= OMAP4_SRCSELECT_MASK,
 	.recalc		= &omap2_clksel_recalc,
@@ -3025,6 +3339,7 @@ static struct clk auxclk5_src_ck = {
 	.enable_bit	= OMAP4_ENABLE_SHIFT,
 };
 
+<<<<<<< HEAD
 static const struct clksel auxclk5_sel[] = {
 	{ .parent = &auxclk5_src_ck, .rates = div16_1to16_rates },
 	{ .parent = NULL },
@@ -3042,6 +3357,8 @@ static struct clk auxclk5_ck = {
 	.set_rate	= &omap2_clksel_set_rate,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct clksel auxclkreq_sel[] = {
 	{ .parent = &auxclk0_ck, .rates = div_1_0_rates },
 	{ .parent = &auxclk1_ck, .rates = div_1_1_rates },
@@ -3185,6 +3502,12 @@ static struct omap_clk omap44xx_clks[] = {
 	CLK(NULL,	"dpll_per_m5x2_ck",		&dpll_per_m5x2_ck,	CK_443X),
 	CLK(NULL,	"dpll_per_m6x2_ck",		&dpll_per_m6x2_ck,	CK_443X),
 	CLK(NULL,	"dpll_per_m7x2_ck",		&dpll_per_m7x2_ck,	CK_443X),
+<<<<<<< HEAD
+=======
+	CLK(NULL,	"dpll_unipro_ck",		&dpll_unipro_ck,	CK_443X),
+	CLK(NULL,	"dpll_unipro_x2_ck",		&dpll_unipro_x2_ck,	CK_443X),
+	CLK(NULL,	"dpll_unipro_m2x2_ck",		&dpll_unipro_m2x2_ck,	CK_443X),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CLK(NULL,	"usb_hs_clk_div_ck",		&usb_hs_clk_div_ck,	CK_443X),
 	CLK(NULL,	"dpll_usb_ck",			&dpll_usb_ck,	CK_443X),
 	CLK(NULL,	"dpll_usb_clkdcoldo_ck",	&dpll_usb_clkdcoldo_ck,	CK_443X),
@@ -3197,15 +3520,27 @@ static struct omap_clk omap44xx_clks[] = {
 	CLK(NULL,	"func_48mc_fclk",		&func_48mc_fclk,	CK_443X),
 	CLK(NULL,	"func_64m_fclk",		&func_64m_fclk,	CK_443X),
 	CLK(NULL,	"func_96m_fclk",		&func_96m_fclk,	CK_443X),
+<<<<<<< HEAD
+=======
+	CLK(NULL,	"hsmmc6_fclk",			&hsmmc6_fclk,	CK_443X),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CLK(NULL,	"init_60m_fclk",		&init_60m_fclk,	CK_443X),
 	CLK(NULL,	"l3_div_ck",			&l3_div_ck,	CK_443X),
 	CLK(NULL,	"l4_div_ck",			&l4_div_ck,	CK_443X),
 	CLK(NULL,	"lp_clk_div_ck",		&lp_clk_div_ck,	CK_443X),
 	CLK(NULL,	"l4_wkup_clk_mux_ck",		&l4_wkup_clk_mux_ck,	CK_443X),
+<<<<<<< HEAD
 	CLK("smp_twd",	NULL,				&mpu_periphclk,	CK_443X),
 	CLK(NULL,	"ocp_abe_iclk",			&ocp_abe_iclk,	CK_443X),
 	CLK(NULL,	"per_abe_24m_fclk",		&per_abe_24m_fclk,	CK_443X),
 	CLK(NULL,	"per_abe_nc_fclk",		&per_abe_nc_fclk,	CK_443X),
+=======
+	CLK(NULL,	"per_abe_nc_fclk",		&per_abe_nc_fclk,	CK_443X),
+	CLK(NULL,	"mcasp2_fclk",			&mcasp2_fclk,	CK_443X),
+	CLK(NULL,	"mcasp3_fclk",			&mcasp3_fclk,	CK_443X),
+	CLK(NULL,	"ocp_abe_iclk",			&ocp_abe_iclk,	CK_443X),
+	CLK(NULL,	"per_abe_24m_fclk",		&per_abe_24m_fclk,	CK_443X),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CLK(NULL,	"pmd_stm_clock_mux_ck",		&pmd_stm_clock_mux_ck,	CK_443X),
 	CLK(NULL,	"pmd_trace_clk_mux_ck",		&pmd_trace_clk_mux_ck,	CK_443X),
 	CLK(NULL,	"syc_clk_div_ck",		&syc_clk_div_ck,	CK_443X),
@@ -3213,6 +3548,7 @@ static struct omap_clk omap44xx_clks[] = {
 	CLK(NULL,	"aes2_fck",			&aes2_fck,	CK_443X),
 	CLK(NULL,	"aess_fck",			&aess_fck,	CK_443X),
 	CLK(NULL,	"bandgap_fclk",			&bandgap_fclk,	CK_443X),
+<<<<<<< HEAD
 	CLK(NULL,	"bandgap_ts_fclk",		&bandgap_ts_fclk,	CK_446X),
 	CLK(NULL,	"des3des_fck",			&des3des_fck,	CK_443X),
 	CLK(NULL,	"div_ts_ck",			&div_ts_ck,	CK_446X),
@@ -3223,6 +3559,16 @@ static struct omap_clk omap44xx_clks[] = {
 	CLK(NULL,	"dss_tv_clk",			&dss_tv_clk,	CK_443X),
 	CLK(NULL,	"dss_48mhz_clk",		&dss_48mhz_clk,	CK_443X),
 	CLK(NULL,	"dss_dss_clk",			&dss_dss_clk,	CK_443X),
+=======
+	CLK(NULL,	"des3des_fck",			&des3des_fck,	CK_443X),
+	CLK(NULL,	"dmic_sync_mux_ck",		&dmic_sync_mux_ck,	CK_443X),
+	CLK(NULL,	"dmic_fck",			&dmic_fck,	CK_443X),
+	CLK(NULL,	"dsp_fck",			&dsp_fck,	CK_443X),
+	CLK("omapdss_dss",	"sys_clk",			&dss_sys_clk,	CK_443X),
+	CLK("omapdss_dss",	"tv_clk",			&dss_tv_clk,	CK_443X),
+	CLK("omapdss_dss",	"video_clk",			&dss_48mhz_clk,	CK_443X),
+	CLK("omapdss_dss",	"fck",				&dss_dss_clk,	CK_443X),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CLK("omapdss_dss",	"ick",				&dss_fck,	CK_443X),
 	CLK(NULL,	"efuse_ctrl_cust_fck",		&efuse_ctrl_cust_fck,	CK_443X),
 	CLK(NULL,	"emif1_fck",			&emif1_fck,	CK_443X),
@@ -3243,12 +3589,21 @@ static struct omap_clk omap44xx_clks[] = {
 	CLK(NULL,	"gpio6_ick",			&gpio6_ick,	CK_443X),
 	CLK(NULL,	"gpmc_ick",			&gpmc_ick,	CK_443X),
 	CLK(NULL,	"gpu_fck",			&gpu_fck,	CK_443X),
+<<<<<<< HEAD
 	CLK(NULL,	"hdq1w_fck",			&hdq1w_fck,	CK_443X),
 	CLK(NULL,	"hsi_fck",			&hsi_fck,	CK_443X),
 	CLK(NULL,	"i2c1_fck",			&i2c1_fck,	CK_443X),
 	CLK(NULL,	"i2c2_fck",			&i2c2_fck,	CK_443X),
 	CLK(NULL,	"i2c3_fck",			&i2c3_fck,	CK_443X),
 	CLK(NULL,	"i2c4_fck",			&i2c4_fck,	CK_443X),
+=======
+	CLK("omap2_hdq.0",	"fck",				&hdq1w_fck,	CK_443X),
+	CLK(NULL,	"hsi_fck",			&hsi_fck,	CK_443X),
+	CLK("omap_i2c.1",	"fck",				&i2c1_fck,	CK_443X),
+	CLK("omap_i2c.2",	"fck",				&i2c2_fck,	CK_443X),
+	CLK("omap_i2c.3",	"fck",				&i2c3_fck,	CK_443X),
+	CLK("omap_i2c.4",	"fck",				&i2c4_fck,	CK_443X),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CLK(NULL,	"ipu_fck",			&ipu_fck,	CK_443X),
 	CLK(NULL,	"iss_ctrlclk",			&iss_ctrlclk,	CK_443X),
 	CLK(NULL,	"iss_fck",			&iss_fck,	CK_443X),
@@ -3259,6 +3614,7 @@ static struct omap_clk omap44xx_clks[] = {
 	CLK(NULL,	"mcasp_sync_mux_ck",		&mcasp_sync_mux_ck,	CK_443X),
 	CLK(NULL,	"mcasp_fck",			&mcasp_fck,	CK_443X),
 	CLK(NULL,	"mcbsp1_sync_mux_ck",		&mcbsp1_sync_mux_ck,	CK_443X),
+<<<<<<< HEAD
 	CLK(NULL,	"mcbsp1_fck",			&mcbsp1_fck,	CK_443X),
 	CLK(NULL,	"mcbsp2_sync_mux_ck",		&mcbsp2_sync_mux_ck,	CK_443X),
 	CLK(NULL,	"mcbsp2_fck",			&mcbsp2_fck,	CK_443X),
@@ -3276,6 +3632,25 @@ static struct omap_clk omap44xx_clks[] = {
 	CLK(NULL,	"mmc3_fck",			&mmc3_fck,	CK_443X),
 	CLK(NULL,	"mmc4_fck",			&mmc4_fck,	CK_443X),
 	CLK(NULL,	"mmc5_fck",			&mmc5_fck,	CK_443X),
+=======
+	CLK("omap-mcbsp.1",	"fck",				&mcbsp1_fck,	CK_443X),
+	CLK(NULL,	"mcbsp2_sync_mux_ck",		&mcbsp2_sync_mux_ck,	CK_443X),
+	CLK("omap-mcbsp.2",	"fck",				&mcbsp2_fck,	CK_443X),
+	CLK(NULL,	"mcbsp3_sync_mux_ck",		&mcbsp3_sync_mux_ck,	CK_443X),
+	CLK("omap-mcbsp.3",	"fck",				&mcbsp3_fck,	CK_443X),
+	CLK(NULL,	"mcbsp4_sync_mux_ck",		&mcbsp4_sync_mux_ck,	CK_443X),
+	CLK("omap-mcbsp.4",	"fck",				&mcbsp4_fck,	CK_443X),
+	CLK(NULL,	"mcpdm_fck",			&mcpdm_fck,	CK_443X),
+	CLK("omap2_mcspi.1",	"fck",				&mcspi1_fck,	CK_443X),
+	CLK("omap2_mcspi.2",	"fck",				&mcspi2_fck,	CK_443X),
+	CLK("omap2_mcspi.3",	"fck",				&mcspi3_fck,	CK_443X),
+	CLK("omap2_mcspi.4",	"fck",				&mcspi4_fck,	CK_443X),
+	CLK("omap_hsmmc.0",	"fck",				&mmc1_fck,	CK_443X),
+	CLK("omap_hsmmc.1",	"fck",				&mmc2_fck,	CK_443X),
+	CLK("omap_hsmmc.2",	"fck",				&mmc3_fck,	CK_443X),
+	CLK("omap_hsmmc.3",	"fck",				&mmc4_fck,	CK_443X),
+	CLK("omap_hsmmc.4",	"fck",				&mmc5_fck,	CK_443X),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CLK(NULL,	"ocp2scp_usb_phy_phy_48m",	&ocp2scp_usb_phy_phy_48m,	CK_443X),
 	CLK(NULL,	"ocp2scp_usb_phy_ick",		&ocp2scp_usb_phy_ick,	CK_443X),
 	CLK(NULL,	"ocp_wp_noc_ick",		&ocp_wp_noc_ick,	CK_443X),
@@ -3309,7 +3684,12 @@ static struct omap_clk omap44xx_clks[] = {
 	CLK(NULL,	"uart2_fck",			&uart2_fck,	CK_443X),
 	CLK(NULL,	"uart3_fck",			&uart3_fck,	CK_443X),
 	CLK(NULL,	"uart4_fck",			&uart4_fck,	CK_443X),
+<<<<<<< HEAD
 	CLK("usbhs_omap",	"fs_fck",		&usb_host_fs_fck,	CK_443X),
+=======
+	CLK(NULL,	"usb_host_fs_fck",		&usb_host_fs_fck,	CK_443X),
+	CLK("usbhs-omap.0",	"fs_fck",		&usb_host_fs_fck,	CK_443X),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CLK(NULL,	"utmi_p1_gfclk",		&utmi_p1_gfclk,	CK_443X),
 	CLK(NULL,	"usb_host_hs_utmi_p1_clk",	&usb_host_hs_utmi_p1_clk,	CK_443X),
 	CLK(NULL,	"utmi_p2_gfclk",		&utmi_p2_gfclk,	CK_443X),
@@ -3320,7 +3700,13 @@ static struct omap_clk omap44xx_clks[] = {
 	CLK(NULL,	"usb_host_hs_hsic60m_p2_clk",	&usb_host_hs_hsic60m_p2_clk,	CK_443X),
 	CLK(NULL,	"usb_host_hs_hsic480m_p2_clk",	&usb_host_hs_hsic480m_p2_clk,	CK_443X),
 	CLK(NULL,	"usb_host_hs_func48mclk",	&usb_host_hs_func48mclk,	CK_443X),
+<<<<<<< HEAD
 	CLK("usbhs_omap",	"hs_fck",		&usb_host_hs_fck,	CK_443X),
+=======
+	CLK(NULL,	"usb_host_hs_fck",		&usb_host_hs_fck,	CK_443X),
+	CLK("usbhs-omap.0",	"hs_fck",		&usb_host_hs_fck,	CK_443X),
+	CLK("usbhs-omap.0",	"usbhost_ick",		&dummy_ck,		CK_443X),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CLK(NULL,	"otg_60m_gfclk",		&otg_60m_gfclk,	CK_443X),
 	CLK(NULL,	"usb_otg_hs_xclk",		&usb_otg_hs_xclk,	CK_443X),
 	CLK("musb-omap2430",	"ick",				&usb_otg_hs_ick,	CK_443X),
@@ -3328,6 +3714,7 @@ static struct omap_clk omap44xx_clks[] = {
 	CLK(NULL,	"usb_tll_hs_usb_ch2_clk",	&usb_tll_hs_usb_ch2_clk,	CK_443X),
 	CLK(NULL,	"usb_tll_hs_usb_ch0_clk",	&usb_tll_hs_usb_ch0_clk,	CK_443X),
 	CLK(NULL,	"usb_tll_hs_usb_ch1_clk",	&usb_tll_hs_usb_ch1_clk,	CK_443X),
+<<<<<<< HEAD
 	CLK("usbhs_omap",	"usbtll_ick",		&usb_tll_hs_ick,	CK_443X),
 	CLK(NULL,	"usim_ck",			&usim_ck,	CK_443X),
 	CLK(NULL,	"usim_fclk",			&usim_fclk,	CK_443X),
@@ -3354,6 +3741,19 @@ static struct omap_clk omap44xx_clks[] = {
 	CLK(NULL,	"auxclk5_src_ck",		&auxclk5_src_ck,	CK_443X),
 	CLK(NULL,	"auxclk5_ck",			&auxclk5_ck,	CK_443X),
 	CLK(NULL,	"auxclkreq5_ck",		&auxclkreq5_ck,	CK_443X),
+=======
+	CLK(NULL,	"usb_tll_hs_ick",		&usb_tll_hs_ick,	CK_443X),
+	CLK("usbhs-omap.0",	"usbtll_ick",		&usb_tll_hs_ick,	CK_443X),
+	CLK("usbhs-omap.0",	"usbtll_fck",		&dummy_ck,	CK_443X),
+	CLK(NULL,	"usim_ck",			&usim_ck,	CK_443X),
+	CLK(NULL,	"usim_fclk",			&usim_fclk,	CK_443X),
+	CLK(NULL,	"usim_fck",			&usim_fck,	CK_443X),
+	CLK("omap_wdt",	"fck",				&wd_timer2_fck,	CK_443X),
+	CLK(NULL,	"mailboxes_ick",		&dummy_ck,	CK_443X),
+	CLK(NULL,	"wd_timer3_fck",		&wd_timer3_fck,	CK_443X),
+	CLK(NULL,	"stm_clk_div_ck",		&stm_clk_div_ck,	CK_443X),
+	CLK(NULL,	"trace_clk_div_ck",		&trace_clk_div_ck,	CK_443X),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CLK(NULL,	"gpmc_ck",			&dummy_ck,	CK_443X),
 	CLK(NULL,	"gpt1_ick",			&dummy_ck,	CK_443X),
 	CLK(NULL,	"gpt2_ick",			&dummy_ck,	CK_443X),
@@ -3370,7 +3770,10 @@ static struct omap_clk omap44xx_clks[] = {
 	CLK("omap_i2c.2",	"ick",				&dummy_ck,	CK_443X),
 	CLK("omap_i2c.3",	"ick",				&dummy_ck,	CK_443X),
 	CLK("omap_i2c.4",	"ick",				&dummy_ck,	CK_443X),
+<<<<<<< HEAD
 	CLK(NULL,	"mailboxes_ick",		&dummy_ck,	CK_443X),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CLK("omap_hsmmc.0",	"ick",				&dummy_ck,	CK_443X),
 	CLK("omap_hsmmc.1",	"ick",				&dummy_ck,	CK_443X),
 	CLK("omap_hsmmc.2",	"ick",				&dummy_ck,	CK_443X),
@@ -3388,6 +3791,7 @@ static struct omap_clk omap44xx_clks[] = {
 	CLK(NULL,	"uart2_ick",			&dummy_ck,	CK_443X),
 	CLK(NULL,	"uart3_ick",			&dummy_ck,	CK_443X),
 	CLK(NULL,	"uart4_ick",			&dummy_ck,	CK_443X),
+<<<<<<< HEAD
 	CLK("usbhs_omap",	"usbhost_ick",		&dummy_ck,		CK_443X),
 	CLK("usbhs_omap",	"usbtll_fck",		&dummy_ck,	CK_443X),
 	CLK("omap_wdt",	"ick",				&dummy_ck,	CK_443X),
@@ -3413,6 +3817,21 @@ static struct omap_clk omap44xx_clks[] = {
 	CLK("omap_timer.6",	"sys_ck",	&syc_clk_div_ck,	CK_443X),
 	CLK("omap_timer.7",	"sys_ck",	&syc_clk_div_ck,	CK_443X),
 	CLK("omap_timer.8",	"sys_ck",	&syc_clk_div_ck,	CK_443X),
+=======
+	CLK("omap_wdt",	"ick",				&dummy_ck,	CK_443X),
+	CLK(NULL,	"auxclk0_ck",			&auxclk0_ck,	CK_443X),
+	CLK(NULL,	"auxclk1_ck",			&auxclk1_ck,	CK_443X),
+	CLK(NULL,	"auxclk2_ck",			&auxclk2_ck,	CK_443X),
+	CLK(NULL,	"auxclk3_ck",			&auxclk3_ck,	CK_443X),
+	CLK(NULL,	"auxclk4_ck",			&auxclk4_ck,	CK_443X),
+	CLK(NULL,	"auxclk5_ck",			&auxclk5_ck,	CK_443X),
+	CLK(NULL,	"auxclkreq0_ck",		&auxclkreq0_ck,	CK_443X),
+	CLK(NULL,	"auxclkreq1_ck",		&auxclkreq1_ck,	CK_443X),
+	CLK(NULL,	"auxclkreq2_ck",		&auxclkreq2_ck,	CK_443X),
+	CLK(NULL,	"auxclkreq3_ck",		&auxclkreq3_ck,	CK_443X),
+	CLK(NULL,	"auxclkreq4_ck",		&auxclkreq4_ck,	CK_443X),
+	CLK(NULL,	"auxclkreq5_ck",		&auxclkreq5_ck,	CK_443X),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int __init omap4xxx_clk_init(void)
@@ -3420,6 +3839,7 @@ int __init omap4xxx_clk_init(void)
 	struct omap_clk *c;
 	u32 cpu_clkflg;
 
+<<<<<<< HEAD
 	if (cpu_is_omap443x()) {
 		cpu_mask = RATE_IN_4430;
 		cpu_clkflg = CK_443X;
@@ -3428,10 +3848,16 @@ int __init omap4xxx_clk_init(void)
 		cpu_clkflg = CK_446X | CK_443X;
 	} else {
 		return 0;
+=======
+	if (cpu_is_omap44xx()) {
+		cpu_mask = RATE_IN_4430;
+		cpu_clkflg = CK_443X;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	clk_init(&omap2_clk_functions);
 
+<<<<<<< HEAD
 	/*
 	 * Must stay commented until all OMAP SoC drivers are
 	 * converted to runtime PM, or drivers may start crashing
@@ -3439,6 +3865,8 @@ int __init omap4xxx_clk_init(void)
 	 * omap2_clk_disable_clkdm_control();
 	 */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (c = omap44xx_clks; c < omap44xx_clks + ARRAY_SIZE(omap44xx_clks);
 									  c++)
 		clk_preinit(c->lk.clk);

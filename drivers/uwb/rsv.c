@@ -19,7 +19,10 @@
 #include <linux/uwb.h>
 #include <linux/slab.h>
 #include <linux/random.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "uwb-internal.h"
 

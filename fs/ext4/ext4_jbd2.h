@@ -104,6 +104,7 @@
 #define EXT4_MAXQUOTAS_INIT_BLOCKS(sb) (MAXQUOTAS*EXT4_QUOTA_INIT_BLOCKS(sb))
 #define EXT4_MAXQUOTAS_DEL_BLOCKS(sb) (MAXQUOTAS*EXT4_QUOTA_DEL_BLOCKS(sb))
 
+<<<<<<< HEAD
 /**
  *   struct ext4_journal_cb_entry - Base structure for callback information.
  *
@@ -180,6 +181,8 @@ static inline bool ext4_journal_callback_try_del(handle_t *handle,
 	return deleted;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int
 ext4_mark_iloc_dirty(handle_t *handle,
 		     struct inode *inode,
@@ -316,8 +319,20 @@ static inline int ext4_journal_force_commit(journal_t *journal)
 
 static inline int ext4_jbd2_file_inode(handle_t *handle, struct inode *inode)
 {
+<<<<<<< HEAD
 	if (ext4_handle_valid(handle))
 		return jbd2_journal_file_inode(handle, EXT4_I(inode)->jinode);
+=======
+	if (ext4_handle_valid(handle)) {
+		if (unlikely(EXT4_I(inode)->jinode == NULL)) {
+			/* Should never happen */
+			WARN(true, "inode #%lu has NULL jinode\n",
+				inode->i_ino);
+			return 0;
+		}
+		return jbd2_journal_file_inode(handle, EXT4_I(inode)->jinode);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

@@ -39,7 +39,10 @@ enum CTCARDS {
 	CT20K2_MODEL_FIRST = CTSB0760,
 	CTHENDRIX,
 	CTSB0880,
+<<<<<<< HEAD
 	CTSB1270,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CT20K2_UNKNOWN,
 	NUM_CTCARDS		/* This should always be the last */
 };
@@ -61,6 +64,7 @@ struct card_conf {
 	unsigned int msr;	/* master sample rate in rsrs */
 };
 
+<<<<<<< HEAD
 struct capabilities {
 	unsigned int digit_io_switch:1;
 	unsigned int dedicated_mic:1;
@@ -68,6 +72,8 @@ struct capabilities {
 	unsigned int mic_source_switch:1;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct hw {
 	int (*card_init)(struct hw *hw, struct card_conf *info);
 	int (*card_stop)(struct hw *hw);
@@ -78,11 +84,15 @@ struct hw {
 #endif
 	int (*is_adc_source_selected)(struct hw *hw, enum ADCSRC source);
 	int (*select_adc_source)(struct hw *hw, enum ADCSRC source);
+<<<<<<< HEAD
 	struct capabilities (*capabilities)(struct hw *hw);
 	int (*output_switch_get)(struct hw *hw);
 	int (*output_switch_put)(struct hw *hw, int position);
 	int (*mic_source_switch_get)(struct hw *hw);
 	int (*mic_source_switch_put)(struct hw *hw, int position);
+=======
+	int (*have_digit_io_switch)(struct hw *hw);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* SRC operations */
 	int (*src_rsc_get_ctrl_blk)(void **rblk);

@@ -37,7 +37,10 @@
 #include <asm/shmparam.h>
 #include <asm/sysmips.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
 #include <asm/switch_to.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * For historic reasons the pipe(2) syscall on MIPS has an unusual calling

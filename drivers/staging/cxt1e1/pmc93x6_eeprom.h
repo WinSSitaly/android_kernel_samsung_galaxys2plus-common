@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+/*
+ * $Id: pmc93x6_eeprom.h,v 1.1 2005/09/28 00:10:08 rickd PMCC4_3_1B $
+ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef _INC_PMC93X6_EEPROM_H_
 #define _INC_PMC93X6_EEPROM_H_
 
@@ -19,9 +26,32 @@
  * For further information, contact via email: support@sbei.com
  * SBE, Inc.  San Ramon, California  U.S.A.
  *-----------------------------------------------------------------------------
+<<<<<<< HEAD
  */
 
 #include <linux/types.h>
+=======
+ * RCS info:
+ *-----------------------------------------------------------------------------
+ * $Log: pmc93x6_eeprom.h,v $
+ * Revision 1.1  2005/09/28 00:10:08  rickd
+ * pmc_verify_cksum return value is char.
+ *
+ * Revision 1.0  2005/05/04 17:20:51  rickd
+ * Initial revision
+ *
+ * Revision 1.0  2005/04/22 23:48:48  rickd
+ * Initial revision
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+#if defined (__FreeBSD__) || defined (__NetBSD__)
+#include <sys/types.h>
+#else
+#include <linux/types.h>
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef __KERNEL__
 

@@ -1786,7 +1786,11 @@ void LedControl871x(struct _adapter *padapter, enum LED_CTL_MODE LedAction)
 {
 	struct led_priv	*ledpriv = &(padapter->ledpriv);
 
+<<<<<<< HEAD
 	if (ledpriv->bRegUseLed == false)
+=======
+	if (ledpriv == NULL || ledpriv->bRegUseLed == false)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	switch (ledpriv->LedStrategy) {
 	case SW_LED_MODE0:

@@ -21,6 +21,7 @@
 #include <linux/sysfs.h>
 #include "./common.h"
 
+<<<<<<< HEAD
 /*
  *		image of renesas_usbhs
  *
@@ -44,6 +45,8 @@
  */
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define USBHSF_RUNTIME_PWCTRL	(1 << 0)
 
 /* status */
@@ -61,8 +64,13 @@
  */
 #define usbhs_platform_call(priv, func, args...)\
 	(!(priv) ? -ENODEV :			\
+<<<<<<< HEAD
 	 !((priv)->pfunc.func) ? 0 :		\
 	 (priv)->pfunc.func(args))
+=======
+	 !((priv)->pfunc->func) ? 0 :		\
+	 (priv)->pfunc->func(args))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  *		common functions
@@ -95,11 +103,16 @@ struct usbhs_priv *usbhs_pdev_to_priv(struct platform_device *pdev)
 /*
  *		syscfg functions
  */
+<<<<<<< HEAD
 static void usbhs_sys_clock_ctrl(struct usbhs_priv *priv, int enable)
+=======
+void usbhs_sys_clock_ctrl(struct usbhs_priv *priv, int enable)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	usbhs_bset(priv, SYSCFG, SCKE, enable ? SCKE : 0);
 }
 
+<<<<<<< HEAD
 void usbhs_sys_host_ctrl(struct usbhs_priv *priv, int enable)
 {
 	u16 mask = DCFM | DRPD | DPRPU | HSE | USBE;
@@ -108,6 +121,22 @@ void usbhs_sys_host_ctrl(struct usbhs_priv *priv, int enable)
 
 	if (has_otg)
 		usbhs_bset(priv, DVSTCTR, (EXTLP | PWEN), (EXTLP | PWEN));
+=======
+void usbhs_sys_hispeed_ctrl(struct usbhs_priv *priv, int enable)
+{
+	usbhs_bset(priv, SYSCFG, HSE, enable ? HSE : 0);
+}
+
+void usbhs_sys_usb_ctrl(struct usbhs_priv *priv, int enable)
+{
+	usbhs_bset(priv, SYSCFG, USBE, enable ? USBE : 0);
+}
+
+void usbhs_sys_host_ctrl(struct usbhs_priv *priv, int enable)
+{
+	u16 mask = DCFM | DRPD | DPRPU;
+	u16 val  = DCFM | DRPD;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * if enable
@@ -120,8 +149,13 @@ void usbhs_sys_host_ctrl(struct usbhs_priv *priv, int enable)
 
 void usbhs_sys_function_ctrl(struct usbhs_priv *priv, int enable)
 {
+<<<<<<< HEAD
 	u16 mask = DCFM | DRPD | DPRPU | HSE | USBE;
 	u16 val  = DPRPU | HSE | USBE;
+=======
+	u16 mask = DCFM | DRPD | DPRPU;
+	u16 val  = DPRPU;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * if enable
@@ -132,11 +166,14 @@ void usbhs_sys_function_ctrl(struct usbhs_priv *priv, int enable)
 	usbhs_bset(priv, SYSCFG, mask, enable ? val : 0);
 }
 
+<<<<<<< HEAD
 void usbhs_sys_set_test_mode(struct usbhs_priv *priv, u16 mode)
 {
 	usbhs_write(priv, TESTMODE, mode);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *		frame functions
  */
@@ -146,6 +183,7 @@ int usbhs_frame_get_num(struct usbhs_priv *priv)
 }
 
 /*
+<<<<<<< HEAD
  *		usb request functions
  */
 void usbhs_usbreq_get_val(struct usbhs_priv *priv, struct usb_ctrlrequest *req)
@@ -273,6 +311,21 @@ static void usbhsc_set_buswait(struct usbhs_priv *priv)
 	/* set bus wait if platform have */
 	if (wait)
 		usbhs_bset(priv, BUSWAIT, 0x000F, wait);
+=======
+ *		local functions
+ */
+static void usbhsc_bus_ctrl(struct usbhs_priv *priv, int enable)
+{
+	int wait = usbhs_get_dparam(priv, buswait_bwait);
+	u16 data = 0;
+
+	if (enable) {
+		/* set bus wait if platform have */
+		if (wait)
+			usbhs_bset(priv, BUSWAIT, 0x000F, wait);
+	}
+	usbhs_write(priv, DVSTCTR, data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -296,13 +349,17 @@ static u32 usbhsc_default_pipe_type[] = {
  */
 static void usbhsc_power_ctrl(struct usbhs_priv *priv, int enable)
 {
+<<<<<<< HEAD
 	struct platform_device *pdev = usbhs_priv_to_pdev(priv);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct device *dev = usbhs_priv_to_dev(priv);
 
 	if (enable) {
 		/* enable PM */
 		pm_runtime_get_sync(dev);
 
+<<<<<<< HEAD
 		/* enable platform power */
 		usbhs_platform_call(priv, power_ctrl, pdev, priv->base, enable);
 
@@ -315,16 +372,36 @@ static void usbhsc_power_ctrl(struct usbhs_priv *priv, int enable)
 		/* disable platform power */
 		usbhs_platform_call(priv, power_ctrl, pdev, priv->base, enable);
 
+=======
+		/* USB on */
+		usbhs_sys_clock_ctrl(priv, enable);
+		usbhsc_bus_ctrl(priv, enable);
+	} else {
+		/* USB off */
+		usbhsc_bus_ctrl(priv, enable);
+		usbhs_sys_clock_ctrl(priv, enable);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* disable PM */
 		pm_runtime_put_sync(dev);
 	}
 }
 
 /*
+<<<<<<< HEAD
  *		hotplug
  */
 static void usbhsc_hotplug(struct usbhs_priv *priv)
 {
+=======
+ *		notify hotplug
+ */
+static void usbhsc_notify_hotplug(struct work_struct *work)
+{
+	struct usbhs_priv *priv = container_of(work,
+					       struct usbhs_priv,
+					       notify_hotplug_work.work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct platform_device *pdev = usbhs_priv_to_pdev(priv);
 	struct usbhs_mod *mod = usbhs_mod_get_current(priv);
 	int id;
@@ -352,10 +429,13 @@ static void usbhsc_hotplug(struct usbhs_priv *priv)
 		if (usbhsc_flags_has(priv, USBHSF_RUNTIME_PWCTRL))
 			usbhsc_power_ctrl(priv, enable);
 
+<<<<<<< HEAD
 		/* bus init */
 		usbhsc_set_buswait(priv);
 		usbhsc_bus_init(priv);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* module start */
 		usbhs_mod_call(priv, start, priv);
 
@@ -365,9 +445,12 @@ static void usbhsc_hotplug(struct usbhs_priv *priv)
 		/* module stop */
 		usbhs_mod_call(priv, stop, priv);
 
+<<<<<<< HEAD
 		/* bus init */
 		usbhsc_bus_init(priv);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* power off */
 		if (usbhsc_flags_has(priv, USBHSF_RUNTIME_PWCTRL))
 			usbhsc_power_ctrl(priv, enable);
@@ -379,6 +462,7 @@ static void usbhsc_hotplug(struct usbhs_priv *priv)
 	}
 }
 
+<<<<<<< HEAD
 /*
  *		notify hotplug
  */
@@ -391,6 +475,9 @@ static void usbhsc_notify_hotplug(struct work_struct *work)
 }
 
 static int usbhsc_drvcllbck_notify_hotplug(struct platform_device *pdev)
+=======
+int usbhsc_drvcllbck_notify_hotplug(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct usbhs_priv *priv = usbhs_pdev_to_priv(pdev);
 	int delay = usbhs_get_dparam(priv, detection_delay);
@@ -400,20 +487,33 @@ static int usbhsc_drvcllbck_notify_hotplug(struct platform_device *pdev)
 	 * To make sure safety context,
 	 * use workqueue for usbhs_notify_hotplug
 	 */
+<<<<<<< HEAD
 	schedule_delayed_work(&priv->notify_hotplug_work,
 			      msecs_to_jiffies(delay));
+=======
+	schedule_delayed_work(&priv->notify_hotplug_work, delay);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 /*
  *		platform functions
  */
+<<<<<<< HEAD
 static int usbhs_probe(struct platform_device *pdev)
+=======
+static int __devinit usbhs_probe(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct renesas_usbhs_platform_info *info = pdev->dev.platform_data;
 	struct renesas_usbhs_driver_callback *dfunc;
 	struct usbhs_priv *priv;
+<<<<<<< HEAD
 	struct resource *res, *irq_res;
+=======
+	struct resource *res;
+	unsigned int irq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	/* check platform information */
@@ -425,8 +525,13 @@ static int usbhs_probe(struct platform_device *pdev)
 
 	/* platform data */
 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+<<<<<<< HEAD
 	irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
 	if (!res || !irq_res) {
+=======
+	irq = platform_get_irq(pdev, 0);
+	if (!res || (int)irq <= 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_err(&pdev->dev, "Not enough Renesas USB platform resources.\n");
 		return -ENODEV;
 	}
@@ -448,18 +553,24 @@ static int usbhs_probe(struct platform_device *pdev)
 	/*
 	 * care platform info
 	 */
+<<<<<<< HEAD
 	memcpy(&priv->pfunc,
 	       &info->platform_callback,
 	       sizeof(struct renesas_usbhs_platform_callback));
 	memcpy(&priv->dparam,
 	       &info->driver_param,
 	       sizeof(struct renesas_usbhs_driver_param));
+=======
+	priv->pfunc	= &info->platform_callback;
+	priv->dparam	= &info->driver_param;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* set driver callback functions for platform */
 	dfunc			= &info->driver_callback;
 	dfunc->notify_hotplug	= usbhsc_drvcllbck_notify_hotplug;
 
 	/* set default param if platform doesn't have */
+<<<<<<< HEAD
 	if (!priv->dparam.pipe_type) {
 		priv->dparam.pipe_type = usbhsc_default_pipe_type;
 		priv->dparam.pipe_size = ARRAY_SIZE(usbhsc_default_pipe_type);
@@ -470,14 +581,28 @@ static int usbhs_probe(struct platform_device *pdev)
 	/* FIXME */
 	/* runtime power control ? */
 	if (priv->pfunc.get_vbus)
+=======
+	if (!priv->dparam->pipe_type) {
+		priv->dparam->pipe_type = usbhsc_default_pipe_type;
+		priv->dparam->pipe_size = ARRAY_SIZE(usbhsc_default_pipe_type);
+	}
+
+	/* FIXME */
+	/* runtime power control ? */
+	if (priv->pfunc->get_vbus)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		usbhsc_flags_set(priv, USBHSF_RUNTIME_PWCTRL);
 
 	/*
 	 * priv settings
 	 */
+<<<<<<< HEAD
 	priv->irq	= irq_res->start;
 	if (irq_res->flags & IORESOURCE_IRQ_SHAREABLE)
 		priv->irqflags = IRQF_SHARED;
+=======
+	priv->irq	= irq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	priv->pdev	= pdev;
 	INIT_DELAYED_WORK(&priv->notify_hotplug_work, usbhsc_notify_hotplug);
 	spin_lock_init(usbhs_priv_to_lock(priv));
@@ -487,6 +612,7 @@ static int usbhs_probe(struct platform_device *pdev)
 	if (ret < 0)
 		goto probe_end_iounmap;
 
+<<<<<<< HEAD
 	ret = usbhs_fifo_probe(priv);
 	if (ret < 0)
 		goto probe_end_pipe_exit;
@@ -494,6 +620,11 @@ static int usbhs_probe(struct platform_device *pdev)
 	ret = usbhs_mod_probe(priv);
 	if (ret < 0)
 		goto probe_end_fifo_exit;
+=======
+	ret = usbhs_mod_probe(priv);
+	if (ret < 0)
+		goto probe_end_pipe_exit;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* dev_set_drvdata should be called after usbhs_mod_init */
 	dev_set_drvdata(&pdev->dev, priv);
@@ -542,8 +673,11 @@ probe_end_call_remove:
 	usbhs_platform_call(priv, hardware_exit, pdev);
 probe_end_mod_exit:
 	usbhs_mod_remove(priv);
+<<<<<<< HEAD
 probe_end_fifo_exit:
 	usbhs_fifo_remove(priv);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 probe_end_pipe_exit:
 	usbhs_pipe_remove(priv);
 probe_end_iounmap:
@@ -574,7 +708,10 @@ static int __devexit usbhs_remove(struct platform_device *pdev)
 
 	usbhs_platform_call(priv, hardware_exit, pdev);
 	usbhs_mod_remove(priv);
+<<<<<<< HEAD
 	usbhs_fifo_remove(priv);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usbhs_pipe_remove(priv);
 	iounmap(priv->base);
 	kfree(priv);
@@ -582,6 +719,7 @@ static int __devexit usbhs_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int usbhsc_suspend(struct device *dev)
 {
 	struct usbhs_priv *priv = dev_get_drvdata(dev);
@@ -636,12 +774,32 @@ static struct platform_driver renesas_usbhs_driver = {
 	.driver		= {
 		.name	= "renesas_usbhs",
 		.pm	= &usbhsc_pm_ops,
+=======
+static struct platform_driver renesas_usbhs_driver = {
+	.driver		= {
+		.name	= "renesas_usbhs",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe		= usbhs_probe,
 	.remove		= __devexit_p(usbhs_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(renesas_usbhs_driver);
+=======
+static int __init usbhs_init(void)
+{
+	return platform_driver_register(&renesas_usbhs_driver);
+}
+
+static void __exit usbhs_exit(void)
+{
+	platform_driver_unregister(&renesas_usbhs_driver);
+}
+
+module_init(usbhs_init);
+module_exit(usbhs_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Renesas USB driver");

@@ -31,7 +31,11 @@
  */
 
 #include <rdma/ib_umem.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "iw_cxgb4.h"
 

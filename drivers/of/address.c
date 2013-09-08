@@ -14,7 +14,11 @@
 static struct of_bus *of_match_bus(struct device_node *np);
 static int __of_address_to_resource(struct device_node *dev,
 		const __be32 *addrp, u64 size, unsigned int flags,
+<<<<<<< HEAD
 		const char *name, struct resource *r);
+=======
+				    struct resource *r);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Debug utility */
 #ifdef DEBUG
@@ -215,7 +219,11 @@ int of_pci_address_to_resource(struct device_node *dev, int bar,
 	addrp = of_get_pci_address(dev, bar, &size, &flags);
 	if (addrp == NULL)
 		return -EINVAL;
+<<<<<<< HEAD
 	return __of_address_to_resource(dev, addrp, size, flags, NULL, r);
+=======
+	return __of_address_to_resource(dev, addrp, size, flags, r);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(of_pci_address_to_resource);
 #endif /* CONFIG_PCI */
@@ -529,7 +537,11 @@ EXPORT_SYMBOL(of_get_address);
 
 static int __of_address_to_resource(struct device_node *dev,
 		const __be32 *addrp, u64 size, unsigned int flags,
+<<<<<<< HEAD
 		const char *name, struct resource *r)
+=======
+				    struct resource *r)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u64 taddr;
 
@@ -551,8 +563,12 @@ static int __of_address_to_resource(struct device_node *dev,
 		r->end = taddr + size - 1;
 	}
 	r->flags = flags;
+<<<<<<< HEAD
 	r->name = name ? name : dev->full_name;
 
+=======
+	r->name = dev->full_name;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -570,11 +586,15 @@ int of_address_to_resource(struct device_node *dev, int index,
 	const __be32	*addrp;
 	u64		size;
 	unsigned int	flags;
+<<<<<<< HEAD
 	const char	*name = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	addrp = of_get_address(dev, index, &size, &flags);
 	if (addrp == NULL)
 		return -EINVAL;
+<<<<<<< HEAD
 
 	/* Get optional "reg-names" property to add a name to a resource */
 	of_property_read_string_index(dev, "reg-names",	index, &name);
@@ -601,6 +621,12 @@ struct device_node *of_find_matching_node_by_address(struct device_node *from,
 	return NULL;
 }
 
+=======
+	return __of_address_to_resource(dev, addrp, size, flags, r);
+}
+EXPORT_SYMBOL_GPL(of_address_to_resource);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * of_iomap - Maps the memory mapped IO for a given device_node
@@ -616,6 +642,10 @@ void __iomem *of_iomap(struct device_node *np, int index)
 	if (of_address_to_resource(np, index, &res))
 		return NULL;
 
+<<<<<<< HEAD
 	return ioremap(res.start, resource_size(&res));
+=======
+	return ioremap(res.start, 1 + res.end - res.start);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(of_iomap);

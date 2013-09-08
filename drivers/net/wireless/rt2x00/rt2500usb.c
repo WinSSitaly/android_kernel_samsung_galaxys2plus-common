@@ -39,7 +39,11 @@
 /*
  * Allow hardware encryption to be disabled.
  */
+<<<<<<< HEAD
 static bool modparam_nohwcrypt;
+=======
+static int modparam_nohwcrypt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(nohwcrypt, modparam_nohwcrypt, bool, S_IRUGO);
 MODULE_PARM_DESC(nohwcrypt, "Disable hardware encryption.");
 
@@ -283,7 +287,11 @@ static int rt2500usb_rfkill_poll(struct rt2x00_dev *rt2x00dev)
 	u16 reg;
 
 	rt2500usb_register_read(rt2x00dev, MAC_CSR19, &reg);
+<<<<<<< HEAD
 	return rt2x00_get_field16(reg, MAC_CSR19_BIT7);
+=======
+	return rt2x00_get_field32(reg, MAC_CSR19_BIT7);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_RT2X00_LIB_LEDS
@@ -1768,7 +1776,10 @@ static int rt2500usb_probe_hw_mode(struct rt2x00_dev *rt2x00dev)
 static int rt2500usb_probe_hw(struct rt2x00_dev *rt2x00dev)
 {
 	int retval;
+<<<<<<< HEAD
 	u16 reg;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Allocate eeprom data.
@@ -1782,6 +1793,7 @@ static int rt2500usb_probe_hw(struct rt2x00_dev *rt2x00dev)
 		return retval;
 
 	/*
+<<<<<<< HEAD
 	 * Enable rfkill polling by setting GPIO direction of the
 	 * rfkill switch GPIO pin correctly.
 	 */
@@ -1790,6 +1802,8 @@ static int rt2500usb_probe_hw(struct rt2x00_dev *rt2x00dev)
 	rt2500usb_register_write(rt2x00dev, MAC_CSR19, reg);
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Initialize hw specifications.
 	 */
 	retval = rt2500usb_probe_hw_mode(rt2x00dev);
@@ -1836,7 +1850,10 @@ static const struct ieee80211_ops rt2500usb_mac80211_ops = {
 	.set_antenna		= rt2x00mac_set_antenna,
 	.get_antenna		= rt2x00mac_get_antenna,
 	.get_ringparam		= rt2x00mac_get_ringparam,
+<<<<<<< HEAD
 	.tx_frames_pending	= rt2x00mac_tx_frames_pending,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct rt2x00lib_ops rt2500usb_rt2x00_ops = {
@@ -1991,4 +2008,19 @@ static struct usb_driver rt2500usb_driver = {
 	.resume		= rt2x00usb_resume,
 };
 
+<<<<<<< HEAD
 module_usb_driver(rt2500usb_driver);
+=======
+static int __init rt2500usb_init(void)
+{
+	return usb_register(&rt2500usb_driver);
+}
+
+static void __exit rt2500usb_exit(void)
+{
+	usb_deregister(&rt2500usb_driver);
+}
+
+module_init(rt2500usb_init);
+module_exit(rt2500usb_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

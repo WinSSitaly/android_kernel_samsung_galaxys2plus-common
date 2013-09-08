@@ -28,7 +28,11 @@
 #define DBG(fmt...)
 #endif
 
+<<<<<<< HEAD
 #ifndef CONFIG_NONSTATIC_KERNEL
+=======
+#ifndef CONFIG_RELOCATABLE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init reserve_kdump_trampoline(void)
 {
 	memblock_reserve(0, KDUMP_RESERVE_LIMIT);
@@ -67,7 +71,11 @@ void __init setup_kdump_trampoline(void)
 
 	DBG(" <- setup_kdump_trampoline()\n");
 }
+<<<<<<< HEAD
 #endif /* CONFIG_NONSTATIC_KERNEL */
+=======
+#endif /* CONFIG_RELOCATABLE */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __init parse_savemaxmem(char *p)
 {

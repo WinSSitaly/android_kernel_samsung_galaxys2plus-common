@@ -33,7 +33,10 @@ enum DAIOTYP {
 	SPDIFOO,	/* S/PDIF Out (Flexijack/Optical) */
 	LINEIM,
 	SPDIFIO,	/* S/PDIF In (Flexijack/Optical) on the card */
+<<<<<<< HEAD
 	MIC,		/* Dedicated mic on Titanium HD */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	SPDIFI1,	/* S/PDIF In on internal Drive Bay */
 	NUM_DAIOTYP
 };

@@ -5,9 +5,14 @@
  * Version 2.  See the file COPYING for more details.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/average.h>
 #include <linux/kernel.h>
+=======
+#include <linux/module.h>
+#include <linux/average.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bug.h>
 #include <linux/log2.h>
 

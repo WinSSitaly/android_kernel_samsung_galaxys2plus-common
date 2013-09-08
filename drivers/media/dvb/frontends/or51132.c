@@ -306,9 +306,15 @@ static int modulation_fw_class(fe_modulation_t modulation)
 	}
 }
 
+<<<<<<< HEAD
 static int or51132_set_parameters(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int or51132_set_parameters(struct dvb_frontend* fe,
+				  struct dvb_frontend_parameters *param)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 	struct or51132_state* state = fe->demodulator_priv;
 	const struct firmware *fw;
@@ -317,8 +323,13 @@ static int or51132_set_parameters(struct dvb_frontend *fe)
 
 	/* Upload new firmware only if we need a different one */
 	if (modulation_fw_class(state->current_modulation) !=
+<<<<<<< HEAD
 	    modulation_fw_class(p->modulation)) {
 		switch (modulation_fw_class(p->modulation)) {
+=======
+	    modulation_fw_class(param->u.vsb.modulation)) {
+		switch(modulation_fw_class(param->u.vsb.modulation)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case MOD_FWCLASS_VSB:
 			dprintk("set_parameters VSB MODE\n");
 			fwname = OR51132_VSB_FIRMWARE;
@@ -335,7 +346,11 @@ static int or51132_set_parameters(struct dvb_frontend *fe)
 			break;
 		default:
 			printk("or51132: Modulation type(%d) UNSUPPORTED\n",
+<<<<<<< HEAD
 			       p->modulation);
+=======
+			       param->u.vsb.modulation);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -1;
 		}
 		printk("or51132: Waiting for firmware upload(%s)...\n",
@@ -357,13 +372,22 @@ static int or51132_set_parameters(struct dvb_frontend *fe)
 		state->config->set_ts_params(fe, clock_mode);
 	}
 	/* Change only if we are actually changing the modulation */
+<<<<<<< HEAD
 	if (state->current_modulation != p->modulation) {
 		state->current_modulation = p->modulation;
+=======
+	if (state->current_modulation != param->u.vsb.modulation) {
+		state->current_modulation = param->u.vsb.modulation;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		or51132_setmode(fe);
 	}
 
 	if (fe->ops.tuner_ops.set_params) {
+<<<<<<< HEAD
 		fe->ops.tuner_ops.set_params(fe);
+=======
+		fe->ops.tuner_ops.set_params(fe, param);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (fe->ops.i2c_gate_ctrl) fe->ops.i2c_gate_ctrl(fe, 0);
 	}
 
@@ -371,6 +395,7 @@ static int or51132_set_parameters(struct dvb_frontend *fe)
 	or51132_setmode(fe);
 
 	/* Update current frequency */
+<<<<<<< HEAD
 	state->current_frequency = p->frequency;
 	return 0;
 }
@@ -378,6 +403,15 @@ static int or51132_set_parameters(struct dvb_frontend *fe)
 static int or51132_get_parameters(struct dvb_frontend* fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+	state->current_frequency = param->frequency;
+	return 0;
+}
+
+static int or51132_get_parameters(struct dvb_frontend* fe,
+				  struct dvb_frontend_parameters *param)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct or51132_state* state = fe->demodulator_priv;
 	int status;
 	int retry = 1;
@@ -389,6 +423,7 @@ start:
 		return -EREMOTEIO;
 	}
 	switch(status&0xff) {
+<<<<<<< HEAD
 	case 0x06:
 		p->modulation = VSB_8;
 		break;
@@ -411,6 +446,23 @@ start:
 
 	/* FIXME: How to read inversion setting? Receiver 6 register? */
 	p->inversion = INVERSION_AUTO;
+=======
+		case 0x06: param->u.vsb.modulation = VSB_8; break;
+		case 0x43: param->u.vsb.modulation = QAM_64; break;
+		case 0x45: param->u.vsb.modulation = QAM_256; break;
+		default:
+			if (retry--) goto start;
+			printk(KERN_WARNING "or51132: unknown status 0x%02x\n",
+			       status&0xff);
+			return -EREMOTEIO;
+	}
+
+	/* FIXME: Read frequency from frontend, take AFC into account */
+	param->frequency = state->current_frequency;
+
+	/* FIXME: How to read inversion setting? Receiver 6 register? */
+	param->inversion = INVERSION_AUTO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -586,9 +638,16 @@ struct dvb_frontend* or51132_attach(const struct or51132_config* config,
 }
 
 static struct dvb_frontend_ops or51132_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_ATSC, SYS_DVBC_ANNEX_B },
 	.info = {
 		.name			= "Oren OR51132 VSB/QAM Frontend",
+=======
+
+	.info = {
+		.name			= "Oren OR51132 VSB/QAM Frontend",
+		.type			= FE_ATSC,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min		= 44000000,
 		.frequency_max		= 958000000,
 		.frequency_stepsize	= 166666,

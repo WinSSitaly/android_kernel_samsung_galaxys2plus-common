@@ -929,7 +929,11 @@ static int dbg_check_orphans(struct ubifs_info *c)
 	struct check_info ci;
 	int err;
 
+<<<<<<< HEAD
 	if (!dbg_is_chk_orph(c))
+=======
+	if (!(ubifs_chk_flags & UBIFS_CHK_ORPH))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	ci.last_ino = 0;

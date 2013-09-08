@@ -11,7 +11,10 @@
 #include <asm/hardirq.h>
 #include <asm/div64.h>
 #include <asm/cpu.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/time.h>
 #include <asm/irq.h>
 #include <asm/mc146818-time.h>

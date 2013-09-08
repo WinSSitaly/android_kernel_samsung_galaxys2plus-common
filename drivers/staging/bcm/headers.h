@@ -20,22 +20,40 @@
 #include <linux/file.h>
 #include <linux/string.h>
 #include <linux/etherdevice.h>
+<<<<<<< HEAD
 #include <linux/wait.h>
 #include <linux/proc_fs.h>
 #include <linux/interrupt.h>
 #include <linux/stddef.h>
+=======
+#include <net/ip.h>
+#include <linux/wait.h>
+#include <linux/proc_fs.h>
+#include <linux/interrupt.h>
+
+#include <linux/version.h>
+#include <linux/stddef.h>
+#include <linux/kernel.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/stat.h>
 #include <linux/fcntl.h>
 #include <linux/unistd.h>
 #include <linux/sched.h>
 #include <linux/mm.h>
 #include <linux/pagemap.h>
+<<<<<<< HEAD
+=======
+#include <asm/uaccess.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kthread.h>
 #include <linux/tcp.h>
 #include <linux/udp.h>
 #include <linux/usb.h>
+<<<<<<< HEAD
 #include <asm/uaccess.h>
 #include <net/ip.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "Typedefs.h"
 #include "Version.h"
@@ -58,6 +76,10 @@
 #include "Queue.h"
 #include "vendorspecificextn.h"
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "InterfaceMacros.h"
 #include "InterfaceAdapter.h"
 #include "InterfaceIsr.h"
@@ -74,6 +96,9 @@
 #define DRV_VERSION	VER_FILEVERSION_STR
 #define PFX		DRV_NAME " "
 
+<<<<<<< HEAD
 extern struct class *bcm_class;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

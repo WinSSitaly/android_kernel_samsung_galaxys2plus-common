@@ -209,6 +209,7 @@ static struct dentry *msdos_lookup(struct inode *dir, struct dentry *dentry,
 	int err;
 
 	lock_super(sb);
+<<<<<<< HEAD
 	err = msdos_find(dir, dentry->d_name.name, dentry->d_name.len, &sinfo);
 	switch (err) {
 	case -ENOENT:
@@ -223,6 +224,31 @@ static struct dentry *msdos_lookup(struct inode *dir, struct dentry *dentry,
 	}
 	unlock_super(sb);
 	return d_splice_alias(inode, dentry);
+=======
+
+	err = msdos_find(dir, dentry->d_name.name, dentry->d_name.len, &sinfo);
+	if (err) {
+		if (err == -ENOENT) {
+			inode = NULL;
+			goto out;
+		}
+		goto error;
+	}
+
+	inode = fat_build_inode(sb, sinfo.de, sinfo.i_pos);
+	brelse(sinfo.bh);
+	if (IS_ERR(inode)) {
+		err = PTR_ERR(inode);
+		goto error;
+	}
+out:
+	unlock_super(sb);
+	return d_splice_alias(inode, dentry);
+
+error:
+	unlock_super(sb);
+	return ERR_PTR(err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /***** Creates a directory entry (name is already formatted). */
@@ -264,7 +290,11 @@ static int msdos_add_entry(struct inode *dir, const unsigned char *name,
 }
 
 /***** Create a file */
+<<<<<<< HEAD
 static int msdos_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+=======
+static int msdos_create(struct inode *dir, struct dentry *dentry, int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			struct nameidata *nd)
 {
 	struct super_block *sb = dir->i_sb;
@@ -346,7 +376,11 @@ out:
 }
 
 /***** Make a directory */
+<<<<<<< HEAD
 static int msdos_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+=======
+static int msdos_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct super_block *sb = dir->i_sb;
 	struct fat_slot_info sinfo;
@@ -387,7 +421,11 @@ static int msdos_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
 		/* the directory was completed, just return a error */
 		goto out;
 	}
+<<<<<<< HEAD
 	set_nlink(inode, 2);
+=======
+	inode->i_nlink = 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	inode->i_mtime = inode->i_atime = inode->i_ctime = ts;
 	/* timestamp is already written, so mark_inode_dirty() is unneeded. */
 

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include "../perf.h"
 #include "util.h"
 #include <sys/mman.h>
@@ -18,6 +19,11 @@ void event_attr_init(struct perf_event_attr *attr)
 	attr->size = sizeof(*attr);
 }
 
+=======
+#include "util.h"
+#include <sys/mman.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int mkdir_p(char *path, mode_t mode)
 {
 	struct stat st;

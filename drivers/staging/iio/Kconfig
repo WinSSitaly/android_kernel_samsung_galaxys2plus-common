@@ -72,6 +72,10 @@ source "drivers/staging/iio/dds/Kconfig"
 source "drivers/staging/iio/gyro/Kconfig"
 source "drivers/staging/iio/impedance-analyzer/Kconfig"
 source "drivers/staging/iio/imu/Kconfig"
+<<<<<<< HEAD
+=======
+source "drivers/staging/iio/inv_test/Kconfig"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 source "drivers/staging/iio/light/Kconfig"
 source "drivers/staging/iio/magnetometer/Kconfig"
 source "drivers/staging/iio/meter/Kconfig"

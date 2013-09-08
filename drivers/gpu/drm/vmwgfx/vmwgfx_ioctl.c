@@ -27,7 +27,10 @@
 
 #include "vmwgfx_drv.h"
 #include "vmwgfx_drm.h"
+<<<<<<< HEAD
 #include "vmwgfx_kms.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int vmw_getparam_ioctl(struct drm_device *dev, void *data,
 		       struct drm_file *file_priv)
@@ -46,6 +49,12 @@ int vmw_getparam_ioctl(struct drm_device *dev, void *data,
 	case DRM_VMW_PARAM_3D:
 		param->value = vmw_fifo_have_3d(dev_priv) ? 1 : 0;
 		break;
+<<<<<<< HEAD
+=======
+	case DRM_VMW_PARAM_FIFO_OFFSET:
+		param->value = dev_priv->mmio_start;
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case DRM_VMW_PARAM_HW_CAPS:
 		param->value = dev_priv->capabilities;
 		break;
@@ -55,6 +64,7 @@ int vmw_getparam_ioctl(struct drm_device *dev, void *data,
 	case DRM_VMW_PARAM_MAX_FB_SIZE:
 		param->value = dev_priv->vram_size;
 		break;
+<<<<<<< HEAD
 	case DRM_VMW_PARAM_FIFO_HW_VERSION:
 	{
 		__le32 __iomem *fifo_mem = dev_priv->mmio_virt;
@@ -68,6 +78,8 @@ int vmw_getparam_ioctl(struct drm_device *dev, void *data,
 				  SVGA_FIFO_3D_HWVERSION));
 		break;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		DRM_ERROR("Illegal vmwgfx get param request: %d\n",
 			  param->param);
@@ -77,6 +89,7 @@ int vmw_getparam_ioctl(struct drm_device *dev, void *data,
 	return 0;
 }
 
+<<<<<<< HEAD
 
 int vmw_get_cap_3d_ioctl(struct drm_device *dev, void *data,
 			 struct drm_file *file_priv)
@@ -326,4 +339,27 @@ ssize_t vmw_fops_read(struct file *filp, char __user *buffer,
 
 	vmw_fifo_ping_host(dev_priv, SVGA_SYNC_GENERIC);
 	return drm_read(filp, buffer, count, offset);
+=======
+int vmw_fifo_debug_ioctl(struct drm_device *dev, void *data,
+			 struct drm_file *file_priv)
+{
+	struct vmw_private *dev_priv = vmw_priv(dev);
+	struct vmw_fifo_state *fifo_state = &dev_priv->fifo;
+	struct drm_vmw_fifo_debug_arg *arg =
+	    (struct drm_vmw_fifo_debug_arg *)data;
+	__le32 __user *buffer = (__le32 __user *)
+	    (unsigned long)arg->debug_buffer;
+
+	if (unlikely(fifo_state->last_buffer == NULL))
+		return -EINVAL;
+
+	if (arg->debug_buffer_size < fifo_state->last_data_size) {
+		arg->used_size = arg->debug_buffer_size;
+		arg->did_not_fit = 1;
+	} else {
+		arg->used_size = fifo_state->last_data_size;
+		arg->did_not_fit = 0;
+	}
+	return copy_to_user(buffer, fifo_state->last_buffer, arg->used_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

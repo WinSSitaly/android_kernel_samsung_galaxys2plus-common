@@ -26,6 +26,7 @@ config B43
 	  This driver can be built as a module (recommended) that will be called "b43".
 	  If unsure, say M.
 
+<<<<<<< HEAD
 config B43_BCMA
 	bool "Support for BCMA bus"
 	depends on B43 && BCMA
@@ -42,6 +43,8 @@ config B43_SSB
 	depends on B43 && SSB
 	default y
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # Auto-select SSB PCI-HOST support, if possible
 config B43_PCI_AUTOSELECT
 	bool
@@ -96,12 +99,15 @@ config B43_SDIO
 
 #Data transfers to the device via PIO. We want it as a fallback even
 # if we can do DMA.
+<<<<<<< HEAD
 config B43_BCMA_PIO
 	bool
 	depends on B43_BCMA
 	select BCMA_BLOCKIO
 	default y
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config B43_PIO
 	bool
 	depends on B43
@@ -120,12 +126,18 @@ config B43_PHY_N
 	  affect other devices support and may provide support for basic needs.
 
 config B43_PHY_LP
+<<<<<<< HEAD
 	bool "Support for low-power (LP-PHY) devices"
 	depends on B43
+=======
+	bool "Support for low-power (LP-PHY) devices (EXPERIMENTAL)"
+	depends on B43 && EXPERIMENTAL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default y
 	---help---
 	  Support for the LP-PHY.
 	  The LP-PHY is a low-power PHY built into some notebooks
+<<<<<<< HEAD
 	  and embedded devices. It supports 802.11a/b/g
 	  (802.11a support is optional, and currently disabled).
 
@@ -145,6 +157,11 @@ config B43_PHY_LCN
 
 	  Say N, this is BROKEN and crashes driver.
 
+=======
+	  and embedded devices. It supports 802.11a/g
+	  (802.11a support is optional, and currently disabled).
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # This config option automatically enables b43 LEDS support,
 # if it's possible.
 config B43_LEDS
@@ -175,3 +192,16 @@ config B43_DEBUG
 	  Say N, if you are a distributor or user building a release kernel
 	  for production use.
 	  Only say Y, if you are debugging a problem in the b43 driver sourcecode.
+<<<<<<< HEAD
+=======
+
+config B43_FORCE_PIO
+	bool "Force usage of PIO instead of DMA"
+	depends on B43 && B43_DEBUG
+	---help---
+	  This will disable DMA and always enable PIO instead.
+
+	  Say N!
+	  This is only for debugging the PIO engine code. You do
+	  _NOT_ want to enable this.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

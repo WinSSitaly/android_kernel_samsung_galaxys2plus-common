@@ -31,11 +31,25 @@
 #include <scsi/scsi_host.h>
 #include <scsi/scsi_device.h>
 #include <scsi/scsi_cmnd.h>
+<<<<<<< HEAD
 
 #include <target/target_core_base.h>
 #include <target/target_core_fabric.h>
 #include <target/target_core_fabric_configfs.h>
 #include <target/target_core_configfs.h>
+=======
+#include <scsi/scsi_tcq.h>
+
+#include <target/target_core_base.h>
+#include <target/target_core_transport.h>
+#include <target/target_core_fabric_ops.h>
+#include <target/target_core_fabric_configfs.h>
+#include <target/target_core_fabric_lib.h>
+#include <target/target_core_configfs.h>
+#include <target/target_core_device.h>
+#include <target/target_core_tpg.h>
+#include <target/target_core_tmr.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "tcm_loop.h"
 
@@ -44,34 +58,222 @@
 /* Local pointer to allocated TCM configfs fabric module */
 static struct target_fabric_configfs *tcm_loop_fabric_configfs;
 
+<<<<<<< HEAD
 static struct workqueue_struct *tcm_loop_workqueue;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct kmem_cache *tcm_loop_cmd_cache;
 
 static int tcm_loop_hba_no_cnt;
 
+<<<<<<< HEAD
 static int tcm_loop_queue_status(struct se_cmd *se_cmd);
+=======
+/*
+ * Allocate a tcm_loop cmd descriptor from target_core_mod code
+ *
+ * Can be called from interrupt context in tcm_loop_queuecommand() below
+ */
+static struct se_cmd *tcm_loop_allocate_core_cmd(
+	struct tcm_loop_hba *tl_hba,
+	struct se_portal_group *se_tpg,
+	struct scsi_cmnd *sc)
+{
+	struct se_cmd *se_cmd;
+	struct se_session *se_sess;
+	struct tcm_loop_nexus *tl_nexus = tl_hba->tl_nexus;
+	struct tcm_loop_cmd *tl_cmd;
+	int sam_task_attr;
+
+	if (!tl_nexus) {
+		scmd_printk(KERN_ERR, sc, "TCM_Loop I_T Nexus"
+				" does not exist\n");
+		set_host_byte(sc, DID_ERROR);
+		return NULL;
+	}
+	se_sess = tl_nexus->se_sess;
+
+	tl_cmd = kmem_cache_zalloc(tcm_loop_cmd_cache, GFP_ATOMIC);
+	if (!tl_cmd) {
+		printk(KERN_ERR "Unable to allocate struct tcm_loop_cmd\n");
+		set_host_byte(sc, DID_ERROR);
+		return NULL;
+	}
+	se_cmd = &tl_cmd->tl_se_cmd;
+	/*
+	 * Save the pointer to struct scsi_cmnd *sc
+	 */
+	tl_cmd->sc = sc;
+	/*
+	 * Locate the SAM Task Attr from struct scsi_cmnd *
+	 */
+	if (sc->device->tagged_supported) {
+		switch (sc->tag) {
+		case HEAD_OF_QUEUE_TAG:
+			sam_task_attr = MSG_HEAD_TAG;
+			break;
+		case ORDERED_QUEUE_TAG:
+			sam_task_attr = MSG_ORDERED_TAG;
+			break;
+		default:
+			sam_task_attr = MSG_SIMPLE_TAG;
+			break;
+		}
+	} else
+		sam_task_attr = MSG_SIMPLE_TAG;
+
+	/*
+	 * Initialize struct se_cmd descriptor from target_core_mod infrastructure
+	 */
+	transport_init_se_cmd(se_cmd, se_tpg->se_tpg_tfo, se_sess,
+			scsi_bufflen(sc), sc->sc_data_direction, sam_task_attr,
+			&tl_cmd->tl_sense_buf[0]);
+
+	/*
+	 * Signal BIDI usage with T_TASK(cmd)->t_tasks_bidi
+	 */
+	if (scsi_bidi_cmnd(sc))
+		T_TASK(se_cmd)->t_tasks_bidi = 1;
+	/*
+	 * Locate the struct se_lun pointer and attach it to struct se_cmd
+	 */
+	if (transport_get_lun_for_cmd(se_cmd, NULL, tl_cmd->sc->device->lun) < 0) {
+		kmem_cache_free(tcm_loop_cmd_cache, tl_cmd);
+		set_host_byte(sc, DID_NO_CONNECT);
+		return NULL;
+	}
+	/*
+	 * Because some userspace code via scsi-generic do not memset their
+	 * associated read buffers, go ahead and do that here for type
+	 * SCF_SCSI_CONTROL_SG_IO_CDB.  Also note that this is currently
+	 * guaranteed to be a single SGL for SCF_SCSI_CONTROL_SG_IO_CDB
+	 * by target core in transport_generic_allocate_tasks() ->
+	 * transport_generic_cmd_sequencer().
+	 */
+	if (se_cmd->se_cmd_flags & SCF_SCSI_CONTROL_SG_IO_CDB &&
+	    se_cmd->data_direction == DMA_FROM_DEVICE) {
+		struct scatterlist *sg = scsi_sglist(sc);
+		unsigned char *buf = kmap(sg_page(sg)) + sg->offset;
+
+		if (buf != NULL) {
+			memset(buf, 0, sg->length);
+			kunmap(sg_page(sg));
+		}
+	}
+
+	transport_device_setup_cmd(se_cmd);
+	return se_cmd;
+}
+
+/*
+ * Called by struct target_core_fabric_ops->new_cmd_map()
+ *
+ * Always called in process context.  A non zero return value
+ * here will signal to handle an exception based on the return code.
+ */
+static int tcm_loop_new_cmd_map(struct se_cmd *se_cmd)
+{
+	struct tcm_loop_cmd *tl_cmd = container_of(se_cmd,
+				struct tcm_loop_cmd, tl_se_cmd);
+	struct scsi_cmnd *sc = tl_cmd->sc;
+	void *mem_ptr, *mem_bidi_ptr = NULL;
+	u32 sg_no_bidi = 0;
+	int ret;
+	/*
+	 * Allocate the necessary tasks to complete the received CDB+data
+	 */
+	ret = transport_generic_allocate_tasks(se_cmd, tl_cmd->sc->cmnd);
+	if (ret == -1) {
+		/* Out of Resources */
+		return PYX_TRANSPORT_LU_COMM_FAILURE;
+	} else if (ret == -2) {
+		/*
+		 * Handle case for SAM_STAT_RESERVATION_CONFLICT
+		 */
+		if (se_cmd->se_cmd_flags & SCF_SCSI_RESERVATION_CONFLICT)
+			return PYX_TRANSPORT_RESERVATION_CONFLICT;
+		/*
+		 * Otherwise, return SAM_STAT_CHECK_CONDITION and return
+		 * sense data.
+		 */
+		return PYX_TRANSPORT_USE_SENSE_REASON;
+	}
+	/*
+	 * Setup the struct scatterlist memory from the received
+	 * struct scsi_cmnd.
+	 */
+	if (scsi_sg_count(sc)) {
+		se_cmd->se_cmd_flags |= SCF_PASSTHROUGH_SG_TO_MEM;
+		mem_ptr = (void *)scsi_sglist(sc);
+		/*
+		 * For BIDI commands, pass in the extra READ buffer
+		 * to transport_generic_map_mem_to_cmd() below..
+		 */
+		if (T_TASK(se_cmd)->t_tasks_bidi) {
+			struct scsi_data_buffer *sdb = scsi_in(sc);
+
+			mem_bidi_ptr = (void *)sdb->table.sgl;
+			sg_no_bidi = sdb->table.nents;
+		}
+	} else {
+		/*
+		 * Used for DMA_NONE
+		 */
+		mem_ptr = NULL;
+	}
+	/*
+	 * Map the SG memory into struct se_mem->page linked list using the same
+	 * physical memory at sg->page_link.
+	 */
+	ret = transport_generic_map_mem_to_cmd(se_cmd, mem_ptr,
+			scsi_sg_count(sc), mem_bidi_ptr, sg_no_bidi);
+	if (ret < 0)
+		return PYX_TRANSPORT_LU_COMM_FAILURE;
+
+	return 0;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Called from struct target_core_fabric_ops->check_stop_free()
  */
+<<<<<<< HEAD
 static int tcm_loop_check_stop_free(struct se_cmd *se_cmd)
+=======
+static void tcm_loop_check_stop_free(struct se_cmd *se_cmd)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * Do not release struct se_cmd's containing a valid TMR
 	 * pointer.  These will be released directly in tcm_loop_device_reset()
 	 * with transport_generic_free_cmd().
 	 */
+<<<<<<< HEAD
 	if (se_cmd->se_cmd_flags & SCF_SCSI_TMR_CDB)
 		return 0;
+=======
+	if (se_cmd->se_tmr_req)
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Release the struct se_cmd, which will make a callback to release
 	 * struct tcm_loop_cmd * in tcm_loop_deallocate_core_cmd()
 	 */
+<<<<<<< HEAD
 	transport_generic_free_cmd(se_cmd, 0);
 	return 1;
 }
 
 static void tcm_loop_release_cmd(struct se_cmd *se_cmd)
+=======
+	transport_generic_free_cmd(se_cmd, 0, 1, 0);
+}
+
+/*
+ * Called from struct target_core_fabric_ops->release_cmd_to_pool()
+ */
+static void tcm_loop_deallocate_core_cmd(struct se_cmd *se_cmd)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tcm_loop_cmd *tl_cmd = container_of(se_cmd,
 				struct tcm_loop_cmd, tl_se_cmd);
@@ -137,6 +339,7 @@ static int tcm_loop_change_queue_depth(
 }
 
 /*
+<<<<<<< HEAD
  * Locate the SAM Task Attr from struct scsi_cmnd *
  */
 static int tcm_loop_sam_attr(struct scsi_cmnd *sc)
@@ -283,6 +486,43 @@ static int tcm_loop_queuecommand(struct Scsi_Host *sh, struct scsi_cmnd *sc)
 	tl_cmd->sc = sc;
 	INIT_WORK(&tl_cmd->work, tcm_loop_submission_work);
 	queue_work(tcm_loop_workqueue, &tl_cmd->work);
+=======
+ * Main entry point from struct scsi_host_template for incoming SCSI CDB+Data
+ * from Linux/SCSI subsystem for SCSI low level device drivers (LLDs)
+ */
+static int tcm_loop_queuecommand(
+	struct Scsi_Host *sh,
+	struct scsi_cmnd *sc)
+{
+	struct se_cmd *se_cmd;
+	struct se_portal_group *se_tpg;
+	struct tcm_loop_hba *tl_hba;
+	struct tcm_loop_tpg *tl_tpg;
+
+	TL_CDB_DEBUG("tcm_loop_queuecommand() %d:%d:%d:%d got CDB: 0x%02x"
+		" scsi_buf_len: %u\n", sc->device->host->host_no,
+		sc->device->id, sc->device->channel, sc->device->lun,
+		sc->cmnd[0], scsi_bufflen(sc));
+	/*
+	 * Locate the tcm_loop_hba_t pointer
+	 */
+	tl_hba = *(struct tcm_loop_hba **)shost_priv(sc->device->host);
+	tl_tpg = &tl_hba->tl_hba_tpgs[sc->device->id];
+	se_tpg = &tl_tpg->tl_se_tpg;
+	/*
+	 * Determine the SAM Task Attribute and allocate tl_cmd and
+	 * tl_cmd->tl_se_cmd from TCM infrastructure
+	 */
+	se_cmd = tcm_loop_allocate_core_cmd(tl_hba, se_tpg, sc);
+	if (!se_cmd) {
+		sc->scsi_done(sc);
+		return 0;
+	}
+	/*
+	 * Queue up the newly allocated to be processed in TCM thread context.
+	*/
+	transport_generic_handle_cdb_map(se_cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -300,7 +540,11 @@ static int tcm_loop_device_reset(struct scsi_cmnd *sc)
 	struct tcm_loop_nexus *tl_nexus;
 	struct tcm_loop_tmr *tl_tmr = NULL;
 	struct tcm_loop_tpg *tl_tpg;
+<<<<<<< HEAD
 	int ret = FAILED, rc;
+=======
+	int ret = FAILED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Locate the tcm_loop_hba_t pointer
 	 */
@@ -310,7 +554,11 @@ static int tcm_loop_device_reset(struct scsi_cmnd *sc)
 	 */
 	tl_nexus = tl_hba->tl_nexus;
 	if (!tl_nexus) {
+<<<<<<< HEAD
 		pr_err("Unable to perform device reset without"
+=======
+		printk(KERN_ERR "Unable to perform device reset without"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				" active I_T Nexus\n");
 		return FAILED;
 	}
@@ -323,13 +571,21 @@ static int tcm_loop_device_reset(struct scsi_cmnd *sc)
 
 	tl_cmd = kmem_cache_zalloc(tcm_loop_cmd_cache, GFP_KERNEL);
 	if (!tl_cmd) {
+<<<<<<< HEAD
 		pr_err("Unable to allocate memory for tl_cmd\n");
+=======
+		printk(KERN_ERR "Unable to allocate memory for tl_cmd\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return FAILED;
 	}
 
 	tl_tmr = kzalloc(sizeof(struct tcm_loop_tmr), GFP_KERNEL);
 	if (!tl_tmr) {
+<<<<<<< HEAD
 		pr_err("Unable to allocate memory for tl_tmr\n");
+=======
+		printk(KERN_ERR "Unable to allocate memory for tl_tmr\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto release;
 	}
 	init_waitqueue_head(&tl_tmr->tl_tmr_wait);
@@ -341,14 +597,27 @@ static int tcm_loop_device_reset(struct scsi_cmnd *sc)
 	transport_init_se_cmd(se_cmd, se_tpg->se_tpg_tfo, se_sess, 0,
 				DMA_NONE, MSG_SIMPLE_TAG,
 				&tl_cmd->tl_sense_buf[0]);
+<<<<<<< HEAD
 
 	rc = core_tmr_alloc_req(se_cmd, tl_tmr, TMR_LUN_RESET, GFP_KERNEL);
 	if (rc < 0)
+=======
+	/*
+	 * Allocate the LUN_RESET TMR
+	 */
+	se_cmd->se_tmr_req = core_tmr_alloc_req(se_cmd, (void *)tl_tmr,
+				TMR_LUN_RESET);
+	if (IS_ERR(se_cmd->se_tmr_req))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto release;
 	/*
 	 * Locate the underlying TCM struct se_lun from sc->device->lun
 	 */
+<<<<<<< HEAD
 	if (transport_lookup_tmr_lun(se_cmd, sc->device->lun) < 0)
+=======
+	if (transport_get_lun_for_tmr(se_cmd, sc->device->lun) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto release;
 	/*
 	 * Queue the TMR to TCM Core and sleep waiting for tcm_loop_queue_tm_rsp()
@@ -364,7 +633,11 @@ static int tcm_loop_device_reset(struct scsi_cmnd *sc)
 		SUCCESS : FAILED;
 release:
 	if (se_cmd)
+<<<<<<< HEAD
 		transport_generic_free_cmd(se_cmd, 1);
+=======
+		transport_generic_free_cmd(se_cmd, 1, 1, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		kmem_cache_free(tcm_loop_cmd_cache, tl_cmd);
 	kfree(tl_tmr);
@@ -389,11 +662,19 @@ static struct scsi_host_template tcm_loop_driver_template = {
 	.queuecommand		= tcm_loop_queuecommand,
 	.change_queue_depth	= tcm_loop_change_queue_depth,
 	.eh_device_reset_handler = tcm_loop_device_reset,
+<<<<<<< HEAD
 	.can_queue		= 1024,
 	.this_id		= -1,
 	.sg_tablesize		= 256,
 	.cmd_per_lun		= 1024,
 	.max_sectors		= 0xFFFF,
+=======
+	.can_queue		= TL_SCSI_CAN_QUEUE,
+	.this_id		= -1,
+	.sg_tablesize		= TL_SCSI_SG_TABLESIZE,
+	.cmd_per_lun		= TL_SCSI_CMD_PER_LUN,
+	.max_sectors		= TL_SCSI_MAX_SECTORS,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.use_clustering		= DISABLE_CLUSTERING,
 	.slave_alloc		= tcm_loop_slave_alloc,
 	.slave_configure	= tcm_loop_slave_configure,
@@ -411,7 +692,11 @@ static int tcm_loop_driver_probe(struct device *dev)
 	sh = scsi_host_alloc(&tcm_loop_driver_template,
 			sizeof(struct tcm_loop_hba));
 	if (!sh) {
+<<<<<<< HEAD
 		pr_err("Unable to allocate struct scsi_host\n");
+=======
+		printk(KERN_ERR "Unable to allocate struct scsi_host\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 	tl_hba->sh = sh;
@@ -430,7 +715,11 @@ static int tcm_loop_driver_probe(struct device *dev)
 
 	error = scsi_add_host(sh, &tl_hba->dev);
 	if (error) {
+<<<<<<< HEAD
 		pr_err("%s: scsi_add_host failed\n", __func__);
+=======
+		printk(KERN_ERR "%s: scsi_add_host failed\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		scsi_host_put(sh);
 		return -ENODEV;
 	}
@@ -471,7 +760,11 @@ static int tcm_loop_setup_hba_bus(struct tcm_loop_hba *tl_hba, int tcm_loop_host
 
 	ret = device_register(&tl_hba->dev);
 	if (ret) {
+<<<<<<< HEAD
 		pr_err("device_register() failed for"
+=======
+		printk(KERN_ERR "device_register() failed for"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				" tl_hba->dev: %d\n", ret);
 		return -ENODEV;
 	}
@@ -489,24 +782,40 @@ static int tcm_loop_alloc_core_bus(void)
 
 	tcm_loop_primary = root_device_register("tcm_loop_0");
 	if (IS_ERR(tcm_loop_primary)) {
+<<<<<<< HEAD
 		pr_err("Unable to allocate tcm_loop_primary\n");
+=======
+		printk(KERN_ERR "Unable to allocate tcm_loop_primary\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return PTR_ERR(tcm_loop_primary);
 	}
 
 	ret = bus_register(&tcm_loop_lld_bus);
 	if (ret) {
+<<<<<<< HEAD
 		pr_err("bus_register() failed for tcm_loop_lld_bus\n");
+=======
+		printk(KERN_ERR "bus_register() failed for tcm_loop_lld_bus\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto dev_unreg;
 	}
 
 	ret = driver_register(&tcm_loop_driverfs);
 	if (ret) {
+<<<<<<< HEAD
 		pr_err("driver_register() failed for"
+=======
+		printk(KERN_ERR "driver_register() failed for"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"tcm_loop_driverfs\n");
 		goto bus_unreg;
 	}
 
+<<<<<<< HEAD
 	pr_debug("Initialized TCM Loop Core Bus\n");
+=======
+	printk(KERN_INFO "Initialized TCM Loop Core Bus\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 
 bus_unreg:
@@ -522,7 +831,11 @@ static void tcm_loop_release_core_bus(void)
 	bus_unregister(&tcm_loop_lld_bus);
 	root_device_unregister(tcm_loop_primary);
 
+<<<<<<< HEAD
 	pr_debug("Releasing TCM Loop Core BUS\n");
+=======
+	printk(KERN_INFO "Releasing TCM Loop Core BUS\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static char *tcm_loop_get_fabric_name(void)
@@ -532,7 +845,12 @@ static char *tcm_loop_get_fabric_name(void)
 
 static u8 tcm_loop_get_fabric_proto_ident(struct se_portal_group *se_tpg)
 {
+<<<<<<< HEAD
 	struct tcm_loop_tpg *tl_tpg = se_tpg->se_tpg_fabric_ptr;
+=======
+	struct tcm_loop_tpg *tl_tpg =
+			(struct tcm_loop_tpg *)se_tpg->se_tpg_fabric_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct tcm_loop_hba *tl_hba = tl_tpg->tl_hba;
 	/*
 	 * tl_proto_id is set at tcm_loop_configfs.c:tcm_loop_make_scsi_hba()
@@ -549,7 +867,11 @@ static u8 tcm_loop_get_fabric_proto_ident(struct se_portal_group *se_tpg)
 	case SCSI_PROTOCOL_ISCSI:
 		return iscsi_get_fabric_proto_ident(se_tpg);
 	default:
+<<<<<<< HEAD
 		pr_err("Unknown tl_proto_id: 0x%02x, using"
+=======
+		printk(KERN_ERR "Unknown tl_proto_id: 0x%02x, using"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			" SAS emulation\n", tl_hba->tl_proto_id);
 		break;
 	}
@@ -559,7 +881,12 @@ static u8 tcm_loop_get_fabric_proto_ident(struct se_portal_group *se_tpg)
 
 static char *tcm_loop_get_endpoint_wwn(struct se_portal_group *se_tpg)
 {
+<<<<<<< HEAD
 	struct tcm_loop_tpg *tl_tpg = se_tpg->se_tpg_fabric_ptr;
+=======
+	struct tcm_loop_tpg *tl_tpg =
+		(struct tcm_loop_tpg *)se_tpg->se_tpg_fabric_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Return the passed NAA identifier for the SAS Target Port
 	 */
@@ -568,7 +895,12 @@ static char *tcm_loop_get_endpoint_wwn(struct se_portal_group *se_tpg)
 
 static u16 tcm_loop_get_tag(struct se_portal_group *se_tpg)
 {
+<<<<<<< HEAD
 	struct tcm_loop_tpg *tl_tpg = se_tpg->se_tpg_fabric_ptr;
+=======
+	struct tcm_loop_tpg *tl_tpg =
+		(struct tcm_loop_tpg *)se_tpg->se_tpg_fabric_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * This Tag is used when forming SCSI Name identifier in EVPD=1 0x83
 	 * to represent the SCSI Target Port.
@@ -588,7 +920,12 @@ static u32 tcm_loop_get_pr_transport_id(
 	int *format_code,
 	unsigned char *buf)
 {
+<<<<<<< HEAD
 	struct tcm_loop_tpg *tl_tpg = se_tpg->se_tpg_fabric_ptr;
+=======
+	struct tcm_loop_tpg *tl_tpg =
+			(struct tcm_loop_tpg *)se_tpg->se_tpg_fabric_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct tcm_loop_hba *tl_hba = tl_tpg->tl_hba;
 
 	switch (tl_hba->tl_proto_id) {
@@ -602,7 +939,11 @@ static u32 tcm_loop_get_pr_transport_id(
 		return iscsi_get_pr_transport_id(se_tpg, se_nacl, pr_reg,
 					format_code, buf);
 	default:
+<<<<<<< HEAD
 		pr_err("Unknown tl_proto_id: 0x%02x, using"
+=======
+		printk(KERN_ERR "Unknown tl_proto_id: 0x%02x, using"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			" SAS emulation\n", tl_hba->tl_proto_id);
 		break;
 	}
@@ -617,7 +958,12 @@ static u32 tcm_loop_get_pr_transport_id_len(
 	struct t10_pr_registration *pr_reg,
 	int *format_code)
 {
+<<<<<<< HEAD
 	struct tcm_loop_tpg *tl_tpg = se_tpg->se_tpg_fabric_ptr;
+=======
+	struct tcm_loop_tpg *tl_tpg =
+			(struct tcm_loop_tpg *)se_tpg->se_tpg_fabric_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct tcm_loop_hba *tl_hba = tl_tpg->tl_hba;
 
 	switch (tl_hba->tl_proto_id) {
@@ -631,7 +977,11 @@ static u32 tcm_loop_get_pr_transport_id_len(
 		return iscsi_get_pr_transport_id_len(se_tpg, se_nacl, pr_reg,
 					format_code);
 	default:
+<<<<<<< HEAD
 		pr_err("Unknown tl_proto_id: 0x%02x, using"
+=======
+		printk(KERN_ERR "Unknown tl_proto_id: 0x%02x, using"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			" SAS emulation\n", tl_hba->tl_proto_id);
 		break;
 	}
@@ -650,7 +1000,12 @@ static char *tcm_loop_parse_pr_out_transport_id(
 	u32 *out_tid_len,
 	char **port_nexus_ptr)
 {
+<<<<<<< HEAD
 	struct tcm_loop_tpg *tl_tpg = se_tpg->se_tpg_fabric_ptr;
+=======
+	struct tcm_loop_tpg *tl_tpg =
+			(struct tcm_loop_tpg *)se_tpg->se_tpg_fabric_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct tcm_loop_hba *tl_hba = tl_tpg->tl_hba;
 
 	switch (tl_hba->tl_proto_id) {
@@ -664,7 +1019,11 @@ static char *tcm_loop_parse_pr_out_transport_id(
 		return iscsi_parse_pr_out_transport_id(se_tpg, buf, out_tid_len,
 					port_nexus_ptr);
 	default:
+<<<<<<< HEAD
 		pr_err("Unknown tl_proto_id: 0x%02x, using"
+=======
+		printk(KERN_ERR "Unknown tl_proto_id: 0x%02x, using"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			" SAS emulation\n", tl_hba->tl_proto_id);
 		break;
 	}
@@ -713,7 +1072,11 @@ static struct se_node_acl *tcm_loop_tpg_alloc_fabric_acl(
 
 	tl_nacl = kzalloc(sizeof(struct tcm_loop_nacl), GFP_KERNEL);
 	if (!tl_nacl) {
+<<<<<<< HEAD
 		pr_err("Unable to allocate struct tcm_loop_nacl\n");
+=======
+		printk(KERN_ERR "Unable to allocate struct tcm_loop_nacl\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 	}
 
@@ -735,6 +1098,35 @@ static u32 tcm_loop_get_inst_index(struct se_portal_group *se_tpg)
 	return 1;
 }
 
+<<<<<<< HEAD
+=======
+static void tcm_loop_new_cmd_failure(struct se_cmd *se_cmd)
+{
+	/*
+	 * Since TCM_loop is already passing struct scatterlist data from
+	 * struct scsi_cmnd, no more Linux/SCSI failure dependent state need
+	 * to be handled here.
+	 */
+	return;
+}
+
+static int tcm_loop_is_state_remove(struct se_cmd *se_cmd)
+{
+	/*
+	 * Assume struct scsi_cmnd is not in remove state..
+	 */
+	return 0;
+}
+
+static int tcm_loop_sess_logged_in(struct se_session *se_sess)
+{
+	/*
+	 * Assume that TL Nexus is always active
+	 */
+	return 1;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u32 tcm_loop_sess_get_index(struct se_session *se_sess)
 {
 	return 1;
@@ -768,6 +1160,22 @@ static void tcm_loop_close_session(struct se_session *se_sess)
 	return;
 };
 
+<<<<<<< HEAD
+=======
+static void tcm_loop_stop_session(
+	struct se_session *se_sess,
+	int sess_sleep,
+	int conn_sleep)
+{
+	return;
+}
+
+static void tcm_loop_fall_back_to_erl0(struct se_session *se_sess)
+{
+	return;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int tcm_loop_write_pending(struct se_cmd *se_cmd)
 {
 	/*
@@ -794,7 +1202,11 @@ static int tcm_loop_queue_data_in(struct se_cmd *se_cmd)
 				struct tcm_loop_cmd, tl_se_cmd);
 	struct scsi_cmnd *sc = tl_cmd->sc;
 
+<<<<<<< HEAD
 	pr_debug("tcm_loop_queue_data_in() called for scsi_cmnd: %p"
+=======
+	TL_CDB_DEBUG("tcm_loop_queue_data_in() called for scsi_cmnd: %p"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     " cdb: 0x%02x\n", sc, sc->cmnd[0]);
 
 	sc->result = SAM_STAT_GOOD;
@@ -812,14 +1224,22 @@ static int tcm_loop_queue_status(struct se_cmd *se_cmd)
 				struct tcm_loop_cmd, tl_se_cmd);
 	struct scsi_cmnd *sc = tl_cmd->sc;
 
+<<<<<<< HEAD
 	pr_debug("tcm_loop_queue_status() called for scsi_cmnd: %p"
+=======
+	TL_CDB_DEBUG("tcm_loop_queue_status() called for scsi_cmnd: %p"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			" cdb: 0x%02x\n", sc, sc->cmnd[0]);
 
 	if (se_cmd->sense_buffer &&
 	   ((se_cmd->se_cmd_flags & SCF_TRANSPORT_TASK_SENSE) ||
 	    (se_cmd->se_cmd_flags & SCF_EMULATED_TASK_SENSE))) {
 
+<<<<<<< HEAD
 		memcpy(sc->sense_buffer, se_cmd->sense_buffer,
+=======
+		memcpy((void *)sc->sense_buffer, (void *)se_cmd->sense_buffer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				SCSI_SENSE_BUFFERSIZE);
 		sc->result = SAM_STAT_CHECK_CONDITION;
 		set_driver_byte(sc, DRIVER_SENSE);
@@ -890,7 +1310,11 @@ static int tcm_loop_port_link(
 	 */
 	scsi_add_device(tl_hba->sh, 0, tl_tpg->tl_tpgt, lun->unpacked_lun);
 
+<<<<<<< HEAD
 	pr_debug("TCM_Loop_ConfigFS: Port Link Successful\n");
+=======
+	printk(KERN_INFO "TCM_Loop_ConfigFS: Port Link Successful\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -908,7 +1332,11 @@ static void tcm_loop_port_unlink(
 	sd = scsi_device_lookup(tl_hba->sh, 0, tl_tpg->tl_tpgt,
 				se_lun->unpacked_lun);
 	if (!sd) {
+<<<<<<< HEAD
 		pr_err("Unable to locate struct scsi_device for %d:%d:"
+=======
+		printk(KERN_ERR "Unable to locate struct scsi_device for %d:%d:"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"%d\n", 0, tl_tpg->tl_tpgt, se_lun->unpacked_lun);
 		return;
 	}
@@ -921,7 +1349,11 @@ static void tcm_loop_port_unlink(
 	atomic_dec(&tl_tpg->tl_tpg_port_count);
 	smp_mb__after_atomic_dec();
 
+<<<<<<< HEAD
 	pr_debug("TCM_Loop_ConfigFS: Port Unlink Successful\n");
+=======
+	printk(KERN_INFO "TCM_Loop_ConfigFS: Port Unlink Successful\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* End items for tcm_loop_port_cit */
@@ -938,14 +1370,22 @@ static int tcm_loop_make_nexus(
 	int ret = -ENOMEM;
 
 	if (tl_tpg->tl_hba->tl_nexus) {
+<<<<<<< HEAD
 		pr_debug("tl_tpg->tl_hba->tl_nexus already exists\n");
+=======
+		printk(KERN_INFO "tl_tpg->tl_hba->tl_nexus already exists\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EEXIST;
 	}
 	se_tpg = &tl_tpg->tl_se_tpg;
 
 	tl_nexus = kzalloc(sizeof(struct tcm_loop_nexus), GFP_KERNEL);
 	if (!tl_nexus) {
+<<<<<<< HEAD
 		pr_err("Unable to allocate struct tcm_loop_nexus\n");
+=======
+		printk(KERN_ERR "Unable to allocate struct tcm_loop_nexus\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 	/*
@@ -972,9 +1412,15 @@ static int tcm_loop_make_nexus(
 	 * transport_register_session()
 	 */
 	__transport_register_session(se_tpg, tl_nexus->se_sess->se_node_acl,
+<<<<<<< HEAD
 			tl_nexus->se_sess, tl_nexus);
 	tl_tpg->tl_hba->tl_nexus = tl_nexus;
 	pr_debug("TCM_Loop_ConfigFS: Established I_T Nexus to emulated"
+=======
+			tl_nexus->se_sess, (void *)tl_nexus);
+	tl_tpg->tl_hba->tl_nexus = tl_nexus;
+	printk(KERN_INFO "TCM_Loop_ConfigFS: Established I_T Nexus to emulated"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		" %s Initiator Port: %s\n", tcm_loop_dump_proto_id(tl_hba),
 		name);
 	return 0;
@@ -1000,13 +1446,21 @@ static int tcm_loop_drop_nexus(
 		return -ENODEV;
 
 	if (atomic_read(&tpg->tl_tpg_port_count)) {
+<<<<<<< HEAD
 		pr_err("Unable to remove TCM_Loop I_T Nexus with"
+=======
+		printk(KERN_ERR "Unable to remove TCM_Loop I_T Nexus with"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			" active TPG port count: %d\n",
 			atomic_read(&tpg->tl_tpg_port_count));
 		return -EPERM;
 	}
 
+<<<<<<< HEAD
 	pr_debug("TCM_Loop_ConfigFS: Removing I_T Nexus to emulated"
+=======
+	printk(KERN_INFO "TCM_Loop_ConfigFS: Removing I_T Nexus to emulated"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		" %s Initiator Port: %s\n", tcm_loop_dump_proto_id(tl_hba),
 		tl_nexus->se_sess->se_node_acl->initiatorname);
 	/*
@@ -1062,7 +1516,11 @@ static ssize_t tcm_loop_tpg_store_nexus(
 	 * tcm_loop_make_nexus()
 	 */
 	if (strlen(page) >= TL_WWN_ADDR_LEN) {
+<<<<<<< HEAD
 		pr_err("Emulated NAA Sas Address: %s, exceeds"
+=======
+		printk(KERN_ERR "Emulated NAA Sas Address: %s, exceeds"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				" max: %d\n", page, TL_WWN_ADDR_LEN);
 		return -EINVAL;
 	}
@@ -1071,7 +1529,11 @@ static ssize_t tcm_loop_tpg_store_nexus(
 	ptr = strstr(i_port, "naa.");
 	if (ptr) {
 		if (tl_hba->tl_proto_id != SCSI_PROTOCOL_SAS) {
+<<<<<<< HEAD
 			pr_err("Passed SAS Initiator Port %s does not"
+=======
+			printk(KERN_ERR "Passed SAS Initiator Port %s does not"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				" match target port protoid: %s\n", i_port,
 				tcm_loop_dump_proto_id(tl_hba));
 			return -EINVAL;
@@ -1082,7 +1544,11 @@ static ssize_t tcm_loop_tpg_store_nexus(
 	ptr = strstr(i_port, "fc.");
 	if (ptr) {
 		if (tl_hba->tl_proto_id != SCSI_PROTOCOL_FCP) {
+<<<<<<< HEAD
 			pr_err("Passed FCP Initiator Port %s does not"
+=======
+			printk(KERN_ERR "Passed FCP Initiator Port %s does not"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				" match target port protoid: %s\n", i_port,
 				tcm_loop_dump_proto_id(tl_hba));
 			return -EINVAL;
@@ -1093,7 +1559,11 @@ static ssize_t tcm_loop_tpg_store_nexus(
 	ptr = strstr(i_port, "iqn.");
 	if (ptr) {
 		if (tl_hba->tl_proto_id != SCSI_PROTOCOL_ISCSI) {
+<<<<<<< HEAD
 			pr_err("Passed iSCSI Initiator Port %s does not"
+=======
+			printk(KERN_ERR "Passed iSCSI Initiator Port %s does not"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				" match target port protoid: %s\n", i_port,
 				tcm_loop_dump_proto_id(tl_hba));
 			return -EINVAL;
@@ -1101,7 +1571,11 @@ static ssize_t tcm_loop_tpg_store_nexus(
 		port_ptr = &i_port[0];
 		goto check_newline;
 	}
+<<<<<<< HEAD
 	pr_err("Unable to locate prefix for emulated Initiator Port:"
+=======
+	printk(KERN_ERR "Unable to locate prefix for emulated Initiator Port:"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			" %s\n", i_port);
 	return -EINVAL;
 	/*
@@ -1141,15 +1615,24 @@ struct se_portal_group *tcm_loop_make_naa_tpg(
 
 	tpgt_str = strstr(name, "tpgt_");
 	if (!tpgt_str) {
+<<<<<<< HEAD
 		pr_err("Unable to locate \"tpgt_#\" directory"
+=======
+		printk(KERN_ERR "Unable to locate \"tpgt_#\" directory"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				" group\n");
 		return ERR_PTR(-EINVAL);
 	}
 	tpgt_str += 5; /* Skip ahead of "tpgt_" */
 	tpgt = (unsigned short int) simple_strtoul(tpgt_str, &end_ptr, 0);
 
+<<<<<<< HEAD
 	if (tpgt >= TL_TPGS_PER_HBA) {
 		pr_err("Passed tpgt: %hu exceeds TL_TPGS_PER_HBA:"
+=======
+	if (tpgt > TL_TPGS_PER_HBA) {
+		printk(KERN_ERR "Passed tpgt: %hu exceeds TL_TPGS_PER_HBA:"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				" %u\n", tpgt, TL_TPGS_PER_HBA);
 		return ERR_PTR(-EINVAL);
 	}
@@ -1160,12 +1643,20 @@ struct se_portal_group *tcm_loop_make_naa_tpg(
 	 * Register the tl_tpg as a emulated SAS TCM Target Endpoint
 	 */
 	ret = core_tpg_register(&tcm_loop_fabric_configfs->tf_ops,
+<<<<<<< HEAD
 			wwn, &tl_tpg->tl_se_tpg, tl_tpg,
+=======
+			wwn, &tl_tpg->tl_se_tpg, (void *)tl_tpg,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			TRANSPORT_TPG_TYPE_NORMAL);
 	if (ret < 0)
 		return ERR_PTR(-ENOMEM);
 
+<<<<<<< HEAD
 	pr_debug("TCM_Loop_ConfigFS: Allocated Emulated %s"
+=======
+	printk(KERN_INFO "TCM_Loop_ConfigFS: Allocated Emulated %s"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		" Target Port %s,t,0x%04x\n", tcm_loop_dump_proto_id(tl_hba),
 		config_item_name(&wwn->wwn_group.cg_item), tpgt);
 
@@ -1192,10 +1683,14 @@ void tcm_loop_drop_naa_tpg(
 	 */
 	core_tpg_deregister(se_tpg);
 
+<<<<<<< HEAD
 	tl_tpg->tl_hba = NULL;
 	tl_tpg->tl_tpgt = 0;
 
 	pr_debug("TCM_Loop_ConfigFS: Deallocated Emulated %s"
+=======
+	printk(KERN_INFO "TCM_Loop_ConfigFS: Deallocated Emulated %s"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		" Target Port %s,t,0x%04x\n", tcm_loop_dump_proto_id(tl_hba),
 		config_item_name(&wwn->wwn_group.cg_item), tpgt);
 }
@@ -1216,7 +1711,11 @@ struct se_wwn *tcm_loop_make_scsi_hba(
 
 	tl_hba = kzalloc(sizeof(struct tcm_loop_hba), GFP_KERNEL);
 	if (!tl_hba) {
+<<<<<<< HEAD
 		pr_err("Unable to allocate struct tcm_loop_hba\n");
+=======
+		printk(KERN_ERR "Unable to allocate struct tcm_loop_hba\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ERR_PTR(-ENOMEM);
 	}
 	/*
@@ -1235,6 +1734,7 @@ struct se_wwn *tcm_loop_make_scsi_hba(
 		goto check_len;
 	}
 	ptr = strstr(name, "iqn.");
+<<<<<<< HEAD
 	if (!ptr) {
 		pr_err("Unable to locate prefix for emulated Target "
 				"Port: %s\n", name);
@@ -1250,6 +1750,24 @@ check_len:
 			TL_WWN_ADDR_LEN);
 		ret = -EINVAL;
 		goto out;
+=======
+	if (ptr) {
+		tl_hba->tl_proto_id = SCSI_PROTOCOL_ISCSI;
+		goto check_len;
+	}
+
+	printk(KERN_ERR "Unable to locate prefix for emulated Target Port:"
+			" %s\n", name);
+	return ERR_PTR(-EINVAL);
+
+check_len:
+	if (strlen(name) >= TL_WWN_ADDR_LEN) {
+		printk(KERN_ERR "Emulated NAA %s Address: %s, exceeds"
+			" max: %d\n", name, tcm_loop_dump_proto_id(tl_hba),
+			TL_WWN_ADDR_LEN);
+		kfree(tl_hba);
+		return ERR_PTR(-EINVAL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	snprintf(&tl_hba->tl_wwn_address[0], TL_WWN_ADDR_LEN, "%s", &name[off]);
 
@@ -1264,7 +1782,11 @@ check_len:
 
 	sh = tl_hba->sh;
 	tcm_loop_hba_no_cnt++;
+<<<<<<< HEAD
 	pr_debug("TCM_Loop_ConfigFS: Allocated emulated Target"
+=======
+	printk(KERN_INFO "TCM_Loop_ConfigFS: Allocated emulated Target"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		" %s Address: %s at Linux/SCSI Host ID: %d\n",
 		tcm_loop_dump_proto_id(tl_hba), name, sh->host_no);
 
@@ -1279,16 +1801,27 @@ void tcm_loop_drop_scsi_hba(
 {
 	struct tcm_loop_hba *tl_hba = container_of(wwn,
 				struct tcm_loop_hba, tl_hba_wwn);
+<<<<<<< HEAD
 
 	pr_debug("TCM_Loop_ConfigFS: Deallocating emulated Target"
 		" SAS Address: %s at Linux/SCSI Host ID: %d\n",
 		tl_hba->tl_wwn_address, tl_hba->sh->host_no);
+=======
+	int host_no = tl_hba->sh->host_no;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Call device_unregister() on the original tl_hba->dev.
 	 * tcm_loop_fabric_scsi.c:tcm_loop_release_adapter() will
 	 * release *tl_hba;
 	 */
 	device_unregister(&tl_hba->dev);
+<<<<<<< HEAD
+=======
+
+	printk(KERN_INFO "TCM_Loop_ConfigFS: Deallocated emulated Target"
+		" SAS Address: %s at Linux/SCSI Host ID: %d\n",
+		config_item_name(&wwn->wwn_group.cg_item), host_no);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Start items for tcm_loop_cit */
@@ -1311,6 +1844,10 @@ static struct configfs_attribute *tcm_loop_wwn_attrs[] = {
 static int tcm_loop_register_configfs(void)
 {
 	struct target_fabric_configfs *fabric;
+<<<<<<< HEAD
+=======
+	struct config_group *tf_cg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 	/*
 	 * Set the TCM Loop HBA counter to zero
@@ -1320,9 +1857,15 @@ static int tcm_loop_register_configfs(void)
 	 * Register the top level struct config_item_type with TCM core
 	 */
 	fabric = target_fabric_configfs_init(THIS_MODULE, "loopback");
+<<<<<<< HEAD
 	if (IS_ERR(fabric)) {
 		pr_err("tcm_loop_register_configfs() failed!\n");
 		return PTR_ERR(fabric);
+=======
+	if (!fabric) {
+		printk(KERN_ERR "tcm_loop_register_configfs() failed!\n");
+		return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	/*
 	 * Setup the fabric API of function pointers used by target_core_mod
@@ -1354,12 +1897,33 @@ static int tcm_loop_register_configfs(void)
 					&tcm_loop_tpg_release_fabric_acl;
 	fabric->tf_ops.tpg_get_inst_index = &tcm_loop_get_inst_index;
 	/*
+<<<<<<< HEAD
 	 * Used for setting up remaining TCM resources in process context
 	 */
 	fabric->tf_ops.check_stop_free = &tcm_loop_check_stop_free;
 	fabric->tf_ops.release_cmd = &tcm_loop_release_cmd;
 	fabric->tf_ops.shutdown_session = &tcm_loop_shutdown_session;
 	fabric->tf_ops.close_session = &tcm_loop_close_session;
+=======
+	 * Since tcm_loop is mapping physical memory from Linux/SCSI
+	 * struct scatterlist arrays for each struct scsi_cmnd I/O,
+	 * we do not need TCM to allocate a iovec array for
+	 * virtual memory address mappings
+	 */
+	fabric->tf_ops.alloc_cmd_iovecs = NULL;
+	/*
+	 * Used for setting up remaining TCM resources in process context
+	 */
+	fabric->tf_ops.new_cmd_map = &tcm_loop_new_cmd_map;
+	fabric->tf_ops.check_stop_free = &tcm_loop_check_stop_free;
+	fabric->tf_ops.release_cmd_to_pool = &tcm_loop_deallocate_core_cmd;
+	fabric->tf_ops.release_cmd_direct = &tcm_loop_deallocate_core_cmd;
+	fabric->tf_ops.shutdown_session = &tcm_loop_shutdown_session;
+	fabric->tf_ops.close_session = &tcm_loop_close_session;
+	fabric->tf_ops.stop_session = &tcm_loop_stop_session;
+	fabric->tf_ops.fall_back_to_erl0 = &tcm_loop_fall_back_to_erl0;
+	fabric->tf_ops.sess_logged_in = &tcm_loop_sess_logged_in;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fabric->tf_ops.sess_get_index = &tcm_loop_sess_get_index;
 	fabric->tf_ops.sess_get_initiator_sid = NULL;
 	fabric->tf_ops.write_pending = &tcm_loop_write_pending;
@@ -1371,12 +1935,22 @@ static int tcm_loop_register_configfs(void)
 					&tcm_loop_set_default_node_attributes;
 	fabric->tf_ops.get_task_tag = &tcm_loop_get_task_tag;
 	fabric->tf_ops.get_cmd_state = &tcm_loop_get_cmd_state;
+<<<<<<< HEAD
+=======
+	fabric->tf_ops.new_cmd_failure = &tcm_loop_new_cmd_failure;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fabric->tf_ops.queue_data_in = &tcm_loop_queue_data_in;
 	fabric->tf_ops.queue_status = &tcm_loop_queue_status;
 	fabric->tf_ops.queue_tm_rsp = &tcm_loop_queue_tm_rsp;
 	fabric->tf_ops.set_fabric_sense_len = &tcm_loop_set_fabric_sense_len;
 	fabric->tf_ops.get_fabric_sense_len = &tcm_loop_get_fabric_sense_len;
+<<<<<<< HEAD
 
+=======
+	fabric->tf_ops.is_state_remove = &tcm_loop_is_state_remove;
+
+	tf_cg = &fabric->tf_group;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Setup function pointers for generic logic in target_core_fabric_configfs.c
 	 */
@@ -1406,7 +1980,11 @@ static int tcm_loop_register_configfs(void)
 	 */
 	ret = target_fabric_configfs_register(fabric);
 	if (ret < 0) {
+<<<<<<< HEAD
 		pr_err("target_fabric_configfs_register() for"
+=======
+		printk(KERN_ERR "target_fabric_configfs_register() for"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				" TCM_Loop failed!\n");
 		target_fabric_configfs_free(fabric);
 		return -1;
@@ -1415,7 +1993,11 @@ static int tcm_loop_register_configfs(void)
 	 * Setup our local pointer to *fabric.
 	 */
 	tcm_loop_fabric_configfs = fabric;
+<<<<<<< HEAD
 	pr_debug("TCM_LOOP[0] - Set fabric ->"
+=======
+	printk(KERN_INFO "TCM_LOOP[0] - Set fabric ->"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			" tcm_loop_fabric_configfs\n");
 	return 0;
 }
@@ -1427,30 +2009,45 @@ static void tcm_loop_deregister_configfs(void)
 
 	target_fabric_configfs_deregister(tcm_loop_fabric_configfs);
 	tcm_loop_fabric_configfs = NULL;
+<<<<<<< HEAD
 	pr_debug("TCM_LOOP[0] - Cleared"
+=======
+	printk(KERN_INFO "TCM_LOOP[0] - Cleared"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				" tcm_loop_fabric_configfs\n");
 }
 
 static int __init tcm_loop_fabric_init(void)
 {
+<<<<<<< HEAD
 	int ret = -ENOMEM;
 
 	tcm_loop_workqueue = alloc_workqueue("tcm_loop", 0, 0);
 	if (!tcm_loop_workqueue)
 		goto out;
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tcm_loop_cmd_cache = kmem_cache_create("tcm_loop_cmd_cache",
 				sizeof(struct tcm_loop_cmd),
 				__alignof__(struct tcm_loop_cmd),
 				0, NULL);
 	if (!tcm_loop_cmd_cache) {
+<<<<<<< HEAD
 		pr_debug("kmem_cache_create() for"
 			" tcm_loop_cmd_cache failed\n");
 		goto out_destroy_workqueue;
+=======
+		printk(KERN_ERR "kmem_cache_create() for"
+			" tcm_loop_cmd_cache failed\n");
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ret = tcm_loop_alloc_core_bus();
 	if (ret)
+<<<<<<< HEAD
 		goto out_destroy_cache;
 
 	ret = tcm_loop_register_configfs();
@@ -1467,6 +2064,17 @@ out_destroy_workqueue:
 	destroy_workqueue(tcm_loop_workqueue);
 out:
 	return ret;
+=======
+		return ret;
+
+	ret = tcm_loop_register_configfs();
+	if (ret) {
+		tcm_loop_release_core_bus();
+		return ret;
+	}
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit tcm_loop_fabric_exit(void)
@@ -1474,7 +2082,10 @@ static void __exit tcm_loop_fabric_exit(void)
 	tcm_loop_deregister_configfs();
 	tcm_loop_release_core_bus();
 	kmem_cache_destroy(tcm_loop_cmd_cache);
+<<<<<<< HEAD
 	destroy_workqueue(tcm_loop_workqueue);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 MODULE_DESCRIPTION("TCM loopback virtual Linux/SCSI fabric module");

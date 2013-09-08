@@ -44,8 +44,12 @@ struct lapb_parms_struct {
 	unsigned int mode;
 };
 
+<<<<<<< HEAD
 extern int lapb_register(struct net_device *dev,
 			 const struct lapb_register_struct *callbacks);
+=======
+extern int lapb_register(struct net_device *dev, struct lapb_register_struct *callbacks);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int lapb_unregister(struct net_device *dev);
 extern int lapb_getparms(struct net_device *dev, struct lapb_parms_struct *parms);
 extern int lapb_setparms(struct net_device *dev, struct lapb_parms_struct *parms);

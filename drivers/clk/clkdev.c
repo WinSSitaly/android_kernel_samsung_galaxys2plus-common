@@ -170,6 +170,10 @@ void clkdev_drop(struct clk_lookup *cl)
 	mutex_lock(&clocks_mutex);
 	list_del(&cl->node);
 	mutex_unlock(&clocks_mutex);
+<<<<<<< HEAD
 	kfree(cl);
+=======
+	kfree(container_of(cl, struct clk_lookup_alloc, cl));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(clkdev_drop);

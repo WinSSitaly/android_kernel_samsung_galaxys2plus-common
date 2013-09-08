@@ -12,7 +12,10 @@
 #include <linux/etherdevice.h>
 #include <linux/llc.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/llc.h>
 #include <net/llc_pdu.h>
 #include <net/stp.h>
@@ -89,9 +92,15 @@ void stp_proto_unregister(const struct stp_proto *proto)
 {
 	mutex_lock(&stp_proto_mutex);
 	if (is_zero_ether_addr(proto->group_address))
+<<<<<<< HEAD
 		RCU_INIT_POINTER(stp_proto, NULL);
 	else
 		RCU_INIT_POINTER(garp_protos[proto->group_address[5] -
+=======
+		rcu_assign_pointer(stp_proto, NULL);
+	else
+		rcu_assign_pointer(garp_protos[proto->group_address[5] -
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					       GARP_ADDR_MIN], NULL);
 	synchronize_rcu();
 

@@ -490,7 +490,11 @@ static int platinum_var_to_par(struct fb_var_screeninfo *var,
 
 
 /* 
+<<<<<<< HEAD
  * Parse user specified options (`video=platinumfb:')
+=======
+ * Parse user speficied options (`video=platinumfb:')
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int __init platinumfb_setup(char *options)
 {
@@ -567,7 +571,11 @@ static int __devinit platinumfb_probe(struct platform_device* odev)
 	 * northbridge and that can fail. Only request framebuffer
 	 */
 	if (!request_mem_region(pinfo->rsrc_fb.start,
+<<<<<<< HEAD
 				resource_size(&pinfo->rsrc_fb),
+=======
+				pinfo->rsrc_fb.end - pinfo->rsrc_fb.start + 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"platinumfb framebuffer")) {
 		printk(KERN_ERR "platinumfb: Can't request framebuffer !\n");
 		framebuffer_release(info);
@@ -658,7 +666,12 @@ static int __devexit platinumfb_remove(struct platform_device* odev)
 	iounmap(pinfo->cmap_regs);
 
 	release_mem_region(pinfo->rsrc_fb.start,
+<<<<<<< HEAD
 			   resource_size(&pinfo->rsrc_fb));
+=======
+			   pinfo->rsrc_fb.end -
+			   pinfo->rsrc_fb.start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	release_mem_region(pinfo->cmap_regs_phys, 0x1000);
 
@@ -683,7 +696,11 @@ static struct platform_driver platinum_driver =
 		.of_match_table = platinumfb_match,
 	},
 	.probe		= platinumfb_probe,
+<<<<<<< HEAD
 	.remove		= __devexit_p(platinumfb_remove),
+=======
+	.remove		= platinumfb_remove,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init platinumfb_init(void)

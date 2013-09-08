@@ -40,6 +40,7 @@ config CAN_BCM
 	  CAN messages are used on the bus (e.g. in automotive environments).
 	  To use the Broadcast Manager, use AF_CAN with protocol CAN_BCM.
 
+<<<<<<< HEAD
 config CAN_GW
 	tristate "CAN Gateway/Router (with netlink configuration)"
 	depends on CAN
@@ -51,5 +52,7 @@ config CAN_GW
 	  CAN frames can be routed between CAN network interfaces (one hop).
 	  They can be modified with AND/OR/XOR/SET operations as configured
 	  by the netlink configuration interface known e.g. from iptables.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 source "drivers/net/can/Kconfig"

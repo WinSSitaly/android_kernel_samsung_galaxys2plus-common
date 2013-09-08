@@ -16,14 +16,31 @@
 #include <linux/freezer.h>
 #include <linux/delay.h>
 #include <linux/workqueue.h>
+<<<<<<< HEAD
 #include <linux/kmod.h>
+=======
+#include <linux/wakelock.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* 
  * Timeout for stopping processes
  */
 #define TIMEOUT	(20 * HZ)
 
+<<<<<<< HEAD
 static int try_to_freeze_tasks(bool user_only)
+=======
+static inline int freezable(struct task_struct * p)
+{
+	if ((p == current) ||
+	    (p->flags & PF_NOFREEZE) ||
+	    (p->exit_state != 0))
+		return 0;
+	return 1;
+}
+
+static int try_to_freeze_tasks(bool sig_only)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct task_struct *g, *p;
 	unsigned long end_time;
@@ -38,14 +55,25 @@ static int try_to_freeze_tasks(bool user_only)
 
 	end_time = jiffies + TIMEOUT;
 
+<<<<<<< HEAD
 	if (!user_only)
+=======
+	if (!sig_only)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		freeze_workqueues_begin();
 
 	while (true) {
 		todo = 0;
 		read_lock(&tasklist_lock);
 		do_each_thread(g, p) {
+<<<<<<< HEAD
 			if (p == current || !freeze_task(p))
+=======
+			if (frozen(p) || !freezable(p))
+				continue;
+
+			if (!freeze_task(p, sig_only))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				continue;
 
 			/*
@@ -54,9 +82,17 @@ static int try_to_freeze_tasks(bool user_only)
 			 * It is "frozen enough".  If the task does wake
 			 * up, it will immediately call try_to_freeze.
 			 *
+<<<<<<< HEAD
 			 * Because freeze_task() goes through p's scheduler lock, it's
 			 * guaranteed that TASK_STOPPED/TRACED -> TASK_RUNNING
 			 * transition can't race with task state testing here.
+=======
+			 * Because freeze_task() goes through p's
+			 * scheduler lock after setting TIF_FREEZE, it's
+			 * guaranteed that either we see TASK_RUNNING or
+			 * try_to_stop() after schedule() in ptrace/signal
+			 * stop sees TIF_FREEZE.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 */
 			if (!task_is_stopped_or_traced(p) &&
 			    !freezer_should_skip(p))
@@ -64,11 +100,22 @@ static int try_to_freeze_tasks(bool user_only)
 		} while_each_thread(g, p);
 		read_unlock(&tasklist_lock);
 
+<<<<<<< HEAD
 		if (!user_only) {
+=======
+		if (!sig_only) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			wq_busy = freeze_workqueues_busy();
 			todo += wq_busy;
 		}
 
+<<<<<<< HEAD
+=======
+		if (todo && has_wake_lock(WAKE_LOCK_SUSPEND)) {
+			wakeup = 1;
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!todo || time_after(jiffies, end_time))
 			break;
 
@@ -90,6 +137,7 @@ static int try_to_freeze_tasks(bool user_only)
 	elapsed_csecs = elapsed_csecs64;
 
 	if (todo) {
+<<<<<<< HEAD
 		printk("\n");
 		printk(KERN_ERR "Freezing of tasks %s after %d.%02d seconds "
 		       "(%d tasks refusing to freeze, wq_busy=%d):\n",
@@ -106,6 +154,37 @@ static int try_to_freeze_tasks(bool user_only)
 			} while_each_thread(g, p);
 			read_unlock(&tasklist_lock);
 		}
+=======
+		/* This does not unfreeze processes that are already frozen
+		 * (we have slightly ugly calling convention in that respect,
+		 * and caller must call thaw_processes() if something fails),
+		 * but it cleans up leftover PF_FREEZE requests.
+		 */
+		if(wakeup) {
+			printk("\n");
+			printk(KERN_ERR "Freezing of %s aborted\n",
+					sig_only ? "user space " : "tasks ");
+		}
+		else {
+			printk("\n");
+			printk(KERN_ERR "Freezing of tasks failed after %d.%02d seconds "
+			       "(%d tasks refusing to freeze, wq_busy=%d):\n",
+			       elapsed_csecs / 100, elapsed_csecs % 100,
+			       todo - wq_busy, wq_busy);
+		}
+		thaw_workqueues();
+
+		read_lock(&tasklist_lock);
+		do_each_thread(g, p) {
+			task_lock(p);
+			if (freezing(p) && !freezer_should_skip(p) &&
+				elapsed_csecs > 100)
+				sched_show_task(p);
+			cancel_freezing(p);
+			task_unlock(p);
+		} while_each_thread(g, p);
+		read_unlock(&tasklist_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		printk("(elapsed %d.%02d seconds) ", elapsed_csecs / 100,
 			elapsed_csecs % 100);
@@ -115,14 +194,19 @@ static int try_to_freeze_tasks(bool user_only)
 }
 
 /**
+<<<<<<< HEAD
  * freeze_processes - Signal user space processes to enter the refrigerator.
  *
  * On success, returns 0.  On failure, -errno and system is fully thawed.
+=======
+ *	freeze_processes - tell processes to enter the refrigerator
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int freeze_processes(void)
 {
 	int error;
 
+<<<<<<< HEAD
 	error = __usermodehelper_disable(UMH_FREEZING);
 	if (error)
 		return error;
@@ -218,3 +302,57 @@ void thaw_kernel_threads(void)
 	schedule();
 	printk("done.\n");
 }
+=======
+	printk("Freezing user space processes ... ");
+	error = try_to_freeze_tasks(true);
+	if (error)
+		goto Exit;
+	printk("done.\n");
+
+	printk("Freezing remaining freezable tasks ... ");
+	error = try_to_freeze_tasks(false);
+	if (error)
+		goto Exit;
+	printk("done.");
+
+	oom_killer_disable();
+ Exit:
+	BUG_ON(in_atomic());
+	printk("\n");
+
+	return error;
+}
+
+static void thaw_tasks(bool nosig_only)
+{
+	struct task_struct *g, *p;
+
+	read_lock(&tasklist_lock);
+	do_each_thread(g, p) {
+		if (!freezable(p))
+			continue;
+
+		if (nosig_only && should_send_signal(p))
+			continue;
+
+		if (cgroup_freezing_or_frozen(p))
+			continue;
+
+		thaw_process(p);
+	} while_each_thread(g, p);
+	read_unlock(&tasklist_lock);
+}
+
+void thaw_processes(void)
+{
+	oom_killer_enable();
+
+	printk("Restarting tasks ... ");
+	thaw_workqueues();
+	thaw_tasks(true);
+	thaw_tasks(false);
+	schedule();
+	printk("done.\n");
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

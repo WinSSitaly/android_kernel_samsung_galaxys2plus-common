@@ -29,6 +29,10 @@ choice
 	prompt "DM365 codec select"
 	depends on SND_DAVINCI_SOC_EVM
 	depends on MACH_DAVINCI_DM365_EVM
+<<<<<<< HEAD
+=======
+	default SND_DM365_EXTERNAL_CODEC
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config SND_DM365_AIC3X_CODEC
 	bool "Audio Codec - AIC3101"

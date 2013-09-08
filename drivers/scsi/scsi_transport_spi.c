@@ -597,6 +597,7 @@ static DEVICE_ATTR(signalling, S_IRUGO,
 		   show_spi_host_signalling,
 		   store_spi_host_signalling);
 
+<<<<<<< HEAD
 static ssize_t show_spi_host_width(struct device *cdev,
 				      struct device_attribute *attr,
 				      char *buf)
@@ -619,6 +620,8 @@ static ssize_t show_spi_host_hba_id(struct device *cdev,
 static DEVICE_ATTR(hba_id, S_IRUGO,
 		   show_spi_host_hba_id, NULL);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DV_SET(x, y)			\
 	if(i->f->set_##x)		\
 		i->f->set_##x(sdev->sdev_target, y)
@@ -1402,8 +1405,11 @@ static DECLARE_ANON_TRANSPORT_CLASS(spi_device_class,
 
 static struct attribute *host_attributes[] = {
 	&dev_attr_signalling.attr,
+<<<<<<< HEAD
 	&dev_attr_host_width.attr,
 	&dev_attr_hba_id.attr,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL
 };
 
@@ -1434,7 +1440,11 @@ static int spi_host_configure(struct transport_container *tc,
 	(si->f->show_##name ? S_IRUGO : 0) | \
 	(si->f->set_##name ? S_IWUSR : 0)
 
+<<<<<<< HEAD
 static umode_t target_attribute_is_visible(struct kobject *kobj,
+=======
+static mode_t target_attribute_is_visible(struct kobject *kobj,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					  struct attribute *attr, int i)
 {
 	struct device *cdev = container_of(kobj, struct device, kobj);

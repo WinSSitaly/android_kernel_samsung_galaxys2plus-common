@@ -226,6 +226,7 @@ Here is the list of current tracers that may be configured.
 	Traces and records the max latency that it takes for
 	the highest priority task to get scheduled after
 	it has been woken up.
+<<<<<<< HEAD
         Traces all tasks as an average developer would expect.
 
   "wakeup_rt"
@@ -233,6 +234,8 @@ Here is the list of current tracers that may be configured.
         Traces and records the max latency that it takes for just
         RT tasks (as the current "wakeup" does). This is useful
         for those interested in wake up timings of RT tasks.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
   "hw-branch-tracer"
 

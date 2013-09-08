@@ -32,7 +32,10 @@
 #include <asm/ptrace.h>
 #include <asm/irqflags.h>
 #include <asm/ftrace.h>
+<<<<<<< HEAD
 #include <asm/hw_irq.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * System calls.
@@ -116,6 +119,7 @@ BEGIN_FW_FTR_SECTION
 END_FW_FTR_SECTION_IFSET(FW_FEATURE_SPLPAR)
 #endif /* CONFIG_VIRT_CPU_ACCOUNTING && CONFIG_PPC_SPLPAR */
 
+<<<<<<< HEAD
 	/*
 	 * A syscall should always be called with interrupts enabled
 	 * so we just unconditionally hard-enable here. When some kind
@@ -133,16 +137,50 @@ END_FW_FTR_SECTION_IFSET(FW_FEATURE_SPLPAR)
 	wrteei	1
 #else
 	ld	r11,PACAKMSR(r13)
+=======
+#ifdef CONFIG_TRACE_IRQFLAGS
+	bl	.trace_hardirqs_on
+	REST_GPR(0,r1)
+	REST_4GPRS(3,r1)
+	REST_2GPRS(7,r1)
+	addi	r9,r1,STACK_FRAME_OVERHEAD
+	ld	r12,_MSR(r1)
+#endif /* CONFIG_TRACE_IRQFLAGS */
+	li	r10,1
+	stb	r10,PACASOFTIRQEN(r13)
+	stb	r10,PACAHARDIRQEN(r13)
+	std	r10,SOFTE(r1)
+#ifdef CONFIG_PPC_ISERIES
+BEGIN_FW_FTR_SECTION
+	/* Hack for handling interrupts when soft-enabling on iSeries */
+	cmpdi	cr1,r0,0x5555		/* syscall 0x5555 */
+	andi.	r10,r12,MSR_PR		/* from kernel */
+	crand	4*cr0+eq,4*cr1+eq,4*cr0+eq
+	bne	2f
+	b	hardware_interrupt_entry
+2:
+END_FW_FTR_SECTION_IFSET(FW_FEATURE_ISERIES)
+#endif /* CONFIG_PPC_ISERIES */
+
+	/* Hard enable interrupts */
+#ifdef CONFIG_PPC_BOOK3E
+	wrteei	1
+#else
+	mfmsr	r11
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ori	r11,r11,MSR_EE
 	mtmsrd	r11,1
 #endif /* CONFIG_PPC_BOOK3E */
 
+<<<<<<< HEAD
 	/* We do need to set SOFTE in the stack frame or the return
 	 * from interrupt will be painful
 	 */
 	li	r10,1
 	std	r10,SOFTE(r1)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef SHOW_SYSCALLS
 	bl	.do_show_syscall
 	REST_GPR(0,r1)
@@ -193,14 +231,25 @@ syscall_exit:
 	andi.	r10,r8,MSR_RI
 	beq-	unrecov_restore
 #endif
+<<<<<<< HEAD
 	/*
 	 * Disable interrupts so current_thread_info()->flags can't change,
+=======
+
+	/* Disable interrupts so current_thread_info()->flags can't change,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * and so that we don't get interrupted after loading SRR0/1.
 	 */
 #ifdef CONFIG_PPC_BOOK3E
 	wrteei	0
 #else
+<<<<<<< HEAD
 	ld	r10,PACAKMSR(r13)
+=======
+	mfmsr	r10
+	rldicl	r10,r10,48,1
+	rotldi	r10,r10,16
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mtmsrd	r10,1
 #endif /* CONFIG_PPC_BOOK3E */
 
@@ -312,7 +361,11 @@ syscall_exit_work:
 #ifdef CONFIG_PPC_BOOK3E
 	wrteei	1
 #else
+<<<<<<< HEAD
 	ld	r10,PACAKMSR(r13)
+=======
+	mfmsr	r10
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ori	r10,r10,MSR_EE
 	mtmsrd	r10,1
 #endif /* CONFIG_PPC_BOOK3E */
@@ -373,12 +426,15 @@ _GLOBAL(ret_from_fork)
 	li	r3,0
 	b	syscall_exit
 
+<<<<<<< HEAD
 	.section	".toc","aw"
 DSCR_DEFAULT:
 	.tc dscr_default[TC],dscr_default
 
 	.section	".text"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This routine switches between two different tasks.  The process
  * state of one is saved on its kernel stack.  Then the state
@@ -518,6 +574,12 @@ END_MMU_FTR_SECTION_IFSET(MMU_FTR_1T_SEGMENT)
 	mr	r1,r8		/* start using new stack pointer */
 	std	r7,PACAKSAVE(r13)
 
+<<<<<<< HEAD
+=======
+	ld	r6,_CCR(r1)
+	mtcrf	0xFF,r6
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_ALTIVEC
 BEGIN_FTR_SECTION
 	ld	r0,THREAD_VRSAVE(r4)
@@ -526,6 +588,7 @@ END_FTR_SECTION_IFSET(CPU_FTR_ALTIVEC)
 #endif /* CONFIG_ALTIVEC */
 #ifdef CONFIG_PPC64
 BEGIN_FTR_SECTION
+<<<<<<< HEAD
 	lwz	r6,THREAD_DSCR_INHERIT(r4)
 	ld	r7,DSCR_DEFAULT@toc(2)
 	ld	r0,THREAD_DSCR(r4)
@@ -542,6 +605,16 @@ END_FTR_SECTION_IFSET(CPU_FTR_DSCR)
 	ld	r6,_CCR(r1)
 	mtcrf	0xFF,r6
 
+=======
+	ld	r0,THREAD_DSCR(r4)
+	cmpd	r0,r25
+	beq	1f
+	mtspr	SPRN_DSCR,r0
+1:	
+END_FTR_SECTION_IFSET(CPU_FTR_DSCR)
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* r3-r13 are destroyed -- Cort */
 	REST_8GPRS(14, r1)
 	REST_10GPRS(22, r1)
@@ -569,8 +642,15 @@ _GLOBAL(ret_from_except_lite)
 #ifdef CONFIG_PPC_BOOK3E
 	wrteei	0
 #else
+<<<<<<< HEAD
 	ld	r10,PACAKMSR(r13) /* Get kernel MSR without EE */
 	mtmsrd	r10,1		  /* Update machine state */
+=======
+	mfmsr	r10		/* Get current interrupt state */
+	rldicl	r9,r10,48,1	/* clear MSR_EE */
+	rotldi	r9,r9,16
+	mtmsrd	r9,1		/* Update machine state */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_PPC_BOOK3E */
 
 #ifdef CONFIG_PREEMPT
@@ -593,6 +673,7 @@ _GLOBAL(ret_from_except_lite)
 	ld	r4,TI_FLAGS(r9)
 	andi.	r0,r4,_TIF_USER_WORK_MASK
 	bne	do_work
+<<<<<<< HEAD
 #endif /* !CONFIG_PREEMPT */
 
 	.globl	fast_exc_return_irq
@@ -657,6 +738,27 @@ ALT_FTR_SECTION_END_IFCLR(CPU_FTR_STCX_CHECKS_ADDRESS)
 	.globl	fast_exception_return
 fast_exception_return:
 	ld	r3,_MSR(r1)
+=======
+#endif
+
+restore:
+BEGIN_FW_FTR_SECTION
+	ld	r5,SOFTE(r1)
+FW_FTR_SECTION_ELSE
+	b	.Liseries_check_pending_irqs
+ALT_FW_FTR_SECTION_END_IFCLR(FW_FEATURE_ISERIES)
+2:
+	TRACE_AND_RESTORE_IRQ(r5);
+
+	/* extract EE bit and use it to restore paca->hard_enabled */
+	ld	r3,_MSR(r1)
+	rldicl	r4,r3,49,63		/* r0 = (r3 >> 15) & 1 */
+	stb	r4,PACAHARDIRQEN(r13)
+
+#ifdef CONFIG_PPC_BOOK3E
+	b	.exception_return_book3e
+#else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ld	r4,_CTR(r1)
 	ld	r0,_LINK(r1)
 	mtctr	r4
@@ -670,18 +772,41 @@ fast_exception_return:
 	beq-	unrecov_restore
 
 	/*
+<<<<<<< HEAD
+=======
+	 * Clear the reservation. If we know the CPU tracks the address of
+	 * the reservation then we can potentially save some cycles and use
+	 * a larx. On POWER6 and POWER7 this is significantly faster.
+	 */
+BEGIN_FTR_SECTION
+	stdcx.	r0,0,r1		/* to clear the reservation */
+FTR_SECTION_ELSE
+	ldarx	r4,0,r1
+ALT_FTR_SECTION_END_IFCLR(CPU_FTR_STCX_CHECKS_ADDRESS)
+
+	/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Clear RI before restoring r13.  If we are returning to
 	 * userspace and we take an exception after restoring r13,
 	 * we end up corrupting the userspace r13 value.
 	 */
+<<<<<<< HEAD
 	ld	r4,PACAKMSR(r13) /* Get kernel MSR without EE */
 	andc	r4,r4,r0	 /* r0 contains MSR_RI here */
+=======
+	mfmsr	r4
+	andc	r4,r4,r0	/* r0 contains MSR_RI here */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mtmsrd	r4,1
 
 	/*
 	 * r13 is our per cpu area, only restore it if we are returning to
+<<<<<<< HEAD
 	 * userspace the value stored in the stack frame may belong to
 	 * another CPU.
+=======
+	 * userspace
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	andi.	r0,r3,MSR_PR
 	beq	1f
@@ -706,6 +831,7 @@ fast_exception_return:
 
 #endif /* CONFIG_PPC_BOOK3E */
 
+<<<<<<< HEAD
 	/*
 	 * We are returning to a context with interrupts soft disabled.
 	 *
@@ -777,6 +903,32 @@ restore_check_irq_replay:
 
 
 3:
+=======
+.Liseries_check_pending_irqs:
+#ifdef CONFIG_PPC_ISERIES
+	ld	r5,SOFTE(r1)
+	cmpdi	0,r5,0
+	beq	2b
+	/* Check for pending interrupts (iSeries) */
+	ld	r3,PACALPPACAPTR(r13)
+	ld	r3,LPPACAANYINT(r3)
+	cmpdi	r3,0
+	beq+	2b			/* skip do_IRQ if no interrupts */
+
+	li	r3,0
+	stb	r3,PACASOFTIRQEN(r13)	/* ensure we are soft-disabled */
+#ifdef CONFIG_TRACE_IRQFLAGS
+	bl	.trace_hardirqs_off
+	mfmsr	r10
+#endif
+	ori	r10,r10,MSR_EE
+	mtmsrd	r10			/* hard-enable again */
+	addi	r3,r1,STACK_FRAME_OVERHEAD
+	bl	.do_IRQ
+	b	.ret_from_except_lite		/* loop back and handle more */
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 do_work:
 #ifdef CONFIG_PREEMPT
 	andi.	r0,r3,MSR_PR	/* Returning to user mode? */
@@ -789,6 +941,7 @@ do_work:
 	crandc	eq,cr1*4+eq,eq
 	bne	restore
 
+<<<<<<< HEAD
 	/*
 	 * Here we are preempting the current task. We want to make
 	 * sure we are soft-disabled first
@@ -796,6 +949,34 @@ do_work:
 	SOFT_DISABLE_INTS(r3,r4)
 1:	bl	.preempt_schedule_irq
 
+=======
+	/* Here we are preempting the current task.
+	 *
+	 * Ensure interrupts are soft-disabled. We also properly mark
+	 * the PACA to reflect the fact that they are hard-disabled
+	 * and trace the change
+	 */
+	li	r0,0
+	stb	r0,PACASOFTIRQEN(r13)
+	stb	r0,PACAHARDIRQEN(r13)
+	TRACE_DISABLE_INTS
+
+	/* Call the scheduler with soft IRQs off */
+1:	bl	.preempt_schedule_irq
+
+	/* Hard-disable interrupts again (and update PACA) */
+#ifdef CONFIG_PPC_BOOK3E
+	wrteei	0
+#else
+	mfmsr	r10
+	rldicl	r10,r10,48,1
+	rotldi	r10,r10,16
+	mtmsrd	r10,1
+#endif /* CONFIG_PPC_BOOK3E */
+	li	r0,0
+	stb	r0,PACAHARDIRQEN(r13)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Re-test flags and eventually loop */
 	clrrdi	r9,r1,THREAD_SHIFT
 	ld	r4,TI_FLAGS(r9)
@@ -806,16 +987,34 @@ do_work:
 user_work:
 #endif /* CONFIG_PREEMPT */
 
+<<<<<<< HEAD
 	andi.	r0,r4,_TIF_NEED_RESCHED
 	beq	1f
 	bl	.restore_interrupts
+=======
+	/* Enable interrupts */
+#ifdef CONFIG_PPC_BOOK3E
+	wrteei	1
+#else
+	ori	r10,r10,MSR_EE
+	mtmsrd	r10,1
+#endif /* CONFIG_PPC_BOOK3E */
+
+	andi.	r0,r4,_TIF_NEED_RESCHED
+	beq	1f
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bl	.schedule
 	b	.ret_from_except_lite
 
 1:	bl	.save_nvgprs
+<<<<<<< HEAD
 	bl	.restore_interrupts
 	addi	r3,r1,STACK_FRAME_OVERHEAD
 	bl	.do_notify_resume
+=======
+	addi	r3,r1,STACK_FRAME_OVERHEAD
+	bl	.do_signal
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	b	.ret_from_except
 
 unrecov_restore:

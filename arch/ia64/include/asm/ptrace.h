@@ -246,6 +246,7 @@ static inline unsigned long user_stack_pointer(struct pt_regs *regs)
 	return regs->ar_bspstore;
 }
 
+<<<<<<< HEAD
 static inline int is_syscall_success(struct pt_regs *regs)
 {
 	return regs->r10 != -1;
@@ -258,6 +259,9 @@ static inline long regs_return_value(struct pt_regs *regs)
 	else
 		return -regs->r8;
 }
+=======
+#define regs_return_value(regs) ((regs)->r8)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Conserve space in histogram by encoding slot bits in address
  * bits 2 and 3 rather than bits 0 and 1.
@@ -297,6 +301,10 @@ static inline long regs_return_value(struct pt_regs *regs)
   struct task_struct;			/* forward decl */
   struct unw_frame_info;		/* forward decl */
 
+<<<<<<< HEAD
+=======
+  extern void show_regs (struct pt_regs *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   extern void ia64_do_show_stack (struct unw_frame_info *, void *);
   extern unsigned long ia64_get_user_rbs_end (struct task_struct *, struct pt_regs *,
 					      unsigned long *);

@@ -735,7 +735,11 @@ static int i5400_get_devices(struct mem_ctl_info *mci, int dev_idx)
 
 	/* Attempt to 'get' the MCH register we want */
 	pdev = NULL;
+<<<<<<< HEAD
 	while (1) {
+=======
+	while (!pvt->branchmap_werrors || !pvt->fsb_error_regs) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pdev = pci_get_device(PCI_VENDOR_ID_INTEL,
 				      PCI_DEVICE_ID_INTEL_5400_ERR, pdev);
 		if (!pdev) {
@@ -743,6 +747,7 @@ static int i5400_get_devices(struct mem_ctl_info *mci, int dev_idx)
 			i5400_printk(KERN_ERR,
 				"'system address,Process Bus' "
 				"device not found:"
+<<<<<<< HEAD
 				"vendor 0x%x device 0x%x ERR func 1 "
 				"(broken BIOS?)\n",
 				PCI_VENDOR_ID_INTEL,
@@ -779,6 +784,25 @@ static int i5400_get_devices(struct mem_ctl_info *mci, int dev_idx)
 			break;
 	}
 	pvt->fsb_error_regs = pdev;
+=======
+				"vendor 0x%x device 0x%x ERR funcs "
+				"(broken BIOS?)\n",
+				PCI_VENDOR_ID_INTEL,
+				PCI_DEVICE_ID_INTEL_5400_ERR);
+			goto error;
+		}
+
+		/* Store device 16 funcs 1 and 2 */
+		switch (PCI_FUNC(pdev->devfn)) {
+		case 1:
+			pvt->branchmap_werrors = pdev;
+			break;
+		case 2:
+			pvt->fsb_error_regs = pdev;
+			break;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	debugf1("System Address, processor bus- PCI Bus ID: %s  %x:%x\n",
 		pci_name(pvt->system_address),
@@ -797,10 +821,14 @@ static int i5400_get_devices(struct mem_ctl_info *mci, int dev_idx)
 			"MC: 'BRANCH 0' device not found:"
 			"vendor 0x%x device 0x%x Func 0 (broken BIOS?)\n",
 			PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_5400_FBD0);
+<<<<<<< HEAD
 
 		pci_dev_put(pvt->fsb_error_regs);
 		pci_dev_put(pvt->branchmap_werrors);
 		return -ENODEV;
+=======
+		goto error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* If this device claims to have more than 2 channels then
@@ -818,6 +846,7 @@ static int i5400_get_devices(struct mem_ctl_info *mci, int dev_idx)
 			"(broken BIOS?)\n",
 			PCI_VENDOR_ID_INTEL,
 			PCI_DEVICE_ID_INTEL_5400_FBD1);
+<<<<<<< HEAD
 
 		pci_dev_put(pvt->branch_0);
 		pci_dev_put(pvt->fsb_error_regs);
@@ -826,6 +855,16 @@ static int i5400_get_devices(struct mem_ctl_info *mci, int dev_idx)
 	}
 
 	return 0;
+=======
+		goto error;
+	}
+
+	return 0;
+
+error:
+	i5400_put_devices(mci);
+	return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1405,7 +1444,11 @@ static void __devexit i5400_remove_one(struct pci_dev *pdev)
  *
  *	The "E500P" device is the first device supported.
  */
+<<<<<<< HEAD
 static DEFINE_PCI_DEVICE_TABLE(i5400_pci_tbl) = {
+=======
+static const struct pci_device_id i5400_pci_tbl[] __devinitdata = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_5400_ERR)},
 	{0,}			/* 0 terminated list. */
 };

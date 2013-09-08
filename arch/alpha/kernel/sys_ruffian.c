@@ -18,6 +18,10 @@
 #include <linux/init.h>
 
 #include <asm/ptrace.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/dma.h>
 #include <asm/irq.h>
 #include <asm/mmu_context.h>
@@ -25,6 +29,10 @@
 #include <asm/pgtable.h>
 #include <asm/core_cia.h>
 #include <asm/tlbflush.h>
+<<<<<<< HEAD
+=======
+#include <asm/8253pit.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "proto.h"
 #include "irq_impl.h"
@@ -118,7 +126,11 @@ ruffian_kill_arch (int mode)
  */
 
 static int __init
+<<<<<<< HEAD
 ruffian_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+ruffian_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
         static char irq_tab[11][5] __initdata = {
 	      /*INT  INTA INTB INTC INTD */

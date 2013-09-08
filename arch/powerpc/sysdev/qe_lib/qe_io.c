@@ -41,7 +41,11 @@ int par_io_init(struct device_node *np)
 	ret = of_address_to_resource(np, 0, &res);
 	if (ret)
 		return ret;
+<<<<<<< HEAD
 	par_io = ioremap(res.start, resource_size(&res));
+=======
+	par_io = ioremap(res.start, res.end - res.start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	num_ports = of_get_property(np, "num-ports", NULL);
 	if (num_ports)

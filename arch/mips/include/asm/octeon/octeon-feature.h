@@ -31,6 +31,7 @@
 
 #ifndef __OCTEON_FEATURE_H__
 #define __OCTEON_FEATURE_H__
+<<<<<<< HEAD
 #include <asm/octeon/cvmx-mio-defs.h>
 #include <asm/octeon/cvmx-rnm-defs.h>
 
@@ -39,6 +40,10 @@ enum octeon_feature {
 	OCTEON_FEATURE_PKND,
 	/* CN68XX has different fields in word0 - word2 */
 	OCTEON_FEATURE_CN68XX_WQE,
+=======
+
+enum octeon_feature {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Octeon models in the CN5XXX family and higher support
 	 * atomic add instructions to memory (saa/saad).
@@ -48,6 +53,7 @@ enum octeon_feature {
 	OCTEON_FEATURE_ZIP,
 	/* Does this Octeon support crypto acceleration using COP2? */
 	OCTEON_FEATURE_CRYPTO,
+<<<<<<< HEAD
 	OCTEON_FEATURE_DORM_CRYPTO,
 	/* Does this Octeon support PCI express? */
 	OCTEON_FEATURE_PCIE,
@@ -55,6 +61,10 @@ enum octeon_feature {
 	OCTEON_FEATURE_SRIO,
 	/*  Does this Octeon support Interlaken */
 	OCTEON_FEATURE_ILK,
+=======
+	/* Does this Octeon support PCI express? */
+	OCTEON_FEATURE_PCIE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Some Octeon models support internal memory for storing
 	 * cryptographic keys */
 	OCTEON_FEATURE_KEY_MEMORY,
@@ -75,6 +85,7 @@ enum octeon_feature {
 	/* Octeon MDIO block supports clause 45 transactions for 10
 	 * Gig support */
 	OCTEON_FEATURE_MDIO_CLAUSE_45,
+<<<<<<< HEAD
         /*
 	 *  CN52XX and CN56XX used a block named NPEI for PCIe
 	 *  access. Newer chips replaced this with SLI+DPI.
@@ -84,6 +95,8 @@ enum octeon_feature {
 	OCTEON_FEATURE_DFM,
 	OCTEON_FEATURE_CIU2,
 	OCTEON_MAX_FEATURE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline int cvmx_fuse_read(int fuse);
@@ -116,6 +129,7 @@ static inline int octeon_has_feature(enum octeon_feature feature)
 			return !cvmx_fuse_read(121);
 
 	case OCTEON_FEATURE_CRYPTO:
+<<<<<<< HEAD
 		if (OCTEON_IS_MODEL(OCTEON_CN6XXX)) {
 			union cvmx_mio_fus_dat2 fus_2;
 			fus_2.u64 = cvmx_read_csr(CVMX_MIO_FUS_DAT2);
@@ -159,10 +173,22 @@ static inline int octeon_has_feature(enum octeon_feature feature)
 			|| OCTEON_IS_MODEL(OCTEON_CN56XX)
 			|| OCTEON_IS_MODEL(OCTEON_CN6XXX);
 
+=======
+		return !cvmx_fuse_read(90);
+
+	case OCTEON_FEATURE_PCIE:
+	case OCTEON_FEATURE_MGMT_PORT:
+	case OCTEON_FEATURE_RAID:
+		return OCTEON_IS_MODEL(OCTEON_CN56XX)
+			|| OCTEON_IS_MODEL(OCTEON_CN52XX);
+
+	case OCTEON_FEATURE_KEY_MEMORY:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case OCTEON_FEATURE_LED_CONTROLLER:
 		return OCTEON_IS_MODEL(OCTEON_CN38XX)
 			|| OCTEON_IS_MODEL(OCTEON_CN58XX)
 			|| OCTEON_IS_MODEL(OCTEON_CN56XX);
+<<<<<<< HEAD
 
 	case OCTEON_FEATURE_TRA:
 		return !(OCTEON_IS_MODEL(OCTEON_CN30XX)
@@ -188,6 +214,19 @@ static inline int octeon_has_feature(enum octeon_feature feature)
 			  && !OCTEON_IS_MODEL(OCTEON_CN56XX_PASS1_X)
 			  && !OCTEON_IS_MODEL(OCTEON_CN52XX_PASS1_X);
 
+=======
+	case OCTEON_FEATURE_TRA:
+		return !(OCTEON_IS_MODEL(OCTEON_CN30XX)
+			 || OCTEON_IS_MODEL(OCTEON_CN50XX));
+	case OCTEON_FEATURE_USB:
+		return !(OCTEON_IS_MODEL(OCTEON_CN38XX)
+			 || OCTEON_IS_MODEL(OCTEON_CN58XX));
+	case OCTEON_FEATURE_NO_WPTR:
+		return (OCTEON_IS_MODEL(OCTEON_CN56XX)
+			 || OCTEON_IS_MODEL(OCTEON_CN52XX))
+			&& !OCTEON_IS_MODEL(OCTEON_CN56XX_PASS1_X)
+			&& !OCTEON_IS_MODEL(OCTEON_CN52XX_PASS1_X);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case OCTEON_FEATURE_DFA:
 		if (!OCTEON_IS_MODEL(OCTEON_CN38XX)
 		    && !OCTEON_IS_MODEL(OCTEON_CN31XX)
@@ -195,6 +234,7 @@ static inline int octeon_has_feature(enum octeon_feature feature)
 			return 0;
 		else if (OCTEON_IS_MODEL(OCTEON_CN3020))
 			return 0;
+<<<<<<< HEAD
 		else
 			return !cvmx_fuse_read(120);
 
@@ -211,10 +251,17 @@ static inline int octeon_has_feature(enum octeon_feature feature)
 		else
 			return !cvmx_fuse_read(90);
 
+=======
+		else if (OCTEON_IS_MODEL(OCTEON_CN38XX_PASS1))
+			return 1;
+		else
+			return !cvmx_fuse_read(120);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case OCTEON_FEATURE_MDIO_CLAUSE_45:
 		return !(OCTEON_IS_MODEL(OCTEON_CN3XXX)
 			 || OCTEON_IS_MODEL(OCTEON_CN58XX)
 			 || OCTEON_IS_MODEL(OCTEON_CN50XX));
+<<<<<<< HEAD
 
 	case OCTEON_FEATURE_NPEI:
 		return OCTEON_IS_MODEL(OCTEON_CN56XX)
@@ -231,6 +278,8 @@ static inline int octeon_has_feature(enum octeon_feature feature)
 
 	default:
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }

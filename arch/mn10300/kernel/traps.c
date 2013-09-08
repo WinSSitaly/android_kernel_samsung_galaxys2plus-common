@@ -27,9 +27,16 @@
 #include <linux/bug.h>
 #include <linux/irq.h>
 #include <asm/processor.h>
+<<<<<<< HEAD
 #include <linux/uaccess.h>
 #include <asm/io.h>
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <linux/uaccess.h>
+#include <asm/io.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/smp.h>
 #include <asm/pgalloc.h>
 #include <asm/cacheflush.h>

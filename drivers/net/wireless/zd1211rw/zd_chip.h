@@ -21,8 +21,11 @@
 #ifndef _ZD_CHIP_H
 #define _ZD_CHIP_H
 
+<<<<<<< HEAD
 #include <net/mac80211.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "zd_rf.h"
 #include "zd_usb.h"
 

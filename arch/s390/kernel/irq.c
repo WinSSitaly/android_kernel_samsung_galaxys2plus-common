@@ -33,8 +33,12 @@ static const struct irq_class intrclass_names[] = {
 	{.name = "EXT" },
 	{.name = "I/O" },
 	{.name = "CLK", .desc = "[EXT] Clock Comparator" },
+<<<<<<< HEAD
 	{.name = "EXC", .desc = "[EXT] External Call" },
 	{.name = "EMS", .desc = "[EXT] Emergency Signal" },
+=======
+	{.name = "IPI", .desc = "[EXT] Signal Processor" },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{.name = "TMR", .desc = "[EXT] CPU Timer" },
 	{.name = "TAL", .desc = "[EXT] Timing Alert" },
 	{.name = "PFL", .desc = "[EXT] Pseudo Page Fault" },
@@ -43,8 +47,13 @@ static const struct irq_class intrclass_names[] = {
 	{.name = "SCP", .desc = "[EXT] Service Call" },
 	{.name = "IUC", .desc = "[EXT] IUCV" },
 	{.name = "CPM", .desc = "[EXT] CPU Measurement" },
+<<<<<<< HEAD
 	{.name = "CIO", .desc = "[I/O] Common I/O Layer Interrupt" },
 	{.name = "QAI", .desc = "[I/O] QDIO Adapter Interrupt" },
+=======
+	{.name = "QAI", .desc = "[I/O] QDIO Adapter Interrupt" },
+	{.name = "QDI", .desc = "[I/O] QDIO Interrupt" },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{.name = "DAS", .desc = "[I/O] DASD" },
 	{.name = "C15", .desc = "[I/O] 3215" },
 	{.name = "C70", .desc = "[I/O] 3270" },
@@ -54,7 +63,10 @@ static const struct irq_class intrclass_names[] = {
 	{.name = "CLW", .desc = "[I/O] CLAW" },
 	{.name = "CTC", .desc = "[I/O] CTC" },
 	{.name = "APB", .desc = "[I/O] AP Bus" },
+<<<<<<< HEAD
 	{.name = "CSC", .desc = "[I/O] CHSC Subchannel" },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{.name = "NMI", .desc = "[NMI] Machine Check" },
 };
 
@@ -90,6 +102,18 @@ int show_interrupts(struct seq_file *p, void *v)
 }
 
 /*
+<<<<<<< HEAD
+=======
+ * For compatibilty only. S/390 specific setup of interrupts et al. is done
+ * much later in init_channel_subsystem().
+ */
+void __init init_IRQ(void)
+{
+	/* nothing... */
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Switch to the asynchronous interrupt stack for softirq execution.
  */
 asmlinkage void do_softirq(void)
@@ -118,10 +142,16 @@ asmlinkage void do_softirq(void)
 				         "a" (__do_softirq)
 				     : "0", "1", "2", "3", "4", "5", "14",
 				       "cc", "memory" );
+<<<<<<< HEAD
 		} else {
 			/* We are already on the async stack. */
 			__do_softirq();
 		}
+=======
+		} else
+			/* We are already on the async stack. */
+			__do_softirq();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	local_irq_restore(flags);
@@ -138,6 +168,7 @@ void init_irq_proc(void)
 #endif
 
 /*
+<<<<<<< HEAD
  * ext_int_hash[index] is the list head for all external interrupts that hash
  * to this index.
  */
@@ -160,6 +191,21 @@ static void __init init_external_interrupts(void)
 	for (idx = 0; idx < ARRAY_SIZE(ext_int_hash); idx++)
 		INIT_LIST_HEAD(&ext_int_hash[idx]);
 }
+=======
+ * ext_int_hash[index] is the start of the list for all external interrupts
+ * that hash to this index. With the current set of external interrupts
+ * (0x1202 external call, 0x1004 cpu timer, 0x2401 hwc console, 0x4000
+ * iucv and 0x2603 pfault) this is always the first element.
+ */
+
+struct ext_int_info {
+	struct ext_int_info *next;
+	ext_int_handler_t handler;
+	u16 code;
+};
+
+static struct ext_int_info *ext_int_hash[256];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int ext_hash(u16 code)
 {
@@ -169,7 +215,10 @@ static inline int ext_hash(u16 code)
 int register_external_interrupt(u16 code, ext_int_handler_t handler)
 {
 	struct ext_int_info *p;
+<<<<<<< HEAD
 	unsigned long flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int index;
 
 	p = kmalloc(sizeof(*p), GFP_ATOMIC);
@@ -178,16 +227,22 @@ int register_external_interrupt(u16 code, ext_int_handler_t handler)
 	p->code = code;
 	p->handler = handler;
 	index = ext_hash(code);
+<<<<<<< HEAD
 
 	spin_lock_irqsave(&ext_int_hash_lock, flags);
 	list_add_rcu(&p->entry, &ext_int_hash[index]);
 	spin_unlock_irqrestore(&ext_int_hash_lock, flags);
+=======
+	p->next = ext_int_hash[index];
+	ext_int_hash[index] = p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL(register_external_interrupt);
 
 int unregister_external_interrupt(u16 code, ext_int_handler_t handler)
 {
+<<<<<<< HEAD
 	struct ext_int_info *p;
 	unsigned long flags;
 	int index = ext_hash(code);
@@ -200,10 +255,32 @@ int unregister_external_interrupt(u16 code, ext_int_handler_t handler)
 		}
 	}
 	spin_unlock_irqrestore(&ext_int_hash_lock, flags);
+=======
+	struct ext_int_info *p, *q;
+	int index;
+
+	index = ext_hash(code);
+	q = NULL;
+	p = ext_int_hash[index];
+	while (p) {
+		if (p->code == code && p->handler == handler)
+			break;
+		q = p;
+		p = p->next;
+	}
+	if (!p)
+		return -ENOENT;
+	if (q)
+		q->next = p->next;
+	else
+		ext_int_hash[index] = p->next;
+	kfree(p);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL(unregister_external_interrupt);
 
+<<<<<<< HEAD
 void __irq_entry do_extint(struct pt_regs *regs, struct ext_code ext_code,
 			   unsigned int param32, unsigned long param64)
 {
@@ -227,15 +304,44 @@ void __irq_entry do_extint(struct pt_regs *regs, struct ext_code ext_code,
 		if (likely(p->code == ext_code.code))
 			p->handler(ext_code, param32, param64);
 	rcu_read_unlock();
+=======
+void __irq_entry do_extint(struct pt_regs *regs, unsigned int ext_int_code,
+			   unsigned int param32, unsigned long param64)
+{
+	struct pt_regs *old_regs;
+	unsigned short code;
+	struct ext_int_info *p;
+	int index;
+
+	code = (unsigned short) ext_int_code;
+	old_regs = set_irq_regs(regs);
+	s390_idle_check(regs, S390_lowcore.int_clock,
+			S390_lowcore.async_enter_timer);
+	irq_enter();
+	if (S390_lowcore.int_clock >= S390_lowcore.clock_comparator)
+		/* Serve timer interrupts first. */
+		clock_comparator_work();
+	kstat_cpu(smp_processor_id()).irqs[EXTERNAL_INTERRUPT]++;
+	if (code != 0x1004)
+		__get_cpu_var(s390_idle).nohz_delay = 1;
+	index = ext_hash(code);
+	for (p = ext_int_hash[index]; p; p = p->next) {
+		if (likely(p->code == code))
+			p->handler(ext_int_code, param32, param64);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	irq_exit();
 	set_irq_regs(old_regs);
 }
 
+<<<<<<< HEAD
 void __init init_IRQ(void)
 {
 	init_external_interrupts();
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEFINE_SPINLOCK(sc_irq_lock);
 static int sc_irq_refcount;
 
@@ -258,6 +364,7 @@ void service_subclass_irq_unregister(void)
 	spin_unlock(&sc_irq_lock);
 }
 EXPORT_SYMBOL(service_subclass_irq_unregister);
+<<<<<<< HEAD
 
 static DEFINE_SPINLOCK(ma_subclass_lock);
 static int ma_subclass_refcount;
@@ -281,3 +388,5 @@ void measurement_alert_subclass_unregister(void)
 	spin_unlock(&ma_subclass_lock);
 }
 EXPORT_SYMBOL(measurement_alert_subclass_unregister);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

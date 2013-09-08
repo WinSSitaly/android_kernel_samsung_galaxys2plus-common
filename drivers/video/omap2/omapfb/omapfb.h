@@ -32,7 +32,11 @@
 #include <video/omapdss.h>
 
 #ifdef DEBUG
+<<<<<<< HEAD
 extern bool omapfb_debug;
+=======
+extern unsigned int omapfb_debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DBG(format, ...) \
 	do { \
 		if (omapfb_debug) \
@@ -73,6 +77,7 @@ struct omapfb_info {
 	bool mirror;
 };
 
+<<<<<<< HEAD
 struct omapfb_display_data {
 	struct omapfb2_device *fbdev;
 	struct omap_dss_device *dssdev;
@@ -82,6 +87,8 @@ struct omapfb_display_data {
 	struct delayed_work auto_update_work;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct omapfb2_device {
 	struct device *dev;
 	struct mutex  mtx;
@@ -95,13 +102,25 @@ struct omapfb2_device {
 	struct omapfb2_mem_region regions[10];
 
 	unsigned num_displays;
+<<<<<<< HEAD
 	struct omapfb_display_data displays[10];
+=======
+	struct omap_dss_device *displays[10];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned num_overlays;
 	struct omap_overlay *overlays[10];
 	unsigned num_managers;
 	struct omap_overlay_manager *managers[10];
 
+<<<<<<< HEAD
 	struct workqueue_struct *auto_update_wq;
+=======
+	unsigned num_bpp_overrides;
+	struct {
+		struct omap_dss_device *dssdev;
+		u8 bpp;
+	} bpp_overrides[10];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct omapfb_colormode {
@@ -133,6 +152,7 @@ int dss_mode_to_fb_mode(enum omap_color_mode dssmode,
 int omapfb_setup_overlay(struct fb_info *fbi, struct omap_overlay *ovl,
 		u16 posx, u16 posy, u16 outw, u16 outh);
 
+<<<<<<< HEAD
 void omapfb_start_auto_update(struct omapfb2_device *fbdev,
 		struct omap_dss_device *display);
 void omapfb_stop_auto_update(struct omapfb2_device *fbdev,
@@ -140,6 +160,8 @@ void omapfb_stop_auto_update(struct omapfb2_device *fbdev,
 int omapfb_get_update_mode(struct fb_info *fbi, enum omapfb_update_mode *mode);
 int omapfb_set_update_mode(struct fb_info *fbi, enum omapfb_update_mode mode);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* find the display connected to this fb, if any */
 static inline struct omap_dss_device *fb2display(struct fb_info *fbi)
 {
@@ -155,6 +177,7 @@ static inline struct omap_dss_device *fb2display(struct fb_info *fbi)
 	return NULL;
 }
 
+<<<<<<< HEAD
 static inline struct omapfb_display_data *get_display_data(
 		struct omapfb2_device *fbdev, struct omap_dss_device *dssdev)
 {
@@ -168,6 +191,8 @@ static inline struct omapfb_display_data *get_display_data(
 	BUG();
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void omapfb_lock(struct omapfb2_device *fbdev)
 {
 	mutex_lock(&fbdev->mtx);
@@ -181,10 +206,20 @@ static inline void omapfb_unlock(struct omapfb2_device *fbdev)
 static inline int omapfb_overlay_enable(struct omap_overlay *ovl,
 		int enable)
 {
+<<<<<<< HEAD
 	if (enable)
 		return ovl->enable(ovl);
 	else
 		return ovl->disable(ovl);
+=======
+	struct omap_overlay_info info;
+
+	ovl->get_overlay_info(ovl, &info);
+	if (info.enabled == enable)
+		return 0;
+	info.enabled = enable;
+	return ovl->set_overlay_info(ovl, &info);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline struct omapfb2_mem_region *

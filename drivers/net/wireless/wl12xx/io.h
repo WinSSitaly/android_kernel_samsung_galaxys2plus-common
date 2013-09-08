@@ -25,7 +25,10 @@
 #ifndef __IO_H__
 #define __IO_H__
 
+<<<<<<< HEAD
 #include <linux/irqreturn.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "reg.h"
 
 #define HW_ACCESS_MEMORY_MAX_RANGE	0x1FFC0
@@ -43,8 +46,11 @@
 
 #define HW_ACCESS_PRAM_MAX_RANGE	0x3c000
 
+<<<<<<< HEAD
 extern struct wl1271_partition_set wl12xx_part_table[PART_TABLE_LEN];
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct wl1271;
 
 void wl1271_disable_interrupts(struct wl1271 *wl);
@@ -53,17 +59,34 @@ void wl1271_enable_interrupts(struct wl1271 *wl);
 void wl1271_io_reset(struct wl1271 *wl);
 void wl1271_io_init(struct wl1271 *wl);
 
+<<<<<<< HEAD
+=======
+static inline struct device *wl1271_wl_to_dev(struct wl1271 *wl)
+{
+	return wl->if_ops->dev(wl);
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Raw target IO, address is not translated */
 static inline void wl1271_raw_write(struct wl1271 *wl, int addr, void *buf,
 				    size_t len, bool fixed)
 {
+<<<<<<< HEAD
 	wl->if_ops->write(wl->dev, addr, buf, len, fixed);
+=======
+	wl->if_ops->write(wl, addr, buf, len, fixed);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void wl1271_raw_read(struct wl1271 *wl, int addr, void *buf,
 				   size_t len, bool fixed)
 {
+<<<<<<< HEAD
 	wl->if_ops->read(wl->dev, addr, buf, len, fixed);
+=======
+	wl->if_ops->read(wl, addr, buf, len, fixed);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline u32 wl1271_raw_read32(struct wl1271 *wl, int addr)
@@ -125,6 +148,7 @@ static inline void wl1271_write(struct wl1271 *wl, int addr, void *buf,
 	wl1271_raw_write(wl, physical, buf, len, fixed);
 }
 
+<<<<<<< HEAD
 static inline void wl1271_read_hwaddr(struct wl1271 *wl, int hwaddr,
 				      void *buf, size_t len, bool fixed)
 {
@@ -139,6 +163,8 @@ static inline void wl1271_read_hwaddr(struct wl1271 *wl, int hwaddr,
 	wl1271_raw_read(wl, physical, buf, len, fixed);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline u32 wl1271_read32(struct wl1271 *wl, int addr)
 {
 	return wl1271_raw_read32(wl, wl1271_translate_addr(wl, addr));
@@ -151,13 +177,21 @@ static inline void wl1271_write32(struct wl1271 *wl, int addr, u32 val)
 
 static inline void wl1271_power_off(struct wl1271 *wl)
 {
+<<<<<<< HEAD
 	wl->if_ops->power(wl->dev, false);
+=======
+	wl->if_ops->power(wl, false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clear_bit(WL1271_FLAG_GPIO_POWER, &wl->flags);
 }
 
 static inline int wl1271_power_on(struct wl1271 *wl)
 {
+<<<<<<< HEAD
 	int ret = wl->if_ops->power(wl->dev, true);
+=======
+	int ret = wl->if_ops->power(wl, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret == 0)
 		set_bit(WL1271_FLAG_GPIO_POWER, &wl->flags);
 
@@ -172,10 +206,24 @@ u16 wl1271_top_reg_read(struct wl1271 *wl, int addr);
 int wl1271_set_partition(struct wl1271 *wl,
 			 struct wl1271_partition_set *p);
 
+<<<<<<< HEAD
 bool wl1271_set_block_size(struct wl1271 *wl);
 
 /* Functions from wl1271_main.c */
 
 int wl1271_tx_dummy_packet(struct wl1271 *wl);
+=======
+/* Functions from wl1271_main.c */
+
+int wl1271_register_hw(struct wl1271 *wl);
+void wl1271_unregister_hw(struct wl1271 *wl);
+int wl1271_init_ieee80211(struct wl1271 *wl);
+struct ieee80211_hw *wl1271_alloc_hw(void);
+int wl1271_free_hw(struct wl1271 *wl);
+irqreturn_t wl1271_irq(int irq, void *data);
+bool wl1271_set_block_size(struct wl1271 *wl);
+int wl1271_tx_dummy_packet(struct wl1271 *wl);
+void wl1271_configure_filters(struct wl1271 *wl, unsigned int filters);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

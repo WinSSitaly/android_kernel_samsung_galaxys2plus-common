@@ -64,7 +64,10 @@ config ARCH_SUPPORTS_DEBUG_PAGEALLOC
 config S390
 	def_bool y
 	select USE_GENERIC_SMP_HELPERS if SMP
+<<<<<<< HEAD
 	select GENERIC_CPU_DEVICES if !SMP
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select HAVE_SYSCALL_WRAPPERS
 	select HAVE_FUNCTION_TRACER
 	select HAVE_FUNCTION_TRACE_MCOUNT_TEST
@@ -82,18 +85,27 @@ config S390
 	select INIT_ALL_POSSIBLE
 	select HAVE_IRQ_WORK
 	select HAVE_PERF_EVENTS
+<<<<<<< HEAD
 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select HAVE_KERNEL_GZIP
 	select HAVE_KERNEL_BZIP2
 	select HAVE_KERNEL_LZMA
 	select HAVE_KERNEL_LZO
 	select HAVE_KERNEL_XZ
+<<<<<<< HEAD
 	select HAVE_ARCH_MUTEX_CPU_RELAX
 	select HAVE_ARCH_JUMP_LABEL if !MARCH_G5
 	select ARCH_SAVE_PAGE_KEYS if HIBERNATION
 	select HAVE_MEMBLOCK
 	select HAVE_MEMBLOCK_NODE_MAP
 	select ARCH_DISCARD_MEMBLOCK
+=======
+	select HAVE_GET_USER_PAGES_FAST
+	select HAVE_ARCH_MUTEX_CPU_RELAX
+	select HAVE_ARCH_JUMP_LABEL if !MARCH_G5
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select ARCH_INLINE_SPIN_TRYLOCK
 	select ARCH_INLINE_SPIN_TRYLOCK_BH
 	select ARCH_INLINE_SPIN_LOCK
@@ -193,13 +205,27 @@ config HOTPLUG_CPU
 	  Say N if you want to disable CPU hotplug.
 
 config SCHED_MC
+<<<<<<< HEAD
 	def_bool n
+=======
+	def_bool y
+	prompt "Multi-core scheduler support"
+	depends on SMP
+	help
+	  Multi-core scheduler support improves the CPU scheduler's decision
+	  making when dealing with multi-core CPU chips at a cost of slightly
+	  increased overhead in some places.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config SCHED_BOOK
 	def_bool y
 	prompt "Book scheduler support"
+<<<<<<< HEAD
 	depends on SMP
 	select SCHED_MC
+=======
+	depends on SMP && SCHED_MC
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Book scheduler support improves the CPU scheduler's decision making
 	  when dealing with machines that have several books.
@@ -218,7 +244,10 @@ config COMPAT
 	prompt "Kernel support for 31 bit emulation"
 	depends on 64BIT
 	select COMPAT_BINFMT_ELF
+<<<<<<< HEAD
 	select ARCH_WANT_OLD_COMPAT_IPC
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Select this option if you want to enable your system kernel to
 	  handle system-calls from ELF binaries for 31 bit ESA.  This option
@@ -276,11 +305,19 @@ config MARCH_Z10
 	  on older machines.
 
 config MARCH_Z196
+<<<<<<< HEAD
 	bool "IBM zEnterprise 114 and 196"
 	help
 	  Select this to enable optimizations for IBM zEnterprise 114 and 196
 	  (2818 and 2817 series). The kernel will be slightly faster but will
 	  not work on older machines.
+=======
+	bool "IBM zEnterprise 196"
+	help
+	  Select this to enable optimizations for IBM zEnterprise 196
+	  (2817 series). The kernel will be slightly faster but will not work
+	  on older machines.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 endchoice
 
@@ -346,6 +383,12 @@ config WARN_DYNAMIC_STACK
 
 	  Say N if you are unsure.
 
+<<<<<<< HEAD
+=======
+config ARCH_POPULATES_NODE_MAP
+	def_bool y
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 comment "Kernel preemption"
 
 source "kernel/Kconfig.preempt"
@@ -567,6 +610,7 @@ config KEXEC
 	  current kernel, and to start another kernel.  It is like a reboot
 	  but is independent of hardware/microcode support.
 
+<<<<<<< HEAD
 config CRASH_DUMP
 	bool "kernel crash dumps"
 	depends on 64BIT
@@ -578,6 +622,8 @@ config CRASH_DUMP
 	  a crash by kdump/kexec.
 	  For more details see Documentation/kdump/kdump.txt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config ZFCPDUMP
 	def_bool n
 	prompt "zfcpdump support"

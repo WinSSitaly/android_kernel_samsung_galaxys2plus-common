@@ -369,8 +369,15 @@ if ($hz eq '--can') {
 		die "Usage: $0 HZ\n";
 	}
 
+<<<<<<< HEAD
 	$cv = $canned_values{$hz};
 	@val = defined($cv) ? @$cv : compute_values($hz);
+=======
+	@val = @{$canned_values{$hz}};
+	if (!defined(@val)) {
+		@val = compute_values($hz);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	output($hz, @val);
 }
 exit 0;

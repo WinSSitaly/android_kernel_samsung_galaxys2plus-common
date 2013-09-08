@@ -38,8 +38,12 @@
 #include <linux/delay.h>
 #include <linux/pm.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/of_device.h>
 #include <linux/regmap.h>
+=======
+#include <linux/platform_device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/spi/spi.h>
 #include <linux/slab.h>
 #include <sound/core.h>
@@ -66,6 +70,7 @@ static int wm8753_voice_write_dai_fmt(struct snd_soc_codec *codec,
  * We can't read the WM8753 register space when we
  * are using 2 wire for device control, so we cache them instead.
  */
+<<<<<<< HEAD
 static const struct reg_default wm8753_reg_defaults[] = {
 	{ 0x00, 0x0000 },
 	{ 0x01, 0x0008 },
@@ -146,6 +151,30 @@ static bool wm8753_writeable(struct device *dev, unsigned int reg)
 /* codec private data */
 struct wm8753_priv {
 	struct regmap *regmap;
+=======
+static const u16 wm8753_reg[] = {
+	0x0000, 0x0008, 0x0000, 0x000a,
+	0x000a, 0x0033, 0x0000, 0x0007,
+	0x00ff, 0x00ff, 0x000f, 0x000f,
+	0x007b, 0x0000, 0x0032, 0x0000,
+	0x00c3, 0x00c3, 0x00c0, 0x0000,
+	0x0000, 0x0000, 0x0000, 0x0000,
+	0x0000, 0x0000, 0x0000, 0x0000,
+	0x0000, 0x0000, 0x0000, 0x0000,
+	0x0055, 0x0005, 0x0050, 0x0055,
+	0x0050, 0x0055, 0x0050, 0x0055,
+	0x0079, 0x0079, 0x0079, 0x0079,
+	0x0079, 0x0000, 0x0000, 0x0000,
+	0x0000, 0x0097, 0x0097, 0x0000,
+	0x0004, 0x0000, 0x0083, 0x0024,
+	0x01ba, 0x0000, 0x0083, 0x0024,
+	0x01ba, 0x0000, 0x0000, 0x0000
+};
+
+/* codec private data */
+struct wm8753_priv {
+	enum snd_soc_control_type control_type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int sysclk;
 	unsigned int pcmclk;
 
@@ -544,7 +573,11 @@ SND_SOC_DAPM_INPUT("MIC2"),
 SND_SOC_DAPM_VMID("VREF"),
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dapm_route wm8753_dapm_routes[] = {
+=======
+static const struct snd_soc_dapm_route audio_map[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* left mixer */
 	{"Left Mixer", "Left Playback Switch", "Left DAC"},
 	{"Left Mixer", "Voice Playback Switch", "Voice DAC"},
@@ -698,6 +731,20 @@ static const struct snd_soc_dapm_route wm8753_dapm_routes[] = {
 	{"ACOP", NULL, "ALC Mixer"},
 };
 
+<<<<<<< HEAD
+=======
+static int wm8753_add_widgets(struct snd_soc_codec *codec)
+{
+	struct snd_soc_dapm_context *dapm = &codec->dapm;
+
+	snd_soc_dapm_new_controls(dapm, wm8753_dapm_widgets,
+				  ARRAY_SIZE(wm8753_dapm_widgets));
+	snd_soc_dapm_add_routes(dapm, audio_map, ARRAY_SIZE(audio_map));
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* PLL divisors */
 struct _pll_div {
 	u32 div2:1;
@@ -1373,7 +1420,11 @@ static int wm8753_set_bias_level(struct snd_soc_codec *codec,
  * 3. Voice disabled - HIFI over HIFI
  * 4. Voice disabled - HIFI over HIFI, uses voice DAI LRC for capture
  */
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops wm8753_dai_ops_hifi_mode = {
+=======
+static struct snd_soc_dai_ops wm8753_dai_ops_hifi_mode = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params	= wm8753_i2s_hw_params,
 	.digital_mute	= wm8753_mute,
 	.set_fmt	= wm8753_hifi_set_dai_fmt,
@@ -1382,7 +1433,11 @@ static const struct snd_soc_dai_ops wm8753_dai_ops_hifi_mode = {
 	.set_sysclk	= wm8753_set_dai_sysclk,
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops wm8753_dai_ops_voice_mode = {
+=======
+static struct snd_soc_dai_ops wm8753_dai_ops_voice_mode = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params	= wm8753_pcm_hw_params,
 	.digital_mute	= wm8753_mute,
 	.set_fmt	= wm8753_voice_set_dai_fmt,
@@ -1439,18 +1494,41 @@ static void wm8753_work(struct work_struct *work)
 	wm8753_set_bias_level(codec, dapm->bias_level);
 }
 
+<<<<<<< HEAD
 static int wm8753_suspend(struct snd_soc_codec *codec)
 {
 	wm8753_set_bias_level(codec, SND_SOC_BIAS_OFF);
 	codec->cache_sync = 1;
+=======
+static int wm8753_suspend(struct snd_soc_codec *codec, pm_message_t state)
+{
+	wm8753_set_bias_level(codec, SND_SOC_BIAS_OFF);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int wm8753_resume(struct snd_soc_codec *codec)
 {
+<<<<<<< HEAD
 	struct wm8753_priv *wm8753 = snd_soc_codec_get_drvdata(codec);
 
 	regcache_sync(wm8753->regmap);
+=======
+	u16 *reg_cache = codec->reg_cache;
+	int i;
+
+	/* Sync reg_cache with the hardware */
+	for (i = 1; i < ARRAY_SIZE(wm8753_reg); i++) {
+		if (i == WM8753_RESET)
+			continue;
+
+		/* No point in writing hardware default values back */
+		if (reg_cache[i] == wm8753_reg[i])
+			continue;
+
+		snd_soc_write(codec, i, reg_cache[i]);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wm8753_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
 
@@ -1472,8 +1550,12 @@ static int wm8753_probe(struct snd_soc_codec *codec)
 
 	INIT_DELAYED_WORK(&codec->dapm.delayed_work, wm8753_work);
 
+<<<<<<< HEAD
 	codec->control_data = wm8753->regmap;
 	ret = snd_soc_codec_set_cache_io(codec, 7, 9, SND_SOC_REGMAP);
+=======
+	ret = snd_soc_codec_set_cache_io(codec, 7, 9, wm8753->control_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		dev_err(codec->dev, "Failed to set cache I/O: %d\n", ret);
 		return ret;
@@ -1505,6 +1587,13 @@ static int wm8753_probe(struct snd_soc_codec *codec)
 	snd_soc_update_bits(codec, WM8753_LINVOL, 0x0100, 0x0100);
 	snd_soc_update_bits(codec, WM8753_RINVOL, 0x0100, 0x0100);
 
+<<<<<<< HEAD
+=======
+	snd_soc_add_controls(codec, wm8753_snd_controls,
+			     ARRAY_SIZE(wm8753_snd_controls));
+	wm8753_add_widgets(codec);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1523,6 +1612,7 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8753 = {
 	.suspend =	wm8753_suspend,
 	.resume =	wm8753_resume,
 	.set_bias_level = wm8753_set_bias_level,
+<<<<<<< HEAD
 
 	.controls = wm8753_snd_controls,
 	.num_controls = ARRAY_SIZE(wm8753_snd_controls),
@@ -1549,6 +1639,11 @@ static const struct regmap_config wm8753_regmap = {
 	.cache_type = REGCACHE_RBTREE,
 	.reg_defaults = wm8753_reg_defaults,
 	.num_reg_defaults = ARRAY_SIZE(wm8753_reg_defaults),
+=======
+	.reg_cache_size = ARRAY_SIZE(wm8753_reg),
+	.reg_word_size = sizeof(u16),
+	.reg_cache_default = wm8753_reg,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #if defined(CONFIG_SPI_MASTER)
@@ -1557,6 +1652,7 @@ static int __devinit wm8753_spi_probe(struct spi_device *spi)
 	struct wm8753_priv *wm8753;
 	int ret;
 
+<<<<<<< HEAD
 	wm8753 = devm_kzalloc(&spi->dev, sizeof(struct wm8753_priv),
 			      GFP_KERNEL);
 	if (wm8753 == NULL)
@@ -1584,24 +1680,47 @@ static int __devinit wm8753_spi_probe(struct spi_device *spi)
 err_regmap:
 	regmap_exit(wm8753->regmap);
 err:
+=======
+	wm8753 = kzalloc(sizeof(struct wm8753_priv), GFP_KERNEL);
+	if (wm8753 == NULL)
+		return -ENOMEM;
+
+	wm8753->control_type = SND_SOC_SPI;
+	spi_set_drvdata(spi, wm8753);
+
+	ret = snd_soc_register_codec(&spi->dev,
+			&soc_codec_dev_wm8753, wm8753_dai, ARRAY_SIZE(wm8753_dai));
+	if (ret < 0)
+		kfree(wm8753);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devexit wm8753_spi_remove(struct spi_device *spi)
 {
+<<<<<<< HEAD
 	struct wm8753_priv *wm8753 = spi_get_drvdata(spi);
 
 	snd_soc_unregister_codec(&spi->dev);
 	regmap_exit(wm8753->regmap);
 	kfree(wm8753);
+=======
+	snd_soc_unregister_codec(&spi->dev);
+	kfree(spi_get_drvdata(spi));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static struct spi_driver wm8753_spi_driver = {
 	.driver = {
+<<<<<<< HEAD
 		.name	= "wm8753",
 		.owner	= THIS_MODULE,
 		.of_match_table = wm8753_of_match,
+=======
+		.name	= "wm8753-codec",
+		.owner	= THIS_MODULE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe		= wm8753_spi_probe,
 	.remove		= __devexit_p(wm8753_spi_remove),
@@ -1615,12 +1734,17 @@ static __devinit int wm8753_i2c_probe(struct i2c_client *i2c,
 	struct wm8753_priv *wm8753;
 	int ret;
 
+<<<<<<< HEAD
 	wm8753 = devm_kzalloc(&i2c->dev, sizeof(struct wm8753_priv),
 			      GFP_KERNEL);
+=======
+	wm8753 = kzalloc(sizeof(struct wm8753_priv), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (wm8753 == NULL)
 		return -ENOMEM;
 
 	i2c_set_clientdata(i2c, wm8753);
+<<<<<<< HEAD
 
 	wm8753->regmap = regmap_init_i2c(i2c, &wm8753_regmap);
 	if (IS_ERR(wm8753->regmap)) {
@@ -1642,15 +1766,28 @@ static __devinit int wm8753_i2c_probe(struct i2c_client *i2c,
 err_regmap:
 	regmap_exit(wm8753->regmap);
 err:
+=======
+	wm8753->control_type = SND_SOC_I2C;
+
+	ret =  snd_soc_register_codec(&i2c->dev,
+			&soc_codec_dev_wm8753, wm8753_dai, ARRAY_SIZE(wm8753_dai));
+	if (ret < 0)
+		kfree(wm8753);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static __devexit int wm8753_i2c_remove(struct i2c_client *client)
 {
+<<<<<<< HEAD
 	struct wm8753_priv *wm8753 = i2c_get_clientdata(client);
 
 	snd_soc_unregister_codec(&client->dev);
 	regmap_exit(wm8753->regmap);
+=======
+	snd_soc_unregister_codec(&client->dev);
+	kfree(i2c_get_clientdata(client));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1662,9 +1799,14 @@ MODULE_DEVICE_TABLE(i2c, wm8753_i2c_id);
 
 static struct i2c_driver wm8753_i2c_driver = {
 	.driver = {
+<<<<<<< HEAD
 		.name = "wm8753",
 		.owner = THIS_MODULE,
 		.of_match_table = wm8753_of_match,
+=======
+		.name = "wm8753-codec",
+		.owner = THIS_MODULE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe =    wm8753_i2c_probe,
 	.remove =   __devexit_p(wm8753_i2c_remove),

@@ -12,6 +12,7 @@
  *
  * See the GNU General Public License for more details.
  */
+<<<<<<< HEAD
 
 #include <linux/socket.h>
 
@@ -19,13 +20,23 @@
 struct sockaddr_llc {
 	__kernel_sa_family_t sllc_family; /* AF_LLC */
 	__kernel_sa_family_t sllc_arphrd; /* ARPHRD_ETHER */
+=======
+#define __LLC_SOCK_SIZE__ 16	/* sizeof(sockaddr_llc), word align. */
+struct sockaddr_llc {
+	sa_family_t     sllc_family;	/* AF_LLC */
+	sa_family_t	sllc_arphrd;	/* ARPHRD_ETHER */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char   sllc_test;
 	unsigned char   sllc_xid;
 	unsigned char	sllc_ua;	/* UA data, only for SOCK_STREAM. */
 	unsigned char   sllc_sap;
 	unsigned char   sllc_mac[IFHWADDRLEN];
+<<<<<<< HEAD
 	unsigned char   __pad[__LLC_SOCK_SIZE__ -
 			      sizeof(__kernel_sa_family_t) * 2 -
+=======
+	unsigned char   __pad[__LLC_SOCK_SIZE__ - sizeof(sa_family_t) * 2 -
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      sizeof(unsigned char) * 4 - IFHWADDRLEN];
 };
 

@@ -52,6 +52,10 @@
 #include <linux/workqueue.h>
 
 #include <asm/byteorder.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <scsi/scsi.h>
 #include <scsi/scsi_cmnd.h>
@@ -65,7 +69,11 @@
  *
  * Concurrent logins are useful together with cluster filesystems.
  */
+<<<<<<< HEAD
 static bool sbp2_param_exclusive_login = 1;
+=======
+static int sbp2_param_exclusive_login = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(exclusive_login, sbp2_param_exclusive_login, bool, 0644);
 MODULE_PARM_DESC(exclusive_login, "Exclusive login to sbp2 device "
 		 "(default = Y, use N for concurrent initiators)");
@@ -124,6 +132,11 @@ MODULE_PARM_DESC(workarounds, "Work around device bugs (default = 0"
 	", override internal blacklist = " __stringify(SBP2_WORKAROUND_OVERRIDE)
 	", or a combination)");
 
+<<<<<<< HEAD
+=======
+static const char sbp2_driver_name[] = "sbp2";
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * We create one struct sbp2_logical_unit per SBP-2 Logical Unit Number Entry
  * and one struct scsi_device per sbp2_logical_unit.
@@ -151,17 +164,26 @@ struct sbp2_logical_unit {
 	bool blocked;
 };
 
+<<<<<<< HEAD
 static void sbp2_queue_work(struct sbp2_logical_unit *lu, unsigned long delay)
 {
 	queue_delayed_work(fw_workqueue, &lu->work, delay);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * We create one struct sbp2_target per IEEE 1212 Unit Directory
  * and one struct Scsi_Host per sbp2_target.
  */
 struct sbp2_target {
+<<<<<<< HEAD
 	struct fw_unit *unit;
+=======
+	struct kref kref;
+	struct fw_unit *unit;
+	const char *bus_id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head lu_list;
 
 	u64 management_agent_address;
@@ -177,11 +199,16 @@ struct sbp2_target {
 	int blocked;	/* ditto */
 };
 
+<<<<<<< HEAD
 static struct fw_device *target_parent_device(struct sbp2_target *tgt)
+=======
+static struct fw_device *target_device(struct sbp2_target *tgt)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return fw_parent_device(tgt->unit);
 }
 
+<<<<<<< HEAD
 static const struct device *tgt_dev(const struct sbp2_target *tgt)
 {
 	return &tgt->unit->device;
@@ -192,6 +219,8 @@ static const struct device *lu_dev(const struct sbp2_logical_unit *lu)
 	return &lu->tgt->unit->device;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Impossible login_id, to detect logout attempt before successful login */
 #define INVALID_LOGIN_ID 0x10000
 
@@ -217,7 +246,10 @@ static const struct device *lu_dev(const struct sbp2_logical_unit *lu)
 #define SBP2_CSR_UNIT_CHARACTERISTICS	0x3a
 #define SBP2_CSR_FIRMWARE_REVISION	0x3c
 #define SBP2_CSR_LOGICAL_UNIT_NUMBER	0x14
+<<<<<<< HEAD
 #define SBP2_CSR_UNIT_UNIQUE_ID		0x8d
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SBP2_CSR_LOGICAL_UNIT_DIRECTORY	0xd4
 
 /* Management orb opcodes */
@@ -437,8 +469,12 @@ static void sbp2_status_write(struct fw_card *card, struct fw_request *request,
 		memcpy(status.data, payload + 8, length - 8);
 
 	if (STATUS_GET_SOURCE(status) == 2 || STATUS_GET_SOURCE(status) == 3) {
+<<<<<<< HEAD
 		dev_notice(lu_dev(lu),
 			   "non-ORB related status write, not handled\n");
+=======
+		fw_notify("non-orb related status write, not handled\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fw_send_response(card, request, RCODE_COMPLETE);
 		return;
 	}
@@ -459,7 +495,11 @@ static void sbp2_status_write(struct fw_card *card, struct fw_request *request,
 		orb->callback(orb, &status);
 		kref_put(&orb->kref, free_orb); /* orb callback reference */
 	} else {
+<<<<<<< HEAD
 		dev_err(lu_dev(lu), "status write for unknown ORB\n");
+=======
+		fw_error("status write for unknown orb\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	fw_send_response(card, request, RCODE_COMPLETE);
@@ -500,7 +540,11 @@ static void complete_transaction(struct fw_card *card, int rcode,
 static void sbp2_send_orb(struct sbp2_orb *orb, struct sbp2_logical_unit *lu,
 			  int node_id, int generation, u64 offset)
 {
+<<<<<<< HEAD
 	struct fw_device *device = target_parent_device(lu->tgt);
+=======
+	struct fw_device *device = target_device(lu->tgt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sbp2_pointer orb_pointer;
 	unsigned long flags;
 
@@ -521,7 +565,11 @@ static void sbp2_send_orb(struct sbp2_orb *orb, struct sbp2_logical_unit *lu,
 
 static int sbp2_cancel_orbs(struct sbp2_logical_unit *lu)
 {
+<<<<<<< HEAD
 	struct fw_device *device = target_parent_device(lu->tgt);
+=======
+	struct fw_device *device = target_device(lu->tgt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sbp2_orb *orb, *next;
 	struct list_head list;
 	unsigned long flags;
@@ -560,7 +608,11 @@ static int sbp2_send_management_orb(struct sbp2_logical_unit *lu, int node_id,
 				    int generation, int function,
 				    int lun_or_login_id, void *response)
 {
+<<<<<<< HEAD
 	struct fw_device *device = target_parent_device(lu->tgt);
+=======
+	struct fw_device *device = target_device(lu->tgt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sbp2_management_orb *orb;
 	unsigned int timeout;
 	int retval = -ENOMEM;
@@ -568,7 +620,11 @@ static int sbp2_send_management_orb(struct sbp2_logical_unit *lu, int node_id,
 	if (function == SBP2_LOGOUT_REQUEST && fw_device_is_shutdown(device))
 		return 0;
 
+<<<<<<< HEAD
 	orb = kzalloc(sizeof(*orb), GFP_NOIO);
+=======
+	orb = kzalloc(sizeof(*orb), GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (orb == NULL)
 		return -ENOMEM;
 
@@ -620,20 +676,34 @@ static int sbp2_send_management_orb(struct sbp2_logical_unit *lu, int node_id,
 
 	retval = -EIO;
 	if (sbp2_cancel_orbs(lu) == 0) {
+<<<<<<< HEAD
 		dev_err(lu_dev(lu), "ORB reply timed out, rcode 0x%02x\n",
 			orb->base.rcode);
+=======
+		fw_error("%s: orb reply timed out, rcode=0x%02x\n",
+			 lu->tgt->bus_id, orb->base.rcode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
 	if (orb->base.rcode != RCODE_COMPLETE) {
+<<<<<<< HEAD
 		dev_err(lu_dev(lu), "management write failed, rcode 0x%02x\n",
 			orb->base.rcode);
+=======
+		fw_error("%s: management write failed, rcode 0x%02x\n",
+			 lu->tgt->bus_id, orb->base.rcode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
 	if (STATUS_GET_RESPONSE(orb->status) != 0 ||
 	    STATUS_GET_SBP_STATUS(orb->status) != 0) {
+<<<<<<< HEAD
 		dev_err(lu_dev(lu), "error status: %d:%d\n",
+=======
+		fw_error("%s: error status: %d:%d\n", lu->tgt->bus_id,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 STATUS_GET_RESPONSE(orb->status),
 			 STATUS_GET_SBP_STATUS(orb->status));
 		goto out;
@@ -656,7 +726,11 @@ static int sbp2_send_management_orb(struct sbp2_logical_unit *lu, int node_id,
 
 static void sbp2_agent_reset(struct sbp2_logical_unit *lu)
 {
+<<<<<<< HEAD
 	struct fw_device *device = target_parent_device(lu->tgt);
+=======
+	struct fw_device *device = target_device(lu->tgt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__be32 d = 0;
 
 	fw_run_transaction(device->card, TCODE_WRITE_QUADLET_REQUEST,
@@ -673,7 +747,11 @@ static void complete_agent_reset_write_no_wait(struct fw_card *card,
 
 static void sbp2_agent_reset_no_wait(struct sbp2_logical_unit *lu)
 {
+<<<<<<< HEAD
 	struct fw_device *device = target_parent_device(lu->tgt);
+=======
+	struct fw_device *device = target_device(lu->tgt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct fw_transaction *t;
 	static __be32 d;
 
@@ -712,7 +790,11 @@ static inline void sbp2_allow_block(struct sbp2_logical_unit *lu)
 static void sbp2_conditionally_block(struct sbp2_logical_unit *lu)
 {
 	struct sbp2_target *tgt = lu->tgt;
+<<<<<<< HEAD
 	struct fw_card *card = target_parent_device(tgt)->card;
+=======
+	struct fw_card *card = target_device(tgt)->card;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct Scsi_Host *shost =
 		container_of((void *)tgt, struct Scsi_Host, hostdata[0]);
 	unsigned long flags;
@@ -736,7 +818,11 @@ static void sbp2_conditionally_block(struct sbp2_logical_unit *lu)
 static void sbp2_conditionally_unblock(struct sbp2_logical_unit *lu)
 {
 	struct sbp2_target *tgt = lu->tgt;
+<<<<<<< HEAD
 	struct fw_card *card = target_parent_device(tgt)->card;
+=======
+	struct fw_card *card = target_device(tgt)->card;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct Scsi_Host *shost =
 		container_of((void *)tgt, struct Scsi_Host, hostdata[0]);
 	unsigned long flags;
@@ -761,7 +847,11 @@ static void sbp2_conditionally_unblock(struct sbp2_logical_unit *lu)
  */
 static void sbp2_unblock(struct sbp2_target *tgt)
 {
+<<<<<<< HEAD
 	struct fw_card *card = target_parent_device(tgt)->card;
+=======
+	struct fw_card *card = target_device(tgt)->card;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct Scsi_Host *shost =
 		container_of((void *)tgt, struct Scsi_Host, hostdata[0]);
 	unsigned long flags;
@@ -784,6 +874,74 @@ static int sbp2_lun2int(u16 lun)
 	return scsilun_to_int(&eight_bytes_lun);
 }
 
+<<<<<<< HEAD
+=======
+static void sbp2_release_target(struct kref *kref)
+{
+	struct sbp2_target *tgt = container_of(kref, struct sbp2_target, kref);
+	struct sbp2_logical_unit *lu, *next;
+	struct Scsi_Host *shost =
+		container_of((void *)tgt, struct Scsi_Host, hostdata[0]);
+	struct scsi_device *sdev;
+	struct fw_device *device = target_device(tgt);
+
+	/* prevent deadlocks */
+	sbp2_unblock(tgt);
+
+	list_for_each_entry_safe(lu, next, &tgt->lu_list, link) {
+		sdev = scsi_device_lookup(shost, 0, 0, sbp2_lun2int(lu->lun));
+		if (sdev) {
+			scsi_remove_device(sdev);
+			scsi_device_put(sdev);
+		}
+		if (lu->login_id != INVALID_LOGIN_ID) {
+			int generation, node_id;
+			/*
+			 * tgt->node_id may be obsolete here if we failed
+			 * during initial login or after a bus reset where
+			 * the topology changed.
+			 */
+			generation = device->generation;
+			smp_rmb(); /* node_id vs. generation */
+			node_id    = device->node_id;
+			sbp2_send_management_orb(lu, node_id, generation,
+						 SBP2_LOGOUT_REQUEST,
+						 lu->login_id, NULL);
+		}
+		fw_core_remove_address_handler(&lu->address_handler);
+		list_del(&lu->link);
+		kfree(lu);
+	}
+	scsi_remove_host(shost);
+	fw_notify("released %s, target %d:0:0\n", tgt->bus_id, shost->host_no);
+
+	fw_unit_put(tgt->unit);
+	scsi_host_put(shost);
+	fw_device_put(device);
+}
+
+static void sbp2_target_get(struct sbp2_target *tgt)
+{
+	kref_get(&tgt->kref);
+}
+
+static void sbp2_target_put(struct sbp2_target *tgt)
+{
+	kref_put(&tgt->kref, sbp2_release_target);
+}
+
+/*
+ * Always get the target's kref when scheduling work on one its units.
+ * Each workqueue job is responsible to call sbp2_target_put() upon return.
+ */
+static void sbp2_queue_work(struct sbp2_logical_unit *lu, unsigned long delay)
+{
+	sbp2_target_get(lu->tgt);
+	if (!queue_delayed_work(fw_workqueue, &lu->work, delay))
+		sbp2_target_put(lu->tgt);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Write retransmit retry values into the BUSY_TIMEOUT register.
  * - The single-phase retry protocol is supported by all SBP-2 devices, but the
@@ -802,7 +960,11 @@ static int sbp2_lun2int(u16 lun)
  */
 static void sbp2_set_busy_timeout(struct sbp2_logical_unit *lu)
 {
+<<<<<<< HEAD
 	struct fw_device *device = target_parent_device(lu->tgt);
+=======
+	struct fw_device *device = target_device(lu->tgt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__be32 d = cpu_to_be32(SBP2_CYCLE_LIMIT | SBP2_RETRY_LIMIT);
 
 	fw_run_transaction(device->card, TCODE_WRITE_QUADLET_REQUEST,
@@ -817,14 +979,22 @@ static void sbp2_login(struct work_struct *work)
 	struct sbp2_logical_unit *lu =
 		container_of(work, struct sbp2_logical_unit, work.work);
 	struct sbp2_target *tgt = lu->tgt;
+<<<<<<< HEAD
 	struct fw_device *device = target_parent_device(tgt);
+=======
+	struct fw_device *device = target_device(tgt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct Scsi_Host *shost;
 	struct scsi_device *sdev;
 	struct sbp2_login_response response;
 	int generation, node_id, local_node_id;
 
 	if (fw_device_is_shutdown(device))
+<<<<<<< HEAD
 		return;
+=======
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	generation    = device->generation;
 	smp_rmb();    /* node IDs must not be older than generation */
@@ -841,12 +1011,21 @@ static void sbp2_login(struct work_struct *work)
 		if (lu->retries++ < 5) {
 			sbp2_queue_work(lu, DIV_ROUND_UP(HZ, 5));
 		} else {
+<<<<<<< HEAD
 			dev_err(tgt_dev(tgt), "failed to login to LUN %04x\n",
 				lu->lun);
 			/* Let any waiting I/O fail from now on. */
 			sbp2_unblock(lu->tgt);
 		}
 		return;
+=======
+			fw_error("%s: failed to login to LUN %04x\n",
+				 tgt->bus_id, lu->lun);
+			/* Let any waiting I/O fail from now on. */
+			sbp2_unblock(lu->tgt);
+		}
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	tgt->node_id	  = node_id;
@@ -859,8 +1038,13 @@ static void sbp2_login(struct work_struct *work)
 		      << 32) | be32_to_cpu(response.command_block_agent.low);
 	lu->login_id = be32_to_cpu(response.misc) & 0xffff;
 
+<<<<<<< HEAD
 	dev_notice(tgt_dev(tgt), "logged in to LUN %04x (%d retries)\n",
 		   lu->lun, lu->retries);
+=======
+	fw_notify("%s: logged in to LUN %04x (%d retries)\n",
+		  tgt->bus_id, lu->lun, lu->retries);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* set appropriate retry limit(s) in BUSY_TIMEOUT register */
 	sbp2_set_busy_timeout(lu);
@@ -872,8 +1056,12 @@ static void sbp2_login(struct work_struct *work)
 	if (lu->has_sdev) {
 		sbp2_cancel_orbs(lu);
 		sbp2_conditionally_unblock(lu);
+<<<<<<< HEAD
 
 		return;
+=======
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (lu->tgt->workarounds & SBP2_WORKAROUND_DELAY_INQUIRY)
@@ -905,8 +1093,12 @@ static void sbp2_login(struct work_struct *work)
 	lu->has_sdev = true;
 	scsi_device_put(sdev);
 	sbp2_allow_block(lu);
+<<<<<<< HEAD
 
 	return;
+=======
+	goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
  out_logout_login:
 	smp_rmb(); /* generation may have changed */
@@ -920,6 +1112,7 @@ static void sbp2_login(struct work_struct *work)
 	 * lu->work already.  Reset the work from reconnect to login.
 	 */
 	PREPARE_DELAYED_WORK(&lu->work, sbp2_login);
+<<<<<<< HEAD
 }
 
 static void sbp2_reconnect(struct work_struct *work)
@@ -971,6 +1164,10 @@ static void sbp2_reconnect(struct work_struct *work)
 	sbp2_agent_reset(lu);
 	sbp2_cancel_orbs(lu);
 	sbp2_conditionally_unblock(lu);
+=======
+ out:
+	sbp2_target_put(tgt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int sbp2_add_logical_unit(struct sbp2_target *tgt, int lun_entry)
@@ -1005,6 +1202,7 @@ static int sbp2_add_logical_unit(struct sbp2_target *tgt, int lun_entry)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void sbp2_get_unit_unique_id(struct sbp2_target *tgt,
 				    const u32 *leaf)
 {
@@ -1012,6 +1210,8 @@ static void sbp2_get_unit_unique_id(struct sbp2_target *tgt,
 		tgt->guid = (u64)leaf[1] << 32 | leaf[2];
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int sbp2_scan_logical_unit_dir(struct sbp2_target *tgt,
 				      const u32 *directory)
 {
@@ -1063,10 +1263,13 @@ static int sbp2_scan_unit_dir(struct sbp2_target *tgt, const u32 *directory,
 				return -ENOMEM;
 			break;
 
+<<<<<<< HEAD
 		case SBP2_CSR_UNIT_UNIQUE_ID:
 			sbp2_get_unit_unique_id(tgt, ci.p - 1 + value);
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case SBP2_CSR_LOGICAL_UNIT_DIRECTORY:
 			/* Adjust for the increment in the iterator */
 			if (sbp2_scan_logical_unit_dir(tgt, ci.p - 1 + value) < 0)
@@ -1087,8 +1290,13 @@ static void sbp2_clamp_management_orb_timeout(struct sbp2_target *tgt)
 	unsigned int timeout = tgt->mgt_orb_timeout;
 
 	if (timeout > 40000)
+<<<<<<< HEAD
 		dev_notice(tgt_dev(tgt), "%ds mgt_ORB_timeout limited to 40s\n",
 			   timeout / 1000);
+=======
+		fw_notify("%s: %ds mgt_ORB_timeout limited to 40s\n",
+			  tgt->bus_id, timeout / 1000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tgt->mgt_orb_timeout = clamp_val(timeout, 5000, 40000);
 }
@@ -1100,9 +1308,15 @@ static void sbp2_init_workarounds(struct sbp2_target *tgt, u32 model,
 	unsigned int w = sbp2_param_workarounds;
 
 	if (w)
+<<<<<<< HEAD
 		dev_notice(tgt_dev(tgt),
 			   "Please notify linux1394-devel@lists.sf.net "
 			   "if you need the workarounds parameter\n");
+=======
+		fw_notify("Please notify linux1394-devel@lists.sourceforge.net "
+			  "if you need the workarounds parameter for %s\n",
+			  tgt->bus_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (w & SBP2_WORKAROUND_OVERRIDE)
 		goto out;
@@ -1122,14 +1336,23 @@ static void sbp2_init_workarounds(struct sbp2_target *tgt, u32 model,
 	}
  out:
 	if (w)
+<<<<<<< HEAD
 		dev_notice(tgt_dev(tgt), "workarounds 0x%x "
 			   "(firmware_revision 0x%06x, model_id 0x%06x)\n",
 			   w, firmware_revision, model);
+=======
+		fw_notify("Workarounds for %s: 0x%x "
+			  "(firmware_revision 0x%06x, model_id 0x%06x)\n",
+			  tgt->bus_id, w, firmware_revision, model);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tgt->workarounds = w;
 }
 
 static struct scsi_host_template scsi_driver_template;
+<<<<<<< HEAD
 static int sbp2_remove(struct device *dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int sbp2_probe(struct device *dev)
 {
@@ -1140,10 +1363,13 @@ static int sbp2_probe(struct device *dev)
 	struct Scsi_Host *shost;
 	u32 model, firmware_revision;
 
+<<<<<<< HEAD
 	/* cannot (or should not) handle targets on the local node */
 	if (device->is_local)
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dma_get_max_seg_size(device->card->device) > SBP2_MAX_SEG_SIZE)
 		BUG_ON(dma_set_max_seg_size(device->card->device,
 					    SBP2_MAX_SEG_SIZE));
@@ -1155,7 +1381,13 @@ static int sbp2_probe(struct device *dev)
 	tgt = (struct sbp2_target *)shost->hostdata;
 	dev_set_drvdata(&unit->device, tgt);
 	tgt->unit = unit;
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&tgt->lu_list);
+=======
+	kref_init(&tgt->kref);
+	INIT_LIST_HEAD(&tgt->lu_list);
+	tgt->bus_id = dev_name(&unit->device);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tgt->guid = (u64)device->config_rom[3] << 32 | device->config_rom[4];
 
 	if (fw_device_enable_phys_dma(device) < 0)
@@ -1166,6 +1398,12 @@ static int sbp2_probe(struct device *dev)
 	if (scsi_add_host(shost, &unit->device) < 0)
 		goto fail_shost_put;
 
+<<<<<<< HEAD
+=======
+	fw_device_get(device);
+	fw_unit_get(unit);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* implicit directory ID */
 	tgt->directory_id = ((unit->directory - device->config_rom) * 4
 			     + CSR_CONFIG_ROM) & 0xffffff;
@@ -1175,7 +1413,11 @@ static int sbp2_probe(struct device *dev)
 
 	if (sbp2_scan_unit_dir(tgt, unit->directory, &model,
 			       &firmware_revision) < 0)
+<<<<<<< HEAD
 		goto fail_remove;
+=======
+		goto fail_tgt_put;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sbp2_clamp_management_orb_timeout(tgt);
 	sbp2_init_workarounds(tgt, model, firmware_revision);
@@ -1186,17 +1428,29 @@ static int sbp2_probe(struct device *dev)
 	 * specifies the max payload size as 2 ^ (max_payload + 2), so
 	 * if we set this to max_speed + 7, we get the right value.
 	 */
+<<<<<<< HEAD
 	tgt->max_payload = min3(device->max_speed + 7, 10U,
 				device->card->max_receive - 1);
+=======
+	tgt->max_payload = min(device->max_speed + 7, 10U);
+	tgt->max_payload = min(tgt->max_payload, device->card->max_receive - 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Do the login in a workqueue so we can easily reschedule retries. */
 	list_for_each_entry(lu, &tgt->lu_list, link)
 		sbp2_queue_work(lu, DIV_ROUND_UP(HZ, 5));
+<<<<<<< HEAD
 
 	return 0;
 
  fail_remove:
 	sbp2_remove(dev);
+=======
+	return 0;
+
+ fail_tgt_put:
+	sbp2_target_put(tgt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -ENOMEM;
 
  fail_shost_put:
@@ -1204,6 +1458,74 @@ static int sbp2_probe(struct device *dev)
 	return -ENOMEM;
 }
 
+<<<<<<< HEAD
+=======
+static int sbp2_remove(struct device *dev)
+{
+	struct fw_unit *unit = fw_unit(dev);
+	struct sbp2_target *tgt = dev_get_drvdata(&unit->device);
+	struct sbp2_logical_unit *lu;
+
+	list_for_each_entry(lu, &tgt->lu_list, link)
+		cancel_delayed_work_sync(&lu->work);
+
+	sbp2_target_put(tgt);
+	return 0;
+}
+
+static void sbp2_reconnect(struct work_struct *work)
+{
+	struct sbp2_logical_unit *lu =
+		container_of(work, struct sbp2_logical_unit, work.work);
+	struct sbp2_target *tgt = lu->tgt;
+	struct fw_device *device = target_device(tgt);
+	int generation, node_id, local_node_id;
+
+	if (fw_device_is_shutdown(device))
+		goto out;
+
+	generation    = device->generation;
+	smp_rmb();    /* node IDs must not be older than generation */
+	node_id       = device->node_id;
+	local_node_id = device->card->node_id;
+
+	if (sbp2_send_management_orb(lu, node_id, generation,
+				     SBP2_RECONNECT_REQUEST,
+				     lu->login_id, NULL) < 0) {
+		/*
+		 * If reconnect was impossible even though we are in the
+		 * current generation, fall back and try to log in again.
+		 *
+		 * We could check for "Function rejected" status, but
+		 * looking at the bus generation as simpler and more general.
+		 */
+		smp_rmb(); /* get current card generation */
+		if (generation == device->card->generation ||
+		    lu->retries++ >= 5) {
+			fw_error("%s: failed to reconnect\n", tgt->bus_id);
+			lu->retries = 0;
+			PREPARE_DELAYED_WORK(&lu->work, sbp2_login);
+		}
+		sbp2_queue_work(lu, DIV_ROUND_UP(HZ, 5));
+		goto out;
+	}
+
+	tgt->node_id      = node_id;
+	tgt->address_high = local_node_id << 16;
+	smp_wmb();	  /* node IDs must not be older than generation */
+	lu->generation	  = generation;
+
+	fw_notify("%s: reconnected to LUN %04x (%d retries)\n",
+		  tgt->bus_id, lu->lun, lu->retries);
+
+	sbp2_agent_reset(lu);
+	sbp2_cancel_orbs(lu);
+	sbp2_conditionally_unblock(lu);
+ out:
+	sbp2_target_put(tgt);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void sbp2_update(struct fw_unit *unit)
 {
 	struct sbp2_target *tgt = dev_get_drvdata(&unit->device);
@@ -1222,6 +1544,7 @@ static void sbp2_update(struct fw_unit *unit)
 	}
 }
 
+<<<<<<< HEAD
 static int sbp2_remove(struct device *dev)
 {
 	struct fw_unit *unit = fw_unit(dev);
@@ -1267,6 +1590,8 @@ static int sbp2_remove(struct device *dev)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SBP2_UNIT_SPEC_ID_ENTRY	0x0000609e
 #define SBP2_SW_VERSION_ENTRY	0x00010483
 
@@ -1283,7 +1608,11 @@ static const struct ieee1394_device_id sbp2_id_table[] = {
 static struct fw_driver sbp2_driver = {
 	.driver   = {
 		.owner  = THIS_MODULE,
+<<<<<<< HEAD
 		.name   = KBUILD_MODNAME,
+=======
+		.name   = sbp2_driver_name,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.bus    = &fw_bus_type,
 		.probe  = sbp2_probe,
 		.remove = sbp2_remove,
@@ -1308,6 +1637,7 @@ static void sbp2_unmap_scatterlist(struct device *card_device,
 static unsigned int sbp2_status_to_sense_data(u8 *sbp2_status, u8 *sense_data)
 {
 	int sam_status;
+<<<<<<< HEAD
 	int sfmt = (sbp2_status[0] >> 6) & 0x03;
 
 	if (sfmt == 2 || sfmt == 3) {
@@ -1321,6 +1651,12 @@ static unsigned int sbp2_status_to_sense_data(u8 *sbp2_status, u8 *sense_data)
 	sense_data[0] = 0x70 | sfmt | (sbp2_status[1] & 0x80);
 	sense_data[1] = 0x0;
 	sense_data[2] = ((sbp2_status[1] << 1) & 0xe0) | (sbp2_status[1] & 0x0f);
+=======
+
+	sense_data[0] = 0x70;
+	sense_data[1] = 0x0;
+	sense_data[2] = sbp2_status[1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sense_data[3] = sbp2_status[4];
 	sense_data[4] = sbp2_status[5];
 	sense_data[5] = sbp2_status[6];
@@ -1356,7 +1692,11 @@ static void complete_command_orb(struct sbp2_orb *base_orb,
 {
 	struct sbp2_command_orb *orb =
 		container_of(base_orb, struct sbp2_command_orb, base);
+<<<<<<< HEAD
 	struct fw_device *device = target_parent_device(orb->lu->tgt);
+=======
+	struct fw_device *device = target_device(orb->lu->tgt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int result;
 
 	if (status != NULL) {
@@ -1464,7 +1804,11 @@ static int sbp2_scsi_queuecommand(struct Scsi_Host *shost,
 				  struct scsi_cmnd *cmd)
 {
 	struct sbp2_logical_unit *lu = cmd->device->hostdata;
+<<<<<<< HEAD
 	struct fw_device *device = target_parent_device(lu->tgt);
+=======
+	struct fw_device *device = target_device(lu->tgt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sbp2_command_orb *orb;
 	int generation, retval = SCSI_MLQUEUE_HOST_BUSY;
 
@@ -1473,7 +1817,11 @@ static int sbp2_scsi_queuecommand(struct Scsi_Host *shost,
 	 * transfer direction not handled.
 	 */
 	if (cmd->sc_data_direction == DMA_BIDIRECTIONAL) {
+<<<<<<< HEAD
 		dev_err(lu_dev(lu), "cannot handle bidirectional command\n");
+=======
+		fw_error("Can't handle DMA_BIDIRECTIONAL, rejecting command\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cmd->result = DID_ERROR << 16;
 		cmd->scsi_done(cmd);
 		return 0;
@@ -1481,7 +1829,11 @@ static int sbp2_scsi_queuecommand(struct Scsi_Host *shost,
 
 	orb = kzalloc(sizeof(*orb), GFP_ATOMIC);
 	if (orb == NULL) {
+<<<<<<< HEAD
 		dev_notice(lu_dev(lu), "failed to alloc ORB\n");
+=======
+		fw_notify("failed to alloc orb\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCSI_MLQUEUE_HOST_BUSY;
 	}
 
@@ -1581,7 +1933,11 @@ static int sbp2_scsi_abort(struct scsi_cmnd *cmd)
 {
 	struct sbp2_logical_unit *lu = cmd->device->hostdata;
 
+<<<<<<< HEAD
 	dev_notice(lu_dev(lu), "sbp2_scsi_abort\n");
+=======
+	fw_notify("%s: sbp2_scsi_abort\n", lu->tgt->bus_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sbp2_agent_reset(lu);
 	sbp2_cancel_orbs(lu);
 
@@ -1621,7 +1977,11 @@ static struct device_attribute *sbp2_scsi_sysfs_attrs[] = {
 static struct scsi_host_template scsi_driver_template = {
 	.module			= THIS_MODULE,
 	.name			= "SBP-2 IEEE-1394",
+<<<<<<< HEAD
 	.proc_name		= "sbp2",
+=======
+	.proc_name		= sbp2_driver_name,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.queuecommand		= sbp2_scsi_queuecommand,
 	.slave_alloc		= sbp2_scsi_slave_alloc,
 	.slave_configure	= sbp2_scsi_slave_configure,

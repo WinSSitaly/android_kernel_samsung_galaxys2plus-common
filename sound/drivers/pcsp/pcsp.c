@@ -6,7 +6,11 @@
  */
 
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <sound/core.h>
 #include <sound/initval.h>
@@ -25,8 +29,13 @@ MODULE_ALIAS("platform:pcspkr");
 
 static int index = SNDRV_DEFAULT_IDX1;	/* Index 0-MAX */
 static char *id = SNDRV_DEFAULT_STR1;	/* ID for this card */
+<<<<<<< HEAD
 static bool enable = SNDRV_DEFAULT_ENABLE1;	/* Enable this card */
 static bool nopcm;	/* Disable PCM capability of the driver */
+=======
+static int enable = SNDRV_DEFAULT_ENABLE1;	/* Enable this card */
+static int nopcm;	/* Disable PCM capability of the driver */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(index, int, 0444);
 MODULE_PARM_DESC(index, "Index value for pcsp soundcard.");

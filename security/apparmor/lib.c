@@ -12,13 +12,19 @@
  * License.
  */
 
+<<<<<<< HEAD
 #include <linux/mm.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/string.h>
 #include <linux/vmalloc.h>
 
 #include "include/audit.h"
+<<<<<<< HEAD
 #include "include/apparmor.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /**
@@ -65,10 +71,15 @@ void aa_info_message(const char *str)
 {
 	if (audit_enabled) {
 		struct common_audit_data sa;
+<<<<<<< HEAD
 		struct apparmor_audit_data aad = {0,};
 		COMMON_AUDIT_DATA_INIT(&sa, NONE);
 		sa.aad = &aad;
 		aad.info = str;
+=======
+		COMMON_AUDIT_DATA_INIT(&sa, NONE);
+		sa.aad.info = str;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		aa_audit_msg(AUDIT_APPARMOR_STATUS, &sa, NULL);
 	}
 	printk(KERN_INFO "AppArmor: %s\n", str);

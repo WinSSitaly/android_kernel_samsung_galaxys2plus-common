@@ -14,7 +14,10 @@
 #include <linux/proc_fs.h>
 #include <linux/delay.h>
 #include <linux/param.h>
+<<<<<<< HEAD
 #include <arch/system.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_PROC_FS
 #define HAS_FPU		0x0001

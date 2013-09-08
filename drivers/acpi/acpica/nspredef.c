@@ -6,7 +6,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -193,6 +197,7 @@ acpi_ns_check_predefined_names(struct acpi_namespace_node *node,
 	}
 
 	/*
+<<<<<<< HEAD
 	 * Return value validation and possible repair.
 	 *
 	 * 1) Don't perform return value validation/repair if this feature
@@ -207,6 +212,16 @@ acpi_ns_check_predefined_names(struct acpi_namespace_node *node,
 	 */
 	if (acpi_gbl_disable_auto_repair ||
 	    (!predefined->info.expected_btypes) ||
+=======
+	 * 1) We have a return value, but if one wasn't expected, just exit, this is
+	 * not a problem. For example, if the "Implicit Return" feature is
+	 * enabled, methods will always return a value.
+	 *
+	 * 2) If the return value can be of any type, then we cannot perform any
+	 * validation, exit.
+	 */
+	if ((!predefined->info.expected_btypes) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    (predefined->info.expected_btypes == ACPI_RTYPE_ALL)) {
 		goto cleanup;
 	}
@@ -620,7 +635,10 @@ acpi_ns_check_package(struct acpi_predefined_data *data,
 	case ACPI_PTYPE2_FIXED:
 	case ACPI_PTYPE2_MIN:
 	case ACPI_PTYPE2_COUNT:
+<<<<<<< HEAD
 	case ACPI_PTYPE2_FIX_VAR:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * These types all return a single Package that consists of a
@@ -638,8 +656,13 @@ acpi_ns_check_package(struct acpi_predefined_data *data,
 			/* Create the new outer package and populate it */
 
 			status =
+<<<<<<< HEAD
 			    acpi_ns_wrap_with_package(data, return_object,
 						      return_object_ptr);
+=======
+			    acpi_ns_repair_package_list(data,
+							return_object_ptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ACPI_FAILURE(status)) {
 				return (status);
 			}
@@ -760,6 +783,7 @@ acpi_ns_check_package_list(struct acpi_predefined_data *data,
 			}
 			break;
 
+<<<<<<< HEAD
 		case ACPI_PTYPE2_FIX_VAR:
 			/*
 			 * Each subpackage has a fixed number of elements and an
@@ -788,6 +812,8 @@ acpi_ns_check_package_list(struct acpi_predefined_data *data,
 			}
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case ACPI_PTYPE2_FIXED:
 
 			/* Each sub-package has a fixed length */

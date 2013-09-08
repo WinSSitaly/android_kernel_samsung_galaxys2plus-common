@@ -7,9 +7,12 @@
 #ifndef	ROSE_KERNEL_H
 #define	ROSE_KERNEL_H
 
+<<<<<<< HEAD
 #include <linux/socket.h>
 #include <linux/ax25.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ROSE_MTU	251
 
 #define ROSE_MAX_DIGIS 6
@@ -47,7 +50,11 @@ typedef struct {
 } rose_address;
 
 struct sockaddr_rose {
+<<<<<<< HEAD
 	__kernel_sa_family_t srose_family;
+=======
+	sa_family_t	srose_family;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rose_address	srose_addr;
 	ax25_address	srose_call;
 	int		srose_ndigis;
@@ -55,7 +62,11 @@ struct sockaddr_rose {
 };
 
 struct full_sockaddr_rose {
+<<<<<<< HEAD
 	__kernel_sa_family_t srose_family;
+=======
+	sa_family_t	srose_family;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rose_address	srose_addr;
 	ax25_address	srose_call;
 	unsigned int	srose_ndigis;

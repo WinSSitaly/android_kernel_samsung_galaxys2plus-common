@@ -12,7 +12,11 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
@@ -22,10 +26,24 @@
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 
+<<<<<<< HEAD
 #include <plat/mux.h>
 #include <plat/usb.h>
 #include <plat/board.h>
 #include "common.h"
+=======
+#include <mach/gpio.h>
+#include <plat/mux.h>
+#include <plat/usb.h>
+#include <plat/board.h>
+#include <plat/common.h>
+
+static void __init omap_generic_init_irq(void)
+{
+	omap1_init_common_hw();
+	omap_init_irq();
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* assume no Mini-AB port */
 
@@ -80,6 +98,7 @@ static void __init omap_generic_init(void)
 	omap_register_i2c_bus(1, 100, NULL, 0);
 }
 
+<<<<<<< HEAD
 MACHINE_START(OMAP_GENERIC, "Generic OMAP1510/1610/1710")
 	/* Maintainer: Tony Lindgren <tony@atomide.com> */
 	.atag_offset	= 0x100,
@@ -90,4 +109,19 @@ MACHINE_START(OMAP_GENERIC, "Generic OMAP1510/1610/1710")
 	.init_machine	= omap_generic_init,
 	.timer		= &omap1_timer,
 	.restart	= omap1_restart,
+=======
+static void __init omap_generic_map_io(void)
+{
+	omap1_map_common_io();
+}
+
+MACHINE_START(OMAP_GENERIC, "Generic OMAP1510/1610/1710")
+	/* Maintainer: Tony Lindgren <tony@atomide.com> */
+	.boot_params	= 0x10000100,
+	.map_io		= omap_generic_map_io,
+	.reserve	= omap_reserve,
+	.init_irq	= omap_generic_init_irq,
+	.init_machine	= omap_generic_init,
+	.timer		= &omap_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

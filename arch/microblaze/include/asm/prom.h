@@ -21,17 +21,41 @@
 
 #include <linux/types.h>
 #include <asm/irq.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define HAVE_ARCH_DEVTREE_FIXUPS
 
 /* Other Prototypes */
+<<<<<<< HEAD
 enum early_consoles {
 	UARTLITE = 1,
 	UART16550 = 2,
 };
 
 extern int of_early_console(void *version);
+=======
+extern int early_uartlite_console(void);
+extern int early_uart16550_console(void);
+
+#ifdef CONFIG_PCI
+/*
+ * PCI <-> OF matching functions
+ * (XXX should these be here?)
+ */
+struct pci_bus;
+struct pci_dev;
+extern int pci_device_from_OF_node(struct device_node *node,
+					u8 *bus, u8 *devfn);
+extern struct device_node *pci_busdev_to_OF_node(struct pci_bus *bus,
+							int devfn);
+extern struct device_node *pci_device_to_OF_node(struct pci_dev *dev);
+extern void pci_create_OF_bus_map(void);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * OF address retreival & translation

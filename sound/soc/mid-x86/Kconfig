@@ -1,6 +1,10 @@
 config SND_MFLD_MACHINE
 	tristate "SOC Machine Audio driver for Intel Medfield MID platform"
 	depends on INTEL_SCU_IPC
+<<<<<<< HEAD
+=======
+	depends on SND_INTEL_SST
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select SND_SOC_SN95031
 	select SND_SST_PLATFORM
 	help

@@ -13,8 +13,11 @@
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/irq.h>
+<<<<<<< HEAD
 #include <asm/proc-fns.h>
 #include <asm/system_misc.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach/arch.h>
 #include <mach/at91x40.h>
 #include <mach/at91_st.h>
@@ -39,6 +42,7 @@ unsigned long clk_get_rate(struct clk *clk)
 	return AT91X40_MASTER_CLOCK;
 }
 
+<<<<<<< HEAD
 static void at91x40_idle(void)
 {
 	/*
@@ -52,6 +56,10 @@ static void at91x40_idle(void)
 void __init at91x40_initialize(unsigned long main_clock)
 {
 	arm_pm_idle = at91x40_idle;
+=======
+void __init at91x40_initialize(unsigned long main_clock)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	at91_extern_irq = (1 << AT91X40_ID_IRQ0) | (1 << AT91X40_ID_IRQ1)
 			| (1 << AT91X40_ID_IRQ2);
 }

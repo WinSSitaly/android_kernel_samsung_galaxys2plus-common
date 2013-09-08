@@ -21,7 +21,11 @@
 
 #include <linux/interrupt.h>
 #include <linux/list.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ptrace.h>
 #include <linux/wait.h>
 #include <linux/mm.h>
@@ -222,7 +226,11 @@ static int spu_map_resource(struct spu *spu, int nr,
 		return ret;
 	if (phys)
 		*phys = resource.start;
+<<<<<<< HEAD
 	len = resource_size(&resource);
+=======
+	len = resource.end - resource.start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*virt = ioremap(resource.start, len);
 	if (!*virt)
 		return -EINVAL;

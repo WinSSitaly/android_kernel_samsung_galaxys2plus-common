@@ -20,14 +20,21 @@
 #include <linux/slab.h>
 #include <linux/firmware.h>
 #include <linux/etherdevice.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <net/mac80211.h>
 
 #include "p54.h"
 #include "lmac.h"
 
+<<<<<<< HEAD
 static bool modparam_nohwcrypt;
+=======
+static int modparam_nohwcrypt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(nohwcrypt, modparam_nohwcrypt, bool, S_IRUGO);
 MODULE_PARM_DESC(nohwcrypt, "Disable hardware encryption.");
 MODULE_AUTHOR("Michael Wu <flamingice@sourmilk.net>");
@@ -205,11 +212,21 @@ static void p54_stop(struct ieee80211_hw *dev)
 	struct p54_common *priv = dev->priv;
 	int i;
 
+<<<<<<< HEAD
 	priv->mode = NL80211_IFTYPE_UNSPECIFIED;
 	priv->softled_state = 0;
 	cancel_delayed_work_sync(&priv->work);
 	mutex_lock(&priv->conf_mutex);
 	p54_set_leds(priv);
+=======
+	mutex_lock(&priv->conf_mutex);
+	priv->mode = NL80211_IFTYPE_UNSPECIFIED;
+	priv->softled_state = 0;
+	p54_set_leds(priv);
+
+	cancel_delayed_work_sync(&priv->work);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	priv->stop(dev);
 	skb_queue_purge(&priv->tx_pending);
 	skb_queue_purge(&priv->tx_queue);
@@ -227,9 +244,12 @@ static int p54_add_interface(struct ieee80211_hw *dev,
 			     struct ieee80211_vif *vif)
 {
 	struct p54_common *priv = dev->priv;
+<<<<<<< HEAD
 	int err;
 
 	vif->driver_flags |= IEEE80211_VIF_BEACON_FILTER;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&priv->conf_mutex);
 	if (priv->mode != NL80211_IFTYPE_MONITOR) {
@@ -252,9 +272,15 @@ static int p54_add_interface(struct ieee80211_hw *dev,
 	}
 
 	memcpy(priv->mac_addr, vif->addr, ETH_ALEN);
+<<<<<<< HEAD
 	err = p54_setup_mac(priv);
 	mutex_unlock(&priv->conf_mutex);
 	return err;
+=======
+	p54_setup_mac(priv);
+	mutex_unlock(&priv->conf_mutex);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void p54_remove_interface(struct ieee80211_hw *dev,
@@ -280,6 +306,7 @@ static void p54_remove_interface(struct ieee80211_hw *dev,
 	mutex_unlock(&priv->conf_mutex);
 }
 
+<<<<<<< HEAD
 static int p54_wait_for_stats(struct ieee80211_hw *dev)
 {
 	struct p54_common *priv = dev->priv;
@@ -316,6 +343,8 @@ static void p54_reset_stats(struct p54_common *priv)
 	priv->survey_raw.tx = 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int p54_config(struct ieee80211_hw *dev, u32 changed)
 {
 	int ret = 0;
@@ -326,6 +355,7 @@ static int p54_config(struct ieee80211_hw *dev, u32 changed)
 	if (changed & IEEE80211_CONF_CHANGE_POWER)
 		priv->output_power = conf->power_level << 2;
 	if (changed & IEEE80211_CONF_CHANGE_CHANNEL) {
+<<<<<<< HEAD
 		struct ieee80211_channel *oldchan;
 		WARN_ON(p54_wait_for_stats(dev));
 		oldchan = priv->curchan;
@@ -356,6 +386,21 @@ static int p54_config(struct ieee80211_hw *dev, u32 changed)
 		if (ret)
 			goto out;
 		WARN_ON(p54_wait_for_stats(dev));
+=======
+		ret = p54_scan(priv, P54_SCAN_EXIT, 0);
+		if (ret)
+			goto out;
+	}
+	if (changed & IEEE80211_CONF_CHANGE_PS) {
+		ret = p54_set_ps(priv);
+		if (ret)
+			goto out;
+	}
+	if (changed & IEEE80211_CONF_CHANGE_IDLE) {
+		ret = p54_setup_mac(priv);
+		if (ret)
+			goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 out:
@@ -408,8 +453,12 @@ static void p54_configure_filter(struct ieee80211_hw *dev,
 		p54_set_groupfilter(priv);
 }
 
+<<<<<<< HEAD
 static int p54_conf_tx(struct ieee80211_hw *dev,
 		       struct ieee80211_vif *vif, u16 queue,
+=======
+static int p54_conf_tx(struct ieee80211_hw *dev, u16 queue,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       const struct ieee80211_tx_queue_params *params)
 {
 	struct p54_common *priv = dev->priv;
@@ -440,9 +489,13 @@ static void p54_work(struct work_struct *work)
 	 *      2. cancel stuck frames / reset the device if necessary.
 	 */
 
+<<<<<<< HEAD
 	mutex_lock(&priv->conf_mutex);
 	WARN_ON_ONCE(p54_fetch_statistics(priv));
 	mutex_unlock(&priv->conf_mutex);
+=======
+	p54_fetch_statistics(priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int p54_get_stats(struct ieee80211_hw *dev,
@@ -599,6 +652,7 @@ static int p54_get_survey(struct ieee80211_hw *dev, int idx,
 				struct survey_info *survey)
 {
 	struct p54_common *priv = dev->priv;
+<<<<<<< HEAD
 	struct ieee80211_channel *chan;
 	int err, tries;
 	bool in_use = false;
@@ -640,6 +694,18 @@ static int p54_get_survey(struct ieee80211_hw *dev, int idx,
 	}
 	return -ETIMEDOUT;
 #undef MAX_TRIES
+=======
+	struct ieee80211_conf *conf = &dev->conf;
+
+	if (idx != 0)
+		return -ENOENT;
+
+	survey->channel = conf->channel;
+	survey->filled = SURVEY_INFO_NOISE_DBM;
+	survey->noise = clamp_t(s8, priv->noise, -128, 127);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static unsigned int p54_flush_count(struct p54_common *priv)
@@ -737,6 +803,10 @@ struct ieee80211_hw *p54_init_common(size_t priv_data_len)
 		     IEEE80211_HW_SIGNAL_DBM |
 		     IEEE80211_HW_SUPPORTS_PS |
 		     IEEE80211_HW_PS_NULLFUNC_STACK |
+<<<<<<< HEAD
+=======
+		     IEEE80211_HW_BEACON_FILTER |
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     IEEE80211_HW_REPORTS_TX_ACK_STATUS;
 
 	dev->wiphy->interface_modes = BIT(NL80211_IFTYPE_STATION) |
@@ -774,14 +844,20 @@ struct ieee80211_hw *p54_init_common(size_t priv_data_len)
 
 	mutex_init(&priv->conf_mutex);
 	mutex_init(&priv->eeprom_mutex);
+<<<<<<< HEAD
 	init_completion(&priv->stat_comp);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	init_completion(&priv->eeprom_comp);
 	init_completion(&priv->beacon_comp);
 	INIT_DELAYED_WORK(&priv->work, p54_work);
 
 	memset(&priv->mc_maclist[0], ~0, ETH_ALEN);
+<<<<<<< HEAD
 	priv->curchan = NULL;
 	p54_reset_stats(priv);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return dev;
 }
 EXPORT_SYMBOL_GPL(p54_init_common);
@@ -821,13 +897,19 @@ void p54_free_common(struct ieee80211_hw *dev)
 	kfree(priv->curve_data);
 	kfree(priv->rssi_db);
 	kfree(priv->used_rxkeys);
+<<<<<<< HEAD
 	kfree(priv->survey);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	priv->iq_autocal = NULL;
 	priv->output_limit = NULL;
 	priv->curve_data = NULL;
 	priv->rssi_db = NULL;
 	priv->used_rxkeys = NULL;
+<<<<<<< HEAD
 	priv->survey = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ieee80211_free_hw(dev);
 }
 EXPORT_SYMBOL_GPL(p54_free_common);

@@ -25,6 +25,7 @@
 #define _PAGE_USER_TABLE	(PMD_TYPE_TABLE | PMD_BIT4 | PMD_DOMAIN(DOMAIN_USER))
 #define _PAGE_KERNEL_TABLE	(PMD_TYPE_TABLE | PMD_BIT4 | PMD_DOMAIN(DOMAIN_KERNEL))
 
+<<<<<<< HEAD
 #ifdef CONFIG_ARM_LPAE
 
 static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
@@ -45,14 +46,20 @@ static inline void pud_populate(struct mm_struct *mm, pud_t *pud, pmd_t *pmd)
 
 #else	/* !CONFIG_ARM_LPAE */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Since we have only two-level page tables, these are trivial
  */
 #define pmd_alloc_one(mm,addr)		({ BUG(); ((pmd_t *)2); })
 #define pmd_free(mm, pmd)		do { } while (0)
+<<<<<<< HEAD
 #define pud_populate(mm,pmd,pte)	BUG()
 
 #endif	/* CONFIG_ARM_LPAE */
+=======
+#define pgd_populate(mm,pmd,pte)	BUG()
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern pgd_t *pgd_alloc(struct mm_struct *mm);
 extern void pgd_free(struct mm_struct *mm, pgd_t *pgd);
@@ -127,6 +134,7 @@ static inline void pte_free(struct mm_struct *mm, pgtable_t pte)
 }
 
 static inline void __pmd_populate(pmd_t *pmdp, phys_addr_t pte,
+<<<<<<< HEAD
 				  pmdval_t prot)
 {
 	pmdval_t pmdval = (pte + PTE_HWTABLE_OFF) | prot;
@@ -134,6 +142,13 @@ static inline void __pmd_populate(pmd_t *pmdp, phys_addr_t pte,
 #ifndef CONFIG_ARM_LPAE
 	pmdp[1] = __pmd(pmdval + 256 * sizeof(pte_t));
 #endif
+=======
+	unsigned long prot)
+{
+	unsigned long pmdval = (pte + PTE_HWTABLE_OFF) | prot;
+	pmdp[0] = __pmd(pmdval);
+	pmdp[1] = __pmd(pmdval + 256 * sizeof(pte_t));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	flush_pmd_entry(pmdp);
 }
 

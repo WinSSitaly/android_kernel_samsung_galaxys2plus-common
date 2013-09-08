@@ -51,7 +51,11 @@
 
 #include "53c700.h"
 
+<<<<<<< HEAD
 MODULE_AUTHOR("Thomas BogendÃ¶rfer");
+=======
+MODULE_AUTHOR("Thomas Bogendörfer");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("SNI RM 53c710 SCSI Driver");
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:snirm_53c710");

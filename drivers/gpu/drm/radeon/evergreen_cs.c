@@ -31,9 +31,12 @@
 #include "evergreen_reg_safe.h"
 #include "cayman_reg_safe.h"
 
+<<<<<<< HEAD
 #define MAX(a,b)                   (((a)>(b))?(a):(b))
 #define MIN(a,b)                   (((a)<(b))?(a):(b))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int evergreen_cs_packet_next_reloc(struct radeon_cs_parser *p,
 					  struct radeon_cs_reloc **cs_reloc);
 
@@ -41,6 +44,7 @@ struct evergreen_cs_track {
 	u32			group_size;
 	u32			nbanks;
 	u32			npipes;
+<<<<<<< HEAD
 	u32			row_size;
 	/* value we track */
 	u32			nsamples;		/* unused */
@@ -68,15 +72,49 @@ struct evergreen_cs_track {
 	u32			db_depth_slice;
 	u32			db_depth_size;
 	u32			db_z_info;
+=======
+	/* value we track */
+	u32			nsamples;
+	u32			cb_color_base_last[12];
+	struct radeon_bo	*cb_color_bo[12];
+	u32			cb_color_bo_offset[12];
+	struct radeon_bo	*cb_color_fmask_bo[8];
+	struct radeon_bo	*cb_color_cmask_bo[8];
+	u32			cb_color_info[12];
+	u32			cb_color_view[12];
+	u32			cb_color_pitch_idx[12];
+	u32			cb_color_slice_idx[12];
+	u32			cb_color_dim_idx[12];
+	u32			cb_color_dim[12];
+	u32			cb_color_pitch[12];
+	u32			cb_color_slice[12];
+	u32			cb_color_cmask_slice[8];
+	u32			cb_color_fmask_slice[8];
+	u32			cb_target_mask;
+	u32			cb_shader_mask;
+	u32			vgt_strmout_config;
+	u32			vgt_strmout_buffer_config;
+	u32			db_depth_control;
+	u32			db_depth_view;
+	u32			db_depth_size;
+	u32			db_depth_size_idx;
+	u32			db_z_info;
+	u32			db_z_idx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32			db_z_read_offset;
 	u32			db_z_write_offset;
 	struct radeon_bo	*db_z_read_bo;
 	struct radeon_bo	*db_z_write_bo;
 	u32			db_s_info;
+<<<<<<< HEAD
+=======
+	u32			db_s_idx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32			db_s_read_offset;
 	u32			db_s_write_offset;
 	struct radeon_bo	*db_s_read_bo;
 	struct radeon_bo	*db_s_write_bo;
+<<<<<<< HEAD
 	bool			sx_misc_kill_all_prims;
 	bool			cb_dirty;
 	bool			db_dirty;
@@ -111,6 +149,10 @@ static u32 evergreen_cs_get_num_banks(u32 nbanks)
 	}
 }
 
+=======
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void evergreen_cs_track_init(struct evergreen_cs_track *track)
 {
 	int i;
@@ -123,6 +165,7 @@ static void evergreen_cs_track_init(struct evergreen_cs_track *track)
 	}
 
 	for (i = 0; i < 12; i++) {
+<<<<<<< HEAD
 		track->cb_color_bo[i] = NULL;
 		track->cb_color_bo_offset[i] = 0xFFFFFFFF;
 		track->cb_color_info[i] = 0;
@@ -140,15 +183,43 @@ static void evergreen_cs_track_init(struct evergreen_cs_track *track)
 	track->db_depth_size = 0xFFFFFFFF;
 	track->db_depth_control = 0xFFFFFFFF;
 	track->db_z_info = 0xFFFFFFFF;
+=======
+		track->cb_color_base_last[i] = 0;
+		track->cb_color_bo[i] = NULL;
+		track->cb_color_bo_offset[i] = 0xFFFFFFFF;
+		track->cb_color_info[i] = 0;
+		track->cb_color_view[i] = 0;
+		track->cb_color_pitch_idx[i] = 0;
+		track->cb_color_slice_idx[i] = 0;
+		track->cb_color_dim[i] = 0;
+		track->cb_color_pitch[i] = 0;
+		track->cb_color_slice[i] = 0;
+		track->cb_color_dim[i] = 0;
+	}
+	track->cb_target_mask = 0xFFFFFFFF;
+	track->cb_shader_mask = 0xFFFFFFFF;
+
+	track->db_depth_view = 0xFFFFC000;
+	track->db_depth_size = 0xFFFFFFFF;
+	track->db_depth_size_idx = 0;
+	track->db_depth_control = 0xFFFFFFFF;
+	track->db_z_info = 0xFFFFFFFF;
+	track->db_z_idx = 0xFFFFFFFF;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	track->db_z_read_offset = 0xFFFFFFFF;
 	track->db_z_write_offset = 0xFFFFFFFF;
 	track->db_z_read_bo = NULL;
 	track->db_z_write_bo = NULL;
 	track->db_s_info = 0xFFFFFFFF;
+<<<<<<< HEAD
+=======
+	track->db_s_idx = 0xFFFFFFFF;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	track->db_s_read_offset = 0xFFFFFFFF;
 	track->db_s_write_offset = 0xFFFFFFFF;
 	track->db_s_read_bo = NULL;
 	track->db_s_write_bo = NULL;
+<<<<<<< HEAD
 	track->db_dirty = true;
 	track->htile_bo = NULL;
 	track->htile_offset = 0xFFFFFFFF;
@@ -896,12 +967,20 @@ static int evergreen_cs_track_validate_texture(struct radeon_cs_parser *p,
 		}
 	}
 
+=======
+}
+
+static inline int evergreen_cs_track_validate_cb(struct radeon_cs_parser *p, int i)
+{
+	/* XXX fill in */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int evergreen_cs_track_check(struct radeon_cs_parser *p)
 {
 	struct evergreen_cs_track *track = p->track;
+<<<<<<< HEAD
 	unsigned tmp, i;
 	int r;
 	unsigned buffer_mask = 0;
@@ -975,6 +1054,16 @@ static int evergreen_cs_track_check(struct radeon_cs_parser *p)
 		track->db_dirty = false;
 	}
 
+=======
+
+	/* we don't support stream out buffer yet */
+	if (track->vgt_strmout_config || track->vgt_strmout_buffer_config) {
+		dev_warn(p->dev, "this kernel doesn't support SMX output buffer\n");
+		return -EINVAL;
+	}
+
+	/* XXX fill in */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1072,6 +1161,31 @@ static int evergreen_cs_packet_next_reloc(struct radeon_cs_parser *p,
 }
 
 /**
+<<<<<<< HEAD
+=======
+ * evergreen_cs_packet_next_is_pkt3_nop() - test if next packet is packet3 nop for reloc
+ * @parser:		parser structure holding parsing context.
+ *
+ * Check next packet is relocation packet3, do bo validation and compute
+ * GPU offset using the provided start.
+ **/
+static inline int evergreen_cs_packet_next_is_pkt3_nop(struct radeon_cs_parser *p)
+{
+	struct radeon_cs_packet p3reloc;
+	int r;
+
+	r = evergreen_cs_packet_parse(p, &p3reloc, p->idx);
+	if (r) {
+		return 0;
+	}
+	if (p3reloc.type != PACKET_TYPE3 || p3reloc.opcode != PACKET3_NOP) {
+		return 0;
+	}
+	return 1;
+}
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * evergreen_cs_packet_next_vline() - parse userspace VLINE packet
  * @parser:		parser structure holding parsing context.
  *
@@ -1228,7 +1342,11 @@ static int evergreen_cs_parse_packet0(struct radeon_cs_parser *p,
  * if register is safe. If register is not flag as safe this function
  * will test it against a list of register needind special handling.
  */
+<<<<<<< HEAD
 static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
+=======
+static inline int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct evergreen_cs_track *track = (struct evergreen_cs_track *)p->track;
 	struct radeon_cs_reloc *reloc;
@@ -1242,7 +1360,11 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 		last_reg = ARRAY_SIZE(evergreen_reg_safe_bm);
 
 	i = (reg >> 7);
+<<<<<<< HEAD
 	if (i >= last_reg) {
+=======
+	if (i > last_reg) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_warn(p->dev, "forbidden register 0x%08x at %d\n", reg, idx);
 		return -EINVAL;
 	}
@@ -1306,7 +1428,10 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 		break;
 	case DB_DEPTH_CONTROL:
 		track->db_depth_control = radeon_get_ib_value(p, idx);
+<<<<<<< HEAD
 		track->db_dirty = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CAYMAN_DB_EQAA:
 		if (p->rdev->family < CHIP_CAYMAN) {
@@ -1323,6 +1448,7 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 		}
 		break;
 	case DB_Z_INFO:
+<<<<<<< HEAD
 		track->db_z_info = radeon_get_ib_value(p, idx);
 		if (!(p->cs_flags & RADEON_CS_KEEP_TILING_FLAGS)) {
 			r = evergreen_cs_packet_next_reloc(p, &reloc);
@@ -1365,6 +1491,34 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 	case R_02805C_DB_DEPTH_SLICE:
 		track->db_depth_slice = radeon_get_ib_value(p, idx);
 		track->db_dirty = true;
+=======
+		r = evergreen_cs_packet_next_reloc(p, &reloc);
+		if (r) {
+			dev_warn(p->dev, "bad SET_CONTEXT_REG "
+					"0x%04X\n", reg);
+			return -EINVAL;
+		}
+		track->db_z_info = radeon_get_ib_value(p, idx);
+		ib[idx] &= ~Z_ARRAY_MODE(0xf);
+		track->db_z_info &= ~Z_ARRAY_MODE(0xf);
+		if (reloc->lobj.tiling_flags & RADEON_TILING_MACRO) {
+			ib[idx] |= Z_ARRAY_MODE(ARRAY_2D_TILED_THIN1);
+			track->db_z_info |= Z_ARRAY_MODE(ARRAY_2D_TILED_THIN1);
+		} else {
+			ib[idx] |= Z_ARRAY_MODE(ARRAY_1D_TILED_THIN1);
+			track->db_z_info |= Z_ARRAY_MODE(ARRAY_1D_TILED_THIN1);
+		}
+		break;
+	case DB_STENCIL_INFO:
+		track->db_s_info = radeon_get_ib_value(p, idx);
+		break;
+	case DB_DEPTH_VIEW:
+		track->db_depth_view = radeon_get_ib_value(p, idx);
+		break;
+	case DB_DEPTH_SIZE:
+		track->db_depth_size = radeon_get_ib_value(p, idx);
+		track->db_depth_size_idx = idx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case DB_Z_READ_BASE:
 		r = evergreen_cs_packet_next_reloc(p, &reloc);
@@ -1376,7 +1530,10 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 		track->db_z_read_offset = radeon_get_ib_value(p, idx);
 		ib[idx] += (u32)((reloc->lobj.gpu_offset >> 8) & 0xffffffff);
 		track->db_z_read_bo = reloc->robj;
+<<<<<<< HEAD
 		track->db_dirty = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case DB_Z_WRITE_BASE:
 		r = evergreen_cs_packet_next_reloc(p, &reloc);
@@ -1388,7 +1545,10 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 		track->db_z_write_offset = radeon_get_ib_value(p, idx);
 		ib[idx] += (u32)((reloc->lobj.gpu_offset >> 8) & 0xffffffff);
 		track->db_z_write_bo = reloc->robj;
+<<<<<<< HEAD
 		track->db_dirty = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case DB_STENCIL_READ_BASE:
 		r = evergreen_cs_packet_next_reloc(p, &reloc);
@@ -1400,7 +1560,10 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 		track->db_s_read_offset = radeon_get_ib_value(p, idx);
 		ib[idx] += (u32)((reloc->lobj.gpu_offset >> 8) & 0xffffffff);
 		track->db_s_read_bo = reloc->robj;
+<<<<<<< HEAD
 		track->db_dirty = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case DB_STENCIL_WRITE_BASE:
 		r = evergreen_cs_packet_next_reloc(p, &reloc);
@@ -1412,6 +1575,7 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 		track->db_s_write_offset = radeon_get_ib_value(p, idx);
 		ib[idx] += (u32)((reloc->lobj.gpu_offset >> 8) & 0xffffffff);
 		track->db_s_write_bo = reloc->robj;
+<<<<<<< HEAD
 		track->db_dirty = true;
 		break;
 	case VGT_STRMOUT_CONFIG:
@@ -1462,6 +1626,20 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 	case CB_SHADER_MASK:
 		track->cb_shader_mask = radeon_get_ib_value(p, idx);
 		track->cb_dirty = true;
+=======
+		break;
+	case VGT_STRMOUT_CONFIG:
+		track->vgt_strmout_config = radeon_get_ib_value(p, idx);
+		break;
+	case VGT_STRMOUT_BUFFER_CONFIG:
+		track->vgt_strmout_buffer_config = radeon_get_ib_value(p, idx);
+		break;
+	case CB_TARGET_MASK:
+		track->cb_target_mask = radeon_get_ib_value(p, idx);
+		break;
+	case CB_SHADER_MASK:
+		track->cb_shader_mask = radeon_get_ib_value(p, idx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case PA_SC_AA_CONFIG:
 		if (p->rdev->family >= CHIP_CAYMAN) {
@@ -1491,7 +1669,10 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 	case CB_COLOR7_VIEW:
 		tmp = (reg - CB_COLOR0_VIEW) / 0x3c;
 		track->cb_color_view[tmp] = radeon_get_ib_value(p, idx);
+<<<<<<< HEAD
 		track->cb_dirty = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CB_COLOR8_VIEW:
 	case CB_COLOR9_VIEW:
@@ -1499,7 +1680,10 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 	case CB_COLOR11_VIEW:
 		tmp = ((reg - CB_COLOR8_VIEW) / 0x1c) + 8;
 		track->cb_color_view[tmp] = radeon_get_ib_value(p, idx);
+<<<<<<< HEAD
 		track->cb_dirty = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CB_COLOR0_INFO:
 	case CB_COLOR1_INFO:
@@ -1509,6 +1693,7 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 	case CB_COLOR5_INFO:
 	case CB_COLOR6_INFO:
 	case CB_COLOR7_INFO:
+<<<<<<< HEAD
 		tmp = (reg - CB_COLOR0_INFO) / 0x3c;
 		track->cb_color_info[tmp] = radeon_get_ib_value(p, idx);
 		if (!(p->cs_flags & RADEON_CS_KEEP_TILING_FLAGS)) {
@@ -1522,11 +1707,29 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 			track->cb_color_info[tmp] |= CB_ARRAY_MODE(evergreen_cs_get_aray_mode(reloc->lobj.tiling_flags));
 		}
 		track->cb_dirty = true;
+=======
+		r = evergreen_cs_packet_next_reloc(p, &reloc);
+		if (r) {
+			dev_warn(p->dev, "bad SET_CONTEXT_REG "
+					"0x%04X\n", reg);
+			return -EINVAL;
+		}
+		tmp = (reg - CB_COLOR0_INFO) / 0x3c;
+		track->cb_color_info[tmp] = radeon_get_ib_value(p, idx);
+		if (reloc->lobj.tiling_flags & RADEON_TILING_MACRO) {
+			ib[idx] |= CB_ARRAY_MODE(ARRAY_2D_TILED_THIN1);
+			track->cb_color_info[tmp] |= CB_ARRAY_MODE(ARRAY_2D_TILED_THIN1);
+		} else if (reloc->lobj.tiling_flags & RADEON_TILING_MICRO) {
+			ib[idx] |= CB_ARRAY_MODE(ARRAY_1D_TILED_THIN1);
+			track->cb_color_info[tmp] |= CB_ARRAY_MODE(ARRAY_1D_TILED_THIN1);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CB_COLOR8_INFO:
 	case CB_COLOR9_INFO:
 	case CB_COLOR10_INFO:
 	case CB_COLOR11_INFO:
+<<<<<<< HEAD
 		tmp = ((reg - CB_COLOR8_INFO) / 0x1c) + 8;
 		track->cb_color_info[tmp] = radeon_get_ib_value(p, idx);
 		if (!(p->cs_flags & RADEON_CS_KEEP_TILING_FLAGS)) {
@@ -1540,6 +1743,23 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 			track->cb_color_info[tmp] |= CB_ARRAY_MODE(evergreen_cs_get_aray_mode(reloc->lobj.tiling_flags));
 		}
 		track->cb_dirty = true;
+=======
+		r = evergreen_cs_packet_next_reloc(p, &reloc);
+		if (r) {
+			dev_warn(p->dev, "bad SET_CONTEXT_REG "
+					"0x%04X\n", reg);
+			return -EINVAL;
+		}
+		tmp = ((reg - CB_COLOR8_INFO) / 0x1c) + 8;
+		track->cb_color_info[tmp] = radeon_get_ib_value(p, idx);
+		if (reloc->lobj.tiling_flags & RADEON_TILING_MACRO) {
+			ib[idx] |= CB_ARRAY_MODE(ARRAY_2D_TILED_THIN1);
+			track->cb_color_info[tmp] |= CB_ARRAY_MODE(ARRAY_2D_TILED_THIN1);
+		} else if (reloc->lobj.tiling_flags & RADEON_TILING_MICRO) {
+			ib[idx] |= CB_ARRAY_MODE(ARRAY_1D_TILED_THIN1);
+			track->cb_color_info[tmp] |= CB_ARRAY_MODE(ARRAY_1D_TILED_THIN1);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CB_COLOR0_PITCH:
 	case CB_COLOR1_PITCH:
@@ -1551,7 +1771,11 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 	case CB_COLOR7_PITCH:
 		tmp = (reg - CB_COLOR0_PITCH) / 0x3c;
 		track->cb_color_pitch[tmp] = radeon_get_ib_value(p, idx);
+<<<<<<< HEAD
 		track->cb_dirty = true;
+=======
+		track->cb_color_pitch_idx[tmp] = idx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CB_COLOR8_PITCH:
 	case CB_COLOR9_PITCH:
@@ -1559,7 +1783,11 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 	case CB_COLOR11_PITCH:
 		tmp = ((reg - CB_COLOR8_PITCH) / 0x1c) + 8;
 		track->cb_color_pitch[tmp] = radeon_get_ib_value(p, idx);
+<<<<<<< HEAD
 		track->cb_dirty = true;
+=======
+		track->cb_color_pitch_idx[tmp] = idx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CB_COLOR0_SLICE:
 	case CB_COLOR1_SLICE:
@@ -1572,7 +1800,10 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 		tmp = (reg - CB_COLOR0_SLICE) / 0x3c;
 		track->cb_color_slice[tmp] = radeon_get_ib_value(p, idx);
 		track->cb_color_slice_idx[tmp] = idx;
+<<<<<<< HEAD
 		track->cb_dirty = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CB_COLOR8_SLICE:
 	case CB_COLOR9_SLICE:
@@ -1581,7 +1812,10 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 		tmp = ((reg - CB_COLOR8_SLICE) / 0x1c) + 8;
 		track->cb_color_slice[tmp] = radeon_get_ib_value(p, idx);
 		track->cb_color_slice_idx[tmp] = idx;
+<<<<<<< HEAD
 		track->cb_dirty = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CB_COLOR0_ATTRIB:
 	case CB_COLOR1_ATTRIB:
@@ -1591,6 +1825,7 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 	case CB_COLOR5_ATTRIB:
 	case CB_COLOR6_ATTRIB:
 	case CB_COLOR7_ATTRIB:
+<<<<<<< HEAD
 		r = evergreen_cs_packet_next_reloc(p, &reloc);
 		if (r) {
 			dev_warn(p->dev, "bad SET_CONTEXT_REG "
@@ -1615,10 +1850,13 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 		track->cb_color_attrib[tmp] = ib[idx];
 		track->cb_dirty = true;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case CB_COLOR8_ATTRIB:
 	case CB_COLOR9_ATTRIB:
 	case CB_COLOR10_ATTRIB:
 	case CB_COLOR11_ATTRIB:
+<<<<<<< HEAD
 		r = evergreen_cs_packet_next_reloc(p, &reloc);
 		if (r) {
 			dev_warn(p->dev, "bad SET_CONTEXT_REG "
@@ -1642,6 +1880,28 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 		tmp = ((reg - CB_COLOR8_ATTRIB) / 0x1c) + 8;
 		track->cb_color_attrib[tmp] = ib[idx];
 		track->cb_dirty = true;
+=======
+		break;
+	case CB_COLOR0_DIM:
+	case CB_COLOR1_DIM:
+	case CB_COLOR2_DIM:
+	case CB_COLOR3_DIM:
+	case CB_COLOR4_DIM:
+	case CB_COLOR5_DIM:
+	case CB_COLOR6_DIM:
+	case CB_COLOR7_DIM:
+		tmp = (reg - CB_COLOR0_DIM) / 0x3c;
+		track->cb_color_dim[tmp] = radeon_get_ib_value(p, idx);
+		track->cb_color_dim_idx[tmp] = idx;
+		break;
+	case CB_COLOR8_DIM:
+	case CB_COLOR9_DIM:
+	case CB_COLOR10_DIM:
+	case CB_COLOR11_DIM:
+		tmp = ((reg - CB_COLOR8_DIM) / 0x1c) + 8;
+		track->cb_color_dim[tmp] = radeon_get_ib_value(p, idx);
+		track->cb_color_dim_idx[tmp] = idx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CB_COLOR0_FMASK:
 	case CB_COLOR1_FMASK:
@@ -1716,8 +1976,13 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 		tmp = (reg - CB_COLOR0_BASE) / 0x3c;
 		track->cb_color_bo_offset[tmp] = radeon_get_ib_value(p, idx);
 		ib[idx] += (u32)((reloc->lobj.gpu_offset >> 8) & 0xffffffff);
+<<<<<<< HEAD
 		track->cb_color_bo[tmp] = reloc->robj;
 		track->cb_dirty = true;
+=======
+		track->cb_color_base_last[tmp] = ib[idx];
+		track->cb_color_bo[tmp] = reloc->robj;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CB_COLOR8_BASE:
 	case CB_COLOR9_BASE:
@@ -1732,6 +1997,7 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 		tmp = ((reg - CB_COLOR8_BASE) / 0x1c) + 8;
 		track->cb_color_bo_offset[tmp] = radeon_get_ib_value(p, idx);
 		ib[idx] += (u32)((reloc->lobj.gpu_offset >> 8) & 0xffffffff);
+<<<<<<< HEAD
 		track->cb_color_bo[tmp] = reloc->robj;
 		track->cb_dirty = true;
 		break;
@@ -1751,6 +2017,10 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 		/* 8x8 only */
 		track->htile_surface = radeon_get_ib_value(p, idx);
 		track->db_dirty = true;
+=======
+		track->cb_color_base_last[tmp] = ib[idx];
+		track->cb_color_bo[tmp] = reloc->robj;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CB_IMMED0_BASE:
 	case CB_IMMED1_BASE:
@@ -1764,6 +2034,10 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 	case CB_IMMED9_BASE:
 	case CB_IMMED10_BASE:
 	case CB_IMMED11_BASE:
+<<<<<<< HEAD
+=======
+	case DB_HTILE_DATA_BASE:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SQ_PGM_START_FS:
 	case SQ_PGM_START_ES:
 	case SQ_PGM_START_VS:
@@ -1771,6 +2045,10 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 	case SQ_PGM_START_PS:
 	case SQ_PGM_START_HS:
 	case SQ_PGM_START_LS:
+<<<<<<< HEAD
+=======
+	case GDS_ADDR_BASE:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SQ_CONST_MEM_BASE:
 	case SQ_ALU_CONST_CACHE_GS_0:
 	case SQ_ALU_CONST_CACHE_GS_1:
@@ -1857,6 +2135,7 @@ static int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 			dev_warn(p->dev, "bad SET_CONTEXT_REG "
 					"0x%04X\n", reg);
 			return -EINVAL;
+<<<<<<< HEAD
 		}
 		ib[idx] += (u32)((reloc->lobj.gpu_offset >> 8) & 0xffffffff);
 		break;
@@ -1922,6 +2201,34 @@ static bool evergreen_is_safe_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
 	}
 	dev_warn(p->dev, "forbidden register 0x%08x at %d\n", reg, idx);
 	return false;
+=======
+		}
+		ib[idx] += (u32)((reloc->lobj.gpu_offset >> 8) & 0xffffffff);
+		break;
+	default:
+		dev_warn(p->dev, "forbidden register 0x%08x at %d\n", reg, idx);
+		return -EINVAL;
+	}
+	return 0;
+}
+
+/**
+ * evergreen_check_texture_resource() - check if register is authorized or not
+ * @p: parser structure holding parsing context
+ * @idx: index into the cs buffer
+ * @texture: texture's bo structure
+ * @mipmap: mipmap's bo structure
+ *
+ * This function will check that the resource has valid field and that
+ * the texture and mipmap bo object are big enough to cover this resource.
+ */
+static inline int evergreen_check_texture_resource(struct radeon_cs_parser *p,  u32 idx,
+						   struct radeon_bo *texture,
+						   struct radeon_bo *mipmap)
+{
+	/* XXX fill in */
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int evergreen_packet3_check(struct radeon_cs_parser *p,
@@ -1946,8 +2253,11 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 	{
 		int pred_op;
 		int tmp;
+<<<<<<< HEAD
 		uint64_t offset;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (pkt->count != 1) {
 			DRM_ERROR("bad SET PREDICATION\n");
 			return -EINVAL;
@@ -1971,12 +2281,17 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 			return -EINVAL;
 		}
 
+<<<<<<< HEAD
 		offset = reloc->lobj.gpu_offset +
 		         (idx_value & 0xfffffff0) +
 		         ((u64)(tmp & 0xff) << 32);
 
 		ib[idx + 0] = offset;
 		ib[idx + 1] = (tmp & 0xffffff00) | (upper_32_bits(offset) & 0xff);
+=======
+		ib[idx + 0] = idx_value + (u32)(reloc->lobj.gpu_offset & 0xffffffff);
+		ib[idx + 1] = tmp + (upper_32_bits(reloc->lobj.gpu_offset) & 0xff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	break;
 	case PACKET3_CONTEXT_CONTROL:
@@ -2004,9 +2319,12 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 		}
 		break;
 	case PACKET3_INDEX_BASE:
+<<<<<<< HEAD
 	{
 		uint64_t offset;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (pkt->count != 1) {
 			DRM_ERROR("bad INDEX_BASE\n");
 			return -EINVAL;
@@ -2016,6 +2334,7 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 			DRM_ERROR("bad INDEX_BASE\n");
 			return -EINVAL;
 		}
+<<<<<<< HEAD
 
 		offset = reloc->lobj.gpu_offset +
 		         idx_value +
@@ -2024,16 +2343,24 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 		ib[idx+0] = offset;
 		ib[idx+1] = upper_32_bits(offset) & 0xff;
 
+=======
+		ib[idx+0] = idx_value + (u32)(reloc->lobj.gpu_offset & 0xffffffff);
+		ib[idx+1] += upper_32_bits(reloc->lobj.gpu_offset) & 0xff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r = evergreen_cs_track_check(p);
 		if (r) {
 			dev_warn(p->dev, "%s:%d invalid cmd stream\n", __func__, __LINE__);
 			return r;
 		}
 		break;
+<<<<<<< HEAD
 	}
 	case PACKET3_DRAW_INDEX:
 	{
 		uint64_t offset;
+=======
+	case PACKET3_DRAW_INDEX:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (pkt->count != 3) {
 			DRM_ERROR("bad DRAW_INDEX\n");
 			return -EINVAL;
@@ -2043,6 +2370,7 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 			DRM_ERROR("bad DRAW_INDEX\n");
 			return -EINVAL;
 		}
+<<<<<<< HEAD
 
 		offset = reloc->lobj.gpu_offset +
 		         idx_value +
@@ -2051,17 +2379,25 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 		ib[idx+0] = offset;
 		ib[idx+1] = upper_32_bits(offset) & 0xff;
 
+=======
+		ib[idx+0] = idx_value + (u32)(reloc->lobj.gpu_offset & 0xffffffff);
+		ib[idx+1] += upper_32_bits(reloc->lobj.gpu_offset) & 0xff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r = evergreen_cs_track_check(p);
 		if (r) {
 			dev_warn(p->dev, "%s:%d invalid cmd stream\n", __func__, __LINE__);
 			return r;
 		}
 		break;
+<<<<<<< HEAD
 	}
 	case PACKET3_DRAW_INDEX_2:
 	{
 		uint64_t offset;
 
+=======
+	case PACKET3_DRAW_INDEX_2:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (pkt->count != 4) {
 			DRM_ERROR("bad DRAW_INDEX_2\n");
 			return -EINVAL;
@@ -2071,6 +2407,7 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 			DRM_ERROR("bad DRAW_INDEX_2\n");
 			return -EINVAL;
 		}
+<<<<<<< HEAD
 
 		offset = reloc->lobj.gpu_offset +
 		         radeon_get_ib_value(p, idx+1) +
@@ -2079,13 +2416,20 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 		ib[idx+1] = offset;
 		ib[idx+2] = upper_32_bits(offset) & 0xff;
 
+=======
+		ib[idx+1] = idx_value + (u32)(reloc->lobj.gpu_offset & 0xffffffff);
+		ib[idx+2] += upper_32_bits(reloc->lobj.gpu_offset) & 0xff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r = evergreen_cs_track_check(p);
 		if (r) {
 			dev_warn(p->dev, "%s:%d invalid cmd stream\n", __func__, __LINE__);
 			return r;
 		}
 		break;
+<<<<<<< HEAD
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case PACKET3_DRAW_INDEX_AUTO:
 		if (pkt->count != 1) {
 			DRM_ERROR("bad DRAW_INDEX_AUTO\n");
@@ -2141,6 +2485,7 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 			return r;
 		}
 		break;
+<<<<<<< HEAD
 	case PACKET3_DISPATCH_DIRECT:
 		if (pkt->count != 3) {
 			DRM_ERROR("bad DISPATCH_DIRECT\n");
@@ -2169,6 +2514,8 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 			return r;
 		}
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case PACKET3_WAIT_REG_MEM:
 		if (pkt->count != 5) {
 			DRM_ERROR("bad WAIT_REG_MEM\n");
@@ -2176,13 +2523,17 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 		}
 		/* bit 4 is reg (0) or mem (1) */
 		if (idx_value & 0x10) {
+<<<<<<< HEAD
 			uint64_t offset;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			r = evergreen_cs_packet_next_reloc(p, &reloc);
 			if (r) {
 				DRM_ERROR("bad WAIT_REG_MEM\n");
 				return -EINVAL;
 			}
+<<<<<<< HEAD
 
 			offset = reloc->lobj.gpu_offset +
 			         (radeon_get_ib_value(p, idx+1) & 0xfffffffc) +
@@ -2190,6 +2541,10 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 
 			ib[idx+1] = (ib[idx+1] & 0x3) | (offset & 0xfffffffc);
 			ib[idx+2] = upper_32_bits(offset) & 0xff;
+=======
+			ib[idx+1] += (u32)(reloc->lobj.gpu_offset & 0xffffffff);
+			ib[idx+2] += upper_32_bits(reloc->lobj.gpu_offset) & 0xff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		break;
 	case PACKET3_SURFACE_SYNC:
@@ -2214,13 +2569,17 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 			return -EINVAL;
 		}
 		if (pkt->count) {
+<<<<<<< HEAD
 			uint64_t offset;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			r = evergreen_cs_packet_next_reloc(p, &reloc);
 			if (r) {
 				DRM_ERROR("bad EVENT_WRITE\n");
 				return -EINVAL;
 			}
+<<<<<<< HEAD
 			offset = reloc->lobj.gpu_offset +
 			         (radeon_get_ib_value(p, idx+1) & 0xfffffff8) +
 			         ((u64)(radeon_get_ib_value(p, idx+2) & 0xff) << 32);
@@ -2233,6 +2592,13 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 	{
 		uint64_t offset;
 
+=======
+			ib[idx+1] += (u32)(reloc->lobj.gpu_offset & 0xffffffff);
+			ib[idx+2] += upper_32_bits(reloc->lobj.gpu_offset) & 0xff;
+		}
+		break;
+	case PACKET3_EVENT_WRITE_EOP:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (pkt->count != 4) {
 			DRM_ERROR("bad EVENT_WRITE_EOP\n");
 			return -EINVAL;
@@ -2242,6 +2608,7 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 			DRM_ERROR("bad EVENT_WRITE_EOP\n");
 			return -EINVAL;
 		}
+<<<<<<< HEAD
 
 		offset = reloc->lobj.gpu_offset +
 		         (radeon_get_ib_value(p, idx+1) & 0xfffffffc) +
@@ -2255,6 +2622,12 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 	{
 		uint64_t offset;
 
+=======
+		ib[idx+1] += (u32)(reloc->lobj.gpu_offset & 0xffffffff);
+		ib[idx+2] += upper_32_bits(reloc->lobj.gpu_offset) & 0xff;
+		break;
+	case PACKET3_EVENT_WRITE_EOS:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (pkt->count != 3) {
 			DRM_ERROR("bad EVENT_WRITE_EOS\n");
 			return -EINVAL;
@@ -2264,6 +2637,7 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 			DRM_ERROR("bad EVENT_WRITE_EOS\n");
 			return -EINVAL;
 		}
+<<<<<<< HEAD
 
 		offset = reloc->lobj.gpu_offset +
 		         (radeon_get_ib_value(p, idx+1) & 0xfffffffc) +
@@ -2273,6 +2647,11 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 		ib[idx+2] = (ib[idx+2] & 0xffffff00) | (upper_32_bits(offset) & 0xff);
 		break;
 	}
+=======
+		ib[idx+1] += (u32)(reloc->lobj.gpu_offset & 0xffffffff);
+		ib[idx+2] += upper_32_bits(reloc->lobj.gpu_offset) & 0xff;
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case PACKET3_SET_CONFIG_REG:
 		start_reg = (idx_value << 2) + PACKET3_SET_CONFIG_REG_START;
 		end_reg = 4 * pkt->count + start_reg - 4;
@@ -2320,7 +2699,10 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 		}
 		for (i = 0; i < (pkt->count / 8); i++) {
 			struct radeon_bo *texture, *mipmap;
+<<<<<<< HEAD
 			u32 toffset, moffset;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			u32 size, offset;
 
 			switch (G__SQ_CONSTANT_TYPE(radeon_get_ib_value(p, idx+1+(i*8)+7))) {
@@ -2331,6 +2713,7 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 					DRM_ERROR("bad SET_RESOURCE (tex)\n");
 					return -EINVAL;
 				}
+<<<<<<< HEAD
 				if (!(p->cs_flags & RADEON_CS_KEEP_TILING_FLAGS)) {
 					ib[idx+1+(i*8)+1] |=
 						TEX_ARRAY_MODE(evergreen_cs_get_aray_mode(reloc->lobj.tiling_flags));
@@ -2350,12 +2733,21 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 				}
 				texture = reloc->robj;
 				toffset = (u32)((reloc->lobj.gpu_offset >> 8) & 0xffffffff);
+=======
+				ib[idx+1+(i*8)+2] += (u32)((reloc->lobj.gpu_offset >> 8) & 0xffffffff);
+				if (reloc->lobj.tiling_flags & RADEON_TILING_MACRO)
+					ib[idx+1+(i*8)+1] |= TEX_ARRAY_MODE(ARRAY_2D_TILED_THIN1);
+				else if (reloc->lobj.tiling_flags & RADEON_TILING_MICRO)
+					ib[idx+1+(i*8)+1] |= TEX_ARRAY_MODE(ARRAY_1D_TILED_THIN1);
+				texture = reloc->robj;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/* tex mip base */
 				r = evergreen_cs_packet_next_reloc(p, &reloc);
 				if (r) {
 					DRM_ERROR("bad SET_RESOURCE (tex)\n");
 					return -EINVAL;
 				}
+<<<<<<< HEAD
 				moffset = (u32)((reloc->lobj.gpu_offset >> 8) & 0xffffffff);
 				mipmap = reloc->robj;
 				r = evergreen_cs_track_validate_texture(p, texture, mipmap, idx+1+(i*8));
@@ -2367,6 +2759,16 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 			case SQ_TEX_VTX_VALID_BUFFER:
 			{
 				uint64_t offset64;
+=======
+				ib[idx+1+(i*8)+3] += (u32)((reloc->lobj.gpu_offset >> 8) & 0xffffffff);
+				mipmap = reloc->robj;
+				r = evergreen_check_texture_resource(p,  idx+1+(i*8),
+						texture, mipmap);
+				if (r)
+					return r;
+				break;
+			case SQ_TEX_VTX_VALID_BUFFER:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/* vtx base */
 				r = evergreen_cs_packet_next_reloc(p, &reloc);
 				if (r) {
@@ -2378,6 +2780,7 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 				if (p->rdev && (size + offset) > radeon_bo_size(reloc->robj)) {
 					/* force size to size of the buffer */
 					dev_warn(p->dev, "vbo resource seems too big for the bo\n");
+<<<<<<< HEAD
 					ib[idx+1+(i*8)+1] = radeon_bo_size(reloc->robj) - offset;
 				}
 
@@ -2387,6 +2790,13 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 						    (upper_32_bits(offset64) & 0xff);
 				break;
 			}
+=======
+					ib[idx+1+(i*8)+1] = radeon_bo_size(reloc->robj);
+				}
+				ib[idx+1+(i*8)+0] += (u32)((reloc->lobj.gpu_offset) & 0xffffffff);
+				ib[idx+1+(i*8)+2] += upper_32_bits(reloc->lobj.gpu_offset) & 0xff;
+				break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			case SQ_TEX_VTX_INVALID_TEXTURE:
 			case SQ_TEX_VTX_INVALID_BUFFER:
 			default:
@@ -2442,6 +2852,7 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 			return -EINVAL;
 		}
 		break;
+<<<<<<< HEAD
 	case PACKET3_STRMOUT_BUFFER_UPDATE:
 		if (pkt->count != 4) {
 			DRM_ERROR("bad STRMOUT_BUFFER_UPDATE (invalid count)\n");
@@ -2540,6 +2951,8 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
 				return -EINVAL;
 		}
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case PACKET3_NOP:
 		break;
 	default:
@@ -2553,7 +2966,10 @@ int evergreen_cs_parse(struct radeon_cs_parser *p)
 {
 	struct radeon_cs_packet pkt;
 	struct evergreen_cs_track *track;
+<<<<<<< HEAD
 	u32 tmp;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int r;
 
 	if (p->track == NULL) {
@@ -2562,6 +2978,7 @@ int evergreen_cs_parse(struct radeon_cs_parser *p)
 		if (track == NULL)
 			return -ENOMEM;
 		evergreen_cs_track_init(track);
+<<<<<<< HEAD
 		if (p->rdev->family >= CHIP_CAYMAN)
 			tmp = p->rdev->config.cayman.tile_config;
 		else
@@ -2619,6 +3036,11 @@ int evergreen_cs_parse(struct radeon_cs_parser *p)
 			break;
 		}
 
+=======
+		track->npipes = p->rdev->config.evergreen.tiling_npipes;
+		track->nbanks = p->rdev->config.evergreen.tiling_nbanks;
+		track->group_size = p->rdev->config.evergreen.tiling_group_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		p->track = track;
 	}
 	do {
@@ -2661,6 +3083,7 @@ int evergreen_cs_parse(struct radeon_cs_parser *p)
 	return 0;
 }
 
+<<<<<<< HEAD
 /* vm parser */
 static bool evergreen_vm_reg_valid(u32 reg)
 {
@@ -2905,3 +3328,5 @@ int evergreen_ib_parse(struct radeon_device *rdev, struct radeon_ib *ib)
 
 	return ret;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

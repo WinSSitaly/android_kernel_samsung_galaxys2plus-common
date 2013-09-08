@@ -22,7 +22,10 @@
 #include <asm/hw_breakpoint.h>
 #include <asm/mmu_context.h>
 #include <asm/ptrace.h>
+<<<<<<< HEAD
 #include <asm/traps.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Stores the breakpoints currently in use on each breakpoint address

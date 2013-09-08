@@ -4,8 +4,12 @@ dm-crypt
 Device-Mapper's "crypt" target provides transparent encryption of block devices
 using the kernel crypto API.
 
+<<<<<<< HEAD
 Parameters: <cipher> <key> <iv_offset> <device path> \
 	      <offset> [<#opt_params> <opt_params>]
+=======
+Parameters: <cipher> <key> <iv_offset> <device path> <offset>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 <cipher>
     Encryption cipher and an optional IV generation mode.
@@ -38,6 +42,7 @@ Parameters: <cipher> <key> <iv_offset> <device path> \
 <offset>
     Starting sector within the device where the encrypted data begins.
 
+<<<<<<< HEAD
 <#opt_params>
     Number of optional parameters. If there are no optional parameters,
     the optional paramaters section can be skipped or #opt_params can be zero.
@@ -56,6 +61,8 @@ allow_discards
     used space etc.) if the discarded blocks can be located easily on the
     device later.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Example scripts
 ===============
 LUKS (Linux Unified Key Setup) is now the preferred way to set up disk

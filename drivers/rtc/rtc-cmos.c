@@ -164,7 +164,11 @@ static inline unsigned char cmos_read_bank2(unsigned char addr)
 static inline void cmos_write_bank2(unsigned char val, unsigned char addr)
 {
 	outb(addr, RTC_PORT(2));
+<<<<<<< HEAD
 	outb(val, RTC_PORT(3));
+=======
+	outb(val, RTC_PORT(2));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #else
@@ -606,7 +610,11 @@ cmos_do_probe(struct device *dev, struct resource *ports, int rtc_irq)
 	 * (needing ioremap etc), not i/o space resources like this ...
 	 */
 	ports = request_region(ports->start,
+<<<<<<< HEAD
 			resource_size(ports),
+=======
+			ports->end + 1 - ports->start,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			driver_name);
 	if (!ports) {
 		dev_dbg(dev, "i/o registers already in use\n");
@@ -714,7 +722,11 @@ cmos_do_probe(struct device *dev, struct resource *ports, int rtc_irq)
 			rtc_cmos_int_handler = cmos_interrupt;
 
 		retval = request_irq(rtc_irq, rtc_cmos_int_handler,
+<<<<<<< HEAD
 				0, dev_name(&cmos_rtc.rtc->dev),
+=======
+				IRQF_DISABLED, dev_name(&cmos_rtc.rtc->dev),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				cmos_rtc.rtc);
 		if (retval < 0) {
 			dev_dbg(dev, "IRQ %d is already in use\n", rtc_irq);
@@ -750,7 +762,11 @@ cleanup1:
 	cmos_rtc.dev = NULL;
 	rtc_device_unregister(cmos_rtc.rtc);
 cleanup0:
+<<<<<<< HEAD
 	release_region(ports->start, resource_size(ports));
+=======
+	release_region(ports->start, ports->end + 1 - ports->start);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return retval;
 }
 
@@ -779,7 +795,11 @@ static void __exit cmos_do_remove(struct device *dev)
 	cmos->rtc = NULL;
 
 	ports = cmos->iomem;
+<<<<<<< HEAD
 	release_region(ports->start, resource_size(ports));
+=======
+	release_region(ports->start, ports->end + 1 - ports->start);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmos->iomem = NULL;
 
 	cmos->dev = NULL;
@@ -805,8 +825,14 @@ static int cmos_suspend(struct device *dev)
 			mask = RTC_IRQMASK;
 		tmp &= ~mask;
 		CMOS_WRITE(tmp, RTC_CONTROL);
+<<<<<<< HEAD
 		hpet_mask_rtc_irq_bit(mask);
 
+=======
+
+		/* shut down hpet emulation - we don't need it for alarm */
+		hpet_mask_rtc_irq_bit(RTC_PIE|RTC_AIE|RTC_UIE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cmos_checkintr(cmos, tmp);
 	}
 	spin_unlock_irq(&rtc_lock);
@@ -871,7 +897,10 @@ static int cmos_resume(struct device *dev)
 			rtc_update_irq(cmos->rtc, 1, mask);
 			tmp &= ~RTC_AIE;
 			hpet_mask_rtc_irq_bit(RTC_AIE);
+<<<<<<< HEAD
 			hpet_rtc_timer_init();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} while (mask & RTC_AIE);
 		spin_unlock_irq(&rtc_lock);
 	}

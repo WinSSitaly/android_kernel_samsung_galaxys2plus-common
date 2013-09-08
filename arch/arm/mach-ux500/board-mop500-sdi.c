@@ -22,6 +22,7 @@
 #include "ste-dma40-db8500.h"
 
 /*
+<<<<<<< HEAD
  * v2 has a new version of this block that need to be forced, the number found
  * in hardware is incorrect
  */
@@ -58,6 +59,28 @@ static int mop500_sdi0_ios_handler(struct device *dev, struct mmc_ios *ios)
 	}
 
 	return 0;
+=======
+ * SDI 0 (MicroSD slot)
+ */
+
+/* MMCIPOWER bits */
+#define MCI_DATA2DIREN		(1 << 2)
+#define MCI_CMDDIREN		(1 << 3)
+#define MCI_DATA0DIREN		(1 << 4)
+#define MCI_DATA31DIREN		(1 << 5)
+#define MCI_FBCLKEN		(1 << 7)
+
+static u32 mop500_sdi0_vdd_handler(struct device *dev, unsigned int vdd,
+				   unsigned char power_mode)
+{
+	if (power_mode == MMC_POWER_UP)
+		gpio_set_value_cansleep(GPIO_SDMMC_EN, 1);
+	else if (power_mode == MMC_POWER_OFF)
+		gpio_set_value_cansleep(GPIO_SDMMC_EN, 0);
+
+	return MCI_FBCLKEN | MCI_CMDDIREN | MCI_DATA0DIREN |
+	       MCI_DATA2DIREN | MCI_DATA31DIREN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_STE_DMA40
@@ -81,6 +104,7 @@ static struct stedma40_chan_cfg mop500_sdi0_dma_cfg_tx = {
 #endif
 
 static struct mmci_platform_data mop500_sdi0_data = {
+<<<<<<< HEAD
 	.ios_handler	= mop500_sdi0_ios_handler,
 	.ocr_mask	= MMC_VDD_29_30,
 	.f_max		= 50000000,
@@ -92,6 +116,13 @@ static struct mmci_platform_data mop500_sdi0_data = {
 				MCI_ST_CMDDIREN |
 				MCI_ST_DATA0DIREN |
 				MCI_ST_DATA2DIREN,
+=======
+	.vdd_handler	= mop500_sdi0_vdd_handler,
+	.ocr_mask	= MMC_VDD_29_30,
+	.f_max		= 100000000,
+	.capabilities	= MMC_CAP_4_BIT_DATA,
+	.gpio_wp	= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_STE_DMA40
 	.dma_filter	= stedma40_filter,
 	.dma_rx_param	= &mop500_sdi0_dma_cfg_rx,
@@ -99,7 +130,15 @@ static struct mmci_platform_data mop500_sdi0_data = {
 #endif
 };
 
+<<<<<<< HEAD
 static void sdi0_configure(struct device *parent)
+=======
+/* GPIO pins used by the sdi0 level shifter */
+static int sdi0_en = -1;
+static int sdi0_vsel = -1;
+
+static void sdi0_configure(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 
@@ -118,14 +157,25 @@ static void sdi0_configure(struct device *parent)
 	gpio_direction_output(sdi0_en, 1);
 
 	/* Add the device, force v2 to subrevision 1 */
+<<<<<<< HEAD
 	db8500_add_sdi0(parent, &mop500_sdi0_data, U8500_SDI_V2_PERIPHID);
 }
 
 void mop500_sdi_tc35892_init(struct device *parent)
+=======
+	if (cpu_is_u8500v2())
+		db8500_add_sdi0(&mop500_sdi0_data, 0x10480180);
+	else
+		db8500_add_sdi0(&mop500_sdi0_data, 0);
+}
+
+void mop500_sdi_tc35892_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	mop500_sdi0_data.gpio_cd = GPIO_SDMMC_CD;
 	sdi0_en = GPIO_SDMMC_EN;
 	sdi0_vsel = GPIO_SDMMC_1V8_3V_SEL;
+<<<<<<< HEAD
 	sdi0_configure(parent);
 }
 
@@ -166,6 +216,12 @@ static struct mmci_platform_data mop500_sdi1_data = {
 };
 
 /*
+=======
+	sdi0_configure();
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * SDI 2 (POP eMMC, not on DB8500ed)
  */
 
@@ -191,9 +247,14 @@ static struct stedma40_chan_cfg mop500_sdi2_dma_cfg_tx = {
 
 static struct mmci_platform_data mop500_sdi2_data = {
 	.ocr_mask	= MMC_VDD_165_195,
+<<<<<<< HEAD
 	.f_max		= 50000000,
 	.capabilities	= MMC_CAP_4_BIT_DATA | MMC_CAP_8_BIT_DATA |
 			  MMC_CAP_MMC_HIGHSPEED,
+=======
+	.f_max		= 100000000,
+	.capabilities	= MMC_CAP_4_BIT_DATA | MMC_CAP_8_BIT_DATA,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.gpio_cd	= -1,
 	.gpio_wp	= -1,
 #ifdef CONFIG_STE_DMA40
@@ -229,7 +290,11 @@ static struct stedma40_chan_cfg mop500_sdi4_dma_cfg_tx = {
 
 static struct mmci_platform_data mop500_sdi4_data = {
 	.ocr_mask	= MMC_VDD_29_30,
+<<<<<<< HEAD
 	.f_max		= 50000000,
+=======
+	.f_max		= 100000000,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.capabilities	= MMC_CAP_4_BIT_DATA | MMC_CAP_8_BIT_DATA |
 			  MMC_CAP_MMC_HIGHSPEED,
 	.gpio_cd	= -1,
@@ -241,6 +306,7 @@ static struct mmci_platform_data mop500_sdi4_data = {
 #endif
 };
 
+<<<<<<< HEAD
 void __init mop500_sdi_init(struct device *parent)
 {
 	/* PoP:ed eMMC */
@@ -248,12 +314,36 @@ void __init mop500_sdi_init(struct device *parent)
 	/* On-board eMMC */
 	db8500_add_sdi4(parent, &mop500_sdi4_data, U8500_SDI_V2_PERIPHID);
 
+=======
+void __init mop500_sdi_init(void)
+{
+	u32 periphid = 0;
+
+	/* v2 has a new version of this block that need to be forced */
+	if (cpu_is_u8500v2())
+		periphid = 0x10480180;
+	/* PoP:ed eMMC on top of DB8500 v1.0 has problems with high speed */
+	if (!cpu_is_u8500v10())
+		mop500_sdi2_data.capabilities |= MMC_CAP_MMC_HIGHSPEED;
+	db8500_add_sdi2(&mop500_sdi2_data, periphid);
+
+	/* On-board eMMC */
+	db8500_add_sdi4(&mop500_sdi4_data, periphid);
+
+	if (machine_is_hrefv60()) {
+		mop500_sdi0_data.gpio_cd = HREFV60_SDMMC_CD_GPIO;
+		sdi0_en = HREFV60_SDMMC_EN_GPIO;
+		sdi0_vsel = HREFV60_SDMMC_1V8_3V_GPIO;
+		sdi0_configure();
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * On boards with the TC35892 GPIO expander, sdi0 will finally
 	 * be added when the TC35892 initializes and calls
 	 * mop500_sdi_tc35892_init() above.
 	 */
 }
+<<<<<<< HEAD
 
 void __init snowball_sdi_init(struct device *parent)
 {
@@ -283,3 +373,5 @@ void __init hrefv60_sdi_init(struct device *parent)
 	/* WLAN SDIO channel */
 	db8500_add_sdi1(parent, &mop500_sdi1_data, U8500_SDI_V2_PERIPHID);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

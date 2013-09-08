@@ -17,6 +17,10 @@
 #include <linux/serial_reg.h>
 #include <linux/start_kernel.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/serial-regs.h>
 #include <asm/timer-regs.h>
 #include <asm/irc-regs.h>

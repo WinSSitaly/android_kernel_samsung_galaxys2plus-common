@@ -37,10 +37,18 @@
 #include <linux/serial.h>
 #include "usb-wwan.h"
 
+<<<<<<< HEAD
 static bool debug;
 
 void usb_wwan_dtr_rts(struct usb_serial_port *port, int on)
 {
+=======
+static int debug;
+
+void usb_wwan_dtr_rts(struct usb_serial_port *port, int on)
+{
+	struct usb_serial *serial = port->serial;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct usb_wwan_port_private *portdata;
 
 	struct usb_wwan_intf_private *intfdata;
@@ -53,11 +61,20 @@ void usb_wwan_dtr_rts(struct usb_serial_port *port, int on)
 		return;
 
 	portdata = usb_get_serial_port_data(port);
+<<<<<<< HEAD
 	/* FIXME: locking */
 	portdata->rts_state = on;
 	portdata->dtr_state = on;
 
 	intfdata->send_setup(port);
+=======
+	mutex_lock(&serial->disc_mutex);
+	portdata->rts_state = on;
+	portdata->dtr_state = on;
+	if (serial->dev)
+		intfdata->send_setup(port);
+	mutex_unlock(&serial->disc_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(usb_wwan_dtr_rts);
 
@@ -649,7 +666,11 @@ int usb_wwan_suspend(struct usb_serial *serial, pm_message_t message)
 
 	dbg("%s entered", __func__);
 
+<<<<<<< HEAD
 	if (PMSG_IS_AUTO(message)) {
+=======
+	if (message.event & PM_EVENT_AUTO) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_lock_irq(&intfdata->susp_lock);
 		b = intfdata->in_flight;
 		spin_unlock_irq(&intfdata->susp_lock);

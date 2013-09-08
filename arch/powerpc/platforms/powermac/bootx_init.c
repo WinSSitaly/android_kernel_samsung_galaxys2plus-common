@@ -19,7 +19,10 @@
 #include <asm/bootx.h>
 #include <asm/btext.h>
 #include <asm/io.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #undef DEBUG
 #define SET_BOOT_BAT

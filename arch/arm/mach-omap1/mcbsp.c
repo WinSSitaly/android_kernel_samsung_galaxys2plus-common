@@ -19,22 +19,32 @@
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 
+<<<<<<< HEAD
+=======
+#include <mach/irqs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/dma.h>
 #include <plat/mux.h>
 #include <plat/cpu.h>
 #include <plat/mcbsp.h>
 
+<<<<<<< HEAD
 #include <mach/irqs.h>
 
 #include "iomap.h"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DPS_RSTCT2_PER_EN	(1 << 0)
 #define DSP_RSTCT2_WD_PER_EN	(1 << 1)
 
 static int dsp_use;
 static struct clk *api_clk;
 static struct clk *dsp_clk;
+<<<<<<< HEAD
 static struct platform_device **omap_mcbsp_devices;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void omap1_mcbsp_request(unsigned int id)
 {
@@ -42,7 +52,11 @@ static void omap1_mcbsp_request(unsigned int id)
 	 * On 1510, 1610 and 1710, McBSP1 and McBSP3
 	 * are DSP public peripherals.
 	 */
+<<<<<<< HEAD
 	if (id == 0 || id == 2) {
+=======
+	if (id == OMAP_MCBSP1 || id == OMAP_MCBSP3) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (dsp_use++ == 0) {
 			api_clk = clk_get(NULL, "api_ck");
 			dsp_clk = clk_get(NULL, "dsp_ck");
@@ -63,7 +77,11 @@ static void omap1_mcbsp_request(unsigned int id)
 
 static void omap1_mcbsp_free(unsigned int id)
 {
+<<<<<<< HEAD
 	if (id == 0 || id == 2) {
+=======
+	if (id == OMAP_MCBSP1 || id == OMAP_MCBSP3) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (--dsp_use == 0) {
 			if (!IS_ERR(api_clk)) {
 				clk_disable(api_clk);
@@ -82,6 +100,7 @@ static struct omap_mcbsp_ops omap1_mcbsp_ops = {
 	.free		= omap1_mcbsp_free,
 };
 
+<<<<<<< HEAD
 #define OMAP7XX_MCBSP1_BASE	0xfffb1000
 #define OMAP7XX_MCBSP2_BASE	0xfffb1800
 
@@ -93,6 +112,8 @@ static struct omap_mcbsp_ops omap1_mcbsp_ops = {
 #define OMAP1610_MCBSP2_BASE	0xfffb1000
 #define OMAP1610_MCBSP3_BASE	0xe1017000
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_ARCH_OMAP730) || defined(CONFIG_ARCH_OMAP850)
 struct resource omap7xx_mcbsp_res[][6] = {
 	{
@@ -384,6 +405,7 @@ static struct omap_mcbsp_platform_data omap16xx_mcbsp_pdata[] = {
 #define OMAP16XX_MCBSP_COUNT		0
 #endif
 
+<<<<<<< HEAD
 static void omap_mcbsp_register_board_cfg(struct resource *res, int res_count,
 			struct omap_mcbsp_platform_data *config, int size)
 {
@@ -417,12 +439,29 @@ static void omap_mcbsp_register_board_cfg(struct resource *res, int res_count,
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init omap1_mcbsp_init(void)
 {
 	if (!cpu_class_is_omap1())
 		return -ENODEV;
 
 	if (cpu_is_omap7xx())
+<<<<<<< HEAD
+=======
+		omap_mcbsp_count = OMAP7XX_MCBSP_COUNT;
+	else if (cpu_is_omap15xx())
+		omap_mcbsp_count = OMAP15XX_MCBSP_COUNT;
+	else if (cpu_is_omap16xx())
+		omap_mcbsp_count = OMAP16XX_MCBSP_COUNT;
+
+	mcbsp_ptr = kzalloc(omap_mcbsp_count * sizeof(struct omap_mcbsp *),
+								GFP_KERNEL);
+	if (!mcbsp_ptr)
+		return -ENOMEM;
+
+	if (cpu_is_omap7xx())
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		omap_mcbsp_register_board_cfg(omap7xx_mcbsp_res_0,
 					OMAP7XX_MCBSP_RES_SZ,
 					omap7xx_mcbsp_pdata,
@@ -440,7 +479,11 @@ static int __init omap1_mcbsp_init(void)
 					omap16xx_mcbsp_pdata,
 					OMAP16XX_MCBSP_COUNT);
 
+<<<<<<< HEAD
 	return 0;
+=======
+	return omap_mcbsp_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 arch_initcall(omap1_mcbsp_init);

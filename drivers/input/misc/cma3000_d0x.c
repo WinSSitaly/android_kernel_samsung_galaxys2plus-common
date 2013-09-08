@@ -23,7 +23,10 @@
 #include <linux/slab.h>
 #include <linux/input.h>
 #include <linux/input/cma3000.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "cma3000_d0x.h"
 
@@ -115,8 +118,13 @@ static void decode_mg(struct cma3000_accl_data *data, int *datax,
 static irqreturn_t cma3000_thread_irq(int irq, void *dev_id)
 {
 	struct cma3000_accl_data *data = dev_id;
+<<<<<<< HEAD
 	int datax, datay, dataz, intr_status;
 	u8 ctrl, mode, range;
+=======
+	int datax, datay, dataz;
+	u8 ctrl, mode, range, intr_status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	intr_status = CMA3000_READ(data, CMA3000_INTSTATUS, "interrupt status");
 	if (intr_status < 0)

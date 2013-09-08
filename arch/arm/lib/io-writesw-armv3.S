@@ -9,6 +9,10 @@
  */
 #include <linux/linkage.h>
 #include <asm/assembler.h>
+<<<<<<< HEAD
+=======
+#include <mach/hardware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 .Loutsw_bad_alignment:
 		adr	r0, .Loutsw_bad_align_msg

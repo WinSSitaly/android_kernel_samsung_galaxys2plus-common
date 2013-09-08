@@ -732,19 +732,28 @@ static int davinci_mcasp_hw_params(struct snd_pcm_substream *substream,
 		davinci_hw_param(dev, substream->stream);
 
 	switch (params_format(params)) {
+<<<<<<< HEAD
 	case SNDRV_PCM_FORMAT_U8:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SNDRV_PCM_FORMAT_S8:
 		dma_params->data_type = 1;
 		word_length = DAVINCI_AUDIO_WORD_8;
 		break;
 
+<<<<<<< HEAD
 	case SNDRV_PCM_FORMAT_U16_LE:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SNDRV_PCM_FORMAT_S16_LE:
 		dma_params->data_type = 2;
 		word_length = DAVINCI_AUDIO_WORD_16;
 		break;
 
+<<<<<<< HEAD
 	case SNDRV_PCM_FORMAT_U32_LE:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SNDRV_PCM_FORMAT_S32_LE:
 		dma_params->data_type = 4;
 		word_length = DAVINCI_AUDIO_WORD_32;
@@ -813,7 +822,11 @@ static int davinci_mcasp_startup(struct snd_pcm_substream *substream,
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops davinci_mcasp_dai_ops = {
+=======
+static struct snd_soc_dai_ops davinci_mcasp_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.startup	= davinci_mcasp_startup,
 	.trigger	= davinci_mcasp_trigger,
 	.hw_params	= davinci_mcasp_hw_params,
@@ -821,6 +834,7 @@ static const struct snd_soc_dai_ops davinci_mcasp_dai_ops = {
 
 };
 
+<<<<<<< HEAD
 #define DAVINCI_MCASP_PCM_FMTS (SNDRV_PCM_FMTBIT_S8 | \
 				SNDRV_PCM_FMTBIT_U8 | \
 				SNDRV_PCM_FMTBIT_S16_LE | \
@@ -828,6 +842,8 @@ static const struct snd_soc_dai_ops davinci_mcasp_dai_ops = {
 				SNDRV_PCM_FMTBIT_S32_LE | \
 				SNDRV_PCM_FMTBIT_U32_LE)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct snd_soc_dai_driver davinci_mcasp_dai[] = {
 	{
 		.name		= "davinci-mcasp.0",
@@ -835,13 +851,25 @@ static struct snd_soc_dai_driver davinci_mcasp_dai[] = {
 			.channels_min	= 2,
 			.channels_max 	= 2,
 			.rates 		= DAVINCI_MCASP_RATES,
+<<<<<<< HEAD
 			.formats	= DAVINCI_MCASP_PCM_FMTS,
+=======
+			.formats 	= SNDRV_PCM_FMTBIT_S8 |
+						SNDRV_PCM_FMTBIT_S16_LE |
+						SNDRV_PCM_FMTBIT_S32_LE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 		.capture 	= {
 			.channels_min 	= 2,
 			.channels_max 	= 2,
 			.rates 		= DAVINCI_MCASP_RATES,
+<<<<<<< HEAD
 			.formats	= DAVINCI_MCASP_PCM_FMTS,
+=======
+			.formats	= SNDRV_PCM_FMTBIT_S8 |
+						SNDRV_PCM_FMTBIT_S16_LE |
+						SNDRV_PCM_FMTBIT_S32_LE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 		.ops 		= &davinci_mcasp_dai_ops,
 
@@ -852,7 +880,11 @@ static struct snd_soc_dai_driver davinci_mcasp_dai[] = {
 			.channels_min	= 1,
 			.channels_max	= 384,
 			.rates		= DAVINCI_MCASP_RATES,
+<<<<<<< HEAD
 			.formats	= DAVINCI_MCASP_PCM_FMTS,
+=======
+			.formats	= SNDRV_PCM_FMTBIT_S16_LE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 		.ops 		= &davinci_mcasp_dai_ops,
 	},
@@ -865,16 +897,23 @@ static int davinci_mcasp_probe(struct platform_device *pdev)
 	struct resource *mem, *ioarea, *res;
 	struct snd_platform_data *pdata;
 	struct davinci_audio_dev *dev;
+<<<<<<< HEAD
 	int ret;
 
 	dev = devm_kzalloc(&pdev->dev, sizeof(struct davinci_audio_dev),
 			   GFP_KERNEL);
+=======
+	int ret = 0;
+
+	dev = kzalloc(sizeof(struct davinci_audio_dev), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!dev)
 		return	-ENOMEM;
 
 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	if (!mem) {
 		dev_err(&pdev->dev, "no mem resource?\n");
+<<<<<<< HEAD
 		return -ENODEV;
 	}
 
@@ -883,17 +922,40 @@ static int davinci_mcasp_probe(struct platform_device *pdev)
 	if (!ioarea) {
 		dev_err(&pdev->dev, "Audio region already claimed\n");
 		return -EBUSY;
+=======
+		ret = -ENODEV;
+		goto err_release_data;
+	}
+
+	ioarea = request_mem_region(mem->start,
+			resource_size(mem), pdev->name);
+	if (!ioarea) {
+		dev_err(&pdev->dev, "Audio region already claimed\n");
+		ret = -EBUSY;
+		goto err_release_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	pdata = pdev->dev.platform_data;
 	dev->clk = clk_get(&pdev->dev, NULL);
+<<<<<<< HEAD
 	if (IS_ERR(dev->clk))
 		return -ENODEV;
+=======
+	if (IS_ERR(dev->clk)) {
+		ret = -ENODEV;
+		goto err_release_region;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	clk_enable(dev->clk);
 	dev->clk_active = 1;
 
+<<<<<<< HEAD
 	dev->base = devm_ioremap(&pdev->dev, mem->start, resource_size(mem));
+=======
+	dev->base = ioremap(mem->start, resource_size(mem));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!dev->base) {
 		dev_err(&pdev->dev, "ioremap failed\n");
 		ret = -ENOMEM;
@@ -921,7 +983,11 @@ static int davinci_mcasp_probe(struct platform_device *pdev)
 	if (!res) {
 		dev_err(&pdev->dev, "no DMA resource\n");
 		ret = -ENODEV;
+<<<<<<< HEAD
 		goto err_release_clk;
+=======
+		goto err_iounmap;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	dma_data->channel = res->start;
@@ -937,7 +1003,11 @@ static int davinci_mcasp_probe(struct platform_device *pdev)
 	if (!res) {
 		dev_err(&pdev->dev, "no DMA resource\n");
 		ret = -ENODEV;
+<<<<<<< HEAD
 		goto err_release_clk;
+=======
+		goto err_iounmap;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	dma_data->channel = res->start;
@@ -945,24 +1015,52 @@ static int davinci_mcasp_probe(struct platform_device *pdev)
 	ret = snd_soc_register_dai(&pdev->dev, &davinci_mcasp_dai[pdata->op_mode]);
 
 	if (ret != 0)
+<<<<<<< HEAD
 		goto err_release_clk;
 	return 0;
 
 err_release_clk:
 	clk_disable(dev->clk);
 	clk_put(dev->clk);
+=======
+		goto err_iounmap;
+	return 0;
+
+err_iounmap:
+	iounmap(dev->base);
+err_release_clk:
+	clk_disable(dev->clk);
+	clk_put(dev->clk);
+err_release_region:
+	release_mem_region(mem->start, resource_size(mem));
+err_release_data:
+	kfree(dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int davinci_mcasp_remove(struct platform_device *pdev)
 {
 	struct davinci_audio_dev *dev = dev_get_drvdata(&pdev->dev);
+<<<<<<< HEAD
+=======
+	struct resource *mem;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	snd_soc_unregister_dai(&pdev->dev);
 	clk_disable(dev->clk);
 	clk_put(dev->clk);
 	dev->clk = NULL;
 
+<<<<<<< HEAD
+=======
+	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	release_mem_region(mem->start, resource_size(mem));
+
+	kfree(dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -975,7 +1073,21 @@ static struct platform_driver davinci_mcasp_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(davinci_mcasp_driver);
+=======
+static int __init davinci_mcasp_init(void)
+{
+	return platform_driver_register(&davinci_mcasp_driver);
+}
+module_init(davinci_mcasp_init);
+
+static void __exit davinci_mcasp_exit(void)
+{
+	platform_driver_unregister(&davinci_mcasp_driver);
+}
+module_exit(davinci_mcasp_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Steve Chen");
 MODULE_DESCRIPTION("TI DAVINCI McASP SoC Interface");

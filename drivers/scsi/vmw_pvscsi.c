@@ -17,7 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  *
+<<<<<<< HEAD
  * Maintained by: Arvind Kumar <arvindkumar@vmware.com>
+=======
+ * Maintained by: Alok N Kataria <akataria@vmware.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  */
 
@@ -1144,7 +1148,11 @@ static void pvscsi_release_resources(struct pvscsi_adapter *adapter)
  *
  * These are statically allocated.  Trying to be clever was not worth it.
  *
+<<<<<<< HEAD
  * Dynamic allocation can fail, and we can't go deep into the memory
+=======
+ * Dynamic allocation can fail, and we can't go deeep into the memory
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * allocator, since we're a SCSI driver, and trying too hard to allocate
  * memory might generate disk I/O.  We also don't want to fail disk I/O
  * in that case because we can't get an allocation - the I/O could be
@@ -1178,6 +1186,7 @@ static int __devinit pvscsi_allocate_sg(struct pvscsi_adapter *adapter)
 	return 0;
 }
 
+<<<<<<< HEAD
 /*
  * Query the device, fetch the config info and return the
  * maximum number of targets on the adapter. In case of
@@ -1233,12 +1242,17 @@ exit:
 	return numPhys;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit pvscsi_probe(struct pci_dev *pdev,
 				  const struct pci_device_id *id)
 {
 	struct pvscsi_adapter *adapter;
 	struct Scsi_Host *host;
+<<<<<<< HEAD
 	struct device *dev;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int i;
 	unsigned long flags = 0;
 	int error;
@@ -1328,6 +1342,7 @@ static int __devinit pvscsi_probe(struct pci_dev *pdev,
 	}
 
 	/*
+<<<<<<< HEAD
 	 * Ask the device for max number of targets.
 	 */
 	host->max_id = pvscsi_get_max_targets(adapter);
@@ -1335,6 +1350,8 @@ static int __devinit pvscsi_probe(struct pci_dev *pdev,
 	dev_info(dev, "vmw_pvscsi: host->max_id: %u\n", host->max_id);
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * From this point on we should reset the adapter if anything goes
 	 * wrong.
 	 */

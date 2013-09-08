@@ -4,8 +4,11 @@ config SUPERH
 	select CLKDEV_LOOKUP
 	select HAVE_IDE if HAS_IOPORT
 	select HAVE_MEMBLOCK
+<<<<<<< HEAD
 	select HAVE_MEMBLOCK_NODE_MAP
 	select ARCH_DISCARD_MEMBLOCK
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select HAVE_OPROFILE
 	select HAVE_GENERIC_DMA_COHERENT
 	select HAVE_ARCH_TRACEHOOK
@@ -13,7 +16,10 @@ config SUPERH
 	select HAVE_DMA_ATTRS
 	select HAVE_IRQ_WORK
 	select HAVE_PERF_EVENTS
+<<<<<<< HEAD
 	select ARCH_HAVE_NMI_SAFE_CMPXCHG if (GUSA_RB || CPU_SH4A)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select PERF_USE_VMALLOC
 	select HAVE_KERNEL_GZIP
 	select HAVE_KERNEL_BZIP2
@@ -23,7 +29,11 @@ config SUPERH
 	select HAVE_SYSCALL_TRACEPOINTS
 	select HAVE_REGS_AND_STACK_ACCESS_API
 	select HAVE_GENERIC_HARDIRQS
+<<<<<<< HEAD
 	select MAY_HAVE_SPARSE_IRQ
+=======
+	select HAVE_SPARSE_IRQ
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select IRQ_FORCED_THREADING
 	select RTC_LIB
 	select GENERIC_ATOMIC64
@@ -86,6 +96,12 @@ config GENERIC_GPIO
 config GENERIC_CALIBRATE_DELAY
 	bool
 
+<<<<<<< HEAD
+=======
+config GENERIC_IOMAP
+	bool
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config GENERIC_CLOCKEVENTS
 	def_bool y
 
@@ -100,6 +116,13 @@ config GENERIC_LOCKBREAK
 	def_bool y
 	depends on SMP && PREEMPT
 
+<<<<<<< HEAD
+=======
+config SYS_SUPPORTS_PM
+	bool
+	depends on !SMP
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config ARCH_SUSPEND_POSSIBLE
 	def_bool n
 
@@ -162,9 +185,12 @@ config NO_IOPORT
 config IO_TRAPPED
 	bool
 
+<<<<<<< HEAD
 config SWAP_IO_SPACE
 	bool
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config DMA_COHERENT
 	bool
 
@@ -647,7 +673,11 @@ config CRASH_DUMP
 	  a specially reserved region and then later executed after
 	  a crash by kdump/kexec. The crash dump kernel must be compiled
 	  to a memory address not used by the main kernel using
+<<<<<<< HEAD
 	  PHYSICAL_START.
+=======
+	  MEMORY_START.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	  For more details see Documentation/kdump/kdump.txt
 
@@ -658,6 +688,7 @@ config KEXEC_JUMP
 	  Jump between original kernel and kexeced kernel and invoke
 	  code via KEXEC
 
+<<<<<<< HEAD
 config PHYSICAL_START
 	hex "Physical address where the kernel is loaded" if (EXPERT || CRASH_DUMP)
 	default MEMORY_START
@@ -669,6 +700,8 @@ config PHYSICAL_START
 	  where the fail safe kernel needs to run at a different address
 	  than the panic-ed kernel.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config SECCOMP
 	bool "Enable seccomp to safely compute untrusted bytecode"
 	depends on PROC_FS
@@ -862,8 +895,11 @@ config PCI
 	bool "PCI support"
 	depends on SYS_SUPPORTS_PCI
 	select PCI_DOMAINS
+<<<<<<< HEAD
 	select GENERIC_PCI_IOMAP
 	select NO_GENERIC_PCI_IOPORT_MAP
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Find out whether you have a PCI motherboard. PCI is the name of a
 	  bus system, i.e. the way the CPU talks to the other stuff inside
@@ -909,4 +945,23 @@ source "security/Kconfig"
 
 source "crypto/Kconfig"
 
+<<<<<<< HEAD
+=======
+menuconfig VIRTUALIZATION
+	bool "Virtualization"
+	default n
+	---help---
+	  Say Y here to get to see options for using your Linux host to run other
+	  operating systems inside virtual machines (guests).
+	  This option alone does not add any kernel code.
+
+	  If you say N, all options in this submenu will be skipped and disabled.
+
+if VIRTUALIZATION
+
+source drivers/virtio/Kconfig
+
+endif # VIRTUALIZATION
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 source "lib/Kconfig"

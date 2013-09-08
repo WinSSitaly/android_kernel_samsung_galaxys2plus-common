@@ -5,7 +5,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "map.h"
+<<<<<<< HEAD
 #include "../perf.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/list.h>
 #include <linux/rbtree.h>
 #include <stdio.h>
@@ -69,6 +72,7 @@ struct strlist;
 
 struct symbol_conf {
 	unsigned short	priv_size;
+<<<<<<< HEAD
 	unsigned short	nr_events;
 	bool		try_vmlinux_path,
 			show_kernel_path,
@@ -76,13 +80,23 @@ struct symbol_conf {
 			sort_by_name,
 			show_nr_samples,
 			show_total_period,
+=======
+	bool		try_vmlinux_path,
+			use_modules,
+			sort_by_name,
+			show_nr_samples,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			use_callchain,
 			exclude_other,
 			show_cpu_utilization,
 			initialized,
+<<<<<<< HEAD
 			kptr_restrict,
 			annotate_asm_raw,
 			annotate_src;
+=======
+			kptr_restrict;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const char	*vmlinux_name,
 			*kallsyms_name,
 			*source_prefix,
@@ -97,11 +111,15 @@ struct symbol_conf {
 			*col_width_list_str;
        struct strlist	*dso_list,
 			*comm_list,
+<<<<<<< HEAD
 			*sym_list,
 			*dso_from_list,
 			*dso_to_list,
 			*sym_from_list,
 			*sym_to_list;
+=======
+			*sym_list;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const char	*symfs;
 };
 
@@ -125,6 +143,7 @@ struct map_symbol {
 	bool	      has_children;
 };
 
+<<<<<<< HEAD
 struct addr_map_symbol {
 	struct map    *map;
 	struct symbol *sym;
@@ -138,6 +157,8 @@ struct branch_info {
 	struct branch_flags flags;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct addr_location {
 	struct thread *thread;
 	struct map    *map;
@@ -178,6 +199,10 @@ struct dso {
 };
 
 struct dso *dso__new(const char *name);
+<<<<<<< HEAD
+=======
+struct dso *dso__new_kernel(const char *name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void dso__delete(struct dso *dso);
 
 int dso__name_len(const struct dso *dso);
@@ -260,9 +285,12 @@ void machines__destroy_guest_kernel_maps(struct rb_root *machines);
 
 int symbol__init(void);
 void symbol__exit(void);
+<<<<<<< HEAD
 size_t symbol__fprintf_symname_offs(const struct symbol *sym,
 				    const struct addr_location *al, FILE *fp);
 size_t symbol__fprintf_symname(const struct symbol *sym, FILE *fp);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bool symbol_type__is_a(char symbol_type, enum map_type map_type);
 
 size_t machine__fprintf_vmlinux_path(struct machine *machine, FILE *fp);

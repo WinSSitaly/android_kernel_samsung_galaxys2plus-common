@@ -8,7 +8,11 @@
  *  it under the terms of the GNU General Public License version 2 as
  *  publishhed by the Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/platform_device.h>
@@ -23,7 +27,11 @@
 #include <mach/addr-map.h>
 #include <mach/mfp-pxa168.h>
 #include <mach/pxa168.h>
+<<<<<<< HEAD
 #include <mach/irqs.h>
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <video/pxa168fb.h>
 #include <linux/input.h>
 #include <plat/pxa27x_keypad.h>
@@ -120,8 +128,13 @@ static struct resource smc91x_resources[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 	[1] = {
+<<<<<<< HEAD
 		.start	= MMP_GPIO_TO_IRQ(27),
 		.end	= MMP_GPIO_TO_IRQ(27),
+=======
+		.start	= gpio_to_irq(27),
+		.end	= gpio_to_irq(27),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHEDGE,
 	}
 };
@@ -160,16 +173,25 @@ static struct mtd_partition aspenite_nand_partitions[] = {
 	}, {
 		.name		= "filesystem",
 		.offset		= MTDPART_OFS_APPEND,
+<<<<<<< HEAD
 		.size		= SZ_32M + SZ_16M,
+=======
+		.size		= SZ_48M,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.mask_flags	= 0,
 	}
 };
 
 static struct pxa3xx_nand_platform_data aspenite_nand_info = {
 	.enable_arbiter	= 1,
+<<<<<<< HEAD
 	.num_cs = 1,
 	.parts[0]	= aspenite_nand_partitions,
 	.nr_parts[0]	= ARRAY_SIZE(aspenite_nand_partitions),
+=======
+	.parts		= aspenite_nand_partitions,
+	.nr_parts	= ARRAY_SIZE(aspenite_nand_partitions),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct i2c_board_info aspenite_i2c_info[] __initdata = {
@@ -232,7 +254,10 @@ static void __init common_init(void)
 	pxa168_add_nand(&aspenite_nand_info);
 	pxa168_add_fb(&aspenite_lcd_info);
 	pxa168_add_keypad(&aspenite_keypad_info);
+<<<<<<< HEAD
 	platform_device_register(&pxa168_device_gpio);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* off-chip devices */
 	platform_device_register(&smc91x_device);
@@ -240,18 +265,32 @@ static void __init common_init(void)
 
 MACHINE_START(ASPENITE, "PXA168-based Aspenite Development Platform")
 	.map_io		= mmp_map_io,
+<<<<<<< HEAD
 	.nr_irqs	= MMP_NR_IRQS,
 	.init_irq       = pxa168_init_irq,
 	.timer          = &pxa168_timer,
 	.init_machine   = common_init,
 	.restart	= pxa168_restart,
+=======
+	.nr_irqs	= IRQ_BOARD_START,
+	.init_irq       = pxa168_init_irq,
+	.timer          = &pxa168_timer,
+	.init_machine   = common_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 
 MACHINE_START(ZYLONITE2, "PXA168-based Zylonite2 Development Platform")
 	.map_io		= mmp_map_io,
+<<<<<<< HEAD
 	.nr_irqs	= MMP_NR_IRQS,
 	.init_irq       = pxa168_init_irq,
 	.timer          = &pxa168_timer,
 	.init_machine   = common_init,
 	.restart	= pxa168_restart,
+=======
+	.nr_irqs	= IRQ_BOARD_START,
+	.init_irq       = pxa168_init_irq,
+	.timer          = &pxa168_timer,
+	.init_machine   = common_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

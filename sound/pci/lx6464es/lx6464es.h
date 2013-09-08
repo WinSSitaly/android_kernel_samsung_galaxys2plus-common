@@ -26,7 +26,11 @@
 #define LX6464ES_H
 
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <sound/core.h>
 #include <sound/pcm.h>
@@ -69,8 +73,11 @@ struct lx6464es {
 	struct pci_dev         *pci;
 	int			irq;
 
+<<<<<<< HEAD
 	u8			mac_address[6];
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spinlock_t		lock;        /* interrupt spinlock */
 	struct mutex            setup_mutex; /* mutex used in hw_params, open
 					      * and close */

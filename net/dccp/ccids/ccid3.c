@@ -38,7 +38,11 @@
 #include <asm/unaligned.h>
 
 #ifdef CONFIG_IP_DCCP_CCID3_DEBUG
+<<<<<<< HEAD
 static bool ccid3_debug;
+=======
+static int ccid3_debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ccid3_pr_debug(format, a...)	DCCP_PR_DEBUG(ccid3_debug, format, ##a)
 #else
 #define ccid3_pr_debug(format, a...)
@@ -98,7 +102,10 @@ static void ccid3_update_send_interval(struct ccid3_hc_tx_sock *hc)
 {
 	hc->tx_t_ipi = scaled_div32(((u64)hc->tx_s) << 6, hc->tx_x);
 
+<<<<<<< HEAD
 	DCCP_BUG_ON(hc->tx_t_ipi == 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ccid3_pr_debug("t_ipi=%u, s=%u, X=%u\n", hc->tx_t_ipi,
 		       hc->tx_s, (unsigned)(hc->tx_x >> 6));
 }
@@ -237,6 +244,11 @@ static void ccid3_hc_tx_no_feedback_timer(unsigned long data)
 		 *
 		 *  Note that X_recv is scaled by 2^6 while X_calc is not
 		 */
+<<<<<<< HEAD
+=======
+		BUG_ON(hc->tx_p && !hc->tx_x_calc);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (hc->tx_x_calc > (hc->tx_x_recv >> 5))
 			hc->tx_x_recv =
 				max(hc->tx_x_recv / 2,
@@ -531,7 +543,10 @@ static int ccid3_hc_tx_getsockopt(struct sock *sk, const int optname, int len,
 	case DCCP_SOCKOPT_CCID_TX_INFO:
 		if (len < sizeof(tfrc))
 			return -EINVAL;
+<<<<<<< HEAD
 		memset(&tfrc, 0, sizeof(tfrc));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tfrc.tfrctx_x	   = hc->tx_x;
 		tfrc.tfrctx_x_recv = hc->tx_x_recv;
 		tfrc.tfrctx_x_calc = hc->tx_x_calc;

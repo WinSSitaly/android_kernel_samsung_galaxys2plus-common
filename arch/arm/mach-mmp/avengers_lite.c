@@ -38,14 +38,23 @@ static void __init avengers_lite_init(void)
 
 	/* on-chip devices */
 	pxa168_add_uart(2);
+<<<<<<< HEAD
 	platform_device_register(&pxa168_device_gpio);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 MACHINE_START(AVENGERS_LITE, "PXA168 Avengers lite Development Platform")
 	.map_io		= mmp_map_io,
+<<<<<<< HEAD
 	.nr_irqs	= MMP_NR_IRQS,
 	.init_irq       = pxa168_init_irq,
 	.timer          = &pxa168_timer,
 	.init_machine   = avengers_lite_init,
 	.restart	= pxa168_restart,
+=======
+	.init_irq       = pxa168_init_irq,
+	.timer          = &pxa168_timer,
+	.init_machine   = avengers_lite_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

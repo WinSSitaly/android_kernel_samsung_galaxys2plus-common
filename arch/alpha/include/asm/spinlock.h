@@ -1,6 +1,10 @@
 #ifndef _ALPHA_SPINLOCK_H
 #define _ALPHA_SPINLOCK_H
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <asm/current.h>
 

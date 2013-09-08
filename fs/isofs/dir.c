@@ -254,16 +254,28 @@ static int isofs_readdir(struct file *filp,
 	char *tmpname;
 	struct iso_directory_record *tmpde;
 	struct inode *inode = filp->f_path.dentry->d_inode;
+<<<<<<< HEAD
+=======
+	struct isofs_sb_info *sbi = ISOFS_SB(inode->i_sb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tmpname = (char *)__get_free_page(GFP_KERNEL);
 	if (tmpname == NULL)
 		return -ENOMEM;
 
+<<<<<<< HEAD
+=======
+	mutex_lock(&sbi->s_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tmpde = (struct iso_directory_record *) (tmpname+1024);
 
 	result = do_isofs_readdir(inode, filp, dirent, filldir, tmpname, tmpde);
 
 	free_page((unsigned long) tmpname);
+<<<<<<< HEAD
+=======
+	mutex_unlock(&sbi->s_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return result;
 }
 

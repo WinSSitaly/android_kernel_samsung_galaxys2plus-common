@@ -29,8 +29,11 @@
 #include <linux/errno.h>
 #include <linux/interrupt.h>
 #include <linux/i2c-pxa.h>
+<<<<<<< HEAD
 #include <linux/of.h>
 #include <linux/of_device.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/of_i2c.h>
 #include <linux/platform_device.h>
 #include <linux/err.h>
@@ -1046,6 +1049,7 @@ static const struct i2c_algorithm i2c_pxa_pio_algorithm = {
 	.functionality	= i2c_pxa_functionality,
 };
 
+<<<<<<< HEAD
 static struct of_device_id i2c_pxa_dt_ids[] = {
 	{ .compatible = "mrvl,pxa-i2c", .data = (void *)REGS_PXA2XX },
 	{ .compatible = "mrvl,pwri2c", .data = (void *)REGS_PXA3XX },
@@ -1100,6 +1104,25 @@ static int i2c_pxa_probe(struct platform_device *dev)
 	struct pxa_i2c *i2c;
 	struct resource *res = NULL;
 	int ret, irq;
+=======
+static int i2c_pxa_probe(struct platform_device *dev)
+{
+	struct pxa_i2c *i2c;
+	struct resource *res;
+	struct i2c_pxa_platform_data *plat = dev->dev.platform_data;
+	const struct platform_device_id *id = platform_get_device_id(dev);
+	enum pxa_i2c_types i2c_type = id->driver_data;
+	int ret;
+	int irq;
+
+	res = platform_get_resource(dev, IORESOURCE_MEM, 0);
+	irq = platform_get_irq(dev, 0);
+	if (res == NULL || irq < 0)
+		return -ENODEV;
+
+	if (!request_mem_region(res->start, resource_size(res), res->name))
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	i2c = kzalloc(sizeof(struct pxa_i2c), GFP_KERNEL);
 	if (!i2c) {
@@ -1107,6 +1130,7 @@ static int i2c_pxa_probe(struct platform_device *dev)
 		goto emalloc;
 	}
 
+<<<<<<< HEAD
 	ret = i2c_pxa_probe_dt(dev, i2c, &i2c_type);
 	if (ret > 0)
 		ret = i2c_pxa_probe_pdata(dev, i2c, &i2c_type);
@@ -1125,6 +1149,8 @@ static int i2c_pxa_probe(struct platform_device *dev)
 		goto eclk;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	i2c->adap.owner   = THIS_MODULE;
 	i2c->adap.retries = 5;
 
@@ -1166,6 +1192,7 @@ static int i2c_pxa_probe(struct platform_device *dev)
 
 	i2c->slave_addr = I2C_PXA_SLAVE_ADDR;
 
+<<<<<<< HEAD
 	if (plat) {
 #ifdef CONFIG_I2C_PXA_SLAVE
 		i2c->slave_addr = plat->slave_addr;
@@ -1176,6 +1203,23 @@ static int i2c_pxa_probe(struct platform_device *dev)
 
 	clk_enable(i2c->clk);
 
+=======
+#ifdef CONFIG_I2C_PXA_SLAVE
+	if (plat) {
+		i2c->slave_addr = plat->slave_addr;
+		i2c->slave = plat->slave;
+	}
+#endif
+
+	clk_enable(i2c->clk);
+
+	if (plat) {
+		i2c->adap.class = plat->class;
+		i2c->use_pio = plat->use_pio;
+		i2c->fast_mode = plat->fast_mode;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (i2c->use_pio) {
 		i2c->adap.algo = &i2c_pxa_pio_algorithm;
 	} else {
@@ -1286,7 +1330,10 @@ static struct platform_driver i2c_pxa_driver = {
 		.name	= "pxa2xx-i2c",
 		.owner	= THIS_MODULE,
 		.pm	= I2C_PXA_DEV_PM_OPS,
+<<<<<<< HEAD
 		.of_match_table = i2c_pxa_dt_ids,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.id_table	= i2c_pxa_id_table,
 };

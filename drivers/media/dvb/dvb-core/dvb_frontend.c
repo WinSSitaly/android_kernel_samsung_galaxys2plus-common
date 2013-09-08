@@ -25,9 +25,12 @@
  * Or, point your browser to http://www.gnu.org/copyleft/gpl.html
  */
 
+<<<<<<< HEAD
 /* Enables DVBv3 compatibility bits at the headers */
 #define __DVB_CORE__
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/string.h>
 #include <linux/kernel.h>
 #include <linux/sched.h>
@@ -108,6 +111,10 @@ struct dvb_frontend_private {
 
 	/* thread/frontend values */
 	struct dvb_device *dvbdev;
+<<<<<<< HEAD
+=======
+	struct dvb_frontend_parameters parameters_in;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dvb_frontend_parameters parameters_out;
 	struct dvb_fe_events events;
 	struct semaphore sem;
@@ -141,6 +148,7 @@ struct dvb_frontend_private {
 };
 
 static void dvb_frontend_wakeup(struct dvb_frontend *fe);
+<<<<<<< HEAD
 static int dtv_get_frontend(struct dvb_frontend *fe,
 			    struct dvb_frontend_parameters *p_out);
 static int dtv_property_legacy_params_sync(struct dvb_frontend *fe,
@@ -199,6 +207,8 @@ static enum dvbv3_emulation_type dvbv3_type(u32 delivery_system)
 		return DVBV3_UNKNOWN;
 	}
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void dvb_frontend_add_event(struct dvb_frontend *fe, fe_status_t status)
 {
@@ -209,25 +219,46 @@ static void dvb_frontend_add_event(struct dvb_frontend *fe, fe_status_t status)
 
 	dprintk ("%s\n", __func__);
 
+<<<<<<< HEAD
 	if ((status & FE_HAS_LOCK) && has_get_frontend(fe))
 		dtv_get_frontend(fe, &fepriv->parameters_out);
 
 	mutex_lock(&events->mtx);
 
 	wp = (events->eventw + 1) % MAX_EVENT;
+=======
+	if (mutex_lock_interruptible (&events->mtx))
+		return;
+
+	wp = (events->eventw + 1) % MAX_EVENT;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (wp == events->eventr) {
 		events->overflow = 1;
 		events->eventr = (events->eventr + 1) % MAX_EVENT;
 	}
 
 	e = &events->events[events->eventw];
+<<<<<<< HEAD
 	e->status = status;
+=======
+
+	if (status & FE_HAS_LOCK)
+		if (fe->ops.get_frontend)
+			fe->ops.get_frontend(fe, &fepriv->parameters_out);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	e->parameters = fepriv->parameters_out;
 
 	events->eventw = wp;
 
 	mutex_unlock(&events->mtx);
 
+<<<<<<< HEAD
+=======
+	e->status = status;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wake_up_interruptible (&events->wait_queue);
 }
 
@@ -262,6 +293,7 @@ static int dvb_frontend_get_event(struct dvb_frontend *fe,
 			return ret;
 	}
 
+<<<<<<< HEAD
 	mutex_lock(&events->mtx);
 	*event = events->events[events->eventr];
 	events->eventr = (events->eventr + 1) % MAX_EVENT;
@@ -278,6 +310,19 @@ static void dvb_frontend_clear_events(struct dvb_frontend *fe)
 	mutex_lock(&events->mtx);
 	events->eventr = events->eventw;
 	mutex_unlock(&events->mtx);
+=======
+	if (mutex_lock_interruptible (&events->mtx))
+		return -ERESTARTSYS;
+
+	memcpy (event, &events->events[events->eventr],
+		sizeof(struct dvb_frontend_event));
+
+	events->eventr = (events->eventr + 1) % MAX_EVENT;
+
+	mutex_unlock(&events->mtx);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void dvb_frontend_init(struct dvb_frontend *fe)
@@ -337,6 +382,7 @@ static int dvb_frontend_swzigzag_autotune(struct dvb_frontend *fe, int check_wra
 	int ready = 0;
 	int fe_set_err = 0;
 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
+<<<<<<< HEAD
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache, tmp;
 	int original_inversion = c->inversion;
 	u32 original_frequency = c->frequency;
@@ -344,6 +390,14 @@ static int dvb_frontend_swzigzag_autotune(struct dvb_frontend *fe, int check_wra
 	/* are we using autoinversion? */
 	autoinversion = ((!(fe->ops.info.caps & FE_CAN_INVERSION_AUTO)) &&
 			 (c->inversion == INVERSION_AUTO));
+=======
+	int original_inversion = fepriv->parameters_in.inversion;
+	u32 original_frequency = fepriv->parameters_in.frequency;
+
+	/* are we using autoinversion? */
+	autoinversion = ((!(fe->ops.info.caps & FE_CAN_INVERSION_AUTO)) &&
+			 (fepriv->parameters_in.inversion == INVERSION_AUTO));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* setup parameters correctly */
 	while(!ready) {
@@ -409,6 +463,7 @@ static int dvb_frontend_swzigzag_autotune(struct dvb_frontend *fe, int check_wra
 		fepriv->auto_step, fepriv->auto_sub_step, fepriv->started_auto_step);
 
 	/* set the frontend itself */
+<<<<<<< HEAD
 	c->frequency += fepriv->lnb_drift;
 	if (autoinversion)
 		c->inversion = fepriv->inversion;
@@ -416,13 +471,26 @@ static int dvb_frontend_swzigzag_autotune(struct dvb_frontend *fe, int check_wra
 	if (fe->ops.set_frontend)
 		fe_set_err = fe->ops.set_frontend(fe);
 	*c = tmp;
+=======
+	fepriv->parameters_in.frequency += fepriv->lnb_drift;
+	if (autoinversion)
+		fepriv->parameters_in.inversion = fepriv->inversion;
+	if (fe->ops.set_frontend)
+		fe_set_err = fe->ops.set_frontend(fe, &fepriv->parameters_in);
+	fepriv->parameters_out = fepriv->parameters_in;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (fe_set_err < 0) {
 		fepriv->state = FESTATE_ERROR;
 		return fe_set_err;
 	}
 
+<<<<<<< HEAD
 	c->frequency = original_frequency;
 	c->inversion = original_inversion;
+=======
+	fepriv->parameters_in.frequency = original_frequency;
+	fepriv->parameters_in.inversion = original_inversion;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fepriv->auto_sub_step++;
 	return 0;
@@ -433,7 +501,10 @@ static void dvb_frontend_swzigzag(struct dvb_frontend *fe)
 	fe_status_t s = 0;
 	int retval = 0;
 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
+<<<<<<< HEAD
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache, tmp;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* if we've got no parameters, just keep idling */
 	if (fepriv->state & FESTATE_IDLE) {
@@ -445,10 +516,17 @@ static void dvb_frontend_swzigzag(struct dvb_frontend *fe)
 	/* in SCAN mode, we just set the frontend when asked and leave it alone */
 	if (fepriv->tune_mode_flags & FE_TUNE_MODE_ONESHOT) {
 		if (fepriv->state & FESTATE_RETUNE) {
+<<<<<<< HEAD
 			tmp = *c;
 			if (fe->ops.set_frontend)
 				retval = fe->ops.set_frontend(fe);
 			*c = tmp;
+=======
+			if (fe->ops.set_frontend)
+				retval = fe->ops.set_frontend(fe,
+							&fepriv->parameters_in);
+			fepriv->parameters_out = fepriv->parameters_in;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (retval < 0)
 				fepriv->state = FESTATE_ERROR;
 			else
@@ -478,8 +556,13 @@ static void dvb_frontend_swzigzag(struct dvb_frontend *fe)
 
 		/* if we're tuned, then we have determined the correct inversion */
 		if ((!(fe->ops.info.caps & FE_CAN_INVERSION_AUTO)) &&
+<<<<<<< HEAD
 		    (c->inversion == INVERSION_AUTO)) {
 			c->inversion = fepriv->inversion;
+=======
+		    (fepriv->parameters_in.inversion == INVERSION_AUTO)) {
+			fepriv->parameters_in.inversion = fepriv->inversion;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		return;
 	}
@@ -570,7 +653,11 @@ static int dvb_frontend_is_exiting(struct dvb_frontend *fe)
 		return 1;
 
 	if (fepriv->dvbdev->writers == 1)
+<<<<<<< HEAD
 		if (time_after_eq(jiffies, fepriv->release_jiffies +
+=======
+		if (time_after(jiffies, fepriv->release_jiffies +
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  dvb_shutdown_timeout * HZ))
 			return 1;
 
@@ -600,10 +687,18 @@ static int dvb_frontend_thread(void *data)
 {
 	struct dvb_frontend *fe = data;
 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
+<<<<<<< HEAD
 	fe_status_t s;
 	enum dvbfe_algo algo;
 
 	bool re_tune = false;
+=======
+	unsigned long timeout;
+	fe_status_t s;
+	enum dvbfe_algo algo;
+
+	struct dvb_frontend_parameters *params;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dprintk("%s\n", __func__);
 
@@ -620,7 +715,11 @@ static int dvb_frontend_thread(void *data)
 	while (1) {
 		up(&fepriv->sem);	    /* is locked when we enter the thread... */
 restart:
+<<<<<<< HEAD
 		wait_event_interruptible_timeout(fepriv->wait_queue,
+=======
+		timeout = wait_event_interruptible_timeout(fepriv->wait_queue,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dvb_frontend_should_wakeup(fe) || kthread_should_stop()
 				|| freezing(current),
 			fepriv->delay);
@@ -639,10 +738,19 @@ restart:
 
 		if (fepriv->reinitialise) {
 			dvb_frontend_init(fe);
+<<<<<<< HEAD
 			if (fe->ops.set_tone && fepriv->tone != -1)
 				fe->ops.set_tone(fe, fepriv->tone);
 			if (fe->ops.set_voltage && fepriv->voltage != -1)
 				fe->ops.set_voltage(fe, fepriv->voltage);
+=======
+			if (fepriv->tone != -1) {
+				fe->ops.set_tone(fe, fepriv->tone);
+			}
+			if (fepriv->voltage != -1) {
+				fe->ops.set_voltage(fe, fepriv->voltage);
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			fepriv->reinitialise = 0;
 		}
 
@@ -652,6 +760,7 @@ restart:
 			switch (algo) {
 			case DVBFE_ALGO_HW:
 				dprintk("%s: Frontend ALGO = DVBFE_ALGO_HW\n", __func__);
+<<<<<<< HEAD
 
 				if (fepriv->state & FESTATE_RETUNE) {
 					dprintk("%s: Retune requested, FESTATE_RETUNE\n", __func__);
@@ -663,6 +772,20 @@ restart:
 
 				if (fe->ops.tune)
 					fe->ops.tune(fe, re_tune, fepriv->tune_mode_flags, &fepriv->delay, &s);
+=======
+				params = NULL; /* have we been asked to RETUNE ? */
+
+				if (fepriv->state & FESTATE_RETUNE) {
+					dprintk("%s: Retune requested, FESTATE_RETUNE\n", __func__);
+					params = &fepriv->parameters_in;
+					fepriv->state = FESTATE_TUNED;
+				}
+
+				if (fe->ops.tune)
+					fe->ops.tune(fe, params, fepriv->tune_mode_flags, &fepriv->delay, &s);
+				if (params)
+					fepriv->parameters_out = *params;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				if (s != fepriv->status && !(fepriv->tune_mode_flags & FE_TUNE_MODE_ONESHOT)) {
 					dprintk("%s: state changed, adding current state\n", __func__);
@@ -686,7 +809,11 @@ restart:
 				 */
 				if (fepriv->algo_status & DVBFE_ALGO_SEARCH_AGAIN) {
 					if (fe->ops.search) {
+<<<<<<< HEAD
 						fepriv->algo_status = fe->ops.search(fe);
+=======
+						fepriv->algo_status = fe->ops.search(fe, &fepriv->parameters_in);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						/* We did do a search as was requested, the flags are
 						 * now unset as well and has the flags wrt to search.
 						 */
@@ -695,11 +822,22 @@ restart:
 					}
 				}
 				/* Track the carrier if the search was successful */
+<<<<<<< HEAD
 				if (fepriv->algo_status != DVBFE_ALGO_SEARCH_SUCCESS) {
 					fepriv->algo_status |= DVBFE_ALGO_SEARCH_AGAIN;
 					fepriv->delay = HZ / 2;
 				}
 				dtv_property_legacy_params_sync(fe, &fepriv->parameters_out);
+=======
+				if (fepriv->algo_status == DVBFE_ALGO_SEARCH_SUCCESS) {
+					if (fe->ops.track)
+						fe->ops.track(fe, &fepriv->parameters_in);
+				} else {
+					fepriv->algo_status |= DVBFE_ALGO_SEARCH_AGAIN;
+					fepriv->delay = HZ / 2;
+				}
+				fepriv->parameters_out = fepriv->parameters_in;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				fe->ops.read_status(fe, &s);
 				if (s != fepriv->status) {
 					dvb_frontend_add_event(fe, s); /* update event list */
@@ -866,22 +1004,36 @@ static void dvb_frontend_get_frequency_limits(struct dvb_frontend *fe,
 		       fe->dvb->num,fe->id);
 }
 
+<<<<<<< HEAD
 static int dvb_frontend_check_parameters(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+=======
+static int dvb_frontend_check_parameters(struct dvb_frontend *fe,
+				struct dvb_frontend_parameters *parms)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 freq_min;
 	u32 freq_max;
 
 	/* range check: frequency */
 	dvb_frontend_get_frequency_limits(fe, &freq_min, &freq_max);
+<<<<<<< HEAD
 	if ((freq_min && c->frequency < freq_min) ||
 	    (freq_max && c->frequency > freq_max)) {
 		printk(KERN_WARNING "DVB: adapter %i frontend %i frequency %u out of range (%u..%u)\n",
 		       fe->dvb->num, fe->id, c->frequency, freq_min, freq_max);
+=======
+	if ((freq_min && parms->frequency < freq_min) ||
+	    (freq_max && parms->frequency > freq_max)) {
+		printk(KERN_WARNING "DVB: adapter %i frontend %i frequency %u out of range (%u..%u)\n",
+		       fe->dvb->num, fe->id, parms->frequency, freq_min, freq_max);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
 	/* range check: symbol rate */
+<<<<<<< HEAD
 	switch (c->delivery_system) {
 	case SYS_DVBS:
 	case SYS_DVBS2:
@@ -900,6 +1052,38 @@ static int dvb_frontend_check_parameters(struct dvb_frontend *fe)
 		}
 	default:
 		break;
+=======
+	if (fe->ops.info.type == FE_QPSK) {
+		if ((fe->ops.info.symbol_rate_min &&
+		     parms->u.qpsk.symbol_rate < fe->ops.info.symbol_rate_min) ||
+		    (fe->ops.info.symbol_rate_max &&
+		     parms->u.qpsk.symbol_rate > fe->ops.info.symbol_rate_max)) {
+			printk(KERN_WARNING "DVB: adapter %i frontend %i symbol rate %u out of range (%u..%u)\n",
+			       fe->dvb->num, fe->id, parms->u.qpsk.symbol_rate,
+			       fe->ops.info.symbol_rate_min, fe->ops.info.symbol_rate_max);
+			return -EINVAL;
+		}
+
+	} else if (fe->ops.info.type == FE_QAM) {
+		if ((fe->ops.info.symbol_rate_min &&
+		     parms->u.qam.symbol_rate < fe->ops.info.symbol_rate_min) ||
+		    (fe->ops.info.symbol_rate_max &&
+		     parms->u.qam.symbol_rate > fe->ops.info.symbol_rate_max)) {
+			printk(KERN_WARNING "DVB: adapter %i frontend %i symbol rate %u out of range (%u..%u)\n",
+			       fe->dvb->num, fe->id, parms->u.qam.symbol_rate,
+			       fe->ops.info.symbol_rate_min, fe->ops.info.symbol_rate_max);
+			return -EINVAL;
+		}
+	}
+
+	/* check for supported modulation */
+	if (fe->ops.info.type == FE_QAM &&
+	    (parms->u.qam.modulation > QAM_AUTO ||
+	     !((1 << (parms->u.qam.modulation + 10)) & fe->ops.info.caps))) {
+		printk(KERN_WARNING "DVB: adapter %i frontend %i modulation %u not supported\n",
+		       fe->dvb->num, fe->id, parms->u.qam.modulation);
+			return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -909,6 +1093,7 @@ static int dvb_frontend_clear_cache(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
 	int i;
+<<<<<<< HEAD
 	u32 delsys;
 
 	delsys = c->delivery_system;
@@ -962,6 +1147,34 @@ static int dvb_frontend_clear_cache(struct dvb_frontend *fe)
 	default:
 		c->modulation = QAM_AUTO;
 		break;
+=======
+
+	memset(c, 0, sizeof(struct dtv_frontend_properties));
+
+	c->state = DTV_CLEAR;
+	c->delivery_system = SYS_UNDEFINED;
+	c->inversion = INVERSION_AUTO;
+	c->fec_inner = FEC_AUTO;
+	c->transmission_mode = TRANSMISSION_MODE_AUTO;
+	c->bandwidth_hz = BANDWIDTH_AUTO;
+	c->guard_interval = GUARD_INTERVAL_AUTO;
+	c->hierarchy = HIERARCHY_AUTO;
+	c->symbol_rate = QAM_AUTO;
+	c->code_rate_HP = FEC_AUTO;
+	c->code_rate_LP = FEC_AUTO;
+
+	c->isdbt_partial_reception = -1;
+	c->isdbt_sb_mode = -1;
+	c->isdbt_sb_subchannel = -1;
+	c->isdbt_sb_segment_idx = -1;
+	c->isdbt_sb_segment_count = -1;
+	c->isdbt_layer_enabled = 0x7;
+	for (i = 0; i < 3; i++) {
+		c->layer[i].fec = FEC_AUTO;
+		c->layer[i].modulation = QAM_AUTO;
+		c->layer[i].interleaving = -1;
+		c->layer[i].segment_count = -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -975,7 +1188,11 @@ static int dvb_frontend_clear_cache(struct dvb_frontend *fe)
 	.buffer = b \
 }
 
+<<<<<<< HEAD
 static struct dtv_cmds_h dtv_cmds[DTV_MAX_COMMAND + 1] = {
+=======
+static struct dtv_cmds_h dtv_cmds[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	_DTV_CMD(DTV_TUNE, 1, 0),
 	_DTV_CMD(DTV_CLEAR, 1, 0),
 
@@ -1017,8 +1234,31 @@ static struct dtv_cmds_h dtv_cmds[DTV_MAX_COMMAND + 1] = {
 	_DTV_CMD(DTV_ISDBT_LAYERC_SEGMENT_COUNT, 1, 0),
 	_DTV_CMD(DTV_ISDBT_LAYERC_TIME_INTERLEAVING, 1, 0),
 
+<<<<<<< HEAD
 	_DTV_CMD(DTV_ISDBS_TS_ID, 1, 0),
 	_DTV_CMD(DTV_DVBT2_PLP_ID, 1, 0),
+=======
+	_DTV_CMD(DTV_ISDBT_PARTIAL_RECEPTION, 0, 0),
+	_DTV_CMD(DTV_ISDBT_SOUND_BROADCASTING, 0, 0),
+	_DTV_CMD(DTV_ISDBT_SB_SUBCHANNEL_ID, 0, 0),
+	_DTV_CMD(DTV_ISDBT_SB_SEGMENT_IDX, 0, 0),
+	_DTV_CMD(DTV_ISDBT_SB_SEGMENT_COUNT, 0, 0),
+	_DTV_CMD(DTV_ISDBT_LAYER_ENABLED, 0, 0),
+	_DTV_CMD(DTV_ISDBT_LAYERA_FEC, 0, 0),
+	_DTV_CMD(DTV_ISDBT_LAYERA_MODULATION, 0, 0),
+	_DTV_CMD(DTV_ISDBT_LAYERA_SEGMENT_COUNT, 0, 0),
+	_DTV_CMD(DTV_ISDBT_LAYERA_TIME_INTERLEAVING, 0, 0),
+	_DTV_CMD(DTV_ISDBT_LAYERB_FEC, 0, 0),
+	_DTV_CMD(DTV_ISDBT_LAYERB_MODULATION, 0, 0),
+	_DTV_CMD(DTV_ISDBT_LAYERB_SEGMENT_COUNT, 0, 0),
+	_DTV_CMD(DTV_ISDBT_LAYERB_TIME_INTERLEAVING, 0, 0),
+	_DTV_CMD(DTV_ISDBT_LAYERC_FEC, 0, 0),
+	_DTV_CMD(DTV_ISDBT_LAYERC_MODULATION, 0, 0),
+	_DTV_CMD(DTV_ISDBT_LAYERC_SEGMENT_COUNT, 0, 0),
+	_DTV_CMD(DTV_ISDBT_LAYERC_TIME_INTERLEAVING, 0, 0),
+
+	_DTV_CMD(DTV_ISDBS_TS_ID, 1, 0),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Get */
 	_DTV_CMD(DTV_DISEQC_SLAVE_REPLY, 0, 1),
@@ -1028,8 +1268,11 @@ static struct dtv_cmds_h dtv_cmds[DTV_MAX_COMMAND + 1] = {
 	_DTV_CMD(DTV_GUARD_INTERVAL, 0, 0),
 	_DTV_CMD(DTV_TRANSMISSION_MODE, 0, 0),
 	_DTV_CMD(DTV_HIERARCHY, 0, 0),
+<<<<<<< HEAD
 
 	_DTV_CMD(DTV_ENUM_DELSYS, 0, 0),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void dtv_property_dump(struct dtv_property *tvp)
@@ -1063,17 +1306,37 @@ static void dtv_property_dump(struct dtv_property *tvp)
 		dprintk("%s() tvp.u.data = 0x%08x\n", __func__, tvp->u.data);
 }
 
+<<<<<<< HEAD
+=======
+static int is_legacy_delivery_system(fe_delivery_system_t s)
+{
+	if((s == SYS_UNDEFINED) || (s == SYS_DVBC_ANNEX_AC) ||
+	   (s == SYS_DVBC_ANNEX_B) || (s == SYS_DVBT) || (s == SYS_DVBS) ||
+	   (s == SYS_ATSC))
+		return 1;
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Synchronise the legacy tuning parameters into the cache, so that demodulator
  * drivers can use a single set_frontend tuning function, regardless of whether
  * it's being used for the legacy or new API, reducing code and complexity.
  */
+<<<<<<< HEAD
 static int dtv_property_cache_sync(struct dvb_frontend *fe,
 				   struct dtv_frontend_properties *c,
 				   const struct dvb_frontend_parameters *p)
+=======
+static void dtv_property_cache_sync(struct dvb_frontend *fe,
+				    struct dtv_frontend_properties *c,
+				    const struct dvb_frontend_parameters *p)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	c->frequency = p->frequency;
 	c->inversion = p->inversion;
 
+<<<<<<< HEAD
 	switch (dvbv3_type(c->delivery_system)) {
 	case DVBV3_QPSK:
 		dprintk("%s() Preparing QPSK req\n", __func__);
@@ -1111,21 +1374,54 @@ static int dtv_property_cache_sync(struct dvb_frontend *fe,
 			c->bandwidth_hz = 0;
 		}
 
+=======
+	switch (fe->ops.info.type) {
+	case FE_QPSK:
+		c->modulation = QPSK;   /* implied for DVB-S in legacy API */
+		c->rolloff = ROLLOFF_35;/* implied for DVB-S */
+		c->symbol_rate = p->u.qpsk.symbol_rate;
+		c->fec_inner = p->u.qpsk.fec_inner;
+		c->delivery_system = SYS_DVBS;
+		break;
+	case FE_QAM:
+		c->symbol_rate = p->u.qam.symbol_rate;
+		c->fec_inner = p->u.qam.fec_inner;
+		c->modulation = p->u.qam.modulation;
+		c->delivery_system = SYS_DVBC_ANNEX_AC;
+		break;
+	case FE_OFDM:
+		if (p->u.ofdm.bandwidth == BANDWIDTH_6_MHZ)
+			c->bandwidth_hz = 6000000;
+		else if (p->u.ofdm.bandwidth == BANDWIDTH_7_MHZ)
+			c->bandwidth_hz = 7000000;
+		else if (p->u.ofdm.bandwidth == BANDWIDTH_8_MHZ)
+			c->bandwidth_hz = 8000000;
+		else
+			/* Including BANDWIDTH_AUTO */
+			c->bandwidth_hz = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		c->code_rate_HP = p->u.ofdm.code_rate_HP;
 		c->code_rate_LP = p->u.ofdm.code_rate_LP;
 		c->modulation = p->u.ofdm.constellation;
 		c->transmission_mode = p->u.ofdm.transmission_mode;
 		c->guard_interval = p->u.ofdm.guard_interval;
 		c->hierarchy = p->u.ofdm.hierarchy_information;
+<<<<<<< HEAD
 		break;
 	case DVBV3_ATSC:
 		dprintk("%s() Preparing ATSC req\n", __func__);
+=======
+		c->delivery_system = SYS_DVBT;
+		break;
+	case FE_ATSC:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		c->modulation = p->u.vsb.modulation;
 		if ((c->modulation == VSB_8) || (c->modulation == VSB_16))
 			c->delivery_system = SYS_ATSC;
 		else
 			c->delivery_system = SYS_DVBC_ANNEX_B;
 		break;
+<<<<<<< HEAD
 	case DVBV3_UNKNOWN:
 		printk(KERN_ERR
 		       "%s: doesn't know how to handle a DVBv3 call to delivery system %i\n",
@@ -1134,19 +1430,31 @@ static int dtv_property_cache_sync(struct dvb_frontend *fe,
 	}
 
 	return 0;
+=======
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Ensure the cached values are set correctly in the frontend
  * legacy tuning structures, for the advanced tuning API.
  */
+<<<<<<< HEAD
 static int dtv_property_legacy_params_sync(struct dvb_frontend *fe,
 					    struct dvb_frontend_parameters *p)
 {
 	const struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+=======
+static void dtv_property_legacy_params_sync(struct dvb_frontend *fe)
+{
+	const struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+	struct dvb_frontend_private *fepriv = fe->frontend_priv;
+	struct dvb_frontend_parameters *p = &fepriv->parameters_in;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	p->frequency = c->frequency;
 	p->inversion = c->inversion;
 
+<<<<<<< HEAD
 	switch (dvbv3_type(c->delivery_system)) {
 	case DVBV3_UNKNOWN:
 		printk(KERN_ERR
@@ -1154,16 +1462,25 @@ static int dtv_property_legacy_params_sync(struct dvb_frontend *fe,
 		       __func__, c->delivery_system);
 		return -EINVAL;
 	case DVBV3_QPSK:
+=======
+	switch (fe->ops.info.type) {
+	case FE_QPSK:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dprintk("%s() Preparing QPSK req\n", __func__);
 		p->u.qpsk.symbol_rate = c->symbol_rate;
 		p->u.qpsk.fec_inner = c->fec_inner;
 		break;
+<<<<<<< HEAD
 	case DVBV3_QAM:
+=======
+	case FE_QAM:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dprintk("%s() Preparing QAM req\n", __func__);
 		p->u.qam.symbol_rate = c->symbol_rate;
 		p->u.qam.fec_inner = c->fec_inner;
 		p->u.qam.modulation = c->modulation;
 		break;
+<<<<<<< HEAD
 	case DVBV3_OFDM:
 		dprintk("%s() Preparing OFDM req\n", __func__);
 
@@ -1190,6 +1507,18 @@ static int dtv_property_legacy_params_sync(struct dvb_frontend *fe,
 		default:
 			p->u.ofdm.bandwidth = BANDWIDTH_AUTO;
 		}
+=======
+	case FE_OFDM:
+		dprintk("%s() Preparing OFDM req\n", __func__);
+		if (c->bandwidth_hz == 6000000)
+			p->u.ofdm.bandwidth = BANDWIDTH_6_MHZ;
+		else if (c->bandwidth_hz == 7000000)
+			p->u.ofdm.bandwidth = BANDWIDTH_7_MHZ;
+		else if (c->bandwidth_hz == 8000000)
+			p->u.ofdm.bandwidth = BANDWIDTH_8_MHZ;
+		else
+			p->u.ofdm.bandwidth = BANDWIDTH_AUTO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		p->u.ofdm.code_rate_HP = c->code_rate_HP;
 		p->u.ofdm.code_rate_LP = c->code_rate_LP;
 		p->u.ofdm.constellation = c->modulation;
@@ -1197,11 +1526,16 @@ static int dtv_property_legacy_params_sync(struct dvb_frontend *fe,
 		p->u.ofdm.guard_interval = c->guard_interval;
 		p->u.ofdm.hierarchy_information = c->hierarchy;
 		break;
+<<<<<<< HEAD
 	case DVBV3_ATSC:
+=======
+	case FE_ATSC:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dprintk("%s() Preparing VSB req\n", __func__);
 		p->u.vsb.modulation = c->modulation;
 		break;
 	}
+<<<<<<< HEAD
 	return 0;
 }
 
@@ -1231,6 +1565,78 @@ static int dtv_get_frontend(struct dvb_frontend *fe,
 
 	/* As everything is in cache, get_frontend fops are always supported */
 	return 0;
+=======
+}
+
+/* Ensure the cached values are set correctly in the frontend
+ * legacy tuning structures, for the legacy tuning API.
+ */
+static void dtv_property_adv_params_sync(struct dvb_frontend *fe)
+{
+	const struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+	struct dvb_frontend_private *fepriv = fe->frontend_priv;
+	struct dvb_frontend_parameters *p = &fepriv->parameters_in;
+
+	p->frequency = c->frequency;
+	p->inversion = c->inversion;
+
+	switch(c->modulation) {
+	case PSK_8:
+	case APSK_16:
+	case APSK_32:
+	case QPSK:
+		p->u.qpsk.symbol_rate = c->symbol_rate;
+		p->u.qpsk.fec_inner = c->fec_inner;
+		break;
+	default:
+		break;
+	}
+
+	/* Fake out a generic DVB-T request so we pass validation in the ioctl */
+	if ((c->delivery_system == SYS_ISDBT) ||
+	    (c->delivery_system == SYS_DVBT2)) {
+		p->u.ofdm.constellation = QAM_AUTO;
+		p->u.ofdm.code_rate_HP = FEC_AUTO;
+		p->u.ofdm.code_rate_LP = FEC_AUTO;
+		p->u.ofdm.transmission_mode = TRANSMISSION_MODE_AUTO;
+		p->u.ofdm.guard_interval = GUARD_INTERVAL_AUTO;
+		p->u.ofdm.hierarchy_information = HIERARCHY_AUTO;
+		if (c->bandwidth_hz == 8000000)
+			p->u.ofdm.bandwidth = BANDWIDTH_8_MHZ;
+		else if (c->bandwidth_hz == 7000000)
+			p->u.ofdm.bandwidth = BANDWIDTH_7_MHZ;
+		else if (c->bandwidth_hz == 6000000)
+			p->u.ofdm.bandwidth = BANDWIDTH_6_MHZ;
+		else
+			p->u.ofdm.bandwidth = BANDWIDTH_AUTO;
+	}
+}
+
+static void dtv_property_cache_submit(struct dvb_frontend *fe)
+{
+	const struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+
+	/* For legacy delivery systems we don't need the delivery_system to
+	 * be specified, but we populate the older structures from the cache
+	 * so we can call set_frontend on older drivers.
+	 */
+	if(is_legacy_delivery_system(c->delivery_system)) {
+
+		dprintk("%s() legacy, modulation = %d\n", __func__, c->modulation);
+		dtv_property_legacy_params_sync(fe);
+
+	} else {
+		dprintk("%s() adv, modulation = %d\n", __func__, c->modulation);
+
+		/* For advanced delivery systems / modulation types ...
+		 * we seed the lecacy dvb_frontend_parameters structure
+		 * so that the sanity checking code later in the IOCTL processing
+		 * can validate our basic frequency ranges, symbolrates, modulation
+		 * etc.
+		 */
+		dtv_property_adv_params_sync(fe);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int dvb_frontend_ioctl_legacy(struct file *file,
@@ -1239,6 +1645,7 @@ static int dvb_frontend_ioctl_properties(struct file *file,
 			unsigned int cmd, void *parg);
 
 static int dtv_property_process_get(struct dvb_frontend *fe,
+<<<<<<< HEAD
 				    const struct dtv_frontend_properties *c,
 				    struct dtv_property *tvp,
 				    struct file *file)
@@ -1254,6 +1661,27 @@ static int dtv_property_process_get(struct dvb_frontend *fe,
 		}
 		tvp->u.buffer.len = ncaps;
 		break;
+=======
+				    struct dtv_property *tvp,
+				    struct file *file)
+{
+	const struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+	struct dvb_frontend_private *fepriv = fe->frontend_priv;
+	struct dtv_frontend_properties cdetected;
+	int r;
+
+	/*
+	 * If the driver implements a get_frontend function, then convert
+	 * detected parameters to S2API properties.
+	 */
+	if (fe->ops.get_frontend) {
+		cdetected = *c;
+		dtv_property_cache_sync(fe, &cdetected, &fepriv->parameters_out);
+		c = &cdetected;
+	}
+
+	switch(tvp->cmd) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case DTV_FREQUENCY:
 		tvp->u.data = c->frequency;
 		break;
@@ -1383,6 +1811,7 @@ static int dtv_property_process_get(struct dvb_frontend *fe,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int dtv_set_frontend(struct dvb_frontend *fe);
 
 static bool is_dvbv3_delsys(u32 delsys)
@@ -1562,12 +1991,19 @@ static int set_delivery_system(struct dvb_frontend *fe, u32 desired_system)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int dtv_property_process_set(struct dvb_frontend *fe,
 				    struct dtv_property *tvp,
 				    struct file *file)
 {
 	int r = 0;
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+<<<<<<< HEAD
+=======
+	struct dvb_frontend_private *fepriv = fe->frontend_priv;
+	dtv_property_dump(tvp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Allow the frontend to validate incoming properties */
 	if (fe->ops.set_property) {
@@ -1578,11 +2014,19 @@ static int dtv_property_process_set(struct dvb_frontend *fe,
 
 	switch(tvp->cmd) {
 	case DTV_CLEAR:
+<<<<<<< HEAD
 		/*
 		 * Reset a cache of data specific to the frontend here. This does
 		 * not effect hardware.
 		 */
 		dvb_frontend_clear_cache(fe);
+=======
+		/* Reset a cache of data specific to the frontend here. This does
+		 * not effect hardware.
+		 */
+		dvb_frontend_clear_cache(fe);
+		dprintk("%s() Flushing property cache\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case DTV_TUNE:
 		/* interpret the cache of data, build either a traditional frontend
@@ -1591,8 +2035,15 @@ static int dtv_property_process_set(struct dvb_frontend *fe,
 		 */
 		c->state = tvp->cmd;
 		dprintk("%s() Finalised property cache\n", __func__);
+<<<<<<< HEAD
 
 		r = dtv_set_frontend(fe);
+=======
+		dtv_property_cache_submit(fe);
+
+		r = dvb_frontend_ioctl_legacy(file, FE_SET_FRONTEND,
+			&fepriv->parameters_in);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case DTV_FREQUENCY:
 		c->frequency = tvp->u.data;
@@ -1619,7 +2070,11 @@ static int dtv_property_process_set(struct dvb_frontend *fe,
 		c->rolloff = tvp->u.data;
 		break;
 	case DTV_DELIVERY_SYSTEM:
+<<<<<<< HEAD
 		r = set_delivery_system(fe, tvp->u.data);
+=======
+		c->delivery_system = tvp->u.data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case DTV_VOLTAGE:
 		c->voltage = tvp->u.data;
@@ -1753,7 +2208,10 @@ static int dvb_frontend_ioctl_properties(struct file *file,
 {
 	struct dvb_device *dvbdev = file->private_data;
 	struct dvb_frontend *fe = dvbdev->priv;
+<<<<<<< HEAD
 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
 	int err = 0;
 
@@ -1797,6 +2255,10 @@ static int dvb_frontend_ioctl_properties(struct file *file,
 
 	} else
 	if(cmd == FE_GET_PROPERTY) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tvps = (struct dtv_properties __user *)parg;
 
 		dprintk("%s() properties.num = %d\n", __func__, tvps->num);
@@ -1818,6 +2280,7 @@ static int dvb_frontend_ioctl_properties(struct file *file,
 			goto out;
 		}
 
+<<<<<<< HEAD
 		/*
 		 * Fills the cache out struct with the cache contents, plus
 		 * the data retrieved from get_frontend, if the frontend
@@ -1830,6 +2293,10 @@ static int dvb_frontend_ioctl_properties(struct file *file,
 		}
 		for (i = 0; i < tvps->num; i++) {
 			err = dtv_property_process_get(fe, c, tvp + i, file);
+=======
+		for (i = 0; i < tvps->num; i++) {
+			err = dtv_property_process_get(fe, tvp + i, file);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (err < 0)
 				goto out;
 			(tvp + i)->result = err;
@@ -1848,6 +2315,7 @@ out:
 	return err;
 }
 
+<<<<<<< HEAD
 static int dtv_set_frontend(struct dvb_frontend *fe)
 {
 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
@@ -1967,13 +2435,18 @@ static int dtv_set_frontend(struct dvb_frontend *fe)
 }
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int dvb_frontend_ioctl_legacy(struct file *file,
 			unsigned int cmd, void *parg)
 {
 	struct dvb_device *dvbdev = file->private_data;
 	struct dvb_frontend *fe = dvbdev->priv;
 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
+<<<<<<< HEAD
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int cb_err, err = -EOPNOTSUPP;
 
 	if (fe->dvb->fe_ioctl_override) {
@@ -1990,6 +2463,7 @@ static int dvb_frontend_ioctl_legacy(struct file *file,
 	switch (cmd) {
 	case FE_GET_INFO: {
 		struct dvb_frontend_info* info = parg;
+<<<<<<< HEAD
 
 		memcpy(info, &fe->ops.info, sizeof(struct dvb_frontend_info));
 		dvb_frontend_get_frequency_limits(fe, &info->frequency_min, &info->frequency_max);
@@ -2027,6 +2501,11 @@ static int dvb_frontend_ioctl_legacy(struct file *file,
 		dprintk("current delivery system on cache: %d, V3 type: %d\n",
 			c->delivery_system, fe->ops.info.type);
 
+=======
+		memcpy(info, &fe->ops.info, sizeof(struct dvb_frontend_info));
+		dvb_frontend_get_frequency_limits(fe, &info->frequency_min, &info->frequency_max);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Force the CAN_INVERSION_AUTO bit on. If the frontend doesn't
 		 * do it, it is done for it. */
 		info->caps |= FE_CAN_INVERSION_AUTO;
@@ -2185,6 +2664,7 @@ static int dvb_frontend_ioctl_legacy(struct file *file,
 			err = fe->ops.enable_high_lnb_voltage(fe, (long) parg);
 		break;
 
+<<<<<<< HEAD
 	case FE_SET_FRONTEND:
 		err = set_delivery_system(fe, SYS_UNDEFINED);
 		if (err)
@@ -2195,12 +2675,105 @@ static int dvb_frontend_ioctl_legacy(struct file *file,
 			break;
 		err = dtv_set_frontend(fe);
 		break;
+=======
+	case FE_SET_FRONTEND: {
+		struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+		struct dvb_frontend_tune_settings fetunesettings;
+
+		if (c->state == DTV_TUNE) {
+			if (dvb_frontend_check_parameters(fe, &fepriv->parameters_in) < 0) {
+				err = -EINVAL;
+				break;
+			}
+		} else {
+			if (dvb_frontend_check_parameters(fe, parg) < 0) {
+				err = -EINVAL;
+				break;
+			}
+
+			memcpy (&fepriv->parameters_in, parg,
+				sizeof (struct dvb_frontend_parameters));
+			dtv_property_cache_sync(fe, c, &fepriv->parameters_in);
+		}
+
+		memset(&fetunesettings, 0, sizeof(struct dvb_frontend_tune_settings));
+		memcpy(&fetunesettings.parameters, parg,
+		       sizeof (struct dvb_frontend_parameters));
+
+		/* force auto frequency inversion if requested */
+		if (dvb_force_auto_inversion) {
+			fepriv->parameters_in.inversion = INVERSION_AUTO;
+			fetunesettings.parameters.inversion = INVERSION_AUTO;
+		}
+		if (fe->ops.info.type == FE_OFDM) {
+			/* without hierarchical coding code_rate_LP is irrelevant,
+			 * so we tolerate the otherwise invalid FEC_NONE setting */
+			if (fepriv->parameters_in.u.ofdm.hierarchy_information == HIERARCHY_NONE &&
+			    fepriv->parameters_in.u.ofdm.code_rate_LP == FEC_NONE)
+				fepriv->parameters_in.u.ofdm.code_rate_LP = FEC_AUTO;
+		}
+
+		/* get frontend-specific tuning settings */
+		if (fe->ops.get_tune_settings && (fe->ops.get_tune_settings(fe, &fetunesettings) == 0)) {
+			fepriv->min_delay = (fetunesettings.min_delay_ms * HZ) / 1000;
+			fepriv->max_drift = fetunesettings.max_drift;
+			fepriv->step_size = fetunesettings.step_size;
+		} else {
+			/* default values */
+			switch(fe->ops.info.type) {
+			case FE_QPSK:
+				fepriv->min_delay = HZ/20;
+				fepriv->step_size = fepriv->parameters_in.u.qpsk.symbol_rate / 16000;
+				fepriv->max_drift = fepriv->parameters_in.u.qpsk.symbol_rate / 2000;
+				break;
+
+			case FE_QAM:
+				fepriv->min_delay = HZ/20;
+				fepriv->step_size = 0; /* no zigzag */
+				fepriv->max_drift = 0;
+				break;
+
+			case FE_OFDM:
+				fepriv->min_delay = HZ/20;
+				fepriv->step_size = fe->ops.info.frequency_stepsize * 2;
+				fepriv->max_drift = (fe->ops.info.frequency_stepsize * 2) + 1;
+				break;
+			case FE_ATSC:
+				fepriv->min_delay = HZ/20;
+				fepriv->step_size = 0;
+				fepriv->max_drift = 0;
+				break;
+			}
+		}
+		if (dvb_override_tune_delay > 0)
+			fepriv->min_delay = (dvb_override_tune_delay * HZ) / 1000;
+
+		fepriv->state = FESTATE_RETUNE;
+
+		/* Request the search algorithm to search */
+		fepriv->algo_status |= DVBFE_ALGO_SEARCH_AGAIN;
+
+		dvb_frontend_wakeup(fe);
+		dvb_frontend_add_event(fe, 0);
+		fepriv->status = 0;
+		err = 0;
+		break;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case FE_GET_EVENT:
 		err = dvb_frontend_get_event (fe, parg, file->f_flags);
 		break;
 
 	case FE_GET_FRONTEND:
+<<<<<<< HEAD
 		err = dtv_get_frontend(fe, parg);
+=======
+		if (fe->ops.get_frontend) {
+			err = fe->ops.get_frontend(fe, &fepriv->parameters_out);
+			memcpy(parg, &fepriv->parameters_out, sizeof(struct dvb_frontend_parameters));
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case FE_SET_FRONTEND_TUNE_MODE:
@@ -2341,15 +2914,23 @@ static int dvb_frontend_release(struct inode *inode, struct file *file)
 
 	dprintk ("%s\n", __func__);
 
+<<<<<<< HEAD
 	if ((file->f_flags & O_ACCMODE) != O_RDONLY) {
 		fepriv->release_jiffies = jiffies;
 		mb();
 	}
+=======
+	if ((file->f_flags & O_ACCMODE) != O_RDONLY)
+		fepriv->release_jiffies = jiffies;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = dvb_generic_release (inode, file);
 
 	if (dvbdev->users == -1) {
+<<<<<<< HEAD
 		wake_up(&fepriv->wait_queue);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (fepriv->exit != DVB_FE_NO_EXIT) {
 			fops_put(file->f_op);
 			file->f_op = NULL;
@@ -2410,6 +2991,7 @@ int dvb_register_frontend(struct dvb_adapter* dvb,
 	dvb_register_device (fe->dvb, &fepriv->dvbdev, &dvbdev_template,
 			     fe, DVB_DEVICE_FRONTEND);
 
+<<<<<<< HEAD
 	/*
 	 * Initialize the cache to the proper values according with the
 	 * first supported delivery system (ops->delsys[0])
@@ -2418,6 +3000,8 @@ int dvb_register_frontend(struct dvb_adapter* dvb,
         fe->dtv_property_cache.delivery_system = fe->ops.delsys[0];
 	dvb_frontend_clear_cache(fe);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&frontend_mutex);
 	return 0;
 }

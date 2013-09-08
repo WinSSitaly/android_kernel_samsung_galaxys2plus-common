@@ -47,9 +47,14 @@
 
 /* Current ACPICA subsystem version in YYYYMMDD format */
 
+<<<<<<< HEAD
 #define ACPI_CA_VERSION                 0x20120320
 
 #include "acconfig.h"
+=======
+#define ACPI_CA_VERSION                 0x20110413
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "actypes.h"
 #include "actbl.h"
 
@@ -67,6 +72,7 @@ extern u8 acpi_gbl_create_osi_method;
 extern u8 acpi_gbl_use_default_register_widths;
 extern acpi_name acpi_gbl_trace_method_name;
 extern u32 acpi_gbl_trace_flags;
+<<<<<<< HEAD
 extern bool acpi_gbl_enable_aml_debug_object;
 extern u8 acpi_gbl_copy_dsdt_locally;
 extern u8 acpi_gbl_truncate_io_addresses;
@@ -98,11 +104,19 @@ extern u8 acpi_gbl_disable_auto_repair;
 	static ACPI_INLINE prototype {}
 
 #endif				/* !ACPI_REDUCED_HARDWARE */
+=======
+extern u32 acpi_gbl_enable_aml_debug_object;
+extern u8 acpi_gbl_copy_dsdt_locally;
+extern u8 acpi_gbl_truncate_io_addresses;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern u32 acpi_current_gpe_count;
 extern struct acpi_table_fadt acpi_gbl_FADT;
 extern u8 acpi_gbl_system_awake_and_running;
+<<<<<<< HEAD
 extern u8 acpi_gbl_reduced_hardware;	/* ACPI 5.0 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern u32 acpi_rsdt_forced;
 /*
@@ -124,8 +138,14 @@ acpi_status acpi_terminate(void);
 acpi_status acpi_subsystem_status(void);
 #endif
 
+<<<<<<< HEAD
 ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_enable(void))
 ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_disable(void))
+=======
+acpi_status acpi_enable(void);
+
+acpi_status acpi_disable(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef ACPI_FUTURE_USAGE
 acpi_status acpi_get_system_info(struct acpi_buffer *ret_buffer);
@@ -139,11 +159,14 @@ acpi_status acpi_install_interface(acpi_string interface_name);
 
 acpi_status acpi_remove_interface(acpi_string interface_name);
 
+<<<<<<< HEAD
 u32
 acpi_check_address_range(acpi_adr_space_type space_id,
 			 acpi_physical_address address,
 			 acpi_size length, u8 warn);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * ACPI Memory management
  */
@@ -262,6 +285,7 @@ acpi_status acpi_get_parent(acpi_handle object, acpi_handle * out_handle);
 acpi_status
 acpi_install_initialization_handler(acpi_init_handler handler, u32 function);
 
+<<<<<<< HEAD
 ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status
 				acpi_install_global_event_handler
 				(ACPI_GBL_EVENT_HANDLER handler, void *context))
@@ -290,6 +314,19 @@ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status
 							 u32 gpe_number,
 							 acpi_gpe_handler
 							 address))
+=======
+acpi_status
+acpi_install_global_event_handler(ACPI_GBL_EVENT_HANDLER handler,
+				 void *context);
+
+acpi_status
+acpi_install_fixed_event_handler(u32 acpi_event,
+				 acpi_event_handler handler, void *context);
+
+acpi_status
+acpi_remove_fixed_event_handler(u32 acpi_event, acpi_event_handler handler);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 acpi_status
 acpi_install_notify_handler(acpi_handle device,
 			    u32 handler_type,
@@ -310,6 +347,18 @@ acpi_remove_address_space_handler(acpi_handle device,
 				  acpi_adr_space_type space_id,
 				  acpi_adr_space_handler handler);
 
+<<<<<<< HEAD
+=======
+acpi_status
+acpi_install_gpe_handler(acpi_handle gpe_device,
+			 u32 gpe_number,
+			 u32 type, acpi_gpe_handler address, void *context);
+
+acpi_status
+acpi_remove_gpe_handler(acpi_handle gpe_device,
+			u32 gpe_number, acpi_gpe_handler address);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef ACPI_FUTURE_USAGE
 acpi_status acpi_install_exception_handler(acpi_exception_handler handler);
 #endif
@@ -317,6 +366,7 @@ acpi_status acpi_install_exception_handler(acpi_exception_handler handler);
 acpi_status acpi_install_interface_handler(acpi_interface_handler handler);
 
 /*
+<<<<<<< HEAD
  * Global Lock interfaces
  */
 ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status
@@ -405,6 +455,55 @@ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status
 						       u32 interrupt_number))
 ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status
 				 acpi_remove_gpe_block(acpi_handle gpe_device))
+=======
+ * Event interfaces
+ */
+acpi_status acpi_acquire_global_lock(u16 timeout, u32 * handle);
+
+acpi_status acpi_release_global_lock(u32 handle);
+
+acpi_status acpi_enable_event(u32 event, u32 flags);
+
+acpi_status acpi_disable_event(u32 event, u32 flags);
+
+acpi_status acpi_clear_event(u32 event);
+
+acpi_status acpi_get_event_status(u32 event, acpi_event_status * event_status);
+
+/*
+ * GPE Interfaces
+ */
+acpi_status acpi_enable_gpe(acpi_handle gpe_device, u32 gpe_number);
+
+acpi_status acpi_disable_gpe(acpi_handle gpe_device, u32 gpe_number);
+
+acpi_status acpi_clear_gpe(acpi_handle gpe_device, u32 gpe_number);
+
+acpi_status
+acpi_setup_gpe_for_wake(acpi_handle parent_device,
+			acpi_handle gpe_device, u32 gpe_number);
+
+acpi_status acpi_set_gpe_wake_mask(acpi_handle gpe_device, u32 gpe_number, u8 action);
+
+acpi_status
+acpi_get_gpe_status(acpi_handle gpe_device,
+		    u32 gpe_number, acpi_event_status *event_status);
+
+acpi_status acpi_disable_all_gpes(void);
+
+acpi_status acpi_enable_all_runtime_gpes(void);
+
+acpi_status acpi_get_gpe_device(u32 gpe_index, acpi_handle *gpe_device);
+
+acpi_status
+acpi_install_gpe_block(acpi_handle gpe_device,
+		       struct acpi_generic_address *gpe_block_address,
+		       u32 register_count, u32 interrupt_number);
+
+acpi_status acpi_remove_gpe_block(acpi_handle gpe_device);
+
+acpi_status acpi_update_all_gpes(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Resource interfaces
@@ -428,10 +527,13 @@ acpi_get_possible_resources(acpi_handle device, struct acpi_buffer *ret_buffer);
 #endif
 
 acpi_status
+<<<<<<< HEAD
 acpi_get_event_resources(acpi_handle device_handle,
 			 struct acpi_buffer *ret_buffer);
 
 acpi_status
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 acpi_walk_resources(acpi_handle device,
 		    char *name,
 		    acpi_walk_resource_callback user_function, void *context);
@@ -446,16 +548,20 @@ acpi_status
 acpi_resource_to_address64(struct acpi_resource *resource,
 			   struct acpi_resource_address64 *out);
 
+<<<<<<< HEAD
 acpi_status
 acpi_buffer_to_resource(u8 *aml_buffer,
 			u16 aml_buffer_length,
 			struct acpi_resource **resource_ptr);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Hardware (ACPI device) interfaces
  */
 acpi_status acpi_reset(void);
 
+<<<<<<< HEAD
 ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status
 				acpi_read_bit_register(u32 register_id,
 						       u32 *return_value))
@@ -472,29 +578,51 @@ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status
 ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status
 				acpi_set_firmware_waking_vector64(u64
 								  physical_address))
+=======
+acpi_status acpi_read_bit_register(u32 register_id, u32 *return_value);
+
+acpi_status acpi_write_bit_register(u32 register_id, u32 value);
+
+acpi_status acpi_set_firmware_waking_vector(u32 physical_address);
+
+#if ACPI_MACHINE_WIDTH == 64
+acpi_status acpi_set_firmware_waking_vector64(u64 physical_address);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 acpi_status acpi_read(u64 *value, struct acpi_generic_address *reg);
 
 acpi_status acpi_write(u64 value, struct acpi_generic_address *reg);
 
+<<<<<<< HEAD
 /*
  * Sleep/Wake interfaces
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 acpi_status
 acpi_get_sleep_type_data(u8 sleep_state, u8 * slp_typ_a, u8 * slp_typ_b);
 
 acpi_status acpi_enter_sleep_state_prep(u8 sleep_state);
 
+<<<<<<< HEAD
 acpi_status asmlinkage acpi_enter_sleep_state(u8 sleep_state, u8 flags);
 
 ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status asmlinkage acpi_enter_sleep_state_s4bios(void))
 
 acpi_status acpi_leave_sleep_state_prep(u8 sleep_state, u8 flags);
+=======
+acpi_status asmlinkage acpi_enter_sleep_state(u8 sleep_state);
+
+acpi_status asmlinkage acpi_enter_sleep_state_s4bios(void);
+
+acpi_status acpi_leave_sleep_state_prep(u8 sleep_state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 acpi_status acpi_leave_sleep_state(u8 sleep_state);
 
 /*
+<<<<<<< HEAD
  * ACPI Timer interfaces
  */
 #ifdef ACPI_FUTURE_USAGE
@@ -510,6 +638,8 @@ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status
 #endif				/* ACPI_FUTURE_USAGE */
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Error/Warning output
  */
 void ACPI_INTERNAL_VAR_XFACE

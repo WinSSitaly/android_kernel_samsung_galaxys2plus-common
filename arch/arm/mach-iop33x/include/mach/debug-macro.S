@@ -11,7 +11,11 @@
  * published by the Free Software Foundation.
  */
 
+<<<<<<< HEAD
 		.macro	addruart, rp, rv, tmp
+=======
+		.macro	addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mov	\rp, #0x00ff0000
 		orr	\rp, \rp, #0x0000f700
 		orr	\rv, #0xfe000000	@ virtual

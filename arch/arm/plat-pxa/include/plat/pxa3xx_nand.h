@@ -41,6 +41,7 @@ struct pxa3xx_nand_flash {
 	struct pxa3xx_nand_timing *timing;	/* NAND Flash timing */
 };
 
+<<<<<<< HEAD
 /*
  * Current pxa3xx_nand controller has two chip select which
  * both be workable.
@@ -54,6 +55,8 @@ struct pxa3xx_nand_flash {
 
 /* The max num of chip select current support */
 #define NUM_CHIP_SELECT		(2)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct pxa3xx_nand_platform_data {
 
 	/* the data flash bus is shared between the Static Memory
@@ -65,11 +68,16 @@ struct pxa3xx_nand_platform_data {
 	/* allow platform code to keep OBM/bootloader defined NFC config */
 	int	keep_config;
 
+<<<<<<< HEAD
 	/* indicate how many chip selects will be used */
 	int	num_cs;
 
 	const struct mtd_partition		*parts[NUM_CHIP_SELECT];
 	unsigned int				nr_parts[NUM_CHIP_SELECT];
+=======
+	const struct mtd_partition		*parts;
+	unsigned int				nr_parts;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	const struct pxa3xx_nand_flash * 	flash;
 	size_t					num_flash;

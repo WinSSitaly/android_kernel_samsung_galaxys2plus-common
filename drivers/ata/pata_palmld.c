@@ -132,9 +132,27 @@ static struct platform_driver palmld_pata_platform_driver = {
 	.remove		= __devexit_p(palmld_pata_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(palmld_pata_platform_driver);
+=======
+static int __init palmld_pata_init(void)
+{
+	return platform_driver_register(&palmld_pata_platform_driver);
+}
+
+static void __exit palmld_pata_exit(void)
+{
+	platform_driver_unregister(&palmld_pata_platform_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Marek Vasut <marek.vasut@gmail.com>");
 MODULE_DESCRIPTION("PalmLD PATA driver");
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:" DRV_NAME);
+<<<<<<< HEAD
+=======
+
+module_init(palmld_pata_init);
+module_exit(palmld_pata_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -26,6 +26,10 @@
  */
 
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/errno.h>
 #include <linux/fs.h>
@@ -582,13 +586,21 @@ static int ufs1_read_inode(struct inode *inode, struct ufs_inode *ufs_inode)
 {
 	struct ufs_inode_info *ufsi = UFS_I(inode);
 	struct super_block *sb = inode->i_sb;
+<<<<<<< HEAD
 	umode_t mode;
+=======
+	mode_t mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Copy data to the in-core inode.
 	 */
 	inode->i_mode = mode = fs16_to_cpu(sb, ufs_inode->ui_mode);
+<<<<<<< HEAD
 	set_nlink(inode, fs16_to_cpu(sb, ufs_inode->ui_nlink));
+=======
+	inode->i_nlink = fs16_to_cpu(sb, ufs_inode->ui_nlink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (inode->i_nlink == 0) {
 		ufs_error (sb, "ufs_read_inode", "inode %lu has zero nlink\n", inode->i_ino);
 		return -1;
@@ -629,14 +641,22 @@ static int ufs2_read_inode(struct inode *inode, struct ufs2_inode *ufs2_inode)
 {
 	struct ufs_inode_info *ufsi = UFS_I(inode);
 	struct super_block *sb = inode->i_sb;
+<<<<<<< HEAD
 	umode_t mode;
+=======
+	mode_t mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	UFSD("Reading ufs2 inode, ino %lu\n", inode->i_ino);
 	/*
 	 * Copy data to the in-core inode.
 	 */
 	inode->i_mode = mode = fs16_to_cpu(sb, ufs2_inode->ui_mode);
+<<<<<<< HEAD
 	set_nlink(inode, fs16_to_cpu(sb, ufs2_inode->ui_nlink));
+=======
+	inode->i_nlink = fs16_to_cpu(sb, ufs2_inode->ui_nlink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (inode->i_nlink == 0) {
 		ufs_error (sb, "ufs_read_inode", "inode %lu has zero nlink\n", inode->i_ino);
 		return -1;

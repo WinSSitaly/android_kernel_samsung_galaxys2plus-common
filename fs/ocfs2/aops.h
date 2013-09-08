@@ -78,7 +78,10 @@ enum ocfs2_iocb_lock_bits {
 	OCFS2_IOCB_RW_LOCK = 0,
 	OCFS2_IOCB_RW_LOCK_LEVEL,
 	OCFS2_IOCB_SEM,
+<<<<<<< HEAD
 	OCFS2_IOCB_UNALIGNED_IO,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	OCFS2_IOCB_NUM_LOCKS
 };
 
@@ -92,6 +95,7 @@ enum ocfs2_iocb_lock_bits {
 	clear_bit(OCFS2_IOCB_SEM, (unsigned long *)&iocb->private)
 #define ocfs2_iocb_is_sem_locked(iocb) \
 	test_bit(OCFS2_IOCB_SEM, (unsigned long *)&iocb->private)
+<<<<<<< HEAD
 
 #define ocfs2_iocb_set_unaligned_aio(iocb) \
 	set_bit(OCFS2_IOCB_UNALIGNED_IO, (unsigned long *)&iocb->private)
@@ -105,4 +109,6 @@ enum ocfs2_iocb_lock_bits {
 					    OCFS2_IOEND_WQ_HASH_SZ])
 extern wait_queue_head_t ocfs2__ioend_wq[OCFS2_IOEND_WQ_HASH_SZ];
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* OCFS2_FILE_H */

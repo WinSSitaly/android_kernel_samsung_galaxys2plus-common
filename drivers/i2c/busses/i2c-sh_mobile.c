@@ -543,7 +543,11 @@ static int sh_mobile_i2c_hook_irqs(struct platform_device *dev, int hook)
 
 	while ((res = platform_get_resource(dev, IORESOURCE_IRQ, k))) {
 		for (n = res->start; hook && n <= res->end; n++) {
+<<<<<<< HEAD
 			if (request_irq(n, sh_mobile_i2c_isr, 0,
+=======
+			if (request_irq(n, sh_mobile_i2c_isr, IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					dev_name(&dev->dev), dev)) {
 				for (n--; n >= res->start; n--)
 					free_irq(n, dev);

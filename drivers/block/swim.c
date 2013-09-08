@@ -26,6 +26,10 @@
 #include <linux/delay.h>
 #include <linux/platform_device.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/macintosh.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mac_via.h>
 
 #define CARDNAME "swim"

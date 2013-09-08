@@ -7,12 +7,16 @@
 #ifndef __LINUX_MFD_TC3589x_H
 #define __LINUX_MFD_TC3589x_H
 
+<<<<<<< HEAD
 struct device;
 
 enum tx3589x_block {
 	TC3589x_BLOCK_GPIO        = 1 << 0,
 	TC3589x_BLOCK_KEYPAD      = 1 << 1,
 };
+=======
+#include <linux/device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define TC3589x_RSTCTRL_IRQRST	(1 << 4)
 #define TC3589x_RSTCTRL_TIMRST	(1 << 3)
@@ -177,13 +181,19 @@ struct tc3589x_gpio_platform_data {
 
 /**
  * struct tc3589x_platform_data - TC3589x platform data
+<<<<<<< HEAD
  * @block: bitmask of blocks to enable (use TC3589x_BLOCK_*)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @irq_base: base IRQ number.  %TC3589x_NR_IRQS irqs will be used.
  * @gpio: GPIO-specific platform data
  * @keypad: keypad-specific platform data
  */
 struct tc3589x_platform_data {
+<<<<<<< HEAD
 	unsigned int block;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int irq_base;
 	struct tc3589x_gpio_platform_data *gpio;
 	const struct tc3589x_keypad_platform_data *keypad;

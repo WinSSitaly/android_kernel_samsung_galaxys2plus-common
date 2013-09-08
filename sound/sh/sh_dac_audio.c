@@ -27,7 +27,10 @@
 #include <linux/io.h>
 #include <linux/platform_device.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/initval.h>
 #include <sound/pcm.h>
@@ -441,4 +444,19 @@ static struct platform_driver driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(driver);
+=======
+static int __init sh_dac_init(void)
+{
+	return platform_driver_register(&driver);
+}
+
+static void __exit sh_dac_exit(void)
+{
+	platform_driver_unregister(&driver);
+}
+
+module_init(sh_dac_init);
+module_exit(sh_dac_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

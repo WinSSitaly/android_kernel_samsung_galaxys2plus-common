@@ -2,6 +2,9 @@ TODO:
 	- more discussion about the protocol
 	- testing
 	- review of the userspace interface
+<<<<<<< HEAD
 	- document the protocol
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 Please send patches for this code to Greg Kroah-Hartman <greg@kroah.com>

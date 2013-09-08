@@ -657,6 +657,10 @@ struct caam_full {
 	u64 rsvd[512];
 	struct caam_assurance assure;
 	struct caam_queue_if qi;
+<<<<<<< HEAD
+=======
+	struct caam_deco *deco;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif /* REGS_H */

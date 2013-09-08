@@ -2,6 +2,7 @@
 #define _ASM_X86_SIGINFO_H
 
 #ifdef __x86_64__
+<<<<<<< HEAD
 # ifdef __ILP32__ /* x32 */
 typedef long long __kernel_si_clock_t __attribute__((aligned(4)));
 #  define __ARCH_SI_CLOCK_T		__kernel_si_clock_t
@@ -9,6 +10,9 @@ typedef long long __kernel_si_clock_t __attribute__((aligned(4)));
 # else /* x86-64 */
 #  define __ARCH_SI_PREAMBLE_SIZE	(4 * sizeof(int))
 # endif
+=======
+# define __ARCH_SI_PREAMBLE_SIZE	(4 * sizeof(int))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #include <asm-generic/siginfo.h>

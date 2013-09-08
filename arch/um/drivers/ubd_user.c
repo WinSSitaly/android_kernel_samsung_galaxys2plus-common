@@ -15,12 +15,24 @@
 #include <sys/socket.h>
 #include <sys/mman.h>
 #include <sys/param.h>
+<<<<<<< HEAD
 #include <endian.h>
 #include <byteswap.h>
 
 #include "ubd.h"
 #include "os.h"
 
+=======
+#include "asm/types.h"
+#include "user.h"
+#include "ubd_user.h"
+#include "os.h"
+#include "cow.h"
+
+#include <endian.h>
+#include <byteswap.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void ignore_sigwinch_sig(void)
 {
 	signal(SIGWINCH, SIG_IGN);

@@ -357,7 +357,11 @@ static inline u32 s6dmac_channel_enabled(u32 dmac, int chan)
 static inline void s6dmac_dp_setup_group(u32 dmac, int port,
 			int nrch, int frrep)
 {
+<<<<<<< HEAD
 	static const u8 mask[4] = {0, 3, 1, 2};
+=======
+	const static u8 mask[4] = {0, 3, 1, 2};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BUG_ON(dmac != S6_REG_DPDMA);
 	if ((port < 0) || (port > 3) || (nrch < 1) || (nrch > 4))
 		return;

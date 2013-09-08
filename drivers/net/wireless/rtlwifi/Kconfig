@@ -12,7 +12,11 @@ config RTL8192CE
 
 config RTL8192SE
 	tristate "Realtek RTL8192SE/RTL8191SE PCIe Wireless Network Adapter"
+<<<<<<< HEAD
 	depends on MAC80211 && EXPERIMENTAL && PCI
+=======
+	depends on MAC80211 && EXPERIMENTAL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select FW_LOADER
 	select RTLWIFI
 	---help---
@@ -21,6 +25,7 @@ config RTL8192SE
 
 	If you choose to build it as a module, it will be called rtl8192se
 
+<<<<<<< HEAD
 config RTL8192DE
 	tristate "Realtek RTL8192DE/RTL8188DE PCIe Wireless Network Adapter"
 	depends on MAC80211 && EXPERIMENTAL && PCI
@@ -32,6 +37,8 @@ config RTL8192DE
 
 	If you choose to build it as a module, it will be called rtl8192de
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config RTL8192CU
 	tristate "Realtek RTL8192CU/RTL8188CU USB Wireless Network Adapter"
 	depends on MAC80211 && USB && EXPERIMENTAL
@@ -46,6 +53,7 @@ config RTL8192CU
 
 config RTLWIFI
 	tristate
+<<<<<<< HEAD
 	depends on RTL8192CE || RTL8192CU || RTL8192SE || RTL8192DE
 	default m
 
@@ -57,4 +65,12 @@ config RTLWIFI_DEBUG
 config RTL8192C_COMMON
 	tristate
 	depends on RTL8192CE || RTL8192CU
+=======
+	depends on RTL8192CE || RTL8192CU || RTL8192SE
+	default m
+
+config RTL8192C_COMMON
+	tristate
+	depends on RTL8192CE || RTL8192CU || RTL8192SE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default m

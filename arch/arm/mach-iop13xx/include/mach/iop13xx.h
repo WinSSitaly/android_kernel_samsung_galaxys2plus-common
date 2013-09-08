@@ -5,13 +5,19 @@
 /* The ATU offsets can change based on the strapping */
 extern u32 iop13xx_atux_pmmr_offset;
 extern u32 iop13xx_atue_pmmr_offset;
+<<<<<<< HEAD
 void iop13xx_init_early(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void iop13xx_init_irq(void);
 void iop13xx_map_io(void);
 void iop13xx_platform_init(void);
 void iop13xx_add_tpmi_devices(void);
 void iop13xx_init_irq(void);
+<<<<<<< HEAD
 void iop13xx_restart(char, const char *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* CPUID CP6 R0 Page 0 */
 static inline int iop13xx_cpu_id(void)

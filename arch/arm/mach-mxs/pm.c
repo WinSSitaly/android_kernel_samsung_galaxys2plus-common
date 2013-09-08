@@ -15,12 +15,20 @@
 #include <linux/kernel.h>
 #include <linux/suspend.h>
 #include <linux/io.h>
+<<<<<<< HEAD
+=======
+#include <mach/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int mxs_suspend_enter(suspend_state_t state)
 {
 	switch (state) {
 	case PM_SUSPEND_MEM:
+<<<<<<< HEAD
 		cpu_do_idle();
+=======
+		arch_idle();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	default:

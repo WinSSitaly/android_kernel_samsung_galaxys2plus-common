@@ -46,7 +46,11 @@
 #define PRESENT         1	/* Card in slot */
 
 #define MY_NAME "rpaphp"
+<<<<<<< HEAD
 extern bool rpaphp_debug;
+=======
+extern int rpaphp_debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define dbg(format, arg...)					\
 	do {							\
 		if (rpaphp_debug)					\

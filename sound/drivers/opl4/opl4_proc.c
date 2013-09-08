@@ -19,7 +19,10 @@
 
 #include "opl4_local.h"
 #include <linux/vmalloc.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/info.h>
 
 #ifdef CONFIG_PROC_FS

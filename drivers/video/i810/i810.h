@@ -137,7 +137,11 @@
 #define DRAM_ON                     0x08            
 #define DRAM_OFF                    0xE7
 #define PG_ENABLE_MASK              0x01
+<<<<<<< HEAD
 #define RING_SIZE_MASK              (RINGBUFFER_SIZE - 1)
+=======
+#define RING_SIZE_MASK              (RINGBUFFER_SIZE - 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* defines for restoring registers partially */
 #define ADDR_MAP_MASK               (0x07 << 5)

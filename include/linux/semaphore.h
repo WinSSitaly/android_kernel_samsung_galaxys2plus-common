@@ -14,14 +14,22 @@
 
 /* Please don't access any members of this structure directly */
 struct semaphore {
+<<<<<<< HEAD
 	raw_spinlock_t		lock;
+=======
+	spinlock_t		lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int		count;
 	struct list_head	wait_list;
 };
 
 #define __SEMAPHORE_INITIALIZER(name, n)				\
 {									\
+<<<<<<< HEAD
 	.lock		= __RAW_SPIN_LOCK_UNLOCKED((name).lock),	\
+=======
+	.lock		= __SPIN_LOCK_UNLOCKED((name).lock),		\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.count		= n,						\
 	.wait_list	= LIST_HEAD_INIT((name).wait_list),		\
 }

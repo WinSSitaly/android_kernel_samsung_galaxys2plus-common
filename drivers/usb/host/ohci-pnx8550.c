@@ -107,7 +107,11 @@ int usb_hcd_pnx8550_probe (const struct hc_driver *driver,
 
 	ohci_hcd_init(hcd_to_ohci(hcd));
 
+<<<<<<< HEAD
 	retval = usb_add_hcd(hcd, dev->resource[1].start, 0);
+=======
+	retval = usb_add_hcd(hcd, dev->resource[1].start, IRQF_DISABLED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval == 0)
 		return retval;
 

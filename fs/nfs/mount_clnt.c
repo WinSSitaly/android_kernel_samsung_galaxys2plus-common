@@ -16,7 +16,11 @@
 #include <linux/nfs_fs.h>
 #include "internal.h"
 
+<<<<<<< HEAD
 #ifdef NFS_DEBUG
+=======
+#ifdef RPC_DEBUG
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # define NFSDBG_FACILITY	NFSDBG_MOUNT
 #endif
 
@@ -67,7 +71,11 @@ enum {
 	MOUNTPROC3_EXPORT	= 5,
 };
 
+<<<<<<< HEAD
 static const struct rpc_program mnt_program;
+=======
+static struct rpc_program	mnt_program;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Defined by OpenGroup XNFS Version 3W, chapter 8
@@ -153,7 +161,11 @@ int nfs_mount(struct nfs_mount_request *info)
 		.rpc_resp	= &result,
 	};
 	struct rpc_create_args args = {
+<<<<<<< HEAD
 		.net		= info->net,
+=======
+		.net		= &init_net,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.protocol	= info->protocol,
 		.address	= info->sap,
 		.addrsize	= info->salen,
@@ -181,7 +193,11 @@ int nfs_mount(struct nfs_mount_request *info)
 	else
 		msg.rpc_proc = &mnt_clnt->cl_procinfo[MOUNTPROC_MNT];
 
+<<<<<<< HEAD
 	status = rpc_call_sync(mnt_clnt, &msg, RPC_TASK_SOFT|RPC_TASK_TIMEOUT);
+=======
+	status = rpc_call_sync(mnt_clnt, &msg, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rpc_shutdown_client(mnt_clnt);
 
 	if (status < 0)
@@ -225,7 +241,11 @@ void nfs_umount(const struct nfs_mount_request *info)
 		.to_retries = 2,
 	};
 	struct rpc_create_args args = {
+<<<<<<< HEAD
 		.net		= info->net,
+=======
+		.net		= &init_net,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.protocol	= IPPROTO_UDP,
 		.address	= info->sap,
 		.addrsize	= info->salen,
@@ -488,19 +508,31 @@ static struct rpc_procinfo mnt3_procedures[] = {
 };
 
 
+<<<<<<< HEAD
 static const struct rpc_version mnt_version1 = {
+=======
+static struct rpc_version mnt_version1 = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.number		= 1,
 	.nrprocs	= ARRAY_SIZE(mnt_procedures),
 	.procs		= mnt_procedures,
 };
 
+<<<<<<< HEAD
 static const struct rpc_version mnt_version3 = {
+=======
+static struct rpc_version mnt_version3 = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.number		= 3,
 	.nrprocs	= ARRAY_SIZE(mnt3_procedures),
 	.procs		= mnt3_procedures,
 };
 
+<<<<<<< HEAD
 static const struct rpc_version *mnt_version[] = {
+=======
+static struct rpc_version *mnt_version[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL,
 	&mnt_version1,
 	NULL,
@@ -509,7 +541,11 @@ static const struct rpc_version *mnt_version[] = {
 
 static struct rpc_stat mnt_stats;
 
+<<<<<<< HEAD
 static const struct rpc_program mnt_program = {
+=======
+static struct rpc_program mnt_program = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name		= "mount",
 	.number		= NFS_MNT_PROGRAM,
 	.nrvers		= ARRAY_SIZE(mnt_version),

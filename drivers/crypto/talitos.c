@@ -1,7 +1,11 @@
 /*
  * talitos - Freescale Integrated Security Engine (SEC) device driver
  *
+<<<<<<< HEAD
  * Copyright (c) 2008-2011 Freescale Semiconductor, Inc.
+=======
+ * Copyright (c) 2008-2010 Freescale Semiconductor, Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Scatterlist Crypto API glue code copied from files with the following:
  * Copyright (c) 2006-2007 Herbert Xu <herbert@gondor.apana.org.au>
@@ -99,8 +103,11 @@ struct talitos_request {
 
 /* per-channel fifo management */
 struct talitos_channel {
+<<<<<<< HEAD
 	void __iomem *reg;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* request fifo */
 	struct talitos_request *fifo;
 
@@ -122,10 +129,14 @@ struct talitos_private {
 	struct device *dev;
 	struct platform_device *ofdev;
 	void __iomem *reg;
+<<<<<<< HEAD
 	int irq[2];
 
 	/* SEC global registers lock  */
 	spinlock_t reg_lock ____cacheline_aligned;
+=======
+	int irq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* SEC version geometry (from device tree node) */
 	unsigned int num_channels;
@@ -149,7 +160,11 @@ struct talitos_private {
 	atomic_t last_chan ____cacheline_aligned;
 
 	/* request callback tasklet */
+<<<<<<< HEAD
 	struct tasklet_struct done_task[2];
+=======
+	struct tasklet_struct done_task;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* list of registered algorithms */
 	struct list_head alg_list;
@@ -162,7 +177,10 @@ struct talitos_private {
 #define TALITOS_FTR_SRC_LINK_TBL_LEN_INCLUDES_EXTENT 0x00000001
 #define TALITOS_FTR_HW_AUTH_CHECK 0x00000002
 #define TALITOS_FTR_SHA224_HWINIT 0x00000004
+<<<<<<< HEAD
 #define TALITOS_FTR_HMAC_OK 0x00000008
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void to_talitos_ptr(struct talitos_ptr *talitos_ptr, dma_addr_t dma_addr)
 {
@@ -202,9 +220,15 @@ static int reset_channel(struct device *dev, int ch)
 	struct talitos_private *priv = dev_get_drvdata(dev);
 	unsigned int timeout = TALITOS_TIMEOUT;
 
+<<<<<<< HEAD
 	setbits32(priv->chan[ch].reg + TALITOS_CCCR, TALITOS_CCCR_RESET);
 
 	while ((in_be32(priv->chan[ch].reg + TALITOS_CCCR) & TALITOS_CCCR_RESET)
+=======
+	setbits32(priv->reg + TALITOS_CCCR(ch), TALITOS_CCCR_RESET);
+
+	while ((in_be32(priv->reg + TALITOS_CCCR(ch)) & TALITOS_CCCR_RESET)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       && --timeout)
 		cpu_relax();
 
@@ -214,12 +238,20 @@ static int reset_channel(struct device *dev, int ch)
 	}
 
 	/* set 36-bit addressing, done writeback enable and done IRQ enable */
+<<<<<<< HEAD
 	setbits32(priv->chan[ch].reg + TALITOS_CCCR_LO, TALITOS_CCCR_LO_EAE |
+=======
+	setbits32(priv->reg + TALITOS_CCCR_LO(ch), TALITOS_CCCR_LO_EAE |
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  TALITOS_CCCR_LO_CDWE | TALITOS_CCCR_LO_CDIE);
 
 	/* and ICCR writeback, if available */
 	if (priv->features & TALITOS_FTR_HW_AUTH_CHECK)
+<<<<<<< HEAD
 		setbits32(priv->chan[ch].reg + TALITOS_CCCR_LO,
+=======
+		setbits32(priv->reg + TALITOS_CCCR_LO(ch),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		          TALITOS_CCCR_LO_IWSE);
 
 	return 0;
@@ -229,19 +261,27 @@ static int reset_device(struct device *dev)
 {
 	struct talitos_private *priv = dev_get_drvdata(dev);
 	unsigned int timeout = TALITOS_TIMEOUT;
+<<<<<<< HEAD
 	u32 mcr = TALITOS_MCR_SWR;
 
 	setbits32(priv->reg + TALITOS_MCR, mcr);
+=======
+
+	setbits32(priv->reg + TALITOS_MCR, TALITOS_MCR_SWR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while ((in_be32(priv->reg + TALITOS_MCR) & TALITOS_MCR_SWR)
 	       && --timeout)
 		cpu_relax();
 
+<<<<<<< HEAD
 	if (priv->irq[1]) {
 		mcr = TALITOS_MCR_RCA1 | TALITOS_MCR_RCA3;
 		setbits32(priv->reg + TALITOS_MCR, mcr);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (timeout == 0) {
 		dev_err(dev, "failed to reset device\n");
 		return -EIO;
@@ -294,7 +334,10 @@ static int init_device(struct device *dev)
 /**
  * talitos_submit - submits a descriptor to the device for processing
  * @dev:	the SEC device to be used
+<<<<<<< HEAD
  * @ch:		the SEC device channel to be used
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @desc:	the descriptor to be processed by the device
  * @callback:	whom to call when processing is complete
  * @context:	a handle for use by caller (optional)
@@ -303,7 +346,11 @@ static int init_device(struct device *dev)
  * callback must check err and feedback in descriptor header
  * for device processing status.
  */
+<<<<<<< HEAD
 static int talitos_submit(struct device *dev, int ch, struct talitos_desc *desc,
+=======
+static int talitos_submit(struct device *dev, struct talitos_desc *desc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  void (*callback)(struct device *dev,
 					   struct talitos_desc *desc,
 					   void *context, int error),
@@ -311,9 +358,21 @@ static int talitos_submit(struct device *dev, int ch, struct talitos_desc *desc,
 {
 	struct talitos_private *priv = dev_get_drvdata(dev);
 	struct talitos_request *request;
+<<<<<<< HEAD
 	unsigned long flags;
 	int head;
 
+=======
+	unsigned long flags, ch;
+	int head;
+
+	/* select done notification */
+	desc->hdr |= DESC_HDR_DONE_NOTIFY;
+
+	/* emulate SEC's round-robin channel fifo polling scheme */
+	ch = atomic_inc_return(&priv->last_chan) & (priv->num_channels - 1);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&priv->chan[ch].head_lock, flags);
 
 	if (!atomic_inc_not_zero(&priv->chan[ch].submit_count)) {
@@ -339,9 +398,14 @@ static int talitos_submit(struct device *dev, int ch, struct talitos_desc *desc,
 
 	/* GO! */
 	wmb();
+<<<<<<< HEAD
 	out_be32(priv->chan[ch].reg + TALITOS_FF,
 		 upper_32_bits(request->dma_desc));
 	out_be32(priv->chan[ch].reg + TALITOS_FF_LO,
+=======
+	out_be32(priv->reg + TALITOS_FF(ch), upper_32_bits(request->dma_desc));
+	out_be32(priv->reg + TALITOS_FF_LO(ch),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 lower_32_bits(request->dma_desc));
 
 	spin_unlock_irqrestore(&priv->chan[ch].head_lock, flags);
@@ -410,6 +474,7 @@ static void flush_channel(struct device *dev, int ch, int error, int reset_ch)
 /*
  * process completed requests for channels that have done status
  */
+<<<<<<< HEAD
 #define DEF_TALITOS_DONE(name, ch_done_mask)				\
 static void talitos_done_##name(unsigned long data)			\
 {									\
@@ -439,41 +504,83 @@ out:									\
 DEF_TALITOS_DONE(4ch, TALITOS_ISR_4CHDONE)
 DEF_TALITOS_DONE(ch0_2, TALITOS_ISR_CH_0_2_DONE)
 DEF_TALITOS_DONE(ch1_3, TALITOS_ISR_CH_1_3_DONE)
+=======
+static void talitos_done(unsigned long data)
+{
+	struct device *dev = (struct device *)data;
+	struct talitos_private *priv = dev_get_drvdata(dev);
+	int ch;
+
+	for (ch = 0; ch < priv->num_channels; ch++)
+		flush_channel(dev, ch, 0, 0);
+
+	/* At this point, all completed channels have been processed.
+	 * Unmask done interrupts for channels completed later on.
+	 */
+	setbits32(priv->reg + TALITOS_IMR, TALITOS_IMR_INIT);
+	setbits32(priv->reg + TALITOS_IMR_LO, TALITOS_IMR_LO_INIT);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * locate current (offending) descriptor
  */
+<<<<<<< HEAD
 static u32 current_desc_hdr(struct device *dev, int ch)
+=======
+static struct talitos_desc *current_desc(struct device *dev, int ch)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct talitos_private *priv = dev_get_drvdata(dev);
 	int tail = priv->chan[ch].tail;
 	dma_addr_t cur_desc;
 
+<<<<<<< HEAD
 	cur_desc = in_be32(priv->chan[ch].reg + TALITOS_CDPR_LO);
+=======
+	cur_desc = in_be32(priv->reg + TALITOS_CDPR_LO(ch));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (priv->chan[ch].fifo[tail].dma_desc != cur_desc) {
 		tail = (tail + 1) & (priv->fifo_len - 1);
 		if (tail == priv->chan[ch].tail) {
 			dev_err(dev, "couldn't locate current descriptor\n");
+<<<<<<< HEAD
 			return 0;
 		}
 	}
 
 	return priv->chan[ch].fifo[tail].desc->hdr;
+=======
+			return NULL;
+		}
+	}
+
+	return priv->chan[ch].fifo[tail].desc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * user diagnostics; report root cause of error based on execution unit status
  */
+<<<<<<< HEAD
 static void report_eu_error(struct device *dev, int ch, u32 desc_hdr)
+=======
+static void report_eu_error(struct device *dev, int ch,
+			    struct talitos_desc *desc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct talitos_private *priv = dev_get_drvdata(dev);
 	int i;
 
+<<<<<<< HEAD
 	if (!desc_hdr)
 		desc_hdr = in_be32(priv->chan[ch].reg + TALITOS_DESCBUF);
 
 	switch (desc_hdr & DESC_HDR_SEL0_MASK) {
+=======
+	switch (desc->hdr & DESC_HDR_SEL0_MASK) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case DESC_HDR_SEL0_AFEU:
 		dev_err(dev, "AFEUISR 0x%08x_%08x\n",
 			in_be32(priv->reg + TALITOS_AFEUISR),
@@ -517,7 +624,11 @@ static void report_eu_error(struct device *dev, int ch, u32 desc_hdr)
 		break;
 	}
 
+<<<<<<< HEAD
 	switch (desc_hdr & DESC_HDR_SEL1_MASK) {
+=======
+	switch (desc->hdr & DESC_HDR_SEL1_MASK) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case DESC_HDR_SEL1_MDEUA:
 	case DESC_HDR_SEL1_MDEUB:
 		dev_err(dev, "MDEUISR 0x%08x_%08x\n",
@@ -533,15 +644,26 @@ static void report_eu_error(struct device *dev, int ch, u32 desc_hdr)
 
 	for (i = 0; i < 8; i++)
 		dev_err(dev, "DESCBUF 0x%08x_%08x\n",
+<<<<<<< HEAD
 			in_be32(priv->chan[ch].reg + TALITOS_DESCBUF + 8*i),
 			in_be32(priv->chan[ch].reg + TALITOS_DESCBUF_LO + 8*i));
+=======
+			in_be32(priv->reg + TALITOS_DESCBUF(ch) + 8*i),
+			in_be32(priv->reg + TALITOS_DESCBUF_LO(ch) + 8*i));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * recover from error interrupts
  */
+<<<<<<< HEAD
 static void talitos_error(struct device *dev, u32 isr, u32 isr_lo)
 {
+=======
+static void talitos_error(unsigned long data, u32 isr, u32 isr_lo)
+{
+	struct device *dev = (struct device *)data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct talitos_private *priv = dev_get_drvdata(dev);
 	unsigned int timeout = TALITOS_TIMEOUT;
 	int ch, error, reset_dev = 0, reset_ch = 0;
@@ -554,8 +676,13 @@ static void talitos_error(struct device *dev, u32 isr, u32 isr_lo)
 
 		error = -EINVAL;
 
+<<<<<<< HEAD
 		v = in_be32(priv->chan[ch].reg + TALITOS_CCPSR);
 		v_lo = in_be32(priv->chan[ch].reg + TALITOS_CCPSR_LO);
+=======
+		v = in_be32(priv->reg + TALITOS_CCPSR(ch));
+		v_lo = in_be32(priv->reg + TALITOS_CCPSR_LO(ch));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (v_lo & TALITOS_CCPSR_LO_DOF) {
 			dev_err(dev, "double fetch fifo overflow error\n");
@@ -578,7 +705,11 @@ static void talitos_error(struct device *dev, u32 isr, u32 isr_lo)
 		if (v_lo & TALITOS_CCPSR_LO_IEU)
 			dev_err(dev, "invalid execution unit error\n");
 		if (v_lo & TALITOS_CCPSR_LO_EU)
+<<<<<<< HEAD
 			report_eu_error(dev, ch, current_desc_hdr(dev, ch));
+=======
+			report_eu_error(dev, ch, current_desc(dev, ch));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (v_lo & TALITOS_CCPSR_LO_GB)
 			dev_err(dev, "gather boundary error\n");
 		if (v_lo & TALITOS_CCPSR_LO_GRL)
@@ -593,10 +724,17 @@ static void talitos_error(struct device *dev, u32 isr, u32 isr_lo)
 		if (reset_ch) {
 			reset_channel(dev, ch);
 		} else {
+<<<<<<< HEAD
 			setbits32(priv->chan[ch].reg + TALITOS_CCCR,
 				  TALITOS_CCCR_CONT);
 			setbits32(priv->chan[ch].reg + TALITOS_CCCR_LO, 0);
 			while ((in_be32(priv->chan[ch].reg + TALITOS_CCCR) &
+=======
+			setbits32(priv->reg + TALITOS_CCCR(ch),
+				  TALITOS_CCCR_CONT);
+			setbits32(priv->reg + TALITOS_CCCR_LO(ch), 0);
+			while ((in_be32(priv->reg + TALITOS_CCCR(ch)) &
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       TALITOS_CCCR_CONT) && --timeout)
 				cpu_relax();
 			if (timeout == 0) {
@@ -606,7 +744,11 @@ static void talitos_error(struct device *dev, u32 isr, u32 isr_lo)
 			}
 		}
 	}
+<<<<<<< HEAD
 	if (reset_dev || isr & ~TALITOS_ISR_4CHERR || isr_lo) {
+=======
+	if (reset_dev || isr & ~TALITOS_ISR_CHERR || isr_lo) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_err(dev, "done overflow, internal time out, or rngu error: "
 		        "ISR 0x%08x_%08x\n", isr, isr_lo);
 
@@ -619,6 +761,7 @@ static void talitos_error(struct device *dev, u32 isr, u32 isr_lo)
 	}
 }
 
+<<<<<<< HEAD
 #define DEF_TALITOS_INTERRUPT(name, ch_done_mask, ch_err_mask, tlet)	       \
 static irqreturn_t talitos_interrupt_##name(int irq, void *data)	       \
 {									       \
@@ -654,6 +797,32 @@ static irqreturn_t talitos_interrupt_##name(int irq, void *data)	       \
 DEF_TALITOS_INTERRUPT(4ch, TALITOS_ISR_4CHDONE, TALITOS_ISR_4CHERR, 0)
 DEF_TALITOS_INTERRUPT(ch0_2, TALITOS_ISR_CH_0_2_DONE, TALITOS_ISR_CH_0_2_ERR, 0)
 DEF_TALITOS_INTERRUPT(ch1_3, TALITOS_ISR_CH_1_3_DONE, TALITOS_ISR_CH_1_3_ERR, 1)
+=======
+static irqreturn_t talitos_interrupt(int irq, void *data)
+{
+	struct device *dev = data;
+	struct talitos_private *priv = dev_get_drvdata(dev);
+	u32 isr, isr_lo;
+
+	isr = in_be32(priv->reg + TALITOS_ISR);
+	isr_lo = in_be32(priv->reg + TALITOS_ISR_LO);
+	/* Acknowledge interrupt */
+	out_be32(priv->reg + TALITOS_ICR, isr);
+	out_be32(priv->reg + TALITOS_ICR_LO, isr_lo);
+
+	if (unlikely((isr & ~TALITOS_ISR_CHDONE) || isr_lo))
+		talitos_error((unsigned long)data, isr, isr_lo);
+	else
+		if (likely(isr & TALITOS_ISR_CHDONE)) {
+			/* mask further done interrupts. */
+			clrbits32(priv->reg + TALITOS_IMR, TALITOS_IMR_DONE);
+			/* done_task will unmask done interrupts at exit */
+			tasklet_schedule(&priv->done_task);
+		}
+
+	return (isr || isr_lo) ? IRQ_HANDLED : IRQ_NONE;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * hwrng
@@ -740,7 +909,10 @@ static void talitos_unregister_rng(struct device *dev)
 
 struct talitos_ctx {
 	struct device *dev;
+<<<<<<< HEAD
 	int ch;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__be32 desc_hdr_template;
 	u8 key[TALITOS_MAX_KEY_SIZE];
 	u8 iv[TALITOS_MAX_IV_LENGTH];
@@ -1152,7 +1324,11 @@ static int ipsec_esp(struct talitos_edesc *edesc, struct aead_request *areq,
 	map_single_talitos_ptr(dev, &desc->ptr[6], ivsize, ctx->iv, 0,
 			       DMA_FROM_DEVICE);
 
+<<<<<<< HEAD
 	ret = talitos_submit(dev, ctx->ch, desc, callback, areq);
+=======
+	ret = talitos_submit(dev, desc, callback, areq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret != -EINPROGRESS) {
 		ipsec_esp_unmap(dev, edesc, areq);
 		kfree(edesc);
@@ -1417,11 +1593,28 @@ static int ablkcipher_setkey(struct crypto_ablkcipher *cipher,
 			     const u8 *key, unsigned int keylen)
 {
 	struct talitos_ctx *ctx = crypto_ablkcipher_ctx(cipher);
+<<<<<<< HEAD
+=======
+	struct ablkcipher_alg *alg = crypto_ablkcipher_alg(cipher);
+
+	if (keylen > TALITOS_MAX_KEY_SIZE)
+		goto badkey;
+
+	if (keylen < alg->min_keysize || keylen > alg->max_keysize)
+		goto badkey;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memcpy(&ctx->key, key, keylen);
 	ctx->keylen = keylen;
 
 	return 0;
+<<<<<<< HEAD
+=======
+
+badkey:
+	crypto_ablkcipher_set_flags(cipher, CRYPTO_TFM_RES_BAD_KEY_LEN);
+	return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void common_nonsnoop_unmap(struct device *dev,
@@ -1457,6 +1650,10 @@ static void ablkcipher_done(struct device *dev,
 
 static int common_nonsnoop(struct talitos_edesc *edesc,
 			   struct ablkcipher_request *areq,
+<<<<<<< HEAD
+=======
+			   u8 *giv,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   void (*callback) (struct device *dev,
 					     struct talitos_desc *desc,
 					     void *context, int error))
@@ -1476,7 +1673,11 @@ static int common_nonsnoop(struct talitos_edesc *edesc,
 
 	/* cipher iv */
 	ivsize = crypto_ablkcipher_ivsize(cipher);
+<<<<<<< HEAD
 	map_single_talitos_ptr(dev, &desc->ptr[1], ivsize, areq->info, 0,
+=======
+	map_single_talitos_ptr(dev, &desc->ptr[1], ivsize, giv ?: areq->info, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       DMA_TO_DEVICE);
 
 	/* cipher key */
@@ -1547,7 +1748,11 @@ static int common_nonsnoop(struct talitos_edesc *edesc,
 	to_talitos_ptr(&desc->ptr[6], 0);
 	desc->ptr[6].j_extent = 0;
 
+<<<<<<< HEAD
 	ret = talitos_submit(dev, ctx->ch, desc, callback, areq);
+=======
+	ret = talitos_submit(dev, desc, callback, areq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret != -EINPROGRESS) {
 		common_nonsnoop_unmap(dev, edesc, areq);
 		kfree(edesc);
@@ -1579,7 +1784,11 @@ static int ablkcipher_encrypt(struct ablkcipher_request *areq)
 	/* set encrypt */
 	edesc->desc.hdr = ctx->desc_hdr_template | DESC_HDR_MODE0_ENCRYPT;
 
+<<<<<<< HEAD
 	return common_nonsnoop(edesc, areq, ablkcipher_done);
+=======
+	return common_nonsnoop(edesc, areq, NULL, ablkcipher_done);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ablkcipher_decrypt(struct ablkcipher_request *areq)
@@ -1595,7 +1804,11 @@ static int ablkcipher_decrypt(struct ablkcipher_request *areq)
 
 	edesc->desc.hdr = ctx->desc_hdr_template | DESC_HDR_DIR_INBOUND;
 
+<<<<<<< HEAD
 	return common_nonsnoop(edesc, areq, ablkcipher_done);
+=======
+	return common_nonsnoop(edesc, areq, NULL, ablkcipher_done);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void common_nonsnoop_hash_unmap(struct device *dev,
@@ -1726,7 +1939,11 @@ static int common_nonsnoop_hash(struct talitos_edesc *edesc,
 	/* last DWORD empty */
 	desc->ptr[6] = zero_entry;
 
+<<<<<<< HEAD
 	ret = talitos_submit(dev, ctx->ch, desc, callback, areq);
+=======
+	ret = talitos_submit(dev, desc, callback, areq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret != -EINPROGRESS) {
 		common_nonsnoop_hash_unmap(dev, edesc, areq);
 		kfree(edesc);
@@ -1911,6 +2128,7 @@ static int ahash_digest(struct ahash_request *areq)
 	return ahash_process_req(areq, areq->nbytes);
 }
 
+<<<<<<< HEAD
 struct keyhash_result {
 	struct completion completion;
 	int err;
@@ -2002,6 +2220,8 @@ static int ahash_setkey(struct crypto_ahash *tfm, const u8 *key,
 }
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct talitos_alg_template {
 	u32 type;
 	union {
@@ -2345,6 +2565,7 @@ static struct talitos_alg_template driver_algs[] = {
 				     DESC_HDR_SEL0_MDEUB |
 				     DESC_HDR_MODE0_MDEUB_SHA512,
 	},
+<<<<<<< HEAD
 	{	.type = CRYPTO_ALG_TYPE_AHASH,
 		.alg.hash = {
 			.init = ahash_init,
@@ -2477,6 +2698,8 @@ static struct talitos_alg_template driver_algs[] = {
 				     DESC_HDR_SEL0_MDEUB |
 				     DESC_HDR_MODE0_MDEUB_SHA512,
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct talitos_crypto_alg {
@@ -2490,7 +2713,10 @@ static int talitos_cra_init(struct crypto_tfm *tfm)
 	struct crypto_alg *alg = tfm->__crt_alg;
 	struct talitos_crypto_alg *talitos_alg;
 	struct talitos_ctx *ctx = crypto_tfm_ctx(tfm);
+<<<<<<< HEAD
 	struct talitos_private *priv;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((alg->cra_flags & CRYPTO_ALG_TYPE_MASK) == CRYPTO_ALG_TYPE_AHASH)
 		talitos_alg = container_of(__crypto_ahash_alg(alg),
@@ -2503,6 +2729,7 @@ static int talitos_cra_init(struct crypto_tfm *tfm)
 	/* update context with ptr to dev */
 	ctx->dev = talitos_alg->dev;
 
+<<<<<<< HEAD
 	/* assign SEC channel to tfm in round-robin fashion */
 	priv = dev_get_drvdata(ctx->dev);
 	ctx->ch = atomic_inc_return(&priv->last_chan) &
@@ -2514,6 +2741,11 @@ static int talitos_cra_init(struct crypto_tfm *tfm)
 	/* select done notification */
 	ctx->desc_hdr_template |= DESC_HDR_DONE_NOTIFY;
 
+=======
+	/* copy descriptor header template value */
+	ctx->desc_hdr_template = talitos_alg->algt.desc_hdr_template;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -2591,6 +2823,7 @@ static int talitos_remove(struct platform_device *ofdev)
 
 	kfree(priv->chan);
 
+<<<<<<< HEAD
 	for (i = 0; i < 2; i++)
 		if (priv->irq[i]) {
 			free_irq(priv->irq[i], dev);
@@ -2600,6 +2833,14 @@ static int talitos_remove(struct platform_device *ofdev)
 	tasklet_kill(&priv->done_task[0]);
 	if (priv->irq[1])
 		tasklet_kill(&priv->done_task[1]);
+=======
+	if (priv->irq != NO_IRQ) {
+		free_irq(priv->irq, dev);
+		irq_dispose_mapping(priv->irq);
+	}
+
+	tasklet_kill(&priv->done_task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	iounmap(priv->reg);
 
@@ -2636,6 +2877,7 @@ static struct talitos_crypto_alg *talitos_alg_alloc(struct device *dev,
 	case CRYPTO_ALG_TYPE_AHASH:
 		alg = &t_alg->algt.alg.hash.halg.base;
 		alg->cra_init = talitos_cra_init_ahash;
+<<<<<<< HEAD
 		if (!(priv->features & TALITOS_FTR_HMAC_OK) &&
 		    !strncmp(alg->cra_name, "hmac", 4)) {
 			kfree(t_alg);
@@ -2644,6 +2886,10 @@ static struct talitos_crypto_alg *talitos_alg_alloc(struct device *dev,
 		if (!(priv->features & TALITOS_FTR_SHA224_HWINIT) &&
 		    (!strcmp(alg->cra_name, "sha224") ||
 		     !strcmp(alg->cra_name, "hmac(sha224)"))) {
+=======
+		if (!(priv->features & TALITOS_FTR_SHA224_HWINIT) &&
+		    !strcmp(alg->cra_name, "sha224")) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			t_alg->algt.alg.hash.init = ahash_init_sha224_swinit;
 			t_alg->algt.desc_hdr_template =
 					DESC_HDR_TYPE_COMMON_NONSNOOP_NO_AFEU |
@@ -2660,13 +2906,17 @@ static struct talitos_crypto_alg *talitos_alg_alloc(struct device *dev,
 	alg->cra_priority = TALITOS_CRA_PRIORITY;
 	alg->cra_alignmask = 0;
 	alg->cra_ctxsize = sizeof(struct talitos_ctx);
+<<<<<<< HEAD
 	alg->cra_flags |= CRYPTO_ALG_KERN_DRIVER_ONLY;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	t_alg->dev = dev;
 
 	return t_alg;
 }
 
+<<<<<<< HEAD
 static int talitos_probe_irq(struct platform_device *ofdev)
 {
 	struct device *dev = &ofdev->dev;
@@ -2715,6 +2965,8 @@ primary_out:
 	return err;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int talitos_probe(struct platform_device *ofdev)
 {
 	struct device *dev = &ofdev->dev;
@@ -2731,6 +2983,7 @@ static int talitos_probe(struct platform_device *ofdev)
 
 	priv->ofdev = ofdev;
 
+<<<<<<< HEAD
 	spin_lock_init(&priv->reg_lock);
 
 	err = talitos_probe_irq(ofdev);
@@ -2748,6 +3001,29 @@ static int talitos_probe(struct platform_device *ofdev)
 	}
 
 	INIT_LIST_HEAD(&priv->alg_list);
+=======
+	tasklet_init(&priv->done_task, talitos_done, (unsigned long)dev);
+
+	INIT_LIST_HEAD(&priv->alg_list);
+
+	priv->irq = irq_of_parse_and_map(np, 0);
+
+	if (priv->irq == NO_IRQ) {
+		dev_err(dev, "failed to map irq\n");
+		err = -EINVAL;
+		goto err_out;
+	}
+
+	/* get the irq line */
+	err = request_irq(priv->irq, talitos_interrupt, 0,
+			  dev_driver_string(dev), dev);
+	if (err) {
+		dev_err(dev, "failed to request irq %d\n", priv->irq);
+		irq_dispose_mapping(priv->irq);
+		priv->irq = NO_IRQ;
+		goto err_out;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	priv->reg = of_iomap(np, 0);
 	if (!priv->reg) {
@@ -2785,8 +3061,12 @@ static int talitos_probe(struct platform_device *ofdev)
 
 	if (of_device_is_compatible(np, "fsl,sec2.1"))
 		priv->features |= TALITOS_FTR_HW_AUTH_CHECK |
+<<<<<<< HEAD
 				  TALITOS_FTR_SHA224_HWINIT |
 				  TALITOS_FTR_HMAC_OK;
+=======
+				  TALITOS_FTR_SHA224_HWINIT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	priv->chan = kzalloc(sizeof(struct talitos_channel) *
 			     priv->num_channels, GFP_KERNEL);
@@ -2797,12 +3077,15 @@ static int talitos_probe(struct platform_device *ofdev)
 	}
 
 	for (i = 0; i < priv->num_channels; i++) {
+<<<<<<< HEAD
 		priv->chan[i].reg = priv->reg + TALITOS_CH_STRIDE * (i + 1);
 		if (!priv->irq[1] || !(i & 1))
 			priv->chan[i].reg += TALITOS_CH_BASE_OFFSET;
 	}
 
 	for (i = 0; i < priv->num_channels; i++) {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_lock_init(&priv->chan[i].head_lock);
 		spin_lock_init(&priv->chan[i].tail_lock);
 	}
@@ -2851,8 +3134,11 @@ static int talitos_probe(struct platform_device *ofdev)
 			t_alg = talitos_alg_alloc(dev, &driver_algs[i]);
 			if (IS_ERR(t_alg)) {
 				err = PTR_ERR(t_alg);
+<<<<<<< HEAD
 				if (err == -ENOTSUPP)
 					continue;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto err_out;
 			}
 
@@ -2874,6 +3160,7 @@ static int talitos_probe(struct platform_device *ofdev)
 				dev_err(dev, "%s alg registration failed\n",
 					name);
 				kfree(t_alg);
+<<<<<<< HEAD
 			} else
 				list_add_tail(&t_alg->entry, &priv->alg_list);
 		}
@@ -2881,6 +3168,14 @@ static int talitos_probe(struct platform_device *ofdev)
 	if (!list_empty(&priv->alg_list))
 		dev_info(dev, "%s algorithms registered in /proc/crypto\n",
 			 (char *)of_get_property(np, "compatible", NULL));
+=======
+			} else {
+				list_add_tail(&t_alg->entry, &priv->alg_list);
+				dev_info(dev, "%s\n", name);
+			}
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
@@ -2908,7 +3203,21 @@ static struct platform_driver talitos_driver = {
 	.remove = talitos_remove,
 };
 
+<<<<<<< HEAD
 module_platform_driver(talitos_driver);
+=======
+static int __init talitos_init(void)
+{
+	return platform_driver_register(&talitos_driver);
+}
+module_init(talitos_init);
+
+static void __exit talitos_exit(void)
+{
+	platform_driver_unregister(&talitos_driver);
+}
+module_exit(talitos_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Kim Phillips <kim.phillips@freescale.com>");

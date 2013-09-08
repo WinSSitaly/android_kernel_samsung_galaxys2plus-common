@@ -63,7 +63,11 @@ static int switch_drv_probe(struct platform_device *pdev)
 	BUG_ON(!psw_info);
 
 	ret = request_irq(irq, psw_info->irq_handler,
+<<<<<<< HEAD
 			  psw_info->irq_flags,
+=======
+			  IRQF_DISABLED | psw_info->irq_flags,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  psw_info->name ? psw_info->name : DRV_NAME, pdev);
 	if (unlikely(ret < 0))
 		goto err;

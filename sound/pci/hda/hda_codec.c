@@ -19,13 +19,19 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  */
 
+<<<<<<< HEAD
 #include <linux/mm.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/delay.h>
 #include <linux/slab.h>
 #include <linux/pci.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include "hda_codec.h"
 #include <sound/asoundef.h>
@@ -34,12 +40,17 @@
 #include <sound/jack.h>
 #include "hda_local.h"
 #include "hda_beep.h"
+<<<<<<< HEAD
 #include "hda_jack.h"
 #include <sound/hda_hwdep.h>
 
 #define CREATE_TRACE_POINTS
 #include "hda_trace.h"
 
+=======
+#include <sound/hda_hwdep.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * vendor / preset table
  */
@@ -97,10 +108,15 @@ EXPORT_SYMBOL_HDA(snd_hda_delete_codec_preset);
 #ifdef CONFIG_SND_HDA_POWER_SAVE
 static void hda_power_work(struct work_struct *work);
 static void hda_keep_power_on(struct hda_codec *codec);
+<<<<<<< HEAD
 #define hda_codec_is_power_on(codec)	((codec)->power_on)
 #else
 static inline void hda_keep_power_on(struct hda_codec *codec) {}
 #define hda_codec_is_power_on(codec)	1
+=======
+#else
+static inline void hda_keep_power_on(struct hda_codec *codec) {}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /**
@@ -165,7 +181,11 @@ const char *snd_hda_get_jack_type(u32 cfg)
 		"Line Out", "Speaker", "HP Out", "CD",
 		"SPDIF Out", "Digital Out", "Modem Line", "Modem Hand",
 		"Line In", "Aux", "Mic", "Telephony",
+<<<<<<< HEAD
 		"SPDIF In", "Digital In", "Reserved", "Other"
+=======
+		"SPDIF In", "Digitial In", "Reserved", "Other"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	};
 
 	return jack_types[(cfg & AC_DEFCFG_DEVICE)
@@ -214,19 +234,28 @@ static int codec_exec_verb(struct hda_codec *codec, unsigned int cmd,
  again:
 	snd_hda_power_up(codec);
 	mutex_lock(&bus->cmd_mutex);
+<<<<<<< HEAD
 	trace_hda_send_cmd(codec, cmd);
 	err = bus->ops.command(bus, cmd);
 	if (!err && res) {
 		*res = bus->ops.get_response(bus, codec->addr);
 		trace_hda_get_response(codec, *res);
 	}
+=======
+	err = bus->ops.command(bus, cmd);
+	if (!err && res)
+		*res = bus->ops.get_response(bus, codec->addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&bus->cmd_mutex);
 	snd_hda_power_down(codec);
 	if (res && *res == -1 && bus->rirb_error) {
 		if (bus->response_reset) {
 			snd_printd("hda_codec: resetting BUS due to "
 				   "fatal communication error\n");
+<<<<<<< HEAD
 			trace_hda_bus_reset(bus);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			bus->ops.bus_reset(bus);
 		}
 		goto again;
@@ -255,8 +284,12 @@ unsigned int snd_hda_codec_read(struct hda_codec *codec, hda_nid_t nid,
 {
 	unsigned cmd = make_codec_cmd(codec, nid, direct, verb, parm);
 	unsigned int res;
+<<<<<<< HEAD
 	if (codec_exec_verb(codec, cmd, &res))
 		return -1;
+=======
+	codec_exec_verb(codec, cmd, &res);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return res;
 }
 EXPORT_SYMBOL_HDA(snd_hda_codec_read);
@@ -320,6 +353,7 @@ int snd_hda_get_sub_nodes(struct hda_codec *codec, hda_nid_t nid,
 }
 EXPORT_SYMBOL_HDA(snd_hda_get_sub_nodes);
 
+<<<<<<< HEAD
 /* look up the cached results */
 static hda_nid_t *lookup_conn_list(struct snd_array *array, hda_nid_t nid)
 {
@@ -339,12 +373,27 @@ static hda_nid_t *lookup_conn_list(struct snd_array *array, hda_nid_t nid)
  * @codec: the HDA codec
  * @nid: NID to parse
  * @listp: the pointer to store NID list
+=======
+static int _hda_get_connections(struct hda_codec *codec, hda_nid_t nid,
+				hda_nid_t *conn_list, int max_conns);
+static bool add_conn_list(struct snd_array *array, hda_nid_t nid);
+static int copy_conn_list(hda_nid_t nid, hda_nid_t *dst, int max_dst,
+			  hda_nid_t *src, int len);
+
+/**
+ * snd_hda_get_connections - get connection list
+ * @codec: the HDA codec
+ * @nid: NID to parse
+ * @conn_list: connection list array
+ * @max_conns: max. number of connections to store
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Parses the connection list of the given widget and stores the list
  * of NIDs.
  *
  * Returns the number of connections, or a negative error code.
  */
+<<<<<<< HEAD
 int snd_hda_get_conn_list(struct hda_codec *codec, hda_nid_t nid,
 			  const hda_nid_t **listp)
 {
@@ -421,6 +470,47 @@ EXPORT_SYMBOL_HDA(snd_hda_get_connections);
  */
 int snd_hda_get_raw_connections(struct hda_codec *codec, hda_nid_t nid,
 				hda_nid_t *conn_list, int max_conns)
+=======
+int snd_hda_get_connections(struct hda_codec *codec, hda_nid_t nid,
+			     hda_nid_t *conn_list, int max_conns)
+{
+	struct snd_array *array = &codec->conn_lists;
+	int i, len, old_used;
+	hda_nid_t list[HDA_MAX_CONNECTIONS];
+
+	/* look up the cached results */
+	for (i = 0; i < array->used; ) {
+		hda_nid_t *p = snd_array_elem(array, i);
+		len = p[1];
+		if (nid == *p)
+			return copy_conn_list(nid, conn_list, max_conns,
+					      p + 2, len);
+		i += len + 2;
+	}
+
+	len = _hda_get_connections(codec, nid, list, HDA_MAX_CONNECTIONS);
+	if (len < 0)
+		return len;
+
+	/* add to the cache */
+	old_used = array->used;
+	if (!add_conn_list(array, nid) || !add_conn_list(array, len))
+		goto error_add;
+	for (i = 0; i < len; i++)
+		if (!add_conn_list(array, list[i]))
+			goto error_add;
+
+	return copy_conn_list(nid, conn_list, max_conns, list, len);
+		
+ error_add:
+	array->used = old_used;
+	return -ENOMEM;
+}
+EXPORT_SYMBOL_HDA(snd_hda_get_connections);
+
+static int _hda_get_connections(struct hda_codec *codec, hda_nid_t nid,
+			     hda_nid_t *conn_list, int max_conns)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int parm;
 	int i, conn_len, conns;
@@ -433,8 +523,16 @@ int snd_hda_get_raw_connections(struct hda_codec *codec, hda_nid_t nid,
 
 	wcaps = get_wcaps(codec, nid);
 	if (!(wcaps & AC_WCAP_CONN_LIST) &&
+<<<<<<< HEAD
 	    get_wcaps_type(wcaps) != AC_WID_VOL_KNB)
 		return 0;
+=======
+	    get_wcaps_type(wcaps) != AC_WID_VOL_KNB) {
+		snd_printk(KERN_WARNING "hda_codec: "
+			   "connection list not available for 0x%x\n", nid);
+		return -EINVAL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	parm = snd_hda_param_read(codec, nid, AC_PAR_CONNLIST_LEN);
 	if (parm & AC_CLIST_LONG) {
@@ -524,6 +622,7 @@ static bool add_conn_list(struct snd_array *array, hda_nid_t nid)
 	return true;
 }
 
+<<<<<<< HEAD
 /**
  * snd_hda_override_conn_list - add/modify the connection-list to cache
  * @codec: the HDA codec
@@ -599,6 +698,20 @@ int snd_hda_get_conn_index(struct hda_codec *codec, hda_nid_t mux,
 	return -1;
 }
 EXPORT_SYMBOL_HDA(snd_hda_get_conn_index);
+=======
+static int copy_conn_list(hda_nid_t nid, hda_nid_t *dst, int max_dst,
+			  hda_nid_t *src, int len)
+{
+	if (len > max_dst) {
+		snd_printk(KERN_ERR "hda_codec: "
+			   "Too many connections %d for NID 0x%x\n",
+			   len, nid);
+		return -EINVAL;
+	}
+	memcpy(dst, src, len * sizeof(hda_nid_t));
+	return len;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * snd_hda_queue_unsol_event - add an unsolicited event to queue
@@ -617,10 +730,13 @@ int snd_hda_queue_unsol_event(struct hda_bus *bus, u32 res, u32 res_ex)
 	struct hda_bus_unsolicited *unsol;
 	unsigned int wp;
 
+<<<<<<< HEAD
 	if (!bus || !bus->workq)
 		return 0;
 
 	trace_hda_unsol_event(bus, res, res_ex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsol = bus->unsol;
 	if (!unsol)
 		return 0;
@@ -1121,7 +1237,11 @@ void snd_hda_shutup_pins(struct hda_codec *codec)
 }
 EXPORT_SYMBOL_HDA(snd_hda_shutup_pins);
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
+=======
+#ifdef SND_HDA_NEEDS_RESUME
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Restore the pin controls cleared previously via snd_hda_shutup_pins() */
 static void restore_shutup_pins(struct hda_codec *codec)
 {
@@ -1195,7 +1315,10 @@ static void snd_hda_codec_free(struct hda_codec *codec)
 {
 	if (!codec)
 		return;
+<<<<<<< HEAD
 	snd_hda_jack_tbl_clear(codec);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	restore_init_pincfgs(codec);
 #ifdef CONFIG_SND_HDA_POWER_SAVE
 	cancel_delayed_work(&codec->power_work);
@@ -1204,9 +1327,13 @@ static void snd_hda_codec_free(struct hda_codec *codec)
 	list_del(&codec->list);
 	snd_array_free(&codec->mixers);
 	snd_array_free(&codec->nids);
+<<<<<<< HEAD
 	snd_array_free(&codec->cvt_setups);
 	snd_array_free(&codec->conn_lists);
 	snd_array_free(&codec->spdif_out);
+=======
+	snd_array_free(&codec->conn_lists);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	codec->bus->caddr_tbl[codec->addr] = NULL;
 	if (codec->patch_ops.free)
 		codec->patch_ops.free(codec);
@@ -1268,7 +1395,10 @@ int /*__devinit*/ snd_hda_codec_new(struct hda_bus *bus,
 	snd_array_init(&codec->driver_pins, sizeof(struct hda_pincfg), 16);
 	snd_array_init(&codec->cvt_setups, sizeof(struct hda_cvt_setup), 8);
 	snd_array_init(&codec->conn_lists, sizeof(hda_nid_t), 64);
+<<<<<<< HEAD
 	snd_array_init(&codec->spdif_out, sizeof(struct hda_spdif_out), 16);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (codec->bus->modelname) {
 		codec->modelname = kstrdup(codec->bus->modelname, GFP_KERNEL);
 		if (!codec->modelname) {
@@ -1499,11 +1629,16 @@ static void really_cleanup_stream(struct hda_codec *codec,
 				  struct hda_cvt_setup *q)
 {
 	hda_nid_t nid = q->nid;
+<<<<<<< HEAD
 	if (q->stream_tag || q->channel_id)
 		snd_hda_codec_write(codec, nid, 0, AC_VERB_SET_CHANNEL_STREAMID, 0);
 	if (q->format_id)
 		snd_hda_codec_write(codec, nid, 0, AC_VERB_SET_STREAM_FORMAT, 0
 );
+=======
+	snd_hda_codec_write(codec, nid, 0, AC_VERB_SET_CHANNEL_STREAMID, 0);
+	snd_hda_codec_write(codec, nid, 0, AC_VERB_SET_STREAM_FORMAT, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(q, 0, sizeof(*q));
 	q->nid = nid;
 }
@@ -1524,7 +1659,11 @@ static void purify_inactive_streams(struct hda_codec *codec)
 	}
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
+=======
+#ifdef SND_HDA_NEEDS_RESUME
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* clean up all streams; called from suspend */
 static void hda_cleanup_all_streams(struct hda_codec *codec)
 {
@@ -1708,6 +1847,7 @@ u32 snd_hda_query_pin_caps(struct hda_codec *codec, hda_nid_t nid)
 EXPORT_SYMBOL_HDA(snd_hda_query_pin_caps);
 
 /**
+<<<<<<< HEAD
  * snd_hda_override_pin_caps - Override the pin capabilities
  * @codec: the CODEC
  * @nid: the NID to override
@@ -1729,6 +1869,43 @@ int snd_hda_override_pin_caps(struct hda_codec *codec, hda_nid_t nid,
 	return 0;
 }
 EXPORT_SYMBOL_HDA(snd_hda_override_pin_caps);
+=======
+ * snd_hda_pin_sense - execute pin sense measurement
+ * @codec: the CODEC to sense
+ * @nid: the pin NID to sense
+ *
+ * Execute necessary pin sense measurement and return its Presence Detect,
+ * Impedance, ELD Valid etc. status bits.
+ */
+u32 snd_hda_pin_sense(struct hda_codec *codec, hda_nid_t nid)
+{
+	u32 pincap;
+
+	if (!codec->no_trigger_sense) {
+		pincap = snd_hda_query_pin_caps(codec, nid);
+		if (pincap & AC_PINCAP_TRIG_REQ) /* need trigger? */
+			snd_hda_codec_read(codec, nid, 0,
+					AC_VERB_SET_PIN_SENSE, 0);
+	}
+	return snd_hda_codec_read(codec, nid, 0,
+				  AC_VERB_GET_PIN_SENSE, 0);
+}
+EXPORT_SYMBOL_HDA(snd_hda_pin_sense);
+
+/**
+ * snd_hda_jack_detect - query pin Presence Detect status
+ * @codec: the CODEC to sense
+ * @nid: the pin NID to sense
+ *
+ * Query and return the pin's Presence Detect status.
+ */
+int snd_hda_jack_detect(struct hda_codec *codec, hda_nid_t nid)
+{
+	u32 sense = snd_hda_pin_sense(codec, nid);
+	return !!(sense & AC_PINSENSE_PRESENCE);
+}
+EXPORT_SYMBOL_HDA(snd_hda_jack_detect);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * read the current volume to info
@@ -1853,7 +2030,11 @@ int snd_hda_codec_amp_stereo(struct hda_codec *codec, hda_nid_t nid,
 }
 EXPORT_SYMBOL_HDA(snd_hda_codec_amp_stereo);
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
+=======
+#ifdef SND_HDA_NEEDS_RESUME
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * snd_hda_codec_resume_amp - Resume all AMP commands from the cache
  * @codec: HD-audio codec
@@ -1883,7 +2064,11 @@ void snd_hda_codec_resume_amp(struct hda_codec *codec)
 	}
 }
 EXPORT_SYMBOL_HDA(snd_hda_codec_resume_amp);
+<<<<<<< HEAD
 #endif /* CONFIG_PM */
+=======
+#endif /* SND_HDA_NEEDS_RESUME */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static u32 get_amp_max_value(struct hda_codec *codec, hda_nid_t nid, int dir,
 			     unsigned int ofs)
@@ -2282,8 +2467,11 @@ int snd_hda_codec_reset(struct hda_codec *codec)
 	}
 	if (codec->patch_ops.free)
 		codec->patch_ops.free(codec);
+<<<<<<< HEAD
 	memset(&codec->patch_ops, 0, sizeof(codec->patch_ops));
 	snd_hda_jack_tbl_clear(codec);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	codec->proc_widget_hook = NULL;
 	codec->spec = NULL;
 	free_hda_cache(&codec->amp_cache);
@@ -2296,6 +2484,10 @@ int snd_hda_codec_reset(struct hda_codec *codec)
 	codec->num_pcms = 0;
 	codec->pcm_info = NULL;
 	codec->preset = NULL;
+<<<<<<< HEAD
+=======
+	memset(&codec->patch_ops, 0, sizeof(codec->patch_ops));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	codec->slave_dig_outs = NULL;
 	codec->spdif_status_reset = 0;
 	module_put(codec->owner);
@@ -2310,7 +2502,11 @@ typedef int (*map_slave_func_t)(void *, struct snd_kcontrol *);
 
 /* apply the function to all matching slave ctls in the mixer list */
 static int map_slaves(struct hda_codec *codec, const char * const *slaves,
+<<<<<<< HEAD
 		      const char *suffix, map_slave_func_t func, void *data) 
+=======
+		      map_slave_func_t func, void *data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hda_nid_item *items;
 	const char * const *s;
@@ -2323,6 +2519,7 @@ static int map_slaves(struct hda_codec *codec, const char * const *slaves,
 		    sctl->id.iface != SNDRV_CTL_ELEM_IFACE_MIXER)
 			continue;
 		for (s = slaves; *s; s++) {
+<<<<<<< HEAD
 			char tmpname[sizeof(sctl->id.name)];
 			const char *name = *s;
 			if (suffix) {
@@ -2331,6 +2528,9 @@ static int map_slaves(struct hda_codec *codec, const char * const *slaves,
 				name = tmpname;
 			}
 			if (!strcmp(sctl->id.name, name)) {
+=======
+			if (!strcmp(sctl->id.name, *s)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				err = func(data, sctl);
 				if (err)
 					return err;
@@ -2346,6 +2546,7 @@ static int check_slave_present(void *data, struct snd_kcontrol *sctl)
 	return 1;
 }
 
+<<<<<<< HEAD
 /* guess the value corresponding to 0dB */
 static int get_kctl_0dB_offset(struct snd_kcontrol *kctl)
 {
@@ -2396,15 +2597,20 @@ static int init_slave_unmute(void *data, struct snd_kcontrol *slave)
 	return put_kctl_with_value(slave, 1);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * snd_hda_add_vmaster - create a virtual master control and add slaves
  * @codec: HD-audio codec
  * @name: vmaster control name
  * @tlv: TLV data (optional)
  * @slaves: slave control names (optional)
+<<<<<<< HEAD
  * @suffix: suffix string to each slave name (optional)
  * @init_slave_vol: initialize slaves to unmute/0dB
  * @ctl_ret: store the vmaster kcontrol in return
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Create a virtual master control with the given name.  The TLV data
  * must be either NULL or a valid data.
@@ -2415,18 +2621,27 @@ static int init_slave_unmute(void *data, struct snd_kcontrol *slave)
  *
  * This function returns zero if successful or a negative error code.
  */
+<<<<<<< HEAD
 int __snd_hda_add_vmaster(struct hda_codec *codec, char *name,
 			unsigned int *tlv, const char * const *slaves,
 			  const char *suffix, bool init_slave_vol,
 			  struct snd_kcontrol **ctl_ret)
+=======
+int snd_hda_add_vmaster(struct hda_codec *codec, char *name,
+			unsigned int *tlv, const char * const *slaves)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct snd_kcontrol *kctl;
 	int err;
 
+<<<<<<< HEAD
 	if (ctl_ret)
 		*ctl_ret = NULL;
 
 	err = map_slaves(codec, slaves, suffix, check_slave_present, NULL);
+=======
+	err = map_slaves(codec, slaves, check_slave_present, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err != 1) {
 		snd_printdd("No slave found for %s\n", name);
 		return 0;
@@ -2438,6 +2653,7 @@ int __snd_hda_add_vmaster(struct hda_codec *codec, char *name,
 	if (err < 0)
 		return err;
 
+<<<<<<< HEAD
 	err = map_slaves(codec, slaves, suffix,
 			 (map_slave_func_t)snd_ctl_add_slave, kctl);
 	if (err < 0)
@@ -2551,6 +2767,15 @@ void snd_hda_sync_vmaster_hook(struct hda_vmaster_mute_hook *hook)
 }
 EXPORT_SYMBOL_HDA(snd_hda_sync_vmaster_hook);
 
+=======
+	err = map_slaves(codec, slaves, (map_slave_func_t)snd_ctl_add_slave,
+			 kctl);
+	if (err < 0)
+		return err;
+	return 0;
+}
+EXPORT_SYMBOL_HDA(snd_hda_add_vmaster);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * snd_hda_mixer_amp_switch_info - Info callback for a standard AMP mixer switch
@@ -2863,6 +3088,7 @@ static int snd_hda_spdif_default_get(struct snd_kcontrol *kcontrol,
 				     struct snd_ctl_elem_value *ucontrol)
 {
 	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
+<<<<<<< HEAD
 	int idx = kcontrol->private_value;
 	struct hda_spdif_out *spdif = snd_array_elem(&codec->spdif_out, idx);
 
@@ -2870,6 +3096,13 @@ static int snd_hda_spdif_default_get(struct snd_kcontrol *kcontrol,
 	ucontrol->value.iec958.status[1] = (spdif->status >> 8) & 0xff;
 	ucontrol->value.iec958.status[2] = (spdif->status >> 16) & 0xff;
 	ucontrol->value.iec958.status[3] = (spdif->status >> 24) & 0xff;
+=======
+
+	ucontrol->value.iec958.status[0] = codec->spdif_status & 0xff;
+	ucontrol->value.iec958.status[1] = (codec->spdif_status >> 8) & 0xff;
+	ucontrol->value.iec958.status[2] = (codec->spdif_status >> 16) & 0xff;
+	ucontrol->value.iec958.status[3] = (codec->spdif_status >> 24) & 0xff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -2913,7 +3146,11 @@ static unsigned int convert_to_spdif_status(unsigned short val)
 	if (val & AC_DIG1_PROFESSIONAL)
 		sbits |= IEC958_AES0_PROFESSIONAL;
 	if (sbits & IEC958_AES0_PROFESSIONAL) {
+<<<<<<< HEAD
 		if (val & AC_DIG1_EMPHASIS)
+=======
+		if (sbits & AC_DIG1_EMPHASIS)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sbits |= IEC958_AES0_PRO_EMPHASIS_5015;
 	} else {
 		if (val & AC_DIG1_EMPHASIS)
@@ -2954,13 +3191,18 @@ static int snd_hda_spdif_default_put(struct snd_kcontrol *kcontrol,
 				     struct snd_ctl_elem_value *ucontrol)
 {
 	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
+<<<<<<< HEAD
 	int idx = kcontrol->private_value;
 	struct hda_spdif_out *spdif = snd_array_elem(&codec->spdif_out, idx);
 	hda_nid_t nid = spdif->nid;
+=======
+	hda_nid_t nid = kcontrol->private_value;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned short val;
 	int change;
 
 	mutex_lock(&codec->spdif_mutex);
+<<<<<<< HEAD
 	spdif->status = ucontrol->value.iec958.status[0] |
 		((unsigned int)ucontrol->value.iec958.status[1] << 8) |
 		((unsigned int)ucontrol->value.iec958.status[2] << 16) |
@@ -2971,6 +3213,20 @@ static int snd_hda_spdif_default_put(struct snd_kcontrol *kcontrol,
 	spdif->ctls = val;
 	if (change && nid != (u16)-1)
 		set_dig_out_convert(codec, nid, val & 0xff, (val >> 8) & 0xff);
+=======
+	codec->spdif_status = ucontrol->value.iec958.status[0] |
+		((unsigned int)ucontrol->value.iec958.status[1] << 8) |
+		((unsigned int)ucontrol->value.iec958.status[2] << 16) |
+		((unsigned int)ucontrol->value.iec958.status[3] << 24);
+	val = convert_from_spdif_status(codec->spdif_status);
+	val |= codec->spdif_ctls & 1;
+	change = codec->spdif_ctls != val;
+	codec->spdif_ctls = val;
+
+	if (change)
+		set_dig_out_convert(codec, nid, val & 0xff, (val >> 8) & 0xff);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&codec->spdif_mutex);
 	return change;
 }
@@ -2981,6 +3237,7 @@ static int snd_hda_spdif_out_switch_get(struct snd_kcontrol *kcontrol,
 					struct snd_ctl_elem_value *ucontrol)
 {
 	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
+<<<<<<< HEAD
 	int idx = kcontrol->private_value;
 	struct hda_spdif_out *spdif = snd_array_elem(&codec->spdif_out, idx);
 
@@ -2999,17 +3256,29 @@ static inline void set_spdif_ctls(struct hda_codec *codec, hda_nid_t nid,
 					    HDA_AMP_MUTE, 0);
 }
 
+=======
+
+	ucontrol->value.integer.value[0] = codec->spdif_ctls & AC_DIG1_ENABLE;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int snd_hda_spdif_out_switch_put(struct snd_kcontrol *kcontrol,
 					struct snd_ctl_elem_value *ucontrol)
 {
 	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
+<<<<<<< HEAD
 	int idx = kcontrol->private_value;
 	struct hda_spdif_out *spdif = snd_array_elem(&codec->spdif_out, idx);
 	hda_nid_t nid = spdif->nid;
+=======
+	hda_nid_t nid = kcontrol->private_value;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned short val;
 	int change;
 
 	mutex_lock(&codec->spdif_mutex);
+<<<<<<< HEAD
 	val = spdif->ctls & ~AC_DIG1_ENABLE;
 	if (ucontrol->value.integer.value[0])
 		val |= AC_DIG1_ENABLE;
@@ -3017,6 +3286,21 @@ static int snd_hda_spdif_out_switch_put(struct snd_kcontrol *kcontrol,
 	spdif->ctls = val;
 	if (change && nid != (u16)-1)
 		set_spdif_ctls(codec, nid, val & 0xff, -1);
+=======
+	val = codec->spdif_ctls & ~AC_DIG1_ENABLE;
+	if (ucontrol->value.integer.value[0])
+		val |= AC_DIG1_ENABLE;
+	change = codec->spdif_ctls != val;
+	if (change) {
+		codec->spdif_ctls = val;
+		set_dig_out_convert(codec, nid, val & 0xff, -1);
+		/* unmute amp switch (if any) */
+		if ((get_wcaps(codec, nid) & AC_WCAP_OUT_AMP) &&
+		    (val & AC_DIG1_ENABLE))
+			snd_hda_codec_amp_stereo(codec, nid, HDA_OUTPUT, 0,
+						 HDA_AMP_MUTE, 0);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&codec->spdif_mutex);
 	return change;
 }
@@ -3063,27 +3347,38 @@ static struct snd_kcontrol_new dig_mixes[] = {
  *
  * Returns 0 if successful, or a negative error code.
  */
+<<<<<<< HEAD
 int snd_hda_create_spdif_out_ctls(struct hda_codec *codec,
 				  hda_nid_t associated_nid,
 				  hda_nid_t cvt_nid)
+=======
+int snd_hda_create_spdif_out_ctls(struct hda_codec *codec, hda_nid_t nid)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 	struct snd_kcontrol *kctl;
 	struct snd_kcontrol_new *dig_mix;
 	int idx;
+<<<<<<< HEAD
 	struct hda_spdif_out *spdif;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	idx = find_empty_mixer_ctl_idx(codec, "IEC958 Playback Switch");
 	if (idx < 0) {
 		printk(KERN_ERR "hda_codec: too many IEC958 outputs\n");
 		return -EBUSY;
 	}
+<<<<<<< HEAD
 	spdif = snd_array_new(&codec->spdif_out);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (dig_mix = dig_mixes; dig_mix->name; dig_mix++) {
 		kctl = snd_ctl_new1(dig_mix, codec);
 		if (!kctl)
 			return -ENOMEM;
 		kctl->id.index = idx;
+<<<<<<< HEAD
 		kctl->private_value = codec->spdif_out.used - 1;
 		err = snd_hda_ctl_add(codec, associated_nid, kctl);
 		if (err < 0)
@@ -3093,10 +3388,22 @@ int snd_hda_create_spdif_out_ctls(struct hda_codec *codec,
 	spdif->ctls = snd_hda_codec_read(codec, cvt_nid, 0,
 					 AC_VERB_GET_DIGI_CONVERT_1, 0);
 	spdif->status = convert_to_spdif_status(spdif->ctls);
+=======
+		kctl->private_value = nid;
+		err = snd_hda_ctl_add(codec, nid, kctl);
+		if (err < 0)
+			return err;
+	}
+	codec->spdif_ctls =
+		snd_hda_codec_read(codec, nid, 0,
+				   AC_VERB_GET_DIGI_CONVERT_1, 0);
+	codec->spdif_status = convert_to_spdif_status(codec->spdif_ctls);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL_HDA(snd_hda_create_spdif_out_ctls);
 
+<<<<<<< HEAD
 struct hda_spdif_out *snd_hda_spdif_out_of_nid(struct hda_codec *codec,
 					       hda_nid_t nid)
 {
@@ -3136,6 +3443,8 @@ void snd_hda_spdif_ctls_assign(struct hda_codec *codec, int idx, hda_nid_t nid)
 }
 EXPORT_SYMBOL_HDA(snd_hda_spdif_ctls_assign);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * SPDIF sharing with analog output
  */
@@ -3287,7 +3596,11 @@ int snd_hda_create_spdif_in_ctls(struct hda_codec *codec, hda_nid_t nid)
 }
 EXPORT_SYMBOL_HDA(snd_hda_create_spdif_in_ctls);
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
+=======
+#ifdef SND_HDA_NEEDS_RESUME
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * command cache
  */
@@ -3404,6 +3717,7 @@ void snd_hda_sequence_write_cache(struct hda_codec *codec,
 					  seq->param);
 }
 EXPORT_SYMBOL_HDA(snd_hda_sequence_write_cache);
+<<<<<<< HEAD
 #endif /* CONFIG_PM */
 
 void snd_hda_codec_set_power_to_all(struct hda_codec *codec, hda_nid_t fg,
@@ -3430,6 +3744,55 @@ void snd_hda_codec_set_power_to_all(struct hda_codec *codec, hda_nid_t fg,
 		}
 		snd_hda_codec_write(codec, nid, 0, AC_VERB_SET_POWER_STATE,
 				    power_state);
+=======
+#endif /* SND_HDA_NEEDS_RESUME */
+
+/*
+ * set power state of the codec
+ */
+static void hda_set_power_state(struct hda_codec *codec, hda_nid_t fg,
+				unsigned int power_state)
+{
+	hda_nid_t nid;
+	int i;
+
+	/* this delay seems necessary to avoid click noise at power-down */
+	if (power_state == AC_PWRST_D3)
+		msleep(100);
+	snd_hda_codec_read(codec, fg, 0, AC_VERB_SET_POWER_STATE,
+			    power_state);
+	/* partial workaround for "azx_get_response timeout" */
+	if (power_state == AC_PWRST_D0 &&
+	    (codec->vendor_id & 0xffff0000) == 0x14f10000)
+		msleep(10);
+
+	nid = codec->start_nid;
+	for (i = 0; i < codec->num_nodes; i++, nid++) {
+		unsigned int wcaps = get_wcaps(codec, nid);
+		if (wcaps & AC_WCAP_POWER) {
+			unsigned int wid_type = get_wcaps_type(wcaps);
+			if (power_state == AC_PWRST_D3 &&
+			    wid_type == AC_WID_PIN) {
+				unsigned int pincap;
+				/*
+				 * don't power down the widget if it controls
+				 * eapd and EAPD_BTLENABLE is set.
+				 */
+				pincap = snd_hda_query_pin_caps(codec, nid);
+				if (pincap & AC_PINCAP_EAPD) {
+					int eapd = snd_hda_codec_read(codec,
+						nid, 0,
+						AC_VERB_GET_EAPD_BTLENABLE, 0);
+					eapd &= 0x02;
+					if (eapd)
+						continue;
+				}
+			}
+			snd_hda_codec_write(codec, nid, 0,
+					    AC_VERB_SET_POWER_STATE,
+					    power_state);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (power_state == AC_PWRST_D0) {
@@ -3446,6 +3809,7 @@ void snd_hda_codec_set_power_to_all(struct hda_codec *codec, hda_nid_t fg,
 		} while (time_after_eq(end_time, jiffies));
 	}
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_HDA(snd_hda_codec_set_power_to_all);
 
 /*
@@ -3466,6 +3830,8 @@ static void hda_set_power_state(struct hda_codec *codec, hda_nid_t fg,
 			    power_state);
 	snd_hda_codec_set_power_to_all(codec, fg, power_state, true);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_SND_HDA_HWDEP
 /* execute additional init verbs */
@@ -3478,7 +3844,11 @@ static void hda_exec_init_verbs(struct hda_codec *codec)
 static inline void hda_exec_init_verbs(struct hda_codec *codec) {}
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
+=======
+#ifdef SND_HDA_NEEDS_RESUME
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * call suspend and power-down; used both from PM and power-save
  */
@@ -3510,7 +3880,10 @@ static void hda_call_codec_resume(struct hda_codec *codec)
 	restore_pincfgs(codec); /* restore all current pin configs */
 	restore_shutup_pins(codec);
 	hda_exec_init_verbs(codec);
+<<<<<<< HEAD
 	snd_hda_jack_set_dirty_all(codec);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (codec->patch_ops.resume)
 		codec->patch_ops.resume(codec);
 	else {
@@ -3520,7 +3893,11 @@ static void hda_call_codec_resume(struct hda_codec *codec)
 		snd_hda_codec_resume_cache(codec);
 	}
 }
+<<<<<<< HEAD
 #endif /* CONFIG_PM */
+=======
+#endif /* SND_HDA_NEEDS_RESUME */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /**
@@ -3718,7 +4095,11 @@ static unsigned int query_stream_param(struct hda_codec *codec, hda_nid_t nid)
  *
  * Returns 0 if successful, otherwise a negative error code.
  */
+<<<<<<< HEAD
 int snd_hda_query_supported_pcm(struct hda_codec *codec, hda_nid_t nid,
+=======
+static int snd_hda_query_supported_pcm(struct hda_codec *codec, hda_nid_t nid,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				u32 *ratesp, u64 *formatsp, unsigned int *bpsp)
 {
 	unsigned int i, val, wcaps;
@@ -3810,7 +4191,10 @@ int snd_hda_query_supported_pcm(struct hda_codec *codec, hda_nid_t nid,
 
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_HDA(snd_hda_query_supported_pcm);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * snd_hda_is_supported_format - Check the validity of the format
@@ -3997,12 +4381,15 @@ static int get_empty_pcm_device(struct hda_bus *bus, int type)
 		if (!test_and_set_bit(audio_idx[type][i], bus->pcm_dev_bits))
 			return audio_idx[type][i];
 
+<<<<<<< HEAD
 	/* non-fixed slots starting from 10 */
 	for (i = 10; i < 32; i++) {
 		if (!test_and_set_bit(i, bus->pcm_dev_bits))
 			return i;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_printk(KERN_WARNING "Too many %s devices\n",
 		snd_hda_pcm_type_name[type]);
 	return -EAGAIN;
@@ -4199,9 +4586,15 @@ int snd_hda_check_board_codec_sid_config(struct hda_codec *codec,
 
 	/* Search for codec ID */
 	for (q = tbl; q->subvendor; q++) {
+<<<<<<< HEAD
 		unsigned int mask = 0xffff0000 | q->subdevice_mask;
 		unsigned int id = (q->subdevice | (q->subvendor << 16)) & mask;
 		if ((codec->subsystem_id & mask) == id)
+=======
+		unsigned long vendorid = (q->subdevice) | (q->subvendor << 16);
+
+		if (vendorid == codec->subsystem_id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 	}
 
@@ -4282,6 +4675,12 @@ int snd_hda_add_new_ctls(struct hda_codec *codec,
 EXPORT_SYMBOL_HDA(snd_hda_add_new_ctls);
 
 #ifdef CONFIG_SND_HDA_POWER_SAVE
+<<<<<<< HEAD
+=======
+static void hda_set_power_state(struct hda_codec *codec, hda_nid_t fg,
+				unsigned int power_state);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void hda_power_work(struct work_struct *work)
 {
 	struct hda_codec *codec =
@@ -4293,7 +4692,10 @@ static void hda_power_work(struct work_struct *work)
 		return;
 	}
 
+<<<<<<< HEAD
 	trace_hda_power_down(codec);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hda_call_codec_suspend(codec);
 	if (bus->ops.pm_notify)
 		bus->ops.pm_notify(bus);
@@ -4332,7 +4734,10 @@ void snd_hda_power_up(struct hda_codec *codec)
 	if (codec->power_on || codec->power_transition)
 		return;
 
+<<<<<<< HEAD
 	trace_hda_power_up(codec);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_hda_update_power_acct(codec);
 	codec->power_on = 1;
 	codec->power_jiffies = jiffies;
@@ -4545,12 +4950,19 @@ EXPORT_SYMBOL_HDA(snd_hda_input_mux_put);
 static void setup_dig_out_stream(struct hda_codec *codec, hda_nid_t nid,
 				 unsigned int stream_tag, unsigned int format)
 {
+<<<<<<< HEAD
 	struct hda_spdif_out *spdif = snd_hda_spdif_out_of_nid(codec, nid);
 
 	/* turn off SPDIF once; otherwise the IEC958 bits won't be updated */
 	if (codec->spdif_status_reset && (spdif->ctls & AC_DIG1_ENABLE))
 		set_dig_out_convert(codec, nid,
 				    spdif->ctls & ~AC_DIG1_ENABLE & 0xff,
+=======
+	/* turn off SPDIF once; otherwise the IEC958 bits won't be updated */
+	if (codec->spdif_status_reset && (codec->spdif_ctls & AC_DIG1_ENABLE))
+		set_dig_out_convert(codec, nid,
+				    codec->spdif_ctls & ~AC_DIG1_ENABLE & 0xff,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    -1);
 	snd_hda_codec_setup_stream(codec, nid, stream_tag, 0, format);
 	if (codec->slave_dig_outs) {
@@ -4560,9 +4972,15 @@ static void setup_dig_out_stream(struct hda_codec *codec, hda_nid_t nid,
 						   format);
 	}
 	/* turn on again (if needed) */
+<<<<<<< HEAD
 	if (codec->spdif_status_reset && (spdif->ctls & AC_DIG1_ENABLE))
 		set_dig_out_convert(codec, nid,
 				    spdif->ctls & 0xff, -1);
+=======
+	if (codec->spdif_status_reset && (codec->spdif_ctls & AC_DIG1_ENABLE))
+		set_dig_out_convert(codec, nid,
+				    codec->spdif_ctls & 0xff, -1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void cleanup_dig_out_stream(struct hda_codec *codec, hda_nid_t nid)
@@ -4586,8 +5004,16 @@ void snd_hda_bus_reboot_notify(struct hda_bus *bus)
 	if (!bus)
 		return;
 	list_for_each_entry(codec, &bus->codec_list, list) {
+<<<<<<< HEAD
 		if (hda_codec_is_power_on(codec) &&
 		    codec->patch_ops.reboot_notify)
+=======
+#ifdef CONFIG_SND_HDA_POWER_SAVE
+		if (!codec->power_on)
+			continue;
+#endif
+		if (codec->patch_ops.reboot_notify)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			codec->patch_ops.reboot_notify(codec);
 	}
 }
@@ -4715,8 +5141,11 @@ int snd_hda_multi_out_analog_prepare(struct hda_codec *codec,
 {
 	const hda_nid_t *nids = mout->dac_nids;
 	int chs = substream->runtime->channels;
+<<<<<<< HEAD
 	struct hda_spdif_out *spdif =
 			snd_hda_spdif_out_of_nid(codec, mout->dig_out_nid);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	mutex_lock(&codec->spdif_mutex);
@@ -4725,7 +5154,11 @@ int snd_hda_multi_out_analog_prepare(struct hda_codec *codec,
 		if (chs == 2 &&
 		    snd_hda_is_supported_format(codec, mout->dig_out_nid,
 						format) &&
+<<<<<<< HEAD
 		    !(spdif->status & IEC958_AES0_NONAUDIO)) {
+=======
+		    !(codec->spdif_status & IEC958_AES0_NONAUDIO)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mout->dig_out_used = HDA_DIG_ANALOG_DUP;
 			setup_dig_out_stream(codec, mout->dig_out_nid,
 					     stream_tag, format);
@@ -4745,11 +5178,14 @@ int snd_hda_multi_out_analog_prepare(struct hda_codec *codec,
 		snd_hda_codec_setup_stream(codec, mout->hp_nid, stream_tag,
 					   0, format);
 	/* extra outputs copied from front */
+<<<<<<< HEAD
 	for (i = 0; i < ARRAY_SIZE(mout->hp_out_nid); i++)
 		if (!mout->no_share_stream && mout->hp_out_nid[i])
 			snd_hda_codec_setup_stream(codec,
 						   mout->hp_out_nid[i],
 						   stream_tag, 0, format);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < ARRAY_SIZE(mout->extra_out_nid); i++)
 		if (!mout->no_share_stream && mout->extra_out_nid[i])
 			snd_hda_codec_setup_stream(codec,
@@ -4782,10 +5218,13 @@ int snd_hda_multi_out_analog_cleanup(struct hda_codec *codec,
 		snd_hda_codec_cleanup_stream(codec, nids[i]);
 	if (mout->hp_nid)
 		snd_hda_codec_cleanup_stream(codec, mout->hp_nid);
+<<<<<<< HEAD
 	for (i = 0; i < ARRAY_SIZE(mout->hp_out_nid); i++)
 		if (mout->hp_out_nid[i])
 			snd_hda_codec_cleanup_stream(codec,
 						     mout->hp_out_nid[i]);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < ARRAY_SIZE(mout->extra_out_nid); i++)
 		if (mout->extra_out_nid[i])
 			snd_hda_codec_cleanup_stream(codec,
@@ -4866,6 +5305,7 @@ static void sort_autocfg_input_pins(struct auto_pin_cfg *cfg)
 	}
 }
 
+<<<<<<< HEAD
 /* Reorder the surround channels
  * ALSA sequence is front/surr/clfe/side
  * HDA sequence is:
@@ -4887,6 +5327,8 @@ static void reorder_outputs(unsigned int nums, hda_nid_t *pins)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Parse all pin widgets and store the useful pin nids to cfg
  *
@@ -4904,6 +5346,7 @@ static void reorder_outputs(unsigned int nums, hda_nid_t *pins)
  * The digital input/output pins are assigned to dig_in_pin and dig_out_pin,
  * respectively.
  */
+<<<<<<< HEAD
 int snd_hda_parse_pin_defcfg(struct hda_codec *codec,
 			     struct auto_pin_cfg *cfg,
 			     const hda_nid_t *ignore_nids,
@@ -4911,6 +5354,14 @@ int snd_hda_parse_pin_defcfg(struct hda_codec *codec,
 {
 	hda_nid_t nid, end_nid;
 	short seq, assoc_line_out;
+=======
+int snd_hda_parse_pin_def_config(struct hda_codec *codec,
+				 struct auto_pin_cfg *cfg,
+				 const hda_nid_t *ignore_nids)
+{
+	hda_nid_t nid, end_nid;
+	short seq, assoc_line_out, assoc_speaker;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	short sequences_line_out[ARRAY_SIZE(cfg->line_out_pins)];
 	short sequences_speaker[ARRAY_SIZE(cfg->speaker_pins)];
 	short sequences_hp[ARRAY_SIZE(cfg->hp_pins)];
@@ -4921,15 +5372,24 @@ int snd_hda_parse_pin_defcfg(struct hda_codec *codec,
 	memset(sequences_line_out, 0, sizeof(sequences_line_out));
 	memset(sequences_speaker, 0, sizeof(sequences_speaker));
 	memset(sequences_hp, 0, sizeof(sequences_hp));
+<<<<<<< HEAD
 	assoc_line_out = 0;
 
 	codec->ignore_misc_bit = true;
+=======
+	assoc_line_out = assoc_speaker = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	end_nid = codec->start_nid + codec->num_nodes;
 	for (nid = codec->start_nid; nid < end_nid; nid++) {
 		unsigned int wid_caps = get_wcaps(codec, nid);
 		unsigned int wid_type = get_wcaps_type(wid_caps);
 		unsigned int def_conf;
+<<<<<<< HEAD
 		short assoc, loc, conn, dev;
+=======
+		short assoc, loc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* read all default configuration for pin complex */
 		if (wid_type != AC_WID_PIN)
@@ -4939,6 +5399,7 @@ int snd_hda_parse_pin_defcfg(struct hda_codec *codec,
 			continue;
 
 		def_conf = snd_hda_codec_get_pincfg(codec, nid);
+<<<<<<< HEAD
 		if (!(get_defcfg_misc(snd_hda_codec_get_pincfg(codec, nid)) &
 		      AC_DEFCFG_MISC_NO_PRESENCE))
 			codec->ignore_misc_bit = false;
@@ -4955,6 +5416,12 @@ int snd_hda_parse_pin_defcfg(struct hda_codec *codec,
 		}
 
 		switch (dev) {
+=======
+		if (get_defcfg_connect(def_conf) == AC_JACK_PORT_NONE)
+			continue;
+		loc = get_defcfg_location(def_conf);
+		switch (get_defcfg_device(def_conf)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case AC_JACK_LINE_OUT:
 			seq = get_defcfg_sequence(def_conf);
 			assoc = get_defcfg_association(def_conf);
@@ -4977,10 +5444,23 @@ int snd_hda_parse_pin_defcfg(struct hda_codec *codec,
 		case AC_JACK_SPEAKER:
 			seq = get_defcfg_sequence(def_conf);
 			assoc = get_defcfg_association(def_conf);
+<<<<<<< HEAD
 			if (cfg->speaker_outs >= ARRAY_SIZE(cfg->speaker_pins))
 				continue;
 			cfg->speaker_pins[cfg->speaker_outs] = nid;
 			sequences_speaker[cfg->speaker_outs] = (assoc << 4) | seq;
+=======
+			if (!assoc)
+				continue;
+			if (!assoc_speaker)
+				assoc_speaker = assoc;
+			else if (assoc_speaker != assoc)
+				continue;
+			if (cfg->speaker_outs >= ARRAY_SIZE(cfg->speaker_pins))
+				continue;
+			cfg->speaker_pins[cfg->speaker_outs] = nid;
+			sequences_speaker[cfg->speaker_outs] = seq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cfg->speaker_outs++;
 			break;
 		case AC_JACK_HP_OUT:
@@ -5029,8 +5509,12 @@ int snd_hda_parse_pin_defcfg(struct hda_codec *codec,
 	 * If no line-out is defined but multiple HPs are found,
 	 * some of them might be the real line-outs.
 	 */
+<<<<<<< HEAD
 	if (!cfg->line_outs && cfg->hp_outs > 1 &&
 	    !(cond_flags & HDA_PINCFG_NO_HP_FIXUP)) {
+=======
+	if (!cfg->line_outs && cfg->hp_outs > 1) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int i = 0;
 		while (i < cfg->hp_outs) {
 			/* The real HPs should have the sequence 0x0f */
@@ -5067,8 +5551,12 @@ int snd_hda_parse_pin_defcfg(struct hda_codec *codec,
 	 * FIX-UP: if no line-outs are detected, try to use speaker or HP pin
 	 * as a primary output
 	 */
+<<<<<<< HEAD
 	if (!cfg->line_outs &&
 	    !(cond_flags & HDA_PINCFG_NO_LO_FIXUP)) {
+=======
+	if (!cfg->line_outs) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (cfg->speaker_outs) {
 			cfg->line_outs = cfg->speaker_outs;
 			memcpy(cfg->line_out_pins, cfg->speaker_pins,
@@ -5086,9 +5574,27 @@ int snd_hda_parse_pin_defcfg(struct hda_codec *codec,
 		}
 	}
 
+<<<<<<< HEAD
 	reorder_outputs(cfg->line_outs, cfg->line_out_pins);
 	reorder_outputs(cfg->hp_outs, cfg->hp_pins);
 	reorder_outputs(cfg->speaker_outs, cfg->speaker_pins);
+=======
+	/* Reorder the surround channels
+	 * ALSA sequence is front/surr/clfe/side
+	 * HDA sequence is:
+	 *    4-ch: front/surr  =>  OK as it is
+	 *    6-ch: front/clfe/surr
+	 *    8-ch: front/clfe/rear/side|fc
+	 */
+	switch (cfg->line_outs) {
+	case 3:
+	case 4:
+		nid = cfg->line_out_pins[1];
+		cfg->line_out_pins[1] = cfg->line_out_pins[2];
+		cfg->line_out_pins[2] = nid;
+		break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sort_autocfg_input_pins(cfg);
 
@@ -5126,7 +5632,11 @@ int snd_hda_parse_pin_defcfg(struct hda_codec *codec,
 
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_HDA(snd_hda_parse_pin_defcfg);
+=======
+EXPORT_SYMBOL_HDA(snd_hda_parse_pin_def_config);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int snd_hda_get_input_pin_attr(unsigned int def_conf)
 {
@@ -5157,8 +5667,13 @@ EXPORT_SYMBOL_HDA(snd_hda_get_input_pin_attr);
  * "Rear", "Internal".
  */
 
+<<<<<<< HEAD
 static const char *hda_get_input_pin_label(struct hda_codec *codec,
 					   hda_nid_t pin, bool check_location)
+=======
+const char *hda_get_input_pin_label(struct hda_codec *codec, hda_nid_t pin,
+					int check_location)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int def_conf;
 	static const char * const mic_names[] = {
@@ -5197,6 +5712,10 @@ static const char *hda_get_input_pin_label(struct hda_codec *codec,
 		return "Misc";
 	}
 }
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL_HDA(hda_get_input_pin_label);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Check whether the location prefix needs to be added to the label.
  * If all mic-jacks are in the same location (e.g. rear panel), we don't
@@ -5253,6 +5772,7 @@ const char *hda_get_autocfg_input_label(struct hda_codec *codec,
 }
 EXPORT_SYMBOL_HDA(hda_get_autocfg_input_label);
 
+<<<<<<< HEAD
 /* return the position of NID in the list, or -1 if not found */
 static int find_idx_in_nid_list(hda_nid_t nid, const hda_nid_t *list, int nums)
 {
@@ -5396,6 +5916,8 @@ int snd_hda_get_pin_label(struct hda_codec *codec, hda_nid_t nid,
 }
 EXPORT_SYMBOL_HDA(snd_hda_get_pin_label);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * snd_hda_add_imux_item - Add an item to input_mux
  *
@@ -5447,10 +5969,18 @@ int snd_hda_suspend(struct hda_bus *bus)
 	struct hda_codec *codec;
 
 	list_for_each_entry(codec, &bus->codec_list, list) {
+<<<<<<< HEAD
 		if (hda_codec_is_power_on(codec))
 			hda_call_codec_suspend(codec);
 		if (codec->patch_ops.post_suspend)
 			codec->patch_ops.post_suspend(codec);
+=======
+#ifdef CONFIG_SND_HDA_POWER_SAVE
+		if (!codec->power_on)
+			continue;
+#endif
+		hda_call_codec_suspend(codec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }
@@ -5470,8 +6000,11 @@ int snd_hda_resume(struct hda_bus *bus)
 	struct hda_codec *codec;
 
 	list_for_each_entry(codec, &bus->codec_list, list) {
+<<<<<<< HEAD
 		if (codec->patch_ops.pre_resume)
 			codec->patch_ops.pre_resume(codec);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (snd_hda_codec_needs_resume(codec))
 			hda_call_codec_resume(codec);
 	}
@@ -5497,6 +6030,7 @@ void *snd_array_new(struct snd_array *array)
 {
 	if (array->used >= array->alloced) {
 		int num = array->alloced + array->alloc_align;
+<<<<<<< HEAD
 		int size = (num + 1) * array->elem_size;
 		int oldsize = array->alloced * array->elem_size;
 		void *nlist;
@@ -5506,6 +6040,19 @@ void *snd_array_new(struct snd_array *array)
 		if (!nlist)
 			return NULL;
 		memset(nlist + oldsize, 0, size - oldsize);
+=======
+		void *nlist;
+		if (snd_BUG_ON(num >= 4096))
+			return NULL;
+		nlist = kcalloc(num + 1, array->elem_size, GFP_KERNEL);
+		if (!nlist)
+			return NULL;
+		if (array->list) {
+			memcpy(nlist, array->list,
+			       array->elem_size * array->alloced);
+			kfree(array->list);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		array->list = nlist;
 		array->alloced = num;
 	}
@@ -5527,6 +6074,33 @@ void snd_array_free(struct snd_array *array)
 EXPORT_SYMBOL_HDA(snd_array_free);
 
 /**
+<<<<<<< HEAD
+=======
+ * snd_print_pcm_rates - Print the supported PCM rates to the string buffer
+ * @pcm: PCM caps bits
+ * @buf: the string buffer to write
+ * @buflen: the max buffer length
+ *
+ * used by hda_proc.c and hda_eld.c
+ */
+void snd_print_pcm_rates(int pcm, char *buf, int buflen)
+{
+	static unsigned int rates[] = {
+		8000, 11025, 16000, 22050, 32000, 44100, 48000, 88200,
+		96000, 176400, 192000, 384000
+	};
+	int i, j;
+
+	for (i = 0, j = 0; i < ARRAY_SIZE(rates); i++)
+		if (pcm & (1 << i))
+			j += snprintf(buf + j, buflen - j,  " %d", rates[i]);
+
+	buf[j] = '\0'; /* necessary when j == 0 */
+}
+EXPORT_SYMBOL_HDA(snd_print_pcm_rates);
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * snd_print_pcm_bits - Print the supported PCM fmt bits to the string buffer
  * @pcm: PCM caps bits
  * @buf: the string buffer to write
@@ -5547,5 +6121,114 @@ void snd_print_pcm_bits(int pcm, char *buf, int buflen)
 }
 EXPORT_SYMBOL_HDA(snd_print_pcm_bits);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SND_HDA_INPUT_JACK
+/*
+ * Input-jack notification support
+ */
+struct hda_jack_item {
+	hda_nid_t nid;
+	int type;
+	struct snd_jack *jack;
+};
+
+static const char *get_jack_default_name(struct hda_codec *codec, hda_nid_t nid,
+					 int type)
+{
+	switch (type) {
+	case SND_JACK_HEADPHONE:
+		return "Headphone";
+	case SND_JACK_MICROPHONE:
+		return "Mic";
+	case SND_JACK_LINEOUT:
+		return "Line-out";
+	case SND_JACK_HEADSET:
+		return "Headset";
+	case SND_JACK_VIDEOOUT:
+		return "HDMI/DP";
+	default:
+		return "Misc";
+	}
+}
+
+static void hda_free_jack_priv(struct snd_jack *jack)
+{
+	struct hda_jack_item *jacks = jack->private_data;
+	jacks->nid = 0;
+	jacks->jack = NULL;
+}
+
+int snd_hda_input_jack_add(struct hda_codec *codec, hda_nid_t nid, int type,
+			   const char *name)
+{
+	struct hda_jack_item *jack;
+	int err;
+
+	snd_array_init(&codec->jacks, sizeof(*jack), 32);
+	jack = snd_array_new(&codec->jacks);
+	if (!jack)
+		return -ENOMEM;
+
+	jack->nid = nid;
+	jack->type = type;
+	if (!name)
+		name = get_jack_default_name(codec, nid, type);
+	err = snd_jack_new(codec->bus->card, name, type, &jack->jack);
+	if (err < 0) {
+		jack->nid = 0;
+		return err;
+	}
+	jack->jack->private_data = jack;
+	jack->jack->private_free = hda_free_jack_priv;
+	return 0;
+}
+EXPORT_SYMBOL_HDA(snd_hda_input_jack_add);
+
+void snd_hda_input_jack_report(struct hda_codec *codec, hda_nid_t nid)
+{
+	struct hda_jack_item *jacks = codec->jacks.list;
+	int i;
+
+	if (!jacks)
+		return;
+
+	for (i = 0; i < codec->jacks.used; i++, jacks++) {
+		unsigned int pin_ctl;
+		unsigned int present;
+		int type;
+
+		if (jacks->nid != nid)
+			continue;
+		present = snd_hda_jack_detect(codec, nid);
+		type = jacks->type;
+		if (type == (SND_JACK_HEADPHONE | SND_JACK_LINEOUT)) {
+			pin_ctl = snd_hda_codec_read(codec, nid, 0,
+					     AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
+			type = (pin_ctl & AC_PINCTL_HP_EN) ?
+				SND_JACK_HEADPHONE : SND_JACK_LINEOUT;
+		}
+		snd_jack_report(jacks->jack, present ? type : 0);
+	}
+}
+EXPORT_SYMBOL_HDA(snd_hda_input_jack_report);
+
+/* free jack instances manually when clearing/reconfiguring */
+void snd_hda_input_jack_free(struct hda_codec *codec)
+{
+	if (!codec->bus->shutdown && codec->jacks.list) {
+		struct hda_jack_item *jacks = codec->jacks.list;
+		int i;
+		for (i = 0; i < codec->jacks.used; i++, jacks++) {
+			if (jacks->jack)
+				snd_device_free(codec->bus->card, jacks->jack);
+		}
+	}
+	snd_array_free(&codec->jacks);
+}
+EXPORT_SYMBOL_HDA(snd_hda_input_jack_free);
+#endif /* CONFIG_SND_HDA_INPUT_JACK */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("HDA codec core");
 MODULE_LICENSE("GPL");

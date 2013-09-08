@@ -11,22 +11,38 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
 #include <linux/input.h>
 #include <linux/interrupt.h>
 #include <linux/irq.h>
+<<<<<<< HEAD
 #include <linux/device.h>
 
 #include <linux/delay.h>
 
+=======
+#include <linux/sysdev.h>
+
+#include <linux/delay.h>
+
+#include <asm/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/hardware.h>
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 #include <asm/mach/flash.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/system.h>
 #include <mach/vreg.h>
 #include <mach/board.h>
@@ -75,8 +91,13 @@ static struct map_desc sapphire_io_desc[] __initdata = {
 	}
 };
 
+<<<<<<< HEAD
 static void __init sapphire_fixup(struct tag *tags, char **cmdline,
 				  struct meminfo *mi)
+=======
+static void __init sapphire_fixup(struct machine_desc *desc, struct tag *tags,
+				  char **cmdline, struct meminfo *mi)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int smi_sz = parse_tag_smi((const struct tag *)tags);
 
@@ -103,7 +124,11 @@ static void __init sapphire_map_io(void)
 
 MACHINE_START(SAPPHIRE, "sapphire")
 /* Maintainer: Brian Swetland <swetland@google.com> */
+<<<<<<< HEAD
 	.atag_offset    = 0x100,
+=======
+	.boot_params    = PLAT_PHYS_OFFSET + 0x100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.fixup          = sapphire_fixup,
 	.map_io         = sapphire_map_io,
 	.init_irq       = sapphire_init_irq,

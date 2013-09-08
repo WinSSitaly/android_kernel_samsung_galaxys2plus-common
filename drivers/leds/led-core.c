@@ -23,6 +23,7 @@ EXPORT_SYMBOL_GPL(leds_list_lock);
 
 LIST_HEAD(leds_list);
 EXPORT_SYMBOL_GPL(leds_list);
+<<<<<<< HEAD
 
 static void led_stop_software_blink(struct led_classdev *led_cdev)
 {
@@ -93,3 +94,5 @@ void led_brightness_set(struct led_classdev *led_cdev,
 	led_cdev->brightness_set(led_cdev, brightness);
 }
 EXPORT_SYMBOL(led_brightness_set);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

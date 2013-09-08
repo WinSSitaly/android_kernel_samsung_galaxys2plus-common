@@ -54,6 +54,7 @@ struct blackfin_pda {			/* Per-processor Data Area */
 #endif
 };
 
+<<<<<<< HEAD
 struct blackfin_initial_pda {
 	void *retx;
 #ifdef CONFIG_DEBUG_DOUBLEFAULT
@@ -64,6 +65,8 @@ struct blackfin_initial_pda {
 #endif
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct blackfin_pda cpu_pda[];
 
 #endif	/* __ASSEMBLY__ */

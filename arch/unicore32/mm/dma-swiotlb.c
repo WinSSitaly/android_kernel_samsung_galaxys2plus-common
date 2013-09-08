@@ -17,6 +17,7 @@
 
 #include <asm/dma.h>
 
+<<<<<<< HEAD
 static void *unicore_swiotlb_alloc_coherent(struct device *dev, size_t size,
 					    dma_addr_t *dma_handle, gfp_t flags,
 					    struct dma_attrs *attrs)
@@ -34,6 +35,11 @@ static void unicore_swiotlb_free_coherent(struct device *dev, size_t size,
 struct dma_map_ops swiotlb_dma_map_ops = {
 	.alloc = unicore_swiotlb_alloc_coherent,
 	.free = unicore_swiotlb_free_coherent,
+=======
+struct dma_map_ops swiotlb_dma_map_ops = {
+	.alloc_coherent = swiotlb_alloc_coherent,
+	.free_coherent = swiotlb_free_coherent,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_sg = swiotlb_map_sg_attrs,
 	.unmap_sg = swiotlb_unmap_sg_attrs,
 	.dma_supported = swiotlb_dma_supported,

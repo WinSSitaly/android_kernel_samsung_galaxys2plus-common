@@ -652,14 +652,22 @@ struct twl4030_power_data {
 	unsigned num;
 	struct twl4030_resconfig *resource_config;
 #define TWL4030_RESCONFIG_UNDEF	((u8)-1)
+<<<<<<< HEAD
 	bool use_poweroff;	/* Board is wired for TWL poweroff */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 extern void twl4030_power_init(struct twl4030_power_data *triton2_scripts);
 extern int twl4030_remove_script(u8 flags);
+<<<<<<< HEAD
 extern void twl4030_power_off(void);
 
 struct twl4030_codec_data {
+=======
+
+struct twl4030_codec_audio_data {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int digimic_delay; /* in ms */
 	unsigned int ramp_delay_value;
 	unsigned int offset_cncl_path;
@@ -669,6 +677,7 @@ struct twl4030_codec_data {
 	void (*set_hs_extmute)(int mute);
 };
 
+<<<<<<< HEAD
 struct twl4030_vibra_data {
 	unsigned int	coexist;
 };
@@ -677,11 +686,24 @@ struct twl4030_audio_data {
 	unsigned int	audio_mclk;
 	struct twl4030_codec_data *codec;
 	struct twl4030_vibra_data *vibra;
+=======
+struct twl4030_codec_vibra_data {
+	unsigned int	coexist;
+};
+
+struct twl4030_codec_data {
+	unsigned int	audio_mclk;
+	struct twl4030_codec_audio_data		*audio;
+	struct twl4030_codec_vibra_data		*vibra;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* twl6040 */
 	int audpwron_gpio;	/* audio power-on gpio */
 	int naudint_irq;	/* audio interrupt */
+<<<<<<< HEAD
 	unsigned int irq_base;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct twl4030_platform_data {
@@ -693,16 +715,23 @@ struct twl4030_platform_data {
 	struct twl4030_keypad_data		*keypad;
 	struct twl4030_usb_data			*usb;
 	struct twl4030_power_data		*power;
+<<<<<<< HEAD
 	struct twl4030_audio_data		*audio;
+=======
+	struct twl4030_codec_data		*codec;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Common LDO regulators for TWL4030/TWL6030 */
 	struct regulator_init_data		*vdac;
 	struct regulator_init_data		*vaux1;
 	struct regulator_init_data		*vaux2;
 	struct regulator_init_data		*vaux3;
+<<<<<<< HEAD
 	struct regulator_init_data		*vdd1;
 	struct regulator_init_data		*vdd2;
 	struct regulator_init_data		*vdd3;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* TWL4030 LDO regulators */
 	struct regulator_init_data		*vpll1;
 	struct regulator_init_data		*vpll2;
@@ -711,6 +740,11 @@ struct twl4030_platform_data {
 	struct regulator_init_data		*vsim;
 	struct regulator_init_data		*vaux4;
 	struct regulator_init_data		*vio;
+<<<<<<< HEAD
+=======
+	struct regulator_init_data		*vdd1;
+	struct regulator_init_data		*vdd2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct regulator_init_data		*vintana1;
 	struct regulator_init_data		*vintana2;
 	struct regulator_init_data		*vintdig;
@@ -722,8 +756,11 @@ struct twl4030_platform_data {
 	struct regulator_init_data              *vcxio;
 	struct regulator_init_data              *vusb;
 	struct regulator_init_data		*clk32kg;
+<<<<<<< HEAD
 	struct regulator_init_data              *v1v8;
 	struct regulator_init_data              *v2v1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* TWL6025 LDO regulators */
 	struct regulator_init_data		*ldo1;
 	struct regulator_init_data		*ldo2;
@@ -740,6 +777,7 @@ struct twl4030_platform_data {
 	struct regulator_init_data		*vio6025;
 };
 
+<<<<<<< HEAD
 struct twl_regulator_driver_data {
 	int		(*set_voltage)(void *data, int target_uV);
 	int		(*get_voltage)(void *data);
@@ -750,6 +788,11 @@ struct twl_regulator_driver_data {
 /*----------------------------------------------------------------------*/
 
 int twl4030_sih_setup(struct device *dev, int module, int irq_base);
+=======
+/*----------------------------------------------------------------------*/
+
+int twl4030_sih_setup(int module);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Offsets to Power Registers */
 #define TWL4030_VDAC_DEV_GRP		0x3B

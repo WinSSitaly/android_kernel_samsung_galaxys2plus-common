@@ -28,8 +28,11 @@
 
 #define _XMIT_OSDEP_C_
 
+<<<<<<< HEAD
 #include <linux/usb.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "osdep_service.h"
 #include "drv_types.h"
 
@@ -44,6 +47,10 @@
 
 static uint remainder_len(struct pkt_file *pfile)
 {
+<<<<<<< HEAD
+=======
+	/* Kovich: Need to extend the buf_len to 64 bit ?(unsigned long long) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return (uint)(pfile->buf_len - ((addr_t)(pfile->cur_addr) -
 	       (addr_t)(pfile->buf_start)));
 }
@@ -108,6 +115,7 @@ void r8712_set_qos(struct pkt_file *ppktfile, struct pkt_attrib *pattrib)
 	pattrib->subtype = WIFI_QOS_DATA_TYPE;
 }
 
+<<<<<<< HEAD
 void r8712_SetFilter(struct work_struct *work)
 {
 	struct _adapter *padapter = container_of(work, struct _adapter,
@@ -128,13 +136,19 @@ void r8712_SetFilter(struct work_struct *work)
 	r8712_write8(padapter, 0x117, oldvalue);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int r8712_xmit_resource_alloc(struct _adapter *padapter,
 			      struct xmit_buf *pxmitbuf)
 {
 	int i;
 
 	for (i = 0; i < 8; i++) {
+<<<<<<< HEAD
 		pxmitbuf->pxmit_urb[i] = usb_alloc_urb(0, GFP_KERNEL);
+=======
+		pxmitbuf->pxmit_urb[i] = _usb_alloc_urb(0, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (pxmitbuf->pxmit_urb[i] == NULL) {
 			printk(KERN_ERR "r8712u: pxmitbuf->pxmit_urb[i]"
 			    " == NULL");
@@ -167,7 +181,11 @@ void r8712_xmit_complete(struct _adapter *padapter, struct xmit_frame *pxframe)
 int r8712_xmit_entry(_pkt *pkt, struct  net_device *pnetdev)
 {
 	struct xmit_frame *pxmitframe = NULL;
+<<<<<<< HEAD
 	struct _adapter *padapter = (struct _adapter *)netdev_priv(pnetdev);
+=======
+	struct _adapter *padapter = (struct _adapter *)_netdev_priv(pnetdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct xmit_priv *pxmitpriv = &(padapter->xmitpriv);
 	int ret = 0;
 

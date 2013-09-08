@@ -187,7 +187,11 @@ void ath9k_fatal_work(struct work_struct *work)
 						   fatal_work);
 	struct ath_common *common = ath9k_hw_common(priv->ah);
 
+<<<<<<< HEAD
 	ath_dbg(common, FATAL, "FATAL Event received, resetting device\n");
+=======
+	ath_dbg(common, ATH_DBG_FATAL, "FATAL Event received, resetting device\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ath9k_htc_reset(priv);
 }
 
@@ -330,7 +334,12 @@ int ath9k_wmi_cmd(struct wmi *wmi, enum wmi_cmd_id cmd_id,
 
 	time_left = wait_for_completion_timeout(&wmi->cmd_wait, timeout);
 	if (!time_left) {
+<<<<<<< HEAD
 		ath_dbg(common, WMI, "Timeout waiting for WMI command: %s\n",
+=======
+		ath_dbg(common, ATH_DBG_WMI,
+			"Timeout waiting for WMI command: %s\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			wmi_cmd_to_name(cmd_id));
 		mutex_unlock(&wmi->op_mutex);
 		return -ETIMEDOUT;
@@ -341,7 +350,12 @@ int ath9k_wmi_cmd(struct wmi *wmi, enum wmi_cmd_id cmd_id,
 	return 0;
 
 out:
+<<<<<<< HEAD
 	ath_dbg(common, WMI, "WMI failure for: %s\n", wmi_cmd_to_name(cmd_id));
+=======
+	ath_dbg(common, ATH_DBG_WMI,
+		"WMI failure for: %s\n", wmi_cmd_to_name(cmd_id));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&wmi->op_mutex);
 	kfree_skb(skb);
 

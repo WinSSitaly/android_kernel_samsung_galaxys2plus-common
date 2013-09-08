@@ -31,7 +31,11 @@
 
 #include <asm/hwrpb.h>
 #include <asm/ptrace.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/io.h>
 #include <asm/irq.h>
@@ -450,7 +454,11 @@ setup_smp(void)
 		smp_num_probed = 1;
 	}
 
+<<<<<<< HEAD
 	printk(KERN_INFO "SMP: %d CPUs probed -- cpu_present_mask = %lx\n",
+=======
+	printk(KERN_INFO "SMP: %d CPUs probed -- cpu_present_map = %lx\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       smp_num_probed, cpumask_bits(cpu_present_mask)[0]);
 }
 

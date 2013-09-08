@@ -26,6 +26,10 @@
 
 #include <asm/sections.h>
 #include <asm/prom.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/pgtable.h>
 #include <asm/machdep.h>
@@ -273,7 +277,11 @@ int __init via_calibrate_decr(void)
 		return 0;
 	}
 	of_node_put(vias);
+<<<<<<< HEAD
 	via = ioremap(rsrc.start, resource_size(&rsrc));
+=======
+	via = ioremap(rsrc.start, rsrc.end - rsrc.start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (via == NULL) {
 		printk(KERN_ERR "Failed to map VIA for timer calibration !\n");
 		return 0;

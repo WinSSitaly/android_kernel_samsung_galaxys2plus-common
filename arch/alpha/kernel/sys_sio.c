@@ -20,6 +20,10 @@
 
 #include <asm/compiler.h>
 #include <asm/ptrace.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/dma.h>
 #include <asm/irq.h>
 #include <asm/mmu_context.h>
@@ -145,7 +149,11 @@ sio_fixup_irq_levels(unsigned int level_bits)
 }
 
 static inline int __init
+<<<<<<< HEAD
 noname_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+noname_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * The Noname board has 5 PCI slots with each of the 4
@@ -184,7 +192,11 @@ noname_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
 }
 
 static inline int __init
+<<<<<<< HEAD
 p2k_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+p2k_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static char irq_tab[][5] __initdata = {
 		/*INT A   B   C   D */

@@ -1,9 +1,13 @@
 #ifndef _ASM_MICROBLAZE_ATOMIC_H
 #define _ASM_MICROBLAZE_ATOMIC_H
 
+<<<<<<< HEAD
 #include <asm/cmpxchg.h>
 #include <asm-generic/atomic.h>
 #include <asm-generic/atomic64.h>
+=======
+#include <asm-generic/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Atomically test *v and decrement if it is greater than 0.

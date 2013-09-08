@@ -26,9 +26,13 @@ enum s3c_hsotg_dmamode {
 struct s3c_hsotg_plat {
 	enum s3c_hsotg_dmamode	dma;
 	unsigned int		is_osc : 1;
+<<<<<<< HEAD
 
 	int (*phy_init)(struct platform_device *pdev, int type);
 	int (*phy_exit)(struct platform_device *pdev, int type);
 };
 
 extern void s3c_hsotg_set_platdata(struct s3c_hsotg_plat *pd);
+=======
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

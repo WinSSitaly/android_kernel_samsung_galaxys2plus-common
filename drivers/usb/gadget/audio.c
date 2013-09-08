@@ -14,8 +14,15 @@
 #include <linux/kernel.h>
 #include <linux/utsname.h>
 
+<<<<<<< HEAD
 #define DRIVER_DESC		"Linux USB Audio Gadget"
 #define DRIVER_VERSION		"Feb 2, 2012"
+=======
+#include "u_audio.h"
+
+#define DRIVER_DESC		"Linux USB Audio Gadget"
+#define DRIVER_VERSION		"Dec 18, 2008"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*-------------------------------------------------------------------------*/
 
@@ -31,6 +38,7 @@
 #include "config.c"
 #include "epautoconf.c"
 
+<<<<<<< HEAD
 /* string IDs are assigned dynamically */
 
 #define STRING_MANUFACTURER_IDX		0
@@ -61,6 +69,10 @@ static struct usb_gadget_strings *audio_strings[] = {
 #else
 #include "f_uac2.c"
 #endif
+=======
+#include "u_audio.c"
+#include "f_audio.c"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*-------------------------------------------------------------------------*/
 
@@ -80,6 +92,7 @@ static struct usb_device_descriptor device_desc = {
 
 	.bcdUSB =		__constant_cpu_to_le16(0x200),
 
+<<<<<<< HEAD
 #ifdef CONFIG_GADGET_UAC1
 	.bDeviceClass =		USB_CLASS_PER_INTERFACE,
 	.bDeviceSubClass =	0,
@@ -89,6 +102,11 @@ static struct usb_device_descriptor device_desc = {
 	.bDeviceSubClass =	0x02,
 	.bDeviceProtocol =	0x01,
 #endif
+=======
+	.bDeviceClass =		USB_CLASS_PER_INTERFACE,
+	.bDeviceSubClass =	0,
+	.bDeviceProtocol =	0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* .bMaxPacketSize0 = f(hardware) */
 
 	/* Vendor and product id defaults change according to what configs
@@ -104,6 +122,7 @@ static struct usb_device_descriptor device_desc = {
 	.bNumConfigurations =	1,
 };
 
+<<<<<<< HEAD
 static struct usb_otg_descriptor otg_descriptor = {
 	.bLength =		sizeof otg_descriptor,
 	.bDescriptorType =	USB_DT_OTG,
@@ -119,17 +138,22 @@ static const struct usb_descriptor_header *otg_desc[] = {
 	NULL,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*-------------------------------------------------------------------------*/
 
 static int __init audio_do_config(struct usb_configuration *c)
 {
 	/* FIXME alloc iConfiguration string, set it in c->strings */
 
+<<<<<<< HEAD
 	if (gadget_is_otg(c->cdev->gadget)) {
 		c->descriptors = otg_desc;
 		c->bmAttributes |= USB_CONFIG_ATT_WAKEUP;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	audio_bind_config(c);
 
 	return 0;
@@ -140,9 +164,12 @@ static struct usb_configuration audio_config_driver = {
 	.bConfigurationValue	= 1,
 	/* .iConfiguration = DYNAMIC */
 	.bmAttributes		= USB_CONFIG_ATT_SELFPOWER,
+<<<<<<< HEAD
 #ifndef CONFIG_GADGET_UAC1
 	.unbind			= uac2_unbind_config,
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*-------------------------------------------------------------------------*/
@@ -192,9 +219,13 @@ fail:
 
 static int __exit audio_unbind(struct usb_composite_dev *cdev)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_GADGET_UAC1
 	gaudio_cleanup();
 #endif
+=======
+	gaudio_cleanup();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -202,7 +233,10 @@ static struct usb_composite_driver audio_driver = {
 	.name		= "g_audio",
 	.dev		= &device_desc,
 	.strings	= audio_strings,
+<<<<<<< HEAD
 	.max_speed	= USB_SPEED_HIGH,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.unbind		= __exit_p(audio_unbind),
 };
 

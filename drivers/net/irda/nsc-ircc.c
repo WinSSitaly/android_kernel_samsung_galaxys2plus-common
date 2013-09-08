@@ -52,7 +52,10 @@
 #include <linux/ioport.h>
 #include <linux/delay.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/rtnetlink.h>
 #include <linux/dma-mapping.h>
 #include <linux/pnp.h>
@@ -1664,7 +1667,11 @@ static int nsc_ircc_dma_xmit_complete(struct nsc_ircc_cb *self)
 	switch_bank(iobase, BANK0);
         outb(inb(iobase+MCR) & ~MCR_DMA_EN, iobase+MCR);
 	
+<<<<<<< HEAD
 	/* Check for underrun! */
+=======
+	/* Check for underrrun! */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (inb(iobase+ASCR) & ASCR_TXUR) {
 		self->netdev->stats.tx_errors++;
 		self->netdev->stats.tx_fifo_errors++;

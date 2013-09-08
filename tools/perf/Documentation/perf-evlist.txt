@@ -18,7 +18,11 @@ OPTIONS
 -------
 -i::
 --input=::
+<<<<<<< HEAD
         Input file name. (default: perf.data unless stdin is a fifo)
+=======
+        Input file name. (default: perf.data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 SEE ALSO
 --------

@@ -35,7 +35,10 @@
 #include <linux/mman.h>
 #include <linux/pagemap.h>
 #include <linux/shmem_fs.h>
+<<<<<<< HEAD
 #include <linux/dma-buf.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drmP.h"
 
 /** @file drm_gem.c
@@ -130,7 +133,11 @@ drm_gem_destroy(struct drm_device *dev)
 }
 
 /**
+<<<<<<< HEAD
  * Initialize an already allocated GEM object of the specified size with
+=======
+ * Initialize an already allocate GEM object of the specified size with
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * shmfs backing store.
  */
 int drm_gem_object_init(struct drm_device *dev,
@@ -141,7 +148,11 @@ int drm_gem_object_init(struct drm_device *dev,
 	obj->dev = dev;
 	obj->filp = shmem_file_setup("drm mm object", size, VM_NORESERVE);
 	if (IS_ERR(obj->filp))
+<<<<<<< HEAD
 		return PTR_ERR(obj->filp);
+=======
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kref_init(&obj->refcount);
 	atomic_set(&obj->handle_count, 0);
@@ -152,6 +163,7 @@ int drm_gem_object_init(struct drm_device *dev,
 EXPORT_SYMBOL(drm_gem_object_init);
 
 /**
+<<<<<<< HEAD
  * Initialize an already allocated GEM object of the specified size with
  * no GEM provided backing store. Instead the caller is responsible for
  * backing the object and handling it.
@@ -173,6 +185,8 @@ int drm_gem_private_object_init(struct drm_device *dev,
 EXPORT_SYMBOL(drm_gem_private_object_init);
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Allocate a GEM object of the specified size with shmfs backing store
  */
 struct drm_gem_object *
@@ -233,12 +247,15 @@ drm_gem_handle_delete(struct drm_file *filp, u32 handle)
 	idr_remove(&filp->object_idr, handle);
 	spin_unlock(&filp->table_lock);
 
+<<<<<<< HEAD
 	if (obj->import_attach)
 		drm_prime_remove_imported_buf_handle(&filp->prime,
 				obj->import_attach->dmabuf);
 
 	if (dev->driver->gem_close_object)
 		dev->driver->gem_close_object(obj, filp);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	drm_gem_object_handle_unreference_unlocked(obj);
 
 	return 0;
@@ -255,8 +272,12 @@ drm_gem_handle_create(struct drm_file *file_priv,
 		       struct drm_gem_object *obj,
 		       u32 *handlep)
 {
+<<<<<<< HEAD
 	struct drm_device *dev = obj->dev;
 	int ret;
+=======
+	int	ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Get the user-visible handle using idr.
@@ -277,6 +298,7 @@ again:
 		return ret;
 
 	drm_gem_object_handle_reference(obj);
+<<<<<<< HEAD
 
 	if (dev->driver->gem_open_object) {
 		ret = dev->driver->gem_open_object(obj, file_priv);
@@ -286,10 +308,13 @@ again:
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL(drm_gem_handle_create);
 
+<<<<<<< HEAD
 
 /**
  * drm_gem_free_mmap_offset - release a fake mmap offset for an object
@@ -378,6 +403,8 @@ out_free_list:
 }
 EXPORT_SYMBOL(drm_gem_create_mmap_offset);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /** Returns a reference to the object named by the handle. */
 struct drm_gem_object *
 drm_gem_object_lookup(struct drm_device *dev, struct drm_file *filp,
@@ -528,6 +555,7 @@ drm_gem_open(struct drm_device *dev, struct drm_file *file_private)
 static int
 drm_gem_object_release_handle(int id, void *ptr, void *data)
 {
+<<<<<<< HEAD
 	struct drm_file *file_priv = data;
 	struct drm_gem_object *obj = ptr;
 	struct drm_device *dev = obj->dev;
@@ -538,6 +566,9 @@ drm_gem_object_release_handle(int id, void *ptr, void *data)
 
 	if (dev->driver->gem_close_object)
 		dev->driver->gem_close_object(obj, file_priv);
+=======
+	struct drm_gem_object *obj = ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	drm_gem_object_handle_unreference_unlocked(obj);
 
@@ -553,7 +584,11 @@ void
 drm_gem_release(struct drm_device *dev, struct drm_file *file_private)
 {
 	idr_for_each(&file_private->object_idr,
+<<<<<<< HEAD
 		     &drm_gem_object_release_handle, file_private);
+=======
+		     &drm_gem_object_release_handle, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	idr_remove_all(&file_private->object_idr);
 	idr_destroy(&file_private->object_idr);
@@ -562,8 +597,12 @@ drm_gem_release(struct drm_device *dev, struct drm_file *file_private)
 void
 drm_gem_object_release(struct drm_gem_object *obj)
 {
+<<<<<<< HEAD
 	if (obj->filp)
 	    fput(obj->filp);
+=======
+	fput(obj->filp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(drm_gem_object_release);
 
@@ -670,9 +709,12 @@ int drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
 	struct drm_hash_item *hash;
 	int ret = 0;
 
+<<<<<<< HEAD
 	if (drm_device_is_unplugged(dev))
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&dev->struct_mutex);
 
 	if (drm_ht_find_item(&mm->offset_hash, vma->vm_pgoff, &hash)) {
@@ -712,6 +754,10 @@ int drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
 	 */
 	drm_gem_object_reference(obj);
 
+<<<<<<< HEAD
+=======
+	vma->vm_file = filp;	/* Needed for drm_vm_open() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	drm_vm_open_locked(vma);
 
 out_unlock:

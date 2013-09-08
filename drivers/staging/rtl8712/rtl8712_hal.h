@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2010 Realtek Corporation. All rights reserved.
@@ -23,6 +24,8 @@
  * Larry Finger <Larry.Finger@lwfinger.net>
  *
  ******************************************************************************/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __RTL8712_HAL_H__
 #define __RTL8712_HAL_H__
 
@@ -138,13 +141,20 @@ struct fw_hdr {/*8-byte alinment required*/
 	struct fw_priv	fwpriv;
 };
 
+<<<<<<< HEAD
 struct hal_priv {
+=======
+struct hal_priv{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*Endpoint handles*/
 	struct  net_device *pipehdls_r8712[10];
 	u8 (*hal_bus_init)(struct _adapter *adapter);
 };
 
 uint	 rtl8712_hal_init(struct _adapter *padapter);
+<<<<<<< HEAD
 int rtl871x_load_fw(struct _adapter *padapter);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

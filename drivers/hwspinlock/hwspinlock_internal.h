@@ -21,8 +21,11 @@
 #include <linux/spinlock.h>
 #include <linux/device.h>
 
+<<<<<<< HEAD
 struct hwspinlock_device;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct hwspinlock_ops - platform-specific hwspinlock handlers
  *
@@ -41,6 +44,7 @@ struct hwspinlock_ops {
 
 /**
  * struct hwspinlock - this struct represents a single hwspinlock instance
+<<<<<<< HEAD
  * @bank: the hwspinlock_device structure which owns this lock
  * @lock: initialized and used by hwspinlock core
  * @priv: private data, owned by the underlying platform-specific hwspinlock drv
@@ -74,4 +78,25 @@ static inline int hwlock_to_id(struct hwspinlock *hwlock)
 	return hwlock->bank->base_id + local_id;
 }
 
+=======
+ *
+ * @dev: underlying device, will be used to invoke runtime PM api
+ * @ops: platform-specific hwspinlock handlers
+ * @id: a global, unique, system-wide, index of the lock.
+ * @lock: initialized and used by hwspinlock core
+ * @owner: underlying implementation module, used to maintain module ref count
+ *
+ * Note: currently simplicity was opted for, but later we can squeeze some
+ * memory bytes by grouping the dev, ops and owner members in a single
+ * per-platform struct, and have all hwspinlocks point at it.
+ */
+struct hwspinlock {
+	struct device *dev;
+	const struct hwspinlock_ops *ops;
+	int id;
+	spinlock_t lock;
+	struct module *owner;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __HWSPINLOCK_HWSPINLOCK_H */

@@ -21,6 +21,7 @@ struct gsm_config
 #define GSMIOC_GETCONF		_IOR('G', 0, struct gsm_config)
 #define GSMIOC_SETCONF		_IOW('G', 1, struct gsm_config)
 
+<<<<<<< HEAD
 struct gsm_netconfig {
 	unsigned int adaption;  /* Adaption to use in network mode */
 	unsigned short protocol;/* Protocol to use - only ETH_P_IP supported */
@@ -32,5 +33,7 @@ struct gsm_netconfig {
 #define GSMIOC_ENABLE_NET      _IOW('G', 2, struct gsm_netconfig)
 #define GSMIOC_DISABLE_NET     _IO('G', 3)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

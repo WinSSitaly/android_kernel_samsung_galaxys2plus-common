@@ -1,7 +1,10 @@
 #ifndef _FS_CEPH_MDSMAP_H
 #define _FS_CEPH_MDSMAP_H
 
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "types.h"
 
 /*

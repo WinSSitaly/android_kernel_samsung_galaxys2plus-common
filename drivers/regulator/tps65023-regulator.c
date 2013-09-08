@@ -25,7 +25,10 @@
 #include <linux/i2c.h>
 #include <linux/delay.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/regmap.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Register definitions */
 #define	TPS65023_REG_VERSION		0
@@ -63,6 +66,7 @@
 #define TPS65023_REG_CTRL_LDO2_EN	BIT(2)
 #define TPS65023_REG_CTRL_LDO1_EN	BIT(1)
 
+<<<<<<< HEAD
 /* REG_CTRL2 bitfields */
 #define TPS65023_REG_CTRL2_GO		BIT(7)
 #define TPS65023_REG_CTRL2_CORE_ADJ	BIT(6)
@@ -70,6 +74,8 @@
 #define TPS65023_REG_CTRL2_DCDC1	BIT(1)
 #define TPS65023_REG_CTRL2_DCDC3	BIT(0)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* LDO_CTRL bitfields */
 #define TPS65023_LDO_CTRL_LDOx_SHIFT(ldo_id)	((ldo_id)*4)
 #define TPS65023_LDO_CTRL_LDOx_MASK(ldo_id)	(0xF0 >> ((ldo_id)*4))
@@ -92,7 +98,11 @@
 #define TPS65023_MAX_REG_ID		TPS65023_LDO_2
 
 /* Supported voltage values for regulators */
+<<<<<<< HEAD
 static const u16 VCORE_VSEL_table[] = {
+=======
+static const u16 VDCDC1_VSEL_table[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	800, 825, 850, 875,
 	900, 925, 950, 975,
 	1000, 1025, 1050, 1075,
@@ -103,6 +113,7 @@ static const u16 VCORE_VSEL_table[] = {
 	1500, 1525, 1550, 1600,
 };
 
+<<<<<<< HEAD
 /* Supported voltage values for LDO regulators for tps65020 */
 static const u16 TPS65020_LDO1_VSEL_table[] = {
 	1000, 1050, 1100, 1300,
@@ -117,15 +128,29 @@ static const u16 TPS65020_LDO2_VSEL_table[] = {
 /* Supported voltage values for LDO regulators
  * for tps65021 and tps65023 */
 static const u16 TPS65023_LDO1_VSEL_table[] = {
+=======
+static const u16 LDO1_VSEL_table[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	1000, 1100, 1300, 1800,
 	2200, 2600, 2800, 3150,
 };
 
+<<<<<<< HEAD
 static const u16 TPS65023_LDO2_VSEL_table[] = {
+=======
+static const u16 LDO2_VSEL_table[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	1050, 1200, 1300, 1800,
 	2500, 2800, 3000, 3300,
 };
 
+<<<<<<< HEAD
+=======
+static unsigned int num_voltages[] = {ARRAY_SIZE(VDCDC1_VSEL_table),
+				0, 0, ARRAY_SIZE(LDO1_VSEL_table),
+				ARRAY_SIZE(LDO2_VSEL_table)};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Regulator specific details */
 struct tps_info {
 	const char *name;
@@ -142,6 +167,7 @@ struct tps_pmic {
 	struct i2c_client *client;
 	struct regulator_dev *rdev[TPS65023_NUM_REGULATOR];
 	const struct tps_info *info[TPS65023_NUM_REGULATOR];
+<<<<<<< HEAD
 	struct regmap *regmap;
 	u8 core_regulator;
 };
@@ -151,22 +177,122 @@ struct tps_driver_data {
 	const struct tps_info *info;
 	u8 core_regulator;
 };
+=======
+	struct mutex io_lock;
+};
+
+static inline int tps_65023_read(struct tps_pmic *tps, u8 reg)
+{
+	return i2c_smbus_read_byte_data(tps->client, reg);
+}
+
+static inline int tps_65023_write(struct tps_pmic *tps, u8 reg, u8 val)
+{
+	return i2c_smbus_write_byte_data(tps->client, reg, val);
+}
+
+static int tps_65023_set_bits(struct tps_pmic *tps, u8 reg, u8 mask)
+{
+	int err, data;
+
+	mutex_lock(&tps->io_lock);
+
+	data = tps_65023_read(tps, reg);
+	if (data < 0) {
+		dev_err(&tps->client->dev, "Read from reg 0x%x failed\n", reg);
+		err = data;
+		goto out;
+	}
+
+	data |= mask;
+	err = tps_65023_write(tps, reg, data);
+	if (err)
+		dev_err(&tps->client->dev, "Write for reg 0x%x failed\n", reg);
+
+out:
+	mutex_unlock(&tps->io_lock);
+	return err;
+}
+
+static int tps_65023_clear_bits(struct tps_pmic *tps, u8 reg, u8 mask)
+{
+	int err, data;
+
+	mutex_lock(&tps->io_lock);
+
+	data = tps_65023_read(tps, reg);
+	if (data < 0) {
+		dev_err(&tps->client->dev, "Read from reg 0x%x failed\n", reg);
+		err = data;
+		goto out;
+	}
+
+	data &= ~mask;
+
+	err = tps_65023_write(tps, reg, data);
+	if (err)
+		dev_err(&tps->client->dev, "Write for reg 0x%x failed\n", reg);
+
+out:
+	mutex_unlock(&tps->io_lock);
+	return err;
+
+}
+
+static int tps_65023_reg_read(struct tps_pmic *tps, u8 reg)
+{
+	int data;
+
+	mutex_lock(&tps->io_lock);
+
+	data = tps_65023_read(tps, reg);
+	if (data < 0)
+		dev_err(&tps->client->dev, "Read from reg 0x%x failed\n", reg);
+
+	mutex_unlock(&tps->io_lock);
+	return data;
+}
+
+static int tps_65023_reg_write(struct tps_pmic *tps, u8 reg, u8 val)
+{
+	int err;
+
+	mutex_lock(&tps->io_lock);
+
+	err = tps_65023_write(tps, reg, val);
+	if (err < 0)
+		dev_err(&tps->client->dev, "Write for reg 0x%x failed\n", reg);
+
+	mutex_unlock(&tps->io_lock);
+	return err;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int tps65023_dcdc_is_enabled(struct regulator_dev *dev)
 {
 	struct tps_pmic *tps = rdev_get_drvdata(dev);
 	int data, dcdc = rdev_get_id(dev);
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 shift;
 
 	if (dcdc < TPS65023_DCDC_1 || dcdc > TPS65023_DCDC_3)
 		return -EINVAL;
 
 	shift = TPS65023_NUM_REGULATOR - dcdc;
+<<<<<<< HEAD
 	ret = regmap_read(tps->regmap, TPS65023_REG_REG_CTRL, &data);
 
 	if (ret != 0)
 		return ret;
+=======
+	data = tps_65023_reg_read(tps, TPS65023_REG_REG_CTRL);
+
+	if (data < 0)
+		return data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		return (data & 1<<shift) ? 1 : 0;
 }
@@ -175,17 +301,27 @@ static int tps65023_ldo_is_enabled(struct regulator_dev *dev)
 {
 	struct tps_pmic *tps = rdev_get_drvdata(dev);
 	int data, ldo = rdev_get_id(dev);
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 shift;
 
 	if (ldo < TPS65023_LDO_1 || ldo > TPS65023_LDO_2)
 		return -EINVAL;
 
 	shift = (ldo == TPS65023_LDO_1 ? 1 : 2);
+<<<<<<< HEAD
 	ret = regmap_read(tps->regmap, TPS65023_REG_REG_CTRL, &data);
 
 	if (ret != 0)
 		return ret;
+=======
+	data = tps_65023_reg_read(tps, TPS65023_REG_REG_CTRL);
+
+	if (data < 0)
+		return data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		return (data & 1<<shift) ? 1 : 0;
 }
@@ -200,7 +336,11 @@ static int tps65023_dcdc_enable(struct regulator_dev *dev)
 		return -EINVAL;
 
 	shift = TPS65023_NUM_REGULATOR - dcdc;
+<<<<<<< HEAD
 	return regmap_update_bits(tps->regmap, TPS65023_REG_REG_CTRL, 1 << shift, 1 << shift);
+=======
+	return tps_65023_set_bits(tps, TPS65023_REG_REG_CTRL, 1 << shift);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int tps65023_dcdc_disable(struct regulator_dev *dev)
@@ -213,7 +353,11 @@ static int tps65023_dcdc_disable(struct regulator_dev *dev)
 		return -EINVAL;
 
 	shift = TPS65023_NUM_REGULATOR - dcdc;
+<<<<<<< HEAD
 	return regmap_update_bits(tps->regmap, TPS65023_REG_REG_CTRL, 1 << shift, 0);
+=======
+	return tps_65023_clear_bits(tps, TPS65023_REG_REG_CTRL, 1 << shift);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int tps65023_ldo_enable(struct regulator_dev *dev)
@@ -226,7 +370,11 @@ static int tps65023_ldo_enable(struct regulator_dev *dev)
 		return -EINVAL;
 
 	shift = (ldo == TPS65023_LDO_1 ? 1 : 2);
+<<<<<<< HEAD
 	return regmap_update_bits(tps->regmap, TPS65023_REG_REG_CTRL, 1 << shift, 1 << shift);
+=======
+	return tps_65023_set_bits(tps, TPS65023_REG_REG_CTRL, 1 << shift);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int tps65023_ldo_disable(struct regulator_dev *dev)
@@ -239,22 +387,36 @@ static int tps65023_ldo_disable(struct regulator_dev *dev)
 		return -EINVAL;
 
 	shift = (ldo == TPS65023_LDO_1 ? 1 : 2);
+<<<<<<< HEAD
 	return regmap_update_bits(tps->regmap, TPS65023_REG_REG_CTRL, 1 << shift, 0);
+=======
+	return tps_65023_clear_bits(tps, TPS65023_REG_REG_CTRL, 1 << shift);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int tps65023_dcdc_get_voltage(struct regulator_dev *dev)
 {
 	struct tps_pmic *tps = rdev_get_drvdata(dev);
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int data, dcdc = rdev_get_id(dev);
 
 	if (dcdc < TPS65023_DCDC_1 || dcdc > TPS65023_DCDC_3)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	if (dcdc == tps->core_regulator) {
 		ret = regmap_read(tps->regmap, TPS65023_REG_DEF_CORE, &data);
 		if (ret != 0)
 			return ret;
+=======
+	if (dcdc == TPS65023_DCDC_1) {
+		data = tps_65023_reg_read(tps, TPS65023_REG_DEF_CORE);
+		if (data < 0)
+			return data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		data &= (tps->info[dcdc]->table_len - 1);
 		return tps->info[dcdc]->table[data] * 1000;
 	} else
@@ -268,10 +430,17 @@ static int tps65023_dcdc_set_voltage(struct regulator_dev *dev,
 	struct tps_pmic *tps = rdev_get_drvdata(dev);
 	int dcdc = rdev_get_id(dev);
 	int vsel;
+<<<<<<< HEAD
 	int ret;
 
 	if (dcdc != tps->core_regulator)
 		return -EINVAL;
+=======
+
+	if (dcdc != TPS65023_DCDC_1)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (min_uV < tps->info[dcdc]->min_uV
 			|| min_uV > tps->info[dcdc]->max_uV)
 		return -EINVAL;
@@ -290,6 +459,7 @@ static int tps65023_dcdc_set_voltage(struct regulator_dev *dev,
 
 	*selector = vsel;
 
+<<<<<<< HEAD
 	if (vsel == tps->info[dcdc]->table_len)
 		goto failed;
 
@@ -305,20 +475,36 @@ static int tps65023_dcdc_set_voltage(struct regulator_dev *dev,
 
 failed:
 	return -EINVAL;
+=======
+	/* write to the register in case we found a match */
+	if (vsel == tps->info[dcdc]->table_len)
+		return -EINVAL;
+	else
+		return tps_65023_reg_write(tps, TPS65023_REG_DEF_CORE, vsel);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int tps65023_ldo_get_voltage(struct regulator_dev *dev)
 {
 	struct tps_pmic *tps = rdev_get_drvdata(dev);
 	int data, ldo = rdev_get_id(dev);
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ldo < TPS65023_LDO_1 || ldo > TPS65023_LDO_2)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	ret = regmap_read(tps->regmap, TPS65023_REG_LDO_CTRL, &data);
 	if (ret != 0)
 		return ret;
+=======
+	data = tps_65023_reg_read(tps, TPS65023_REG_LDO_CTRL);
+	if (data < 0)
+		return data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	data >>= (TPS65023_LDO_CTRL_LDOx_SHIFT(ldo - TPS65023_LDO_1));
 	data &= (tps->info[ldo]->table_len - 1);
@@ -330,7 +516,10 @@ static int tps65023_ldo_set_voltage(struct regulator_dev *dev,
 {
 	struct tps_pmic *tps = rdev_get_drvdata(dev);
 	int data, vsel, ldo = rdev_get_id(dev);
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ldo < TPS65023_LDO_1 || ldo > TPS65023_LDO_2)
 		return -EINVAL;
@@ -354,6 +543,7 @@ static int tps65023_ldo_set_voltage(struct regulator_dev *dev,
 
 	*selector = vsel;
 
+<<<<<<< HEAD
 	ret = regmap_read(tps->regmap, TPS65023_REG_LDO_CTRL, &data);
 	if (ret != 0)
 		return ret;
@@ -361,6 +551,15 @@ static int tps65023_ldo_set_voltage(struct regulator_dev *dev,
 	data &= TPS65023_LDO_CTRL_LDOx_MASK(ldo - TPS65023_LDO_1);
 	data |= (vsel << (TPS65023_LDO_CTRL_LDOx_SHIFT(ldo - TPS65023_LDO_1)));
 	return regmap_write(tps->regmap, TPS65023_REG_LDO_CTRL, data);
+=======
+	data = tps_65023_reg_read(tps, TPS65023_REG_LDO_CTRL);
+	if (data < 0)
+		return data;
+
+	data &= TPS65023_LDO_CTRL_LDOx_MASK(ldo - TPS65023_LDO_1);
+	data |= (vsel << (TPS65023_LDO_CTRL_LDOx_SHIFT(ldo - TPS65023_LDO_1)));
+	return tps_65023_reg_write(tps, TPS65023_REG_LDO_CTRL, data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int tps65023_dcdc_list_voltage(struct regulator_dev *dev,
@@ -372,7 +571,11 @@ static int tps65023_dcdc_list_voltage(struct regulator_dev *dev,
 	if (dcdc < TPS65023_DCDC_1 || dcdc > TPS65023_DCDC_3)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	if (dcdc == tps->core_regulator) {
+=======
+	if (dcdc == TPS65023_DCDC_1) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (selector >= tps->info[dcdc]->table_len)
 			return -EINVAL;
 		else
@@ -416,6 +619,7 @@ static struct regulator_ops tps65023_ldo_ops = {
 	.list_voltage = tps65023_ldo_list_voltage,
 };
 
+<<<<<<< HEAD
 static struct regmap_config tps65023_regmap_config = {
 	.reg_bits = 8,
 	.val_bits = 8,
@@ -426,6 +630,12 @@ static int __devinit tps_65023_probe(struct i2c_client *client,
 {
 	const struct tps_driver_data *drv_data = (void *)id->driver_data;
 	const struct tps_info *info = drv_data->info;
+=======
+static int __devinit tps_65023_probe(struct i2c_client *client,
+				     const struct i2c_device_id *id)
+{
+	const struct tps_info *info = (void *)id->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct regulator_init_data *init_data;
 	struct regulator_dev *rdev;
 	struct tps_pmic *tps;
@@ -447,6 +657,7 @@ static int __devinit tps_65023_probe(struct i2c_client *client,
 	if (!tps)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	tps->regmap = regmap_init_i2c(client, &tps65023_regmap_config);
 	if (IS_ERR(tps->regmap)) {
 		error = PTR_ERR(tps->regmap);
@@ -458,6 +669,12 @@ static int __devinit tps_65023_probe(struct i2c_client *client,
 	/* common for all regulators */
 	tps->client = client;
 	tps->core_regulator = drv_data->core_regulator;
+=======
+	mutex_init(&tps->io_lock);
+
+	/* common for all regulators */
+	tps->client = client;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < TPS65023_NUM_REGULATOR; i++, info++, init_data++) {
 		/* Store regulator specific information */
@@ -465,7 +682,11 @@ static int __devinit tps_65023_probe(struct i2c_client *client,
 
 		tps->desc[i].name = info->name;
 		tps->desc[i].id = i;
+<<<<<<< HEAD
 		tps->desc[i].n_voltages = info->table_len;
+=======
+		tps->desc[i].n_voltages = num_voltages[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tps->desc[i].ops = (i > TPS65023_DCDC_3 ?
 					&tps65023_ldo_ops : &tps65023_dcdc_ops);
 		tps->desc[i].type = REGULATOR_VOLTAGE;
@@ -473,7 +694,11 @@ static int __devinit tps_65023_probe(struct i2c_client *client,
 
 		/* Register the regulators */
 		rdev = regulator_register(&tps->desc[i], &client->dev,
+<<<<<<< HEAD
 					  init_data, tps, NULL);
+=======
+					  init_data, tps);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (IS_ERR(rdev)) {
 			dev_err(&client->dev, "failed to register %s\n",
 				id->name);
@@ -487,18 +712,24 @@ static int __devinit tps_65023_probe(struct i2c_client *client,
 
 	i2c_set_clientdata(client, tps);
 
+<<<<<<< HEAD
 	/* Enable setting output voltage by I2C */
 	regmap_update_bits(tps->regmap, TPS65023_REG_CON_CTRL2,
 			TPS65023_REG_CTRL2_CORE_ADJ, TPS65023_REG_CTRL2_CORE_ADJ);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
  fail:
 	while (--i >= 0)
 		regulator_unregister(tps->rdev[i]);
 
+<<<<<<< HEAD
 	regmap_exit(tps->regmap);
  fail_alloc:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(tps);
 	return error;
 }
@@ -517,12 +748,16 @@ static int __devexit tps_65023_remove(struct i2c_client *client)
 	for (i = 0; i < TPS65023_NUM_REGULATOR; i++)
 		regulator_unregister(tps->rdev[i]);
 
+<<<<<<< HEAD
 	regmap_exit(tps->regmap);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(tps);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct tps_info tps65020_regs[] = {
 	{
 		.name = "VDCDC1",
@@ -596,13 +831,20 @@ static const struct tps_info tps65021_regs[] = {
 	},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct tps_info tps65023_regs[] = {
 	{
 		.name = "VDCDC1",
 		.min_uV =  800000,
 		.max_uV = 1600000,
+<<<<<<< HEAD
 		.table_len = ARRAY_SIZE(VCORE_VSEL_table),
 		.table = VCORE_VSEL_table,
+=======
+		.table_len = ARRAY_SIZE(VDCDC1_VSEL_table),
+		.table = VDCDC1_VSEL_table,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "VDCDC2",
@@ -620,13 +862,19 @@ static const struct tps_info tps65023_regs[] = {
 		.name = "LDO1",
 		.min_uV = 1000000,
 		.max_uV = 3150000,
+<<<<<<< HEAD
 		.table_len = ARRAY_SIZE(TPS65023_LDO1_VSEL_table),
 		.table = TPS65023_LDO1_VSEL_table,
+=======
+		.table_len = ARRAY_SIZE(LDO1_VSEL_table),
+		.table = LDO1_VSEL_table,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	{
 		.name = "LDO2",
 		.min_uV = 1050000,
 		.max_uV = 3300000,
+<<<<<<< HEAD
 		.table_len = ARRAY_SIZE(TPS65023_LDO2_VSEL_table),
 		.table = TPS65023_LDO2_VSEL_table,
 	},
@@ -654,6 +902,18 @@ static const struct i2c_device_id tps_65023_id[] = {
 	.driver_data = (unsigned long) &tps65021_drv_data,},
 	{.name = "tps65020",
 	.driver_data = (unsigned long) &tps65020_drv_data},
+=======
+		.table_len = ARRAY_SIZE(LDO2_VSEL_table),
+		.table = LDO2_VSEL_table,
+	},
+};
+
+static const struct i2c_device_id tps_65023_id[] = {
+	{.name = "tps65023",
+	.driver_data = (unsigned long) tps65023_regs,},
+	{.name = "tps65021",
+	.driver_data = (unsigned long) tps65023_regs,},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ },
 };
 

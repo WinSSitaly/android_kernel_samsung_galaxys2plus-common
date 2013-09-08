@@ -44,7 +44,11 @@ struct mxc_usbh_platform_data {
 	int (*exit)(struct platform_device *pdev);
 
 	unsigned int		 portsc;
+<<<<<<< HEAD
 	struct usb_phy		*otg;
+=======
+	struct otg_transceiver	*otg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int mx51_initialize_usb_hw(int port, unsigned int flags);

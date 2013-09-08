@@ -53,13 +53,20 @@ int nf_log_bind_pf(u_int8_t pf, const struct nf_logger *logger);
 void nf_log_unbind_pf(u_int8_t pf);
 
 /* Calls the registered backend logging function */
+<<<<<<< HEAD
 __printf(7, 8)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void nf_log_packet(u_int8_t pf,
 		   unsigned int hooknum,
 		   const struct sk_buff *skb,
 		   const struct net_device *in,
 		   const struct net_device *out,
 		   const struct nf_loginfo *li,
+<<<<<<< HEAD
 		   const char *fmt, ...);
+=======
+		   const char *fmt, ...) __attribute__ ((format(printf,7,8)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* _NF_LOG_H */

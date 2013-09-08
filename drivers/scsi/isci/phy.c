@@ -59,6 +59,7 @@
 #include "scu_event_codes.h"
 #include "probe_roms.h"
 
+<<<<<<< HEAD
 #undef C
 #define C(a) (#a)
 static const char *phy_state_name(enum sci_phy_states state)
@@ -69,6 +70,8 @@ static const char *phy_state_name(enum sci_phy_states state)
 }
 #undef C
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Maximum arbitration wait time in micro-seconds */
 #define SCIC_SDS_PHY_MAX_ARBITRATION_WAIT_TIME  (700)
 
@@ -77,6 +80,7 @@ enum sas_linkrate sci_phy_linkrate(struct isci_phy *iphy)
 	return iphy->max_negotiated_speed;
 }
 
+<<<<<<< HEAD
 static struct isci_host *phy_to_host(struct isci_phy *iphy)
 {
 	struct isci_phy *table = iphy - iphy->phy_index;
@@ -90,6 +94,8 @@ static struct device *sciphy_to_dev(struct isci_phy *iphy)
 	return &phy_to_host(iphy)->pdev->dev;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static enum sci_status
 sci_phy_transport_layer_initialization(struct isci_phy *iphy,
 				       struct scu_transport_layer_registers __iomem *reg)
@@ -114,6 +120,7 @@ sci_phy_transport_layer_initialization(struct isci_phy *iphy,
 
 static enum sci_status
 sci_phy_link_layer_initialization(struct isci_phy *iphy,
+<<<<<<< HEAD
 				  struct scu_link_layer_registers __iomem *llr)
 {
 	struct isci_host *ihost = iphy->owning_port->owning_controller;
@@ -122,15 +129,30 @@ sci_phy_link_layer_initialization(struct isci_phy *iphy,
 	int phy_idx = iphy->phy_index;
 	struct sci_phy_cap phy_cap;
 	u32 phy_configuration;
+=======
+				  struct scu_link_layer_registers __iomem *reg)
+{
+	struct isci_host *ihost = iphy->owning_port->owning_controller;
+	int phy_idx = iphy->phy_index;
+	struct sci_phy_user_params *phy_user = &ihost->user_parameters.phys[phy_idx];
+	struct sci_phy_oem_params *phy_oem =
+		&ihost->oem_parameters.phys[phy_idx];
+	u32 phy_configuration;
+	struct sci_phy_cap phy_cap;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 parity_check = 0;
 	u32 parity_count = 0;
 	u32 llctl, link_rate;
 	u32 clksm_value = 0;
 	u32 sp_timeouts = 0;
 
+<<<<<<< HEAD
 	phy_user = &ihost->user_parameters.phys[phy_idx];
 	phy_oem = &ihost->oem_parameters.phys[phy_idx];
 	iphy->link_layer_registers = llr;
+=======
+	iphy->link_layer_registers = reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Set our IDENTIFY frame data */
 	#define SCI_END_DEVICE 0x01
@@ -140,6 +162,7 @@ sci_phy_link_layer_initialization(struct isci_phy *iphy,
 	       SCU_SAS_TIID_GEN_BIT(STP_INITIATOR) |
 	       SCU_SAS_TIID_GEN_BIT(DA_SATA_HOST) |
 	       SCU_SAS_TIID_GEN_VAL(DEVICE_TYPE, SCI_END_DEVICE),
+<<<<<<< HEAD
 	       &llr->transmit_identification);
 
 	/* Write the device SAS Address */
@@ -160,6 +183,34 @@ sci_phy_link_layer_initialization(struct isci_phy *iphy,
 	/* Hold OOB state machine in reset */
 	phy_configuration |=  SCU_SAS_PCFG_GEN_BIT(OOB_RESET);
 	writel(phy_configuration, &llr->phy_configuration);
+=======
+	       &iphy->link_layer_registers->transmit_identification);
+
+	/* Write the device SAS Address */
+	writel(0xFEDCBA98,
+	       &iphy->link_layer_registers->sas_device_name_high);
+	writel(phy_idx, &iphy->link_layer_registers->sas_device_name_low);
+
+	/* Write the source SAS Address */
+	writel(phy_oem->sas_address.high,
+		&iphy->link_layer_registers->source_sas_address_high);
+	writel(phy_oem->sas_address.low,
+		&iphy->link_layer_registers->source_sas_address_low);
+
+	/* Clear and Set the PHY Identifier */
+	writel(0, &iphy->link_layer_registers->identify_frame_phy_id);
+	writel(SCU_SAS_TIPID_GEN_VALUE(ID, phy_idx),
+		&iphy->link_layer_registers->identify_frame_phy_id);
+
+	/* Change the initial state of the phy configuration register */
+	phy_configuration =
+		readl(&iphy->link_layer_registers->phy_configuration);
+
+	/* Hold OOB state machine in reset */
+	phy_configuration |=  SCU_SAS_PCFG_GEN_BIT(OOB_RESET);
+	writel(phy_configuration,
+		&iphy->link_layer_registers->phy_configuration);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Configure the SNW capabilities */
 	phy_cap.all = 0;
@@ -167,6 +218,7 @@ sci_phy_link_layer_initialization(struct isci_phy *iphy,
 	phy_cap.gen3_no_ssc = 1;
 	phy_cap.gen2_no_ssc = 1;
 	phy_cap.gen1_no_ssc = 1;
+<<<<<<< HEAD
 	if (ihost->oem_parameters.controller.do_enable_ssc) {
 		struct scu_afe_registers __iomem *afe = &ihost->scu_registers->afe;
 		struct scu_afe_transceiver *xcvr = &afe->scu_afe_xcvr[phy_idx];
@@ -225,6 +277,17 @@ sci_phy_link_layer_initialization(struct isci_phy *iphy,
 	/* The SAS specification indicates that the phy_capabilities that
 	 * are transmitted shall have an even parity.  Calculate the parity.
 	 */
+=======
+	if (ihost->oem_parameters.controller.do_enable_ssc == true) {
+		phy_cap.gen3_ssc = 1;
+		phy_cap.gen2_ssc = 1;
+		phy_cap.gen1_ssc = 1;
+	}
+
+	/*
+	 * The SAS specification indicates that the phy_capabilities that
+	 * are transmitted shall have an even parity.  Calculate the parity. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	parity_check = phy_cap.all;
 	while (parity_check != 0) {
 		if (parity_check & 0x1)
@@ -232,6 +295,7 @@ sci_phy_link_layer_initialization(struct isci_phy *iphy,
 		parity_check >>= 1;
 	}
 
+<<<<<<< HEAD
 	/* If parity indicates there are an odd number of bits set, then
 	 * set the parity bit to 1 in the phy capabilities.
 	 */
@@ -239,13 +303,26 @@ sci_phy_link_layer_initialization(struct isci_phy *iphy,
 		phy_cap.parity = 1;
 
 	writel(phy_cap.all, &llr->phy_capabilities);
+=======
+	/*
+	 * If parity indicates there are an odd number of bits set, then
+	 * set the parity bit to 1 in the phy capabilities. */
+	if ((parity_count % 2) != 0)
+		phy_cap.parity = 1;
+
+	writel(phy_cap.all, &iphy->link_layer_registers->phy_capabilities);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Set the enable spinup period but disable the ability to send
 	 * notify enable spinup
 	 */
 	writel(SCU_ENSPINUP_GEN_VAL(COUNT,
 			phy_user->notify_enable_spin_up_insertion_frequency),
+<<<<<<< HEAD
 		&llr->notify_enable_spinup_control);
+=======
+		&iphy->link_layer_registers->notify_enable_spinup_control);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Write the ALIGN Insertion Ferequency for connected phy and
 	 * inpendent of connected state
@@ -256,6 +333,7 @@ sci_phy_link_layer_initialization(struct isci_phy *iphy,
 	clksm_value |= SCU_ALIGN_INSERTION_FREQUENCY_GEN_VAL(GENERAL,
 			phy_user->align_insertion_frequency);
 
+<<<<<<< HEAD
 	writel(clksm_value, &llr->clock_skew_management);
 
 	if (is_c0(ihost->pdev) || is_c1(ihost->pdev)) {
@@ -263,6 +341,13 @@ sci_phy_link_layer_initialization(struct isci_phy *iphy,
 		writel(0x020A7C05, &llr->sas_primitive_timeout);
 	} else
 		writel(0x02108421, &llr->afe_lookup_table_control);
+=======
+	writel(clksm_value, &iphy->link_layer_registers->clock_skew_management);
+
+	/* @todo Provide a way to write this register correctly */
+	writel(0x02108421,
+		&iphy->link_layer_registers->afe_lookup_table_control);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	llctl = SCU_SAS_LLCTL_GEN_VAL(NO_OUTBOUND_TASK_TIMEOUT,
 		(u8)ihost->user_parameters.no_outbound_task_timeout);
@@ -279,9 +364,15 @@ sci_phy_link_layer_initialization(struct isci_phy *iphy,
 		break;
 	}
 	llctl |= SCU_SAS_LLCTL_GEN_VAL(MAX_LINK_RATE, link_rate);
+<<<<<<< HEAD
 	writel(llctl, &llr->link_layer_control);
 
 	sp_timeouts = readl(&llr->sas_phy_timeouts);
+=======
+	writel(llctl, &iphy->link_layer_registers->link_layer_control);
+
+	sp_timeouts = readl(&iphy->link_layer_registers->sas_phy_timeouts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Clear the default 0x36 (54us) RATE_CHANGE timeout value. */
 	sp_timeouts &= ~SCU_SAS_PHYTOV_GEN_VAL(RATE_CHANGE, 0xFF);
@@ -291,6 +382,7 @@ sci_phy_link_layer_initialization(struct isci_phy *iphy,
 	 */
 	sp_timeouts |= SCU_SAS_PHYTOV_GEN_VAL(RATE_CHANGE, 0x3B);
 
+<<<<<<< HEAD
 	writel(sp_timeouts, &llr->sas_phy_timeouts);
 
 	if (is_a2(ihost->pdev)) {
@@ -308,6 +400,22 @@ sci_phy_link_layer_initialization(struct isci_phy *iphy,
 	 * I/O timeouts.
 	 */
 	writel(0, &llr->link_layer_hang_detection_timeout);
+=======
+	writel(sp_timeouts, &iphy->link_layer_registers->sas_phy_timeouts);
+
+	if (is_a2(ihost->pdev)) {
+		/* Program the max ARB time for the PHY to 700us so we inter-operate with
+		 * the PMC expander which shuts down PHYs if the expander PHY generates too
+		 * many breaks.  This time value will guarantee that the initiator PHY will
+		 * generate the break.
+		 */
+		writel(SCIC_SDS_PHY_MAX_ARBITRATION_WAIT_TIME,
+			&iphy->link_layer_registers->maximum_arbitration_wait_timer_timeout);
+	}
+
+	/* Disable link layer hang detection, rely on the OS timeout for I/O timeouts. */
+	writel(0, &iphy->link_layer_registers->link_layer_hang_detection_timeout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* We can exit the initial state to the stopped state */
 	sci_change_state(&iphy->sm, SCI_PHY_STOPPED);
@@ -469,8 +577,13 @@ enum sci_status sci_phy_start(struct isci_phy *iphy)
 	enum sci_phy_states state = iphy->sm.current_state_id;
 
 	if (state != SCI_PHY_STOPPED) {
+<<<<<<< HEAD
 		dev_dbg(sciphy_to_dev(iphy), "%s: in wrong state: %s\n",
 			__func__, phy_state_name(state));
+=======
+		dev_dbg(sciphy_to_dev(iphy),
+			 "%s: in wrong state: %d\n", __func__, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 	}
 
@@ -495,8 +608,13 @@ enum sci_status sci_phy_stop(struct isci_phy *iphy)
 	case SCI_PHY_READY:
 		break;
 	default:
+<<<<<<< HEAD
 		dev_dbg(sciphy_to_dev(iphy), "%s: in wrong state: %s\n",
 			__func__, phy_state_name(state));
+=======
+		dev_dbg(sciphy_to_dev(iphy),
+			"%s: in wrong state: %d\n", __func__, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 	}
 
@@ -509,8 +627,13 @@ enum sci_status sci_phy_reset(struct isci_phy *iphy)
 	enum sci_phy_states state = iphy->sm.current_state_id;
 
 	if (state != SCI_PHY_READY) {
+<<<<<<< HEAD
 		dev_dbg(sciphy_to_dev(iphy), "%s: in wrong state: %s\n",
 			__func__, phy_state_name(state));
+=======
+		dev_dbg(sciphy_to_dev(iphy),
+			"%s: in wrong state: %d\n", __func__, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 	}
 
@@ -559,8 +682,13 @@ enum sci_status sci_phy_consume_power_handler(struct isci_phy *iphy)
 		return SCI_SUCCESS;
 	}
 	default:
+<<<<<<< HEAD
 		dev_dbg(sciphy_to_dev(iphy), "%s: in wrong state: %s\n",
 			__func__, phy_state_name(state));
+=======
+		dev_dbg(sciphy_to_dev(iphy),
+			"%s: in wrong state: %d\n", __func__, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 	}
 }
@@ -614,6 +742,7 @@ static void sci_phy_complete_link_training(struct isci_phy *iphy,
 	sci_change_state(&iphy->sm, next_state);
 }
 
+<<<<<<< HEAD
 static const char *phy_event_name(u32 event_code)
 {
 	switch (scu_get_event_code(event_code)) {
@@ -668,6 +797,8 @@ static const char *phy_event_name(u32 event_code)
 		phy_to_host(iphy)->id, iphy->phy_index, \
 		phy_state_name(state), phy_event_name(code), code)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum sci_status sci_phy_event_handler(struct isci_phy *iphy, u32 event_code)
 {
 	enum sci_phy_states state = iphy->sm.current_state_id;
@@ -684,7 +815,15 @@ enum sci_status sci_phy_event_handler(struct isci_phy *iphy, u32 event_code)
 			iphy->is_in_link_training = true;
 			break;
 		default:
+<<<<<<< HEAD
 			phy_event_dbg(iphy, state, event_code);
+=======
+			dev_dbg(sciphy_to_dev(iphy),
+				"%s: PHY starting substate machine received "
+				"unexpected event_code %x\n",
+				__func__,
+				event_code);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return SCI_FAILURE;
 		}
 		return SCI_SUCCESS;
@@ -721,7 +860,15 @@ enum sci_status sci_phy_event_handler(struct isci_phy *iphy, u32 event_code)
 			sci_change_state(&iphy->sm, SCI_PHY_STARTING);
 			break;
 		default:
+<<<<<<< HEAD
 			phy_event_warn(iphy, state, event_code);
+=======
+			dev_warn(sciphy_to_dev(iphy),
+				 "%s: PHY starting substate machine received "
+				 "unexpected event_code %x\n",
+				 __func__, event_code);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return SCI_FAILURE;
 			break;
 		}
@@ -746,7 +893,14 @@ enum sci_status sci_phy_event_handler(struct isci_phy *iphy, u32 event_code)
 			sci_change_state(&iphy->sm, SCI_PHY_STARTING);
 			break;
 		default:
+<<<<<<< HEAD
 			phy_event_warn(iphy, state, event_code);
+=======
+			dev_warn(sciphy_to_dev(iphy),
+				 "%s: PHY starting substate machine received "
+				 "unexpected event_code %x\n",
+				 __func__, event_code);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return SCI_FAILURE;
 		}
 		return SCI_SUCCESS;
@@ -757,7 +911,15 @@ enum sci_status sci_phy_event_handler(struct isci_phy *iphy, u32 event_code)
 			sci_change_state(&iphy->sm, SCI_PHY_STARTING);
 			break;
 		default:
+<<<<<<< HEAD
 			phy_event_warn(iphy, state, event_code);
+=======
+			dev_warn(sciphy_to_dev(iphy),
+				"%s: PHY starting substate machine received unexpected "
+				"event_code %x\n",
+				__func__,
+				event_code);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return SCI_FAILURE;
 		}
 		return SCI_SUCCESS;
@@ -781,7 +943,15 @@ enum sci_status sci_phy_event_handler(struct isci_phy *iphy, u32 event_code)
 			break;
 
 		default:
+<<<<<<< HEAD
 			phy_event_warn(iphy, state, event_code);
+=======
+			dev_warn(sciphy_to_dev(iphy),
+				 "%s: PHY starting substate machine received "
+				 "unexpected event_code %x\n",
+				 __func__, event_code);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return SCI_FAILURE;
 		}
 		return SCI_SUCCESS;
@@ -809,8 +979,18 @@ enum sci_status sci_phy_event_handler(struct isci_phy *iphy, u32 event_code)
 			sci_phy_start_sas_link_training(iphy);
 			break;
 		default:
+<<<<<<< HEAD
 			phy_event_warn(iphy, state, event_code);
 			return SCI_FAILURE;
+=======
+			dev_warn(sciphy_to_dev(iphy),
+				 "%s: PHY starting substate machine received "
+				 "unexpected event_code %x\n",
+				 __func__,
+				 event_code);
+
+			return SCI_FAILURE;;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		return SCI_SUCCESS;
 	case SCI_PHY_SUB_AWAIT_SATA_SPEED_EN:
@@ -846,7 +1026,15 @@ enum sci_status sci_phy_event_handler(struct isci_phy *iphy, u32 event_code)
 			sci_phy_start_sas_link_training(iphy);
 			break;
 		default:
+<<<<<<< HEAD
 			phy_event_warn(iphy, state, event_code);
+=======
+			dev_warn(sciphy_to_dev(iphy),
+				 "%s: PHY starting substate machine received "
+				 "unexpected event_code %x\n",
+				 __func__, event_code);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return SCI_FAILURE;
 		}
 
@@ -864,7 +1052,16 @@ enum sci_status sci_phy_event_handler(struct isci_phy *iphy, u32 event_code)
 			break;
 
 		default:
+<<<<<<< HEAD
 			phy_event_warn(iphy, state, event_code);
+=======
+			dev_warn(sciphy_to_dev(iphy),
+				 "%s: PHY starting substate machine received "
+				 "unexpected event_code %x\n",
+				 __func__,
+				 event_code);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return SCI_FAILURE;
 		}
 		return SCI_SUCCESS;
@@ -882,7 +1079,14 @@ enum sci_status sci_phy_event_handler(struct isci_phy *iphy, u32 event_code)
 				iphy->bcn_received_while_port_unassigned = true;
 			break;
 		default:
+<<<<<<< HEAD
 			phy_event_warn(iphy, state, event_code);
+=======
+			dev_warn(sciphy_to_dev(iphy),
+				 "%sP SCIC PHY 0x%p ready state machine received "
+				 "unexpected event_code %x\n",
+				 __func__, iphy, event_code);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return SCI_FAILURE_INVALID_STATE;
 		}
 		return SCI_SUCCESS;
@@ -893,14 +1097,27 @@ enum sci_status sci_phy_event_handler(struct isci_phy *iphy, u32 event_code)
 			sci_change_state(&iphy->sm, SCI_PHY_STARTING);
 			break;
 		default:
+<<<<<<< HEAD
 			phy_event_warn(iphy, state, event_code);
+=======
+			dev_warn(sciphy_to_dev(iphy),
+				 "%s: SCIC PHY 0x%p resetting state machine received "
+				 "unexpected event_code %x\n",
+				 __func__, iphy, event_code);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return SCI_FAILURE_INVALID_STATE;
 			break;
 		}
 		return SCI_SUCCESS;
 	default:
+<<<<<<< HEAD
 		dev_dbg(sciphy_to_dev(iphy), "%s: in wrong state: %s\n",
 			__func__, phy_state_name(state));
+=======
+		dev_dbg(sciphy_to_dev(iphy),
+			"%s: in wrong state: %d\n", __func__, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 	}
 }
@@ -993,8 +1210,13 @@ enum sci_status sci_phy_frame_handler(struct isci_phy *iphy, u32 frame_index)
 		return result;
 	}
 	default:
+<<<<<<< HEAD
 		dev_dbg(sciphy_to_dev(iphy), "%s: in wrong state: %s\n",
 			__func__, phy_state_name(state));
+=======
+		dev_dbg(sciphy_to_dev(iphy),
+			"%s: in wrong state: %d\n", __func__, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 	}
 
@@ -1135,6 +1357,7 @@ static void scu_link_layer_stop_protocol_engine(
 	writel(enable_spinup_value, &iphy->link_layer_registers->notify_enable_spinup_control);
 }
 
+<<<<<<< HEAD
 static void scu_link_layer_start_oob(struct isci_phy *iphy)
 {
 	struct scu_link_layer_registers __iomem *ll = iphy->link_layer_registers;
@@ -1154,6 +1377,26 @@ static void scu_link_layer_start_oob(struct isci_phy *iphy)
 	writel(val, &ll->phy_configuration);
 	readl(&ll->phy_configuration); /* flush */
 	/** Start OOB sequence - end */
+=======
+/**
+ *
+ *
+ * This method will start the OOB/SN state machine for this struct isci_phy object.
+ */
+static void scu_link_layer_start_oob(
+	struct isci_phy *iphy)
+{
+	u32 scu_sas_pcfg_value;
+
+	scu_sas_pcfg_value =
+		readl(&iphy->link_layer_registers->phy_configuration);
+	scu_sas_pcfg_value |= SCU_SAS_PCFG_GEN_BIT(OOB_ENABLE);
+	scu_sas_pcfg_value &=
+		~(SCU_SAS_PCFG_GEN_BIT(OOB_RESET) |
+		SCU_SAS_PCFG_GEN_BIT(HARD_RESET));
+	writel(scu_sas_pcfg_value,
+	       &iphy->link_layer_registers->phy_configuration);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1336,6 +1579,10 @@ void isci_phy_init(struct isci_phy *iphy, struct isci_host *ihost, int index)
 	sas_addr = cpu_to_be64(sci_sas_addr);
 	memcpy(iphy->sas_addr, &sas_addr, sizeof(sas_addr));
 
+<<<<<<< HEAD
+=======
+	iphy->isci_port = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iphy->sas_phy.enabled = 0;
 	iphy->sas_phy.id = index;
 	iphy->sas_phy.sas_addr = &iphy->sas_addr[0];
@@ -1369,13 +1616,21 @@ int isci_phy_control(struct asd_sas_phy *sas_phy,
 {
 	int ret = 0;
 	struct isci_phy *iphy = sas_phy->lldd_phy;
+<<<<<<< HEAD
 	struct asd_sas_port *port = sas_phy->port;
+=======
+	struct isci_port *iport = iphy->isci_port;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct isci_host *ihost = sas_phy->ha->lldd_ha;
 	unsigned long flags;
 
 	dev_dbg(&ihost->pdev->dev,
 		"%s: phy %p; func %d; buf %p; isci phy %p, port %p\n",
+<<<<<<< HEAD
 		__func__, sas_phy, func, buf, iphy, port);
+=======
+		__func__, sas_phy, func, buf, iphy, iport);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (func) {
 	case PHY_FUNC_DISABLE:
@@ -1392,6 +1647,7 @@ int isci_phy_control(struct asd_sas_phy *sas_phy,
 		break;
 
 	case PHY_FUNC_HARD_RESET:
+<<<<<<< HEAD
 		if (!port)
 			return -ENODEV;
 
@@ -1409,6 +1665,15 @@ int isci_phy_control(struct asd_sas_phy *sas_phy,
 		phy->invalid_dword_count = readl(&r->invalid_dword_counter);
 		break;
 	}
+=======
+		if (!iport)
+			return -ENODEV;
+
+		/* Perform the port reset. */
+		ret = isci_port_perform_hard_reset(ihost, iport, iphy);
+
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	default:
 		dev_dbg(&ihost->pdev->dev,

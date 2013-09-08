@@ -29,7 +29,10 @@
 #include <linux/kfifo.h>
 #include <linux/err.h>
 #include <linux/notifier.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <plat/mailbox.h>
 
@@ -307,7 +310,11 @@ static void omap_mbox_fini(struct omap_mbox *mbox)
 	if (!--mbox->use_count) {
 		free_irq(mbox->irq, mbox);
 		tasklet_kill(&mbox->txq->tasklet);
+<<<<<<< HEAD
 		flush_work_sync(&mbox->rxq->work);
+=======
+	flush_work_sync(&mbox->rxq->work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mbox_queue_free(mbox->txq);
 		mbox_queue_free(mbox->rxq);
 	}

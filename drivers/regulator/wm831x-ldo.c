@@ -310,23 +310,34 @@ static __devinit int wm831x_gp_ldo_probe(struct platform_device *pdev)
 {
 	struct wm831x *wm831x = dev_get_drvdata(pdev->dev.parent);
 	struct wm831x_pdata *pdata = wm831x->dev->platform_data;
+<<<<<<< HEAD
 	int id;
+=======
+	int id = pdev->id % ARRAY_SIZE(pdata->ldo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct wm831x_ldo *ldo;
 	struct resource *res;
 	int ret, irq;
 
+<<<<<<< HEAD
 	if (pdata && pdata->wm831x_num)
 		id = (pdata->wm831x_num * 10) + 1;
 	else
 		id = 0;
 	id = pdev->id - id;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_dbg(&pdev->dev, "Probing LDO%d\n", id + 1);
 
 	if (pdata == NULL || pdata->ldo[id] == NULL)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	ldo = devm_kzalloc(&pdev->dev, sizeof(struct wm831x_ldo), GFP_KERNEL);
+=======
+	ldo = kzalloc(sizeof(struct wm831x_ldo), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ldo == NULL) {
 		dev_err(&pdev->dev, "Unable to allocate private data\n");
 		return -ENOMEM;
@@ -351,7 +362,11 @@ static __devinit int wm831x_gp_ldo_probe(struct platform_device *pdev)
 	ldo->desc.owner = THIS_MODULE;
 
 	ldo->regulator = regulator_register(&ldo->desc, &pdev->dev,
+<<<<<<< HEAD
 					     pdata->ldo[id], ldo, NULL);
+=======
+					     pdata->ldo[id], ldo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(ldo->regulator)) {
 		ret = PTR_ERR(ldo->regulator);
 		dev_err(wm831x->dev, "Failed to register LDO%d: %d\n",
@@ -376,6 +391,10 @@ static __devinit int wm831x_gp_ldo_probe(struct platform_device *pdev)
 err_regulator:
 	regulator_unregister(ldo->regulator);
 err:
+<<<<<<< HEAD
+=======
+	kfree(ldo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -387,6 +406,10 @@ static __devexit int wm831x_gp_ldo_remove(struct platform_device *pdev)
 
 	free_irq(platform_get_irq_byname(pdev, "UV"), ldo);
 	regulator_unregister(ldo->regulator);
+<<<<<<< HEAD
+=======
+	kfree(ldo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -506,19 +529,33 @@ static int wm831x_aldo_set_mode(struct regulator_dev *rdev,
 {
 	struct wm831x_ldo *ldo = rdev_get_drvdata(rdev);
 	struct wm831x *wm831x = ldo->wm831x;
+<<<<<<< HEAD
+=======
+	int ctrl_reg = ldo->base + WM831X_LDO_CONTROL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int on_reg = ldo->base + WM831X_LDO_ON_CONTROL;
 	int ret;
 
 
 	switch (mode) {
 	case REGULATOR_MODE_NORMAL:
+<<<<<<< HEAD
 		ret = wm831x_set_bits(wm831x, on_reg, WM831X_LDO7_ON_MODE, 0);
+=======
+		ret = wm831x_set_bits(wm831x, on_reg,
+				      WM831X_LDO7_ON_MODE, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0)
 			return ret;
 		break;
 
 	case REGULATOR_MODE_IDLE:
+<<<<<<< HEAD
 		ret = wm831x_set_bits(wm831x, on_reg, WM831X_LDO7_ON_MODE,
+=======
+		ret = wm831x_set_bits(wm831x, ctrl_reg,
+				      WM831X_LDO7_ON_MODE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      WM831X_LDO7_ON_MODE);
 		if (ret < 0)
 			return ret;
@@ -575,23 +612,34 @@ static __devinit int wm831x_aldo_probe(struct platform_device *pdev)
 {
 	struct wm831x *wm831x = dev_get_drvdata(pdev->dev.parent);
 	struct wm831x_pdata *pdata = wm831x->dev->platform_data;
+<<<<<<< HEAD
 	int id;
+=======
+	int id = pdev->id % ARRAY_SIZE(pdata->ldo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct wm831x_ldo *ldo;
 	struct resource *res;
 	int ret, irq;
 
+<<<<<<< HEAD
 	if (pdata && pdata->wm831x_num)
 		id = (pdata->wm831x_num * 10) + 1;
 	else
 		id = 0;
 	id = pdev->id - id;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_dbg(&pdev->dev, "Probing LDO%d\n", id + 1);
 
 	if (pdata == NULL || pdata->ldo[id] == NULL)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	ldo = devm_kzalloc(&pdev->dev, sizeof(struct wm831x_ldo), GFP_KERNEL);
+=======
+	ldo = kzalloc(sizeof(struct wm831x_ldo), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ldo == NULL) {
 		dev_err(&pdev->dev, "Unable to allocate private data\n");
 		return -ENOMEM;
@@ -616,7 +664,11 @@ static __devinit int wm831x_aldo_probe(struct platform_device *pdev)
 	ldo->desc.owner = THIS_MODULE;
 
 	ldo->regulator = regulator_register(&ldo->desc, &pdev->dev,
+<<<<<<< HEAD
 					     pdata->ldo[id], ldo, NULL);
+=======
+					     pdata->ldo[id], ldo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(ldo->regulator)) {
 		ret = PTR_ERR(ldo->regulator);
 		dev_err(wm831x->dev, "Failed to register LDO%d: %d\n",
@@ -640,6 +692,10 @@ static __devinit int wm831x_aldo_probe(struct platform_device *pdev)
 err_regulator:
 	regulator_unregister(ldo->regulator);
 err:
+<<<<<<< HEAD
+=======
+	kfree(ldo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -649,6 +705,10 @@ static __devexit int wm831x_aldo_remove(struct platform_device *pdev)
 
 	free_irq(platform_get_irq_byname(pdev, "UV"), ldo);
 	regulator_unregister(ldo->regulator);
+<<<<<<< HEAD
+=======
+	kfree(ldo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -769,11 +829,16 @@ static __devinit int wm831x_alive_ldo_probe(struct platform_device *pdev)
 {
 	struct wm831x *wm831x = dev_get_drvdata(pdev->dev.parent);
 	struct wm831x_pdata *pdata = wm831x->dev->platform_data;
+<<<<<<< HEAD
 	int id;
+=======
+	int id = pdev->id % ARRAY_SIZE(pdata->ldo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct wm831x_ldo *ldo;
 	struct resource *res;
 	int ret;
 
+<<<<<<< HEAD
 	if (pdata && pdata->wm831x_num)
 		id = (pdata->wm831x_num * 10) + 1;
 	else
@@ -781,12 +846,18 @@ static __devinit int wm831x_alive_ldo_probe(struct platform_device *pdev)
 	id = pdev->id - id;
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_dbg(&pdev->dev, "Probing LDO%d\n", id + 1);
 
 	if (pdata == NULL || pdata->ldo[id] == NULL)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	ldo = devm_kzalloc(&pdev->dev, sizeof(struct wm831x_ldo), GFP_KERNEL);
+=======
+	ldo = kzalloc(sizeof(struct wm831x_ldo), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ldo == NULL) {
 		dev_err(&pdev->dev, "Unable to allocate private data\n");
 		return -ENOMEM;
@@ -811,7 +882,11 @@ static __devinit int wm831x_alive_ldo_probe(struct platform_device *pdev)
 	ldo->desc.owner = THIS_MODULE;
 
 	ldo->regulator = regulator_register(&ldo->desc, &pdev->dev,
+<<<<<<< HEAD
 					     pdata->ldo[id], ldo, NULL);
+=======
+					     pdata->ldo[id], ldo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(ldo->regulator)) {
 		ret = PTR_ERR(ldo->regulator);
 		dev_err(wm831x->dev, "Failed to register LDO%d: %d\n",
@@ -824,6 +899,10 @@ static __devinit int wm831x_alive_ldo_probe(struct platform_device *pdev)
 	return 0;
 
 err:
+<<<<<<< HEAD
+=======
+	kfree(ldo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -832,6 +911,10 @@ static __devexit int wm831x_alive_ldo_remove(struct platform_device *pdev)
 	struct wm831x_ldo *ldo = platform_get_drvdata(pdev);
 
 	regulator_unregister(ldo->regulator);
+<<<<<<< HEAD
+=======
+	kfree(ldo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

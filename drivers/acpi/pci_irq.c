@@ -303,6 +303,7 @@ void acpi_pci_irq_del_prt(struct pci_bus *bus)
 /* --------------------------------------------------------------------------
                           PCI Interrupt Routing Support
    -------------------------------------------------------------------------- */
+<<<<<<< HEAD
 #ifdef CONFIG_X86_IO_APIC
 extern int noioapicquirk;
 extern int noioapicreroute;
@@ -358,6 +359,8 @@ static int acpi_reroute_boot_interrupt(struct pci_dev *dev,
 }
 #endif /* CONFIG_X86_IO_APIC */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct acpi_prt_entry *acpi_pci_irq_lookup(struct pci_dev *dev, int pin)
 {
 	struct acpi_prt_entry *entry;
@@ -366,9 +369,12 @@ static struct acpi_prt_entry *acpi_pci_irq_lookup(struct pci_dev *dev, int pin)
 
 	entry = acpi_pci_irq_find_prt_entry(dev, pin);
 	if (entry) {
+<<<<<<< HEAD
 #ifdef CONFIG_X86_IO_APIC
 		acpi_reroute_boot_interrupt(dev, entry);
 #endif /* CONFIG_X86_IO_APIC */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Found %s[%c] _PRT entry\n",
 				  pci_name(dev), pin_name(pin)));
 		return entry;
@@ -487,10 +493,17 @@ int acpi_pci_irq_enable(struct pci_dev *dev)
 	else
 		link_desc[0] = '\0';
 
+<<<<<<< HEAD
 	dev_dbg(&dev->dev, "PCI INT %c%s -> GSI %u (%s, %s) -> IRQ %d\n",
 		pin_name(pin), link_desc, gsi,
 		(triggering == ACPI_LEVEL_SENSITIVE) ? "level" : "edge",
 		(polarity == ACPI_ACTIVE_LOW) ? "low" : "high", dev->irq);
+=======
+	dev_info(&dev->dev, "PCI INT %c%s -> GSI %u (%s, %s) -> IRQ %d\n",
+		 pin_name(pin), link_desc, gsi,
+		 (triggering == ACPI_LEVEL_SENSITIVE) ? "level" : "edge",
+		 (polarity == ACPI_ACTIVE_LOW) ? "low" : "high", dev->irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -524,6 +537,10 @@ void acpi_pci_irq_disable(struct pci_dev *dev)
 	 * (e.g. PCI_UNDEFINED_IRQ).
 	 */
 
+<<<<<<< HEAD
 	dev_dbg(&dev->dev, "PCI INT %c disabled\n", pin_name(pin));
+=======
+	dev_info(&dev->dev, "PCI INT %c disabled\n", pin_name(pin));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acpi_unregister_gsi(gsi);
 }

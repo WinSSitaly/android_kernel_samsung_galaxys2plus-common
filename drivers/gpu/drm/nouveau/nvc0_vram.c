@@ -43,7 +43,11 @@ static const u8 types[256] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 3, 3, 3, 3, 1, 1, 1, 1, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
+<<<<<<< HEAD
 	3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3,
+=======
+	3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	3, 3, 0, 0, 0, 0, 0, 0, 3, 0, 0, 3, 0, 3, 0, 3,
 	3, 0, 3, 3, 3, 3, 3, 0, 0, 3, 0, 3, 0, 3, 3, 0,
 	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 1, 1, 0
@@ -61,7 +65,13 @@ nvc0_vram_new(struct drm_device *dev, u64 size, u32 align, u32 ncmin,
 	      u32 type, struct nouveau_mem **pmem)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
+<<<<<<< HEAD
 	struct nouveau_mm *mm = &dev_priv->engine.vram.mm;
+=======
+	struct ttm_bo_device *bdev = &dev_priv->ttm.bdev;
+	struct ttm_mem_type_manager *man = &bdev->man[TTM_PL_VRAM];
+	struct nouveau_mm *mm = man->priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct nouveau_mm_node *r;
 	struct nouveau_mem *mem;
 	int ret;
@@ -103,6 +113,7 @@ int
 nvc0_vram_init(struct drm_device *dev)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
+<<<<<<< HEAD
 	struct nouveau_vram_engine *vram = &dev_priv->engine.vram;
 	const u32 rsvd_head = ( 256 * 1024) >> 12; /* vga memory */
 	const u32 rsvd_tail = (1024 * 1024) >> 12; /* vbios etc */
@@ -156,5 +167,11 @@ nvc0_vram_init(struct drm_device *dev)
 		return ret;
 	}
 
+=======
+
+	dev_priv->vram_size  = nv_rd32(dev, 0x10f20c) << 20;
+	dev_priv->vram_size *= nv_rd32(dev, 0x121c74);
+	dev_priv->vram_rblock_size = 4096;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }

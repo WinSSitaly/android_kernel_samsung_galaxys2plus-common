@@ -36,7 +36,11 @@ static void __wakeup_reset(struct trace_array *tr);
 static int wakeup_graph_entry(struct ftrace_graph_ent *trace);
 static void wakeup_graph_return(struct ftrace_graph_ret *trace);
 
+<<<<<<< HEAD
 static int save_flags;
+=======
+static int save_lat_flag;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define TRACE_DISPLAY_GRAPH     1
 
@@ -227,9 +231,13 @@ static void wakeup_trace_close(struct trace_iterator *iter)
 		graph_trace_close(iter);
 }
 
+<<<<<<< HEAD
 #define GRAPH_TRACER_FLAGS (TRACE_GRAPH_PRINT_PROC | \
 			    TRACE_GRAPH_PRINT_ABS_TIME | \
 			    TRACE_GRAPH_PRINT_DURATION)
+=======
+#define GRAPH_TRACER_FLAGS (TRACE_GRAPH_PRINT_PROC)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static enum print_line_t wakeup_print_line(struct trace_iterator *iter)
 {
@@ -280,6 +288,7 @@ static enum print_line_t wakeup_print_line(struct trace_iterator *iter)
 }
 
 static void wakeup_graph_return(struct ftrace_graph_ret *trace) { }
+<<<<<<< HEAD
 static void wakeup_trace_open(struct trace_iterator *iter) { }
 static void wakeup_trace_close(struct trace_iterator *iter) { }
 
@@ -294,6 +303,11 @@ static void wakeup_print_header(struct seq_file *s)
 	trace_latency_header(s);
 }
 #endif /* CONFIG_FUNCTION_TRACER */
+=======
+static void wakeup_print_header(struct seq_file *s) { }
+static void wakeup_trace_open(struct trace_iterator *iter) { }
+static void wakeup_trace_close(struct trace_iterator *iter) { }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_FUNCTION_GRAPH_TRACER */
 
 /*
@@ -539,11 +553,16 @@ static void stop_wakeup_tracer(struct trace_array *tr)
 
 static int __wakeup_tracer_init(struct trace_array *tr)
 {
+<<<<<<< HEAD
 	save_flags = trace_flags;
 
 	/* non overwrite screws up the latency tracers */
 	set_tracer_flag(TRACE_ITER_OVERWRITE, 1);
 	set_tracer_flag(TRACE_ITER_LATENCY_FMT, 1);
+=======
+	save_lat_flag = trace_flags & TRACE_ITER_LATENCY_FMT;
+	trace_flags |= TRACE_ITER_LATENCY_FMT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tracing_max_latency = 0;
 	wakeup_trace = tr;
@@ -565,15 +584,23 @@ static int wakeup_rt_tracer_init(struct trace_array *tr)
 
 static void wakeup_tracer_reset(struct trace_array *tr)
 {
+<<<<<<< HEAD
 	int lat_flag = save_flags & TRACE_ITER_LATENCY_FMT;
 	int overwrite_flag = save_flags & TRACE_ITER_OVERWRITE;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	stop_wakeup_tracer(tr);
 	/* make sure we put back any tasks we are tracing */
 	wakeup_reset(tr);
 
+<<<<<<< HEAD
 	set_tracer_flag(TRACE_ITER_LATENCY_FMT, lat_flag);
 	set_tracer_flag(TRACE_ITER_OVERWRITE, overwrite_flag);
+=======
+	if (!save_lat_flag)
+		trace_flags &= ~TRACE_ITER_LATENCY_FMT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void wakeup_tracer_start(struct trace_array *tr)
@@ -599,7 +626,10 @@ static struct tracer wakeup_tracer __read_mostly =
 	.print_line	= wakeup_print_line,
 	.flags		= &tracer_flags,
 	.set_flag	= wakeup_set_flag,
+<<<<<<< HEAD
 	.flag_changed	= trace_keep_overwrite,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_FTRACE_SELFTEST
 	.selftest    = trace_selftest_startup_wakeup,
 #endif
@@ -621,7 +651,10 @@ static struct tracer wakeup_rt_tracer __read_mostly =
 	.print_line	= wakeup_print_line,
 	.flags		= &tracer_flags,
 	.set_flag	= wakeup_set_flag,
+<<<<<<< HEAD
 	.flag_changed	= trace_keep_overwrite,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_FTRACE_SELFTEST
 	.selftest    = trace_selftest_startup_wakeup,
 #endif

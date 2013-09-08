@@ -35,11 +35,17 @@
 
 #include <linux/bootmem.h>
 #include <linux/dma-mapping.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <xen/swiotlb-xen.h>
 #include <xen/page.h>
 #include <xen/xen-ops.h>
 #include <xen/hvc-console.h>
+=======
+#include <xen/swiotlb-xen.h>
+#include <xen/page.h>
+#include <xen/xen-ops.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Used to do a quick range check in swiotlb_tbl_unmap_single and
  * swiotlb_tbl_sync_single_*, to see if the memory was in fact allocated by this
@@ -148,29 +154,46 @@ xen_swiotlb_fixup(void *buf, size_t size, unsigned long nslabs)
 void __init xen_swiotlb_init(int verbose)
 {
 	unsigned long bytes;
+<<<<<<< HEAD
 	int rc = -ENOMEM;
 	unsigned long nr_tbl;
 	char *m = NULL;
 	unsigned int repeat = 3;
 
 	nr_tbl = swiotlb_nr_tbl();
+=======
+	int rc;
+	unsigned long nr_tbl;
+
+	nr_tbl = swioltb_nr_tbl();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (nr_tbl)
 		xen_io_tlb_nslabs = nr_tbl;
 	else {
 		xen_io_tlb_nslabs = (64 * 1024 * 1024 >> IO_TLB_SHIFT);
 		xen_io_tlb_nslabs = ALIGN(xen_io_tlb_nslabs, IO_TLB_SEGSIZE);
 	}
+<<<<<<< HEAD
 retry:
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bytes = xen_io_tlb_nslabs << IO_TLB_SHIFT;
 
 	/*
 	 * Get IO TLB memory from any location.
 	 */
 	xen_io_tlb_start = alloc_bootmem_pages(PAGE_ALIGN(bytes));
+<<<<<<< HEAD
 	if (!xen_io_tlb_start) {
 		m = "Cannot allocate Xen-SWIOTLB buffer!\n";
 		goto error;
 	}
+=======
+	if (!xen_io_tlb_start)
+		panic("Cannot allocate SWIOTLB buffer");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	xen_io_tlb_end = xen_io_tlb_start + bytes;
 	/*
 	 * And replace that memory with pages under 4GB.
@@ -178,6 +201,7 @@ retry:
 	rc = xen_swiotlb_fixup(xen_io_tlb_start,
 			       bytes,
 			       xen_io_tlb_nslabs);
+<<<<<<< HEAD
 	if (rc) {
 		free_bootmem(__pa(xen_io_tlb_start), PAGE_ALIGN(bytes));
 		m = "Failed to get contiguous memory for DMA from Xen!\n"\
@@ -186,11 +210,17 @@ retry:
 		    "is too fragmented!";
 		goto error;
 	}
+=======
+	if (rc)
+		goto error;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	start_dma_addr = xen_virt_to_bus(xen_io_tlb_start);
 	swiotlb_init_with_tbl(xen_io_tlb_start, xen_io_tlb_nslabs, verbose);
 
 	return;
 error:
+<<<<<<< HEAD
 	if (repeat--) {
 		xen_io_tlb_nslabs = max(1024UL, /* Min is 2MB */
 					(xen_io_tlb_nslabs >> 1));
@@ -200,19 +230,31 @@ error:
 	}
 	xen_raw_printk("%s (rc:%d)", m, rc);
 	panic("%s (rc:%d)", m, rc);
+=======
+	panic("DMA(%d): Failed to exchange pages allocated for DMA with Xen! "\
+	      "We either don't have the permission or you do not have enough"\
+	      "free memory under 4GB!\n", rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void *
 xen_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+<<<<<<< HEAD
 			   dma_addr_t *dma_handle, gfp_t flags,
 			   struct dma_attrs *attrs)
+=======
+			   dma_addr_t *dma_handle, gfp_t flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	void *ret;
 	int order = get_order(size);
 	u64 dma_mask = DMA_BIT_MASK(32);
 	unsigned long vstart;
+<<<<<<< HEAD
 	phys_addr_t phys;
 	dma_addr_t dev_addr;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	* Ignore region specifiers - the kernel's ideas of
@@ -228,6 +270,7 @@ xen_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
 	vstart = __get_free_pages(flags, order);
 	ret = (void *)vstart;
 
+<<<<<<< HEAD
 	if (!ret)
 		return ret;
 
@@ -240,29 +283,48 @@ xen_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
 	    !range_straddles_page_boundary(phys, size))
 		*dma_handle = dev_addr;
 	else {
+=======
+	if (hwdev && hwdev->coherent_dma_mask)
+		dma_mask = dma_alloc_coherent_mask(hwdev, flags);
+
+	if (ret) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (xen_create_contiguous_region(vstart, order,
 						 fls64(dma_mask)) != 0) {
 			free_pages(vstart, order);
 			return NULL;
 		}
+<<<<<<< HEAD
 		*dma_handle = virt_to_machine(ret).maddr;
 	}
 	memset(ret, 0, size);
+=======
+		memset(ret, 0, size);
+		*dma_handle = virt_to_machine(ret).maddr;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 EXPORT_SYMBOL_GPL(xen_swiotlb_alloc_coherent);
 
 void
 xen_swiotlb_free_coherent(struct device *hwdev, size_t size, void *vaddr,
+<<<<<<< HEAD
 			  dma_addr_t dev_addr, struct dma_attrs *attrs)
 {
 	int order = get_order(size);
 	phys_addr_t phys;
 	u64 dma_mask = DMA_BIT_MASK(32);
+=======
+			  dma_addr_t dev_addr)
+{
+	int order = get_order(size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dma_release_from_coherent(hwdev, order, vaddr))
 		return;
 
+<<<<<<< HEAD
 	if (hwdev && hwdev->coherent_dma_mask)
 		dma_mask = hwdev->coherent_dma_mask;
 
@@ -272,6 +334,9 @@ xen_swiotlb_free_coherent(struct device *hwdev, size_t size, void *vaddr,
 	    range_straddles_page_boundary(phys, size))
 		xen_destroy_contiguous_region((unsigned long)vaddr, order);
 
+=======
+	xen_destroy_contiguous_region((unsigned long)vaddr, order);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	free_pages((unsigned long)vaddr, order);
 }
 EXPORT_SYMBOL_GPL(xen_swiotlb_free_coherent);

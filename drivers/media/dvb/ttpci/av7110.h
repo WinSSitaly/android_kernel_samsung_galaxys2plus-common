@@ -272,6 +272,10 @@ struct av7110 {
 
 	/* crash recovery */
 	void				(*recover)(struct av7110* av7110);
+<<<<<<< HEAD
+=======
+	struct dvb_frontend_parameters	saved_fe_params;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fe_sec_voltage_t		saved_voltage;
 	fe_sec_tone_mode_t		saved_tone;
 	struct dvb_diseqc_master_cmd	saved_master_cmd;
@@ -285,7 +289,11 @@ struct av7110 {
 	int (*fe_set_tone)(struct dvb_frontend* fe, fe_sec_tone_mode_t tone);
 	int (*fe_set_voltage)(struct dvb_frontend* fe, fe_sec_voltage_t voltage);
 	int (*fe_dishnetwork_send_legacy_command)(struct dvb_frontend* fe, unsigned long cmd);
+<<<<<<< HEAD
 	int (*fe_set_frontend)(struct dvb_frontend *fe);
+=======
+	int (*fe_set_frontend)(struct dvb_frontend* fe, struct dvb_frontend_parameters* params);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 

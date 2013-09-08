@@ -37,7 +37,12 @@ static void __init edb7211_reserve(void)
 }
 
 static void __init
+<<<<<<< HEAD
 fixup_edb7211(struct tag *tags, char **cmdline, struct meminfo *mi)
+=======
+fixup_edb7211(struct machine_desc *desc, struct tag *tags,
+	      char **cmdline, struct meminfo *mi)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * Bank start addresses are not present in the information
@@ -56,11 +61,18 @@ fixup_edb7211(struct tag *tags, char **cmdline, struct meminfo *mi)
 
 MACHINE_START(EDB7211, "CL-EDB7211 (EP7211 eval board)")
 	/* Maintainer: Jon McClintock */
+<<<<<<< HEAD
 	.atag_offset	= 0x20100,	/* 0xc0000000 - 0xc001ffff can be video RAM */
+=======
+	.boot_params	= 0xc0020100,	/* 0xc0000000 - 0xc001ffff can be video RAM */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.fixup		= fixup_edb7211,
 	.map_io		= edb7211_map_io,
 	.reserve	= edb7211_reserve,
 	.init_irq	= clps711x_init_irq,
 	.timer		= &clps711x_timer,
+<<<<<<< HEAD
 	.restart	= clps711x_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

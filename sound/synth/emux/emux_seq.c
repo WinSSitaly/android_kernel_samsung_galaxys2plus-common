@@ -21,7 +21,11 @@
 
 #include "emux_voice.h"
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Prototypes for static functions */
 static void free_port(void *private);

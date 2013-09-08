@@ -81,7 +81,11 @@ int					/* error */
 xfs_dialloc(
 	struct xfs_trans *tp,		/* transaction pointer */
 	xfs_ino_t	parent,		/* parent inode (directory) */
+<<<<<<< HEAD
 	umode_t		mode,		/* mode bits for new inode */
+=======
+	mode_t		mode,		/* mode bits for new inode */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int		okalloc,	/* ok to allocate more space */
 	struct xfs_buf	**agbp,		/* buf for a.g. inode header */
 	boolean_t	*alloc_done,	/* an allocation was done to replenish

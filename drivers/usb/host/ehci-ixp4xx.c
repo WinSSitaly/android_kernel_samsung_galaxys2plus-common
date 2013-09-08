@@ -100,7 +100,11 @@ static int ixp4xx_ehci_probe(struct platform_device *pdev)
 		goto fail_request_resource;
 	}
 	hcd->rsrc_start = res->start;
+<<<<<<< HEAD
 	hcd->rsrc_len = resource_size(res);
+=======
+	hcd->rsrc_len = res->end - res->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len,
 				driver->description)) {

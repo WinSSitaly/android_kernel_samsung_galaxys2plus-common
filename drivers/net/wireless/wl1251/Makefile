@@ -6,5 +6,8 @@ wl1251_sdio-objs	+= sdio.o
 obj-$(CONFIG_WL1251)		+= wl1251.o
 obj-$(CONFIG_WL1251_SPI)	+= wl1251_spi.o
 obj-$(CONFIG_WL1251_SDIO)	+= wl1251_sdio.o
+<<<<<<< HEAD
 
 ccflags-y += -D__CHECK_ENDIAN__
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

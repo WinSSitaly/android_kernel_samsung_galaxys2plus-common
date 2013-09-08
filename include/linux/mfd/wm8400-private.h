@@ -25,15 +25,26 @@
 #include <linux/mutex.h>
 #include <linux/platform_device.h>
 
+<<<<<<< HEAD
 struct regmap;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define WM8400_REGISTER_COUNT 0x55
 
 struct wm8400 {
 	struct device *dev;
 
+<<<<<<< HEAD
 	struct mutex io_lock;
 	struct regmap *regmap;
+=======
+	int (*read_dev)(void *data, char reg, int count, u16 *dst);
+	int (*write_dev)(void *data, char reg, int count, const u16 *src);
+
+	struct mutex io_lock;
+	void *io_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	u16 reg_cache[WM8400_REGISTER_COUNT];
 

@@ -16,7 +16,10 @@
 #include <linux/slab.h>
 #include <linux/workqueue.h>
 #include <linux/input/adxl34x.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "adxl34x.h"
 
@@ -452,10 +455,17 @@ static ssize_t adxl34x_disable_store(struct device *dev,
 				     const char *buf, size_t count)
 {
 	struct adxl34x *ac = dev_get_drvdata(dev);
+<<<<<<< HEAD
 	unsigned int val;
 	int error;
 
 	error = kstrtouint(buf, 10, &val);
+=======
+	unsigned long val;
+	int error;
+
+	error = strict_strtoul(buf, 10, &val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error)
 		return error;
 
@@ -541,10 +551,17 @@ static ssize_t adxl34x_rate_store(struct device *dev,
 				  const char *buf, size_t count)
 {
 	struct adxl34x *ac = dev_get_drvdata(dev);
+<<<<<<< HEAD
 	unsigned char val;
 	int error;
 
 	error = kstrtou8(buf, 10, &val);
+=======
+	unsigned long val;
+	int error;
+
+	error = strict_strtoul(buf, 10, &val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error)
 		return error;
 
@@ -576,10 +593,17 @@ static ssize_t adxl34x_autosleep_store(struct device *dev,
 				  const char *buf, size_t count)
 {
 	struct adxl34x *ac = dev_get_drvdata(dev);
+<<<<<<< HEAD
 	unsigned int val;
 	int error;
 
 	error = kstrtouint(buf, 10, &val);
+=======
+	unsigned long val;
+	int error;
+
+	error = strict_strtoul(buf, 10, &val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error)
 		return error;
 
@@ -623,13 +647,21 @@ static ssize_t adxl34x_write_store(struct device *dev,
 				   const char *buf, size_t count)
 {
 	struct adxl34x *ac = dev_get_drvdata(dev);
+<<<<<<< HEAD
 	unsigned int val;
+=======
+	unsigned long val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int error;
 
 	/*
 	 * This allows basic ADXL register write access for debug purposes.
 	 */
+<<<<<<< HEAD
 	error = kstrtouint(buf, 16, &val);
+=======
+	error = strict_strtoul(buf, 16, &val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error)
 		return error;
 

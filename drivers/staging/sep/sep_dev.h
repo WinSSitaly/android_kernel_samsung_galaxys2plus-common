@@ -5,8 +5,13 @@
  *
  *  sep_dev.h - Security Processor Device Structures
  *
+<<<<<<< HEAD
  *  Copyright(c) 2009-2011 Intel Corporation. All rights reserved.
  *  Contributions(c) 2009-2011 Discretix. All rights reserved.
+=======
+ *  Copyright(c) 2009,2010 Intel Corporation. All rights reserved.
+ *  Contributions(c) 2009,2010 Discretix. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -28,7 +33,10 @@
  *
  *  CHANGES
  *  2010.09.14  upgrade to Medfield
+<<<<<<< HEAD
  *  2011.02.22  enable kernel crypto
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 struct sep_device {
@@ -37,6 +45,7 @@ struct sep_device {
 
 	/* character device file */
 	struct cdev sep_cdev;
+<<<<<<< HEAD
 
 	/* devices (using misc dev) */
 	struct miscdevice miscdev_sep;
@@ -47,11 +56,38 @@ struct sep_device {
 	spinlock_t snd_rply_lck;
 	/* guards driver memory usage in fastcall if */
 	struct semaphore sep_doublebuf;
+=======
+	struct cdev sep_daemon_cdev;
+	struct cdev sep_singleton_cdev;
+
+	/* devices (using misc dev) */
+	struct miscdevice miscdev_sep;
+	struct miscdevice miscdev_singleton;
+	struct miscdevice miscdev_daemon;
+
+	/* major / minor numbers of device */
+	dev_t sep_devno;
+	dev_t sep_daemon_devno;
+	dev_t sep_singleton_devno;
+
+	struct mutex sep_mutex;
+	struct mutex ioctl_mutex;
+	spinlock_t snd_rply_lck;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* flags to indicate use and lock status of sep */
 	u32 pid_doing_transaction;
 	unsigned long in_use_flags;
 
+<<<<<<< HEAD
+=======
+	/* request daemon alread open */
+	unsigned long request_daemon_open;
+
+	/* 1 = Moorestown; 0 = Medfield */
+	int mrst;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* address of the shared memory allocated during init for SEP driver
 	   (coherent alloc) */
 	dma_addr_t shared_bus;
@@ -63,6 +99,7 @@ struct sep_device {
 	dma_addr_t reg_physical_end;
 	void __iomem *reg_addr;
 
+<<<<<<< HEAD
 	/* wait queue heads of the driver */
 	wait_queue_head_t event_interrupt;
 	wait_queue_head_t event_transactions;
@@ -79,12 +116,25 @@ struct sep_device {
 
 	/* Power state */
 	u32 power_state;
+=======
+	/* wait queue head (event) of the driver */
+	wait_queue_head_t event;
+	wait_queue_head_t event_request_daemon;
+	wait_queue_head_t event_mmap;
+
+	struct sep_caller_id_entry
+		caller_id_table[SEP_CALLER_ID_TABLE_NUM_ENTRIES];
+
+	/* access flag for singleton device */
+	unsigned long singleton_access_flag;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* transaction counter that coordinates the
 	   transactions between SEP and HOST */
 	unsigned long send_ct;
 	/* counter for the messages from sep */
 	unsigned long reply_ct;
+<<<<<<< HEAD
 
 	/* The following are used for kernel crypto client requests */
 	u32 in_kernel; /* Set for kernel client request */
@@ -134,6 +184,22 @@ struct sep_queue_data {
 struct sep_queue_info {
 	struct list_head list;
 	struct sep_queue_data data;
+=======
+	/* counter for the number of bytes allocated in the pool for the
+	   current transaction */
+	long data_pool_bytes_allocated;
+
+	u32 num_of_data_allocations;
+
+	/* number of the lli tables created in the current transaction */
+	u32     num_lli_tables_created;
+
+	/* number of data control blocks */
+	u32 nr_dcb_creat;
+
+	struct sep_dma_resource dma_res_arr[SEP_MAX_NUM_SYNC_DMA_OPS];
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline void sep_write_reg(struct sep_device *dev, int reg, u32 value)

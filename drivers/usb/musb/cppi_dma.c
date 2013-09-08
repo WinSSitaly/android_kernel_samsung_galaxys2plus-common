@@ -513,7 +513,11 @@ static inline int cppi_autoreq_update(struct cppi_channel *rx,
 		if (!(val & MUSB_RXCSR_H_REQPKT)) {
 			val |= MUSB_RXCSR_H_REQPKT | MUSB_RXCSR_H_WZC_BITS;
 			musb_writew(regs, MUSB_RXCSR, val);
+<<<<<<< HEAD
 			/* flush writebuffer */
+=======
+			/* flush writebufer */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			val = musb_readw(regs, MUSB_RXCSR);
 		}
 	}
@@ -750,7 +754,11 @@ cppi_next_tx_segment(struct musb *musb, struct cppi_channel *tx)
  * So this module parameter lets the heuristic be disabled.  When using
  * gadgetfs, the heuristic will probably need to be disabled.
  */
+<<<<<<< HEAD
 static bool cppi_rx_rndis = 1;
+=======
+static int cppi_rx_rndis = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(cppi_rx_rndis, bool, 0);
 MODULE_PARM_DESC(cppi_rx_rndis, "enable/disable RX RNDIS heuristic");
@@ -1313,7 +1321,10 @@ irqreturn_t cppi_interrupt(int irq, void *dev_id)
 
 	return IRQ_HANDLED;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(cppi_interrupt);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Instantiate a software object representing a DMA controller. */
 struct dma_controller *__init

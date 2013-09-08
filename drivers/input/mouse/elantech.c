@@ -10,6 +10,11 @@
  * Trademarks are the property of their respective owners.
  */
 
+<<<<<<< HEAD
+=======
+#define pr_fmt(fmt) KBUILD_BASENAME ": " fmt
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/delay.h>
 #include <linux/slab.h>
 #include <linux/module.h>
@@ -23,10 +28,20 @@
 #define elantech_debug(fmt, ...)					\
 	do {								\
 		if (etd->debug)						\
+<<<<<<< HEAD
 			psmouse_printk(KERN_DEBUG, psmouse,		\
 					fmt, ##__VA_ARGS__);		\
 	} while (0)
 
+=======
+			printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__);	\
+	} while (0)
+
+static bool force_elantech;
+module_param_named(force_elantech, force_elantech, bool, 0644);
+MODULE_PARM_DESC(force_elantech, "Force the Elantech PS/2 protocol extension to be used, 1 = enabled, 0 = disabled (default).");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Send a Synaptics style sliced query command
  */
@@ -35,6 +50,7 @@ static int synaptics_send_cmd(struct psmouse *psmouse, unsigned char c,
 {
 	if (psmouse_sliced_command(psmouse, c) ||
 	    ps2_command(&psmouse->ps2dev, param, PSMOUSE_CMD_GETINFO)) {
+<<<<<<< HEAD
 		psmouse_err(psmouse, "%s query 0x%02x failed.\n", __func__, c);
 		return -1;
 	}
@@ -54,6 +70,9 @@ static int elantech_send_cmd(struct psmouse *psmouse, unsigned char c,
 	    ps2_command(ps2dev, NULL, c) ||
 	    ps2_command(ps2dev, param, PSMOUSE_CMD_GETINFO)) {
 		psmouse_err(psmouse, "%s query 0x%02x failed.\n", __func__, c);
+=======
+		pr_err("synaptics_send_cmd query 0x%02x failed.\n", c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
@@ -82,7 +101,11 @@ static int elantech_ps2_command(struct psmouse *psmouse,
 	} while (tries > 0);
 
 	if (rc)
+<<<<<<< HEAD
 		psmouse_err(psmouse, "ps2 command 0x%02x failed.\n", command);
+=======
+		pr_err("ps2 command 0x%02x failed.\n", command);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return rc;
 }
@@ -97,7 +120,11 @@ static int elantech_read_reg(struct psmouse *psmouse, unsigned char reg,
 	unsigned char param[3];
 	int rc = 0;
 
+<<<<<<< HEAD
 	if (reg < 0x07 || reg > 0x26)
+=======
+	if (reg < 0x10 || reg > 0x26)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 
 	if (reg > 0x11 && reg < 0x20)
@@ -121,6 +148,7 @@ static int elantech_read_reg(struct psmouse *psmouse, unsigned char reg,
 			rc = -1;
 		}
 		break;
+<<<<<<< HEAD
 
 	case 3 ... 4:
 		if (elantech_ps2_command(psmouse, NULL, ETP_PS2_CUSTOM_COMMAND) ||
@@ -139,6 +167,14 @@ static int elantech_read_reg(struct psmouse *psmouse, unsigned char reg,
 		*val = param[0];
 	else
 		*val = param[1];
+=======
+	}
+
+	if (rc)
+		pr_err("failed to read register 0x%02x.\n", reg);
+	else
+		*val = param[0];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return rc;
 }
@@ -152,7 +188,11 @@ static int elantech_write_reg(struct psmouse *psmouse, unsigned char reg,
 	struct elantech_data *etd = psmouse->private;
 	int rc = 0;
 
+<<<<<<< HEAD
 	if (reg < 0x07 || reg > 0x26)
+=======
+	if (reg < 0x10 || reg > 0x26)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 
 	if (reg > 0x11 && reg < 0x20)
@@ -179,6 +219,7 @@ static int elantech_write_reg(struct psmouse *psmouse, unsigned char reg,
 			rc = -1;
 		}
 		break;
+<<<<<<< HEAD
 
 	case 3:
 		if (elantech_ps2_command(psmouse, NULL, ETP_PS2_CUSTOM_COMMAND) ||
@@ -211,6 +252,13 @@ static int elantech_write_reg(struct psmouse *psmouse, unsigned char reg,
 		psmouse_err(psmouse,
 			    "failed to write register 0x%02x with value 0x%02x.\n",
 			    reg, val);
+=======
+	}
+
+	if (rc)
+		pr_err("failed to write register 0x%02x with value 0x%02x.\n",
+			reg, val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return rc;
 }
@@ -218,6 +266,7 @@ static int elantech_write_reg(struct psmouse *psmouse, unsigned char reg,
 /*
  * Dump a complete mouse movement packet to the syslog
  */
+<<<<<<< HEAD
 static void elantech_packet_dump(struct psmouse *psmouse)
 {
 	int	i;
@@ -225,6 +274,15 @@ static void elantech_packet_dump(struct psmouse *psmouse)
 	psmouse_printk(KERN_DEBUG, psmouse, "PS/2 packet [");
 	for (i = 0; i < psmouse->pktsize; i++)
 		printk("%s0x%02x ", i ? ", " : " ", psmouse->packet[i]);
+=======
+static void elantech_packet_dump(unsigned char *packet, int size)
+{
+	int	i;
+
+	printk(KERN_DEBUG pr_fmt("PS/2 packet ["));
+	for (i = 0; i < size; i++)
+		printk("%s0x%02x ", (i) ? ", " : " ", packet[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk("]\n");
 }
 
@@ -275,7 +333,11 @@ static void elantech_report_absolute_v1(struct psmouse *psmouse)
 		input_report_abs(dev, ABS_X,
 			((packet[1] & 0x0c) << 6) | packet[2]);
 		input_report_abs(dev, ABS_Y,
+<<<<<<< HEAD
 			etd->y_max - (((packet[1] & 0x03) << 8) | packet[3]));
+=======
+			ETP_YMAX_V1 - (((packet[1] & 0x03) << 8) | packet[3]));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	input_report_key(dev, BTN_TOOL_FINGER, fingers == 1);
@@ -285,7 +347,11 @@ static void elantech_report_absolute_v1(struct psmouse *psmouse)
 	input_report_key(dev, BTN_RIGHT, packet[0] & 0x02);
 
 	if (etd->fw_version < 0x020000 &&
+<<<<<<< HEAD
 	    (etd->capabilities[0] & ETP_CAP_HAS_ROCKER)) {
+=======
+	    (etd->capabilities & ETP_CAP_HAS_ROCKER)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* rocker up */
 		input_report_key(dev, BTN_FORWARD, packet[0] & 0x40);
 		/* rocker down */
@@ -325,11 +391,19 @@ static void elantech_report_absolute_v2(struct psmouse *psmouse)
 	struct elantech_data *etd = psmouse->private;
 	struct input_dev *dev = psmouse->dev;
 	unsigned char *packet = psmouse->packet;
+<<<<<<< HEAD
 	unsigned int fingers, x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 	unsigned int width = 0, pres = 0;
 
 	/* byte 0: n1  n0   .   .   .   .   R   L */
 	fingers = (packet[0] & 0xc0) >> 6;
+=======
+	unsigned int fingers, x1 = 0, y1 = 0, x2 = 0, y2 = 0, width = 0, pres = 0;
+
+	/* byte 0: n1  n0   .   .   .   .   R   L */
+	fingers = (packet[0] & 0xc0) >> 6;
+	input_report_key(dev, BTN_TOUCH, fingers != 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (fingers) {
 	case 3:
@@ -342,6 +416,7 @@ static void elantech_report_absolute_v2(struct psmouse *psmouse)
 		/* pass through... */
 	case 1:
 		/*
+<<<<<<< HEAD
 		 * byte 1:  .   .   .   .  x11 x10 x9  x8
 		 * byte 2: x7  x6  x5  x4  x4  x2  x1  x0
 		 */
@@ -351,6 +426,20 @@ static void elantech_report_absolute_v2(struct psmouse *psmouse)
 		 * byte 5: y7  y6  y5  y4  y3  y2  y1  y0
 		 */
 		y1 = etd->y_max - (((packet[4] & 0x0f) << 8) | packet[5]);
+=======
+		 * byte 1:  .   .   .   .   .  x10 x9  x8
+		 * byte 2: x7  x6  x5  x4  x4  x2  x1  x0
+		 */
+		x1 = ((packet[1] & 0x07) << 8) | packet[2];
+		/*
+		 * byte 4:  .   .   .   .   .   .  y9  y8
+		 * byte 5: y7  y6  y5  y4  y3  y2  y1  y0
+		 */
+		y1 = ETP_YMAX_V2 - (((packet[4] & 0x03) << 8) | packet[5]);
+
+		input_report_abs(dev, ABS_X, x1);
+		input_report_abs(dev, ABS_Y, y1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		pres = (packet[1] & 0xf0) | ((packet[4] & 0xf0) >> 4);
 		width = ((packet[0] & 0x30) >> 2) | ((packet[3] & 0x30) >> 4);
@@ -363,18 +452,36 @@ static void elantech_report_absolute_v2(struct psmouse *psmouse)
 		 * byte 0:  .   .  ay8 ax8  .   .   .   .
 		 * byte 1: ax7 ax6 ax5 ax4 ax3 ax2 ax1 ax0
 		 */
+<<<<<<< HEAD
 		x1 = (((packet[0] & 0x10) << 4) | packet[1]) << 2;
 		/* byte 2: ay7 ay6 ay5 ay4 ay3 ay2 ay1 ay0 */
 		y1 = etd->y_max -
 			((((packet[0] & 0x20) << 3) | packet[2]) << 2);
+=======
+		x1 = ((packet[0] & 0x10) << 4) | packet[1];
+		/* byte 2: ay7 ay6 ay5 ay4 ay3 ay2 ay1 ay0 */
+		y1 = ETP_2FT_YMAX - (((packet[0] & 0x20) << 3) | packet[2]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * byte 3:  .   .  by8 bx8  .   .   .   .
 		 * byte 4: bx7 bx6 bx5 bx4 bx3 bx2 bx1 bx0
 		 */
+<<<<<<< HEAD
 		x2 = (((packet[3] & 0x10) << 4) | packet[4]) << 2;
 		/* byte 5: by7 by8 by5 by4 by3 by2 by1 by0 */
 		y2 = etd->y_max -
 			((((packet[3] & 0x20) << 3) | packet[5]) << 2);
+=======
+		x2 = ((packet[3] & 0x10) << 4) | packet[4];
+		/* byte 5: by7 by8 by5 by4 by3 by2 by1 by0 */
+		y2 = ETP_2FT_YMAX - (((packet[3] & 0x20) << 3) | packet[5]);
+		/*
+		 * For compatibility with the X Synaptics driver scale up
+		 * one coordinate and report as ordinary mouse movent
+		 */
+		input_report_abs(dev, ABS_X, x1 << 2);
+		input_report_abs(dev, ABS_Y, y1 << 2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Unknown so just report sensible values */
 		pres = 127;
@@ -382,11 +489,14 @@ static void elantech_report_absolute_v2(struct psmouse *psmouse)
 		break;
 	}
 
+<<<<<<< HEAD
 	input_report_key(dev, BTN_TOUCH, fingers != 0);
 	if (fingers != 0) {
 		input_report_abs(dev, ABS_X, x1);
 		input_report_abs(dev, ABS_Y, y1);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	elantech_report_semi_mt_data(dev, fingers, x1, y1, x2, y2);
 	input_report_key(dev, BTN_TOOL_FINGER, fingers == 1);
 	input_report_key(dev, BTN_TOOL_DOUBLETAP, fingers == 2);
@@ -402,6 +512,7 @@ static void elantech_report_absolute_v2(struct psmouse *psmouse)
 	input_sync(dev);
 }
 
+<<<<<<< HEAD
 /*
  * Interpret complete data packets and report absolute mode input events for
  * hardware version 3. (12 byte packets for two fingers)
@@ -603,6 +714,9 @@ static void elantech_report_absolute_v4(struct psmouse *psmouse,
 }
 
 static int elantech_packet_check_v1(struct psmouse *psmouse)
+=======
+static int elantech_check_parity_v1(struct psmouse *psmouse)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct elantech_data *etd = psmouse->private;
 	unsigned char *packet = psmouse->packet;
@@ -626,6 +740,7 @@ static int elantech_packet_check_v1(struct psmouse *psmouse)
 	       etd->parity[packet[3]] == p3;
 }
 
+<<<<<<< HEAD
 static int elantech_debounce_check_v2(struct psmouse *psmouse)
 {
         /*
@@ -710,29 +825,43 @@ static int elantech_packet_check_v4(struct psmouse *psmouse)
 	return PACKET_UNKNOWN;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Process byte stream from mouse and handle complete packets
  */
 static psmouse_ret_t elantech_process_byte(struct psmouse *psmouse)
 {
 	struct elantech_data *etd = psmouse->private;
+<<<<<<< HEAD
 	int packet_type;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (psmouse->pktcnt < psmouse->pktsize)
 		return PSMOUSE_GOOD_DATA;
 
 	if (etd->debug > 1)
+<<<<<<< HEAD
 		elantech_packet_dump(psmouse);
 
 	switch (etd->hw_version) {
 	case 1:
 		if (etd->paritycheck && !elantech_packet_check_v1(psmouse))
+=======
+		elantech_packet_dump(psmouse->packet, psmouse->pktsize);
+
+	switch (etd->hw_version) {
+	case 1:
+		if (etd->paritycheck && !elantech_check_parity_v1(psmouse))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return PSMOUSE_BAD_DATA;
 
 		elantech_report_absolute_v1(psmouse);
 		break;
 
 	case 2:
+<<<<<<< HEAD
 		/* ignore debounce */
 		if (elantech_debounce_check_v2(psmouse))
 			return PSMOUSE_FULL_PACKET;
@@ -762,6 +891,11 @@ static psmouse_ret_t elantech_process_byte(struct psmouse *psmouse)
 
 		elantech_report_absolute_v4(psmouse, packet_type);
 		break;
+=======
+		/* We don't know how to check parity in protocol v2 */
+		elantech_report_absolute_v2(psmouse);
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return PSMOUSE_FULL_PACKET;
@@ -796,6 +930,7 @@ static int elantech_set_absolute_mode(struct psmouse *psmouse)
 		    elantech_write_reg(psmouse, 0x11, etd->reg_11) ||
 		    elantech_write_reg(psmouse, 0x21, etd->reg_21)) {
 			rc = -1;
+<<<<<<< HEAD
 		}
 		break;
 
@@ -812,13 +947,21 @@ static int elantech_set_absolute_mode(struct psmouse *psmouse)
 			rc = -1;
 
 		goto skip_readback_reg_10; /* v4 has no reg 0x10 to read */
+=======
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (rc == 0) {
 		/*
 		 * Read back reg 0x10. For hardware version 1 we must make
 		 * sure the absolute mode bit is set. For hardware version 2
+<<<<<<< HEAD
 		 * the touchpad is probably initializing and not ready until
+=======
+		 * the touchpad is probably initalising and not ready until
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * we read back the value we just wrote.
 		 */
 		do {
@@ -831,23 +974,36 @@ static int elantech_set_absolute_mode(struct psmouse *psmouse)
 		} while (tries > 0);
 
 		if (rc) {
+<<<<<<< HEAD
 			psmouse_err(psmouse,
 				    "failed to read back register 0x10.\n");
 		} else if (etd->hw_version == 1 &&
 			   !(val & ETP_R10_ABSOLUTE_MODE)) {
 			psmouse_err(psmouse,
 				    "touchpad refuses to switch to absolute mode.\n");
+=======
+			pr_err("failed to read back register 0x10.\n");
+		} else if (etd->hw_version == 1 &&
+			   !(val & ETP_R10_ABSOLUTE_MODE)) {
+			pr_err("touchpad refuses to switch to absolute mode.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rc = -1;
 		}
 	}
 
+<<<<<<< HEAD
  skip_readback_reg_10:
 	if (rc)
 		psmouse_err(psmouse, "failed to initialise registers.\n");
+=======
+	if (rc)
+		pr_err("failed to initialise registers.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return rc;
 }
 
+<<<<<<< HEAD
 static int elantech_set_range(struct psmouse *psmouse,
 			      unsigned int *x_min, unsigned int *y_min,
 			      unsigned int *x_max, unsigned int *y_max,
@@ -967,6 +1123,16 @@ static int elantech_set_input_params(struct psmouse *psmouse)
 		return -1;
 
 	__set_bit(INPUT_PROP_POINTER, dev->propbit);
+=======
+/*
+ * Set the appropriate event bits for the input subsystem
+ */
+static void elantech_set_input_params(struct psmouse *psmouse)
+{
+	struct input_dev *dev = psmouse->dev;
+	struct elantech_data *etd = psmouse->private;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__set_bit(EV_KEY, dev->evbit);
 	__set_bit(EV_ABS, dev->evbit);
 	__clear_bit(EV_REL, dev->evbit);
@@ -983,27 +1149,42 @@ static int elantech_set_input_params(struct psmouse *psmouse)
 	case 1:
 		/* Rocker button */
 		if (etd->fw_version < 0x020000 &&
+<<<<<<< HEAD
 		    (etd->capabilities[0] & ETP_CAP_HAS_ROCKER)) {
 			__set_bit(BTN_FORWARD, dev->keybit);
 			__set_bit(BTN_BACK, dev->keybit);
 		}
 		input_set_abs_params(dev, ABS_X, x_min, x_max, 0, 0);
 		input_set_abs_params(dev, ABS_Y, y_min, y_max, 0, 0);
+=======
+		    (etd->capabilities & ETP_CAP_HAS_ROCKER)) {
+			__set_bit(BTN_FORWARD, dev->keybit);
+			__set_bit(BTN_BACK, dev->keybit);
+		}
+		input_set_abs_params(dev, ABS_X, ETP_XMIN_V1, ETP_XMAX_V1, 0, 0);
+		input_set_abs_params(dev, ABS_Y, ETP_YMIN_V1, ETP_YMAX_V1, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case 2:
 		__set_bit(BTN_TOOL_QUADTAP, dev->keybit);
+<<<<<<< HEAD
 		__set_bit(INPUT_PROP_SEMI_MT, dev->propbit);
 		/* fall through */
 	case 3:
 		input_set_abs_params(dev, ABS_X, x_min, x_max, 0, 0);
 		input_set_abs_params(dev, ABS_Y, y_min, y_max, 0, 0);
+=======
+		input_set_abs_params(dev, ABS_X, ETP_XMIN_V2, ETP_XMAX_V2, 0, 0);
+		input_set_abs_params(dev, ABS_Y, ETP_YMIN_V2, ETP_YMAX_V2, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (etd->reports_pressure) {
 			input_set_abs_params(dev, ABS_PRESSURE, ETP_PMIN_V2,
 					     ETP_PMAX_V2, 0, 0);
 			input_set_abs_params(dev, ABS_TOOL_WIDTH, ETP_WMIN_V2,
 					     ETP_WMAX_V2, 0, 0);
 		}
+<<<<<<< HEAD
 		input_mt_init_slots(dev, 2);
 		input_set_abs_params(dev, ABS_MT_POSITION_X, x_min, x_max, 0, 0);
 		input_set_abs_params(dev, ABS_MT_POSITION_Y, y_min, y_max, 0, 0);
@@ -1055,6 +1236,14 @@ static int elantech_set_input_params(struct psmouse *psmouse)
 	etd->width = width;
 
 	return 0;
+=======
+		__set_bit(INPUT_PROP_SEMI_MT, dev->propbit);
+		input_mt_init_slots(dev, 2);
+		input_set_abs_params(dev, ABS_MT_POSITION_X, ETP_XMIN_V2, ETP_XMAX_V2, 0, 0);
+		input_set_abs_params(dev, ABS_MT_POSITION_Y, ETP_YMIN_V2, ETP_YMAX_V2, 0, 0);
+		break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct elantech_attr_data {
@@ -1088,6 +1277,7 @@ static ssize_t elantech_set_int_attr(struct psmouse *psmouse,
 	struct elantech_data *etd = psmouse->private;
 	struct elantech_attr_data *attr = data;
 	unsigned char *reg = (unsigned char *) etd + attr->field_offset;
+<<<<<<< HEAD
 	unsigned char value;
 	int err;
 
@@ -1095,6 +1285,18 @@ static ssize_t elantech_set_int_attr(struct psmouse *psmouse,
 	if (err)
 		return err;
 
+=======
+	unsigned long value;
+	int err;
+
+	err = strict_strtoul(buf, 16, &value);
+	if (err)
+		return err;
+
+	if (value > 0xff)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Do we need to preserve some bits for version 2 hardware too? */
 	if (etd->hw_version == 1) {
 		if (attr->reg == 0x10)
@@ -1121,7 +1323,10 @@ static ssize_t elantech_set_int_attr(struct psmouse *psmouse,
 			    elantech_show_int_attr,			\
 			    elantech_set_int_attr)
 
+<<<<<<< HEAD
 ELANTECH_INT_ATTR(reg_07, 0x07);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ELANTECH_INT_ATTR(reg_10, 0x10);
 ELANTECH_INT_ATTR(reg_11, 0x11);
 ELANTECH_INT_ATTR(reg_20, 0x20);
@@ -1135,7 +1340,10 @@ ELANTECH_INT_ATTR(debug, 0);
 ELANTECH_INT_ATTR(paritycheck, 0);
 
 static struct attribute *elantech_attrs[] = {
+<<<<<<< HEAD
 	&psmouse_attr_reg_07.dattr.attr,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&psmouse_attr_reg_10.dattr.attr,
 	&psmouse_attr_reg_11.dattr.attr,
 	&psmouse_attr_reg_20.dattr.attr,
@@ -1187,7 +1395,11 @@ int elantech_detect(struct psmouse *psmouse, bool set_properties)
 	    ps2_command(ps2dev,  NULL, PSMOUSE_CMD_SETSCALE11) ||
 	    ps2_command(ps2dev,  NULL, PSMOUSE_CMD_SETSCALE11) ||
 	    ps2_command(ps2dev, param, PSMOUSE_CMD_GETINFO)) {
+<<<<<<< HEAD
 		psmouse_dbg(psmouse, "sending Elantech magic knock failed.\n");
+=======
+		pr_debug("sending Elantech magic knock failed.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
@@ -1195,11 +1407,17 @@ int elantech_detect(struct psmouse *psmouse, bool set_properties)
 	 * Report this in case there are Elantech models that use a different
 	 * set of magic numbers
 	 */
+<<<<<<< HEAD
 	if (param[0] != 0x3c || param[1] != 0x03 ||
 	    (param[2] != 0xc8 && param[2] != 0x00)) {
 		psmouse_dbg(psmouse,
 			    "unexpected magic knock result 0x%02x, 0x%02x, 0x%02x.\n",
 			    param[0], param[1], param[2]);
+=======
+	if (param[0] != 0x3c || param[1] != 0x03 || param[2] != 0xc8) {
+		pr_debug("unexpected magic knock result 0x%02x, 0x%02x, 0x%02x.\n",
+			 param[0], param[1], param[2]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
@@ -1209,6 +1427,7 @@ int elantech_detect(struct psmouse *psmouse, bool set_properties)
 	 * to Elantech magic knock and there might be more.
 	 */
 	if (synaptics_send_cmd(psmouse, ETP_FW_VERSION_QUERY, param)) {
+<<<<<<< HEAD
 		psmouse_dbg(psmouse, "failed to query firmware version.\n");
 		return -1;
 	}
@@ -1221,6 +1440,22 @@ int elantech_detect(struct psmouse *psmouse, bool set_properties)
 		psmouse_dbg(psmouse,
 			    "Probably not a real Elantech touchpad. Aborting.\n");
 		return -1;
+=======
+		pr_debug("failed to query firmware version.\n");
+		return -1;
+	}
+
+	pr_debug("Elantech version query result 0x%02x, 0x%02x, 0x%02x.\n",
+		 param[0], param[1], param[2]);
+
+	if (!elantech_is_signature_valid(param)) {
+		if (!force_elantech) {
+			pr_debug("Probably not a real Elantech touchpad. Aborting.\n");
+			return -1;
+		}
+
+		pr_debug("Probably not a real Elantech touchpad. Enabling anyway due to force_elantech.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (set_properties) {
@@ -1247,14 +1482,21 @@ static void elantech_disconnect(struct psmouse *psmouse)
  */
 static int elantech_reconnect(struct psmouse *psmouse)
 {
+<<<<<<< HEAD
 	psmouse_reset(psmouse);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (elantech_detect(psmouse, 0))
 		return -1;
 
 	if (elantech_set_absolute_mode(psmouse)) {
+<<<<<<< HEAD
 		psmouse_err(psmouse,
 			    "failed to put touchpad back into absolute mode.\n");
+=======
+		pr_err("failed to put touchpad back into absolute mode.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
@@ -1262,6 +1504,7 @@ static int elantech_reconnect(struct psmouse *psmouse)
 }
 
 /*
+<<<<<<< HEAD
  * determine hardware version and set some properties according to it.
  */
 static int elantech_set_properties(struct elantech_data *etd)
@@ -1316,6 +1559,8 @@ static int elantech_set_properties(struct elantech_data *etd)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Initialize the touchpad and create sysfs entries
  */
 int elantech_init(struct psmouse *psmouse)
@@ -1328,8 +1573,11 @@ int elantech_init(struct psmouse *psmouse)
 	if (!etd)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	psmouse_reset(psmouse);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	etd->parity[0] = 1;
 	for (i = 1; i < 256; i++)
 		etd->parity[i] = etd->parity[i & (i - 1)] ^ 1;
@@ -1338,6 +1586,7 @@ int elantech_init(struct psmouse *psmouse)
 	 * Do the version query again so we can store the result
 	 */
 	if (synaptics_send_cmd(psmouse, ETP_FW_VERSION_QUERY, param)) {
+<<<<<<< HEAD
 		psmouse_err(psmouse, "failed to query firmware version.\n");
 		goto init_fail;
 	}
@@ -1378,13 +1627,76 @@ int elantech_init(struct psmouse *psmouse)
 		psmouse_err(psmouse,
 			    "failed to create sysfs attributes, error: %d.\n",
 			    error);
+=======
+		pr_err("failed to query firmware version.\n");
+		goto init_fail;
+	}
+
+	etd->fw_version = (param[0] << 16) | (param[1] << 8) | param[2];
+
+	/*
+	 * Assume every version greater than this is new EeePC style
+	 * hardware with 6 byte packets
+	 */
+	if (etd->fw_version >= 0x020030) {
+		etd->hw_version = 2;
+		/* For now show extra debug information */
+		etd->debug = 1;
+		/* Don't know how to do parity checking for version 2 */
+		etd->paritycheck = 0;
+
+		if (etd->fw_version >= 0x020800)
+			etd->reports_pressure = true;
+
+	} else {
+		etd->hw_version = 1;
+		etd->paritycheck = 1;
+	}
+
+	pr_info("assuming hardware version %d, firmware version %d.%d.%d\n",
+		etd->hw_version, param[0], param[1], param[2]);
+
+	if (synaptics_send_cmd(psmouse, ETP_CAPABILITIES_QUERY, param)) {
+		pr_err("failed to query capabilities.\n");
+		goto init_fail;
+	}
+	pr_info("Synaptics capabilities query result 0x%02x, 0x%02x, 0x%02x.\n",
+		param[0], param[1], param[2]);
+	etd->capabilities = param[0];
+
+	/*
+	 * This firmware suffers from misreporting coordinates when
+	 * a touch action starts causing the mouse cursor or scrolled page
+	 * to jump. Enable a workaround.
+	 */
+	if (etd->fw_version == 0x020022 || etd->fw_version == 0x020600) {
+		pr_info("firmware version 2.0.34/2.6.0 detected, enabling jumpy cursor workaround\n");
+		etd->jumpy_cursor = true;
+	}
+
+	if (elantech_set_absolute_mode(psmouse)) {
+		pr_err("failed to put touchpad into absolute mode.\n");
+		goto init_fail;
+	}
+
+	elantech_set_input_params(psmouse);
+
+	error = sysfs_create_group(&psmouse->ps2dev.serio->dev.kobj,
+				   &elantech_attr_group);
+	if (error) {
+		pr_err("failed to create sysfs attributes, error: %d.\n", error);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto init_fail;
 	}
 
 	psmouse->protocol_handler = elantech_process_byte;
 	psmouse->disconnect = elantech_disconnect;
 	psmouse->reconnect = elantech_reconnect;
+<<<<<<< HEAD
 	psmouse->pktsize = etd->hw_version > 1 ? 6 : 4;
+=======
+	psmouse->pktsize = etd->hw_version == 2 ? 6 : 4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 

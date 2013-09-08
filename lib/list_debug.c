@@ -6,10 +6,15 @@
  * DEBUG_LIST.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/list.h>
 #include <linux/bug.h>
 #include <linux/kernel.h>
+=======
+#include <linux/module.h>
+#include <linux/list.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Insert a new entry between two known consecutive entries.

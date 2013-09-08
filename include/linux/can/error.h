@@ -7,6 +7,11 @@
  * Copyright (c) 2002-2007 Volkswagen Group Electronic Research
  * All rights reserved.
  *
+<<<<<<< HEAD
+=======
+ * Send feedback to <socketcan-users@lists.berlios.de>
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #ifndef CAN_ERROR_H

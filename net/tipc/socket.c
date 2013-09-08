@@ -34,9 +34,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <net/sock.h>
 
+=======
+#include <net/sock.h>
+
+#include <linux/tipc.h>
+#include <linux/tipc_config.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "core.h"
 #include "port.h"
 
@@ -50,7 +58,11 @@ struct tipc_sock {
 	struct sock sk;
 	struct tipc_port *p;
 	struct tipc_portid peer_name;
+<<<<<<< HEAD
 	unsigned int conn_timeout;
+=======
+	long conn_timeout;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define tipc_sk(sk) ((struct tipc_sock *)(sk))
@@ -126,7 +138,11 @@ static atomic_t tipc_queue_size = ATOMIC_INIT(0);
 
 static void advance_rx_queue(struct sock *sk)
 {
+<<<<<<< HEAD
 	kfree_skb(__skb_dequeue(&sk->sk_receive_queue));
+=======
+	buf_discard(__skb_dequeue(&sk->sk_receive_queue));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atomic_dec(&tipc_queue_size);
 }
 
@@ -142,7 +158,11 @@ static void discard_rx_queue(struct sock *sk)
 
 	while ((buf = __skb_dequeue(&sk->sk_receive_queue))) {
 		atomic_dec(&tipc_queue_size);
+<<<<<<< HEAD
 		kfree_skb(buf);
+=======
+		buf_discard(buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -185,6 +205,12 @@ static int tipc_create(struct net *net, struct socket *sock, int protocol,
 
 	/* Validate arguments */
 
+<<<<<<< HEAD
+=======
+	if (!net_eq(net, &init_net))
+		return -EAFNOSUPPORT;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(protocol != 0))
 		return -EPROTONOSUPPORT;
 
@@ -229,7 +255,11 @@ static int tipc_create(struct net *net, struct socket *sock, int protocol,
 	sock_init_data(sock, sk);
 	sk->sk_backlog_rcv = backlog_rcv;
 	tipc_sk(sk)->p = tp_ptr;
+<<<<<<< HEAD
 	tipc_sk(sk)->conn_timeout = CONN_TIMEOUT_DEFAULT;
+=======
+	tipc_sk(sk)->conn_timeout = msecs_to_jiffies(CONN_TIMEOUT_DEFAULT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_bh(tp_ptr->lock);
 
@@ -288,7 +318,11 @@ static int release(struct socket *sock)
 			break;
 		atomic_dec(&tipc_queue_size);
 		if (TIPC_SKB_CB(buf)->handle != 0)
+<<<<<<< HEAD
 			kfree_skb(buf);
+=======
+			buf_discard(buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		else {
 			if ((sock->state == SS_CONNECTING) ||
 			    (sock->state == SS_CONNECTED)) {
@@ -355,9 +389,12 @@ static int bind(struct socket *sock, struct sockaddr *uaddr, int uaddr_len)
 	else if (addr->addrtype != TIPC_ADDR_NAMESEQ)
 		return -EAFNOSUPPORT;
 
+<<<<<<< HEAD
 	if (addr->addr.nameseq.type < TIPC_RESERVED_TYPES)
 		return -EACCES;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return (addr->scope > 0) ?
 		tipc_publish(portref, addr->scope, &addr->addr.nameseq) :
 		tipc_withdraw(portref, -addr->scope, &addr->addr.nameseq);
@@ -526,7 +563,10 @@ static int send_msg(struct kiocb *iocb, struct socket *sock,
 	struct tipc_port *tport = tipc_sk_port(sk);
 	struct sockaddr_tipc *dest = (struct sockaddr_tipc *)m->msg_name;
 	int needs_conn;
+<<<<<<< HEAD
 	long timeout_val;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int res = -EINVAL;
 
 	if (unlikely(!dest))
@@ -566,8 +606,11 @@ static int send_msg(struct kiocb *iocb, struct socket *sock,
 		reject_rx_queue(sk);
 	}
 
+<<<<<<< HEAD
 	timeout_val = sock_sndtimeo(sk, m->msg_flags & MSG_DONTWAIT);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do {
 		if (dest->addrtype == TIPC_ADDR_NAME) {
 			res = dest_name_check(dest, m);
@@ -604,6 +647,7 @@ static int send_msg(struct kiocb *iocb, struct socket *sock,
 				sock->state = SS_CONNECTING;
 			break;
 		}
+<<<<<<< HEAD
 		if (timeout_val <= 0L) {
 			res = timeout_val ? timeout_val : -EWOULDBLOCK;
 			break;
@@ -612,6 +656,18 @@ static int send_msg(struct kiocb *iocb, struct socket *sock,
 		timeout_val = wait_event_interruptible_timeout(*sk_sleep(sk),
 					       !tport->congested, timeout_val);
 		lock_sock(sk);
+=======
+		if (m->msg_flags & MSG_DONTWAIT) {
+			res = -EWOULDBLOCK;
+			break;
+		}
+		release_sock(sk);
+		res = wait_event_interruptible(*sk_sleep(sk),
+					       !tport->congested);
+		lock_sock(sk);
+		if (res)
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} while (1);
 
 exit:
@@ -638,7 +694,10 @@ static int send_packet(struct kiocb *iocb, struct socket *sock,
 	struct sock *sk = sock->sk;
 	struct tipc_port *tport = tipc_sk_port(sk);
 	struct sockaddr_tipc *dest = (struct sockaddr_tipc *)m->msg_name;
+<<<<<<< HEAD
 	long timeout_val;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int res;
 
 	/* Handle implied connection establishment */
@@ -653,8 +712,11 @@ static int send_packet(struct kiocb *iocb, struct socket *sock,
 	if (iocb)
 		lock_sock(sk);
 
+<<<<<<< HEAD
 	timeout_val = sock_sndtimeo(sk, m->msg_flags & MSG_DONTWAIT);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do {
 		if (unlikely(sock->state != SS_CONNECTED)) {
 			if (sock->state == SS_DISCONNECTING)
@@ -668,6 +730,7 @@ static int send_packet(struct kiocb *iocb, struct socket *sock,
 				total_len);
 		if (likely(res != -ELINKCONG))
 			break;
+<<<<<<< HEAD
 		if (timeout_val <= 0L) {
 			res = timeout_val ? timeout_val : -EWOULDBLOCK;
 			break;
@@ -676,6 +739,18 @@ static int send_packet(struct kiocb *iocb, struct socket *sock,
 		timeout_val = wait_event_interruptible_timeout(*sk_sleep(sk),
 			(!tport->congested || !tport->connected), timeout_val);
 		lock_sock(sk);
+=======
+		if (m->msg_flags & MSG_DONTWAIT) {
+			res = -EWOULDBLOCK;
+			break;
+		}
+		release_sock(sk);
+		res = wait_event_interruptible(*sk_sleep(sk),
+			(!tport->congested || !tport->connected));
+		lock_sock(sk);
+		if (res)
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} while (1);
 
 	if (iocb)
@@ -829,7 +904,10 @@ static void set_orig_addr(struct msghdr *m, struct tipc_msg *msg)
 	if (addr) {
 		addr->family = AF_TIPC;
 		addr->addrtype = TIPC_ADDR_ID;
+<<<<<<< HEAD
 		memset(&addr->addr, 0, sizeof(addr->addr));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		addr->addr.id.ref = msg_origport(msg);
 		addr->addr.id.node = msg_orignode(msg);
 		addr->addr.name.domain = 0;	/* could leave uninitialized */
@@ -949,9 +1027,12 @@ static int recv_msg(struct kiocb *iocb, struct socket *sock,
 		goto exit;
 	}
 
+<<<<<<< HEAD
 	/* will be updated in set_orig_addr() if needed */
 	m->msg_namelen = 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	timeout = sock_rcvtimeo(sk, flags & MSG_DONTWAIT);
 restart:
 
@@ -1078,9 +1159,12 @@ static int recv_stream(struct kiocb *iocb, struct socket *sock,
 		goto exit;
 	}
 
+<<<<<<< HEAD
 	/* will be updated in set_orig_addr() if needed */
 	m->msg_namelen = 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	target = sock_rcvlowat(sk, flags & MSG_WAITALL, buf_len);
 	timeout = sock_rcvtimeo(sk, flags & MSG_DONTWAIT);
 restart:
@@ -1379,7 +1463,11 @@ static int connect(struct socket *sock, struct sockaddr *dest, int destlen,
 	struct msghdr m = {NULL,};
 	struct sk_buff *buf;
 	struct tipc_msg *msg;
+<<<<<<< HEAD
 	unsigned int timeout;
+=======
+	long timeout;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int res;
 
 	lock_sock(sk);
@@ -1444,8 +1532,12 @@ static int connect(struct socket *sock, struct sockaddr *dest, int destlen,
 	res = wait_event_interruptible_timeout(*sk_sleep(sk),
 			(!skb_queue_empty(&sk->sk_receive_queue) ||
 			(sock->state != SS_CONNECTING)),
+<<<<<<< HEAD
 			timeout ? (long)msecs_to_jiffies(timeout)
 				: MAX_SCHEDULE_TIMEOUT);
+=======
+			timeout ? timeout : MAX_SCHEDULE_TIMEOUT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lock_sock(sk);
 
 	if (res > 0) {
@@ -1491,7 +1583,13 @@ static int listen(struct socket *sock, int len)
 
 	lock_sock(sk);
 
+<<<<<<< HEAD
 	if (sock->state != SS_UNCONNECTED)
+=======
+	if (sock->state == SS_READY)
+		res = -EOPNOTSUPP;
+	else if (sock->state != SS_UNCONNECTED)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		res = -EINVAL;
 	else {
 		sock->state = SS_LISTENING;
@@ -1519,6 +1617,13 @@ static int accept(struct socket *sock, struct socket *new_sock, int flags)
 
 	lock_sock(sk);
 
+<<<<<<< HEAD
+=======
+	if (sock->state == SS_READY) {
+		res = -EOPNOTSUPP;
+		goto exit;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (sock->state != SS_LISTENING) {
 		res = -EINVAL;
 		goto exit;
@@ -1622,7 +1727,11 @@ restart:
 		if (buf) {
 			atomic_dec(&tipc_queue_size);
 			if (TIPC_SKB_CB(buf)->handle != 0) {
+<<<<<<< HEAD
 				kfree_skb(buf);
+=======
+				buf_discard(buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto restart;
 			}
 			tipc_disconnect(tport->ref);
@@ -1701,7 +1810,11 @@ static int setsockopt(struct socket *sock,
 		res = tipc_set_portunreturnable(tport->ref, value);
 		break;
 	case TIPC_CONN_TIMEOUT:
+<<<<<<< HEAD
 		tipc_sk(sk)->conn_timeout = value;
+=======
+		tipc_sk(sk)->conn_timeout = msecs_to_jiffies(value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* no need to set "res", since already 0 at this point */
 		break;
 	default:
@@ -1757,7 +1870,11 @@ static int getsockopt(struct socket *sock,
 		res = tipc_portunreturnable(tport->ref, &value);
 		break;
 	case TIPC_CONN_TIMEOUT:
+<<<<<<< HEAD
 		value = tipc_sk(sk)->conn_timeout;
+=======
+		value = jiffies_to_msecs(tipc_sk(sk)->conn_timeout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* no need to set "res", since already 0 at this point */
 		break;
 	case TIPC_NODE_RECVQ_DEPTH:
@@ -1795,11 +1912,19 @@ static const struct proto_ops msg_ops = {
 	.bind		= bind,
 	.connect	= connect,
 	.socketpair	= sock_no_socketpair,
+<<<<<<< HEAD
 	.accept		= sock_no_accept,
 	.getname	= get_name,
 	.poll		= poll,
 	.ioctl		= sock_no_ioctl,
 	.listen		= sock_no_listen,
+=======
+	.accept		= accept,
+	.getname	= get_name,
+	.poll		= poll,
+	.ioctl		= sock_no_ioctl,
+	.listen		= listen,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.shutdown	= shutdown,
 	.setsockopt	= setsockopt,
 	.getsockopt	= getsockopt,

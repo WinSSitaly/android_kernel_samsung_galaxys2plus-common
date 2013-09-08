@@ -67,8 +67,26 @@ static struct platform_driver xo1_rfkill_driver = {
 	.remove		= __devexit_p(xo1_rfkill_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(xo1_rfkill_driver);
+=======
+static int __init xo1_rfkill_init(void)
+{
+	return platform_driver_register(&xo1_rfkill_driver);
+}
+
+static void __exit xo1_rfkill_exit(void)
+{
+	platform_driver_unregister(&xo1_rfkill_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Daniel Drake <dsd@laptop.org>");
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:xo1-rfkill");
+<<<<<<< HEAD
+=======
+
+module_init(xo1_rfkill_init);
+module_exit(xo1_rfkill_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

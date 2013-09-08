@@ -23,7 +23,10 @@
 #include <linux/usb/cdc.h>
 #include <asm/byteorder.h>
 #include <asm/unaligned.h>
+<<<<<<< HEAD
 #include <linux/usb/cdc-wdm.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Version Information
@@ -32,8 +35,11 @@
 #define DRIVER_AUTHOR "Oliver Neukum"
 #define DRIVER_DESC "USB Abstract Control Model driver for USB WCM Device Management"
 
+<<<<<<< HEAD
 #define HUAWEI_VENDOR_ID	0x12D1
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct usb_device_id wdm_ids[] = {
 	{
 		.match_flags = USB_DEVICE_ID_MATCH_INT_CLASS |
@@ -41,6 +47,7 @@ static const struct usb_device_id wdm_ids[] = {
 		.bInterfaceClass = USB_CLASS_COMM,
 		.bInterfaceSubClass = USB_CDC_SUBCLASS_DMM
 	},
+<<<<<<< HEAD
 	{
 		/* 
 		 * Huawei E392, E398 and possibly other Qualcomm based modems
@@ -64,6 +71,8 @@ static const struct usb_device_id wdm_ids[] = {
 		.bInterfaceSubClass = 1,
 		.bInterfaceProtocol = 57, /* NOTE: CDC ECM control interface! */
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ }
 };
 
@@ -80,8 +89,11 @@ MODULE_DEVICE_TABLE (usb, wdm_ids);
 #define WDM_POLL_RUNNING	6
 #define WDM_RESPONDING		7
 #define WDM_SUSPENDING		8
+<<<<<<< HEAD
 #define WDM_RESETTING		9
 #define WDM_OVERFLOW		10
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define WDM_MAX			16
 
@@ -89,8 +101,11 @@ MODULE_DEVICE_TABLE (usb, wdm_ids);
 #define WDM_DEFAULT_BUFSIZE	256
 
 static DEFINE_MUTEX(wdm_mutex);
+<<<<<<< HEAD
 static DEFINE_SPINLOCK(wdm_device_list_lock);
 static LIST_HEAD(wdm_device_list);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* --- method tables --- */
 
@@ -112,6 +127,10 @@ struct wdm_device {
 	u16			bufsize;
 	u16			wMaxCommand;
 	u16			wMaxPacketSize;
+<<<<<<< HEAD
+=======
+	u16			bMaxPacketSize0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__le16			inum;
 	int			reslength;
 	int			length;
@@ -125,13 +144,17 @@ struct wdm_device {
 	struct work_struct	rxwork;
 	int			werr;
 	int			rerr;
+<<<<<<< HEAD
 
 	struct list_head	device_list;
 	int			(*manage_power)(struct usb_interface *, int);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct usb_driver wdm_driver;
 
+<<<<<<< HEAD
 /* return intfdata if we own the interface, else look up intf in the list */
 static struct wdm_device *wdm_find_device(struct usb_interface *intf)
 {
@@ -163,6 +186,8 @@ found:
 	return desc;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* --- callbacks --- */
 static void wdm_out_callback(struct urb *urb)
 {
@@ -181,7 +206,10 @@ static void wdm_in_callback(struct urb *urb)
 {
 	struct wdm_device *desc = urb->context;
 	int status = urb->status;
+<<<<<<< HEAD
 	int length = urb->actual_length;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock(&desc->iuspin);
 	clear_bit(WDM_RESPONDING, &desc->flags);
@@ -212,6 +240,7 @@ static void wdm_in_callback(struct urb *urb)
 	}
 
 	desc->rerr = status;
+<<<<<<< HEAD
 	if (length + desc->length > desc->wMaxCommand) {
 		/* The buffer would overflow */
 		set_bit(WDM_OVERFLOW, &desc->flags);
@@ -223,6 +252,11 @@ static void wdm_in_callback(struct urb *urb)
 			desc->reslength = length;
 		}
 	}
+=======
+	desc->reslength = urb->actual_length;
+	memmove(desc->ubuf + desc->length, desc->inbuf, desc->reslength);
+	desc->length += desc->reslength;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 skip_error:
 	wake_up(&desc->wait);
 
@@ -233,12 +267,22 @@ skip_error:
 static void wdm_int_callback(struct urb *urb)
 {
 	int rv = 0;
+<<<<<<< HEAD
 	int responding;
 	int status = urb->status;
 	struct wdm_device *desc;
 	struct usb_cdc_notification *dr;
 
 	desc = urb->context;
+=======
+	int status = urb->status;
+	struct wdm_device *desc;
+	struct usb_ctrlrequest *req;
+	struct usb_cdc_notification *dr;
+
+	desc = urb->context;
+	req = desc->irq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dr = (struct usb_cdc_notification *)desc->sbuf;
 
 	if (status) {
@@ -285,10 +329,35 @@ static void wdm_int_callback(struct urb *urb)
 		goto exit;
 	}
 
+<<<<<<< HEAD
 	spin_lock(&desc->iuspin);
 	clear_bit(WDM_READ, &desc->flags);
 	responding = test_and_set_bit(WDM_RESPONDING, &desc->flags);
 	if (!responding && !test_bit(WDM_DISCONNECTING, &desc->flags)
+=======
+	req->bRequestType = (USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE);
+	req->bRequest = USB_CDC_GET_ENCAPSULATED_RESPONSE;
+	req->wValue = 0;
+	req->wIndex = desc->inum;
+	req->wLength = cpu_to_le16(desc->wMaxCommand);
+
+	usb_fill_control_urb(
+		desc->response,
+		interface_to_usbdev(desc->intf),
+		/* using common endpoint 0 */
+		usb_rcvctrlpipe(interface_to_usbdev(desc->intf), 0),
+		(unsigned char *)req,
+		desc->inbuf,
+		desc->wMaxCommand,
+		wdm_in_callback,
+		desc
+	);
+	desc->response->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
+	spin_lock(&desc->iuspin);
+	clear_bit(WDM_READ, &desc->flags);
+	set_bit(WDM_RESPONDING, &desc->flags);
+	if (!test_bit(WDM_DISCONNECTING, &desc->flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		&& !test_bit(WDM_SUSPENDING, &desc->flags)) {
 		rv = usb_submit_urb(desc->response, GFP_ATOMIC);
 		dev_dbg(&desc->intf->dev, "%s: usb_submit_urb %d",
@@ -333,8 +402,19 @@ static void free_urbs(struct wdm_device *desc)
 
 static void cleanup(struct wdm_device *desc)
 {
+<<<<<<< HEAD
 	kfree(desc->sbuf);
 	kfree(desc->inbuf);
+=======
+	usb_free_coherent(interface_to_usbdev(desc->intf),
+			  desc->wMaxPacketSize,
+			  desc->sbuf,
+			  desc->validity->transfer_dma);
+	usb_free_coherent(interface_to_usbdev(desc->intf),
+			  desc->bMaxPacketSize0,
+			  desc->inbuf,
+			  desc->response->transfer_dma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(desc->orq);
 	kfree(desc->irq);
 	kfree(desc->ubuf);
@@ -399,10 +479,13 @@ static ssize_t wdm_write
 	else
 		if (test_bit(WDM_IN_USE, &desc->flags))
 			r = -EAGAIN;
+<<<<<<< HEAD
 
 	if (test_bit(WDM_RESETTING, &desc->flags))
 		r = -EIO;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (r < 0) {
 		kfree(buf);
 		goto out;
@@ -468,11 +551,14 @@ retry:
 			rv = -ENODEV;
 			goto err;
 		}
+<<<<<<< HEAD
 		if (test_bit(WDM_OVERFLOW, &desc->flags)) {
 			clear_bit(WDM_OVERFLOW, &desc->flags);
 			rv = -ENOBUFS;
 			goto err;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		i++;
 		if (file->f_flags & O_NONBLOCK) {
 			if (!test_bit(WDM_READ, &desc->flags)) {
@@ -490,10 +576,13 @@ retry:
 			rv = -ENODEV;
 			goto err;
 		}
+<<<<<<< HEAD
 		if (test_bit(WDM_RESETTING, &desc->flags)) {
 			rv = -EIO;
 			goto err;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		usb_mark_last_busy(interface_to_usbdev(desc->intf));
 		if (rv < 0) {
 			rv = -ERESTARTSYS;
@@ -516,10 +605,14 @@ retry:
 			spin_unlock_irq(&desc->iuspin);
 			goto retry;
 		}
+<<<<<<< HEAD
 
 		if (!desc->reslength) { /* zero length read */
 			dev_dbg(&desc->intf->dev, "%s: zero length - clearing WDM_READ\n", __func__);
 			clear_bit(WDM_READ, &desc->flags);
+=======
+		if (!desc->reslength) { /* zero length read */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			spin_unlock_irq(&desc->iuspin);
 			goto retry;
 		}
@@ -559,6 +652,7 @@ static int wdm_flush(struct file *file, fl_owner_t id)
 	struct wdm_device *desc = file->private_data;
 
 	wait_event(desc->wait, !test_bit(WDM_IN_USE, &desc->flags));
+<<<<<<< HEAD
 
 	/* cannot dereference desc->intf if WDM_DISCONNECTING */
 	if (desc->werr < 0 && !test_bit(WDM_DISCONNECTING, &desc->flags))
@@ -566,6 +660,13 @@ static int wdm_flush(struct file *file, fl_owner_t id)
 			desc->werr);
 
 	return usb_translate_errors(desc->werr);
+=======
+	if (desc->werr < 0)
+		dev_err(&desc->intf->dev, "Error in flush path: %d\n",
+			desc->werr);
+
+	return desc->werr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static unsigned int wdm_poll(struct file *file, struct poll_table_struct *wait)
@@ -576,7 +677,11 @@ static unsigned int wdm_poll(struct file *file, struct poll_table_struct *wait)
 
 	spin_lock_irqsave(&desc->iuspin, flags);
 	if (test_bit(WDM_DISCONNECTING, &desc->flags)) {
+<<<<<<< HEAD
 		mask = POLLHUP | POLLERR;
+=======
+		mask = POLLERR;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock_irqrestore(&desc->iuspin, flags);
 		goto desc_out;
 	}
@@ -602,11 +707,19 @@ static int wdm_open(struct inode *inode, struct file *file)
 	struct wdm_device *desc;
 
 	mutex_lock(&wdm_mutex);
+<<<<<<< HEAD
 	desc = wdm_find_device_by_minor(minor);
 	if (!desc)
 		goto out;
 
 	intf = desc->intf;
+=======
+	intf = usb_find_interface(&wdm_driver, minor);
+	if (!intf)
+		goto out;
+
+	desc = usb_get_intfdata(intf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (test_bit(WDM_DISCONNECTING, &desc->flags))
 		goto out;
 	file->private_data = desc;
@@ -616,6 +729,10 @@ static int wdm_open(struct inode *inode, struct file *file)
 		dev_err(&desc->intf->dev, "Error autopm - %d\n", rv);
 		goto out;
 	}
+<<<<<<< HEAD
+=======
+	intf->needs_remote_wakeup = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* using write lock to protect desc->count */
 	mutex_lock(&desc->wlock);
@@ -632,8 +749,11 @@ static int wdm_open(struct inode *inode, struct file *file)
 		rv = 0;
 	}
 	mutex_unlock(&desc->wlock);
+<<<<<<< HEAD
 	if (desc->count == 1)
 		desc->manage_power(intf, 1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usb_autopm_put_interface(desc->intf);
 out:
 	mutex_unlock(&wdm_mutex);
@@ -652,6 +772,7 @@ static int wdm_release(struct inode *inode, struct file *file)
 	mutex_unlock(&desc->wlock);
 
 	if (!desc->count) {
+<<<<<<< HEAD
 		if (!test_bit(WDM_DISCONNECTING, &desc->flags)) {
 			dev_dbg(&desc->intf->dev, "wdm_release: cleanup");
 			kill_urbs(desc);
@@ -661,6 +782,12 @@ static int wdm_release(struct inode *inode, struct file *file)
 			pr_debug(KBUILD_MODNAME " %s: device gone - cleaning up\n", __func__);
 			cleanup(desc);
 		}
+=======
+		dev_dbg(&desc->intf->dev, "wdm_release: cleanup");
+		kill_urbs(desc);
+		if (!test_bit(WDM_DISCONNECTING, &desc->flags))
+			desc->intf->needs_remote_wakeup = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	mutex_unlock(&wdm_mutex);
 	return 0;
@@ -688,13 +815,18 @@ static void wdm_rxwork(struct work_struct *work)
 {
 	struct wdm_device *desc = container_of(work, struct wdm_device, rxwork);
 	unsigned long flags;
+<<<<<<< HEAD
 	int rv = 0;
 	int responding;
+=======
+	int rv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&desc->iuspin, flags);
 	if (test_bit(WDM_DISCONNECTING, &desc->flags)) {
 		spin_unlock_irqrestore(&desc->iuspin, flags);
 	} else {
+<<<<<<< HEAD
 		responding = test_and_set_bit(WDM_RESPONDING, &desc->flags);
 		spin_unlock_irqrestore(&desc->iuspin, flags);
 		if (!responding)
@@ -702,6 +834,12 @@ static void wdm_rxwork(struct work_struct *work)
 		if (rv < 0 && rv != -EPERM) {
 			spin_lock_irqsave(&desc->iuspin, flags);
 			clear_bit(WDM_RESPONDING, &desc->flags);
+=======
+		spin_unlock_irqrestore(&desc->iuspin, flags);
+		rv = usb_submit_urb(desc->response, GFP_KERNEL);
+		if (rv < 0 && rv != -EPERM) {
+			spin_lock_irqsave(&desc->iuspin, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!test_bit(WDM_DISCONNECTING, &desc->flags))
 				schedule_work(&desc->rxwork);
 			spin_unlock_irqrestore(&desc->iuspin, flags);
@@ -711,6 +849,7 @@ static void wdm_rxwork(struct work_struct *work)
 
 /* --- hotplug --- */
 
+<<<<<<< HEAD
 static int wdm_create(struct usb_interface *intf, struct usb_endpoint_descriptor *ep,
 		u16 bufsize, int (*manage_power)(struct usb_interface *, int))
 {
@@ -721,21 +860,84 @@ static int wdm_create(struct usb_interface *intf, struct usb_endpoint_descriptor
 	if (!desc)
 		goto out;
 	INIT_LIST_HEAD(&desc->device_list);
+=======
+static int wdm_probe(struct usb_interface *intf, const struct usb_device_id *id)
+{
+	int rv = -EINVAL;
+	struct usb_device *udev = interface_to_usbdev(intf);
+	struct wdm_device *desc;
+	struct usb_host_interface *iface;
+	struct usb_endpoint_descriptor *ep;
+	struct usb_cdc_dmm_desc *dmhd;
+	u8 *buffer = intf->altsetting->extra;
+	int buflen = intf->altsetting->extralen;
+	u16 maxcom = WDM_DEFAULT_BUFSIZE;
+
+	if (!buffer)
+		goto out;
+
+	while (buflen > 2) {
+		if (buffer [1] != USB_DT_CS_INTERFACE) {
+			dev_err(&intf->dev, "skipping garbage\n");
+			goto next_desc;
+		}
+
+		switch (buffer [2]) {
+		case USB_CDC_HEADER_TYPE:
+			break;
+		case USB_CDC_DMM_TYPE:
+			dmhd = (struct usb_cdc_dmm_desc *)buffer;
+			maxcom = le16_to_cpu(dmhd->wMaxCommand);
+			dev_dbg(&intf->dev,
+				"Finding maximum buffer length: %d", maxcom);
+			break;
+		default:
+			dev_err(&intf->dev,
+				"Ignoring extra header, type %d, length %d\n",
+				buffer[2], buffer[0]);
+			break;
+		}
+next_desc:
+		buflen -= buffer[0];
+		buffer += buffer[0];
+	}
+
+	rv = -ENOMEM;
+	desc = kzalloc(sizeof(struct wdm_device), GFP_KERNEL);
+	if (!desc)
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_init(&desc->rlock);
 	mutex_init(&desc->wlock);
 	spin_lock_init(&desc->iuspin);
 	init_waitqueue_head(&desc->wait);
+<<<<<<< HEAD
 	desc->wMaxCommand = bufsize;
+=======
+	desc->wMaxCommand = maxcom;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* this will be expanded and needed in hardware endianness */
 	desc->inum = cpu_to_le16((u16)intf->cur_altsetting->desc.bInterfaceNumber);
 	desc->intf = intf;
 	INIT_WORK(&desc->rxwork, wdm_rxwork);
 
 	rv = -EINVAL;
+<<<<<<< HEAD
 	if (!usb_endpoint_is_int_in(ep))
 		goto err;
 
 	desc->wMaxPacketSize = usb_endpoint_maxp(ep);
+=======
+	iface = intf->cur_altsetting;
+	if (iface->desc.bNumEndpoints != 1)
+		goto err;
+	ep = &iface->endpoint[0].desc;
+	if (!ep || !usb_endpoint_is_int_in(ep))
+		goto err;
+
+	desc->wMaxPacketSize = le16_to_cpu(ep->wMaxPacketSize);
+	desc->bMaxPacketSize0 = udev->descriptor.bMaxPacketSize0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	desc->orq = kmalloc(sizeof(struct usb_ctrlrequest), GFP_KERNEL);
 	if (!desc->orq)
@@ -760,6 +962,7 @@ static int wdm_create(struct usb_interface *intf, struct usb_endpoint_descriptor
 	if (!desc->ubuf)
 		goto err;
 
+<<<<<<< HEAD
 	desc->sbuf = kmalloc(desc->wMaxPacketSize, GFP_KERNEL);
 	if (!desc->sbuf)
 		goto err;
@@ -767,6 +970,21 @@ static int wdm_create(struct usb_interface *intf, struct usb_endpoint_descriptor
 	desc->inbuf = kmalloc(desc->wMaxCommand, GFP_KERNEL);
 	if (!desc->inbuf)
 		goto err;
+=======
+	desc->sbuf = usb_alloc_coherent(interface_to_usbdev(intf),
+					desc->wMaxPacketSize,
+					GFP_KERNEL,
+					&desc->validity->transfer_dma);
+	if (!desc->sbuf)
+		goto err;
+
+	desc->inbuf = usb_alloc_coherent(interface_to_usbdev(intf),
+					 desc->wMaxCommand,
+					 GFP_KERNEL,
+					 &desc->response->transfer_dma);
+	if (!desc->inbuf)
+		goto err2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	usb_fill_int_urb(
 		desc->validity,
@@ -778,6 +996,7 @@ static int wdm_create(struct usb_interface *intf, struct usb_endpoint_descriptor
 		desc,
 		ep->bInterval
 	);
+<<<<<<< HEAD
 
 	desc->irq->bRequestType = (USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE);
 	desc->irq->bRequest = USB_CDC_GET_ENCAPSULATED_RESPONSE;
@@ -916,14 +1135,52 @@ err:
 }
 EXPORT_SYMBOL(usb_cdc_wdm_register);
 
+=======
+	desc->validity->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
+
+	usb_set_intfdata(intf, desc);
+	rv = usb_register_dev(intf, &wdm_class);
+	if (rv < 0)
+		goto err3;
+	else
+		dev_info(&intf->dev, "cdc-wdm%d: USB WDM device\n",
+			intf->minor - WDM_MINOR_BASE);
+out:
+	return rv;
+err3:
+	usb_set_intfdata(intf, NULL);
+	usb_free_coherent(interface_to_usbdev(desc->intf),
+			  desc->bMaxPacketSize0,
+			desc->inbuf,
+			desc->response->transfer_dma);
+err2:
+	usb_free_coherent(interface_to_usbdev(desc->intf),
+			  desc->wMaxPacketSize,
+			  desc->sbuf,
+			  desc->validity->transfer_dma);
+err:
+	free_urbs(desc);
+	kfree(desc->ubuf);
+	kfree(desc->orq);
+	kfree(desc->irq);
+	kfree(desc);
+	return rv;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void wdm_disconnect(struct usb_interface *intf)
 {
 	struct wdm_device *desc;
 	unsigned long flags;
 
 	usb_deregister_dev(intf, &wdm_class);
+<<<<<<< HEAD
 	desc = wdm_find_device(intf);
 	mutex_lock(&wdm_mutex);
+=======
+	mutex_lock(&wdm_mutex);
+	desc = usb_get_intfdata(intf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* the spinlock makes sure no new urbs are generated in the callbacks */
 	spin_lock_irqsave(&desc->iuspin, flags);
@@ -939,12 +1196,15 @@ static void wdm_disconnect(struct usb_interface *intf)
 	cancel_work_sync(&desc->rxwork);
 	mutex_unlock(&desc->wlock);
 	mutex_unlock(&desc->rlock);
+<<<<<<< HEAD
 
 	/* the desc->intf pointer used as list key is now invalid */
 	spin_lock(&wdm_device_list_lock);
 	list_del(&desc->device_list);
 	spin_unlock(&wdm_device_list_lock);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!desc->count)
 		cleanup(desc);
 	mutex_unlock(&wdm_mutex);
@@ -953,19 +1213,31 @@ static void wdm_disconnect(struct usb_interface *intf)
 #ifdef CONFIG_PM
 static int wdm_suspend(struct usb_interface *intf, pm_message_t message)
 {
+<<<<<<< HEAD
 	struct wdm_device *desc = wdm_find_device(intf);
+=======
+	struct wdm_device *desc = usb_get_intfdata(intf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rv = 0;
 
 	dev_dbg(&desc->intf->dev, "wdm%d_suspend\n", intf->minor);
 
 	/* if this is an autosuspend the caller does the locking */
+<<<<<<< HEAD
 	if (!PMSG_IS_AUTO(message)) {
+=======
+	if (!(message.event & PM_EVENT_AUTO)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mutex_lock(&desc->rlock);
 		mutex_lock(&desc->wlock);
 	}
 	spin_lock_irq(&desc->iuspin);
 
+<<<<<<< HEAD
 	if (PMSG_IS_AUTO(message) &&
+=======
+	if ((message.event & PM_EVENT_AUTO) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			(test_bit(WDM_IN_USE, &desc->flags)
 			|| test_bit(WDM_RESPONDING, &desc->flags))) {
 		spin_unlock_irq(&desc->iuspin);
@@ -978,7 +1250,11 @@ static int wdm_suspend(struct usb_interface *intf, pm_message_t message)
 		kill_urbs(desc);
 		cancel_work_sync(&desc->rxwork);
 	}
+<<<<<<< HEAD
 	if (!PMSG_IS_AUTO(message)) {
+=======
+	if (!(message.event & PM_EVENT_AUTO)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mutex_unlock(&desc->wlock);
 		mutex_unlock(&desc->rlock);
 	}
@@ -1003,7 +1279,11 @@ static int recover_from_urb_loss(struct wdm_device *desc)
 #ifdef CONFIG_PM
 static int wdm_resume(struct usb_interface *intf)
 {
+<<<<<<< HEAD
 	struct wdm_device *desc = wdm_find_device(intf);
+=======
+	struct wdm_device *desc = usb_get_intfdata(intf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rv;
 
 	dev_dbg(&desc->intf->dev, "wdm%d_resume\n", intf->minor);
@@ -1017,7 +1297,15 @@ static int wdm_resume(struct usb_interface *intf)
 
 static int wdm_pre_reset(struct usb_interface *intf)
 {
+<<<<<<< HEAD
 	struct wdm_device *desc = wdm_find_device(intf);
+=======
+	struct wdm_device *desc = usb_get_intfdata(intf);
+
+	mutex_lock(&desc->rlock);
+	mutex_lock(&desc->wlock);
+	kill_urbs(desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * we notify everybody using poll of
@@ -1026,6 +1314,7 @@ static int wdm_pre_reset(struct usb_interface *intf)
 	 * message from the device is lost
 	 */
 	spin_lock_irq(&desc->iuspin);
+<<<<<<< HEAD
 	set_bit(WDM_RESETTING, &desc->flags);	/* inform read/write */
 	set_bit(WDM_READ, &desc->flags);	/* unblock read */
 	clear_bit(WDM_IN_USE, &desc->flags);	/* unblock write */
@@ -1036,16 +1325,27 @@ static int wdm_pre_reset(struct usb_interface *intf)
 	mutex_lock(&desc->wlock);
 	kill_urbs(desc);
 	cancel_work_sync(&desc->rxwork);
+=======
+	desc->rerr = -EINTR;
+	spin_unlock_irq(&desc->iuspin);
+	wake_up_all(&desc->wait);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int wdm_post_reset(struct usb_interface *intf)
 {
+<<<<<<< HEAD
 	struct wdm_device *desc = wdm_find_device(intf);
 	int rv;
 
 	clear_bit(WDM_OVERFLOW, &desc->flags);
 	clear_bit(WDM_RESETTING, &desc->flags);
+=======
+	struct wdm_device *desc = usb_get_intfdata(intf);
+	int rv;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rv = recover_from_urb_loss(desc);
 	mutex_unlock(&desc->wlock);
 	mutex_unlock(&desc->rlock);
@@ -1067,7 +1367,28 @@ static struct usb_driver wdm_driver = {
 	.supports_autosuspend = 1,
 };
 
+<<<<<<< HEAD
 module_usb_driver(wdm_driver);
+=======
+/* --- low level module stuff --- */
+
+static int __init wdm_init(void)
+{
+	int rv;
+
+	rv = usb_register(&wdm_driver);
+
+	return rv;
+}
+
+static void __exit wdm_exit(void)
+{
+	usb_deregister(&wdm_driver);
+}
+
+module_init(wdm_init);
+module_exit(wdm_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR(DRIVER_AUTHOR);
 MODULE_DESCRIPTION(DRIVER_DESC);

@@ -1,7 +1,10 @@
 include include/asm-generic/Kbuild.asm
 
 header-y += break.h
+<<<<<<< HEAD
 header-y += cmpxchg.h
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 header-y += fpu.h
 header-y += gcc_intrin.h
 header-y += ia64regs.h

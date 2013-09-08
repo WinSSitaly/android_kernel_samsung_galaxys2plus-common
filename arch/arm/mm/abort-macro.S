@@ -9,6 +9,7 @@
  *
  */
 
+<<<<<<< HEAD
 	.macro	do_thumb_abort, fsr, pc, psr, tmp
 	tst	\psr, #PSR_T_BIT
 	beq	not_thumb
@@ -19,10 +20,23 @@
 	tst	\tmp, #1 << 11			@ L = 0 -> write
 	orreq	\fsr, \fsr, #1 << 11		@ yes.
 	b	do_DataAbort
+=======
+	.macro	do_thumb_abort
+	tst	r3, #PSR_T_BIT
+	beq	not_thumb
+	ldrh	r3, [r2]			@ Read aborted Thumb instruction
+	and	r3, r3, # 0xfe00		@ Mask opcode field
+	cmp	r3, # 0x5600			@ Is it ldrsb?
+	orreq	r3, r3, #1 << 11		@ Set L-bit if yes
+	tst	r3, #1 << 11			@ L = 0 -> write
+	orreq	r1, r1, #1 << 11		@ yes.
+	mov	pc, lr
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 not_thumb:
 	.endm
 
 /*
+<<<<<<< HEAD
  * We check for the following instruction encoding for LDRD.
  *
  * [27:25] == 000
@@ -35,6 +49,22 @@ not_thumb:
 	and	\tmp, \insn, #0x000000f0	@ [7:4] == 1101
 	cmp	\tmp, #0x000000d0
 	beq	do_DataAbort
+=======
+ * We check for the following insturction encoding for LDRD.
+ *
+ * [27:25] == 0
+ *   [7:4] == 1101
+ *    [20] == 0
+ */
+ 	.macro	do_ldrd_abort
+ 	tst	r3, #0x0e000000			@ [27:25] == 0
+	bne	not_ldrd
+	and	r2, r3, #0x000000f0		@ [7:4] == 1101
+	cmp	r2, #0x000000d0
+	bne	not_ldrd
+	tst	r3, #1 << 20			@ [20] == 0
+	moveq	pc, lr
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 not_ldrd:
 	.endm
 

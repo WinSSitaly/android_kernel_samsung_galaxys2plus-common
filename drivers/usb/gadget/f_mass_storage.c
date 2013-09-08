@@ -3,7 +3,11 @@
  *
  * Copyright (C) 2003-2008 Alan Stern
  * Copyright (C) 2009 Samsung Electronics
+<<<<<<< HEAD
  *                    Author: Michal Nazarewicz <mina86@mina86.com>
+=======
+ *                    Author: Michal Nazarewicz <m.nazarewicz@samsung.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -112,7 +116,12 @@
  * is not loaded (an empty string as "filename" in the fsg_config
  * structure causes error).  The CD-ROM emulation includes a single
  * data track and no audio tracks; hence there need be only one
+<<<<<<< HEAD
  * backing file per LUN.
+=======
+ * backing file per LUN.  Note also that the CD-ROM block length is
+ * set to 512 rather than the more common value 2048.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *
  * MSF includes support for module parameters.  If gadget using it
@@ -304,6 +313,10 @@
 
 static const char fsg_string_interface[] = "Mass Storage";
 
+<<<<<<< HEAD
+=======
+#define FSG_NO_INTR_EP 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define FSG_NO_DEVICE_STRINGS    1
 #define FSG_NO_OTG               1
 #define FSG_NO_INTR_EP           1
@@ -361,7 +374,11 @@ struct fsg_common {
 
 	struct fsg_buffhd	*next_buffhd_to_fill;
 	struct fsg_buffhd	*next_buffhd_to_drain;
+<<<<<<< HEAD
 	struct fsg_buffhd	*buffhds;
+=======
+	struct fsg_buffhd	buffhds[FSG_NUM_BUFFERS];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int			cmnd_size;
 	u8			cmnd[MAX_COMMAND_SIZE];
@@ -511,7 +528,10 @@ static int fsg_set_halt(struct fsg_dev *fsg, struct usb_ep *ep)
 /* Caller must hold fsg->lock */
 static void wakeup_thread(struct fsg_common *common)
 {
+<<<<<<< HEAD
 	smp_wmb();	/* ensure the write of bh->state is complete */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Tell the main thread that something has happened */
 	common->thread_wakeup_needed = 1;
 	if (common->thread_task)
@@ -620,12 +640,20 @@ static int fsg_setup(struct usb_function *f,
 
 	switch (ctrl->bRequest) {
 
+<<<<<<< HEAD
 	case US_BULK_RESET_REQUEST:
 		if (ctrl->bRequestType !=
 		    (USB_DIR_OUT | USB_TYPE_CLASS | USB_RECIP_INTERFACE))
 			break;
 		if (w_index != fsg->interface_number || w_value != 0 ||
 				w_length != 0)
+=======
+	case USB_BULK_RESET_REQUEST:
+		if (ctrl->bRequestType !=
+		    (USB_DIR_OUT | USB_TYPE_CLASS | USB_RECIP_INTERFACE))
+			break;
+		if (w_index != fsg->interface_number || w_value != 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EDOM;
 
 		/*
@@ -636,12 +664,20 @@ static int fsg_setup(struct usb_function *f,
 		raise_exception(fsg->common, FSG_STATE_RESET);
 		return DELAYED_STATUS;
 
+<<<<<<< HEAD
 	case US_BULK_GET_MAX_LUN:
 		if (ctrl->bRequestType !=
 		    (USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE))
 			break;
 		if (w_index != fsg->interface_number || w_value != 0 ||
 				w_length != 1)
+=======
+	case USB_BULK_GET_MAX_LUN_REQUEST:
+		if (ctrl->bRequestType !=
+		    (USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE))
+			break;
+		if (w_index != fsg->interface_number || w_value != 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EDOM;
 		VDBG(fsg, "get max LUN\n");
 		*(u8 *)req->buf = fsg->common->nluns - 1;
@@ -731,7 +767,10 @@ static int sleep_thread(struct fsg_common *common)
 	}
 	__set_current_state(TASK_RUNNING);
 	common->thread_wakeup_needed = 0;
+<<<<<<< HEAD
 	smp_rmb();	/* ensure the latest bh->state is visible */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -747,6 +786,10 @@ static int do_read(struct fsg_common *common)
 	u32			amount_left;
 	loff_t			file_offset, file_offset_tmp;
 	unsigned int		amount;
+<<<<<<< HEAD
+=======
+	unsigned int		partial_page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ssize_t			nread;
 
 	/*
@@ -772,7 +815,11 @@ static int do_read(struct fsg_common *common)
 		curlun->sense_data = SS_LOGICAL_BLOCK_ADDRESS_OUT_OF_RANGE;
 		return -EINVAL;
 	}
+<<<<<<< HEAD
 	file_offset = ((loff_t) lba) << curlun->blkbits;
+=======
+	file_offset = ((loff_t) lba) << 9;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Carry out the file reads */
 	amount_left = common->data_size_from_cmnd;
@@ -785,10 +832,24 @@ static int do_read(struct fsg_common *common)
 		 * Try to read the remaining amount.
 		 * But don't read more than the buffer size.
 		 * And don't try to read past the end of the file.
+<<<<<<< HEAD
+=======
+		 * Finally, if we're not at a page boundary, don't read past
+		 *	the next page.
+		 * If this means reading 0 then we were asked to read past
+		 *	the end of file.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 */
 		amount = min(amount_left, FSG_BUFLEN);
 		amount = min((loff_t)amount,
 			     curlun->file_length - file_offset);
+<<<<<<< HEAD
+=======
+		partial_page = file_offset & (PAGE_CACHE_SIZE - 1);
+		if (partial_page > 0)
+			amount = min(amount, (unsigned int)PAGE_CACHE_SIZE -
+					     partial_page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Wait for the next buffer to become available */
 		bh = common->next_buffhd_to_fill;
@@ -805,8 +866,12 @@ static int do_read(struct fsg_common *common)
 		if (amount == 0) {
 			curlun->sense_data =
 					SS_LOGICAL_BLOCK_ADDRESS_OUT_OF_RANGE;
+<<<<<<< HEAD
 			curlun->sense_data_info =
 					file_offset >> curlun->blkbits;
+=======
+			curlun->sense_data_info = file_offset >> 9;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			curlun->info_valid = 1;
 			bh->inreq->length = 0;
 			bh->state = BUF_STATE_FULL;
@@ -829,25 +894,36 @@ static int do_read(struct fsg_common *common)
 		} else if (nread < amount) {
 			LDBG(curlun, "partial file read: %d/%u\n",
 			     (int)nread, amount);
+<<<<<<< HEAD
 			nread = round_down(nread, curlun->blksize);
+=======
+			nread -= (nread & 511);	/* Round down to a block */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		file_offset  += nread;
 		amount_left  -= nread;
 		common->residue -= nread;
+<<<<<<< HEAD
 
 		/*
 		 * Except at the end of the transfer, nread will be
 		 * equal to the buffer size, which is divisible by the
 		 * bulk-in maxpacket size.
 		 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bh->inreq->length = nread;
 		bh->state = BUF_STATE_FULL;
 
 		/* If an error occurred, report it and its position */
 		if (nread < amount) {
 			curlun->sense_data = SS_UNRECOVERED_READ_ERROR;
+<<<<<<< HEAD
 			curlun->sense_data_info =
 					file_offset >> curlun->blkbits;
+=======
+			curlun->sense_data_info = file_offset >> 9;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			curlun->info_valid = 1;
 			break;
 		}
@@ -878,6 +954,10 @@ static int do_write(struct fsg_common *common)
 	u32			amount_left_to_req, amount_left_to_write;
 	loff_t			usb_offset, file_offset, file_offset_tmp;
 	unsigned int		amount;
+<<<<<<< HEAD
+=======
+	unsigned int		partial_page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ssize_t			nwritten;
 	int			rc;
 
@@ -921,7 +1001,11 @@ static int do_write(struct fsg_common *common)
 
 	/* Carry out the file writes */
 	get_some_more = 1;
+<<<<<<< HEAD
 	file_offset = usb_offset = ((loff_t) lba) << curlun->blkbits;
+=======
+	file_offset = usb_offset = ((loff_t) lba) << 9;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	amount_left_to_req = common->data_size_from_cmnd;
 	amount_left_to_write = common->data_size_from_cmnd;
 
@@ -933,6 +1017,7 @@ static int do_write(struct fsg_common *common)
 
 			/*
 			 * Figure out how much we want to get:
+<<<<<<< HEAD
 			 * Try to get the remaining amount,
 			 * but not more than the buffer size.
 			 */
@@ -948,6 +1033,43 @@ static int do_write(struct fsg_common *common)
 				curlun->info_valid = 1;
 				continue;
 			}
+=======
+			 * Try to get the remaining amount.
+			 * But don't get more than the buffer size.
+			 * And don't try to go past the end of the file.
+			 * If we're not at a page boundary,
+			 *	don't go past the next page.
+			 * If this means getting 0, then we were asked
+			 *	to write past the end of file.
+			 * Finally, round down to a block boundary.
+			 */
+			amount = min(amount_left_to_req, FSG_BUFLEN);
+			amount = min((loff_t)amount,
+				     curlun->file_length - usb_offset);
+			partial_page = usb_offset & (PAGE_CACHE_SIZE - 1);
+			if (partial_page > 0)
+				amount = min(amount,
+	(unsigned int)PAGE_CACHE_SIZE - partial_page);
+
+			if (amount == 0) {
+				get_some_more = 0;
+				curlun->sense_data =
+					SS_LOGICAL_BLOCK_ADDRESS_OUT_OF_RANGE;
+				curlun->sense_data_info = usb_offset >> 9;
+				curlun->info_valid = 1;
+				continue;
+			}
+			amount -= amount & 511;
+			if (amount == 0) {
+
+				/*
+				 * Why were we were asked to transfer a
+				 * partial block?
+				 */
+				get_some_more = 0;
+				continue;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* Get the next buffer */
 			usb_offset += amount;
@@ -957,11 +1079,20 @@ static int do_write(struct fsg_common *common)
 				get_some_more = 0;
 
 			/*
+<<<<<<< HEAD
 			 * Except at the end of the transfer, amount will be
 			 * equal to the buffer size, which is divisible by
 			 * the bulk-out maxpacket size.
 			 */
 			set_bulk_out_req_length(common, bh, amount);
+=======
+			 * amount is always divisible by 512, hence by
+			 * the bulk-out maxpacket size
+			 */
+			bh->outreq->length = amount;
+			bh->bulk_out_intended_length = amount;
+			bh->outreq->short_not_ok = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!start_out_transfer(common, bh))
 				/* Dunno what to do if common->fsg is NULL */
 				return -EIO;
@@ -981,8 +1112,12 @@ static int do_write(struct fsg_common *common)
 			/* Did something go wrong with the transfer? */
 			if (bh->outreq->status != 0) {
 				curlun->sense_data = SS_COMMUNICATION_FAILURE;
+<<<<<<< HEAD
 				curlun->sense_data_info =
 					file_offset >> curlun->blkbits;
+=======
+				curlun->sense_data_info = file_offset >> 9;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				curlun->info_valid = 1;
 				break;
 			}
@@ -996,6 +1131,7 @@ static int do_write(struct fsg_common *common)
 				amount = curlun->file_length - file_offset;
 			}
 
+<<<<<<< HEAD
 			/* Don't accept excess data.  The spec doesn't say
 			 * what to do in this case.  We'll ignore the error.
 			 */
@@ -1006,6 +1142,8 @@ static int do_write(struct fsg_common *common)
 			if (amount == 0)
 				goto empty_write;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Perform the write */
 			file_offset_tmp = file_offset;
 			nwritten = vfs_write(curlun->filp,
@@ -1023,7 +1161,12 @@ static int do_write(struct fsg_common *common)
 			} else if (nwritten < amount) {
 				LDBG(curlun, "partial file write: %d/%u\n",
 				     (int)nwritten, amount);
+<<<<<<< HEAD
 				nwritten = round_down(nwritten, curlun->blksize);
+=======
+				nwritten -= (nwritten & 511);
+				/* Round down to a block */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			file_offset += nwritten;
 			amount_left_to_write -= nwritten;
@@ -1032,15 +1175,24 @@ static int do_write(struct fsg_common *common)
 			/* If an error occurred, report it and its position */
 			if (nwritten < amount) {
 				curlun->sense_data = SS_WRITE_ERROR;
+<<<<<<< HEAD
 				curlun->sense_data_info =
 					file_offset >> curlun->blkbits;
+=======
+				curlun->sense_data_info = file_offset >> 9;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				curlun->info_valid = 1;
 				break;
 			}
 
+<<<<<<< HEAD
  empty_write:
 			/* Did the host decide to stop early? */
 			if (bh->outreq->actual < bh->bulk_out_intended_length) {
+=======
+			/* Did the host decide to stop early? */
+			if (bh->outreq->actual != bh->outreq->length) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				common->short_packet_received = 1;
 				break;
 			}
@@ -1120,8 +1272,13 @@ static int do_verify(struct fsg_common *common)
 		return -EIO;		/* No default reply */
 
 	/* Prepare to carry out the file verify */
+<<<<<<< HEAD
 	amount_left = verification_length << curlun->blkbits;
 	file_offset = ((loff_t) lba) << curlun->blkbits;
+=======
+	amount_left = verification_length << 9;
+	file_offset = ((loff_t) lba) << 9;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Write out all the dirty buffers before invalidating them */
 	fsg_lun_fsync_sub(curlun);
@@ -1139,6 +1296,11 @@ static int do_verify(struct fsg_common *common)
 		 * Try to read the remaining amount, but not more than
 		 * the buffer size.
 		 * And don't try to read past the end of the file.
+<<<<<<< HEAD
+=======
+		 * If this means reading 0 then we were asked to read
+		 * past the end of file.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 */
 		amount = min(amount_left, FSG_BUFLEN);
 		amount = min((loff_t)amount,
@@ -1146,8 +1308,12 @@ static int do_verify(struct fsg_common *common)
 		if (amount == 0) {
 			curlun->sense_data =
 					SS_LOGICAL_BLOCK_ADDRESS_OUT_OF_RANGE;
+<<<<<<< HEAD
 			curlun->sense_data_info =
 				file_offset >> curlun->blkbits;
+=======
+			curlun->sense_data_info = file_offset >> 9;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			curlun->info_valid = 1;
 			break;
 		}
@@ -1169,12 +1335,20 @@ static int do_verify(struct fsg_common *common)
 		} else if (nread < amount) {
 			LDBG(curlun, "partial file verify: %d/%u\n",
 			     (int)nread, amount);
+<<<<<<< HEAD
 			nread = round_down(nread, curlun->blksize);
 		}
 		if (nread == 0) {
 			curlun->sense_data = SS_UNRECOVERED_READ_ERROR;
 			curlun->sense_data_info =
 				file_offset >> curlun->blkbits;
+=======
+			nread -= nread & 511;	/* Round down to a sector */
+		}
+		if (nread == 0) {
+			curlun->sense_data = SS_UNRECOVERED_READ_ERROR;
+			curlun->sense_data_info = file_offset >> 9;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			curlun->info_valid = 1;
 			break;
 		}
@@ -1280,7 +1454,11 @@ static int do_read_capacity(struct fsg_common *common, struct fsg_buffhd *bh)
 
 	put_unaligned_be32(curlun->num_sectors - 1, &buf[0]);
 						/* Max logical block */
+<<<<<<< HEAD
 	put_unaligned_be32(curlun->blksize, &buf[4]);/* Block length */
+=======
+	put_unaligned_be32(512, &buf[4]);	/* Block length */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 8;
 }
 
@@ -1518,7 +1696,11 @@ static int do_read_format_capacities(struct fsg_common *common,
 
 	put_unaligned_be32(curlun->num_sectors, &buf[0]);
 						/* Number of blocks */
+<<<<<<< HEAD
 	put_unaligned_be32(curlun->blksize, &buf[4]);/* Block length */
+=======
+	put_unaligned_be32(512, &buf[4]);	/* Block length */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	buf[4] = 0x02;				/* Current capacity */
 	return 12;
 }
@@ -1598,7 +1780,11 @@ static int throw_away_data(struct fsg_common *common)
 			common->next_buffhd_to_drain = bh->next;
 
 			/* A short packet or an error ends everything */
+<<<<<<< HEAD
 			if (bh->outreq->actual < bh->bulk_out_intended_length ||
+=======
+			if (bh->outreq->actual != bh->outreq->length ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    bh->outreq->status != 0) {
 				raise_exception(common,
 						FSG_STATE_ABORT_BULK_OUT);
@@ -1614,11 +1800,20 @@ static int throw_away_data(struct fsg_common *common)
 			amount = min(common->usb_amount_left, FSG_BUFLEN);
 
 			/*
+<<<<<<< HEAD
 			 * Except at the end of the transfer, amount will be
 			 * equal to the buffer size, which is divisible by
 			 * the bulk-out maxpacket size.
 			 */
 			set_bulk_out_req_length(common, bh, amount);
+=======
+			 * amount is always divisible by 512, hence by
+			 * the bulk-out maxpacket size.
+			 */
+			bh->outreq->length = amount;
+			bh->bulk_out_intended_length = amount;
+			bh->outreq->short_not_ok = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!start_out_transfer(common, bh))
 				/* Dunno what to do if common->fsg is NULL */
 				return -EIO;
@@ -1743,7 +1938,11 @@ static int send_status(struct fsg_common *common)
 	struct fsg_buffhd	*bh;
 	struct bulk_cs_wrap	*csw;
 	int			rc;
+<<<<<<< HEAD
 	u8			status = US_BULK_STAT_OK;
+=======
+	u8			status = USB_STATUS_PASS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32			sd, sdinfo = 0;
 
 	/* Wait for the next buffer to become available */
@@ -1764,11 +1963,19 @@ static int send_status(struct fsg_common *common)
 
 	if (common->phase_error) {
 		DBG(common, "sending phase-error status\n");
+<<<<<<< HEAD
 		status = US_BULK_STAT_PHASE;
 		sd = SS_INVALID_COMMAND;
 	} else if (sd != SS_NO_SENSE) {
 		DBG(common, "sending command-failure status\n");
 		status = US_BULK_STAT_FAIL;
+=======
+		status = USB_STATUS_PHASE_ERROR;
+		sd = SS_INVALID_COMMAND;
+	} else if (sd != SS_NO_SENSE) {
+		DBG(common, "sending command-failure status\n");
+		status = USB_STATUS_FAIL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		VDBG(common, "  sense data: SK x%02x, ASC x%02x, ASCQ x%02x;"
 				"  info x%x\n",
 				SK(sd), ASC(sd), ASCQ(sd), sdinfo);
@@ -1777,12 +1984,20 @@ static int send_status(struct fsg_common *common)
 	/* Store and send the Bulk-only CSW */
 	csw = (void *)bh->buf;
 
+<<<<<<< HEAD
 	csw->Signature = cpu_to_le32(US_BULK_CS_SIGN);
+=======
+	csw->Signature = cpu_to_le32(USB_BULK_CS_SIG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	csw->Tag = common->tag;
 	csw->Residue = cpu_to_le32(common->residue);
 	csw->Status = status;
 
+<<<<<<< HEAD
 	bh->inreq->length = US_BULK_CS_WRAP_LEN;
+=======
+	bh->inreq->length = USB_BULK_CS_WRAP_LEN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bh->inreq->zero = 0;
 	if (!start_in_transfer(common, bh))
 		/* Don't know what to do if common->fsg is NULL */
@@ -1874,14 +2089,25 @@ static int check_command(struct fsg_common *common, int cmnd_size,
 		    common->lun, lun);
 
 	/* Check the LUN */
+<<<<<<< HEAD
 	curlun = common->curlun;
 	if (curlun) {
+=======
+	if (common->lun < common->nluns) {
+		curlun = &common->luns[common->lun];
+		common->curlun = curlun;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (common->cmnd[0] != REQUEST_SENSE) {
 			curlun->sense_data = SS_NO_SENSE;
 			curlun->sense_data_info = 0;
 			curlun->info_valid = 0;
 		}
 	} else {
+<<<<<<< HEAD
+=======
+		common->curlun = NULL;
+		curlun = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		common->bad_lun_okay = 0;
 
 		/*
@@ -1927,6 +2153,7 @@ static int check_command(struct fsg_common *common, int cmnd_size,
 	return 0;
 }
 
+<<<<<<< HEAD
 /* wrapper of check_command for data size in blocks handling */
 static int check_command_size_in_blocks(struct fsg_common *common,
 		int cmnd_size, enum data_direction data_dir,
@@ -1938,6 +2165,8 @@ static int check_command_size_in_blocks(struct fsg_common *common,
 			mask, needs_medium, name);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int do_scsi_command(struct fsg_common *common)
 {
 	struct fsg_buffhd	*bh;
@@ -2020,9 +2249,14 @@ static int do_scsi_command(struct fsg_common *common)
 
 	case READ_6:
 		i = common->cmnd[4];
+<<<<<<< HEAD
 		common->data_size_from_cmnd = (i == 0) ? 256 : i;
 		reply = check_command_size_in_blocks(common, 6,
 				      DATA_DIR_TO_HOST,
+=======
+		common->data_size_from_cmnd = (i == 0 ? 256 : i) << 9;
+		reply = check_command(common, 6, DATA_DIR_TO_HOST,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      (7<<1) | (1<<4), 1,
 				      "READ(6)");
 		if (reply == 0)
@@ -2031,9 +2265,14 @@ static int do_scsi_command(struct fsg_common *common)
 
 	case READ_10:
 		common->data_size_from_cmnd =
+<<<<<<< HEAD
 				get_unaligned_be16(&common->cmnd[7]);
 		reply = check_command_size_in_blocks(common, 10,
 				      DATA_DIR_TO_HOST,
+=======
+				get_unaligned_be16(&common->cmnd[7]) << 9;
+		reply = check_command(common, 10, DATA_DIR_TO_HOST,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      (1<<1) | (0xf<<2) | (3<<7), 1,
 				      "READ(10)");
 		if (reply == 0)
@@ -2042,9 +2281,14 @@ static int do_scsi_command(struct fsg_common *common)
 
 	case READ_12:
 		common->data_size_from_cmnd =
+<<<<<<< HEAD
 				get_unaligned_be32(&common->cmnd[6]);
 		reply = check_command_size_in_blocks(common, 12,
 				      DATA_DIR_TO_HOST,
+=======
+				get_unaligned_be32(&common->cmnd[6]) << 9;
+		reply = check_command(common, 12, DATA_DIR_TO_HOST,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      (1<<1) | (0xf<<2) | (0xf<<6), 1,
 				      "READ(12)");
 		if (reply == 0)
@@ -2143,9 +2387,14 @@ static int do_scsi_command(struct fsg_common *common)
 
 	case WRITE_6:
 		i = common->cmnd[4];
+<<<<<<< HEAD
 		common->data_size_from_cmnd = (i == 0) ? 256 : i;
 		reply = check_command_size_in_blocks(common, 6,
 				      DATA_DIR_FROM_HOST,
+=======
+		common->data_size_from_cmnd = (i == 0 ? 256 : i) << 9;
+		reply = check_command(common, 6, DATA_DIR_FROM_HOST,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      (7<<1) | (1<<4), 1,
 				      "WRITE(6)");
 		if (reply == 0)
@@ -2154,9 +2403,14 @@ static int do_scsi_command(struct fsg_common *common)
 
 	case WRITE_10:
 		common->data_size_from_cmnd =
+<<<<<<< HEAD
 				get_unaligned_be16(&common->cmnd[7]);
 		reply = check_command_size_in_blocks(common, 10,
 				      DATA_DIR_FROM_HOST,
+=======
+				get_unaligned_be16(&common->cmnd[7]) << 9;
+		reply = check_command(common, 10, DATA_DIR_FROM_HOST,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      (1<<1) | (0xf<<2) | (3<<7), 1,
 				      "WRITE(10)");
 		if (reply == 0)
@@ -2165,9 +2419,14 @@ static int do_scsi_command(struct fsg_common *common)
 
 	case WRITE_12:
 		common->data_size_from_cmnd =
+<<<<<<< HEAD
 				get_unaligned_be32(&common->cmnd[6]);
 		reply = check_command_size_in_blocks(common, 12,
 				      DATA_DIR_FROM_HOST,
+=======
+				get_unaligned_be32(&common->cmnd[6]) << 9;
+		reply = check_command(common, 12, DATA_DIR_FROM_HOST,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      (1<<1) | (0xf<<2) | (0xf<<6), 1,
 				      "WRITE(12)");
 		if (reply == 0)
@@ -2222,7 +2481,11 @@ unknown_cmnd:
 static int received_cbw(struct fsg_dev *fsg, struct fsg_buffhd *bh)
 {
 	struct usb_request	*req = bh->outreq;
+<<<<<<< HEAD
 	struct bulk_cb_wrap	*cbw = req->buf;
+=======
+	struct fsg_bulk_cb_wrap	*cbw = req->buf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct fsg_common	*common = fsg->common;
 
 	/* Was this a real packet?  Should it be ignored? */
@@ -2230,9 +2493,15 @@ static int received_cbw(struct fsg_dev *fsg, struct fsg_buffhd *bh)
 		return -EINVAL;
 
 	/* Is the CBW valid? */
+<<<<<<< HEAD
 	if (req->actual != US_BULK_CB_WRAP_LEN ||
 			cbw->Signature != cpu_to_le32(
 				US_BULK_CB_SIGN)) {
+=======
+	if (req->actual != USB_BULK_CB_WRAP_LEN ||
+			cbw->Signature != cpu_to_le32(
+				USB_BULK_CB_SIG)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		DBG(fsg, "invalid CBW: len %u sig 0x%x\n",
 				req->actual,
 				le32_to_cpu(cbw->Signature));
@@ -2254,7 +2523,11 @@ static int received_cbw(struct fsg_dev *fsg, struct fsg_buffhd *bh)
 	}
 
 	/* Is the CBW meaningful? */
+<<<<<<< HEAD
 	if (cbw->Lun >= FSG_MAX_LUNS || cbw->Flags & ~US_BULK_FLAG_IN ||
+=======
+	if (cbw->Lun >= FSG_MAX_LUNS || cbw->Flags & ~USB_BULK_IN_FLAG ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cbw->Length <= 0 || cbw->Length > MAX_COMMAND_SIZE) {
 		DBG(fsg, "non-meaningful CBW: lun = %u, flags = 0x%x, "
 				"cmdlen %u\n",
@@ -2274,7 +2547,11 @@ static int received_cbw(struct fsg_dev *fsg, struct fsg_buffhd *bh)
 	/* Save the command for later */
 	common->cmnd_size = cbw->Length;
 	memcpy(common->cmnd, cbw->CDB, common->cmnd_size);
+<<<<<<< HEAD
 	if (cbw->Flags & US_BULK_FLAG_IN)
+=======
+	if (cbw->Flags & USB_BULK_IN_FLAG)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		common->data_dir = DATA_DIR_TO_HOST;
 	else
 		common->data_dir = DATA_DIR_FROM_HOST;
@@ -2282,10 +2559,13 @@ static int received_cbw(struct fsg_dev *fsg, struct fsg_buffhd *bh)
 	if (common->data_size == 0)
 		common->data_dir = DATA_DIR_NONE;
 	common->lun = cbw->Lun;
+<<<<<<< HEAD
 	if (common->lun >= 0 && common->lun < common->nluns)
 		common->curlun = &common->luns[common->lun];
 	else
 		common->curlun = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	common->tag = cbw->Tag;
 	return 0;
 }
@@ -2304,7 +2584,12 @@ static int get_next_command(struct fsg_common *common)
 	}
 
 	/* Queue a request to read a Bulk-only CBW */
+<<<<<<< HEAD
 	set_bulk_out_req_length(common, bh, US_BULK_CB_WRAP_LEN);
+=======
+	set_bulk_out_req_length(common, bh, USB_BULK_CB_WRAP_LEN);
+	bh->outreq->short_not_ok = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!start_out_transfer(common, bh))
 		/* Don't know what to do if common->fsg is NULL */
 		return -EIO;
@@ -2331,6 +2616,21 @@ static int get_next_command(struct fsg_common *common)
 
 /*-------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
+=======
+static int enable_endpoint(struct fsg_common *common, struct usb_ep *ep,
+		const struct usb_endpoint_descriptor *d)
+{
+	int	rc;
+
+	ep->driver_data = common;
+	rc = usb_ep_enable(ep, d);
+	if (rc)
+		ERROR(common, "can't enable %s, result %d\n", ep->name, rc);
+	return rc;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int alloc_request(struct fsg_common *common, struct usb_ep *ep,
 		struct usb_request **preq)
 {
@@ -2344,6 +2644,10 @@ static int alloc_request(struct fsg_common *common, struct usb_ep *ep,
 /* Reset interface setting and re-init endpoint state (toggle etc). */
 static int do_set_interface(struct fsg_common *common, struct fsg_dev *new_fsg)
 {
+<<<<<<< HEAD
+=======
+	const struct usb_endpoint_descriptor *d;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct fsg_dev *fsg;
 	int i, rc = 0;
 
@@ -2355,7 +2659,11 @@ reset:
 	if (common->fsg) {
 		fsg = common->fsg;
 
+<<<<<<< HEAD
 		for (i = 0; i < fsg_num_buffers; ++i) {
+=======
+		for (i = 0; i < FSG_NUM_BUFFERS; ++i) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			struct fsg_buffhd *bh = &common->buffhds[i];
 
 			if (bh->inreq) {
@@ -2390,6 +2698,7 @@ reset:
 	fsg = common->fsg;
 
 	/* Enable the endpoints */
+<<<<<<< HEAD
 	rc = config_ep_by_speed(common->gadget, &(fsg->function), fsg->bulk_in);
 	if (rc)
 		goto reset;
@@ -2413,6 +2722,26 @@ reset:
 
 	/* Allocate the requests */
 	for (i = 0; i < fsg_num_buffers; ++i) {
+=======
+	d = fsg_ep_desc(common->gadget,
+			&fsg_fs_bulk_in_desc, &fsg_hs_bulk_in_desc);
+	rc = enable_endpoint(common, fsg->bulk_in, d);
+	if (rc)
+		goto reset;
+	fsg->bulk_in_enabled = 1;
+
+	d = fsg_ep_desc(common->gadget,
+			&fsg_fs_bulk_out_desc, &fsg_hs_bulk_out_desc);
+	rc = enable_endpoint(common, fsg->bulk_out, d);
+	if (rc)
+		goto reset;
+	fsg->bulk_out_enabled = 1;
+	common->bulk_out_maxpacket = le16_to_cpu(d->wMaxPacketSize);
+	clear_bit(IGNORE_BULK_OUT, &fsg->atomic_bitflags);
+
+	/* Allocate the requests */
+	for (i = 0; i < FSG_NUM_BUFFERS; ++i) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct fsg_buffhd	*bh = &common->buffhds[i];
 
 		rc = alloc_request(common, fsg->bulk_in, &bh->inreq);
@@ -2481,7 +2810,11 @@ static void handle_exception(struct fsg_common *common)
 
 	/* Cancel all the pending transfers */
 	if (likely(common->fsg)) {
+<<<<<<< HEAD
 		for (i = 0; i < fsg_num_buffers; ++i) {
+=======
+		for (i = 0; i < FSG_NUM_BUFFERS; ++i) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			bh = &common->buffhds[i];
 			if (bh->inreq_busy)
 				usb_ep_dequeue(common->fsg->bulk_in, bh->inreq);
@@ -2493,7 +2826,11 @@ static void handle_exception(struct fsg_common *common)
 		/* Wait until everything is idle */
 		for (;;) {
 			int num_active = 0;
+<<<<<<< HEAD
 			for (i = 0; i < fsg_num_buffers; ++i) {
+=======
+			for (i = 0; i < FSG_NUM_BUFFERS; ++i) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				bh = &common->buffhds[i];
 				num_active += bh->inreq_busy + bh->outreq_busy;
 			}
@@ -2516,7 +2853,11 @@ static void handle_exception(struct fsg_common *common)
 	 */
 	spin_lock_irq(&common->lock);
 
+<<<<<<< HEAD
 	for (i = 0; i < fsg_num_buffers; ++i) {
+=======
+	for (i = 0; i < FSG_NUM_BUFFERS; ++i) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bh = &common->buffhds[i];
 		bh->state = BUF_STATE_EMPTY;
 	}
@@ -2633,8 +2974,17 @@ static int fsg_main_thread(void *common_)
 		}
 
 		if (!common->running) {
+<<<<<<< HEAD
 			sleep_thread(common);
 			continue;
+=======
+			if (sleep_thread(common)) {
+				DBG(common, "sleep_thread error\n");
+				continue;
+			} else {
+				continue;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (get_next_command(common))
@@ -2725,10 +3075,13 @@ static struct fsg_common *fsg_common_init(struct fsg_common *common,
 	int nluns, i, rc;
 	char *pathbuf;
 
+<<<<<<< HEAD
 	rc = fsg_num_buffers_validate();
 	if (rc != 0)
 		return ERR_PTR(rc);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Find out how many LUNs there should be */
 	nluns = cfg->nluns;
 	if (nluns < 1 || nluns > FSG_MAX_LUNS) {
@@ -2747,6 +3100,7 @@ static struct fsg_common *fsg_common_init(struct fsg_common *common,
 		common->free_storage_on_release = 0;
 	}
 
+<<<<<<< HEAD
 	common->buffhds = kcalloc(fsg_num_buffers,
 				  sizeof *(common->buffhds), GFP_KERNEL);
 	if (!common->buffhds) {
@@ -2755,6 +3109,8 @@ static struct fsg_common *fsg_common_init(struct fsg_common *common,
 		return ERR_PTR(-ENOMEM);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	common->ops = cfg->ops;
 	common->private_data = cfg->private_data;
 
@@ -2776,7 +3132,11 @@ static struct fsg_common *fsg_common_init(struct fsg_common *common,
 	 * Create the LUNs, open their backing files, and register the
 	 * LUN devices in sysfs.
 	 */
+<<<<<<< HEAD
 	curlun = kcalloc(nluns, sizeof(*curlun), GFP_KERNEL);
+=======
+	curlun = kzalloc(nluns * sizeof *curlun, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(!curlun)) {
 		rc = -ENOMEM;
 		goto error_release;
@@ -2832,18 +3192,33 @@ static struct fsg_common *fsg_common_init(struct fsg_common *common,
 
 	/* Data buffers cyclic list */
 	bh = common->buffhds;
+<<<<<<< HEAD
 	i = fsg_num_buffers;
 	goto buffhds_first_it;
 	do {
 		bh->next = bh + 1;
 		++bh;
 buffhds_first_it:
+=======
+	i = FSG_NUM_BUFFERS;
+
+	do {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bh->buf = kmalloc(FSG_BUFLEN, GFP_KERNEL);
 		if (unlikely(!bh->buf)) {
 			rc = -ENOMEM;
 			goto error_release;
 		}
+<<<<<<< HEAD
 	} while (--i);
+=======
+		if (i > 1) {
+			bh->next = bh + 1;
+			++bh;
+		}
+	} while (--i);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bh->next = common->buffhds;
 
 	/* Prepare inquiryString */
@@ -2958,13 +3333,20 @@ static void fsg_common_release(struct kref *ref)
 
 	{
 		struct fsg_buffhd *bh = common->buffhds;
+<<<<<<< HEAD
 		unsigned i = fsg_num_buffers;
+=======
+		unsigned i = FSG_NUM_BUFFERS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		do {
 			kfree(bh->buf);
 		} while (++bh, --i);
 	}
 
+<<<<<<< HEAD
 	kfree(common->buffhds);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (common->free_storage_on_release)
 		kfree(common);
 }
@@ -2988,7 +3370,10 @@ static void fsg_unbind(struct usb_configuration *c, struct usb_function *f)
 	fsg_common_put(common);
 	usb_free_descriptors(fsg->function.descriptors);
 	usb_free_descriptors(fsg->function.hs_descriptors);
+<<<<<<< HEAD
 	usb_free_descriptors(fsg->function.ss_descriptors);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(fsg);
 }
 
@@ -3039,6 +3424,7 @@ static int fsg_bind(struct usb_configuration *c, struct usb_function *f)
 		}
 	}
 
+<<<<<<< HEAD
 	if (gadget_is_superspeed(gadget)) {
 		unsigned	max_burst;
 
@@ -3061,6 +3447,8 @@ static int fsg_bind(struct usb_configuration *c, struct usb_function *f)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 autoconf_fail:
@@ -3087,7 +3475,11 @@ static int fsg_bind_config(struct usb_composite_dev *cdev,
 	if (unlikely(!fsg))
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	fsg->function.name        = FSG_DRIVER_DESC;
+=======
+	fsg->function.name        = "mass_storage";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fsg->function.strings     = fsg_strings_array;
 	fsg->function.bind        = fsg_bind;
 	fsg->function.unbind      = fsg_unbind;
@@ -3124,15 +3516,26 @@ fsg_add(struct usb_composite_dev *cdev, struct usb_configuration *c,
 
 struct fsg_module_parameters {
 	char		*file[FSG_MAX_LUNS];
+<<<<<<< HEAD
 	bool		ro[FSG_MAX_LUNS];
 	bool		removable[FSG_MAX_LUNS];
 	bool		cdrom[FSG_MAX_LUNS];
 	bool		nofua[FSG_MAX_LUNS];
+=======
+	int		ro[FSG_MAX_LUNS];
+	int		removable[FSG_MAX_LUNS];
+	int		cdrom[FSG_MAX_LUNS];
+	int		nofua[FSG_MAX_LUNS];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	unsigned int	file_count, ro_count, removable_count, cdrom_count;
 	unsigned int	nofua_count;
 	unsigned int	luns;	/* nluns */
+<<<<<<< HEAD
 	bool		stall;	/* can_stall */
+=======
+	int		stall;	/* can_stall */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define _FSG_MODULE_PARAM_ARRAY(prefix, params, name, type, desc)	\
@@ -3213,3 +3616,69 @@ fsg_common_from_params(struct fsg_common *common,
 	return fsg_common_init(common, cdev, &cfg);
 }
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_ANDROID_MASS_STORAGE
+
+static struct fsg_config fsg_cfg;
+
+static int fsg_probe(struct platform_device *pdev)
+{
+	struct usb_mass_storage_platform_data *pdata = pdev->dev.platform_data;
+	int i, nluns;
+
+	printk(KERN_INFO "fsg_probe pdev: %p, pdata: %p\n", pdev, pdata);
+	if (!pdata)
+		return -1;
+
+	nluns = pdata->nluns;
+	if (nluns > FSG_MAX_LUNS)
+		nluns = FSG_MAX_LUNS;
+	fsg_cfg.nluns = nluns;
+	for (i = 0; i < nluns; i++)
+		fsg_cfg.luns[i].removable = 1;
+
+	fsg_cfg.vendor_name = pdata->vendor;
+	fsg_cfg.product_name = pdata->product;
+	fsg_cfg.release = pdata->release;
+	fsg_cfg.can_stall = 0;
+	fsg_cfg.pdev = pdev;
+
+	return 0;
+}
+
+static struct platform_driver fsg_platform_driver = {
+	.driver = { .name = FUNCTION_NAME, },
+	.probe = fsg_probe,
+};
+
+int mass_storage_bind_config(struct usb_configuration *c)
+{
+	struct fsg_common *common;
+
+	common = fsg_common_init(NULL, c->cdev, &fsg_cfg);
+
+	if (IS_ERR(common))
+		return -1;
+
+	return fsg_add(c->cdev, c, common);
+}
+
+static struct android_usb_function mass_storage_function = {
+	.name = FUNCTION_NAME,
+	.bind_config = mass_storage_bind_config,
+};
+
+static int __init init(void)
+{
+	int		rc;
+	printk(KERN_INFO "f_mass_storage init\n");
+	rc = platform_driver_register(&fsg_platform_driver);
+	if (rc != 0)
+		return rc;
+	android_register_function(&mass_storage_function);
+	return 0;
+}module_init(init);
+
+#endif /* CONFIG_USB_ANDROID_MASS_STORAGE */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

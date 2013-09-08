@@ -1,6 +1,7 @@
 #ifndef _ASM_X86_RWLOCK_H
 #define _ASM_X86_RWLOCK_H
 
+<<<<<<< HEAD
 #include <asm/asm.h>
 
 #if CONFIG_NR_CPUS <= 2048
@@ -43,6 +44,9 @@ typedef union {
 #endif /* CONFIG_NR_CPUS */
 
 #define __ARCH_RW_LOCK_UNLOCKED		{ RW_LOCK_BIAS }
+=======
+#define RW_LOCK_BIAS		 0x01000000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Actual code is in asm/spinlock.h or in arch/x86/lib/rwlock.S */
 

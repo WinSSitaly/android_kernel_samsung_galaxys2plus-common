@@ -370,9 +370,15 @@ static int zlib_decompress(struct list_head *ws, unsigned char *data_in,
 			    PAGE_CACHE_SIZE - buf_offset);
 		bytes = min(bytes, bytes_left);
 
+<<<<<<< HEAD
 		kaddr = kmap_atomic(dest_page);
 		memcpy(kaddr + pg_offset, workspace->buf + buf_offset, bytes);
 		kunmap_atomic(kaddr);
+=======
+		kaddr = kmap_atomic(dest_page, KM_USER0);
+		memcpy(kaddr + pg_offset, workspace->buf + buf_offset, bytes);
+		kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		pg_offset += bytes;
 		bytes_left -= bytes;

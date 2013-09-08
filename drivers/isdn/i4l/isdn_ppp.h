@@ -39,3 +39,8 @@ extern int isdn_ppp_unregister_compressor(struct isdn_ppp_compressor *ipc);
 #define IPPP_ASSIGNED	0x10
 
 #define IPPP_MAX_HEADER 10
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

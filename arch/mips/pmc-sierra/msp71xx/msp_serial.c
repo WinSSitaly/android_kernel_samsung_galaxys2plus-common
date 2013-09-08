@@ -27,7 +27,10 @@
 #include <linux/serial.h>
 #include <linux/serial_core.h>
 #include <linux/serial_reg.h>
+<<<<<<< HEAD
 #include <linux/slab.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/bootinfo.h>
 #include <asm/io.h>
@@ -39,6 +42,7 @@
 #include <msp_int.h>
 #include <msp_regs.h>
 
+<<<<<<< HEAD
 struct msp_uart_data {
 	int	last_lcr;
 };
@@ -88,6 +92,8 @@ static int msp_serial_handle_irq(struct uart_port *p)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init msp_serial_setup(void)
 {
 	char    *s;
@@ -109,6 +115,7 @@ void __init msp_serial_setup(void)
 	up.irq          = MSP_INT_UART0;
 	up.uartclk      = uartclk;
 	up.regshift     = 2;
+<<<<<<< HEAD
 	up.iotype       = UPIO_MEM;
 	up.flags        = ASYNC_BOOT_AUTOCONF | ASYNC_SKIP_TEST;
 	up.type         = PORT_16550A;
@@ -125,6 +132,15 @@ void __init msp_serial_setup(void)
 		kfree(up.private_data);
 		pr_err("Early serial init of port 0 failed\n");
 	}
+=======
+	up.iotype       = UPIO_DWAPB; /* UPIO_MEM like */
+	up.flags        = ASYNC_BOOT_AUTOCONF | ASYNC_SKIP_TEST;
+	up.type         = PORT_16550A;
+	up.line         = 0;
+	up.private_data		= (void*)UART0_STATUS_REG;
+	if (early_serial_setup(&up))
+		printk(KERN_ERR "Early serial init of port 0 failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Initialize the second serial port, if one exists */
 	switch (mips_machtype) {
@@ -147,8 +163,13 @@ void __init msp_serial_setup(void)
 	up.irq          = MSP_INT_UART1;
 	up.line         = 1;
 	up.private_data		= (void*)UART1_STATUS_REG;
+<<<<<<< HEAD
 	if (early_serial_setup(&up)) {
 		kfree(up.private_data);
 		pr_err("Early serial init of port 1 failed\n");
 	}
+=======
+	if (early_serial_setup(&up))
+		printk(KERN_ERR "Early serial init of port 1 failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

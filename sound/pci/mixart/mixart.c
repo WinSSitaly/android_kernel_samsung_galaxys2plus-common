@@ -25,7 +25,11 @@
 #include <linux/interrupt.h>
 #include <linux/pci.h>
 #include <linux/dma-mapping.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mutex.h>
 #include <linux/slab.h>
 
@@ -49,7 +53,11 @@ MODULE_SUPPORTED_DEVICE("{{Digigram," CARD_NAME "}}");
 
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;             /* Index 0-MAX */
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;              /* ID for this card */
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;     /* Enable this card */
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;     /* Enable this card */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_array(index, int, NULL, 0444);
 MODULE_PARM_DESC(index, "Index value for Digigram " CARD_NAME " soundcard.");
@@ -1268,7 +1276,11 @@ static int __devinit snd_mixart_probe(struct pci_dev *pci,
 	}
 
 	if (request_irq(pci->irq, snd_mixart_interrupt, IRQF_SHARED,
+<<<<<<< HEAD
 			KBUILD_MODNAME, mgr)) {
+=======
+			CARD_NAME, mgr)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printk(KERN_ERR "unable to grab IRQ %d\n", pci->irq);
 		snd_mixart_free(mgr);
 		return -EBUSY;
@@ -1381,7 +1393,11 @@ static void __devexit snd_mixart_remove(struct pci_dev *pci)
 }
 
 static struct pci_driver driver = {
+<<<<<<< HEAD
 	.name = KBUILD_MODNAME,
+=======
+	.name = "Digigram miXart",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table = snd_mixart_ids,
 	.probe = snd_mixart_probe,
 	.remove = __devexit_p(snd_mixart_remove),

@@ -69,6 +69,7 @@ static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff)
 	 * file will not get a swp_entry_t in its pte, but rather it is like
 	 * any other file mapping (ie. marked !present and faulted in with
 	 * tmpfs's .fault). So swapped out tmpfs mappings are tested here.
+<<<<<<< HEAD
 	 */
 	page = find_get_page(mapping, pgoff);
 #ifdef CONFIG_SWAP
@@ -78,6 +79,14 @@ static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff)
 		page = find_get_page(&swapper_space, swap.val);
 	}
 #endif
+=======
+	 *
+	 * However when tmpfs moves the page from pagecache and into swapcache,
+	 * it is still in core, but the find_get_page below won't find it.
+	 * No big deal, but make a note of it.
+	 */
+	page = find_get_page(mapping, pgoff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (page) {
 		present = PageUptodate(page);
 		page_cache_release(page);

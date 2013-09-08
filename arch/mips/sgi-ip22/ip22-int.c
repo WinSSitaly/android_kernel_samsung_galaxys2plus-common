@@ -155,32 +155,52 @@ static void __irq_entry indy_buserror_irq(void)
 
 static struct irqaction local0_cascade = {
 	.handler	= no_action,
+<<<<<<< HEAD
 	.flags		= IRQF_NO_THREAD,
+=======
+	.flags		= IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name		= "local0 cascade",
 };
 
 static struct irqaction local1_cascade = {
 	.handler	= no_action,
+<<<<<<< HEAD
 	.flags		= IRQF_NO_THREAD,
+=======
+	.flags		= IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name		= "local1 cascade",
 };
 
 static struct irqaction buserr = {
 	.handler	= no_action,
+<<<<<<< HEAD
 	.flags		= IRQF_NO_THREAD,
+=======
+	.flags		= IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name		= "Bus Error",
 };
 
 static struct irqaction map0_cascade = {
 	.handler	= no_action,
+<<<<<<< HEAD
 	.flags		= IRQF_NO_THREAD,
+=======
+	.flags		= IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name		= "mapable0 cascade",
 };
 
 #ifdef USE_LIO3_IRQ
 static struct irqaction map1_cascade = {
 	.handler	= no_action,
+<<<<<<< HEAD
 	.flags		= IRQF_NO_THREAD,
+=======
+	.flags		= IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name		= "mapable1 cascade",
 };
 #define SGI_INTERRUPTS	SGINT_END

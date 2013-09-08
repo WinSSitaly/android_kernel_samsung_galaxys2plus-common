@@ -2,14 +2,18 @@
 #define _M68K_CACHEFLUSH_H
 
 #include <linux/mm.h>
+<<<<<<< HEAD
 #ifdef CONFIG_COLDFIRE
 #include <asm/mcfsim.h>
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* cache code */
 #define FLUSH_I_AND_D	(0x00000808)
 #define FLUSH_I		(0x00000008)
 
+<<<<<<< HEAD
 #ifndef ICACHE_MAX_ADDR
 #define ICACHE_MAX_ADDR	0
 #define ICACHE_SET_MASK	0
@@ -71,20 +75,30 @@ static inline void flush_cf_bcache(unsigned long start, unsigned long end)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Cache handling functions
  */
 
 static inline void flush_icache(void)
 {
+<<<<<<< HEAD
 	if (CPU_IS_COLDFIRE) {
 		flush_cf_icache(0, ICACHE_MAX_ADDR);
 	} else if (CPU_IS_040_OR_060) {
+=======
+	if (CPU_IS_040_OR_060)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		asm volatile (	"nop\n"
 			"	.chip	68040\n"
 			"	cpusha	%bc\n"
 			"	.chip	68k");
+<<<<<<< HEAD
 	} else {
+=======
+	else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned long tmp;
 		asm volatile (	"movec	%%cacr,%0\n"
 			"	or.w	%1,%0\n"
@@ -117,14 +131,22 @@ extern void cache_push_v(unsigned long vaddr, int len);
    process changes.  */
 #define __flush_cache_all()					\
 ({								\
+<<<<<<< HEAD
 	if (CPU_IS_COLDFIRE) {					\
 		flush_cf_dcache(0, DCACHE_MAX_ADDR);		\
 	} else if (CPU_IS_040_OR_060) {				\
+=======
+	if (CPU_IS_040_OR_060)					\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__asm__ __volatile__("nop\n\t"			\
 				     ".chip 68040\n\t"		\
 				     "cpusha %dc\n\t"		\
 				     ".chip 68k");		\
+<<<<<<< HEAD
 	} else {						\
+=======
+	else {							\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned long _tmp;				\
 		__asm__ __volatile__("movec %%cacr,%0\n\t"	\
 				     "orw %1,%0\n\t"		\
@@ -180,6 +202,7 @@ static inline void flush_cache_page(struct vm_area_struct *vma, unsigned long vm
 /* RZ: use cpush %bc instead of cpush %dc, cinv %ic */
 static inline void __flush_page_to_ram(void *vaddr)
 {
+<<<<<<< HEAD
 	if (CPU_IS_COLDFIRE) {
 		unsigned long addr, start, end;
 		addr = ((unsigned long) vaddr) & ~(PAGE_SIZE - 1);
@@ -191,6 +214,9 @@ static inline void __flush_page_to_ram(void *vaddr)
 		}
 		flush_cf_bcache(start, end);
 	} else if (CPU_IS_040_OR_060) {
+=======
+	if (CPU_IS_040_OR_060) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__asm__ __volatile__("nop\n\t"
 				     ".chip 68040\n\t"
 				     "cpushp %%bc,(%0)\n\t"

@@ -6,7 +6,10 @@
 
 #include <linux/sched.h>
 #include <linux/tracepoint.h>
+<<<<<<< HEAD
 #include <linux/binfmts.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Tracepoint for calling kthread_stop, performed to end a kthread:
@@ -101,7 +104,11 @@ static inline long __trace_sched_switch_state(struct task_struct *p)
 	 * For all intents and purposes a preempted task is a running task.
 	 */
 	if (task_thread_info(p)->preempt_count & PREEMPT_ACTIVE)
+<<<<<<< HEAD
 		state = TASK_RUNNING | TASK_STATE_MAX;
+=======
+		state = TASK_RUNNING;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	return state;
@@ -138,6 +145,7 @@ TRACE_EVENT(sched_switch,
 		__entry->next_prio	= next->prio;
 	),
 
+<<<<<<< HEAD
 	TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d",
 		__entry->prev_comm, __entry->prev_pid, __entry->prev_prio,
 		__entry->prev_state & (TASK_STATE_MAX-1) ?
@@ -146,6 +154,15 @@ TRACE_EVENT(sched_switch,
 				{ 16, "Z" }, { 32, "X" }, { 64, "x" },
 				{ 128, "W" }) : "R",
 		__entry->prev_state & TASK_STATE_MAX ? "+" : "",
+=======
+	TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s ==> next_comm=%s next_pid=%d next_prio=%d",
+		__entry->prev_comm, __entry->prev_pid, __entry->prev_prio,
+		__entry->prev_state ?
+		  __print_flags(__entry->prev_state, "|",
+				{ 1, "S"} , { 2, "D" }, { 4, "T" }, { 8, "t" },
+				{ 16, "Z" }, { 32, "X" }, { 64, "x" },
+				{ 128, "W" }) : "R",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__entry->next_comm, __entry->next_pid, __entry->next_prio)
 );
 
@@ -277,6 +294,7 @@ TRACE_EVENT(sched_process_fork,
 );
 
 /*
+<<<<<<< HEAD
  * Tracepoint for exec:
  */
 TRACE_EVENT(sched_process_exec,
@@ -303,6 +321,8 @@ TRACE_EVENT(sched_process_exec,
 );
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * XXX the below sched_stat tracepoints only apply to SCHED_OTHER/BATCH/IDLE
  *     adding sched_stat support to SCHED_FIFO/RR would be welcome.
  */
@@ -358,6 +378,7 @@ DEFINE_EVENT(sched_stat_template, sched_stat_iowait,
 	     TP_ARGS(tsk, delay));
 
 /*
+<<<<<<< HEAD
  * Tracepoint for accounting blocked time (time the task is in uninterruptible).
  */
 DEFINE_EVENT(sched_stat_template, sched_stat_blocked,
@@ -365,6 +386,8 @@ DEFINE_EVENT(sched_stat_template, sched_stat_blocked,
 	     TP_ARGS(tsk, delay));
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Tracepoint for accounting runtime (time the task is executing
  * on a CPU).
  */

@@ -36,6 +36,10 @@
 #include <mach/hardware.h>
 #include <mach/iomux-mx27.h>
 #include <asm/mach/time.h>
+<<<<<<< HEAD
+=======
+#include <mach/audmux.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/irqs.h>
 #include <mach/ulpi.h>
 
@@ -356,7 +360,21 @@ static void __init pca100_init(void)
 {
 	int ret;
 
+<<<<<<< HEAD
 	imx27_soc_init();
+=======
+	/* SSI unit */
+	mxc_audmux_v1_configure_port(MX27_AUDMUX_HPCR1_SSI0,
+				  MXC_AUDMUX_V1_PCR_SYN | /* 4wire mode */
+				  MXC_AUDMUX_V1_PCR_TFCSEL(3) |
+				  MXC_AUDMUX_V1_PCR_TCLKDIR | /* clock is output */
+				  MXC_AUDMUX_V1_PCR_RXDSEL(3));
+	mxc_audmux_v1_configure_port(3,
+				  MXC_AUDMUX_V1_PCR_SYN | /* 4wire mode */
+				  MXC_AUDMUX_V1_PCR_TFCSEL(0) |
+				  MXC_AUDMUX_V1_PCR_TFSDIR |
+				  MXC_AUDMUX_V1_PCR_RXDSEL(0));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = mxc_gpio_setup_multiple_pins(pca100_pins,
 			ARRAY_SIZE(pca100_pins), "PCA100");
@@ -422,6 +440,7 @@ static struct sys_timer pca100_timer = {
 };
 
 MACHINE_START(PCA100, "phyCARD-i.MX27")
+<<<<<<< HEAD
 	.atag_offset = 0x100,
 	.map_io = mx27_map_io,
 	.init_early = imx27_init_early,
@@ -430,4 +449,12 @@ MACHINE_START(PCA100, "phyCARD-i.MX27")
 	.init_machine = pca100_init,
 	.timer = &pca100_timer,
 	.restart	= mxc_restart,
+=======
+	.boot_params = MX27_PHYS_OFFSET + 0x100,
+	.map_io = mx27_map_io,
+	.init_early = imx27_init_early,
+	.init_irq = mx27_init_irq,
+	.init_machine = pca100_init,
+	.timer = &pca100_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

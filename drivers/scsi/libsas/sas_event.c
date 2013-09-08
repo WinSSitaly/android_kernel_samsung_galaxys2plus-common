@@ -22,11 +22,15 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <scsi/scsi_host.h>
 #include "sas_internal.h"
 #include "sas_dump.h"
 
+<<<<<<< HEAD
 void sas_queue_work(struct sas_ha_struct *ha, struct sas_work *sw)
 {
 	if (!test_bit(SAS_HA_REGISTERED, &ha->state))
@@ -116,11 +120,17 @@ void sas_enable_revalidation(struct sas_ha_struct *ha)
 	mutex_unlock(&ha->disco_mutex);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void notify_ha_event(struct sas_ha_struct *sas_ha, enum ha_event event)
 {
 	BUG_ON(event >= HA_NUM_EVENTS);
 
+<<<<<<< HEAD
 	sas_queue_event(event, &sas_ha->pending,
+=======
+	sas_queue_event(event, &sas_ha->event_lock, &sas_ha->pending,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			&sas_ha->ha_events[event].work, sas_ha);
 }
 
@@ -130,7 +140,11 @@ static void notify_port_event(struct asd_sas_phy *phy, enum port_event event)
 
 	BUG_ON(event >= PORT_NUM_EVENTS);
 
+<<<<<<< HEAD
 	sas_queue_event(event, &phy->port_events_pending,
+=======
+	sas_queue_event(event, &ha->event_lock, &phy->port_events_pending,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			&phy->port_events[event].work, ha);
 }
 
@@ -140,7 +154,11 @@ static void notify_phy_event(struct asd_sas_phy *phy, enum phy_event event)
 
 	BUG_ON(event >= PHY_NUM_EVENTS);
 
+<<<<<<< HEAD
 	sas_queue_event(event, &phy->phy_events_pending,
+=======
+	sas_queue_event(event, &ha->event_lock, &phy->phy_events_pending,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			&phy->phy_events[event].work, ha);
 }
 
@@ -152,8 +170,15 @@ int sas_init_events(struct sas_ha_struct *sas_ha)
 
 	int i;
 
+<<<<<<< HEAD
 	for (i = 0; i < HA_NUM_EVENTS; i++) {
 		INIT_SAS_WORK(&sas_ha->ha_events[i].work, sas_ha_event_fns[i]);
+=======
+	spin_lock_init(&sas_ha->event_lock);
+
+	for (i = 0; i < HA_NUM_EVENTS; i++) {
+		INIT_WORK(&sas_ha->ha_events[i].work, sas_ha_event_fns[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sas_ha->ha_events[i].ha = sas_ha;
 	}
 

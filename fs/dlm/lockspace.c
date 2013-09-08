@@ -2,7 +2,11 @@
 *******************************************************************************
 **
 **  Copyright (C) Sistina Software, Inc.  1997-2003  All rights reserved.
+<<<<<<< HEAD
 **  Copyright (C) 2004-2011 Red Hat, Inc.  All rights reserved.
+=======
+**  Copyright (C) 2004-2008 Red Hat, Inc.  All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 **
 **  This copyrighted material is made available to anyone wishing to use,
 **  modify, copy, or redistribute it subject to the terms and conditions
@@ -15,6 +19,10 @@
 #include "lockspace.h"
 #include "member.h"
 #include "recoverd.h"
+<<<<<<< HEAD
+=======
+#include "ast.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "dir.h"
 #include "lowcomms.h"
 #include "config.h"
@@ -23,7 +31,10 @@
 #include "recover.h"
 #include "requestqueue.h"
 #include "user.h"
+<<<<<<< HEAD
 #include "ast.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int			ls_count;
 static struct mutex		ls_lock;
@@ -359,10 +370,24 @@ static int threads_start(void)
 {
 	int error;
 
+<<<<<<< HEAD
 	error = dlm_scand_start();
 	if (error) {
 		log_print("cannot start dlm_scand thread %d", error);
 		goto fail;
+=======
+	/* Thread which process lock requests for all lockspace's */
+	error = dlm_astd_start();
+	if (error) {
+		log_print("cannot start dlm_astd thread %d", error);
+		goto fail;
+	}
+
+	error = dlm_scand_start();
+	if (error) {
+		log_print("cannot start dlm_scand thread %d", error);
+		goto astd_fail;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Thread for sending/receiving messages for all lockspace's */
@@ -376,6 +401,11 @@ static int threads_start(void)
 
  scand_fail:
 	dlm_scand_stop();
+<<<<<<< HEAD
+=======
+ astd_fail:
+	dlm_astd_stop();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  fail:
 	return error;
 }
@@ -384,17 +414,28 @@ static void threads_stop(void)
 {
 	dlm_scand_stop();
 	dlm_lowcomms_stop();
+<<<<<<< HEAD
 }
 
 static int new_lockspace(const char *name, const char *cluster,
 			 uint32_t flags, int lvblen,
 			 const struct dlm_lockspace_ops *ops, void *ops_arg,
 			 int *ops_result, dlm_lockspace_t **lockspace)
+=======
+	dlm_astd_stop();
+}
+
+static int new_lockspace(const char *name, int namelen, void **lockspace,
+			 uint32_t flags, int lvblen)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dlm_ls *ls;
 	int i, size, error;
 	int do_unreg = 0;
+<<<<<<< HEAD
 	int namelen = strlen(name);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (namelen > DLM_LOCKSPACE_LEN)
 		return -EINVAL;
@@ -406,6 +447,7 @@ static int new_lockspace(const char *name, const char *cluster,
 		return -EINVAL;
 
 	if (!dlm_user_daemon_available()) {
+<<<<<<< HEAD
 		log_print("dlm user daemon not available");
 		error = -EUNATCH;
 		goto out;
@@ -424,6 +466,10 @@ static int new_lockspace(const char *name, const char *cluster,
 			  dlm_config.ci_cluster_name, cluster);
 		error = -EBADR;
 		goto out;
+=======
+		module_put(THIS_MODULE);
+		return -EUNATCH;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	error = 0;
@@ -461,11 +507,14 @@ static int new_lockspace(const char *name, const char *cluster,
 	ls->ls_flags = 0;
 	ls->ls_scan_time = jiffies;
 
+<<<<<<< HEAD
 	if (ops && dlm_config.ci_recover_callbacks) {
 		ls->ls_ops = ops;
 		ls->ls_ops_arg = ops_arg;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (flags & DLM_LSFL_TIMEWARN)
 		set_bit(LSFL_TIMEWARN, &ls->ls_flags);
 
@@ -477,6 +526,7 @@ static int new_lockspace(const char *name, const char *cluster,
 	size = dlm_config.ci_rsbtbl_size;
 	ls->ls_rsbtbl_size = size;
 
+<<<<<<< HEAD
 	ls->ls_rsbtbl = vmalloc(sizeof(struct dlm_rsbtable) * size);
 	if (!ls->ls_rsbtbl)
 		goto out_lsfree;
@@ -488,11 +538,37 @@ static int new_lockspace(const char *name, const char *cluster,
 
 	idr_init(&ls->ls_lkbidr);
 	spin_lock_init(&ls->ls_lkbidr_spin);
+=======
+	ls->ls_rsbtbl = kmalloc(sizeof(struct dlm_rsbtable) * size, GFP_NOFS);
+	if (!ls->ls_rsbtbl)
+		goto out_lsfree;
+	for (i = 0; i < size; i++) {
+		INIT_LIST_HEAD(&ls->ls_rsbtbl[i].list);
+		INIT_LIST_HEAD(&ls->ls_rsbtbl[i].toss);
+		spin_lock_init(&ls->ls_rsbtbl[i].lock);
+	}
+
+	size = dlm_config.ci_lkbtbl_size;
+	ls->ls_lkbtbl_size = size;
+
+	ls->ls_lkbtbl = kmalloc(sizeof(struct dlm_lkbtable) * size, GFP_NOFS);
+	if (!ls->ls_lkbtbl)
+		goto out_rsbfree;
+	for (i = 0; i < size; i++) {
+		INIT_LIST_HEAD(&ls->ls_lkbtbl[i].list);
+		rwlock_init(&ls->ls_lkbtbl[i].lock);
+		ls->ls_lkbtbl[i].counter = 1;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	size = dlm_config.ci_dirtbl_size;
 	ls->ls_dirtbl_size = size;
 
+<<<<<<< HEAD
 	ls->ls_dirtbl = vmalloc(sizeof(struct dlm_dirtable) * size);
+=======
+	ls->ls_dirtbl = kmalloc(sizeof(struct dlm_dirtable) * size, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ls->ls_dirtbl)
 		goto out_lkbfree;
 	for (i = 0; i < size; i++) {
@@ -507,9 +583,12 @@ static int new_lockspace(const char *name, const char *cluster,
 	INIT_LIST_HEAD(&ls->ls_timeout);
 	mutex_init(&ls->ls_timeout_mutex);
 
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&ls->ls_new_rsb);
 	spin_lock_init(&ls->ls_new_rsb_spin);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_LIST_HEAD(&ls->ls_nodes);
 	INIT_LIST_HEAD(&ls->ls_nodes_gone);
 	ls->ls_num_nodes = 0;
@@ -528,9 +607,12 @@ static int new_lockspace(const char *name, const char *cluster,
 	init_completion(&ls->ls_members_done);
 	ls->ls_members_result = -1;
 
+<<<<<<< HEAD
 	mutex_init(&ls->ls_cb_mutex);
 	INIT_LIST_HEAD(&ls->ls_cb_delay);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ls->ls_recoverd_task = NULL;
 	mutex_init(&ls->ls_recoverd_active);
 	spin_lock_init(&ls->ls_recover_lock);
@@ -549,11 +631,14 @@ static int new_lockspace(const char *name, const char *cluster,
 	if (!ls->ls_recover_buf)
 		goto out_dirfree;
 
+<<<<<<< HEAD
 	ls->ls_slot = 0;
 	ls->ls_num_slots = 0;
 	ls->ls_slots_size = 0;
 	ls->ls_slots = NULL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_LIST_HEAD(&ls->ls_recover_list);
 	spin_lock_init(&ls->ls_recover_list_lock);
 	ls->ls_recover_list_count = 0;
@@ -569,6 +654,7 @@ static int new_lockspace(const char *name, const char *cluster,
 	list_add(&ls->ls_list, &lslist);
 	spin_unlock(&lslist_lock);
 
+<<<<<<< HEAD
 	if (flags & DLM_LSFL_FS) {
 		error = dlm_callback_start(ls);
 		if (error) {
@@ -577,18 +663,28 @@ static int new_lockspace(const char *name, const char *cluster,
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* needs to find ls in lslist */
 	error = dlm_recoverd_start(ls);
 	if (error) {
 		log_error(ls, "can't start dlm_recoverd %d", error);
+<<<<<<< HEAD
 		goto out_callback;
+=======
+		goto out_delist;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ls->ls_kobj.kset = dlm_kset;
 	error = kobject_init_and_add(&ls->ls_kobj, &dlm_ktype, NULL,
 				     "%s", ls->ls_name);
 	if (error)
+<<<<<<< HEAD
 		goto out_recoverd;
+=======
+		goto out_stop;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kobject_uevent(&ls->ls_kobj, KOBJ_ADD);
 
 	/* let kobject handle freeing of ls if there's an error */
@@ -602,7 +698,11 @@ static int new_lockspace(const char *name, const char *cluster,
 
 	error = do_uevent(ls, 1);
 	if (error)
+<<<<<<< HEAD
 		goto out_recoverd;
+=======
+		goto out_stop;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wait_for_completion(&ls->ls_members_done);
 	error = ls->ls_members_result;
@@ -619,20 +719,33 @@ static int new_lockspace(const char *name, const char *cluster,
 	do_uevent(ls, 0);
 	dlm_clear_members(ls);
 	kfree(ls->ls_node_array);
+<<<<<<< HEAD
  out_recoverd:
 	dlm_recoverd_stop(ls);
  out_callback:
 	dlm_callback_stop(ls);
+=======
+ out_stop:
+	dlm_recoverd_stop(ls);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  out_delist:
 	spin_lock(&lslist_lock);
 	list_del(&ls->ls_list);
 	spin_unlock(&lslist_lock);
 	kfree(ls->ls_recover_buf);
  out_dirfree:
+<<<<<<< HEAD
 	vfree(ls->ls_dirtbl);
  out_lkbfree:
 	idr_destroy(&ls->ls_lkbidr);
 	vfree(ls->ls_rsbtbl);
+=======
+	kfree(ls->ls_dirtbl);
+ out_lkbfree:
+	kfree(ls->ls_lkbtbl);
+ out_rsbfree:
+	kfree(ls->ls_rsbtbl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  out_lsfree:
 	if (do_unreg)
 		kobject_put(&ls->ls_kobj);
@@ -643,10 +756,15 @@ static int new_lockspace(const char *name, const char *cluster,
 	return error;
 }
 
+<<<<<<< HEAD
 int dlm_new_lockspace(const char *name, const char *cluster,
 		      uint32_t flags, int lvblen,
 		      const struct dlm_lockspace_ops *ops, void *ops_arg,
 		      int *ops_result, dlm_lockspace_t **lockspace)
+=======
+int dlm_new_lockspace(const char *name, int namelen, void **lockspace,
+		      uint32_t flags, int lvblen)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int error = 0;
 
@@ -656,8 +774,12 @@ int dlm_new_lockspace(const char *name, const char *cluster,
 	if (error)
 		goto out;
 
+<<<<<<< HEAD
 	error = new_lockspace(name, cluster, flags, lvblen, ops, ops_arg,
 			      ops_result, lockspace);
+=======
+	error = new_lockspace(name, namelen, lockspace, flags, lvblen);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!error)
 		ls_count++;
 	if (error > 0)
@@ -669,6 +791,7 @@ int dlm_new_lockspace(const char *name, const char *cluster,
 	return error;
 }
 
+<<<<<<< HEAD
 static int lkb_idr_is_local(int id, void *p, void *data)
 {
 	struct dlm_lkb *lkb = p;
@@ -712,10 +835,41 @@ static int lockspace_busy(struct dlm_ls *ls, int force)
 	}
 	spin_unlock(&ls->ls_lkbidr_spin);
 	return rv;
+=======
+/* Return 1 if the lockspace still has active remote locks,
+ *        2 if the lockspace still has active local locks.
+ */
+static int lockspace_busy(struct dlm_ls *ls)
+{
+	int i, lkb_found = 0;
+	struct dlm_lkb *lkb;
+
+	/* NOTE: We check the lockidtbl here rather than the resource table.
+	   This is because there may be LKBs queued as ASTs that have been
+	   unlinked from their RSBs and are pending deletion once the AST has
+	   been delivered */
+
+	for (i = 0; i < ls->ls_lkbtbl_size; i++) {
+		read_lock(&ls->ls_lkbtbl[i].lock);
+		if (!list_empty(&ls->ls_lkbtbl[i].list)) {
+			lkb_found = 1;
+			list_for_each_entry(lkb, &ls->ls_lkbtbl[i].list,
+					    lkb_idtbl_list) {
+				if (!lkb->lkb_nodeid) {
+					read_unlock(&ls->ls_lkbtbl[i].lock);
+					return 2;
+				}
+			}
+		}
+		read_unlock(&ls->ls_lkbtbl[i].lock);
+	}
+	return lkb_found;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int release_lockspace(struct dlm_ls *ls, int force)
 {
+<<<<<<< HEAD
 	struct dlm_rsb *rsb;
 	struct rb_node *n;
 	int i, busy, rv;
@@ -727,6 +881,20 @@ static int release_lockspace(struct dlm_ls *ls, int force)
 		if (busy) {
 			rv = -EBUSY;
 		} else {
+=======
+	struct dlm_lkb *lkb;
+	struct dlm_rsb *rsb;
+	struct list_head *head;
+	int i, busy, rv;
+
+	busy = lockspace_busy(ls);
+
+	spin_lock(&lslist_lock);
+	if (ls->ls_create_count == 1) {
+		if (busy > force)
+			rv = -EBUSY;
+		else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* remove_lockspace takes ls off lslist */
 			ls->ls_create_count = 0;
 			rv = 0;
@@ -750,12 +918,20 @@ static int release_lockspace(struct dlm_ls *ls, int force)
 
 	dlm_recoverd_stop(ls);
 
+<<<<<<< HEAD
 	dlm_callback_stop(ls);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	remove_lockspace(ls);
 
 	dlm_delete_debug_file(ls);
 
+<<<<<<< HEAD
+=======
+	dlm_astd_suspend();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(ls->ls_recover_buf);
 
 	/*
@@ -763,6 +939,7 @@ static int release_lockspace(struct dlm_ls *ls, int force)
 	 */
 
 	dlm_dir_clear(ls);
+<<<<<<< HEAD
 	vfree(ls->ls_dirtbl);
 
 	/*
@@ -772,12 +949,40 @@ static int release_lockspace(struct dlm_ls *ls, int force)
 	idr_for_each(&ls->ls_lkbidr, lkb_idr_free, ls);
 	idr_remove_all(&ls->ls_lkbidr);
 	idr_destroy(&ls->ls_lkbidr);
+=======
+	kfree(ls->ls_dirtbl);
+
+	/*
+	 * Free all lkb's on lkbtbl[] lists.
+	 */
+
+	for (i = 0; i < ls->ls_lkbtbl_size; i++) {
+		head = &ls->ls_lkbtbl[i].list;
+		while (!list_empty(head)) {
+			lkb = list_entry(head->next, struct dlm_lkb,
+					 lkb_idtbl_list);
+
+			list_del(&lkb->lkb_idtbl_list);
+
+			dlm_del_ast(lkb);
+
+			if (lkb->lkb_lvbptr && lkb->lkb_flags & DLM_IFL_MSTCPY)
+				dlm_free_lvb(lkb->lkb_lvbptr);
+
+			dlm_free_lkb(lkb);
+		}
+	}
+	dlm_astd_resume();
+
+	kfree(ls->ls_lkbtbl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Free all rsb's on rsbtbl[] lists
 	 */
 
 	for (i = 0; i < ls->ls_rsbtbl_size; i++) {
+<<<<<<< HEAD
 		while ((n = rb_first(&ls->ls_rsbtbl[i].keep))) {
 			rsb = rb_entry(n, struct dlm_rsb, res_hashnode);
 			rb_erase(n, &ls->ls_rsbtbl[i].keep);
@@ -787,10 +992,27 @@ static int release_lockspace(struct dlm_ls *ls, int force)
 		while ((n = rb_first(&ls->ls_rsbtbl[i].toss))) {
 			rsb = rb_entry(n, struct dlm_rsb, res_hashnode);
 			rb_erase(n, &ls->ls_rsbtbl[i].toss);
+=======
+		head = &ls->ls_rsbtbl[i].list;
+		while (!list_empty(head)) {
+			rsb = list_entry(head->next, struct dlm_rsb,
+					 res_hashchain);
+
+			list_del(&rsb->res_hashchain);
+			dlm_free_rsb(rsb);
+		}
+
+		head = &ls->ls_rsbtbl[i].toss;
+		while (!list_empty(head)) {
+			rsb = list_entry(head->next, struct dlm_rsb,
+					 res_hashchain);
+			list_del(&rsb->res_hashchain);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dlm_free_rsb(rsb);
 		}
 	}
 
+<<<<<<< HEAD
 	vfree(ls->ls_rsbtbl);
 
 	while (!list_empty(&ls->ls_new_rsb)) {
@@ -799,6 +1021,9 @@ static int release_lockspace(struct dlm_ls *ls, int force)
 		list_del(&rsb->res_hashchain);
 		dlm_free_rsb(rsb);
 	}
+=======
+	kfree(ls->ls_rsbtbl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Free structures on any other lists

@@ -19,7 +19,10 @@
 #ifndef __LPC32XX_COMMON_H
 #define __LPC32XX_COMMON_H
 
+<<<<<<< HEAD
 #include <mach/board.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 
 /*
@@ -29,11 +32,14 @@ extern struct platform_device lpc32xx_watchdog_device;
 extern struct platform_device lpc32xx_i2c0_device;
 extern struct platform_device lpc32xx_i2c1_device;
 extern struct platform_device lpc32xx_i2c2_device;
+<<<<<<< HEAD
 extern struct platform_device lpc32xx_tsc_device;
 extern struct platform_device lpc32xx_adc_device;
 extern struct platform_device lpc32xx_rtc_device;
 extern struct platform_device lpc32xx_ohci_device;
 extern struct platform_device lpc32xx_net_device;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Other arch specific structures and functions
@@ -43,8 +49,11 @@ extern void __init lpc32xx_init_irq(void);
 extern void __init lpc32xx_map_io(void);
 extern void __init lpc32xx_serial_init(void);
 extern void __init lpc32xx_gpio_init(void);
+<<<<<<< HEAD
 extern void lpc23xx_restart(char, const char *);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Structure used for setting up and querying the PLLS
@@ -69,7 +78,13 @@ extern u32 clk_get_pclk_div(void);
  */
 extern void lpc32xx_get_uid(u32 devid[4]);
 
+<<<<<<< HEAD
 extern u32 lpc32xx_return_iram_size(void);
+=======
+extern void lpc32xx_watchdog_reset(void);
+extern u32 lpc32xx_return_iram_size(void);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Pointers used for sizing and copying suspend function data
  */

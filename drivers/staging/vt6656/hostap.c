@@ -153,7 +153,11 @@ static int hostap_disable_hostapd(PSDevice pDevice, int rtnl_locked)
             DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "%s: Netdevice %s unregistered\n",
 		       pDevice->dev->name, pDevice->apdev->name);
 	}
+<<<<<<< HEAD
 	free_netdev(pDevice->apdev);
+=======
+	kfree(pDevice->apdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pDevice->apdev = NULL;
     pDevice->bEnable8021x = FALSE;
     pDevice->bEnableHostWEP = FALSE;

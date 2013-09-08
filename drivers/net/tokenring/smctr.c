@@ -49,6 +49,10 @@
 #include <linux/bitops.h>
 #include <linux/firmware.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/dma.h>
 #include <asm/irq.h>
@@ -3622,7 +3626,11 @@ static const struct net_device_ops smctr_netdev_ops = {
 	.ndo_start_xmit    = smctr_send_packet,
 	.ndo_tx_timeout	   = smctr_timeout,
 	.ndo_get_stats     = smctr_get_stats,
+<<<<<<< HEAD
 	.ndo_set_rx_mode   = smctr_set_multicast_list,
+=======
+	.ndo_set_multicast_list = smctr_set_multicast_list,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init smctr_probe1(struct net_device *dev, int ioaddr)

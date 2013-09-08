@@ -60,24 +60,41 @@ static inline void native_halt(void)
 #include <asm/paravirt.h>
 #else
 #ifndef __ASSEMBLY__
+<<<<<<< HEAD
 #include <linux/types.h>
 
 static inline notrace unsigned long arch_local_save_flags(void)
+=======
+
+static inline unsigned long arch_local_save_flags(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return native_save_fl();
 }
 
+<<<<<<< HEAD
 static inline notrace void arch_local_irq_restore(unsigned long flags)
+=======
+static inline void arch_local_irq_restore(unsigned long flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	native_restore_fl(flags);
 }
 
+<<<<<<< HEAD
 static inline notrace void arch_local_irq_disable(void)
+=======
+static inline void arch_local_irq_disable(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	native_irq_disable();
 }
 
+<<<<<<< HEAD
 static inline notrace void arch_local_irq_enable(void)
+=======
+static inline void arch_local_irq_enable(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	native_irq_enable();
 }
@@ -103,7 +120,11 @@ static inline void halt(void)
 /*
  * For spinlocks, etc:
  */
+<<<<<<< HEAD
 static inline notrace unsigned long arch_local_irq_save(void)
+=======
+static inline unsigned long arch_local_irq_save(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags = arch_local_save_flags();
 	arch_local_irq_disable();

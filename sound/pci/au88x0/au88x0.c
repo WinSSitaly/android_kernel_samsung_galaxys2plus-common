@@ -19,14 +19,22 @@
 #include <linux/pci.h>
 #include <linux/slab.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/dma-mapping.h>
 #include <sound/initval.h>
 
 // module parameters (see "Module Parameters")
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int pcifix[SNDRV_CARDS] = {[0 ... (SNDRV_CARDS - 1)] = 255 };
 
 module_param_array(index, int, NULL, 0444);
@@ -196,7 +204,11 @@ snd_vortex_create(struct snd_card *card, struct pci_dev *pci, vortex_t ** rchip)
 	}
 
 	if ((err = request_irq(pci->irq, vortex_interrupt,
+<<<<<<< HEAD
 			       IRQF_SHARED, KBUILD_MODNAME,
+=======
+	                       IRQF_SHARED, CARD_NAME_SHORT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	                       chip)) != 0) {
 		printk(KERN_ERR "cannot grab irq\n");
 		goto irq_out;
@@ -268,6 +280,7 @@ snd_vortex_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
 		card->shortname, chip->io, chip->irq);
 
 	// (4) Alloc components.
+<<<<<<< HEAD
 	err = snd_vortex_mixer(chip);
 	if (err < 0) {
 		snd_card_free(card);
@@ -276,6 +289,10 @@ snd_vortex_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
 	// ADB pcm.
 	err = snd_vortex_new_pcm(chip, VORTEX_PCM_ADB, NR_PCM);
 	if (err < 0) {
+=======
+	// ADB pcm.
+	if ((err = snd_vortex_new_pcm(chip, VORTEX_PCM_ADB, NR_ADB)) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_card_free(card);
 		return err;
 	}
@@ -305,6 +322,14 @@ snd_vortex_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
 		return err;
 	}
 #endif
+<<<<<<< HEAD
+=======
+	// snd_ac97_mixer and Vortex mixer.
+	if ((err = snd_vortex_mixer(chip)) < 0) {
+		snd_card_free(card);
+		return err;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((err = snd_vortex_midi(chip)) < 0) {
 		snd_card_free(card);
 		return err;
@@ -376,7 +401,11 @@ static void __devexit snd_vortex_remove(struct pci_dev *pci)
 
 // pci_driver definition
 static struct pci_driver driver = {
+<<<<<<< HEAD
 	.name = KBUILD_MODNAME,
+=======
+	.name = CARD_NAME_SHORT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table = snd_vortex_ids,
 	.probe = snd_vortex_probe,
 	.remove = __devexit_p(snd_vortex_remove),

@@ -169,7 +169,11 @@ When using ide.c as a module in combination with kmod, add:
 
 	alias block-major-3 ide-probe
 
+<<<<<<< HEAD
 to a configuration file in /etc/modprobe.d/.
+=======
+to /etc/modprobe.conf.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 When ide.c is used as a module, you can pass command line parameters to the
 driver using the "options=" keyword to insmod, while replacing any ',' with

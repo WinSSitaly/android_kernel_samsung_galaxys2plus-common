@@ -8,8 +8,13 @@
 #endif
 #include <asm/addrspace.h>
 #include <asm/reboot.h>
+<<<<<<< HEAD
 #include <asm/tlbflush.h>
 #include <asm/traps.h>
+=======
+#include <asm/system.h>
+#include <asm/tlbflush.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void (*pm_power_off)(void);
 EXPORT_SYMBOL(pm_power_off);

@@ -21,6 +21,10 @@
  * Lock ordering in mm:
  *
  * inode->i_mutex	(while writing or truncating, not reading or faulting)
+<<<<<<< HEAD
+=======
+ *   inode->i_alloc_sem (vmtruncate_range)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *   mm->mmap_sem
  *     page->flags PG_locked (lock_page)
  *       mapping->i_mmap_mutex
@@ -31,11 +35,19 @@
  *               mmlist_lock (in mmput, drain_mmlist and others)
  *               mapping->private_lock (in __set_page_dirty_buffers)
  *               inode->i_lock (in set_page_dirty's __mark_inode_dirty)
+<<<<<<< HEAD
  *               bdi.wb->list_lock (in set_page_dirty's __mark_inode_dirty)
  *                 sb_lock (within inode_lock in fs/fs-writeback.c)
  *                 mapping->tree_lock (widely used, in set_page_dirty,
  *                           in arch-dependent flush_dcache_mmap_lock,
  *                           within bdi.wb->list_lock in __sync_single_inode)
+=======
+ *               inode_wb_list_lock (in set_page_dirty's __mark_inode_dirty)
+ *                 sb_lock (within inode_lock in fs/fs-writeback.c)
+ *                 mapping->tree_lock (widely used, in set_page_dirty,
+ *                           in arch-dependent flush_dcache_mmap_lock,
+ *                           within inode_wb_list_lock in __sync_single_inode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * anon_vma->mutex,mapping->i_mutex      (memory_failure, collect_procs_anon)
  *   ->tasklist_lock
@@ -51,12 +63,19 @@
 #include <linux/ksm.h>
 #include <linux/rmap.h>
 #include <linux/rcupdate.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/memcontrol.h>
 #include <linux/mmu_notifier.h>
 #include <linux/migrate.h>
 #include <linux/hugetlb.h>
+<<<<<<< HEAD
 #include <linux/backing-dev.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/tlbflush.h>
 
@@ -121,6 +140,7 @@ static void anon_vma_chain_free(struct anon_vma_chain *anon_vma_chain)
 	kmem_cache_free(anon_vma_chain_cachep, anon_vma_chain);
 }
 
+<<<<<<< HEAD
 static void anon_vma_chain_link(struct vm_area_struct *vma,
 				struct anon_vma_chain *avc,
 				struct anon_vma *anon_vma)
@@ -136,6 +156,8 @@ static void anon_vma_chain_link(struct vm_area_struct *vma,
 	list_add_tail(&avc->same_anon_vma, &anon_vma->head);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * anon_vma_prepare - attach an anon_vma to a memory region
  * @vma: the memory region in question
@@ -191,7 +213,14 @@ int anon_vma_prepare(struct vm_area_struct *vma)
 		spin_lock(&mm->page_table_lock);
 		if (likely(!vma->anon_vma)) {
 			vma->anon_vma = anon_vma;
+<<<<<<< HEAD
 			anon_vma_chain_link(vma, avc, anon_vma);
+=======
+			avc->anon_vma = anon_vma;
+			avc->vma = vma;
+			list_add(&avc->same_vma, &vma->anon_vma_chain);
+			list_add_tail(&avc->same_anon_vma, &anon_vma->head);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			allocated = NULL;
 			avc = NULL;
 		}
@@ -237,6 +266,24 @@ static inline void unlock_anon_vma_root(struct anon_vma *root)
 		mutex_unlock(&root->mutex);
 }
 
+<<<<<<< HEAD
+=======
+static void anon_vma_chain_link(struct vm_area_struct *vma,
+				struct anon_vma_chain *avc,
+				struct anon_vma *anon_vma)
+{
+	avc->vma = vma;
+	avc->anon_vma = anon_vma;
+	list_add(&avc->same_vma, &vma->anon_vma_chain);
+
+	/*
+	 * It's critical to add new vmas to the tail of the anon_vma,
+	 * see comment in huge_memory.c:__split_huge_page().
+	 */
+	list_add_tail(&avc->same_anon_vma, &anon_vma->head);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Attach the anon_vmas from src to dst.
  * Returns 0 on success, -ENOMEM on failure.
@@ -270,6 +317,7 @@ int anon_vma_clone(struct vm_area_struct *dst, struct vm_area_struct *src)
 }
 
 /*
+<<<<<<< HEAD
  * Some rmap walk that needs to find all ptes/hugepmds without false
  * negatives (like migrate and split_huge_page) running concurrent
  * with operations that copy or move pagetables (like mremap() and
@@ -315,6 +363,8 @@ void anon_vma_moveto_tail(struct vm_area_struct *dst)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Attach vma to its own anon_vma, as well as to the anon_vmas that
  * the corresponding VMA in the parent process is attached to.
  * Returns 0 on success, non-zero on failure.
@@ -771,7 +821,11 @@ out:
 }
 
 static int page_referenced_anon(struct page *page,
+<<<<<<< HEAD
 				struct mem_cgroup *memcg,
+=======
+				struct mem_cgroup *mem_cont,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				unsigned long *vm_flags)
 {
 	unsigned int mapcount;
@@ -794,7 +848,11 @@ static int page_referenced_anon(struct page *page,
 		 * counting on behalf of references from different
 		 * cgroups
 		 */
+<<<<<<< HEAD
 		if (memcg && !mm_match_cgroup(vma->vm_mm, memcg))
+=======
+		if (mem_cont && !mm_match_cgroup(vma->vm_mm, mem_cont))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		referenced += page_referenced_one(page, vma, address,
 						  &mapcount, vm_flags);
@@ -809,7 +867,11 @@ static int page_referenced_anon(struct page *page,
 /**
  * page_referenced_file - referenced check for object-based rmap
  * @page: the page we're checking references on.
+<<<<<<< HEAD
  * @memcg: target memory control group
+=======
+ * @mem_cont: target memory controller
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @vm_flags: collect encountered vma->vm_flags who actually referenced the page
  *
  * For an object-based mapped page, find all the places it is mapped and
@@ -820,7 +882,11 @@ static int page_referenced_anon(struct page *page,
  * This function is only called from page_referenced for object-based pages.
  */
 static int page_referenced_file(struct page *page,
+<<<<<<< HEAD
 				struct mem_cgroup *memcg,
+=======
+				struct mem_cgroup *mem_cont,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				unsigned long *vm_flags)
 {
 	unsigned int mapcount;
@@ -862,7 +928,11 @@ static int page_referenced_file(struct page *page,
 		 * counting on behalf of references from different
 		 * cgroups
 		 */
+<<<<<<< HEAD
 		if (memcg && !mm_match_cgroup(vma->vm_mm, memcg))
+=======
+		if (mem_cont && !mm_match_cgroup(vma->vm_mm, mem_cont))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		referenced += page_referenced_one(page, vma, address,
 						  &mapcount, vm_flags);
@@ -878,7 +948,11 @@ static int page_referenced_file(struct page *page,
  * page_referenced - test if the page was referenced
  * @page: the page to test
  * @is_locked: caller holds lock on the page
+<<<<<<< HEAD
  * @memcg: target memory cgroup
+=======
+ * @mem_cont: target memory controller
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @vm_flags: collect encountered vma->vm_flags who actually referenced the page
  *
  * Quick test_and_clear_referenced for all mappings to a page,
@@ -886,7 +960,11 @@ static int page_referenced_file(struct page *page,
  */
 int page_referenced(struct page *page,
 		    int is_locked,
+<<<<<<< HEAD
 		    struct mem_cgroup *memcg,
+=======
+		    struct mem_cgroup *mem_cont,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    unsigned long *vm_flags)
 {
 	int referenced = 0;
@@ -902,6 +980,7 @@ int page_referenced(struct page *page,
 			}
 		}
 		if (unlikely(PageKsm(page)))
+<<<<<<< HEAD
 			referenced += page_referenced_ksm(page, memcg,
 								vm_flags);
 		else if (PageAnon(page))
@@ -917,6 +996,23 @@ int page_referenced(struct page *page,
 			referenced++;
 	}
 out:
+=======
+			referenced += page_referenced_ksm(page, mem_cont,
+								vm_flags);
+		else if (PageAnon(page))
+			referenced += page_referenced_anon(page, mem_cont,
+								vm_flags);
+		else if (page->mapping)
+			referenced += page_referenced_file(page, mem_cont,
+								vm_flags);
+		if (we_locked)
+			unlock_page(page);
+	}
+out:
+	if (page_test_and_clear_young(page_to_pfn(page)))
+		referenced++;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return referenced;
 }
 
@@ -978,8 +1074,16 @@ int page_mkclean(struct page *page)
 
 	if (page_mapped(page)) {
 		struct address_space *mapping = page_mapping(page);
+<<<<<<< HEAD
 		if (mapping)
 			ret = page_mkclean_file(mapping, page);
+=======
+		if (mapping) {
+			ret = page_mkclean_file(mapping, page);
+			if (page_test_and_clear_dirty(page_to_pfn(page), 1))
+				ret = 1;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;
@@ -1146,15 +1250,21 @@ void page_add_new_anon_rmap(struct page *page,
  */
 void page_add_file_rmap(struct page *page)
 {
+<<<<<<< HEAD
 	bool locked;
 	unsigned long flags;
 
 	mem_cgroup_begin_update_page_stat(page, &locked, &flags);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (atomic_inc_and_test(&page->_mapcount)) {
 		__inc_zone_page_state(page, NR_FILE_MAPPED);
 		mem_cgroup_inc_page_stat(page, MEMCG_NR_FILE_MAPPED);
 	}
+<<<<<<< HEAD
 	mem_cgroup_end_update_page_stat(page, &locked, &flags);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1165,6 +1275,7 @@ void page_add_file_rmap(struct page *page)
  */
 void page_remove_rmap(struct page *page)
 {
+<<<<<<< HEAD
 	struct address_space *mapping = page_mapping(page);
 	bool anon = PageAnon(page);
 	bool locked;
@@ -1181,6 +1292,11 @@ void page_remove_rmap(struct page *page)
 	/* page still mapped by someone else? */
 	if (!atomic_add_negative(-1, &page->_mapcount))
 		goto out;
+=======
+	/* page still mapped by someone else? */
+	if (!atomic_add_negative(-1, &page->_mapcount))
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Now that the last pte has gone, s390 must transfer dirty
@@ -1188,6 +1304,7 @@ void page_remove_rmap(struct page *page)
 	 * this if the page is anon, so about to be freed; but perhaps
 	 * not if it's in swapcache - there might be another pte slot
 	 * containing the swap entry, but page not yet written to swap.
+<<<<<<< HEAD
 	 *
 	 * And we can skip it on file pages, so long as the filesystem
 	 * participates in dirty tracking; but need to catch shm and tmpfs
@@ -1201,6 +1318,10 @@ void page_remove_rmap(struct page *page)
 	 * to &swapper_space when PageSwapCache(page).
 	 */
 	if (mapping && !mapping_cap_account_dirty(mapping) &&
+=======
+	 */
+	if ((!PageAnon(page) || PageSwapCache(page)) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    page_test_and_clear_dirty(page_to_pfn(page), 1))
 		set_page_dirty(page);
 	/*
@@ -1208,8 +1329,13 @@ void page_remove_rmap(struct page *page)
 	 * and not charged by memcg for now.
 	 */
 	if (unlikely(PageHuge(page)))
+<<<<<<< HEAD
 		goto out;
 	if (anon) {
+=======
+		return;
+	if (PageAnon(page)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mem_cgroup_uncharge_page(page);
 		if (!PageTransHuge(page))
 			__dec_zone_page_state(page, NR_ANON_PAGES);
@@ -1229,14 +1355,21 @@ void page_remove_rmap(struct page *page)
 	 * Leaving it set also helps swapoff to reinstate ptes
 	 * faster for those pages still in swapcache.
 	 */
+<<<<<<< HEAD
 out:
 	if (!anon)
 		mem_cgroup_end_update_page_stat(page, &locked, &flags);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * Subfunctions of try_to_unmap: try_to_unmap_one called
+<<<<<<< HEAD
  * repeatedly from try_to_unmap_ksm, try_to_unmap_anon or try_to_unmap_file.
+=======
+ * repeatedly from either try_to_unmap_anon or try_to_unmap_file.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
 		     unsigned long address, enum ttu_flags flags)
@@ -1309,7 +1442,11 @@ int try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
 			}
 			dec_mm_counter(mm, MM_ANONPAGES);
 			inc_mm_counter(mm, MM_SWAPENTS);
+<<<<<<< HEAD
 		} else if (IS_ENABLED(CONFIG_MIGRATION)) {
+=======
+		} else if (PAGE_MIGRATION) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * Store the pfn of the page in a special migration
 			 * pte. do_swap_page() will wait until the migration
@@ -1320,8 +1457,12 @@ int try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
 		}
 		set_pte_at(mm, address, pte, swp_entry_to_pte(entry));
 		BUG_ON(pte_file(*pte));
+<<<<<<< HEAD
 	} else if (IS_ENABLED(CONFIG_MIGRATION) &&
 		   (TTU_ACTION(flags) == TTU_MIGRATION)) {
+=======
+	} else if (PAGE_MIGRATION && (TTU_ACTION(flags) == TTU_MIGRATION)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Establish migration entry for a file page */
 		swp_entry_t entry;
 		entry = make_migration_entry(page, pte_write(pteval));
@@ -1527,7 +1668,11 @@ static int try_to_unmap_anon(struct page *page, enum ttu_flags flags)
 		 * locking requirements of exec(), migration skips
 		 * temporary VMAs until after exec() completes.
 		 */
+<<<<<<< HEAD
 		if (IS_ENABLED(CONFIG_MIGRATION) && (flags & TTU_MIGRATION) &&
+=======
+		if (PAGE_MIGRATION && (flags & TTU_MIGRATION) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				is_vma_temporary_stack(vma))
 			continue;
 

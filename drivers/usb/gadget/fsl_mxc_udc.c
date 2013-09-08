@@ -16,7 +16,10 @@
 #include <linux/err.h>
 #include <linux/fsl_devices.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/io.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/hardware.h>
 
@@ -89,6 +92,10 @@ eenahb:
 void fsl_udc_clk_finalize(struct platform_device *pdev)
 {
 	struct fsl_usb2_platform_data *pdata = pdev->dev.platform_data;
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SOC_IMX35)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cpu_is_mx35()) {
 		unsigned int v;
 
@@ -101,6 +108,10 @@ void fsl_udc_clk_finalize(struct platform_device *pdev)
 					USBPHYCTRL_OTGBASE_OFFSET));
 		}
 	}
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* ULPI transceivers don't need usbpll */
 	if (pdata->phy_mode == FSL_USB2_PHY_ULPI) {

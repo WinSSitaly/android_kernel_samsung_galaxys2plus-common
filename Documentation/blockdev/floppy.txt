@@ -49,7 +49,11 @@ you can put:
 
  options floppy omnibook messages
 
+<<<<<<< HEAD
 in a configuration file in /etc/modprobe.d/.
+=======
+in /etc/modprobe.conf.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
  The floppy driver related options are:

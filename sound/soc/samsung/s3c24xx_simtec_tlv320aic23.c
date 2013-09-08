@@ -7,7 +7,10 @@
  * published by the Free Software Foundation.
 */
 
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/soc.h>
 
 #include "s3c24xx_simtec.h"
@@ -55,12 +58,24 @@ static int simtec_tlv320aic23_init(struct snd_soc_pcm_runtime *rtd)
 	struct snd_soc_codec *codec = rtd->codec;
 	struct snd_soc_dapm_context *dapm = &codec->dapm;
 
+<<<<<<< HEAD
+=======
+	snd_soc_dapm_new_controls(dapm, dapm_widgets,
+				  ARRAY_SIZE(dapm_widgets));
+
+	snd_soc_dapm_add_routes(dapm, base_map, ARRAY_SIZE(base_map));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_soc_dapm_enable_pin(dapm, "Headphone Jack");
 	snd_soc_dapm_enable_pin(dapm, "Line In");
 	snd_soc_dapm_enable_pin(dapm, "Line Out");
 	snd_soc_dapm_enable_pin(dapm, "Mic Jack");
 
 	simtec_audio_init(rtd);
+<<<<<<< HEAD
+=======
+	snd_soc_dapm_sync(dapm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -78,6 +93,7 @@ static struct snd_soc_dai_link simtec_dai_aic23 = {
 /* simtec audio machine driver */
 static struct snd_soc_card snd_soc_machine_simtec_aic23 = {
 	.name		= "Simtec",
+<<<<<<< HEAD
 	.owner		= THIS_MODULE,
 	.dai_link	= &simtec_dai_aic23,
 	.num_links	= 1,
@@ -86,6 +102,10 @@ static struct snd_soc_card snd_soc_machine_simtec_aic23 = {
 	.num_dapm_widgets = ARRAY_SIZE(dapm_widgets),
 	.dapm_routes	= base_map,
 	.num_dapm_routes = ARRAY_SIZE(base_map),
+=======
+	.dai_link	= &simtec_dai_aic23,
+	.num_links	= 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __devinit simtec_audio_tlv320aic23_probe(struct platform_device *pd)
@@ -93,7 +113,11 @@ static int __devinit simtec_audio_tlv320aic23_probe(struct platform_device *pd)
 	return simtec_audio_core_probe(pd, &snd_soc_machine_simtec_aic23);
 }
 
+<<<<<<< HEAD
 static struct platform_driver simtec_audio_tlv320aic23_driver = {
+=======
+static struct platform_driver simtec_audio_tlv320aic23_platdrv = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.driver	= {
 		.owner	= THIS_MODULE,
 		.name	= "s3c24xx-simtec-tlv320aic23",
@@ -103,9 +127,27 @@ static struct platform_driver simtec_audio_tlv320aic23_driver = {
 	.remove	= __devexit_p(simtec_audio_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(simtec_audio_tlv320aic23_driver);
 
 MODULE_ALIAS("platform:s3c24xx-simtec-tlv320aic23");
+=======
+MODULE_ALIAS("platform:s3c24xx-simtec-tlv320aic23");
+
+static int __init simtec_tlv320aic23_modinit(void)
+{
+	return platform_driver_register(&simtec_audio_tlv320aic23_platdrv);
+}
+
+static void __exit simtec_tlv320aic23_modexit(void)
+{
+	platform_driver_unregister(&simtec_audio_tlv320aic23_platdrv);
+}
+
+module_init(simtec_tlv320aic23_modinit);
+module_exit(simtec_tlv320aic23_modexit);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_AUTHOR("Ben Dooks <ben@simtec.co.uk>");
 MODULE_DESCRIPTION("ALSA SoC Simtec Audio support");
 MODULE_LICENSE("GPL");

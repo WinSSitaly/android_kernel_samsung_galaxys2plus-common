@@ -53,7 +53,11 @@ int __init omap_init_opp_table(struct omap_opp_def *opp_def,
 	omap_table_init = 1;
 
 	/* Lets now register with OPP library */
+<<<<<<< HEAD
 	for (i = 0; i < opp_def_size; i++, opp_def++) {
+=======
+	for (i = 0; i < opp_def_size; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct omap_hwmod *oh;
 		struct device *dev;
 
@@ -64,12 +68,21 @@ int __init omap_init_opp_table(struct omap_opp_def *opp_def,
 		}
 		oh = omap_hwmod_lookup(opp_def->hwmod_name);
 		if (!oh || !oh->od) {
+<<<<<<< HEAD
 			pr_debug("%s: no hwmod or odev for %s, [%d] "
 				"cannot add OPPs.\n", __func__,
 				opp_def->hwmod_name, i);
 			continue;
 		}
 		dev = &oh->od->pdev->dev;
+=======
+			pr_warn("%s: no hwmod or odev for %s, [%d] "
+				"cannot add OPPs.\n", __func__,
+				opp_def->hwmod_name, i);
+			return -EINVAL;
+		}
+		dev = &oh->od->pdev.dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		r = opp_add(dev, opp_def->freq, opp_def->u_volt);
 		if (r) {
@@ -86,6 +99,10 @@ int __init omap_init_opp_table(struct omap_opp_def *opp_def,
 					__func__, opp_def->freq,
 					opp_def->hwmod_name, i, r);
 		}
+<<<<<<< HEAD
+=======
+		opp_def++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;

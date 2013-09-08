@@ -46,6 +46,12 @@ static int emi62_set_reset(struct usb_device *dev, unsigned char reset_bit);
 static int emi62_load_firmware (struct usb_device *dev);
 static int emi62_probe(struct usb_interface *intf, const struct usb_device_id *id);
 static void emi62_disconnect(struct usb_interface *intf);
+<<<<<<< HEAD
+=======
+static int __init emi62_init (void);
+static void __exit emi62_exit (void);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* thanks to drivers/usb/serial/keyspan_pda.c code */
 static int emi62_writememory(struct usb_device *dev, int address,
@@ -256,7 +262,11 @@ wraperr:
 	return err;
 }
 
+<<<<<<< HEAD
 static const struct usb_device_id id_table[] = {
+=======
+static const struct usb_device_id id_table[] __devinitconst = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ USB_DEVICE(EMI62_VENDOR_ID, EMI62_PRODUCT_ID) },
 	{ }                                             /* Terminating entry */
 };
@@ -287,7 +297,26 @@ static struct usb_driver emi62_driver = {
 	.id_table	= id_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(emi62_driver);
+=======
+static int __init emi62_init (void)
+{
+	int retval;
+	retval = usb_register (&emi62_driver);
+	if (retval)
+		printk(KERN_ERR "adi-emi: registration failed\n");
+	return retval;
+}
+
+static void __exit emi62_exit (void)
+{
+	usb_deregister (&emi62_driver);
+}
+
+module_init(emi62_init);
+module_exit(emi62_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Tapio Laxström");
 MODULE_DESCRIPTION("Emagic EMI 6|2m firmware loader.");

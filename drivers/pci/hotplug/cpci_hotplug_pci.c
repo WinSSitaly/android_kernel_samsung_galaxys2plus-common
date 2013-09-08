@@ -341,7 +341,11 @@ int cpci_unconfigure_slot(struct slot* slot)
 		dev = pci_get_slot(slot->bus,
 				    PCI_DEVFN(PCI_SLOT(slot->devfn), i));
 		if (dev) {
+<<<<<<< HEAD
 			pci_stop_and_remove_bus_device(dev);
+=======
+			pci_remove_bus_device(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pci_dev_put(dev);
 		}
 	}

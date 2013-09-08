@@ -561,7 +561,11 @@ static irqreturn_t bluecard_interrupt(int irq, void *dev_inst)
 
 static int bluecard_hci_set_baud_rate(struct hci_dev *hdev, int baud)
 {
+<<<<<<< HEAD
 	bluecard_info_t *info = hci_get_drvdata(hdev);
+=======
+	bluecard_info_t *info = (bluecard_info_t *)(hdev->driver_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sk_buff *skb;
 
 	/* Ericsson baud rate command */
@@ -609,7 +613,11 @@ static int bluecard_hci_set_baud_rate(struct hci_dev *hdev, int baud)
 
 static int bluecard_hci_flush(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	bluecard_info_t *info = hci_get_drvdata(hdev);
+=======
+	bluecard_info_t *info = (bluecard_info_t *)(hdev->driver_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Drop TX queue */
 	skb_queue_purge(&(info->txq));
@@ -620,7 +628,11 @@ static int bluecard_hci_flush(struct hci_dev *hdev)
 
 static int bluecard_hci_open(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	bluecard_info_t *info = hci_get_drvdata(hdev);
+=======
+	bluecard_info_t *info = (bluecard_info_t *)(hdev->driver_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int iobase = info->p_dev->resource[0]->start;
 
 	if (test_bit(CARD_HAS_PCCARD_ID, &(info->hw_state)))
@@ -640,7 +652,11 @@ static int bluecard_hci_open(struct hci_dev *hdev)
 
 static int bluecard_hci_close(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	bluecard_info_t *info = hci_get_drvdata(hdev);
+=======
+	bluecard_info_t *info = (bluecard_info_t *)(hdev->driver_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int iobase = info->p_dev->resource[0]->start;
 
 	if (!test_and_clear_bit(HCI_RUNNING, &(hdev->flags)))
@@ -667,7 +683,11 @@ static int bluecard_hci_send_frame(struct sk_buff *skb)
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	info = hci_get_drvdata(hdev);
+=======
+	info = (bluecard_info_t *)(hdev->driver_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (bt_cb(skb)->pkt_type) {
 	case HCI_COMMAND_PKT:
@@ -691,6 +711,14 @@ static int bluecard_hci_send_frame(struct sk_buff *skb)
 }
 
 
+<<<<<<< HEAD
+=======
+static void bluecard_hci_destruct(struct hci_dev *hdev)
+{
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int bluecard_hci_ioctl(struct hci_dev *hdev, unsigned int cmd, unsigned long arg)
 {
 	return -ENOIOCTLCMD;
@@ -729,15 +757,27 @@ static int bluecard_open(bluecard_info_t *info)
 	info->hdev = hdev;
 
 	hdev->bus = HCI_PCCARD;
+<<<<<<< HEAD
 	hci_set_drvdata(hdev, info);
+=======
+	hdev->driver_data = info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	SET_HCIDEV_DEV(hdev, &info->p_dev->dev);
 
 	hdev->open     = bluecard_hci_open;
 	hdev->close    = bluecard_hci_close;
 	hdev->flush    = bluecard_hci_flush;
 	hdev->send     = bluecard_hci_send_frame;
+<<<<<<< HEAD
 	hdev->ioctl    = bluecard_hci_ioctl;
 
+=======
+	hdev->destruct = bluecard_hci_destruct;
+	hdev->ioctl    = bluecard_hci_ioctl;
+
+	hdev->owner = THIS_MODULE;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	id = inb(iobase + 0x30);
 
 	if ((id & 0x0f) == 0x02)
@@ -836,7 +876,13 @@ static int bluecard_close(bluecard_info_t *info)
 	/* Turn FPGA off */
 	outb(0x80, iobase + 0x30);
 
+<<<<<<< HEAD
 	hci_unregister_dev(hdev);
+=======
+	if (hci_unregister_dev(hdev) < 0)
+		BT_ERR("Can't unregister HCI device %s", hdev->name);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hci_free_dev(hdev);
 
 	return 0;

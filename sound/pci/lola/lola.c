@@ -20,7 +20,11 @@
 
 #include <linux/kernel.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/dma-mapping.h>
 #include <linux/delay.h>
 #include <linux/interrupt.h>
@@ -35,7 +39,11 @@
 /* Standard options */
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_array(index, int, NULL, 0444);
 MODULE_PARM_DESC(index, "Index value for Digigram Lola driver.");
@@ -648,7 +656,11 @@ static int __devinit lola_create(struct snd_card *card, struct pci_dev *pci,
 		goto errout;
 
 	if (request_irq(pci->irq, lola_interrupt, IRQF_SHARED,
+<<<<<<< HEAD
 			KBUILD_MODNAME, chip)) {
+=======
+			DRVNAME, chip)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR SFX "unable to grab IRQ %d\n", pci->irq);
 		err = -EBUSY;
 		goto errout;
@@ -771,7 +783,11 @@ MODULE_DEVICE_TABLE(pci, lola_ids);
 
 /* pci_driver definition */
 static struct pci_driver driver = {
+<<<<<<< HEAD
 	.name = KBUILD_MODNAME,
+=======
+	.name = DRVNAME,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table = lola_ids,
 	.probe = lola_probe,
 	.remove = __devexit_p(lola_remove),

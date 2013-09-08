@@ -88,7 +88,12 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
 
 	ret = install_special_mapping(mm, addr, PAGE_SIZE,
 				      VM_READ|VM_EXEC|
+<<<<<<< HEAD
 				      VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
+=======
+				      VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC|
+				      VM_ALWAYSDUMP,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      &vdso_page);
 
 	if (ret)

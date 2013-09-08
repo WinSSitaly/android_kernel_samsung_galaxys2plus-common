@@ -4,6 +4,7 @@
  *
  * See LICENSE.qla2xxx for copyright and licensing details.
  */
+<<<<<<< HEAD
 
 /*
  * Table for showing the current message id in use for particular level
@@ -35,12 +36,17 @@
  * ----------------------------------------------------------------------
  */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "qla_def.h"
 
 #include <linux/delay.h>
 
+<<<<<<< HEAD
 static uint32_t ql_dbg_offset = 0x800;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void
 qla2xxx_prep_dump(struct qla_hw_data *ha, struct qla2xxx_fw_dump *fw_dump)
 {
@@ -89,7 +95,11 @@ qla24xx_dump_ram(struct qla_hw_data *ha, uint32_t addr, uint32_t *ram,
 	WRT_REG_WORD(&reg->mailbox0, MBC_DUMP_RISC_RAM_EXTENDED);
 	clear_bit(MBX_INTERRUPT, &ha->mbx_cmd_flags);
 
+<<<<<<< HEAD
 	dwords = qla2x00_gid_list_size(ha) / 4;
+=======
+	dwords = GID_LIST_SIZE / 4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (cnt = 0; cnt < ram_dwords && rval == QLA_SUCCESS;
 	    cnt += dwords, addr += dwords) {
 		if (cnt + dwords > ram_dwords)
@@ -264,7 +274,11 @@ qla2xxx_dump_ram(struct qla_hw_data *ha, uint32_t addr, uint16_t *ram,
 	WRT_MAILBOX_REG(ha, reg, 0, MBC_DUMP_RISC_RAM_EXTENDED);
 	clear_bit(MBX_INTERRUPT, &ha->mbx_cmd_flags);
 
+<<<<<<< HEAD
 	words = qla2x00_gid_list_size(ha) / 2;
+=======
+	words = GID_LIST_SIZE / 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (cnt = 0; cnt < ram_words && rval == QLA_SUCCESS;
 	    cnt += words, addr += words) {
 		if (cnt + words > ram_words)
@@ -375,6 +389,7 @@ qla25xx_copy_fce(struct qla_hw_data *ha, void *ptr, uint32_t **last_chain)
 
 	memcpy(iter_reg, ha->fce, ntohl(fcec->size));
 
+<<<<<<< HEAD
 	return (char *)iter_reg + ntohl(fcec->size);
 }
 
@@ -447,6 +462,9 @@ qla25xx_copy_mqueues(struct qla_hw_data *ha, void *ptr, uint32_t **last_chain)
 	}
 
 	return ptr;
+=======
+	return iter_reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void *
@@ -457,7 +475,11 @@ qla25xx_copy_mq(struct qla_hw_data *ha, void *ptr, uint32_t **last_chain)
 	struct qla2xxx_mq_chain *mq = ptr;
 	struct device_reg_25xxmq __iomem *reg;
 
+<<<<<<< HEAD
 	if (!ha->mqenable || IS_QLA83XX(ha))
+=======
+	if (!ha->mqenable)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ptr;
 
 	mq = ptr;
@@ -481,17 +503,29 @@ qla25xx_copy_mq(struct qla_hw_data *ha, void *ptr, uint32_t **last_chain)
 	return ptr + sizeof(struct qla2xxx_mq_chain);
 }
 
+<<<<<<< HEAD
 void
+=======
+static void
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 qla2xxx_dump_post_process(scsi_qla_host_t *vha, int rval)
 {
 	struct qla_hw_data *ha = vha->hw;
 
 	if (rval != QLA_SUCCESS) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0xd000,
 		    "Failed to dump firmware (%x).\n", rval);
 		ha->fw_dumped = 0;
 	} else {
 		ql_log(ql_log_info, vha, 0xd001,
+=======
+		qla_printk(KERN_WARNING, ha,
+		    "Failed to dump firmware (%x)!!!\n", rval);
+		ha->fw_dumped = 0;
+	} else {
+		qla_printk(KERN_INFO, ha,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    "Firmware dump saved to temp buffer (%ld/%p).\n",
 		    vha->host_no, ha->fw_dump);
 		ha->fw_dumped = 1;
@@ -523,16 +557,27 @@ qla2300_fw_dump(scsi_qla_host_t *vha, int hardware_locked)
 		spin_lock_irqsave(&ha->hardware_lock, flags);
 
 	if (!ha->fw_dump) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0xd002,
 		    "No buffer available for dump.\n");
+=======
+		qla_printk(KERN_WARNING, ha,
+		    "No buffer available for dump!!!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto qla2300_fw_dump_failed;
 	}
 
 	if (ha->fw_dumped) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0xd003,
 		    "Firmware has been previously dumped (%p) "
 		    "-- ignoring request.\n",
 		    ha->fw_dump);
+=======
+		qla_printk(KERN_WARNING, ha,
+		    "Firmware has been previously dumped (%p) -- ignoring "
+		    "request...\n", ha->fw_dump);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto qla2300_fw_dump_failed;
 	}
 	fw = &ha->fw_dump->isp.isp23;
@@ -687,16 +732,27 @@ qla2100_fw_dump(scsi_qla_host_t *vha, int hardware_locked)
 		spin_lock_irqsave(&ha->hardware_lock, flags);
 
 	if (!ha->fw_dump) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0xd004,
 		    "No buffer available for dump.\n");
+=======
+		qla_printk(KERN_WARNING, ha,
+		    "No buffer available for dump!!!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto qla2100_fw_dump_failed;
 	}
 
 	if (ha->fw_dumped) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0xd005,
 		    "Firmware has been previously dumped (%p) "
 		    "-- ignoring request.\n",
 		    ha->fw_dump);
+=======
+		qla_printk(KERN_WARNING, ha,
+		    "Firmware has been previously dumped (%p) -- ignoring "
+		    "request...\n", ha->fw_dump);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto qla2100_fw_dump_failed;
 	}
 	fw = &ha->fw_dump->isp.isp21;
@@ -885,16 +941,27 @@ qla24xx_fw_dump(scsi_qla_host_t *vha, int hardware_locked)
 		spin_lock_irqsave(&ha->hardware_lock, flags);
 
 	if (!ha->fw_dump) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0xd006,
 		    "No buffer available for dump.\n");
+=======
+		qla_printk(KERN_WARNING, ha,
+		    "No buffer available for dump!!!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto qla24xx_fw_dump_failed;
 	}
 
 	if (ha->fw_dumped) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0xd007,
 		    "Firmware has been previously dumped (%p) "
 		    "-- ignoring request.\n",
 		    ha->fw_dump);
+=======
+		qla_printk(KERN_WARNING, ha,
+		    "Firmware has been previously dumped (%p) -- ignoring "
+		    "request...\n", ha->fw_dump);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto qla24xx_fw_dump_failed;
 	}
 	fw = &ha->fw_dump->isp.isp24;
@@ -1124,16 +1191,27 @@ qla25xx_fw_dump(scsi_qla_host_t *vha, int hardware_locked)
 		spin_lock_irqsave(&ha->hardware_lock, flags);
 
 	if (!ha->fw_dump) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0xd008,
 		    "No buffer available for dump.\n");
+=======
+		qla_printk(KERN_WARNING, ha,
+		    "No buffer available for dump!!!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto qla25xx_fw_dump_failed;
 	}
 
 	if (ha->fw_dumped) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0xd009,
 		    "Firmware has been previously dumped (%p) "
 		    "-- ignoring request.\n",
 		    ha->fw_dump);
+=======
+		qla_printk(KERN_WARNING, ha,
+		    "Firmware has been previously dumped (%p) -- ignoring "
+		    "request...\n", ha->fw_dump);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto qla25xx_fw_dump_failed;
 	}
 	fw = &ha->fw_dump->isp.isp25;
@@ -1397,16 +1475,23 @@ qla25xx_fw_dump(scsi_qla_host_t *vha, int hardware_locked)
 	nxt = qla24xx_copy_eft(ha, nxt);
 
 	/* Chain entries -- started with MQ. */
+<<<<<<< HEAD
 	nxt_chain = qla25xx_copy_fce(ha, nxt_chain, &last_chain);
 	nxt_chain = qla25xx_copy_mqueues(ha, nxt_chain, &last_chain);
+=======
+	qla25xx_copy_fce(ha, nxt_chain, &last_chain);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (last_chain) {
 		ha->fw_dump->version |= __constant_htonl(DUMP_CHAIN_VARIANT);
 		*last_chain |= __constant_htonl(DUMP_CHAIN_LAST);
 	}
 
+<<<<<<< HEAD
 	/* Adjust valid length. */
 	ha->fw_dump_len = (nxt_chain - (void *)ha->fw_dump);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 qla25xx_fw_dump_failed_0:
 	qla2xxx_dump_post_process(base_vha, rval);
 
@@ -1440,16 +1525,27 @@ qla81xx_fw_dump(scsi_qla_host_t *vha, int hardware_locked)
 		spin_lock_irqsave(&ha->hardware_lock, flags);
 
 	if (!ha->fw_dump) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0xd00a,
 		    "No buffer available for dump.\n");
+=======
+		qla_printk(KERN_WARNING, ha,
+		    "No buffer available for dump!!!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto qla81xx_fw_dump_failed;
 	}
 
 	if (ha->fw_dumped) {
+<<<<<<< HEAD
 		ql_log(ql_log_warn, vha, 0xd00b,
 		    "Firmware has been previously dumped (%p) "
 		    "-- ignoring request.\n",
 		    ha->fw_dump);
+=======
+		qla_printk(KERN_WARNING, ha,
+		    "Firmware has been previously dumped (%p) -- ignoring "
+		    "request...\n", ha->fw_dump);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto qla81xx_fw_dump_failed;
 	}
 	fw = &ha->fw_dump->isp.isp81;
@@ -1715,16 +1811,23 @@ qla81xx_fw_dump(scsi_qla_host_t *vha, int hardware_locked)
 	nxt = qla24xx_copy_eft(ha, nxt);
 
 	/* Chain entries -- started with MQ. */
+<<<<<<< HEAD
 	nxt_chain = qla25xx_copy_fce(ha, nxt_chain, &last_chain);
 	nxt_chain = qla25xx_copy_mqueues(ha, nxt_chain, &last_chain);
+=======
+	qla25xx_copy_fce(ha, nxt_chain, &last_chain);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (last_chain) {
 		ha->fw_dump->version |= __constant_htonl(DUMP_CHAIN_VARIANT);
 		*last_chain |= __constant_htonl(DUMP_CHAIN_LAST);
 	}
 
+<<<<<<< HEAD
 	/* Adjust valid length. */
 	ha->fw_dump_len = (nxt_chain - (void *)ha->fw_dump);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 qla81xx_fw_dump_failed_0:
 	qla2xxx_dump_post_process(base_vha, rval);
 
@@ -1733,6 +1836,7 @@ qla81xx_fw_dump_failed:
 		spin_unlock_irqrestore(&ha->hardware_lock, flags);
 }
 
+<<<<<<< HEAD
 void
 qla83xx_fw_dump(scsi_qla_host_t *vha, int hardware_locked)
 {
@@ -2234,10 +2338,13 @@ qla83xx_fw_dump_failed:
 		spin_unlock_irqrestore(&ha->hardware_lock, flags);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /****************************************************************************/
 /*                         Driver Debug Functions.                          */
 /****************************************************************************/
 
+<<<<<<< HEAD
 static inline int
 ql_mask_match(uint32_t level)
 {
@@ -2440,11 +2547,16 @@ ql_log_pci(uint32_t level, struct pci_dev *pdev, int32_t id,
 
 void
 ql_dump_regs(uint32_t level, scsi_qla_host_t *vha, int32_t id)
+=======
+void
+qla2x00_dump_regs(scsi_qla_host_t *vha)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 	struct qla_hw_data *ha = vha->hw;
 	struct device_reg_2xxx __iomem *reg = &ha->iobase->isp;
 	struct device_reg_24xx __iomem *reg24 = &ha->iobase->isp24;
+<<<<<<< HEAD
 	struct device_reg_82xx __iomem *reg82 = &ha->iobase->isp82;
 	uint16_t __iomem *mbx_reg;
 
@@ -2462,16 +2574,32 @@ ql_dump_regs(uint32_t level, scsi_qla_host_t *vha, int32_t id)
 	for (i = 0; i < 6; i++)
 		ql_dbg(level, vha, id,
 		    "mbox[%d] 0x%04x\n", i, RD_REG_WORD(mbx_reg++));
+=======
+	uint16_t __iomem *mbx_reg;
+
+	mbx_reg = IS_FWI2_CAPABLE(ha) ? &reg24->mailbox0:
+	    MAILBOX_REG(ha, reg, 0);
+
+	printk("Mailbox registers:\n");
+	for (i = 0; i < 6; i++)
+		printk("scsi(%ld): mbox %d 0x%04x \n", vha->host_no, i,
+		    RD_REG_WORD(mbx_reg++));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
 void
+<<<<<<< HEAD
 ql_dump_buffer(uint32_t level, scsi_qla_host_t *vha, int32_t id,
 	uint8_t *b, uint32_t size)
+=======
+qla2x00_dump_buffer(uint8_t * b, uint32_t size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	uint32_t cnt;
 	uint8_t c;
 
+<<<<<<< HEAD
 	if (!ql_mask_match(level))
 		return;
 
@@ -2484,6 +2612,16 @@ ql_dump_buffer(uint32_t level, scsi_qla_host_t *vha, int32_t id,
 	for (cnt = 0; cnt < size;) {
 		c = *b++;
 		printk("%02x", (uint32_t) c);
+=======
+	printk(" 0   1   2   3   4   5   6   7   8   9  "
+	    "Ah  Bh  Ch  Dh  Eh  Fh\n");
+	printk("----------------------------------------"
+	    "----------------------\n");
+
+	for (cnt = 0; cnt < size;) {
+		c = *b++;
+		printk("%02x",(uint32_t) c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cnt++;
 		if (!(cnt % 16))
 			printk("\n");
@@ -2491,5 +2629,69 @@ ql_dump_buffer(uint32_t level, scsi_qla_host_t *vha, int32_t id,
 			printk("  ");
 	}
 	if (cnt % 16)
+<<<<<<< HEAD
 		ql_dbg(level, vha, id, "\n");
+=======
+		printk("\n");
+}
+
+void
+qla2x00_dump_buffer_zipped(uint8_t *b, uint32_t size)
+{
+	uint32_t cnt;
+	uint8_t c;
+	uint8_t  last16[16], cur16[16];
+	uint32_t lc = 0, num_same16 = 0, j;
+
+	printk(KERN_DEBUG " 0   1   2   3   4   5   6   7   8   9  "
+	    "Ah  Bh  Ch  Dh  Eh  Fh\n");
+	printk(KERN_DEBUG "----------------------------------------"
+	    "----------------------\n");
+
+	for (cnt = 0; cnt < size;) {
+		c = *b++;
+
+		cur16[lc++] = c;
+
+		cnt++;
+		if (cnt % 16)
+			continue;
+
+		/* We have 16 now */
+		lc = 0;
+		if (num_same16 == 0) {
+			memcpy(last16, cur16, 16);
+			num_same16++;
+			continue;
+		}
+		if (memcmp(cur16, last16, 16) == 0) {
+			num_same16++;
+			continue;
+		}
+		for (j = 0; j < 16; j++)
+			printk(KERN_DEBUG "%02x  ", (uint32_t)last16[j]);
+		printk(KERN_DEBUG "\n");
+
+		if (num_same16 > 1)
+			printk(KERN_DEBUG "> prev pattern repeats (%u)"
+			    "more times\n", num_same16-1);
+		memcpy(last16, cur16, 16);
+		num_same16 = 1;
+	}
+
+	if (num_same16) {
+		for (j = 0; j < 16; j++)
+			printk(KERN_DEBUG "%02x  ", (uint32_t)last16[j]);
+		printk(KERN_DEBUG "\n");
+
+		if (num_same16 > 1)
+			printk(KERN_DEBUG "> prev pattern repeats (%u)"
+			    "more times\n", num_same16-1);
+	}
+	if (lc) {
+		for (j = 0; j < lc; j++)
+			printk(KERN_DEBUG "%02x  ", (uint32_t)cur16[j]);
+		printk(KERN_DEBUG "\n");
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

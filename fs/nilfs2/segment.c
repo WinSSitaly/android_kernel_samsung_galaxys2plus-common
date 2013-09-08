@@ -2309,8 +2309,11 @@ nilfs_remove_written_gcinodes(struct the_nilfs *nilfs, struct list_head *head)
 		if (!test_bit(NILFS_I_UPDATED, &ii->i_state))
 			continue;
 		list_del_init(&ii->i_dirty);
+<<<<<<< HEAD
 		truncate_inode_pages(&ii->vfs_inode.i_data, 0);
 		nilfs_btnode_cache_clear(&ii->i_btnode_cache);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iput(&ii->vfs_inode);
 	}
 }
@@ -2472,7 +2475,11 @@ static int nilfs_segctor_thread(void *arg)
 
 	if (freezing(current)) {
 		spin_unlock(&sci->sc_state_lock);
+<<<<<<< HEAD
 		try_to_freeze();
+=======
+		refrigerator();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_lock(&sci->sc_state_lock);
 	} else {
 		DEFINE_WAIT(wait);

@@ -18,7 +18,10 @@
  * of the OMAP PM core code.
  */
 
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include "cm2xxx_3xxx.h"
 #include "prm2xxx_3xxx.h"

@@ -5,7 +5,11 @@
  ******************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,6 +55,7 @@ ACPI_MODULE_NAME("rscreate")
 
 /*******************************************************************************
  *
+<<<<<<< HEAD
  * FUNCTION:    acpi_buffer_to_resource
  *
  * PARAMETERS:  aml_buffer          - Pointer to the resource byte stream
@@ -115,6 +120,8 @@ acpi_buffer_to_resource(u8 *aml_buffer,
 
 /*******************************************************************************
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * FUNCTION:    acpi_rs_create_resource_list
  *
  * PARAMETERS:  aml_buffer          - Pointer to the resource byte stream
@@ -130,10 +137,16 @@ acpi_buffer_to_resource(u8 *aml_buffer,
  *              of device resources.
  *
  ******************************************************************************/
+<<<<<<< HEAD
 
 acpi_status
 acpi_rs_create_resource_list(union acpi_operand_object *aml_buffer,
 			     struct acpi_buffer * output_buffer)
+=======
+acpi_status
+acpi_rs_create_resource_list(union acpi_operand_object *aml_buffer,
+			     struct acpi_buffer *output_buffer)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 
 	acpi_status status;

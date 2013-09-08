@@ -3,7 +3,11 @@
  * Copyright (C) 2007 David S. Miller <davem@davemloft.net>
  */
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 
 #include <asm/hypervisor.h>

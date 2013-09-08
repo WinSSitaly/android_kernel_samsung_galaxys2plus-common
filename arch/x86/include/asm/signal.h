@@ -125,8 +125,11 @@ typedef unsigned long sigset_t;
 extern void do_notify_resume(struct pt_regs *, void *, __u32);
 # endif /* __KERNEL__ */
 
+<<<<<<< HEAD
 #define __ARCH_HAS_SA_RESTORER
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef __i386__
 # ifdef __KERNEL__
 struct old_sigaction {

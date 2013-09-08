@@ -11,7 +11,11 @@
  */
 #include <mach/ep93xx-regs.h>
 
+<<<<<<< HEAD
 		.macro	addruart, rp, rv, tmp
+=======
+		.macro	addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ldr	\rp, =EP93XX_APB_PHYS_BASE	@ Physical base
 		ldr	\rv, =EP93XX_APB_VIRT_BASE	@ virtual base
 		orr	\rp, \rp, #0x000c0000

@@ -67,7 +67,11 @@ static const struct stb0899_tab stb0899_cn_tab[] = {
  * Crude linear extrapolation below -84.8dBm and above -8.0dBm.
  */
 static const struct stb0899_tab stb0899_dvbsrf_tab[] = {
+<<<<<<< HEAD
 	{ -750,	-128 },
+=======
+	{ -950,	-128 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ -748,	 -94 },
 	{ -745,	 -92 },
 	{ -735,	 -90 },
@@ -131,7 +135,11 @@ static const struct stb0899_tab stb0899_dvbs2rf_tab[] = {
 	{ -730,	13645 },
 	{ -750,	13909 },
 	{ -766,	14153 },
+<<<<<<< HEAD
 	{ -950,	16383 }
+=======
+	{ -999,	16383 }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* DVB-S2 Es/N0 quant in dB/100 vs read value * 100*/
@@ -706,7 +714,11 @@ static int stb0899_send_diseqc_msg(struct dvb_frontend *fe, struct dvb_diseqc_ma
 	stb0899_write_reg(state, STB0899_DISCNTRL1, reg);
 	for (i = 0; i < cmd->msg_len; i++) {
 		/* wait for FIFO empty	*/
+<<<<<<< HEAD
 		if (stb0899_wait_diseqc_fifo_empty(state, 100) < 0)
+=======
+		if (stb0899_wait_diseqc_fifo_empty(state, 10) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ETIMEDOUT;
 
 		stb0899_write_reg(state, STB0899_DISFIFO, cmd->msg[i]);
@@ -964,7 +976,10 @@ static int stb0899_read_signal_strength(struct dvb_frontend *fe, u16 *strength)
 
 	int val;
 	u32 reg;
+<<<<<<< HEAD
 	*strength = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (state->delsys) {
 	case SYS_DVBS:
 	case SYS_DSS:
@@ -984,11 +999,19 @@ static int stb0899_read_signal_strength(struct dvb_frontend *fe, u16 *strength)
 		break;
 	case SYS_DVBS2:
 		if (internal->lock) {
+<<<<<<< HEAD
 			reg = STB0899_READ_S2REG(STB0899_S2DEMOD, IF_AGC_GAIN);
 			val = STB0899_GETFIELD(IF_AGC_GAIN, reg);
 
 			*strength = stb0899_table_lookup(stb0899_dvbs2rf_tab, ARRAY_SIZE(stb0899_dvbs2rf_tab) - 1, val);
 			*strength += 950;
+=======
+			reg = STB0899_READ_S2REG(STB0899_DEMOD, IF_AGC_GAIN);
+			val = STB0899_GETFIELD(IF_AGC_GAIN, reg);
+
+			*strength = stb0899_table_lookup(stb0899_dvbs2rf_tab, ARRAY_SIZE(stb0899_dvbs2rf_tab) - 1, val);
+			*strength += 750;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dprintk(state->verbose, FE_DEBUG, 1, "IF_AGC_GAIN = 0x%04x, C = %d * 0.1 dBm",
 				val & 0x3fff, *strength);
 		}
@@ -1010,7 +1033,10 @@ static int stb0899_read_snr(struct dvb_frontend *fe, u16 *snr)
 	u8 buf[2];
 	u32 reg;
 
+<<<<<<< HEAD
 	*snr = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	reg  = stb0899_read_reg(state, STB0899_VSTATUS);
 	switch (state->delsys) {
 	case SYS_DVBS:
@@ -1073,7 +1099,11 @@ static int stb0899_read_status(struct dvb_frontend *fe, enum fe_status *status)
 			reg  = stb0899_read_reg(state, STB0899_VSTATUS);
 			if (STB0899_GETFIELD(VSTATUS_LOCKEDVIT, reg)) {
 				dprintk(state->verbose, FE_DEBUG, 1, "--------> FE_HAS_CARRIER | FE_HAS_LOCK");
+<<<<<<< HEAD
 				*status |= FE_HAS_SIGNAL | FE_HAS_CARRIER | FE_HAS_LOCK;
+=======
+				*status |= FE_HAS_CARRIER | FE_HAS_LOCK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				reg = stb0899_read_reg(state, STB0899_PLPARM);
 				if (STB0899_GETFIELD(VITCURPUN, reg)) {
@@ -1428,12 +1458,21 @@ static void stb0899_set_iterations(struct stb0899_state *state)
 	if (iter_scale > config->ldpc_max_iter)
 		iter_scale = config->ldpc_max_iter;
 
+<<<<<<< HEAD
 	reg = STB0899_READ_S2REG(STB0899_S2FEC, MAX_ITER);
 	STB0899_SETFIELD_VAL(MAX_ITERATIONS, reg, iter_scale);
 	stb0899_write_s2reg(state, STB0899_S2FEC, STB0899_BASE_MAX_ITER, STB0899_OFF0_MAX_ITER, reg);
 }
 
 static enum dvbfe_search stb0899_search(struct dvb_frontend *fe)
+=======
+	reg = STB0899_READ_S2REG(STB0899_S2DEMOD, MAX_ITER);
+	STB0899_SETFIELD_VAL(MAX_ITERATIONS, reg, iter_scale);
+	stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_MAX_ITER, STB0899_OFF0_MAX_ITER, reg);
+}
+
+static enum dvbfe_search stb0899_search(struct dvb_frontend *fe, struct dvb_frontend_parameters *p)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct stb0899_state *state = fe->demodulator_priv;
 	struct stb0899_params *i_params = &state->params;
@@ -1443,8 +1482,13 @@ static enum dvbfe_search stb0899_search(struct dvb_frontend *fe)
 
 	u32 SearchRange, gain;
 
+<<<<<<< HEAD
 	i_params->freq	= props->frequency;
 	i_params->srate = props->symbol_rate;
+=======
+	i_params->freq	= p->frequency;
+	i_params->srate = p->u.qpsk.symbol_rate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	state->delsys = props->delivery_system;
 	dprintk(state->verbose, FE_DEBUG, 1, "delivery system=%d", state->delsys);
 
@@ -1570,15 +1614,45 @@ static enum dvbfe_search stb0899_search(struct dvb_frontend *fe)
 
 	return DVBFE_ALGO_SEARCH_ERROR;
 }
+<<<<<<< HEAD
 
 static int stb0899_get_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+/*
+ * stb0899_track
+ * periodically check the signal level against a specified
+ * threshold level and perform derotator centering.
+ * called once we have a lock from a successful search
+ * event.
+ *
+ * Will be called periodically called to maintain the
+ * lock.
+ *
+ * Will be used to get parameters as well as info from
+ * the decoded baseband header
+ *
+ * Once a new lock has established, the internal state
+ * frequency (internal->freq) is updated
+ */
+static int stb0899_track(struct dvb_frontend *fe, struct dvb_frontend_parameters *p)
+{
+	return 0;
+}
+
+static int stb0899_get_frontend(struct dvb_frontend *fe, struct dvb_frontend_parameters *p)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct stb0899_state *state		= fe->demodulator_priv;
 	struct stb0899_internal *internal	= &state->internal;
 
 	dprintk(state->verbose, FE_DEBUG, 1, "Get params");
+<<<<<<< HEAD
 	p->symbol_rate = internal->srate;
+=======
+	p->u.qpsk.symbol_rate = internal->srate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1589,9 +1663,16 @@ static enum dvbfe_algo stb0899_frontend_algo(struct dvb_frontend *fe)
 }
 
 static struct dvb_frontend_ops stb0899_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_DVBS, SYS_DVBS2, SYS_DSS },
 	.info = {
 		.name 			= "STB0899 Multistandard",
+=======
+
+	.info = {
+		.name 			= "STB0899 Multistandard",
+		.type 			= FE_QPSK,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min		= 950000,
 		.frequency_max 		= 2150000,
 		.frequency_stepsize	= 0,
@@ -1614,7 +1695,12 @@ static struct dvb_frontend_ops stb0899_ops = {
 
 	.get_frontend_algo		= stb0899_frontend_algo,
 	.search				= stb0899_search,
+<<<<<<< HEAD
 	.get_frontend                   = stb0899_get_frontend,
+=======
+	.track				= stb0899_track,
+	.get_frontend			= stb0899_get_frontend,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 	.read_status			= stb0899_read_status,

@@ -2,7 +2,10 @@
 #define _LINUX_INIT_H
 
 #include <linux/compiler.h>
+<<<<<<< HEAD
 #include <linux/types.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* These macros are used to mark some functions or 
  * initialized data (doesn't apply to uninitialized data)
@@ -157,7 +160,11 @@ void prepare_namespace(void);
 
 extern void (*late_time_init)(void);
 
+<<<<<<< HEAD
 extern bool initcall_debug;
+=======
+extern int initcall_debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif
   

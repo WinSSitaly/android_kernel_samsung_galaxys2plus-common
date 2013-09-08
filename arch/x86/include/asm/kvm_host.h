@@ -16,18 +16,25 @@
 #include <linux/mmu_notifier.h>
 #include <linux/tracepoint.h>
 #include <linux/cpumask.h>
+<<<<<<< HEAD
 #include <linux/irq_work.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/kvm.h>
 #include <linux/kvm_para.h>
 #include <linux/kvm_types.h>
+<<<<<<< HEAD
 #include <linux/perf_event.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/pvclock-abi.h>
 #include <asm/desc.h>
 #include <asm/mtrr.h>
 #include <asm/msr-index.h>
 
+<<<<<<< HEAD
 #define KVM_MAX_VCPUS 254
 #define KVM_SOFT_MAX_VCPUS 160
 #define KVM_MEMORY_SLOTS 32
@@ -35,6 +42,12 @@
 #define KVM_PRIVATE_MEM_SLOTS 4
 #define KVM_MEM_SLOTS_NUM (KVM_MEMORY_SLOTS + KVM_PRIVATE_MEM_SLOTS)
 
+=======
+#define KVM_MAX_VCPUS 64
+#define KVM_MEMORY_SLOTS 32
+/* memory slots that does not exposed to userspace */
+#define KVM_PRIVATE_MEM_SLOTS 4
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define KVM_MMIO_SIZE 16
 
 #define KVM_PIO_PAGE_OFFSET 1
@@ -53,7 +66,11 @@
 	(~(unsigned long)(X86_CR4_VME | X86_CR4_PVI | X86_CR4_TSD | X86_CR4_DE\
 			  | X86_CR4_PSE | X86_CR4_PAE | X86_CR4_MCE     \
 			  | X86_CR4_PGE | X86_CR4_PCE | X86_CR4_OSFXSR  \
+<<<<<<< HEAD
 			  | X86_CR4_OSXSAVE | X86_CR4_SMEP | X86_CR4_RDWRGSFS \
+=======
+			  | X86_CR4_OSXSAVE \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  | X86_CR4_OSXMMEXCPT | X86_CR4_VMXE))
 
 #define CR8_RESERVED_BITS (~(unsigned long)X86_CR8_TPR)
@@ -181,6 +198,16 @@ struct kvm_mmu_memory_cache {
 	void *objects[KVM_NR_MEM_OBJS];
 };
 
+<<<<<<< HEAD
+=======
+#define NR_PTE_CHAIN_ENTRIES 5
+
+struct kvm_pte_chain {
+	u64 *parent_ptes[NR_PTE_CHAIN_ENTRIES];
+	struct hlist_node link;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * kvm_mmu_page_role, below, is defined as:
  *
@@ -203,7 +230,10 @@ union kvm_mmu_page_role {
 		unsigned invalid:1;
 		unsigned nxe:1;
 		unsigned cr0_wp:1;
+<<<<<<< HEAD
 		unsigned smep_andnot_wp:1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	};
 };
 
@@ -225,6 +255,7 @@ struct kvm_mmu_page {
 	 * One bit set per slot which has memory
 	 * in this shadow page.
 	 */
+<<<<<<< HEAD
 	DECLARE_BITMAP(slot_bitmap, KVM_MEM_SLOTS_NUM);
 	bool unsync;
 	int root_count;          /* Currently serving as active root */
@@ -239,6 +270,25 @@ struct kvm_mmu_page {
 	int write_flooding_count;
 
 	struct rcu_head rcu;
+=======
+	DECLARE_BITMAP(slot_bitmap, KVM_MEMORY_SLOTS + KVM_PRIVATE_MEM_SLOTS);
+	bool multimapped;         /* More than one parent_pte? */
+	bool unsync;
+	int root_count;          /* Currently serving as active root */
+	unsigned int unsync_children;
+	union {
+		u64 *parent_pte;               /* !multimapped */
+		struct hlist_head parent_ptes; /* multimapped, kvm_pte_chain */
+	};
+	DECLARE_BITMAP(unsync_child_bitmap, 512);
+};
+
+struct kvm_pv_mmu_op_buffer {
+	void *ptr;
+	unsigned len;
+	unsigned processed;
+	char buf[512] __aligned(sizeof(long));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct kvm_pio_request {
@@ -257,7 +307,10 @@ struct kvm_mmu {
 	void (*new_cr3)(struct kvm_vcpu *vcpu);
 	void (*set_cr3)(struct kvm_vcpu *vcpu, unsigned long root);
 	unsigned long (*get_cr3)(struct kvm_vcpu *vcpu);
+<<<<<<< HEAD
 	u64 (*get_pdptr)(struct kvm_vcpu *vcpu, int index);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*page_fault)(struct kvm_vcpu *vcpu, gva_t gva, u32 err,
 			  bool prefault);
 	void (*inject_page_fault)(struct kvm_vcpu *vcpu,
@@ -266,6 +319,11 @@ struct kvm_mmu {
 	gpa_t (*gva_to_gpa)(struct kvm_vcpu *vcpu, gva_t gva, u32 access,
 			    struct x86_exception *exception);
 	gpa_t (*translate_gpa)(struct kvm_vcpu *vcpu, gpa_t gpa, u32 access);
+<<<<<<< HEAD
+=======
+	void (*prefetch_page)(struct kvm_vcpu *vcpu,
+			      struct kvm_mmu_page *page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*sync_page)(struct kvm_vcpu *vcpu,
 			 struct kvm_mmu_page *sp);
 	void (*invlpg)(struct kvm_vcpu *vcpu, gva_t gva);
@@ -286,6 +344,7 @@ struct kvm_mmu {
 	u64 pdptrs[4]; /* pae */
 };
 
+<<<<<<< HEAD
 enum pmc_type {
 	KVM_PMC_GP = 0,
 	KVM_PMC_FIXED,
@@ -317,6 +376,8 @@ struct kvm_pmu {
 	u64 reprogram_pmi;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct kvm_vcpu_arch {
 	/*
 	 * rip and regs accesses must go through
@@ -368,10 +429,27 @@ struct kvm_vcpu_arch {
 	 */
 	struct kvm_mmu *walk_mmu;
 
+<<<<<<< HEAD
 	struct kvm_mmu_memory_cache mmu_pte_list_desc_cache;
 	struct kvm_mmu_memory_cache mmu_page_cache;
 	struct kvm_mmu_memory_cache mmu_page_header_cache;
 
+=======
+	/* only needed in kvm_pv_mmu_op() path, but it's hot so
+	 * put it here to avoid allocation */
+	struct kvm_pv_mmu_op_buffer mmu_op_buffer;
+
+	struct kvm_mmu_memory_cache mmu_pte_chain_cache;
+	struct kvm_mmu_memory_cache mmu_rmap_desc_cache;
+	struct kvm_mmu_memory_cache mmu_page_cache;
+	struct kvm_mmu_memory_cache mmu_page_header_cache;
+
+	gfn_t last_pt_write_gfn;
+	int   last_pt_write_count;
+	u64  *last_pte_updated;
+	gfn_t last_pte_gfn;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct fpu guest_fpu;
 	u64 xcr0;
 
@@ -407,6 +485,7 @@ struct kvm_vcpu_arch {
 	gpa_t time;
 	struct pvclock_vcpu_time_info hv_clock;
 	unsigned int hw_tsc_khz;
+<<<<<<< HEAD
 	struct gfn_to_hva_cache pv_time;
 	bool pv_time_enabled;
 
@@ -434,6 +513,21 @@ struct kvm_vcpu_arch {
 	atomic_t nmi_queued;  /* unprocessed asynchronous NMIs */
 	unsigned nmi_pending; /* NMI queued after currently running handler */
 	bool nmi_injected;    /* Trying to inject an NMI this entry */
+=======
+	unsigned int time_offset;
+	struct page *time_page;
+	u64 last_guest_tsc;
+	u64 last_kernel_ns;
+	u64 last_tsc_nsec;
+	u64 last_tsc_write;
+	u32 virtual_tsc_khz;
+	bool tsc_catchup;
+	u32  tsc_catchup_mult;
+	s8   tsc_catchup_shift;
+
+	bool nmi_pending;
+	bool nmi_injected;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct mtrr_state_type mtrr_state;
 	u32 pat;
@@ -449,6 +543,7 @@ struct kvm_vcpu_arch {
 	u64 mcg_ctl;
 	u64 *mce_banks;
 
+<<<<<<< HEAD
 	/* Cache MMIO info */
 	u64 mmio_gva;
 	unsigned access;
@@ -456,6 +551,8 @@ struct kvm_vcpu_arch {
 
 	struct kvm_pmu pmu;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* used for guest single stepping over the given code position */
 	unsigned long singlestep_rip;
 
@@ -464,9 +561,12 @@ struct kvm_vcpu_arch {
 
 	cpumask_var_t wbinvd_dirty_mask;
 
+<<<<<<< HEAD
 	unsigned long last_retry_eip;
 	unsigned long last_retry_addr;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct {
 		bool halted;
 		gfn_t gfns[roundup_pow_of_two(ASYNC_PF_PER_VCPU)];
@@ -475,6 +575,7 @@ struct kvm_vcpu_arch {
 		u32 id;
 		bool send_user_only;
 	} apf;
+<<<<<<< HEAD
 
 	/* OSVW MSRs (AMD only) */
 	struct {
@@ -490,13 +591,19 @@ struct kvm_lpage_info {
 
 struct kvm_arch_memory_slot {
 	struct kvm_lpage_info *lpage_info[KVM_NR_PAGE_SIZES - 1];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct kvm_arch {
 	unsigned int n_used_mmu_pages;
 	unsigned int n_requested_mmu_pages;
 	unsigned int n_max_mmu_pages;
+<<<<<<< HEAD
 	unsigned int indirect_shadow_pages;
+=======
+	atomic_t invlpg_counter;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct hlist_head mmu_page_hash[KVM_NUM_MMU_PAGES];
 	/*
 	 * Hash table of struct kvm_mmu_page.
@@ -523,12 +630,17 @@ struct kvm_arch {
 	s64 kvmclock_offset;
 	raw_spinlock_t tsc_write_lock;
 	u64 last_tsc_nsec;
+<<<<<<< HEAD
 	u64 last_tsc_write;
 	u32 last_tsc_khz;
 	u64 cur_tsc_nsec;
 	u64 cur_tsc_write;
 	u64 cur_tsc_offset;
 	u8  cur_tsc_generation;
+=======
+	u64 last_tsc_offset;
+	u64 last_tsc_write;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct kvm_xen_hvm_config xen_hvm_config;
 
@@ -536,8 +648,11 @@ struct kvm_arch {
 	u64 hv_guest_os_id;
 	u64 hv_hypercall;
 
+<<<<<<< HEAD
 	atomic_t reader_counter;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	#ifdef CONFIG_KVM_MMU_AUDIT
 	int audit_point;
 	#endif
@@ -620,7 +735,11 @@ struct kvm_x86_ops {
 	void (*decache_cr4_guest_bits)(struct kvm_vcpu *vcpu);
 	void (*set_cr0)(struct kvm_vcpu *vcpu, unsigned long cr0);
 	void (*set_cr3)(struct kvm_vcpu *vcpu, unsigned long cr3);
+<<<<<<< HEAD
 	int (*set_cr4)(struct kvm_vcpu *vcpu, unsigned long cr4);
+=======
+	void (*set_cr4)(struct kvm_vcpu *vcpu, unsigned long cr4);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void (*set_efer)(struct kvm_vcpu *vcpu, u64 efer);
 	void (*get_idt)(struct kvm_vcpu *vcpu, struct desc_ptr *dt);
 	void (*set_idt)(struct kvm_vcpu *vcpu, struct desc_ptr *dt);
@@ -660,7 +779,11 @@ struct kvm_x86_ops {
 	u64 (*get_mt_mask)(struct kvm_vcpu *vcpu, gfn_t gfn, bool is_mmio);
 	int (*get_lpage_level)(void);
 	bool (*rdtscp_supported)(void);
+<<<<<<< HEAD
 	void (*adjust_tsc_offset)(struct kvm_vcpu *vcpu, s64 adjustment, bool host);
+=======
+	void (*adjust_tsc_offset)(struct kvm_vcpu *vcpu, s64 adjustment);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	void (*set_tdp_cr3)(struct kvm_vcpu *vcpu, unsigned long cr3);
 
@@ -668,17 +791,29 @@ struct kvm_x86_ops {
 
 	bool (*has_wbinvd_exit)(void);
 
+<<<<<<< HEAD
 	void (*set_tsc_khz)(struct kvm_vcpu *vcpu, u32 user_tsc_khz, bool scale);
 	void (*write_tsc_offset)(struct kvm_vcpu *vcpu, u64 offset);
 
 	u64 (*compute_tsc_offset)(struct kvm_vcpu *vcpu, u64 target_tsc);
 	u64 (*read_l1_tsc)(struct kvm_vcpu *vcpu);
+=======
+	void (*set_tsc_khz)(struct kvm_vcpu *vcpu, u32 user_tsc_khz);
+	void (*write_tsc_offset)(struct kvm_vcpu *vcpu, u64 offset);
+
+	u64 (*compute_tsc_offset)(struct kvm_vcpu *vcpu, u64 target_tsc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	void (*get_exit_info)(struct kvm_vcpu *vcpu, u64 *info1, u64 *info2);
 
 	int (*check_intercept)(struct kvm_vcpu *vcpu,
 			       struct x86_instruction_info *info,
 			       enum x86_intercept_stage stage);
+<<<<<<< HEAD
+=======
+
+	const struct trace_print_flags *exit_reasons_str;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct kvm_arch_async_pf {
@@ -690,6 +825,7 @@ struct kvm_arch_async_pf {
 
 extern struct kvm_x86_ops *kvm_x86_ops;
 
+<<<<<<< HEAD
 static inline void adjust_tsc_offset_guest(struct kvm_vcpu *vcpu,
 					   s64 adjustment)
 {
@@ -701,19 +837,28 @@ static inline void adjust_tsc_offset_host(struct kvm_vcpu *vcpu, s64 adjustment)
 	kvm_x86_ops->adjust_tsc_offset(vcpu, adjustment, true);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int kvm_mmu_module_init(void);
 void kvm_mmu_module_exit(void);
 
 void kvm_mmu_destroy(struct kvm_vcpu *vcpu);
 int kvm_mmu_create(struct kvm_vcpu *vcpu);
 int kvm_mmu_setup(struct kvm_vcpu *vcpu);
+<<<<<<< HEAD
+=======
+void kvm_mmu_set_nonpresent_ptes(u64 trap_pte, u64 notrap_pte);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void kvm_mmu_set_mask_ptes(u64 user_mask, u64 accessed_mask,
 		u64 dirty_mask, u64 nx_mask, u64 x_mask);
 
 int kvm_mmu_reset_context(struct kvm_vcpu *vcpu);
 void kvm_mmu_slot_remove_write_access(struct kvm *kvm, int slot);
+<<<<<<< HEAD
 int kvm_mmu_rmap_write_protect(struct kvm *kvm, u64 gfn,
 			       struct kvm_memory_slot *slot);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void kvm_mmu_zap_all(struct kvm *kvm);
 unsigned int kvm_mmu_calculate_mmu_pages(struct kvm *kvm);
 void kvm_mmu_change_mmu_pages(struct kvm *kvm, unsigned int kvm_nr_mmu_pages);
@@ -722,12 +867,20 @@ int load_pdptrs(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu, unsigned long cr3);
 
 int emulator_write_phys(struct kvm_vcpu *vcpu, gpa_t gpa,
 			  const void *val, int bytes);
+<<<<<<< HEAD
+=======
+int kvm_pv_mmu_op(struct kvm_vcpu *vcpu, unsigned long bytes,
+		  gpa_t addr, unsigned long *ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u8 kvm_get_guest_memory_type(struct kvm_vcpu *vcpu, gfn_t gfn);
 
 extern bool tdp_enabled;
 
+<<<<<<< HEAD
 u64 vcpu_tsc_khz(struct kvm_vcpu *vcpu);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* control of guest tsc rate supported? */
 extern bool kvm_has_tsc_control;
 /* minimum supported tsc_khz for guests */
@@ -744,7 +897,10 @@ enum emulation_result {
 #define EMULTYPE_NO_DECODE	    (1 << 0)
 #define EMULTYPE_TRAP_UD	    (1 << 1)
 #define EMULTYPE_SKIP		    (1 << 2)
+<<<<<<< HEAD
 #define EMULTYPE_RETRY		    (1 << 3)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int x86_emulate_instruction(struct kvm_vcpu *vcpu, unsigned long cr2,
 			    int emulation_type, void *insn, int insn_len);
 
@@ -768,8 +924,13 @@ int kvm_emulate_wbinvd(struct kvm_vcpu *vcpu);
 void kvm_get_segment(struct kvm_vcpu *vcpu, struct kvm_segment *var, int seg);
 int kvm_load_segment_descriptor(struct kvm_vcpu *vcpu, u16 selector, int seg);
 
+<<<<<<< HEAD
 int kvm_task_switch(struct kvm_vcpu *vcpu, u16 tss_selector, int idt_index,
 		    int reason, bool has_error_code, u32 error_code);
+=======
+int kvm_task_switch(struct kvm_vcpu *vcpu, u16 tss_selector, int reason,
+		    bool has_error_code, u32 error_code);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int kvm_set_cr0(struct kvm_vcpu *vcpu, unsigned long cr0);
 int kvm_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3);
@@ -787,7 +948,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, u32 msr, u64 data);
 
 unsigned long kvm_get_rflags(struct kvm_vcpu *vcpu);
 void kvm_set_rflags(struct kvm_vcpu *vcpu, unsigned long rflags);
+<<<<<<< HEAD
 bool kvm_rdpmc(struct kvm_vcpu *vcpu);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void kvm_queue_exception(struct kvm_vcpu *vcpu, unsigned nr);
 void kvm_queue_exception_e(struct kvm_vcpu *vcpu, unsigned nr, u32 error_code);
@@ -808,14 +972,22 @@ int fx_init(struct kvm_vcpu *vcpu);
 
 void kvm_mmu_flush_tlb(struct kvm_vcpu *vcpu);
 void kvm_mmu_pte_write(struct kvm_vcpu *vcpu, gpa_t gpa,
+<<<<<<< HEAD
 		       const u8 *new, int bytes);
 int kvm_mmu_unprotect_page(struct kvm *kvm, gfn_t gfn);
+=======
+		       const u8 *new, int bytes,
+		       bool guest_initiated);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int kvm_mmu_unprotect_page_virt(struct kvm_vcpu *vcpu, gva_t gva);
 void __kvm_mmu_free_some_pages(struct kvm_vcpu *vcpu);
 int kvm_mmu_load(struct kvm_vcpu *vcpu);
 void kvm_mmu_unload(struct kvm_vcpu *vcpu);
 void kvm_mmu_sync_roots(struct kvm_vcpu *vcpu);
+<<<<<<< HEAD
 gpa_t translate_nested_gpa(struct kvm_vcpu *vcpu, gpa_t gpa, u32 access);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 gpa_t kvm_mmu_gva_to_gpa_read(struct kvm_vcpu *vcpu, gva_t gva,
 			      struct x86_exception *exception);
 gpa_t kvm_mmu_gva_to_gpa_fetch(struct kvm_vcpu *vcpu, gva_t gva,
@@ -837,11 +1009,14 @@ void kvm_disable_tdp(void);
 int complete_pio(struct kvm_vcpu *vcpu);
 bool kvm_check_iopl(struct kvm_vcpu *vcpu);
 
+<<<<<<< HEAD
 static inline gpa_t translate_gpa(struct kvm_vcpu *vcpu, gpa_t gpa, u32 access)
 {
 	return gpa;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline struct kvm_mmu_page *page_header(hpa_t shadow_page)
 {
 	struct page *page = pfn_to_page(shadow_page >> PAGE_SHIFT);
@@ -910,12 +1085,19 @@ enum {
 asmlinkage void kvm_spurious_fault(void);
 extern bool kvm_rebooting;
 
+<<<<<<< HEAD
 #define ____kvm_handle_fault_on_reboot(insn, cleanup_insn)	\
+=======
+#define __kvm_handle_fault_on_reboot(insn) \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"666: " insn "\n\t" \
 	"668: \n\t"                           \
 	".pushsection .fixup, \"ax\" \n" \
 	"667: \n\t" \
+<<<<<<< HEAD
 	cleanup_insn "\n\t"		      \
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"cmpb $0, kvm_rebooting \n\t"	      \
 	"jne 668b \n\t"      		      \
 	__ASM_SIZE(push) " $666b \n\t"	      \
@@ -925,9 +1107,12 @@ extern bool kvm_rebooting;
 	_ASM_PTR " 666b, 667b \n\t" \
 	".popsection"
 
+<<<<<<< HEAD
 #define __kvm_handle_fault_on_reboot(insn)		\
 	____kvm_handle_fault_on_reboot(insn, "")
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define KVM_ARCH_WANT_MMU_NOTIFIER
 int kvm_unmap_hva(struct kvm *kvm, unsigned long hva);
 int kvm_age_hva(struct kvm *kvm, unsigned long hva);
@@ -954,6 +1139,7 @@ extern bool kvm_find_async_pf_gfn(struct kvm_vcpu *vcpu, gfn_t gfn);
 
 void kvm_complete_insn_gp(struct kvm_vcpu *vcpu, int err);
 
+<<<<<<< HEAD
 int kvm_is_in_guest(void);
 
 void kvm_pmu_init(struct kvm_vcpu *vcpu);
@@ -967,4 +1153,6 @@ int kvm_pmu_read_pmc(struct kvm_vcpu *vcpu, unsigned pmc, u64 *data);
 void kvm_handle_pmu_event(struct kvm_vcpu *vcpu);
 void kvm_deliver_pmi(struct kvm_vcpu *vcpu);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _ASM_X86_KVM_HOST_H */

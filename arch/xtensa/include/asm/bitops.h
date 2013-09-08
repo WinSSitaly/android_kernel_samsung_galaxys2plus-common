@@ -21,6 +21,10 @@
 
 #include <asm/processor.h>
 #include <asm/byteorder.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_SMP
 # error SMP not supported on this architecture
@@ -107,7 +111,23 @@ static inline unsigned long __fls(unsigned long word)
 #include <asm-generic/bitops/find.h>
 #include <asm-generic/bitops/le.h>
 
+<<<<<<< HEAD
 #include <asm-generic/bitops/ext2-atomic-setbit.h>
+=======
+#ifdef __XTENSA_EL__
+# define ext2_set_bit_atomic(lock,nr,addr)				\
+	test_and_set_bit((nr), (unsigned long*)(addr))
+# define ext2_clear_bit_atomic(lock,nr,addr)				\
+	test_and_clear_bit((nr), (unsigned long*)(addr))
+#elif defined(__XTENSA_EB__)
+# define ext2_set_bit_atomic(lock,nr,addr)				\
+	test_and_set_bit((nr) ^ 0x18, (unsigned long*)(addr))
+# define ext2_clear_bit_atomic(lock,nr,addr)				\
+	test_and_clear_bit((nr) ^ 0x18, (unsigned long*)(addr))
+#else
+# error processor byte order undefined!
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm-generic/bitops/hweight.h>
 #include <asm-generic/bitops/lock.h>

@@ -119,7 +119,11 @@ asmlinkage void full_exception(struct pt_regs *regs, unsigned int type,
 	case MICROBLAZE_DIV_ZERO_EXCEPTION:
 		if (user_mode(regs)) {
 			pr_debug("Divide by zero exception in user mode\n");
+<<<<<<< HEAD
 			_exception(SIGFPE, regs, FPE_INTDIV, addr);
+=======
+			_exception(SIGILL, regs, FPE_INTDIV, addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 		}
 		printk(KERN_WARNING "Divide by zero exception " \

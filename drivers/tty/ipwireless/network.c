@@ -22,7 +22,11 @@
 #include <linux/ppp_channel.h>
 #include <linux/ppp_defs.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/ppp-ioctl.h>
+=======
+#include <linux/if_ppp.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/skbuff.h>
 
 #include "network.h"

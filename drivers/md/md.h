@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
    md.h : kernel internal structure of the Linux MD driver
+=======
+   md_k.h : kernel internal structure of the Linux MD driver
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
           Copyright (C) 1996-98 Ingo Molnar, Gadi Oxman
 	  
    This program is free software; you can redistribute it and/or modify
@@ -26,21 +30,35 @@
 
 #define MaxSector (~(sector_t)0)
 
+<<<<<<< HEAD
 /* Bad block numbers are stored sorted in a single page.
  * 64bits is used for each block or extent.
  * 54 bits are sector number, 9 bits are extent size,
  * 1 bit is an 'acknowledged' flag.
  */
 #define MD_MAX_BADBLOCKS	(PAGE_SIZE/8)
+=======
+typedef struct mddev_s mddev_t;
+typedef struct mdk_rdev_s mdk_rdev_t;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * MD's 'extended' device
  */
+<<<<<<< HEAD
 struct md_rdev {
 	struct list_head same_set;	/* RAID devices within the same set */
 
 	sector_t sectors;		/* Device size (in 512bytes sectors) */
 	struct mddev *mddev;		/* RAID array if running */
+=======
+struct mdk_rdev_s
+{
+	struct list_head same_set;	/* RAID devices within the same set */
+
+	sector_t sectors;		/* Device size (in 512bytes sectors) */
+	mddev_t *mddev;			/* RAID array if running */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int last_events;		/* IO event timestamp */
 
 	/*
@@ -51,7 +69,11 @@ struct md_rdev {
 	struct block_device *meta_bdev;
 	struct block_device *bdev;	/* block device handle */
 
+<<<<<<< HEAD
 	struct page	*sb_page, *bb_page;
+=======
+	struct page	*sb_page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int		sb_loaded;
 	__u64		sb_events;
 	sector_t	data_offset;	/* start of data in array */
@@ -72,7 +94,18 @@ struct md_rdev {
 	 * This reduces the burden of testing multiple flags in many cases
 	 */
 
+<<<<<<< HEAD
 	unsigned long	flags;	/* bit set of 'enum flag_bits' bits. */
+=======
+	unsigned long	flags;
+#define	Faulty		1		/* device is known to have a fault */
+#define	In_sync		2		/* device is in_sync with rest of array */
+#define	WriteMostly	4		/* Avoid reading if at all possible */
+#define	AutoDetected	7		/* added by auto-detect */
+#define Blocked		8		/* An error occurred on an externally
+					 * managed array, don't allow writes
+					 * until it is cleared */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wait_queue_head_t blocked_wait;
 
 	int desc_nr;			/* descriptor index in the superblock */
@@ -107,6 +140,7 @@ struct md_rdev {
 
 	struct sysfs_dirent *sysfs_state; /* handle for 'state'
 					   * sysfs entry */
+<<<<<<< HEAD
 
 	struct badblocks {
 		int	count;		/* count of bad blocks */
@@ -200,6 +234,14 @@ extern void md_ack_all_badblocks(struct badblocks *bb);
 struct mddev {
 	void				*private;
 	struct md_personality		*pers;
+=======
+};
+
+struct mddev_s
+{
+	void				*private;
+	struct mdk_personality		*pers;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_t				unit;
 	int				md_minor;
 	struct list_head 		disks;
@@ -266,8 +308,13 @@ struct mddev {
 	atomic_t			plug_cnt;	/* If device is expecting
 							 * more bios soon.
 							 */
+<<<<<<< HEAD
 	struct md_thread		*thread;	/* management thread */
 	struct md_thread		*sync_thread;	/* doing resync or reconstruct */
+=======
+	struct mdk_thread_s		*thread;	/* management thread */
+	struct mdk_thread_s		*sync_thread;	/* doing resync or reconstruct */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sector_t			curr_resync;	/* last block scheduled */
 	/* As resync requests can complete out of order, we cannot easily track
 	 * how much resync has been completed.  So we occasionally pause until
@@ -322,12 +369,18 @@ struct mddev {
 #define	MD_RECOVERY_FROZEN	9
 
 	unsigned long			recovery;
+<<<<<<< HEAD
 	/* If a RAID personality determines that recovery (of a particular
 	 * device) will fail due to a read error on the source device, it
 	 * takes a copy of this number and does not attempt recovery again
 	 * until this number changes.
 	 */
 	int				recovery_disabled;
+=======
+	int				recovery_disabled; /* if we detect that recovery
+							    * will always fail, set this
+							    * so we don't loop trying */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int				in_sync;	/* know to not need resync */
 	/* 'open_mutex' avoids races between 'md_open' and 'do_md_stop', so
@@ -349,10 +402,13 @@ struct mddev {
 	int				degraded;	/* whether md should consider
 							 * adding a spare
 							 */
+<<<<<<< HEAD
 	int				merge_check_needed; /* at least one
 							     * member device
 							     * has a
 							     * merge_bvec_fn */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	atomic_t			recovery_active; /* blocks scheduled, but not written */
 	wait_queue_head_t		recovery_wait;
@@ -394,6 +450,14 @@ struct mddev {
 							 * hot-adding a bitmap.  It should
 							 * eventually be settable by sysfs.
 							 */
+<<<<<<< HEAD
+=======
+		/* When md is serving under dm, it might use a
+		 * dirty_log to store the bits.
+		 */
+		struct dm_dirty_log *log;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct mutex		mutex;
 		unsigned long		chunksize;
 		unsigned long		daemon_sleep; /* how many jiffies between updates? */
@@ -416,11 +480,19 @@ struct mddev {
 	atomic_t flush_pending;
 	struct work_struct flush_work;
 	struct work_struct event_work;	/* used by dm to report failure event */
+<<<<<<< HEAD
 	void (*sync_super)(struct mddev *mddev, struct md_rdev *rdev);
 };
 
 
 static inline void rdev_dec_pending(struct md_rdev *rdev, struct mddev *mddev)
+=======
+	void (*sync_super)(mddev_t *mddev, mdk_rdev_t *rdev);
+};
+
+
+static inline void rdev_dec_pending(mdk_rdev_t *rdev, mddev_t *mddev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int faulty = test_bit(Faulty, &rdev->flags);
 	if (atomic_dec_and_test(&rdev->nr_pending) && faulty)
@@ -432,12 +504,17 @@ static inline void md_sync_acct(struct block_device *bdev, unsigned long nr_sect
         atomic_add(nr_sectors, &bdev->bd_contains->bd_disk->sync_io);
 }
 
+<<<<<<< HEAD
 struct md_personality
+=======
+struct mdk_personality
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	char *name;
 	int level;
 	struct list_head list;
 	struct module *owner;
+<<<<<<< HEAD
 	void (*make_request)(struct mddev *mddev, struct bio *bio);
 	int (*run)(struct mddev *mddev);
 	int (*stop)(struct mddev *mddev);
@@ -455,12 +532,35 @@ struct md_personality
 	int (*check_reshape) (struct mddev *mddev);
 	int (*start_reshape) (struct mddev *mddev);
 	void (*finish_reshape) (struct mddev *mddev);
+=======
+	int (*make_request)(mddev_t *mddev, struct bio *bio);
+	int (*run)(mddev_t *mddev);
+	int (*stop)(mddev_t *mddev);
+	void (*status)(struct seq_file *seq, mddev_t *mddev);
+	/* error_handler must set ->faulty and clear ->in_sync
+	 * if appropriate, and should abort recovery if needed 
+	 */
+	void (*error_handler)(mddev_t *mddev, mdk_rdev_t *rdev);
+	int (*hot_add_disk) (mddev_t *mddev, mdk_rdev_t *rdev);
+	int (*hot_remove_disk) (mddev_t *mddev, int number);
+	int (*spare_active) (mddev_t *mddev);
+	sector_t (*sync_request)(mddev_t *mddev, sector_t sector_nr, int *skipped, int go_faster);
+	int (*resize) (mddev_t *mddev, sector_t sectors);
+	sector_t (*size) (mddev_t *mddev, sector_t sectors, int raid_disks);
+	int (*check_reshape) (mddev_t *mddev);
+	int (*start_reshape) (mddev_t *mddev);
+	void (*finish_reshape) (mddev_t *mddev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* quiesce moves between quiescence states
 	 * 0 - fully active
 	 * 1 - no new requests allowed
 	 * others - reserved
 	 */
+<<<<<<< HEAD
 	void (*quiesce) (struct mddev *mddev, int state);
+=======
+	void (*quiesce) (mddev_t *mddev, int state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* takeover is used to transition an array from one
 	 * personality to another.  The new personality must be able
 	 * to handle the data in the current layout.
@@ -470,14 +570,23 @@ struct md_personality
 	 * This needs to be installed and then ->run used to activate the
 	 * array.
 	 */
+<<<<<<< HEAD
 	void *(*takeover) (struct mddev *mddev);
+=======
+	void *(*takeover) (mddev_t *mddev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
 struct md_sysfs_entry {
 	struct attribute attr;
+<<<<<<< HEAD
 	ssize_t (*show)(struct mddev *, char *);
 	ssize_t (*store)(struct mddev *, const char *, size_t);
+=======
+	ssize_t (*show)(mddev_t *, char *);
+	ssize_t (*store)(mddev_t *, const char *, size_t);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 extern struct attribute_group md_bitmap_group;
 
@@ -493,11 +602,16 @@ static inline void sysfs_notify_dirent_safe(struct sysfs_dirent *sd)
 		sysfs_notify_dirent(sd);
 }
 
+<<<<<<< HEAD
 static inline char * mdname (struct mddev * mddev)
+=======
+static inline char * mdname (mddev_t * mddev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return mddev->gendisk ? mddev->gendisk->disk_name : "mdX";
 }
 
+<<<<<<< HEAD
 static inline int sysfs_link_rdev(struct mddev *mddev, struct md_rdev *rdev)
 {
 	char nm[20];
@@ -517,6 +631,8 @@ static inline void sysfs_unlink_rdev(struct mddev *mddev, struct md_rdev *rdev)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * iterates through some rdev ringlist. It's safe to remove the
  * current 'rdev'. Dont touch 'tmp' though.
@@ -527,23 +643,37 @@ static inline void sysfs_unlink_rdev(struct mddev *mddev, struct md_rdev *rdev)
 /*
  * iterates through the 'same array disks' ringlist
  */
+<<<<<<< HEAD
 #define rdev_for_each(rdev, mddev)				\
 	list_for_each_entry(rdev, &((mddev)->disks), same_set)
 
 #define rdev_for_each_safe(rdev, tmp, mddev)				\
+=======
+#define rdev_for_each(rdev, tmp, mddev)				\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry_safe(rdev, tmp, &((mddev)->disks), same_set)
 
 #define rdev_for_each_rcu(rdev, mddev)				\
 	list_for_each_entry_rcu(rdev, &((mddev)->disks), same_set)
 
+<<<<<<< HEAD
 struct md_thread {
 	void			(*run) (struct mddev *mddev);
 	struct mddev		*mddev;
+=======
+typedef struct mdk_thread_s {
+	void			(*run) (mddev_t *mddev);
+	mddev_t			*mddev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wait_queue_head_t	wqueue;
 	unsigned long           flags;
 	struct task_struct	*tsk;
 	unsigned long		timeout;
+<<<<<<< HEAD
 };
+=======
+} mdk_thread_t;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define THREAD_WAKEUP  0
 
@@ -578,6 +708,7 @@ static inline void safe_put_page(struct page *p)
 	if (p) put_page(p);
 }
 
+<<<<<<< HEAD
 extern int register_md_personality(struct md_personality *p);
 extern int unregister_md_personality(struct md_personality *p);
 extern struct md_thread *md_register_thread(
@@ -624,4 +755,49 @@ extern struct bio *bio_alloc_mddev(gfp_t gfp_mask, int nr_iovecs,
 				   struct mddev *mddev);
 extern int mddev_check_plugged(struct mddev *mddev);
 extern void md_trim_bio(struct bio *bio, int offset, int size);
+=======
+extern int register_md_personality(struct mdk_personality *p);
+extern int unregister_md_personality(struct mdk_personality *p);
+extern mdk_thread_t * md_register_thread(void (*run) (mddev_t *mddev),
+				mddev_t *mddev, const char *name);
+extern void md_unregister_thread(mdk_thread_t **threadp);
+extern void md_wakeup_thread(mdk_thread_t *thread);
+extern void md_check_recovery(mddev_t *mddev);
+extern void md_write_start(mddev_t *mddev, struct bio *bi);
+extern void md_write_end(mddev_t *mddev);
+extern void md_done_sync(mddev_t *mddev, int blocks, int ok);
+extern void md_error(mddev_t *mddev, mdk_rdev_t *rdev);
+
+extern int mddev_congested(mddev_t *mddev, int bits);
+extern void md_flush_request(mddev_t *mddev, struct bio *bio);
+extern void md_super_write(mddev_t *mddev, mdk_rdev_t *rdev,
+			   sector_t sector, int size, struct page *page);
+extern void md_super_wait(mddev_t *mddev);
+extern int sync_page_io(mdk_rdev_t *rdev, sector_t sector, int size, 
+			struct page *page, int rw, bool metadata_op);
+extern void md_do_sync(mddev_t *mddev);
+extern void md_new_event(mddev_t *mddev);
+extern int md_allow_write(mddev_t *mddev);
+extern void md_wait_for_blocked_rdev(mdk_rdev_t *rdev, mddev_t *mddev);
+extern void md_set_array_sectors(mddev_t *mddev, sector_t array_sectors);
+extern int md_check_no_bitmap(mddev_t *mddev);
+extern int md_integrity_register(mddev_t *mddev);
+extern void md_integrity_add_rdev(mdk_rdev_t *rdev, mddev_t *mddev);
+extern int strict_strtoul_scaled(const char *cp, unsigned long *res, int scale);
+extern void restore_bitmap_write_access(struct file *file);
+
+extern void mddev_init(mddev_t *mddev);
+extern int md_run(mddev_t *mddev);
+extern void md_stop(mddev_t *mddev);
+extern void md_stop_writes(mddev_t *mddev);
+extern void md_rdev_init(mdk_rdev_t *rdev);
+
+extern void mddev_suspend(mddev_t *mddev);
+extern void mddev_resume(mddev_t *mddev);
+extern struct bio *bio_clone_mddev(struct bio *bio, gfp_t gfp_mask,
+				   mddev_t *mddev);
+extern struct bio *bio_alloc_mddev(gfp_t gfp_mask, int nr_iovecs,
+				   mddev_t *mddev);
+extern int mddev_check_plugged(mddev_t *mddev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _MD_MD_H */

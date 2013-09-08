@@ -62,6 +62,7 @@
 #include <asm/reboot.h>
 #include <asm/stackprotector.h>
 #include <asm/hypervisor.h>
+<<<<<<< HEAD
 #include <asm/mwait.h>
 #include <asm/pci_x86.h>
 #include <asm/pat.h>
@@ -73,6 +74,8 @@
 #include <acpi/processor.h>
 #include <xen/interface/platform.h>
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "xen-ops.h"
 #include "mmu.h"
@@ -139,6 +142,7 @@ static void xen_vcpu_setup(int cpu)
 
 	BUG_ON(HYPERVISOR_shared_info == &xen_dummy_shared_info);
 
+<<<<<<< HEAD
 	/*
 	 * This path is called twice on PVHVM - first during bootup via
 	 * smp_init -> xen_hvm_cpu_notify, and then if the VCPU is being
@@ -154,6 +158,8 @@ static void xen_vcpu_setup(int cpu)
 		if (per_cpu(xen_vcpu, cpu) == &per_cpu(xen_vcpu_info, cpu))
 			return;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cpu < MAX_VIRT_CPUS)
 		per_cpu(xen_vcpu,cpu) = &HYPERVISOR_shared_info->vcpu_info[cpu];
 
@@ -223,6 +229,7 @@ static void __init xen_banner(void)
 	       xen_feature(XENFEAT_mmu_pt_update_preserve_ad) ? " (preserve-AD)" : "");
 }
 
+<<<<<<< HEAD
 #define CPUID_THERM_POWER_LEAF 6
 #define APERFMPERF_PRESENT 0
 
@@ -233,13 +240,22 @@ static __read_mostly unsigned int cpuid_leaf1_ecx_set_mask;
 static __read_mostly unsigned int cpuid_leaf5_ecx_val;
 static __read_mostly unsigned int cpuid_leaf5_edx_val;
 
+=======
+static __read_mostly unsigned int cpuid_leaf1_edx_mask = ~0;
+static __read_mostly unsigned int cpuid_leaf1_ecx_mask = ~0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void xen_cpuid(unsigned int *ax, unsigned int *bx,
 		      unsigned int *cx, unsigned int *dx)
 {
 	unsigned maskebx = ~0;
 	unsigned maskecx = ~0;
 	unsigned maskedx = ~0;
+<<<<<<< HEAD
 	unsigned setecx = 0;
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Mask out inconvenient features, to try and disable as many
 	 * unsupported kernel subsystems as possible.
@@ -247,6 +263,7 @@ static void xen_cpuid(unsigned int *ax, unsigned int *bx,
 	switch (*ax) {
 	case 1:
 		maskecx = cpuid_leaf1_ecx_mask;
+<<<<<<< HEAD
 		setecx = cpuid_leaf1_ecx_set_mask;
 		maskedx = cpuid_leaf1_edx_mask;
 		break;
@@ -264,6 +281,11 @@ static void xen_cpuid(unsigned int *ax, unsigned int *bx,
 		maskecx = ~(1 << APERFMPERF_PRESENT);
 		break;
 
+=======
+		maskedx = cpuid_leaf1_edx_mask;
+		break;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case 0xb:
 		/* Suppress extended topology stuff */
 		maskebx = 0;
@@ -279,6 +301,7 @@ static void xen_cpuid(unsigned int *ax, unsigned int *bx,
 
 	*bx &= maskebx;
 	*cx &= maskecx;
+<<<<<<< HEAD
 	*cx |= setecx;
 	*dx &= maskedx;
 
@@ -349,6 +372,11 @@ static bool __init xen_check_mwait(void)
 	return false;
 #endif
 }
+=======
+	*dx &= maskedx;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init xen_init_cpuid_mask(void)
 {
 	unsigned int ax, bx, cx, dx;
@@ -365,7 +393,10 @@ static void __init xen_init_cpuid_mask(void)
 			~((1 << X86_FEATURE_APIC) |  /* disable local APIC */
 			  (1 << X86_FEATURE_ACPI));  /* disable ACPI */
 	ax = 1;
+<<<<<<< HEAD
 	cx = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	xen_cpuid(&ax, &bx, &cx, &dx);
 
 	xsave_mask =
@@ -375,8 +406,11 @@ static void __init xen_init_cpuid_mask(void)
 	/* Xen will set CR4.OSXSAVE if supported and not disabled by force */
 	if ((cx & xsave_mask) != xsave_mask)
 		cpuid_leaf1_ecx_mask &= ~xsave_mask; /* disable XSAVE & OSXSAVE */
+<<<<<<< HEAD
 	if (xen_check_mwait())
 		cpuid_leaf1_ecx_set_mask = (1 << (X86_FEATURE_MWAIT % 32));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void xen_set_debugreg(int reg, unsigned long val)
@@ -458,8 +492,11 @@ static void xen_set_ldt(const void *addr, unsigned entries)
 	struct mmuext_op *op;
 	struct multicall_space mcs = xen_mc_entry(sizeof(*op));
 
+<<<<<<< HEAD
 	trace_xen_cpu_set_ldt(addr, entries);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	op = mcs.args;
 	op->cmd = MMUEXT_SET_LDT;
 	op->arg1.linear_addr = (unsigned long)addr;
@@ -615,8 +652,11 @@ static void xen_write_ldt_entry(struct desc_struct *dt, int entrynum,
 	xmaddr_t mach_lp = arbitrary_virt_to_machine(&dt[entrynum]);
 	u64 entry = *(u64 *)ptr;
 
+<<<<<<< HEAD
 	trace_xen_cpu_write_ldt_entry(dt, entrynum, entry);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	preempt_disable();
 
 	xen_mc_flush();
@@ -686,8 +726,11 @@ static void xen_write_idt_entry(gate_desc *dt, int entrynum, const gate_desc *g)
 	unsigned long p = (unsigned long)&dt[entrynum];
 	unsigned long start, end;
 
+<<<<<<< HEAD
 	trace_xen_cpu_write_idt_entry(dt, entrynum, g);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	preempt_disable();
 
 	start = __this_cpu_read(idt_desc.address);
@@ -742,8 +785,11 @@ static void xen_load_idt(const struct desc_ptr *desc)
 	static DEFINE_SPINLOCK(lock);
 	static struct trap_info traps[257];
 
+<<<<<<< HEAD
 	trace_xen_cpu_load_idt(desc);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&lock);
 
 	__get_cpu_var(idt_desc) = *desc;
@@ -762,8 +808,11 @@ static void xen_load_idt(const struct desc_ptr *desc)
 static void xen_write_gdt_entry(struct desc_struct *dt, int entry,
 				const void *desc, int type)
 {
+<<<<<<< HEAD
 	trace_xen_cpu_write_gdt_entry(dt, entry, desc, type);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	preempt_disable();
 
 	switch (type) {
@@ -792,8 +841,11 @@ static void xen_write_gdt_entry(struct desc_struct *dt, int entry,
 static void __init xen_write_gdt_entry_boot(struct desc_struct *dt, int entry,
 					    const void *desc, int type)
 {
+<<<<<<< HEAD
 	trace_xen_cpu_write_gdt_entry(dt, entry, desc, type);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (type) {
 	case DESC_LDT:
 	case DESC_TSS:
@@ -813,9 +865,13 @@ static void __init xen_write_gdt_entry_boot(struct desc_struct *dt, int entry,
 static void xen_load_sp0(struct tss_struct *tss,
 			 struct thread_struct *thread)
 {
+<<<<<<< HEAD
 	struct multicall_space mcs;
 
 	mcs = xen_mc_entry(0);
+=======
+	struct multicall_space mcs = xen_mc_entry(0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	MULTI_stack_switch(mcs.mc, __KERNEL_DS, thread->sp0);
 	xen_mc_issue(PARAVIRT_LAZY_CPU);
 }
@@ -834,6 +890,7 @@ static void xen_io_delay(void)
 }
 
 #ifdef CONFIG_X86_LOCAL_APIC
+<<<<<<< HEAD
 static unsigned long xen_set_apic_id(unsigned int x)
 {
 	WARN_ON(1);
@@ -868,6 +925,11 @@ static u32 xen_apic_read(u32 reg)
 		return 0;
 
 	return op.u.pcpu_info.apic_id << 24;
+=======
+static u32 xen_apic_read(u32 reg)
+{
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void xen_apic_write(u32 reg, u32 val)
@@ -905,8 +967,11 @@ static void set_xen_basic_apic_ops(void)
 	apic->icr_write = xen_apic_icr_write;
 	apic->wait_icr_idle = xen_apic_wait_icr_idle;
 	apic->safe_wait_icr_idle = xen_safe_apic_wait_icr_idle;
+<<<<<<< HEAD
 	apic->set_apic_id = xen_set_apic_id;
 	apic->get_apic_id = xen_get_apic_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #endif
@@ -926,11 +991,19 @@ static DEFINE_PER_CPU(unsigned long, xen_cr0_value);
 
 static unsigned long xen_read_cr0(void)
 {
+<<<<<<< HEAD
 	unsigned long cr0 = this_cpu_read(xen_cr0_value);
 
 	if (unlikely(cr0 == 0)) {
 		cr0 = native_read_cr0();
 		this_cpu_write(xen_cr0_value, cr0);
+=======
+	unsigned long cr0 = percpu_read(xen_cr0_value);
+
+	if (unlikely(cr0 == 0)) {
+		cr0 = native_read_cr0();
+		percpu_write(xen_cr0_value, cr0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return cr0;
@@ -940,7 +1013,11 @@ static void xen_write_cr0(unsigned long cr0)
 {
 	struct multicall_space mcs;
 
+<<<<<<< HEAD
 	this_cpu_write(xen_cr0_value, cr0);
+=======
+	percpu_write(xen_cr0_value, cr0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Only pay attention to cr0.TS; everything else is
 	   ignored. */
@@ -958,6 +1035,7 @@ static void xen_write_cr4(unsigned long cr4)
 
 	native_write_cr4(cr4);
 }
+<<<<<<< HEAD
 #ifdef CONFIG_X86_64
 static inline unsigned long xen_read_cr8(void)
 {
@@ -968,6 +1046,9 @@ static inline void xen_write_cr8(unsigned long val)
 	BUG_ON(val);
 }
 #endif
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int xen_write_msr_safe(unsigned int msr, unsigned low, unsigned high)
 {
 	int ret;
@@ -1034,7 +1115,11 @@ void xen_setup_shared_info(void)
 	xen_setup_mfn_list_list();
 }
 
+<<<<<<< HEAD
 /* This is called once we have the cpu_possible_mask */
+=======
+/* This is called once we have the cpu_possible_map */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void xen_setup_vcpu_info_placement(void)
 {
 	int cpu;
@@ -1110,10 +1195,13 @@ static const struct pv_info xen_info __initconst = {
 	.paravirt_enabled = 1,
 	.shared_kernel_pmd = 0,
 
+<<<<<<< HEAD
 #ifdef CONFIG_X86_64
 	.extra_user_64bit_cs = FLAT_USER_CS64,
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name = "Xen",
 };
 
@@ -1136,6 +1224,7 @@ static const struct pv_cpu_ops xen_cpu_ops __initconst = {
 	.read_cr4_safe = native_read_cr4_safe,
 	.write_cr4 = xen_write_cr4,
 
+<<<<<<< HEAD
 #ifdef CONFIG_X86_64
 	.read_cr8 = xen_read_cr8,
 	.write_cr8 = xen_write_cr8,
@@ -1153,6 +1242,15 @@ static const struct pv_cpu_ops xen_cpu_ops __initconst = {
 
 	.read_tscp = native_read_tscp,
 
+=======
+	.wbinvd = native_wbinvd,
+
+	.read_msr = native_read_msr_safe,
+	.write_msr = xen_write_msr_safe,
+	.read_tsc = native_read_tsc,
+	.read_pmc = native_read_pmc,
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.iret = xen_iret,
 	.irq_enable_sysexit = xen_sysexit,
 #ifdef CONFIG_X86_64
@@ -1309,9 +1407,13 @@ asmlinkage void __init xen_start_kernel(void)
 
 	/* Prevent unwanted bits from being set in PTEs. */
 	__supported_pte_mask &= ~_PAGE_GLOBAL;
+<<<<<<< HEAD
 #if 0
 	if (!xen_initial_domain())
 #endif
+=======
+	if (!xen_initial_domain())
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__supported_pte_mask &= ~(_PAGE_PWT | _PAGE_PCD);
 
 	__supported_pte_mask |= _PAGE_IOMAP;
@@ -1371,6 +1473,7 @@ asmlinkage void __init xen_start_kernel(void)
 	 */
 	acpi_numa = -1;
 #endif
+<<<<<<< HEAD
 #ifdef CONFIG_X86_PAT
 	/*
 	 * For right now disable the PAT. We should remove this once
@@ -1381,6 +1484,15 @@ asmlinkage void __init xen_start_kernel(void)
 #endif
 	pgd = (pgd_t *)xen_start_info->pt_base;
 
+=======
+
+	pgd = (pgd_t *)xen_start_info->pt_base;
+
+	if (!xen_initial_domain())
+		__supported_pte_mask &= ~(_PAGE_PWT | _PAGE_PCD);
+
+	__supported_pte_mask |= _PAGE_IOMAP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Don't do the full vcpu_info placement stuff until we have a
 	   possible map and a non-dummy shared_info. */
 	per_cpu(xen_vcpu, 0) = &HYPERVISOR_shared_info->vcpu_info[0];
@@ -1388,6 +1500,11 @@ asmlinkage void __init xen_start_kernel(void)
 	local_irq_disable();
 	early_boot_irqs_disabled = true;
 
+<<<<<<< HEAD
+=======
+	memblock_init();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	xen_raw_console_write("mapping kernel into physical memory\n");
 	pgd = xen_setup_kernel_pagetable(pgd, xen_start_info->nr_pages);
 	xen_ident_map_ISA();
@@ -1449,10 +1566,15 @@ asmlinkage void __init xen_start_kernel(void)
 		/* Make sure ACS will be enabled */
 		pci_request_acs();
 	}
+<<<<<<< HEAD
 #ifdef CONFIG_PCI
 	/* PCI BIOS service won't work from a PV guest. */
 	pci_probe &= ~PCI_PROBE_BIOS;
 #endif
+=======
+		
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	xen_raw_console_write("about to get started...\n");
 
 	xen_setup_runstate_info(0);
@@ -1530,11 +1652,16 @@ static int __cpuinit xen_hvm_cpu_notify(struct notifier_block *self,
 	switch (action) {
 	case CPU_UP_PREPARE:
 		xen_vcpu_setup(cpu);
+<<<<<<< HEAD
 		if (xen_have_vector_callback) {
 			xen_init_lock_cpu(cpu);
 			if (xen_feature(XENFEAT_hvm_safe_pvclock))
 				xen_setup_timer(cpu);
 		}
+=======
+		if (xen_have_vector_callback)
+			xen_init_lock_cpu(cpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		break;

@@ -16,6 +16,10 @@
 
 #include <asm/byteorder.h>
 #include <asm/memory.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PCI_IOBASE	PKUNITY_PCILIO_BASE
 #include <asm-generic/io.h>
@@ -31,14 +35,30 @@ extern void __uc32_iounmap(volatile void __iomem *addr);
  * ioremap and friends.
  *
  * ioremap takes a PCI memory address, as specified in
+<<<<<<< HEAD
  * Documentation/io-mapping.txt.
+=======
+ * Documentation/IO-mapping.txt.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  */
 #define ioremap(cookie, size)		__uc32_ioremap(cookie, size)
 #define ioremap_cached(cookie, size)	__uc32_ioremap_cached(cookie, size)
+<<<<<<< HEAD
 #define ioremap_nocache(cookie, size)	__uc32_ioremap(cookie, size)
 #define iounmap(cookie)			__uc32_iounmap(cookie)
 
+=======
+#define iounmap(cookie)			__uc32_iounmap(cookie)
+
+/*
+ * Convert a physical pointer to a virtual kernel pointer for /dev/mem
+ * access
+ */
+#undef xlate_dev_mem_ptr
+#define xlate_dev_mem_ptr(p)	__va(p)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define HAVE_ARCH_PIO_SIZE
 #define PIO_OFFSET		(unsigned int)(PCI_IOBASE)
 #define PIO_MASK		(unsigned int)(IO_SPACE_LIMIT)

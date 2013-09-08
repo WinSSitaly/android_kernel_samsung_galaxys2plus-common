@@ -39,7 +39,10 @@
 #include <linux/serial.h>
 #include <linux/tty_driver.h>
 #include <linux/tty_flip.h>
+<<<<<<< HEAD
 #include <linux/serial.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/mutex.h>
 #include <linux/uaccess.h>
@@ -59,6 +62,7 @@ static struct usb_driver acm_driver;
 static struct tty_driver *acm_tty_driver;
 static struct acm *acm_table[ACM_TTY_MINORS];
 
+<<<<<<< HEAD
 static DEFINE_MUTEX(acm_table_lock);
 
 /*
@@ -115,6 +119,14 @@ static void acm_release_minor(struct acm *acm)
 	acm_table[acm->minor] = NULL;
 	mutex_unlock(&acm_table_lock);
 }
+=======
+static DEFINE_MUTEX(open_mutex);
+
+#define ACM_READY(acm)	(acm && acm->dev && acm->port.count)
+
+static const struct tty_port_operations acm_port_ops = {
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Functions for ACM control messages.
@@ -318,6 +330,12 @@ static void acm_ctrl_irq(struct urb *urb)
 		goto exit;
 	}
 
+<<<<<<< HEAD
+=======
+	if (!ACM_READY(acm))
+		goto exit;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usb_mark_last_busy(acm->dev);
 
 	data = (unsigned char *)(dr + 1);
@@ -477,7 +495,12 @@ static void acm_write_bulk(struct urb *urb)
 	spin_lock_irqsave(&acm->write_lock, flags);
 	acm_write_done(acm, wb);
 	spin_unlock_irqrestore(&acm->write_lock, flags);
+<<<<<<< HEAD
 	schedule_work(&acm->work);
+=======
+	if (ACM_READY(acm))
+		schedule_work(&acm->work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void acm_softint(struct work_struct *work)
@@ -487,6 +510,11 @@ static void acm_softint(struct work_struct *work)
 
 	dev_vdbg(&acm->data->dev, "%s\n", __func__);
 
+<<<<<<< HEAD
+=======
+	if (!ACM_READY(acm))
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tty = tty_port_tty_get(&acm->port);
 	if (!tty)
 		return;
@@ -498,6 +526,7 @@ static void acm_softint(struct work_struct *work)
  * TTY handlers
  */
 
+<<<<<<< HEAD
 static int acm_tty_install(struct tty_driver *driver, struct tty_struct *tty)
 {
 	struct acm *acm;
@@ -552,11 +581,45 @@ static int acm_port_activate(struct tty_port *port, struct tty_struct *tty)
 	 */
 	set_bit(TTY_NO_WRITE_SPLIT, &tty->flags);
 	acm->control->needs_remote_wakeup = 1;
+=======
+static int acm_tty_open(struct tty_struct *tty, struct file *filp)
+{
+	struct acm *acm;
+	int rv = -ENODEV;
+
+	mutex_lock(&open_mutex);
+
+	acm = acm_table[tty->index];
+	if (!acm || !acm->dev)
+		goto out;
+	else
+		rv = 0;
+
+	dev_dbg(&acm->control->dev, "%s\n", __func__);
+
+	set_bit(TTY_NO_WRITE_SPLIT, &tty->flags);
+
+	tty->driver_data = acm;
+	tty_port_tty_set(&acm->port, tty);
+
+	if (usb_autopm_get_interface(acm->control) < 0)
+		goto early_bail;
+	else
+		acm->control->needs_remote_wakeup = 1;
+
+	mutex_lock(&acm->mutex);
+	if (acm->port.count++) {
+		mutex_unlock(&acm->mutex);
+		usb_autopm_put_interface(acm->control);
+		goto out;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	acm->ctrlurb->dev = acm->dev;
 	if (usb_submit_urb(acm->ctrlurb, GFP_KERNEL)) {
 		dev_err(&acm->control->dev,
 			"%s - usb_submit_urb(ctrl irq) failed\n", __func__);
+<<<<<<< HEAD
 		goto error_submit_urb;
 	}
 
@@ -603,10 +666,55 @@ static void acm_port_destruct(struct tty_port *port)
 
 	acm_release_minor(acm);
 	usb_put_intf(acm->control);
+=======
+		goto bail_out;
+	}
+
+	if (0 > acm_set_control(acm, acm->ctrlout = ACM_CTRL_DTR | ACM_CTRL_RTS) &&
+	    (acm->ctrl_caps & USB_CDC_CAP_LINE))
+		goto bail_out;
+
+	usb_autopm_put_interface(acm->control);
+
+	if (acm_submit_read_urbs(acm, GFP_KERNEL))
+		goto bail_out;
+
+	set_bit(ASYNCB_INITIALIZED, &acm->port.flags);
+	rv = tty_port_block_til_ready(&acm->port, tty, filp);
+
+	mutex_unlock(&acm->mutex);
+out:
+	mutex_unlock(&open_mutex);
+	return rv;
+
+bail_out:
+	acm->port.count--;
+	mutex_unlock(&acm->mutex);
+	usb_autopm_put_interface(acm->control);
+early_bail:
+	mutex_unlock(&open_mutex);
+	tty_port_tty_set(&acm->port, NULL);
+	return -EIO;
+}
+
+static void acm_tty_unregister(struct acm *acm)
+{
+	int i;
+
+	tty_unregister_device(acm_tty_driver, acm->minor);
+	usb_put_intf(acm->control);
+	acm_table[acm->minor] = NULL;
+	usb_free_urb(acm->ctrlurb);
+	for (i = 0; i < ACM_NW; i++)
+		usb_free_urb(acm->wb[i].urb);
+	for (i = 0; i < acm->rx_buflimit; i++)
+		usb_free_urb(acm->read_urbs[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(acm->country_codes);
 	kfree(acm);
 }
 
+<<<<<<< HEAD
 static void acm_port_shutdown(struct tty_port *port)
 {
 	struct acm *acm = container_of(port, struct acm, port);
@@ -616,6 +724,13 @@ static void acm_port_shutdown(struct tty_port *port)
 
 	mutex_lock(&acm->mutex);
 	if (!acm->disconnected) {
+=======
+static void acm_port_down(struct acm *acm)
+{
+	int i;
+
+	if (acm->dev) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		usb_autopm_get_interface(acm->control);
 		acm_set_control(acm, acm->ctrlout = 0);
 		usb_kill_urb(acm->ctrlurb);
@@ -626,6 +741,7 @@ static void acm_port_shutdown(struct tty_port *port)
 		acm->control->needs_remote_wakeup = 0;
 		usb_autopm_put_interface(acm->control);
 	}
+<<<<<<< HEAD
 	mutex_unlock(&acm->mutex);
 }
 
@@ -634,20 +750,61 @@ static void acm_tty_cleanup(struct tty_struct *tty)
 	struct acm *acm = tty->driver_data;
 	dev_dbg(&acm->control->dev, "%s\n", __func__);
 	tty_port_put(&acm->port);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void acm_tty_hangup(struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	struct acm *acm = tty->driver_data;
 	dev_dbg(&acm->control->dev, "%s\n", __func__);
 	tty_port_hangup(&acm->port);
+=======
+	struct acm *acm;
+
+	mutex_lock(&open_mutex);
+	acm = tty->driver_data;
+
+	if (!acm)
+		goto out;
+
+	tty_port_hangup(&acm->port);
+	acm_port_down(acm);
+
+out:
+	mutex_unlock(&open_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void acm_tty_close(struct tty_struct *tty, struct file *filp)
 {
 	struct acm *acm = tty->driver_data;
+<<<<<<< HEAD
 	dev_dbg(&acm->control->dev, "%s\n", __func__);
 	tty_port_close(&acm->port, tty, filp);
+=======
+
+	/* Perform the closing process and see if we need to do the hardware
+	   shutdown */
+	if (!acm)
+		return;
+
+	mutex_lock(&open_mutex);
+	if (tty_port_close_start(&acm->port, tty, filp) == 0) {
+		if (!acm->dev) {
+			tty_port_tty_set(&acm->port, NULL);
+			acm_tty_unregister(acm);
+			tty->driver_data = NULL;
+		}
+		mutex_unlock(&open_mutex);
+		return;
+	}
+	acm_port_down(acm);
+	tty_port_close_end(&acm->port, tty);
+	tty_port_tty_set(&acm->port, NULL);
+	mutex_unlock(&open_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int acm_tty_write(struct tty_struct *tty,
@@ -659,6 +816,11 @@ static int acm_tty_write(struct tty_struct *tty,
 	int wbn;
 	struct acm_wb *wb;
 
+<<<<<<< HEAD
+=======
+	if (!ACM_READY(acm))
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!count)
 		return 0;
 
@@ -687,6 +849,11 @@ static int acm_tty_write(struct tty_struct *tty,
 static int acm_tty_write_room(struct tty_struct *tty)
 {
 	struct acm *acm = tty->driver_data;
+<<<<<<< HEAD
+=======
+	if (!ACM_READY(acm))
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Do not let the line discipline to know that we have a reserve,
 	 * or it might get too enthusiastic.
@@ -697,11 +864,15 @@ static int acm_tty_write_room(struct tty_struct *tty)
 static int acm_tty_chars_in_buffer(struct tty_struct *tty)
 {
 	struct acm *acm = tty->driver_data;
+<<<<<<< HEAD
 	/*
 	 * if the device was unplugged then any remaining characters fell out
 	 * of the connector ;)
 	 */
 	if (acm->disconnected)
+=======
+	if (!ACM_READY(acm))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	/*
 	 * This is inaccurate (overcounts), but it works.
@@ -713,6 +884,12 @@ static void acm_tty_throttle(struct tty_struct *tty)
 {
 	struct acm *acm = tty->driver_data;
 
+<<<<<<< HEAD
+=======
+	if (!ACM_READY(acm))
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irq(&acm->read_lock);
 	acm->throttle_req = 1;
 	spin_unlock_irq(&acm->read_lock);
@@ -723,6 +900,12 @@ static void acm_tty_unthrottle(struct tty_struct *tty)
 	struct acm *acm = tty->driver_data;
 	unsigned int was_throttled;
 
+<<<<<<< HEAD
+=======
+	if (!ACM_READY(acm))
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irq(&acm->read_lock);
 	was_throttled = acm->throttled;
 	acm->throttled = 0;
@@ -737,7 +920,12 @@ static int acm_tty_break_ctl(struct tty_struct *tty, int state)
 {
 	struct acm *acm = tty->driver_data;
 	int retval;
+<<<<<<< HEAD
 
+=======
+	if (!ACM_READY(acm))
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	retval = acm_send_break(acm, state ? 0xffff : 0);
 	if (retval < 0)
 		dev_dbg(&acm->control->dev, "%s - send break failed\n",
@@ -749,6 +937,12 @@ static int acm_tty_tiocmget(struct tty_struct *tty)
 {
 	struct acm *acm = tty->driver_data;
 
+<<<<<<< HEAD
+=======
+	if (!ACM_READY(acm))
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return (acm->ctrlout & ACM_CTRL_DTR ? TIOCM_DTR : 0) |
 	       (acm->ctrlout & ACM_CTRL_RTS ? TIOCM_RTS : 0) |
 	       (acm->ctrlin  & ACM_CTRL_DSR ? TIOCM_DSR : 0) |
@@ -763,6 +957,12 @@ static int acm_tty_tiocmset(struct tty_struct *tty,
 	struct acm *acm = tty->driver_data;
 	unsigned int newctrl;
 
+<<<<<<< HEAD
+=======
+	if (!ACM_READY(acm))
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	newctrl = acm->ctrlout;
 	set = (set & TIOCM_DTR ? ACM_CTRL_DTR : 0) |
 					(set & TIOCM_RTS ? ACM_CTRL_RTS : 0);
@@ -776,6 +976,7 @@ static int acm_tty_tiocmset(struct tty_struct *tty,
 	return acm_set_control(acm, acm->ctrlout = newctrl);
 }
 
+<<<<<<< HEAD
 static int get_serial_info(struct acm *acm, struct serial_struct __user *info)
 {
 	struct serial_struct tmp;
@@ -829,10 +1030,13 @@ static int set_serial_info(struct acm *acm,
 	return retval;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int acm_tty_ioctl(struct tty_struct *tty,
 					unsigned int cmd, unsigned long arg)
 {
 	struct acm *acm = tty->driver_data;
+<<<<<<< HEAD
 	int rv = -ENOIOCTLCMD;
 
 	switch (cmd) {
@@ -845,6 +1049,13 @@ static int acm_tty_ioctl(struct tty_struct *tty,
 	}
 
 	return rv;
+=======
+
+	if (!ACM_READY(acm))
+		return -EINVAL;
+
+	return -ENOIOCTLCMD;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const __u32 acm_tty_speed[] = {
@@ -855,6 +1066,13 @@ static const __u32 acm_tty_speed[] = {
 	2500000, 3000000, 3500000, 4000000
 };
 
+<<<<<<< HEAD
+=======
+static const __u8 acm_tty_size[] = {
+	5, 6, 7, 8
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void acm_tty_set_termios(struct tty_struct *tty,
 						struct ktermios *termios_old)
 {
@@ -863,11 +1081,18 @@ static void acm_tty_set_termios(struct tty_struct *tty,
 	struct usb_cdc_line_coding newline;
 	int newctrl = acm->ctrlout;
 
+<<<<<<< HEAD
+=======
+	if (!ACM_READY(acm))
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	newline.dwDTERate = cpu_to_le32(tty_get_baud_rate(tty));
 	newline.bCharFormat = termios->c_cflag & CSTOPB ? 2 : 0;
 	newline.bParityType = termios->c_cflag & PARENB ?
 				(termios->c_cflag & PARODD ? 1 : 2) +
 				(termios->c_cflag & CMSPAR ? 2 : 0) : 0;
+<<<<<<< HEAD
 	switch (termios->c_cflag & CSIZE) {
 	case CS5:
 		newline.bDataBits = 5;
@@ -883,6 +1108,9 @@ static void acm_tty_set_termios(struct tty_struct *tty,
 		newline.bDataBits = 8;
 		break;
 	}
+=======
+	newline.bDataBits = acm_tty_size[(termios->c_cflag & CSIZE) >> 4];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* FIXME: Needs to clear unsupported bits in the termios */
 	acm->clocal = ((termios->c_cflag & CLOCAL) != 0);
 
@@ -906,12 +1134,15 @@ static void acm_tty_set_termios(struct tty_struct *tty,
 	}
 }
 
+<<<<<<< HEAD
 static const struct tty_port_operations acm_port_ops = {
 	.shutdown = acm_port_shutdown,
 	.activate = acm_port_activate,
 	.destruct = acm_port_destruct,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * USB probe and disconnect routines.
  */
@@ -985,6 +1216,10 @@ static int acm_probe(struct usb_interface *intf,
 	int i;
 	int combined_interfaces = 0;
 
+<<<<<<< HEAD
+=======
+        printk("USBD][%s] Probe USB ACM \n",__func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* normal quirks */
 	quirks = (unsigned long)id->driver_info;
 	num_rx_buf = (quirks == SINGLE_RX_URB) ? 1 : ACM_NR;
@@ -1151,8 +1386,12 @@ skip_normal_probe:
 	}
 
 
+<<<<<<< HEAD
 	if (data_interface->cur_altsetting->desc.bNumEndpoints < 2 ||
 	    control_interface->cur_altsetting->desc.bNumEndpoints == 0)
+=======
+	if (data_interface->cur_altsetting->desc.bNumEndpoints < 2)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	epctrl = &control_interface->cur_altsetting->endpoint[0].desc;
@@ -1172,6 +1411,15 @@ skip_normal_probe:
 	}
 made_compressed_probe:
 	dev_dbg(&intf->dev, "interfaces are valid\n");
+<<<<<<< HEAD
+=======
+	for (minor = 0; minor < ACM_TTY_MINORS && acm_table[minor]; minor++);
+
+	if (minor == ACM_TTY_MINORS) {
+		dev_err(&intf->dev, "no more free acm devices\n");
+		return -ENODEV;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	acm = kzalloc(sizeof(struct acm), GFP_KERNEL);
 	if (acm == NULL) {
@@ -1179,6 +1427,7 @@ made_compressed_probe:
 		goto alloc_fail;
 	}
 
+<<<<<<< HEAD
 	minor = acm_alloc_minor(acm);
 	if (minor == ACM_TTY_MINORS) {
 		dev_err(&intf->dev, "no more free acm devices\n");
@@ -1191,6 +1440,13 @@ made_compressed_probe:
 				(quirks == SINGLE_RX_URB ? 1 : 2);
 	acm->combined_interfaces = combined_interfaces;
 	acm->writesize = usb_endpoint_maxp(epwrite) * 20;
+=======
+	ctrlsize = le16_to_cpu(epctrl->wMaxPacketSize);
+	readsize = le16_to_cpu(epread->wMaxPacketSize) *
+				(quirks == SINGLE_RX_URB ? 1 : 2);
+	acm->combined_interfaces = combined_interfaces;
+	acm->writesize = le16_to_cpu(epwrite->wMaxPacketSize) * 20;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acm->control = control_interface;
 	acm->data = data_interface;
 	acm->minor = minor;
@@ -1281,7 +1537,11 @@ made_compressed_probe:
 
 		if (usb_endpoint_xfer_int(epwrite))
 			usb_fill_int_urb(snd->urb, usb_dev,
+<<<<<<< HEAD
 				usb_sndintpipe(usb_dev, epwrite->bEndpointAddress),
+=======
+				usb_sndbulkpipe(usb_dev, epwrite->bEndpointAddress),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				NULL, acm->writesize, acm_write_bulk, snd, epwrite->bInterval);
 		else
 			usb_fill_bulk_urb(snd->urb, usb_dev,
@@ -1348,6 +1608,11 @@ skip_countries:
 	usb_get_intf(control_interface);
 	tty_register_device(acm_tty_driver, minor, &control_interface->dev);
 
+<<<<<<< HEAD
+=======
+	acm_table[minor] = acm;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 alloc_fail7:
 	for (i = 0; i < ACM_NW; i++)
@@ -1362,7 +1627,10 @@ alloc_fail5:
 alloc_fail4:
 	usb_free_coherent(usb_dev, ctrlsize, acm->ctrl_buffer, acm->ctrl_dma);
 alloc_fail2:
+<<<<<<< HEAD
 	acm_release_minor(acm);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(acm);
 alloc_fail:
 	return -ENOMEM;
@@ -1388,16 +1656,23 @@ static void acm_disconnect(struct usb_interface *intf)
 	struct acm *acm = usb_get_intfdata(intf);
 	struct usb_device *usb_dev = interface_to_usbdev(intf);
 	struct tty_struct *tty;
+<<<<<<< HEAD
 	int i;
 
 	dev_dbg(&intf->dev, "%s\n", __func__);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* sibling interface is already cleaning up */
 	if (!acm)
 		return;
 
+<<<<<<< HEAD
 	mutex_lock(&acm->mutex);
 	acm->disconnected = true;
+=======
+	mutex_lock(&open_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (acm->country_codes) {
 		device_remove_file(&acm->control->dev,
 				&dev_attr_wCountryCodes);
@@ -1405,6 +1680,7 @@ static void acm_disconnect(struct usb_interface *intf)
 				&dev_attr_iCountryCodeRelDate);
 	}
 	device_remove_file(&acm->control->dev, &dev_attr_bmCapabilities);
+<<<<<<< HEAD
 	usb_set_intfdata(acm->control, NULL);
 	usb_set_intfdata(acm->data, NULL);
 	mutex_unlock(&acm->mutex);
@@ -1426,13 +1702,39 @@ static void acm_disconnect(struct usb_interface *intf)
 		usb_free_urb(acm->read_urbs[i]);
 	acm_write_buffers_free(acm);
 	usb_free_coherent(usb_dev, acm->ctrlsize, acm->ctrl_buffer, acm->ctrl_dma);
+=======
+	acm->dev = NULL;
+	usb_set_intfdata(acm->control, NULL);
+	usb_set_intfdata(acm->data, NULL);
+
+	stop_data_traffic(acm);
+
+	acm_write_buffers_free(acm);
+	usb_free_coherent(usb_dev, acm->ctrlsize, acm->ctrl_buffer,
+			  acm->ctrl_dma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acm_read_buffers_free(acm);
 
 	if (!acm->combined_interfaces)
 		usb_driver_release_interface(&acm_driver, intf == acm->control ?
 					acm->data : acm->control);
 
+<<<<<<< HEAD
 	tty_port_put(&acm->port);
+=======
+	if (acm->port.count == 0) {
+		acm_tty_unregister(acm);
+		mutex_unlock(&open_mutex);
+		return;
+	}
+
+	mutex_unlock(&open_mutex);
+	tty = tty_port_tty_get(&acm->port);
+	if (tty) {
+		tty_hangup(tty);
+		tty_kref_put(tty);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_PM
@@ -1441,7 +1743,11 @@ static int acm_suspend(struct usb_interface *intf, pm_message_t message)
 	struct acm *acm = usb_get_intfdata(intf);
 	int cnt;
 
+<<<<<<< HEAD
 	if (PMSG_IS_AUTO(message)) {
+=======
+	if (message.event & PM_EVENT_AUTO) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int b;
 
 		spin_lock_irq(&acm->write_lock);
@@ -1459,10 +1765,23 @@ static int acm_suspend(struct usb_interface *intf, pm_message_t message)
 
 	if (cnt)
 		return 0;
+<<<<<<< HEAD
 
 	if (test_bit(ASYNCB_INITIALIZED, &acm->port.flags))
 		stop_data_traffic(acm);
 
+=======
+	/*
+	we treat opened interfaces differently,
+	we must guard against open
+	*/
+	mutex_lock(&acm->mutex);
+
+	if (acm->port.count)
+		stop_data_traffic(acm);
+
+	mutex_unlock(&acm->mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1481,7 +1800,12 @@ static int acm_resume(struct usb_interface *intf)
 	if (cnt)
 		return 0;
 
+<<<<<<< HEAD
 	if (test_bit(ASYNCB_INITIALIZED, &acm->port.flags)) {
+=======
+	mutex_lock(&acm->mutex);
+	if (acm->port.count) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rv = usb_submit_urb(acm->ctrlurb, GFP_NOIO);
 
 		spin_lock_irq(&acm->write_lock);
@@ -1505,6 +1829,10 @@ static int acm_resume(struct usb_interface *intf)
 	}
 
 err_out:
+<<<<<<< HEAD
+=======
+	mutex_unlock(&acm->mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rv;
 }
 
@@ -1513,14 +1841,23 @@ static int acm_reset_resume(struct usb_interface *intf)
 	struct acm *acm = usb_get_intfdata(intf);
 	struct tty_struct *tty;
 
+<<<<<<< HEAD
 	if (test_bit(ASYNCB_INITIALIZED, &acm->port.flags)) {
+=======
+	mutex_lock(&acm->mutex);
+	if (acm->port.count) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tty = tty_port_tty_get(&acm->port);
 		if (tty) {
 			tty_hangup(tty);
 			tty_kref_put(tty);
 		}
 	}
+<<<<<<< HEAD
 
+=======
+	mutex_unlock(&acm->mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return acm_resume(intf);
 }
 
@@ -1600,12 +1937,15 @@ static const struct usb_device_id acm_ids[] = {
 					   Maybe we should define a new
 					   quirk for this. */
 	},
+<<<<<<< HEAD
 	{ USB_DEVICE(0x0572, 0x1340), /* Conexant CX93010-2x UCMxx */
 	.driver_info = NO_UNION_NORMAL,
 	},
 	{ USB_DEVICE(0x05f9, 0x4002), /* PSC Scanning, Magellan 800i */
 	.driver_info = NO_UNION_NORMAL,
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ USB_DEVICE(0x1bbb, 0x0003), /* Alcatel OT-I650 */
 	.driver_info = NO_UNION_NORMAL, /* reports zero length descriptor */
 	},
@@ -1735,10 +2075,15 @@ static struct usb_driver acm_driver = {
  */
 
 static const struct tty_operations acm_ops = {
+<<<<<<< HEAD
 	.install =		acm_tty_install,
 	.open =			acm_tty_open,
 	.close =		acm_tty_close,
 	.cleanup =		acm_tty_cleanup,
+=======
+	.open =			acm_tty_open,
+	.close =		acm_tty_close,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hangup =		acm_tty_hangup,
 	.write =		acm_tty_write,
 	.write_room =		acm_tty_write_room,
@@ -1762,6 +2107,10 @@ static int __init acm_init(void)
 	acm_tty_driver = alloc_tty_driver(ACM_TTY_MINORS);
 	if (!acm_tty_driver)
 		return -ENOMEM;
+<<<<<<< HEAD
+=======
+	acm_tty_driver->owner = THIS_MODULE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acm_tty_driver->driver_name = "acm",
 	acm_tty_driver->name = "ttyACM",
 	acm_tty_driver->major = ACM_TTY_MAJOR,

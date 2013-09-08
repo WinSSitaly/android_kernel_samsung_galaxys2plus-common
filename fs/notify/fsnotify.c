@@ -26,7 +26,10 @@
 
 #include <linux/fsnotify_backend.h>
 #include "fsnotify.h"
+<<<<<<< HEAD
 #include "../mount.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Clear all of the marks on an inode when it is being evicted from core
@@ -206,13 +209,21 @@ int fsnotify(struct inode *to_tell, __u32 mask, void *data, int data_is,
 	struct fsnotify_mark *inode_mark = NULL, *vfsmount_mark = NULL;
 	struct fsnotify_group *inode_group, *vfsmount_group;
 	struct fsnotify_event *event = NULL;
+<<<<<<< HEAD
 	struct mount *mnt;
+=======
+	struct vfsmount *mnt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int idx, ret = 0;
 	/* global tests shouldn't care about events on child only the specific event */
 	__u32 test_mask = (mask & ~FS_EVENT_ON_CHILD);
 
 	if (data_is == FSNOTIFY_EVENT_PATH)
+<<<<<<< HEAD
 		mnt = real_mount(((struct path *)data)->mnt);
+=======
+		mnt = ((struct path *)data)->mnt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		mnt = NULL;
 
@@ -263,11 +274,19 @@ int fsnotify(struct inode *to_tell, __u32 mask, void *data, int data_is,
 			/* we didn't use the vfsmount_mark */
 			vfsmount_group = NULL;
 		} else if (vfsmount_group > inode_group) {
+<<<<<<< HEAD
 			ret = send_to_group(to_tell, &mnt->mnt, NULL, vfsmount_mark, mask, data,
 					    data_is, cookie, file_name, &event);
 			inode_group = NULL;
 		} else {
 			ret = send_to_group(to_tell, &mnt->mnt, inode_mark, vfsmount_mark,
+=======
+			ret = send_to_group(to_tell, mnt, NULL, vfsmount_mark, mask, data,
+					    data_is, cookie, file_name, &event);
+			inode_group = NULL;
+		} else {
+			ret = send_to_group(to_tell, mnt, inode_mark, vfsmount_mark,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					    mask, data, data_is, cookie, file_name,
 					    &event);
 		}

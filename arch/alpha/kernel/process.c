@@ -28,10 +28,17 @@
 #include <linux/tty.h>
 #include <linux/console.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/rcupdate.h>
 
 #include <asm/reg.h>
 #include <asm/uaccess.h>
+=======
+
+#include <asm/reg.h>
+#include <asm/uaccess.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/pgtable.h>
 #include <asm/hwrpb.h>
@@ -55,11 +62,16 @@ cpu_idle(void)
 		/* FIXME -- EV6 and LCA45 know how to power down
 		   the CPU.  */
 
+<<<<<<< HEAD
 		rcu_idle_enter();
 		while (!need_resched())
 			cpu_relax();
 
 		rcu_idle_exit();
+=======
+		while (!need_resched())
+			cpu_relax();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		schedule();
 	}
 }
@@ -203,6 +215,10 @@ show_regs(struct pt_regs *regs)
 void
 start_thread(struct pt_regs * regs, unsigned long pc, unsigned long sp)
 {
+<<<<<<< HEAD
+=======
+	set_fs(USER_DS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	regs->pc = pc;
 	regs->ps = 8;
 	wrusp(sp);

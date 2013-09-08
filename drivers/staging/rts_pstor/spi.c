@@ -463,7 +463,11 @@ int spi_read_flash_id(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 	}
 
 	if (len) {
+<<<<<<< HEAD
 		buf = kmalloc(len, GFP_KERNEL);
+=======
+		buf = (u8 *)kmalloc(len, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!buf)
 			TRACE_RET(chip, STATUS_ERROR);
 

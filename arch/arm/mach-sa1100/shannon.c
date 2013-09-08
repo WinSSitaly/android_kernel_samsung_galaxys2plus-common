@@ -9,8 +9,11 @@
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/partitions.h>
 
+<<<<<<< HEAD
 #include <video/sa1100fb.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/hardware.h>
 #include <asm/mach-types.h>
 #include <asm/setup.h>
@@ -21,7 +24,10 @@
 #include <asm/mach/serial_sa1100.h>
 #include <mach/mcp.h>
 #include <mach/shannon.h>
+<<<<<<< HEAD
 #include <mach/irqs.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "generic.h"
 
@@ -49,14 +55,23 @@ static struct flash_platform_data shannon_flash_data = {
 	.nr_parts	= ARRAY_SIZE(shannon_partitions),
 };
 
+<<<<<<< HEAD
 static struct resource shannon_flash_resource =
 	DEFINE_RES_MEM(SA1100_CS0_PHYS, SZ_4M);
+=======
+static struct resource shannon_flash_resource = {
+	.start		= SA1100_CS0_PHYS,
+	.end		= SA1100_CS0_PHYS + SZ_4M - 1,
+	.flags		= IORESOURCE_MEM,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct mcp_plat_data shannon_mcp_data = {
 	.mccr0		= MCCR0_ADM,
 	.sclk_rate	= 11981000,
 };
 
+<<<<<<< HEAD
 static struct sa1100fb_mach_info shannon_lcd_info = {
 	.pixclock	= 152500,	.bpp		= 8,
 	.xres		= 640,		.yres		= 480,
@@ -75,6 +90,10 @@ static void __init shannon_init(void)
 {
 	sa11x0_ppc_configure_mcp();
 	sa11x0_register_lcd(&shannon_lcd_info);
+=======
+static void __init shannon_init(void)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sa11x0_register_mtd(&shannon_flash_data, &shannon_flash_resource, 1);
 	sa11x0_register_mcp(&shannon_mcp_data);
 }
@@ -98,6 +117,7 @@ static void __init shannon_map_io(void)
 }
 
 MACHINE_START(SHANNON, "Shannon (AKA: Tuxscreen)")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= shannon_map_io,
 	.nr_irqs	= SA1100_NR_IRQS,
@@ -105,4 +125,11 @@ MACHINE_START(SHANNON, "Shannon (AKA: Tuxscreen)")
 	.timer		= &sa1100_timer,
 	.init_machine	= shannon_init,
 	.restart	= sa11x0_restart,
+=======
+	.boot_params	= 0xc0000100,
+	.map_io		= shannon_map_io,
+	.init_irq	= sa1100_init_irq,
+	.timer		= &sa1100_timer,
+	.init_machine	= shannon_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

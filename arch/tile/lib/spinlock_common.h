@@ -60,5 +60,9 @@ static void delay_backoff(int iterations)
 	loops += __insn_crc32_32(stack_pointer, get_cycles_low()) &
 		(loops - 1);
 
+<<<<<<< HEAD
 	relax(loops);
+=======
+	relax(1 << exponent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

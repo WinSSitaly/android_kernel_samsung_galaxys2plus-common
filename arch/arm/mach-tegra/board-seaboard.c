@@ -19,12 +19,17 @@
 #include <linux/platform_device.h>
 #include <linux/serial_8250.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
+=======
+#include <linux/i2c-tegra.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/delay.h>
 #include <linux/input.h>
 #include <linux/io.h>
 #include <linux/gpio.h>
 #include <linux/gpio_keys.h>
 
+<<<<<<< HEAD
 #include <sound/wm8903.h>
 
 #include <mach/iomap.h>
@@ -35,6 +40,14 @@
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 #include <asm/hardware/gic.h>
+=======
+#include <mach/iomap.h>
+#include <mach/irqs.h>
+#include <mach/sdhci.h>
+
+#include <asm/mach-types.h>
+#include <asm/mach/arch.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "board.h"
 #include "board-seaboard.h"
@@ -45,8 +58,12 @@
 static struct plat_serial8250_port debug_uart_platform_data[] = {
 	{
 		/* Memory and IRQ filled in before registration */
+<<<<<<< HEAD
 		.flags		= UPF_BOOT_AUTOCONF | UPF_FIXED_TYPE,
 		.type		= PORT_TEGRA,
+=======
+		.flags		= UPF_BOOT_AUTOCONF,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.iotype		= UPIO_MEM,
 		.regshift	= 2,
 		.uartclk	= 216000000,
@@ -67,6 +84,7 @@ static __initdata struct tegra_clk_init_table seaboard_clk_init_table[] = {
 	/* name		parent		rate		enabled */
 	{ "uartb",	"pll_p",	216000000,	true},
 	{ "uartd",	"pll_p",	216000000,	true},
+<<<<<<< HEAD
 	{ "pll_a",	"pll_p_out1",	56448000,	true },
 	{ "pll_a_out0",	"pll_a",	11289600,	true },
 	{ "cdev1",	NULL,		0,		true },
@@ -76,6 +94,27 @@ static __initdata struct tegra_clk_init_table seaboard_clk_init_table[] = {
 	{ NULL,		NULL,		0,		0},
 };
 
+=======
+	{ NULL,		NULL,		0,		0},
+};
+
+static struct tegra_i2c_platform_data seaboard_i2c1_platform_data = {
+	.bus_clk_rate	= 400000.
+};
+
+static struct tegra_i2c_platform_data seaboard_i2c2_platform_data = {
+	.bus_clk_rate	= 400000,
+};
+
+static struct tegra_i2c_platform_data seaboard_i2c3_platform_data = {
+	.bus_clk_rate	= 400000,
+};
+
+static struct tegra_i2c_platform_data seaboard_dvc_platform_data = {
+	.bus_clk_rate	= 400000,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct gpio_keys_button seaboard_gpio_keys_buttons[] = {
 	{
 		.code		= SW_LID,
@@ -128,6 +167,7 @@ static struct tegra_sdhci_platform_data sdhci_pdata4 = {
 	.is_8bit	= 1,
 };
 
+<<<<<<< HEAD
 static struct tegra_wm8903_platform_data seaboard_audio_pdata = {
 	.gpio_spkr_en		= TEGRA_GPIO_SPKR_EN,
 	.gpio_hp_det		= TEGRA_GPIO_HP_DET,
@@ -155,16 +195,30 @@ static struct platform_device *seaboard_devices[] __initdata = {
 	&tegra_das_device,
 	&tegra_pcm_device,
 	&seaboard_audio_device,
+=======
+static struct platform_device *seaboard_devices[] __initdata = {
+	&debug_uart,
+	&tegra_pmu_device,
+	&tegra_sdhci_device1,
+	&tegra_sdhci_device3,
+	&tegra_sdhci_device4,
+	&seaboard_gpio_keys_device,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct i2c_board_info __initdata isl29018_device = {
 	I2C_BOARD_INFO("isl29018", 0x44),
+<<<<<<< HEAD
+=======
+	.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_ISL29018_IRQ),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct i2c_board_info __initdata adt7461_device = {
 	I2C_BOARD_INFO("adt7461", 0x4c),
 };
 
+<<<<<<< HEAD
 static struct wm8903_platform_data wm8903_pdata = {
 	.irq_active_low = 0,
 	.micdet_cfg = 0,
@@ -207,11 +261,14 @@ static int seaboard_ehci_init(void)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init seaboard_i2c_init(void)
 {
 	gpio_request(TEGRA_GPIO_ISL29018_IRQ, "isl29018");
 	gpio_direction_input(TEGRA_GPIO_ISL29018_IRQ);
 
+<<<<<<< HEAD
 	isl29018_device.irq = gpio_to_irq(TEGRA_GPIO_ISL29018_IRQ);
 	i2c_register_board_info(0, &isl29018_device, 1);
 
@@ -219,6 +276,16 @@ static void __init seaboard_i2c_init(void)
 	i2c_register_board_info(0, &wm8903_device, 1);
 
 	i2c_register_board_info(3, &adt7461_device, 1);
+=======
+	i2c_register_board_info(0, &isl29018_device, 1);
+
+	i2c_register_board_info(4, &adt7461_device, 1);
+
+	tegra_i2c_device1.dev.platform_data = &seaboard_i2c1_platform_data;
+	tegra_i2c_device2.dev.platform_data = &seaboard_i2c2_platform_data;
+	tegra_i2c_device3.dev.platform_data = &seaboard_i2c3_platform_data;
+	tegra_i2c_device4.dev.platform_data = &seaboard_dvc_platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	platform_device_register(&tegra_i2c_device1);
 	platform_device_register(&tegra_i2c_device2);
@@ -237,8 +304,11 @@ static void __init seaboard_common_init(void)
 	tegra_sdhci_device4.dev.platform_data = &sdhci_pdata4;
 
 	platform_add_devices(seaboard_devices, ARRAY_SIZE(seaboard_devices));
+<<<<<<< HEAD
 
 	seaboard_ehci_init();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __init tegra_seaboard_init(void)
@@ -260,9 +330,12 @@ static void __init tegra_kaen_init(void)
 	debug_uart_platform_data[0].mapbase = TEGRA_UARTB_BASE;
 	debug_uart_platform_data[0].irq = INT_UARTB;
 
+<<<<<<< HEAD
 	seaboard_audio_pdata.gpio_hp_mute = TEGRA_GPIO_KAEN_HP_MUTE;
 	tegra_gpio_enable(TEGRA_GPIO_KAEN_HP_MUTE);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	seaboard_common_init();
 
 	seaboard_i2c_init();
@@ -282,6 +355,7 @@ static void __init tegra_wario_init(void)
 
 
 MACHINE_START(SEABOARD, "seaboard")
+<<<<<<< HEAD
 	.atag_offset    = 0x100,
 	.map_io         = tegra_map_common_io,
 	.init_early     = tegra20_init_early,
@@ -312,4 +386,30 @@ MACHINE_START(WARIO, "wario")
 	.timer          = &tegra_timer,
 	.init_machine   = tegra_wario_init,
 	.restart	= tegra_assert_system_reset,
+=======
+	.boot_params    = 0x00000100,
+	.map_io         = tegra_map_common_io,
+	.init_early     = tegra_init_early,
+	.init_irq       = tegra_init_irq,
+	.timer          = &tegra_timer,
+	.init_machine   = tegra_seaboard_init,
+MACHINE_END
+
+MACHINE_START(KAEN, "kaen")
+	.boot_params    = 0x00000100,
+	.map_io         = tegra_map_common_io,
+	.init_early     = tegra_init_early,
+	.init_irq       = tegra_init_irq,
+	.timer          = &tegra_timer,
+	.init_machine   = tegra_kaen_init,
+MACHINE_END
+
+MACHINE_START(WARIO, "wario")
+	.boot_params    = 0x00000100,
+	.map_io         = tegra_map_common_io,
+	.init_early     = tegra_init_early,
+	.init_irq       = tegra_init_irq,
+	.timer          = &tegra_timer,
+	.init_machine   = tegra_wario_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

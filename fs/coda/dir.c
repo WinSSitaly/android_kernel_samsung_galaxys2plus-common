@@ -30,14 +30,22 @@
 #include "coda_int.h"
 
 /* dir inode-ops */
+<<<<<<< HEAD
 static int coda_create(struct inode *dir, struct dentry *new, umode_t mode, struct nameidata *nd);
+=======
+static int coda_create(struct inode *dir, struct dentry *new, int mode, struct nameidata *nd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct dentry *coda_lookup(struct inode *dir, struct dentry *target, struct nameidata *nd);
 static int coda_link(struct dentry *old_dentry, struct inode *dir_inode, 
 		     struct dentry *entry);
 static int coda_unlink(struct inode *dir_inode, struct dentry *entry);
 static int coda_symlink(struct inode *dir_inode, struct dentry *entry,
 			const char *symname);
+<<<<<<< HEAD
 static int coda_mkdir(struct inode *dir_inode, struct dentry *entry, umode_t mode);
+=======
+static int coda_mkdir(struct inode *dir_inode, struct dentry *entry, int mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int coda_rmdir(struct inode *dir_inode, struct dentry *entry);
 static int coda_rename(struct inode *old_inode, struct dentry *old_dentry, 
                        struct inode *new_inode, struct dentry *new_dentry);
@@ -96,11 +104,20 @@ const struct file_operations coda_dir_operations = {
 /* access routines: lookup, readlink, permission */
 static struct dentry *coda_lookup(struct inode *dir, struct dentry *entry, struct nameidata *nd)
 {
+<<<<<<< HEAD
 	struct super_block *sb = dir->i_sb;
 	const char *name = entry->d_name.name;
 	size_t length = entry->d_name.len;
 	struct inode *inode;
 	int type = 0;
+=======
+	struct inode *inode = NULL;
+	struct CodaFid resfid = { { 0, } };
+	int type = 0;
+	int error = 0;
+	const char *name = entry->d_name.name;
+	size_t length = entry->d_name.len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (length > CODA_MAXNAMLEN) {
 		printk(KERN_ERR "name too long: lookup, %s (%*s)\n",
@@ -110,6 +127,7 @@ static struct dentry *coda_lookup(struct inode *dir, struct dentry *entry, struc
 
 	/* control object, create inode on the fly */
 	if (coda_isroot(dir) && coda_iscontrol(name, length)) {
+<<<<<<< HEAD
 		inode = coda_cnode_makectl(sb);
 		type = CODA_NOCACHE;
 	} else {
@@ -124,16 +142,42 @@ static struct dentry *coda_lookup(struct inode *dir, struct dentry *entry, struc
 
 	if (inode == ERR_PTR(-ENOENT))
 		inode = NULL;
+=======
+		error = coda_cnode_makectl(&inode, dir->i_sb);
+		type = CODA_NOCACHE;
+		goto exit;
+	}
+
+	error = venus_lookup(dir->i_sb, coda_i2f(dir), name, length,
+			     &type, &resfid);
+	if (!error)
+		error = coda_cnode_make(&inode, &resfid, dir->i_sb);
+
+	if (error && error != -ENOENT)
+		return ERR_PTR(error);
+
+exit:
+	if (inode && (type & CODA_NOCACHE))
+		coda_flag_inode(inode, C_VATTR | C_PURGE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return d_splice_alias(inode, entry);
 }
 
 
+<<<<<<< HEAD
 int coda_permission(struct inode *inode, int mask)
 {
 	int error;
 
 	if (mask & MAY_NOT_BLOCK)
+=======
+int coda_permission(struct inode *inode, int mask, unsigned int flags)
+{
+	int error;
+
+	if (flags & IPERM_FLAG_RCU)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ECHILD;
 
 	mask &= MAY_READ | MAY_WRITE | MAY_EXEC;
@@ -188,7 +232,11 @@ static inline void coda_dir_drop_nlink(struct inode *dir)
 }
 
 /* creation routines: create, mknod, mkdir, link, symlink */
+<<<<<<< HEAD
 static int coda_create(struct inode *dir, struct dentry *de, umode_t mode, struct nameidata *nd)
+=======
+static int coda_create(struct inode *dir, struct dentry *de, int mode, struct nameidata *nd)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int error;
 	const char *name=de->d_name.name;
@@ -220,7 +268,11 @@ err_out:
 	return error;
 }
 
+<<<<<<< HEAD
 static int coda_mkdir(struct inode *dir, struct dentry *de, umode_t mode)
+=======
+static int coda_mkdir(struct inode *dir, struct dentry *de, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inode *inode;
 	struct coda_vattr attrs;
@@ -337,7 +389,11 @@ static int coda_rmdir(struct inode *dir, struct dentry *de)
 	if (!error) {
 		/* VFS may delete the child */
 		if (de->d_inode)
+<<<<<<< HEAD
 			clear_nlink(de->d_inode);
+=======
+		    de->d_inode->i_nlink = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* fix the link count of the parent */
 		coda_dir_drop_nlink(dir);
@@ -446,7 +502,12 @@ static int coda_venus_readdir(struct file *coda_file, void *buf,
 	struct file *host_file;
 	struct dentry *de;
 	struct venus_dirent *vdir;
+<<<<<<< HEAD
 	unsigned long vdir_size = offsetof(struct venus_dirent, d_name);
+=======
+	unsigned long vdir_size =
+	    (unsigned long)(&((struct venus_dirent *)0)->d_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int type;
 	struct qstr name;
 	ino_t ino;
@@ -470,7 +531,11 @@ static int coda_venus_readdir(struct file *coda_file, void *buf,
 		coda_file->f_pos++;
 	}
 	if (coda_file->f_pos == 1) {
+<<<<<<< HEAD
 		ret = filldir(buf, "..", 2, 1, parent_ino(de), DT_DIR);
+=======
+		ret = filldir(buf, "..", 2, 1, de->d_parent->d_inode->i_ino, DT_DIR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0)
 			goto out;
 		result++;

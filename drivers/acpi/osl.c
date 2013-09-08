@@ -31,7 +31,10 @@
 #include <linux/kernel.h>
 #include <linux/slab.h>
 #include <linux/mm.h>
+<<<<<<< HEAD
 #include <linux/highmem.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pci.h>
 #include <linux/interrupt.h>
 #include <linux/kmod.h>
@@ -77,15 +80,35 @@ EXPORT_SYMBOL(acpi_in_debugger);
 extern char line_buf[80];
 #endif				/*ENABLE_DEBUGGER */
 
+<<<<<<< HEAD
 static int (*__acpi_os_prepare_sleep)(u8 sleep_state, u32 pm1a_ctrl,
 				      u32 pm1b_ctrl);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static acpi_osd_handler acpi_irq_handler;
 static void *acpi_irq_context;
 static struct workqueue_struct *kacpid_wq;
 static struct workqueue_struct *kacpi_notify_wq;
+<<<<<<< HEAD
 struct workqueue_struct *kacpi_hotplug_wq;
 EXPORT_SYMBOL(kacpi_hotplug_wq);
+=======
+static struct workqueue_struct *kacpi_hotplug_wq;
+
+struct acpi_res_list {
+	resource_size_t start;
+	resource_size_t end;
+	acpi_adr_space_type resource_type; /* IO port, System memory, ...*/
+	char name[5];   /* only can have a length of 4 chars, make use of this
+			   one instead of res->name, no need to kalloc then */
+	struct list_head resource_list;
+	int count;
+};
+
+static LIST_HEAD(resource_list_head);
+static DEFINE_SPINLOCK(acpi_res_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * This list of permanent mappings is for memory that may be accessed from
@@ -147,7 +170,11 @@ static u32 acpi_osi_handler(acpi_string interface, u32 supported)
 {
 	if (!strcmp("Linux", interface)) {
 
+<<<<<<< HEAD
 		printk_once(KERN_NOTICE FW_BUG PREFIX
+=======
+		printk(KERN_NOTICE FW_BUG PREFIX
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"BIOS _OSI(Linux) query %s%s\n",
 			osi_linux.enable ? "honored" : "ignored",
 			osi_linux.cmdline ? " via cmdline" :
@@ -157,6 +184,7 @@ static u32 acpi_osi_handler(acpi_string interface, u32 supported)
 	return supported;
 }
 
+<<<<<<< HEAD
 static void __init acpi_request_region (struct acpi_generic_address *gas,
 	unsigned int length, char *desc)
 {
@@ -172,6 +200,19 @@ static void __init acpi_request_region (struct acpi_generic_address *gas,
 		request_region(addr, length, desc);
 	else if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY)
 		request_mem_region(addr, length, desc);
+=======
+static void __init acpi_request_region (struct acpi_generic_address *addr,
+	unsigned int length, char *desc)
+{
+	if (!addr->address || !length)
+		return;
+
+	/* Resources are never freed */
+	if (addr->space_id == ACPI_ADR_SPACE_SYSTEM_IO)
+		request_region(addr->address, length, desc);
+	else if (addr->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY)
+		request_mem_region(addr->address, length, desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __init acpi_reserve_resources(void)
@@ -233,6 +274,7 @@ void acpi_os_vprintf(const char *fmt, va_list args)
 #endif
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_KEXEC
 static unsigned long acpi_rsdp;
 static int __init setup_acpi_rsdp(char *arg)
@@ -251,6 +293,11 @@ acpi_physical_address __init acpi_os_get_root_pointer(void)
 #endif
 
 	if (efi_enabled(EFI_CONFIG_TABLES)) {
+=======
+acpi_physical_address __init acpi_os_get_root_pointer(void)
+{
+	if (efi_enabled) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (efi.acpi20 != EFI_INVALID_TABLE_ADDR)
 			return efi.acpi20;
 		else if (efi.acpi != EFI_INVALID_TABLE_ADDR)
@@ -325,6 +372,7 @@ acpi_map_lookup_virt(void __iomem *virt, acpi_size size)
 	return NULL;
 }
 
+<<<<<<< HEAD
 #ifndef CONFIG_IA64
 #define should_use_kmap(pfn)   page_is_ram(pfn)
 #else
@@ -356,6 +404,8 @@ static void acpi_unmap(acpi_physical_address pg_off, void __iomem *vaddr)
 		iounmap(vaddr);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __iomem *__init_refok
 acpi_os_map_memory(acpi_physical_address phys, acpi_size size)
 {
@@ -388,7 +438,11 @@ acpi_os_map_memory(acpi_physical_address phys, acpi_size size)
 
 	pg_off = round_down(phys, PAGE_SIZE);
 	pg_sz = round_up(phys + size, PAGE_SIZE) - pg_off;
+<<<<<<< HEAD
 	virt = acpi_map(pg_off, pg_sz);
+=======
+	virt = acpi_os_ioremap(pg_off, pg_sz);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!virt) {
 		mutex_unlock(&acpi_ioremap_lock);
 		kfree(map);
@@ -419,7 +473,11 @@ static void acpi_os_map_cleanup(struct acpi_ioremap *map)
 {
 	if (!map->refcount) {
 		synchronize_rcu();
+<<<<<<< HEAD
 		acpi_unmap(map->phys, map->virt);
+=======
+		iounmap(map->virt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(map);
 	}
 }
@@ -453,6 +511,7 @@ void __init early_acpi_os_unmap_memory(void __iomem *virt, acpi_size size)
 		__acpi_unmap_table(virt, size);
 }
 
+<<<<<<< HEAD
 int acpi_os_map_generic_address(struct acpi_generic_address *gas)
 {
 	u64 addr;
@@ -467,11 +526,25 @@ int acpi_os_map_generic_address(struct acpi_generic_address *gas)
 		return -EINVAL;
 
 	virt = acpi_os_map_memory(addr, gas->bit_width / 8);
+=======
+static int acpi_os_map_generic_address(struct acpi_generic_address *addr)
+{
+	void __iomem *virt;
+
+	if (addr->space_id != ACPI_ADR_SPACE_SYSTEM_MEMORY)
+		return 0;
+
+	if (!addr->address || !addr->bit_width)
+		return -EINVAL;
+
+	virt = acpi_os_map_memory(addr->address, addr->bit_width / 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!virt)
 		return -EIO;
 
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(acpi_os_map_generic_address);
 
 void acpi_os_unmap_generic_address(struct acpi_generic_address *gas)
@@ -489,6 +562,21 @@ void acpi_os_unmap_generic_address(struct acpi_generic_address *gas)
 
 	mutex_lock(&acpi_ioremap_lock);
 	map = acpi_map_lookup(addr, gas->bit_width / 8);
+=======
+
+static void acpi_os_unmap_generic_address(struct acpi_generic_address *addr)
+{
+	struct acpi_ioremap *map;
+
+	if (addr->space_id != ACPI_ADR_SPACE_SYSTEM_MEMORY)
+		return;
+
+	if (!addr->address || !addr->bit_width)
+		return;
+
+	mutex_lock(&acpi_ioremap_lock);
+	map = acpi_map_lookup(addr->address, addr->bit_width / 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!map) {
 		mutex_unlock(&acpi_ioremap_lock);
 		return;
@@ -498,7 +586,10 @@ void acpi_os_unmap_generic_address(struct acpi_generic_address *gas)
 
 	acpi_os_map_cleanup(map);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(acpi_os_unmap_generic_address);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef ACPI_FUTURE_USAGE
 acpi_status
@@ -557,6 +648,7 @@ acpi_os_table_override(struct acpi_table_header * existing_table,
 	return AE_OK;
 }
 
+<<<<<<< HEAD
 acpi_status
 acpi_os_physical_table_override(struct acpi_table_header *existing_table,
 				acpi_physical_address * new_address,
@@ -566,6 +658,8 @@ acpi_os_physical_table_override(struct acpi_table_header *existing_table,
 }
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static irqreturn_t acpi_irq(int irq, void *dev_id)
 {
 	u32 handled;
@@ -711,6 +805,7 @@ acpi_status acpi_os_write_port(acpi_io_address port, u32 value, u32 width)
 
 EXPORT_SYMBOL(acpi_os_write_port);
 
+<<<<<<< HEAD
 #ifdef readq
 static inline u64 read64(const volatile void __iomem *addr)
 {
@@ -728,11 +823,19 @@ static inline u64 read64(const volatile void __iomem *addr)
 
 acpi_status
 acpi_os_read_memory(acpi_physical_address phys_addr, u64 *value, u32 width)
+=======
+acpi_status
+acpi_os_read_memory(acpi_physical_address phys_addr, u32 * value, u32 width)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	void __iomem *virt_addr;
 	unsigned int size = width / 8;
 	bool unmap = false;
+<<<<<<< HEAD
 	u64 dummy;
+=======
+	u32 dummy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rcu_read_lock();
 	virt_addr = acpi_map_vaddr_lookup(phys_addr, size);
@@ -757,9 +860,12 @@ acpi_os_read_memory(acpi_physical_address phys_addr, u64 *value, u32 width)
 	case 32:
 		*(u32 *) value = readl(virt_addr);
 		break;
+<<<<<<< HEAD
 	case 64:
 		*(u64 *) value = read64(virt_addr);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		BUG();
 	}
@@ -772,6 +878,7 @@ acpi_os_read_memory(acpi_physical_address phys_addr, u64 *value, u32 width)
 	return AE_OK;
 }
 
+<<<<<<< HEAD
 #ifdef writeq
 static inline void write64(u64 val, volatile void __iomem *addr)
 {
@@ -787,6 +894,10 @@ static inline void write64(u64 val, volatile void __iomem *addr)
 
 acpi_status
 acpi_os_write_memory(acpi_physical_address phys_addr, u64 value, u32 width)
+=======
+acpi_status
+acpi_os_write_memory(acpi_physical_address phys_addr, u32 value, u32 width)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	void __iomem *virt_addr;
 	unsigned int size = width / 8;
@@ -812,9 +923,12 @@ acpi_os_write_memory(acpi_physical_address phys_addr, u64 value, u32 width)
 	case 32:
 		writel(value, virt_addr);
 		break;
+<<<<<<< HEAD
 	case 64:
 		write64(value, virt_addr);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		BUG();
 	}
@@ -1176,6 +1290,7 @@ struct osi_setup_entry {
 	bool enable;
 };
 
+<<<<<<< HEAD
 static struct osi_setup_entry __initdata
 		osi_setup_entries[OSI_STRING_ENTRIES_MAX] = {
 	{"Module Device", true},
@@ -1183,6 +1298,9 @@ static struct osi_setup_entry __initdata
 	{"3.0 _SCP Extensions", true},
 	{"Processor Aggregator Device", true},
 };
+=======
+static struct osi_setup_entry __initdata osi_setup_entries[OSI_STRING_ENTRIES_MAX];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void __init acpi_osi_setup(char *str)
 {
@@ -1355,16 +1473,22 @@ __setup("acpi_enforce_resources=", acpi_enforce_resources_setup);
  * drivers */
 int acpi_check_resource_conflict(const struct resource *res)
 {
+<<<<<<< HEAD
 	acpi_adr_space_type space_id;
 	acpi_size length;
 	u8 warn = 0;
 	int clash = 0;
+=======
+	struct acpi_res_list *res_list_elem;
+	int ioport = 0, clash = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (acpi_enforce_resources == ENFORCE_RESOURCES_NO)
 		return 0;
 	if (!(res->flags & IORESOURCE_IO) && !(res->flags & IORESOURCE_MEM))
 		return 0;
 
+<<<<<<< HEAD
 	if (res->flags & IORESOURCE_IO)
 		space_id = ACPI_ADR_SPACE_SYSTEM_IO;
 	else
@@ -1377,6 +1501,38 @@ int acpi_check_resource_conflict(const struct resource *res)
 
 	if (clash) {
 		if (acpi_enforce_resources != ENFORCE_RESOURCES_NO) {
+=======
+	ioport = res->flags & IORESOURCE_IO;
+
+	spin_lock(&acpi_res_lock);
+	list_for_each_entry(res_list_elem, &resource_list_head,
+			    resource_list) {
+		if (ioport && (res_list_elem->resource_type
+			       != ACPI_ADR_SPACE_SYSTEM_IO))
+			continue;
+		if (!ioport && (res_list_elem->resource_type
+				!= ACPI_ADR_SPACE_SYSTEM_MEMORY))
+			continue;
+
+		if (res->end < res_list_elem->start
+		    || res_list_elem->end < res->start)
+			continue;
+		clash = 1;
+		break;
+	}
+	spin_unlock(&acpi_res_lock);
+
+	if (clash) {
+		if (acpi_enforce_resources != ENFORCE_RESOURCES_NO) {
+			printk(KERN_WARNING "ACPI: resource %s %pR"
+			       " conflicts with ACPI region %s "
+			       "[%s 0x%zx-0x%zx]\n",
+			       res->name, res, res_list_elem->name,
+			       (res_list_elem->resource_type ==
+				ACPI_ADR_SPACE_SYSTEM_IO) ? "io" : "mem",
+			       (size_t) res_list_elem->start,
+			       (size_t) res_list_elem->end);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (acpi_enforce_resources == ENFORCE_RESOURCES_LAX)
 				printk(KERN_NOTICE "ACPI: This conflict may"
 				       " cause random problems and system"
@@ -1528,6 +1684,158 @@ acpi_status acpi_os_release_object(acpi_cache_t * cache, void *object)
 	kmem_cache_free(cache, object);
 	return (AE_OK);
 }
+<<<<<<< HEAD
+=======
+
+static inline int acpi_res_list_add(struct acpi_res_list *res)
+{
+	struct acpi_res_list *res_list_elem;
+
+	list_for_each_entry(res_list_elem, &resource_list_head,
+			    resource_list) {
+
+		if (res->resource_type == res_list_elem->resource_type &&
+		    res->start == res_list_elem->start &&
+		    res->end == res_list_elem->end) {
+
+			/*
+			 * The Region(addr,len) already exist in the list,
+			 * just increase the count
+			 */
+
+			res_list_elem->count++;
+			return 0;
+		}
+	}
+
+	res->count = 1;
+	list_add(&res->resource_list, &resource_list_head);
+	return 1;
+}
+
+static inline void acpi_res_list_del(struct acpi_res_list *res)
+{
+	struct acpi_res_list *res_list_elem;
+
+	list_for_each_entry(res_list_elem, &resource_list_head,
+			    resource_list) {
+
+		if (res->resource_type == res_list_elem->resource_type &&
+		    res->start == res_list_elem->start &&
+		    res->end == res_list_elem->end) {
+
+			/*
+			 * If the res count is decreased to 0,
+			 * remove and free it
+			 */
+
+			if (--res_list_elem->count == 0) {
+				list_del(&res_list_elem->resource_list);
+				kfree(res_list_elem);
+			}
+			return;
+		}
+	}
+}
+
+acpi_status
+acpi_os_invalidate_address(
+    u8                   space_id,
+    acpi_physical_address   address,
+    acpi_size               length)
+{
+	struct acpi_res_list res;
+
+	switch (space_id) {
+	case ACPI_ADR_SPACE_SYSTEM_IO:
+	case ACPI_ADR_SPACE_SYSTEM_MEMORY:
+		/* Only interference checks against SystemIO and SystemMemory
+		   are needed */
+		res.start = address;
+		res.end = address + length - 1;
+		res.resource_type = space_id;
+		spin_lock(&acpi_res_lock);
+		acpi_res_list_del(&res);
+		spin_unlock(&acpi_res_lock);
+		break;
+	case ACPI_ADR_SPACE_PCI_CONFIG:
+	case ACPI_ADR_SPACE_EC:
+	case ACPI_ADR_SPACE_SMBUS:
+	case ACPI_ADR_SPACE_CMOS:
+	case ACPI_ADR_SPACE_PCI_BAR_TARGET:
+	case ACPI_ADR_SPACE_DATA_TABLE:
+	case ACPI_ADR_SPACE_FIXED_HARDWARE:
+		break;
+	}
+	return AE_OK;
+}
+
+/******************************************************************************
+ *
+ * FUNCTION:    acpi_os_validate_address
+ *
+ * PARAMETERS:  space_id             - ACPI space ID
+ *              address             - Physical address
+ *              length              - Address length
+ *
+ * RETURN:      AE_OK if address/length is valid for the space_id. Otherwise,
+ *              should return AE_AML_ILLEGAL_ADDRESS.
+ *
+ * DESCRIPTION: Validate a system address via the host OS. Used to validate
+ *              the addresses accessed by AML operation regions.
+ *
+ *****************************************************************************/
+
+acpi_status
+acpi_os_validate_address (
+    u8                   space_id,
+    acpi_physical_address   address,
+    acpi_size               length,
+    char *name)
+{
+	struct acpi_res_list *res;
+	int added;
+	if (acpi_enforce_resources == ENFORCE_RESOURCES_NO)
+		return AE_OK;
+
+	switch (space_id) {
+	case ACPI_ADR_SPACE_SYSTEM_IO:
+	case ACPI_ADR_SPACE_SYSTEM_MEMORY:
+		/* Only interference checks against SystemIO and SystemMemory
+		   are needed */
+		res = kzalloc(sizeof(struct acpi_res_list), GFP_KERNEL);
+		if (!res)
+			return AE_OK;
+		/* ACPI names are fixed to 4 bytes, still better use strlcpy */
+		strlcpy(res->name, name, 5);
+		res->start = address;
+		res->end = address + length - 1;
+		res->resource_type = space_id;
+		spin_lock(&acpi_res_lock);
+		added = acpi_res_list_add(res);
+		spin_unlock(&acpi_res_lock);
+		pr_debug("%s %s resource: start: 0x%llx, end: 0x%llx, "
+			 "name: %s\n", added ? "Added" : "Already exist",
+			 (space_id == ACPI_ADR_SPACE_SYSTEM_IO)
+			 ? "SystemIO" : "System Memory",
+			 (unsigned long long)res->start,
+			 (unsigned long long)res->end,
+			 res->name);
+		if (!added)
+			kfree(res);
+		break;
+	case ACPI_ADR_SPACE_PCI_CONFIG:
+	case ACPI_ADR_SPACE_EC:
+	case ACPI_ADR_SPACE_SMBUS:
+	case ACPI_ADR_SPACE_CMOS:
+	case ACPI_ADR_SPACE_PCI_BAR_TARGET:
+	case ACPI_ADR_SPACE_DATA_TABLE:
+	case ACPI_ADR_SPACE_FIXED_HARDWARE:
+		break;
+	}
+	return AE_OK;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 acpi_status __init acpi_os_initialize(void)
@@ -1571,6 +1879,7 @@ acpi_status acpi_os_terminate(void)
 
 	return AE_OK;
 }
+<<<<<<< HEAD
 
 acpi_status acpi_os_prepare_sleep(u8 sleep_state, u32 pm1a_control,
 				  u32 pm1b_control)
@@ -1592,3 +1901,5 @@ void acpi_os_set_prepare_sleep(int (*func)(u8 sleep_state,
 {
 	__acpi_os_prepare_sleep = func;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

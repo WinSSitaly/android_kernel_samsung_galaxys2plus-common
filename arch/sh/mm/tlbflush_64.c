@@ -22,6 +22,10 @@
 #include <linux/smp.h>
 #include <linux/perf_event.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/tlb.h>
 #include <asm/uaccess.h>
@@ -115,7 +119,11 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long writeaccess,
 	/* Not an IO address, so reenable interrupts */
 	local_irq_enable();
 
+<<<<<<< HEAD
 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
+=======
+	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, 0, regs, address);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If we're in an interrupt or have no user
@@ -199,11 +207,19 @@ good_area:
 
 	if (fault & VM_FAULT_MAJOR) {
 		tsk->maj_flt++;
+<<<<<<< HEAD
 		perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS_MAJ, 1,
 				     regs, address);
 	} else {
 		tsk->min_flt++;
 		perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS_MIN, 1,
+=======
+		perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS_MAJ, 1, 0,
+				     regs, address);
+	} else {
+		tsk->min_flt++;
+		perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS_MIN, 1, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     regs, address);
 	}
 

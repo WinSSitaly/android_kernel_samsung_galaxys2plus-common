@@ -3,18 +3,28 @@
  *
  * Copyright (c) 2003 Patrick Mochel
  * Copyright (c) 2003 Open Source Development Lab
+<<<<<<< HEAD
  *
+=======
+ * 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This file is released under the GPLv2
  *
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kobject.h>
 #include <linux/string.h>
 #include <linux/resume-trace.h>
 #include <linux/workqueue.h>
+<<<<<<< HEAD
 #include <linux/debugfs.h>
 #include <linux/seq_file.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "power.h"
 
@@ -40,9 +50,14 @@ EXPORT_SYMBOL_GPL(unregister_pm_notifier);
 
 int pm_notifier_call_chain(unsigned long val)
 {
+<<<<<<< HEAD
 	int ret = blocking_notifier_call_chain(&pm_chain_head, val, NULL);
 
 	return notifier_to_errno(ret);
+=======
+	return (blocking_notifier_call_chain(&pm_chain_head, val, NULL)
+			== NOTIFY_BAD) ? -EINVAL : 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* If set, devices may be suspended and resumed asynchronously. */
@@ -116,7 +131,11 @@ static ssize_t pm_test_store(struct kobject *kobj, struct kobj_attribute *attr,
 	p = memchr(buf, '\n', n);
 	len = p ? p - buf : n;
 
+<<<<<<< HEAD
 	lock_system_sleep();
+=======
+	mutex_lock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	level = TEST_FIRST;
 	for (s = &pm_tests[level]; level <= TEST_MAX; s++, level++)
@@ -126,7 +145,11 @@ static ssize_t pm_test_store(struct kobject *kobj, struct kobj_attribute *attr,
 			break;
 		}
 
+<<<<<<< HEAD
 	unlock_system_sleep();
+=======
+	mutex_unlock(&pm_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return error ? error : n;
 }
@@ -134,6 +157,7 @@ static ssize_t pm_test_store(struct kobject *kobj, struct kobj_attribute *attr,
 power_attr(pm_test);
 #endif /* CONFIG_PM_DEBUG */
 
+<<<<<<< HEAD
 #ifdef CONFIG_DEBUG_FS
 static char *suspend_step_name(enum suspend_stat_step step)
 {
@@ -233,6 +257,8 @@ static int __init pm_debugfs_init(void)
 late_initcall(pm_debugfs_init);
 #endif /* CONFIG_DEBUG_FS */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_PM_SLEEP */
 
 struct kobject *power_kobj;
@@ -244,7 +270,11 @@ struct kobject *power_kobj;
  *	'standby' (Power-On Suspend), 'mem' (Suspend-to-RAM), and
  *	'disk' (Suspend-to-Disk).
  *
+<<<<<<< HEAD
  *	store() accepts one of those strings, translates it into the
+=======
+ *	store() accepts one of those strings, translates it into the 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	proper enumerated value, and initiates a suspend transition.
  */
 static ssize_t state_show(struct kobject *kobj, struct kobj_attribute *attr,
@@ -273,7 +303,15 @@ static ssize_t state_store(struct kobject *kobj, struct kobj_attribute *attr,
 			   const char *buf, size_t n)
 {
 #ifdef CONFIG_SUSPEND
+<<<<<<< HEAD
 	suspend_state_t state = PM_SUSPEND_STANDBY;
+=======
+#ifdef CONFIG_EARLYSUSPEND
+	suspend_state_t state = PM_SUSPEND_ON;
+#else
+	suspend_state_t state = PM_SUSPEND_STANDBY;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const char * const *s;
 #endif
 	char *p;
@@ -286,16 +324,35 @@ static ssize_t state_store(struct kobject *kobj, struct kobj_attribute *attr,
 	/* First, check if we are requested to hibernate */
 	if (len == 4 && !strncmp(buf, "disk", len)) {
 		error = hibernate();
+<<<<<<< HEAD
 		goto Exit;
+=======
+  goto Exit;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 #ifdef CONFIG_SUSPEND
 	for (s = &pm_states[state]; state < PM_SUSPEND_MAX; s++, state++) {
+<<<<<<< HEAD
 		if (*s && len == strlen(*s) && !strncmp(buf, *s, len)) {
 			error = pm_suspend(state);
 			break;
 		}
 	}
+=======
+		if (*s && len == strlen(*s) && !strncmp(buf, *s, len))
+			break;
+	}
+	if (state < PM_SUSPEND_MAX && *s)
+#ifdef CONFIG_EARLYSUSPEND
+		if (state == PM_SUSPEND_ON || valid_state(state)) {
+			error = 0;
+			request_suspend_state(state);
+		}
+#else
+		error = enter_state(state);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
  Exit:
@@ -400,6 +457,14 @@ power_attr(pm_trace_dev_match);
 
 #endif /* CONFIG_PM_TRACE */
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USER_WAKELOCK
+power_attr(wake_lock);
+power_attr(wake_unlock);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct attribute * g[] = {
 	&state_attr.attr,
 #ifdef CONFIG_PM_TRACE
@@ -412,6 +477,13 @@ static struct attribute * g[] = {
 #ifdef CONFIG_PM_DEBUG
 	&pm_test_attr.attr,
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USER_WAKELOCK
+	&wake_lock_attr.attr,
+	&wake_unlock_attr.attr,
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	NULL,
 };

@@ -22,6 +22,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+<<<<<<< HEAD
 #include "pwc.h"
 
 void pwc_dec1_init(struct pwc_device *pdev, const unsigned char *cmd)
@@ -30,3 +31,31 @@ void pwc_dec1_init(struct pwc_device *pdev, const unsigned char *cmd)
 
 	pdec->version = pdev->release;
 }
+=======
+
+
+
+#include "pwc-dec1.h"
+
+
+void pwc_dec1_init(int type, int release, void *buffer, void *table)
+{
+
+}
+
+void pwc_dec1_exit(void)
+{
+
+
+
+}
+
+int pwc_dec1_alloc(struct pwc_device *pwc)
+{
+	pwc->decompress_data = kmalloc(sizeof(struct pwc_dec1_private), GFP_KERNEL);
+	if (pwc->decompress_data == NULL)
+		return -ENOMEM;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

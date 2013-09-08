@@ -11,11 +11,22 @@
 #include <sched.h>
 #include <signal.h>
 #include <string.h>
+<<<<<<< HEAD
 #include "kern_util.h"
 #include "init.h"
 #include "os.h"
 #include "sigio.h"
 #include "um_malloc.h"
+=======
+#include "kern_constants.h"
+#include "kern_util.h"
+#include "init.h"
+#include "os.h"
+#include "process.h"
+#include "sigio.h"
+#include "um_malloc.h"
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Protected by sigio_lock(), also used by sigio_cleanup, which is an

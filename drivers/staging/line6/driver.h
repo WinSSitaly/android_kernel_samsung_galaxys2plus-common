@@ -88,11 +88,14 @@ static const int SYSEX_EXTRA_SIZE = sizeof(line6_midi_id) + 4;
 */
 struct line6_properties {
 	/**
+<<<<<<< HEAD
 		 Bit identifying this device in the line6usb driver.
 	*/
 	int device_bit;
 
 	/**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 Card id string (maximum 16 characters).
 		 This can be used to address the device in ALSA programs as
 		 "default:CARD=<id>"
@@ -105,6 +108,14 @@ struct line6_properties {
 	const char *name;
 
 	/**
+<<<<<<< HEAD
+=======
+		 Bit identifying this device in the line6usb driver.
+	*/
+	int device_bit;
+
+	/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 Bit vector defining this device's capabilities in the
 		 line6usb driver.
 	*/

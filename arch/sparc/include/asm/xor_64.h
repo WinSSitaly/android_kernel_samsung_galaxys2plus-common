@@ -66,8 +66,12 @@ static struct xor_block_template xor_block_niagara = {
 	((tlb_type == hypervisor && \
 	  (sun4v_chip_type == SUN4V_CHIP_NIAGARA1 || \
 	   sun4v_chip_type == SUN4V_CHIP_NIAGARA2 || \
+<<<<<<< HEAD
 	   sun4v_chip_type == SUN4V_CHIP_NIAGARA3 || \
 	   sun4v_chip_type == SUN4V_CHIP_NIAGARA4 || \
 	   sun4v_chip_type == SUN4V_CHIP_NIAGARA5)) ? \
+=======
+	   sun4v_chip_type == SUN4V_CHIP_NIAGARA3)) ? \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 &xor_block_niagara : \
 	 &xor_block_VIS)

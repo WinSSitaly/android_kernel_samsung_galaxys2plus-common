@@ -5,7 +5,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -121,7 +125,11 @@ void acpi_ns_dump_root_devices(void)
 		return;
 	}
 
+<<<<<<< HEAD
 	status = acpi_get_handle(NULL, METHOD_NAME__SB_, &sys_bus_handle);
+=======
+	status = acpi_get_handle(NULL, ACPI_NS_SYSTEM_BUS, &sys_bus_handle);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ACPI_FAILURE(status)) {
 		return;
 	}

@@ -59,7 +59,11 @@ static int rio_karma_init(struct us_data *us);
 { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
   .driver_info = (flags)|(USB_US_TYPE_STOR<<24) }
 
+<<<<<<< HEAD
 static struct usb_device_id karma_usb_ids[] = {
+=======
+struct usb_device_id karma_usb_ids[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #	include "unusual_karma.h"
 	{ }		/* Terminating entry */
 };
@@ -230,7 +234,24 @@ static struct usb_driver karma_driver = {
 	.post_reset =	usb_stor_post_reset,
 	.id_table =	karma_usb_ids,
 	.soft_unbind =	1,
+<<<<<<< HEAD
 	.no_dynamic_id = 1,
 };
 
 module_usb_driver(karma_driver);
+=======
+};
+
+static int __init karma_init(void)
+{
+	return usb_register(&karma_driver);
+}
+
+static void __exit karma_exit(void)
+{
+	usb_deregister(&karma_driver);
+}
+
+module_init(karma_init);
+module_exit(karma_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

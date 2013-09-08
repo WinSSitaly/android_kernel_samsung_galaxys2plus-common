@@ -198,5 +198,8 @@ static int __init jornada_ssp_init(void)
 {
 	return platform_driver_register(&jornadassp_driver);
 }
+<<<<<<< HEAD
 
 module_init(jornada_ssp_init);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

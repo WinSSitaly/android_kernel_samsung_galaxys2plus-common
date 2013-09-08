@@ -25,12 +25,18 @@
 
 #include <linux/kprobes.h>
 #include <linux/preempt.h>
+<<<<<<< HEAD
 #include <linux/uaccess.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kdebug.h>
 #include <linux/slab.h>
 
 #include <asm/ptrace.h>
+<<<<<<< HEAD
 #include <asm/branch.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/break.h>
 #include <asm/inst.h>
 
@@ -114,6 +120,7 @@ insn_ok:
 	return 0;
 }
 
+<<<<<<< HEAD
 /*
  * insn_has_ll_or_sc function checks whether instruction is ll or sc
  * one; putting breakpoint on top of atomic ll/sc pair is bad idea;
@@ -138,12 +145,15 @@ static int __kprobes insn_has_ll_or_sc(union mips_instruction insn)
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int __kprobes arch_prepare_kprobe(struct kprobe *p)
 {
 	union mips_instruction insn;
 	union mips_instruction prev_insn;
 	int ret = 0;
 
+<<<<<<< HEAD
 	insn = p->addr[0];
 
 	if (insn_has_ll_or_sc(insn)) {
@@ -157,6 +167,13 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
 				sizeof(mips_instruction)) == 0) &&
 				insn_has_delayslot(prev_insn)) {
 		pr_notice("Kprobes for branch delayslot are not supported\n");
+=======
+	prev_insn = p->addr[-1];
+	insn = p->addr[0];
+
+	if (insn_has_delayslot(insn) || insn_has_delayslot(prev_insn)) {
+		pr_notice("Kprobes for branch and jump instructions are not supported\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EINVAL;
 		goto out;
 	}
@@ -172,6 +189,7 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
 	 * In the kprobe->ainsn.insn[] array we store the original
 	 * instruction at index zero and a break trap instruction at
 	 * index one.
+<<<<<<< HEAD
 	 *
 	 * On MIPS arch if the instruction at probed address is a
 	 * branch instruction, we need to execute the instruction at
@@ -186,6 +204,11 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
 	else
 		memcpy(&p->ainsn.insn[0], p->addr, sizeof(kprobe_opcode_t));
 
+=======
+	 */
+
+	memcpy(&p->ainsn.insn[0], p->addr, sizeof(kprobe_opcode_t));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	p->ainsn.insn[1] = breakpoint2_insn;
 	p->opcode = *p->addr;
 
@@ -236,6 +259,7 @@ static void set_current_kprobe(struct kprobe *p, struct pt_regs *regs,
 	kcb->kprobe_saved_epc = regs->cp0_epc;
 }
 
+<<<<<<< HEAD
 /**
  * evaluate_branch_instrucion -
  *
@@ -288,12 +312,17 @@ static void prepare_singlestep(struct kprobe *p, struct pt_regs *regs,
 {
 	int ret = 0;
 
+=======
+static void prepare_singlestep(struct kprobe *p, struct pt_regs *regs)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	regs->cp0_status &= ~ST0_IE;
 
 	/* single step inline if the instruction is a break */
 	if (p->opcode.word == breakpoint_insn.word ||
 	    p->opcode.word == breakpoint2_insn.word)
 		regs->cp0_epc = (unsigned long)p->addr;
+<<<<<<< HEAD
 	else if (insn_has_delayslot(p->opcode)) {
 		ret = evaluate_branch_instruction(p, regs, kcb);
 		if (ret < 0) {
@@ -326,6 +355,10 @@ static void __kprobes resume_execution(struct kprobe *p,
 		unsigned long orig_epc = kcb->kprobe_saved_epc;
 		regs->cp0_epc = orig_epc + 4;
 	}
+=======
+	else
+		regs->cp0_epc = (unsigned long)&p->ainsn.insn[0];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __kprobes kprobe_handler(struct pt_regs *regs)
@@ -364,6 +397,7 @@ static int __kprobes kprobe_handler(struct pt_regs *regs)
 			save_previous_kprobe(kcb);
 			set_current_kprobe(p, regs, kcb);
 			kprobes_inc_nmissed_count(p);
+<<<<<<< HEAD
 			prepare_singlestep(p, regs, kcb);
 			kcb->kprobe_status = KPROBE_REENTER;
 			if (kcb->flags & SKIP_DELAYSLOT) {
@@ -371,6 +405,10 @@ static int __kprobes kprobe_handler(struct pt_regs *regs)
 				restore_previous_kprobe(kcb);
 				preempt_enable_no_resched();
 			}
+=======
+			prepare_singlestep(p, regs);
+			kcb->kprobe_status = KPROBE_REENTER;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 1;
 		} else {
 			if (addr->word != breakpoint_insn.word) {
@@ -414,6 +452,7 @@ static int __kprobes kprobe_handler(struct pt_regs *regs)
 	}
 
 ss_probe:
+<<<<<<< HEAD
 	prepare_singlestep(p, regs, kcb);
 	if (kcb->flags & SKIP_DELAYSLOT) {
 		kcb->kprobe_status = KPROBE_HIT_SSDONE;
@@ -424,6 +463,10 @@ ss_probe:
 	} else
 		kcb->kprobe_status = KPROBE_HIT_SS;
 
+=======
+	prepare_singlestep(p, regs);
+	kcb->kprobe_status = KPROBE_HIT_SS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 
 no_kprobe:
@@ -432,6 +475,28 @@ no_kprobe:
 
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * Called after single-stepping.  p->addr is the address of the
+ * instruction whose first byte has been replaced by the "break 0"
+ * instruction.  To avoid the SMP problems that can occur when we
+ * temporarily put back the original opcode to single-step, we
+ * single-stepped a copy of the instruction.  The address of this
+ * copy is p->ainsn.insn.
+ *
+ * This function prepares to return from the post-single-step
+ * breakpoint trap.
+ */
+static void __kprobes resume_execution(struct kprobe *p,
+				       struct pt_regs *regs,
+				       struct kprobe_ctlblk *kcb)
+{
+	unsigned long orig_epc = kcb->kprobe_saved_epc;
+	regs->cp0_epc = orig_epc + 4;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int post_kprobe_handler(struct pt_regs *regs)
 {
 	struct kprobe *cur = kprobe_running();

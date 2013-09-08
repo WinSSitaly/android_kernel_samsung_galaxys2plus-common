@@ -269,6 +269,11 @@ struct saa7164_board saa7164_boards[] = {
 		.portb		= SAA7164_MPEG_DVB,
 		.portc		= SAA7164_MPEG_ENCODER,
 		.portd		= SAA7164_MPEG_ENCODER,
+<<<<<<< HEAD
+=======
+		.portc		= SAA7164_MPEG_ENCODER,
+		.portd		= SAA7164_MPEG_ENCODER,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.porte		= SAA7164_MPEG_VBI,
 		.portf		= SAA7164_MPEG_VBI,
 		.chiprev	= SAA7164_CHIP_REV3,
@@ -331,6 +336,11 @@ struct saa7164_board saa7164_boards[] = {
 		.portd		= SAA7164_MPEG_ENCODER,
 		.porte		= SAA7164_MPEG_VBI,
 		.portf		= SAA7164_MPEG_VBI,
+<<<<<<< HEAD
+=======
+		.porte		= SAA7164_MPEG_VBI,
+		.portf		= SAA7164_MPEG_VBI,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.chiprev	= SAA7164_CHIP_REV3,
 		.unit		= {{
 			.id		= 0x28,
@@ -443,6 +453,7 @@ struct saa7164_board saa7164_boards[] = {
 			.i2c_reg_len	= REGLEN_8bit,
 		} },
 	},
+<<<<<<< HEAD
 	[SAA7164_BOARD_HAUPPAUGE_HVR2200_5] = {
 		.name		= "Hauppauge WinTV-HVR2200",
 		.porta		= SAA7164_MPEG_DVB,
@@ -499,6 +510,8 @@ struct saa7164_board saa7164_boards[] = {
 			.i2c_reg_len	= REGLEN_8bit,
 		} },
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 const unsigned int saa7164_bcount = ARRAY_SIZE(saa7164_boards);
 
@@ -542,10 +555,13 @@ struct saa7164_subid saa7164_subids[] = {
 		.subvendor = 0x0070,
 		.subdevice = 0x8940,
 		.card      = SAA7164_BOARD_HAUPPAUGE_HVR2200_4,
+<<<<<<< HEAD
 	}, {
 		.subvendor = 0x0070,
 		.subdevice = 0x8953,
 		.card      = SAA7164_BOARD_HAUPPAUGE_HVR2200_5,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 const unsigned int saa7164_idcount = ARRAY_SIZE(saa7164_subids);
@@ -590,7 +606,10 @@ void saa7164_gpio_setup(struct saa7164_dev *dev)
 	case SAA7164_BOARD_HAUPPAUGE_HVR2200_2:
 	case SAA7164_BOARD_HAUPPAUGE_HVR2200_3:
 	case SAA7164_BOARD_HAUPPAUGE_HVR2200_4:
+<<<<<<< HEAD
 	case SAA7164_BOARD_HAUPPAUGE_HVR2200_5:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SAA7164_BOARD_HAUPPAUGE_HVR2250:
 	case SAA7164_BOARD_HAUPPAUGE_HVR2250_2:
 	case SAA7164_BOARD_HAUPPAUGE_HVR2250_3:
@@ -672,7 +691,10 @@ void saa7164_card_setup(struct saa7164_dev *dev)
 	case SAA7164_BOARD_HAUPPAUGE_HVR2200_2:
 	case SAA7164_BOARD_HAUPPAUGE_HVR2200_3:
 	case SAA7164_BOARD_HAUPPAUGE_HVR2200_4:
+<<<<<<< HEAD
 	case SAA7164_BOARD_HAUPPAUGE_HVR2200_5:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SAA7164_BOARD_HAUPPAUGE_HVR2250:
 	case SAA7164_BOARD_HAUPPAUGE_HVR2250_2:
 	case SAA7164_BOARD_HAUPPAUGE_HVR2250_3:

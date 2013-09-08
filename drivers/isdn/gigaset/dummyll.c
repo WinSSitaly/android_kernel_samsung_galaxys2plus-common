@@ -11,7 +11,10 @@
  * =====================================================================
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "gigaset.h"
 
 void gigaset_skb_sent(struct bc_state *bcs, struct sk_buff *skb)

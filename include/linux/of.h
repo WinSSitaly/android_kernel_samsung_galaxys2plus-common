@@ -17,13 +17,19 @@
  */
 #include <linux/types.h>
 #include <linux/bitops.h>
+<<<<<<< HEAD
 #include <linux/errno.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kref.h>
 #include <linux/mod_devicetable.h>
 #include <linux/spinlock.h>
 
 #include <asm/byteorder.h>
+<<<<<<< HEAD
 #include <asm/errno.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef u32 phandle;
 typedef u32 ihandle;
@@ -65,6 +71,7 @@ struct device_node {
 #endif
 };
 
+<<<<<<< HEAD
 #define MAX_PHANDLE_ARGS 8
 struct of_phandle_args {
 	struct device_node *np;
@@ -84,12 +91,17 @@ static inline struct device_node *of_node_get(struct device_node *node)
 static inline void of_node_put(struct device_node *node) { }
 #endif /* !CONFIG_OF_DYNAMIC */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_OF
 
 /* Pointer for first entry in chain of all nodes. */
 extern struct device_node *allnodes;
 extern struct device_node *of_chosen;
+<<<<<<< HEAD
 extern struct device_node *of_aliases;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern rwlock_t devtree_lock;
 
 static inline bool of_have_populated_dt(void)
@@ -114,6 +126,24 @@ static inline void of_node_set_flag(struct device_node *n, unsigned long flag)
 
 extern struct device_node *of_find_all_nodes(struct device_node *prev);
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SPARC)
+/* Dummy ref counting routines - to be implemented later */
+static inline struct device_node *of_node_get(struct device_node *node)
+{
+	return node;
+}
+static inline void of_node_put(struct device_node *node)
+{
+}
+
+#else
+extern struct device_node *of_node_get(struct device_node *node);
+extern void of_node_put(struct device_node *node);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * OF address retrieval & translation
  */
@@ -202,6 +232,7 @@ extern struct device_node *of_find_node_with_property(
 extern struct property *of_find_property(const struct device_node *np,
 					 const char *name,
 					 int *lenp);
+<<<<<<< HEAD
 extern int of_property_read_u32_array(const struct device_node *np,
 				      const char *propname,
 				      u32 *out_values,
@@ -220,15 +251,24 @@ extern int of_property_match_string(struct device_node *np,
 				    const char *string);
 extern int of_property_count_strings(struct device_node *np,
 				     const char *propname);
+=======
+extern int of_property_read_u32(struct device_node *np, char *propname,
+					u32 *out_value);
+extern int of_property_read_string(struct device_node *np, char *propname,
+					char **out_string);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int of_device_is_compatible(const struct device_node *device,
 				   const char *);
 extern int of_device_is_available(const struct device_node *device);
 extern const void *of_get_property(const struct device_node *node,
 				const char *name,
 				int *lenp);
+<<<<<<< HEAD
 #define for_each_property_of_node(dn, pp) \
 	for (pp = dn->properties; pp != NULL; pp = pp->next)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int of_n_addr_cells(struct device_node *np);
 extern int of_n_size_cells(struct device_node *np);
 extern const struct of_device_id *of_match_node(
@@ -237,12 +277,18 @@ extern int of_modalias_node(struct device_node *node, char *modalias, int len);
 extern struct device_node *of_parse_phandle(struct device_node *np,
 					    const char *phandle_name,
 					    int index);
+<<<<<<< HEAD
 extern int of_parse_phandle_with_args(struct device_node *np,
 	const char *list_name, const char *cells_name, int index,
 	struct of_phandle_args *out_args);
 
 extern void of_alias_scan(void * (*dt_alloc)(u64 size, u64 align));
 extern int of_alias_get_id(struct device_node *np, const char *stem);
+=======
+extern int of_parse_phandles_with_args(struct device_node *np,
+	const char *list_name, const char *cells_name, int index,
+	struct device_node **out_node, const void **out_args);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int of_machine_is_compatible(const char *compat);
 
@@ -258,14 +304,19 @@ extern void of_attach_node(struct device_node *);
 extern void of_detach_node(struct device_node *);
 #endif
 
+<<<<<<< HEAD
 #define of_match_ptr(_ptr)	(_ptr)
 #else /* CONFIG_OF */
+=======
+#else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline bool of_have_populated_dt(void)
 {
 	return false;
 }
 
+<<<<<<< HEAD
 #define for_each_child_of_node(parent, child) \
 	while (0)
 
@@ -374,4 +425,7 @@ static inline int of_property_read_u32(const struct device_node *np,
 	return of_property_read_u32_array(np, propname, out_value, 1);
 }
 
+=======
+#endif /* CONFIG_OF */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _LINUX_OF_H */

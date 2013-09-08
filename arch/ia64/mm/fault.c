@@ -14,6 +14,10 @@
 
 #include <asm/pgtable.h>
 #include <asm/processor.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 
 extern int die(char *, struct pt_regs *, long);

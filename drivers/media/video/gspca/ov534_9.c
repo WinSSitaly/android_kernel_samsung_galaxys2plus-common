@@ -1,7 +1,13 @@
 /*
+<<<<<<< HEAD
  * ov534-ov9xxx gspca driver
  *
  * Copyright (C) 2009-2011 Jean-Francois Moine http://moinejf.free.fr
+=======
+ * ov534-ov965x gspca driver
+ *
+ * Copyright (C) 2009-2010 Jean-Francois Moine http://moinejf.free.fr
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (C) 2008 Antonio Ospite <ospite@studenti.unina.it>
  * Copyright (C) 2008 Jim Paris <jim@jtan.com>
  *
@@ -24,8 +30,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MODULE_NAME "ov534_9"
 
 #include "gspca.h"
@@ -47,6 +56,7 @@ MODULE_AUTHOR("Jean-Francois Moine <moinejf@free.fr>");
 MODULE_DESCRIPTION("GSPCA/OV534_9 USB Camera Driver");
 MODULE_LICENSE("GPL");
 
+<<<<<<< HEAD
 /* controls */
 enum e_ctrl {
 	BRIGHTNESS,
@@ -86,6 +96,41 @@ static void setlightfreq(struct gspca_dev *gspca_dev);
 
 static const struct ctrl sd_ctrls[NCTRLS] = {
 [BRIGHTNESS] = {
+=======
+/* specific webcam descriptor */
+struct sd {
+	struct gspca_dev gspca_dev;	/* !! must be the first item */
+	__u32 last_pts;
+	u8 last_fid;
+
+	u8 brightness;
+	u8 contrast;
+	u8 autogain;
+	u8 exposure;
+	s8 sharpness;
+	u8 satur;
+	u8 freq;
+};
+
+/* V4L2 controls supported by the driver */
+static int sd_setbrightness(struct gspca_dev *gspca_dev, __s32 val);
+static int sd_getbrightness(struct gspca_dev *gspca_dev, __s32 *val);
+static int sd_setcontrast(struct gspca_dev *gspca_dev, __s32 val);
+static int sd_getcontrast(struct gspca_dev *gspca_dev, __s32 *val);
+static int sd_setautogain(struct gspca_dev *gspca_dev, __s32 val);
+static int sd_getautogain(struct gspca_dev *gspca_dev, __s32 *val);
+static int sd_setexposure(struct gspca_dev *gspca_dev, __s32 val);
+static int sd_getexposure(struct gspca_dev *gspca_dev, __s32 *val);
+static int sd_setsharpness(struct gspca_dev *gspca_dev, __s32 val);
+static int sd_getsharpness(struct gspca_dev *gspca_dev, __s32 *val);
+static int sd_setsatur(struct gspca_dev *gspca_dev, __s32 val);
+static int sd_getsatur(struct gspca_dev *gspca_dev, __s32 *val);
+static int sd_setfreq(struct gspca_dev *gspca_dev, __s32 val);
+static int sd_getfreq(struct gspca_dev *gspca_dev, __s32 *val);
+
+static const struct ctrl sd_ctrls[] = {
+    {							/* 0 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.id      = V4L2_CID_BRIGHTNESS,
 		.type    = V4L2_CTRL_TYPE_INTEGER,
@@ -93,11 +138,21 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = 0,
 		.maximum = 15,
 		.step    = 1,
+<<<<<<< HEAD
 		.default_value = 7
 	},
 	.set_control = setbrightness
     },
 [CONTRAST] = {
+=======
+#define BRIGHTNESS_DEF 7
+		.default_value = BRIGHTNESS_DEF,
+	},
+	.set = sd_setbrightness,
+	.get = sd_getbrightness,
+    },
+    {							/* 1 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.id      = V4L2_CID_CONTRAST,
 		.type    = V4L2_CTRL_TYPE_INTEGER,
@@ -105,11 +160,21 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = 0,
 		.maximum = 15,
 		.step    = 1,
+<<<<<<< HEAD
 		.default_value = 3
 	},
 	.set_control = setcontrast
     },
 [AUTOGAIN] = {
+=======
+#define CONTRAST_DEF 3
+		.default_value = CONTRAST_DEF,
+	},
+	.set = sd_setcontrast,
+	.get = sd_getcontrast,
+    },
+    {							/* 2 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.id      = V4L2_CID_AUTOGAIN,
 		.type    = V4L2_CTRL_TYPE_BOOLEAN,
@@ -120,9 +185,17 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 #define AUTOGAIN_DEF 1
 		.default_value = AUTOGAIN_DEF,
 	},
+<<<<<<< HEAD
 	.set_control = setautogain
     },
 [EXPOSURE] = {
+=======
+	.set = sd_setautogain,
+	.get = sd_getautogain,
+    },
+#define EXPO_IDX 3
+    {							/* 3 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.id      = V4L2_CID_EXPOSURE,
 		.type    = V4L2_CTRL_TYPE_INTEGER,
@@ -130,11 +203,21 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = 0,
 		.maximum = 3,
 		.step    = 1,
+<<<<<<< HEAD
 		.default_value = 0
 	},
 	.set_control = setexposure
     },
 [SHARPNESS] = {
+=======
+#define EXPO_DEF 0
+		.default_value = EXPO_DEF,
+	},
+	.set = sd_setexposure,
+	.get = sd_getexposure,
+    },
+    {							/* 4 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.id      = V4L2_CID_SHARPNESS,
 		.type    = V4L2_CTRL_TYPE_INTEGER,
@@ -142,11 +225,21 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = -1,		/* -1 = auto */
 		.maximum = 4,
 		.step    = 1,
+<<<<<<< HEAD
 		.default_value = -1
 	},
 	.set_control = setsharpness
     },
 [SATUR] = {
+=======
+#define SHARPNESS_DEF -1
+		.default_value = SHARPNESS_DEF,
+	},
+	.set = sd_setsharpness,
+	.get = sd_getsharpness,
+    },
+    {							/* 5 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.id      = V4L2_CID_SATURATION,
 		.type    = V4L2_CTRL_TYPE_INTEGER,
@@ -154,11 +247,21 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = 0,
 		.maximum = 4,
 		.step    = 1,
+<<<<<<< HEAD
 		.default_value = 2
 	},
 	.set_control = setsatur
     },
 [LIGHTFREQ] = {
+=======
+#define SATUR_DEF 2
+		.default_value = SATUR_DEF,
+	},
+	.set = sd_setsatur,
+	.get = sd_getsatur,
+    },
+    {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.id	 = V4L2_CID_POWER_LINE_FREQUENCY,
 		.type    = V4L2_CTRL_TYPE_MENU,
@@ -166,9 +269,17 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = 0,
 		.maximum = 2,	/* 0: 0, 1: 50Hz, 2:60Hz */
 		.step    = 1,
+<<<<<<< HEAD
 		.default_value = 0
 	},
 	.set_control = setlightfreq
+=======
+#define FREQ_DEF 0
+		.default_value = FREQ_DEF,
+	},
+	.set = sd_setfreq,
+	.get = sd_getfreq,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     },
 };
 
@@ -200,6 +311,7 @@ static const struct v4l2_pix_format ov965x_mode[] = {
 		.colorspace = V4L2_COLORSPACE_JPEG},
 };
 
+<<<<<<< HEAD
 static const struct v4l2_pix_format ov971x_mode[] = {
 	{640, 480, V4L2_PIX_FMT_SBGGR8, V4L2_FIELD_NONE,
 		.bytesperline = 640,
@@ -216,6 +328,8 @@ static const struct v4l2_pix_format ov562x_mode[] = {
 	}
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const u8 bridge_init[][2] = {
 	{0x88, 0xf8},
 	{0x89, 0xff},
@@ -250,7 +364,11 @@ static const u8 bridge_init[][2] = {
 	{0x94, 0x11},
 };
 
+<<<<<<< HEAD
 static const u8 ov965x_init[][2] = {
+=======
+static const u8 sensor_init[][2] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{0x12, 0x80},	/* com7 - SSCB reset */
 	{0x00, 0x00},	/* gain */
 	{0x01, 0x80},	/* blue */
@@ -460,7 +578,11 @@ static const u8 bridge_init_2[][2] = {
 	{0x94, 0x11},
 };
 
+<<<<<<< HEAD
 static const u8 ov965x_init_2[][2] = {
+=======
+static const u8 sensor_init_2[][2] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{0x3b, 0xc4},
 	{0x1e, 0x04},	/* mvfp */
 	{0x13, 0xe0},	/* com8 */
@@ -502,6 +624,7 @@ static const u8 ov965x_init_2[][2] = {
 	{0x13, 0xe7},	/* com8 - everything (AGC, AWB and AEC) */
 };
 
+<<<<<<< HEAD
 static const u8 ov971x_init[][2] = {
 	{0x12, 0x80},
 	{0x09, 0x10},
@@ -561,6 +684,9 @@ static const u8 ov971x_init[][2] = {
 };
 
 static const u8 ov965x_start_1_vga[][2] = {	/* same for qvga */
+=======
+static const u8 sensor_start_1_vga[][2] = {	/* same for qvga */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{0x12, 0x62},	/* com7 - 30fps VGA YUV */
 	{0x36, 0xfa},	/* aref3 */
 	{0x69, 0x0a},	/* hv */
@@ -583,7 +709,11 @@ static const u8 ov965x_start_1_vga[][2] = {	/* same for qvga */
 	{0xc0, 0xaa},
 };
 
+<<<<<<< HEAD
 static const u8 ov965x_start_1_svga[][2] = {
+=======
+static const u8 sensor_start_1_svga[][2] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{0x12, 0x02},	/* com7 - YUYV - VGA 15 full resolution */
 	{0x36, 0xf8},	/* aref3 */
 	{0x69, 0x02},	/* hv */
@@ -605,7 +735,11 @@ static const u8 ov965x_start_1_svga[][2] = {
 	{0xc0, 0xe2},
 };
 
+<<<<<<< HEAD
 static const u8 ov965x_start_1_xga[][2] = {
+=======
+static const u8 sensor_start_1_xga[][2] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{0x12, 0x02},	/* com7 */
 	{0x36, 0xf8},	/* aref3 */
 	{0x69, 0x02},	/* hv */
@@ -628,7 +762,11 @@ static const u8 ov965x_start_1_xga[][2] = {
 	{0xc0, 0xe2},
 };
 
+<<<<<<< HEAD
 static const u8 ov965x_start_1_sxga[][2] = {
+=======
+static const u8 sensor_start_1_sxga[][2] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{0x12, 0x02},	/* com7 */
 	{0x36, 0xf8},	/* aref3 */
 	{0x69, 0x02},	/* hv */
@@ -777,7 +915,11 @@ static const u8 bridge_start_sxga[][2] = {
 	{0x94, 0x11},
 };
 
+<<<<<<< HEAD
 static const u8 ov965x_start_2_qvga[][2] = {
+=======
+static const u8 sensor_start_2_qvga[][2] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{0x3b, 0xe4},	/* com11 - night mode 1/4 frame rate */
 	{0x1e, 0x04},	/* mvfp */
 	{0x13, 0xe0},	/* com8 */
@@ -795,7 +937,11 @@ static const u8 ov965x_start_2_qvga[][2] = {
 	{0x3a, 0x80},	/* tslb - yuyv */
 };
 
+<<<<<<< HEAD
 static const u8 ov965x_start_2_vga[][2] = {
+=======
+static const u8 sensor_start_2_vga[][2] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{0x3b, 0xc4},	/* com11 - night mode 1/4 frame rate */
 	{0x1e, 0x04},	/* mvfp */
 	{0x13, 0xe0},	/* com8 */
@@ -811,7 +957,11 @@ static const u8 ov965x_start_2_vga[][2] = {
 	{0x2d, 0x00},	/* advfl */
 };
 
+<<<<<<< HEAD
 static const u8 ov965x_start_2_svga[][2] = {	/* same for xga */
+=======
+static const u8 sensor_start_2_svga[][2] = {	/* same for xga */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{0x3b, 0xc4},	/* com11 - night mode 1/4 frame rate */
 	{0x1e, 0x04},	/* mvfp */
 	{0x13, 0xe0},	/* com8 */
@@ -825,7 +975,11 @@ static const u8 ov965x_start_2_svga[][2] = {	/* same for xga */
 	{0xa3, 0x41},	/* bd60 */
 };
 
+<<<<<<< HEAD
 static const u8 ov965x_start_2_sxga[][2] = {
+=======
+static const u8 sensor_start_2_sxga[][2] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{0x13, 0xe0},	/* com8 */
 	{0x00, 0x00},
 	{0x13, 0xe7},	/* com8 - everything (AGC, AWB and AEC) */
@@ -839,6 +993,7 @@ static const u8 ov965x_start_2_sxga[][2] = {
 	{0xa3, 0x41},	/* bd60 */
 };
 
+<<<<<<< HEAD
 static const u8 ov562x_init[][2] = {
 	{0x88, 0x20},
 	{0x89, 0x0a},
@@ -957,6 +1112,8 @@ static const u8 ov562x_init_2[][2] = {
 	{0x85, 0xc0},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void reg_w_i(struct gspca_dev *gspca_dev, u16 reg, u8 val)
 {
 	struct usb_device *udev = gspca_dev->dev;
@@ -971,7 +1128,11 @@ static void reg_w_i(struct gspca_dev *gspca_dev, u16 reg, u8 val)
 			      USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
 			      0x00, reg, gspca_dev->usb_buf, 1, CTRL_TIMEOUT);
 	if (ret < 0) {
+<<<<<<< HEAD
 		pr_err("reg_w failed %d\n", ret);
+=======
+		err("reg_w failed %d", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gspca_dev->usb_err = ret;
 	}
 }
@@ -996,7 +1157,11 @@ static u8 reg_r(struct gspca_dev *gspca_dev, u16 reg)
 			      0x00, reg, gspca_dev->usb_buf, 1, CTRL_TIMEOUT);
 	PDEBUG(D_USBI, "reg_r [%04x] -> %02x", reg, gspca_dev->usb_buf[0]);
 	if (ret < 0) {
+<<<<<<< HEAD
 		pr_err("reg_r err %d\n", ret);
+=======
+		err("reg_r err %d", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gspca_dev->usb_err = ret;
 	}
 	return gspca_dev->usb_buf[0];
@@ -1034,7 +1199,11 @@ static void sccb_write(struct gspca_dev *gspca_dev, u8 reg, u8 val)
 	reg_w_i(gspca_dev, OV534_REG_OPERATION, OV534_OP_WRITE_3);
 
 	if (!sccb_check_status(gspca_dev))
+<<<<<<< HEAD
 		pr_err("sccb_write failed\n");
+=======
+		err("sccb_write failed");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static u8 sccb_read(struct gspca_dev *gspca_dev, u16 reg)
@@ -1042,11 +1211,19 @@ static u8 sccb_read(struct gspca_dev *gspca_dev, u16 reg)
 	reg_w(gspca_dev, OV534_REG_SUBADDR, reg);
 	reg_w(gspca_dev, OV534_REG_OPERATION, OV534_OP_WRITE_2);
 	if (!sccb_check_status(gspca_dev))
+<<<<<<< HEAD
 		pr_err("sccb_read failed 1\n");
 
 	reg_w(gspca_dev, OV534_REG_OPERATION, OV534_OP_READ_2);
 	if (!sccb_check_status(gspca_dev))
 		pr_err("sccb_read failed 2\n");
+=======
+		err("sccb_read failed 1");
+
+	reg_w(gspca_dev, OV534_REG_OPERATION, OV534_OP_READ_2);
+	if (!sccb_check_status(gspca_dev))
+		err("sccb_read failed 2");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return reg_r(gspca_dev, OV534_REG_READ);
 }
@@ -1107,6 +1284,7 @@ static void setbrightness(struct gspca_dev *gspca_dev)
 {
 	struct sd *sd = (struct sd *) gspca_dev;
 	u8 val;
+<<<<<<< HEAD
 	s8 sval;
 
 	if (gspca_dev->ctrl_dis & (1 << BRIGHTNESS))
@@ -1135,16 +1313,31 @@ static void setbrightness(struct gspca_dev *gspca_dev)
 		sccb_write(gspca_dev, 0x55,	/* brtn - brightness adjustment */
 				0x0f | (val << 4));
 	}
+=======
+
+	val = sd->brightness;
+	if (val < 8)
+		val = 15 - val;		/* f .. 8 */
+	else
+		val = val - 8;		/* 0 .. 7 */
+	sccb_write(gspca_dev, 0x55,	/* brtn - brightness adjustment */
+			0x0f | (val << 4));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void setcontrast(struct gspca_dev *gspca_dev)
 {
 	struct sd *sd = (struct sd *) gspca_dev;
 
+<<<<<<< HEAD
 	if (gspca_dev->ctrl_dis & (1 << CONTRAST))
 		return;
 	sccb_write(gspca_dev, 0x56,	/* cnst1 - contrast 1 ctrl coeff */
 			sd->ctrls[CONTRAST].val << 4);
+=======
+	sccb_write(gspca_dev, 0x56,	/* cnst1 - contrast 1 ctrl coeff */
+			sd->contrast << 4);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void setautogain(struct gspca_dev *gspca_dev)
@@ -1152,12 +1345,19 @@ static void setautogain(struct gspca_dev *gspca_dev)
 	struct sd *sd = (struct sd *) gspca_dev;
 	u8 val;
 
+<<<<<<< HEAD
 	if (gspca_dev->ctrl_dis & (1 << AUTOGAIN))
 		return;
 /*fixme: should adjust agc/awb/aec by different controls */
 	val = sccb_read(gspca_dev, 0x13);		/* com8 */
 	sccb_write(gspca_dev, 0xff, 0x00);
 	if (sd->ctrls[AUTOGAIN].val)
+=======
+/*fixme: should adjust agc/awb/aec by different controls */
+	val = sccb_read(gspca_dev, 0x13);		/* com8 */
+	sccb_write(gspca_dev, 0xff, 0x00);
+	if (sd->autogain)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		val |= 0x05;		/* agc & aec */
 	else
 		val &= 0xfa;
@@ -1170,10 +1370,15 @@ static void setexposure(struct gspca_dev *gspca_dev)
 	u8 val;
 	static const u8 expo[4] = {0x00, 0x25, 0x38, 0x5e};
 
+<<<<<<< HEAD
 	if (gspca_dev->ctrl_dis & (1 << EXPOSURE))
 		return;
 	sccb_write(gspca_dev, 0x10,			/* aec[9:2] */
 			expo[sd->ctrls[EXPOSURE].val]);
+=======
+	sccb_write(gspca_dev, 0x10,			/* aec[9:2] */
+			expo[sd->exposure]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	val = sccb_read(gspca_dev, 0x13);		/* com8 */
 	sccb_write(gspca_dev, 0xff, 0x00);
@@ -1189,9 +1394,13 @@ static void setsharpness(struct gspca_dev *gspca_dev)
 	struct sd *sd = (struct sd *) gspca_dev;
 	s8 val;
 
+<<<<<<< HEAD
 	if (gspca_dev->ctrl_dis & (1 << SHARPNESS))
 		return;
 	val = sd->ctrls[SHARPNESS].val;
+=======
+	val = sd->sharpness;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (val < 0) {				/* auto */
 		val = sccb_read(gspca_dev, 0x42);	/* com17 */
 		sccb_write(gspca_dev, 0xff, 0x00);
@@ -1220,10 +1429,15 @@ static void setsatur(struct gspca_dev *gspca_dev)
 		{0x48, 0x90}
 	};
 
+<<<<<<< HEAD
 	if (gspca_dev->ctrl_dis & (1 << SATUR))
 		return;
 	val1 = matrix[sd->ctrls[SATUR].val][0];
 	val2 = matrix[sd->ctrls[SATUR].val][1];
+=======
+	val1 = matrix[sd->satur][0];
+	val2 = matrix[sd->satur][1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	val3 = val1 + val2;
 	sccb_write(gspca_dev, 0x4f, val3);	/* matrix coeff */
 	sccb_write(gspca_dev, 0x50, val3);
@@ -1238,16 +1452,26 @@ static void setsatur(struct gspca_dev *gspca_dev)
 	sccb_write(gspca_dev, 0x41, val1);
 }
 
+<<<<<<< HEAD
 static void setlightfreq(struct gspca_dev *gspca_dev)
+=======
+static void setfreq(struct gspca_dev *gspca_dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sd *sd = (struct sd *) gspca_dev;
 	u8 val;
 
+<<<<<<< HEAD
 	if (gspca_dev->ctrl_dis & (1 << LIGHTFREQ))
 		return;
 	val = sccb_read(gspca_dev, 0x13);		/* com8 */
 	sccb_write(gspca_dev, 0xff, 0x00);
 	if (sd->ctrls[LIGHTFREQ].val == 0) {
+=======
+	val = sccb_read(gspca_dev, 0x13);		/* com8 */
+	sccb_write(gspca_dev, 0xff, 0x00);
+	if (sd->freq == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sccb_write(gspca_dev, 0x13, val & 0xdf);
 		return;
 	}
@@ -1255,7 +1479,11 @@ static void setlightfreq(struct gspca_dev *gspca_dev)
 
 	val = sccb_read(gspca_dev, 0x42);		/* com17 */
 	sccb_write(gspca_dev, 0xff, 0x00);
+<<<<<<< HEAD
 	if (sd->ctrls[LIGHTFREQ].val == 1)
+=======
+	if (sd->freq == 1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		val |= 0x01;
 	else
 		val &= 0xfe;
@@ -1267,19 +1495,47 @@ static int sd_config(struct gspca_dev *gspca_dev,
 		     const struct usb_device_id *id)
 {
 	struct sd *sd = (struct sd *) gspca_dev;
+<<<<<<< HEAD
 
 	gspca_dev->cam.ctrls = sd->ctrls;
 
 #if AUTOGAIN_DEF != 0
 	gspca_dev->ctrl_inac |= (1 << EXPOSURE);
 #endif
+=======
+	struct cam *cam;
+
+	cam = &gspca_dev->cam;
+
+	cam->cam_mode = ov965x_mode;
+	cam->nmodes = ARRAY_SIZE(ov965x_mode);
+
+	sd->brightness = BRIGHTNESS_DEF;
+	sd->contrast = CONTRAST_DEF;
+#if AUTOGAIN_DEF != 0
+	sd->autogain = AUTOGAIN_DEF;
+	gspca_dev->ctrl_inac |= (1 << EXPO_IDX);
+#endif
+#if EXPO_DEF != 0
+	sd->exposure = EXPO_DEF;
+#endif
+#if SHARPNESS_DEF != 0
+	sd->sharpness = SHARPNESS_DEF;
+#endif
+	sd->satur = SATUR_DEF;
+	sd->freq = FREQ_DEF;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 /* this function is called at probe and resume time */
 static int sd_init(struct gspca_dev *gspca_dev)
 {
+<<<<<<< HEAD
 	struct sd *sd = (struct sd *) gspca_dev;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 sensor_id;
 
 	/* reset bridge */
@@ -1302,6 +1558,7 @@ static int sd_init(struct gspca_dev *gspca_dev)
 	PDEBUG(D_PROBE, "Sensor ID: %04x", sensor_id);
 
 	/* initialize */
+<<<<<<< HEAD
 	if ((sensor_id & 0xfff0) == 0x9650) {
 		sd->sensor = SENSOR_OV965x;
 
@@ -1379,12 +1636,27 @@ static int sd_init(struct gspca_dev *gspca_dev)
 		err("Unknown sensor %04x", sensor_id);
 		return -EINVAL;
 	}
+=======
+	reg_w_array(gspca_dev, bridge_init,
+			ARRAY_SIZE(bridge_init));
+	sccb_w_array(gspca_dev, sensor_init,
+			ARRAY_SIZE(sensor_init));
+	reg_w_array(gspca_dev, bridge_init_2,
+			ARRAY_SIZE(bridge_init_2));
+	sccb_w_array(gspca_dev, sensor_init_2,
+			ARRAY_SIZE(sensor_init_2));
+	reg_w(gspca_dev, 0xe0, 0x00);
+	reg_w(gspca_dev, 0xe0, 0x01);
+	set_led(gspca_dev, 0);
+	reg_w(gspca_dev, 0xe0, 0x00);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return gspca_dev->usb_err;
 }
 
 static int sd_start(struct gspca_dev *gspca_dev)
 {
+<<<<<<< HEAD
 	struct sd *sd = (struct sd *) gspca_dev;
 
 	if (sd->sensor == SENSOR_OV971x)
@@ -1437,6 +1709,52 @@ static int sd_start(struct gspca_dev *gspca_dev)
 		break;
 	}
 	setlightfreq(gspca_dev);
+=======
+	switch (gspca_dev->curr_mode) {
+	case QVGA_MODE:			/* 320x240 */
+		sccb_w_array(gspca_dev, sensor_start_1_vga,
+				ARRAY_SIZE(sensor_start_1_vga));
+		reg_w_array(gspca_dev, bridge_start_qvga,
+				ARRAY_SIZE(bridge_start_qvga));
+		sccb_w_array(gspca_dev, sensor_start_2_qvga,
+				ARRAY_SIZE(sensor_start_2_qvga));
+		break;
+	case VGA_MODE:			/* 640x480 */
+		sccb_w_array(gspca_dev, sensor_start_1_vga,
+				ARRAY_SIZE(sensor_start_1_vga));
+		reg_w_array(gspca_dev, bridge_start_vga,
+				ARRAY_SIZE(bridge_start_vga));
+		sccb_w_array(gspca_dev, sensor_start_2_vga,
+				ARRAY_SIZE(sensor_start_2_vga));
+		break;
+	case SVGA_MODE:			/* 800x600 */
+		sccb_w_array(gspca_dev, sensor_start_1_svga,
+				ARRAY_SIZE(sensor_start_1_svga));
+		reg_w_array(gspca_dev, bridge_start_svga,
+				ARRAY_SIZE(bridge_start_svga));
+		sccb_w_array(gspca_dev, sensor_start_2_svga,
+				ARRAY_SIZE(sensor_start_2_svga));
+		break;
+	case XGA_MODE:			/* 1024x768 */
+		sccb_w_array(gspca_dev, sensor_start_1_xga,
+				ARRAY_SIZE(sensor_start_1_xga));
+		reg_w_array(gspca_dev, bridge_start_xga,
+				ARRAY_SIZE(bridge_start_xga));
+		sccb_w_array(gspca_dev, sensor_start_2_svga,
+				ARRAY_SIZE(sensor_start_2_svga));
+		break;
+	default:
+/*	case SXGA_MODE:			 * 1280x1024 */
+		sccb_w_array(gspca_dev, sensor_start_1_sxga,
+				ARRAY_SIZE(sensor_start_1_sxga));
+		reg_w_array(gspca_dev, bridge_start_sxga,
+				ARRAY_SIZE(bridge_start_sxga));
+		sccb_w_array(gspca_dev, sensor_start_2_sxga,
+				ARRAY_SIZE(sensor_start_2_sxga));
+		break;
+	}
+	setfreq(gspca_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	setautogain(gspca_dev);
 	setbrightness(gspca_dev);
 	setcontrast(gspca_dev);
@@ -1474,11 +1792,17 @@ static void sd_pkt_scan(struct gspca_dev *gspca_dev,
 	__u32 this_pts;
 	u8 this_fid;
 	int remaining_len = len;
+<<<<<<< HEAD
 	int payload_len;
 
 	payload_len = gspca_dev->cam.bulk ? 2048 : 2040;
 	do {
 		len = min(remaining_len, payload_len);
+=======
+
+	do {
+		len = min(remaining_len, 2040);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Payloads are prefixed with a UVC-style header.  We
 		   consider a frame to start when the FID toggles, or the PTS
@@ -1540,6 +1864,141 @@ scan_next:
 	} while (remaining_len > 0);
 }
 
+<<<<<<< HEAD
+=======
+/* controls */
+static int sd_setbrightness(struct gspca_dev *gspca_dev, __s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->brightness = val;
+	if (gspca_dev->streaming)
+		setbrightness(gspca_dev);
+	return gspca_dev->usb_err;
+}
+
+static int sd_getbrightness(struct gspca_dev *gspca_dev, __s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	*val = sd->brightness;
+	return 0;
+}
+
+static int sd_setcontrast(struct gspca_dev *gspca_dev, __s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->contrast = val;
+	if (gspca_dev->streaming)
+		setcontrast(gspca_dev);
+	return gspca_dev->usb_err;
+}
+
+static int sd_getcontrast(struct gspca_dev *gspca_dev, __s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	*val = sd->contrast;
+	return 0;
+}
+
+static int sd_setautogain(struct gspca_dev *gspca_dev, __s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->autogain = val;
+
+	if (gspca_dev->streaming) {
+		if (val)
+			gspca_dev->ctrl_inac |= (1 << EXPO_IDX);
+		else
+			gspca_dev->ctrl_inac &= ~(1 << EXPO_IDX);
+		setautogain(gspca_dev);
+	}
+	return gspca_dev->usb_err;
+}
+
+static int sd_getautogain(struct gspca_dev *gspca_dev, __s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	*val = sd->autogain;
+	return 0;
+}
+
+static int sd_setexposure(struct gspca_dev *gspca_dev, __s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->exposure = val;
+	if (gspca_dev->streaming)
+		setexposure(gspca_dev);
+	return gspca_dev->usb_err;
+}
+
+static int sd_getexposure(struct gspca_dev *gspca_dev, __s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	*val = sd->exposure;
+	return 0;
+}
+
+static int sd_setsharpness(struct gspca_dev *gspca_dev, __s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->sharpness = val;
+	if (gspca_dev->streaming)
+		setsharpness(gspca_dev);
+	return gspca_dev->usb_err;
+}
+
+static int sd_getsharpness(struct gspca_dev *gspca_dev, __s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	*val = sd->sharpness;
+	return 0;
+}
+
+static int sd_setsatur(struct gspca_dev *gspca_dev, __s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->satur = val;
+	if (gspca_dev->streaming)
+		setsatur(gspca_dev);
+	return gspca_dev->usb_err;
+}
+
+static int sd_getsatur(struct gspca_dev *gspca_dev, __s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	*val = sd->satur;
+	return 0;
+}
+static int sd_setfreq(struct gspca_dev *gspca_dev, __s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->freq = val;
+	if (gspca_dev->streaming)
+		setfreq(gspca_dev);
+	return gspca_dev->usb_err;
+}
+
+static int sd_getfreq(struct gspca_dev *gspca_dev, __s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	*val = sd->freq;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int sd_querymenu(struct gspca_dev *gspca_dev,
 			struct v4l2_querymenu *menu)
 {
@@ -1565,7 +2024,11 @@ static int sd_querymenu(struct gspca_dev *gspca_dev,
 static const struct sd_desc sd_desc = {
 	.name     = MODULE_NAME,
 	.ctrls    = sd_ctrls,
+<<<<<<< HEAD
 	.nctrls   = NCTRLS,
+=======
+	.nctrls   = ARRAY_SIZE(sd_ctrls),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.config   = sd_config,
 	.init     = sd_init,
 	.start    = sd_start,
@@ -1576,9 +2039,13 @@ static const struct sd_desc sd_desc = {
 
 /* -- module initialisation -- */
 static const struct usb_device_id device_table[] = {
+<<<<<<< HEAD
 	{USB_DEVICE(0x05a9, 0x8065)},
 	{USB_DEVICE(0x06f8, 0x3003)},
 	{USB_DEVICE(0x05a9, 0x1550)},
+=======
+	{USB_DEVICE(0x06f8, 0x3003)},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{}
 };
 
@@ -1602,4 +2069,20 @@ static struct usb_driver sd_driver = {
 #endif
 };
 
+<<<<<<< HEAD
 module_usb_driver(sd_driver);
+=======
+/* -- module insert / remove -- */
+static int __init sd_mod_init(void)
+{
+	return usb_register(&sd_driver);
+}
+
+static void __exit sd_mod_exit(void)
+{
+	usb_deregister(&sd_driver);
+}
+
+module_init(sd_mod_init);
+module_exit(sd_mod_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

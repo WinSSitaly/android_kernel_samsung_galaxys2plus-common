@@ -18,7 +18,10 @@
 #include <linux/io.h>
 #include <linux/memblock.h>
 #include <linux/dma-mapping.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mmu_context.h>
 #include <asm/mmzone.h>
 #include <asm/kexec.h>
@@ -288,8 +291,11 @@ static void __init do_init_bootmem(void)
 static void __init early_reserve_mem(void)
 {
 	unsigned long start_pfn;
+<<<<<<< HEAD
 	u32 zero_base = (u32)__MEMORY_START + (u32)PHYSICAL_OFFSET;
 	u32 start = zero_base + (u32)CONFIG_ZERO_PAGE_OFFSET;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Partially used pages are not usable - thus
@@ -303,13 +309,23 @@ static void __init early_reserve_mem(void)
 	 * this catches the (definitely buggy) case of us accidentally
 	 * initializing the bootmem allocator with an invalid RAM area.
 	 */
+<<<<<<< HEAD
 	memblock_reserve(start, (PFN_PHYS(start_pfn) + PAGE_SIZE - 1) - start);
+=======
+	memblock_reserve(__MEMORY_START + CONFIG_ZERO_PAGE_OFFSET,
+		    (PFN_PHYS(start_pfn) + PAGE_SIZE - 1) -
+		    (__MEMORY_START + CONFIG_ZERO_PAGE_OFFSET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Reserve physical pages below CONFIG_ZERO_PAGE_OFFSET.
 	 */
 	if (CONFIG_ZERO_PAGE_OFFSET != 0)
+<<<<<<< HEAD
 		memblock_reserve(zero_base, CONFIG_ZERO_PAGE_OFFSET);
+=======
+		memblock_reserve(__MEMORY_START, CONFIG_ZERO_PAGE_OFFSET);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Handle additional early reservations
@@ -324,6 +340,10 @@ void __init paging_init(void)
 	unsigned long vaddr, end;
 	int nid;
 
+<<<<<<< HEAD
+=======
+	memblock_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sh_mv.mv_mem_init();
 
 	early_reserve_mem();
@@ -336,7 +356,11 @@ void __init paging_init(void)
 		sh_mv.mv_mem_reserve();
 
 	memblock_enforce_memory_limit(memory_limit);
+<<<<<<< HEAD
 	memblock_allow_resize();
+=======
+	memblock_analyze();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memblock_dump_all();
 

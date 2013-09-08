@@ -11,7 +11,10 @@
  */
 
 #include <media/rc-map.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* ATI TV Wonder HD 600 USB
    Devin Heitmueller <devin.heitmueller@gmail.com>

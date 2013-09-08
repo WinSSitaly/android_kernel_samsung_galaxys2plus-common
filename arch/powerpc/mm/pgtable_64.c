@@ -26,7 +26,10 @@
 #include <linux/kernel.h>
 #include <linux/errno.h>
 #include <linux/string.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/types.h>
 #include <linux/mman.h>
 #include <linux/mm.h>
@@ -51,6 +54,10 @@
 #include <asm/processor.h>
 #include <asm/cputable.h>
 #include <asm/sections.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/abs_addr.h>
 #include <asm/firmware.h>
 

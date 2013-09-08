@@ -25,8 +25,11 @@
  * the project's page is at http://www.linuxtv.org/ 
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/types.h>
 #include <linux/delay.h>
@@ -255,7 +258,11 @@ static int av7110_dvb_c_switch(struct saa7146_fh *fh)
 
 		switch (av7110->current_input) {
 		case 1:
+<<<<<<< HEAD
 			dprintk(1, "switching SAA7113 to Analog Tuner Input\n");
+=======
+			dprintk(1, "switching SAA7113 to Analog Tuner Input.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			msp_writereg(av7110, MSP_WR_DSP, 0x0008, 0x0000); // loudspeaker source
 			msp_writereg(av7110, MSP_WR_DSP, 0x0009, 0x0000); // headphone source
 			msp_writereg(av7110, MSP_WR_DSP, 0x000a, 0x0000); // SCART 1 source
@@ -265,7 +272,11 @@ static int av7110_dvb_c_switch(struct saa7146_fh *fh)
 
 			if (av7110->analog_tuner_flags & ANALOG_TUNER_VES1820) {
 				if (ves1820_writereg(dev, 0x09, 0x0f, 0x60))
+<<<<<<< HEAD
 					dprintk(1, "setting band in demodulator failed\n");
+=======
+					dprintk(1, "setting band in demodulator failed.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else if (av7110->analog_tuner_flags & ANALOG_TUNER_STV0297) {
 				saa7146_setgpio(dev, 1, SAA7146_GPIO_OUTHI); // TDA9819 pin9(STD)
 				saa7146_setgpio(dev, 3, SAA7146_GPIO_OUTHI); // TDA9819 pin30(VIF)
@@ -274,17 +285,29 @@ static int av7110_dvb_c_switch(struct saa7146_fh *fh)
 				dprintk(1, "saa7113 write failed @ card %d", av7110->dvb_adapter.num);
 			break;
 		case 2:
+<<<<<<< HEAD
 			dprintk(1, "switching SAA7113 to Video AV CVBS Input\n");
+=======
+			dprintk(1, "switching SAA7113 to Video AV CVBS Input.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (i2c_writereg(av7110, 0x48, 0x02, 0xd2) != 1)
 				dprintk(1, "saa7113 write failed @ card %d", av7110->dvb_adapter.num);
 			break;
 		case 3:
+<<<<<<< HEAD
 			dprintk(1, "switching SAA7113 to Video AV Y/C Input\n");
+=======
+			dprintk(1, "switching SAA7113 to Video AV Y/C Input.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (i2c_writereg(av7110, 0x48, 0x02, 0xd9) != 1)
 				dprintk(1, "saa7113 write failed @ card %d", av7110->dvb_adapter.num);
 			break;
 		default:
+<<<<<<< HEAD
 			dprintk(1, "switching SAA7113 to Input: AV7110: SAA7113: invalid input\n");
+=======
+			dprintk(1, "switching SAA7113 to Input: AV7110: SAA7113: invalid input.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		adswitch = 0;
@@ -301,7 +324,11 @@ static int av7110_dvb_c_switch(struct saa7146_fh *fh)
 
 		if (av7110->analog_tuner_flags & ANALOG_TUNER_VES1820) {
 			if (ves1820_writereg(dev, 0x09, 0x0f, 0x20))
+<<<<<<< HEAD
 				dprintk(1, "setting band in demodulator failed\n");
+=======
+				dprintk(1, "setting band in demodulator failed.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else if (av7110->analog_tuner_flags & ANALOG_TUNER_STV0297) {
 			saa7146_setgpio(dev, 1, SAA7146_GPIO_OUTLO); // TDA9819 pin9(STD)
 			saa7146_setgpio(dev, 3, SAA7146_GPIO_OUTLO); // TDA9819 pin30(VIF)
@@ -415,7 +442,11 @@ static int vidioc_g_frequency(struct file *file, void *fh, struct v4l2_frequency
 	struct saa7146_dev *dev = ((struct saa7146_fh *)fh)->dev;
 	struct av7110 *av7110 = (struct av7110 *)dev->ext_priv;
 
+<<<<<<< HEAD
 	dprintk(2, "VIDIOC_G_FREQ: freq:0x%08x\n", f->frequency);
+=======
+	dprintk(2, "VIDIOC_G_FREQ: freq:0x%08x.\n", f->frequency);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!av7110->analog_tuner_flags || av7110->current_input != 1)
 		return -EINVAL;
@@ -431,7 +462,11 @@ static int vidioc_s_frequency(struct file *file, void *fh, struct v4l2_frequency
 	struct saa7146_dev *dev = ((struct saa7146_fh *)fh)->dev;
 	struct av7110 *av7110 = (struct av7110 *)dev->ext_priv;
 
+<<<<<<< HEAD
 	dprintk(2, "VIDIOC_S_FREQUENCY: freq:0x%08x\n", f->frequency);
+=======
+	dprintk(2, "VIDIOC_S_FREQUENCY: freq:0x%08x.\n", f->frequency);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!av7110->analog_tuner_flags || av7110->current_input != 1)
 		return -EINVAL;
@@ -691,12 +726,20 @@ int av7110_init_analog_module(struct av7110 *av7110)
 
 	if (i2c_writereg(av7110, 0x80, 0x0, 0x80) == 1 &&
 	    i2c_writereg(av7110, 0x80, 0x0, 0) == 1) {
+<<<<<<< HEAD
 		pr_info("DVB-C analog module @ card %d detected, initializing MSP3400\n",
+=======
+		printk("dvb-ttpci: DVB-C analog module @ card %d detected, initializing MSP3400\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			av7110->dvb_adapter.num);
 		av7110->adac_type = DVB_ADAC_MSP34x0;
 	} else if (i2c_writereg(av7110, 0x84, 0x0, 0x80) == 1 &&
 		   i2c_writereg(av7110, 0x84, 0x0, 0) == 1) {
+<<<<<<< HEAD
 		pr_info("DVB-C analog module @ card %d detected, initializing MSP3415\n",
+=======
+		printk("dvb-ttpci: DVB-C analog module @ card %d detected, initializing MSP3415\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			av7110->dvb_adapter.num);
 		av7110->adac_type = DVB_ADAC_MSP34x5;
 	} else
@@ -717,7 +760,11 @@ int av7110_init_analog_module(struct av7110 *av7110)
 	msp_writereg(av7110, MSP_WR_DSP, 0x000d, 0x1900); // prescale SCART
 
 	if (i2c_writereg(av7110, 0x48, 0x01, 0x00)!=1) {
+<<<<<<< HEAD
 		pr_info("saa7113 not accessible\n");
+=======
+		INFO(("saa7113 not accessible.\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		u8 *i = saa7113_init_regs;
 
@@ -735,7 +782,11 @@ int av7110_init_analog_module(struct av7110 *av7110)
 		/* setup for DVB by default */
 		if (av7110->analog_tuner_flags & ANALOG_TUNER_VES1820) {
 			if (ves1820_writereg(av7110->dev, 0x09, 0x0f, 0x20))
+<<<<<<< HEAD
 				dprintk(1, "setting band in demodulator failed\n");
+=======
+				dprintk(1, "setting band in demodulator failed.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else if (av7110->analog_tuner_flags & ANALOG_TUNER_STV0297) {
 			saa7146_setgpio(av7110->dev, 1, SAA7146_GPIO_OUTLO); // TDA9819 pin9(STD)
 			saa7146_setgpio(av7110->dev, 3, SAA7146_GPIO_OUTLO); // TDA9819 pin30(VIF)
@@ -799,7 +850,11 @@ int av7110_init_v4l(struct av7110 *av7110)
 	ret = saa7146_vv_init(dev, vv_data);
 
 	if (ret) {
+<<<<<<< HEAD
 		ERR("cannot init capture device. skipping\n");
+=======
+		ERR(("cannot init capture device. skipping.\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 	vv_data->ops.vidioc_enum_input = vidioc_enum_input;
@@ -816,12 +871,20 @@ int av7110_init_v4l(struct av7110 *av7110)
 	vv_data->ops.vidioc_s_fmt_sliced_vbi_out = vidioc_s_fmt_sliced_vbi_out;
 
 	if (saa7146_register_device(&av7110->v4l_dev, dev, "av7110", VFL_TYPE_GRABBER)) {
+<<<<<<< HEAD
 		ERR("cannot register capture device. skipping\n");
+=======
+		ERR(("cannot register capture device. skipping.\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		saa7146_vv_release(dev);
 		return -ENODEV;
 	}
 	if (saa7146_register_device(&av7110->vbi_dev, dev, "av7110", VFL_TYPE_VBI))
+<<<<<<< HEAD
 		ERR("cannot register vbi v4l2 device. skipping\n");
+=======
+		ERR(("cannot register vbi v4l2 device. skipping.\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

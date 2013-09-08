@@ -26,7 +26,10 @@
 #include <linux/etherdevice.h>
 #include <linux/ethtool.h>
 #include <linux/if_arp.h>
+<<<<<<< HEAD
 #include <linux/if_vlan.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/if_link.h>
 #include <linux/if_macvlan.h>
 #include <net/rtnetlink.h>
@@ -170,10 +173,13 @@ static rx_handler_result_t macvlan_handle_frame(struct sk_buff **pskb)
 
 	port = macvlan_port_get_rcu(skb->dev);
 	if (is_multicast_ether_addr(eth->h_dest)) {
+<<<<<<< HEAD
 		skb = ip_check_defrag(skb, IP_DEFRAG_MACVLAN);
 		if (!skb)
 			return RX_HANDLER_CONSUMED;
 		eth = eth_hdr(skb);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		src = macvlan_hash_lookup(port, eth->h_source);
 		if (!src)
 			/* frame comes from an external address */
@@ -194,6 +200,7 @@ static rx_handler_result_t macvlan_handle_frame(struct sk_buff **pskb)
 			 */
 			macvlan_broadcast(skb, port, src->dev,
 					  MACVLAN_MODE_VEPA);
+<<<<<<< HEAD
 		else {
 			/* forward to original port. */
 			vlan = src;
@@ -201,12 +208,18 @@ static rx_handler_result_t macvlan_handle_frame(struct sk_buff **pskb)
 			goto out;
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return RX_HANDLER_PASS;
 	}
 
 	if (port->passthru)
+<<<<<<< HEAD
 		vlan = list_first_or_null_rcu(&port->vlans,
 					      struct macvlan_dev, list);
+=======
+		vlan = list_first_entry(&port->vlans, struct macvlan_dev, list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		vlan = macvlan_hash_lookup(port, eth->h_dest);
 	if (vlan == NULL)
@@ -260,7 +273,11 @@ static int macvlan_queue_xmit(struct sk_buff *skb, struct net_device *dev)
 
 xmit_world:
 	skb->ip_summed = ip_summed;
+<<<<<<< HEAD
 	skb->dev = vlan->lowerdev;
+=======
+	skb_set_dev(skb, vlan->lowerdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return dev_queue_xmit(skb);
 }
 
@@ -373,7 +390,10 @@ static int macvlan_set_mac_address(struct net_device *dev, void *p)
 
 	if (!(dev->flags & IFF_UP)) {
 		/* Just copy in the new address */
+<<<<<<< HEAD
 		dev->addr_assign_type &= ~NET_ADDR_RANDOM;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		memcpy(dev->dev_addr, addr->sa_data, ETH_ALEN);
 	} else {
 		/* Rehash and update the device filters */
@@ -428,8 +448,12 @@ static struct lock_class_key macvlan_netdev_addr_lock_key;
 #define MACVLAN_FEATURES \
 	(NETIF_F_SG | NETIF_F_ALL_CSUM | NETIF_F_HIGHDMA | NETIF_F_FRAGLIST | \
 	 NETIF_F_GSO | NETIF_F_TSO | NETIF_F_UFO | NETIF_F_GSO_ROBUST | \
+<<<<<<< HEAD
 	 NETIF_F_TSO_ECN | NETIF_F_TSO6 | NETIF_F_GRO | NETIF_F_RXCSUM | \
 	 NETIF_F_HW_VLAN_FILTER)
+=======
+	 NETIF_F_TSO_ECN | NETIF_F_TSO6 | NETIF_F_GRO | NETIF_F_RXCSUM)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MACVLAN_STATE_MASK \
 	((1<<__LINK_STATE_NOCARRIER) | (1<<__LINK_STATE_DORMANT))
@@ -524,6 +548,7 @@ static struct rtnl_link_stats64 *macvlan_dev_get_stats64(struct net_device *dev,
 	return stats;
 }
 
+<<<<<<< HEAD
 static int macvlan_vlan_rx_add_vid(struct net_device *dev,
 				    unsigned short vid)
 {
@@ -543,6 +568,8 @@ static int macvlan_vlan_rx_kill_vid(struct net_device *dev,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void macvlan_ethtool_get_drvinfo(struct net_device *dev,
 					struct ethtool_drvinfo *drvinfo)
 {
@@ -554,8 +581,12 @@ static int macvlan_ethtool_get_settings(struct net_device *dev,
 					struct ethtool_cmd *cmd)
 {
 	const struct macvlan_dev *vlan = netdev_priv(dev);
+<<<<<<< HEAD
 
 	return __ethtool_get_settings(vlan->lowerdev, cmd);
+=======
+	return dev_ethtool_get_settings(vlan->lowerdev, cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct ethtool_ops macvlan_ethtool_ops = {
@@ -573,11 +604,17 @@ static const struct net_device_ops macvlan_netdev_ops = {
 	.ndo_change_mtu		= macvlan_change_mtu,
 	.ndo_change_rx_flags	= macvlan_change_rx_flags,
 	.ndo_set_mac_address	= macvlan_set_mac_address,
+<<<<<<< HEAD
 	.ndo_set_rx_mode	= macvlan_set_multicast_list,
 	.ndo_get_stats64	= macvlan_dev_get_stats64,
 	.ndo_validate_addr	= eth_validate_addr,
 	.ndo_vlan_rx_add_vid	= macvlan_vlan_rx_add_vid,
 	.ndo_vlan_rx_kill_vid	= macvlan_vlan_rx_kill_vid,
+=======
+	.ndo_set_multicast_list	= macvlan_set_multicast_list,
+	.ndo_get_stats64	= macvlan_dev_get_stats64,
+	.ndo_validate_addr	= eth_validate_addr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void macvlan_common_setup(struct net_device *dev)
@@ -585,7 +622,10 @@ void macvlan_common_setup(struct net_device *dev)
 	ether_setup(dev);
 
 	dev->priv_flags	       &= ~(IFF_XMIT_DST_RELEASE | IFF_TX_SKB_SHARING);
+<<<<<<< HEAD
 	dev->priv_flags	       |= IFF_UNICAST_FLT;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->netdev_ops		= &macvlan_netdev_ops;
 	dev->destructor		= free_netdev;
 	dev->header_ops		= &macvlan_hard_header_ops,
@@ -690,7 +730,11 @@ int macvlan_common_newlink(struct net *src_net, struct net_device *dev,
 		return -EINVAL;
 
 	if (!tb[IFLA_ADDRESS])
+<<<<<<< HEAD
 		eth_hw_addr_random(dev);
+=======
+		random_ether_addr(dev->dev_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!macvlan_port_exists(lowerdev)) {
 		err = macvlan_port_create(lowerdev);
@@ -725,7 +769,11 @@ int macvlan_common_newlink(struct net *src_net, struct net_device *dev,
 	if (err < 0)
 		goto destroy_port;
 
+<<<<<<< HEAD
 	list_add_tail_rcu(&vlan->list, &port->vlans);
+=======
+	list_add_tail(&vlan->list, &port->vlans);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	netif_stacked_transfer_operstate(lowerdev, dev);
 
 	return 0;
@@ -751,7 +799,11 @@ void macvlan_dellink(struct net_device *dev, struct list_head *head)
 {
 	struct macvlan_dev *vlan = netdev_priv(dev);
 
+<<<<<<< HEAD
 	list_del_rcu(&vlan->list);
+=======
+	list_del(&vlan->list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unregister_netdevice_queue(dev, head);
 }
 EXPORT_SYMBOL_GPL(macvlan_dellink);

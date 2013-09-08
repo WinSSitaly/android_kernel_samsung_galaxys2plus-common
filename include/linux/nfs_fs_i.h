@@ -1,6 +1,13 @@
 #ifndef _NFS_FS_I
 #define _NFS_FS_I
 
+<<<<<<< HEAD
+=======
+#include <asm/types.h>
+#include <linux/list.h>
+#include <linux/nfs.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct nlm_lockowner;
 
 /*

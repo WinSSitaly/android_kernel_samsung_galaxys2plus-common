@@ -44,7 +44,11 @@ my %end;
 my %type;
 my $done = 0;
 my $maxtime = 0;
+<<<<<<< HEAD
 my $firsttime = 99999;
+=======
+my $firsttime = 100;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 my $count = 0;
 my %pids;
 my %pidctr;

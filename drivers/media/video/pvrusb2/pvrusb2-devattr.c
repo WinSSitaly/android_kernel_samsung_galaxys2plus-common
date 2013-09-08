@@ -28,7 +28,10 @@ pvr2_device_desc structures.
 
 #include "pvrusb2-devattr.h"
 #include <linux/usb.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* This is needed in order to pull in tuner type ids... */
 #include <linux/i2c.h>
 #include <media/tuner.h>

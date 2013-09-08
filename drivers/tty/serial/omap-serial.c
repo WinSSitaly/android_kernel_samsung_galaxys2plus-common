@@ -37,13 +37,17 @@
 #include <linux/clk.h>
 #include <linux/serial_core.h>
 #include <linux/irq.h>
+<<<<<<< HEAD
 #include <linux/pm_runtime.h>
 #include <linux/of.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <plat/dma.h>
 #include <plat/dmtimer.h>
 #include <plat/omap-serial.h>
 
+<<<<<<< HEAD
 #define DEFAULT_CLK_SPEED 48000000 /* 48Mhz*/
 
 /* SCR register bitmasks */
@@ -53,15 +57,22 @@
 #define OMAP_UART_FCR_RX_FIFO_TRIG_SHIFT		6
 #define OMAP_UART_FCR_RX_FIFO_TRIG_MASK			(0x3 << 6)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct uart_omap_port *ui[OMAP_MAX_HSUART_PORTS];
 
 /* Forward declaration of functions */
 static void uart_tx_dma_callback(int lch, u16 ch_status, void *data);
+<<<<<<< HEAD
 static void serial_omap_rxdma_poll(unsigned long uart_no);
 static int serial_omap_start_rxdma(struct uart_omap_port *up);
 static void serial_omap_mdr1_errataset(struct uart_omap_port *up, u8 mdr1);
 
 static struct workqueue_struct *serial_omap_uart_wq;
+=======
+static void serial_omap_rx_timeout(unsigned long uart_no);
+static int serial_omap_start_rxdma(struct uart_omap_port *up);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline unsigned int serial_in(struct uart_omap_port *up, int offset)
 {
@@ -116,8 +127,11 @@ static void serial_omap_stop_rxdma(struct uart_omap_port *up)
 		omap_free_dma(up->uart_dma.rx_dma_channel);
 		up->uart_dma.rx_dma_channel = OMAP_UART_DMA_CH_FREE;
 		up->uart_dma.rx_dma_used = false;
+<<<<<<< HEAD
 		pm_runtime_mark_last_busy(&up->pdev->dev);
 		pm_runtime_put_autosuspend(&up->pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -125,18 +139,27 @@ static void serial_omap_enable_ms(struct uart_port *port)
 {
 	struct uart_omap_port *up = (struct uart_omap_port *)port;
 
+<<<<<<< HEAD
 	dev_dbg(up->port.dev, "serial_omap_enable_ms+%d\n", up->port.line);
 
 	pm_runtime_get_sync(&up->pdev->dev);
 	up->ier |= UART_IER_MSI;
 	serial_out(up, UART_IER, up->ier);
 	pm_runtime_put(&up->pdev->dev);
+=======
+	dev_dbg(up->port.dev, "serial_omap_enable_ms+%d\n", up->pdev->id);
+	up->ier |= UART_IER_MSI;
+	serial_out(up, UART_IER, up->ier);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void serial_omap_stop_tx(struct uart_port *port)
 {
 	struct uart_omap_port *up = (struct uart_omap_port *)port;
+<<<<<<< HEAD
 	struct omap_uart_port_info *pdata = up->pdev->dev.platform_data;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (up->use_dma &&
 		up->uart_dma.tx_dma_channel != OMAP_UART_DMA_CH_FREE) {
@@ -149,33 +172,45 @@ static void serial_omap_stop_tx(struct uart_port *port)
 		omap_stop_dma(up->uart_dma.tx_dma_channel);
 		omap_free_dma(up->uart_dma.tx_dma_channel);
 		up->uart_dma.tx_dma_channel = OMAP_UART_DMA_CH_FREE;
+<<<<<<< HEAD
 		pm_runtime_mark_last_busy(&up->pdev->dev);
 		pm_runtime_put_autosuspend(&up->pdev->dev);
 	}
 
 	pm_runtime_get_sync(&up->pdev->dev);
+=======
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (up->ier & UART_IER_THRI) {
 		up->ier &= ~UART_IER_THRI;
 		serial_out(up, UART_IER, up->ier);
 	}
+<<<<<<< HEAD
 
 	if (!up->use_dma && pdata && pdata->set_forceidle)
 		pdata->set_forceidle(up->pdev);
 
 	pm_runtime_mark_last_busy(&up->pdev->dev);
 	pm_runtime_put_autosuspend(&up->pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void serial_omap_stop_rx(struct uart_port *port)
 {
 	struct uart_omap_port *up = (struct uart_omap_port *)port;
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(&up->pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (up->use_dma)
 		serial_omap_stop_rxdma(up);
 	up->ier &= ~UART_IER_RLSI;
 	up->port.read_status_mask &= ~UART_LSR_DR;
 	serial_out(up, UART_IER, up->ier);
+<<<<<<< HEAD
 	pm_runtime_mark_last_busy(&up->pdev->dev);
 	pm_runtime_put_autosuspend(&up->pdev->dev);
 }
@@ -186,6 +221,15 @@ static inline void receive_chars(struct uart_omap_port *up,
 	struct tty_struct *tty = up->port.state->port.tty;
 	unsigned int flag, lsr = *status;
 	unsigned char ch = 0;
+=======
+}
+
+static inline void receive_chars(struct uart_omap_port *up, int *status)
+{
+	struct tty_struct *tty = up->port.state->port.tty;
+	unsigned int flag;
+	unsigned char ch, lsr = *status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int max_count = 256;
 
 	do {
@@ -290,18 +334,25 @@ static inline void serial_omap_enable_ier_thri(struct uart_omap_port *up)
 static void serial_omap_start_tx(struct uart_port *port)
 {
 	struct uart_omap_port *up = (struct uart_omap_port *)port;
+<<<<<<< HEAD
 	struct omap_uart_port_info *pdata = up->pdev->dev.platform_data;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct circ_buf *xmit;
 	unsigned int start;
 	int ret = 0;
 
 	if (!up->use_dma) {
+<<<<<<< HEAD
 		pm_runtime_get_sync(&up->pdev->dev);
 		serial_omap_enable_ier_thri(up);
 		if (pdata && pdata->set_noidle)
 			pdata->set_noidle(up->pdev);
 		pm_runtime_mark_last_busy(&up->pdev->dev);
 		pm_runtime_put_autosuspend(&up->pdev->dev);
+=======
+		serial_omap_enable_ier_thri(up);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -311,7 +362,10 @@ static void serial_omap_start_tx(struct uart_port *port)
 	xmit = &up->port.state->xmit;
 
 	if (up->uart_dma.tx_dma_channel == OMAP_UART_DMA_CH_FREE) {
+<<<<<<< HEAD
 		pm_runtime_get_sync(&up->pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = omap_request_dma(up->uart_dma.uart_dma_tx,
 				"UART Tx DMA",
 				(void *)uart_tx_dma_callback, up,
@@ -394,6 +448,7 @@ static inline irqreturn_t serial_omap_irq(int irq, void *dev_id)
 	unsigned int iir, lsr;
 	unsigned long flags;
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(&up->pdev->dev);
 	iir = serial_in(up, UART_IIR);
 	if (iir & UART_IIR_NO_INT) {
@@ -401,6 +456,11 @@ static inline irqreturn_t serial_omap_irq(int irq, void *dev_id)
 		pm_runtime_put_autosuspend(&up->pdev->dev);
 		return IRQ_NONE;
 	}
+=======
+	iir = serial_in(up, UART_IIR);
+	if (iir & UART_IIR_NO_INT)
+		return IRQ_NONE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&up->port.lock, flags);
 	lsr = serial_in(up, UART_LSR);
@@ -422,9 +482,12 @@ static inline irqreturn_t serial_omap_irq(int irq, void *dev_id)
 		transmit_chars(up);
 
 	spin_unlock_irqrestore(&up->port.lock, flags);
+<<<<<<< HEAD
 	pm_runtime_mark_last_busy(&up->pdev->dev);
 	pm_runtime_put_autosuspend(&up->pdev->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	up->port_activity = jiffies;
 	return IRQ_HANDLED;
 }
@@ -435,18 +498,27 @@ static unsigned int serial_omap_tx_empty(struct uart_port *port)
 	unsigned long flags = 0;
 	unsigned int ret = 0;
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(&up->pdev->dev);
 	dev_dbg(up->port.dev, "serial_omap_tx_empty+%d\n", up->port.line);
 	spin_lock_irqsave(&up->port.lock, flags);
 	ret = serial_in(up, UART_LSR) & UART_LSR_TEMT ? TIOCSER_TEMT : 0;
 	spin_unlock_irqrestore(&up->port.lock, flags);
 	pm_runtime_put(&up->pdev->dev);
+=======
+	dev_dbg(up->port.dev, "serial_omap_tx_empty+%d\n", up->pdev->id);
+	spin_lock_irqsave(&up->port.lock, flags);
+	ret = serial_in(up, UART_LSR) & UART_LSR_TEMT ? TIOCSER_TEMT : 0;
+	spin_unlock_irqrestore(&up->port.lock, flags);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static unsigned int serial_omap_get_mctrl(struct uart_port *port)
 {
 	struct uart_omap_port *up = (struct uart_omap_port *)port;
+<<<<<<< HEAD
 	unsigned int status;
 	unsigned int ret = 0;
 
@@ -455,6 +527,13 @@ static unsigned int serial_omap_get_mctrl(struct uart_port *port)
 	pm_runtime_put(&up->pdev->dev);
 
 	dev_dbg(up->port.dev, "serial_omap_get_mctrl+%d\n", up->port.line);
+=======
+	unsigned char status;
+	unsigned int ret = 0;
+
+	status = check_modem_status(up);
+	dev_dbg(up->port.dev, "serial_omap_get_mctrl+%d\n", up->pdev->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (status & UART_MSR_DCD)
 		ret |= TIOCM_CAR;
@@ -472,7 +551,11 @@ static void serial_omap_set_mctrl(struct uart_port *port, unsigned int mctrl)
 	struct uart_omap_port *up = (struct uart_omap_port *)port;
 	unsigned char mcr = 0;
 
+<<<<<<< HEAD
 	dev_dbg(up->port.dev, "serial_omap_set_mctrl+%d\n", up->port.line);
+=======
+	dev_dbg(up->port.dev, "serial_omap_set_mctrl+%d\n", up->pdev->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (mctrl & TIOCM_RTS)
 		mcr |= UART_MCR_RTS;
 	if (mctrl & TIOCM_DTR)
@@ -484,11 +567,16 @@ static void serial_omap_set_mctrl(struct uart_port *port, unsigned int mctrl)
 	if (mctrl & TIOCM_LOOP)
 		mcr |= UART_MCR_LOOP;
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(&up->pdev->dev);
 	up->mcr = serial_in(up, UART_MCR);
 	up->mcr |= mcr;
 	serial_out(up, UART_MCR, up->mcr);
 	pm_runtime_put(&up->pdev->dev);
+=======
+	mcr |= up->mcr;
+	serial_out(up, UART_MCR, mcr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void serial_omap_break_ctl(struct uart_port *port, int break_state)
@@ -496,8 +584,12 @@ static void serial_omap_break_ctl(struct uart_port *port, int break_state)
 	struct uart_omap_port *up = (struct uart_omap_port *)port;
 	unsigned long flags = 0;
 
+<<<<<<< HEAD
 	dev_dbg(up->port.dev, "serial_omap_break_ctl+%d\n", up->port.line);
 	pm_runtime_get_sync(&up->pdev->dev);
+=======
+	dev_dbg(up->port.dev, "serial_omap_break_ctl+%d\n", up->pdev->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&up->port.lock, flags);
 	if (break_state == -1)
 		up->lcr |= UART_LCR_SBC;
@@ -505,7 +597,10 @@ static void serial_omap_break_ctl(struct uart_port *port, int break_state)
 		up->lcr &= ~UART_LCR_SBC;
 	serial_out(up, UART_LCR, up->lcr);
 	spin_unlock_irqrestore(&up->port.lock, flags);
+<<<<<<< HEAD
 	pm_runtime_put(&up->pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int serial_omap_startup(struct uart_port *port)
@@ -522,9 +617,14 @@ static int serial_omap_startup(struct uart_port *port)
 	if (retval)
 		return retval;
 
+<<<<<<< HEAD
 	dev_dbg(up->port.dev, "serial_omap_startup+%d\n", up->port.line);
 
 	pm_runtime_get_sync(&up->pdev->dev);
+=======
+	dev_dbg(up->port.dev, "serial_omap_startup+%d\n", up->pdev->id);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Clear the FIFO buffers and disable them.
 	 * (they will be reenabled in set_termios())
@@ -562,8 +662,13 @@ static int serial_omap_startup(struct uart_port *port)
 			(dma_addr_t *)&(up->uart_dma.tx_buf_dma_phys),
 			0);
 		init_timer(&(up->uart_dma.rx_timer));
+<<<<<<< HEAD
 		up->uart_dma.rx_timer.function = serial_omap_rxdma_poll;
 		up->uart_dma.rx_timer.data = up->port.line;
+=======
+		up->uart_dma.rx_timer.function = serial_omap_rx_timeout;
+		up->uart_dma.rx_timer.data = up->pdev->id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Currently the buffer size is 4KB. Can increase it */
 		up->uart_dma.rx_buf = dma_alloc_coherent(NULL,
 			up->uart_dma.rx_buf_size,
@@ -580,8 +685,11 @@ static int serial_omap_startup(struct uart_port *port)
 	/* Enable module level wake up */
 	serial_out(up, UART_OMAP_WER, OMAP_UART_WER_MOD_WKUP);
 
+<<<<<<< HEAD
 	pm_runtime_mark_last_busy(&up->pdev->dev);
 	pm_runtime_put_autosuspend(&up->pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	up->port_activity = jiffies;
 	return 0;
 }
@@ -591,9 +699,13 @@ static void serial_omap_shutdown(struct uart_port *port)
 	struct uart_omap_port *up = (struct uart_omap_port *)port;
 	unsigned long flags = 0;
 
+<<<<<<< HEAD
 	dev_dbg(up->port.dev, "serial_omap_shutdown+%d\n", up->port.line);
 
 	pm_runtime_get_sync(&up->pdev->dev);
+=======
+	dev_dbg(up->port.dev, "serial_omap_shutdown+%d\n", up->pdev->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Disable interrupts from this port
 	 */
@@ -627,8 +739,11 @@ static void serial_omap_shutdown(struct uart_port *port)
 			up->uart_dma.rx_buf_dma_phys);
 		up->uart_dma.rx_buf = NULL;
 	}
+<<<<<<< HEAD
 
 	pm_runtime_put(&up->pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	free_irq(up->port.irq, up);
 }
 
@@ -636,6 +751,11 @@ static inline void
 serial_omap_configure_xonxoff
 		(struct uart_omap_port *up, struct ktermios *termios)
 {
+<<<<<<< HEAD
+=======
+	unsigned char efr = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	up->lcr = serial_in(up, UART_LCR);
 	serial_out(up, UART_LCR, UART_LCR_CONF_MODE_B);
 	up->efr = serial_in(up, UART_EFR);
@@ -645,7 +765,12 @@ serial_omap_configure_xonxoff
 	serial_out(up, UART_XOFF1, termios->c_cc[VSTOP]);
 
 	/* clear SW control mode bits */
+<<<<<<< HEAD
 	up->efr &= OMAP_UART_SW_CLR;
+=======
+	efr = up->efr;
+	efr &= OMAP_UART_SW_CLR;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * IXON Flag:
@@ -653,7 +778,11 @@ serial_omap_configure_xonxoff
 	 * Transmit XON1, XOFF1
 	 */
 	if (termios->c_iflag & IXON)
+<<<<<<< HEAD
 		up->efr |= OMAP_UART_SW_TX;
+=======
+		efr |= OMAP_UART_SW_TX;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * IXOFF Flag:
@@ -661,7 +790,11 @@ serial_omap_configure_xonxoff
 	 * Receiver compares XON1, XOFF1.
 	 */
 	if (termios->c_iflag & IXOFF)
+<<<<<<< HEAD
 		up->efr |= OMAP_UART_SW_RX;
+=======
+		efr |= OMAP_UART_SW_RX;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	serial_out(up, UART_EFR, up->efr | UART_EFR_ECB);
 	serial_out(up, UART_LCR, UART_LCR_CONF_MODE_A);
@@ -684,13 +817,18 @@ serial_omap_configure_xonxoff
 	 * load the new software flow control mode IXON or IXOFF
 	 * and restore the UARTi.EFR_REG[4] ENHANCED_EN value.
 	 */
+<<<<<<< HEAD
 	serial_out(up, UART_EFR, up->efr | UART_EFR_SCD);
+=======
+	serial_out(up, UART_EFR, efr | UART_EFR_SCD);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	serial_out(up, UART_LCR, UART_LCR_CONF_MODE_A);
 
 	serial_out(up, UART_MCR, up->mcr & ~UART_MCR_TCRTLR);
 	serial_out(up, UART_LCR, up->lcr);
 }
 
+<<<<<<< HEAD
 static void serial_omap_uart_qos_work(struct work_struct *work)
 {
 	struct uart_omap_port *up = container_of(work, struct uart_omap_port,
@@ -699,6 +837,8 @@ static void serial_omap_uart_qos_work(struct work_struct *work)
 	pm_qos_update_request(&up->pm_qos_request, up->latency);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 serial_omap_set_termios(struct uart_port *port, struct ktermios *termios,
 			struct ktermios *old)
@@ -739,6 +879,7 @@ serial_omap_set_termios(struct uart_port *port, struct ktermios *termios,
 	baud = uart_get_baud_rate(port, termios, old, 0, port->uartclk/13);
 	quot = serial_omap_get_divisor(port, baud);
 
+<<<<<<< HEAD
 	/* calculate wakeup latency constraint */
 	up->calc_latency = (USEC_PER_SEC * up->port.fifosize) / (baud / 8);
 	up->latency = up->calc_latency;
@@ -748,6 +889,8 @@ serial_omap_set_termios(struct uart_port *port, struct ktermios *termios,
 	up->dlh = quot >> 8;
 	up->mdr1 = UART_OMAP_MDR1_DISABLE;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	up->fcr = UART_FCR_R_TRIG_01 | UART_FCR_T_TRIG_01 |
 			UART_FCR_ENABLE_FIFO;
 	if (up->use_dma)
@@ -757,7 +900,10 @@ serial_omap_set_termios(struct uart_port *port, struct ktermios *termios,
 	 * Ok, we're now changing the port state. Do it with
 	 * interrupts disabled.
 	 */
+<<<<<<< HEAD
 	pm_runtime_get_sync(&up->pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&up->port.lock, flags);
 
 	/*
@@ -801,8 +947,11 @@ serial_omap_set_termios(struct uart_port *port, struct ktermios *termios,
 		up->ier |= UART_IER_MSI;
 	serial_out(up, UART_IER, up->ier);
 	serial_out(up, UART_LCR, cval);		/* reset DLAB */
+<<<<<<< HEAD
 	up->lcr = cval;
 	up->scr = OMAP_UART_SCR_TX_EMPTY;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* FIFOs and DMA Settings */
 
@@ -824,6 +973,7 @@ serial_omap_set_termios(struct uart_port *port, struct ktermios *termios,
 	up->mcr = serial_in(up, UART_MCR);
 	serial_out(up, UART_MCR, up->mcr | UART_MCR_TCRTLR);
 	/* FIFO ENABLE, DMA MODE */
+<<<<<<< HEAD
 
 	up->scr |= OMAP_UART_SCR_RX_TRIG_GRANU1_MASK;
 
@@ -841,17 +991,32 @@ serial_omap_set_termios(struct uart_port *port, struct ktermios *termios,
 
 	serial_out(up, UART_OMAP_SCR, up->scr);
 
+=======
+	serial_out(up, UART_FCR, up->fcr);
+	serial_out(up, UART_LCR, UART_LCR_CONF_MODE_B);
+
+	if (up->use_dma) {
+		serial_out(up, UART_TI752_TLR, 0);
+		serial_out(up, UART_OMAP_SCR,
+			(UART_FCR_TRIGGER_4 | UART_FCR_TRIGGER_8));
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	serial_out(up, UART_EFR, up->efr);
 	serial_out(up, UART_LCR, UART_LCR_CONF_MODE_A);
 	serial_out(up, UART_MCR, up->mcr);
 
 	/* Protocol, Baud Rate, and Interrupt Settings */
 
+<<<<<<< HEAD
 	if (up->errata & UART_ERRATA_i202_MDR1_ACCESS)
 		serial_omap_mdr1_errataset(up, up->mdr1);
 	else
 		serial_out(up, UART_OMAP_MDR1, up->mdr1);
 
+=======
+	serial_out(up, UART_OMAP_MDR1, UART_OMAP_MDR1_DISABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	serial_out(up, UART_LCR, UART_LCR_CONF_MODE_B);
 
 	up->efr = serial_in(up, UART_EFR);
@@ -861,8 +1026,13 @@ serial_omap_set_termios(struct uart_port *port, struct ktermios *termios,
 	serial_out(up, UART_IER, 0);
 	serial_out(up, UART_LCR, UART_LCR_CONF_MODE_B);
 
+<<<<<<< HEAD
 	serial_out(up, UART_DLL, up->dll);	/* LS of divisor */
 	serial_out(up, UART_DLM, up->dlh);	/* MS of divisor */
+=======
+	serial_out(up, UART_DLL, quot & 0xff);          /* LS of divisor */
+	serial_out(up, UART_DLM, quot >> 8);            /* MS of divisor */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	serial_out(up, UART_LCR, 0);
 	serial_out(up, UART_IER, up->ier);
@@ -872,6 +1042,7 @@ serial_omap_set_termios(struct uart_port *port, struct ktermios *termios,
 	serial_out(up, UART_LCR, cval);
 
 	if (baud > 230400 && baud != 3000000)
+<<<<<<< HEAD
 		up->mdr1 = UART_OMAP_MDR1_13X_MODE;
 	else
 		up->mdr1 = UART_OMAP_MDR1_16X_MODE;
@@ -880,6 +1051,11 @@ serial_omap_set_termios(struct uart_port *port, struct ktermios *termios,
 		serial_omap_mdr1_errataset(up, up->mdr1);
 	else
 		serial_out(up, UART_OMAP_MDR1, up->mdr1);
+=======
+		serial_out(up, UART_OMAP_MDR1, UART_OMAP_MDR1_13X_MODE);
+	else
+		serial_out(up, UART_OMAP_MDR1, UART_OMAP_MDR1_16X_MODE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Hardware Flow Control Configuration */
 
@@ -906,8 +1082,12 @@ serial_omap_set_termios(struct uart_port *port, struct ktermios *termios,
 	serial_omap_configure_xonxoff(up, termios);
 
 	spin_unlock_irqrestore(&up->port.lock, flags);
+<<<<<<< HEAD
 	pm_runtime_put(&up->pdev->dev);
 	dev_dbg(up->port.dev, "serial_omap_set_termios+%d\n", up->port.line);
+=======
+	dev_dbg(up->port.dev, "serial_omap_set_termios+%d\n", up->pdev->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -917,9 +1097,13 @@ serial_omap_pm(struct uart_port *port, unsigned int state,
 	struct uart_omap_port *up = (struct uart_omap_port *)port;
 	unsigned char efr;
 
+<<<<<<< HEAD
 	dev_dbg(up->port.dev, "serial_omap_pm+%d\n", up->port.line);
 
 	pm_runtime_get_sync(&up->pdev->dev);
+=======
+	dev_dbg(up->port.dev, "serial_omap_pm+%d\n", up->pdev->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	serial_out(up, UART_LCR, UART_LCR_CONF_MODE_B);
 	efr = serial_in(up, UART_EFR);
 	serial_out(up, UART_EFR, efr | UART_EFR_ECB);
@@ -929,6 +1113,7 @@ serial_omap_pm(struct uart_port *port, unsigned int state,
 	serial_out(up, UART_LCR, UART_LCR_CONF_MODE_B);
 	serial_out(up, UART_EFR, efr);
 	serial_out(up, UART_LCR, 0);
+<<<<<<< HEAD
 
 	if (!device_may_wakeup(&up->pdev->dev)) {
 		if (!state)
@@ -938,6 +1123,8 @@ serial_omap_pm(struct uart_port *port, unsigned int state,
 	}
 
 	pm_runtime_put(&up->pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void serial_omap_release_port(struct uart_port *port)
@@ -956,7 +1143,11 @@ static void serial_omap_config_port(struct uart_port *port, int flags)
 	struct uart_omap_port *up = (struct uart_omap_port *)port;
 
 	dev_dbg(up->port.dev, "serial_omap_config_port+%d\n",
+<<<<<<< HEAD
 							up->port.line);
+=======
+							up->pdev->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	up->port.type = PORT_OMAP;
 }
 
@@ -973,7 +1164,11 @@ serial_omap_type(struct uart_port *port)
 {
 	struct uart_omap_port *up = (struct uart_omap_port *)port;
 
+<<<<<<< HEAD
 	dev_dbg(up->port.dev, "serial_omap_type+%d\n", up->port.line);
+=======
+	dev_dbg(up->port.dev, "serial_omap_type+%d\n", up->pdev->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return up->name;
 }
 
@@ -1015,16 +1210,22 @@ static inline void wait_for_xmitr(struct uart_omap_port *up)
 static void serial_omap_poll_put_char(struct uart_port *port, unsigned char ch)
 {
 	struct uart_omap_port *up = (struct uart_omap_port *)port;
+<<<<<<< HEAD
 
 	pm_runtime_get_sync(&up->pdev->dev);
 	wait_for_xmitr(up);
 	serial_out(up, UART_TX, ch);
 	pm_runtime_put(&up->pdev->dev);
+=======
+	wait_for_xmitr(up);
+	serial_out(up, UART_TX, ch);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int serial_omap_poll_get_char(struct uart_port *port)
 {
 	struct uart_omap_port *up = (struct uart_omap_port *)port;
+<<<<<<< HEAD
 	unsigned int status;
 
 	pm_runtime_get_sync(&up->pdev->dev);
@@ -1035,6 +1236,14 @@ static int serial_omap_poll_get_char(struct uart_port *port)
 	status = serial_in(up, UART_RX);
 	pm_runtime_put(&up->pdev->dev);
 	return status;
+=======
+	unsigned int status = serial_in(up, UART_LSR);
+
+	if (!(status & UART_LSR_DR))
+		return NO_POLL_CHAR;
+
+	return serial_in(up, UART_RX);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #endif /* CONFIG_CONSOLE_POLL */
@@ -1062,8 +1271,11 @@ serial_omap_console_write(struct console *co, const char *s,
 	unsigned int ier;
 	int locked = 1;
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(&up->pdev->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_irq_save(flags);
 	if (up->port.sysrq)
 		locked = 0;
@@ -1096,8 +1308,11 @@ serial_omap_console_write(struct console *co, const char *s,
 	if (up->msr_saved_flags)
 		check_modem_status(up);
 
+<<<<<<< HEAD
 	pm_runtime_mark_last_busy(&up->pdev->dev);
 	pm_runtime_put_autosuspend(&up->pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (locked)
 		spin_unlock(&up->port.lock);
 	local_irq_restore(flags);
@@ -1134,7 +1349,11 @@ static struct console serial_omap_console = {
 
 static void serial_omap_add_console_port(struct uart_omap_port *up)
 {
+<<<<<<< HEAD
 	serial_omap_console_ports[up->port.line] = up;
+=======
+	serial_omap_console_ports[up->pdev->id] = up;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #define OMAP_CONSOLE	(&serial_omap_console)
@@ -1180,6 +1399,7 @@ static struct uart_driver serial_omap_reg = {
 	.cons		= OMAP_CONSOLE,
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM_SLEEP
 static int serial_omap_suspend(struct device *dev)
 {
@@ -1196,14 +1416,34 @@ static int serial_omap_suspend(struct device *dev)
 static int serial_omap_resume(struct device *dev)
 {
 	struct uart_omap_port *up = dev_get_drvdata(dev);
+=======
+static int
+serial_omap_suspend(struct platform_device *pdev, pm_message_t state)
+{
+	struct uart_omap_port *up = platform_get_drvdata(pdev);
+
+	if (up)
+		uart_suspend_port(&serial_omap_reg, &up->port);
+	return 0;
+}
+
+static int serial_omap_resume(struct platform_device *dev)
+{
+	struct uart_omap_port *up = platform_get_drvdata(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (up)
 		uart_resume_port(&serial_omap_reg, &up->port);
 	return 0;
 }
+<<<<<<< HEAD
 #endif
 
 static void serial_omap_rxdma_poll(unsigned long uart_no)
+=======
+
+static void serial_omap_rx_timeout(unsigned long uart_no)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct uart_omap_port *up = ui[uart_no];
 	unsigned int curr_dma_pos, curr_transmitted_size;
@@ -1213,9 +1453,15 @@ static void serial_omap_rxdma_poll(unsigned long uart_no)
 	if ((curr_dma_pos == up->uart_dma.prev_rx_dma_pos) ||
 			     (curr_dma_pos == 0)) {
 		if (jiffies_to_msecs(jiffies - up->port_activity) <
+<<<<<<< HEAD
 						up->uart_dma.rx_timeout) {
 			mod_timer(&up->uart_dma.rx_timer, jiffies +
 				usecs_to_jiffies(up->uart_dma.rx_poll_rate));
+=======
+							RX_TIMEOUT) {
+			mod_timer(&up->uart_dma.rx_timer, jiffies +
+				usecs_to_jiffies(up->uart_dma.rx_timeout));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			serial_omap_stop_rxdma(up);
 			up->ier |= (UART_IER_RDI | UART_IER_RLSI);
@@ -1244,7 +1490,11 @@ static void serial_omap_rxdma_poll(unsigned long uart_no)
 		}
 	} else  {
 		mod_timer(&up->uart_dma.rx_timer, jiffies +
+<<<<<<< HEAD
 			usecs_to_jiffies(up->uart_dma.rx_poll_rate));
+=======
+			usecs_to_jiffies(up->uart_dma.rx_timeout));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	up->port_activity = jiffies;
 }
@@ -1259,7 +1509,10 @@ static int serial_omap_start_rxdma(struct uart_omap_port *up)
 	int ret = 0;
 
 	if (up->uart_dma.rx_dma_channel == -1) {
+<<<<<<< HEAD
 		pm_runtime_get_sync(&up->pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = omap_request_dma(up->uart_dma.uart_dma_rx,
 				"UART Rx DMA",
 				(void *)uart_rx_dma_callback, up,
@@ -1283,7 +1536,11 @@ static int serial_omap_start_rxdma(struct uart_omap_port *up)
 	/* FIXME: Cache maintenance needed here? */
 	omap_start_dma(up->uart_dma.rx_dma_channel);
 	mod_timer(&up->uart_dma.rx_timer, jiffies +
+<<<<<<< HEAD
 				usecs_to_jiffies(up->uart_dma.rx_poll_rate));
+=======
+				usecs_to_jiffies(up->uart_dma.rx_timeout));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	up->uart_dma.rx_dma_used = true;
 	return ret;
 }
@@ -1346,6 +1603,7 @@ static void uart_tx_dma_callback(int lch, u16 ch_status, void *data)
 	return;
 }
 
+<<<<<<< HEAD
 static struct omap_uart_port_info *of_get_uart_port_info(struct device *dev)
 {
 	struct omap_uart_port_info *omap_up_info;
@@ -1359,6 +1617,8 @@ static struct omap_uart_port_info *of_get_uart_port_info(struct device *dev)
 	return omap_up_info;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int serial_omap_probe(struct platform_device *pdev)
 {
 	struct uart_omap_port	*up;
@@ -1366,9 +1626,12 @@ static int serial_omap_probe(struct platform_device *pdev)
 	struct omap_uart_port_info *omap_up_info = pdev->dev.platform_data;
 	int ret = -ENOSPC;
 
+<<<<<<< HEAD
 	if (pdev->dev.of_node)
 		omap_up_info = of_get_uart_port_info(&pdev->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	if (!mem) {
 		dev_err(&pdev->dev, "no mem resource?\n");
@@ -1381,13 +1644,19 @@ static int serial_omap_probe(struct platform_device *pdev)
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	if (!devm_request_mem_region(&pdev->dev, mem->start, resource_size(mem),
 				pdev->dev.driver->name)) {
+=======
+	if (!request_mem_region(mem->start, (mem->end - mem->start) + 1,
+				     pdev->dev.driver->name)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_err(&pdev->dev, "memory region already claimed\n");
 		return -EBUSY;
 	}
 
 	dma_rx = platform_get_resource_byname(pdev, IORESOURCE_DMA, "rx");
+<<<<<<< HEAD
 	if (!dma_rx)
 		return -ENXIO;
 
@@ -1399,6 +1668,25 @@ static int serial_omap_probe(struct platform_device *pdev)
 	if (!up)
 		return -ENOMEM;
 
+=======
+	if (!dma_rx) {
+		ret = -EINVAL;
+		goto err;
+	}
+
+	dma_tx = platform_get_resource_byname(pdev, IORESOURCE_DMA, "tx");
+	if (!dma_tx) {
+		ret = -EINVAL;
+		goto err;
+	}
+
+	up = kzalloc(sizeof(*up), GFP_KERNEL);
+	if (up == NULL) {
+		ret = -ENOMEM;
+		goto do_release_region;
+	}
+	sprintf(up->name, "OMAP UART%d", pdev->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	up->pdev = pdev;
 	up->port.dev = &pdev->dev;
 	up->port.type = PORT_OMAP;
@@ -1408,6 +1696,7 @@ static int serial_omap_probe(struct platform_device *pdev)
 	up->port.regshift = 2;
 	up->port.fifosize = 64;
 	up->port.ops = &serial_omap_pops;
+<<<<<<< HEAD
 
 	if (pdev->dev.of_node)
 		up->port.line = of_alias_get_id(pdev->dev.of_node, "serial");
@@ -1440,20 +1729,36 @@ static int serial_omap_probe(struct platform_device *pdev)
 	}
 	up->uart_dma.uart_base = mem->start;
 	up->errata = omap_up_info->errata;
+=======
+	up->port.line = pdev->id;
+
+	up->port.membase = omap_up_info->membase;
+	up->port.mapbase = omap_up_info->mapbase;
+	up->port.flags = omap_up_info->flags;
+	up->port.irqflags = omap_up_info->irqflags;
+	up->port.uartclk = omap_up_info->uartclk;
+	up->uart_dma.uart_base = mem->start;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (omap_up_info->dma_enabled) {
 		up->uart_dma.uart_dma_tx = dma_tx->start;
 		up->uart_dma.uart_dma_rx = dma_rx->start;
 		up->use_dma = 1;
+<<<<<<< HEAD
 		up->uart_dma.rx_buf_size = omap_up_info->dma_rx_buf_size;
 		up->uart_dma.rx_timeout = omap_up_info->dma_rx_timeout;
 		up->uart_dma.rx_poll_rate = omap_up_info->dma_rx_poll_rate;
+=======
+		up->uart_dma.rx_buf_size = 4096;
+		up->uart_dma.rx_timeout = 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_lock_init(&(up->uart_dma.tx_lock));
 		spin_lock_init(&(up->uart_dma.rx_lock));
 		up->uart_dma.tx_dma_channel = OMAP_UART_DMA_CH_FREE;
 		up->uart_dma.rx_dma_channel = OMAP_UART_DMA_CH_FREE;
 	}
 
+<<<<<<< HEAD
 	up->latency = PM_QOS_CPU_DMA_LAT_DEFAULT_VALUE;
 	up->calc_latency = PM_QOS_CPU_DMA_LAT_DEFAULT_VALUE;
 	pm_qos_add_request(&up->pm_qos_request,
@@ -1470,10 +1775,14 @@ static int serial_omap_probe(struct platform_device *pdev)
 	pm_runtime_get_sync(&pdev->dev);
 
 	ui[up->port.line] = up;
+=======
+	ui[pdev->id] = up;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	serial_omap_add_console_port(up);
 
 	ret = uart_add_one_port(&serial_omap_reg, &up->port);
 	if (ret != 0)
+<<<<<<< HEAD
 		goto err_add_port;
 
 	pm_runtime_put(&pdev->dev);
@@ -1487,6 +1796,17 @@ err_ioremap:
 err_port_line:
 	dev_err(&pdev->dev, "[UART%d]: failure [%s]: %d\n",
 				pdev->id, __func__, ret);
+=======
+		goto do_release_region;
+
+	platform_set_drvdata(pdev, up);
+	return 0;
+err:
+	dev_err(&pdev->dev, "[UART%d]: failure [%s]: %d\n",
+				pdev->id, __func__, ret);
+do_release_region:
+	release_mem_region(mem->start, (mem->end - mem->start) + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1494,6 +1814,7 @@ static int serial_omap_remove(struct platform_device *dev)
 {
 	struct uart_omap_port *up = platform_get_drvdata(dev);
 
+<<<<<<< HEAD
 	if (up) {
 		pm_runtime_disable(&up->pdev->dev);
 		uart_remove_one_port(&serial_omap_reg, &up->port);
@@ -1654,6 +1975,24 @@ static struct platform_driver serial_omap_driver = {
 		.name	= DRIVER_NAME,
 		.pm	= &serial_omap_dev_pm_ops,
 		.of_match_table = of_match_ptr(omap_serial_of_match),
+=======
+	platform_set_drvdata(dev, NULL);
+	if (up) {
+		uart_remove_one_port(&serial_omap_reg, &up->port);
+		kfree(up);
+	}
+	return 0;
+}
+
+static struct platform_driver serial_omap_driver = {
+	.probe          = serial_omap_probe,
+	.remove         = serial_omap_remove,
+
+	.suspend	= serial_omap_suspend,
+	.resume		= serial_omap_resume,
+	.driver		= {
+		.name	= DRIVER_NAME,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

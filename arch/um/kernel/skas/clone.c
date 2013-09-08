@@ -8,6 +8,10 @@
 #include <asm/unistd.h>
 #include <sys/time.h>
 #include "as-layout.h"
+<<<<<<< HEAD
+=======
+#include "kern_constants.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "ptrace_user.h"
 #include "stub-data.h"
 #include "sysdep/stub.h"

@@ -19,7 +19,15 @@
    COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS, RELATING TO USE OF THIS
    SOFTWARE IS DISCLAIMED.
 */
+<<<<<<< HEAD
 
+=======
+#ifdef CONFIG_BT_MGMT
+#include "smp_mgmt.h"
+#elif defined(CONFIG_BT_TIZEN)
+#include "tizen/smp.h"
+#else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __SMP_H
 #define __SMP_H
 
@@ -115,6 +123,7 @@ struct smp_cmd_security_req {
 #define SMP_MIN_ENC_KEY_SIZE		7
 #define SMP_MAX_ENC_KEY_SIZE		16
 
+<<<<<<< HEAD
 #define SMP_FLAG_TK_VALID	1
 #define SMP_FLAG_CFM_PENDING	2
 #define SMP_FLAG_MITM_AUTH	3
@@ -144,3 +153,13 @@ int smp_user_confirm_reply(struct hci_conn *conn, u16 mgmt_op, __le32 passkey);
 void smp_chan_destroy(struct l2cap_conn *conn);
 
 #endif /* __SMP_H */
+=======
+/* SMP Commands */
+int smp_conn_security(struct l2cap_conn *conn, __u8 sec_level);
+int smp_sig_channel(struct l2cap_conn *conn, struct sk_buff *skb);
+int smp_distribute_keys(struct l2cap_conn *conn, __u8 force);
+
+#endif /* __SMP_H */
+
+#endif /* BT_MGMT */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

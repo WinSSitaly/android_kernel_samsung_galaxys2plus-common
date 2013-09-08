@@ -36,7 +36,10 @@
 #include <linux/list.h>
 #include <linux/acpi.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <acpi/acpi_bus.h>
 #include <acpi/acpi_drivers.h>
 
@@ -82,12 +85,20 @@ struct wmi_block {
 #define ACPI_WMI_STRING      0x4	/* GUID takes & returns a string */
 #define ACPI_WMI_EVENT       0x8	/* GUID is an event */
 
+<<<<<<< HEAD
 static bool debug_event;
+=======
+static int debug_event;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(debug_event, bool, 0444);
 MODULE_PARM_DESC(debug_event,
 		 "Log WMI Events [0/1]");
 
+<<<<<<< HEAD
 static bool debug_dump_wdg;
+=======
+static int debug_dump_wdg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(debug_dump_wdg, bool, 0444);
 MODULE_PARM_DESC(debug_dump_wdg,
 		 "Dump available WMI interfaces [0/1]");

@@ -25,8 +25,11 @@
 #include <linux/pci.h>
 #include <linux/sched.h>
 
+<<<<<<< HEAD
 #include <asm/cpu_device_id.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "speedstep-lib.h"
 
 
@@ -390,6 +393,7 @@ static struct cpufreq_driver speedstep_driver = {
 	.attr	= speedstep_attr,
 };
 
+<<<<<<< HEAD
 static const struct x86_cpu_id ss_smi_ids[] = {
 	{ X86_VENDOR_INTEL, 6, 0xb, },
 	{ X86_VENDOR_INTEL, 6, 0x8, },
@@ -400,6 +404,8 @@ static const struct x86_cpu_id ss_smi_ids[] = {
 /* Autoload or not? Do not for now. */
 MODULE_DEVICE_TABLE(x86cpu, ss_smi_ids);
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * speedstep_init - initializes the SpeedStep CPUFreq driver
@@ -410,9 +416,12 @@ MODULE_DEVICE_TABLE(x86cpu, ss_smi_ids);
  */
 static int __init speedstep_init(void)
 {
+<<<<<<< HEAD
 	if (!x86_match_cpu(ss_smi_ids))
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* detect processor */
 	speedstep_processor = speedstep_detect_processor();
 	if (!speedstep_processor) {

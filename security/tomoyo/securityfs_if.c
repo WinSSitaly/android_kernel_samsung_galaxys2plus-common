@@ -1,13 +1,22 @@
 /*
+<<<<<<< HEAD
  * security/tomoyo/securityfs_if.c
  *
  * Copyright (C) 2005-2011  NTT DATA CORPORATION
+=======
+ * security/tomoyo/common.c
+ *
+ * Securityfs interface for TOMOYO.
+ *
+ * Copyright (C) 2005-2010  NTT DATA CORPORATION
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/security.h>
 #include "common.h"
 
 /**
+<<<<<<< HEAD
  * tomoyo_check_task_acl - Check permission for task operation.
  *
  * @r:   Pointer to "struct tomoyo_request_info".
@@ -126,6 +135,8 @@ static const struct file_operations tomoyo_self_operations = {
 };
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * tomoyo_open - open() for /sys/kernel/security/tomoyo/ interface.
  *
  * @inode: Pointer to "struct inode".
@@ -150,6 +161,7 @@ static int tomoyo_open(struct inode *inode, struct file *file)
  */
 static int tomoyo_release(struct inode *inode, struct file *file)
 {
+<<<<<<< HEAD
 	return tomoyo_close_control(file->private_data);
 }
 
@@ -161,6 +173,18 @@ static int tomoyo_release(struct inode *inode, struct file *file)
  *
  * Returns POLLIN | POLLRDNORM | POLLOUT | POLLWRNORM if ready to read/write,
  * POLLOUT | POLLWRNORM otherwise.
+=======
+	return tomoyo_close_control(file);
+}
+
+/**
+ * tomoyo_poll - poll() for /proc/ccs/ interface.
+ *
+ * @file: Pointer to "struct file".
+ * @wait: Pointer to "poll_table".
+ *
+ * Returns 0 on success, negative value otherwise.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static unsigned int tomoyo_poll(struct file *file, poll_table *wait)
 {
@@ -180,7 +204,11 @@ static unsigned int tomoyo_poll(struct file *file, poll_table *wait)
 static ssize_t tomoyo_read(struct file *file, char __user *buf, size_t count,
 			   loff_t *ppos)
 {
+<<<<<<< HEAD
 	return tomoyo_read_control(file->private_data, buf, count);
+=======
+	return tomoyo_read_control(file, buf, count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -196,7 +224,11 @@ static ssize_t tomoyo_read(struct file *file, char __user *buf, size_t count,
 static ssize_t tomoyo_write(struct file *file, const char __user *buf,
 			    size_t count, loff_t *ppos)
 {
+<<<<<<< HEAD
 	return tomoyo_write_control(file->private_data, buf, count);
+=======
+	return tomoyo_write_control(file, buf, count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -225,7 +257,11 @@ static const struct file_operations tomoyo_operations = {
  *
  * Returns nothing.
  */
+<<<<<<< HEAD
 static void __init tomoyo_create_entry(const char *name, const umode_t mode,
+=======
+static void __init tomoyo_create_entry(const char *name, const mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				       struct dentry *parent, const u8 key)
 {
 	securityfs_create_file(name, mode, parent, ((u8 *) NULL) + key,
@@ -252,21 +288,35 @@ static int __init tomoyo_initerface_init(void)
 			    TOMOYO_DOMAINPOLICY);
 	tomoyo_create_entry("exception_policy", 0600, tomoyo_dir,
 			    TOMOYO_EXCEPTIONPOLICY);
+<<<<<<< HEAD
 	tomoyo_create_entry("audit",            0400, tomoyo_dir,
 			    TOMOYO_AUDIT);
 	tomoyo_create_entry(".process_status",  0600, tomoyo_dir,
 			    TOMOYO_PROCESS_STATUS);
 	tomoyo_create_entry("stat",             0644, tomoyo_dir,
 			    TOMOYO_STAT);
+=======
+	tomoyo_create_entry("self_domain",      0400, tomoyo_dir,
+			    TOMOYO_SELFDOMAIN);
+	tomoyo_create_entry(".domain_status",   0600, tomoyo_dir,
+			    TOMOYO_DOMAIN_STATUS);
+	tomoyo_create_entry(".process_status",  0600, tomoyo_dir,
+			    TOMOYO_PROCESS_STATUS);
+	tomoyo_create_entry("meminfo",          0600, tomoyo_dir,
+			    TOMOYO_MEMINFO);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tomoyo_create_entry("profile",          0600, tomoyo_dir,
 			    TOMOYO_PROFILE);
 	tomoyo_create_entry("manager",          0600, tomoyo_dir,
 			    TOMOYO_MANAGER);
 	tomoyo_create_entry("version",          0400, tomoyo_dir,
 			    TOMOYO_VERSION);
+<<<<<<< HEAD
 	securityfs_create_file("self_domain", 0666, tomoyo_dir, NULL,
 			       &tomoyo_self_operations);
 	tomoyo_load_builtin_policy();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

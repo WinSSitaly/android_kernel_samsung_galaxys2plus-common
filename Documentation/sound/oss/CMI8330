@@ -143,10 +143,19 @@ CONFIG_SOUND_MSS=m
 
 
 
+<<<<<<< HEAD
 Alma Chao <elysian@ethereal.torsion.org> suggests the following in
 a /etc/modprobe.d/*conf file:
+=======
+Alma Chao <elysian@ethereal.torsion.org> suggests the following /etc/modprobe.conf:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 alias sound ad1848
 alias synth0 opl3
 options ad1848 io=0x530 irq=7 dma=0 soundpro=1
 options opl3 io=0x388
+<<<<<<< HEAD
+=======
+
+	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

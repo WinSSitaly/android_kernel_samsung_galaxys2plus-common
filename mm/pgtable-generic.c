@@ -70,11 +70,18 @@ int pmdp_clear_flush_young(struct vm_area_struct *vma,
 			   unsigned long address, pmd_t *pmdp)
 {
 	int young;
+<<<<<<< HEAD
 #ifdef CONFIG_TRANSPARENT_HUGEPAGE
 	VM_BUG_ON(address & ~HPAGE_PMD_MASK);
 #else
 	BUG();
 #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+=======
+#ifndef CONFIG_TRANSPARENT_HUGEPAGE
+	BUG();
+#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+	VM_BUG_ON(address & ~HPAGE_PMD_MASK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	young = pmdp_test_and_clear_young(vma, address, pmdp);
 	if (young)
 		flush_tlb_range(vma, address, address + HPAGE_PMD_SIZE);

@@ -15,13 +15,20 @@
 #include <linux/init.h>
 
 #include <asm/assembler.h>
+<<<<<<< HEAD
 #include <asm/cp15.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/domain.h>
 #include <asm/ptrace.h>
 #include <asm/asm-offsets.h>
 #include <asm/memory.h>
 #include <asm/thread_info.h>
+<<<<<<< HEAD
 #include <asm/pgtable.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_DEBUG_LL
 #include <mach/debug-macro.S>
@@ -39,6 +46,7 @@
 #error KERNEL_RAM_VADDR must start at 0xXXXX8000
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_ARM_LPAE
 	/* LPAE requires an additional page for the PGD */
 #define PG_DIR_SIZE	0x5000
@@ -53,6 +61,13 @@
 
 	.macro	pgtbl, rd, phys
 	add	\rd, \phys, #TEXT_OFFSET - PG_DIR_SIZE
+=======
+	.globl	swapper_pg_dir
+	.equ	swapper_pg_dir, KERNEL_RAM_VADDR - 0x4000
+
+	.macro	pgtbl, rd, phys
+	add	\rd, \phys, #TEXT_OFFSET - 0x4000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.endm
 
 #ifdef CONFIG_XIP_KERNEL
@@ -81,6 +96,7 @@
  * crap here - that's what the boot loader (or in extreme, well justified
  * circumstances, zImage) is for.
  */
+<<<<<<< HEAD
 	.arm
 
 	__HEAD
@@ -91,6 +107,10 @@ ENTRY(stext)
  THUMB(	.thumb			)	@ switch to Thumb now.
  THUMB(1:			)
 
+=======
+	__HEAD
+ENTRY(stext)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	setmode	PSR_F_BIT | PSR_I_BIT | SVC_MODE, r9 @ ensure svc mode
 						@ and irqs disabled
 	mrc	p15, 0, r9, c0, c0		@ get processor id
@@ -99,6 +119,7 @@ ENTRY(stext)
  THUMB( it	eq )		@ force fixup-able long branch encoding
 	beq	__error_p			@ yes, error 'p'
 
+<<<<<<< HEAD
 #ifdef CONFIG_ARM_LPAE
 	mrc	p15, 0, r3, c0, c1, 4		@ read ID_MMFR0
 	and	r3, r3, #0xf			@ extract VMSA support
@@ -107,13 +128,19 @@ ENTRY(stext)
 	blo	__error_p			@ only classic page table format
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef CONFIG_XIP_KERNEL
 	adr	r3, 2f
 	ldmia	r3, {r4, r8}
 	sub	r4, r3, r4			@ (PHYS_OFFSET - PAGE_OFFSET)
 	add	r8, r8, r4			@ PHYS_OFFSET
 #else
+<<<<<<< HEAD
 	ldr	r8, =PHYS_OFFSET		@ always constant in this case
+=======
+	ldr	r8, =PLAT_PHYS_OFFSET
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	/*
@@ -127,6 +154,22 @@ ENTRY(stext)
 #ifdef CONFIG_ARM_PATCH_PHYS_VIRT
 	bl	__fixup_pv_table
 #endif
+<<<<<<< HEAD
+=======
+
+#if 0
+   /* check vc memory */
+   
+   ldr r0,=0x0a000000
+   ldr r1,=0x0a400000
+1:
+    cmp r0, r1
+    ldr r2,=0x0badf00d
+    strcc r2, [r0], #4
+    bcc 1b
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bl	__create_page_tables
 
 	/*
@@ -166,11 +209,19 @@ __create_page_tables:
 	pgtbl	r4, r8				@ page table address
 
 	/*
+<<<<<<< HEAD
 	 * Clear the swapper page table
 	 */
 	mov	r0, r4
 	mov	r3, #0
 	add	r6, r0, #PG_DIR_SIZE
+=======
+	 * Clear the 16K level 1 swapper page table
+	 */
+	mov	r0, r4
+	mov	r3, #0
+	add	r6, r0, #0x4000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 1:	str	r3, [r0], #4
 	str	r3, [r0], #4
 	str	r3, [r0], #4
@@ -178,6 +229,7 @@ __create_page_tables:
 	teq	r0, r6
 	bne	1b
 
+<<<<<<< HEAD
 #ifdef CONFIG_ARM_LPAE
 	/*
 	 * Build the PGD table (first level) to point to the PMD table. A PGD
@@ -197,12 +249,15 @@ __create_page_tables:
 	add	r4, r4, #0x1000			@ point to the PMD tables
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ldr	r7, [r10, #PROCINFO_MM_MMUFLAGS] @ mm_mmuflags
 
 	/*
 	 * Create identity mapping to cater for __enable_mmu.
 	 * This identity mapping will be removed by paging_init().
 	 */
+<<<<<<< HEAD
 	adr	r0, __turn_mmu_on_loc
 	ldmia	r0, {r3, r5, r6}
 	sub	r0, r0, r3			@ virt->phys offset
@@ -216,12 +271,28 @@ __create_page_tables:
 	cmp	r5, r6
 	addlo	r5, r5, #1			@ next section
 	blo	1b
+=======
+	adr	r0, __enable_mmu_loc
+	ldmia	r0, {r3, r5, r6}
+	sub	r0, r0, r3			@ virt->phys offset
+	add	r5, r5, r0			@ phys __enable_mmu
+	add	r6, r6, r0			@ phys __enable_mmu_end
+	mov	r5, r5, lsr #20
+	mov	r6, r6, lsr #20
+
+1:	orr	r3, r7, r5, lsl #20		@ flags + kernel base
+	str	r3, [r4, r5, lsl #2]		@ identity mapping
+	teq	r5, r6
+	addne	r5, r5, #1			@ next section
+	bne	1b
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Now setup the pagetables for our kernel direct
 	 * mapped region.
 	 */
 	mov	r3, pc
+<<<<<<< HEAD
 	mov	r3, r3, lsr #SECTION_SHIFT
 	orr	r3, r7, r3, lsl #SECTION_SHIFT
 	add	r0, r4,  #(KERNEL_START & 0xff000000) >> (SECTION_SHIFT - PMD_ORDER)
@@ -232,6 +303,18 @@ __create_page_tables:
 1:	cmp	r0, r6
 	add	r3, r3, #1 << SECTION_SHIFT
 	strls	r3, [r0], #1 << PMD_ORDER
+=======
+	mov	r3, r3, lsr #20
+	orr	r3, r7, r3, lsl #20
+	add	r0, r4,  #(KERNEL_START & 0xff000000) >> 18
+	str	r3, [r0, #(KERNEL_START & 0x00f00000) >> 18]!
+	ldr	r6, =(KERNEL_END - 1)
+	add	r0, r0, #4
+	add	r6, r4, r6, lsr #18
+1:	cmp	r0, r6
+	add	r3, r3, #1 << 20
+	strls	r3, [r0], #4
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bls	1b
 
 #ifdef CONFIG_XIP_KERNEL
@@ -240,11 +323,19 @@ __create_page_tables:
 	 */
 	add	r3, r8, #TEXT_OFFSET
 	orr	r3, r3, r7
+<<<<<<< HEAD
 	add	r0, r4,  #(KERNEL_RAM_VADDR & 0xff000000) >> (SECTION_SHIFT - PMD_ORDER)
 	str	r3, [r0, #(KERNEL_RAM_VADDR & 0x00f00000) >> (SECTION_SHIFT - PMD_ORDER)]!
 	ldr	r6, =(_end - 1)
 	add	r0, r0, #4
 	add	r6, r4, r6, lsr #(SECTION_SHIFT - PMD_ORDER)
+=======
+	add	r0, r4,  #(KERNEL_RAM_VADDR & 0xff000000) >> 18
+	str	r3, [r0, #(KERNEL_RAM_VADDR & 0x00f00000) >> 18]!
+	ldr	r6, =(_end - 1)
+	add	r0, r0, #4
+	add	r6, r4, r6, lsr #18
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 1:	cmp	r0, r6
 	add	r3, r3, #1 << 20
 	strls	r3, [r0], #4
@@ -252,6 +343,7 @@ __create_page_tables:
 #endif
 
 	/*
+<<<<<<< HEAD
 	 * Then map boot params address in r2 or the first 1MB (2MB with LPAE)
 	 * of ram if boot params address is not specified.
 	 */
@@ -261,26 +353,49 @@ __create_page_tables:
 	sub	r3, r0, r8
 	add	r3, r3, #PAGE_OFFSET
 	add	r3, r4, r3, lsr #(SECTION_SHIFT - PMD_ORDER)
+=======
+	 * Then map boot params address in r2 or
+	 * the first 1MB of ram if boot params address is not specified.
+	 */
+	mov	r0, r2, lsr #20
+	movs	r0, r0, lsl #20
+	moveq	r0, r8
+	sub	r3, r0, r8
+	add	r3, r3, #PAGE_OFFSET
+	add	r3, r4, r3, lsr #18
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	orr	r6, r7, r0
 	str	r6, [r3]
 
 #ifdef CONFIG_DEBUG_LL
+<<<<<<< HEAD
 #if !defined(CONFIG_DEBUG_ICEDCC) && !defined(CONFIG_DEBUG_SEMIHOSTING)
+=======
+#ifndef CONFIG_DEBUG_ICEDCC
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Map in IO space for serial debugging.
 	 * This allows debug messages to be output
 	 * via a serial console before paging_init.
 	 */
+<<<<<<< HEAD
 	addruart r7, r3, r0
 
 	mov	r3, r3, lsr #SECTION_SHIFT
 	mov	r3, r3, lsl #PMD_ORDER
+=======
+	addruart r7, r3
+
+	mov	r3, r3, lsr #20
+	mov	r3, r3, lsl #2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	add	r0, r4, r3
 	rsb	r3, r3, #0x4000			@ PTRS_PER_PGD*sizeof(long)
 	cmp	r3, #0x0800			@ limit to 512MB
 	movhi	r3, #0x0800
 	add	r6, r0, r3
+<<<<<<< HEAD
 	mov	r3, r7, lsr #SECTION_SHIFT
 	ldr	r7, [r10, #PROCINFO_IO_MMUFLAGS] @ io_mmuflags
 	orr	r3, r7, r3, lsl #SECTION_SHIFT
@@ -301,13 +416,31 @@ __create_page_tables:
 	/* we don't need any serial debugging mappings */
 	ldr	r7, [r10, #PROCINFO_IO_MMUFLAGS] @ io_mmuflags
 #endif
+=======
+	mov	r3, r7, lsr #20
+	ldr	r7, [r10, #PROCINFO_IO_MMUFLAGS] @ io_mmuflags
+	orr	r3, r7, r3, lsl #20
+1:	str	r3, [r0], #4
+	add	r3, r3, #1 << 20
+	teq	r0, r6
+	bne	1b
+
+#else /* CONFIG_DEBUG_ICEDCC */
+	/* we don't need any serial debugging mappings for ICEDCC */
+	ldr	r7, [r10, #PROCINFO_IO_MMUFLAGS] @ io_mmuflags
+#endif /* !CONFIG_DEBUG_ICEDCC */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if defined(CONFIG_ARCH_NETWINDER) || defined(CONFIG_ARCH_CATS)
 	/*
 	 * If we're using the NetWinder or CATS, we also need to map
 	 * in the 16550-type serial port for the debug messages
 	 */
+<<<<<<< HEAD
 	add	r0, r4, #0xff000000 >> (SECTION_SHIFT - PMD_ORDER)
+=======
+	add	r0, r4, #0xff000000 >> 18
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	orr	r3, r7, #0x7c000000
 	str	r3, [r0]
 #endif
@@ -317,6 +450,7 @@ __create_page_tables:
 	 * Similar reasons here - for debug.  This is
 	 * only for Acorn RiscPC architectures.
 	 */
+<<<<<<< HEAD
 	add	r0, r4, #0x02000000 >> (SECTION_SHIFT - PMD_ORDER)
 	orr	r3, r7, #0x02000000
 	str	r3, [r0]
@@ -327,14 +461,30 @@ __create_page_tables:
 #ifdef CONFIG_ARM_LPAE
 	sub	r4, r4, #0x1000		@ point to the PGD table
 #endif
+=======
+	add	r0, r4, #0x02000000 >> 18
+	orr	r3, r7, #0x02000000
+	str	r3, [r0]
+	add	r0, r4, #0xd8000000 >> 18
+	str	r3, [r0]
+#endif
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mov	pc, lr
 ENDPROC(__create_page_tables)
 	.ltorg
 	.align
+<<<<<<< HEAD
 __turn_mmu_on_loc:
 	.long	.
 	.long	__turn_mmu_on
 	.long	__turn_mmu_on_end
+=======
+__enable_mmu_loc:
+	.long	.
+	.long	__enable_mmu
+	.long	__enable_mmu_end
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if defined(CONFIG_SMP)
 	__CPUINIT
@@ -418,17 +568,23 @@ __enable_mmu:
 #ifdef CONFIG_CPU_ICACHE_DISABLE
 	bic	r0, r0, #CR_I
 #endif
+<<<<<<< HEAD
 #ifdef CONFIG_ARM_LPAE
 	mov	r5, #0
 	mcrr	p15, 0, r4, r5, c2		@ load TTBR0
 #else
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mov	r5, #(domain_val(DOMAIN_USER, DOMAIN_MANAGER) | \
 		      domain_val(DOMAIN_KERNEL, DOMAIN_MANAGER) | \
 		      domain_val(DOMAIN_TABLE, DOMAIN_MANAGER) | \
 		      domain_val(DOMAIN_IO, DOMAIN_CLIENT))
 	mcr	p15, 0, r5, c3, c0, 0		@ load domain access register
 	mcr	p15, 0, r4, c2, c0, 0		@ load page table pointer
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	b	__turn_mmu_on
 ENDPROC(__enable_mmu)
 
@@ -447,6 +603,7 @@ ENDPROC(__enable_mmu)
  * other registers depend on the function called upon completion
  */
 	.align	5
+<<<<<<< HEAD
 	.pushsection	.idmap.text, "ax"
 ENTRY(__turn_mmu_on)
 	mov	r0, r0
@@ -460,6 +617,17 @@ ENTRY(__turn_mmu_on)
 __turn_mmu_on_end:
 ENDPROC(__turn_mmu_on)
 	.popsection
+=======
+__turn_mmu_on:
+	mov	r0, r0
+	mcr	p15, 0, r0, c1, c0, 0		@ write control reg
+	mrc	p15, 0, r3, c0, c0, 0		@ read id reg
+	mov	r3, r3
+	mov	r3, r13
+	mov	pc, r3
+__enable_mmu_end:
+ENDPROC(__turn_mmu_on)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 #ifdef CONFIG_SMP_ON_UP
@@ -545,8 +713,18 @@ __fixup_pv_table:
 	add	r5, r5, r3	@ adjust table end address
 	add	r7, r7, r3	@ adjust __pv_phys_offset address
 	str	r8, [r7]	@ save computed PHYS_OFFSET to __pv_phys_offset
+<<<<<<< HEAD
 	mov	r6, r3, lsr #24	@ constant for add/sub instructions
 	teq	r3, r6, lsl #24 @ must be 16MiB aligned
+=======
+#ifndef CONFIG_ARM_PATCH_PHYS_VIRT_16BIT
+	mov	r6, r3, lsr #24	@ constant for add/sub instructions
+	teq	r3, r6, lsl #24 @ must be 16MiB aligned
+#else
+	mov	r6, r3, lsr #16	@ constant for add/sub instructions
+	teq	r3, r6, lsl #16	@ must be 64kiB aligned
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 THUMB(	it	ne		@ cross section branch )
 	bne	__error
 	str	r6, [r7, #4]	@ save to __pv_offset
@@ -562,8 +740,25 @@ ENDPROC(__fixup_pv_table)
 	.text
 __fixup_a_pv_table:
 #ifdef CONFIG_THUMB2_KERNEL
+<<<<<<< HEAD
 	lsls	r6, #24
 	beq	2f
+=======
+#ifdef CONFIG_ARM_PATCH_PHYS_VIRT_16BIT
+	lsls	r0, r6, #24
+	lsr	r6, #8
+	beq	1f
+	clz	r7, r0
+	lsr	r0, #24
+	lsl	r0, r7
+	bic	r0, 0x0080
+	lsrs	r7, #1
+	orrcs   r0, #0x0080
+	orr	r0, r0, r7, lsl #12
+#endif
+1:	lsls	r6, #24
+	beq	4f
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clz	r7, r6
 	lsr	r6, #24
 	lsl	r6, r7
@@ -572,6 +767,7 @@ __fixup_a_pv_table:
 	orrcs	r6, #0x0080
 	orr	r6, r6, r7, lsl #12
 	orr	r6, #0x4000
+<<<<<<< HEAD
 	b	2f
 1:	add     r7, r3
 	ldrh	ip, [r7, #2]
@@ -591,6 +787,45 @@ __fixup_a_pv_table:
 2:	cmp	r4, r5
 	ldrcc	r7, [r4], #4	@ use branch for delay slot
 	bcc	1b
+=======
+	b	4f
+2:	@ at this point the C flag is always clear
+	add     r7, r3
+#ifdef CONFIG_ARM_PATCH_PHYS_VIRT_16BIT
+	ldrh	ip, [r7]
+	tst	ip, 0x0400	@ the i bit tells us LS or MS byte
+	beq	3f
+	cmp	r0, #0		@ set C flag, and ...
+	biceq	ip, 0x0400	@ immediate zero value has a special encoding
+	streqh	ip, [r7]	@ that requires the i bit cleared
+#endif
+3:	ldrh	ip, [r7, #2]
+	and	ip, 0x8f00
+	orrcc	ip, r6	@ mask in offset bits 31-24
+	orrcs	ip, r0	@ mask in offset bits 23-16
+	strh	ip, [r7, #2]
+4:	cmp	r4, r5
+	ldrcc	r7, [r4], #4	@ use branch for delay slot
+	bcc	2b
+	bx	lr
+#else
+#ifdef CONFIG_ARM_PATCH_PHYS_VIRT_16BIT
+	and	r0, r6, #255	@ offset bits 23-16
+	mov	r6, r6, lsr #8	@ offset bits 31-24
+#else
+	mov	r0, #0		@ just in case...
+#endif
+	b	3f
+2:	ldr	ip, [r7, r3]
+	bic	ip, ip, #0x000000ff
+	tst	ip, #0x400	@ rotate shift tells us LS or MS byte
+	orrne	ip, ip, r6	@ mask in offset bits 31-24
+	orreq	ip, ip, r0	@ mask in offset bits 23-16
+	str	ip, [r7, r3]
+3:	cmp	r4, r5
+	ldrcc	r7, [r4], #4	@ use branch for delay slot
+	bcc	2b
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mov	pc, lr
 #endif
 ENDPROC(__fixup_a_pv_table)

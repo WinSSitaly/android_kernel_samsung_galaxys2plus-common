@@ -15,17 +15,27 @@
 #include <linux/kernel.h>
 #include <linux/types.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/init.h>
 #include <linux/capability.h>
 #include <linux/delay.h>
 #include <linux/cpu.h>
+=======
+#include <linux/module.h>
+#include <linux/init.h>
+#include <linux/capability.h>
+#include <linux/delay.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/smp.h>
 #include <linux/completion.h>
 #include <linux/cpumask.h>
 #include <linux/memblock.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/reboot.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/prom.h>
 #include <asm/rtas.h>
@@ -34,12 +44,20 @@
 #include <asm/firmware.h>
 #include <asm/page.h>
 #include <asm/param.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/delay.h>
 #include <asm/uaccess.h>
 #include <asm/udbg.h>
 #include <asm/syscalls.h>
 #include <asm/smp.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/time.h>
 #include <asm/mmu.h>
 #include <asm/topology.h>
@@ -716,6 +734,10 @@ static int __rtas_suspend_last_cpu(struct rtas_suspend_me_data *data, int wake_w
 	int cpu;
 
 	slb_set_size(SLB_MIN_SIZE);
+<<<<<<< HEAD
+=======
+	stop_topology_update();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk(KERN_DEBUG "calling ibm,suspend-me on cpu %i\n", smp_processor_id());
 
 	while (rc == H_MULTI_THREADS_ACTIVE && !atomic_read(&data->done) &&
@@ -731,6 +753,10 @@ static int __rtas_suspend_last_cpu(struct rtas_suspend_me_data *data, int wake_w
 		rc = atomic_read(&data->error);
 
 	atomic_set(&data->error, rc);
+<<<<<<< HEAD
+=======
+	start_topology_update();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pSeries_coalesce_init();
 
 	if (wake_when_done) {
@@ -809,6 +835,7 @@ static void rtas_percpu_suspend_me(void *info)
 	__rtas_suspend_cpu((struct rtas_suspend_me_data *)info, 1);
 }
 
+<<<<<<< HEAD
 enum rtas_cpu_state {
 	DOWN,
 	UP,
@@ -898,6 +925,8 @@ int rtas_offline_cpus_mask(cpumask_var_t cpus)
 }
 EXPORT_SYMBOL(rtas_offline_cpus_mask);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int rtas_ibm_suspend_me(struct rtas_args *args)
 {
 	long state;
@@ -905,8 +934,11 @@ int rtas_ibm_suspend_me(struct rtas_args *args)
 	unsigned long retbuf[PLPAR_HCALL_BUFSIZE];
 	struct rtas_suspend_me_data data;
 	DECLARE_COMPLETION_ONSTACK(done);
+<<<<<<< HEAD
 	cpumask_var_t offline_mask;
 	int cpuret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!rtas_service_present("ibm,suspend-me"))
 		return -ENOSYS;
@@ -930,15 +962,19 @@ int rtas_ibm_suspend_me(struct rtas_args *args)
 		return 0;
 	}
 
+<<<<<<< HEAD
 	if (!alloc_cpumask_var(&offline_mask, GFP_TEMPORARY))
 		return -ENOMEM;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atomic_set(&data.working, 0);
 	atomic_set(&data.done, 0);
 	atomic_set(&data.error, 0);
 	data.token = rtas_token("ibm,suspend-me");
 	data.complete = &done;
 
+<<<<<<< HEAD
 	/* All present CPUs must be online */
 	cpumask_andnot(offline_mask, cpu_present_mask, cpu_online_mask);
 	cpuret = rtas_online_cpus_mask(offline_mask);
@@ -950,6 +986,8 @@ int rtas_ibm_suspend_me(struct rtas_args *args)
 
 	stop_topology_update();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Call function on all CPUs.  One of us will make the
 	 * rtas call
 	 */
@@ -961,6 +999,7 @@ int rtas_ibm_suspend_me(struct rtas_args *args)
 	if (atomic_read(&data.error) != 0)
 		printk(KERN_ERR "Error doing global join\n");
 
+<<<<<<< HEAD
 	start_topology_update();
 
 	/* Take down CPUs not online prior to suspend */
@@ -971,6 +1010,8 @@ int rtas_ibm_suspend_me(struct rtas_args *args)
 
 out:
 	free_cpumask_var(offline_mask);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return atomic_read(&data.error);
 }
 #else /* CONFIG_PPC_PSERIES */
@@ -980,6 +1021,7 @@ int rtas_ibm_suspend_me(struct rtas_args *args)
 }
 #endif
 
+<<<<<<< HEAD
 /**
  * Find a specific pseries error log in an RTAS extended event log.
  * @log: RTAS error/event log
@@ -1014,6 +1056,8 @@ struct pseries_errorlog *get_pseries_errorlog(struct rtas_error_log *log,
 	return NULL;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 asmlinkage int ppc_rtas(struct rtas_args __user *uargs)
 {
 	struct rtas_args args;

@@ -18,7 +18,11 @@
 #include <linux/smp.h>
 #include <linux/timer.h>
 #include <asm/blackfin.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/cacheflush.h>
 #include <asm/bfin_watchdog.h>
 

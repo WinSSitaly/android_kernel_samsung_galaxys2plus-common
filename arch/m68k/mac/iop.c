@@ -115,6 +115,10 @@
 #include <asm/macintosh.h>
 #include <asm/macints.h>
 #include <asm/mac_iop.h>
+<<<<<<< HEAD
+=======
+#include <asm/mac_oss.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*#define DEBUG_IOP*/
 
@@ -148,6 +152,11 @@ static struct listener iop_listeners[NUM_IOPS][NUM_IOP_CHAN];
 
 irqreturn_t iop_ism_irq(int, void *);
 
+<<<<<<< HEAD
+=======
+extern void oss_irq_enable(int);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Private access functions
  */
@@ -301,6 +310,7 @@ void __init iop_init(void)
 void __init iop_register_interrupts(void)
 {
 	if (iop_ism_present) {
+<<<<<<< HEAD
 		if (macintosh_config->ident == MAC_MODEL_IIFX) {
 			if (request_irq(IRQ_MAC_ADB, iop_ism_irq, 0,
 					"ISM IOP", (void *)IOP_NUM_ISM))
@@ -308,6 +318,18 @@ void __init iop_register_interrupts(void)
 		} else {
 			if (request_irq(IRQ_VIA2_0, iop_ism_irq, 0, "ISM IOP",
 					(void *)IOP_NUM_ISM))
+=======
+		if (oss_present) {
+			if (request_irq(OSS_IRQLEV_IOPISM, iop_ism_irq,
+					IRQ_FLG_LOCK, "ISM IOP",
+					(void *) IOP_NUM_ISM))
+				pr_err("Couldn't register ISM IOP interrupt\n");
+			oss_irq_enable(IRQ_MAC_ADB);
+		} else {
+			if (request_irq(IRQ_VIA2_0, iop_ism_irq,
+					IRQ_FLG_LOCK|IRQ_FLG_FAST, "ISM IOP",
+					(void *) IOP_NUM_ISM))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				pr_err("Couldn't register ISM IOP interrupt\n");
 		}
 		if (!iop_alive(iop_base[IOP_NUM_ISM])) {

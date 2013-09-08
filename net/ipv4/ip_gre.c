@@ -10,8 +10,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/capability.h>
 #include <linux/module.h>
 #include <linux/types.h>
@@ -48,7 +51,11 @@
 #include <net/rtnetlink.h>
 #include <net/gre.h>
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/ipv6.h>
 #include <net/ip6_fib.h>
 #include <net/ip6_route.h>
@@ -67,7 +74,11 @@
    it is infeasible task. The most general solutions would be
    to keep skb->encapsulation counter (sort of local ttl),
    and silently drop packet when it expires. It is a good
+<<<<<<< HEAD
    solution, but it supposes maintaining new variable in ALL
+=======
+   solution, but it supposes maintaing new variable in ALL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    skb, even if no tunneling is used.
 
    Current solution: xmit_recursion breaks dead loops. This is a percpu
@@ -93,14 +104,22 @@
 
    One of them is to parse packet trying to detect inner encapsulation
    made by our node. It is difficult or even impossible, especially,
+<<<<<<< HEAD
    taking into account fragmentation. TO be short, ttl is not solution at all.
+=======
+   taking into account fragmentation. TO be short, tt is not solution at all.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
    Current solution: The solution was UNEXPECTEDLY SIMPLE.
    We force DF flag on tunnels with preconfigured hop limit,
    that is ALL. :-) Well, it does not remove the problem completely,
    but exponential growth of network traffic is changed to linear
    (branches, that exceed pmtu are pruned) and tunnel mtu
+<<<<<<< HEAD
    rapidly degrades to value <68, where looping stops.
+=======
+   fastly degrades to value <68, where looping stops.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    Yes, it is not good if there exists a router in the loop,
    which does not force DF, even when encapsulating packets have DF set.
    But it is not our problem! Nobody could accuse us, we made
@@ -173,7 +192,11 @@ struct pcpu_tstats {
 	unsigned long	rx_bytes;
 	unsigned long	tx_packets;
 	unsigned long	tx_bytes;
+<<<<<<< HEAD
 } __attribute__((aligned(4*sizeof(unsigned long))));
+=======
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct net_device_stats *ipgre_get_stats(struct net_device *dev)
 {
@@ -424,10 +447,13 @@ static struct ip_tunnel *ipgre_tunnel_locate(struct net *net,
 	if (register_netdevice(dev) < 0)
 		goto failed_free;
 
+<<<<<<< HEAD
 	/* Can use a lockless transmit, unless we generate output sequences */
 	if (!(nt->parms.o_flags & GRE_SEQ))
 		dev->features |= NETIF_F_LLTX;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_hold(dev);
 	ipgre_tunnel_link(ign, nt);
 	return nt;
@@ -459,8 +485,13 @@ static void ipgre_err(struct sk_buff *skb, u32 info)
    GRE tunnels with enabled checksum. Tell them "thank you".
 
    Well, I wonder, rfc1812 was written by Cisco employee,
+<<<<<<< HEAD
    what the hell these idiots break standards established
    by themselves???
+=======
+   what the hell these idiots break standrads established
+   by themself???
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 	const struct iphdr *iph = (const struct iphdr *)skb->data;
@@ -722,7 +753,10 @@ static netdev_tx_t ipgre_tunnel_xmit(struct sk_buff *skb, struct net_device *dev
 		tiph = &tunnel->parms.iph;
 	}
 
+<<<<<<< HEAD
 	memset(&(IPCB(skb)->opt), 0, sizeof(IPCB(skb)->opt));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((dst = tiph->daddr) == 0) {
 		/* NBMA tunnel */
 
@@ -733,6 +767,7 @@ static netdev_tx_t ipgre_tunnel_xmit(struct sk_buff *skb, struct net_device *dev
 
 		if (skb->protocol == htons(ETH_P_IP)) {
 			rt = skb_rtable(skb);
+<<<<<<< HEAD
 			dst = rt->rt_gateway;
 		}
 #if IS_ENABLED(CONFIG_IPV6)
@@ -743,6 +778,17 @@ static netdev_tx_t ipgre_tunnel_xmit(struct sk_buff *skb, struct net_device *dev
 			int addr_type;
 
 			neigh = dst_neigh_lookup(skb_dst(skb), &ipv6_hdr(skb)->daddr);
+=======
+			if ((dst = rt->rt_gateway) == 0)
+				goto tx_error_icmp;
+		}
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+		else if (skb->protocol == htons(ETH_P_IPV6)) {
+			struct neighbour *neigh = dst_get_neighbour(skb_dst(skb));
+			const struct in6_addr *addr6;
+			int addr_type;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (neigh == NULL)
 				goto tx_error;
 
@@ -755,6 +801,7 @@ static netdev_tx_t ipgre_tunnel_xmit(struct sk_buff *skb, struct net_device *dev
 			}
 
 			if ((addr_type & IPV6_ADDR_COMPATv4) == 0)
+<<<<<<< HEAD
 				do_tx_error_icmp = true;
 			else {
 				do_tx_error_icmp = false;
@@ -763,6 +810,11 @@ static netdev_tx_t ipgre_tunnel_xmit(struct sk_buff *skb, struct net_device *dev
 			neigh_release(neigh);
 			if (do_tx_error_icmp)
 				goto tx_error_icmp;
+=======
+				goto tx_error_icmp;
+
+			dst = addr6->s6_addr32[3];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 #endif
 		else
@@ -812,7 +864,11 @@ static netdev_tx_t ipgre_tunnel_xmit(struct sk_buff *skb, struct net_device *dev
 			goto tx_error;
 		}
 	}
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else if (skb->protocol == htons(ETH_P_IPV6)) {
 		struct rt6_info *rt6 = (struct rt6_info *)skb_dst(skb);
 
@@ -866,6 +922,10 @@ static netdev_tx_t ipgre_tunnel_xmit(struct sk_buff *skb, struct net_device *dev
 	skb_reset_transport_header(skb);
 	skb_push(skb, gre_hlen);
 	skb_reset_network_header(skb);
+<<<<<<< HEAD
+=======
+	memset(&(IPCB(skb)->opt), 0, sizeof(IPCB(skb)->opt));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	IPCB(skb)->flags &= ~(IPSKB_XFRM_TUNNEL_SIZE | IPSKB_XFRM_TRANSFORMED |
 			      IPSKB_REROUTED);
 	skb_dst_drop(skb);
@@ -887,7 +947,11 @@ static netdev_tx_t ipgre_tunnel_xmit(struct sk_buff *skb, struct net_device *dev
 	if ((iph->ttl = tiph->ttl) == 0) {
 		if (skb->protocol == htons(ETH_P_IP))
 			iph->ttl = old_iph->ttl;
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		else if (skb->protocol == htons(ETH_P_IPV6))
 			iph->ttl = ((const struct ipv6hdr *)old_iph)->hop_limit;
 #endif
@@ -922,10 +986,16 @@ static netdev_tx_t ipgre_tunnel_xmit(struct sk_buff *skb, struct net_device *dev
 	__IPTUNNEL_XMIT(tstats, &dev->stats);
 	return NETDEV_TX_OK;
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
 tx_error_icmp:
 	dst_link_failure(skb);
 #endif
+=======
+tx_error_icmp:
+	dst_link_failure(skb);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 tx_error:
 	dev->stats.tx_errors++;
 	dev_kfree_skb(skb);
@@ -1538,7 +1608,11 @@ static int ipgre_newlink(struct net *src_net, struct net_device *dev, struct nla
 		return -EEXIST;
 
 	if (dev->type == ARPHRD_ETHER && !tb[IFLA_ADDRESS])
+<<<<<<< HEAD
 		eth_hw_addr_random(dev);
+=======
+		random_ether_addr(dev->dev_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mtu = ipgre_tunnel_bind_dev(dev);
 	if (!tb[IFLA_MTU])
@@ -1718,7 +1792,11 @@ static int __init ipgre_init(void)
 {
 	int err;
 
+<<<<<<< HEAD
 	pr_info("GRE over IPv4 tunneling driver\n");
+=======
+	printk(KERN_INFO "GRE over IPv4 tunneling driver\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = register_pernet_device(&ipgre_net_ops);
 	if (err < 0)
@@ -1726,7 +1804,11 @@ static int __init ipgre_init(void)
 
 	err = gre_add_protocol(&ipgre_protocol, GREPROTO_CISCO);
 	if (err < 0) {
+<<<<<<< HEAD
 		pr_info("%s: can't add protocol\n", __func__);
+=======
+		printk(KERN_INFO "ipgre init: can't add protocol\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto add_proto_failed;
 	}
 
@@ -1755,7 +1837,11 @@ static void __exit ipgre_fini(void)
 	rtnl_link_unregister(&ipgre_tap_ops);
 	rtnl_link_unregister(&ipgre_link_ops);
 	if (gre_del_protocol(&ipgre_protocol, GREPROTO_CISCO) < 0)
+<<<<<<< HEAD
 		pr_info("%s: can't remove protocol\n", __func__);
+=======
+		printk(KERN_INFO "ipgre close: can't remove protocol\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unregister_pernet_device(&ipgre_net_ops);
 }
 

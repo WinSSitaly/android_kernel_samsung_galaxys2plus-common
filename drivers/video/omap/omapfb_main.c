@@ -28,12 +28,19 @@
 #include <linux/mm.h>
 #include <linux/slab.h>
 #include <linux/uaccess.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <plat/dma.h>
 
 #include "omapfb.h"
 #include "lcdc.h"
+<<<<<<< HEAD
+=======
+#include "dispc.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MODULE_NAME	"omapfb"
 
@@ -46,9 +53,15 @@ static unsigned int	def_rotate;
 static unsigned int	def_mirror;
 
 #ifdef CONFIG_FB_OMAP_MANUAL_UPDATE
+<<<<<<< HEAD
 static bool		manual_update = 1;
 #else
 static bool		manual_update;
+=======
+static int		manual_update = 1;
+#else
+static int		manual_update;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 static struct platform_device	*fbdev_pdev;
@@ -103,17 +116,42 @@ static struct platform_device omapdss_device = {
  * ---------------------------------------------------------------------------
  */
 extern struct lcd_ctrl hwa742_ctrl;
+<<<<<<< HEAD
 
 static const struct lcd_ctrl *ctrls[] = {
 	&omap1_int_ctrl,
+=======
+extern struct lcd_ctrl blizzard_ctrl;
+
+static const struct lcd_ctrl *ctrls[] = {
+#ifdef CONFIG_ARCH_OMAP1
+	&omap1_int_ctrl,
+#else
+	&omap2_int_ctrl,
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_FB_OMAP_LCDC_HWA742
 	&hwa742_ctrl,
 #endif
+<<<<<<< HEAD
 };
 
 #ifdef CONFIG_FB_OMAP_LCDC_EXTERNAL
 extern struct lcd_ctrl_extif omap1_ext_if;
+=======
+#ifdef CONFIG_FB_OMAP_LCDC_BLIZZARD
+	&blizzard_ctrl,
+#endif
+};
+
+#ifdef CONFIG_FB_OMAP_LCDC_EXTERNAL
+#ifdef CONFIG_ARCH_OMAP1
+extern struct lcd_ctrl_extif omap1_ext_if;
+#else
+extern struct lcd_ctrl_extif omap2_ext_if;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 static void omapfb_rqueue_lock(struct omapfb_device *fbdev)
@@ -157,6 +195,14 @@ static int ctrl_init(struct omapfb_device *fbdev)
 			fbdev->mem_desc.region[i].size =
 				PAGE_ALIGN(def_vram[i]);
 		fbdev->mem_desc.region_cnt = i;
+<<<<<<< HEAD
+=======
+	} else {
+		struct omapfb_platform_data *conf;
+
+		conf = fbdev->dev->platform_data;
+		fbdev->mem_desc = conf->mem_desc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (!fbdev->mem_desc.region_cnt) {
@@ -862,7 +908,11 @@ static int omapfb_setup_mem(struct fb_info *fbi, struct omapfb_mem_info *mi)
 
 	if (fbdev->ctrl->setup_mem == NULL)
 		return -ENODEV;
+<<<<<<< HEAD
 	if (mi->type != OMAPFB_MEMTYPE_SDRAM)
+=======
+	if (mi->type > OMAPFB_MEMTYPE_MAX)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	size = PAGE_ALIGN(mi->size);
@@ -1703,10 +1753,23 @@ static int omapfb_do_probe(struct platform_device *pdev,
 
 	mutex_init(&fbdev->rqueue_mutex);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ARCH_OMAP1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fbdev->int_ctrl = &omap1_int_ctrl;
 #ifdef CONFIG_FB_OMAP_LCDC_EXTERNAL
 	fbdev->ext_if = &omap1_ext_if;
 #endif
+<<<<<<< HEAD
+=======
+#else	/* OMAP2 */
+	fbdev->int_ctrl = &omap2_int_ctrl;
+#ifdef CONFIG_FB_OMAP_LCDC_EXTERNAL
+	fbdev->ext_if = &omap2_ext_if;
+#endif
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (omapfb_find_ctrl(fbdev) < 0) {
 		dev_err(fbdev->dev,
 			"LCD controller not found, board not supported\n");
@@ -1741,7 +1804,12 @@ static int omapfb_do_probe(struct platform_device *pdev,
 
 #ifdef CONFIG_FB_OMAP_DMA_TUNE
 	/* Set DMA priority for EMIFF access to highest */
+<<<<<<< HEAD
 	omap_set_dma_priority(0, OMAP_DMA_PORT_EMIFF, 15);
+=======
+	if (cpu_class_is_omap1())
+		omap_set_dma_priority(0, OMAP_DMA_PORT_EMIFF, 15);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	r = ctrl_change_mode(fbdev->fb_info[0]);

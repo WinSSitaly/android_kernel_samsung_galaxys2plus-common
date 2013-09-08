@@ -19,7 +19,11 @@
 #endif
 
 #ifdef CONFIG_ROMFS_ON_MTD
+<<<<<<< HEAD
 #define ROMFS_MTD_READ(sb, ...) mtd_read((sb)->s_mtd, ##__VA_ARGS__)
+=======
+#define ROMFS_MTD_READ(sb, ...) ((sb)->s_mtd->read((sb)->s_mtd, ##__VA_ARGS__))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * read data from an romfs image on an MTD device

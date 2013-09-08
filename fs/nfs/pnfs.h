@@ -81,9 +81,12 @@ struct pnfs_layoutdriver_type {
 	struct module *owner;
 	unsigned flags;
 
+<<<<<<< HEAD
 	int (*set_layoutdriver) (struct nfs_server *, const struct nfs_fh *);
 	int (*clear_layoutdriver) (struct nfs_server *);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pnfs_layout_hdr * (*alloc_layout_hdr) (struct inode *inode, gfp_t gfp_flags);
 	void (*free_layout_hdr) (struct pnfs_layout_hdr *);
 
@@ -91,6 +94,7 @@ struct pnfs_layoutdriver_type {
 	void (*free_lseg) (struct pnfs_layout_segment *lseg);
 
 	/* test for nfs page cache coalescing */
+<<<<<<< HEAD
 	const struct nfs_pageio_ops *pg_read_ops;
 	const struct nfs_pageio_ops *pg_write_ops;
 
@@ -98,6 +102,15 @@ struct pnfs_layoutdriver_type {
 					struct pnfs_layout_segment *lseg);
 	void (*clear_request_commit) (struct nfs_page *req);
 	int (*scan_commit_lists) (struct inode *inode, int max, spinlock_t *lock);
+=======
+	bool (*pg_test)(struct nfs_pageio_descriptor *, struct nfs_page *, struct nfs_page *);
+
+	/* Returns true if layoutdriver wants to divert this request to
+	 * driver's commit routine.
+	 */
+	bool (*mark_pnfs_commit)(struct pnfs_layout_segment *lseg);
+	struct list_head * (*choose_commit_list) (struct nfs_page *req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*commit_pagelist)(struct inode *inode, struct list_head *mds_pages, int how);
 
 	/*
@@ -113,8 +126,11 @@ struct pnfs_layoutdriver_type {
 				     struct xdr_stream *xdr,
 				     const struct nfs4_layoutreturn_args *args);
 
+<<<<<<< HEAD
 	void (*cleanup_layoutcommit) (struct nfs4_layoutcommit_data *data);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void (*encode_layoutcommit) (struct pnfs_layout_hdr *layoutid,
 				     struct xdr_stream *xdr,
 				     const struct nfs4_layoutcommit_args *args);
@@ -144,6 +160,7 @@ struct pnfs_device {
 	unsigned int  pglen;
 };
 
+<<<<<<< HEAD
 #define NFS4_PNFS_GETDEVLIST_MAXNUM 16
 
 struct pnfs_devicelist {
@@ -152,21 +169,30 @@ struct pnfs_devicelist {
 	struct nfs4_deviceid	dev_id[NFS4_PNFS_GETDEVLIST_MAXNUM];
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int pnfs_register_layoutdriver(struct pnfs_layoutdriver_type *);
 extern void pnfs_unregister_layoutdriver(struct pnfs_layoutdriver_type *);
 
 /* nfs4proc.c */
+<<<<<<< HEAD
 extern int nfs4_proc_getdevicelist(struct nfs_server *server,
 				   const struct nfs_fh *fh,
 				   struct pnfs_devicelist *devlist);
 extern int nfs4_proc_getdeviceinfo(struct nfs_server *server,
 				   struct pnfs_device *dev);
 extern int nfs4_proc_layoutget(struct nfs4_layoutget *lgp, gfp_t gfp_flags);
+=======
+extern int nfs4_proc_getdeviceinfo(struct nfs_server *server,
+				   struct pnfs_device *dev);
+extern int nfs4_proc_layoutget(struct nfs4_layoutget *lgp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int nfs4_proc_layoutreturn(struct nfs4_layoutreturn *lrp);
 
 /* pnfs.c */
 void get_layout_hdr(struct pnfs_layout_hdr *lo);
 void put_lseg(struct pnfs_layout_segment *lseg);
+<<<<<<< HEAD
 
 bool pnfs_pageio_init_read(struct nfs_pageio_descriptor *, struct inode *);
 bool pnfs_pageio_init_write(struct nfs_pageio_descriptor *, struct inode *, int);
@@ -179,6 +205,19 @@ void pnfs_generic_pg_init_write(struct nfs_pageio_descriptor *, struct nfs_page 
 int pnfs_generic_pg_writepages(struct nfs_pageio_descriptor *desc);
 bool pnfs_generic_pg_test(struct nfs_pageio_descriptor *pgio, struct nfs_page *prev, struct nfs_page *req);
 void pnfs_set_lo_fail(struct pnfs_layout_segment *lseg);
+=======
+struct pnfs_layout_segment *
+pnfs_update_layout(struct inode *ino, struct nfs_open_context *ctx,
+		   loff_t pos, u64 count, enum pnfs_iomode access_type,
+		   gfp_t gfp_flags);
+void set_pnfs_layoutdriver(struct nfs_server *, u32 id);
+void unset_pnfs_layoutdriver(struct nfs_server *);
+enum pnfs_try_status pnfs_try_to_write_data(struct nfs_write_data *,
+					     const struct rpc_call_ops *, int);
+enum pnfs_try_status pnfs_try_to_read_data(struct nfs_read_data *,
+					    const struct rpc_call_ops *);
+bool pnfs_generic_pg_test(struct nfs_pageio_descriptor *pgio, struct nfs_page *prev, struct nfs_page *req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int pnfs_layout_process(struct nfs4_layoutget *lgp);
 void pnfs_free_lseg_list(struct list_head *tmp_list);
 void pnfs_destroy_layout(struct nfs_inode *);
@@ -198,6 +237,7 @@ void pnfs_roc_release(struct inode *ino);
 void pnfs_roc_set_barrier(struct inode *ino, u32 barrier);
 bool pnfs_roc_drain(struct inode *ino, u32 *barrier);
 void pnfs_set_layoutcommit(struct nfs_write_data *wdata);
+<<<<<<< HEAD
 void pnfs_cleanup_layoutcommit(struct nfs4_layoutcommit_data *data);
 int pnfs_layoutcommit_inode(struct inode *inode, bool sync);
 int _pnfs_return_layout(struct inode *);
@@ -216,6 +256,12 @@ void nfs4_deviceid_mark_client_invalid(struct nfs_client *clp);
 enum {
 	NFS_DEVICEID_INVALID = 0,       /* set when MDS clientid recalled */
 };
+=======
+int pnfs_layoutcommit_inode(struct inode *inode, bool sync);
+int _pnfs_return_layout(struct inode *);
+int pnfs_ld_write_done(struct nfs_write_data *);
+int pnfs_ld_read_done(struct nfs_read_data *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* pnfs_dev.c */
 struct nfs4_deviceid_node {
@@ -223,12 +269,21 @@ struct nfs4_deviceid_node {
 	struct hlist_node		tmpnode;
 	const struct pnfs_layoutdriver_type *ld;
 	const struct nfs_client		*nfs_client;
+<<<<<<< HEAD
 	unsigned long 			flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct nfs4_deviceid		deviceid;
 	atomic_t			ref;
 };
 
+<<<<<<< HEAD
 struct nfs4_deviceid_node *nfs4_find_get_deviceid(const struct pnfs_layoutdriver_type *, const struct nfs_client *, const struct nfs4_deviceid *);
+=======
+void nfs4_print_deviceid(const struct nfs4_deviceid *dev_id);
+struct nfs4_deviceid_node *nfs4_find_get_deviceid(const struct pnfs_layoutdriver_type *, const struct nfs_client *, const struct nfs4_deviceid *);
+struct nfs4_deviceid_node *nfs4_unhash_put_deviceid(const struct pnfs_layoutdriver_type *, const struct nfs_client *, const struct nfs4_deviceid *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void nfs4_delete_deviceid(const struct pnfs_layoutdriver_type *, const struct nfs_client *, const struct nfs4_deviceid *);
 void nfs4_init_deviceid_node(struct nfs4_deviceid_node *,
 			     const struct pnfs_layoutdriver_type *,
@@ -260,6 +315,23 @@ static inline int pnfs_enabled_sb(struct nfs_server *nfss)
 	return nfss->pnfs_curr_ld != NULL;
 }
 
+<<<<<<< HEAD
+=======
+static inline void
+pnfs_mark_request_commit(struct nfs_page *req, struct pnfs_layout_segment *lseg)
+{
+	if (lseg) {
+		struct pnfs_layoutdriver_type *ld;
+
+		ld = NFS_SERVER(req->wb_page->mapping->host)->pnfs_curr_ld;
+		if (ld->mark_pnfs_commit && ld->mark_pnfs_commit(lseg)) {
+			set_bit(PG_PNFS_COMMIT, &req->wb_flags);
+			req->wb_commit_lseg = get_lseg(lseg);
+		}
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int
 pnfs_commit_list(struct inode *inode, struct list_head *mds_pages, int how)
 {
@@ -268,6 +340,7 @@ pnfs_commit_list(struct inode *inode, struct list_head *mds_pages, int how)
 	return NFS_SERVER(inode)->pnfs_curr_ld->commit_pagelist(inode, mds_pages, how);
 }
 
+<<<<<<< HEAD
 static inline bool
 pnfs_mark_request_commit(struct nfs_page *req, struct pnfs_layout_segment *lseg)
 {
@@ -304,6 +377,29 @@ pnfs_scan_commit_lists(struct inode *inode, int max, spinlock_t *lock)
 	if (ret != 0)
 		set_bit(NFS_INO_PNFS_COMMIT, &NFS_I(inode)->flags);
 	return ret;
+=======
+static inline struct list_head *
+pnfs_choose_commit_list(struct nfs_page *req, struct list_head *mds)
+{
+	struct list_head *rv;
+
+	if (test_and_clear_bit(PG_PNFS_COMMIT, &req->wb_flags)) {
+		struct inode *inode = req->wb_commit_lseg->pls_layout->plh_inode;
+
+		set_bit(NFS_INO_PNFS_COMMIT, &NFS_I(inode)->flags);
+		rv = NFS_SERVER(inode)->pnfs_curr_ld->choose_commit_list(req);
+		/* matched by ref taken when PG_PNFS_COMMIT is set */
+		put_lseg(req->wb_commit_lseg);
+	} else
+		rv = mds;
+	return rv;
+}
+
+static inline void pnfs_clear_request_commit(struct nfs_page *req)
+{
+	if (test_and_clear_bit(PG_PNFS_COMMIT, &req->wb_flags))
+		put_lseg(req->wb_commit_lseg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Should the pNFS client commit and return the layout upon a setattr */
@@ -327,6 +423,7 @@ static inline int pnfs_return_layout(struct inode *ino)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef NFS_DEBUG
 void nfs4_print_deviceid(const struct nfs4_deviceid *dev_id);
 #else
@@ -334,6 +431,17 @@ static inline void nfs4_print_deviceid(const struct nfs4_deviceid *dev_id)
 {
 }
 #endif /* NFS_DEBUG */
+=======
+static inline void pnfs_pageio_init(struct nfs_pageio_descriptor *pgio,
+				    struct inode *inode)
+{
+	struct pnfs_layoutdriver_type *ld = NFS_SERVER(inode)->pnfs_curr_ld;
+
+	if (ld)
+		pgio->pg_test = ld->pg_test;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else  /* CONFIG_NFS_V4_1 */
 
 static inline void pnfs_destroy_all_layouts(struct nfs_client *clp)
@@ -354,6 +462,31 @@ static inline void put_lseg(struct pnfs_layout_segment *lseg)
 {
 }
 
+<<<<<<< HEAD
+=======
+static inline struct pnfs_layout_segment *
+pnfs_update_layout(struct inode *ino, struct nfs_open_context *ctx,
+		   loff_t pos, u64 count, enum pnfs_iomode access_type,
+		   gfp_t gfp_flags)
+{
+	return NULL;
+}
+
+static inline enum pnfs_try_status
+pnfs_try_to_read_data(struct nfs_read_data *data,
+		      const struct rpc_call_ops *call_ops)
+{
+	return PNFS_NOT_ATTEMPTED;
+}
+
+static inline enum pnfs_try_status
+pnfs_try_to_write_data(struct nfs_write_data *data,
+		       const struct rpc_call_ops *call_ops, int how)
+{
+	return PNFS_NOT_ATTEMPTED;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int pnfs_return_layout(struct inode *ino)
 {
 	return 0;
@@ -387,8 +520,12 @@ pnfs_roc_drain(struct inode *ino, u32 *barrier)
 	return false;
 }
 
+<<<<<<< HEAD
 static inline void set_pnfs_layoutdriver(struct nfs_server *s,
 					 const struct nfs_fh *mntfh, u32 id)
+=======
+static inline void set_pnfs_layoutdriver(struct nfs_server *s, u32 id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 }
 
@@ -396,6 +533,7 @@ static inline void unset_pnfs_layoutdriver(struct nfs_server *s)
 {
 }
 
+<<<<<<< HEAD
 static inline bool pnfs_pageio_init_read(struct nfs_pageio_descriptor *pgio, struct inode *inode)
 {
 	return false;
@@ -404,6 +542,16 @@ static inline bool pnfs_pageio_init_read(struct nfs_pageio_descriptor *pgio, str
 static inline bool pnfs_pageio_init_write(struct nfs_pageio_descriptor *pgio, struct inode *inode, int ioflags)
 {
 	return false;
+=======
+static inline void pnfs_pageio_init(struct nfs_pageio_descriptor *pgio,
+				    struct inode *inode)
+{
+}
+
+static inline void
+pnfs_mark_request_commit(struct nfs_page *req, struct pnfs_layout_segment *lseg)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int
@@ -412,6 +560,7 @@ pnfs_commit_list(struct inode *inode, struct list_head *mds_pages, int how)
 	return PNFS_NOT_ATTEMPTED;
 }
 
+<<<<<<< HEAD
 static inline bool
 pnfs_mark_request_commit(struct nfs_page *req, struct pnfs_layout_segment *lseg)
 {
@@ -426,15 +575,34 @@ pnfs_clear_request_commit(struct nfs_page *req)
 
 static inline int
 pnfs_scan_commit_lists(struct inode *inode, int max, spinlock_t *lock)
+=======
+static inline struct list_head *
+pnfs_choose_commit_list(struct nfs_page *req, struct list_head *mds)
+{
+	return mds;
+}
+
+static inline void pnfs_clear_request_commit(struct nfs_page *req)
+{
+}
+
+static inline int pnfs_layoutcommit_inode(struct inode *inode, bool sync)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
 
+<<<<<<< HEAD
 static inline int pnfs_layoutcommit_inode(struct inode *inode, bool sync)
 {
 	return 0;
 }
 
+=======
+static inline void nfs4_deviceid_purge_client(struct nfs_client *ncl)
+{
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_NFS_V4_1 */
 
 #endif /* FS_NFS_PNFS_H */

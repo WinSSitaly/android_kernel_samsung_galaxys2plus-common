@@ -66,17 +66,24 @@ static void tick_broadcast_start_periodic(struct clock_event_device *bc)
  */
 int tick_check_broadcast_device(struct clock_event_device *dev)
 {
+<<<<<<< HEAD
 	struct clock_event_device *cur = tick_broadcast_device.evtdev;
 
 	if ((dev->features & CLOCK_EVT_FEAT_DUMMY) ||
 	    (tick_broadcast_device.evtdev &&
+=======
+	if ((tick_broadcast_device.evtdev &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	     tick_broadcast_device.evtdev->rating >= dev->rating) ||
 	     (dev->features & CLOCK_EVT_FEAT_C3STOP))
 		return 0;
 
 	clockevents_exchange_device(tick_broadcast_device.evtdev, dev);
+<<<<<<< HEAD
 	if (cur)
 		cur->event_handler = clockevents_handle_noop;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tick_broadcast_device.evtdev = dev;
 	if (!cpumask_empty(tick_get_broadcast_mask()))
 		tick_broadcast_start_periodic(dev);
@@ -199,7 +206,11 @@ static void tick_handle_periodic_broadcast(struct clock_event_device *dev)
 	for (next = dev->next_event; ;) {
 		next = ktime_add(next, tick_period);
 
+<<<<<<< HEAD
 		if (!clockevents_program_event(dev, next, false))
+=======
+		if (!clockevents_program_event(dev, next, ktime_get()))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 		tick_do_periodic_broadcast();
 	}
@@ -351,8 +362,12 @@ int tick_resume_broadcast(void)
 						     tick_get_broadcast_mask());
 			break;
 		case TICKDEV_MODE_ONESHOT:
+<<<<<<< HEAD
 			if (!cpumask_empty(tick_get_broadcast_mask()))
 				broadcast = tick_resume_broadcast_oneshot(bc);
+=======
+			broadcast = tick_resume_broadcast_oneshot(bc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	}
@@ -379,10 +394,14 @@ static int tick_broadcast_set_event(ktime_t expires, int force)
 {
 	struct clock_event_device *bc = tick_broadcast_device.evtdev;
 
+<<<<<<< HEAD
 	if (bc->mode != CLOCK_EVT_MODE_ONESHOT)
 		clockevents_set_mode(bc, CLOCK_EVT_MODE_ONESHOT);
 
 	return clockevents_program_event(bc, expires, force);
+=======
+	return tick_dev_program_event(bc, expires, force);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int tick_resume_broadcast_oneshot(struct clock_event_device *bc)
@@ -400,6 +419,7 @@ void tick_check_oneshot_broadcast(int cpu)
 	if (cpumask_test_cpu(cpu, to_cpumask(tick_broadcast_oneshot_mask))) {
 		struct tick_device *td = &per_cpu(tick_cpu_device, cpu);
 
+<<<<<<< HEAD
 		/*
 		 * We might be in the middle of switching over from
 		 * periodic to oneshot. If the CPU has not yet
@@ -409,6 +429,9 @@ void tick_check_oneshot_broadcast(int cpu)
 			clockevents_set_mode(td->evtdev,
 					     CLOCK_EVT_MODE_ONESHOT);
 		}
+=======
+		clockevents_set_mode(td->evtdev, CLOCK_EVT_MODE_ONESHOT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -548,6 +571,10 @@ void tick_broadcast_setup_oneshot(struct clock_event_device *bc)
 		int was_periodic = bc->mode == CLOCK_EVT_MODE_PERIODIC;
 
 		bc->event_handler = tick_handle_oneshot_broadcast;
+<<<<<<< HEAD
+=======
+		clockevents_set_mode(bc, CLOCK_EVT_MODE_ONESHOT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Take the do_timer update */
 		tick_do_timer_cpu = cpu;
@@ -565,7 +592,10 @@ void tick_broadcast_setup_oneshot(struct clock_event_device *bc)
 			   to_cpumask(tmpmask));
 
 		if (was_periodic && !cpumask_empty(to_cpumask(tmpmask))) {
+<<<<<<< HEAD
 			clockevents_set_mode(bc, CLOCK_EVT_MODE_ONESHOT);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			tick_broadcast_init_next_event(to_cpumask(tmpmask),
 						       tick_next_period);
 			tick_broadcast_set_event(tick_next_period, 1);
@@ -597,7 +627,10 @@ void tick_broadcast_switch_to_oneshot(void)
 	bc = tick_broadcast_device.evtdev;
 	if (bc)
 		tick_broadcast_setup_oneshot(bc);
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	raw_spin_unlock_irqrestore(&tick_broadcast_lock, flags);
 }
 

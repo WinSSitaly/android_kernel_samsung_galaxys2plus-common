@@ -752,6 +752,7 @@ dasd_eckd_cdl_reclen(int recid)
 		return sizes_trk0[recid];
 	return LABEL_SIZE;
 }
+<<<<<<< HEAD
 /* create unique id from private structure. */
 static void create_uid(struct dasd_eckd_private *private)
 {
@@ -759,6 +760,26 @@ static void create_uid(struct dasd_eckd_private *private)
 	struct dasd_uid *uid;
 
 	uid = &private->uid;
+=======
+
+/*
+ * Generate device unique id that specifies the physical device.
+ */
+static int dasd_eckd_generate_uid(struct dasd_device *device)
+{
+	struct dasd_eckd_private *private;
+	struct dasd_uid *uid;
+	int count;
+	unsigned long flags;
+
+	private = (struct dasd_eckd_private *) device->private;
+	if (!private)
+		return -ENODEV;
+	if (!private->ned || !private->gneq)
+		return -ENODEV;
+	uid = &private->uid;
+	spin_lock_irqsave(get_ccwdev_lock(device->cdev), flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(uid, 0, sizeof(struct dasd_uid));
 	memcpy(uid->vendor, private->ned->HDA_manufacturer,
 	       sizeof(uid->vendor) - 1);
@@ -781,6 +802,7 @@ static void create_uid(struct dasd_eckd_private *private)
 				private->vdsneq->uit[count]);
 		}
 	}
+<<<<<<< HEAD
 }
 
 /*
@@ -798,6 +820,8 @@ static int dasd_eckd_generate_uid(struct dasd_device *device)
 		return -ENODEV;
 	spin_lock_irqsave(get_ccwdev_lock(device->cdev), flags);
 	create_uid(private);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(get_ccwdev_lock(device->cdev), flags);
 	return 0;
 }
@@ -817,6 +841,7 @@ static int dasd_eckd_get_uid(struct dasd_device *device, struct dasd_uid *uid)
 	return -EINVAL;
 }
 
+<<<<<<< HEAD
 /*
  * compare device UID with data of a given dasd_eckd_private structure
  * return 0 for match
@@ -832,6 +857,8 @@ static int dasd_eckd_compare_path_uid(struct dasd_device *device,
 	return memcmp(&device_uid, &private->uid, sizeof(struct dasd_uid));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void dasd_eckd_fill_rcd_cqr(struct dasd_device *device,
 				   struct dasd_ccw_req *cqr,
 				   __u8 *rcd_buffer,
@@ -865,6 +892,7 @@ static void dasd_eckd_fill_rcd_cqr(struct dasd_device *device,
 	set_bit(DASD_CQR_VERIFY_PATH, &cqr->flags);
 }
 
+<<<<<<< HEAD
 /*
  * Wakeup helper for read_conf
  * if the cqr is not done and needs some error recovery
@@ -889,6 +917,8 @@ static void read_conf_cb(struct dasd_ccw_req *cqr, void *data)
 	dasd_wakeup_cb(cqr, data);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int dasd_eckd_read_conf_immediately(struct dasd_device *device,
 					   struct dasd_ccw_req *cqr,
 					   __u8 *rcd_buffer,
@@ -908,7 +938,10 @@ static int dasd_eckd_read_conf_immediately(struct dasd_device *device,
 	clear_bit(DASD_CQR_FLAGS_USE_ERP, &cqr->flags);
 	set_bit(DASD_CQR_ALLOW_SLOCK, &cqr->flags);
 	cqr->retries = 5;
+<<<<<<< HEAD
 	cqr->callback = read_conf_cb;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = dasd_sleep_on_immediatly(cqr);
 	return rc;
 }
@@ -946,7 +979,10 @@ static int dasd_eckd_read_conf_lpm(struct dasd_device *device,
 		goto out_error;
 	}
 	dasd_eckd_fill_rcd_cqr(device, cqr, rcd_buf, lpm);
+<<<<<<< HEAD
 	cqr->callback = read_conf_cb;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = dasd_sleep_on(cqr);
 	/*
 	 * on success we update the user input parms
@@ -1026,14 +1062,20 @@ static int dasd_eckd_read_conf(struct dasd_device *device)
 	int conf_len, conf_data_saved;
 	int rc;
 	__u8 lpm, opm;
+<<<<<<< HEAD
 	struct dasd_eckd_private *private, path_private;
 	struct dasd_path *path_data;
 	struct dasd_uid *uid;
 	char print_path_uid[60], print_device_uid[60];
+=======
+	struct dasd_eckd_private *private;
+	struct dasd_path *path_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	private = (struct dasd_eckd_private *) device->private;
 	path_data = &device->path_data;
 	opm = ccw_device_get_path_mask(device->cdev);
+<<<<<<< HEAD
 	conf_data_saved = 0;
 	/* get configuration data per operational path */
 	for (lpm = 0x80; lpm; lpm>>= 1) {
@@ -1140,6 +1182,55 @@ static int dasd_eckd_read_conf(struct dasd_device *device)
 			kfree(conf_data);
 	}
 
+=======
+	lpm = 0x80;
+	conf_data_saved = 0;
+	/* get configuration data per operational path */
+	for (lpm = 0x80; lpm; lpm>>= 1) {
+		if (lpm & opm) {
+			rc = dasd_eckd_read_conf_lpm(device, &conf_data,
+						     &conf_len, lpm);
+			if (rc && rc != -EOPNOTSUPP) {	/* -EOPNOTSUPP is ok */
+				DBF_EVENT_DEVID(DBF_WARNING, device->cdev,
+					  "Read configuration data returned "
+					  "error %d", rc);
+				return rc;
+			}
+			if (conf_data == NULL) {
+				DBF_EVENT_DEVID(DBF_WARNING, device->cdev, "%s",
+						"No configuration data "
+						"retrieved");
+				/* no further analysis possible */
+				path_data->opm |= lpm;
+				continue;	/* no error */
+			}
+			/* save first valid configuration data */
+			if (!conf_data_saved) {
+				kfree(private->conf_data);
+				private->conf_data = conf_data;
+				private->conf_len = conf_len;
+				if (dasd_eckd_identify_conf_parts(private)) {
+					private->conf_data = NULL;
+					private->conf_len = 0;
+					kfree(conf_data);
+					continue;
+				}
+				conf_data_saved++;
+			}
+			switch (dasd_eckd_path_access(conf_data, conf_len)) {
+			case 0x02:
+				path_data->npm |= lpm;
+				break;
+			case 0x03:
+				path_data->ppm |= lpm;
+				break;
+			}
+			path_data->opm |= lpm;
+			if (conf_data != private->conf_data)
+				kfree(conf_data);
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1172,6 +1263,7 @@ static int verify_fcx_max_data(struct dasd_device *device, __u8 lpm)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int rebuild_device_uid(struct dasd_device *device,
 			      struct path_verification_work_data *data)
 {
@@ -1217,32 +1309,43 @@ static int rebuild_device_uid(struct dasd_device *device,
 	return rc;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void do_path_verification_work(struct work_struct *work)
 {
 	struct path_verification_work_data *data;
 	struct dasd_device *device;
+<<<<<<< HEAD
 	struct dasd_eckd_private path_private;
 	struct dasd_uid *uid;
 	__u8 path_rcd_buf[DASD_ECKD_RCD_DATA_SIZE];
 	__u8 lpm, opm, npm, ppm, epm;
 	unsigned long flags;
 	char print_uid[60];
+=======
+	__u8 lpm, opm, npm, ppm, epm;
+	unsigned long flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rc;
 
 	data = container_of(work, struct path_verification_work_data, worker);
 	device = data->device;
 
+<<<<<<< HEAD
 	/* delay path verification until device was resumed */
 	if (test_bit(DASD_FLAG_SUSPENDED, &device->flags)) {
 		schedule_work(work);
 		return;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	opm = 0;
 	npm = 0;
 	ppm = 0;
 	epm = 0;
 	for (lpm = 0x80; lpm; lpm >>= 1) {
+<<<<<<< HEAD
 		if (!(lpm & data->tbvpm))
 			continue;
 		memset(&data->rcd_buffer, 0, sizeof(data->rcd_buffer));
@@ -1366,6 +1469,66 @@ static void do_path_verification_work(struct work_struct *work)
 		device->path_data.tbvpm |= epm;
 		spin_unlock_irqrestore(get_ccwdev_lock(device->cdev), flags);
 	}
+=======
+		if (lpm & data->tbvpm) {
+			memset(data->rcd_buffer, 0, sizeof(data->rcd_buffer));
+			memset(&data->cqr, 0, sizeof(data->cqr));
+			data->cqr.cpaddr = &data->ccw;
+			rc = dasd_eckd_read_conf_immediately(device, &data->cqr,
+							     data->rcd_buffer,
+							     lpm);
+			if (!rc) {
+				switch (dasd_eckd_path_access(data->rcd_buffer,
+						     DASD_ECKD_RCD_DATA_SIZE)) {
+				case 0x02:
+					npm |= lpm;
+					break;
+				case 0x03:
+					ppm |= lpm;
+					break;
+				}
+				opm |= lpm;
+			} else if (rc == -EOPNOTSUPP) {
+				DBF_EVENT_DEVID(DBF_WARNING, device->cdev, "%s",
+				       "path verification: No configuration "
+				       "data retrieved");
+				opm |= lpm;
+			} else if (rc == -EAGAIN) {
+				DBF_EVENT_DEVID(DBF_WARNING, device->cdev, "%s",
+					"path verification: device is stopped,"
+					" try again later");
+				epm |= lpm;
+			} else {
+				dev_warn(&device->cdev->dev,
+					 "Reading device feature codes failed "
+					 "(rc=%d) for new path %x\n", rc, lpm);
+				continue;
+			}
+			if (verify_fcx_max_data(device, lpm)) {
+				opm &= ~lpm;
+				npm &= ~lpm;
+				ppm &= ~lpm;
+			}
+		}
+	}
+	/*
+	 * There is a small chance that a path is lost again between
+	 * above path verification and the following modification of
+	 * the device opm mask. We could avoid that race here by using
+	 * yet another path mask, but we rather deal with this unlikely
+	 * situation in dasd_start_IO.
+	 */
+	spin_lock_irqsave(get_ccwdev_lock(device->cdev), flags);
+	if (!device->path_data.opm && opm) {
+		device->path_data.opm = opm;
+		dasd_generic_path_operational(device);
+	} else
+		device->path_data.opm |= opm;
+	device->path_data.npm |= npm;
+	device->path_data.ppm |= ppm;
+	device->path_data.tbvpm |= epm;
+	spin_unlock_irqrestore(get_ccwdev_lock(device->cdev), flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dasd_put_device(device);
 	if (data->isglobal)
@@ -1534,10 +1697,13 @@ static void dasd_eckd_validate_server(struct dasd_device *device)
 	struct dasd_eckd_private *private;
 	int enable_pav;
 
+<<<<<<< HEAD
 	private = (struct dasd_eckd_private *) device->private;
 	if (private->uid.type == UA_BASE_PAV_ALIAS ||
 	    private->uid.type == UA_HYPER_PAV_ALIAS)
 		return;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dasd_nopav || MACHINE_IS_VM)
 		enable_pav = 0;
 	else
@@ -1546,10 +1712,15 @@ static void dasd_eckd_validate_server(struct dasd_device *device)
 
 	/* may be requested feature is not available on server,
 	 * therefore just report error and go ahead */
+<<<<<<< HEAD
+=======
+	private = (struct dasd_eckd_private *) device->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DBF_EVENT_DEVID(DBF_WARNING, device->cdev, "PSF-SSC for SSID %04x "
 			"returned rc=%d", private->uid.ssid, rc);
 }
 
+<<<<<<< HEAD
 /*
  * worker to do a validate server in case of a lost pathgroup
  */
@@ -1574,6 +1745,8 @@ static void dasd_eckd_kick_validate_server(struct dasd_device *device)
 	schedule_work(&device->kick_validate);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u32 get_fcx_max_data(struct dasd_device *device)
 {
 #if defined(CONFIG_64BIT)
@@ -1615,6 +1788,7 @@ dasd_eckd_check_characteristics(struct dasd_device *device)
 	struct dasd_eckd_private *private;
 	struct dasd_block *block;
 	struct dasd_uid temp_uid;
+<<<<<<< HEAD
 	int rc, i;
 	int readonly;
 	unsigned long value;
@@ -1622,6 +1796,12 @@ dasd_eckd_check_characteristics(struct dasd_device *device)
 	/* setup work queue for validate server*/
 	INIT_WORK(&device->kick_validate, dasd_eckd_do_validate_server);
 
+=======
+	int is_known, rc, i;
+	int readonly;
+	unsigned long value;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ccw_device_is_pathgroup(device->cdev)) {
 		dev_warn(&device->cdev->dev,
 			 "A channel path group could not be established\n");
@@ -1667,6 +1847,14 @@ dasd_eckd_check_characteristics(struct dasd_device *device)
 			device->default_expires = value;
 	}
 
+<<<<<<< HEAD
+=======
+	/* Generate device unique id */
+	rc = dasd_eckd_generate_uid(device);
+	if (rc)
+		goto out_err1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dasd_eckd_get_uid(device, &temp_uid);
 	if (temp_uid.type == UA_BASE_DEVICE) {
 		block = dasd_alloc_block();
@@ -1681,12 +1869,31 @@ dasd_eckd_check_characteristics(struct dasd_device *device)
 		block->base = device;
 	}
 
+<<<<<<< HEAD
 	/* register lcu with alias handling, enable PAV */
 	rc = dasd_alias_make_device_known_to_lcu(device);
 	if (rc)
 		goto out_err2;
 
 	dasd_eckd_validate_server(device);
+=======
+	/* register lcu with alias handling, enable PAV if this is a new lcu */
+	is_known = dasd_alias_make_device_known_to_lcu(device);
+	if (is_known < 0) {
+		rc = is_known;
+		goto out_err2;
+	}
+	/*
+	 * dasd_eckd_validate_server is done on the first device that
+	 * is found for an LCU. All later other devices have to wait
+	 * for it, so they will read the correct feature codes.
+	 */
+	if (!is_known) {
+		dasd_eckd_validate_server(device);
+		dasd_alias_lcu_setup_complete(device);
+	} else
+		dasd_alias_wait_for_lcu_setup(device);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* device may report different configuration data after LCU setup */
 	rc = dasd_eckd_read_conf(device);
@@ -1704,6 +1911,7 @@ dasd_eckd_check_characteristics(struct dasd_device *device)
 				"Read device characteristic failed, rc=%d", rc);
 		goto out_err3;
 	}
+<<<<<<< HEAD
 
 	if ((device->features & DASD_FEATURE_USERAW) &&
 	    !(private->rdc_data.facilities.RT_in_LR)) {
@@ -1713,6 +1921,8 @@ dasd_eckd_check_characteristics(struct dasd_device *device)
 		goto out_err3;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* find the valid cylinder size */
 	if (private->rdc_data.no_cyl == LV_COMPAT_CYL &&
 	    private->rdc_data.long_no_cyl)
@@ -1999,7 +2209,10 @@ static int dasd_eckd_ready_to_online(struct dasd_device *device)
 static int dasd_eckd_online_to_ready(struct dasd_device *device)
 {
 	cancel_work_sync(&device->reload_device);
+<<<<<<< HEAD
 	cancel_work_sync(&device->kick_validate);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return dasd_alias_remove_device(device);
 };
 
@@ -2265,6 +2478,7 @@ static void dasd_eckd_check_for_device_change(struct dasd_device *device,
 	/* first of all check for state change pending interrupt */
 	mask = DEV_STAT_ATTENTION | DEV_STAT_DEV_END | DEV_STAT_UNIT_EXCEP;
 	if ((scsw_dstat(&irb->scsw) & mask) == mask) {
+<<<<<<< HEAD
 		/*
 		 * for alias only, not in offline processing
 		 * and only if not suspended
@@ -2273,6 +2487,11 @@ static void dasd_eckd_check_for_device_change(struct dasd_device *device,
 		    device->state == DASD_STATE_ONLINE &&
 		    !test_bit(DASD_FLAG_OFFLINE, &device->flags) &&
 		    !test_bit(DASD_FLAG_SUSPENDED, &device->flags)) {
+=======
+		/* for alias only and not in offline processing*/
+		if (!device->block && private->lcu &&
+		    !test_bit(DASD_FLAG_OFFLINE, &device->flags)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * the state change could be caused by an alias
 			 * reassignment remove device from alias handling
@@ -2419,7 +2638,11 @@ static struct dasd_ccw_req *dasd_eckd_build_cp_cmd_single(
 					   sizeof(struct PFX_eckd_data));
 	} else {
 		if (define_extent(ccw++, cqr->data, first_trk,
+<<<<<<< HEAD
 				  last_trk, cmd, basedev) == -EAGAIN) {
+=======
+				  last_trk, cmd, startdev) == -EAGAIN) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Clock not in sync and XRC is enabled.
 			 * Try again later.
 			 */
@@ -2599,7 +2822,11 @@ static struct dasd_ccw_req *dasd_eckd_build_cp_cmd_track(
 	new_track = 1;
 	end_idaw = 0;
 	len_to_track_end = 0;
+<<<<<<< HEAD
 	idaw_dst = NULL;
+=======
+	idaw_dst = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	idaw_len = 0;
 	rq_for_each_segment(bv, req, iter) {
 		dst = page_address(bv->bv_page) + bv->bv_offset;
@@ -2661,7 +2888,11 @@ static struct dasd_ccw_req *dasd_eckd_build_cp_cmd_track(
 			if (end_idaw) {
 				idaws = idal_create_words(idaws, idaw_dst,
 							  idaw_len);
+<<<<<<< HEAD
 				idaw_dst = NULL;
+=======
+				idaw_dst = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				idaw_len = 0;
 				end_idaw = 0;
 			}
@@ -2844,7 +3075,10 @@ static struct dasd_ccw_req *dasd_eckd_build_cp_tpm_track(
 	sector_t recid, trkid;
 	unsigned int offs;
 	unsigned int count, count_to_trk_end;
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	basedev = block->base;
 	if (rq_data_dir(req) == READ) {
@@ -2885,8 +3119,13 @@ static struct dasd_ccw_req *dasd_eckd_build_cp_tpm_track(
 
 	itcw = itcw_init(cqr->data, itcw_size, itcw_op, 0, ctidaw, 0);
 	if (IS_ERR(itcw)) {
+<<<<<<< HEAD
 		ret = -EINVAL;
 		goto out_error;
+=======
+		dasd_sfree_request(cqr, startdev);
+		return ERR_PTR(-EINVAL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	cqr->cpaddr = itcw_get_tcw(itcw);
 	if (prepare_itcw(itcw, first_trk, last_trk,
@@ -2898,8 +3137,13 @@ static struct dasd_ccw_req *dasd_eckd_build_cp_tpm_track(
 		/* Clock not in sync and XRC is enabled.
 		 * Try again later.
 		 */
+<<<<<<< HEAD
 		ret = -EAGAIN;
 		goto out_error;
+=======
+		dasd_sfree_request(cqr, startdev);
+		return ERR_PTR(-EAGAIN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	len_to_track_end = 0;
 	/*
@@ -2938,10 +3182,15 @@ static struct dasd_ccw_req *dasd_eckd_build_cp_tpm_track(
 					tidaw_flags = 0;
 				last_tidaw = itcw_add_tidaw(itcw, tidaw_flags,
 							    dst, part_len);
+<<<<<<< HEAD
 				if (IS_ERR(last_tidaw)) {
 					ret = -EINVAL;
 					goto out_error;
 				}
+=======
+				if (IS_ERR(last_tidaw))
+					return ERR_PTR(-EINVAL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				dst += part_len;
 			}
 		}
@@ -2950,10 +3199,15 @@ static struct dasd_ccw_req *dasd_eckd_build_cp_tpm_track(
 			dst = page_address(bv->bv_page) + bv->bv_offset;
 			last_tidaw = itcw_add_tidaw(itcw, 0x00,
 						    dst, bv->bv_len);
+<<<<<<< HEAD
 			if (IS_ERR(last_tidaw)) {
 				ret = -EINVAL;
 				goto out_error;
 			}
+=======
+			if (IS_ERR(last_tidaw))
+				return ERR_PTR(-EINVAL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	last_tidaw->flags |= TIDAW_FLAGS_LAST;
@@ -2973,9 +3227,12 @@ static struct dasd_ccw_req *dasd_eckd_build_cp_tpm_track(
 	cqr->buildclk = get_clock();
 	cqr->status = DASD_CQR_FILLED;
 	return cqr;
+<<<<<<< HEAD
 out_error:
 	dasd_sfree_request(cqr, startdev);
 	return ERR_PTR(ret);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct dasd_ccw_req *dasd_eckd_build_cp(struct dasd_device *startdev,
@@ -4128,7 +4385,11 @@ static int dasd_eckd_restore_device(struct dasd_device *device)
 {
 	struct dasd_eckd_private *private;
 	struct dasd_eckd_characteristics temp_rdc_data;
+<<<<<<< HEAD
 	int rc;
+=======
+	int is_known, rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dasd_uid temp_uid;
 	unsigned long flags;
 
@@ -4151,10 +4412,21 @@ static int dasd_eckd_restore_device(struct dasd_device *device)
 		goto out_err;
 
 	/* register lcu with alias handling, enable PAV if this is a new lcu */
+<<<<<<< HEAD
 	rc = dasd_alias_make_device_known_to_lcu(device);
 	if (rc)
 		return rc;
 	dasd_eckd_validate_server(device);
+=======
+	is_known = dasd_alias_make_device_known_to_lcu(device);
+	if (is_known < 0)
+		return is_known;
+	if (!is_known) {
+		dasd_eckd_validate_server(device);
+		dasd_alias_lcu_setup_complete(device);
+	} else
+		dasd_alias_wait_for_lcu_setup(device);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* RE-Read Configuration Data */
 	rc = dasd_eckd_read_conf(device);
@@ -4251,7 +4523,10 @@ static struct ccw_driver dasd_eckd_driver = {
 	.thaw	     = dasd_generic_restore_device,
 	.restore     = dasd_generic_restore_device,
 	.uc_handler  = dasd_generic_uc_handler,
+<<<<<<< HEAD
 	.int_class   = IOINT_DAS,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -4296,7 +4571,10 @@ static struct dasd_discipline dasd_eckd_discipline = {
 	.restore = dasd_eckd_restore_device,
 	.reload = dasd_eckd_reload_device,
 	.get_uid = dasd_eckd_get_uid,
+<<<<<<< HEAD
 	.kick_validate = dasd_eckd_kick_validate_server,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init

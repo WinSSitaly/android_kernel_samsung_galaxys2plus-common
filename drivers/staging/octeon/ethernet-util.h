@@ -25,6 +25,13 @@
  * Contact Cavium Networks for more information
 *********************************************************************/
 
+<<<<<<< HEAD
+=======
+#define DEBUGPRINT(format, ...) do { if (printk_ratelimit()) 		\
+					printk(format, ##__VA_ARGS__);	\
+				} while (0)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * cvm_oct_get_buffer_ptr - convert packet data address to pointer
  * @packet_ptr: Packet data hardware address

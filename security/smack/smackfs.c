@@ -44,7 +44,10 @@ enum smk_inos {
 	SMK_ONLYCAP	= 9,	/* the only "capable" label */
 	SMK_LOGGING	= 10,	/* logging */
 	SMK_LOAD_SELF	= 11,	/* task specific rules */
+<<<<<<< HEAD
 	SMK_ACCESSES	= 12,	/* access policy */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -86,6 +89,7 @@ char *smack_onlycap;
  */
 
 LIST_HEAD(smk_netlbladdr_list);
+<<<<<<< HEAD
 
 /*
  * Rule lists are maintained for each label.
@@ -96,12 +100,20 @@ struct smack_master_list {
 	struct smack_rule	*smk_rule;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 LIST_HEAD(smack_rule_list);
 
 static int smk_cipso_doi_value = SMACK_CIPSO_DOI_DEFAULT;
 
 const char *smack_cipso_option = SMACK_CIPSO_OPTION;
 
+<<<<<<< HEAD
+=======
+
+#define	SEQ_READ_FINISHED	1
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Values for parsing cipso rules
  * SMK_DIGITLEN: Length of a digit field in a rule.
@@ -167,6 +179,7 @@ static int smk_set_access(struct smack_rule *srp, struct list_head *rule_list,
 
 	mutex_lock(rule_lock);
 
+<<<<<<< HEAD
 	/*
 	 * Because the object label is less likely to match
 	 * than the subject label check it first
@@ -174,6 +187,11 @@ static int smk_set_access(struct smack_rule *srp, struct list_head *rule_list,
 	list_for_each_entry_rcu(sp, rule_list, list) {
 		if (sp->smk_object == srp->smk_object &&
 		    sp->smk_subject == srp->smk_subject) {
+=======
+	list_for_each_entry_rcu(sp, rule_list, list) {
+		if (sp->smk_subject == srp->smk_subject &&
+		    sp->smk_object == srp->smk_object) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			found = 1;
 			sp->smk_access = srp->smk_access;
 			break;
@@ -188,6 +206,7 @@ static int smk_set_access(struct smack_rule *srp, struct list_head *rule_list,
 }
 
 /**
+<<<<<<< HEAD
  * smk_parse_rule - parse Smack rule from load string
  * @data: string to be parsed whose size is SMK_LOADLEN
  * @rule: Smack rule
@@ -281,6 +300,8 @@ static int smk_parse_rule(const char *data, struct smack_rule *rule, int import)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * smk_write_load_list - write() for any /smack/load
  * @file: file pointer, not actually used
  * @buf: where to get the data from
@@ -302,12 +323,18 @@ static ssize_t smk_write_load_list(struct file *file, const char __user *buf,
 				struct list_head *rule_list,
 				struct mutex *rule_lock)
 {
+<<<<<<< HEAD
 	struct smack_master_list *smlp;
 	struct smack_known *skp;
 	struct smack_rule *rule;
 	char *data;
 	int rc = -EINVAL;
 	int load = 0;
+=======
+	struct smack_rule *rule;
+	char *data;
+	int rc = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * No partial writes.
@@ -342,6 +369,7 @@ static ssize_t smk_write_load_list(struct file *file, const char __user *buf,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	if (smk_parse_rule(data, rule, 1))
 		goto out_free_rule;
 
@@ -350,10 +378,76 @@ static ssize_t smk_write_load_list(struct file *file, const char __user *buf,
 		skp = smk_find_entry(rule->smk_subject);
 		rule_list = &skp->smk_rules;
 		rule_lock = &skp->smk_rules_lock;
+=======
+	rule->smk_subject = smk_import(data, 0);
+	if (rule->smk_subject == NULL)
+		goto out_free_rule;
+
+	rule->smk_object = smk_import(data + SMK_LABELLEN, 0);
+	if (rule->smk_object == NULL)
+		goto out_free_rule;
+
+	rule->smk_access = 0;
+
+	switch (data[SMK_LABELLEN + SMK_LABELLEN]) {
+	case '-':
+		break;
+	case 'r':
+	case 'R':
+		rule->smk_access |= MAY_READ;
+		break;
+	default:
+		goto out_free_rule;
+	}
+
+	switch (data[SMK_LABELLEN + SMK_LABELLEN + 1]) {
+	case '-':
+		break;
+	case 'w':
+	case 'W':
+		rule->smk_access |= MAY_WRITE;
+		break;
+	default:
+		goto out_free_rule;
+	}
+
+	switch (data[SMK_LABELLEN + SMK_LABELLEN + 2]) {
+	case '-':
+		break;
+	case 'x':
+	case 'X':
+		rule->smk_access |= MAY_EXEC;
+		break;
+	default:
+		goto out_free_rule;
+	}
+
+	switch (data[SMK_LABELLEN + SMK_LABELLEN + 3]) {
+	case '-':
+		break;
+	case 'a':
+	case 'A':
+		rule->smk_access |= MAY_APPEND;
+		break;
+	default:
+		goto out_free_rule;
+	}
+
+	switch (data[SMK_LABELLEN + SMK_LABELLEN + 4]) {
+	case '-':
+		break;
+	case 't':
+	case 'T':
+		rule->smk_access |= MAY_TRANSMUTE;
+		break;
+	default:
+		goto out_free_rule;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	rc = count;
 	/*
+<<<<<<< HEAD
 	 * If this is "load" as opposed to "load-self" and a new rule
 	 * it needs to get added for reporting.
 	 * smk_set_access returns true if there was already a rule
@@ -368,6 +462,13 @@ static ssize_t smk_write_load_list(struct file *file, const char __user *buf,
 			rc = -ENOMEM;
 		goto out;
 	}
+=======
+	 * smk_set_access returns true if there was already a rule
+	 * for the subject/object pair, and false if it was new.
+	 */
+	if (!smk_set_access(rule, rule_list, rule_lock))
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out_free_rule:
 	kfree(rule);
@@ -376,6 +477,7 @@ out:
 	return rc;
 }
 
+<<<<<<< HEAD
 /*
  * Core logic for smackfs seq list operations.
  */
@@ -441,6 +543,38 @@ static int load_seq_show(struct seq_file *s, void *v)
 	struct smack_master_list *smlp =
 		 list_entry(list, struct smack_master_list, list);
 	struct smack_rule *srp = smlp->smk_rule;
+=======
+
+/*
+ * Seq_file read operations for /smack/load
+ */
+
+static void *load_seq_start(struct seq_file *s, loff_t *pos)
+{
+	if (*pos == SEQ_READ_FINISHED)
+		return NULL;
+	if (list_empty(&smack_rule_list))
+		return NULL;
+	return smack_rule_list.next;
+}
+
+static void *load_seq_next(struct seq_file *s, void *v, loff_t *pos)
+{
+	struct list_head *list = v;
+
+	if (list_is_last(list, &smack_rule_list)) {
+		*pos = SEQ_READ_FINISHED;
+		return NULL;
+	}
+	return list->next;
+}
+
+static int load_seq_show(struct seq_file *s, void *v)
+{
+	struct list_head *list = v;
+	struct smack_rule *srp =
+		 list_entry(list, struct smack_rule, list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	seq_printf(s, "%s %s", (char *)srp->smk_subject,
 		   (char *)srp->smk_object);
@@ -465,11 +599,23 @@ static int load_seq_show(struct seq_file *s, void *v)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void load_seq_stop(struct seq_file *s, void *v)
+{
+	/* No-op */
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct seq_operations load_seq_ops = {
 	.start = load_seq_start,
 	.next  = load_seq_next,
 	.show  = load_seq_show,
+<<<<<<< HEAD
 	.stop  = smk_seq_stop,
+=======
+	.stop  = load_seq_stop,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -504,7 +650,12 @@ static ssize_t smk_write_load(struct file *file, const char __user *buf,
 	if (!capable(CAP_MAC_ADMIN))
 		return -EPERM;
 
+<<<<<<< HEAD
 	return smk_write_load_list(file, buf, count, ppos, NULL, NULL);
+=======
+	return smk_write_load_list(file, buf, count, ppos, &smack_rule_list,
+					&smack_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct file_operations smk_load_ops = {
@@ -588,12 +739,36 @@ static void smk_unlbl_ambient(char *oldambient)
 
 static void *cipso_seq_start(struct seq_file *s, loff_t *pos)
 {
+<<<<<<< HEAD
 	return smk_seq_start(s, pos, &smack_known_list);
+=======
+	if (*pos == SEQ_READ_FINISHED)
+		return NULL;
+	if (list_empty(&smack_known_list))
+		return NULL;
+
+	return smack_known_list.next;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void *cipso_seq_next(struct seq_file *s, void *v, loff_t *pos)
 {
+<<<<<<< HEAD
 	return smk_seq_next(s, v, pos, &smack_known_list);
+=======
+	struct list_head  *list = v;
+
+	/*
+	 * labels with no associated cipso value wont be printed
+	 * in cipso_seq_show
+	 */
+	if (list_is_last(list, &smack_known_list)) {
+		*pos = SEQ_READ_FINISHED;
+		return NULL;
+	}
+
+	return list->next;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -632,11 +807,24 @@ static int cipso_seq_show(struct seq_file *s, void *v)
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct seq_operations cipso_seq_ops = {
 	.start = cipso_seq_start,
 	.next  = cipso_seq_next,
 	.show  = cipso_seq_show,
 	.stop  = smk_seq_stop,
+=======
+static void cipso_seq_stop(struct seq_file *s, void *v)
+{
+	/* No-op */
+}
+
+static const struct seq_operations cipso_seq_ops = {
+	.start = cipso_seq_start,
+	.stop  = cipso_seq_stop,
+	.next  = cipso_seq_next,
+	.show  = cipso_seq_show,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -781,12 +969,31 @@ static const struct file_operations smk_cipso_ops = {
 
 static void *netlbladdr_seq_start(struct seq_file *s, loff_t *pos)
 {
+<<<<<<< HEAD
 	return smk_seq_start(s, pos, &smk_netlbladdr_list);
+=======
+	if (*pos == SEQ_READ_FINISHED)
+		return NULL;
+	if (list_empty(&smk_netlbladdr_list))
+		return NULL;
+	return smk_netlbladdr_list.next;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void *netlbladdr_seq_next(struct seq_file *s, void *v, loff_t *pos)
 {
+<<<<<<< HEAD
 	return smk_seq_next(s, v, pos, &smk_netlbladdr_list);
+=======
+	struct list_head *list = v;
+
+	if (list_is_last(list, &smk_netlbladdr_list)) {
+		*pos = SEQ_READ_FINISHED;
+		return NULL;
+	}
+
+	return list->next;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #define BEBITS	(sizeof(__be32) * 8)
 
@@ -810,11 +1017,24 @@ static int netlbladdr_seq_show(struct seq_file *s, void *v)
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct seq_operations netlbladdr_seq_ops = {
 	.start = netlbladdr_seq_start,
 	.next  = netlbladdr_seq_next,
 	.show  = netlbladdr_seq_show,
 	.stop  = smk_seq_stop,
+=======
+static void netlbladdr_seq_stop(struct seq_file *s, void *v)
+{
+	/* No-op */
+}
+
+static const struct seq_operations netlbladdr_seq_ops = {
+	.start = netlbladdr_seq_start,
+	.stop  = netlbladdr_seq_stop,
+	.next  = netlbladdr_seq_next,
+	.show  = netlbladdr_seq_show,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -1382,14 +1602,32 @@ static void *load_self_seq_start(struct seq_file *s, loff_t *pos)
 {
 	struct task_smack *tsp = current_security();
 
+<<<<<<< HEAD
 	return smk_seq_start(s, pos, &tsp->smk_rules);
+=======
+	if (*pos == SEQ_READ_FINISHED)
+		return NULL;
+	if (list_empty(&tsp->smk_rules))
+		return NULL;
+	return tsp->smk_rules.next;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void *load_self_seq_next(struct seq_file *s, void *v, loff_t *pos)
 {
 	struct task_smack *tsp = current_security();
+<<<<<<< HEAD
 
 	return smk_seq_next(s, v, pos, &tsp->smk_rules);
+=======
+	struct list_head *list = v;
+
+	if (list_is_last(list, &tsp->smk_rules)) {
+		*pos = SEQ_READ_FINISHED;
+		return NULL;
+	}
+	return list->next;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int load_self_seq_show(struct seq_file *s, void *v)
@@ -1421,11 +1659,23 @@ static int load_self_seq_show(struct seq_file *s, void *v)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void load_self_seq_stop(struct seq_file *s, void *v)
+{
+	/* No-op */
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct seq_operations load_self_seq_ops = {
 	.start = load_self_seq_start,
 	.next  = load_self_seq_next,
 	.show  = load_self_seq_show,
+<<<<<<< HEAD
 	.stop  = smk_seq_stop,
+=======
+	.stop  = load_self_seq_stop,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -1465,6 +1715,7 @@ static const struct file_operations smk_load_self_ops = {
 	.write		= smk_write_load_self,
 	.release        = seq_release,
 };
+<<<<<<< HEAD
 
 /**
  * smk_write_access - handle access check transaction
@@ -1503,6 +1754,8 @@ static const struct file_operations smk_access_ops = {
 	.llseek		= generic_file_llseek,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * smk_fill_super - fill the /smackfs superblock
  * @sb: the empty superblock
@@ -1537,8 +1790,11 @@ static int smk_fill_super(struct super_block *sb, void *data, int silent)
 			"logging", &smk_logging_ops, S_IRUGO|S_IWUSR},
 		[SMK_LOAD_SELF] = {
 			"load-self", &smk_load_self_ops, S_IRUGO|S_IWUGO},
+<<<<<<< HEAD
 		[SMK_ACCESSES] = {
 			"access", &smk_access_ops, S_IRUGO|S_IWUGO},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* last one */
 			{""}
 	};

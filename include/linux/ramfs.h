@@ -2,7 +2,11 @@
 #define _LINUX_RAMFS_H
 
 struct inode *ramfs_get_inode(struct super_block *sb, const struct inode *dir,
+<<<<<<< HEAD
 	 umode_t mode, dev_t dev);
+=======
+	 int mode, dev_t dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct dentry *ramfs_mount(struct file_system_type *fs_type,
 	 int flags, const char *dev_name, void *data);
 

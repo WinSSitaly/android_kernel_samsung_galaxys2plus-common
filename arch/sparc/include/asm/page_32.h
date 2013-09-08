@@ -8,10 +8,21 @@
 #ifndef _SPARC_PAGE_H
 #define _SPARC_PAGE_H
 
+<<<<<<< HEAD
 #include <linux/const.h>
 
 #define PAGE_SHIFT   12
 #define PAGE_SIZE    (_AC(1, UL) << PAGE_SHIFT)
+=======
+#define PAGE_SHIFT   12
+
+#ifndef __ASSEMBLY__
+/* I have my suspicions... -DaveM */
+#define PAGE_SIZE    (1UL << PAGE_SHIFT)
+#else
+#define PAGE_SIZE    (1 << PAGE_SHIFT)
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PAGE_MASK    (~(PAGE_SIZE-1))
 
 #include <asm/btfixup.h>

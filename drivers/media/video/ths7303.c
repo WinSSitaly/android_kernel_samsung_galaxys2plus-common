@@ -137,4 +137,20 @@ static struct i2c_driver ths7303_driver = {
 	.id_table	= ths7303_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(ths7303_driver);
+=======
+static int __init ths7303_init(void)
+{
+	return i2c_add_driver(&ths7303_driver);
+}
+
+static void __exit ths7303_exit(void)
+{
+	i2c_del_driver(&ths7303_driver);
+}
+
+module_init(ths7303_init);
+module_exit(ths7303_exit);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

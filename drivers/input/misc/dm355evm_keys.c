@@ -17,7 +17,10 @@
 #include <linux/interrupt.h>
 
 #include <linux/i2c/dm355evm_msp.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /*
@@ -267,6 +270,21 @@ static struct platform_driver dm355evm_keys_driver = {
 		.name	= "dm355evm_keys",
 	},
 };
+<<<<<<< HEAD
 module_platform_driver(dm355evm_keys_driver);
+=======
+
+static int __init dm355evm_keys_init(void)
+{
+	return platform_driver_register(&dm355evm_keys_driver);
+}
+module_init(dm355evm_keys_init);
+
+static void __exit dm355evm_keys_exit(void)
+{
+	platform_driver_unregister(&dm355evm_keys_driver);
+}
+module_exit(dm355evm_keys_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");

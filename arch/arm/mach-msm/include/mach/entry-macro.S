@@ -16,6 +16,7 @@
  *
  */
 
+<<<<<<< HEAD
 #if !defined(CONFIG_ARM_GIC)
 #include <mach/msm_iomap.h>
 
@@ -33,4 +34,10 @@
 	ldr	\irqnr, [\base, #0xD4]
 	cmp	\irqnr, #0xffffffff
 	.endm
+=======
+#if defined(CONFIG_ARM_GIC)
+#include <mach/entry-macro-qgic.S>
+#else
+#include <mach/entry-macro-vic.S>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

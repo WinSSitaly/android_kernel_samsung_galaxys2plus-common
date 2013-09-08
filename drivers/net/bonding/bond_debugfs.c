@@ -6,7 +6,11 @@
 #include "bonding.h"
 #include "bond_alb.h"
 
+<<<<<<< HEAD
 #if defined(CONFIG_DEBUG_FS) && !defined(CONFIG_NET_NS)
+=======
+#ifdef CONFIG_DEBUG_FS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/debugfs.h>
 #include <linux/seq_file.h>

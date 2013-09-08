@@ -841,17 +841,43 @@ static int __devexit ds2780_battery_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+MODULE_ALIAS("platform:ds2780-battery");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver ds2780_battery_driver = {
 	.driver = {
 		.name = "ds2780-battery",
 	},
 	.probe	  = ds2780_battery_probe,
+<<<<<<< HEAD
 	.remove   = __devexit_p(ds2780_battery_remove),
 };
 
 module_platform_driver(ds2780_battery_driver);
+=======
+	.remove   = ds2780_battery_remove,
+};
+
+static int __init ds2780_battery_init(void)
+{
+	return platform_driver_register(&ds2780_battery_driver);
+}
+
+static void __exit ds2780_battery_exit(void)
+{
+	platform_driver_unregister(&ds2780_battery_driver);
+}
+
+module_init(ds2780_battery_init);
+module_exit(ds2780_battery_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Clifton Barnes <cabarnes@indesign-llc.com>");
 MODULE_DESCRIPTION("Maxim/Dallas DS2780 Stand-Alone Fuel Gauage IC driver");
+<<<<<<< HEAD
 MODULE_ALIAS("platform:ds2780-battery");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

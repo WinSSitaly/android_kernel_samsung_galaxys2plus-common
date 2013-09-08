@@ -1,7 +1,11 @@
 /*
  *	w1_smem.c
  *
+<<<<<<< HEAD
  * Copyright (c) 2004 Evgeniy Polyakov <zbr@ioremap.net>
+=======
+ * Copyright (c) 2004 Evgeniy Polyakov <johnpol@2ka.mipt.ru>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,7 +36,11 @@
 #include "../w1_family.h"
 
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_AUTHOR("Evgeniy Polyakov <zbr@ioremap.net>");
+=======
+MODULE_AUTHOR("Evgeniy Polyakov <johnpol@2ka.mipt.ru>");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("Driver for 1-wire Dallas network protocol, 64bit memory family.");
 
 static struct w1_family w1_smem_family_01 = {

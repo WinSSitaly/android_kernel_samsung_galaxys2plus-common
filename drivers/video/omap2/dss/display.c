@@ -29,7 +29,10 @@
 
 #include <video/omapdss.h>
 #include "dss.h"
+<<<<<<< HEAD
 #include "dss_features.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static ssize_t display_enabled_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
@@ -45,6 +48,7 @@ static ssize_t display_enabled_store(struct device *dev,
 		const char *buf, size_t size)
 {
 	struct omap_dss_device *dssdev = to_dss_device(dev);
+<<<<<<< HEAD
 	int r;
 	bool enabled;
 
@@ -52,6 +56,16 @@ static ssize_t display_enabled_store(struct device *dev,
 	if (r)
 		return r;
 
+=======
+	int r, enabled;
+
+	r = kstrtoint(buf, 0, &enabled);
+	if (r)
+		return r;
+
+	enabled = !!enabled;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (enabled != (dssdev->state != OMAP_DSS_DISPLAY_DISABLED)) {
 		if (enabled) {
 			r = dssdev->driver->enable(dssdev);
@@ -65,6 +79,51 @@ static ssize_t display_enabled_store(struct device *dev,
 	return size;
 }
 
+<<<<<<< HEAD
+=======
+static ssize_t display_upd_mode_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	struct omap_dss_device *dssdev = to_dss_device(dev);
+	enum omap_dss_update_mode mode = OMAP_DSS_UPDATE_AUTO;
+	if (dssdev->driver->get_update_mode)
+		mode = dssdev->driver->get_update_mode(dssdev);
+	return snprintf(buf, PAGE_SIZE, "%d\n", mode);
+}
+
+static ssize_t display_upd_mode_store(struct device *dev,
+		struct device_attribute *attr,
+		const char *buf, size_t size)
+{
+	struct omap_dss_device *dssdev = to_dss_device(dev);
+	int val, r;
+	enum omap_dss_update_mode mode;
+
+	if (!dssdev->driver->set_update_mode)
+		return -EINVAL;
+
+	r = kstrtoint(buf, 0, &val);
+	if (r)
+		return r;
+
+	switch (val) {
+	case OMAP_DSS_UPDATE_DISABLED:
+	case OMAP_DSS_UPDATE_AUTO:
+	case OMAP_DSS_UPDATE_MANUAL:
+		mode = (enum omap_dss_update_mode)val;
+		break;
+	default:
+		return -EINVAL;
+	}
+
+	r = dssdev->driver->set_update_mode(dssdev, mode);
+	if (r)
+		return r;
+
+	return size;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t display_tear_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -78,16 +137,29 @@ static ssize_t display_tear_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t size)
 {
 	struct omap_dss_device *dssdev = to_dss_device(dev);
+<<<<<<< HEAD
 	int r;
 	bool te;
+=======
+	int te, r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!dssdev->driver->enable_te || !dssdev->driver->get_te)
 		return -ENOENT;
 
+<<<<<<< HEAD
 	r = strtobool(buf, &te);
 	if (r)
 		return r;
 
+=======
+	r = kstrtoint(buf, 0, &te);
+	if (r)
+		return r;
+
+	te = !!te;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = dssdev->driver->enable_te(dssdev, te);
 	if (r)
 		return r;
@@ -193,16 +265,29 @@ static ssize_t display_mirror_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t size)
 {
 	struct omap_dss_device *dssdev = to_dss_device(dev);
+<<<<<<< HEAD
 	int r;
 	bool mirror;
+=======
+	int mirror, r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!dssdev->driver->set_mirror || !dssdev->driver->get_mirror)
 		return -ENOENT;
 
+<<<<<<< HEAD
 	r = strtobool(buf, &mirror);
 	if (r)
 		return r;
 
+=======
+	r = kstrtoint(buf, 0, &mirror);
+	if (r)
+		return r;
+
+	mirror = !!mirror;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = dssdev->driver->set_mirror(dssdev, mirror);
 	if (r)
 		return r;
@@ -250,6 +335,11 @@ static ssize_t display_wss_store(struct device *dev,
 
 static DEVICE_ATTR(enabled, S_IRUGO|S_IWUSR,
 		display_enabled_show, display_enabled_store);
+<<<<<<< HEAD
+=======
+static DEVICE_ATTR(update_mode, S_IRUGO|S_IWUSR,
+		display_upd_mode_show, display_upd_mode_store);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEVICE_ATTR(tear_elim, S_IRUGO|S_IWUSR,
 		display_tear_show, display_tear_store);
 static DEVICE_ATTR(timings, S_IRUGO|S_IWUSR,
@@ -263,6 +353,10 @@ static DEVICE_ATTR(wss, S_IRUGO|S_IWUSR,
 
 static struct device_attribute *display_sysfs_attrs[] = {
 	&dev_attr_enabled,
+<<<<<<< HEAD
+=======
+	&dev_attr_update_mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&dev_attr_tear_elim,
 	&dev_attr_timings,
 	&dev_attr_rotate,
@@ -279,6 +373,22 @@ void omapdss_default_get_resolution(struct omap_dss_device *dssdev,
 }
 EXPORT_SYMBOL(omapdss_default_get_resolution);
 
+<<<<<<< HEAD
+=======
+void default_get_overlay_fifo_thresholds(enum omap_plane plane,
+		u32 fifo_size, enum omap_burst_size *burst_size,
+		u32 *fifo_low, u32 *fifo_high)
+{
+	unsigned burst_size_bytes;
+
+	*burst_size = OMAP_DSS_BURST_16x32;
+	burst_size_bytes = 16 * 32 / 8;
+
+	*fifo_high = fifo_size - 1;
+	*fifo_low = fifo_size - burst_size_bytes;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int omapdss_default_get_recommended_bpp(struct omap_dss_device *dssdev)
 {
 	switch (dssdev->type) {
@@ -289,12 +399,17 @@ int omapdss_default_get_recommended_bpp(struct omap_dss_device *dssdev)
 			return 16;
 
 	case OMAP_DISPLAY_TYPE_DBI:
+<<<<<<< HEAD
 		if (dssdev->ctrl.pixel_size == 24)
 			return 24;
 		else
 			return 16;
 	case OMAP_DISPLAY_TYPE_DSI:
 		if (dsi_get_pixel_size(dssdev->panel.dsi_pix_fmt) > 16)
+=======
+	case OMAP_DISPLAY_TYPE_DSI:
+		if (dssdev->ctrl.pixel_size == 24)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 24;
 		else
 			return 16;
@@ -333,10 +448,15 @@ bool dss_use_replication(struct omap_dss_device *dssdev,
 		bpp = 24;
 		break;
 	case OMAP_DISPLAY_TYPE_DBI:
+<<<<<<< HEAD
 		bpp = dssdev->ctrl.pixel_size;
 		break;
 	case OMAP_DISPLAY_TYPE_DSI:
 		bpp = dsi_get_pixel_size(dssdev->panel.dsi_pix_fmt);
+=======
+	case OMAP_DISPLAY_TYPE_DSI:
+		bpp = dssdev->ctrl.pixel_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		BUG();

@@ -383,6 +383,7 @@ const struct soc_mbus_pixelfmt *soc_mbus_get_fmtdesc(
 }
 EXPORT_SYMBOL(soc_mbus_get_fmtdesc);
 
+<<<<<<< HEAD
 unsigned int soc_mbus_config_compatible(const struct v4l2_mbus_config *cfg,
 					unsigned int flags)
 {
@@ -416,6 +417,8 @@ unsigned int soc_mbus_config_compatible(const struct v4l2_mbus_config *cfg,
 }
 EXPORT_SYMBOL(soc_mbus_config_compatible);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init soc_mbus_init(void)
 {
 	return 0;

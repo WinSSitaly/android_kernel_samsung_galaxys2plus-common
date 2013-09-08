@@ -177,6 +177,10 @@ retry:
 static
 int i2400mu_txd(void *_i2400mu)
 {
+<<<<<<< HEAD
+=======
+	int result = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct i2400mu *i2400mu = _i2400mu;
 	struct i2400m *i2400m = &i2400mu->i2400m;
 	struct device *dev = &i2400mu->usb_iface->dev;
@@ -207,14 +211,24 @@ int i2400mu_txd(void *_i2400mu)
 		/* Yeah, we ignore errors ... not much we can do */
 		i2400mu_tx(i2400mu, tx_msg, tx_msg_size);
 		i2400m_tx_msg_sent(i2400m);	/* ack it, advance the FIFO */
+<<<<<<< HEAD
+=======
+		if (result < 0)
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	spin_lock_irqsave(&i2400m->tx_lock, flags);
 	i2400mu->tx_kthread = NULL;
 	spin_unlock_irqrestore(&i2400m->tx_lock, flags);
 
+<<<<<<< HEAD
 	d_fnend(4, dev, "(i2400mu %p)\n", i2400mu);
 	return 0;
+=======
+	d_fnend(4, dev, "(i2400mu %p) = %d\n", i2400mu, result);
+	return result;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 

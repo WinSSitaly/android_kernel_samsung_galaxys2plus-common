@@ -3,10 +3,18 @@
 
 #include <linux/types.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
+=======
+#include <linux/i2c-kona.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* platform data for the PCA9539 16-bit I/O expander driver */
 
 struct pca953x_platform_data {
+<<<<<<< HEAD
+=======
+	struct i2c_slave_platform_data i2c_pdata;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* number of the first GPIO */
 	unsigned	gpio_base;
 

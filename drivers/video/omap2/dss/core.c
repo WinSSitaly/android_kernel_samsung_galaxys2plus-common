@@ -50,7 +50,11 @@ module_param_named(def_disp, def_disp_name, charp, 0);
 MODULE_PARM_DESC(def_disp, "default display name");
 
 #ifdef DEBUG
+<<<<<<< HEAD
 bool dss_debug;
+=======
+unsigned int dss_debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(debug, dss_debug, bool, 0644);
 #endif
 
@@ -145,10 +149,13 @@ static int dss_initialize_debugfs(void)
 	debugfs_create_file("venc", S_IRUGO, dss_debugfs_dir,
 			&venc_dump_regs, &dss_debug_fops);
 #endif
+<<<<<<< HEAD
 #ifdef CONFIG_OMAP4_DSS_HDMI
 	debugfs_create_file("hdmi", S_IRUGO, dss_debugfs_dir,
 			&hdmi_dump_regs, &dss_debug_fops);
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -178,11 +185,56 @@ static int omap_dss_probe(struct platform_device *pdev)
 
 	dss_features_init();
 
+<<<<<<< HEAD
 	dss_apply_init();
 
 	dss_init_overlay_managers(pdev);
 	dss_init_overlays(pdev);
 
+=======
+	dss_init_overlay_managers(pdev);
+	dss_init_overlays(pdev);
+
+	r = dss_init_platform_driver();
+	if (r) {
+		DSSERR("Failed to initialize DSS platform driver\n");
+		goto err_dss;
+	}
+
+	/* keep clocks enabled to prevent context saves/restores during init */
+	dss_clk_enable(DSS_CLK_ICK | DSS_CLK_FCK);
+
+	r = rfbi_init_platform_driver();
+	if (r) {
+		DSSERR("Failed to initialize rfbi platform driver\n");
+		goto err_rfbi;
+	}
+
+	r = dispc_init_platform_driver();
+	if (r) {
+		DSSERR("Failed to initialize dispc platform driver\n");
+		goto err_dispc;
+	}
+
+	r = venc_init_platform_driver();
+	if (r) {
+		DSSERR("Failed to initialize venc platform driver\n");
+		goto err_venc;
+	}
+
+	r = dsi_init_platform_driver();
+	if (r) {
+		DSSERR("Failed to initialize DSI platform driver\n");
+		goto err_dsi;
+	}
+
+	r = hdmi_init_platform_driver();
+	if (r) {
+		DSSERR("Failed to initialize hdmi\n");
+		goto err_hdmi;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = dss_initialize_debugfs();
 	if (r)
 		goto err_debugfs;
@@ -205,11 +257,31 @@ static int omap_dss_probe(struct platform_device *pdev)
 			pdata->default_device = dssdev;
 	}
 
+<<<<<<< HEAD
+=======
+	dss_clk_disable(DSS_CLK_ICK | DSS_CLK_FCK);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 err_register:
 	dss_uninitialize_debugfs();
 err_debugfs:
+<<<<<<< HEAD
+=======
+	hdmi_uninit_platform_driver();
+err_hdmi:
+	dsi_uninit_platform_driver();
+err_dsi:
+	venc_uninit_platform_driver();
+err_venc:
+	dispc_uninit_platform_driver();
+err_dispc:
+	rfbi_uninit_platform_driver();
+err_rfbi:
+	dss_uninit_platform_driver();
+err_dss:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return r;
 }
@@ -221,6 +293,16 @@ static int omap_dss_remove(struct platform_device *pdev)
 
 	dss_uninitialize_debugfs();
 
+<<<<<<< HEAD
+=======
+	venc_uninit_platform_driver();
+	dispc_uninit_platform_driver();
+	rfbi_uninit_platform_driver();
+	dsi_uninit_platform_driver();
+	hdmi_uninit_platform_driver();
+	dss_uninit_platform_driver();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dss_uninit_overlays(pdev);
 	dss_uninit_overlay_managers(pdev);
 
@@ -470,6 +552,7 @@ static int omap_dss_bus_register(void)
 
 /* INIT */
 
+<<<<<<< HEAD
 static int __init omap_dss_register_drivers(void)
 {
 	int r;
@@ -544,6 +627,8 @@ static void __exit omap_dss_unregister_drivers(void)
 	platform_driver_unregister(&omap_dss_driver);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_OMAP2_DSS_MODULE
 static void omap_dss_bus_unregister(void)
 {
@@ -560,7 +645,11 @@ static int __init omap_dss_init(void)
 	if (r)
 		return r;
 
+<<<<<<< HEAD
 	r = omap_dss_register_drivers();
+=======
+	r = platform_driver_register(&omap_dss_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (r) {
 		omap_dss_bus_unregister();
 		return r;
@@ -581,7 +670,11 @@ static void __exit omap_dss_exit(void)
 		core.vdds_sdi_reg = NULL;
 	}
 
+<<<<<<< HEAD
 	omap_dss_unregister_drivers();
+=======
+	platform_driver_unregister(&omap_dss_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	omap_dss_bus_unregister();
 }
@@ -596,7 +689,11 @@ static int __init omap_dss_init(void)
 
 static int __init omap_dss_init2(void)
 {
+<<<<<<< HEAD
 	return omap_dss_register_drivers();
+=======
+	return platform_driver_register(&omap_dss_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 core_initcall(omap_dss_init);

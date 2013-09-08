@@ -37,9 +37,12 @@
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+<<<<<<< HEAD
 #include <linux/kmod.h>
 #include <linux/moduleparam.h>
 #include <linux/ratelimit.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <scsi/osd_initiator.h>
 #include "objlayout.h"
 
@@ -159,16 +162,37 @@ last_byte_offset(u64 start, u64 len)
 	return end > start ? end - 1 : NFS4_MAX_UINT64;
 }
 
+<<<<<<< HEAD
 static void _fix_verify_io_params(struct pnfs_layout_segment *lseg,
 			   struct page ***p_pages, unsigned *p_pgbase,
 			   u64 offset, unsigned long count)
 {
 	u64 lseg_end_offset;
 
+=======
+static struct objlayout_io_state *
+objlayout_alloc_io_state(struct pnfs_layout_hdr *pnfs_layout_type,
+			struct page **pages,
+			unsigned pgbase,
+			loff_t offset,
+			size_t count,
+			struct pnfs_layout_segment *lseg,
+			void *rpcdata,
+			gfp_t gfp_flags)
+{
+	struct objlayout_io_state *state;
+	u64 lseg_end_offset;
+
+	dprintk("%s: allocating io_state\n", __func__);
+	if (objio_alloc_io_state(lseg, &state, gfp_flags))
+		return NULL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BUG_ON(offset < lseg->pls_range.offset);
 	lseg_end_offset = end_offset(lseg->pls_range.offset,
 				     lseg->pls_range.length);
 	BUG_ON(offset >= lseg_end_offset);
+<<<<<<< HEAD
 	WARN_ON(offset + count > lseg_end_offset);
 
 	if (*p_pgbase > PAGE_SIZE) {
@@ -176,12 +200,47 @@ static void _fix_verify_io_params(struct pnfs_layout_segment *lseg,
 		*p_pages += *p_pgbase >> PAGE_SHIFT;
 		*p_pgbase &= ~PAGE_MASK;
 	}
+=======
+	if (offset + count > lseg_end_offset) {
+		count = lseg->pls_range.length -
+				(offset - lseg->pls_range.offset);
+		dprintk("%s: truncated count %Zd\n", __func__, count);
+	}
+
+	if (pgbase > PAGE_SIZE) {
+		pages += pgbase >> PAGE_SHIFT;
+		pgbase &= ~PAGE_MASK;
+	}
+
+	INIT_LIST_HEAD(&state->err_list);
+	state->lseg = lseg;
+	state->rpcdata = rpcdata;
+	state->pages = pages;
+	state->pgbase = pgbase;
+	state->nr_pages = (pgbase + count + PAGE_SIZE - 1) >> PAGE_SHIFT;
+	state->offset = offset;
+	state->count = count;
+	state->sync = 0;
+
+	return state;
+}
+
+static void
+objlayout_free_io_state(struct objlayout_io_state *state)
+{
+	dprintk("%s: freeing io_state\n", __func__);
+	if (unlikely(!state))
+		return;
+
+	objio_free_io_state(state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * I/O done common code
  */
 static void
+<<<<<<< HEAD
 objlayout_iodone(struct objlayout_io_res *oir)
 {
 	if (likely(oir->status >= 0)) {
@@ -192,6 +251,20 @@ objlayout_iodone(struct objlayout_io_res *oir)
 		spin_lock(&objlay->lock);
 		objlay->delta_space_valid = OBJ_DSU_INVALID;
 		list_add(&objlay->err_list, &oir->err_list);
+=======
+objlayout_iodone(struct objlayout_io_state *state)
+{
+	dprintk("%s: state %p status\n", __func__, state);
+
+	if (likely(state->status >= 0)) {
+		objlayout_free_io_state(state);
+	} else {
+		struct objlayout *objlay = OBJLAYOUT(state->lseg->pls_layout);
+
+		spin_lock(&objlay->lock);
+		objlay->delta_space_valid = OBJ_DSU_INVALID;
+		list_add(&objlay->err_list, &state->err_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock(&objlay->lock);
 	}
 }
@@ -203,6 +276,7 @@ objlayout_iodone(struct objlayout_io_res *oir)
  * the error for later reporting at layout-return.
  */
 void
+<<<<<<< HEAD
 objlayout_io_set_result(struct objlayout_io_res *oir, unsigned index,
 			struct pnfs_osd_objid *pooid, int osd_error,
 			u64 offset, u64 length, bool is_write)
@@ -210,6 +284,15 @@ objlayout_io_set_result(struct objlayout_io_res *oir, unsigned index,
 	struct pnfs_osd_ioerr *ioerr = &oir->ioerrs[index];
 
 	BUG_ON(index >= oir->num_comps);
+=======
+objlayout_io_set_result(struct objlayout_io_state *state, unsigned index,
+			struct pnfs_osd_objid *pooid, int osd_error,
+			u64 offset, u64 length, bool is_write)
+{
+	struct pnfs_osd_ioerr *ioerr = &state->ioerrs[index];
+
+	BUG_ON(index >= state->num_comps);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (osd_error) {
 		ioerr->oer_component = *pooid;
 		ioerr->oer_comp_offset = offset;
@@ -250,6 +333,7 @@ static void _rpc_read_complete(struct work_struct *work)
 }
 
 void
+<<<<<<< HEAD
 objlayout_read_done(struct objlayout_io_res *oir, ssize_t status, bool sync)
 {
 	struct nfs_read_data *rdata = oir->rpcdata;
@@ -264,6 +348,25 @@ objlayout_read_done(struct objlayout_io_res *oir, ssize_t status, bool sync)
 
 	dprintk("%s: Return status=%zd eof=%d sync=%d\n", __func__,
 		status, rdata->res.eof, sync);
+=======
+objlayout_read_done(struct objlayout_io_state *state, ssize_t status, bool sync)
+{
+	int eof = state->eof;
+	struct nfs_read_data *rdata;
+
+	state->status = status;
+	dprintk("%s: Begin status=%zd eof=%d\n", __func__, status, eof);
+	rdata = state->rpcdata;
+	rdata->task.tk_status = status;
+	if (likely(status >= 0)) {
+		rdata->res.count = status;
+		rdata->res.eof = eof;
+	} else {
+		rdata->pnfs_error = status;
+	}
+	objlayout_iodone(state);
+	/* must not use state after this point */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (sync)
 		pnfs_ld_read_done(rdata);
@@ -281,6 +384,7 @@ objlayout_read_pagelist(struct nfs_read_data *rdata)
 {
 	loff_t offset = rdata->args.offset;
 	size_t count = rdata->args.count;
+<<<<<<< HEAD
 	int err;
 	loff_t eof;
 
@@ -291,11 +395,27 @@ objlayout_read_pagelist(struct nfs_read_data *rdata)
 			rdata->res.count = 0;
 			rdata->res.eof = 1;
 			/*FIXME: do we need to call pnfs_ld_read_done() */
+=======
+	struct objlayout_io_state *state;
+	ssize_t status = 0;
+	loff_t eof;
+
+	dprintk("%s: Begin inode %p offset %llu count %d\n",
+		__func__, rdata->inode, offset, (int)count);
+
+	eof = i_size_read(rdata->inode);
+	if (unlikely(offset + count > eof)) {
+		if (offset >= eof) {
+			status = 0;
+			rdata->res.count = 0;
+			rdata->res.eof = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out;
 		}
 		count = eof - offset;
 	}
 
+<<<<<<< HEAD
 	rdata->res.eof = (offset + count) >= eof;
 	_fix_verify_io_params(rdata->lseg, &rdata->args.pages,
 			      &rdata->args.pgbase,
@@ -311,6 +431,24 @@ objlayout_read_pagelist(struct nfs_read_data *rdata)
 		dprintk("%s: Returned Error %d\n", __func__, err);
 		return PNFS_NOT_ATTEMPTED;
 	}
+=======
+	state = objlayout_alloc_io_state(NFS_I(rdata->inode)->layout,
+					 rdata->args.pages, rdata->args.pgbase,
+					 offset, count,
+					 rdata->lseg, rdata,
+					 GFP_KERNEL);
+	if (unlikely(!state)) {
+		status = -ENOMEM;
+		goto out;
+	}
+
+	state->eof = state->offset + state->count >= eof;
+
+	status = objio_read_pagelist(state);
+ out:
+	dprintk("%s: Return status %Zd\n", __func__, status);
+	rdata->pnfs_error = status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return PNFS_ATTEMPTED;
 }
 
@@ -331,6 +469,7 @@ static void _rpc_write_complete(struct work_struct *work)
 }
 
 void
+<<<<<<< HEAD
 objlayout_write_done(struct objlayout_io_res *oir, ssize_t status, bool sync)
 {
 	struct nfs_write_data *wdata = oir->rpcdata;
@@ -347,6 +486,30 @@ objlayout_write_done(struct objlayout_io_res *oir, ssize_t status, bool sync)
 
 	dprintk("%s: Return status %zd committed %d sync=%d\n", __func__,
 		status, wdata->verf.committed, sync);
+=======
+objlayout_write_done(struct objlayout_io_state *state, ssize_t status,
+		     bool sync)
+{
+	struct nfs_write_data *wdata;
+
+	dprintk("%s: Begin\n", __func__);
+	wdata = state->rpcdata;
+	state->status = status;
+	wdata->task.tk_status = status;
+	if (likely(status >= 0)) {
+		wdata->res.count = status;
+		wdata->verf.committed = state->committed;
+		dprintk("%s: Return status %d committed %d\n",
+			__func__, wdata->task.tk_status,
+			wdata->verf.committed);
+	} else {
+		wdata->pnfs_error = status;
+		dprintk("%s: Return status %d\n",
+			__func__, wdata->task.tk_status);
+	}
+	objlayout_iodone(state);
+	/* must not use state after this point */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (sync)
 		pnfs_ld_write_done(wdata);
@@ -363,6 +526,7 @@ enum pnfs_try_status
 objlayout_write_pagelist(struct nfs_write_data *wdata,
 			 int how)
 {
+<<<<<<< HEAD
 	int err;
 
 	_fix_verify_io_params(wdata->lseg, &wdata->args.pages,
@@ -375,6 +539,32 @@ objlayout_write_pagelist(struct nfs_write_data *wdata,
 		dprintk("%s: Returned Error %d\n", __func__, err);
 		return PNFS_NOT_ATTEMPTED;
 	}
+=======
+	struct objlayout_io_state *state;
+	ssize_t status;
+
+	dprintk("%s: Begin inode %p offset %llu count %u\n",
+		__func__, wdata->inode, wdata->args.offset, wdata->args.count);
+
+	state = objlayout_alloc_io_state(NFS_I(wdata->inode)->layout,
+					 wdata->args.pages,
+					 wdata->args.pgbase,
+					 wdata->args.offset,
+					 wdata->args.count,
+					 wdata->lseg, wdata,
+					 GFP_NOFS);
+	if (unlikely(!state)) {
+		status = -ENOMEM;
+		goto out;
+	}
+
+	state->sync = how & FLUSH_SYNC;
+
+	status = objio_write_pagelist(state, how & FLUSH_STABLE);
+ out:
+	dprintk("%s: Return status %Zd\n", __func__, status);
+	wdata->pnfs_error = status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return PNFS_ATTEMPTED;
 }
 
@@ -481,6 +671,7 @@ merge_ioerr(struct pnfs_osd_ioerr *dest_err,
 static void
 encode_accumulated_error(struct objlayout *objlay, __be32 *p)
 {
+<<<<<<< HEAD
 	struct objlayout_io_res *oir, *tmp;
 	struct pnfs_osd_ioerr accumulated_err = {.oer_errno = 0};
 
@@ -489,13 +680,29 @@ encode_accumulated_error(struct objlayout *objlay, __be32 *p)
 
 		for (i = 0; i < oir->num_comps; i++) {
 			struct pnfs_osd_ioerr *ioerr = &oir->ioerrs[i];
+=======
+	struct objlayout_io_state *state, *tmp;
+	struct pnfs_osd_ioerr accumulated_err = {.oer_errno = 0};
+
+	list_for_each_entry_safe(state, tmp, &objlay->err_list, err_list) {
+		unsigned i;
+
+		for (i = 0; i < state->num_comps; i++) {
+			struct pnfs_osd_ioerr *ioerr = &state->ioerrs[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (!ioerr->oer_errno)
 				continue;
 
+<<<<<<< HEAD
 			printk(KERN_ERR "NFS: %s: err[%d]: errno=%d "
 				"is_write=%d dev(%llx:%llx) par=0x%llx "
 				"obj=0x%llx offset=0x%llx length=0x%llx\n",
+=======
+			printk(KERN_ERR "%s: err[%d]: errno=%d is_write=%d "
+				"dev(%llx:%llx) par=0x%llx obj=0x%llx "
+				"offset=0x%llx length=0x%llx\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				__func__, i, ioerr->oer_errno,
 				ioerr->oer_iswrite,
 				_DEVID_LO(&ioerr->oer_component.oid_device_id),
@@ -507,8 +714,13 @@ encode_accumulated_error(struct objlayout *objlay, __be32 *p)
 
 			merge_ioerr(&accumulated_err, ioerr);
 		}
+<<<<<<< HEAD
 		list_del(&oir->err_list);
 		objio_free_result(oir);
+=======
+		list_del(&state->err_list);
+		objlayout_free_io_state(state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	pnfs_osd_xdr_encode_ioerr(p, &accumulated_err);
@@ -520,7 +732,11 @@ objlayout_encode_layoutreturn(struct pnfs_layout_hdr *pnfslay,
 			      const struct nfs4_layoutreturn_args *args)
 {
 	struct objlayout *objlay = OBJLAYOUT(pnfslay);
+<<<<<<< HEAD
 	struct objlayout_io_res *oir, *tmp;
+=======
+	struct objlayout_io_state *state, *tmp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__be32 *start;
 
 	dprintk("%s: Begin\n", __func__);
@@ -529,13 +745,22 @@ objlayout_encode_layoutreturn(struct pnfs_layout_hdr *pnfslay,
 
 	spin_lock(&objlay->lock);
 
+<<<<<<< HEAD
 	list_for_each_entry_safe(oir, tmp, &objlay->err_list, err_list) {
+=======
+	list_for_each_entry_safe(state, tmp, &objlay->err_list, err_list) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__be32 *last_xdr = NULL, *p;
 		unsigned i;
 		int res = 0;
 
+<<<<<<< HEAD
 		for (i = 0; i < oir->num_comps; i++) {
 			struct pnfs_osd_ioerr *ioerr = &oir->ioerrs[i];
+=======
+		for (i = 0; i < state->num_comps; i++) {
+			struct pnfs_osd_ioerr *ioerr = &state->ioerrs[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (!ioerr->oer_errno)
 				continue;
@@ -559,7 +784,11 @@ objlayout_encode_layoutreturn(struct pnfs_layout_hdr *pnfslay,
 			}
 
 			last_xdr = p;
+<<<<<<< HEAD
 			pnfs_osd_xdr_encode_ioerr(p, &oir->ioerrs[i]);
+=======
+			pnfs_osd_xdr_encode_ioerr(p, &state->ioerrs[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/* TODO: use xdr_write_pages */
@@ -575,8 +804,13 @@ objlayout_encode_layoutreturn(struct pnfs_layout_hdr *pnfslay,
 			encode_accumulated_error(objlay, last_xdr);
 			goto loop_done;
 		}
+<<<<<<< HEAD
 		list_del(&oir->err_list);
 		objio_free_result(oir);
+=======
+		list_del(&state->err_list);
+		objlayout_free_io_state(state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 loop_done:
 	spin_unlock(&objlay->lock);
@@ -604,6 +838,10 @@ int objlayout_get_deviceinfo(struct pnfs_layout_hdr *pnfslay,
 {
 	struct objlayout_deviceinfo *odi;
 	struct pnfs_device pd;
+<<<<<<< HEAD
+=======
+	struct super_block *sb;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct page *page, **pages;
 	u32 *p;
 	int err;
@@ -622,6 +860,10 @@ int objlayout_get_deviceinfo(struct pnfs_layout_hdr *pnfslay,
 	pd.pglen = PAGE_SIZE;
 	pd.mincount = 0;
 
+<<<<<<< HEAD
+=======
+	sb = pnfslay->plh_inode->i_sb;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = nfs4_proc_getdeviceinfo(NFS_SERVER(pnfslay->plh_inode), &pd);
 	dprintk("%s nfs_getdeviceinfo returned %d\n", __func__, err);
 	if (err)
@@ -652,6 +894,7 @@ void objlayout_put_deviceinfo(struct pnfs_osd_deviceaddr *deviceaddr)
 	__free_page(odi->page);
 	kfree(odi);
 }
+<<<<<<< HEAD
 
 enum {
 	OBJLAYOUT_MAX_URI_LEN = 256, OBJLAYOUT_MAX_OSDNAME_LEN = 64,
@@ -783,3 +1026,5 @@ int objlayout_autologin(struct pnfs_osd_deviceaddr *deviceaddr)
 
 	return rc;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

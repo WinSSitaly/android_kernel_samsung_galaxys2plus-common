@@ -55,7 +55,10 @@
 /* GPIO Registers */
 #define GPIO_DATA           0x1B7020
 #define GPIO_CTRL           0x1B7024
+<<<<<<< HEAD
 #define GPIO_EXT_DATA       0x1B70A0
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Virtual memory registers */
 #define VMEM_PTPAL          0x1C6300 /* 0x1C6300 + (16 * Chn) */

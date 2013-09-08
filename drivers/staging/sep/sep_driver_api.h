@@ -2,8 +2,13 @@
  *
  *  sep_driver_api.h - Security Processor Driver api definitions
  *
+<<<<<<< HEAD
  *  Copyright(c) 2009-2011 Intel Corporation. All rights reserved.
  *  Contributions(c) 2009-2011 Discretix. All rights reserved.
+=======
+ *  Copyright(c) 2009,2010 Intel Corporation. All rights reserved.
+ *  Contributions(c) 2009,2010 Discretix. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -26,7 +31,10 @@
  *  CHANGES:
  *
  *  2010.09.14  Upgrade to Medfield
+<<<<<<< HEAD
  *  2011.02.22  Enable kernel crypto
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  */
 
@@ -38,6 +46,7 @@
 #define SEP_DRIVER_SRC_REQ		2
 #define SEP_DRIVER_SRC_PRINTF		3
 
+<<<<<<< HEAD
 /* Power state */
 #define SEP_DRIVER_POWERON		1
 #define SEP_DRIVER_POWEROFF		2
@@ -64,6 +73,28 @@ enum hash_stage {
 	HASH_DIGEST,
 	HASH_FINUP_DATA,
 	HASH_FINUP_FINISH
+=======
+
+/*-------------------------------------------
+    TYPEDEFS
+----------------------------------------------*/
+
+struct alloc_struct {
+	/* offset from start of shared pool area */
+	u32  offset;
+	/* number of bytes to allocate */
+	u32  num_bytes;
+};
+
+/* command struct for getting caller id value and address */
+struct caller_id_struct {
+	/* pid of the process */
+	u32 pid;
+	/* virtual address of the caller id hash */
+	aligned_u64 callerIdAddress;
+	/* caller id hash size in bytes */
+	u32 callerIdSizeInBytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -90,6 +121,14 @@ struct sep_dcblock {
 	u8	tail_data[68];
 };
 
+<<<<<<< HEAD
+=======
+struct sep_caller_id_entry {
+	int pid;
+	unsigned char callerIdHash[SEP_CALLER_ID_HASH_SIZE_IN_BYTES];
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
 	command structure for building dcb block (currently for ext app only
 */
@@ -106,6 +145,7 @@ struct build_dcb_struct {
 	/* the size of the block of the operation - if needed,
 	every table will be modulo this parameter */
 	u32  tail_block_size;
+<<<<<<< HEAD
 
 	/* which application calls the driver DX or applet */
 	u32  is_applet;
@@ -133,6 +173,8 @@ struct build_dcb_struct_kernel {
 
 	struct scatterlist *src_sg;
 	struct scatterlist *dst_sg;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -176,10 +218,13 @@ struct sep_dma_resource {
 
 	/* number of entries of the output mapp array */
 	u32 out_map_num_entries;
+<<<<<<< HEAD
 
 	/* Scatter list for kernel operations */
 	struct scatterlist *src_sg;
 	struct scatterlist *dst_sg;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -202,6 +247,7 @@ struct sep_lli_entry {
 	u32 block_size;
 };
 
+<<<<<<< HEAD
 /*
  * header format for each fastcall write operation
  */
@@ -376,21 +422,58 @@ int sep_wait_transaction(struct sep_device *sep);
  */
 /* magic number 1 of the sep IOCTL command */
 #define SEP_IOC_MAGIC_NUMBER	's'
+=======
+/*----------------------------------------------------------------
+	IOCTL command defines
+	-----------------------------------------------------------------*/
+
+/* magic number 1 of the sep IOCTL command */
+#define SEP_IOC_MAGIC_NUMBER	                     's'
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* sends interrupt to sep that message is ready */
 #define SEP_IOCSENDSEPCOMMAND	 \
 	_IO(SEP_IOC_MAGIC_NUMBER, 0)
 
+<<<<<<< HEAD
+=======
+/* sends interrupt to sep that message is ready */
+#define SEP_IOCSENDSEPRPLYCOMMAND	 \
+	_IO(SEP_IOC_MAGIC_NUMBER, 1)
+
+/* allocate memory in data pool */
+#define SEP_IOCALLOCDATAPOLL	\
+	_IOW(SEP_IOC_MAGIC_NUMBER, 2, struct alloc_struct)
+
+/* free dynamic data aalocated during table creation */
+#define SEP_IOCFREEDMATABLEDATA	 \
+	_IO(SEP_IOC_MAGIC_NUMBER, 7)
+
+/* get the static pool area addersses (physical and virtual) */
+#define SEP_IOCGETSTATICPOOLADDR	\
+	_IO(SEP_IOC_MAGIC_NUMBER, 8)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* end transaction command */
 #define SEP_IOCENDTRANSACTION	 \
 	_IO(SEP_IOC_MAGIC_NUMBER, 15)
 
+<<<<<<< HEAD
+=======
+#define SEP_IOCRARPREPAREMESSAGE	\
+	_IOW(SEP_IOC_MAGIC_NUMBER, 20, struct rar_hndl_to_bus_struct)
+
+#define SEP_IOCTLSETCALLERID	\
+	_IOW(SEP_IOC_MAGIC_NUMBER, 34, struct caller_id_struct)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SEP_IOCPREPAREDCB					\
 	_IOW(SEP_IOC_MAGIC_NUMBER, 35, struct build_dcb_struct)
 
 #define SEP_IOCFREEDCB					\
 	_IO(SEP_IOC_MAGIC_NUMBER, 36)
 
+<<<<<<< HEAD
 struct sep_device;
 
 #define SEP_IOCPREPAREDCB_SECURE_DMA	\
@@ -399,4 +482,6 @@ struct sep_device;
 #define SEP_IOCFREEDCB_SECURE_DMA	\
 	_IO(SEP_IOC_MAGIC_NUMBER, 39)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

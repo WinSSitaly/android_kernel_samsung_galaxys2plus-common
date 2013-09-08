@@ -37,10 +37,15 @@
 #include "nouveau_drv.h"
 #include "nouveau_drm.h"
 #include "nouveau_reg.h"
+<<<<<<< HEAD
 #include "nouveau_encoder.h"
 
 static int
 nv40_get_intensity(struct backlight_device *bd)
+=======
+
+static int nv40_get_intensity(struct backlight_device *bd)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_device *dev = bl_get_data(bd);
 	int val = (nv_rd32(dev, NV40_PMC_BACKLIGHT) & NV40_PMC_BACKLIGHT_MASK)
@@ -49,8 +54,12 @@ nv40_get_intensity(struct backlight_device *bd)
 	return val;
 }
 
+<<<<<<< HEAD
 static int
 nv40_set_intensity(struct backlight_device *bd)
+=======
+static int nv40_set_intensity(struct backlight_device *bd)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_device *dev = bl_get_data(bd);
 	int val = bd->props.brightness;
@@ -68,8 +77,35 @@ static const struct backlight_ops nv40_bl_ops = {
 	.update_status = nv40_set_intensity,
 };
 
+<<<<<<< HEAD
 static int
 nv40_backlight_init(struct drm_connector *connector)
+=======
+static int nv50_get_intensity(struct backlight_device *bd)
+{
+	struct drm_device *dev = bl_get_data(bd);
+
+	return nv_rd32(dev, NV50_PDISPLAY_SOR_BACKLIGHT);
+}
+
+static int nv50_set_intensity(struct backlight_device *bd)
+{
+	struct drm_device *dev = bl_get_data(bd);
+	int val = bd->props.brightness;
+
+	nv_wr32(dev, NV50_PDISPLAY_SOR_BACKLIGHT,
+		val | NV50_PDISPLAY_SOR_BACKLIGHT_ENABLE);
+	return 0;
+}
+
+static const struct backlight_ops nv50_bl_ops = {
+	.options = BL_CORE_SUSPENDRESUME,
+	.get_brightness = nv50_get_intensity,
+	.update_status = nv50_set_intensity,
+};
+
+static int nouveau_nv40_backlight_init(struct drm_connector *connector)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_device *dev = connector->dev;
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
@@ -94,6 +130,7 @@ nv40_backlight_init(struct drm_connector *connector)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int
 nv50_get_intensity(struct backlight_device *bd)
 {
@@ -203,20 +240,48 @@ nv50_backlight_init(struct drm_connector *connector)
 	props.max_brightness = 100;
 	bd = backlight_device_register("nv_backlight", &connector->kdev,
 				       nv_encoder, ops, &props);
+=======
+static int nouveau_nv50_backlight_init(struct drm_connector *connector)
+{
+	struct drm_device *dev = connector->dev;
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	struct backlight_properties props;
+	struct backlight_device *bd;
+
+	if (!nv_rd32(dev, NV50_PDISPLAY_SOR_BACKLIGHT))
+		return 0;
+
+	memset(&props, 0, sizeof(struct backlight_properties));
+	props.type = BACKLIGHT_RAW;
+	props.max_brightness = 1025;
+	bd = backlight_device_register("nv_backlight", &connector->kdev, dev,
+				       &nv50_bl_ops, &props);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(bd))
 		return PTR_ERR(bd);
 
 	dev_priv->backlight = bd;
+<<<<<<< HEAD
 	bd->props.brightness = bd->ops->get_brightness(bd);
+=======
+	bd->props.brightness = nv50_get_intensity(bd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	backlight_update_status(bd);
 	return 0;
 }
 
+<<<<<<< HEAD
 int
 nouveau_backlight_init(struct drm_device *dev)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct drm_connector *connector;
+=======
+int nouveau_backlight_init(struct drm_connector *connector)
+{
+	struct drm_device *dev = connector->dev;
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_ACPI
 	if (acpi_video_backlight_support()) {
@@ -226,6 +291,7 @@ nouveau_backlight_init(struct drm_device *dev)
 	}
 #endif
 
+<<<<<<< HEAD
 	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
 		if (connector->connector_type != DRM_MODE_CONNECTOR_LVDS &&
 		    connector->connector_type != DRM_MODE_CONNECTOR_eDP)
@@ -248,6 +314,23 @@ nouveau_backlight_init(struct drm_device *dev)
 void
 nouveau_backlight_exit(struct drm_device *dev)
 {
+=======
+	switch (dev_priv->card_type) {
+	case NV_40:
+		return nouveau_nv40_backlight_init(connector);
+	case NV_50:
+		return nouveau_nv50_backlight_init(connector);
+	default:
+		break;
+	}
+
+	return 0;
+}
+
+void nouveau_backlight_exit(struct drm_connector *connector)
+{
+	struct drm_device *dev = connector->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 
 	if (dev_priv->backlight) {

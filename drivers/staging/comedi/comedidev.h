@@ -61,6 +61,12 @@
 #define COMEDI_NUM_BOARD_MINORS 0x30
 #define COMEDI_FIRST_SUBDEVICE_MINOR COMEDI_NUM_BOARD_MINORS
 
+<<<<<<< HEAD
+=======
+#define COMEDI_DEVICE_CREATE(cs, parent, devt, drvdata, device, fmt...) \
+	device_create(cs, ((parent) ? (parent) : (device)), devt, drvdata, fmt)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct comedi_subdevice {
 	struct comedi_device *device;
 	int type;
@@ -234,7 +240,10 @@ struct comedi_device_file_info {
 	struct comedi_device *device;
 	struct comedi_subdevice *read_subdevice;
 	struct comedi_subdevice *write_subdevice;
+<<<<<<< HEAD
 	struct device *hardware_device;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #ifdef CONFIG_COMEDI_DEBUG

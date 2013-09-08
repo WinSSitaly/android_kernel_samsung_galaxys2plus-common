@@ -332,6 +332,7 @@
 #define AR_PHY_CCA_MAX_GOOD_VAL_9300_2GHZ     -95
 #define AR_PHY_CCA_MAX_GOOD_VAL_9300_5GHZ     -100
 
+<<<<<<< HEAD
 #define AR_PHY_CCA_NOM_VAL_9462_2GHZ          -127
 #define AR_PHY_CCA_MIN_GOOD_VAL_9462_2GHZ     -127
 #define AR_PHY_CCA_NOM_VAL_9462_5GHZ          -127
@@ -339,6 +340,8 @@
 
 #define AR_PHY_CCA_NOM_VAL_9330_2GHZ          -118
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * AGC Field Definitions
  */
@@ -394,8 +397,11 @@
 #define AR_PHY_DAG_CTRLCCK_RSSI_THR_S   10
 
 #define AR_PHY_RIFS_INIT_DELAY         0x3ff0000
+<<<<<<< HEAD
 #define AR_PHY_AGC_QUICK_DROP       0x03c00000
 #define AR_PHY_AGC_QUICK_DROP_S     22
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AR_PHY_AGC_COARSE_LOW       0x00007F80
 #define AR_PHY_AGC_COARSE_LOW_S     7
 #define AR_PHY_AGC_COARSE_HIGH      0x003F8000
@@ -495,8 +501,11 @@
 #define AR_PHY_TEST_CTL_TSTADC_EN_S       8
 #define AR_PHY_TEST_CTL_RX_OBS_SEL        0x3C00
 #define AR_PHY_TEST_CTL_RX_OBS_SEL_S      10
+<<<<<<< HEAD
 #define AR_PHY_TEST_CTL_DEBUGPORT_SEL	  0xe0000000
 #define AR_PHY_TEST_CTL_DEBUGPORT_SEL_S	  29
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 #define AR_PHY_TSTDAC            (AR_SM_BASE + 0x168)
@@ -581,8 +590,11 @@
 
 #define AR_PHY_TXGAIN_TABLE      (AR_SM_BASE + 0x300)
 
+<<<<<<< HEAD
 #define AR_PHY_TX_IQCAL_CONTROL_0   (AR_SM_BASE + (AR_SREV_9485(ah) ? \
 						 0x3c4 : 0x444))
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AR_PHY_TX_IQCAL_CONTROL_1   (AR_SM_BASE + (AR_SREV_9485(ah) ? \
 						 0x3c8 : 0x448))
 #define AR_PHY_TX_IQCAL_START       (AR_SM_BASE + (AR_SREV_9485(ah) ? \
@@ -592,7 +604,10 @@
 #define AR_PHY_TX_IQCAL_CORR_COEFF_B0(_i)    (AR_SM_BASE + \
 					     (AR_SREV_9485(ah) ? \
 					      0x3d0 : 0x450) + ((_i) << 2))
+<<<<<<< HEAD
 #define AR_PHY_RTT_CTRL			(AR_SM_BASE + 0x380)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AR_PHY_WATCHDOG_STATUS      (AR_SM_BASE + 0x5c0)
 #define AR_PHY_WATCHDOG_CTL_1       (AR_SM_BASE + 0x5c4)
@@ -612,6 +627,7 @@
 #define AR_PHY_BB_THERM_ADC_4_LATEST_VOLT_VALUE		0x0000ff00
 #define AR_PHY_BB_THERM_ADC_4_LATEST_VOLT_VALUE_S	8
 
+<<<<<<< HEAD
 /* AIC Registers */
 #define AR_PHY_AIC_CTRL_0_B0	(AR_SM_BASE + 0x4b0)
 #define AR_PHY_AIC_CTRL_1_B0	(AR_SM_BASE + 0x4b4)
@@ -625,11 +641,18 @@
 #define AR_PHY_65NM_CH0_SYNTH4      0x1608c
 #define AR_PHY_SYNTH4_LONG_SHIFT_SELECT   (AR_SREV_9462(ah) ? 0x00000001 : 0x00000002)
 #define AR_PHY_SYNTH4_LONG_SHIFT_SELECT_S (AR_SREV_9462(ah) ? 0 : 1)
+=======
+
+#define AR_PHY_65NM_CH0_SYNTH4      0x1608c
+#define AR_PHY_SYNTH4_LONG_SHIFT_SELECT   0x00000002
+#define AR_PHY_SYNTH4_LONG_SHIFT_SELECT_S 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AR_PHY_65NM_CH0_SYNTH7      0x16098
 #define AR_PHY_65NM_CH0_BIAS1       0x160c0
 #define AR_PHY_65NM_CH0_BIAS2       0x160c4
 #define AR_PHY_65NM_CH0_BIAS4       0x160cc
 #define AR_PHY_65NM_CH0_RXTX4       0x1610c
+<<<<<<< HEAD
 
 #define AR_CH0_TOP	(AR_SREV_9300(ah) ? 0x16288 : \
 				((AR_SREV_9462(ah) ? 0x1628c : 0x16280)))
@@ -659,6 +682,9 @@
 
 #define AR_PHY_65NM_CH0_THERM       (AR_SREV_9300(ah) ? 0x16290 :\
 					(AR_SREV_9462(ah) ? 0x16294 : 0x1628c))
+=======
+#define AR_PHY_65NM_CH0_THERM       (AR_SREV_9300(ah) ? 0x16290 : 0x1628c)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AR_PHY_65NM_CH0_THERM_LOCAL   0x80000000
 #define AR_PHY_65NM_CH0_THERM_LOCAL_S 31
@@ -674,6 +700,7 @@
 #define AR_PHY_65NM_CH2_RXTX1       0x16900
 #define AR_PHY_65NM_CH2_RXTX2       0x16904
 
+<<<<<<< HEAD
 #define AR_CH0_TOP2		(AR_SREV_9300(ah) ? 0x1628c : \
 					(AR_SREV_9462(ah) ? 0x16290 : 0x16284))
 #define AR_CH0_TOP2_XPABIASLVL		0xf000
@@ -681,16 +708,31 @@
 
 #define AR_CH0_XTAL		(AR_SREV_9300(ah) ? 0x16294 : \
 					(AR_SREV_9462(ah) ? 0x16298 : 0x16290))
+=======
+#define AR_CH0_TOP2 (AR_SREV_9485(ah) ? 0x00016284 : 0x0001628c)
+#define AR_CH0_TOP2_XPABIASLVL		0xf000
+#define AR_CH0_TOP2_XPABIASLVL_S	12
+
+#define AR_CH0_XTAL		(AR_SREV_9485(ah) ? 0x16290 : 0x16294)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AR_CH0_XTAL_CAPINDAC	0x7f000000
 #define AR_CH0_XTAL_CAPINDAC_S	24
 #define AR_CH0_XTAL_CAPOUTDAC	0x00fe0000
 #define AR_CH0_XTAL_CAPOUTDAC_S	17
 
+<<<<<<< HEAD
 #define AR_PHY_PMU1		(AR_SREV_9462(ah) ? 0x16340 : 0x16c40)
 #define AR_PHY_PMU1_PWD		0x1
 #define AR_PHY_PMU1_PWD_S	0
 
 #define AR_PHY_PMU2		(AR_SREV_9462(ah) ? 0x16344 : 0x16c44)
+=======
+#define AR_PHY_PMU1		0x16c40
+#define AR_PHY_PMU1_PWD		0x1
+#define AR_PHY_PMU1_PWD_S	0
+
+#define AR_PHY_PMU2		0x16c44
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AR_PHY_PMU2_PGM		0x00200000
 #define AR_PHY_PMU2_PGM_S	21
 
@@ -830,6 +872,7 @@
 #define AR_PHY_SPECTRAL_SCAN_SHORT_REPEAT   0x01000000
 #define AR_PHY_SPECTRAL_SCAN_SHORT_REPEAT_S 24
 #define AR_PHY_CHANNEL_STATUS_RX_CLEAR      0x00000004
+<<<<<<< HEAD
 #define AR_PHY_RTT_CTRL_ENA_RADIO_RETENTION     0x00000001
 #define AR_PHY_RTT_CTRL_ENA_RADIO_RETENTION_S   0
 #define AR_PHY_RTT_CTRL_RESTORE_MASK            0x0000007E
@@ -846,6 +889,8 @@
 #define AR_PHY_RTT_SW_RTT_TABLE_DATA_S          4
 #define AR_PHY_TX_IQCAL_CONTROL_0_ENABLE_TXIQ_CAL                   0x80000000
 #define AR_PHY_TX_IQCAL_CONTROL_0_ENABLE_TXIQ_CAL_S                         31
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AR_PHY_TX_IQCAL_CONTROL_1_IQCORR_I_Q_COFF_DELPT             0x01fc0000
 #define AR_PHY_TX_IQCAL_CONTROL_1_IQCORR_I_Q_COFF_DELPT_S                   18
 #define AR_PHY_TX_IQCAL_START_DO_CAL	    0x00000001
@@ -906,6 +951,7 @@
  */
 #define AR_SM1_BASE	0xb200
 
+<<<<<<< HEAD
 #define AR_PHY_SWITCH_CHAIN_1   (AR_SM1_BASE + 0x84)
 #define AR_PHY_FCAL_2_1         (AR_SM1_BASE + 0xd0)
 #define AR_PHY_DFT_TONE_CTL_1   (AR_SM1_BASE + 0xd4)
@@ -942,6 +988,21 @@
 					AR_SM1_BASE : AR_SM_BASE))
 #define AR_PHY_RTT_TABLE_SW_INTF_1_B(i)	(0x388 + ((i) ? \
 					AR_SM1_BASE : AR_SM_BASE))
+=======
+#define AR_PHY_SWITCH_CHAIN_1    (AR_SM1_BASE + 0x84)
+#define AR_PHY_FCAL_2_1          (AR_SM1_BASE + 0xd0)
+#define AR_PHY_DFT_TONE_CTL_1    (AR_SM1_BASE + 0xd4)
+#define AR_PHY_CL_TAB_1          (AR_SM1_BASE + 0x100)
+#define AR_PHY_CHAN_INFO_GAIN_1  (AR_SM1_BASE + 0x180)
+#define AR_PHY_TPC_4_B1          (AR_SM1_BASE + 0x204)
+#define AR_PHY_TPC_5_B1          (AR_SM1_BASE + 0x208)
+#define AR_PHY_TPC_6_B1          (AR_SM1_BASE + 0x20c)
+#define AR_PHY_TPC_11_B1         (AR_SM1_BASE + 0x220)
+#define AR_PHY_PDADC_TAB_1       (AR_SM1_BASE + 0x240)
+#define AR_PHY_TX_IQCAL_STATUS_B1   (AR_SM1_BASE + 0x48c)
+#define AR_PHY_TX_IQCAL_CORR_COEFF_B1(_i)    (AR_SM1_BASE + 0x450 + ((_i) << 2))
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Channel 2 Register Map
  */
@@ -1004,6 +1065,7 @@
 
 #define AR_PHY_RSSI_3            (AR_AGC3_BASE + 0x180)
 
+<<<<<<< HEAD
 /* GLB Registers */
 #define AR_GLB_BASE	0x20000
 #define AR_GLB_GPIO_CONTROL	(AR_GLB_BASE)
@@ -1012,6 +1074,8 @@
 					(AR_SREV_9462_20(_ah) ? 0x4c : 0x50))
 #define AR_GLB_STATUS		(AR_GLB_BASE + 0x48)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Misc helper defines
  */
@@ -1219,7 +1283,11 @@
 #define AR_PHY_POWERTX_RATE8_POWERTXHT40_5	0x3F00
 #define AR_PHY_POWERTX_RATE8_POWERTXHT40_5_S	8
 
+<<<<<<< HEAD
 #define AR_PHY_CL_TAB_CL_GAIN_MOD		0x1f
 #define AR_PHY_CL_TAB_CL_GAIN_MOD_S		0
+=======
+void ar9003_hw_set_chain_masks(struct ath_hw *ah, u8 rx, u8 tx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif  /* AR9003_PHY_H */

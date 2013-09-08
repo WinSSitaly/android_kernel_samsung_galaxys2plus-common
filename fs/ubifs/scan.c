@@ -148,7 +148,11 @@ struct ubifs_scan_leb *ubifs_start_scan(const struct ubifs_info *c, int lnum,
 	INIT_LIST_HEAD(&sleb->nodes);
 	sleb->buf = sbuf;
 
+<<<<<<< HEAD
 	err = ubifs_leb_read(c, lnum, sbuf + offs, offs, c->leb_size - offs, 0);
+=======
+	err = ubi_read(c->ubi, lnum, sbuf + offs, offs, c->leb_size - offs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err && err != -EBADMSG) {
 		ubifs_err("cannot read %d bytes from LEB %d:%d,"
 			  " error %d", c->leb_size - offs, lnum, offs, err);
@@ -240,7 +244,11 @@ void ubifs_scanned_corruption(const struct ubifs_info *c, int lnum, int offs,
 	int len;
 
 	ubifs_err("corruption at LEB %d:%d", lnum, offs);
+<<<<<<< HEAD
 	if (dbg_is_tst_rcvry(c))
+=======
+	if (dbg_failure_mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	len = c->leb_size - offs;
 	if (len > 8192)

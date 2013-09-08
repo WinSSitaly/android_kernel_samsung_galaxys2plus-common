@@ -243,7 +243,10 @@ int dvb_register_device(struct dvb_adapter *adap, struct dvb_device **pdvbdev,
 	if (minor == MAX_DVB_MINORS) {
 		kfree(dvbdevfops);
 		kfree(dvbdev);
+<<<<<<< HEAD
 		up_write(&minor_rwsem);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mutex_unlock(&dvbdev_register_lock);
 		return -EINVAL;
 	}
@@ -451,7 +454,11 @@ static int dvb_uevent(struct device *dev, struct kobj_uevent_env *env)
 	return 0;
 }
 
+<<<<<<< HEAD
 static char *dvb_devnode(struct device *dev, umode_t *mode)
+=======
+static char *dvb_devnode(struct device *dev, mode_t *mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dvb_device *dvbdev = dev_get_drvdata(dev);
 

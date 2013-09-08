@@ -29,10 +29,13 @@
 #include <plat/usb.h>
 #include <plat/board.h>
 
+<<<<<<< HEAD
 #include <mach/hardware.h>
 
 #include "../mach-omap2/common.h"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef	CONFIG_ARCH_OMAP_OTG
 
 void __init

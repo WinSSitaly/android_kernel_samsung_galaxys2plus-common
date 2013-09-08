@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2010-2012 B.A.T.M.A.N. contributors:
+=======
+ * Copyright (C) 2010-2011 B.A.T.M.A.N. contributors:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Andreas Langer
  *
@@ -39,8 +43,13 @@ static struct sk_buff *frag_merge_packet(struct list_head *head,
 		(struct unicast_frag_packet *)skb->data;
 	struct sk_buff *tmp_skb;
 	struct unicast_packet *unicast_packet;
+<<<<<<< HEAD
 	int hdr_len = sizeof(*unicast_packet);
 	int uni_diff = sizeof(*up) - hdr_len;
+=======
+	int hdr_len = sizeof(struct unicast_packet);
+	int uni_diff = sizeof(struct unicast_frag_packet) - hdr_len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* set skb to the first part and tmp_skb to the second part */
 	if (up->flags & UNI_FRAG_HEAD) {
@@ -53,7 +62,11 @@ static struct sk_buff *frag_merge_packet(struct list_head *head,
 	if (skb_linearize(skb) < 0 || skb_linearize(tmp_skb) < 0)
 		goto err;
 
+<<<<<<< HEAD
 	skb_pull(tmp_skb, sizeof(*up));
+=======
+	skb_pull(tmp_skb, sizeof(struct unicast_frag_packet));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pskb_expand_head(skb, 0, tmp_skb->len, GFP_ATOMIC) < 0)
 		goto err;
 
@@ -66,8 +79,13 @@ static struct sk_buff *frag_merge_packet(struct list_head *head,
 	kfree_skb(tmp_skb);
 
 	memmove(skb->data + uni_diff, skb->data, hdr_len);
+<<<<<<< HEAD
 	unicast_packet = (struct unicast_packet *)skb_pull(skb, uni_diff);
 	unicast_packet->header.packet_type = BAT_UNICAST;
+=======
+	unicast_packet = (struct unicast_packet *) skb_pull(skb, uni_diff);
+	unicast_packet->packet_type = BAT_UNICAST;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return skb;
 
@@ -99,7 +117,12 @@ static int frag_create_buffer(struct list_head *head)
 	struct frag_packet_list_entry *tfp;
 
 	for (i = 0; i < FRAG_BUFFER_SIZE; i++) {
+<<<<<<< HEAD
 		tfp = kmalloc(sizeof(*tfp), GFP_ATOMIC);
+=======
+		tfp = kmalloc(sizeof(struct frag_packet_list_entry),
+			GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!tfp) {
 			frag_list_free(head);
 			return -ENOMEM;
@@ -114,7 +137,11 @@ static int frag_create_buffer(struct list_head *head)
 }
 
 static struct frag_packet_list_entry *frag_search_packet(struct list_head *head,
+<<<<<<< HEAD
 					   const struct unicast_frag_packet *up)
+=======
+						 struct unicast_frag_packet *up)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct frag_packet_list_entry *tfp;
 	struct unicast_frag_packet *tmp_up = NULL;
@@ -217,14 +244,23 @@ out:
 }
 
 int frag_send_skb(struct sk_buff *skb, struct bat_priv *bat_priv,
+<<<<<<< HEAD
 		  struct hard_iface *hard_iface, const uint8_t dstaddr[])
+=======
+		  struct hard_iface *hard_iface, uint8_t dstaddr[])
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct unicast_packet tmp_uc, *unicast_packet;
 	struct hard_iface *primary_if;
 	struct sk_buff *frag_skb;
 	struct unicast_frag_packet *frag1, *frag2;
+<<<<<<< HEAD
 	int uc_hdr_len = sizeof(*unicast_packet);
 	int ucf_hdr_len = sizeof(*frag1);
+=======
+	int uc_hdr_len = sizeof(struct unicast_packet);
+	int ucf_hdr_len = sizeof(struct unicast_frag_packet);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int data_len = skb->len - uc_hdr_len;
 	int large_tail = 0, ret = NET_RX_DROP;
 	uint16_t seqno;
@@ -238,7 +274,11 @@ int frag_send_skb(struct sk_buff *skb, struct bat_priv *bat_priv,
 		goto dropped;
 	skb_reserve(frag_skb, ucf_hdr_len);
 
+<<<<<<< HEAD
 	unicast_packet = (struct unicast_packet *)skb->data;
+=======
+	unicast_packet = (struct unicast_packet *) skb->data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy(&tmp_uc, unicast_packet, uc_hdr_len);
 	skb_split(skb, frag_skb, data_len / 2 + uc_hdr_len);
 
@@ -249,6 +289,7 @@ int frag_send_skb(struct sk_buff *skb, struct bat_priv *bat_priv,
 	frag1 = (struct unicast_frag_packet *)skb->data;
 	frag2 = (struct unicast_frag_packet *)frag_skb->data;
 
+<<<<<<< HEAD
 	memcpy(frag1, &tmp_uc, sizeof(tmp_uc));
 
 	frag1->header.ttl--;
@@ -257,6 +298,16 @@ int frag_send_skb(struct sk_buff *skb, struct bat_priv *bat_priv,
 
 	memcpy(frag1->orig, primary_if->net_dev->dev_addr, ETH_ALEN);
 	memcpy(frag2, frag1, sizeof(*frag2));
+=======
+	memcpy(frag1, &tmp_uc, sizeof(struct unicast_packet));
+
+	frag1->ttl--;
+	frag1->version = COMPAT_VERSION;
+	frag1->packet_type = BAT_UNICAST_FRAG;
+
+	memcpy(frag1->orig, primary_if->net_dev->dev_addr, ETH_ALEN);
+	memcpy(frag2, frag1, sizeof(struct unicast_frag_packet));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (data_len & 1)
 		large_tail = UNI_FRAG_LARGETAIL;
@@ -294,15 +345,24 @@ int unicast_send_skb(struct sk_buff *skb, struct bat_priv *bat_priv)
 
 	/* get routing information */
 	if (is_multicast_ether_addr(ethhdr->h_dest)) {
+<<<<<<< HEAD
 		orig_node = gw_get_selected_orig(bat_priv);
+=======
+		orig_node = (struct orig_node *)gw_get_selected_orig(bat_priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (orig_node)
 			goto find_router;
 	}
 
+<<<<<<< HEAD
 	/* check for tt host - increases orig_node refcount.
 	 * returns NULL in case of AP isolation */
 	orig_node = transtable_search(bat_priv, ethhdr->h_source,
 				      ethhdr->h_dest);
+=======
+	/* check for tt host - increases orig_node refcount */
+	orig_node = transtable_search(bat_priv, ethhdr->h_dest);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 find_router:
 	/**
@@ -315,11 +375,19 @@ find_router:
 	if (!neigh_node)
 		goto out;
 
+<<<<<<< HEAD
 	if (my_skb_head_push(skb, sizeof(*unicast_packet)) < 0)
+=======
+	if (neigh_node->if_incoming->if_status != IF_ACTIVE)
+		goto out;
+
+	if (my_skb_head_push(skb, sizeof(struct unicast_packet)) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	unicast_packet = (struct unicast_packet *)skb->data;
 
+<<<<<<< HEAD
 	unicast_packet->header.version = COMPAT_VERSION;
 	/* batman packet type: unicast */
 	unicast_packet->header.packet_type = BAT_UNICAST;
@@ -336,6 +404,21 @@ find_router:
 				neigh_node->if_incoming->net_dev->mtu) {
 		/* send frag skb decreases ttl */
 		unicast_packet->header.ttl++;
+=======
+	unicast_packet->version = COMPAT_VERSION;
+	/* batman packet type: unicast */
+	unicast_packet->packet_type = BAT_UNICAST;
+	/* set unicast ttl */
+	unicast_packet->ttl = TTL;
+	/* copy the destination for faster routing */
+	memcpy(unicast_packet->dest, orig_node->orig, ETH_ALEN);
+
+	if (atomic_read(&bat_priv->fragmentation) &&
+	    data_len + sizeof(struct unicast_packet) >
+				neigh_node->if_incoming->net_dev->mtu) {
+		/* send frag skb decreases ttl */
+		unicast_packet->ttl++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = frag_send_skb(skb, bat_priv,
 				    neigh_node->if_incoming, neigh_node->addr);
 		goto out;

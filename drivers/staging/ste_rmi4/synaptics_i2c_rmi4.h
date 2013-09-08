@@ -34,6 +34,10 @@
  * @irq_type: irq type
  * @x flip: x flip flag
  * @y flip: y flip flag
+<<<<<<< HEAD
+=======
+ * @regulator_en: regulator enable flag
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This structure gives platform data for rmi4.
  */
@@ -42,6 +46,10 @@ struct synaptics_rmi4_platform_data {
 	int irq_type;
 	bool x_flip;
 	bool y_flip;
+<<<<<<< HEAD
+=======
+	bool regulator_en;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif

@@ -50,6 +50,10 @@
 #include <linux/uaccess.h>
 #include <linux/module.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* number of characters left in xmit buffer before select has we have room */
 #define WAKEUP_CHARS 256
@@ -60,7 +64,11 @@
  * controlling the space in the read buffer.
  */
 #define TTY_THRESHOLD_THROTTLE		128 /* now based on remaining room */
+<<<<<<< HEAD
 #define TTY_THRESHOLD_UNTHROTTLE	128
+=======
+#define TTY_THRESHOLD_UNTHROTTLE 	128
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Special byte codes used in the echo buffer to represent operations
@@ -184,6 +192,10 @@ static void reset_buffer_flags(struct tty_struct *tty)
 	tty->canon_head = tty->canon_data = tty->erasing = 0;
 	memset(&tty->read_flags, 0, sizeof tty->read_flags);
 	n_tty_set_room(tty);
+<<<<<<< HEAD
+=======
+	check_unthrottle(tty);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -404,7 +416,11 @@ static ssize_t process_output_block(struct tty_struct *tty,
 				    const unsigned char *buf, unsigned int nr)
 {
 	int	space;
+<<<<<<< HEAD
 	int	i;
+=======
+	int 	i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const unsigned char *cp;
 
 	mutex_lock(&tty->output_lock);
@@ -1529,6 +1545,7 @@ static void n_tty_set_termios(struct tty_struct *tty, struct ktermios *old)
 			tty->real_raw = 0;
 	}
 	n_tty_set_room(tty);
+<<<<<<< HEAD
 	/*
 	 * Fix tty hang when I_IXON(tty) is cleared, but the tty
 	 * been stopped by STOP_CHAR(tty) before it.
@@ -1537,6 +1554,8 @@ static void n_tty_set_termios(struct tty_struct *tty, struct ktermios *old)
 		start_tty(tty);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* The termios change make the tty ready for I/O */
 	wake_up_interruptible(&tty->write_wait);
 	wake_up_interruptible(&tty->read_wait);
@@ -1593,7 +1612,10 @@ static int n_tty_open(struct tty_struct *tty)
 			return -ENOMEM;
 	}
 	reset_buffer_flags(tty);
+<<<<<<< HEAD
 	tty_unthrottle(tty);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tty->column = 0;
 	n_tty_set_termios(tty, NULL);
 	tty->minimum_to_wake = 1;
@@ -1614,7 +1636,11 @@ static inline int input_available_p(struct tty_struct *tty, int amt)
 }
 
 /**
+<<<<<<< HEAD
  *	copy_from_read_buf	-	copy read data directly
+=======
+ * 	copy_from_read_buf	-	copy read data directly
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	@tty: terminal device
  *	@b: user data
  *	@nr: size of data
@@ -1735,8 +1761,12 @@ static ssize_t n_tty_read(struct tty_struct *tty, struct file *file,
 
 do_it_again:
 
+<<<<<<< HEAD
 	if (WARN_ON(!tty->read_buf))
 		return -EAGAIN;
+=======
+	BUG_ON(!tty->read_buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	c = job_control(tty, file);
 	if (c < 0)
@@ -1917,7 +1947,11 @@ do_it_again:
 		if (nr)
 			clear_bit(TTY_PUSH, &tty->flags);
 	} else if (test_and_clear_bit(TTY_PUSH, &tty->flags))
+<<<<<<< HEAD
 		goto do_it_again;
+=======
+		 goto do_it_again;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	n_tty_set_room(tty);
 	return retval;

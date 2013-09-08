@@ -3,9 +3,12 @@
 
 #include <linux/list.h>
 
+<<<<<<< HEAD
 struct pt_regs;
 struct task_struct;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct undef_hook {
 	struct list_head node;
 	u32 instr_mask;
@@ -46,7 +49,11 @@ static inline int in_exception_text(unsigned long ptr)
 	return in ? : __in_irqentry_text(ptr);
 }
 
+<<<<<<< HEAD
 extern void __init early_trap_init(void *);
+=======
+extern void __init early_trap_init(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void dump_backtrace_entry(unsigned long where, unsigned long from, unsigned long frame);
 extern void ptrace_break(struct task_struct *tsk, struct pt_regs *regs);
 

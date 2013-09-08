@@ -1,11 +1,16 @@
 /*
+<<<<<<< HEAD
  *    Copyright IBM Corp. 2007,2011
+=======
+ *    Copyright IBM Corp. 2007
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *    Author(s): Heiko Carstens <heiko.carstens@de.ibm.com>
  */
 
 #define KMSG_COMPONENT "cpu"
 #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
 
+<<<<<<< HEAD
 #include <linux/workqueue.h>
 #include <linux/bootmem.h>
 #include <linux/cpuset.h>
@@ -17,6 +22,19 @@
 #include <linux/cpu.h>
 #include <linux/smp.h>
 #include <linux/mm.h>
+=======
+#include <linux/kernel.h>
+#include <linux/mm.h>
+#include <linux/init.h>
+#include <linux/device.h>
+#include <linux/bootmem.h>
+#include <linux/sched.h>
+#include <linux/workqueue.h>
+#include <linux/cpu.h>
+#include <linux/smp.h>
+#include <linux/cpuset.h>
+#include <asm/delay.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PTF_HORIZONTAL	(0UL)
 #define PTF_VERTICAL	(1UL)
@@ -31,6 +49,10 @@ struct mask_info {
 static int topology_enabled = 1;
 static void topology_work_fn(struct work_struct *work);
 static struct sysinfo_15_1_x *tl_info;
+<<<<<<< HEAD
+=======
+static struct timer_list topology_timer;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void set_topology_timer(void);
 static DECLARE_WORK(topology_work, topology_work_fn);
 /* topology_lock protects the core linked list */
@@ -40,12 +62,20 @@ static struct mask_info core_info;
 cpumask_t cpu_core_map[NR_CPUS];
 unsigned char cpu_core_id[NR_CPUS];
 
+<<<<<<< HEAD
 static struct mask_info book_info;
 cpumask_t cpu_book_map[NR_CPUS];
 unsigned char cpu_book_id[NR_CPUS];
 
 /* smp_cpu_state_mutex must be held when accessing this array */
 int cpu_polarization[NR_CPUS];
+=======
+#ifdef CONFIG_SCHED_BOOK
+static struct mask_info book_info;
+cpumask_t cpu_book_map[NR_CPUS];
+unsigned char cpu_book_id[NR_CPUS];
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static cpumask_t cpu_group_map(struct mask_info *info, unsigned int cpu)
 {
@@ -68,10 +98,15 @@ static cpumask_t cpu_group_map(struct mask_info *info, unsigned int cpu)
 	return mask;
 }
 
+<<<<<<< HEAD
 static struct mask_info *add_cpus_to_mask(struct topology_cpu *tl_cpu,
 					  struct mask_info *book,
 					  struct mask_info *core,
 					  int one_core_per_cpu)
+=======
+static void add_cpus_to_mask(struct topology_cpu *tl_cpu,
+			     struct mask_info *book, struct mask_info *core)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int cpu;
 
@@ -79,6 +114,7 @@ static struct mask_info *add_cpus_to_mask(struct topology_cpu *tl_cpu,
 	     cpu < TOPOLOGY_CPU_BITS;
 	     cpu = find_next_bit(&tl_cpu->mask[0], TOPOLOGY_CPU_BITS, cpu + 1))
 	{
+<<<<<<< HEAD
 		unsigned int rcpu;
 		int lcpu;
 
@@ -98,6 +134,23 @@ static struct mask_info *add_cpus_to_mask(struct topology_cpu *tl_cpu,
 		}
 	}
 	return core;
+=======
+		unsigned int rcpu, lcpu;
+
+		rcpu = TOPOLOGY_CPU_BITS - 1 - cpu + tl_cpu->origin;
+		for_each_present_cpu(lcpu) {
+			if (cpu_logical_map(lcpu) != rcpu)
+				continue;
+#ifdef CONFIG_SCHED_BOOK
+			cpumask_set_cpu(lcpu, &book->mask);
+			cpu_book_id[lcpu] = book->id;
+#endif
+			cpumask_set_cpu(lcpu, &core->mask);
+			cpu_core_id[lcpu] = core->id;
+			smp_cpu_polarization[lcpu] = tl_cpu->pp;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void clear_masks(void)
@@ -109,11 +162,19 @@ static void clear_masks(void)
 		cpumask_clear(&info->mask);
 		info = info->next;
 	}
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SCHED_BOOK
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info = &book_info;
 	while (info) {
 		cpumask_clear(&info->mask);
 		info = info->next;
 	}
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static union topology_entry *next_tle(union topology_entry *tle)
@@ -123,25 +184,50 @@ static union topology_entry *next_tle(union topology_entry *tle)
 	return (union topology_entry *)((struct topology_container *)tle + 1);
 }
 
+<<<<<<< HEAD
 static void __tl_to_cores_generic(struct sysinfo_15_1_x *info)
 {
 	struct mask_info *core = &core_info;
 	struct mask_info *book = &book_info;
 	union topology_entry *tle, *end;
 
+=======
+static void tl_to_cores(struct sysinfo_15_1_x *info)
+{
+#ifdef CONFIG_SCHED_BOOK
+	struct mask_info *book = &book_info;
+#else
+	struct mask_info *book = NULL;
+#endif
+	struct mask_info *core = &core_info;
+	union topology_entry *tle, *end;
+
+
+	spin_lock_irq(&topology_lock);
+	clear_masks();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tle = info->tle;
 	end = (union topology_entry *)((unsigned long)info + info->length);
 	while (tle < end) {
 		switch (tle->nl) {
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SCHED_BOOK
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case 2:
 			book = book->next;
 			book->id = tle->container.id;
 			break;
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case 1:
 			core = core->next;
 			core->id = tle->container.id;
 			break;
 		case 0:
+<<<<<<< HEAD
 			add_cpus_to_mask(&tle->cpu, book, core, 0);
 			break;
 		default:
@@ -192,6 +278,17 @@ static void tl_to_cores(struct sysinfo_15_1_x *info)
 	default:
 		__tl_to_cores_generic(info);
 	}
+=======
+			add_cpus_to_mask(&tle->cpu, book, core);
+			break;
+		default:
+			clear_masks();
+			goto out;
+		}
+		tle = next_tle(tle);
+	}
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irq(&topology_lock);
 }
 
@@ -201,7 +298,11 @@ static void topology_update_polarization_simple(void)
 
 	mutex_lock(&smp_cpu_state_mutex);
 	for_each_possible_cpu(cpu)
+<<<<<<< HEAD
 		cpu_set_polarization(cpu, POLARIZATION_HRZ);
+=======
+		smp_cpu_polarization[cpu] = POLARIZATION_HRZ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&smp_cpu_state_mutex);
 }
 
@@ -220,7 +321,12 @@ static int ptf(unsigned long fc)
 
 int topology_set_cpu_management(int fc)
 {
+<<<<<<< HEAD
 	int cpu, rc;
+=======
+	int cpu;
+	int rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!MACHINE_HAS_TOPOLOGY)
 		return -EOPNOTSUPP;
@@ -231,7 +337,11 @@ int topology_set_cpu_management(int fc)
 	if (rc)
 		return -EBUSY;
 	for_each_possible_cpu(cpu)
+<<<<<<< HEAD
 		cpu_set_polarization(cpu, POLARIZATION_UNKNOWN);
+=======
+		smp_cpu_polarization[cpu] = POLARIZATION_UNKNWN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -243,25 +353,43 @@ static void update_cpu_core_map(void)
 	spin_lock_irqsave(&topology_lock, flags);
 	for_each_possible_cpu(cpu) {
 		cpu_core_map[cpu] = cpu_group_map(&core_info, cpu);
+<<<<<<< HEAD
 		cpu_book_map[cpu] = cpu_group_map(&book_info, cpu);
+=======
+#ifdef CONFIG_SCHED_BOOK
+		cpu_book_map[cpu] = cpu_group_map(&book_info, cpu);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	spin_unlock_irqrestore(&topology_lock, flags);
 }
 
 void store_topology(struct sysinfo_15_1_x *info)
 {
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SCHED_BOOK
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rc;
 
 	rc = stsi(info, 15, 1, 3);
 	if (rc != -ENOSYS)
 		return;
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	stsi(info, 15, 1, 2);
 }
 
 int arch_update_cpu_topology(void)
 {
 	struct sysinfo_15_1_x *info = tl_info;
+<<<<<<< HEAD
 	struct device *dev;
+=======
+	struct sys_device *sysdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int cpu;
 
 	if (!MACHINE_HAS_TOPOLOGY) {
@@ -273,8 +401,13 @@ int arch_update_cpu_topology(void)
 	tl_to_cores(info);
 	update_cpu_core_map();
 	for_each_online_cpu(cpu) {
+<<<<<<< HEAD
 		dev = get_cpu_device(cpu);
 		kobject_uevent(&dev->kobj, KOBJ_CHANGE);
+=======
+		sysdev = get_cpu_sysdev(cpu);
+		kobject_uevent(&sysdev->kobj, KOBJ_CHANGE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 1;
 }
@@ -296,6 +429,7 @@ static void topology_timer_fn(unsigned long ignored)
 	set_topology_timer();
 }
 
+<<<<<<< HEAD
 static struct timer_list topology_timer =
 	TIMER_DEFERRED_INITIALIZER(topology_timer_fn, 0, 0);
 
@@ -320,6 +454,14 @@ void topology_expect_change(void)
 		return;
 	atomic_add(60, &topology_poll);
 	set_topology_timer();
+=======
+static void set_topology_timer(void)
+{
+	topology_timer.function = topology_timer_fn;
+	topology_timer.data = 0;
+	topology_timer.expires = jiffies + 60 * HZ;
+	add_timer(&topology_timer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __init early_parse_topology(char *p)
@@ -331,8 +473,30 @@ static int __init early_parse_topology(char *p)
 }
 early_param("topology", early_parse_topology);
 
+<<<<<<< HEAD
 static void __init alloc_masks(struct sysinfo_15_1_x *info,
 			       struct mask_info *mask, int offset)
+=======
+static int __init init_topology_update(void)
+{
+	int rc;
+
+	rc = 0;
+	if (!MACHINE_HAS_TOPOLOGY) {
+		topology_update_polarization_simple();
+		goto out;
+	}
+	init_timer_deferrable(&topology_timer);
+	set_topology_timer();
+out:
+	update_cpu_core_map();
+	return rc;
+}
+__initcall(init_topology_update);
+
+static void alloc_masks(struct sysinfo_15_1_x *info, struct mask_info *mask,
+			int offset)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i, nr_masks;
 
@@ -358,6 +522,7 @@ void __init s390_init_cpu_topology(void)
 	store_topology(info);
 	pr_info("The CPU configuration topology of the machine is:");
 	for (i = 0; i < TOPOLOGY_NR_MAG; i++)
+<<<<<<< HEAD
 		printk(KERN_CONT " %d", info->mag[i]);
 	printk(KERN_CONT " / %d\n", info->mnest);
 	alloc_masks(info, &core_info, 1);
@@ -463,3 +628,12 @@ out:
 	return device_create_file(cpu_subsys.dev_root, &dev_attr_dispatching);
 }
 device_initcall(topology_init);
+=======
+		printk(" %d", info->mag[i]);
+	printk(" / %d\n", info->mnest);
+	alloc_masks(info, &core_info, 2);
+#ifdef CONFIG_SCHED_BOOK
+	alloc_masks(info, &book_info, 3);
+#endif
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

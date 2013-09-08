@@ -135,7 +135,11 @@
 
 /* Kernel module parameters */
 extern int force_sensor;
+<<<<<<< HEAD
 extern bool dump_sensor;
+=======
+extern int dump_sensor;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int ov9650_probe(struct sd *sd);
 int ov9650_init(struct sd *sd);

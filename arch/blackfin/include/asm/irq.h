@@ -38,4 +38,11 @@
 
 #include <asm-generic/irq.h>
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_NMI_WATCHDOG
+# define ARCH_HAS_NMI_WATCHDOG
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif				/* _BFIN_IRQ_H_ */

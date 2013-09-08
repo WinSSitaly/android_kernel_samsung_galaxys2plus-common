@@ -13,9 +13,15 @@
 #include <linux/interrupt.h>
 #include <linux/mtd/physmap.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/sh_eth.h>
 #include <asm/machvec.h>
 #include <asm/sizes.h>
+=======
+#include <asm/machvec.h>
+#include <asm/sizes.h>
+#include <asm/sh_eth.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* NOR Flash */
 static struct mtd_partition espt_nor_flash_partitions[] = {

@@ -19,8 +19,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/types.h>
@@ -41,7 +44,11 @@
 static int verbose;
 static int port = 0x91;
 static int ticks = 10000;
+<<<<<<< HEAD
 static DEFINE_SPINLOCK(cpu5wdt_lock);
+=======
+static spinlock_t cpu5wdt_lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PFX			"cpu5wdt: "
 
@@ -73,7 +80,11 @@ static struct {
 static void cpu5wdt_trigger(unsigned long unused)
 {
 	if (verbose > 2)
+<<<<<<< HEAD
 		pr_debug("trigger at %i ticks\n", ticks);
+=======
+		printk(KERN_DEBUG PFX "trigger at %i ticks\n", ticks);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (cpu5wdt_device.running)
 		ticks--;
@@ -98,7 +109,11 @@ static void cpu5wdt_reset(void)
 	ticks = cpu5wdt_device.default_ticks;
 
 	if (verbose)
+<<<<<<< HEAD
 		pr_debug("reset (%i ticks)\n", (int) ticks);
+=======
+		printk(KERN_DEBUG PFX "reset (%i ticks)\n", (int) ticks);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 }
 
@@ -131,7 +146,11 @@ static int cpu5wdt_stop(void)
 	ticks = cpu5wdt_device.default_ticks;
 	spin_unlock_irqrestore(&cpu5wdt_lock, flags);
 	if (verbose)
+<<<<<<< HEAD
 		pr_crit("stop not possible\n");
+=======
+		printk(KERN_CRIT PFX "stop not possible\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -EIO;
 }
 
@@ -221,15 +240,27 @@ static int __devinit cpu5wdt_init(void)
 	int err;
 
 	if (verbose)
+<<<<<<< HEAD
 		pr_debug("port=0x%x, verbose=%i\n", port, verbose);
 
 	init_completion(&cpu5wdt_device.stop);
+=======
+		printk(KERN_DEBUG PFX
+				"port=0x%x, verbose=%i\n", port, verbose);
+
+	init_completion(&cpu5wdt_device.stop);
+	spin_lock_init(&cpu5wdt_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cpu5wdt_device.queue = 0;
 	setup_timer(&cpu5wdt_device.timer, cpu5wdt_trigger, 0);
 	cpu5wdt_device.default_ticks = ticks;
 
 	if (!request_region(port, CPU5WDT_EXTENT, PFX)) {
+<<<<<<< HEAD
 		pr_err("request_region failed\n");
+=======
+		printk(KERN_ERR PFX "request_region failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = -EBUSY;
 		goto no_port;
 	}
@@ -238,16 +269,28 @@ static int __devinit cpu5wdt_init(void)
 	val = inb(port + CPU5WDT_STATUS_REG);
 	val = (val >> 2) & 1;
 	if (!val)
+<<<<<<< HEAD
 		pr_info("sorry, was my fault\n");
 
 	err = misc_register(&cpu5wdt_misc);
 	if (err < 0) {
 		pr_err("misc_register failed\n");
+=======
+		printk(KERN_INFO PFX "sorry, was my fault\n");
+
+	err = misc_register(&cpu5wdt_misc);
+	if (err < 0) {
+		printk(KERN_ERR PFX "misc_register failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto no_misc;
 	}
 
 
+<<<<<<< HEAD
 	pr_info("init success\n");
+=======
+	printk(KERN_INFO PFX "init success\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 no_misc:

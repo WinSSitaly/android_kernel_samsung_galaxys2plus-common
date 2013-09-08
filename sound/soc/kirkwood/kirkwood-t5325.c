@@ -25,7 +25,22 @@ static int t5325_hw_params(struct snd_pcm_substream *substream,
 {
 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+<<<<<<< HEAD
 	unsigned int freq;
+=======
+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+	int ret;
+	unsigned int freq, fmt;
+
+	fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBS_CFS;
+	ret = snd_soc_dai_set_fmt(cpu_dai, fmt);
+	if (ret < 0)
+		return ret;
+
+	ret = snd_soc_dai_set_fmt(codec_dai, fmt);
+	if (ret < 0)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	freq = params_rate(params) * 256;
 
@@ -59,10 +74,23 @@ static int t5325_dai_init(struct snd_soc_pcm_runtime *rtd)
 	struct snd_soc_codec *codec = rtd->codec;
 	struct snd_soc_dapm_context *dapm = &codec->dapm;
 
+<<<<<<< HEAD
+=======
+	snd_soc_dapm_new_controls(dapm, t5325_dapm_widgets,
+				ARRAY_SIZE(t5325_dapm_widgets));
+
+	snd_soc_dapm_add_routes(dapm, t5325_route, ARRAY_SIZE(t5325_route));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_soc_dapm_enable_pin(dapm, "Mic Jack");
 	snd_soc_dapm_enable_pin(dapm, "Headphone Jack");
 	snd_soc_dapm_enable_pin(dapm, "Speaker");
 
+<<<<<<< HEAD
+=======
+	snd_soc_dapm_sync(dapm);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -74,12 +102,16 @@ static struct snd_soc_dai_link t5325_dai[] = {
 	.platform_name = "kirkwood-pcm-audio",
 	.codec_dai_name = "alc5621-hifi",
 	.codec_name = "alc562x-codec.0-001a",
+<<<<<<< HEAD
 	.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBS_CFS,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ops = &t5325_ops,
 	.init = t5325_dai_init,
 },
 };
 
+<<<<<<< HEAD
 static struct snd_soc_card t5325 = {
 	.name = "t5325",
 	.owner = THIS_MODULE,
@@ -124,8 +156,51 @@ static struct platform_driver t5325_driver = {
 };
 
 module_platform_driver(t5325_driver);
+=======
+
+static struct snd_soc_card t5325 = {
+	.name = "t5325",
+	.dai_link = t5325_dai,
+	.num_links = ARRAY_SIZE(t5325_dai),
+};
+
+static struct platform_device *t5325_snd_device;
+
+static int __init t5325_init(void)
+{
+	int ret;
+
+	if (!machine_is_t5325())
+		return 0;
+
+	t5325_snd_device = platform_device_alloc("soc-audio", -1);
+	if (!t5325_snd_device)
+		return -ENOMEM;
+
+	platform_set_drvdata(t5325_snd_device,
+			&t5325);
+
+	ret = platform_device_add(t5325_snd_device);
+	if (ret) {
+		printk(KERN_ERR "%s: platform_device_add failed\n", __func__);
+		platform_device_put(t5325_snd_device);
+	}
+
+	return ret;
+}
+module_init(t5325_init);
+
+static void __exit t5325_exit(void)
+{
+	platform_device_unregister(t5325_snd_device);
+}
+module_exit(t5325_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Arnaud Patard <arnaud.patard@rtp-net.org>");
 MODULE_DESCRIPTION("ALSA SoC t5325 audio client");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_ALIAS("platform:t5325-audio");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

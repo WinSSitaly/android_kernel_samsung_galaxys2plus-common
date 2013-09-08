@@ -32,6 +32,7 @@
 
 static inline int dev_is_sata(struct domain_device *dev)
 {
+<<<<<<< HEAD
 	return dev->dev_type == SATA_DEV || dev->dev_type == SATA_PM ||
 	       dev->dev_type == SATA_PM_PORT || dev->dev_type == SATA_PENDING;
 }
@@ -45,6 +46,21 @@ void sas_ata_eh(struct Scsi_Host *shost, struct list_head *work_q,
 void sas_ata_schedule_reset(struct domain_device *dev);
 void sas_ata_wait_eh(struct domain_device *dev);
 void sas_probe_sata(struct asd_sas_port *port);
+=======
+	return (dev->rphy->identify.target_port_protocols & SAS_PROTOCOL_SATA);
+}
+
+int sas_ata_init_host_and_port(struct domain_device *found_dev,
+			       struct scsi_target *starget);
+
+void sas_ata_task_abort(struct sas_task *task);
+void sas_ata_strategy_handler(struct Scsi_Host *shost);
+int sas_ata_timed_out(struct scsi_cmnd *cmd, struct sas_task *task,
+		      enum blk_eh_timer_return *rtn);
+int sas_ata_eh(struct Scsi_Host *shost, struct list_head *work_q,
+	       struct list_head *done_q);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 
 
@@ -52,7 +68,12 @@ static inline int dev_is_sata(struct domain_device *dev)
 {
 	return 0;
 }
+<<<<<<< HEAD
 static inline int sas_ata_init(struct domain_device *dev)
+=======
+static inline int sas_ata_init_host_and_port(struct domain_device *found_dev,
+			       struct scsi_target *starget)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
@@ -64,6 +85,7 @@ static inline void sas_ata_strategy_handler(struct Scsi_Host *shost)
 {
 }
 
+<<<<<<< HEAD
 static inline void sas_ata_eh(struct Scsi_Host *shost, struct list_head *work_q,
 			      struct list_head *done_q)
 {
@@ -85,6 +107,20 @@ static inline int sas_get_ata_info(struct domain_device *dev, struct ex_phy *phy
 {
 	return 0;
 }
+=======
+static inline int sas_ata_timed_out(struct scsi_cmnd *cmd,
+				    struct sas_task *task,
+				    enum blk_eh_timer_return *rtn)
+{
+	return 0;
+}
+static inline int sas_ata_eh(struct Scsi_Host *shost, struct list_head *work_q,
+			     struct list_head *done_q)
+{
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #endif /* _SAS_ATA_H_ */

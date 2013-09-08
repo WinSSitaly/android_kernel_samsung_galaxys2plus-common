@@ -247,7 +247,11 @@ static int ocfs2_set_acl(handle_t *handle,
 	case ACL_TYPE_ACCESS:
 		name_index = OCFS2_XATTR_INDEX_POSIX_ACL_ACCESS;
 		if (acl) {
+<<<<<<< HEAD
 			umode_t mode = inode->i_mode;
+=======
+			mode_t mode = inode->i_mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = posix_acl_equiv_mode(acl, &mode);
 			if (ret < 0)
 				return ret;
@@ -290,13 +294,18 @@ static int ocfs2_set_acl(handle_t *handle,
 	return ret;
 }
 
+<<<<<<< HEAD
 struct posix_acl *ocfs2_iop_get_acl(struct inode *inode, int type)
+=======
+int ocfs2_check_acl(struct inode *inode, int mask, unsigned int flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ocfs2_super *osb;
 	struct buffer_head *di_bh = NULL;
 	struct posix_acl *acl;
 	int ret = -EAGAIN;
 
+<<<<<<< HEAD
 	osb = OCFS2_SB(inode->i_sb);
 	if (!(osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL))
 		return NULL;
@@ -310,12 +319,46 @@ struct posix_acl *ocfs2_iop_get_acl(struct inode *inode, int type)
 	brelse(di_bh);
 
 	return acl;
+=======
+	if (flags & IPERM_FLAG_RCU)
+		return -ECHILD;
+
+	osb = OCFS2_SB(inode->i_sb);
+	if (!(osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL))
+		return ret;
+
+	ret = ocfs2_read_inode_block(inode, &di_bh);
+	if (ret < 0) {
+		mlog_errno(ret);
+		return ret;
+	}
+
+	acl = ocfs2_get_acl_nolock(inode, ACL_TYPE_ACCESS, di_bh);
+
+	brelse(di_bh);
+
+	if (IS_ERR(acl)) {
+		mlog_errno(PTR_ERR(acl));
+		return PTR_ERR(acl);
+	}
+	if (acl) {
+		ret = posix_acl_permission(inode, acl, mask);
+		posix_acl_release(acl);
+		return ret;
+	}
+
+	return -EAGAIN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int ocfs2_acl_chmod(struct inode *inode)
 {
 	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
+<<<<<<< HEAD
 	struct posix_acl *acl;
+=======
+	struct posix_acl *acl, *clone;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	if (S_ISLNK(inode->i_mode))
@@ -327,12 +370,24 @@ int ocfs2_acl_chmod(struct inode *inode)
 	acl = ocfs2_get_acl(inode, ACL_TYPE_ACCESS);
 	if (IS_ERR(acl) || !acl)
 		return PTR_ERR(acl);
+<<<<<<< HEAD
 	ret = posix_acl_chmod(&acl, GFP_KERNEL, inode->i_mode);
 	if (ret)
 		return ret;
 	ret = ocfs2_set_acl(NULL, inode, NULL, ACL_TYPE_ACCESS,
 			    acl, NULL, NULL);
 	posix_acl_release(acl);
+=======
+	clone = posix_acl_clone(acl, GFP_KERNEL);
+	posix_acl_release(acl);
+	if (!clone)
+		return -ENOMEM;
+	ret = posix_acl_chmod_masq(clone, inode->i_mode);
+	if (!ret)
+		ret = ocfs2_set_acl(NULL, inode, NULL, ACL_TYPE_ACCESS,
+				    clone, NULL, NULL);
+	posix_acl_release(clone);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -351,7 +406,11 @@ int ocfs2_init_acl(handle_t *handle,
 	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
 	struct posix_acl *acl = NULL;
 	int ret = 0, ret2;
+<<<<<<< HEAD
 	umode_t mode;
+=======
+	mode_t mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!S_ISLNK(inode->i_mode)) {
 		if (osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL) {
@@ -370,6 +429,11 @@ int ocfs2_init_acl(handle_t *handle,
 		}
 	}
 	if ((osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL) && acl) {
+<<<<<<< HEAD
+=======
+		struct posix_acl *clone;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (S_ISDIR(inode->i_mode)) {
 			ret = ocfs2_set_acl(handle, inode, di_bh,
 					    ACL_TYPE_DEFAULT, acl,
@@ -377,6 +441,7 @@ int ocfs2_init_acl(handle_t *handle,
 			if (ret)
 				goto cleanup;
 		}
+<<<<<<< HEAD
 		mode = inode->i_mode;
 		ret = posix_acl_create(&acl, GFP_NOFS, &mode);
 		if (ret < 0)
@@ -393,6 +458,29 @@ int ocfs2_init_acl(handle_t *handle,
 					    di_bh, ACL_TYPE_ACCESS,
 					    acl, meta_ac, data_ac);
 		}
+=======
+		clone = posix_acl_clone(acl, GFP_NOFS);
+		ret = -ENOMEM;
+		if (!clone)
+			goto cleanup;
+
+		mode = inode->i_mode;
+		ret = posix_acl_create_masq(clone, &mode);
+		if (ret >= 0) {
+			ret2 = ocfs2_acl_set_mode(inode, di_bh, handle, mode);
+			if (ret2) {
+				mlog_errno(ret2);
+				ret = ret2;
+				goto cleanup;
+			}
+			if (ret > 0) {
+				ret = ocfs2_set_acl(handle, inode,
+						    di_bh, ACL_TYPE_ACCESS,
+						    clone, meta_ac, data_ac);
+			}
+		}
+		posix_acl_release(clone);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 cleanup:
 	posix_acl_release(acl);

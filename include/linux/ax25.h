@@ -47,7 +47,11 @@ typedef struct {
 } ax25_address;
 
 struct sockaddr_ax25 {
+<<<<<<< HEAD
 	__kernel_sa_family_t sax25_family;
+=======
+	sa_family_t	sax25_family;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ax25_address	sax25_call;
 	int		sax25_ndigis;
 	/* Digipeater ax25_address sets follow */

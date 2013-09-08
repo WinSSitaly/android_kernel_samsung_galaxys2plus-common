@@ -92,6 +92,7 @@ i915_gem_detect_bit_6_swizzle(struct drm_device *dev)
 	uint32_t swizzle_x = I915_BIT_6_SWIZZLE_UNKNOWN;
 	uint32_t swizzle_y = I915_BIT_6_SWIZZLE_UNKNOWN;
 
+<<<<<<< HEAD
 	if (INTEL_INFO(dev)->gen >= 6) {
 		uint32_t dimm_c0, dimm_c1;
 		dimm_c0 = I915_READ(MAD_DIMM_C0);
@@ -111,6 +112,9 @@ i915_gem_detect_bit_6_swizzle(struct drm_device *dev)
 			swizzle_y = I915_BIT_6_SWIZZLE_NONE;
 		}
 	} else if (IS_GEN5(dev)) {
+=======
+	if (INTEL_INFO(dev)->gen >= 5) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* On Ironlake whatever DRAM config, GPU always do
 		 * same swizzling setup.
 		 */
@@ -122,10 +126,17 @@ i915_gem_detect_bit_6_swizzle(struct drm_device *dev)
 		 */
 		swizzle_x = I915_BIT_6_SWIZZLE_NONE;
 		swizzle_y = I915_BIT_6_SWIZZLE_NONE;
+<<<<<<< HEAD
 	} else if (IS_MOBILE(dev) || (IS_GEN3(dev) && !IS_G33(dev))) {
 		uint32_t dcc;
 
 		/* On 9xx chipsets, channel interleave by the CPU is
+=======
+	} else if (IS_MOBILE(dev)) {
+		uint32_t dcc;
+
+		/* On mobile 9xx chipsets, channel interleave by the CPU is
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * determined by DCC.  For single-channel, neither the CPU
 		 * nor the GPU do swizzling.  For dual channel interleaved,
 		 * the GPU's interleave is bit 9 and 10 for X tiled, and bit
@@ -458,9 +469,20 @@ i915_gem_swizzle_page(struct page *page)
 void
 i915_gem_object_do_bit_17_swizzle(struct drm_i915_gem_object *obj)
 {
+<<<<<<< HEAD
 	int page_count = obj->base.size >> PAGE_SHIFT;
 	int i;
 
+=======
+	struct drm_device *dev = obj->base.dev;
+	drm_i915_private_t *dev_priv = dev->dev_private;
+	int page_count = obj->base.size >> PAGE_SHIFT;
+	int i;
+
+	if (dev_priv->mm.bit_6_swizzle_x != I915_BIT_6_SWIZZLE_9_10_17)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (obj->bit_17 == NULL)
 		return;
 
@@ -477,9 +499,20 @@ i915_gem_object_do_bit_17_swizzle(struct drm_i915_gem_object *obj)
 void
 i915_gem_object_save_bit_17_swizzle(struct drm_i915_gem_object *obj)
 {
+<<<<<<< HEAD
 	int page_count = obj->base.size >> PAGE_SHIFT;
 	int i;
 
+=======
+	struct drm_device *dev = obj->base.dev;
+	drm_i915_private_t *dev_priv = dev->dev_private;
+	int page_count = obj->base.size >> PAGE_SHIFT;
+	int i;
+
+	if (dev_priv->mm.bit_6_swizzle_x != I915_BIT_6_SWIZZLE_9_10_17)
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (obj->bit_17 == NULL) {
 		obj->bit_17 = kmalloc(BITS_TO_LONGS(page_count) *
 					   sizeof(long), GFP_KERNEL);

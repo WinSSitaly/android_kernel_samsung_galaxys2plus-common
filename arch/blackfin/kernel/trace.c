@@ -21,7 +21,10 @@
 #include <asm/fixed_code.h>
 #include <asm/traps.h>
 #include <asm/irq_handler.h>
+<<<<<<< HEAD
 #include <asm/pda.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void decode_address(char *buf, unsigned long address)
 {

@@ -59,7 +59,11 @@ struct nfhd_device {
 	struct gendisk *disk;
 };
 
+<<<<<<< HEAD
 static void nfhd_make_request(struct request_queue *queue, struct bio *bio)
+=======
+static int nfhd_make_request(struct request_queue *queue, struct bio *bio)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct nfhd_device *dev = queue->queuedata;
 	struct bio_vec *bvec;
@@ -76,6 +80,10 @@ static void nfhd_make_request(struct request_queue *queue, struct bio *bio)
 		sec += len;
 	}
 	bio_endio(bio, 0);
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int nfhd_getgeo(struct block_device *bdev, struct hd_geometry *geo)

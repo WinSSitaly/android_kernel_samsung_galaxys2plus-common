@@ -59,9 +59,12 @@ static void cfi_amdstd_resume (struct mtd_info *);
 static int cfi_amdstd_reboot(struct notifier_block *, unsigned long, void *);
 static int cfi_amdstd_secsi_read (struct mtd_info *, loff_t, size_t, size_t *, u_char *);
 
+<<<<<<< HEAD
 static int cfi_amdstd_panic_write(struct mtd_info *mtd, loff_t to, size_t len,
 				  size_t *retlen, const u_char *buf);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void cfi_amdstd_destroy(struct mtd_info *);
 
 struct mtd_info *cfi_cmdset_0002(struct map_info *, int);
@@ -148,7 +151,12 @@ static void fixup_amd_bootblock(struct mtd_info *mtd)
 	if (((major << 8) | minor) < 0x3131) {
 		/* CFI version 1.0 => don't trust bootloc */
 
+<<<<<<< HEAD
 		pr_debug("%s: JEDEC Vendor ID is 0x%02X Device ID is 0x%02X\n",
+=======
+		DEBUG(MTD_DEBUG_LEVEL1,
+			"%s: JEDEC Vendor ID is 0x%02X Device ID is 0x%02X\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			map->name, cfi->mfr, cfi->id);
 
 		/* AFAICS all 29LV400 with a bottom boot block have a device ID
@@ -168,7 +176,12 @@ static void fixup_amd_bootblock(struct mtd_info *mtd)
 			 * the 8-bit device ID.
 			 */
 			(cfi->mfr == CFI_MFR_MACRONIX)) {
+<<<<<<< HEAD
 			pr_debug("%s: Macronix MX29LV400C with bottom boot block"
+=======
+			DEBUG(MTD_DEBUG_LEVEL1,
+				"%s: Macronix MX29LV400C with bottom boot block"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				" detected\n", map->name);
 			extp->TopBottom = 2;	/* bottom boot */
 		} else
@@ -179,7 +192,12 @@ static void fixup_amd_bootblock(struct mtd_info *mtd)
 			extp->TopBottom = 2;	/* bottom boot */
 		}
 
+<<<<<<< HEAD
 		pr_debug("%s: AMD CFI PRI V%c.%c has no boot block field;"
+=======
+		DEBUG(MTD_DEBUG_LEVEL1,
+			"%s: AMD CFI PRI V%c.%c has no boot block field;"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			" deduced %s from Device ID\n", map->name, major, minor,
 			extp->TopBottom == 2 ? "bottom" : "top");
 	}
@@ -191,8 +209,13 @@ static void fixup_use_write_buffers(struct mtd_info *mtd)
 	struct map_info *map = mtd->priv;
 	struct cfi_private *cfi = map->fldrv_priv;
 	if (cfi->cfiq->BufWriteTimeoutTyp) {
+<<<<<<< HEAD
 		pr_debug("Using buffer write method\n" );
 		mtd->_write = cfi_amdstd_write_buffers;
+=======
+		DEBUG(MTD_DEBUG_LEVEL1, "Using buffer write method\n" );
+		mtd->write = cfi_amdstd_write_buffers;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -231,8 +254,13 @@ static void fixup_convert_atmel_pri(struct mtd_info *mtd)
 static void fixup_use_secsi(struct mtd_info *mtd)
 {
 	/* Setup for chips with a secsi area */
+<<<<<<< HEAD
 	mtd->_read_user_prot_reg = cfi_amdstd_secsi_read;
 	mtd->_read_fact_prot_reg = cfi_amdstd_secsi_read;
+=======
+	mtd->read_user_prot_reg = cfi_amdstd_secsi_read;
+	mtd->read_fact_prot_reg = cfi_amdstd_secsi_read;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void fixup_use_erase_chip(struct mtd_info *mtd)
@@ -241,7 +269,11 @@ static void fixup_use_erase_chip(struct mtd_info *mtd)
 	struct cfi_private *cfi = map->fldrv_priv;
 	if ((cfi->cfiq->NumEraseRegions == 1) &&
 		((cfi->cfiq->EraseRegionInfo[0] & 0xffff) == 0)) {
+<<<<<<< HEAD
 		mtd->_erase = cfi_amdstd_erase_chip;
+=======
+		mtd->erase = cfi_amdstd_erase_chip;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 }
@@ -252,8 +284,13 @@ static void fixup_use_erase_chip(struct mtd_info *mtd)
  */
 static void fixup_use_atmel_lock(struct mtd_info *mtd)
 {
+<<<<<<< HEAD
 	mtd->_lock = cfi_atmel_lock;
 	mtd->_unlock = cfi_atmel_unlock;
+=======
+	mtd->lock = cfi_atmel_lock;
+	mtd->unlock = cfi_atmel_unlock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mtd->flags |= MTD_POWERUP_LOCK;
 }
 
@@ -432,21 +469,36 @@ struct mtd_info *cfi_cmdset_0002(struct map_info *map, int primary)
 	mtd->type = MTD_NORFLASH;
 
 	/* Fill in the default mtd operations */
+<<<<<<< HEAD
 	mtd->_erase   = cfi_amdstd_erase_varsize;
 	mtd->_write   = cfi_amdstd_write_words;
 	mtd->_read    = cfi_amdstd_read;
 	mtd->_sync    = cfi_amdstd_sync;
 	mtd->_suspend = cfi_amdstd_suspend;
 	mtd->_resume  = cfi_amdstd_resume;
+=======
+	mtd->erase   = cfi_amdstd_erase_varsize;
+	mtd->write   = cfi_amdstd_write_words;
+	mtd->read    = cfi_amdstd_read;
+	mtd->sync    = cfi_amdstd_sync;
+	mtd->suspend = cfi_amdstd_suspend;
+	mtd->resume  = cfi_amdstd_resume;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mtd->flags   = MTD_CAP_NORFLASH;
 	mtd->name    = map->name;
 	mtd->writesize = 1;
 	mtd->writebufsize = cfi_interleave(cfi) << cfi->cfiq->MaxBufWriteSize;
 
+<<<<<<< HEAD
 	pr_debug("MTD %s(): write buffer size %d\n", __func__,
 			mtd->writebufsize);
 
 	mtd->_panic_write = cfi_amdstd_panic_write;
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "MTD %s(): write buffer size %d\n",
+		__func__, mtd->writebufsize);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mtd->reboot_notifier.notifier_call = cfi_amdstd_reboot;
 
 	if (cfi->cfi_mode==CFI_MODE_CFI){
@@ -774,6 +826,11 @@ static void put_chip(struct map_info *map, struct flchip *chip, unsigned long ad
 
 	case FL_READY:
 	case FL_STATUS:
+<<<<<<< HEAD
+=======
+		/* We should really make set_vpp() count, rather than doing this */
+		DISABLE_VPP(map);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		printk(KERN_ERR "MTD: put_chip() called with oldstate %d!!\n", chip->oldstate);
@@ -1015,9 +1072,19 @@ static int cfi_amdstd_read (struct mtd_info *mtd, loff_t from, size_t len, size_
 	int ret = 0;
 
 	/* ofs: offset within the first chip that the first read should start */
+<<<<<<< HEAD
 	chipnum = (from >> cfi->chipshift);
 	ofs = from - (chipnum <<  cfi->chipshift);
 
+=======
+
+	chipnum = (from >> cfi->chipshift);
+	ofs = from - (chipnum <<  cfi->chipshift);
+
+
+	*retlen = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (len) {
 		unsigned long thislen;
 
@@ -1095,11 +1162,23 @@ static int cfi_amdstd_secsi_read (struct mtd_info *mtd, loff_t from, size_t len,
 	int chipnum;
 	int ret = 0;
 
+<<<<<<< HEAD
 	/* ofs: offset within the first chip that the first read should start */
+=======
+
+	/* ofs: offset within the first chip that the first read should start */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* 8 secsi bytes per chip */
 	chipnum=from>>3;
 	ofs=from & 7;
 
+<<<<<<< HEAD
+=======
+
+	*retlen = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (len) {
 		unsigned long thislen;
 
@@ -1153,7 +1232,11 @@ static int __xipram do_write_oneword(struct map_info *map, struct flchip *chip, 
 		return ret;
 	}
 
+<<<<<<< HEAD
 	pr_debug("MTD %s(): WRITE 0x%.8lx(0x%.8lx)\n",
+=======
+	DEBUG( MTD_DEBUG_LEVEL3, "MTD %s(): WRITE 0x%.8lx(0x%.8lx)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       __func__, adr, datum.x[0] );
 
 	/*
@@ -1164,7 +1247,11 @@ static int __xipram do_write_oneword(struct map_info *map, struct flchip *chip, 
 	 */
 	oldd = map_read(map, adr);
 	if (map_word_equal(map, oldd, datum)) {
+<<<<<<< HEAD
 		pr_debug("MTD %s(): NOP\n",
+=======
+		DEBUG( MTD_DEBUG_LEVEL3, "MTD %s(): NOP\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       __func__);
 		goto op_done;
 	}
@@ -1227,7 +1314,10 @@ static int __xipram do_write_oneword(struct map_info *map, struct flchip *chip, 
 	xip_enable(map, chip, adr);
  op_done:
 	chip->state = FL_READY;
+<<<<<<< HEAD
 	DISABLE_VPP(map);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	put_chip(map, chip, adr);
 	mutex_unlock(&chip->mutex);
 
@@ -1245,6 +1335,13 @@ static int cfi_amdstd_write_words(struct mtd_info *mtd, loff_t to, size_t len,
 	unsigned long ofs, chipstart;
 	DECLARE_WAITQUEUE(wait, current);
 
+<<<<<<< HEAD
+=======
+	*retlen = 0;
+	if (!len)
+		return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	chipnum = to >> cfi->chipshift;
 	ofs = to  - (chipnum << cfi->chipshift);
 	chipstart = cfi->chips[chipnum].start;
@@ -1387,7 +1484,11 @@ static int __xipram do_write_buffer(struct map_info *map, struct flchip *chip,
 
 	datum = map_word_load(map, buf);
 
+<<<<<<< HEAD
 	pr_debug("MTD %s(): WRITE 0x%.8lx(0x%.8lx)\n",
+=======
+	DEBUG( MTD_DEBUG_LEVEL3, "MTD %s(): WRITE 0x%.8lx(0x%.8lx)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       __func__, adr, datum.x[0] );
 
 	XIP_INVAL_CACHED_RANGE(map, adr, len);
@@ -1466,7 +1567,10 @@ static int __xipram do_write_buffer(struct map_info *map, struct flchip *chip,
 	ret = -EIO;
  op_done:
 	chip->state = FL_READY;
+<<<<<<< HEAD
 	DISABLE_VPP(map);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	put_chip(map, chip, adr);
 	mutex_unlock(&chip->mutex);
 
@@ -1484,6 +1588,13 @@ static int cfi_amdstd_write_buffers(struct mtd_info *mtd, loff_t to, size_t len,
 	int chipnum;
 	unsigned long ofs;
 
+<<<<<<< HEAD
+=======
+	*retlen = 0;
+	if (!len)
+		return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	chipnum = to >> cfi->chipshift;
 	ofs = to  - (chipnum << cfi->chipshift);
 
@@ -1549,6 +1660,7 @@ static int cfi_amdstd_write_buffers(struct mtd_info *mtd, loff_t to, size_t len,
 	return 0;
 }
 
+<<<<<<< HEAD
 /*
  * Wait for the flash chip to become ready to write data
  *
@@ -1781,6 +1893,8 @@ static int cfi_amdstd_panic_write(struct mtd_info *mtd, loff_t to, size_t len,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Handle devices with one erase region, that only implement
@@ -1803,7 +1917,11 @@ static int __xipram do_erase_chip(struct map_info *map, struct flchip *chip)
 		return ret;
 	}
 
+<<<<<<< HEAD
 	pr_debug("MTD %s(): ERASE 0x%.8lx\n",
+=======
+	DEBUG( MTD_DEBUG_LEVEL3, "MTD %s(): ERASE 0x%.8lx\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       __func__, chip->start );
 
 	XIP_INVAL_CACHED_RANGE(map, adr, map->size);
@@ -1868,7 +1986,10 @@ static int __xipram do_erase_chip(struct map_info *map, struct flchip *chip)
 
 	chip->state = FL_READY;
 	xip_enable(map, chip, adr);
+<<<<<<< HEAD
 	DISABLE_VPP(map);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	put_chip(map, chip, adr);
 	mutex_unlock(&chip->mutex);
 
@@ -1892,7 +2013,11 @@ static int __xipram do_erase_oneblock(struct map_info *map, struct flchip *chip,
 		return ret;
 	}
 
+<<<<<<< HEAD
 	pr_debug("MTD %s(): ERASE 0x%.8lx\n",
+=======
+	DEBUG( MTD_DEBUG_LEVEL3, "MTD %s(): ERASE 0x%.8lx\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       __func__, adr );
 
 	XIP_INVAL_CACHED_RANGE(map, adr, len);
@@ -1959,7 +2084,10 @@ static int __xipram do_erase_oneblock(struct map_info *map, struct flchip *chip,
 	}
 
 	chip->state = FL_READY;
+<<<<<<< HEAD
 	DISABLE_VPP(map);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	put_chip(map, chip, adr);
 	mutex_unlock(&chip->mutex);
 	return ret;
@@ -2019,7 +2147,12 @@ static int do_atmel_lock(struct map_info *map, struct flchip *chip,
 		goto out_unlock;
 	chip->state = FL_LOCKING;
 
+<<<<<<< HEAD
 	pr_debug("MTD %s(): LOCK 0x%08lx len %d\n", __func__, adr, len);
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "MTD %s(): LOCK 0x%08lx len %d\n",
+	      __func__, adr, len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cfi_send_gen_cmd(0xAA, cfi->addr_unlock1, chip->start, map, cfi,
 			 cfi->device_type, NULL);
@@ -2054,7 +2187,12 @@ static int do_atmel_unlock(struct map_info *map, struct flchip *chip,
 		goto out_unlock;
 	chip->state = FL_UNLOCKING;
 
+<<<<<<< HEAD
 	pr_debug("MTD %s(): LOCK 0x%08lx len %d\n", __func__, adr, len);
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "MTD %s(): LOCK 0x%08lx len %d\n",
+	      __func__, adr, len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cfi_send_gen_cmd(0xAA, cfi->addr_unlock1, chip->start, map, cfi,
 			 cfi->device_type, NULL);

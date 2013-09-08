@@ -16,6 +16,7 @@
 #include <linux/err.h>
 #include <linux/clk.h>
 #include <linux/gpio.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/slab.h>
 #include <linux/mmc/host.h>
@@ -43,6 +44,24 @@
  */
 #define SDHCI_INT_VENDOR_SPEC_DMA_ERR	0x10000000
 
+=======
+#include <linux/slab.h>
+#include <linux/mmc/host.h>
+#include <linux/mmc/sdhci-pltfm.h>
+#include <linux/mmc/mmc.h>
+#include <linux/mmc/sdio.h>
+#include <mach/hardware.h>
+#include <mach/esdhc.h>
+#include "sdhci.h"
+#include "sdhci-pltfm.h"
+#include "sdhci-esdhc.h"
+
+/* VENDOR SPEC register */
+#define SDHCI_VENDOR_SPEC		0xC0
+#define  SDHCI_VENDOR_SPEC_SDIO_QUIRK	0x00000002
+
+#define ESDHC_FLAG_GPIO_FOR_CD_WP	(1 << 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The CMDTYPE of the CMD register (offset 0xE) should be set to
  * "11" when the STOP CMD12 is issued on imx53 to abort one
@@ -56,6 +75,7 @@
  */
 #define ESDHC_FLAG_MULTIBLK_NO_INT	(1 << 1)
 
+<<<<<<< HEAD
 enum imx_esdhc_type {
 	IMX25_ESDHC,
 	IMX35_ESDHC,
@@ -127,6 +147,12 @@ static inline int is_imx6q_usdhc(struct pltfm_imx_data *data)
 {
 	return data->devtype == IMX6Q_USDHC;
 }
+=======
+struct pltfm_imx_data {
+	int flags;
+	u32 scratchpad;
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void esdhc_clrset_le(struct sdhci_host *host, u32 mask, u32 val, int reg)
 {
@@ -140,6 +166,7 @@ static u32 esdhc_readl_le(struct sdhci_host *host, int reg)
 {
 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
 	struct pltfm_imx_data *imx_data = pltfm_host->priv;
+<<<<<<< HEAD
 	struct esdhc_platform_data *boarddata = &imx_data->boarddata;
 
 	/* fake CARD_PRESENT flag */
@@ -148,6 +175,19 @@ static u32 esdhc_readl_le(struct sdhci_host *host, int reg)
 	if (unlikely((reg == SDHCI_PRESENT_STATE)
 			&& gpio_is_valid(boarddata->cd_gpio))) {
 		if (gpio_get_value(boarddata->cd_gpio))
+=======
+
+	/* fake CARD_PRESENT flag on mx25/35 */
+	u32 val = readl(host->ioaddr + reg);
+
+	if (unlikely((reg == SDHCI_PRESENT_STATE)
+			&& (imx_data->flags & ESDHC_FLAG_GPIO_FOR_CD_WP))) {
+		struct esdhc_platform_data *boarddata =
+				host->mmc->parent->platform_data;
+
+		if (boarddata && gpio_is_valid(boarddata->cd_gpio)
+				&& gpio_get_value(boarddata->cd_gpio))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* no card, if a valid gpio says so... */
 			val &= ~SDHCI_CARD_PRESENT;
 		else
@@ -155,6 +195,7 @@ static u32 esdhc_readl_le(struct sdhci_host *host, int reg)
 			val |= SDHCI_CARD_PRESENT;
 	}
 
+<<<<<<< HEAD
 	if (unlikely(reg == SDHCI_CAPABILITIES)) {
 		/* In FSL esdhc IC module, only bit20 is used to indicate the
 		 * ADMA2 capability of esdhc, but this bit is messed up on
@@ -176,6 +217,8 @@ static u32 esdhc_readl_le(struct sdhci_host *host, int reg)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return val;
 }
 
@@ -183,6 +226,7 @@ static void esdhc_writel_le(struct sdhci_host *host, u32 val, int reg)
 {
 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
 	struct pltfm_imx_data *imx_data = pltfm_host->priv;
+<<<<<<< HEAD
 	struct esdhc_platform_data *boarddata = &imx_data->boarddata;
 	u32 data;
 
@@ -210,6 +254,16 @@ static void esdhc_writel_le(struct sdhci_host *host, u32 val, int reg)
 			writel(data, host->ioaddr + SDHCI_HOST_CONTROL);
 		}
 	}
+=======
+
+	if (unlikely((reg == SDHCI_INT_ENABLE || reg == SDHCI_SIGNAL_ENABLE)
+			&& (imx_data->flags & ESDHC_FLAG_GPIO_FOR_CD_WP)))
+		/*
+		 * these interrupts won't work with a custom card_detect gpio
+		 * (only applied to mx25/35)
+		 */
+		val &= ~(SDHCI_INT_CARD_REMOVE | SDHCI_INT_CARD_INSERT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (unlikely((imx_data->flags & ESDHC_FLAG_MULTIBLK_NO_INT)
 				&& (reg == SDHCI_INT_STATUS)
@@ -220,6 +274,7 @@ static void esdhc_writel_le(struct sdhci_host *host, u32 val, int reg)
 			writel(v, host->ioaddr + SDHCI_VENDOR_SPEC);
 	}
 
+<<<<<<< HEAD
 	if (unlikely(reg == SDHCI_INT_ENABLE || reg == SDHCI_SIGNAL_ENABLE)) {
 		if (val & SDHCI_INT_ADMA_ERROR) {
 			val &= ~SDHCI_INT_ADMA_ERROR;
@@ -227,11 +282,14 @@ static void esdhc_writel_le(struct sdhci_host *host, u32 val, int reg)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writel(val, host->ioaddr + reg);
 }
 
 static u16 esdhc_readw_le(struct sdhci_host *host, int reg)
 {
+<<<<<<< HEAD
 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
 	struct pltfm_imx_data *imx_data = pltfm_host->priv;
 
@@ -245,6 +303,10 @@ static u16 esdhc_readw_le(struct sdhci_host *host, int reg)
 			return SDHCI_SPEC_300;
 		}
 	}
+=======
+	if (unlikely(reg == SDHCI_HOST_VERSION))
+		reg ^= 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return readw(host->ioaddr + reg);
 }
@@ -276,6 +338,7 @@ static void esdhc_writew_le(struct sdhci_host *host, u16 val, int reg)
 		     host->cmd->opcode == MMC_SET_BLOCK_COUNT) &&
 	            (imx_data->flags & ESDHC_FLAG_MULTIBLK_NO_INT))
 			val |= SDHCI_CMD_ABORTCMD;
+<<<<<<< HEAD
 
 		if (is_imx6q_usdhc(imx_data)) {
 			u32 m = readl(host->ioaddr + SDHCI_MIX_CTRL);
@@ -287,6 +350,10 @@ static void esdhc_writew_le(struct sdhci_host *host, u16 val, int reg)
 			writel(val << 16 | imx_data->scratchpad,
 			       host->ioaddr + SDHCI_TRANSFER_MODE);
 		}
+=======
+		writel(val << 16 | imx_data->scratchpad,
+			host->ioaddr + SDHCI_TRANSFER_MODE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	case SDHCI_BLOCK_SIZE:
 		val &= ~SDHCI_MAKE_BLKSZ(0x7, 0);
@@ -307,10 +374,15 @@ static void esdhc_writeb_le(struct sdhci_host *host, u8 val, int reg)
 		 */
 		return;
 	case SDHCI_HOST_CONTROL:
+<<<<<<< HEAD
 		/* FSL messed up here, so we can just keep those three */
 		new_val = val & (SDHCI_CTRL_LED | \
 				SDHCI_CTRL_4BITBUS | \
 				SDHCI_CTRL_D3CD);
+=======
+		/* FSL messed up here, so we can just keep those two */
+		new_val = val & (SDHCI_CTRL_LED | SDHCI_CTRL_4BITBUS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* ensure the endianess */
 		new_val |= ESDHC_HOST_CONTROL_LE;
 		/* DMA mode bits are shifted */
@@ -320,6 +392,7 @@ static void esdhc_writeb_le(struct sdhci_host *host, u8 val, int reg)
 		return;
 	}
 	esdhc_clrset_le(host, 0xff, val, reg);
+<<<<<<< HEAD
 
 	/*
 	 * The esdhc has a design violation to SDHC spec which tells
@@ -331,6 +404,8 @@ static void esdhc_writeb_le(struct sdhci_host *host, u8 val, int reg)
 	 */
 	if ((reg == SDHCI_SOFTWARE_RESET) && (val & 1))
 		esdhc_clrset_le(host, 0x7, 0x7, ESDHC_SYSTEM_CONTROL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static unsigned int esdhc_pltfm_get_max_clock(struct sdhci_host *host)
@@ -349,6 +424,7 @@ static unsigned int esdhc_pltfm_get_min_clock(struct sdhci_host *host)
 
 static unsigned int esdhc_pltfm_get_ro(struct sdhci_host *host)
 {
+<<<<<<< HEAD
 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
 	struct pltfm_imx_data *imx_data = pltfm_host->priv;
 	struct esdhc_platform_data *boarddata = &imx_data->boarddata;
@@ -365,6 +441,14 @@ static unsigned int esdhc_pltfm_get_ro(struct sdhci_host *host)
 	}
 
 	return -ENOSYS;
+=======
+	struct esdhc_platform_data *boarddata = host->mmc->parent->platform_data;
+
+	if (boarddata && gpio_is_valid(boarddata->wp_gpio))
+		return gpio_get_value(boarddata->wp_gpio);
+	else
+		return -ENOSYS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct sdhci_ops sdhci_esdhc_ops = {
@@ -376,6 +460,7 @@ static struct sdhci_ops sdhci_esdhc_ops = {
 	.set_clock = esdhc_set_clock,
 	.get_max_clock = esdhc_pltfm_get_max_clock,
 	.get_min_clock = esdhc_pltfm_get_min_clock,
+<<<<<<< HEAD
 	.get_ro = esdhc_pltfm_get_ro,
 };
 
@@ -385,6 +470,8 @@ static struct sdhci_pltfm_data sdhci_esdhc_imx_pdata = {
 			| SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC
 			| SDHCI_QUIRK_BROKEN_CARD_DETECTION,
 	.ops = &sdhci_esdhc_ops,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static irqreturn_t cd_irq(int irq, void *data)
@@ -395,6 +482,7 @@ static irqreturn_t cd_irq(int irq, void *data)
 	return IRQ_HANDLED;
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_OF
 static int __devinit
 sdhci_esdhc_imx_probe_dt(struct platform_device *pdev,
@@ -440,10 +528,17 @@ static int __devinit sdhci_esdhc_imx_probe(struct platform_device *pdev)
 	struct sdhci_pltfm_host *pltfm_host;
 	struct sdhci_host *host;
 	struct esdhc_platform_data *boarddata;
+=======
+static int esdhc_pltfm_init(struct sdhci_host *host, struct sdhci_pltfm_data *pdata)
+{
+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+	struct esdhc_platform_data *boarddata = host->mmc->parent->platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct clk *clk;
 	int err;
 	struct pltfm_imx_data *imx_data;
 
+<<<<<<< HEAD
 	host = sdhci_pltfm_init(pdev, &sdhci_esdhc_imx_pdata);
 	if (IS_ERR(host))
 		return PTR_ERR(host);
@@ -519,14 +614,63 @@ static int __devinit sdhci_esdhc_imx_probe(struct platform_device *pdev)
 		err = gpio_request_one(boarddata->cd_gpio, GPIOF_IN, "ESDHC_CD");
 		if (err) {
 			dev_err(mmc_dev(host->mmc),
+=======
+	clk = clk_get(mmc_dev(host->mmc), NULL);
+	if (IS_ERR(clk)) {
+		dev_err(mmc_dev(host->mmc), "clk err\n");
+		return PTR_ERR(clk);
+	}
+	clk_enable(clk);
+	pltfm_host->clk = clk;
+
+	imx_data = kzalloc(sizeof(struct pltfm_imx_data), GFP_KERNEL);
+	if (!imx_data) {
+		clk_disable(pltfm_host->clk);
+		clk_put(pltfm_host->clk);
+		return -ENOMEM;
+	}
+	pltfm_host->priv = imx_data;
+
+	host->quirks |= SDHCI_QUIRK_BROKEN_TIMEOUT_VAL;
+
+	if (cpu_is_mx25() || cpu_is_mx35()) {
+		/* Fix errata ENGcm07207 present on i.MX25 and i.MX35 */
+		host->quirks |= SDHCI_QUIRK_NO_MULTIBLOCK;
+		/* write_protect can't be routed to controller, use gpio */
+		sdhci_esdhc_ops.get_ro = esdhc_pltfm_get_ro;
+	}
+
+	if (!(cpu_is_mx25() || cpu_is_mx35() || cpu_is_mx51()))
+		imx_data->flags |= ESDHC_FLAG_MULTIBLK_NO_INT;
+
+	if (boarddata) {
+		err = gpio_request_one(boarddata->wp_gpio, GPIOF_IN, "ESDHC_WP");
+		if (err) {
+			dev_warn(mmc_dev(host->mmc),
+				"no write-protect pin available!\n");
+			boarddata->wp_gpio = err;
+		}
+
+		err = gpio_request_one(boarddata->cd_gpio, GPIOF_IN, "ESDHC_CD");
+		if (err) {
+			dev_warn(mmc_dev(host->mmc),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"no card-detect pin available!\n");
 			goto no_card_detect_pin;
 		}
 
+<<<<<<< HEAD
+=======
+		/* i.MX5x has issues to be researched */
+		if (!cpu_is_mx25() && !cpu_is_mx35())
+			goto not_supported;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = request_irq(gpio_to_irq(boarddata->cd_gpio), cd_irq,
 				 IRQF_TRIGGER_FALLING | IRQF_TRIGGER_RISING,
 				 mmc_hostname(host->mmc), host);
 		if (err) {
+<<<<<<< HEAD
 			dev_err(mmc_dev(host->mmc), "request irq error\n");
 			goto no_card_detect_irq;
 		}
@@ -614,3 +758,54 @@ module_platform_driver(sdhci_esdhc_imx_driver);
 MODULE_DESCRIPTION("SDHCI driver for Freescale i.MX eSDHC");
 MODULE_AUTHOR("Wolfram Sang <w.sang@pengutronix.de>");
 MODULE_LICENSE("GPL v2");
+=======
+			dev_warn(mmc_dev(host->mmc), "request irq error\n");
+			goto no_card_detect_irq;
+		}
+
+		imx_data->flags |= ESDHC_FLAG_GPIO_FOR_CD_WP;
+		/* Now we have a working card_detect again */
+		host->quirks &= ~SDHCI_QUIRK_BROKEN_CARD_DETECTION;
+	}
+
+	return 0;
+
+ no_card_detect_irq:
+	gpio_free(boarddata->cd_gpio);
+ no_card_detect_pin:
+	boarddata->cd_gpio = err;
+ not_supported:
+	kfree(imx_data);
+	return 0;
+}
+
+static void esdhc_pltfm_exit(struct sdhci_host *host)
+{
+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+	struct esdhc_platform_data *boarddata = host->mmc->parent->platform_data;
+	struct pltfm_imx_data *imx_data = pltfm_host->priv;
+
+	if (boarddata && gpio_is_valid(boarddata->wp_gpio))
+		gpio_free(boarddata->wp_gpio);
+
+	if (boarddata && gpio_is_valid(boarddata->cd_gpio)) {
+		gpio_free(boarddata->cd_gpio);
+
+		if (!(host->quirks & SDHCI_QUIRK_BROKEN_CARD_DETECTION))
+			free_irq(gpio_to_irq(boarddata->cd_gpio), host);
+	}
+
+	clk_disable(pltfm_host->clk);
+	clk_put(pltfm_host->clk);
+	kfree(imx_data);
+}
+
+struct sdhci_pltfm_data sdhci_esdhc_imx_pdata = {
+	.quirks = ESDHC_DEFAULT_QUIRKS | SDHCI_QUIRK_BROKEN_ADMA
+			| SDHCI_QUIRK_BROKEN_CARD_DETECTION,
+	/* ADMA has issues. Might be fixable */
+	.ops = &sdhci_esdhc_ops,
+	.init = esdhc_pltfm_init,
+	.exit = esdhc_pltfm_exit,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -9,6 +9,7 @@ struct cache_detail;
 struct sunrpc_net {
 	struct proc_dir_entry *proc_net_rpc;
 	struct cache_detail *ip_map_cache;
+<<<<<<< HEAD
 	struct cache_detail *unix_gid_cache;
 	struct cache_detail *rsc_cache;
 	struct cache_detail *rsi_cache;
@@ -23,6 +24,8 @@ struct sunrpc_net {
 	struct rpc_clnt *rpcb_local_clnt4;
 	spinlock_t rpcb_clnt_lock;
 	unsigned int rpcb_users;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 extern int sunrpc_net_id;

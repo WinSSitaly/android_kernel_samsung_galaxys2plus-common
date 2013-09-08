@@ -797,6 +797,7 @@ static void __init a780_init(void)
 }
 
 MACHINE_START(EZX_A780, "Motorola EZX A780")
+<<<<<<< HEAD
 	.atag_offset    = 0x100,
 	.map_io         = pxa27x_map_io,
 	.nr_irqs	= EZX_NR_IRQS,
@@ -805,6 +806,14 @@ MACHINE_START(EZX_A780, "Motorola EZX A780")
 	.timer          = &pxa_timer,
 	.init_machine   = a780_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params    = 0xa0000100,
+	.map_io         = pxa27x_map_io,
+	.nr_irqs	= EZX_NR_IRQS,
+	.init_irq       = pxa27x_init_irq,
+	.timer          = &pxa_timer,
+	.init_machine   = a780_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 
@@ -864,6 +873,7 @@ static void __init e680_init(void)
 }
 
 MACHINE_START(EZX_E680, "Motorola EZX E680")
+<<<<<<< HEAD
 	.atag_offset    = 0x100,
 	.map_io         = pxa27x_map_io,
 	.nr_irqs	= EZX_NR_IRQS,
@@ -872,6 +882,14 @@ MACHINE_START(EZX_E680, "Motorola EZX E680")
 	.timer          = &pxa_timer,
 	.init_machine   = e680_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params    = 0xa0000100,
+	.map_io         = pxa27x_map_io,
+	.nr_irqs	= EZX_NR_IRQS,
+	.init_irq       = pxa27x_init_irq,
+	.timer          = &pxa_timer,
+	.init_machine   = e680_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 
@@ -931,6 +949,7 @@ static void __init a1200_init(void)
 }
 
 MACHINE_START(EZX_A1200, "Motorola EZX A1200")
+<<<<<<< HEAD
 	.atag_offset    = 0x100,
 	.map_io         = pxa27x_map_io,
 	.nr_irqs	= EZX_NR_IRQS,
@@ -939,6 +958,14 @@ MACHINE_START(EZX_A1200, "Motorola EZX A1200")
 	.timer          = &pxa_timer,
 	.init_machine   = a1200_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params    = 0xa0000100,
+	.map_io         = pxa27x_map_io,
+	.nr_irqs	= EZX_NR_IRQS,
+	.init_irq       = pxa27x_init_irq,
+	.timer          = &pxa_timer,
+	.init_machine   = a1200_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 
@@ -1123,6 +1150,7 @@ static void __init a910_init(void)
 }
 
 MACHINE_START(EZX_A910, "Motorola EZX A910")
+<<<<<<< HEAD
 	.atag_offset    = 0x100,
 	.map_io         = pxa27x_map_io,
 	.nr_irqs	= EZX_NR_IRQS,
@@ -1131,6 +1159,14 @@ MACHINE_START(EZX_A910, "Motorola EZX A910")
 	.timer          = &pxa_timer,
 	.init_machine   = a910_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params    = 0xa0000100,
+	.map_io         = pxa27x_map_io,
+	.nr_irqs	= EZX_NR_IRQS,
+	.init_irq       = pxa27x_init_irq,
+	.timer          = &pxa_timer,
+	.init_machine   = a910_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 
@@ -1190,6 +1226,7 @@ static void __init e6_init(void)
 }
 
 MACHINE_START(EZX_E6, "Motorola EZX E6")
+<<<<<<< HEAD
 	.atag_offset    = 0x100,
 	.map_io         = pxa27x_map_io,
 	.nr_irqs	= EZX_NR_IRQS,
@@ -1198,6 +1235,14 @@ MACHINE_START(EZX_E6, "Motorola EZX E6")
 	.timer          = &pxa_timer,
 	.init_machine   = e6_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params    = 0xa0000100,
+	.map_io         = pxa27x_map_io,
+	.nr_irqs	= EZX_NR_IRQS,
+	.init_irq       = pxa27x_init_irq,
+	.timer          = &pxa_timer,
+	.init_machine   = e6_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif
 
@@ -1231,6 +1276,7 @@ static void __init e2_init(void)
 }
 
 MACHINE_START(EZX_E2, "Motorola EZX E2")
+<<<<<<< HEAD
 	.atag_offset    = 0x100,
 	.map_io         = pxa27x_map_io,
 	.nr_irqs	= EZX_NR_IRQS,
@@ -1239,5 +1285,13 @@ MACHINE_START(EZX_E2, "Motorola EZX E2")
 	.timer          = &pxa_timer,
 	.init_machine   = e2_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params    = 0xa0000100,
+	.map_io         = pxa27x_map_io,
+	.nr_irqs	= EZX_NR_IRQS,
+	.init_irq       = pxa27x_init_irq,
+	.timer          = &pxa_timer,
+	.init_machine   = e2_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 #endif

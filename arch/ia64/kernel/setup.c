@@ -59,6 +59,10 @@
 #include <asm/sections.h>
 #include <asm/setup.h>
 #include <asm/smp.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/tlbflush.h>
 #include <asm/unistd.h>
 #include <asm/hpsim.h>
@@ -219,6 +223,7 @@ sort_regions (struct rsvd_region *rsvd_region, int max)
 	}
 }
 
+<<<<<<< HEAD
 /* merge overlaps */
 static int __init
 merge_regions (struct rsvd_region *rsvd_region, int max)
@@ -236,6 +241,8 @@ merge_regions (struct rsvd_region *rsvd_region, int max)
 	return max;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Request address space for all standard resources
  */
@@ -286,7 +293,10 @@ static void __init setup_crashkernel(unsigned long total, int *n)
 	if (ret == 0 && size > 0) {
 		if (!base) {
 			sort_regions(rsvd_region, *n);
+<<<<<<< HEAD
 			*n = merge_regions(rsvd_region, *n);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			base = kdump_find_rsvd_region(size,
 					rsvd_region, *n);
 		}
@@ -390,7 +400,10 @@ reserve_memory (void)
 	BUG_ON(IA64_MAX_RSVD_REGIONS + 1 < n);
 
 	sort_regions(rsvd_region, num_rsvd_regions);
+<<<<<<< HEAD
 	num_rsvd_regions = merge_regions(rsvd_region, num_rsvd_regions);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -485,7 +498,11 @@ mark_bsp_online (void)
 {
 #ifdef CONFIG_SMP
 	/* If we register an early console, allow CPU 0 to printk */
+<<<<<<< HEAD
 	set_cpu_online(smp_processor_id(), true);
+=======
+	cpu_set(smp_processor_id(), cpu_online_map);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }
 

@@ -93,8 +93,11 @@ static int __init early_get_pnodeid(void)
 
 	if (node_id.s.part_number == UV2_HUB_PART_NUMBER)
 		uv_min_hub_revision_id += UV2_HUB_REVISION_BASE - 1;
+<<<<<<< HEAD
 	if (node_id.s.part_number == UV2_HUB_PART_NUMBER_X)
 		uv_min_hub_revision_id += UV2_HUB_REVISION_BASE - 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	uv_hub_info->hub_revision = uv_min_hub_revision_id;
 	pnode = (node_id.s.node_id >> 1) & ((1 << m_n_config.s.n_skt) - 1);
@@ -266,11 +269,14 @@ static void uv_send_IPI_all(int vector)
 	uv_send_IPI_mask(cpu_online_mask, vector);
 }
 
+<<<<<<< HEAD
 static int uv_apic_id_valid(int apicid)
 {
 	return 1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int uv_apic_id_registered(void)
 {
 	return 1;
@@ -356,7 +362,10 @@ static struct apic __refdata apic_x2apic_uv_x = {
 	.name				= "UV large system",
 	.probe				= uv_probe,
 	.acpi_madt_oem_check		= uv_acpi_madt_oem_check,
+<<<<<<< HEAD
 	.apic_id_valid			= uv_apic_id_valid,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.apic_id_registered		= uv_apic_id_registered,
 
 	.irq_delivery_mode		= dest_Fixed,
@@ -680,11 +689,25 @@ void __cpuinit uv_cpu_init(void)
 /*
  * When NMI is received, print a stack trace.
  */
+<<<<<<< HEAD
 int uv_handle_nmi(unsigned int reason, struct pt_regs *regs)
+=======
+int uv_handle_nmi(struct notifier_block *self, unsigned long reason, void *data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long real_uv_nmi;
 	int bid;
 
+<<<<<<< HEAD
+=======
+	if (reason != DIE_NMIUNKNOWN)
+		return NOTIFY_OK;
+
+	if (in_crash_kexec)
+		/* do nothing if entering the crash kernel */
+		return NOTIFY_OK;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Each blade has an MMR that indicates when an NMI has been sent
 	 * to cpus on the blade. If an NMI is detected, atomically
@@ -705,7 +728,11 @@ int uv_handle_nmi(unsigned int reason, struct pt_regs *regs)
 	}
 
 	if (likely(__get_cpu_var(cpu_last_nmi_count) == uv_blade_info[bid].nmi_count))
+<<<<<<< HEAD
 		return NMI_DONE;
+=======
+		return NOTIFY_DONE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	__get_cpu_var(cpu_last_nmi_count) = uv_blade_info[bid].nmi_count;
 
@@ -718,12 +745,26 @@ int uv_handle_nmi(unsigned int reason, struct pt_regs *regs)
 	dump_stack();
 	spin_unlock(&uv_nmi_lock);
 
+<<<<<<< HEAD
 	return NMI_HANDLED;
 }
 
 void uv_register_nmi_notifier(void)
 {
 	if (register_nmi_handler(NMI_UNKNOWN, uv_handle_nmi, 0, "uv"))
+=======
+	return NOTIFY_STOP;
+}
+
+static struct notifier_block uv_dump_stack_nmi_nb = {
+	.notifier_call	= uv_handle_nmi,
+	.priority = NMI_LOCAL_LOW_PRIOR - 1,
+};
+
+void uv_register_nmi_notifier(void)
+{
+	if (register_die_notifier(&uv_dump_stack_nmi_nb))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_WARNING "UV NMI handler failed to register\n");
 }
 

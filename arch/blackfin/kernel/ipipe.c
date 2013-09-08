@@ -31,7 +31,12 @@
 #include <linux/kthread.h>
 #include <linux/unistd.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/irq_handler.h>
 
 DEFINE_PER_CPU(struct pt_regs, __ipipe_tick_regs);

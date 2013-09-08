@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 #ifndef __ASM_MIPSPROM_H
 #define __ASM_MIPSPROM_H
+=======
+#ifndef __ASM_MIPS_PROM_H
+#define __ASM_MIPS_PROM_H
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PROM_RESET		0
 #define PROM_EXEC		1
@@ -73,4 +78,8 @@
 
 extern char *prom_getenv(char *);
 
+<<<<<<< HEAD
 #endif /* __ASM_MIPSPROM_H */
+=======
+#endif /* __ASM_MIPS_PROM_H */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

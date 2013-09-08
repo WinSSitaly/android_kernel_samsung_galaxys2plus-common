@@ -21,8 +21,11 @@
 #include <linux/sched.h>
 #include <linux/slab.h>
 #include <linux/seq_file.h>
+<<<<<<< HEAD
 #include <linux/cryptouser.h>
 #include <net/netlink.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "internal.h"
 
@@ -46,7 +49,11 @@ static int hash_walk_next(struct crypto_hash_walk *walk)
 	unsigned int nbytes = min(walk->entrylen,
 				  ((unsigned int)(PAGE_SIZE)) - offset);
 
+<<<<<<< HEAD
 	walk->data = kmap_atomic(walk->pg);
+=======
+	walk->data = crypto_kmap(walk->pg, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	walk->data += offset;
 
 	if (offset & alignmask) {
@@ -93,7 +100,11 @@ int crypto_hash_walk_done(struct crypto_hash_walk *walk, int err)
 		return nbytes;
 	}
 
+<<<<<<< HEAD
 	kunmap_atomic(walk->data);
+=======
+	crypto_kunmap(walk->data, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	crypto_yield(walk->flags);
 
 	if (err)
@@ -399,6 +410,7 @@ static unsigned int crypto_ahash_extsize(struct crypto_alg *alg)
 	return sizeof(struct crypto_shash *);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_NET
 static int crypto_ahash_report(struct sk_buff *skb, struct crypto_alg *alg)
 {
@@ -424,6 +436,8 @@ static int crypto_ahash_report(struct sk_buff *skb, struct crypto_alg *alg)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void crypto_ahash_show(struct seq_file *m, struct crypto_alg *alg)
 	__attribute__ ((unused));
 static void crypto_ahash_show(struct seq_file *m, struct crypto_alg *alg)
@@ -442,7 +456,10 @@ const struct crypto_type crypto_ahash_type = {
 #ifdef CONFIG_PROC_FS
 	.show = crypto_ahash_show,
 #endif
+<<<<<<< HEAD
 	.report = crypto_ahash_report,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.maskclear = ~CRYPTO_ALG_TYPE_MASK,
 	.maskset = CRYPTO_ALG_TYPE_AHASH_MASK,
 	.type = CRYPTO_ALG_TYPE_AHASH,

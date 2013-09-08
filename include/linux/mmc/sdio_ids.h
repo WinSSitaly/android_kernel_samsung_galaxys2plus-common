@@ -2,8 +2,13 @@
  * SDIO Classes, Interface Types, Manufacturer IDs, etc.
  */
 
+<<<<<<< HEAD
 #ifndef LINUX_MMC_SDIO_IDS_H
 #define LINUX_MMC_SDIO_IDS_H
+=======
+#ifndef MMC_SDIO_IDS_H
+#define MMC_SDIO_IDS_H
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Standard SDIO Function Interfaces
@@ -44,4 +49,13 @@
 #define SDIO_DEVICE_ID_SIANO_NOVA_A0		0x1100
 #define SDIO_DEVICE_ID_SIANO_STELLAR 		0x5347
 
+<<<<<<< HEAD
 #endif /* LINUX_MMC_SDIO_IDS_H */
+=======
+#ifdef CONFIG_BCM_SDIOWL
+#define SDIO_VENDOR_ID_BROADCOM                 0x02d0
+#define SDIO_DEVICE_ID_BROADCOM_4325            0x0000
+#endif
+
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

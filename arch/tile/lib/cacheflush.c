@@ -39,6 +39,7 @@ void finv_buffer_remote(void *buffer, size_t size, int hfh)
 {
 	char *p, *base;
 	size_t step_size, load_count;
+<<<<<<< HEAD
 
 	/*
 	 * On TILEPro the striping granularity is a fixed 8KB; on
@@ -54,6 +55,9 @@ void finv_buffer_remote(void *buffer, size_t size, int hfh)
 	const unsigned long STRIPE_WIDTH = 8192;
 #endif
 
+=======
+	const unsigned long STRIPE_WIDTH = 8192;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef __tilegx__
 	/*
 	 * On TILE-Gx, we must disable the dstream prefetcher before doing
@@ -88,7 +92,11 @@ void finv_buffer_remote(void *buffer, size_t size, int hfh)
 	 * memory, that one load would be sufficient, but since we may
 	 * be, we also need to back up to the last load issued to
 	 * another memory controller, which would be the point where
+<<<<<<< HEAD
 	 * we crossed a "striping" boundary (the granularity of striping
+=======
+	 * we crossed an 8KB boundary (the granularity of striping
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * across memory controllers).  Keep backing up and doing this
 	 * until we are before the beginning of the buffer, or have
 	 * hit all the controllers.
@@ -102,6 +110,7 @@ void finv_buffer_remote(void *buffer, size_t size, int hfh)
 	 * every cache line on a full memory stripe on each
 	 * controller" that we simply do that, to simplify the logic.
 	 *
+<<<<<<< HEAD
 	 * On TILE-Gx the hash-for-home function is much more complex,
 	 * with the upshot being we can't readily guarantee we have
 	 * hit both entries in the 128-entry AMT that were hit by any
@@ -118,6 +127,14 @@ void finv_buffer_remote(void *buffer, size_t size, int hfh)
 		load_count = (STRIPE_WIDTH / L2_CACHE_BYTES) *
 			      (1 << CHIP_LOG_NUM_MSHIMS());
 #endif
+=======
+	 * FIXME: See bug 9535 for some issues with this code.
+	 */
+	if (hfh) {
+		step_size = L2_CACHE_BYTES;
+		load_count = (STRIPE_WIDTH / L2_CACHE_BYTES) *
+			      (1 << CHIP_LOG_NUM_MSHIMS());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		step_size = STRIPE_WIDTH;
 		load_count = (1 << CHIP_LOG_NUM_MSHIMS());
@@ -133,7 +150,11 @@ void finv_buffer_remote(void *buffer, size_t size, int hfh)
 
 	/* Figure out how far back we need to go. */
 	base = p - (step_size * (load_count - 2));
+<<<<<<< HEAD
 	if ((unsigned long)base < (unsigned long)buffer)
+=======
+	if ((long)base < (long)buffer)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		base = buffer;
 
 	/*

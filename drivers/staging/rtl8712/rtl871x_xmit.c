@@ -71,6 +71,11 @@ sint _r8712_init_xmit_priv(struct xmit_priv *pxmitpriv,
 
 	memset((unsigned char *)pxmitpriv, 0, sizeof(struct xmit_priv));
 	spin_lock_init(&pxmitpriv->lock);
+<<<<<<< HEAD
+=======
+	sema_init(&pxmitpriv->xmit_sema, 0);
+	sema_init(&pxmitpriv->terminate_xmitthread_sema, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	Please insert all the queue initializaiton using _init_queue below
 	*/
@@ -119,6 +124,10 @@ sint _r8712_init_xmit_priv(struct xmit_priv *pxmitpriv,
 	_r8712_init_hw_txqueue(&pxmitpriv->bmc_txqueue, BMC_QUEUE_INX);
 	pxmitpriv->frag_len = MAX_FRAG_THRESHOLD;
 	pxmitpriv->txirp_cnt = 1;
+<<<<<<< HEAD
+=======
+	sema_init(&(pxmitpriv->tx_retevt), 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*per AC pending irp*/
 	pxmitpriv->beq_cnt = 0;
 	pxmitpriv->bkq_cnt = 0;
@@ -149,12 +158,20 @@ sint _r8712_init_xmit_priv(struct xmit_priv *pxmitpriv,
 		pxmitbuf++;
 	}
 	pxmitpriv->free_xmitbuf_cnt = NR_XMITBUFF;
+<<<<<<< HEAD
 	_init_workitem(&padapter->wkFilterRxFF0, r8712_SetFilter, padapter);
 	alloc_hwxmits(padapter);
 	init_hwxmits(pxmitpriv->hwxmits, pxmitpriv->hwxmit_entry);
 	tasklet_init(&pxmitpriv->xmit_tasklet,
 		(void(*)(unsigned long))r8712_xmit_bh,
 		(unsigned long)padapter);
+=======
+	alloc_hwxmits(padapter);
+	init_hwxmits(pxmitpriv->hwxmits, pxmitpriv->hwxmit_entry);
+	tasklet_init(&pxmitpriv->xmit_tasklet,
+	     (void(*)(addr_t))r8712_xmit_bh,
+	     (addr_t)padapter);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return _SUCCESS;
 }
 
@@ -610,7 +627,11 @@ sint r8712_xmitframe_coalesce(struct _adapter *padapter, _pkt *pkt,
 	if (make_wlanhdr(padapter, mem_start, pattrib) == _FAIL)
 		return _FAIL;
 	_r8712_open_pktfile(pkt, &pktfile);
+<<<<<<< HEAD
 	_r8712_pktfile_read(&pktfile, NULL, (uint) pattrib->pkt_hdrlen);
+=======
+	_r8712_pktfile_read(&pktfile, NULL, pattrib->pkt_hdrlen);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (check_fwstate(pmlmepriv, WIFI_MP_STATE) == true) {
 		/* truncate TXDESC_SIZE bytes txcmd if at mp mode for 871x */
 		if (pattrib->ether_type == 0x8712) {
@@ -824,6 +845,7 @@ void r8712_free_xmitframe(struct xmit_priv *pxmitpriv,
 	unsigned long irqL;
 	struct  __queue *pfree_xmit_queue = &pxmitpriv->free_xmit_queue;
 	struct _adapter *padapter = pxmitpriv->adapter;
+<<<<<<< HEAD
 	struct sk_buff *pndis_pkt = NULL;
 
 	if (pxmitframe == NULL)
@@ -834,6 +856,15 @@ void r8712_free_xmitframe(struct xmit_priv *pxmitpriv,
 		pndis_pkt = pxmitframe->pkt;
 		pxmitframe->pkt = NULL;
 	}
+=======
+
+	if (pxmitframe == NULL)
+		return;
+	if (pxmitframe->pkt)
+		r8712_xmit_complete(padapter, pxmitframe);
+	spin_lock_irqsave(&pfree_xmit_queue->lock, irqL);
+	list_delete(&pxmitframe->list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_insert_tail(&pxmitframe->list, get_list_head(pfree_xmit_queue));
 	pxmitpriv->free_xmitframe_cnt++;
 	spin_unlock_irqrestore(&pfree_xmit_queue->lock, irqL);
@@ -1012,6 +1043,7 @@ static void init_hwxmits(struct hw_xmit *phwxmit, sint entry)
 	}
 }
 
+<<<<<<< HEAD
 void xmitframe_xmitbuf_attach(struct xmit_frame *pxmitframe,
 			struct xmit_buf *pxmitbuf)
 {
@@ -1025,6 +1057,8 @@ void xmitframe_xmitbuf_attach(struct xmit_frame *pxmitframe,
 	pxmitbuf->priv_data = pxmitframe;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * tx_action == 0 == no frames to transmit
  * tx_action > 0 ==> we have frames to transmit
@@ -1056,7 +1090,13 @@ int r8712_pre_xmit(struct _adapter *padapter, struct xmit_frame *pxmitframe)
 	} else { /*dump packet directly*/
 		spin_unlock_irqrestore(&pxmitpriv->lock, irqL);
 		ret = true;
+<<<<<<< HEAD
 		xmitframe_xmitbuf_attach(pxmitframe, pxmitbuf);
+=======
+		pxmitframe->pxmitbuf = pxmitbuf;
+		pxmitframe->pxmit_urb[0] = pxmitbuf->pxmit_urb[0];
+		pxmitframe->buf_addr = pxmitbuf->pbuf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r8712_xmit_direct(padapter, pxmitframe);
 	}
 	return ret;

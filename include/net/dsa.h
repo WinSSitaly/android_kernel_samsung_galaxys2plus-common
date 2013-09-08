@@ -11,11 +11,14 @@
 #ifndef __LINUX_NET_DSA_H
 #define __LINUX_NET_DSA_H
 
+<<<<<<< HEAD
 #include <linux/if_ether.h>
 #include <linux/list.h>
 #include <linux/timer.h>
 #include <linux/workqueue.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DSA_MAX_SWITCHES	4
 #define DSA_MAX_PORTS		12
 
@@ -59,6 +62,7 @@ struct dsa_platform_data {
 	struct dsa_chip_data	*chip;
 };
 
+<<<<<<< HEAD
 struct dsa_switch_tree {
 	/*
 	 * Configuration data for the platform device that owns
@@ -197,5 +201,10 @@ static inline bool dsa_uses_trailer_tags(struct dsa_switch_tree *dst)
 {
 	return !!(dst->tag_protocol == htons(ETH_P_TRAILER));
 }
+=======
+extern bool dsa_uses_dsa_tags(void *dsa_ptr);
+extern bool dsa_uses_trailer_tags(void *dsa_ptr);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

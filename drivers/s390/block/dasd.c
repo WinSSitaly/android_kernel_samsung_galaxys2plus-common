@@ -11,18 +11,29 @@
 #define KMSG_COMPONENT "dasd"
 #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
 
+<<<<<<< HEAD
+=======
+#include <linux/kernel_stat.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kmod.h>
 #include <linux/init.h>
 #include <linux/interrupt.h>
 #include <linux/ctype.h>
 #include <linux/major.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/hdreg.h>
 #include <linux/async.h>
 #include <linux/mutex.h>
 #include <linux/debugfs.h>
 #include <linux/seq_file.h>
 #include <linux/vmalloc.h>
+=======
+#include <linux/buffer_head.h>
+#include <linux/hdreg.h>
+#include <linux/async.h>
+#include <linux/mutex.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/ccwdev.h>
 #include <asm/ebcdic.h>
@@ -46,7 +57,10 @@
  * SECTION: exported variables of dasd.c
  */
 debug_info_t *dasd_debug_area;
+<<<<<<< HEAD
 static struct dentry *dasd_debugfs_root_entry;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct dasd_discipline *dasd_diag_discipline_pointer;
 void dasd_int_handler(struct ccw_device *, unsigned long, struct irb *);
 
@@ -73,8 +87,11 @@ static void dasd_return_cqr_cb(struct dasd_ccw_req *, void *);
 static void dasd_device_timeout(unsigned long);
 static void dasd_block_timeout(unsigned long);
 static void __dasd_process_erp(struct dasd_device *, struct dasd_ccw_req *);
+<<<<<<< HEAD
 static void dasd_profile_init(struct dasd_profile *, struct dentry *);
 static void dasd_profile_exit(struct dasd_profile *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * SECTION: Operations on the device structure.
@@ -125,7 +142,11 @@ struct dasd_device *dasd_alloc_device(void)
 	device->state = DASD_STATE_NEW;
 	device->target = DASD_STATE_NEW;
 	mutex_init(&device->state_mutex);
+<<<<<<< HEAD
 	spin_lock_init(&device->profile.lock);
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return device;
 }
 
@@ -163,7 +184,10 @@ struct dasd_block *dasd_alloc_block(void)
 	init_timer(&block->timer);
 	block->timer.function = dasd_block_timeout;
 	block->timer.data = (unsigned long) block;
+<<<<<<< HEAD
 	spin_lock_init(&block->profile.lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return block;
 }
@@ -227,6 +251,7 @@ static int dasd_state_known_to_new(struct dasd_device *device)
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct dentry *dasd_debugfs_setup(const char *name,
 					 struct dentry *base_dentry)
 {
@@ -240,11 +265,14 @@ static struct dentry *dasd_debugfs_setup(const char *name,
 	return pde;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Request the irq line for the device.
  */
 static int dasd_state_known_to_basic(struct dasd_device *device)
 {
+<<<<<<< HEAD
 	struct dasd_block *block = device->block;
 	int rc;
 
@@ -265,6 +293,16 @@ static int dasd_state_known_to_basic(struct dasd_device *device)
 				   dasd_debugfs_root_entry);
 	dasd_profile_init(&device->profile, device->debugfs_dentry);
 
+=======
+	int rc;
+
+	/* Allocate and register gendisk structure. */
+	if (device->block) {
+		rc = dasd_gendisk_alloc(device->block);
+		if (rc)
+			return rc;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* register 'device' debug area, used for all DBF_DEV_XXX calls */
 	device->debug_area = debug_register(dev_name(&device->cdev->dev), 4, 1,
 					    8 * sizeof(long));
@@ -283,9 +321,12 @@ static int dasd_state_basic_to_known(struct dasd_device *device)
 {
 	int rc;
 	if (device->block) {
+<<<<<<< HEAD
 		dasd_profile_exit(&device->block->profile);
 		if (device->block->debugfs_dentry)
 			debugfs_remove(device->block->debugfs_dentry);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dasd_gendisk_free(device->block);
 		dasd_block_clear_timer(device->block);
 	}
@@ -293,9 +334,12 @@ static int dasd_state_basic_to_known(struct dasd_device *device)
 	if (rc)
 		return rc;
 	dasd_device_clear_timer(device);
+<<<<<<< HEAD
 	dasd_profile_exit(&device->profile);
 	if (device->debugfs_dentry)
 		debugfs_remove(device->debugfs_dentry);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	DBF_DEV_EVENT(DBF_EMERG, device, "%p debug area deleted", device);
 	if (device->debug_area != NULL) {
@@ -640,15 +684,19 @@ void dasd_enable_device(struct dasd_device *device)
 		dasd_set_target_state(device, DASD_STATE_NEW);
 	/* Now wait for the devices to come up. */
 	wait_event(dasd_init_waitq, _wait_for_device(device));
+<<<<<<< HEAD
 
 	dasd_reload_device(device);
 	if (device->discipline->kick_validate)
 		device->discipline->kick_validate(device);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * SECTION: device operation (interrupt handler, start i/o, term i/o ...)
  */
+<<<<<<< HEAD
 
 unsigned int dasd_global_profile_level = DASD_PROFILE_OFF;
 
@@ -656,6 +704,23 @@ unsigned int dasd_global_profile_level = DASD_PROFILE_OFF;
 struct dasd_profile_info dasd_global_profile_data;
 static struct dentry *dasd_global_profile_dentry;
 static struct dentry *dasd_debugfs_global_entry;
+=======
+#ifdef CONFIG_DASD_PROFILE
+
+struct dasd_profile_info_t dasd_global_profile;
+unsigned int dasd_profile_level = DASD_PROFILE_OFF;
+
+/*
+ * Increments counter in global and local profiling structures.
+ */
+#define dasd_profile_counter(value, counter, block) \
+{ \
+	int index; \
+	for (index = 0; index < 31 && value >> (2+index); index++); \
+	dasd_global_profile.counter[index]++; \
+	block->profile.counter[index]++; \
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Add profiling information for cqr before execution.
@@ -666,6 +731,7 @@ static void dasd_profile_start(struct dasd_block *block,
 {
 	struct list_head *l;
 	unsigned int counter;
+<<<<<<< HEAD
 	struct dasd_device *device;
 
 	/* count the length of the chanq for statistics */
@@ -707,11 +773,25 @@ static void dasd_profile_start(struct dasd_block *block,
 			device->profile.data->dasd_read_nr_req[counter]++;
 	}
 	spin_unlock(&device->profile.lock);
+=======
+
+	if (dasd_profile_level != DASD_PROFILE_ON)
+		return;
+
+	/* count the length of the chanq for statistics */
+	counter = 0;
+	list_for_each(l, &block->ccw_queue)
+		if (++counter >= 31)
+			break;
+	dasd_global_profile.dasd_io_nr_req[counter]++;
+	block->profile.dasd_io_nr_req[counter]++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * Add profiling information for cqr after execution.
  */
+<<<<<<< HEAD
 
 #define dasd_profile_counter(value, index)			   \
 {								   \
@@ -767,12 +847,15 @@ static void dasd_profile_end_add_data(struct dasd_profile_info *data,
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void dasd_profile_end(struct dasd_block *block,
 			     struct dasd_ccw_req *cqr,
 			     struct request *req)
 {
 	long strtime, irqtime, endtime, tottime;	/* in microseconds */
 	long tottimeps, sectors;
+<<<<<<< HEAD
 	struct dasd_device *device;
 	int sectors_ind, tottime_ind, tottimeps_ind, strtime_ind;
 	int irqtime_ind, irqtimeps_ind, endtime_ind;
@@ -781,6 +864,10 @@ static void dasd_profile_end(struct dasd_block *block,
 	if (!(dasd_global_profile_level ||
 	      block->profile.data ||
 	      device->profile.data))
+=======
+
+	if (dasd_profile_level != DASD_PROFILE_ON)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	sectors = blk_rq_sectors(req);
@@ -795,6 +882,7 @@ static void dasd_profile_end(struct dasd_block *block,
 	tottime = ((cqr->endclk - cqr->buildclk) >> 12);
 	tottimeps = tottime / sectors;
 
+<<<<<<< HEAD
 	dasd_profile_counter(sectors, sectors_ind);
 	dasd_profile_counter(tottime, tottime_ind);
 	dasd_profile_counter(tottimeps, tottimeps_ind);
@@ -1181,6 +1269,31 @@ int dasd_profile_on(struct dasd_profile *profile)
 	return 0;
 }
 
+=======
+	if (!dasd_global_profile.dasd_io_reqs)
+		memset(&dasd_global_profile, 0,
+		       sizeof(struct dasd_profile_info_t));
+	dasd_global_profile.dasd_io_reqs++;
+	dasd_global_profile.dasd_io_sects += sectors;
+
+	if (!block->profile.dasd_io_reqs)
+		memset(&block->profile, 0,
+		       sizeof(struct dasd_profile_info_t));
+	block->profile.dasd_io_reqs++;
+	block->profile.dasd_io_sects += sectors;
+
+	dasd_profile_counter(sectors, dasd_io_secs, block);
+	dasd_profile_counter(tottime, dasd_io_times, block);
+	dasd_profile_counter(tottimeps, dasd_io_timps, block);
+	dasd_profile_counter(strtime, dasd_io_time1, block);
+	dasd_profile_counter(irqtime, dasd_io_time2, block);
+	dasd_profile_counter(irqtime / sectors, dasd_io_time2ps, block);
+	dasd_profile_counter(endtime, dasd_io_time3, block);
+}
+#else
+#define dasd_profile_start(block, cqr, req) do {} while (0)
+#define dasd_profile_end(block, cqr, req) do {} while (0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif				/* CONFIG_DASD_PROFILE */
 
 /*
@@ -1596,6 +1709,10 @@ void dasd_int_handler(struct ccw_device *cdev, unsigned long intparm,
 	unsigned long long now;
 	int expires;
 
+<<<<<<< HEAD
+=======
+	kstat_cpu(smp_processor_id()).irqs[IOINT_DAS]++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(irb)) {
 		switch (PTR_ERR(irb)) {
 		case -EIO:
@@ -2062,14 +2179,21 @@ void dasd_add_request_tail(struct dasd_ccw_req *cqr)
 /*
  * Wakeup helper for the 'sleep_on' functions.
  */
+<<<<<<< HEAD
 void dasd_wakeup_cb(struct dasd_ccw_req *cqr, void *data)
+=======
+static void dasd_wakeup_cb(struct dasd_ccw_req *cqr, void *data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	spin_lock_irq(get_ccwdev_lock(cqr->startdev->cdev));
 	cqr->callback_data = DASD_SLEEPON_END_TAG;
 	spin_unlock_irq(get_ccwdev_lock(cqr->startdev->cdev));
 	wake_up(&generic_waitq);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(dasd_wakeup_cb);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int _wait_for_wakeup(struct dasd_ccw_req *cqr)
 {
@@ -2169,9 +2293,13 @@ static int _dasd_sleep_on(struct dasd_ccw_req *maincqr, int interruptible)
 		} else
 			wait_event(generic_waitq, !(device->stopped));
 
+<<<<<<< HEAD
 		if (!cqr->callback)
 			cqr->callback = dasd_wakeup_cb;
 
+=======
+		cqr->callback = dasd_wakeup_cb;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cqr->callback_data = DASD_SLEEPON_START_TAG;
 		dasd_add_request_tail(cqr);
 		if (interruptible) {
@@ -2267,11 +2395,15 @@ int dasd_sleep_on_immediatly(struct dasd_ccw_req *cqr)
 	cqr->callback = dasd_wakeup_cb;
 	cqr->callback_data = DASD_SLEEPON_START_TAG;
 	cqr->status = DASD_CQR_QUEUED;
+<<<<<<< HEAD
 	/*
 	 * add new request as second
 	 * first the terminated cqr needs to be finished
 	 */
 	list_add(&cqr->devlist, device->ccw_queue.next);
+=======
+	list_add(&cqr->devlist, &device->ccw_queue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* let the bh start the request to keep them in order */
 	dasd_schedule_device_bh(device);
@@ -2933,7 +3065,10 @@ dasd_exit(void)
 		debug_unregister(dasd_debug_area);
 		dasd_debug_area = NULL;
 	}
+<<<<<<< HEAD
 	dasd_statistics_removeroot();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -3265,12 +3400,15 @@ void dasd_generic_path_event(struct ccw_device *cdev, int *path_event)
 			device->path_data.tbvpm |= eventlpm;
 			dasd_schedule_device_bh(device);
 		}
+<<<<<<< HEAD
 		if (path_event[chp] & PE_PATHGROUP_ESTABLISHED) {
 			DBF_DEV_EVENT(DBF_WARNING, device, "%s",
 				      "Pathgroup re-established\n");
 			if (device->discipline->kick_validate)
 				device->discipline->kick_validate(device);
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	dasd_put_device(device);
 }
@@ -3298,9 +3436,12 @@ int dasd_generic_pm_freeze(struct ccw_device *cdev)
 	if (IS_ERR(device))
 		return PTR_ERR(device);
 
+<<<<<<< HEAD
 	/* mark device as suspended */
 	set_bit(DASD_FLAG_SUSPENDED, &device->flags);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (device->discipline->freeze)
 		rc = device->discipline->freeze(device);
 
@@ -3375,7 +3516,10 @@ int dasd_generic_restore_device(struct ccw_device *cdev)
 	if (device->block)
 		dasd_schedule_block_bh(device->block);
 
+<<<<<<< HEAD
 	clear_bit(DASD_FLAG_SUSPENDED, &device->flags);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dasd_put_device(device);
 	return 0;
 }
@@ -3495,8 +3639,11 @@ static int __init dasd_init(void)
 
 	dasd_diag_discipline_pointer = NULL;
 
+<<<<<<< HEAD
 	dasd_statistics_createroot();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = dasd_devmap_init();
 	if (rc)
 		goto failed;

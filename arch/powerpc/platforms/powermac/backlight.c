@@ -12,8 +12,12 @@
 #include <linux/backlight.h>
 #include <linux/adb.h>
 #include <linux/pmu.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
 #include <linux/export.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/prom.h>
 #include <asm/backlight.h>
 

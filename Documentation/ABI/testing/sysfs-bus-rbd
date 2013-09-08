@@ -51,6 +51,22 @@ current_snap
 
 	The current snapshot for which the device is mapped.
 
+<<<<<<< HEAD
+=======
+create_snap
+
+	Create a snapshot:
+
+	 $ echo <snap-name> > /sys/bus/rbd/devices/<dev-id>/snap_create
+
+rollback_snap
+
+	Rolls back data to the specified snapshot. This goes over the entire
+	list of rados blocks and sends a rollback command to each.
+
+	 $ echo <snap-name> > /sys/bus/rbd/devices/<dev-id>/snap_rollback
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 snap_*
 
 	A directory per each snapshot

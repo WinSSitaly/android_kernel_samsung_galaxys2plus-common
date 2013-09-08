@@ -26,8 +26,11 @@
  * This is technically part of the OMAP2xxx clock code.
  */
 
+<<<<<<< HEAD
 #include <plat/hardware.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "opp2xxx.h"
 #include "sdrc.h"
 #include "clock.h"

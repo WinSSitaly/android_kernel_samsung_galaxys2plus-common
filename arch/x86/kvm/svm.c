@@ -29,7 +29,10 @@
 #include <linux/ftrace_event.h>
 #include <linux/slab.h>
 
+<<<<<<< HEAD
 #include <asm/perf_event.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/tlbflush.h>
 #include <asm/desc.h>
 #include <asm/kvm_para.h>
@@ -111,12 +114,15 @@ struct nested_state {
 #define MSRPM_OFFSETS	16
 static u32 msrpm_offsets[MSRPM_OFFSETS] __read_mostly;
 
+<<<<<<< HEAD
 /*
  * Set osvw_len to higher value when updated Revision Guides
  * are published and we know what the new status bits are
  */
 static uint64_t osvw_len = 4, osvw_status;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct vcpu_svm {
 	struct kvm_vcpu vcpu;
 	struct vmcb *vmcb;
@@ -183,6 +189,7 @@ static bool npt_enabled = true;
 #else
 static bool npt_enabled;
 #endif
+<<<<<<< HEAD
 
 /* allow nested paging (virtualized MMU) for all guests */
 static int npt = true;
@@ -190,6 +197,13 @@ module_param(npt, int, S_IRUGO);
 
 /* allow nested virtualization in KVM/SVM */
 static int nested = true;
+=======
+static int npt = 1;
+
+module_param(npt, int, S_IRUGO);
+
+static int nested = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(nested, int, S_IRUGO);
 
 static void svm_flush_tlb(struct kvm_vcpu *vcpu);
@@ -565,6 +579,7 @@ static void svm_init_erratum_383(void)
 	erratum_383_found = true;
 }
 
+<<<<<<< HEAD
 static void svm_init_osvw(struct kvm_vcpu *vcpu)
 {
 	/*
@@ -586,6 +601,8 @@ static void svm_init_osvw(struct kvm_vcpu *vcpu)
 		vcpu->arch.osvw.status |= 1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int has_svm(void)
 {
 	const char *msg;
@@ -605,8 +622,11 @@ static void svm_hardware_disable(void *garbage)
 		wrmsrl(MSR_AMD64_TSC_RATIO, TSC_RATIO_DEFAULT);
 
 	cpu_svm_disable();
+<<<<<<< HEAD
 
 	amd_pmu_disable_virt();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int svm_hardware_enable(void *garbage)
@@ -652,6 +672,7 @@ static int svm_hardware_enable(void *garbage)
 		__get_cpu_var(current_tsc_ratio) = TSC_RATIO_DEFAULT;
 	}
 
+<<<<<<< HEAD
 
 	/*
 	 * Get OSVW bits.
@@ -686,6 +707,10 @@ static int svm_hardware_enable(void *garbage)
 
 	amd_pmu_enable_virt();
 
+=======
+	svm_init_erratum_383();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -969,12 +994,17 @@ static u64 svm_scale_tsc(struct kvm_vcpu *vcpu, u64 tsc)
 	return _tsc;
 }
 
+<<<<<<< HEAD
 static void svm_set_tsc_khz(struct kvm_vcpu *vcpu, u32 user_tsc_khz, bool scale)
+=======
+static void svm_set_tsc_khz(struct kvm_vcpu *vcpu, u32 user_tsc_khz)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct vcpu_svm *svm = to_svm(vcpu);
 	u64 ratio;
 	u64 khz;
 
+<<<<<<< HEAD
 	/* Guest TSC same frequency as host TSC? */
 	if (!scale) {
 		svm->tsc_ratio = TSC_RATIO_DEFAULT;
@@ -988,6 +1018,16 @@ static void svm_set_tsc_khz(struct kvm_vcpu *vcpu, u32 user_tsc_khz, bool scale)
 			vcpu->arch.tsc_always_catchup = 1;
 		} else
 			WARN(1, "user requested TSC rate below hardware speed\n");
+=======
+	/* TSC scaling supported? */
+	if (!boot_cpu_has(X86_FEATURE_TSCRATEMSR))
+		return;
+
+	/* TSC-Scaling disabled or guest TSC same frequency as host TSC? */
+	if (user_tsc_khz == 0) {
+		vcpu->arch.virtual_tsc_khz = 0;
+		svm->tsc_ratio = TSC_RATIO_DEFAULT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -1002,6 +1042,10 @@ static void svm_set_tsc_khz(struct kvm_vcpu *vcpu, u32 user_tsc_khz, bool scale)
 				user_tsc_khz);
 		return;
 	}
+<<<<<<< HEAD
+=======
+	vcpu->arch.virtual_tsc_khz = user_tsc_khz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	svm->tsc_ratio             = ratio;
 }
 
@@ -1021,6 +1065,7 @@ static void svm_write_tsc_offset(struct kvm_vcpu *vcpu, u64 offset)
 	mark_dirty(svm->vmcb, VMCB_INTERCEPTS);
 }
 
+<<<<<<< HEAD
 static void svm_adjust_tsc_offset(struct kvm_vcpu *vcpu, s64 adjustment, bool host)
 {
 	struct vcpu_svm *svm = to_svm(vcpu);
@@ -1029,6 +1074,12 @@ static void svm_adjust_tsc_offset(struct kvm_vcpu *vcpu, s64 adjustment, bool ho
 	if (host)
 		adjustment = svm_scale_tsc(vcpu, adjustment);
 
+=======
+static void svm_adjust_tsc_offset(struct kvm_vcpu *vcpu, s64 adjustment)
+{
+	struct vcpu_svm *svm = to_svm(vcpu);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	svm->vmcb->control.tsc_offset += adjustment;
 	if (is_guest_mode(vcpu))
 		svm->nested.hsave->control.tsc_offset += adjustment;
@@ -1086,7 +1137,10 @@ static void init_vmcb(struct vcpu_svm *svm)
 	set_intercept(svm, INTERCEPT_NMI);
 	set_intercept(svm, INTERCEPT_SMI);
 	set_intercept(svm, INTERCEPT_SELECTIVE_CR0);
+<<<<<<< HEAD
 	set_intercept(svm, INTERCEPT_RDPMC);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_intercept(svm, INTERCEPT_CPUID);
 	set_intercept(svm, INTERCEPT_INVD);
 	set_intercept(svm, INTERCEPT_HLT);
@@ -1157,6 +1211,10 @@ static void init_vmcb(struct vcpu_svm *svm)
 	if (npt_enabled) {
 		/* Setup VMCB for Nested Paging */
 		control->nested_ctl = 1;
+<<<<<<< HEAD
+=======
+		clr_intercept(svm, INTERCEPT_TASK_SWITCH);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		clr_intercept(svm, INTERCEPT_INVLPG);
 		clr_exception_intercept(svm, PF_VECTOR);
 		clr_cr_intercept(svm, INTERCEPT_CR3_READ);
@@ -1258,8 +1316,11 @@ static struct kvm_vcpu *svm_create_vcpu(struct kvm *kvm, unsigned int id)
 	if (kvm_vcpu_is_bsp(&svm->vcpu))
 		svm->vcpu.arch.apic_base |= MSR_IA32_APICBASE_BSP;
 
+<<<<<<< HEAD
 	svm_init_osvw(&svm->vcpu);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return &svm->vcpu;
 
 free_page4:
@@ -1337,6 +1398,7 @@ static void svm_vcpu_put(struct kvm_vcpu *vcpu)
 		wrmsrl(host_save_user_msrs[i], svm->host_user_msrs[i]);
 }
 
+<<<<<<< HEAD
 static void svm_update_cpl(struct kvm_vcpu *vcpu)
 {
 	struct vcpu_svm *svm = to_svm(vcpu);
@@ -1352,6 +1414,8 @@ static void svm_update_cpl(struct kvm_vcpu *vcpu)
 	svm->vmcb->save.cpl = cpl;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned long svm_get_rflags(struct kvm_vcpu *vcpu)
 {
 	return to_svm(vcpu)->vmcb->save.rflags;
@@ -1359,11 +1423,15 @@ static unsigned long svm_get_rflags(struct kvm_vcpu *vcpu)
 
 static void svm_set_rflags(struct kvm_vcpu *vcpu, unsigned long rflags)
 {
+<<<<<<< HEAD
 	unsigned long old_rflags = to_svm(vcpu)->vmcb->save.rflags;
 
 	to_svm(vcpu)->vmcb->save.rflags = rflags;
 	if ((old_rflags ^ rflags) & X86_EFLAGS_VM)
 		svm_update_cpl(vcpu);
+=======
+	to_svm(vcpu)->vmcb->save.rflags = rflags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void svm_cache_reg(struct kvm_vcpu *vcpu, enum kvm_reg reg)
@@ -1589,14 +1657,21 @@ static void svm_set_cr0(struct kvm_vcpu *vcpu, unsigned long cr0)
 	update_cr0_intercept(svm);
 }
 
+<<<<<<< HEAD
 static int svm_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+=======
+static void svm_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long host_cr4_mce = read_cr4() & X86_CR4_MCE;
 	unsigned long old_cr4 = to_svm(vcpu)->vmcb->save.cr4;
 
+<<<<<<< HEAD
 	if (cr4 & X86_CR4_VMXE)
 		return 1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (npt_enabled && ((old_cr4 ^ cr4) & X86_CR4_PGE))
 		svm_flush_tlb(vcpu);
 
@@ -1606,7 +1681,10 @@ static int svm_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
 	cr4 |= host_cr4_mce;
 	to_svm(vcpu)->vmcb->save.cr4 = cr4;
 	mark_dirty(to_svm(vcpu)->vmcb, VMCB_CR);
+<<<<<<< HEAD
 	return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void svm_set_segment(struct kvm_vcpu *vcpu,
@@ -1631,7 +1709,13 @@ static void svm_set_segment(struct kvm_vcpu *vcpu,
 		s->attrib |= (var->g & 1) << SVM_SELECTOR_G_SHIFT;
 	}
 	if (seg == VCPU_SREG_CS)
+<<<<<<< HEAD
 		svm_update_cpl(vcpu);
+=======
+		svm->vmcb->save.cpl
+			= (svm->vmcb->save.cs.attrib
+			   >> SVM_SELECTOR_DPL_SHIFT) & 3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mark_dirty(svm->vmcb, VMCB_SEG);
 }
@@ -1935,6 +2019,7 @@ static unsigned long nested_svm_get_tdp_cr3(struct kvm_vcpu *vcpu)
 	return svm->nested.nested_cr3;
 }
 
+<<<<<<< HEAD
 static u64 nested_svm_get_tdp_pdptr(struct kvm_vcpu *vcpu, int index)
 {
 	struct vcpu_svm *svm = to_svm(vcpu);
@@ -1949,6 +2034,8 @@ static u64 nested_svm_get_tdp_pdptr(struct kvm_vcpu *vcpu, int index)
 	return pdpte;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void nested_svm_set_tdp_cr3(struct kvm_vcpu *vcpu,
 				   unsigned long root)
 {
@@ -1980,7 +2067,10 @@ static int nested_svm_init_mmu_context(struct kvm_vcpu *vcpu)
 
 	vcpu->arch.mmu.set_cr3           = nested_svm_set_tdp_cr3;
 	vcpu->arch.mmu.get_cr3           = nested_svm_get_tdp_cr3;
+<<<<<<< HEAD
 	vcpu->arch.mmu.get_pdptr         = nested_svm_get_tdp_pdptr;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vcpu->arch.mmu.inject_page_fault = nested_svm_inject_npf_exit;
 	vcpu->arch.mmu.shadow_root_level = get_npt_level();
 	vcpu->arch.walk_mmu              = &vcpu->arch.nested_mmu;
@@ -2288,8 +2378,12 @@ static int nested_svm_vmexit(struct vcpu_svm *svm)
 				       vmcb->control.exit_info_1,
 				       vmcb->control.exit_info_2,
 				       vmcb->control.exit_int_info,
+<<<<<<< HEAD
 				       vmcb->control.exit_int_info_err,
 				       KVM_ISA_SVM);
+=======
+				       vmcb->control.exit_int_info_err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nested_vmcb = nested_svm_map(svm, svm->nested.vmcb, &page);
 	if (!nested_vmcb)
@@ -2821,10 +2915,14 @@ static int task_switch_interception(struct vcpu_svm *svm)
 	     (int_vec == OF_VECTOR || int_vec == BP_VECTOR)))
 		skip_emulated_instruction(&svm->vcpu);
 
+<<<<<<< HEAD
 	if (int_type != SVM_EXITINTINFO_TYPE_SOFT)
 		int_vec = -1;
 
 	if (kvm_task_switch(&svm->vcpu, tss_selector, int_vec, reason,
+=======
+	if (kvm_task_switch(&svm->vcpu, tss_selector, reason,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				has_error_code, error_code) == EMULATE_FAIL) {
 		svm->vcpu.run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
 		svm->vcpu.run->internal.suberror = KVM_INTERNAL_ERROR_EMULATION;
@@ -2865,6 +2963,7 @@ static int emulate_on_interception(struct vcpu_svm *svm)
 	return emulate_instruction(&svm->vcpu, 0) == EMULATE_DONE;
 }
 
+<<<<<<< HEAD
 static int rdpmc_interception(struct vcpu_svm *svm)
 {
 	int err;
@@ -2878,6 +2977,8 @@ static int rdpmc_interception(struct vcpu_svm *svm)
 	return 1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bool check_selective_cr0_intercepted(struct vcpu_svm *svm, unsigned long val)
 {
 	unsigned long cr0 = svm->vcpu.arch.cr0;
@@ -3017,6 +3118,7 @@ static int cr8_write_interception(struct vcpu_svm *svm)
 	return 0;
 }
 
+<<<<<<< HEAD
 u64 svm_read_l1_tsc(struct kvm_vcpu *vcpu)
 {
 	struct vmcb *vmcb = get_host_vmcb(to_svm(vcpu));
@@ -3024,13 +3126,21 @@ u64 svm_read_l1_tsc(struct kvm_vcpu *vcpu)
 		svm_scale_tsc(vcpu, native_read_tsc());
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int svm_get_msr(struct kvm_vcpu *vcpu, unsigned ecx, u64 *data)
 {
 	struct vcpu_svm *svm = to_svm(vcpu);
 
 	switch (ecx) {
 	case MSR_IA32_TSC: {
+<<<<<<< HEAD
 		*data = svm->vmcb->control.tsc_offset +
+=======
+		struct vmcb *vmcb = get_host_vmcb(svm);
+
+		*data = vmcb->control.tsc_offset +
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			svm_scale_tsc(vcpu, native_read_tsc());
 
 		break;
@@ -3298,7 +3408,10 @@ static int (*svm_exit_handlers[])(struct vcpu_svm *svm) = {
 	[SVM_EXIT_SMI]				= nop_on_interception,
 	[SVM_EXIT_INIT]				= nop_on_interception,
 	[SVM_EXIT_VINTR]			= interrupt_window_interception,
+<<<<<<< HEAD
 	[SVM_EXIT_RDPMC]			= rdpmc_interception,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[SVM_EXIT_CPUID]			= cpuid_interception,
 	[SVM_EXIT_IRET]                         = iret_interception,
 	[SVM_EXIT_INVD]                         = emulate_on_interception,
@@ -3443,6 +3556,11 @@ static int handle_exit(struct kvm_vcpu *vcpu)
 	struct kvm_run *kvm_run = vcpu->run;
 	u32 exit_code = svm->vmcb->control.exit_code;
 
+<<<<<<< HEAD
+=======
+	trace_kvm_exit(exit_code, vcpu, KVM_ISA_SVM);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!is_cr_intercept(svm, INTERCEPT_CR0_WRITE))
 		vcpu->arch.cr0 = svm->vmcb->save.cr0;
 	if (npt_enabled)
@@ -3462,8 +3580,12 @@ static int handle_exit(struct kvm_vcpu *vcpu)
 					svm->vmcb->control.exit_info_1,
 					svm->vmcb->control.exit_info_2,
 					svm->vmcb->control.exit_int_info,
+<<<<<<< HEAD
 					svm->vmcb->control.exit_int_info_err,
 					KVM_ISA_SVM);
+=======
+					svm->vmcb->control.exit_int_info_err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		vmexit = nested_svm_exit_special(svm);
 
@@ -3896,8 +4018,11 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
 	vcpu->arch.regs[VCPU_REGS_RSP] = svm->vmcb->save.rsp;
 	vcpu->arch.regs[VCPU_REGS_RIP] = svm->vmcb->save.rip;
 
+<<<<<<< HEAD
 	trace_kvm_exit(svm->vmcb->control.exit_code, vcpu, KVM_ISA_SVM);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(svm->vmcb->control.exit_code == SVM_EXIT_NMI))
 		kvm_before_handle_nmi(&svm->vcpu);
 
@@ -4027,6 +4152,63 @@ static void svm_set_supported_cpuid(u32 func, struct kvm_cpuid_entry2 *entry)
 	}
 }
 
+<<<<<<< HEAD
+=======
+static const struct trace_print_flags svm_exit_reasons_str[] = {
+	{ SVM_EXIT_READ_CR0,			"read_cr0" },
+	{ SVM_EXIT_READ_CR3,			"read_cr3" },
+	{ SVM_EXIT_READ_CR4,			"read_cr4" },
+	{ SVM_EXIT_READ_CR8,			"read_cr8" },
+	{ SVM_EXIT_WRITE_CR0,			"write_cr0" },
+	{ SVM_EXIT_WRITE_CR3,			"write_cr3" },
+	{ SVM_EXIT_WRITE_CR4,			"write_cr4" },
+	{ SVM_EXIT_WRITE_CR8,			"write_cr8" },
+	{ SVM_EXIT_READ_DR0,			"read_dr0" },
+	{ SVM_EXIT_READ_DR1,			"read_dr1" },
+	{ SVM_EXIT_READ_DR2,			"read_dr2" },
+	{ SVM_EXIT_READ_DR3,			"read_dr3" },
+	{ SVM_EXIT_WRITE_DR0,			"write_dr0" },
+	{ SVM_EXIT_WRITE_DR1,			"write_dr1" },
+	{ SVM_EXIT_WRITE_DR2,			"write_dr2" },
+	{ SVM_EXIT_WRITE_DR3,			"write_dr3" },
+	{ SVM_EXIT_WRITE_DR5,			"write_dr5" },
+	{ SVM_EXIT_WRITE_DR7,			"write_dr7" },
+	{ SVM_EXIT_EXCP_BASE + DB_VECTOR,	"DB excp" },
+	{ SVM_EXIT_EXCP_BASE + BP_VECTOR,	"BP excp" },
+	{ SVM_EXIT_EXCP_BASE + UD_VECTOR,	"UD excp" },
+	{ SVM_EXIT_EXCP_BASE + PF_VECTOR,	"PF excp" },
+	{ SVM_EXIT_EXCP_BASE + NM_VECTOR,	"NM excp" },
+	{ SVM_EXIT_EXCP_BASE + MC_VECTOR,	"MC excp" },
+	{ SVM_EXIT_INTR,			"interrupt" },
+	{ SVM_EXIT_NMI,				"nmi" },
+	{ SVM_EXIT_SMI,				"smi" },
+	{ SVM_EXIT_INIT,			"init" },
+	{ SVM_EXIT_VINTR,			"vintr" },
+	{ SVM_EXIT_CPUID,			"cpuid" },
+	{ SVM_EXIT_INVD,			"invd" },
+	{ SVM_EXIT_HLT,				"hlt" },
+	{ SVM_EXIT_INVLPG,			"invlpg" },
+	{ SVM_EXIT_INVLPGA,			"invlpga" },
+	{ SVM_EXIT_IOIO,			"io" },
+	{ SVM_EXIT_MSR,				"msr" },
+	{ SVM_EXIT_TASK_SWITCH,			"task_switch" },
+	{ SVM_EXIT_SHUTDOWN,			"shutdown" },
+	{ SVM_EXIT_VMRUN,			"vmrun" },
+	{ SVM_EXIT_VMMCALL,			"hypercall" },
+	{ SVM_EXIT_VMLOAD,			"vmload" },
+	{ SVM_EXIT_VMSAVE,			"vmsave" },
+	{ SVM_EXIT_STGI,			"stgi" },
+	{ SVM_EXIT_CLGI,			"clgi" },
+	{ SVM_EXIT_SKINIT,			"skinit" },
+	{ SVM_EXIT_WBINVD,			"wbinvd" },
+	{ SVM_EXIT_MONITOR,			"monitor" },
+	{ SVM_EXIT_MWAIT,			"mwait" },
+	{ SVM_EXIT_XSETBV,			"xsetbv" },
+	{ SVM_EXIT_NPF,				"npf" },
+	{ -1, NULL }
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int svm_get_lpage_level(void)
 {
 	return PT_PDPE_LEVEL;
@@ -4299,6 +4481,10 @@ static struct kvm_x86_ops svm_x86_ops = {
 	.get_mt_mask = svm_get_mt_mask,
 
 	.get_exit_info = svm_get_exit_info,
+<<<<<<< HEAD
+=======
+	.exit_reasons_str = svm_exit_reasons_str,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.get_lpage_level = svm_get_lpage_level,
 
@@ -4314,7 +4500,10 @@ static struct kvm_x86_ops svm_x86_ops = {
 	.write_tsc_offset = svm_write_tsc_offset,
 	.adjust_tsc_offset = svm_adjust_tsc_offset,
 	.compute_tsc_offset = svm_compute_tsc_offset,
+<<<<<<< HEAD
 	.read_l1_tsc = svm_read_l1_tsc,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.set_tdp_cr3 = set_tdp_cr3,
 

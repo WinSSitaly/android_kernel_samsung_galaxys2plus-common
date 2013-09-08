@@ -13,6 +13,11 @@
 
 #ifndef __ASSEMBLY__
 
+<<<<<<< HEAD
+=======
+typedef unsigned short umode_t;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* A address type so that arithmetic can be done on it & it can be upgraded to
    64 bit when necessary 
 */

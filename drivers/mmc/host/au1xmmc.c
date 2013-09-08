@@ -55,7 +55,11 @@
 
 #ifdef DEBUG
 #define DBG(fmt, idx, args...)	\
+<<<<<<< HEAD
 	pr_debug("au1xmmc(%d): DEBUG: " fmt, idx, ##args)
+=======
+	printk(KERN_DEBUG "au1xmmc(%d): DEBUG: " fmt, idx, ##args)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 #define DBG(fmt, idx, args...) do {} while (0)
 #endif
@@ -64,8 +68,16 @@
 #define AU1XMMC_DESCRIPTOR_COUNT 1
 
 /* max DMA seg size: 64KB on Au1100, 4MB on Au1200 */
+<<<<<<< HEAD
 #define AU1100_MMC_DESCRIPTOR_SIZE 0x0000ffff
 #define AU1200_MMC_DESCRIPTOR_SIZE 0x003fffff
+=======
+#ifdef CONFIG_SOC_AU1100
+#define AU1XMMC_DESCRIPTOR_SIZE 0x0000ffff
+#else	/* Au1200 */
+#define AU1XMMC_DESCRIPTOR_SIZE 0x003fffff
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AU1XMMC_OCR (MMC_VDD_27_28 | MMC_VDD_28_29 | MMC_VDD_29_30 | \
 		     MMC_VDD_30_31 | MMC_VDD_31_32 | MMC_VDD_32_33 | \
@@ -124,7 +136,10 @@ struct au1xmmc_host {
 #define HOST_F_XMIT	0x0001
 #define HOST_F_RECV	0x0002
 #define HOST_F_DMA	0x0010
+<<<<<<< HEAD
 #define HOST_F_DBDMA	0x0020
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define HOST_F_ACTIVE	0x0100
 #define HOST_F_STOP	0x1000
 
@@ -149,6 +164,7 @@ struct au1xmmc_host {
 #define DMA_CHANNEL(h)	\
 	(((h)->flags & HOST_F_XMIT) ? (h)->tx_chan : (h)->rx_chan)
 
+<<<<<<< HEAD
 static inline int has_dbdma(void)
 {
 	switch (alchemy_get_cputype()) {
@@ -160,6 +176,8 @@ static inline int has_dbdma(void)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void IRQ_ON(struct au1xmmc_host *host, u32 mask)
 {
 	u32 val = au_readl(HOST_CONFIG(host));
@@ -277,7 +295,11 @@ static int au1xmmc_send_command(struct au1xmmc_host *host, int wait,
 		mmccmd |= SD_CMD_RT_3;
 		break;
 	default:
+<<<<<<< HEAD
 		pr_info("au1xmmc: unhandled response type %02x\n",
+=======
+		printk(KERN_INFO "au1xmmc: unhandled response type %02x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mmc_resp_type(cmd));
 		return -EINVAL;
 	}
@@ -362,12 +384,21 @@ static void au1xmmc_data_complete(struct au1xmmc_host *host, u32 status)
 	data->bytes_xfered = 0;
 
 	if (!data->error) {
+<<<<<<< HEAD
 		if (host->flags & (HOST_F_DMA | HOST_F_DBDMA)) {
+=======
+		if (host->flags & HOST_F_DMA) {
+#ifdef CONFIG_SOC_AU1200	/* DBDMA */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			u32 chan = DMA_CHANNEL(host);
 
 			chan_tab_t *c = *((chan_tab_t **)chan);
 			au1x_dma_chan_t *cp = c->chan_ptr;
 			data->bytes_xfered = cp->ddma_bytecnt;
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else
 			data->bytes_xfered =
 				(data->blocks * data->blksz) - host->pio.len;
@@ -577,10 +608,18 @@ static void au1xmmc_cmd_complete(struct au1xmmc_host *host, u32 status)
 
 	host->status = HOST_S_DATA;
 
+<<<<<<< HEAD
 	if ((host->flags & (HOST_F_DMA | HOST_F_DBDMA))) {
 		u32 channel = DMA_CHANNEL(host);
 
 		/* Start the DBDMA as soon as the buffer gets something in it */
+=======
+	if (host->flags & HOST_F_DMA) {
+#ifdef CONFIG_SOC_AU1200	/* DBDMA */
+		u32 channel = DMA_CHANNEL(host);
+
+		/* Start the DMA as soon as the buffer gets something in it */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (host->flags & HOST_F_RECV) {
 			u32 mask = SD_STATUS_DB | SD_STATUS_NE;
@@ -590,6 +629,10 @@ static void au1xmmc_cmd_complete(struct au1xmmc_host *host, u32 status)
 		}
 
 		au1xxx_dbdma_start(channel);
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -638,7 +681,12 @@ static int au1xmmc_prepare_data(struct au1xmmc_host *host,
 
 	au_writel(data->blksz - 1, HOST_BLKSIZE(host));
 
+<<<<<<< HEAD
 	if (host->flags & (HOST_F_DMA | HOST_F_DBDMA)) {
+=======
+	if (host->flags & HOST_F_DMA) {
+#ifdef CONFIG_SOC_AU1200	/* DBDMA */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int i;
 		u32 channel = DMA_CHANNEL(host);
 
@@ -667,6 +715,10 @@ static int au1xmmc_prepare_data(struct au1xmmc_host *host,
 
 			datalen -= len;
 		}
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		host->pio.index = 0;
 		host->pio.offset = 0;
@@ -769,6 +821,7 @@ static void au1xmmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 
 	config2 = au_readl(HOST_CONFIG2(host));
 	switch (ios->bus_width) {
+<<<<<<< HEAD
 	case MMC_BUS_WIDTH_8:
 		config2 |= SD_CONFIG2_BB;
 		break;
@@ -778,6 +831,13 @@ static void au1xmmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 		break;
 	case MMC_BUS_WIDTH_1:
 		config2 &= ~(SD_CONFIG2_WB | SD_CONFIG2_BB);
+=======
+	case MMC_BUS_WIDTH_4:
+		config2 |= SD_CONFIG2_WB;
+		break;
+	case MMC_BUS_WIDTH_1:
+		config2 &= ~SD_CONFIG2_WB;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 	au_writel(config2, HOST_CONFIG2(host));
@@ -845,6 +905,10 @@ static irqreturn_t au1xmmc_irq(int irq, void *dev_id)
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SOC_AU1200
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* 8bit memory DMA device */
 static dbdev_tab_t au1xmmc_mem_dbdev = {
 	.dev_id		= DSCR_CMD0_ALWAYS,
@@ -911,7 +975,11 @@ static int au1xmmc_dbdma_init(struct au1xmmc_host *host)
 	au1xxx_dbdma_ring_alloc(host->rx_chan, AU1XMMC_DESCRIPTOR_COUNT);
 
 	/* DBDMA is good to go */
+<<<<<<< HEAD
 	host->flags |= HOST_F_DMA | HOST_F_DBDMA;
+=======
+	host->flags |= HOST_F_DMA;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -924,6 +992,10 @@ static void au1xmmc_dbdma_shutdown(struct au1xmmc_host *host)
 		au1xxx_dbdma_chan_free(host->rx_chan);
 	}
 }
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void au1xmmc_enable_sdio_irq(struct mmc_host *mmc, int en)
 {
@@ -948,7 +1020,11 @@ static int __devinit au1xmmc_probe(struct platform_device *pdev)
 	struct mmc_host *mmc;
 	struct au1xmmc_host *host;
 	struct resource *r;
+<<<<<<< HEAD
 	int ret, iflag;
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mmc = mmc_alloc_host(sizeof(struct au1xmmc_host), &pdev->dev);
 	if (!mmc) {
@@ -987,18 +1063,37 @@ static int __devinit au1xmmc_probe(struct platform_device *pdev)
 		dev_err(&pdev->dev, "no IRQ defined\n");
 		goto out3;
 	}
+<<<<<<< HEAD
 	host->irq = r->start;
+=======
+
+	host->irq = r->start;
+	/* IRQ is shared among both SD controllers */
+	ret = request_irq(host->irq, au1xmmc_irq, IRQF_SHARED,
+			  DRIVER_NAME, host);
+	if (ret) {
+		dev_err(&pdev->dev, "cannot grab IRQ\n");
+		goto out3;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mmc->ops = &au1xmmc_ops;
 
 	mmc->f_min =   450000;
 	mmc->f_max = 24000000;
 
+<<<<<<< HEAD
+=======
+	mmc->max_seg_size = AU1XMMC_DESCRIPTOR_SIZE;
+	mmc->max_segs = AU1XMMC_DESCRIPTOR_COUNT;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mmc->max_blk_size = 2048;
 	mmc->max_blk_count = 512;
 
 	mmc->ocr_avail = AU1XMMC_OCR;
 	mmc->caps = MMC_CAP_4_BIT_DATA | MMC_CAP_SDIO_IRQ;
+<<<<<<< HEAD
 	mmc->max_segs = AU1XMMC_DESCRIPTOR_COUNT;
 
 	iflag = IRQF_SHARED;	/* Au1100/Au1200: one int for both ctrls */
@@ -1024,6 +1119,8 @@ static int __devinit au1xmmc_probe(struct platform_device *pdev)
 		dev_err(&pdev->dev, "cannot grab IRQ\n");
 		goto out3;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	host->status = HOST_S_IDLE;
 
@@ -1047,11 +1144,19 @@ static int __devinit au1xmmc_probe(struct platform_device *pdev)
 	tasklet_init(&host->finish_task, au1xmmc_tasklet_finish,
 			(unsigned long)host);
 
+<<<<<<< HEAD
 	if (has_dbdma()) {
 		ret = au1xmmc_dbdma_init(host);
 		if (ret)
 			pr_info(DRIVER_NAME ": DBDMA init failed; using PIO\n");
 	}
+=======
+#ifdef CONFIG_SOC_AU1200
+	ret = au1xmmc_dbdma_init(host);
+	if (ret)
+		printk(KERN_INFO DRIVER_NAME ": DBDMA init failed; using PIO\n");
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_LEDS_CLASS
 	if (host->platdata && host->platdata->led) {
@@ -1075,7 +1180,11 @@ static int __devinit au1xmmc_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, host);
 
+<<<<<<< HEAD
 	pr_info(DRIVER_NAME ": MMC Controller %d set up at %8.8X"
+=======
+	printk(KERN_INFO DRIVER_NAME ": MMC Controller %d set up at %8.8X"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		" (mode=%s)\n", pdev->id, host->iobase,
 		host->flags & HOST_F_DMA ? "dma" : "pio");
 
@@ -1092,8 +1201,14 @@ out5:
 	au_writel(0, HOST_CONFIG2(host));
 	au_sync();
 
+<<<<<<< HEAD
 	if (host->flags & HOST_F_DBDMA)
 		au1xmmc_dbdma_shutdown(host);
+=======
+#ifdef CONFIG_SOC_AU1200
+	au1xmmc_dbdma_shutdown(host);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tasklet_kill(&host->data_task);
 	tasklet_kill(&host->finish_task);
@@ -1138,9 +1253,15 @@ static int __devexit au1xmmc_remove(struct platform_device *pdev)
 		tasklet_kill(&host->data_task);
 		tasklet_kill(&host->finish_task);
 
+<<<<<<< HEAD
 		if (host->flags & HOST_F_DBDMA)
 			au1xmmc_dbdma_shutdown(host);
 
+=======
+#ifdef CONFIG_SOC_AU1200
+		au1xmmc_dbdma_shutdown(host);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		au1xmmc_set_power(host, 0);
 
 		free_irq(host->irq, host);
@@ -1199,6 +1320,7 @@ static struct platform_driver au1xmmc_driver = {
 
 static int __init au1xmmc_init(void)
 {
+<<<<<<< HEAD
 	if (has_dbdma()) {
 		/* DSCR_CMD0_ALWAYS has a stride of 32 bits, we need a stride
 		* of 8 bits.  And since devices are shared, we need to create
@@ -1208,14 +1330,32 @@ static int __init au1xmmc_init(void)
 		if (!memid)
 			pr_err("au1xmmc: cannot add memory dbdma\n");
 	}
+=======
+#ifdef CONFIG_SOC_AU1200
+	/* DSCR_CMD0_ALWAYS has a stride of 32 bits, we need a stride
+	 * of 8 bits.  And since devices are shared, we need to create
+	 * our own to avoid freaking out other devices.
+	 */
+	memid = au1xxx_ddma_add_device(&au1xmmc_mem_dbdev);
+	if (!memid)
+		printk(KERN_ERR "au1xmmc: cannot add memory dbdma dev\n");
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return platform_driver_register(&au1xmmc_driver);
 }
 
 static void __exit au1xmmc_exit(void)
 {
+<<<<<<< HEAD
 	if (has_dbdma() && memid)
 		au1xxx_ddma_del_device(memid);
 
+=======
+#ifdef CONFIG_SOC_AU1200
+	if (memid)
+		au1xxx_ddma_del_device(memid);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_driver_unregister(&au1xmmc_driver);
 }
 

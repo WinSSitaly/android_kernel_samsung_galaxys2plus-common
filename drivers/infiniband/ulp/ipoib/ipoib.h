@@ -46,7 +46,11 @@
 #include <net/neighbour.h>
 #include <net/sch_generic.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <rdma/ib_verbs.h>
 #include <rdma/ib_pack.h>

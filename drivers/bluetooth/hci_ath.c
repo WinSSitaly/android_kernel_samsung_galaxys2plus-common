@@ -112,7 +112,11 @@ static int ath_open(struct hci_uart *hu)
 
 	BT_DBG("hu %p", hu);
 
+<<<<<<< HEAD
 	ath = kzalloc(sizeof(*ath), GFP_KERNEL);
+=======
+	ath = kzalloc(sizeof(*ath), GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ath)
 		return -ENOMEM;
 

@@ -26,6 +26,10 @@ obj-$(CONFIG_STI_CONSOLE)         += sticon.o sticore.o font.o
 obj-$(CONFIG_VGA_CONSOLE)         += vgacon.o
 obj-$(CONFIG_MDA_CONSOLE)         += mdacon.o
 obj-$(CONFIG_FRAMEBUFFER_CONSOLE) += fbcon.o bitblit.o font.o softcursor.o
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_FRAMEBUFFER_FPS)	+= fb_fps.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ifeq ($(CONFIG_FB_TILEBLITTING),y)
 obj-$(CONFIG_FRAMEBUFFER_CONSOLE)     += tileblit.o
 endif

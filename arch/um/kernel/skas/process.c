@@ -41,7 +41,11 @@ static int __init start_kernel_proc(void *unused)
 	cpu_tasks[0].pid = pid;
 	cpu_tasks[0].task = current;
 #ifdef CONFIG_SMP
+<<<<<<< HEAD
 	init_cpu_online(get_cpu_mask(0));
+=======
+	cpu_online_map = cpumask_of_cpu(0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	start_kernel();
 	return 0;

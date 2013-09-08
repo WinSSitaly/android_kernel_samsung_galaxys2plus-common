@@ -16,6 +16,10 @@
 #define _ASM_X86_VIRTEX_H
 
 #include <asm/processor.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/vmx.h>
 #include <asm/svm.h>

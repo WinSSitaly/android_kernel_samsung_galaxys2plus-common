@@ -8,7 +8,12 @@
 #ifndef __UM_PGALLOC_H
 #define __UM_PGALLOC_H
 
+<<<<<<< HEAD
 #include <linux/mm.h>
+=======
+#include "linux/mm.h"
+#include "asm/fixmap.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define pmd_populate_kernel(mm, pmd, pte) \
 	set_pmd(pmd, __pmd(_PAGE_TABLE + (unsigned long) __pa(pte)))

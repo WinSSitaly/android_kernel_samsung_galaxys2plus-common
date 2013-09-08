@@ -2,6 +2,7 @@
  * (C) 1997 Linus Torvalds
  * (C) 1999 Andrea Arcangeli <andrea@suse.de> (dynamic inode allocation)
  */
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/fs.h>
 #include <linux/mm.h>
@@ -9,14 +10,39 @@
 #include <linux/hash.h>
 #include <linux/swap.h>
 #include <linux/security.h>
+=======
+#include <linux/fs.h>
+#include <linux/mm.h>
+#include <linux/dcache.h>
+#include <linux/init.h>
+#include <linux/slab.h>
+#include <linux/writeback.h>
+#include <linux/module.h>
+#include <linux/backing-dev.h>
+#include <linux/wait.h>
+#include <linux/rwsem.h>
+#include <linux/hash.h>
+#include <linux/swap.h>
+#include <linux/security.h>
+#include <linux/pagemap.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/cdev.h>
 #include <linux/bootmem.h>
 #include <linux/fsnotify.h>
 #include <linux/mount.h>
+<<<<<<< HEAD
 #include <linux/posix_acl.h>
 #include <linux/prefetch.h>
 #include <linux/buffer_head.h> /* for inode_has_buffers */
 #include <linux/ratelimit.h>
+=======
+#include <linux/async.h>
+#include <linux/posix_acl.h>
+#include <linux/prefetch.h>
+#include <linux/ima.h>
+#include <linux/cred.h>
+#include <linux/buffer_head.h> /* for inode_has_buffers */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "internal.h"
 
 /*
@@ -24,11 +50,19 @@
  *
  * inode->i_lock protects:
  *   inode->i_state, inode->i_hash, __iget()
+<<<<<<< HEAD
  * inode->i_sb->s_inode_lru_lock protects:
  *   inode->i_sb->s_inode_lru, inode->i_lru
  * inode_sb_list_lock protects:
  *   sb->s_inodes, inode->i_sb_list
  * bdi->wb.list_lock protects:
+=======
+ * inode_lru_lock protects:
+ *   inode_lru, inode->i_lru
+ * inode_sb_list_lock protects:
+ *   sb->s_inodes, inode->i_sb_list
+ * inode_wb_list_lock protects:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *   bdi->wb.b_{dirty,io,more_io}, inode->i_wb_list
  * inode_hash_lock protects:
  *   inode_hashtable, inode->i_hash
@@ -37,9 +71,15 @@
  *
  * inode_sb_list_lock
  *   inode->i_lock
+<<<<<<< HEAD
  *     inode->i_sb->s_inode_lru_lock
  *
  * bdi->wb.list_lock
+=======
+ *     inode_lru_lock
+ *
+ * inode_wb_list_lock
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *   inode->i_lock
  *
  * inode_hash_lock
@@ -55,7 +95,26 @@ static unsigned int i_hash_shift __read_mostly;
 static struct hlist_head *inode_hashtable __read_mostly;
 static __cacheline_aligned_in_smp DEFINE_SPINLOCK(inode_hash_lock);
 
+<<<<<<< HEAD
 __cacheline_aligned_in_smp DEFINE_SPINLOCK(inode_sb_list_lock);
+=======
+static LIST_HEAD(inode_lru);
+static DEFINE_SPINLOCK(inode_lru_lock);
+
+__cacheline_aligned_in_smp DEFINE_SPINLOCK(inode_sb_list_lock);
+__cacheline_aligned_in_smp DEFINE_SPINLOCK(inode_wb_list_lock);
+
+/*
+ * iprune_sem provides exclusion between the icache shrinking and the
+ * umount path.
+ *
+ * We don't actually need it to protect anything in the umount path,
+ * but only need to cycle through it to make sure any inode that
+ * prune_icache took off the LRU list has been fully torn down by the
+ * time we are past evict_inodes.
+ */
+static DECLARE_RWSEM(iprune_sem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Empty aops. Can be used for the cases where the user does not
@@ -71,7 +130,10 @@ EXPORT_SYMBOL(empty_aops);
 struct inodes_stat_t inodes_stat;
 
 static DEFINE_PER_CPU(unsigned int, nr_inodes);
+<<<<<<< HEAD
 static DEFINE_PER_CPU(unsigned int, nr_unused);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct kmem_cache *inode_cachep __read_mostly;
 
@@ -86,11 +148,15 @@ static int get_nr_inodes(void)
 
 static inline int get_nr_inodes_unused(void)
 {
+<<<<<<< HEAD
 	int i;
 	int sum = 0;
 	for_each_possible_cpu(i)
 		sum += per_cpu(nr_unused, i);
 	return sum < 0 ? 0 : sum;
+=======
+	return inodes_stat.nr_unused;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int get_nr_dirty_inodes(void)
@@ -108,7 +174,10 @@ int proc_nr_inodes(ctl_table *table, int write,
 		   void __user *buffer, size_t *lenp, loff_t *ppos)
 {
 	inodes_stat.nr_inodes = get_nr_inodes();
+<<<<<<< HEAD
 	inodes_stat.nr_unused = get_nr_inodes_unused();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return proc_dointvec(table, write, buffer, lenp, ppos);
 }
 #endif
@@ -133,8 +202,12 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
 	atomic_set(&inode->i_count, 1);
 	inode->i_op = &empty_iops;
 	inode->i_fop = &empty_fops;
+<<<<<<< HEAD
 	inode->__i_nlink = 1;
 	inode->i_opflags = 0;
+=======
+	inode->i_nlink = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	inode->i_uid = 0;
 	inode->i_gid = 0;
 	atomic_set(&inode->i_writecount, 0);
@@ -159,7 +232,12 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
 	mutex_init(&inode->i_mutex);
 	lockdep_set_class(&inode->i_mutex, &sb->s_type->i_mutex_key);
 
+<<<<<<< HEAD
 	atomic_set(&inode->i_dio_count, 0);
+=======
+	init_rwsem(&inode->i_alloc_sem);
+	lockdep_set_class(&inode->i_alloc_sem, &sb->s_type->i_alloc_sem_key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mapping->a_ops = &empty_aops;
 	mapping->host = inode;
@@ -182,7 +260,10 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
 	}
 	inode->i_private = NULL;
 	inode->i_mapping = mapping;
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&inode->i_dentry);	/* buggered by rcu freeing */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_FS_POSIX_ACL
 	inode->i_acl = inode->i_default_acl = ACL_NOT_CACHED;
 #endif
@@ -233,11 +314,14 @@ void __destroy_inode(struct inode *inode)
 	BUG_ON(inode_has_buffers(inode));
 	security_inode_free(inode);
 	fsnotify_inode_delete(inode);
+<<<<<<< HEAD
 	if (!inode->i_nlink) {
 		WARN_ON(atomic_long_read(&inode->i_sb->s_remove_count) == 0);
 		atomic_long_dec(&inode->i_sb->s_remove_count);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_FS_POSIX_ACL
 	if (inode->i_acl && inode->i_acl != ACL_NOT_CACHED)
 		posix_acl_release(inode->i_acl);
@@ -251,6 +335,10 @@ EXPORT_SYMBOL(__destroy_inode);
 static void i_callback(struct rcu_head *head)
 {
 	struct inode *inode = container_of(head, struct inode, i_rcu);
+<<<<<<< HEAD
+=======
+	INIT_LIST_HEAD(&inode->i_dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kmem_cache_free(inode_cachep, inode);
 }
 
@@ -264,6 +352,7 @@ static void destroy_inode(struct inode *inode)
 		call_rcu(&inode->i_rcu, i_callback);
 }
 
+<<<<<<< HEAD
 /**
  * drop_nlink - directly drop an inode's link count
  * @inode: inode
@@ -340,6 +429,8 @@ void inc_nlink(struct inode *inode)
 }
 EXPORT_SYMBOL(inc_nlink);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void address_space_init_once(struct address_space *mapping)
 {
 	memset(mapping, 0, sizeof(*mapping));
@@ -362,6 +453,10 @@ void inode_init_once(struct inode *inode)
 {
 	memset(inode, 0, sizeof(*inode));
 	INIT_HLIST_NODE(&inode->i_hash);
+<<<<<<< HEAD
+=======
+	INIT_LIST_HEAD(&inode->i_dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_LIST_HEAD(&inode->i_devices);
 	INIT_LIST_HEAD(&inode->i_wb_list);
 	INIT_LIST_HEAD(&inode->i_lru);
@@ -399,6 +494,7 @@ EXPORT_SYMBOL(ihold);
 
 static void inode_lru_list_add(struct inode *inode)
 {
+<<<<<<< HEAD
 	spin_lock(&inode->i_sb->s_inode_lru_lock);
 	if (list_empty(&inode->i_lru)) {
 		list_add(&inode->i_lru, &inode->i_sb->s_inode_lru);
@@ -406,10 +502,19 @@ static void inode_lru_list_add(struct inode *inode)
 		this_cpu_inc(nr_unused);
 	}
 	spin_unlock(&inode->i_sb->s_inode_lru_lock);
+=======
+	spin_lock(&inode_lru_lock);
+	if (list_empty(&inode->i_lru)) {
+		list_add(&inode->i_lru, &inode_lru);
+		inodes_stat.nr_unused++;
+	}
+	spin_unlock(&inode_lru_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void inode_lru_list_del(struct inode *inode)
 {
+<<<<<<< HEAD
 	spin_lock(&inode->i_sb->s_inode_lru_lock);
 	if (!list_empty(&inode->i_lru)) {
 		list_del_init(&inode->i_lru);
@@ -417,6 +522,14 @@ static void inode_lru_list_del(struct inode *inode)
 		this_cpu_dec(nr_unused);
 	}
 	spin_unlock(&inode->i_sb->s_inode_lru_lock);
+=======
+	spin_lock(&inode_lru_lock);
+	if (!list_empty(&inode->i_lru)) {
+		list_del_init(&inode->i_lru);
+		inodes_stat.nr_unused--;
+	}
+	spin_unlock(&inode_lru_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -433,11 +546,17 @@ EXPORT_SYMBOL_GPL(inode_sb_list_add);
 
 static inline void inode_sb_list_del(struct inode *inode)
 {
+<<<<<<< HEAD
 	if (!list_empty(&inode->i_sb_list)) {
 		spin_lock(&inode_sb_list_lock);
 		list_del_init(&inode->i_sb_list);
 		spin_unlock(&inode_sb_list_lock);
 	}
+=======
+	spin_lock(&inode_sb_list_lock);
+	list_del_init(&inode->i_sb_list);
+	spin_unlock(&inode_sb_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static unsigned long hash(struct super_block *sb, unsigned long hashval)
@@ -471,12 +590,20 @@ void __insert_inode_hash(struct inode *inode, unsigned long hashval)
 EXPORT_SYMBOL(__insert_inode_hash);
 
 /**
+<<<<<<< HEAD
  *	__remove_inode_hash - remove an inode from the hash
+=======
+ *	remove_inode_hash - remove an inode from the hash
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	@inode: inode to unhash
  *
  *	Remove an inode from the superblock.
  */
+<<<<<<< HEAD
 void __remove_inode_hash(struct inode *inode)
+=======
+void remove_inode_hash(struct inode *inode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	spin_lock(&inode_hash_lock);
 	spin_lock(&inode->i_lock);
@@ -484,7 +611,11 @@ void __remove_inode_hash(struct inode *inode)
 	spin_unlock(&inode->i_lock);
 	spin_unlock(&inode_hash_lock);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(__remove_inode_hash);
+=======
+EXPORT_SYMBOL(remove_inode_hash);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void end_writeback(struct inode *inode)
 {
@@ -526,9 +657,13 @@ static void evict(struct inode *inode)
 	BUG_ON(!(inode->i_state & I_FREEING));
 	BUG_ON(!list_empty(&inode->i_lru));
 
+<<<<<<< HEAD
 	if (!list_empty(&inode->i_wb_list))
 		inode_wb_list_del(inode);
 
+=======
+	inode_wb_list_del(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	inode_sb_list_del(inode);
 
 	if (op->evict_inode) {
@@ -605,6 +740,17 @@ void evict_inodes(struct super_block *sb)
 	spin_unlock(&inode_sb_list_lock);
 
 	dispose_list(&dispose);
+<<<<<<< HEAD
+=======
+
+	/*
+	 * Cycle through iprune_sem to make sure any inode that prune_icache
+	 * moved off the list before we took the lock has been fully torn
+	 * down.
+	 */
+	down_write(&iprune_sem);
+	up_write(&iprune_sem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -667,10 +813,15 @@ static int can_unuse(struct inode *inode)
 }
 
 /*
+<<<<<<< HEAD
  * Walk the superblock inode LRU for freeable inodes and attempt to free them.
  * This is called from the superblock shrinker function with a number of inodes
  * to trim from the LRU. Inodes to be freed are moved to a temporary list and
  * then are freed outside inode_lock by dispose_list().
+=======
+ * Scan `goal' inodes on the unused list for freeable ones. They are moved to a
+ * temporary list and then are freed outside inode_lru_lock by dispose_list().
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Any inodes which are pinned purely because of attached pagecache have their
  * pagecache removed.  If the inode has metadata buffers attached to
@@ -684,12 +835,17 @@ static int can_unuse(struct inode *inode)
  * LRU does not have strict ordering. Hence we don't want to reclaim inodes
  * with this flag set because they are the inodes that are out of order.
  */
+<<<<<<< HEAD
 void prune_icache_sb(struct super_block *sb, int nr_to_scan)
+=======
+static void prune_icache(int nr_to_scan)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	LIST_HEAD(freeable);
 	int nr_scanned;
 	unsigned long reap = 0;
 
+<<<<<<< HEAD
 	spin_lock(&sb->s_inode_lru_lock);
 	for (nr_scanned = nr_to_scan; nr_scanned >= 0; nr_scanned--) {
 		struct inode *inode;
@@ -701,11 +857,29 @@ void prune_icache_sb(struct super_block *sb, int nr_to_scan)
 
 		/*
 		 * we are inverting the sb->s_inode_lru_lock/inode->i_lock here,
+=======
+	down_read(&iprune_sem);
+	spin_lock(&inode_lru_lock);
+	for (nr_scanned = 0; nr_scanned < nr_to_scan; nr_scanned++) {
+		struct inode *inode;
+
+		if (list_empty(&inode_lru))
+			break;
+
+		inode = list_entry(inode_lru.prev, struct inode, i_lru);
+
+		/*
+		 * we are inverting the inode_lru_lock/inode->i_lock here,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * so use a trylock. If we fail to get the lock, just move the
 		 * inode to the back of the list so we don't spin on it.
 		 */
 		if (!spin_trylock(&inode->i_lock)) {
+<<<<<<< HEAD
 			list_move(&inode->i_lru, &sb->s_inode_lru);
+=======
+			list_move(&inode->i_lru, &inode_lru);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 
@@ -717,29 +891,47 @@ void prune_icache_sb(struct super_block *sb, int nr_to_scan)
 		    (inode->i_state & ~I_REFERENCED)) {
 			list_del_init(&inode->i_lru);
 			spin_unlock(&inode->i_lock);
+<<<<<<< HEAD
 			sb->s_nr_inodes_unused--;
 			this_cpu_dec(nr_unused);
+=======
+			inodes_stat.nr_unused--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 
 		/* recently referenced inodes get one more pass */
 		if (inode->i_state & I_REFERENCED) {
 			inode->i_state &= ~I_REFERENCED;
+<<<<<<< HEAD
 			list_move(&inode->i_lru, &sb->s_inode_lru);
+=======
+			list_move(&inode->i_lru, &inode_lru);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			spin_unlock(&inode->i_lock);
 			continue;
 		}
 		if (inode_has_buffers(inode) || inode->i_data.nrpages) {
 			__iget(inode);
 			spin_unlock(&inode->i_lock);
+<<<<<<< HEAD
 			spin_unlock(&sb->s_inode_lru_lock);
+=======
+			spin_unlock(&inode_lru_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (remove_inode_buffers(inode))
 				reap += invalidate_mapping_pages(&inode->i_data,
 								0, -1);
 			iput(inode);
+<<<<<<< HEAD
 			spin_lock(&sb->s_inode_lru_lock);
 
 			if (inode != list_entry(sb->s_inode_lru.next,
+=======
+			spin_lock(&inode_lru_lock);
+
+			if (inode != list_entry(inode_lru.next,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						struct inode, i_lru))
 				continue;	/* wrong inode or list_empty */
 			/* avoid lock inversions with trylock */
@@ -755,13 +947,18 @@ void prune_icache_sb(struct super_block *sb, int nr_to_scan)
 		spin_unlock(&inode->i_lock);
 
 		list_move(&inode->i_lru, &freeable);
+<<<<<<< HEAD
 		sb->s_nr_inodes_unused--;
 		this_cpu_dec(nr_unused);
+=======
+		inodes_stat.nr_unused--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (current_is_kswapd())
 		__count_vm_events(KSWAPD_INODESTEAL, reap);
 	else
 		__count_vm_events(PGINODESTEAL, reap);
+<<<<<<< HEAD
 	spin_unlock(&sb->s_inode_lru_lock);
 	if (current->reclaim_state)
 		current->reclaim_state->reclaimed_slab += reap;
@@ -769,6 +966,47 @@ void prune_icache_sb(struct super_block *sb, int nr_to_scan)
 	dispose_list(&freeable);
 }
 
+=======
+	spin_unlock(&inode_lru_lock);
+
+	dispose_list(&freeable);
+	up_read(&iprune_sem);
+}
+
+/*
+ * shrink_icache_memory() will attempt to reclaim some unused inodes.  Here,
+ * "unused" means that no dentries are referring to the inodes: the files are
+ * not open and the dcache references to those inodes have already been
+ * reclaimed.
+ *
+ * This function is passed the number of inodes to scan, and it returns the
+ * total number of remaining possibly-reclaimable inodes.
+ */
+static int shrink_icache_memory(struct shrinker *shrink,
+				struct shrink_control *sc)
+{
+	int nr = sc->nr_to_scan;
+	gfp_t gfp_mask = sc->gfp_mask;
+
+	if (nr) {
+		/*
+		 * Nasty deadlock avoidance.  We may hold various FS locks,
+		 * and we don't want to recurse into the FS that called us
+		 * in clear_inode() and friends..
+		 */
+		if (!(gfp_mask & __GFP_FS))
+			return -1;
+		prune_icache(nr);
+	}
+	return (get_nr_inodes_unused() / 100) * sysctl_vfs_cache_pressure;
+}
+
+static struct shrinker icache_shrinker = {
+	.shrink = shrink_icache_memory,
+	.seeks = DEFAULT_SEEKS,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __wait_on_freeing_inode(struct inode *inode);
 /*
  * Called with the inode lock held.
@@ -874,6 +1112,7 @@ unsigned int get_next_ino(void)
 EXPORT_SYMBOL(get_next_ino);
 
 /**
+<<<<<<< HEAD
  *	new_inode_pseudo 	- obtain an inode
  *	@sb: superblock
  *
@@ -897,6 +1136,8 @@ struct inode *new_inode_pseudo(struct super_block *sb)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	new_inode 	- obtain an inode
  *	@sb: superblock
  *
@@ -914,21 +1155,49 @@ struct inode *new_inode(struct super_block *sb)
 
 	spin_lock_prefetch(&inode_sb_list_lock);
 
+<<<<<<< HEAD
 	inode = new_inode_pseudo(sb);
 	if (inode)
 		inode_sb_list_add(inode);
+=======
+	inode = alloc_inode(sb);
+	if (inode) {
+		spin_lock(&inode->i_lock);
+		inode->i_state = 0;
+		spin_unlock(&inode->i_lock);
+		inode_sb_list_add(inode);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return inode;
 }
 EXPORT_SYMBOL(new_inode);
 
+<<<<<<< HEAD
 #ifdef CONFIG_DEBUG_LOCK_ALLOC
 void lockdep_annotate_inode_mutex_key(struct inode *inode)
 {
+=======
+/**
+ * unlock_new_inode - clear the I_NEW state and wake up any waiters
+ * @inode:	new inode to unlock
+ *
+ * Called when the inode is fully initialised to clear the new state of the
+ * inode and wake up anyone waiting for the inode to finish initialisation.
+ */
+void unlock_new_inode(struct inode *inode)
+{
+#ifdef CONFIG_DEBUG_LOCK_ALLOC
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (S_ISDIR(inode->i_mode)) {
 		struct file_system_type *type = inode->i_sb->s_type;
 
 		/* Set new key only if filesystem hasn't already changed it */
+<<<<<<< HEAD
 		if (lockdep_match_class(&inode->i_mutex, &type->i_mutex_key)) {
+=======
+		if (!lockdep_match_class(&inode->i_mutex,
+		    &type->i_mutex_key)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * ensure nobody is actually holding i_mutex
 			 */
@@ -938,6 +1207,7 @@ void lockdep_annotate_inode_mutex_key(struct inode *inode)
 					  &type->i_mutex_dir_key);
 		}
 	}
+<<<<<<< HEAD
 }
 EXPORT_SYMBOL(lockdep_annotate_inode_mutex_key);
 #endif
@@ -956,6 +1226,12 @@ void unlock_new_inode(struct inode *inode)
 	WARN_ON(!(inode->i_state & I_NEW));
 	inode->i_state &= ~I_NEW;
 	smp_mb();
+=======
+#endif
+	spin_lock(&inode->i_lock);
+	WARN_ON(!(inode->i_state & I_NEW));
+	inode->i_state &= ~I_NEW;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wake_up_bit(&inode->i_state, __I_NEW);
 	spin_unlock(&inode->i_lock);
 }
@@ -1359,6 +1635,20 @@ int generic_delete_inode(struct inode *inode)
 EXPORT_SYMBOL(generic_delete_inode);
 
 /*
+<<<<<<< HEAD
+=======
+ * Normal UNIX filesystem behaviour: delete the
+ * inode when the usage count drops to zero, and
+ * i_nlink is zero.
+ */
+int generic_drop_inode(struct inode *inode)
+{
+	return !inode->i_nlink || inode_unhashed(inode);
+}
+EXPORT_SYMBOL_GPL(generic_drop_inode);
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Called when we're dropping the last reference
  * to an inode.
  *
@@ -1376,7 +1666,11 @@ static void iput_final(struct inode *inode)
 
 	WARN_ON(inode->i_state & I_NEW);
 
+<<<<<<< HEAD
 	if (op->drop_inode)
+=======
+	if (op && op->drop_inode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		drop = op->drop_inode(inode);
 	else
 		drop = generic_drop_inode(inode);
@@ -1399,8 +1693,12 @@ static void iput_final(struct inode *inode)
 	}
 
 	inode->i_state |= I_FREEING;
+<<<<<<< HEAD
 	if (!list_empty(&inode->i_lru))
 		inode_lru_list_del(inode);
+=======
+	inode_lru_list_del(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&inode->i_lock);
 
 	evict(inode);
@@ -1489,10 +1787,16 @@ static int relatime_need_update(struct vfsmount *mnt, struct inode *inode,
  *	This function automatically handles read only file systems and media,
  *	as well as the "noatime" flag and inode specific "noatime" markers.
  */
+<<<<<<< HEAD
 void touch_atime(struct path *path)
 {
 	struct vfsmount *mnt = path->mnt;
 	struct inode *inode = path->dentry->d_inode;
+=======
+void touch_atime(struct vfsmount *mnt, struct dentry *dentry)
+{
+	struct inode *inode = dentry->d_inode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct timespec now;
 
 	if (inode->i_flags & S_NOATIME)
@@ -1571,7 +1875,11 @@ void file_update_time(struct file *file)
 	if (sync_it & S_MTIME)
 		inode->i_mtime = now;
 	mark_inode_dirty_sync(inode);
+<<<<<<< HEAD
 	mnt_drop_write_file(file);
+=======
+	mnt_drop_write(file->f_path.mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(file_update_time);
 
@@ -1631,7 +1939,11 @@ __setup("ihash_entries=", set_ihash_entries);
  */
 void __init inode_init_early(void)
 {
+<<<<<<< HEAD
 	unsigned int loop;
+=======
+	int loop;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* If hashes are distributed across NUMA nodes, defer
 	 * hash allocation until vmalloc space is available.
@@ -1649,13 +1961,21 @@ void __init inode_init_early(void)
 					&i_hash_mask,
 					0);
 
+<<<<<<< HEAD
 	for (loop = 0; loop < (1U << i_hash_shift); loop++)
+=======
+	for (loop = 0; loop < (1 << i_hash_shift); loop++)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		INIT_HLIST_HEAD(&inode_hashtable[loop]);
 }
 
 void __init inode_init(void)
 {
+<<<<<<< HEAD
 	unsigned int loop;
+=======
+	int loop;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* inode slab cache */
 	inode_cachep = kmem_cache_create("inode_cache",
@@ -1664,6 +1984,10 @@ void __init inode_init(void)
 					 (SLAB_RECLAIM_ACCOUNT|SLAB_PANIC|
 					 SLAB_MEM_SPREAD),
 					 init_once);
+<<<<<<< HEAD
+=======
+	register_shrinker(&icache_shrinker);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Hash may have been set up in inode_init_early */
 	if (!hashdist)
@@ -1679,7 +2003,11 @@ void __init inode_init(void)
 					&i_hash_mask,
 					0);
 
+<<<<<<< HEAD
 	for (loop = 0; loop < (1U << i_hash_shift); loop++)
+=======
+	for (loop = 0; loop < (1 << i_hash_shift); loop++)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		INIT_HLIST_HEAD(&inode_hashtable[loop]);
 }
 
@@ -1710,7 +2038,11 @@ EXPORT_SYMBOL(init_special_inode);
  * @mode: mode of the new inode
  */
 void inode_init_owner(struct inode *inode, const struct inode *dir,
+<<<<<<< HEAD
 			umode_t mode)
+=======
+			mode_t mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	inode->i_uid = current_fsuid();
 	if (dir && dir->i_mode & S_ISGID) {

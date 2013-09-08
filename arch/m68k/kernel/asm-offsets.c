@@ -24,7 +24,12 @@ int main(void)
 	/* offsets into the task struct */
 	DEFINE(TASK_THREAD, offsetof(struct task_struct, thread));
 	DEFINE(TASK_MM, offsetof(struct task_struct, mm));
+<<<<<<< HEAD
 	DEFINE(TASK_STACK, offsetof(struct task_struct, stack));
+=======
+	DEFINE(TASK_INFO, offsetof(struct task_struct, thread.info));
+	DEFINE(TASK_TINFO, offsetof(struct task_struct, thread.info));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* offsets into the thread struct */
 	DEFINE(THREAD_KSP, offsetof(struct thread_struct, ksp));

@@ -240,14 +240,22 @@ static int __init setup_early_printk(char *buf)
 		if (!strncmp(buf, "xen", 3))
 			early_console_register(&xenboot_console, keep);
 #endif
+<<<<<<< HEAD
 #ifdef CONFIG_EARLY_PRINTK_INTEL_MID
+=======
+#ifdef CONFIG_EARLY_PRINTK_MRST
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!strncmp(buf, "mrst", 4)) {
 			mrst_early_console_init();
 			early_console_register(&early_mrst_console, keep);
 		}
 
 		if (!strncmp(buf, "hsu", 3)) {
+<<<<<<< HEAD
 			hsu_early_console_init(buf + 3);
+=======
+			hsu_early_console_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			early_console_register(&early_hsu_console, keep);
 		}
 #endif

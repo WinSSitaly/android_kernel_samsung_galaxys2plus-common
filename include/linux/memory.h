@@ -15,11 +15,19 @@
 #ifndef _LINUX_MEMORY_H_
 #define _LINUX_MEMORY_H_
 
+<<<<<<< HEAD
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/node.h>
 #include <linux/compiler.h>
 #include <linux/mutex.h>
 
+<<<<<<< HEAD
 #define MIN_MEMORY_BLOCK_SIZE     (1UL << SECTION_SIZE_BITS)
+=======
+#define MIN_MEMORY_BLOCK_SIZE     (1 << SECTION_SIZE_BITS)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct memory_block {
 	unsigned long start_section_nr;
@@ -37,7 +45,11 @@ struct memory_block {
 	int phys_device;		/* to which fru does this belong? */
 	void *hw;			/* optional pointer to fw/hw data */
 	int (*phys_callback)(struct memory_block *);
+<<<<<<< HEAD
 	struct device dev;
+=======
+	struct sys_device sysdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int arch_get_memory_phys_device(unsigned long start_pfn);

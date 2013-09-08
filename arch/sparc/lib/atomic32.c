@@ -7,7 +7,11 @@
  * Based on asm-parisc/atomic.h Copyright (C) 2000 Philipp Rumpf
  */
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/spinlock.h>
 #include <linux/module.h>
 
@@ -55,7 +59,11 @@ int atomic_cmpxchg(atomic_t *v, int old, int new)
 }
 EXPORT_SYMBOL(atomic_cmpxchg);
 
+<<<<<<< HEAD
 int __atomic_add_unless(atomic_t *v, int a, int u)
+=======
+int atomic_add_unless(atomic_t *v, int a, int u)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 	unsigned long flags;
@@ -65,9 +73,15 @@ int __atomic_add_unless(atomic_t *v, int a, int u)
 	if (ret != u)
 		v->counter += a;
 	spin_unlock_irqrestore(ATOMIC_HASH(v), flags);
+<<<<<<< HEAD
 	return ret;
 }
 EXPORT_SYMBOL(__atomic_add_unless);
+=======
+	return ret != u;
+}
+EXPORT_SYMBOL(atomic_add_unless);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Atomic operations are already serializing */
 void atomic_set(atomic_t *v, int i)

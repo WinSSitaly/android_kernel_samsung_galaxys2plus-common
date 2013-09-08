@@ -13,7 +13,13 @@
 #include <wait.h>
 #include <sys/mman.h>
 #include <sys/utsname.h>
+<<<<<<< HEAD
 #include "os.h"
+=======
+#include "kern_constants.h"
+#include "os.h"
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void stack_protections(unsigned long address)
 {

@@ -5,9 +5,13 @@
 #define _ASM_MC146818RTC_H
 
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/kernel.h>
 
 #define RTC_IRQ BUILD_BUG_ON(1)
+=======
+#include <mach/irqs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifndef RTC_PORT
 #define RTC_PORT(x)	(0x70 + (x))

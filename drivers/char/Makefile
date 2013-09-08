@@ -16,6 +16,10 @@ obj-$(CONFIG_UV_MMTIMER)	+= uv_mmtimer.o
 obj-$(CONFIG_VIOTAPE)		+= viotape.o
 obj-$(CONFIG_IBM_BSR)		+= bsr.o
 obj-$(CONFIG_SGI_MBCS)		+= mbcs.o
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_BRIQ_PANEL)	+= briq_panel.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_BFIN_OTP)		+= bfin-otp.o
 
 obj-$(CONFIG_PRINTER)		+= lp.o
@@ -57,10 +61,44 @@ obj-$(CONFIG_IPMI_HANDLER)	+= ipmi/
 obj-$(CONFIG_HANGCHECK_TIMER)	+= hangcheck-timer.o
 obj-$(CONFIG_TCG_TPM)		+= tpm/
 
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_DCC_TTY)		+= dcc_tty.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_PS3_FLASH)		+= ps3flash.o
 obj-$(CONFIG_RAMOOPS)		+= ramoops.o
 
 obj-$(CONFIG_JS_RTC)		+= js-rtc.o
 js-rtc-y = rtc.o
 
+<<<<<<< HEAD
 obj-$(CONFIG_TILE_SROM)		+= tile-srom.o
+=======
+obj-$(CONFIG_BRCM_CHAR_DRIVERS) += broadcom/
+obj-$(CONFIG_BCM_GPS)		+= bcm_gps.o
+
+# Files generated that shall be removed upon make clean
+clean-files := consolemap_deftbl.c defkeymap.c
+
+quiet_cmd_conmk = CONMK   $@
+      cmd_conmk = scripts/conmakehash $< > $@
+
+$(obj)/consolemap_deftbl.c: $(src)/$(FONTMAPFILE)
+	$(call cmd,conmk)
+
+$(obj)/defkeymap.o:  $(obj)/defkeymap.c
+
+# Uncomment if you're changing the keymap and have an appropriate
+# loadkeys version for the map. By default, we'll use the shipped
+# versions.
+# GENERATE_KEYMAP := 1
+
+ifdef GENERATE_KEYMAP
+
+$(obj)/defkeymap.c: $(obj)/%.c: $(src)/%.map
+	loadkeys --mktable $< > $@.tmp
+	sed -e 's/^static *//' $@.tmp > $@
+	rm $@.tmp
+
+endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

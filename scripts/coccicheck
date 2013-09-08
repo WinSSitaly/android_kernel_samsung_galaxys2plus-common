@@ -10,6 +10,7 @@ if [ "$C" = "1" -o "$C" = "2" ]; then
 #    OPTIONS=$*
 
 # Workaround for Coccinelle < 0.2.3
+<<<<<<< HEAD
 	FLAGS="-I $srctree/include -very_quiet"
 	shift $(( $# - 1 ))
 	OPTIONS=$1
@@ -21,6 +22,15 @@ else
     else
         OPTIONS="-dir $KBUILD_EXTMOD -patch $srctree -I $srctree/include -I $KBUILD_EXTMOD/include"
     fi
+=======
+    FLAGS="-I $srctree/include -very_quiet"
+    shift $(( $# - 1 ))
+    OPTIONS=$1
+else
+    ONLINE=0
+    FLAGS="-very_quiet"
+    OPTIONS="-dir $srctree"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 fi
 
 if [ ! -x "$SPATCH" ]; then

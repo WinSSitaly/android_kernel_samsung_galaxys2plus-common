@@ -1,7 +1,11 @@
 /*
  * Driver for the Analog Devices digital potentiometers (I2C bus)
  *
+<<<<<<< HEAD
  * Copyright (C) 2010-2011 Michael Hennerich, Analog Devices Inc.
+=======
+ * Copyright (C) 2010 Michael Hennerich, Analog Devices Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Licensed under the GPL-2 or later.
  */
@@ -11,6 +15,10 @@
 
 #include "ad525x_dpot.h"
 
+<<<<<<< HEAD
+=======
+/* ------------------------------------------------------------------------- */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* I2C bus functions */
 static int write_d8(void *client, u8 val)
 {
@@ -59,13 +67,25 @@ static int __devinit ad_dpot_i2c_probe(struct i2c_client *client,
 		.bops = &bops,
 	};
 
+<<<<<<< HEAD
+=======
+	struct ad_dpot_id dpot_id = {
+		.name = (char *) &id->name,
+		.devid = id->driver_data,
+	};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!i2c_check_functionality(client->adapter,
 				     I2C_FUNC_SMBUS_WORD_DATA)) {
 		dev_err(&client->dev, "SMBUS Word Data not Supported\n");
 		return -EIO;
 	}
 
+<<<<<<< HEAD
 	return ad_dpot_probe(&client->dev, &bdata, id->driver_data, id->name);
+=======
+	return ad_dpot_probe(&client->dev, &bdata, &dpot_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __devexit ad_dpot_i2c_remove(struct i2c_client *client)
@@ -92,7 +112,10 @@ static const struct i2c_device_id ad_dpot_id[] = {
 	{"ad5282", AD5282_ID},
 	{"adn2860", ADN2860_ID},
 	{"ad5273", AD5273_ID},
+<<<<<<< HEAD
 	{"ad5161", AD5161_ID},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{"ad5171", AD5171_ID},
 	{"ad5170", AD5170_ID},
 	{"ad5172", AD5172_ID},
@@ -113,7 +136,21 @@ static struct i2c_driver ad_dpot_i2c_driver = {
 	.id_table	= ad_dpot_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(ad_dpot_i2c_driver);
+=======
+static int __init ad_dpot_i2c_init(void)
+{
+	return i2c_add_driver(&ad_dpot_i2c_driver);
+}
+module_init(ad_dpot_i2c_init);
+
+static void __exit ad_dpot_i2c_exit(void)
+{
+	i2c_del_driver(&ad_dpot_i2c_driver);
+}
+module_exit(ad_dpot_i2c_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Michael Hennerich <hennerich@blackfin.uclinux.org>");
 MODULE_DESCRIPTION("digital potentiometer I2C bus driver");

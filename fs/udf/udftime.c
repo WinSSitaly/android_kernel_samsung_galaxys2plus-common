@@ -34,10 +34,16 @@
  * http://www.boulder.nist.gov/timefreq/pubs/bulletin/leapsecond.htm
  */
 
+<<<<<<< HEAD
 #include "udfdecl.h"
 
 #include <linux/types.h>
 #include <linux/kernel.h>
+=======
+#include <linux/types.h>
+#include <linux/kernel.h>
+#include "udfdecl.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define EPOCH_YEAR 1970
 

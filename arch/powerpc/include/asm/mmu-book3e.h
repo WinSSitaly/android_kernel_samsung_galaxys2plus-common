@@ -41,10 +41,16 @@
 /* MAS registers bit definitions */
 
 #define MAS0_TLBSEL(x)		(((x) << 28) & 0x30000000)
+<<<<<<< HEAD
 #define MAS0_ESEL_MASK		0x0FFF0000
 #define MAS0_ESEL_SHIFT		16
 #define MAS0_ESEL(x)		(((x) << MAS0_ESEL_SHIFT) & MAS0_ESEL_MASK)
 #define MAS0_NV(x)		((x) & 0x00000FFF)
+=======
+#define MAS0_ESEL(x)		(((x) << 16) & 0x0FFF0000)
+#define MAS0_NV(x)		((x) & 0x00000FFF)
+#define MAS0_ESEL_MASK		0x0FFF0000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MAS0_HES		0x00004000
 #define MAS0_WQ_ALLWAYS		0x00000000
 #define MAS0_WQ_COND		0x00001000
@@ -67,7 +73,10 @@
 #define MAS2_M			0x00000004
 #define MAS2_G			0x00000002
 #define MAS2_E			0x00000001
+<<<<<<< HEAD
 #define MAS2_WIMGE_MASK		0x0000001f
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MAS2_EPN_MASK(size)		(~0 << (size + 10))
 #define MAS2_VAL(addr, size, flags)	((addr) & MAS2_EPN_MASK(size) | (flags))
 
@@ -82,7 +91,10 @@
 #define MAS3_SW			0x00000004
 #define MAS3_UR			0x00000002
 #define MAS3_SR			0x00000001
+<<<<<<< HEAD
 #define MAS3_BAP_MASK		0x0000003f
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MAS3_SPSIZE		0x0000003e
 #define MAS3_SPSIZE_SHIFT	1
 
@@ -168,7 +180,10 @@
 #define TLBnCFG_MAXSIZE		0x000f0000	/* Maximum Page Size (v1.0) */
 #define TLBnCFG_MAXSIZE_SHIFT	16
 #define TLBnCFG_ASSOC		0xff000000	/* Associativity */
+<<<<<<< HEAD
 #define TLBnCFG_ASSOC_SHIFT	24
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* TLBnPS encoding */
 #define TLBnPS_4K		0x00000004
@@ -216,6 +231,7 @@ typedef struct {
 	unsigned int	id;
 	unsigned int	active;
 	unsigned long	vdso_base;
+<<<<<<< HEAD
 #ifdef CONFIG_PPC_ICSWX
 	struct spinlock *cop_lockp;	/* guard cop related stuff */
 	unsigned long acop;		/* mask of enabled coprocessor types */
@@ -225,6 +241,8 @@ typedef struct {
 	u64 high_slices_psize;  /* 4 bits per slice for now */
 	u16 user_psize;         /* page size index */
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } mm_context_t;
 
 /* Page size definitions, common between 32 and 64-bit
@@ -260,6 +278,7 @@ extern int mmu_vmemmap_psize;
 
 #ifdef CONFIG_PPC64
 extern unsigned long linear_map_top;
+<<<<<<< HEAD
 
 /*
  * 64-bit booke platforms don't load the tlb in the tlb miss handler code.
@@ -267,6 +286,8 @@ extern unsigned long linear_map_top;
  * return 1, indicating that the tlb requires preloading.
  */
 #define HUGETLB_NEED_PRELOAD
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #endif /* !__ASSEMBLY__ */

@@ -23,11 +23,18 @@
 #include <mach/addr-map.h>
 #include <mach/mfp-mmp2.h>
 #include <mach/mmp2.h>
+<<<<<<< HEAD
 #include <mach/irqs.h>
 
 #include "common.h"
 
 #define FLINT_NR_IRQS	(MMP_NR_IRQS + 48)
+=======
+
+#include "common.h"
+
+#define FLINT_NR_IRQS	(IRQ_BOARD_START + 48)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static unsigned long flint_pin_config[] __initdata = {
 	/* UART1 */
@@ -88,8 +95,13 @@ static struct resource smc91x_resources[] = {
 		.flags  = IORESOURCE_MEM,
 	},
 	[1] = {
+<<<<<<< HEAD
 		.start  = MMP_GPIO_TO_IRQ(155),
 		.end    = MMP_GPIO_TO_IRQ(155),
+=======
+		.start  = gpio_to_irq(155),
+		.end    = gpio_to_irq(155),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags  = IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHEDGE,
 	}
 };
@@ -111,7 +123,10 @@ static void __init flint_init(void)
 	/* on-chip devices */
 	mmp2_add_uart(1);
 	mmp2_add_uart(2);
+<<<<<<< HEAD
 	platform_device_register(&mmp2_device_gpio);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* off-chip devices */
 	platform_device_register(&smc91x_device);
@@ -123,5 +138,8 @@ MACHINE_START(FLINT, "Flint Development Platform")
 	.init_irq       = mmp2_init_irq,
 	.timer          = &mmp2_timer,
 	.init_machine   = flint_init,
+<<<<<<< HEAD
 	.restart	= mmp_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

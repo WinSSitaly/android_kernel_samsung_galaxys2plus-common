@@ -62,6 +62,7 @@ struct platform_device *__init imx_add_mx2_camera(
 			res, data->iobaseemmaprp ? 4 : 2,
 			pdata, sizeof(*pdata), DMA_BIT_MASK(32));
 }
+<<<<<<< HEAD
 
 struct platform_device *__init imx_add_mx2_emmaprp(
 		const struct imx_mx2_camera_data *data)
@@ -80,3 +81,5 @@ struct platform_device *__init imx_add_mx2_emmaprp(
 	return imx_add_platform_device_dmamask("m2m-emmaprp", 0,
 			res, 2, NULL, 0, DMA_BIT_MASK(32));
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

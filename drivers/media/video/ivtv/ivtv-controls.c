@@ -21,7 +21,10 @@
 #include "ivtv-driver.h"
 #include "ivtv-ioctl.h"
 #include "ivtv-controls.h"
+<<<<<<< HEAD
 #include "ivtv-mailbox.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int ivtv_s_stream_vbi_fmt(struct cx2341x_handler *cxhdl, u32 fmt)
 {
@@ -100,6 +103,7 @@ struct cx2341x_handler_ops ivtv_cxhdl_ops = {
 	.s_video_encoding = ivtv_s_video_encoding,
 	.s_stream_vbi_fmt = ivtv_s_stream_vbi_fmt,
 };
+<<<<<<< HEAD
 
 int ivtv_g_pts_frame(struct ivtv *itv, s64 *pts, s64 *frame)
 {
@@ -161,3 +165,5 @@ const struct v4l2_ctrl_ops ivtv_hdl_out_ops = {
 	.s_ctrl = ivtv_s_ctrl,
 	.g_volatile_ctrl = ivtv_g_volatile_ctrl,
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

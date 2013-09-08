@@ -451,6 +451,7 @@ out:
 static struct cache_dir *__cpuinit cacheinfo_create_cache_dir(unsigned int cpu_id)
 {
 	struct cache_dir *cache_dir;
+<<<<<<< HEAD
 	struct device *dev;
 	struct kobject *kobj = NULL;
 
@@ -460,6 +461,17 @@ static struct cache_dir *__cpuinit cacheinfo_create_cache_dir(unsigned int cpu_i
 		goto err;
 
 	kobj = kobject_create_and_add("cache", &dev->kobj);
+=======
+	struct sys_device *sysdev;
+	struct kobject *kobj = NULL;
+
+	sysdev = get_cpu_sysdev(cpu_id);
+	WARN_ONCE(!sysdev, "no sysdev for CPU %i\n", cpu_id);
+	if (!sysdev)
+		goto err;
+
+	kobj = kobject_create_and_add("cache", &sysdev->kobj);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!kobj)
 		goto err;
 

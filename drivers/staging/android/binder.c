@@ -30,9 +30,15 @@
 #include <linux/rbtree.h>
 #include <linux/sched.h>
 #include <linux/seq_file.h>
+<<<<<<< HEAD
 #include <linux/uaccess.h>
 #include <linux/vmalloc.h>
 #include <linux/slab.h>
+=======
+#include <linux/slab.h>
+#include <linux/uaccess.h>
+#include <linux/vmalloc.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "binder.h"
 
@@ -103,7 +109,11 @@ static uint32_t binder_debug_mask = BINDER_DEBUG_USER_ERROR |
 	BINDER_DEBUG_FAILED_TRANSACTION | BINDER_DEBUG_DEAD_TRANSACTION;
 module_param_named(debug_mask, binder_debug_mask, uint, S_IWUSR | S_IRUGO);
 
+<<<<<<< HEAD
 static bool binder_debug_no_lock;
+=======
+static int binder_debug_no_lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(proc_no_lock, binder_debug_no_lock, bool, S_IWUSR | S_IRUGO);
 
 static DECLARE_WAIT_QUEUE_HEAD(binder_user_error_wait);
@@ -258,7 +268,11 @@ struct binder_ref {
 };
 
 struct binder_buffer {
+<<<<<<< HEAD
 	struct list_head entry; /* free and allocated entries by address */
+=======
+	struct list_head entry; /* free and allocated entries by addesss */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct rb_node rb_node; /* free entry by size or allocated entry */
 				/* by address */
 	unsigned free:1;
@@ -381,7 +395,12 @@ int task_get_unused_fd_flags(struct binder_proc *proc, int flags)
 
 repeat:
 	fdt = files_fdtable(files);
+<<<<<<< HEAD
 	fd = find_next_zero_bit(fdt->open_fds, fdt->max_fds, files->next_fd);
+=======
+	fd = find_next_zero_bit(fdt->open_fds->fds_bits, fdt->max_fds,
+				files->next_fd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * N.B. For clone tasks sharing a files structure, this test
@@ -409,11 +428,19 @@ repeat:
 		goto repeat;
 	}
 
+<<<<<<< HEAD
 	__set_open_fd(fd, fdt);
 	if (flags & O_CLOEXEC)
 		__set_close_on_exec(fd, fdt);
 	else
 		__clear_close_on_exec(fd, fdt);
+=======
+	FD_SET(fd, fdt->open_fds);
+	if (flags & O_CLOEXEC)
+		FD_SET(fd, fdt->close_on_exec);
+	else
+		FD_CLR(fd, fdt->close_on_exec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	files->next_fd = fd + 1;
 #if 1
 	/* Sanity check */
@@ -454,7 +481,11 @@ static void task_fd_install(
 static void __put_unused_fd(struct files_struct *files, unsigned int fd)
 {
 	struct fdtable *fdt = files_fdtable(files);
+<<<<<<< HEAD
 	__clear_open_fd(fd, fdt);
+=======
+	__FD_CLR(fd, fdt->open_fds);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (fd < files->next_fd)
 		files->next_fd = fd;
 }
@@ -480,7 +511,11 @@ static long task_close_fd(struct binder_proc *proc, unsigned int fd)
 	if (!filp)
 		goto out_unlock;
 	rcu_assign_pointer(fdt->fd[fd], NULL);
+<<<<<<< HEAD
 	__clear_close_on_exec(fd, fdt);
+=======
+	FD_CLR(fd, fdt->close_on_exec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__put_unused_fd(files, fd);
 	spin_unlock(&files->file_lock);
 	retval = filp_close(filp, files);
@@ -655,7 +690,11 @@ static int binder_update_page_range(struct binder_proc *proc, int allocate,
 		page = &proc->pages[(page_addr - proc->buffer) / PAGE_SIZE];
 
 		BUG_ON(*page);
+<<<<<<< HEAD
 		*page = alloc_page(GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO);
+=======
+		*page = alloc_page(GFP_KERNEL | __GFP_ZERO);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (*page == NULL) {
 			printk(KERN_ERR "binder: %d: binder_alloc_buf failed "
 			       "for page at %p\n", proc->pid, page_addr);
@@ -2789,6 +2828,10 @@ static void binder_vma_open(struct vm_area_struct *vma)
 		     proc->pid, vma->vm_start, vma->vm_end,
 		     (vma->vm_end - vma->vm_start) / SZ_1K, vma->vm_flags,
 		     (unsigned long)pgprot_val(vma->vm_page_prot));
+<<<<<<< HEAD
+=======
+	dump_stack();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void binder_vma_close(struct vm_area_struct *vma)
@@ -2817,6 +2860,12 @@ static int binder_mmap(struct file *filp, struct vm_area_struct *vma)
 	const char *failure_string;
 	struct binder_buffer *buffer;
 
+<<<<<<< HEAD
+=======
+	if (proc->tsk != current)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((vma->vm_end - vma->vm_start) > SZ_4M)
 		vma->vm_end = vma->vm_start + SZ_4M;
 
@@ -2881,7 +2930,11 @@ static int binder_mmap(struct file *filp, struct vm_area_struct *vma)
 	binder_insert_free_buffer(proc, buffer);
 	proc->free_async_space = proc->buffer_size / 2;
 	barrier();
+<<<<<<< HEAD
 	proc->files = get_files_struct(proc->tsk);
+=======
+	proc->files = get_files_struct(current);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	proc->vma = vma;
 	proc->vma_vm_mm = vma->vm_mm;
 

@@ -258,7 +258,10 @@ void deactivate_fd(int fd, int irqnum)
 
 	ignore_sigio_fd(fd);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(deactivate_fd);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Called just before shutdown in order to provide a clean exec

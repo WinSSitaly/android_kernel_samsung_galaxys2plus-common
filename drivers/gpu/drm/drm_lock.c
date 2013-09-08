@@ -33,7 +33,10 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drmP.h"
 
 static int drm_notifier(void *priv);
@@ -346,7 +349,10 @@ void drm_idlelock_take(struct drm_lock_data *lock_data)
 	}
 	spin_unlock_bh(&lock_data->spinlock);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(drm_idlelock_take);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void drm_idlelock_release(struct drm_lock_data *lock_data)
 {
@@ -366,7 +372,10 @@ void drm_idlelock_release(struct drm_lock_data *lock_data)
 	}
 	spin_unlock_bh(&lock_data->spinlock);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(drm_idlelock_release);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int drm_i_have_hw_lock(struct drm_device *dev, struct drm_file *file_priv)
 {

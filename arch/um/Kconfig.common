@@ -8,8 +8,11 @@ config UML
 	default y
 	select HAVE_GENERIC_HARDIRQS
 	select GENERIC_IRQ_SHOW
+<<<<<<< HEAD
 	select GENERIC_CPU_DEVICES
 	select GENERIC_IO
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config MMU
 	bool

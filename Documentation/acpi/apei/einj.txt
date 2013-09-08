@@ -47,6 +47,7 @@ directory apei/einj. The following files are provided.
 
 - param1
   This file is used to set the first error parameter value. Effect of
+<<<<<<< HEAD
   parameter depends on error_type specified.
 
 - param2
@@ -105,3 +106,15 @@ Example:
 
 For more information about EINJ, please refer to ACPI specification
 version 4.0, section 17.5 and ACPI 5.0, section 18.6.
+=======
+  parameter depends on error_type specified. For memory error, this is
+  physical memory address.
+
+- param2
+  This file is used to set the second error parameter value. Effect of
+  parameter depends on error_type specified. For memory error, this is
+  physical memory address mask.
+
+For more information about EINJ, please refer to ACPI specification
+version 4.0, section 17.5.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -7,11 +7,14 @@ Supported chips:
     Addresses scanned: I2C 0x28 - 0x2f
     Datasheet: Publicly available at the National Semiconductor website
                http://www.national.com/
+<<<<<<< HEAD
   * National Semiconductor LM96080
     Prefix: 'lm96080'
     Addresses scanned: I2C 0x28 - 0x2f
     Datasheet: Publicly available at the National Semiconductor website
                http://www.national.com/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 Authors:
         Frodo Looijaard <frodol@dds.nl>,
@@ -22,9 +25,13 @@ Description
 
 This driver implements support for the National Semiconductor LM80.
 It is described as a 'Serial Interface ACPI-Compatible Microprocessor
+<<<<<<< HEAD
 System Hardware Monitor'. The LM96080 is a more recent incarnation,
 it is pin and register compatible, with a few additional features not
 yet supported by the driver.
+=======
+System Hardware Monitor'.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 The LM80 implements one temperature sensor, two fan rotation speed sensors,
 seven voltage sensors, alarms, and some miscellaneous stuff.

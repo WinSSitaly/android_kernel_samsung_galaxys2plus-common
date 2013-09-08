@@ -254,6 +254,7 @@ int fixup_exception(struct pt_regs *regs);
 unsigned long search_exception_table(unsigned long addr);
 const struct exception_table_entry *search_exception_tables(unsigned long addr);
 
+<<<<<<< HEAD
 extern void *set_exception_table_vec(unsigned int vec, void *handler);
 
 static inline void *set_exception_table_evt(unsigned int evt, void *handler)
@@ -268,5 +269,7 @@ struct mem_access {
 
 int handle_unaligned_access(insn_size_t instruction, struct pt_regs *regs,
 			    struct mem_access *ma, int, unsigned long address);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __ASM_SH_UACCESS_H */

@@ -29,7 +29,11 @@ MODULE_PARM_DESC(force_pid_filter_usage, "force all dvb-usb-devices to use a PID
 static int dvb_usb_adapter_init(struct dvb_usb_device *d, short *adapter_nrs)
 {
 	struct dvb_usb_adapter *adap;
+<<<<<<< HEAD
 	int ret, n, o;
+=======
+	int ret, n;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (n = 0; n < d->props.num_adapters; n++) {
 		adap = &d->adapter[n];
@@ -38,14 +42,20 @@ static int dvb_usb_adapter_init(struct dvb_usb_device *d, short *adapter_nrs)
 
 		memcpy(&adap->props, &d->props.adapter[n], sizeof(struct dvb_usb_adapter_properties));
 
+<<<<<<< HEAD
 	for (o = 0; o < adap->props.num_frontends; o++) {
 		struct dvb_usb_adapter_fe_properties *props = &adap->props.fe[o];
 		/* speed - when running at FULL speed we need a HW PID filter */
 		if (d->udev->speed == USB_SPEED_FULL && !(props->caps & DVB_USB_ADAP_HAS_PID_FILTER)) {
+=======
+		/* speed - when running at FULL speed we need a HW PID filter */
+		if (d->udev->speed == USB_SPEED_FULL && !(adap->props.caps & DVB_USB_ADAP_HAS_PID_FILTER)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			err("This USB2.0 device cannot be run on a USB1.1 port. (it lacks a hardware PID filter)");
 			return -ENODEV;
 		}
 
+<<<<<<< HEAD
 		if ((d->udev->speed == USB_SPEED_FULL && props->caps & DVB_USB_ADAP_HAS_PID_FILTER) ||
 			(props->caps & DVB_USB_ADAP_NEED_PID_FILTERING)) {
 			info("will use the device's hardware PID filter (table count: %d).", props->pid_filter_count);
@@ -74,6 +84,27 @@ static int dvb_usb_adapter_init(struct dvb_usb_device *d, short *adapter_nrs)
 		}
 	}
 
+=======
+		if ((d->udev->speed == USB_SPEED_FULL && adap->props.caps & DVB_USB_ADAP_HAS_PID_FILTER) ||
+			(adap->props.caps & DVB_USB_ADAP_NEED_PID_FILTERING)) {
+			info("will use the device's hardware PID filter (table count: %d).", adap->props.pid_filter_count);
+			adap->pid_filtering  = 1;
+			adap->max_feed_count = adap->props.pid_filter_count;
+		} else {
+			info("will pass the complete MPEG2 transport stream to the software demuxer.");
+			adap->pid_filtering  = 0;
+			adap->max_feed_count = 255;
+		}
+
+		if (!adap->pid_filtering &&
+			dvb_usb_force_pid_filter_usage &&
+			adap->props.caps & DVB_USB_ADAP_HAS_PID_FILTER) {
+			info("pid filter enabled by module option.");
+			adap->pid_filtering  = 1;
+			adap->max_feed_count = adap->props.pid_filter_count;
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (adap->props.size_of_priv > 0) {
 			adap->priv = kzalloc(adap->props.size_of_priv, GFP_KERNEL);
 			if (adap->priv == NULL) {
@@ -88,10 +119,13 @@ static int dvb_usb_adapter_init(struct dvb_usb_device *d, short *adapter_nrs)
 			return ret;
 		}
 
+<<<<<<< HEAD
 		/* use exclusive FE lock if there is multiple shared FEs */
 		if (adap->fe_adap[1].fe)
 			adap->dvb_adap.mfe_shared = 1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		d->num_adapters_initialized++;
 		d->state |= DVB_USB_STATE_DVB;
 	}

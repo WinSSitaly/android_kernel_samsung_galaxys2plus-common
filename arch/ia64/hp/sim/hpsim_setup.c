@@ -26,6 +26,15 @@
 #include "hpsim_ssc.h"
 
 void
+<<<<<<< HEAD
+=======
+ia64_ssc_connect_irq (long intr, long irq)
+{
+	ia64_ssc(intr, irq, 0, 0, SSC_CONNECT_INTERRUPT);
+}
+
+void
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ia64_ctl_trace (long on)
 {
 	ia64_ssc(on, 0, 0, 0, SSC_CTL_TRACE);

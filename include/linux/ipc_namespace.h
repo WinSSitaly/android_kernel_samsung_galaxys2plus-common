@@ -42,6 +42,7 @@ struct ipc_namespace {
 
 	size_t		shm_ctlmax;
 	size_t		shm_ctlall;
+<<<<<<< HEAD
 	unsigned long	shm_tot;
 	int		shm_ctlmni;
 	/*
@@ -49,6 +50,10 @@ struct ipc_namespace {
 	 * of shmctl()
 	 */
 	int		shm_rmid_forced;
+=======
+	int		shm_ctlmni;
+	int		shm_tot;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct notifier_block ipcns_nb;
 
@@ -77,7 +82,10 @@ extern int register_ipcns_notifier(struct ipc_namespace *);
 extern int cond_register_ipcns_notifier(struct ipc_namespace *);
 extern void unregister_ipcns_notifier(struct ipc_namespace *);
 extern int ipcns_notify(unsigned long);
+<<<<<<< HEAD
 extern void shm_destroy_orphaned(struct ipc_namespace *ns);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else /* CONFIG_SYSVIPC */
 static inline int register_ipcns_notifier(struct ipc_namespace *ns)
 { return 0; }
@@ -85,7 +93,10 @@ static inline int cond_register_ipcns_notifier(struct ipc_namespace *ns)
 { return 0; }
 static inline void unregister_ipcns_notifier(struct ipc_namespace *ns) { }
 static inline int ipcns_notify(unsigned long l) { return 0; }
+<<<<<<< HEAD
 static inline void shm_destroy_orphaned(struct ipc_namespace *ns) {}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_SYSVIPC */
 
 #ifdef CONFIG_POSIX_MQUEUE

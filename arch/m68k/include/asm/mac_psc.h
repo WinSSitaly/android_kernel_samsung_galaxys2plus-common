@@ -211,10 +211,13 @@
 extern volatile __u8 *psc;
 extern int psc_present;
 
+<<<<<<< HEAD
 extern void psc_register_interrupts(void);
 extern void psc_irq_enable(int);
 extern void psc_irq_disable(int);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *	Access functions
  */

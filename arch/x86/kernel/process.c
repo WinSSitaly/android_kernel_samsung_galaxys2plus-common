@@ -12,17 +12,25 @@
 #include <linux/user-return-notifier.h>
 #include <linux/dmi.h>
 #include <linux/utsname.h>
+<<<<<<< HEAD
 #include <linux/stackprotector.h>
 #include <linux/tick.h>
 #include <linux/cpuidle.h>
 #include <trace/events/power.h>
 #include <linux/hw_breakpoint.h>
 #include <asm/cpu.h>
+=======
+#include <trace/events/power.h>
+#include <linux/hw_breakpoint.h>
+#include <asm/cpu.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/apic.h>
 #include <asm/syscalls.h>
 #include <asm/idle.h>
 #include <asm/uaccess.h>
 #include <asm/i387.h>
+<<<<<<< HEAD
 #include <asm/fpu-internal.h>
 #include <asm/debugreg.h>
 #include <asm/nmi.h>
@@ -43,6 +51,9 @@ void idle_notifier_unregister(struct notifier_block *n)
 }
 EXPORT_SYMBOL_GPL(idle_notifier_unregister);
 #endif
+=======
+#include <asm/debugreg.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct kmem_cache *task_xstate_cachep;
 EXPORT_SYMBOL_GPL(task_xstate_cachep);
@@ -70,7 +81,11 @@ void free_thread_xstate(struct task_struct *tsk)
 void free_thread_info(struct thread_info *ti)
 {
 	free_thread_xstate(ti->task);
+<<<<<<< HEAD
 	free_pages((unsigned long)ti, THREAD_ORDER);
+=======
+	free_pages((unsigned long)ti, get_order(THREAD_SIZE));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void arch_task_cache_init(void)
@@ -314,7 +329,11 @@ int kernel_thread(int (*fn)(void *), void *arg, unsigned long flags)
 	regs.orig_ax = -1;
 	regs.ip = (unsigned long) kernel_thread_helper;
 	regs.cs = __KERNEL_CS | get_kernel_rpl();
+<<<<<<< HEAD
 	regs.flags = X86_EFLAGS_IF | X86_EFLAGS_BIT1;
+=======
+	regs.flags = X86_EFLAGS_IF | 0x2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Ok, create the new process.. */
 	return do_fork(flags | CLONE_VM | CLONE_UNTRACED, 0, &regs, 0, NULL, NULL);
@@ -362,6 +381,7 @@ void (*pm_idle)(void);
 EXPORT_SYMBOL(pm_idle);
 #endif
 
+<<<<<<< HEAD
 static inline int hlt_use_halt(void)
 {
 	return 1;
@@ -395,10 +415,39 @@ void exit_idle(void)
 	if (current->pid)
 		return;
 	__exit_idle();
+=======
+#ifdef CONFIG_X86_32
+/*
+ * This halt magic was a workaround for ancient floppy DMA
+ * wreckage. It should be safe to remove.
+ */
+static int hlt_counter;
+void disable_hlt(void)
+{
+	hlt_counter++;
+}
+EXPORT_SYMBOL(disable_hlt);
+
+void enable_hlt(void)
+{
+	hlt_counter--;
+}
+EXPORT_SYMBOL(enable_hlt);
+
+static inline int hlt_use_halt(void)
+{
+	return (!hlt_counter && boot_cpu_data.hlt_works_ok);
+}
+#else
+static inline int hlt_use_halt(void)
+{
+	return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif
 
 /*
+<<<<<<< HEAD
  * The idle thread. There's no useful work to be
  * done, so just try to conserve power and have a
  * low exit latency (ie sit in a loop waiting for
@@ -461,14 +510,21 @@ void cpu_idle(void)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * We use this if we don't have any better
  * idle routine..
  */
 void default_idle(void)
 {
 	if (hlt_use_halt()) {
+<<<<<<< HEAD
 		trace_power_start_rcuidle(POWER_CSTATE, 1, smp_processor_id());
 		trace_cpu_idle_rcuidle(1, smp_processor_id());
+=======
+		trace_power_start(POWER_CSTATE, 1, smp_processor_id());
+		trace_cpu_idle(1, smp_processor_id());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		current_thread_info()->status &= ~TS_POLLING;
 		/*
 		 * TS_POLLING-cleared state must be visible before we
@@ -481,8 +537,13 @@ void default_idle(void)
 		else
 			local_irq_enable();
 		current_thread_info()->status |= TS_POLLING;
+<<<<<<< HEAD
 		trace_power_end_rcuidle(smp_processor_id());
 		trace_cpu_idle_rcuidle(PWR_EVENT_EXIT, smp_processor_id());
+=======
+		trace_power_end(smp_processor_id());
+		trace_cpu_idle(PWR_EVENT_EXIT, smp_processor_id());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		local_irq_enable();
 		/* loop is done by the caller */
@@ -493,6 +554,7 @@ void default_idle(void)
 EXPORT_SYMBOL(default_idle);
 #endif
 
+<<<<<<< HEAD
 bool set_pm_idle_to_default(void)
 {
 	bool ret = !!pm_idle;
@@ -501,6 +563,8 @@ bool set_pm_idle_to_default(void)
 
 	return ret;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void stop_this_cpu(void *dummy)
 {
 	local_irq_disable();
@@ -536,12 +600,43 @@ void cpu_idle_wait(void)
 }
 EXPORT_SYMBOL_GPL(cpu_idle_wait);
 
+<<<<<<< HEAD
+=======
+/*
+ * This uses new MONITOR/MWAIT instructions on P4 processors with PNI,
+ * which can obviate IPI to trigger checking of need_resched.
+ * We execute MONITOR against need_resched and enter optimized wait state
+ * through MWAIT. Whenever someone changes need_resched, we would be woken
+ * up from MWAIT (without an IPI).
+ *
+ * New with Core Duo processors, MWAIT can take some hints based on CPU
+ * capability.
+ */
+void mwait_idle_with_hints(unsigned long ax, unsigned long cx)
+{
+	if (!need_resched()) {
+		if (this_cpu_has(X86_FEATURE_CLFLUSH_MONITOR))
+			clflush((void *)&current_thread_info()->flags);
+
+		__monitor((void *)&current_thread_info()->flags, 0, 0);
+		smp_mb();
+		if (!need_resched())
+			__mwait(ax, cx);
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Default MONITOR/MWAIT with no hints, used for default C1 state */
 static void mwait_idle(void)
 {
 	if (!need_resched()) {
+<<<<<<< HEAD
 		trace_power_start_rcuidle(POWER_CSTATE, 1, smp_processor_id());
 		trace_cpu_idle_rcuidle(1, smp_processor_id());
+=======
+		trace_power_start(POWER_CSTATE, 1, smp_processor_id());
+		trace_cpu_idle(1, smp_processor_id());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (this_cpu_has(X86_FEATURE_CLFLUSH_MONITOR))
 			clflush((void *)&current_thread_info()->flags);
 
@@ -551,8 +646,13 @@ static void mwait_idle(void)
 			__sti_mwait(0, 0);
 		else
 			local_irq_enable();
+<<<<<<< HEAD
 		trace_power_end_rcuidle(smp_processor_id());
 		trace_cpu_idle_rcuidle(PWR_EVENT_EXIT, smp_processor_id());
+=======
+		trace_power_end(smp_processor_id());
+		trace_cpu_idle(PWR_EVENT_EXIT, smp_processor_id());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		local_irq_enable();
 }
@@ -564,6 +664,7 @@ static void mwait_idle(void)
  */
 static void poll_idle(void)
 {
+<<<<<<< HEAD
 	trace_power_start_rcuidle(POWER_CSTATE, 0, smp_processor_id());
 	trace_cpu_idle_rcuidle(0, smp_processor_id());
 	local_irq_enable();
@@ -571,6 +672,15 @@ static void poll_idle(void)
 		cpu_relax();
 	trace_power_end_rcuidle(smp_processor_id());
 	trace_cpu_idle_rcuidle(PWR_EVENT_EXIT, smp_processor_id());
+=======
+	trace_power_start(POWER_CSTATE, 0, smp_processor_id());
+	trace_cpu_idle(0, smp_processor_id());
+	local_irq_enable();
+	while (!need_resched())
+		cpu_relax();
+	trace_power_end(smp_processor_id());
+	trace_cpu_idle(PWR_EVENT_EXIT, smp_processor_id());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*

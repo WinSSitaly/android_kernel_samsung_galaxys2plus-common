@@ -8,7 +8,11 @@ struct dev_archdata {
 #ifdef CONFIG_X86_64
 struct dma_map_ops *dma_ops;
 #endif
+<<<<<<< HEAD
 #if defined(CONFIG_INTEL_IOMMU) || defined(CONFIG_AMD_IOMMU)
+=======
+#if defined(CONFIG_DMAR) || defined(CONFIG_AMD_IOMMU)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *iommu; /* hook for IOMMU specific extension */
 #endif
 };

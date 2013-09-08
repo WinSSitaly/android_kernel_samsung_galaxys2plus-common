@@ -173,12 +173,16 @@
 #include <linux/init.h>
 #include <linux/ioport.h>
 #include <linux/cpufreq.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <linux/dma-mapping.h>
 #include <linux/mutex.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
 #include <video/sa1100fb.h>
 
 #include <mach/hardware.h>
@@ -186,35 +190,298 @@
 #include <mach/shannon.h>
 
 /*
+=======
+#include <mach/hardware.h>
+#include <asm/mach-types.h>
+#include <mach/assabet.h>
+#include <mach/shannon.h>
+
+/*
+ * debugging?
+ */
+#define DEBUG 0
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Complain if VAR is out of range.
  */
 #define DEBUG_VAR 1
 
+<<<<<<< HEAD
 #include "sa1100fb.h"
 
 static const struct sa1100fb_rgb rgb_4 = {
+=======
+#undef ASSABET_PAL_VIDEO
+
+#include "sa1100fb.h"
+
+extern void (*sa1100fb_backlight_power)(int on);
+extern void (*sa1100fb_lcd_power)(int on);
+
+static struct sa1100fb_rgb rgb_4 = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.red	= { .offset = 0,  .length = 4, },
 	.green	= { .offset = 0,  .length = 4, },
 	.blue	= { .offset = 0,  .length = 4, },
 	.transp	= { .offset = 0,  .length = 0, },
 };
 
+<<<<<<< HEAD
 static const struct sa1100fb_rgb rgb_8 = {
+=======
+static struct sa1100fb_rgb rgb_8 = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.red	= { .offset = 0,  .length = 8, },
 	.green	= { .offset = 0,  .length = 8, },
 	.blue	= { .offset = 0,  .length = 8, },
 	.transp	= { .offset = 0,  .length = 0, },
 };
 
+<<<<<<< HEAD
 static const struct sa1100fb_rgb def_rgb_16 = {
+=======
+static struct sa1100fb_rgb def_rgb_16 = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.red	= { .offset = 11, .length = 5, },
 	.green	= { .offset = 5,  .length = 6, },
 	.blue	= { .offset = 0,  .length = 5, },
 	.transp	= { .offset = 0,  .length = 0, },
 };
 
+<<<<<<< HEAD
 
 
+=======
+#ifdef CONFIG_SA1100_ASSABET
+#ifndef ASSABET_PAL_VIDEO
+/*
+ * The assabet uses a sharp LQ039Q2DS54 LCD module.  It is actually
+ * takes an RGB666 signal, but we provide it with an RGB565 signal
+ * instead (def_rgb_16).
+ */
+static struct sa1100fb_mach_info lq039q2ds54_info __initdata = {
+	.pixclock	= 171521,	.bpp		= 16,
+	.xres		= 320,		.yres		= 240,
+
+	.hsync_len	= 5,		.vsync_len	= 1,
+	.left_margin	= 61,		.upper_margin	= 3,
+	.right_margin	= 9,		.lower_margin	= 0,
+
+	.sync		= FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
+
+	.lccr0		= LCCR0_Color | LCCR0_Sngl | LCCR0_Act,
+	.lccr3		= LCCR3_OutEnH | LCCR3_PixRsEdg | LCCR3_ACBsDiv(2),
+};
+#else
+static struct sa1100fb_mach_info pal_info __initdata = {
+	.pixclock	= 67797,	.bpp		= 16,
+	.xres		= 640,		.yres		= 512,
+
+	.hsync_len	= 64,		.vsync_len	= 6,
+	.left_margin	= 125,		.upper_margin	= 70,
+	.right_margin	= 115,		.lower_margin	= 36,
+
+	.lccr0		= LCCR0_Color | LCCR0_Sngl | LCCR0_Act,
+	.lccr3		= LCCR3_OutEnH | LCCR3_PixRsEdg | LCCR3_ACBsDiv(512),
+};
+#endif
+#endif
+
+#ifdef CONFIG_SA1100_H3600
+static struct sa1100fb_mach_info h3600_info __initdata = {
+	.pixclock	= 174757, 	.bpp		= 16,
+	.xres		= 320,		.yres		= 240,
+
+	.hsync_len	= 3,		.vsync_len	= 3,
+	.left_margin	= 12,		.upper_margin	= 10,
+	.right_margin	= 17,		.lower_margin	= 1,
+
+	.cmap_static	= 1,
+
+	.lccr0		= LCCR0_Color | LCCR0_Sngl | LCCR0_Act,
+	.lccr3		= LCCR3_OutEnH | LCCR3_PixRsEdg | LCCR3_ACBsDiv(2),
+};
+
+static struct sa1100fb_rgb h3600_rgb_16 = {
+	.red	= { .offset = 12, .length = 4, },
+	.green	= { .offset = 7,  .length = 4, },
+	.blue	= { .offset = 1,  .length = 4, },
+	.transp	= { .offset = 0,  .length = 0, },
+};
+#endif
+
+#ifdef CONFIG_SA1100_H3100
+static struct sa1100fb_mach_info h3100_info __initdata = {
+	.pixclock	= 406977, 	.bpp		= 4,
+	.xres		= 320,		.yres		= 240,
+
+	.hsync_len	= 26,		.vsync_len	= 41,
+	.left_margin	= 4,		.upper_margin	= 0,
+	.right_margin	= 4,		.lower_margin	= 0,
+
+	.sync		= FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
+	.cmap_greyscale	= 1,
+	.cmap_inverse	= 1,
+
+	.lccr0		= LCCR0_Mono | LCCR0_4PixMono | LCCR0_Sngl | LCCR0_Pas,
+	.lccr3		= LCCR3_OutEnH | LCCR3_PixRsEdg | LCCR3_ACBsDiv(2),
+};
+#endif
+
+#ifdef CONFIG_SA1100_COLLIE
+static struct sa1100fb_mach_info collie_info __initdata = {
+	.pixclock	= 171521,	.bpp		= 16,
+	.xres		= 320,		.yres		= 240,
+
+	.hsync_len	= 5,		.vsync_len	= 1,
+	.left_margin	= 11,		.upper_margin	= 2,
+	.right_margin	= 30,		.lower_margin	= 0,
+
+	.sync		= FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
+
+	.lccr0		= LCCR0_Color | LCCR0_Sngl | LCCR0_Act,
+	.lccr3		= LCCR3_OutEnH | LCCR3_PixRsEdg | LCCR3_ACBsDiv(2),
+};
+#endif
+
+#ifdef LART_GREY_LCD
+static struct sa1100fb_mach_info lart_grey_info __initdata = {
+	.pixclock	= 150000,	.bpp		= 4,
+	.xres		= 320,		.yres		= 240,
+
+	.hsync_len	= 1,		.vsync_len	= 1,
+	.left_margin	= 4,		.upper_margin	= 0,
+	.right_margin	= 2,		.lower_margin	= 0,
+
+	.cmap_greyscale	= 1,
+	.sync		= FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
+
+	.lccr0		= LCCR0_Mono | LCCR0_Sngl | LCCR0_Pas | LCCR0_4PixMono,
+	.lccr3		= LCCR3_OutEnH | LCCR3_PixRsEdg | LCCR3_ACBsDiv(512),
+};
+#endif
+#ifdef LART_COLOR_LCD
+static struct sa1100fb_mach_info lart_color_info __initdata = {
+	.pixclock	= 150000,	.bpp		= 16,
+	.xres		= 320,		.yres		= 240,
+
+	.hsync_len	= 2,		.vsync_len	= 3,
+	.left_margin	= 69,		.upper_margin	= 14,
+	.right_margin	= 8,		.lower_margin	= 4,
+
+	.lccr0		= LCCR0_Color | LCCR0_Sngl | LCCR0_Act,
+	.lccr3		= LCCR3_OutEnH | LCCR3_PixFlEdg | LCCR3_ACBsDiv(512),
+};
+#endif
+#ifdef LART_VIDEO_OUT
+static struct sa1100fb_mach_info lart_video_info __initdata = {
+	.pixclock	= 39721,	.bpp		= 16,
+	.xres		= 640,		.yres		= 480,
+
+	.hsync_len	= 95,		.vsync_len	= 2,
+	.left_margin	= 40,		.upper_margin	= 32,
+	.right_margin	= 24,		.lower_margin	= 11,
+
+	.sync		= FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
+
+	.lccr0		= LCCR0_Color | LCCR0_Sngl | LCCR0_Act,
+	.lccr3		= LCCR3_OutEnL | LCCR3_PixFlEdg | LCCR3_ACBsDiv(512),
+};
+#endif
+
+#ifdef LART_KIT01_LCD
+static struct sa1100fb_mach_info lart_kit01_info __initdata = {
+	.pixclock	= 63291,	.bpp		= 16,
+	.xres		= 640,		.yres		= 480,
+
+	.hsync_len	= 64,		.vsync_len	= 3,
+	.left_margin	= 122,		.upper_margin	= 45,
+	.right_margin	= 10,		.lower_margin	= 10,
+
+	.lccr0		= LCCR0_Color | LCCR0_Sngl | LCCR0_Act,
+	.lccr3		= LCCR3_OutEnH | LCCR3_PixFlEdg
+};
+#endif
+
+#ifdef CONFIG_SA1100_SHANNON
+static struct sa1100fb_mach_info shannon_info __initdata = {
+	.pixclock	= 152500,	.bpp		= 8,
+	.xres		= 640,		.yres		= 480,
+
+	.hsync_len	= 4,		.vsync_len	= 3,
+	.left_margin	= 2,		.upper_margin	= 0,
+	.right_margin	= 1,		.lower_margin	= 0,
+
+	.sync		= FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
+
+	.lccr0		= LCCR0_Color | LCCR0_Dual | LCCR0_Pas,
+	.lccr3		= LCCR3_ACBsDiv(512),
+};
+#endif
+
+
+
+static struct sa1100fb_mach_info * __init
+sa1100fb_get_machine_info(struct sa1100fb_info *fbi)
+{
+	struct sa1100fb_mach_info *inf = NULL;
+
+	/*
+	 *            R        G       B       T
+	 * default  {11,5}, { 5,6}, { 0,5}, { 0,0}
+	 * h3600    {12,4}, { 7,4}, { 1,4}, { 0,0}
+	 * freebird { 8,4}, { 4,4}, { 0,4}, {12,4}
+	 */
+#ifdef CONFIG_SA1100_ASSABET
+	if (machine_is_assabet()) {
+#ifndef ASSABET_PAL_VIDEO
+		inf = &lq039q2ds54_info;
+#else
+		inf = &pal_info;
+#endif
+	}
+#endif
+#ifdef CONFIG_SA1100_H3100
+	if (machine_is_h3100()) {
+		inf = &h3100_info;
+	}
+#endif
+#ifdef CONFIG_SA1100_H3600
+	if (machine_is_h3600()) {
+		inf = &h3600_info;
+		fbi->rgb[RGB_16] = &h3600_rgb_16;
+	}
+#endif
+#ifdef CONFIG_SA1100_COLLIE
+	if (machine_is_collie()) {
+		inf = &collie_info;
+	}
+#endif
+#ifdef CONFIG_SA1100_LART
+	if (machine_is_lart()) {
+#ifdef LART_GREY_LCD
+		inf = &lart_grey_info;
+#endif
+#ifdef LART_COLOR_LCD
+		inf = &lart_color_info;
+#endif
+#ifdef LART_VIDEO_OUT
+		inf = &lart_video_info;
+#endif
+#ifdef LART_KIT01_LCD
+		inf = &lart_kit01_info;
+#endif
+	}
+#endif
+#ifdef CONFIG_SA1100_SHANNON
+	if (machine_is_shannon()) {
+		inf = &shannon_info;
+	}
+#endif
+	return inf;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int sa1100fb_activate_var(struct fb_var_screeninfo *var, struct sa1100fb_info *);
 static void set_ctrlr_state(struct sa1100fb_info *fbi, u_int state);
 
@@ -299,7 +566,11 @@ sa1100fb_setcolreg(u_int regno, u_int red, u_int green, u_int blue,
 	 * is what you poke into the framebuffer to produce the
 	 * colour you requested.
 	 */
+<<<<<<< HEAD
 	if (fbi->inf->cmap_inverse) {
+=======
+	if (fbi->cmap_inverse) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		red   = 0xffff - red;
 		green = 0xffff - green;
 		blue  = 0xffff - blue;
@@ -373,6 +644,7 @@ sa1100fb_check_var(struct fb_var_screeninfo *var, struct fb_info *info)
 		var->xres = MIN_XRES;
 	if (var->yres < MIN_YRES)
 		var->yres = MIN_YRES;
+<<<<<<< HEAD
 	if (var->xres > fbi->inf->xres)
 		var->xres = fbi->inf->xres;
 	if (var->yres > fbi->inf->yres)
@@ -381,6 +653,16 @@ sa1100fb_check_var(struct fb_var_screeninfo *var, struct fb_info *info)
 	var->yres_virtual = max(var->yres_virtual, var->yres);
 
 	dev_dbg(fbi->dev, "var->bits_per_pixel=%d\n", var->bits_per_pixel);
+=======
+	if (var->xres > fbi->max_xres)
+		var->xres = fbi->max_xres;
+	if (var->yres > fbi->max_yres)
+		var->yres = fbi->max_yres;
+	var->xres_virtual = max(var->xres_virtual, var->xres);
+	var->yres_virtual = max(var->yres_virtual, var->yres);
+
+	DPRINTK("var->bits_per_pixel=%d\n", var->bits_per_pixel);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (var->bits_per_pixel) {
 	case 4:
 		rgbidx = RGB_4;
@@ -404,16 +686,28 @@ sa1100fb_check_var(struct fb_var_screeninfo *var, struct fb_info *info)
 	var->blue   = fbi->rgb[rgbidx]->blue;
 	var->transp = fbi->rgb[rgbidx]->transp;
 
+<<<<<<< HEAD
 	dev_dbg(fbi->dev, "RGBT length = %d:%d:%d:%d\n",
 		var->red.length, var->green.length, var->blue.length,
 		var->transp.length);
 
 	dev_dbg(fbi->dev, "RGBT offset = %d:%d:%d:%d\n",
+=======
+	DPRINTK("RGBT length = %d:%d:%d:%d\n",
+		var->red.length, var->green.length, var->blue.length,
+		var->transp.length);
+
+	DPRINTK("RGBT offset = %d:%d:%d:%d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		var->red.offset, var->green.offset, var->blue.offset,
 		var->transp.offset);
 
 #ifdef CONFIG_CPU_FREQ
+<<<<<<< HEAD
 	dev_dbg(fbi->dev, "dma period = %d ps, clock = %d kHz\n",
+=======
+	printk(KERN_DEBUG "dma period = %d ps, clock = %d kHz\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sa1100fb_display_dma_period(var),
 		cpufreq_get(smp_processor_id()));
 #endif
@@ -421,10 +715,29 @@ sa1100fb_check_var(struct fb_var_screeninfo *var, struct fb_info *info)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void sa1100fb_set_visual(struct sa1100fb_info *fbi, u32 visual)
 {
 	if (fbi->inf->set_visual)
 		fbi->inf->set_visual(visual);
+=======
+static inline void sa1100fb_set_truecolor(u_int is_true_color)
+{
+	if (machine_is_assabet()) {
+#if 1		// phase 4 or newer Assabet's
+		if (is_true_color)
+			ASSABET_BCR_set(ASSABET_BCR_LCD_12RGB);
+		else
+			ASSABET_BCR_clear(ASSABET_BCR_LCD_12RGB);
+#else
+		// older Assabet's
+		if (is_true_color)
+			ASSABET_BCR_clear(ASSABET_BCR_LCD_12RGB);
+		else
+			ASSABET_BCR_set(ASSABET_BCR_LCD_12RGB);
+#endif
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -437,11 +750,19 @@ static int sa1100fb_set_par(struct fb_info *info)
 	struct fb_var_screeninfo *var = &info->var;
 	unsigned long palette_mem_size;
 
+<<<<<<< HEAD
 	dev_dbg(fbi->dev, "set_par\n");
 
 	if (var->bits_per_pixel == 16)
 		fbi->fb.fix.visual = FB_VISUAL_TRUECOLOR;
 	else if (!fbi->inf->cmap_static)
+=======
+	DPRINTK("set_par\n");
+
+	if (var->bits_per_pixel == 16)
+		fbi->fb.fix.visual = FB_VISUAL_TRUECOLOR;
+	else if (!fbi->cmap_static)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fbi->fb.fix.visual = FB_VISUAL_PSEUDOCOLOR;
 	else {
 		/*
@@ -458,7 +779,11 @@ static int sa1100fb_set_par(struct fb_info *info)
 
 	palette_mem_size = fbi->palette_size * sizeof(u16);
 
+<<<<<<< HEAD
 	dev_dbg(fbi->dev, "palette_mem_size = 0x%08lx\n", palette_mem_size);
+=======
+	DPRINTK("palette_mem_size = 0x%08lx\n", (u_long) palette_mem_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fbi->palette_cpu = (u16 *)(fbi->map_cpu + PAGE_SIZE - palette_mem_size);
 	fbi->palette_dma = fbi->map_dma + PAGE_SIZE - palette_mem_size;
@@ -466,7 +791,11 @@ static int sa1100fb_set_par(struct fb_info *info)
 	/*
 	 * Set (any) board control register to handle new color depth
 	 */
+<<<<<<< HEAD
 	sa1100fb_set_visual(fbi, fbi->fb.fix.visual);
+=======
+	sa1100fb_set_truecolor(fbi->fb.fix.visual == FB_VISUAL_TRUECOLOR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sa1100fb_activate_var(var, fbi);
 
 	return 0;
@@ -482,7 +811,11 @@ sa1100fb_set_cmap(struct fb_cmap *cmap, int kspc, int con,
 	/*
 	 * Make sure the user isn't doing something stupid.
 	 */
+<<<<<<< HEAD
 	if (!kspc && (fbi->fb.var.bits_per_pixel == 16 || fbi->inf->cmap_static))
+=======
+	if (!kspc && (fbi->fb.var.bits_per_pixel == 16 || fbi->cmap_static))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	return gen_set_cmap(cmap, kspc, con, info);
@@ -529,7 +862,11 @@ static int sa1100fb_blank(int blank, struct fb_info *info)
 	struct sa1100fb_info *fbi = (struct sa1100fb_info *)info;
 	int i;
 
+<<<<<<< HEAD
 	dev_dbg(fbi->dev, "sa1100fb_blank: blank=%d\n", blank);
+=======
+	DPRINTK("sa1100fb_blank: blank=%d\n", blank);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (blank) {
 	case FB_BLANK_POWERDOWN:
@@ -617,17 +954,27 @@ static int sa1100fb_activate_var(struct fb_var_screeninfo *var, struct sa1100fb_
 	u_int half_screen_size, yres, pcd;
 	u_long flags;
 
+<<<<<<< HEAD
 	dev_dbg(fbi->dev, "Configuring SA1100 LCD\n");
 
 	dev_dbg(fbi->dev, "var: xres=%d hslen=%d lm=%d rm=%d\n",
 		var->xres, var->hsync_len,
 		var->left_margin, var->right_margin);
 	dev_dbg(fbi->dev, "var: yres=%d vslen=%d um=%d bm=%d\n",
+=======
+	DPRINTK("Configuring SA1100 LCD\n");
+
+	DPRINTK("var: xres=%d hslen=%d lm=%d rm=%d\n",
+		var->xres, var->hsync_len,
+		var->left_margin, var->right_margin);
+	DPRINTK("var: yres=%d vslen=%d um=%d bm=%d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		var->yres, var->vsync_len,
 		var->upper_margin, var->lower_margin);
 
 #if DEBUG_VAR
 	if (var->xres < 16        || var->xres > 1024)
+<<<<<<< HEAD
 		dev_err(fbi->dev, "%s: invalid xres %d\n",
 			fbi->fb.fix.id, var->xres);
 	if (var->hsync_len < 1    || var->hsync_len > 64)
@@ -654,6 +1001,34 @@ static int sa1100fb_activate_var(struct fb_var_screeninfo *var, struct sa1100fb_
 #endif
 
 	new_regs.lccr0 = fbi->inf->lccr0 |
+=======
+		printk(KERN_ERR "%s: invalid xres %d\n",
+			fbi->fb.fix.id, var->xres);
+	if (var->hsync_len < 1    || var->hsync_len > 64)
+		printk(KERN_ERR "%s: invalid hsync_len %d\n",
+			fbi->fb.fix.id, var->hsync_len);
+	if (var->left_margin < 1  || var->left_margin > 255)
+		printk(KERN_ERR "%s: invalid left_margin %d\n",
+			fbi->fb.fix.id, var->left_margin);
+	if (var->right_margin < 1 || var->right_margin > 255)
+		printk(KERN_ERR "%s: invalid right_margin %d\n",
+			fbi->fb.fix.id, var->right_margin);
+	if (var->yres < 1         || var->yres > 1024)
+		printk(KERN_ERR "%s: invalid yres %d\n",
+			fbi->fb.fix.id, var->yres);
+	if (var->vsync_len < 1    || var->vsync_len > 64)
+		printk(KERN_ERR "%s: invalid vsync_len %d\n",
+			fbi->fb.fix.id, var->vsync_len);
+	if (var->upper_margin < 0 || var->upper_margin > 255)
+		printk(KERN_ERR "%s: invalid upper_margin %d\n",
+			fbi->fb.fix.id, var->upper_margin);
+	if (var->lower_margin < 0 || var->lower_margin > 255)
+		printk(KERN_ERR "%s: invalid lower_margin %d\n",
+			fbi->fb.fix.id, var->lower_margin);
+#endif
+
+	new_regs.lccr0 = fbi->lccr0 |
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		LCCR0_LEN | LCCR0_LDM | LCCR0_BAM |
 		LCCR0_ERM | LCCR0_LtlEnd | LCCR0_DMADel(0);
 
@@ -668,7 +1043,11 @@ static int sa1100fb_activate_var(struct fb_var_screeninfo *var, struct sa1100fb_
 	 * the YRES parameter.
 	 */
 	yres = var->yres;
+<<<<<<< HEAD
 	if (fbi->inf->lccr0 & LCCR0_Dual)
+=======
+	if (fbi->lccr0 & LCCR0_Dual)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		yres /= 2;
 
 	new_regs.lccr2 =
@@ -678,6 +1057,7 @@ static int sa1100fb_activate_var(struct fb_var_screeninfo *var, struct sa1100fb_
 		LCCR2_EndFrmDel(var->lower_margin);
 
 	pcd = get_pcd(var->pixclock, cpufreq_get(0));
+<<<<<<< HEAD
 	new_regs.lccr3 = LCCR3_PixClkDiv(pcd) | fbi->inf->lccr3 |
 		(var->sync & FB_SYNC_HOR_HIGH_ACT ? LCCR3_HorSnchH : LCCR3_HorSnchL) |
 		(var->sync & FB_SYNC_VERT_HIGH_ACT ? LCCR3_VrtSnchH : LCCR3_VrtSnchL);
@@ -686,6 +1066,16 @@ static int sa1100fb_activate_var(struct fb_var_screeninfo *var, struct sa1100fb_
 	dev_dbg(fbi->dev, "nlccr1 = 0x%08lx\n", new_regs.lccr1);
 	dev_dbg(fbi->dev, "nlccr2 = 0x%08lx\n", new_regs.lccr2);
 	dev_dbg(fbi->dev, "nlccr3 = 0x%08lx\n", new_regs.lccr3);
+=======
+	new_regs.lccr3 = LCCR3_PixClkDiv(pcd) | fbi->lccr3 |
+		(var->sync & FB_SYNC_HOR_HIGH_ACT ? LCCR3_HorSnchH : LCCR3_HorSnchL) |
+		(var->sync & FB_SYNC_VERT_HIGH_ACT ? LCCR3_VrtSnchH : LCCR3_VrtSnchL);
+
+	DPRINTK("nlccr0 = 0x%08lx\n", new_regs.lccr0);
+	DPRINTK("nlccr1 = 0x%08lx\n", new_regs.lccr1);
+	DPRINTK("nlccr2 = 0x%08lx\n", new_regs.lccr2);
+	DPRINTK("nlccr3 = 0x%08lx\n", new_regs.lccr3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	half_screen_size = var->bits_per_pixel;
 	half_screen_size = half_screen_size * var->xres * var->yres / 16;
@@ -705,12 +1095,18 @@ static int sa1100fb_activate_var(struct fb_var_screeninfo *var, struct sa1100fb_
 	 * Only update the registers if the controller is enabled
 	 * and something has changed.
 	 */
+<<<<<<< HEAD
 	if (readl_relaxed(fbi->base + LCCR0) != fbi->reg_lccr0 ||
 	    readl_relaxed(fbi->base + LCCR1) != fbi->reg_lccr1 ||
 	    readl_relaxed(fbi->base + LCCR2) != fbi->reg_lccr2 ||
 	    readl_relaxed(fbi->base + LCCR3) != fbi->reg_lccr3 ||
 	    readl_relaxed(fbi->base + DBAR1) != fbi->dbar1 ||
 	    readl_relaxed(fbi->base + DBAR2) != fbi->dbar2)
+=======
+	if ((LCCR0 != fbi->reg_lccr0)       || (LCCR1 != fbi->reg_lccr1) ||
+	    (LCCR2 != fbi->reg_lccr2)       || (LCCR3 != fbi->reg_lccr3) ||
+	    (DBAR1 != fbi->dbar1) || (DBAR2 != fbi->dbar2))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sa1100fb_schedule_work(fbi, C_REENABLE);
 
 	return 0;
@@ -724,18 +1120,32 @@ static int sa1100fb_activate_var(struct fb_var_screeninfo *var, struct sa1100fb_
  */
 static inline void __sa1100fb_backlight_power(struct sa1100fb_info *fbi, int on)
 {
+<<<<<<< HEAD
 	dev_dbg(fbi->dev, "backlight o%s\n", on ? "n" : "ff");
 
 	if (fbi->inf->backlight_power)
 		fbi->inf->backlight_power(on);
+=======
+	DPRINTK("backlight o%s\n", on ? "n" : "ff");
+
+	if (sa1100fb_backlight_power)
+		sa1100fb_backlight_power(on);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void __sa1100fb_lcd_power(struct sa1100fb_info *fbi, int on)
 {
+<<<<<<< HEAD
 	dev_dbg(fbi->dev, "LCD power o%s\n", on ? "n" : "ff");
 
 	if (fbi->inf->lcd_power)
 		fbi->inf->lcd_power(on);
+=======
+	DPRINTK("LCD power o%s\n", on ? "n" : "ff");
+
+	if (sa1100fb_lcd_power)
+		sa1100fb_lcd_power(on);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void sa1100fb_setup_gpio(struct sa1100fb_info *fbi)
@@ -765,6 +1175,7 @@ static void sa1100fb_setup_gpio(struct sa1100fb_info *fbi)
 	}
 
 	if (mask) {
+<<<<<<< HEAD
 		unsigned long flags;
 
 		/*
@@ -778,12 +1189,20 @@ static void sa1100fb_setup_gpio(struct sa1100fb_info *fbi)
 		GPDR |= mask;
 		GAFR |= mask;
 		local_irq_restore(flags);
+=======
+		GPDR |= mask;
+		GAFR |= mask;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
 static void sa1100fb_enable_controller(struct sa1100fb_info *fbi)
 {
+<<<<<<< HEAD
 	dev_dbg(fbi->dev, "Enabling LCD controller\n");
+=======
+	DPRINTK("Enabling LCD controller\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Make sure the mode bits are present in the first palette entry
@@ -792,6 +1211,7 @@ static void sa1100fb_enable_controller(struct sa1100fb_info *fbi)
 	fbi->palette_cpu[0] |= palette_pbs(&fbi->fb.var);
 
 	/* Sequence from 11.7.10 */
+<<<<<<< HEAD
 	writel_relaxed(fbi->reg_lccr3, fbi->base + LCCR3);
 	writel_relaxed(fbi->reg_lccr2, fbi->base + LCCR2);
 	writel_relaxed(fbi->reg_lccr1, fbi->base + LCCR1);
@@ -809,21 +1229,52 @@ static void sa1100fb_enable_controller(struct sa1100fb_info *fbi)
 	dev_dbg(fbi->dev, "LCCR1: 0x%08x\n", readl_relaxed(fbi->base + LCCR1));
 	dev_dbg(fbi->dev, "LCCR2: 0x%08x\n", readl_relaxed(fbi->base + LCCR2));
 	dev_dbg(fbi->dev, "LCCR3: 0x%08x\n", readl_relaxed(fbi->base + LCCR3));
+=======
+	LCCR3 = fbi->reg_lccr3;
+	LCCR2 = fbi->reg_lccr2;
+	LCCR1 = fbi->reg_lccr1;
+	LCCR0 = fbi->reg_lccr0 & ~LCCR0_LEN;
+	DBAR1 = fbi->dbar1;
+	DBAR2 = fbi->dbar2;
+	LCCR0 |= LCCR0_LEN;
+
+	if (machine_is_shannon()) {
+		GPDR |= SHANNON_GPIO_DISP_EN;
+		GPSR |= SHANNON_GPIO_DISP_EN;
+	}
+
+	DPRINTK("DBAR1 = 0x%08x\n", DBAR1);
+	DPRINTK("DBAR2 = 0x%08x\n", DBAR2);
+	DPRINTK("LCCR0 = 0x%08x\n", LCCR0);
+	DPRINTK("LCCR1 = 0x%08x\n", LCCR1);
+	DPRINTK("LCCR2 = 0x%08x\n", LCCR2);
+	DPRINTK("LCCR3 = 0x%08x\n", LCCR3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void sa1100fb_disable_controller(struct sa1100fb_info *fbi)
 {
 	DECLARE_WAITQUEUE(wait, current);
+<<<<<<< HEAD
 	u32 lccr0;
 
 	dev_dbg(fbi->dev, "Disabling LCD controller\n");
 
 	if (machine_is_shannon())
 		gpio_set_value(SHANNON_GPIO_DISP_EN, 0);
+=======
+
+	DPRINTK("Disabling LCD controller\n");
+
+	if (machine_is_shannon()) {
+		GPCR |= SHANNON_GPIO_DISP_EN;
+	}	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	set_current_state(TASK_UNINTERRUPTIBLE);
 	add_wait_queue(&fbi->ctrlr_wait, &wait);
 
+<<<<<<< HEAD
 	/* Clear LCD Status Register */
 	writel_relaxed(~0, fbi->base + LCSR);
 
@@ -832,6 +1283,11 @@ static void sa1100fb_disable_controller(struct sa1100fb_info *fbi)
 	writel_relaxed(lccr0, fbi->base + LCCR0);
 	lccr0 &= ~LCCR0_LEN;	/* Disable LCD Controller */
 	writel_relaxed(lccr0, fbi->base + LCCR0);
+=======
+	LCSR = 0xffffffff;	/* Clear LCD Status Register */
+	LCCR0 &= ~LCCR0_LDM;	/* Enable LCD Disable Done Interrupt */
+	LCCR0 &= ~LCCR0_LEN;	/* Disable LCD Controller */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	schedule_timeout(20 * HZ / 1000);
 	remove_wait_queue(&fbi->ctrlr_wait, &wait);
@@ -843,6 +1299,7 @@ static void sa1100fb_disable_controller(struct sa1100fb_info *fbi)
 static irqreturn_t sa1100fb_handle_irq(int irq, void *dev_id)
 {
 	struct sa1100fb_info *fbi = dev_id;
+<<<<<<< HEAD
 	unsigned int lcsr = readl_relaxed(fbi->base + LCSR);
 
 	if (lcsr & LCSR_LDD) {
@@ -852,6 +1309,16 @@ static irqreturn_t sa1100fb_handle_irq(int irq, void *dev_id)
 	}
 
 	writel_relaxed(lcsr, fbi->base + LCSR);
+=======
+	unsigned int lcsr = LCSR;
+
+	if (lcsr & LCSR_LDD) {
+		LCCR0 |= LCCR0_LDM;
+		wake_up(&fbi->ctrlr_wait);
+	}
+
+	LCSR = lcsr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return IRQ_HANDLED;
 }
 
@@ -1040,7 +1507,11 @@ sa1100fb_freq_policy(struct notifier_block *nb, unsigned long val,
 	switch (val) {
 	case CPUFREQ_ADJUST:
 	case CPUFREQ_INCOMPATIBLE:
+<<<<<<< HEAD
 		dev_dbg(fbi->dev, "min dma period: %d ps, "
+=======
+		printk(KERN_DEBUG "min dma period: %d ps, "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"new clock %d kHz\n", sa1100fb_min_dma_period(fbi),
 			policy->max);
 		/* todo: fill in min/max values */
@@ -1090,7 +1561,11 @@ static int sa1100fb_resume(struct platform_device *dev)
  *      cache.  Once this area is remapped, all virtual memory
  *      access to the video memory should occur at the new region.
  */
+<<<<<<< HEAD
 static int __devinit sa1100fb_map_video_memory(struct sa1100fb_info *fbi)
+=======
+static int __init sa1100fb_map_video_memory(struct sa1100fb_info *fbi)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * We reserve one page for the palette, plus the size
@@ -1116,7 +1591,11 @@ static int __devinit sa1100fb_map_video_memory(struct sa1100fb_info *fbi)
 }
 
 /* Fake monspecs to fill in fbinfo structure */
+<<<<<<< HEAD
 static struct fb_monspecs monspecs __devinitdata = {
+=======
+static struct fb_monspecs monspecs __initdata = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hfmin	= 30000,
 	.hfmax	= 70000,
 	.vfmin	= 50,
@@ -1124,11 +1603,18 @@ static struct fb_monspecs monspecs __devinitdata = {
 };
 
 
+<<<<<<< HEAD
 static struct sa1100fb_info * __devinit sa1100fb_init_fbinfo(struct device *dev)
 {
 	struct sa1100fb_mach_info *inf = dev->platform_data;
 	struct sa1100fb_info *fbi;
 	unsigned i;
+=======
+static struct sa1100fb_info * __init sa1100fb_init_fbinfo(struct device *dev)
+{
+	struct sa1100fb_mach_info *inf;
+	struct sa1100fb_info *fbi;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fbi = kmalloc(sizeof(struct sa1100fb_info) + sizeof(u32) * 16,
 		      GFP_KERNEL);
@@ -1163,6 +1649,11 @@ static struct sa1100fb_info * __devinit sa1100fb_init_fbinfo(struct device *dev)
 	fbi->rgb[RGB_8]		= &rgb_8;
 	fbi->rgb[RGB_16]	= &def_rgb_16;
 
+<<<<<<< HEAD
+=======
+	inf = sa1100fb_get_machine_info(fbi);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * People just don't seem to get this.  We don't support
 	 * anything but correct entries now, so panic if someone
@@ -1173,10 +1664,20 @@ static struct sa1100fb_info * __devinit sa1100fb_init_fbinfo(struct device *dev)
 		panic("sa1100fb error: invalid LCCR3 fields set or zero "
 			"pixclock.");
 
+<<<<<<< HEAD
 	fbi->fb.var.xres		= inf->xres;
 	fbi->fb.var.xres_virtual	= inf->xres;
 	fbi->fb.var.yres		= inf->yres;
 	fbi->fb.var.yres_virtual	= inf->yres;
+=======
+	fbi->max_xres			= inf->xres;
+	fbi->fb.var.xres		= inf->xres;
+	fbi->fb.var.xres_virtual	= inf->xres;
+	fbi->max_yres			= inf->yres;
+	fbi->fb.var.yres		= inf->yres;
+	fbi->fb.var.yres_virtual	= inf->yres;
+	fbi->max_bpp			= inf->bpp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fbi->fb.var.bits_per_pixel	= inf->bpp;
 	fbi->fb.var.pixclock		= inf->pixclock;
 	fbi->fb.var.hsync_len		= inf->hsync_len;
@@ -1187,6 +1688,7 @@ static struct sa1100fb_info * __devinit sa1100fb_init_fbinfo(struct device *dev)
 	fbi->fb.var.lower_margin	= inf->lower_margin;
 	fbi->fb.var.sync		= inf->sync;
 	fbi->fb.var.grayscale		= inf->cmap_greyscale;
+<<<<<<< HEAD
 	fbi->state			= C_STARTUP;
 	fbi->task_state			= (u_char)-1;
 	fbi->fb.fix.smem_len		= inf->xres * inf->yres *
@@ -1197,6 +1699,16 @@ static struct sa1100fb_info * __devinit sa1100fb_init_fbinfo(struct device *dev)
 	for (i = 0; i < NR_RGB; i++)
 		if (inf->rgb[i])
 			fbi->rgb[i] = inf->rgb[i];
+=======
+	fbi->cmap_inverse		= inf->cmap_inverse;
+	fbi->cmap_static		= inf->cmap_static;
+	fbi->lccr0			= inf->lccr0;
+	fbi->lccr3			= inf->lccr3;
+	fbi->state			= C_STARTUP;
+	fbi->task_state			= (u_char)-1;
+	fbi->fb.fix.smem_len		= fbi->max_xres * fbi->max_yres *
+					  fbi->max_bpp / 8;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	init_waitqueue_head(&fbi->ctrlr_wait);
 	INIT_WORK(&fbi->task, sa1100fb_task);
@@ -1208,6 +1720,7 @@ static struct sa1100fb_info * __devinit sa1100fb_init_fbinfo(struct device *dev)
 static int __devinit sa1100fb_probe(struct platform_device *pdev)
 {
 	struct sa1100fb_info *fbi;
+<<<<<<< HEAD
 	struct resource *res;
 	int ret, irq;
 
@@ -1222,6 +1735,15 @@ static int __devinit sa1100fb_probe(struct platform_device *pdev)
 		return -EINVAL;
 
 	if (!request_mem_region(res->start, resource_size(res), "LCD"))
+=======
+	int ret, irq;
+
+	irq = platform_get_irq(pdev, 0);
+	if (irq < 0)
+		return -EINVAL;
+
+	if (!request_mem_region(0xb0100000, 0x10000, "LCD"))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EBUSY;
 
 	fbi = sa1100fb_init_fbinfo(&pdev->dev);
@@ -1229,15 +1751,19 @@ static int __devinit sa1100fb_probe(struct platform_device *pdev)
 	if (!fbi)
 		goto failed;
 
+<<<<<<< HEAD
 	fbi->base = ioremap(res->start, resource_size(res));
 	if (!fbi->base)
 		goto failed;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Initialize video memory */
 	ret = sa1100fb_map_video_memory(fbi);
 	if (ret)
 		goto failed;
 
+<<<<<<< HEAD
 	ret = request_irq(irq, sa1100fb_handle_irq, 0, "LCD", fbi);
 	if (ret) {
 		dev_err(&pdev->dev, "request_irq failed: %d\n", ret);
@@ -1250,6 +1776,19 @@ static int __devinit sa1100fb_probe(struct platform_device *pdev)
 		if (ret)
 			goto err_free_irq;
 	}
+=======
+	ret = request_irq(irq, sa1100fb_handle_irq, IRQF_DISABLED,
+			  "LCD", fbi);
+	if (ret) {
+		printk(KERN_ERR "sa1100fb: request_irq failed: %d\n", ret);
+		goto failed;
+	}
+
+#ifdef ASSABET_PAL_VIDEO
+	if (machine_is_assabet())
+		ASSABET_BCR_clear(ASSABET_BCR_LCD_ON);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * This makes sure that our colour bitfield
@@ -1261,7 +1800,11 @@ static int __devinit sa1100fb_probe(struct platform_device *pdev)
 
 	ret = register_framebuffer(&fbi->fb);
 	if (ret < 0)
+<<<<<<< HEAD
 		goto err_reg_fb;
+=======
+		goto err_free_irq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_CPU_FREQ
 	fbi->freq_transition.notifier_call = sa1100fb_freq_transition;
@@ -1273,6 +1816,7 @@ static int __devinit sa1100fb_probe(struct platform_device *pdev)
 	/* This driver cannot be unloaded at the moment */
 	return 0;
 
+<<<<<<< HEAD
  err_reg_fb:
 	if (machine_is_shannon())
 		gpio_free(SHANNON_GPIO_DISP_EN);
@@ -1284,6 +1828,14 @@ static int __devinit sa1100fb_probe(struct platform_device *pdev)
 	platform_set_drvdata(pdev, NULL);
 	kfree(fbi);
 	release_mem_region(res->start, resource_size(res));
+=======
+ err_free_irq:
+	free_irq(irq, fbi);
+ failed:
+	platform_set_drvdata(pdev, NULL);
+	kfree(fbi);
+	release_mem_region(0xb0100000, 0x10000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1293,7 +1845,10 @@ static struct platform_driver sa1100fb_driver = {
 	.resume		= sa1100fb_resume,
 	.driver		= {
 		.name	= "sa11x0-fb",
+<<<<<<< HEAD
 		.owner	= THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

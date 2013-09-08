@@ -1,6 +1,10 @@
 /* jazz_esp.c: ESP front-end for MIPS JAZZ systems.
  *
+<<<<<<< HEAD
  * Copyright (C) 2007 Thomas BogendÃ¶rfer (tsbogend@alpha.frankende)
+=======
+ * Copyright (C) 2007 Thomas Bogendörfer (tsbogend@alpha.frankende)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/kernel.h>

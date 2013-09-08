@@ -311,8 +311,15 @@ static void xiic_fill_tx_fifo(struct xiic_i2c *i2c)
 			/* last message in transfer -> STOP */
 			data |= XIIC_TX_DYN_STOP_MASK;
 			dev_dbg(i2c->adap.dev.parent, "%s TX STOP\n", __func__);
+<<<<<<< HEAD
 		}
 		xiic_setreg16(i2c, XIIC_DTR_REG_OFFSET, data);
+=======
+
+			xiic_setreg16(i2c, XIIC_DTR_REG_OFFSET, data);
+		} else
+			xiic_setreg8(i2c, XIIC_DTR_REG_OFFSET, data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -424,7 +431,11 @@ static void xiic_process(struct xiic_i2c *i2c)
 			xiic_wakeup(i2c, STATE_ERROR);
 
 	} else if (pend & (XIIC_INTR_TX_EMPTY_MASK | XIIC_INTR_TX_HALF_MASK)) {
+<<<<<<< HEAD
 		/* Transmit register/FIFO is empty or Â½ empty */
+=======
+		/* Transmit register/FIFO is empty or ½ empty */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		clr = pend &
 			(XIIC_INTR_TX_EMPTY_MASK | XIIC_INTR_TX_HALF_MASK);
@@ -793,6 +804,13 @@ static int __devexit xiic_i2c_remove(struct platform_device* pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+
+/* work with hotplug and coldplug */
+MODULE_ALIAS("platform:"DRIVER_NAME);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver xiic_i2c_driver = {
 	.probe   = xiic_i2c_probe,
 	.remove  = __devexit_p(xiic_i2c_remove),
@@ -802,9 +820,27 @@ static struct platform_driver xiic_i2c_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(xiic_i2c_driver);
+=======
+static int __init xiic_i2c_init(void)
+{
+	return platform_driver_register(&xiic_i2c_driver);
+}
+
+static void __exit xiic_i2c_exit(void)
+{
+	platform_driver_unregister(&xiic_i2c_driver);
+}
+
+module_init(xiic_i2c_init);
+module_exit(xiic_i2c_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("info@mocean-labs.com");
 MODULE_DESCRIPTION("Xilinx I2C bus driver");
 MODULE_LICENSE("GPL v2");
+<<<<<<< HEAD
 MODULE_ALIAS("platform:"DRIVER_NAME);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

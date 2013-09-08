@@ -43,6 +43,10 @@
 
 #include <asm/processor.h>
 #include <asm/msr.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct class *cpuid_class;
 
@@ -176,7 +180,11 @@ static struct notifier_block __refdata cpuid_class_cpu_notifier =
 	.notifier_call = cpuid_class_cpu_callback,
 };
 
+<<<<<<< HEAD
 static char *cpuid_devnode(struct device *dev, umode_t *mode)
+=======
+static char *cpuid_devnode(struct device *dev, mode_t *mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return kasprintf(GFP_KERNEL, "cpu/%u/cpuid", MINOR(dev->devt));
 }

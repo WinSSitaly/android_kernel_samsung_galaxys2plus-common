@@ -35,7 +35,11 @@ static unsigned long siumckb_recalc(struct clk *clk)
 	return codec_freq;
 }
 
+<<<<<<< HEAD
 static struct sh_clk_ops siumckb_clk_ops = {
+=======
+static struct clk_ops siumckb_clk_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.recalc = siumckb_recalc,
 };
 
@@ -164,7 +168,10 @@ static struct snd_soc_dai_link migor_dai = {
 /* migor audio machine driver */
 static struct snd_soc_card snd_soc_migor = {
 	.name = "Migo-R",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link = &migor_dai,
 	.num_links = 1,
 };

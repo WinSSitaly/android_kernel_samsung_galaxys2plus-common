@@ -111,7 +111,11 @@ static char *ch7xxx_get_id(uint8_t vid)
 /** Reads an 8 bit register */
 static bool ch7xxx_readb(struct intel_dvo_device *dvo, int addr, uint8_t *ch)
 {
+<<<<<<< HEAD
 	struct ch7xxx_priv *ch7xxx = dvo->dev_priv;
+=======
+	struct ch7xxx_priv *ch7xxx= dvo->dev_priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct i2c_adapter *adapter = dvo->i2c_bus;
 	u8 out_buf[2];
 	u8 in_buf[2];
@@ -303,7 +307,11 @@ static void ch7xxx_dump_regs(struct intel_dvo_device *dvo)
 
 	for (i = 0; i < CH7xxx_NUM_REGS; i++) {
 		uint8_t val;
+<<<<<<< HEAD
 		if ((i % 8) == 0)
+=======
+		if ((i % 8) == 0 )
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			DRM_LOG_KMS("\n %02X: ", i);
 		ch7xxx_readb(dvo, i, &val);
 		DRM_LOG_KMS("%02X ", val);

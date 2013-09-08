@@ -85,6 +85,25 @@ struct thermal_cooling_device {
 				((long)t-2732+5)/10 : ((long)t-2732-5)/10)
 #define CELSIUS_TO_KELVIN(t)	((t)*10+2732)
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_THERMAL_HWMON)
+/* thermal zone devices with the same type share one hwmon device */
+struct thermal_hwmon_device {
+	char type[THERMAL_NAME_LENGTH];
+	struct device *device;
+	int count;
+	struct list_head tz_list;
+	struct list_head node;
+};
+
+struct thermal_hwmon_attr {
+	struct device_attribute attr;
+	char name[16];
+};
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct thermal_zone_device {
 	int id;
 	char type[THERMAL_NAME_LENGTH];
@@ -104,11 +123,24 @@ struct thermal_zone_device {
 	struct mutex lock;	/* protect cooling devices list */
 	struct list_head node;
 	struct delayed_work poll_queue;
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_THERMAL_HWMON)
+	struct list_head hwmon_node;
+	struct thermal_hwmon_device *hwmon;
+	struct thermal_hwmon_attr temp_input;	/* hwmon sys attr */
+	struct thermal_hwmon_attr temp_crit;	/* hwmon sys attr */
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 /* Adding event notification support elements */
 #define THERMAL_GENL_FAMILY_NAME                "thermal_event"
 #define THERMAL_GENL_VERSION                    0x01
+<<<<<<< HEAD
 #define THERMAL_GENL_MCAST_GROUP_NAME           "thermal_mc_grp"
+=======
+#define THERMAL_GENL_MCAST_GROUP_NAME           "thermal_mc_group"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum events {
 	THERMAL_AUX0,
@@ -152,9 +184,15 @@ struct thermal_cooling_device *thermal_cooling_device_register(char *, void *,
 void thermal_cooling_device_unregister(struct thermal_cooling_device *);
 
 #ifdef CONFIG_NET
+<<<<<<< HEAD
 extern int thermal_generate_netlink_event(u32 orig, enum events event);
 #else
 static inline int thermal_generate_netlink_event(u32 orig, enum events event)
+=======
+extern int generate_netlink_event(u32 orig, enum events event);
+#else
+static inline int generate_netlink_event(u32 orig, enum events event)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }

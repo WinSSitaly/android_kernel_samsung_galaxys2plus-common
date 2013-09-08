@@ -1,7 +1,10 @@
 #ifndef _ASMARM_BUG_H
 #define _ASMARM_BUG_H
 
+<<<<<<< HEAD
 #include <linux/linkage.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_BUG
 
@@ -33,6 +36,10 @@
 
 #define __BUG(__file, __line, __value)				\
 do {								\
+<<<<<<< HEAD
+=======
+	BUILD_BUG_ON(sizeof(struct bug_entry) != 12);		\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	asm volatile("1:\t" BUG_INSTR_TYPE #__value "\n"	\
 		".pushsection .rodata.str, \"aMS\", %progbits, 1\n" \
 		"2:\t.asciz " #__file "\n" 			\
@@ -58,6 +65,7 @@ do {								\
 
 #include <asm-generic/bug.h>
 
+<<<<<<< HEAD
 struct pt_regs;
 void die(const char *msg, struct pt_regs *regs, int err);
 
@@ -87,4 +95,6 @@ struct mm_struct;
 extern void show_pte(struct mm_struct *mm, unsigned long addr);
 extern void __show_regs(struct pt_regs *);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

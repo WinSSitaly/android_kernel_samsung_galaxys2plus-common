@@ -145,7 +145,11 @@ static int labpc_attach(struct comedi_device *dev, struct comedi_devconfig *it)
 		irq = link->irq;
 		break;
 	default:
+<<<<<<< HEAD
 		pr_err("bug! couldn't determine board type\n");
+=======
+		printk("bug! couldn't determine board type\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 		break;
 	}

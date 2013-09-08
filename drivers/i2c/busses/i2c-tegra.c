@@ -26,8 +26,11 @@
 #include <linux/delay.h>
 #include <linux/slab.h>
 #include <linux/i2c-tegra.h>
+<<<<<<< HEAD
 #include <linux/of_i2c.h>
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/unaligned.h>
 
@@ -271,6 +274,7 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
 
 	/* Rounds down to not include partial word at the end of buf */
 	words_to_transfer = buf_remaining / BYTES_PER_FIFO_WORD;
+<<<<<<< HEAD
 
 	/* It's very common to have < 4 bytes, so optimize that case. */
 	if (words_to_transfer) {
@@ -295,6 +299,16 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
 
 		buf += words_to_transfer * BYTES_PER_FIFO_WORD;
 	}
+=======
+	if (words_to_transfer > tx_fifo_avail)
+		words_to_transfer = tx_fifo_avail;
+
+	i2c_writesl(i2c_dev, buf, I2C_TX_FIFO, words_to_transfer);
+
+	buf += words_to_transfer * BYTES_PER_FIFO_WORD;
+	buf_remaining -= words_to_transfer * BYTES_PER_FIFO_WORD;
+	tx_fifo_avail -= words_to_transfer;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If there is a partial word at the end of buf, handle it manually to
@@ -304,6 +318,7 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
 	if (tx_fifo_avail > 0 && buf_remaining > 0) {
 		BUG_ON(buf_remaining > 3);
 		memcpy(&val, buf, buf_remaining);
+<<<<<<< HEAD
 
 		/* Again update before writing to FIFO to make sure isr sees. */
 		i2c_dev->msg_buf_remaining = 0;
@@ -313,6 +328,16 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
 		i2c_writel(i2c_dev, val, I2C_TX_FIFO);
 	}
 
+=======
+		i2c_writel(i2c_dev, val, I2C_TX_FIFO);
+		buf_remaining = 0;
+		tx_fifo_avail--;
+	}
+
+	BUG_ON(tx_fifo_avail > 0 && buf_remaining > 0);
+	i2c_dev->msg_buf_remaining = buf_remaining;
+	i2c_dev->msg_buf = buf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -401,6 +426,11 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
 			disable_irq_nosync(i2c_dev->irq);
 			i2c_dev->irq_disabled = 1;
 		}
+<<<<<<< HEAD
+=======
+
+		complete(&i2c_dev->msg_complete);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err;
 	}
 
@@ -409,6 +439,10 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
 			i2c_dev->msg_err |= I2C_ERR_NO_ACK;
 		if (status & I2C_INT_ARBITRATION_LOST)
 			i2c_dev->msg_err |= I2C_ERR_ARBITRATION_LOST;
+<<<<<<< HEAD
+=======
+		complete(&i2c_dev->msg_complete);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err;
 	}
 
@@ -426,6 +460,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
 			tegra_i2c_mask_irq(i2c_dev, I2C_INT_TX_FIFO_DATA_REQ);
 	}
 
+<<<<<<< HEAD
 	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
 	if (i2c_dev->is_dvc)
 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
@@ -434,6 +469,15 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
 		BUG_ON(i2c_dev->msg_buf_remaining);
 		complete(&i2c_dev->msg_complete);
 	}
+=======
+	if ((status & I2C_INT_PACKET_XFER_COMPLETE) &&
+			!i2c_dev->msg_buf_remaining)
+		complete(&i2c_dev->msg_complete);
+
+	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
+	if (i2c_dev->is_dvc)
+		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return IRQ_HANDLED;
 err:
 	/* An error occurred, mask all interrupts */
@@ -443,8 +487,11 @@ err:
 	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
 	if (i2c_dev->is_dvc)
 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
+<<<<<<< HEAD
 
 	complete(&i2c_dev->msg_complete);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return IRQ_HANDLED;
 }
 
@@ -456,6 +503,10 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
 	int ret;
 
 	tegra_i2c_flush_fifos(i2c_dev);
+<<<<<<< HEAD
+=======
+	i2c_writel(i2c_dev, 0xFF, I2C_INT_STATUS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (msg->len == 0)
 		return -EINVAL;
@@ -515,6 +566,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
 	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
 		return 0;
 
+<<<<<<< HEAD
 	/*
 	 * NACK interrupt is generated before the I2C controller generates the
 	 * STOP condition on the bus. So wait for 2 clock periods before resetting
@@ -523,6 +575,8 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK)
 		udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tegra_i2c_init(i2c_dev);
 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
 		if (msg->flags & I2C_M_IGNORE_NAK)
@@ -556,7 +610,11 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
 
 static u32 tegra_i2c_func(struct i2c_adapter *adap)
 {
+<<<<<<< HEAD
 	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
+=======
+	return I2C_FUNC_I2C;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct i2c_algorithm tegra_i2c_algo = {
@@ -564,7 +622,11 @@ static const struct i2c_algorithm tegra_i2c_algo = {
 	.functionality	= tegra_i2c_func,
 };
 
+<<<<<<< HEAD
 static int __devinit tegra_i2c_probe(struct platform_device *pdev)
+=======
+static int tegra_i2c_probe(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tegra_i2c_dev *i2c_dev;
 	struct tegra_i2c_platform_data *pdata = pdev->dev.platform_data;
@@ -572,8 +634,12 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
 	struct resource *iomem;
 	struct clk *clk;
 	struct clk *i2c_clk;
+<<<<<<< HEAD
 	const unsigned int *prop;
 	void __iomem *base;
+=======
+	void *base;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int irq;
 	int ret = 0;
 
@@ -630,6 +696,7 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
 	i2c_dev->irq = irq;
 	i2c_dev->cont_id = pdev->id;
 	i2c_dev->dev = &pdev->dev;
+<<<<<<< HEAD
 
 	i2c_dev->bus_clk_rate = 100000; /* default clock rate */
 	if (pdata) {
@@ -646,6 +713,11 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
 		i2c_dev->is_dvc = of_device_is_compatible(pdev->dev.of_node,
 						"nvidia,tegra20-i2c-dvc");
 	else if (pdev->id == 3)
+=======
+	i2c_dev->bus_clk_rate = pdata ? pdata->bus_clk_rate : 100000;
+
+	if (pdev->id == 3)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		i2c_dev->is_dvc = 1;
 	init_completion(&i2c_dev->msg_complete);
 
@@ -673,7 +745,10 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
 	i2c_dev->adapter.algo = &tegra_i2c_algo;
 	i2c_dev->adapter.dev.parent = &pdev->dev;
 	i2c_dev->adapter.nr = pdev->id;
+<<<<<<< HEAD
 	i2c_dev->adapter.dev.of_node = pdev->dev.of_node;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = i2c_add_numbered_adapter(&i2c_dev->adapter);
 	if (ret) {
@@ -681,8 +756,11 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
 		goto err_free_irq;
 	}
 
+<<<<<<< HEAD
 	of_i2c_register_devices(&i2c_dev->adapter);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 err_free_irq:
 	free_irq(i2c_dev->irq, i2c_dev);
@@ -699,7 +777,11 @@ err_iounmap:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int __devexit tegra_i2c_remove(struct platform_device *pdev)
+=======
+static int tegra_i2c_remove(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct tegra_i2c_dev *i2c_dev = platform_get_drvdata(pdev);
 	i2c_del_adapter(&i2c_dev->adapter);
@@ -747,6 +829,7 @@ static int tegra_i2c_resume(struct platform_device *pdev)
 }
 #endif
 
+<<<<<<< HEAD
 #if defined(CONFIG_OF)
 /* Match table for of_platform binding */
 static const struct of_device_id tegra_i2c_of_match[] __devinitconst = {
@@ -762,6 +845,11 @@ MODULE_DEVICE_TABLE(of, tegra_i2c_of_match);
 static struct platform_driver tegra_i2c_driver = {
 	.probe   = tegra_i2c_probe,
 	.remove  = __devexit_p(tegra_i2c_remove),
+=======
+static struct platform_driver tegra_i2c_driver = {
+	.probe   = tegra_i2c_probe,
+	.remove  = tegra_i2c_remove,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PM
 	.suspend = tegra_i2c_suspend,
 	.resume  = tegra_i2c_resume,
@@ -769,7 +857,10 @@ static struct platform_driver tegra_i2c_driver = {
 	.driver  = {
 		.name  = "tegra-i2c",
 		.owner = THIS_MODULE,
+<<<<<<< HEAD
 		.of_match_table = tegra_i2c_of_match,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

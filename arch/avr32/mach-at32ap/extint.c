@@ -204,7 +204,11 @@ static int __init eic_probe(struct platform_device *pdev)
 	}
 
 	eic->first_irq = EIM_IRQ_BASE + 32 * pdev->id;
+<<<<<<< HEAD
 	eic->regs = ioremap(regs->start, resource_size(regs));
+=======
+	eic->regs = ioremap(regs->start, regs->end - regs->start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!eic->regs) {
 		dev_dbg(&pdev->dev, "failed to map regs\n");
 		goto err_ioremap;

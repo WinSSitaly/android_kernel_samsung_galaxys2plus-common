@@ -42,6 +42,7 @@ int cfg80211_mgd_wext_giwessid(struct net_device *dev,
 			       struct iw_request_info *info,
 			       struct iw_point *data, char *ssid);
 
+<<<<<<< HEAD
 int cfg80211_wext_siwmlme(struct net_device *dev,
 			  struct iw_request_info *info,
 			  struct iw_point *data, char *extra);
@@ -50,6 +51,8 @@ int cfg80211_wext_siwgenie(struct net_device *dev,
 			   struct iw_point *data, char *extra);
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int cfg80211_wext_freq(struct wiphy *wiphy, struct iw_freq *freq);
 
 

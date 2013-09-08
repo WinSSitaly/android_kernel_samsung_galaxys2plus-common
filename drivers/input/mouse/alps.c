@@ -17,13 +17,17 @@
 
 #include <linux/slab.h>
 #include <linux/input.h>
+<<<<<<< HEAD
 #include <linux/input/mt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/serio.h>
 #include <linux/libps2.h>
 
 #include "psmouse.h"
 #include "alps.h"
 
+<<<<<<< HEAD
 /*
  * Definitions for ALPS version 3 and 4 command mode protocol
  */
@@ -74,6 +78,16 @@ static const struct alps_nibble_commands alps_v4_nibble_commands[] = {
 };
 
 
+=======
+#undef DEBUG
+#ifdef DEBUG
+#define dbg(format, arg...) printk(KERN_INFO "alps.c: " format "\n", ## arg)
+#else
+#define dbg(format, arg...) do {} while (0)
+#endif
+
+#define ALPS_OLDPROTO		0x01	/* old style input */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ALPS_DUALPOINT		0x02	/* touchpad has trackstick */
 #define ALPS_PASS		0x04	/* device has a pass-through port */
 
@@ -85,6 +99,7 @@ static const struct alps_nibble_commands alps_v4_nibble_commands[] = {
 					   6-byte ALPS packet */
 
 static const struct alps_model_info alps_model_data[] = {
+<<<<<<< HEAD
 	{ { 0x32, 0x02, 0x14 },	0x00, ALPS_PROTO_V2, 0xf8, 0xf8, ALPS_PASS | ALPS_DUALPOINT },	/* Toshiba Salellite Pro M10 */
 	{ { 0x33, 0x02, 0x0a },	0x00, ALPS_PROTO_V1, 0x88, 0xf8, 0 },				/* UMAX-530T */
 	{ { 0x53, 0x02, 0x0a },	0x00, ALPS_PROTO_V2, 0xf8, 0xf8, 0 },
@@ -112,6 +127,32 @@ static const struct alps_model_info alps_model_data[] = {
 	{ { 0x73, 0x02, 0x64 },	0x9b, ALPS_PROTO_V3, 0x8f, 0x8f, ALPS_DUALPOINT },
 	{ { 0x73, 0x02, 0x64 },	0x9d, ALPS_PROTO_V3, 0x8f, 0x8f, ALPS_DUALPOINT },
 	{ { 0x73, 0x02, 0x64 },	0x8a, ALPS_PROTO_V4, 0x8f, 0x8f, 0 },
+=======
+	{ { 0x32, 0x02, 0x14 },	0xf8, 0xf8, ALPS_PASS | ALPS_DUALPOINT }, /* Toshiba Salellite Pro M10 */
+	{ { 0x33, 0x02, 0x0a },	0x88, 0xf8, ALPS_OLDPROTO },		  /* UMAX-530T */
+	{ { 0x53, 0x02, 0x0a },	0xf8, 0xf8, 0 },
+	{ { 0x53, 0x02, 0x14 },	0xf8, 0xf8, 0 },
+	{ { 0x60, 0x03, 0xc8 }, 0xf8, 0xf8, 0 },			  /* HP ze1115 */
+	{ { 0x63, 0x02, 0x0a },	0xf8, 0xf8, 0 },
+	{ { 0x63, 0x02, 0x14 },	0xf8, 0xf8, 0 },
+	{ { 0x63, 0x02, 0x28 },	0xf8, 0xf8, ALPS_FW_BK_2 },		  /* Fujitsu Siemens S6010 */
+	{ { 0x63, 0x02, 0x3c },	0x8f, 0x8f, ALPS_WHEEL },		  /* Toshiba Satellite S2400-103 */
+	{ { 0x63, 0x02, 0x50 },	0xef, 0xef, ALPS_FW_BK_1 },		  /* NEC Versa L320 */
+	{ { 0x63, 0x02, 0x64 },	0xf8, 0xf8, 0 },
+	{ { 0x63, 0x03, 0xc8 }, 0xf8, 0xf8, ALPS_PASS | ALPS_DUALPOINT }, /* Dell Latitude D800 */
+	{ { 0x73, 0x00, 0x0a },	0xf8, 0xf8, ALPS_DUALPOINT },		  /* ThinkPad R61 8918-5QG */
+	{ { 0x73, 0x02, 0x0a },	0xf8, 0xf8, 0 },
+	{ { 0x73, 0x02, 0x14 },	0xf8, 0xf8, ALPS_FW_BK_2 },		  /* Ahtec Laptop */
+	{ { 0x20, 0x02, 0x0e },	0xf8, 0xf8, ALPS_PASS | ALPS_DUALPOINT }, /* XXX */
+	{ { 0x22, 0x02, 0x0a },	0xf8, 0xf8, ALPS_PASS | ALPS_DUALPOINT },
+	{ { 0x22, 0x02, 0x14 }, 0xff, 0xff, ALPS_PASS | ALPS_DUALPOINT }, /* Dell Latitude D600 */
+	/* Dell Latitude E5500, E6400, E6500, Precision M4400 */
+	{ { 0x62, 0x02, 0x14 }, 0xcf, 0xcf,
+		ALPS_PASS | ALPS_DUALPOINT | ALPS_PS2_INTERLEAVED },
+	{ { 0x73, 0x02, 0x50 }, 0xcf, 0xcf, ALPS_FOUR_BUTTONS },	  /* Dell Vostro 1400 */
+	{ { 0x52, 0x01, 0x14 }, 0xff, 0xff,
+		ALPS_PASS | ALPS_DUALPOINT | ALPS_PS2_INTERLEAVED },	  /* Toshiba Tecra A11-11L */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -120,7 +161,46 @@ static const struct alps_model_info alps_model_data[] = {
  * isn't valid per PS/2 spec.
  */
 
+<<<<<<< HEAD
 /* Packet formats are described in Documentation/input/alps.txt */
+=======
+/*
+ * PS/2 packet format
+ *
+ * byte 0:  0    0 YSGN XSGN    1    M    R    L
+ * byte 1: X7   X6   X5   X4   X3   X2   X1   X0
+ * byte 2: Y7   Y6   Y5   Y4   Y3   Y2   Y1   Y0
+ *
+ * Note that the device never signals overflow condition.
+ *
+ * ALPS absolute Mode - new format
+ *
+ * byte 0:  1    ?    ?    ?    1    ?    ?    ?
+ * byte 1:  0   x6   x5   x4   x3   x2   x1   x0
+ * byte 2:  0  x10   x9   x8   x7    ?  fin  ges
+ * byte 3:  0   y9   y8   y7    1    M    R    L
+ * byte 4:  0   y6   y5   y4   y3   y2   y1   y0
+ * byte 5:  0   z6   z5   z4   z3   z2   z1   z0
+ *
+ * Dualpoint device -- interleaved packet format
+ *
+ * byte 0:    1    1    0    0    1    1    1    1
+ * byte 1:    0   x6   x5   x4   x3   x2   x1   x0
+ * byte 2:    0  x10   x9   x8   x7    0  fin  ges
+ * byte 3:    0    0 YSGN XSGN    1    1    1    1
+ * byte 4:   X7   X6   X5   X4   X3   X2   X1   X0
+ * byte 5:   Y7   Y6   Y5   Y4   Y3   Y2   Y1   Y0
+ * byte 6:    0   y9   y8   y7    1    m    r    l
+ * byte 7:    0   y6   y5   y4   y3   y2   y1   y0
+ * byte 8:    0   z6   z5   z4   z3   z2   z1   z0
+ *
+ * CAPITALS = stick, miniscules = touchpad
+ *
+ * ?'s can have different meanings on different models,
+ * such as wheel rotation, extra buttons, stick buttons
+ * on a dualpoint, etc.
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static bool alps_is_valid_first_byte(const struct alps_model_info *model,
 				     unsigned char data)
@@ -155,7 +235,11 @@ static void alps_report_buttons(struct psmouse *psmouse,
 	input_sync(dev2);
 }
 
+<<<<<<< HEAD
 static void alps_process_packet_v1_v2(struct psmouse *psmouse)
+=======
+static void alps_process_packet(struct psmouse *psmouse)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct alps_data *priv = psmouse->private;
 	const struct alps_model_info *model = priv->i;
@@ -165,7 +249,11 @@ static void alps_process_packet_v1_v2(struct psmouse *psmouse)
 	int x, y, z, ges, fin, left, right, middle;
 	int back = 0, forward = 0;
 
+<<<<<<< HEAD
 	if (model->proto_version == ALPS_PROTO_V1) {
+=======
+	if (model->flags & ALPS_OLDPROTO) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		left = packet[2] & 0x10;
 		right = packet[2] & 0x08;
 		middle = 0;
@@ -257,6 +345,7 @@ static void alps_process_packet_v1_v2(struct psmouse *psmouse)
 	input_sync(dev);
 }
 
+<<<<<<< HEAD
 /*
  * Process bitmap data from v3 and v4 protocols. Returns the number of
  * fingers detected. A return value of 0 means at least one of the
@@ -654,6 +743,8 @@ static void alps_process_packet(struct psmouse *psmouse)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void alps_report_bare_ps2_packet(struct psmouse *psmouse,
 					unsigned char packet[],
 					bool report_buttons)
@@ -705,10 +796,17 @@ static psmouse_ret_t alps_handle_interleaved_ps2(struct psmouse *psmouse)
 		      psmouse->packet[4] |
 		      psmouse->packet[5]) & 0x80) ||
 		    (!alps_is_valid_first_byte(priv->i, psmouse->packet[6]))) {
+<<<<<<< HEAD
 			psmouse_dbg(psmouse,
 				    "refusing packet %x %x %x %x (suspected interleaved ps/2)\n",
 				    psmouse->packet[3], psmouse->packet[4],
 				    psmouse->packet[5], psmouse->packet[6]);
+=======
+			dbg("refusing packet %x %x %x %x "
+			    "(suspected interleaved ps/2)\n",
+			    psmouse->packet[3], psmouse->packet[4],
+			    psmouse->packet[5], psmouse->packet[6]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return PSMOUSE_BAD_DATA;
 		}
 
@@ -727,13 +825,21 @@ static psmouse_ret_t alps_handle_interleaved_ps2(struct psmouse *psmouse)
 		 * There is also possibility that we got 6-byte ALPS
 		 * packet followed  by 3-byte packet from trackpoint. We
 		 * can not distinguish between these 2 scenarios but
+<<<<<<< HEAD
 		 * because the latter is unlikely to happen in course of
+=======
+		 * becase the latter is unlikely to happen in course of
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * normal operation (user would need to press all
 		 * buttons on the pad and start moving trackpoint
 		 * without touching the pad surface) we assume former.
 		 * Even if we are wrong the wost thing that would happen
 		 * the cursor would jump but we should not get protocol
+<<<<<<< HEAD
 		 * de-synchronization.
+=======
+		 * desynchronization.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 */
 
 		alps_report_bare_ps2_packet(psmouse, &psmouse->packet[3],
@@ -759,7 +865,11 @@ static void alps_flush_packet(unsigned long data)
 
 	serio_pause_rx(psmouse->ps2dev.serio);
 
+<<<<<<< HEAD
 	if (psmouse->pktcnt == psmouse->pktsize) {
+=======
+	if (psmouse->pktcnt == 6) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * We did not any more data in reasonable amount of time.
@@ -769,10 +879,17 @@ static void alps_flush_packet(unsigned long data)
 		if ((psmouse->packet[3] |
 		     psmouse->packet[4] |
 		     psmouse->packet[5]) & 0x80) {
+<<<<<<< HEAD
 			psmouse_dbg(psmouse,
 				    "refusing packet %x %x %x (suspected interleaved ps/2)\n",
 				    psmouse->packet[3], psmouse->packet[4],
 				    psmouse->packet[5]);
+=======
+			dbg("refusing packet %x %x %x "
+			    "(suspected interleaved ps/2)\n",
+			    psmouse->packet[3], psmouse->packet[4],
+			    psmouse->packet[5]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			alps_process_packet(psmouse);
 		}
@@ -804,6 +921,7 @@ static psmouse_ret_t alps_process_byte(struct psmouse *psmouse)
 	}
 
 	if (!alps_is_valid_first_byte(model, psmouse->packet[0])) {
+<<<<<<< HEAD
 		psmouse_dbg(psmouse,
 			    "refusing packet[0] = %x (mask0 = %x, byte0 = %x)\n",
 			    psmouse->packet[0], model->mask0, model->byte0);
@@ -820,6 +938,22 @@ static psmouse_ret_t alps_process_byte(struct psmouse *psmouse)
 	}
 
 	if (psmouse->pktcnt == psmouse->pktsize) {
+=======
+		dbg("refusing packet[0] = %x (mask0 = %x, byte0 = %x)\n",
+		    psmouse->packet[0], model->mask0, model->byte0);
+		return PSMOUSE_BAD_DATA;
+	}
+
+	/* Bytes 2 - 6 should have 0 in the highest bit */
+	if (psmouse->pktcnt >= 2 && psmouse->pktcnt <= 6 &&
+	    (psmouse->packet[psmouse->pktcnt - 1] & 0x80)) {
+		dbg("refusing packet[%i] = %x\n",
+		    psmouse->pktcnt - 1, psmouse->packet[psmouse->pktcnt - 1]);
+		return PSMOUSE_BAD_DATA;
+	}
+
+	if (psmouse->pktcnt == 6) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		alps_process_packet(psmouse);
 		return PSMOUSE_FULL_PACKET;
 	}
@@ -827,6 +961,7 @@ static psmouse_ret_t alps_process_byte(struct psmouse *psmouse)
 	return PSMOUSE_GOOD_DATA;
 }
 
+<<<<<<< HEAD
 static int alps_command_mode_send_nibble(struct psmouse *psmouse, int nibble)
 {
 	struct ps2dev *ps2dev = &psmouse->ps2dev;
@@ -942,12 +1077,17 @@ static inline int alps_exit_command_mode(struct psmouse *psmouse)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct alps_model_info *alps_get_model(struct psmouse *psmouse, int *version)
 {
 	struct ps2dev *ps2dev = &psmouse->ps2dev;
 	static const unsigned char rates[] = { 0, 10, 20, 40, 60, 80, 100, 200 };
 	unsigned char param[4];
+<<<<<<< HEAD
 	const struct alps_model_info *model = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	/*
@@ -967,8 +1107,12 @@ static const struct alps_model_info *alps_get_model(struct psmouse *psmouse, int
 	if (ps2_command(ps2dev, param, PSMOUSE_CMD_GETINFO))
 		return NULL;
 
+<<<<<<< HEAD
 	psmouse_dbg(psmouse, "E6 report: %2.2x %2.2x %2.2x",
 		    param[0], param[1], param[2]);
+=======
+	dbg("E6 report: %2.2x %2.2x %2.2x", param[0], param[1], param[2]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((param[0] & 0xf8) != 0 || param[1] != 0 ||
 	    (param[2] != 10 && param[2] != 100))
@@ -989,8 +1133,12 @@ static const struct alps_model_info *alps_get_model(struct psmouse *psmouse, int
 	if (ps2_command(ps2dev, param, PSMOUSE_CMD_GETINFO))
 		return NULL;
 
+<<<<<<< HEAD
 	psmouse_dbg(psmouse, "E7 report: %2.2x %2.2x %2.2x",
 		    param[0], param[1], param[2]);
+=======
+	dbg("E7 report: %2.2x %2.2x %2.2x", param[0], param[1], param[2]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (version) {
 		for (i = 0; i < ARRAY_SIZE(rates) && param[2] != rates[i]; i++)
@@ -998,6 +1146,7 @@ static const struct alps_model_info *alps_get_model(struct psmouse *psmouse, int
 		*version = (param[0] << 8) | (param[1] << 4) | i;
 	}
 
+<<<<<<< HEAD
 	for (i = 0; i < ARRAY_SIZE(alps_model_data); i++) {
 		if (!memcmp(param, alps_model_data[i].signature,
 			    sizeof(alps_model_data[i].signature))) {
@@ -1033,6 +1182,14 @@ static const struct alps_model_info *alps_get_model(struct psmouse *psmouse, int
 	}
 
 	return model;
+=======
+	for (i = 0; i < ARRAY_SIZE(alps_model_data); i++)
+		if (!memcmp(param, alps_model_data[i].signature,
+			    sizeof(alps_model_data[i].signature)))
+			return alps_model_data + i;
+
+	return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1040,7 +1197,11 @@ static const struct alps_model_info *alps_get_model(struct psmouse *psmouse, int
  * subsequent commands. It looks like glidepad is behind stickpointer,
  * I'd thought it would be other way around...
  */
+<<<<<<< HEAD
 static int alps_passthrough_mode_v2(struct psmouse *psmouse, bool enable)
+=======
+static int alps_passthrough_mode(struct psmouse *psmouse, bool enable)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ps2dev *ps2dev = &psmouse->ps2dev;
 	int cmd = enable ? PSMOUSE_CMD_SETSCALE21 : PSMOUSE_CMD_SETSCALE11;
@@ -1057,7 +1218,11 @@ static int alps_passthrough_mode_v2(struct psmouse *psmouse, bool enable)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int alps_absolute_mode_v1_v2(struct psmouse *psmouse)
+=======
+static int alps_absolute_mode(struct psmouse *psmouse)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ps2dev *ps2dev = &psmouse->ps2dev;
 
@@ -1087,8 +1252,12 @@ static int alps_get_status(struct psmouse *psmouse, char *param)
 	    ps2_command(ps2dev, param, PSMOUSE_CMD_GETINFO))
 		return -1;
 
+<<<<<<< HEAD
 	psmouse_dbg(psmouse, "Status: %2.2x %2.2x %2.2x",
 		    param[0], param[1], param[2]);
+=======
+	dbg("Status: %2.2x %2.2x %2.2x", param[0], param[1], param[2]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1128,17 +1297,29 @@ static int alps_tap_mode(struct psmouse *psmouse, int enable)
 static int alps_poll(struct psmouse *psmouse)
 {
 	struct alps_data *priv = psmouse->private;
+<<<<<<< HEAD
 	unsigned char buf[sizeof(psmouse->packet)];
 	bool poll_failed;
 
 	if (priv->i->flags & ALPS_PASS)
 		alps_passthrough_mode_v2(psmouse, true);
+=======
+	unsigned char buf[6];
+	bool poll_failed;
+
+	if (priv->i->flags & ALPS_PASS)
+		alps_passthrough_mode(psmouse, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	poll_failed = ps2_command(&psmouse->ps2dev, buf,
 				  PSMOUSE_CMD_POLL | (psmouse->pktsize << 8)) < 0;
 
 	if (priv->i->flags & ALPS_PASS)
+<<<<<<< HEAD
 		alps_passthrough_mode_v2(psmouse, false);
+=======
+		alps_passthrough_mode(psmouse, false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (poll_failed || (buf[0] & priv->i->mask0) != priv->i->byte0)
 		return -1;
@@ -1155,33 +1336,55 @@ static int alps_poll(struct psmouse *psmouse)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int alps_hw_init_v1_v2(struct psmouse *psmouse)
+=======
+static int alps_hw_init(struct psmouse *psmouse)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct alps_data *priv = psmouse->private;
 	const struct alps_model_info *model = priv->i;
 
 	if ((model->flags & ALPS_PASS) &&
+<<<<<<< HEAD
 	    alps_passthrough_mode_v2(psmouse, true)) {
+=======
+	    alps_passthrough_mode(psmouse, true)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
 	if (alps_tap_mode(psmouse, true)) {
+<<<<<<< HEAD
 		psmouse_warn(psmouse, "Failed to enable hardware tapping\n");
 		return -1;
 	}
 
 	if (alps_absolute_mode_v1_v2(psmouse)) {
 		psmouse_err(psmouse, "Failed to enable absolute mode\n");
+=======
+		printk(KERN_WARNING "alps.c: Failed to enable hardware tapping\n");
+		return -1;
+	}
+
+	if (alps_absolute_mode(psmouse)) {
+		printk(KERN_ERR "alps.c: Failed to enable absolute mode\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
 	if ((model->flags & ALPS_PASS) &&
+<<<<<<< HEAD
 	    alps_passthrough_mode_v2(psmouse, false)) {
+=======
+	    alps_passthrough_mode(psmouse, false)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
 	/* ALPS needs stream mode, otherwise it won't report any data */
 	if (ps2_command(&psmouse->ps2dev, NULL, PSMOUSE_CMD_SETSTREAM)) {
+<<<<<<< HEAD
 		psmouse_err(psmouse, "Failed to enable stream mode\n");
 		return -1;
 	}
@@ -1480,6 +1683,15 @@ static int alps_hw_init(struct psmouse *psmouse)
 	return ret;
 }
 
+=======
+		printk(KERN_ERR "alps.c: Failed to enable stream mode\n");
+		return -1;
+	}
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int alps_reconnect(struct psmouse *psmouse)
 {
 	const struct alps_model_info *model;
@@ -1520,8 +1732,11 @@ int alps_init(struct psmouse *psmouse)
 
 	psmouse->private = priv;
 
+<<<<<<< HEAD
 	psmouse_reset(psmouse);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	model = alps_get_model(psmouse, &version);
 	if (!model)
 		goto init_fail;
@@ -1549,6 +1764,7 @@ int alps_init(struct psmouse *psmouse)
 		BIT_MASK(BTN_LEFT) | BIT_MASK(BTN_RIGHT);
 
 	dev1->evbit[BIT_WORD(EV_ABS)] |= BIT_MASK(EV_ABS);
+<<<<<<< HEAD
 
 	switch (model->proto_version) {
 	case ALPS_PROTO_V1:
@@ -1572,6 +1788,10 @@ int alps_init(struct psmouse *psmouse)
 		break;
 	}
 
+=======
+	input_set_abs_params(dev1, ABS_X, 0, 1023, 0, 0);
+	input_set_abs_params(dev1, ABS_Y, 0, 767, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	input_set_abs_params(dev1, ABS_PRESSURE, 0, 127, 0, 0);
 
 	if (model->flags & ALPS_WHEEL) {
@@ -1614,7 +1834,11 @@ int alps_init(struct psmouse *psmouse)
 	psmouse->poll = alps_poll;
 	psmouse->disconnect = alps_disconnect;
 	psmouse->reconnect = alps_reconnect;
+<<<<<<< HEAD
 	psmouse->pktsize = model->proto_version == ALPS_PROTO_V4 ? 8 : 6;
+=======
+	psmouse->pktsize = 6;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* We are having trouble resyncing ALPS touchpads so disable it for now */
 	psmouse->resync_time = 0;

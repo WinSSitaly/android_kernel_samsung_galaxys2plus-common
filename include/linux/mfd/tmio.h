@@ -1,10 +1,15 @@
 #ifndef MFD_TMIO_H
 #define MFD_TMIO_H
 
+<<<<<<< HEAD
 #include <linux/device.h>
 #include <linux/fb.h>
 #include <linux/io.h>
 #include <linux/jiffies.h>
+=======
+#include <linux/fb.h>
+#include <linux/io.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <linux/pm_runtime.h>
 
@@ -66,6 +71,7 @@
 #define TMIO_MMC_SDIO_IRQ		(1 << 2)
 /*
  * Some platforms can detect card insertion events with controller powered
+<<<<<<< HEAD
  * down, using a GPIO IRQ, in which case they have to fill in cd_irq, cd_gpio,
  * and cd_flags fields of struct tmio_mmc_data.
  */
@@ -81,6 +87,12 @@
  * cd_gpio < 0 to disable GPIO hotplug would break backwards compatibility.
  */
 #define TMIO_MMC_USE_GPIO_CD		(1 << 5)
+=======
+ * down, in which case they have to call tmio_mmc_cd_wakeup() to power up the
+ * controller and report the event to the driver.
+ */
+#define TMIO_MMC_HAS_COLD_CD		(1 << 3)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int tmio_core_mmc_enable(void __iomem *cnf, int shift, unsigned long base);
 int tmio_core_mmc_resume(void __iomem *cnf, int shift, unsigned long base);
@@ -93,8 +105,11 @@ struct tmio_mmc_dma {
 	int alignment_shift;
 };
 
+<<<<<<< HEAD
 struct tmio_mmc_host;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * data for the MMC controller
  */
@@ -105,6 +120,7 @@ struct tmio_mmc_data {
 	u32				ocr_mask;	/* available voltages */
 	struct tmio_mmc_dma		*dma;
 	struct device			*dev;
+<<<<<<< HEAD
 	unsigned int			cd_gpio;
 	void (*set_pwr)(struct platform_device *host, int state);
 	void (*set_clk_div)(struct platform_device *host, int state);
@@ -122,6 +138,20 @@ static inline void tmio_mmc_cd_wakeup(struct tmio_mmc_data *pdata)
 	if (pdata)
 		mmc_detect_change(dev_get_drvdata(pdata->dev),
 				  msecs_to_jiffies(100));
+=======
+	bool				power;
+	void (*set_pwr)(struct platform_device *host, int state);
+	void (*set_clk_div)(struct platform_device *host, int state);
+	int (*get_cd)(struct platform_device *host);
+};
+
+static inline void tmio_mmc_cd_wakeup(struct tmio_mmc_data *pdata)
+{
+	if (pdata && !pdata->power) {
+		pdata->power = true;
+		pm_runtime_get(pdata->dev);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*

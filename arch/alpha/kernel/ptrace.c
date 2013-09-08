@@ -16,6 +16,10 @@
 
 #include <asm/uaccess.h>
 #include <asm/pgtable.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/fpu.h>
 
 #include "proto.h"

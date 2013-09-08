@@ -6,7 +6,10 @@ struct of_irq;
 #include <linux/types.h>
 #include <linux/errno.h>
 #include <linux/irq.h>
+<<<<<<< HEAD
 #include <linux/irqdomain.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ioport.h>
 #include <linux/of.h>
 
@@ -34,8 +37,11 @@ struct of_irq {
 	u32 specifier[OF_MAX_IRQ_SPEC]; /* Specifier copy */
 };
 
+<<<<<<< HEAD
 typedef int (*of_irq_init_cb_t)(struct device_node *, struct device_node *);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Workarounds only applied to 32bit powermac machines
  */
@@ -73,8 +79,11 @@ extern int of_irq_to_resource_table(struct device_node *dev,
 		struct resource *res, int nr_irqs);
 extern struct device_node *of_irq_find_parent(struct device_node *child);
 
+<<<<<<< HEAD
 extern void of_irq_init(const struct of_device_id *matches);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_OF_IRQ */
 #endif /* CONFIG_OF */
 #endif /* __OF_IRQ_H */

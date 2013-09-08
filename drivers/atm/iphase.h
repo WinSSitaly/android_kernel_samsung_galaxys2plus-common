@@ -636,6 +636,7 @@ struct rx_buf_desc {
 #define SEG_BASE IPHASE5575_FRAG_CONTROL_REG_BASE  
 #define REASS_BASE IPHASE5575_REASS_CONTROL_REG_BASE  
 
+<<<<<<< HEAD
 typedef volatile u_int	ffreg_t;
 typedef u_int   rreg_t;
 
@@ -712,6 +713,84 @@ typedef struct _ffredn_t {
 	ffreg_t	cell_ctr_high1_nc;/* Total cell transfer count (high)	*/
 	ffreg_t	cell_ctr_lo1_nc;/* Total cell transfer count (low)	*/
 	u_int	fillercc[0x100-0xcc]; /* pad out to full address space	 */
+=======
+typedef volatile u_int  freg_t;
+typedef u_int   rreg_t;
+
+typedef struct _ffredn_t {
+        freg_t  idlehead_high;  /* Idle cell header (high)              */
+        freg_t  idlehead_low;   /* Idle cell header (low)               */
+        freg_t  maxrate;        /* Maximum rate                         */
+        freg_t  stparms;        /* Traffic Management Parameters        */
+        freg_t  abrubr_abr;     /* ABRUBR Priority Byte 1, TCR Byte 0   */
+        freg_t  rm_type;        /*                                      */
+        u_int   filler5[0x17 - 0x06];
+        freg_t  cmd_reg;        /* Command register                     */
+        u_int   filler18[0x20 - 0x18];
+        freg_t  cbr_base;       /* CBR Pointer Base                     */
+        freg_t  vbr_base;       /* VBR Pointer Base                     */
+        freg_t  abr_base;       /* ABR Pointer Base                     */
+        freg_t  ubr_base;       /* UBR Pointer Base                     */
+        u_int   filler24;
+        freg_t  vbrwq_base;     /* VBR Wait Queue Base                  */
+        freg_t  abrwq_base;     /* ABR Wait Queue Base                  */
+        freg_t  ubrwq_base;     /* UBR Wait Queue Base                  */
+        freg_t  vct_base;       /* Main VC Table Base                   */
+        freg_t  vcte_base;      /* Extended Main VC Table Base          */
+        u_int   filler2a[0x2C - 0x2A];
+        freg_t  cbr_tab_beg;    /* CBR Table Begin                      */
+        freg_t  cbr_tab_end;    /* CBR Table End                        */
+        freg_t  cbr_pointer;    /* CBR Pointer                          */
+        u_int   filler2f[0x30 - 0x2F];
+        freg_t  prq_st_adr;     /* Packet Ready Queue Start Address     */
+        freg_t  prq_ed_adr;     /* Packet Ready Queue End Address       */
+        freg_t  prq_rd_ptr;     /* Packet Ready Queue read pointer      */
+        freg_t  prq_wr_ptr;     /* Packet Ready Queue write pointer     */
+        freg_t  tcq_st_adr;     /* Transmit Complete Queue Start Address*/
+        freg_t  tcq_ed_adr;     /* Transmit Complete Queue End Address  */
+        freg_t  tcq_rd_ptr;     /* Transmit Complete Queue read pointer */
+        freg_t  tcq_wr_ptr;     /* Transmit Complete Queue write pointer*/
+        u_int   filler38[0x40 - 0x38];
+        freg_t  queue_base;     /* Base address for PRQ and TCQ         */
+        freg_t  desc_base;      /* Base address of descriptor table     */
+        u_int   filler42[0x45 - 0x42];
+        freg_t  mode_reg_0;     /* Mode register 0                      */
+        freg_t  mode_reg_1;     /* Mode register 1                      */
+        freg_t  intr_status_reg;/* Interrupt Status register            */
+        freg_t  mask_reg;       /* Mask Register                        */
+        freg_t  cell_ctr_high1; /* Total cell transfer count (high)     */
+        freg_t  cell_ctr_lo1;   /* Total cell transfer count (low)      */
+        freg_t  state_reg;      /* Status register                      */
+        u_int   filler4c[0x58 - 0x4c];
+        freg_t  curr_desc_num;  /* Contains the current descriptor num  */
+        freg_t  next_desc;      /* Next descriptor                      */
+        freg_t  next_vc;        /* Next VC                              */
+        u_int   filler5b[0x5d - 0x5b];
+        freg_t  present_slot_cnt;/* Present slot count                  */
+        u_int   filler5e[0x6a - 0x5e];
+        freg_t  new_desc_num;   /* New descriptor number                */
+        freg_t  new_vc;         /* New VC                               */
+        freg_t  sched_tbl_ptr;  /* Schedule table pointer               */
+        freg_t  vbrwq_wptr;     /* VBR wait queue write pointer         */
+        freg_t  vbrwq_rptr;     /* VBR wait queue read pointer          */
+        freg_t  abrwq_wptr;     /* ABR wait queue write pointer         */
+        freg_t  abrwq_rptr;     /* ABR wait queue read pointer          */
+        freg_t  ubrwq_wptr;     /* UBR wait queue write pointer         */
+        freg_t  ubrwq_rptr;     /* UBR wait queue read pointer          */
+        freg_t  cbr_vc;         /* CBR VC                               */
+        freg_t  vbr_sb_vc;      /* VBR SB VC                            */
+        freg_t  abr_sb_vc;      /* ABR SB VC                            */
+        freg_t  ubr_sb_vc;      /* UBR SB VC                            */
+        freg_t  vbr_next_link;  /* VBR next link                        */
+        freg_t  abr_next_link;  /* ABR next link                        */
+        freg_t  ubr_next_link;  /* UBR next link                        */
+        u_int   filler7a[0x7c-0x7a];
+        freg_t  out_rate_head;  /* Out of rate head                     */
+        u_int   filler7d[0xca-0x7d]; /* pad out to full address space   */
+        freg_t  cell_ctr_high1_nc;/* Total cell transfer count (high)   */
+        freg_t  cell_ctr_lo1_nc;/* Total cell transfer count (low)      */
+        u_int   fillercc[0x100-0xcc]; /* pad out to full address space   */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } ffredn_t;
 
 typedef struct _rfredn_t {
@@ -889,6 +968,7 @@ typedef struct ia_rtn_q {
 } IARTN_Q;
 
 #define SUNI_LOSV   	0x04
+<<<<<<< HEAD
 enum ia_suni {
 	SUNI_MASTER_RESET	= 0x000, /* SUNI Master Reset and Identity   */
 	SUNI_MASTER_CONFIG	= 0x004, /* SUNI Master Configuration        */
@@ -954,6 +1034,81 @@ enum ia_suni {
 	 * SUNI_MASTER_TEST	= 0x200,    SUNI Master Test                 */
 	SUNI_RESERVED_TEST	= 0x204  /* SUNI Reserved for Test           */
 };
+=======
+typedef struct {
+        u32   suni_master_reset;      /* SUNI Master Reset and Identity     */
+        u32   suni_master_config;     /* SUNI Master Configuration          */
+        u32   suni_master_intr_stat;  /* SUNI Master Interrupt Status       */
+        u32   suni_reserved1;         /* Reserved                           */
+        u32   suni_master_clk_monitor;/* SUNI Master Clock Monitor          */
+        u32   suni_master_control;    /* SUNI Master Clock Monitor          */
+        u32   suni_reserved2[10];     /* Reserved                           */
+
+        u32   suni_rsop_control;      /* RSOP Control/Interrupt Enable      */
+        u32   suni_rsop_status;       /* RSOP Status/Interrupt States       */
+        u32   suni_rsop_section_bip8l;/* RSOP Section BIP-8 LSB             */
+        u32   suni_rsop_section_bip8m;/* RSOP Section BIP-8 MSB             */
+
+        u32   suni_tsop_control;      /* TSOP Control                       */
+        u32   suni_tsop_diag;         /* TSOP Disgnostics                   */
+        u32   suni_tsop_reserved[2];  /* TSOP Reserved                      */
+
+        u32   suni_rlop_cs;           /* RLOP Control/Status                */
+        u32   suni_rlop_intr;         /* RLOP Interrupt Enable/Status       */
+        u32   suni_rlop_line_bip24l;  /* RLOP Line BIP-24 LSB               */
+        u32   suni_rlop_line_bip24;   /* RLOP Line BIP-24                   */
+        u32   suni_rlop_line_bip24m;  /* RLOP Line BIP-24 MSB               */
+        u32   suni_rlop_line_febel;   /* RLOP Line FEBE LSB                 */
+        u32   suni_rlop_line_febe;    /* RLOP Line FEBE                     */
+        u32   suni_rlop_line_febem;   /* RLOP Line FEBE MSB                 */
+
+        u32   suni_tlop_control;      /* TLOP Control                       */
+        u32   suni_tlop_disg;         /* TLOP Disgnostics                   */
+        u32   suni_tlop_reserved[14]; /* TLOP Reserved                      */
+
+        u32   suni_rpop_cs;           /* RPOP Status/Control                */
+        u32   suni_rpop_intr;         /* RPOP Interrupt/Status              */
+        u32   suni_rpop_reserved;     /* RPOP Reserved                      */
+        u32   suni_rpop_intr_ena;     /* RPOP Interrupt Enable              */
+        u32   suni_rpop_reserved1[3]; /* RPOP Reserved                      */
+        u32   suni_rpop_path_sig;     /* RPOP Path Signal Label             */
+        u32   suni_rpop_bip8l;        /* RPOP Path BIP-8 LSB                */
+        u32   suni_rpop_bip8m;        /* RPOP Path BIP-8 MSB                */
+        u32   suni_rpop_febel;        /* RPOP Path FEBE LSB                 */
+        u32   suni_rpop_febem;        /* RPOP Path FEBE MSB                 */
+        u32   suni_rpop_reserved2[4]; /* RPOP Reserved                      */
+
+        u32   suni_tpop_cntrl_daig;   /* TPOP Control/Disgnostics           */
+        u32   suni_tpop_pointer_ctrl; /* TPOP Pointer Control               */
+        u32   suni_tpop_sourcer_ctrl; /* TPOP Source Control                */
+        u32   suni_tpop_reserved1[2]; /* TPOP Reserved                      */
+        u32   suni_tpop_arb_prtl;     /* TPOP Arbitrary Pointer LSB         */
+        u32   suni_tpop_arb_prtm;     /* TPOP Arbitrary Pointer MSB         */
+        u32   suni_tpop_reserved2;    /* TPOP Reserved                      */
+        u32   suni_tpop_path_sig;     /* TPOP Path Signal Lable             */
+        u32   suni_tpop_path_status;  /* TPOP Path Status                   */
+        u32   suni_tpop_reserved3[6]; /* TPOP Reserved                      */              
+
+        u32   suni_racp_cs;           /* RACP Control/Status                */
+        u32   suni_racp_intr;         /* RACP Interrupt Enable/Status       */
+        u32   suni_racp_hdr_pattern;  /* RACP Match Header Pattern          */
+        u32   suni_racp_hdr_mask;     /* RACP Match Header Mask             */
+        u32   suni_racp_corr_hcs;     /* RACP Correctable HCS Error Count   */
+        u32   suni_racp_uncorr_hcs;   /* RACP Uncorrectable HCS Error Count */
+        u32   suni_racp_reserved[10]; /* RACP Reserved                      */
+
+        u32   suni_tacp_control;      /* TACP Control                       */
+        u32   suni_tacp_idle_hdr_pat; /* TACP Idle Cell Header Pattern      */
+        u32   suni_tacp_idle_pay_pay; /* TACP Idle Cell Payld Octet Pattern */
+        u32   suni_tacp_reserved[5];  /* TACP Reserved                      */
+
+        u32   suni_reserved3[24];     /* Reserved                           */
+
+        u32   suni_master_test;       /* SUNI Master Test                   */
+        u32   suni_reserved_test;     /* SUNI Reserved for Test             */
+} IA_SUNI;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct _SUNI_STATS_
 {
@@ -985,11 +1140,21 @@ typedef struct _SUNI_STATS_
    u32 racp_uchcs_count;            // uncorrectable HCS error count
 } IA_SUNI_STATS; 
 
+<<<<<<< HEAD
 typedef struct iadev_priv {
 	/*-----base pointers into (i)chipSAR+ address space */   
 	u32 __iomem *phy;	/* Base pointer into phy (SUNI). */
 	u32 __iomem *dma;	/* Base pointer into DMA control registers. */
 	u32 __iomem *reg;	/* Base pointer to SAR registers. */
+=======
+typedef struct iadev_t {  
+	/*-----base pointers into (i)chipSAR+ address space */   
+	u32 __iomem *phy;		/* base pointer into phy(SUNI) */  
+	u32 __iomem *dma;		/* base pointer into DMA control   
+						registers */  
+	u32 __iomem *reg;		/* base pointer to SAR registers  
+					   - Bus Interface Control Regs */  
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 __iomem *seg_reg;		/* base pointer to segmentation engine  
 						internal registers */  
 	u32 __iomem *reass_reg;		/* base pointer to reassemble engine  
@@ -1061,6 +1226,7 @@ typedef struct iadev_priv {
 #define INPH_IA_VCC(v) ((struct ia_vcc *) (v)->dev_data)  
 
 /******************* IDT77105 25MB/s PHY DEFINE *****************************/
+<<<<<<< HEAD
 enum ia_mb25 {
 	MB25_MASTER_CTRL	= 0x00, /* Master control		     */
 	MB25_INTR_STATUS	= 0x04,	/* Interrupt status		     */
@@ -1069,6 +1235,16 @@ enum ia_mb25 {
 	MB25_LOW_BYTE_COUNTER	= 0x10,
 	MB25_HIGH_BYTE_COUNTER	= 0x14
 };
+=======
+typedef struct {
+	u_int	mb25_master_ctrl;	/* Master control		     */
+	u_int	mb25_intr_status;	/* Interrupt status		     */
+	u_int	mb25_diag_control;	/* Diagnostic control		     */
+	u_int	mb25_led_hec;		/* LED driver and HEC status/control */
+	u_int	mb25_low_byte_counter;	/* Low byte counter		     */
+	u_int	mb25_high_byte_counter;	/* High byte counter		     */
+} ia_mb25_t;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Master Control
@@ -1117,6 +1293,7 @@ enum ia_mb25 {
 #define FE_E3_PHY       0x0090          /* E3 */
 		     
 /*********************** SUNI_PM7345 PHY DEFINE HERE *********************/
+<<<<<<< HEAD
 enum suni_pm7345 {
 	SUNI_CONFIG			= 0x000, /* SUNI Configuration */
 	SUNI_INTR_ENBL			= 0x004, /* SUNI Interrupt Enable */
@@ -1232,6 +1409,124 @@ enum suni_pm7345 {
 	SUNI_MASTER_TEST		= 0x200,
 	/* SUNI_PAD6 (0xff - 0x80) */
 };
+=======
+typedef struct _suni_pm7345_t
+{
+    u_int suni_config;     /* SUNI Configuration */
+    u_int suni_intr_enbl;  /* SUNI Interrupt Enable */
+    u_int suni_intr_stat;  /* SUNI Interrupt Status */
+    u_int suni_control;    /* SUNI Control */
+    u_int suni_id_reset;   /* SUNI Reset and Identity */
+    u_int suni_data_link_ctrl;
+    u_int suni_rboc_conf_intr_enbl;
+    u_int suni_rboc_stat;
+    u_int suni_ds3_frm_cfg;
+    u_int suni_ds3_frm_intr_enbl;
+    u_int suni_ds3_frm_intr_stat;
+    u_int suni_ds3_frm_stat;
+    u_int suni_rfdl_cfg;
+    u_int suni_rfdl_enbl_stat;
+    u_int suni_rfdl_stat;
+    u_int suni_rfdl_data;
+    u_int suni_pmon_chng;
+    u_int suni_pmon_intr_enbl_stat;
+    u_int suni_reserved1[0x13-0x11];
+    u_int suni_pmon_lcv_evt_cnt_lsb;
+    u_int suni_pmon_lcv_evt_cnt_msb;
+    u_int suni_pmon_fbe_evt_cnt_lsb;
+    u_int suni_pmon_fbe_evt_cnt_msb;
+    u_int suni_pmon_sez_det_cnt_lsb;
+    u_int suni_pmon_sez_det_cnt_msb;
+    u_int suni_pmon_pe_evt_cnt_lsb;
+    u_int suni_pmon_pe_evt_cnt_msb;
+    u_int suni_pmon_ppe_evt_cnt_lsb;
+    u_int suni_pmon_ppe_evt_cnt_msb;
+    u_int suni_pmon_febe_evt_cnt_lsb;
+    u_int suni_pmon_febe_evt_cnt_msb;
+    u_int suni_ds3_tran_cfg;
+    u_int suni_ds3_tran_diag;
+    u_int suni_reserved2[0x23-0x21];
+    u_int suni_xfdl_cfg;
+    u_int suni_xfdl_intr_st;
+    u_int suni_xfdl_xmit_data;
+    u_int suni_xboc_code;
+    u_int suni_splr_cfg;
+    u_int suni_splr_intr_en;
+    u_int suni_splr_intr_st;
+    u_int suni_splr_status;
+    u_int suni_splt_cfg;
+    u_int suni_splt_cntl;
+    u_int suni_splt_diag_g1;
+    u_int suni_splt_f1;
+    u_int suni_cppm_loc_meters;
+    u_int suni_cppm_chng_of_cppm_perf_meter;
+    u_int suni_cppm_b1_err_cnt_lsb;
+    u_int suni_cppm_b1_err_cnt_msb;
+    u_int suni_cppm_framing_err_cnt_lsb;
+    u_int suni_cppm_framing_err_cnt_msb;
+    u_int suni_cppm_febe_cnt_lsb;
+    u_int suni_cppm_febe_cnt_msb;
+    u_int suni_cppm_hcs_err_cnt_lsb;
+    u_int suni_cppm_hcs_err_cnt_msb;
+    u_int suni_cppm_idle_un_cell_cnt_lsb;
+    u_int suni_cppm_idle_un_cell_cnt_msb;
+    u_int suni_cppm_rcv_cell_cnt_lsb;
+    u_int suni_cppm_rcv_cell_cnt_msb;
+    u_int suni_cppm_xmit_cell_cnt_lsb;
+    u_int suni_cppm_xmit_cell_cnt_msb;
+    u_int suni_rxcp_ctrl;
+    u_int suni_rxcp_fctrl;
+    u_int suni_rxcp_intr_en_sts;
+    u_int suni_rxcp_idle_pat_h1;
+    u_int suni_rxcp_idle_pat_h2;
+    u_int suni_rxcp_idle_pat_h3;
+    u_int suni_rxcp_idle_pat_h4;
+    u_int suni_rxcp_idle_mask_h1;
+    u_int suni_rxcp_idle_mask_h2;
+    u_int suni_rxcp_idle_mask_h3;
+    u_int suni_rxcp_idle_mask_h4;
+    u_int suni_rxcp_cell_pat_h1;
+    u_int suni_rxcp_cell_pat_h2;
+    u_int suni_rxcp_cell_pat_h3;
+    u_int suni_rxcp_cell_pat_h4;
+    u_int suni_rxcp_cell_mask_h1;
+    u_int suni_rxcp_cell_mask_h2;
+    u_int suni_rxcp_cell_mask_h3;
+    u_int suni_rxcp_cell_mask_h4;
+    u_int suni_rxcp_hcs_cs;
+    u_int suni_rxcp_lcd_cnt_threshold;
+    u_int suni_reserved3[0x57-0x54];
+    u_int suni_txcp_ctrl;
+    u_int suni_txcp_intr_en_sts;
+    u_int suni_txcp_idle_pat_h1;
+    u_int suni_txcp_idle_pat_h2;
+    u_int suni_txcp_idle_pat_h3;
+    u_int suni_txcp_idle_pat_h4;
+    u_int suni_txcp_idle_pat_h5;
+    u_int suni_txcp_idle_payload;
+    u_int suni_e3_frm_fram_options;
+    u_int suni_e3_frm_maint_options;
+    u_int suni_e3_frm_fram_intr_enbl;
+    u_int suni_e3_frm_fram_intr_ind_stat;
+    u_int suni_e3_frm_maint_intr_enbl;
+    u_int suni_e3_frm_maint_intr_ind;
+    u_int suni_e3_frm_maint_stat;
+    u_int suni_reserved4;
+    u_int suni_e3_tran_fram_options;
+    u_int suni_e3_tran_stat_diag_options;
+    u_int suni_e3_tran_bip_8_err_mask;
+    u_int suni_e3_tran_maint_adapt_options;
+    u_int suni_ttb_ctrl;
+    u_int suni_ttb_trail_trace_id_stat;
+    u_int suni_ttb_ind_addr;
+    u_int suni_ttb_ind_data;
+    u_int suni_ttb_exp_payload_type;
+    u_int suni_ttb_payload_type_ctrl_stat;
+    u_int suni_pad5[0x7f-0x71];
+    u_int suni_master_test;
+    u_int suni_pad6[0xff-0x80];
+}suni_pm7345_t;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define SUNI_PM7345_T suni_pm7345_t
 #define SUNI_PM7345     0x20            /* Suni chip type */

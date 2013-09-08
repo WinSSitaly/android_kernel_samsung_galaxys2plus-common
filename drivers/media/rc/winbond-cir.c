@@ -6,8 +6,13 @@
  *  could probably support others (Winbond WEC102X, NatSemi, etc)
  *  with minor modifications.
  *
+<<<<<<< HEAD
  *  Original Author: David HÃ¤rdeman <david@hardeman.nu>
  *     Copyright (C) 2009 - 2011 David HÃ¤rdeman <david@hardeman.nu>
+=======
+ *  Original Author: David Härdeman <david@hardeman.nu>
+ *     Copyright (C) 2009 - 2010 David Härdeman <david@hardeman.nu>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *  Dedicated to my daughter Matilda, without whose loving attention this
  *  driver would have been finished in half the time and with a fraction
@@ -41,8 +46,11 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/pnp.h>
 #include <linux/interrupt.h>
@@ -226,11 +234,19 @@ module_param(protocol, uint, 0444);
 MODULE_PARM_DESC(protocol, "IR protocol to use for the power-on command "
 		 "(0 = RC5, 1 = NEC, 2 = RC6A, default)");
 
+<<<<<<< HEAD
 static bool invert; /* default = 0 */
 module_param(invert, bool, 0444);
 MODULE_PARM_DESC(invert, "Invert the signal from the IR receiver");
 
 static bool txandrx; /* default = 0 */
+=======
+static int invert; /* default = 0 */
+module_param(invert, bool, 0444);
+MODULE_PARM_DESC(invert, "Invert the signal from the IR receiver");
+
+static int txandrx; /* default = 0 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(txandrx, bool, 0444);
 MODULE_PARM_DESC(invert, "Allow simultaneous TX and RX");
 
@@ -579,12 +595,25 @@ wbcir_txmask(struct rc_dev *dev, u32 mask)
 }
 
 static int
+<<<<<<< HEAD
 wbcir_tx(struct rc_dev *dev, unsigned *buf, unsigned count)
 {
 	struct wbcir_data *data = dev->priv;
 	unsigned i;
 	unsigned long flags;
 
+=======
+wbcir_tx(struct rc_dev *dev, int *buf, u32 bufsize)
+{
+	struct wbcir_data *data = dev->priv;
+	u32 count;
+	unsigned i;
+	unsigned long flags;
+
+	/* bufsize has been sanity checked by the caller */
+	count = bufsize / sizeof(int);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Not sure if this is possible, but better safe than sorry */
 	spin_lock_irqsave(&data->spinlock, flags);
 	if (data->txstate != WBCIR_TXSTATE_INACTIVE) {
@@ -874,8 +903,23 @@ wbcir_init_hw(struct wbcir_data *data)
 	/* prescaler 1.0, tx/rx fifo lvl 16 */
 	outb(0x30, data->sbase + WBCIR_REG_SP3_EXCR2);
 
+<<<<<<< HEAD
 	/* Set baud divisor to sample every 10 us */
 	outb(0x0F, data->sbase + WBCIR_REG_SP3_BGDL);
+=======
+	/* Set baud divisor to generate one byte per bit/cell */
+	switch (protocol) {
+	case IR_PROTOCOL_RC5:
+		outb(0xA7, data->sbase + WBCIR_REG_SP3_BGDL);
+		break;
+	case IR_PROTOCOL_RC6:
+		outb(0x53, data->sbase + WBCIR_REG_SP3_BGDL);
+		break;
+	case IR_PROTOCOL_NEC:
+		outb(0x69, data->sbase + WBCIR_REG_SP3_BGDL);
+		break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	outb(0x00, data->sbase + WBCIR_REG_SP3_BGDH);
 
 	/* Set CEIR mode */
@@ -884,9 +928,15 @@ wbcir_init_hw(struct wbcir_data *data)
 	inb(data->sbase + WBCIR_REG_SP3_LSR); /* Clear LSR */
 	inb(data->sbase + WBCIR_REG_SP3_MSR); /* Clear MSR */
 
+<<<<<<< HEAD
 	/* Disable RX demod, enable run-length enc/dec, set freq span */
 	wbcir_select_bank(data, WBCIR_BANK_7);
 	outb(0x90, data->sbase + WBCIR_REG_SP3_RCCFG);
+=======
+	/* Disable RX demod, run-length encoding/decoding, set freq span */
+	wbcir_select_bank(data, WBCIR_BANK_7);
+	outb(0x10, data->sbase + WBCIR_REG_SP3_RCCFG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Disable timer */
 	wbcir_select_bank(data, WBCIR_BANK_4);
@@ -991,10 +1041,46 @@ wbcir_probe(struct pnp_dev *device, const struct pnp_device_id *dev_id)
 		"(w: 0x%lX, e: 0x%lX, s: 0x%lX, i: %u)\n",
 		data->wbase, data->ebase, data->sbase, data->irq);
 
+<<<<<<< HEAD
 	led_trigger_register_simple("cir-tx", &data->txtrigger);
 	if (!data->txtrigger) {
 		err = -ENOMEM;
 		goto exit_free_data;
+=======
+	if (!request_region(data->wbase, WAKEUP_IOMEM_LEN, DRVNAME)) {
+		dev_err(dev, "Region 0x%lx-0x%lx already in use!\n",
+			data->wbase, data->wbase + WAKEUP_IOMEM_LEN - 1);
+		err = -EBUSY;
+		goto exit_free_data;
+	}
+
+	if (!request_region(data->ebase, EHFUNC_IOMEM_LEN, DRVNAME)) {
+		dev_err(dev, "Region 0x%lx-0x%lx already in use!\n",
+			data->ebase, data->ebase + EHFUNC_IOMEM_LEN - 1);
+		err = -EBUSY;
+		goto exit_release_wbase;
+	}
+
+	if (!request_region(data->sbase, SP_IOMEM_LEN, DRVNAME)) {
+		dev_err(dev, "Region 0x%lx-0x%lx already in use!\n",
+			data->sbase, data->sbase + SP_IOMEM_LEN - 1);
+		err = -EBUSY;
+		goto exit_release_ebase;
+	}
+
+	err = request_irq(data->irq, wbcir_irq_handler,
+			  IRQF_DISABLED, DRVNAME, device);
+	if (err) {
+		dev_err(dev, "Failed to claim IRQ %u\n", data->irq);
+		err = -EBUSY;
+		goto exit_release_sbase;
+	}
+
+	led_trigger_register_simple("cir-tx", &data->txtrigger);
+	if (!data->txtrigger) {
+		err = -ENOMEM;
+		goto exit_free_irq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	led_trigger_register_simple("cir-rx", &data->rxtrigger);
@@ -1033,6 +1119,7 @@ wbcir_probe(struct pnp_dev *device, const struct pnp_device_id *dev_id)
 	data->dev->priv = data;
 	data->dev->dev.parent = &device->dev;
 
+<<<<<<< HEAD
 	if (!request_region(data->wbase, WAKEUP_IOMEM_LEN, DRVNAME)) {
 		dev_err(dev, "Region 0x%lx-0x%lx already in use!\n",
 			data->wbase, data->wbase + WAKEUP_IOMEM_LEN - 1);
@@ -1065,6 +1152,11 @@ wbcir_probe(struct pnp_dev *device, const struct pnp_device_id *dev_id)
 	err = rc_register_device(data->dev);
 	if (err)
 		goto exit_free_irq;
+=======
+	err = rc_register_device(data->dev);
+	if (err)
+		goto exit_free_rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	device_init_wakeup(&device->dev, 1);
 
@@ -1072,6 +1164,7 @@ wbcir_probe(struct pnp_dev *device, const struct pnp_device_id *dev_id)
 
 	return 0;
 
+<<<<<<< HEAD
 exit_free_irq:
 	free_irq(data->irq, device);
 exit_release_sbase:
@@ -1080,6 +1173,8 @@ exit_release_ebase:
 	release_region(data->ebase, EHFUNC_IOMEM_LEN);
 exit_release_wbase:
 	release_region(data->wbase, WAKEUP_IOMEM_LEN);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 exit_free_rc:
 	rc_free_device(data->dev);
 exit_unregister_led:
@@ -1088,6 +1183,17 @@ exit_unregister_rxtrigger:
 	led_trigger_unregister_simple(data->rxtrigger);
 exit_unregister_txtrigger:
 	led_trigger_unregister_simple(data->txtrigger);
+<<<<<<< HEAD
+=======
+exit_free_irq:
+	free_irq(data->irq, device);
+exit_release_sbase:
+	release_region(data->sbase, SP_IOMEM_LEN);
+exit_release_ebase:
+	release_region(data->ebase, EHFUNC_IOMEM_LEN);
+exit_release_wbase:
+	release_region(data->wbase, WAKEUP_IOMEM_LEN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 exit_free_data:
 	kfree(data);
 	pnp_set_drvdata(device, NULL);
@@ -1158,12 +1264,20 @@ wbcir_init(void)
 	case IR_PROTOCOL_RC6:
 		break;
 	default:
+<<<<<<< HEAD
 		pr_err("Invalid power-on protocol\n");
+=======
+		printk(KERN_ERR DRVNAME ": Invalid power-on protocol\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ret = pnp_register_driver(&wbcir_driver);
 	if (ret)
+<<<<<<< HEAD
 		pr_err("Unable to register driver\n");
+=======
+		printk(KERN_ERR DRVNAME ": Unable to register driver\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -1177,6 +1291,10 @@ wbcir_exit(void)
 module_init(wbcir_init);
 module_exit(wbcir_exit);
 
+<<<<<<< HEAD
 MODULE_AUTHOR("David HÃ¤rdeman <david@hardeman.nu>");
+=======
+MODULE_AUTHOR("David Härdeman <david@hardeman.nu>");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("Winbond SuperI/O Consumer IR Driver");
 MODULE_LICENSE("GPL");

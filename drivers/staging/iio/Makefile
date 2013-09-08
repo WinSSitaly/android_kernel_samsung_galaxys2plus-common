@@ -28,6 +28,10 @@ obj-y += dds/
 obj-y += gyro/
 obj-y += impedance-analyzer/
 obj-y += imu/
+<<<<<<< HEAD
+=======
+obj-y += inv_test/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-y += light/
 obj-y += magnetometer/
 obj-y += meter/

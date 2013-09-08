@@ -26,6 +26,7 @@
 #define __NOUVEAU_DRV_H__
 
 #define DRIVER_AUTHOR		"Stephane Marchesin"
+<<<<<<< HEAD
 #define DRIVER_EMAIL		"nouveau@lists.freedesktop.org"
 
 #define DRIVER_NAME		"nouveau"
@@ -35,6 +36,17 @@
 #define DRIVER_MAJOR		1
 #define DRIVER_MINOR		0
 #define DRIVER_PATCHLEVEL	0
+=======
+#define DRIVER_EMAIL		"dri-devel@lists.sourceforge.net"
+
+#define DRIVER_NAME		"nouveau"
+#define DRIVER_DESC		"nVidia Riva/TNT/GeForce"
+#define DRIVER_DATE		"20090420"
+
+#define DRIVER_MAJOR		0
+#define DRIVER_MINOR		0
+#define DRIVER_PATCHLEVEL	16
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define NOUVEAU_FAMILY   0x0000FFFF
 #define NOUVEAU_FLAGS    0xFFFF0000
@@ -46,6 +58,7 @@
 #include "ttm/ttm_module.h"
 
 struct nouveau_fpriv {
+<<<<<<< HEAD
 	spinlock_t lock;
 	struct list_head channels;
 	struct nouveau_vm *vm;
@@ -57,6 +70,11 @@ nouveau_fpriv(struct drm_file *file_priv)
 	return file_priv ? file_priv->driver_priv : NULL;
 }
 
+=======
+	struct ttm_object_file *tfile;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DRM_FILE_PAGE_OFFSET (0x100000000ULL >> PAGE_SHIFT)
 
 #include "nouveau_drm.h"
@@ -77,7 +95,11 @@ struct nouveau_mem {
 	struct drm_device *dev;
 
 	struct nouveau_vma bar_vma;
+<<<<<<< HEAD
 	struct nouveau_vma vma[2];
+=======
+	struct nouveau_vma tmp_vma;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8  page_shift;
 
 	struct drm_mm_node *tag;
@@ -113,8 +135,14 @@ struct nouveau_bo {
 	int pbbo_index;
 	bool validate_mapped;
 
+<<<<<<< HEAD
 	struct list_head vma_list;
 	unsigned page_shift;
+=======
+	struct nouveau_channel *channel;
+
+	struct nouveau_vma vma;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	uint32_t tile_mode;
 	uint32_t tile_flags;
@@ -161,9 +189,12 @@ enum nouveau_flags {
 #define NVOBJ_ENGINE_COPY0	3
 #define NVOBJ_ENGINE_COPY1	4
 #define NVOBJ_ENGINE_MPEG	5
+<<<<<<< HEAD
 #define NVOBJ_ENGINE_PPP	NVOBJ_ENGINE_MPEG
 #define NVOBJ_ENGINE_BSP	6
 #define NVOBJ_ENGINE_VP		7
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NVOBJ_ENGINE_DISPLAY	15
 #define NVOBJ_ENGINE_NR		16
 
@@ -186,10 +217,16 @@ struct nouveau_gpuobj {
 	uint32_t flags;
 
 	u32 size;
+<<<<<<< HEAD
 	u32 pinst;	/* PRAMIN BAR offset */
 	u32 cinst;	/* Channel offset */
 	u64 vinst;	/* VRAM address */
 	u64 linst;	/* VM address */
+=======
+	u32 pinst;
+	u32 cinst;
+	u64 vinst;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	uint32_t engine;
 	uint32_t class;
@@ -212,7 +249,10 @@ enum nouveau_channel_mutex_class {
 
 struct nouveau_channel {
 	struct drm_device *dev;
+<<<<<<< HEAD
 	struct list_head list;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int id;
 
 	/* references to the channel data structure */
@@ -230,7 +270,10 @@ struct nouveau_channel {
 	/* mapping of the regs controlling the fifo */
 	void __iomem *user;
 	uint32_t user_get;
+<<<<<<< HEAD
 	uint32_t user_get_hi;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint32_t user_put;
 
 	/* Fencing */
@@ -241,18 +284,28 @@ struct nouveau_channel {
 		uint32_t sequence;
 		uint32_t sequence_ack;
 		atomic_t last_sequence_irq;
+<<<<<<< HEAD
 		struct nouveau_vma vma;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} fence;
 
 	/* DMA push buffer */
 	struct nouveau_gpuobj *pushbuf;
 	struct nouveau_bo     *pushbuf_bo;
+<<<<<<< HEAD
 	struct nouveau_vma     pushbuf_vma;
 	uint64_t               pushbuf_base;
 
 	/* Notifier memory */
 	struct nouveau_bo *notifier_bo;
 	struct nouveau_vma notifier_vma;
+=======
+	uint32_t               pushbuf_base;
+
+	/* Notifier memory */
+	struct nouveau_bo *notifier_bo;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct drm_mm notifier_heap;
 
 	/* PFIFO context */
@@ -294,7 +347,10 @@ struct nouveau_channel {
 
 	uint32_t sw_subchannel[8];
 
+<<<<<<< HEAD
 	struct nouveau_vma dispc_vma[4];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct {
 		struct nouveau_gpuobj *vblsem;
 		uint32_t vblsem_head;
@@ -314,7 +370,11 @@ struct nouveau_channel {
 struct nouveau_exec_engine {
 	void (*destroy)(struct drm_device *, int engine);
 	int  (*init)(struct drm_device *, int engine);
+<<<<<<< HEAD
 	int  (*fini)(struct drm_device *, int engine, bool suspend);
+=======
+	int  (*fini)(struct drm_device *, int engine);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int  (*context_new)(struct nouveau_channel *, int engine);
 	void (*context_del)(struct nouveau_channel *, int engine);
 	int  (*object_new)(struct nouveau_channel *, int engine,
@@ -331,8 +391,12 @@ struct nouveau_instmem_engine {
 	int	(*suspend)(struct drm_device *dev);
 	void	(*resume)(struct drm_device *dev);
 
+<<<<<<< HEAD
 	int	(*get)(struct nouveau_gpuobj *, struct nouveau_channel *,
 		       u32 size, u32 align);
+=======
+	int	(*get)(struct nouveau_gpuobj *, u32 size, u32 align);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void	(*put)(struct nouveau_gpuobj *);
 	int	(*map)(struct nouveau_gpuobj *);
 	void	(*unmap)(struct nouveau_gpuobj *);
@@ -395,6 +459,7 @@ struct nouveau_display_engine {
 	int (*early_init)(struct drm_device *);
 	void (*late_takedown)(struct drm_device *);
 	int (*create)(struct drm_device *);
+<<<<<<< HEAD
 	void (*destroy)(struct drm_device *);
 	int (*init)(struct drm_device *);
 	void (*fini)(struct drm_device *);
@@ -422,17 +487,46 @@ struct nouveau_gpio_engine {
 struct nouveau_pm_voltage_level {
 	u32 voltage; /* microvolts */
 	u8  vid;
+=======
+	int (*init)(struct drm_device *);
+	void (*destroy)(struct drm_device *);
+};
+
+struct nouveau_gpio_engine {
+	void *priv;
+
+	int  (*init)(struct drm_device *);
+	void (*takedown)(struct drm_device *);
+
+	int  (*get)(struct drm_device *, enum dcb_gpio_tag);
+	int  (*set)(struct drm_device *, enum dcb_gpio_tag, int state);
+
+	int  (*irq_register)(struct drm_device *, enum dcb_gpio_tag,
+			     void (*)(void *, int), void *);
+	void (*irq_unregister)(struct drm_device *, enum dcb_gpio_tag,
+			       void (*)(void *, int), void *);
+	bool (*irq_enable)(struct drm_device *, enum dcb_gpio_tag, bool on);
+};
+
+struct nouveau_pm_voltage_level {
+	u8 voltage;
+	u8 vid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct nouveau_pm_voltage {
 	bool supported;
+<<<<<<< HEAD
 	u8 version;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 vid_mask;
 
 	struct nouveau_pm_voltage_level *level;
 	int nr_level;
 };
 
+<<<<<<< HEAD
 /* Exclusive upper limits */
 #define NV_MEM_CL_DDR2_MAX 8
 #define NV_MEM_WR_DDR2_MAX 9
@@ -498,15 +592,32 @@ struct nouveau_pm_profile {
 	const struct nouveau_pm_profile_func *func;
 	struct list_head head;
 	char name[8];
+=======
+struct nouveau_pm_memtiming {
+	int id;
+	u32 reg_100220;
+	u32 reg_100224;
+	u32 reg_100228;
+	u32 reg_10022c;
+	u32 reg_100230;
+	u32 reg_100234;
+	u32 reg_100238;
+	u32 reg_10023c;
+	u32 reg_100240;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define NOUVEAU_PM_MAX_LEVEL 8
 struct nouveau_pm_level {
+<<<<<<< HEAD
 	struct nouveau_pm_profile profile;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct device_attribute dev_attr;
 	char name[32];
 	int id;
 
+<<<<<<< HEAD
 	struct nouveau_pm_memtiming timing;
 	u32 memory;
 	u16 memscript;
@@ -526,14 +637,33 @@ struct nouveau_pm_level {
 	u32 volt_min; /* microvolts */
 	u32 volt_max;
 	u8  fanspeed;
+=======
+	u32 core;
+	u32 memory;
+	u32 shader;
+	u32 unk05;
+	u32 unk0a;
+
+	u8 voltage;
+	u8 fanspeed;
+
+	u16 memscript;
+	struct nouveau_pm_memtiming *timing;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct nouveau_pm_temp_sensor_constants {
 	u16 offset_constant;
 	s16 offset_mult;
+<<<<<<< HEAD
 	s16 offset_div;
 	s16 slope_mult;
 	s16 slope_div;
+=======
+	u16 offset_div;
+	u16 slope_mult;
+	u16 slope_div;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct nouveau_pm_threshold_temp {
@@ -542,18 +672,26 @@ struct nouveau_pm_threshold_temp {
 	s16 fan_boost;
 };
 
+<<<<<<< HEAD
 struct nouveau_pm_fan {
 	u32 percent;
 	u32 min_duty;
 	u32 max_duty;
 	u32 pwm_freq;
 	u32 pwm_divisor;
+=======
+struct nouveau_pm_memtimings {
+	bool supported;
+	struct nouveau_pm_memtiming *timing;
+	int nr_timing;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct nouveau_pm_engine {
 	struct nouveau_pm_voltage voltage;
 	struct nouveau_pm_level perflvl[NOUVEAU_PM_MAX_LEVEL];
 	int nr_perflvl;
+<<<<<<< HEAD
 	struct nouveau_pm_temp_sensor_constants sensor_constants;
 	struct nouveau_pm_threshold_temp threshold_temp;
 	struct nouveau_pm_fan fan;
@@ -562,6 +700,11 @@ struct nouveau_pm_engine {
 	struct nouveau_pm_profile *profile_dc;
 	struct nouveau_pm_profile *profile;
 	struct list_head profiles;
+=======
+	struct nouveau_pm_memtimings memtimings;
+	struct nouveau_pm_temp_sensor_constants sensor_constants;
+	struct nouveau_pm_threshold_temp threshold_temp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct nouveau_pm_level boot;
 	struct nouveau_pm_level *cur;
@@ -569,6 +712,7 @@ struct nouveau_pm_engine {
 	struct device *hwmon;
 	struct notifier_block acpi_nb;
 
+<<<<<<< HEAD
 	int  (*clocks_get)(struct drm_device *, struct nouveau_pm_level *);
 	void *(*clocks_pre)(struct drm_device *, struct nouveau_pm_level *);
 	int (*clocks_set)(struct drm_device *, void *);
@@ -577,14 +721,28 @@ struct nouveau_pm_engine {
 	int (*voltage_set)(struct drm_device *, int voltage);
 	int (*pwm_get)(struct drm_device *, int line, u32*, u32*);
 	int (*pwm_set)(struct drm_device *, int line, u32, u32);
+=======
+	int (*clock_get)(struct drm_device *, u32 id);
+	void *(*clock_pre)(struct drm_device *, struct nouveau_pm_level *,
+			   u32 id, int khz);
+	void (*clock_set)(struct drm_device *, void *);
+	int (*voltage_get)(struct drm_device *);
+	int (*voltage_set)(struct drm_device *, int voltage);
+	int (*fanspeed_get)(struct drm_device *);
+	int (*fanspeed_set)(struct drm_device *, int fanspeed);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*temp_get)(struct drm_device *);
 };
 
 struct nouveau_vram_engine {
+<<<<<<< HEAD
 	struct nouveau_mm mm;
 
 	int  (*init)(struct drm_device *);
 	void (*takedown)(struct drm_device *dev);
+=======
+	int  (*init)(struct drm_device *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int  (*get)(struct drm_device *, u64, u32 align, u32 size_nc,
 		    u32 type, struct nouveau_mem **);
 	void (*put)(struct drm_device *, struct nouveau_mem **);
@@ -693,27 +851,42 @@ struct nv04_mode_state {
 };
 
 enum nouveau_card_type {
+<<<<<<< HEAD
 	NV_04      = 0x04,
+=======
+	NV_04      = 0x00,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NV_10      = 0x10,
 	NV_20      = 0x20,
 	NV_30      = 0x30,
 	NV_40      = 0x40,
 	NV_50      = 0x50,
 	NV_C0      = 0xc0,
+<<<<<<< HEAD
 	NV_D0      = 0xd0,
 	NV_E0      = 0xe0,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct drm_nouveau_private {
 	struct drm_device *dev;
+<<<<<<< HEAD
 	bool noaccel;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* the card type, takes NV_* as values */
 	enum nouveau_card_type card_type;
 	/* exact chipset, derived from NV_PMC_BOOT_0 */
 	int chipset;
+<<<<<<< HEAD
 	int flags;
 	u32 crystal;
+=======
+	int stepping;
+	int flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	void __iomem *mmio;
 
@@ -797,6 +970,7 @@ struct drm_nouveau_private {
 	} tile;
 
 	/* VRAM/fb configuration */
+<<<<<<< HEAD
 	enum {
 		NV_MEM_TYPE_UNKNOWN = 0,
 		NV_MEM_TYPE_STOLEN,
@@ -814,6 +988,13 @@ struct drm_nouveau_private {
 	uint64_t vram_sys_base;
 	bool vram_rank_B;
 
+=======
+	uint64_t vram_size;
+	uint64_t vram_sys_base;
+	u32 vram_rblock_size;
+
+	uint64_t fb_phys;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint64_t fb_available_size;
 	uint64_t fb_mappable_pages;
 	uint64_t fb_aper_free;
@@ -827,8 +1008,11 @@ struct drm_nouveau_private {
 	struct nouveau_vm *chan_vm;
 
 	struct nvbios vbios;
+<<<<<<< HEAD
 	u8 *mxms;
 	struct list_head i2c_ports;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct nv04_mode_state mode_reg;
 	struct nv04_mode_state saved_reg;
@@ -878,14 +1062,20 @@ nouveau_bo_ref(struct nouveau_bo *ref, struct nouveau_bo **pnvbo)
 }
 
 /* nouveau_drv.c */
+<<<<<<< HEAD
 extern int nouveau_modeset;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int nouveau_agpmode;
 extern int nouveau_duallink;
 extern int nouveau_uscript_lvds;
 extern int nouveau_uscript_tmds;
 extern int nouveau_vram_pushbuf;
 extern int nouveau_vram_notify;
+<<<<<<< HEAD
 extern char *nouveau_vram_type;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int nouveau_fbpercrtc;
 extern int nouveau_tv_disable;
 extern char *nouveau_tv_norm;
@@ -899,16 +1089,23 @@ extern int nouveau_override_conntype;
 extern char *nouveau_perflvl;
 extern int nouveau_perflvl_wr;
 extern int nouveau_msi;
+<<<<<<< HEAD
 extern int nouveau_ctxfw;
 extern int nouveau_mxmdcb;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int nouveau_pci_suspend(struct pci_dev *pdev, pm_message_t pm_state);
 extern int nouveau_pci_resume(struct pci_dev *pdev);
 
 /* nouveau_state.c */
+<<<<<<< HEAD
 extern int  nouveau_open(struct drm_device *, struct drm_file *);
 extern void nouveau_preclose(struct drm_device *dev, struct drm_file *);
 extern void nouveau_postclose(struct drm_device *, struct drm_file *);
+=======
+extern void nouveau_preclose(struct drm_device *dev, struct drm_file *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int  nouveau_load(struct drm_device *, unsigned long flags);
 extern int  nouveau_firstopen(struct drm_device *);
 extern void nouveau_lastclose(struct drm_device *);
@@ -921,8 +1118,11 @@ extern bool nouveau_wait_eq(struct drm_device *, uint64_t timeout,
 			    uint32_t reg, uint32_t mask, uint32_t val);
 extern bool nouveau_wait_ne(struct drm_device *, uint64_t timeout,
 			    uint32_t reg, uint32_t mask, uint32_t val);
+<<<<<<< HEAD
 extern bool nouveau_wait_cb(struct drm_device *, u64 timeout,
 			    bool (*cond)(void *), void *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern bool nouveau_wait_for_idle(struct drm_device *);
 extern int  nouveau_card_init(struct drm_device *);
 
@@ -934,12 +1134,17 @@ extern void nouveau_mem_gart_fini(struct drm_device *);
 extern int  nouveau_mem_init_agp(struct drm_device *);
 extern int  nouveau_mem_reset_agp(struct drm_device *);
 extern void nouveau_mem_close(struct drm_device *);
+<<<<<<< HEAD
 extern bool nouveau_mem_flags_valid(struct drm_device *, u32 tile_flags);
 extern int  nouveau_mem_timing_calc(struct drm_device *, u32 freq,
 				    struct nouveau_pm_memtiming *);
 extern void nouveau_mem_timing_read(struct drm_device *,
 				    struct nouveau_pm_memtiming *);
 extern int nouveau_mem_vbios_type(struct drm_device *);
+=======
+extern int  nouveau_mem_detect(struct drm_device *);
+extern bool nouveau_mem_flags_valid(struct drm_device *, u32 tile_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct nouveau_tile_reg *nv10_mem_set_tiling(
 	struct drm_device *dev, uint32_t addr, uint32_t size,
 	uint32_t pitch, uint32_t flags);
@@ -972,7 +1177,11 @@ extern int  nouveau_channel_alloc(struct drm_device *dev,
 extern struct nouveau_channel *
 nouveau_channel_get_unlocked(struct nouveau_channel *);
 extern struct nouveau_channel *
+<<<<<<< HEAD
 nouveau_channel_get(struct drm_file *, int id);
+=======
+nouveau_channel_get(struct drm_device *, struct drm_file *, int id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void nouveau_channel_put_unlocked(struct nouveau_channel **);
 extern void nouveau_channel_put(struct nouveau_channel **);
 extern void nouveau_channel_ref(struct nouveau_channel *chan,
@@ -1055,10 +1264,14 @@ extern int nouveau_sgdma_init(struct drm_device *);
 extern void nouveau_sgdma_takedown(struct drm_device *);
 extern uint32_t nouveau_sgdma_get_physical(struct drm_device *,
 					   uint32_t offset);
+<<<<<<< HEAD
 extern struct ttm_tt *nouveau_sgdma_create_ttm(struct ttm_bo_device *bdev,
 					       unsigned long size,
 					       uint32_t page_flags,
 					       struct page *dummy_read_page);
+=======
+extern struct ttm_backend *nouveau_sgdma_init_ttm(struct drm_device *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* nouveau_debugfs.c */
 #if defined(CONFIG_DRM_NOUVEAU_DEBUG)
@@ -1090,7 +1303,12 @@ nouveau_debugfs_channel_fini(struct nouveau_channel *chan)
 #endif
 
 /* nouveau_dma.c */
+<<<<<<< HEAD
 extern void nouveau_dma_init(struct nouveau_channel *);
+=======
+extern void nouveau_dma_pre_init(struct nouveau_channel *);
+extern int  nouveau_dma_init(struct nouveau_channel *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int  nouveau_dma_wait(struct nouveau_channel *, int slots, int size);
 
 /* nouveau_acpi.c */
@@ -1098,14 +1316,20 @@ extern int  nouveau_dma_wait(struct nouveau_channel *, int slots, int size);
 #if defined(CONFIG_ACPI)
 void nouveau_register_dsm_handler(void);
 void nouveau_unregister_dsm_handler(void);
+<<<<<<< HEAD
 void nouveau_switcheroo_optimus_dsm(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int nouveau_acpi_get_bios_chunk(uint8_t *bios, int offset, int len);
 bool nouveau_acpi_rom_supported(struct pci_dev *pdev);
 int nouveau_acpi_edid(struct drm_device *, struct drm_connector *);
 #else
 static inline void nouveau_register_dsm_handler(void) {}
 static inline void nouveau_unregister_dsm_handler(void) {}
+<<<<<<< HEAD
 static inline void nouveau_switcheroo_optimus_dsm(void) {}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline bool nouveau_acpi_rom_supported(struct pci_dev *pdev) { return false; }
 static inline int nouveau_acpi_get_bios_chunk(uint8_t *bios, int offset, int len) { return -EINVAL; }
 static inline int nouveau_acpi_edid(struct drm_device *dev, struct drm_connector *connector) { return -EINVAL; }
@@ -1113,15 +1337,26 @@ static inline int nouveau_acpi_edid(struct drm_device *dev, struct drm_connector
 
 /* nouveau_backlight.c */
 #ifdef CONFIG_DRM_NOUVEAU_BACKLIGHT
+<<<<<<< HEAD
 extern int nouveau_backlight_init(struct drm_device *);
 extern void nouveau_backlight_exit(struct drm_device *);
 #else
 static inline int nouveau_backlight_init(struct drm_device *dev)
+=======
+extern int nouveau_backlight_init(struct drm_connector *);
+extern void nouveau_backlight_exit(struct drm_connector *);
+#else
+static inline int nouveau_backlight_init(struct drm_connector *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
 
+<<<<<<< HEAD
 static inline void nouveau_backlight_exit(struct drm_device *dev) { }
+=======
+static inline void nouveau_backlight_exit(struct drm_connector *dev) { }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /* nouveau_bios.c */
@@ -1129,15 +1364,29 @@ extern int nouveau_bios_init(struct drm_device *);
 extern void nouveau_bios_takedown(struct drm_device *dev);
 extern int nouveau_run_vbios_init(struct drm_device *);
 extern void nouveau_bios_run_init_table(struct drm_device *, uint16_t table,
+<<<<<<< HEAD
 					struct dcb_entry *, int crtc);
 extern void nouveau_bios_init_exec(struct drm_device *, uint16_t table);
+=======
+					struct dcb_entry *);
+extern struct dcb_gpio_entry *nouveau_bios_gpio_entry(struct drm_device *,
+						      enum dcb_gpio_tag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct dcb_connector_table_entry *
 nouveau_bios_connector_entry(struct drm_device *, int index);
 extern u32 get_pll_register(struct drm_device *, enum pll_types);
 extern int get_pll_limits(struct drm_device *, uint32_t limit_match,
 			  struct pll_lims *);
+<<<<<<< HEAD
 extern int nouveau_bios_run_display_table(struct drm_device *, u16 id, int clk,
 					  struct dcb_entry *, int crtc);
+=======
+extern int nouveau_bios_run_display_table(struct drm_device *,
+					  struct dcb_entry *,
+					  uint32_t script, int pxclk);
+extern void *nouveau_bios_dp_table(struct drm_device *, struct dcb_entry *,
+				   int *length);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern bool nouveau_bios_fp_mode(struct drm_device *, struct drm_display_mode *);
 extern uint8_t *nouveau_bios_embedded_edid(struct drm_device *);
 extern int nouveau_bios_parse_lvds_table(struct drm_device *, int pxclk,
@@ -1146,28 +1395,44 @@ extern int run_tmds_table(struct drm_device *, struct dcb_entry *,
 			  int head, int pxclk);
 extern int call_lvds_script(struct drm_device *, struct dcb_entry *, int head,
 			    enum LVDS_script, int pxclk);
+<<<<<<< HEAD
 bool bios_encoder_match(struct dcb_entry *, u32 hash);
 
 /* nouveau_mxm.c */
 int  nouveau_mxm_init(struct drm_device *dev);
 void nouveau_mxm_fini(struct drm_device *dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* nouveau_ttm.c */
 int nouveau_ttm_global_init(struct drm_nouveau_private *);
 void nouveau_ttm_global_release(struct drm_nouveau_private *);
 int nouveau_ttm_mmap(struct file *, struct vm_area_struct *);
 
+<<<<<<< HEAD
 /* nouveau_hdmi.c */
 void nouveau_hdmi_mode_set(struct drm_encoder *, struct drm_display_mode *);
 
 /* nv04_fb.c */
 extern int  nv04_fb_vram_init(struct drm_device *);
+=======
+/* nouveau_dp.c */
+int nouveau_dp_auxch(struct nouveau_i2c_chan *auxch, int cmd, int addr,
+		     uint8_t *data, int data_nr);
+bool nouveau_dp_detect(struct drm_encoder *);
+bool nouveau_dp_link_train(struct drm_encoder *);
+
+/* nv04_fb.c */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int  nv04_fb_init(struct drm_device *);
 extern void nv04_fb_takedown(struct drm_device *);
 
 /* nv10_fb.c */
+<<<<<<< HEAD
 extern int  nv10_fb_vram_init(struct drm_device *dev);
 extern int  nv1a_fb_vram_init(struct drm_device *dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int  nv10_fb_init(struct drm_device *);
 extern void nv10_fb_takedown(struct drm_device *);
 extern void nv10_fb_init_tile_region(struct drm_device *dev, int i,
@@ -1176,6 +1441,7 @@ extern void nv10_fb_init_tile_region(struct drm_device *dev, int i,
 extern void nv10_fb_set_tile_region(struct drm_device *dev, int i);
 extern void nv10_fb_free_tile_region(struct drm_device *dev, int i);
 
+<<<<<<< HEAD
 /* nv20_fb.c */
 extern int  nv20_fb_vram_init(struct drm_device *dev);
 extern int  nv20_fb_init(struct drm_device *);
@@ -1186,6 +1452,8 @@ extern void nv20_fb_init_tile_region(struct drm_device *dev, int i,
 extern void nv20_fb_set_tile_region(struct drm_device *dev, int i);
 extern void nv20_fb_free_tile_region(struct drm_device *dev, int i);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* nv30_fb.c */
 extern int  nv30_fb_init(struct drm_device *);
 extern void nv30_fb_takedown(struct drm_device *);
@@ -1195,7 +1463,10 @@ extern void nv30_fb_init_tile_region(struct drm_device *dev, int i,
 extern void nv30_fb_free_tile_region(struct drm_device *dev, int i);
 
 /* nv40_fb.c */
+<<<<<<< HEAD
 extern int  nv40_fb_vram_init(struct drm_device *dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int  nv40_fb_init(struct drm_device *);
 extern void nv40_fb_takedown(struct drm_device *);
 extern void nv40_fb_set_tile_region(struct drm_device *dev, int i);
@@ -1261,6 +1532,10 @@ extern int  nvc0_fifo_unload_context(struct drm_device *);
 
 /* nv04_graph.c */
 extern int  nv04_graph_create(struct drm_device *);
+<<<<<<< HEAD
+=======
+extern void nv04_graph_fifo_access(struct drm_device *, bool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int  nv04_graph_object_new(struct nouveau_channel *, int, u32, u16);
 extern int  nv04_graph_mthd_page_flip(struct nouveau_channel *chan,
 				      u32 class, u32 mthd, u32 data);
@@ -1292,21 +1567,30 @@ extern int  nvc0_graph_isr_chid(struct drm_device *dev, u64 inst);
 /* nv84_crypt.c */
 extern int  nv84_crypt_create(struct drm_device *);
 
+<<<<<<< HEAD
 /* nv98_crypt.c */
 extern int  nv98_crypt_create(struct drm_device *dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* nva3_copy.c */
 extern int  nva3_copy_create(struct drm_device *dev);
 
 /* nvc0_copy.c */
 extern int  nvc0_copy_create(struct drm_device *dev, int engine);
 
+<<<<<<< HEAD
 /* nv31_mpeg.c */
 extern int  nv31_mpeg_create(struct drm_device *dev);
+=======
+/* nv40_mpeg.c */
+extern int  nv40_mpeg_create(struct drm_device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* nv50_mpeg.c */
 extern int  nv50_mpeg_create(struct drm_device *dev);
 
+<<<<<<< HEAD
 /* nv84_bsp.c */
 /* nv98_bsp.c */
 extern int  nv84_bsp_create(struct drm_device *dev);
@@ -1318,13 +1602,19 @@ extern int  nv84_vp_create(struct drm_device *dev);
 /* nv98_ppp.c */
 extern int  nv98_ppp_create(struct drm_device *dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* nv04_instmem.c */
 extern int  nv04_instmem_init(struct drm_device *);
 extern void nv04_instmem_takedown(struct drm_device *);
 extern int  nv04_instmem_suspend(struct drm_device *);
 extern void nv04_instmem_resume(struct drm_device *);
+<<<<<<< HEAD
 extern int  nv04_instmem_get(struct nouveau_gpuobj *, struct nouveau_channel *,
 			     u32 size, u32 align);
+=======
+extern int  nv04_instmem_get(struct nouveau_gpuobj *, u32 size, u32 align);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void nv04_instmem_put(struct nouveau_gpuobj *);
 extern int  nv04_instmem_map(struct nouveau_gpuobj *);
 extern void nv04_instmem_unmap(struct nouveau_gpuobj *);
@@ -1335,8 +1625,12 @@ extern int  nv50_instmem_init(struct drm_device *);
 extern void nv50_instmem_takedown(struct drm_device *);
 extern int  nv50_instmem_suspend(struct drm_device *);
 extern void nv50_instmem_resume(struct drm_device *);
+<<<<<<< HEAD
 extern int  nv50_instmem_get(struct nouveau_gpuobj *, struct nouveau_channel *,
 			     u32 size, u32 align);
+=======
+extern int  nv50_instmem_get(struct nouveau_gpuobj *, u32 size, u32 align);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void nv50_instmem_put(struct nouveau_gpuobj *);
 extern int  nv50_instmem_map(struct nouveau_gpuobj *);
 extern void nv50_instmem_unmap(struct nouveau_gpuobj *);
@@ -1395,6 +1689,7 @@ extern int nv17_tv_create(struct drm_connector *, struct dcb_entry *);
 extern int nv04_display_early_init(struct drm_device *);
 extern void nv04_display_late_takedown(struct drm_device *);
 extern int nv04_display_create(struct drm_device *);
+<<<<<<< HEAD
 extern void nv04_display_destroy(struct drm_device *);
 extern int nv04_display_init(struct drm_device *);
 extern void nv04_display_fini(struct drm_device *);
@@ -1408,15 +1703,26 @@ struct nouveau_bo *nvd0_display_crtc_sema(struct drm_device *, int crtc);
 void nvd0_display_flip_stop(struct drm_crtc *);
 int nvd0_display_flip_next(struct drm_crtc *, struct drm_framebuffer *,
 			   struct nouveau_channel *, u32 swap_interval);
+=======
+extern int nv04_display_init(struct drm_device *);
+extern void nv04_display_destroy(struct drm_device *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* nv04_crtc.c */
 extern int nv04_crtc_create(struct drm_device *, int index);
 
 /* nouveau_bo.c */
 extern struct ttm_bo_driver nouveau_bo_driver;
+<<<<<<< HEAD
 extern int nouveau_bo_new(struct drm_device *, int size, int align,
 			  uint32_t flags, uint32_t tile_mode,
 			  uint32_t tile_flags, struct nouveau_bo **);
+=======
+extern int nouveau_bo_new(struct drm_device *, struct nouveau_channel *,
+			  int size, int align, uint32_t flags,
+			  uint32_t tile_mode, uint32_t tile_flags,
+			  struct nouveau_bo **);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int nouveau_bo_pin(struct nouveau_bo *, uint32_t flags);
 extern int nouveau_bo_unpin(struct nouveau_bo *);
 extern int nouveau_bo_map(struct nouveau_bo *);
@@ -1431,12 +1737,15 @@ extern void nouveau_bo_fence(struct nouveau_bo *, struct nouveau_fence *);
 extern int nouveau_bo_validate(struct nouveau_bo *, bool interruptible,
 			       bool no_wait_reserve, bool no_wait_gpu);
 
+<<<<<<< HEAD
 extern struct nouveau_vma *
 nouveau_bo_vma_find(struct nouveau_bo *, struct nouveau_vm *);
 extern int  nouveau_bo_vma_add(struct nouveau_bo *, struct nouveau_vm *,
 			       struct nouveau_vma *);
 extern void nouveau_bo_vma_del(struct nouveau_bo *, struct nouveau_vma *);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* nouveau_fence.c */
 struct nouveau_fence;
 extern int nouveau_fence_init(struct drm_device *);
@@ -1482,6 +1791,7 @@ static inline struct nouveau_fence *nouveau_fence_ref(struct nouveau_fence *obj)
 }
 
 /* nouveau_gem.c */
+<<<<<<< HEAD
 extern int nouveau_gem_new(struct drm_device *, int size, int align,
 			   uint32_t domain, uint32_t tile_mode,
 			   uint32_t tile_flags, struct nouveau_bo **);
@@ -1490,6 +1800,14 @@ extern void nouveau_gem_object_del(struct drm_gem_object *);
 extern int nouveau_gem_object_open(struct drm_gem_object *, struct drm_file *);
 extern void nouveau_gem_object_close(struct drm_gem_object *,
 				     struct drm_file *);
+=======
+extern int nouveau_gem_new(struct drm_device *, struct nouveau_channel *,
+			   int size, int align, uint32_t domain,
+			   uint32_t tile_mode, uint32_t tile_flags,
+			   struct nouveau_bo **);
+extern int nouveau_gem_object_new(struct drm_gem_object *);
+extern void nouveau_gem_object_del(struct drm_gem_object *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int nouveau_gem_ioctl_new(struct drm_device *, void *,
 				 struct drm_file *);
 extern int nouveau_gem_ioctl_pushbuf(struct drm_device *, void *,
@@ -1502,16 +1820,20 @@ extern int nouveau_gem_ioctl_info(struct drm_device *, void *,
 				  struct drm_file *);
 
 /* nouveau_display.c */
+<<<<<<< HEAD
 int nouveau_display_create(struct drm_device *dev);
 void nouveau_display_destroy(struct drm_device *dev);
 int nouveau_display_init(struct drm_device *dev);
 void nouveau_display_fini(struct drm_device *dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int nouveau_vblank_enable(struct drm_device *dev, int crtc);
 void nouveau_vblank_disable(struct drm_device *dev, int crtc);
 int nouveau_crtc_page_flip(struct drm_crtc *crtc, struct drm_framebuffer *fb,
 			   struct drm_pending_vblank_event *event);
 int nouveau_finish_page_flip(struct nouveau_channel *,
 			     struct nouveau_page_flip_state *);
+<<<<<<< HEAD
 int nouveau_display_dumb_create(struct drm_file *, struct drm_device *,
 				struct drm_mode_create_dumb *args);
 int nouveau_display_dumb_map_offset(struct drm_file *, struct drm_device *,
@@ -1525,10 +1847,17 @@ void nv10_gpio_fini(struct drm_device *dev);
 int nv10_gpio_drive(struct drm_device *dev, int line, int dir, int out);
 int nv10_gpio_sense(struct drm_device *dev, int line);
 void nv10_gpio_irq_enable(struct drm_device *, int line, bool on);
+=======
+
+/* nv10_gpio.c */
+int nv10_gpio_get(struct drm_device *dev, enum dcb_gpio_tag tag);
+int nv10_gpio_set(struct drm_device *dev, enum dcb_gpio_tag tag, int state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* nv50_gpio.c */
 int nv50_gpio_init(struct drm_device *dev);
 void nv50_gpio_fini(struct drm_device *dev);
+<<<<<<< HEAD
 int nv50_gpio_drive(struct drm_device *dev, int line, int dir, int out);
 int nv50_gpio_sense(struct drm_device *dev, int line);
 void nv50_gpio_irq_enable(struct drm_device *, int line, bool on);
@@ -1536,6 +1865,17 @@ int nvd0_gpio_drive(struct drm_device *dev, int line, int dir, int out);
 int nvd0_gpio_sense(struct drm_device *dev, int line);
 
 /* nv50_calc.c */
+=======
+int nv50_gpio_get(struct drm_device *dev, enum dcb_gpio_tag tag);
+int nv50_gpio_set(struct drm_device *dev, enum dcb_gpio_tag tag, int state);
+int  nv50_gpio_irq_register(struct drm_device *, enum dcb_gpio_tag,
+			    void (*)(void *, int), void *);
+void nv50_gpio_irq_unregister(struct drm_device *, enum dcb_gpio_tag,
+			      void (*)(void *, int), void *);
+bool nv50_gpio_irq_enable(struct drm_device *, enum dcb_gpio_tag, bool on);
+
+/* nv50_calc. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int nv50_calc_pll(struct drm_device *, struct pll_lims *, int clk,
 		  int *N1, int *M1, int *N2, int *M2, int *P);
 int nva3_calc_pll(struct drm_device *, struct pll_lims *,
@@ -1603,8 +1943,11 @@ static inline void nv_wr08(struct drm_device *dev, unsigned reg, u8 val)
 	nouveau_wait_eq(dev, 2000000000ULL, (reg), (mask), (val))
 #define nv_wait_ne(dev, reg, mask, val) \
 	nouveau_wait_ne(dev, 2000000000ULL, (reg), (mask), (val))
+<<<<<<< HEAD
 #define nv_wait_cb(dev, func, data) \
 	nouveau_wait_cb(dev, 2000000000ULL, (func), (data))
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* PRAMIN access */
 static inline u32 nv_ri32(struct drm_device *dev, unsigned offset)
@@ -1658,6 +2001,7 @@ extern void nv_wo32(struct nouveau_gpuobj *, u32 offset, u32 val);
 #define NV_TRACEWARN(d, fmt, arg...) NV_PRINTK(KERN_NOTICE, d, fmt, ##arg)
 #define NV_TRACE(d, fmt, arg...) NV_PRINTK(KERN_INFO, d, fmt, ##arg)
 #define NV_WARN(d, fmt, arg...) NV_PRINTK(KERN_WARNING, d, fmt, ##arg)
+<<<<<<< HEAD
 #define NV_WARNONCE(d, fmt, arg...) do {                                       \
 	static int _warned = 0;                                                \
 	if (!_warned) {                                                        \
@@ -1665,6 +2009,8 @@ extern void nv_wo32(struct nouveau_gpuobj *, u32 offset, u32 val);
 		_warned = 1;                                                   \
 	}                                                                      \
 } while(0)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* nouveau_reg_debug bitmask */
 enum {
@@ -1678,7 +2024,10 @@ enum {
 	NOUVEAU_REG_DEBUG_RMVIO          = 0x80,
 	NOUVEAU_REG_DEBUG_VGAATTR        = 0x100,
 	NOUVEAU_REG_DEBUG_EVO            = 0x200,
+<<<<<<< HEAD
 	NOUVEAU_REG_DEBUG_AUXCH          = 0x400
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define NV_REG_DEBUG(type, dev, fmt, arg...) do { \
@@ -1752,7 +2101,10 @@ nv44_graph_class(struct drm_device *dev)
 #define NV_MEM_ACCESS_RW (NV_MEM_ACCESS_RO | NV_MEM_ACCESS_WO)
 #define NV_MEM_ACCESS_SYS 4
 #define NV_MEM_ACCESS_VM  8
+<<<<<<< HEAD
 #define NV_MEM_ACCESS_NOSNOOP 16
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define NV_MEM_TARGET_VRAM        0
 #define NV_MEM_TARGET_PCI         1
@@ -1763,6 +2115,7 @@ nv44_graph_class(struct drm_device *dev)
 #define NV_MEM_TYPE_VM 0x7f
 #define NV_MEM_COMP_VM 0x03
 
+<<<<<<< HEAD
 /* FIFO methods */
 #define NV01_SUBCHAN_OBJECT                                          0x00000000
 #define NV84_SUBCHAN_SEMAPHORE_ADDRESS_HIGH                          0x00000010
@@ -1784,6 +2137,15 @@ nv44_graph_class(struct drm_device *dev)
 
 /* NV_SW object class */
 #define NV_SW                                                        0x0000506e
+=======
+/* NV_SW object class */
+#define NV_SW                                                        0x0000506e
+#define NV_SW_DMA_SEMAPHORE                                          0x00000060
+#define NV_SW_SEMAPHORE_OFFSET                                       0x00000064
+#define NV_SW_SEMAPHORE_ACQUIRE                                      0x00000068
+#define NV_SW_SEMAPHORE_RELEASE                                      0x0000006c
+#define NV_SW_YIELD                                                  0x00000080
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NV_SW_DMA_VBLSEM                                             0x0000018c
 #define NV_SW_VBLSEM_OFFSET                                          0x00000400
 #define NV_SW_VBLSEM_RELEASE_VALUE                                   0x00000404

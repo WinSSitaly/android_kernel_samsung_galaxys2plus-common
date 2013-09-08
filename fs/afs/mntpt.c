@@ -200,9 +200,15 @@ static struct vfsmount *afs_mntpt_do_automount(struct dentry *mntpt)
 		if (PageError(page))
 			goto error;
 
+<<<<<<< HEAD
 		buf = kmap_atomic(page);
 		memcpy(devname, buf, size);
 		kunmap_atomic(buf);
+=======
+		buf = kmap_atomic(page, KM_USER0);
+		memcpy(devname, buf, size);
+		kunmap_atomic(buf, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		page_cache_release(page);
 		page = NULL;
 	}
@@ -242,7 +248,11 @@ struct vfsmount *afs_d_automount(struct path *path)
 {
 	struct vfsmount *newmnt;
 
+<<<<<<< HEAD
 	_enter("{%s}", path->dentry->d_name.name);
+=======
+	_enter("{%s,%s}", path->mnt->mnt_devname, path->dentry->d_name.name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	newmnt = afs_mntpt_do_automount(path->dentry);
 	if (IS_ERR(newmnt))
@@ -252,7 +262,11 @@ struct vfsmount *afs_d_automount(struct path *path)
 	mnt_set_expiry(newmnt, &afs_vfsmounts);
 	queue_delayed_work(afs_wq, &afs_mntpt_expiry_timer,
 			   afs_mntpt_expiry_timeout * HZ);
+<<<<<<< HEAD
 	_leave(" = %p", newmnt);
+=======
+	_leave(" = %p {%s}", newmnt, newmnt->mnt_devname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return newmnt;
 }
 

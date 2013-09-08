@@ -15,7 +15,10 @@
 #include <linux/irq.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
 #include <mach/irqs.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/regs-icu.h>
 #include <mach/mmp2.h>
 

@@ -27,7 +27,11 @@
 #include "nouveau_mm.h"
 
 static inline void
+<<<<<<< HEAD
 region_put(struct nouveau_mm *mm, struct nouveau_mm_node *a)
+=======
+region_put(struct nouveau_mm *rmm, struct nouveau_mm_node *a)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	list_del(&a->nl_entry);
 	list_del(&a->fl_entry);
@@ -35,7 +39,11 @@ region_put(struct nouveau_mm *mm, struct nouveau_mm_node *a)
 }
 
 static struct nouveau_mm_node *
+<<<<<<< HEAD
 region_split(struct nouveau_mm *mm, struct nouveau_mm_node *a, u32 size)
+=======
+region_split(struct nouveau_mm *rmm, struct nouveau_mm_node *a, u32 size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct nouveau_mm_node *b;
 
@@ -57,33 +65,57 @@ region_split(struct nouveau_mm *mm, struct nouveau_mm_node *a, u32 size)
 	return b;
 }
 
+<<<<<<< HEAD
 #define node(root, dir) ((root)->nl_entry.dir == &mm->nodes) ? NULL : \
 	list_entry((root)->nl_entry.dir, struct nouveau_mm_node, nl_entry)
 
 void
 nouveau_mm_put(struct nouveau_mm *mm, struct nouveau_mm_node *this)
+=======
+#define node(root, dir) ((root)->nl_entry.dir == &rmm->nodes) ? NULL : \
+	list_entry((root)->nl_entry.dir, struct nouveau_mm_node, nl_entry)
+
+void
+nouveau_mm_put(struct nouveau_mm *rmm, struct nouveau_mm_node *this)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct nouveau_mm_node *prev = node(this, prev);
 	struct nouveau_mm_node *next = node(this, next);
 
+<<<<<<< HEAD
 	list_add(&this->fl_entry, &mm->free);
+=======
+	list_add(&this->fl_entry, &rmm->free);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	this->type = 0;
 
 	if (prev && prev->type == 0) {
 		prev->length += this->length;
+<<<<<<< HEAD
 		region_put(mm, this);
+=======
+		region_put(rmm, this);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		this = prev;
 	}
 
 	if (next && next->type == 0) {
 		next->offset  = this->offset;
 		next->length += this->length;
+<<<<<<< HEAD
 		region_put(mm, this);
+=======
+		region_put(rmm, this);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
 int
+<<<<<<< HEAD
 nouveau_mm_get(struct nouveau_mm *mm, int type, u32 size, u32 size_nc,
+=======
+nouveau_mm_get(struct nouveau_mm *rmm, int type, u32 size, u32 size_nc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       u32 align, struct nouveau_mm_node **pnode)
 {
 	struct nouveau_mm_node *prev, *this, *next;
@@ -92,17 +124,29 @@ nouveau_mm_get(struct nouveau_mm *mm, int type, u32 size, u32 size_nc,
 	u32 splitoff;
 	u32 s, e;
 
+<<<<<<< HEAD
 	list_for_each_entry(this, &mm->free, fl_entry) {
+=======
+	list_for_each_entry(this, &rmm->free, fl_entry) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		e = this->offset + this->length;
 		s = this->offset;
 
 		prev = node(this, prev);
 		if (prev && prev->type != type)
+<<<<<<< HEAD
 			s = roundup(s, mm->block_size);
 
 		next = node(this, next);
 		if (next && next->type != type)
 			e = rounddown(e, mm->block_size);
+=======
+			s = roundup(s, rmm->block_size);
+
+		next = node(this, next);
+		if (next && next->type != type)
+			e = rounddown(e, rmm->block_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		s  = (s + align_mask) & ~align_mask;
 		e &= ~align_mask;
@@ -110,10 +154,17 @@ nouveau_mm_get(struct nouveau_mm *mm, int type, u32 size, u32 size_nc,
 			continue;
 
 		splitoff = s - this->offset;
+<<<<<<< HEAD
 		if (splitoff && !region_split(mm, this, splitoff))
 			return -ENOMEM;
 
 		this = region_split(mm, this, min(size, e - s));
+=======
+		if (splitoff && !region_split(rmm, this, splitoff))
+			return -ENOMEM;
+
+		this = region_split(rmm, this, min(size, e - s));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!this)
 			return -ENOMEM;
 
@@ -127,6 +178,7 @@ nouveau_mm_get(struct nouveau_mm *mm, int type, u32 size, u32 size_nc,
 }
 
 int
+<<<<<<< HEAD
 nouveau_mm_init(struct nouveau_mm *mm, u32 offset, u32 length, u32 block)
 {
 	struct nouveau_mm_node *node;
@@ -148,10 +200,37 @@ nouveau_mm_init(struct nouveau_mm *mm, u32 offset, u32 length, u32 block)
 	list_add_tail(&node->nl_entry, &mm->nodes);
 	list_add_tail(&node->fl_entry, &mm->free);
 	mm->heap_nodes++;
+=======
+nouveau_mm_init(struct nouveau_mm **prmm, u32 offset, u32 length, u32 block)
+{
+	struct nouveau_mm *rmm;
+	struct nouveau_mm_node *heap;
+
+	heap = kzalloc(sizeof(*heap), GFP_KERNEL);
+	if (!heap)
+		return -ENOMEM;
+	heap->offset = roundup(offset, block);
+	heap->length = rounddown(offset + length, block) - heap->offset;
+
+	rmm = kzalloc(sizeof(*rmm), GFP_KERNEL);
+	if (!rmm) {
+		kfree(heap);
+		return -ENOMEM;
+	}
+	rmm->block_size = block;
+	mutex_init(&rmm->mutex);
+	INIT_LIST_HEAD(&rmm->nodes);
+	INIT_LIST_HEAD(&rmm->free);
+	list_add(&heap->nl_entry, &rmm->nodes);
+	list_add(&heap->fl_entry, &rmm->free);
+
+	*prmm = rmm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 int
+<<<<<<< HEAD
 nouveau_mm_fini(struct nouveau_mm *mm)
 {
 	struct nouveau_mm_node *node, *heap =
@@ -171,5 +250,19 @@ nouveau_mm_fini(struct nouveau_mm *mm)
 	}
 
 	kfree(heap);
+=======
+nouveau_mm_fini(struct nouveau_mm **prmm)
+{
+	struct nouveau_mm *rmm = *prmm;
+	struct nouveau_mm_node *heap =
+		list_first_entry(&rmm->nodes, struct nouveau_mm_node, nl_entry);
+
+	if (!list_is_singular(&rmm->nodes))
+		return -EBUSY;
+
+	kfree(heap);
+	kfree(rmm);
+	*prmm = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }

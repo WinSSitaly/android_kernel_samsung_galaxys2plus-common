@@ -987,8 +987,13 @@ static int tridentfb_pan_display(struct fb_var_screeninfo *var,
 	unsigned int offset;
 
 	debug("enter\n");
+<<<<<<< HEAD
 	offset = (var->xoffset + (var->yoffset * info->var.xres_virtual))
 		* info->var.bits_per_pixel / 32;
+=======
+	offset = (var->xoffset + (var->yoffset * var->xres_virtual))
+		* var->bits_per_pixel / 32;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_screen_start(par, offset);
 	debug("exit\n");
 	return 0;

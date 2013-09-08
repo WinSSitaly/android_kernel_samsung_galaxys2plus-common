@@ -52,9 +52,15 @@ static unsigned long virt_to_phys_slow(unsigned long vaddr)
 		unsigned long *descaddr;
 
 		asm volatile ("ptestr %3,%2@,#7,%0\n\t"
+<<<<<<< HEAD
 			      "pmove %%psr,%1"
 			      : "=a&" (descaddr), "=m" (mmusr)
 			      : "a" (vaddr), "d" (get_fs().seg));
+=======
+			      "pmove %%psr,%1@"
+			      : "=a&" (descaddr)
+			      : "a" (&mmusr), "a" (vaddr), "d" (get_fs().seg));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (mmusr & (MMU_I|MMU_B|MMU_L))
 			return 0;
 		descaddr = phys_to_virt((unsigned long)descaddr);
@@ -74,6 +80,7 @@ static unsigned long virt_to_phys_slow(unsigned long vaddr)
 /* RZ: use cpush %bc instead of cpush %dc, cinv %ic */
 void flush_icache_range(unsigned long address, unsigned long endaddr)
 {
+<<<<<<< HEAD
 	if (CPU_IS_COLDFIRE) {
 		unsigned long start, end;
 		start = address & ICACHE_SET_MASK;
@@ -84,6 +91,10 @@ void flush_icache_range(unsigned long address, unsigned long endaddr)
 		}
 		flush_cf_icache(start, end);
 	} else if (CPU_IS_040_OR_060) {
+=======
+
+	if (CPU_IS_040_OR_060) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		address &= PAGE_MASK;
 
 		do {
@@ -108,6 +119,7 @@ EXPORT_SYMBOL(flush_icache_range);
 void flush_icache_user_range(struct vm_area_struct *vma, struct page *page,
 			     unsigned long addr, int len)
 {
+<<<<<<< HEAD
 	if (CPU_IS_COLDFIRE) {
 		unsigned long start, end;
 		start = addr & ICACHE_SET_MASK;
@@ -119,6 +131,9 @@ void flush_icache_user_range(struct vm_area_struct *vma, struct page *page,
 		flush_cf_icache(start, end);
 
 	} else if (CPU_IS_040_OR_060) {
+=======
+	if (CPU_IS_040_OR_060) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		asm volatile ("nop\n\t"
 			      ".chip 68040\n\t"
 			      "cpushp %%bc,(%0)\n\t"

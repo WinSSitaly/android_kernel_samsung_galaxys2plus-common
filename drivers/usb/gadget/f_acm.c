@@ -5,7 +5,11 @@
  * Copyright (C) 2008 by David Brownell
  * Copyright (C) 2008 by Nokia Corporation
  * Copyright (C) 2009 by Samsung Electronics
+<<<<<<< HEAD
  * Author: Michal Nazarewicz (mina86@mina86.com)
+=======
+ * Author: Michal Nazarewicz (m.nazarewicz@samsung.com)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This software is distributed under the terms of the GNU General
  * Public License ("GPL") as published by the Free Software Foundation,
@@ -39,6 +43,15 @@
  * descriptors (roughly equivalent to CDC Unions) may sometimes help.
  */
 
+<<<<<<< HEAD
+=======
+struct acm_ep_descs {
+	struct usb_endpoint_descriptor	*in;
+	struct usb_endpoint_descriptor	*out;
+	struct usb_endpoint_descriptor	*notify;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct f_acm {
 	struct gserial			port;
 	u8				ctrl_id, data_id;
@@ -52,7 +65,15 @@ struct f_acm {
 	 */
 	spinlock_t			lock;
 
+<<<<<<< HEAD
 	struct usb_ep			*notify;
+=======
+	struct acm_ep_descs		fs;
+	struct acm_ep_descs		hs;
+
+	struct usb_ep			*notify;
+	struct usb_endpoint_descriptor	*notify_desc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct usb_request		*notify_req;
 
 	struct usb_cdc_line_coding	port_line_coding;	/* 8-N-1 etc */
@@ -237,6 +258,7 @@ static struct usb_descriptor_header *acm_hs_function[] = {
 	NULL,
 };
 
+<<<<<<< HEAD
 static struct usb_endpoint_descriptor acm_ss_in_desc = {
 	.bLength =		USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType =	USB_DT_ENDPOINT,
@@ -273,6 +295,8 @@ static struct usb_descriptor_header *acm_ss_function[] = {
 	NULL,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* string descriptors: */
 
 #define ACM_CTRL_IDX	0
@@ -431,16 +455,25 @@ static int acm_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
 			usb_ep_disable(acm->notify);
 		} else {
 			VDBG(cdev, "init acm ctrl interface %d\n", intf);
+<<<<<<< HEAD
 			if (config_ep_by_speed(cdev->gadget, f, acm->notify))
 				return -EINVAL;
 		}
 		usb_ep_enable(acm->notify);
+=======
+		}
+		acm->notify_desc = ep_choose(cdev->gadget,
+				acm->hs.notify,
+				acm->fs.notify);
+		usb_ep_enable(acm->notify, acm->notify_desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		acm->notify->driver_data = acm;
 
 	} else if (intf == acm->data_id) {
 		if (acm->port.in->driver_data) {
 			DBG(cdev, "reset acm ttyGS%d\n", acm->port_num);
 			gserial_disconnect(&acm->port);
+<<<<<<< HEAD
 		}
 		if (!acm->port.in->desc || !acm->port.out->desc) {
 			DBG(cdev, "activate acm ttyGS%d\n", acm->port_num);
@@ -453,6 +486,15 @@ static int acm_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
 				return -EINVAL;
 			}
 		}
+=======
+		} else {
+			DBG(cdev, "activate acm ttyGS%d\n", acm->port_num);
+		}
+		acm->port.in_desc = ep_choose(cdev->gadget,
+				acm->hs.in, acm->fs.in);
+		acm->port.out_desc = ep_choose(cdev->gadget,
+				acm->hs.out, acm->fs.out);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gserial_connect(&acm->port, acm->port_num);
 
 	} else
@@ -572,14 +614,36 @@ static void acm_connect(struct gserial *port)
 {
 	struct f_acm		*acm = port_to_acm(port);
 
+<<<<<<< HEAD
 	acm->serial_state |= ACM_CTRL_DSR | ACM_CTRL_DCD;
 	acm_notify_serial_state(acm);
+=======
+        printk("USBD][%s] ACM node open\n",__func__);
+
+	acm->serial_state |= ACM_CTRL_DSR | ACM_CTRL_DCD;
+	acm_notify_serial_state(acm);
+#ifdef CONFIG_BRCM_FUSE_LOG
+	if (acm->port_num == ACM_LOGGING_PORT)
+		if (acm_logging_cb->start)
+			acm_logging_cb->start();
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void acm_disconnect(struct gserial *port)
 {
 	struct f_acm		*acm = port_to_acm(port);
 
+<<<<<<< HEAD
+=======
+        printk("USBD][%s] ACM node close\n",__func__);
+
+#ifdef CONFIG_BRCM_FUSE_LOG
+	if (acm->port_num == ACM_LOGGING_PORT)
+		if (acm_logging_cb->stop)
+			acm_logging_cb->stop();
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acm->serial_state &= ~(ACM_CTRL_DSR | ACM_CTRL_DCD);
 	acm_notify_serial_state(acm);
 }
@@ -613,9 +677,15 @@ acm_bind(struct usb_configuration *c, struct usb_function *f)
 	status = usb_interface_id(c, f);
 	if (status < 0)
 		goto fail;
+<<<<<<< HEAD
 	acm->ctrl_id = status;
 	acm_iad_descriptor.bFirstInterface = status;
 
+=======
+	acm->ctrl_id = status;	
+	acm_iad_descriptor.bFirstInterface = status;
+	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acm_control_interface_desc.bInterfaceNumber = status;
 	acm_union_desc .bMasterInterface0 = status;
 
@@ -659,11 +729,25 @@ acm_bind(struct usb_configuration *c, struct usb_function *f)
 	acm->notify_req->complete = acm_cdc_notify_complete;
 	acm->notify_req->context = acm;
 
+<<<<<<< HEAD
 	/* copy descriptors */
+=======
+	/* copy descriptors, and track endpoint copies */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	f->descriptors = usb_copy_descriptors(acm_fs_function);
 	if (!f->descriptors)
 		goto fail;
 
+<<<<<<< HEAD
+=======
+	acm->fs.in = usb_find_endpoint(acm_fs_function,
+			f->descriptors, &acm_fs_in_desc);
+	acm->fs.out = usb_find_endpoint(acm_fs_function,
+			f->descriptors, &acm_fs_out_desc);
+	acm->fs.notify = usb_find_endpoint(acm_fs_function,
+			f->descriptors, &acm_fs_notify_desc);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* support all relevant hardware speeds... we expect that when
 	 * hardware is dual speed, all bulk-capable endpoints work at
 	 * both speeds
@@ -676,6 +760,7 @@ acm_bind(struct usb_configuration *c, struct usb_function *f)
 		acm_hs_notify_desc.bEndpointAddress =
 				acm_fs_notify_desc.bEndpointAddress;
 
+<<<<<<< HEAD
 		/* copy descriptors */
 		f->hs_descriptors = usb_copy_descriptors(acm_hs_function);
 	}
@@ -689,14 +774,34 @@ acm_bind(struct usb_configuration *c, struct usb_function *f)
 		f->ss_descriptors = usb_copy_descriptors(acm_ss_function);
 		if (!f->ss_descriptors)
 			goto fail;
+=======
+		/* copy descriptors, and track endpoint copies */
+		f->hs_descriptors = usb_copy_descriptors(acm_hs_function);
+
+		acm->hs.in = usb_find_endpoint(acm_hs_function,
+				f->hs_descriptors, &acm_hs_in_desc);
+		acm->hs.out = usb_find_endpoint(acm_hs_function,
+				f->hs_descriptors, &acm_hs_out_desc);
+		acm->hs.notify = usb_find_endpoint(acm_hs_function,
+				f->hs_descriptors, &acm_hs_notify_desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	DBG(cdev, "acm ttyGS%d: %s speed IN/%s OUT/%s NOTIFY/%s\n",
 			acm->port_num,
+<<<<<<< HEAD
 			gadget_is_superspeed(c->cdev->gadget) ? "super" :
 			gadget_is_dualspeed(c->cdev->gadget) ? "dual" : "full",
 			acm->port.in->name, acm->port.out->name,
 			acm->notify->name);
+=======
+			gadget_is_dualspeed(c->cdev->gadget) ? "dual" : "full",
+			acm->port.in->name, acm->port.out->name,
+			acm->notify->name);
+#ifdef CONFIG_BRCM_FUSE_LOG
+	acm_logging_cb = get_acm_callback_func();
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 fail:
@@ -723,10 +828,16 @@ acm_unbind(struct usb_configuration *c, struct usb_function *f)
 
 	if (gadget_is_dualspeed(c->cdev->gadget))
 		usb_free_descriptors(f->hs_descriptors);
+<<<<<<< HEAD
 	if (gadget_is_superspeed(c->cdev->gadget))
 		usb_free_descriptors(f->ss_descriptors);
 	usb_free_descriptors(f->descriptors);
 	gs_free_req(acm->notify, acm->notify_req);
+=======
+	usb_free_descriptors(f->descriptors);
+	gs_free_req(acm->notify, acm->notify_req);
+	kfree(acm->port.func.name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(acm);
 }
 
@@ -785,6 +896,15 @@ int acm_bind_config(struct usb_configuration *c, u8 port_num)
 		acm_iad_descriptor.iFunction = status;
 	}
 
+<<<<<<< HEAD
+=======
+	if(port_num == 0) /*make first acm as a Modem*/
+		acm_data_interface_desc.bInterfaceProtocol = 0x00;	
+	/* make second acm instance as a serial comm driver */	
+	else if (port_num == 1)
+		acm_data_interface_desc.bInterfaceProtocol = 0xFF;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* allocate and initialize one new instance */
 	acm = kzalloc(sizeof *acm, GFP_KERNEL);
 	if (!acm)
@@ -798,14 +918,26 @@ int acm_bind_config(struct usb_configuration *c, u8 port_num)
 	acm->port.disconnect = acm_disconnect;
 	acm->port.send_break = acm_send_break;
 
+<<<<<<< HEAD
 	acm->port.func.name = "acm";
+=======
+	acm->port.func.name = kasprintf(GFP_KERNEL, "acm%u", port_num);
+	if (!acm->port.func.name) {
+		kfree(acm);
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acm->port.func.strings = acm_strings;
 	/* descriptors are per-instance copies */
 	acm->port.func.bind = acm_bind;
 	acm->port.func.unbind = acm_unbind;
 	acm->port.func.set_alt = acm_set_alt;
 	acm->port.func.setup = acm_setup;
+<<<<<<< HEAD
 	acm->port.func.disable = acm_disable;
+=======
+	acm->port.func.disable = acm_disable;	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	status = usb_add_function(c, &acm->port.func);
 	if (status)

@@ -325,8 +325,14 @@ static const struct daq200_boardtype boardtypes[] = {
 #define this_board ((const struct daq200_boardtype *)dev->board_ptr)
 
 static DEFINE_PCI_DEVICE_TABLE(daqboard2000_pci_table) = {
+<<<<<<< HEAD
 	{ PCI_DEVICE(0x1616, 0x0409) },
 	{0}
+=======
+	{
+	0x1616, 0x0409, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+	0}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 MODULE_DEVICE_TABLE(pci, daqboard2000_pci_table);
@@ -429,14 +435,26 @@ static int daqboard2000_ai_insn_read(struct comedi_device *dev,
 		/* Enable reading from the scanlist FIFO */
 		fpga->acqControl = DAQBOARD2000_SeqStartScanList;
 		for (timeout = 0; timeout < 20; timeout++) {
+<<<<<<< HEAD
 			if (fpga->acqControl & DAQBOARD2000_AcqConfigPipeFull)
 				break;
+=======
+			if (fpga->acqControl & DAQBOARD2000_AcqConfigPipeFull) {
+				break;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* udelay(2); */
 		}
 		fpga->acqControl = DAQBOARD2000_AdcPacerEnable;
 		for (timeout = 0; timeout < 20; timeout++) {
+<<<<<<< HEAD
 			if (fpga->acqControl & DAQBOARD2000_AcqLogicScanning)
 				break;
+=======
+			if (fpga->acqControl & DAQBOARD2000_AcqLogicScanning) {
+				break;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* udelay(2); */
 		}
 		for (timeout = 0; timeout < 20; timeout++) {
@@ -462,8 +480,14 @@ static int daqboard2000_ao_insn_read(struct comedi_device *dev,
 	int i;
 	int chan = CR_CHAN(insn->chanspec);
 
+<<<<<<< HEAD
 	for (i = 0; i < insn->n; i++)
 		data[i] = devpriv->ao_readback[chan];
+=======
+	for (i = 0; i < insn->n; i++) {
+		data[i] = devpriv->ao_readback[chan];
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return i;
 }
@@ -486,8 +510,14 @@ static int daqboard2000_ao_insn_write(struct comedi_device *dev,
 		/* fpga->dacControl = (chan + 2) * 0x0010 | 0x0001; udelay(1000); */
 		fpga->dacSetting[chan] = data[i];
 		for (timeout = 0; timeout < 20; timeout++) {
+<<<<<<< HEAD
 			if ((fpga->dacControl & ((chan + 1) * 0x0010)) == 0)
 				break;
+=======
+			if ((fpga->dacControl & ((chan + 1) * 0x0010)) == 0) {
+				break;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* udelay(2); */
 		}
 		devpriv->ao_readback[chan] = data[i];
@@ -502,7 +532,11 @@ static int daqboard2000_ao_insn_write(struct comedi_device *dev,
 
 static void daqboard2000_resetLocalBus(struct comedi_device *dev)
 {
+<<<<<<< HEAD
 	dev_dbg(dev->hw_dev, "daqboard2000_resetLocalBus\n");
+=======
+	printk("daqboard2000_resetLocalBus\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writel(DAQBOARD2000_SECRLocalBusHi, devpriv->plx + 0x6c);
 	udelay(10000);
 	writel(DAQBOARD2000_SECRLocalBusLo, devpriv->plx + 0x6c);
@@ -511,7 +545,11 @@ static void daqboard2000_resetLocalBus(struct comedi_device *dev)
 
 static void daqboard2000_reloadPLX(struct comedi_device *dev)
 {
+<<<<<<< HEAD
 	dev_dbg(dev->hw_dev, "daqboard2000_reloadPLX\n");
+=======
+	printk("daqboard2000_reloadPLX\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writel(DAQBOARD2000_SECRReloadLo, devpriv->plx + 0x6c);
 	udelay(10000);
 	writel(DAQBOARD2000_SECRReloadHi, devpriv->plx + 0x6c);
@@ -522,7 +560,11 @@ static void daqboard2000_reloadPLX(struct comedi_device *dev)
 
 static void daqboard2000_pulseProgPin(struct comedi_device *dev)
 {
+<<<<<<< HEAD
 	dev_dbg(dev->hw_dev, "daqboard2000_pulseProgPin 1\n");
+=======
+	printk("daqboard2000_pulseProgPin 1\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writel(DAQBOARD2000_SECRProgPinHi, devpriv->plx + 0x6c);
 	udelay(10000);
 	writel(DAQBOARD2000_SECRProgPinLo, devpriv->plx + 0x6c);
@@ -574,14 +616,22 @@ static int initialize_daqboard2000(struct comedi_device *dev,
 	secr = readl(devpriv->plx + 0x6c);
 	if (!(secr & DAQBOARD2000_EEPROM_PRESENT)) {
 #ifdef DEBUG_EEPROM
+<<<<<<< HEAD
 		dev_dbg(dev->hw_dev, "no serial eeprom\n");
+=======
+		printk("no serial eeprom\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 		return -EIO;
 	}
 
 	for (retry = 0; retry < 3; retry++) {
 #ifdef DEBUG_EEPROM
+<<<<<<< HEAD
 		dev_dbg(dev->hw_dev, "Programming EEPROM try %x\n", retry);
+=======
+		printk("Programming EEPROM try %x\n", retry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 		daqboard2000_resetLocalBus(dev);
@@ -592,8 +642,12 @@ static int initialize_daqboard2000(struct comedi_device *dev,
 				if (cpld_array[i] == 0xff
 				    && cpld_array[i + 1] == 0x20) {
 #ifdef DEBUG_EEPROM
+<<<<<<< HEAD
 					dev_dbg(dev->hw_dev, "Preamble found at %d\n",
 						i);
+=======
+					printk("Preamble found at %d\n", i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 					break;
 				}
@@ -601,12 +655,22 @@ static int initialize_daqboard2000(struct comedi_device *dev,
 			for (; i < len; i += 2) {
 				int data =
 				    (cpld_array[i] << 8) + cpld_array[i + 1];
+<<<<<<< HEAD
 				if (!daqboard2000_writeCPLD(dev, data))
 					break;
 			}
 			if (i >= len) {
 #ifdef DEBUG_EEPROM
 				dev_dbg(dev->hw_dev, "Programmed\n");
+=======
+				if (!daqboard2000_writeCPLD(dev, data)) {
+					break;
+				}
+			}
+			if (i >= len) {
+#ifdef DEBUG_EEPROM
+				printk("Programmed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 				daqboard2000_resetLocalBus(dev);
 				daqboard2000_reloadPLX(dev);
@@ -653,8 +717,14 @@ static void daqboard2000_activateReferenceDacs(struct comedi_device *dev)
 	/*  Set the + reference dac value in the FPGA */
 	fpga->refDacs = 0x80 | DAQBOARD2000_PosRefDacSelect;
 	for (timeout = 0; timeout < 20; timeout++) {
+<<<<<<< HEAD
 		if ((fpga->dacControl & DAQBOARD2000_RefBusy) == 0)
 			break;
+=======
+		if ((fpga->dacControl & DAQBOARD2000_RefBusy) == 0) {
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		udelay(2);
 	}
 /*  printk("DAQBOARD2000_PosRefDacSelect %d\n", timeout);*/
@@ -662,8 +732,14 @@ static void daqboard2000_activateReferenceDacs(struct comedi_device *dev)
 	/*  Set the - reference dac value in the FPGA */
 	fpga->refDacs = 0x80 | DAQBOARD2000_NegRefDacSelect;
 	for (timeout = 0; timeout < 20; timeout++) {
+<<<<<<< HEAD
 		if ((fpga->dacControl & DAQBOARD2000_RefBusy) == 0)
 			break;
+=======
+		if ((fpga->dacControl & DAQBOARD2000_RefBusy) == 0) {
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		udelay(2);
 	}
 /*  printk("DAQBOARD2000_NegRefDacSelect %d\n", timeout);*/
@@ -730,13 +806,24 @@ static int daqboard2000_attach(struct comedi_device *dev,
 	unsigned int aux_len;
 	int bus, slot;
 
+<<<<<<< HEAD
+=======
+	printk("comedi%d: daqboard2000:", dev->minor);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bus = it->options[0];
 	slot = it->options[1];
 
 	result = alloc_private(dev, sizeof(struct daqboard2000_private));
+<<<<<<< HEAD
 	if (result < 0)
 		return -ENOMEM;
 
+=======
+	if (result < 0) {
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (card = pci_get_device(0x1616, 0x0409, NULL);
 	     card != NULL; card = pci_get_device(0x1616, 0x0409, card)) {
 		if (bus || slot) {
@@ -750,10 +837,17 @@ static int daqboard2000_attach(struct comedi_device *dev,
 	}
 	if (!card) {
 		if (bus || slot)
+<<<<<<< HEAD
 			dev_err(dev->hw_dev, "no daqboard2000 found at bus/slot: %d/%d\n",
 				bus, slot);
 		else
 			dev_err(dev->hw_dev, "no daqboard2000 found\n");
+=======
+			printk(" no daqboard2000 found at bus/slot: %d/%d\n",
+			       bus, slot);
+		else
+			printk(" no daqboard2000 found\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	} else {
 		u32 id;
@@ -763,8 +857,12 @@ static int daqboard2000_attach(struct comedi_device *dev,
 		      subsystem_device << 16) | card->subsystem_vendor;
 		for (i = 0; i < n_boardtypes; i++) {
 			if (boardtypes[i].id == id) {
+<<<<<<< HEAD
 				dev_dbg(dev->hw_dev, "%s\n",
 					boardtypes[i].name);
+=======
+				printk(" %s", boardtypes[i].name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				dev->board_ptr = boardtypes + i;
 			}
 		}
@@ -778,7 +876,11 @@ static int daqboard2000_attach(struct comedi_device *dev,
 
 	result = comedi_pci_enable(card, "daqboard2000");
 	if (result < 0) {
+<<<<<<< HEAD
 		dev_err(dev->hw_dev, "failed to enable PCI device and request regions\n");
+=======
+		printk(" failed to enable PCI device and request regions\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	}
 	devpriv->got_regions = 1;
@@ -786,8 +888,14 @@ static int daqboard2000_attach(struct comedi_device *dev,
 	    ioremap(pci_resource_start(card, 0), DAQBOARD2000_PLX_SIZE);
 	devpriv->daq =
 	    ioremap(pci_resource_start(card, 2), DAQBOARD2000_DAQ_SIZE);
+<<<<<<< HEAD
 	if (!devpriv->plx || !devpriv->daq)
 		return -ENOMEM;
+=======
+	if (!devpriv->plx || !devpriv->daq) {
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	result = alloc_subdevices(dev, 3);
 	if (result < 0)
@@ -808,7 +916,11 @@ static int daqboard2000_attach(struct comedi_device *dev,
 	if (aux_data && aux_len) {
 		result = initialize_daqboard2000(dev, aux_data, aux_len);
 	} else {
+<<<<<<< HEAD
 		dev_dbg(dev->hw_dev, "no FPGA initialization code, aborting\n");
+=======
+		printk("no FPGA initialization code, aborting\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		result = -EIO;
 	}
 	if (result < 0)
@@ -848,26 +960,47 @@ static int daqboard2000_attach(struct comedi_device *dev,
 	result = subdev_8255_init(dev, s, daqboard2000_8255_cb,
 				  (unsigned long)(dev->iobase + 0x40));
 
+<<<<<<< HEAD
+=======
+	printk("\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return result;
 }
 
 static int daqboard2000_detach(struct comedi_device *dev)
 {
+<<<<<<< HEAD
 	if (dev->subdevices)
 		subdev_8255_cleanup(dev, dev->subdevices + 2);
 
 	if (dev->irq)
 		free_irq(dev->irq, dev);
 
+=======
+	printk("comedi%d: daqboard2000: remove\n", dev->minor);
+
+	if (dev->subdevices)
+		subdev_8255_cleanup(dev, dev->subdevices + 2);
+
+	if (dev->irq) {
+		free_irq(dev->irq, dev);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (devpriv) {
 		if (devpriv->daq)
 			iounmap(devpriv->daq);
 		if (devpriv->plx)
 			iounmap(devpriv->plx);
 		if (devpriv->pci_dev) {
+<<<<<<< HEAD
 			if (devpriv->got_regions)
 				comedi_pci_disable(devpriv->pci_dev);
+=======
+			if (devpriv->got_regions) {
+				comedi_pci_disable(devpriv->pci_dev);
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pci_dev_put(devpriv->pci_dev);
 		}
 	}

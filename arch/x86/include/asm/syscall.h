@@ -15,8 +15,11 @@
 
 #include <linux/sched.h>
 #include <linux/err.h>
+<<<<<<< HEAD
 #include <asm/asm-offsets.h>	/* For NR_syscalls */
 #include <asm/unistd.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern const unsigned long sys_call_table[];
 

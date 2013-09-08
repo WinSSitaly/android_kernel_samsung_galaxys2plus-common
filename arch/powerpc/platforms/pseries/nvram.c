@@ -18,8 +18,11 @@
 #include <linux/spinlock.h>
 #include <linux/slab.h>
 #include <linux/kmsg_dump.h>
+<<<<<<< HEAD
 #include <linux/ctype.h>
 #include <linux/zlib.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <asm/nvram.h>
 #include <asm/rtas.h>
@@ -80,6 +83,7 @@ static struct kmsg_dumper nvram_kmsg_dumper = {
 #define NVRAM_RTAS_READ_TIMEOUT 5		/* seconds */
 static unsigned long last_unread_rtas_event;	/* timestamp */
 
+<<<<<<< HEAD
 /*
  * For capturing and compressing an oops or panic report...
 
@@ -115,6 +119,10 @@ static size_t oops_data_sz;
 #define WINDOW_BITS 12
 #define MEM_LEVEL 4
 static struct z_stream_s stream;
+=======
+/* We preallocate oops_buf during init to avoid kmalloc during oops/panic. */
+static char *oops_buf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static ssize_t pSeries_nvram_read(char *buf, size_t count, loff_t *index)
 {
@@ -422,6 +430,7 @@ static void __init nvram_init_oops_partition(int rtas_partition_exists)
 						sizeof(rtas_log_partition));
 	}
 	oops_buf = kmalloc(oops_log_partition.size, GFP_KERNEL);
+<<<<<<< HEAD
 	if (!oops_buf) {
 		pr_err("nvram: No memory for %s partition\n",
 						oops_log_partition.name);
@@ -454,12 +463,18 @@ static void __init nvram_init_oops_partition(int rtas_partition_exists)
 		stream.workspace = NULL;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = kmsg_dump_register(&nvram_kmsg_dumper);
 	if (rc != 0) {
 		pr_err("nvram: kmsg_dump_register() failed; returned %d\n", rc);
 		kfree(oops_buf);
+<<<<<<< HEAD
 		kfree(big_oops_buf);
 		kfree(stream.workspace);
+=======
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -541,6 +556,7 @@ static int clobbering_unread_rtas_event(void)
 						NVRAM_RTAS_READ_TIMEOUT);
 }
 
+<<<<<<< HEAD
 /* Squeeze out each line's <n> severity prefix. */
 static size_t elide_severities(char *buf, size_t len)
 {
@@ -618,6 +634,9 @@ static int zip_oops(size_t text_len)
  * that we think will compress sufficiently to fit in the lnx,oops-log
  * partition.  If that's too much, go back and capture uncompressed text.
  */
+=======
+/* our kmsg_dump callback */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void oops_to_nvram(struct kmsg_dumper *dumper,
 		enum kmsg_dump_reason reason,
 		const char *old_msgs, unsigned long old_len,
@@ -625,11 +644,15 @@ static void oops_to_nvram(struct kmsg_dumper *dumper,
 {
 	static unsigned int oops_count = 0;
 	static bool panicking = false;
+<<<<<<< HEAD
 	static DEFINE_SPINLOCK(lock);
 	unsigned long flags;
 	size_t text_len;
 	unsigned int err_type = ERR_TYPE_KERNEL_PANIC_GZ;
 	int rc = -1;
+=======
+	size_t text_len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (reason) {
 	case KMSG_DUMP_RESTART:
@@ -638,6 +661,10 @@ static void oops_to_nvram(struct kmsg_dumper *dumper,
 		/* These are almost always orderly shutdowns. */
 		return;
 	case KMSG_DUMP_OOPS:
+<<<<<<< HEAD
+=======
+	case KMSG_DUMP_KEXEC:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case KMSG_DUMP_PANIC:
 		panicking = true;
@@ -656,6 +683,7 @@ static void oops_to_nvram(struct kmsg_dumper *dumper,
 	if (clobbering_unread_rtas_event())
 		return;
 
+<<<<<<< HEAD
 	if (!spin_trylock_irqsave(&lock, flags))
 		return;
 
@@ -676,4 +704,10 @@ static void oops_to_nvram(struct kmsg_dumper *dumper,
 		(int) (sizeof(*oops_len) + *oops_len), err_type, ++oops_count);
 
 	spin_unlock_irqrestore(&lock, flags);
+=======
+	text_len = capture_last_msgs(old_msgs, old_len, new_msgs, new_len,
+					oops_buf, oops_log_partition.size);
+	(void) nvram_write_os_partition(&oops_log_partition, oops_buf,
+		(int) text_len, ERR_TYPE_KERNEL_PANIC, ++oops_count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

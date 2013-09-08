@@ -13,7 +13,10 @@
  * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Copyright SUSE Linux Products GmbH 2010
+<<<<<<< HEAD
  * Copyright 2010-2011 Freescale Semiconductor, Inc.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Authors: Alexander Graf <agraf@suse.de>
  */
@@ -66,9 +69,12 @@ kvm_hypercall_start:
 	   shared->critical == r1 and r2 is always != r1 */		\
 	STL64(r2, KVM_MAGIC_PAGE + KVM_MAGIC_CRITICAL, 0);
 
+<<<<<<< HEAD
 .global kvm_template_start
 kvm_template_start:
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 .global kvm_emulate_mtmsrd
 kvm_emulate_mtmsrd:
 
@@ -171,9 +177,12 @@ maybe_stay_in_guest:
 kvm_emulate_mtmsr_reg2:
 	ori	r30, r0, 0
 
+<<<<<<< HEAD
 	/* Put MSR into magic page because we don't call mtmsr */
 	STL64(r30, KVM_MAGIC_PAGE + KVM_MAGIC_MSR, 0)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Check if we have to fetch an interrupt */
 	lwz	r31, (KVM_MAGIC_PAGE + KVM_MAGIC_INT)(0)
 	cmpwi	r31, 0
@@ -181,10 +190,22 @@ kvm_emulate_mtmsr_reg2:
 
 	/* Check if we may trigger an interrupt */
 	andi.	r31, r30, MSR_EE
+<<<<<<< HEAD
 	bne	do_mtmsr
 
 no_mtmsr:
 
+=======
+	beq	no_mtmsr
+
+	b	do_mtmsr
+
+no_mtmsr:
+
+	/* Put MSR into magic page because we don't call mtmsr */
+	STL64(r30, KVM_MAGIC_PAGE + KVM_MAGIC_MSR, 0)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	SCRATCH_RESTORE
 
 	/* Go back to caller */
@@ -212,6 +233,7 @@ kvm_emulate_mtmsr_orig_ins_offs:
 kvm_emulate_mtmsr_len:
 	.long (kvm_emulate_mtmsr_end - kvm_emulate_mtmsr) / 4
 
+<<<<<<< HEAD
 /* also used for wrteei 1 */
 .global kvm_emulate_wrtee
 kvm_emulate_wrtee:
@@ -279,13 +301,30 @@ kvm_emulate_wrtee_len:
 
 .global kvm_emulate_wrteei_0
 kvm_emulate_wrteei_0:
+=======
+
+
+.global kvm_emulate_wrteei
+kvm_emulate_wrteei:
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	SCRATCH_SAVE
 
 	/* Fetch old MSR in r31 */
 	LL64(r31, KVM_MAGIC_PAGE + KVM_MAGIC_MSR, 0)
 
 	/* Remove MSR_EE from old MSR */
+<<<<<<< HEAD
 	rlwinm	r31, r31, 0, ~MSR_EE
+=======
+	li	r30, 0
+	ori	r30, r30, MSR_EE
+	andc	r31, r31, r30
+
+	/* OR new MSR_EE onto the old MSR */
+kvm_emulate_wrteei_ee:
+	ori	r31, r31, 0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Write new MSR value back */
 	STL64(r31, KVM_MAGIC_PAGE + KVM_MAGIC_MSR, 0)
@@ -293,6 +332,7 @@ kvm_emulate_wrteei_0:
 	SCRATCH_RESTORE
 
 	/* Go back to caller */
+<<<<<<< HEAD
 kvm_emulate_wrteei_0_branch:
 	b	.
 kvm_emulate_wrteei_0_end:
@@ -304,6 +344,24 @@ kvm_emulate_wrteei_0_branch_offs:
 .global kvm_emulate_wrteei_0_len
 kvm_emulate_wrteei_0_len:
 	.long (kvm_emulate_wrteei_0_end - kvm_emulate_wrteei_0) / 4
+=======
+kvm_emulate_wrteei_branch:
+	b	.
+kvm_emulate_wrteei_end:
+
+.global kvm_emulate_wrteei_branch_offs
+kvm_emulate_wrteei_branch_offs:
+	.long (kvm_emulate_wrteei_branch - kvm_emulate_wrteei) / 4
+
+.global kvm_emulate_wrteei_ee_offs
+kvm_emulate_wrteei_ee_offs:
+	.long (kvm_emulate_wrteei_ee - kvm_emulate_wrteei) / 4
+
+.global kvm_emulate_wrteei_len
+kvm_emulate_wrteei_len:
+	.long (kvm_emulate_wrteei_end - kvm_emulate_wrteei) / 4
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 .global kvm_emulate_mtsrin
 kvm_emulate_mtsrin:
@@ -353,6 +411,9 @@ kvm_emulate_mtsrin_orig_ins_offs:
 .global kvm_emulate_mtsrin_len
 kvm_emulate_mtsrin_len:
 	.long (kvm_emulate_mtsrin_end - kvm_emulate_mtsrin) / 4
+<<<<<<< HEAD
 
 .global kvm_template_end
 kvm_template_end:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

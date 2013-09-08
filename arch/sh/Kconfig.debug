@@ -61,7 +61,10 @@ config DUMP_CODE
 config DWARF_UNWINDER
 	bool "Enable the DWARF unwinder for stacktraces"
 	select FRAME_POINTER
+<<<<<<< HEAD
 	depends on SUPERH32
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default n
 	help
 	  Enabling this option will make stacktraces more accurate, at

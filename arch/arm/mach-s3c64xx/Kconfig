@@ -8,7 +8,10 @@ config PLAT_S3C64XX
 	bool
 	depends on ARCH_S3C64XX
 	select SAMSUNG_WAKEMASK
+<<<<<<< HEAD
 	select PM_GENERIC_DOMAINS
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default y
 	help
 	  Base platform code for any Samsung S3C64XX device
@@ -78,6 +81,7 @@ config S3C64XX_SETUP_SDHCI_GPIO
 	help
 	  Common setup code for S3C64XX SDHCI GPIO configurations
 
+<<<<<<< HEAD
 config S3C64XX_SETUP_SPI
 	bool
 	help
@@ -88,6 +92,8 @@ config S3C64XX_SETUP_USB_PHY
 	help
 	  Common setup code for USB PHY controller
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # S36400 Macchine support
 
 config MACH_SMDK6400
@@ -153,7 +159,10 @@ config MACH_SMDK6410
 	select S3C_DEV_USB_HOST
 	select S3C_DEV_USB_HSOTG
 	select S3C_DEV_WDT
+<<<<<<< HEAD
 	select SAMSUNG_DEV_BACKLIGHT
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select SAMSUNG_DEV_KEYPAD
 	select SAMSUNG_DEV_PWM
 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
@@ -162,7 +171,10 @@ config MACH_SMDK6410
 	select S3C64XX_SETUP_IDE
 	select S3C64XX_SETUP_FB_24BPP
 	select S3C64XX_SETUP_KEYPAD
+<<<<<<< HEAD
 	select S3C64XX_SETUP_USB_PHY
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Machine support for the Samsung SMDK6410
 
@@ -200,7 +212,11 @@ config SMDK6410_WM1190_EV1
 	depends on MACH_SMDK6410
 	select REGULATOR
 	select REGULATOR_WM8350
+<<<<<<< HEAD
 	select SAMSUNG_GPIO_EXTRA64
+=======
+	select S3C24XX_GPIO_EXTRA64
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select MFD_WM8350_I2C
 	select MFD_WM8350_CONFIG_MODE_0
 	select MFD_WM8350_CONFIG_MODE_3
@@ -218,7 +234,11 @@ config SMDK6410_WM1192_EV1
 	depends on MACH_SMDK6410
 	select REGULATOR
 	select REGULATOR_WM831X
+<<<<<<< HEAD
 	select SAMSUNG_GPIO_EXTRA64
+=======
+	select S3C24XX_GPIO_EXTRA64
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select MFD_WM831X
 	select MFD_WM831X_I2C
 	help
@@ -262,7 +282,10 @@ config MACH_SMARTQ
 	select S3C_DEV_USB_HOST
 	select S3C64XX_SETUP_SDHCI
 	select S3C64XX_SETUP_FB_24BPP
+<<<<<<< HEAD
 	select S3C64XX_SETUP_USB_PHY
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select SAMSUNG_DEV_ADC
 	select SAMSUNG_DEV_PWM
 	select SAMSUNG_DEV_TS
@@ -280,6 +303,7 @@ config MACH_SMARTQ7
 	select MACH_SMARTQ
 	help
 	    Machine support for the SmartQ 7
+<<<<<<< HEAD
 
 config MACH_WLF_CRAGG_6410
 	bool "Wolfson Cragganmore 6410"
@@ -307,3 +331,5 @@ config MACH_WLF_CRAGG_6410
 	select LEDS_GPIO_REGISTER
 	help
 	  Machine support for the Wolfson Cragganmore S3C6410 variant.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

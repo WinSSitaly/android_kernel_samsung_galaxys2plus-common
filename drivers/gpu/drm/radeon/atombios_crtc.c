@@ -231,6 +231,7 @@ static void atombios_blank_crtc(struct drm_crtc *crtc, int state)
 	atom_execute_table(rdev->mode_info.atom_context, index, (uint32_t *)&args);
 }
 
+<<<<<<< HEAD
 static void atombios_powergate_crtc(struct drm_crtc *crtc, int state)
 {
 	struct radeon_crtc *radeon_crtc = to_radeon_crtc(crtc);
@@ -247,6 +248,8 @@ static void atombios_powergate_crtc(struct drm_crtc *crtc, int state)
 	atom_execute_table(rdev->mode_info.atom_context, index, (uint32_t *)&args);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void atombios_crtc_dpms(struct drm_crtc *crtc, int mode)
 {
 	struct drm_device *dev = crtc->dev;
@@ -259,7 +262,11 @@ void atombios_crtc_dpms(struct drm_crtc *crtc, int mode)
 		/* adjust pm to dpms changes BEFORE enabling crtcs */
 		radeon_pm_compute_clocks(rdev);
 		atombios_enable_crtc(crtc, ATOM_ENABLE);
+<<<<<<< HEAD
 		if (ASIC_IS_DCE3(rdev) && !ASIC_IS_DCE6(rdev))
+=======
+		if (ASIC_IS_DCE3(rdev))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			atombios_enable_crtc_memreq(crtc, ATOM_ENABLE);
 		atombios_blank_crtc(crtc, ATOM_DISABLE);
 		drm_vblank_post_modeset(dev, radeon_crtc->crtc_id);
@@ -271,7 +278,11 @@ void atombios_crtc_dpms(struct drm_crtc *crtc, int mode)
 		drm_vblank_pre_modeset(dev, radeon_crtc->crtc_id);
 		if (radeon_crtc->enabled)
 			atombios_blank_crtc(crtc, ATOM_ENABLE);
+<<<<<<< HEAD
 		if (ASIC_IS_DCE3(rdev) && !ASIC_IS_DCE6(rdev))
+=======
+		if (ASIC_IS_DCE3(rdev))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			atombios_enable_crtc_memreq(crtc, ATOM_DISABLE);
 		atombios_enable_crtc(crtc, ATOM_DISABLE);
 		radeon_crtc->enabled = false;
@@ -371,12 +382,24 @@ static void atombios_crtc_set_timing(struct drm_crtc *crtc,
 	atom_execute_table(rdev->mode_info.atom_context, index, (uint32_t *)&args);
 }
 
+<<<<<<< HEAD
 static void atombios_disable_ss(struct radeon_device *rdev, int pll_id)
 {
 	u32 ss_cntl;
 
 	if (ASIC_IS_DCE4(rdev)) {
 		switch (pll_id) {
+=======
+static void atombios_disable_ss(struct drm_crtc *crtc)
+{
+	struct radeon_crtc *radeon_crtc = to_radeon_crtc(crtc);
+	struct drm_device *dev = crtc->dev;
+	struct radeon_device *rdev = dev->dev_private;
+	u32 ss_cntl;
+
+	if (ASIC_IS_DCE4(rdev)) {
+		switch (radeon_crtc->pll_id) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case ATOM_PPLL1:
 			ss_cntl = RREG32(EVERGREEN_P1PLL_SS_CNTL);
 			ss_cntl &= ~EVERGREEN_PxPLL_SS_EN;
@@ -392,7 +415,11 @@ static void atombios_disable_ss(struct radeon_device *rdev, int pll_id)
 			return;
 		}
 	} else if (ASIC_IS_AVIVO(rdev)) {
+<<<<<<< HEAD
 		switch (pll_id) {
+=======
+		switch (radeon_crtc->pll_id) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case ATOM_PPLL1:
 			ss_cntl = RREG32(AVIVO_P1PLL_INT_SS_CNTL);
 			ss_cntl &= ~1;
@@ -419,6 +446,7 @@ union atom_enable_ss {
 	ENABLE_SPREAD_SPECTRUM_ON_PPLL_V3 v3;
 };
 
+<<<<<<< HEAD
 static void atombios_crtc_program_ss(struct radeon_device *rdev,
 				     int enable,
 				     int pll_id,
@@ -444,6 +472,18 @@ static void atombios_crtc_program_ss(struct radeon_device *rdev,
 		}
 	}
 
+=======
+static void atombios_crtc_program_ss(struct drm_crtc *crtc,
+				     int enable,
+				     int pll_id,
+				     struct radeon_atom_ss *ss)
+{
+	struct drm_device *dev = crtc->dev;
+	struct radeon_device *rdev = dev->dev_private;
+	int index = GetIndexIntoMasterTable(COMMAND, EnableSpreadSpectrumOnPPLL);
+	union atom_enable_ss args;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(&args, 0, sizeof(args));
 
 	if (ASIC_IS_DCE5(rdev)) {
@@ -469,7 +509,11 @@ static void atombios_crtc_program_ss(struct radeon_device *rdev,
 			return;
 		}
 		args.v3.ucEnable = enable;
+<<<<<<< HEAD
 		if ((ss->percentage == 0) || (ss->type & ATOM_EXTERNAL_SS_MASK) || ASIC_IS_DCE61(rdev))
+=======
+		if ((ss->percentage == 0) || (ss->type & ATOM_EXTERNAL_SS_MASK))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			args.v3.ucEnable = ATOM_DISABLE;
 	} else if (ASIC_IS_DCE4(rdev)) {
 		args.v2.usSpreadSpectrumPercentage = cpu_to_le16(ss->percentage);
@@ -494,7 +538,11 @@ static void atombios_crtc_program_ss(struct radeon_device *rdev,
 			return;
 		}
 		args.v2.ucEnable = enable;
+<<<<<<< HEAD
 		if ((ss->percentage == 0) || (ss->type & ATOM_EXTERNAL_SS_MASK) || ASIC_IS_DCE41(rdev))
+=======
+		if ((ss->percentage == 0) || (ss->type & ATOM_EXTERNAL_SS_MASK))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			args.v2.ucEnable = ATOM_DISABLE;
 	} else if (ASIC_IS_DCE3(rdev)) {
 		args.v1.usSpreadSpectrumPercentage = cpu_to_le16(ss->percentage);
@@ -507,7 +555,11 @@ static void atombios_crtc_program_ss(struct radeon_device *rdev,
 	} else if (ASIC_IS_AVIVO(rdev)) {
 		if ((enable == ATOM_DISABLE) || (ss->percentage == 0) ||
 		    (ss->type & ATOM_EXTERNAL_SS_MASK)) {
+<<<<<<< HEAD
 			atombios_disable_ss(rdev, pll_id);
+=======
+			atombios_disable_ss(crtc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 		}
 		args.lvds_ss_2.usSpreadSpectrumPercentage = cpu_to_le16(ss->percentage);
@@ -519,7 +571,11 @@ static void atombios_crtc_program_ss(struct radeon_device *rdev,
 	} else {
 		if ((enable == ATOM_DISABLE) || (ss->percentage == 0) ||
 		    (ss->type & ATOM_EXTERNAL_SS_MASK)) {
+<<<<<<< HEAD
 			atombios_disable_ss(rdev, pll_id);
+=======
+			atombios_disable_ss(crtc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 		}
 		args.lvds_ss.usSpreadSpectrumPercentage = cpu_to_le16(ss->percentage);
@@ -551,7 +607,10 @@ static u32 atombios_adjust_pll(struct drm_crtc *crtc,
 	int encoder_mode = 0;
 	u32 dp_clock = mode->clock;
 	int bpc = 8;
+<<<<<<< HEAD
 	bool is_duallink = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* reset the pll flags */
 	pll->flags = 0;
@@ -570,9 +629,12 @@ static u32 atombios_adjust_pll(struct drm_crtc *crtc,
 
 		if (rdev->family < CHIP_RV770)
 			pll->flags |= RADEON_PLL_PREFER_MINM_OVER_MAXP;
+<<<<<<< HEAD
 		/* use frac fb div on APUs */
 		if (ASIC_IS_DCE41(rdev) || ASIC_IS_DCE61(rdev))
 			pll->flags |= RADEON_PLL_USE_FRAC_FB_DIV;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		pll->flags |= RADEON_PLL_LEGACY;
 
@@ -586,12 +648,20 @@ static u32 atombios_adjust_pll(struct drm_crtc *crtc,
 		if (encoder->crtc == crtc) {
 			radeon_encoder = to_radeon_encoder(encoder);
 			connector = radeon_get_connector_for_encoder(encoder);
+<<<<<<< HEAD
 			/* if (connector && connector->display_info.bpc)
 				bpc = connector->display_info.bpc; */
 			encoder_mode = atombios_get_encoder_mode(encoder);
 			is_duallink = radeon_dig_monitor_is_duallink(encoder, mode->clock);
 			if ((radeon_encoder->devices & (ATOM_DEVICE_LCD_SUPPORT | ATOM_DEVICE_DFP_SUPPORT)) ||
 			    (radeon_encoder_get_dp_bridge_encoder_id(encoder) != ENCODER_OBJECT_ID_NONE)) {
+=======
+			if (connector)
+				bpc = connector->display_info.bpc;
+			encoder_mode = atombios_get_encoder_mode(encoder);
+			if ((radeon_encoder->devices & (ATOM_DEVICE_LCD_SUPPORT | ATOM_DEVICE_DFP_SUPPORT)) ||
+			    radeon_encoder_is_dp_bridge(encoder)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				if (connector) {
 					struct radeon_connector *radeon_connector = to_radeon_connector(connector);
 					struct radeon_connector_atom_dig *dig_connector =
@@ -671,6 +741,7 @@ static u32 atombios_adjust_pll(struct drm_crtc *crtc,
 				if (ss_enabled && ss->percentage)
 					args.v3.sInput.ucDispPllConfig |=
 						DISPPLL_CONFIG_SS_ENABLE;
+<<<<<<< HEAD
 				if (ENCODER_MODE_IS_DP(encoder_mode)) {
 					args.v3.sInput.ucDispPllConfig |=
 						DISPPLL_CONFIG_COHERENT_MODE;
@@ -694,6 +765,46 @@ static u32 atombios_adjust_pll(struct drm_crtc *crtc,
 					args.v3.sInput.ucExtTransmitterID =
 						radeon_encoder_get_dp_bridge_encoder_id(encoder);
 				else
+=======
+				if (radeon_encoder->devices & (ATOM_DEVICE_DFP_SUPPORT) ||
+				    radeon_encoder_is_dp_bridge(encoder)) {
+					struct radeon_encoder_atom_dig *dig = radeon_encoder->enc_priv;
+					if (encoder_mode == ATOM_ENCODER_MODE_DP) {
+						args.v3.sInput.ucDispPllConfig |=
+							DISPPLL_CONFIG_COHERENT_MODE;
+						/* 16200 or 27000 */
+						args.v3.sInput.usPixelClock = cpu_to_le16(dp_clock / 10);
+					} else {
+						if (encoder_mode == ATOM_ENCODER_MODE_HDMI) {
+							/* deep color support */
+							args.v3.sInput.usPixelClock =
+								cpu_to_le16((mode->clock * bpc / 8) / 10);
+						}
+						if (dig->coherent_mode)
+							args.v3.sInput.ucDispPllConfig |=
+								DISPPLL_CONFIG_COHERENT_MODE;
+						if (mode->clock > 165000)
+							args.v3.sInput.ucDispPllConfig |=
+								DISPPLL_CONFIG_DUAL_LINK;
+					}
+				} else if (radeon_encoder->devices & (ATOM_DEVICE_LCD_SUPPORT)) {
+					if (encoder_mode == ATOM_ENCODER_MODE_DP) {
+						args.v3.sInput.ucDispPllConfig |=
+							DISPPLL_CONFIG_COHERENT_MODE;
+						/* 16200 or 27000 */
+						args.v3.sInput.usPixelClock = cpu_to_le16(dp_clock / 10);
+					} else if (encoder_mode != ATOM_ENCODER_MODE_LVDS) {
+						if (mode->clock > 165000)
+							args.v3.sInput.ucDispPllConfig |=
+								DISPPLL_CONFIG_DUAL_LINK;
+					}
+				}
+				if (radeon_encoder_is_dp_bridge(encoder)) {
+					struct drm_encoder *ext_encoder = radeon_atom_get_external_encoder(encoder);
+					struct radeon_encoder *ext_radeon_encoder = to_radeon_encoder(ext_encoder);
+					args.v3.sInput.ucExtTransmitterID = ext_radeon_encoder->encoder_id;
+				} else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					args.v3.sInput.ucExtTransmitterID = 0;
 
 				atom_execute_table(rdev->mode_info.atom_context,
@@ -735,9 +846,17 @@ union set_pixel_clock {
 /* on DCE5, make sure the voltage is high enough to support the
  * required disp clk.
  */
+<<<<<<< HEAD
 static void atombios_crtc_set_disp_eng_pll(struct radeon_device *rdev,
 				    u32 dispclk)
 {
+=======
+static void atombios_crtc_set_dcpll(struct drm_crtc *crtc,
+				    u32 dispclk)
+{
+	struct drm_device *dev = crtc->dev;
+	struct radeon_device *rdev = dev->dev_private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 frev, crev;
 	int index;
 	union set_pixel_clock args;
@@ -765,12 +884,16 @@ static void atombios_crtc_set_disp_eng_pll(struct radeon_device *rdev,
 			 * SetPixelClock provides the dividers
 			 */
 			args.v6.ulDispEngClkFreq = cpu_to_le32(dispclk);
+<<<<<<< HEAD
 			if (ASIC_IS_DCE61(rdev))
 				args.v6.ucPpll = ATOM_EXT_PLL1;
 			else if (ASIC_IS_DCE6(rdev))
 				args.v6.ucPpll = ATOM_PPLL0;
 			else
 				args.v6.ucPpll = ATOM_DCPLL;
+=======
+			args.v6.ucPpll = ATOM_DCPLL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		default:
 			DRM_ERROR("Unknown table version %d %d\n", frev, crev);
@@ -785,7 +908,11 @@ static void atombios_crtc_set_disp_eng_pll(struct radeon_device *rdev,
 }
 
 static void atombios_crtc_program_pll(struct drm_crtc *crtc,
+<<<<<<< HEAD
 				      u32 crtc_id,
+=======
+				      int crtc_id,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      int pll_id,
 				      u32 encoder_mode,
 				      u32 encoder_id,
@@ -872,7 +999,12 @@ static void atombios_crtc_program_pll(struct drm_crtc *crtc,
 			args.v5.ucPpll = pll_id;
 			break;
 		case 6:
+<<<<<<< HEAD
 			args.v6.ulDispEngClkFreq = cpu_to_le32(crtc_id << 24 | clock / 10);
+=======
+			args.v6.ulCrtcPclkFreq.ucCRTC = crtc_id;
+			args.v6.ulCrtcPclkFreq.ulPixelClock = cpu_to_le32(clock / 10);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			args.v6.ucRefDiv = ref_div;
 			args.v6.usFbDiv = cpu_to_le16(fb_div);
 			args.v6.ulFbDivDecFrac = cpu_to_le32(frac_fb_div * 100000);
@@ -953,8 +1085,13 @@ static void atombios_crtc_set_pll(struct drm_crtc *crtc, struct drm_display_mode
 		break;
 	}
 
+<<<<<<< HEAD
 	if ((radeon_encoder->active_device & (ATOM_DEVICE_LCD_SUPPORT | ATOM_DEVICE_DFP_SUPPORT)) ||
 	    (radeon_encoder_get_dp_bridge_encoder_id(encoder) != ENCODER_OBJECT_ID_NONE)) {
+=======
+	if (radeon_encoder->active_device &
+	    (ATOM_DEVICE_LCD_SUPPORT | ATOM_DEVICE_DFP_SUPPORT)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct radeon_encoder_atom_dig *dig = radeon_encoder->enc_priv;
 		struct drm_connector *connector =
 			radeon_get_connector_for_encoder(encoder);
@@ -963,12 +1100,18 @@ static void atombios_crtc_set_pll(struct drm_crtc *crtc, struct drm_display_mode
 		struct radeon_connector_atom_dig *dig_connector =
 			radeon_connector->con_priv;
 		int dp_clock;
+<<<<<<< HEAD
 
 		/* if (connector->display_info.bpc)
 			bpc = connector->display_info.bpc; */
 
 		switch (encoder_mode) {
 		case ATOM_ENCODER_MODE_DP_MST:
+=======
+		bpc = connector->display_info.bpc;
+
+		switch (encoder_mode) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case ATOM_ENCODER_MODE_DP:
 			/* DP/eDP */
 			dp_clock = dig_connector->dp_clock / 10;
@@ -1034,7 +1177,11 @@ static void atombios_crtc_set_pll(struct drm_crtc *crtc, struct drm_display_mode
 		radeon_compute_pll_legacy(pll, adjusted_clock, &pll_clock, &fb_div, &frac_fb_div,
 					  &ref_div, &post_div);
 
+<<<<<<< HEAD
 	atombios_crtc_program_ss(rdev, ATOM_DISABLE, radeon_crtc->pll_id, radeon_crtc->crtc_id, &ss);
+=======
+	atombios_crtc_program_ss(crtc, ATOM_DISABLE, radeon_crtc->pll_id, &ss);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	atombios_crtc_program_pll(crtc, radeon_crtc->crtc_id, radeon_crtc->pll_id,
 				  encoder_mode, radeon_encoder->encoder_id, mode->clock,
@@ -1057,7 +1204,11 @@ static void atombios_crtc_set_pll(struct drm_crtc *crtc, struct drm_display_mode
 			ss.step = step_size;
 		}
 
+<<<<<<< HEAD
 		atombios_crtc_program_ss(rdev, ATOM_ENABLE, radeon_crtc->pll_id, radeon_crtc->crtc_id, &ss);
+=======
+		atombios_crtc_program_ss(crtc, ATOM_ENABLE, radeon_crtc->pll_id, &ss);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1074,7 +1225,10 @@ static int dce4_crtc_do_set_base(struct drm_crtc *crtc,
 	struct radeon_bo *rbo;
 	uint64_t fb_location;
 	uint32_t fb_format, fb_pitch_pixels, tiling_flags;
+<<<<<<< HEAD
 	unsigned bankw, bankh, mtaspect, tile_split;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 fb_swap = EVERGREEN_GRPH_ENDIAN_SWAP(EVERGREEN_GRPH_ENDIAN_NONE);
 	u32 tmp, viewport_w, viewport_h;
 	int r;
@@ -1146,6 +1300,7 @@ static int dce4_crtc_do_set_base(struct drm_crtc *crtc,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	if (tiling_flags & RADEON_TILING_MACRO) {
 		if (rdev->family >= CHIP_CAYMAN)
 			tmp = rdev->config.cayman.tile_config;
@@ -1173,6 +1328,11 @@ static int dce4_crtc_do_set_base(struct drm_crtc *crtc,
 		fb_format |= EVERGREEN_GRPH_BANK_HEIGHT(bankh);
 		fb_format |= EVERGREEN_GRPH_MACRO_TILE_ASPECT(mtaspect);
 	} else if (tiling_flags & RADEON_TILING_MICRO)
+=======
+	if (tiling_flags & RADEON_TILING_MACRO)
+		fb_format |= EVERGREEN_GRPH_ARRAY_MODE(EVERGREEN_GRPH_ARRAY_2D_TILED_THIN1);
+	else if (tiling_flags & RADEON_TILING_MICRO)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fb_format |= EVERGREEN_GRPH_ARRAY_MODE(EVERGREEN_GRPH_ARRAY_1D_TILED_THIN1);
 
 	switch (radeon_crtc->crtc_id) {
@@ -1216,7 +1376,11 @@ static int dce4_crtc_do_set_base(struct drm_crtc *crtc,
 	WREG32(EVERGREEN_GRPH_X_END + radeon_crtc->crtc_offset, target_fb->width);
 	WREG32(EVERGREEN_GRPH_Y_END + radeon_crtc->crtc_offset, target_fb->height);
 
+<<<<<<< HEAD
 	fb_pitch_pixels = target_fb->pitches[0] / (target_fb->bits_per_pixel / 8);
+=======
+	fb_pitch_pixels = target_fb->pitch / (target_fb->bits_per_pixel / 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	WREG32(EVERGREEN_GRPH_PITCH + radeon_crtc->crtc_offset, fb_pitch_pixels);
 	WREG32(EVERGREEN_GRPH_ENABLE + radeon_crtc->crtc_offset, 1);
 
@@ -1385,7 +1549,11 @@ static int avivo_crtc_do_set_base(struct drm_crtc *crtc,
 	WREG32(AVIVO_D1GRPH_X_END + radeon_crtc->crtc_offset, target_fb->width);
 	WREG32(AVIVO_D1GRPH_Y_END + radeon_crtc->crtc_offset, target_fb->height);
 
+<<<<<<< HEAD
 	fb_pitch_pixels = target_fb->pitches[0] / (target_fb->bits_per_pixel / 8);
+=======
+	fb_pitch_pixels = target_fb->pitch / (target_fb->bits_per_pixel / 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	WREG32(AVIVO_D1GRPH_PITCH + radeon_crtc->crtc_offset, fb_pitch_pixels);
 	WREG32(AVIVO_D1GRPH_ENABLE + radeon_crtc->crtc_offset, 1);
 
@@ -1487,6 +1655,7 @@ static int radeon_atom_pick_pll(struct drm_crtc *crtc)
 	struct drm_crtc *test_crtc;
 	uint32_t pll_in_use = 0;
 
+<<<<<<< HEAD
 	if (ASIC_IS_DCE61(rdev)) {
 		list_for_each_entry(test_encoder, &dev->mode_config.encoder_list, head) {
 			if (test_encoder->crtc && (test_encoder->crtc == crtc)) {
@@ -1517,6 +1686,9 @@ static int radeon_atom_pick_pll(struct drm_crtc *crtc)
 			return ATOM_PPLL0;
 		return ATOM_PPLL1;
 	} else if (ASIC_IS_DCE4(rdev)) {
+=======
+	if (ASIC_IS_DCE4(rdev)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_for_each_entry(test_encoder, &dev->mode_config.encoder_list, head) {
 			if (test_encoder->crtc && (test_encoder->crtc == crtc)) {
 				/* in DP mode, the DP ref clock can come from PPLL, DCPLL, or ext clock,
@@ -1528,6 +1700,7 @@ static int radeon_atom_pick_pll(struct drm_crtc *crtc)
 				 * PPLL/DCPLL programming and only program the DP DTO for the
 				 * crtc virtual pixel clock.
 				 */
+<<<<<<< HEAD
 				if (ENCODER_MODE_IS_DP(atombios_get_encoder_mode(test_encoder))) {
 					if (rdev->clock.dp_extclk)
 						return ATOM_PPLL_INVALID;
@@ -1535,6 +1708,11 @@ static int radeon_atom_pick_pll(struct drm_crtc *crtc)
 						return ATOM_PPLL0;
 					else if (ASIC_IS_DCE5(rdev))
 						return ATOM_DCPLL;
+=======
+				if (atombios_get_encoder_mode(test_encoder) == ATOM_ENCODER_MODE_DP) {
+					if (ASIC_IS_DCE5(rdev) || rdev->clock.dp_extclk)
+						return ATOM_PPLL_INVALID;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				}
 			}
 		}
@@ -1559,6 +1737,7 @@ static int radeon_atom_pick_pll(struct drm_crtc *crtc)
 
 }
 
+<<<<<<< HEAD
 void radeon_atom_disp_eng_pll_init(struct radeon_device *rdev)
 {
 	/* always set DCPLL */
@@ -1579,6 +1758,8 @@ void radeon_atom_disp_eng_pll_init(struct radeon_device *rdev)
 
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int atombios_crtc_mode_set(struct drm_crtc *crtc,
 			   struct drm_display_mode *mode,
 			   struct drm_display_mode *adjusted_mode,
@@ -1600,6 +1781,22 @@ int atombios_crtc_mode_set(struct drm_crtc *crtc,
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	/* always set DCPLL */
+	if (ASIC_IS_DCE4(rdev)) {
+		struct radeon_atom_ss ss;
+		bool ss_enabled = radeon_atombios_get_asic_ss_info(rdev, &ss,
+								   ASIC_INTERNAL_SS_ON_DCPLL,
+								   rdev->clock.default_dispclk);
+		if (ss_enabled)
+			atombios_crtc_program_ss(crtc, ATOM_DISABLE, ATOM_DCPLL, &ss);
+		/* XXX: DCE5, make sure voltage, dispclk is high enough */
+		atombios_crtc_set_dcpll(crtc, rdev->clock.default_dispclk);
+		if (ss_enabled)
+			atombios_crtc_program_ss(crtc, ATOM_ENABLE, ATOM_DCPLL, &ss);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atombios_crtc_set_pll(crtc, adjusted_mode);
 
 	if (ASIC_IS_DCE4(rdev))
@@ -1625,6 +1822,15 @@ static bool atombios_crtc_mode_fixup(struct drm_crtc *crtc,
 				     struct drm_display_mode *mode,
 				     struct drm_display_mode *adjusted_mode)
 {
+<<<<<<< HEAD
+=======
+	struct drm_device *dev = crtc->dev;
+	struct radeon_device *rdev = dev->dev_private;
+
+	/* adjust pm to upcoming mode change */
+	radeon_pm_compute_clocks(rdev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!radeon_crtc_scaling_mode_fixup(crtc, mode, adjusted_mode))
 		return false;
 	return true;
@@ -1633,6 +1839,7 @@ static bool atombios_crtc_mode_fixup(struct drm_crtc *crtc,
 static void atombios_crtc_prepare(struct drm_crtc *crtc)
 {
 	struct radeon_crtc *radeon_crtc = to_radeon_crtc(crtc);
+<<<<<<< HEAD
 	struct drm_device *dev = crtc->dev;
 	struct radeon_device *rdev = dev->dev_private;
 
@@ -1644,22 +1851,34 @@ static void atombios_crtc_prepare(struct drm_crtc *crtc)
 	if (ASIC_IS_DCE6(rdev))
 		atombios_powergate_crtc(crtc, ATOM_DISABLE);
 
+=======
+
+	/* pick pll */
+	radeon_crtc->pll_id = radeon_atom_pick_pll(crtc);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atombios_lock_crtc(crtc, ATOM_ENABLE);
 	atombios_crtc_dpms(crtc, DRM_MODE_DPMS_OFF);
 }
 
 static void atombios_crtc_commit(struct drm_crtc *crtc)
 {
+<<<<<<< HEAD
 	struct radeon_crtc *radeon_crtc = to_radeon_crtc(crtc);
 
 	atombios_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
 	atombios_lock_crtc(crtc, ATOM_DISABLE);
 	radeon_crtc->in_mode_set = false;
+=======
+	atombios_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
+	atombios_lock_crtc(crtc, ATOM_DISABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void atombios_crtc_disable(struct drm_crtc *crtc)
 {
 	struct radeon_crtc *radeon_crtc = to_radeon_crtc(crtc);
+<<<<<<< HEAD
 	struct drm_device *dev = crtc->dev;
 	struct radeon_device *rdev = dev->dev_private;
 	struct radeon_atom_ss ss;
@@ -1680,6 +1899,11 @@ static void atombios_crtc_disable(struct drm_crtc *crtc)
 			goto done;
 		}
 	}
+=======
+	struct radeon_atom_ss ss;
+
+	atombios_crtc_dpms(crtc, DRM_MODE_DPMS_OFF);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (radeon_crtc->pll_id) {
 	case ATOM_PPLL1:
@@ -1688,6 +1912,7 @@ static void atombios_crtc_disable(struct drm_crtc *crtc)
 		atombios_crtc_program_pll(crtc, radeon_crtc->crtc_id, radeon_crtc->pll_id,
 					  0, 0, ATOM_DISABLE, 0, 0, 0, 0, 0, false, &ss);
 		break;
+<<<<<<< HEAD
 	case ATOM_PPLL0:
 		/* disable the ppll */
 		if (ASIC_IS_DCE61(rdev))
@@ -1698,6 +1923,11 @@ static void atombios_crtc_disable(struct drm_crtc *crtc)
 		break;
 	}
 done:
+=======
+	default:
+		break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	radeon_crtc->pll_id = -1;
 }
 

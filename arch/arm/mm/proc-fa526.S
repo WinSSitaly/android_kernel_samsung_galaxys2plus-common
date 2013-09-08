@@ -22,6 +22,10 @@
 #include <asm/pgtable.h>
 #include <asm/page.h>
 #include <asm/ptrace.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "proc-macros.S"
 
@@ -56,7 +60,10 @@ ENTRY(cpu_fa526_proc_fin)
  * loc: location to jump to for soft reset
  */
 	.align	4
+<<<<<<< HEAD
 	.pushsection	.idmap.text, "ax"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ENTRY(cpu_fa526_reset)
 /* TODO: Use CP8 if possible... */
 	mov	ip, #0
@@ -73,8 +80,11 @@ ENTRY(cpu_fa526_reset)
 	nop
 	nop
 	mov	pc, r0
+<<<<<<< HEAD
 ENDPROC(cpu_fa526_reset)
 	.popsection
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * cpu_fa526_do_idle()
@@ -182,6 +192,7 @@ fa526_cr1_set:
 
 	__INITDATA
 
+<<<<<<< HEAD
 	@ define struct processor (see <asm/proc-fns.h> and proc-macros.S)
 	define_processor_functions fa526, dabort=v4_early_abort, pabort=legacy_pabort
 
@@ -190,6 +201,44 @@ fa526_cr1_set:
 	string	cpu_arch_name, "armv4"
 	string	cpu_elf_name, "v4"
 	string	cpu_fa526_name, "FA526"
+=======
+/*
+ * Purpose : Function pointers used to access above functions - all calls
+ *	     come through these
+ */
+	.type	fa526_processor_functions, #object
+fa526_processor_functions:
+	.word	v4_early_abort
+	.word	legacy_pabort
+	.word	cpu_fa526_proc_init
+	.word	cpu_fa526_proc_fin
+	.word	cpu_fa526_reset
+	.word   cpu_fa526_do_idle
+	.word	cpu_fa526_dcache_clean_area
+	.word	cpu_fa526_switch_mm
+	.word	cpu_fa526_set_pte_ext
+	.word	0
+	.word	0
+	.word	0
+	.size	fa526_processor_functions, . - fa526_processor_functions
+
+	.section ".rodata"
+
+	.type	cpu_arch_name, #object
+cpu_arch_name:
+	.asciz	"armv4"
+	.size	cpu_arch_name, . - cpu_arch_name
+
+	.type	cpu_elf_name, #object
+cpu_elf_name:
+	.asciz	"v4"
+	.size	cpu_elf_name, . - cpu_elf_name
+
+	.type	cpu_fa526_name, #object
+cpu_fa526_name:
+	.asciz	"FA526"
+	.size	cpu_fa526_name, . - cpu_fa526_name
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.align
 

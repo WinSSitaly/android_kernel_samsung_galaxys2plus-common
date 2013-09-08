@@ -33,6 +33,11 @@
 #include <plat/omap_device.h>
 #include "mux.h"
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_USB_MUSB_OMAP2PLUS) || defined (CONFIG_USB_MUSB_AM35X)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct musb_hdrc_config musb_config = {
 	.multipoint	= 1,
 	.dyn_fifo	= 1,
@@ -60,6 +65,55 @@ static struct musb_hdrc_platform_data musb_plat = {
 
 static u64 musb_dmamask = DMA_BIT_MASK(32);
 
+<<<<<<< HEAD
+=======
+static struct omap_device_pm_latency omap_musb_latency[] = {
+	{
+		.deactivate_func	= omap_device_idle_hwmods,
+		.activate_func		= omap_device_enable_hwmods,
+		.flags			= OMAP_DEVICE_LATENCY_AUTO_ADJUST,
+	},
+};
+
+static void usb_musb_mux_init(struct omap_musb_board_data *board_data)
+{
+	switch (board_data->interface_type) {
+	case MUSB_INTERFACE_UTMI:
+		omap_mux_init_signal("usba0_otg_dp", OMAP_PIN_INPUT);
+		omap_mux_init_signal("usba0_otg_dm", OMAP_PIN_INPUT);
+		break;
+	case MUSB_INTERFACE_ULPI:
+		omap_mux_init_signal("usba0_ulpiphy_clk",
+						OMAP_PIN_INPUT_PULLDOWN);
+		omap_mux_init_signal("usba0_ulpiphy_stp",
+						OMAP_PIN_INPUT_PULLDOWN);
+		omap_mux_init_signal("usba0_ulpiphy_dir",
+						OMAP_PIN_INPUT_PULLDOWN);
+		omap_mux_init_signal("usba0_ulpiphy_nxt",
+						OMAP_PIN_INPUT_PULLDOWN);
+		omap_mux_init_signal("usba0_ulpiphy_dat0",
+						OMAP_PIN_INPUT_PULLDOWN);
+		omap_mux_init_signal("usba0_ulpiphy_dat1",
+						OMAP_PIN_INPUT_PULLDOWN);
+		omap_mux_init_signal("usba0_ulpiphy_dat2",
+						OMAP_PIN_INPUT_PULLDOWN);
+		omap_mux_init_signal("usba0_ulpiphy_dat3",
+						OMAP_PIN_INPUT_PULLDOWN);
+		omap_mux_init_signal("usba0_ulpiphy_dat4",
+						OMAP_PIN_INPUT_PULLDOWN);
+		omap_mux_init_signal("usba0_ulpiphy_dat5",
+						OMAP_PIN_INPUT_PULLDOWN);
+		omap_mux_init_signal("usba0_ulpiphy_dat6",
+						OMAP_PIN_INPUT_PULLDOWN);
+		omap_mux_init_signal("usba0_ulpiphy_dat7",
+						OMAP_PIN_INPUT_PULLDOWN);
+		break;
+	default:
+		break;
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct omap_musb_board_data musb_default_board_data = {
 	.interface_type		= MUSB_INTERFACE_ULPI,
 	.mode			= MUSB_OTG,
@@ -69,6 +123,10 @@ static struct omap_musb_board_data musb_default_board_data = {
 void __init usb_musb_init(struct omap_musb_board_data *musb_board_data)
 {
 	struct omap_hwmod		*oh;
+<<<<<<< HEAD
+=======
+	struct omap_device		*od;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct platform_device		*pdev;
 	struct device			*dev;
 	int				bus_id = -1;
@@ -90,17 +148,27 @@ void __init usb_musb_init(struct omap_musb_board_data *musb_board_data)
 	musb_plat.mode = board_data->mode;
 	musb_plat.extvbus = board_data->extvbus;
 
+<<<<<<< HEAD
 	if (cpu_is_omap3517() || cpu_is_omap3505()) {
 		oh_name = "am35x_otg_hs";
 		name = "musb-am35x";
 	} else if (cpu_is_ti81xx()) {
 		oh_name = "usb_otg_hs";
 		name = "musb-ti81xx";
+=======
+	if (cpu_is_omap44xx())
+		omap4430_phy_init(dev);
+
+	if (cpu_is_omap3517() || cpu_is_omap3505()) {
+		oh_name = "am35x_otg_hs";
+		name = "musb-am35x";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		oh_name = "usb_otg_hs";
 		name = "musb-omap2430";
 	}
 
+<<<<<<< HEAD
         oh = omap_hwmod_lookup(oh_name);
         if (WARN(!oh, "%s: could not find omap_hwmod for %s\n",
                  __func__, oh_name))
@@ -109,11 +177,27 @@ void __init usb_musb_init(struct omap_musb_board_data *musb_board_data)
 	pdev = omap_device_build(name, bus_id, oh, &musb_plat,
 			       sizeof(musb_plat), NULL, 0, false);
 	if (IS_ERR(pdev)) {
+=======
+	oh = omap_hwmod_lookup(oh_name);
+	if (!oh) {
+		pr_err("Could not look up %s\n", oh_name);
+		return;
+	}
+
+	od = omap_device_build(name, bus_id, oh, &musb_plat,
+			       sizeof(musb_plat), omap_musb_latency,
+			       ARRAY_SIZE(omap_musb_latency), false);
+	if (IS_ERR(od)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_err("Could not build omap_device for %s %s\n",
 						name, oh_name);
 		return;
 	}
 
+<<<<<<< HEAD
+=======
+	pdev = &od->pdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev = &pdev->dev;
 	get_device(dev);
 	dev->dma_mask = &musb_dmamask;
@@ -123,3 +207,14 @@ void __init usb_musb_init(struct omap_musb_board_data *musb_board_data)
 	if (cpu_is_omap44xx())
 		omap4430_phy_init(dev);
 }
+<<<<<<< HEAD
+=======
+
+#else
+void __init usb_musb_init(struct omap_musb_board_data *board_data)
+{
+	if (cpu_is_omap44xx())
+		omap4430_phy_init(NULL);
+}
+#endif /* CONFIG_USB_MUSB_SOC */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

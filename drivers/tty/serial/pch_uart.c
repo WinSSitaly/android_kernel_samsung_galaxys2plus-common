@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  *Copyright (C) 2011 LAPIS Semiconductor Co., Ltd.
+=======
+ *Copyright (C) 2010 OKI SEMICONDUCTOR CO., LTD.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *This program is free software; you can redistribute it and/or modify
  *it under the terms of the GNU General Public License as published by
@@ -14,12 +18,16 @@
  *along with this program; if not, write to the Free Software
  *Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307, USA.
  */
+<<<<<<< HEAD
 #include <linux/kernel.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/serial_reg.h>
 #include <linux/slab.h>
 #include <linux/module.h>
 #include <linux/pci.h>
 #include <linux/serial_core.h>
+<<<<<<< HEAD
 #include <linux/tty.h>
 #include <linux/tty_flip.h>
 #include <linux/interrupt.h>
@@ -30,6 +38,12 @@
 #include <linux/delay.h>
 
 #include <linux/debugfs.h>
+=======
+#include <linux/interrupt.h>
+#include <linux/io.h>
+#include <linux/dmi.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/dmaengine.h>
 #include <linux/pch_dma.h>
 
@@ -50,8 +64,12 @@ enum {
 
 /* Set the max number of UART port
  * Intel EG20T PCH: 4 port
+<<<<<<< HEAD
  * LAPIS Semiconductor ML7213 IOH: 3 port
  * LAPIS Semiconductor ML7223 IOH: 2 port
+=======
+ * OKI SEMICONDUCTOR ML7213 IOH: 3 port
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 */
 #define PCH_UART_NR	4
 
@@ -145,7 +163,11 @@ enum {
 #define PCH_UART_DLL		0x00
 #define PCH_UART_DLM		0x01
 
+<<<<<<< HEAD
 #define PCH_UART_BRCSR		0x0E
+=======
+#define DIV_ROUND(a, b)	(((a) + ((b)/2)) / (b))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PCH_UART_IID_RLS	(PCH_UART_IIR_REI)
 #define PCH_UART_IID_RDR	(PCH_UART_IIR_RRI)
@@ -204,6 +226,7 @@ enum {
 
 #define PCI_VENDOR_ID_ROHM		0x10DB
 
+<<<<<<< HEAD
 #define BOTH_EMPTY (UART_LSR_TEMT | UART_LSR_THRE)
 
 #define DEFAULT_UARTCLK   1843200 /*   1.8432 MHz */
@@ -212,6 +235,8 @@ enum {
 #define FRI2_48_UARTCLK  48000000 /*  48.0000 MHz */
 #define NTC1_UARTCLK     64000000 /*  64.0000 MHz */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct pch_uart_buffer {
 	unsigned char *buf;
 	int size;
@@ -225,7 +250,11 @@ struct eg20t_port {
 	unsigned int iobase;
 	struct pci_dev *pdev;
 	int fifo_size;
+<<<<<<< HEAD
 	int uartclk;
+=======
+	int base_baud;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int start_tx;
 	int start_rx;
 	int tx_empty;
@@ -250,11 +279,14 @@ struct eg20t_port {
 	int				tx_dma_use;
 	void				*rx_buf_virt;
 	dma_addr_t			rx_buf_dma;
+<<<<<<< HEAD
 
 	struct dentry	*debugfs;
 
 	/* protect the eg20t_port private structure and io access to membase */
 	spinlock_t lock;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -295,16 +327,21 @@ static struct pch_uart_driver_data drv_dat[] = {
 	[pch_ml7831_uart1] = {PCH_UART_2LINE, 1},
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_SERIAL_PCH_UART_CONSOLE
 static struct eg20t_port *pch_uart_ports[PCH_UART_NR];
 #endif
 static unsigned int default_baud = 9600;
 static unsigned int user_uartclk = 0;
+=======
+static unsigned int default_baud = 9600;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const int trigger_level_256[4] = { 1, 64, 128, 224 };
 static const int trigger_level_64[4] = { 1, 16, 32, 56 };
 static const int trigger_level_16[4] = { 1, 4, 8, 14 };
 static const int trigger_level_1[4] = { 1, 1, 1, 1 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_DEBUG_FS
 
 #define PCH_REGS_BUFSIZE	1024
@@ -395,6 +432,23 @@ static int pch_uart_get_uartclk(void)
 		return NTC1_UARTCLK;
 
 	return DEFAULT_UARTCLK;
+=======
+static void pch_uart_hal_request(struct pci_dev *pdev, int fifosize,
+				 int base_baud)
+{
+	struct eg20t_port *priv = pci_get_drvdata(pdev);
+
+	priv->trigger_level = 1;
+	priv->fcr = 0;
+}
+
+static unsigned int get_msr(struct eg20t_port *priv, void __iomem *base)
+{
+	unsigned int msr = ioread8(base + UART_MSR);
+	priv->dmsr |= msr & PCH_UART_MSR_DELTA;
+
+	return msr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void pch_uart_hal_enable_interrupt(struct eg20t_port *priv,
@@ -420,7 +474,11 @@ static int pch_uart_hal_set_line(struct eg20t_port *priv, int baud,
 	unsigned int dll, dlm, lcr;
 	int div;
 
+<<<<<<< HEAD
 	div = DIV_ROUND_CLOSEST(priv->uartclk / 16, baud);
+=======
+	div = DIV_ROUND(priv->base_baud / 16, baud);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (div < 0 || USHRT_MAX <= div) {
 		dev_err(priv->port.dev, "Invalid Baud(div=0x%x)\n", div);
 		return -EINVAL;
@@ -530,9 +588,14 @@ static int pch_uart_hal_set_fifo(struct eg20t_port *priv,
 
 static u8 pch_uart_hal_get_modem(struct eg20t_port *priv)
 {
+<<<<<<< HEAD
 	unsigned int msr = ioread8(priv->membase + UART_MSR);
 	priv->dmsr = msr & PCH_UART_MSR_DELTA;
 	return (u8)msr;
+=======
+	priv->dmsr = 0;
+	return get_msr(priv, priv->membase);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void pch_uart_hal_write(struct eg20t_port *priv,
@@ -613,7 +676,11 @@ static int push_rx(struct eg20t_port *priv, const unsigned char *buf,
 
 static int pop_tx_x(struct eg20t_port *priv, unsigned char *buf)
 {
+<<<<<<< HEAD
 	int ret = 0;
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct uart_port *port = &priv->port;
 
 	if (port->x_char) {
@@ -622,6 +689,11 @@ static int pop_tx_x(struct eg20t_port *priv, unsigned char *buf)
 		buf[0] = port->x_char;
 		port->x_char = 0;
 		ret = 1;
+<<<<<<< HEAD
+=======
+	} else {
+		ret = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;
@@ -757,8 +829,12 @@ static void pch_dma_rx_complete(void *arg)
 		tty_flip_buffer_push(tty);
 	tty_kref_put(tty);
 	async_tx_ack(priv->desc_rx);
+<<<<<<< HEAD
 	pch_uart_hal_enable_interrupt(priv, PCH_UART_HAL_RX_INT |
 					    PCH_UART_HAL_RX_ERR_INT);
+=======
+	pch_uart_hal_enable_interrupt(priv, PCH_UART_HAL_RX_INT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void pch_dma_tx_complete(void *arg)
@@ -813,8 +889,12 @@ static int handle_rx_to(struct eg20t_port *priv)
 	int rx_size;
 	int ret;
 	if (!priv->start_rx) {
+<<<<<<< HEAD
 		pch_uart_hal_disable_interrupt(priv, PCH_UART_HAL_RX_INT |
 						     PCH_UART_HAL_RX_ERR_INT);
+=======
+		pch_uart_hal_disable_interrupt(priv, PCH_UART_HAL_RX_INT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 	buf = &priv->rxbuf;
@@ -852,8 +932,13 @@ static int dma_handle_rx(struct eg20t_port *priv)
 
 	sg_dma_address(sg) = priv->rx_buf_dma;
 
+<<<<<<< HEAD
 	desc = dmaengine_prep_slave_sg(priv->chan_rx,
 			sg, 1, DMA_DEV_TO_MEM,
+=======
+	desc = priv->chan_rx->device->device_prep_slave_sg(priv->chan_rx,
+			sg, 1, DMA_FROM_DEVICE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
 
 	if (!desc)
@@ -1011,8 +1096,13 @@ static unsigned int dma_handle_tx(struct eg20t_port *priv)
 			sg_dma_len(sg) = size;
 	}
 
+<<<<<<< HEAD
 	desc = dmaengine_prep_slave_sg(priv->chan_tx,
 					priv->sg_tx_p, nent, DMA_MEM_TO_DEV,
+=======
+	desc = priv->chan_tx->device->device_prep_slave_sg(priv->chan_tx,
+					priv->sg_tx_p, nent, DMA_TO_DEVICE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
 	if (!desc) {
 		dev_err(priv->port.dev, "%s:device_prep_slave_sg Failed\n",
@@ -1034,16 +1124,20 @@ static unsigned int dma_handle_tx(struct eg20t_port *priv)
 static void pch_uart_err_ir(struct eg20t_port *priv, unsigned int lsr)
 {
 	u8 fcr = ioread8(priv->membase + UART_FCR);
+<<<<<<< HEAD
 	struct uart_port *port = &priv->port;
 	struct tty_struct *tty = tty_port_tty_get(&port->state->port);
 	char   *error_msg[5] = {};
 	int    i = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Reset FIFO */
 	fcr |= UART_FCR_CLEAR_RCVR;
 	iowrite8(fcr, priv->membase + UART_FCR);
 
 	if (lsr & PCH_UART_LSR_ERR)
+<<<<<<< HEAD
 		error_msg[i++] = "Error data in FIFO\n";
 
 	if (lsr & UART_LSR_FE) {
@@ -1065,6 +1159,18 @@ static void pch_uart_err_ir(struct eg20t_port *priv, unsigned int lsr)
 		for (i = 0; error_msg[i] != NULL; i++)
 			dev_err(&priv->pdev->dev, error_msg[i]);
 	}
+=======
+		dev_err(&priv->pdev->dev, "Error data in FIFO\n");
+
+	if (lsr & UART_LSR_FE)
+		dev_err(&priv->pdev->dev, "Framing Error\n");
+
+	if (lsr & UART_LSR_PE)
+		dev_err(&priv->pdev->dev, "Parity Error\n");
+
+	if (lsr & UART_LSR_OE)
+		dev_err(&priv->pdev->dev, "Overrun Error\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static irqreturn_t pch_uart_interrupt(int irq, void *dev_id)
@@ -1076,7 +1182,11 @@ static irqreturn_t pch_uart_interrupt(int irq, void *dev_id)
 	unsigned int iid;
 	unsigned long flags;
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&priv->lock, flags);
+=======
+	spin_lock_irqsave(&priv->port.lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	handled = 0;
 	while ((iid = pch_uart_hal_get_iid(priv)) > 1) {
 		switch (iid) {
@@ -1091,6 +1201,7 @@ static irqreturn_t pch_uart_interrupt(int irq, void *dev_id)
 		case PCH_UART_IID_RDR:	/* Received Data Ready */
 			if (priv->use_dma) {
 				pch_uart_hal_disable_interrupt(priv,
+<<<<<<< HEAD
 						PCH_UART_HAL_RX_INT |
 						PCH_UART_HAL_RX_ERR_INT);
 				ret = dma_handle_rx(priv);
@@ -1098,6 +1209,13 @@ static irqreturn_t pch_uart_interrupt(int irq, void *dev_id)
 					pch_uart_hal_enable_interrupt(priv,
 						PCH_UART_HAL_RX_INT |
 						PCH_UART_HAL_RX_ERR_INT);
+=======
+							PCH_UART_HAL_RX_INT);
+				ret = dma_handle_rx(priv);
+				if (!ret)
+					pch_uart_hal_enable_interrupt(priv,
+							PCH_UART_HAL_RX_INT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else {
 				ret = handle_rx(priv);
 			}
@@ -1129,7 +1247,11 @@ static irqreturn_t pch_uart_interrupt(int irq, void *dev_id)
 			priv->int_dis_flag = 0;
 	}
 
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&priv->lock, flags);
+=======
+	spin_unlock_irqrestore(&priv->port.lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return IRQ_RETVAL(handled);
 }
 
@@ -1138,12 +1260,23 @@ static irqreturn_t pch_uart_interrupt(int irq, void *dev_id)
 static unsigned int pch_uart_tx_empty(struct uart_port *port)
 {
 	struct eg20t_port *priv;
+<<<<<<< HEAD
 
 	priv = container_of(port, struct eg20t_port, port);
 	if (priv->tx_empty)
 		return TIOCSER_TEMT;
 	else
 		return 0;
+=======
+	int ret;
+	priv = container_of(port, struct eg20t_port, port);
+	if (priv->tx_empty)
+		ret = TIOCSER_TEMT;
+	else
+		ret = 0;
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Returns the current state of modem control inputs. */
@@ -1221,8 +1354,12 @@ static void pch_uart_stop_rx(struct uart_port *port)
 	struct eg20t_port *priv;
 	priv = container_of(port, struct eg20t_port, port);
 	priv->start_rx = 0;
+<<<<<<< HEAD
 	pch_uart_hal_disable_interrupt(priv, PCH_UART_HAL_RX_INT |
 					     PCH_UART_HAL_RX_ERR_INT);
+=======
+	pch_uart_hal_disable_interrupt(priv, PCH_UART_HAL_RX_INT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	priv->int_dis_flag = 1;
 }
 
@@ -1241,9 +1378,15 @@ static void pch_uart_break_ctl(struct uart_port *port, int ctl)
 	unsigned long flags;
 
 	priv = container_of(port, struct eg20t_port, port);
+<<<<<<< HEAD
 	spin_lock_irqsave(&priv->lock, flags);
 	pch_uart_hal_set_break(priv, ctl);
 	spin_unlock_irqrestore(&priv->lock, flags);
+=======
+	spin_lock_irqsave(&port->lock, flags);
+	pch_uart_hal_set_break(priv, ctl);
+	spin_unlock_irqrestore(&port->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Grab any interrupt resources and initialise any low level driver state. */
@@ -1258,9 +1401,15 @@ static int pch_uart_startup(struct uart_port *port)
 	priv->tx_empty = 1;
 
 	if (port->uartclk)
+<<<<<<< HEAD
 		priv->uartclk = port->uartclk;
 	else
 		port->uartclk = priv->uartclk;
+=======
+		priv->base_baud = port->uartclk;
+	else
+		port->uartclk = priv->base_baud;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pch_uart_hal_disable_interrupt(priv, PCH_UART_HAL_ALL_INT);
 	ret = pch_uart_hal_set_line(priv, default_baud,
@@ -1278,7 +1427,10 @@ static int pch_uart_startup(struct uart_port *port)
 		break;
 	case 16:
 		fifo_size = PCH_UART_HAL_FIFO16;
+<<<<<<< HEAD
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case 1:
 	default:
 		fifo_size = PCH_UART_HAL_FIFO_DIS;
@@ -1316,8 +1468,12 @@ static int pch_uart_startup(struct uart_port *port)
 		pch_request_dma(port);
 
 	priv->start_rx = 1;
+<<<<<<< HEAD
 	pch_uart_hal_enable_interrupt(priv, PCH_UART_HAL_RX_INT |
 					    PCH_UART_HAL_RX_ERR_INT);
+=======
+	pch_uart_hal_enable_interrupt(priv, PCH_UART_HAL_RX_INT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uart_update_timeout(port, CS8, default_baud);
 
 	return 0;
@@ -1375,13 +1531,23 @@ static void pch_uart_set_termios(struct uart_port *port,
 		stb = PCH_UART_HAL_STB1;
 
 	if (termios->c_cflag & PARENB) {
+<<<<<<< HEAD
 		if (termios->c_cflag & PARODD)
+=======
+		if (!(termios->c_cflag & PARODD))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			parity = PCH_UART_HAL_PARITY_ODD;
 		else
 			parity = PCH_UART_HAL_PARITY_EVEN;
 
+<<<<<<< HEAD
 	} else
 		parity = PCH_UART_HAL_PARITY_NONE;
+=======
+	} else {
+		parity = PCH_UART_HAL_PARITY_NONE;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Only UART0 has auto hardware flow function */
 	if ((termios->c_cflag & CRTSCTS) && (priv->fifo_size == 256))
@@ -1393,8 +1559,12 @@ static void pch_uart_set_termios(struct uart_port *port,
 
 	baud = uart_get_baud_rate(port, termios, old, 0, port->uartclk / 16);
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&priv->lock, flags);
 	spin_lock(&port->lock);
+=======
+	spin_lock_irqsave(&port->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	uart_update_timeout(port, termios->c_cflag, baud);
 	rtn = pch_uart_hal_set_line(priv, baud, parity, bits, stb);
@@ -1407,8 +1577,12 @@ static void pch_uart_set_termios(struct uart_port *port,
 		tty_termios_encode_baud_rate(termios, baud, baud);
 
 out:
+<<<<<<< HEAD
 	spin_unlock(&port->lock);
 	spin_unlock_irqrestore(&priv->lock, flags);
+=======
+	spin_unlock_irqrestore(&port->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const char *pch_uart_type(struct uart_port *port)
@@ -1505,6 +1679,7 @@ static struct uart_ops pch_uart_ops = {
 	.verify_port = pch_uart_verify_port
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_SERIAL_PCH_UART_CONSOLE
 
 /*
@@ -1647,6 +1822,8 @@ static struct console pch_console = {
 #define PCH_CONSOLE	NULL
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct uart_driver pch_uart_driver = {
 	.owner = THIS_MODULE,
 	.driver_name = KBUILD_MODNAME,
@@ -1654,7 +1831,10 @@ static struct uart_driver pch_uart_driver = {
 	.major = 0,
 	.minor = 0,
 	.nr = PCH_UART_NR,
+<<<<<<< HEAD
 	.cons = PCH_CONSOLE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct eg20t_port *pch_uart_init_port(struct pci_dev *pdev,
@@ -1665,10 +1845,17 @@ static struct eg20t_port *pch_uart_init_port(struct pci_dev *pdev,
 	unsigned int iobase;
 	unsigned int mapbase;
 	unsigned char *rxbuf;
+<<<<<<< HEAD
 	int fifosize;
 	int port_type;
 	struct pch_uart_driver_data *board;
 	char name[32];	/* for debugfs file name */
+=======
+	int fifosize, base_baud;
+	int port_type;
+	struct pch_uart_driver_data *board;
+	const char *board_name;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	board = &drv_dat[id->driver_data];
 	port_type = board->port_type;
@@ -1681,6 +1868,16 @@ static struct eg20t_port *pch_uart_init_port(struct pci_dev *pdev,
 	if (!rxbuf)
 		goto init_port_free_txbuf;
 
+<<<<<<< HEAD
+=======
+	base_baud = 1843200; /* 1.8432MHz */
+
+	/* quirk for CM-iTC board */
+	board_name = dmi_get_system_info(DMI_BOARD_NAME);
+	if (board_name && strstr(board_name, "CM-iTC"))
+		base_baud = 192000000; /* 192.0MHz */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (port_type) {
 	case PORT_UNKNOWN:
 		fifosize = 256; /* EG20T/ML7213: UART0 */
@@ -1693,11 +1890,14 @@ static struct eg20t_port *pch_uart_init_port(struct pci_dev *pdev,
 		goto init_port_hal_free;
 	}
 
+<<<<<<< HEAD
 	pci_enable_msi(pdev);
 	pci_set_master(pdev);
 
 	spin_lock_init(&priv->lock);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iobase = pci_resource_start(pdev, 0);
 	mapbase = pci_resource_start(pdev, 1);
 	priv->mapbase = mapbase;
@@ -1708,7 +1908,11 @@ static struct eg20t_port *pch_uart_init_port(struct pci_dev *pdev,
 	priv->rxbuf.size = PAGE_SIZE;
 
 	priv->fifo_size = fifosize;
+<<<<<<< HEAD
 	priv->uartclk = pch_uart_get_uartclk();
+=======
+	priv->base_baud = base_baud;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	priv->port_type = PORT_MAX_8250 + port_type + 1;
 	priv->port.dev = &pdev->dev;
 	priv->port.iobase = iobase;
@@ -1725,16 +1929,22 @@ static struct eg20t_port *pch_uart_init_port(struct pci_dev *pdev,
 	spin_lock_init(&priv->port.lock);
 
 	pci_set_drvdata(pdev, priv);
+<<<<<<< HEAD
 	priv->trigger_level = 1;
 	priv->fcr = 0;
 
 #ifdef CONFIG_SERIAL_PCH_UART_CONSOLE
 	pch_uart_ports[board->line_no] = priv;
 #endif
+=======
+	pch_uart_hal_request(pdev, fifosize, base_baud);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = uart_add_one_port(&pch_uart_driver, &priv->port);
 	if (ret < 0)
 		goto init_port_hal_free;
 
+<<<<<<< HEAD
 #ifdef CONFIG_DEBUG_FS
 	snprintf(name, sizeof(name), "uart%d_regs", board->line_no);
 	priv->debugfs = debugfs_create_file(name, S_IFREG | S_IRUGO,
@@ -1747,6 +1957,11 @@ init_port_hal_free:
 #ifdef CONFIG_SERIAL_PCH_UART_CONSOLE
 	pch_uart_ports[board->line_no] = NULL;
 #endif
+=======
+	return priv;
+
+init_port_hal_free:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	free_page((unsigned long)rxbuf);
 init_port_free_txbuf:
 	kfree(priv);
@@ -1757,11 +1972,14 @@ init_port_alloc_err:
 
 static void pch_uart_exit_port(struct eg20t_port *priv)
 {
+<<<<<<< HEAD
 
 #ifdef CONFIG_DEBUG_FS
 	if (priv->debugfs)
 		debugfs_remove(priv->debugfs);
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uart_remove_one_port(&pch_uart_driver, &priv->port);
 	pci_set_drvdata(priv->pdev, NULL);
 	free_page((unsigned long)priv->rxbuf.buf);
@@ -1769,6 +1987,7 @@ static void pch_uart_exit_port(struct eg20t_port *priv)
 
 static void pch_uart_pci_remove(struct pci_dev *pdev)
 {
+<<<<<<< HEAD
 	struct eg20t_port *priv = pci_get_drvdata(pdev);
 
 	pci_disable_msi(pdev);
@@ -1776,6 +1995,11 @@ static void pch_uart_pci_remove(struct pci_dev *pdev)
 #ifdef CONFIG_SERIAL_PCH_UART_CONSOLE
 	pch_uart_ports[priv->port.line] = NULL;
 #endif
+=======
+	struct eg20t_port *priv;
+
+	priv = (struct eg20t_port *)pci_get_drvdata(pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pch_uart_exit_port(priv);
 	pci_disable_device(pdev);
 	kfree(priv);
@@ -1863,7 +2087,10 @@ static int __devinit pch_uart_pci_probe(struct pci_dev *pdev,
 	return ret;
 
 probe_disable_device:
+<<<<<<< HEAD
 	pci_disable_msi(pdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pci_disable_device(pdev);
 probe_error:
 	return ret;
@@ -1906,8 +2133,11 @@ module_exit(pch_uart_module_exit);
 MODULE_LICENSE("GPL v2");
 MODULE_DESCRIPTION("Intel EG20T PCH UART PCI Driver");
 module_param(default_baud, uint, S_IRUGO);
+<<<<<<< HEAD
 MODULE_PARM_DESC(default_baud,
                  "Default BAUD for initial driver state and console (default 9600)");
 module_param(user_uartclk, uint, S_IRUGO);
 MODULE_PARM_DESC(user_uartclk,
                  "Override UART default or board specific UART clock");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -98,8 +98,11 @@ struct sparc_trapf {
  */
 #ifndef __ASSEMBLY__
 
+<<<<<<< HEAD
 #include <linux/types.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct pt_regs {
 	unsigned long psr;
 	unsigned long pc;
@@ -165,7 +168,11 @@ struct sparc_stackf {
 #ifdef __KERNEL__
 
 #include <linux/threads.h>
+<<<<<<< HEAD
 #include <asm/switch_to.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int pt_regs_trap_type(struct pt_regs *regs)
 {
@@ -209,6 +216,7 @@ do {	current_thread_info()->syscall_noerror = 1; \
 #define instruction_pointer(regs) ((regs)->tpc)
 #define instruction_pointer_set(regs, val) ((regs)->tpc = (val))
 #define user_stack_pointer(regs) ((regs)->u_regs[UREG_FP])
+<<<<<<< HEAD
 static inline int is_syscall_success(struct pt_regs *regs)
 {
 	return !(regs->tstate & (TSTATE_XCARRY | TSTATE_ICARRY));
@@ -218,11 +226,18 @@ static inline long regs_return_value(struct pt_regs *regs)
 {
 	return regs->u_regs[UREG_I0];
 }
+=======
+#define regs_return_value(regs) ((regs)->u_regs[UREG_I0])
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SMP
 extern unsigned long profile_pc(struct pt_regs *);
 #else
 #define profile_pc(regs) instruction_pointer(regs)
 #endif
+<<<<<<< HEAD
+=======
+extern void show_regs(struct pt_regs *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* (__KERNEL__) */
 
 #else /* __ASSEMBLY__ */
@@ -241,7 +256,12 @@ extern unsigned long profile_pc(struct pt_regs *);
 #ifndef __ASSEMBLY__
 
 #ifdef __KERNEL__
+<<<<<<< HEAD
 #include <asm/switch_to.h>
+=======
+
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline bool pt_regs_is_syscall(struct pt_regs *regs)
 {
@@ -265,6 +285,10 @@ static inline bool pt_regs_clear_syscall(struct pt_regs *regs)
 #define instruction_pointer(regs) ((regs)->pc)
 #define user_stack_pointer(regs) ((regs)->u_regs[UREG_FP])
 unsigned long profile_pc(struct pt_regs *);
+<<<<<<< HEAD
+=======
+extern void show_regs(struct pt_regs *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* (__KERNEL__) */
 
 #else /* (!__ASSEMBLY__) */

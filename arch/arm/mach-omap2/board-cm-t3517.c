@@ -39,7 +39,11 @@
 #include <asm/mach/map.h>
 
 #include <plat/board.h>
+<<<<<<< HEAD
 #include "common.h"
+=======
+#include <plat/common.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/usb.h>
 #include <plat/nand.h>
 #include <plat/gpmc.h>
@@ -49,7 +53,10 @@
 #include "mux.h"
 #include "control.h"
 #include "common-board-devices.h"
+<<<<<<< HEAD
 #include "am35xx-emac.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if defined(CONFIG_LEDS_GPIO) || defined(CONFIG_LEDS_GPIO_MODULE)
 static struct gpio_led cm_t3517_leds[] = {
@@ -237,6 +244,10 @@ static struct mtd_partition cm_t3517_nand_partitions[] = {
 static struct omap_nand_platform_data cm_t3517_nand_data = {
 	.parts			= cm_t3517_nand_partitions,
 	.nr_parts		= ARRAY_SIZE(cm_t3517_nand_partitions),
+<<<<<<< HEAD
+=======
+	.dma_channel		= -1,	/* disable DMA in OMAP NAND driver */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.cs			= 0,
 };
 
@@ -252,6 +263,15 @@ static inline void cm_t3517_init_nand(void) {}
 static struct omap_board_config_kernel cm_t3517_config[] __initdata = {
 };
 
+<<<<<<< HEAD
+=======
+static void __init cm_t3517_init_early(void)
+{
+	omap2_init_common_infrastructure();
+	omap2_init_common_devices(NULL, NULL);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_OMAP_MUX
 static struct omap_board_mux board_mux[] __initdata = {
 	/* GPIO186 - Green LED */
@@ -284,7 +304,10 @@ static void __init cm_t3517_init(void)
 {
 	omap3_mux_init(board_mux, OMAP_PACKAGE_CBB);
 	omap_serial_init();
+<<<<<<< HEAD
 	omap_sdrc_init(NULL, NULL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap_board_config = cm_t3517_config;
 	omap_board_config_size = ARRAY_SIZE(cm_t3517_config);
 	cm_t3517_init_leds();
@@ -292,6 +315,7 @@ static void __init cm_t3517_init(void)
 	cm_t3517_init_rtc();
 	cm_t3517_init_usbh();
 	cm_t3517_init_hecc();
+<<<<<<< HEAD
 	am35xx_emac_init(AM35XX_DEFAULT_MDIO_FREQUENCY, 1);
 }
 
@@ -305,4 +329,16 @@ MACHINE_START(CM_T3517, "Compulab CM-T3517")
 	.init_machine	= cm_t3517_init,
 	.timer		= &omap3_timer,
 	.restart	= omap_prcm_restart,
+=======
+}
+
+MACHINE_START(CM_T3517, "Compulab CM-T3517")
+	.boot_params	= 0x80000100,
+	.reserve        = omap_reserve,
+	.map_io		= omap3_map_io,
+	.init_early	= cm_t3517_init_early,
+	.init_irq	= omap_init_irq,
+	.init_machine	= cm_t3517_init,
+	.timer		= &omap_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

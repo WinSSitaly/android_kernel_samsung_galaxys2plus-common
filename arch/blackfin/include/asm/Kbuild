@@ -1,5 +1,6 @@
 include include/asm-generic/Kbuild.asm
 
+<<<<<<< HEAD
 generic-y += auxvec.h
 generic-y += bitsperlong.h
 generic-y += bugs.h
@@ -44,6 +45,8 @@ generic-y += unaligned.h
 generic-y += user.h
 generic-y += xor.h
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 header-y += bfin_sport.h
 header-y += cachectl.h
 header-y += fixed_code.h

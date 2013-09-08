@@ -38,14 +38,24 @@ long compat_keyctl_instantiate_key_iov(
 
 	ret = compat_rw_copy_check_uvector(WRITE, _payload_iov, ioc,
 					   ARRAY_SIZE(iovstack),
+<<<<<<< HEAD
 					   iovstack, &iov, 1);
 	if (ret < 0)
 		goto err;
+=======
+					   iovstack, &iov);
+	if (ret < 0)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret == 0)
 		goto no_payload_free;
 
 	ret = keyctl_instantiate_key_common(id, iov, ioc, ret, ringid);
+<<<<<<< HEAD
 err:
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (iov != iovstack)
 		kfree(iov);
 	return ret;

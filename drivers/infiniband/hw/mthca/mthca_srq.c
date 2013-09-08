@@ -200,6 +200,10 @@ int mthca_alloc_srq(struct mthca_dev *dev, struct mthca_pd *pd,
 		    struct ib_srq_attr *attr, struct mthca_srq *srq)
 {
 	struct mthca_mailbox *mailbox;
+<<<<<<< HEAD
+=======
+	u8 status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ds;
 	int err;
 
@@ -265,12 +269,25 @@ int mthca_alloc_srq(struct mthca_dev *dev, struct mthca_pd *pd,
 	else
 		mthca_tavor_init_srq_context(dev, pd, srq, mailbox->buf);
 
+<<<<<<< HEAD
 	err = mthca_SW2HW_SRQ(dev, mailbox, srq->srqn);
+=======
+	err = mthca_SW2HW_SRQ(dev, mailbox, srq->srqn, &status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (err) {
 		mthca_warn(dev, "SW2HW_SRQ failed (%d)\n", err);
 		goto err_out_free_buf;
 	}
+<<<<<<< HEAD
+=======
+	if (status) {
+		mthca_warn(dev, "SW2HW_SRQ returned status 0x%02x\n",
+			   status);
+		err = -EINVAL;
+		goto err_out_free_buf;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irq(&dev->srq_table.lock);
 	if (mthca_array_set(&dev->srq_table.srq,
@@ -292,9 +309,17 @@ int mthca_alloc_srq(struct mthca_dev *dev, struct mthca_pd *pd,
 	return 0;
 
 err_out_free_srq:
+<<<<<<< HEAD
 	err = mthca_HW2SW_SRQ(dev, mailbox, srq->srqn);
 	if (err)
 		mthca_warn(dev, "HW2SW_SRQ failed (%d)\n", err);
+=======
+	err = mthca_HW2SW_SRQ(dev, mailbox, srq->srqn, &status);
+	if (err)
+		mthca_warn(dev, "HW2SW_SRQ failed (%d)\n", err);
+	else if (status)
+		mthca_warn(dev, "HW2SW_SRQ returned status 0x%02x\n", status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 err_out_free_buf:
 	if (!pd->ibpd.uobject)
@@ -331,6 +356,10 @@ void mthca_free_srq(struct mthca_dev *dev, struct mthca_srq *srq)
 {
 	struct mthca_mailbox *mailbox;
 	int err;
+<<<<<<< HEAD
+=======
+	u8 status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mailbox = mthca_alloc_mailbox(dev, GFP_KERNEL);
 	if (IS_ERR(mailbox)) {
@@ -338,9 +367,17 @@ void mthca_free_srq(struct mthca_dev *dev, struct mthca_srq *srq)
 		return;
 	}
 
+<<<<<<< HEAD
 	err = mthca_HW2SW_SRQ(dev, mailbox, srq->srqn);
 	if (err)
 		mthca_warn(dev, "HW2SW_SRQ failed (%d)\n", err);
+=======
+	err = mthca_HW2SW_SRQ(dev, mailbox, srq->srqn, &status);
+	if (err)
+		mthca_warn(dev, "HW2SW_SRQ failed (%d)\n", err);
+	else if (status)
+		mthca_warn(dev, "HW2SW_SRQ returned status 0x%02x\n", status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irq(&dev->srq_table.lock);
 	mthca_array_clear(&dev->srq_table.srq,
@@ -366,7 +403,12 @@ int mthca_modify_srq(struct ib_srq *ibsrq, struct ib_srq_attr *attr,
 {
 	struct mthca_dev *dev = to_mdev(ibsrq->device);
 	struct mthca_srq *srq = to_msrq(ibsrq);
+<<<<<<< HEAD
 	int ret = 0;
+=======
+	int ret;
+	u8 status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* We don't support resizing SRQs (yet?) */
 	if (attr_mask & IB_SRQ_MAX_WR)
@@ -378,11 +420,24 @@ int mthca_modify_srq(struct ib_srq *ibsrq, struct ib_srq_attr *attr,
 			return -EINVAL;
 
 		mutex_lock(&srq->mutex);
+<<<<<<< HEAD
 		ret = mthca_ARM_SRQ(dev, srq->srqn, attr->srq_limit);
 		mutex_unlock(&srq->mutex);
 	}
 
 	return ret;
+=======
+		ret = mthca_ARM_SRQ(dev, srq->srqn, attr->srq_limit, &status);
+		mutex_unlock(&srq->mutex);
+
+		if (ret)
+			return ret;
+		if (status)
+			return -EINVAL;
+	}
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int mthca_query_srq(struct ib_srq *ibsrq, struct ib_srq_attr *srq_attr)
@@ -392,13 +447,21 @@ int mthca_query_srq(struct ib_srq *ibsrq, struct ib_srq_attr *srq_attr)
 	struct mthca_mailbox *mailbox;
 	struct mthca_arbel_srq_context *arbel_ctx;
 	struct mthca_tavor_srq_context *tavor_ctx;
+<<<<<<< HEAD
+=======
+	u8 status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err;
 
 	mailbox = mthca_alloc_mailbox(dev, GFP_KERNEL);
 	if (IS_ERR(mailbox))
 		return PTR_ERR(mailbox);
 
+<<<<<<< HEAD
 	err = mthca_QUERY_SRQ(dev, srq->srqn, mailbox);
+=======
+	err = mthca_QUERY_SRQ(dev, srq->srqn, mailbox, &status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		goto out;
 

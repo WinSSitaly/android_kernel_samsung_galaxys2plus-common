@@ -16,7 +16,10 @@
 #include <linux/delay.h>
 #include <linux/pm.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/regmap.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/regulator/consumer.h>
 #include <linux/spi/spi.h>
 #include <linux/slab.h>
@@ -41,6 +44,7 @@ static const char *wm8993_supply_names[WM8993_NUM_SUPPLIES] = {
 	"SPKVDD",
 };
 
+<<<<<<< HEAD
 static struct reg_default wm8993_reg_defaults[] = {
 	{ 1,   0x0000 },     /* R1   - Power Management (1) */
 	{ 2,   0x6000 },     /* R2   - Power Management (2) */
@@ -148,6 +152,136 @@ static struct reg_default wm8993_reg_defaults[] = {
 	{ 124, 0x0000 },     /* R124 - DRC Control 2 */
 	{ 125, 0x0080 },     /* R125 - DRC Control 3 */
 	{ 126, 0x0000 },     /* R126 - DRC Control 4 */
+=======
+static u16 wm8993_reg_defaults[WM8993_REGISTER_COUNT] = {
+	0x8993,     /* R0   - Software Reset */
+	0x0000,     /* R1   - Power Management (1) */
+	0x6000,     /* R2   - Power Management (2) */
+	0x0000,     /* R3   - Power Management (3) */
+	0x4050,     /* R4   - Audio Interface (1) */
+	0x4000,     /* R5   - Audio Interface (2) */
+	0x01C8,     /* R6   - Clocking 1 */
+	0x0000,     /* R7   - Clocking 2 */
+	0x0000,     /* R8   - Audio Interface (3) */
+	0x0040,     /* R9   - Audio Interface (4) */
+	0x0004,     /* R10  - DAC CTRL */
+	0x00C0,     /* R11  - Left DAC Digital Volume */
+	0x00C0,     /* R12  - Right DAC Digital Volume */
+	0x0000,     /* R13  - Digital Side Tone */
+	0x0300,     /* R14  - ADC CTRL */
+	0x00C0,     /* R15  - Left ADC Digital Volume */
+	0x00C0,     /* R16  - Right ADC Digital Volume */
+	0x0000,     /* R17 */
+	0x0000,     /* R18  - GPIO CTRL 1 */
+	0x0010,     /* R19  - GPIO1 */
+	0x0000,     /* R20  - IRQ_DEBOUNCE */
+	0x0000,     /* R21 */
+	0x8000,     /* R22  - GPIOCTRL 2 */
+	0x0800,     /* R23  - GPIO_POL */
+	0x008B,     /* R24  - Left Line Input 1&2 Volume */
+	0x008B,     /* R25  - Left Line Input 3&4 Volume */
+	0x008B,     /* R26  - Right Line Input 1&2 Volume */
+	0x008B,     /* R27  - Right Line Input 3&4 Volume */
+	0x006D,     /* R28  - Left Output Volume */
+	0x006D,     /* R29  - Right Output Volume */
+	0x0066,     /* R30  - Line Outputs Volume */
+	0x0020,     /* R31  - HPOUT2 Volume */
+	0x0079,     /* R32  - Left OPGA Volume */
+	0x0079,     /* R33  - Right OPGA Volume */
+	0x0003,     /* R34  - SPKMIXL Attenuation */
+	0x0003,     /* R35  - SPKMIXR Attenuation */
+	0x0011,     /* R36  - SPKOUT Mixers */
+	0x0100,     /* R37  - SPKOUT Boost */
+	0x0079,     /* R38  - Speaker Volume Left */
+	0x0079,     /* R39  - Speaker Volume Right */
+	0x0000,     /* R40  - Input Mixer2 */
+	0x0000,     /* R41  - Input Mixer3 */
+	0x0000,     /* R42  - Input Mixer4 */
+	0x0000,     /* R43  - Input Mixer5 */
+	0x0000,     /* R44  - Input Mixer6 */
+	0x0000,     /* R45  - Output Mixer1 */
+	0x0000,     /* R46  - Output Mixer2 */
+	0x0000,     /* R47  - Output Mixer3 */
+	0x0000,     /* R48  - Output Mixer4 */
+	0x0000,     /* R49  - Output Mixer5 */
+	0x0000,     /* R50  - Output Mixer6 */
+	0x0000,     /* R51  - HPOUT2 Mixer */
+	0x0000,     /* R52  - Line Mixer1 */
+	0x0000,     /* R53  - Line Mixer2 */
+	0x0000,     /* R54  - Speaker Mixer */
+	0x0000,     /* R55  - Additional Control */
+	0x0000,     /* R56  - AntiPOP1 */
+	0x0000,     /* R57  - AntiPOP2 */
+	0x0000,     /* R58  - MICBIAS */
+	0x0000,     /* R59 */
+	0x0000,     /* R60  - FLL Control 1 */
+	0x0000,     /* R61  - FLL Control 2 */
+	0x0000,     /* R62  - FLL Control 3 */
+	0x2EE0,     /* R63  - FLL Control 4 */
+	0x0002,     /* R64  - FLL Control 5 */
+	0x2287,     /* R65  - Clocking 3 */
+	0x025F,     /* R66  - Clocking 4 */
+	0x0000,     /* R67  - MW Slave Control */
+	0x0000,     /* R68 */
+	0x0002,     /* R69  - Bus Control 1 */
+	0x0000,     /* R70  - Write Sequencer 0 */
+	0x0000,     /* R71  - Write Sequencer 1 */
+	0x0000,     /* R72  - Write Sequencer 2 */
+	0x0000,     /* R73  - Write Sequencer 3 */
+	0x0000,     /* R74  - Write Sequencer 4 */
+	0x0000,     /* R75  - Write Sequencer 5 */
+	0x1F25,     /* R76  - Charge Pump 1 */
+	0x0000,     /* R77 */
+	0x0000,     /* R78 */
+	0x0000,     /* R79 */
+	0x0000,     /* R80 */
+	0x0000,     /* R81  - Class W 0 */
+	0x0000,     /* R82 */
+	0x0000,     /* R83 */
+	0x0000,     /* R84  - DC Servo 0 */
+	0x054A,     /* R85  - DC Servo 1 */
+	0x0000,     /* R86 */
+	0x0000,     /* R87  - DC Servo 3 */
+	0x0000,     /* R88  - DC Servo Readback 0 */
+	0x0000,     /* R89  - DC Servo Readback 1 */
+	0x0000,     /* R90  - DC Servo Readback 2 */
+	0x0000,     /* R91 */
+	0x0000,     /* R92 */
+	0x0000,     /* R93 */
+	0x0000,     /* R94 */
+	0x0000,     /* R95 */
+	0x0100,     /* R96  - Analogue HP 0 */
+	0x0000,     /* R97 */
+	0x0000,     /* R98  - EQ1 */
+	0x000C,     /* R99  - EQ2 */
+	0x000C,     /* R100 - EQ3 */
+	0x000C,     /* R101 - EQ4 */
+	0x000C,     /* R102 - EQ5 */
+	0x000C,     /* R103 - EQ6 */
+	0x0FCA,     /* R104 - EQ7 */
+	0x0400,     /* R105 - EQ8 */
+	0x00D8,     /* R106 - EQ9 */
+	0x1EB5,     /* R107 - EQ10 */
+	0xF145,     /* R108 - EQ11 */
+	0x0B75,     /* R109 - EQ12 */
+	0x01C5,     /* R110 - EQ13 */
+	0x1C58,     /* R111 - EQ14 */
+	0xF373,     /* R112 - EQ15 */
+	0x0A54,     /* R113 - EQ16 */
+	0x0558,     /* R114 - EQ17 */
+	0x168E,     /* R115 - EQ18 */
+	0xF829,     /* R116 - EQ19 */
+	0x07AD,     /* R117 - EQ20 */
+	0x1103,     /* R118 - EQ21 */
+	0x0564,     /* R119 - EQ22 */
+	0x0559,     /* R120 - EQ23 */
+	0x4000,     /* R121 - EQ24 */
+	0x0000,     /* R122 - Digital Pulls */
+	0x0F08,     /* R123 - DRC Control 1 */
+	0x0000,     /* R124 - DRC Control 2 */
+	0x0080,     /* R125 - DRC Control 3 */
+	0x0000,     /* R126 - DRC Control 4 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct {
@@ -205,11 +339,17 @@ static struct {
 
 struct wm8993_priv {
 	struct wm_hubs_data hubs_data;
+<<<<<<< HEAD
 	struct device *dev;
 	struct regmap *regmap;
 	struct regulator_bulk_data supplies[WM8993_NUM_SUPPLIES];
 	struct wm8993_platform_data pdata;
 	struct completion fll_lock;
+=======
+	struct regulator_bulk_data supplies[WM8993_NUM_SUPPLIES];
+	struct wm8993_platform_data pdata;
+	enum snd_soc_control_type control_type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int master;
 	int sysclk_source;
 	int tdm_slots;
@@ -224,15 +364,23 @@ struct wm8993_priv {
 	int fll_src;
 };
 
+<<<<<<< HEAD
 static bool wm8993_volatile(struct device *dev, unsigned int reg)
 {
 	switch (reg) {
 	case WM8993_SOFTWARE_RESET:
 	case WM8993_GPIO_CTRL_1:
+=======
+static int wm8993_volatile(struct snd_soc_codec *codec, unsigned int reg)
+{
+	switch (reg) {
+	case WM8993_SOFTWARE_RESET:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case WM8993_DC_SERVO_0:
 	case WM8993_DC_SERVO_READBACK_0:
 	case WM8993_DC_SERVO_READBACK_1:
 	case WM8993_DC_SERVO_READBACK_2:
+<<<<<<< HEAD
 		return true;
 	default:
 		return false;
@@ -355,6 +503,11 @@ static bool wm8993_readable(struct device *dev, unsigned int reg)
 		return true;
 	default:
 		return false;
+=======
+		return 1;
+	default:
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -471,10 +624,15 @@ static int _wm8993_set_fll(struct snd_soc_codec *codec, int fll_id, int source,
 			  unsigned int Fref, unsigned int Fout)
 {
 	struct wm8993_priv *wm8993 = snd_soc_codec_get_drvdata(codec);
+<<<<<<< HEAD
 	struct i2c_client *i2c = to_i2c_client(codec->dev);
 	u16 reg1, reg4, reg5;
 	struct _fll_div fll_div;
 	unsigned int timeout;
+=======
+	u16 reg1, reg4, reg5;
+	struct _fll_div fll_div;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	/* Any change? */
@@ -545,6 +703,7 @@ static int _wm8993_set_fll(struct snd_soc_codec *codec, int fll_id, int source,
 	reg5 |= fll_div.fll_clk_ref_div << WM8993_FLL_CLK_REF_DIV_SHIFT;
 	snd_soc_write(codec, WM8993_FLL_CONTROL_5, reg5);
 
+<<<<<<< HEAD
 	/* If we've got an interrupt wired up make sure we get it */
 	if (i2c->irq)
 		timeout = msecs_to_jiffies(20);
@@ -562,6 +721,11 @@ static int _wm8993_set_fll(struct snd_soc_codec *codec, int fll_id, int source,
 	if (i2c->irq && !timeout)
 		dev_warn(codec->dev, "Timed out waiting for FLL\n");
 
+=======
+	/* Enable the FLL */
+	snd_soc_write(codec, WM8993_FLL_CONTROL_1, reg1 | WM8993_FLL_ENA);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_dbg(codec->dev, "FLL enabled at %dHz->%dHz\n", Fref, Fout);
 
 	wm8993->fll_fref = Fref;
@@ -630,7 +794,11 @@ static const DECLARE_TLV_DB_SCALE(drc_comp_threash, -4500, 75, 0);
 static const DECLARE_TLV_DB_SCALE(drc_comp_amp, -2250, 75, 0);
 static const DECLARE_TLV_DB_SCALE(drc_min_tlv, -1800, 600, 0);
 static const unsigned int drc_max_tlv[] = {
+<<<<<<< HEAD
 	TLV_DB_RANGE_HEAD(2),
+=======
+	TLV_DB_RANGE_HEAD(4),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	0, 2, TLV_DB_SCALE_ITEM(1200, 600, 0),
 	3, 3, TLV_DB_SCALE_ITEM(3600, 0, 0),
 };
@@ -965,7 +1133,10 @@ SND_SOC_DAPM_SUPPLY("CLK_SYS", WM8993_BUS_CONTROL_1, 1, 0, clk_sys_event,
 		    SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD),
 SND_SOC_DAPM_SUPPLY("TOCLK", WM8993_CLOCKING_1, 14, 0, NULL, 0),
 SND_SOC_DAPM_SUPPLY("CLK_DSP", WM8993_CLOCKING_3, 0, 0, NULL, 0),
+<<<<<<< HEAD
 SND_SOC_DAPM_SUPPLY("VMID", SND_SOC_NOPM, 0, 0, NULL, 0),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 SND_SOC_DAPM_ADC("ADCL", NULL, WM8993_POWER_MANAGEMENT_2, 1, 0),
 SND_SOC_DAPM_ADC("ADCR", NULL, WM8993_POWER_MANAGEMENT_2, 0, 0),
@@ -995,6 +1166,7 @@ SND_SOC_DAPM_MIXER("SPKL", WM8993_POWER_MANAGEMENT_3, 8, 0,
 		   left_speaker_mixer, ARRAY_SIZE(left_speaker_mixer)),
 SND_SOC_DAPM_MIXER("SPKR", WM8993_POWER_MANAGEMENT_3, 9, 0,
 		   right_speaker_mixer, ARRAY_SIZE(right_speaker_mixer)),
+<<<<<<< HEAD
 SND_SOC_DAPM_PGA("Direct Voice", SND_SOC_NOPM, 0, 0, NULL, 0),
 };
 
@@ -1002,6 +1174,12 @@ static const struct snd_soc_dapm_route routes[] = {
 	{ "MICBIAS1", NULL, "VMID" },
 	{ "MICBIAS2", NULL, "VMID" },
 
+=======
+
+};
+
+static const struct snd_soc_dapm_route routes[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ "ADCL", NULL, "CLK_SYS" },
 	{ "ADCL", NULL, "CLK_DSP" },
 	{ "ADCR", NULL, "CLK_SYS" },
@@ -1052,14 +1230,42 @@ static const struct snd_soc_dapm_route routes[] = {
 	{ "Right Headphone Mux", "DAC", "DACR" },
 };
 
+<<<<<<< HEAD
+=======
+static void wm8993_cache_restore(struct snd_soc_codec *codec)
+{
+	u16 *cache = codec->reg_cache;
+	int i;
+
+	if (!codec->cache_sync)
+		return;
+
+	/* Reenable hardware writes */
+	codec->cache_only = 0;
+
+	/* Restore the register settings */
+	for (i = 1; i < WM8993_MAX_REGISTER; i++) {
+		if (cache[i] == wm8993_reg_defaults[i])
+			continue;
+		snd_soc_write(codec, i, cache[i]);
+	}
+
+	/* We're in sync again */
+	codec->cache_sync = 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int wm8993_set_bias_level(struct snd_soc_codec *codec,
 				 enum snd_soc_bias_level level)
 {
 	struct wm8993_priv *wm8993 = snd_soc_codec_get_drvdata(codec);
 	int ret;
 
+<<<<<<< HEAD
 	wm_hubs_set_bias_level(codec, level);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (level) {
 	case SND_SOC_BIAS_ON:
 	case SND_SOC_BIAS_PREPARE:
@@ -1077,10 +1283,19 @@ static int wm8993_set_bias_level(struct snd_soc_codec *codec,
 			if (ret != 0)
 				return ret;
 
+<<<<<<< HEAD
 			regcache_cache_only(wm8993->regmap, false);
 			regcache_sync(wm8993->regmap);
 
 			wm_hubs_vmid_ena(codec);
+=======
+			wm8993_cache_restore(codec);
+
+			/* Tune DC servo configuration */
+			snd_soc_write(codec, 0x44, 3);
+			snd_soc_write(codec, 0x56, 3);
+			snd_soc_write(codec, 0x44, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* Bring up VMID with fast soft start */
 			snd_soc_update_bits(codec, WM8993_ANTIPOP2,
@@ -1136,8 +1351,19 @@ static int wm8993_set_bias_level(struct snd_soc_codec *codec,
 				    WM8993_VMID_RAMP_MASK |
 				    WM8993_BIAS_SRC, 0);
 
+<<<<<<< HEAD
 		regcache_cache_only(wm8993->regmap, true);
 		regcache_mark_dirty(wm8993->regmap);
+=======
+#ifdef CONFIG_REGULATOR
+               /* Post 2.6.34 we will be able to get a callback when
+                * the regulators are disabled which we can use but
+		* for now just assume that the power will be cut if
+		* the regulator API is in use.
+		*/
+		codec->cache_sync = 1;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		regulator_bulk_disable(ARRAY_SIZE(wm8993->supplies),
 				       wm8993->supplies);
@@ -1484,6 +1710,7 @@ out:
 	return 0;
 }
 
+<<<<<<< HEAD
 static irqreturn_t wm8993_irq(int irq, void *data)
 {
 	struct wm8993_priv *wm8993 = data;
@@ -1524,6 +1751,9 @@ static irqreturn_t wm8993_irq(int irq, void *data)
 }
 
 static const struct snd_soc_dai_ops wm8993_ops = {
+=======
+static struct snd_soc_dai_ops wm8993_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.set_sysclk = wm8993_set_sysclk,
 	.set_fmt = wm8993_set_dai_fmt,
 	.hw_params = wm8993_hw_params,
@@ -1547,7 +1777,10 @@ static struct snd_soc_dai_driver wm8993_dai = {
 		.channels_max = 2,
 		.rates = WM8993_RATES,
 		.formats = WM8993_FORMATS,
+<<<<<<< HEAD
 		.sig_bits = 24,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.capture = {
 		 .stream_name = "Capture",
@@ -1555,7 +1788,10 @@ static struct snd_soc_dai_driver wm8993_dai = {
 		 .channels_max = 2,
 		 .rates = WM8993_RATES,
 		 .formats = WM8993_FORMATS,
+<<<<<<< HEAD
 		 .sig_bits = 24,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 },
 	.ops = &wm8993_ops,
 	.symmetric_rates = 1,
@@ -1565,6 +1801,7 @@ static int wm8993_probe(struct snd_soc_codec *codec)
 {
 	struct wm8993_priv *wm8993 = snd_soc_codec_get_drvdata(codec);
 	struct snd_soc_dapm_context *dapm = &codec->dapm;
+<<<<<<< HEAD
 	int ret;
 
 	wm8993->hubs_data.hp_startup_mode = 1;
@@ -1574,11 +1811,52 @@ static int wm8993_probe(struct snd_soc_codec *codec)
 
 	codec->control_data = wm8993->regmap;
 	ret = snd_soc_codec_set_cache_io(codec, 8, 16, SND_SOC_REGMAP);
+=======
+	int ret, i, val;
+
+	wm8993->hubs_data.hp_startup_mode = 1;
+	wm8993->hubs_data.dcs_codes = -2;
+
+	ret = snd_soc_codec_set_cache_io(codec, 8, 16, SND_SOC_I2C);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret != 0) {
 		dev_err(codec->dev, "Failed to set cache I/O: %d\n", ret);
 		return ret;
 	}
 
+<<<<<<< HEAD
+=======
+	for (i = 0; i < ARRAY_SIZE(wm8993->supplies); i++)
+		wm8993->supplies[i].supply = wm8993_supply_names[i];
+
+	ret = regulator_bulk_get(codec->dev, ARRAY_SIZE(wm8993->supplies),
+				 wm8993->supplies);
+	if (ret != 0) {
+		dev_err(codec->dev, "Failed to request supplies: %d\n", ret);
+		return ret;
+	}
+
+	ret = regulator_bulk_enable(ARRAY_SIZE(wm8993->supplies),
+				    wm8993->supplies);
+	if (ret != 0) {
+		dev_err(codec->dev, "Failed to enable supplies: %d\n", ret);
+		goto err_get;
+	}
+
+	val = snd_soc_read(codec, WM8993_SOFTWARE_RESET);
+	if (val != wm8993_reg_defaults[WM8993_SOFTWARE_RESET]) {
+		dev_err(codec->dev, "Invalid ID register value %x\n", val);
+		ret = -EINVAL;
+		goto err_enable;
+	}
+
+	ret = snd_soc_write(codec, WM8993_SOFTWARE_RESET, 0xffff);
+	if (ret != 0)
+		goto err_enable;
+
+	codec->cache_only = 1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* By default we're using the output mixers */
 	wm8993->class_w_users = 2;
 
@@ -1607,15 +1885,25 @@ static int wm8993_probe(struct snd_soc_codec *codec)
 
 	ret = wm8993_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
 	if (ret != 0)
+<<<<<<< HEAD
 		return ret;
 
 	snd_soc_add_codec_controls(codec, wm8993_snd_controls,
+=======
+		goto err_enable;
+
+	snd_soc_add_controls(codec, wm8993_snd_controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     ARRAY_SIZE(wm8993_snd_controls));
 	if (wm8993->pdata.num_retune_configs != 0) {
 		dev_dbg(codec->dev, "Using ReTune Mobile\n");
 	} else {
 		dev_dbg(codec->dev, "No ReTune Mobile, using normal EQ\n");
+<<<<<<< HEAD
 		snd_soc_add_codec_controls(codec, wm8993_eq_controls,
+=======
+		snd_soc_add_controls(codec, wm8993_eq_controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     ARRAY_SIZE(wm8993_eq_controls));
 	}
 
@@ -1627,6 +1915,7 @@ static int wm8993_probe(struct snd_soc_codec *codec)
 	wm_hubs_add_analogue_routes(codec, wm8993->pdata.lineout1_diff,
 				    wm8993->pdata.lineout2_diff);
 
+<<<<<<< HEAD
 	/* If the line outputs are differential then we aren't presenting
 	 * VMID as an output and can disable it.
 	 */
@@ -1635,6 +1924,15 @@ static int wm8993_probe(struct snd_soc_codec *codec)
 
 	return 0;
 
+=======
+	return 0;
+
+err_enable:
+	regulator_bulk_disable(ARRAY_SIZE(wm8993->supplies), wm8993->supplies);
+err_get:
+	regulator_bulk_free(ARRAY_SIZE(wm8993->supplies), wm8993->supplies);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int wm8993_remove(struct snd_soc_codec *codec)
@@ -1647,7 +1945,11 @@ static int wm8993_remove(struct snd_soc_codec *codec)
 }
 
 #ifdef CONFIG_PM
+<<<<<<< HEAD
 static int wm8993_suspend(struct snd_soc_codec *codec)
+=======
+static int wm8993_suspend(struct snd_soc_codec *codec, pm_message_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct wm8993_priv *wm8993 = snd_soc_codec_get_drvdata(codec);
 	int fll_fout = wm8993->fll_fout;
@@ -1697,6 +1999,7 @@ static int wm8993_resume(struct snd_soc_codec *codec)
 #define wm8993_resume NULL
 #endif
 
+<<<<<<< HEAD
 /* Tune DC servo configuration */
 static struct reg_default wm8993_regmap_patch[] = {
 	{ 0x44, 3 },
@@ -1717,18 +2020,31 @@ static const struct regmap_config wm8993_regmap = {
 	.num_reg_defaults = ARRAY_SIZE(wm8993_reg_defaults),
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct snd_soc_codec_driver soc_codec_dev_wm8993 = {
 	.probe = 	wm8993_probe,
 	.remove = 	wm8993_remove,
 	.suspend =	wm8993_suspend,
 	.resume =	wm8993_resume,
 	.set_bias_level = wm8993_set_bias_level,
+<<<<<<< HEAD
 };
 
+=======
+	.reg_cache_size = ARRAY_SIZE(wm8993_reg_defaults),
+	.reg_word_size = sizeof(u16),
+	.reg_cache_default = wm8993_reg_defaults,
+	.volatile_register = wm8993_volatile,
+};
+
+#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __devinit int wm8993_i2c_probe(struct i2c_client *i2c,
 				      const struct i2c_device_id *id)
 {
 	struct wm8993_priv *wm8993;
+<<<<<<< HEAD
 	unsigned int reg;
 	int ret, i;
 
@@ -1840,6 +2156,27 @@ static __devexit int wm8993_i2c_remove(struct i2c_client *i2c)
 	regulator_bulk_disable(ARRAY_SIZE(wm8993->supplies), wm8993->supplies);
 	regulator_bulk_free(ARRAY_SIZE(wm8993->supplies), wm8993->supplies);
 
+=======
+	int ret;
+
+	wm8993 = kzalloc(sizeof(struct wm8993_priv), GFP_KERNEL);
+	if (wm8993 == NULL)
+		return -ENOMEM;
+
+	i2c_set_clientdata(i2c, wm8993);
+
+	ret = snd_soc_register_codec(&i2c->dev,
+			&soc_codec_dev_wm8993, &wm8993_dai, 1);
+	if (ret < 0)
+		kfree(wm8993);
+	return ret;
+}
+
+static __devexit int wm8993_i2c_remove(struct i2c_client *client)
+{
+	snd_soc_unregister_codec(&client->dev);
+	kfree(i2c_get_clientdata(client));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1851,15 +2188,46 @@ MODULE_DEVICE_TABLE(i2c, wm8993_i2c_id);
 
 static struct i2c_driver wm8993_i2c_driver = {
 	.driver = {
+<<<<<<< HEAD
 		.name = "wm8993",
+=======
+		.name = "wm8993-codec",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.owner = THIS_MODULE,
 	},
 	.probe =    wm8993_i2c_probe,
 	.remove =   __devexit_p(wm8993_i2c_remove),
 	.id_table = wm8993_i2c_id,
 };
+<<<<<<< HEAD
 
 module_i2c_driver(wm8993_i2c_driver);
+=======
+#endif
+
+static int __init wm8993_modinit(void)
+{
+	int ret = 0;
+#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
+	ret = i2c_add_driver(&wm8993_i2c_driver);
+	if (ret != 0) {
+		pr_err("WM8993: Unable to register I2C driver: %d\n",
+		       ret);
+	}
+#endif
+	return ret;
+}
+module_init(wm8993_modinit);
+
+static void __exit wm8993_exit(void)
+{
+#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
+	i2c_del_driver(&wm8993_i2c_driver);
+#endif
+}
+module_exit(wm8993_exit);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("ASoC WM8993 driver");
 MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");

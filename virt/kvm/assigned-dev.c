@@ -17,8 +17,11 @@
 #include <linux/pci.h>
 #include <linux/interrupt.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/namei.h>
 #include <linux/fs.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "irq.h"
 
 static struct kvm_assigned_dev_kernel *kvm_find_assigned_dev(struct list_head *head,
@@ -49,12 +52,20 @@ static int find_index_from_host_irq(struct kvm_assigned_dev_kernel
 			index = i;
 			break;
 		}
+<<<<<<< HEAD
 	if (index < 0)
 		printk(KERN_WARNING "Fail to find correlated MSI-X entry!\n");
+=======
+	if (index < 0) {
+		printk(KERN_WARNING "Fail to find correlated MSI-X entry!\n");
+		return 0;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return index;
 }
 
+<<<<<<< HEAD
 static irqreturn_t kvm_assigned_dev_intx(int irq, void *dev_id)
 {
 	struct kvm_assigned_dev_kernel *assigned_dev = dev_id;
@@ -100,10 +111,37 @@ static irqreturn_t kvm_assigned_dev_thread_intx(int irq, void *dev_id)
 
 	kvm_assigned_dev_raise_guest_irq(assigned_dev,
 					 assigned_dev->guest_irq);
+=======
+static irqreturn_t kvm_assigned_dev_thread(int irq, void *dev_id)
+{
+	struct kvm_assigned_dev_kernel *assigned_dev = dev_id;
+	u32 vector;
+	int index;
+
+	if (assigned_dev->irq_requested_type & KVM_DEV_IRQ_HOST_INTX) {
+		spin_lock(&assigned_dev->intx_lock);
+		disable_irq_nosync(irq);
+		assigned_dev->host_irq_disabled = true;
+		spin_unlock(&assigned_dev->intx_lock);
+	}
+
+	if (assigned_dev->irq_requested_type & KVM_DEV_IRQ_HOST_MSIX) {
+		index = find_index_from_host_irq(assigned_dev, irq);
+		if (index >= 0) {
+			vector = assigned_dev->
+					guest_msix_entries[index].vector;
+			kvm_set_irq(assigned_dev->kvm,
+				    assigned_dev->irq_source_id, vector, 1);
+		}
+	} else
+		kvm_set_irq(assigned_dev->kvm, assigned_dev->irq_source_id,
+			    assigned_dev->guest_irq, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
 #ifdef __KVM_HAVE_MSI
 static irqreturn_t kvm_assigned_dev_thread_msi(int irq, void *dev_id)
 {
@@ -166,14 +204,43 @@ static void kvm_assigned_dev_ack_irq(struct kvm_irq_ack_notifier *kian)
 	}
 
 	spin_unlock(&dev->intx_mask_lock);
+=======
+/* Ack the irq line for an assigned device */
+static void kvm_assigned_dev_ack_irq(struct kvm_irq_ack_notifier *kian)
+{
+	struct kvm_assigned_dev_kernel *dev;
+
+	if (kian->gsi == -1)
+		return;
+
+	dev = container_of(kian, struct kvm_assigned_dev_kernel,
+			   ack_notifier);
+
+	kvm_set_irq(dev->kvm, dev->irq_source_id, dev->guest_irq, 0);
+
+	/* The guest irq may be shared so this ack may be
+	 * from another device.
+	 */
+	spin_lock(&dev->intx_lock);
+	if (dev->host_irq_disabled) {
+		enable_irq(dev->host_irq);
+		dev->host_irq_disabled = false;
+	}
+	spin_unlock(&dev->intx_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void deassign_guest_irq(struct kvm *kvm,
 			       struct kvm_assigned_dev_kernel *assigned_dev)
 {
+<<<<<<< HEAD
 	if (assigned_dev->ack_notifier.gsi != -1)
 		kvm_unregister_irq_ack_notifier(kvm,
 						&assigned_dev->ack_notifier);
+=======
+	kvm_unregister_irq_ack_notifier(kvm, &assigned_dev->ack_notifier);
+	assigned_dev->ack_notifier.gsi = -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kvm_set_irq(assigned_dev->kvm, assigned_dev->irq_source_id,
 		    assigned_dev->guest_irq, 0);
@@ -205,7 +272,11 @@ static void deassign_host_irq(struct kvm *kvm,
 
 		for (i = 0; i < assigned_dev->entries_nr; i++)
 			free_irq(assigned_dev->host_msix_entries[i].vector,
+<<<<<<< HEAD
 				 assigned_dev);
+=======
+				 (void *)assigned_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		assigned_dev->entries_nr = 0;
 		kfree(assigned_dev->host_msix_entries);
@@ -213,6 +284,7 @@ static void deassign_host_irq(struct kvm *kvm,
 		pci_disable_msix(assigned_dev->dev);
 	} else {
 		/* Deal with MSI and INTx */
+<<<<<<< HEAD
 		if ((assigned_dev->irq_requested_type &
 		     KVM_DEV_IRQ_HOST_INTX) &&
 		    (assigned_dev->flags & KVM_DEV_ASSIGN_PCI_2_3)) {
@@ -224,6 +296,11 @@ static void deassign_host_irq(struct kvm *kvm,
 			disable_irq(assigned_dev->host_irq);
 
 		free_irq(assigned_dev->host_irq, assigned_dev);
+=======
+		disable_irq(assigned_dev->host_irq);
+
+		free_irq(assigned_dev->host_irq, (void *)assigned_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (assigned_dev->irq_requested_type & KVM_DEV_IRQ_HOST_MSI)
 			pci_disable_msi(assigned_dev->dev);
@@ -275,8 +352,11 @@ static void kvm_free_assigned_device(struct kvm *kvm,
 	else
 		pci_restore_state(assigned_dev->dev);
 
+<<<<<<< HEAD
 	assigned_dev->dev->dev_flags &= ~PCI_DEV_FLAGS_ASSIGNED;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pci_release_regions(assigned_dev->dev);
 	pci_disable_device(assigned_dev->dev);
 	pci_dev_put(assigned_dev->dev);
@@ -302,6 +382,7 @@ void kvm_free_all_assigned_devices(struct kvm *kvm)
 static int assigned_device_enable_host_intx(struct kvm *kvm,
 					    struct kvm_assigned_dev_kernel *dev)
 {
+<<<<<<< HEAD
 	irq_handler_t irq_handler;
 	unsigned long flags;
 
@@ -330,6 +411,17 @@ static int assigned_device_enable_host_intx(struct kvm *kvm,
 		pci_intx(dev->dev, true);
 		spin_unlock_irq(&dev->intx_lock);
 	}
+=======
+	dev->host_irq = dev->dev->irq;
+	/* Even though this is PCI, we don't want to use shared
+	 * interrupts. Sharing host devices with guest-assigned devices
+	 * on the same interrupt line is not a happy situation: there
+	 * are going to be long delays in accepting, acking, etc.
+	 */
+	if (request_threaded_irq(dev->host_irq, NULL, kvm_assigned_dev_thread,
+				 IRQF_ONESHOT, dev->irq_name, (void *)dev))
+		return -EIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -346,9 +438,14 @@ static int assigned_device_enable_host_msi(struct kvm *kvm,
 	}
 
 	dev->host_irq = dev->dev->irq;
+<<<<<<< HEAD
 	if (request_threaded_irq(dev->host_irq, NULL,
 				 kvm_assigned_dev_thread_msi, 0,
 				 dev->irq_name, dev)) {
+=======
+	if (request_threaded_irq(dev->host_irq, NULL, kvm_assigned_dev_thread,
+				 0, dev->irq_name, (void *)dev)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pci_disable_msi(dev->dev);
 		return -EIO;
 	}
@@ -374,8 +471,13 @@ static int assigned_device_enable_host_msix(struct kvm *kvm,
 
 	for (i = 0; i < dev->entries_nr; i++) {
 		r = request_threaded_irq(dev->host_msix_entries[i].vector,
+<<<<<<< HEAD
 					 NULL, kvm_assigned_dev_thread_msix,
 					 0, dev->irq_name, dev);
+=======
+					 NULL, kvm_assigned_dev_thread,
+					 0, dev->irq_name, (void *)dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (r)
 			goto err;
 	}
@@ -383,7 +485,11 @@ static int assigned_device_enable_host_msix(struct kvm *kvm,
 	return 0;
 err:
 	for (i -= 1; i >= 0; i--)
+<<<<<<< HEAD
 		free_irq(dev->host_msix_entries[i].vector, dev);
+=======
+		free_irq(dev->host_msix_entries[i].vector, (void *)dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pci_disable_msix(dev->dev);
 	return r;
 }
@@ -406,6 +512,10 @@ static int assigned_device_enable_guest_msi(struct kvm *kvm,
 {
 	dev->guest_irq = irq->guest_irq;
 	dev->ack_notifier.gsi = -1;
+<<<<<<< HEAD
+=======
+	dev->host_irq_disabled = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 #endif
@@ -417,6 +527,10 @@ static int assigned_device_enable_guest_msix(struct kvm *kvm,
 {
 	dev->guest_irq = irq->guest_irq;
 	dev->ack_notifier.gsi = -1;
+<<<<<<< HEAD
+=======
+	dev->host_irq_disabled = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 #endif
@@ -450,7 +564,10 @@ static int assign_host_irq(struct kvm *kvm,
 	default:
 		r = -EINVAL;
 	}
+<<<<<<< HEAD
 	dev->host_irq_disabled = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!r)
 		dev->irq_requested_type |= host_irq_type;
@@ -495,8 +612,12 @@ static int assign_guest_irq(struct kvm *kvm,
 
 	if (!r) {
 		dev->irq_requested_type |= guest_irq_type;
+<<<<<<< HEAD
 		if (dev->ack_notifier.gsi != -1)
 			kvm_register_irq_ack_notifier(kvm, &dev->ack_notifier);
+=======
+		kvm_register_irq_ack_notifier(kvm, &dev->ack_notifier);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		kvm_free_irq_source_id(kvm, dev->irq_source_id);
 
@@ -552,7 +673,10 @@ static int kvm_vm_ioctl_deassign_dev_irq(struct kvm *kvm,
 {
 	int r = -ENODEV;
 	struct kvm_assigned_dev_kernel *match;
+<<<<<<< HEAD
 	unsigned long irq_type;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&kvm->lock);
 
@@ -561,14 +685,19 @@ static int kvm_vm_ioctl_deassign_dev_irq(struct kvm *kvm,
 	if (!match)
 		goto out;
 
+<<<<<<< HEAD
 	irq_type = assigned_irq->flags & (KVM_DEV_IRQ_HOST_MASK |
 					  KVM_DEV_IRQ_GUEST_MASK);
 	r = kvm_deassign_irq(kvm, match, irq_type);
+=======
+	r = kvm_deassign_irq(kvm, match, assigned_irq->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	mutex_unlock(&kvm->lock);
 	return r;
 }
 
+<<<<<<< HEAD
 /*
  * We want to test whether the caller has been granted permissions to
  * use this device.  To be able to configure and control the device,
@@ -629,16 +758,21 @@ static int probe_sysfs_permissions(struct pci_dev *dev)
 #endif
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int kvm_vm_ioctl_assign_device(struct kvm *kvm,
 				      struct kvm_assigned_pci_dev *assigned_dev)
 {
 	int r = 0, idx;
 	struct kvm_assigned_dev_kernel *match;
 	struct pci_dev *dev;
+<<<<<<< HEAD
 	u8 header_type;
 
 	if (!(assigned_dev->flags & KVM_DEV_ASSIGN_ENABLE_IOMMU))
 		return -EINVAL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&kvm->lock);
 	idx = srcu_read_lock(&kvm->srcu);
@@ -666,6 +800,7 @@ static int kvm_vm_ioctl_assign_device(struct kvm *kvm,
 		r = -EINVAL;
 		goto out_free;
 	}
+<<<<<<< HEAD
 
 	/* Don't allow bridges to be assigned */
 	pci_read_config_byte(dev, PCI_HEADER_TYPE, &header_type);
@@ -678,6 +813,8 @@ static int kvm_vm_ioctl_assign_device(struct kvm *kvm,
 	if (r)
 		goto out_put;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pci_enable_device(dev)) {
 		printk(KERN_INFO "%s: Could not enable PCI device\n", __func__);
 		r = -EBUSY;
@@ -696,10 +833,13 @@ static int kvm_vm_ioctl_assign_device(struct kvm *kvm,
 	if (!match->pci_saved_state)
 		printk(KERN_DEBUG "%s: Couldn't store %s saved state\n",
 		       __func__, dev_name(&dev->dev));
+<<<<<<< HEAD
 
 	if (!pci_intx_mask_supported(dev))
 		assigned_dev->flags &= ~KVM_DEV_ASSIGN_PCI_2_3;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	match->assigned_dev_id = assigned_dev->assigned_dev_id;
 	match->host_segnr = assigned_dev->segnr;
 	match->host_busnr = assigned_dev->busnr;
@@ -707,13 +847,17 @@ static int kvm_vm_ioctl_assign_device(struct kvm *kvm,
 	match->flags = assigned_dev->flags;
 	match->dev = dev;
 	spin_lock_init(&match->intx_lock);
+<<<<<<< HEAD
 	spin_lock_init(&match->intx_mask_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	match->irq_source_id = -1;
 	match->kvm = kvm;
 	match->ack_notifier.irq_acked = kvm_assigned_dev_ack_irq;
 
 	list_add(&match->list, &kvm->arch.assigned_dev_head);
 
+<<<<<<< HEAD
 	if (!kvm->arch.iommu_domain) {
 		r = kvm_iommu_map_guest(kvm);
 		if (r)
@@ -722,6 +866,18 @@ static int kvm_vm_ioctl_assign_device(struct kvm *kvm,
 	r = kvm_assign_device(kvm, match);
 	if (r)
 		goto out_list_del;
+=======
+	if (assigned_dev->flags & KVM_DEV_ASSIGN_ENABLE_IOMMU) {
+		if (!kvm->arch.iommu_domain) {
+			r = kvm_iommu_map_guest(kvm);
+			if (r)
+				goto out_list_del;
+		}
+		r = kvm_assign_device(kvm, match);
+		if (r)
+			goto out_list_del;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	srcu_read_unlock(&kvm->srcu, idx);
@@ -761,7 +917,12 @@ static int kvm_vm_ioctl_deassign_device(struct kvm *kvm,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	kvm_deassign_device(kvm, match);
+=======
+	if (match->flags & KVM_DEV_ASSIGN_ENABLE_IOMMU)
+		kvm_deassign_device(kvm, match);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kvm_free_assigned_device(kvm, match);
 
@@ -790,7 +951,11 @@ static int kvm_vm_ioctl_set_msix_nr(struct kvm *kvm,
 	if (adev->entries_nr == 0) {
 		adev->entries_nr = entry_nr->entry_nr;
 		if (adev->entries_nr == 0 ||
+<<<<<<< HEAD
 		    adev->entries_nr > KVM_MAX_MSIX_PER_DEV) {
+=======
+		    adev->entries_nr >= KVM_MAX_MSIX_PER_DEV) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			r = -EINVAL;
 			goto msix_nr_out;
 		}
@@ -853,6 +1018,7 @@ msix_entry_out:
 }
 #endif
 
+<<<<<<< HEAD
 static int kvm_vm_ioctl_set_pci_irq_mask(struct kvm *kvm,
 		struct kvm_assigned_pci_dev *assigned_dev)
 {
@@ -902,6 +1068,8 @@ out:
 	return r;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 long kvm_vm_ioctl_assigned_device(struct kvm *kvm, unsigned ioctl,
 				  unsigned long arg)
 {
@@ -1009,6 +1177,7 @@ long kvm_vm_ioctl_assigned_device(struct kvm *kvm, unsigned ioctl,
 		break;
 	}
 #endif
+<<<<<<< HEAD
 	case KVM_ASSIGN_SET_INTX_MASK: {
 		struct kvm_assigned_pci_dev assigned_dev;
 
@@ -1018,6 +1187,8 @@ long kvm_vm_ioctl_assigned_device(struct kvm *kvm, unsigned ioctl,
 		r = kvm_vm_ioctl_set_pci_irq_mask(kvm, &assigned_dev);
 		break;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		r = -ENOTTY;
 		break;
@@ -1025,3 +1196,7 @@ long kvm_vm_ioctl_assigned_device(struct kvm *kvm, unsigned ioctl,
 out:
 	return r;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

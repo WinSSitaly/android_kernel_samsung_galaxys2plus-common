@@ -11,7 +11,11 @@
  *
 */
 
+<<<<<<< HEAD
 		.macro	addruart, rp, rv, tmp
+=======
+		.macro	addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mov	\rp, #0x00090000
 		add	\rv, \rp, #0xf4000000	@ virtual
 		add	\rp, \rp, #0x40000000	@ physical

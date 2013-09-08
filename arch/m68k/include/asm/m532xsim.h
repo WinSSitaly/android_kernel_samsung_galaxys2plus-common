@@ -24,6 +24,7 @@
 #define MCFINT_UART1        27          /* Interrupt number for UART1 */
 #define MCFINT_UART2        28          /* Interrupt number for UART2 */
 #define MCFINT_QSPI         31          /* Interrupt number for QSPI */
+<<<<<<< HEAD
 #define MCFINT_FECRX0	    36		/* Interrupt number for FEC */
 #define MCFINT_FECTX0	    40		/* Interrupt number for FEC */
 #define MCFINT_FECENTC0	    42		/* Interrupt number for FEC */
@@ -37,6 +38,8 @@
 #define MCF_IRQ_FECENTC0    (MCFINT_VECBASE + MCFINT_FECENTC0)
 
 #define	MCF_IRQ_QSPI	    (MCFINT_VECBASE + MCFINT_QSPI)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MCF_WTM_WCR	MCF_REG16(0xFC098000)
 
@@ -95,6 +98,7 @@
 /*
  *  UART module.
  */
+<<<<<<< HEAD
 #define MCFUART_BASE0		0xFC060000	/* Base address of UART1 */
 #define MCFUART_BASE1		0xFC064000	/* Base address of UART2 */
 #define MCFUART_BASE2		0xFC068000	/* Base address of UART3 */
@@ -114,6 +118,11 @@
 #define	MCFQSPI_CS0		84
 #define	MCFQSPI_CS1		85
 #define	MCFQSPI_CS2		86
+=======
+#define MCFUART_BASE1		0xFC060000	/* Base address of UART1 */
+#define MCFUART_BASE2		0xFC064000	/* Base address of UART2 */
+#define MCFUART_BASE3		0xFC068000	/* Base address of UART3 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  *  Timer module.

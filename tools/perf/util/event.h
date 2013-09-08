@@ -2,7 +2,10 @@
 #define __PERF_RECORD_H
 
 #include <limits.h>
+<<<<<<< HEAD
 #include <stdio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "../perf.h"
 #include "map.h"
@@ -81,7 +84,10 @@ struct perf_sample {
 	u32 raw_size;
 	void *raw_data;
 	struct ip_callchain *callchain;
+<<<<<<< HEAD
 	struct branch_stack *branch_stack;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define BUILD_ID_SIZE 20
@@ -143,6 +149,7 @@ union perf_event {
 
 void perf_event__print_totals(void);
 
+<<<<<<< HEAD
 struct perf_tool;
 struct thread_map;
 
@@ -191,6 +198,45 @@ int perf_event__process(struct perf_tool *tool,
 struct addr_location;
 int perf_event__preprocess_sample(const union perf_event *self,
 				  struct machine *machine,
+=======
+struct perf_session;
+struct thread_map;
+
+typedef int (*perf_event__handler_synth_t)(union perf_event *event, 
+					   struct perf_session *session);
+typedef int (*perf_event__handler_t)(union perf_event *event,
+				     struct perf_sample *sample,
+				      struct perf_session *session);
+
+int perf_event__synthesize_thread_map(struct thread_map *threads,
+				      perf_event__handler_t process,
+				      struct perf_session *session);
+int perf_event__synthesize_threads(perf_event__handler_t process,
+				   struct perf_session *session);
+int perf_event__synthesize_kernel_mmap(perf_event__handler_t process,
+				       struct perf_session *session,
+				       struct machine *machine,
+				       const char *symbol_name);
+
+int perf_event__synthesize_modules(perf_event__handler_t process,
+				   struct perf_session *session,
+				   struct machine *machine);
+
+int perf_event__process_comm(union perf_event *event, struct perf_sample *sample,
+			     struct perf_session *session);
+int perf_event__process_lost(union perf_event *event, struct perf_sample *sample,
+			     struct perf_session *session);
+int perf_event__process_mmap(union perf_event *event, struct perf_sample *sample,
+			     struct perf_session *session);
+int perf_event__process_task(union perf_event *event, struct perf_sample *sample,
+			     struct perf_session *session);
+int perf_event__process(union perf_event *event, struct perf_sample *sample,
+			struct perf_session *session);
+
+struct addr_location;
+int perf_event__preprocess_sample(const union perf_event *self,
+				  struct perf_session *session,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  struct addr_location *al,
 				  struct perf_sample *sample,
 				  symbol_filter_t filter);
@@ -199,6 +245,7 @@ const char *perf_event__name(unsigned int id);
 
 int perf_event__parse_sample(const union perf_event *event, u64 type,
 			     int sample_size, bool sample_id_all,
+<<<<<<< HEAD
 			     struct perf_sample *sample, bool swapped);
 int perf_event__synthesize_sample(union perf_event *event, u64 type,
 				  const struct perf_sample *sample,
@@ -208,5 +255,8 @@ size_t perf_event__fprintf_comm(union perf_event *event, FILE *fp);
 size_t perf_event__fprintf_mmap(union perf_event *event, FILE *fp);
 size_t perf_event__fprintf_task(union perf_event *event, FILE *fp);
 size_t perf_event__fprintf(union perf_event *event, FILE *fp);
+=======
+			     struct perf_sample *sample);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __PERF_RECORD_H */

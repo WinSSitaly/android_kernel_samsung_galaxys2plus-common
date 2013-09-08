@@ -14,7 +14,11 @@
 #ifndef __RCOM_DOT_H__
 #define __RCOM_DOT_H__
 
+<<<<<<< HEAD
 int dlm_rcom_status(struct dlm_ls *ls, int nodeid, uint32_t status_flags);
+=======
+int dlm_rcom_status(struct dlm_ls *ls, int nodeid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int dlm_rcom_names(struct dlm_ls *ls, int nodeid, char *last_name,int last_len);
 int dlm_send_rcom_lookup(struct dlm_rsb *r, int dir_nodeid);
 int dlm_send_rcom_lock(struct dlm_rsb *r, struct dlm_lkb *lkb);

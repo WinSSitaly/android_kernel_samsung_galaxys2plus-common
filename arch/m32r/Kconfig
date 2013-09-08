@@ -10,7 +10,10 @@ config M32R
 	select HAVE_GENERIC_HARDIRQS
 	select GENERIC_IRQ_PROBE
 	select GENERIC_IRQ_SHOW
+<<<<<<< HEAD
 	select GENERIC_ATOMIC64
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config SBUS
 	bool
@@ -269,7 +272,21 @@ config SCHED_OMIT_FRAME_POINTER
         bool
         default y
 
+<<<<<<< HEAD
 source "kernel/Kconfig.preempt"
+=======
+config PREEMPT
+	bool "Preemptible Kernel"
+	help
+	  This option reduces the latency of the kernel when reacting to
+	  real-time or interactive events by allowing a low priority process to
+	  be preempted even if it is in kernel mode executing a system call.
+	  This allows applications to run more reliably even when the system is
+	  under load.
+
+	  Say Y here if you are building a kernel for a desktop, embedded
+	  or real-time system.  Say N if you are unsure.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config SMP
 	bool "Symmetric multi-processing support"
@@ -323,6 +340,16 @@ config NODES_SHIFT
 	default "1"
 	depends on NEED_MULTIPLE_NODES
 
+<<<<<<< HEAD
+=======
+# turning this on wastes a bunch of space.
+# Summit needs it only when NUMA is on
+config BOOT_IOREMAP
+	bool
+	depends on NUMA
+	default n
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endmenu
 
 

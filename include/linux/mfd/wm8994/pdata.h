@@ -22,7 +22,12 @@ struct wm8994_ldo_pdata {
 	/** GPIOs to enable regulator, 0 or less if not available */
 	int enable;
 
+<<<<<<< HEAD
 	const struct regulator_init_data *init_data;
+=======
+	const char *supply;
+	struct regulator_init_data *init_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define WM8994_CONFIGURE_GPIO 0x10000
@@ -112,6 +117,7 @@ struct wm8958_enh_eq_cfg {
 	u16 regs[WM8958_ENH_EQ_REGS];
 };
 
+<<<<<<< HEAD
 /**
  * Microphone detection rates, used to tune response rates and power
  * consumption for WM8958/WM1811 microphone detection.
@@ -129,6 +135,8 @@ struct wm8958_micd_rate {
 	int rate;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct wm8994_pdata {
 	int gpio_base;
 
@@ -160,9 +168,12 @@ struct wm8994_pdata {
 	int num_enh_eq_cfgs;
 	struct wm8958_enh_eq_cfg *enh_eq_cfgs;
 
+<<<<<<< HEAD
 	int num_micd_rates;
 	struct wm8958_micd_rate *micd_rates;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         /* LINEOUT can be differential or single ended */
         unsigned int lineout1_diff:1;
         unsigned int lineout2_diff:1;
@@ -184,6 +195,7 @@ struct wm8994_pdata {
         unsigned int jd_scthr:2;
         unsigned int jd_thr:2;
 
+<<<<<<< HEAD
 	/* Configure WM1811 jack detection for use with external capacitor */
 	unsigned int jd_ext_cap:1;
 
@@ -205,6 +217,10 @@ struct wm8994_pdata {
 	 * system.
 	 */
 	bool spkmode_pu;
+=======
+	/* WM8958 microphone bias configuration */
+	int micbias[2];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif

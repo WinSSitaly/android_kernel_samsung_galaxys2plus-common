@@ -32,8 +32,11 @@
 #include <linux/pagemap.h>
 #include <linux/memblock.h>
 #include <linux/gfp.h>
+<<<<<<< HEAD
 #include <linux/slab.h>
 #include <linux/hugetlb.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/pgalloc.h>
 #include <asm/prom.h>
@@ -45,7 +48,11 @@
 #include <asm/btext.h>
 #include <asm/tlb.h>
 #include <asm/sections.h>
+<<<<<<< HEAD
 #include <asm/hugetlb.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "mmu_decl.h"
 
@@ -64,6 +71,7 @@ phys_addr_t memstart_addr = (phys_addr_t)~0ull;
 EXPORT_SYMBOL(memstart_addr);
 phys_addr_t kernstart_addr;
 EXPORT_SYMBOL(kernstart_addr);
+<<<<<<< HEAD
 
 #ifdef CONFIG_RELOCATABLE_PPC32
 /* Used in __va()/__pa() */
@@ -71,6 +79,8 @@ long long virt_phys_offset;
 EXPORT_SYMBOL(virt_phys_offset);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 phys_addr_t lowmem_end_addr;
 
 int boot_mapsize;
@@ -132,6 +142,7 @@ void __init MMU_init(void)
 	/* parse args from command line */
 	MMU_setup();
 
+<<<<<<< HEAD
 	/*
 	 * Reserve gigantic pages for hugetlb.  This MUST occur before
 	 * lowmem_end_addr is initialized below.
@@ -141,6 +152,12 @@ void __init MMU_init(void)
 	if (memblock.memory.cnt > 1) {
 #ifndef CONFIG_WII
 		memblock_enforce_memory_limit(memblock.memory.regions[0].size);
+=======
+	if (memblock.memory.cnt > 1) {
+#ifndef CONFIG_WII
+		memblock.memory.cnt = 1;
+		memblock_analyze();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_WARNING "Only using first contiguous memory region");
 #else
 		wii_memory_fixups();
@@ -163,6 +180,10 @@ void __init MMU_init(void)
 #ifndef CONFIG_HIGHMEM
 		total_memory = total_lowmem;
 		memblock_enforce_memory_limit(total_lowmem);
+<<<<<<< HEAD
+=======
+		memblock_analyze();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_HIGHMEM */
 	}
 
@@ -204,6 +225,41 @@ void __init *early_get_page(void)
 		return __va(memblock_alloc(PAGE_SIZE, PAGE_SIZE));
 }
 
+<<<<<<< HEAD
+=======
+/* Free up now-unused memory */
+static void free_sec(unsigned long start, unsigned long end, const char *name)
+{
+	unsigned long cnt = 0;
+
+	while (start < end) {
+		ClearPageReserved(virt_to_page(start));
+		init_page_count(virt_to_page(start));
+		free_page(start);
+		cnt++;
+		start += PAGE_SIZE;
+ 	}
+	if (cnt) {
+		printk(" %ldk %s", cnt << (PAGE_SHIFT - 10), name);
+		totalram_pages += cnt;
+	}
+}
+
+void free_initmem(void)
+{
+#define FREESEC(TYPE) \
+	free_sec((unsigned long)(&__ ## TYPE ## _begin), \
+		 (unsigned long)(&__ ## TYPE ## _end), \
+		 #TYPE);
+
+	printk ("Freeing unused kernel memory:");
+	FREESEC(init);
+ 	printk("\n");
+	ppc_md.progress = NULL;
+#undef FREESEC
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_8xx /* No 8xx specific .c file to put that in ... */
 void setup_initial_memory_limit(phys_addr_t first_memblock_base,
 				phys_addr_t first_memblock_size)

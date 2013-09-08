@@ -1,12 +1,20 @@
 /*
+<<<<<<< HEAD
  *  Copyright (c) 2000-2011 LSI Corporation.
+=======
+ *  Copyright (c) 2000-2010 LSI Corporation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *
  *           Name:  mpi2_ioc.h
  *          Title:  MPI IOC, Port, Event, FW Download, and FW Upload messages
  *  Creation Date:  October 11, 2006
  *
+<<<<<<< HEAD
  *  mpi2_ioc.h Version:  02.00.19
+=======
+ *  mpi2_ioc.h Version:  02.00.15
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *  Version History
  *  ---------------
@@ -103,6 +111,7 @@
  *                      defines.
  *  05-12-10  02.00.15  Marked Task Set Full Event as obsolete.
  *                      Added MPI2_EVENT_SAS_TOPO_LR_UNSUPPORTED_PHY define.
+<<<<<<< HEAD
  *  11-10-10  02.00.16  Added MPI2_FW_DOWNLOAD_ITYPE_MIN_PRODUCT_SPECIFIC.
  *  02-23-11  02.00.17  Added SAS NOTIFY Primitive event, and added
  *                      SASNotifyPrimitiveMasks field to
@@ -117,6 +126,8 @@
  *  08-24-11  02.00.19  Added PhysicalPort field to
  *                      MPI2_EVENT_DATA_SAS_DEVICE_STATUS_CHANGE structure.
  *                      Marked MPI2_PM_CONTROL_FEATURE_PCIE_LINK as obsolete.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  --------------------------------------------------------------------------
  */
 
@@ -434,7 +445,11 @@ typedef struct _MPI2_EVENT_NOTIFICATION_REQUEST
     U32                     Reserved6;                      /* 0x10 */
     U32                     EventMasks[MPI2_EVENT_NOTIFY_EVENTMASK_WORDS];/* 0x14 */
     U16                     SASBroadcastPrimitiveMasks;     /* 0x24 */
+<<<<<<< HEAD
 	 U16                     SASNotifyPrimitiveMasks;        /* 0x26 */
+=======
+    U16                     Reserved7;                      /* 0x26 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     U32                     Reserved8;                      /* 0x28 */
 } MPI2_EVENT_NOTIFICATION_REQUEST,
   MPI2_POINTER PTR_MPI2_EVENT_NOTIFICATION_REQUEST,
@@ -489,9 +504,12 @@ typedef struct _MPI2_EVENT_NOTIFICATION_REPLY
 #define MPI2_EVENT_GPIO_INTERRUPT                   (0x0023)
 #define MPI2_EVENT_HOST_BASED_DISCOVERY_PHY         (0x0024)
 #define MPI2_EVENT_SAS_QUIESCE                      (0x0025)
+<<<<<<< HEAD
 #define MPI2_EVENT_SAS_NOTIFY_PRIMITIVE             (0x0026)
 #define MPI2_EVENT_TEMP_THRESHOLD                   (0x0027)
 #define MPI2_EVENT_HOST_MESSAGE                     (0x0028)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /* Log Entry Added Event data */
@@ -523,6 +541,7 @@ typedef struct _MPI2_EVENT_DATA_GPIO_INTERRUPT {
   MPI2_POINTER PTR_MPI2_EVENT_DATA_GPIO_INTERRUPT,
   Mpi2EventDataGpioInterrupt_t, MPI2_POINTER pMpi2EventDataGpioInterrupt_t;
 
+<<<<<<< HEAD
 /* Temperature Threshold Event data */
 
 typedef struct _MPI2_EVENT_DATA_TEMPERATURE {
@@ -556,6 +575,8 @@ typedef struct _MPI2_EVENT_DATA_HOST_MESSAGE {
 Mpi2EventDataHostMessage_t, MPI2_POINTER pMpi2EventDataHostMessage_t;
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Hard Reset Received Event data */
 
 typedef struct _MPI2_EVENT_DATA_HARD_RESET_RECEIVED
@@ -585,7 +606,11 @@ typedef struct _MPI2_EVENT_DATA_SAS_DEVICE_STATUS_CHANGE
 {
     U16                     TaskTag;                        /* 0x00 */
     U8                      ReasonCode;                     /* 0x02 */
+<<<<<<< HEAD
 	U8                      PhysicalPort;                   /* 0x03 */
+=======
+    U8                      Reserved1;                      /* 0x03 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     U8                      ASC;                            /* 0x04 */
     U8                      ASCQ;                           /* 0x05 */
     U16                     DevHandle;                      /* 0x06 */
@@ -798,6 +823,7 @@ typedef struct _MPI2_EVENT_DATA_SAS_BROADCAST_PRIMITIVE
 #define MPI2_EVENT_PRIMITIVE_CHANGE0_RESERVED               (0x07)
 #define MPI2_EVENT_PRIMITIVE_CHANGE1_RESERVED               (0x08)
 
+<<<<<<< HEAD
 /* SAS Notify Primitive Event data */
 
 typedef struct _MPI2_EVENT_DATA_SAS_NOTIFY_PRIMITIVE {
@@ -816,6 +842,8 @@ MPI2_POINTER pMpi2EventDataSasNotifyPrimitive_t;
 #define MPI2_EVENT_NOTIFY_RESERVED1                         (0x03)
 #define MPI2_EVENT_NOTIFY_RESERVED2                         (0x04)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* SAS Initiator Device Status Change Event data */
 
@@ -1068,6 +1096,7 @@ typedef struct _MPI2_EVENT_ACK_REPLY
 
 
 /****************************************************************************
+<<<<<<< HEAD
 *  SendHostMessage message
 ****************************************************************************/
 
@@ -1115,6 +1144,8 @@ Mpi2SendHostMessageReply_t, MPI2_POINTER pMpi2SendHostMessageReply_t;
 
 
 /****************************************************************************
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 *  FWDownload message
 ****************************************************************************/
 
@@ -1147,7 +1178,10 @@ typedef struct _MPI2_FW_DOWNLOAD_REQUEST
 #define MPI2_FW_DOWNLOAD_ITYPE_MEGARAID             (0x09)
 #define MPI2_FW_DOWNLOAD_ITYPE_COMPLETE             (0x0A)
 #define MPI2_FW_DOWNLOAD_ITYPE_COMMON_BOOT_BLOCK    (0x0B)
+<<<<<<< HEAD
 #define MPI2_FW_DOWNLOAD_ITYPE_MIN_PRODUCT_SPECIFIC (0xF0)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* FWDownload TransactionContext Element */
 typedef struct _MPI2_FW_DOWNLOAD_TCSGE
@@ -1373,6 +1407,7 @@ typedef struct _MPI2_EXT_IMAGE_HEADER
 #define MPI2_EXT_IMAGE_HEADER_SIZE              (0x40)
 
 /* defines for the ImageType field */
+<<<<<<< HEAD
 #define MPI2_EXT_IMAGE_TYPE_UNSPECIFIED				(0x00)
 #define MPI2_EXT_IMAGE_TYPE_FW						(0x01)
 #define MPI2_EXT_IMAGE_TYPE_NVDATA					(0x03)
@@ -1385,6 +1420,18 @@ typedef struct _MPI2_EXT_IMAGE_HEADER
 #define MPI2_EXT_IMAGE_TYPE_MAX_PRODUCT_SPECIFIC    (0xFF)
 #define MPI2_EXT_IMAGE_TYPE_MAX                   \
 	(MPI2_EXT_IMAGE_TYPE_MAX_PRODUCT_SPECIFIC)	/* deprecated */
+=======
+#define MPI2_EXT_IMAGE_TYPE_UNSPECIFIED         (0x00)
+#define MPI2_EXT_IMAGE_TYPE_FW                  (0x01)
+#define MPI2_EXT_IMAGE_TYPE_NVDATA              (0x03)
+#define MPI2_EXT_IMAGE_TYPE_BOOTLOADER          (0x04)
+#define MPI2_EXT_IMAGE_TYPE_INITIALIZATION      (0x05)
+#define MPI2_EXT_IMAGE_TYPE_FLASH_LAYOUT        (0x06)
+#define MPI2_EXT_IMAGE_TYPE_SUPPORTED_DEVICES   (0x07)
+#define MPI2_EXT_IMAGE_TYPE_MEGARAID            (0x08)
+
+#define MPI2_EXT_IMAGE_TYPE_MAX                 (MPI2_EXT_IMAGE_TYPE_MEGARAID)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 
@@ -1577,7 +1624,11 @@ typedef struct _MPI2_PWR_MGMT_CONTROL_REQUEST {
 /* defines for the Feature field */
 #define MPI2_PM_CONTROL_FEATURE_DA_PHY_POWER_COND       (0x01)
 #define MPI2_PM_CONTROL_FEATURE_PORT_WIDTH_MODULATION   (0x02)
+<<<<<<< HEAD
 #define MPI2_PM_CONTROL_FEATURE_PCIE_LINK               (0x03) /* obsolete */
+=======
+#define MPI2_PM_CONTROL_FEATURE_PCIE_LINK               (0x03)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MPI2_PM_CONTROL_FEATURE_IOC_SPEED               (0x04)
 #define MPI2_PM_CONTROL_FEATURE_MIN_PRODUCT_SPECIFIC    (0x80)
 #define MPI2_PM_CONTROL_FEATURE_MAX_PRODUCT_SPECIFIC    (0xFF)
@@ -1606,6 +1657,7 @@ typedef struct _MPI2_PWR_MGMT_CONTROL_REQUEST {
 
 /* parameter usage for the MPI2_PM_CONTROL_FEATURE_PCIE_LINK Feature */
 /* Parameter1 indicates desired PCIe link speed using these defines */
+<<<<<<< HEAD
 #define MPI2_PM_CONTROL_PARAM1_PCIE_2_5_GBPS            (0x00) /* obsolete */
 #define MPI2_PM_CONTROL_PARAM1_PCIE_5_0_GBPS            (0x01) /* obsolete */
 #define MPI2_PM_CONTROL_PARAM1_PCIE_8_0_GBPS            (0x02) /* obsolete */
@@ -1614,6 +1666,16 @@ typedef struct _MPI2_PWR_MGMT_CONTROL_REQUEST {
 #define MPI2_PM_CONTROL_PARAM2_WIDTH_X2                 (0x02) /* obsolete */
 #define MPI2_PM_CONTROL_PARAM2_WIDTH_X4                 (0x04) /* obsolete */
 #define MPI2_PM_CONTROL_PARAM2_WIDTH_X8                 (0x08) /* obsolete */
+=======
+#define MPI2_PM_CONTROL_PARAM1_PCIE_2_5_GBPS            (0x00)
+#define MPI2_PM_CONTROL_PARAM1_PCIE_5_0_GBPS            (0x01)
+#define MPI2_PM_CONTROL_PARAM1_PCIE_8_0_GBPS            (0x02)
+/* Parameter2 indicates desired PCIe link width using these defines */
+#define MPI2_PM_CONTROL_PARAM2_WIDTH_X1                 (0x01)
+#define MPI2_PM_CONTROL_PARAM2_WIDTH_X2                 (0x02)
+#define MPI2_PM_CONTROL_PARAM2_WIDTH_X4                 (0x04)
+#define MPI2_PM_CONTROL_PARAM2_WIDTH_X8                 (0x08)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Parameter3 and Parameter4 are reserved */
 
 /* parameter usage for the MPI2_PM_CONTROL_FEATURE_IOC_SPEED Feature */

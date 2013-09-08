@@ -52,9 +52,12 @@ static struct bench_suite mem_suites[] = {
 	{ "memcpy",
 	  "Simple memory copy in various ways",
 	  bench_mem_memcpy },
+<<<<<<< HEAD
 	{ "memset",
 	  "Simple memory set in various ways",
 	  bench_mem_memset },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	suite_all,
 	{ NULL,
 	  NULL,

@@ -36,7 +36,10 @@ BEGIN_FTR_SECTION;						\
 	b	1f;						\
 END_FTR_SECTION(0, 1);						\
 	ld      r12,hcall_tracepoint_refcount@toc(r2);		\
+<<<<<<< HEAD
 	std	r12,32(r1);					\
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmpdi	r12,0;						\
 	beq+	1f;						\
 	mflr	r0;						\
@@ -75,7 +78,11 @@ END_FTR_SECTION(0, 1);						\
 BEGIN_FTR_SECTION;						\
 	b	1f;						\
 END_FTR_SECTION(0, 1);						\
+<<<<<<< HEAD
 	ld      r12,32(r1);					\
+=======
+	ld      r12,hcall_tracepoint_refcount@toc(r2);		\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmpdi	r12,0;						\
 	beq+	1f;						\
 	mflr	r0;						\

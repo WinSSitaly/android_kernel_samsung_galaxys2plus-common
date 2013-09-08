@@ -22,11 +22,22 @@
 
 #include <asm/mach-types.h>
 
+<<<<<<< HEAD
 #include "board.h"
 #include "board-harmony.h"
 
 #ifdef CONFIG_TEGRA_PCI
 
+=======
+#include <mach/pinmux.h>
+#include "board.h"
+
+#ifdef CONFIG_TEGRA_PCI
+
+/* GPIO 3 of the PMIC */
+#define EN_VDD_1V05_GPIO	(TEGRA_NR_GPIOS + 2)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init harmony_pcie_init(void)
 {
 	struct regulator *regulator = NULL;
@@ -35,11 +46,19 @@ static int __init harmony_pcie_init(void)
 	if (!machine_is_harmony())
 		return 0;
 
+<<<<<<< HEAD
 	err = gpio_request(TEGRA_GPIO_EN_VDD_1V05_GPIO, "EN_VDD_1V05");
 	if (err)
 		return err;
 
 	gpio_direction_output(TEGRA_GPIO_EN_VDD_1V05_GPIO, 1);
+=======
+	err = gpio_request(EN_VDD_1V05_GPIO, "EN_VDD_1V05");
+	if (err)
+		return err;
+
+	gpio_direction_output(EN_VDD_1V05_GPIO, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	regulator = regulator_get(NULL, "pex_clk");
 	if (IS_ERR_OR_NULL(regulator))
@@ -47,6 +66,13 @@ static int __init harmony_pcie_init(void)
 
 	regulator_enable(regulator);
 
+<<<<<<< HEAD
+=======
+	tegra_pinmux_set_tristate(TEGRA_PINGROUP_GPV, TEGRA_TRI_NORMAL);
+	tegra_pinmux_set_tristate(TEGRA_PINGROUP_SLXA, TEGRA_TRI_NORMAL);
+	tegra_pinmux_set_tristate(TEGRA_PINGROUP_SLXK, TEGRA_TRI_NORMAL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = tegra_pcie_init(true, true);
 	if (err)
 		goto err_pcie;
@@ -54,10 +80,21 @@ static int __init harmony_pcie_init(void)
 	return 0;
 
 err_pcie:
+<<<<<<< HEAD
 	regulator_disable(regulator);
 	regulator_put(regulator);
 err_reg:
 	gpio_free(TEGRA_GPIO_EN_VDD_1V05_GPIO);
+=======
+	tegra_pinmux_set_tristate(TEGRA_PINGROUP_GPV, TEGRA_TRI_TRISTATE);
+	tegra_pinmux_set_tristate(TEGRA_PINGROUP_SLXA, TEGRA_TRI_TRISTATE);
+	tegra_pinmux_set_tristate(TEGRA_PINGROUP_SLXK, TEGRA_TRI_TRISTATE);
+
+	regulator_disable(regulator);
+	regulator_put(regulator);
+err_reg:
+	gpio_free(EN_VDD_1V05_GPIO);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }

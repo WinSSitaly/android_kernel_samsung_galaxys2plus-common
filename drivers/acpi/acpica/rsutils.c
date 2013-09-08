@@ -5,7 +5,11 @@
  ******************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -144,9 +148,12 @@ acpi_rs_move_data(void *destination, void *source, u16 item_count, u8 move_type)
 			 * since there are no alignment or endian issues
 			 */
 		case ACPI_RSC_MOVE8:
+<<<<<<< HEAD
 		case ACPI_RSC_MOVE_GPIO_RES:
 		case ACPI_RSC_MOVE_SERIAL_VEN:
 		case ACPI_RSC_MOVE_SERIAL_RES:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ACPI_MEMCPY(destination, source, item_count);
 			return;
 
@@ -156,7 +163,10 @@ acpi_rs_move_data(void *destination, void *source, u16 item_count, u8 move_type)
 			 * misaligned memory transfers
 			 */
 		case ACPI_RSC_MOVE16:
+<<<<<<< HEAD
 		case ACPI_RSC_MOVE_GPIO_PIN:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ACPI_MOVE_16_TO_16(&ACPI_CAST_PTR(u16, destination)[i],
 					   &ACPI_CAST_PTR(u16, source)[i]);
 			break;
@@ -594,6 +604,7 @@ acpi_rs_get_prs_method_data(struct acpi_namespace_node *node,
 
 /*******************************************************************************
  *
+<<<<<<< HEAD
  * FUNCTION:    acpi_rs_get_aei_method_data
  *
  * PARAMETERS:  Node            - Device node
@@ -644,6 +655,8 @@ acpi_rs_get_aei_method_data(struct acpi_namespace_node *node,
 
 /*******************************************************************************
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * FUNCTION:    acpi_rs_get_method_data
  *
  * PARAMETERS:  Handle          - Handle to the containing object

@@ -17,7 +17,10 @@
 #include <linux/syscore_ops.h>
 
 #include <mach/hardware.h>
+<<<<<<< HEAD
 #include <mach/irqs.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach/irq.h>
 
 #include "generic.h"
@@ -222,8 +225,16 @@ static struct irq_chip sa1100_normal_chip = {
 	.irq_set_wake	= sa1100_set_wake,
 };
 
+<<<<<<< HEAD
 static struct resource irq_resource =
 	DEFINE_RES_MEM_NAMED(0x90050000, SZ_64K, "irqs");
+=======
+static struct resource irq_resource = {
+	.name	= "irqs",
+	.start	= 0x90050000,
+	.end	= 0x9005ffff,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct sa1100irq_state {
 	unsigned int	saved;

@@ -100,6 +100,7 @@ extern void cpu_idle_on_new_stack(struct thread_info *old_ti,
 
 #else /* __ASSEMBLY__ */
 
+<<<<<<< HEAD
 /*
  * How to get the thread information struct from assembly.
  * Note that we use different macros since different architectures
@@ -108,6 +109,11 @@ extern void cpu_idle_on_new_stack(struct thread_info *old_ti,
  */
 #ifdef __tilegx__
 #define EXTRACT_THREAD_INFO(reg) mm reg, zero, LOG2_THREAD_SIZE, 63
+=======
+/* how to get the thread information struct from ASM */
+#ifdef __tilegx__
+#define GET_THREAD_INFO(reg) move reg, sp; mm reg, zero, LOG2_THREAD_SIZE, 63
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 #define GET_THREAD_INFO(reg) mm reg, sp, zero, LOG2_THREAD_SIZE, 31
 #endif

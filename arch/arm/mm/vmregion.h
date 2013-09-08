@@ -19,14 +19,23 @@ struct arm_vmregion {
 	unsigned long		vm_end;
 	struct page		*vm_pages;
 	int			vm_active;
+<<<<<<< HEAD
 	const void		*caller;
 };
 
 struct arm_vmregion *arm_vmregion_alloc(struct arm_vmregion_head *, size_t, size_t, gfp_t, const void *);
+=======
+};
+
+struct arm_vmregion *arm_vmregion_alloc(struct arm_vmregion_head *, size_t, size_t, gfp_t);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct arm_vmregion *arm_vmregion_find(struct arm_vmregion_head *, unsigned long);
 struct arm_vmregion *arm_vmregion_find_remove(struct arm_vmregion_head *, unsigned long);
 void arm_vmregion_free(struct arm_vmregion_head *, struct arm_vmregion *);
 
+<<<<<<< HEAD
 int arm_vmregion_create_proc(const char *, struct arm_vmregion_head *);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

@@ -1,5 +1,8 @@
 #include "cache.h"
+<<<<<<< HEAD
 #include <linux/kernel.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int prefixcmp(const char *str, const char *prefix)
 {
@@ -90,6 +93,7 @@ void strbuf_addf(struct strbuf *sb, const char *fmt, ...)
 	if (!strbuf_avail(sb))
 		strbuf_grow(sb, 64);
 	va_start(ap, fmt);
+<<<<<<< HEAD
 	len = vscnprintf(sb->buf + sb->len, sb->alloc - sb->len, fmt, ap);
 	va_end(ap);
 	if (len < 0)
@@ -98,6 +102,16 @@ void strbuf_addf(struct strbuf *sb, const char *fmt, ...)
 		strbuf_grow(sb, len);
 		va_start(ap, fmt);
 		len = vscnprintf(sb->buf + sb->len, sb->alloc - sb->len, fmt, ap);
+=======
+	len = vsnprintf(sb->buf + sb->len, sb->alloc - sb->len, fmt, ap);
+	va_end(ap);
+	if (len < 0)
+		die("your vsnprintf is broken");
+	if (len > strbuf_avail(sb)) {
+		strbuf_grow(sb, len);
+		va_start(ap, fmt);
+		len = vsnprintf(sb->buf + sb->len, sb->alloc - sb->len, fmt, ap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		va_end(ap);
 		if (len > strbuf_avail(sb)) {
 			die("this should not happen, your snprintf is broken");

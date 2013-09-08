@@ -29,13 +29,19 @@ typedef unsigned long long cycles_t;
 
 #if CHIP_HAS_SPLIT_CYCLE()
 cycles_t get_cycles(void);
+<<<<<<< HEAD
 #define get_cycles_low() __insn_mfspr(SPR_CYCLE_LOW)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 static inline cycles_t get_cycles(void)
 {
 	return __insn_mfspr(SPR_CYCLE);
 }
+<<<<<<< HEAD
 #define get_cycles_low() __insn_mfspr(SPR_CYCLE)   /* just get all 64 bits */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 cycles_t get_clock_rate(void);

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  *  linux/arch/m68k/kernel/ptrace.c
  *
@@ -302,3 +303,10 @@ asmlinkage void syscall_trace_leave(void)
 		tracehook_report_syscall_exit(task_pt_regs(current), 0);
 }
 #endif /* CONFIG_COLDFIRE */
+=======
+#ifdef CONFIG_MMU
+#include "ptrace_mm.c"
+#else
+#include "ptrace_no.c"
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

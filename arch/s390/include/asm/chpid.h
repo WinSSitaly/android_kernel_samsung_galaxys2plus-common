@@ -6,7 +6,11 @@
  */
 
 #ifndef _ASM_S390_CHPID_H
+<<<<<<< HEAD
 #define _ASM_S390_CHPID_H
+=======
+#define _ASM_S390_CHPID_H _ASM_S390_CHPID_H
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/string.h>
 #include <linux/types.h>

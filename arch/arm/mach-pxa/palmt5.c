@@ -202,6 +202,7 @@ static void __init palmt5_init(void)
 }
 
 MACHINE_START(PALMT5, "Palm Tungsten|T5")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= pxa27x_map_io,
 	.reserve	= palmt5_reserve,
@@ -211,4 +212,12 @@ MACHINE_START(PALMT5, "Palm Tungsten|T5")
 	.timer		= &pxa_timer,
 	.init_machine	= palmt5_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params	= 0xa0000100,
+	.map_io		= pxa27x_map_io,
+	.reserve	= palmt5_reserve,
+	.init_irq	= pxa27x_init_irq,
+	.timer		= &pxa_timer,
+	.init_machine	= palmt5_init
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

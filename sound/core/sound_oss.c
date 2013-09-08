@@ -26,7 +26,10 @@
 #endif
 
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/time.h>
 #include <sound/core.h>
@@ -40,9 +43,12 @@
 static struct snd_minor *snd_oss_minors[SNDRV_OSS_MINORS];
 static DEFINE_MUTEX(sound_oss_mutex);
 
+<<<<<<< HEAD
 /* NOTE: This function increments the refcount of the associated card like
  * snd_lookup_minor_data(); the caller must call snd_card_unref() appropriately
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void *snd_lookup_oss_minor_data(unsigned int minor, int type)
 {
 	struct snd_minor *mreg;
@@ -52,11 +58,17 @@ void *snd_lookup_oss_minor_data(unsigned int minor, int type)
 		return NULL;
 	mutex_lock(&sound_oss_mutex);
 	mreg = snd_oss_minors[minor];
+<<<<<<< HEAD
 	if (mreg && mreg->type == type) {
 		private_data = mreg->private_data;
 		if (private_data && mreg->card_ptr)
 			atomic_inc(&mreg->card_ptr->refcount);
 	} else
+=======
+	if (mreg && mreg->type == type)
+		private_data = mreg->private_data;
+	else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		private_data = NULL;
 	mutex_unlock(&sound_oss_mutex);
 	return private_data;
@@ -128,7 +140,10 @@ int snd_register_oss_device(int type, struct snd_card *card, int dev,
 	preg->device = dev;
 	preg->f_ops = f_ops;
 	preg->private_data = private_data;
+<<<<<<< HEAD
 	preg->card_ptr = card;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&sound_oss_mutex);
 	snd_oss_minors[minor] = preg;
 	minor_unit = SNDRV_MINOR_OSS_DEVICE(minor);

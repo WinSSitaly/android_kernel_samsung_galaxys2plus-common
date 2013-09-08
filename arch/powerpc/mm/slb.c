@@ -21,6 +21,10 @@
 #include <asm/cputable.h>
 #include <asm/cacheflush.h>
 #include <asm/smp.h>
+<<<<<<< HEAD
+=======
+#include <asm/firmware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/compiler.h>
 #include <asm/udbg.h>
 #include <asm/code-patching.h>
@@ -306,6 +310,14 @@ void slb_initialize(void)
 
 	get_paca()->stab_rr = SLB_NUM_BOLTED;
 
+<<<<<<< HEAD
+=======
+	/* On iSeries the bolted entries have already been set up by
+	 * the hypervisor from the lparMap data in head.S */
+	if (firmware_has_feature(FW_FEATURE_ISERIES))
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lflags = SLB_VSID_KERNEL | linear_llp;
 	vflags = SLB_VSID_KERNEL | vmalloc_llp;
 

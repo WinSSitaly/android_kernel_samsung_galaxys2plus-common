@@ -21,7 +21,10 @@
 #include <linux/scatterlist.h>
 #include <linux/slab.h>
 
+<<<<<<< HEAD
 #include <crypto/xts.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <crypto/b128ops.h>
 #include <crypto/gf128mul.h>
 
@@ -97,7 +100,11 @@ static int crypt(struct blkcipher_desc *d,
 {
 	int err;
 	unsigned int avail;
+<<<<<<< HEAD
 	const int bs = XTS_BLOCK_SIZE;
+=======
+	const int bs = crypto_cipher_blocksize(ctx->child);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sinfo s = {
 		.tfm = crypto_cipher_tfm(ctx->child),
 		.fn = fn
@@ -166,6 +173,7 @@ static int decrypt(struct blkcipher_desc *desc, struct scatterlist *dst,
 		     crypto_cipher_alg(ctx->child)->cia_decrypt);
 }
 
+<<<<<<< HEAD
 int xts_crypt(struct blkcipher_desc *desc, struct scatterlist *sdst,
 	      struct scatterlist *ssrc, unsigned int nbytes,
 	      struct xts_crypt_req *req)
@@ -238,6 +246,8 @@ first:
 }
 EXPORT_SYMBOL_GPL(xts_crypt);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int init_tfm(struct crypto_tfm *tfm)
 {
 	struct crypto_cipher *cipher;
@@ -250,7 +260,11 @@ static int init_tfm(struct crypto_tfm *tfm)
 	if (IS_ERR(cipher))
 		return PTR_ERR(cipher);
 
+<<<<<<< HEAD
 	if (crypto_cipher_blocksize(cipher) != XTS_BLOCK_SIZE) {
+=======
+	if (crypto_cipher_blocksize(cipher) != 16) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*flags |= CRYPTO_TFM_RES_BAD_BLOCK_LEN;
 		crypto_free_cipher(cipher);
 		return -EINVAL;
@@ -265,7 +279,11 @@ static int init_tfm(struct crypto_tfm *tfm)
 	}
 
 	/* this check isn't really needed, leave it here just in case */
+<<<<<<< HEAD
 	if (crypto_cipher_blocksize(cipher) != XTS_BLOCK_SIZE) {
+=======
+	if (crypto_cipher_blocksize(cipher) != 16) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		crypto_free_cipher(cipher);
 		crypto_free_cipher(ctx->child);
 		*flags |= CRYPTO_TFM_RES_BAD_BLOCK_LEN;

@@ -111,6 +111,7 @@ int ipv6_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_type *pt
 	    ipv6_addr_loopback(&hdr->daddr))
 		goto err;
 
+<<<<<<< HEAD
 	/* RFC4291 Errata ID: 3480
 	 * Interface-Local scope spans only a single interface on a
 	 * node and is useful only for loopback transmission of
@@ -140,6 +141,8 @@ int ipv6_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_type *pt
 	if (ipv6_addr_is_multicast(&hdr->saddr))
 		goto err;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skb->transport_header = skb->network_header + sizeof(*hdr);
 	IP6CB(skb)->nhoff = offsetof(struct ipv6hdr, nexthdr);
 
@@ -286,8 +289,12 @@ int ip6_mc_input(struct sk_buff *skb)
 	 *      IPv6 multicast router mode is now supported ;)
 	 */
 	if (dev_net(skb->dev)->ipv6.devconf_all->mc_forwarding &&
+<<<<<<< HEAD
 	    !(ipv6_addr_type(&hdr->daddr) &
 	      (IPV6_ADDR_LOOPBACK|IPV6_ADDR_LINKLOCAL)) &&
+=======
+	    !(ipv6_addr_type(&hdr->daddr) & IPV6_ADDR_LINKLOCAL) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    likely(!(IP6CB(skb)->flags & IP6SKB_FORWARDED))) {
 		/*
 		 * Okay, we try to forward - split and duplicate
@@ -302,7 +309,10 @@ int ip6_mc_input(struct sk_buff *skb)
 			u8 *ptr = skb_network_header(skb) + opt->ra;
 			struct icmp6hdr *icmp6;
 			u8 nexthdr = hdr->nexthdr;
+<<<<<<< HEAD
 			__be16 frag_off;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			int offset;
 
 			/* Check if the value of Router Alert
@@ -316,7 +326,11 @@ int ip6_mc_input(struct sk_buff *skb)
 					goto out;
 				}
 				offset = ipv6_skip_exthdr(skb, sizeof(*hdr),
+<<<<<<< HEAD
 							  &nexthdr, &frag_off);
+=======
+							  &nexthdr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				if (offset < 0)
 					goto out;
 

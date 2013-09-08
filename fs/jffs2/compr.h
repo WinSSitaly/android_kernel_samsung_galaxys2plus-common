@@ -40,8 +40,11 @@
 #define JFFS2_COMPR_MODE_PRIORITY   1
 #define JFFS2_COMPR_MODE_SIZE       2
 #define JFFS2_COMPR_MODE_FAVOURLZO  3
+<<<<<<< HEAD
 #define JFFS2_COMPR_MODE_FORCELZO   4
 #define JFFS2_COMPR_MODE_FORCEZLIB  5
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define FAVOUR_LZO_PERCENT 80
 

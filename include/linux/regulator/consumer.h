@@ -35,8 +35,12 @@
 #ifndef __LINUX_REGULATOR_CONSUMER_H_
 #define __LINUX_REGULATOR_CONSUMER_H_
 
+<<<<<<< HEAD
 struct device;
 struct notifier_block;
+=======
+#include <linux/device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Regulator operating modes.
@@ -123,9 +127,12 @@ struct regulator;
 struct regulator_bulk_data {
 	const char *supply;
 	struct regulator *consumer;
+<<<<<<< HEAD
 
 	/* private: Internal use */
 	int ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #if defined(CONFIG_REGULATOR)
@@ -133,30 +140,45 @@ struct regulator_bulk_data {
 /* regulator get and put */
 struct regulator *__must_check regulator_get(struct device *dev,
 					     const char *id);
+<<<<<<< HEAD
 struct regulator *__must_check devm_regulator_get(struct device *dev,
 					     const char *id);
 struct regulator *__must_check regulator_get_exclusive(struct device *dev,
 						       const char *id);
 void regulator_put(struct regulator *regulator);
 void devm_regulator_put(struct regulator *regulator);
+=======
+struct regulator *__must_check regulator_get_exclusive(struct device *dev,
+						       const char *id);
+void regulator_put(struct regulator *regulator);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* regulator output control and status */
 int regulator_enable(struct regulator *regulator);
 int regulator_disable(struct regulator *regulator);
 int regulator_force_disable(struct regulator *regulator);
 int regulator_is_enabled(struct regulator *regulator);
+<<<<<<< HEAD
 int regulator_disable_deferred(struct regulator *regulator, int ms);
 
 int regulator_bulk_get(struct device *dev, int num_consumers,
 		       struct regulator_bulk_data *consumers);
 int devm_regulator_bulk_get(struct device *dev, int num_consumers,
 			    struct regulator_bulk_data *consumers);
+=======
+
+int regulator_bulk_get(struct device *dev, int num_consumers,
+		       struct regulator_bulk_data *consumers);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int regulator_bulk_enable(int num_consumers,
 			  struct regulator_bulk_data *consumers);
 int regulator_bulk_disable(int num_consumers,
 			   struct regulator_bulk_data *consumers);
+<<<<<<< HEAD
 int regulator_bulk_force_disable(int num_consumers,
 			   struct regulator_bulk_data *consumers);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void regulator_bulk_free(int num_consumers,
 			 struct regulator_bulk_data *consumers);
 
@@ -206,6 +228,7 @@ static inline struct regulator *__must_check regulator_get(struct device *dev,
 	 */
 	return NULL;
 }
+<<<<<<< HEAD
 
 static inline struct regulator *__must_check
 devm_regulator_get(struct device *dev, const char *id)
@@ -213,14 +236,19 @@ devm_regulator_get(struct device *dev, const char *id)
 	return NULL;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void regulator_put(struct regulator *regulator)
 {
 }
 
+<<<<<<< HEAD
 static inline void devm_regulator_put(struct regulator *regulator)
 {
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int regulator_enable(struct regulator *regulator)
 {
 	return 0;
@@ -231,6 +259,7 @@ static inline int regulator_disable(struct regulator *regulator)
 	return 0;
 }
 
+<<<<<<< HEAD
 static inline int regulator_force_disable(struct regulator *regulator)
 {
 	return 0;
@@ -242,6 +271,8 @@ static inline int regulator_disable_deferred(struct regulator *regulator,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int regulator_is_enabled(struct regulator *regulator)
 {
 	return 1;
@@ -254,12 +285,15 @@ static inline int regulator_bulk_get(struct device *dev,
 	return 0;
 }
 
+<<<<<<< HEAD
 static inline int devm_regulator_bulk_get(struct device *dev, int num_consumers,
 					  struct regulator_bulk_data *consumers)
 {
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int regulator_bulk_enable(int num_consumers,
 					struct regulator_bulk_data *consumers)
 {
@@ -272,12 +306,15 @@ static inline int regulator_bulk_disable(int num_consumers,
 	return 0;
 }
 
+<<<<<<< HEAD
 static inline int regulator_bulk_force_disable(int num_consumers,
 					struct regulator_bulk_data *consumers)
 {
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void regulator_bulk_free(int num_consumers,
 				       struct regulator_bulk_data *consumers)
 {

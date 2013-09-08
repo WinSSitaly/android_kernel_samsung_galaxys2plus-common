@@ -107,11 +107,14 @@ struct ib_srq *qib_create_srq(struct ib_pd *ibpd,
 	u32 sz;
 	struct ib_srq *ret;
 
+<<<<<<< HEAD
 	if (srq_init_attr->srq_type != IB_SRQT_BASIC) {
 		ret = ERR_PTR(-ENOSYS);
 		goto done;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (srq_init_attr->attr.max_sge == 0 ||
 	    srq_init_attr->attr.max_sge > ib_qib_max_srq_sges ||
 	    srq_init_attr->attr.max_wr == 0 ||

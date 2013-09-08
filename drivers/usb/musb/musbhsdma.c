@@ -408,7 +408,11 @@ dma_controller_create(struct musb *musb, void __iomem *base)
 	controller->controller.channel_program = dma_channel_program;
 	controller->controller.channel_abort = dma_channel_abort;
 
+<<<<<<< HEAD
 	if (request_irq(irq, dma_controller_irq, 0,
+=======
+	if (request_irq(irq, dma_controller_irq, IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev_name(musb->controller), &controller->controller)) {
 		dev_err(dev, "request_irq %d failed!\n", irq);
 		dma_controller_destroy(&controller->controller);

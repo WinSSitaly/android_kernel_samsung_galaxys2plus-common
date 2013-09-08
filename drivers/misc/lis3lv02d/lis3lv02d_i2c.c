@@ -79,7 +79,12 @@ static int lis3_i2c_init(struct lis3lv02d *lis3)
 	u8 reg;
 	int ret;
 
+<<<<<<< HEAD
 	lis3_reg_ctrl(lis3, LIS3_REG_ON);
+=======
+	if (lis3->reg_ctrl)
+		lis3_reg_ctrl(lis3, LIS3_REG_ON);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lis3->read(lis3, WHO_AM_I, &reg);
 	if (reg != lis3->whoami)
@@ -105,6 +110,13 @@ static int __devinit lis3lv02d_i2c_probe(struct i2c_client *client,
 	struct lis3lv02d_platform_data *pdata = client->dev.platform_data;
 
 	if (pdata) {
+<<<<<<< HEAD
+=======
+		/* Regulator control is optional */
+		if (pdata->driver_features & LIS3_USE_REGULATOR_CTRL)
+			lis3_dev.reg_ctrl = lis3_reg_ctrl;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if ((pdata->driver_features & LIS3_USE_BLOCK_READ) &&
 			(i2c_check_functionality(client->adapter,
 						I2C_FUNC_SMBUS_I2C_BLOCK)))
@@ -126,6 +138,7 @@ static int __devinit lis3lv02d_i2c_probe(struct i2c_client *client,
 			goto fail;
 	}
 
+<<<<<<< HEAD
 	lis3_dev.regulators[0].supply = reg_vdd;
 	lis3_dev.regulators[1].supply = reg_vdd_io;
 	ret = regulator_bulk_get(&client->dev,
@@ -133,6 +146,17 @@ static int __devinit lis3lv02d_i2c_probe(struct i2c_client *client,
 				 lis3_dev.regulators);
 	if (ret < 0)
 		goto fail;
+=======
+	if (lis3_dev.reg_ctrl) {
+		lis3_dev.regulators[0].supply = reg_vdd;
+		lis3_dev.regulators[1].supply = reg_vdd_io;
+		ret = regulator_bulk_get(&client->dev,
+					ARRAY_SIZE(lis3_dev.regulators),
+					lis3_dev.regulators);
+		if (ret < 0)
+			goto fail;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lis3_dev.pdata	  = pdata;
 	lis3_dev.bus_priv = client;
@@ -146,6 +170,7 @@ static int __devinit lis3lv02d_i2c_probe(struct i2c_client *client,
 	i2c_set_clientdata(client, &lis3_dev);
 
 	/* Provide power over the init call */
+<<<<<<< HEAD
 	lis3_reg_ctrl(&lis3_dev, LIS3_REG_ON);
 
 	ret = lis3lv02d_init_device(&lis3_dev);
@@ -159,6 +184,18 @@ static int __devinit lis3lv02d_i2c_probe(struct i2c_client *client,
 fail2:
 	regulator_bulk_free(ARRAY_SIZE(lis3_dev.regulators),
 				lis3_dev.regulators);
+=======
+	if (lis3_dev.reg_ctrl)
+		lis3_reg_ctrl(&lis3_dev, LIS3_REG_ON);
+
+	ret = lis3lv02d_init_device(&lis3_dev);
+
+	if (lis3_dev.reg_ctrl)
+		lis3_reg_ctrl(&lis3_dev, LIS3_REG_OFF);
+
+	if (ret == 0)
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 fail:
 	if (pdata && pdata->release_resources)
 		pdata->release_resources();
@@ -173,11 +210,20 @@ static int __devexit lis3lv02d_i2c_remove(struct i2c_client *client)
 	if (pdata && pdata->release_resources)
 		pdata->release_resources();
 
+<<<<<<< HEAD
 	lis3lv02d_joystick_disable(lis3);
 	lis3lv02d_remove_fs(&lis3_dev);
 
 	regulator_bulk_free(ARRAY_SIZE(lis3->regulators),
 			    lis3_dev.regulators);
+=======
+	lis3lv02d_joystick_disable();
+	lis3lv02d_remove_fs(&lis3_dev);
+
+	if (lis3_dev.reg_ctrl)
+		regulator_bulk_free(ARRAY_SIZE(lis3->regulators),
+				lis3_dev.regulators);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -256,8 +302,26 @@ static struct i2c_driver lis3lv02d_i2c_driver = {
 	.id_table = lis3lv02d_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(lis3lv02d_i2c_driver);
+=======
+static int __init lis3lv02d_init(void)
+{
+	return i2c_add_driver(&lis3lv02d_i2c_driver);
+}
+
+static void __exit lis3lv02d_exit(void)
+{
+	i2c_del_driver(&lis3lv02d_i2c_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Nokia Corporation");
 MODULE_DESCRIPTION("lis3lv02d I2C interface");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(lis3lv02d_init);
+module_exit(lis3lv02d_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

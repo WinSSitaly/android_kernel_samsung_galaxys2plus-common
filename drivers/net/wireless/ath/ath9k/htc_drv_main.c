@@ -266,7 +266,11 @@ static int ath9k_htc_set_channel(struct ath9k_htc_priv *priv,
 
 	ath9k_wmi_event_drain(priv);
 
+<<<<<<< HEAD
 	ath_dbg(common, CONFIG,
+=======
+	ath_dbg(common, ATH_DBG_CONFIG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"(%u MHz) -> (%u MHz), HT: %d, HT40: %d fastcc: %d\n",
 		priv->ah->curchan->channel,
 		channel->center_freq, conf_is_ht(conf), conf_is_ht40(conf),
@@ -415,7 +419,11 @@ static int ath9k_htc_add_monitor_interface(struct ath9k_htc_priv *priv)
 	priv->vif_sta_pos[priv->mon_vif_idx] = sta_idx;
 	priv->ah->is_monitoring = true;
 
+<<<<<<< HEAD
 	ath_dbg(common, CONFIG,
+=======
+	ath_dbg(common, ATH_DBG_CONFIG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"Attached a monitor interface at idx: %d, sta idx: %d\n",
 		priv->mon_vif_idx, sta_idx);
 
@@ -427,7 +435,11 @@ err_sta:
 	 */
 	__ath9k_htc_remove_monitor_interface(priv);
 err_vif:
+<<<<<<< HEAD
 	ath_dbg(common, FATAL, "Unable to attach a monitor interface\n");
+=======
+	ath_dbg(common, ATH_DBG_FATAL, "Unable to attach a monitor interface\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -452,7 +464,11 @@ static int ath9k_htc_remove_monitor_interface(struct ath9k_htc_priv *priv)
 	priv->nstations--;
 	priv->ah->is_monitoring = false;
 
+<<<<<<< HEAD
 	ath_dbg(common, CONFIG,
+=======
+	ath_dbg(common, ATH_DBG_CONFIG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"Removed a monitor interface at idx: %d, sta idx: %d\n",
 		priv->mon_vif_idx, sta_idx);
 
@@ -512,11 +528,19 @@ static int ath9k_htc_add_station(struct ath9k_htc_priv *priv,
 	}
 
 	if (sta) {
+<<<<<<< HEAD
 		ath_dbg(common, CONFIG,
 			"Added a station entry for: %pM (idx: %d)\n",
 			sta->addr, tsta.sta_index);
 	} else {
 		ath_dbg(common, CONFIG,
+=======
+		ath_dbg(common, ATH_DBG_CONFIG,
+			"Added a station entry for: %pM (idx: %d)\n",
+			sta->addr, tsta.sta_index);
+	} else {
+		ath_dbg(common, ATH_DBG_CONFIG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"Added a station entry for VIF %d (idx: %d)\n",
 			avp->index, tsta.sta_index);
 	}
@@ -556,11 +580,19 @@ static int ath9k_htc_remove_station(struct ath9k_htc_priv *priv,
 	}
 
 	if (sta) {
+<<<<<<< HEAD
 		ath_dbg(common, CONFIG,
 			"Removed a station entry for: %pM (idx: %d)\n",
 			sta->addr, sta_idx);
 	} else {
 		ath_dbg(common, CONFIG,
+=======
+		ath_dbg(common, ATH_DBG_CONFIG,
+			"Removed a station entry for: %pM (idx: %d)\n",
+			sta->addr, sta_idx);
+	} else {
+		ath_dbg(common, ATH_DBG_CONFIG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"Removed a station entry for VIF %d (idx: %d)\n",
 			avp->index, sta_idx);
 	}
@@ -665,7 +697,11 @@ static void ath9k_htc_init_rate(struct ath9k_htc_priv *priv,
 	ath9k_htc_setup_rate(priv, sta, &trate);
 	ret = ath9k_htc_send_rate_cmd(priv, &trate);
 	if (!ret)
+<<<<<<< HEAD
 		ath_dbg(common, CONFIG,
+=======
+		ath_dbg(common, ATH_DBG_CONFIG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"Updated target sta: %pM, rate caps: 0x%X\n",
 			sta->addr, be32_to_cpu(trate.capflags));
 }
@@ -692,7 +728,11 @@ static void ath9k_htc_update_rate(struct ath9k_htc_priv *priv,
 
 	ret = ath9k_htc_send_rate_cmd(priv, &trate);
 	if (!ret)
+<<<<<<< HEAD
 		ath_dbg(common, CONFIG,
+=======
+		ath_dbg(common, ATH_DBG_CONFIG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"Updated target sta: %pM, rate caps: 0x%X\n",
 			bss_conf->bssid, be32_to_cpu(trate.capflags));
 }
@@ -721,11 +761,19 @@ static int ath9k_htc_tx_aggr_oper(struct ath9k_htc_priv *priv,
 
 	WMI_CMD_BUF(WMI_TX_AGGR_ENABLE_CMDID, &aggr);
 	if (ret)
+<<<<<<< HEAD
 		ath_dbg(common, CONFIG,
 			"Unable to %s TX aggregation for (%pM, %d)\n",
 			(aggr.aggr_enable) ? "start" : "stop", sta->addr, tid);
 	else
 		ath_dbg(common, CONFIG,
+=======
+		ath_dbg(common, ATH_DBG_CONFIG,
+			"Unable to %s TX aggregation for (%pM, %d)\n",
+			(aggr.aggr_enable) ? "start" : "stop", sta->addr, tid);
+	else
+		ath_dbg(common, ATH_DBG_CONFIG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"%s TX aggregation for (%pM, %d)\n",
 			(aggr.aggr_enable) ? "Starting" : "Stopping",
 			sta->addr, tid);
@@ -784,7 +832,11 @@ void ath9k_htc_ani_work(struct work_struct *work)
 	/* Long calibration runs independently of short calibration. */
 	if ((timestamp - common->ani.longcal_timer) >= ATH_LONG_CALINTERVAL) {
 		longcal = true;
+<<<<<<< HEAD
 		ath_dbg(common, ANI, "longcal @%lu\n", jiffies);
+=======
+		ath_dbg(common, ATH_DBG_ANI, "longcal @%lu\n", jiffies);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		common->ani.longcal_timer = timestamp;
 	}
 
@@ -793,7 +845,12 @@ void ath9k_htc_ani_work(struct work_struct *work)
 		if ((timestamp - common->ani.shortcal_timer) >=
 		    short_cal_interval) {
 			shortcal = true;
+<<<<<<< HEAD
 			ath_dbg(common, ANI, "shortcal @%lu\n", jiffies);
+=======
+			ath_dbg(common, ATH_DBG_ANI,
+				"shortcal @%lu\n", jiffies);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			common->ani.shortcal_timer = timestamp;
 			common->ani.resetcal_timer = timestamp;
 		}
@@ -807,8 +864,12 @@ void ath9k_htc_ani_work(struct work_struct *work)
 	}
 
 	/* Verify whether we must check ANI */
+<<<<<<< HEAD
 	if (ah->config.enable_ani &&
 	    (timestamp - common->ani.checkani_timer) >= ATH_ANI_POLLINTERVAL) {
+=======
+	if ((timestamp - common->ani.checkani_timer) >= ATH_ANI_POLLINTERVAL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		aniflag = true;
 		common->ani.checkani_timer = timestamp;
 	}
@@ -826,7 +887,12 @@ void ath9k_htc_ani_work(struct work_struct *work)
 		if (longcal || shortcal)
 			common->ani.caldone =
 				ath9k_hw_calibrate(ah, ah->curchan,
+<<<<<<< HEAD
 						   ah->rxchainmask, longcal);
+=======
+						   common->rx_chainmask,
+						   longcal);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ath9k_htc_ps_restore(priv);
 	}
@@ -838,7 +904,11 @@ set_timer:
 	* short calibration and long calibration.
 	*/
 	cal_interval = ATH_LONG_CALINTERVAL;
+<<<<<<< HEAD
 	if (ah->config.enable_ani)
+=======
+	if (priv->ah->config.enable_ani)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cal_interval = min(cal_interval, (u32)ATH_ANI_POLLINTERVAL);
 	if (!common->ani.caldone)
 		cal_interval = min(cal_interval, (u32)short_cal_interval);
@@ -865,7 +935,11 @@ static void ath9k_htc_tx(struct ieee80211_hw *hw, struct sk_buff *skb)
 	padsize = padpos & 3;
 	if (padsize && skb->len > padpos) {
 		if (skb_headroom(skb) < padsize) {
+<<<<<<< HEAD
 			ath_dbg(common, XMIT, "No room for padding\n");
+=======
+			ath_dbg(common, ATH_DBG_XMIT, "No room for padding\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto fail_tx;
 		}
 		skb_push(skb, padsize);
@@ -874,13 +948,21 @@ static void ath9k_htc_tx(struct ieee80211_hw *hw, struct sk_buff *skb)
 
 	slot = ath9k_htc_tx_get_slot(priv);
 	if (slot < 0) {
+<<<<<<< HEAD
 		ath_dbg(common, XMIT, "No free TX slot\n");
+=======
+		ath_dbg(common, ATH_DBG_XMIT, "No free TX slot\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto fail_tx;
 	}
 
 	ret = ath9k_htc_tx_start(priv, skb, slot, false);
 	if (ret != 0) {
+<<<<<<< HEAD
 		ath_dbg(common, XMIT, "Tx failed\n");
+=======
+		ath_dbg(common, ATH_DBG_XMIT, "Tx failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto clear_slot;
 	}
 
@@ -908,7 +990,11 @@ static int ath9k_htc_start(struct ieee80211_hw *hw)
 
 	mutex_lock(&priv->mutex);
 
+<<<<<<< HEAD
 	ath_dbg(common, CONFIG,
+=======
+	ath_dbg(common, ATH_DBG_CONFIG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"Starting driver with initial channel: %d MHz\n",
 		curchan->center_freq);
 
@@ -919,6 +1005,10 @@ static int ath9k_htc_start(struct ieee80211_hw *hw)
 	/* setup initial channel */
 	init_channel = ath9k_cmn_get_curchannel(hw, ah);
 
+<<<<<<< HEAD
+=======
+	ath9k_hw_htc_resetinit(ah);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = ath9k_hw_reset(ah, init_channel, ah->caldata, false);
 	if (ret) {
 		ath_err(common,
@@ -941,7 +1031,11 @@ static int ath9k_htc_start(struct ieee80211_hw *hw)
 
 	ret = ath9k_htc_update_cap_target(priv, 0);
 	if (ret)
+<<<<<<< HEAD
 		ath_dbg(common, CONFIG,
+=======
+		ath_dbg(common, ATH_DBG_CONFIG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"Failed to update capability in target\n");
 
 	priv->op_flags &= ~OP_INVALID;
@@ -956,8 +1050,17 @@ static int ath9k_htc_start(struct ieee80211_hw *hw)
 	mod_timer(&priv->tx.cleanup_timer,
 		  jiffies + msecs_to_jiffies(ATH9K_HTC_TX_CLEANUP_INTERVAL));
 
+<<<<<<< HEAD
 	ath9k_htc_start_btcoex(priv);
 
+=======
+	if (ah->btcoex_hw.scheme == ATH_BTCOEX_CFG_3WIRE) {
+		ath9k_hw_btcoex_set_weight(ah, AR_BT_COEX_WGHT,
+					   AR_STOMP_LOW_WLAN_WGHT);
+		ath9k_hw_btcoex_enable(ah);
+		ath_htc_resume_btcoex_work(priv);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&priv->mutex);
 
 	return ret;
@@ -974,7 +1077,11 @@ static void ath9k_htc_stop(struct ieee80211_hw *hw)
 	mutex_lock(&priv->mutex);
 
 	if (priv->op_flags & OP_INVALID) {
+<<<<<<< HEAD
 		ath_dbg(common, ANY, "Device not present\n");
+=======
+		ath_dbg(common, ATH_DBG_ANY, "Device not present\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mutex_unlock(&priv->mutex);
 		return;
 	}
@@ -1004,7 +1111,15 @@ static void ath9k_htc_stop(struct ieee80211_hw *hw)
 
 	mutex_lock(&priv->mutex);
 
+<<<<<<< HEAD
 	ath9k_htc_stop_btcoex(priv);
+=======
+	if (ah->btcoex_hw.enabled) {
+		ath9k_hw_btcoex_disable(ah);
+		if (ah->btcoex_hw.scheme == ATH_BTCOEX_CFG_3WIRE)
+			ath_htc_cancel_btcoex_work(priv);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Remove a monitor interface if it's present. */
 	if (priv->ah->is_monitoring)
@@ -1017,7 +1132,11 @@ static void ath9k_htc_stop(struct ieee80211_hw *hw)
 
 	priv->op_flags |= OP_INVALID;
 
+<<<<<<< HEAD
 	ath_dbg(common, CONFIG, "Driver halt\n");
+=======
+	ath_dbg(common, ATH_DBG_CONFIG, "Driver halt\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&priv->mutex);
 }
 
@@ -1110,8 +1229,13 @@ static int ath9k_htc_add_interface(struct ieee80211_hw *hw,
 		ath9k_htc_start_ani(priv);
 	}
 
+<<<<<<< HEAD
 	ath_dbg(common, CONFIG, "Attach a VIF of type: %d at idx: %d\n",
 		vif->type, avp->index);
+=======
+	ath_dbg(common, ATH_DBG_CONFIG,
+		"Attach a VIF of type: %d at idx: %d\n", vif->type, avp->index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	ath9k_htc_ps_restore(priv);
@@ -1167,7 +1291,11 @@ static void ath9k_htc_remove_interface(struct ieee80211_hw *hw,
 			ath9k_htc_stop_ani(priv);
 	}
 
+<<<<<<< HEAD
 	ath_dbg(common, CONFIG, "Detach Interface at idx: %d\n", avp->index);
+=======
+	ath_dbg(common, ATH_DBG_CONFIG, "Detach Interface at idx: %d\n", avp->index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ath9k_htc_ps_restore(priv);
 	mutex_unlock(&priv->mutex);
@@ -1192,7 +1320,12 @@ static int ath9k_htc_config(struct ieee80211_hw *hw, u32 changed)
 		mutex_unlock(&priv->htc_pm_lock);
 
 		if (enable_radio) {
+<<<<<<< HEAD
 			ath_dbg(common, CONFIG, "not-idle: enabling radio\n");
+=======
+			ath_dbg(common, ATH_DBG_CONFIG,
+				"not-idle: enabling radio\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ath9k_htc_setpower(priv, ATH9K_PM_AWAKE);
 			ath9k_htc_radio_enable(hw);
 		}
@@ -1214,7 +1347,11 @@ static int ath9k_htc_config(struct ieee80211_hw *hw, u32 changed)
 		struct ieee80211_channel *curchan = hw->conf.channel;
 		int pos = curchan->hw_value;
 
+<<<<<<< HEAD
 		ath_dbg(common, CONFIG, "Set channel: %d MHz\n",
+=======
+		ath_dbg(common, ATH_DBG_CONFIG, "Set channel: %d MHz\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			curchan->center_freq);
 
 		ath9k_cmn_update_ichannel(&priv->ah->channels[pos],
@@ -1254,7 +1391,12 @@ static int ath9k_htc_config(struct ieee80211_hw *hw, u32 changed)
 		}
 		mutex_unlock(&priv->htc_pm_lock);
 
+<<<<<<< HEAD
 		ath_dbg(common, CONFIG, "idle: disabling radio\n");
+=======
+		ath_dbg(common, ATH_DBG_CONFIG,
+			"idle: disabling radio\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ath9k_htc_radio_disable(hw);
 	}
 
@@ -1282,6 +1424,7 @@ static void ath9k_htc_configure_filter(struct ieee80211_hw *hw,
 	u32 rfilt;
 
 	mutex_lock(&priv->mutex);
+<<<<<<< HEAD
 	changed_flags &= SUPPORTED_FILTERS;
 	*total_flags &= SUPPORTED_FILTERS;
 
@@ -1293,12 +1436,24 @@ static void ath9k_htc_configure_filter(struct ieee80211_hw *hw,
 	}
 	ath9k_htc_ps_wakeup(priv);
 
+=======
+	ath9k_htc_ps_wakeup(priv);
+
+	changed_flags &= SUPPORTED_FILTERS;
+	*total_flags &= SUPPORTED_FILTERS;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	priv->rxfilter = *total_flags;
 	rfilt = ath9k_htc_calcrxfilter(priv);
 	ath9k_hw_setrxfilter(priv->ah, rfilt);
 
+<<<<<<< HEAD
 	ath_dbg(ath9k_hw_common(priv->ah), CONFIG, "Set HW RX filter: 0x%x\n",
 		rfilt);
+=======
+	ath_dbg(ath9k_hw_common(priv->ah), ATH_DBG_CONFIG,
+		"Set HW RX filter: 0x%x\n", rfilt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ath9k_htc_ps_restore(priv);
 	mutex_unlock(&priv->mutex);
@@ -1341,8 +1496,12 @@ static int ath9k_htc_sta_remove(struct ieee80211_hw *hw,
 	return ret;
 }
 
+<<<<<<< HEAD
 static int ath9k_htc_conf_tx(struct ieee80211_hw *hw,
 			     struct ieee80211_vif *vif, u16 queue,
+=======
+static int ath9k_htc_conf_tx(struct ieee80211_hw *hw, u16 queue,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     const struct ieee80211_tx_queue_params *params)
 {
 	struct ath9k_htc_priv *priv = hw->priv;
@@ -1365,7 +1524,11 @@ static int ath9k_htc_conf_tx(struct ieee80211_hw *hw,
 
 	qnum = get_hw_qnum(queue, priv->hwq_map);
 
+<<<<<<< HEAD
 	ath_dbg(common, CONFIG,
+=======
+	ath_dbg(common, ATH_DBG_CONFIG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"Configure tx [queue/hwq] [%d/%d],  aifs: %d, cw_min: %d, cw_max: %d, txop: %d\n",
 		queue, qnum, params->aifs, params->cw_min,
 		params->cw_max, params->txop);
@@ -1399,6 +1562,7 @@ static int ath9k_htc_set_key(struct ieee80211_hw *hw,
 	if (htc_modparam_nohwcrypt)
 		return -ENOSPC;
 
+<<<<<<< HEAD
 	if ((vif->type == NL80211_IFTYPE_ADHOC ||
 	     vif->type == NL80211_IFTYPE_MESH_POINT) &&
 	    (key->cipher == WLAN_CIPHER_SUITE_TKIP ||
@@ -1416,6 +1580,10 @@ static int ath9k_htc_set_key(struct ieee80211_hw *hw,
 
 	mutex_lock(&priv->mutex);
 	ath_dbg(common, CONFIG, "Set HW Key\n");
+=======
+	mutex_lock(&priv->mutex);
+	ath_dbg(common, ATH_DBG_CONFIG, "Set HW Key\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ath9k_htc_ps_wakeup(priv);
 
 	switch (cmd) {
@@ -1451,7 +1619,12 @@ static void ath9k_htc_set_bssid(struct ath9k_htc_priv *priv)
 	struct ath_common *common = ath9k_hw_common(priv->ah);
 
 	ath9k_hw_write_associd(priv->ah);
+<<<<<<< HEAD
 	ath_dbg(common, CONFIG, "BSSID: %pM aid: 0x%x\n",
+=======
+	ath_dbg(common, ATH_DBG_CONFIG,
+		"BSSID: %pM aid: 0x%x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		common->curbssid, common->curaid);
 }
 
@@ -1489,14 +1662,21 @@ static void ath9k_htc_bss_info_changed(struct ieee80211_hw *hw,
 	ath9k_htc_ps_wakeup(priv);
 
 	if (changed & BSS_CHANGED_ASSOC) {
+<<<<<<< HEAD
 		ath_dbg(common, CONFIG, "BSS Changed ASSOC %d\n",
+=======
+		ath_dbg(common, ATH_DBG_CONFIG, "BSS Changed ASSOC %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			bss_conf->assoc);
 
 		bss_conf->assoc ?
 			priv->num_sta_assoc_vif++ : priv->num_sta_assoc_vif--;
 
 		if (priv->ah->opmode == NL80211_IFTYPE_STATION) {
+<<<<<<< HEAD
 			ath9k_htc_choose_set_bssid(priv);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (bss_conf->assoc && (priv->num_sta_assoc_vif == 1))
 				ath9k_htc_start_ani(priv);
 			else if (priv->num_sta_assoc_vif == 0)
@@ -1504,17 +1684,31 @@ static void ath9k_htc_bss_info_changed(struct ieee80211_hw *hw,
 		}
 	}
 
+<<<<<<< HEAD
 	if (changed & BSS_CHANGED_IBSS) {
+=======
+	if (changed & BSS_CHANGED_BSSID) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (priv->ah->opmode == NL80211_IFTYPE_ADHOC) {
 			common->curaid = bss_conf->aid;
 			memcpy(common->curbssid, bss_conf->bssid, ETH_ALEN);
 			ath9k_htc_set_bssid(priv);
+<<<<<<< HEAD
+=======
+		} else if (priv->ah->opmode == NL80211_IFTYPE_STATION) {
+			ath9k_htc_choose_set_bssid(priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
 	if ((changed & BSS_CHANGED_BEACON_ENABLED) && bss_conf->enable_beacon) {
+<<<<<<< HEAD
 		ath_dbg(common, CONFIG, "Beacon enabled for BSS: %pM\n",
 			bss_conf->bssid);
+=======
+		ath_dbg(common, ATH_DBG_CONFIG,
+			"Beacon enabled for BSS: %pM\n", bss_conf->bssid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ath9k_htc_set_tsfadjust(priv, vif);
 		priv->op_flags |= OP_ENABLE_BEACON;
 		ath9k_htc_beacon_config(priv, vif);
@@ -1526,7 +1720,11 @@ static void ath9k_htc_bss_info_changed(struct ieee80211_hw *hw,
 		 * AP/IBSS interfaces.
 		 */
 		if ((priv->num_ap_vif <= 1) || priv->num_ibss_vif) {
+<<<<<<< HEAD
 			ath_dbg(common, CONFIG,
+=======
+			ath_dbg(common, ATH_DBG_CONFIG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"Beacon disabled for BSS: %pM\n",
 				bss_conf->bssid);
 			priv->op_flags &= ~OP_ENABLE_BEACON;
@@ -1544,7 +1742,11 @@ static void ath9k_htc_bss_info_changed(struct ieee80211_hw *hw,
 		    (vif->type == NL80211_IFTYPE_AP)) {
 			priv->op_flags |= OP_TSF_RESET;
 		}
+<<<<<<< HEAD
 		ath_dbg(common, CONFIG,
+=======
+		ath_dbg(common, ATH_DBG_CONFIG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"Beacon interval changed for BSS: %pM\n",
 			bss_conf->bssid);
 		ath9k_htc_beacon_config(priv, vif);
@@ -1566,8 +1768,12 @@ static void ath9k_htc_bss_info_changed(struct ieee80211_hw *hw,
 	mutex_unlock(&priv->mutex);
 }
 
+<<<<<<< HEAD
 static u64 ath9k_htc_get_tsf(struct ieee80211_hw *hw,
 			     struct ieee80211_vif *vif)
+=======
+static u64 ath9k_htc_get_tsf(struct ieee80211_hw *hw)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath9k_htc_priv *priv = hw->priv;
 	u64 tsf;
@@ -1581,8 +1787,12 @@ static u64 ath9k_htc_get_tsf(struct ieee80211_hw *hw,
 	return tsf;
 }
 
+<<<<<<< HEAD
 static void ath9k_htc_set_tsf(struct ieee80211_hw *hw,
 			      struct ieee80211_vif *vif, u64 tsf)
+=======
+static void ath9k_htc_set_tsf(struct ieee80211_hw *hw, u64 tsf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath9k_htc_priv *priv = hw->priv;
 
@@ -1593,8 +1803,12 @@ static void ath9k_htc_set_tsf(struct ieee80211_hw *hw,
 	mutex_unlock(&priv->mutex);
 }
 
+<<<<<<< HEAD
 static void ath9k_htc_reset_tsf(struct ieee80211_hw *hw,
 				struct ieee80211_vif *vif)
+=======
+static void ath9k_htc_reset_tsf(struct ieee80211_hw *hw)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath9k_htc_priv *priv = hw->priv;
 
@@ -1734,13 +1948,19 @@ static int ath9k_htc_set_bitrate_mask(struct ieee80211_hw *hw,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	ath_dbg(common, CONFIG, "Set bitrate masks: 0x%x, 0x%x\n",
+=======
+	ath_dbg(common, ATH_DBG_CONFIG,
+		"Set bitrate masks: 0x%x, 0x%x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mask->control[IEEE80211_BAND_2GHZ].legacy,
 		mask->control[IEEE80211_BAND_5GHZ].legacy);
 out:
 	return ret;
 }
 
+<<<<<<< HEAD
 
 static int ath9k_htc_get_stats(struct ieee80211_hw *hw,
 			       struct ieee80211_low_level_stats *stats)
@@ -1757,6 +1977,8 @@ static int ath9k_htc_get_stats(struct ieee80211_hw *hw,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ieee80211_ops ath9k_htc_ops = {
 	.tx                 = ath9k_htc_tx,
 	.start              = ath9k_htc_start,
@@ -1780,5 +2002,8 @@ struct ieee80211_ops ath9k_htc_ops = {
 	.rfkill_poll        = ath9k_htc_rfkill_poll_state,
 	.set_coverage_class = ath9k_htc_set_coverage_class,
 	.set_bitrate_mask   = ath9k_htc_set_bitrate_mask,
+<<<<<<< HEAD
 	.get_stats	    = ath9k_htc_get_stats,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };

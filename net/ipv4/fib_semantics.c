@@ -14,6 +14,10 @@
  */
 
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bitops.h>
 #include <linux/types.h>
 #include <linux/kernel.h>
@@ -141,6 +145,7 @@ const struct fib_prop fib_props[RTN_MAX + 1] = {
 };
 
 /* Release a nexthop info record */
+<<<<<<< HEAD
 static void free_fib_info_rcu(struct rcu_head *head)
 {
 	struct fib_info *fi = container_of(head, struct fib_info, rcu);
@@ -155,15 +160,31 @@ static void free_fib_info_rcu(struct rcu_head *head)
 		kfree(fi->fib_metrics);
 	kfree(fi);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void free_fib_info(struct fib_info *fi)
 {
 	if (fi->fib_dead == 0) {
+<<<<<<< HEAD
 		pr_warn("Freeing alive fib_info %p\n", fi);
 		return;
 	}
 	fib_info_cnt--;
 	call_rcu(&fi->rcu, free_fib_info_rcu);
+=======
+		pr_warning("Freeing alive fib_info %p\n", fi);
+		return;
+	}
+	change_nexthops(fi) {
+		if (nexthop_nh->nh_dev)
+			dev_put(nexthop_nh->nh_dev);
+		nexthop_nh->nh_dev = NULL;
+	} endfor_nexthops(fi);
+	fib_info_cnt--;
+	release_net(fi->fib_net);
+	kfree_rcu(fi, rcu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void fib_release_info(struct fib_info *fi)

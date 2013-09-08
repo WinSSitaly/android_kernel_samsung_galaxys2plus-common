@@ -93,7 +93,11 @@
 /* root profile namespace */
 struct aa_namespace *root_ns;
 
+<<<<<<< HEAD
 const char *const profile_mode_names[] = {
+=======
+const char *profile_mode_names[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"enforce",
 	"complain",
 	"kill",
@@ -749,7 +753,10 @@ static void free_profile(struct aa_profile *profile)
 
 	aa_free_sid(profile->sid);
 	aa_put_dfa(profile->xmatch);
+<<<<<<< HEAD
 	aa_put_dfa(profile->policy.dfa);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	aa_put_profile(profile->replacedby);
 
@@ -964,6 +971,7 @@ static int audit_policy(int op, gfp_t gfp, const char *name, const char *info,
 			int error)
 {
 	struct common_audit_data sa;
+<<<<<<< HEAD
 	struct apparmor_audit_data aad = {0,};
 	COMMON_AUDIT_DATA_INIT(&sa, NONE);
 	sa.aad = &aad;
@@ -971,6 +979,13 @@ static int audit_policy(int op, gfp_t gfp, const char *name, const char *info,
 	aad.name = name;
 	aad.info = info;
 	aad.error = error;
+=======
+	COMMON_AUDIT_DATA_INIT(&sa, NONE);
+	sa.aad.op = op;
+	sa.aad.name = name;
+	sa.aad.info = info;
+	sa.aad.error = error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return aa_audit(AUDIT_APPARMOR_STATUS, __aa_current_profile(), gfp,
 			&sa, NULL);

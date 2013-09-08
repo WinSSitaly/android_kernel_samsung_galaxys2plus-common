@@ -28,7 +28,10 @@
 
 #include "cx88.h"
 #include "tea5767.h"
+<<<<<<< HEAD
 #include "xc4000.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static unsigned int tuner[] = {[0 ... (CX88_MAXBOARDS - 1)] = UNSET };
 static unsigned int radio[] = {[0 ... (CX88_MAXBOARDS - 1)] = UNSET };
@@ -1306,7 +1309,11 @@ static const struct cx88_board cx88_boards[] = {
 	},
 	[CX88_BOARD_WINFAST_DTV2000H_J] = {
 		.name           = "WinFast DTV2000 H rev. J",
+<<<<<<< HEAD
 		.tuner_type     = TUNER_PHILIPS_FMD1216MEX_MK3,
+=======
+		.tuner_type     = TUNER_PHILIPS_FMD1216ME_MK3,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.radio_type     = UNSET,
 		.tuner_addr     = ADDR_UNSET,
 		.radio_addr     = ADDR_UNSET,
@@ -1573,8 +1580,13 @@ static const struct cx88_board cx88_boards[] = {
 		.name           = "Pinnacle Hybrid PCTV",
 		.tuner_type     = TUNER_XC2028,
 		.tuner_addr     = 0x61,
+<<<<<<< HEAD
 		.radio_type     = UNSET,
 		.radio_addr     = ADDR_UNSET,
+=======
+		.radio_type     = TUNER_XC2028,
+		.radio_addr     = 0x61,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.input          = { {
 			.type   = CX88_VMUX_TELEVISION,
 			.vmux   = 0,
@@ -1611,6 +1623,7 @@ static const struct cx88_board cx88_boards[] = {
 		.name           = "Leadtek TV2000 XP Global",
 		.tuner_type     = TUNER_XC2028,
 		.tuner_addr     = 0x61,
+<<<<<<< HEAD
 		.radio_type     = UNSET,
 		.radio_addr     = ADDR_UNSET,
 		.input          = { {
@@ -1649,6 +1662,10 @@ static const struct cx88_board cx88_boards[] = {
 		.tuner_addr     = 0x61,
 		.radio_type     = UNSET,
 		.radio_addr     = ADDR_UNSET,
+=======
+		.radio_type     = TUNER_XC2028,
+		.radio_addr     = 0x61,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.input          = { {
 			.type   = CX88_VMUX_TELEVISION,
 			.vmux   = 0,
@@ -1679,6 +1696,7 @@ static const struct cx88_board cx88_boards[] = {
 			.gpio3  = 0x0000,
 		},
 	},
+<<<<<<< HEAD
 	[CX88_BOARD_WINFAST_TV2000_XP_GLOBAL_6F43] = {
 		.name           = "Leadtek TV2000 XP Global (XC4100)",
 		.tuner_type     = TUNER_XC4000,
@@ -1715,6 +1733,8 @@ static const struct cx88_board cx88_boards[] = {
 			.gpio3  = 0x0000,
 		},
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[CX88_BOARD_POWERCOLOR_REAL_ANGEL] = {
 		.name           = "PowerColor RA330",	/* Long names may confuse LIRC. */
 		.tuner_type     = TUNER_XC2028,
@@ -2115,8 +2135,13 @@ static const struct cx88_board cx88_boards[] = {
 		.name           = "Terratec Cinergy HT PCI MKII",
 		.tuner_type     = TUNER_XC2028,
 		.tuner_addr     = 0x61,
+<<<<<<< HEAD
 		.radio_type     = UNSET,
 		.radio_addr     = ADDR_UNSET,
+=======
+		.radio_type     = TUNER_XC2028,
+		.radio_addr     = 0x61,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.input          = { {
 			.type   = CX88_VMUX_TELEVISION,
 			.vmux   = 0,
@@ -2154,9 +2179,15 @@ static const struct cx88_board cx88_boards[] = {
 	[CX88_BOARD_WINFAST_DTV1800H] = {
 		.name           = "Leadtek WinFast DTV1800 Hybrid",
 		.tuner_type     = TUNER_XC2028,
+<<<<<<< HEAD
 		.radio_type     = UNSET,
 		.tuner_addr     = 0x61,
 		.radio_addr     = ADDR_UNSET,
+=======
+		.radio_type     = TUNER_XC2028,
+		.tuner_addr     = 0x61,
+		.radio_addr     = 0x61,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * GPIO setting
 		 *
@@ -2192,6 +2223,7 @@ static const struct cx88_board cx88_boards[] = {
 		},
 		.mpeg           = CX88_MPEG_DVB,
 	},
+<<<<<<< HEAD
 	[CX88_BOARD_WINFAST_DTV1800H_XC4000] = {
 		.name		= "Leadtek WinFast DTV1800 H (XC4000)",
 		.tuner_type	= TUNER_XC4000,
@@ -2285,6 +2317,8 @@ static const struct cx88_board cx88_boards[] = {
 		},
 		.mpeg		= CX88_MPEG_DVB,
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[CX88_BOARD_PROF_7301] = {
 		.name           = "Prof 7301 DVB-S/S2",
 		.tuner_type     = UNSET,
@@ -2747,6 +2781,7 @@ static const struct cx88_subid cx88_subids[] = {
 		.subdevice = 0x6654,
 		.card      = CX88_BOARD_WINFAST_DTV1800H,
 	}, {
+<<<<<<< HEAD
 		/* WinFast DTV1800 H with XC4000 tuner */
 		.subvendor = 0x107d,
 		.subdevice = 0x6f38,
@@ -2756,6 +2791,8 @@ static const struct cx88_subid cx88_subids[] = {
 		.subdevice = 0x6f42,
 		.card      = CX88_BOARD_WINFAST_DTV2000H_PLUS,
 	}, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* PVR2000 PAL Model [107d:6630] */
 		.subvendor = 0x107d,
 		.subdevice = 0x6630,
@@ -2791,6 +2828,7 @@ static const struct cx88_subid cx88_subids[] = {
 		.subdevice = 0x6618,
 		.card      = CX88_BOARD_WINFAST_TV2000_XP_GLOBAL,
 	}, {
+<<<<<<< HEAD
 		/* TV2000 XP Global [107d:6618] */
 		.subvendor = 0x107d,
 		.subdevice = 0x6619,
@@ -2806,6 +2844,8 @@ static const struct cx88_subid cx88_subids[] = {
 		.subdevice = 0x6f43,
 		.card      = CX88_BOARD_WINFAST_TV2000_XP_GLOBAL_6F43,
 	}, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.subvendor = 0xb034,
 		.subdevice = 0x3034,
 		.card      = CX88_BOARD_PROF_7301,
@@ -3036,6 +3076,7 @@ static int cx88_xc3028_winfast1800h_callback(struct cx88_core *core,
 	return -EINVAL;
 }
 
+<<<<<<< HEAD
 static int cx88_xc4000_winfast2000h_plus_callback(struct cx88_core *core,
 						  int command, int arg)
 {
@@ -3053,6 +3094,8 @@ static int cx88_xc4000_winfast2000h_plus_callback(struct cx88_core *core,
 	return -EINVAL;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* ------------------------------------------------------------------- */
 /* some Divco specific stuff                                           */
 static int cx88_pv_8000gt_callback(struct cx88_core *core,
@@ -3155,6 +3198,7 @@ static int cx88_xc2028_tuner_callback(struct cx88_core *core,
 	return -EINVAL;
 }
 
+<<<<<<< HEAD
 static int cx88_xc4000_tuner_callback(struct cx88_core *core,
 				      int command, int arg)
 {
@@ -3170,6 +3214,8 @@ static int cx88_xc4000_tuner_callback(struct cx88_core *core,
 	return -EINVAL;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* ----------------------------------------------------------------------- */
 /* Tuner callback function. Currently only needed for the Pinnacle 	   *
  * PCTV HD 800i with an xc5000 sillicon tuner. This is used for both	   *
@@ -3244,9 +3290,12 @@ int cx88_tuner_callback(void *priv, int component, int command, int arg)
 		case TUNER_XC2028:
 			info_printk(core, "Calling XC2028/3028 callback\n");
 			return cx88_xc2028_tuner_callback(core, command, arg);
+<<<<<<< HEAD
 		case TUNER_XC4000:
 			info_printk(core, "Calling XC4000 callback\n");
 			return cx88_xc4000_tuner_callback(core, command, arg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case TUNER_XC5000:
 			info_printk(core, "Calling XC5000 callback\n");
 			return cx88_xc5000_tuner_callback(core, command, arg);
@@ -3321,7 +3370,10 @@ static void cx88_card_setup_pre_i2c(struct cx88_core *core)
 		cx_set(MO_GP0_IO, 0x00001010);
 		break;
 
+<<<<<<< HEAD
 	case CX88_BOARD_WINFAST_DTV2000H_J:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case CX88_BOARD_HAUPPAUGE_HVR3000:
 	case CX88_BOARD_HAUPPAUGE_HVR4000:
 		/* Init GPIO */
@@ -3335,6 +3387,7 @@ static void cx88_card_setup_pre_i2c(struct cx88_core *core)
 
 	case CX88_BOARD_WINFAST_TV2000_XP_GLOBAL:
 	case CX88_BOARD_WINFAST_DTV1800H:
+<<<<<<< HEAD
 		cx88_xc3028_winfast1800h_callback(core, XC2028_TUNER_RESET, 0);
 		break;
 
@@ -3344,6 +3397,15 @@ static void cx88_card_setup_pre_i2c(struct cx88_core *core)
 	case CX88_BOARD_WINFAST_TV2000_XP_GLOBAL_6F43:
 		cx88_xc4000_winfast2000h_plus_callback(core,
 						       XC4000_TUNER_RESET, 0);
+=======
+		/* GPIO 12 (xc3028 tuner reset) */
+		cx_set(MO_GP1_IO, 0x1010);
+		mdelay(50);
+		cx_clear(MO_GP1_IO, 0x10);
+		mdelay(50);
+		cx_set(MO_GP1_IO, 0x10);
+		mdelay(50);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case CX88_BOARD_TWINHAN_VP1027_DVBS:

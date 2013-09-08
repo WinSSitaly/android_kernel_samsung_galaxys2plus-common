@@ -19,8 +19,13 @@ void (*mce_threshold_vector)(void) = default_threshold_interrupt;
 
 asmlinkage void smp_threshold_interrupt(void)
 {
+<<<<<<< HEAD
 	irq_enter();
 	exit_idle();
+=======
+	exit_idle();
+	irq_enter();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	inc_irq_stat(irq_threshold_count);
 	mce_threshold_vector();
 	irq_exit();

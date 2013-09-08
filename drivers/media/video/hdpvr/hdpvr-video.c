@@ -17,6 +17,10 @@
 #include <linux/uaccess.h>
 #include <linux/usb.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/workqueue.h>
 
 #include <linux/videodev2.h>
@@ -574,6 +578,10 @@ static int vidioc_querycap(struct file *file, void  *priv,
 	strcpy(cap->driver, "hdpvr");
 	strcpy(cap->card, "Hauppauge HD PVR");
 	usb_make_path(dev->udev, cap->bus_info, sizeof(cap->bus_info));
+<<<<<<< HEAD
+=======
+	cap->version = HDPVR_VERSION;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cap->capabilities =     V4L2_CAP_VIDEO_CAPTURE |
 				V4L2_CAP_AUDIO         |
 				V4L2_CAP_READWRITE;
@@ -723,6 +731,7 @@ static const s32 supported_v4l2_ctrls[] = {
 };
 
 static int fill_queryctrl(struct hdpvr_options *opt, struct v4l2_queryctrl *qc,
+<<<<<<< HEAD
 			  int ac3, int fw_ver)
 {
 	int err;
@@ -756,6 +765,23 @@ static int fill_queryctrl(struct hdpvr_options *opt, struct v4l2_queryctrl *qc,
 	}
 
 	switch (qc->id) {
+=======
+			  int ac3)
+{
+	int err;
+
+	switch (qc->id) {
+	case V4L2_CID_BRIGHTNESS:
+		return v4l2_ctrl_query_fill(qc, 0x0, 0xff, 1, 0x86);
+	case V4L2_CID_CONTRAST:
+		return v4l2_ctrl_query_fill(qc, 0x0, 0xff, 1, 0x80);
+	case V4L2_CID_SATURATION:
+		return v4l2_ctrl_query_fill(qc, 0x0, 0xff, 1, 0x80);
+	case V4L2_CID_HUE:
+		return v4l2_ctrl_query_fill(qc, 0x0, 0xff, 1, 0x80);
+	case V4L2_CID_SHARPNESS:
+		return v4l2_ctrl_query_fill(qc, 0x0, 0xff, 1, 0x80);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case V4L2_CID_MPEG_AUDIO_ENCODING:
 		return v4l2_ctrl_query_fill(
 			qc, V4L2_MPEG_AUDIO_ENCODING_AAC,
@@ -813,8 +839,12 @@ static int vidioc_queryctrl(struct file *file, void *private_data,
 
 		if (qc->id == supported_v4l2_ctrls[i])
 			return fill_queryctrl(&dev->options, qc,
+<<<<<<< HEAD
 					      dev->flags & HDPVR_FLAG_AC3_CAP,
 					      dev->fw_ver);
+=======
+					      dev->flags & HDPVR_FLAG_AC3_CAP);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (qc->id < supported_v4l2_ctrls[i])
 			break;

@@ -394,7 +394,11 @@ __do_out_asm(_rec_outl, "stwbrx")
 #endif /* CONFIG_PPC32 */
 
 /* The "__do_*" operations below provide the actual "base" implementation
+<<<<<<< HEAD
  * for each of the defined accessors. Some of them use the out_* functions
+=======
+ * for each of the defined acccessor. Some of them use the out_* functions
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * directly, some of them still use EEH, though we might change that in the
  * future. Those macros below provide the necessary argument swapping and
  * handling of the IO base for PIO.

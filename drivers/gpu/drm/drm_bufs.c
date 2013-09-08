@@ -36,7 +36,10 @@
 #include <linux/vmalloc.h>
 #include <linux/slab.h>
 #include <linux/log2.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/shmparam.h>
 #include "drmP.h"
 
@@ -1510,8 +1513,13 @@ int drm_freebufs(struct drm_device *dev, void *data,
  * \param arg pointer to a drm_buf_map structure.
  * \return zero on success or a negative number on failure.
  *
+<<<<<<< HEAD
  * Maps the AGP, SG or PCI buffer region with vm_mmap(), and copies information
  * about each buffer into user space. For PCI buffers, it calls vm_mmap() with
+=======
+ * Maps the AGP, SG or PCI buffer region with do_mmap(), and copies information
+ * about each buffer into user space. For PCI buffers, it calls do_mmap() with
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * offset equal to 0, which drm_mmap() interpretes as PCI buffers and calls
  * drm_mmap_dma().
  */
@@ -1553,6 +1561,7 @@ int drm_mapbufs(struct drm_device *dev, void *data,
 				retcode = -EINVAL;
 				goto done;
 			}
+<<<<<<< HEAD
 			virtual = vm_mmap(file_priv->filp, 0, map->size,
 					  PROT_READ | PROT_WRITE,
 					  MAP_SHARED,
@@ -1561,6 +1570,20 @@ int drm_mapbufs(struct drm_device *dev, void *data,
 			virtual = vm_mmap(file_priv->filp, 0, dma->byte_count,
 					  PROT_READ | PROT_WRITE,
 					  MAP_SHARED, 0);
+=======
+			down_write(&current->mm->mmap_sem);
+			virtual = do_mmap(file_priv->filp, 0, map->size,
+					  PROT_READ | PROT_WRITE,
+					  MAP_SHARED,
+					  token);
+			up_write(&current->mm->mmap_sem);
+		} else {
+			down_write(&current->mm->mmap_sem);
+			virtual = do_mmap(file_priv->filp, 0, dma->byte_count,
+					  PROT_READ | PROT_WRITE,
+					  MAP_SHARED, 0);
+			up_write(&current->mm->mmap_sem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		if (virtual > -1024UL) {
 			/* Real error */

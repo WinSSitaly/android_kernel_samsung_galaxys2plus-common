@@ -32,7 +32,10 @@
 #include <net/genetlink.h>
 #include <linux/wimax.h>
 #include <linux/security.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "wimax-internal.h"
 
 #define D_SUBMODULE op_reset

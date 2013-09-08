@@ -85,7 +85,10 @@ enum cx25840_video_input {
 	CX25840_NONE1_CH3 = 0x800000c0,
 	CX25840_SVIDEO_ON = 0x80000100,
 	CX25840_COMPONENT_ON = 0x80000200,
+<<<<<<< HEAD
 	CX25840_DIF_ON = 0x80000400,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum cx25840_audio_input {

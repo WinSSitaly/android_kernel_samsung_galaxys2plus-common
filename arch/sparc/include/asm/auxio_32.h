@@ -6,6 +6,10 @@
 #ifndef _SPARC_AUXIO_H
 #define _SPARC_AUXIO_H
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/vaddrs.h>
 
 /* This register is an unsigned char in IO space.  It does two things.

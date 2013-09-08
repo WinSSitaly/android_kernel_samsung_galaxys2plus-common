@@ -32,6 +32,10 @@
 #include <linux/module.h>
 #include <linux/suspend.h>
 #include <linux/writeback.h>
+<<<<<<< HEAD
+=======
+#include <linux/buffer_head.h>		/* for fsync_bdev() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/swap.h>
 #include <linux/spinlock.h>
 #include <linux/vt_kern.h>
@@ -40,7 +44,10 @@
 #include <linux/oom.h>
 #include <linux/slab.h>
 #include <linux/input.h>
+<<<<<<< HEAD
 #include <linux/uaccess.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/ptrace.h>
 #include <asm/irq_regs.h>
@@ -110,9 +117,17 @@ static struct sysrq_key_op sysrq_SAK_op = {
 #ifdef CONFIG_VT
 static void sysrq_handle_unraw(int key)
 {
+<<<<<<< HEAD
 	vt_reset_unicode(fg_console);
 }
 
+=======
+	struct kbd_struct *kbd = &kbd_table[fg_console];
+
+	if (kbd)
+		kbd->kbdmode = default_utf8 ? VC_UNICODE : VC_XLATE;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct sysrq_key_op sysrq_unraw_op = {
 	.handler	= sysrq_handle_unraw,
 	.help_msg	= "unRaw",
@@ -320,6 +335,7 @@ static void send_sig_all(int sig)
 {
 	struct task_struct *p;
 
+<<<<<<< HEAD
 	read_lock(&tasklist_lock);
 	for_each_process(p) {
 		if (p->flags & PF_KTHREAD)
@@ -330,6 +346,13 @@ static void send_sig_all(int sig)
 		do_send_sig_info(sig, SEND_SIG_FORCED, p, true);
 	}
 	read_unlock(&tasklist_lock);
+=======
+	for_each_process(p) {
+		if (p->mm && !is_global_init(p))
+			/* Not swapper, init nor kernel thread */
+			force_sig(sig, p);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void sysrq_handle_term(int key)
@@ -346,7 +369,11 @@ static struct sysrq_key_op sysrq_term_op = {
 
 static void moom_callback(struct work_struct *ignored)
 {
+<<<<<<< HEAD
 	out_of_memory(node_zonelist(0, GFP_KERNEL), GFP_KERNEL, 0, NULL, true);
+=======
+	out_of_memory(node_zonelist(0, GFP_KERNEL), GFP_KERNEL, 0, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static DECLARE_WORK(moom_work, moom_callback);

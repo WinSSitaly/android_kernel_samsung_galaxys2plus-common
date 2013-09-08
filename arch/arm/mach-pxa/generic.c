@@ -16,16 +16,27 @@
  * initialization stuff for PXA machines which can be overridden later if
  * need be.
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
 
 #include <mach/hardware.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach/map.h>
 #include <asm/mach-types.h>
 
 #include <mach/reset.h>
+<<<<<<< HEAD
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/smemc.h>
 #include <mach/pxa3xx-regs.h>
 

@@ -95,7 +95,11 @@ struct mace_video {
  * Ethernet interface
  */
 struct mace_ethernet {
+<<<<<<< HEAD
 	volatile u64 mac_ctrl;
+=======
+	volatile unsigned long mac_ctrl;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	volatile unsigned long int_stat;
 	volatile unsigned long dma_ctrl;
 	volatile unsigned long timer;

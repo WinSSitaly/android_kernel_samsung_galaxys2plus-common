@@ -1,6 +1,10 @@
 /******************************************************************************
  *
+<<<<<<< HEAD
  * Copyright(c) 2008 - 2012 Intel Corporation. All rights reserved.
+=======
+ * Copyright(c) 2008 - 2011 Intel Corporation. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
@@ -27,9 +31,18 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/delay.h>
 #include <linux/skbuff.h>
 #include <linux/netdevice.h>
+=======
+#include <linux/pci.h>
+#include <linux/dma-mapping.h>
+#include <linux/delay.h>
+#include <linux/skbuff.h>
+#include <linux/netdevice.h>
+#include <linux/wireless.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/mac80211.h>
 #include <linux/etherdevice.h>
 #include <asm/unaligned.h>
@@ -39,6 +52,7 @@
 #include "iwl-dev.h"
 #include "iwl-core.h"
 #include "iwl-io.h"
+<<<<<<< HEAD
 #include "iwl-agn.h"
 #include "iwl-agn-hw.h"
 #include "iwl-shared.h"
@@ -55,12 +69,27 @@
 #define IWL2000_UCODE_API_OK 6
 #define IWL105_UCODE_API_OK 6
 #define IWL135_UCODE_API_OK 6
+=======
+#include "iwl-sta.h"
+#include "iwl-agn.h"
+#include "iwl-helpers.h"
+#include "iwl-agn-hw.h"
+#include "iwl-6000-hw.h"
+
+/* Highest firmware API version supported */
+#define IWL2030_UCODE_API_MAX 5
+#define IWL2000_UCODE_API_MAX 5
+#define IWL105_UCODE_API_MAX 5
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Lowest firmware API version supported */
 #define IWL2030_UCODE_API_MIN 5
 #define IWL2000_UCODE_API_MIN 5
 #define IWL105_UCODE_API_MIN 5
+<<<<<<< HEAD
 #define IWL135_UCODE_API_MIN 5
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define IWL2030_FW_PRE "iwlwifi-2030-"
 #define IWL2030_MODULE_FIRMWARE(api) IWL2030_FW_PRE __stringify(api) ".ucode"
@@ -71,6 +100,7 @@
 #define IWL105_FW_PRE "iwlwifi-105-"
 #define IWL105_MODULE_FIRMWARE(api) IWL105_FW_PRE __stringify(api) ".ucode"
 
+<<<<<<< HEAD
 #define IWL135_FW_PRE "iwlwifi-135-"
 #define IWL135_MODULE_FIRMWARE(api) IWL135_FW_PRE __stringify(api) ".ucode"
 
@@ -79,11 +109,19 @@ static void iwl2000_set_ct_threshold(struct iwl_priv *priv)
 	/* want Celsius */
 	hw_params(priv).ct_kill_threshold = CT_KILL_THRESHOLD;
 	hw_params(priv).ct_kill_exit_threshold = CT_KILL_EXIT_THRESHOLD;
+=======
+static void iwl2000_set_ct_threshold(struct iwl_priv *priv)
+{
+	/* want Celsius */
+	priv->hw_params.ct_kill_threshold = CT_KILL_THRESHOLD;
+	priv->hw_params.ct_kill_exit_threshold = CT_KILL_EXIT_THRESHOLD;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* NIC configuration for 2000 series */
 static void iwl2000_nic_config(struct iwl_priv *priv)
 {
+<<<<<<< HEAD
 	iwl_rf_config(priv);
 
 	if (cfg(priv)->iq_invert)
@@ -93,6 +131,35 @@ static void iwl2000_nic_config(struct iwl_priv *priv)
 
 static const struct iwl_sensitivity_ranges iwl2000_sensitivity = {
 	.min_nrg_cck = 97,
+=======
+	u16 radio_cfg;
+
+	radio_cfg = iwl_eeprom_query16(priv, EEPROM_RADIO_CONFIG);
+
+	/* write radio config values to register */
+	if (EEPROM_RF_CFG_TYPE_MSK(radio_cfg) <= EEPROM_RF_CONFIG_TYPE_MAX)
+	iwl_set_bit(priv, CSR_HW_IF_CONFIG_REG,
+			EEPROM_RF_CFG_TYPE_MSK(radio_cfg) |
+			EEPROM_RF_CFG_STEP_MSK(radio_cfg) |
+			EEPROM_RF_CFG_DASH_MSK(radio_cfg));
+
+	/* set CSR_HW_CONFIG_REG for uCode use */
+	iwl_set_bit(priv, CSR_HW_IF_CONFIG_REG,
+		    CSR_HW_IF_CONFIG_REG_BIT_RADIO_SI |
+		    CSR_HW_IF_CONFIG_REG_BIT_MAC_SI);
+
+	if (priv->cfg->iq_invert)
+		iwl_set_bit(priv, CSR_GP_DRIVER_REG,
+			    CSR_GP_DRIVER_REG_BIT_RADIO_IQ_INVER);
+
+	if (priv->cfg->disable_otp_refresh)
+		iwl_write_prph(priv, APMG_ANALOG_SVR_REG, 0x80000010);
+}
+
+static struct iwl_sensitivity_ranges iwl2000_sensitivity = {
+	.min_nrg_cck = 97,
+	.max_nrg_cck = 0, /* not used, set to 0 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.auto_corr_min_ofdm = 80,
 	.auto_corr_min_ofdm_mrc = 128,
 	.auto_corr_min_ofdm_x1 = 105,
@@ -115,6 +182,7 @@ static const struct iwl_sensitivity_ranges iwl2000_sensitivity = {
 	.nrg_th_cca = 62,
 };
 
+<<<<<<< HEAD
 static void iwl2000_hw_set_hw_params(struct iwl_priv *priv)
 {
 	hw_params(priv).ht40_channel =  BIT(IEEE80211_BAND_2GHZ);
@@ -126,16 +194,80 @@ static void iwl2000_hw_set_hw_params(struct iwl_priv *priv)
 	else
 		hw_params(priv).rx_chains_num =
 			num_of_ant(hw_params(priv).valid_rx_ant);
+=======
+static int iwl2000_hw_set_hw_params(struct iwl_priv *priv)
+{
+	if (iwlagn_mod_params.num_of_queues >= IWL_MIN_NUM_QUEUES &&
+	    iwlagn_mod_params.num_of_queues <= IWLAGN_NUM_QUEUES)
+		priv->cfg->base_params->num_of_queues =
+			iwlagn_mod_params.num_of_queues;
+
+	priv->hw_params.max_txq_num = priv->cfg->base_params->num_of_queues;
+	priv->hw_params.dma_chnl_num = FH50_TCSR_CHNL_NUM;
+	priv->hw_params.scd_bc_tbls_size =
+		priv->cfg->base_params->num_of_queues *
+		sizeof(struct iwlagn_scd_bc_tbl);
+	priv->hw_params.tfd_size = sizeof(struct iwl_tfd);
+	priv->hw_params.max_stations = IWLAGN_STATION_COUNT;
+	priv->contexts[IWL_RXON_CTX_BSS].bcast_sta_id = IWLAGN_BROADCAST_ID;
+
+	priv->hw_params.max_data_size = IWL60_RTC_DATA_SIZE;
+	priv->hw_params.max_inst_size = IWL60_RTC_INST_SIZE;
+
+	priv->hw_params.ht40_channel =  BIT(IEEE80211_BAND_2GHZ) |
+					BIT(IEEE80211_BAND_5GHZ);
+	priv->hw_params.rx_wrt_ptr_reg = FH_RSCSR_CHNL0_WPTR;
+
+	priv->hw_params.tx_chains_num = num_of_ant(priv->cfg->valid_tx_ant);
+	if (priv->cfg->rx_with_siso_diversity)
+		priv->hw_params.rx_chains_num = 1;
+	else
+		priv->hw_params.rx_chains_num =
+			num_of_ant(priv->cfg->valid_rx_ant);
+	priv->hw_params.valid_tx_ant = priv->cfg->valid_tx_ant;
+	priv->hw_params.valid_rx_ant = priv->cfg->valid_rx_ant;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	iwl2000_set_ct_threshold(priv);
 
 	/* Set initial sensitivity parameters */
+<<<<<<< HEAD
 	hw_params(priv).sens = &iwl2000_sensitivity;
+=======
+	/* Set initial calibration set */
+	priv->hw_params.sens = &iwl2000_sensitivity;
+	priv->hw_params.calib_init_cfg =
+		BIT(IWL_CALIB_XTAL)             |
+		BIT(IWL_CALIB_LO)               |
+		BIT(IWL_CALIB_TX_IQ)            |
+		BIT(IWL_CALIB_BASE_BAND);
+	if (priv->cfg->need_dc_calib)
+		priv->hw_params.calib_rt_cfg |= BIT(IWL_CALIB_CFG_DC_IDX);
+	if (priv->cfg->need_temp_offset_calib)
+		priv->hw_params.calib_init_cfg |= BIT(IWL_CALIB_TEMP_OFFSET);
+
+	priv->hw_params.beacon_time_tsf_bits = IWLAGN_EXT_BEACON_TIME_POS;
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct iwl_lib_ops iwl2000_lib = {
 	.set_hw_params = iwl2000_hw_set_hw_params,
+<<<<<<< HEAD
 	.nic_config = iwl2000_nic_config,
+=======
+	.rx_handler_setup = iwlagn_rx_handler_setup,
+	.setup_deferred_work = iwlagn_bt_setup_deferred_work,
+	.cancel_deferred_work = iwlagn_bt_cancel_deferred_work,
+	.is_valid_rtc_data_addr = iwlagn_hw_valid_rtc_data_addr,
+	.send_tx_power = iwlagn_send_tx_power,
+	.update_chain_flags = iwl_update_chain_flags,
+	.apm_ops = {
+		.init = iwl_apm_init,
+		.config = iwl2000_nic_config,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.eeprom_ops = {
 		.regulatory_bands = {
 			EEPROM_REG_BAND_1_CHANNELS,
@@ -146,6 +278,7 @@ static struct iwl_lib_ops iwl2000_lib = {
 			EEPROM_6000_REG_BAND_24_HT40_CHANNELS,
 			EEPROM_REGULATORY_BAND_NO_HT40,
 		},
+<<<<<<< HEAD
 		.enhanced_txpower = true,
 	},
 	.temperature = iwlagn_temperature,
@@ -170,6 +303,43 @@ static struct iwl_lib_ops iwl2030_lib = {
 };
 
 static const struct iwl_base_params iwl2000_base_params = {
+=======
+		.query_addr = iwlagn_eeprom_query_addr,
+		.update_enhanced_txpower = iwlcore_eeprom_enhanced_txpower,
+	},
+	.temp_ops = {
+		.temperature = iwlagn_temperature,
+	},
+	.txfifo_flush = iwlagn_txfifo_flush,
+	.dev_txfifo_flush = iwlagn_dev_txfifo_flush,
+};
+
+static const struct iwl_ops iwl2000_ops = {
+	.lib = &iwl2000_lib,
+	.hcmd = &iwlagn_hcmd,
+	.utils = &iwlagn_hcmd_utils,
+};
+
+static const struct iwl_ops iwl2030_ops = {
+	.lib = &iwl2000_lib,
+	.hcmd = &iwlagn_bt_hcmd,
+	.utils = &iwlagn_hcmd_utils,
+};
+
+static const struct iwl_ops iwl105_ops = {
+	.lib = &iwl2000_lib,
+	.hcmd = &iwlagn_hcmd,
+	.utils = &iwlagn_hcmd_utils,
+};
+
+static const struct iwl_ops iwl135_ops = {
+	.lib = &iwl2000_lib,
+	.hcmd = &iwlagn_bt_hcmd,
+	.utils = &iwlagn_hcmd_utils,
+};
+
+static struct iwl_base_params iwl2000_base_params = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.eeprom_size = OTP_LOW_IMAGE_SIZE,
 	.num_of_queues = IWLAGN_NUM_QUEUES,
 	.num_of_ampdu_queues = IWLAGN_NUM_AMPDU_QUEUES,
@@ -177,18 +347,30 @@ static const struct iwl_base_params iwl2000_base_params = {
 	.max_ll_items = OTP_MAX_LL_ITEMS_2x00,
 	.shadow_ram_support = true,
 	.led_compensation = 51,
+<<<<<<< HEAD
+=======
+	.chain_noise_num_beacons = IWL_CAL_NUM_BEACONS,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.adv_thermal_throttle = true,
 	.support_ct_kill_exit = true,
 	.plcp_delta_threshold = IWL_MAX_PLCP_ERR_THRESHOLD_DEF,
 	.chain_noise_scale = 1000,
 	.wd_timeout = IWL_DEF_WD_TIMEOUT,
 	.max_event_log_size = 512,
+<<<<<<< HEAD
 	.shadow_reg_enable = false, /* TODO: fix bugs using this feature */
 	.hd_v2 = true,
 };
 
 
 static const struct iwl_base_params iwl2030_base_params = {
+=======
+	.shadow_reg_enable = true,
+};
+
+
+static struct iwl_base_params iwl2030_base_params = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.eeprom_size = OTP_LOW_IMAGE_SIZE,
 	.num_of_queues = IWLAGN_NUM_QUEUES,
 	.num_of_ampdu_queues = IWLAGN_NUM_AMPDU_QUEUES,
@@ -196,22 +378,37 @@ static const struct iwl_base_params iwl2030_base_params = {
 	.max_ll_items = OTP_MAX_LL_ITEMS_2x00,
 	.shadow_ram_support = true,
 	.led_compensation = 57,
+<<<<<<< HEAD
+=======
+	.chain_noise_num_beacons = IWL_CAL_NUM_BEACONS,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.adv_thermal_throttle = true,
 	.support_ct_kill_exit = true,
 	.plcp_delta_threshold = IWL_MAX_PLCP_ERR_THRESHOLD_DEF,
 	.chain_noise_scale = 1000,
 	.wd_timeout = IWL_LONG_WD_TIMEOUT,
 	.max_event_log_size = 512,
+<<<<<<< HEAD
 	.shadow_reg_enable = false, /* TODO: fix bugs using this feature */
 	.hd_v2 = true,
 };
 
 static const struct iwl_ht_params iwl2000_ht_params = {
+=======
+	.shadow_reg_enable = true,
+};
+
+static struct iwl_ht_params iwl2000_ht_params = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ht_greenfield_support = true,
 	.use_rts_for_aggregation = true, /* use rts/cts protection */
 };
 
+<<<<<<< HEAD
 static const struct iwl_bt_params iwl2030_bt_params = {
+=======
+static struct iwl_bt_params iwl2030_bt_params = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Due to bluetooth, we transmit 2.4 GHz probes only on antenna A */
 	.advanced_bt_coexist = true,
 	.agg_time_limit = BT_AGG_THRESHOLD_DEF,
@@ -224,6 +421,7 @@ static const struct iwl_bt_params iwl2030_bt_params = {
 #define IWL_DEVICE_2000						\
 	.fw_name_pre = IWL2000_FW_PRE,				\
 	.ucode_api_max = IWL2000_UCODE_API_MAX,			\
+<<<<<<< HEAD
 	.ucode_api_ok = IWL2000_UCODE_API_OK,			\
 	.ucode_api_min = IWL2000_UCODE_API_MIN,			\
 	.max_inst_size = IWL60_RTC_INST_SIZE,			\
@@ -239,19 +437,41 @@ static const struct iwl_bt_params iwl2030_bt_params = {
 
 const struct iwl_cfg iwl2000_2bgn_cfg = {
 	.name = "Intel(R) Centrino(R) Wireless-N 2200 BGN",
+=======
+	.ucode_api_min = IWL2000_UCODE_API_MIN,			\
+	.eeprom_ver = EEPROM_2000_EEPROM_VERSION,		\
+	.eeprom_calib_ver = EEPROM_2000_TX_POWER_VERSION,	\
+	.ops = &iwl2000_ops,					\
+	.base_params = &iwl2000_base_params,			\
+	.need_dc_calib = true,					\
+	.need_temp_offset_calib = true,				\
+	.led_mode = IWL_LED_RF_STATE,				\
+	.iq_invert = true,					\
+	.disable_otp_refresh = true				\
+
+struct iwl_cfg iwl2000_2bgn_cfg = {
+	.name = "2000 Series 2x2 BGN",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	IWL_DEVICE_2000,
 	.ht_params = &iwl2000_ht_params,
 };
 
+<<<<<<< HEAD
 const struct iwl_cfg iwl2000_2bgn_d_cfg = {
 	.name = "Intel(R) Centrino(R) Wireless-N 2200D BGN",
 	IWL_DEVICE_2000,
 	.ht_params = &iwl2000_ht_params,
+=======
+struct iwl_cfg iwl2000_2bg_cfg = {
+	.name = "2000 Series 2x2 BG",
+	IWL_DEVICE_2000,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define IWL_DEVICE_2030						\
 	.fw_name_pre = IWL2030_FW_PRE,				\
 	.ucode_api_max = IWL2030_UCODE_API_MAX,			\
+<<<<<<< HEAD
 	.ucode_api_ok = IWL2030_UCODE_API_OK,			\
 	.ucode_api_min = IWL2030_UCODE_API_MIN,			\
 	.max_inst_size = IWL60_RTC_INST_SIZE,			\
@@ -263,16 +483,32 @@ const struct iwl_cfg iwl2000_2bgn_d_cfg = {
 	.bt_params = &iwl2030_bt_params,			\
 	.need_temp_offset_calib = true,				\
 	.temp_offset_v2 = true,					\
+=======
+	.ucode_api_min = IWL2030_UCODE_API_MIN,			\
+	.eeprom_ver = EEPROM_2000_EEPROM_VERSION,		\
+	.eeprom_calib_ver = EEPROM_2000_TX_POWER_VERSION,	\
+	.ops = &iwl2030_ops,					\
+	.base_params = &iwl2030_base_params,			\
+	.bt_params = &iwl2030_bt_params,			\
+	.need_dc_calib = true,					\
+	.need_temp_offset_calib = true,				\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.led_mode = IWL_LED_RF_STATE,				\
 	.adv_pm = true,						\
 	.iq_invert = true					\
 
+<<<<<<< HEAD
 const struct iwl_cfg iwl2030_2bgn_cfg = {
 	.name = "Intel(R) Centrino(R) Wireless-N 2230 BGN",
+=======
+struct iwl_cfg iwl2030_2bgn_cfg = {
+	.name = "2000 Series 2x2 BGN/BT",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	IWL_DEVICE_2030,
 	.ht_params = &iwl2000_ht_params,
 };
 
+<<<<<<< HEAD
 #define IWL_DEVICE_105						\
 	.fw_name_pre = IWL105_FW_PRE,				\
 	.ucode_api_max = IWL105_UCODE_API_MAX,			\
@@ -299,11 +535,40 @@ const struct iwl_cfg iwl105_bgn_cfg = {
 
 const struct iwl_cfg iwl105_bgn_d_cfg = {
 	.name = "Intel(R) Centrino(R) Wireless-N 105D BGN",
+=======
+struct iwl_cfg iwl2030_2bg_cfg = {
+	.name = "2000 Series 2x2 BG/BT",
+	IWL_DEVICE_2030,
+};
+
+#define IWL_DEVICE_105						\
+	.fw_name_pre = IWL105_FW_PRE,				\
+	.ucode_api_max = IWL105_UCODE_API_MAX,			\
+	.ucode_api_min = IWL105_UCODE_API_MIN,			\
+	.eeprom_ver = EEPROM_2000_EEPROM_VERSION,		\
+	.eeprom_calib_ver = EEPROM_2000_TX_POWER_VERSION,	\
+	.ops = &iwl105_ops,					\
+	.base_params = &iwl2000_base_params,			\
+	.need_dc_calib = true,					\
+	.need_temp_offset_calib = true,				\
+	.led_mode = IWL_LED_RF_STATE,				\
+	.adv_pm = true,						\
+	.rx_with_siso_diversity = true				\
+
+struct iwl_cfg iwl105_bg_cfg = {
+	.name = "105 Series 1x1 BG",
+	IWL_DEVICE_105,
+};
+
+struct iwl_cfg iwl105_bgn_cfg = {
+	.name = "105 Series 1x1 BGN",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	IWL_DEVICE_105,
 	.ht_params = &iwl2000_ht_params,
 };
 
 #define IWL_DEVICE_135						\
+<<<<<<< HEAD
 	.fw_name_pre = IWL135_FW_PRE,				\
 	.ucode_api_max = IWL135_UCODE_API_MAX,			\
 	.ucode_api_ok = IWL135_UCODE_API_OK,			\
@@ -324,11 +589,40 @@ const struct iwl_cfg iwl105_bgn_d_cfg = {
 
 const struct iwl_cfg iwl135_bgn_cfg = {
 	.name = "Intel(R) Centrino(R) Wireless-N 135 BGN",
+=======
+	.fw_name_pre = IWL105_FW_PRE,				\
+	.ucode_api_max = IWL105_UCODE_API_MAX,			\
+	.ucode_api_min = IWL105_UCODE_API_MIN,			\
+	.eeprom_ver = EEPROM_2000_EEPROM_VERSION,		\
+	.eeprom_calib_ver = EEPROM_2000_TX_POWER_VERSION,	\
+	.ops = &iwl135_ops,					\
+	.base_params = &iwl2030_base_params,			\
+	.bt_params = &iwl2030_bt_params,			\
+	.need_dc_calib = true,					\
+	.need_temp_offset_calib = true,				\
+	.led_mode = IWL_LED_RF_STATE,				\
+	.adv_pm = true,						\
+	.rx_with_siso_diversity = true				\
+
+struct iwl_cfg iwl135_bg_cfg = {
+	.name = "105 Series 1x1 BG/BT",
+	IWL_DEVICE_135,
+};
+
+struct iwl_cfg iwl135_bgn_cfg = {
+	.name = "105 Series 1x1 BGN/BT",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	IWL_DEVICE_135,
 	.ht_params = &iwl2000_ht_params,
 };
 
+<<<<<<< HEAD
 MODULE_FIRMWARE(IWL2000_MODULE_FIRMWARE(IWL2000_UCODE_API_OK));
 MODULE_FIRMWARE(IWL2030_MODULE_FIRMWARE(IWL2030_UCODE_API_OK));
 MODULE_FIRMWARE(IWL105_MODULE_FIRMWARE(IWL105_UCODE_API_OK));
 MODULE_FIRMWARE(IWL135_MODULE_FIRMWARE(IWL135_UCODE_API_OK));
+=======
+MODULE_FIRMWARE(IWL2000_MODULE_FIRMWARE(IWL2000_UCODE_API_MAX));
+MODULE_FIRMWARE(IWL2030_MODULE_FIRMWARE(IWL2030_UCODE_API_MAX));
+MODULE_FIRMWARE(IWL105_MODULE_FIRMWARE(IWL105_UCODE_API_MAX));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

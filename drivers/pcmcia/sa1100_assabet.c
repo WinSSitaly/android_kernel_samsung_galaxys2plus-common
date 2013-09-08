@@ -10,13 +10,22 @@
 #include <linux/interrupt.h>
 #include <linux/device.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
 
 #include <asm/mach-types.h>
+=======
+
+#include <mach/hardware.h>
+#include <asm/mach-types.h>
+#include <asm/irq.h>
+#include <asm/signal.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/assabet.h>
 
 #include "sa1100_generic.h"
 
+<<<<<<< HEAD
 static int assabet_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
 {
 	skt->stat[SOC_STAT_CD].gpio = ASSABET_GPIO_CF_CD;
@@ -29,11 +38,42 @@ static int assabet_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
 	skt->stat[SOC_STAT_RDY].name = "CF RDY";
 
 	return 0;
+=======
+static struct pcmcia_irqs irqs[] = {
+	{ 1, ASSABET_IRQ_GPIO_CF_CD,   "CF CD"   },
+	{ 1, ASSABET_IRQ_GPIO_CF_BVD2, "CF BVD2" },
+	{ 1, ASSABET_IRQ_GPIO_CF_BVD1, "CF BVD1" },
+};
+
+static int assabet_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
+{
+	skt->socket.pci_irq = ASSABET_IRQ_GPIO_CF_IRQ;
+
+	return soc_pcmcia_request_irqs(skt, irqs, ARRAY_SIZE(irqs));
+}
+
+/*
+ * Release all resources.
+ */
+static void assabet_pcmcia_hw_shutdown(struct soc_pcmcia_socket *skt)
+{
+	soc_pcmcia_free_irqs(skt, irqs, ARRAY_SIZE(irqs));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
 assabet_pcmcia_socket_state(struct soc_pcmcia_socket *skt, struct pcmcia_state *state)
 {
+<<<<<<< HEAD
+=======
+	unsigned long levels = GPLR;
+
+	state->detect = (levels & ASSABET_GPIO_CF_CD) ? 0 : 1;
+	state->ready  = (levels & ASSABET_GPIO_CF_IRQ) ? 1 : 0;
+	state->bvd1   = (levels & ASSABET_GPIO_CF_BVD1) ? 1 : 0;
+	state->bvd2   = (levels & ASSABET_GPIO_CF_BVD2) ? 1 : 0;
+	state->wrprot = 0; /* Not available on Assabet. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	state->vs_3v  = 1; /* Can only apply 3.3V on Assabet. */
 	state->vs_Xv  = 0;
 }
@@ -62,6 +102,7 @@ assabet_pcmcia_configure_socket(struct soc_pcmcia_socket *skt, const socket_stat
 		return -1;
 	}
 
+<<<<<<< HEAD
 	/* Silently ignore Vpp, speaker enable. */
 
 	if (state->flags & SS_RESET)
@@ -71,15 +112,46 @@ assabet_pcmcia_configure_socket(struct soc_pcmcia_socket *skt, const socket_stat
 
 	ASSABET_BCR_frob(ASSABET_BCR_CF_RST | ASSABET_BCR_CF_PWR |
 			ASSABET_BCR_CF_BUS_OFF, mask);
+=======
+	/* Silently ignore Vpp, output enable, speaker enable. */
+
+	if (state->flags & SS_RESET)
+		mask |= ASSABET_BCR_CF_RST;
+
+	ASSABET_BCR_frob(ASSABET_BCR_CF_RST | ASSABET_BCR_CF_PWR, mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 /*
+<<<<<<< HEAD
+=======
+ * Enable card status IRQs on (re-)initialisation.  This can
+ * be called at initialisation, power management event, or
+ * pcmcia event.
+ */
+static void assabet_pcmcia_socket_init(struct soc_pcmcia_socket *skt)
+{
+	/*
+	 * Enable CF bus
+	 */
+	ASSABET_BCR_clear(ASSABET_BCR_CF_BUS_OFF);
+
+	soc_pcmcia_enable_irqs(skt, irqs, ARRAY_SIZE(irqs));
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Disable card status IRQs on suspend.
  */
 static void assabet_pcmcia_socket_suspend(struct soc_pcmcia_socket *skt)
 {
+<<<<<<< HEAD
+=======
+	soc_pcmcia_disable_irqs(skt, irqs, ARRAY_SIZE(irqs));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Tristate the CF bus signals.  Also assert CF
 	 * reset as per user guide page 4-11.
@@ -89,9 +161,20 @@ static void assabet_pcmcia_socket_suspend(struct soc_pcmcia_socket *skt)
 
 static struct pcmcia_low_level assabet_pcmcia_ops = { 
 	.owner			= THIS_MODULE,
+<<<<<<< HEAD
 	.hw_init		= assabet_pcmcia_hw_init,
 	.socket_state		= assabet_pcmcia_socket_state,
 	.configure_socket	= assabet_pcmcia_configure_socket,
+=======
+
+	.hw_init		= assabet_pcmcia_hw_init,
+	.hw_shutdown		= assabet_pcmcia_hw_shutdown,
+
+	.socket_state		= assabet_pcmcia_socket_state,
+	.configure_socket	= assabet_pcmcia_configure_socket,
+
+	.socket_init		= assabet_pcmcia_socket_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.socket_suspend		= assabet_pcmcia_socket_suspend,
 };
 

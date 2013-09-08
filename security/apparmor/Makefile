@@ -15,7 +15,11 @@ clean-files := capability_names.h rlim_names.h
 # to
 #    [1] = "dac_override",
 quiet_cmd_make-caps = GEN     $@
+<<<<<<< HEAD
 cmd_make-caps = echo "static const char *const capability_names[] = {" > $@ ;\
+=======
+cmd_make-caps = echo "static const char *capability_names[] = {" > $@ ;\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sed $< >>$@ -r -n -e '/CAP_FS_MASK/d' \
 	-e 's/^\#define[ \t]+CAP_([A-Z0-9_]+)[ \t]+([0-9]+)/[\2] = "\L\1",/p';\
 	echo "};" >> $@
@@ -28,13 +32,18 @@ cmd_make-caps = echo "static const char *const capability_names[] = {" > $@ ;\
 #    [RLIMIT_STACK] = "stack",
 #
 # and build a second integer table (with the second sed cmd), that maps
+<<<<<<< HEAD
 # RLIMIT defines to the order defined in asm-generic/resource.h  This is
+=======
+# RLIMIT defines to the order defined in asm-generic/resource.h  Thi is
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # required by policy load to map policy ordering of RLIMITs to internal
 # ordering for architectures that redefine an RLIMIT.
 # Transforms lines from
 #    #define RLIMIT_STACK		3	/* max stack size */
 # to
 # RLIMIT_STACK, 
+<<<<<<< HEAD
 #
 # and build the securityfs entries for the mapping.
 # Transforms lines from
@@ -62,4 +71,20 @@ $(obj)/capability_names.h : $(srctree)/include/linux/capability.h \
 	$(call cmd,make-caps)
 $(obj)/rlim_names.h : $(srctree)/include/asm-generic/resource.h \
 		      $(src)/Makefile
+=======
+quiet_cmd_make-rlim = GEN     $@
+cmd_make-rlim = echo "static const char *rlim_names[] = {" > $@ ;\
+	sed $< >> $@ -r -n \
+	    -e 's/^\# ?define[ \t]+(RLIMIT_([A-Z0-9_]+)).*/[\1] = "\L\2",/p';\
+	echo "};" >> $@ ;\
+	echo "static const int rlim_map[] = {" >> $@ ;\
+	sed -r -n "s/^\# ?define[ \t]+(RLIMIT_[A-Z0-9_]+).*/\1,/p" $< >> $@ ;\
+	echo "};" >> $@
+
+$(obj)/capability.o : $(obj)/capability_names.h
+$(obj)/resource.o : $(obj)/rlim_names.h
+$(obj)/capability_names.h : $(srctree)/include/linux/capability.h
+	$(call cmd,make-caps)
+$(obj)/rlim_names.h : $(srctree)/include/asm-generic/resource.h
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	$(call cmd,make-rlim)

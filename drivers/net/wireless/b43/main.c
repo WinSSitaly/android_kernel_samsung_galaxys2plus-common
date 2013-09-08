@@ -4,10 +4,16 @@
 
   Copyright (c) 2005 Martin Langer <martin-langer@gmx.de>
   Copyright (c) 2005 Stefano Brivio <stefano.brivio@polimi.it>
+<<<<<<< HEAD
   Copyright (c) 2005-2009 Michael Buesch <m@bues.ch>
   Copyright (c) 2005 Danny van Dyk <kugelfang@gentoo.org>
   Copyright (c) 2005 Andreas Jaggi <andreas.jaggi@waterwave.ch>
   Copyright (c) 2010-2011 Rafał Miłecki <zajec5@gmail.com>
+=======
+  Copyright (c) 2005-2009 Michael Buesch <mb@bu3sch.de>
+  Copyright (c) 2005 Danny van Dyk <kugelfang@gentoo.org>
+  Copyright (c) 2005 Andreas Jaggi <andreas.jaggi@waterwave.ch>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
   SDIO support
   Copyright (c) 2009 Albert Herranz <albert_herranz@yahoo.es>
@@ -34,10 +40,18 @@
 
 #include <linux/delay.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/if_arp.h>
 #include <linux/etherdevice.h>
 #include <linux/firmware.h>
+=======
+#include <linux/moduleparam.h>
+#include <linux/if_arp.h>
+#include <linux/etherdevice.h>
+#include <linux/firmware.h>
+#include <linux/wireless.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/workqueue.h>
 #include <linux/skbuff.h>
 #include <linux/io.h>
@@ -65,9 +79,15 @@ MODULE_AUTHOR("Martin Langer");
 MODULE_AUTHOR("Stefano Brivio");
 MODULE_AUTHOR("Michael Buesch");
 MODULE_AUTHOR("Gábor Stefanik");
+<<<<<<< HEAD
 MODULE_AUTHOR("Rafał Miłecki");
 MODULE_LICENSE("GPL");
 
+=======
+MODULE_LICENSE("GPL");
+
+MODULE_FIRMWARE(B43_SUPPORTED_FIRMWARE_ID);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_FIRMWARE("b43/ucode11.fw");
 MODULE_FIRMWARE("b43/ucode13.fw");
 MODULE_FIRMWARE("b43/ucode14.fw");
@@ -109,6 +129,7 @@ int b43_modparam_verbose = B43_VERBOSITY_DEFAULT;
 module_param_named(verbose, b43_modparam_verbose, int, 0644);
 MODULE_PARM_DESC(verbose, "Log message verbosity: 0=error, 1=warn, 2=info(default), 3=debug");
 
+<<<<<<< HEAD
 static int b43_modparam_pio = 0;
 module_param_named(pio, b43_modparam_pio, int, 0644);
 MODULE_PARM_DESC(pio, "Use PIO accesses by default: 0=DMA, 1=PIO");
@@ -127,6 +148,12 @@ MODULE_DEVICE_TABLE(bcma, b43_bcma_tbl);
 #endif
 
 #ifdef CONFIG_B43_SSB
+=======
+static int b43_modparam_pio = B43_PIO_DEFAULT;
+module_param_named(pio, b43_modparam_pio, int, 0644);
+MODULE_PARM_DESC(pio, "Use PIO accesses by default: 0=DMA, 1=PIO");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct ssb_device_id b43_ssb_tbl[] = {
 	SSB_DEVICE(SSB_VENDOR_BROADCOM, SSB_DEV_80211, 5),
 	SSB_DEVICE(SSB_VENDOR_BROADCOM, SSB_DEV_80211, 6),
@@ -140,8 +167,13 @@ static const struct ssb_device_id b43_ssb_tbl[] = {
 	SSB_DEVICE(SSB_VENDOR_BROADCOM, SSB_DEV_80211, 16),
 	SSB_DEVTABLE_END
 };
+<<<<<<< HEAD
 MODULE_DEVICE_TABLE(ssb, b43_ssb_tbl);
 #endif
+=======
+
+MODULE_DEVICE_TABLE(ssb, b43_ssb_tbl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Channel and ratetables are shared for all devices.
  * They can't be const, because ieee80211 puts some precalculated
@@ -323,10 +355,13 @@ static void b43_wireless_core_exit(struct b43_wldev *dev);
 static int b43_wireless_core_init(struct b43_wldev *dev);
 static struct b43_wldev * b43_wireless_core_stop(struct b43_wldev *dev);
 static int b43_wireless_core_start(struct b43_wldev *dev);
+<<<<<<< HEAD
 static void b43_op_bss_info_changed(struct ieee80211_hw *hw,
 				    struct ieee80211_vif *vif,
 				    struct ieee80211_bss_conf *conf,
 				    u32 changed);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int b43_ratelimit(struct b43_wl *wl)
 {
@@ -566,7 +601,11 @@ void b43_tsf_read(struct b43_wldev *dev, u64 *tsf)
 {
 	u32 low, high;
 
+<<<<<<< HEAD
 	B43_WARN_ON(dev->dev->core_rev < 3);
+=======
+	B43_WARN_ON(dev->sdev->id.revision < 3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* The hardware guarantees us an atomic read, if we
 	 * read the low register first. */
@@ -580,14 +619,30 @@ void b43_tsf_read(struct b43_wldev *dev, u64 *tsf)
 
 static void b43_time_lock(struct b43_wldev *dev)
 {
+<<<<<<< HEAD
 	b43_maskset32(dev, B43_MMIO_MACCTL, ~0, B43_MACCTL_TBTTHOLD);
+=======
+	u32 macctl;
+
+	macctl = b43_read32(dev, B43_MMIO_MACCTL);
+	macctl |= B43_MACCTL_TBTTHOLD;
+	b43_write32(dev, B43_MMIO_MACCTL, macctl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Commit the write */
 	b43_read32(dev, B43_MMIO_MACCTL);
 }
 
 static void b43_time_unlock(struct b43_wldev *dev)
 {
+<<<<<<< HEAD
 	b43_maskset32(dev, B43_MMIO_MACCTL, ~B43_MACCTL_TBTTHOLD, 0);
+=======
+	u32 macctl;
+
+	macctl = b43_read32(dev, B43_MMIO_MACCTL);
+	macctl &= ~B43_MACCTL_TBTTHOLD;
+	b43_write32(dev, B43_MMIO_MACCTL, macctl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Commit the write */
 	b43_read32(dev, B43_MMIO_MACCTL);
 }
@@ -596,7 +651,11 @@ static void b43_tsf_write_locked(struct b43_wldev *dev, u64 tsf)
 {
 	u32 low, high;
 
+<<<<<<< HEAD
 	B43_WARN_ON(dev->dev->core_rev < 3);
+=======
+	B43_WARN_ON(dev->sdev->id.revision < 3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	low = tsf;
 	high = (tsf >> 32);
@@ -723,6 +782,7 @@ void b43_dummy_transmission(struct b43_wldev *dev, bool ofdm, bool pa_on)
 	for (i = 0; i < 5; i++)
 		b43_ram_write(dev, i * 4, buffer[i]);
 
+<<<<<<< HEAD
 	b43_write16(dev, B43_MMIO_XMTSEL, 0x0000);
 
 	if (dev->dev->core_rev < 11)
@@ -759,23 +819,66 @@ void b43_dummy_transmission(struct b43_wldev *dev, bool ofdm, bool pa_on)
 		b43_write16(dev, B43_MMIO_TXE0_AUX, 0x0030);
 	}
 	b43_read16(dev, B43_MMIO_TXE0_AUX);
+=======
+	b43_write16(dev, 0x0568, 0x0000);
+	if (dev->sdev->id.revision < 11)
+		b43_write16(dev, 0x07C0, 0x0000);
+	else
+		b43_write16(dev, 0x07C0, 0x0100);
+	value = (ofdm ? 0x41 : 0x40);
+	b43_write16(dev, 0x050C, value);
+	if ((phy->type == B43_PHYTYPE_N) || (phy->type == B43_PHYTYPE_LP))
+		b43_write16(dev, 0x0514, 0x1A02);
+	b43_write16(dev, 0x0508, 0x0000);
+	b43_write16(dev, 0x050A, 0x0000);
+	b43_write16(dev, 0x054C, 0x0000);
+	b43_write16(dev, 0x056A, 0x0014);
+	b43_write16(dev, 0x0568, 0x0826);
+	b43_write16(dev, 0x0500, 0x0000);
+	if (!pa_on && (phy->type == B43_PHYTYPE_N)) {
+		//SPEC TODO
+	}
+
+	switch (phy->type) {
+	case B43_PHYTYPE_N:
+		b43_write16(dev, 0x0502, 0x00D0);
+		break;
+	case B43_PHYTYPE_LP:
+		b43_write16(dev, 0x0502, 0x0050);
+		break;
+	default:
+		b43_write16(dev, 0x0502, 0x0030);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (phy->radio_ver == 0x2050 && phy->radio_rev <= 0x5)
 		b43_radio_write16(dev, 0x0051, 0x0017);
 	for (i = 0x00; i < max_loop; i++) {
+<<<<<<< HEAD
 		value = b43_read16(dev, B43_MMIO_TXE0_STATUS);
+=======
+		value = b43_read16(dev, 0x050E);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (value & 0x0080)
 			break;
 		udelay(10);
 	}
 	for (i = 0x00; i < 0x0A; i++) {
+<<<<<<< HEAD
 		value = b43_read16(dev, B43_MMIO_TXE0_STATUS);
+=======
+		value = b43_read16(dev, 0x050E);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (value & 0x0400)
 			break;
 		udelay(10);
 	}
 	for (i = 0x00; i < 0x19; i++) {
+<<<<<<< HEAD
 		value = b43_read16(dev, B43_MMIO_IFSSTAT);
+=======
+		value = b43_read16(dev, 0x0690);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!(value & 0x0100))
 			break;
 		udelay(10);
@@ -1116,17 +1219,29 @@ void b43_power_saving_ctl_bits(struct b43_wldev *dev, unsigned int ps_flags)
 	B43_WARN_ON((ps_flags & B43_PS_AWAKE) && (ps_flags & B43_PS_ASLEEP));
 
 	if (ps_flags & B43_PS_ENABLED) {
+<<<<<<< HEAD
 		hwps = true;
 	} else if (ps_flags & B43_PS_DISABLED) {
 		hwps = false;
+=======
+		hwps = 1;
+	} else if (ps_flags & B43_PS_DISABLED) {
+		hwps = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		//TODO: If powersave is not off and FIXME is not set and we are not in adhoc
 		//      and thus is not an AP and we are associated, set bit 25
 	}
 	if (ps_flags & B43_PS_AWAKE) {
+<<<<<<< HEAD
 		awake = true;
 	} else if (ps_flags & B43_PS_ASLEEP) {
 		awake = false;
+=======
+		awake = 1;
+	} else if (ps_flags & B43_PS_ASLEEP) {
+		awake = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		//TODO: If the device is awake or this is an AP, or we are scanning, or FIXME,
 		//      or we are associated, or FIXME, or the latest PS-Poll packet sent was
@@ -1134,8 +1249,13 @@ void b43_power_saving_ctl_bits(struct b43_wldev *dev, unsigned int ps_flags)
 	}
 
 /* FIXME: For now we force awake-on and hwps-off */
+<<<<<<< HEAD
 	hwps = false;
 	awake = true;
+=======
+	hwps = 0;
+	awake = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	macctl = b43_read32(dev, B43_MMIO_MACCTL);
 	if (hwps)
@@ -1149,7 +1269,11 @@ void b43_power_saving_ctl_bits(struct b43_wldev *dev, unsigned int ps_flags)
 	b43_write32(dev, B43_MMIO_MACCTL, macctl);
 	/* Commit write */
 	b43_read32(dev, B43_MMIO_MACCTL);
+<<<<<<< HEAD
 	if (awake && dev->dev->core_rev >= 5) {
+=======
+	if (awake && dev->sdev->id.revision >= 5) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Wait for the microcode to wake up. */
 		for (i = 0; i < 100; i++) {
 			ucstat = b43_shm_read16(dev, B43_SHM_SHARED,
@@ -1161,6 +1285,7 @@ void b43_power_saving_ctl_bits(struct b43_wldev *dev, unsigned int ps_flags)
 	}
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_B43_BCMA
 static void b43_bcma_phy_reset(struct b43_wldev *dev)
 {
@@ -1204,10 +1329,17 @@ static void b43_ssb_wireless_core_reset(struct b43_wldev *dev, bool gmode)
 
 	if (gmode)
 		flags |= B43_TMSLOW_GMODE;
+=======
+static void b43_ssb_wireless_core_reset(struct b43_wldev *dev, u32 flags)
+{
+	u32 tmslow;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	flags |= B43_TMSLOW_PHYCLKEN;
 	flags |= B43_TMSLOW_PHYRESET;
 	if (dev->phy.type == B43_PHYTYPE_N)
 		flags |= B43_TMSLOW_PHY_BANDWIDTH_20MHZ; /* Make 20 MHz def */
+<<<<<<< HEAD
 	b43_device_enable(dev, flags);
 	msleep(2);		/* Wait for the PLL to turn on. */
 
@@ -1240,6 +1372,29 @@ void b43_wireless_core_reset(struct b43_wldev *dev, bool gmode)
 		break;
 #endif
 	}
+=======
+	ssb_device_enable(dev->sdev, flags);
+	msleep(2);		/* Wait for the PLL to turn on. */
+
+	/* Now take the PHY out of Reset again */
+	tmslow = ssb_read32(dev->sdev, SSB_TMSLOW);
+	tmslow |= SSB_TMSLOW_FGC;
+	tmslow &= ~B43_TMSLOW_PHYRESET;
+	ssb_write32(dev->sdev, SSB_TMSLOW, tmslow);
+	ssb_read32(dev->sdev, SSB_TMSLOW);	/* flush */
+	msleep(1);
+	tmslow &= ~SSB_TMSLOW_FGC;
+	ssb_write32(dev->sdev, SSB_TMSLOW, tmslow);
+	ssb_read32(dev->sdev, SSB_TMSLOW);	/* flush */
+	msleep(1);
+}
+
+void b43_wireless_core_reset(struct b43_wldev *dev, u32 flags)
+{
+	u32 macctl;
+
+	b43_ssb_wireless_core_reset(dev, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Turn Analog ON, but only if we already know the PHY-type.
 	 * This protects against very early setup where we don't know the
@@ -1250,7 +1405,11 @@ void b43_wireless_core_reset(struct b43_wldev *dev, bool gmode)
 
 	macctl = b43_read32(dev, B43_MMIO_MACCTL);
 	macctl &= ~B43_MACCTL_GMODE;
+<<<<<<< HEAD
 	if (gmode)
+=======
+	if (flags & B43_TMSLOW_GMODE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		macctl |= B43_MACCTL_GMODE;
 	macctl |= B43_MACCTL_IHR_ENABLED;
 	b43_write32(dev, B43_MMIO_MACCTL, macctl);
@@ -1288,7 +1447,11 @@ static void drain_txstatus_queue(struct b43_wldev *dev)
 {
 	u32 dummy;
 
+<<<<<<< HEAD
 	if (dev->dev->core_rev < 5)
+=======
+	if (dev->sdev->id.revision < 5)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	/* Read all entries from the microcode TXstatus FIFO
 	 * and throw them away.
@@ -1333,7 +1496,11 @@ static void b43_calculate_link_quality(struct b43_wldev *dev)
 		return;
 	if (dev->noisecalc.calculation_running)
 		return;
+<<<<<<< HEAD
 	dev->noisecalc.calculation_running = true;
+=======
+	dev->noisecalc.calculation_running = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->noisecalc.nr_samples = 0;
 
 	b43_generate_noise_sample(dev);
@@ -1402,7 +1569,11 @@ static void handle_irq_noise(struct b43_wldev *dev)
 			average -= 48;
 
 		dev->stats.link_noise = average;
+<<<<<<< HEAD
 		dev->noisecalc.calculation_running = false;
+=======
+		dev->noisecalc.calculation_running = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 generate_new:
@@ -1418,7 +1589,11 @@ static void handle_irq_tbtt_indication(struct b43_wldev *dev)
 			b43_power_saving_ctl_bits(dev, 0);
 	}
 	if (b43_is_mode(dev->wl, NL80211_IFTYPE_ADHOC))
+<<<<<<< HEAD
 		dev->dfq_valid = true;
+=======
+		dev->dfq_valid = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void handle_irq_atim_end(struct b43_wldev *dev)
@@ -1427,7 +1602,11 @@ static void handle_irq_atim_end(struct b43_wldev *dev)
 		b43_write32(dev, B43_MMIO_MACCMD,
 			    b43_read32(dev, B43_MMIO_MACCMD)
 			    | B43_MACCMD_DFQ_VALID);
+<<<<<<< HEAD
 		dev->dfq_valid = false;
+=======
+		dev->dfq_valid = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1494,9 +1673,15 @@ u8 b43_ieee80211_antenna_sanitize(struct b43_wldev *dev,
 
 	/* Get the mask of available antennas. */
 	if (dev->phy.gmode)
+<<<<<<< HEAD
 		antenna_mask = dev->dev->bus_sprom->ant_available_bg;
 	else
 		antenna_mask = dev->dev->bus_sprom->ant_available_a;
+=======
+		antenna_mask = dev->sdev->bus->sprom.ant_available_bg;
+	else
+		antenna_mask = dev->sdev->bus->sprom.ant_available_a;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!(antenna_mask & (1 << (antenna_nr - 1)))) {
 		/* This antenna is not available. Fall back to default. */
@@ -1533,7 +1718,11 @@ static void b43_write_beacon_template(struct b43_wldev *dev,
 	unsigned int i, len, variable_len;
 	const struct ieee80211_mgmt *bcn;
 	const u8 *ie;
+<<<<<<< HEAD
 	bool tim_found = false;
+=======
+	bool tim_found = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int rate;
 	u16 ctl;
 	int antenna;
@@ -1582,7 +1771,11 @@ static void b43_write_beacon_template(struct b43_wldev *dev,
 			/* A valid TIM is at least 4 bytes long. */
 			if (ie_len < 4)
 				break;
+<<<<<<< HEAD
 			tim_found = true;
+=======
+			tim_found = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			tim_position = sizeof(struct b43_plcp_hdr6);
 			tim_position += offsetof(struct ieee80211_mgmt, u.beacon.variable);
@@ -1619,7 +1812,11 @@ static void b43_upload_beacon0(struct b43_wldev *dev)
 	if (wl->beacon0_uploaded)
 		return;
 	b43_write_beacon_template(dev, 0x68, 0x18);
+<<<<<<< HEAD
 	wl->beacon0_uploaded = true;
+=======
+	wl->beacon0_uploaded = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void b43_upload_beacon1(struct b43_wldev *dev)
@@ -1629,7 +1826,11 @@ static void b43_upload_beacon1(struct b43_wldev *dev)
 	if (wl->beacon1_uploaded)
 		return;
 	b43_write_beacon_template(dev, 0x468, 0x1A);
+<<<<<<< HEAD
 	wl->beacon1_uploaded = true;
+=======
+	wl->beacon1_uploaded = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void handle_irq_beacon(struct b43_wldev *dev)
@@ -1661,7 +1862,11 @@ static void handle_irq_beacon(struct b43_wldev *dev)
 	if (unlikely(wl->beacon_templates_virgin)) {
 		/* We never uploaded a beacon before.
 		 * Upload both templates now, but only mark one valid. */
+<<<<<<< HEAD
 		wl->beacon_templates_virgin = false;
+=======
+		wl->beacon_templates_virgin = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		b43_upload_beacon0(dev);
 		b43_upload_beacon1(dev);
 		cmd = b43_read32(dev, B43_MMIO_MACCMD);
@@ -1712,7 +1917,11 @@ static void b43_beacon_update_trigger_work(struct work_struct *work)
 	mutex_lock(&wl->mutex);
 	dev = wl->current_dev;
 	if (likely(dev && (b43_status(dev) >= B43_STAT_INITIALIZED))) {
+<<<<<<< HEAD
 		if (b43_bus_host_is_sdio(dev->dev)) {
+=======
+		if (dev->sdev->bus->bustype == SSB_BUSTYPE_SDIO) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* wl->mutex is enough. */
 			b43_do_beacon_update_trigger_work(dev);
 			mmiowb();
@@ -1749,15 +1958,24 @@ static void b43_update_templates(struct b43_wl *wl)
 	if (wl->current_beacon)
 		dev_kfree_skb_any(wl->current_beacon);
 	wl->current_beacon = beacon;
+<<<<<<< HEAD
 	wl->beacon0_uploaded = false;
 	wl->beacon1_uploaded = false;
+=======
+	wl->beacon0_uploaded = 0;
+	wl->beacon1_uploaded = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ieee80211_queue_work(wl->hw, &wl->beacon_update_trigger);
 }
 
 static void b43_set_beacon_int(struct b43_wldev *dev, u16 beacon_int)
 {
 	b43_time_lock(dev);
+<<<<<<< HEAD
 	if (dev->dev->core_rev >= 3) {
+=======
+	if (dev->sdev->id.revision >= 3) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		b43_write32(dev, B43_MMIO_TSF_CFP_REP, (beacon_int << 16));
 		b43_write32(dev, B43_MMIO_TSF_CFP_START, (beacon_int << 10));
 	} else {
@@ -1895,6 +2113,7 @@ static void b43_do_interrupt_thread(struct b43_wldev *dev)
 		}
 	}
 
+<<<<<<< HEAD
 	if (unlikely(merged_dma_reason & (B43_DMAIRQ_FATALMASK))) {
 		b43err(dev->wl,
 			"Fatal DMA error: 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X\n",
@@ -1907,6 +2126,32 @@ static void b43_do_interrupt_thread(struct b43_wldev *dev)
 		dev->use_pio = true;
 		b43_controller_restart(dev, "DMA error");
 		return;
+=======
+	if (unlikely(merged_dma_reason & (B43_DMAIRQ_FATALMASK |
+					  B43_DMAIRQ_NONFATALMASK))) {
+		if (merged_dma_reason & B43_DMAIRQ_FATALMASK) {
+			b43err(dev->wl, "Fatal DMA error: "
+			       "0x%08X, 0x%08X, 0x%08X, "
+			       "0x%08X, 0x%08X, 0x%08X\n",
+			       dma_reason[0], dma_reason[1],
+			       dma_reason[2], dma_reason[3],
+			       dma_reason[4], dma_reason[5]);
+			b43err(dev->wl, "This device does not support DMA "
+			       "on your system. It will now be switched to PIO.\n");
+			/* Fall back to PIO transfers if we get fatal DMA errors! */
+			dev->use_pio = 1;
+			b43_controller_restart(dev, "DMA error");
+			return;
+		}
+		if (merged_dma_reason & B43_DMAIRQ_NONFATALMASK) {
+			b43err(dev->wl, "DMA error: "
+			       "0x%08X, 0x%08X, 0x%08X, "
+			       "0x%08X, 0x%08X, 0x%08X\n",
+			       dma_reason[0], dma_reason[1],
+			       dma_reason[2], dma_reason[3],
+			       dma_reason[4], dma_reason[5]);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (unlikely(reason & B43_IRQ_UCODE_DEBUG))
@@ -1925,11 +2170,14 @@ static void b43_do_interrupt_thread(struct b43_wldev *dev)
 		handle_irq_noise(dev);
 
 	/* Check the DMA reason registers for received data. */
+<<<<<<< HEAD
 	if (dma_reason[0] & B43_DMAIRQ_RDESC_UFLOW) {
 		if (B43_DEBUG)
 			b43warn(dev->wl, "RX descriptor underrun\n");
 		b43_dma_handle_rx_overflow(dev->dma.rx_ring);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dma_reason[0] & B43_DMAIRQ_RX_DONE) {
 		if (b43_using_pio_transfers(dev))
 			b43_pio_rx(dev->pio.rx_queue);
@@ -1984,10 +2232,17 @@ static irqreturn_t b43_do_interrupt(struct b43_wldev *dev)
 		return IRQ_NONE;
 	reason &= dev->irq_mask;
 	if (!reason)
+<<<<<<< HEAD
 		return IRQ_NONE;
 
 	dev->dma_reason[0] = b43_read32(dev, B43_MMIO_DMA0_REASON)
 	    & 0x0001FC00;
+=======
+		return IRQ_HANDLED;
+
+	dev->dma_reason[0] = b43_read32(dev, B43_MMIO_DMA0_REASON)
+	    & 0x0001DC00;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->dma_reason[1] = b43_read32(dev, B43_MMIO_DMA1_REASON)
 	    & 0x0000DC00;
 	dev->dma_reason[2] = b43_read32(dev, B43_MMIO_DMA2_REASON)
@@ -2081,6 +2336,7 @@ static void b43_print_fw_helptext(struct b43_wl *wl, bool error)
 		b43warn(wl, text);
 }
 
+<<<<<<< HEAD
 static void b43_fw_cb(const struct firmware *firmware, void *context)
 {
 	struct b43_request_fw_context *ctx = context;
@@ -2093,6 +2349,13 @@ int b43_do_request_fw(struct b43_request_fw_context *ctx,
 		      const char *name,
 		      struct b43_firmware_file *fw, bool async)
 {
+=======
+int b43_do_request_fw(struct b43_request_fw_context *ctx,
+		      const char *name,
+		      struct b43_firmware_file *fw)
+{
+	const struct firmware *blob;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct b43_fw_header *hdr;
 	u32 size;
 	int err;
@@ -2131,6 +2394,7 @@ int b43_do_request_fw(struct b43_request_fw_context *ctx,
 		B43_WARN_ON(1);
 		return -ENOSYS;
 	}
+<<<<<<< HEAD
 	if (async) {
 		/* do this part asynchronously */
 		init_completion(&ctx->fw_load_complete);
@@ -2156,6 +2420,13 @@ int b43_do_request_fw(struct b43_request_fw_context *ctx,
 			 sizeof(ctx->errors[ctx->req_type]),
 			 "Firmware file \"%s\" not found\n",
 			 ctx->fwname);
+=======
+	err = request_firmware(&blob, ctx->fwname, ctx->dev->sdev->dev);
+	if (err == -ENOENT) {
+		snprintf(ctx->errors[ctx->req_type],
+			 sizeof(ctx->errors[ctx->req_type]),
+			 "Firmware file \"%s\" not found\n", ctx->fwname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 	} else if (err) {
 		snprintf(ctx->errors[ctx->req_type],
@@ -2164,15 +2435,25 @@ int b43_do_request_fw(struct b43_request_fw_context *ctx,
 			 ctx->fwname, err);
 		return err;
 	}
+<<<<<<< HEAD
 fw_ready:
 	if (ctx->blob->size < sizeof(struct b43_fw_header))
 		goto err_format;
 	hdr = (struct b43_fw_header *)(ctx->blob->data);
+=======
+	if (blob->size < sizeof(struct b43_fw_header))
+		goto err_format;
+	hdr = (struct b43_fw_header *)(blob->data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (hdr->type) {
 	case B43_FW_TYPE_UCODE:
 	case B43_FW_TYPE_PCM:
 		size = be32_to_cpu(hdr->size);
+<<<<<<< HEAD
 		if (size != ctx->blob->size - sizeof(struct b43_fw_header))
+=======
+		if (size != blob->size - sizeof(struct b43_fw_header))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto err_format;
 		/* fallthrough */
 	case B43_FW_TYPE_IV:
@@ -2183,7 +2464,11 @@ fw_ready:
 		goto err_format;
 	}
 
+<<<<<<< HEAD
 	fw->data = ctx->blob;
+=======
+	fw->data = blob;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fw->filename = name;
 	fw->type = ctx->req_type;
 
@@ -2193,7 +2478,11 @@ err_format:
 	snprintf(ctx->errors[ctx->req_type],
 		 sizeof(ctx->errors[ctx->req_type]),
 		 "Firmware file \"%s\" format error.\n", ctx->fwname);
+<<<<<<< HEAD
 	release_firmware(ctx->blob);
+=======
+	release_firmware(blob);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return -EPROTO;
 }
@@ -2202,11 +2491,16 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
 {
 	struct b43_wldev *dev = ctx->dev;
 	struct b43_firmware *fw = &ctx->dev->fw;
+<<<<<<< HEAD
 	const u8 rev = ctx->dev->dev->core_rev;
+=======
+	const u8 rev = ctx->dev->sdev->id.revision;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const char *filename;
 	u32 tmshigh;
 	int err;
 
+<<<<<<< HEAD
 	/* Files for HT and LCN were found by trying one by one */
 
 	/* Get microcode */
@@ -2245,6 +2539,24 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
 		}
 	}
 	err = b43_do_request_fw(ctx, filename, &fw->ucode, true);
+=======
+	/* Get microcode */
+	if ((rev >= 5) && (rev <= 10))
+		filename = "ucode5";
+	else if ((rev >= 11) && (rev <= 12))
+		filename = "ucode11";
+	else if (rev == 13)
+		filename = "ucode13";
+	else if (rev == 14)
+		filename = "ucode14";
+	else if (rev == 15)
+		filename = "ucode15";
+	else if ((rev >= 16) && (rev <= 20))
+		filename = "ucode16_mimo";
+	else
+		goto err_no_ucode;
+	err = b43_do_request_fw(ctx, filename, &fw->ucode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		goto err_load;
 
@@ -2255,12 +2567,21 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
 		filename = NULL;
 	else
 		goto err_no_pcm;
+<<<<<<< HEAD
 	fw->pcm_request_failed = false;
 	err = b43_do_request_fw(ctx, filename, &fw->pcm, false);
 	if (err == -ENOENT) {
 		/* We did not find a PCM file? Not fatal, but
 		 * core rev <= 10 must do without hwcrypto then. */
 		fw->pcm_request_failed = true;
+=======
+	fw->pcm_request_failed = 0;
+	err = b43_do_request_fw(ctx, filename, &fw->pcm);
+	if (err == -ENOENT) {
+		/* We did not find a PCM file? Not fatal, but
+		 * core rev <= 10 must do without hwcrypto then. */
+		fw->pcm_request_failed = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (err)
 		goto err_load;
 
@@ -2268,7 +2589,11 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
 	switch (dev->phy.type) {
 	case B43_PHYTYPE_A:
 		if ((rev >= 5) && (rev <= 10)) {
+<<<<<<< HEAD
 			tmshigh = ssb_read32(dev->dev->sdev, SSB_TMSHIGH);
+=======
+			tmshigh = ssb_read32(dev->sdev, SSB_TMSHIGH);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (tmshigh & B43_TMSHIGH_HAVE_2GHZ_PHY)
 				filename = "a0g1initvals5";
 			else
@@ -2302,6 +2627,7 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
 		else
 			goto err_no_initvals;
 		break;
+<<<<<<< HEAD
 	case B43_PHYTYPE_HT:
 		if (rev == 29)
 			filename = "ht0initvals29";
@@ -2318,6 +2644,12 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
 		goto err_no_initvals;
 	}
 	err = b43_do_request_fw(ctx, filename, &fw->initvals, false);
+=======
+	default:
+		goto err_no_initvals;
+	}
+	err = b43_do_request_fw(ctx, filename, &fw->initvals);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		goto err_load;
 
@@ -2325,7 +2657,11 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
 	switch (dev->phy.type) {
 	case B43_PHYTYPE_A:
 		if ((rev >= 5) && (rev <= 10)) {
+<<<<<<< HEAD
 			tmshigh = ssb_read32(dev->dev->sdev, SSB_TMSHIGH);
+=======
+			tmshigh = ssb_read32(dev->sdev, SSB_TMSHIGH);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (tmshigh & B43_TMSHIGH_HAVE_2GHZ_PHY)
 				filename = "a0g1bsinitvals5";
 			else
@@ -2361,6 +2697,7 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
 		else
 			goto err_no_initvals;
 		break;
+<<<<<<< HEAD
 	case B43_PHYTYPE_HT:
 		if (rev == 29)
 			filename = "ht0bsinitvals29";
@@ -2377,6 +2714,12 @@ static int b43_try_request_fw(struct b43_request_fw_context *ctx)
 		goto err_no_initvals;
 	}
 	err = b43_do_request_fw(ctx, filename, &fw->initvals_band, false);
+=======
+	default:
+		goto err_no_initvals;
+	}
+	err = b43_do_request_fw(ctx, filename, &fw->initvals_band);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		goto err_load;
 
@@ -2411,6 +2754,7 @@ error:
 	return err;
 }
 
+<<<<<<< HEAD
 static int b43_one_core_attach(struct b43_bus_dev *dev, struct b43_wl *wl);
 static void b43_one_core_detach(struct b43_bus_dev *dev);
 
@@ -2419,6 +2763,10 @@ static void b43_request_firmware(struct work_struct *work)
 	struct b43_wl *wl = container_of(work,
 			    struct b43_wl, firmware_load);
 	struct b43_wldev *dev = wl->current_dev;
+=======
+static int b43_request_firmware(struct b43_wldev *dev)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct b43_request_fw_context *ctx;
 	unsigned int i;
 	int err;
@@ -2426,12 +2774,17 @@ static void b43_request_firmware(struct work_struct *work)
 
 	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
 	if (!ctx)
+<<<<<<< HEAD
 		return;
+=======
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ctx->dev = dev;
 
 	ctx->req_type = B43_FWTYPE_PROPRIETARY;
 	err = b43_try_request_fw(ctx);
 	if (!err)
+<<<<<<< HEAD
 		goto start_ieee80211; /* Successfully loaded it. */
 	/* Was fw version known? */
 	if (ctx->fatal_failure)
@@ -2443,12 +2796,26 @@ static void b43_request_firmware(struct work_struct *work)
 	if (!err)
 		goto start_ieee80211; /* Successfully loaded it. */
 	if(ctx->fatal_failure)
+=======
+		goto out; /* Successfully loaded it. */
+	err = ctx->fatal_failure;
+	if (err)
+		goto out;
+
+	ctx->req_type = B43_FWTYPE_OPENSOURCE;
+	err = b43_try_request_fw(ctx);
+	if (!err)
+		goto out; /* Successfully loaded it. */
+	err = ctx->fatal_failure;
+	if (err)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	/* Could not find a usable firmware. Print the errors. */
 	for (i = 0; i < B43_NR_FWTYPES; i++) {
 		errmsg = ctx->errors[i];
 		if (strlen(errmsg))
+<<<<<<< HEAD
 			b43err(dev->wl, "%s", errmsg);
 	}
 	b43_print_fw_helptext(dev->wl, 1);
@@ -2466,6 +2833,16 @@ err_one_core_detach:
 
 out:
 	kfree(ctx);
+=======
+			b43err(dev->wl, errmsg);
+	}
+	b43_print_fw_helptext(dev->wl, 1);
+	err = -ENOENT;
+
+out:
+	kfree(ctx);
+	return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int b43_upload_microcode(struct b43_wldev *dev)
@@ -2515,8 +2892,15 @@ static int b43_upload_microcode(struct b43_wldev *dev)
 	b43_write32(dev, B43_MMIO_GEN_IRQ_REASON, B43_IRQ_ALL);
 
 	/* Start the microcode PSM */
+<<<<<<< HEAD
 	b43_maskset32(dev, B43_MMIO_MACCTL, ~B43_MACCTL_PSM_JMP0,
 		      B43_MACCTL_PSM_RUN);
+=======
+	macctl = b43_read32(dev, B43_MMIO_MACCTL);
+	macctl &= ~B43_MACCTL_PSM_JMP0;
+	macctl |= B43_MACCTL_PSM_RUN;
+	b43_write32(dev, B43_MMIO_MACCTL, macctl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Wait for the microcode to load and respond */
 	i = 0;
@@ -2548,6 +2932,7 @@ static int b43_upload_microcode(struct b43_wldev *dev)
 		b43_print_fw_helptext(dev->wl, 1);
 		err = -EOPNOTSUPP;
 		goto error;
+<<<<<<< HEAD
 	}
 	dev->fw.rev = fwrev;
 	dev->fw.patch = fwpatch;
@@ -2557,13 +2942,29 @@ static int b43_upload_microcode(struct b43_wldev *dev)
 		dev->fw.hdr_format = B43_FW_HDR_410;
 	else
 		dev->fw.hdr_format = B43_FW_HDR_351;
+=======
+	} else if (fwrev >= 598) {
+		b43err(dev->wl, "YOUR FIRMWARE IS TOO NEW. Support for "
+		       "firmware 598 and up requires kernel 3.2 or newer. You "
+		       "have to install older firmware or upgrade kernel.\n");
+		b43_print_fw_helptext(dev->wl, 1);
+		err = -EOPNOTSUPP;
+		goto error;
+	}
+	dev->fw.rev = fwrev;
+	dev->fw.patch = fwpatch;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->fw.opensource = (fwdate == 0xFFFF);
 
 	/* Default to use-all-queues. */
 	dev->wl->hw->queues = dev->wl->mac80211_initially_registered_queues;
 	dev->qos_enabled = !!modparam_qos;
 	/* Default to firmware/hardware crypto acceleration. */
+<<<<<<< HEAD
 	dev->hwcrypto_enabled = true;
+=======
+	dev->hwcrypto_enabled = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dev->fw.opensource) {
 		u16 fwcapa;
@@ -2577,7 +2978,11 @@ static int b43_upload_microcode(struct b43_wldev *dev)
 		if (!(fwcapa & B43_FWCAPA_HWCRYPTO) || dev->fw.pcm_request_failed) {
 			b43info(dev->wl, "Hardware crypto acceleration not supported by firmware\n");
 			/* Disable hardware crypto and fall back to software crypto. */
+<<<<<<< HEAD
 			dev->hwcrypto_enabled = false;
+=======
+			dev->hwcrypto_enabled = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		if (!(fwcapa & B43_FWCAPA_QOS)) {
 			b43info(dev->wl, "QoS not supported by firmware\n");
@@ -2585,7 +2990,11 @@ static int b43_upload_microcode(struct b43_wldev *dev)
 			 * ieee80211_unregister to make sure the networking core can
 			 * properly free possible resources. */
 			dev->wl->hw->queues = 1;
+<<<<<<< HEAD
 			dev->qos_enabled = false;
+=======
+			dev->qos_enabled = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		b43info(dev->wl, "Loading firmware version %u.%u "
@@ -2602,9 +3011,15 @@ static int b43_upload_microcode(struct b43_wldev *dev)
 
 	snprintf(wiphy->fw_version, sizeof(wiphy->fw_version), "%u.%u",
 			dev->fw.rev, dev->fw.patch);
+<<<<<<< HEAD
 	wiphy->hw_version = dev->dev->core_id;
 
 	if (dev->fw.hdr_format == B43_FW_HDR_351) {
+=======
+	wiphy->hw_version = dev->sdev->id.coreid;
+
+	if (b43_is_old_txhdr_format(dev)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* We're over the deadline, but we keep support for old fw
 		 * until it turns out to be in major conflict with something new. */
 		b43warn(dev->wl, "You are using an old firmware image. "
@@ -2616,9 +3031,16 @@ static int b43_upload_microcode(struct b43_wldev *dev)
 	return 0;
 
 error:
+<<<<<<< HEAD
 	/* Stop the microcode PSM. */
 	b43_maskset32(dev, B43_MMIO_MACCTL, ~B43_MACCTL_PSM_RUN,
 		      B43_MACCTL_PSM_JMP0);
+=======
+	macctl = b43_read32(dev, B43_MMIO_MACCTL);
+	macctl &= ~B43_MACCTL_PSM_RUN;
+	macctl |= B43_MACCTL_PSM_JMP0;
+	b43_write32(dev, B43_MMIO_MACCTL, macctl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }
@@ -2719,7 +3141,11 @@ out:
  */
 static struct ssb_device *b43_ssb_gpio_dev(struct b43_wldev *dev)
 {
+<<<<<<< HEAD
 	struct ssb_bus *bus = dev->dev->sdev->bus;
+=======
+	struct ssb_bus *bus = dev->sdev->bus;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_SSB_DRIVER_PCICORE
 	return (bus->chipco.dev ? bus->chipco.dev : bus->pcicore.dev);
@@ -2733,6 +3159,7 @@ static int b43_gpio_init(struct b43_wldev *dev)
 	struct ssb_device *gpiodev;
 	u32 mask, set;
 
+<<<<<<< HEAD
 	b43_maskset32(dev, B43_MMIO_MACCTL, ~B43_MACCTL_GPOUTSMSK, 0);
 	b43_maskset16(dev, B43_MMIO_GPIO_MASK, ~0, 0xF);
 
@@ -2744,6 +3171,20 @@ static int b43_gpio_init(struct b43_wldev *dev)
 	}
 	if (dev->dev->chip_id == 0x5354)
 		set &= 0xff02;
+=======
+	b43_write32(dev, B43_MMIO_MACCTL, b43_read32(dev, B43_MMIO_MACCTL)
+		    & ~B43_MACCTL_GPOUTSMSK);
+
+	b43_write16(dev, B43_MMIO_GPIO_MASK, b43_read16(dev, B43_MMIO_GPIO_MASK)
+		    | 0x000F);
+
+	mask = 0x0000001F;
+	set = 0x0000000F;
+	if (dev->sdev->bus->chip_id == 0x4301) {
+		mask |= 0x0060;
+		set |= 0x0060;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (0 /* FIXME: conditional unknown */ ) {
 		b43_write16(dev, B43_MMIO_GPIO_MASK,
 			    b43_read16(dev, B43_MMIO_GPIO_MASK)
@@ -2751,13 +3192,18 @@ static int b43_gpio_init(struct b43_wldev *dev)
 		mask |= 0x0180;
 		set |= 0x0180;
 	}
+<<<<<<< HEAD
 	if (dev->dev->bus_sprom->boardflags_lo & B43_BFL_PACTRL) {
+=======
+	if (dev->sdev->bus->sprom.boardflags_lo & B43_BFL_PACTRL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		b43_write16(dev, B43_MMIO_GPIO_MASK,
 			    b43_read16(dev, B43_MMIO_GPIO_MASK)
 			    | 0x0200);
 		mask |= 0x0200;
 		set |= 0x0200;
 	}
+<<<<<<< HEAD
 	if (dev->dev->core_rev >= 2)
 		mask |= 0x0010;	/* FIXME: This is redundant. */
 
@@ -2779,6 +3225,16 @@ static int b43_gpio_init(struct b43_wldev *dev)
 		break;
 #endif
 	}
+=======
+	if (dev->sdev->id.revision >= 2)
+		mask |= 0x0010;	/* FIXME: This is redundant. */
+
+	gpiodev = b43_ssb_gpio_dev(dev);
+	if (gpiodev)
+		ssb_write32(gpiodev, B43_GPIO_CONTROL,
+			    (ssb_read32(gpiodev, B43_GPIO_CONTROL)
+			     & mask) | set);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -2788,6 +3244,7 @@ static void b43_gpio_cleanup(struct b43_wldev *dev)
 {
 	struct ssb_device *gpiodev;
 
+<<<<<<< HEAD
 	switch (dev->dev->bus_type) {
 #ifdef CONFIG_B43_BCMA
 	case B43_BUS_BCMA:
@@ -2803,6 +3260,11 @@ static void b43_gpio_cleanup(struct b43_wldev *dev)
 		break;
 #endif
 	}
+=======
+	gpiodev = b43_ssb_gpio_dev(dev);
+	if (gpiodev)
+		ssb_write32(gpiodev, B43_GPIO_CONTROL, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* http://bcm-specs.sipsolutions.net/EnableMac */
@@ -2824,7 +3286,13 @@ void b43_mac_enable(struct b43_wldev *dev)
 	dev->mac_suspended--;
 	B43_WARN_ON(dev->mac_suspended < 0);
 	if (dev->mac_suspended == 0) {
+<<<<<<< HEAD
 		b43_maskset32(dev, B43_MMIO_MACCTL, ~0, B43_MACCTL_ENABLED);
+=======
+		b43_write32(dev, B43_MMIO_MACCTL,
+			    b43_read32(dev, B43_MMIO_MACCTL)
+			    | B43_MACCTL_ENABLED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		b43_write32(dev, B43_MMIO_GEN_IRQ_REASON,
 			    B43_IRQ_MAC_SUSPENDED);
 		/* Commit writes */
@@ -2845,7 +3313,13 @@ void b43_mac_suspend(struct b43_wldev *dev)
 
 	if (dev->mac_suspended == 0) {
 		b43_power_saving_ctl_bits(dev, B43_PS_AWAKE);
+<<<<<<< HEAD
 		b43_maskset32(dev, B43_MMIO_MACCTL, ~B43_MACCTL_ENABLED, 0);
+=======
+		b43_write32(dev, B43_MMIO_MACCTL,
+			    b43_read32(dev, B43_MMIO_MACCTL)
+			    & ~B43_MACCTL_ENABLED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* force pci to flush the write */
 		b43_read32(dev, B43_MMIO_MACCTL);
 		for (i = 35; i; i--) {
@@ -2870,6 +3344,7 @@ out:
 /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/MacPhyClkSet */
 void b43_mac_phy_clock_set(struct b43_wldev *dev, bool on)
 {
+<<<<<<< HEAD
 	u32 tmp;
 
 	switch (dev->dev->bus_type) {
@@ -2894,6 +3369,14 @@ void b43_mac_phy_clock_set(struct b43_wldev *dev, bool on)
 		break;
 #endif
 	}
+=======
+	u32 tmslow = ssb_read32(dev->sdev, SSB_TMSLOW);
+	if (on)
+		tmslow |= B43_TMSLOW_MACPHYCLKEN;
+	else
+		tmslow &= ~B43_TMSLOW_MACPHYCLKEN;
+	ssb_write32(dev->sdev, SSB_TMSLOW, tmslow);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void b43_adjust_opmode(struct b43_wldev *dev)
@@ -2932,15 +3415,24 @@ static void b43_adjust_opmode(struct b43_wldev *dev)
 	/* Workaround: On old hardware the HW-MAC-address-filter
 	 * doesn't work properly, so always run promisc in filter
 	 * it in software. */
+<<<<<<< HEAD
 	if (dev->dev->core_rev <= 4)
+=======
+	if (dev->sdev->id.revision <= 4)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ctl |= B43_MACCTL_PROMISC;
 
 	b43_write32(dev, B43_MMIO_MACCTL, ctl);
 
 	cfp_pretbtt = 2;
 	if ((ctl & B43_MACCTL_INFRA) && !(ctl & B43_MACCTL_AP)) {
+<<<<<<< HEAD
 		if (dev->dev->chip_id == 0x4306 &&
 		    dev->dev->chip_rev == 3)
+=======
+		if (dev->sdev->bus->chip_id == 0x4306 &&
+		    dev->sdev->bus->chip_rev == 3)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cfp_pretbtt = 100;
 		else
 			cfp_pretbtt = 50;
@@ -2951,10 +3443,22 @@ static void b43_adjust_opmode(struct b43_wldev *dev)
 	 *        so always disable it. If we want to implement PMQ,
 	 *        we need to enable it here (clear DISCPMQ) in AP mode.
 	 */
+<<<<<<< HEAD
 	if (0  /* ctl & B43_MACCTL_AP */)
 		b43_maskset32(dev, B43_MMIO_MACCTL, ~B43_MACCTL_DISCPMQ, 0);
 	else
 		b43_maskset32(dev, B43_MMIO_MACCTL, ~0, B43_MACCTL_DISCPMQ);
+=======
+	if (0  /* ctl & B43_MACCTL_AP */) {
+		b43_write32(dev, B43_MMIO_MACCTL,
+			    b43_read32(dev, B43_MMIO_MACCTL)
+			    & ~B43_MACCTL_DISCPMQ);
+	} else {
+		b43_write32(dev, B43_MMIO_MACCTL,
+			    b43_read32(dev, B43_MMIO_MACCTL)
+			    | B43_MACCTL_DISCPMQ);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void b43_rate_memory_write(struct b43_wldev *dev, u16 rate, int is_ofdm)
@@ -2979,8 +3483,11 @@ static void b43_rate_memory_init(struct b43_wldev *dev)
 	case B43_PHYTYPE_G:
 	case B43_PHYTYPE_N:
 	case B43_PHYTYPE_LP:
+<<<<<<< HEAD
 	case B43_PHYTYPE_HT:
 	case B43_PHYTYPE_LCN:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		b43_rate_memory_write(dev, B43_OFDM_RATE_6MB, 1);
 		b43_rate_memory_write(dev, B43_OFDM_RATE_12MB, 1);
 		b43_rate_memory_write(dev, B43_OFDM_RATE_18MB, 1);
@@ -3059,6 +3566,12 @@ static int b43_chip_init(struct b43_wldev *dev)
 	macctl |= B43_MACCTL_INFRA;
 	b43_write32(dev, B43_MMIO_MACCTL, macctl);
 
+<<<<<<< HEAD
+=======
+	err = b43_request_firmware(dev);
+	if (err)
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = b43_upload_microcode(dev);
 	if (err)
 		goto out;	/* firmware is released later */
@@ -3092,11 +3605,21 @@ static int b43_chip_init(struct b43_wldev *dev)
 		b43_write16(dev, 0x005E, value16);
 	}
 	b43_write32(dev, 0x0100, 0x01000000);
+<<<<<<< HEAD
 	if (dev->dev->core_rev < 5)
 		b43_write32(dev, 0x010C, 0x01000000);
 
 	b43_maskset32(dev, B43_MMIO_MACCTL, ~B43_MACCTL_INFRA, 0);
 	b43_maskset32(dev, B43_MMIO_MACCTL, ~0, B43_MACCTL_INFRA);
+=======
+	if (dev->sdev->id.revision < 5)
+		b43_write32(dev, 0x010C, 0x01000000);
+
+	b43_write32(dev, B43_MMIO_MACCTL, b43_read32(dev, B43_MMIO_MACCTL)
+		    & ~B43_MACCTL_INFRA);
+	b43_write32(dev, B43_MMIO_MACCTL, b43_read32(dev, B43_MMIO_MACCTL)
+		    | B43_MACCTL_INFRA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Probe Response Timeout value */
 	/* FIXME: Default to 0, has to be set by ioctl probably... :-/ */
@@ -3105,7 +3628,11 @@ static int b43_chip_init(struct b43_wldev *dev)
 	/* Initially set the wireless operation mode. */
 	b43_adjust_opmode(dev);
 
+<<<<<<< HEAD
 	if (dev->dev->core_rev < 3) {
+=======
+	if (dev->sdev->id.revision < 3) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		b43_write16(dev, 0x060E, 0x0000);
 		b43_write16(dev, 0x0610, 0x8000);
 		b43_write16(dev, 0x0604, 0x0000);
@@ -3115,7 +3642,11 @@ static int b43_chip_init(struct b43_wldev *dev)
 		b43_write32(dev, 0x018C, 0x02000000);
 	}
 	b43_write32(dev, B43_MMIO_GEN_IRQ_REASON, 0x00004000);
+<<<<<<< HEAD
 	b43_write32(dev, B43_MMIO_DMA0_IRQ_MASK, 0x0001FC00);
+=======
+	b43_write32(dev, B43_MMIO_DMA0_IRQ_MASK, 0x0001DC00);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	b43_write32(dev, B43_MMIO_DMA1_IRQ_MASK, 0x0000DC00);
 	b43_write32(dev, B43_MMIO_DMA2_IRQ_MASK, 0x0000DC00);
 	b43_write32(dev, B43_MMIO_DMA3_IRQ_MASK, 0x0001DC00);
@@ -3124,6 +3655,7 @@ static int b43_chip_init(struct b43_wldev *dev)
 
 	b43_mac_phy_clock_set(dev, true);
 
+<<<<<<< HEAD
 	switch (dev->dev->bus_type) {
 #ifdef CONFIG_B43_BCMA
 	case B43_BUS_BCMA:
@@ -3138,6 +3670,10 @@ static int b43_chip_init(struct b43_wldev *dev)
 		break;
 #endif
 	}
+=======
+	b43_write16(dev, B43_MMIO_POWERUP_DELAY,
+		    dev->sdev->bus->chipco.fast_pwrup_delay);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = 0;
 	b43dbg(dev->wl, "Chip initialized\n");
@@ -3300,7 +3836,11 @@ static int b43_validate_chipaccess(struct b43_wldev *dev)
 	b43_shm_write32(dev, B43_SHM_SHARED, 0, backup0);
 	b43_shm_write32(dev, B43_SHM_SHARED, 4, backup4);
 
+<<<<<<< HEAD
 	if ((dev->dev->core_rev >= 3) && (dev->dev->core_rev <= 10)) {
+=======
+	if ((dev->sdev->id.revision >= 3) && (dev->sdev->id.revision <= 10)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* The 32bit register shadows the two 16bit registers
 		 * with update sideeffects. Validate this. */
 		b43_write16(dev, B43_MMIO_TSF_CFP_START, 0xAAAA);
@@ -3373,10 +3913,17 @@ static int b43_rng_init(struct b43_wl *wl)
 	wl->rng.name = wl->rng_name;
 	wl->rng.data_read = b43_rng_read;
 	wl->rng.priv = (unsigned long)wl;
+<<<<<<< HEAD
 	wl->rng_initialized = true;
 	err = hwrng_register(&wl->rng);
 	if (err) {
 		wl->rng_initialized = false;
+=======
+	wl->rng_initialized = 1;
+	err = hwrng_register(&wl->rng);
+	if (err) {
+		wl->rng_initialized = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		b43err(wl, "Failed to register the random "
 		       "number generator (%d)\n", err);
 	}
@@ -3390,7 +3937,10 @@ static void b43_tx_work(struct work_struct *work)
 	struct b43_wl *wl = container_of(work, struct b43_wl, tx_work);
 	struct b43_wldev *dev;
 	struct sk_buff *skb;
+<<<<<<< HEAD
 	int queue_num;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err = 0;
 
 	mutex_lock(&wl->mutex);
@@ -3400,6 +3950,7 @@ static void b43_tx_work(struct work_struct *work)
 		return;
 	}
 
+<<<<<<< HEAD
 	for (queue_num = 0; queue_num < B43_QOS_QUEUE_NUM; queue_num++) {
 		while (skb_queue_len(&wl->tx_queue[queue_num])) {
 			skb = skb_dequeue(&wl->tx_queue[queue_num]);
@@ -3420,6 +3971,17 @@ static void b43_tx_work(struct work_struct *work)
 
 		if (!err)
 			wl->tx_queue_stopped[queue_num] = 0;
+=======
+	while (skb_queue_len(&wl->tx_queue)) {
+		skb = skb_dequeue(&wl->tx_queue);
+
+		if (b43_using_pio_transfers(dev))
+			err = b43_pio_tx(dev, skb);
+		else
+			err = b43_dma_tx(dev, skb);
+		if (unlikely(err))
+			dev_kfree_skb(skb); /* Drop it */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 #if B43_DEBUG
@@ -3435,17 +3997,26 @@ static void b43_op_tx(struct ieee80211_hw *hw,
 
 	if (unlikely(skb->len < 2 + 2 + 6)) {
 		/* Too short, this can't be a valid frame. */
+<<<<<<< HEAD
 		ieee80211_free_txskb(hw, skb);
+=======
+		dev_kfree_skb_any(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 	B43_WARN_ON(skb_shinfo(skb)->nr_frags);
 
+<<<<<<< HEAD
 	skb_queue_tail(&wl->tx_queue[skb->queue_mapping], skb);
 	if (!wl->tx_queue_stopped[skb->queue_mapping]) {
 		ieee80211_queue_work(wl->hw, &wl->tx_work);
 	} else {
 		ieee80211_stop_queue(wl->hw, skb->queue_mapping);
 	}
+=======
+	skb_queue_tail(&wl->tx_queue, skb);
+	ieee80211_queue_work(wl->hw, &wl->tx_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void b43_qos_params_upload(struct b43_wldev *dev,
@@ -3587,8 +4158,12 @@ static void b43_qos_init(struct b43_wldev *dev)
 	b43dbg(dev->wl, "QoS enabled\n");
 }
 
+<<<<<<< HEAD
 static int b43_op_conf_tx(struct ieee80211_hw *hw,
 			  struct ieee80211_vif *vif, u16 _queue,
+=======
+static int b43_op_conf_tx(struct ieee80211_hw *hw, u16 _queue,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  const struct ieee80211_tx_queue_params *params)
 {
 	struct b43_wl *wl = hw_to_b43_wl(hw);
@@ -3635,7 +4210,11 @@ static int b43_op_get_stats(struct ieee80211_hw *hw,
 	return 0;
 }
 
+<<<<<<< HEAD
 static u64 b43_op_get_tsf(struct ieee80211_hw *hw, struct ieee80211_vif *vif)
+=======
+static u64 b43_op_get_tsf(struct ieee80211_hw *hw)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct b43_wl *wl = hw_to_b43_wl(hw);
 	struct b43_wldev *dev;
@@ -3654,8 +4233,12 @@ static u64 b43_op_get_tsf(struct ieee80211_hw *hw, struct ieee80211_vif *vif)
 	return tsf;
 }
 
+<<<<<<< HEAD
 static void b43_op_set_tsf(struct ieee80211_hw *hw,
 			   struct ieee80211_vif *vif, u64 tsf)
+=======
+static void b43_op_set_tsf(struct ieee80211_hw *hw, u64 tsf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct b43_wl *wl = hw_to_b43_wl(hw);
 	struct b43_wldev *dev;
@@ -3671,6 +4254,7 @@ static void b43_op_set_tsf(struct ieee80211_hw *hw,
 
 static void b43_put_phy_into_reset(struct b43_wldev *dev)
 {
+<<<<<<< HEAD
 	u32 tmp;
 
 	switch (dev->dev->bus_type) {
@@ -3698,6 +4282,23 @@ static void b43_put_phy_into_reset(struct b43_wldev *dev)
 		break;
 #endif
 	}
+=======
+	struct ssb_device *sdev = dev->sdev;
+	u32 tmslow;
+
+	tmslow = ssb_read32(sdev, SSB_TMSLOW);
+	tmslow &= ~B43_TMSLOW_GMODE;
+	tmslow |= B43_TMSLOW_PHYRESET;
+	tmslow |= SSB_TMSLOW_FGC;
+	ssb_write32(sdev, SSB_TMSLOW, tmslow);
+	msleep(1);
+
+	tmslow = ssb_read32(sdev, SSB_TMSLOW);
+	tmslow &= ~SSB_TMSLOW_FGC;
+	tmslow |= B43_TMSLOW_PHYRESET;
+	ssb_write32(sdev, SSB_TMSLOW, tmslow);
+	msleep(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const char *band_to_string(enum ieee80211_band band)
@@ -3730,13 +4331,21 @@ static int b43_switch_band(struct b43_wl *wl, struct ieee80211_channel *chan)
 		case IEEE80211_BAND_5GHZ:
 			if (d->phy.supports_5ghz) {
 				up_dev = d;
+<<<<<<< HEAD
 				gmode = false;
+=======
+				gmode = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			break;
 		case IEEE80211_BAND_2GHZ:
 			if (d->phy.supports_2ghz) {
 				up_dev = d;
+<<<<<<< HEAD
 				gmode = true;
+=======
+				gmode = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			break;
 		default:
@@ -3829,16 +4438,23 @@ static int b43_op_config(struct ieee80211_hw *hw, u32 changed)
 	struct ieee80211_conf *conf = &hw->conf;
 	int antenna;
 	int err = 0;
+<<<<<<< HEAD
 	bool reload_bss = false;
 
 	mutex_lock(&wl->mutex);
 
 	dev = wl->current_dev;
 
+=======
+
+	mutex_lock(&wl->mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Switch the band (if necessary). This might change the active core. */
 	err = b43_switch_band(wl, conf->channel);
 	if (err)
 		goto out_unlock_mutex;
+<<<<<<< HEAD
 
 	/* Need to reload all settings if the core changed */
 	if (dev != wl->current_dev) {
@@ -3847,6 +4463,9 @@ static int b43_op_config(struct ieee80211_hw *hw, u32 changed)
 		reload_bss = true;
 	}
 
+=======
+	dev = wl->current_dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	phy = &dev->phy;
 
 	if (conf_is_ht(conf))
@@ -3907,9 +4526,12 @@ out_mac_enable:
 out_unlock_mutex:
 	mutex_unlock(&wl->mutex);
 
+<<<<<<< HEAD
 	if (wl->vif && reload_bss)
 		b43_op_bss_info_changed(hw, wl->vif, &wl->vif->bss_conf, ~0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -3998,8 +4620,12 @@ static void b43_op_bss_info_changed(struct ieee80211_hw *hw,
 	if (changed & BSS_CHANGED_BEACON_INT &&
 	    (b43_is_mode(wl, NL80211_IFTYPE_AP) ||
 	     b43_is_mode(wl, NL80211_IFTYPE_MESH_POINT) ||
+<<<<<<< HEAD
 	     b43_is_mode(wl, NL80211_IFTYPE_ADHOC)) &&
 	    conf->beacon_int)
+=======
+	     b43_is_mode(wl, NL80211_IFTYPE_ADHOC)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		b43_set_beacon_int(dev, conf->beacon_int);
 
 	if (changed & BSS_CHANGED_BASIC_RATES)
@@ -4172,6 +4798,7 @@ out_unlock:
  * because the core might be gone away while we unlocked the mutex. */
 static struct b43_wldev * b43_wireless_core_stop(struct b43_wldev *dev)
 {
+<<<<<<< HEAD
 	struct b43_wl *wl;
 	struct b43_wldev *orig_dev;
 	u32 mask;
@@ -4180,6 +4807,12 @@ static struct b43_wldev * b43_wireless_core_stop(struct b43_wldev *dev)
 	if (!dev)
 		return NULL;
 	wl = dev->wl;
+=======
+	struct b43_wl *wl = dev->wl;
+	struct b43_wldev *orig_dev;
+	u32 mask;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 redo:
 	if (!dev || b43_status(dev) < B43_STAT_STARTED)
 		return dev;
@@ -4188,7 +4821,10 @@ redo:
 	mutex_unlock(&wl->mutex);
 	cancel_delayed_work_sync(&dev->periodic_work);
 	cancel_work_sync(&wl->tx_work);
+<<<<<<< HEAD
 	cancel_work_sync(&wl->firmware_load);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&wl->mutex);
 	dev = wl->current_dev;
 	if (!dev || b43_status(dev) < B43_STAT_STARTED) {
@@ -4198,7 +4834,11 @@ redo:
 
 	/* Disable interrupts on the device. */
 	b43_set_status(dev, B43_STAT_INITIALIZED);
+<<<<<<< HEAD
 	if (b43_bus_host_is_sdio(dev->dev)) {
+=======
+	if (dev->sdev->bus->bustype == SSB_BUSTYPE_SDIO) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* wl->mutex is locked. That is enough. */
 		b43_write32(dev, B43_MMIO_GEN_IRQ_MASK, 0);
 		b43_read32(dev, B43_MMIO_GEN_IRQ_MASK);	/* Flush */
@@ -4211,11 +4851,19 @@ redo:
 	/* Synchronize and free the interrupt handlers. Unlock to avoid deadlocks. */
 	orig_dev = dev;
 	mutex_unlock(&wl->mutex);
+<<<<<<< HEAD
 	if (b43_bus_host_is_sdio(dev->dev)) {
 		b43_sdio_free_irq(dev);
 	} else {
 		synchronize_irq(dev->dev->irq);
 		free_irq(dev->dev->irq, dev);
+=======
+	if (dev->sdev->bus->bustype == SSB_BUSTYPE_SDIO) {
+		b43_sdio_free_irq(dev);
+	} else {
+		synchronize_irq(dev->sdev->irq);
+		free_irq(dev->sdev->irq, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	mutex_lock(&wl->mutex);
 	dev = wl->current_dev;
@@ -4229,6 +4877,7 @@ redo:
 	mask = b43_read32(dev, B43_MMIO_GEN_IRQ_MASK);
 	B43_WARN_ON(mask != 0xFFFFFFFF && mask);
 
+<<<<<<< HEAD
 	/* Drain all TX queues. */
 	for (queue_num = 0; queue_num < B43_QOS_QUEUE_NUM; queue_num++) {
 		while (skb_queue_len(&wl->tx_queue[queue_num])) {
@@ -4238,6 +4887,11 @@ redo:
 			ieee80211_free_txskb(wl->hw, skb);
 		}
 	}
+=======
+	/* Drain the TX queue */
+	while (skb_queue_len(&wl->tx_queue))
+		dev_kfree_skb(skb_dequeue(&wl->tx_queue));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	b43_mac_suspend(dev);
 	b43_leds_exit(dev);
@@ -4254,19 +4908,31 @@ static int b43_wireless_core_start(struct b43_wldev *dev)
 	B43_WARN_ON(b43_status(dev) != B43_STAT_INITIALIZED);
 
 	drain_txstatus_queue(dev);
+<<<<<<< HEAD
 	if (b43_bus_host_is_sdio(dev->dev)) {
+=======
+	if (dev->sdev->bus->bustype == SSB_BUSTYPE_SDIO) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = b43_sdio_request_irq(dev, b43_sdio_interrupt_handler);
 		if (err) {
 			b43err(dev->wl, "Cannot request SDIO IRQ\n");
 			goto out;
 		}
 	} else {
+<<<<<<< HEAD
 		err = request_threaded_irq(dev->dev->irq, b43_interrupt_handler,
+=======
+		err = request_threaded_irq(dev->sdev->irq, b43_interrupt_handler,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					   b43_interrupt_thread_handler,
 					   IRQF_SHARED, KBUILD_MODNAME, dev);
 		if (err) {
 			b43err(dev->wl, "Cannot request IRQ-%d\n",
+<<<<<<< HEAD
 			       dev->dev->irq);
+=======
+			       dev->sdev->irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out;
 		}
 	}
@@ -4333,6 +4999,7 @@ static int b43_phy_versioning(struct b43_wldev *dev)
 			unsupported = 1;
 		break;
 #endif
+<<<<<<< HEAD
 #ifdef CONFIG_B43_PHY_HT
 	case B43_PHYTYPE_HT:
 		if (phy_rev > 1)
@@ -4348,6 +5015,11 @@ static int b43_phy_versioning(struct b43_wldev *dev)
 	default:
 		unsupported = 1;
 	}
+=======
+	default:
+		unsupported = 1;
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unsupported) {
 		b43err(dev->wl, "FOUND UNSUPPORTED PHY "
 		       "(Analog %u, Type %u, Revision %u)\n",
@@ -4358,6 +5030,7 @@ static int b43_phy_versioning(struct b43_wldev *dev)
 	       analog_type, phy_type, phy_rev);
 
 	/* Get RADIO versioning */
+<<<<<<< HEAD
 	if (dev->dev->core_rev >= 24) {
 		u16 radio24[3];
 
@@ -4394,6 +5067,24 @@ static int b43_phy_versioning(struct b43_wldev *dev)
 		radio_rev = (tmp & 0xF0000000) >> 28;
 	}
 
+=======
+	if (dev->sdev->bus->chip_id == 0x4317) {
+		if (dev->sdev->bus->chip_rev == 0)
+			tmp = 0x3205017F;
+		else if (dev->sdev->bus->chip_rev == 1)
+			tmp = 0x4205017F;
+		else
+			tmp = 0x5205017F;
+	} else {
+		b43_write16(dev, B43_MMIO_RADIO_CONTROL, B43_RADIOCTL_ID);
+		tmp = b43_read16(dev, B43_MMIO_RADIO_DATA_LOW);
+		b43_write16(dev, B43_MMIO_RADIO_CONTROL, B43_RADIOCTL_ID);
+		tmp |= (u32)b43_read16(dev, B43_MMIO_RADIO_DATA_HIGH) << 16;
+	}
+	radio_manuf = (tmp & 0x00000FFF);
+	radio_ver = (tmp & 0x0FFFF000) >> 12;
+	radio_rev = (tmp & 0xF0000000) >> 28;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (radio_manuf != 0x17F /* Broadcom */)
 		unsupported = 1;
 	switch (phy_type) {
@@ -4421,6 +5112,7 @@ static int b43_phy_versioning(struct b43_wldev *dev)
 		if (radio_ver != 0x2062 && radio_ver != 0x2063)
 			unsupported = 1;
 		break;
+<<<<<<< HEAD
 	case B43_PHYTYPE_HT:
 		if (radio_ver != 0x2059)
 			unsupported = 1;
@@ -4429,6 +5121,8 @@ static int b43_phy_versioning(struct b43_wldev *dev)
 		if (radio_ver != 0x2064)
 			unsupported = 1;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		B43_WARN_ON(1);
 	}
@@ -4461,18 +5155,31 @@ static void setup_struct_phy_for_init(struct b43_wldev *dev,
 	atomic_set(&phy->txerr_cnt, B43_PHY_TX_BADNESS_LIMIT);
 
 #if B43_DEBUG
+<<<<<<< HEAD
 	phy->phy_locked = false;
 	phy->radio_locked = false;
+=======
+	phy->phy_locked = 0;
+	phy->radio_locked = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }
 
 static void setup_struct_wldev_for_init(struct b43_wldev *dev)
 {
+<<<<<<< HEAD
 	dev->dfq_valid = false;
 
 	/* Assume the radio is enabled. If it's not enabled, the state will
 	 * immediately get fixed on the first periodic work run. */
 	dev->radio_hw_enable = true;
+=======
+	dev->dfq_valid = 0;
+
+	/* Assume the radio is enabled. If it's not enabled, the state will
+	 * immediately get fixed on the first periodic work run. */
+	dev->radio_hw_enable = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Stats */
 	memset(&dev->stats, 0, sizeof(dev->stats));
@@ -4494,7 +5201,11 @@ static void setup_struct_wldev_for_init(struct b43_wldev *dev)
 
 static void b43_bluetooth_coext_enable(struct b43_wldev *dev)
 {
+<<<<<<< HEAD
 	struct ssb_sprom *sprom = dev->dev->bus_sprom;
+=======
+	struct ssb_sprom *sprom = &dev->sdev->bus->sprom;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64 hf;
 
 	if (!modparam_btcoex)
@@ -4521,6 +5232,7 @@ static void b43_bluetooth_coext_disable(struct b43_wldev *dev)
 
 static void b43_imcfglo_timeouts_workaround(struct b43_wldev *dev)
 {
+<<<<<<< HEAD
 	struct ssb_bus *bus;
 	u32 tmp;
 
@@ -4536,6 +5248,18 @@ static void b43_imcfglo_timeouts_workaround(struct b43_wldev *dev)
 		tmp &= ~SSB_IMCFGLO_SERTO;
 		tmp |= 0x3;
 		ssb_write32(dev->dev->sdev, SSB_IMCFGLO, tmp);
+=======
+	struct ssb_bus *bus = dev->sdev->bus;
+	u32 tmp;
+
+	if ((bus->chip_id == 0x4311 && bus->chip_rev == 2) ||
+	    (bus->chip_id == 0x4312)) {
+		tmp = ssb_read32(dev->sdev, SSB_IMCFGLO);
+		tmp &= ~SSB_IMCFGLO_REQTO;
+		tmp &= ~SSB_IMCFGLO_SERTO;
+		tmp |= 0x3;
+		ssb_write32(dev->sdev, SSB_IMCFGLO, tmp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ssb_commit_settings(bus);
 	}
 }
@@ -4579,6 +5303,11 @@ static void b43_set_pretbtt(struct b43_wldev *dev)
 /* Locking: wl->mutex */
 static void b43_wireless_core_exit(struct b43_wldev *dev)
 {
+<<<<<<< HEAD
+=======
+	u32 macctl;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	B43_WARN_ON(dev && b43_status(dev) > B43_STAT_INITIALIZED);
 	if (!dev || b43_status(dev) != B43_STAT_INITIALIZED)
 		return;
@@ -4589,8 +5318,15 @@ static void b43_wireless_core_exit(struct b43_wldev *dev)
 	b43_set_status(dev, B43_STAT_UNINIT);
 
 	/* Stop the microcode PSM. */
+<<<<<<< HEAD
 	b43_maskset32(dev, B43_MMIO_MACCTL, ~B43_MACCTL_PSM_RUN,
 		      B43_MACCTL_PSM_JMP0);
+=======
+	macctl = b43_read32(dev, B43_MMIO_MACCTL);
+	macctl &= ~B43_MACCTL_PSM_RUN;
+	macctl |= B43_MACCTL_PSM_JMP0;
+	b43_write32(dev, B43_MMIO_MACCTL, macctl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	b43_dma_free(dev);
 	b43_pio_free(dev);
@@ -4601,13 +5337,19 @@ static void b43_wireless_core_exit(struct b43_wldev *dev)
 		dev->wl->current_beacon = NULL;
 	}
 
+<<<<<<< HEAD
 	b43_device_disable(dev, 0);
 	b43_bus_may_powerdown(dev);
+=======
+	ssb_device_disable(dev->sdev, 0);
+	ssb_bus_may_powerdown(dev->sdev->bus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Initialize a wireless core */
 static int b43_wireless_core_init(struct b43_wldev *dev)
 {
+<<<<<<< HEAD
 	struct ssb_sprom *sprom = dev->dev->bus_sprom;
 	struct b43_phy *phy = &dev->phy;
 	int err;
@@ -4620,12 +5362,31 @@ static int b43_wireless_core_init(struct b43_wldev *dev)
 		goto out;
 	if (!b43_device_is_enabled(dev))
 		b43_wireless_core_reset(dev, phy->gmode);
+=======
+	struct ssb_bus *bus = dev->sdev->bus;
+	struct ssb_sprom *sprom = &bus->sprom;
+	struct b43_phy *phy = &dev->phy;
+	int err;
+	u64 hf;
+	u32 tmp;
+
+	B43_WARN_ON(b43_status(dev) != B43_STAT_UNINIT);
+
+	err = ssb_bus_powerup(bus, 0);
+	if (err)
+		goto out;
+	if (!ssb_device_is_enabled(dev->sdev)) {
+		tmp = phy->gmode ? B43_TMSLOW_GMODE : 0;
+		b43_wireless_core_reset(dev, tmp);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Reset all data structures. */
 	setup_struct_wldev_for_init(dev);
 	phy->ops->prepare_structs(dev);
 
 	/* Enable IRQ routing to this device. */
+<<<<<<< HEAD
 	switch (dev->dev->bus_type) {
 #ifdef CONFIG_B43_BCMA
 	case B43_BUS_BCMA:
@@ -4640,6 +5401,9 @@ static int b43_wireless_core_init(struct b43_wldev *dev)
 		break;
 #endif
 	}
+=======
+	ssb_pcicore_dev_irqvecs_enable(&bus->pcicore, dev->sdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	b43_imcfglo_timeouts_workaround(dev);
 	b43_bluetooth_coext_disable(dev);
@@ -4652,7 +5416,11 @@ static int b43_wireless_core_init(struct b43_wldev *dev)
 	if (err)
 		goto err_busdown;
 	b43_shm_write16(dev, B43_SHM_SHARED,
+<<<<<<< HEAD
 			B43_SHM_SH_WLCOREREV, dev->dev->core_rev);
+=======
+			B43_SHM_SH_WLCOREREV, dev->sdev->id.revision);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hf = b43_hf_read(dev);
 	if (phy->type == B43_PHYTYPE_G) {
 		hf |= B43_HF_SYMW;
@@ -4670,9 +5438,14 @@ static int b43_wireless_core_init(struct b43_wldev *dev)
 	if (sprom->boardflags_lo & B43_BFL_XTAL_NOSLOW)
 		hf |= B43_HF_DSCRQ; /* Disable slowclock requests from ucode. */
 #ifdef CONFIG_SSB_DRIVER_PCICORE
+<<<<<<< HEAD
 	if (dev->dev->bus_type == B43_BUS_SSB &&
 	    dev->dev->sdev->bus->bustype == SSB_BUSTYPE_PCI &&
 	    dev->dev->sdev->bus->pcicore.dev->id.revision <= 10)
+=======
+	if ((bus->bustype == SSB_BUSTYPE_PCI) &&
+	    (bus->pcicore.dev->id.revision <= 10))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hf |= B43_HF_PCISCW; /* PCI slow clock workaround. */
 #endif
 	hf &= ~B43_HF_SKCFPUP;
@@ -4700,6 +5473,7 @@ static int b43_wireless_core_init(struct b43_wldev *dev)
 	/* Maximum Contention Window */
 	b43_shm_write16(dev, B43_SHM_SCRATCH, B43_SHM_SC_MAXCONT, 0x3FF);
 
+<<<<<<< HEAD
 	if (b43_bus_host_is_pcmcia(dev->dev) ||
 	    b43_bus_host_is_sdio(dev->dev)) {
 		dev->__using_pio_transfers = true;
@@ -4712,6 +5486,15 @@ static int b43_wireless_core_init(struct b43_wldev *dev)
 		err = b43_pio_init(dev);
 	} else {
 		dev->__using_pio_transfers = false;
+=======
+	if ((dev->sdev->bus->bustype == SSB_BUSTYPE_PCMCIA) ||
+	    (dev->sdev->bus->bustype == SSB_BUSTYPE_SDIO) ||
+	    dev->use_pio) {
+		dev->__using_pio_transfers = 1;
+		err = b43_pio_init(dev);
+	} else {
+		dev->__using_pio_transfers = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = b43_dma_init(dev);
 	}
 	if (err)
@@ -4720,7 +5503,11 @@ static int b43_wireless_core_init(struct b43_wldev *dev)
 	b43_set_synth_pu_delay(dev, 1);
 	b43_bluetooth_coext_enable(dev);
 
+<<<<<<< HEAD
 	b43_bus_powerup(dev, !(sprom->boardflags_lo & B43_BFL_XTAL_NOSLOW));
+=======
+	ssb_bus_powerup(bus, !(sprom->boardflags_lo & B43_BFL_XTAL_NOSLOW));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	b43_upload_card_macaddress(dev);
 	b43_security_init(dev);
 
@@ -4737,7 +5524,11 @@ out:
 err_chip_exit:
 	b43_chip_exit(dev);
 err_busdown:
+<<<<<<< HEAD
 	b43_bus_may_powerdown(dev);
+=======
+	ssb_bus_may_powerdown(bus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	B43_WARN_ON(b43_status(dev) != B43_STAT_UNINIT);
 	return err;
 }
@@ -4765,7 +5556,11 @@ static int b43_op_add_interface(struct ieee80211_hw *hw,
 	b43dbg(wl, "Adding Interface type %d\n", vif->type);
 
 	dev = wl->current_dev;
+<<<<<<< HEAD
 	wl->operating = true;
+=======
+	wl->operating = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wl->vif = vif;
 	wl->if_type = vif->type;
 	memcpy(wl->mac_addr, vif->addr, ETH_ALEN);
@@ -4779,9 +5574,12 @@ static int b43_op_add_interface(struct ieee80211_hw *hw,
  out_mutex_unlock:
 	mutex_unlock(&wl->mutex);
 
+<<<<<<< HEAD
 	if (err == 0)
 		b43_op_bss_info_changed(hw, vif, &vif->bss_conf, ~0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -4799,7 +5597,11 @@ static void b43_op_remove_interface(struct ieee80211_hw *hw,
 	B43_WARN_ON(wl->vif != vif);
 	wl->vif = NULL;
 
+<<<<<<< HEAD
 	wl->operating = false;
+=======
+	wl->operating = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	b43_adjust_opmode(dev);
 	memset(wl->mac_addr, 0, ETH_ALEN);
@@ -4821,12 +5623,21 @@ static int b43_op_start(struct ieee80211_hw *hw)
 	memset(wl->bssid, 0, ETH_ALEN);
 	memset(wl->mac_addr, 0, ETH_ALEN);
 	wl->filter_flags = 0;
+<<<<<<< HEAD
 	wl->radiotap_enabled = false;
 	b43_qos_clear(wl);
 	wl->beacon0_uploaded = false;
 	wl->beacon1_uploaded = false;
 	wl->beacon_templates_virgin = true;
 	wl->radio_enabled = true;
+=======
+	wl->radiotap_enabled = 0;
+	b43_qos_clear(wl);
+	wl->beacon0_uploaded = 0;
+	wl->beacon1_uploaded = 0;
+	wl->beacon_templates_virgin = 1;
+	wl->radio_enabled = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&wl->mutex);
 
@@ -4852,6 +5663,7 @@ static int b43_op_start(struct ieee80211_hw *hw)
  out_mutex_unlock:
 	mutex_unlock(&wl->mutex);
 
+<<<<<<< HEAD
 	/*
 	 * Configuration may have been overwritten during initialization.
 	 * Reload the configuration, but only if initialization was
@@ -4861,6 +5673,8 @@ static int b43_op_start(struct ieee80211_hw *hw)
 	if (!err)
 		b43_op_config(hw, ~0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -4871,9 +5685,12 @@ static void b43_op_stop(struct ieee80211_hw *hw)
 
 	cancel_work_sync(&(wl->beacon_update_trigger));
 
+<<<<<<< HEAD
 	if (!dev)
 		goto out;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&wl->mutex);
 	if (b43_status(dev) >= B43_STAT_STARTED) {
 		dev = b43_wireless_core_stop(dev);
@@ -4881,11 +5698,19 @@ static void b43_op_stop(struct ieee80211_hw *hw)
 			goto out_unlock;
 	}
 	b43_wireless_core_exit(dev);
+<<<<<<< HEAD
 	wl->radio_enabled = false;
 
 out_unlock:
 	mutex_unlock(&wl->mutex);
 out:
+=======
+	wl->radio_enabled = 0;
+
+out_unlock:
+	mutex_unlock(&wl->mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cancel_work_sync(&(wl->txpower_adjust_work));
 }
 
@@ -5020,6 +5845,7 @@ out:
 	if (err)
 		wl->current_dev = NULL; /* Failed to init the dev. */
 	mutex_unlock(&wl->mutex);
+<<<<<<< HEAD
 
 	if (err) {
 		b43err(wl, "Controller restart FAILED\n");
@@ -5032,6 +5858,12 @@ out:
 		b43_op_bss_info_changed(wl->hw, wl->vif, &wl->vif->bss_conf, ~0);
 
 	b43info(wl, "Controller restarted\n");
+=======
+	if (err)
+		b43err(wl, "Controller restart FAILED\n");
+	else
+		b43info(wl, "Controller restarted\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int b43_setup_bands(struct b43_wldev *dev,
@@ -5066,10 +5898,18 @@ static void b43_wireless_core_detach(struct b43_wldev *dev)
 static int b43_wireless_core_attach(struct b43_wldev *dev)
 {
 	struct b43_wl *wl = dev->wl;
+<<<<<<< HEAD
 	struct pci_dev *pdev = NULL;
 	int err;
 	u32 tmp;
 	bool have_2ghz_phy = false, have_5ghz_phy = false;
+=======
+	struct ssb_bus *bus = dev->sdev->bus;
+	struct pci_dev *pdev = (bus->bustype == SSB_BUSTYPE_PCI) ? bus->host_pci : NULL;
+	int err;
+	bool have_2ghz_phy = 0, have_5ghz_phy = 0;
+	u32 tmp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Do NOT do any device initialization here.
 	 * Do it in wireless_core_init() instead.
@@ -5078,6 +5918,7 @@ static int b43_wireless_core_attach(struct b43_wldev *dev)
 	 * that in core_init(), too.
 	 */
 
+<<<<<<< HEAD
 #ifdef CONFIG_B43_SSB
 	if (dev->dev->bus_type == B43_BUS_SSB &&
 	    dev->dev->sdev->bus->bustype == SSB_BUSTYPE_PCI)
@@ -5085,10 +5926,14 @@ static int b43_wireless_core_attach(struct b43_wldev *dev)
 #endif
 
 	err = b43_bus_powerup(dev, 0);
+=======
+	err = ssb_bus_powerup(bus, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err) {
 		b43err(wl, "Bus powerup failed\n");
 		goto out;
 	}
+<<<<<<< HEAD
 
 	/* Get the PHY type. */
 	switch (dev->dev->bus_type) {
@@ -5114,6 +5959,22 @@ static int b43_wireless_core_attach(struct b43_wldev *dev)
 	dev->phy.gmode = have_2ghz_phy;
 	dev->phy.radio_on = true;
 	b43_wireless_core_reset(dev, dev->phy.gmode);
+=======
+	/* Get the PHY type. */
+	if (dev->sdev->id.revision >= 5) {
+		u32 tmshigh;
+
+		tmshigh = ssb_read32(dev->sdev, SSB_TMSHIGH);
+		have_2ghz_phy = !!(tmshigh & B43_TMSHIGH_HAVE_2GHZ_PHY);
+		have_5ghz_phy = !!(tmshigh & B43_TMSHIGH_HAVE_5GHZ_PHY);
+	} else
+		B43_WARN_ON(1);
+
+	dev->phy.gmode = have_2ghz_phy;
+	dev->phy.radio_on = 1;
+	tmp = dev->phy.gmode ? B43_TMSLOW_GMODE : 0;
+	b43_wireless_core_reset(dev, tmp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = b43_phy_versioning(dev);
 	if (err)
@@ -5123,11 +5984,19 @@ static int b43_wireless_core_attach(struct b43_wldev *dev)
 	    (pdev->device != 0x4312 &&
 	     pdev->device != 0x4319 && pdev->device != 0x4324)) {
 		/* No multiband support. */
+<<<<<<< HEAD
 		have_2ghz_phy = false;
 		have_5ghz_phy = false;
 		switch (dev->phy.type) {
 		case B43_PHYTYPE_A:
 			have_5ghz_phy = true;
+=======
+		have_2ghz_phy = 0;
+		have_5ghz_phy = 0;
+		switch (dev->phy.type) {
+		case B43_PHYTYPE_A:
+			have_5ghz_phy = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case B43_PHYTYPE_LP: //FIXME not always!
 #if 0 //FIXME enabling 5GHz causes a NULL pointer dereference
@@ -5135,9 +6004,13 @@ static int b43_wireless_core_attach(struct b43_wldev *dev)
 #endif
 		case B43_PHYTYPE_G:
 		case B43_PHYTYPE_N:
+<<<<<<< HEAD
 		case B43_PHYTYPE_HT:
 		case B43_PHYTYPE_LCN:
 			have_2ghz_phy = true;
+=======
+			have_2ghz_phy = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		default:
 			B43_WARN_ON(1);
@@ -5153,8 +6026,13 @@ static int b43_wireless_core_attach(struct b43_wldev *dev)
 		/* FIXME: For now we disable the A-PHY on multi-PHY devices. */
 		if (dev->phy.type != B43_PHYTYPE_N &&
 		    dev->phy.type != B43_PHYTYPE_LP) {
+<<<<<<< HEAD
 			have_2ghz_phy = true;
 			have_5ghz_phy = false;
+=======
+			have_2ghz_phy = 1;
+			have_5ghz_phy = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -5163,7 +6041,12 @@ static int b43_wireless_core_attach(struct b43_wldev *dev)
 		goto err_powerdown;
 
 	dev->phy.gmode = have_2ghz_phy;
+<<<<<<< HEAD
 	b43_wireless_core_reset(dev, dev->phy.gmode);
+=======
+	tmp = dev->phy.gmode ? B43_TMSLOW_GMODE : 0;
+	b43_wireless_core_reset(dev, tmp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = b43_validate_chipaccess(dev);
 	if (err)
@@ -5178,8 +6061,13 @@ static int b43_wireless_core_attach(struct b43_wldev *dev)
 	INIT_WORK(&dev->restart_work, b43_chip_reset);
 
 	dev->phy.ops->switch_analog(dev, 0);
+<<<<<<< HEAD
 	b43_device_disable(dev, 0);
 	b43_bus_may_powerdown(dev);
+=======
+	ssb_device_disable(dev->sdev, 0);
+	ssb_bus_may_powerdown(bus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	return err;
@@ -5187,11 +6075,19 @@ out:
 err_phy_free:
 	b43_phy_free(dev);
 err_powerdown:
+<<<<<<< HEAD
 	b43_bus_may_powerdown(dev);
 	return err;
 }
 
 static void b43_one_core_detach(struct b43_bus_dev *dev)
+=======
+	ssb_bus_may_powerdown(bus);
+	return err;
+}
+
+static void b43_one_core_detach(struct ssb_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct b43_wldev *wldev;
 	struct b43_wl *wl;
@@ -5199,17 +6095,29 @@ static void b43_one_core_detach(struct b43_bus_dev *dev)
 	/* Do not cancel ieee80211-workqueue based work here.
 	 * See comment in b43_remove(). */
 
+<<<<<<< HEAD
 	wldev = b43_bus_get_wldev(dev);
+=======
+	wldev = ssb_get_drvdata(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wl = wldev->wl;
 	b43_debugfs_remove_device(wldev);
 	b43_wireless_core_detach(wldev);
 	list_del(&wldev->list);
 	wl->nr_devs--;
+<<<<<<< HEAD
 	b43_bus_set_wldev(dev, NULL);
 	kfree(wldev);
 }
 
 static int b43_one_core_attach(struct b43_bus_dev *dev, struct b43_wl *wl)
+=======
+	ssb_set_drvdata(dev, NULL);
+	kfree(wldev);
+}
+
+static int b43_one_core_attach(struct ssb_device *dev, struct b43_wl *wl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct b43_wldev *wldev;
 	int err = -ENOMEM;
@@ -5219,7 +6127,11 @@ static int b43_one_core_attach(struct b43_bus_dev *dev, struct b43_wl *wl)
 		goto out;
 
 	wldev->use_pio = b43_modparam_pio;
+<<<<<<< HEAD
 	wldev->dev = dev;
+=======
+	wldev->sdev = dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wldev->wl = wl;
 	b43_set_status(wldev, B43_STAT_UNINIT);
 	wldev->bad_frames_preempt = modparam_bad_frames_preempt;
@@ -5231,7 +6143,11 @@ static int b43_one_core_attach(struct b43_bus_dev *dev, struct b43_wl *wl)
 
 	list_add(&wldev->list, &wl->devlist);
 	wl->nr_devs++;
+<<<<<<< HEAD
 	b43_bus_set_wldev(dev, wldev);
+=======
+	ssb_set_drvdata(dev, wldev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	b43_debugfs_add_device(wldev);
 
       out:
@@ -5272,6 +6188,7 @@ static void b43_sprom_fixup(struct ssb_bus *bus)
 	}
 }
 
+<<<<<<< HEAD
 static void b43_wireless_exit(struct b43_bus_dev *dev, struct b43_wl *wl)
 {
 	struct ieee80211_hw *hw = wl->hw;
@@ -5287,6 +6204,21 @@ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
 	struct b43_wl *wl;
 	char chip_name[6];
 	int queue_num;
+=======
+static void b43_wireless_exit(struct ssb_device *dev, struct b43_wl *wl)
+{
+	struct ieee80211_hw *hw = wl->hw;
+
+	ssb_set_devtypedata(dev, NULL);
+	ieee80211_free_hw(hw);
+}
+
+static struct b43_wl *b43_wireless_init(struct ssb_device *dev)
+{
+	struct ssb_sprom *sprom = &dev->bus->sprom;
+	struct ieee80211_hw *hw;
+	struct b43_wl *wl;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hw = ieee80211_alloc_hw(sizeof(*wl), &b43_hw_ops);
 	if (!hw) {
@@ -5306,7 +6238,11 @@ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
 		BIT(NL80211_IFTYPE_WDS) |
 		BIT(NL80211_IFTYPE_ADHOC);
 
+<<<<<<< HEAD
 	hw->queues = modparam_qos ? B43_QOS_QUEUE_NUM : 1;
+=======
+	hw->queues = modparam_qos ? 4 : 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wl->mac80211_initially_registered_queues = hw->queues;
 	hw->max_rates = 2;
 	SET_IEEE80211_DEV(hw, dev->dev);
@@ -5323,6 +6259,7 @@ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
 	INIT_WORK(&wl->beacon_update_trigger, b43_beacon_update_trigger_work);
 	INIT_WORK(&wl->txpower_adjust_work, b43_phy_txpower_adjust_work);
 	INIT_WORK(&wl->tx_work, b43_tx_work);
+<<<<<<< HEAD
 
 	/* Initialize queues and flags. */
 	for (queue_num = 0; queue_num < B43_QOS_QUEUE_NUM; queue_num++) {
@@ -5406,10 +6343,22 @@ static
 int b43_ssb_probe(struct ssb_device *sdev, const struct ssb_device_id *id)
 {
 	struct b43_bus_dev *dev;
+=======
+	skb_queue_head_init(&wl->tx_queue);
+
+	b43info(wl, "Broadcom %04X WLAN found (core revision %u)\n",
+		dev->bus->chip_id, dev->id.revision);
+	return wl;
+}
+
+static int b43_ssb_probe(struct ssb_device *dev, const struct ssb_device_id *id)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct b43_wl *wl;
 	int err;
 	int first = 0;
 
+<<<<<<< HEAD
 	dev = b43_bus_dev_ssb_init(sdev);
 	if (!dev)
 		return -ENOMEM;
@@ -5419,44 +6368,80 @@ int b43_ssb_probe(struct ssb_device *sdev, const struct ssb_device_id *id)
 		/* Probing the first core. Must setup common struct b43_wl */
 		first = 1;
 		b43_sprom_fixup(sdev->bus);
+=======
+	wl = ssb_get_devtypedata(dev);
+	if (!wl) {
+		/* Probing the first core. Must setup common struct b43_wl */
+		first = 1;
+		b43_sprom_fixup(dev->bus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wl = b43_wireless_init(dev);
 		if (IS_ERR(wl)) {
 			err = PTR_ERR(wl);
 			goto out;
 		}
+<<<<<<< HEAD
 		ssb_set_devtypedata(sdev, wl);
 		B43_WARN_ON(ssb_get_devtypedata(sdev) != wl);
+=======
+		ssb_set_devtypedata(dev, wl);
+		B43_WARN_ON(ssb_get_devtypedata(dev) != wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	err = b43_one_core_attach(dev, wl);
 	if (err)
 		goto err_wireless_exit;
 
+<<<<<<< HEAD
 	/* setup and start work to load firmware */
 	INIT_WORK(&wl->firmware_load, b43_request_firmware);
 	schedule_work(&wl->firmware_load);
+=======
+	if (first) {
+		err = ieee80211_register_hw(wl->hw);
+		if (err)
+			goto err_one_core_detach;
+		b43_leds_register(wl->current_dev);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
       out:
 	return err;
 
+<<<<<<< HEAD
+=======
+      err_one_core_detach:
+	b43_one_core_detach(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
       err_wireless_exit:
 	if (first)
 		b43_wireless_exit(dev, wl);
 	return err;
 }
 
+<<<<<<< HEAD
 static void b43_ssb_remove(struct ssb_device *sdev)
 {
 	struct b43_wl *wl = ssb_get_devtypedata(sdev);
 	struct b43_wldev *wldev = ssb_get_drvdata(sdev);
 	struct b43_bus_dev *dev = wldev->dev;
+=======
+static void b43_ssb_remove(struct ssb_device *dev)
+{
+	struct b43_wl *wl = ssb_get_devtypedata(dev);
+	struct b43_wldev *wldev = ssb_get_drvdata(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* We must cancel any work here before unregistering from ieee80211,
 	 * as the ieee80211 unreg will destroy the workqueue. */
 	cancel_work_sync(&wldev->restart_work);
 
 	B43_WARN_ON(!wl);
+<<<<<<< HEAD
 	if (!wldev->fw.ucode.data)
 		return;			/* NULL if firmware never loaded */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (wl->current_dev == wldev) {
 		/* Restore the queues count before unregistering, because firmware detect
 		 * might have modified it. Restoring is important, so the networking
@@ -5477,6 +6462,7 @@ static void b43_ssb_remove(struct ssb_device *sdev)
 	}
 }
 
+<<<<<<< HEAD
 static struct ssb_driver b43_ssb_driver = {
 	.name		= KBUILD_MODNAME,
 	.id_table	= b43_ssb_tbl,
@@ -5485,6 +6471,8 @@ static struct ssb_driver b43_ssb_driver = {
 };
 #endif /* CONFIG_B43_SSB */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Perform a hardware reset. This can be called from any context. */
 void b43_controller_restart(struct b43_wldev *dev, const char *reason)
 {
@@ -5495,6 +6483,16 @@ void b43_controller_restart(struct b43_wldev *dev, const char *reason)
 	ieee80211_queue_work(dev->wl->hw, &dev->restart_work);
 }
 
+<<<<<<< HEAD
+=======
+static struct ssb_driver b43_ssb_driver = {
+	.name		= KBUILD_MODNAME,
+	.id_table	= b43_ssb_tbl,
+	.probe		= b43_ssb_probe,
+	.remove		= b43_ssb_remove,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void b43_print_driverinfo(void)
 {
 	const char *feat_pci = "", *feat_pcmcia = "", *feat_nphy = "",
@@ -5516,7 +6514,12 @@ static void b43_print_driverinfo(void)
 	feat_sdio = "S";
 #endif
 	printk(KERN_INFO "Broadcom 43xx driver loaded "
+<<<<<<< HEAD
 	       "[ Features: %s%s%s%s%s ]\n",
+=======
+	       "[ Features: %s%s%s%s%s, Firmware-ID: "
+	       B43_SUPPORTED_FIRMWARE_ID " ]\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       feat_pci, feat_pcmcia, feat_nphy,
 	       feat_leds, feat_sdio);
 }
@@ -5532,6 +6535,7 @@ static int __init b43_init(void)
 	err = b43_sdio_init();
 	if (err)
 		goto err_pcmcia_exit;
+<<<<<<< HEAD
 #ifdef CONFIG_B43_BCMA
 	err = bcma_driver_register(&b43_bcma_driver);
 	if (err)
@@ -5542,10 +6546,16 @@ static int __init b43_init(void)
 	if (err)
 		goto err_bcma_driver_exit;
 #endif
+=======
+	err = ssb_driver_register(&b43_ssb_driver);
+	if (err)
+		goto err_sdio_exit;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	b43_print_driverinfo();
 
 	return err;
 
+<<<<<<< HEAD
 #ifdef CONFIG_B43_SSB
 err_bcma_driver_exit:
 #endif
@@ -5553,6 +6563,9 @@ err_bcma_driver_exit:
 	bcma_driver_unregister(&b43_bcma_driver);
 err_sdio_exit:
 #endif
+=======
+err_sdio_exit:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	b43_sdio_exit();
 err_pcmcia_exit:
 	b43_pcmcia_exit();
@@ -5563,12 +6576,16 @@ err_dfs_exit:
 
 static void __exit b43_exit(void)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_B43_SSB
 	ssb_driver_unregister(&b43_ssb_driver);
 #endif
 #ifdef CONFIG_B43_BCMA
 	bcma_driver_unregister(&b43_bcma_driver);
 #endif
+=======
+	ssb_driver_unregister(&b43_ssb_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	b43_sdio_exit();
 	b43_pcmcia_exit();
 	b43_debugfs_exit();

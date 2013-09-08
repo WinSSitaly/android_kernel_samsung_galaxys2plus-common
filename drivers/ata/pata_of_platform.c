@@ -11,8 +11,12 @@
 
 #include <linux/kernel.h>
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/of_address.h>
 #include <linux/platform_device.h>
+=======
+#include <linux/of_platform.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ata_platform.h>
 
 static int __devinit pata_of_platform_probe(struct platform_device *ofdev)
@@ -21,7 +25,11 @@ static int __devinit pata_of_platform_probe(struct platform_device *ofdev)
 	struct device_node *dn = ofdev->dev.of_node;
 	struct resource io_res;
 	struct resource ctl_res;
+<<<<<<< HEAD
 	struct resource *irq_res;
+=======
+	struct resource irq_res;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int reg_shift = 0;
 	int pio_mode = 0;
 	int pio_mask;
@@ -50,6 +58,7 @@ static int __devinit pata_of_platform_probe(struct platform_device *ofdev)
 		}
 	}
 
+<<<<<<< HEAD
 	irq_res = platform_get_resource(ofdev, IORESOURCE_IRQ, 0);
 	if (irq_res)
 		irq_res->flags = 0;
@@ -61,6 +70,21 @@ static int __devinit pata_of_platform_probe(struct platform_device *ofdev)
 	prop = of_get_property(dn, "pio-mode", NULL);
 	if (prop) {
 		pio_mode = be32_to_cpup(prop);
+=======
+	ret = of_irq_to_resource(dn, 0, &irq_res);
+	if (ret == NO_IRQ)
+		irq_res.start = irq_res.end = 0;
+	else
+		irq_res.flags = 0;
+
+	prop = of_get_property(dn, "reg-shift", NULL);
+	if (prop)
+		reg_shift = *prop;
+
+	prop = of_get_property(dn, "pio-mode", NULL);
+	if (prop) {
+		pio_mode = *prop;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (pio_mode > 6) {
 			dev_err(&ofdev->dev, "invalid pio-mode\n");
 			return -EINVAL;
@@ -72,7 +96,11 @@ static int __devinit pata_of_platform_probe(struct platform_device *ofdev)
 	pio_mask = 1 << pio_mode;
 	pio_mask |= (1 << pio_mode) - 1;
 
+<<<<<<< HEAD
 	return __pata_platform_probe(&ofdev->dev, &io_res, &ctl_res, irq_res,
+=======
+	return __pata_platform_probe(&ofdev->dev, &io_res, &ctl_res, &irq_res,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     reg_shift, pio_mask);
 }
 
@@ -98,7 +126,21 @@ static struct platform_driver pata_of_platform_driver = {
 	.remove		= __devexit_p(pata_of_platform_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(pata_of_platform_driver);
+=======
+static int __init pata_of_platform_init(void)
+{
+	return platform_driver_register(&pata_of_platform_driver);
+}
+module_init(pata_of_platform_init);
+
+static void __exit pata_of_platform_exit(void)
+{
+	platform_driver_unregister(&pata_of_platform_driver);
+}
+module_exit(pata_of_platform_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("OF-platform PATA driver");
 MODULE_AUTHOR("Anton Vorontsov <avorontsov@ru.mvista.com>");

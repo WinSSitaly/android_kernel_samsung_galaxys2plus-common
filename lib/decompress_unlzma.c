@@ -562,7 +562,11 @@ STATIC inline int INIT unlzma(unsigned char *buf, int in_len,
 	else
 		inbuf = malloc(LZMA_IOBUF_SIZE);
 	if (!inbuf) {
+<<<<<<< HEAD
 		error("Could not allocate input buffer");
+=======
+		error("Could not allocate input bufer");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto exit_0;
 	}
 

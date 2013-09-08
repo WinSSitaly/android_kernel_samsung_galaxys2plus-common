@@ -7,6 +7,10 @@
 
 #define pr_fmt(fmt) KBUILD_MODNAME ":" fmt
 
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/netdevice.h>

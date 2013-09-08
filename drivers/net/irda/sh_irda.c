@@ -2,7 +2,11 @@
  * SuperH IrDA Driver
  *
  * Copyright (C) 2010 Renesas Solutions Corp.
+<<<<<<< HEAD
  * Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+=======
+ * Kuninori Morimoto <morimoto.kuninori@renesas.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Based on sh_sir.c
  * Copyright (C) 2009 Renesas Solutions Corp.
@@ -22,11 +26,16 @@
  *  - DMA transfer support
  *  - FIFO mode support
  */
+<<<<<<< HEAD
 #include <linux/io.h>
 #include <linux/interrupt.h>
 #include <linux/module.h>
 #include <linux/platform_device.h>
 #include <linux/pm_runtime.h>
+=======
+#include <linux/module.h>
+#include <linux/platform_device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/clk.h>
 #include <net/irda/wrapper.h>
 #include <net/irda/irda_device.h>
@@ -145,8 +154,13 @@ struct sh_irda_xir_func {
 
 struct sh_irda_self {
 	void __iomem		*membase;
+<<<<<<< HEAD
 	unsigned int		irq;
 	struct platform_device	*pdev;
+=======
+	unsigned int		 irq;
+	struct clk		*clk;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct net_device	*ndev;
 
@@ -265,7 +279,11 @@ static int sh_irda_set_baudrate(struct sh_irda_self *self, int baudrate)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int sh_irda_get_rcv_length(struct sh_irda_self *self)
+=======
+static int xir_get_rcv_length(struct sh_irda_self *self)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return RFL_MASK & sh_irda_read(self, IRRFLR);
 }
@@ -275,47 +293,76 @@ static int sh_irda_get_rcv_length(struct sh_irda_self *self)
  *		NONE MODE
  *
  *=====================================*/
+<<<<<<< HEAD
 static int sh_irda_xir_fre(struct sh_irda_self *self)
+=======
+static int xir_fre(struct sh_irda_self *self)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct device *dev = &self->ndev->dev;
 	dev_err(dev, "none mode: frame recv\n");
 	return 0;
 }
 
+<<<<<<< HEAD
 static int sh_irda_xir_trov(struct sh_irda_self *self)
+=======
+static int xir_trov(struct sh_irda_self *self)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct device *dev = &self->ndev->dev;
 	dev_err(dev, "none mode: buffer ram over\n");
 	return 0;
 }
 
+<<<<<<< HEAD
 static int sh_irda_xir_9(struct sh_irda_self *self)
+=======
+static int xir_9(struct sh_irda_self *self)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct device *dev = &self->ndev->dev;
 	dev_err(dev, "none mode: time over\n");
 	return 0;
 }
 
+<<<<<<< HEAD
 static int sh_irda_xir_8(struct sh_irda_self *self)
+=======
+static int xir_8(struct sh_irda_self *self)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct device *dev = &self->ndev->dev;
 	dev_err(dev, "none mode: framing error\n");
 	return 0;
 }
 
+<<<<<<< HEAD
 static int sh_irda_xir_fte(struct sh_irda_self *self)
+=======
+static int xir_fte(struct sh_irda_self *self)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct device *dev = &self->ndev->dev;
 	dev_err(dev, "none mode: frame transmit end\n");
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct sh_irda_xir_func sh_irda_xir_func = {
 	.xir_fre	= sh_irda_xir_fre,
 	.xir_trov	= sh_irda_xir_trov,
 	.xir_9		= sh_irda_xir_9,
 	.xir_8		= sh_irda_xir_8,
 	.xir_fte	= sh_irda_xir_fte,
+=======
+static struct sh_irda_xir_func xir_func = {
+	.xir_fre	= xir_fre,
+	.xir_trov	= xir_trov,
+	.xir_9		= xir_9,
+	.xir_8		= xir_8,
+	.xir_fte	= xir_fte,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*=====================================
@@ -324,12 +371,21 @@ static struct sh_irda_xir_func sh_irda_xir_func = {
  *
  * MIR/FIR are not supported now
  *=====================================*/
+<<<<<<< HEAD
 static struct sh_irda_xir_func sh_irda_mfir_func = {
 	.xir_fre	= sh_irda_xir_fre,
 	.xir_trov	= sh_irda_xir_trov,
 	.xir_9		= sh_irda_xir_9,
 	.xir_8		= sh_irda_xir_8,
 	.xir_fte	= sh_irda_xir_fte,
+=======
+static struct sh_irda_xir_func mfir_func = {
+	.xir_fre	= xir_fre,
+	.xir_trov	= xir_trov,
+	.xir_9		= xir_9,
+	.xir_8		= xir_8,
+	.xir_fte	= xir_fte,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*=====================================
@@ -337,12 +393,20 @@ static struct sh_irda_xir_func sh_irda_mfir_func = {
  *		SIR MODE
  *
  *=====================================*/
+<<<<<<< HEAD
 static int sh_irda_sir_fre(struct sh_irda_self *self)
+=======
+static int sir_fre(struct sh_irda_self *self)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct device *dev = &self->ndev->dev;
 	u16 data16;
 	u8  *data = (u8 *)&data16;
+<<<<<<< HEAD
 	int len = sh_irda_get_rcv_length(self);
+=======
+	int len = xir_get_rcv_length(self);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i, j;
 
 	if (len > IRDARAM_LEN)
@@ -365,7 +429,11 @@ static int sh_irda_sir_fre(struct sh_irda_self *self)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int sh_irda_sir_trov(struct sh_irda_self *self)
+=======
+static int sir_trov(struct sh_irda_self *self)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct device *dev = &self->ndev->dev;
 
@@ -374,7 +442,11 @@ static int sh_irda_sir_trov(struct sh_irda_self *self)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int sh_irda_sir_tot(struct sh_irda_self *self)
+=======
+static int sir_tot(struct sh_irda_self *self)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct device *dev = &self->ndev->dev;
 
@@ -384,7 +456,11 @@ static int sh_irda_sir_tot(struct sh_irda_self *self)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int sh_irda_sir_fer(struct sh_irda_self *self)
+=======
+static int sir_fer(struct sh_irda_self *self)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct device *dev = &self->ndev->dev;
 
@@ -393,7 +469,11 @@ static int sh_irda_sir_fer(struct sh_irda_self *self)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int sh_irda_sir_fte(struct sh_irda_self *self)
+=======
+static int sir_fte(struct sh_irda_self *self)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct device *dev = &self->ndev->dev;
 
@@ -403,12 +483,21 @@ static int sh_irda_sir_fte(struct sh_irda_self *self)
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct sh_irda_xir_func sh_irda_sir_func = {
 	.xir_fre	= sh_irda_sir_fre,
 	.xir_trov	= sh_irda_sir_trov,
 	.xir_9		= sh_irda_sir_tot,
 	.xir_8		= sh_irda_sir_fer,
 	.xir_fte	= sh_irda_sir_fte,
+=======
+static struct sh_irda_xir_func sir_func = {
+	.xir_fre	= sir_fre,
+	.xir_trov	= sir_trov,
+	.xir_9		= sir_tot,
+	.xir_8		= sir_fer,
+	.xir_fte	= sir_fte,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void sh_irda_set_mode(struct sh_irda_self *self, enum sh_irda_mode mode)
@@ -422,22 +511,39 @@ static void sh_irda_set_mode(struct sh_irda_self *self, enum sh_irda_mode mode)
 	case SH_IRDA_SIR:
 		name	= "SIR";
 		data	= TMD_SIR;
+<<<<<<< HEAD
 		func	= &sh_irda_sir_func;
+=======
+		func	= &sir_func;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case SH_IRDA_MIR:
 		name	= "MIR";
 		data	= TMD_MIR;
+<<<<<<< HEAD
 		func	= &sh_irda_mfir_func;
+=======
+		func	= &mfir_func;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case SH_IRDA_FIR:
 		name	= "FIR";
 		data	= TMD_FIR;
+<<<<<<< HEAD
 		func	= &sh_irda_mfir_func;
 		break;
 	default:
 		name	= "NONE";
 		data	= 0;
 		func	= &sh_irda_xir_func;
+=======
+		func	= &mfir_func;
+		break;
+	default:
+		name = "NONE";
+		data = 0;
+		func = &xir_func;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -695,7 +801,11 @@ static int sh_irda_open(struct net_device *ndev)
 	struct sh_irda_self *self = netdev_priv(ndev);
 	int err;
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(&self->pdev->dev);
+=======
+	clk_enable(self->clk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = sh_irda_crc_init(self);
 	if (err)
 		goto open_err;
@@ -719,7 +829,11 @@ static int sh_irda_open(struct net_device *ndev)
 	return 0;
 
 open_err:
+<<<<<<< HEAD
 	pm_runtime_put_sync(&self->pdev->dev);
+=======
+	clk_disable(self->clk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }
@@ -735,7 +849,10 @@ static int sh_irda_stop(struct net_device *ndev)
 	}
 
 	netif_stop_queue(ndev);
+<<<<<<< HEAD
 	pm_runtime_put_sync(&self->pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_info(&ndev->dev, "stoped\n");
 
@@ -788,8 +905,16 @@ static int __devinit sh_irda_probe(struct platform_device *pdev)
 	if (err)
 		goto err_mem_2;
 
+<<<<<<< HEAD
 	self->pdev = pdev;
 	pm_runtime_enable(&pdev->dev);
+=======
+	self->clk = clk_get(&pdev->dev, NULL);
+	if (IS_ERR(self->clk)) {
+		dev_err(&pdev->dev, "cannot get irda clock\n");
+		goto err_mem_3;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	irda_init_max_qos_capabilies(&self->qos);
 
@@ -819,7 +944,12 @@ static int __devinit sh_irda_probe(struct platform_device *pdev)
 	goto exit;
 
 err_mem_4:
+<<<<<<< HEAD
 	pm_runtime_disable(&pdev->dev);
+=======
+	clk_put(self->clk);
+err_mem_3:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sh_irda_remove_iobuf(self);
 err_mem_2:
 	iounmap(self->membase);
@@ -838,7 +968,11 @@ static int __devexit sh_irda_remove(struct platform_device *pdev)
 		return 0;
 
 	unregister_netdev(ndev);
+<<<<<<< HEAD
 	pm_runtime_disable(&pdev->dev);
+=======
+	clk_put(self->clk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sh_irda_remove_iobuf(self);
 	iounmap(self->membase);
 	free_netdev(ndev);
@@ -847,6 +981,7 @@ static int __devexit sh_irda_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int sh_irda_runtime_nop(struct device *dev)
 {
 	/* Runtime PM callback shared between ->runtime_suspend()
@@ -876,5 +1011,29 @@ static struct platform_driver sh_irda_driver = {
 module_platform_driver(sh_irda_driver);
 
 MODULE_AUTHOR("Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>");
+=======
+static struct platform_driver sh_irda_driver = {
+	.probe   = sh_irda_probe,
+	.remove  = __devexit_p(sh_irda_remove),
+	.driver  = {
+		.name = DRIVER_NAME,
+	},
+};
+
+static int __init sh_irda_init(void)
+{
+	return platform_driver_register(&sh_irda_driver);
+}
+
+static void __exit sh_irda_exit(void)
+{
+	platform_driver_unregister(&sh_irda_driver);
+}
+
+module_init(sh_irda_init);
+module_exit(sh_irda_exit);
+
+MODULE_AUTHOR("Kuninori Morimoto <morimoto.kuninori@renesas.com>");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("SuperH IrDA driver");
 MODULE_LICENSE("GPL");

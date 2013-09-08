@@ -88,7 +88,11 @@ static int datafab_determine_lun(struct us_data *us,
 { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
   .driver_info = (flags)|(USB_US_TYPE_STOR<<24) }
 
+<<<<<<< HEAD
 static struct usb_device_id datafab_usb_ids[] = {
+=======
+struct usb_device_id datafab_usb_ids[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #	include "unusual_datafab.h"
 	{ }		/* Terminating entry */
 };
@@ -751,7 +755,24 @@ static struct usb_driver datafab_driver = {
 	.post_reset =	usb_stor_post_reset,
 	.id_table =	datafab_usb_ids,
 	.soft_unbind =	1,
+<<<<<<< HEAD
 	.no_dynamic_id = 1,
 };
 
 module_usb_driver(datafab_driver);
+=======
+};
+
+static int __init datafab_init(void)
+{
+	return usb_register(&datafab_driver);
+}
+
+static void __exit datafab_exit(void)
+{
+	usb_deregister(&datafab_driver);
+}
+
+module_init(datafab_init);
+module_exit(datafab_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

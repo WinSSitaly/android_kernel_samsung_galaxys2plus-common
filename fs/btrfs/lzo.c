@@ -411,9 +411,15 @@ static int lzo_decompress(struct list_head *ws, unsigned char *data_in,
 
 	bytes = min_t(unsigned long, destlen, out_len - start_byte);
 
+<<<<<<< HEAD
 	kaddr = kmap_atomic(dest_page);
 	memcpy(kaddr, workspace->buf + start_byte, bytes);
 	kunmap_atomic(kaddr);
+=======
+	kaddr = kmap_atomic(dest_page, KM_USER0);
+	memcpy(kaddr, workspace->buf + start_byte, bytes);
+	kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return ret;
 }

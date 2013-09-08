@@ -14,12 +14,21 @@
 #include <linux/time.h>
 #include <linux/bitops.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include "reiserfs.h"
 #include "acl.h"
 #include "xattr.h"
 #include <linux/quotaops.h>
 
 #define INC_DIR_INODE_NLINK(i) if (i->i_nlink != 1) { inc_nlink(i); if (i->i_nlink >= REISERFS_LINK_MAX) set_nlink(i, 1); }
+=======
+#include <linux/reiserfs_fs.h>
+#include <linux/reiserfs_acl.h>
+#include <linux/reiserfs_xattr.h>
+#include <linux/quotaops.h>
+
+#define INC_DIR_INODE_NLINK(i) if (i->i_nlink != 1) { inc_nlink(i); if (i->i_nlink >= REISERFS_LINK_MAX) i->i_nlink=1; }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DEC_DIR_INODE_NLINK(i) if (i->i_nlink != 1) drop_nlink(i);
 
 // directory item contains array of entry headers. This performs
@@ -559,7 +568,11 @@ static int drop_new_inode(struct inode *inode)
 ** outside of a transaction, so we had to pull some bits of
 ** reiserfs_new_inode out into this func.
 */
+<<<<<<< HEAD
 static int new_inode_init(struct inode *inode, struct inode *dir, umode_t mode)
+=======
+static int new_inode_init(struct inode *inode, struct inode *dir, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Make inode invalid - just in case we are going to drop it before
 	 * the initialization happens */
@@ -572,7 +585,11 @@ static int new_inode_init(struct inode *inode, struct inode *dir, umode_t mode)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int reiserfs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+=======
+static int reiserfs_create(struct inode *dir, struct dentry *dentry, int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   struct nameidata *nd)
 {
 	int retval;
@@ -622,7 +639,11 @@ static int reiserfs_create(struct inode *dir, struct dentry *dentry, umode_t mod
 			       dentry->d_name.len, inode, 1 /*visible */ );
 	if (retval) {
 		int err;
+<<<<<<< HEAD
 		drop_nlink(inode);
+=======
+		inode->i_nlink--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reiserfs_update_sd(&th, inode);
 		err = journal_end(&th, dir->i_sb, jbegin_count);
 		if (err)
@@ -643,7 +664,11 @@ static int reiserfs_create(struct inode *dir, struct dentry *dentry, umode_t mod
 	return retval;
 }
 
+<<<<<<< HEAD
 static int reiserfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode,
+=======
+static int reiserfs_mknod(struct inode *dir, struct dentry *dentry, int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  dev_t rdev)
 {
 	int retval;
@@ -702,7 +727,11 @@ static int reiserfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode
 			       dentry->d_name.len, inode, 1 /*visible */ );
 	if (retval) {
 		int err;
+<<<<<<< HEAD
 		drop_nlink(inode);
+=======
+		inode->i_nlink--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reiserfs_update_sd(&th, inode);
 		err = journal_end(&th, dir->i_sb, jbegin_count);
 		if (err)
@@ -721,7 +750,11 @@ static int reiserfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode
 	return retval;
 }
 
+<<<<<<< HEAD
 static int reiserfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+=======
+static int reiserfs_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int retval;
 	struct inode *inode;
@@ -787,7 +820,11 @@ static int reiserfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode
 			       dentry->d_name.len, inode, 1 /*visible */ );
 	if (retval) {
 		int err;
+<<<<<<< HEAD
 		clear_nlink(inode);
+=======
+		inode->i_nlink = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		DEC_DIR_INODE_NLINK(dir);
 		reiserfs_update_sd(&th, inode);
 		err = journal_end(&th, dir->i_sb, jbegin_count);
@@ -964,7 +1001,11 @@ static int reiserfs_unlink(struct inode *dir, struct dentry *dentry)
 		reiserfs_warning(inode->i_sb, "reiserfs-7042",
 				 "deleting nonexistent file (%lu), %d",
 				 inode->i_ino, inode->i_nlink);
+<<<<<<< HEAD
 		set_nlink(inode, 1);
+=======
+		inode->i_nlink = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	drop_nlink(inode);
@@ -1086,7 +1127,11 @@ static int reiserfs_symlink(struct inode *parent_dir,
 				    dentry->d_name.len, inode, 1 /*visible */ );
 	if (retval) {
 		int err;
+<<<<<<< HEAD
 		drop_nlink(inode);
+=======
+		inode->i_nlink--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reiserfs_update_sd(&th, inode);
 		err = journal_end(&th, parent_dir->i_sb, jbegin_count);
 		if (err)
@@ -1129,7 +1174,11 @@ static int reiserfs_link(struct dentry *old_dentry, struct inode *dir,
 
 	retval = journal_begin(&th, dir->i_sb, jbegin_count);
 	if (retval) {
+<<<<<<< HEAD
 		drop_nlink(inode);
+=======
+		inode->i_nlink--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reiserfs_write_unlock(dir->i_sb);
 		return retval;
 	}
@@ -1144,7 +1193,11 @@ static int reiserfs_link(struct dentry *old_dentry, struct inode *dir,
 
 	if (retval) {
 		int err;
+<<<<<<< HEAD
 		drop_nlink(inode);
+=======
+		inode->i_nlink--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = journal_end(&th, dir->i_sb, jbegin_count);
 		reiserfs_write_unlock(dir->i_sb);
 		return err ? err : retval;
@@ -1529,7 +1582,10 @@ const struct inode_operations reiserfs_dir_inode_operations = {
 	.listxattr = reiserfs_listxattr,
 	.removexattr = reiserfs_removexattr,
 	.permission = reiserfs_permission,
+<<<<<<< HEAD
 	.get_acl = reiserfs_get_acl,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -1546,7 +1602,10 @@ const struct inode_operations reiserfs_symlink_inode_operations = {
 	.listxattr = reiserfs_listxattr,
 	.removexattr = reiserfs_removexattr,
 	.permission = reiserfs_permission,
+<<<<<<< HEAD
 	.get_acl = reiserfs_get_acl,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 };
 
@@ -1560,5 +1619,9 @@ const struct inode_operations reiserfs_special_inode_operations = {
 	.listxattr = reiserfs_listxattr,
 	.removexattr = reiserfs_removexattr,
 	.permission = reiserfs_permission,
+<<<<<<< HEAD
 	.get_acl = reiserfs_get_acl,
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };

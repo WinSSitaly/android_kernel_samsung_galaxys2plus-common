@@ -369,8 +369,13 @@ static struct dentry *fuse_lookup(struct inode *dir, struct dentry *entry,
  * If the filesystem doesn't support this, then fall back to separate
  * 'mknod' + 'open' requests.
  */
+<<<<<<< HEAD
 static int fuse_create_open(struct inode *dir, struct dentry *entry,
 			    umode_t mode, struct nameidata *nd)
+=======
+static int fuse_create_open(struct inode *dir, struct dentry *entry, int mode,
+			    struct nameidata *nd)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 	struct inode *inode;
@@ -382,11 +387,21 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
 	struct fuse_entry_out outentry;
 	struct fuse_file *ff;
 	struct file *file;
+<<<<<<< HEAD
 	int flags = nd->intent.open.flags;
+=======
+	int flags = nd->intent.open.flags - 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (fc->no_create)
 		return -ENOSYS;
 
+<<<<<<< HEAD
+=======
+	if (flags & O_DIRECT)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	forget = fuse_alloc_forget();
 	if (!forget)
 		return -ENOMEM;
@@ -477,7 +492,11 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
  */
 static int create_new_entry(struct fuse_conn *fc, struct fuse_req *req,
 			    struct inode *dir, struct dentry *entry,
+<<<<<<< HEAD
 			    umode_t mode)
+=======
+			    int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct fuse_entry_out outarg;
 	struct inode *inode;
@@ -544,7 +563,11 @@ static int create_new_entry(struct fuse_conn *fc, struct fuse_req *req,
 	return err;
 }
 
+<<<<<<< HEAD
 static int fuse_mknod(struct inode *dir, struct dentry *entry, umode_t mode,
+=======
+static int fuse_mknod(struct inode *dir, struct dentry *entry, int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      dev_t rdev)
 {
 	struct fuse_mknod_in inarg;
@@ -570,10 +593,17 @@ static int fuse_mknod(struct inode *dir, struct dentry *entry, umode_t mode,
 	return create_new_entry(fc, req, dir, entry, mode);
 }
 
+<<<<<<< HEAD
 static int fuse_create(struct inode *dir, struct dentry *entry, umode_t mode,
 		       struct nameidata *nd)
 {
 	if (nd) {
+=======
+static int fuse_create(struct inode *dir, struct dentry *entry, int mode,
+		       struct nameidata *nd)
+{
+	if (nd && (nd->flags & LOOKUP_OPEN)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int err = fuse_create_open(dir, entry, mode, nd);
 		if (err != -ENOSYS)
 			return err;
@@ -582,7 +612,11 @@ static int fuse_create(struct inode *dir, struct dentry *entry, umode_t mode,
 	return fuse_mknod(dir, entry, mode, 0);
 }
 
+<<<<<<< HEAD
 static int fuse_mkdir(struct inode *dir, struct dentry *entry, umode_t mode)
+=======
+static int fuse_mkdir(struct inode *dir, struct dentry *entry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct fuse_mkdir_in inarg;
 	struct fuse_conn *fc = get_fuse_conn(dir);
@@ -641,6 +675,7 @@ static int fuse_unlink(struct inode *dir, struct dentry *entry)
 	fuse_put_request(fc, req);
 	if (!err) {
 		struct inode *inode = entry->d_inode;
+<<<<<<< HEAD
 		struct fuse_inode *fi = get_fuse_inode(inode);
 
 		spin_lock(&fc->lock);
@@ -654,6 +689,15 @@ static int fuse_unlink(struct inode *dir, struct dentry *entry)
 		if (inode->i_nlink > 0)
 			drop_nlink(inode);
 		spin_unlock(&fc->lock);
+=======
+
+		/*
+		 * Set nlink to zero so the inode can be cleared, if the inode
+		 * does have more links this will be discovered at the next
+		 * lookup/getattr.
+		 */
+		clear_nlink(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fuse_invalidate_attr(inode);
 		fuse_invalidate_attr(dir);
 		fuse_invalidate_entry_cache(entry);
@@ -765,6 +809,7 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
 	   will reflect changes in the backing inode (link count,
 	   etc.)
 	*/
+<<<<<<< HEAD
 	if (!err) {
 		struct fuse_inode *fi = get_fuse_inode(inode);
 
@@ -776,6 +821,10 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
 	} else if (err == -EINTR) {
 		fuse_invalidate_attr(inode);
 	}
+=======
+	if (!err || err == -EINTR)
+		fuse_invalidate_attr(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -870,7 +919,10 @@ int fuse_update_attributes(struct inode *inode, struct kstat *stat,
 		if (stat) {
 			generic_fillattr(inode, stat);
 			stat->mode = fi->orig_i_mode;
+<<<<<<< HEAD
 			stat->ino = fi->orig_ino;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -881,7 +933,11 @@ int fuse_update_attributes(struct inode *inode, struct kstat *stat,
 }
 
 int fuse_reverse_inval_entry(struct super_block *sb, u64 parent_nodeid,
+<<<<<<< HEAD
 			     u64 child_nodeid, struct qstr *name)
+=======
+			     struct qstr *name)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err = -ENOTDIR;
 	struct inode *parent;
@@ -908,6 +964,7 @@ int fuse_reverse_inval_entry(struct super_block *sb, u64 parent_nodeid,
 
 	fuse_invalidate_attr(parent);
 	fuse_invalidate_entry(entry);
+<<<<<<< HEAD
 
 	if (child_nodeid != 0 && entry->d_inode) {
 		mutex_lock(&entry->d_inode->i_mutex);
@@ -938,6 +995,10 @@ int fuse_reverse_inval_entry(struct super_block *sb, u64 parent_nodeid,
 		err = 0;
 	}
 	dput(entry);
+=======
+	dput(entry);
+	err = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
  unlock:
 	mutex_unlock(&parent->i_mutex);
@@ -1012,9 +1073,15 @@ static int fuse_access(struct inode *inode, int mask)
 	return err;
 }
 
+<<<<<<< HEAD
 static int fuse_perm_getattr(struct inode *inode, int mask)
 {
 	if (mask & MAY_NOT_BLOCK)
+=======
+static int fuse_perm_getattr(struct inode *inode, int flags)
+{
+	if (flags & IPERM_FLAG_RCU)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ECHILD;
 
 	return fuse_do_getattr(inode, NULL, NULL);
@@ -1033,7 +1100,11 @@ static int fuse_perm_getattr(struct inode *inode, int mask)
  * access request is sent.  Execute permission is still checked
  * locally based on file mode.
  */
+<<<<<<< HEAD
 static int fuse_permission(struct inode *inode, int mask)
+=======
+static int fuse_permission(struct inode *inode, int mask, unsigned int flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct fuse_conn *fc = get_fuse_conn(inode);
 	bool refreshed = false;
@@ -1052,22 +1123,37 @@ static int fuse_permission(struct inode *inode, int mask)
 		if (fi->i_time < get_jiffies_64()) {
 			refreshed = true;
 
+<<<<<<< HEAD
 			err = fuse_perm_getattr(inode, mask);
+=======
+			err = fuse_perm_getattr(inode, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (err)
 				return err;
 		}
 	}
 
 	if (fc->flags & FUSE_DEFAULT_PERMISSIONS) {
+<<<<<<< HEAD
 		err = generic_permission(inode, mask);
+=======
+		err = generic_permission(inode, mask, flags, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* If permission is denied, try to refresh file
 		   attributes.  This is also needed, because the root
 		   node will at first have no permissions */
 		if (err == -EACCES && !refreshed) {
+<<<<<<< HEAD
 			err = fuse_perm_getattr(inode, mask);
 			if (!err)
 				err = generic_permission(inode, mask);
+=======
+			err = fuse_perm_getattr(inode, flags);
+			if (!err)
+				err = generic_permission(inode, mask,
+							flags, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/* Note: the opposite of the above test does not
@@ -1075,7 +1161,11 @@ static int fuse_permission(struct inode *inode, int mask)
 		   noticed immediately, only after the attribute
 		   timeout has expired */
 	} else if (mask & (MAY_ACCESS | MAY_CHDIR)) {
+<<<<<<< HEAD
 		if (mask & MAY_NOT_BLOCK)
+=======
+		if (flags & IPERM_FLAG_RCU)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ECHILD;
 
 		err = fuse_access(inode, mask);
@@ -1084,7 +1174,11 @@ static int fuse_permission(struct inode *inode, int mask)
 			if (refreshed)
 				return -EACCES;
 
+<<<<<<< HEAD
 			err = fuse_perm_getattr(inode, mask);
+=======
+			err = fuse_perm_getattr(inode, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!err && !(inode->i_mode & S_IXUGO))
 				return -EACCES;
 		}
@@ -1217,6 +1311,7 @@ static int fuse_dir_release(struct inode *inode, struct file *file)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int fuse_dir_fsync(struct file *file, loff_t start, loff_t end,
 			  int datasync)
 {
@@ -1245,6 +1340,11 @@ static long fuse_dir_compat_ioctl(struct file *file, unsigned int cmd,
 
 	return fuse_ioctl_common(file, cmd, arg,
 				 FUSE_IOCTL_COMPAT | FUSE_IOCTL_DIR);
+=======
+static int fuse_dir_fsync(struct file *file, int datasync)
+{
+	return fuse_fsync_common(file, datasync, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static bool update_mtime(unsigned ivalid)
@@ -1503,8 +1603,11 @@ static int fuse_setxattr(struct dentry *entry, const char *name,
 		fc->no_setxattr = 1;
 		err = -EOPNOTSUPP;
 	}
+<<<<<<< HEAD
 	if (!err)
 		fuse_invalidate_attr(inode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -1634,8 +1737,11 @@ static int fuse_removexattr(struct dentry *entry, const char *name)
 		fc->no_removexattr = 1;
 		err = -EOPNOTSUPP;
 	}
+<<<<<<< HEAD
 	if (!err)
 		fuse_invalidate_attr(inode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -1665,8 +1771,11 @@ static const struct file_operations fuse_dir_operations = {
 	.open		= fuse_dir_open,
 	.release	= fuse_dir_release,
 	.fsync		= fuse_dir_fsync,
+<<<<<<< HEAD
 	.unlocked_ioctl	= fuse_dir_ioctl,
 	.compat_ioctl	= fuse_dir_compat_ioctl,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct inode_operations fuse_common_inode_operations = {

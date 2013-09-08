@@ -20,21 +20,33 @@
 #include <linux/lockdep.h>
 #include <linux/compiler.h>
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/mutex.h>
 #include <linux/pm.h>
 #include <linux/atomic.h>
+=======
+#include <linux/module.h>
+#include <linux/pm.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/device.h>
 
 struct device;
 struct device_private;
 struct device_driver;
 struct driver_private;
+<<<<<<< HEAD
 struct module;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct class;
 struct subsys_private;
 struct bus_type;
 struct device_node;
+<<<<<<< HEAD
 struct iommu_ops;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct bus_attribute {
 	struct attribute	attr;
@@ -53,8 +65,11 @@ extern void bus_remove_file(struct bus_type *, struct bus_attribute *);
  * struct bus_type - The bus type of the device
  *
  * @name:	The name of the bus.
+<<<<<<< HEAD
  * @dev_name:	Used for subsystems to enumerate devices like ("foo%u", dev->id).
  * @dev_root:	Default device to use as the parent.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @bus_attrs:	Default attributes of the bus.
  * @dev_attrs:	Default attributes of the devices on the bus.
  * @drv_attrs:	Default attributes of the device drivers on the bus.
@@ -71,9 +86,12 @@ extern void bus_remove_file(struct bus_type *, struct bus_attribute *);
  * @resume:	Called to bring a device on this bus out of sleep mode.
  * @pm:		Power management operations of this bus, callback the specific
  *		device driver's pm-ops.
+<<<<<<< HEAD
  * @iommu_ops:  IOMMU specific operations for this bus, used to attach IOMMU
  *              driver implementations to a bus and allow the driver to do
  *              bus-specific setup
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @p:		The private data of the driver core, only the driver core can
  *		touch this.
  *
@@ -88,8 +106,11 @@ extern void bus_remove_file(struct bus_type *, struct bus_attribute *);
  */
 struct bus_type {
 	const char		*name;
+<<<<<<< HEAD
 	const char		*dev_name;
 	struct device		*dev_root;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bus_attribute	*bus_attrs;
 	struct device_attribute	*dev_attrs;
 	struct driver_attribute	*drv_attrs;
@@ -105,6 +126,7 @@ struct bus_type {
 
 	const struct dev_pm_ops *pm;
 
+<<<<<<< HEAD
 	struct iommu_ops *iommu_ops;
 
 	struct subsys_private *p;
@@ -119,11 +141,18 @@ struct bus_type {
 })
 extern int __must_check __bus_register(struct bus_type *bus,
 				       struct lock_class_key *key);
+=======
+	struct subsys_private *p;
+};
+
+extern int __must_check bus_register(struct bus_type *bus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void bus_unregister(struct bus_type *bus);
 
 extern int __must_check bus_rescan_devices(struct bus_type *bus);
 
 /* iterator helpers for buses */
+<<<<<<< HEAD
 struct subsys_dev_iter {
 	struct klist_iter		ki;
 	const struct device_type	*type;
@@ -134,6 +163,8 @@ void subsys_dev_iter_init(struct subsys_dev_iter *iter,
 			 const struct device_type *type);
 struct device *subsys_dev_iter_next(struct subsys_dev_iter *iter);
 void subsys_dev_iter_exit(struct subsys_dev_iter *iter);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int bus_for_each_dev(struct bus_type *bus, struct device *start, void *data,
 		     int (*fn)(struct device *dev, void *data));
@@ -143,10 +174,17 @@ struct device *bus_find_device(struct bus_type *bus, struct device *start,
 struct device *bus_find_device_by_name(struct bus_type *bus,
 				       struct device *start,
 				       const char *name);
+<<<<<<< HEAD
 struct device *subsys_find_device_by_id(struct bus_type *bus, unsigned int id,
 					struct device *hint);
 int bus_for_each_drv(struct bus_type *bus, struct device_driver *start,
 		     void *data, int (*fn)(struct device_driver *, void *));
+=======
+
+int bus_for_each_drv(struct bus_type *bus, struct device_driver *start,
+		     void *data, int (*fn)(struct device_driver *, void *));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void bus_sort_breadthfirst(struct bus_type *bus,
 			   int (*compare)(const struct device *a,
 					  const struct device *b));
@@ -238,6 +276,11 @@ struct device_driver {
 extern int __must_check driver_register(struct device_driver *drv);
 extern void driver_unregister(struct device_driver *drv);
 
+<<<<<<< HEAD
+=======
+extern struct device_driver *get_driver(struct device_driver *drv);
+extern void put_driver(struct device_driver *drv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct device_driver *driver_find(const char *name,
 					 struct bus_type *bus);
 extern int driver_probe_done(void);
@@ -262,6 +305,13 @@ extern int __must_check driver_create_file(struct device_driver *driver,
 extern void driver_remove_file(struct device_driver *driver,
 			       const struct driver_attribute *attr);
 
+<<<<<<< HEAD
+=======
+extern int __must_check driver_add_kobj(struct device_driver *drv,
+					struct kobject *kobj,
+					const char *fmt, ...);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int __must_check driver_for_each_device(struct device_driver *drv,
 					       struct device *start,
 					       void *data,
@@ -272,6 +322,7 @@ struct device *driver_find_device(struct device_driver *drv,
 				  int (*match)(struct device *dev, void *data));
 
 /**
+<<<<<<< HEAD
  * struct subsys_interface - interfaces to device functions
  * @name:       name of the device function
  * @subsys:     subsytem of the devices to attach to
@@ -299,6 +350,8 @@ int subsys_system_register(struct bus_type *subsys,
 			   const struct attribute_group **groups);
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * struct class - device classes
  * @name:	Name of the class.
  * @owner:	The module owner.
@@ -337,7 +390,11 @@ struct class {
 	struct kobject			*dev_kobj;
 
 	int (*dev_uevent)(struct device *dev, struct kobj_uevent_env *env);
+<<<<<<< HEAD
 	char *(*devnode)(struct device *dev, umode_t *mode);
+=======
+	char *(*devnode)(struct device *dev, mode_t *mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	void (*class_release)(struct class *class);
 	void (*dev_release)(struct device *dev);
@@ -400,8 +457,11 @@ struct class_attribute {
 			char *buf);
 	ssize_t (*store)(struct class *class, struct class_attribute *attr,
 			const char *buf, size_t count);
+<<<<<<< HEAD
 	const void *(*namespace)(struct class *class,
 				 const struct class_attribute *attr);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define CLASS_ATTR(_name, _mode, _show, _store)			\
@@ -466,7 +526,11 @@ struct device_type {
 	const char *name;
 	const struct attribute_group **groups;
 	int (*uevent)(struct device *dev, struct kobj_uevent_env *env);
+<<<<<<< HEAD
 	char *(*devnode)(struct device *dev, umode_t *mode);
+=======
+	char *(*devnode)(struct device *dev, mode_t *mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void (*release)(struct device *dev);
 
 	const struct dev_pm_ops *pm;
@@ -481,6 +545,7 @@ struct device_attribute {
 			 const char *buf, size_t count);
 };
 
+<<<<<<< HEAD
 struct dev_ext_attribute {
 	struct device_attribute attr;
 	void *var;
@@ -506,6 +571,13 @@ ssize_t device_store_int(struct device *dev, struct device_attribute *attr,
 
 extern int device_create_file(struct device *device,
 			      const struct device_attribute *entry);
+=======
+#define DEVICE_ATTR(_name, _mode, _show, _store) \
+struct device_attribute dev_attr_##_name = __ATTR(_name, _mode, _show, _store)
+
+extern int __must_check device_create_file(struct device *device,
+					const struct device_attribute *entry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void device_remove_file(struct device *dev,
 			       const struct device_attribute *attr);
 extern int __must_check device_create_bin_file(struct device *dev,
@@ -553,9 +625,12 @@ extern int devres_release_group(struct device *dev, void *id);
 extern void *devm_kzalloc(struct device *dev, size_t size, gfp_t gfp);
 extern void devm_kfree(struct device *dev, void *p);
 
+<<<<<<< HEAD
 void __iomem *devm_request_and_ioremap(struct device *dev,
 			struct resource *res);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct device_dma_parameters {
 	/*
 	 * a low level driver may set these to teach IOMMU code about
@@ -591,7 +666,11 @@ struct device_dma_parameters {
  * 		minimizes board-specific #ifdefs in drivers.
  * @power:	For device power management.
  * 		See Documentation/power/devices.txt for details.
+<<<<<<< HEAD
  * @pm_domain:	Provide callbacks that are executed during system suspend,
+=======
+ * @pwr_domain:	Provide callbacks that are executed during system suspend,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * 		hibernation, system resume and during runtime PM transitions
  * 		along with subsystem-level and driver-level callbacks.
  * @numa_node:	NUMA node this device is close to.
@@ -606,7 +685,10 @@ struct device_dma_parameters {
  * @archdata:	For arch-specific additions.
  * @of_node:	Associated device tree node.
  * @devt:	For creating the sysfs "dev".
+<<<<<<< HEAD
  * @id:		device instance
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @devres_lock: Spinlock to protect the resource of the device.
  * @devres_head: The resources list of the device.
  * @knode_class: The node used to add the device to the class list.
@@ -643,7 +725,11 @@ struct device {
 	void		*platform_data;	/* Platform specific data, device
 					   core doesn't touch it */
 	struct dev_pm_info	power;
+<<<<<<< HEAD
 	struct dev_pm_domain	*pm_domain;
+=======
+	struct dev_power_domain	*pwr_domain;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_NUMA
 	int		numa_node;	/* NUMA node this device is close to */
@@ -661,13 +747,23 @@ struct device {
 
 	struct dma_coherent_mem	*dma_mem; /* internal for coherent mem
 					     override */
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_CMA
+	struct cma *cma_area;		/* contiguous memory area for dma
+					   allocations */
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* arch specific additions */
 	struct dev_archdata	archdata;
 
 	struct device_node	*of_node; /* associated device tree node */
 
 	dev_t			devt;	/* dev_t, creates the sysfs "dev" */
+<<<<<<< HEAD
 	u32			id;	/* device instance */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spinlock_t		devres_lock;
 	struct list_head	devres_head;
@@ -691,8 +787,13 @@ static inline const char *dev_name(const struct device *dev)
 	return kobject_name(&dev->kobj);
 }
 
+<<<<<<< HEAD
 extern __printf(2, 3)
 int dev_set_name(struct device *dev, const char *name, ...);
+=======
+extern int dev_set_name(struct device *dev, const char *name, ...)
+			__attribute__((format(printf, 2, 3)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_NUMA
 static inline int dev_to_node(struct device *dev)
@@ -713,11 +814,14 @@ static inline void set_dev_node(struct device *dev, int node)
 }
 #endif
 
+<<<<<<< HEAD
 static inline struct pm_subsys_data *dev_to_psd(struct device *dev)
 {
 	return dev ? dev->power.subsys_data : NULL;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline unsigned int dev_get_uevent_suppress(const struct device *dev)
 {
 	return dev->kobj.uevent_suppress;
@@ -750,11 +854,14 @@ static inline bool device_async_suspend_enabled(struct device *dev)
 	return !!dev->power.async_suspend;
 }
 
+<<<<<<< HEAD
 static inline void pm_suspend_ignore_children(struct device *dev, bool enable)
 {
 	dev->power.ignore_children = enable;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void device_lock(struct device *dev)
 {
 	mutex_lock(&dev->mutex);
@@ -788,7 +895,11 @@ extern int device_rename(struct device *dev, const char *new_name);
 extern int device_move(struct device *dev, struct device *new_parent,
 		       enum dpm_order dpm_order);
 extern const char *device_get_devnode(struct device *dev,
+<<<<<<< HEAD
 				      umode_t *mode, const char **tmp);
+=======
+				      mode_t *mode, const char **tmp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void *dev_get_drvdata(const struct device *dev);
 extern int dev_set_drvdata(struct device *dev, void *data);
 
@@ -797,6 +908,7 @@ extern int dev_set_drvdata(struct device *dev, void *data);
  */
 extern struct device *__root_device_register(const char *name,
 					     struct module *owner);
+<<<<<<< HEAD
 
 /*
  * This is a macro to avoid include problems with THIS_MODULE,
@@ -805,6 +917,12 @@ extern struct device *__root_device_register(const char *name,
 #define root_device_register(name) \
 	__root_device_register(name, THIS_MODULE)
 
+=======
+static inline struct device *root_device_register(const char *name)
+{
+	return __root_device_register(name, THIS_MODULE);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void root_device_unregister(struct device *root);
 
 static inline void *dev_get_platdata(const struct device *dev)
@@ -831,10 +949,17 @@ extern struct device *device_create_vargs(struct class *cls,
 					  void *drvdata,
 					  const char *fmt,
 					  va_list vargs);
+<<<<<<< HEAD
 extern __printf(5, 6)
 struct device *device_create(struct class *cls, struct device *parent,
 			     dev_t devt, void *drvdata,
 			     const char *fmt, ...);
+=======
+extern struct device *device_create(struct class *cls, struct device *parent,
+				    dev_t devt, void *drvdata,
+				    const char *fmt, ...)
+				    __attribute__((format(printf, 5, 6)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void device_destroy(struct class *cls, dev_t devt);
 
 /*
@@ -876,6 +1001,7 @@ extern const char *dev_driver_string(const struct device *dev);
 
 #ifdef CONFIG_PRINTK
 
+<<<<<<< HEAD
 extern int __dev_printk(const char *level, const struct device *dev,
 			struct va_format *vaf);
 extern __printf(3, 4)
@@ -928,6 +1054,63 @@ int dev_notice(const struct device *dev, const char *fmt, ...)
 static inline __printf(2, 3)
 int _dev_info(const struct device *dev, const char *fmt, ...)
 { return 0; }
+=======
+extern int dev_printk(const char *level, const struct device *dev,
+		      const char *fmt, ...)
+	__attribute__ ((format (printf, 3, 4)));
+extern int dev_emerg(const struct device *dev, const char *fmt, ...)
+	__attribute__ ((format (printf, 2, 3)));
+extern int dev_alert(const struct device *dev, const char *fmt, ...)
+	__attribute__ ((format (printf, 2, 3)));
+extern int dev_crit(const struct device *dev, const char *fmt, ...)
+	__attribute__ ((format (printf, 2, 3)));
+extern int dev_err(const struct device *dev, const char *fmt, ...)
+	__attribute__ ((format (printf, 2, 3)));
+extern int dev_warn(const struct device *dev, const char *fmt, ...)
+	__attribute__ ((format (printf, 2, 3)));
+extern int dev_notice(const struct device *dev, const char *fmt, ...)
+	__attribute__ ((format (printf, 2, 3)));
+extern int _dev_info(const struct device *dev, const char *fmt, ...)
+	__attribute__ ((format (printf, 2, 3)));
+
+#else
+
+static inline int dev_printk(const char *level, const struct device *dev,
+		      const char *fmt, ...)
+	__attribute__ ((format (printf, 3, 4)));
+static inline int dev_printk(const char *level, const struct device *dev,
+		      const char *fmt, ...)
+	 { return 0; }
+
+static inline int dev_emerg(const struct device *dev, const char *fmt, ...)
+	__attribute__ ((format (printf, 2, 3)));
+static inline int dev_emerg(const struct device *dev, const char *fmt, ...)
+	{ return 0; }
+static inline int dev_crit(const struct device *dev, const char *fmt, ...)
+	__attribute__ ((format (printf, 2, 3)));
+static inline int dev_crit(const struct device *dev, const char *fmt, ...)
+	{ return 0; }
+static inline int dev_alert(const struct device *dev, const char *fmt, ...)
+	__attribute__ ((format (printf, 2, 3)));
+static inline int dev_alert(const struct device *dev, const char *fmt, ...)
+	{ return 0; }
+static inline int dev_err(const struct device *dev, const char *fmt, ...)
+	__attribute__ ((format (printf, 2, 3)));
+static inline int dev_err(const struct device *dev, const char *fmt, ...)
+	{ return 0; }
+static inline int dev_warn(const struct device *dev, const char *fmt, ...)
+	__attribute__ ((format (printf, 2, 3)));
+static inline int dev_warn(const struct device *dev, const char *fmt, ...)
+	{ return 0; }
+static inline int dev_notice(const struct device *dev, const char *fmt, ...)
+	__attribute__ ((format (printf, 2, 3)));
+static inline int dev_notice(const struct device *dev, const char *fmt, ...)
+	{ return 0; }
+static inline int _dev_info(const struct device *dev, const char *fmt, ...)
+	__attribute__ ((format (printf, 2, 3)));
+static inline int _dev_info(const struct device *dev, const char *fmt, ...)
+	{ return 0; }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif
 
@@ -940,14 +1123,24 @@ int _dev_info(const struct device *dev, const char *fmt, ...)
 
 #define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
 
+<<<<<<< HEAD
 #if defined(CONFIG_DYNAMIC_DEBUG)
+=======
+#if defined(DEBUG)
+#define dev_dbg(dev, format, arg...)		\
+	dev_printk(KERN_DEBUG, dev, format, ##arg)
+#elif defined(CONFIG_DYNAMIC_DEBUG)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define dev_dbg(dev, format, ...)		     \
 do {						     \
 	dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
 } while (0)
+<<<<<<< HEAD
 #elif defined(DEBUG)
 #define dev_dbg(dev, format, arg...)		\
 	dev_printk(KERN_DEBUG, dev, format, ##arg)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 #define dev_dbg(dev, format, arg...)				\
 ({								\
@@ -992,6 +1185,7 @@ extern long sysfs_deprecated;
 #define sysfs_deprecated 0
 #endif
 
+<<<<<<< HEAD
 /**
  * module_driver() - Helper macro for drivers that don't do anything
  * special in module init/exit. This eliminates a lot of boilerplate.
@@ -1018,4 +1212,6 @@ static void __exit __driver##_exit(void) \
 } \
 module_exit(__driver##_exit);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _DEVICE_H_ */

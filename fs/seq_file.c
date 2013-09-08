@@ -6,13 +6,18 @@
  */
 
 #include <linux/fs.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/seq_file.h>
 #include <linux/slab.h>
 
 #include <asm/uaccess.h>
 #include <asm/page.h>
 
+<<<<<<< HEAD
 
 /*
  * seq_files have a buffer which can may overflow. When this happens a larger
@@ -29,6 +34,8 @@ static void seq_set_overflow(struct seq_file *m)
 	m->count = m->size;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  *	seq_open -	initialize sequential file
  *	@file: file we initialize
@@ -108,7 +115,11 @@ static int traverse(struct seq_file *m, loff_t offset)
 			error = 0;
 			m->count = 0;
 		}
+<<<<<<< HEAD
 		if (seq_overflow(m))
+=======
+		if (m->count == m->size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto Eoverflow;
 		if (pos + m->count > offset) {
 			m->from = offset - pos;
@@ -156,6 +167,7 @@ ssize_t seq_read(struct file *file, char __user *buf, size_t size, loff_t *ppos)
 
 	mutex_lock(&m->lock);
 
+<<<<<<< HEAD
 	/*
 	 * seq_file->op->..m_start/m_stop/m_next may do special actions
 	 * or optimisations based on the file->f_version, so we want to
@@ -171,6 +183,11 @@ ssize_t seq_read(struct file *file, char __user *buf, size_t size, loff_t *ppos)
 
 	/* Don't assume *ppos is where we left it */
 	if (unlikely(*ppos != m->read_pos)) {
+=======
+	/* Don't assume *ppos is where we left it */
+	if (unlikely(*ppos != m->read_pos)) {
+		m->read_pos = *ppos;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		while ((err = traverse(m, *ppos)) == -EAGAIN)
 			;
 		if (err) {
@@ -180,11 +197,29 @@ ssize_t seq_read(struct file *file, char __user *buf, size_t size, loff_t *ppos)
 			m->index = 0;
 			m->count = 0;
 			goto Done;
+<<<<<<< HEAD
 		} else {
 			m->read_pos = *ppos;
 		}
 	}
 
+=======
+		}
+	}
+
+	/*
+	 * seq_file->op->..m_start/m_stop/m_next may do special actions
+	 * or optimisations based on the file->f_version, so we want to
+	 * pass the file->f_version to those methods.
+	 *
+	 * seq_file->version is just copy of f_version, and seq_file
+	 * methods can treat it simply as file version.
+	 * It is copied in first and copied out after all operations.
+	 * It is convenient to have it as  part of structure to avoid the
+	 * need of passing another argument to all the seq_file methods.
+	 */
+	m->version = file->f_version;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* grab buffer if we didn't have one */
 	if (!m->buf) {
 		m->buf = kmalloc(m->size = PAGE_SIZE, GFP_KERNEL);
@@ -250,7 +285,11 @@ Fill:
 			break;
 		}
 		err = m->op->show(m, p);
+<<<<<<< HEAD
 		if (seq_overflow(m) || err) {
+=======
+		if (m->count == m->size || err) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			m->count = offs;
 			if (likely(err <= 0))
 				break;
@@ -377,7 +416,11 @@ int seq_escape(struct seq_file *m, const char *s, const char *esc)
 			*p++ = '0' + (c & 07);
 			continue;
 		}
+<<<<<<< HEAD
 		seq_set_overflow(m);
+=======
+		m->count = m->size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
         }
 	m->count = p - m->buf;
@@ -399,7 +442,11 @@ int seq_printf(struct seq_file *m, const char *f, ...)
 			return 0;
 		}
 	}
+<<<<<<< HEAD
 	seq_set_overflow(m);
+=======
+	m->count = m->size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -1;
 }
 EXPORT_SYMBOL(seq_printf);
@@ -415,7 +462,11 @@ EXPORT_SYMBOL(seq_printf);
  *      Returns pointer past last written character in @s, or NULL in case of
  *      failure.
  */
+<<<<<<< HEAD
 char *mangle_path(char *s, const char *p, const char *esc)
+=======
+char *mangle_path(char *s, char *p, char *esc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	while (s <= p) {
 		char c = *p++;
@@ -445,7 +496,11 @@ EXPORT_SYMBOL(mangle_path);
  * return the absolute path of 'path', as represented by the
  * dentry / mnt pair in the path parameter.
  */
+<<<<<<< HEAD
 int seq_path(struct seq_file *m, const struct path *path, const char *esc)
+=======
+int seq_path(struct seq_file *m, struct path *path, char *esc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	char *buf;
 	size_t size = seq_get_buf(m, &buf);
@@ -468,8 +523,13 @@ EXPORT_SYMBOL(seq_path);
 /*
  * Same as seq_path, but relative to supplied root.
  */
+<<<<<<< HEAD
 int seq_path_root(struct seq_file *m, const struct path *path,
 		  const struct path *root, const char *esc)
+=======
+int seq_path_root(struct seq_file *m, struct path *path, struct path *root,
+		  char *esc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	char *buf;
 	size_t size = seq_get_buf(m, &buf);
@@ -498,7 +558,11 @@ int seq_path_root(struct seq_file *m, const struct path *path,
 /*
  * returns the path of the 'dentry' from the root of its filesystem.
  */
+<<<<<<< HEAD
 int seq_dentry(struct seq_file *m, struct dentry *dentry, const char *esc)
+=======
+int seq_dentry(struct seq_file *m, struct dentry *dentry, char *esc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	char *buf;
 	size_t size = seq_get_buf(m, &buf);
@@ -528,7 +592,11 @@ int seq_bitmap(struct seq_file *m, const unsigned long *bits,
 			return 0;
 		}
 	}
+<<<<<<< HEAD
 	seq_set_overflow(m);
+=======
+	m->count = m->size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -1;
 }
 EXPORT_SYMBOL(seq_bitmap);
@@ -544,7 +612,11 @@ int seq_bitmap_list(struct seq_file *m, const unsigned long *bits,
 			return 0;
 		}
 	}
+<<<<<<< HEAD
 	seq_set_overflow(m);
+=======
+	m->count = m->size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -1;
 }
 EXPORT_SYMBOL(seq_bitmap_list);
@@ -655,11 +727,16 @@ int seq_puts(struct seq_file *m, const char *s)
 		m->count += len;
 		return 0;
 	}
+<<<<<<< HEAD
 	seq_set_overflow(m);
+=======
+	m->count = m->size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -1;
 }
 EXPORT_SYMBOL(seq_puts);
 
+<<<<<<< HEAD
 /*
  * A helper routine for putting decimal numbers without rich format of printf().
  * only 'unsigned long long' is supported.
@@ -712,6 +789,8 @@ int seq_put_decimal_ll(struct seq_file *m, char delimiter,
 }
 EXPORT_SYMBOL(seq_put_decimal_ll);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * seq_write - write arbitrary data to buffer
  * @seq: seq_file identifying the buffer to which data should be written
@@ -727,7 +806,11 @@ int seq_write(struct seq_file *seq, const void *data, size_t len)
 		seq->count += len;
 		return 0;
 	}
+<<<<<<< HEAD
 	seq_set_overflow(seq);
+=======
+	seq->count = seq->size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -1;
 }
 EXPORT_SYMBOL(seq_write);

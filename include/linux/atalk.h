@@ -3,7 +3,10 @@
 
 #include <linux/types.h>
 #include <asm/byteorder.h>
+<<<<<<< HEAD
 #include <linux/socket.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * AppleTalk networking structures
@@ -29,7 +32,11 @@ struct atalk_addr {
 };
 
 struct sockaddr_at {
+<<<<<<< HEAD
 	__kernel_sa_family_t sat_family;
+=======
+	sa_family_t	  sat_family;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__u8		  sat_port;
 	struct atalk_addr sat_addr;
 	char		  sat_zero[8];

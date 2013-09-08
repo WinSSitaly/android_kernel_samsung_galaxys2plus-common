@@ -286,8 +286,27 @@ static struct platform_driver i2c_pca_pf_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(i2c_pca_pf_driver);
+=======
+static int __init i2c_pca_pf_init(void)
+{
+	return platform_driver_register(&i2c_pca_pf_driver);
+}
+
+static void __exit i2c_pca_pf_exit(void)
+{
+	platform_driver_unregister(&i2c_pca_pf_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Wolfram Sang <w.sang@pengutronix.de>");
 MODULE_DESCRIPTION("I2C-PCA9564/PCA9665 platform driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(i2c_pca_pf_init);
+module_exit(i2c_pca_pf_exit);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

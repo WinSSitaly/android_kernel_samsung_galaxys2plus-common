@@ -41,6 +41,10 @@
 
 #include <linux/module.h>
 #include <linux/moduleparam.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/seq_file.h>
 #include <linux/timer.h>
@@ -170,6 +174,10 @@ struct smi_info {
 	struct si_sm_handlers  *handlers;
 	enum si_type           si_type;
 	spinlock_t             si_lock;
+<<<<<<< HEAD
+=======
+	spinlock_t             msg_lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head       xmit_msgs;
 	struct list_head       hp_xmit_msgs;
 	struct ipmi_smi_msg    *curr_msg;
@@ -318,8 +326,21 @@ static int register_xaction_notifier(struct notifier_block *nb)
 static void deliver_recv_msg(struct smi_info *smi_info,
 			     struct ipmi_smi_msg *msg)
 {
+<<<<<<< HEAD
 	/* Deliver the message to the upper layer. */
 	ipmi_smi_msg_received(smi_info->intf, msg);
+=======
+	/* Deliver the message to the upper layer with the lock
+	   released. */
+
+	if (smi_info->run_to_completion) {
+		ipmi_smi_msg_received(smi_info->intf, msg);
+	} else {
+		spin_unlock(&(smi_info->si_lock));
+		ipmi_smi_msg_received(smi_info->intf, msg);
+		spin_lock(&(smi_info->si_lock));
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void return_hosed_msg(struct smi_info *smi_info, int cCode)
@@ -348,6 +369,16 @@ static enum si_sm_result start_next_msg(struct smi_info *smi_info)
 	struct timeval t;
 #endif
 
+<<<<<<< HEAD
+=======
+	/*
+	 * No need to save flags, we aleady have interrupts off and we
+	 * already hold the SMI lock.
+	 */
+	if (!smi_info->run_to_completion)
+		spin_lock(&(smi_info->msg_lock));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Pick the high priority queue first. */
 	if (!list_empty(&(smi_info->hp_xmit_msgs))) {
 		entry = smi_info->hp_xmit_msgs.next;
@@ -385,6 +416,12 @@ static enum si_sm_result start_next_msg(struct smi_info *smi_info)
 		rv = SI_SM_CALL_WITHOUT_DELAY;
 	}
  out:
+<<<<<<< HEAD
+=======
+	if (!smi_info->run_to_completion)
+		spin_unlock(&(smi_info->msg_lock));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rv;
 }
 
@@ -461,7 +498,13 @@ static void handle_flags(struct smi_info *smi_info)
 
 		start_clear_flags(smi_info);
 		smi_info->msg_flags &= ~WDT_PRE_TIMEOUT_INT;
+<<<<<<< HEAD
 		ipmi_smi_watchdog_pretimeout(smi_info->intf);
+=======
+		spin_unlock(&(smi_info->si_lock));
+		ipmi_smi_watchdog_pretimeout(smi_info->intf);
+		spin_lock(&(smi_info->si_lock));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (smi_info->msg_flags & RECEIVE_MSG_AVAIL) {
 		/* Messages available. */
 		smi_info->curr_msg = ipmi_alloc_smi_msg();
@@ -867,6 +910,22 @@ static void sender(void                *send_info,
 	printk("**Enqueue: %d.%9.9d\n", t.tv_sec, t.tv_usec);
 #endif
 
+<<<<<<< HEAD
+=======
+	/*
+	 * last_timeout_jiffies is updated here to avoid
+	 * smi_timeout() handler passing very large time_diff
+	 * value to smi_event_handler() that causes
+	 * the send command to abort.
+	 */
+	smi_info->last_timeout_jiffies = jiffies;
+
+	mod_timer(&smi_info->si_timer, jiffies + SI_TIMEOUT_JIFFIES);
+
+	if (smi_info->thread)
+		wake_up_process(smi_info->thread);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (smi_info->run_to_completion) {
 		/*
 		 * If we are running to completion, then throw it in
@@ -889,11 +948,16 @@ static void sender(void                *send_info,
 		return;
 	}
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&smi_info->si_lock, flags);
+=======
+	spin_lock_irqsave(&smi_info->msg_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (priority > 0)
 		list_add_tail(&msg->link, &smi_info->hp_xmit_msgs);
 	else
 		list_add_tail(&msg->link, &smi_info->xmit_msgs);
+<<<<<<< HEAD
 
 	if (smi_info->si_state == SI_NORMAL && smi_info->curr_msg == NULL) {
 		/*
@@ -912,6 +976,13 @@ static void sender(void                *send_info,
 		start_next_msg(smi_info);
 		smi_event_handler(smi_info, 0);
 	}
+=======
+	spin_unlock_irqrestore(&smi_info->msg_lock, flags);
+
+	spin_lock_irqsave(&smi_info->si_lock, flags);
+	if (smi_info->si_state == SI_NORMAL && smi_info->curr_msg == NULL)
+		start_next_msg(smi_info);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&smi_info->si_lock, flags);
 }
 
@@ -1012,19 +1083,29 @@ static int ipmi_thread(void *data)
 static void poll(void *send_info)
 {
 	struct smi_info *smi_info = send_info;
+<<<<<<< HEAD
 	unsigned long flags = 0;
 	int run_to_completion = smi_info->run_to_completion;
+=======
+	unsigned long flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Make sure there is some delay in the poll loop so we can
 	 * drive time forward and timeout things.
 	 */
 	udelay(10);
+<<<<<<< HEAD
 	if (!run_to_completion)
 		spin_lock_irqsave(&smi_info->si_lock, flags);
 	smi_event_handler(smi_info, 10);
 	if (!run_to_completion)
 		spin_unlock_irqrestore(&smi_info->si_lock, flags);
+=======
+	spin_lock_irqsave(&smi_info->si_lock, flags);
+	smi_event_handler(smi_info, 10);
+	spin_unlock_irqrestore(&smi_info->si_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void request_events(void *send_info)
@@ -1208,7 +1289,11 @@ static int smi_num; /* Used to sequence the SMIs */
 #define DEFAULT_REGSPACING	1
 #define DEFAULT_REGSIZE		1
 
+<<<<<<< HEAD
 static bool          si_trydefaults = 1;
+=======
+static int           si_trydefaults = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static char          *si_type[SI_MAX_PARMS];
 #define MAX_SI_TYPE_STR 30
 static char          si_type_str[MAX_SI_TYPE_STR];
@@ -1661,8 +1746,15 @@ static struct smi_info *smi_info_alloc(void)
 {
 	struct smi_info *info = kzalloc(sizeof(*info), GFP_KERNEL);
 
+<<<<<<< HEAD
 	if (info)
 		spin_lock_init(&info->si_lock);
+=======
+	if (info) {
+		spin_lock_init(&info->si_lock);
+		spin_lock_init(&info->msg_lock);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return info;
 }
 

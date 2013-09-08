@@ -60,6 +60,11 @@ static int usb_serial_device_probe(struct device *dev)
 		retval = -ENODEV;
 		goto exit;
 	}
+<<<<<<< HEAD
+=======
+	if (port->dev_state != PORT_REGISTERING)
+		goto exit;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	driver = port->serial->type;
 	if (driver->port_probe) {
@@ -96,6 +101,12 @@ static int usb_serial_device_remove(struct device *dev)
 	if (!port)
 		return -ENODEV;
 
+<<<<<<< HEAD
+=======
+	if (port->dev_state != PORT_UNREGISTERING)
+		return retval;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	device_remove_file(&port->dev, &dev_attr_port_number);
 
 	driver = port->serial->type;

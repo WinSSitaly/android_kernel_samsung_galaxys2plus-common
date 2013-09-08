@@ -418,10 +418,16 @@ static void bf5xx_pcm_free_dma_buffers(struct snd_pcm *pcm)
 
 static u64 bf5xx_pcm_dmamask = DMA_BIT_MASK(32);
 
+<<<<<<< HEAD
 static int bf5xx_pcm_ac97_new(struct snd_soc_pcm_runtime *rtd)
 {
 	struct snd_card *card = rtd->card->snd_card;
 	struct snd_pcm *pcm = rtd->pcm;
+=======
+int bf5xx_pcm_ac97_new(struct snd_card *card, struct snd_soc_dai *dai,
+	struct snd_pcm *pcm)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	pr_debug("%s enter\n", __func__);
@@ -430,14 +436,22 @@ static int bf5xx_pcm_ac97_new(struct snd_soc_pcm_runtime *rtd)
 	if (!card->dev->coherent_dma_mask)
 		card->dev->coherent_dma_mask = DMA_BIT_MASK(32);
 
+<<<<<<< HEAD
 	if (pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream) {
+=======
+	if (dai->driver->playback.channels_min) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = bf5xx_pcm_preallocate_dma_buffer(pcm,
 			SNDRV_PCM_STREAM_PLAYBACK);
 		if (ret)
 			goto out;
 	}
 
+<<<<<<< HEAD
 	if (pcm->streams[SNDRV_PCM_STREAM_CAPTURE].substream) {
+=======
+	if (dai->driver->capture.channels_min) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = bf5xx_pcm_preallocate_dma_buffer(pcm,
 			SNDRV_PCM_STREAM_CAPTURE);
 		if (ret)
@@ -474,7 +488,21 @@ static struct platform_driver bf5xx_pcm_driver = {
 	.remove = __devexit_p(bf5xx_soc_platform_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(bf5xx_pcm_driver);
+=======
+static int __init snd_bf5xx_pcm_init(void)
+{
+	return platform_driver_register(&bf5xx_pcm_driver);
+}
+module_init(snd_bf5xx_pcm_init);
+
+static void __exit snd_bf5xx_pcm_exit(void)
+{
+	platform_driver_unregister(&bf5xx_pcm_driver);
+}
+module_exit(snd_bf5xx_pcm_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Cliff Cai");
 MODULE_DESCRIPTION("ADI Blackfin AC97 PCM DMA module");

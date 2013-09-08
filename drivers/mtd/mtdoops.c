@@ -112,7 +112,11 @@ static int mtdoops_erase_block(struct mtdoops_context *cxt, int offset)
 	set_current_state(TASK_INTERRUPTIBLE);
 	add_wait_queue(&wait_q, &wait);
 
+<<<<<<< HEAD
 	ret = mtd_erase(mtd, &erase);
+=======
+	ret = mtd->erase(mtd, &erase);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret) {
 		set_current_state(TASK_RUNNING);
 		remove_wait_queue(&wait_q, &wait);
@@ -169,8 +173,13 @@ static void mtdoops_workfunc_erase(struct work_struct *work)
 			cxt->nextpage = 0;
 	}
 
+<<<<<<< HEAD
 	while (1) {
 		ret = mtd_block_isbad(mtd, cxt->nextpage * record_size);
+=======
+	while (mtd->block_isbad) {
+		ret = mtd->block_isbad(mtd, cxt->nextpage * record_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!ret)
 			break;
 		if (ret < 0) {
@@ -199,9 +208,15 @@ badblock:
 		return;
 	}
 
+<<<<<<< HEAD
 	if (ret == -EIO) {
 		ret = mtd_block_markbad(mtd, cxt->nextpage * record_size);
 		if (ret < 0 && ret != -EOPNOTSUPP) {
+=======
+	if (mtd->block_markbad && ret == -EIO) {
+		ret = mtd->block_markbad(mtd, cxt->nextpage * record_size);
+		if (ret < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			printk(KERN_ERR "mtdoops: block_markbad failed, aborting\n");
 			return;
 		}
@@ -221,6 +236,7 @@ static void mtdoops_write(struct mtdoops_context *cxt, int panic)
 	hdr[0] = cxt->nextcount;
 	hdr[1] = MTDOOPS_KERNMSG_MAGIC;
 
+<<<<<<< HEAD
 	if (panic) {
 		ret = mtd_panic_write(mtd, cxt->nextpage * record_size,
 				      record_size, &retlen, cxt->oops_buf);
@@ -231,6 +247,14 @@ static void mtdoops_write(struct mtdoops_context *cxt, int panic)
 	} else
 		ret = mtd_write(mtd, cxt->nextpage * record_size,
 				record_size, &retlen, cxt->oops_buf);
+=======
+	if (panic)
+		ret = mtd->panic_write(mtd, cxt->nextpage * record_size,
+					record_size, &retlen, cxt->oops_buf);
+	else
+		ret = mtd->write(mtd, cxt->nextpage * record_size,
+					record_size, &retlen, cxt->oops_buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (retlen != record_size || ret < 0)
 		printk(KERN_ERR "mtdoops: write failure at %ld (%td of %ld written), error %d\n",
@@ -257,6 +281,7 @@ static void find_next_position(struct mtdoops_context *cxt)
 	size_t retlen;
 
 	for (page = 0; page < cxt->oops_pages; page++) {
+<<<<<<< HEAD
 		if (mtd_block_isbad(mtd, page * record_size))
 			continue;
 		/* Assume the page is used */
@@ -265,6 +290,17 @@ static void find_next_position(struct mtdoops_context *cxt)
 			       &retlen, (u_char *)&count[0]);
 		if (retlen != MTDOOPS_HEADER_SIZE ||
 				(ret < 0 && !mtd_is_bitflip(ret))) {
+=======
+		if (mtd->block_isbad &&
+		    mtd->block_isbad(mtd, page * record_size))
+			continue;
+		/* Assume the page is used */
+		mark_page_used(cxt, page);
+		ret = mtd->read(mtd, page * record_size, MTDOOPS_HEADER_SIZE,
+				&retlen, (u_char *) &count[0]);
+		if (retlen != MTDOOPS_HEADER_SIZE ||
+				(ret < 0 && ret != -EUCLEAN)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			printk(KERN_ERR "mtdoops: read failure at %ld (%td of %d read), err %d\n",
 			       page * record_size, retlen,
 			       MTDOOPS_HEADER_SIZE, ret);
@@ -314,7 +350,12 @@ static void mtdoops_do_dump(struct kmsg_dumper *dumper,
 	char *dst;
 
 	if (reason != KMSG_DUMP_OOPS &&
+<<<<<<< HEAD
 	    reason != KMSG_DUMP_PANIC)
+=======
+	    reason != KMSG_DUMP_PANIC &&
+	    reason != KMSG_DUMP_KEXEC)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	/* Only dump oopses if dump_oops is set */
@@ -332,8 +373,18 @@ static void mtdoops_do_dump(struct kmsg_dumper *dumper,
 	memcpy(dst + l1_cpy, s2 + s2_start, l2_cpy);
 
 	/* Panics must be written immediately */
+<<<<<<< HEAD
 	if (reason != KMSG_DUMP_OOPS)
 		mtdoops_write(cxt, 1);
+=======
+	if (reason != KMSG_DUMP_OOPS) {
+		if (!cxt->mtd->panic_write)
+			printk(KERN_ERR "mtdoops: Cannot write from panic without panic_write\n");
+		else
+			mtdoops_write(cxt, 1);
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* For other cases, schedule work to write it "nicely" */
 	schedule_work(&cxt->work_write);

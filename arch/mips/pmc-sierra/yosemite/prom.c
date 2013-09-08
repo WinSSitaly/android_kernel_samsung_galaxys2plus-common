@@ -20,6 +20,10 @@
 #include <asm/processor.h>
 #include <asm/reboot.h>
 #include <asm/smp-ops.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/bootinfo.h>
 #include <asm/pmon.h>
 
@@ -101,7 +105,11 @@ void __init prom_init(void)
 
 	/* Get the boot parameters */
 	for (i = 1; i < argc; i++) {
+<<<<<<< HEAD
 		if (strlen(arcs_cmdline) + strlen(arg[i]) + 1 >=
+=======
+		if (strlen(arcs_cmdline) + strlen(arg[i] + 1) >=
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    sizeof(arcs_cmdline))
 			break;
 

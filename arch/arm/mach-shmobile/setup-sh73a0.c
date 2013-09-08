@@ -31,6 +31,7 @@
 #include <linux/sh_intc.h>
 #include <linux/sh_timer.h>
 #include <mach/hardware.h>
+<<<<<<< HEAD
 #include <mach/irqs.h>
 #include <mach/sh73a0.h>
 #include <mach/common.h>
@@ -55,6 +56,11 @@ void __init sh73a0_map_io(void)
 {
 	iotable_init(sh73a0_io_desc, ARRAY_SIZE(sh73a0_io_desc));
 }
+=======
+#include <mach/sh73a0.h>
+#include <asm/mach-types.h>
+#include <asm/mach/arch.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct plat_sci_port scif0_platform_data = {
 	.mapbase	= 0xe6c40000,
@@ -628,7 +634,11 @@ static struct resource sh73a0_dmae_resources[] = {
 		.flags  = IORESOURCE_MEM,
 	},
 	{
+<<<<<<< HEAD
 		.name	= "error_irq",
+=======
+		/* DMA error IRQ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.start  = gic_spi(129),
 		.end    = gic_spi(129),
 		.flags  = IORESOURCE_IRQ,
@@ -688,6 +698,7 @@ void __init sh73a0_add_standard_devices(void)
 			    ARRAY_SIZE(sh73a0_late_devices));
 }
 
+<<<<<<< HEAD
 /* do nothing for !CONFIG_SMP or !CONFIG_HAVE_TWD */
 void __init __weak sh73a0_register_twd(void) { }
 
@@ -698,14 +709,19 @@ static void __init sh73a0_earlytimer_init(void)
 	sh73a0_register_twd();
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init sh73a0_add_early_devices(void)
 {
 	early_platform_add_devices(sh73a0_early_devices,
 				   ARRAY_SIZE(sh73a0_early_devices));
+<<<<<<< HEAD
 
 	/* setup early console here as well */
 	shmobile_setup_console();
 
 	/* override timer setup with soc-specific code */
 	shmobile_timer.init = sh73a0_earlytimer_init;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

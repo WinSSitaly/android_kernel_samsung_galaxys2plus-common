@@ -803,7 +803,11 @@ int iwch_post_terminate(struct iwch_qp *qhp, struct respQ_msg_t *rsp_msg)
  * Assumes qhp lock is held.
  */
 static void __flush_qp(struct iwch_qp *qhp, struct iwch_cq *rchp,
+<<<<<<< HEAD
 				struct iwch_cq *schp)
+=======
+				struct iwch_cq *schp, unsigned long *flag)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int count;
 	int flushed;
@@ -812,15 +816,23 @@ static void __flush_qp(struct iwch_qp *qhp, struct iwch_cq *rchp,
 	PDBG("%s qhp %p rchp %p schp %p\n", __func__, qhp, rchp, schp);
 	/* take a ref on the qhp since we must release the lock */
 	atomic_inc(&qhp->refcnt);
+<<<<<<< HEAD
 	spin_unlock(&qhp->lock);
 
 	/* locking hierarchy: cq lock first, then qp lock. */
 	spin_lock(&rchp->lock);
+=======
+	spin_unlock_irqrestore(&qhp->lock, *flag);
+
+	/* locking hierarchy: cq lock first, then qp lock. */
+	spin_lock_irqsave(&rchp->lock, *flag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&qhp->lock);
 	cxio_flush_hw_cq(&rchp->cq);
 	cxio_count_rcqes(&rchp->cq, &qhp->wq, &count);
 	flushed = cxio_flush_rq(&qhp->wq, &rchp->cq, count);
 	spin_unlock(&qhp->lock);
+<<<<<<< HEAD
 	spin_unlock(&rchp->lock);
 	if (flushed) {
 		spin_lock(&rchp->comp_handler_lock);
@@ -830,26 +842,47 @@ static void __flush_qp(struct iwch_qp *qhp, struct iwch_cq *rchp,
 
 	/* locking hierarchy: cq lock first, then qp lock. */
 	spin_lock(&schp->lock);
+=======
+	spin_unlock_irqrestore(&rchp->lock, *flag);
+	if (flushed)
+		(*rchp->ibcq.comp_handler)(&rchp->ibcq, rchp->ibcq.cq_context);
+
+	/* locking hierarchy: cq lock first, then qp lock. */
+	spin_lock_irqsave(&schp->lock, *flag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&qhp->lock);
 	cxio_flush_hw_cq(&schp->cq);
 	cxio_count_scqes(&schp->cq, &qhp->wq, &count);
 	flushed = cxio_flush_sq(&qhp->wq, &schp->cq, count);
 	spin_unlock(&qhp->lock);
+<<<<<<< HEAD
 	spin_unlock(&schp->lock);
 	if (flushed) {
 		spin_lock(&schp->comp_handler_lock);
 		(*schp->ibcq.comp_handler)(&schp->ibcq, schp->ibcq.cq_context);
 		spin_unlock(&schp->comp_handler_lock);
 	}
+=======
+	spin_unlock_irqrestore(&schp->lock, *flag);
+	if (flushed)
+		(*schp->ibcq.comp_handler)(&schp->ibcq, schp->ibcq.cq_context);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* deref */
 	if (atomic_dec_and_test(&qhp->refcnt))
 	        wake_up(&qhp->wait);
 
+<<<<<<< HEAD
 	spin_lock(&qhp->lock);
 }
 
 static void flush_qp(struct iwch_qp *qhp)
+=======
+	spin_lock_irqsave(&qhp->lock, *flag);
+}
+
+static void flush_qp(struct iwch_qp *qhp, unsigned long *flag)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct iwch_cq *rchp, *schp;
 
@@ -859,6 +892,7 @@ static void flush_qp(struct iwch_qp *qhp)
 	if (qhp->ibqp.uobject) {
 		cxio_set_wq_in_error(&qhp->wq);
 		cxio_set_cq_in_error(&rchp->cq);
+<<<<<<< HEAD
 		spin_lock(&rchp->comp_handler_lock);
 		(*rchp->ibcq.comp_handler)(&rchp->ibcq, rchp->ibcq.cq_context);
 		spin_unlock(&rchp->comp_handler_lock);
@@ -872,6 +906,17 @@ static void flush_qp(struct iwch_qp *qhp)
 		return;
 	}
 	__flush_qp(qhp, rchp, schp);
+=======
+		(*rchp->ibcq.comp_handler)(&rchp->ibcq, rchp->ibcq.cq_context);
+		if (schp != rchp) {
+			cxio_set_cq_in_error(&schp->cq);
+			(*schp->ibcq.comp_handler)(&schp->ibcq,
+						   schp->ibcq.cq_context);
+		}
+		return;
+	}
+	__flush_qp(qhp, rchp, schp, flag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -1030,7 +1075,11 @@ int iwch_modify_qp(struct iwch_dev *rhp, struct iwch_qp *qhp,
 			break;
 		case IWCH_QP_STATE_ERROR:
 			qhp->attr.state = IWCH_QP_STATE_ERROR;
+<<<<<<< HEAD
 			flush_qp(qhp);
+=======
+			flush_qp(qhp, &flag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		default:
 			ret = -EINVAL;
@@ -1078,7 +1127,11 @@ int iwch_modify_qp(struct iwch_dev *rhp, struct iwch_qp *qhp,
 		}
 		switch (attrs->next_state) {
 			case IWCH_QP_STATE_IDLE:
+<<<<<<< HEAD
 				flush_qp(qhp);
+=======
+				flush_qp(qhp, &flag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				qhp->attr.state = IWCH_QP_STATE_IDLE;
 				qhp->attr.llp_stream_handle = NULL;
 				put_ep(&qhp->ep->com);
@@ -1132,7 +1185,11 @@ err:
 	free=1;
 	wake_up(&qhp->wait);
 	BUG_ON(!ep);
+<<<<<<< HEAD
 	flush_qp(qhp);
+=======
+	flush_qp(qhp, &flag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	spin_unlock_irqrestore(&qhp->lock, flag);
 

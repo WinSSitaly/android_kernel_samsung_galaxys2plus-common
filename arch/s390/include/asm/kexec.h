@@ -30,6 +30,7 @@
 /* Not more than 2GB */
 #define KEXEC_CONTROL_MEMORY_LIMIT (1UL<<31)
 
+<<<<<<< HEAD
 /* Maximum address we can use for the crash control pages */
 #define KEXEC_CRASH_CONTROL_MEMORY_LIMIT (-1UL)
 
@@ -60,6 +61,14 @@
 	 ALIGN(sizeof(u32), 4) \
 	)
 
+=======
+/* Allocate one page for the pdp and the second for the code */
+#define KEXEC_CONTROL_PAGE_SIZE 4096
+
+/* The native architecture */
+#define KEXEC_ARCH KEXEC_ARCH_S390
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Provide a dummy definition to avoid build failures. */
 static inline void crash_setup_regs(struct pt_regs *newregs,
 					struct pt_regs *oldregs) { }

@@ -6,9 +6,12 @@
  * Copyright 2008 Freescale Semiconductor, Inc. All Rights Reserved.
  * Copyright 2008 Embedded Alley Solutions, Inc All Rights Reserved.
  */
+<<<<<<< HEAD
 
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/fs.h>
@@ -17,7 +20,10 @@
 #include <linux/platform_device.h>
 #include <linux/spinlock.h>
 #include <linux/uaccess.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/platform.h>
 #include <mach/regs-rtc.h>
@@ -35,7 +41,11 @@
 
 static DEFINE_SPINLOCK(stmp3xxx_wdt_io_lock);
 static unsigned long wdt_status;
+<<<<<<< HEAD
 static const bool nowayout = WATCHDOG_NOWAYOUT;
+=======
+static const int nowayout = WATCHDOG_NOWAYOUT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int heartbeat = DEFAULT_HEARTBEAT;
 static unsigned long boot_status;
 
@@ -177,7 +187,11 @@ static int stmp3xxx_wdt_release(struct inode *inode, struct file *file)
 	if (!nowayout) {
 		if (!test_bit(WDT_OK_TO_CLOSE, &wdt_status)) {
 			wdt_ping();
+<<<<<<< HEAD
 			pr_debug("%s: Device closed unexpectedly\n", __func__);
+=======
+			pr_debug("%s: Device closed unexpectdly\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = -EINVAL;
 		} else {
 			wdt_disable();
@@ -224,7 +238,12 @@ static int __devinit stmp3xxx_wdt_probe(struct platform_device *pdev)
 		return ret;
 	}
 
+<<<<<<< HEAD
 	pr_info("initialized, heartbeat %d sec\n", heartbeat);
+=======
+	printk(KERN_INFO "stmp3xxx watchdog: initialized, heartbeat %d sec\n",
+		heartbeat);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -274,7 +293,22 @@ static struct platform_driver platform_wdt_driver = {
 	.resume = stmp3xxx_wdt_resume,
 };
 
+<<<<<<< HEAD
 module_platform_driver(platform_wdt_driver);
+=======
+static int __init stmp3xxx_wdt_init(void)
+{
+	return platform_driver_register(&platform_wdt_driver);
+}
+
+static void __exit stmp3xxx_wdt_exit(void)
+{
+	return platform_driver_unregister(&platform_wdt_driver);
+}
+
+module_init(stmp3xxx_wdt_init);
+module_exit(stmp3xxx_wdt_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("STMP3XXX Watchdog Driver");
 MODULE_LICENSE("GPL");

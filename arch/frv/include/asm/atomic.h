@@ -16,7 +16,11 @@
 
 #include <linux/types.h>
 #include <asm/spr-regs.h>
+<<<<<<< HEAD
 #include <asm/cmpxchg.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_SMP
 #error not SMP safe
@@ -181,12 +185,74 @@ static inline void atomic64_dec(atomic64_t *v)
 #define atomic64_dec_and_test(v)	(atomic64_dec_return((v)) == 0)
 #define atomic64_inc_and_test(v)	(atomic64_inc_return((v)) == 0)
 
+<<<<<<< HEAD
+=======
+/*****************************************************************************/
+/*
+ * exchange value with memory
+ */
+extern uint64_t __xchg_64(uint64_t i, volatile void *v);
+
+#ifndef CONFIG_FRV_OUTOFLINE_ATOMIC_OPS
+
+#define xchg(ptr, x)								\
+({										\
+	__typeof__(ptr) __xg_ptr = (ptr);					\
+	__typeof__(*(ptr)) __xg_orig;						\
+										\
+	switch (sizeof(__xg_orig)) {						\
+	case 4:									\
+		asm volatile(							\
+			"swap%I0 %M0,%1"					\
+			: "+m"(*__xg_ptr), "=r"(__xg_orig)			\
+			: "1"(x)						\
+			: "memory"						\
+			);							\
+		break;								\
+										\
+	default:								\
+		__xg_orig = (__typeof__(__xg_orig))0;				\
+		asm volatile("break");						\
+		break;								\
+	}									\
+										\
+	__xg_orig;								\
+})
+
+#else
+
+extern uint32_t __xchg_32(uint32_t i, volatile void *v);
+
+#define xchg(ptr, x)										\
+({												\
+	__typeof__(ptr) __xg_ptr = (ptr);							\
+	__typeof__(*(ptr)) __xg_orig;								\
+												\
+	switch (sizeof(__xg_orig)) {								\
+	case 4: __xg_orig = (__typeof__(*(ptr))) __xchg_32((uint32_t) x, __xg_ptr);	break;	\
+	default:										\
+		__xg_orig = (__typeof__(__xg_orig))0;									\
+		asm volatile("break");								\
+		break;										\
+	}											\
+	__xg_orig;										\
+})
+
+#endif
+
+#define tas(ptr) (xchg((ptr), 1))
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define atomic_cmpxchg(v, old, new)	(cmpxchg(&(v)->counter, old, new))
 #define atomic_xchg(v, new)		(xchg(&(v)->counter, new))
 #define atomic64_cmpxchg(v, old, new)	(__cmpxchg_64(old, new, &(v)->counter))
 #define atomic64_xchg(v, new)		(__xchg_64(new, &(v)->counter))
 
+<<<<<<< HEAD
 static __inline__ int __atomic_add_unless(atomic_t *v, int a, int u)
+=======
+static __inline__ int atomic_add_unless(atomic_t *v, int a, int u)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int c, old;
 	c = atomic_read(v);
@@ -198,8 +264,17 @@ static __inline__ int __atomic_add_unless(atomic_t *v, int a, int u)
 			break;
 		c = old;
 	}
+<<<<<<< HEAD
 	return c;
 }
 
 
+=======
+	return c != (u);
+}
+
+#define atomic_inc_not_zero(v) atomic_add_unless((v), 1, 0)
+
+#include <asm-generic/atomic-long.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _ASM_ATOMIC_H */

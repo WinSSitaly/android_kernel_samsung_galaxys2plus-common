@@ -122,6 +122,10 @@ static int __init ircomm_tty_init(void)
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
+=======
+	driver->owner		= THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	driver->driver_name     = "ircomm";
 	driver->name            = "ircomm";
 	driver->major           = IRCOMM_TTY_MAJOR;
@@ -365,12 +369,23 @@ static int ircomm_tty_block_til_ready(struct ircomm_tty_cb *self,
 static int ircomm_tty_open(struct tty_struct *tty, struct file *filp)
 {
 	struct ircomm_tty_cb *self;
+<<<<<<< HEAD
 	unsigned int line = tty->index;
+=======
+	unsigned int line;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long	flags;
 	int ret;
 
 	IRDA_DEBUG(2, "%s()\n", __func__ );
 
+<<<<<<< HEAD
+=======
+	line = tty->index;
+	if (line >= IRCOMM_TTY_PORTS)
+		return -ENODEV;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Check if instance already exists */
 	self = hashbin_lock_find(ircomm_tty, line, NULL);
 	if (!self) {
@@ -546,7 +561,11 @@ static void ircomm_tty_close(struct tty_struct *tty, struct file *filp)
 	 */
 	tty->closing = 1;
 	if (self->closing_wait != ASYNC_CLOSING_WAIT_NONE)
+<<<<<<< HEAD
 		tty_wait_until_sent_from_close(tty, self->closing_wait);
+=======
+		tty_wait_until_sent(tty, self->closing_wait);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ircomm_tty_shutdown(self);
 

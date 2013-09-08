@@ -1,6 +1,10 @@
 /******************************************************************************
  *
+<<<<<<< HEAD
  * Copyright(c) 2009-2012  Realtek Corporation.
+=======
+ * Copyright(c) 2009-2010  Realtek Corporation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
@@ -27,13 +31,20 @@
  *
  *****************************************************************************/
 
+<<<<<<< HEAD
+=======
+#include <linux/firmware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "../wifi.h"
 #include "../pci.h"
 #include "../base.h"
 #include "../rtl8192ce/reg.h"
 #include "../rtl8192ce/def.h"
 #include "fw_common.h"
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void _rtl92c_enable_fw_download(struct ieee80211_hw *hw, bool enable)
 {
@@ -70,6 +81,7 @@ static void _rtl92c_enable_fw_download(struct ieee80211_hw *hw, bool enable)
 	}
 }
 
+<<<<<<< HEAD
 static void rtl_block_fw_writeN(struct ieee80211_hw *hw, const u8 *buffer,
 				u32 size)
 {
@@ -98,6 +110,8 @@ static void rtl_block_fw_writeN(struct ieee80211_hw *hw, const u8 *buffer,
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void _rtl92c_fw_block_write(struct ieee80211_hw *hw,
 				   const u8 *buffer, u32 size)
 {
@@ -106,6 +120,7 @@ static void _rtl92c_fw_block_write(struct ieee80211_hw *hw,
 	u8 *bufferPtr = (u8 *) buffer;
 	u32 *pu4BytePtr = (u32 *) buffer;
 	u32 i, offset, blockCount, remainSize;
+<<<<<<< HEAD
 	u32 data;
 
 	if (rtlpriv->io.writeN_sync) {
@@ -130,6 +145,25 @@ static void _rtl92c_fw_block_write(struct ieee80211_hw *hw,
 		data = le32_to_cpu(*(__le32 *)(pu4BytePtr + i));
 		rtl_write_dword(rtlpriv, (FW_8192C_START_ADDRESS + offset),
 				data);
+=======
+
+	blockCount = size / blockSize;
+	remainSize = size % blockSize;
+
+	for (i = 0; i < blockCount; i++) {
+		offset = i * blockSize;
+		rtl_write_dword(rtlpriv, (FW_8192C_START_ADDRESS + offset),
+				*(pu4BytePtr + i));
+	}
+
+	if (remainSize) {
+		offset = blockCount * blockSize;
+		bufferPtr += offset;
+		for (i = 0; i < remainSize; i++) {
+			rtl_write_byte(rtlpriv, (FW_8192C_START_ADDRESS +
+						 offset + i), *(bufferPtr + i));
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -169,7 +203,11 @@ static void _rtl92c_write_fw(struct ieee80211_hw *hw,
 	struct rtl_hal *rtlhal = rtl_hal(rtl_priv(hw));
 	u8 *bufferPtr = (u8 *) buffer;
 
+<<<<<<< HEAD
 	RT_TRACE(rtlpriv, COMP_FW, DBG_TRACE, "FW size is %d bytes\n", size);
+=======
+	RT_TRACE(rtlpriv, COMP_FW, DBG_TRACE, ("FW size is %d bytes,\n", size));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (IS_CHIP_VER_B(version)) {
 		u32 pageNums, remainSize;
@@ -183,7 +221,11 @@ static void _rtl92c_write_fw(struct ieee80211_hw *hw,
 
 		if (pageNums > 4) {
 			RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+<<<<<<< HEAD
 				 "Page numbers should not greater then 4\n");
+=======
+				 ("Page numbers should not greater then 4\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		for (page = 0; page < pageNums; page++) {
@@ -216,12 +258,21 @@ static int _rtl92c_fw_free_to_go(struct ieee80211_hw *hw)
 
 	if (counter >= FW_8192C_POLLING_TIMEOUT_COUNT) {
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+<<<<<<< HEAD
 			 "chksum report faill ! REG_MCUFWDL:0x%08x\n", value32);
+=======
+			 ("chksum report faill ! REG_MCUFWDL:0x%08x .\n",
+			  value32));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	}
 
 	RT_TRACE(rtlpriv, COMP_FW, DBG_TRACE,
+<<<<<<< HEAD
 		 "Checksum report OK ! REG_MCUFWDL:0x%08x\n", value32);
+=======
+		 ("Checksum report OK ! REG_MCUFWDL:0x%08x .\n", value32));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	value32 = rtl_read_dword(rtlpriv, REG_MCUFWDL);
 	value32 |= MCUFWDL_RDY;
@@ -234,8 +285,14 @@ static int _rtl92c_fw_free_to_go(struct ieee80211_hw *hw)
 		value32 = rtl_read_dword(rtlpriv, REG_MCUFWDL);
 		if (value32 & WINTINI_RDY) {
 			RT_TRACE(rtlpriv, COMP_FW, DBG_TRACE,
+<<<<<<< HEAD
 				 "Polling FW ready success!! REG_MCUFWDL:0x%08x\n",
 				 value32);
+=======
+				 ("Polling FW ready success!!"
+				 " REG_MCUFWDL:0x%08x .\n",
+				 value32));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 0;
 		}
 
@@ -244,7 +301,11 @@ static int _rtl92c_fw_free_to_go(struct ieee80211_hw *hw)
 	} while (counter++ < FW_8192C_POLLING_TIMEOUT_COUNT);
 
 	RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+<<<<<<< HEAD
 		 "Polling FW ready fail!! REG_MCUFWDL:0x%08x\n", value32);
+=======
+		 ("Polling FW ready fail!! REG_MCUFWDL:0x%08x .\n", value32));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -EIO;
 }
 
@@ -257,7 +318,13 @@ int rtl92c_download_fw(struct ieee80211_hw *hw)
 	u32 fwsize;
 	enum version_8192c version = rtlhal->version;
 
+<<<<<<< HEAD
 	if (rtlpriv->max_fw_size == 0 || !rtlhal->pfirmware)
+=======
+	printk(KERN_INFO "rtl8192c: Loading firmware file %s\n",
+	       rtlpriv->cfg->fw_name);
+	if (!rtlhal->pfirmware)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 
 	pfwheader = (struct rtl92c_firmware_header *)rtlhal->pfirmware;
@@ -266,10 +333,16 @@ int rtl92c_download_fw(struct ieee80211_hw *hw)
 
 	if (IS_FW_HEADER_EXIST(pfwheader)) {
 		RT_TRACE(rtlpriv, COMP_FW, DBG_DMESG,
+<<<<<<< HEAD
 			 "Firmware Version(%d), Signature(%#x),Size(%d)\n",
 			 le16_to_cpu(pfwheader->version),
 			 le16_to_cpu(pfwheader->signature),
 			 (uint)sizeof(struct rtl92c_firmware_header));
+=======
+			 ("Firmware Version(%d), Signature(%#x),Size(%d)\n",
+			  pfwheader->version, pfwheader->signature,
+			  (uint)sizeof(struct rtl92c_firmware_header)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		pfwdata = pfwdata + sizeof(struct rtl92c_firmware_header);
 		fwsize = fwsize - sizeof(struct rtl92c_firmware_header);
@@ -281,10 +354,17 @@ int rtl92c_download_fw(struct ieee80211_hw *hw)
 
 	if (_rtl92c_fw_free_to_go(hw)) {
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+<<<<<<< HEAD
 			 "Firmware is not ready to run!\n");
 	} else {
 		RT_TRACE(rtlpriv, COMP_FW, DBG_TRACE,
 			 "Firmware is ready to run!\n");
+=======
+			 ("Firmware is not ready to run!\n"));
+	} else {
+		RT_TRACE(rtlpriv, COMP_FW, DBG_TRACE,
+			 ("Firmware is ready to run!\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -322,22 +402,36 @@ static void _rtl92c_fill_h2c_command(struct ieee80211_hw *hw,
 	unsigned long flag;
 	u8 idx;
 
+<<<<<<< HEAD
 	RT_TRACE(rtlpriv, COMP_CMD, DBG_LOUD, "come in\n");
+=======
+	RT_TRACE(rtlpriv, COMP_CMD, DBG_LOUD, ("come in\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (true) {
 		spin_lock_irqsave(&rtlpriv->locks.h2c_lock, flag);
 		if (rtlhal->h2c_setinprogress) {
 			RT_TRACE(rtlpriv, COMP_CMD, DBG_LOUD,
+<<<<<<< HEAD
 				 "H2C set in progress! Wait to set..element_id(%d)\n",
 				 element_id);
+=======
+				 ("H2C set in progress! Wait to set.."
+				  "element_id(%d).\n", element_id));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			while (rtlhal->h2c_setinprogress) {
 				spin_unlock_irqrestore(&rtlpriv->locks.h2c_lock,
 						       flag);
 				h2c_waitcounter++;
 				RT_TRACE(rtlpriv, COMP_CMD, DBG_LOUD,
+<<<<<<< HEAD
 					 "Wait 100 us (%d times)...\n",
 					 h2c_waitcounter);
+=======
+					 ("Wait 100 us (%d times)...\n",
+					  h2c_waitcounter));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				udelay(100);
 
 				if (h2c_waitcounter > 1000)
@@ -357,7 +451,12 @@ static void _rtl92c_fill_h2c_command(struct ieee80211_hw *hw,
 		wait_writeh2c_limmit--;
 		if (wait_writeh2c_limmit == 0) {
 			RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+<<<<<<< HEAD
 				 "Write H2C fail because no trigger for FW INT!\n");
+=======
+				 ("Write H2C fail because no trigger "
+				  "for FW INT!\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 
@@ -381,7 +480,11 @@ static void _rtl92c_fill_h2c_command(struct ieee80211_hw *hw,
 			break;
 		default:
 			RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+<<<<<<< HEAD
 				 "switch case not processed\n");
+=======
+				 ("switch case not process\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 
@@ -391,8 +494,13 @@ static void _rtl92c_fill_h2c_command(struct ieee80211_hw *hw,
 			wait_h2c_limmit--;
 			if (wait_h2c_limmit == 0) {
 				RT_TRACE(rtlpriv, COMP_CMD, DBG_LOUD,
+<<<<<<< HEAD
 					 "Waiting too long for FW read clear HMEBox(%d)!\n",
 					 boxnum);
+=======
+					 ("Wating too long for FW read "
+					  "clear HMEBox(%d)!\n", boxnum));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 			}
 
@@ -401,14 +509,24 @@ static void _rtl92c_fill_h2c_command(struct ieee80211_hw *hw,
 			isfw_read = _rtl92c_check_fw_read_last_h2c(hw, boxnum);
 			u1b_tmp = rtl_read_byte(rtlpriv, 0x1BF);
 			RT_TRACE(rtlpriv, COMP_CMD, DBG_LOUD,
+<<<<<<< HEAD
 				 "Waiting for FW read clear HMEBox(%d)!!! 0x1BF = %2x\n",
 				 boxnum, u1b_tmp);
+=======
+				 ("Wating for FW read clear HMEBox(%d)!!! "
+				  "0x1BF = %2x\n", boxnum, u1b_tmp));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (!isfw_read) {
 			RT_TRACE(rtlpriv, COMP_CMD, DBG_LOUD,
+<<<<<<< HEAD
 				 "Write H2C register BOX[%d] fail!!!!! Fw do not read\n",
 				 boxnum);
+=======
+				 ("Write H2C register BOX[%d] fail!!!!! "
+				  "Fw do not read.\n", boxnum));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 
@@ -416,8 +534,13 @@ static void _rtl92c_fill_h2c_command(struct ieee80211_hw *hw,
 		memset(boxextcontent, 0, sizeof(boxextcontent));
 		boxcontent[0] = element_id;
 		RT_TRACE(rtlpriv, COMP_CMD, DBG_LOUD,
+<<<<<<< HEAD
 			 "Write element_id box_reg(%4x) = %2x\n",
 			 box_reg, element_id);
+=======
+			 ("Write element_id box_reg(%4x) = %2x\n",
+			  box_reg, element_id));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		switch (cmd_len) {
 		case 1:
@@ -486,7 +609,11 @@ static void _rtl92c_fill_h2c_command(struct ieee80211_hw *hw,
 			break;
 		default:
 			RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+<<<<<<< HEAD
 				 "switch case not processed\n");
+=======
+				 ("switch case not process\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 
@@ -497,22 +624,43 @@ static void _rtl92c_fill_h2c_command(struct ieee80211_hw *hw,
 			rtlhal->last_hmeboxnum = 0;
 
 		RT_TRACE(rtlpriv, COMP_CMD, DBG_LOUD,
+<<<<<<< HEAD
 			 "pHalData->last_hmeboxnum  = %d\n",
 			 rtlhal->last_hmeboxnum);
+=======
+			 ("pHalData->last_hmeboxnum  = %d\n",
+			  rtlhal->last_hmeboxnum));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	spin_lock_irqsave(&rtlpriv->locks.h2c_lock, flag);
 	rtlhal->h2c_setinprogress = false;
 	spin_unlock_irqrestore(&rtlpriv->locks.h2c_lock, flag);
 
+<<<<<<< HEAD
 	RT_TRACE(rtlpriv, COMP_CMD, DBG_LOUD, "go out\n");
+=======
+	RT_TRACE(rtlpriv, COMP_CMD, DBG_LOUD, ("go out\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void rtl92c_fill_h2c_cmd(struct ieee80211_hw *hw,
 			 u8 element_id, u32 cmd_len, u8 *p_cmdbuffer)
 {
+<<<<<<< HEAD
 	u32 tmp_cmdbuf[2];
 
+=======
+	struct rtl_hal *rtlhal = rtl_hal(rtl_priv(hw));
+	u32 tmp_cmdbuf[2];
+
+	if (rtlhal->fw_ready == false) {
+		RT_ASSERT(false, ("return H2C cmd because of Fw "
+				  "download fail!!!\n"));
+		return;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(tmp_cmdbuf, 0, 8);
 	memcpy(tmp_cmdbuf, p_cmdbuffer, cmd_len);
 	_rtl92c_fill_h2c_command(hw, element_id, cmd_len, (u8 *)&tmp_cmdbuf);
@@ -533,7 +681,11 @@ void rtl92c_firmware_selfreset(struct ieee80211_hw *hw)
 	while (u1b_tmp & BIT(2)) {
 		delay--;
 		if (delay == 0) {
+<<<<<<< HEAD
 			RT_ASSERT(false, "8051 reset fail\n");
+=======
+			RT_ASSERT(false, ("8051 reset fail.\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 		udelay(50);
@@ -548,7 +700,11 @@ void rtl92c_set_fw_pwrmode_cmd(struct ieee80211_hw *hw, u8 mode)
 	u8 u1_h2c_set_pwrmode[3] = {0};
 	struct rtl_ps_ctl *ppsc = rtl_psc(rtl_priv(hw));
 
+<<<<<<< HEAD
 	RT_TRACE(rtlpriv, COMP_POWER, DBG_LOUD, "FW LPS mode = %d\n", mode);
+=======
+	RT_TRACE(rtlpriv, COMP_POWER, DBG_LOUD, ("FW LPS mode = %d\n", mode));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	SET_H2CCMD_PWRMODE_PARM_MODE(u1_h2c_set_pwrmode, mode);
 	SET_H2CCMD_PWRMODE_PARM_SMART_PS(u1_h2c_set_pwrmode, 1);
@@ -556,7 +712,11 @@ void rtl92c_set_fw_pwrmode_cmd(struct ieee80211_hw *hw, u8 mode)
 					      ppsc->reg_max_lps_awakeintvl);
 
 	RT_PRINT_DATA(rtlpriv, COMP_CMD, DBG_DMESG,
+<<<<<<< HEAD
 		      "rtl92c_set_fw_rsvdpagepkt(): u1_h2c_set_pwrmode",
+=======
+		      "rtl92c_set_fw_rsvdpagepkt(): u1_h2c_set_pwrmode\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      u1_h2c_set_pwrmode, 3);
 	rtl92c_fill_h2c_cmd(hw, H2C_SETPWRMODE, 3, u1_h2c_set_pwrmode);
 
@@ -570,6 +730,10 @@ static bool _rtl92c_cmd_send_packet(struct ieee80211_hw *hw,
 	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
 	struct rtl8192_tx_ring *ring;
 	struct rtl_tx_desc *pdesc;
+<<<<<<< HEAD
+=======
+	u8 own;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 	struct sk_buff *pskb = NULL;
 
@@ -582,6 +746,10 @@ static bool _rtl92c_cmd_send_packet(struct ieee80211_hw *hw,
 	spin_lock_irqsave(&rtlpriv->locks.irq_th_lock, flags);
 
 	pdesc = &ring->desc[0];
+<<<<<<< HEAD
+=======
+	own = (u8) rtlpriv->cfg->ops->get_desc((u8 *) pdesc, true, HW_DESC_OWN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rtlpriv->cfg->ops->fill_tx_cmddesc(hw, (u8 *) pdesc, 1, 1, skb);
 
@@ -766,16 +934,26 @@ void rtl92c_set_fw_rsvdpagepkt(struct ieee80211_hw *hw, bool dl_finished)
 	totalpacketlen = TOTAL_RESERVED_PKT_LEN;
 
 	RT_PRINT_DATA(rtlpriv, COMP_CMD, DBG_LOUD,
+<<<<<<< HEAD
 		      "rtl92c_set_fw_rsvdpagepkt(): HW_VAR_SET_TX_CMD: ALL",
 		      &reserved_page_packet[0], totalpacketlen);
 	RT_PRINT_DATA(rtlpriv, COMP_CMD, DBG_DMESG,
 		      "rtl92c_set_fw_rsvdpagepkt(): HW_VAR_SET_TX_CMD: ALL",
+=======
+		      "rtl92c_set_fw_rsvdpagepkt(): HW_VAR_SET_TX_CMD: ALL\n",
+		      &reserved_page_packet[0], totalpacketlen);
+	RT_PRINT_DATA(rtlpriv, COMP_CMD, DBG_DMESG,
+		      "rtl92c_set_fw_rsvdpagepkt(): HW_VAR_SET_TX_CMD: ALL\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      u1RsvdPageLoc, 3);
 
 
 	skb = dev_alloc_skb(totalpacketlen);
+<<<<<<< HEAD
 	if (!skb)
 		return;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy((u8 *) skb_put(skb, totalpacketlen),
 	       &reserved_page_packet, totalpacketlen);
 
@@ -786,14 +964,25 @@ void rtl92c_set_fw_rsvdpagepkt(struct ieee80211_hw *hw, bool dl_finished)
 
 	if (dlok) {
 		RT_TRACE(rtlpriv, COMP_POWER, DBG_LOUD,
+<<<<<<< HEAD
 			 "Set RSVD page location to Fw\n");
 		RT_PRINT_DATA(rtlpriv, COMP_CMD, DBG_DMESG,
 			      "H2C_RSVDPAGE", u1RsvdPageLoc, 3);
+=======
+			 ("Set RSVD page location to Fw.\n"));
+		RT_PRINT_DATA(rtlpriv, COMP_CMD, DBG_DMESG,
+				"H2C_RSVDPAGE:\n",
+				u1RsvdPageLoc, 3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rtl92c_fill_h2c_cmd(hw, H2C_RSVDPAGE,
 				    sizeof(u1RsvdPageLoc), u1RsvdPageLoc);
 	} else
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_WARNING,
+<<<<<<< HEAD
 			 "Set RSVD page location to Fw FAIL!!!!!!\n");
+=======
+			 ("Set RSVD page location to Fw FAIL!!!!!!.\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(rtl92c_set_fw_rsvdpagepkt);
 

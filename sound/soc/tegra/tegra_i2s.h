@@ -153,7 +153,10 @@
 #define TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_TWELVE_SLOTS	(TEGRA_I2S_FIFO_ATN_LVL_TWELVE_SLOTS << TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_SHIFT)
 
 struct tegra_i2s {
+<<<<<<< HEAD
 	struct snd_soc_dai_driver dai;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct clk *clk_i2s;
 	int clk_refs;
 	struct tegra_pcm_dma_params capture_dma_data;

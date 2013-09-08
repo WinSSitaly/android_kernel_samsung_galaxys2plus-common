@@ -306,8 +306,12 @@ static void em28xx_ir_handle_key(struct em28xx_IR *ir)
 				   poll_result.rc_data[0],
 				   poll_result.toggle_bit);
 
+<<<<<<< HEAD
 		if (ir->dev->chip_id == CHIP_ID_EM2874 ||
 		    ir->dev->chip_id == CHIP_ID_EM2884)
+=======
+		if (ir->dev->chip_id == CHIP_ID_EM2874)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* The em2874 clears the readcount field every time the
 			   register is read.  The em2860/2880 datasheet says that it
 			   is supposed to clear the readcount, but it doesn't.  So with
@@ -372,15 +376,23 @@ int em28xx_ir_change_protocol(struct rc_dev *rc_dev, u64 rc_type)
 	case CHIP_ID_EM2883:
 		ir->get_key = default_polling_getkey;
 		break;
+<<<<<<< HEAD
 	case CHIP_ID_EM2884:
 	case CHIP_ID_EM2874:
 	case CHIP_ID_EM28174:
+=======
+	case CHIP_ID_EM2874:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ir->get_key = em2874_polling_getkey;
 		em28xx_write_regs(dev, EM2874_R50_IR_CONFIG, &ir_config, 1);
 		break;
 	default:
+<<<<<<< HEAD
 		printk("Unrecognized em28xx chip id 0x%02x: IR not supported\n",
 			dev->chip_id);
+=======
+		printk("Unrecognized em28xx chip id: IR not supported\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -EINVAL;
 	}
 
@@ -466,11 +478,19 @@ int em28xx_ir_fini(struct em28xx *dev)
 	if (!ir)
 		return 0;
 
+<<<<<<< HEAD
 	if (ir->rc)
 		rc_unregister_device(ir->rc);
 
 	/* done */
 	kfree(ir);
+=======
+	em28xx_ir_stop(ir->rc);
+	rc_unregister_device(ir->rc);
+	kfree(ir);
+
+	/* done */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->ir = NULL;
 	return 0;
 }

@@ -9,15 +9,22 @@
  * published by the Free Software Foundation.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/etherdevice.h>
 #include <net/mac80211.h>
 #include <asm/unaligned.h>
+=======
+#include <net/mac80211.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "ieee80211_i.h"
 #include "rate.h"
 #include "mesh.h"
 #include "led.h"
+<<<<<<< HEAD
 #include "wme.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 void ieee80211_tx_status_irqsafe(struct ieee80211_hw *hw,
@@ -47,8 +54,11 @@ static void ieee80211_handle_filtered_frame(struct ieee80211_local *local,
 					    struct sk_buff *skb)
 {
 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
+<<<<<<< HEAD
 	struct ieee80211_hdr *hdr = (void *)skb->data;
 	int ac;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * This skb 'survived' a round-trip through the driver, and
@@ -69,6 +79,7 @@ static void ieee80211_handle_filtered_frame(struct ieee80211_local *local,
 	sta->tx_filtered_count++;
 
 	/*
+<<<<<<< HEAD
 	 * Clear more-data bit on filtered frames, it might be set
 	 * but later frames might time out so it might have to be
 	 * clear again ... It's all rather unlikely (this frame
@@ -95,11 +106,17 @@ static void ieee80211_handle_filtered_frame(struct ieee80211_local *local,
 	}
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Clear the TX filter mask for this STA when sending the next
 	 * packet. If the STA went to power save mode, this will happen
 	 * when it wakes up for the next time.
 	 */
+<<<<<<< HEAD
 	set_sta_flag(sta, WLAN_STA_CLEAR_PS_FILT);
+=======
+	set_sta_flags(sta, WLAN_STA_CLEAR_PS_FILT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * This code races in the following way:
@@ -135,6 +152,7 @@ static void ieee80211_handle_filtered_frame(struct ieee80211_local *local,
 	 *      changes before calling TX status events if ordering can be
 	 *	unknown.
 	 */
+<<<<<<< HEAD
 	if (test_sta_flag(sta, WLAN_STA_PS_STA) &&
 	    skb_queue_len(&sta->tx_filtered[ac]) < STA_MAX_TX_BUFFER) {
 		skb_queue_tail(&sta->tx_filtered[ac], skb);
@@ -148,6 +166,15 @@ static void ieee80211_handle_filtered_frame(struct ieee80211_local *local,
 	}
 
 	if (!test_sta_flag(sta, WLAN_STA_PS_STA) &&
+=======
+	if (test_sta_flags(sta, WLAN_STA_PS_STA) &&
+	    skb_queue_len(&sta->tx_filtered) < STA_MAX_TX_BUFFER) {
+		skb_queue_tail(&sta->tx_filtered, skb);
+		return;
+	}
+
+	if (!test_sta_flags(sta, WLAN_STA_PS_STA) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    !(info->flags & IEEE80211_TX_INTFL_RETRIED)) {
 		/* Software retry the packet once */
 		info->flags |= IEEE80211_TX_INTFL_RETRIED;
@@ -159,12 +186,18 @@ static void ieee80211_handle_filtered_frame(struct ieee80211_local *local,
 	if (net_ratelimit())
 		wiphy_debug(local->hw.wiphy,
 			    "dropped TX filtered frame, queue_len=%d PS=%d @%lu\n",
+<<<<<<< HEAD
 			    skb_queue_len(&sta->tx_filtered[ac]),
 			    !!test_sta_flag(sta, WLAN_STA_PS_STA), jiffies);
+=======
+			    skb_queue_len(&sta->tx_filtered),
+			    !!test_sta_flags(sta, WLAN_STA_PS_STA), jiffies);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	dev_kfree_skb(skb);
 }
 
+<<<<<<< HEAD
 static void ieee80211_check_pending_bar(struct sta_info *sta, u8 *addr, u8 tid)
 {
 	struct tid_ampdu_tx *tid_tx;
@@ -177,12 +210,15 @@ static void ieee80211_check_pending_bar(struct sta_info *sta, u8 *addr, u8 tid)
 	ieee80211_send_bar(&sta->sdata->vif, addr, tid, tid_tx->failed_bar_ssn);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ieee80211_frame_acked(struct sta_info *sta, struct sk_buff *skb)
 {
 	struct ieee80211_mgmt *mgmt = (void *) skb->data;
 	struct ieee80211_local *local = sta->local;
 	struct ieee80211_sub_if_data *sdata = sta->sdata;
 
+<<<<<<< HEAD
 	if (ieee80211_is_data_qos(mgmt->frame_control)) {
 		struct ieee80211_hdr *hdr = (void *) skb->data;
 		u8 *qc = ieee80211_get_qos_ctl(hdr);
@@ -191,6 +227,8 @@ static void ieee80211_frame_acked(struct sta_info *sta, struct sk_buff *skb)
 		ieee80211_check_pending_bar(sta, hdr->addr1, tid);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ieee80211_is_action(mgmt->frame_control) &&
 	    sdata->vif.type == NL80211_IFTYPE_STATION &&
 	    mgmt->u.action.category == WLAN_CATEGORY_HT &&
@@ -219,6 +257,7 @@ static void ieee80211_frame_acked(struct sta_info *sta, struct sk_buff *skb)
 	}
 }
 
+<<<<<<< HEAD
 static void ieee80211_set_bar_pending(struct sta_info *sta, u8 tid, u16 ssn)
 {
 	struct tid_ampdu_tx *tid_tx;
@@ -327,6 +366,8 @@ static void ieee80211_add_tx_radiotap_header(struct ieee80211_supported_band
 
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Use a static threshold for now, best value to be determined
  * by testing ...
@@ -342,8 +383,15 @@ void ieee80211_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb)
 	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *) skb->data;
 	struct ieee80211_local *local = hw_to_local(hw);
 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
+<<<<<<< HEAD
 	__le16 fc;
 	struct ieee80211_supported_band *sband;
+=======
+	u16 frag, type;
+	__le16 fc;
+	struct ieee80211_supported_band *sband;
+	struct ieee80211_tx_status_rtap_hdr *rthdr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ieee80211_sub_if_data *sdata;
 	struct net_device *prev_dev = NULL;
 	struct sta_info *sta, *tmp;
@@ -351,8 +399,11 @@ void ieee80211_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb)
 	int rates_idx = -1;
 	bool send_to_cooked;
 	bool acked;
+<<<<<<< HEAD
 	struct ieee80211_bar *bar;
 	int rtap_len;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < IEEE80211_TX_MAX_RATES; i++) {
 		if (info->status.rates[i].idx < 0) {
@@ -378,6 +429,7 @@ void ieee80211_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb)
 
 	for_each_sta_info(local, hdr->addr1, sta, tmp) {
 		/* skip wrong virtual interface */
+<<<<<<< HEAD
 		if (compare_ether_addr(hdr->addr2, sta->sdata->vif.addr))
 			continue;
 
@@ -386,6 +438,13 @@ void ieee80211_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb)
 
 		acked = !!(info->flags & IEEE80211_TX_STAT_ACK);
 		if (!acked && test_sta_flag(sta, WLAN_STA_PS_STA)) {
+=======
+		if (memcmp(hdr->addr2, sta->sdata->vif.addr, ETH_ALEN))
+			continue;
+
+		acked = !!(info->flags & IEEE80211_TX_STAT_ACK);
+		if (!acked && test_sta_flags(sta, WLAN_STA_PS_STA)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * The STA is in power save mode, so assume
 			 * that this TX packet failed because of that.
@@ -408,6 +467,7 @@ void ieee80211_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb)
 			tid = qc[0] & 0xf;
 			ssn = ((le16_to_cpu(hdr->seq_ctrl) + 0x10)
 						& IEEE80211_SCTL_SEQ);
+<<<<<<< HEAD
 			ieee80211_send_bar(&sta->sdata->vif, hdr->addr1,
 					   tid, ssn);
 		}
@@ -433,6 +493,12 @@ void ieee80211_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb)
 			}
 		}
 
+=======
+			ieee80211_send_bar(sta->sdata, hdr->addr1,
+					   tid, ssn);
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (info->flags & IEEE80211_TX_STAT_TX_FILTERED) {
 			ieee80211_handle_filtered_frame(local, sta, skb);
 			rcu_read_unlock();
@@ -476,8 +542,17 @@ void ieee80211_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb)
 	 * Fragments are passed to low-level drivers as separate skbs, so these
 	 * are actually fragments, not frames. Update frame counters only for
 	 * the first fragment of the frame. */
+<<<<<<< HEAD
 	if (info->flags & IEEE80211_TX_STAT_ACK) {
 		if (ieee80211_is_first_frag(hdr->seq_ctrl)) {
+=======
+
+	frag = le16_to_cpu(hdr->seq_ctrl) & IEEE80211_SCTL_FRAG;
+	type = le16_to_cpu(hdr->frame_control) & IEEE80211_FCTL_FTYPE;
+
+	if (info->flags & IEEE80211_TX_STAT_ACK) {
+		if (frag == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			local->dot11TransmittedFrameCount++;
 			if (is_multicast_ether_addr(hdr->addr1))
 				local->dot11MulticastTransmittedFrameCount++;
@@ -492,11 +567,19 @@ void ieee80211_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb)
 		 * with a multicast address in the address 1 field of type Data
 		 * or Management. */
 		if (!is_multicast_ether_addr(hdr->addr1) ||
+<<<<<<< HEAD
 		    ieee80211_is_data(fc) ||
 		    ieee80211_is_mgmt(fc))
 			local->dot11TransmittedFragmentCount++;
 	} else {
 		if (ieee80211_is_first_frag(hdr->seq_ctrl))
+=======
+		    type == IEEE80211_FTYPE_DATA ||
+		    type == IEEE80211_FTYPE_MGMT)
+			local->dot11TransmittedFragmentCount++;
+	} else {
+		if (frag == 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			local->dot11FailedCount++;
 	}
 
@@ -513,6 +596,7 @@ void ieee80211_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb)
 	}
 
 	if (info->flags & IEEE80211_TX_INTFL_NL80211_FRAME_TX) {
+<<<<<<< HEAD
 		u64 cookie = (unsigned long)skb;
 
 		if (ieee80211_is_nullfunc(hdr->frame_control) ||
@@ -562,6 +646,32 @@ void ieee80211_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb)
 		if (ack_skb)
 			skb_complete_wifi_ack(ack_skb,
 				info->flags & IEEE80211_TX_STAT_ACK);
+=======
+		struct ieee80211_work *wk;
+		u64 cookie = (unsigned long)skb;
+
+		rcu_read_lock();
+		list_for_each_entry_rcu(wk, &local->work_list, list) {
+			if (wk->type != IEEE80211_WORK_OFFCHANNEL_TX)
+				continue;
+			if (wk->offchan_tx.frame != skb)
+				continue;
+			wk->offchan_tx.status = true;
+			break;
+		}
+		rcu_read_unlock();
+		if (local->hw_roc_skb_for_status == skb) {
+			cookie = local->hw_roc_cookie ^ 2;
+			local->hw_roc_skb_for_status = NULL;
+		}
+
+		if (cookie == local->hw_offchan_tx_cookie)
+			local->hw_offchan_tx_cookie = 0;
+
+		cfg80211_mgmt_tx_status(
+			skb->dev, cookie, skb->data, skb->len,
+			!!(info->flags & IEEE80211_TX_STAT_ACK), GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* this was a transmitted frame, but now we want to reuse it */
@@ -569,7 +679,11 @@ void ieee80211_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb)
 
 	/* Need to make a copy before skb->cb gets cleared */
 	send_to_cooked = !!(info->flags & IEEE80211_TX_CTL_INJECTED) ||
+<<<<<<< HEAD
 			 !(ieee80211_is_data(fc));
+=======
+			(type != IEEE80211_FTYPE_DATA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * This is a bit racy but we can avoid a lot of work
@@ -581,13 +695,53 @@ void ieee80211_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb)
 	}
 
 	/* send frame to monitor interfaces now */
+<<<<<<< HEAD
 	rtap_len = ieee80211_tx_radiotap_len(info);
 	if (WARN_ON_ONCE(skb_headroom(skb) < rtap_len)) {
+=======
+
+	if (skb_headroom(skb) < sizeof(*rthdr)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR "ieee80211_tx_status: headroom too small\n");
 		dev_kfree_skb(skb);
 		return;
 	}
+<<<<<<< HEAD
 	ieee80211_add_tx_radiotap_header(sband, skb, retry_count, rtap_len);
+=======
+
+	rthdr = (struct ieee80211_tx_status_rtap_hdr *)
+				skb_push(skb, sizeof(*rthdr));
+
+	memset(rthdr, 0, sizeof(*rthdr));
+	rthdr->hdr.it_len = cpu_to_le16(sizeof(*rthdr));
+	rthdr->hdr.it_present =
+		cpu_to_le32((1 << IEEE80211_RADIOTAP_TX_FLAGS) |
+			    (1 << IEEE80211_RADIOTAP_DATA_RETRIES) |
+			    (1 << IEEE80211_RADIOTAP_RATE));
+
+	if (!(info->flags & IEEE80211_TX_STAT_ACK) &&
+	    !is_multicast_ether_addr(hdr->addr1))
+		rthdr->tx_flags |= cpu_to_le16(IEEE80211_RADIOTAP_F_TX_FAIL);
+
+	/*
+	 * XXX: Once radiotap gets the bitmap reset thing the vendor
+	 *	extensions proposal contains, we can actually report
+	 *	the whole set of tries we did.
+	 */
+	if ((info->status.rates[0].flags & IEEE80211_TX_RC_USE_RTS_CTS) ||
+	    (info->status.rates[0].flags & IEEE80211_TX_RC_USE_CTS_PROTECT))
+		rthdr->tx_flags |= cpu_to_le16(IEEE80211_RADIOTAP_F_TX_CTS);
+	else if (info->status.rates[0].flags & IEEE80211_TX_RC_USE_RTS_CTS)
+		rthdr->tx_flags |= cpu_to_le16(IEEE80211_RADIOTAP_F_TX_RTS);
+	if (info->status.rates[0].idx >= 0 &&
+	    !(info->status.rates[0].flags & IEEE80211_TX_RC_MCS))
+		rthdr->rate = sband->bitrates[
+				info->status.rates[0].idx].bitrate / 5;
+
+	/* for now report the total retry_count */
+	rthdr->data_retries = retry_count;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* XXX: is this sufficient for BPF? */
 	skb_set_mac_header(skb, 0);
@@ -634,6 +788,7 @@ void ieee80211_report_low_ack(struct ieee80211_sta *pubsta, u32 num_packets)
 				    num_packets, GFP_ATOMIC);
 }
 EXPORT_SYMBOL(ieee80211_report_low_ack);
+<<<<<<< HEAD
 
 void ieee80211_free_txskb(struct ieee80211_hw *hw, struct sk_buff *skb)
 {
@@ -669,3 +824,5 @@ void ieee80211_purge_tx_queue(struct ieee80211_hw *hw,
 	while ((skb = __skb_dequeue(skbs)))
 		ieee80211_free_txskb(hw, skb);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -92,7 +92,10 @@ struct key_type {
 
 	/* internal fields */
 	struct list_head	link;		/* link in types list */
+<<<<<<< HEAD
 	struct lock_class_key	lock_class;	/* key->sem lock class */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 extern struct key_type key_type_keyring;

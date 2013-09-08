@@ -14,6 +14,10 @@
 #include <linux/pagemap.h>
 
 #include <asm/cacheflush.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/tlbflush.h>
 
 void flush_cache_mm(struct mm_struct *mm)

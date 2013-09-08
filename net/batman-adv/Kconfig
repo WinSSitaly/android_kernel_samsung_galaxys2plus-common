@@ -5,7 +5,10 @@
 config BATMAN_ADV
 	tristate "B.A.T.M.A.N. Advanced Meshing Protocol"
 	depends on NET
+<<<<<<< HEAD
 	select CRC16
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         default n
 	---help---
 

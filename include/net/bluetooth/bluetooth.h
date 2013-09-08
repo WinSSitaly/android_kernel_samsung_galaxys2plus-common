@@ -21,7 +21,15 @@
    COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS, RELATING TO USE OF THIS 
    SOFTWARE IS DISCLAIMED.
 */
+<<<<<<< HEAD
 
+=======
+#ifdef CONFIG_BT_MGMT
+#include "bluetooth_mgmt.h"
+#elif defined(CONFIG_BT_TIZEN)
+#include "tizen/bluetooth.h"
+#else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __BLUETOOTH_H
 #define __BLUETOOTH_H
 
@@ -36,11 +44,14 @@
 #define PF_BLUETOOTH	AF_BLUETOOTH
 #endif
 
+<<<<<<< HEAD
 /* Bluetooth versions */
 #define BLUETOOTH_VER_1_1	1
 #define BLUETOOTH_VER_1_2	2
 #define BLUETOOTH_VER_2_0	3
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Reserv for core and drivers use */
 #define BT_SKB_RESERVE	8
 
@@ -82,6 +93,7 @@ struct bt_power {
 #define BT_POWER_FORCE_ACTIVE_OFF 0
 #define BT_POWER_FORCE_ACTIVE_ON  1
 
+<<<<<<< HEAD
 #define BT_CHANNEL_POLICY	10
 
 /* BR/EDR only (default policy)
@@ -117,6 +129,14 @@ int bt_err(const char *fmt, ...);
 #define BT_INFO(fmt, ...)	bt_info(fmt "\n", ##__VA_ARGS__)
 #define BT_ERR(fmt, ...)	bt_err(fmt "\n", ##__VA_ARGS__)
 #define BT_DBG(fmt, ...)	pr_debug(fmt "\n", ##__VA_ARGS__)
+=======
+__attribute__((format (printf, 2, 3)))
+int bt_printk(const char *level, const char *fmt, ...);
+
+#define BT_INFO(fmt, arg...)   bt_printk(KERN_INFO, pr_fmt(fmt), ##arg)
+#define BT_ERR(fmt, arg...)    bt_printk(KERN_ERR, pr_fmt(fmt), ##arg)
+#define BT_DBG(fmt, arg...)    pr_debug(fmt "\n", ##arg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Connection and socket states */
 enum {
@@ -131,6 +151,7 @@ enum {
 	BT_CLOSED
 };
 
+<<<<<<< HEAD
 /* If unused will be removed by compiler */
 static inline const char *state_to_string(int state)
 {
@@ -158,6 +179,8 @@ static inline const char *state_to_string(int state)
 	return "invalid state";
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* BD Address */
 typedef struct {
 	__u8 b[6];
@@ -191,7 +214,10 @@ struct bt_sock {
 	struct list_head accept_q;
 	struct sock *parent;
 	u32 defer_setup;
+<<<<<<< HEAD
 	bool suspended;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct bt_sock_list {
@@ -220,9 +246,16 @@ struct bt_skb_cb {
 	__u8 pkt_type;
 	__u8 incoming;
 	__u16 expect;
+<<<<<<< HEAD
 	__u16 tx_seq;
 	__u8 retries;
 	__u8 sar;
+=======
+	__u8 tx_seq;
+	__u8 retries;
+	__u8 sar;
+	unsigned short channel;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__u8 force_active;
 };
 #define bt_cb(skb) ((struct bt_skb_cb *)((skb)->cb))
@@ -279,6 +312,7 @@ extern void bt_sysfs_cleanup(void);
 
 extern struct dentry *bt_debugfs;
 
+<<<<<<< HEAD
 int l2cap_init(void);
 void l2cap_exit(void);
 
@@ -288,3 +322,36 @@ void sco_exit(void);
 void bt_sock_reclassify_lock(struct sock *sk, int proto);
 
 #endif /* __BLUETOOTH_H */
+=======
+#ifdef CONFIG_BT_L2CAP
+int l2cap_init(void);
+void l2cap_exit(void);
+#else
+static inline int l2cap_init(void)
+{
+	return 0;
+}
+
+static inline void l2cap_exit(void)
+{
+}
+#endif
+
+#ifdef CONFIG_BT_SCO
+int sco_init(void);
+void sco_exit(void);
+#else
+static inline int sco_init(void)
+{
+	return 0;
+}
+
+static inline void sco_exit(void)
+{
+}
+#endif
+
+#endif /* __BLUETOOTH_H */
+
+#endif /*BT_MGMT*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

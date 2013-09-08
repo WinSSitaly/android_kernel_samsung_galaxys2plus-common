@@ -198,10 +198,19 @@ struct ov9640_reg {
 
 struct ov9640_priv {
 	struct v4l2_subdev		subdev;
+<<<<<<< HEAD
 	struct v4l2_ctrl_handler	hdl;
 
 	int				model;
 	int				revision;
+=======
+
+	int				model;
+	int				revision;
+
+	bool				flag_vflip;
+	bool				flag_hflip;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif	/* __DRIVERS_MEDIA_VIDEO_OV9640_H__ */

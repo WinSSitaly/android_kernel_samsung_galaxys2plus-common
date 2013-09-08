@@ -34,7 +34,10 @@
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 #include <linux/gpio.h>
+<<<<<<< HEAD
 #include <linux/of_gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/tegra_wm8903_pdata.h>
 
@@ -60,9 +63,14 @@
 #define GPIO_HP_DET     BIT(4)
 
 struct tegra_wm8903 {
+<<<<<<< HEAD
 	struct tegra_wm8903_platform_data pdata;
 	struct platform_device *pcm_dev;
 	struct tegra_asoc_utils_data util_data;
+=======
+	struct tegra_asoc_utils_data util_data;
+	struct tegra_wm8903_platform_data *pdata;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int gpio_requested;
 };
 
@@ -162,7 +170,11 @@ static int tegra_wm8903_event_int_spk(struct snd_soc_dapm_widget *w,
 	struct snd_soc_dapm_context *dapm = w->dapm;
 	struct snd_soc_card *card = dapm->card;
 	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
+<<<<<<< HEAD
 	struct tegra_wm8903_platform_data *pdata = &machine->pdata;
+=======
+	struct tegra_wm8903_platform_data *pdata = machine->pdata;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!(machine->gpio_requested & GPIO_SPKR_EN))
 		return 0;
@@ -179,7 +191,11 @@ static int tegra_wm8903_event_hp(struct snd_soc_dapm_widget *w,
 	struct snd_soc_dapm_context *dapm = w->dapm;
 	struct snd_soc_card *card = dapm->card;
 	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
+<<<<<<< HEAD
 	struct tegra_wm8903_platform_data *pdata = &machine->pdata;
+=======
+	struct tegra_wm8903_platform_data *pdata = machine->pdata;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!(machine->gpio_requested & GPIO_HP_MUTE))
 		return 0;
@@ -203,8 +219,13 @@ static const struct snd_soc_dapm_route harmony_audio_map[] = {
 	{"Int Spk", NULL, "RON"},
 	{"Int Spk", NULL, "LOP"},
 	{"Int Spk", NULL, "LON"},
+<<<<<<< HEAD
 	{"Mic Jack", NULL, "MICBIAS"},
 	{"IN1L", NULL, "Mic Jack"},
+=======
+	{"Mic Bias", NULL, "Mic Jack"},
+	{"IN1L", NULL, "Mic Bias"},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct snd_soc_dapm_route seaboard_audio_map[] = {
@@ -214,8 +235,13 @@ static const struct snd_soc_dapm_route seaboard_audio_map[] = {
 	{"Int Spk", NULL, "RON"},
 	{"Int Spk", NULL, "LOP"},
 	{"Int Spk", NULL, "LON"},
+<<<<<<< HEAD
 	{"Mic Jack", NULL, "MICBIAS"},
 	{"IN1R", NULL, "Mic Jack"},
+=======
+	{"Mic Bias", NULL, "Mic Jack"},
+	{"IN1R", NULL, "Mic Bias"},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct snd_soc_dapm_route kaen_audio_map[] = {
@@ -225,8 +251,13 @@ static const struct snd_soc_dapm_route kaen_audio_map[] = {
 	{"Int Spk", NULL, "RON"},
 	{"Int Spk", NULL, "LOP"},
 	{"Int Spk", NULL, "LON"},
+<<<<<<< HEAD
 	{"Mic Jack", NULL, "MICBIAS"},
 	{"IN2R", NULL, "Mic Jack"},
+=======
+	{"Mic Bias", NULL, "Mic Jack"},
+	{"IN2R", NULL, "Mic Bias"},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct snd_soc_dapm_route aebl_audio_map[] = {
@@ -234,8 +265,13 @@ static const struct snd_soc_dapm_route aebl_audio_map[] = {
 	{"Headphone Jack", NULL, "HPOUTL"},
 	{"Int Spk", NULL, "LINEOUTR"},
 	{"Int Spk", NULL, "LINEOUTL"},
+<<<<<<< HEAD
 	{"Mic Jack", NULL, "MICBIAS"},
 	{"IN1R", NULL, "Mic Jack"},
+=======
+	{"Mic Bias", NULL, "Mic Jack"},
+	{"IN1R", NULL, "Mic Bias"},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct snd_kcontrol_new tegra_wm8903_controls[] = {
@@ -248,6 +284,7 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
 	struct snd_soc_dapm_context *dapm = &codec->dapm;
 	struct snd_soc_card *card = codec->card;
 	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
+<<<<<<< HEAD
 	struct tegra_wm8903_platform_data *pdata = &machine->pdata;
 	struct device_node *np = card->dev->of_node;
 	int ret;
@@ -278,6 +315,11 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
 		return -EINVAL;
 	}
 
+=======
+	struct tegra_wm8903_platform_data *pdata = machine->pdata;
+	int ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (gpio_is_valid(pdata->gpio_spkr_en)) {
 		ret = gpio_request(pdata->gpio_spkr_en, "spkr_en");
 		if (ret) {
@@ -297,7 +339,11 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
 		}
 		machine->gpio_requested |= GPIO_HP_MUTE;
 
+<<<<<<< HEAD
 		gpio_direction_output(pdata->gpio_hp_mute, 1);
+=======
+		gpio_direction_output(pdata->gpio_hp_mute, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (gpio_is_valid(pdata->gpio_int_mic_en)) {
@@ -345,7 +391,34 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
 	wm8903_mic_detect(codec, &tegra_wm8903_mic_jack, SND_JACK_MICROPHONE,
 				0);
 
+<<<<<<< HEAD
 	snd_soc_dapm_force_enable_pin(dapm, "MICBIAS");
+=======
+	snd_soc_dapm_force_enable_pin(dapm, "Mic Bias");
+
+	/* FIXME: Calculate automatically based on DAPM routes? */
+	if (!machine_is_harmony() && !machine_is_ventana())
+		snd_soc_dapm_nc_pin(dapm, "IN1L");
+	if (!machine_is_seaboard() && !machine_is_aebl())
+		snd_soc_dapm_nc_pin(dapm, "IN1R");
+	snd_soc_dapm_nc_pin(dapm, "IN2L");
+	if (!machine_is_kaen())
+		snd_soc_dapm_nc_pin(dapm, "IN2R");
+	snd_soc_dapm_nc_pin(dapm, "IN3L");
+	snd_soc_dapm_nc_pin(dapm, "IN3R");
+
+	if (machine_is_aebl()) {
+		snd_soc_dapm_nc_pin(dapm, "LON");
+		snd_soc_dapm_nc_pin(dapm, "RON");
+		snd_soc_dapm_nc_pin(dapm, "ROP");
+		snd_soc_dapm_nc_pin(dapm, "LOP");
+	} else {
+		snd_soc_dapm_nc_pin(dapm, "LINEOUTR");
+		snd_soc_dapm_nc_pin(dapm, "LINEOUTL");
+	}
+
+	snd_soc_dapm_sync(dapm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -363,7 +436,10 @@ static struct snd_soc_dai_link tegra_wm8903_dai = {
 
 static struct snd_soc_card snd_soc_tegra_wm8903 = {
 	.name = "tegra-wm8903",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link = &tegra_wm8903_dai,
 	.num_links = 1,
 
@@ -371,20 +447,32 @@ static struct snd_soc_card snd_soc_tegra_wm8903 = {
 	.num_controls = ARRAY_SIZE(tegra_wm8903_controls),
 	.dapm_widgets = tegra_wm8903_dapm_widgets,
 	.num_dapm_widgets = ARRAY_SIZE(tegra_wm8903_dapm_widgets),
+<<<<<<< HEAD
 	.fully_routed = true,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static __devinit int tegra_wm8903_driver_probe(struct platform_device *pdev)
 {
 	struct snd_soc_card *card = &snd_soc_tegra_wm8903;
 	struct tegra_wm8903 *machine;
+<<<<<<< HEAD
 	int ret;
 
 	if (!pdev->dev.platform_data && !pdev->dev.of_node) {
+=======
+	struct tegra_wm8903_platform_data *pdata;
+	int ret;
+
+	pdata = pdev->dev.platform_data;
+	if (!pdata) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_err(&pdev->dev, "No platform data supplied\n");
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	machine = devm_kzalloc(&pdev->dev, sizeof(struct tegra_wm8903),
 			       GFP_KERNEL);
 	if (!machine) {
@@ -393,11 +481,25 @@ static __devinit int tegra_wm8903_driver_probe(struct platform_device *pdev)
 		goto err;
 	}
 	machine->pcm_dev = ERR_PTR(-EINVAL);
+=======
+	machine = kzalloc(sizeof(struct tegra_wm8903), GFP_KERNEL);
+	if (!machine) {
+		dev_err(&pdev->dev, "Can't allocate tegra_wm8903 struct\n");
+		return -ENOMEM;
+	}
+
+	machine->pdata = pdata;
+
+	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
+	if (ret)
+		goto err_free_machine;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	card->dev = &pdev->dev;
 	platform_set_drvdata(pdev, card);
 	snd_soc_card_set_drvdata(card, machine);
 
+<<<<<<< HEAD
 	if (pdev->dev.of_node) {
 		ret = snd_soc_of_parse_card_name(card, "nvidia,model");
 		if (ret)
@@ -456,6 +558,22 @@ static __devinit int tegra_wm8903_driver_probe(struct platform_device *pdev)
 	if (ret)
 		goto err_unregister;
 
+=======
+	if (machine_is_harmony() || machine_is_ventana()) {
+		card->dapm_routes = harmony_audio_map;
+		card->num_dapm_routes = ARRAY_SIZE(harmony_audio_map);
+	} else if (machine_is_seaboard()) {
+		card->dapm_routes = seaboard_audio_map;
+		card->num_dapm_routes = ARRAY_SIZE(seaboard_audio_map);
+	} else if (machine_is_kaen()) {
+		card->dapm_routes = kaen_audio_map;
+		card->num_dapm_routes = ARRAY_SIZE(kaen_audio_map);
+	} else {
+		card->dapm_routes = aebl_audio_map;
+		card->num_dapm_routes = ARRAY_SIZE(aebl_audio_map);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = snd_soc_register_card(card);
 	if (ret) {
 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
@@ -467,10 +585,15 @@ static __devinit int tegra_wm8903_driver_probe(struct platform_device *pdev)
 
 err_fini_utils:
 	tegra_asoc_utils_fini(&machine->util_data);
+<<<<<<< HEAD
 err_unregister:
 	if (!IS_ERR(machine->pcm_dev))
 		platform_device_unregister(machine->pcm_dev);
 err:
+=======
+err_free_machine:
+	kfree(machine);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -478,7 +601,11 @@ static int __devexit tegra_wm8903_driver_remove(struct platform_device *pdev)
 {
 	struct snd_soc_card *card = platform_get_drvdata(pdev);
 	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
+<<<<<<< HEAD
 	struct tegra_wm8903_platform_data *pdata = &machine->pdata;
+=======
+	struct tegra_wm8903_platform_data *pdata = machine->pdata;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (machine->gpio_requested & GPIO_HP_DET)
 		snd_soc_jack_free_gpios(&tegra_wm8903_hp_jack,
@@ -497,31 +624,60 @@ static int __devexit tegra_wm8903_driver_remove(struct platform_device *pdev)
 	snd_soc_unregister_card(card);
 
 	tegra_asoc_utils_fini(&machine->util_data);
+<<<<<<< HEAD
 	if (!IS_ERR(machine->pcm_dev))
 		platform_device_unregister(machine->pcm_dev);
+=======
+
+	kfree(machine);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct of_device_id tegra_wm8903_of_match[] __devinitconst = {
 	{ .compatible = "nvidia,tegra-audio-wm8903", },
 	{},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver tegra_wm8903_driver = {
 	.driver = {
 		.name = DRV_NAME,
 		.owner = THIS_MODULE,
 		.pm = &snd_soc_pm_ops,
+<<<<<<< HEAD
 		.of_match_table = tegra_wm8903_of_match,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe = tegra_wm8903_driver_probe,
 	.remove = __devexit_p(tegra_wm8903_driver_remove),
 };
+<<<<<<< HEAD
 module_platform_driver(tegra_wm8903_driver);
+=======
+
+static int __init tegra_wm8903_modinit(void)
+{
+	return platform_driver_register(&tegra_wm8903_driver);
+}
+module_init(tegra_wm8903_modinit);
+
+static void __exit tegra_wm8903_modexit(void)
+{
+	platform_driver_unregister(&tegra_wm8903_driver);
+}
+module_exit(tegra_wm8903_modexit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Stephen Warren <swarren@nvidia.com>");
 MODULE_DESCRIPTION("Tegra+WM8903 machine ASoC driver");
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:" DRV_NAME);
+<<<<<<< HEAD
 MODULE_DEVICE_TABLE(of, tegra_wm8903_of_match);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

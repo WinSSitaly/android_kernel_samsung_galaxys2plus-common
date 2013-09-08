@@ -109,8 +109,16 @@ static struct flash_platform_data h3xxx_flash_data = {
 	.nr_parts	= ARRAY_SIZE(h3xxx_partitions),
 };
 
+<<<<<<< HEAD
 static struct resource h3xxx_flash_resource =
 	DEFINE_RES_MEM(SA1100_CS0_PHYS, SZ_32M);
+=======
+static struct resource h3xxx_flash_resource = {
+	.start		= SA1100_CS0_PHYS,
+	.end		= SA1100_CS0_PHYS + SZ_32M - 1,
+	.flags		= IORESOURCE_MEM,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /*
@@ -183,7 +191,15 @@ static struct sa1100_port_fns h3xxx_port_fns __initdata = {
  */
 
 static struct resource egpio_resources[] = {
+<<<<<<< HEAD
 	[0] = DEFINE_RES_MEM(H3600_EGPIO_PHYS, 0x4),
+=======
+	[0] = {
+		.start	= H3600_EGPIO_PHYS,
+		.end	= H3600_EGPIO_PHYS + 0x4 - 1,
+		.flags	= IORESOURCE_MEM,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct htc_egpio_chip egpio_chips[] = {

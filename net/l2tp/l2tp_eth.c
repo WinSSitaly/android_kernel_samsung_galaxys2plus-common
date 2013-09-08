@@ -64,7 +64,11 @@ static int l2tp_eth_dev_init(struct net_device *dev)
 	struct l2tp_eth *priv = netdev_priv(dev);
 
 	priv->dev = dev;
+<<<<<<< HEAD
 	eth_hw_addr_random(dev);
+=======
+	random_ether_addr(dev->dev_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(&dev->broadcast[0], 0xff, 6);
 
 	return 0;
@@ -132,7 +136,11 @@ static void l2tp_eth_dev_recv(struct l2tp_session *session, struct sk_buff *skb,
 		printk("\n");
 	}
 
+<<<<<<< HEAD
 	if (!pskb_may_pull(skb, ETH_HLEN))
+=======
+	if (!pskb_may_pull(skb, sizeof(ETH_HLEN)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error;
 
 	secpath_reset(skb);
@@ -167,7 +175,10 @@ static void l2tp_eth_delete(struct l2tp_session *session)
 		if (dev) {
 			unregister_netdev(dev);
 			spriv->dev = NULL;
+<<<<<<< HEAD
 			module_put(THIS_MODULE);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }
@@ -255,7 +266,10 @@ static int l2tp_eth_create(struct net *net, u32 tunnel_id, u32 session_id, u32 p
 	if (rc < 0)
 		goto out_del_dev;
 
+<<<<<<< HEAD
 	__module_get(THIS_MODULE);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Must be done after register_netdev() */
 	strlcpy(session->ifname, dev->name, IFNAMSIZ);
 
@@ -269,7 +283,10 @@ static int l2tp_eth_create(struct net *net, u32 tunnel_id, u32 session_id, u32 p
 
 out_del_dev:
 	free_netdev(dev);
+<<<<<<< HEAD
 	spriv->dev = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_del_session:
 	l2tp_session_delete(session);
 out:

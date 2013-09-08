@@ -11,6 +11,7 @@
  * for more details.
  */
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/interrupt.h>
@@ -25,6 +26,14 @@
 #include <mach/hardware.h>
 
 #include "iomap.h"
+=======
+#include <linux/init.h>
+#include <linux/interrupt.h>
+#include <linux/io.h>
+#include <mach/hardware.h>
+#include <asm/mach/irq.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* selected INTC register offsets */
 
@@ -43,11 +52,14 @@
 /* Number of IRQ state bits in each MIR register */
 #define IRQ_BITS_PER_REG	32
 
+<<<<<<< HEAD
 #define OMAP2_IRQ_BASE		OMAP2_L4_IO_ADDRESS(OMAP24XX_IC_BASE)
 #define OMAP3_IRQ_BASE		OMAP2_L4_IO_ADDRESS(OMAP34XX_IC_BASE)
 #define INTCPS_SIR_IRQ_OFFSET	0x0040	/* omap2/3 active interrupt offset */
 #define ACTIVEIRQ_MASK		0x7f	/* omap2/3 active interrupt bits */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * OMAP2 has a number of different interrupt controllers, each interrupt
  * controller is identified as its own "bank". Register definitions are
@@ -64,8 +76,11 @@ static struct omap_irq_bank {
 	},
 };
 
+<<<<<<< HEAD
 static struct irq_domain *domain;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Structure to save interrupt controller context */
 struct omap3_intc_regs {
 	u32 sysconfig;
@@ -156,6 +171,7 @@ omap_alloc_gc(void __iomem *base, unsigned int irq_start, unsigned int num)
 				IRQ_NOREQUEST | IRQ_NOPROBE, 0);
 }
 
+<<<<<<< HEAD
 static void __init omap_init_irq(u32 base, int nr_irqs,
 				 struct device_node *node)
 {
@@ -181,23 +197,54 @@ static void __init omap_init_irq(u32 base, int nr_irqs,
 		struct omap_irq_bank *bank = irq_banks + i;
 
 		bank->nr_irqs = nr_irqs;
+=======
+void __init omap_init_irq(void)
+{
+	unsigned long nr_of_irqs = 0;
+	unsigned int nr_banks = 0;
+	int i, j;
+
+	for (i = 0; i < ARRAY_SIZE(irq_banks); i++) {
+		unsigned long base = 0;
+		struct omap_irq_bank *bank = irq_banks + i;
+
+		if (cpu_is_omap24xx())
+			base = OMAP24XX_IC_BASE;
+		else if (cpu_is_omap34xx())
+			base = OMAP34XX_IC_BASE;
+
+		BUG_ON(!base);
+
+		if (cpu_is_ti816x())
+			bank->nr_irqs = 128;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Static mapping, never released */
 		bank->base_reg = ioremap(base, SZ_4K);
 		if (!bank->base_reg) {
+<<<<<<< HEAD
 			pr_err("Could not ioremap irq bank%i\n", i);
+=======
+			printk(KERN_ERR "Could not ioremap irq bank%i\n", i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 
 		omap_irq_bank_init_one(bank);
 
+<<<<<<< HEAD
 		for (j = 0; j < bank->nr_irqs; j += 32)
 			omap_alloc_gc(bank->base_reg + j, j + irq_base, 32);
+=======
+		for (i = 0, j = 0; i < bank->nr_irqs; i += 32, j += 0x20)
+			omap_alloc_gc(bank->base_reg + j, i, 32);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		nr_of_irqs += bank->nr_irqs;
 		nr_banks++;
 	}
 
+<<<<<<< HEAD
 	pr_info("Total of %ld interrupts on %d active controller%s\n",
 		nr_of_irqs, nr_banks, nr_banks > 1 ? "s" : "");
 }
@@ -277,6 +324,10 @@ int __init omap_intc_of_init(struct device_node *node,
 	omap_init_irq(res.start, nr_irqs, of_node_get(node));
 
 	return 0;
+=======
+	printk(KERN_INFO "Total of %ld interrupts on %d active controller%s\n",
+	       nr_of_irqs, nr_banks, nr_banks > 1 ? "s" : "");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_ARCH_OMAP3
@@ -351,10 +402,13 @@ void omap3_intc_resume_idle(void)
 	/* Re-enable autoidle */
 	intc_bank_write_reg(1, &irq_banks[0], INTC_SYSCONFIG);
 }
+<<<<<<< HEAD
 
 asmlinkage void __exception_irq_entry omap3_intc_handle_irq(struct pt_regs *regs)
 {
 	void __iomem *base_addr = OMAP3_IRQ_BASE;
 	omap_intc_handle_irq(base_addr, regs);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_ARCH_OMAP3 */

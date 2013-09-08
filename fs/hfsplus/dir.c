@@ -38,9 +38,13 @@ static struct dentry *hfsplus_lookup(struct inode *dir, struct dentry *dentry,
 	sb = dir->i_sb;
 
 	dentry->d_fsdata = NULL;
+<<<<<<< HEAD
 	err = hfs_find_init(HFSPLUS_SB(sb)->cat_tree, &fd);
 	if (err)
 		return ERR_PTR(err);
+=======
+	hfs_find_init(HFSPLUS_SB(sb)->cat_tree, &fd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hfsplus_cat_build_key(sb, fd.search_key, dir->i_ino, &dentry->d_name);
 again:
 	err = hfs_brec_read(&fd, &entry, sizeof(entry));
@@ -134,9 +138,13 @@ static int hfsplus_readdir(struct file *filp, void *dirent, filldir_t filldir)
 	if (filp->f_pos >= inode->i_size)
 		return 0;
 
+<<<<<<< HEAD
 	err = hfs_find_init(HFSPLUS_SB(sb)->cat_tree, &fd);
 	if (err)
 		return err;
+=======
+	hfs_find_init(HFSPLUS_SB(sb)->cat_tree, &fd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hfsplus_cat_build_key(sb, fd.search_key, inode->i_ino, NULL);
 	err = hfs_brec_find(&fd);
 	if (err)
@@ -426,7 +434,11 @@ static int hfsplus_symlink(struct inode *dir, struct dentry *dentry,
 	goto out;
 
 out_err:
+<<<<<<< HEAD
 	clear_nlink(inode);
+=======
+	inode->i_nlink = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hfsplus_delete_inode(inode);
 	iput(inode);
 out:
@@ -435,7 +447,11 @@ out:
 }
 
 static int hfsplus_mknod(struct inode *dir, struct dentry *dentry,
+<<<<<<< HEAD
 			 umode_t mode, dev_t rdev)
+=======
+			 int mode, dev_t rdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hfsplus_sb_info *sbi = HFSPLUS_SB(dir->i_sb);
 	struct inode *inode;
@@ -451,7 +467,11 @@ static int hfsplus_mknod(struct inode *dir, struct dentry *dentry,
 
 	res = hfsplus_create_cat(inode->i_ino, dir, &dentry->d_name, inode);
 	if (res) {
+<<<<<<< HEAD
 		clear_nlink(inode);
+=======
+		inode->i_nlink = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hfsplus_delete_inode(inode);
 		iput(inode);
 		goto out;
@@ -464,13 +484,21 @@ out:
 	return res;
 }
 
+<<<<<<< HEAD
 static int hfsplus_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+=======
+static int hfsplus_create(struct inode *dir, struct dentry *dentry, int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  struct nameidata *nd)
 {
 	return hfsplus_mknod(dir, dentry, mode, 0);
 }
 
+<<<<<<< HEAD
 static int hfsplus_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+=======
+static int hfsplus_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return hfsplus_mknod(dir, dentry, mode | S_IFDIR, 0);
 }

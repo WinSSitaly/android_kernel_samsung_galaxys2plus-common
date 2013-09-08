@@ -30,6 +30,7 @@
 #include <linux/sh_intc.h>
 #include <linux/sh_timer.h>
 #include <mach/hardware.h>
+<<<<<<< HEAD
 #include <mach/common.h>
 #include <asm/mach/map.h>
 #include <mach/irqs.h>
@@ -53,6 +54,10 @@ void __init sh7377_map_io(void)
 {
 	iotable_init(sh7377_io_desc, ARRAY_SIZE(sh7377_io_desc));
 }
+=======
+#include <asm/mach-types.h>
+#include <asm/mach/arch.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* SCIFA0 */
 static struct plat_sci_port scif0_platform_data = {
@@ -477,12 +482,15 @@ void __init sh7377_add_standard_devices(void)
 			    ARRAY_SIZE(sh7377_devices));
 }
 
+<<<<<<< HEAD
 static void __init sh7377_earlytimer_init(void)
 {
 	sh7377_clock_init();
 	shmobile_earlytimer_init();
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SMSTPCR3 0xe615013c
 #define SMSTPCR3_CMT1 (1 << 29)
 
@@ -493,10 +501,13 @@ void __init sh7377_add_early_devices(void)
 
 	early_platform_add_devices(sh7377_early_devices,
 				   ARRAY_SIZE(sh7377_early_devices));
+<<<<<<< HEAD
 
 	/* setup early console here as well */
 	shmobile_setup_console();
 
 	/* override timer setup with soc-specific code */
 	shmobile_timer.init = sh7377_earlytimer_init;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

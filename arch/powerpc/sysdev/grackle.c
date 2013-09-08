@@ -57,7 +57,11 @@ void __init setup_grackle(struct pci_controller *hose)
 {
 	setup_indirect_pci(hose, 0xfec00000, 0xfee00000, 0);
 	if (of_machine_is_compatible("PowerMac1,1"))
+<<<<<<< HEAD
 		pci_add_flags(PCI_REASSIGN_ALL_BUS);
+=======
+		ppc_pci_add_flags(PPC_PCI_REASSIGN_ALL_BUS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (of_machine_is_compatible("AAPL,PowerBook1998"))
 		grackle_set_loop_snoop(hose, 1);
 #if 0	/* Disabled for now, HW problems ??? */

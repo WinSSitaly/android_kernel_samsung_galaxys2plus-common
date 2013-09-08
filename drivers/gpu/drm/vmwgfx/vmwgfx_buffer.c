@@ -28,7 +28,10 @@
 #include "vmwgfx_drv.h"
 #include "ttm/ttm_bo_driver.h"
 #include "ttm/ttm_placement.h"
+<<<<<<< HEAD
 #include "ttm/ttm_page_alloc.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static uint32_t vram_placement_flags = TTM_PL_FLAG_VRAM |
 	TTM_PL_FLAG_CACHED;
@@ -43,10 +46,13 @@ static uint32_t sys_placement_flags = TTM_PL_FLAG_SYSTEM |
 static uint32_t gmr_placement_flags = VMW_PL_FLAG_GMR |
 	TTM_PL_FLAG_CACHED;
 
+<<<<<<< HEAD
 static uint32_t gmr_ne_placement_flags = VMW_PL_FLAG_GMR |
 	TTM_PL_FLAG_CACHED |
 	TTM_PL_FLAG_NO_EVICT;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ttm_placement vmw_vram_placement = {
 	.fpfn = 0,
 	.lpfn = 0,
@@ -61,11 +67,14 @@ static uint32_t vram_gmr_placement_flags[] = {
 	VMW_PL_FLAG_GMR | TTM_PL_FLAG_CACHED
 };
 
+<<<<<<< HEAD
 static uint32_t gmr_vram_placement_flags[] = {
 	VMW_PL_FLAG_GMR | TTM_PL_FLAG_CACHED,
 	TTM_PL_FLAG_VRAM | TTM_PL_FLAG_CACHED
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ttm_placement vmw_vram_gmr_placement = {
 	.fpfn = 0,
 	.lpfn = 0,
@@ -75,6 +84,7 @@ struct ttm_placement vmw_vram_gmr_placement = {
 	.busy_placement = &gmr_placement_flags
 };
 
+<<<<<<< HEAD
 static uint32_t vram_gmr_ne_placement_flags[] = {
 	TTM_PL_FLAG_VRAM | TTM_PL_FLAG_CACHED | TTM_PL_FLAG_NO_EVICT,
 	VMW_PL_FLAG_GMR | TTM_PL_FLAG_CACHED | TTM_PL_FLAG_NO_EVICT
@@ -89,6 +99,8 @@ struct ttm_placement vmw_vram_gmr_ne_placement = {
 	.busy_placement = &gmr_ne_placement_flags
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ttm_placement vmw_vram_sys_placement = {
 	.fpfn = 0,
 	.lpfn = 0,
@@ -116,6 +128,7 @@ struct ttm_placement vmw_sys_placement = {
 	.busy_placement = &sys_placement_flags
 };
 
+<<<<<<< HEAD
 static uint32_t evictable_placement_flags[] = {
 	TTM_PL_FLAG_SYSTEM | TTM_PL_FLAG_CACHED,
 	TTM_PL_FLAG_VRAM | TTM_PL_FLAG_CACHED,
@@ -159,35 +172,103 @@ static int vmw_ttm_bind(struct ttm_tt *ttm, struct ttm_mem_reg *bo_mem)
 static int vmw_ttm_unbind(struct ttm_tt *ttm)
 {
 	struct vmw_ttm_tt *vmw_be = container_of(ttm, struct vmw_ttm_tt, ttm);
+=======
+struct vmw_ttm_backend {
+	struct ttm_backend backend;
+	struct page **pages;
+	unsigned long num_pages;
+	struct vmw_private *dev_priv;
+	int gmr_id;
+};
+
+static int vmw_ttm_populate(struct ttm_backend *backend,
+			    unsigned long num_pages, struct page **pages,
+			    struct page *dummy_read_page,
+			    dma_addr_t *dma_addrs)
+{
+	struct vmw_ttm_backend *vmw_be =
+	    container_of(backend, struct vmw_ttm_backend, backend);
+
+	vmw_be->pages = pages;
+	vmw_be->num_pages = num_pages;
+
+	return 0;
+}
+
+static int vmw_ttm_bind(struct ttm_backend *backend, struct ttm_mem_reg *bo_mem)
+{
+	struct vmw_ttm_backend *vmw_be =
+	    container_of(backend, struct vmw_ttm_backend, backend);
+
+	vmw_be->gmr_id = bo_mem->start;
+
+	return vmw_gmr_bind(vmw_be->dev_priv, vmw_be->pages,
+			    vmw_be->num_pages, vmw_be->gmr_id);
+}
+
+static int vmw_ttm_unbind(struct ttm_backend *backend)
+{
+	struct vmw_ttm_backend *vmw_be =
+	    container_of(backend, struct vmw_ttm_backend, backend);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	vmw_gmr_unbind(vmw_be->dev_priv, vmw_be->gmr_id);
 	return 0;
 }
 
+<<<<<<< HEAD
 static void vmw_ttm_destroy(struct ttm_tt *ttm)
 {
 	struct vmw_ttm_tt *vmw_be = container_of(ttm, struct vmw_ttm_tt, ttm);
 
 	ttm_tt_fini(ttm);
+=======
+static void vmw_ttm_clear(struct ttm_backend *backend)
+{
+	struct vmw_ttm_backend *vmw_be =
+		container_of(backend, struct vmw_ttm_backend, backend);
+
+	vmw_be->pages = NULL;
+	vmw_be->num_pages = 0;
+}
+
+static void vmw_ttm_destroy(struct ttm_backend *backend)
+{
+	struct vmw_ttm_backend *vmw_be =
+	    container_of(backend, struct vmw_ttm_backend, backend);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(vmw_be);
 }
 
 static struct ttm_backend_func vmw_ttm_func = {
+<<<<<<< HEAD
+=======
+	.populate = vmw_ttm_populate,
+	.clear = vmw_ttm_clear,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bind = vmw_ttm_bind,
 	.unbind = vmw_ttm_unbind,
 	.destroy = vmw_ttm_destroy,
 };
 
+<<<<<<< HEAD
 struct ttm_tt *vmw_ttm_tt_create(struct ttm_bo_device *bdev,
 				 unsigned long size, uint32_t page_flags,
 				 struct page *dummy_read_page)
 {
 	struct vmw_ttm_tt *vmw_be;
+=======
+struct ttm_backend *vmw_ttm_backend_init(struct ttm_bo_device *bdev)
+{
+	struct vmw_ttm_backend *vmw_be;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	vmw_be = kmalloc(sizeof(*vmw_be), GFP_KERNEL);
 	if (!vmw_be)
 		return NULL;
 
+<<<<<<< HEAD
 	vmw_be->ttm.func = &vmw_ttm_func;
 	vmw_be->dev_priv = container_of(bdev, struct vmw_private, bdev);
 
@@ -197,6 +278,12 @@ struct ttm_tt *vmw_ttm_tt_create(struct ttm_bo_device *bdev,
 	}
 
 	return &vmw_be->ttm;
+=======
+	vmw_be->backend.func = &vmw_ttm_func;
+	vmw_be->dev_priv = container_of(bdev, struct vmw_private, bdev);
+
+	return &vmw_be->backend;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int vmw_invalidate_caches(struct ttm_bo_device *bdev, uint32_t flags)
@@ -300,33 +387,57 @@ static int vmw_ttm_fault_reserve_notify(struct ttm_buffer_object *bo)
 
 static void *vmw_sync_obj_ref(void *sync_obj)
 {
+<<<<<<< HEAD
 
 	return (void *)
 		vmw_fence_obj_reference((struct vmw_fence_obj *) sync_obj);
+=======
+	return sync_obj;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void vmw_sync_obj_unref(void **sync_obj)
 {
+<<<<<<< HEAD
 	vmw_fence_obj_unreference((struct vmw_fence_obj **) sync_obj);
+=======
+	*sync_obj = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int vmw_sync_obj_flush(void *sync_obj, void *sync_arg)
 {
+<<<<<<< HEAD
 	vmw_fence_obj_flush((struct vmw_fence_obj *) sync_obj);
+=======
+	struct vmw_private *dev_priv = (struct vmw_private *)sync_arg;
+
+	mutex_lock(&dev_priv->hw_mutex);
+	vmw_write(dev_priv, SVGA_REG_SYNC, SVGA_SYNC_GENERIC);
+	mutex_unlock(&dev_priv->hw_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static bool vmw_sync_obj_signaled(void *sync_obj, void *sync_arg)
 {
+<<<<<<< HEAD
 	unsigned long flags = (unsigned long) sync_arg;
 	return	vmw_fence_obj_signaled((struct vmw_fence_obj *) sync_obj,
 				       (uint32_t) flags);
 
+=======
+	struct vmw_private *dev_priv = (struct vmw_private *)sync_arg;
+	uint32_t sequence = (unsigned long) sync_obj;
+
+	return vmw_fence_signaled(dev_priv, sequence);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int vmw_sync_obj_wait(void *sync_obj, void *sync_arg,
 			     bool lazy, bool interruptible)
 {
+<<<<<<< HEAD
 	unsigned long flags = (unsigned long) sync_arg;
 
 	return vmw_fence_obj_wait((struct vmw_fence_obj *) sync_obj,
@@ -339,6 +450,16 @@ struct ttm_bo_driver vmw_bo_driver = {
 	.ttm_tt_create = &vmw_ttm_tt_create,
 	.ttm_tt_populate = &ttm_pool_populate,
 	.ttm_tt_unpopulate = &ttm_pool_unpopulate,
+=======
+	struct vmw_private *dev_priv = (struct vmw_private *)sync_arg;
+	uint32_t sequence = (unsigned long) sync_obj;
+
+	return vmw_wait_fence(dev_priv, false, sequence, false, 3*HZ);
+}
+
+struct ttm_bo_driver vmw_bo_driver = {
+	.create_ttm_backend_entry = vmw_ttm_backend_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.invalidate_caches = vmw_invalidate_caches,
 	.init_mem_type = vmw_init_mem_type,
 	.evict_flags = vmw_evict_flags,

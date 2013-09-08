@@ -454,13 +454,21 @@ nv20_graph_context_del(struct nouveau_channel *chan, int engine)
 	unsigned long flags;
 
 	spin_lock_irqsave(&dev_priv->context_switch_lock, flags);
+<<<<<<< HEAD
 	nv_mask(dev, NV04_PGRAPH_FIFO, 0x00000001, 0x00000000);
+=======
+	nv04_graph_fifo_access(dev, false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Unload the context if it's the currently active one */
 	if (nv10_graph_channel(dev) == chan)
 		nv20_graph_unload_context(dev);
 
+<<<<<<< HEAD
 	nv_mask(dev, NV04_PGRAPH_FIFO, 0x00000001, 0x00000001);
+=======
+	nv04_graph_fifo_access(dev, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&dev_priv->context_switch_lock, flags);
 
 	/* Free the context resources */
@@ -654,6 +662,7 @@ nv30_graph_init(struct drm_device *dev, int engine)
 }
 
 int
+<<<<<<< HEAD
 nv20_graph_fini(struct drm_device *dev, int engine, bool suspend)
 {
 	nv_mask(dev, NV04_PGRAPH_FIFO, 0x00000001, 0x00000000);
@@ -661,6 +670,10 @@ nv20_graph_fini(struct drm_device *dev, int engine, bool suspend)
 		nv_mask(dev, NV04_PGRAPH_FIFO, 0x00000001, 0x00000001);
 		return -EBUSY;
 	}
+=======
+nv20_graph_fini(struct drm_device *dev, int engine)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nv20_graph_unload_context(dev);
 	nv_wr32(dev, NV03_PGRAPH_INTR_EN, 0x00000000);
 	return 0;
@@ -758,7 +771,10 @@ nv20_graph_create(struct drm_device *dev)
 			break;
 		default:
 			NV_ERROR(dev, "PGRAPH: unknown chipset\n");
+<<<<<<< HEAD
 			kfree(pgraph);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 0;
 		}
 	} else {
@@ -780,7 +796,10 @@ nv20_graph_create(struct drm_device *dev)
 			break;
 		default:
 			NV_ERROR(dev, "PGRAPH: unknown chipset\n");
+<<<<<<< HEAD
 			kfree(pgraph);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 0;
 		}
 	}

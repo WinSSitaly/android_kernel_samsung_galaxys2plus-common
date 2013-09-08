@@ -10,10 +10,17 @@
 #include <linux/module.h>
 #include <linux/io.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
 #include <mach/cns3xxx.h>
 #include <mach/pm.h>
 #include "core.h"
+=======
+#include <asm/atomic.h>
+#include <mach/system.h>
+#include <mach/cns3xxx.h>
+#include <mach/pm.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void cns3xxx_pwr_clk_en(unsigned int block)
 {
@@ -89,7 +96,11 @@ void cns3xxx_pwr_soft_rst(unsigned int block)
 }
 EXPORT_SYMBOL(cns3xxx_pwr_soft_rst);
 
+<<<<<<< HEAD
 void cns3xxx_restart(char mode, const char *cmd)
+=======
+void arch_reset(char mode, const char *cmd)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * To reset, we hit the on-board reset register

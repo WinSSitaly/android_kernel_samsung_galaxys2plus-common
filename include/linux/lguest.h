@@ -59,6 +59,11 @@ struct lguest_data {
 	unsigned long reserve_mem;
 	/* KHz for the TSC clock. */
 	u32 tsc_khz;
+<<<<<<< HEAD
+=======
+	/* Page where the top-level pagetable is */
+	unsigned long pgdir;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Fields initialized by the Guest at boot: */
 	/* Instruction range to suppress interrupts even if enabled */

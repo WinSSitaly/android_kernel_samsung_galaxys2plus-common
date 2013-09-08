@@ -87,14 +87,22 @@ static int __init ebtable_broute_init(void)
 	if (ret < 0)
 		return ret;
 	/* see br_input.c */
+<<<<<<< HEAD
 	RCU_INIT_POINTER(br_should_route_hook,
+=======
+	rcu_assign_pointer(br_should_route_hook,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   (br_should_route_hook_t *)ebt_broute);
 	return 0;
 }
 
 static void __exit ebtable_broute_fini(void)
 {
+<<<<<<< HEAD
 	RCU_INIT_POINTER(br_should_route_hook, NULL);
+=======
+	rcu_assign_pointer(br_should_route_hook, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	synchronize_net();
 	unregister_pernet_subsys(&broute_net_ops);
 }

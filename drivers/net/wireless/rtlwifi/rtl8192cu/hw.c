@@ -1,6 +1,10 @@
 /******************************************************************************
  *
+<<<<<<< HEAD
  * Copyright(c) 2009-2012  Realtek Corporation. All rights reserved.
+=======
+ * Copyright(c) 2009-2010  Realtek Corporation. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
@@ -160,6 +164,7 @@ static void _rtl92cu_read_txpower_info_from_hwpg(struct ieee80211_hw *hw,
 	for (rf_path = 0; rf_path < 2; rf_path++)
 		for (i = 0; i < 3; i++)
 			RTPRINT(rtlpriv, FINIT, INIT_EEPROM,
+<<<<<<< HEAD
 				"RF(%d) EEPROM CCK Area(%d) = 0x%x\n",
 				rf_path, i,
 				rtlefuse->
@@ -178,6 +183,26 @@ static void _rtl92cu_read_txpower_info_from_hwpg(struct ieee80211_hw *hw,
 				rf_path, i,
 				rtlefuse->
 				eeprom_chnlarea_txpwr_ht40_2sdiif[rf_path][i]);
+=======
+				("RF(%d) EEPROM CCK Area(%d) = 0x%x\n", rf_path,
+				 i, rtlefuse->
+				 eeprom_chnlarea_txpwr_cck[rf_path][i]));
+	for (rf_path = 0; rf_path < 2; rf_path++)
+		for (i = 0; i < 3; i++)
+			RTPRINT(rtlpriv, FINIT, INIT_EEPROM,
+				("RF(%d) EEPROM HT40 1S Area(%d) = 0x%x\n",
+				 rf_path, i,
+				 rtlefuse->
+				 eeprom_chnlarea_txpwr_ht40_1s[rf_path][i]));
+	for (rf_path = 0; rf_path < 2; rf_path++)
+		for (i = 0; i < 3; i++)
+			RTPRINT(rtlpriv, FINIT, INIT_EEPROM,
+				("RF(%d) EEPROM HT40 2S Diff Area(%d) = 0x%x\n",
+				 rf_path, i,
+				 rtlefuse->
+				 eeprom_chnlarea_txpwr_ht40_2sdiif[rf_path]
+				 [i]));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (rf_path = 0; rf_path < 2; rf_path++) {
 		for (i = 0; i < 14; i++) {
 			index = _rtl92c_get_chnl_group((u8) i);
@@ -203,10 +228,18 @@ static void _rtl92cu_read_txpower_info_from_hwpg(struct ieee80211_hw *hw,
 		}
 		for (i = 0; i < 14; i++) {
 			RTPRINT(rtlpriv, FINIT, INIT_TxPower,
+<<<<<<< HEAD
 				"RF(%d)-Ch(%d) [CCK / HT40_1S / HT40_2S] = [0x%x / 0x%x / 0x%x]\n", rf_path, i,
 				rtlefuse->txpwrlevel_cck[rf_path][i],
 				rtlefuse->txpwrlevel_ht40_1s[rf_path][i],
 				rtlefuse->txpwrlevel_ht40_2s[rf_path][i]);
+=======
+				("RF(%d)-Ch(%d) [CCK / HT40_1S / HT40_2S] = "
+				 "[0x%x / 0x%x / 0x%x]\n", rf_path, i,
+				 rtlefuse->txpwrlevel_cck[rf_path][i],
+				 rtlefuse->txpwrlevel_ht40_1s[rf_path][i],
+				 rtlefuse->txpwrlevel_ht40_2s[rf_path][i]));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	for (i = 0; i < 3; i++) {
@@ -239,6 +272,7 @@ static void _rtl92cu_read_txpower_info_from_hwpg(struct ieee80211_hw *hw,
 				      & 0xf0) >> 4);
 			}
 			RTPRINT(rtlpriv, FINIT, INIT_TxPower,
+<<<<<<< HEAD
 				"RF-%d pwrgroup_ht20[%d] = 0x%x\n",
 				rf_path, i,
 				rtlefuse->pwrgroup_ht20[rf_path][i]);
@@ -246,6 +280,15 @@ static void _rtl92cu_read_txpower_info_from_hwpg(struct ieee80211_hw *hw,
 				"RF-%d pwrgroup_ht40[%d] = 0x%x\n",
 				rf_path, i,
 				rtlefuse->pwrgroup_ht40[rf_path][i]);
+=======
+				("RF-%d pwrgroup_ht20[%d] = 0x%x\n",
+				 rf_path, i,
+				 rtlefuse->pwrgroup_ht20[rf_path][i]));
+			RTPRINT(rtlpriv, FINIT, INIT_TxPower,
+				("RF-%d pwrgroup_ht40[%d] = 0x%x\n",
+				 rf_path, i,
+				 rtlefuse->pwrgroup_ht40[rf_path][i]));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	for (i = 0; i < 14; i++) {
@@ -274,6 +317,7 @@ static void _rtl92cu_read_txpower_info_from_hwpg(struct ieee80211_hw *hw,
 	    rtlefuse->txpwr_legacyhtdiff[RF90_PATH_A][7];
 	for (i = 0; i < 14; i++)
 		RTPRINT(rtlpriv, FINIT, INIT_TxPower,
+<<<<<<< HEAD
 			"RF-A Ht20 to HT40 Diff[%d] = 0x%x\n",
 			i, rtlefuse->txpwr_ht20diff[RF90_PATH_A][i]);
 	for (i = 0; i < 14; i++)
@@ -288,12 +332,32 @@ static void _rtl92cu_read_txpower_info_from_hwpg(struct ieee80211_hw *hw,
 		RTPRINT(rtlpriv, FINIT, INIT_TxPower,
 			"RF-B Legacy to HT40 Diff[%d] = 0x%x\n",
 			i, rtlefuse->txpwr_legacyhtdiff[RF90_PATH_B][i]);
+=======
+			("RF-A Ht20 to HT40 Diff[%d] = 0x%x\n", i,
+			 rtlefuse->txpwr_ht20diff[RF90_PATH_A][i]));
+	for (i = 0; i < 14; i++)
+		RTPRINT(rtlpriv, FINIT, INIT_TxPower,
+			("RF-A Legacy to Ht40 Diff[%d] = 0x%x\n", i,
+			 rtlefuse->txpwr_legacyhtdiff[RF90_PATH_A][i]));
+	for (i = 0; i < 14; i++)
+		RTPRINT(rtlpriv, FINIT, INIT_TxPower,
+			("RF-B Ht20 to HT40 Diff[%d] = 0x%x\n", i,
+			 rtlefuse->txpwr_ht20diff[RF90_PATH_B][i]));
+	for (i = 0; i < 14; i++)
+		RTPRINT(rtlpriv, FINIT, INIT_TxPower,
+			("RF-B Legacy to HT40 Diff[%d] = 0x%x\n", i,
+			 rtlefuse->txpwr_legacyhtdiff[RF90_PATH_B][i]));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!autoload_fail)
 		rtlefuse->eeprom_regulatory = (hwinfo[RF_OPTION1] & 0x7);
 	else
 		rtlefuse->eeprom_regulatory = 0;
 	RTPRINT(rtlpriv, FINIT, INIT_TxPower,
+<<<<<<< HEAD
 		"eeprom_regulatory = 0x%x\n", rtlefuse->eeprom_regulatory);
+=======
+		("eeprom_regulatory = 0x%x\n", rtlefuse->eeprom_regulatory));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!autoload_fail) {
 		rtlefuse->eeprom_tssi[RF90_PATH_A] = hwinfo[EEPROM_TSSI_A];
 		rtlefuse->eeprom_tssi[RF90_PATH_B] = hwinfo[EEPROM_TSSI_B];
@@ -302,9 +366,15 @@ static void _rtl92cu_read_txpower_info_from_hwpg(struct ieee80211_hw *hw,
 		rtlefuse->eeprom_tssi[RF90_PATH_B] = EEPROM_DEFAULT_TSSI;
 	}
 	RTPRINT(rtlpriv, FINIT, INIT_TxPower,
+<<<<<<< HEAD
 		"TSSI_A = 0x%x, TSSI_B = 0x%x\n",
 		rtlefuse->eeprom_tssi[RF90_PATH_A],
 		rtlefuse->eeprom_tssi[RF90_PATH_B]);
+=======
+		("TSSI_A = 0x%x, TSSI_B = 0x%x\n",
+		 rtlefuse->eeprom_tssi[RF90_PATH_A],
+		 rtlefuse->eeprom_tssi[RF90_PATH_B]));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!autoload_fail)
 		tempval = hwinfo[EEPROM_THERMAL_METER];
 	else
@@ -317,7 +387,11 @@ static void _rtl92cu_read_txpower_info_from_hwpg(struct ieee80211_hw *hw,
 		rtlefuse->apk_thermalmeterignore = true;
 	rtlefuse->thermalmeter[0] = rtlefuse->eeprom_thermalmeter;
 	RTPRINT(rtlpriv, FINIT, INIT_TxPower,
+<<<<<<< HEAD
 		"thermalmeter = 0x%x\n", rtlefuse->eeprom_thermalmeter);
+=======
+		("thermalmeter = 0x%x\n", rtlefuse->eeprom_thermalmeter));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void _rtl92cu_read_board_type(struct ieee80211_hw *hw, u8 *contents)
@@ -336,9 +410,166 @@ static void _rtl92cu_read_board_type(struct ieee80211_hw *hw, u8 *contents)
 	rtlefuse->board_type = boardType;
 	if (IS_HIGHT_PA(rtlefuse->board_type))
 		rtlefuse->external_pa = 1;
+<<<<<<< HEAD
 	pr_info("Board Type %x\n", rtlefuse->board_type);
 }
 
+=======
+	printk(KERN_INFO "rtl8192cu: Board Type %x\n", rtlefuse->board_type);
+
+#ifdef CONFIG_ANTENNA_DIVERSITY
+	/* Antenna Diversity setting. */
+	if (registry_par->antdiv_cfg == 2) /* 2: From Efuse */
+		rtl_efuse->antenna_cfg = (contents[EEPROM_RF_OPT1]&0x18)>>3;
+	else
+		rtl_efuse->antenna_cfg = registry_par->antdiv_cfg; /* 0:OFF, */
+
+	printk(KERN_INFO "rtl8192cu: Antenna Config %x\n",
+	       rtl_efuse->antenna_cfg);
+#endif
+}
+
+#ifdef CONFIG_BT_COEXIST
+static void _update_bt_param(_adapter *padapter)
+{
+	struct btcoexist_priv	 *pbtpriv = &(padapter->halpriv.bt_coexist);
+	struct registry_priv	*registry_par = &padapter->registrypriv;
+	if (2 != registry_par->bt_iso) {
+		/* 0:Low, 1:High, 2:From Efuse */
+		pbtpriv->BT_Ant_isolation = registry_par->bt_iso;
+	}
+	if (registry_par->bt_sco == 1) {
+		/* 0:Idle, 1:None-SCO, 2:SCO, 3:From Counter, 4.Busy,
+		 * 5.OtherBusy */
+		pbtpriv->BT_Service = BT_OtherAction;
+	} else if (registry_par->bt_sco == 2) {
+		pbtpriv->BT_Service = BT_SCO;
+	} else if (registry_par->bt_sco == 4) {
+		pbtpriv->BT_Service = BT_Busy;
+	} else if (registry_par->bt_sco == 5) {
+		pbtpriv->BT_Service = BT_OtherBusy;
+	} else {
+		pbtpriv->BT_Service = BT_Idle;
+	}
+	pbtpriv->BT_Ampdu = registry_par->bt_ampdu;
+	pbtpriv->bCOBT = _TRUE;
+	pbtpriv->BtEdcaUL = 0;
+	pbtpriv->BtEdcaDL = 0;
+	pbtpriv->BtRssiState = 0xff;
+	pbtpriv->bInitSet = _FALSE;
+	pbtpriv->bBTBusyTraffic = _FALSE;
+	pbtpriv->bBTTrafficModeSet = _FALSE;
+	pbtpriv->bBTNonTrafficModeSet = _FALSE;
+	pbtpriv->CurrentState = 0;
+	pbtpriv->PreviousState = 0;
+	printk(KERN_INFO "rtl8192cu: BT Coexistance = %s\n",
+	       (pbtpriv->BT_Coexist == _TRUE) ? "enable" : "disable");
+	if (pbtpriv->BT_Coexist) {
+		if (pbtpriv->BT_Ant_Num == Ant_x2)
+			printk(KERN_INFO "rtl8192cu: BlueTooth BT_"
+			       "Ant_Num = Antx2\n");
+		else if (pbtpriv->BT_Ant_Num == Ant_x1)
+			printk(KERN_INFO "rtl8192cu: BlueTooth BT_"
+			       "Ant_Num = Antx1\n");
+		switch (pbtpriv->BT_CoexistType) {
+		case BT_2Wire:
+			printk(KERN_INFO "rtl8192cu: BlueTooth BT_"
+			       "CoexistType = BT_2Wire\n");
+			break;
+		case BT_ISSC_3Wire:
+			printk(KERN_INFO "rtl8192cu: BlueTooth BT_"
+			       "CoexistType = BT_ISSC_3Wire\n");
+			break;
+		case BT_Accel:
+			printk(KERN_INFO "rtl8192cu: BlueTooth BT_"
+			       "CoexistType = BT_Accel\n");
+			break;
+		case BT_CSR_BC4:
+			printk(KERN_INFO "rtl8192cu: BlueTooth BT_"
+			       "CoexistType = BT_CSR_BC4\n");
+			break;
+		case BT_CSR_BC8:
+			printk(KERN_INFO "rtl8192cu: BlueTooth BT_"
+			       "CoexistType = BT_CSR_BC8\n");
+			break;
+		case BT_RTL8756:
+			printk(KERN_INFO "rtl8192cu: BlueTooth BT_"
+			       "CoexistType = BT_RTL8756\n");
+			break;
+		default:
+			printk(KERN_INFO "rtl8192cu: BlueTooth BT_"
+			       "CoexistType = Unknown\n");
+			break;
+		}
+		printk(KERN_INFO "rtl8192cu: BlueTooth BT_Ant_isolation = %d\n",
+		       pbtpriv->BT_Ant_isolation);
+		switch (pbtpriv->BT_Service) {
+		case BT_OtherAction:
+			printk(KERN_INFO "rtl8192cu: BlueTooth BT_Service = "
+			       "BT_OtherAction\n");
+			break;
+		case BT_SCO:
+			printk(KERN_INFO "rtl8192cu: BlueTooth BT_Service = "
+			       "BT_SCO\n");
+			break;
+		case BT_Busy:
+			printk(KERN_INFO "rtl8192cu: BlueTooth BT_Service = "
+			       "BT_Busy\n");
+			break;
+		case BT_OtherBusy:
+			printk(KERN_INFO "rtl8192cu: BlueTooth BT_Service = "
+			       "BT_OtherBusy\n");
+			break;
+		default:
+			printk(KERN_INFO "rtl8192cu: BlueTooth BT_Service = "
+			       "BT_Idle\n");
+			break;
+		}
+		printk(KERN_INFO "rtl8192cu: BT_RadioSharedType = 0x%x\n",
+		       pbtpriv->BT_RadioSharedType);
+	}
+}
+
+#define GET_BT_COEXIST(priv) (&priv->bt_coexist)
+
+static void _rtl92cu_read_bluetooth_coexistInfo(struct ieee80211_hw *hw,
+						u8 *contents,
+						bool bautoloadfailed);
+{
+	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(Adapter);
+	bool isNormal = IS_NORMAL_CHIP(pHalData->VersionID);
+	struct btcoexist_priv	 *pbtpriv = &pHalData->bt_coexist;
+	u8	rf_opt4;
+
+	_rtw_memset(pbtpriv, 0, sizeof(struct btcoexist_priv));
+	if (AutoloadFail) {
+		pbtpriv->BT_Coexist = _FALSE;
+		pbtpriv->BT_CoexistType = BT_2Wire;
+		pbtpriv->BT_Ant_Num = Ant_x2;
+		pbtpriv->BT_Ant_isolation = 0;
+		pbtpriv->BT_RadioSharedType = BT_Radio_Shared;
+		return;
+	}
+	if (isNormal) {
+		if (pHalData->BoardType == BOARD_USB_COMBO)
+			pbtpriv->BT_Coexist = _TRUE;
+		else
+			pbtpriv->BT_Coexist = ((PROMContent[EEPROM_RF_OPT3] &
+					      0x20) >> 5); /* bit[5] */
+		rf_opt4 = PROMContent[EEPROM_RF_OPT4];
+		pbtpriv->BT_CoexistType = ((rf_opt4&0xe)>>1); /* bit [3:1] */
+		pbtpriv->BT_Ant_Num = (rf_opt4&0x1); /* bit [0] */
+		pbtpriv->BT_Ant_isolation = ((rf_opt4&0x10)>>4); /* bit [4] */
+		pbtpriv->BT_RadioSharedType = ((rf_opt4&0x20)>>5); /* bit [5] */
+	} else {
+		pbtpriv->BT_Coexist = (PROMContent[EEPROM_RF_OPT4] >> 4) ?
+				       _TRUE : _FALSE;
+	}
+	_update_bt_param(Adapter);
+}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void _rtl92cu_read_adapter_info(struct ieee80211_hw *hw)
 {
 	struct rtl_priv *rtlpriv = rtl_priv(hw);
@@ -355,6 +586,7 @@ static void _rtl92cu_read_adapter_info(struct ieee80211_hw *hw)
 		       HWSET_MAX_SIZE);
 	} else if (rtlefuse->epromtype == EEPROM_93C46) {
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+<<<<<<< HEAD
 			 "RTL819X Not boot from eeprom, check it !!\n");
 	}
 	RT_PRINT_DATA(rtlpriv, COMP_INIT, DBG_LOUD, "MAP",
@@ -369,11 +601,28 @@ static void _rtl92cu_read_adapter_info(struct ieee80211_hw *hw)
 		rtlefuse->autoload_failflag = false;
 	}
 	if (rtlefuse->autoload_failflag)
+=======
+			 ("RTL819X Not boot from eeprom, check it !!"));
+	}
+	RT_PRINT_DATA(rtlpriv, COMP_INIT, DBG_LOUD, ("MAP\n"),
+		      hwinfo, HWSET_MAX_SIZE);
+	eeprom_id = *((u16 *)&hwinfo[0]);
+	if (eeprom_id != RTL8190_EEPROM_ID) {
+		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+			 ("EEPROM ID(%#x) is invalid!!\n", eeprom_id));
+		rtlefuse->autoload_failflag = true;
+	} else {
+		RT_TRACE(rtlpriv, COMP_INIT, DBG_LOUD, ("Autoload OK\n"));
+		rtlefuse->autoload_failflag = false;
+	}
+	if (rtlefuse->autoload_failflag == true)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	for (i = 0; i < 6; i += 2) {
 		usvalue = *(u16 *)&hwinfo[EEPROM_MAC_ADDR + i];
 		*((u16 *) (&rtlefuse->dev_addr[i])) = usvalue;
 	}
+<<<<<<< HEAD
 	pr_info("MAC address: %pM\n", rtlefuse->dev_addr);
 	_rtl92cu_read_txpower_info_from_hwpg(hw,
 					   rtlefuse->autoload_failflag, hwinfo);
@@ -388,6 +637,22 @@ static void _rtl92cu_read_adapter_info(struct ieee80211_hw *hw)
 	rtlefuse->eeprom_oemid = *(u8 *)&hwinfo[EEPROM_CUSTOMER_ID];
 	RT_TRACE(rtlpriv, COMP_INIT, DBG_LOUD, "EEPROM Customer ID: 0x%2x\n",
 		 rtlefuse->eeprom_oemid);
+=======
+	printk(KERN_INFO "rtl8192cu: MAC address: %pM\n", rtlefuse->dev_addr);
+	_rtl92cu_read_txpower_info_from_hwpg(hw,
+					   rtlefuse->autoload_failflag, hwinfo);
+	rtlefuse->eeprom_vid = *(u16 *)&hwinfo[EEPROM_VID];
+	rtlefuse->eeprom_did = *(u16 *)&hwinfo[EEPROM_DID];
+	RT_TRACE(rtlpriv, COMP_INIT, DBG_DMESG,
+		 (" VID = 0x%02x PID = 0x%02x\n",
+		 rtlefuse->eeprom_vid, rtlefuse->eeprom_did));
+	rtlefuse->eeprom_channelplan = *(u8 *)&hwinfo[EEPROM_CHANNELPLAN];
+	rtlefuse->eeprom_version = *(u16 *)&hwinfo[EEPROM_VERSION];
+	rtlefuse->txpwr_fromeprom = true;
+	rtlefuse->eeprom_oemid = *(u8 *)&hwinfo[EEPROM_CUSTOMER_ID];
+	RT_TRACE(rtlpriv, COMP_INIT, DBG_LOUD,
+		 ("EEPROM Customer ID: 0x%2x\n", rtlefuse->eeprom_oemid));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rtlhal->oem_id == RT_CID_DEFAULT) {
 		switch (rtlefuse->eeprom_oemid) {
 		case EEPROM_CID_DEFAULT:
@@ -414,6 +679,13 @@ static void _rtl92cu_read_adapter_info(struct ieee80211_hw *hw)
 		}
 	}
 	_rtl92cu_read_board_type(hw, hwinfo);
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_BT_COEXIST
+	_rtl92cu_read_bluetooth_coexistInfo(hw, hwinfo,
+					    rtlefuse->autoload_failflag);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void _rtl92cu_hal_customized_behavior(struct ieee80211_hw *hw)
@@ -435,8 +707,13 @@ static void _rtl92cu_hal_customized_behavior(struct ieee80211_hw *hw)
 	default:
 		break;
 	}
+<<<<<<< HEAD
 	RT_TRACE(rtlpriv, COMP_INIT, DBG_DMESG, "RT Customized ID: 0x%02X\n",
 		 rtlhal->oem_id);
+=======
+	RT_TRACE(rtlpriv, COMP_INIT, DBG_DMESG,
+		 ("RT Customized ID: 0x%02X\n", rtlhal->oem_id));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void rtl92cu_read_eeprom_info(struct ieee80211_hw *hw)
@@ -452,11 +729,19 @@ void rtl92cu_read_eeprom_info(struct ieee80211_hw *hw)
 	tmp_u1b = rtl_read_byte(rtlpriv, REG_9346CR);
 	rtlefuse->epromtype = (tmp_u1b & BOOT_FROM_EEPROM) ?
 			       EEPROM_93C46 : EEPROM_BOOT_EFUSE;
+<<<<<<< HEAD
 	RT_TRACE(rtlpriv, COMP_INIT, DBG_DMESG, "Boot from %s\n",
 		 tmp_u1b & BOOT_FROM_EEPROM ? "EERROM" : "EFUSE");
 	rtlefuse->autoload_failflag = (tmp_u1b & EEPROM_EN) ? false : true;
 	RT_TRACE(rtlpriv, COMP_INIT, DBG_LOUD, "Autoload %s\n",
 		 tmp_u1b & EEPROM_EN ? "OK!!" : "ERR!!");
+=======
+	RT_TRACE(rtlpriv, COMP_INIT, DBG_DMESG, ("Boot from %s\n",
+		 (tmp_u1b & BOOT_FROM_EEPROM) ? "EERROM" : "EFUSE"));
+	rtlefuse->autoload_failflag = (tmp_u1b & EEPROM_EN) ? false : true;
+	RT_TRACE(rtlpriv, COMP_INIT, DBG_LOUD, ("Autoload %s\n",
+		 (tmp_u1b & EEPROM_EN) ? "OK!!" : "ERR!!"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	_rtl92cu_read_adapter_info(hw);
 	_rtl92cu_hal_customized_behavior(hw);
 	return;
@@ -474,12 +759,21 @@ static int _rtl92cu_init_power_on(struct ieee80211_hw *hw)
 	do {
 		if (rtl_read_byte(rtlpriv, REG_APS_FSMCO) & PFM_ALDN) {
 			RT_TRACE(rtlpriv, COMP_INIT, DBG_DMESG,
+<<<<<<< HEAD
 				 "Autoload Done!\n");
+=======
+				 ("Autoload Done!\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 		if (pollingCount++ > 100) {
 			RT_TRACE(rtlpriv, COMP_INIT, DBG_EMERG,
+<<<<<<< HEAD
 				 "Failed to polling REG_APS_FSMCO[PFM_ALDN] done!\n");
+=======
+				 ("Failed to polling REG_APS_FSMCO[PFM_ALDN]"
+				 " done!\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ENODEV;
 		}
 	} while (true);
@@ -494,8 +788,13 @@ static int _rtl92cu_init_power_on(struct ieee80211_hw *hw)
 		value8 |= LDV12_EN;
 		rtl_write_byte(rtlpriv, REG_LDOV12D_CTRL, value8);
 		RT_TRACE(rtlpriv, COMP_INIT, DBG_DMESG,
+<<<<<<< HEAD
 			 " power-on :REG_LDOV12D_CTRL Reg0x21:0x%02x\n",
 			 value8);
+=======
+			 (" power-on :REG_LDOV12D_CTRL Reg0x21:0x%02x.\n",
+			 value8));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		udelay(100);
 		value8 = rtl_read_byte(rtlpriv, REG_SYS_ISO_CTRL);
 		value8 &= ~ISO_MD2PP;
@@ -508,12 +807,21 @@ static int _rtl92cu_init_power_on(struct ieee80211_hw *hw)
 	rtl_write_word(rtlpriv, REG_APS_FSMCO, value16);
 	do {
 		if (!(rtl_read_word(rtlpriv, REG_APS_FSMCO) & APFM_ONMAC)) {
+<<<<<<< HEAD
 			pr_info("MAC auto ON okay!\n");
+=======
+			printk(KERN_INFO "rtl8192cu: MAC auto ON okay!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 		if (pollingCount++ > 100) {
 			RT_TRACE(rtlpriv, COMP_INIT, DBG_EMERG,
+<<<<<<< HEAD
 				 "Failed to polling REG_APS_FSMCO[APFM_ONMAC] done!\n");
+=======
+				 ("Failed to polling REG_APS_FSMCO[APFM_ONMAC]"
+				 " done!\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ENODEV;
 		}
 	} while (true);
@@ -661,7 +969,11 @@ static void _rtl92cu_init_chipN_one_out_ep_priority(struct ieee80211_hw *hw,
 	}
 	_rtl92c_init_chipN_reg_priority(hw, value, value, value, value,
 					value, value);
+<<<<<<< HEAD
 	pr_info("Tx queue select: 0x%02x\n", queue_sel);
+=======
+	printk(KERN_INFO "rtl8192cu: Tx queue select: 0x%02x\n", queue_sel);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void _rtl92cu_init_chipN_two_out_ep_priority(struct ieee80211_hw *hw,
@@ -705,7 +1017,11 @@ static void _rtl92cu_init_chipN_two_out_ep_priority(struct ieee80211_hw *hw,
 		hiQ = valueHi;
 	}
 	_rtl92c_init_chipN_reg_priority(hw, beQ, bkQ, viQ, voQ, mgtQ, hiQ);
+<<<<<<< HEAD
 	pr_info("Tx queue select: 0x%02x\n", queue_sel);
+=======
+	printk(KERN_INFO "rtl8192cu: Tx queue select: 0x%02x\n", queue_sel);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void _rtl92cu_init_chipN_three_out_ep_priority(struct ieee80211_hw *hw,
@@ -731,8 +1047,13 @@ static void _rtl92cu_init_chipN_three_out_ep_priority(struct ieee80211_hw *hw,
 		hiQ	= QUEUE_HIGH;
 	}
 	_rtl92c_init_chipN_reg_priority(hw, beQ, bkQ, viQ, voQ, mgtQ, hiQ);
+<<<<<<< HEAD
 	RT_TRACE(rtlpriv, COMP_INIT, DBG_EMERG, "Tx queue select :0x%02x..\n",
 		 queue_sel);
+=======
+	RT_TRACE(rtlpriv, COMP_INIT, DBG_EMERG,
+		 ("Tx queue select :0x%02x..\n", queue_sel));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void _rtl92cu_init_chipN_queue_priority(struct ieee80211_hw *hw,
@@ -791,8 +1112,13 @@ static void _rtl92cu_init_chipT_queue_priority(struct ieee80211_hw *hw,
 		break;
 	}
 	rtl_write_byte(rtlpriv, (REG_TRXDMA_CTRL+1), hq_sele);
+<<<<<<< HEAD
 	RT_TRACE(rtlpriv, COMP_INIT, DBG_EMERG, "Tx queue select :0x%02x..\n",
 		 hq_sele);
+=======
+	RT_TRACE(rtlpriv, COMP_INIT, DBG_EMERG,
+		 ("Tx queue select :0x%02x..\n", hq_sele));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void _rtl92cu_init_queue_priority(struct ieee80211_hw *hw,
@@ -852,7 +1178,11 @@ static int _rtl92cu_init_mac(struct ieee80211_hw *hw)
 
 	if (err) {
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+<<<<<<< HEAD
 			 "Failed to init power on!\n");
+=======
+			("Failed to init power on!\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 	}
 	if (!wmm_enable) {
@@ -864,7 +1194,11 @@ static int _rtl92cu_init_mac(struct ieee80211_hw *hw)
 	}
 	if (false == rtl92c_init_llt_table(hw, boundary)) {
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+<<<<<<< HEAD
 			 "Failed to init LLT Table!\n");
+=======
+			("Failed to init LLT Table!\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 	_rtl92cu_init_queue_reserved_page(hw, wmm_enable, out_ep_nums,
@@ -897,12 +1231,21 @@ void rtl92cu_enable_hw_security_config(struct ieee80211_hw *hw)
 	struct rtl_hal *rtlhal = rtl_hal(rtlpriv);
 
 	RT_TRACE(rtlpriv, COMP_INIT, DBG_LOUD,
+<<<<<<< HEAD
 		 "PairwiseEncAlgorithm = %d GroupEncAlgorithm = %d\n",
 		 rtlpriv->sec.pairwise_enc_algorithm,
 		 rtlpriv->sec.group_enc_algorithm);
 	if (rtlpriv->cfg->mod_params->sw_crypto || rtlpriv->sec.use_sw_sec) {
 		RT_TRACE(rtlpriv, COMP_SEC, DBG_DMESG,
 			 "not open sw encryption\n");
+=======
+		 ("PairwiseEncAlgorithm = %d GroupEncAlgorithm = %d\n",
+		  rtlpriv->sec.pairwise_enc_algorithm,
+		  rtlpriv->sec.group_enc_algorithm));
+	if (rtlpriv->cfg->mod_params->sw_crypto || rtlpriv->sec.use_sw_sec) {
+		RT_TRACE(rtlpriv, COMP_SEC, DBG_DMESG,
+			 ("not open sw encryption\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 	sec_reg_value = SCR_TxEncEnable | SCR_RxDecEnable;
@@ -913,8 +1256,13 @@ void rtl92cu_enable_hw_security_config(struct ieee80211_hw *hw)
 	if (IS_NORMAL_CHIP(rtlhal->version))
 		sec_reg_value |= (SCR_RXBCUSEDK | SCR_TXBCUSEDK);
 	rtl_write_byte(rtlpriv, REG_CR + 1, 0x02);
+<<<<<<< HEAD
 	RT_TRACE(rtlpriv, COMP_SEC, DBG_LOUD, "The SECR-value %x\n",
 		 sec_reg_value);
+=======
+	RT_TRACE(rtlpriv, COMP_SEC, DBG_LOUD,
+		 ("The SECR-value %x\n", sec_reg_value));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtlpriv->cfg->ops->set_hw_reg(hw, HW_VAR_WPA_CONFIG, &sec_reg_value);
 }
 
@@ -965,6 +1313,37 @@ static void _InitPABias(struct ieee80211_hw *hw)
 	}
 }
 
+<<<<<<< HEAD
+=======
+static void _InitAntenna_Selection(struct ieee80211_hw *hw)
+{
+#ifdef CONFIG_ANTENNA_DIVERSITY
+	struct rtl_priv *rtlpriv = rtl_priv(hw);
+	struct rtl_hal *rtlhal = rtl_hal(rtl_priv(hw));
+	struct rtl_phy *rtlphy = &(rtlpriv->phy);
+
+	if (pHalData->AntDivCfg == 0)
+		return;
+
+	if (rtlphy->rf_type == RF_1T1R) {
+		rtl_write_dword(rtlpriv, REG_LEDCFG0,
+				rtl_read_dword(rtlpriv,
+				REG_LEDCFG0)|BIT(23));
+		rtl_set_bbreg(hw, rFPGA0_XAB_RFPARAMETER, BIT(13), 0x01);
+		if (rtl_get_bbreg(hw, RFPGA0_XA_RFINTERFACEOE, 0x300) ==
+		    Antenna_A)
+			pHalData->CurAntenna = Antenna_A;
+		else
+			pHalData->CurAntenna = Antenna_B;
+	}
+#endif
+}
+
+static void _dump_registers(struct ieee80211_hw *hw)
+{
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void _update_mac_setting(struct ieee80211_hw *hw)
 {
 	struct rtl_priv *rtlpriv = rtl_priv(hw);
@@ -989,15 +1368,28 @@ int rtl92cu_hw_init(struct ieee80211_hw *hw)
 	rtlhal->hw_type = HARDWARE_TYPE_RTL8192CU;
 	err = _rtl92cu_init_mac(hw);
 	if (err) {
+<<<<<<< HEAD
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG, "init mac failed!\n");
+=======
+		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG, ("init mac failed!\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return err;
 	}
 	err = rtl92c_download_fw(hw);
 	if (err) {
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_WARNING,
+<<<<<<< HEAD
 			 "Failed to download FW. Init HW without FW now..\n");
 		err = 1;
 		return err;
+=======
+			 ("Failed to download FW. Init HW without FW now..\n"));
+		err = 1;
+		rtlhal->fw_ready = false;
+		return err;
+	} else {
+		rtlhal->fw_ready = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	rtlhal->last_hmeboxnum = 0; /* h2c */
 	_rtl92cu_phy_param_tab_init(hw);
@@ -1032,8 +1424,15 @@ int rtl92cu_hw_init(struct ieee80211_hw *hw)
 	}
 	_rtl92cu_hw_configure(hw);
 	_InitPABias(hw);
+<<<<<<< HEAD
 	_update_mac_setting(hw);
 	rtl92c_dm_init(hw);
+=======
+	_InitAntenna_Selection(hw);
+	_update_mac_setting(hw);
+	rtl92c_dm_init(hw);
+	_dump_registers(hw);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -1091,6 +1490,7 @@ static void  _ResetDigitalProcedure1(struct ieee80211_hw *hw, bool bWithoutHWSM)
 		if (rtl_read_byte(rtlpriv, REG_MCUFWDL) & BIT(1)) {
 			/* reset MCU ready status */
 			rtl_write_byte(rtlpriv, REG_MCUFWDL, 0);
+<<<<<<< HEAD
 			/* 8051 reset by self */
 			rtl_write_byte(rtlpriv, REG_HMETFR+3, 0x20);
 			while ((retry_cnts++ < 100) &&
@@ -1106,6 +1506,26 @@ static void  _ResetDigitalProcedure1(struct ieee80211_hw *hw, bool bWithoutHWSM)
 					       REG_SYS_FUNC_EN + 1,
 					       0x50);
 				udelay(100);
+=======
+			if (rtlhal->fw_ready) {
+				/* 8051 reset by self */
+				rtl_write_byte(rtlpriv, REG_HMETFR+3, 0x20);
+				while ((retry_cnts++ < 100) &&
+				       (FEN_CPUEN & rtl_read_word(rtlpriv,
+				       REG_SYS_FUNC_EN))) {
+					udelay(50);
+				}
+				if (retry_cnts >= 100) {
+					RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+						("#####=> 8051 reset failed!.."
+						".......................\n"););
+					/* if 8051 reset fail, reset MAC. */
+					rtl_write_byte(rtlpriv,
+						       REG_SYS_FUNC_EN + 1,
+						       0x50);
+					udelay(100);
+				}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 		/* Reset MAC and Enable 8051 */
@@ -1313,36 +1733,61 @@ static int _rtl92cu_set_media_status(struct ieee80211_hw *hw,
 		_rtl92cu_resume_tx_beacon(hw);
 		_rtl92cu_disable_bcn_sub_func(hw);
 	} else {
+<<<<<<< HEAD
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_WARNING,
 			 "Set HW_VAR_MEDIA_STATUS:No such media status(%x)\n",
 			 type);
+=======
+		RT_TRACE(rtlpriv, COMP_ERR, DBG_WARNING, ("Set HW_VAR_MEDIA_"
+			 "STATUS:No such media status(%x).\n", type));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	switch (type) {
 	case NL80211_IFTYPE_UNSPECIFIED:
 		bt_msr |= MSR_NOLINK;
 		ledaction = LED_CTL_LINK;
 		RT_TRACE(rtlpriv, COMP_INIT, DBG_TRACE,
+<<<<<<< HEAD
 			 "Set Network type to NO LINK!\n");
+=======
+			 ("Set Network type to NO LINK!\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case NL80211_IFTYPE_ADHOC:
 		bt_msr |= MSR_ADHOC;
 		RT_TRACE(rtlpriv, COMP_INIT, DBG_TRACE,
+<<<<<<< HEAD
 			 "Set Network type to Ad Hoc!\n");
+=======
+			 ("Set Network type to Ad Hoc!\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case NL80211_IFTYPE_STATION:
 		bt_msr |= MSR_INFRA;
 		ledaction = LED_CTL_LINK;
 		RT_TRACE(rtlpriv, COMP_INIT, DBG_TRACE,
+<<<<<<< HEAD
 			 "Set Network type to STA!\n");
+=======
+			 ("Set Network type to STA!\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case NL80211_IFTYPE_AP:
 		bt_msr |= MSR_AP;
 		RT_TRACE(rtlpriv, COMP_INIT, DBG_TRACE,
+<<<<<<< HEAD
 			 "Set Network type to AP!\n");
 		break;
 	default:
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
 			 "Network type %d not supported!\n", type);
+=======
+			 ("Set Network type to AP!\n"));
+		break;
+	default:
+		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+			 ("Network type %d not support!\n", type));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error_out;
 	}
 	rtl_write_byte(rtlpriv, (MSR), bt_msr);
@@ -1377,6 +1822,7 @@ void rtl92cu_card_disable(struct ieee80211_hw *hw)
 
 void rtl92cu_set_check_bssid(struct ieee80211_hw *hw, bool check_bssid)
 {
+<<<<<<< HEAD
 	struct rtl_priv *rtlpriv = rtl_priv(hw);
 	struct rtl_hal *rtlhal = rtl_hal(rtlpriv);
 	u32 reg_rcr = rtl_read_dword(rtlpriv, REG_RCR);
@@ -1428,6 +1874,76 @@ int rtl92cu_set_network_type(struct ieee80211_hw *hw, enum nl80211_iftype type)
 		rtl92cu_set_check_bssid(hw, false);
 	}
 
+=======
+	/* dummy routine needed for callback from rtl_op_configure_filter() */
+}
+
+/*========================================================================== */
+
+static void _rtl92cu_set_check_bssid(struct ieee80211_hw *hw,
+			      enum nl80211_iftype type)
+{
+	struct rtl_priv *rtlpriv = rtl_priv(hw);
+	u32 reg_rcr = rtl_read_dword(rtlpriv, REG_RCR);
+	struct rtl_hal *rtlhal = rtl_hal(rtlpriv);
+	struct rtl_phy *rtlphy = &(rtlpriv->phy);
+	u8 filterout_non_associated_bssid = false;
+
+	switch (type) {
+	case NL80211_IFTYPE_ADHOC:
+	case NL80211_IFTYPE_STATION:
+		filterout_non_associated_bssid = true;
+		break;
+	case NL80211_IFTYPE_UNSPECIFIED:
+	case NL80211_IFTYPE_AP:
+	default:
+		break;
+	}
+	if (filterout_non_associated_bssid == true) {
+		if (IS_NORMAL_CHIP(rtlhal->version)) {
+			switch (rtlphy->current_io_type) {
+			case IO_CMD_RESUME_DM_BY_SCAN:
+				reg_rcr |= (RCR_CBSSID_DATA | RCR_CBSSID_BCN);
+				rtlpriv->cfg->ops->set_hw_reg(hw,
+						 HW_VAR_RCR, (u8 *)(&reg_rcr));
+				/* enable update TSF */
+				_rtl92cu_set_bcn_ctrl_reg(hw, 0, BIT(4));
+				break;
+			case IO_CMD_PAUSE_DM_BY_SCAN:
+				reg_rcr &= ~(RCR_CBSSID_DATA | RCR_CBSSID_BCN);
+				rtlpriv->cfg->ops->set_hw_reg(hw,
+						 HW_VAR_RCR, (u8 *)(&reg_rcr));
+				/* disable update TSF */
+				_rtl92cu_set_bcn_ctrl_reg(hw, BIT(4), 0);
+				break;
+			}
+		} else {
+			reg_rcr |= (RCR_CBSSID);
+			rtlpriv->cfg->ops->set_hw_reg(hw, HW_VAR_RCR,
+						      (u8 *)(&reg_rcr));
+			_rtl92cu_set_bcn_ctrl_reg(hw, 0, (BIT(4)|BIT(5)));
+		}
+	} else if (filterout_non_associated_bssid == false) {
+		if (IS_NORMAL_CHIP(rtlhal->version)) {
+			reg_rcr &= (~(RCR_CBSSID_DATA | RCR_CBSSID_BCN));
+			rtlpriv->cfg->ops->set_hw_reg(hw, HW_VAR_RCR,
+						      (u8 *)(&reg_rcr));
+			_rtl92cu_set_bcn_ctrl_reg(hw, BIT(4), 0);
+		} else {
+			reg_rcr &= (~RCR_CBSSID);
+			rtlpriv->cfg->ops->set_hw_reg(hw, HW_VAR_RCR,
+						      (u8 *)(&reg_rcr));
+			_rtl92cu_set_bcn_ctrl_reg(hw, (BIT(4)|BIT(5)), 0);
+		}
+	}
+}
+
+int rtl92cu_set_network_type(struct ieee80211_hw *hw, enum nl80211_iftype type)
+{
+	if (_rtl92cu_set_media_status(hw, type))
+		return -EOPNOTSUPP;
+	_rtl92cu_set_check_bssid(hw, type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1486,8 +2002,13 @@ void rtl92cu_set_beacon_related_registers(struct ieee80211_hw *hw)
 	value32 |= TSFRST;
 	rtl_write_dword(rtlpriv, REG_TCR, value32);
 	RT_TRACE(rtlpriv, COMP_INIT|COMP_BEACON, DBG_LOUD,
+<<<<<<< HEAD
 		 "SetBeaconRelatedRegisters8192CUsb(): Set TCR(%x)\n",
 		 value32);
+=======
+		 ("SetBeaconRelatedRegisters8192CUsb(): Set TCR(%x)\n",
+		 value32));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* TODO: Modify later (Find the right parameters)
 	 * NOTE: Fix test chip's bug (about contention windows's randomness) */
 	if ((mac->opmode == NL80211_IFTYPE_ADHOC) ||
@@ -1504,8 +2025,13 @@ void rtl92cu_set_beacon_interval(struct ieee80211_hw *hw)
 	struct rtl_mac *mac = rtl_mac(rtl_priv(hw));
 	u16 bcn_interval = mac->beacon_interval;
 
+<<<<<<< HEAD
 	RT_TRACE(rtlpriv, COMP_BEACON, DBG_DMESG, "beacon_interval:%d\n",
 		 bcn_interval);
+=======
+	RT_TRACE(rtlpriv, COMP_BEACON, DBG_DMESG,
+		 ("beacon_interval:%d\n", bcn_interval));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtl_write_word(rtlpriv, REG_BCN_INTERVAL, bcn_interval);
 }
 
@@ -1569,7 +2095,11 @@ void rtl92cu_get_hw_reg(struct ieee80211_hw *hw, u8 variable, u8 *val)
 		break;
 	default:
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+<<<<<<< HEAD
 			 "switch case not processed\n");
+=======
+			 ("switch case not process\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 }
@@ -1629,7 +2159,12 @@ void rtl92cu_set_hw_reg(struct ieee80211_hw *hw, u8 variable, u8 *val)
 			rtl_write_byte(rtlpriv, REG_MAC_SPEC_SIFS + 1, val[0]);
 			rtl_write_byte(rtlpriv, REG_R2T_SIFS+1, val[0]);
 			rtl_write_byte(rtlpriv, REG_T2T_SIFS+1, val[0]);
+<<<<<<< HEAD
 			RT_TRACE(rtlpriv, COMP_MLME, DBG_LOUD, "HW_VAR_SIFS\n");
+=======
+			RT_TRACE(rtlpriv, COMP_MLME, DBG_LOUD,
+				 ("HW_VAR_SIFS\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	case HW_VAR_SLOT_TIME:{
@@ -1638,7 +2173,11 @@ void rtl92cu_set_hw_reg(struct ieee80211_hw *hw, u8 variable, u8 *val)
 
 			rtl_write_byte(rtlpriv, REG_SLOT, val[0]);
 			RT_TRACE(rtlpriv, COMP_MLME, DBG_LOUD,
+<<<<<<< HEAD
 				 "HW_VAR_SLOT_TIME %x\n", val[0]);
+=======
+				 ("HW_VAR_SLOT_TIME %x\n", val[0]));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (QOS_MODE) {
 				for (e_aci = 0; e_aci < AC_MAX; e_aci++)
 					rtlpriv->cfg->ops->set_hw_reg(hw,
@@ -1702,8 +2241,13 @@ void rtl92cu_set_hw_reg(struct ieee80211_hw *hw, u8 variable, u8 *val)
 						     min_spacing_to_set);
 				*val = min_spacing_to_set;
 				RT_TRACE(rtlpriv, COMP_MLME, DBG_LOUD,
+<<<<<<< HEAD
 					 "Set HW_VAR_AMPDU_MIN_SPACE: %#x\n",
 					 mac->min_space_cfg);
+=======
+					("Set HW_VAR_AMPDU_MIN_SPACE: %#x\n",
+					mac->min_space_cfg));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				rtl_write_byte(rtlpriv, REG_AMPDU_MIN_SPACE,
 					       mac->min_space_cfg);
 			}
@@ -1717,8 +2261,13 @@ void rtl92cu_set_hw_reg(struct ieee80211_hw *hw, u8 variable, u8 *val)
 			mac->min_space_cfg &= 0x07;
 			mac->min_space_cfg |= (density_to_set << 3);
 			RT_TRACE(rtlpriv, COMP_MLME, DBG_LOUD,
+<<<<<<< HEAD
 				 "Set HW_VAR_SHORTGI_DENSITY: %#x\n",
 				 mac->min_space_cfg);
+=======
+				 ("Set HW_VAR_SHORTGI_DENSITY: %#x\n",
+				  mac->min_space_cfg));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rtl_write_byte(rtlpriv, REG_AMPDU_MIN_SPACE,
 				       mac->min_space_cfg);
 			break;
@@ -1751,8 +2300,13 @@ void rtl92cu_set_hw_reg(struct ieee80211_hw *hw, u8 variable, u8 *val)
 						       p_regtoset[index]);
 				}
 				RT_TRACE(rtlpriv, COMP_MLME, DBG_LOUD,
+<<<<<<< HEAD
 					 "Set HW_VAR_AMPDU_FACTOR: %#x\n",
 					 factor_toset);
+=======
+					 ("Set HW_VAR_AMPDU_FACTOR: %#x\n",
+					  factor_toset));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			break;
 		}
@@ -1770,8 +2324,13 @@ void rtl92cu_set_hw_reg(struct ieee80211_hw *hw, u8 variable, u8 *val)
 					 AC_PARAM_ECW_MAX_OFFSET);
 			u4b_ac_param |= (u32) tx_op << AC_PARAM_TXOP_OFFSET;
 			RT_TRACE(rtlpriv, COMP_MLME, DBG_LOUD,
+<<<<<<< HEAD
 				 "queue:%x, ac_param:%x\n",
 				 e_aci, u4b_ac_param);
+=======
+				 ("queue:%x, ac_param:%x\n", e_aci,
+				  u4b_ac_param));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			switch (e_aci) {
 			case AC1_BK:
 				rtl_write_dword(rtlpriv, REG_EDCA_BK_PARAM,
@@ -1790,9 +2349,14 @@ void rtl92cu_set_hw_reg(struct ieee80211_hw *hw, u8 variable, u8 *val)
 						u4b_ac_param);
 				break;
 			default:
+<<<<<<< HEAD
 				RT_ASSERT(false,
 					  "SetHwReg8185(): invalid aci: %d !\n",
 					  e_aci);
+=======
+				RT_ASSERT(false, ("SetHwReg8185(): invalid"
+					  " aci: %d !\n", e_aci));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 			}
 			if (rtlusb->acm_method != eAcmWay2_SW)
@@ -1822,8 +2386,13 @@ void rtl92cu_set_hw_reg(struct ieee80211_hw *hw, u8 variable, u8 *val)
 					break;
 				default:
 					RT_TRACE(rtlpriv, COMP_ERR, DBG_WARNING,
+<<<<<<< HEAD
 						 "HW_VAR_ACM_CTRL acm set failed: eACI is %d\n",
 						 acm);
+=======
+						 ("HW_VAR_ACM_CTRL acm set "
+						  "failed: eACI is %d\n", acm));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					break;
 				}
 			} else {
@@ -1839,13 +2408,22 @@ void rtl92cu_set_hw_reg(struct ieee80211_hw *hw, u8 variable, u8 *val)
 					break;
 				default:
 					RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+<<<<<<< HEAD
 						 "switch case not processed\n");
+=======
+						 ("switch case not process\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					break;
 				}
 			}
 			RT_TRACE(rtlpriv, COMP_QOS, DBG_TRACE,
+<<<<<<< HEAD
 				 "SetHwReg8190pci(): [HW_VAR_ACM_CTRL] Write 0x%X\n",
 				 acm_ctrl);
+=======
+				 ("SetHwReg8190pci(): [HW_VAR_ACM_CTRL] "
+				  "Write 0x%X\n", acm_ctrl));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rtl_write_byte(rtlpriv, REG_ACMHWCTRL, acm_ctrl);
 			break;
 		}
@@ -1853,7 +2431,11 @@ void rtl92cu_set_hw_reg(struct ieee80211_hw *hw, u8 variable, u8 *val)
 			rtl_write_dword(rtlpriv, REG_RCR, ((u32 *) (val))[0]);
 			mac->rx_conf = ((u32 *) (val))[0];
 			RT_TRACE(rtlpriv, COMP_RECV, DBG_DMESG,
+<<<<<<< HEAD
 				 "### Set RCR(0x%08x) ###\n", mac->rx_conf);
+=======
+				 ("### Set RCR(0x%08x) ###\n", mac->rx_conf));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	case HW_VAR_RETRY_LIMIT:{
@@ -1862,9 +2444,14 @@ void rtl92cu_set_hw_reg(struct ieee80211_hw *hw, u8 variable, u8 *val)
 			rtl_write_word(rtlpriv, REG_RL,
 				       retry_limit << RETRY_LIMIT_SHORT_SHIFT |
 				       retry_limit << RETRY_LIMIT_LONG_SHIFT);
+<<<<<<< HEAD
 			RT_TRACE(rtlpriv, COMP_MLME, DBG_DMESG,
 				 "Set HW_VAR_RETRY_LIMIT(0x%08x)\n",
 				 retry_limit);
+=======
+			RT_TRACE(rtlpriv, COMP_MLME, DBG_DMESG, ("Set HW_VAR_R"
+				 "ETRY_LIMIT(0x%08x)\n", retry_limit));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	case HW_VAR_DUAL_TSF_RST:
@@ -1946,7 +2533,11 @@ void rtl92cu_set_hw_reg(struct ieee80211_hw *hw, u8 variable, u8 *val)
 	case HW_VAR_CORRECT_TSF:{
 			u8 btype_ibss = ((u8 *) (val))[0];
 
+<<<<<<< HEAD
 			if (btype_ibss)
+=======
+			if (btype_ibss == true)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				_rtl92cu_stop_tx_beacon(hw);
 			_rtl92cu_set_bcn_ctrl_reg(hw, 0, BIT(3));
 			rtl_write_dword(rtlpriv, REG_TSFTR, (u32)(mac->tsf &
@@ -1954,7 +2545,11 @@ void rtl92cu_set_hw_reg(struct ieee80211_hw *hw, u8 variable, u8 *val)
 			rtl_write_dword(rtlpriv, REG_TSFTR + 4,
 					(u32)((mac->tsf >> 32) & 0xffffffff));
 			_rtl92cu_set_bcn_ctrl_reg(hw, BIT(3), 0);
+<<<<<<< HEAD
 			if (btype_ibss)
+=======
+			if (btype_ibss == true)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				_rtl92cu_resume_tx_beacon(hw);
 			break;
 		}
@@ -1968,8 +2563,13 @@ void rtl92cu_set_hw_reg(struct ieee80211_hw *hw, u8 variable, u8 *val)
 		rtl_write_word(rtlpriv, REG_RXFLTMAP2, *(u16 *)val);
 		break;
 	default:
+<<<<<<< HEAD
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
 			 "switch case not processed\n");
+=======
+		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG, ("switch case "
+							"not process\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 }
@@ -2042,6 +2642,11 @@ void rtl92cu_update_hal_rate_table(struct ieee80211_hw *hw,
 			       (shortgi_rate << 4) | (shortgi_rate);
 	}
 	rtl_write_dword(rtlpriv, REG_ARFR0 + ratr_index * 4, ratr_value);
+<<<<<<< HEAD
+=======
+	RT_TRACE(rtlpriv, COMP_RATR, DBG_DMESG, ("%x\n", rtl_read_dword(rtlpriv,
+		 REG_ARFR0)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void rtl92cu_update_hal_rate_mask(struct ieee80211_hw *hw, u8 rssi_level)
@@ -2145,6 +2750,7 @@ void rtl92cu_update_hal_rate_mask(struct ieee80211_hw *hw, u8 rssi_level)
 			ratr_bitmap &= 0x0f0ff0ff;
 		break;
 	}
+<<<<<<< HEAD
 	RT_TRACE(rtlpriv, COMP_RATR, DBG_DMESG, "ratr_bitmap :%x\n",
 		 ratr_bitmap);
 	*(u32 *)&rate_mask = ((ratr_bitmap & 0x0fffffff) |
@@ -2155,6 +2761,19 @@ void rtl92cu_update_hal_rate_mask(struct ieee80211_hw *hw, u8 rssi_level)
 		 ratr_index, ratr_bitmap,
 		 rate_mask[0], rate_mask[1], rate_mask[2], rate_mask[3],
 		 rate_mask[4]);
+=======
+	RT_TRACE(rtlpriv, COMP_RATR, DBG_DMESG, ("ratr_bitmap :%x\n",
+		 ratr_bitmap));
+	*(u32 *)&rate_mask = ((ratr_bitmap & 0x0fffffff) |
+				      ratr_index << 28);
+	rate_mask[4] = macid | (shortgi ? 0x20 : 0x00) | 0x80;
+	RT_TRACE(rtlpriv, COMP_RATR, DBG_DMESG, ("Rate_index:%x, "
+						"ratr_val:%x, %x:%x:%x:%x:%x\n",
+						ratr_index, ratr_bitmap,
+						rate_mask[0], rate_mask[1],
+						rate_mask[2], rate_mask[3],
+						rate_mask[4]));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtl92c_fill_h2c_cmd(hw, H2C_RA_MASK, 5, rate_mask);
 }
 
@@ -2204,7 +2823,11 @@ bool rtl92cu_gpio_radio_on_off_checking(struct ieee80211_hw *hw, u8 * valid)
 			e_rfpowerstate_toset = (u1tmp & BIT(7)) ?
 					       ERFOFF : ERFON;
 			RT_TRACE(rtlpriv, COMP_POWER, DBG_DMESG,
+<<<<<<< HEAD
 				 "pwrdown, 0x5c(BIT7)=%02x\n", u1tmp);
+=======
+				 ("pwrdown, 0x5c(BIT7)=%02x\n", u1tmp));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			rtl_write_byte(rtlpriv, REG_MAC_PINMUX_CFG,
 				       rtl_read_byte(rtlpriv,
@@ -2213,6 +2836,7 @@ bool rtl92cu_gpio_radio_on_off_checking(struct ieee80211_hw *hw, u8 * valid)
 			e_rfpowerstate_toset  = (u1tmp & BIT(3)) ?
 						 ERFON : ERFOFF;
 			RT_TRACE(rtlpriv, COMP_POWER, DBG_DMESG,
+<<<<<<< HEAD
 				 "GPIO_IN=%02x\n", u1tmp);
 		}
 		RT_TRACE(rtlpriv, COMP_POWER, DBG_LOUD, "N-SS RF =%x\n",
@@ -2221,10 +2845,21 @@ bool rtl92cu_gpio_radio_on_off_checking(struct ieee80211_hw *hw, u8 * valid)
 	if ((ppsc->hwradiooff) && (e_rfpowerstate_toset == ERFON)) {
 		RT_TRACE(rtlpriv, COMP_POWER, DBG_LOUD,
 			 "GPIOChangeRF  - HW Radio ON, RF ON\n");
+=======
+				("GPIO_IN=%02x\n", u1tmp));
+		}
+		RT_TRACE(rtlpriv, COMP_POWER, DBG_LOUD, ("N-SS RF =%x\n",
+			 e_rfpowerstate_toset));
+	}
+	if ((ppsc->hwradiooff) && (e_rfpowerstate_toset == ERFON)) {
+		RT_TRACE(rtlpriv, COMP_POWER, DBG_LOUD, ("GPIOChangeRF  - HW "
+			 "Radio ON, RF ON\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ppsc->hwradiooff = false;
 		actuallyset = true;
 	} else if ((!ppsc->hwradiooff) && (e_rfpowerstate_toset  ==
 		    ERFOFF)) {
+<<<<<<< HEAD
 		RT_TRACE(rtlpriv, COMP_POWER, DBG_LOUD,
 			 "GPIOChangeRF  - HW Radio OFF\n");
 		ppsc->hwradiooff = true;
@@ -2236,6 +2871,20 @@ bool rtl92cu_gpio_radio_on_off_checking(struct ieee80211_hw *hw, u8 * valid)
 	}
 	if (actuallyset) {
 		ppsc->hwradiooff = true;
+=======
+		RT_TRACE(rtlpriv, COMP_POWER, DBG_LOUD, ("GPIOChangeRF  - HW"
+			 " Radio OFF\n"));
+		ppsc->hwradiooff = true;
+		actuallyset = true;
+	} else {
+		RT_TRACE(rtlpriv, COMP_POWER, DBG_LOUD ,
+			 ("pHalData->bHwRadioOff and eRfPowerStateToSet do not"
+			 " match: pHalData->bHwRadioOff %x, eRfPowerStateToSet "
+			 "%x\n", ppsc->hwradiooff, e_rfpowerstate_toset));
+	}
+	if (actuallyset) {
+		ppsc->hwradiooff = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (e_rfpowerstate_toset == ERFON) {
 			if ((ppsc->reg_rfps_level  & RT_RF_OFF_LEVL_ASPM) &&
 			     RT_IN_PS_LEVEL(ppsc, RT_RF_OFF_LEVL_ASPM))

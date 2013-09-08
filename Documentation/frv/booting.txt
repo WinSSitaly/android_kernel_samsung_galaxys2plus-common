@@ -106,6 +106,7 @@ separated by spaces:
       To use the first on-chip serial port at baud rate 115200, no parity, 8
       bits, and no flow control.
 
+<<<<<<< HEAD
   (*) root=<xxxx>
 
       This specifies the device upon which the root filesystem resides. It
@@ -120,6 +121,15 @@ separated by spaces:
 
       Authoritative information can be found in
       "Documentation/kernel-parameters.txt".
+=======
+  (*) root=/dev/<xxxx>
+
+      This specifies the device upon which the root filesystem resides. For
+      example:
+
+	/dev/nfs	NFS root filesystem
+	/dev/mtdblock3	Fourth RedBoot partition on the System Flash
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
   (*) rw
 
@@ -180,3 +190,12 @@ separated by spaces:
 
       This tells the kernel what program to run initially. By default this is
       /sbin/init, but /sbin/sash or /bin/sh are common alternatives.
+<<<<<<< HEAD
+=======
+
+  (*) vdc=...
+
+      This option configures the MB93493 companion chip visual display
+      driver. Please see Documentation/frv/mb93493/vdc.txt for more
+      information.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

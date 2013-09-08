@@ -24,7 +24,11 @@
 
 static DEFINE_SPINLOCK(die_lock);
 
+<<<<<<< HEAD
 void die(const char *str, struct pt_regs *regs, long err)
+=======
+void NORET_TYPE die(const char *str, struct pt_regs *regs, long err)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static int die_counter;
 

@@ -1,7 +1,11 @@
 /*******************************************************************
  * This file is part of the Emulex Linux Device Driver for         *
  * Fibre Channel Host Bus Adapters.                                *
+<<<<<<< HEAD
  * Copyright (C) 2004-2012 Emulex.  All rights reserved.           *
+=======
+ * Copyright (C) 2004-2011 Emulex.  All rights reserved.           *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * EMULEX and SLI are trademarks of Emulex.                        *
  * www.emulex.com                                                  *
  * Portions Copyright (C) 2004-2005 Christoph Hellwig              *
@@ -21,7 +25,10 @@
 #include <linux/pci.h>
 #include <linux/slab.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/delay.h>
 #include <asm/unaligned.h>
 
@@ -39,8 +46,13 @@
 #include "lpfc_sli4.h"
 #include "lpfc_nl.h"
 #include "lpfc_disc.h"
+<<<<<<< HEAD
 #include "lpfc.h"
 #include "lpfc_scsi.h"
+=======
+#include "lpfc_scsi.h"
+#include "lpfc.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "lpfc_logmsg.h"
 #include "lpfc_crtn.h"
 #include "lpfc_vport.h"
@@ -51,6 +63,7 @@
 int _dump_buf_done;
 
 static char *dif_op_str[] = {
+<<<<<<< HEAD
 	"PROT_NORMAL",
 	"PROT_READ_INSERT",
 	"PROT_WRITE_STRIP",
@@ -72,6 +85,16 @@ struct scsi_dif_tuple {
 	__be32 ref_tag;         /* Target LBA or indirect LBA */
 };
 
+=======
+	"SCSI_PROT_NORMAL",
+	"SCSI_PROT_READ_INSERT",
+	"SCSI_PROT_WRITE_STRIP",
+	"SCSI_PROT_READ_STRIP",
+	"SCSI_PROT_WRITE_INSERT",
+	"SCSI_PROT_READ_PASS",
+	"SCSI_PROT_WRITE_PASS",
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 lpfc_release_scsi_buf_s4(struct lpfc_hba *phba, struct lpfc_scsi_buf *psb);
 static void
@@ -687,10 +710,15 @@ lpfc_sli4_fcp_xri_aborted(struct lpfc_hba *phba,
 
 			rrq_empty = list_empty(&phba->active_rrq_list);
 			spin_unlock_irqrestore(&phba->hbalock, iflag);
+<<<<<<< HEAD
 			if (ndlp) {
 				lpfc_set_rrq_active(phba, ndlp, xri, rxid, 1);
 				lpfc_sli4_abts_err_handler(phba, ndlp, axri);
 			}
+=======
+			if (ndlp)
+				lpfc_set_rrq_active(phba, ndlp, xri, rxid, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			lpfc_release_scsi_buf_s4(phba, psb);
 			if (rrq_empty)
 				lpfc_worker_wake_up(phba);
@@ -1279,6 +1307,7 @@ lpfc_scsi_prep_dma_buf_s3(struct lpfc_hba *phba, struct lpfc_scsi_buf *lpfc_cmd)
 	return 0;
 }
 
+<<<<<<< HEAD
 static inline unsigned
 lpfc_cmd_blksize(struct scsi_cmnd *sc)
 {
@@ -1706,13 +1735,21 @@ lpfc_bg_err_inject(struct lpfc_hba *phba, struct scsi_cmnd *sc,
  * lpfc_sc_to_bg_opcodes - Determine the BlockGuard opcodes to be used with
  * the specified SCSI command.
  * @phba: The Hba for which this call is being executed.
+=======
+/*
+ * Given a scsi cmnd, determine the BlockGuard opcodes to be used with it
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @sc: The SCSI command to examine
  * @txopt: (out) BlockGuard operation for transmitted data
  * @rxopt: (out) BlockGuard operation for received data
  *
  * Returns: zero on success; non-zero if tx and/or rx op cannot be determined
  *
+<<<<<<< HEAD
  **/
+=======
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int
 lpfc_sc_to_bg_opcodes(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 		uint8_t *txop, uint8_t *rxop)
@@ -1724,20 +1761,35 @@ lpfc_sc_to_bg_opcodes(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 		switch (scsi_get_prot_op(sc)) {
 		case SCSI_PROT_READ_INSERT:
 		case SCSI_PROT_WRITE_STRIP:
+<<<<<<< HEAD
 			*rxop = BG_OP_IN_NODIF_OUT_CSUM;
 			*txop = BG_OP_IN_CSUM_OUT_NODIF;
+=======
+			*txop = BG_OP_IN_CSUM_OUT_NODIF;
+			*rxop = BG_OP_IN_NODIF_OUT_CSUM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case SCSI_PROT_READ_STRIP:
 		case SCSI_PROT_WRITE_INSERT:
+<<<<<<< HEAD
 			*rxop = BG_OP_IN_CRC_OUT_NODIF;
 			*txop = BG_OP_IN_NODIF_OUT_CRC;
+=======
+			*txop = BG_OP_IN_NODIF_OUT_CRC;
+			*rxop = BG_OP_IN_CRC_OUT_NODIF;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case SCSI_PROT_READ_PASS:
 		case SCSI_PROT_WRITE_PASS:
+<<<<<<< HEAD
 			*rxop = BG_OP_IN_CRC_OUT_CSUM;
 			*txop = BG_OP_IN_CSUM_OUT_CRC;
+=======
+			*txop = BG_OP_IN_CSUM_OUT_CRC;
+			*rxop = BG_OP_IN_CRC_OUT_CSUM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case SCSI_PROT_NORMAL:
@@ -1753,20 +1805,35 @@ lpfc_sc_to_bg_opcodes(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 		switch (scsi_get_prot_op(sc)) {
 		case SCSI_PROT_READ_STRIP:
 		case SCSI_PROT_WRITE_INSERT:
+<<<<<<< HEAD
 			*rxop = BG_OP_IN_CRC_OUT_NODIF;
 			*txop = BG_OP_IN_NODIF_OUT_CRC;
+=======
+			*txop = BG_OP_IN_NODIF_OUT_CRC;
+			*rxop = BG_OP_IN_CRC_OUT_NODIF;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case SCSI_PROT_READ_PASS:
 		case SCSI_PROT_WRITE_PASS:
+<<<<<<< HEAD
 			*rxop = BG_OP_IN_CRC_OUT_CRC;
 			*txop = BG_OP_IN_CRC_OUT_CRC;
+=======
+			*txop = BG_OP_IN_CRC_OUT_CRC;
+			*rxop = BG_OP_IN_CRC_OUT_CRC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case SCSI_PROT_READ_INSERT:
 		case SCSI_PROT_WRITE_STRIP:
+<<<<<<< HEAD
 			*rxop = BG_OP_IN_NODIF_OUT_CRC;
 			*txop = BG_OP_IN_CRC_OUT_NODIF;
+=======
+			*txop = BG_OP_IN_CRC_OUT_NODIF;
+			*rxop = BG_OP_IN_NODIF_OUT_CRC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case SCSI_PROT_NORMAL:
@@ -1782,6 +1849,7 @@ lpfc_sc_to_bg_opcodes(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 	return ret;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_SCSI_LPFC_DEBUG_FS
 /**
  * lpfc_bg_err_opcodes - reDetermine the BlockGuard opcodes to be used with
@@ -1864,6 +1932,22 @@ lpfc_bg_err_opcodes(struct lpfc_hba *phba, struct scsi_cmnd *sc,
  * @datacnt: number of segments of data that have been dma mapped
  *
  * This function sets up BPL buffer list for protection groups of
+=======
+struct scsi_dif_tuple {
+	__be16 guard_tag;       /* Checksum */
+	__be16 app_tag;         /* Opaque storage */
+	__be32 ref_tag;         /* Target LBA or indirect LBA */
+};
+
+static inline unsigned
+lpfc_cmd_blksize(struct scsi_cmnd *sc)
+{
+	return sc->device->sector_size;
+}
+
+/*
+ * This function sets up buffer list for protection groups of
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * type LPFC_PG_TYPE_NO_DIF
  *
  * This is usually used when the HBA is instructed to generate
@@ -1882,11 +1966,20 @@ lpfc_bg_err_opcodes(struct lpfc_hba *phba, struct scsi_cmnd *sc,
  *                                |more Data BDE's ... (opt)|
  *                                +-------------------------+
  *
+<<<<<<< HEAD
  *
  * Note: Data s/g buffers have been dma mapped
  *
  * Returns the number of BDEs added to the BPL.
  **/
+=======
+ * @sc: pointer to scsi command we're working on
+ * @bpl: pointer to buffer list for protection groups
+ * @datacnt: number of segments of data that have been dma mapped
+ *
+ * Note: Data s/g buffers have been dma mapped
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int
 lpfc_bg_setup_bpl(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 		struct ulp_bde64 *bpl, int datasegcnt)
@@ -1897,8 +1990,11 @@ lpfc_bg_setup_bpl(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 	dma_addr_t physaddr;
 	int i = 0, num_bde = 0, status;
 	int datadir = sc->sc_data_direction;
+<<<<<<< HEAD
 	uint32_t rc;
 	uint32_t checking = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint32_t reftag;
 	unsigned blksize;
 	uint8_t txop, rxop;
@@ -1909,6 +2005,7 @@ lpfc_bg_setup_bpl(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 
 	/* extract some info from the scsi command for pde*/
 	blksize = lpfc_cmd_blksize(sc);
+<<<<<<< HEAD
 	reftag = (uint32_t)scsi_get_lba(sc); /* Truncate LBA */
 
 #ifdef CONFIG_SCSI_LPFC_DEBUG_FS
@@ -1920,6 +2017,9 @@ lpfc_bg_setup_bpl(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 			checking = 0;
 	}
 #endif
+=======
+	reftag = scsi_get_lba(sc) & 0xffffffff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* setup PDE5 with what we have */
 	pde5 = (struct lpfc_pde5 *) bpl;
@@ -1941,8 +2041,13 @@ lpfc_bg_setup_bpl(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 	bf_set(pde6_optx, pde6, txop);
 	bf_set(pde6_oprx, pde6, rxop);
 	if (datadir == DMA_FROM_DEVICE) {
+<<<<<<< HEAD
 		bf_set(pde6_ce, pde6, checking);
 		bf_set(pde6_re, pde6, checking);
+=======
+		bf_set(pde6_ce, pde6, 1);
+		bf_set(pde6_re, pde6, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	bf_set(pde6_ai, pde6, 1);
 	bf_set(pde6_ae, pde6, 0);
@@ -1976,6 +2081,7 @@ out:
 	return num_bde;
 }
 
+<<<<<<< HEAD
 /**
  * lpfc_bg_setup_bpl_prot - Setup BlockGuard BPL with protection data
  * @phba: The Hba for which this call is being executed.
@@ -1986,6 +2092,11 @@ out:
  *
  * This function sets up BPL buffer list for protection groups of
  * type LPFC_PG_TYPE_DIF
+=======
+/*
+ * This function sets up buffer list for protection groups of
+ * type LPFC_PG_TYPE_DIF_BUF
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This is usually used when DIFs are in their own buffers,
  * separate from the data. The HBA can then by instructed
@@ -2010,11 +2121,22 @@ out:
  *                                    |          ...            |
  *                                    +-------------------------+
  *
+<<<<<<< HEAD
  * Note: It is assumed that both data and protection s/g buffers have been
  *       mapped for DMA
  *
  * Returns the number of BDEs added to the BPL.
  **/
+=======
+ * @sc: pointer to scsi command we're working on
+ * @bpl: pointer to buffer list for protection groups
+ * @datacnt: number of segments of data that have been dma mapped
+ * @protcnt: number of segment of protection data that have been dma mapped
+ *
+ * Note: It is assumed that both data and protection s/g buffers have been
+ *       mapped for DMA
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int
 lpfc_bg_setup_bpl_prot(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 		struct ulp_bde64 *bpl, int datacnt, int protcnt)
@@ -2034,8 +2156,11 @@ lpfc_bg_setup_bpl_prot(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 	int datadir = sc->sc_data_direction;
 	unsigned char pgdone = 0, alldone = 0;
 	unsigned blksize;
+<<<<<<< HEAD
 	uint32_t rc;
 	uint32_t checking = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint32_t reftag;
 	uint8_t txop, rxop;
 	int num_bde = 0;
@@ -2056,6 +2181,7 @@ lpfc_bg_setup_bpl_prot(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 
 	/* extract some info from the scsi command */
 	blksize = lpfc_cmd_blksize(sc);
+<<<<<<< HEAD
 	reftag = (uint32_t)scsi_get_lba(sc); /* Truncate LBA */
 
 #ifdef CONFIG_SCSI_LPFC_DEBUG_FS
@@ -2067,6 +2193,9 @@ lpfc_bg_setup_bpl_prot(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 			checking = 0;
 	}
 #endif
+=======
+	reftag = scsi_get_lba(sc) & 0xffffffff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	split_offset = 0;
 	do {
@@ -2089,8 +2218,13 @@ lpfc_bg_setup_bpl_prot(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 		bf_set(pde6_type, pde6, LPFC_PDE6_DESCRIPTOR);
 		bf_set(pde6_optx, pde6, txop);
 		bf_set(pde6_oprx, pde6, rxop);
+<<<<<<< HEAD
 		bf_set(pde6_ce, pde6, checking);
 		bf_set(pde6_re, pde6, checking);
+=======
+		bf_set(pde6_ce, pde6, 1);
+		bf_set(pde6_re, pde6, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bf_set(pde6_ai, pde6, 1);
 		bf_set(pde6_ae, pde6, 0);
 		bf_set(pde6_apptagval, pde6, 0);
@@ -2098,6 +2232,7 @@ lpfc_bg_setup_bpl_prot(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 		/* Endianness conversion if necessary for PDE6 */
 		pde6->word0 = cpu_to_le32(pde6->word0);
 		pde6->word1 = cpu_to_le32(pde6->word1);
+<<<<<<< HEAD
 		pde6->word2 = cpu_to_le32(pde6->word2);
 
 		/* advance bpl and increment bde count */
@@ -2442,6 +2577,13 @@ lpfc_bg_setup_sgl_prot(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 		/* advance sgl and increment bde count */
 		num_sge++;
 		sgl++;
+=======
+		pde6->word2 = cpu_to_le32(pde6->word2);
+
+		/* advance bpl and increment bde count */
+		num_bde++;
+		bpl++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* setup the first BDE that points to protection buffer */
 		protphysaddr = sg_dma_address(sgpe) + protgroup_offset;
@@ -2450,19 +2592,34 @@ lpfc_bg_setup_sgl_prot(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 		/* must be integer multiple of the DIF block length */
 		BUG_ON(protgroup_len % 8);
 
+<<<<<<< HEAD
 		/* Now setup DIF SGE */
 		sgl->word2 = 0;
 		bf_set(lpfc_sli4_sge_type, sgl, LPFC_SGE_TYPE_DIF);
 		sgl->addr_hi = le32_to_cpu(putPaddrHigh(protphysaddr));
 		sgl->addr_lo = le32_to_cpu(putPaddrLow(protphysaddr));
 		sgl->word2 = cpu_to_le32(sgl->word2);
+=======
+		pde7 = (struct lpfc_pde7 *) bpl;
+		memset(pde7, 0, sizeof(struct lpfc_pde7));
+		bf_set(pde7_type, pde7, LPFC_PDE7_DESCRIPTOR);
+
+		pde7->addrHigh = le32_to_cpu(putPaddrHigh(protphysaddr));
+		pde7->addrLow = le32_to_cpu(putPaddrLow(protphysaddr));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		protgrp_blks = protgroup_len / 8;
 		protgrp_bytes = protgrp_blks * blksize;
 
+<<<<<<< HEAD
 		/* check if DIF SGE is crossing the 4K boundary; if so split */
 		if ((sgl->addr_lo & 0xfff) + protgroup_len > 0x1000) {
 			protgroup_remainder = 0x1000 - (sgl->addr_lo & 0xfff);
+=======
+		/* check if this pde is crossing the 4K boundary; if so split */
+		if ((pde7->addrLow & 0xfff) + protgroup_len > 0x1000) {
+			protgroup_remainder = 0x1000 - (pde7->addrLow & 0xfff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			protgroup_offset += protgroup_remainder;
 			protgrp_blks = protgroup_remainder / 8;
 			protgrp_bytes = protgrp_blks * blksize;
@@ -2471,32 +2628,54 @@ lpfc_bg_setup_sgl_prot(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 			curr_prot++;
 		}
 
+<<<<<<< HEAD
 		num_sge++;
 
 		/* setup SGE's for data blocks associated with DIF data */
+=======
+		num_bde++;
+
+		/* setup BDE's for data blocks associated with DIF data */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pgdone = 0;
 		subtotal = 0; /* total bytes processed for current prot grp */
 		while (!pgdone) {
 			if (!sgde) {
 				lpfc_printf_log(phba, KERN_ERR, LOG_BG,
+<<<<<<< HEAD
 					"9086 BLKGRD:%s Invalid data segment\n",
 						__func__);
 				return 0;
 			}
 			sgl++;
 			dataphysaddr = sg_dma_address(sgde) + split_offset;
+=======
+					"9065 BLKGRD:%s Invalid data segment\n",
+						__func__);
+				return 0;
+			}
+			bpl++;
+			dataphysaddr = sg_dma_address(sgde) + split_offset;
+			bpl->addrLow = le32_to_cpu(putPaddrLow(dataphysaddr));
+			bpl->addrHigh = le32_to_cpu(putPaddrHigh(dataphysaddr));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			remainder = sg_dma_len(sgde) - split_offset;
 
 			if ((subtotal + remainder) <= protgrp_bytes) {
 				/* we can use this whole buffer */
+<<<<<<< HEAD
 				dma_len = remainder;
+=======
+				bpl->tus.f.bdeSize = remainder;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				split_offset = 0;
 
 				if ((subtotal + remainder) == protgrp_bytes)
 					pgdone = 1;
 			} else {
 				/* must split this buffer with next prot grp */
+<<<<<<< HEAD
 				dma_len = protgrp_bytes - subtotal;
 				split_offset += dma_len;
 			}
@@ -2513,6 +2692,21 @@ lpfc_bg_setup_sgl_prot(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 			dma_offset += dma_len;
 
 			num_sge++;
+=======
+				bpl->tus.f.bdeSize = protgrp_bytes - subtotal;
+				split_offset += bpl->tus.f.bdeSize;
+			}
+
+			subtotal += bpl->tus.f.bdeSize;
+
+			if (datadir == DMA_TO_DEVICE)
+				bpl->tus.f.bdeFlags = BUFF_TYPE_BDE_64;
+			else
+				bpl->tus.f.bdeFlags = BUFF_TYPE_BDE_64I;
+			bpl->tus.w = le32_to_cpu(bpl->tus.w);
+
+			num_bde++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			curr_data++;
 
 			if (split_offset)
@@ -2520,36 +2714,56 @@ lpfc_bg_setup_sgl_prot(struct lpfc_hba *phba, struct scsi_cmnd *sc,
 
 			/* Move to the next s/g segment if possible */
 			sgde = sg_next(sgde);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (protgroup_offset) {
 			/* update the reference tag */
 			reftag += protgrp_blks;
+<<<<<<< HEAD
 			sgl++;
+=======
+			bpl++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 
 		/* are we done ? */
 		if (curr_prot == protcnt) {
+<<<<<<< HEAD
 			bf_set(lpfc_sli4_sge_last, sgl, 1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			alldone = 1;
 		} else if (curr_prot < protcnt) {
 			/* advance to next prot buffer */
 			sgpe = sg_next(sgpe);
+<<<<<<< HEAD
 			sgl++;
+=======
+			bpl++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* update the reference tag */
 			reftag += protgrp_blks;
 		} else {
 			/* if we're here, we have a bug */
 			lpfc_printf_log(phba, KERN_ERR, LOG_BG,
+<<<<<<< HEAD
 				"9085 BLKGRD: bug in %s\n", __func__);
+=======
+				"9054 BLKGRD: bug in %s\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 	} while (!alldone);
 
 out:
 
+<<<<<<< HEAD
 	return num_sge;
 }
 
@@ -2564,6 +2778,18 @@ out:
  * Returns: Protection group type (with or without DIF)
  *
  **/
+=======
+	return num_bde;
+}
+
+/*
+ * Given a SCSI command that supports DIF, determine composition of protection
+ * groups involved in setting up buffer lists
+ *
+ * Returns:
+ *			      for DIF (for both read and write)
+ * */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int
 lpfc_prot_group_type(struct lpfc_hba *phba, struct scsi_cmnd *sc)
 {
@@ -2590,6 +2816,7 @@ lpfc_prot_group_type(struct lpfc_hba *phba, struct scsi_cmnd *sc)
 	return ret;
 }
 
+<<<<<<< HEAD
 /**
  * lpfc_bg_scsi_prep_dma_buf_s3 - DMA mapping for scsi buffer to SLI3 IF spec
  * @phba: The Hba for which this call is being executed.
@@ -2601,6 +2828,15 @@ lpfc_prot_group_type(struct lpfc_hba *phba, struct scsi_cmnd *sc)
  **/
 static int
 lpfc_bg_scsi_prep_dma_buf_s3(struct lpfc_hba *phba,
+=======
+/*
+ * This is the protection/DIF aware version of
+ * lpfc_scsi_prep_dma_buf(). It may be a good idea to combine the
+ * two functions eventually, but for now, it's here
+ */
+static int
+lpfc_bg_scsi_prep_dma_buf(struct lpfc_hba *phba,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct lpfc_scsi_buf *lpfc_cmd)
 {
 	struct scsi_cmnd *scsi_cmnd = lpfc_cmd->pCmd;
@@ -2856,6 +3092,7 @@ lpfc_parse_bg_err(struct lpfc_hba *phba, struct lpfc_scsi_buf *lpfc_cmd,
 		cmd->sense_buffer[8] = 0;     /* Information descriptor type */
 		cmd->sense_buffer[9] = 0xa;   /* Additional descriptor length */
 		cmd->sense_buffer[10] = 0x80; /* Validity bit */
+<<<<<<< HEAD
 
 		/* bghm is a "on the wire" FC frame based count */
 		switch (scsi_get_prot_op(cmd)) {
@@ -2871,6 +3108,9 @@ lpfc_parse_bg_err(struct lpfc_hba *phba, struct lpfc_scsi_buf *lpfc_cmd,
 				sizeof(struct scsi_dif_tuple));
 			break;
 		}
+=======
+		bghm /= cmd->device->sector_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		failing_sector = scsi_get_lba(cmd);
 		failing_sector += bghm;
@@ -2883,7 +3123,11 @@ lpfc_parse_bg_err(struct lpfc_hba *phba, struct lpfc_scsi_buf *lpfc_cmd,
 		/* No error was reported - problem in FW? */
 		cmd->result = ScsiResult(DID_ERROR, 0);
 		lpfc_printf_log(phba, KERN_ERR, LOG_BG,
+<<<<<<< HEAD
 			"9057 BLKGRD: Unknown error reported!\n");
+=======
+			"9057 BLKGRD: no errors reported!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 out:
@@ -2973,7 +3217,10 @@ lpfc_scsi_prep_dma_buf_s4(struct lpfc_hba *phba, struct lpfc_scsi_buf *lpfc_cmd)
 			else
 				bf_set(lpfc_sli4_sge_last, sgl, 0);
 			bf_set(lpfc_sli4_sge_offset, sgl, dma_offset);
+<<<<<<< HEAD
 			bf_set(lpfc_sli4_sge_type, sgl, LPFC_SGE_TYPE_DATA);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sgl->word2 = cpu_to_le32(sgl->word2);
 			sgl->sge_len = cpu_to_le32(dma_len);
 			dma_offset += dma_len;
@@ -3015,6 +3262,7 @@ lpfc_scsi_prep_dma_buf_s4(struct lpfc_hba *phba, struct lpfc_scsi_buf *lpfc_cmd)
 }
 
 /**
+<<<<<<< HEAD
  * lpfc_bg_scsi_adjust_dl - Adjust SCSI data length for BlockGuard
  * @phba: The Hba for which this call is being executed.
  * @lpfc_cmd: The scsi buffer which is going to be adjusted.
@@ -3189,6 +3437,8 @@ err:
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * lpfc_scsi_prep_dma_buf - Wrapper function for DMA mapping of scsi buffer
  * @phba: The Hba for which this call is being executed.
  * @lpfc_cmd: The scsi buffer which is going to be mapped.
@@ -3207,6 +3457,7 @@ lpfc_scsi_prep_dma_buf(struct lpfc_hba *phba, struct lpfc_scsi_buf *lpfc_cmd)
 }
 
 /**
+<<<<<<< HEAD
  * lpfc_bg_scsi_prep_dma_buf - Wrapper function for DMA mapping of scsi buffer
  * using BlockGuard.
  * @phba: The Hba for which this call is being executed.
@@ -3226,6 +3477,8 @@ lpfc_bg_scsi_prep_dma_buf(struct lpfc_hba *phba, struct lpfc_scsi_buf *lpfc_cmd)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * lpfc_send_scsi_error_event - Posts an event when there is SCSI error
  * @phba: Pointer to hba context object.
  * @vport: Pointer to vport object.
@@ -3417,9 +3670,14 @@ lpfc_handle_fcp_err(struct lpfc_vport *vport, struct lpfc_scsi_buf *lpfc_cmd,
 	}
 	lp = (uint32_t *)cmnd->sense_buffer;
 
+<<<<<<< HEAD
 	if (!scsi_status && (resp_info & RESID_UNDER) &&
 		vport->cfg_log_verbose & LOG_FCP_UNDER)
 		logit = LOG_FCP_UNDER;
+=======
+	if (!scsi_status && (resp_info & RESID_UNDER))
+		logit = LOG_FCP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lpfc_printf_vlog(vport, KERN_WARNING, logit,
 			 "9024 FCP command x%x failed: x%x SNS x%x x%x "
@@ -3435,7 +3693,11 @@ lpfc_handle_fcp_err(struct lpfc_vport *vport, struct lpfc_scsi_buf *lpfc_cmd,
 	if (resp_info & RESID_UNDER) {
 		scsi_set_resid(cmnd, be32_to_cpu(fcprsp->rspResId));
 
+<<<<<<< HEAD
 		lpfc_printf_vlog(vport, KERN_INFO, LOG_FCP_UNDER,
+=======
+		lpfc_printf_vlog(vport, KERN_INFO, LOG_FCP,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 "9025 FCP Read Underrun, expected %d, "
 				 "residual %d Data: x%x x%x x%x\n",
 				 be32_to_cpu(fcpcmd->fcpDl),
@@ -3542,7 +3804,10 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *pIocbIn,
 	struct lpfc_fast_path_event *fast_path_evt;
 	struct Scsi_Host *shost;
 	uint32_t queue_depth, scsi_id;
+<<<<<<< HEAD
 	uint32_t logit = LOG_FCP;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Sanity check on return of outstanding command */
 	if (!(lpfc_cmd->pCmd))
@@ -3555,6 +3820,7 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *pIocbIn,
 	/* pick up SLI4 exhange busy status from HBA */
 	lpfc_cmd->exch_busy = pIocbOut->iocb_flag & LPFC_EXCHANGE_BUSY;
 
+<<<<<<< HEAD
 #ifdef CONFIG_SCSI_LPFC_DEBUG_FS
 	if (lpfc_cmd->prot_data_type) {
 		struct scsi_dif_tuple *src = NULL;
@@ -3586,6 +3852,8 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *pIocbIn,
 		lpfc_cmd->prot_data_segment = NULL;
 	}
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pnode && NLP_CHK_NODE_ACT(pnode))
 		atomic_dec(&pnode->cmd_pending);
 
@@ -3595,6 +3863,7 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *pIocbIn,
 			lpfc_cmd->status = IOSTAT_DRIVER_REJECT;
 		else if (lpfc_cmd->status >= IOSTAT_CNT)
 			lpfc_cmd->status = IOSTAT_DEFAULT;
+<<<<<<< HEAD
 		if (lpfc_cmd->status == IOSTAT_FCP_RSP_ERROR
 			&& !lpfc_cmd->fcp_rsp->rspStatus3
 			&& (lpfc_cmd->fcp_rsp->rspStatus2 & RESID_UNDER)
@@ -3611,6 +3880,18 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *pIocbIn,
 			 lpfc_cmd->status, lpfc_cmd->result,
 			 pIocbOut->iocb.ulpContext,
 			 lpfc_cmd->cur_iocbq.iocb.ulpIoTag);
+=======
+
+		lpfc_printf_vlog(vport, KERN_WARNING, LOG_FCP,
+				 "9030 FCP cmd x%x failed <%d/%d> "
+				 "status: x%x result: x%x Data: x%x x%x\n",
+				 cmd->cmnd[0],
+				 cmd->device ? cmd->device->id : 0xffff,
+				 cmd->device ? cmd->device->lun : 0xffff,
+				 lpfc_cmd->status, lpfc_cmd->result,
+				 pIocbOut->iocb.ulpContext,
+				 lpfc_cmd->cur_iocbq.iocb.ulpIoTag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		switch (lpfc_cmd->status) {
 		case IOSTAT_FCP_RSP_ERROR:
@@ -3860,8 +4141,13 @@ lpfc_scsi_prep_cmnd(struct lpfc_vport *vport, struct lpfc_scsi_buf *lpfc_cmd,
 	int_to_scsilun(lpfc_cmd->pCmd->device->lun,
 			&lpfc_cmd->fcp_cmnd->fcp_lun);
 
+<<<<<<< HEAD
 	memset(&fcp_cmnd->fcpCdb[0], 0, LPFC_FCP_CDB_LEN);
 	memcpy(&fcp_cmnd->fcpCdb[0], scsi_cmnd->cmnd, scsi_cmnd->cmd_len);
+=======
+	memcpy(&fcp_cmnd->fcpCdb[0], scsi_cmnd->cmnd, 16);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (scsi_populate_tag_msg(scsi_cmnd, tag)) {
 		switch (tag[0]) {
 		case HEAD_OF_QUEUE_TAG:
@@ -4019,14 +4305,20 @@ lpfc_scsi_api_table_setup(struct lpfc_hba *phba, uint8_t dev_grp)
 	case LPFC_PCI_DEV_LP:
 		phba->lpfc_new_scsi_buf = lpfc_new_scsi_buf_s3;
 		phba->lpfc_scsi_prep_dma_buf = lpfc_scsi_prep_dma_buf_s3;
+<<<<<<< HEAD
 		phba->lpfc_bg_scsi_prep_dma_buf = lpfc_bg_scsi_prep_dma_buf_s3;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		phba->lpfc_release_scsi_buf = lpfc_release_scsi_buf_s3;
 		phba->lpfc_get_scsi_buf = lpfc_get_scsi_buf_s3;
 		break;
 	case LPFC_PCI_DEV_OC:
 		phba->lpfc_new_scsi_buf = lpfc_new_scsi_buf_s4;
 		phba->lpfc_scsi_prep_dma_buf = lpfc_scsi_prep_dma_buf_s4;
+<<<<<<< HEAD
 		phba->lpfc_bg_scsi_prep_dma_buf = lpfc_bg_scsi_prep_dma_buf_s4;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		phba->lpfc_release_scsi_buf = lpfc_release_scsi_buf_s4;
 		phba->lpfc_get_scsi_buf = lpfc_get_scsi_buf_s4;
 		break;
@@ -4189,8 +4481,13 @@ lpfc_queuecommand_lck(struct scsi_cmnd *cmnd, void (*done) (struct scsi_cmnd *))
 	}
 	ndlp = rdata->pnode;
 
+<<<<<<< HEAD
 	if ((scsi_get_prot_op(cmnd) != SCSI_PROT_NORMAL) &&
 		(!(phba->sli3_options & LPFC_SLI3_BG_ENABLED))) {
+=======
+	if (!(phba->sli3_options & LPFC_SLI3_BG_ENABLED) &&
+		scsi_get_prot_op(cmnd) != SCSI_PROT_NORMAL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		lpfc_printf_log(phba, KERN_ERR, LOG_BG,
 				"9058 BLKGRD: ERROR: rcvd protected cmd:%02x"
@@ -4236,6 +4533,7 @@ lpfc_queuecommand_lck(struct scsi_cmnd *cmnd, void (*done) (struct scsi_cmnd *))
 	if (scsi_get_prot_op(cmnd) != SCSI_PROT_NORMAL) {
 		if (vport->phba->cfg_enable_bg) {
 			lpfc_printf_vlog(vport, KERN_WARNING, LOG_BG,
+<<<<<<< HEAD
 				"9033 BLKGRD: rcvd protected cmd:%02x op=%s "
 				"guard=%s\n", cmnd->cmnd[0],
 				dif_op_str[scsi_get_prot_op(cmnd)],
@@ -4254,12 +4552,39 @@ lpfc_queuecommand_lck(struct scsi_cmnd *cmnd, void (*done) (struct scsi_cmnd *))
 					(unsigned long long)scsi_get_lba(cmnd),
 					blk_rq_sectors(cmnd->request),
 					(cmnd->cmnd[1]>>5));
+=======
+				"9033 BLKGRD: rcvd protected cmd:%02x op:%02x "
+				"str=%s\n",
+				cmnd->cmnd[0], scsi_get_prot_op(cmnd),
+				dif_op_str[scsi_get_prot_op(cmnd)]);
+			lpfc_printf_vlog(vport, KERN_WARNING, LOG_BG,
+				"9034 BLKGRD: CDB: %02x %02x %02x %02x %02x "
+				"%02x %02x %02x %02x %02x\n",
+				cmnd->cmnd[0], cmnd->cmnd[1], cmnd->cmnd[2],
+				cmnd->cmnd[3], cmnd->cmnd[4], cmnd->cmnd[5],
+				cmnd->cmnd[6], cmnd->cmnd[7], cmnd->cmnd[8],
+				cmnd->cmnd[9]);
+			if (cmnd->cmnd[0] == READ_10)
+				lpfc_printf_vlog(vport, KERN_WARNING, LOG_BG,
+					"9035 BLKGRD: READ @ sector %llu, "
+					"count %u\n",
+					(unsigned long long)scsi_get_lba(cmnd),
+					blk_rq_sectors(cmnd->request));
+			else if (cmnd->cmnd[0] == WRITE_10)
+				lpfc_printf_vlog(vport, KERN_WARNING, LOG_BG,
+					"9036 BLKGRD: WRITE @ sector %llu, "
+					"count %u cmd=%p\n",
+					(unsigned long long)scsi_get_lba(cmnd),
+					blk_rq_sectors(cmnd->request),
+					cmnd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		err = lpfc_bg_scsi_prep_dma_buf(phba, lpfc_cmd);
 	} else {
 		if (vport->phba->cfg_enable_bg) {
 			lpfc_printf_vlog(vport, KERN_WARNING, LOG_BG,
+<<<<<<< HEAD
 				"9038 BLKGRD: rcvd unprotected cmd:"
 				"%02x op=%s guard=%s\n", cmnd->cmnd[0],
 				dif_op_str[scsi_get_prot_op(cmnd)],
@@ -4278,6 +4603,35 @@ lpfc_queuecommand_lck(struct scsi_cmnd *cmnd, void (*done) (struct scsi_cmnd *))
 					(unsigned long long)scsi_get_lba(cmnd),
 					blk_rq_sectors(cmnd->request),
 					(cmnd->cmnd[1]>>5));
+=======
+					"9038 BLKGRD: rcvd unprotected cmd:"
+					"%02x op:%02x str=%s\n",
+					cmnd->cmnd[0], scsi_get_prot_op(cmnd),
+					dif_op_str[scsi_get_prot_op(cmnd)]);
+				lpfc_printf_vlog(vport, KERN_WARNING, LOG_BG,
+					"9039 BLKGRD: CDB: %02x %02x %02x "
+					"%02x %02x %02x %02x %02x %02x %02x\n",
+					cmnd->cmnd[0], cmnd->cmnd[1],
+					cmnd->cmnd[2], cmnd->cmnd[3],
+					cmnd->cmnd[4], cmnd->cmnd[5],
+					cmnd->cmnd[6], cmnd->cmnd[7],
+					cmnd->cmnd[8], cmnd->cmnd[9]);
+			if (cmnd->cmnd[0] == READ_10)
+				lpfc_printf_vlog(vport, KERN_WARNING, LOG_BG,
+					"9040 dbg: READ @ sector %llu, "
+					"count %u\n",
+					(unsigned long long)scsi_get_lba(cmnd),
+					 blk_rq_sectors(cmnd->request));
+			else if (cmnd->cmnd[0] == WRITE_10)
+				lpfc_printf_vlog(vport, KERN_WARNING, LOG_BG,
+					 "9041 dbg: WRITE @ sector %llu, "
+					 "count %u cmd=%p\n",
+					 (unsigned long long)scsi_get_lba(cmnd),
+					 blk_rq_sectors(cmnd->request), cmnd);
+			else
+				lpfc_printf_vlog(vport, KERN_WARNING, LOG_BG,
+					 "9042 dbg: parser not implemented\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		err = lpfc_scsi_prep_dma_buf(phba, lpfc_cmd);
 	}
@@ -4809,9 +5163,15 @@ lpfc_bus_reset_handler(struct scsi_cmnd *cmnd)
 	fc_host_post_vendor_event(shost, fc_get_event_number(),
 		sizeof(scsi_event), (char *)&scsi_event, LPFC_NL_VENDOR_ID);
 
+<<<<<<< HEAD
 	status = fc_block_scsi_eh(cmnd);
 	if (status)
 		return status;
+=======
+	ret = fc_block_scsi_eh(cmnd);
+	if (ret)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Since the driver manages a single bus device, reset all

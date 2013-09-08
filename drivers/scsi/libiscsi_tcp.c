@@ -36,7 +36,10 @@
 #include <linux/delay.h>
 #include <linux/kfifo.h>
 #include <linux/scatterlist.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/tcp.h>
 #include <scsi/scsi_cmnd.h>
 #include <scsi/scsi_device.h>
@@ -135,7 +138,11 @@ static void iscsi_tcp_segment_map(struct iscsi_segment *segment, int recv)
 
 	if (recv) {
 		segment->atomic_mapped = true;
+<<<<<<< HEAD
 		segment->sg_mapped = kmap_atomic(sg_page(sg));
+=======
+		segment->sg_mapped = kmap_atomic(sg_page(sg), KM_SOFTIRQ0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		segment->atomic_mapped = false;
 		/* the xmit path can sleep with the page mapped so use kmap */
@@ -149,7 +156,11 @@ void iscsi_tcp_segment_unmap(struct iscsi_segment *segment)
 {
 	if (segment->sg_mapped) {
 		if (segment->atomic_mapped)
+<<<<<<< HEAD
 			kunmap_atomic(segment->sg_mapped);
+=======
+			kunmap_atomic(segment->sg_mapped, KM_SOFTIRQ0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		else
 			kunmap(sg_page(segment->sg));
 		segment->sg_mapped = NULL;
@@ -1170,6 +1181,7 @@ void iscsi_tcp_r2tpool_free(struct iscsi_session *session)
 }
 EXPORT_SYMBOL_GPL(iscsi_tcp_r2tpool_free);
 
+<<<<<<< HEAD
 int iscsi_tcp_set_max_r2t(struct iscsi_conn *conn, char *buf)
 {
 	struct iscsi_session *session = conn->session;
@@ -1188,6 +1200,8 @@ int iscsi_tcp_set_max_r2t(struct iscsi_conn *conn, char *buf)
 }
 EXPORT_SYMBOL_GPL(iscsi_tcp_set_max_r2t);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void iscsi_tcp_conn_get_stats(struct iscsi_cls_conn *cls_conn,
 			      struct iscsi_stats *stats)
 {

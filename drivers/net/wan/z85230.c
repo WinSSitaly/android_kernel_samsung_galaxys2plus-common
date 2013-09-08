@@ -36,8 +36,11 @@
  *	Synchronous mode without DMA is unlikely to pass about 2400 baud.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/mm.h>
@@ -367,7 +370,11 @@ static void z8530_rx(struct z8530_channel *c)
 				c->count=0;
 				if(stat&Rx_OVR)
 				{
+<<<<<<< HEAD
 					pr_warn("%s: overrun\n", c->dev->name);
+=======
+					printk(KERN_WARNING "%s: overrun\n", c->dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					c->rx_overrun++;
 				}
 				if(stat&CRC_ERR)
@@ -466,12 +473,20 @@ static void z8530_status(struct z8530_channel *chan)
 	if (altered & chan->dcdcheck)
 	{
 		if (status & chan->dcdcheck) {
+<<<<<<< HEAD
 			pr_info("%s: DCD raised\n", chan->dev->name);
+=======
+			printk(KERN_INFO "%s: DCD raised\n", chan->dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			write_zsreg(chan, R3, chan->regs[3] | RxENABLE);
 			if (chan->netdevice)
 				netif_carrier_on(chan->netdevice);
 		} else {
+<<<<<<< HEAD
 			pr_info("%s: DCD lost\n", chan->dev->name);
+=======
+			printk(KERN_INFO "%s: DCD lost\n", chan->dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			write_zsreg(chan, R3, chan->regs[3] & ~RxENABLE);
 			z8530_flush_fifo(chan);
 			if (chan->netdevice)
@@ -540,12 +555,20 @@ static void z8530_dma_tx(struct z8530_channel *chan)
 {
 	if(!chan->dma_tx)
 	{
+<<<<<<< HEAD
 		pr_warn("Hey who turned the DMA off?\n");
+=======
+		printk(KERN_WARNING "Hey who turned the DMA off?\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		z8530_tx(chan);
 		return;
 	}
 	/* This shouldn't occur in DMA mode */
+<<<<<<< HEAD
 	pr_err("DMA tx - bogus event!\n");
+=======
+	printk(KERN_ERR "DMA tx - bogus event!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	z8530_tx(chan);
 }
 
@@ -587,12 +610,20 @@ static void z8530_dma_status(struct z8530_channel *chan)
 	if (altered & chan->dcdcheck)
 	{
 		if (status & chan->dcdcheck) {
+<<<<<<< HEAD
 			pr_info("%s: DCD raised\n", chan->dev->name);
+=======
+			printk(KERN_INFO "%s: DCD raised\n", chan->dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			write_zsreg(chan, R3, chan->regs[3] | RxENABLE);
 			if (chan->netdevice)
 				netif_carrier_on(chan->netdevice);
 		} else {
+<<<<<<< HEAD
 			pr_info("%s: DCD lost\n", chan->dev->name);
+=======
+			printk(KERN_INFO "%s:DCD lost\n", chan->dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			write_zsreg(chan, R3, chan->regs[3] & ~RxENABLE);
 			z8530_flush_fifo(chan);
 			if (chan->netdevice)
@@ -714,7 +745,11 @@ irqreturn_t z8530_interrupt(int irq, void *dev_id)
 	
 	if(locker)
 	{
+<<<<<<< HEAD
 		pr_err("IRQ re-enter\n");
+=======
+		printk(KERN_ERR "IRQ re-enter\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return IRQ_NONE;
 	}
 	locker=1;
@@ -760,8 +795,12 @@ irqreturn_t z8530_interrupt(int irq, void *dev_id)
 	}
 	spin_unlock(&dev->lock);
 	if(work==5000)
+<<<<<<< HEAD
 		pr_err("%s: interrupt jammed - abort(0x%X)!\n",
 		       dev->name, intr);
+=======
+		printk(KERN_ERR "%s: interrupt jammed - abort(0x%X)!\n", dev->name, intr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Ok all done */
 	locker=0;
 	return IRQ_HANDLED;
@@ -1228,7 +1267,11 @@ static const char *z8530_type_name[]={
 
 void z8530_describe(struct z8530_dev *dev, char *mapping, unsigned long io)
 {
+<<<<<<< HEAD
 	pr_info("%s: %s found at %s 0x%lX, IRQ %d\n",
+=======
+	printk(KERN_INFO "%s: %s found at %s 0x%lX, IRQ %d.\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev->name, 
 		z8530_type_name[dev->type],
 		mapping,
@@ -1624,7 +1667,12 @@ static void z8530_rx_done(struct z8530_channel *c)
 		else
 			/* Can't occur as we dont reenable the DMA irq until
 			   after the flip is done */
+<<<<<<< HEAD
 			netdev_warn(c->netdevice, "DMA flip overrun!\n");
+=======
+			printk(KERN_WARNING "%s: DMA flip overrun!\n",
+			       c->netdevice->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		release_dma_lock(flags);
 
@@ -1639,7 +1687,12 @@ static void z8530_rx_done(struct z8530_channel *c)
 		skb = dev_alloc_skb(ct);
 		if (skb == NULL) {
 			c->netdevice->stats.rx_dropped++;
+<<<<<<< HEAD
 			netdev_warn(c->netdevice, "Memory squeeze\n");
+=======
+			printk(KERN_WARNING "%s: Memory squeeze.\n",
+			       c->netdevice->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			skb_put(skb, ct);
 			skb_copy_to_linear_data(skb, rxb, ct);
@@ -1679,7 +1732,12 @@ static void z8530_rx_done(struct z8530_channel *c)
 
 		c->skb2 = dev_alloc_skb(c->mtu);
 		if (c->skb2 == NULL)
+<<<<<<< HEAD
 			netdev_warn(c->netdevice, "memory squeeze\n");
+=======
+			printk(KERN_WARNING "%s: memory squeeze.\n",
+			       c->netdevice->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		else
 			skb_put(c->skb2, c->mtu);
 		c->netdevice->stats.rx_packets++;
@@ -1693,7 +1751,11 @@ static void z8530_rx_done(struct z8530_channel *c)
 		c->rx_function(c, skb);
 	} else {
 		c->netdevice->stats.rx_dropped++;
+<<<<<<< HEAD
 		netdev_err(c->netdevice, "Lost a frame\n");
+=======
+		printk(KERN_ERR "%s: Lost a frame\n", c->netdevice->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 

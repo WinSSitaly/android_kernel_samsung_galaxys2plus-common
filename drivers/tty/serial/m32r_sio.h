@@ -15,7 +15,10 @@
  * (at your option) any later version.
  */
 
+<<<<<<< HEAD
 #include <linux/pci.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct m32r_sio_probe {
 	struct module	*owner;

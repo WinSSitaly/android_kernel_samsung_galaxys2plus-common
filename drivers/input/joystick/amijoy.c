@@ -35,6 +35,10 @@
 #include <linux/interrupt.h>
 #include <linux/mutex.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/amigahw.h>
 #include <asm/amigaints.h>
 
@@ -107,9 +111,12 @@ static int __init amijoy_init(void)
 	int i, j;
 	int err;
 
+<<<<<<< HEAD
 	if (!MACH_IS_AMIGA)
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < 2; i++) {
 		if (!amijoy[i])
 			continue;

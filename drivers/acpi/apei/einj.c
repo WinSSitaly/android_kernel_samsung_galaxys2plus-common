@@ -43,6 +43,7 @@
 #define FIRMWARE_TIMEOUT	(1 * NSEC_PER_MSEC)
 
 /*
+<<<<<<< HEAD
  * ACPI version 5 provides a SET_ERROR_TYPE_WITH_ADDRESS action.
  */
 static int acpi5;
@@ -86,6 +87,12 @@ static char vendor_dev[64];
  * most will ignore the parameter and make their own choice of address
  * for error injection.  This extension is used only if
  * param_extension module parameter is specified.
+=======
+ * Some BIOSes allow parameters to the SET_ERROR_TYPE entries in the
+ * EINJ table through an unpublished extension. Use with caution as
+ * most will ignore the parameter and make their own choice of address
+ * for error injection.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct einj_parameter {
 	u64 type;
@@ -104,9 +111,12 @@ struct einj_parameter {
 	((struct acpi_whea_header *)((char *)(tab) +			\
 				    sizeof(struct acpi_table_einj)))
 
+<<<<<<< HEAD
 static bool param_extension;
 module_param(param_extension, bool, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct acpi_table_einj *einj_tab;
 
 static struct apei_resources einj_resources;
@@ -141,7 +151,19 @@ static struct apei_exec_ins_type einj_ins_type[] = {
  */
 static DEFINE_MUTEX(einj_mutex);
 
+<<<<<<< HEAD
 static void *einj_param;
+=======
+static struct einj_parameter *einj_param;
+
+#ifndef writeq
+static inline void writeq(__u64 val, volatile void __iomem *addr)
+{
+	writel(val, addr);
+	writel(val >> 32, addr+4);
+}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void einj_exec_ctx_init(struct apei_exec_context *ctx)
 {
@@ -188,6 +210,7 @@ static int einj_timedout(u64 *t)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void check_vendor_extension(u64 paddr,
 				   struct set_error_type_with_address *v5param)
 {
@@ -212,6 +235,12 @@ static void *einj_get_parameter_address(void)
 {
 	int i;
 	u64 paddrv4 = 0, paddrv5 = 0;
+=======
+static u64 einj_get_parameter_address(void)
+{
+	int i;
+	u64 paddr = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct acpi_whea_header *entry;
 
 	entry = EINJ_TAB_ENTRY(einj_tab);
@@ -220,6 +249,7 @@ static void *einj_get_parameter_address(void)
 		    entry->instruction == ACPI_EINJ_WRITE_REGISTER &&
 		    entry->register_region.space_id ==
 		    ACPI_ADR_SPACE_SYSTEM_MEMORY)
+<<<<<<< HEAD
 			memcpy(&paddrv4, &entry->register_region.address,
 			       sizeof(paddrv4));
 		if (entry->action == ACPI_EINJ_SET_ERROR_TYPE_WITH_ADDRESS &&
@@ -254,6 +284,14 @@ static void *einj_get_parameter_address(void)
 	}
 
 	return NULL;
+=======
+			memcpy(&paddr, &entry->register_region.address,
+			       sizeof(paddr));
+		entry++;
+	}
+
+	return paddr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* do sanity check to trigger table */
@@ -262,7 +300,11 @@ static int einj_check_trigger_header(struct acpi_einj_trigger *trigger_tab)
 	if (trigger_tab->header_size != sizeof(struct acpi_einj_trigger))
 		return -EINVAL;
 	if (trigger_tab->table_size > PAGE_SIZE ||
+<<<<<<< HEAD
 	    trigger_tab->table_size < trigger_tab->header_size)
+=======
+	    trigger_tab->table_size <= trigger_tab->header_size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	if (trigger_tab->entry_count !=
 	    (trigger_tab->table_size - trigger_tab->header_size) /
@@ -272,6 +314,7 @@ static int einj_check_trigger_header(struct acpi_einj_trigger *trigger_tab)
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct acpi_generic_address *einj_get_trigger_parameter_region(
 	struct acpi_einj_trigger *trigger_tab, u64 param1, u64 param2)
 {
@@ -295,6 +338,10 @@ static struct acpi_generic_address *einj_get_trigger_parameter_region(
 /* Execute instructions in trigger error action table */
 static int __einj_error_trigger(u64 trigger_paddr, u32 type,
 				u64 param1, u64 param2)
+=======
+/* Execute instructions in trigger error action table */
+static int __einj_error_trigger(u64 trigger_paddr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct acpi_einj_trigger *trigger_tab = NULL;
 	struct apei_exec_context trigger_ctx;
@@ -303,16 +350,25 @@ static int __einj_error_trigger(u64 trigger_paddr, u32 type,
 	struct resource *r;
 	u32 table_size;
 	int rc = -EIO;
+<<<<<<< HEAD
 	struct acpi_generic_address *trigger_param_region = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	r = request_mem_region(trigger_paddr, sizeof(*trigger_tab),
 			       "APEI EINJ Trigger Table");
 	if (!r) {
 		pr_err(EINJ_PFX
+<<<<<<< HEAD
 	"Can not request [mem %#010llx-%#010llx] for Trigger table\n",
 		       (unsigned long long)trigger_paddr,
 		       (unsigned long long)trigger_paddr +
 			    sizeof(*trigger_tab) - 1);
+=======
+	"Can not request iomem region <%016llx-%016llx> for Trigger table.\n",
+		       (unsigned long long)trigger_paddr,
+		       (unsigned long long)trigger_paddr+sizeof(*trigger_tab));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 	trigger_tab = ioremap_cache(trigger_paddr, sizeof(*trigger_tab));
@@ -326,11 +382,14 @@ static int __einj_error_trigger(u64 trigger_paddr, u32 type,
 			   "The trigger error action table is invalid\n");
 		goto out_rel_header;
 	}
+<<<<<<< HEAD
 
 	/* No action structures in the TRIGGER_ERROR table, nothing to do */
 	if (!trigger_tab->entry_count)
 		goto out_rel_header;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = -EIO;
 	table_size = trigger_tab->table_size;
 	r = request_mem_region(trigger_paddr + sizeof(*trigger_tab),
@@ -338,9 +397,15 @@ static int __einj_error_trigger(u64 trigger_paddr, u32 type,
 			       "APEI EINJ Trigger Table");
 	if (!r) {
 		pr_err(EINJ_PFX
+<<<<<<< HEAD
 "Can not request [mem %#010llx-%#010llx] for Trigger Table Entry\n",
 		       (unsigned long long)trigger_paddr + sizeof(*trigger_tab),
 		       (unsigned long long)trigger_paddr + table_size - 1);
+=======
+"Can not request iomem region <%016llx-%016llx> for Trigger Table Entry.\n",
+		       (unsigned long long)trigger_paddr+sizeof(*trigger_tab),
+		       (unsigned long long)trigger_paddr + table_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_rel_header;
 	}
 	iounmap(trigger_tab);
@@ -361,6 +426,7 @@ static int __einj_error_trigger(u64 trigger_paddr, u32 type,
 	rc = apei_resources_sub(&trigger_resources, &einj_resources);
 	if (rc)
 		goto out_fini;
+<<<<<<< HEAD
 	/*
 	 * Some firmware will access target address specified in
 	 * param1 to trigger the error when injecting memory error.
@@ -385,6 +451,8 @@ static int __einj_error_trigger(u64 trigger_paddr, u32 type,
 		if (rc)
 			goto out_fini;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = apei_resources_request(&trigger_resources, "APEI EINJ Trigger");
 	if (rc)
 		goto out_fini;
@@ -419,6 +487,7 @@ static int __einj_error_inject(u32 type, u64 param1, u64 param2)
 
 	einj_exec_ctx_init(&ctx);
 
+<<<<<<< HEAD
 	rc = apei_exec_run_optional(&ctx, ACPI_EINJ_BEGIN_OPERATION);
 	if (rc)
 		return rc;
@@ -473,6 +542,18 @@ static int __einj_error_inject(u32 type, u64 param1, u64 param2)
 			v4param->param1 = param1;
 			v4param->param2 = param2;
 		}
+=======
+	rc = apei_exec_run(&ctx, ACPI_EINJ_BEGIN_OPERATION);
+	if (rc)
+		return rc;
+	apei_exec_ctx_set_input(&ctx, type);
+	rc = apei_exec_run(&ctx, ACPI_EINJ_SET_ERROR_TYPE);
+	if (rc)
+		return rc;
+	if (einj_param) {
+		writeq(param1, &einj_param->param1);
+		writeq(param2, &einj_param->param2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	rc = apei_exec_run(&ctx, ACPI_EINJ_EXECUTE_OPERATION);
 	if (rc)
@@ -498,12 +579,19 @@ static int __einj_error_inject(u32 type, u64 param1, u64 param2)
 	if (rc)
 		return rc;
 	trigger_paddr = apei_exec_ctx_get_output(&ctx);
+<<<<<<< HEAD
 	if (notrigger == 0) {
 		rc = __einj_error_trigger(trigger_paddr, type, param1, param2);
 		if (rc)
 			return rc;
 	}
 	rc = apei_exec_run_optional(&ctx, ACPI_EINJ_END_OPERATION);
+=======
+	rc = __einj_error_trigger(trigger_paddr);
+	if (rc)
+		return rc;
+	rc = apei_exec_run(&ctx, ACPI_EINJ_END_OPERATION);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return rc;
 }
@@ -584,6 +672,7 @@ static int error_type_set(void *data, u64 val)
 {
 	int rc;
 	u32 available_error_type = 0;
+<<<<<<< HEAD
 	u32 tval, vendor;
 
 	/*
@@ -603,6 +692,17 @@ static int error_type_set(void *data, u64 val)
 		if (!(val & available_error_type))
 			return -EINVAL;
 	}
+=======
+
+	/* Only one error type can be specified */
+	if (val & (val - 1))
+		return -EINVAL;
+	rc = einj_get_available_error_type(&available_error_type);
+	if (rc)
+		return rc;
+	if (!(val & available_error_type))
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	error_type = val;
 
 	return 0;
@@ -641,6 +741,10 @@ static int einj_check_table(struct acpi_table_einj *einj_tab)
 static int __init einj_init(void)
 {
 	int rc;
+<<<<<<< HEAD
+=======
+	u64 param_paddr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acpi_status status;
 	struct dentry *fentry;
 	struct apei_exec_context ctx;
@@ -650,9 +754,16 @@ static int __init einj_init(void)
 
 	status = acpi_get_table(ACPI_SIG_EINJ, 0,
 				(struct acpi_table_header **)&einj_tab);
+<<<<<<< HEAD
 	if (status == AE_NOT_FOUND)
 		return -ENODEV;
 	else if (ACPI_FAILURE(status)) {
+=======
+	if (status == AE_NOT_FOUND) {
+		pr_info(EINJ_PFX "Table is not found!\n");
+		return -ENODEV;
+	} else if (ACPI_FAILURE(status)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		const char *msg = acpi_format_exception(status);
 		pr_err(EINJ_PFX "Failed to get table, %s\n", msg);
 		return -EINVAL;
@@ -677,6 +788,17 @@ static int __init einj_init(void)
 				     einj_debug_dir, NULL, &error_type_fops);
 	if (!fentry)
 		goto err_cleanup;
+<<<<<<< HEAD
+=======
+	fentry = debugfs_create_x64("param1", S_IRUSR | S_IWUSR,
+				    einj_debug_dir, &error_param1);
+	if (!fentry)
+		goto err_cleanup;
+	fentry = debugfs_create_x64("param2", S_IRUSR | S_IWUSR,
+				    einj_debug_dir, &error_param2);
+	if (!fentry)
+		goto err_cleanup;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fentry = debugfs_create_file("error_inject", S_IWUSR,
 				     einj_debug_dir, NULL, &error_inject_fops);
 	if (!fentry)
@@ -693,6 +815,7 @@ static int __init einj_init(void)
 	rc = apei_exec_pre_map_gars(&ctx);
 	if (rc)
 		goto err_release;
+<<<<<<< HEAD
 
 	einj_param = einj_get_parameter_address();
 	if ((param_extension || acpi5) && einj_param) {
@@ -721,6 +844,13 @@ static int __init einj_init(void)
 		fentry = debugfs_create_x32("vendor_flags", S_IRUSR | S_IWUSR,
 					    einj_debug_dir, &vendor_flags);
 		if (!fentry)
+=======
+	param_paddr = einj_get_parameter_address();
+	if (param_paddr) {
+		einj_param = ioremap(param_paddr, sizeof(*einj_param));
+		rc = -ENOMEM;
+		if (!einj_param)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto err_unmap;
 	}
 
@@ -729,6 +859,7 @@ static int __init einj_init(void)
 	return 0;
 
 err_unmap:
+<<<<<<< HEAD
 	if (einj_param) {
 		acpi_size size = (acpi5) ?
 			sizeof(struct set_error_type_with_address) :
@@ -736,6 +867,8 @@ err_unmap:
 
 		acpi_os_unmap_memory(einj_param, size);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	apei_exec_post_unmap_gars(&ctx);
 err_release:
 	apei_resources_release(&einj_resources);
@@ -751,6 +884,7 @@ static void __exit einj_exit(void)
 {
 	struct apei_exec_context ctx;
 
+<<<<<<< HEAD
 	if (einj_param) {
 		acpi_size size = (acpi5) ?
 			sizeof(struct set_error_type_with_address) :
@@ -758,6 +892,10 @@ static void __exit einj_exit(void)
 
 		acpi_os_unmap_memory(einj_param, size);
 	}
+=======
+	if (einj_param)
+		iounmap(einj_param);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	einj_exec_ctx_init(&ctx);
 	apei_exec_post_unmap_gars(&ctx);
 	apei_resources_release(&einj_resources);

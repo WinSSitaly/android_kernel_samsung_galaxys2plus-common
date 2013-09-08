@@ -22,7 +22,10 @@
  */
 
 #include "wl12xx.h"
+<<<<<<< HEAD
 #include "debug.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "reg.h"
 #include "io.h"
 #include "event.h"
@@ -30,6 +33,7 @@
 #include "scan.h"
 #include "wl12xx_80211.h"
 
+<<<<<<< HEAD
 static void wl1271_event_rssi_trigger(struct wl1271 *wl,
 				      struct wl12xx_vif *wlvif,
 				      struct event_mailbox *mbox)
@@ -89,6 +93,145 @@ static void wl12xx_event_soft_gemini_sense(struct wl1271 *wl,
 		}
 	}
 
+=======
+void wl1271_pspoll_work(struct work_struct *work)
+{
+	struct delayed_work *dwork;
+	struct wl1271 *wl;
+	int ret;
+
+	dwork = container_of(work, struct delayed_work, work);
+	wl = container_of(dwork, struct wl1271, pspoll_work);
+
+	wl1271_debug(DEBUG_EVENT, "pspoll work");
+
+	mutex_lock(&wl->mutex);
+
+	if (unlikely(wl->state == WL1271_STATE_OFF))
+		goto out;
+
+	if (!test_and_clear_bit(WL1271_FLAG_PSPOLL_FAILURE, &wl->flags))
+		goto out;
+
+	if (!test_bit(WL1271_FLAG_STA_ASSOCIATED, &wl->flags))
+		goto out;
+
+	/*
+	 * if we end up here, then we were in powersave when the pspoll
+	 * delivery failure occurred, and no-one changed state since, so
+	 * we should go back to powersave.
+	 */
+	ret = wl1271_ps_elp_wakeup(wl);
+	if (ret < 0)
+		goto out;
+
+	wl1271_ps_set_mode(wl, STATION_POWER_SAVE_MODE, wl->basic_rate, true);
+
+	wl1271_ps_elp_sleep(wl);
+out:
+	mutex_unlock(&wl->mutex);
+};
+
+static void wl1271_event_pspoll_delivery_fail(struct wl1271 *wl)
+{
+	int delay = wl->conf.conn.ps_poll_recovery_period;
+	int ret;
+
+	wl->ps_poll_failures++;
+	if (wl->ps_poll_failures == 1)
+		wl1271_info("AP with dysfunctional ps-poll, "
+			    "trying to work around it.");
+
+	/* force active mode receive data from the AP */
+	if (test_bit(WL1271_FLAG_PSM, &wl->flags)) {
+		ret = wl1271_ps_set_mode(wl, STATION_ACTIVE_MODE,
+					 wl->basic_rate, true);
+		if (ret < 0)
+			return;
+		set_bit(WL1271_FLAG_PSPOLL_FAILURE, &wl->flags);
+		ieee80211_queue_delayed_work(wl->hw, &wl->pspoll_work,
+					     msecs_to_jiffies(delay));
+	}
+
+	/*
+	 * If already in active mode, lets we should be getting data from
+	 * the AP right away. If we enter PSM too fast after this, and data
+	 * remains on the AP, we will get another event like this, and we'll
+	 * go into active once more.
+	 */
+}
+
+static int wl1271_event_ps_report(struct wl1271 *wl,
+				  struct event_mailbox *mbox,
+				  bool *beacon_loss)
+{
+	int ret = 0;
+	u32 total_retries = wl->conf.conn.psm_entry_retries;
+
+	wl1271_debug(DEBUG_EVENT, "ps_status: 0x%x", mbox->ps_status);
+
+	switch (mbox->ps_status) {
+	case EVENT_ENTER_POWER_SAVE_FAIL:
+		wl1271_debug(DEBUG_PSM, "PSM entry failed");
+
+		if (!test_bit(WL1271_FLAG_PSM, &wl->flags)) {
+			/* remain in active mode */
+			wl->psm_entry_retry = 0;
+			break;
+		}
+
+		if (wl->psm_entry_retry < total_retries) {
+			wl->psm_entry_retry++;
+			ret = wl1271_ps_set_mode(wl, STATION_POWER_SAVE_MODE,
+						 wl->basic_rate, true);
+		} else {
+			wl1271_info("No ack to nullfunc from AP.");
+			wl->psm_entry_retry = 0;
+			*beacon_loss = true;
+		}
+		break;
+	case EVENT_ENTER_POWER_SAVE_SUCCESS:
+		wl->psm_entry_retry = 0;
+
+		/* enable beacon filtering */
+		ret = wl1271_acx_beacon_filter_opt(wl, true);
+		if (ret < 0)
+			break;
+
+		/* enable beacon early termination */
+		ret = wl1271_acx_bet_enable(wl, true);
+		if (ret < 0)
+			break;
+
+		if (wl->ps_compl) {
+			complete(wl->ps_compl);
+			wl->ps_compl = NULL;
+		}
+		break;
+	default:
+		break;
+	}
+
+	return ret;
+}
+
+static void wl1271_event_rssi_trigger(struct wl1271 *wl,
+				      struct event_mailbox *mbox)
+{
+	enum nl80211_cqm_rssi_threshold_event event;
+	s8 metric = mbox->rssi_snr_trigger_metric[0];
+
+	wl1271_debug(DEBUG_EVENT, "RSSI trigger metric: %d", metric);
+
+	if (metric <= wl->rssi_thold)
+		event = NL80211_CQM_RSSI_THRESHOLD_EVENT_LOW;
+	else
+		event = NL80211_CQM_RSSI_THRESHOLD_EVENT_HIGH;
+
+	if (event != wl->last_rssi_event)
+		ieee80211_cqm_rssi_notify(wl->vif, event, GFP_KERNEL);
+	wl->last_rssi_event = event;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void wl1271_event_mbox_dump(struct event_mailbox *mbox)
@@ -100,12 +243,19 @@ static void wl1271_event_mbox_dump(struct event_mailbox *mbox)
 
 static int wl1271_event_process(struct wl1271 *wl, struct event_mailbox *mbox)
 {
+<<<<<<< HEAD
 	struct ieee80211_vif *vif;
 	struct wl12xx_vif *wlvif;
 	u32 vector;
 	bool beacon_loss = false;
 	bool disconnect_sta = false;
 	unsigned long sta_bitmap = 0;
+=======
+	int ret;
+	u32 vector;
+	bool beacon_loss = false;
+	bool is_ap = (wl->bss_type == BSS_TYPE_AP_BSS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wl1271_event_mbox_dump(mbox);
 
@@ -117,7 +267,11 @@ static int wl1271_event_process(struct wl1271 *wl, struct event_mailbox *mbox)
 		wl1271_debug(DEBUG_EVENT, "status: 0x%x",
 			     mbox->scheduled_scan_status);
 
+<<<<<<< HEAD
 		wl1271_scan_stm(wl, wl->scan_vif);
+=======
+		wl1271_scan_stm(wl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (vector & PERIODIC_SCAN_REPORT_EVENT_ID) {
@@ -131,6 +285,7 @@ static int wl1271_event_process(struct wl1271 *wl, struct event_mailbox *mbox)
 		wl1271_debug(DEBUG_EVENT, "PERIODIC_SCAN_COMPLETE_EVENT "
 			     "(status 0x%0x)", mbox->scheduled_scan_status);
 		if (wl->sched_scanning) {
+<<<<<<< HEAD
 			ieee80211_sched_scan_stopped(wl->hw);
 			wl->sched_scanning = false;
 		}
@@ -139,6 +294,21 @@ static int wl1271_event_process(struct wl1271 *wl, struct event_mailbox *mbox)
 	if (vector & SOFT_GEMINI_SENSE_EVENT_ID)
 		wl12xx_event_soft_gemini_sense(wl,
 					       mbox->soft_gemini_sense_info);
+=======
+			wl1271_scan_sched_scan_stop(wl);
+			ieee80211_sched_scan_stopped(wl->hw);
+		}
+	}
+
+	/* disable dynamic PS when requested by the firmware */
+	if (vector & SOFT_GEMINI_SENSE_EVENT_ID &&
+	    wl->bss_type == BSS_TYPE_STA_BSS) {
+		if (mbox->soft_gemini_sense_info)
+			ieee80211_disable_dyn_ps(wl->vif);
+		else
+			ieee80211_enable_dyn_ps(wl->vif);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * The BSS_LOSE_EVENT_ID is only needed while psm (and hence beacon
@@ -149,14 +319,19 @@ static int wl1271_event_process(struct wl1271 *wl, struct event_mailbox *mbox)
 	 * BSS_LOSE_EVENT, beacon loss has to be reported to the stack.
 	 *
 	 */
+<<<<<<< HEAD
 	if (vector & BSS_LOSE_EVENT_ID) {
 		/* TODO: check for multi-role */
+=======
+	if ((vector & BSS_LOSE_EVENT_ID) && !is_ap) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wl1271_info("Beacon loss detected.");
 
 		/* indicate to the stack, that beacons have been lost */
 		beacon_loss = true;
 	}
 
+<<<<<<< HEAD
 	if (vector & RSSI_SNR_TRIGGER_0_EVENT_ID) {
 		/* TODO: check actual multi-role support */
 		wl1271_debug(DEBUG_EVENT, "RSSI_SNR_TRIGGER_0_EVENT");
@@ -263,6 +438,32 @@ static int wl1271_event_process(struct wl1271 *wl, struct event_mailbox *mbox)
 			vif = wl12xx_wlvif_to_vif(wlvif);
 			ieee80211_connection_loss(vif);
 		}
+=======
+	if ((vector & PS_REPORT_EVENT_ID) && !is_ap) {
+		wl1271_debug(DEBUG_EVENT, "PS_REPORT_EVENT");
+		ret = wl1271_event_ps_report(wl, mbox, &beacon_loss);
+		if (ret < 0)
+			return ret;
+	}
+
+	if ((vector & PSPOLL_DELIVERY_FAILURE_EVENT_ID) && !is_ap)
+		wl1271_event_pspoll_delivery_fail(wl);
+
+	if (vector & RSSI_SNR_TRIGGER_0_EVENT_ID) {
+		wl1271_debug(DEBUG_EVENT, "RSSI_SNR_TRIGGER_0_EVENT");
+		if (wl->vif)
+			wl1271_event_rssi_trigger(wl, mbox);
+	}
+
+	if ((vector & DUMMY_PACKET_EVENT_ID) && !is_ap) {
+		wl1271_debug(DEBUG_EVENT, "DUMMY_PACKET_ID_EVENT_ID");
+		if (wl->vif)
+			wl1271_tx_dummy_packet(wl);
+	}
+
+	if (wl->vif && beacon_loss)
+		ieee80211_connection_loss(wl->vif);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

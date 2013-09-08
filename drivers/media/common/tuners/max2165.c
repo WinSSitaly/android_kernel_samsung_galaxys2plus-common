@@ -151,7 +151,11 @@ static int max2165_set_bandwidth(struct max2165_priv *priv, u32 bw)
 {
 	u8 val;
 
+<<<<<<< HEAD
 	if (bw == 8000000)
+=======
+	if (bw == BANDWIDTH_8_MHZ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		val = priv->bb_filter_8mhz_cfg;
 	else
 		val = priv->bb_filter_7mhz_cfg;
@@ -168,7 +172,11 @@ int fixpt_div32(u32 dividend, u32 divisor, u32 *quotient, u32 *fraction)
 	int i;
 
 	if (0 == divisor)
+<<<<<<< HEAD
 		return -EINVAL;
+=======
+		return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	q = dividend / divisor;
 	remainder = dividend - q * divisor;
@@ -194,6 +202,7 @@ static int max2165_set_rf(struct max2165_priv *priv, u32 freq)
 	u8 tf_ntch;
 	u32 t;
 	u32 quotient, fraction;
+<<<<<<< HEAD
 	int ret;
 
 	/* Set PLL divider according to RF frequency */
@@ -201,6 +210,12 @@ static int max2165_set_rf(struct max2165_priv *priv, u32 freq)
 			 &quotient, &fraction);
 	if (ret != 0)
 		return ret;
+=======
+
+	/* Set PLL divider according to RF frequency */
+	fixpt_div32(freq / 1000, priv->config->osc_clk * 1000,
+		&quotient, &fraction);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* 20-bit fraction */
 	fraction >>= 12;
@@ -260,6 +275,7 @@ static void max2165_debug_status(struct max2165_priv *priv)
 	dprintk("VCO: %d, VCO Sub-band: %d, ADC: %d\n", vco, vco_sub_band, adc);
 }
 
+<<<<<<< HEAD
 static int max2165_set_params(struct dvb_frontend *fe)
 {
 	struct max2165_priv *priv = fe->tuner_priv;
@@ -282,6 +298,41 @@ static int max2165_set_params(struct dvb_frontend *fe)
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 1);
 	max2165_set_bandwidth(priv, c->bandwidth_hz);
+=======
+static int max2165_set_params(struct dvb_frontend *fe,
+	struct dvb_frontend_parameters *params)
+{
+	struct max2165_priv *priv = fe->tuner_priv;
+	int ret;
+
+	dprintk("%s() frequency=%d (Hz)\n", __func__, params->frequency);
+	if (fe->ops.info.type == FE_ATSC) {
+			return -EINVAL;
+	} else if (fe->ops.info.type == FE_OFDM) {
+		dprintk("%s() OFDM\n", __func__);
+		switch (params->u.ofdm.bandwidth) {
+		case BANDWIDTH_6_MHZ:
+			return -EINVAL;
+		case BANDWIDTH_7_MHZ:
+		case BANDWIDTH_8_MHZ:
+			priv->frequency = params->frequency;
+			priv->bandwidth = params->u.ofdm.bandwidth;
+			break;
+		default:
+			printk(KERN_ERR "MAX2165 bandwidth not set!\n");
+			return -EINVAL;
+		}
+	} else {
+		printk(KERN_ERR "MAX2165 modulation type not supported!\n");
+		return -EINVAL;
+	}
+
+	dprintk("%s() frequency=%d\n", __func__, priv->frequency);
+
+	if (fe->ops.i2c_gate_ctrl)
+		fe->ops.i2c_gate_ctrl(fe, 1);
+	max2165_set_bandwidth(priv, priv->bandwidth);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = max2165_set_rf(priv, priv->frequency);
 	mdelay(50);
 	max2165_debug_status(priv);
@@ -362,7 +413,11 @@ static int max2165_init(struct dvb_frontend *fe)
 
 	max2165_read_rom_table(priv);
 
+<<<<<<< HEAD
 	max2165_set_bandwidth(priv, 8000000);
+=======
+	max2165_set_bandwidth(priv, BANDWIDTH_8_MHZ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 0);

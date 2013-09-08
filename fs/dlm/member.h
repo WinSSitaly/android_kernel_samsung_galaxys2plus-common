@@ -1,7 +1,11 @@
 /******************************************************************************
 *******************************************************************************
 **
+<<<<<<< HEAD
 **  Copyright (C) 2005-2011 Red Hat, Inc.  All rights reserved.
+=======
+**  Copyright (C) 2005-2008 Red Hat, Inc.  All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 **
 **  This copyrighted material is made available to anyone wishing to use,
 **  modify, copy, or redistribute it subject to the terms and conditions
@@ -20,6 +24,7 @@ void dlm_clear_members_gone(struct dlm_ls *ls);
 int dlm_recover_members(struct dlm_ls *ls, struct dlm_recover *rv,int *neg_out);
 int dlm_is_removed(struct dlm_ls *ls, int nodeid);
 int dlm_is_member(struct dlm_ls *ls, int nodeid);
+<<<<<<< HEAD
 int dlm_slots_version(struct dlm_header *h);
 void dlm_slot_save(struct dlm_ls *ls, struct dlm_rcom *rc,
 		   struct dlm_member *memb);
@@ -28,6 +33,8 @@ int dlm_slots_copy_in(struct dlm_ls *ls);
 int dlm_slots_assign(struct dlm_ls *ls, int *num_slots, int *slots_size,
 		     struct dlm_slot **slots_out, uint32_t *gen_out);
 void dlm_lsop_recover_done(struct dlm_ls *ls);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif                          /* __MEMBER_DOT_H__ */
 

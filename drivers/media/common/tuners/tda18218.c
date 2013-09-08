@@ -109,11 +109,18 @@ static int tda18218_rd_reg(struct tda18218_priv *priv, u8 reg, u8 *val)
 	return tda18218_rd_regs(priv, reg, val, 1);
 }
 
+<<<<<<< HEAD
 static int tda18218_set_params(struct dvb_frontend *fe)
 {
 	struct tda18218_priv *priv = fe->tuner_priv;
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
 	u32 bw = c->bandwidth_hz;
+=======
+static int tda18218_set_params(struct dvb_frontend *fe,
+	struct dvb_frontend_parameters *params)
+{
+	struct tda18218_priv *priv = fe->tuner_priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 	u8 buf[3], i, BP_Filter, LP_Fc;
 	u32 LO_Frac;
@@ -139,6 +146,7 @@ static int tda18218_set_params(struct dvb_frontend *fe)
 		fe->ops.i2c_gate_ctrl(fe, 1); /* open I2C-gate */
 
 	/* low-pass filter cut-off frequency */
+<<<<<<< HEAD
 	if (bw <= 6000000) {
 		LP_Fc = 0;
 		priv->if_frequency = 3000000;
@@ -152,6 +160,24 @@ static int tda18218_set_params(struct dvb_frontend *fe)
 
 	LO_Frac = c->frequency + priv->if_frequency;
 
+=======
+	switch (params->u.ofdm.bandwidth) {
+	case BANDWIDTH_6_MHZ:
+		LP_Fc = 0;
+		LO_Frac = params->frequency + 4000000;
+		break;
+	case BANDWIDTH_7_MHZ:
+		LP_Fc = 1;
+		LO_Frac = params->frequency + 3500000;
+		break;
+	case BANDWIDTH_8_MHZ:
+	default:
+		LP_Fc = 2;
+		LO_Frac = params->frequency + 4000000;
+		break;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* band-pass filter */
 	if (LO_Frac < 188000000)
 		BP_Filter = 3;
@@ -204,6 +230,7 @@ error:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int tda18218_get_if_frequency(struct dvb_frontend *fe, u32 *frequency)
 {
 	struct tda18218_priv *priv = fe->tuner_priv;
@@ -212,6 +239,8 @@ static int tda18218_get_if_frequency(struct dvb_frontend *fe, u32 *frequency)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int tda18218_sleep(struct dvb_frontend *fe)
 {
 	struct tda18218_priv *priv = fe->tuner_priv;
@@ -274,8 +303,11 @@ static const struct dvb_tuner_ops tda18218_tuner_ops = {
 	.sleep         = tda18218_sleep,
 
 	.set_params    = tda18218_set_params,
+<<<<<<< HEAD
 
 	.get_if_frequency = tda18218_get_if_frequency,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct dvb_frontend *tda18218_attach(struct dvb_frontend *fe,

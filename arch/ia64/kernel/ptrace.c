@@ -26,6 +26,10 @@
 #include <asm/processor.h>
 #include <asm/ptrace_offsets.h>
 #include <asm/rse.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <asm/unwind.h>
 #ifdef CONFIG_PERFMON
@@ -1245,8 +1249,20 @@ syscall_trace_enter (long arg0, long arg1, long arg2, long arg3,
 	if (test_thread_flag(TIF_RESTORE_RSE))
 		ia64_sync_krbs();
 
+<<<<<<< HEAD
 
 	audit_syscall_entry(AUDIT_ARCH_IA64, regs.r15, arg0, arg1, arg2, arg3);
+=======
+	if (unlikely(current->audit_context)) {
+		long syscall;
+		int arch;
+
+		syscall = regs.r15;
+		arch = AUDIT_ARCH_IA64;
+
+		audit_syscall_entry(arch, syscall, arg0, arg1, arg2, arg3);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1260,7 +1276,18 @@ syscall_trace_leave (long arg0, long arg1, long arg2, long arg3,
 {
 	int step;
 
+<<<<<<< HEAD
 	audit_syscall_exit(&regs);
+=======
+	if (unlikely(current->audit_context)) {
+		int success = AUDITSC_RESULT(regs.r10);
+		long result = regs.r8;
+
+		if (success != AUDITSC_SUCCESS)
+			result = -result;
+		audit_syscall_exit(success, result);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	step = test_thread_flag(TIF_SINGLESTEP);
 	if (step || test_thread_flag(TIF_SYSCALL_TRACE))

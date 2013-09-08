@@ -109,7 +109,11 @@ int ecryptfs_parse_packet_length(unsigned char *data, size_t *size,
 		(*size) += ((unsigned char)(data[1]) + 192);
 		(*length_size) = 2;
 	} else if (data[0] == 255) {
+<<<<<<< HEAD
 		/* If support is added, adjust ECRYPTFS_MAX_PKT_LEN_SIZE */
+=======
+		/* Five-byte length; we're not supposed to see this */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ecryptfs_printk(KERN_ERR, "Five-byte packet length not "
 				"supported\n");
 		rc = -EINVAL;
@@ -126,7 +130,11 @@ out:
 /**
  * ecryptfs_write_packet_length
  * @dest: The byte array target into which to write the length. Must
+<<<<<<< HEAD
  *        have at least ECRYPTFS_MAX_PKT_LEN_SIZE bytes allocated.
+=======
+ *        have at least 5 bytes allocated.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @size: The length to write.
  * @packet_size_length: The number of bytes used to encode the packet
  *                      length is written to this address.
@@ -146,7 +154,10 @@ int ecryptfs_write_packet_length(char *dest, size_t size,
 		dest[1] = ((size - 192) % 256);
 		(*packet_size_length) = 2;
 	} else {
+<<<<<<< HEAD
 		/* If support is added, adjust ECRYPTFS_MAX_PKT_LEN_SIZE */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -EINVAL;
 		ecryptfs_printk(KERN_WARNING,
 				"Unsupported packet size: [%zd]\n", size);
@@ -679,7 +690,14 @@ ecryptfs_write_tag_70_packet(char *dest, size_t *remaining_bytes,
 	 * Octets N3-N4: Block-aligned encrypted filename
 	 *  - Consists of a minimum number of random characters, a \0
 	 *    separator, and then the filename */
+<<<<<<< HEAD
 	s->max_packet_size = (ECRYPTFS_TAG_70_MAX_METADATA_SIZE
+=======
+	s->max_packet_size = (1                   /* Tag 70 identifier */
+			      + 3                 /* Max Tag 70 packet size */
+			      + ECRYPTFS_SIG_SIZE /* FNEK sig */
+			      + 1                 /* Cipher identifier */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      + s->block_aligned_filename_size);
 	if (dest == NULL) {
 		(*packet_size) = s->max_packet_size;
@@ -931,10 +949,17 @@ ecryptfs_parse_tag_70_packet(char **filename, size_t *filename_size,
 		goto out;
 	}
 	s->desc.flags = CRYPTO_TFM_REQ_MAY_SLEEP;
+<<<<<<< HEAD
 	if (max_packet_size < ECRYPTFS_TAG_70_MIN_METADATA_SIZE) {
 		printk(KERN_WARNING "%s: max_packet_size is [%zd]; it must be "
 		       "at least [%d]\n", __func__, max_packet_size,
 		       ECRYPTFS_TAG_70_MIN_METADATA_SIZE);
+=======
+	if (max_packet_size < (1 + 1 + ECRYPTFS_SIG_SIZE + 1 + 1)) {
+		printk(KERN_WARNING "%s: max_packet_size is [%zd]; it must be "
+		       "at least [%d]\n", __func__, max_packet_size,
+			(1 + 1 + ECRYPTFS_SIG_SIZE + 1 + 1));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -EINVAL;
 		goto out;
 	}
@@ -1148,8 +1173,13 @@ decrypt_pki_encrypted_session_key(struct ecryptfs_auth_tok *auth_tok,
 	u8 cipher_code = 0;
 	struct ecryptfs_msg_ctx *msg_ctx;
 	struct ecryptfs_message *msg = NULL;
+<<<<<<< HEAD
 	char *auth_tok_sig;
 	char *payload;
+=======
+	char *auth_tok_sig = NULL;
+	char *payload = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	size_t payload_len;
 	int rc;
 
@@ -1204,6 +1234,13 @@ decrypt_pki_encrypted_session_key(struct ecryptfs_auth_tok *auth_tok,
 out:
 	if (msg)
 		kfree(msg);
+<<<<<<< HEAD
+=======
+	if (auth_tok_sig)
+        kfree(auth_tok_sig);
+	if (payload)
+        kfree(payload);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -1633,6 +1670,7 @@ int ecryptfs_keyring_auth_tok_for_sig(struct key **auth_tok_key,
 
 	(*auth_tok_key) = request_key(&key_type_user, sig, NULL);
 	if (!(*auth_tok_key) || IS_ERR(*auth_tok_key)) {
+<<<<<<< HEAD
 		(*auth_tok_key) = ecryptfs_get_encrypted_key(sig);
 		if (!(*auth_tok_key) || IS_ERR(*auth_tok_key)) {
 			printk(KERN_ERR "Could not find key with description: [%s]\n",
@@ -1641,6 +1679,13 @@ int ecryptfs_keyring_auth_tok_for_sig(struct key **auth_tok_key,
 			(*auth_tok_key) = NULL;
 			goto out;
 		}
+=======
+		printk(KERN_ERR "Could not find key with description: [%s]\n",
+		       sig);
+		rc = process_request_key_err(PTR_ERR(*auth_tok_key));
+		(*auth_tok_key) = NULL;
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	down_write(&(*auth_tok_key)->sem);
 	rc = ecryptfs_verify_auth_tok_from_key(*auth_tok_key, auth_tok);
@@ -1763,8 +1808,13 @@ int ecryptfs_parse_packet_set(struct ecryptfs_crypt_stat *crypt_stat,
 	size_t found_auth_tok;
 	size_t next_packet_is_auth_tok_packet;
 	struct list_head auth_tok_list;
+<<<<<<< HEAD
 	struct ecryptfs_auth_tok *matching_auth_tok;
 	struct ecryptfs_auth_tok *candidate_auth_tok;
+=======
+	struct ecryptfs_auth_tok *matching_auth_tok = NULL;
+	struct ecryptfs_auth_tok *candidate_auth_tok = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *candidate_auth_tok_sig;
 	size_t packet_size;
 	struct ecryptfs_auth_tok *new_auth_tok;
@@ -2184,7 +2234,11 @@ write_tag_3_packet(char *dest, size_t *remaining_bytes,
 {
 	size_t i;
 	size_t encrypted_session_key_valid = 0;
+<<<<<<< HEAD
 	char session_key_encryption_key[ECRYPTFS_MAX_KEY_BYTES];
+=======
+	char session_key_encryption_key[ECRYPTFS_MAX_KEY_BYTES] = {0, };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct scatterlist dst_sg[2];
 	struct scatterlist src_sg[2];
 	struct mutex *tfm_mutex = NULL;
@@ -2256,7 +2310,11 @@ write_tag_3_packet(char *dest, size_t *remaining_bytes,
 		       auth_tok->token.password.session_key_encryption_key,
 		       crypt_stat->key_size);
 		ecryptfs_printk(KERN_DEBUG,
+<<<<<<< HEAD
 				"Cached session key encryption key:\n");
+=======
+				"Cached session key " "encryption key: \n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ecryptfs_verbosity > 0)
 			ecryptfs_dump_hex(session_key_encryption_key, 16);
 	}

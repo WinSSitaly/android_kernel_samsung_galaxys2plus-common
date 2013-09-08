@@ -13,7 +13,11 @@
 #define ASM_ALIGN ".balign 4"
 #endif
 
+<<<<<<< HEAD
 static __always_inline bool arch_static_branch(struct static_key *key)
+=======
+static __always_inline bool arch_static_branch(struct jump_label_key *key)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	asm goto("0:	brcl 0,0\n"
 		".pushsection __jump_table, \"aw\"\n"

@@ -12,9 +12,21 @@
 
 #define IRQ_STATUS	0x14
 
+<<<<<<< HEAD
 	.macro  get_irqnr_preamble, base, tmp
 	.endm
 
+=======
+	.macro  disable_fiq
+	.endm
+
+	.macro  get_irqnr_preamble, base, tmp
+	.endm
+
+	.macro  arch_ret_to_user, tmp1, tmp2
+	.endm
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.macro  get_irqnr_and_base, irqnr, irqstat, base, tmp
 	ldr     \irqstat, =IO_ADDRESS(GEMINI_INTERRUPT_BASE + IRQ_STATUS)
 	ldr     \irqnr, [\irqstat]

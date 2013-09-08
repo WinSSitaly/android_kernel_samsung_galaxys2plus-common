@@ -40,7 +40,11 @@
 #include <linux/init.h>
 #include <linux/interrupt.h>
 #include <linux/pci.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/firmware.h>
 #include <linux/slab.h>
 #include <sound/core.h>
@@ -52,7 +56,11 @@
 #include <sound/asoundef.h>
 #include <sound/initval.h>
 #include <asm/io.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "echoaudio.h"
 
 MODULE_FIRMWARE("ea/darla20_dsp.fw");

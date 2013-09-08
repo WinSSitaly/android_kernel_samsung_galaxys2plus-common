@@ -80,10 +80,13 @@ comment "Supported nGene Adapters"
 	depends on DVB_CORE && PCI && I2C
 	source "drivers/media/dvb/ngene/Kconfig"
 
+<<<<<<< HEAD
 comment "Supported ddbridge ('Octopus') Adapters"
 	depends on DVB_CORE && PCI && I2C
 	source "drivers/media/dvb/ddbridge/Kconfig"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 comment "Supported DVB Frontends"
 	depends on DVB_CORE
 source "drivers/media/dvb/frontends/Kconfig"

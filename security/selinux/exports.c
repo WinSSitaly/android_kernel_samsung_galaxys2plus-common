@@ -12,7 +12,10 @@
  * as published by the Free Software Foundation.
  */
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/selinux.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "security.h"
 

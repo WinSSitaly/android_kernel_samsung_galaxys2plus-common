@@ -35,6 +35,7 @@
 #include "conf.h"
 #include "ini.h"
 
+<<<<<<< HEAD
 #define WL127X_FW_NAME_MULTI "ti-connectivity/wl127x-fw-4-mr.bin"
 #define WL127X_FW_NAME_SINGLE "ti-connectivity/wl127x-fw-4-sr.bin"
 
@@ -43,6 +44,107 @@
 
 #define WL127X_PLT_FW_NAME "ti-connectivity/wl127x-fw-4-plt.bin"
 #define WL128X_PLT_FW_NAME "ti-connectivity/wl128x-fw-4-plt.bin"
+=======
+#define DRIVER_NAME "wl1271"
+#define DRIVER_PREFIX DRIVER_NAME ": "
+
+/*
+ * FW versions support BA 11n
+ * versions marks x.x.x.50-60.x
+ */
+#define WL12XX_BA_SUPPORT_FW_COST_VER2_START    50
+#define WL12XX_BA_SUPPORT_FW_COST_VER2_END      60
+
+enum {
+	DEBUG_NONE	= 0,
+	DEBUG_IRQ	= BIT(0),
+	DEBUG_SPI	= BIT(1),
+	DEBUG_BOOT	= BIT(2),
+	DEBUG_MAILBOX	= BIT(3),
+	DEBUG_TESTMODE	= BIT(4),
+	DEBUG_EVENT	= BIT(5),
+	DEBUG_TX	= BIT(6),
+	DEBUG_RX	= BIT(7),
+	DEBUG_SCAN	= BIT(8),
+	DEBUG_CRYPT	= BIT(9),
+	DEBUG_PSM	= BIT(10),
+	DEBUG_MAC80211	= BIT(11),
+	DEBUG_CMD	= BIT(12),
+	DEBUG_ACX	= BIT(13),
+	DEBUG_SDIO	= BIT(14),
+	DEBUG_FILTERS   = BIT(15),
+	DEBUG_ADHOC     = BIT(16),
+	DEBUG_AP	= BIT(17),
+	DEBUG_MASTER	= (DEBUG_ADHOC | DEBUG_AP),
+	DEBUG_ALL	= ~0,
+};
+
+extern u32 wl12xx_debug_level;
+
+#define DEBUG_DUMP_LIMIT 1024
+
+#define wl1271_error(fmt, arg...) \
+	pr_err(DRIVER_PREFIX "ERROR " fmt "\n", ##arg)
+
+#define wl1271_warning(fmt, arg...) \
+	pr_warning(DRIVER_PREFIX "WARNING " fmt "\n", ##arg)
+
+#define wl1271_notice(fmt, arg...) \
+	pr_info(DRIVER_PREFIX fmt "\n", ##arg)
+
+#define wl1271_info(fmt, arg...) \
+	pr_info(DRIVER_PREFIX fmt "\n", ##arg)
+
+#define wl1271_debug(level, fmt, arg...) \
+	do { \
+		if (level & wl12xx_debug_level) \
+			pr_debug(DRIVER_PREFIX fmt "\n", ##arg); \
+	} while (0)
+
+/* TODO: use pr_debug_hex_dump when it will be available */
+#define wl1271_dump(level, prefix, buf, len)	\
+	do { \
+		if (level & wl12xx_debug_level) \
+			print_hex_dump(KERN_DEBUG, DRIVER_PREFIX prefix, \
+				       DUMP_PREFIX_OFFSET, 16, 1,	\
+				       buf,				\
+				       min_t(size_t, len, DEBUG_DUMP_LIMIT), \
+				       0);				\
+	} while (0)
+
+#define wl1271_dump_ascii(level, prefix, buf, len)	\
+	do { \
+		if (level & wl12xx_debug_level) \
+			print_hex_dump(KERN_DEBUG, DRIVER_PREFIX prefix, \
+				       DUMP_PREFIX_OFFSET, 16, 1,	\
+				       buf,				\
+				       min_t(size_t, len, DEBUG_DUMP_LIMIT), \
+				       true);				\
+	} while (0)
+
+#define WL1271_DEFAULT_STA_RX_CONFIG (CFG_UNI_FILTER_EN |	\
+				  CFG_BSSID_FILTER_EN | \
+				  CFG_MC_FILTER_EN)
+
+#define WL1271_DEFAULT_STA_RX_FILTER (CFG_RX_RCTS_ACK | CFG_RX_PRSP_EN |  \
+				  CFG_RX_MGMT_EN | CFG_RX_DATA_EN |   \
+				  CFG_RX_CTL_EN | CFG_RX_BCN_EN |     \
+				  CFG_RX_AUTH_EN | CFG_RX_ASSOC_EN)
+
+#define WL1271_DEFAULT_AP_RX_CONFIG  0
+
+#define WL1271_DEFAULT_AP_RX_FILTER  (CFG_RX_RCTS_ACK | CFG_RX_PREQ_EN | \
+				  CFG_RX_MGMT_EN | CFG_RX_DATA_EN | \
+				  CFG_RX_CTL_EN | CFG_RX_AUTH_EN | \
+				  CFG_RX_ASSOC_EN)
+
+
+
+#define WL1271_FW_NAME "ti-connectivity/wl1271-fw-2.bin"
+#define WL128X_FW_NAME "ti-connectivity/wl128x-fw.bin"
+#define WL127X_AP_FW_NAME "ti-connectivity/wl1271-fw-ap.bin"
+#define WL128X_AP_FW_NAME "ti-connectivity/wl128x-fw-ap.bin"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * wl127x and wl128x are using the same NVS file name. However, the
@@ -53,7 +155,10 @@
 
 #define WL1271_TX_SECURITY_LO16(s) ((u16)((s) & 0xffff))
 #define WL1271_TX_SECURITY_HI32(s) ((u32)(((s) >> 16) & 0xffffffff))
+<<<<<<< HEAD
 #define WL1271_TX_SQN_POST_RECOVERY_PADDING 0xff
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define WL1271_CIPHER_SUITE_GEM 0x00147201
 
@@ -66,6 +171,7 @@
 #define WL1271_DEFAULT_BEACON_INT  100
 #define WL1271_DEFAULT_DTIM_PERIOD 1
 
+<<<<<<< HEAD
 #define WL12XX_MAX_ROLES           4
 #define WL12XX_MAX_LINKS           12
 #define WL12XX_INVALID_ROLE_ID     0xff
@@ -90,12 +196,35 @@
 #define WL1271_AP_DEF_BEACON_EXP   20
 
 #define ACX_TX_DESCRIPTORS         16
+=======
+#define WL1271_AP_GLOBAL_HLID      0
+#define WL1271_AP_BROADCAST_HLID   1
+#define WL1271_AP_STA_HLID_START   2
+
+/*
+ * When in AP-mode, we allow (at least) this number of mem-blocks
+ * to be transmitted to FW for a STA in PS-mode. Only when packets are
+ * present in the FW buffers it will wake the sleeping STA. We want to put
+ * enough packets for the driver to transmit all of its buffered data before
+ * the STA goes to sleep again. But we don't want to take too much mem-blocks
+ * as it might hurt the throughput of active STAs.
+ * The number of blocks (18) is enough for 2 large packets.
+ */
+#define WL1271_PS_STA_MAX_BLOCKS  (2 * 9)
+
+#define WL1271_AP_BSS_INDEX        0
+#define WL1271_AP_DEF_INACTIV_SEC  300
+#define WL1271_AP_DEF_BEACON_EXP   20
+
+#define ACX_TX_DESCRIPTORS         32
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define WL1271_AGGR_BUFFER_SIZE (4 * PAGE_SIZE)
 
 enum wl1271_state {
 	WL1271_STATE_OFF,
 	WL1271_STATE_ON,
+<<<<<<< HEAD
 };
 
 enum wl12xx_fw_type {
@@ -103,6 +232,9 @@ enum wl12xx_fw_type {
 	WL12XX_FW_TYPE_NORMAL,
 	WL12XX_FW_TYPE_MULTI,
 	WL12XX_FW_TYPE_PLT,
+=======
+	WL1271_STATE_PLT,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum wl1271_partition_type {
@@ -146,8 +278,11 @@ enum {
 #define FW_VER_MINOR_1_SPARE_STA_MIN 58
 #define FW_VER_MINOR_1_SPARE_AP_MIN  47
 
+<<<<<<< HEAD
 #define FW_VER_MINOR_FWLOG_STA_MIN 70
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct wl1271_chip {
 	u32 id;
 	char fw_ver_str[ETHTOOL_BUSINFO_LEN];
@@ -165,17 +300,39 @@ struct wl1271_stats {
 #define NUM_TX_QUEUES              4
 #define NUM_RX_PKT_DESC            8
 
+<<<<<<< HEAD
 #define AP_MAX_STATIONS            8
 
 /* FW status registers */
 struct wl12xx_fw_status {
+=======
+#define AP_MAX_STATIONS            5
+
+/* Broadcast and Global links + links to stations */
+#define AP_MAX_LINKS               (AP_MAX_STATIONS + 2)
+
+/* FW status registers common for AP/STA */
+struct wl1271_fw_common_status {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__le32 intr;
 	u8  fw_rx_counter;
 	u8  drv_rx_counter;
 	u8  reserved;
 	u8  tx_results_counter;
 	__le32 rx_pkt_descs[NUM_RX_PKT_DESC];
+<<<<<<< HEAD
 	__le32 fw_localtime;
+=======
+	__le32 tx_released_blks[NUM_TX_QUEUES];
+	__le32 fw_localtime;
+} __packed;
+
+/* FW status registers for AP */
+struct wl1271_fw_ap_status {
+	struct wl1271_fw_common_status common;
+
+	/* Next fields valid only in AP FW */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * A bitmap (where each bit represents a single HLID)
@@ -183,6 +340,7 @@ struct wl12xx_fw_status {
 	 */
 	__le32 link_ps_bitmap;
 
+<<<<<<< HEAD
 	/*
 	 * A bitmap (where each bit represents a single HLID) to indicate
 	 * if the station is in Fast mode
@@ -207,6 +365,33 @@ struct wl12xx_fw_status {
 	__le32 log_start_addr;
 } __packed;
 
+=======
+	/* Number of freed MBs per HLID */
+	u8 tx_lnk_free_blks[AP_MAX_LINKS];
+	u8 padding_1[1];
+} __packed;
+
+/* FW status registers for STA */
+struct wl1271_fw_sta_status {
+	struct wl1271_fw_common_status common;
+
+	u8  tx_total;
+	u8  reserved1;
+	__le16 reserved2;
+	/* Total structure size is 68 bytes */
+	u32 padding;
+} __packed;
+
+struct wl1271_fw_full_status {
+	union {
+		struct wl1271_fw_common_status common;
+		struct wl1271_fw_sta_status sta;
+		struct wl1271_fw_ap_status ap;
+	};
+} __packed;
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct wl1271_rx_mem_pool_addr {
 	u32 addr;
 	u32 addr_extra;
@@ -218,11 +403,16 @@ struct wl1271_scan {
 	unsigned long scanned_ch[BITS_TO_LONGS(WL1271_MAX_CHANNELS)];
 	bool failed;
 	u8 state;
+<<<<<<< HEAD
 	u8 ssid[IEEE80211_MAX_SSID_LEN+1];
+=======
+	u8 ssid[IW_ESSID_MAX_SIZE+1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	size_t ssid_len;
 };
 
 struct wl1271_if_operations {
+<<<<<<< HEAD
 	void (*read)(struct device *child, int addr, void *buf, size_t len,
 		     bool fixed);
 	void (*write)(struct device *child, int addr, void *buf, size_t len,
@@ -231,6 +421,19 @@ struct wl1271_if_operations {
 	void (*init)(struct device *child);
 	int (*power)(struct device *child, bool enable);
 	void (*set_block_size) (struct device *child, unsigned int blksz);
+=======
+	void (*read)(struct wl1271 *wl, int addr, void *buf, size_t len,
+		     bool fixed);
+	void (*write)(struct wl1271 *wl, int addr, void *buf, size_t len,
+		     bool fixed);
+	void (*reset)(struct wl1271 *wl);
+	void (*init)(struct wl1271 *wl);
+	int (*power)(struct wl1271 *wl, bool enable);
+	struct device* (*dev)(struct wl1271 *wl);
+	void (*enable_irq)(struct wl1271 *wl);
+	void (*disable_irq)(struct wl1271 *wl);
+	void (*set_block_size) (struct wl1271 *wl, unsigned int blksz);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define MAX_NUM_KEYS 14
@@ -247,11 +450,17 @@ struct wl1271_ap_key {
 };
 
 enum wl12xx_flags {
+<<<<<<< HEAD
+=======
+	WL1271_FLAG_STA_ASSOCIATED,
+	WL1271_FLAG_JOINED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	WL1271_FLAG_GPIO_POWER,
 	WL1271_FLAG_TX_QUEUE_STOPPED,
 	WL1271_FLAG_TX_PENDING,
 	WL1271_FLAG_IN_ELP,
 	WL1271_FLAG_ELP_REQUESTED,
+<<<<<<< HEAD
 	WL1271_FLAG_IRQ_RUNNING,
 	WL1271_FLAG_FW_TX_BUSY,
 	WL1271_FLAG_DUMMY_PACKET_PENDING,
@@ -276,12 +485,27 @@ enum wl12xx_vif_flags {
 	WLVIF_FLAG_CS_PROGRESS,
 	WLVIF_FLAG_AP_PROBE_RESP_SET,
 	WLVIF_FLAG_IN_USE,
+=======
+	WL1271_FLAG_PSM,
+	WL1271_FLAG_PSM_REQUESTED,
+	WL1271_FLAG_IRQ_RUNNING,
+	WL1271_FLAG_IDLE,
+	WL1271_FLAG_PSPOLL_FAILURE,
+	WL1271_FLAG_STA_STATE_SENT,
+	WL1271_FLAG_FW_TX_BUSY,
+	WL1271_FLAG_AP_STARTED,
+	WL1271_FLAG_IF_INITIALIZED,
+	WL1271_FLAG_DUMMY_PACKET_PENDING,
+	WL1271_FLAG_SUSPENDED,
+	WL1271_FLAG_PENDING_WORK,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct wl1271_link {
 	/* AP-mode - TX queue per AC in link */
 	struct sk_buff_head tx_queue[NUM_TX_QUEUES];
 
+<<<<<<< HEAD
 	/* accounting for allocated / freed packets in FW */
 	u8 allocated_pkts;
 	u8 prev_freed_pkts;
@@ -298,6 +522,20 @@ struct wl1271 {
 
 	struct device *dev;
 
+=======
+	/* accounting for allocated / available TX blocks in FW */
+	u8 allocated_blks;
+	u8 prev_freed_blks;
+
+	u8 addr[ETH_ALEN];
+};
+
+struct wl1271 {
+	struct platform_device *plat_dev;
+	struct ieee80211_hw *hw;
+	bool mac80211_registered;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *if_priv;
 
 	struct wl1271_if_operations *if_ops;
@@ -309,9 +547,12 @@ struct wl1271 {
 	spinlock_t wl_lock;
 
 	enum wl1271_state state;
+<<<<<<< HEAD
 	enum wl12xx_fw_type fw_type;
 	bool plt;
 	u8 last_vif_count;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mutex mutex;
 
 	unsigned long flags;
@@ -325,11 +566,16 @@ struct wl1271 {
 
 	u8 *fw;
 	size_t fw_len;
+<<<<<<< HEAD
+=======
+	u8 fw_bss_type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *nvs;
 	size_t nvs_len;
 
 	s8 hw_pg_ver;
 
+<<<<<<< HEAD
 	/* address read from the fuse ROM */
 	u32 fuse_oui_addr;
 	u32 fuse_nic_addr;
@@ -349,15 +595,29 @@ struct wl1271 {
 
 	u8 sta_count;
 	u8 ap_count;
+=======
+	u8 bssid[ETH_ALEN];
+	u8 mac_addr[ETH_ALEN];
+	u8 bss_type;
+	u8 set_bss_type;
+	u8 ssid[IW_ESSID_MAX_SIZE + 1];
+	u8 ssid_len;
+	int channel;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct wl1271_acx_mem_map *target_mem_map;
 
 	/* Accounting for allocated / available TX blocks on HW */
+<<<<<<< HEAD
 	u32 tx_blocks_freed;
+=======
+	u32 tx_blocks_freed[NUM_TX_QUEUES];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 tx_blocks_available;
 	u32 tx_allocated_blocks;
 	u32 tx_results_count;
 
+<<<<<<< HEAD
 	/* amount of spare TX blocks to use */
 	u32 tx_spare_blocks;
 
@@ -365,15 +625,26 @@ struct wl1271 {
 	u32 tx_pkts_freed[NUM_TX_QUEUES];
 	u32 tx_allocated_pkts[NUM_TX_QUEUES];
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Transmitted TX packets counter for chipset interface */
 	u32 tx_packets_count;
 
 	/* Time-offset between host and chipset clocks */
 	s64 time_offset;
 
+<<<<<<< HEAD
 	/* Frames scheduled for transmission, not handled yet */
 	int tx_queue_count[NUM_TX_QUEUES];
 	long stopped_queues_map;
+=======
+	/* Session counter for the chipset */
+	int session_counter;
+
+	/* Frames scheduled for transmission, not handled yet */
+	struct sk_buff_head tx_queue[NUM_TX_QUEUES];
+	int tx_queue_count;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Frames received, not handled yet by mac80211 */
 	struct sk_buff_head deferred_rx_queue;
@@ -382,13 +653,23 @@ struct wl1271 {
 	struct sk_buff_head deferred_tx_queue;
 
 	struct work_struct tx_work;
+<<<<<<< HEAD
 	struct workqueue_struct *freezable_wq;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Pending TX frames */
 	unsigned long tx_frames_map[BITS_TO_LONGS(ACX_TX_DESCRIPTORS)];
 	struct sk_buff *tx_frames[ACX_TX_DESCRIPTORS];
 	int tx_frames_cnt;
 
+<<<<<<< HEAD
+=======
+	/* Security sequence number counters */
+	u8 tx_security_last_seq;
+	s64 tx_security_seq;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* FW Rx counter */
 	u32 rx_counter;
 
@@ -404,6 +685,7 @@ struct wl1271 {
 	/* Network stack work  */
 	struct work_struct netstack_work;
 
+<<<<<<< HEAD
 	/* FW log buffer */
 	u8 *fwlog;
 
@@ -413,6 +695,8 @@ struct wl1271 {
 	/* Sysfs FW log entry readers wait queue */
 	wait_queue_head_t fwlog_waitq;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Hardware recovery work */
 	struct work_struct recovery_work;
 
@@ -423,30 +707,89 @@ struct wl1271 {
 	u32 mbox_ptr[2];
 
 	/* Are we currently scanning */
+<<<<<<< HEAD
 	struct ieee80211_vif *scan_vif;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct wl1271_scan scan;
 	struct delayed_work scan_complete_work;
 
 	bool sched_scanning;
 
+<<<<<<< HEAD
 	/* The current band */
 	enum ieee80211_band band;
 
 	struct completion *elp_compl;
 	struct delayed_work elp_work;
+=======
+	/* probe-req template for the current AP */
+	struct sk_buff *probereq;
+
+	/* Our association ID */
+	u16 aid;
+
+	/*
+	 * currently configured rate set:
+	 *	bits  0-15 - 802.11abg rates
+	 *	bits 16-23 - 802.11n   MCS index mask
+	 * support only 1 stream, thus only 8 bits for the MCS rates (0-7).
+	 */
+	u32 basic_rate_set;
+	u32 basic_rate;
+	u32 rate_set;
+
+	/* The current band */
+	enum ieee80211_band band;
+
+	/* Beaconing interval (needed for ad-hoc) */
+	u32 beacon_int;
+
+	/* Default key (for WEP) */
+	u32 default_key;
+
+	unsigned int filters;
+	unsigned int rx_config;
+	unsigned int rx_filter;
+
+	struct completion *elp_compl;
+	struct completion *ps_compl;
+	struct delayed_work elp_work;
+	struct delayed_work pspoll_work;
+
+	/* counter for ps-poll delivery failures */
+	int ps_poll_failures;
+
+	/* retry counter for PSM entries */
+	u8 psm_entry_retry;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* in dBm */
 	int power_level;
 
+<<<<<<< HEAD
+=======
+	int rssi_thold;
+	int last_rssi_event;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct wl1271_stats stats;
 
 	__le32 buffer_32;
 	u32 buffer_cmd;
 	u32 buffer_busyword[WL1271_BUSY_WORD_CNT];
 
+<<<<<<< HEAD
 	struct wl12xx_fw_status *fw_status;
 	struct wl1271_tx_hw_res_if *tx_res_if;
 
+=======
+	struct wl1271_fw_full_status *fw_status;
+	struct wl1271_tx_hw_res_if *tx_res_if;
+
+	struct ieee80211_vif *vif;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Current chipset configuration */
 	struct conf_drv_settings conf;
 
@@ -454,12 +797,33 @@ struct wl1271 {
 
 	bool enable_11a;
 
+<<<<<<< HEAD
 	/* Most recently reported noise in dBm */
 	s8 noise;
 
 	/* bands supported by this instance of wl12xx */
 	struct ieee80211_supported_band bands[IEEE80211_NUM_BANDS];
 
+=======
+	struct list_head list;
+
+	/* Most recently reported noise in dBm */
+	s8 noise;
+
+	/* map for HLIDs of associated stations - when operating in AP mode */
+	unsigned long ap_hlid_map[BITS_TO_LONGS(AP_MAX_STATIONS)];
+
+	/* recoreded keys for AP-mode - set here before AP startup */
+	struct wl1271_ap_key *recorded_ap_keys[MAX_NUM_KEYS];
+
+	/* bands supported by this instance of wl12xx */
+	struct ieee80211_supported_band bands[IEEE80211_NUM_BANDS];
+
+	/* RX BA constraint value */
+	bool ba_support;
+	u8 ba_rx_bitmap;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int tcxo_clock;
 
 	/*
@@ -467,13 +831,23 @@ struct wl1271 {
 	 * (currently, only "ANY" trigger is supported)
 	 */
 	bool wow_enabled;
+<<<<<<< HEAD
 	bool irq_wake_enabled;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * AP-mode - links indexed by HLID. The global and broadcast links
 	 * are always active.
 	 */
+<<<<<<< HEAD
 	struct wl1271_link links[WL12XX_MAX_LINKS];
+=======
+	struct wl1271_link links[AP_MAX_LINKS];
+
+	/* the hlid of the link where the last transmitted skb came from */
+	int last_tx_hlid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* AP-mode - a bitmap of links currently in PS mode according to FW */
 	u32 ap_fw_ps_map;
@@ -486,6 +860,7 @@ struct wl1271 {
 
 	/* Platform limitations */
 	unsigned int platform_quirks;
+<<<<<<< HEAD
 
 	/* number of currently active RX BA sessions */
 	int ba_rx_session_count;
@@ -498,12 +873,15 @@ struct wl1271 {
 
 	/* work to fire when Tx is stuck */
 	struct delayed_work tx_watchdog_work;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct wl1271_station {
 	u8 hlid;
 };
 
+<<<<<<< HEAD
 struct wl12xx_vif {
 	struct wl1271 *wl;
 	struct list_head list;
@@ -667,6 +1045,19 @@ size_t wl12xx_copy_fwlog(struct wl1271 *wl, u8 *memblock, size_t maxlen);
 
 #define WL1271_TX_QUEUE_LOW_WATERMARK  32
 #define WL1271_TX_QUEUE_HIGH_WATERMARK 256
+=======
+int wl1271_plt_start(struct wl1271 *wl);
+int wl1271_plt_stop(struct wl1271 *wl);
+
+#define JOIN_TIMEOUT 5000 /* 5000 milliseconds to join */
+
+#define SESSION_COUNTER_MAX 7 /* maximum value for the session counter */
+
+#define WL1271_DEFAULT_POWER_LEVEL 0
+
+#define WL1271_TX_QUEUE_LOW_WATERMARK  10
+#define WL1271_TX_QUEUE_HIGH_WATERMARK 25
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define WL1271_DEFERRED_QUEUE_LIMIT    64
 
@@ -684,6 +1075,7 @@ size_t wl12xx_copy_fwlog(struct wl1271 *wl, u8 *memblock, size_t maxlen);
 /* Each RX/TX transaction requires an end-of-transaction transfer */
 #define WL12XX_QUIRK_END_OF_TRANSACTION		BIT(0)
 
+<<<<<<< HEAD
 /* wl127x and SPI don't support SDIO block size alignment */
 #define WL12XX_QUIRK_NO_BLOCKSIZE_ALIGNMENT	BIT(2)
 
@@ -691,5 +1083,15 @@ size_t wl12xx_copy_fwlog(struct wl1271 *wl, u8 *memblock, size_t maxlen);
 #define WL12XX_QUIRK_FWLOG_NOT_IMPLEMENTED	BIT(4)
 
 #define WL12XX_HW_BLOCK_SIZE	256
+=======
+/*
+ * Older firmwares use 2 spare TX blocks
+ * (for STA < 6.1.3.50.58 or for AP < 6.2.0.0.47)
+ */
+#define WL12XX_QUIRK_USE_2_SPARE_BLOCKS		BIT(1)
+
+/* WL128X requires aggregated packets to be aligned to the SDIO block size */
+#define WL12XX_QUIRK_BLOCKSIZE_ALIGNMENT	BIT(2)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

@@ -125,7 +125,11 @@ static int cap_inode_init_security(struct inode *inode, struct inode *dir,
 }
 
 static int cap_inode_create(struct inode *inode, struct dentry *dentry,
+<<<<<<< HEAD
 			    umode_t mask)
+=======
+			    int mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
@@ -148,7 +152,11 @@ static int cap_inode_symlink(struct inode *inode, struct dentry *dentry,
 }
 
 static int cap_inode_mkdir(struct inode *inode, struct dentry *dentry,
+<<<<<<< HEAD
 			   umode_t mask)
+=======
+			   int mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
@@ -159,7 +167,11 @@ static int cap_inode_rmdir(struct inode *inode, struct dentry *dentry)
 }
 
 static int cap_inode_mknod(struct inode *inode, struct dentry *dentry,
+<<<<<<< HEAD
 			   umode_t mode, dev_t dev)
+=======
+			   int mode, dev_t dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
@@ -181,7 +193,11 @@ static int cap_inode_follow_link(struct dentry *dentry,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int cap_inode_permission(struct inode *inode, int mask)
+=======
+static int cap_inode_permission(struct inode *inode, int mask, unsigned flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
@@ -235,13 +251,21 @@ static void cap_inode_getsecid(const struct inode *inode, u32 *secid)
 }
 
 #ifdef CONFIG_SECURITY_PATH
+<<<<<<< HEAD
 static int cap_path_mknod(struct path *dir, struct dentry *dentry, umode_t mode,
+=======
+static int cap_path_mknod(struct path *dir, struct dentry *dentry, int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  unsigned int dev)
 {
 	return 0;
 }
 
+<<<<<<< HEAD
 static int cap_path_mkdir(struct path *dir, struct dentry *dentry, umode_t mode)
+=======
+static int cap_path_mkdir(struct path *dir, struct dentry *dentry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
@@ -279,7 +303,12 @@ static int cap_path_truncate(struct path *path)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int cap_path_chmod(struct path *path, umode_t mode)
+=======
+static int cap_path_chmod(struct dentry *dentry, struct vfsmount *mnt,
+			  mode_t mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
@@ -358,10 +387,13 @@ static int cap_task_create(unsigned long clone_flags)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void cap_task_free(struct task_struct *task)
 {
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int cap_cred_alloc_blank(struct cred *cred, gfp_t gfp)
 {
 	return 0;
@@ -958,7 +990,10 @@ void __init security_fixup_ops(struct security_operations *ops)
 	set_to_cap_if_null(ops, file_receive);
 	set_to_cap_if_null(ops, dentry_open);
 	set_to_cap_if_null(ops, task_create);
+<<<<<<< HEAD
 	set_to_cap_if_null(ops, task_free);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_to_cap_if_null(ops, cred_alloc_blank);
 	set_to_cap_if_null(ops, cred_free);
 	set_to_cap_if_null(ops, cred_prepare);
@@ -1003,6 +1038,10 @@ void __init security_fixup_ops(struct security_operations *ops)
 	set_to_cap_if_null(ops, sem_semctl);
 	set_to_cap_if_null(ops, sem_semop);
 	set_to_cap_if_null(ops, netlink_send);
+<<<<<<< HEAD
+=======
+	set_to_cap_if_null(ops, netlink_recv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_to_cap_if_null(ops, d_instantiate);
 	set_to_cap_if_null(ops, getprocattr);
 	set_to_cap_if_null(ops, setprocattr);

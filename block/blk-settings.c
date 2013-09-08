@@ -104,7 +104,13 @@ EXPORT_SYMBOL_GPL(blk_queue_lld_busy);
  * @lim:  the queue_limits structure to reset
  *
  * Description:
+<<<<<<< HEAD
  *   Returns a queue_limit struct to its default state.
+=======
+ *   Returns a queue_limit struct to its default state.  Can be used by
+ *   stacking drivers like DM that stage table swaps and reuse an
+ *   existing device queue.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void blk_set_default_limits(struct queue_limits *lim)
 {
@@ -112,12 +118,21 @@ void blk_set_default_limits(struct queue_limits *lim)
 	lim->max_integrity_segments = 0;
 	lim->seg_boundary_mask = BLK_SEG_BOUNDARY_MASK;
 	lim->max_segment_size = BLK_MAX_SEGMENT_SIZE;
+<<<<<<< HEAD
 	lim->max_sectors = lim->max_hw_sectors = BLK_SAFE_MAX_SECTORS;
+=======
+	lim->max_sectors = BLK_DEF_MAX_SECTORS;
+	lim->max_hw_sectors = INT_MAX;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lim->max_discard_sectors = 0;
 	lim->discard_granularity = 0;
 	lim->discard_alignment = 0;
 	lim->discard_misaligned = 0;
+<<<<<<< HEAD
 	lim->discard_zeroes_data = 0;
+=======
+	lim->discard_zeroes_data = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lim->logical_block_size = lim->physical_block_size = lim->io_min = 512;
 	lim->bounce_pfn = (unsigned long)(BLK_BOUNCE_ANY >> PAGE_SHIFT);
 	lim->alignment_offset = 0;
@@ -128,6 +143,7 @@ void blk_set_default_limits(struct queue_limits *lim)
 EXPORT_SYMBOL(blk_set_default_limits);
 
 /**
+<<<<<<< HEAD
  * blk_set_stacking_limits - set default limits for stacking devices
  * @lim:  the queue_limits structure to reset
  *
@@ -149,6 +165,8 @@ void blk_set_stacking_limits(struct queue_limits *lim)
 EXPORT_SYMBOL(blk_set_stacking_limits);
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * blk_queue_make_request - define an alternate make_request function for a device
  * @q:  the request queue for the device to be affected
  * @mfn: the alternate make_request function
@@ -183,6 +201,11 @@ void blk_queue_make_request(struct request_queue *q, make_request_fn *mfn)
 	q->nr_batching = BLK_BATCH_REQ;
 
 	blk_set_default_limits(&q->limits);
+<<<<<<< HEAD
+=======
+	blk_queue_max_hw_sectors(q, BLK_SAFE_MAX_SECTORS);
+	q->limits.discard_zeroes_data = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * by default assume old behaviour and bounce for any highmem page

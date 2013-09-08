@@ -50,8 +50,13 @@ static struct resource capc7117_ide_resources[] = {
 	       .flags = IORESOURCE_MEM
 	},
 	[2] = {
+<<<<<<< HEAD
 	       .start = PXA_GPIO_TO_IRQ(mfp_to_gpio(MFP_PIN_GPIO76)),
 	       .end = PXA_GPIO_TO_IRQ(mfp_to_gpio(MFP_PIN_GPIO76)),
+=======
+	       .start = gpio_to_irq(mfp_to_gpio(MFP_PIN_GPIO76)),
+	       .end = gpio_to_irq(mfp_to_gpio(MFP_PIN_GPIO76)),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       .flags = IORESOURCE_IRQ | IRQF_TRIGGER_RISING
 	}
 };
@@ -80,7 +85,11 @@ static void __init capc7117_ide_init(void)
 static struct plat_serial8250_port ti16c752_platform_data[] = {
 	[0] = {
 	       .mapbase = 0x14000000,
+<<<<<<< HEAD
 	       .irq = PXA_GPIO_TO_IRQ(mfp_to_gpio(MFP_PIN_GPIO78)),
+=======
+	       .irq = gpio_to_irq(mfp_to_gpio(MFP_PIN_GPIO78)),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       .irqflags = IRQF_TRIGGER_RISING,
 	       .flags = TI16C752_FLAGS,
 	       .iotype = UPIO_MEM,
@@ -89,7 +98,11 @@ static struct plat_serial8250_port ti16c752_platform_data[] = {
 	},
 	[1] = {
 	       .mapbase = 0x14000040,
+<<<<<<< HEAD
 	       .irq = PXA_GPIO_TO_IRQ(mfp_to_gpio(MFP_PIN_GPIO79)),
+=======
+	       .irq = gpio_to_irq(mfp_to_gpio(MFP_PIN_GPIO79)),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       .irqflags = IRQF_TRIGGER_RISING,
 	       .flags = TI16C752_FLAGS,
 	       .iotype = UPIO_MEM,
@@ -98,7 +111,11 @@ static struct plat_serial8250_port ti16c752_platform_data[] = {
 	},
 	[2] = {
 	       .mapbase = 0x14000080,
+<<<<<<< HEAD
 	       .irq = PXA_GPIO_TO_IRQ(mfp_to_gpio(MFP_PIN_GPIO80)),
+=======
+	       .irq = gpio_to_irq(mfp_to_gpio(MFP_PIN_GPIO80)),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       .irqflags = IRQF_TRIGGER_RISING,
 	       .flags = TI16C752_FLAGS,
 	       .iotype = UPIO_MEM,
@@ -107,7 +124,11 @@ static struct plat_serial8250_port ti16c752_platform_data[] = {
 	},
 	[3] = {
 	       .mapbase = 0x140000c0,
+<<<<<<< HEAD
 	       .irq = PXA_GPIO_TO_IRQ(mfp_to_gpio(MFP_PIN_GPIO81)),
+=======
+	       .irq = gpio_to_irq(mfp_to_gpio(MFP_PIN_GPIO81)),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       .irqflags = IRQF_TRIGGER_RISING,
 	       .flags = TI16C752_FLAGS,
 	       .iotype = UPIO_MEM,
@@ -148,6 +169,7 @@ static void __init capc7117_init(void)
 
 MACHINE_START(CAPC7117,
 	      "Embedian CAPC-7117 evaluation kit based on the MXM-8x10 CoM")
+<<<<<<< HEAD
 	.atag_offset = 0x100,
 	.map_io = pxa3xx_map_io,
 	.nr_irqs = PXA_NR_IRQS,
@@ -156,4 +178,11 @@ MACHINE_START(CAPC7117,
 	.timer = &pxa_timer,
 	.init_machine = capc7117_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params = 0xa0000100,
+	.map_io = pxa3xx_map_io,
+	.init_irq = pxa3xx_init_irq,
+	.timer = &pxa_timer,
+	.init_machine = capc7117_init
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

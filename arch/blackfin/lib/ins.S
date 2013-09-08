@@ -66,7 +66,11 @@
  *  - turns interrupts off every loop (low overhead, but longer latency)
  *  - DMA version, which do not suffer from this issue. DMA versions have
  *      different name (prefixed by dma_ ), and are located in
+<<<<<<< HEAD
  *      ../kernel/bfin_dma.c
+=======
+ *      ../kernel/bfin_dma_5xx.c
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Using the dma related functions are recommended for transferring large
  * buffers in/out of FIFOs.
  */

@@ -14,7 +14,12 @@
 #include <linux/irq.h>
 #include <linux/delay.h>
 #include <linux/gpio.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+
+#include <asm/mach-types.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "soc_common.h"
 
@@ -25,6 +30,20 @@
 #define GPIO_PCMCIA_S1_RDYINT	(8)
 #define GPIO_PCMCIA_RESET	(9)
 
+<<<<<<< HEAD
+=======
+#define PCMCIA_S0_CD_VALID	IRQ_GPIO(GPIO_PCMCIA_S0_CD_VALID)
+#define PCMCIA_S1_CD_VALID	IRQ_GPIO(GPIO_PCMCIA_S1_CD_VALID)
+#define PCMCIA_S0_RDYINT	IRQ_GPIO(GPIO_PCMCIA_S0_RDYINT)
+#define PCMCIA_S1_RDYINT	IRQ_GPIO(GPIO_PCMCIA_S1_RDYINT)
+
+
+static struct pcmcia_irqs irqs[] = {
+	{ 0, PCMCIA_S0_CD_VALID, "PCMCIA0 CD" },
+	{ 1, PCMCIA_S1_CD_VALID, "PCMCIA1 CD" },
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int cmx255_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
 {
 	int ret = gpio_request(GPIO_PCMCIA_RESET, "PCCard reset");
@@ -32,6 +51,7 @@ static int cmx255_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
 		return ret;
 	gpio_direction_output(GPIO_PCMCIA_RESET, 0);
 
+<<<<<<< HEAD
 	if (skt->nr == 0) {
 		skt->stat[SOC_STAT_CD].gpio = GPIO_PCMCIA_S0_CD_VALID;
 		skt->stat[SOC_STAT_CD].name = "PCMCIA0 CD";
@@ -45,10 +65,22 @@ static int cmx255_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
 	}
 
 	return 0;
+=======
+	skt->socket.pci_irq = skt->nr == 0 ? PCMCIA_S0_RDYINT : PCMCIA_S1_RDYINT;
+	ret = soc_pcmcia_request_irqs(skt, irqs, ARRAY_SIZE(irqs));
+	if (!ret)
+		gpio_free(GPIO_PCMCIA_RESET);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void cmx255_pcmcia_shutdown(struct soc_pcmcia_socket *skt)
 {
+<<<<<<< HEAD
+=======
+	soc_pcmcia_free_irqs(skt, irqs, ARRAY_SIZE(irqs));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gpio_free(GPIO_PCMCIA_RESET);
 }
 
@@ -56,8 +88,21 @@ static void cmx255_pcmcia_shutdown(struct soc_pcmcia_socket *skt)
 static void cmx255_pcmcia_socket_state(struct soc_pcmcia_socket *skt,
 				       struct pcmcia_state *state)
 {
+<<<<<<< HEAD
 	state->vs_3v  = 0;
 	state->vs_Xv  = 0;
+=======
+	int cd = skt->nr ? GPIO_PCMCIA_S1_CD_VALID : GPIO_PCMCIA_S0_CD_VALID;
+	int rdy = skt->nr ? GPIO_PCMCIA_S1_RDYINT : GPIO_PCMCIA_S0_RDYINT;
+
+	state->detect = !gpio_get_value(cd);
+	state->ready  = !!gpio_get_value(rdy);
+	state->bvd1   = 1;
+	state->bvd2   = 1;
+	state->vs_3v  = 0;
+	state->vs_Xv  = 0;
+	state->wrprot = 0;  /* not available */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -88,12 +133,29 @@ static int cmx255_pcmcia_configure_socket(struct soc_pcmcia_socket *skt,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void cmx255_pcmcia_socket_init(struct soc_pcmcia_socket *skt)
+{
+}
+
+static void cmx255_pcmcia_socket_suspend(struct soc_pcmcia_socket *skt)
+{
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct pcmcia_low_level cmx255_pcmcia_ops __initdata = {
 	.owner			= THIS_MODULE,
 	.hw_init		= cmx255_pcmcia_hw_init,
 	.hw_shutdown		= cmx255_pcmcia_shutdown,
 	.socket_state		= cmx255_pcmcia_socket_state,
 	.configure_socket	= cmx255_pcmcia_configure_socket,
+<<<<<<< HEAD
+=======
+	.socket_init		= cmx255_pcmcia_socket_init,
+	.socket_suspend		= cmx255_pcmcia_socket_suspend,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.nr			= 1,
 };
 

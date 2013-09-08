@@ -33,8 +33,13 @@ int noioapicreroute = 1;
 int pcibios_last_bus = -1;
 unsigned long pirq_table_addr;
 struct pci_bus *pci_root_bus;
+<<<<<<< HEAD
 const struct pci_raw_ops *__read_mostly raw_pci_ops;
 const struct pci_raw_ops *__read_mostly raw_pci_ext_ops;
+=======
+struct pci_raw_ops *raw_pci_ops;
+struct pci_raw_ops *raw_pci_ext_ops;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int raw_pci_read(unsigned int domain, unsigned int bus, unsigned int devfn,
 						int reg, int len, u32 *val)
@@ -164,6 +169,12 @@ void __devinit pcibios_fixup_bus(struct pci_bus *b)
 {
 	struct pci_dev *dev;
 
+<<<<<<< HEAD
+=======
+	/* root bus? */
+	if (!b->parent)
+		x86_pci_root_bus_res_quirks(b);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pci_read_bridge_bases(b);
 	list_for_each_entry(dev, &b->devices, bus_list)
 		pcibios_fixup_device_resources(dev);
@@ -244,6 +255,16 @@ static const struct dmi_system_id __devinitconst pciprobe_dmi_table[] = {
 	},
 #endif		/* __i386__ */
 	{
+<<<<<<< HEAD
+=======
+		.callback = find_sort_method,
+		.ident = "Dell System",
+		.matches = {
+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc"),
+		},
+	},
+	{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.callback = set_bf_sort,
 		.ident = "Dell PowerEdge 1950",
 		.matches = {
@@ -284,6 +305,7 @@ static const struct dmi_system_id __devinitconst pciprobe_dmi_table[] = {
 		},
 	},
 	{
+<<<<<<< HEAD
 		.callback = find_sort_method,
 		.ident = "Dell System",
 		.matches = {
@@ -291,6 +313,8 @@ static const struct dmi_system_id __devinitconst pciprobe_dmi_table[] = {
 		},
 	},
 	{
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.callback = set_bf_sort,
 		.ident = "HP ProLiant BL20p G3",
 		.matches = {
@@ -430,7 +454,10 @@ void __init dmi_check_pciprobe(void)
 
 struct pci_bus * __devinit pcibios_scan_root(int busnum)
 {
+<<<<<<< HEAD
 	LIST_HEAD(resources);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pci_bus *bus = NULL;
 	struct pci_sysdata *sd;
 
@@ -454,12 +481,18 @@ struct pci_bus * __devinit pcibios_scan_root(int busnum)
 	sd->node = get_mp_bus_to_node(busnum);
 
 	printk(KERN_DEBUG "PCI: Probing PCI hardware (bus %02x)\n", busnum);
+<<<<<<< HEAD
 	x86_pci_root_bus_resources(busnum, &resources);
 	bus = pci_scan_root_bus(NULL, busnum, &pci_root_ops, sd, &resources);
 	if (!bus) {
 		pci_free_resource_list(&resources);
 		kfree(sd);
 	}
+=======
+	bus = pci_scan_bus_parented(NULL, busnum, &pci_root_ops, sd);
+	if (!bus)
+		kfree(sd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return bus;
 }
@@ -640,7 +673,10 @@ int pci_ext_cfg_avail(struct pci_dev *dev)
 
 struct pci_bus * __devinit pci_scan_bus_on_node(int busno, struct pci_ops *ops, int node)
 {
+<<<<<<< HEAD
 	LIST_HEAD(resources);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pci_bus *bus = NULL;
 	struct pci_sysdata *sd;
 
@@ -655,12 +691,18 @@ struct pci_bus * __devinit pci_scan_bus_on_node(int busno, struct pci_ops *ops, 
 		return NULL;
 	}
 	sd->node = node;
+<<<<<<< HEAD
 	x86_pci_root_bus_resources(busno, &resources);
 	bus = pci_scan_root_bus(NULL, busno, ops, sd, &resources);
 	if (!bus) {
 		pci_free_resource_list(&resources);
 		kfree(sd);
 	}
+=======
+	bus = pci_scan_bus(busno, ops, sd);
+	if (!bus)
+		kfree(sd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return bus;
 }

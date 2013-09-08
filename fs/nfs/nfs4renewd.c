@@ -60,7 +60,10 @@ nfs4_renew_state(struct work_struct *work)
 	struct rpc_cred *cred;
 	long lease;
 	unsigned long last, now;
+<<<<<<< HEAD
 	unsigned renew_flags = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ops = clp->cl_mvops->state_renewal_ops;
 	dprintk("%s: start\n", __func__);
@@ -73,6 +76,7 @@ nfs4_renew_state(struct work_struct *work)
 	last = clp->cl_last_renewal;
 	now = jiffies;
 	/* Are we close to a lease timeout? */
+<<<<<<< HEAD
 	if (time_after(now, last + lease/3))
 		renew_flags |= NFS4_RENEW_TIMEOUT;
 	if (nfs_delegations_present(clp))
@@ -83,13 +87,24 @@ nfs4_renew_state(struct work_struct *work)
 		spin_unlock(&clp->cl_lock);
 		if (cred == NULL) {
 			if (!(renew_flags & NFS4_RENEW_DELEGATION_CB)) {
+=======
+	if (time_after(now, last + lease/3)) {
+		cred = ops->get_state_renewal_cred_locked(clp);
+		spin_unlock(&clp->cl_lock);
+		if (cred == NULL) {
+			if (!nfs_delegations_present(clp)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				set_bit(NFS4CLNT_LEASE_EXPIRED, &clp->cl_state);
 				goto out;
 			}
 			nfs_expire_all_delegations(clp);
 		} else {
 			/* Queue an asynchronous RENEW. */
+<<<<<<< HEAD
 			ops->sched_state_renewal(clp, cred, renew_flags);
+=======
+			ops->sched_state_renewal(clp, cred);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			put_rpccred(cred);
 			goto out_exp;
 		}

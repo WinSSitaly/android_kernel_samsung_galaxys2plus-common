@@ -34,6 +34,7 @@
 #define S5P6450_GPQ_BASE		(S5P_VA_GPIO + 0x0180)
 #define S5P6450_GPS_BASE		(S5P_VA_GPIO + 0x0300)
 
+<<<<<<< HEAD
 #define S5P64X0_SPCON0			(S5P_VA_GPIO + 0x1A0)
 #define S5P64X0_SPCON0_LCD_SEL_MASK	(0x3 << 0)
 #define S5P64X0_SPCON0_LCD_SEL_RGB	(0x1 << 0)
@@ -65,4 +66,6 @@
 #define S5P64X0_SLPEN			(S5P_VA_GPIO + 0x930)
 #define S5P64X0_SLPEN_USE_xSLP		(1 << 0)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ASM_ARCH_REGS_GPIO_H */

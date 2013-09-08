@@ -8,7 +8,10 @@
  * is licensed "as is" without any warranty of any kind, whether express
  * or implied.
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/clk.h>
 
@@ -20,7 +23,11 @@
 #include <mach/common.h>
 #include <mach/time.h>
 #include <mach/da8xx.h>
+<<<<<<< HEAD
 #include <mach/gpio-davinci.h>
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "clock.h"
 #include "mux.h"
@@ -1201,6 +1208,10 @@ static struct davinci_soc_info davinci_soc_info_da830 = {
 	.gpio_irq		= IRQ_DA8XX_GPIO0,
 	.serial_dev		= &da8xx_serial_device,
 	.emac_pdata		= &da8xx_emac_pdata,
+<<<<<<< HEAD
+=======
+	.reset_device		= &da8xx_wdt_device,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void __init da830_init(void)

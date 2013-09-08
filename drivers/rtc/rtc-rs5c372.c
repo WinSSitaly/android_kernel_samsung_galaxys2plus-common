@@ -14,7 +14,10 @@
 #include <linux/rtc.h>
 #include <linux/bcd.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRV_VERSION "0.6"
 
@@ -689,7 +692,22 @@ static struct i2c_driver rs5c372_driver = {
 	.id_table	= rs5c372_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(rs5c372_driver);
+=======
+static __init int rs5c372_init(void)
+{
+	return i2c_add_driver(&rs5c372_driver);
+}
+
+static __exit void rs5c372_exit(void)
+{
+	i2c_del_driver(&rs5c372_driver);
+}
+
+module_init(rs5c372_init);
+module_exit(rs5c372_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR(
 		"Pavel Mironchik <pmironchik@optifacio.net>, "

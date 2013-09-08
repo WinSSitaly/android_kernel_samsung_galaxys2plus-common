@@ -41,6 +41,7 @@
 #define LG_FF3			0x1000
 #define LG_FF4			0x2000
 
+<<<<<<< HEAD
 /* Size of the original descriptor of the Driving Force Pro wheel */
 #define DFP_RDESC_ORIG_SIZE	97
 
@@ -101,6 +102,8 @@ static __u8 dfp_rdesc_fixed[] = {
 };
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Certain Logitech keyboards send in report #3 keys which are far
  * above the logical maximum described in descriptor. This extends
@@ -134,6 +137,7 @@ static __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
 		rdesc[47] = 0x95;
 		rdesc[48] = 0x0B;
 	}
+<<<<<<< HEAD
 
 	switch (hdev->product) {
 	case USB_DEVICE_ID_LOGITECH_DFP_WHEEL:
@@ -146,6 +150,8 @@ static __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
 		break;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rdesc;
 }
 
@@ -363,7 +369,11 @@ static int lg_probe(struct hid_device *hdev, const struct hid_device_id *id)
 		goto err_free;
 	}
 
+<<<<<<< HEAD
 	if (quirks & (LG_FF | LG_FF2 | LG_FF3 | LG_FF4))
+=======
+	if (quirks & (LG_FF | LG_FF2 | LG_FF3))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		connect_mask &= ~HID_CONNECT_FF;
 
 	ret = hid_hw_start(hdev, connect_mask);
@@ -372,8 +382,12 @@ static int lg_probe(struct hid_device *hdev, const struct hid_device_id *id)
 		goto err_free;
 	}
 
+<<<<<<< HEAD
 	/* Setup wireless link with Logitech Wii wheel */
 	if(hdev->product == USB_DEVICE_ID_LOGITECH_WII_WHEEL) {
+=======
+	if (quirks & LG_FF4) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned char buf[] = { 0x00, 0xAF,  0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 		ret = hdev->hid_output_raw_report(hdev, buf, sizeof(buf), HID_FEATURE_REPORT);
@@ -406,6 +420,7 @@ err_free:
 	return ret;
 }
 
+<<<<<<< HEAD
 static void lg_remove(struct hid_device *hdev)
 {
 	unsigned long quirks = (unsigned long)hid_get_drvdata(hdev);
@@ -415,6 +430,8 @@ static void lg_remove(struct hid_device *hdev)
 	hid_hw_stop(hdev);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct hid_device_id lg_devices[] = {
 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_MX3000_RECEIVER),
 		.driver_data = LG_RDESC | LG_WIRELESS },
@@ -441,7 +458,11 @@ static const struct hid_device_id lg_devices[] = {
 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_EXTREME_3D),
 		.driver_data = LG_NOGET },
 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_WHEEL),
+<<<<<<< HEAD
 		.driver_data = LG_NOGET | LG_FF4 },
+=======
+		.driver_data = LG_NOGET | LG_FF },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_RUMBLEPAD_CORD),
 		.driver_data = LG_FF2 },
@@ -454,6 +475,7 @@ static const struct hid_device_id lg_devices[] = {
 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_FORCE3D_PRO),
 		.driver_data = LG_FF },
 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOMO_WHEEL),
+<<<<<<< HEAD
 		.driver_data = LG_FF4 },
 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOMO_WHEEL2),
 		.driver_data = LG_FF4 },
@@ -465,6 +487,17 @@ static const struct hid_device_id lg_devices[] = {
 		.driver_data = LG_FF4 },
 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_DFP_WHEEL),
 		.driver_data = LG_NOGET | LG_FF4 },
+=======
+		.driver_data = LG_FF },
+	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOMO_WHEEL2),
+		.driver_data = LG_FF },
+	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_G25_WHEEL),
+		.driver_data = LG_FF },
+	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_G27_WHEEL),
+		.driver_data = LG_FF },
+	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_DFP_WHEEL),
+		.driver_data = LG_FF },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_WII_WHEEL),
 		.driver_data = LG_FF4 },
 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_WINGMAN_FFG ),
@@ -490,7 +523,10 @@ static struct hid_driver lg_driver = {
 	.input_mapped = lg_input_mapped,
 	.event = lg_event,
 	.probe = lg_probe,
+<<<<<<< HEAD
 	.remove = lg_remove,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init lg_init(void)

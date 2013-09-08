@@ -13,6 +13,17 @@
 
 #ifdef CONFIG_OF
 
+<<<<<<< HEAD
+=======
+#include <asm/setup.h>
+#include <asm/irq.h>
+
+static inline void irq_dispose_mapping(unsigned int virq)
+{
+	return;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct machine_desc *setup_machine_fdt(unsigned int dt_phys);
 extern void arm_dt_memblock_reserve(void);
 

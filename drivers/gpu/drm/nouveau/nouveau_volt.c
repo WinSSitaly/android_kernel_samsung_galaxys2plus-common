@@ -26,15 +26,24 @@
 
 #include "nouveau_drv.h"
 #include "nouveau_pm.h"
+<<<<<<< HEAD
 #include "nouveau_gpio.h"
 
 static const enum dcb_gpio_tag vidtag[] = { 0x04, 0x05, 0x06, 0x1a, 0x73 };
+=======
+
+static const enum dcb_gpio_tag vidtag[] = { 0x04, 0x05, 0x06, 0x1a };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int nr_vidtag = sizeof(vidtag) / sizeof(vidtag[0]);
 
 int
 nouveau_voltage_gpio_get(struct drm_device *dev)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
+<<<<<<< HEAD
+=======
+	struct nouveau_gpio_engine *gpio = &dev_priv->engine.gpio;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct nouveau_pm_voltage *volt = &dev_priv->engine.pm.voltage;
 	u8 vid = 0;
 	int i;
@@ -43,7 +52,11 @@ nouveau_voltage_gpio_get(struct drm_device *dev)
 		if (!(volt->vid_mask & (1 << i)))
 			continue;
 
+<<<<<<< HEAD
 		vid |= nouveau_gpio_func_get(dev, vidtag[i]) << i;
+=======
+		vid |= gpio->get(dev, vidtag[i]) << i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return nouveau_volt_lvl_lookup(dev, vid);
@@ -53,6 +66,10 @@ int
 nouveau_voltage_gpio_set(struct drm_device *dev, int voltage)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
+<<<<<<< HEAD
+=======
+	struct nouveau_gpio_engine *gpio = &dev_priv->engine.gpio;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct nouveau_pm_voltage *volt = &dev_priv->engine.pm.voltage;
 	int vid, i;
 
@@ -64,7 +81,11 @@ nouveau_voltage_gpio_set(struct drm_device *dev, int voltage)
 		if (!(volt->vid_mask & (1 << i)))
 			continue;
 
+<<<<<<< HEAD
 		nouveau_gpio_func_set(dev, vidtag[i], !!(vid & (1 << i)));
+=======
+		gpio->set(dev, vidtag[i], !!(vid & (1 << i)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -116,10 +137,17 @@ nouveau_volt_init(struct drm_device *dev)
 			return;
 
 		if (P.version == 1)
+<<<<<<< HEAD
 			volt = ROMPTR(dev, P.data[16]);
 		else
 		if (P.version == 2)
 			volt = ROMPTR(dev, P.data[12]);
+=======
+			volt = ROMPTR(bios, P.data[16]);
+		else
+		if (P.version == 2)
+			volt = ROMPTR(bios, P.data[12]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		else {
 			NV_WARN(dev, "unknown volt for BIT P %d\n", P.version);
 		}
@@ -129,7 +157,11 @@ nouveau_volt_init(struct drm_device *dev)
 			return;
 		}
 
+<<<<<<< HEAD
 		volt = ROMPTR(dev, bios->data[bios->offset + 0x98]);
+=======
+		volt = ROMPTR(bios, bios->data[bios->offset + 0x98]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (!volt) {
@@ -169,6 +201,7 @@ nouveau_volt_init(struct drm_device *dev)
 		 */
 		vidshift  = 2;
 		break;
+<<<<<<< HEAD
 	case 0x40:
 		headerlen = volt[1];
 		recordlen = volt[2];
@@ -176,6 +209,8 @@ nouveau_volt_init(struct drm_device *dev)
 		vidmask   = volt[11]; /* guess.. */
 		vidshift  = 0;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		NV_WARN(dev, "voltage table 0x%02x unknown\n", volt[0]);
 		return;
@@ -193,7 +228,11 @@ nouveau_volt_init(struct drm_device *dev)
 			return;
 		}
 
+<<<<<<< HEAD
 		if (!nouveau_gpio_func_valid(dev, vidtag[i])) {
+=======
+		if (!nouveau_bios_gpio_entry(dev, vidtag[i])) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			NV_DEBUG(dev, "vid bit %d has no gpio tag\n", i);
 			return;
 		}
@@ -203,6 +242,7 @@ nouveau_volt_init(struct drm_device *dev)
 	}
 
 	/* parse vbios entries into common format */
+<<<<<<< HEAD
 	voltage->version = volt[0];
 	if (voltage->version < 0x40) {
 		voltage->nr_level = entries;
@@ -234,6 +274,18 @@ nouveau_volt_init(struct drm_device *dev)
 		}
 	}
 
+=======
+	voltage->level = kcalloc(entries, sizeof(*voltage->level), GFP_KERNEL);
+	if (!voltage->level)
+		return;
+
+	entry = volt + headerlen;
+	for (i = 0; i < entries; i++, entry += recordlen) {
+		voltage->level[i].voltage = entry[0];
+		voltage->level[i].vid     = entry[1] >> vidshift;
+	}
+	voltage->nr_level  = entries;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	voltage->supported = true;
 }
 

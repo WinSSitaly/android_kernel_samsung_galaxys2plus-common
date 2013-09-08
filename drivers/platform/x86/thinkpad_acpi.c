@@ -297,7 +297,11 @@ struct ibm_init_struct {
 	char param[32];
 
 	int (*init) (struct ibm_init_struct *);
+<<<<<<< HEAD
 	umode_t base_procfs_mode;
+=======
+	mode_t base_procfs_mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ibm_struct *data;
 };
 
@@ -378,6 +382,7 @@ static unsigned int bright_maxlvl;	/* 0 = unknown */
 
 #ifdef CONFIG_THINKPAD_ACPI_DEBUGFACILITIES
 static int dbg_wlswemul;
+<<<<<<< HEAD
 static bool tpacpi_wlsw_emulstate;
 static int dbg_bluetoothemul;
 static bool tpacpi_bluetooth_emulstate;
@@ -385,6 +390,15 @@ static int dbg_wwanemul;
 static bool tpacpi_wwan_emulstate;
 static int dbg_uwbemul;
 static bool tpacpi_uwb_emulstate;
+=======
+static int tpacpi_wlsw_emulstate;
+static int dbg_bluetoothemul;
+static int tpacpi_bluetooth_emulstate;
+static int dbg_wwanemul;
+static int tpacpi_wwan_emulstate;
+static int dbg_uwbemul;
+static int tpacpi_uwb_emulstate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 
@@ -2456,9 +2470,14 @@ static int hotkey_kthread(void *data)
 	u32 poll_mask, event_mask;
 	unsigned int si, so;
 	unsigned long t;
+<<<<<<< HEAD
 	unsigned int change_detector;
 	unsigned int poll_freq;
 	bool was_frozen;
+=======
+	unsigned int change_detector, must_reset;
+	unsigned int poll_freq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&hotkey_thread_mutex);
 
@@ -2489,6 +2508,7 @@ static int hotkey_kthread(void *data)
 				t = 100;	/* should never happen... */
 		}
 		t = msleep_interruptible(t);
+<<<<<<< HEAD
 		if (unlikely(kthread_freezable_should_stop(&was_frozen)))
 			break;
 
@@ -2497,6 +2517,16 @@ static int hotkey_kthread(void *data)
 
 		mutex_lock(&hotkey_thread_data_mutex);
 		if (was_frozen || hotkey_config_change != change_detector) {
+=======
+		if (unlikely(kthread_should_stop()))
+			break;
+		must_reset = try_to_freeze();
+		if (t > 0 && !must_reset)
+			continue;
+
+		mutex_lock(&hotkey_thread_data_mutex);
+		if (must_reset || hotkey_config_change != change_detector) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* forget old state on thaw or config change */
 			si = so;
 			t = 0;
@@ -2529,6 +2559,13 @@ exit:
 static void hotkey_poll_stop_sync(void)
 {
 	if (tpacpi_hotkey_task) {
+<<<<<<< HEAD
+=======
+		if (frozen(tpacpi_hotkey_task) ||
+		    freezing(tpacpi_hotkey_task))
+			thaw_process(tpacpi_hotkey_task);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kthread_stop(tpacpi_hotkey_task);
 		tpacpi_hotkey_task = NULL;
 		mutex_lock(&hotkey_thread_mutex);
@@ -3183,6 +3220,7 @@ static int __init hotkey_init(struct ibm_init_struct *iibm)
 		KEY_VENDOR,	/* 0x17: Thinkpad/AccessIBM/Lenovo */
 
 		/* (assignments unknown, please report if found) */
+<<<<<<< HEAD
 		KEY_UNKNOWN, KEY_UNKNOWN,
 
 		/*
@@ -3194,6 +3232,10 @@ static int __init hotkey_init(struct ibm_init_struct *iibm)
 		/* (assignments unknown, please report if found) */
 		KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN,
 		KEY_UNKNOWN,
+=======
+		KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN,
+		KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 	};
 
@@ -4004,7 +4046,11 @@ static void bluetooth_shutdown(void)
 		pr_notice("failed to save bluetooth state to NVRAM\n");
 	else
 		vdbg_printk(TPACPI_DBG_RFKILL,
+<<<<<<< HEAD
 			"bluetooth state saved to NVRAM\n");
+=======
+			"bluestooth state saved to NVRAM\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void bluetooth_exit(void)
@@ -6444,7 +6490,11 @@ static struct ibm_struct brightness_driver_data = {
 
 static int alsa_index = ~((1 << (SNDRV_CARDS - 3)) - 1); /* last three slots */
 static char *alsa_id = "ThinkPadEC";
+<<<<<<< HEAD
 static bool alsa_enable = SNDRV_DEFAULT_ENABLE1;
+=======
+static int alsa_enable = SNDRV_DEFAULT_ENABLE1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct tpacpi_alsa_data {
 	struct snd_card *card;
@@ -6487,7 +6537,11 @@ static enum tpacpi_volume_access_mode volume_mode =
 	TPACPI_VOL_MODE_MAX;
 
 static enum tpacpi_volume_capabilities volume_capabilities;
+<<<<<<< HEAD
 static bool volume_control_allowed;
+=======
+static int volume_control_allowed;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Used to syncronize writers to TP_EC_AUDIO and
@@ -7265,7 +7319,11 @@ enum fan_control_commands {
 						 * and also watchdog cmd */
 };
 
+<<<<<<< HEAD
 static bool fan_control_allowed;
+=======
+static int fan_control_allowed;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static enum fan_status_access_mode fan_status_access_mode;
 static enum fan_control_access_mode fan_control_access_mode;
@@ -8437,7 +8495,11 @@ static struct proc_dir_entry *proc_dir;
  * Module and infrastructure proble, init and exit handling
  */
 
+<<<<<<< HEAD
 static bool force_load;
+=======
+static int force_load;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_THINKPAD_ACPI_DEBUG
 static const char * __init str_supported(int is_supported)
@@ -8539,7 +8601,11 @@ static int __init ibm_init(struct ibm_init_struct *iibm)
 		"%s installed\n", ibm->name);
 
 	if (ibm->read) {
+<<<<<<< HEAD
 		umode_t mode = iibm->base_procfs_mode;
+=======
+		mode_t mode = iibm->base_procfs_mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (!mode)
 			mode = S_IRUGO;
@@ -8658,6 +8724,7 @@ static int __must_check __init get_thinkpad_model_data(
 	}
 
 	s = dmi_get_system_info(DMI_PRODUCT_VERSION);
+<<<<<<< HEAD
 	if (s && !(strnicmp(s, "ThinkPad", 8) && strnicmp(s, "Lenovo", 6))) {
 		tp->model_str = kstrdup(s, GFP_KERNEL);
 		if (!tp->model_str)
@@ -8669,6 +8736,12 @@ static int __must_check __init get_thinkpad_model_data(
 			if (!tp->model_str)
 				return -ENOMEM;
 		}
+=======
+	if (s && !strnicmp(s, "ThinkPad", 8)) {
+		tp->model_str = kstrdup(s, GFP_KERNEL);
+		if (!tp->model_str)
+			return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	s = dmi_get_system_info(DMI_PRODUCT_NAME);

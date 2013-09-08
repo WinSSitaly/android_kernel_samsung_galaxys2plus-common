@@ -7,11 +7,20 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/init.h>
 #include <linux/device.h>
 #include <linux/syscore_ops.h>
 #include <linux/string.h>
+=======
+#include <linux/module.h>
+#include <linux/init.h>
+#include <linux/notifier.h>
+#include <linux/cpu.h>
+#include <linux/sysdev.h>
+#include <linux/syscore_ops.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/leds.h>
 
@@ -34,8 +43,13 @@ static const struct leds_evt_name evt_names[] = {
 	{ "red",   led_red_on,   led_red_off   },
 };
 
+<<<<<<< HEAD
 static ssize_t leds_store(struct device *dev,
 			struct device_attribute *attr,
+=======
+static ssize_t leds_store(struct sys_device *dev,
+			struct sysdev_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			const char *buf, size_t size)
 {
 	int ret = -EINVAL, len = strcspn(buf, " ");
@@ -69,6 +83,7 @@ static ssize_t leds_store(struct device *dev,
 	return ret;
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(event, 0200, NULL, leds_store);
 
 static struct bus_type leds_subsys = {
@@ -79,6 +94,17 @@ static struct bus_type leds_subsys = {
 static struct device leds_device = {
 	.id		= 0,
 	.bus		= &leds_subsys,
+=======
+static SYSDEV_ATTR(event, 0200, NULL, leds_store);
+
+static struct sysdev_class leds_sysclass = {
+	.name		= "leds",
+};
+
+static struct sys_device leds_device = {
+	.id		= 0,
+	.cls		= &leds_sysclass,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int leds_suspend(void)
@@ -103,6 +129,7 @@ static struct syscore_ops leds_syscore_ops = {
 	.resume		= leds_resume,
 };
 
+<<<<<<< HEAD
 static int __init leds_init(void)
 {
 	int ret;
@@ -113,6 +140,41 @@ static int __init leds_init(void)
 		ret = device_create_file(&leds_device, &dev_attr_event);
 	if (ret == 0)
 		register_syscore_ops(&leds_syscore_ops);
+=======
+static int leds_idle_notifier(struct notifier_block *nb, unsigned long val,
+                                void *data)
+{
+	switch (val) {
+	case IDLE_START:
+		leds_event(led_idle_start);
+		break;
+	case IDLE_END:
+		leds_event(led_idle_end);
+		break;
+	}
+
+	return 0;
+}
+
+static struct notifier_block leds_idle_nb = {
+	.notifier_call = leds_idle_notifier,
+};
+
+static int __init leds_init(void)
+{
+	int ret;
+	ret = sysdev_class_register(&leds_sysclass);
+	if (ret == 0)
+		ret = sysdev_register(&leds_device);
+	if (ret == 0)
+		ret = sysdev_create_file(&leds_device, &attr_event);
+
+	if (ret == 0) {
+		register_syscore_ops(&leds_syscore_ops);
+		idle_notifier_register(&leds_idle_nb);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 

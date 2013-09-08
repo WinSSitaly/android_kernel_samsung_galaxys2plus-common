@@ -1,6 +1,10 @@
 /******************************************************************************
  *
+<<<<<<< HEAD
  * Copyright(c) 2009-2012  Realtek Corporation.
+=======
+ * Copyright(c) 2009-2010  Realtek Corporation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Tmis program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
@@ -156,6 +160,7 @@ enum dbgp_flag_e {
 	DBGP_TYPE_MAX
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_RTLWIFI_DEBUG
 
 #define RT_ASSERT(_exp, fmt, ...)					\
@@ -228,6 +233,60 @@ static inline void RT_PRINT_DATA(struct rtl_priv *rtlpriv,
 }
 
 #endif
+=======
+#define RT_ASSERT(_exp, fmt)				\
+	do {						\
+		if (!(_exp)) {			\
+			printk(KERN_DEBUG "%s:%s(): ", KBUILD_MODNAME, \
+			__func__);			\
+			printk fmt;			\
+		} \
+	} while (0);
+
+#define RT_TRACE(rtlpriv, comp, level, fmt)\
+	do { \
+		if (unlikely(((comp) & rtlpriv->dbg.global_debugcomponents) && \
+			((level) <= rtlpriv->dbg.global_debuglevel))) {\
+			printk(KERN_DEBUG "%s:%s():<%lx-%x> ", KBUILD_MODNAME, \
+			__func__, in_interrupt(), in_atomic());	\
+			printk fmt;				\
+		} \
+	} while (0);
+
+#define RTPRINT(rtlpriv, dbgtype, dbgflag, printstr)	\
+	do {						\
+		if (unlikely(rtlpriv->dbg.dbgp_type[dbgtype] & dbgflag)) { \
+			printk(KERN_DEBUG "%s: ", KBUILD_MODNAME);	\
+			printk printstr;		\
+		}					\
+	} while (0);
+
+#define RT_PRINT_DATA(rtlpriv, _comp, _level, _titlestring, _hexdata, \
+		_hexdatalen) \
+	do {\
+		if (unlikely(((_comp) & rtlpriv->dbg.global_debugcomponents) &&\
+			(_level <= rtlpriv->dbg.global_debuglevel)))	{ \
+			int __i;					\
+			u8*	ptr = (u8 *)_hexdata;			\
+			printk(KERN_DEBUG "%s: ", KBUILD_MODNAME);	\
+			printk("In process \"%s\" (pid %i):", current->comm,\
+					current->pid); \
+			printk(_titlestring);		\
+			for (__i = 0; __i < (int)_hexdatalen; __i++) {	\
+				printk("%02X%s", ptr[__i], (((__i + 1) % 4)\
+							== 0) ? "  " : " ");\
+				if (((__i + 1) % 16) == 0)		\
+					printk("\n");			\
+			}				\
+			printk(KERN_DEBUG "\n");			\
+		} \
+	} while (0);
+
+#define MAC_FMT "%02x:%02x:%02x:%02x:%02x:%02x"
+#define MAC_ARG(x) \
+	((u8 *)(x))[0], ((u8 *)(x))[1], ((u8 *)(x))[2],\
+	((u8 *)(x))[3], ((u8 *)(x))[4], ((u8 *)(x))[5]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void rtl_dbgp_flag_init(struct ieee80211_hw *hw);
 #endif

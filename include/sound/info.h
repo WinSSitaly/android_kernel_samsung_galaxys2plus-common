@@ -72,7 +72,11 @@ struct snd_info_entry_ops {
 
 struct snd_info_entry {
 	const char *name;
+<<<<<<< HEAD
 	umode_t mode;
+=======
+	mode_t mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	long size;
 	unsigned short content;
 	union {
@@ -110,8 +114,13 @@ void snd_card_info_read_oss(struct snd_info_buffer *buffer);
 static inline void snd_card_info_read_oss(struct snd_info_buffer *buffer) {}
 #endif
 
+<<<<<<< HEAD
 __printf(2, 3)
 int snd_iprintf(struct snd_info_buffer *buffer, const char *fmt, ...);
+=======
+int snd_iprintf(struct snd_info_buffer *buffer, const char *fmt, ...) \
+				__attribute__ ((format (printf, 2, 3)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int snd_info_init(void);
 int snd_info_done(void);
 

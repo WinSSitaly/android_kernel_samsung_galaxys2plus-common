@@ -19,10 +19,17 @@
 #include <linux/module.h>
 #include <linux/bitops.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/compat.h>
 
 #include <asm/io.h>
 #include <asm/uaccess.h>
+=======
+
+#include <asm/io.h>
+#include <asm/uaccess.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #undef TTY_DEBUG_WAIT_UNTIL_SENT
 
@@ -617,7 +624,11 @@ static int set_termios(struct tty_struct *tty, void __user *arg, int opt)
 	if (opt & TERMIOS_WAIT) {
 		tty_wait_until_sent(tty, 0);
 		if (signal_pending(current))
+<<<<<<< HEAD
 			return -ERESTARTSYS;
+=======
+			return -EINTR;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	tty_set_termios(tty, &tmp_termios);
@@ -684,7 +695,11 @@ static int set_termiox(struct tty_struct *tty, void __user *arg, int opt)
 	if (opt & TERMIOS_WAIT) {
 		tty_wait_until_sent(tty, 0);
 		if (signal_pending(current))
+<<<<<<< HEAD
 			return -ERESTARTSYS;
+=======
+			return -EINTR;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	mutex_lock(&tty->termios_mutex);
@@ -1179,6 +1194,7 @@ int n_tty_ioctl_helper(struct tty_struct *tty, struct file *file,
 	}
 }
 EXPORT_SYMBOL(n_tty_ioctl_helper);
+<<<<<<< HEAD
 
 #ifdef CONFIG_COMPAT
 long n_tty_compat_ioctl_helper(struct tty_struct *tty, struct file *file,
@@ -1195,3 +1211,5 @@ long n_tty_compat_ioctl_helper(struct tty_struct *tty, struct file *file,
 EXPORT_SYMBOL(n_tty_compat_ioctl_helper);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

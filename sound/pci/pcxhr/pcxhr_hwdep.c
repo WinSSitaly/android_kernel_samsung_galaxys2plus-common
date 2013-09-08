@@ -24,7 +24,10 @@
 #include <linux/vmalloc.h>
 #include <linux/firmware.h>
 #include <linux/pci.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <sound/core.h>
 #include <sound/hwdep.h>

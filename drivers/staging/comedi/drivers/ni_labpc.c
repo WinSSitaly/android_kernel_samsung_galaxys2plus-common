@@ -78,7 +78,10 @@ NI manuals:
 
 #include <linux/interrupt.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/io.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "../comedidev.h"
 
 #include <linux/delay.h>
@@ -213,10 +216,15 @@ static int labpc_attach(struct comedi_device *dev, struct comedi_devconfig *it);
 static int labpc_cancel(struct comedi_device *dev, struct comedi_subdevice *s);
 static irqreturn_t labpc_interrupt(int irq, void *d);
 static int labpc_drain_fifo(struct comedi_device *dev);
+<<<<<<< HEAD
 #ifdef CONFIG_ISA_DMA_API
 static void labpc_drain_dma(struct comedi_device *dev);
 static void handle_isa_dma(struct comedi_device *dev);
 #endif
+=======
+static void labpc_drain_dma(struct comedi_device *dev);
+static void handle_isa_dma(struct comedi_device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void labpc_drain_dregs(struct comedi_device *dev);
 static int labpc_ai_cmdtest(struct comedi_device *dev,
 			    struct comedi_subdevice *s, struct comedi_cmd *cmd);
@@ -240,11 +248,17 @@ static int labpc_eeprom_write_insn(struct comedi_device *dev,
 				   struct comedi_subdevice *s,
 				   struct comedi_insn *insn,
 				   unsigned int *data);
+<<<<<<< HEAD
 static void labpc_adc_timing(struct comedi_device *dev, struct comedi_cmd *cmd);
 #ifdef CONFIG_ISA_DMA_API
 static unsigned int labpc_suggest_transfer_size(struct comedi_cmd cmd);
 #endif
 #ifdef CONFIG_COMEDI_PCI_DRIVERS
+=======
+static unsigned int labpc_suggest_transfer_size(struct comedi_cmd cmd);
+static void labpc_adc_timing(struct comedi_device *dev, struct comedi_cmd *cmd);
+#ifdef CONFIG_COMEDI_PCI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int labpc_find_device(struct comedi_device *dev, int bus, int slot);
 #endif
 static int labpc_dio_mem_callback(int dir, int port, int data,
@@ -461,7 +475,11 @@ static const struct labpc_board_struct labpc_boards[] = {
 	 .ai_scan_up = 0,
 	 .memory_mapped_io = 0,
 	 },
+<<<<<<< HEAD
 #ifdef CONFIG_COMEDI_PCI_DRIVERS
+=======
+#ifdef CONFIG_COMEDI_PCI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 	 .name = "pci-1200",
 	 .device_id = 0x161,
@@ -505,14 +523,22 @@ static struct comedi_driver driver_labpc = {
 	.offset = sizeof(struct labpc_board_struct),
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_COMEDI_PCI_DRIVERS
+=======
+#ifdef CONFIG_COMEDI_PCI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEFINE_PCI_DEVICE_TABLE(labpc_pci_table) = {
 	{PCI_DEVICE(PCI_VENDOR_ID_NI, 0x161)},
 	{0}
 };
 
 MODULE_DEVICE_TABLE(pci, labpc_pci_table);
+<<<<<<< HEAD
 #endif /* CONFIG_COMEDI_PCI_DRIVERS */
+=======
+#endif /* CONFIG_COMEDI_PCI */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int labpc_counter_load(struct comedi_device *dev,
 				     unsigned long base_address,
@@ -531,10 +557,14 @@ int labpc_common_attach(struct comedi_device *dev, unsigned long iobase,
 {
 	struct comedi_subdevice *s;
 	int i;
+<<<<<<< HEAD
 	unsigned long isr_flags;
 #ifdef CONFIG_ISA_DMA_API
 	unsigned long dma_flags;
 #endif
+=======
+	unsigned long dma_flags, isr_flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	short lsb, msb;
 
 	printk(KERN_ERR "comedi%d: ni_labpc: %s, io 0x%lx", dev->minor,
@@ -594,7 +624,10 @@ int labpc_common_attach(struct comedi_device *dev, unsigned long iobase,
 	}
 	dev->irq = irq;
 
+<<<<<<< HEAD
 #ifdef CONFIG_ISA_DMA_API
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* grab dma channel */
 	if (dma_chan > 3) {
 		printk(KERN_ERR " invalid dma channel %u\n", dma_chan);
@@ -618,7 +651,10 @@ int labpc_common_attach(struct comedi_device *dev, unsigned long iobase,
 		set_dma_mode(devpriv->dma_chan, DMA_MODE_READ);
 		release_dma_lock(dma_flags);
 	}
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev->board_name = thisboard->name;
 
@@ -722,7 +758,11 @@ static int labpc_attach(struct comedi_device *dev, struct comedi_devconfig *it)
 	unsigned long iobase = 0;
 	unsigned int irq = 0;
 	unsigned int dma_chan = 0;
+<<<<<<< HEAD
 #ifdef CONFIG_COMEDI_PCI_DRIVERS
+=======
+#ifdef CONFIG_COMEDI_PCI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int retval;
 #endif
 
@@ -733,6 +773,7 @@ static int labpc_attach(struct comedi_device *dev, struct comedi_devconfig *it)
 	/* get base address, irq etc. based on bustype */
 	switch (thisboard->bustype) {
 	case isa_bustype:
+<<<<<<< HEAD
 #ifdef CONFIG_ISA_DMA_API
 		iobase = it->options[0];
 		irq = it->options[1];
@@ -745,6 +786,14 @@ static int labpc_attach(struct comedi_device *dev, struct comedi_devconfig *it)
 		break;
 	case pci_bustype:
 #ifdef CONFIG_COMEDI_PCI_DRIVERS
+=======
+		iobase = it->options[0];
+		irq = it->options[1];
+		dma_chan = it->options[2];
+		break;
+	case pci_bustype:
+#ifdef CONFIG_COMEDI_PCI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		retval = labpc_find_device(dev, it->options[0], it->options[1]);
 		if (retval < 0)
 			return retval;
@@ -774,7 +823,11 @@ static int labpc_attach(struct comedi_device *dev, struct comedi_devconfig *it)
 }
 
 /* adapted from ni_pcimio for finding mite based boards (pc-1200) */
+<<<<<<< HEAD
 #ifdef CONFIG_COMEDI_PCI_DRIVERS
+=======
+#ifdef CONFIG_COMEDI_PCI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int labpc_find_device(struct comedi_device *dev, int bus, int slot)
 {
 	struct mite_struct *mite;
@@ -812,17 +865,27 @@ int labpc_common_detach(struct comedi_device *dev)
 	if (dev->subdevices)
 		subdev_8255_cleanup(dev, dev->subdevices + 2);
 
+<<<<<<< HEAD
 #ifdef CONFIG_ISA_DMA_API
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* only free stuff if it has been allocated by _attach */
 	kfree(devpriv->dma_buffer);
 	if (devpriv->dma_chan)
 		free_dma(devpriv->dma_chan);
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dev->irq)
 		free_irq(dev->irq, dev);
 	if (thisboard->bustype == isa_bustype && dev->iobase)
 		release_region(dev->iobase, LABPC_SIZE);
+<<<<<<< HEAD
 #ifdef CONFIG_COMEDI_PCI_DRIVERS
+=======
+#ifdef CONFIG_COMEDI_PCI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (devpriv->mite)
 		mite_unsetup(devpriv->mite);
 #endif
@@ -1152,9 +1215,13 @@ static int labpc_ai_cmdtest(struct comedi_device *dev,
 static int labpc_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
 {
 	int channel, range, aref;
+<<<<<<< HEAD
 #ifdef CONFIG_ISA_DMA_API
 	unsigned long irq_flags;
 #endif
+=======
+	unsigned long irq_flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 	struct comedi_async *async = s->async;
 	struct comedi_cmd *cmd = &async->cmd;
@@ -1201,7 +1268,10 @@ static int labpc_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
 		devpriv->write_byte(INIT_A1_BITS,
 				    dev->iobase + COUNTER_A_CONTROL_REG);
 
+<<<<<<< HEAD
 #ifdef CONFIG_ISA_DMA_API
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*  figure out what method we will use to transfer data */
 	if (devpriv->dma_chan &&	/*  need a dma channel allocated */
 		/*
@@ -1213,9 +1283,13 @@ static int labpc_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
 	    thisboard->bustype == isa_bustype) {
 		xfer = isa_dma_transfer;
 		/* pc-plus has no fifo-half full interrupt */
+<<<<<<< HEAD
 	} else
 #endif
 	if (thisboard->register_layout == labpc_1200_layout &&
+=======
+	} else if (thisboard->register_layout == labpc_1200_layout &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   /*  wake-end-of-scan should interrupt on fifo not empty */
 		   (cmd->flags & TRIG_WAKE_EOS) == 0 &&
 		   /*  make sure we are taking more than just a few points */
@@ -1264,9 +1338,13 @@ static int labpc_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
 	else
 		channel = CR_CHAN(cmd->chanlist[0]);
 	/* munge channel bits for differential / scan disabled mode */
+<<<<<<< HEAD
 	if ((labpc_ai_scan_mode(cmd) == MODE_SINGLE_CHAN ||
 	     labpc_ai_scan_mode(cmd) == MODE_SINGLE_CHAN_INTERVAL) &&
 	    aref == AREF_DIFF)
+=======
+	if (labpc_ai_scan_mode(cmd) != MODE_SINGLE_CHAN && aref == AREF_DIFF)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		channel *= 2;
 	devpriv->command1_bits |= ADC_CHAN_BITS(channel);
 	devpriv->command1_bits |= thisboard->ai_range_code[range];
@@ -1282,6 +1360,24 @@ static int labpc_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
 		devpriv->write_byte(devpriv->command1_bits,
 				    dev->iobase + COMMAND1_REG);
 	}
+<<<<<<< HEAD
+=======
+	/*  setup any external triggering/pacing (command4 register) */
+	devpriv->command4_bits = 0;
+	if (cmd->convert_src != TRIG_EXT)
+		devpriv->command4_bits |= EXT_CONVERT_DISABLE_BIT;
+	/* XXX should discard first scan when using interval scanning
+	 * since manual says it is not synced with scan clock */
+	if (labpc_use_continuous_mode(cmd) == 0) {
+		devpriv->command4_bits |= INTERVAL_SCAN_EN_BIT;
+		if (cmd->scan_begin_src == TRIG_EXT)
+			devpriv->command4_bits |= EXT_SCAN_EN_BIT;
+	}
+	/*  single-ended/differential */
+	if (aref == AREF_DIFF)
+		devpriv->command4_bits |= ADC_DIFF_BIT;
+	devpriv->write_byte(devpriv->command4_bits, dev->iobase + COMMAND4_REG);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	devpriv->write_byte(cmd->chanlist_len,
 			    dev->iobase + INTERVAL_COUNT_REG);
@@ -1326,7 +1422,10 @@ static int labpc_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
 
 	labpc_clear_adc_fifo(dev);
 
+<<<<<<< HEAD
 #ifdef CONFIG_ISA_DMA_API
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*  set up dma transfer */
 	if (xfer == isa_dma_transfer) {
 		irq_flags = claim_dma_lock();
@@ -1350,7 +1449,10 @@ static int labpc_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
 		devpriv->command3_bits |= DMA_EN_BIT | DMATC_INTR_EN_BIT;
 	} else
 		devpriv->command3_bits &= ~DMA_EN_BIT & ~DMATC_INTR_EN_BIT;
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*  enable error interrupts */
 	devpriv->command3_bits |= ERR_INTR_EN_BIT;
@@ -1361,6 +1463,7 @@ static int labpc_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
 		devpriv->command3_bits &= ~ADC_FNE_INTR_EN_BIT;
 	devpriv->write_byte(devpriv->command3_bits, dev->iobase + COMMAND3_REG);
 
+<<<<<<< HEAD
 	/*  setup any external triggering/pacing (command4 register) */
 	devpriv->command4_bits = 0;
 	if (cmd->convert_src != TRIG_EXT)
@@ -1377,6 +1480,8 @@ static int labpc_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
 		devpriv->command4_bits |= ADC_DIFF_BIT;
 	devpriv->write_byte(devpriv->command4_bits, dev->iobase + COMMAND4_REG);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*  startup acquisition */
 
 	/*  command2 reg */
@@ -1453,7 +1558,10 @@ static irqreturn_t labpc_interrupt(int irq, void *d)
 		return IRQ_HANDLED;
 	}
 
+<<<<<<< HEAD
 #ifdef CONFIG_ISA_DMA_API
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (devpriv->current_transfer == isa_dma_transfer) {
 		/*
 		 * if a dma terminal count of external stop trigger
@@ -1465,7 +1573,10 @@ static irqreturn_t labpc_interrupt(int irq, void *d)
 			handle_isa_dma(dev);
 		}
 	} else
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		labpc_drain_fifo(dev);
 
 	if (devpriv->status1_bits & TIMER_BIT) {
@@ -1538,7 +1649,10 @@ static int labpc_drain_fifo(struct comedi_device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_ISA_DMA_API
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void labpc_drain_dma(struct comedi_device *dev)
 {
 	struct comedi_subdevice *s = dev->read_subdev;
@@ -1601,16 +1715,24 @@ static void handle_isa_dma(struct comedi_device *dev)
 	/*  clear dma tc interrupt */
 	devpriv->write_byte(0x1, dev->iobase + DMATC_CLEAR_REG);
 }
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* makes sure all data acquired by board is transferred to comedi (used
  * when acquisition is terminated by stop_src == TRIG_EXT). */
 static void labpc_drain_dregs(struct comedi_device *dev)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_ISA_DMA_API
 	if (devpriv->current_transfer == isa_dma_transfer)
 		labpc_drain_dma(dev);
 #endif
+=======
+	if (devpriv->current_transfer == isa_dma_transfer)
+		labpc_drain_dma(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	labpc_drain_fifo(dev);
 }
@@ -1802,7 +1924,10 @@ static int labpc_eeprom_write_insn(struct comedi_device *dev,
 	return 1;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_ISA_DMA_API
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* utility function that suggests a dma transfer size in bytes */
 static unsigned int labpc_suggest_transfer_size(struct comedi_cmd cmd)
 {
@@ -1826,7 +1951,10 @@ static unsigned int labpc_suggest_transfer_size(struct comedi_cmd cmd)
 
 	return size;
 }
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* figures out what counter values to use based on command */
 static void labpc_adc_timing(struct comedi_device *dev, struct comedi_cmd *cmd)
@@ -2140,7 +2268,11 @@ static void write_caldac(struct comedi_device *dev, unsigned int channel,
 	devpriv->write_byte(devpriv->command5_bits, dev->iobase + COMMAND5_REG);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_COMEDI_PCI_DRIVERS
+=======
+#ifdef CONFIG_COMEDI_PCI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit driver_labpc_pci_probe(struct pci_dev *dev,
 					    const struct pci_device_id *ent)
 {

@@ -20,6 +20,10 @@
 #include <linux/cramfs_fs.h>
 #include <linux/slab.h>
 #include <linux/cramfs_fs_sb.h>
+<<<<<<< HEAD
+=======
+#include <linux/buffer_head.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/vfs.h>
 #include <linux/mutex.h>
 
@@ -257,10 +261,17 @@ static int cramfs_fill_super(struct super_block *sb, void *data, int silent)
 
 	/* Do sanity checks on the superblock */
 	if (super.magic != CRAMFS_MAGIC) {
+<<<<<<< HEAD
 		/* check for wrong endianness */
 		if (super.magic == CRAMFS_MAGIC_WEND) {
 			if (!silent)
 				printk(KERN_ERR "cramfs: wrong endianness\n");
+=======
+		/* check for wrong endianess */
+		if (super.magic == CRAMFS_MAGIC_WEND) {
+			if (!silent)
+				printk(KERN_ERR "cramfs: wrong endianess\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out;
 		}
 
@@ -270,7 +281,11 @@ static int cramfs_fill_super(struct super_block *sb, void *data, int silent)
 		mutex_unlock(&read_mutex);
 		if (super.magic != CRAMFS_MAGIC) {
 			if (super.magic == CRAMFS_MAGIC_WEND && !silent)
+<<<<<<< HEAD
 				printk(KERN_ERR "cramfs: wrong endianness\n");
+=======
+				printk(KERN_ERR "cramfs: wrong endianess\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			else if (!silent)
 				printk(KERN_ERR "cramfs: wrong magic\n");
 			goto out;
@@ -318,9 +333,17 @@ static int cramfs_fill_super(struct super_block *sb, void *data, int silent)
 	root = get_cramfs_inode(sb, &super.root, 0);
 	if (IS_ERR(root))
 		goto out;
+<<<<<<< HEAD
 	sb->s_root = d_make_root(root);
 	if (!sb->s_root)
 		goto out;
+=======
+	sb->s_root = d_alloc_root(root);
+	if (!sb->s_root) {
+		iput(root);
+		goto out;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 out:
 	kfree(sbi);
@@ -375,7 +398,11 @@ static int cramfs_readdir(struct file *filp, void *dirent, filldir_t filldir)
 		unsigned long nextoffset;
 		char *name;
 		ino_t ino;
+<<<<<<< HEAD
 		umode_t mode;
+=======
+		mode_t mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int namelen, error;
 
 		mutex_lock(&read_mutex);

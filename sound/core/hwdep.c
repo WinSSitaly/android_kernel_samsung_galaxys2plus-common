@@ -24,7 +24,10 @@
 #include <linux/slab.h>
 #include <linux/time.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/control.h>
 #include <sound/minors.h>
@@ -100,10 +103,15 @@ static int snd_hwdep_open(struct inode *inode, struct file * file)
 	if (hw == NULL)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	if (!try_module_get(hw->card->module)) {
 		snd_card_unref(hw->card);
 		return -EFAULT;
 	}
+=======
+	if (!try_module_get(hw->card->module))
+		return -EFAULT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	init_waitqueue_entry(&wait, current);
 	add_wait_queue(&hw->open_wait, &wait);
@@ -131,10 +139,13 @@ static int snd_hwdep_open(struct inode *inode, struct file * file)
 		mutex_unlock(&hw->open_mutex);
 		schedule();
 		mutex_lock(&hw->open_mutex);
+<<<<<<< HEAD
 		if (hw->card->shutdown) {
 			err = -ENODEV;
 			break;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (signal_pending(current)) {
 			err = -ERESTARTSYS;
 			break;
@@ -154,7 +165,10 @@ static int snd_hwdep_open(struct inode *inode, struct file * file)
 	mutex_unlock(&hw->open_mutex);
 	if (err < 0)
 		module_put(hw->card->module);
+<<<<<<< HEAD
 	snd_card_unref(hw->card);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -280,6 +294,7 @@ static int snd_hwdep_control_ioctl(struct snd_card *card,
 			if (get_user(device, (int __user *)arg))
 				return -EFAULT;
 			mutex_lock(&register_mutex);
+<<<<<<< HEAD
 
 			if (device < 0)
 				device = 0;
@@ -288,6 +303,9 @@ static int snd_hwdep_control_ioctl(struct snd_card *card,
 			else
 				device = SNDRV_MINOR_HWDEPS;
 
+=======
+			device = device < 0 ? 0 : device + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			while (device < SNDRV_MINOR_HWDEPS) {
 				if (snd_hwdep_search(card, device))
 					break;
@@ -466,15 +484,21 @@ static int snd_hwdep_dev_disconnect(struct snd_device *device)
 		mutex_unlock(&register_mutex);
 		return -EINVAL;
 	}
+<<<<<<< HEAD
 	mutex_lock(&hwdep->open_mutex);
 	wake_up(&hwdep->open_wait);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SND_OSSEMUL
 	if (hwdep->ossreg)
 		snd_unregister_oss_device(hwdep->oss_type, hwdep->card, hwdep->device);
 #endif
 	snd_unregister_device(SNDRV_DEVICE_TYPE_HWDEP, hwdep->card, hwdep->device);
 	list_del_init(&hwdep->list);
+<<<<<<< HEAD
 	mutex_unlock(&hwdep->open_mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&register_mutex);
 	return 0;
 }

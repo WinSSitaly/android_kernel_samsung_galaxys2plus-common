@@ -6,6 +6,7 @@
  */
 
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 
 #include "md.h"
@@ -22,6 +23,23 @@
  * They must be cleared before md_run is called.
  */
 #define FirstUse 10             /* rdev flag */
+=======
+
+#include "md.h"
+#include "raid5.h"
+#include "dm.h"
+#include "bitmap.h"
+
+#define DM_MSG_PREFIX "raid"
+
+/*
+ * If the MD doesn't support MD_SYNC_STATE_FORCED yet, then
+ * make it so the flag doesn't set anything.
+ */
+#ifndef MD_SYNC_STATE_FORCED
+#define MD_SYNC_STATE_FORCED 0
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct raid_dev {
 	/*
@@ -38,12 +56,17 @@ struct raid_dev {
 	 */
 	struct dm_dev *meta_dev;
 	struct dm_dev *data_dev;
+<<<<<<< HEAD
 	struct md_rdev rdev;
+=======
+	struct mdk_rdev_s rdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
  * Flags for rs->print_flags field.
  */
+<<<<<<< HEAD
 #define DMPF_SYNC              0x1
 #define DMPF_NOSYNC            0x2
 #define DMPF_REBUILD           0x4
@@ -60,6 +83,22 @@ struct raid_set {
 	uint32_t print_flags;
 
 	struct mddev md;
+=======
+#define DMPF_DAEMON_SLEEP      0x1
+#define DMPF_MAX_WRITE_BEHIND  0x2
+#define DMPF_SYNC              0x4
+#define DMPF_NOSYNC            0x8
+#define DMPF_STRIPE_CACHE      0x10
+#define DMPF_MIN_RECOVERY_RATE 0x20
+#define DMPF_MAX_RECOVERY_RATE 0x40
+
+struct raid_set {
+	struct dm_target *ti;
+
+	uint64_t print_flags;
+
+	struct mddev_s md;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct raid_type *raid_type;
 	struct dm_target_callbacks callbacks;
 
@@ -75,7 +114,10 @@ static struct raid_type {
 	const unsigned level;		/* RAID level. */
 	const unsigned algorithm;	/* RAID algorithm. */
 } raid_types[] = {
+<<<<<<< HEAD
 	{"raid1",    "RAID1 (mirroring)",               0, 2, 1, 0 /* NONE */},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{"raid4",    "RAID4 (dedicated parity disk)",	1, 2, 5, ALGORITHM_PARITY_0},
 	{"raid5_la", "RAID5 (left asymmetric)",		1, 2, 5, ALGORITHM_LEFT_ASYMMETRIC},
 	{"raid5_ra", "RAID5 (right asymmetric)",	1, 2, 5, ALGORITHM_RIGHT_ASYMMETRIC},
@@ -109,8 +151,12 @@ static struct raid_set *context_alloc(struct dm_target *ti, struct raid_type *ra
 	}
 
 	sectors_per_dev = ti->len;
+<<<<<<< HEAD
 	if ((raid_type->level > 1) &&
 	    sector_div(sectors_per_dev, (raid_devs - raid_type->parity_devs))) {
+=======
+	if (sector_div(sectors_per_dev, (raid_devs - raid_type->parity_devs))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ti->error = "Target length not divisible by number of data devices";
 		return ERR_PTR(-EINVAL);
 	}
@@ -152,6 +198,7 @@ static void context_free(struct raid_set *rs)
 {
 	int i;
 
+<<<<<<< HEAD
 	for (i = 0; i < rs->md.raid_disks; i++) {
 		if (rs->dev[i].meta_dev)
 			dm_put_device(rs->ti, rs->dev[i].meta_dev);
@@ -162,6 +209,11 @@ static void context_free(struct raid_set *rs)
 		if (rs->dev[i].data_dev)
 			dm_put_device(rs->ti, rs->dev[i].data_dev);
 	}
+=======
+	for (i = 0; i < rs->md.raid_disks; i++)
+		if (rs->dev[i].data_dev)
+			dm_put_device(rs->ti, rs->dev[i].data_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kfree(rs);
 }
@@ -171,6 +223,7 @@ static void context_free(struct raid_set *rs)
  *  <meta_dev>: meta device name or '-' if missing
  *  <data_dev>: data device name or '-' if missing
  *
+<<<<<<< HEAD
  * The following are permitted:
  *    - -
  *    - <data_dev>
@@ -181,6 +234,9 @@ static void context_free(struct raid_set *rs)
  *
  * This code parses those words.  If there is a failure,
  * the caller must use context_free to unwind the operations.
+=======
+ * This code parses those words.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int dev_parms(struct raid_set *rs, char **argv)
 {
@@ -203,6 +259,7 @@ static int dev_parms(struct raid_set *rs, char **argv)
 		rs->dev[i].rdev.mddev = &rs->md;
 
 		if (strcmp(argv[0], "-")) {
+<<<<<<< HEAD
 			ret = dm_get_device(rs->ti, argv[0],
 					    dm_table_get_mode(rs->ti->table),
 					    &rs->dev[i].meta_dev);
@@ -213,6 +270,10 @@ static int dev_parms(struct raid_set *rs, char **argv)
 			rs->dev[i].rdev.sb_page = alloc_page(GFP_KERNEL);
 			if (!rs->dev[i].rdev.sb_page)
 				return -ENOMEM;
+=======
+			rs->ti->error = "Metadata devices not supported";
+			return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (!strcmp(argv[1], "-")) {
@@ -222,10 +283,13 @@ static int dev_parms(struct raid_set *rs, char **argv)
 				return -EINVAL;
 			}
 
+<<<<<<< HEAD
 			rs->ti->error = "No data device supplied with metadata device";
 			if (rs->dev[i].meta_dev)
 				return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 
@@ -237,10 +301,13 @@ static int dev_parms(struct raid_set *rs, char **argv)
 			return ret;
 		}
 
+<<<<<<< HEAD
 		if (rs->dev[i].meta_dev) {
 			metadata_available = 1;
 			rs->dev[i].rdev.meta_bdev = rs->dev[i].meta_dev->bdev;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rs->dev[i].rdev.bdev = rs->dev[i].data_dev->bdev;
 		list_add(&rs->dev[i].rdev.same_set, &rs->md.disks);
 		if (!test_bit(In_sync, &rs->dev[i].rdev.flags))
@@ -272,6 +339,7 @@ static int dev_parms(struct raid_set *rs, char **argv)
 }
 
 /*
+<<<<<<< HEAD
  * validate_region_size
  * @rs
  * @region_size:  region size in sectors.  If 0, pick a size (4MiB default).
@@ -350,16 +418,35 @@ static int validate_region_size(struct raid_set *rs, unsigned long region_size)
  *    [max_write_behind <sectors>]	See '-write-behind=' (man mdadm)
  *    [stripe_cache <sectors>]		Stripe cache size for higher RAIDs
  *    [region_size <sectors>]           Defines granularity of bitmap
+=======
+ * Possible arguments are...
+ * RAID456:
+ *	<chunk_size> [optional_args]
+ *
+ * Optional args:
+ *    [[no]sync]			Force or prevent recovery of the entire array
+ *    [rebuild <idx>]			Rebuild the drive indicated by the index
+ *    [daemon_sleep <ms>]		Time between bitmap daemon work to clear bits
+ *    [min_recovery_rate <kB/sec/disk>]	Throttle RAID initialization
+ *    [max_recovery_rate <kB/sec/disk>]	Throttle RAID initialization
+ *    [max_write_behind <sectors>]	See '-write-behind=' (man mdadm)
+ *    [stripe_cache <sectors>]		Stripe cache size for higher RAIDs
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int parse_raid_params(struct raid_set *rs, char **argv,
 			     unsigned num_raid_params)
 {
 	unsigned i, rebuild_cnt = 0;
+<<<<<<< HEAD
 	unsigned long value, region_size = 0;
+=======
+	unsigned long value;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *key;
 
 	/*
 	 * First, parse the in-order required arguments
+<<<<<<< HEAD
 	 * "chunk_size" is the only argument of this type.
 	 */
 	if ((strict_strtoul(argv[0], 10, &value) < 0)) {
@@ -375,6 +462,13 @@ static int parse_raid_params(struct raid_set *rs, char **argv,
 	} else if (value < 8) {
 		rs->ti->error = "Chunk size value is too small";
 		return -EINVAL;
+=======
+	 */
+	if ((strict_strtoul(argv[0], 10, &value) < 0) ||
+	    !is_power_of_2(value) || (value < 8)) {
+		rs->ti->error = "Bad chunk size";
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	rs->md.new_chunk_sectors = rs->md.chunk_sectors = value;
@@ -382,6 +476,7 @@ static int parse_raid_params(struct raid_set *rs, char **argv,
 	num_raid_params--;
 
 	/*
+<<<<<<< HEAD
 	 * We set each individual device as In_sync with a completed
 	 * 'recovery_offset'.  If there has been a device failure or
 	 * replacement then one of the following cases applies:
@@ -415,6 +510,24 @@ static int parse_raid_params(struct raid_set *rs, char **argv,
 		if (!strcasecmp(argv[i], "sync")) {
 			rs->md.recovery_cp = 0;
 			rs->print_flags |= DMPF_SYNC;
+=======
+	 * Second, parse the unordered optional arguments
+	 */
+	for (i = 0; i < rs->md.raid_disks; i++)
+		set_bit(In_sync, &rs->dev[i].rdev.flags);
+
+	for (i = 0; i < num_raid_params; i++) {
+		if (!strcmp(argv[i], "nosync")) {
+			rs->md.recovery_cp = MaxSector;
+			rs->print_flags |= DMPF_NOSYNC;
+			rs->md.flags |= MD_SYNC_STATE_FORCED;
+			continue;
+		}
+		if (!strcmp(argv[i], "sync")) {
+			rs->md.recovery_cp = 0;
+			rs->print_flags |= DMPF_SYNC;
+			rs->md.flags |= MD_SYNC_STATE_FORCED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 
@@ -430,6 +543,7 @@ static int parse_raid_params(struct raid_set *rs, char **argv,
 			return -EINVAL;
 		}
 
+<<<<<<< HEAD
 		if (!strcasecmp(key, "rebuild")) {
 			rebuild_cnt++;
 			if (((rs->raid_type->level != 1) &&
@@ -437,6 +551,11 @@ static int parse_raid_params(struct raid_set *rs, char **argv,
 			    ((rs->raid_type->level == 1) &&
 			     (rebuild_cnt > (rs->md.raid_disks - 1)))) {
 				rs->ti->error = "Too many rebuild devices specified for given RAID type";
+=======
+		if (!strcmp(key, "rebuild")) {
+			if (++rebuild_cnt > rs->raid_type->parity_devs) {
+				rs->ti->error = "Too many rebuild drives given";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return -EINVAL;
 			}
 			if (value > rs->md.raid_disks) {
@@ -445,6 +564,7 @@ static int parse_raid_params(struct raid_set *rs, char **argv,
 			}
 			clear_bit(In_sync, &rs->dev[value].rdev.flags);
 			rs->dev[value].rdev.recovery_offset = 0;
+<<<<<<< HEAD
 			rs->print_flags |= DMPF_REBUILD;
 		} else if (!strcasecmp(key, "write_mostly")) {
 			if (rs->raid_type->level != 1) {
@@ -461,6 +581,9 @@ static int parse_raid_params(struct raid_set *rs, char **argv,
 				rs->ti->error = "max_write_behind option is only valid for RAID1";
 				return -EINVAL;
 			}
+=======
+		} else if (!strcmp(key, "max_write_behind")) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rs->print_flags |= DMPF_MAX_WRITE_BEHIND;
 
 			/*
@@ -473,14 +596,22 @@ static int parse_raid_params(struct raid_set *rs, char **argv,
 				return -EINVAL;
 			}
 			rs->md.bitmap_info.max_write_behind = value;
+<<<<<<< HEAD
 		} else if (!strcasecmp(key, "daemon_sleep")) {
+=======
+		} else if (!strcmp(key, "daemon_sleep")) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rs->print_flags |= DMPF_DAEMON_SLEEP;
 			if (!value || (value > MAX_SCHEDULE_TIMEOUT)) {
 				rs->ti->error = "daemon sleep period out of range";
 				return -EINVAL;
 			}
 			rs->md.bitmap_info.daemon_sleep = value;
+<<<<<<< HEAD
 		} else if (!strcasecmp(key, "stripe_cache")) {
+=======
+		} else if (!strcmp(key, "stripe_cache")) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rs->print_flags |= DMPF_STRIPE_CACHE;
 
 			/*
@@ -497,23 +628,34 @@ static int parse_raid_params(struct raid_set *rs, char **argv,
 				rs->ti->error = "Bad stripe_cache size";
 				return -EINVAL;
 			}
+<<<<<<< HEAD
 		} else if (!strcasecmp(key, "min_recovery_rate")) {
+=======
+		} else if (!strcmp(key, "min_recovery_rate")) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rs->print_flags |= DMPF_MIN_RECOVERY_RATE;
 			if (value > INT_MAX) {
 				rs->ti->error = "min_recovery_rate out of range";
 				return -EINVAL;
 			}
 			rs->md.sync_speed_min = (int)value;
+<<<<<<< HEAD
 		} else if (!strcasecmp(key, "max_recovery_rate")) {
+=======
+		} else if (!strcmp(key, "max_recovery_rate")) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rs->print_flags |= DMPF_MAX_RECOVERY_RATE;
 			if (value > INT_MAX) {
 				rs->ti->error = "max_recovery_rate out of range";
 				return -EINVAL;
 			}
 			rs->md.sync_speed_max = (int)value;
+<<<<<<< HEAD
 		} else if (!strcasecmp(key, "region_size")) {
 			rs->print_flags |= DMPF_REGION_SIZE;
 			region_size = value;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			DMERR("Unable to parse RAID parameter: %s", key);
 			rs->ti->error = "Unable to parse RAID parameters";
@@ -521,6 +663,7 @@ static int parse_raid_params(struct raid_set *rs, char **argv,
 		}
 	}
 
+<<<<<<< HEAD
 	if (validate_region_size(rs, region_size))
 		return -EINVAL;
 
@@ -534,6 +677,8 @@ static int parse_raid_params(struct raid_set *rs, char **argv,
 	else
 		rs->ti->split_io = region_size;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Assume there are no metadata devices until the drives are parsed */
 	rs->md.persistent = 0;
 	rs->md.external = 1;
@@ -552,13 +697,17 @@ static int raid_is_congested(struct dm_target_callbacks *cb, int bits)
 {
 	struct raid_set *rs = container_of(cb, struct raid_set, callbacks);
 
+<<<<<<< HEAD
 	if (rs->raid_type->level == 1)
 		return md_raid1_congested(&rs->md, bits);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return md_raid5_congested(&rs->md, bits);
 }
 
 /*
+<<<<<<< HEAD
  * This structure is never routinely used by userspace, unlike md superblocks.
  * Devices with this superblock should only ever be accessed via device-mapper.
  */
@@ -945,11 +1094,18 @@ static int analyse_superblocks(struct dm_target *ti, struct raid_set *rs)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Construct a RAID4/5/6 mapping:
  * Args:
  *	<raid_type> <#raid_params> <raid_params>		\
  *	<#raid_devs> { <meta_dev1> <dev1> .. <meta_devN> <devN> }
  *
+<<<<<<< HEAD
+=======
+ * ** metadata devices are not supported yet, use '-' instead **
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * <raid_params> varies by <raid_type>.  See 'parse_raid_params' for
  * details on possible <raid_params>.
  */
@@ -1017,12 +1173,17 @@ static int raid_ctr(struct dm_target *ti, unsigned argc, char **argv)
 	if (ret)
 		goto bad;
 
+<<<<<<< HEAD
 	rs->md.sync_super = super_sync;
 	ret = analyse_superblocks(ti, rs);
 	if (ret)
 		goto bad;
 
 	INIT_WORK(&rs->md.event_work, do_table_event);
+=======
+	INIT_WORK(&rs->md.event_work, do_table_event);
+	ti->split_io = rs->md.chunk_sectors;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ti->private = rs;
 	ti->num_flush_requests = 1;
 
@@ -1039,7 +1200,10 @@ static int raid_ctr(struct dm_target *ti, unsigned argc, char **argv)
 	rs->callbacks.congested_fn = raid_is_congested;
 	dm_table_add_target_callbacks(ti->table, &rs->callbacks);
 
+<<<<<<< HEAD
 	mddev_suspend(&rs->md);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 bad:
@@ -1060,7 +1224,11 @@ static void raid_dtr(struct dm_target *ti)
 static int raid_map(struct dm_target *ti, struct bio *bio, union map_info *map_context)
 {
 	struct raid_set *rs = ti->private;
+<<<<<<< HEAD
 	struct mddev *mddev = &rs->md;
+=======
+	mddev_t *mddev = &rs->md;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mddev->pers->make_request(mddev, bio);
 
@@ -1073,18 +1241,35 @@ static int raid_status(struct dm_target *ti, status_type_t type,
 	struct raid_set *rs = ti->private;
 	unsigned raid_param_cnt = 1; /* at least 1 for chunksize */
 	unsigned sz = 0;
+<<<<<<< HEAD
 	int i, array_in_sync = 0;
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sector_t sync;
 
 	switch (type) {
 	case STATUSTYPE_INFO:
 		DMEMIT("%s %d ", rs->raid_type->name, rs->md.raid_disks);
 
+<<<<<<< HEAD
+=======
+		for (i = 0; i < rs->md.raid_disks; i++) {
+			if (test_bit(Faulty, &rs->dev[i].rdev.flags))
+				DMEMIT("D");
+			else if (test_bit(In_sync, &rs->dev[i].rdev.flags))
+				DMEMIT("A");
+			else
+				DMEMIT("a");
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (test_bit(MD_RECOVERY_RUNNING, &rs->md.recovery))
 			sync = rs->md.curr_resync_completed;
 		else
 			sync = rs->md.recovery_cp;
 
+<<<<<<< HEAD
 		if (sync >= rs->md.resync_max_sectors) {
 			array_in_sync = 1;
 			sync = rs->md.resync_max_sectors;
@@ -1123,6 +1308,11 @@ static int raid_status(struct dm_target *ti, status_type_t type,
 		 *  The user can distinguish between the two by referring
 		 *  to the status characters.
 		 */
+=======
+		if (sync > rs->md.resync_max_sectors)
+			sync = rs->md.resync_max_sectors;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		DMEMIT(" %llu/%llu",
 		       (unsigned long long) sync,
 		       (unsigned long long) rs->md.resync_max_sectors);
@@ -1130,6 +1320,7 @@ static int raid_status(struct dm_target *ti, status_type_t type,
 		break;
 	case STATUSTYPE_TABLE:
 		/* The string you would use to construct this array */
+<<<<<<< HEAD
 		for (i = 0; i < rs->md.raid_disks; i++) {
 			if ((rs->print_flags & DMPF_REBUILD) &&
 			    rs->dev[i].data_dev &&
@@ -1141,6 +1332,14 @@ static int raid_status(struct dm_target *ti, status_type_t type,
 		}
 
 		raid_param_cnt += (hweight32(rs->print_flags & ~DMPF_REBUILD) * 2);
+=======
+		for (i = 0; i < rs->md.raid_disks; i++)
+			if (rs->dev[i].data_dev &&
+			    !test_bit(In_sync, &rs->dev[i].rdev.flags))
+				raid_param_cnt++; /* for rebuilds */
+
+		raid_param_cnt += (hweight64(rs->print_flags) * 2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rs->print_flags & (DMPF_SYNC | DMPF_NOSYNC))
 			raid_param_cnt--;
 
@@ -1154,8 +1353,12 @@ static int raid_status(struct dm_target *ti, status_type_t type,
 			DMEMIT(" nosync");
 
 		for (i = 0; i < rs->md.raid_disks; i++)
+<<<<<<< HEAD
 			if ((rs->print_flags & DMPF_REBUILD) &&
 			    rs->dev[i].data_dev &&
+=======
+			if (rs->dev[i].data_dev &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    !test_bit(In_sync, &rs->dev[i].rdev.flags))
 				DMEMIT(" rebuild %u", i);
 
@@ -1169,23 +1372,31 @@ static int raid_status(struct dm_target *ti, status_type_t type,
 		if (rs->print_flags & DMPF_MAX_RECOVERY_RATE)
 			DMEMIT(" max_recovery_rate %d", rs->md.sync_speed_max);
 
+<<<<<<< HEAD
 		for (i = 0; i < rs->md.raid_disks; i++)
 			if (rs->dev[i].data_dev &&
 			    test_bit(WriteMostly, &rs->dev[i].rdev.flags))
 				DMEMIT(" write_mostly %u", i);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rs->print_flags & DMPF_MAX_WRITE_BEHIND)
 			DMEMIT(" max_write_behind %lu",
 			       rs->md.bitmap_info.max_write_behind);
 
 		if (rs->print_flags & DMPF_STRIPE_CACHE) {
+<<<<<<< HEAD
 			struct r5conf *conf = rs->md.private;
+=======
+			raid5_conf_t *conf = rs->md.private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* convert from kiB to sectors */
 			DMEMIT(" stripe_cache %d",
 			       conf ? conf->max_nr_stripes * 2 : 0);
 		}
 
+<<<<<<< HEAD
 		if (rs->print_flags & DMPF_REGION_SIZE)
 			DMEMIT(" region_size %lu",
 			       rs->md.bitmap_info.chunksize >> 9);
@@ -1196,6 +1407,11 @@ static int raid_status(struct dm_target *ti, status_type_t type,
 				DMEMIT(" %s", rs->dev[i].meta_dev->name);
 			else
 				DMEMIT(" -");
+=======
+		DMEMIT(" %d", rs->md.raid_disks);
+		for (i = 0; i < rs->md.raid_disks; i++) {
+			DMEMIT(" -"); /* metadata device */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (rs->dev[i].data_dev)
 				DMEMIT(" %s", rs->dev[i].data_dev->name);
@@ -1228,7 +1444,11 @@ static void raid_io_hints(struct dm_target *ti, struct queue_limits *limits)
 {
 	struct raid_set *rs = ti->private;
 	unsigned chunk_size = rs->md.chunk_sectors << 9;
+<<<<<<< HEAD
 	struct r5conf *conf = rs->md.private;
+=======
+	raid5_conf_t *conf = rs->md.private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	blk_limits_io_min(limits, chunk_size);
 	blk_limits_io_opt(limits, chunk_size * (conf->raid_disks - conf->max_degraded));
@@ -1252,18 +1472,25 @@ static void raid_resume(struct dm_target *ti)
 {
 	struct raid_set *rs = ti->private;
 
+<<<<<<< HEAD
 	if (!rs->bitmap_loaded) {
 		bitmap_load(&rs->md);
 		rs->bitmap_loaded = 1;
 	} else
 		md_wakeup_thread(rs->md.thread);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mddev_resume(&rs->md);
 }
 
 static struct target_type raid_target = {
 	.name = "raid",
+<<<<<<< HEAD
 	.version = {1, 2, 0},
+=======
+	.version = {1, 0, 0},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.module = THIS_MODULE,
 	.ctr = raid_ctr,
 	.dtr = raid_dtr,

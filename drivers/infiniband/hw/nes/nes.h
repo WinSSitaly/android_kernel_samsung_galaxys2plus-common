@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2006 - 2011 Intel Corporation.  All rights reserved.
+=======
+ * Copyright (c) 2006 - 2009 Intel Corporation.  All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (c) 2005 Open Grid Computing, Inc. All rights reserved.
  *
  * This software is available to you under a choice of one of two
@@ -102,7 +106,10 @@
 #define NES_DRV_OPT_NO_INLINE_DATA       0x00000080
 #define NES_DRV_OPT_DISABLE_INT_MOD      0x00000100
 #define NES_DRV_OPT_DISABLE_VIRT_WQ      0x00000200
+<<<<<<< HEAD
 #define NES_DRV_OPT_ENABLE_PAU           0x00000400
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define NES_AEQ_EVENT_TIMEOUT         2500
 #define NES_DISCONNECT_EVENT_TIMEOUT  2000
@@ -129,7 +136,10 @@
 #define NES_DBG_IW_RX       0x00020000
 #define NES_DBG_IW_TX       0x00040000
 #define NES_DBG_SHUTDOWN    0x00080000
+<<<<<<< HEAD
 #define NES_DBG_PAU         0x00100000
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NES_DBG_RSVD1       0x10000000
 #define NES_DBG_RSVD2       0x20000000
 #define NES_DBG_RSVD3       0x40000000
@@ -164,7 +174,10 @@ do { \
 #include "nes_context.h"
 #include "nes_user.h"
 #include "nes_cm.h"
+<<<<<<< HEAD
 #include "nes_mgt.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int max_mtu;
 #define max_frame_len (max_mtu+ETH_HLEN)
@@ -205,8 +218,11 @@ extern atomic_t cm_nodes_created;
 extern atomic_t cm_nodes_destroyed;
 extern atomic_t cm_accel_dropped_pkts;
 extern atomic_t cm_resets_recvd;
+<<<<<<< HEAD
 extern atomic_t pau_qps_created;
 extern atomic_t pau_qps_destroyed;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern u32 int_mod_timer_init;
 extern u32 int_mod_cq_depth_256;
@@ -278,6 +294,7 @@ struct nes_device {
 	u8                     link_recheck;
 };
 
+<<<<<<< HEAD
 /* Receive skb private area - must fit in skb->cb area */
 struct nes_rskb_cb {
 	u64                    busaddr;
@@ -286,6 +303,8 @@ struct nes_rskb_cb {
 	u8                     *data_start;
 	struct nes_qp          *nesqp;
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline __le32 get_crc_value(struct nes_v4_quad *nes_quad)
 {
@@ -318,8 +337,13 @@ set_wqe_32bit_value(__le32 *wqe_words, u32 index, u32 value)
 static inline void
 nes_fill_init_cqp_wqe(struct nes_hw_cqp_wqe *cqp_wqe, struct nes_device *nesdev)
 {
+<<<<<<< HEAD
 	cqp_wqe->wqe_words[NES_CQP_WQE_COMP_CTX_LOW_IDX]       = 0;
 	cqp_wqe->wqe_words[NES_CQP_WQE_COMP_CTX_HIGH_IDX]      = 0;
+=======
+	set_wqe_64bit_value(cqp_wqe->wqe_words, NES_CQP_WQE_COMP_CTX_LOW_IDX,
+			(u64)((unsigned long) &nesdev->cqp));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cqp_wqe->wqe_words[NES_CQP_WQE_COMP_SCRATCH_LOW_IDX]   = 0;
 	cqp_wqe->wqe_words[NES_CQP_WQE_COMP_SCRATCH_HIGH_IDX]  = 0;
 	cqp_wqe->wqe_words[NES_CQP_STAG_WQE_PBL_BLK_COUNT_IDX] = 0;
@@ -524,7 +548,10 @@ void nes_iwarp_ce_handler(struct nes_device *, struct nes_hw_cq *);
 int nes_destroy_cqp(struct nes_device *);
 int nes_nic_cm_xmit(struct sk_buff *, struct net_device *);
 void nes_recheck_link_status(struct work_struct *work);
+<<<<<<< HEAD
 void nes_terminate_timeout(unsigned long context);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* nes_nic.c */
 struct net_device *nes_netdev_init(struct nes_device *, void __iomem *);

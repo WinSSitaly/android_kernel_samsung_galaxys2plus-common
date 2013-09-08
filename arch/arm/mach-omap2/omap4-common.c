@@ -15,6 +15,7 @@
 #include <linux/init.h>
 #include <linux/io.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/memblock.h>
 
 #include <asm/hardware/gic.h>
@@ -93,27 +94,56 @@ void __init gic_init_irq(void)
 {
 	void __iomem *omap_irq_base;
 	void __iomem *gic_dist_base_addr;
+=======
+
+#include <asm/hardware/gic.h>
+#include <asm/hardware/cache-l2x0.h>
+
+#include <mach/hardware.h>
+#include <mach/omap4-common.h>
+
+#ifdef CONFIG_CACHE_L2X0
+void __iomem *l2cache_base;
+#endif
+
+void __iomem *gic_dist_base_addr;
+
+
+void __init gic_init_irq(void)
+{
+	void __iomem *gic_cpu_base;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Static mapping, never released */
 	gic_dist_base_addr = ioremap(OMAP44XX_GIC_DIST_BASE, SZ_4K);
 	BUG_ON(!gic_dist_base_addr);
 
 	/* Static mapping, never released */
+<<<<<<< HEAD
 	omap_irq_base = ioremap(OMAP44XX_GIC_CPU_BASE, SZ_512);
 	BUG_ON(!omap_irq_base);
 
 	omap_wakeupgen_init();
 
 	gic_init(0, 29, gic_dist_base_addr, omap_irq_base);
+=======
+	gic_cpu_base = ioremap(OMAP44XX_GIC_CPU_BASE, SZ_512);
+	BUG_ON(!gic_cpu_base);
+
+	gic_init(0, 29, gic_dist_base_addr, gic_cpu_base);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_CACHE_L2X0
 
+<<<<<<< HEAD
 void __iomem *omap4_get_l2cache_base(void)
 {
 	return l2cache_base;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void omap4_l2x0_disable(void)
 {
 	/* Disable PL310 L2 Cache controller */
@@ -139,8 +169,12 @@ static int __init omap_l2_cache_init(void)
 
 	/* Static mapping, never released */
 	l2cache_base = ioremap(OMAP44XX_L2CACHE_BASE, SZ_4K);
+<<<<<<< HEAD
 	if (WARN_ON(!l2cache_base))
 		return -ENOMEM;
+=======
+	BUG_ON(!l2cache_base);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * 16-way associativity, parity disabled
@@ -180,6 +214,7 @@ static int __init omap_l2_cache_init(void)
 }
 early_initcall(omap_l2_cache_init);
 #endif
+<<<<<<< HEAD
 
 void __iomem *omap4_get_sar_ram_base(void)
 {
@@ -207,3 +242,5 @@ static int __init omap4_sar_ram_init(void)
 	return 0;
 }
 early_initcall(omap4_sar_ram_init);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

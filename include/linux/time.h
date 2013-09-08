@@ -107,6 +107,7 @@ static inline struct timespec timespec_sub(struct timespec lhs,
 	return ts_delta;
 }
 
+<<<<<<< HEAD
 #define KTIME_MAX			((s64)~((u64)1 << 63))
 #if (BITS_PER_LONG == 64)
 # define KTIME_SEC_MAX			(KTIME_MAX / NSEC_PER_SEC)
@@ -137,10 +138,21 @@ static inline bool timespec_valid_strict(const struct timespec *ts)
 		return false;
 	return true;
 }
+=======
+/*
+ * Returns true if the timespec is norm, false if denorm:
+ */
+#define timespec_valid(ts) \
+	(((ts)->tv_sec >= 0) && (((unsigned long) (ts)->tv_nsec) < NSEC_PER_SEC))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void read_persistent_clock(struct timespec *ts);
 extern void read_boot_clock(struct timespec *ts);
 extern int update_persistent_clock(struct timespec now);
+<<<<<<< HEAD
+=======
+extern int no_sync_cmos_clock __read_mostly;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void timekeeping_init(void);
 extern int timekeeping_suspended;
 
@@ -280,9 +292,22 @@ static __always_inline void timespec_add_ns(struct timespec *a, u64 ns)
 	a->tv_sec += __iter_div_u64_rem(a->tv_nsec + ns, NSEC_PER_SEC, &ns);
 	a->tv_nsec = ns;
 }
+<<<<<<< HEAD
 
 #endif /* __KERNEL__ */
 
+=======
+#endif /* __KERNEL__ */
+
+#define NFDBITS			__NFDBITS
+
+#define FD_SETSIZE		__FD_SETSIZE
+#define FD_SET(fd,fdsetp)	__FD_SET(fd,fdsetp)
+#define FD_CLR(fd,fdsetp)	__FD_CLR(fd,fdsetp)
+#define FD_ISSET(fd,fdsetp)	__FD_ISSET(fd,fdsetp)
+#define FD_ZERO(fdsetp)		__FD_ZERO(fdsetp)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Names of the interval timers, and structure
  * defining a timer setting:

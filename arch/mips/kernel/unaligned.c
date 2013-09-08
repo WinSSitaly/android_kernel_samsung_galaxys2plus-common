@@ -73,6 +73,10 @@
  *       Undo the partial store in this case.
  */
 #include <linux/mm.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/signal.h>
 #include <linux/smp.h>
 #include <linux/sched.h>
@@ -85,6 +89,10 @@
 #include <asm/cop2.h>
 #include <asm/inst.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define STR(x)  __STR(x)
 #define __STR(x)  #x
@@ -109,7 +117,12 @@ static void emulate_load_store_insn(struct pt_regs *regs,
 	unsigned long value;
 	unsigned int res;
 
+<<<<<<< HEAD
 	perf_sw_event(PERF_COUNT_SW_EMULATION_FAULTS, 1, regs, 0);
+=======
+	perf_sw_event(PERF_COUNT_SW_EMULATION_FAULTS,
+		      1, 0, regs, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * This load never faults.
@@ -514,7 +527,11 @@ asmlinkage void do_ade(struct pt_regs *regs)
 	mm_segment_t seg;
 
 	perf_sw_event(PERF_COUNT_SW_ALIGNMENT_FAULTS,
+<<<<<<< HEAD
 			1, regs, regs->cp0_badvaddr);
+=======
+			1, 0, regs, regs->cp0_badvaddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Did we catch a fault trying to load an instruction?
 	 * Or are we running in MIPS16 mode?

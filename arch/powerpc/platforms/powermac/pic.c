@@ -24,6 +24,10 @@
 #include <linux/syscore_ops.h>
 #include <linux/adb.h>
 #include <linux/pmu.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/sections.h>
 #include <asm/io.h>
@@ -52,6 +56,7 @@ struct device_node *of_irq_dflt_pic;
 /* Default addresses */
 static volatile struct pmac_irq_hw __iomem *pmac_irq_hw[4];
 
+<<<<<<< HEAD
 static int max_irqs;
 static int max_real_irqs;
 
@@ -62,6 +67,23 @@ static DECLARE_BITMAP(ppc_lost_interrupts, 128);
 static DECLARE_BITMAP(ppc_cached_irq_mask, 128);
 static int pmac_irq_cascade = -1;
 static struct irq_domain *pmac_pic_host;
+=======
+#define GC_LEVEL_MASK		0x3ff00000
+#define OHARE_LEVEL_MASK	0x1ff00000
+#define HEATHROW_LEVEL_MASK	0x1ff00000
+
+static int max_irqs;
+static int max_real_irqs;
+static u32 level_mask[4];
+
+static DEFINE_RAW_SPINLOCK(pmac_pic_lock);
+
+#define NR_MASK_WORDS	((NR_IRQS + 31) / 32)
+static unsigned long ppc_lost_interrupts[NR_MASK_WORDS];
+static unsigned long ppc_cached_irq_mask[NR_MASK_WORDS];
+static int pmac_irq_cascade = -1;
+static struct irq_host *pmac_pic_host;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void __pmac_retrigger(unsigned int irq_nr)
 {
@@ -212,7 +234,12 @@ static irqreturn_t gatwick_action(int cpl, void *dev_id)
 	for (irq = max_irqs; (irq -= 32) >= max_real_irqs; ) {
 		int i = irq >> 5;
 		bits = in_le32(&pmac_irq_hw[i]->event) | ppc_lost_interrupts[i];
+<<<<<<< HEAD
 		bits |= in_le32(&pmac_irq_hw[i]->level);
+=======
+		/* We must read level interrupts from the level register */
+		bits |= (in_le32(&pmac_irq_hw[i]->level) & level_mask[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bits &= ppc_cached_irq_mask[i];
 		if (bits == 0)
 			continue;
@@ -242,7 +269,12 @@ static unsigned int pmac_pic_get_irq(void)
 	for (irq = max_real_irqs; (irq -= 32) >= 0; ) {
 		int i = irq >> 5;
 		bits = in_le32(&pmac_irq_hw[i]->event) | ppc_lost_interrupts[i];
+<<<<<<< HEAD
 		bits |= in_le32(&pmac_irq_hw[i]->level);
+=======
+		/* We must read level interrupts from the level register */
+		bits |= (in_le32(&pmac_irq_hw[i]->level) & level_mask[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bits &= ppc_cached_irq_mask[i];
 		if (bits == 0)
 			continue;
@@ -265,24 +297,41 @@ static struct irqaction xmon_action = {
 
 static struct irqaction gatwick_cascade_action = {
 	.handler	= gatwick_action,
+<<<<<<< HEAD
 	.name		= "cascade",
 };
 
 static int pmac_pic_host_match(struct irq_domain *h, struct device_node *node)
+=======
+	.flags		= IRQF_DISABLED,
+	.name		= "cascade",
+};
+
+static int pmac_pic_host_match(struct irq_host *h, struct device_node *node)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* We match all, we don't always have a node anyway */
 	return 1;
 }
 
+<<<<<<< HEAD
 static int pmac_pic_host_map(struct irq_domain *h, unsigned int virq,
 			     irq_hw_number_t hw)
 {
+=======
+static int pmac_pic_host_map(struct irq_host *h, unsigned int virq,
+			     irq_hw_number_t hw)
+{
+	int level;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (hw >= max_irqs)
 		return -EINVAL;
 
 	/* Mark level interrupts, set delayed disable for edge ones and set
 	 * handlers
 	 */
+<<<<<<< HEAD
 	irq_set_status_flags(virq, IRQ_LEVEL);
 	irq_set_chip_and_handler(virq, &pmac_pic, handle_level_irq);
 	return 0;
@@ -292,6 +341,31 @@ static const struct irq_domain_ops pmac_pic_host_ops = {
 	.match = pmac_pic_host_match,
 	.map = pmac_pic_host_map,
 	.xlate = irq_domain_xlate_onecell,
+=======
+	level = !!(level_mask[hw >> 5] & (1UL << (hw & 0x1f)));
+	if (level)
+		irq_set_status_flags(virq, IRQ_LEVEL);
+	irq_set_chip_and_handler(virq, &pmac_pic,
+				 level ? handle_level_irq : handle_edge_irq);
+	return 0;
+}
+
+static int pmac_pic_host_xlate(struct irq_host *h, struct device_node *ct,
+			       const u32 *intspec, unsigned int intsize,
+			       irq_hw_number_t *out_hwirq,
+			       unsigned int *out_flags)
+
+{
+	*out_flags = IRQ_TYPE_NONE;
+	*out_hwirq = *intspec;
+	return 0;
+}
+
+static struct irq_host_ops pmac_pic_host_ops = {
+	.match = pmac_pic_host_match,
+	.map = pmac_pic_host_map,
+	.xlate = pmac_pic_host_xlate,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void __init pmac_pic_probe_oldstyle(void)
@@ -311,6 +385,7 @@ static void __init pmac_pic_probe_oldstyle(void)
 
 	if ((master = of_find_node_by_name(NULL, "gc")) != NULL) {
 		max_irqs = max_real_irqs = 32;
+<<<<<<< HEAD
 	} else if ((master = of_find_node_by_name(NULL, "ohare")) != NULL) {
 		max_irqs = max_real_irqs = 32;
 		/* We might have a second cascaded ohare */
@@ -319,6 +394,23 @@ static void __init pmac_pic_probe_oldstyle(void)
 			max_irqs = 64;
 	} else if ((master = of_find_node_by_name(NULL, "mac-io")) != NULL) {
 		max_irqs = max_real_irqs = 64;
+=======
+		level_mask[0] = GC_LEVEL_MASK;
+	} else if ((master = of_find_node_by_name(NULL, "ohare")) != NULL) {
+		max_irqs = max_real_irqs = 32;
+		level_mask[0] = OHARE_LEVEL_MASK;
+
+		/* We might have a second cascaded ohare */
+		slave = of_find_node_by_name(NULL, "pci106b,7");
+		if (slave) {
+			max_irqs = 64;
+			level_mask[1] = OHARE_LEVEL_MASK;
+		}
+	} else if ((master = of_find_node_by_name(NULL, "mac-io")) != NULL) {
+		max_irqs = max_real_irqs = 64;
+		level_mask[0] = HEATHROW_LEVEL_MASK;
+		level_mask[1] = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* We might have a second cascaded heathrow */
 		slave = of_find_node_by_name(master, "mac-io");
@@ -333,16 +425,30 @@ static void __init pmac_pic_probe_oldstyle(void)
 		}
 
 		/* We found a slave */
+<<<<<<< HEAD
 		if (slave)
 			max_irqs = 128;
+=======
+		if (slave) {
+			max_irqs = 128;
+			level_mask[2] = HEATHROW_LEVEL_MASK;
+			level_mask[3] = 0;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	BUG_ON(master == NULL);
 
 	/*
 	 * Allocate an irq host
 	 */
+<<<<<<< HEAD
 	pmac_pic_host = irq_domain_add_linear(master, max_irqs,
 					      &pmac_pic_host_ops, NULL);
+=======
+	pmac_pic_host = irq_alloc_host(master, IRQ_HOST_MAP_LINEAR, max_irqs,
+				       &pmac_pic_host_ops,
+				       max_irqs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BUG_ON(pmac_pic_host == NULL);
 	irq_set_default_host(pmac_pic_host);
 
@@ -430,6 +536,21 @@ int of_irq_map_oldworld(struct device_node *device, int index,
 }
 #endif /* CONFIG_PPC32 */
 
+<<<<<<< HEAD
+=======
+static void pmac_u3_cascade(unsigned int irq, struct irq_desc *desc)
+{
+	struct irq_chip *chip = irq_desc_get_chip(desc);
+	struct mpic *mpic = irq_desc_get_handler_data(desc);
+	unsigned int cascade_irq = mpic_get_one_irq(mpic);
+
+	if (cascade_irq != NO_IRQ)
+		generic_handle_irq(cascade_irq);
+
+	chip->irq_eoi(&desc->irq_data);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init pmac_pic_setup_mpic_nmi(struct mpic *mpic)
 {
 #if defined(CONFIG_XMON) && defined(CONFIG_PPC32)
@@ -452,11 +573,26 @@ static struct mpic * __init pmac_setup_one_mpic(struct device_node *np,
 						int master)
 {
 	const char *name = master ? " MPIC 1   " : " MPIC 2   ";
+<<<<<<< HEAD
 	struct mpic *mpic;
 	unsigned int flags = master ? 0 : MPIC_SECONDARY;
 
 	pmac_call_feature(PMAC_FTR_ENABLE_MPIC, np, 0, 0);
 
+=======
+	struct resource r;
+	struct mpic *mpic;
+	unsigned int flags = master ? MPIC_PRIMARY : 0;
+	int rc;
+
+	rc = of_address_to_resource(np, 0, &r);
+	if (rc)
+		return NULL;
+
+	pmac_call_feature(PMAC_FTR_ENABLE_MPIC, np, 0, 0);
+
+	flags |= MPIC_WANTS_RESET;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (of_get_property(np, "big-endian", NULL))
 		flags |= MPIC_BIG_ENDIAN;
 
@@ -466,7 +602,11 @@ static struct mpic * __init pmac_setup_one_mpic(struct device_node *np,
 	if (master && (flags & MPIC_BIG_ENDIAN))
 		flags |= MPIC_U3_HT_IRQS;
 
+<<<<<<< HEAD
 	mpic = mpic_alloc(np, 0, flags, 0, 0, name);
+=======
+	mpic = mpic_alloc(np, r.start, flags, 0, 0, name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (mpic == NULL)
 		return NULL;
 
@@ -479,6 +619,10 @@ static int __init pmac_pic_probe_mpic(void)
 {
 	struct mpic *mpic1, *mpic2;
 	struct device_node *np, *master = NULL, *slave = NULL;
+<<<<<<< HEAD
+=======
+	unsigned int cascade;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* We can have up to 2 MPICs cascaded */
 	for (np = NULL; (np = of_find_node_by_type(np, "open-pic"))
@@ -514,6 +658,7 @@ static int __init pmac_pic_probe_mpic(void)
 
 	of_node_put(master);
 
+<<<<<<< HEAD
 	/* Set up a cascaded controller, if present */
 	if (slave) {
 		mpic2 = pmac_setup_one_mpic(slave, 0);
@@ -522,6 +667,29 @@ static int __init pmac_pic_probe_mpic(void)
 		of_node_put(slave);
 	}
 
+=======
+	/* No slave, let's go out */
+	if (slave == NULL)
+		return 0;
+
+	/* Get/Map slave interrupt */
+	cascade = irq_of_parse_and_map(slave, 0);
+	if (cascade == NO_IRQ) {
+		printk(KERN_ERR "Failed to map cascade IRQ\n");
+		return 0;
+	}
+
+	mpic2 = pmac_setup_one_mpic(slave, 0);
+	if (mpic2 == NULL) {
+		printk(KERN_ERR "Failed to setup slave MPIC\n");
+		of_node_put(slave);
+		return 0;
+	}
+	irq_set_handler_data(cascade, mpic2);
+	irq_set_chained_handler(cascade, pmac_u3_cascade);
+
+	of_node_put(slave);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

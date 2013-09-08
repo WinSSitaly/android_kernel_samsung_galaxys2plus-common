@@ -7,10 +7,13 @@
 extern int raw_show_trace;
 extern unsigned long unwind_stack(struct task_struct *task, unsigned long *sp,
 				  unsigned long pc, unsigned long *ra);
+<<<<<<< HEAD
 extern unsigned long unwind_stack_by_address(unsigned long stack_page,
 					     unsigned long *sp,
 					     unsigned long pc,
 					     unsigned long *ra);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 #define raw_show_trace 1
 static inline unsigned long unwind_stack(struct task_struct *task,

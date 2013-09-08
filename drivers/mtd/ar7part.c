@@ -27,7 +27,10 @@
 #include <linux/mtd/partitions.h>
 #include <linux/bootmem.h>
 #include <linux/magic.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AR7_PARTS	4
 #define ROOT_OFFSET	0xe0000
@@ -47,7 +50,11 @@ struct ar7_bin_rec {
 
 static int create_mtd_partitions(struct mtd_info *master,
 				 struct mtd_partition **pparts,
+<<<<<<< HEAD
 				 struct mtd_part_parser_data *data)
+=======
+				 unsigned long origin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ar7_bin_rec header;
 	unsigned int offset;
@@ -73,8 +80,13 @@ static int create_mtd_partitions(struct mtd_info *master,
 
 	do { /* Try 10 blocks starting from master->erasesize */
 		offset = pre_size;
+<<<<<<< HEAD
 		mtd_read(master, offset, sizeof(header), &len,
 			 (uint8_t *)&header);
+=======
+		master->read(master, offset,
+			     sizeof(header), &len, (uint8_t *)&header);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!strncmp((char *)&header, "TIENV0.8", 8))
 			ar7_parts[1].offset = pre_size;
 		if (header.checksum == LOADER_MAGIC1)
@@ -95,16 +107,26 @@ static int create_mtd_partitions(struct mtd_info *master,
 	case LOADER_MAGIC1:
 		while (header.length) {
 			offset += sizeof(header) + header.length;
+<<<<<<< HEAD
 			mtd_read(master, offset, sizeof(header), &len,
 				 (uint8_t *)&header);
+=======
+			master->read(master, offset, sizeof(header),
+				     &len, (uint8_t *)&header);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		root_offset = offset + sizeof(header) + 4;
 		break;
 	case LOADER_MAGIC2:
 		while (header.length) {
 			offset += sizeof(header) + header.length;
+<<<<<<< HEAD
 			mtd_read(master, offset, sizeof(header), &len,
 				 (uint8_t *)&header);
+=======
+			master->read(master, offset, sizeof(header),
+				     &len, (uint8_t *)&header);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		root_offset = offset + sizeof(header) + 4 + 0xff;
 		root_offset &= ~(uint32_t)0xff;
@@ -114,7 +136,12 @@ static int create_mtd_partitions(struct mtd_info *master,
 		break;
 	}
 
+<<<<<<< HEAD
 	mtd_read(master, root_offset, sizeof(header), &len, (u8 *)&header);
+=======
+	master->read(master, root_offset,
+		sizeof(header), &len, (u8 *)&header);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (header.checksum != SQUASHFS_MAGIC) {
 		root_offset += master->erasesize - 1;
 		root_offset &= ~(master->erasesize - 1);

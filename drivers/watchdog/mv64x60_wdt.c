@@ -15,8 +15,11 @@
  * or implied.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/fs.h>
 #include <linux/init.h>
 #include <linux/kernel.h>
@@ -60,8 +63,13 @@ static unsigned int bus_clk;
 static char expect_close;
 static DEFINE_SPINLOCK(mv64x60_wdt_spinlock);
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 module_param(nowayout, bool, 0);
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout,
 		"Watchdog cannot be stopped once started (default="
 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
@@ -102,7 +110,11 @@ static void mv64x60_wdt_handler_enable(void)
 	if (mv64x60_wdt_toggle_wdc(MV64x60_WDC_ENABLED_FALSE,
 				   MV64x60_WDC_ENABLE_SHIFT)) {
 		mv64x60_wdt_service();
+<<<<<<< HEAD
 		pr_notice("watchdog activated\n");
+=======
+		printk(KERN_NOTICE "mv64x60_wdt: watchdog activated\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -110,7 +122,11 @@ static void mv64x60_wdt_handler_disable(void)
 {
 	if (mv64x60_wdt_toggle_wdc(MV64x60_WDC_ENABLED_TRUE,
 				   MV64x60_WDC_ENABLE_SHIFT))
+<<<<<<< HEAD
 		pr_notice("watchdog deactivated\n");
+=======
+		printk(KERN_NOTICE "mv64x60_wdt: watchdog deactivated\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void mv64x60_wdt_set_timeout(unsigned int timeout)
@@ -141,7 +157,12 @@ static int mv64x60_wdt_release(struct inode *inode, struct file *file)
 	if (expect_close == 42)
 		mv64x60_wdt_handler_disable();
 	else {
+<<<<<<< HEAD
 		pr_crit("unexpected close, not stopping timer!\n");
+=======
+		printk(KERN_CRIT
+		       "mv64x60_wdt: unexpected close, not stopping timer!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mv64x60_wdt_service();
 	}
 	expect_close = 0;
@@ -309,7 +330,11 @@ static struct platform_driver mv64x60_wdt_driver = {
 
 static int __init mv64x60_wdt_init(void)
 {
+<<<<<<< HEAD
 	pr_info("MV64x60 watchdog driver\n");
+=======
+	printk(KERN_INFO "MV64x60 watchdog driver\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return platform_driver_register(&mv64x60_wdt_driver);
 }

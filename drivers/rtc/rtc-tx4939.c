@@ -11,7 +11,10 @@
 #include <linux/rtc.h>
 #include <linux/platform_device.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 #include <linux/gfp.h>
 #include <asm/txx9/tx4939.h>
@@ -266,7 +269,11 @@ static int __init tx4939_rtc_probe(struct platform_device *pdev)
 	spin_lock_init(&pdata->lock);
 	tx4939_rtc_cmd(pdata->rtcreg, TX4939_RTCCTL_COMMAND_NOP);
 	if (devm_request_irq(&pdev->dev, irq, tx4939_rtc_interrupt,
+<<<<<<< HEAD
 			     0, pdev->name, &pdev->dev) < 0)
+=======
+			     IRQF_DISABLED, pdev->name, &pdev->dev) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EBUSY;
 	rtc = rtc_device_register(pdev->name, &pdev->dev,
 				  &tx4939_rtc_ops, THIS_MODULE);

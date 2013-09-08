@@ -21,7 +21,10 @@
 #include <linux/unistd.h>
 #include <linux/security.h>
 #include <linux/timex.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/migrate.h>
 #include <linux/posix-timers.h>
 #include <linux/times.h>
@@ -31,10 +34,18 @@
 #include <asm/uaccess.h>
 
 /*
+<<<<<<< HEAD
  * Get/set struct timeval with struct timespec on the native side
  */
 static int compat_get_timeval_convert(struct timespec *o,
 				      struct compat_timeval __user *i)
+=======
+ * Note that the native side is already converted to a timespec, because
+ * that's what we want anyway.
+ */
+static int compat_get_timeval(struct timespec *o,
+		struct compat_timeval __user *i)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	long usec;
 
@@ -45,8 +56,13 @@ static int compat_get_timeval_convert(struct timespec *o,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int compat_put_timeval_convert(struct compat_timeval __user *o,
 				      struct timeval *i)
+=======
+static int compat_put_timeval(struct compat_timeval __user *o,
+		struct timeval *i)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return (put_user(i->tv_sec, &o->tv_sec) ||
 		put_user(i->tv_usec, &o->tv_usec)) ? -EFAULT : 0;
@@ -116,7 +132,11 @@ asmlinkage long compat_sys_gettimeofday(struct compat_timeval __user *tv,
 	if (tv) {
 		struct timeval ktv;
 		do_gettimeofday(&ktv);
+<<<<<<< HEAD
 		if (compat_put_timeval_convert(tv, &ktv))
+=======
+		if (compat_put_timeval(tv, &ktv))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EFAULT;
 	}
 	if (tz) {
@@ -134,7 +154,11 @@ asmlinkage long compat_sys_settimeofday(struct compat_timeval __user *tv,
 	struct timezone ktz;
 
 	if (tv) {
+<<<<<<< HEAD
 		if (compat_get_timeval_convert(&kts, tv))
+=======
+		if (compat_get_timeval(&kts, tv))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EFAULT;
 	}
 	if (tz) {
@@ -145,6 +169,7 @@ asmlinkage long compat_sys_settimeofday(struct compat_timeval __user *tv,
 	return do_sys_settimeofday(tv ? &kts : NULL, tz ? &ktz : NULL);
 }
 
+<<<<<<< HEAD
 int get_compat_timeval(struct timeval *tv, const struct compat_timeval __user *ctv)
 {
 	return (!access_ok(VERIFY_READ, ctv, sizeof(*ctv)) ||
@@ -161,13 +186,18 @@ int put_compat_timeval(const struct timeval *tv, struct compat_timeval __user *c
 }
 EXPORT_SYMBOL_GPL(put_compat_timeval);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int get_compat_timespec(struct timespec *ts, const struct compat_timespec __user *cts)
 {
 	return (!access_ok(VERIFY_READ, cts, sizeof(*cts)) ||
 			__get_user(ts->tv_sec, &cts->tv_sec) ||
 			__get_user(ts->tv_nsec, &cts->tv_nsec)) ? -EFAULT : 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(get_compat_timespec);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int put_compat_timespec(const struct timespec *ts, struct compat_timespec __user *cts)
 {
@@ -175,6 +205,7 @@ int put_compat_timespec(const struct timespec *ts, struct compat_timespec __user
 			__put_user(ts->tv_sec, &cts->tv_sec) ||
 			__put_user(ts->tv_nsec, &cts->tv_nsec)) ? -EFAULT : 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(put_compat_timespec);
 
 int compat_get_timeval(struct timeval *tv, const void __user *utv)
@@ -212,6 +243,8 @@ int compat_put_timespec(const struct timespec *ts, void __user *uts)
 		return put_compat_timespec(ts, uts);
 }
 EXPORT_SYMBOL_GPL(compat_put_timespec);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static long compat_nanosleep_restart(struct restart_block *restart)
 {
@@ -372,6 +405,7 @@ asmlinkage long compat_sys_sigpending(compat_old_sigset_t __user *set)
 
 #ifdef __ARCH_WANT_SYS_SIGPROCMASK
 
+<<<<<<< HEAD
 /*
  * sys_sigprocmask SIG_SETMASK sets the first (compat) word of the
  * blocked set of signals to the supplied signal set
@@ -420,6 +454,27 @@ asmlinkage long compat_sys_sigprocmask(int how,
 	}
 
 	return 0;
+=======
+asmlinkage long compat_sys_sigprocmask(int how, compat_old_sigset_t __user *set,
+		compat_old_sigset_t __user *oset)
+{
+	old_sigset_t s;
+	long ret;
+	mm_segment_t old_fs;
+
+	if (set && get_user(s, set))
+		return -EFAULT;
+	old_fs = get_fs();
+	set_fs(KERNEL_DS);
+	ret = sys_sigprocmask(how,
+			      set ? (old_sigset_t __user *) &s : NULL,
+			      oset ? (old_sigset_t __user *) &s : NULL);
+	set_fs(old_fs);
+	if (ret == 0)
+		if (oset)
+			ret = put_user(s, oset);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #endif
@@ -973,7 +1028,10 @@ sigset_from_compat (sigset_t *set, compat_sigset_t *compat)
 	case 1: set->sig[0] = compat->sig[0] | (((long)compat->sig[1]) << 32 );
 	}
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(sigset_from_compat);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 asmlinkage long
 compat_sys_rt_sigtimedwait (compat_sigset_t __user *uthese,
@@ -1075,8 +1133,16 @@ asmlinkage long compat_sys_rt_sigsuspend(compat_sigset_t __user *unewset, compat
 	sigset_from_compat(&newset, &newset32);
 	sigdelsetmask(&newset, sigmask(SIGKILL)|sigmask(SIGSTOP));
 
+<<<<<<< HEAD
 	current->saved_sigmask = current->blocked;
 	set_current_blocked(&newset);
+=======
+	spin_lock_irq(&current->sighand->siglock);
+	current->saved_sigmask = current->blocked;
+	current->blocked = newset;
+	recalc_sigpending();
+	spin_unlock_irq(&current->sighand->siglock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	current->state = TASK_INTERRUPTIBLE;
 	schedule();

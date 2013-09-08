@@ -241,6 +241,7 @@ static struct resource bfin_uart0_resources[] = {
 		.flags = IORESOURCE_MEM,
 	},
 	{
+<<<<<<< HEAD
 		.start = IRQ_UART0_TX,
 		.end = IRQ_UART0_TX,
 		.flags = IORESOURCE_IRQ,
@@ -248,6 +249,10 @@ static struct resource bfin_uart0_resources[] = {
 	{
 		.start = IRQ_UART0_RX,
 		.end = IRQ_UART0_RX,
+=======
+		.start = IRQ_UART0_RX,
+		.end = IRQ_UART0_RX+1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags = IORESOURCE_IRQ,
 	},
 	{
@@ -289,6 +294,7 @@ static struct resource bfin_uart1_resources[] = {
 		.flags = IORESOURCE_MEM,
 	},
 	{
+<<<<<<< HEAD
 		.start = IRQ_UART1_TX,
 		.end = IRQ_UART1_TX,
 		.flags = IORESOURCE_IRQ,
@@ -296,6 +302,10 @@ static struct resource bfin_uart1_resources[] = {
 	{
 		.start = IRQ_UART1_RX,
 		.end = IRQ_UART1_RX,
+=======
+		.start = IRQ_UART1_RX,
+		.end = IRQ_UART1_RX+1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags = IORESOURCE_IRQ,
 	},
 	{
@@ -353,6 +363,7 @@ static struct resource bfin_uart2_resources[] = {
 		.flags = IORESOURCE_MEM,
 	},
 	{
+<<<<<<< HEAD
 		.start = IRQ_UART2_TX,
 		.end = IRQ_UART2_TX,
 		.flags = IORESOURCE_IRQ,
@@ -360,6 +371,10 @@ static struct resource bfin_uart2_resources[] = {
 	{
 		.start = IRQ_UART2_RX,
 		.end = IRQ_UART2_RX,
+=======
+		.start = IRQ_UART2_RX,
+		.end = IRQ_UART2_RX+1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags = IORESOURCE_IRQ,
 	},
 	{
@@ -401,6 +416,7 @@ static struct resource bfin_uart3_resources[] = {
 		.flags = IORESOURCE_MEM,
 	},
 	{
+<<<<<<< HEAD
 		.start = IRQ_UART3_TX,
 		.end = IRQ_UART3_TX,
 		.flags = IORESOURCE_IRQ,
@@ -408,6 +424,10 @@ static struct resource bfin_uart3_resources[] = {
 	{
 		.start = IRQ_UART3_RX,
 		.end = IRQ_UART3_RX,
+=======
+		.start = IRQ_UART3_RX,
+		.end = IRQ_UART3_RX+1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags = IORESOURCE_IRQ,
 	},
 	{
@@ -1038,10 +1058,30 @@ static struct flash_platform_data bfin_spi_flash_data = {
 
 static struct bfin5xx_spi_chip spi_flash_chip_info = {
 	.enable_dma = 0,         /* use dma transfer with this chip*/
+<<<<<<< HEAD
+=======
+	.bits_per_word = 8,
+};
+#endif
+
+#if defined(CONFIG_SND_BF5XX_SOC_AD183X) \
+	|| defined(CONFIG_SND_BF5XX_SOC_AD183X_MODULE)
+static struct bfin5xx_spi_chip ad1836_spi_chip_info = {
+	.enable_dma = 0,
+	.bits_per_word = 16,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #endif
 
 #if defined(CONFIG_TOUCHSCREEN_AD7877) || defined(CONFIG_TOUCHSCREEN_AD7877_MODULE)
+<<<<<<< HEAD
+=======
+static struct bfin5xx_spi_chip spi_ad7877_chip_info = {
+	.enable_dma = 0,
+	.bits_per_word = 16,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct ad7877_platform_data bfin_ad7877_ts_info = {
 	.model			= 7877,
 	.vref_delay_usecs	= 50,	/* internal, no capacitor */
@@ -1057,6 +1097,23 @@ static const struct ad7877_platform_data bfin_ad7877_ts_info = {
 };
 #endif
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SPI_SPIDEV) || defined(CONFIG_SPI_SPIDEV_MODULE)
+static struct bfin5xx_spi_chip spidev_chip_info = {
+	.enable_dma = 0,
+	.bits_per_word = 8,
+};
+#endif
+
+#if defined(CONFIG_INPUT_ADXL34X_SPI) || defined(CONFIG_INPUT_ADXL34X_SPI_MODULE)
+static struct bfin5xx_spi_chip spi_adxl34x_chip_info = {
+	.enable_dma = 0,         /* use dma transfer with this chip*/
+	.bits_per_word = 8,
+};
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct spi_board_info bfin_spi_board_info[] __initdata = {
 #if defined(CONFIG_MTD_M25P80) \
 	|| defined(CONFIG_MTD_M25P80_MODULE)
@@ -1078,6 +1135,10 @@ static struct spi_board_info bfin_spi_board_info[] __initdata = {
 		.max_speed_hz = 3125000,     /* max spi clock (SCK) speed in HZ */
 		.bus_num = 1,
 		.chip_select = 4,
+<<<<<<< HEAD
+=======
+		.controller_data = &ad1836_spi_chip_info,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 #endif
 #if defined(CONFIG_TOUCHSCREEN_AD7877) || defined(CONFIG_TOUCHSCREEN_AD7877_MODULE)
@@ -1088,6 +1149,10 @@ static struct spi_board_info bfin_spi_board_info[] __initdata = {
 		.max_speed_hz		= 12500000,     /* max spi clock (SCK) speed in HZ */
 		.bus_num		= 0,
 		.chip_select  		= 2,
+<<<<<<< HEAD
+=======
+		.controller_data = &spi_ad7877_chip_info,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 #endif
 #if defined(CONFIG_SPI_SPIDEV) || defined(CONFIG_SPI_SPIDEV_MODULE)
@@ -1096,6 +1161,10 @@ static struct spi_board_info bfin_spi_board_info[] __initdata = {
 		.max_speed_hz = 3125000,     /* max spi clock (SCK) speed in HZ */
 		.bus_num = 0,
 		.chip_select = 1,
+<<<<<<< HEAD
+=======
+		.controller_data = &spidev_chip_info,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 #endif
 #if defined(CONFIG_INPUT_ADXL34X_SPI) || defined(CONFIG_INPUT_ADXL34X_SPI_MODULE)
@@ -1106,11 +1175,19 @@ static struct spi_board_info bfin_spi_board_info[] __initdata = {
 		.max_speed_hz		= 5000000,     /* max spi clock (SCK) speed in HZ */
 		.bus_num		= 1,
 		.chip_select  		= 2,
+<<<<<<< HEAD
+=======
+		.controller_data = &spi_adxl34x_chip_info,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.mode = SPI_MODE_3,
 	},
 #endif
 };
+<<<<<<< HEAD
 #if defined(CONFIG_SPI_BFIN5XX) || defined(CONFIG_SPI_BFIN5XX_MODULE)
+=======
+#if defined(CONFIG_SPI_BFIN) || defined(CONFIG_SPI_BFIN_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* SPI (0) */
 static struct resource bfin_spi0_resource[] = {
 	[0] = {
@@ -1183,6 +1260,7 @@ static struct platform_device bf54x_spi_master1 = {
 };
 #endif  /* spi master and devices */
 
+<<<<<<< HEAD
 #if defined(CONFIG_VIDEO_BLACKFIN_CAPTURE) \
 	|| defined(CONFIG_VIDEO_BLACKFIN_CAPTURE_MODULE)
 #include <linux/videodev2.h>
@@ -1250,6 +1328,8 @@ static struct platform_device bfin_capture_device = {
 };
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_I2C_BLACKFIN_TWI) || defined(CONFIG_I2C_BLACKFIN_TWI_MODULE)
 static struct resource bfin_twi0_resource[] = {
 	[0] = {
@@ -1295,11 +1375,14 @@ static struct platform_device i2c_bfin_twi1_device = {
 #endif
 
 static struct i2c_board_info __initdata bfin_i2c_board_info0[] = {
+<<<<<<< HEAD
 #if defined(CONFIG_SND_SOC_SSM2602) || defined(CONFIG_SND_SOC_SSM2602_MODULE)
 	{
 		I2C_BOARD_INFO("ssm2602", 0x1b),
 	},
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #if !defined(CONFIG_BF542)	/* The BF542 only has 1 TWI */
@@ -1392,8 +1475,11 @@ static struct platform_device bfin_dpmc = {
 static const u16 bfin_snd_pin[][7] = {
 	SPORT_REQ(0),
 	SPORT_REQ(1),
+<<<<<<< HEAD
 	SPORT_REQ(2),
 	SPORT_REQ(3),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct bfin_snd_platform_data bfin_snd_data[] = {
@@ -1403,12 +1489,15 @@ static struct bfin_snd_platform_data bfin_snd_data[] = {
 	{
 		.pin_req = &bfin_snd_pin[1][0],
 	},
+<<<<<<< HEAD
 	{
 		.pin_req = &bfin_snd_pin[2][0],
 	},
 	{
 		.pin_req = &bfin_snd_pin[3][0],
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define BFIN_SND_RES(x) \
@@ -1438,6 +1527,7 @@ static struct bfin_snd_platform_data bfin_snd_data[] = {
 static struct resource bfin_snd_resources[][4] = {
 	BFIN_SND_RES(0),
 	BFIN_SND_RES(1),
+<<<<<<< HEAD
 	BFIN_SND_RES(2),
 	BFIN_SND_RES(3),
 };
@@ -1460,6 +1550,12 @@ static struct platform_device bfin_tdm_pcm = {
 #if defined(CONFIG_SND_BF5XX_AC97) || defined(CONFIG_SND_BF5XX_AC97_MODULE)
 static struct platform_device bfin_ac97_pcm = {
 	.name = "bfin-ac97-pcm-audio",
+=======
+};
+
+static struct platform_device bfin_pcm = {
+	.name = "bfin-pcm-audio",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id = -1,
 };
 #endif
@@ -1600,6 +1696,7 @@ static struct platform_device *ezkit_devices[] __initdata = {
 	&bf54x_sdh_device,
 #endif
 
+<<<<<<< HEAD
 #if defined(CONFIG_SPI_BFIN5XX) || defined(CONFIG_SPI_BFIN5XX_MODULE)
 	&bf54x_spi_master0,
 	&bf54x_spi_master1,
@@ -1608,6 +1705,12 @@ static struct platform_device *ezkit_devices[] __initdata = {
 	|| defined(CONFIG_VIDEO_BLACKFIN_CAPTURE_MODULE)
 	&bfin_capture_device,
 #endif
+=======
+#if defined(CONFIG_SPI_BFIN) || defined(CONFIG_SPI_BFIN_MODULE)
+	&bf54x_spi_master0,
+	&bf54x_spi_master1,
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if defined(CONFIG_KEYBOARD_BFIN) || defined(CONFIG_KEYBOARD_BFIN_MODULE)
 	&bf54x_kpad_device,
@@ -1632,6 +1735,7 @@ static struct platform_device *ezkit_devices[] __initdata = {
 	&ezkit_flash_device,
 #endif
 
+<<<<<<< HEAD
 #if defined(CONFIG_SND_BF5XX_I2S) || defined(CONFIG_SND_BF5XX_I2S_MODULE)
 	&bfin_i2s_pcm,
 #endif
@@ -1640,6 +1744,12 @@ static struct platform_device *ezkit_devices[] __initdata = {
 #endif
 #if defined(CONFIG_SND_BF5XX_AC97) || defined(CONFIG_SND_BF5XX_AC97_MODULE)
 	&bfin_ac97_pcm,
+=======
+#if defined(CONFIG_SND_BF5XX_I2S) || defined(CONFIG_SND_BF5XX_I2S_MODULE) || \
+	defined(CONFIG_SND_BF5XX_TDM) || defined(CONFIG_SND_BF5XX_TDM_MODULE) || \
+	defined(CONFIG_SND_BF5XX_AC97) || defined(CONFIG_SND_BF5XX_AC97_MODULE)
+	&bfin_pcm,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #if defined(CONFIG_SND_BF5XX_SOC_AD1980) || defined(CONFIG_SND_BF5XX_SOC_AD1980_MODULE)

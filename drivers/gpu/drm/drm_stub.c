@@ -319,7 +319,10 @@ int drm_fill_in_dev(struct drm_device *dev,
 	drm_lastclose(dev);
 	return retcode;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(drm_fill_in_dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /**
@@ -398,7 +401,10 @@ err_idr:
 	*minor = NULL;
 	return ret;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(drm_get_minor);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * Put a secondary minor number.
@@ -430,12 +436,15 @@ int drm_put_minor(struct drm_minor **minor_p)
 	*minor_p = NULL;
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(drm_put_minor);
 
 static void drm_unplug_minor(struct drm_minor *minor)
 {
 	drm_sysfs_device_remove(minor);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * Called via drm_exit() at module unload time or when pci device is
@@ -500,6 +509,7 @@ void drm_put_dev(struct drm_device *dev)
 	kfree(dev);
 }
 EXPORT_SYMBOL(drm_put_dev);
+<<<<<<< HEAD
 
 void drm_unplug_dev(struct drm_device *dev)
 {
@@ -518,3 +528,5 @@ void drm_unplug_dev(struct drm_device *dev)
 	mutex_unlock(&drm_global_mutex);
 }
 EXPORT_SYMBOL(drm_unplug_dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

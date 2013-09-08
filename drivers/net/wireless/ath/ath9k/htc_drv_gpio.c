@@ -20,10 +20,13 @@
 /*     BTCOEX     */
 /******************/
 
+<<<<<<< HEAD
 #define ATH_HTC_BTCOEX_PRODUCT_ID "wb193"
 
 #ifdef CONFIG_ATH9K_BTCOEX_SUPPORT
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Detects if there is any priority bt traffic
  */
@@ -40,12 +43,20 @@ static void ath_detect_bt_priority(struct ath9k_htc_priv *priv)
 		priv->op_flags &= ~(OP_BT_PRIORITY_DETECTED | OP_BT_SCAN);
 		/* Detect if colocated bt started scanning */
 		if (btcoex->bt_priority_cnt >= ATH_BT_CNT_SCAN_THRESHOLD) {
+<<<<<<< HEAD
 			ath_dbg(ath9k_hw_common(ah), BTCOEX,
+=======
+			ath_dbg(ath9k_hw_common(ah), ATH_DBG_BTCOEX,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"BT scan detected\n");
 			priv->op_flags |= (OP_BT_SCAN |
 					 OP_BT_PRIORITY_DETECTED);
 		} else if (btcoex->bt_priority_cnt >= ATH_BT_CNT_THRESHOLD) {
+<<<<<<< HEAD
 			ath_dbg(ath9k_hw_common(ah), BTCOEX,
+=======
+			ath_dbg(ath9k_hw_common(ah), ATH_DBG_BTCOEX,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"BT priority traffic detected\n");
 			priv->op_flags |= OP_BT_PRIORITY_DETECTED;
 		}
@@ -84,7 +95,10 @@ static void ath_btcoex_period_work(struct work_struct *work)
 	ath9k_hw_btcoex_bt_stomp(priv->ah, is_btscan ? ATH_BTCOEX_STOMP_ALL :
 			btcoex->bt_stomp_type);
 
+<<<<<<< HEAD
 	ath9k_hw_btcoex_enable(priv->ah);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	timer_period = is_btscan ? btcoex->btscan_no_stomp :
 		btcoex->btcoex_no_stomp;
 	ieee80211_queue_delayed_work(priv->hw, &priv->duty_cycle_work,
@@ -106,16 +120,27 @@ static void ath_btcoex_duty_cycle_work(struct work_struct *work)
 	struct ath_common *common = ath9k_hw_common(ah);
 	bool is_btscan = priv->op_flags & OP_BT_SCAN;
 
+<<<<<<< HEAD
 	ath_dbg(common, BTCOEX, "time slice work for bt and wlan\n");
+=======
+	ath_dbg(common, ATH_DBG_BTCOEX,
+		"time slice work for bt and wlan\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (btcoex->bt_stomp_type == ATH_BTCOEX_STOMP_LOW || is_btscan)
 		ath9k_hw_btcoex_bt_stomp(ah, ATH_BTCOEX_STOMP_NONE);
 	else if (btcoex->bt_stomp_type == ATH_BTCOEX_STOMP_ALL)
 		ath9k_hw_btcoex_bt_stomp(ah, ATH_BTCOEX_STOMP_LOW);
+<<<<<<< HEAD
 	ath9k_hw_btcoex_enable(priv->ah);
 }
 
 static void ath_htc_init_btcoex_work(struct ath9k_htc_priv *priv)
+=======
+}
+
+void ath_htc_init_btcoex_work(struct ath9k_htc_priv *priv)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath_btcoex *btcoex = &priv->btcoex;
 
@@ -132,12 +157,20 @@ static void ath_htc_init_btcoex_work(struct ath9k_htc_priv *priv)
  * (Re)start btcoex work
  */
 
+<<<<<<< HEAD
 static void ath_htc_resume_btcoex_work(struct ath9k_htc_priv *priv)
+=======
+void ath_htc_resume_btcoex_work(struct ath9k_htc_priv *priv)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath_btcoex *btcoex = &priv->btcoex;
 	struct ath_hw *ah = priv->ah;
 
+<<<<<<< HEAD
 	ath_dbg(ath9k_hw_common(ah), BTCOEX, "Starting btcoex work\n");
+=======
+	ath_dbg(ath9k_hw_common(ah), ATH_DBG_BTCOEX, "Starting btcoex work\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	btcoex->bt_priority_cnt = 0;
 	btcoex->bt_priority_time = jiffies;
@@ -149,12 +182,17 @@ static void ath_htc_resume_btcoex_work(struct ath9k_htc_priv *priv)
 /*
  * Cancel btcoex and bt duty cycle work.
  */
+<<<<<<< HEAD
 static void ath_htc_cancel_btcoex_work(struct ath9k_htc_priv *priv)
+=======
+void ath_htc_cancel_btcoex_work(struct ath9k_htc_priv *priv)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	cancel_delayed_work_sync(&priv->coex_period_work);
 	cancel_delayed_work_sync(&priv->duty_cycle_work);
 }
 
+<<<<<<< HEAD
 void ath9k_htc_start_btcoex(struct ath9k_htc_priv *priv)
 {
 	struct ath_hw *ah = priv->ah;
@@ -209,6 +247,8 @@ void ath9k_htc_init_btcoex(struct ath9k_htc_priv *priv, char *product)
 
 #endif /* CONFIG_ATH9K_BTCOEX_SUPPORT */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*******/
 /* LED */
 /*******/
@@ -287,6 +327,7 @@ void ath9k_init_leds(struct ath9k_htc_priv *priv)
 
 static bool ath_is_rfkill_set(struct ath9k_htc_priv *priv)
 {
+<<<<<<< HEAD
 	bool is_blocked;
 
 	ath9k_htc_ps_wakeup(priv);
@@ -295,6 +336,10 @@ static bool ath_is_rfkill_set(struct ath9k_htc_priv *priv)
 	ath9k_htc_ps_restore(priv);
 
 	return is_blocked;
+=======
+	return ath9k_hw_gpio_get(priv->ah, priv->ah->rfkill_gpio) ==
+		priv->ah->rfkill_polarity;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void ath9k_htc_rfkill_poll_state(struct ieee80211_hw *hw)

@@ -120,19 +120,34 @@ static struct attribute_group wlags_group = {
 
 void register_wlags_sysfs(struct net_device *net)
 {
+<<<<<<< HEAD
 	struct device *dev = &(net->dev);
 	struct wl_private *lp = wl_priv(net);
 	int err;
 	err = sysfs_create_group(&dev->kobj, &wlags_group);
 	if (!err)
 		lp->sysfsCreated = true;
+=======
+    struct device *dev = &(net->dev);
+    struct wl_private *lp = wl_priv(net);
+
+    lp->sysfsCreated = sysfs_create_group(&dev->kobj, &wlags_group);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void unregister_wlags_sysfs(struct net_device *net)
 {
+<<<<<<< HEAD
 	struct device *dev = &(net->dev);
 	struct wl_private *lp = wl_priv(net);
 
 	if (lp->sysfsCreated)
 		sysfs_remove_group(&dev->kobj, &wlags_group);
+=======
+    struct device *dev = &(net->dev);
+    struct wl_private *lp = wl_priv(net);
+
+    if (lp->sysfsCreated)
+	sysfs_remove_group(&dev->kobj, &wlags_group);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

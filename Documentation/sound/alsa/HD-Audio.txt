@@ -59,12 +59,16 @@ a case, you can change the default method via `position_fix` option.
 `position_fix=1` means to use LPIB method explicitly.
 `position_fix=2` means to use the position-buffer.
 `position_fix=3` means to use a combination of both methods, needed
+<<<<<<< HEAD
 for some VIA controllers.  The capture stream position is corrected
 by comparing both LPIB and position-buffer values.
 `position_fix=4` is another combination available for all controllers,
 and uses LPIB for the playback and the position-buffer for the capture
 streams.
 0 is the default value for all other
+=======
+for some VIA and ATI controllers.  0 is the default value for all other
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 controllers, the automatic check and fallback to LPIB as described in
 the above.  If you get a problem of repeated sounds, this option might
 help.
@@ -452,10 +456,14 @@ The file needs to have a line `[codec]`.  The next line should contain
 three numbers indicating the codec vendor-id (0x12345678 in the
 example), the codec subsystem-id (0xabcd1234) and the address (2) of
 the codec.  The rest patch entries are applied to this specified codec
+<<<<<<< HEAD
 until another codec entry is given.  Passing 0 or a negative number to
 the first or the second value will make the check of the corresponding
 field be skipped.  It'll be useful for really broken devices that don't
 initialize SSID properly.
+=======
+until another codec entry is given.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 The `[model]` line allows to change the model name of the each codec.
 In the example above, it will be changed to model=auto.
@@ -499,7 +507,11 @@ Also, the codec chip name can be rewritten via `[chip_name]` line.
 The hd-audio driver reads the file via request_firmware().  Thus,
 a patch file has to be located on the appropriate firmware path,
 typically, /lib/firmware.  For example, when you pass the option
+<<<<<<< HEAD
 `patch=hda-init.fw`, the file /lib/firmware/hda-init.fw must be
+=======
+`patch=hda-init.fw`, the file /lib/firmware/hda-init-fw must be
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 present.
 
 The patch module option is specific to each card instance, and you
@@ -532,6 +544,7 @@ power-saving.  See /sys/module/snd_hda_intel/parameters/power_save to
 check the current value.  If it's non-zero, the feature is turned on.
 
 
+<<<<<<< HEAD
 Tracepoints
 ~~~~~~~~~~~
 The hd-audio driver gives a few basic tracepoints.
@@ -580,11 +593,17 @@ to set the left output-amp value to 25.
 ------------------------------------------------------------------------
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Development Tree
 ~~~~~~~~~~~~~~~~
 The latest development codes for HD-audio are found on sound git tree:
 
+<<<<<<< HEAD
 - git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
+=======
+- git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-2.6.git
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 The master branch or for-next branches can be used as the main
 development branches in general while the HD-audio specific patches
@@ -599,7 +618,11 @@ is, installed via the usual spells: configure, make and make
 install(-modules).  See INSTALL in the package.  The snapshot tarballs
 are found at:
 
+<<<<<<< HEAD
 - ftp://ftp.suse.com/pub/people/tiwai/snapshot/
+=======
+- ftp://ftp.kernel.org/pub/linux/kernel/people/tiwai/snapshot/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 Sending a Bug Report
@@ -701,7 +724,11 @@ via hda-verb won't change the mixer value.
 
 The hda-verb program is found in the ftp directory:
 
+<<<<<<< HEAD
 - ftp://ftp.suse.com/pub/people/tiwai/misc/
+=======
+- ftp://ftp.kernel.org/pub/linux/kernel/people/tiwai/misc/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 Also a git repository is available:
 
@@ -769,7 +796,11 @@ operation, the jack plugging simulation, etc.
 
 The package is found in:
 
+<<<<<<< HEAD
 - ftp://ftp.suse.com/pub/people/tiwai/misc/
+=======
+- ftp://ftp.kernel.org/pub/linux/kernel/people/tiwai/misc/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 A git repository is available:
 

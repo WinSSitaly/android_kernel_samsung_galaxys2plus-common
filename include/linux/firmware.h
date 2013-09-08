@@ -1,6 +1,10 @@
 #ifndef _LINUX_FIRMWARE_H
 #define _LINUX_FIRMWARE_H
 
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/types.h>
 #include <linux/compiler.h>
 #include <linux/gfp.h>
@@ -14,7 +18,10 @@ struct firmware {
 	struct page **pages;
 };
 
+<<<<<<< HEAD
 struct module;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct device;
 
 struct builtin_fw {

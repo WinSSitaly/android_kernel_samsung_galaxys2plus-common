@@ -60,8 +60,11 @@ struct thread_info {
 register struct thread_info *__current_thread_info __asm__("$28");
 #define current_thread_info()  __current_thread_info
 
+<<<<<<< HEAD
 #endif /* !__ASSEMBLY__ */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* thread information allocation */
 #if defined(CONFIG_PAGE_SIZE_4KB) && defined(CONFIG_32BIT)
 #define THREAD_SIZE_ORDER (1)
@@ -99,6 +102,11 @@ register struct thread_info *__current_thread_info __asm__("$28");
 
 #define free_thread_info(info) kfree(info)
 
+<<<<<<< HEAD
+=======
+#endif /* !__ASSEMBLY__ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PREEMPT_ACTIVE		0x10000000
 
 /*
@@ -117,6 +125,10 @@ register struct thread_info *__current_thread_info __asm__("$28");
 #define TIF_USEDFPU		16	/* FPU was used by this task this quantum (SMP) */
 #define TIF_POLLING_NRFLAG	17	/* true if poll_idle() is polling TIF_NEED_RESCHED */
 #define TIF_MEMDIE		18	/* is terminating due to OOM killer */
+<<<<<<< HEAD
+=======
+#define TIF_FREEZE		19
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define TIF_FIXADE		20	/* Fix address errors in software */
 #define TIF_LOGADE		21	/* Log address errors to syslog */
 #define TIF_32BIT_REGS		22	/* also implies 16/32 fprs */
@@ -140,6 +152,10 @@ register struct thread_info *__current_thread_info __asm__("$28");
 #define _TIF_RESTORE_SIGMASK	(1<<TIF_RESTORE_SIGMASK)
 #define _TIF_USEDFPU		(1<<TIF_USEDFPU)
 #define _TIF_POLLING_NRFLAG	(1<<TIF_POLLING_NRFLAG)
+<<<<<<< HEAD
+=======
+#define _TIF_FREEZE		(1<<TIF_FREEZE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define _TIF_FIXADE		(1<<TIF_FIXADE)
 #define _TIF_LOGADE		(1<<TIF_LOGADE)
 #define _TIF_32BIT_REGS		(1<<TIF_32BIT_REGS)

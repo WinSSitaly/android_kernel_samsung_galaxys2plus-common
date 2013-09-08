@@ -33,8 +33,11 @@
 #include <linux/sysrq.h>
 #include <linux/tty_flip.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/of.h>
 #include <linux/of_device.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/dma-mapping.h>
 #include <linux/atmel_pdc.h>
 #include <linux/atmel_serial.h>
@@ -48,7 +51,11 @@
 
 #ifdef CONFIG_ARM
 #include <mach/cpu.h>
+<<<<<<< HEAD
 #include <asm/gpio.h>
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #define PDC_BUFFER_SIZE		512
@@ -159,12 +166,16 @@ struct atmel_uart_port {
 };
 
 static struct atmel_uart_port atmel_ports[ATMEL_MAX_UART];
+<<<<<<< HEAD
 static DECLARE_BITMAP(atmel_ports_in_use, ATMEL_MAX_UART);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef SUPPORT_SYSRQ
 static struct console atmel_console;
 #endif
 
+<<<<<<< HEAD
 #if defined(CONFIG_OF)
 static const struct of_device_id atmel_serial_dt_ids[] = {
 	{ .compatible = "atmel,at91rm9200-usart" },
@@ -175,6 +186,8 @@ static const struct of_device_id atmel_serial_dt_ids[] = {
 MODULE_DEVICE_TABLE(of, atmel_serial_dt_ids);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline struct atmel_uart_port *
 to_atmel_uart_port(struct uart_port *uart)
 {
@@ -229,7 +242,11 @@ void atmel_config_rs485(struct uart_port *port, struct serial_rs485 *rs485conf)
 	if (rs485conf->flags & SER_RS485_ENABLED) {
 		dev_dbg(port->dev, "Setting UART to RS485\n");
 		atmel_port->tx_done_mask = ATMEL_US_TXEMPTY;
+<<<<<<< HEAD
 		if ((rs485conf->delay_rts_after_send) > 0)
+=======
+		if (rs485conf->flags & SER_RS485_RTS_AFTER_SEND)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			UART_PUT_TTGR(port, rs485conf->delay_rts_after_send);
 		mode |= ATMEL_US_USMODE_RS485;
 	} else {
@@ -305,7 +322,11 @@ static void atmel_set_mctrl(struct uart_port *port, u_int mctrl)
 
 	if (atmel_port->rs485.flags & SER_RS485_ENABLED) {
 		dev_dbg(port->dev, "Setting UART to RS485\n");
+<<<<<<< HEAD
 		if ((atmel_port->rs485.delay_rts_after_send) > 0)
+=======
+		if (atmel_port->rs485.flags & SER_RS485_RTS_AFTER_SEND)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			UART_PUT_TTGR(port,
 					atmel_port->rs485.delay_rts_after_send);
 		mode |= ATMEL_US_USMODE_RS485;
@@ -353,8 +374,12 @@ static void atmel_stop_tx(struct uart_port *port)
 	/* Disable interrupts */
 	UART_PUT_IDR(port, atmel_port->tx_done_mask);
 
+<<<<<<< HEAD
 	if ((atmel_port->rs485.flags & SER_RS485_ENABLED) &&
 	    !(atmel_port->rs485.flags & SER_RS485_RX_DURING_TX))
+=======
+	if (atmel_port->rs485.flags & SER_RS485_ENABLED)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		atmel_start_rx(port);
 }
 
@@ -371,8 +396,12 @@ static void atmel_start_tx(struct uart_port *port)
 			   really need this.*/
 			return;
 
+<<<<<<< HEAD
 		if ((atmel_port->rs485.flags & SER_RS485_ENABLED) &&
 		    !(atmel_port->rs485.flags & SER_RS485_RX_DURING_TX))
+=======
+		if (atmel_port->rs485.flags & SER_RS485_ENABLED)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			atmel_stop_rx(port);
 
 		/* re-enable PDC transmit */
@@ -389,8 +418,11 @@ static void atmel_start_rx(struct uart_port *port)
 {
 	UART_PUT_CR(port, ATMEL_US_RSTSTA);  /* reset status and receiver */
 
+<<<<<<< HEAD
 	UART_PUT_CR(port, ATMEL_US_RXEN);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (atmel_use_dma_rx(port)) {
 		/* enable PDC controller */
 		UART_PUT_IER(port, ATMEL_US_ENDRX | ATMEL_US_TIMEOUT |
@@ -406,8 +438,11 @@ static void atmel_start_rx(struct uart_port *port)
  */
 static void atmel_stop_rx(struct uart_port *port)
 {
+<<<<<<< HEAD
 	UART_PUT_CR(port, ATMEL_US_RXDIS);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (atmel_use_dma_rx(port)) {
 		/* disable PDC receive */
 		UART_PUT_PTCR(port, ATMEL_PDC_RXTDIS);
@@ -700,8 +735,12 @@ static void atmel_tx_dma(struct uart_port *port)
 		/* Enable interrupts */
 		UART_PUT_IER(port, atmel_port->tx_done_mask);
 	} else {
+<<<<<<< HEAD
 		if ((atmel_port->rs485.flags & SER_RS485_ENABLED) &&
 		    !(atmel_port->rs485.flags & SER_RS485_RX_DURING_TX)) {
+=======
+		if (atmel_port->rs485.flags & SER_RS485_ENABLED) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* DMA done, stop TX, start RX for RS485 */
 			atmel_start_rx(port);
 		}
@@ -1233,7 +1272,11 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
 
 	if (atmel_port->rs485.flags & SER_RS485_ENABLED) {
 		dev_dbg(port->dev, "Setting UART to RS485\n");
+<<<<<<< HEAD
 		if ((atmel_port->rs485.delay_rts_after_send) > 0)
+=======
+		if (atmel_port->rs485.flags & SER_RS485_RTS_AFTER_SEND)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			UART_PUT_TTGR(port,
 					atmel_port->rs485.delay_rts_after_send);
 		mode |= ATMEL_US_USMODE_RS485;
@@ -1261,7 +1304,16 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
 
 static void atmel_set_ldisc(struct uart_port *port, int new)
 {
+<<<<<<< HEAD
 	if (new == N_PPS) {
+=======
+	int line = port->line;
+
+	if (line >= port->state->port.tty->driver->num)
+		return;
+
+	if (port->state->port.tty->ldisc->ops->num == N_PPS) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		port->flags |= UPF_HARDPPS_CD;
 		atmel_enable_ms(port);
 	} else {
@@ -1423,6 +1475,7 @@ static struct uart_ops atmel_pops = {
 #endif
 };
 
+<<<<<<< HEAD
 static void __devinit atmel_of_init_port(struct atmel_uart_port *atmel_port,
 					 struct device_node *np)
 {
@@ -1455,6 +1508,8 @@ static void __devinit atmel_of_init_port(struct atmel_uart_port *atmel_port,
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Configure the port from the platform device resource info.
  */
@@ -1462,6 +1517,7 @@ static void __devinit atmel_init_port(struct atmel_uart_port *atmel_port,
 				      struct platform_device *pdev)
 {
 	struct uart_port *port = &atmel_port->uart;
+<<<<<<< HEAD
 	struct atmel_uart_data *pdata = pdev->dev.platform_data;
 
 	if (pdev->dev.of_node) {
@@ -1471,11 +1527,18 @@ static void __devinit atmel_init_port(struct atmel_uart_port *atmel_port,
 		atmel_port->use_dma_tx	= pdata->use_dma_tx;
 		atmel_port->rs485	= pdata->rs485;
 	}
+=======
+	struct atmel_uart_data *data = pdev->dev.platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	port->iotype		= UPIO_MEM;
 	port->flags		= UPF_BOOT_AUTOCONF;
 	port->ops		= &atmel_pops;
 	port->fifosize		= 1;
+<<<<<<< HEAD
+=======
+	port->line		= data->num;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	port->dev		= &pdev->dev;
 	port->mapbase	= pdev->resource[0].start;
 	port->irq	= pdev->resource[1].start;
@@ -1485,10 +1548,17 @@ static void __devinit atmel_init_port(struct atmel_uart_port *atmel_port,
 
 	memset(&atmel_port->rx_ring, 0, sizeof(atmel_port->rx_ring));
 
+<<<<<<< HEAD
 	if (pdata && pdata->regs) {
 		/* Already mapped by setup code */
 		port->membase = pdata->regs;
 	} else {
+=======
+	if (data->regs)
+		/* Already mapped by setup code */
+		port->membase = data->regs;
+	else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		port->flags	|= UPF_IOREMAP;
 		port->membase	= NULL;
 	}
@@ -1502,6 +1572,12 @@ static void __devinit atmel_init_port(struct atmel_uart_port *atmel_port,
 		/* only enable clock when USART is in use */
 	}
 
+<<<<<<< HEAD
+=======
+	atmel_port->use_dma_rx = data->use_dma_rx;
+	atmel_port->use_dma_tx = data->use_dma_tx;
+	atmel_port->rs485	= data->rs485;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Use TXEMPTY for interrupt when rs485 else TXRDY or ENDTX|TXBUFE */
 	if (atmel_port->rs485.flags & SER_RS485_ENABLED)
 		atmel_port->tx_done_mask = ATMEL_US_TXEMPTY;
@@ -1530,8 +1606,11 @@ void __init atmel_register_uart_fns(struct atmel_port_fns *fns)
 	atmel_pops.set_wake	= fns->set_wake;
 }
 
+<<<<<<< HEAD
 struct platform_device *atmel_default_console_device;	/* the serial console device */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SERIAL_ATMEL_CONSOLE
 static void atmel_console_putchar(struct uart_port *port, int ch)
 {
@@ -1663,6 +1742,7 @@ static struct console atmel_console = {
 static int __init atmel_console_init(void)
 {
 	if (atmel_default_console_device) {
+<<<<<<< HEAD
 		struct atmel_uart_data *pdata =
 			atmel_default_console_device->dev.platform_data;
 		int id = pdata->num;
@@ -1673,6 +1753,12 @@ static int __init atmel_console_init(void)
 
 		add_preferred_console(ATMEL_DEVICENAME, id, NULL);
 		atmel_init_port(port, atmel_default_console_device);
+=======
+		add_preferred_console(ATMEL_DEVICENAME,
+				      atmel_default_console_device->id, NULL);
+		atmel_init_port(&atmel_ports[atmel_default_console_device->id],
+				atmel_default_console_device);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		register_console(&atmel_console);
 	}
 
@@ -1769,6 +1855,7 @@ static int atmel_serial_resume(struct platform_device *pdev)
 static int __devinit atmel_serial_probe(struct platform_device *pdev)
 {
 	struct atmel_uart_port *port;
+<<<<<<< HEAD
 	struct device_node *np = pdev->dev.of_node;
 	struct atmel_uart_data *pdata = pdev->dev.platform_data;
 	void *data;
@@ -1801,6 +1888,16 @@ static int __devinit atmel_serial_probe(struct platform_device *pdev)
 	port = &atmel_ports[ret];
 	port->backup_imr = 0;
 	port->uart.line = ret;
+=======
+	struct atmel_uart_data *pdata = pdev->dev.platform_data;
+	void *data;
+	int ret;
+
+	BUILD_BUG_ON(ATMEL_SERIAL_RINGSIZE & (ATMEL_SERIAL_RINGSIZE - 1));
+
+	port = &atmel_ports[pdata->num];
+	port->backup_imr = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	atmel_init_port(port, pdev);
 
@@ -1846,7 +1943,11 @@ err_alloc_ring:
 		clk_put(port->clk);
 		port->clk = NULL;
 	}
+<<<<<<< HEAD
 err:
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1866,8 +1967,11 @@ static int __devexit atmel_serial_remove(struct platform_device *pdev)
 
 	/* "port" is allocated statically, so we shouldn't free it */
 
+<<<<<<< HEAD
 	clear_bit(port->line, atmel_ports_in_use);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clk_put(atmel_port->clk);
 
 	return ret;
@@ -1881,7 +1985,10 @@ static struct platform_driver atmel_serial_driver = {
 	.driver		= {
 		.name	= "atmel_usart",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.of_match_table	= of_match_ptr(atmel_serial_dt_ids),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

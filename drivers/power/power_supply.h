@@ -10,10 +10,13 @@
  *  You may use this code as per GPL version 2
  */
 
+<<<<<<< HEAD
 struct device;
 struct device_type;
 struct power_supply;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SYSFS
 
 extern void power_supply_init_attrs(struct device_type *dev_type);

@@ -158,6 +158,7 @@ struct pxafb_mach_info {
 void pxa_set_fb_info(struct device *, struct pxafb_mach_info *);
 unsigned long pxafb_get_hsync_time(struct device *dev);
 
+<<<<<<< HEAD
 #ifdef CONFIG_FB_PXA_SMARTPANEL
 extern int pxafb_smart_queue(struct fb_info *info, uint16_t *cmds, int);
 extern int pxafb_smart_flush(struct fb_info *info);
@@ -173,3 +174,7 @@ static inline int pxafb_smart_flush(struct fb_info *info)
 	return 0;
 }
 #endif
+=======
+extern int pxafb_smart_queue(struct fb_info *info, uint16_t *cmds, int);
+extern int pxafb_smart_flush(struct fb_info *info);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -24,6 +24,11 @@
 
 #ifdef __KERNEL__
 struct notifier_block;
+<<<<<<< HEAD
+=======
+extern const int NR_TYPES;
+extern const int max_vals[];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern unsigned short *key_maps[MAX_NR_KEYMAPS];
 extern unsigned short plain_map[NR_KEYS];
 

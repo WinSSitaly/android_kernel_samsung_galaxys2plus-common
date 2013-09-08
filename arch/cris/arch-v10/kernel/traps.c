@@ -11,7 +11,10 @@
 #include <linux/ptrace.h>
 #include <asm/uaccess.h>
 #include <arch/sv_addr_ag.h>
+<<<<<<< HEAD
 #include <arch/system.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void
 show_registers(struct pt_regs *regs)

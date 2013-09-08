@@ -36,19 +36,29 @@
 #include <linux/io.h>
 #include <linux/slab.h>
 
+<<<<<<< HEAD
 #include <mach/hardware.h>
 #include <asm/hardware/iomd.h>
+=======
+#include <asm/irq.h>
+#include <mach/hardware.h>
+#include <asm/hardware/iomd.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Vojtech Pavlik, Russell King");
 MODULE_DESCRIPTION("Acorn RiscPC PS/2 keyboard controller driver");
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:kart");
 
+<<<<<<< HEAD
 struct rpckbd_data {
 	int tx_irq;
 	int rx_irq;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int rpckbd_write(struct serio *port, unsigned char val)
 {
 	while (!(iomd_readb(IOMD_KCTRL) & (1 << 7)))
@@ -81,21 +91,34 @@ static irqreturn_t rpckbd_tx(int irq, void *dev_id)
 
 static int rpckbd_open(struct serio *port)
 {
+<<<<<<< HEAD
 	struct rpckbd_data *rpckbd = port->port_data;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Reset the keyboard state machine. */
 	iomd_writeb(0, IOMD_KCTRL);
 	iomd_writeb(8, IOMD_KCTRL);
 	iomd_readb(IOMD_KARTRX);
 
+<<<<<<< HEAD
 	if (request_irq(rpckbd->rx_irq, rpckbd_rx, 0, "rpckbd", port) != 0) {
+=======
+	if (request_irq(IRQ_KEYBOARDRX, rpckbd_rx, 0, "rpckbd", port) != 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR "rpckbd.c: Could not allocate keyboard receive IRQ\n");
 		return -EBUSY;
 	}
 
+<<<<<<< HEAD
 	if (request_irq(rpckbd->tx_irq, rpckbd_tx, 0, "rpckbd", port) != 0) {
 		printk(KERN_ERR "rpckbd.c: Could not allocate keyboard transmit IRQ\n");
 		free_irq(rpckbd->rx_irq, port);
+=======
+	if (request_irq(IRQ_KEYBOARDTX, rpckbd_tx, 0, "rpckbd", port) != 0) {
+		printk(KERN_ERR "rpckbd.c: Could not allocate keyboard transmit IRQ\n");
+		free_irq(IRQ_KEYBOARDRX, port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EBUSY;
 	}
 
@@ -104,10 +127,15 @@ static int rpckbd_open(struct serio *port)
 
 static void rpckbd_close(struct serio *port)
 {
+<<<<<<< HEAD
 	struct rpckbd_data *rpckbd = port->port_data;
 
 	free_irq(rpckbd->rx_irq, port);
 	free_irq(rpckbd->tx_irq, port);
+=======
+	free_irq(IRQ_KEYBOARDRX, port);
+	free_irq(IRQ_KEYBOARDTX, port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -116,6 +144,7 @@ static void rpckbd_close(struct serio *port)
  */
 static int __devinit rpckbd_probe(struct platform_device *dev)
 {
+<<<<<<< HEAD
 	struct rpckbd_data *rpckbd;
 	struct serio *serio;
 	int tx_irq, rx_irq;
@@ -138,13 +167,23 @@ static int __devinit rpckbd_probe(struct platform_device *dev)
 
 	rpckbd->rx_irq = rx_irq;
 	rpckbd->tx_irq = tx_irq;
+=======
+	struct serio *serio;
+
+	serio = kzalloc(sizeof(struct serio), GFP_KERNEL);
+	if (!serio)
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	serio->id.type		= SERIO_8042;
 	serio->write		= rpckbd_write;
 	serio->open		= rpckbd_open;
 	serio->close		= rpckbd_close;
 	serio->dev.parent	= &dev->dev;
+<<<<<<< HEAD
 	serio->port_data	= rpckbd;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	strlcpy(serio->name, "RiscPC PS/2 kbd port", sizeof(serio->name));
 	strlcpy(serio->phys, "rpckbd/serio0", sizeof(serio->phys));
 
@@ -156,11 +195,15 @@ static int __devinit rpckbd_probe(struct platform_device *dev)
 static int __devexit rpckbd_remove(struct platform_device *dev)
 {
 	struct serio *serio = platform_get_drvdata(dev);
+<<<<<<< HEAD
 	struct rpckbd_data *rpckbd = serio->port_data;
 
 	serio_unregister_port(serio);
 	kfree(rpckbd);
 
+=======
+	serio_unregister_port(serio);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -172,4 +215,20 @@ static struct platform_driver rpckbd_driver = {
 		.owner	= THIS_MODULE,
 	},
 };
+<<<<<<< HEAD
 module_platform_driver(rpckbd_driver);
+=======
+
+static int __init rpckbd_init(void)
+{
+	return platform_driver_register(&rpckbd_driver);
+}
+
+static void __exit rpckbd_exit(void)
+{
+	platform_driver_unregister(&rpckbd_driver);
+}
+
+module_init(rpckbd_init);
+module_exit(rpckbd_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

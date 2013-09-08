@@ -40,7 +40,11 @@ struct bitmap_port {
 /* Base variant */
 
 static int
+<<<<<<< HEAD
 bitmap_port_test(struct ip_set *set, void *value, u32 timeout, u32 flags)
+=======
+bitmap_port_test(struct ip_set *set, void *value, u32 timeout)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const struct bitmap_port *map = set->data;
 	u16 id = *(u16 *)value;
@@ -49,7 +53,11 @@ bitmap_port_test(struct ip_set *set, void *value, u32 timeout, u32 flags)
 }
 
 static int
+<<<<<<< HEAD
 bitmap_port_add(struct ip_set *set, void *value, u32 timeout, u32 flags)
+=======
+bitmap_port_add(struct ip_set *set, void *value, u32 timeout)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bitmap_port *map = set->data;
 	u16 id = *(u16 *)value;
@@ -61,7 +69,11 @@ bitmap_port_add(struct ip_set *set, void *value, u32 timeout, u32 flags)
 }
 
 static int
+<<<<<<< HEAD
 bitmap_port_del(struct ip_set *set, void *value, u32 timeout, u32 flags)
+=======
+bitmap_port_del(struct ip_set *set, void *value, u32 timeout)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bitmap_port *map = set->data;
 	u16 id = *(u16 *)value;
@@ -119,7 +131,11 @@ nla_put_failure:
 /* Timeout variant */
 
 static int
+<<<<<<< HEAD
 bitmap_port_ttest(struct ip_set *set, void *value, u32 timeout, u32 flags)
+=======
+bitmap_port_ttest(struct ip_set *set, void *value, u32 timeout)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const struct bitmap_port *map = set->data;
 	const unsigned long *members = map->members;
@@ -129,13 +145,21 @@ bitmap_port_ttest(struct ip_set *set, void *value, u32 timeout, u32 flags)
 }
 
 static int
+<<<<<<< HEAD
 bitmap_port_tadd(struct ip_set *set, void *value, u32 timeout, u32 flags)
+=======
+bitmap_port_tadd(struct ip_set *set, void *value, u32 timeout)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bitmap_port *map = set->data;
 	unsigned long *members = map->members;
 	u16 id = *(u16 *)value;
 
+<<<<<<< HEAD
 	if (ip_set_timeout_test(members[id]) && !(flags & IPSET_FLAG_EXIST))
+=======
+	if (ip_set_timeout_test(members[id]))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -IPSET_ERR_EXIST;
 
 	members[id] = ip_set_timeout_set(timeout);
@@ -144,7 +168,11 @@ bitmap_port_tadd(struct ip_set *set, void *value, u32 timeout, u32 flags)
 }
 
 static int
+<<<<<<< HEAD
 bitmap_port_tdel(struct ip_set *set, void *value, u32 timeout, u32 flags)
+=======
+bitmap_port_tdel(struct ip_set *set, void *value, u32 timeout)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bitmap_port *map = set->data;
 	unsigned long *members = map->members;
@@ -208,16 +236,24 @@ nla_put_failure:
 
 static int
 bitmap_port_kadt(struct ip_set *set, const struct sk_buff *skb,
+<<<<<<< HEAD
 		 const struct xt_action_param *par,
 		 enum ipset_adt adt, const struct ip_set_adt_opt *opt)
+=======
+		 enum ipset_adt adt, u8 pf, u8 dim, u8 flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bitmap_port *map = set->data;
 	ipset_adtfn adtfn = set->variant->adt[adt];
 	__be16 __port;
 	u16 port = 0;
 
+<<<<<<< HEAD
 	if (!ip_set_get_ip_port(skb, opt->family,
 				opt->flags & IPSET_DIM_ONE_SRC, &__port))
+=======
+	if (!ip_set_get_ip_port(skb, pf, flags & IPSET_DIM_ONE_SRC, &__port))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	port = ntohs(__port);
@@ -227,12 +263,20 @@ bitmap_port_kadt(struct ip_set *set, const struct sk_buff *skb,
 
 	port -= map->first_port;
 
+<<<<<<< HEAD
 	return adtfn(set, &port, opt_timeout(opt, map), opt->cmdflags);
+=======
+	return adtfn(set, &port, map->timeout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
 bitmap_port_uadt(struct ip_set *set, struct nlattr *tb[],
+<<<<<<< HEAD
 		 enum ipset_adt adt, u32 *lineno, u32 flags, bool retried)
+=======
+		 enum ipset_adt adt, u32 *lineno, u32 flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bitmap_port *map = set->data;
 	ipset_adtfn adtfn = set->variant->adt[adt];
@@ -261,7 +305,11 @@ bitmap_port_uadt(struct ip_set *set, struct nlattr *tb[],
 
 	if (adt == IPSET_TEST) {
 		id = port - map->first_port;
+<<<<<<< HEAD
 		return adtfn(set, &id, timeout, flags);
+=======
+		return adtfn(set, &id, timeout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (tb[IPSET_ATTR_PORT_TO]) {
@@ -279,7 +327,11 @@ bitmap_port_uadt(struct ip_set *set, struct nlattr *tb[],
 
 	for (; port <= port_to; port++) {
 		id = port - map->first_port;
+<<<<<<< HEAD
 		ret = adtfn(set, &id, timeout, flags);
+=======
+		ret = adtfn(set, &id, timeout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (ret && !ip_set_eexist(ret, flags))
 			return ret;
@@ -422,7 +474,11 @@ init_map_port(struct ip_set *set, struct bitmap_port *map,
 	map->timeout = IPSET_NO_TIMEOUT;
 
 	set->data = map;
+<<<<<<< HEAD
 	set->family = NFPROTO_UNSPEC;
+=======
+	set->family = AF_UNSPEC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return true;
 }
@@ -483,9 +539,14 @@ static struct ip_set_type bitmap_port_type = {
 	.protocol	= IPSET_PROTOCOL,
 	.features	= IPSET_TYPE_PORT,
 	.dimension	= IPSET_DIM_ONE,
+<<<<<<< HEAD
 	.family		= NFPROTO_UNSPEC,
 	.revision_min	= 0,
 	.revision_max	= 0,
+=======
+	.family		= AF_UNSPEC,
+	.revision	= 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.create		= bitmap_port_create,
 	.create_policy	= {
 		[IPSET_ATTR_PORT]	= { .type = NLA_U16 },

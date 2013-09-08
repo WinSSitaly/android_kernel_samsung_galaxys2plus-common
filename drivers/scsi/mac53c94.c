@@ -17,11 +17,18 @@
 #include <linux/stat.h>
 #include <linux/spinlock.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/dbdma.h>
 #include <asm/io.h>
 #include <asm/pgtable.h>
 #include <asm/prom.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/pci-bridge.h>
 #include <asm/macio.h>
 

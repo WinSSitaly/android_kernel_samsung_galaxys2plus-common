@@ -26,6 +26,7 @@
 #include "radeon_reg.h"
 #include "radeon.h"
 
+<<<<<<< HEAD
 #define RADEON_BENCHMARK_COPY_BLIT 1
 #define RADEON_BENCHMARK_COPY_DMA  0
 
@@ -103,6 +104,23 @@ static void radeon_benchmark_move(struct radeon_device *rdev, unsigned size,
 	int time;
 
 	n = RADEON_BENCHMARK_ITERATIONS;
+=======
+void radeon_benchmark_move(struct radeon_device *rdev, unsigned bsize,
+			   unsigned sdomain, unsigned ddomain)
+{
+	struct radeon_bo *dobj = NULL;
+	struct radeon_bo *sobj = NULL;
+	struct radeon_fence *fence = NULL;
+	uint64_t saddr, daddr;
+	unsigned long start_jiffies;
+	unsigned long end_jiffies;
+	unsigned long time;
+	unsigned i, n, size;
+	int r;
+
+	size = bsize;
+	n = 1024;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = radeon_bo_create(rdev, size, PAGE_SIZE, true, sdomain, &sobj);
 	if (r) {
 		goto out_cleanup;
@@ -129,6 +147,7 @@ static void radeon_benchmark_move(struct radeon_device *rdev, unsigned size,
 	}
 
 	/* r100 doesn't have dma engine so skip the test */
+<<<<<<< HEAD
 	/* also, VRAM-to-VRAM test doesn't make much sense for DMA */
 	/* skip it as well if domains are the same */
 	if ((rdev->asic->copy.dma) && (sdomain != ddomain)) {
@@ -151,6 +170,67 @@ static void radeon_benchmark_move(struct radeon_device *rdev, unsigned size,
 						     sdomain, ddomain, "blit");
 	}
 
+=======
+	if (rdev->asic->copy_dma) {
+
+		start_jiffies = jiffies;
+		for (i = 0; i < n; i++) {
+			r = radeon_fence_create(rdev, &fence);
+			if (r) {
+				goto out_cleanup;
+			}
+
+			r = radeon_copy_dma(rdev, saddr, daddr,
+					size / RADEON_GPU_PAGE_SIZE, fence);
+
+			if (r) {
+				goto out_cleanup;
+			}
+			r = radeon_fence_wait(fence, false);
+			if (r) {
+				goto out_cleanup;
+			}
+			radeon_fence_unref(&fence);
+		}
+		end_jiffies = jiffies;
+		time = end_jiffies - start_jiffies;
+		time = jiffies_to_msecs(time);
+		if (time > 0) {
+			i = ((n * size) >> 10) / time;
+			printk(KERN_INFO "radeon: dma %u bo moves of %ukb from"
+					" %d to %d in %lums (%ukb/ms %ukb/s %uM/s)\n",
+					n, size >> 10,
+					sdomain, ddomain, time,
+					i, i * 1000, (i * 1000) / 1024);
+		}
+	}
+
+	start_jiffies = jiffies;
+	for (i = 0; i < n; i++) {
+		r = radeon_fence_create(rdev, &fence);
+		if (r) {
+			goto out_cleanup;
+		}
+		r = radeon_copy_blit(rdev, saddr, daddr, size / RADEON_GPU_PAGE_SIZE, fence);
+		if (r) {
+			goto out_cleanup;
+		}
+		r = radeon_fence_wait(fence, false);
+		if (r) {
+			goto out_cleanup;
+		}
+		radeon_fence_unref(&fence);
+	}
+	end_jiffies = jiffies;
+	time = end_jiffies - start_jiffies;
+	time = jiffies_to_msecs(time);
+	if (time > 0) {
+		i = ((n * size) >> 10) / time;
+		printk(KERN_INFO "radeon: blit %u bo moves of %ukb from %d to %d"
+		       " in %lums (%ukb/ms %ukb/s %uM/s)\n", n, size >> 10,
+		       sdomain, ddomain, time, i, i * 1000, (i * 1000) / 1024);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_cleanup:
 	if (sobj) {
 		r = radeon_bo_reserve(sobj, false);
@@ -168,6 +248,7 @@ out_cleanup:
 		}
 		radeon_bo_unref(&dobj);
 	}
+<<<<<<< HEAD
 
 	if (r) {
 		DRM_ERROR("Error while benchmarking BO move.\n");
@@ -256,4 +337,20 @@ void radeon_benchmark(struct radeon_device *rdev, int test_number)
 	default:
 		DRM_ERROR("Unknown benchmark\n");
 	}
+=======
+	if (fence) {
+		radeon_fence_unref(&fence);
+	}
+	if (r) {
+		printk(KERN_WARNING "Error while benchmarking BO move.\n");
+	}
+}
+
+void radeon_benchmark(struct radeon_device *rdev)
+{
+	radeon_benchmark_move(rdev, 1024*1024, RADEON_GEM_DOMAIN_GTT,
+			      RADEON_GEM_DOMAIN_VRAM);
+	radeon_benchmark_move(rdev, 1024*1024, RADEON_GEM_DOMAIN_VRAM,
+			      RADEON_GEM_DOMAIN_GTT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

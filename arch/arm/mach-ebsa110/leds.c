@@ -17,10 +17,16 @@
 
 #include <mach/hardware.h>
 #include <asm/leds.h>
+<<<<<<< HEAD
 #include <asm/mach-types.h>
 
 #include "core.h"
 
+=======
+#include <asm/system.h>
+#include <asm/mach-types.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static spinlock_t leds_lock;
 
 static void ebsa110_leds_event(led_event_t ledevt)

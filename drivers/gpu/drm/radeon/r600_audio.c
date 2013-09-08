@@ -36,7 +36,11 @@
  */
 static int r600_audio_chipset_supported(struct radeon_device *rdev)
 {
+<<<<<<< HEAD
 	return (rdev->family >= CHIP_R600 && !ASIC_IS_DCE5(rdev))
+=======
+	return (rdev->family >= CHIP_R600 && rdev->family < CHIP_CEDAR)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		|| rdev->family == CHIP_RS600
 		|| rdev->family == CHIP_RS690
 		|| rdev->family == CHIP_RS740;
@@ -161,6 +165,7 @@ static void r600_audio_update_hdmi(unsigned long param)
  */
 static void r600_audio_engine_enable(struct radeon_device *rdev, bool enable)
 {
+<<<<<<< HEAD
 	u32 value = 0;
 	DRM_INFO("%s audio support\n", enable ? "Enabling" : "Disabling");
 	if (ASIC_IS_DCE4(rdev)) {
@@ -173,6 +178,10 @@ static void r600_audio_engine_enable(struct radeon_device *rdev, bool enable)
 		WREG32_P(R600_AUDIO_ENABLE,
 			 enable ? 0x81000000 : 0x0, ~0x81000000);
 	}
+=======
+	DRM_INFO("%s audio support\n", enable ? "Enabling" : "Disabling");
+	WREG32_P(R600_AUDIO_ENABLE, enable ? 0x81000000 : 0x0, ~0x81000000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rdev->audio_enabled = enable;
 }
 
@@ -239,7 +248,10 @@ void r600_audio_set_clock(struct drm_encoder *encoder, int clock)
 	struct radeon_device *rdev = dev->dev_private;
 	struct radeon_encoder *radeon_encoder = to_radeon_encoder(encoder);
 	struct radeon_encoder_atom_dig *dig = radeon_encoder->enc_priv;
+<<<<<<< HEAD
 	struct radeon_crtc *radeon_crtc = to_radeon_crtc(encoder->crtc);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int base_rate = 48000;
 
 	switch (radeon_encoder->encoder_id) {
@@ -259,6 +271,7 @@ void r600_audio_set_clock(struct drm_encoder *encoder, int clock)
 		return;
 	}
 
+<<<<<<< HEAD
 	if (ASIC_IS_DCE4(rdev)) {
 		/* TODO: other PLLs? */
 		WREG32(EVERGREEN_AUDIO_PLL1_MUL, base_rate * 10);
@@ -286,6 +299,24 @@ void r600_audio_set_clock(struct drm_encoder *encoder, int clock)
 				radeon_encoder->encoder_id);
 			return;
 		}
+=======
+	switch (dig->dig_encoder) {
+	case 0:
+		WREG32(R600_AUDIO_PLL1_MUL, base_rate * 50);
+		WREG32(R600_AUDIO_PLL1_DIV, clock * 100);
+		WREG32(R600_AUDIO_CLK_SRCSEL, 0);
+		break;
+
+	case 1:
+		WREG32(R600_AUDIO_PLL2_MUL, base_rate * 50);
+		WREG32(R600_AUDIO_PLL2_DIV, clock * 100);
+		WREG32(R600_AUDIO_CLK_SRCSEL, 1);
+		break;
+	default:
+		dev_err(rdev->dev, "Unsupported DIG on encoder 0x%02X\n",
+			  radeon_encoder->encoder_id);
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 

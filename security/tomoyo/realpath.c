@@ -1,6 +1,7 @@
 /*
  * security/tomoyo/realpath.c
  *
+<<<<<<< HEAD
  * Copyright (C) 2005-2011  NTT DATA CORPORATION
  */
 
@@ -12,15 +13,41 @@
  *
  * @str:     String in binary format.
  * @str_len: Size of @str in byte.
+=======
+ * Pathname calculation functions for TOMOYO.
+ *
+ * Copyright (C) 2005-2010  NTT DATA CORPORATION
+ */
+
+#include <linux/types.h>
+#include <linux/mount.h>
+#include <linux/mnt_namespace.h>
+#include <linux/fs_struct.h>
+#include <linux/magic.h>
+#include <linux/slab.h>
+#include <net/sock.h>
+#include "common.h"
+#include "../../fs/internal.h"
+
+/**
+ * tomoyo_encode: Convert binary string to ascii string.
+ *
+ * @str: String in binary format.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Returns pointer to @str in ascii format on success, NULL otherwise.
  *
  * This function uses kzalloc(), so caller must kfree() if this function
  * didn't return NULL.
  */
+<<<<<<< HEAD
 char *tomoyo_encode2(const char *str, int str_len)
 {
 	int i;
+=======
+char *tomoyo_encode(const char *str)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int len = 0;
 	const char *p = str;
 	char *cp;
@@ -28,9 +55,14 @@ char *tomoyo_encode2(const char *str, int str_len)
 
 	if (!p)
 		return NULL;
+<<<<<<< HEAD
 	for (i = 0; i < str_len; i++) {
 		const unsigned char c = p[i];
 
+=======
+	while (*p) {
+		const unsigned char c = *p++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (c == '\\')
 			len += 2;
 		else if (c > ' ' && c < 127)
@@ -45,8 +77,13 @@ char *tomoyo_encode2(const char *str, int str_len)
 		return NULL;
 	cp0 = cp;
 	p = str;
+<<<<<<< HEAD
 	for (i = 0; i < str_len; i++) {
 		const unsigned char c = p[i];
+=======
+	while (*p) {
+		const unsigned char c = *p++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (c == '\\') {
 			*cp++ = '\\';
@@ -64,6 +101,7 @@ char *tomoyo_encode2(const char *str, int str_len)
 }
 
 /**
+<<<<<<< HEAD
  * tomoyo_encode - Encode binary string to ascii string.
  *
  * @str: String in binary format.
@@ -233,6 +271,8 @@ static char *tomoyo_get_socket_name(struct path *path, char * const buffer,
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * tomoyo_realpath_from_path - Returns realpath(3) of the given pathname but ignores chroot'ed root.
  *
  * @path: Pointer to "struct path".
@@ -253,6 +293,7 @@ char *tomoyo_realpath_from_path(struct path *path)
 	char *name = NULL;
 	unsigned int buf_len = PAGE_SIZE / 2;
 	struct dentry *dentry = path->dentry;
+<<<<<<< HEAD
 	struct super_block *sb;
 	if (!dentry)
 		return NULL;
@@ -260,11 +301,20 @@ char *tomoyo_realpath_from_path(struct path *path)
 	while (1) {
 		char *pos;
 		struct inode *inode;
+=======
+	bool is_dir;
+	if (!dentry)
+		return NULL;
+	is_dir = dentry->d_inode && S_ISDIR(dentry->d_inode->i_mode);
+	while (1) {
+		char *pos;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		buf_len <<= 1;
 		kfree(buf);
 		buf = kmalloc(buf_len, GFP_NOFS);
 		if (!buf)
 			break;
+<<<<<<< HEAD
 		/* To make sure that pos is '\0' terminated. */
 		buf[buf_len - 1] = '\0';
 		/* Get better name for socket. */
@@ -297,6 +347,49 @@ char *tomoyo_realpath_from_path(struct path *path)
 							    buf_len - 1);
 		}
 encode:
+=======
+		/* Get better name for socket. */
+		if (dentry->d_sb && dentry->d_sb->s_magic == SOCKFS_MAGIC) {
+			struct inode *inode = dentry->d_inode;
+			struct socket *sock = inode ? SOCKET_I(inode) : NULL;
+			struct sock *sk = sock ? sock->sk : NULL;
+			if (sk) {
+				snprintf(buf, buf_len - 1, "socket:[family=%u:"
+					 "type=%u:protocol=%u]", sk->sk_family,
+					 sk->sk_type, sk->sk_protocol);
+			} else {
+				snprintf(buf, buf_len - 1, "socket:[unknown]");
+			}
+			name = tomoyo_encode(buf);
+			break;
+		}
+		/* For "socket:[\$]" and "pipe:[\$]". */
+		if (dentry->d_op && dentry->d_op->d_dname) {
+			pos = dentry->d_op->d_dname(dentry, buf, buf_len - 1);
+			if (IS_ERR(pos))
+				continue;
+			name = tomoyo_encode(pos);
+			break;
+		}
+		/* If we don't have a vfsmount, we can't calculate. */
+		if (!path->mnt)
+			break;
+		pos = d_absolute_path(path, buf, buf_len - 1);
+		/* If path is disconnected, use "[unknown]" instead. */
+		if (pos == ERR_PTR(-EINVAL)) {
+			name = tomoyo_encode("[unknown]");
+			break;
+		}
+		/* Prepend "/proc" prefix if using internal proc vfs mount. */
+		if (!IS_ERR(pos) && (path->mnt->mnt_flags & MNT_INTERNAL) &&
+		    (path->mnt->mnt_sb->s_magic == PROC_SUPER_MAGIC)) {
+			pos -= 5;
+			if (pos >= buf)
+				memcpy(pos, "/proc", 5);
+			else
+				pos = ERR_PTR(-ENOMEM);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (IS_ERR(pos))
 			continue;
 		name = tomoyo_encode(pos);
@@ -305,6 +398,19 @@ encode:
 	kfree(buf);
 	if (!name)
 		tomoyo_warn_oom(__func__);
+<<<<<<< HEAD
+=======
+	else if (is_dir && *name) {
+		/* Append trailing '/' if dentry is a directory. */
+		char *pos = name + strlen(name) - 1;
+		if (*pos != '/')
+			/*
+			 * This is OK because tomoyo_encode() reserves space
+			 * for appending "/".
+			 */
+			*++pos = '/';
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return name;
 }
 

@@ -39,6 +39,10 @@
 #include <mach/regs-clock.h>
 #include <mach/regs-ldm.h>
 #include <mach/fb.h>
+<<<<<<< HEAD
+=======
+#include <mach/clkdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "nuc900fb.h"
 
@@ -550,7 +554,11 @@ static int __devinit nuc900fb_probe(struct platform_device *pdev)
 
 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 
+<<<<<<< HEAD
 	size = resource_size(res);
+=======
+	size = (res->end - res->start) + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fbi->mem = request_mem_region(res->start, size, pdev->name);
 	if (fbi->mem == NULL) {
 		dev_err(&pdev->dev, "failed to alloc memory region\n");
@@ -587,7 +595,11 @@ static int __devinit nuc900fb_probe(struct platform_device *pdev)
 	fbinfo->flags			= FBINFO_FLAG_DEFAULT;
 	fbinfo->pseudo_palette		= &fbi->pseudo_pal;
 
+<<<<<<< HEAD
 	ret = request_irq(irq, nuc900fb_irqhandler, 0,
+=======
+	ret = request_irq(irq, nuc900fb_irqhandler, IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  pdev->name, fbinfo);
 	if (ret) {
 		dev_err(&pdev->dev, "cannot register irq handler %d -err %d\n",
@@ -762,7 +774,22 @@ static struct platform_driver nuc900fb_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(nuc900fb_driver);
+=======
+int __devinit nuc900fb_init(void)
+{
+	return platform_driver_register(&nuc900fb_driver);
+}
+
+static void __exit nuc900fb_cleanup(void)
+{
+	platform_driver_unregister(&nuc900fb_driver);
+}
+
+module_init(nuc900fb_init);
+module_exit(nuc900fb_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Framebuffer driver for the NUC900");
 MODULE_LICENSE("GPL");

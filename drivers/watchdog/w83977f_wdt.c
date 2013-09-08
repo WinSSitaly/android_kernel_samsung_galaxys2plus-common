@@ -15,8 +15,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/types.h>
@@ -31,9 +34,18 @@
 #include <linux/uaccess.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
 
 #define WATCHDOG_VERSION  "1.00"
 #define WATCHDOG_NAME     "W83977F WDT"
+=======
+#include <asm/system.h>
+
+#define WATCHDOG_VERSION  "1.00"
+#define WATCHDOG_NAME     "W83977F WDT"
+#define PFX WATCHDOG_NAME ": "
+#define DRIVER_VERSION    WATCHDOG_NAME " driver, v" WATCHDOG_VERSION "\n"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define IO_INDEX_PORT     0x3F0
 #define IO_DATA_PORT      (IO_INDEX_PORT+1)
@@ -58,8 +70,13 @@ MODULE_PARM_DESC(timeout,
 module_param(testmode, int, 0);
 MODULE_PARM_DESC(testmode, "Watchdog testmode (1 = no reboot), default=0");
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 module_param(nowayout, bool, 0);
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout,
 		"Watchdog cannot be stopped once started (default="
 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
@@ -130,7 +147,11 @@ static int wdt_start(void)
 
 	spin_unlock_irqrestore(&spinlock, flags);
 
+<<<<<<< HEAD
 	pr_info("activated\n");
+=======
+	printk(KERN_INFO PFX "activated.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -184,7 +205,11 @@ static int wdt_stop(void)
 
 	spin_unlock_irqrestore(&spinlock, flags);
 
+<<<<<<< HEAD
 	pr_info("shutdown\n");
+=======
+	printk(KERN_INFO PFX "shutdown.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -312,7 +337,12 @@ static int wdt_release(struct inode *inode, struct file *file)
 		clear_bit(0, &timer_alive);
 	} else {
 		wdt_keepalive();
+<<<<<<< HEAD
 		pr_crit("unexpected close, not stopping watchdog!\n");
+=======
+		printk(KERN_CRIT PFX
+			"unexpected close, not stopping watchdog!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	expect_close = 0;
 	return 0;
@@ -469,7 +499,11 @@ static int __init w83977f_wdt_init(void)
 {
 	int rc;
 
+<<<<<<< HEAD
 	pr_info("driver v%s\n", WATCHDOG_VERSION);
+=======
+	printk(KERN_INFO PFX DRIVER_VERSION);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Check that the timeout value is within it's range;
@@ -477,24 +511,41 @@ static int __init w83977f_wdt_init(void)
 	 */
 	if (wdt_set_timeout(timeout)) {
 		wdt_set_timeout(DEFAULT_TIMEOUT);
+<<<<<<< HEAD
 		pr_info("timeout value must be 15 <= timeout <= 7635, using %d\n",
 			DEFAULT_TIMEOUT);
 	}
 
 	if (!request_region(IO_INDEX_PORT, 2, WATCHDOG_NAME)) {
 		pr_err("I/O address 0x%04x already in use\n", IO_INDEX_PORT);
+=======
+		printk(KERN_INFO PFX
+		    "timeout value must be 15 <= timeout <= 7635, using %d\n",
+							DEFAULT_TIMEOUT);
+	}
+
+	if (!request_region(IO_INDEX_PORT, 2, WATCHDOG_NAME)) {
+		printk(KERN_ERR PFX "I/O address 0x%04x already in use\n",
+			IO_INDEX_PORT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -EIO;
 		goto err_out;
 	}
 
 	rc = register_reboot_notifier(&wdt_notifier);
 	if (rc) {
+<<<<<<< HEAD
 		pr_err("cannot register reboot notifier (err=%d)\n", rc);
+=======
+		printk(KERN_ERR PFX
+			"cannot register reboot notifier (err=%d)\n", rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_out_region;
 	}
 
 	rc = misc_register(&wdt_miscdev);
 	if (rc) {
+<<<<<<< HEAD
 		pr_err("cannot register miscdev on minor=%d (err=%d)\n",
 		       wdt_miscdev.minor, rc);
 		goto err_out_reboot;
@@ -502,6 +553,17 @@ static int __init w83977f_wdt_init(void)
 
 	pr_info("initialized. timeout=%d sec (nowayout=%d testmode=%d)\n",
 		timeout, nowayout, testmode);
+=======
+		printk(KERN_ERR PFX
+			"cannot register miscdev on minor=%d (err=%d)\n",
+						wdt_miscdev.minor, rc);
+		goto err_out_reboot;
+	}
+
+	printk(KERN_INFO PFX
+		"initialized. timeout=%d sec (nowayout=%d testmode=%d)\n",
+					timeout, nowayout, testmode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 

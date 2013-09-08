@@ -57,12 +57,19 @@ int radeon_driver_load_kms(struct drm_device *dev, unsigned long flags)
 	}
 	dev->dev_private = (void *)rdev;
 
+<<<<<<< HEAD
 	pci_set_master(dev->pdev);
 
 	/* update BUS flag */
 	if (drm_pci_device_is_agp(dev)) {
 		flags |= RADEON_IS_AGP;
 	} else if (pci_is_pcie(dev->pdev)) {
+=======
+	/* update BUS flag */
+	if (drm_pci_device_is_agp(dev)) {
+		flags |= RADEON_IS_AGP;
+	} else if (drm_pci_device_is_pcie(dev)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		flags |= RADEON_IS_PCIE;
 	} else {
 		flags |= RADEON_IS_PCI;
@@ -171,9 +178,13 @@ int radeon_info_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
 		value = rdev->accel_working;
 		break;
 	case RADEON_INFO_TILING_CONFIG:
+<<<<<<< HEAD
 		if (rdev->family >= CHIP_TAHITI)
 			value = rdev->config.si.tile_config;
 		else if (rdev->family >= CHIP_CAYMAN)
+=======
+		if (rdev->family >= CHIP_CAYMAN)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			value = rdev->config.cayman.tile_config;
 		else if (rdev->family >= CHIP_CEDAR)
 			value = rdev->config.evergreen.tile_config;
@@ -212,10 +223,14 @@ int radeon_info_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
 		value = rdev->clock.spll.reference_freq * 10;
 		break;
 	case RADEON_INFO_NUM_BACKENDS:
+<<<<<<< HEAD
 		if (rdev->family >= CHIP_TAHITI)
 			value = rdev->config.si.max_backends_per_se *
 				rdev->config.si.max_shader_engines;
 		else if (rdev->family >= CHIP_CAYMAN)
+=======
+		if (rdev->family >= CHIP_CAYMAN)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			value = rdev->config.cayman.max_backends_per_se *
 				rdev->config.cayman.max_shader_engines;
 		else if (rdev->family >= CHIP_CEDAR)
@@ -229,9 +244,13 @@ int radeon_info_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
 		}
 		break;
 	case RADEON_INFO_NUM_TILE_PIPES:
+<<<<<<< HEAD
 		if (rdev->family >= CHIP_TAHITI)
 			value = rdev->config.si.max_tile_pipes;
 		else if (rdev->family >= CHIP_CAYMAN)
+=======
+		if (rdev->family >= CHIP_CAYMAN)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			value = rdev->config.cayman.max_tile_pipes;
 		else if (rdev->family >= CHIP_CEDAR)
 			value = rdev->config.evergreen.max_tile_pipes;
@@ -246,6 +265,7 @@ int radeon_info_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
 	case RADEON_INFO_FUSION_GART_WORKING:
 		value = 1;
 		break;
+<<<<<<< HEAD
 	case RADEON_INFO_BACKEND_MAP:
 		if (rdev->family >= CHIP_TAHITI)
 			value = rdev->config.si.backend_map;
@@ -288,6 +308,8 @@ int radeon_info_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
 			return -EINVAL;
 		}
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		DRM_DEBUG_KMS("Invalid request %d\n", info->request);
 		return -EINVAL;
@@ -308,6 +330,10 @@ int radeon_driver_firstopen_kms(struct drm_device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void radeon_driver_lastclose_kms(struct drm_device *dev)
 {
 	vga_switcheroo_process_delayed_switch();
@@ -315,6 +341,7 @@ void radeon_driver_lastclose_kms(struct drm_device *dev)
 
 int radeon_driver_open_kms(struct drm_device *dev, struct drm_file *file_priv)
 {
+<<<<<<< HEAD
 	struct radeon_device *rdev = dev->dev_private;
 
 	file_priv->driver_priv = NULL;
@@ -338,12 +365,15 @@ int radeon_driver_open_kms(struct drm_device *dev, struct drm_file *file_priv)
 
 		file_priv->driver_priv = fpriv;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 void radeon_driver_postclose_kms(struct drm_device *dev,
 				 struct drm_file *file_priv)
 {
+<<<<<<< HEAD
 	struct radeon_device *rdev = dev->dev_private;
 
 	/* new gpu have virtual address space support */
@@ -354,6 +384,8 @@ void radeon_driver_postclose_kms(struct drm_device *dev,
 		kfree(fpriv);
 		file_priv->driver_priv = NULL;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void radeon_driver_preclose_kms(struct drm_device *dev,
@@ -521,6 +553,9 @@ struct drm_ioctl_desc radeon_ioctls_kms[] = {
 	DRM_IOCTL_DEF_DRV(RADEON_GEM_SET_TILING, radeon_gem_set_tiling_ioctl, DRM_AUTH|DRM_UNLOCKED),
 	DRM_IOCTL_DEF_DRV(RADEON_GEM_GET_TILING, radeon_gem_get_tiling_ioctl, DRM_AUTH|DRM_UNLOCKED),
 	DRM_IOCTL_DEF_DRV(RADEON_GEM_BUSY, radeon_gem_busy_ioctl, DRM_AUTH|DRM_UNLOCKED),
+<<<<<<< HEAD
 	DRM_IOCTL_DEF_DRV(RADEON_GEM_VA, radeon_gem_va_ioctl, DRM_AUTH|DRM_UNLOCKED),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 int radeon_max_kms_ioctl = DRM_ARRAY_SIZE(radeon_ioctls_kms);

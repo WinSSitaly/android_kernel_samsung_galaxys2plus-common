@@ -97,6 +97,10 @@
 #include <linux/init.h>
 #include <linux/net.h>
 #include <linux/rcupdate.h>
+<<<<<<< HEAD
+=======
+#include <linux/jhash.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #ifdef CONFIG_SYSCTL
 #include <linux/sysctl.h>
@@ -112,7 +116,17 @@
 #include <net/arp.h>
 #include <net/ax25.h>
 #include <net/netrom.h>
+<<<<<<< HEAD
 
+=======
+#if defined(CONFIG_ATM_CLIP) || defined(CONFIG_ATM_CLIP_MODULE)
+#include <net/atmclip.h>
+struct neigh_table *clip_tbl_hook;
+EXPORT_SYMBOL(clip_tbl_hook);
+#endif
+
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/uaccess.h>
 
 #include <linux/netfilter_arp.h>
@@ -120,7 +134,11 @@
 /*
  *	Interface to generic neighbour cache.
  */
+<<<<<<< HEAD
 static u32 arp_hash(const void *pkey, const struct net_device *dev, __u32 *hash_rnd);
+=======
+static u32 arp_hash(const void *pkey, const struct net_device *dev, __u32 rnd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int arp_constructor(struct neighbour *neigh);
 static void arp_solicit(struct neighbour *neigh, struct sk_buff *skb);
 static void arp_error_report(struct neighbour *neigh, struct sk_buff *skb);
@@ -132,6 +150,11 @@ static const struct neigh_ops arp_generic_ops = {
 	.error_report =		arp_error_report,
 	.output =		neigh_resolve_output,
 	.connected_output =	neigh_connected_output,
+<<<<<<< HEAD
+=======
+	.hh_output =		dev_queue_xmit,
+	.queue_xmit =		dev_queue_xmit,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct neigh_ops arp_hh_ops = {
@@ -140,12 +163,24 @@ static const struct neigh_ops arp_hh_ops = {
 	.error_report =		arp_error_report,
 	.output =		neigh_resolve_output,
 	.connected_output =	neigh_resolve_output,
+<<<<<<< HEAD
+=======
+	.hh_output =		dev_queue_xmit,
+	.queue_xmit =		dev_queue_xmit,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct neigh_ops arp_direct_ops = {
 	.family =		AF_INET,
+<<<<<<< HEAD
 	.output =		neigh_direct_output,
 	.connected_output =	neigh_direct_output,
+=======
+	.output =		dev_queue_xmit,
+	.connected_output =	dev_queue_xmit,
+	.hh_output =		dev_queue_xmit,
+	.queue_xmit =		dev_queue_xmit,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct neigh_ops arp_broken_ops = {
@@ -154,10 +189,19 @@ static const struct neigh_ops arp_broken_ops = {
 	.error_report =		arp_error_report,
 	.output =		neigh_compat_output,
 	.connected_output =	neigh_compat_output,
+<<<<<<< HEAD
+=======
+	.hh_output =		dev_queue_xmit,
+	.queue_xmit =		dev_queue_xmit,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct neigh_table arp_tbl = {
 	.family		= AF_INET,
+<<<<<<< HEAD
+=======
+	.entry_size	= sizeof(struct neighbour) + 4,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.key_len	= 4,
 	.hash		= arp_hash,
 	.constructor	= arp_constructor,
@@ -170,7 +214,11 @@ struct neigh_table arp_tbl = {
 		.gc_staletime		= 60 * HZ,
 		.reachable_time		= 30 * HZ,
 		.delay_probe_time	= 5 * HZ,
+<<<<<<< HEAD
 		.queue_len_bytes	= 64*1024,
+=======
+		.queue_len		= 3,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.ucast_probes		= 3,
 		.mcast_probes		= 3,
 		.anycast_delay		= 1 * HZ,
@@ -214,9 +262,15 @@ int arp_mc_map(__be32 addr, u8 *haddr, struct net_device *dev, int dir)
 
 static u32 arp_hash(const void *pkey,
 		    const struct net_device *dev,
+<<<<<<< HEAD
 		    __u32 *hash_rnd)
 {
 	return arp_hashfn(*(u32 *)pkey, dev, *hash_rnd);
+=======
+		    __u32 hash_rnd)
+{
+	return jhash_2words(*(u32 *)pkey, dev->ifindex, hash_rnd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int arp_constructor(struct neighbour *neigh)
@@ -243,7 +297,11 @@ static int arp_constructor(struct neighbour *neigh)
 	if (!dev->header_ops) {
 		neigh->nud_state = NUD_NOARP;
 		neigh->ops = &arp_direct_ops;
+<<<<<<< HEAD
 		neigh->output = neigh_direct_output;
+=======
+		neigh->output = neigh->ops->queue_xmit;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		/* Good devices (checked by reading texts, but only Ethernet is
 		   tested)
@@ -276,9 +334,15 @@ static int arp_constructor(struct neighbour *neigh)
 		default:
 			break;
 		case ARPHRD_ROSE:
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_AX25)
 		case ARPHRD_AX25:
 #if IS_ENABLED(CONFIG_NETROM)
+=======
+#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
+		case ARPHRD_AX25:
+#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case ARPHRD_NETROM:
 #endif
 			neigh->ops = &arp_broken_ops;
@@ -502,6 +566,39 @@ EXPORT_SYMBOL(arp_find);
 
 /* END OF OBSOLETE FUNCTIONS */
 
+<<<<<<< HEAD
+=======
+struct neighbour *__arp_bind_neighbour(struct dst_entry *dst, __be32 nexthop)
+{
+	struct net_device *dev = dst->dev;
+
+	if (dev->flags & (IFF_LOOPBACK | IFF_POINTOPOINT))
+		nexthop = 0;
+	return __neigh_lookup_errno(
+#if defined(CONFIG_ATM_CLIP) || defined(CONFIG_ATM_CLIP_MODULE)
+		dev->type == ARPHRD_ATM ?
+		clip_tbl_hook :
+#endif
+		&arp_tbl, &nexthop, dev);
+}
+
+int arp_bind_neighbour(struct dst_entry *dst)
+{
+	struct net_device *dev = dst->dev;
+	struct neighbour *n = dst_get_neighbour(dst);
+
+	if (dev == NULL)
+		return -EINVAL;
+	if (n == NULL) {
+		n = __arp_bind_neighbour(dst, ((struct rtable *)dst)->rt_gateway);
+		if (IS_ERR(n))
+			return PTR_ERR(n);
+		dst_set_neighbour(dst, n);
+	}
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Check if we can use proxy ARP for this path
  */
@@ -585,18 +682,29 @@ struct sk_buff *arp_create(int type, int ptype, __be32 dest_ip,
 	struct sk_buff *skb;
 	struct arphdr *arp;
 	unsigned char *arp_ptr;
+<<<<<<< HEAD
 	int hlen = LL_RESERVED_SPACE(dev);
 	int tlen = dev->needed_tailroom;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 *	Allocate a buffer
 	 */
 
+<<<<<<< HEAD
 	skb = alloc_skb(arp_hdr_len(dev) + hlen + tlen, GFP_ATOMIC);
 	if (skb == NULL)
 		return NULL;
 
 	skb_reserve(skb, hlen);
+=======
+	skb = alloc_skb(arp_hdr_len(dev) + LL_ALLOCATED_SPACE(dev), GFP_ATOMIC);
+	if (skb == NULL)
+		return NULL;
+
+	skb_reserve(skb, LL_RESERVED_SPACE(dev));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skb_reset_network_header(skb);
 	arp = (struct arphdr *) skb_put(skb, arp_hdr_len(dev));
 	skb->dev = dev;
@@ -628,13 +736,21 @@ struct sk_buff *arp_create(int type, int ptype, __be32 dest_ip,
 		arp->ar_pro = htons(ETH_P_IP);
 		break;
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_AX25)
+=======
+#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case ARPHRD_AX25:
 		arp->ar_hrd = htons(ARPHRD_AX25);
 		arp->ar_pro = htons(AX25_P_IP);
 		break;
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_NETROM)
+=======
+#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case ARPHRD_NETROM:
 		arp->ar_hrd = htons(ARPHRD_NETROM);
 		arp->ar_pro = htons(AX25_P_IP);
@@ -642,13 +758,21 @@ struct sk_buff *arp_create(int type, int ptype, __be32 dest_ip,
 #endif
 #endif
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_FDDI)
+=======
+#if defined(CONFIG_FDDI) || defined(CONFIG_FDDI_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case ARPHRD_FDDI:
 		arp->ar_hrd = htons(ARPHRD_ETHER);
 		arp->ar_pro = htons(ETH_P_IP);
 		break;
 #endif
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_TR)
+=======
+#if defined(CONFIG_TR) || defined(CONFIG_TR_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case ARPHRD_IEEE802_TR:
 		arp->ar_hrd = htons(ARPHRD_IEEE802);
 		arp->ar_pro = htons(ETH_P_IP);
@@ -888,7 +1012,11 @@ static int arp_process(struct sk_buff *skb)
 
 	n = __neigh_lookup(&arp_tbl, &sip, dev, 0);
 
+<<<<<<< HEAD
 	if (IN_DEV_ARP_ACCEPT(in_dev)) {
+=======
+	if (IPV4_DEVCONF_ALL(dev_net(dev), ARP_ACCEPT)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Unsolicited ARP is not accepted by default.
 		   It is possible, that this option should be enabled for some
 		   devices (strip is candidate)
@@ -1036,7 +1164,11 @@ static int arp_req_set(struct net *net, struct arpreq *r,
 			return -EINVAL;
 	}
 	switch (dev->type) {
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_FDDI)
+=======
+#if defined(CONFIG_FDDI) || defined(CONFIG_FDDI_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case ARPHRD_FDDI:
 		/*
 		 * According to RFC 1390, FDDI devices should accept ARP
@@ -1282,7 +1414,11 @@ void __init arp_init(void)
 }
 
 #ifdef CONFIG_PROC_FS
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_AX25)
+=======
+#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -1330,7 +1466,11 @@ static void arp_format_neigh_entry(struct seq_file *seq,
 
 	read_lock(&n->lock);
 	/* Convert hardware address to XX:XX:XX:XX ... form. */
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_AX25)
+=======
+#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (hatype == ARPHRD_AX25 || hatype == ARPHRD_NETROM)
 		ax2asc2((ax25_address *)n->ha, hbuffer);
 	else {
@@ -1343,7 +1483,11 @@ static void arp_format_neigh_entry(struct seq_file *seq,
 	if (k != 0)
 		--k;
 	hbuffer[k] = 0;
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_AX25)
+=======
+#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 #endif
 	sprintf(tbuf, "%pI4", n->primary_key);

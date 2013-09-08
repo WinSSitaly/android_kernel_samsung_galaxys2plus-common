@@ -18,9 +18,15 @@
 #include <linux/delay.h>
 #include <linux/pm.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/spi/spi.h>
 #include <linux/slab.h>
 #include <linux/of_device.h>
+=======
+#include <linux/platform_device.h>
+#include <linux/spi/spi.h>
+#include <linux/slab.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/pcm.h>
 #include <sound/pcm_params.h>
@@ -301,7 +307,11 @@ static const struct snd_soc_dapm_widget wm8750_dapm_widgets[] = {
 	SND_SOC_DAPM_INPUT("RINPUT3"),
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dapm_route wm8750_dapm_routes[] = {
+=======
+static const struct snd_soc_dapm_route audio_map[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* left mixer */
 	{"Left Mixer", "Playback Switch", "Left DAC"},
 	{"Left Mixer", "Left Bypass Switch", "Left Line Mux"},
@@ -395,6 +405,20 @@ static const struct snd_soc_dapm_route wm8750_dapm_routes[] = {
 	{"Right ADC", NULL, "Right ADC Mux"},
 };
 
+<<<<<<< HEAD
+=======
+static int wm8750_add_widgets(struct snd_soc_codec *codec)
+{
+	struct snd_soc_dapm_context *dapm = &codec->dapm;
+
+	snd_soc_dapm_new_controls(dapm, wm8750_dapm_widgets,
+				  ARRAY_SIZE(wm8750_dapm_widgets));
+	snd_soc_dapm_add_routes(dapm, audio_map, ARRAY_SIZE(audio_map));
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct _coeff_div {
 	u32 mclk;
 	u32 rate;
@@ -604,8 +628,11 @@ static int wm8750_set_bias_level(struct snd_soc_codec *codec,
 		break;
 	case SND_SOC_BIAS_STANDBY:
 		if (codec->dapm.bias_level == SND_SOC_BIAS_OFF) {
+<<<<<<< HEAD
 			snd_soc_cache_sync(codec);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Set VMID to 5k */
 			snd_soc_write(codec, WM8750_PWR1, pwr_reg | 0x01c1);
 
@@ -631,7 +658,11 @@ static int wm8750_set_bias_level(struct snd_soc_codec *codec,
 #define WM8750_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE |\
 	SNDRV_PCM_FMTBIT_S24_LE)
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops wm8750_dai_ops = {
+=======
+static struct snd_soc_dai_ops wm8750_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params	= wm8750_pcm_hw_params,
 	.digital_mute	= wm8750_mute,
 	.set_fmt	= wm8750_set_dai_fmt,
@@ -655,7 +686,11 @@ static struct snd_soc_dai_driver wm8750_dai = {
 	.ops = &wm8750_dai_ops,
 };
 
+<<<<<<< HEAD
 static int wm8750_suspend(struct snd_soc_codec *codec)
+=======
+static int wm8750_suspend(struct snd_soc_codec *codec, pm_message_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	wm8750_set_bias_level(codec, SND_SOC_BIAS_OFF);
 	return 0;
@@ -663,14 +698,36 @@ static int wm8750_suspend(struct snd_soc_codec *codec)
 
 static int wm8750_resume(struct snd_soc_codec *codec)
 {
+<<<<<<< HEAD
 	wm8750_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
+=======
+	int i;
+	u8 data[2];
+	u16 *cache = codec->reg_cache;
+
+	/* Sync reg_cache with the hardware */
+	for (i = 0; i < ARRAY_SIZE(wm8750_reg); i++) {
+		if (i == WM8750_RESET)
+			continue;
+		data[0] = (i << 1) | ((cache[i] >> 8) & 0x0001);
+		data[1] = cache[i] & 0x00ff;
+		codec->hw_write(codec->control_data, data, 2);
+	}
+
+	wm8750_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int wm8750_probe(struct snd_soc_codec *codec)
 {
 	struct wm8750_priv *wm8750 = snd_soc_codec_get_drvdata(codec);
+<<<<<<< HEAD
 	int ret;
+=======
+	int reg, ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = snd_soc_codec_set_cache_io(codec, 7, 9, wm8750->control_type);
 	if (ret < 0) {
@@ -688,6 +745,7 @@ static int wm8750_probe(struct snd_soc_codec *codec)
 	wm8750_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
 
 	/* set the update bits */
+<<<<<<< HEAD
 	snd_soc_update_bits(codec, WM8750_LDAC, 0x0100, 0x0100);
 	snd_soc_update_bits(codec, WM8750_RDAC, 0x0100, 0x0100);
 	snd_soc_update_bits(codec, WM8750_LOUT1V, 0x0100, 0x0100);
@@ -697,6 +755,28 @@ static int wm8750_probe(struct snd_soc_codec *codec)
 	snd_soc_update_bits(codec, WM8750_LINVOL, 0x0100, 0x0100);
 	snd_soc_update_bits(codec, WM8750_RINVOL, 0x0100, 0x0100);
 
+=======
+	reg = snd_soc_read(codec, WM8750_LDAC);
+	snd_soc_write(codec, WM8750_LDAC, reg | 0x0100);
+	reg = snd_soc_read(codec, WM8750_RDAC);
+	snd_soc_write(codec, WM8750_RDAC, reg | 0x0100);
+	reg = snd_soc_read(codec, WM8750_LOUT1V);
+	snd_soc_write(codec, WM8750_LOUT1V, reg | 0x0100);
+	reg = snd_soc_read(codec, WM8750_ROUT1V);
+	snd_soc_write(codec, WM8750_ROUT1V, reg | 0x0100);
+	reg = snd_soc_read(codec, WM8750_LOUT2V);
+	snd_soc_write(codec, WM8750_LOUT2V, reg | 0x0100);
+	reg = snd_soc_read(codec, WM8750_ROUT2V);
+	snd_soc_write(codec, WM8750_ROUT2V, reg | 0x0100);
+	reg = snd_soc_read(codec, WM8750_LINVOL);
+	snd_soc_write(codec, WM8750_LINVOL, reg | 0x0100);
+	reg = snd_soc_read(codec, WM8750_RINVOL);
+	snd_soc_write(codec, WM8750_RINVOL, reg | 0x0100);
+
+	snd_soc_add_controls(codec, wm8750_snd_controls,
+				ARRAY_SIZE(wm8750_snd_controls));
+	wm8750_add_widgets(codec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -715,6 +795,7 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8750 = {
 	.reg_cache_size = ARRAY_SIZE(wm8750_reg),
 	.reg_word_size = sizeof(u16),
 	.reg_cache_default = wm8750_reg,
+<<<<<<< HEAD
 
 	.controls = wm8750_snd_controls,
 	.num_controls = ARRAY_SIZE(wm8750_snd_controls),
@@ -730,6 +811,9 @@ static const struct of_device_id wm8750_of_match[] = {
 	{ }
 };
 MODULE_DEVICE_TABLE(of, wm8750_of_match);
+=======
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if defined(CONFIG_SPI_MASTER)
 static int __devinit wm8750_spi_probe(struct spi_device *spi)
@@ -737,8 +821,12 @@ static int __devinit wm8750_spi_probe(struct spi_device *spi)
 	struct wm8750_priv *wm8750;
 	int ret;
 
+<<<<<<< HEAD
 	wm8750 = devm_kzalloc(&spi->dev, sizeof(struct wm8750_priv),
 			      GFP_KERNEL);
+=======
+	wm8750 = kzalloc(sizeof(struct wm8750_priv), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (wm8750 == NULL)
 		return -ENOMEM;
 
@@ -747,12 +835,18 @@ static int __devinit wm8750_spi_probe(struct spi_device *spi)
 
 	ret = snd_soc_register_codec(&spi->dev,
 			&soc_codec_dev_wm8750, &wm8750_dai, 1);
+<<<<<<< HEAD
+=======
+	if (ret < 0)
+		kfree(wm8750);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devexit wm8750_spi_remove(struct spi_device *spi)
 {
 	snd_soc_unregister_codec(&spi->dev);
+<<<<<<< HEAD
 	return 0;
 }
 
@@ -770,6 +864,17 @@ static struct spi_driver wm8750_spi_driver = {
 		.of_match_table = wm8750_of_match,
 	},
 	.id_table	= wm8750_spi_ids,
+=======
+	kfree(spi_get_drvdata(spi));
+	return 0;
+}
+
+static struct spi_driver wm8750_spi_driver = {
+	.driver = {
+		.name	= "wm8750-codec",
+		.owner	= THIS_MODULE,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.probe		= wm8750_spi_probe,
 	.remove		= __devexit_p(wm8750_spi_remove),
 };
@@ -782,8 +887,12 @@ static __devinit int wm8750_i2c_probe(struct i2c_client *i2c,
 	struct wm8750_priv *wm8750;
 	int ret;
 
+<<<<<<< HEAD
 	wm8750 = devm_kzalloc(&i2c->dev, sizeof(struct wm8750_priv),
 			      GFP_KERNEL);
+=======
+	wm8750 = kzalloc(sizeof(struct wm8750_priv), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (wm8750 == NULL)
 		return -ENOMEM;
 
@@ -792,12 +901,21 @@ static __devinit int wm8750_i2c_probe(struct i2c_client *i2c,
 
 	ret =  snd_soc_register_codec(&i2c->dev,
 			&soc_codec_dev_wm8750, &wm8750_dai, 1);
+<<<<<<< HEAD
+=======
+	if (ret < 0)
+		kfree(wm8750);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static __devexit int wm8750_i2c_remove(struct i2c_client *client)
 {
 	snd_soc_unregister_codec(&client->dev);
+<<<<<<< HEAD
+=======
+	kfree(i2c_get_clientdata(client));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -810,9 +928,14 @@ MODULE_DEVICE_TABLE(i2c, wm8750_i2c_id);
 
 static struct i2c_driver wm8750_i2c_driver = {
 	.driver = {
+<<<<<<< HEAD
 		.name = "wm8750",
 		.owner = THIS_MODULE,
 		.of_match_table = wm8750_of_match,
+=======
+		.name = "wm8750-codec",
+		.owner = THIS_MODULE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe =    wm8750_i2c_probe,
 	.remove =   __devexit_p(wm8750_i2c_remove),

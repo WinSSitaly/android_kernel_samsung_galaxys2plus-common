@@ -11,7 +11,11 @@
  *  Copyright (c) 2000 Daniel Egger		<egger@suse.de>
  *  Copyright (c) 2001 Frederic Lepied		<flepied@mandrakesoft.com>
  *  Copyright (c) 2004 Panagiotis Issaris	<panagiotis.issaris@mech.kuleuven.ac.be>
+<<<<<<< HEAD
  *  Copyright (c) 2002-2011 Ping Cheng		<pingc@wacom.com>
+=======
+ *  Copyright (c) 2002-2009 Ping Cheng		<pingc@wacom.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *  ChangeLog:
  *      v0.1 (vp)  - Initial release
@@ -88,13 +92,20 @@
 #include <linux/mod_devicetable.h>
 #include <linux/init.h>
 #include <linux/usb/input.h>
+<<<<<<< HEAD
 #include <linux/power_supply.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/unaligned.h>
 
 /*
  * Version Information
  */
+<<<<<<< HEAD
 #define DRIVER_VERSION "v1.53"
+=======
+#define DRIVER_VERSION "v1.52"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DRIVER_AUTHOR "Vojtech Pavlik <vojtech@ucw.cz>"
 #define DRIVER_DESC "USB Wacom tablet driver"
 #define DRIVER_LICENSE "GPL"
@@ -113,6 +124,7 @@ struct wacom {
 	struct urb *irq;
 	struct wacom_wac wacom_wac;
 	struct mutex lock;
+<<<<<<< HEAD
 	struct work_struct work;
 	bool open;
 	char phys[32];
@@ -131,6 +143,12 @@ static inline void wacom_schedule_work(struct wacom_wac *wacom_wac)
 	schedule_work(&wacom->work);
 }
 
+=======
+	bool open;
+	char phys[32];
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern const struct usb_device_id wacom_ids[];
 
 void wacom_wac_irq(struct wacom_wac *wacom_wac, size_t len);

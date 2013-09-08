@@ -38,9 +38,12 @@
 #include <rdma/ib_mad.h>
 #include <rdma/ib_sa.h>
 
+<<<<<<< HEAD
 /* ib_cm and ib_user_cm modules share /sys/class/infiniband_cm */
 extern struct class cm_class;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum ib_cm_state {
 	IB_CM_IDLE,
 	IB_CM_LISTEN,

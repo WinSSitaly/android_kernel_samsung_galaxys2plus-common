@@ -23,6 +23,9 @@ obj-$(CONFIG_RTL8192C_COMMON)	+= rtl8192c/
 obj-$(CONFIG_RTL8192CE)		+= rtl8192ce/
 obj-$(CONFIG_RTL8192CU)		+= rtl8192cu/
 obj-$(CONFIG_RTL8192SE)		+= rtl8192se/
+<<<<<<< HEAD
 obj-$(CONFIG_RTL8192DE)		+= rtl8192de/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 ccflags-y += -D__CHECK_ENDIAN__

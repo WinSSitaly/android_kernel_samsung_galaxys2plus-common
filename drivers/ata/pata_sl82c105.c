@@ -1,7 +1,10 @@
 /*
  * pata_sl82c105.c 	- SL82C105 PATA for new ATA layer
  *			  (C) 2005 Red Hat Inc
+<<<<<<< HEAD
  *			  (C) 2011 Bartlomiej Zolnierkiewicz
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Based in part on linux/drivers/ide/pci/sl82c105.c
  * 		SL82C105/Winbond 553 IDE driver
@@ -290,6 +293,7 @@ static int sl82c105_bridge_revision(struct pci_dev *pdev)
 	return bridge->revision;
 }
 
+<<<<<<< HEAD
 static void sl82c105_fixup(struct pci_dev *pdev)
 {
 	u32 val;
@@ -298,6 +302,8 @@ static void sl82c105_fixup(struct pci_dev *pdev)
 	val |= CTRL_P0EN | CTRL_P0F16 | CTRL_P1F16;
 	pci_write_config_dword(pdev, 0x40, val);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int sl82c105_init_one(struct pci_dev *dev, const struct pci_device_id *id)
 {
@@ -315,6 +321,10 @@ static int sl82c105_init_one(struct pci_dev *dev, const struct pci_device_id *id
 	/* for now use only the first port */
 	const struct ata_port_info *ppi[] = { &info_early,
 					       NULL };
+<<<<<<< HEAD
+=======
+	u32 val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rev;
 	int rc;
 
@@ -325,6 +335,7 @@ static int sl82c105_init_one(struct pci_dev *dev, const struct pci_device_id *id
 	rev = sl82c105_bridge_revision(dev);
 
 	if (rev == -1)
+<<<<<<< HEAD
 		dev_warn(&dev->dev,
 			 "pata_sl82c105: Unable to find bridge, disabling DMA\n");
 	else if (rev <= 5)
@@ -334,10 +345,22 @@ static int sl82c105_init_one(struct pci_dev *dev, const struct pci_device_id *id
 		ppi[0] = &info_dma;
 
 	sl82c105_fixup(dev);
+=======
+		dev_printk(KERN_WARNING, &dev->dev, "pata_sl82c105: Unable to find bridge, disabling DMA.\n");
+	else if (rev <= 5)
+		dev_printk(KERN_WARNING, &dev->dev, "pata_sl82c105: Early bridge revision, no DMA available.\n");
+	else
+		ppi[0] = &info_dma;
+
+	pci_read_config_dword(dev, 0x40, &val);
+	val |= CTRL_P0EN | CTRL_P0F16 | CTRL_P1F16;
+	pci_write_config_dword(dev, 0x40, val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ata_pci_bmdma_init_one(dev, ppi, &sl82c105_sht, NULL, 0);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 static int sl82c105_reinit_one(struct pci_dev *pdev)
 {
@@ -355,6 +378,8 @@ static int sl82c105_reinit_one(struct pci_dev *pdev)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct pci_device_id sl82c105[] = {
 	{ PCI_VDEVICE(WINBOND, PCI_DEVICE_ID_WINBOND_82C105), },
 
@@ -365,11 +390,15 @@ static struct pci_driver sl82c105_pci_driver = {
 	.name 		= DRV_NAME,
 	.id_table	= sl82c105,
 	.probe 		= sl82c105_init_one,
+<<<<<<< HEAD
 	.remove		= ata_pci_remove_one,
 #ifdef CONFIG_PM
 	.suspend	= ata_pci_device_suspend,
 	.resume		= sl82c105_reinit_one,
 #endif
+=======
+	.remove		= ata_pci_remove_one
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init sl82c105_init(void)

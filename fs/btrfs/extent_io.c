@@ -17,9 +17,12 @@
 #include "compat.h"
 #include "ctree.h"
 #include "btrfs_inode.h"
+<<<<<<< HEAD
 #include "volumes.h"
 #include "check-integrity.h"
 #include "locking.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct kmem_cache *extent_state_cache;
 static struct kmem_cache *extent_buffer_cache;
@@ -54,6 +57,7 @@ struct extent_page_data {
 	unsigned int sync_io:1;
 };
 
+<<<<<<< HEAD
 static noinline void flush_write_bio(void *data);
 static inline struct btrfs_fs_info *
 tree_fs_info(struct extent_io_tree *tree)
@@ -61,6 +65,8 @@ tree_fs_info(struct extent_io_tree *tree)
 	return btrfs_sb(tree->mapping->host->i_sb);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int __init extent_io_init(void)
 {
 	extent_state_cache = kmem_cache_create("extent_state",
@@ -144,7 +150,10 @@ static struct extent_state *alloc_extent_state(gfp_t mask)
 #endif
 	atomic_set(&state->refs, 1);
 	init_waitqueue_head(&state->wq);
+<<<<<<< HEAD
 	trace_alloc_extent_state(state, mask, _RET_IP_);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return state;
 }
 
@@ -162,7 +171,10 @@ void free_extent_state(struct extent_state *state)
 		list_del(&state->leak_list);
 		spin_unlock_irqrestore(&leak_lock, flags);
 #endif
+<<<<<<< HEAD
 		trace_free_extent_state(state, _RET_IP_);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kmem_cache_free(extent_state_cache, state);
 	}
 }
@@ -266,14 +278,23 @@ static void merge_cb(struct extent_io_tree *tree, struct extent_state *new,
  *
  * This should be called with the tree lock held.
  */
+<<<<<<< HEAD
 static void merge_state(struct extent_io_tree *tree,
 		        struct extent_state *state)
+=======
+static int merge_state(struct extent_io_tree *tree,
+		       struct extent_state *state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct extent_state *other;
 	struct rb_node *other_node;
 
 	if (state->state & (EXTENT_IOBITS | EXTENT_BOUNDARY))
+<<<<<<< HEAD
 		return;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	other_node = rb_prev(&state->rb_node);
 	if (other_node) {
@@ -293,6 +314,7 @@ static void merge_state(struct extent_io_tree *tree,
 		if (other->start == state->end + 1 &&
 		    other->state == state->state) {
 			merge_cb(tree, state, other);
+<<<<<<< HEAD
 			state->end = other->end;
 			other->tree = NULL;
 			rb_erase(&other->rb_node, &tree->state);
@@ -306,6 +328,28 @@ static void set_state_cb(struct extent_io_tree *tree,
 {
 	if (tree->ops && tree->ops->set_bit_hook)
 		tree->ops->set_bit_hook(tree->mapping->host, state, bits);
+=======
+			other->start = state->start;
+			state->tree = NULL;
+			rb_erase(&state->rb_node, &tree->state);
+			free_extent_state(state);
+			state = NULL;
+		}
+	}
+
+	return 0;
+}
+
+static int set_state_cb(struct extent_io_tree *tree,
+			 struct extent_state *state, int *bits)
+{
+	if (tree->ops && tree->ops->set_bit_hook) {
+		return tree->ops->set_bit_hook(tree->mapping->host,
+					       state, bits);
+	}
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void clear_state_cb(struct extent_io_tree *tree,
@@ -315,9 +359,12 @@ static void clear_state_cb(struct extent_io_tree *tree,
 		tree->ops->clear_bit_hook(tree->mapping->host, state, bits);
 }
 
+<<<<<<< HEAD
 static void set_state_bits(struct extent_io_tree *tree,
 			   struct extent_state *state, int *bits);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * insert an extent_state struct into the tree.  'bits' are set on the
  * struct before it is inserted.
@@ -333,6 +380,11 @@ static int insert_state(struct extent_io_tree *tree,
 			int *bits)
 {
 	struct rb_node *node;
+<<<<<<< HEAD
+=======
+	int bits_to_set = *bits & ~EXTENT_CTLBITS;
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (end < start) {
 		printk(KERN_ERR "btrfs end < start %llu %llu\n",
@@ -342,9 +394,19 @@ static int insert_state(struct extent_io_tree *tree,
 	}
 	state->start = start;
 	state->end = end;
+<<<<<<< HEAD
 
 	set_state_bits(tree, state, bits);
 
+=======
+	ret = set_state_cb(tree, state, bits);
+	if (ret)
+		return ret;
+
+	if (bits_to_set & EXTENT_DIRTY)
+		tree->dirty_bytes += end - start + 1;
+	state->state |= bits_to_set;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	node = tree_insert(&tree->state, end, &state->rb_node);
 	if (node) {
 		struct extent_state *found;
@@ -353,6 +415,10 @@ static int insert_state(struct extent_io_tree *tree,
 		       "%llu %llu\n", (unsigned long long)found->start,
 		       (unsigned long long)found->end,
 		       (unsigned long long)start, (unsigned long long)end);
+<<<<<<< HEAD
+=======
+		free_extent_state(state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EEXIST;
 	}
 	state->tree = tree;
@@ -360,11 +426,21 @@ static int insert_state(struct extent_io_tree *tree,
 	return 0;
 }
 
+<<<<<<< HEAD
 static void split_cb(struct extent_io_tree *tree, struct extent_state *orig,
 		     u64 split)
 {
 	if (tree->ops && tree->ops->split_extent_hook)
 		tree->ops->split_extent_hook(tree->mapping->host, orig, split);
+=======
+static int split_cb(struct extent_io_tree *tree, struct extent_state *orig,
+		     u64 split)
+{
+	if (tree->ops && tree->ops->split_extent_hook)
+		return tree->ops->split_extent_hook(tree->mapping->host,
+						    orig, split);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -402,6 +478,7 @@ static int split_state(struct extent_io_tree *tree, struct extent_state *orig,
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct extent_state *next_state(struct extent_state *state)
 {
 	struct rb_node *next = rb_next(&state->rb_node);
@@ -414,16 +491,31 @@ static struct extent_state *next_state(struct extent_state *state)
 /*
  * utility function to clear some bits in an extent state struct.
  * it will optionally wake up any one waiting on this state (wake == 1)
+=======
+/*
+ * utility function to clear some bits in an extent state struct.
+ * it will optionally wake up any one waiting on this state (wake == 1), or
+ * forcibly remove the state from the tree (delete == 1).
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * If no bits are set on the state struct after clearing things, the
  * struct is freed and removed from the tree
  */
+<<<<<<< HEAD
 static struct extent_state *clear_state_bit(struct extent_io_tree *tree,
 					    struct extent_state *state,
 					    int *bits, int wake)
 {
 	struct extent_state *next;
 	int bits_to_clear = *bits & ~EXTENT_CTLBITS;
+=======
+static int clear_state_bit(struct extent_io_tree *tree,
+			    struct extent_state *state,
+			    int *bits, int wake)
+{
+	int bits_to_clear = *bits & ~EXTENT_CTLBITS;
+	int ret = state->state & bits_to_clear;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((bits_to_clear & EXTENT_DIRTY) && (state->state & EXTENT_DIRTY)) {
 		u64 range = state->end - state->start + 1;
@@ -435,7 +527,10 @@ static struct extent_state *clear_state_bit(struct extent_io_tree *tree,
 	if (wake)
 		wake_up(&state->wq);
 	if (state->state == 0) {
+<<<<<<< HEAD
 		next = next_state(state);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (state->tree) {
 			rb_erase(&state->rb_node, &tree->state);
 			state->tree = NULL;
@@ -445,9 +540,14 @@ static struct extent_state *clear_state_bit(struct extent_io_tree *tree,
 		}
 	} else {
 		merge_state(tree, state);
+<<<<<<< HEAD
 		next = next_state(state);
 	}
 	return next;
+=======
+	}
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct extent_state *
@@ -459,6 +559,7 @@ alloc_extent_state_atomic(struct extent_state *prealloc)
 	return prealloc;
 }
 
+<<<<<<< HEAD
 void extent_io_tree_panic(struct extent_io_tree *tree, int err)
 {
 	btrfs_panic(tree_fs_info(tree), err, "Locking error: "
@@ -466,6 +567,8 @@ void extent_io_tree_panic(struct extent_io_tree *tree, int err)
 		    "thread while locked.");
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * clear some bits on a range in the tree.  This may require splitting
  * or inserting elements in the tree, so the gfp mask is used to
@@ -476,7 +579,12 @@ void extent_io_tree_panic(struct extent_io_tree *tree, int err)
  *
  * the range [start, end] is inclusive.
  *
+<<<<<<< HEAD
  * This takes the tree lock, and returns 0 on success and < 0 on error.
+=======
+ * This takes the tree lock, and returns < 0 on error, > 0 if any of the
+ * bits were already set, or zero if none of the bits were already set.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int clear_extent_bit(struct extent_io_tree *tree, u64 start, u64 end,
 		     int bits, int wake, int delete,
@@ -486,9 +594,17 @@ int clear_extent_bit(struct extent_io_tree *tree, u64 start, u64 end,
 	struct extent_state *state;
 	struct extent_state *cached;
 	struct extent_state *prealloc = NULL;
+<<<<<<< HEAD
 	struct rb_node *node;
 	u64 last_end;
 	int err;
+=======
+	struct rb_node *next_node;
+	struct rb_node *node;
+	u64 last_end;
+	int err;
+	int set = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int clear = 0;
 
 	if (delete)
@@ -513,8 +629,12 @@ again:
 			cached_state = NULL;
 		}
 
+<<<<<<< HEAD
 		if (cached && cached->tree && cached->start <= start &&
 		    cached->end > start) {
+=======
+		if (cached && cached->tree && cached->start == start) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (clear)
 				atomic_dec(&cached->refs);
 			state = cached;
@@ -537,12 +657,15 @@ hit_next:
 	WARN_ON(state->end < start);
 	last_end = state->end;
 
+<<<<<<< HEAD
 	/* the state doesn't have the wanted bits, go ahead */
 	if (!(state->state & bits)) {
 		state = next_state(state);
 		goto next;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 *     | ---- desired range ---- |
 	 *  | state | or
@@ -563,14 +686,22 @@ hit_next:
 		prealloc = alloc_extent_state_atomic(prealloc);
 		BUG_ON(!prealloc);
 		err = split_state(tree, state, prealloc, start);
+<<<<<<< HEAD
 		if (err)
 			extent_io_tree_panic(tree, err);
 
+=======
+		BUG_ON(err == -EEXIST);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		prealloc = NULL;
 		if (err)
 			goto out;
 		if (state->end <= end) {
+<<<<<<< HEAD
 			clear_state_bit(tree, state, &bits, wake);
+=======
+			set |= clear_state_bit(tree, state, &bits, wake);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (last_end == (u64)-1)
 				goto out;
 			start = last_end + 1;
@@ -587,6 +718,7 @@ hit_next:
 		prealloc = alloc_extent_state_atomic(prealloc);
 		BUG_ON(!prealloc);
 		err = split_state(tree, state, prealloc, end + 1);
+<<<<<<< HEAD
 		if (err)
 			extent_io_tree_panic(tree, err);
 
@@ -594,11 +726,19 @@ hit_next:
 			wake_up(&state->wq);
 
 		clear_state_bit(tree, prealloc, &bits, wake);
+=======
+		BUG_ON(err == -EEXIST);
+		if (wake)
+			wake_up(&state->wq);
+
+		set |= clear_state_bit(tree, prealloc, &bits, wake);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		prealloc = NULL;
 		goto out;
 	}
 
+<<<<<<< HEAD
 	state = clear_state_bit(tree, state, &bits, wake);
 next:
 	if (last_end == (u64)-1)
@@ -606,6 +746,23 @@ next:
 	start = last_end + 1;
 	if (start <= end && state && !need_resched())
 		goto hit_next;
+=======
+	if (state->end < end && prealloc && !need_resched())
+		next_node = rb_next(&state->rb_node);
+	else
+		next_node = NULL;
+
+	set |= clear_state_bit(tree, state, &bits, wake);
+	if (last_end == (u64)-1)
+		goto out;
+	start = last_end + 1;
+	if (start <= end && next_node) {
+		state = rb_entry(next_node, struct extent_state,
+				 rb_node);
+		if (state->start == start)
+			goto hit_next;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	goto search_again;
 
 out:
@@ -613,7 +770,11 @@ out:
 	if (prealloc)
 		free_extent_state(prealloc);
 
+<<<<<<< HEAD
 	return 0;
+=======
+	return set;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 search_again:
 	if (start > end)
@@ -624,8 +785,13 @@ search_again:
 	goto again;
 }
 
+<<<<<<< HEAD
 static void wait_on_state(struct extent_io_tree *tree,
 			  struct extent_state *state)
+=======
+static int wait_on_state(struct extent_io_tree *tree,
+			 struct extent_state *state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__releases(tree->lock)
 		__acquires(tree->lock)
 {
@@ -635,6 +801,10 @@ static void wait_on_state(struct extent_io_tree *tree,
 	schedule();
 	spin_lock(&tree->lock);
 	finish_wait(&state->wq, &wait);
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -642,7 +812,11 @@ static void wait_on_state(struct extent_io_tree *tree,
  * The range [start, end] is inclusive.
  * The tree lock is taken by this function
  */
+<<<<<<< HEAD
 void wait_extent_bit(struct extent_io_tree *tree, u64 start, u64 end, int bits)
+=======
+int wait_extent_bit(struct extent_io_tree *tree, u64 start, u64 end, int bits)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct extent_state *state;
 	struct rb_node *node;
@@ -675,6 +849,7 @@ again:
 		if (start > end)
 			break;
 
+<<<<<<< HEAD
 		cond_resched_lock(&tree->lock);
 	}
 out:
@@ -688,11 +863,39 @@ static void set_state_bits(struct extent_io_tree *tree,
 	int bits_to_set = *bits & ~EXTENT_CTLBITS;
 
 	set_state_cb(tree, state, bits);
+=======
+		if (need_resched()) {
+			spin_unlock(&tree->lock);
+			cond_resched();
+			spin_lock(&tree->lock);
+		}
+	}
+out:
+	spin_unlock(&tree->lock);
+	return 0;
+}
+
+static int set_state_bits(struct extent_io_tree *tree,
+			   struct extent_state *state,
+			   int *bits)
+{
+	int ret;
+	int bits_to_set = *bits & ~EXTENT_CTLBITS;
+
+	ret = set_state_cb(tree, state, bits);
+	if (ret)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((bits_to_set & EXTENT_DIRTY) && !(state->state & EXTENT_DIRTY)) {
 		u64 range = state->end - state->start + 1;
 		tree->dirty_bytes += range;
 	}
 	state->state |= bits_to_set;
+<<<<<<< HEAD
+=======
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void cache_state(struct extent_state *state,
@@ -726,10 +929,16 @@ static void uncache_state(struct extent_state **cached_ptr)
  * [start, end] is inclusive This takes the tree lock.
  */
 
+<<<<<<< HEAD
 static int __must_check
 __set_extent_bit(struct extent_io_tree *tree, u64 start, u64 end,
 		 int bits, int exclusive_bits, u64 *failed_start,
 		 struct extent_state **cached_state, gfp_t mask)
+=======
+int set_extent_bit(struct extent_io_tree *tree, u64 start, u64 end,
+		   int bits, int exclusive_bits, u64 *failed_start,
+		   struct extent_state **cached_state, gfp_t mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct extent_state *state;
 	struct extent_state *prealloc = NULL;
@@ -748,8 +957,12 @@ again:
 	spin_lock(&tree->lock);
 	if (cached_state && *cached_state) {
 		state = *cached_state;
+<<<<<<< HEAD
 		if (state->start <= start && state->end > start &&
 		    state->tree) {
+=======
+		if (state->start == start && state->tree) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			node = &state->rb_node;
 			goto hit_next;
 		}
@@ -763,10 +976,15 @@ again:
 		prealloc = alloc_extent_state_atomic(prealloc);
 		BUG_ON(!prealloc);
 		err = insert_state(tree, prealloc, start, end, &bits);
+<<<<<<< HEAD
 		if (err)
 			extent_io_tree_panic(tree, err);
 
 		prealloc = NULL;
+=======
+		prealloc = NULL;
+		BUG_ON(err == -EEXIST);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 	state = rb_entry(node, struct extent_state, rb_node);
@@ -788,15 +1006,26 @@ hit_next:
 			goto out;
 		}
 
+<<<<<<< HEAD
 		set_state_bits(tree, state, &bits);
 
+=======
+		err = set_state_bits(tree, state, &bits);
+		if (err)
+			goto out;
+
+		next_node = rb_next(node);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cache_state(state, cached_state);
 		merge_state(tree, state);
 		if (last_end == (u64)-1)
 			goto out;
 
 		start = last_end + 1;
+<<<<<<< HEAD
 		next_node = rb_next(&state->rb_node);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (next_node && start < end && prealloc && !need_resched()) {
 			state = rb_entry(next_node, struct extent_state,
 					 rb_node);
@@ -832,14 +1061,24 @@ hit_next:
 		prealloc = alloc_extent_state_atomic(prealloc);
 		BUG_ON(!prealloc);
 		err = split_state(tree, state, prealloc, start);
+<<<<<<< HEAD
 		if (err)
 			extent_io_tree_panic(tree, err);
 
+=======
+		BUG_ON(err == -EEXIST);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		prealloc = NULL;
 		if (err)
 			goto out;
 		if (state->end <= end) {
+<<<<<<< HEAD
 			set_state_bits(tree, state, &bits);
+=======
+			err = set_state_bits(tree, state, &bits);
+			if (err)
+				goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cache_state(state, cached_state);
 			merge_state(tree, state);
 			if (last_end == (u64)-1)
@@ -869,12 +1108,26 @@ hit_next:
 		 * Avoid to free 'prealloc' if it can be merged with
 		 * the later extent.
 		 */
+<<<<<<< HEAD
 		err = insert_state(tree, prealloc, start, this_end,
 				   &bits);
 		if (err)
 			extent_io_tree_panic(tree, err);
 
 		cache_state(prealloc, cached_state);
+=======
+		atomic_inc(&prealloc->refs);
+		err = insert_state(tree, prealloc, start, this_end,
+				   &bits);
+		BUG_ON(err == -EEXIST);
+		if (err) {
+			free_extent_state(prealloc);
+			prealloc = NULL;
+			goto out;
+		}
+		cache_state(prealloc, cached_state);
+		free_extent_state(prealloc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		prealloc = NULL;
 		start = this_end + 1;
 		goto search_again;
@@ -895,6 +1148,7 @@ hit_next:
 		prealloc = alloc_extent_state_atomic(prealloc);
 		BUG_ON(!prealloc);
 		err = split_state(tree, state, prealloc, end + 1);
+<<<<<<< HEAD
 		if (err)
 			extent_io_tree_panic(tree, err);
 
@@ -1100,6 +1354,17 @@ hit_next:
 
 		set_state_bits(tree, prealloc, &bits);
 		clear_state_bit(tree, prealloc, &clear_bits, 0);
+=======
+		BUG_ON(err == -EEXIST);
+
+		err = set_state_bits(tree, prealloc, &bits);
+		if (err) {
+			prealloc = NULL;
+			goto out;
+		}
+		cache_state(prealloc, cached_state);
+		merge_state(tree, prealloc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		prealloc = NULL;
 		goto out;
 	}
@@ -1126,14 +1391,22 @@ search_again:
 int set_extent_dirty(struct extent_io_tree *tree, u64 start, u64 end,
 		     gfp_t mask)
 {
+<<<<<<< HEAD
 	return set_extent_bit(tree, start, end, EXTENT_DIRTY, NULL,
+=======
+	return set_extent_bit(tree, start, end, EXTENT_DIRTY, 0, NULL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      NULL, mask);
 }
 
 int set_extent_bits(struct extent_io_tree *tree, u64 start, u64 end,
 		    int bits, gfp_t mask)
 {
+<<<<<<< HEAD
 	return set_extent_bit(tree, start, end, bits, NULL,
+=======
+	return set_extent_bit(tree, start, end, bits, 0, NULL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      NULL, mask);
 }
 
@@ -1147,8 +1420,13 @@ int set_extent_delalloc(struct extent_io_tree *tree, u64 start, u64 end,
 			struct extent_state **cached_state, gfp_t mask)
 {
 	return set_extent_bit(tree, start, end,
+<<<<<<< HEAD
 			      EXTENT_DELALLOC | EXTENT_UPTODATE,
 			      NULL, cached_state, mask);
+=======
+			      EXTENT_DELALLOC | EXTENT_DIRTY | EXTENT_UPTODATE,
+			      0, NULL, cached_state, mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int clear_extent_dirty(struct extent_io_tree *tree, u64 start, u64 end,
@@ -1162,7 +1440,11 @@ int clear_extent_dirty(struct extent_io_tree *tree, u64 start, u64 end,
 int set_extent_new(struct extent_io_tree *tree, u64 start, u64 end,
 		     gfp_t mask)
 {
+<<<<<<< HEAD
 	return set_extent_bit(tree, start, end, EXTENT_NEW, NULL,
+=======
+	return set_extent_bit(tree, start, end, EXTENT_NEW, 0, NULL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      NULL, mask);
 }
 
@@ -1170,7 +1452,11 @@ int set_extent_uptodate(struct extent_io_tree *tree, u64 start, u64 end,
 			struct extent_state **cached_state, gfp_t mask)
 {
 	return set_extent_bit(tree, start, end, EXTENT_UPTODATE, 0,
+<<<<<<< HEAD
 			      cached_state, mask);
+=======
+			      NULL, cached_state, mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int clear_extent_uptodate(struct extent_io_tree *tree, u64 start,
@@ -1186,11 +1472,16 @@ static int clear_extent_uptodate(struct extent_io_tree *tree, u64 start,
  * us if waiting is desired.
  */
 int lock_extent_bits(struct extent_io_tree *tree, u64 start, u64 end,
+<<<<<<< HEAD
 		     int bits, struct extent_state **cached_state)
+=======
+		     int bits, struct extent_state **cached_state, gfp_t mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 	u64 failed_start;
 	while (1) {
+<<<<<<< HEAD
 		err = __set_extent_bit(tree, start, end, EXTENT_LOCKED | bits,
 				       EXTENT_LOCKED, &failed_start,
 				       cached_state, GFP_NOFS);
@@ -1199,27 +1490,57 @@ int lock_extent_bits(struct extent_io_tree *tree, u64 start, u64 end,
 			start = failed_start;
 		} else
 			break;
+=======
+		err = set_extent_bit(tree, start, end, EXTENT_LOCKED | bits,
+				     EXTENT_LOCKED, &failed_start,
+				     cached_state, mask);
+		if (err == -EEXIST && (mask & __GFP_WAIT)) {
+			wait_extent_bit(tree, failed_start, end, EXTENT_LOCKED);
+			start = failed_start;
+		} else {
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		WARN_ON(start > end);
 	}
 	return err;
 }
 
+<<<<<<< HEAD
 int lock_extent(struct extent_io_tree *tree, u64 start, u64 end)
 {
 	return lock_extent_bits(tree, start, end, 0, NULL);
 }
 
 int try_lock_extent(struct extent_io_tree *tree, u64 start, u64 end)
+=======
+int lock_extent(struct extent_io_tree *tree, u64 start, u64 end, gfp_t mask)
+{
+	return lock_extent_bits(tree, start, end, 0, NULL, mask);
+}
+
+int try_lock_extent(struct extent_io_tree *tree, u64 start, u64 end,
+		    gfp_t mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 	u64 failed_start;
 
+<<<<<<< HEAD
 	err = __set_extent_bit(tree, start, end, EXTENT_LOCKED, EXTENT_LOCKED,
 			       &failed_start, NULL, GFP_NOFS);
 	if (err == -EEXIST) {
 		if (failed_start > start)
 			clear_extent_bit(tree, start, failed_start - 1,
 					 EXTENT_LOCKED, 1, 0, NULL, GFP_NOFS);
+=======
+	err = set_extent_bit(tree, start, end, EXTENT_LOCKED, EXTENT_LOCKED,
+			     &failed_start, NULL, mask);
+	if (err == -EEXIST) {
+		if (failed_start > start)
+			clear_extent_bit(tree, start, failed_start - 1,
+					 EXTENT_LOCKED, 1, 0, NULL, mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 	return 1;
@@ -1232,6 +1553,7 @@ int unlock_extent_cached(struct extent_io_tree *tree, u64 start, u64 end,
 				mask);
 }
 
+<<<<<<< HEAD
 int unlock_extent(struct extent_io_tree *tree, u64 start, u64 end)
 {
 	return clear_extent_bit(tree, start, end, EXTENT_LOCKED, 1, 0, NULL,
@@ -1239,21 +1561,40 @@ int unlock_extent(struct extent_io_tree *tree, u64 start, u64 end)
 }
 
 int extent_range_clear_dirty_for_io(struct inode *inode, u64 start, u64 end)
+=======
+int unlock_extent(struct extent_io_tree *tree, u64 start, u64 end, gfp_t mask)
+{
+	return clear_extent_bit(tree, start, end, EXTENT_LOCKED, 1, 0, NULL,
+				mask);
+}
+
+/*
+ * helper function to set both pages and extents in the tree writeback
+ */
+static int set_range_writeback(struct extent_io_tree *tree, u64 start, u64 end)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long index = start >> PAGE_CACHE_SHIFT;
 	unsigned long end_index = end >> PAGE_CACHE_SHIFT;
 	struct page *page;
 
 	while (index <= end_index) {
+<<<<<<< HEAD
 		page = find_get_page(inode->i_mapping, index);
 		BUG_ON(!page); /* Pages should be in the extent_io_tree */
 		clear_page_dirty_for_io(page);
+=======
+		page = find_get_page(tree->mapping, index);
+		BUG_ON(!page);
+		set_page_writeback(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		page_cache_release(page);
 		index++;
 	}
 	return 0;
 }
 
+<<<<<<< HEAD
 int extent_range_redirty_for_io(struct inode *inode, u64 start, u64 end)
 {
 	unsigned long index = start >> PAGE_CACHE_SHIFT;
@@ -1288,6 +1629,46 @@ static int set_range_writeback(struct extent_io_tree *tree, u64 start, u64 end)
 		index++;
 	}
 	return 0;
+=======
+/*
+ * find the first offset in the io tree with 'bits' set. zero is
+ * returned if we find something, and *start_ret and *end_ret are
+ * set to reflect the state struct that was found.
+ *
+ * If nothing was found, 1 is returned, < 0 on error
+ */
+int find_first_extent_bit(struct extent_io_tree *tree, u64 start,
+			  u64 *start_ret, u64 *end_ret, int bits)
+{
+	struct rb_node *node;
+	struct extent_state *state;
+	int ret = 1;
+
+	spin_lock(&tree->lock);
+	/*
+	 * this search will find all the extents that end after
+	 * our range starts.
+	 */
+	node = tree_search(tree, start);
+	if (!node)
+		goto out;
+
+	while (1) {
+		state = rb_entry(node, struct extent_state, rb_node);
+		if (state->end >= start && (state->state & bits)) {
+			*start_ret = state->start;
+			*end_ret = state->end;
+			ret = 0;
+			break;
+		}
+		node = rb_next(node);
+		if (!node)
+			break;
+	}
+out:
+	spin_unlock(&tree->lock);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* find the first state struct with 'bits' set after 'start', and
@@ -1322,6 +1703,7 @@ out:
 }
 
 /*
+<<<<<<< HEAD
  * find the first offset in the io tree with 'bits' set. zero is
  * returned if we find something, and *start_ret and *end_ret are
  * set to reflect the state struct that was found.
@@ -1346,6 +1728,8 @@ int find_first_extent_bit(struct extent_io_tree *tree, u64 start,
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * find a contiguous range of bytes in the file marked as delalloc, not
  * more than 'max_bytes'.  start and end are used to return the range,
  *
@@ -1405,9 +1789,15 @@ out:
 	return found;
 }
 
+<<<<<<< HEAD
 static noinline void __unlock_for_delalloc(struct inode *inode,
 					   struct page *locked_page,
 					   u64 start, u64 end)
+=======
+static noinline int __unlock_for_delalloc(struct inode *inode,
+					  struct page *locked_page,
+					  u64 start, u64 end)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 	struct page *pages[16];
@@ -1417,7 +1807,11 @@ static noinline void __unlock_for_delalloc(struct inode *inode,
 	int i;
 
 	if (index == locked_page->index && end_index == index)
+<<<<<<< HEAD
 		return;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (nr_pages > 0) {
 		ret = find_get_pages_contig(inode->i_mapping, index,
@@ -1432,6 +1826,10 @@ static noinline void __unlock_for_delalloc(struct inode *inode,
 		index += ret;
 		cond_resched();
 	}
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static noinline int lock_delalloc_pages(struct inode *inode,
@@ -1561,10 +1959,18 @@ again:
 			goto out_failed;
 		}
 	}
+<<<<<<< HEAD
 	BUG_ON(ret); /* Only valid values are 0 and -EAGAIN */
 
 	/* step three, lock the state bits for the whole range */
 	lock_extent_bits(tree, delalloc_start, delalloc_end, 0, &cached_state);
+=======
+	BUG_ON(ret);
+
+	/* step three, lock the state bits for the whole range */
+	lock_extent_bits(tree, delalloc_start, delalloc_end,
+			 0, &cached_state, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* then test to make sure it is all still delalloc */
 	ret = test_range_bit(tree, delalloc_start, delalloc_end,
@@ -1775,8 +2181,12 @@ int test_range_bit(struct extent_io_tree *tree, u64 start, u64 end,
 	int bitset = 0;
 
 	spin_lock(&tree->lock);
+<<<<<<< HEAD
 	if (cached && cached->tree && cached->start <= start &&
 	    cached->end > start)
+=======
+	if (cached && cached->tree && cached->start == start)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		node = &cached->rb_node;
 	else
 		node = tree_search(tree, start);
@@ -1821,30 +2231,49 @@ int test_range_bit(struct extent_io_tree *tree, u64 start, u64 end,
  * helper function to set a given page up to date if all the
  * extents in the tree for that page are up to date
  */
+<<<<<<< HEAD
 static void check_page_uptodate(struct extent_io_tree *tree, struct page *page)
+=======
+static int check_page_uptodate(struct extent_io_tree *tree,
+			       struct page *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u64 start = (u64)page->index << PAGE_CACHE_SHIFT;
 	u64 end = start + PAGE_CACHE_SIZE - 1;
 	if (test_range_bit(tree, start, end, EXTENT_UPTODATE, 1, NULL))
 		SetPageUptodate(page);
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * helper function to unlock a page if all the extents in the tree
  * for that page are unlocked
  */
+<<<<<<< HEAD
 static void check_page_locked(struct extent_io_tree *tree, struct page *page)
+=======
+static int check_page_locked(struct extent_io_tree *tree,
+			     struct page *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u64 start = (u64)page->index << PAGE_CACHE_SHIFT;
 	u64 end = start + PAGE_CACHE_SIZE - 1;
 	if (!test_range_bit(tree, start, end, EXTENT_LOCKED, 0, NULL))
 		unlock_page(page);
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * helper function to end page writeback if all the extents
  * in the tree for that page are done with writeback
  */
+<<<<<<< HEAD
 static void check_page_writeback(struct extent_io_tree *tree,
 				 struct page *page)
 {
@@ -2272,6 +2701,17 @@ int end_extent_writepage(struct page *page, int err, u64 start, u64 end)
 	return 0;
 }
 
+=======
+static int check_page_writeback(struct extent_io_tree *tree,
+			     struct page *page)
+{
+	end_page_writeback(page);
+	return 0;
+}
+
+/* lots and lots of room for performance fixes in the end_bio funcs */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * after a writepage IO is done, we need to:
  * clear the uptodate bits on error
@@ -2283,11 +2723,19 @@ int end_extent_writepage(struct page *page, int err, u64 start, u64 end)
  */
 static void end_bio_extent_writepage(struct bio *bio, int err)
 {
+<<<<<<< HEAD
+=======
+	int uptodate = err == 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bio_vec *bvec = bio->bi_io_vec + bio->bi_vcnt - 1;
 	struct extent_io_tree *tree;
 	u64 start;
 	u64 end;
 	int whole_page;
+<<<<<<< HEAD
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	do {
 		struct page *page = bvec->bv_page;
@@ -2304,9 +2752,34 @@ static void end_bio_extent_writepage(struct bio *bio, int err)
 
 		if (--bvec >= bio->bi_io_vec)
 			prefetchw(&bvec->bv_page->flags);
+<<<<<<< HEAD
 
 		if (end_extent_writepage(page, err, start, end))
 			continue;
+=======
+		if (tree->ops && tree->ops->writepage_end_io_hook) {
+			ret = tree->ops->writepage_end_io_hook(page, start,
+						       end, NULL, uptodate);
+			if (ret)
+				uptodate = 0;
+		}
+
+		if (!uptodate && tree->ops &&
+		    tree->ops->writepage_io_failed_hook) {
+			ret = tree->ops->writepage_io_failed_hook(bio, page,
+							 start, end, NULL);
+			if (ret == 0) {
+				uptodate = (err == 0);
+				continue;
+			}
+		}
+
+		if (!uptodate) {
+			clear_extent_uptodate(tree, start, end, NULL, GFP_NOFS);
+			ClearPageUptodate(page);
+			SetPageError(page);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (whole_page)
 			end_page_writeback(page);
@@ -2337,7 +2810,10 @@ static void end_bio_extent_readpage(struct bio *bio, int err)
 	u64 start;
 	u64 end;
 	int whole_page;
+<<<<<<< HEAD
 	int mirror;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	if (err)
@@ -2348,9 +2824,12 @@ static void end_bio_extent_readpage(struct bio *bio, int err)
 		struct extent_state *cached = NULL;
 		struct extent_state *state;
 
+<<<<<<< HEAD
 		pr_debug("end_bio_extent_readpage: bi_vcnt=%d, idx=%d, err=%d, "
 			 "mirror=%ld\n", bio->bi_vcnt, bio->bi_idx, err,
 			 (long int)bio->bi_bdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tree = &BTRFS_I(page->mapping->host)->io_tree;
 
 		start = ((u64)page->index << PAGE_CACHE_SHIFT) +
@@ -2376,6 +2855,7 @@ static void end_bio_extent_readpage(struct bio *bio, int err)
 		}
 		spin_unlock(&tree->lock);
 
+<<<<<<< HEAD
 		mirror = (int)(unsigned long)bio->bi_bdev;
 		if (uptodate && tree->ops && tree->ops->readpage_end_io_hook) {
 			ret = tree->ops->readpage_end_io_hook(page, start, end,
@@ -2403,6 +2883,18 @@ static void end_bio_extent_readpage(struct bio *bio, int err)
 			 * remain responsible for that page.
 			 */
 			ret = bio_readpage_error(bio, page, start, end, mirror, NULL);
+=======
+		if (uptodate && tree->ops && tree->ops->readpage_end_io_hook) {
+			ret = tree->ops->readpage_end_io_hook(page, start, end,
+							      state);
+			if (ret)
+				uptodate = 0;
+		}
+		if (!uptodate && tree->ops &&
+		    tree->ops->readpage_io_failed_hook) {
+			ret = tree->ops->readpage_io_failed_hook(bio, page,
+							 start, end, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret == 0) {
 				uptodate =
 					test_bit(BIO_UPTODATE, &bio->bi_flags);
@@ -2413,7 +2905,11 @@ static void end_bio_extent_readpage(struct bio *bio, int err)
 			}
 		}
 
+<<<<<<< HEAD
 		if (uptodate && tree->track_uptodate) {
+=======
+		if (uptodate) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			set_extent_uptodate(tree, start, end, &cached,
 					    GFP_ATOMIC);
 		}
@@ -2462,12 +2958,17 @@ btrfs_bio_alloc(struct block_device *bdev, u64 first_sector, int nr_vecs,
 	return bio;
 }
 
+<<<<<<< HEAD
 /*
  * Since writes are async, they will only return -ENOMEM.
  * Reads can return the full range of I/O error conditions.
  */
 static int __must_check submit_one_bio(int rw, struct bio *bio,
 				       int mirror_num, unsigned long bio_flags)
+=======
+static int submit_one_bio(int rw, struct bio *bio, int mirror_num,
+			  unsigned long bio_flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret = 0;
 	struct bio_vec *bvec = bio->bi_io_vec + bio->bi_vcnt - 1;
@@ -2485,14 +2986,19 @@ static int __must_check submit_one_bio(int rw, struct bio *bio,
 		ret = tree->ops->submit_bio_hook(page->mapping->host, rw, bio,
 					   mirror_num, bio_flags, start);
 	else
+<<<<<<< HEAD
 		btrfsic_submit_bio(rw, bio);
 
+=======
+		submit_bio(rw, bio);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (bio_flagged(bio, BIO_EOPNOTSUPP))
 		ret = -EOPNOTSUPP;
 	bio_put(bio);
 	return ret;
 }
 
+<<<<<<< HEAD
 static int merge_bio(struct extent_io_tree *tree, struct page *page,
 		     unsigned long offset, size_t size, struct bio *bio,
 		     unsigned long bio_flags)
@@ -2506,6 +3012,8 @@ static int merge_bio(struct extent_io_tree *tree, struct page *page,
 
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int submit_extent_page(int rw, struct extent_io_tree *tree,
 			      struct page *page, sector_t sector,
 			      size_t size, unsigned long offset,
@@ -2534,12 +3042,21 @@ static int submit_extent_page(int rw, struct extent_io_tree *tree,
 				sector;
 
 		if (prev_bio_flags != bio_flags || !contig ||
+<<<<<<< HEAD
 		    merge_bio(tree, page, offset, page_size, bio, bio_flags) ||
 		    bio_add_page(bio, page, page_size, offset) < page_size) {
 			ret = submit_one_bio(rw, bio, mirror_num,
 					     prev_bio_flags);
 			if (ret < 0)
 				return ret;
+=======
+		    (tree->ops && tree->ops->merge_bio_hook &&
+		     tree->ops->merge_bio_hook(page, offset, page_size, bio,
+					       bio_flags)) ||
+		    bio_add_page(bio, page, page_size, offset) < page_size) {
+			ret = submit_one_bio(rw, bio, mirror_num,
+					     prev_bio_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			bio = NULL;
 		} else {
 			return 0;
@@ -2566,11 +3083,16 @@ static int submit_extent_page(int rw, struct extent_io_tree *tree,
 	return ret;
 }
 
+<<<<<<< HEAD
 void attach_extent_buffer_page(struct extent_buffer *eb, struct page *page)
+=======
+void set_page_extent_mapped(struct page *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (!PagePrivate(page)) {
 		SetPagePrivate(page);
 		page_cache_get(page);
+<<<<<<< HEAD
 		set_page_private(page, (unsigned long)eb);
 	} else {
 		WARN_ON(page->private != (unsigned long)eb);
@@ -2584,13 +3106,26 @@ void set_page_extent_mapped(struct page *page)
 		page_cache_get(page);
 		set_page_private(page, EXTENT_PAGE_PRIVATE);
 	}
+=======
+		set_page_private(page, EXTENT_PAGE_PRIVATE);
+	}
+}
+
+static void set_page_extent_head(struct page *page, unsigned long len)
+{
+	WARN_ON(!PagePrivate(page));
+	set_page_private(page, EXTENT_PAGE_PRIVATE_FIRST_PAGE | len << 2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * basic readpage implementation.  Locked extent state structs are inserted
  * into the tree that are removed when the IO is done (by the end_io
  * handlers)
+<<<<<<< HEAD
  * XXX JDM: This needs looking at to ensure proper page locking
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int __extent_read_full_page(struct extent_io_tree *tree,
 				   struct page *page,
@@ -2630,11 +3165,19 @@ static int __extent_read_full_page(struct extent_io_tree *tree,
 
 	end = page_end;
 	while (1) {
+<<<<<<< HEAD
 		lock_extent(tree, start, end);
 		ordered = btrfs_lookup_ordered_extent(inode, start);
 		if (!ordered)
 			break;
 		unlock_extent(tree, start, end);
+=======
+		lock_extent(tree, start, end, GFP_NOFS);
+		ordered = btrfs_lookup_ordered_extent(inode, start);
+		if (!ordered)
+			break;
+		unlock_extent(tree, start, end, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		btrfs_start_ordered_extent(inode, ordered, 1);
 		btrfs_put_ordered_extent(ordered);
 	}
@@ -2645,10 +3188,17 @@ static int __extent_read_full_page(struct extent_io_tree *tree,
 
 		if (zero_offset) {
 			iosize = PAGE_CACHE_SIZE - zero_offset;
+<<<<<<< HEAD
 			userpage = kmap_atomic(page);
 			memset(userpage + zero_offset, 0, iosize);
 			flush_dcache_page(page);
 			kunmap_atomic(userpage);
+=======
+			userpage = kmap_atomic(page, KM_USER0);
+			memset(userpage + zero_offset, 0, iosize);
+			flush_dcache_page(page);
+			kunmap_atomic(userpage, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	while (cur <= end) {
@@ -2657,10 +3207,17 @@ static int __extent_read_full_page(struct extent_io_tree *tree,
 			struct extent_state *cached = NULL;
 
 			iosize = PAGE_CACHE_SIZE - pg_offset;
+<<<<<<< HEAD
 			userpage = kmap_atomic(page);
 			memset(userpage + pg_offset, 0, iosize);
 			flush_dcache_page(page);
 			kunmap_atomic(userpage);
+=======
+			userpage = kmap_atomic(page, KM_USER0);
+			memset(userpage + pg_offset, 0, iosize);
+			flush_dcache_page(page);
+			kunmap_atomic(userpage, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			set_extent_uptodate(tree, cur, cur + iosize - 1,
 					    &cached, GFP_NOFS);
 			unlock_extent_cached(tree, cur, cur + iosize - 1,
@@ -2671,7 +3228,11 @@ static int __extent_read_full_page(struct extent_io_tree *tree,
 				end - cur + 1, 0);
 		if (IS_ERR_OR_NULL(em)) {
 			SetPageError(page);
+<<<<<<< HEAD
 			unlock_extent(tree, cur, end);
+=======
+			unlock_extent(tree, cur, end, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 		extent_offset = cur - em->start;
@@ -2706,10 +3267,17 @@ static int __extent_read_full_page(struct extent_io_tree *tree,
 			char *userpage;
 			struct extent_state *cached = NULL;
 
+<<<<<<< HEAD
 			userpage = kmap_atomic(page);
 			memset(userpage + pg_offset, 0, iosize);
 			flush_dcache_page(page);
 			kunmap_atomic(userpage);
+=======
+			userpage = kmap_atomic(page, KM_USER0);
+			memset(userpage + pg_offset, 0, iosize);
+			flush_dcache_page(page);
+			kunmap_atomic(userpage, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			set_extent_uptodate(tree, cur, cur + iosize - 1,
 					    &cached, GFP_NOFS);
@@ -2723,7 +3291,11 @@ static int __extent_read_full_page(struct extent_io_tree *tree,
 		if (test_range_bit(tree, cur, cur_end,
 				   EXTENT_UPTODATE, 1, NULL)) {
 			check_page_uptodate(tree, page);
+<<<<<<< HEAD
 			unlock_extent(tree, cur, cur + iosize - 1);
+=======
+			unlock_extent(tree, cur, cur + iosize - 1, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cur = cur + iosize;
 			pg_offset += iosize;
 			continue;
@@ -2733,7 +3305,11 @@ static int __extent_read_full_page(struct extent_io_tree *tree,
 		 */
 		if (block_start == EXTENT_MAP_INLINE) {
 			SetPageError(page);
+<<<<<<< HEAD
 			unlock_extent(tree, cur, cur + iosize - 1);
+=======
+			unlock_extent(tree, cur, cur + iosize - 1, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cur = cur + iosize;
 			pg_offset += iosize;
 			continue;
@@ -2753,7 +3329,10 @@ static int __extent_read_full_page(struct extent_io_tree *tree,
 					 end_bio_extent_readpage, mirror_num,
 					 *bio_flags,
 					 this_bio_flag);
+<<<<<<< HEAD
 			BUG_ON(ret == -ENOMEM);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			nr++;
 			*bio_flags = this_bio_flag;
 		}
@@ -2772,16 +3351,27 @@ out:
 }
 
 int extent_read_full_page(struct extent_io_tree *tree, struct page *page,
+<<<<<<< HEAD
 			    get_extent_t *get_extent, int mirror_num)
+=======
+			    get_extent_t *get_extent)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bio *bio = NULL;
 	unsigned long bio_flags = 0;
 	int ret;
 
+<<<<<<< HEAD
 	ret = __extent_read_full_page(tree, page, get_extent, &bio, mirror_num,
 				      &bio_flags);
 	if (bio)
 		ret = submit_one_bio(READ, bio, mirror_num, bio_flags);
+=======
+	ret = __extent_read_full_page(tree, page, get_extent, &bio, 0,
+				      &bio_flags);
+	if (bio)
+		ret = submit_one_bio(READ, bio, 0, bio_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -2832,7 +3422,10 @@ static int __extent_writepage(struct page *page, struct writeback_control *wbc,
 	int compressed;
 	int write_flags;
 	unsigned long nr_written = 0;
+<<<<<<< HEAD
 	bool fill_delalloc = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (wbc->sync_mode == WB_SYNC_ALL)
 		write_flags = WRITE_SYNC;
@@ -2842,9 +3435,12 @@ static int __extent_writepage(struct page *page, struct writeback_control *wbc,
 	trace___extent_writepage(page, inode, wbc);
 
 	WARN_ON(!PageLocked(page));
+<<<<<<< HEAD
 
 	ClearPageError(page);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pg_offset = i_size & (PAGE_CACHE_SIZE - 1);
 	if (page->index > end_index ||
 	   (page->index == end_index && !pg_offset)) {
@@ -2856,16 +3452,24 @@ static int __extent_writepage(struct page *page, struct writeback_control *wbc,
 	if (page->index == end_index) {
 		char *userpage;
 
+<<<<<<< HEAD
 		userpage = kmap_atomic(page);
 		memset(userpage + pg_offset, 0,
 		       PAGE_CACHE_SIZE - pg_offset);
 		kunmap_atomic(userpage);
+=======
+		userpage = kmap_atomic(page, KM_USER0);
+		memset(userpage + pg_offset, 0,
+		       PAGE_CACHE_SIZE - pg_offset);
+		kunmap_atomic(userpage, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		flush_dcache_page(page);
 	}
 	pg_offset = 0;
 
 	set_page_extent_mapped(page);
 
+<<<<<<< HEAD
 	if (!tree->ops || !tree->ops->fill_delalloc)
 		fill_delalloc = false;
 
@@ -2873,6 +3477,12 @@ static int __extent_writepage(struct page *page, struct writeback_control *wbc,
 	delalloc_end = 0;
 	page_started = 0;
 	if (!epd->extent_locked && fill_delalloc) {
+=======
+	delalloc_start = start;
+	delalloc_end = 0;
+	page_started = 0;
+	if (!epd->extent_locked) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u64 delalloc_to_write = 0;
 		/*
 		 * make sure the wbc mapping index is at least updated
@@ -2890,6 +3500,7 @@ static int __extent_writepage(struct page *page, struct writeback_control *wbc,
 				delalloc_start = delalloc_end + 1;
 				continue;
 			}
+<<<<<<< HEAD
 			ret = tree->ops->fill_delalloc(inode, page,
 						       delalloc_start,
 						       delalloc_end,
@@ -2900,6 +3511,11 @@ static int __extent_writepage(struct page *page, struct writeback_control *wbc,
 				SetPageError(page);
 				goto done;
 			}
+=======
+			tree->ops->fill_delalloc(inode, page, delalloc_start,
+						 delalloc_end, &page_started,
+						 &nr_written);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * delalloc_end is already one less than the total
 			 * length, so we don't subtract one from
@@ -2936,12 +3552,17 @@ static int __extent_writepage(struct page *page, struct writeback_control *wbc,
 	if (tree->ops && tree->ops->writepage_start_hook) {
 		ret = tree->ops->writepage_start_hook(page, start,
 						      page_end);
+<<<<<<< HEAD
 		if (ret) {
 			/* Fixup worker will requeue */
 			if (ret == -EBUSY)
 				wbc->pages_skipped++;
 			else
 				redirty_page_for_writepage(wbc, page);
+=======
+		if (ret == -EAGAIN) {
+			redirty_page_for_writepage(wbc, page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			update_nr_written(page, wbc, nr_written);
 			unlock_page(page);
 			ret = 0;
@@ -3044,6 +3665,7 @@ static int __extent_writepage(struct page *page, struct writeback_control *wbc,
 				       page->index, (unsigned long long)cur,
 				       (unsigned long long)end);
 			}
+<<<<<<< HEAD
 
 			ret = submit_extent_page(write_flags, tree, page,
 						 sector, iosize, pg_offset,
@@ -3339,6 +3961,34 @@ retry:
 	}
 	flush_write_bio(&epd);
 	return ret;
+=======
+
+			ret = submit_extent_page(write_flags, tree, page,
+						 sector, iosize, pg_offset,
+						 bdev, &epd->bio, max_nr,
+						 end_bio_extent_writepage,
+						 0, 0, 0);
+			if (ret)
+				SetPageError(page);
+		}
+		cur = cur + iosize;
+		pg_offset += iosize;
+		nr++;
+	}
+done:
+	if (nr == 0) {
+		/* make sure the mapping tag for page dirty gets cleared */
+		set_page_writeback(page);
+		end_page_writeback(page);
+	}
+	unlock_page(page);
+
+done_unlocked:
+
+	/* drop our reference on any cached states */
+	free_extent_state(cached_state);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -3370,7 +4020,10 @@ static int extent_write_cache_pages(struct extent_io_tree *tree,
 	pgoff_t index;
 	pgoff_t end;		/* Inclusive */
 	int scanned = 0;
+<<<<<<< HEAD
 	int tag;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pagevec_init(&pvec, 0);
 	if (wbc->range_cyclic) {
@@ -3381,6 +4034,7 @@ static int extent_write_cache_pages(struct extent_io_tree *tree,
 		end = wbc->range_end >> PAGE_CACHE_SHIFT;
 		scanned = 1;
 	}
+<<<<<<< HEAD
 	if (wbc->sync_mode == WB_SYNC_ALL)
 		tag = PAGECACHE_TAG_TOWRITE;
 	else
@@ -3391,6 +4045,13 @@ retry:
 	while (!done && !nr_to_write_done && (index <= end) &&
 	       (nr_pages = pagevec_lookup_tag(&pvec, mapping, &index, tag,
 			min(end - index, (pgoff_t)PAGEVEC_SIZE-1) + 1))) {
+=======
+retry:
+	while (!done && !nr_to_write_done && (index <= end) &&
+	       (nr_pages = pagevec_lookup_tag(&pvec, mapping, &index,
+			      PAGECACHE_TAG_DIRTY, min(end - index,
+				  (pgoff_t)PAGEVEC_SIZE-1) + 1))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned i;
 
 		scanned = 1;
@@ -3404,6 +4065,7 @@ retry:
 			 * swizzled back from swapper_space to tmpfs file
 			 * mapping
 			 */
+<<<<<<< HEAD
 			if (tree->ops &&
 			    tree->ops->write_cache_pages_lock_hook) {
 				tree->ops->write_cache_pages_lock_hook(page,
@@ -3414,6 +4076,12 @@ retry:
 					lock_page(page);
 				}
 			}
+=======
+			if (tree->ops && tree->ops->write_cache_pages_lock_hook)
+				tree->ops->write_cache_pages_lock_hook(page);
+			else
+				lock_page(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (unlikely(page->mapping != mapping)) {
 				unlock_page(page);
@@ -3472,6 +4140,7 @@ retry:
 static void flush_epd_write_bio(struct extent_page_data *epd)
 {
 	if (epd->bio) {
+<<<<<<< HEAD
 		int rw = WRITE;
 		int ret;
 
@@ -3480,6 +4149,12 @@ static void flush_epd_write_bio(struct extent_page_data *epd)
 
 		ret = submit_one_bio(rw, epd->bio, 0, 0);
 		BUG_ON(ret < 0); /* -ENOMEM */
+=======
+		if (epd->sync_io)
+			submit_one_bio(WRITE_SYNC, epd->bio, 0, 0);
+		else
+			submit_one_bio(WRITE, epd->bio, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		epd->bio = NULL;
 	}
 }
@@ -3495,6 +4170,10 @@ int extent_write_full_page(struct extent_io_tree *tree, struct page *page,
 			  struct writeback_control *wbc)
 {
 	int ret;
+<<<<<<< HEAD
+=======
+	struct address_space *mapping = page->mapping;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct extent_page_data epd = {
 		.bio = NULL,
 		.tree = tree,
@@ -3502,9 +4181,24 @@ int extent_write_full_page(struct extent_io_tree *tree, struct page *page,
 		.extent_locked = 0,
 		.sync_io = wbc->sync_mode == WB_SYNC_ALL,
 	};
+<<<<<<< HEAD
 
 	ret = __extent_writepage(page, wbc, &epd);
 
+=======
+	struct writeback_control wbc_writepages = {
+		.sync_mode	= wbc->sync_mode,
+		.older_than_this = NULL,
+		.nr_to_write	= 64,
+		.range_start	= page_offset(page) + PAGE_CACHE_SIZE,
+		.range_end	= (loff_t)-1,
+	};
+
+	ret = __extent_writepage(page, wbc, &epd);
+
+	extent_write_cache_pages(tree, mapping, &wbc_writepages,
+				 __extent_writepage, &epd, flush_write_bio);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	flush_epd_write_bio(&epd);
 	return ret;
 }
@@ -3528,6 +4222,10 @@ int extent_write_locked_range(struct extent_io_tree *tree, struct inode *inode,
 	};
 	struct writeback_control wbc_writepages = {
 		.sync_mode	= mode,
+<<<<<<< HEAD
+=======
+		.older_than_this = NULL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.nr_to_write	= nr_pages * 2,
 		.range_start	= start,
 		.range_end	= end + 1,
@@ -3596,7 +4294,11 @@ int extent_readpages(struct extent_io_tree *tree,
 	}
 	BUG_ON(!list_empty(pages));
 	if (bio)
+<<<<<<< HEAD
 		return submit_one_bio(READ, bio, 0, bio_flags);
+=======
+		submit_one_bio(READ, bio, 0, bio_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -3617,7 +4319,11 @@ int extent_invalidatepage(struct extent_io_tree *tree,
 	if (start > end)
 		return 0;
 
+<<<<<<< HEAD
 	lock_extent_bits(tree, start, end, 0, &cached_state);
+=======
+	lock_extent_bits(tree, start, end, 0, &cached_state, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wait_on_page_writeback(page);
 	clear_extent_bit(tree, start, end,
 			 EXTENT_LOCKED | EXTENT_DIRTY | EXTENT_DELALLOC |
@@ -3684,7 +4390,11 @@ int try_release_extent_mapping(struct extent_map_tree *map,
 			len = end - start + 1;
 			write_lock(&map->lock);
 			em = lookup_extent_mapping(map, start, len);
+<<<<<<< HEAD
 			if (!em) {
+=======
+			if (IS_ERR_OR_NULL(em)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				write_unlock(&map->lock);
 				break;
 			}
@@ -3783,9 +4493,12 @@ int extent_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
 		return -ENOMEM;
 	path->leave_spinning = 1;
 
+<<<<<<< HEAD
 	start = ALIGN(start, BTRFS_I(inode)->root->sectorsize);
 	len = ALIGN(len, BTRFS_I(inode)->root->sectorsize);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * lookup the last file extent.  We're not using i_size here
 	 * because there might be preallocation past i_size
@@ -3831,9 +4544,15 @@ int extent_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
 	}
 
 	lock_extent_bits(&BTRFS_I(inode)->io_tree, start, start + len, 0,
+<<<<<<< HEAD
 			 &cached_state);
 
 	em = get_extent_skip_holes(inode, start, last_for_get_extent,
+=======
+			 &cached_state, GFP_NOFS);
+
+	em = get_extent_skip_holes(inode, off, last_for_get_extent,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   get_extent);
 	if (!em)
 		goto out;
@@ -3922,6 +4641,7 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 inline struct page *extent_buffer_page(struct extent_buffer *eb,
 					      unsigned long i)
 {
@@ -3929,11 +4649,40 @@ inline struct page *extent_buffer_page(struct extent_buffer *eb,
 }
 
 inline unsigned long num_extent_pages(u64 start, u64 len)
+=======
+static inline struct page *extent_buffer_page(struct extent_buffer *eb,
+					      unsigned long i)
+{
+	struct page *p;
+	struct address_space *mapping;
+
+	if (i == 0)
+		return eb->first_page;
+	i += eb->start >> PAGE_CACHE_SHIFT;
+	mapping = eb->first_page->mapping;
+	if (!mapping)
+		return NULL;
+
+	/*
+	 * extent_buffer_page is only called after pinning the page
+	 * by increasing the reference count.  So we know the page must
+	 * be in the radix tree.
+	 */
+	rcu_read_lock();
+	p = radix_tree_lookup(&mapping->page_tree, i);
+	rcu_read_unlock();
+
+	return p;
+}
+
+static inline unsigned long num_extent_pages(u64 start, u64 len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return ((start + len + PAGE_CACHE_SIZE - 1) >> PAGE_CACHE_SHIFT) -
 		(start >> PAGE_CACHE_SHIFT);
 }
 
+<<<<<<< HEAD
 static void __free_extent_buffer(struct extent_buffer *eb)
 {
 #if LEAK_DEBUG
@@ -3947,6 +4696,8 @@ static void __free_extent_buffer(struct extent_buffer *eb)
 	kmem_cache_free(extent_buffer_cache, eb);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct extent_buffer *__alloc_extent_buffer(struct extent_io_tree *tree,
 						   u64 start,
 						   unsigned long len,
@@ -3962,6 +4713,7 @@ static struct extent_buffer *__alloc_extent_buffer(struct extent_io_tree *tree,
 		return NULL;
 	eb->start = start;
 	eb->len = len;
+<<<<<<< HEAD
 	eb->tree = tree;
 	rwlock_init(&eb->lock);
 	atomic_set(&eb->write_locks, 0);
@@ -3973,12 +4725,17 @@ static struct extent_buffer *__alloc_extent_buffer(struct extent_io_tree *tree,
 	eb->lock_nested = 0;
 	init_waitqueue_head(&eb->write_lock_wq);
 	init_waitqueue_head(&eb->read_lock_wq);
+=======
+	spin_lock_init(&eb->lock);
+	init_waitqueue_head(&eb->lock_wq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if LEAK_DEBUG
 	spin_lock_irqsave(&leak_lock, flags);
 	list_add(&eb->leak_list, &buffers);
 	spin_unlock_irqrestore(&leak_lock, flags);
 #endif
+<<<<<<< HEAD
 	spin_lock_init(&eb->refs_lock);
 	atomic_set(&eb->refs, 1);
 	atomic_set(&eb->io_pages, 0);
@@ -3996,15 +4753,30 @@ static struct extent_buffer *__alloc_extent_buffer(struct extent_io_tree *tree,
 	} else {
 		eb->pages = eb->inline_pages;
 	}
+=======
+	atomic_set(&eb->refs, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return eb;
 }
 
+<<<<<<< HEAD
 static int extent_buffer_under_io(struct extent_buffer *eb)
 {
 	return (atomic_read(&eb->io_pages) ||
 		test_bit(EXTENT_BUFFER_WRITEBACK, &eb->bflags) ||
 		test_bit(EXTENT_BUFFER_DIRTY, &eb->bflags));
+=======
+static void __free_extent_buffer(struct extent_buffer *eb)
+{
+#if LEAK_DEBUG
+	unsigned long flags;
+	spin_lock_irqsave(&leak_lock, flags);
+	list_del(&eb->leak_list);
+	spin_unlock_irqrestore(&leak_lock, flags);
+#endif
+	kmem_cache_free(extent_buffer_cache, eb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -4016,7 +4788,12 @@ static void btrfs_release_extent_buffer_page(struct extent_buffer *eb,
 	unsigned long index;
 	struct page *page;
 
+<<<<<<< HEAD
 	BUG_ON(extent_buffer_under_io(eb));
+=======
+	if (!eb->first_page)
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	index = num_extent_pages(eb->start, eb->len);
 	if (start_idx >= index)
@@ -4025,6 +4802,7 @@ static void btrfs_release_extent_buffer_page(struct extent_buffer *eb,
 	do {
 		index--;
 		page = extent_buffer_page(eb, index);
+<<<<<<< HEAD
 		if (page) {
 			spin_lock(&page->mapping->private_lock);
 			/*
@@ -4053,6 +4831,10 @@ static void btrfs_release_extent_buffer_page(struct extent_buffer *eb,
 			/* One for when we alloced the page */
 			page_cache_release(page);
 		}
+=======
+		if (page)
+			page_cache_release(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} while (index != start_idx);
 }
 
@@ -4065,6 +4847,7 @@ static inline void btrfs_release_extent_buffer(struct extent_buffer *eb)
 	__free_extent_buffer(eb);
 }
 
+<<<<<<< HEAD
 static void check_buffer_tree_ref(struct extent_buffer *eb)
 {
 	/* the ref bit is tricky.  We have to make sure it is set
@@ -4109,6 +4892,11 @@ static void mark_extent_buffer_accessed(struct extent_buffer *eb)
 
 struct extent_buffer *alloc_extent_buffer(struct extent_io_tree *tree,
 					  u64 start, unsigned long len)
+=======
+struct extent_buffer *alloc_extent_buffer(struct extent_io_tree *tree,
+					  u64 start, unsigned long len,
+					  struct page *page0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long num_pages = num_extent_pages(start, len);
 	unsigned long i;
@@ -4124,7 +4912,11 @@ struct extent_buffer *alloc_extent_buffer(struct extent_io_tree *tree,
 	eb = radix_tree_lookup(&tree->buffer, start >> PAGE_CACHE_SHIFT);
 	if (eb && atomic_inc_not_zero(&eb->refs)) {
 		rcu_read_unlock();
+<<<<<<< HEAD
 		mark_extent_buffer_accessed(eb);
+=======
+		mark_page_accessed(eb->first_page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return eb;
 	}
 	rcu_read_unlock();
@@ -4133,12 +4925,30 @@ struct extent_buffer *alloc_extent_buffer(struct extent_io_tree *tree,
 	if (!eb)
 		return NULL;
 
+<<<<<<< HEAD
 	for (i = 0; i < num_pages; i++, index++) {
 		p = find_or_create_page(mapping, index, GFP_NOFS);
+=======
+	if (page0) {
+		eb->first_page = page0;
+		i = 1;
+		index++;
+		page_cache_get(page0);
+		mark_page_accessed(page0);
+		set_page_extent_mapped(page0);
+		set_page_extent_head(page0, len);
+		uptodate = PageUptodate(page0);
+	} else {
+		i = 0;
+	}
+	for (; i < num_pages; i++, index++) {
+		p = find_or_create_page(mapping, index, GFP_NOFS | __GFP_HIGHMEM);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!p) {
 			WARN_ON(1);
 			goto free_eb;
 		}
+<<<<<<< HEAD
 
 		spin_lock(&mapping->private_lock);
 		if (PagePrivate(p)) {
@@ -4171,6 +4981,16 @@ struct extent_buffer *alloc_extent_buffer(struct extent_io_tree *tree,
 		WARN_ON(PageDirty(p));
 		mark_page_accessed(p);
 		eb->pages[i] = p;
+=======
+		set_page_extent_mapped(p);
+		mark_page_accessed(p);
+		if (i == 0) {
+			eb->first_page = p;
+			set_page_extent_head(p, len);
+		} else {
+			set_page_private(p, EXTENT_PAGE_PRIVATE);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!PageUptodate(p))
 			uptodate = 0;
 
@@ -4178,10 +4998,19 @@ struct extent_buffer *alloc_extent_buffer(struct extent_io_tree *tree,
 		 * see below about how we avoid a nasty race with release page
 		 * and why we unlock later
 		 */
+<<<<<<< HEAD
 	}
 	if (uptodate)
 		set_bit(EXTENT_BUFFER_UPTODATE, &eb->bflags);
 again:
+=======
+		if (i != 0)
+			unlock_page(p);
+	}
+	if (uptodate)
+		set_bit(EXTENT_BUFFER_UPTODATE, &eb->bflags);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = radix_tree_preload(GFP_NOFS & ~__GFP_HIGHMEM);
 	if (ret)
 		goto free_eb;
@@ -4191,6 +5020,7 @@ again:
 	if (ret == -EEXIST) {
 		exists = radix_tree_lookup(&tree->buffer,
 						start >> PAGE_CACHE_SHIFT);
+<<<<<<< HEAD
 		if (!atomic_inc_not_zero(&exists->refs)) {
 			spin_unlock(&tree->buffer_lock);
 			radix_tree_preload_end();
@@ -4206,6 +5036,16 @@ again:
 	spin_lock(&eb->refs_lock);
 	check_buffer_tree_ref(eb);
 	spin_unlock(&eb->refs_lock);
+=======
+		/* add one reference for the caller */
+		atomic_inc(&exists->refs);
+		spin_unlock(&tree->buffer_lock);
+		radix_tree_preload_end();
+		goto free_eb;
+	}
+	/* add one reference for the tree */
+	atomic_inc(&eb->refs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&tree->buffer_lock);
 	radix_tree_preload_end();
 
@@ -4218,6 +5058,7 @@ again:
 	 * after the extent buffer is in the radix tree so
 	 * it doesn't get lost
 	 */
+<<<<<<< HEAD
 	SetPageChecked(eb->pages[0]);
 	for (i = 1; i < num_pages; i++) {
 		p = extent_buffer_page(eb, i);
@@ -4234,6 +5075,20 @@ free_eb:
 	}
 
 	WARN_ON(!atomic_dec_and_test(&eb->refs));
+=======
+	set_page_extent_mapped(eb->first_page);
+	set_page_extent_head(eb->first_page, eb->len);
+	if (!page0)
+		unlock_page(eb->first_page);
+	return eb;
+
+free_eb:
+	if (eb->first_page && !page0)
+		unlock_page(eb->first_page);
+
+	if (!atomic_dec_and_test(&eb->refs))
+		return exists;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_release_extent_buffer(eb);
 	return exists;
 }
@@ -4247,7 +5102,11 @@ struct extent_buffer *find_extent_buffer(struct extent_io_tree *tree,
 	eb = radix_tree_lookup(&tree->buffer, start >> PAGE_CACHE_SHIFT);
 	if (eb && atomic_inc_not_zero(&eb->refs)) {
 		rcu_read_unlock();
+<<<<<<< HEAD
 		mark_extent_buffer_accessed(eb);
+=======
+		mark_page_accessed(eb->first_page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return eb;
 	}
 	rcu_read_unlock();
@@ -4255,6 +5114,7 @@ struct extent_buffer *find_extent_buffer(struct extent_io_tree *tree,
 	return NULL;
 }
 
+<<<<<<< HEAD
 static inline void btrfs_release_extent_buffer_rcu(struct rcu_head *head)
 {
 	struct extent_buffer *eb =
@@ -4286,11 +5146,14 @@ static void release_extent_buffer(struct extent_buffer *eb, gfp_t mask)
 	spin_unlock(&eb->refs_lock);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void free_extent_buffer(struct extent_buffer *eb)
 {
 	if (!eb)
 		return;
 
+<<<<<<< HEAD
 	spin_lock(&eb->refs_lock);
 	if (atomic_read(&eb->refs) == 2 &&
 	    test_bit(EXTENT_BUFFER_STALE, &eb->bflags) &&
@@ -4320,6 +5183,16 @@ void free_extent_buffer_stale(struct extent_buffer *eb)
 }
 
 void clear_extent_buffer_dirty(struct extent_buffer *eb)
+=======
+	if (!atomic_dec_and_test(&eb->refs))
+		return;
+
+	WARN_ON(1);
+}
+
+int clear_extent_buffer_dirty(struct extent_io_tree *tree,
+			      struct extent_buffer *eb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long i;
 	unsigned long num_pages;
@@ -4335,6 +5208,13 @@ void clear_extent_buffer_dirty(struct extent_buffer *eb)
 		lock_page(page);
 		WARN_ON(!PagePrivate(page));
 
+<<<<<<< HEAD
+=======
+		set_page_extent_mapped(page);
+		if (i == 0)
+			set_page_extent_head(page, eb->len);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		clear_page_dirty_for_io(page);
 		spin_lock_irq(&page->mapping->tree_lock);
 		if (!PageDirty(page)) {
@@ -4343,6 +5223,7 @@ void clear_extent_buffer_dirty(struct extent_buffer *eb)
 						PAGECACHE_TAG_DIRTY);
 		}
 		spin_unlock_irq(&page->mapping->tree_lock);
+<<<<<<< HEAD
 		ClearPageError(page);
 		unlock_page(page);
 	}
@@ -4350,11 +5231,21 @@ void clear_extent_buffer_dirty(struct extent_buffer *eb)
 }
 
 int set_extent_buffer_dirty(struct extent_buffer *eb)
+=======
+		unlock_page(page);
+	}
+	return 0;
+}
+
+int set_extent_buffer_dirty(struct extent_io_tree *tree,
+			     struct extent_buffer *eb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long i;
 	unsigned long num_pages;
 	int was_dirty = 0;
 
+<<<<<<< HEAD
 	check_buffer_tree_ref(eb);
 
 	was_dirty = test_and_set_bit(EXTENT_BUFFER_DIRTY, &eb->bflags);
@@ -4380,13 +5271,33 @@ static int range_straddles_pages(u64 start, u64 len)
 }
 
 int clear_extent_buffer_uptodate(struct extent_buffer *eb)
+=======
+	was_dirty = test_and_set_bit(EXTENT_BUFFER_DIRTY, &eb->bflags);
+	num_pages = num_extent_pages(eb->start, eb->len);
+	for (i = 0; i < num_pages; i++)
+		__set_page_dirty_nobuffers(extent_buffer_page(eb, i));
+	return was_dirty;
+}
+
+int clear_extent_buffer_uptodate(struct extent_io_tree *tree,
+				struct extent_buffer *eb,
+				struct extent_state **cached_state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long i;
 	struct page *page;
 	unsigned long num_pages;
 
+<<<<<<< HEAD
 	clear_bit(EXTENT_BUFFER_UPTODATE, &eb->bflags);
 	num_pages = num_extent_pages(eb->start, eb->len);
+=======
+	num_pages = num_extent_pages(eb->start, eb->len);
+	clear_bit(EXTENT_BUFFER_UPTODATE, &eb->bflags);
+
+	clear_extent_uptodate(tree, eb->start, eb->start + eb->len - 1,
+			      cached_state, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < num_pages; i++) {
 		page = extent_buffer_page(eb, i);
 		if (page)
@@ -4395,16 +5306,36 @@ int clear_extent_buffer_uptodate(struct extent_buffer *eb)
 	return 0;
 }
 
+<<<<<<< HEAD
 int set_extent_buffer_uptodate(struct extent_buffer *eb)
+=======
+int set_extent_buffer_uptodate(struct extent_io_tree *tree,
+				struct extent_buffer *eb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long i;
 	struct page *page;
 	unsigned long num_pages;
 
+<<<<<<< HEAD
 	set_bit(EXTENT_BUFFER_UPTODATE, &eb->bflags);
 	num_pages = num_extent_pages(eb->start, eb->len);
 	for (i = 0; i < num_pages; i++) {
 		page = extent_buffer_page(eb, i);
+=======
+	num_pages = num_extent_pages(eb->start, eb->len);
+
+	set_extent_uptodate(tree, eb->start, eb->start + eb->len - 1,
+			    NULL, GFP_NOFS);
+	for (i = 0; i < num_pages; i++) {
+		page = extent_buffer_page(eb, i);
+		if ((i == 0 && (eb->start & (PAGE_CACHE_SIZE - 1))) ||
+		    ((i == num_pages - 1) &&
+		     ((eb->start + eb->len) & (PAGE_CACHE_SIZE - 1)))) {
+			check_page_uptodate(tree, page);
+			continue;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		SetPageUptodate(page);
 	}
 	return 0;
@@ -4419,6 +5350,7 @@ int extent_range_uptodate(struct extent_io_tree *tree,
 	int uptodate;
 	unsigned long index;
 
+<<<<<<< HEAD
 	if (range_straddles_pages(start, end - start + 1)) {
 		ret = test_range_bit(tree, start, end,
 				     EXTENT_UPTODATE, 1, NULL);
@@ -4430,6 +5362,14 @@ int extent_range_uptodate(struct extent_io_tree *tree,
 		page = find_get_page(tree->mapping, index);
 		if (!page)
 			return 1;
+=======
+	ret = test_range_bit(tree, start, end, EXTENT_UPTODATE, 1, NULL);
+	if (ret)
+		return 1;
+	while (start <= end) {
+		index = start >> PAGE_CACHE_SHIFT;
+		page = find_get_page(tree->mapping, index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		uptodate = PageUptodate(page);
 		page_cache_release(page);
 		if (!uptodate) {
@@ -4441,6 +5381,7 @@ int extent_range_uptodate(struct extent_io_tree *tree,
 	return pg_uptodate;
 }
 
+<<<<<<< HEAD
 int extent_buffer_uptodate(struct extent_buffer *eb)
 {
 	return test_bit(EXTENT_BUFFER_UPTODATE, &eb->bflags);
@@ -4448,6 +5389,40 @@ int extent_buffer_uptodate(struct extent_buffer *eb)
 
 int read_extent_buffer_pages(struct extent_io_tree *tree,
 			     struct extent_buffer *eb, u64 start, int wait,
+=======
+int extent_buffer_uptodate(struct extent_io_tree *tree,
+			   struct extent_buffer *eb,
+			   struct extent_state *cached_state)
+{
+	int ret = 0;
+	unsigned long num_pages;
+	unsigned long i;
+	struct page *page;
+	int pg_uptodate = 1;
+
+	if (test_bit(EXTENT_BUFFER_UPTODATE, &eb->bflags))
+		return 1;
+
+	ret = test_range_bit(tree, eb->start, eb->start + eb->len - 1,
+			   EXTENT_UPTODATE, 1, cached_state);
+	if (ret)
+		return ret;
+
+	num_pages = num_extent_pages(eb->start, eb->len);
+	for (i = 0; i < num_pages; i++) {
+		page = extent_buffer_page(eb, i);
+		if (!PageUptodate(page)) {
+			pg_uptodate = 0;
+			break;
+		}
+	}
+	return pg_uptodate;
+}
+
+int read_extent_buffer_pages(struct extent_io_tree *tree,
+			     struct extent_buffer *eb,
+			     u64 start, int wait,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     get_extent_t *get_extent, int mirror_num)
 {
 	unsigned long i;
@@ -4457,14 +5432,27 @@ int read_extent_buffer_pages(struct extent_io_tree *tree,
 	int ret = 0;
 	int locked_pages = 0;
 	int all_uptodate = 1;
+<<<<<<< HEAD
 	unsigned long num_pages;
 	unsigned long num_reads = 0;
+=======
+	int inc_all_pages = 0;
+	unsigned long num_pages;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bio *bio = NULL;
 	unsigned long bio_flags = 0;
 
 	if (test_bit(EXTENT_BUFFER_UPTODATE, &eb->bflags))
 		return 0;
 
+<<<<<<< HEAD
+=======
+	if (test_range_bit(tree, eb->start, eb->start + eb->len - 1,
+			   EXTENT_UPTODATE, 1, NULL)) {
+		return 0;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (start) {
 		WARN_ON(start < eb->start);
 		start_i = (start >> PAGE_CACHE_SHIFT) -
@@ -4476,17 +5464,26 @@ int read_extent_buffer_pages(struct extent_io_tree *tree,
 	num_pages = num_extent_pages(eb->start, eb->len);
 	for (i = start_i; i < num_pages; i++) {
 		page = extent_buffer_page(eb, i);
+<<<<<<< HEAD
 		if (wait == WAIT_NONE) {
+=======
+		if (!wait) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!trylock_page(page))
 				goto unlock_exit;
 		} else {
 			lock_page(page);
 		}
 		locked_pages++;
+<<<<<<< HEAD
 		if (!PageUptodate(page)) {
 			num_reads++;
 			all_uptodate = 0;
 		}
+=======
+		if (!PageUptodate(page))
+			all_uptodate = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (all_uptodate) {
 		if (start_i == 0)
@@ -4494,12 +5491,29 @@ int read_extent_buffer_pages(struct extent_io_tree *tree,
 		goto unlock_exit;
 	}
 
+<<<<<<< HEAD
 	clear_bit(EXTENT_BUFFER_IOERR, &eb->bflags);
 	eb->read_mirror = 0;
 	atomic_set(&eb->io_pages, num_reads);
 	for (i = start_i; i < num_pages; i++) {
 		page = extent_buffer_page(eb, i);
 		if (!PageUptodate(page)) {
+=======
+	for (i = start_i; i < num_pages; i++) {
+		page = extent_buffer_page(eb, i);
+
+		WARN_ON(!PagePrivate(page));
+
+		set_page_extent_mapped(page);
+		if (i == 0)
+			set_page_extent_head(page, eb->len);
+
+		if (inc_all_pages)
+			page_cache_get(page);
+		if (!PageUptodate(page)) {
+			if (start_i == 0)
+				inc_all_pages = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ClearPageError(page);
 			err = __extent_read_full_page(tree, page,
 						      get_extent, &bio,
@@ -4511,6 +5525,7 @@ int read_extent_buffer_pages(struct extent_io_tree *tree,
 		}
 	}
 
+<<<<<<< HEAD
 	if (bio) {
 		err = submit_one_bio(READ, bio, mirror_num, bio_flags);
 		if (err)
@@ -4518,6 +5533,12 @@ int read_extent_buffer_pages(struct extent_io_tree *tree,
 	}
 
 	if (ret || wait != WAIT_COMPLETE)
+=======
+	if (bio)
+		submit_one_bio(READ, bio, mirror_num, bio_flags);
+
+	if (ret || !wait)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 
 	for (i = start_i; i < num_pages; i++) {
@@ -4527,6 +5548,11 @@ int read_extent_buffer_pages(struct extent_io_tree *tree,
 			ret = -EIO;
 	}
 
+<<<<<<< HEAD
+=======
+	if (!ret)
+		set_bit(EXTENT_BUFFER_UPTODATE, &eb->bflags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 
 unlock_exit:
@@ -4561,8 +5587,14 @@ void read_extent_buffer(struct extent_buffer *eb, void *dstv,
 		page = extent_buffer_page(eb, i);
 
 		cur = min(len, (PAGE_CACHE_SIZE - offset));
+<<<<<<< HEAD
 		kaddr = page_address(page);
 		memcpy(dst, kaddr + offset, cur);
+=======
+		kaddr = kmap_atomic(page, KM_USER1);
+		memcpy(dst, kaddr + offset, cur);
+		kunmap_atomic(kaddr, KM_USER1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		dst += cur;
 		len -= cur;
@@ -4572,9 +5604,15 @@ void read_extent_buffer(struct extent_buffer *eb, void *dstv,
 }
 
 int map_private_extent_buffer(struct extent_buffer *eb, unsigned long start,
+<<<<<<< HEAD
 			       unsigned long min_len, char **map,
 			       unsigned long *map_start,
 			       unsigned long *map_len)
+=======
+			       unsigned long min_len, char **token, char **map,
+			       unsigned long *map_start,
+			       unsigned long *map_len, int km)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	size_t offset = start & (PAGE_CACHE_SIZE - 1);
 	char *kaddr;
@@ -4604,12 +5642,49 @@ int map_private_extent_buffer(struct extent_buffer *eb, unsigned long start,
 	}
 
 	p = extent_buffer_page(eb, i);
+<<<<<<< HEAD
 	kaddr = page_address(p);
+=======
+	kaddr = kmap_atomic(p, km);
+	*token = kaddr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*map = kaddr + offset;
 	*map_len = PAGE_CACHE_SIZE - offset;
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+int map_extent_buffer(struct extent_buffer *eb, unsigned long start,
+		      unsigned long min_len,
+		      char **token, char **map,
+		      unsigned long *map_start,
+		      unsigned long *map_len, int km)
+{
+	int err;
+	int save = 0;
+	if (eb->map_token) {
+		unmap_extent_buffer(eb, eb->map_token, km);
+		eb->map_token = NULL;
+		save = 1;
+	}
+	err = map_private_extent_buffer(eb, start, min_len, token, map,
+				       map_start, map_len, km);
+	if (!err && save) {
+		eb->map_token = *token;
+		eb->kaddr = *map;
+		eb->map_start = *map_start;
+		eb->map_len = *map_len;
+	}
+	return err;
+}
+
+void unmap_extent_buffer(struct extent_buffer *eb, char *token, int km)
+{
+	kunmap_atomic(token, km);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int memcmp_extent_buffer(struct extent_buffer *eb, const void *ptrv,
 			  unsigned long start,
 			  unsigned long len)
@@ -4633,8 +5708,14 @@ int memcmp_extent_buffer(struct extent_buffer *eb, const void *ptrv,
 
 		cur = min(len, (PAGE_CACHE_SIZE - offset));
 
+<<<<<<< HEAD
 		kaddr = page_address(page);
 		ret = memcmp(ptr, kaddr + offset, cur);
+=======
+		kaddr = kmap_atomic(page, KM_USER0);
+		ret = memcmp(ptr, kaddr + offset, cur);
+		kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret)
 			break;
 
@@ -4667,8 +5748,14 @@ void write_extent_buffer(struct extent_buffer *eb, const void *srcv,
 		WARN_ON(!PageUptodate(page));
 
 		cur = min(len, PAGE_CACHE_SIZE - offset);
+<<<<<<< HEAD
 		kaddr = page_address(page);
 		memcpy(kaddr + offset, src, cur);
+=======
+		kaddr = kmap_atomic(page, KM_USER1);
+		memcpy(kaddr + offset, src, cur);
+		kunmap_atomic(kaddr, KM_USER1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		src += cur;
 		len -= cur;
@@ -4697,8 +5784,14 @@ void memset_extent_buffer(struct extent_buffer *eb, char c,
 		WARN_ON(!PageUptodate(page));
 
 		cur = min(len, PAGE_CACHE_SIZE - offset);
+<<<<<<< HEAD
 		kaddr = page_address(page);
 		memset(kaddr + offset, c, cur);
+=======
+		kaddr = kmap_atomic(page, KM_USER0);
+		memset(kaddr + offset, c, cur);
+		kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		len -= cur;
 		offset = 0;
@@ -4729,8 +5822,14 @@ void copy_extent_buffer(struct extent_buffer *dst, struct extent_buffer *src,
 
 		cur = min(len, (unsigned long)(PAGE_CACHE_SIZE - offset));
 
+<<<<<<< HEAD
 		kaddr = page_address(page);
 		read_extent_buffer(src, kaddr + offset, src_offset, cur);
+=======
+		kaddr = kmap_atomic(page, KM_USER0);
+		read_extent_buffer(src, kaddr + offset, src_offset, cur);
+		kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		src_offset += cur;
 		len -= cur;
@@ -4743,17 +5842,32 @@ static void move_pages(struct page *dst_page, struct page *src_page,
 		       unsigned long dst_off, unsigned long src_off,
 		       unsigned long len)
 {
+<<<<<<< HEAD
 	char *dst_kaddr = page_address(dst_page);
 	if (dst_page == src_page) {
 		memmove(dst_kaddr + dst_off, dst_kaddr + src_off, len);
 	} else {
 		char *src_kaddr = page_address(src_page);
+=======
+	char *dst_kaddr = kmap_atomic(dst_page, KM_USER0);
+	if (dst_page == src_page) {
+		memmove(dst_kaddr + dst_off, dst_kaddr + src_off, len);
+	} else {
+		char *src_kaddr = kmap_atomic(src_page, KM_USER1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		char *p = dst_kaddr + dst_off + len;
 		char *s = src_kaddr + src_off + len;
 
 		while (len--)
 			*--p = *--s;
+<<<<<<< HEAD
 	}
+=======
+
+		kunmap_atomic(src_kaddr, KM_USER1);
+	}
+	kunmap_atomic(dst_kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline bool areas_overlap(unsigned long src, unsigned long dst, unsigned long len)
@@ -4766,6 +5880,7 @@ static void copy_pages(struct page *dst_page, struct page *src_page,
 		       unsigned long dst_off, unsigned long src_off,
 		       unsigned long len)
 {
+<<<<<<< HEAD
 	char *dst_kaddr = page_address(dst_page);
 	char *src_kaddr;
 	int must_memmove = 0;
@@ -4782,6 +5897,22 @@ static void copy_pages(struct page *dst_page, struct page *src_page,
 		memmove(dst_kaddr + dst_off, src_kaddr + src_off, len);
 	else
 		memcpy(dst_kaddr + dst_off, src_kaddr + src_off, len);
+=======
+	char *dst_kaddr = kmap_atomic(dst_page, KM_USER0);
+	char *src_kaddr;
+
+	if (dst_page != src_page) {
+		src_kaddr = kmap_atomic(src_page, KM_USER1);
+	} else {
+		src_kaddr = dst_kaddr;
+		BUG_ON(areas_overlap(src_off, dst_off, len));
+	}
+
+	memcpy(dst_kaddr + dst_off, src_kaddr + src_off, len);
+	kunmap_atomic(dst_kaddr, KM_USER0);
+	if (dst_page != src_page)
+		kunmap_atomic(src_kaddr, KM_USER1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void memcpy_extent_buffer(struct extent_buffer *dst, unsigned long dst_offset,
@@ -4851,7 +5982,11 @@ void memmove_extent_buffer(struct extent_buffer *dst, unsigned long dst_offset,
 		       "len %lu len %lu\n", dst_offset, len, dst->len);
 		BUG_ON(1);
 	}
+<<<<<<< HEAD
 	if (dst_offset < src_offset) {
+=======
+	if (!areas_overlap(src_offset, dst_offset, len)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		memcpy_extent_buffer(dst, dst_offset, src_offset, len);
 		return;
 	}
@@ -4877,6 +6012,7 @@ void memmove_extent_buffer(struct extent_buffer *dst, unsigned long dst_offset,
 	}
 }
 
+<<<<<<< HEAD
 int try_release_extent_buffer(struct page *page, gfp_t mask)
 {
 	struct extent_buffer *eb;
@@ -4921,4 +6057,49 @@ int try_release_extent_buffer(struct page *page, gfp_t mask)
 	release_extent_buffer(eb, mask);
 
 	return 1;
+=======
+static inline void btrfs_release_extent_buffer_rcu(struct rcu_head *head)
+{
+	struct extent_buffer *eb =
+			container_of(head, struct extent_buffer, rcu_head);
+
+	btrfs_release_extent_buffer(eb);
+}
+
+int try_release_extent_buffer(struct extent_io_tree *tree, struct page *page)
+{
+	u64 start = page_offset(page);
+	struct extent_buffer *eb;
+	int ret = 1;
+
+	spin_lock(&tree->buffer_lock);
+	eb = radix_tree_lookup(&tree->buffer, start >> PAGE_CACHE_SHIFT);
+	if (!eb) {
+		spin_unlock(&tree->buffer_lock);
+		return ret;
+	}
+
+	if (test_bit(EXTENT_BUFFER_DIRTY, &eb->bflags)) {
+		ret = 0;
+		goto out;
+	}
+
+	/*
+	 * set @eb->refs to 0 if it is already 1, and then release the @eb.
+	 * Or go back.
+	 */
+	if (atomic_cmpxchg(&eb->refs, 1, 0) != 1) {
+		ret = 0;
+		goto out;
+	}
+
+	radix_tree_delete(&tree->buffer, start >> PAGE_CACHE_SHIFT);
+out:
+	spin_unlock(&tree->buffer_lock);
+
+	/* at this point we can safely release the extent buffer */
+	if (atomic_read(&eb->refs) == 0)
+		call_rcu(&eb->rcu_head, btrfs_release_extent_buffer_rcu);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

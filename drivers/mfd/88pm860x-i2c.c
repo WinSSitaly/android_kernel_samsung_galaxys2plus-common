@@ -12,6 +12,7 @@
 #include <linux/module.h>
 #include <linux/platform_device.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/err.h>
 #include <linux/regmap.h>
 #include <linux/mfd/88pm860x.h>
@@ -26,6 +27,53 @@ int pm860x_reg_read(struct i2c_client *i2c, int reg)
 	int ret;
 
 	ret = regmap_read(map, reg, &data);
+=======
+#include <linux/mfd/88pm860x.h>
+#include <linux/slab.h>
+
+static inline int pm860x_read_device(struct i2c_client *i2c,
+				     int reg, int bytes, void *dest)
+{
+	unsigned char data;
+	int ret;
+
+	data = (unsigned char)reg;
+	ret = i2c_master_send(i2c, &data, 1);
+	if (ret < 0)
+		return ret;
+
+	ret = i2c_master_recv(i2c, dest, bytes);
+	if (ret < 0)
+		return ret;
+	return 0;
+}
+
+static inline int pm860x_write_device(struct i2c_client *i2c,
+				      int reg, int bytes, void *src)
+{
+	unsigned char buf[bytes + 1];
+	int ret;
+
+	buf[0] = (unsigned char)reg;
+	memcpy(&buf[1], src, bytes);
+
+	ret = i2c_master_send(i2c, buf, bytes + 1);
+	if (ret < 0)
+		return ret;
+	return 0;
+}
+
+int pm860x_reg_read(struct i2c_client *i2c, int reg)
+{
+	struct pm860x_chip *chip = i2c_get_clientdata(i2c);
+	unsigned char data;
+	int ret;
+
+	mutex_lock(&chip->io_lock);
+	ret = pm860x_read_device(i2c, reg, 1, &data);
+	mutex_unlock(&chip->io_lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		return ret;
 	else
@@ -37,11 +85,20 @@ int pm860x_reg_write(struct i2c_client *i2c, int reg,
 		     unsigned char data)
 {
 	struct pm860x_chip *chip = i2c_get_clientdata(i2c);
+<<<<<<< HEAD
 	struct regmap *map = (i2c == chip->client) ? chip->regmap
 				: chip->regmap_companion;
 	int ret;
 
 	ret = regmap_write(map, reg, data);
+=======
+	int ret;
+
+	mutex_lock(&chip->io_lock);
+	ret = pm860x_write_device(i2c, reg, 1, &data);
+	mutex_unlock(&chip->io_lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 EXPORT_SYMBOL(pm860x_reg_write);
@@ -50,11 +107,20 @@ int pm860x_bulk_read(struct i2c_client *i2c, int reg,
 		     int count, unsigned char *buf)
 {
 	struct pm860x_chip *chip = i2c_get_clientdata(i2c);
+<<<<<<< HEAD
 	struct regmap *map = (i2c == chip->client) ? chip->regmap
 				: chip->regmap_companion;
 	int ret;
 
 	ret = regmap_raw_read(map, reg, buf, count);
+=======
+	int ret;
+
+	mutex_lock(&chip->io_lock);
+	ret = pm860x_read_device(i2c, reg, count, buf);
+	mutex_unlock(&chip->io_lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 EXPORT_SYMBOL(pm860x_bulk_read);
@@ -63,11 +129,20 @@ int pm860x_bulk_write(struct i2c_client *i2c, int reg,
 		      int count, unsigned char *buf)
 {
 	struct pm860x_chip *chip = i2c_get_clientdata(i2c);
+<<<<<<< HEAD
 	struct regmap *map = (i2c == chip->client) ? chip->regmap
 				: chip->regmap_companion;
 	int ret;
 
 	ret = regmap_raw_write(map, reg, buf, count);
+=======
+	int ret;
+
+	mutex_lock(&chip->io_lock);
+	ret = pm860x_write_device(i2c, reg, count, buf);
+	mutex_unlock(&chip->io_lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 EXPORT_SYMBOL(pm860x_bulk_write);
@@ -76,15 +151,31 @@ int pm860x_set_bits(struct i2c_client *i2c, int reg,
 		    unsigned char mask, unsigned char data)
 {
 	struct pm860x_chip *chip = i2c_get_clientdata(i2c);
+<<<<<<< HEAD
 	struct regmap *map = (i2c == chip->client) ? chip->regmap
 				: chip->regmap_companion;
 	int ret;
 
 	ret = regmap_update_bits(map, reg, mask, data);
+=======
+	unsigned char value;
+	int ret;
+
+	mutex_lock(&chip->io_lock);
+	ret = pm860x_read_device(i2c, reg, 1, &value);
+	if (ret < 0)
+		goto out;
+	value &= ~mask;
+	value |= data;
+	ret = pm860x_write_device(i2c, reg, 1, &value);
+out:
+	mutex_unlock(&chip->io_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 EXPORT_SYMBOL(pm860x_set_bits);
 
+<<<<<<< HEAD
 static int read_device(struct i2c_client *i2c, int reg,
 		       int bytes, void *dest)
 {
@@ -134,10 +225,16 @@ static int write_device(struct i2c_client *i2c, int reg,
 
 int pm860x_page_reg_read(struct i2c_client *i2c, int reg)
 {
+=======
+int pm860x_page_reg_read(struct i2c_client *i2c, int reg)
+{
+	struct pm860x_chip *chip = i2c_get_clientdata(i2c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char zero = 0;
 	unsigned char data;
 	int ret;
 
+<<<<<<< HEAD
 	i2c_lock_adapter(i2c->adapter);
 	read_device(i2c, 0xFA, 0, &zero);
 	read_device(i2c, 0xFB, 0, &zero);
@@ -148,6 +245,18 @@ int pm860x_page_reg_read(struct i2c_client *i2c, int reg)
 	read_device(i2c, 0xFE, 0, &zero);
 	read_device(i2c, 0xFC, 0, &zero);
 	i2c_unlock_adapter(i2c->adapter);
+=======
+	mutex_lock(&chip->io_lock);
+	pm860x_write_device(i2c, 0xFA, 0, &zero);
+	pm860x_write_device(i2c, 0xFB, 0, &zero);
+	pm860x_write_device(i2c, 0xFF, 0, &zero);
+	ret = pm860x_read_device(i2c, reg, 1, &data);
+	if (ret >= 0)
+		ret = (int)data;
+	pm860x_write_device(i2c, 0xFE, 0, &zero);
+	pm860x_write_device(i2c, 0xFC, 0, &zero);
+	mutex_unlock(&chip->io_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 EXPORT_SYMBOL(pm860x_page_reg_read);
@@ -155,6 +264,7 @@ EXPORT_SYMBOL(pm860x_page_reg_read);
 int pm860x_page_reg_write(struct i2c_client *i2c, int reg,
 			  unsigned char data)
 {
+<<<<<<< HEAD
 	unsigned char zero;
 	int ret;
 
@@ -166,6 +276,20 @@ int pm860x_page_reg_write(struct i2c_client *i2c, int reg,
 	read_device(i2c, 0xFE, 0, &zero);
 	read_device(i2c, 0xFC, 0, &zero);
 	i2c_unlock_adapter(i2c->adapter);
+=======
+	struct pm860x_chip *chip = i2c_get_clientdata(i2c);
+	unsigned char zero;
+	int ret;
+
+	mutex_lock(&chip->io_lock);
+	pm860x_write_device(i2c, 0xFA, 0, &zero);
+	pm860x_write_device(i2c, 0xFB, 0, &zero);
+	pm860x_write_device(i2c, 0xFF, 0, &zero);
+	ret = pm860x_write_device(i2c, reg, 1, &data);
+	pm860x_write_device(i2c, 0xFE, 0, &zero);
+	pm860x_write_device(i2c, 0xFC, 0, &zero);
+	mutex_unlock(&chip->io_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 EXPORT_SYMBOL(pm860x_page_reg_write);
@@ -173,6 +297,7 @@ EXPORT_SYMBOL(pm860x_page_reg_write);
 int pm860x_page_bulk_read(struct i2c_client *i2c, int reg,
 			  int count, unsigned char *buf)
 {
+<<<<<<< HEAD
 	unsigned char zero = 0;
 	int ret;
 
@@ -184,6 +309,20 @@ int pm860x_page_bulk_read(struct i2c_client *i2c, int reg,
 	read_device(i2c, 0xFE, 0, &zero);
 	read_device(i2c, 0xFC, 0, &zero);
 	i2c_unlock_adapter(i2c->adapter);
+=======
+	struct pm860x_chip *chip = i2c_get_clientdata(i2c);
+	unsigned char zero = 0;
+	int ret;
+
+	mutex_lock(&chip->io_lock);
+	pm860x_write_device(i2c, 0xFA, 0, &zero);
+	pm860x_write_device(i2c, 0xFB, 0, &zero);
+	pm860x_write_device(i2c, 0xFF, 0, &zero);
+	ret = pm860x_read_device(i2c, reg, count, buf);
+	pm860x_write_device(i2c, 0xFE, 0, &zero);
+	pm860x_write_device(i2c, 0xFC, 0, &zero);
+	mutex_unlock(&chip->io_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 EXPORT_SYMBOL(pm860x_page_bulk_read);
@@ -191,6 +330,7 @@ EXPORT_SYMBOL(pm860x_page_bulk_read);
 int pm860x_page_bulk_write(struct i2c_client *i2c, int reg,
 			   int count, unsigned char *buf)
 {
+<<<<<<< HEAD
 	unsigned char zero = 0;
 	int ret;
 
@@ -203,6 +343,20 @@ int pm860x_page_bulk_write(struct i2c_client *i2c, int reg,
 	read_device(i2c, 0xFC, 0, &zero);
 	i2c_unlock_adapter(i2c->adapter);
 	i2c_unlock_adapter(i2c->adapter);
+=======
+	struct pm860x_chip *chip = i2c_get_clientdata(i2c);
+	unsigned char zero = 0;
+	int ret;
+
+	mutex_lock(&chip->io_lock);
+	pm860x_write_device(i2c, 0xFA, 0, &zero);
+	pm860x_write_device(i2c, 0xFB, 0, &zero);
+	pm860x_write_device(i2c, 0xFF, 0, &zero);
+	ret = pm860x_write_device(i2c, reg, count, buf);
+	pm860x_write_device(i2c, 0xFE, 0, &zero);
+	pm860x_write_device(i2c, 0xFC, 0, &zero);
+	mutex_unlock(&chip->io_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 EXPORT_SYMBOL(pm860x_page_bulk_write);
@@ -210,24 +364,44 @@ EXPORT_SYMBOL(pm860x_page_bulk_write);
 int pm860x_page_set_bits(struct i2c_client *i2c, int reg,
 			 unsigned char mask, unsigned char data)
 {
+<<<<<<< HEAD
+=======
+	struct pm860x_chip *chip = i2c_get_clientdata(i2c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char zero;
 	unsigned char value;
 	int ret;
 
+<<<<<<< HEAD
 	i2c_lock_adapter(i2c->adapter);
 	read_device(i2c, 0xFA, 0, &zero);
 	read_device(i2c, 0xFB, 0, &zero);
 	read_device(i2c, 0xFF, 0, &zero);
 	ret = read_device(i2c, reg, 1, &value);
+=======
+	mutex_lock(&chip->io_lock);
+	pm860x_write_device(i2c, 0xFA, 0, &zero);
+	pm860x_write_device(i2c, 0xFB, 0, &zero);
+	pm860x_write_device(i2c, 0xFF, 0, &zero);
+	ret = pm860x_read_device(i2c, reg, 1, &value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		goto out;
 	value &= ~mask;
 	value |= data;
+<<<<<<< HEAD
 	ret = write_device(i2c, reg, 1, &value);
 out:
 	read_device(i2c, 0xFE, 0, &zero);
 	read_device(i2c, 0xFC, 0, &zero);
 	i2c_unlock_adapter(i2c->adapter);
+=======
+	ret = pm860x_write_device(i2c, reg, 1, &value);
+out:
+	pm860x_write_device(i2c, 0xFE, 0, &zero);
+	pm860x_write_device(i2c, 0xFC, 0, &zero);
+	mutex_unlock(&chip->io_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 EXPORT_SYMBOL(pm860x_page_set_bits);
@@ -259,17 +433,23 @@ static int verify_addr(struct i2c_client *i2c)
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct regmap_config pm860x_regmap_config = {
 	.reg_bits = 8,
 	.val_bits = 8,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit pm860x_probe(struct i2c_client *client,
 				  const struct i2c_device_id *id)
 {
 	struct pm860x_platform_data *pdata = client->dev.platform_data;
 	struct pm860x_chip *chip;
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!pdata) {
 		pr_info("No platform data in %s!\n", __func__);
@@ -281,6 +461,7 @@ static int __devinit pm860x_probe(struct i2c_client *client,
 		return -ENOMEM;
 
 	chip->id = verify_addr(client);
+<<<<<<< HEAD
 	chip->regmap = regmap_init_i2c(client, &pm860x_regmap_config);
 	if (IS_ERR(chip->regmap)) {
 		ret = PTR_ERR(chip->regmap);
@@ -292,6 +473,12 @@ static int __devinit pm860x_probe(struct i2c_client *client,
 	chip->client = client;
 	i2c_set_clientdata(client, chip);
 	chip->dev = &client->dev;
+=======
+	chip->client = client;
+	i2c_set_clientdata(client, chip);
+	chip->dev = &client->dev;
+	mutex_init(&chip->io_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_set_drvdata(chip->dev, chip);
 
 	/*
@@ -305,6 +492,7 @@ static int __devinit pm860x_probe(struct i2c_client *client,
 		chip->companion_addr = pdata->companion_addr;
 		chip->companion = i2c_new_dummy(chip->client->adapter,
 						chip->companion_addr);
+<<<<<<< HEAD
 		chip->regmap_companion = regmap_init_i2c(chip->companion,
 							&pm860x_regmap_config);
 		if (IS_ERR(chip->regmap_companion)) {
@@ -313,6 +501,8 @@ static int __devinit pm860x_probe(struct i2c_client *client,
 				"Failed to allocate register map: %d\n", ret);
 			return ret;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		i2c_set_clientdata(chip->companion, chip);
 	}
 
@@ -325,15 +515,20 @@ static int __devexit pm860x_remove(struct i2c_client *client)
 	struct pm860x_chip *chip = i2c_get_clientdata(client);
 
 	pm860x_device_exit(chip);
+<<<<<<< HEAD
 	if (chip->companion) {
 		regmap_exit(chip->regmap_companion);
 		i2c_unregister_device(chip->companion);
 	}
 	regmap_exit(chip->regmap);
+=======
+	i2c_unregister_device(chip->companion);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(chip);
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM_SLEEP
 static int pm860x_suspend(struct device *dev)
 {
@@ -358,11 +553,16 @@ static int pm860x_resume(struct device *dev)
 
 static SIMPLE_DEV_PM_OPS(pm860x_pm_ops, pm860x_suspend, pm860x_resume);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct i2c_driver pm860x_driver = {
 	.driver	= {
 		.name	= "88PM860x",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.pm     = &pm860x_pm_ops,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe		= pm860x_probe,
 	.remove		= __devexit_p(pm860x_remove),

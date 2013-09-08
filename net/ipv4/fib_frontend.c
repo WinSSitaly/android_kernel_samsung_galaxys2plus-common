@@ -15,6 +15,10 @@
 
 #include <linux/module.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bitops.h>
 #include <linux/capability.h>
 #include <linux/types.h>
@@ -694,7 +698,11 @@ void fib_add_ifaddr(struct in_ifaddr *ifa)
 	if (ifa->ifa_flags & IFA_F_SECONDARY) {
 		prim = inet_ifa_byprefix(in_dev, prefix, mask);
 		if (prim == NULL) {
+<<<<<<< HEAD
 			pr_warn("%s: bug: prim == NULL\n", __func__);
+=======
+			printk(KERN_WARNING "fib_add_ifaddr: bug: prim == NULL\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 		}
 	}
@@ -748,11 +756,19 @@ void fib_del_ifaddr(struct in_ifaddr *ifa, struct in_ifaddr *iprim)
 	if (ifa->ifa_flags & IFA_F_SECONDARY) {
 		prim = inet_ifa_byprefix(in_dev, any, ifa->ifa_mask);
 		if (prim == NULL) {
+<<<<<<< HEAD
 			pr_warn("%s: bug: prim == NULL\n", __func__);
 			return;
 		}
 		if (iprim && iprim != prim) {
 			pr_warn("%s: bug: iprim != prim\n", __func__);
+=======
+			printk(KERN_WARNING "fib_del_ifaddr: bug: prim == NULL\n");
+			return;
+		}
+		if (iprim && iprim != prim) {
+			printk(KERN_WARNING "fib_del_ifaddr: bug: iprim != prim\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 		}
 	} else if (!ipv4_is_zeronet(any) &&
@@ -1123,9 +1139,15 @@ static struct pernet_operations fib_net_ops = {
 
 void __init ip_fib_init(void)
 {
+<<<<<<< HEAD
 	rtnl_register(PF_INET, RTM_NEWROUTE, inet_rtm_newroute, NULL, NULL);
 	rtnl_register(PF_INET, RTM_DELROUTE, inet_rtm_delroute, NULL, NULL);
 	rtnl_register(PF_INET, RTM_GETROUTE, NULL, inet_dump_fib, NULL);
+=======
+	rtnl_register(PF_INET, RTM_NEWROUTE, inet_rtm_newroute, NULL);
+	rtnl_register(PF_INET, RTM_DELROUTE, inet_rtm_delroute, NULL);
+	rtnl_register(PF_INET, RTM_GETROUTE, NULL, inet_dump_fib);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	register_pernet_subsys(&fib_net_ops);
 	register_netdevice_notifier(&fib_netdev_notifier);

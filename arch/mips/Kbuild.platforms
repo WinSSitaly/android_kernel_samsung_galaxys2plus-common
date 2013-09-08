@@ -16,7 +16,10 @@ platforms += lasat
 platforms += loongson
 platforms += mipssim
 platforms += mti-malta
+<<<<<<< HEAD
 platforms += netlogic
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 platforms += pmc-sierra
 platforms += pnx833x
 platforms += pnx8550

@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * drivers/video/fb_ddc.c - DDC/EDID read support.
+=======
+ * driver/vide/fb_ddc.c - DDC/EDID read support.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *  Copyright (C) 2006 Dennis Munsie <dmunsie@cecropia.com>
  *
@@ -10,7 +14,10 @@
 
 #include <linux/delay.h>
 #include <linux/device.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/fb.h>
 #include <linux/i2c-algo-bit.h>
 #include <linux/slab.h>

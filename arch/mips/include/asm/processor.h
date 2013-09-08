@@ -19,6 +19,10 @@
 #include <asm/cpu-info.h>
 #include <asm/mipsregs.h>
 #include <asm/prefetch.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Return current * instruction pointer ("program counter").
@@ -355,12 +359,15 @@ unsigned long get_wchan(struct task_struct *p);
 #define ARCH_HAS_PREFETCHW
 #define prefetchw(x) __builtin_prefetch((x), 1, 1)
 
+<<<<<<< HEAD
 /*
  * See Documentation/scheduler/sched-arch.txt; prevents deadlock on SMP
  * systems.
  */
 #define __ARCH_WANT_UNLOCKED_CTXSW
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #endif /* _ASM_PROCESSOR_H */

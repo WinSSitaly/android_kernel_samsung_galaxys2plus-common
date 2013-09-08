@@ -61,7 +61,10 @@ Notes:
 #include <linux/gfp.h>
 #include <linux/ioport.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/io.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/dma.h>
 #include "comedi_fc.h"
 
@@ -407,9 +410,14 @@ struct dt282x_private {
 			}					\
 			udelay(5);				\
 		}						\
+<<<<<<< HEAD
 		if (_i) {					\
 			b					\
 		}						\
+=======
+		if (_i)						\
+			b					\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} while (0)
 
 static int dt282x_attach(struct comedi_device *dev,

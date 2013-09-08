@@ -15,9 +15,14 @@
 #ifndef __MIPS_JZ4740_IRQ_H__
 #define __MIPS_JZ4740_IRQ_H__
 
+<<<<<<< HEAD
 #include <linux/irq.h>
 
 extern void jz4740_irq_suspend(struct irq_data *data);
 extern void jz4740_irq_resume(struct irq_data *data);
+=======
+extern void jz4740_intc_suspend(void);
+extern void jz4740_intc_resume(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

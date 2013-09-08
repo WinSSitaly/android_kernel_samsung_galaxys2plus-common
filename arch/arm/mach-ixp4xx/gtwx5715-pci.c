@@ -49,7 +49,11 @@ void __init gtwx5715_pci_preinit(void)
 }
 
 
+<<<<<<< HEAD
 static int __init gtwx5715_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+static int __init gtwx5715_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int rc = -1;
 

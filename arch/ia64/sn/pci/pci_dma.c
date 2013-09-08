@@ -76,8 +76,12 @@ EXPORT_SYMBOL(sn_dma_set_mask);
  * more information.
  */
 static void *sn_dma_alloc_coherent(struct device *dev, size_t size,
+<<<<<<< HEAD
 				   dma_addr_t * dma_handle, gfp_t flags,
 				   struct dma_attrs *attrs)
+=======
+				   dma_addr_t * dma_handle, gfp_t flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	void *cpuaddr;
 	unsigned long phys_addr;
@@ -138,7 +142,11 @@ static void *sn_dma_alloc_coherent(struct device *dev, size_t size,
  * any associated IOMMU mappings.
  */
 static void sn_dma_free_coherent(struct device *dev, size_t size, void *cpu_addr,
+<<<<<<< HEAD
 				 dma_addr_t dma_handle, struct dma_attrs *attrs)
+=======
+				 dma_addr_t dma_handle)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct pci_dev *pdev = to_pci_dev(dev);
 	struct sn_pcibus_provider *provider = SN_PCIDEV_BUSPROVIDER(pdev);
@@ -467,8 +475,13 @@ int sn_pci_legacy_write(struct pci_bus *bus, u16 port, u32 val, u8 size)
 }
 
 static struct dma_map_ops sn_dma_ops = {
+<<<<<<< HEAD
 	.alloc			= sn_dma_alloc_coherent,
 	.free			= sn_dma_free_coherent,
+=======
+	.alloc_coherent		= sn_dma_alloc_coherent,
+	.free_coherent		= sn_dma_free_coherent,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_page		= sn_dma_map_page,
 	.unmap_page		= sn_dma_unmap_page,
 	.map_sg			= sn_dma_map_sg,

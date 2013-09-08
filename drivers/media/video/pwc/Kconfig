@@ -1,7 +1,10 @@
 config USB_PWC
 	tristate "USB Philips Cameras"
 	depends on VIDEO_V4L2
+<<<<<<< HEAD
 	select VIDEOBUF2_VMALLOC
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	---help---
 	  Say Y or M here if you want to use one of these Philips & OEM
 	  webcams:

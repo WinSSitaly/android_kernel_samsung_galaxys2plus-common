@@ -62,7 +62,11 @@ static int __init br_init(void)
 
 	brioctl_set(br_ioctl_deviceless_stub);
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_ATM_LANE)
+=======
+#if defined(CONFIG_ATM_LANE) || defined(CONFIG_ATM_LANE_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	br_fdb_test_addr_hook = br_fdb_test_addr;
 #endif
 
@@ -93,7 +97,11 @@ static void __exit br_deinit(void)
 	rcu_barrier(); /* Wait for completion of call_rcu()'s */
 
 	br_netfilter_fini();
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_ATM_LANE)
+=======
+#if defined(CONFIG_ATM_LANE) || defined(CONFIG_ATM_LANE_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	br_fdb_test_addr_hook = NULL;
 #endif
 

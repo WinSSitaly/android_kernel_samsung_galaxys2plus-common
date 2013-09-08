@@ -1,7 +1,11 @@
 /*******************************************************************
  * This file is part of the Emulex Linux Device Driver for         *
  * Fibre Channel Host Bus Adapters.                                *
+<<<<<<< HEAD
  * Copyright (C) 2009-2012 Emulex.  All rights reserved.                *
+=======
+ * Copyright (C) 2009 Emulex.  All rights reserved.                *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * EMULEX and SLI are trademarks of Emulex.                        *
  * www.emulex.com                                                  *
  *                                                                 *
@@ -41,8 +45,11 @@
  * Or clear that bit field:
  *	bf_set(example_bit_field, &t1, 0);
  */
+<<<<<<< HEAD
 #define bf_get_be32(name, ptr) \
 	((be32_to_cpu((ptr)->name##_WORD) >> name##_SHIFT) & name##_MASK)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define bf_get_le32(name, ptr) \
 	((le32_to_cpu((ptr)->name##_WORD) >> name##_SHIFT) & name##_MASK)
 #define bf_get(name, ptr) \
@@ -321,10 +328,13 @@ struct lpfc_cqe {
 #define CQE_STATUS_CMD_REJECT		0xb
 #define CQE_STATUS_FCP_TGT_LENCHECK	0xc
 #define CQE_STATUS_NEED_BUFF_ENTRY	0xf
+<<<<<<< HEAD
 #define CQE_STATUS_DI_ERROR		0x16
 
 /* Used when mapping CQE status to IOCB */
 #define LPFC_IOCB_STATUS_MASK		0xf
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Status returned by hardware (valid only if status = CQE_STATUS_SUCCESS). */
 #define CQE_HW_STATUS_NO_ERR		0x0
@@ -338,12 +348,15 @@ struct lpfc_cqe {
 #define CQE_CODE_XRI_ABORTED		0x5
 #define CQE_CODE_RECEIVE_V1		0x9
 
+<<<<<<< HEAD
 /*
  * Define mask value for xri_aborted and wcqe completed CQE extended status.
  * Currently, extended status is limited to 9 bits (0x0 -> 0x103) .
  */
 #define WCQE_PARAM_MASK		0x1FF;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* completion queue entry for wqe completions */
 struct lpfc_wcqe_complete {
 	uint32_t word0;
@@ -358,6 +371,7 @@ struct lpfc_wcqe_complete {
 #define lpfc_wcqe_c_hw_status_WORD	word0
 	uint32_t total_data_placed;
 	uint32_t parameter;
+<<<<<<< HEAD
 #define lpfc_wcqe_c_bg_edir_SHIFT	5
 #define lpfc_wcqe_c_bg_edir_MASK	0x00000001
 #define lpfc_wcqe_c_bg_edir_WORD	parameter
@@ -373,6 +387,8 @@ struct lpfc_wcqe_complete {
 #define lpfc_wcqe_c_bg_ge_SHIFT		0
 #define lpfc_wcqe_c_bg_ge_MASK		0x00000001
 #define lpfc_wcqe_c_bg_ge_WORD		parameter
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint32_t word3;
 #define lpfc_wcqe_c_valid_SHIFT		lpfc_cqe_valid_SHIFT
 #define lpfc_wcqe_c_valid_MASK		lpfc_cqe_valid_MASK
@@ -384,8 +400,13 @@ struct lpfc_wcqe_complete {
 #define lpfc_wcqe_c_pv_MASK		0x00000001
 #define lpfc_wcqe_c_pv_WORD		word3
 #define lpfc_wcqe_c_priority_SHIFT	24
+<<<<<<< HEAD
 #define lpfc_wcqe_c_priority_MASK	0x00000007
 #define lpfc_wcqe_c_priority_WORD	word3
+=======
+#define lpfc_wcqe_c_priority_MASK		0x00000007
+#define lpfc_wcqe_c_priority_WORD		word3
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define lpfc_wcqe_c_code_SHIFT		lpfc_cqe_code_SHIFT
 #define lpfc_wcqe_c_code_MASK		lpfc_cqe_code_MASK
 #define lpfc_wcqe_c_code_WORD		lpfc_cqe_code_WORD
@@ -705,6 +726,10 @@ struct lpfc_register {
 #define lpfc_rq_doorbell_num_posted_SHIFT	16
 #define lpfc_rq_doorbell_num_posted_MASK	0x3FFF
 #define lpfc_rq_doorbell_num_posted_WORD	word0
+<<<<<<< HEAD
+=======
+#define LPFC_RQ_POST_BATCH		8	/* RQEs to post at one time */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define lpfc_rq_doorbell_id_SHIFT		0
 #define lpfc_rq_doorbell_id_MASK		0xFFFF
 #define lpfc_rq_doorbell_id_WORD		word0
@@ -740,6 +765,7 @@ struct lpfc_register {
 #define lpfc_eqcq_doorbell_eqci_SHIFT		9
 #define lpfc_eqcq_doorbell_eqci_MASK		0x0001
 #define lpfc_eqcq_doorbell_eqci_WORD		word0
+<<<<<<< HEAD
 #define lpfc_eqcq_doorbell_cqid_lo_SHIFT	0
 #define lpfc_eqcq_doorbell_cqid_lo_MASK		0x03FF
 #define lpfc_eqcq_doorbell_cqid_lo_WORD		word0
@@ -754,6 +780,14 @@ struct lpfc_register {
 #define lpfc_eqcq_doorbell_eqid_hi_WORD		word0
 #define LPFC_CQID_HI_FIELD_SHIFT		10
 #define LPFC_EQID_HI_FIELD_SHIFT		9
+=======
+#define lpfc_eqcq_doorbell_cqid_SHIFT		0
+#define lpfc_eqcq_doorbell_cqid_MASK		0x03FF
+#define lpfc_eqcq_doorbell_cqid_WORD		word0
+#define lpfc_eqcq_doorbell_eqid_SHIFT		0
+#define lpfc_eqcq_doorbell_eqid_MASK		0x01FF
+#define lpfc_eqcq_doorbell_eqid_WORD		word0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define LPFC_BMBX			0x0160
 #define lpfc_bmbx_addr_SHIFT		2
@@ -818,8 +852,11 @@ union lpfc_sli4_cfg_shdr {
 #define LPFC_Q_CREATE_VERSION_2	2
 #define LPFC_Q_CREATE_VERSION_1	1
 #define LPFC_Q_CREATE_VERSION_0	0
+<<<<<<< HEAD
 #define LPFC_OPCODE_VERSION_0	0
 #define LPFC_OPCODE_VERSION_1	1
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} request;
 	struct {
 		uint32_t word6;
@@ -861,7 +898,10 @@ struct mbox_header {
 #define LPFC_EXTENT_VERSION_DEFAULT	0
 
 /* Subsystem Definitions */
+<<<<<<< HEAD
 #define LPFC_MBOX_SUBSYSTEM_NA		0x0
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define LPFC_MBOX_SUBSYSTEM_COMMON	0x1
 #define LPFC_MBOX_SUBSYSTEM_FCOE	0xC
 
@@ -872,6 +912,7 @@ struct mbox_header {
 #define HOST_ENDIAN_HIGH_WORD1	0xFF7856FF
 
 /* Common Opcodes */
+<<<<<<< HEAD
 #define LPFC_MBOX_OPCODE_NA				0x00
 #define LPFC_MBOX_OPCODE_CQ_CREATE			0x0C
 #define LPFC_MBOX_OPCODE_EQ_CREATE			0x0D
@@ -900,6 +941,27 @@ struct mbox_header {
 #define LPFC_MBOX_OPCODE_READ_OBJECT_LIST		0xAD
 #define LPFC_MBOX_OPCODE_DELETE_OBJECT			0xAE
 #define LPFC_MBOX_OPCODE_GET_SLI4_PARAMETERS		0xB5
+=======
+#define LPFC_MBOX_OPCODE_CQ_CREATE		0x0C
+#define LPFC_MBOX_OPCODE_EQ_CREATE		0x0D
+#define LPFC_MBOX_OPCODE_MQ_CREATE		0x15
+#define LPFC_MBOX_OPCODE_GET_CNTL_ATTRIBUTES	0x20
+#define LPFC_MBOX_OPCODE_NOP			0x21
+#define LPFC_MBOX_OPCODE_MQ_DESTROY		0x35
+#define LPFC_MBOX_OPCODE_CQ_DESTROY		0x36
+#define LPFC_MBOX_OPCODE_EQ_DESTROY		0x37
+#define LPFC_MBOX_OPCODE_QUERY_FW_CFG		0x3A
+#define LPFC_MBOX_OPCODE_FUNCTION_RESET		0x3D
+#define LPFC_MBOX_OPCODE_MQ_CREATE_EXT		0x5A
+#define LPFC_MBOX_OPCODE_GET_RSRC_EXTENT_INFO	0x9A
+#define LPFC_MBOX_OPCODE_GET_ALLOC_RSRC_EXTENT	0x9B
+#define LPFC_MBOX_OPCODE_ALLOC_RSRC_EXTENT	0x9C
+#define LPFC_MBOX_OPCODE_DEALLOC_RSRC_EXTENT	0x9D
+#define LPFC_MBOX_OPCODE_GET_FUNCTION_CONFIG    0xA0
+#define LPFC_MBOX_OPCODE_GET_PROFILE_CONFIG	0xA4
+#define LPFC_MBOX_OPCODE_WRITE_OBJECT		0xAC
+#define LPFC_MBOX_OPCODE_GET_SLI4_PARAMETERS	0xB5
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* FCoE Opcodes */
 #define LPFC_MBOX_OPCODE_FCOE_WQ_CREATE			0x01
@@ -913,7 +975,10 @@ struct mbox_header {
 #define LPFC_MBOX_OPCODE_FCOE_DELETE_FCF		0x0A
 #define LPFC_MBOX_OPCODE_FCOE_POST_HDR_TEMPLATE		0x0B
 #define LPFC_MBOX_OPCODE_FCOE_REDISCOVER_FCF		0x10
+<<<<<<< HEAD
 #define LPFC_MBOX_OPCODE_FCOE_SET_FCLINK_SETTINGS	0x21
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define LPFC_MBOX_OPCODE_FCOE_LINK_DIAG_STATE		0x22
 #define LPFC_MBOX_OPCODE_FCOE_LINK_DIAG_LOOPBACK	0x23
 
@@ -1384,11 +1449,19 @@ struct lpfc_mbx_set_link_diag_loopback {
 		struct {
 			uint32_t word0;
 #define lpfc_mbx_set_diag_lpbk_type_SHIFT	0
+<<<<<<< HEAD
 #define lpfc_mbx_set_diag_lpbk_type_MASK	0x00000003
 #define lpfc_mbx_set_diag_lpbk_type_WORD	word0
 #define LPFC_DIAG_LOOPBACK_TYPE_DISABLE		0x0
 #define LPFC_DIAG_LOOPBACK_TYPE_INTERNAL	0x1
 #define LPFC_DIAG_LOOPBACK_TYPE_SERDES		0x2
+=======
+#define lpfc_mbx_set_diag_lpbk_type_MASK	0x00000001
+#define lpfc_mbx_set_diag_lpbk_type_WORD	word0
+#define LPFC_DIAG_LOOPBACK_TYPE_DISABLE		0x0
+#define LPFC_DIAG_LOOPBACK_TYPE_INTERNAL	0x1
+#define LPFC_DIAG_LOOPBACK_TYPE_EXTERNAL	0x2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define lpfc_mbx_set_diag_lpbk_link_num_SHIFT	16
 #define lpfc_mbx_set_diag_lpbk_link_num_MASK	0x0000003F
 #define lpfc_mbx_set_diag_lpbk_link_num_WORD	word0
@@ -1517,6 +1590,7 @@ struct sli4_sge {	/* SLI-4 */
 	uint32_t addr_lo;
 
 	uint32_t word2;
+<<<<<<< HEAD
 #define lpfc_sli4_sge_offset_SHIFT	0
 #define lpfc_sli4_sge_offset_MASK	0x07FFFFFF
 #define lpfc_sli4_sge_offset_WORD	word2
@@ -1533,11 +1607,19 @@ struct sli4_sge {	/* SLI-4 */
 #define LPFC_SGE_TYPE_ATM		0xA
 #define LPFC_SGE_TYPE_SKIP		0xC
 #define lpfc_sli4_sge_last_SHIFT	31 /* Last SEG in the SGL sets it */
+=======
+#define lpfc_sli4_sge_offset_SHIFT	0 /* Offset of buffer - Not used*/
+#define lpfc_sli4_sge_offset_MASK	0x1FFFFFFF
+#define lpfc_sli4_sge_offset_WORD	word2
+#define lpfc_sli4_sge_last_SHIFT	31 /* Last SEG in the SGL sets
+						this  flag !! */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define lpfc_sli4_sge_last_MASK		0x00000001
 #define lpfc_sli4_sge_last_WORD		word2
 	uint32_t sge_len;
 };
 
+<<<<<<< HEAD
 struct sli4_sge_diseed {	/* SLI-4 */
 	uint32_t ref_tag;
 	uint32_t ref_tag_tran;
@@ -1592,6 +1674,8 @@ struct sli4_sge_diseed {	/* SLI-4 */
 /* optx and oprx use BG_OP_IN defines in lpfc_hw.h */
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct fcf_record {
 	uint32_t max_rcv_size;
 	uint32_t fka_adv_period;
@@ -1863,8 +1947,11 @@ struct lpfc_mbx_init_vfi {
 #define lpfc_init_vfi_hop_count_MASK	0x000000FF
 #define lpfc_init_vfi_hop_count_WORD	word4
 };
+<<<<<<< HEAD
 #define MBX_VFI_IN_USE			0x9F02
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct lpfc_mbx_reg_vfi {
 	uint32_t word1;
@@ -2133,6 +2220,7 @@ struct lpfc_mbx_read_config {
 #define lpfc_mbx_rd_conf_extnts_inuse_MASK	0x00000001
 #define lpfc_mbx_rd_conf_extnts_inuse_WORD	word1
 	uint32_t word2;
+<<<<<<< HEAD
 #define lpfc_mbx_rd_conf_lnk_numb_SHIFT		0
 #define lpfc_mbx_rd_conf_lnk_numb_MASK		0x0000003F
 #define lpfc_mbx_rd_conf_lnk_numb_WORD		word2
@@ -2144,6 +2232,8 @@ struct lpfc_mbx_read_config {
 #define lpfc_mbx_rd_conf_lnk_ldv_SHIFT		8
 #define lpfc_mbx_rd_conf_lnk_ldv_MASK		0x00000001
 #define lpfc_mbx_rd_conf_lnk_ldv_WORD		word2
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define lpfc_mbx_rd_conf_topology_SHIFT		24
 #define lpfc_mbx_rd_conf_topology_MASK		0x000000FF
 #define lpfc_mbx_rd_conf_topology_WORD		word2
@@ -2677,6 +2767,7 @@ struct lpfc_mbx_get_prof_cfg {
 	} u;
 };
 
+<<<<<<< HEAD
 struct lpfc_controller_attribute {
 	uint32_t version_string[8];
 	uint32_t manufacturer_name[8];
@@ -2823,6 +2914,10 @@ struct lpfc_mbx_get_port_name {
 
 /* Mailbox Completion Queue Error Messages */
 #define MB_CQE_STATUS_SUCCESS			0x0
+=======
+/* Mailbox Completion Queue Error Messages */
+#define MB_CQE_STATUS_SUCCESS 			0x0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MB_CQE_STATUS_INSUFFICIENT_PRIVILEGES	0x1
 #define MB_CQE_STATUS_INVALID_PARAMETER		0x2
 #define MB_CQE_STATUS_INSUFFICIENT_RESOURCES	0x3
@@ -2906,9 +3001,14 @@ struct lpfc_mqe {
 		struct lpfc_mbx_run_link_diag_test link_diag_test;
 		struct lpfc_mbx_get_func_cfg get_func_cfg;
 		struct lpfc_mbx_get_prof_cfg get_prof_cfg;
+<<<<<<< HEAD
 		struct lpfc_mbx_wr_object wr_object;
 		struct lpfc_mbx_get_port_name get_port_name;
 		struct lpfc_mbx_nop nop;
+=======
+		struct lpfc_mbx_nop nop;
+		struct lpfc_mbx_wr_object wr_object;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} un;
 };
 
@@ -3125,9 +3225,12 @@ struct wqe_common {
 #define wqe_ctxt_tag_MASK     0x0000FFFF
 #define wqe_ctxt_tag_WORD     word6
 	uint32_t word7;
+<<<<<<< HEAD
 #define wqe_dif_SHIFT         0
 #define wqe_dif_MASK          0x00000003
 #define wqe_dif_WORD          word7
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define wqe_ct_SHIFT          2
 #define wqe_ct_MASK           0x00000003
 #define wqe_ct_WORD           word7
@@ -3140,21 +3243,27 @@ struct wqe_common {
 #define wqe_class_SHIFT       16
 #define wqe_class_MASK        0x00000007
 #define wqe_class_WORD        word7
+<<<<<<< HEAD
 #define wqe_ar_SHIFT          19
 #define wqe_ar_MASK           0x00000001
 #define wqe_ar_WORD           word7
 #define wqe_ag_SHIFT          wqe_ar_SHIFT
 #define wqe_ag_MASK           wqe_ar_MASK
 #define wqe_ag_WORD           wqe_ar_WORD
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define wqe_pu_SHIFT          20
 #define wqe_pu_MASK           0x00000003
 #define wqe_pu_WORD           word7
 #define wqe_erp_SHIFT         22
 #define wqe_erp_MASK          0x00000001
 #define wqe_erp_WORD          word7
+<<<<<<< HEAD
 #define wqe_conf_SHIFT        wqe_erp_SHIFT
 #define wqe_conf_MASK         wqe_erp_MASK
 #define wqe_conf_WORD         wqe_erp_WORD
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define wqe_lnk_SHIFT         23
 #define wqe_lnk_MASK          0x00000001
 #define wqe_lnk_WORD          word7
@@ -3213,9 +3322,12 @@ struct wqe_common {
 #define wqe_xc_SHIFT          21
 #define wqe_xc_MASK           0x00000001
 #define wqe_xc_WORD           word10
+<<<<<<< HEAD
 #define wqe_sr_SHIFT          22
 #define wqe_sr_MASK           0x00000001
 #define wqe_sr_WORD           word10
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define wqe_ccpe_SHIFT        23
 #define wqe_ccpe_MASK         0x00000001
 #define wqe_ccpe_WORD         word10
@@ -3346,11 +3458,15 @@ struct xmit_bls_rsp64_wqe {
 	uint32_t rsrvd4;
 	struct wqe_did	wqe_dest;
 	struct wqe_common wqe_com; /* words 6-11 */
+<<<<<<< HEAD
 	uint32_t word12;
 #define xmit_bls_rsp64_temprpi_SHIFT  0
 #define xmit_bls_rsp64_temprpi_MASK   0x0000ffff
 #define xmit_bls_rsp64_temprpi_WORD   word12
 	uint32_t rsvd_13_15[3];
+=======
+	uint32_t rsvd_12_15[4];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct wqe_rctl_dfctl {
@@ -3361,9 +3477,12 @@ struct wqe_rctl_dfctl {
 #define wqe_la_SHIFT 3
 #define wqe_la_MASK  0x000000001
 #define wqe_la_WORD  word5
+<<<<<<< HEAD
 #define wqe_xo_SHIFT	6
 #define wqe_xo_MASK	0x000000001
 #define wqe_xo_WORD	word5
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define wqe_ls_SHIFT 7
 #define wqe_ls_MASK  0x000000001
 #define wqe_ls_WORD  word5

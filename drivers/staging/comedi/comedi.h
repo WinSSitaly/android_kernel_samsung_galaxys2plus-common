@@ -514,16 +514,23 @@
 			return 0x1 + pfi_channel;
 		else
 			return 0xb + pfi_channel;
+<<<<<<< HEAD
 	}
 
 	static inline unsigned NI_USUAL_RTSI_SELECT(unsigned rtsi_channel)
 	{
+=======
+	} static inline unsigned NI_USUAL_RTSI_SELECT(unsigned rtsi_channel) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rtsi_channel < 7)
 			return 0xb + rtsi_channel;
 		else
 			return 0x1b;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* mode bits for NI general-purpose counters, set with
  * INSN_CONFIG_SET_COUNTER_MODE */
 #define NI_GPCT_COUNTING_MODE_SHIFT 16

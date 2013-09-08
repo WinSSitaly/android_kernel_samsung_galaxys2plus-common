@@ -434,7 +434,22 @@ static struct i2c_driver saa7706h_driver = {
 	.id_table	= saa7706h_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(saa7706h_driver);
+=======
+static __init int saa7706h_init(void)
+{
+	return i2c_add_driver(&saa7706h_driver);
+}
+
+static __exit void saa7706h_exit(void)
+{
+	i2c_del_driver(&saa7706h_driver);
+}
+
+module_init(saa7706h_init);
+module_exit(saa7706h_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("SAA7706H Car Radio DSP driver");
 MODULE_AUTHOR("Mocean Laboratories");

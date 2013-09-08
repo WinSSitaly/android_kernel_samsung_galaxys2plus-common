@@ -50,6 +50,7 @@ nv50_sor_nr(struct drm_device *dev)
 	return 4;
 }
 
+<<<<<<< HEAD
 u32
 nv50_display_active_crtcs(struct drm_device *dev)
 {
@@ -120,6 +121,11 @@ nv50_display_early_init(struct drm_device *dev)
 		nv_mask(dev, 0x000200, 0x40000000, 0x40000000);
 	}
 
+=======
+int
+nv50_display_early_init(struct drm_device *dev)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -129,6 +135,7 @@ nv50_display_late_takedown(struct drm_device *dev)
 }
 
 int
+<<<<<<< HEAD
 nv50_display_sync(struct drm_device *dev)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
@@ -163,6 +170,13 @@ nv50_display_sync(struct drm_device *dev)
 int
 nv50_display_init(struct drm_device *dev)
 {
+=======
+nv50_display_init(struct drm_device *dev)
+{
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	struct nouveau_gpio_engine *pgpio = &dev_priv->engine.gpio;
+	struct drm_connector *connector;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct nouveau_channel *evo;
 	int ret, i;
 	u32 val;
@@ -257,6 +271,19 @@ nv50_display_init(struct drm_device *dev)
 		     NV50_PDISPLAY_INTR_EN_1_CLK_UNK20 |
 		     NV50_PDISPLAY_INTR_EN_1_CLK_UNK40);
 
+<<<<<<< HEAD
+=======
+	/* enable hotplug interrupts */
+	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
+		struct nouveau_connector *conn = nouveau_connector(connector);
+
+		if (conn->dcb->gpio_tag == 0xff)
+			continue;
+
+		pgpio->irq_enable(dev, conn->dcb->gpio_tag, true);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = nv50_evo_init(dev);
 	if (ret)
 		return ret;
@@ -264,6 +291,7 @@ nv50_display_init(struct drm_device *dev)
 
 	nv_wr32(dev, NV50_PDISPLAY_OBJECTS, (evo->ramin->vinst >> 8) | 9);
 
+<<<<<<< HEAD
 	ret = RING_SPACE(evo, 3);
 	if (ret)
 		return ret;
@@ -277,6 +305,38 @@ nv50_display_init(struct drm_device *dev)
 void
 nv50_display_fini(struct drm_device *dev)
 {
+=======
+	ret = RING_SPACE(evo, 15);
+	if (ret)
+		return ret;
+	BEGIN_RING(evo, 0, NV50_EVO_UNK84, 2);
+	OUT_RING(evo, NV50_EVO_UNK84_NOTIFY_DISABLED);
+	OUT_RING(evo, NvEvoSync);
+	BEGIN_RING(evo, 0, NV50_EVO_CRTC(0, FB_DMA), 1);
+	OUT_RING(evo, NV50_EVO_CRTC_FB_DMA_HANDLE_NONE);
+	BEGIN_RING(evo, 0, NV50_EVO_CRTC(0, UNK0800), 1);
+	OUT_RING(evo, 0);
+	BEGIN_RING(evo, 0, NV50_EVO_CRTC(0, DISPLAY_START), 1);
+	OUT_RING(evo, 0);
+	BEGIN_RING(evo, 0, NV50_EVO_CRTC(0, UNK082C), 1);
+	OUT_RING(evo, 0);
+	/* required to make display sync channels not hate life */
+	BEGIN_RING(evo, 0, NV50_EVO_CRTC(0, UNK900), 1);
+	OUT_RING  (evo, 0x00000311);
+	BEGIN_RING(evo, 0, NV50_EVO_CRTC(1, UNK900), 1);
+	OUT_RING  (evo, 0x00000311);
+	FIRE_RING(evo);
+	if (!nv_wait(dev, 0x640004, 0xffffffff, evo->dma.put << 2))
+		NV_ERROR(dev, "evo pushbuf stalled\n");
+
+
+	return 0;
+}
+
+static int nv50_display_disable(struct drm_device *dev)
+{
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct nv50_display *disp = nv50_display(dev);
 	struct nouveau_channel *evo = disp->master;
 	struct drm_crtc *drm_crtc;
@@ -316,6 +376,7 @@ nv50_display_fini(struct drm_device *dev)
 		}
 	}
 
+<<<<<<< HEAD
 	for (i = 0; i < 2; i++) {
 		nv_wr32(dev, NV50_PDISPLAY_CURSOR_CURSOR_CTRL2(i), 0);
 		if (!nv_wait(dev, NV50_PDISPLAY_CURSOR_CURSOR_CTRL2(i),
@@ -326,6 +387,8 @@ nv50_display_fini(struct drm_device *dev)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nv50_evo_fini(dev);
 
 	for (i = 0; i < 3; i++) {
@@ -339,10 +402,25 @@ nv50_display_fini(struct drm_device *dev)
 
 	/* disable interrupts. */
 	nv_wr32(dev, NV50_PDISPLAY_INTR_EN_1, 0x00000000);
+<<<<<<< HEAD
 }
 
 int
 nv50_display_create(struct drm_device *dev)
+=======
+
+	/* disable hotplug interrupts */
+	nv_wr32(dev, 0xe054, 0xffffffff);
+	nv_wr32(dev, 0xe050, 0x00000000);
+	if (dev_priv->chipset >= 0x90) {
+		nv_wr32(dev, 0xe074, 0xffffffff);
+		nv_wr32(dev, 0xe070, 0x00000000);
+	}
+	return 0;
+}
+
+int nv50_display_create(struct drm_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct dcb_table *dcb = &dev_priv->vbios.dcb;
@@ -357,6 +435,26 @@ nv50_display_create(struct drm_device *dev)
 		return -ENOMEM;
 	dev_priv->engine.display.priv = priv;
 
+<<<<<<< HEAD
+=======
+	/* init basic kernel modesetting */
+	drm_mode_config_init(dev);
+
+	/* Initialise some optional connector properties. */
+	drm_mode_create_scaling_mode_property(dev);
+	drm_mode_create_dithering_property(dev);
+
+	dev->mode_config.min_width = 0;
+	dev->mode_config.min_height = 0;
+
+	dev->mode_config.funcs = (void *)&nouveau_mode_config_funcs;
+
+	dev->mode_config.max_width = 8192;
+	dev->mode_config.max_height = 8192;
+
+	dev->mode_config.fb_base = dev_priv->fb_phys;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Create CRTC objects */
 	for (i = 0; i < 2; i++)
 		nv50_crtc_create(dev, i);
@@ -402,7 +500,11 @@ nv50_display_create(struct drm_device *dev)
 	tasklet_init(&priv->tasklet, nv50_display_bh, (unsigned long)dev);
 	nouveau_irq_register(dev, 26, nv50_display_isr);
 
+<<<<<<< HEAD
 	ret = nv50_evo_create(dev);
+=======
+	ret = nv50_display_init(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret) {
 		nv50_display_destroy(dev);
 		return ret;
@@ -418,7 +520,13 @@ nv50_display_destroy(struct drm_device *dev)
 
 	NV_DEBUG_KMS(dev, "\n");
 
+<<<<<<< HEAD
 	nv50_evo_destroy(dev);
+=======
+	drm_mode_config_cleanup(dev);
+
+	nv50_display_disable(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nouveau_irq_unregister(dev, 26);
 	kfree(disp);
 }
@@ -467,6 +575,11 @@ nv50_display_flip_next(struct drm_crtc *crtc, struct drm_framebuffer *fb,
 
 	/* synchronise with the rendering channel, if necessary */
 	if (likely(chan)) {
+<<<<<<< HEAD
+=======
+		u64 offset = dispc->sem.bo->vma.offset + dispc->sem.offset;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = RING_SPACE(chan, 10);
 		if (ret) {
 			WIND_RING(evo);
@@ -474,6 +587,7 @@ nv50_display_flip_next(struct drm_crtc *crtc, struct drm_framebuffer *fb,
 		}
 
 		if (dev_priv->chipset < 0xc0) {
+<<<<<<< HEAD
 			BEGIN_RING(chan, 0, 0x0060, 2);
 			OUT_RING  (chan, NvEvoSema0 + nv_crtc->index);
 			OUT_RING  (chan, dispc->sem.offset);
@@ -483,19 +597,38 @@ nv50_display_flip_next(struct drm_crtc *crtc, struct drm_framebuffer *fb,
 			OUT_RING  (chan, dispc->sem.offset ^ 0x10);
 			OUT_RING  (chan, 0x74b1e000);
 			BEGIN_RING(chan, 0, 0x0060, 1);
+=======
+			BEGIN_RING(chan, NvSubSw, 0x0060, 2);
+			OUT_RING  (chan, NvEvoSema0 + nv_crtc->index);
+			OUT_RING  (chan, dispc->sem.offset);
+			BEGIN_RING(chan, NvSubSw, 0x006c, 1);
+			OUT_RING  (chan, 0xf00d0000 | dispc->sem.value);
+			BEGIN_RING(chan, NvSubSw, 0x0064, 2);
+			OUT_RING  (chan, dispc->sem.offset ^ 0x10);
+			OUT_RING  (chan, 0x74b1e000);
+			BEGIN_RING(chan, NvSubSw, 0x0060, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (dev_priv->chipset < 0x84)
 				OUT_RING  (chan, NvSema);
 			else
 				OUT_RING  (chan, chan->vram_handle);
 		} else {
+<<<<<<< HEAD
 			u64 offset = chan->dispc_vma[nv_crtc->index].offset;
 			offset += dispc->sem.offset;
 			BEGIN_NVC0(chan, 2, 0, 0x0010, 4);
+=======
+			BEGIN_NVC0(chan, 2, NvSubM2MF, 0x0010, 4);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			OUT_RING  (chan, upper_32_bits(offset));
 			OUT_RING  (chan, lower_32_bits(offset));
 			OUT_RING  (chan, 0xf00d0000 | dispc->sem.value);
 			OUT_RING  (chan, 0x1002);
+<<<<<<< HEAD
 			BEGIN_NVC0(chan, 2, 0, 0x0010, 4);
+=======
+			BEGIN_NVC0(chan, 2, NvSubM2MF, 0x0010, 4);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			OUT_RING  (chan, upper_32_bits(offset));
 			OUT_RING  (chan, lower_32_bits(offset ^ 0x10));
 			OUT_RING  (chan, 0x74b1e000);
@@ -536,7 +669,11 @@ nv50_display_flip_next(struct drm_crtc *crtc, struct drm_framebuffer *fb,
 	OUT_RING  (evo, 0x00000000);
 	OUT_RING  (evo, 0x00000000);
 	BEGIN_RING(evo, 0, 0x0800, 5);
+<<<<<<< HEAD
 	OUT_RING  (evo, nv_fb->nvbo->bo.offset >> 8);
+=======
+	OUT_RING  (evo, (nv_fb->nvbo->bo.mem.start << PAGE_SHIFT) >> 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	OUT_RING  (evo, 0);
 	OUT_RING  (evo, (fb->height << 16) | fb->width);
 	OUT_RING  (evo, nv_fb->r_pitch);
@@ -582,7 +719,11 @@ nv50_display_script_select(struct drm_device *dev, struct dcb_entry *dcb,
 		} else {
 			/* determine number of lvds links */
 			if (nv_connector && nv_connector->edid &&
+<<<<<<< HEAD
 			    nv_connector->type == DCB_CONNECTOR_LVDS_SPWG) {
+=======
+			    nv_connector->dcb->type == DCB_CONNECTOR_LVDS_SPWG) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/* http://www.spwg.org */
 				if (((u8 *)nv_connector->edid)[121] == 2)
 					script |= 0x0100;
@@ -677,7 +818,11 @@ nv50_display_unk10_handler(struct drm_device *dev)
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct nv50_display *disp = nv50_display(dev);
 	u32 unk30 = nv_rd32(dev, 0x610030), mc;
+<<<<<<< HEAD
 	int i, crtc, or = 0, type = OUTPUT_ANY;
+=======
+	int i, crtc, or, type = OUTPUT_ANY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	NV_DEBUG_KMS(dev, "0x610030: 0x%08x\n", unk30);
 	disp->irq.dcb = NULL;
@@ -750,7 +895,11 @@ nv50_display_unk10_handler(struct drm_device *dev)
 		struct dcb_entry *dcb = &dev_priv->vbios.dcb.entry[i];
 
 		if (dcb->type == type && (dcb->or & (1 << or))) {
+<<<<<<< HEAD
 			nouveau_bios_run_display_table(dev, 0, -1, dcb, -1);
+=======
+			nouveau_bios_run_display_table(dev, dcb, 0, -1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			disp->irq.dcb = dcb;
 			goto ack;
 		}
@@ -763,18 +912,60 @@ ack:
 }
 
 static void
+<<<<<<< HEAD
+=======
+nv50_display_unk20_dp_hack(struct drm_device *dev, struct dcb_entry *dcb)
+{
+	int or = ffs(dcb->or) - 1, link = !(dcb->dpconf.sor.link & 1);
+	struct drm_encoder *encoder;
+	uint32_t tmp, unk0 = 0, unk1 = 0;
+
+	if (dcb->type != OUTPUT_DP)
+		return;
+
+	list_for_each_entry(encoder, &dev->mode_config.encoder_list, head) {
+		struct nouveau_encoder *nv_encoder = nouveau_encoder(encoder);
+
+		if (nv_encoder->dcb == dcb) {
+			unk0 = nv_encoder->dp.unk0;
+			unk1 = nv_encoder->dp.unk1;
+			break;
+		}
+	}
+
+	if (unk0 || unk1) {
+		tmp  = nv_rd32(dev, NV50_SOR_DP_CTRL(or, link));
+		tmp &= 0xfffffe03;
+		nv_wr32(dev, NV50_SOR_DP_CTRL(or, link), tmp | unk0);
+
+		tmp  = nv_rd32(dev, NV50_SOR_DP_UNK128(or, link));
+		tmp &= 0xfef080c0;
+		nv_wr32(dev, NV50_SOR_DP_UNK128(or, link), tmp | unk1);
+	}
+}
+
+static void
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 nv50_display_unk20_handler(struct drm_device *dev)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct nv50_display *disp = nv50_display(dev);
 	u32 unk30 = nv_rd32(dev, 0x610030), tmp, pclk, script, mc = 0;
 	struct dcb_entry *dcb;
+<<<<<<< HEAD
 	int i, crtc, or = 0, type = OUTPUT_ANY;
+=======
+	int i, crtc, or, type = OUTPUT_ANY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	NV_DEBUG_KMS(dev, "0x610030: 0x%08x\n", unk30);
 	dcb = disp->irq.dcb;
 	if (dcb) {
+<<<<<<< HEAD
 		nouveau_bios_run_display_table(dev, 0, -2, dcb, -1);
+=======
+		nouveau_bios_run_display_table(dev, dcb, 0, -2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		disp->irq.dcb = NULL;
 	}
 
@@ -783,8 +974,13 @@ nv50_display_unk20_handler(struct drm_device *dev)
 	if (crtc >= 0) {
 		pclk  = nv_rd32(dev, NV50_PDISPLAY_CRTC_P(crtc, CLOCK));
 		pclk &= 0x003fffff;
+<<<<<<< HEAD
 		if (pclk)
 			nv50_crtc_set_clock(dev, crtc, pclk);
+=======
+
+		nv50_crtc_set_clock(dev, crtc, pclk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		tmp = nv_rd32(dev, NV50_PDISPLAY_CRTC_CLK_CTRL2(crtc));
 		tmp &= ~0x000000f;
@@ -858,6 +1054,7 @@ nv50_display_unk20_handler(struct drm_device *dev)
 	}
 
 	script = nv50_display_script_select(dev, dcb, mc, pclk);
+<<<<<<< HEAD
 	nouveau_bios_run_display_table(dev, script, pclk, dcb, -1);
 
 	if (type == OUTPUT_DP) {
@@ -867,6 +1064,11 @@ nv50_display_unk20_handler(struct drm_device *dev)
 		else
 			nv50_sor_dp_calc_tu(dev, or, link, pclk, 24);
 	}
+=======
+	nouveau_bios_run_display_table(dev, dcb, script, pclk);
+
+	nv50_display_unk20_dp_hack(dev, dcb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dcb->type != OUTPUT_ANALOG) {
 		tmp = nv_rd32(dev, NV50_PDISPLAY_SOR_CLK_CTRL2(or));
@@ -931,7 +1133,11 @@ nv50_display_unk40_handler(struct drm_device *dev)
 	if (!dcb)
 		goto ack;
 
+<<<<<<< HEAD
 	nouveau_bios_run_display_table(dev, script, -pclk, dcb, -1);
+=======
+	nouveau_bios_run_display_table(dev, dcb, script, -pclk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nv50_display_unk40_dp_set_tmds(dev, dcb);
 
 ack:

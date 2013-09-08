@@ -309,7 +309,11 @@ typedef struct wandev_conf
 #define WANOPT_EVEN	2
 
 /* CHDLC Protocol Options */
+<<<<<<< HEAD
 /* DF Commented out for now.
+=======
+/* DF Commmented out for now.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define WANOPT_CHDLC_NO_DCD		IGNORE_DCD_FOR_LINK_STAT
 #define WANOPT_CHDLC_NO_CTS		IGNORE_CTS_FOR_LINK_STAT

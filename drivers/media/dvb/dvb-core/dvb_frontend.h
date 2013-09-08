@@ -42,16 +42,23 @@
 
 #include "dvbdev.h"
 
+<<<<<<< HEAD
 /*
  * Maximum number of Delivery systems per frontend. It
  * should be smaller or equal to 32
  */
 #define MAX_DELSYS	8
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct dvb_frontend_tune_settings {
 	int min_delay_ms;
 	int step_size;
 	int max_drift;
+<<<<<<< HEAD
+=======
+	struct dvb_frontend_parameters parameters;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct dvb_frontend;
@@ -203,18 +210,29 @@ struct dvb_tuner_ops {
 	int (*sleep)(struct dvb_frontend *fe);
 
 	/** This is for simple PLLs - set all parameters in one go. */
+<<<<<<< HEAD
 	int (*set_params)(struct dvb_frontend *fe);
 	int (*set_analog_params)(struct dvb_frontend *fe, struct analog_parameters *p);
 
 	/** This is support for demods like the mt352 - fills out the supplied buffer with what to write. */
 	int (*calc_regs)(struct dvb_frontend *fe, u8 *buf, int buf_len);
+=======
+	int (*set_params)(struct dvb_frontend *fe, struct dvb_frontend_parameters *p);
+	int (*set_analog_params)(struct dvb_frontend *fe, struct analog_parameters *p);
+
+	/** This is support for demods like the mt352 - fills out the supplied buffer with what to write. */
+	int (*calc_regs)(struct dvb_frontend *fe, struct dvb_frontend_parameters *p, u8 *buf, int buf_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/** This is to allow setting tuner-specific configs */
 	int (*set_config)(struct dvb_frontend *fe, void *priv_cfg);
 
 	int (*get_frequency)(struct dvb_frontend *fe, u32 *frequency);
 	int (*get_bandwidth)(struct dvb_frontend *fe, u32 *bandwidth);
+<<<<<<< HEAD
 	int (*get_if_frequency)(struct dvb_frontend *fe, u32 *frequency);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define TUNER_STATUS_LOCKED 1
 #define TUNER_STATUS_STEREO 2
@@ -255,14 +273,20 @@ struct analog_demod_ops {
 	int (*set_config)(struct dvb_frontend *fe, void *priv_cfg);
 };
 
+<<<<<<< HEAD
 struct dtv_frontend_properties;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct dvb_frontend_ops {
 
 	struct dvb_frontend_info info;
 
+<<<<<<< HEAD
 	u8 delsys[MAX_DELSYS];
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void (*release)(struct dvb_frontend* fe);
 	void (*release_sec)(struct dvb_frontend* fe);
 
@@ -273,7 +297,11 @@ struct dvb_frontend_ops {
 
 	/* if this is set, it overrides the default swzigzag */
 	int (*tune)(struct dvb_frontend* fe,
+<<<<<<< HEAD
 		    bool re_tune,
+=======
+		    struct dvb_frontend_parameters* params,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    unsigned int mode_flags,
 		    unsigned int *delay,
 		    fe_status_t *status);
@@ -281,10 +309,17 @@ struct dvb_frontend_ops {
 	enum dvbfe_algo (*get_frontend_algo)(struct dvb_frontend *fe);
 
 	/* these two are only used for the swzigzag code */
+<<<<<<< HEAD
 	int (*set_frontend)(struct dvb_frontend *fe);
 	int (*get_tune_settings)(struct dvb_frontend* fe, struct dvb_frontend_tune_settings* settings);
 
 	int (*get_frontend)(struct dvb_frontend *fe);
+=======
+	int (*set_frontend)(struct dvb_frontend* fe, struct dvb_frontend_parameters* params);
+	int (*get_tune_settings)(struct dvb_frontend* fe, struct dvb_frontend_tune_settings* settings);
+
+	int (*get_frontend)(struct dvb_frontend* fe, struct dvb_frontend_parameters* params);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int (*read_status)(struct dvb_frontend* fe, fe_status_t* status);
 	int (*read_ber)(struct dvb_frontend* fe, u32* ber);
@@ -306,7 +341,12 @@ struct dvb_frontend_ops {
 	/* These callbacks are for devices that implement their own
 	 * tuning algorithms, rather than a simple swzigzag
 	 */
+<<<<<<< HEAD
 	enum dvbfe_search (*search)(struct dvb_frontend *fe);
+=======
+	enum dvbfe_search (*search)(struct dvb_frontend *fe, struct dvb_frontend_parameters *p);
+	int (*track)(struct dvb_frontend *fe, struct dvb_frontend_parameters *p);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct dvb_tuner_ops tuner_ops;
 	struct analog_demod_ops analog_ops;
@@ -315,7 +355,10 @@ struct dvb_frontend_ops {
 	int (*get_property)(struct dvb_frontend* fe, struct dtv_property* tvp);
 };
 
+<<<<<<< HEAD
 #ifdef __DVB_CORE__
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MAX_EVENT 8
 
 struct dvb_fe_events {
@@ -326,7 +369,10 @@ struct dvb_fe_events {
 	wait_queue_head_t	  wait_queue;
 	struct mutex		  mtx;
 };
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct dtv_frontend_properties {
 
@@ -384,7 +430,10 @@ struct dvb_frontend {
 	void *analog_demod_priv;
 	struct dtv_frontend_properties dtv_property_cache;
 #define DVB_FRONTEND_COMPONENT_TUNER 0
+<<<<<<< HEAD
 #define DVB_FRONTEND_COMPONENT_DEMOD 1
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*callback)(void *adapter_priv, int component, int cmd, int arg);
 	int id;
 };

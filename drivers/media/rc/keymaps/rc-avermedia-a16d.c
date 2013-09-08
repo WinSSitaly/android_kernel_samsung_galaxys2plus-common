@@ -11,7 +11,10 @@
  */
 
 #include <media/rc-map.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct rc_map_table avermedia_a16d[] = {
 	{ 0x20, KEY_LIST},

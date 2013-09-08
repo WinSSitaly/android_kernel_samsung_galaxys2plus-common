@@ -34,7 +34,10 @@
 #include <linux/device.h>
 #include <linux/module.h>
 #include <linux/tty.h>
+<<<<<<< HEAD
 #include <linux/tty_flip.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/serial.h>
 #include <linux/sysrq.h>
 #include <linux/console.h>
@@ -262,9 +265,14 @@ static unsigned int mpc5200b_psc_set_baudrate(struct uart_port *port,
 				  port->uartclk / 4);
 	divisor = (port->uartclk + 2 * baud) / (4 * baud);
 
+<<<<<<< HEAD
 	/* select the proper prescaler and set the divisor
 	 * prefer high prescaler for more tolerance on low baudrates */
 	if (divisor > 0xffff || baud <= 115200) {
+=======
+	/* select the proper prescaler and set the divisor */
+	if (divisor > 0xffff) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		divisor = (divisor + 4) / 8;
 		prescaler = 0xdd00; /* /32 */
 	} else
@@ -275,7 +283,11 @@ static unsigned int mpc5200b_psc_set_baudrate(struct uart_port *port,
 
 static void mpc52xx_psc_get_irq(struct uart_port *port, struct device_node *np)
 {
+<<<<<<< HEAD
 	port->irqflags = 0;
+=======
+	port->irqflags = IRQF_DISABLED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	port->irq = irq_of_parse_and_map(np, 0);
 }
 
@@ -508,7 +520,11 @@ static int __init mpc512x_psc_fifoc_init(void)
 
 	psc_fifoc_irq = irq_of_parse_and_map(np, 0);
 	of_node_put(np);
+<<<<<<< HEAD
 	if (psc_fifoc_irq == 0) {
+=======
+	if (psc_fifoc_irq == NO_IRQ) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_err("%s: Can't get FIFOC irq\n", __func__);
 		iounmap(psc_fifoc);
 		return -ENODEV;
@@ -1355,7 +1371,11 @@ static int __devinit mpc52xx_uart_of_probe(struct platform_device *op)
 	}
 
 	psc_ops->get_irq(port, op->dev.of_node);
+<<<<<<< HEAD
 	if (port->irq == 0) {
+=======
+	if (port->irq == NO_IRQ) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_dbg(&op->dev, "Could not get irq\n");
 		return -EINVAL;
 	}

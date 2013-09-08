@@ -114,7 +114,10 @@
 
 #include <linux/delay.h>
 #include <linux/ioport.h>
+<<<<<<< HEAD
 #include <linux/io.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/dma.h>
 
 #include "8253.h"

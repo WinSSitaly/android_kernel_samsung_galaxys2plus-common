@@ -30,9 +30,12 @@
  * - Use page->lru to keep a free list
  * - doesn't track currently in use pages
  */
+<<<<<<< HEAD
 
 #define pr_fmt(fmt) "[TTM] " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/list.h>
 #include <linux/spinlock.h>
 #include <linux/highmem.h>
@@ -43,7 +46,11 @@
 #include <linux/slab.h>
 #include <linux/dma-mapping.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "ttm/ttm_bo_driver.h"
 #include "ttm/ttm_page_alloc.h"
@@ -170,13 +177,27 @@ static ssize_t ttm_pool_store(struct kobject *kobj,
 		m->options.small = val;
 	else if (attr == &ttm_page_pool_alloc_size) {
 		if (val > NUM_PAGES_TO_ALLOC*8) {
+<<<<<<< HEAD
 			pr_err("Setting allocation size to %lu is not allowed. Recommended size is %lu\n",
+=======
+			printk(KERN_ERR TTM_PFX
+			       "Setting allocation size to %lu "
+			       "is not allowed. Recommended size is "
+			       "%lu\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       NUM_PAGES_TO_ALLOC*(PAGE_SIZE >> 7),
 			       NUM_PAGES_TO_ALLOC*(PAGE_SIZE >> 10));
 			return size;
 		} else if (val > NUM_PAGES_TO_ALLOC) {
+<<<<<<< HEAD
 			pr_warn("Setting allocation size to larger than %lu is not recommended\n",
 				NUM_PAGES_TO_ALLOC*(PAGE_SIZE >> 10));
+=======
+			printk(KERN_WARNING TTM_PFX
+			       "Setting allocation size to "
+			       "larger than %lu is not recommended.\n",
+			       NUM_PAGES_TO_ALLOC*(PAGE_SIZE >> 10));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		m->options.alloc_size = val;
 	}
@@ -277,7 +298,12 @@ static void ttm_pages_put(struct page *pages[], unsigned npages)
 {
 	unsigned i;
 	if (set_pages_array_wb(pages, npages))
+<<<<<<< HEAD
 		pr_err("Failed to set %d pages to wb!\n", npages);
+=======
+		printk(KERN_ERR TTM_PFX "Failed to set %d pages to wb!\n",
+				npages);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < npages; ++i)
 		__free_page(pages[i]);
 }
@@ -312,7 +338,12 @@ static int ttm_page_pool_free(struct ttm_page_pool *pool, unsigned nr_free)
 	pages_to_free = kmalloc(npages_to_free * sizeof(struct page *),
 			GFP_KERNEL);
 	if (!pages_to_free) {
+<<<<<<< HEAD
 		pr_err("Failed to allocate memory for pool free operation\n");
+=======
+		printk(KERN_ERR TTM_PFX
+		       "Failed to allocate memory for pool free operation.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
@@ -351,7 +382,11 @@ restart:
 			if (nr_free)
 				goto restart;
 
+<<<<<<< HEAD
 			/* Not allowed to fall through or break because
+=======
+			/* Not allowed to fall tough or break because
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 * following context is inside spinlock while we are
 			 * outside here.
 			 */
@@ -434,12 +469,24 @@ static int ttm_set_pages_caching(struct page **pages,
 	case tt_uncached:
 		r = set_pages_array_uc(pages, cpages);
 		if (r)
+<<<<<<< HEAD
 			pr_err("Failed to set %d pages to uc!\n", cpages);
+=======
+			printk(KERN_ERR TTM_PFX
+			       "Failed to set %d pages to uc!\n",
+			       cpages);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case tt_wc:
 		r = set_pages_array_wc(pages, cpages);
 		if (r)
+<<<<<<< HEAD
 			pr_err("Failed to set %d pages to wc!\n", cpages);
+=======
+			printk(KERN_ERR TTM_PFX
+			       "Failed to set %d pages to wc!\n",
+			       cpages);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		break;
@@ -484,7 +531,12 @@ static int ttm_alloc_new_pages(struct list_head *pages, gfp_t gfp_flags,
 	caching_array = kmalloc(max_cpages*sizeof(struct page *), GFP_KERNEL);
 
 	if (!caching_array) {
+<<<<<<< HEAD
 		pr_err("Unable to allocate table for new pages\n");
+=======
+		printk(KERN_ERR TTM_PFX
+		       "Unable to allocate table for new pages.");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 
@@ -492,7 +544,11 @@ static int ttm_alloc_new_pages(struct list_head *pages, gfp_t gfp_flags,
 		p = alloc_page(gfp_flags);
 
 		if (!p) {
+<<<<<<< HEAD
 			pr_err("Unable to get page %u\n", i);
+=======
+			printk(KERN_ERR TTM_PFX "Unable to get page %u.\n", i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* store already allocated pages in the pool after
 			 * setting the caching state */
@@ -547,7 +603,11 @@ out:
 }
 
 /**
+<<<<<<< HEAD
  * Fill the given pool if there aren't enough pages and the requested number of
+=======
+ * Fill the given pool if there isn't enough pages and requested number of
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * pages is small.
  */
 static void ttm_page_pool_fill_locked(struct ttm_page_pool *pool,
@@ -567,8 +627,13 @@ static void ttm_page_pool_fill_locked(struct ttm_page_pool *pool,
 
 	pool->fill_lock = true;
 
+<<<<<<< HEAD
 	/* If allocation request is small and there are not enough
 	 * pages in a pool we fill the pool up first. */
+=======
+	/* If allocation request is small and there is not enough
+	 * pages in pool we fill the pool first */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (count < _manager->options.small
 		&& count > pool->npages) {
 		struct list_head new_pages;
@@ -590,7 +655,12 @@ static void ttm_page_pool_fill_locked(struct ttm_page_pool *pool,
 			++pool->nrefills;
 			pool->npages += alloc_size;
 		} else {
+<<<<<<< HEAD
 			pr_err("Failed to fill pool (%p)\n", pool);
+=======
+			printk(KERN_ERR TTM_PFX
+			       "Failed to fill pool (%p).", pool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* If we have any pages left put them to the pool. */
 			list_for_each_entry(p, &pool->list, lru) {
 				++cpages;
@@ -604,6 +674,7 @@ static void ttm_page_pool_fill_locked(struct ttm_page_pool *pool,
 }
 
 /**
+<<<<<<< HEAD
  * Cut 'count' number of pages from the pool and put them on the return list.
  *
  * @return count of pages still required to fulfill the request.
@@ -613,6 +684,15 @@ static unsigned ttm_page_pool_get_pages(struct ttm_page_pool *pool,
 					int ttm_flags,
 					enum ttm_caching_state cstate,
 					unsigned count)
+=======
+ * Cut count nubmer of pages from the pool and put them to return list
+ *
+ * @return count of pages still to allocate to fill the request.
+ */
+static unsigned ttm_page_pool_get_pages(struct ttm_page_pool *pool,
+		struct list_head *pages, int ttm_flags,
+		enum ttm_caching_state cstate, unsigned count)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long irq_flags;
 	struct list_head *p;
@@ -629,7 +709,11 @@ static unsigned ttm_page_pool_get_pages(struct ttm_page_pool *pool,
 		goto out;
 	}
 	/* find the last pages to include for requested number of pages. Split
+<<<<<<< HEAD
 	 * pool to begin and halve it to reduce search space. */
+=======
+	 * pool to begin and halves to reduce search space. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (count <= pool->npages/2) {
 		i = 0;
 		list_for_each(p, &pool->list) {
@@ -643,7 +727,11 @@ static unsigned ttm_page_pool_get_pages(struct ttm_page_pool *pool,
 				break;
 		}
 	}
+<<<<<<< HEAD
 	/* Cut 'count' number of pages from the pool */
+=======
+	/* Cut count number of pages from pool */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_cut_position(pages, &pool->list, p);
 	pool->npages -= count;
 	count = 0;
@@ -652,6 +740,7 @@ out:
 	return count;
 }
 
+<<<<<<< HEAD
 /* Put all pages in pages list to correct pool to wait for reuse */
 static void ttm_put_pages(struct page **pages, unsigned npages, int flags,
 			  enum ttm_caching_state cstate)
@@ -697,10 +786,13 @@ static void ttm_put_pages(struct page **pages, unsigned npages, int flags,
 		ttm_page_pool_free(pool, npages);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * On success pages list will hold count number of correctly
  * cached pages.
  */
+<<<<<<< HEAD
 static int ttm_get_pages(struct page **pages, unsigned npages, int flags,
 			 enum ttm_caching_state cstate)
 {
@@ -709,6 +801,15 @@ static int ttm_get_pages(struct page **pages, unsigned npages, int flags,
 	struct page *p = NULL;
 	gfp_t gfp_flags = GFP_USER;
 	unsigned count;
+=======
+int ttm_get_pages(struct list_head *pages, int flags,
+		  enum ttm_caching_state cstate, unsigned count,
+		  dma_addr_t *dma_address)
+{
+	struct ttm_page_pool *pool = ttm_get_pool(flags, cstate);
+	struct page *p = NULL;
+	gfp_t gfp_flags = GFP_USER;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int r;
 
 	/* set zero flag for page allocation if required */
@@ -722,6 +823,7 @@ static int ttm_get_pages(struct page **pages, unsigned npages, int flags,
 		else
 			gfp_flags |= GFP_HIGHUSER;
 
+<<<<<<< HEAD
 		for (r = 0; r < npages; ++r) {
 			p = alloc_page(gfp_flags);
 			if (!p) {
@@ -731,14 +833,31 @@ static int ttm_get_pages(struct page **pages, unsigned npages, int flags,
 			}
 
 			pages[r] = p;
+=======
+		for (r = 0; r < count; ++r) {
+			p = alloc_page(gfp_flags);
+			if (!p) {
+
+				printk(KERN_ERR TTM_PFX
+				       "Unable to allocate page.");
+				return -ENOMEM;
+			}
+
+			list_add(&p->lru, pages);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		return 0;
 	}
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* combine zero flag to pool flags */
 	gfp_flags |= pool->gfp_flags;
 
 	/* First we take pages from the pool */
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&plist);
 	npages = ttm_page_pool_get_pages(pool, &plist, flags, cstate, npages);
 	count = 0;
@@ -753,10 +872,19 @@ static int ttm_get_pages(struct page **pages, unsigned npages, int flags,
 				clear_highpage(p);
 			else
 				clear_page(page_address(p));
+=======
+	count = ttm_page_pool_get_pages(pool, pages, flags, cstate, count);
+
+	/* clear the pages coming from the pool if requested */
+	if (flags & TTM_PAGE_FLAG_ZERO_ALLOC) {
+		list_for_each_entry(p, pages, lru) {
+			clear_page(page_address(p));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
 	/* If pool didn't have enough pages allocate new one. */
+<<<<<<< HEAD
 	if (npages > 0) {
 		/* ttm_alloc_new_pages doesn't reference pool so we can run
 		 * multiple requests in parallel.
@@ -771,13 +899,75 @@ static int ttm_get_pages(struct page **pages, unsigned npages, int flags,
 			 * the pool. */
 			pr_err("Failed to allocate extra pages for large request\n");
 			ttm_put_pages(pages, count, flags, cstate);
+=======
+	if (count > 0) {
+		/* ttm_alloc_new_pages doesn't reference pool so we can run
+		 * multiple requests in parallel.
+		 **/
+		r = ttm_alloc_new_pages(pages, gfp_flags, flags, cstate, count);
+		if (r) {
+			/* If there is any pages in the list put them back to
+			 * the pool. */
+			printk(KERN_ERR TTM_PFX
+			       "Failed to allocate extra pages "
+			       "for large request.");
+			ttm_put_pages(pages, 0, flags, cstate, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return r;
 		}
 	}
 
+<<<<<<< HEAD
 	return 0;
 }
 
+=======
+
+	return 0;
+}
+
+/* Put all pages in pages list to correct pool to wait for reuse */
+void ttm_put_pages(struct list_head *pages, unsigned page_count, int flags,
+		   enum ttm_caching_state cstate, dma_addr_t *dma_address)
+{
+	unsigned long irq_flags;
+	struct ttm_page_pool *pool = ttm_get_pool(flags, cstate);
+	struct page *p, *tmp;
+
+	if (pool == NULL) {
+		/* No pool for this memory type so free the pages */
+
+		list_for_each_entry_safe(p, tmp, pages, lru) {
+			__free_page(p);
+		}
+		/* Make the pages list empty */
+		INIT_LIST_HEAD(pages);
+		return;
+	}
+	if (page_count == 0) {
+		list_for_each_entry_safe(p, tmp, pages, lru) {
+			++page_count;
+		}
+	}
+
+	spin_lock_irqsave(&pool->lock, irq_flags);
+	list_splice_init(pages, &pool->list);
+	pool->npages += page_count;
+	/* Check that we don't go over the pool limit */
+	page_count = 0;
+	if (pool->npages > _manager->options.max_size) {
+		page_count = pool->npages - _manager->options.max_size;
+		/* free at least NUM_PAGES_TO_ALLOC number of pages
+		 * to reduce calls to set_memory_wb */
+		if (page_count < NUM_PAGES_TO_ALLOC)
+			page_count = NUM_PAGES_TO_ALLOC;
+	}
+	spin_unlock_irqrestore(&pool->lock, irq_flags);
+	if (page_count)
+		ttm_page_pool_free(pool, page_count);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ttm_page_pool_init_locked(struct ttm_page_pool *pool, int flags,
 		char *name)
 {
@@ -795,7 +985,11 @@ int ttm_page_alloc_init(struct ttm_mem_global *glob, unsigned max_pages)
 
 	WARN_ON(_manager);
 
+<<<<<<< HEAD
 	pr_info("Initializing pool allocator\n");
+=======
+	printk(KERN_INFO TTM_PFX "Initializing pool allocator.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	_manager = kzalloc(sizeof(*_manager), GFP_KERNEL);
 
@@ -830,7 +1024,11 @@ void ttm_page_alloc_fini(void)
 {
 	int i;
 
+<<<<<<< HEAD
 	pr_info("Finalizing pool allocator\n");
+=======
+	printk(KERN_INFO TTM_PFX "Finalizing pool allocator.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ttm_pool_mm_shrink_fini(_manager);
 
 	for (i = 0; i < NUM_POOLS; ++i)
@@ -840,6 +1038,7 @@ void ttm_page_alloc_fini(void)
 	_manager = NULL;
 }
 
+<<<<<<< HEAD
 int ttm_pool_populate(struct ttm_tt *ttm)
 {
 	struct ttm_mem_global *mem_glob = ttm->glob->mem_glob;
@@ -896,6 +1095,8 @@ void ttm_pool_unpopulate(struct ttm_tt *ttm)
 }
 EXPORT_SYMBOL(ttm_pool_unpopulate);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int ttm_page_alloc_debugfs(struct seq_file *m, void *data)
 {
 	struct ttm_page_pool *p;

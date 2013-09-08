@@ -367,6 +367,7 @@ static int w8001_command(struct w8001 *w8001, unsigned char command,
 	return rc;
 }
 
+<<<<<<< HEAD
 static int w8001_open(struct input_dev *dev)
 {
 	struct w8001 *w8001 = input_get_drvdata(dev);
@@ -381,6 +382,8 @@ static void w8001_close(struct input_dev *dev)
 	w8001_command(w8001, W8001_CMD_STOP, false);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int w8001_setup(struct w8001 *w8001)
 {
 	struct input_dev *dev = w8001->dev;
@@ -397,8 +400,11 @@ static int w8001_setup(struct w8001 *w8001)
 	dev->evbit[0] = BIT_MASK(EV_KEY) | BIT_MASK(EV_ABS);
 	strlcat(w8001->name, "Wacom Serial", sizeof(w8001->name));
 
+<<<<<<< HEAD
 	__set_bit(INPUT_PROP_DIRECT, dev->propbit);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* penabled? */
 	error = w8001_command(w8001, W8001_CMD_QUERY, true);
 	if (!error) {
@@ -490,7 +496,11 @@ static int w8001_setup(struct w8001 *w8001)
 
 	strlcat(w8001->name, " Touchscreen", sizeof(w8001->name));
 
+<<<<<<< HEAD
 	return 0;
+=======
+	return w8001_command(w8001, W8001_CMD_START, false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -501,12 +511,21 @@ static void w8001_disconnect(struct serio *serio)
 {
 	struct w8001 *w8001 = serio_get_drvdata(serio);
 
+<<<<<<< HEAD
 	serio_close(serio);
 
 	input_unregister_device(w8001->dev);
 	kfree(w8001);
 
 	serio_set_drvdata(serio, NULL);
+=======
+	input_get_device(w8001->dev);
+	input_unregister_device(w8001->dev);
+	serio_close(serio);
+	serio_set_drvdata(serio, NULL);
+	input_put_device(w8001->dev);
+	kfree(w8001);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -550,11 +569,14 @@ static int w8001_connect(struct serio *serio, struct serio_driver *drv)
 	input_dev->id.version = 0x0100;
 	input_dev->dev.parent = &serio->dev;
 
+<<<<<<< HEAD
 	input_dev->open = w8001_open;
 	input_dev->close = w8001_close;
 
 	input_set_drvdata(input_dev, w8001);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = input_register_device(w8001->dev);
 	if (err)
 		goto fail3;

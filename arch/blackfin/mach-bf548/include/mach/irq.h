@@ -438,7 +438,11 @@
 struct bfin_pint_regs {
 	u32 mask_set;
 	u32 mask_clear;
+<<<<<<< HEAD
 	u32 request;
+=======
+	u32 irq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 assign;
 	u32 edge_set;
 	u32 edge_clear;

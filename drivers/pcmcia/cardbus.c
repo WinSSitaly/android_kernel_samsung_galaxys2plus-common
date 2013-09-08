@@ -108,5 +108,9 @@ void cb_free(struct pcmcia_socket *s)
 	struct pci_dev *bridge = s->cb_dev;
 
 	if (bridge)
+<<<<<<< HEAD
 		pci_stop_and_remove_behind_bridge(bridge);
+=======
+		pci_remove_behind_bridge(bridge);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

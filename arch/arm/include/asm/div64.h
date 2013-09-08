@@ -1,8 +1,13 @@
 #ifndef __ASM_ARM_DIV64
 #define __ASM_ARM_DIV64
 
+<<<<<<< HEAD
 #include <linux/types.h>
 #include <asm/compiler.h>
+=======
+#include <asm/system.h>
+#include <linux/types.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * The semantics of do_div() are:

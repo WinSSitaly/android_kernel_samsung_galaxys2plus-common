@@ -1,6 +1,10 @@
 config SQUASHFS
 	tristate "SquashFS 4.0 - Squashed file system support"
 	depends on BLOCK
+<<<<<<< HEAD
+=======
+	select ZLIB_INFLATE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Saying Y here includes support for SquashFS 4.0 (a Compressed
 	  Read-Only File System).  Squashfs is a highly compressed read-only
@@ -19,9 +23,15 @@ config SQUASHFS
 
 	  If you want to compile this as a module ( = code which can be
 	  inserted in and removed from the running kernel whenever you want),
+<<<<<<< HEAD
 	  say M here.  The module will be called squashfs.  Note that the root
 	  file system (the one containing the directory /) cannot be compiled
 	  as a module.
+=======
+	  say M here and read <file:Documentation/modules.txt>.  The module
+	  will be called squashfs.  Note that the root file system (the one
+	  containing the directory /) cannot be compiled as a module.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	  If unsure, say N.
 
@@ -35,6 +45,7 @@ config SQUASHFS_XATTR
 
 	  If unsure, say N.
 
+<<<<<<< HEAD
 config SQUASHFS_ZLIB
 	bool "Include support for ZLIB compressed file systems"
 	depends on SQUASHFS
@@ -48,6 +59,8 @@ config SQUASHFS_ZLIB
 
 	  If unsure, say Y.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config SQUASHFS_LZO
 	bool "Include support for LZO compressed file systems"
 	depends on SQUASHFS
@@ -78,6 +91,7 @@ config SQUASHFS_XZ
 
 	  If unsure, say N.
 
+<<<<<<< HEAD
 config SQUASHFS_4K_DEVBLK_SIZE
 	bool "Use 4K device block size?"
 	depends on SQUASHFS
@@ -100,6 +114,8 @@ config SQUASHFS_4K_DEVBLK_SIZE
 
 	  If unsure, say N.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config SQUASHFS_EMBEDDED
 	bool "Additional option for memory-constrained systems"
 	depends on SQUASHFS

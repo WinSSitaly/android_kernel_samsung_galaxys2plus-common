@@ -75,10 +75,15 @@ Devices: [Fastwel] UNIOxx-5 (unioxx5),
 /* 'private' structure for each subdevice */
 struct unioxx5_subd_priv {
 	int usp_iobase;
+<<<<<<< HEAD
 	/* 12 modules. each can be 70L or 73L */
 	unsigned char usp_module_type[12];
 	/* for saving previous written value for analog modules */
 	unsigned char usp_extra_data[12][4];
+=======
+	unsigned char usp_module_type[12];	/* 12 modules. each can be 70L or 73L */
+	unsigned char usp_extra_data[12][4];	/* for saving previous written value for analog modules */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char usp_prev_wr_val[3];	/* previous written value */
 	unsigned char usp_prev_cn_val[3];	/* previous channel value */
 };
@@ -171,7 +176,11 @@ static int unioxx5_attach(struct comedi_device *dev,
 			return -1;
 	}
 
+<<<<<<< HEAD
 	printk(KERN_INFO "attached\n");
+=======
+	printk("attached\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -183,8 +192,12 @@ static int unioxx5_subdev_read(struct comedi_device *dev,
 	int channel, type;
 
 	channel = CR_CHAN(insn->chanspec);
+<<<<<<< HEAD
 	/* defining module type(analog or digital) */
 	type = usp->usp_module_type[channel / 2];
+=======
+	type = usp->usp_module_type[channel / 2];	/* defining module type(analog or digital) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (type == MODULE_DIGITAL) {
 		if (!__unioxx5_digital_read(usp, data, channel, dev->minor))
@@ -205,8 +218,12 @@ static int unioxx5_subdev_write(struct comedi_device *dev,
 	int channel, type;
 
 	channel = CR_CHAN(insn->chanspec);
+<<<<<<< HEAD
 	/* defining module type(analog or digital) */
 	type = usp->usp_module_type[channel / 2];
+=======
+	type = usp->usp_module_type[channel / 2];	/* defining module type(analog or digital) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (type == MODULE_DIGITAL) {
 		if (!__unioxx5_digital_write(usp, data, channel, dev->minor))
@@ -265,12 +282,18 @@ static int unioxx5_insn_config(struct comedi_device *dev,
 	 * change channel type on input or output)                *
 	 \*                                                        */
 	outb(1, usp->usp_iobase + 0);
+<<<<<<< HEAD
 	/* changes type of _one_ channel */
 	outb(flags, usp->usp_iobase + channel_offset);
 	/* sets channels bank to 0(allows directly input/output) */
 	outb(0, usp->usp_iobase + 0);
 	/* saves written value */
 	usp->usp_prev_cn_val[channel_offset - 1] = flags;
+=======
+	outb(flags, usp->usp_iobase + channel_offset);	/* changes type of _one_ channel */
+	outb(0, usp->usp_iobase + 0);	/* sets channels bank to 0(allows directly input/output) */
+	usp->usp_prev_cn_val[channel_offset - 1] = flags;	/* saves written value */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -306,20 +329,32 @@ static int __unioxx5_subdev_init(struct comedi_subdevice *subdev,
 	usp = kzalloc(sizeof(*usp), GFP_KERNEL);
 
 	if (usp == NULL) {
+<<<<<<< HEAD
 		printk(KERN_ERR "comedi%d: error! --> out of memory!\n", minor);
+=======
+		printk(KERN_ERR "comedi%d: erorr! --> out of memory!\n", minor);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
 	usp->usp_iobase = subdev_iobase;
+<<<<<<< HEAD
 	printk(KERN_INFO "comedi%d: |", minor);
+=======
+	printk("comedi%d: |", minor);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* defining modules types */
 	for (i = 0; i < 12; i++) {
 		to = 10000;
 
 		__unioxx5_analog_config(usp, i * 2);
+<<<<<<< HEAD
 		/* sends channel number to card */
 		outb(i + 1, subdev_iobase + 5);
+=======
+		outb(i + 1, subdev_iobase + 5);	/* sends channel number to card */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		outb('H', subdev_iobase + 6);	/* requests EEPROM world */
 		while (!(inb(subdev_iobase + 0) & TxBE))
 			;	/* waits while writting will be allowed */
@@ -354,10 +389,16 @@ static int __unioxx5_subdev_init(struct comedi_subdevice *subdev,
 	subdev->range_table = &range_digital;
 	subdev->insn_read = unioxx5_subdev_read;
 	subdev->insn_write = unioxx5_subdev_write;
+<<<<<<< HEAD
 	/* for digital modules only!!! */
 	subdev->insn_config = unioxx5_insn_config;
 
 	printk(KERN_INFO "subdevice configured\n");
+=======
+	subdev->insn_config = unioxx5_insn_config;	/* for digital modules only!!! */
+
+	printk("subdevice configured\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -376,8 +417,12 @@ static int __unioxx5_digital_write(struct unioxx5_subd_priv *usp,
 		return 0;
 	}
 
+<<<<<<< HEAD
 	/* getting previous written value */
 	val = usp->usp_prev_wr_val[channel_offset - 1];
+=======
+	val = usp->usp_prev_wr_val[channel_offset - 1];	/* getting previous written value */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (*data)
 		val |= mask;
@@ -385,8 +430,12 @@ static int __unioxx5_digital_write(struct unioxx5_subd_priv *usp,
 		val &= ~mask;
 
 	outb(val, usp->usp_iobase + channel_offset);
+<<<<<<< HEAD
 	/* saving new written value */
 	usp->usp_prev_wr_val[channel_offset - 1] = val;
+=======
+	usp->usp_prev_wr_val[channel_offset - 1] = val;	/* saving new written value */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 1;
 }
@@ -410,6 +459,10 @@ static int __unioxx5_digital_read(struct unioxx5_subd_priv *usp,
 
 	if (channel_offset > 1)
 		channel -= 2 << channel_offset;	/* this operation is created for correct readed value to 0 or 1 */
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*data >>= channel;
 	return 1;
 }
@@ -454,8 +507,12 @@ static int __unioxx5_analog_write(struct unioxx5_subd_priv *usp,
 	usp->usp_extra_data[module][i] = (unsigned char)((*data & 0xFF00) >> 8);
 
 	/* while(!((inb(usp->usp_iobase + 0)) & TxBE)); */
+<<<<<<< HEAD
 	/* sending module number to card(1 .. 12) */
 	outb(module + 1, usp->usp_iobase + 5);
+=======
+	outb(module + 1, usp->usp_iobase + 5);	/* sending module number to card(1 .. 12) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	outb('W', usp->usp_iobase + 6);	/* sends (W)rite command to module */
 
 	/* sending for bytes to module(one byte per cycle iteration) */
@@ -486,8 +543,12 @@ static int __unioxx5_analog_read(struct unioxx5_subd_priv *usp,
 	}
 
 	__unioxx5_analog_config(usp, channel);
+<<<<<<< HEAD
 	/* sends module number to card(1 .. 12) */
 	outb(module_no + 1, usp->usp_iobase + 5);
+=======
+	outb(module_no + 1, usp->usp_iobase + 5);	/* sends module number to card(1 .. 12) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	outb('V', usp->usp_iobase + 6);	/* sends to module (V)erify command */
 	control = inb(usp->usp_iobase);	/* get control register byte */
 

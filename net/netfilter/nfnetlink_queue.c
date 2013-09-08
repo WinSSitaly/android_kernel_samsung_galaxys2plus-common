@@ -31,7 +31,11 @@
 #include <net/sock.h>
 #include <net/netfilter/nf_queue.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_BRIDGE_NETFILTER
 #include "../bridge/br_private.h"
@@ -58,7 +62,11 @@ struct nfqnl_instance {
  */
 	spinlock_t	lock;
 	unsigned int	queue_total;
+<<<<<<< HEAD
 	unsigned int	id_sequence;		/* 'sequence' of pkt ids */
+=======
+	atomic_t	id_sequence;		/* 'sequence' of pkt ids */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head queue_list;		/* packets in queue */
 };
 
@@ -171,6 +179,7 @@ __enqueue_entry(struct nfqnl_instance *queue, struct nf_queue_entry *entry)
        queue->queue_total++;
 }
 
+<<<<<<< HEAD
 static void
 __dequeue_entry(struct nfqnl_instance *queue, struct nf_queue_entry *entry)
 {
@@ -178,6 +187,8 @@ __dequeue_entry(struct nfqnl_instance *queue, struct nf_queue_entry *entry)
 	queue->queue_total--;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct nf_queue_entry *
 find_dequeue_entry(struct nfqnl_instance *queue, unsigned int id)
 {
@@ -192,8 +203,15 @@ find_dequeue_entry(struct nfqnl_instance *queue, unsigned int id)
 		}
 	}
 
+<<<<<<< HEAD
 	if (entry)
 		__dequeue_entry(queue, entry);
+=======
+	if (entry) {
+		list_del(&entry->list);
+		queue->queue_total--;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_bh(&queue->lock);
 
@@ -218,15 +236,23 @@ nfqnl_flush(struct nfqnl_instance *queue, nfqnl_cmpfn cmpfn, unsigned long data)
 
 static struct sk_buff *
 nfqnl_build_packet_message(struct nfqnl_instance *queue,
+<<<<<<< HEAD
 			   struct nf_queue_entry *entry,
 			   __be32 **packet_id_ptr)
+=======
+			   struct nf_queue_entry *entry)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	sk_buff_data_t old_tail;
 	size_t size;
 	size_t data_len = 0;
 	struct sk_buff *skb;
+<<<<<<< HEAD
 	struct nlattr *nla;
 	struct nfqnl_msg_packet_hdr *pmsg;
+=======
+	struct nfqnl_msg_packet_hdr pmsg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct nlmsghdr *nlh;
 	struct nfgenmsg *nfmsg;
 	struct sk_buff *entskb = entry->skb;
@@ -279,11 +305,20 @@ nfqnl_build_packet_message(struct nfqnl_instance *queue,
 	nfmsg->version = NFNETLINK_V0;
 	nfmsg->res_id = htons(queue->queue_num);
 
+<<<<<<< HEAD
 	nla = __nla_reserve(skb, NFQA_PACKET_HDR, sizeof(*pmsg));
 	pmsg = nla_data(nla);
 	pmsg->hw_protocol	= entskb->protocol;
 	pmsg->hook		= entry->hook;
 	*packet_id_ptr		= &pmsg->packet_id;
+=======
+	entry->id = atomic_inc_return(&queue->id_sequence);
+	pmsg.packet_id 		= htonl(entry->id);
+	pmsg.hw_protocol	= entskb->protocol;
+	pmsg.hook		= entry->hook;
+
+	NLA_PUT(skb, NFQA_PACKET_HDR, sizeof(pmsg), &pmsg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	indev = entry->indev;
 	if (indev) {
@@ -395,7 +430,10 @@ nfqnl_enqueue_packet(struct nf_queue_entry *entry, unsigned int queuenum)
 	struct sk_buff *nskb;
 	struct nfqnl_instance *queue;
 	int err = -ENOBUFS;
+<<<<<<< HEAD
 	__be32 *packet_id_ptr;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* rcu_read_lock()ed by nf_hook_slow() */
 	queue = instance_lookup(queuenum);
@@ -409,7 +447,11 @@ nfqnl_enqueue_packet(struct nf_queue_entry *entry, unsigned int queuenum)
 		goto err_out;
 	}
 
+<<<<<<< HEAD
 	nskb = nfqnl_build_packet_message(queue, entry, &packet_id_ptr);
+=======
+	nskb = nfqnl_build_packet_message(queue, entry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (nskb == NULL) {
 		err = -ENOMEM;
 		goto err_out;
@@ -428,8 +470,11 @@ nfqnl_enqueue_packet(struct nf_queue_entry *entry, unsigned int queuenum)
 				 queue->queue_total);
 		goto err_out_free_nskb;
 	}
+<<<<<<< HEAD
 	entry->id = ++queue->id_sequence;
 	*packet_id_ptr = htonl(entry->id);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* nfnetlink_unicast will either free the nskb or add it to a socket */
 	err = nfnetlink_unicast(nskb, &init_net, queue->peer_pid, MSG_DONTWAIT);
@@ -617,6 +662,7 @@ static const struct nla_policy nfqa_verdict_policy[NFQA_MAX+1] = {
 	[NFQA_PAYLOAD]		= { .type = NLA_UNSPEC },
 };
 
+<<<<<<< HEAD
 static const struct nla_policy nfqa_verdict_batch_policy[NFQA_MAX+1] = {
 	[NFQA_VERDICT_HDR]	= { .len = sizeof(struct nfqnl_msg_verdict_hdr) },
 	[NFQA_MARK]		= { .type = NLA_U32 },
@@ -703,6 +749,8 @@ nfqnl_recv_verdict_batch(struct sock *ctnl, struct sk_buff *skb,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int
 nfqnl_recv_verdict(struct sock *ctnl, struct sk_buff *skb,
 		   const struct nlmsghdr *nlh,
@@ -715,6 +763,7 @@ nfqnl_recv_verdict(struct sock *ctnl, struct sk_buff *skb,
 	struct nfqnl_instance *queue;
 	unsigned int verdict;
 	struct nf_queue_entry *entry;
+<<<<<<< HEAD
 
 	queue = instance_lookup(queue_num);
 	if (!queue)
@@ -732,6 +781,41 @@ nfqnl_recv_verdict(struct sock *ctnl, struct sk_buff *skb,
 	entry = find_dequeue_entry(queue, ntohl(vhdr->id));
 	if (entry == NULL)
 		return -ENOENT;
+=======
+	int err;
+
+	rcu_read_lock();
+	queue = instance_lookup(queue_num);
+	if (!queue) {
+		err = -ENODEV;
+		goto err_out_unlock;
+	}
+
+	if (queue->peer_pid != NETLINK_CB(skb).pid) {
+		err = -EPERM;
+		goto err_out_unlock;
+	}
+
+	if (!nfqa[NFQA_VERDICT_HDR]) {
+		err = -EINVAL;
+		goto err_out_unlock;
+	}
+
+	vhdr = nla_data(nfqa[NFQA_VERDICT_HDR]);
+	verdict = ntohl(vhdr->verdict);
+
+	if ((verdict & NF_VERDICT_MASK) > NF_MAX_VERDICT) {
+		err = -EINVAL;
+		goto err_out_unlock;
+	}
+
+	entry = find_dequeue_entry(queue, ntohl(vhdr->id));
+	if (entry == NULL) {
+		err = -ENOENT;
+		goto err_out_unlock;
+	}
+	rcu_read_unlock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (nfqa[NFQA_PAYLOAD]) {
 		if (nfqnl_mangle(nla_data(nfqa[NFQA_PAYLOAD]),
@@ -744,6 +828,13 @@ nfqnl_recv_verdict(struct sock *ctnl, struct sk_buff *skb,
 
 	nf_reinject(entry, verdict);
 	return 0;
+<<<<<<< HEAD
+=======
+
+err_out_unlock:
+	rcu_read_unlock();
+	return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -856,17 +947,26 @@ err_out_unlock:
 }
 
 static const struct nfnl_callback nfqnl_cb[NFQNL_MSG_MAX] = {
+<<<<<<< HEAD
 	[NFQNL_MSG_PACKET]	= { .call_rcu = nfqnl_recv_unsupp,
 				    .attr_count = NFQA_MAX, },
 	[NFQNL_MSG_VERDICT]	= { .call_rcu = nfqnl_recv_verdict,
+=======
+	[NFQNL_MSG_PACKET]	= { .call = nfqnl_recv_unsupp,
+				    .attr_count = NFQA_MAX, },
+	[NFQNL_MSG_VERDICT]	= { .call = nfqnl_recv_verdict,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    .attr_count = NFQA_MAX,
 				    .policy = nfqa_verdict_policy },
 	[NFQNL_MSG_CONFIG]	= { .call = nfqnl_recv_config,
 				    .attr_count = NFQA_CFG_MAX,
 				    .policy = nfqa_cfg_policy },
+<<<<<<< HEAD
 	[NFQNL_MSG_VERDICT_BATCH]={ .call_rcu = nfqnl_recv_verdict_batch,
 				    .attr_count = NFQA_MAX,
 				    .policy = nfqa_verdict_batch_policy },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct nfnetlink_subsystem nfqnl_subsys = {
@@ -948,7 +1048,11 @@ static int seq_show(struct seq_file *s, void *v)
 			  inst->peer_pid, inst->queue_total,
 			  inst->copy_mode, inst->copy_range,
 			  inst->queue_dropped, inst->queue_user_dropped,
+<<<<<<< HEAD
 			  inst->id_sequence, 1);
+=======
+			  atomic_read(&inst->id_sequence), 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct seq_operations nfqnl_seq_ops = {

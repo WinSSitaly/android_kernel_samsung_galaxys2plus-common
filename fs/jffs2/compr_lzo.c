@@ -33,6 +33,10 @@ static int __init alloc_workspace(void)
 	lzo_compress_buf = vmalloc(lzo1x_worst_compress(PAGE_SIZE));
 
 	if (!lzo_mem || !lzo_compress_buf) {
+<<<<<<< HEAD
+=======
+		printk(KERN_WARNING "Failed to allocate lzo deflate workspace\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		free_workspace();
 		return -ENOMEM;
 	}

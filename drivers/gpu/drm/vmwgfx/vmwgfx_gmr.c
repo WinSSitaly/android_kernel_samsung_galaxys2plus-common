@@ -1,6 +1,10 @@
 /**************************************************************************
  *
+<<<<<<< HEAD
  * Copyright © 2009-2011 VMware, Inc., Palo Alto, CA., USA
+=======
+ * Copyright © 2009 VMware, Inc., Palo Alto, CA., USA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -29,6 +33,7 @@
 #include "drmP.h"
 #include "ttm/ttm_bo_driver.h"
 
+<<<<<<< HEAD
 #define VMW_PPN_SIZE (sizeof(unsigned long))
 /* A future safe maximum remap size. */
 #define VMW_PPN_PER_REMAP ((31 * 1024) / VMW_PPN_SIZE)
@@ -120,6 +125,8 @@ static void vmw_gmr2_unbind(struct vmw_private *dev_priv,
 	vmw_fifo_commit(dev_priv, define_size);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * FIXME: Adjust to the ttm lowmem / highmem storage to minimize
  * the number of used descriptors.
@@ -156,10 +163,17 @@ static int vmw_gmr_build_descriptors(struct list_head *desc_pages,
 
 		if (likely(page_virtual != NULL)) {
 			desc_virtual->ppn = page_to_pfn(page);
+<<<<<<< HEAD
 			kunmap_atomic(page_virtual);
 		}
 
 		page_virtual = kmap_atomic(page);
+=======
+			kunmap_atomic(page_virtual, KM_USER0);
+		}
+
+		page_virtual = kmap_atomic(page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		desc_virtual = page_virtual - 1;
 		prev_pfn = ~(0UL);
 
@@ -189,7 +203,11 @@ static int vmw_gmr_build_descriptors(struct list_head *desc_pages,
 	}
 
 	if (likely(page_virtual != NULL))
+<<<<<<< HEAD
 		kunmap_atomic(page_virtual);
+=======
+		kunmap_atomic(page_virtual, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 out_err:
@@ -261,9 +279,12 @@ int vmw_gmr_bind(struct vmw_private *dev_priv,
 	struct list_head desc_pages;
 	int ret;
 
+<<<<<<< HEAD
 	if (likely(dev_priv->capabilities & SVGA_CAP_GMR2))
 		return vmw_gmr2_bind(dev_priv, pages, num_pages, gmr_id);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(!(dev_priv->capabilities & SVGA_CAP_GMR)))
 		return -EINVAL;
 
@@ -286,11 +307,14 @@ int vmw_gmr_bind(struct vmw_private *dev_priv,
 
 void vmw_gmr_unbind(struct vmw_private *dev_priv, int gmr_id)
 {
+<<<<<<< HEAD
 	if (likely(dev_priv->capabilities & SVGA_CAP_GMR2)) {
 		vmw_gmr2_unbind(dev_priv, gmr_id);
 		return;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&dev_priv->hw_mutex);
 	vmw_write(dev_priv, SVGA_REG_GMR_ID, gmr_id);
 	wmb();

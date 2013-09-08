@@ -16,7 +16,10 @@
 #define _ASM_TILE_PCI_H
 
 #include <linux/pci.h>
+<<<<<<< HEAD
 #include <asm-generic/pci_iomap.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Structure of a PCI controller (host bridge)
@@ -47,9 +50,16 @@ struct pci_controller {
  */
 #define PCI_DMA_BUS_IS_PHYS     1
 
+<<<<<<< HEAD
 int __init tile_pci_init(void);
 int __init pcibios_init(void);
 
+=======
+int __devinit tile_pci_init(void);
+int __devinit pcibios_init(void);
+
+void __iomem *pci_iomap(struct pci_dev *dev, int bar, unsigned long max);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void pci_iounmap(struct pci_dev *dev, void __iomem *addr) {}
 
 void __devinit pcibios_fixup_bus(struct pci_bus *bus);
@@ -76,6 +86,16 @@ static inline int pcibios_assign_all_busses(void)
 	return 1;
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * No special bus mastering setup handling.
+ */
+static inline void pcibios_set_master(struct pci_dev *dev)
+{
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PCIBIOS_MIN_MEM		0
 #define PCIBIOS_MIN_IO		0
 

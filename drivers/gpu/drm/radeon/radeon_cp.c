@@ -29,8 +29,11 @@
  *    Gareth Hughes <gareth@valinux.com>
  */
 
+<<<<<<< HEAD
 #include <linux/module.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drmP.h"
 #include "drm.h"
 #include "drm_sarea.h"
@@ -2115,11 +2118,17 @@ int radeon_driver_load(struct drm_device *dev, unsigned long flags)
 		break;
 	}
 
+<<<<<<< HEAD
 	pci_set_master(dev->pdev);
 
 	if (drm_pci_device_is_agp(dev))
 		dev_priv->flags |= RADEON_IS_AGP;
 	else if (pci_is_pcie(dev->pdev))
+=======
+	if (drm_pci_device_is_agp(dev))
+		dev_priv->flags |= RADEON_IS_AGP;
+	else if (drm_pci_device_is_pcie(dev))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_priv->flags |= RADEON_IS_PCIE;
 	else
 		dev_priv->flags |= RADEON_IS_PCI;

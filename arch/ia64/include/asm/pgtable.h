@@ -16,6 +16,10 @@
 #include <asm/mman.h>
 #include <asm/page.h>
 #include <asm/processor.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/types.h>
 
 #define IA64_MAX_PHYS_BITS	50	/* max. number of physical address bits (architected) */

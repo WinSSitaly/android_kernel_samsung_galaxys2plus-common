@@ -35,6 +35,10 @@
 
 #include <asm/processor.h>
 #include <asm/bios_ebda.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <asm/pgtable.h>
 #include <asm/pgalloc.h>
@@ -607,12 +611,28 @@ kernel_physical_mapping_init(unsigned long start,
 #ifndef CONFIG_NUMA
 void __init initmem_init(void)
 {
+<<<<<<< HEAD
 	memblock_set_node(0, (phys_addr_t)ULLONG_MAX, 0);
+=======
+	memblock_x86_register_active_regions(0, 0, max_pfn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif
 
 void __init paging_init(void)
 {
+<<<<<<< HEAD
+=======
+	unsigned long max_zone_pfns[MAX_NR_ZONES];
+
+	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
+#ifdef CONFIG_ZONE_DMA
+	max_zone_pfns[ZONE_DMA] = MAX_DMA_PFN;
+#endif
+	max_zone_pfns[ZONE_DMA32] = MAX_DMA32_PFN;
+	max_zone_pfns[ZONE_NORMAL] = max_pfn;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sparse_memory_present_with_active_regions(MAX_NUMNODES);
 	sparse_init();
 
@@ -624,7 +644,11 @@ void __init paging_init(void)
 	 */
 	node_clear_state(0, N_NORMAL_MEMORY);
 
+<<<<<<< HEAD
 	zone_sizes_init();
+=======
+	free_area_init_nodes(max_zone_pfns);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -821,9 +845,12 @@ int kern_addr_valid(unsigned long addr)
 	if (pud_none(*pud))
 		return 0;
 
+<<<<<<< HEAD
 	if (pud_large(*pud))
 		return pfn_valid(pud_pfn(*pud));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pmd = pmd_offset(pud, addr);
 	if (pmd_none(*pmd))
 		return 0;

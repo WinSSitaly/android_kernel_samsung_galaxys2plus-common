@@ -49,6 +49,7 @@ config DVB_STV6110x
 	help
 	  A Silicon tuner that supports DVB-S and DVB-S2 modes
 
+<<<<<<< HEAD
 comment "Multistandard (cable + terrestrial) frontends"
 	depends on DVB_CORE
 
@@ -70,6 +71,8 @@ config DVB_TDA18271C2DD
 
 	  Say Y when you want to support this tuner.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 comment "DVB-S (satellite) frontends"
 	depends on DVB_CORE
 
@@ -236,6 +239,7 @@ config DVB_MB86A16
 	  A DVB-S/DSS Direct Conversion reveiver.
 	  Say Y when you want to support this frontend.
 
+<<<<<<< HEAD
 config DVB_TDA10071
 	tristate "NXP TDA10071"
 	depends on DVB_CORE && I2C
@@ -243,6 +247,8 @@ config DVB_TDA10071
 	help
 	  Say Y when you want to support this frontend.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 comment "DVB-T (terrestrial) frontends"
 	depends on DVB_CORE
 
@@ -404,6 +410,7 @@ config DVB_EC100
 	help
 	  Say Y when you want to support this frontend.
 
+<<<<<<< HEAD
 config DVB_HD29L2
 	tristate "HDIC HD29L2"
 	depends on DVB_CORE && I2C
@@ -411,6 +418,8 @@ config DVB_HD29L2
 	help
 	  Say Y when you want to support this frontend.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config DVB_STV0367
 	tristate "ST STV0367 based"
 	depends on DVB_CORE && I2C
@@ -425,6 +434,7 @@ config DVB_CXD2820R
 	help
 	  Say Y when you want to support this frontend.
 
+<<<<<<< HEAD
 config DVB_RTL2830
 	tristate "Realtek RTL2830 DVB-T"
 	depends on DVB_CORE && I2C
@@ -432,6 +442,8 @@ config DVB_RTL2830
 	help
 	  Say Y when you want to support this frontend.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 comment "DVB-C (cable) frontends"
 	depends on DVB_CORE
 
@@ -621,6 +633,7 @@ config DVB_LNBP21
 	help
 	  An SEC control chips.
 
+<<<<<<< HEAD
 config DVB_LNBP22
 	tristate "LNBP22 SEC controllers"
 	depends on DVB_CORE && I2C
@@ -631,6 +644,8 @@ config DVB_LNBP22
 	  and I2C interface.
 	  Say Y when you want to support this chip.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config DVB_ISL6405
 	tristate "ISL6405 SEC controller"
 	depends on DVB_CORE && I2C
@@ -652,11 +667,14 @@ config DVB_ISL6423
 	help
 	  A SEC controller chip from Intersil
 
+<<<<<<< HEAD
 config DVB_A8293
 	tristate "Allegro A8293"
 	depends on DVB_CORE && I2C
 	default m if DVB_FE_CUSTOMISE
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config DVB_LGS8GL5
 	tristate "Silicon Legend LGS-8GL5 demodulator (OFDM)"
 	depends on DVB_CORE && I2C
@@ -697,6 +715,7 @@ config DVB_IX2505V
 	help
 	  A DVB-S tuner module. Say Y when you want to support this frontend.
 
+<<<<<<< HEAD
 config DVB_IT913X_FE
 	tristate "it913x frontend and it9137 tuner"
 	depends on DVB_CORE && I2C
@@ -713,6 +732,8 @@ config DVB_M88RS2000
 	  A DVB-S tuner module.
 	  Say Y when you want to support this frontend.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 comment "Tools to develop new frontends"
 
 config DVB_DUMMY_FE

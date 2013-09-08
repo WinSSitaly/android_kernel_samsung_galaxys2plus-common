@@ -143,6 +143,7 @@ static int ecryptfs_interpose(struct dentry *lower_dentry,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int ecryptfs_do_unlink(struct inode *dir, struct dentry *dentry,
 			      struct inode *inode)
 {
@@ -165,6 +166,45 @@ static int ecryptfs_do_unlink(struct inode *dir, struct dentry *dentry,
 out_unlock:
 	unlock_dir(lower_dir_dentry);
 	dput(lower_dentry);
+=======
+/**
+ * ecryptfs_create_underlying_file
+ * @lower_dir_inode: inode of the parent in the lower fs of the new file
+ * @dentry: New file's dentry
+ * @mode: The mode of the new file
+ * @nd: nameidata of ecryptfs' parent's dentry & vfsmount
+ *
+ * Creates the file in the lower file system.
+ *
+ * Returns zero on success; non-zero on error condition
+ */
+static int
+ecryptfs_create_underlying_file(struct inode *lower_dir_inode,
+				struct dentry *dentry, int mode,
+				struct nameidata *nd)
+{
+	struct dentry *lower_dentry = ecryptfs_dentry_to_lower(dentry);
+	struct vfsmount *lower_mnt = ecryptfs_dentry_to_lower_mnt(dentry);
+	struct dentry *dentry_save;
+	struct vfsmount *vfsmount_save;
+	unsigned int flags_save;
+	int rc;
+
+	if (nd) {
+		dentry_save = nd->path.dentry;
+		vfsmount_save = nd->path.mnt;
+		flags_save = nd->flags;
+		nd->path.dentry = lower_dentry;
+		nd->path.mnt = lower_mnt;
+		nd->flags &= ~LOOKUP_OPEN;
+	}
+	rc = vfs_create(lower_dir_inode, lower_dentry, mode, nd);
+	if (nd) {
+		nd->path.dentry = dentry_save;
+		nd->path.mnt = vfsmount_save;
+		nd->flags = flags_save;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -179,22 +219,35 @@ out_unlock:
  * it. It will also update the eCryptfs directory inode to mimic the
  * stat of the lower directory inode.
  *
+<<<<<<< HEAD
  * Returns the new eCryptfs inode on success; an ERR_PTR on error condition
  */
 static struct inode *
 ecryptfs_do_create(struct inode *directory_inode,
 		   struct dentry *ecryptfs_dentry, umode_t mode)
+=======
+ * Returns zero on success; non-zero on error condition
+ */
+static int
+ecryptfs_do_create(struct inode *directory_inode,
+		   struct dentry *ecryptfs_dentry, int mode,
+		   struct nameidata *nd)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int rc;
 	struct dentry *lower_dentry;
 	struct dentry *lower_dir_dentry;
+<<<<<<< HEAD
 	struct inode *inode;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lower_dentry = ecryptfs_dentry_to_lower(ecryptfs_dentry);
 	lower_dir_dentry = lock_parent(lower_dentry);
 	if (IS_ERR(lower_dir_dentry)) {
 		ecryptfs_printk(KERN_ERR, "Error locking directory of "
 				"dentry\n");
+<<<<<<< HEAD
 		inode = ERR_CAST(lower_dir_dentry);
 		goto out;
 	}
@@ -209,6 +262,22 @@ ecryptfs_do_create(struct inode *directory_inode,
 				     directory_inode->i_sb);
 	if (IS_ERR(inode)) {
 		vfs_unlink(lower_dir_dentry->d_inode, lower_dentry);
+=======
+		rc = PTR_ERR(lower_dir_dentry);
+		goto out;
+	}
+	rc = ecryptfs_create_underlying_file(lower_dir_dentry->d_inode,
+					     ecryptfs_dentry, mode, nd);
+	if (rc) {
+		printk(KERN_ERR "%s: Failure to create dentry in lower fs; "
+		       "rc = [%d]\n", __func__, rc);
+		goto out_lock;
+	}
+	rc = ecryptfs_interpose(lower_dentry, ecryptfs_dentry,
+				directory_inode->i_sb);
+	if (rc) {
+		ecryptfs_printk(KERN_ERR, "Failure in ecryptfs_interpose\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_lock;
 	}
 	fsstack_copy_attr_times(directory_inode, lower_dir_dentry->d_inode);
@@ -216,7 +285,11 @@ ecryptfs_do_create(struct inode *directory_inode,
 out_lock:
 	unlock_dir(lower_dir_dentry);
 out:
+<<<<<<< HEAD
 	return inode;
+=======
+	return rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -227,6 +300,7 @@ out:
  *
  * Returns zero on success
  */
+<<<<<<< HEAD
 int ecryptfs_initialize_file(struct dentry *ecryptfs_dentry,
 			     struct inode *ecryptfs_inode)
 {
@@ -235,18 +309,36 @@ int ecryptfs_initialize_file(struct dentry *ecryptfs_dentry,
 	int rc = 0;
 
 	if (S_ISDIR(ecryptfs_inode->i_mode)) {
+=======
+static int ecryptfs_initialize_file(struct dentry *ecryptfs_dentry)
+{
+	struct ecryptfs_crypt_stat *crypt_stat =
+		&ecryptfs_inode_to_private(ecryptfs_dentry->d_inode)->crypt_stat;
+	int rc = 0;
+
+	if (S_ISDIR(ecryptfs_dentry->d_inode->i_mode)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ecryptfs_printk(KERN_DEBUG, "This is a directory\n");
 		crypt_stat->flags &= ~(ECRYPTFS_ENCRYPTED);
 		goto out;
 	}
 	ecryptfs_printk(KERN_DEBUG, "Initializing crypto context\n");
+<<<<<<< HEAD
 	rc = ecryptfs_new_file_context(ecryptfs_inode);
+=======
+	rc = ecryptfs_new_file_context(ecryptfs_dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc) {
 		ecryptfs_printk(KERN_ERR, "Error creating new file "
 				"context; rc = [%d]\n", rc);
 		goto out;
 	}
+<<<<<<< HEAD
 	rc = ecryptfs_get_lower_file(ecryptfs_dentry, ecryptfs_inode);
+=======
+	rc = ecryptfs_get_lower_file(ecryptfs_dentry,
+				     ecryptfs_dentry->d_inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc) {
 		printk(KERN_ERR "%s: Error attempting to initialize "
 			"the lower file for the dentry with name "
@@ -254,10 +346,50 @@ int ecryptfs_initialize_file(struct dentry *ecryptfs_dentry,
 			ecryptfs_dentry->d_name.name, rc);
 		goto out;
 	}
+<<<<<<< HEAD
 	rc = ecryptfs_write_metadata(ecryptfs_dentry, ecryptfs_inode);
 	if (rc)
 		printk(KERN_ERR "Error writing headers; rc = [%d]\n", rc);
 	ecryptfs_put_lower_file(ecryptfs_inode);
+=======
+#ifdef CONFIG_WTL_ENCRYPTION_FILTER
+	mutex_lock(&crypt_stat->cs_mutex);
+	if (crypt_stat->flags & ECRYPTFS_ENCRYPTED) {
+		struct dentry *fp_dentry =
+			ecryptfs_inode_to_private(ecryptfs_dentry->d_inode)
+			->lower_file->f_dentry;
+		struct ecryptfs_mount_crypt_stat *mount_crypt_stat =
+			&ecryptfs_superblock_to_private(ecryptfs_dentry->d_sb)
+			->mount_crypt_stat;
+		char filename[NAME_MAX+1] = {0};
+		if (fp_dentry->d_name.len <= NAME_MAX)
+			memcpy(filename, fp_dentry->d_name.name,
+					fp_dentry->d_name.len + 1);
+
+		if ((mount_crypt_stat->flags & ECRYPTFS_ENABLE_NEW_PASSTHROUGH)
+		    || ((mount_crypt_stat->flags & ECRYPTFS_ENABLE_FILTERING) &&
+			(is_file_name_match(mount_crypt_stat, fp_dentry) ||
+			is_file_ext_match(mount_crypt_stat, filename)))) {
+			crypt_stat->flags &= ~(ECRYPTFS_I_SIZE_INITIALIZED
+					| ECRYPTFS_ENCRYPTED);
+			ecryptfs_put_lower_file(ecryptfs_dentry->d_inode);
+		} else {
+			rc = ecryptfs_write_metadata(ecryptfs_dentry);
+			if (rc)
+				printk(
+				KERN_ERR "Error writing headers; rc = [%d]\n"
+				    , rc);
+			ecryptfs_put_lower_file(ecryptfs_dentry->d_inode);
+		}
+	}
+	mutex_unlock(&crypt_stat->cs_mutex);
+#else
+	rc = ecryptfs_write_metadata(ecryptfs_dentry);
+	if (rc)
+		printk(KERN_ERR "Error writing headers; rc = [%d]\n", rc);
+	ecryptfs_put_lower_file(ecryptfs_dentry->d_inode);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return rc;
 }
@@ -275,6 +407,7 @@ out:
  */
 static int
 ecryptfs_create(struct inode *directory_inode, struct dentry *ecryptfs_dentry,
+<<<<<<< HEAD
 		umode_t mode, struct nameidata *nd)
 {
 	struct inode *ecryptfs_inode;
@@ -286,10 +419,22 @@ ecryptfs_create(struct inode *directory_inode, struct dentry *ecryptfs_dentry,
 		ecryptfs_printk(KERN_WARNING, "Failed to create file in"
 				"lower filesystem\n");
 		rc = PTR_ERR(ecryptfs_inode);
+=======
+		int mode, struct nameidata *nd)
+{
+	int rc;
+
+	/* ecryptfs_do_create() calls ecryptfs_interpose() */
+	rc = ecryptfs_do_create(directory_inode, ecryptfs_dentry, mode, nd);
+	if (unlikely(rc)) {
+		ecryptfs_printk(KERN_WARNING, "Failed to create file in"
+				"lower filesystem\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 	/* At this point, a file exists on "disk"; we need to make sure
 	 * that this on disk file is prepared to be an ecryptfs file */
+<<<<<<< HEAD
 	rc = ecryptfs_initialize_file(ecryptfs_dentry, ecryptfs_inode);
 	if (rc) {
 		ecryptfs_do_unlink(directory_inode, ecryptfs_dentry,
@@ -301,6 +446,9 @@ ecryptfs_create(struct inode *directory_inode, struct dentry *ecryptfs_dentry,
 	}
 	d_instantiate(ecryptfs_dentry, ecryptfs_inode);
 	unlock_new_inode(ecryptfs_inode);
+=======
+	rc = ecryptfs_initialize_file(ecryptfs_dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return rc;
 }
@@ -494,8 +642,13 @@ static int ecryptfs_link(struct dentry *old_dentry, struct inode *dir,
 		goto out_lock;
 	fsstack_copy_attr_times(dir, lower_dir_dentry->d_inode);
 	fsstack_copy_inode_size(dir, lower_dir_dentry->d_inode);
+<<<<<<< HEAD
 	set_nlink(old_dentry->d_inode,
 		  ecryptfs_inode_to_lower(old_dentry->d_inode)->i_nlink);
+=======
+	old_dentry->d_inode->i_nlink =
+		ecryptfs_inode_to_lower(old_dentry->d_inode)->i_nlink;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	i_size_write(new_dentry->d_inode, file_size_save);
 out_lock:
 	unlock_dir(lower_dir_dentry);
@@ -506,7 +659,31 @@ out_lock:
 
 static int ecryptfs_unlink(struct inode *dir, struct dentry *dentry)
 {
+<<<<<<< HEAD
 	return ecryptfs_do_unlink(dir, dentry, dentry->d_inode);
+=======
+	int rc = 0;
+	struct dentry *lower_dentry = ecryptfs_dentry_to_lower(dentry);
+	struct inode *lower_dir_inode = ecryptfs_inode_to_lower(dir);
+	struct dentry *lower_dir_dentry;
+
+	dget(lower_dentry);
+	lower_dir_dentry = lock_parent(lower_dentry);
+	rc = vfs_unlink(lower_dir_inode, lower_dentry);
+	if (rc) {
+		printk(KERN_ERR "Error in vfs_unlink; rc = [%d]\n", rc);
+		goto out_unlock;
+	}
+	fsstack_copy_attr_times(dir, lower_dir_inode);
+	dentry->d_inode->i_nlink =
+		ecryptfs_inode_to_lower(dentry->d_inode)->i_nlink;
+	dentry->d_inode->i_ctime = dir->i_ctime;
+	d_drop(dentry);
+out_unlock:
+	unlock_dir(lower_dir_dentry);
+	dput(lower_dentry);
+	return rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ecryptfs_symlink(struct inode *dir, struct dentry *dentry,
@@ -549,7 +726,11 @@ out_lock:
 	return rc;
 }
 
+<<<<<<< HEAD
 static int ecryptfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+=======
+static int ecryptfs_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int rc;
 	struct dentry *lower_dentry;
@@ -565,7 +746,11 @@ static int ecryptfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode
 		goto out;
 	fsstack_copy_attr_times(dir, lower_dir_dentry->d_inode);
 	fsstack_copy_inode_size(dir, lower_dir_dentry->d_inode);
+<<<<<<< HEAD
 	set_nlink(dir, lower_dir_dentry->d_inode->i_nlink);
+=======
+	dir->i_nlink = lower_dir_dentry->d_inode->i_nlink;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	unlock_dir(lower_dir_dentry);
 	if (!dentry->d_inode)
@@ -588,7 +773,11 @@ static int ecryptfs_rmdir(struct inode *dir, struct dentry *dentry)
 	if (!rc && dentry->d_inode)
 		clear_nlink(dentry->d_inode);
 	fsstack_copy_attr_times(dir, lower_dir_dentry->d_inode);
+<<<<<<< HEAD
 	set_nlink(dir, lower_dir_dentry->d_inode->i_nlink);
+=======
+	dir->i_nlink = lower_dir_dentry->d_inode->i_nlink;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unlock_dir(lower_dir_dentry);
 	if (!rc)
 		d_drop(dentry);
@@ -597,7 +786,11 @@ static int ecryptfs_rmdir(struct inode *dir, struct dentry *dentry)
 }
 
 static int
+<<<<<<< HEAD
 ecryptfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
+=======
+ecryptfs_mknod(struct inode *dir, struct dentry *dentry, int mode, dev_t dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int rc;
 	struct dentry *lower_dentry;
@@ -630,7 +823,10 @@ ecryptfs_rename(struct inode *old_dir, struct dentry *old_dentry,
 	struct dentry *lower_old_dir_dentry;
 	struct dentry *lower_new_dir_dentry;
 	struct dentry *trap = NULL;
+<<<<<<< HEAD
 	struct inode *target_inode;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lower_old_dentry = ecryptfs_dentry_to_lower(old_dentry);
 	lower_new_dentry = ecryptfs_dentry_to_lower(new_dentry);
@@ -638,7 +834,10 @@ ecryptfs_rename(struct inode *old_dir, struct dentry *old_dentry,
 	dget(lower_new_dentry);
 	lower_old_dir_dentry = dget_parent(lower_old_dentry);
 	lower_new_dir_dentry = dget_parent(lower_new_dentry);
+<<<<<<< HEAD
 	target_inode = new_dentry->d_inode;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trap = lock_rename(lower_old_dir_dentry, lower_new_dir_dentry);
 	/* source should not be ancestor of target */
 	if (trap == lower_old_dentry) {
@@ -654,9 +853,12 @@ ecryptfs_rename(struct inode *old_dir, struct dentry *old_dentry,
 			lower_new_dir_dentry->d_inode, lower_new_dentry);
 	if (rc)
 		goto out_lock;
+<<<<<<< HEAD
 	if (target_inode)
 		fsstack_copy_attr_all(target_inode,
 				      ecryptfs_inode_to_lower(target_inode));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fsstack_copy_attr_all(new_dir, lower_new_dir_dentry->d_inode);
 	if (new_dir != old_dir)
 		fsstack_copy_attr_all(old_dir, lower_old_dir_dentry->d_inode);
@@ -939,8 +1141,15 @@ int ecryptfs_truncate(struct dentry *dentry, loff_t new_length)
 }
 
 static int
+<<<<<<< HEAD
 ecryptfs_permission(struct inode *inode, int mask)
 {
+=======
+ecryptfs_permission(struct inode *inode, int mask, unsigned int flags)
+{
+	if (flags & IPERM_FLAG_RCU)
+		return -ECHILD;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return inode_permission(ecryptfs_inode_to_lower(inode), mask);
 }
 
@@ -1016,6 +1225,15 @@ static int ecryptfs_setattr(struct dentry *dentry, struct iattr *ia)
 			goto out;
 	}
 
+<<<<<<< HEAD
+=======
+	if (S_ISREG(inode->i_mode)) {
+		rc = filemap_write_and_wait(inode->i_mapping);
+		if (rc)
+			goto out;
+		fsstack_copy_attr_all(inode, lower_inode);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy(&lower_ia, ia, sizeof(lower_ia));
 	if (ia->ia_valid & ATTR_FILE)
 		lower_ia.ia_file = ecryptfs_file_to_lower(ia->ia_file);

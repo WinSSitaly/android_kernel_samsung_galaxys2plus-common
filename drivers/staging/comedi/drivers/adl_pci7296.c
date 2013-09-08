@@ -49,8 +49,15 @@ Configuration Options:
 #define PCI_DEVICE_ID_PCI7296 0x7296
 
 static DEFINE_PCI_DEVICE_TABLE(adl_pci7296_pci_table) = {
+<<<<<<< HEAD
 	{ PCI_DEVICE(PCI_VENDOR_ID_ADLINK, PCI_DEVICE_ID_PCI7296) },
 	{0}
+=======
+	{
+	PCI_VENDOR_ID_ADLINK, PCI_DEVICE_ID_PCI7296, PCI_ANY_ID,
+		    PCI_ANY_ID, 0, 0, 0}, {
+	0}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 MODULE_DEVICE_TABLE(pci, adl_pci7296_pci_table);

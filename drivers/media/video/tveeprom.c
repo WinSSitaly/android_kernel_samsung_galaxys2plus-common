@@ -286,6 +286,7 @@ hauppauge_tuner[] =
 	{ TUNER_ABSENT,                 "MaxLinear 301"},
 	{ TUNER_ABSENT,                 "Mirics MSi001"},
 	{ TUNER_ABSENT,                 "MaxLinear MxL241SF"},
+<<<<<<< HEAD
 	{ TUNER_XC5000C,                "Xceive XC5000C"},
 	{ TUNER_ABSENT,                 "Montage M68TS2020"},
 	{ TUNER_ABSENT,                 "Siano SMS1530"},
@@ -296,6 +297,10 @@ hauppauge_tuner[] =
 	/* 180-189 */
 	{ TUNER_ABSENT,                 "NXP 18272M"},
 	{ TUNER_ABSENT,                 "NXP 18272S"},
+=======
+	{ TUNER_ABSENT,                 "Xceive XC5000C"},
+	{ TUNER_ABSENT,                 "Montage M68TS2020"},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Use V4L2_IDENT_AMBIGUOUS for those audio 'chips' that are

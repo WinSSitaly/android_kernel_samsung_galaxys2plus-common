@@ -13,7 +13,10 @@
 #include <linux/irq.h>
 #include <linux/platform_device.h>
 #include <linux/syscore_ops.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/io.h>
 
@@ -108,7 +111,11 @@ void __init init_IRQ(void)
 
 	clk_enable(pclk);
 
+<<<<<<< HEAD
 	intc0.regs = ioremap(regs->start, resource_size(regs));
+=======
+	intc0.regs = ioremap(regs->start, regs->end - regs->start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!intc0.regs) {
 		printk(KERN_EMERG "intc: failed to map registers (0x%08lx)\n",
 		       (unsigned long)regs->start);

@@ -26,11 +26,16 @@
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/spinlock.h>
 
 #include <asm/system.h>
 
 #include <plat/cpu.h>
+=======
+#include <asm/system.h>
+#include <linux/spinlock.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/mux.h>
 
 #ifdef CONFIG_OMAP_MUX

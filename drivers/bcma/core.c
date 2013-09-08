@@ -6,7 +6,10 @@
  */
 
 #include "bcma_private.h"
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bcma/bcma.h>
 
 bool bcma_core_is_enabled(struct bcma_device *core)
@@ -20,7 +23,11 @@ bool bcma_core_is_enabled(struct bcma_device *core)
 }
 EXPORT_SYMBOL_GPL(bcma_core_is_enabled);
 
+<<<<<<< HEAD
 void bcma_core_disable(struct bcma_device *core, u32 flags)
+=======
+static void bcma_core_disable(struct bcma_device *core, u32 flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (bcma_aread32(core, BCMA_RESET_CTL) & BCMA_RESET_CTL_RESET)
 		return;
@@ -32,7 +39,10 @@ void bcma_core_disable(struct bcma_device *core, u32 flags)
 	bcma_awrite32(core, BCMA_RESET_CTL, BCMA_RESET_CTL_RESET);
 	udelay(1);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(bcma_core_disable);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int bcma_core_enable(struct bcma_device *core, u32 flags)
 {
@@ -51,6 +61,7 @@ int bcma_core_enable(struct bcma_device *core, u32 flags)
 	return 0;
 }
 EXPORT_SYMBOL_GPL(bcma_core_enable);
+<<<<<<< HEAD
 
 void bcma_core_set_clockmode(struct bcma_device *core,
 			     enum bcma_clkmode clkmode)
@@ -125,3 +136,5 @@ u32 bcma_core_dma_translation(struct bcma_device *core)
 	return BCMA_DMA_TRANSLATION_NONE;
 }
 EXPORT_SYMBOL(bcma_core_dma_translation);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

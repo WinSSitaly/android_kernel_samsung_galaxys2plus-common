@@ -1,6 +1,10 @@
 /******************************************************************************
  *
+<<<<<<< HEAD
  * Copyright(c) 2009-2012  Realtek Corporation.
+=======
+ * Copyright(c) 2009-2010  Realtek Corporation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Tmis program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
@@ -28,13 +32,21 @@
 
 #include "wifi.h"
 
+<<<<<<< HEAD
 #include <linux/moduleparam.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void rtl_dbgp_flag_init(struct ieee80211_hw *hw)
 {
 	struct rtl_priv *rtlpriv = rtl_priv(hw);
 	u8 i;
 
+<<<<<<< HEAD
+=======
+	rtlpriv->dbg.global_debuglevel = DBG_EMERG;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtlpriv->dbg.global_debugcomponents =
 	    COMP_ERR | COMP_FW | COMP_INIT | COMP_RECV | COMP_SEND |
 	    COMP_MLME | COMP_SCAN | COMP_INTR | COMP_LED | COMP_SEC |

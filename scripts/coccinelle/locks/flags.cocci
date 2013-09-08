@@ -1,9 +1,15 @@
 /// Find nested lock+irqsave functions that use the same flags variables
 ///
 // Confidence: High
+<<<<<<< HEAD
 // Copyright: (C) 2010-2012 Nicolas Palix.  GPLv2.
 // Copyright: (C) 2010-2012 Julia Lawall, INRIA/LIP6.  GPLv2.
 // Copyright: (C) 2010-2012 Gilles Muller, INRIA/LiP6.  GPLv2.
+=======
+// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
+// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
+// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 // URL: http://coccinelle.lip6.fr/
 // Comments:
 // Options: -no_includes -include_headers
@@ -12,7 +18,11 @@ virtual context
 virtual org
 virtual report
 
+<<<<<<< HEAD
 @r exists@
+=======
+@r@
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 expression lock1,lock2,flags;
 position p1,p2;
 @@
@@ -39,7 +49,11 @@ read_lock_irqsave@p2(lock2,flags)
 write_lock_irqsave@p2(lock2,flags)
 )
 
+<<<<<<< HEAD
 @d exists@
+=======
+@d@
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 expression f <= r.flags;
 expression lock1,lock2,flags;
 position r.p1, r.p2;
@@ -76,5 +90,9 @@ p1 << r.p1;
 p2 << r.p2;
 @@
 
+<<<<<<< HEAD
 msg="ERROR: nested lock+irqsave that reuses flags from line %s." % (p1[0].line)
+=======
+msg="ERROR: nested lock+irqsave that reuses flags from %s." % (p1[0].line)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 coccilib.report.print_report(p2[0], msg)

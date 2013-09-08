@@ -96,8 +96,12 @@ extern int sysctl_max_syn_backlog;
  */
 struct listen_sock {
 	u8			max_qlen_log;
+<<<<<<< HEAD
 	u8			synflood_warned;
 	/* 2 bytes hole, try to use */
+=======
+	/* 3 bytes hole, try to use */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			qlen;
 	int			qlen_young;
 	int			clock_hand;

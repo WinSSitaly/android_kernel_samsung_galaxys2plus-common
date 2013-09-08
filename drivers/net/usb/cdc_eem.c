@@ -370,7 +370,22 @@ static struct usb_driver eem_driver = {
 	.resume =	usbnet_resume,
 };
 
+<<<<<<< HEAD
 module_usb_driver(eem_driver);
+=======
+
+static int __init eem_init(void)
+{
+	return usb_register(&eem_driver);
+}
+module_init(eem_init);
+
+static void __exit eem_exit(void)
+{
+	usb_deregister(&eem_driver);
+}
+module_exit(eem_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Omar Laazimani <omar.oberthur@gmail.com>");
 MODULE_DESCRIPTION("USB CDC EEM");

@@ -25,7 +25,10 @@
 #define KBD_STAT_MOUSE_OBF	0x20	/* Mouse output buffer full */
 
 static int kbd_exists;
+<<<<<<< HEAD
 static int kbd_last_ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Check if the keyboard controller has a keypress for us.
@@ -91,11 +94,16 @@ int kdb_get_kbd_char(void)
 		return -1;
 	}
 
+<<<<<<< HEAD
 	if ((scancode & 0x80) != 0) {
 		if (scancode == 0x9c)
 			kbd_last_ret = 0;
 		return -1;
 	}
+=======
+	if ((scancode & 0x80) != 0)
+		return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	scancode &= 0x7f;
 
@@ -182,6 +190,7 @@ int kdb_get_kbd_char(void)
 		return -1;	/* ignore unprintables */
 	}
 
+<<<<<<< HEAD
 	if (scancode == 0x1c) {
 		kbd_last_ret = 1;
 		return 13;
@@ -229,10 +238,22 @@ void kdb_kbd_cleanup_state(void)
 
 		/*
 		 * Fetch the scancode.
+=======
+	if ((scancode & 0x7f) == 0x1c) {
+		/*
+		 * enter key.  All done.  Absorb the release scancode.
+		 */
+		while ((inb(KBD_STATUS_REG) & KBD_STAT_OBF) == 0)
+			;
+
+		/*
+		 * Fetch the scancode
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 */
 		scancode = inb(KBD_DATA_REG);
 		scanstatus = inb(KBD_STATUS_REG);
 
+<<<<<<< HEAD
 		/*
 		 * Skip mouse input.
 		 */
@@ -261,3 +282,24 @@ void kdb_kbd_cleanup_state(void)
 		return;
 	}
 }
+=======
+		while (scanstatus & KBD_STAT_MOUSE_OBF) {
+			scancode = inb(KBD_DATA_REG);
+			scanstatus = inb(KBD_STATUS_REG);
+		}
+
+		if (scancode != 0x9c) {
+			/*
+			 * Wasn't an enter-release,  why not?
+			 */
+			kdb_printf("kdb: expected enter got 0x%x status 0x%x\n",
+			       scancode, scanstatus);
+		}
+
+		return 13;
+	}
+
+	return keychar & 0xff;
+}
+EXPORT_SYMBOL_GPL(kdb_get_kbd_char);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

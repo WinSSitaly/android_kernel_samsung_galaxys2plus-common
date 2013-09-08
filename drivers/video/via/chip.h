@@ -146,6 +146,12 @@ struct tmds_setting_information {
 
 struct lvds_setting_information {
 	int iga_path;
+<<<<<<< HEAD
+=======
+	int h_active;
+	int v_active;
+	int bpp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int lcd_panel_hres;
 	int lcd_panel_vres;
 	int display_method;

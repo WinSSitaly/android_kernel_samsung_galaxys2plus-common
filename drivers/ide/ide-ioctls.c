@@ -2,7 +2,10 @@
  * IDE ioctls handling.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/hdreg.h>
 #include <linux/ide.h>
 #include <linux/slab.h>

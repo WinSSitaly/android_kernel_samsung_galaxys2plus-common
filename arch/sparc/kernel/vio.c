@@ -12,7 +12,10 @@
 #include <linux/kernel.h>
 #include <linux/slab.h>
 #include <linux/irq.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 
 #include <asm/mdesc.h>
@@ -119,6 +122,7 @@ static struct bus_type vio_bus_type = {
 	.remove		= vio_device_remove,
 };
 
+<<<<<<< HEAD
 int __vio_register_driver(struct vio_driver *viodrv, struct module *owner,
 			const char *mod_name)
 {
@@ -130,6 +134,15 @@ int __vio_register_driver(struct vio_driver *viodrv, struct module *owner,
 	return driver_register(&viodrv->driver);
 }
 EXPORT_SYMBOL(__vio_register_driver);
+=======
+int vio_register_driver(struct vio_driver *viodrv)
+{
+	viodrv->driver.bus = &vio_bus_type;
+
+	return driver_register(&viodrv->driver);
+}
+EXPORT_SYMBOL(vio_register_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void vio_unregister_driver(struct vio_driver *viodrv)
 {

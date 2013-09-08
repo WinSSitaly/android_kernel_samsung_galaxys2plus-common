@@ -3,13 +3,20 @@
  *
  * OMAP LEDs dispatcher
  */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/init.h>
 
 #include <asm/leds.h>
 #include <asm/mach-types.h>
 
+<<<<<<< HEAD
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/mux.h>
 
 #include "leds.h"

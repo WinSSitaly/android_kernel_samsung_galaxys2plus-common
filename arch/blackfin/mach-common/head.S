@@ -85,15 +85,24 @@ ENTRY(__start)
 	SSYNC;
 
 	/* in case of double faults, save a few things */
+<<<<<<< HEAD
 	p1.l = _initial_pda;
 	p1.h = _initial_pda;
 	r4 = RETX;
+=======
+	p0.l = _init_retx;
+	p0.h = _init_retx;
+	R0 = RETX;
+	[P0] = R0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_DEBUG_DOUBLEFAULT
 	/* Only save these if we are storing them,
 	 * This happens here, since L1 gets clobbered
 	 * below
 	 */
 	GET_PDA(p0, r0);
+<<<<<<< HEAD
 	r0 = [p0 + PDA_DF_RETX];
 	r1 = [p0 + PDA_DF_DCPLB];
 	r2 = [p0 + PDA_DF_ICPLB];
@@ -104,6 +113,28 @@ ENTRY(__start)
 	[p1 + PDA_INIT_DF_SEQSTAT] = r3;
 #endif
 	[p1 + PDA_INIT_RETX] = r4;
+=======
+	r5 = [p0 + PDA_DF_RETX];
+	p1.l = _init_saved_retx;
+	p1.h = _init_saved_retx;
+	[p1] = r5;
+
+	r5 = [p0 + PDA_DF_DCPLB];
+	p1.l = _init_saved_dcplb_fault_addr;
+	p1.h = _init_saved_dcplb_fault_addr;
+	[p1] = r5;
+
+	r5 = [p0 + PDA_DF_ICPLB];
+	p1.l = _init_saved_icplb_fault_addr;
+	p1.h = _init_saved_icplb_fault_addr;
+	[p1] = r5;
+
+	r5 = [p0 + PDA_DF_SEQSTAT];
+	p1.l = _init_saved_seqstat;
+	p1.h = _init_saved_seqstat;
+	[p1] = r5;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Initialize stack pointer */
 	sp.l = _init_thread_union + THREAD_SIZE;

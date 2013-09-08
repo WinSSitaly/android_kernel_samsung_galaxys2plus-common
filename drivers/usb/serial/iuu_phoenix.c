@@ -34,9 +34,15 @@
 
 
 #ifdef CONFIG_USB_SERIAL_DEBUG
+<<<<<<< HEAD
 static bool debug = 1;
 #else
 static bool debug;
+=======
+static int debug = 1;
+#else
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /*
@@ -56,6 +62,10 @@ static struct usb_driver iuu_driver = {
 	.probe = usb_serial_probe,
 	.disconnect = usb_serial_disconnect,
 	.id_table = id_table,
+<<<<<<< HEAD
+=======
+	.no_dynamic_id = 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* turbo parameter */
@@ -64,7 +74,11 @@ static int clockmode = 1;
 static int cdmode = 1;
 static int iuu_cardin;
 static int iuu_cardout;
+<<<<<<< HEAD
 static bool xmas;
+=======
+static int xmas;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int vcc_default = 5;
 
 static void read_rxcmd_callback(struct urb *urb);
@@ -326,7 +340,11 @@ static int bulk_immediate(struct usb_serial_port *port, u8 *buf, u8 count)
 	    usb_bulk_msg(serial->dev,
 			 usb_sndbulkpipe(serial->dev,
 					 port->bulk_out_endpointAddress), buf,
+<<<<<<< HEAD
 			 count, &actual, 1000);
+=======
+			 count, &actual, HZ * 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (status != IUU_OPERATION_OK)
 		dbg("%s - error = %2x", __func__, status);
@@ -349,7 +367,11 @@ static int read_immediate(struct usb_serial_port *port, u8 *buf, u8 count)
 	    usb_bulk_msg(serial->dev,
 			 usb_rcvbulkpipe(serial->dev,
 					 port->bulk_in_endpointAddress), buf,
+<<<<<<< HEAD
 			 count, &actual, 1000);
+=======
+			 count, &actual, HZ * 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (status != IUU_OPERATION_OK)
 		dbg("%s - error = %2x", __func__, status);
@@ -1167,14 +1189,25 @@ static int iuu_open(struct tty_struct *tty, struct usb_serial_port *port)
 			  port->write_urb->transfer_buffer, 1,
 			  read_rxcmd_callback, port);
 	result = usb_submit_urb(port->write_urb, GFP_KERNEL);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (result) {
 		dev_err(&port->dev, "%s - failed submitting read urb,"
 			" error %d\n", __func__, result);
 		iuu_close(port);
+<<<<<<< HEAD
 	} else {
 		dbg("%s - rxcmd OK", __func__);
 	}
 
+=======
+		return -EPROTO;
+	} else {
+		dbg("%s - rxcmd OK", __func__);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return result;
 }
 
@@ -1273,6 +1306,10 @@ static struct usb_serial_driver iuu_device = {
 		   .name = "iuu_phoenix",
 		   },
 	.id_table = id_table,
+<<<<<<< HEAD
+=======
+	.usb_driver = &iuu_driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.num_ports = 1,
 	.bulk_in_size = 512,
 	.bulk_out_size = 512,
@@ -1290,11 +1327,40 @@ static struct usb_serial_driver iuu_device = {
 	.release = iuu_release,
 };
 
+<<<<<<< HEAD
 static struct usb_serial_driver * const serial_drivers[] = {
 	&iuu_device, NULL
 };
 
 module_usb_serial_driver(iuu_driver, serial_drivers);
+=======
+static int __init iuu_init(void)
+{
+	int retval;
+	retval = usb_serial_register(&iuu_device);
+	if (retval)
+		goto failed_usb_serial_register;
+	retval = usb_register(&iuu_driver);
+	if (retval)
+		goto failed_usb_register;
+	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_VERSION ":"
+	       DRIVER_DESC "\n");
+	return 0;
+failed_usb_register:
+	usb_serial_deregister(&iuu_device);
+failed_usb_serial_register:
+	return retval;
+}
+
+static void __exit iuu_exit(void)
+{
+	usb_deregister(&iuu_driver);
+	usb_serial_deregister(&iuu_device);
+}
+
+module_init(iuu_init);
+module_exit(iuu_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Alain Degreffe eczema@ecze.com");
 

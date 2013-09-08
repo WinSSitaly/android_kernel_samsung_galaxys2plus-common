@@ -432,7 +432,11 @@ void ENE_stor_invoke_transport(struct scsi_cmnd *srb, struct us_data *us)
 	usb_stor_print_cmd(srb);
 	/* send the command to the transport layer */
 	scsi_set_resid(srb, 0);
+<<<<<<< HEAD
 	if (!(us->SM_Status.Ready))
+=======
+	if (!(us->MS_Status.Ready || us->SM_Status.Ready))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		result = ENE_InitMedia(us);
 
 	if (us->Power_IsResum == true) {
@@ -440,6 +444,11 @@ void ENE_stor_invoke_transport(struct scsi_cmnd *srb, struct us_data *us)
 		us->Power_IsResum = false;
 	}
 
+<<<<<<< HEAD
+=======
+	if (us->MS_Status.Ready)
+		result = MS_SCSIIrp(us, srb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (us->SM_Status.Ready)
 		result = SM_SCSIIrp(us, srb);
 

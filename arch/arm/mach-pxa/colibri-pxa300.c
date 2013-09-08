@@ -78,8 +78,13 @@ static struct resource colibri_asix_resource[] = {
 		.flags = IORESOURCE_MEM,
 	},
 	[1] = {
+<<<<<<< HEAD
 		.start = PXA_GPIO_TO_IRQ(COLIBRI_ETH_IRQ_GPIO),
 		.end   = PXA_GPIO_TO_IRQ(COLIBRI_ETH_IRQ_GPIO),
+=======
+		.start = gpio_to_irq(COLIBRI_ETH_IRQ_GPIO),
+		.end   = gpio_to_irq(COLIBRI_ETH_IRQ_GPIO),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags = IORESOURCE_IRQ | IRQF_TRIGGER_FALLING,
 	}
 };
@@ -183,6 +188,7 @@ void __init colibri_pxa300_init(void)
 }
 
 MACHINE_START(COLIBRI300, "Toradex Colibri PXA300")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.init_machine	= colibri_pxa300_init,
 	.map_io		= pxa3xx_map_io,
@@ -191,5 +197,12 @@ MACHINE_START(COLIBRI300, "Toradex Colibri PXA300")
 	.handle_irq	= pxa3xx_handle_irq,
 	.timer		= &pxa_timer,
 	.restart	= pxa_restart,
+=======
+	.boot_params	= COLIBRI_SDRAM_BASE + 0x100,
+	.init_machine	= colibri_pxa300_init,
+	.map_io		= pxa3xx_map_io,
+	.init_irq	= pxa3xx_init_irq,
+	.timer		= &pxa_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 

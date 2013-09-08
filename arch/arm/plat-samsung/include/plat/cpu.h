@@ -1,5 +1,6 @@
 /* linux/arch/arm/plat-samsung/include/plat/cpu.h
  *
+<<<<<<< HEAD
  * Copyright (c) 2011 Samsung Electronics Co., Ltd.
  *		http://www.samsung.com/
  *
@@ -7,6 +8,12 @@
  *	Ben Dooks <ben@simtec.co.uk>
  *
  * Header file for Samsung CPU support
+=======
+ * Copyright (c) 2004-2005 Simtec Electronics
+ *	Ben Dooks <ben@simtec.co.uk>
+ *
+ * Header file for S3C24XX CPU support
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -18,6 +25,7 @@
 #ifndef __SAMSUNG_PLAT_CPU_H
 #define __SAMSUNG_PLAT_CPU_H
 
+<<<<<<< HEAD
 extern unsigned long samsung_cpu_id;
 
 #define S3C24XX_CPU_ID		0x32400000
@@ -130,6 +138,8 @@ IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID, EXYNOS5_SOC_MASK)
 # define soc_is_exynos5250()	0
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define IODESC_ENT(x) { (unsigned long)S3C24XX_VA_##x, __phys_to_pfn(S3C24XX_PA_##x), S3C24XX_SZ_##x, MT_DEVICE }
 
 #ifndef MHZ
@@ -162,6 +172,7 @@ extern void s3c_init_cpu(unsigned long idcode,
 /* core initialisation functions */
 
 extern void s3c24xx_init_irq(void);
+<<<<<<< HEAD
 extern void s5p_init_irq(u32 *vic, u32 num_vic);
 
 extern void s3c24xx_init_io(struct map_desc *mach_desc, int size);
@@ -171,6 +182,15 @@ extern void s3c64xx_init_cpu(void);
 extern void s5p_init_cpu(void __iomem *cpuid_addr);
 
 extern unsigned int samsung_rev(void);
+=======
+extern void s3c64xx_init_irq(u32 vic0, u32 vic1);
+extern void s5p_init_irq(u32 *vic, u32 num_vic);
+
+extern void s3c24xx_init_io(struct map_desc *mach_desc, int size);
+extern void s3c64xx_init_io(struct map_desc *mach_desc, int size);
+extern void s5p_init_io(struct map_desc *mach_desc,
+			int size, void __iomem *cpuid_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void s3c24xx_init_uarts(struct s3c2410_uartcfg *cfg, int no);
 
@@ -189,6 +209,7 @@ extern struct syscore_ops s3c2410_pm_syscore_ops;
 extern struct syscore_ops s3c2412_pm_syscore_ops;
 extern struct syscore_ops s3c2416_pm_syscore_ops;
 extern struct syscore_ops s3c244x_pm_syscore_ops;
+<<<<<<< HEAD
 
 /* system device subsystems */
 
@@ -203,6 +224,24 @@ extern struct bus_type s3c6410_subsys;
 extern struct bus_type s5p64x0_subsys;
 extern struct bus_type s5pv210_subsys;
 extern struct bus_type exynos4_subsys;
+=======
+extern struct syscore_ops s3c64xx_irq_syscore_ops;
+
+/* system device classes */
+
+extern struct sysdev_class s3c2410_sysclass;
+extern struct sysdev_class s3c2410a_sysclass;
+extern struct sysdev_class s3c2412_sysclass;
+extern struct sysdev_class s3c2416_sysclass;
+extern struct sysdev_class s3c2440_sysclass;
+extern struct sysdev_class s3c2442_sysclass;
+extern struct sysdev_class s3c2443_sysclass;
+extern struct sysdev_class s3c6410_sysclass;
+extern struct sysdev_class s3c64xx_sysclass;
+extern struct sysdev_class s5p64x0_sysclass;
+extern struct sysdev_class s5pv210_sysclass;
+extern struct sysdev_class exynos4_sysclass;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void (*s5pc1xx_idle)(void);
 

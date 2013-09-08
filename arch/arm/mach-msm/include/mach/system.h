@@ -13,6 +13,18 @@
  *
  */
 
+<<<<<<< HEAD
+=======
+#include <mach/hardware.h>
+
+void arch_idle(void);
+
+static inline void arch_reset(char mode, const char *cmd)
+{
+	for (;;) ;  /* depends on IPC w/ other core */
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* low level hardware reset hook -- for example, hitting the
  * PSHOLD line on the PMIC to hard reset the system
  */

@@ -24,10 +24,13 @@ unsigned long acpi_realmode_flags;
 static char temp_stack[4096];
 #endif
 
+<<<<<<< HEAD
 asmlinkage void acpi_enter_s3(void)
 {
 	acpi_enter_sleep_state(3, wake_sleep_flags);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * acpi_suspend_lowlevel - save kernel state
  *

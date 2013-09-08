@@ -25,7 +25,10 @@
 
 #include <linux/kthread.h>
 #include <linux/firmware.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ctype.h>
 
 #include "sas_internal.h"
@@ -49,12 +52,36 @@
 #include <linux/scatterlist.h>
 #include <linux/libata.h>
 
+<<<<<<< HEAD
 /* record final status and free the task */
 static void sas_end_task(struct scsi_cmnd *sc, struct sas_task *task)
 {
 	struct task_status_struct *ts = &task->task_status;
 	int hs = 0, stat = 0;
 
+=======
+/* ---------- SCSI Host glue ---------- */
+
+static void sas_scsi_task_done(struct sas_task *task)
+{
+	struct task_status_struct *ts = &task->task_status;
+	struct scsi_cmnd *sc = task->uldd_task;
+	int hs = 0, stat = 0;
+
+	if (unlikely(task->task_state_flags & SAS_TASK_STATE_ABORTED)) {
+		/* Aborted tasks will be completed by the error handler */
+		SAS_DPRINTK("task done but aborted\n");
+		return;
+	}
+
+	if (unlikely(!sc)) {
+		SAS_DPRINTK("task_done called with non existing SCSI cmnd!\n");
+		list_del_init(&task->list);
+		sas_free_task(task);
+		return;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ts->resp == SAS_TASK_UNDELIVERED) {
 		/* transport error */
 		hs = DID_NO_CONNECT;
@@ -109,6 +136,7 @@ static void sas_end_task(struct scsi_cmnd *sc, struct sas_task *task)
 			break;
 		}
 	}
+<<<<<<< HEAD
 
 	sc->result = (hs << 16) | stat;
 	ASSIGN_SAS_TASK(sc, NULL);
@@ -144,6 +172,12 @@ static void sas_scsi_task_done(struct sas_task *task)
 	}
 
 	sas_end_task(sc, task);
+=======
+	ASSIGN_SAS_TASK(sc, NULL);
+	sc->result = (hs << 16) | stat;
+	list_del_init(&task->list);
+	sas_free_task(task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sc->scsi_done(sc);
 }
 
@@ -199,6 +233,7 @@ int sas_queue_up(struct sas_task *task)
 	return 0;
 }
 
+<<<<<<< HEAD
 int sas_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
 {
 	struct sas_internal *i = to_sas_internal(host->transportt);
@@ -281,6 +316,101 @@ static void sas_eh_defer_cmd(struct scsi_cmnd *cmd)
 	list_move_tail(&cmd->eh_entry, &ha->eh_ata_q);
 }
 
+=======
+/**
+ * sas_queuecommand -- Enqueue a command for processing
+ * @parameters: See SCSI Core documentation
+ *
+ * Note: XXX: Remove the host unlock/lock pair when SCSI Core can
+ * call us without holding an IRQ spinlock...
+ */
+static int sas_queuecommand_lck(struct scsi_cmnd *cmd,
+		     void (*scsi_done)(struct scsi_cmnd *))
+	__releases(host->host_lock)
+	__acquires(dev->sata_dev.ap->lock)
+	__releases(dev->sata_dev.ap->lock)
+	__acquires(host->host_lock)
+{
+	int res = 0;
+	struct domain_device *dev = cmd_to_domain_dev(cmd);
+	struct Scsi_Host *host = cmd->device->host;
+	struct sas_internal *i = to_sas_internal(host->transportt);
+
+	spin_unlock_irq(host->host_lock);
+
+	{
+		struct sas_ha_struct *sas_ha = dev->port->ha;
+		struct sas_task *task;
+
+		/* If the device fell off, no sense in issuing commands */
+		if (dev->gone) {
+			cmd->result = DID_BAD_TARGET << 16;
+			scsi_done(cmd);
+			goto out;
+		}
+
+		if (dev_is_sata(dev)) {
+			unsigned long flags;
+
+			spin_lock_irqsave(dev->sata_dev.ap->lock, flags);
+			res = ata_sas_queuecmd(cmd, dev->sata_dev.ap);
+			spin_unlock_irqrestore(dev->sata_dev.ap->lock, flags);
+			goto out;
+		}
+
+		res = -ENOMEM;
+		task = sas_create_task(cmd, dev, GFP_ATOMIC);
+		if (!task)
+			goto out;
+
+		cmd->scsi_done = scsi_done;
+		/* Queue up, Direct Mode or Task Collector Mode. */
+		if (sas_ha->lldd_max_execute_num < 2)
+			res = i->dft->lldd_execute_task(task, 1, GFP_ATOMIC);
+		else
+			res = sas_queue_up(task);
+
+		/* Examine */
+		if (res) {
+			SAS_DPRINTK("lldd_execute_task returned: %d\n", res);
+			ASSIGN_SAS_TASK(cmd, NULL);
+			sas_free_task(task);
+			if (res == -SAS_QUEUE_FULL) {
+				cmd->result = DID_SOFT_ERROR << 16; /* retry */
+				res = 0;
+				scsi_done(cmd);
+			}
+			goto out;
+		}
+	}
+out:
+	spin_lock_irq(host->host_lock);
+	return res;
+}
+
+DEF_SCSI_QCMD(sas_queuecommand)
+
+static void sas_eh_finish_cmd(struct scsi_cmnd *cmd)
+{
+	struct sas_task *task = TO_SAS_TASK(cmd);
+	struct sas_ha_struct *sas_ha = SHOST_TO_SAS_HA(cmd->device->host);
+
+	/* remove the aborted task flag to allow the task to be
+	 * completed now. At this point, we only get called following
+	 * an actual abort of the task, so we should be guaranteed not
+	 * to be racing with any completions from the LLD (hence we
+	 * don't need the task state lock to clear the flag) */
+	task->task_state_flags &= ~SAS_TASK_STATE_ABORTED;
+	/* Now call task_done.  However, task will be free'd after
+	 * this */
+	task->task_done(task);
+	/* now finish the command and move it on to the error
+	 * handler done list, this also takes it off the
+	 * error handler pending list */
+	scsi_eh_finish_cmd(cmd, &sas_ha->eh_done_q);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void sas_scsi_clear_queue_lu(struct list_head *error_q, struct scsi_cmnd *my_cmd)
 {
 	struct scsi_cmnd *cmd, *n;
@@ -288,7 +418,11 @@ static void sas_scsi_clear_queue_lu(struct list_head *error_q, struct scsi_cmnd 
 	list_for_each_entry_safe(cmd, n, error_q, eh_entry) {
 		if (cmd->device->sdev_target == my_cmd->device->sdev_target &&
 		    cmd->device->lun == my_cmd->device->lun)
+<<<<<<< HEAD
 			sas_eh_defer_cmd(cmd);
+=======
+			sas_eh_finish_cmd(cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -323,7 +457,10 @@ enum task_disposition {
 	TASK_IS_DONE,
 	TASK_IS_ABORTED,
 	TASK_IS_AT_LU,
+<<<<<<< HEAD
 	TASK_IS_NOT_AT_HA,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	TASK_IS_NOT_AT_LU,
 	TASK_ABORT_FAILED,
 };
@@ -340,6 +477,7 @@ static enum task_disposition sas_scsi_find_task(struct sas_task *task)
 		struct scsi_core *core = &ha->core;
 		struct sas_task *t, *n;
 
+<<<<<<< HEAD
 		mutex_lock(&core->task_queue_flush);
 		spin_lock_irqsave(&core->task_queue_lock, flags);
 		list_for_each_entry_safe(t, n, &core->task_queue, list)
@@ -352,6 +490,21 @@ static enum task_disposition sas_scsi_find_task(struct sas_task *task)
 
 		if (task == t)
 			return TASK_IS_NOT_AT_HA;
+=======
+		spin_lock_irqsave(&core->task_queue_lock, flags);
+		list_for_each_entry_safe(t, n, &core->task_queue, list) {
+			if (task == t) {
+				list_del_init(&t->list);
+				spin_unlock_irqrestore(&core->task_queue_lock,
+						       flags);
+				SAS_DPRINTK("%s: task 0x%p aborted from "
+					    "task_queue\n",
+					    __func__, task);
+				return TASK_IS_ABORTED;
+			}
+		}
+		spin_unlock_irqrestore(&core->task_queue_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	for (i = 0; i < 5; i++) {
@@ -439,6 +592,7 @@ static int sas_recover_I_T(struct domain_device *dev)
 	return res;
 }
 
+<<<<<<< HEAD
 /* take a reference on the last known good phy for this device */
 struct sas_phy *sas_get_local_phy(struct domain_device *dev)
 {
@@ -459,6 +613,32 @@ struct sas_phy *sas_get_local_phy(struct domain_device *dev)
 	return phy;
 }
 EXPORT_SYMBOL_GPL(sas_get_local_phy);
+=======
+/* Find the sas_phy that's attached to this device */
+struct sas_phy *sas_find_local_phy(struct domain_device *dev)
+{
+	struct domain_device *pdev = dev->parent;
+	struct ex_phy *exphy = NULL;
+	int i;
+
+	/* Directly attached device */
+	if (!pdev)
+		return dev->port->phy;
+
+	/* Otherwise look in the expander */
+	for (i = 0; i < pdev->ex_dev.num_phys; i++)
+		if (!memcmp(dev->sas_addr,
+			    pdev->ex_dev.ex_phy[i].attached_sas_addr,
+			    SAS_ADDR_SIZE)) {
+			exphy = &pdev->ex_dev.ex_phy[i];
+			break;
+		}
+
+	BUG_ON(!exphy);
+	return exphy->phy;
+}
+EXPORT_SYMBOL_GPL(sas_find_local_phy);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Attempt to send a LUN reset message to a device */
 int sas_eh_device_reset_handler(struct scsi_cmnd *cmd)
@@ -485,7 +665,11 @@ int sas_eh_device_reset_handler(struct scsi_cmnd *cmd)
 int sas_eh_bus_reset_handler(struct scsi_cmnd *cmd)
 {
 	struct domain_device *dev = cmd_to_domain_dev(cmd);
+<<<<<<< HEAD
 	struct sas_phy *phy = sas_get_local_phy(dev);
+=======
+	struct sas_phy *phy = sas_find_local_phy(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int res;
 
 	res = sas_phy_reset(phy, 1);
@@ -493,8 +677,11 @@ int sas_eh_bus_reset_handler(struct scsi_cmnd *cmd)
 		SAS_DPRINTK("Bus reset of %s failed 0x%x\n",
 			    kobject_name(&phy->dev.kobj),
 			    res);
+<<<<<<< HEAD
 	sas_put_local_phy(phy);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (res == TMF_RESP_FUNC_SUCC || res == TMF_RESP_FUNC_COMPLETE)
 		return SUCCESS;
 
@@ -521,7 +708,13 @@ try_bus_reset:
 	return FAILED;
 }
 
+<<<<<<< HEAD
 static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *work_q)
+=======
+static int sas_eh_handle_sas_errors(struct Scsi_Host *shost,
+				    struct list_head *work_q,
+				    struct list_head *done_q)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct scsi_cmnd *cmd, *n;
 	enum task_disposition res = TASK_IS_DONE;
@@ -529,6 +722,7 @@ static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *
 	struct sas_internal *i = to_sas_internal(shost->transportt);
 	unsigned long flags;
 	struct sas_ha_struct *ha = SHOST_TO_SAS_HA(shost);
+<<<<<<< HEAD
 	LIST_HEAD(done);
 
 	/* clean out any commands that won the completion vs eh race */
@@ -551,6 +745,15 @@ static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *
  Again:
 	list_for_each_entry_safe(cmd, n, work_q, eh_entry) {
 		struct sas_task *task = TO_SAS_TASK(cmd);
+=======
+
+Again:
+	list_for_each_entry_safe(cmd, n, work_q, eh_entry) {
+		struct sas_task *task = TO_SAS_TASK(cmd);
+
+		if (!task)
+			continue;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		list_del_init(&cmd->eh_entry);
 
@@ -570,6 +773,7 @@ static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *
 		cmd->eh_eflags = 0;
 
 		switch (res) {
+<<<<<<< HEAD
 		case TASK_IS_NOT_AT_HA:
 			SAS_DPRINTK("%s: task 0x%p is not at ha: %s\n",
 				    __func__, task,
@@ -582,11 +786,21 @@ static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *
 			SAS_DPRINTK("%s: task 0x%p is done\n", __func__,
 				    task);
 			sas_eh_defer_cmd(cmd);
+=======
+		case TASK_IS_DONE:
+			SAS_DPRINTK("%s: task 0x%p is done\n", __func__,
+				    task);
+			sas_eh_finish_cmd(cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		case TASK_IS_ABORTED:
 			SAS_DPRINTK("%s: task 0x%p is aborted\n",
 				    __func__, task);
+<<<<<<< HEAD
 			sas_eh_defer_cmd(cmd);
+=======
+			sas_eh_finish_cmd(cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		case TASK_IS_AT_LU:
 			SAS_DPRINTK("task 0x%p is at LU: lu recover\n", task);
@@ -597,7 +811,11 @@ static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *
 					    "recovered\n",
 					    SAS_ADDR(task->dev),
 					    cmd->device->lun);
+<<<<<<< HEAD
 				sas_eh_defer_cmd(cmd);
+=======
+				sas_eh_finish_cmd(cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				sas_scsi_clear_queue_lu(work_q, cmd);
 				goto Again;
 			}
@@ -607,8 +825,12 @@ static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *
 			SAS_DPRINTK("task 0x%p is not at LU: I_T recover\n",
 				    task);
 			tmf_resp = sas_recover_I_T(task->dev);
+<<<<<<< HEAD
 			if (tmf_resp == TMF_RESP_FUNC_COMPLETE ||
 			    tmf_resp == -ENODEV) {
+=======
+			if (tmf_resp == TMF_RESP_FUNC_COMPLETE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				struct domain_device *dev = task->dev;
 				SAS_DPRINTK("I_T %016llx recovered\n",
 					    SAS_ADDR(task->dev->sas_addr));
@@ -655,6 +877,7 @@ static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *
 			goto clear_q;
 		}
 	}
+<<<<<<< HEAD
  out:
 	list_splice_tail(&done, work_q);
 	list_splice_tail_init(&ha->eh_ata_q, work_q);
@@ -665,6 +888,15 @@ static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *
 	list_for_each_entry_safe(cmd, n, work_q, eh_entry)
 		sas_eh_finish_cmd(cmd);
 	goto out;
+=======
+	return list_empty(work_q);
+clear_q:
+	SAS_DPRINTK("--- Exit %s -- clear_q\n", __func__);
+	list_for_each_entry_safe(cmd, n, work_q, eh_entry)
+		sas_eh_finish_cmd(cmd);
+
+	return list_empty(work_q);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void sas_scsi_recover_host(struct Scsi_Host *shost)
@@ -678,6 +910,7 @@ void sas_scsi_recover_host(struct Scsi_Host *shost)
 	shost->host_eh_scheduled = 0;
 	spin_unlock_irqrestore(shost->host_lock, flags);
 
+<<<<<<< HEAD
 	SAS_DPRINTK("Enter %s busy: %d failed: %d\n",
 		    __func__, shost->host_busy, shost->host_failed);
 	/*
@@ -689,6 +922,14 @@ void sas_scsi_recover_host(struct Scsi_Host *shost)
 	sas_eh_handle_sas_errors(shost, &eh_work_q);
 	clear_bit(SAS_HA_FROZEN, &ha->state);
 	if (list_empty(&eh_work_q))
+=======
+	SAS_DPRINTK("Enter %s\n", __func__);
+	/*
+	 * Deal with commands that still have SAS tasks (i.e. they didn't
+	 * complete via the normal sas_task completion mechanism)
+	 */
+	if (sas_eh_handle_sas_errors(shost, &eh_work_q, &ha->eh_done_q))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	/*
@@ -697,6 +938,7 @@ void sas_scsi_recover_host(struct Scsi_Host *shost)
 	 * scsi_unjam_host does, but we skip scsi_eh_abort_cmds because any
 	 * command we see here has no sas_task and is thus unknown to the HA.
 	 */
+<<<<<<< HEAD
 	sas_ata_eh(shost, &eh_work_q, &ha->eh_done_q);
 	if (!scsi_eh_get_sense(&eh_work_q, &ha->eh_done_q))
 		scsi_eh_ready_devs(shost, &eh_work_q, &ha->eh_done_q);
@@ -705,18 +947,70 @@ out:
 	if (ha->lldd_max_execute_num > 1)
 		wake_up_process(ha->core.queue_thread);
 
+=======
+	if (!sas_ata_eh(shost, &eh_work_q, &ha->eh_done_q))
+		if (!scsi_eh_get_sense(&eh_work_q, &ha->eh_done_q))
+			scsi_eh_ready_devs(shost, &eh_work_q, &ha->eh_done_q);
+
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* now link into libata eh --- if we have any ata devices */
 	sas_ata_strategy_handler(shost);
 
 	scsi_eh_flush_done_q(&ha->eh_done_q);
 
+<<<<<<< HEAD
 	SAS_DPRINTK("--- Exit %s: busy: %d failed: %d\n",
 		    __func__, shost->host_busy, shost->host_failed);
+=======
+	SAS_DPRINTK("--- Exit %s\n", __func__);
+	return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 enum blk_eh_timer_return sas_scsi_timed_out(struct scsi_cmnd *cmd)
 {
+<<<<<<< HEAD
 	scmd_printk(KERN_DEBUG, cmd, "command %p timed out\n", cmd);
+=======
+	struct sas_task *task = TO_SAS_TASK(cmd);
+	unsigned long flags;
+	enum blk_eh_timer_return rtn;
+
+	if (sas_ata_timed_out(cmd, task, &rtn))
+		return rtn;
+
+	if (!task) {
+		cmd->request->timeout /= 2;
+		SAS_DPRINTK("command 0x%p, task 0x%p, gone: %s\n",
+			    cmd, task, (cmd->request->timeout ?
+			    "BLK_EH_RESET_TIMER" : "BLK_EH_NOT_HANDLED"));
+		if (!cmd->request->timeout)
+			return BLK_EH_NOT_HANDLED;
+		return BLK_EH_RESET_TIMER;
+	}
+
+	spin_lock_irqsave(&task->task_state_lock, flags);
+	BUG_ON(task->task_state_flags & SAS_TASK_STATE_ABORTED);
+	if (task->task_state_flags & SAS_TASK_STATE_DONE) {
+		spin_unlock_irqrestore(&task->task_state_lock, flags);
+		SAS_DPRINTK("command 0x%p, task 0x%p, timed out: "
+			    "BLK_EH_HANDLED\n", cmd, task);
+		return BLK_EH_HANDLED;
+	}
+	if (!(task->task_state_flags & SAS_TASK_AT_INITIATOR)) {
+		spin_unlock_irqrestore(&task->task_state_lock, flags);
+		SAS_DPRINTK("command 0x%p, task 0x%p, not at initiator: "
+			    "BLK_EH_RESET_TIMER\n",
+			    cmd, task);
+		return BLK_EH_RESET_TIMER;
+	}
+	task->task_state_flags |= SAS_TASK_STATE_ABORTED;
+	spin_unlock_irqrestore(&task->task_state_lock, flags);
+
+	SAS_DPRINTK("command 0x%p, task 0x%p, timed out: BLK_EH_NOT_HANDLED\n",
+		    cmd, task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return BLK_EH_NOT_HANDLED;
 }
@@ -760,20 +1054,48 @@ struct domain_device *sas_find_dev_by_rphy(struct sas_rphy *rphy)
 	return found_dev;
 }
 
+<<<<<<< HEAD
 int sas_target_alloc(struct scsi_target *starget)
 {
 	struct sas_rphy *rphy = dev_to_rphy(starget->dev.parent);
 	struct domain_device *found_dev = sas_find_dev_by_rphy(rphy);
+=======
+static inline struct domain_device *sas_find_target(struct scsi_target *starget)
+{
+	struct sas_rphy *rphy = dev_to_rphy(starget->dev.parent);
+
+	return sas_find_dev_by_rphy(rphy);
+}
+
+int sas_target_alloc(struct scsi_target *starget)
+{
+	struct domain_device *found_dev = sas_find_target(starget);
+	int res;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!found_dev)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	kref_get(&found_dev->kref);
+=======
+	if (dev_is_sata(found_dev)) {
+		res = sas_ata_init_host_and_port(found_dev, starget);
+		if (res)
+			return res;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	starget->hostdata = found_dev;
 	return 0;
 }
 
+<<<<<<< HEAD
 #define SAS_DEF_QD 256
+=======
+#define SAS_DEF_QD 32
+#define SAS_MAX_QD 64
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int sas_slave_configure(struct scsi_device *scsi_dev)
 {
@@ -808,6 +1130,7 @@ int sas_slave_configure(struct scsi_device *scsi_dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 int sas_change_queue_depth(struct scsi_device *sdev, int depth, int reason)
 {
 	struct domain_device *dev = sdev_to_domain_dev(sdev);
@@ -831,15 +1154,49 @@ int sas_change_queue_depth(struct scsi_device *sdev, int depth, int reason)
 	}
 
 	return depth;
+=======
+void sas_slave_destroy(struct scsi_device *scsi_dev)
+{
+	struct domain_device *dev = sdev_to_domain_dev(scsi_dev);
+
+	if (dev_is_sata(dev))
+		dev->sata_dev.ap->link.device[0].class = ATA_DEV_NONE;
+}
+
+int sas_change_queue_depth(struct scsi_device *scsi_dev, int new_depth,
+			   int reason)
+{
+	int res = min(new_depth, SAS_MAX_QD);
+
+	if (reason != SCSI_QDEPTH_DEFAULT)
+		return -EOPNOTSUPP;
+
+	if (scsi_dev->tagged_supported)
+		scsi_adjust_queue_depth(scsi_dev, scsi_get_tag_type(scsi_dev),
+					res);
+	else {
+		struct domain_device *dev = sdev_to_domain_dev(scsi_dev);
+		sas_printk("device %llx LUN %x queue depth changed to 1\n",
+			   SAS_ADDR(dev->sas_addr),
+			   scsi_dev->lun);
+		scsi_adjust_queue_depth(scsi_dev, 0, 1);
+		res = 1;
+	}
+
+	return res;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int sas_change_queue_type(struct scsi_device *scsi_dev, int qt)
 {
+<<<<<<< HEAD
 	struct domain_device *dev = sdev_to_domain_dev(scsi_dev);
 
 	if (dev_is_sata(dev))
 		return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!scsi_dev->tagged_supported)
 		return 0;
 
@@ -874,11 +1231,17 @@ static void sas_queue(struct sas_ha_struct *sas_ha)
 	int res;
 	struct sas_internal *i = to_sas_internal(core->shost->transportt);
 
+<<<<<<< HEAD
 	mutex_lock(&core->task_queue_flush);
 	spin_lock_irqsave(&core->task_queue_lock, flags);
 	while (!kthread_should_stop() &&
 	       !list_empty(&core->task_queue) &&
 	       !test_bit(SAS_HA_FROZEN, &sas_ha->state)) {
+=======
+	spin_lock_irqsave(&core->task_queue_lock, flags);
+	while (!kthread_should_stop() &&
+	       !list_empty(&core->task_queue)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		can_queue = sas_ha->lldd_queue_size - core->task_queue_size;
 		if (can_queue >= 0) {
@@ -914,7 +1277,10 @@ static void sas_queue(struct sas_ha_struct *sas_ha)
 		}
 	}
 	spin_unlock_irqrestore(&core->task_queue_lock, flags);
+<<<<<<< HEAD
 	mutex_unlock(&core->task_queue_flush);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -941,7 +1307,10 @@ int sas_init_queue(struct sas_ha_struct *sas_ha)
 	struct scsi_core *core = &sas_ha->core;
 
 	spin_lock_init(&core->task_queue_lock);
+<<<<<<< HEAD
 	mutex_init(&core->task_queue_flush);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	core->task_queue_size = 0;
 	INIT_LIST_HEAD(&core->task_queue);
 
@@ -979,6 +1348,52 @@ void sas_shutdown_queue(struct sas_ha_struct *sas_ha)
 }
 
 /*
+<<<<<<< HEAD
+=======
+ * Call the LLDD task abort routine directly.  This function is intended for
+ * use by upper layers that need to tell the LLDD to abort a task.
+ */
+int __sas_task_abort(struct sas_task *task)
+{
+	struct sas_internal *si =
+		to_sas_internal(task->dev->port->ha->core.shost->transportt);
+	unsigned long flags;
+	int res;
+
+	spin_lock_irqsave(&task->task_state_lock, flags);
+	if (task->task_state_flags & SAS_TASK_STATE_ABORTED ||
+	    task->task_state_flags & SAS_TASK_STATE_DONE) {
+		spin_unlock_irqrestore(&task->task_state_lock, flags);
+		SAS_DPRINTK("%s: Task %p already finished.\n", __func__,
+			    task);
+		return 0;
+	}
+	task->task_state_flags |= SAS_TASK_STATE_ABORTED;
+	spin_unlock_irqrestore(&task->task_state_lock, flags);
+
+	if (!si->dft->lldd_abort_task)
+		return -ENODEV;
+
+	res = si->dft->lldd_abort_task(task);
+
+	spin_lock_irqsave(&task->task_state_lock, flags);
+	if ((task->task_state_flags & SAS_TASK_STATE_DONE) ||
+	    (res == TMF_RESP_FUNC_COMPLETE))
+	{
+		spin_unlock_irqrestore(&task->task_state_lock, flags);
+		task->task_done(task);
+		return 0;
+	}
+
+	if (!(task->task_state_flags & SAS_TASK_STATE_DONE))
+		task->task_state_flags &= ~SAS_TASK_STATE_ABORTED;
+	spin_unlock_irqrestore(&task->task_state_lock, flags);
+
+	return -EAGAIN;
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Tell an upper layer that it needs to initiate an abort for a given task.
  * This should only ever be called by an LLDD.
  */
@@ -1007,15 +1422,38 @@ void sas_task_abort(struct sas_task *task)
 	}
 }
 
+<<<<<<< HEAD
 void sas_target_destroy(struct scsi_target *starget)
 {
 	struct domain_device *found_dev = starget->hostdata;
+=======
+int sas_slave_alloc(struct scsi_device *scsi_dev)
+{
+	struct domain_device *dev = sdev_to_domain_dev(scsi_dev);
+
+	if (dev_is_sata(dev))
+		return ata_sas_port_init(dev->sata_dev.ap);
+
+	return 0;
+}
+
+void sas_target_destroy(struct scsi_target *starget)
+{
+	struct domain_device *found_dev = sas_find_target(starget);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!found_dev)
 		return;
 
+<<<<<<< HEAD
 	starget->hostdata = NULL;
 	sas_put_device(found_dev);
+=======
+	if (dev_is_sata(found_dev))
+		ata_sas_port_destroy(found_dev->sata_dev.ap);
+
+	return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void sas_parse_addr(u8 *sas_addr, const char *p)
@@ -1060,6 +1498,7 @@ EXPORT_SYMBOL_GPL(sas_request_addr);
 EXPORT_SYMBOL_GPL(sas_queuecommand);
 EXPORT_SYMBOL_GPL(sas_target_alloc);
 EXPORT_SYMBOL_GPL(sas_slave_configure);
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(sas_change_queue_depth);
 EXPORT_SYMBOL_GPL(sas_change_queue_type);
 EXPORT_SYMBOL_GPL(sas_bios_param);
@@ -1067,5 +1506,18 @@ EXPORT_SYMBOL_GPL(sas_task_abort);
 EXPORT_SYMBOL_GPL(sas_phy_reset);
 EXPORT_SYMBOL_GPL(sas_eh_device_reset_handler);
 EXPORT_SYMBOL_GPL(sas_eh_bus_reset_handler);
+=======
+EXPORT_SYMBOL_GPL(sas_slave_destroy);
+EXPORT_SYMBOL_GPL(sas_change_queue_depth);
+EXPORT_SYMBOL_GPL(sas_change_queue_type);
+EXPORT_SYMBOL_GPL(sas_bios_param);
+EXPORT_SYMBOL_GPL(__sas_task_abort);
+EXPORT_SYMBOL_GPL(sas_task_abort);
+EXPORT_SYMBOL_GPL(sas_phy_reset);
+EXPORT_SYMBOL_GPL(sas_phy_enable);
+EXPORT_SYMBOL_GPL(sas_eh_device_reset_handler);
+EXPORT_SYMBOL_GPL(sas_eh_bus_reset_handler);
+EXPORT_SYMBOL_GPL(sas_slave_alloc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL_GPL(sas_target_destroy);
 EXPORT_SYMBOL_GPL(sas_ioctl);

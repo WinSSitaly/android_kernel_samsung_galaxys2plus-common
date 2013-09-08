@@ -24,7 +24,10 @@
 #include <linux/io.h>
 #include <linux/clk.h>
 #include <linux/input/matrix_keypad.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define BITS(x)			(BIT(x) - 1)
 
@@ -322,9 +325,29 @@ static struct platform_driver keypad_driver = {
 	.driver.name	= "tnetv107x-keypad",
 	.driver.owner	= THIS_MODULE,
 };
+<<<<<<< HEAD
 module_platform_driver(keypad_driver);
 
 MODULE_AUTHOR("Cyril Chemparathy");
 MODULE_DESCRIPTION("TNETV107X Keypad Driver");
 MODULE_ALIAS("platform:tnetv107x-keypad");
+=======
+
+static int __init keypad_init(void)
+{
+	return platform_driver_register(&keypad_driver);
+}
+
+static void __exit keypad_exit(void)
+{
+	platform_driver_unregister(&keypad_driver);
+}
+
+module_init(keypad_init);
+module_exit(keypad_exit);
+
+MODULE_AUTHOR("Cyril Chemparathy");
+MODULE_DESCRIPTION("TNETV107X Keypad Driver");
+MODULE_ALIAS("platform: tnetv107x-keypad");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("GPL");

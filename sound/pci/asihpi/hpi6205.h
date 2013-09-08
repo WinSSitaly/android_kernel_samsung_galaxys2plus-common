@@ -1,7 +1,11 @@
 /*****************************************************************************
 
     AudioScience HPI driver
+<<<<<<< HEAD
     Copyright (C) 1997-2011  AudioScience Inc. <support@audioscience.com>
+=======
+    Copyright (C) 1997-2010  AudioScience Inc. <support@audioscience.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of version 2 of the GNU General Public License as
@@ -70,6 +74,7 @@ The Host located memory buffer that the 6205 will bus master
 in and out of.
 ************************************************************/
 #define HPI6205_SIZEOF_DATA (16*1024)
+<<<<<<< HEAD
 
 struct message_buffer_6205 {
 	struct hpi_message message;
@@ -87,11 +92,21 @@ union buffer_6205 {
 	u8 b_data[HPI6205_SIZEOF_DATA];
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct bus_master_interface {
 	u32 host_cmd;
 	u32 dsp_ack;
 	u32 transfer_size_in_bytes;
+<<<<<<< HEAD
 	union buffer_6205 u;
+=======
+	union {
+		struct hpi_message_header message_buffer;
+		struct hpi_response_header response_buffer;
+		u8 b_data[HPI6205_SIZEOF_DATA];
+	} u;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct controlcache_6205 control_cache;
 	struct async_event_buffer_6205 async_buffer;
 	struct hpi_hostbuffer_status

@@ -45,11 +45,14 @@ SYSSEG		= 0x1000		/* historical load address >> 4 */
 
 	.global bootsect_start
 bootsect_start:
+<<<<<<< HEAD
 #ifdef CONFIG_EFI_STUB
 	# "MZ", MS-DOS header
 	.byte 0x4d
 	.byte 0x5a
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	# Normalize the start address
 	ljmp	$BOOTSEG, $start2
@@ -84,6 +87,7 @@ bs_die:
 	# invoke the BIOS reset code...
 	ljmp	$0xf000,$0xfff0
 
+<<<<<<< HEAD
 #ifdef CONFIG_EFI_STUB
 	.org	0x3c
 	#
@@ -92,6 +96,8 @@ bs_die:
 	.long	pe_header
 #endif /* CONFIG_EFI_STUB */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.section ".bsdata", "a"
 bugger_off_msg:
 	.ascii	"Direct booting from floppy is no longer supported.\r\n"
@@ -100,6 +106,7 @@ bugger_off_msg:
 	.ascii	"Remove disk and press any key to reboot . . .\r\n"
 	.byte	0
 
+<<<<<<< HEAD
 #ifdef CONFIG_EFI_STUB
 pe_header:
 	.ascii	"PE"
@@ -235,6 +242,8 @@ section_table:
 	.word	0				# NumberOfLineNumbers
 	.long	0x42100040			# Characteristics (section flags)
 #endif /* CONFIG_EFI_STUB */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	# Kernel attributes; used by setup.  This is part 1 of the
 	# header, from the old boot sector.
@@ -277,7 +286,11 @@ start_sys_seg:	.word	SYSSEG		# obsolete and meaningless, but just
 
 type_of_loader:	.byte	0		# 0 means ancient bootloader, newer
 					# bootloaders know to change this.
+<<<<<<< HEAD
 					# See Documentation/x86/boot.txt for
+=======
+					# See Documentation/i386/boot.txt for
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					# assigned ids
 
 # flags, unused bits must be zero (RFU) bit within loadflags
@@ -466,6 +479,7 @@ die:
 setup_corrupt:
 	.byte	7
 	.string	"No setup signature found...\n"
+<<<<<<< HEAD
 
 	.data
 dummy:	.long	0
@@ -476,3 +490,5 @@ reloc_start:
 	.long	10
 	.word	0
 reloc_end:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

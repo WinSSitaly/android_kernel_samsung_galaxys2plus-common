@@ -46,7 +46,11 @@
 #define PORT_AR7	18	/* Texas Instruments AR7 internal UART */
 #define PORT_U6_16550A	19	/* ST-Ericsson U6xxx internal UART */
 #define PORT_TEGRA	20	/* NVIDIA Tegra internal UART */
+<<<<<<< HEAD
 #define PORT_XR17D15X	21	/* Exar XR17D15x UART */
+=======
+#define PORT_KONA	21	/* Broadcom Kona SoC internal UART */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PORT_MAX_8250	21	/* max port ID */
 
 /*
@@ -207,11 +211,16 @@
 /* Xilinx PSS UART */
 #define PORT_XUARTPS	98
 
+<<<<<<< HEAD
 /* Atheros AR933X SoC */
 #define PORT_AR933X	99
 
 /* Energy Micro efm32 SoC */
 #define PORT_EFMUART   100
+=======
+/* Broadcom Virtual UART */
+#define PORT_BCMVUART	93
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef __KERNEL__
 
@@ -252,6 +261,10 @@ struct uart_ops {
 	void		(*pm)(struct uart_port *, unsigned int state,
 			      unsigned int oldstate);
 	int		(*set_wake)(struct uart_port *, unsigned int state);
+<<<<<<< HEAD
+=======
+	void		(*wake_peer)(struct uart_port *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Return a string describing the type of the port
@@ -356,8 +369,11 @@ struct uart_port {
 #define UPF_MAGIC_MULTIPLIER	((__force upf_t) (1 << 16))
 #define UPF_CONS_FLOW		((__force upf_t) (1 << 23))
 #define UPF_SHARE_IRQ		((__force upf_t) (1 << 24))
+<<<<<<< HEAD
 #define UPF_EXAR_EFR		((__force upf_t) (1 << 25))
 #define UPF_BUG_THRE		((__force upf_t) (1 << 26))
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* The exact UART type is known and should not be probed.  */
 #define UPF_FIXED_TYPE		((__force upf_t) (1 << 27))
 #define UPF_BOOT_AUTOCONF	((__force upf_t) (1 << 28))
@@ -383,6 +399,7 @@ struct uart_port {
 	void			*private_data;		/* generic platform data pointer */
 };
 
+<<<<<<< HEAD
 static inline int serial_port_in(struct uart_port *up, int offset)
 {
 	return up->serial_in(up, offset);
@@ -393,6 +410,8 @@ static inline void serial_port_out(struct uart_port *up, int offset, int value)
 	up->serial_out(up, offset, value);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This is the state information which is persistent across opens.
  */
@@ -402,6 +421,10 @@ struct uart_state {
 	int			pm_state;
 	struct circ_buf		xmit;
 
+<<<<<<< HEAD
+=======
+	struct tasklet_struct	tlet;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct uart_port	*uart_port;
 };
 
@@ -500,6 +523,7 @@ static inline int uart_tx_stopped(struct uart_port *port)
 /*
  * The following are helper functions for the low level drivers.
  */
+<<<<<<< HEAD
 
 extern void uart_handle_dcd_change(struct uart_port *uport,
 		unsigned int status);
@@ -513,6 +537,12 @@ extern void uart_insert_char(struct uart_port *port, unsigned int status,
 static inline int
 uart_handle_sysrq_char(struct uart_port *port, unsigned int ch)
 {
+=======
+static inline int
+uart_handle_sysrq_char(struct uart_port *port, unsigned int ch)
+{
+#ifdef SUPPORT_SYSRQ
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (port->sysrq) {
 		if (ch && time_before(jiffies, port->sysrq)) {
 			handle_sysrq(ch);
@@ -521,10 +551,18 @@ uart_handle_sysrq_char(struct uart_port *port, unsigned int ch)
 		}
 		port->sysrq = 0;
 	}
+<<<<<<< HEAD
 	return 0;
 }
 #else
 #define uart_handle_sysrq_char(port,ch) ({ (void)port; 0; })
+=======
+#endif
+	return 0;
+}
+#ifndef SUPPORT_SYSRQ
+#define uart_handle_sysrq_char(port,ch) uart_handle_sysrq_char(port, 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /*
@@ -547,6 +585,92 @@ static inline int uart_handle_break(struct uart_port *port)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+/**
+ *	uart_handle_dcd_change - handle a change of carrier detect state
+ *	@uport: uart_port structure for the open port
+ *	@status: new carrier detect status, nonzero if active
+ */
+static inline void
+uart_handle_dcd_change(struct uart_port *uport, unsigned int status)
+{
+	struct uart_state *state = uport->state;
+	struct tty_port *port = &state->port;
+	struct tty_ldisc *ld = tty_ldisc_ref(port->tty);
+	struct pps_event_time ts;
+
+	if (ld && ld->ops->dcd_change)
+		pps_get_ts(&ts);
+
+	uport->icount.dcd++;
+#ifdef CONFIG_HARD_PPS
+	if ((uport->flags & UPF_HARDPPS_CD) && status)
+		hardpps();
+#endif
+
+	if (port->flags & ASYNC_CHECK_CD) {
+		if (status)
+			wake_up_interruptible(&port->open_wait);
+		else if (port->tty)
+			tty_hangup(port->tty);
+	}
+
+	if (ld && ld->ops->dcd_change)
+		ld->ops->dcd_change(port->tty, status, &ts);
+	if (ld)
+		tty_ldisc_deref(ld);
+}
+
+/**
+ *	uart_handle_cts_change - handle a change of clear-to-send state
+ *	@uport: uart_port structure for the open port
+ *	@status: new clear to send status, nonzero if active
+ */
+static inline void
+uart_handle_cts_change(struct uart_port *uport, unsigned int status)
+{
+	struct tty_port *port = &uport->state->port;
+	struct tty_struct *tty = port->tty;
+
+	uport->icount.cts++;
+
+	if (port->flags & ASYNC_CTS_FLOW) {
+		if (tty->hw_stopped) {
+			if (status) {
+				tty->hw_stopped = 0;
+				uport->ops->start_tx(uport);
+				uart_write_wakeup(uport);
+			}
+		} else {
+			if (!status) {
+				tty->hw_stopped = 1;
+				uport->ops->stop_tx(uport);
+			}
+		}
+	}
+}
+
+#include <linux/tty_flip.h>
+
+static inline void
+uart_insert_char(struct uart_port *port, unsigned int status,
+		 unsigned int overrun, unsigned int ch, unsigned int flag)
+{
+	struct tty_struct *tty = port->state->port.tty;
+
+	if ((status & port->ignore_status_mask & ~overrun) == 0)
+		tty_insert_flip_char(tty, ch, flag);
+
+	/*
+	 * Overrun is special.  Since it's reported immediately,
+	 * it doesn't affect the current character.
+	 */
+	if (status & ~port->ignore_status_mask & overrun)
+		tty_insert_flip_char(tty, 0, TTY_OVERRUN);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *	UART_ENABLE_MS - determine if port should enable modem status irqs
  */

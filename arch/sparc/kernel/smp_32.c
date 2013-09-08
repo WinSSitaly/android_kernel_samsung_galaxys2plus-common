@@ -22,7 +22,11 @@
 #include <linux/delay.h>
 
 #include <asm/ptrace.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/irq.h>
 #include <asm/page.h>

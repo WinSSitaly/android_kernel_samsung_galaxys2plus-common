@@ -18,6 +18,10 @@
  */
 #ifndef GL860_DEV_H
 #define GL860_DEV_H
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "gspca.h"
 

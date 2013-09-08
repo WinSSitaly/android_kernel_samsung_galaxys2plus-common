@@ -21,7 +21,10 @@
 #include <linux/phy.h>
 #include <linux/ptp_classify.h>
 #include <linux/skbuff.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct sock_filter ptp_filter[] = {
 	PTP_FILTER
@@ -73,7 +76,10 @@ void skb_clone_tx_timestamp(struct sk_buff *skb)
 		break;
 	}
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(skb_clone_tx_timestamp);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void skb_complete_tx_timestamp(struct sk_buff *skb,
 			       struct skb_shared_hwtstamps *hwtstamps)
@@ -131,7 +137,10 @@ bool skb_defer_rx_timestamp(struct sk_buff *skb)
 
 	return false;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(skb_defer_rx_timestamp);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void __init skb_timestamping_init(void)
 {

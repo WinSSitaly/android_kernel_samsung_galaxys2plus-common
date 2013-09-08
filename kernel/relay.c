@@ -15,7 +15,11 @@
 #include <linux/errno.h>
 #include <linux/stddef.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/string.h>
 #include <linux/relay.h>
 #include <linux/vmalloc.h>
@@ -306,7 +310,11 @@ static void buf_unmapped_default_callback(struct rchan_buf *buf,
  */
 static struct dentry *create_buf_file_default_callback(const char *filename,
 						       struct dentry *parent,
+<<<<<<< HEAD
 						       umode_t mode,
+=======
+						       int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						       struct rchan_buf *buf,
 						       int *is_global)
 {
@@ -1235,7 +1243,10 @@ static ssize_t subbuf_splice_actor(struct file *in,
 	struct splice_pipe_desc spd = {
 		.pages = pages,
 		.nr_pages = 0,
+<<<<<<< HEAD
 		.nr_pages_max = PIPE_DEF_BUFFERS,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.partial = partial,
 		.flags = flags,
 		.ops = &relay_pipe_buf_ops,
@@ -1303,8 +1314,13 @@ static ssize_t subbuf_splice_actor(struct file *in,
                 ret += padding;
 
 out:
+<<<<<<< HEAD
 	splice_shrink_spd(&spd);
 	return ret;
+=======
+	splice_shrink_spd(pipe, &spd);
+        return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t relay_file_splice_read(struct file *in,

@@ -62,8 +62,11 @@ static void __init check_fpu(void)
 		return;
 	}
 
+<<<<<<< HEAD
 	kernel_fpu_begin();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * trap_init() enabled FXSR and company _before_ testing for FP
 	 * problems here.
@@ -82,8 +85,11 @@ static void __init check_fpu(void)
 		: "=m" (*&fdiv_bug)
 		: "m" (*&x), "m" (*&y));
 
+<<<<<<< HEAD
 	kernel_fpu_end();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	boot_cpu_data.fdiv_bug = fdiv_bug;
 	if (boot_cpu_data.fdiv_bug)
 		printk(KERN_WARNING "Hmm, FPU with FDIV bug.\n");

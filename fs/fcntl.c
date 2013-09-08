@@ -32,6 +32,7 @@ void set_close_on_exec(unsigned int fd, int flag)
 	spin_lock(&files->file_lock);
 	fdt = files_fdtable(files);
 	if (flag)
+<<<<<<< HEAD
 		__set_close_on_exec(fd, fdt);
 	else
 		__clear_close_on_exec(fd, fdt);
@@ -46,6 +47,22 @@ static bool get_close_on_exec(unsigned int fd)
 	rcu_read_lock();
 	fdt = files_fdtable(files);
 	res = close_on_exec(fd, fdt);
+=======
+		FD_SET(fd, fdt->close_on_exec);
+	else
+		FD_CLR(fd, fdt->close_on_exec);
+	spin_unlock(&files->file_lock);
+}
+
+static int get_close_on_exec(unsigned int fd)
+{
+	struct files_struct *files = current->files;
+	struct fdtable *fdt;
+	int res;
+	rcu_read_lock();
+	fdt = files_fdtable(files);
+	res = FD_ISSET(fd, fdt->close_on_exec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rcu_read_unlock();
 	return res;
 }
@@ -90,6 +107,7 @@ SYSCALL_DEFINE3(dup3, unsigned int, oldfd, unsigned int, newfd, int, flags)
 	err = -EBUSY;
 	fdt = files_fdtable(files);
 	tofree = fdt->fd[newfd];
+<<<<<<< HEAD
 	if (!tofree && fd_is_open(newfd, fdt))
 		goto out_unlock;
 	get_file(file);
@@ -99,6 +117,17 @@ SYSCALL_DEFINE3(dup3, unsigned int, oldfd, unsigned int, newfd, int, flags)
 		__set_close_on_exec(newfd, fdt);
 	else
 		__clear_close_on_exec(newfd, fdt);
+=======
+	if (!tofree && FD_ISSET(newfd, fdt->open_fds))
+		goto out_unlock;
+	get_file(file);
+	rcu_assign_pointer(fdt->fd[newfd], file);
+	FD_SET(newfd, fdt->open_fds);
+	if (flags & O_CLOEXEC)
+		FD_SET(newfd, fdt->close_on_exec);
+	else
+		FD_CLR(newfd, fdt->close_on_exec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&files->file_lock);
 
 	if (tofree)

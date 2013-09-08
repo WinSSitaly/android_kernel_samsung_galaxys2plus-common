@@ -23,6 +23,7 @@
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/gpio.h>
+<<<<<<< HEAD
 #include <mach/irqs.h>
 #include <mach/sh7372.h>
 
@@ -33,6 +34,31 @@
 	PORT_10(fn, pfx##14, sfx),	PORT_10(fn, pfx##15, sfx), \
 	PORT_10(fn, pfx##16, sfx),	PORT_10(fn, pfx##17, sfx), \
 	PORT_10(fn, pfx##18, sfx),	PORT_1(fn, pfx##190, sfx)
+=======
+#include <mach/sh7372.h>
+
+#define _1(fn, pfx, sfx) fn(pfx, sfx)
+
+#define _10(fn, pfx, sfx)				\
+	_1(fn, pfx##0, sfx), _1(fn, pfx##1, sfx),	\
+	_1(fn, pfx##2, sfx), _1(fn, pfx##3, sfx),	\
+	_1(fn, pfx##4, sfx), _1(fn, pfx##5, sfx),	\
+	_1(fn, pfx##6, sfx), _1(fn, pfx##7, sfx),	\
+	_1(fn, pfx##8, sfx), _1(fn, pfx##9, sfx)
+
+#define _80(fn, pfx, sfx)				\
+	_10(fn, pfx##1, sfx),	_10(fn, pfx##2, sfx),	\
+	_10(fn, pfx##3, sfx),	_10(fn, pfx##4, sfx),	\
+	_10(fn, pfx##5, sfx),	_10(fn, pfx##6, sfx),	\
+	_10(fn, pfx##7, sfx),	_10(fn, pfx##8, sfx)
+
+#define _190(fn, pfx, sfx) \
+	_10(fn, pfx, sfx), _80(fn, pfx, sfx), _10(fn, pfx##9, sfx), \
+	_10(fn, pfx##10, sfx), _80(fn, pfx##1, sfx), _1(fn, pfx##190, sfx)
+
+#define _PORT(pfx, sfx) pfx##_##sfx
+#define PORT_ALL(str) _190(_PORT, PORT, str)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum {
 	PINMUX_RESERVED = 0,
@@ -368,6 +394,7 @@ enum {
 	PINMUX_MARK_END,
 };
 
+<<<<<<< HEAD
 static pinmux_enum_t pinmux_data[] = {
 
 	/* specify valid pin states for each pin in GPIO mode */
@@ -486,6 +513,110 @@ static pinmux_enum_t pinmux_data[] = {
 	PORT_DATA_IO_PU_PD(188),	PORT_DATA_IO_PU_PD(189),
 
 	PORT_DATA_IO_PU_PD(190),
+=======
+/* PORT_DATA_I_PD(nr) */
+#define _I___D(nr)			     \
+	PINMUX_DATA(PORT##nr##_DATA, PORT##nr##_FN0, \
+		    PORT##nr##_IN, PORT##nr##_IN_PD)
+
+/* PORT_DATA_I_PU(nr) */
+#define _I__U_(nr)			     \
+	PINMUX_DATA(PORT##nr##_DATA, PORT##nr##_FN0, \
+		    PORT##nr##_IN, PORT##nr##_IN_PU)
+
+/* PORT_DATA_I_PU_PD(nr) */
+#define _I__UD(nr)			     \
+	PINMUX_DATA(PORT##nr##_DATA, PORT##nr##_FN0, \
+		    PORT##nr##_IN, PORT##nr##_IN_PD, PORT##nr##_IN_PU)
+
+/* PORT_DATA_O(nr) */
+#define __O___(nr)							\
+	PINMUX_DATA(PORT##nr##_DATA, PORT##nr##_FN0, PORT##nr##_OUT)
+
+/* PORT_DATA_IO(nr) */
+#define _IO___(nr)				     \
+	PINMUX_DATA(PORT##nr##_DATA, PORT##nr##_FN0, PORT##nr##_OUT, \
+		    PORT##nr##_IN)
+
+/* PORT_DATA_IO_PD(nr) */
+#define _IO__D(nr)					     \
+	PINMUX_DATA(PORT##nr##_DATA, PORT##nr##_FN0, PORT##nr##_OUT, \
+		    PORT##nr##_IN, PORT##nr##_IN_PD)
+
+/* PORT_DATA_IO_PU(nr) */
+#define _IO_U_(nr)					     \
+	PINMUX_DATA(PORT##nr##_DATA, PORT##nr##_FN0, PORT##nr##_OUT, \
+		    PORT##nr##_IN, PORT##nr##_IN_PU)
+
+/* PORT_DATA_IO_PU_PD(nr) */
+#define _IO_UD(nr)					     \
+	PINMUX_DATA(PORT##nr##_DATA, PORT##nr##_FN0, PORT##nr##_OUT, \
+		    PORT##nr##_IN, PORT##nr##_IN_PD, PORT##nr##_IN_PU)
+
+
+static pinmux_enum_t pinmux_data[] = {
+
+	/* specify valid pin states for each pin in GPIO mode */
+
+	_IO__D(0), _IO__D(1), __O___(2), _I___D(3), _I___D(4),
+	_I___D(5), _IO_UD(6), _I___D(7), _IO__D(8), __O___(9),
+
+	__O___(10), __O___(11), _IO_UD(12), _IO__D(13), _IO__D(14),
+	__O___(15), _IO__D(16), _IO__D(17), _I___D(18), _IO___(19),
+
+	_IO___(20), _IO___(21), _IO___(22), _IO___(23), _IO___(24),
+	_IO___(25), _IO___(26), _IO___(27), _IO___(28), _IO___(29),
+
+	_IO___(30), _IO___(31), _IO___(32), _IO___(33), _IO___(34),
+	_IO___(35), _IO___(36), _IO___(37), _IO___(38), _IO___(39),
+
+	_IO___(40), _IO___(41), _IO___(42), _IO___(43), _IO___(44),
+	_IO___(45), _IO_U_(46), _IO_U_(47), _IO_U_(48), _IO_U_(49),
+
+	_IO_U_(50), _IO_U_(51), _IO_U_(52), _IO_U_(53), _IO_U_(54),
+	_IO_U_(55), _IO_U_(56), _IO_U_(57), _IO_U_(58), _IO_U_(59),
+
+	_IO_U_(60), _IO_U_(61), _IO___(62), __O___(63), __O___(64),
+	_IO_U_(65), __O___(66), _IO_U_(67), __O___(68), _IO___(69), /*66?*/
+
+	_IO___(70), _IO___(71), __O___(72), _I__U_(73), _I__UD(74),
+	_IO_UD(75), _IO_UD(76), _IO_UD(77), _IO_UD(78), _IO_UD(79),
+
+	_IO_UD(80), _IO_UD(81), _IO_UD(82), _IO_UD(83), _IO_UD(84),
+	_IO_UD(85), _IO_UD(86), _IO_UD(87), _IO_UD(88), _IO_UD(89),
+
+	_IO_UD(90), _IO_UD(91), _IO_UD(92), _IO_UD(93), _IO_UD(94),
+	_IO_UD(95), _IO_U_(96), _IO_UD(97), _IO_UD(98), __O___(99), /*99?*/
+
+	_IO__D(100), _IO__D(101), _IO__D(102), _IO__D(103), _IO__D(104),
+	_IO__D(105), _IO_U_(106), _IO_U_(107), _IO_U_(108), _IO_U_(109),
+
+	_IO_U_(110), _IO_U_(111), _IO__D(112), _IO__D(113), _IO_U_(114),
+	_IO_U_(115), _IO_U_(116), _IO_U_(117), _IO_U_(118), _IO_U_(119),
+
+	_IO_U_(120), _IO__D(121), _IO__D(122), _IO__D(123), _IO__D(124),
+	_IO__D(125), _IO__D(126), _IO__D(127), _IO__D(128), _IO_UD(129),
+
+	_IO_UD(130), _IO_UD(131), _IO_UD(132), _IO_UD(133), _IO_UD(134),
+	_IO_UD(135), _IO__D(136), _IO__D(137), _IO__D(138), _IO__D(139),
+
+	_IO__D(140), _IO__D(141), _IO__D(142), _IO_UD(143), _IO__D(144),
+	_IO__D(145), _IO__D(146), _IO__D(147), _IO__D(148), _IO__D(149),
+
+	_IO__D(150), _IO__D(151), _IO_UD(152), _I___D(153), _IO_UD(154),
+	_I___D(155), _IO__D(156), _IO__D(157), _I___D(158), _IO__D(159),
+
+	__O___(160), _IO__D(161), _IO__D(162), _IO__D(163), _I___D(164),
+	_IO__D(165), _I___D(166), _I___D(167), _I___D(168), _I___D(169),
+
+	_I___D(170), __O___(171), _IO_UD(172), _IO_UD(173), _IO_UD(174),
+	_IO_UD(175), _IO_UD(176), _IO_UD(177), _IO_UD(178), __O___(179),
+
+	_IO_UD(180), _IO_UD(181), _IO_UD(182), _IO_UD(183), _IO_UD(184),
+	__O___(185), _IO_UD(186), _IO_UD(187), _IO_UD(188), _IO_UD(189),
+
+	_IO_UD(190),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* IRQ */
 	PINMUX_DATA(IRQ0_6_MARK,	PORT6_FN0, 	MSEL1CR_0_0),
@@ -929,6 +1060,13 @@ static pinmux_enum_t pinmux_data[] = {
 	PINMUX_DATA(MFIv4_MARK,		MSEL4CR_6_1),
 };
 
+<<<<<<< HEAD
+=======
+#define _GPIO_PORT(pfx, sfx) PINMUX_GPIO(GPIO_PORT##pfx, PORT##pfx##_DATA)
+#define GPIO_PORT_ALL() _190(_GPIO_PORT, , unused)
+#define GPIO_FN(str) PINMUX_GPIO(GPIO_FN_##str, str##_MARK)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct pinmux_gpio pinmux_gpios[] = {
 
 	/* PORT */
@@ -1200,6 +1338,25 @@ static struct pinmux_gpio pinmux_gpios[] = {
 	GPIO_FN(SDENC_DV_CLKI),
 };
 
+<<<<<<< HEAD
+=======
+/* helper for top 4 bits in PORTnCR */
+#define PCRH(in, in_pd, in_pu, out)		\
+	0, (out), (in), 0,			\
+	0, 0, 0, 0,				\
+	0, 0, (in_pd), 0,			\
+	0, 0, (in_pu), 0
+
+#define PORTCR(nr, reg)						\
+	{ PINMUX_CFG_REG("PORT" nr "CR", reg, 8, 4) {		\
+		PCRH(PORT##nr##_IN, PORT##nr##_IN_PD,		\
+		     PORT##nr##_IN_PU, PORT##nr##_OUT),		\
+		PORT##nr##_FN0, PORT##nr##_FN1, PORT##nr##_FN2,	\
+		PORT##nr##_FN3,	PORT##nr##_FN4, PORT##nr##_FN5,	\
+		PORT##nr##_FN6, PORT##nr##_FN7 }		\
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct pinmux_cfg_reg pinmux_config_regs[] = {
 	PORTCR(0,	0xE6051000), /* PORT0CR */
 	PORTCR(1,	0xE6051001), /* PORT1CR */
@@ -1595,6 +1752,7 @@ static struct pinmux_data_reg pinmux_data_regs[] = {
 	{ },
 };
 
+<<<<<<< HEAD
 #define EXT_IRQ16L(n) evt2irq(0x200 + ((n) << 5))
 #define EXT_IRQ16H(n) evt2irq(0x3200 + (((n) - 16) << 5))
 static struct pinmux_irq pinmux_irqs[] = {
@@ -1632,6 +1790,8 @@ static struct pinmux_irq pinmux_irqs[] = {
 	PINMUX_IRQ(EXT_IRQ16H(31), PORT138_FN0, PORT184_FN0),
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct pinmux_info sh7372_pinmux_info = {
 	.name = "sh7372_pfc",
 	.reserved_id = PINMUX_RESERVED,
@@ -1652,9 +1812,12 @@ static struct pinmux_info sh7372_pinmux_info = {
 
 	.gpio_data = pinmux_data,
 	.gpio_data_size = ARRAY_SIZE(pinmux_data),
+<<<<<<< HEAD
 
 	.gpio_irq = pinmux_irqs,
 	.gpio_irq_size = ARRAY_SIZE(pinmux_irqs),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void sh7372_pinmux_init(void)

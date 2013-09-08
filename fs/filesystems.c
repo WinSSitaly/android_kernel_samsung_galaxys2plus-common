@@ -74,6 +74,10 @@ int register_filesystem(struct file_system_type * fs)
 	BUG_ON(strchr(fs->name, '.'));
 	if (fs->next)
 		return -EBUSY;
+<<<<<<< HEAD
+=======
+	INIT_LIST_HEAD(&fs->fs_supers);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	write_lock(&file_systems_lock);
 	p = find_filesystem(fs->name, strlen(fs->name));
 	if (*p)

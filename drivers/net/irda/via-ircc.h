@@ -210,7 +210,11 @@ static void DisableDmaChannel(unsigned int channel)
 		break;
 	default:
 		break;
+<<<<<<< HEAD
 	}
+=======
+	};			//Switch
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static unsigned char ReadLPCReg(int iRegNum)

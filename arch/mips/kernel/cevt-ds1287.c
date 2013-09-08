@@ -108,7 +108,11 @@ static irqreturn_t ds1287_interrupt(int irq, void *dev_id)
 
 static struct irqaction ds1287_irqaction = {
 	.handler	= ds1287_interrupt,
+<<<<<<< HEAD
 	.flags		= IRQF_PERCPU | IRQF_TIMER,
+=======
+	.flags		= IRQF_DISABLED | IRQF_PERCPU | IRQF_TIMER,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name		= "ds1287",
 };
 

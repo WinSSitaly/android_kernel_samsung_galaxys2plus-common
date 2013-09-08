@@ -2,6 +2,10 @@
 #define _PARISC_HARDWARE_H
 
 #include <linux/mod_devicetable.h>
+<<<<<<< HEAD
+=======
+#include <asm/pdc.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define HWTYPE_ANY_ID		PA_HWTYPE_ANY_ID
 #define HVERSION_ANY_ID		PA_HVERSION_ANY_ID
@@ -94,14 +98,20 @@ struct bc_module {
 #define HPHW_MC	       15
 #define HPHW_FAULTY    31
 
+<<<<<<< HEAD
 struct parisc_device_id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* hardware.c: */
 extern const char *parisc_hardware_description(struct parisc_device_id *id);
 extern enum cpu_type parisc_get_cpu_type(unsigned long hversion);
 
 struct pci_dev;
+<<<<<<< HEAD
 struct hardware_path;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* drivers.c: */
 extern struct parisc_device *alloc_pa_dev(unsigned long hpa,

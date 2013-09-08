@@ -11,11 +11,18 @@
 
 #include <asm-generic/mman.h>
 
+<<<<<<< HEAD
 #if defined(__KERNEL__)
 #if !defined(__ASSEMBLY__) && defined(CONFIG_64BIT)
 int s390_mmap_check(unsigned long addr, unsigned long len);
 #define arch_mmap_check(addr,len,flags)	s390_mmap_check(addr,len)
 #endif
 #endif
+=======
+#if defined(__KERNEL__) && !defined(__ASSEMBLY__) && defined(CONFIG_64BIT)
+int s390_mmap_check(unsigned long addr, unsigned long len);
+#define arch_mmap_check(addr,len,flags)	s390_mmap_check(addr,len)
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __S390_MMAN_H__ */

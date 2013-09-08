@@ -27,8 +27,11 @@
 #ifndef _DRM_MODE_H
 #define _DRM_MODE_H
 
+<<<<<<< HEAD
 #include <linux/types.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DRM_DISPLAY_INFO_LEN	32
 #define DRM_CONNECTOR_NAME_LEN	32
 #define DRM_DISPLAY_MODE_LEN	32
@@ -122,6 +125,7 @@ struct drm_mode_crtc {
 	struct drm_mode_modeinfo mode;
 };
 
+<<<<<<< HEAD
 #define DRM_MODE_PRESENT_TOP_FIELD	(1<<0)
 #define DRM_MODE_PRESENT_BOTTOM_FIELD	(1<<1)
 
@@ -159,12 +163,17 @@ struct drm_mode_get_plane_res {
 	__u32 count_planes;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DRM_MODE_ENCODER_NONE	0
 #define DRM_MODE_ENCODER_DAC	1
 #define DRM_MODE_ENCODER_TMDS	2
 #define DRM_MODE_ENCODER_LVDS	3
 #define DRM_MODE_ENCODER_TVDAC	4
+<<<<<<< HEAD
 #define DRM_MODE_ENCODER_VIRTUAL 5
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct drm_mode_get_encoder {
 	__u32 encoder_id;
@@ -202,7 +211,10 @@ struct drm_mode_get_encoder {
 #define DRM_MODE_CONNECTOR_HDMIB	12
 #define DRM_MODE_CONNECTOR_TV		13
 #define DRM_MODE_CONNECTOR_eDP		14
+<<<<<<< HEAD
 #define DRM_MODE_CONNECTOR_VIRTUAL      15
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct drm_mode_get_connector {
 
@@ -270,6 +282,7 @@ struct drm_mode_fb_cmd {
 	__u32 handle;
 };
 
+<<<<<<< HEAD
 #define DRM_MODE_FB_INTERLACED	(1<<0) /* for interlaced framebuffers */
 
 struct drm_mode_fb_cmd2 {
@@ -297,6 +310,8 @@ struct drm_mode_fb_cmd2 {
 	__u32 offsets[4]; /* offset of each plane */
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DRM_MODE_FB_DIRTY_ANNOTATE_COPY 0x01
 #define DRM_MODE_FB_DIRTY_ANNOTATE_FILL 0x02
 #define DRM_MODE_FB_DIRTY_FLAGS         0x03
@@ -343,9 +358,14 @@ struct drm_mode_mode_cmd {
 	struct drm_mode_modeinfo mode;
 };
 
+<<<<<<< HEAD
 #define DRM_MODE_CURSOR_BO	0x01
 #define DRM_MODE_CURSOR_MOVE	0x02
 #define DRM_MODE_CURSOR_FLAGS	0x03
+=======
+#define DRM_MODE_CURSOR_BO	(1<<0)
+#define DRM_MODE_CURSOR_MOVE	(1<<1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * depending on the value in flags different members are used.

@@ -112,7 +112,11 @@ static u32 ehca_encode_hwpage_size(u32 pgsize)
 
 static u64 ehca_get_max_hwpage_size(struct ehca_shca *shca)
 {
+<<<<<<< HEAD
 	return rounddown_pow_of_two(shca->hca_cap_mr_pgsize);
+=======
+	return 1UL << ilog2(shca->hca_cap_mr_pgsize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct ehca_mr *ehca_mr_new(void)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2010 Realtek Corporation. All rights reserved.
@@ -23,11 +24,16 @@
  * Larry Finger <Larry.Finger@lwfinger.net>
  *
  ******************************************************************************/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef _WIFI_H_
 #define _WIFI_H_
 
 #include "rtl871x_byteorder.h"
+<<<<<<< HEAD
 #include <linux/compiler.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef BIT
 #undef BIT
@@ -549,7 +555,11 @@ struct ieee80211_bar {
 	unsigned char ta[6];
 	unsigned short control;
 	unsigned short start_seq_num;
+<<<<<<< HEAD
 } __packed;
+=======
+} __attribute__((packed));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* 802.11 BAR control masks */
 #define IEEE80211_BAR_CTRL_ACK_POLICY_NORMAL     0x0000
@@ -570,7 +580,11 @@ struct ieee80211_ht_cap {
 	unsigned short	extended_ht_cap_info;
 	unsigned int		tx_BF_cap_info;
 	unsigned char	       antenna_selection_info;
+<<<<<<< HEAD
 } __packed;
+=======
+} __attribute__ ((packed));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * struct ieee80211_ht_cap - HT additional information
@@ -584,7 +598,11 @@ struct ieee80211_ht_addt_info {
 	unsigned short	operation_mode;
 	unsigned short	stbc_param;
 	unsigned char		basic_set[16];
+<<<<<<< HEAD
 } __packed;
+=======
+} __attribute__ ((packed));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* 802.11n HT capabilities masks */
 #define IEEE80211_HT_CAP_SUP_WIDTH		0x0002

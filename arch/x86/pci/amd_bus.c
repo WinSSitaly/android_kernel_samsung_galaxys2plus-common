@@ -383,6 +383,10 @@ static void __init pci_enable_pci_io_ecs(void)
 			++n;
 		}
 	}
+<<<<<<< HEAD
+=======
+	pr_info("Extended Config Space enabled on %u nodes\n", n);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 }
 

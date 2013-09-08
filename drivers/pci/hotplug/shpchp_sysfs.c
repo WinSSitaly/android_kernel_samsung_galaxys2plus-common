@@ -50,26 +50,47 @@ static ssize_t show_ctrl (struct device *dev, struct device_attribute *attr, cha
 	pci_bus_for_each_resource(bus, res, index) {
 		if (res && (res->flags & IORESOURCE_MEM) &&
 				!(res->flags & IORESOURCE_PREFETCH)) {
+<<<<<<< HEAD
 			out += sprintf(out, "start = %8.8llx, length = %8.8llx\n",
 				       (unsigned long long)res->start,
 				       (unsigned long long)resource_size(res));
+=======
+			out += sprintf(out, "start = %8.8llx, "
+					"length = %8.8llx\n",
+					(unsigned long long)res->start,
+					(unsigned long long)(res->end - res->start));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	out += sprintf(out, "Free resources: prefetchable memory\n");
 	pci_bus_for_each_resource(bus, res, index) {
 		if (res && (res->flags & IORESOURCE_MEM) &&
 			       (res->flags & IORESOURCE_PREFETCH)) {
+<<<<<<< HEAD
 			out += sprintf(out, "start = %8.8llx, length = %8.8llx\n",
 				       (unsigned long long)res->start,
 				       (unsigned long long)resource_size(res));
+=======
+			out += sprintf(out, "start = %8.8llx, "
+					"length = %8.8llx\n",
+					(unsigned long long)res->start,
+					(unsigned long long)(res->end - res->start));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	out += sprintf(out, "Free resources: IO\n");
 	pci_bus_for_each_resource(bus, res, index) {
 		if (res && (res->flags & IORESOURCE_IO)) {
+<<<<<<< HEAD
 			out += sprintf(out, "start = %8.8llx, length = %8.8llx\n",
 				       (unsigned long long)res->start,
 				       (unsigned long long)resource_size(res));
+=======
+			out += sprintf(out, "start = %8.8llx, "
+					"length = %8.8llx\n",
+					(unsigned long long)res->start,
+					(unsigned long long)(res->end - res->start));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	out += sprintf(out, "Free resources: bus numbers\n");

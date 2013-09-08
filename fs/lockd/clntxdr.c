@@ -223,7 +223,11 @@ static void encode_nlm_stat(struct xdr_stream *xdr,
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	WARN_ON_ONCE(be32_to_cpu(stat) > NLM_LCK_DENIED_GRACE_PERIOD);
+=======
+	BUG_ON(be32_to_cpu(stat) > NLM_LCK_DENIED_GRACE_PERIOD);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	p = xdr_reserve_space(xdr, 4);
 	*p = stat;
 }
@@ -596,19 +600,31 @@ static struct rpc_procinfo	nlm_procedures[] = {
 	PROC(GRANTED_RES,	res,		norep),
 };
 
+<<<<<<< HEAD
 static const struct rpc_version	nlm_version1 = {
+=======
+static struct rpc_version	nlm_version1 = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.number		= 1,
 		.nrprocs	= ARRAY_SIZE(nlm_procedures),
 		.procs		= nlm_procedures,
 };
 
+<<<<<<< HEAD
 static const struct rpc_version	nlm_version3 = {
+=======
+static struct rpc_version	nlm_version3 = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.number		= 3,
 		.nrprocs	= ARRAY_SIZE(nlm_procedures),
 		.procs		= nlm_procedures,
 };
 
+<<<<<<< HEAD
 static const struct rpc_version	*nlm_versions[] = {
+=======
+static struct rpc_version	*nlm_versions[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[1] = &nlm_version1,
 	[3] = &nlm_version3,
 #ifdef CONFIG_LOCKD_V4
@@ -618,7 +634,11 @@ static const struct rpc_version	*nlm_versions[] = {
 
 static struct rpc_stat		nlm_rpc_stats;
 
+<<<<<<< HEAD
 const struct rpc_program	nlm_program = {
+=======
+struct rpc_program		nlm_program = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.name		= "lockd",
 		.number		= NLM_PROGRAM,
 		.nrvers		= ARRAY_SIZE(nlm_versions),

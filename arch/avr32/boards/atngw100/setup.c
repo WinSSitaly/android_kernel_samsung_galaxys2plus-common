@@ -90,6 +90,14 @@ static struct mtd_partition nand_partitions[] = {
 	},
 };
 
+<<<<<<< HEAD
+=======
+static struct mtd_partition *nand_part_info(int size, int *num_partitions)
+{
+	*num_partitions = ARRAY_SIZE(nand_partitions);
+	return nand_partitions;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct atmel_nand_data atngw100mkii_nand_data __initdata = {
 	.cle		= 21,
@@ -97,9 +105,13 @@ static struct atmel_nand_data atngw100mkii_nand_data __initdata = {
 	.rdy_pin	= GPIO_PIN_PB(28),
 	.enable_pin	= GPIO_PIN_PE(23),
 	.bus_width_16	= true,
+<<<<<<< HEAD
 	.ecc_mode	= NAND_ECC_SOFT,
 	.parts		= nand_partitions,
 	.num_parts	= ARRAY_SIZE(nand_partitions),
+=======
+	.partition_info	= nand_part_info,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #endif
 
@@ -110,7 +122,11 @@ struct eth_addr {
 	u8 addr[6];
 };
 static struct eth_addr __initdata hw_addr[2];
+<<<<<<< HEAD
 static struct macb_platform_data __initdata eth_data[2];
+=======
+static struct eth_platform_data __initdata eth_data[2];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct spi_board_info spi0_board_info[] __initdata = {
 	{

@@ -56,7 +56,11 @@ static int v9fs_fid_readpage(struct p9_fid *fid, struct page *page)
 	struct inode *inode;
 
 	inode = page->mapping->host;
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, "\n");
+=======
+	P9_DPRINTK(P9_DEBUG_VFS, "\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BUG_ON(!PageLocked(page));
 
@@ -116,14 +120,22 @@ static int v9fs_vfs_readpages(struct file *filp, struct address_space *mapping,
 	struct inode *inode;
 
 	inode = mapping->host;
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, "inode: %p file: %p\n", inode, filp);
+=======
+	P9_DPRINTK(P9_DEBUG_VFS, "inode: %p file: %p\n", inode, filp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = v9fs_readpages_from_fscache(inode, mapping, pages, &nr_pages);
 	if (ret == 0)
 		return ret;
 
 	ret = read_cache_pages(mapping, pages, (void *)v9fs_vfs_readpage, filp);
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, "  = %d\n", ret);
+=======
+	P9_DPRINTK(P9_DEBUG_VFS, "  = %d\n", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -263,9 +275,16 @@ v9fs_direct_IO(int rw, struct kiocb *iocb, const struct iovec *iov,
 	 * Now that we do caching with cache mode enabled, We need
 	 * to support direct IO
 	 */
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, "v9fs_direct_IO: v9fs_direct_IO (%s) off/no(%lld/%lu) EINVAL\n",
 		 iocb->ki_filp->f_path.dentry->d_name.name,
 		 (long long)pos, nr_segs);
+=======
+	P9_DPRINTK(P9_DEBUG_VFS, "v9fs_direct_IO: v9fs_direct_IO (%s) "
+			"off/no(%lld/%lu) EINVAL\n",
+			iocb->ki_filp->f_path.dentry->d_name.name,
+			(long long) pos, nr_segs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return -EINVAL;
 }

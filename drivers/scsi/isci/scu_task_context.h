@@ -866,9 +866,15 @@ struct scu_task_context {
 	struct transport_snapshot snapshot; /* read only set to 0 */
 
 	/* OFFSET 0x5C */
+<<<<<<< HEAD
 	u32 blk_prot_en:1;
 	u32 blk_sz:2;
 	u32 blk_prot_func:2;
+=======
+	u32 block_protection_enable:1;
+	u32 block_size:2;
+	u32 block_protection_function:2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 reserved_5C_0:9;
 	u32 active_sgl_element:2;  /* read only set to 0 */
 	u32 sgl_exhausted:1;  /* read only set to 0 */
@@ -896,6 +902,7 @@ struct scu_task_context {
 	u32 reserved_C4_CC[3];
 
 	/* OFFSET 0xD0 */
+<<<<<<< HEAD
 	u32 interm_crc_val:16;
 	u32 init_crc_seed:16;
 
@@ -946,6 +953,35 @@ struct scu_task_context {
 
 	/* OFFSET 0xEC */
 	u32 ref_tag_seed_gen;
+=======
+	u32 intermediate_crc_value:16;
+	u32 initial_crc_seed:16;
+
+	/* OFFSET 0xD4 */
+	u32 application_tag_for_verify:16;
+	u32 application_tag_for_generate:16;
+
+	/* OFFSET 0xD8 */
+	u32 reference_tag_seed_for_verify_function;
+
+	/* OFFSET 0xDC */
+	u32 reserved_DC;
+
+	/* OFFSET 0xE0 */
+	u32 reserved_E0_0:16;
+	u32 application_tag_mask_for_generate:16;
+
+	/* OFFSET 0xE4 */
+	u32 block_protection_control:16;
+	u32 application_tag_mask_for_verify:16;
+
+	/* OFFSET 0xE8 */
+	u32 block_protection_error:8;
+	u32 reserved_E8_0:24;
+
+	/* OFFSET 0xEC */
+	u32 reference_tag_seed_for_verify;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* OFFSET 0xF0 */
 	u32 intermediate_crc_valid_snapshot:16;
@@ -960,6 +996,10 @@ struct scu_task_context {
 	/* OFFSET 0xFC */
 	u32 reference_tag_seed_for_generate_function_snapshot;
 
+<<<<<<< HEAD
 } __packed;
+=======
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* _SCU_TASK_CONTEXT_H_ */

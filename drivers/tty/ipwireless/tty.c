@@ -21,7 +21,11 @@
 #include <linux/mutex.h>
 #include <linux/ppp_defs.h>
 #include <linux/if.h>
+<<<<<<< HEAD
 #include <linux/ppp-ioctl.h>
+=======
+#include <linux/if_ppp.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/serial.h>
 #include <linux/slab.h>
@@ -90,6 +94,7 @@ static void report_deregistering(struct ipw_tty *tty)
 	       tty->index);
 }
 
+<<<<<<< HEAD
 static struct ipw_tty *get_tty(int index)
 {
 	/*
@@ -102,11 +107,39 @@ static struct ipw_tty *get_tty(int index)
 		return NULL;
 
 	return ttys[index];
+=======
+static struct ipw_tty *get_tty(int minor)
+{
+	if (minor < ipw_tty_driver->minor_start
+			|| minor >= ipw_tty_driver->minor_start +
+			IPWIRELESS_PCMCIA_MINORS)
+		return NULL;
+	else {
+		int minor_offset = minor - ipw_tty_driver->minor_start;
+
+		/*
+		 * The 'ras_raw' channel is only available when 'loopback' mode
+		 * is enabled.
+		 * Number of minor starts with 16 (_RANGE * _RAS_RAW).
+		 */
+		if (!ipwireless_loopback &&
+				minor_offset >=
+				 IPWIRELESS_PCMCIA_MINOR_RANGE * TTYTYPE_RAS_RAW)
+			return NULL;
+
+		return ttys[minor_offset];
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ipw_open(struct tty_struct *linux_tty, struct file *filp)
 {
+<<<<<<< HEAD
 	struct ipw_tty *tty = get_tty(linux_tty->index);
+=======
+	int minor = linux_tty->index;
+	struct ipw_tty *tty = get_tty(minor);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!tty)
 		return -ENODEV;
@@ -500,7 +533,11 @@ static int add_tty(int j,
 		ipwireless_associate_network_tty(network,
 						 secondary_channel_idx,
 						 ttys[j]);
+<<<<<<< HEAD
 	if (get_tty(j) == ttys[j])
+=======
+	if (get_tty(j + ipw_tty_driver->minor_start) == ttys[j])
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		report_registering(ttys[j]);
 	return 0;
 }
@@ -560,7 +597,11 @@ void ipwireless_tty_free(struct ipw_tty *tty)
 
 		if (ttyj) {
 			mutex_lock(&ttyj->ipw_tty_mutex);
+<<<<<<< HEAD
 			if (get_tty(j) == ttyj)
+=======
+			if (get_tty(j + ipw_tty_driver->minor_start) == ttyj)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				report_deregistering(ttyj);
 			ttyj->closing = 1;
 			if (ttyj->linux_tty != NULL) {
@@ -604,6 +645,10 @@ int ipwireless_tty_init(void)
 	if (!ipw_tty_driver)
 		return -ENOMEM;
 
+<<<<<<< HEAD
+=======
+	ipw_tty_driver->owner = THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ipw_tty_driver->driver_name = IPWIRELESS_PCCARD_NAME;
 	ipw_tty_driver->name = "ttyIPWp";
 	ipw_tty_driver->major = 0;

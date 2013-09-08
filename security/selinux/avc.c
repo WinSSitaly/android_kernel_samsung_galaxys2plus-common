@@ -436,9 +436,15 @@ static void avc_audit_pre_callback(struct audit_buffer *ab, void *a)
 {
 	struct common_audit_data *ad = a;
 	audit_log_format(ab, "avc:  %s ",
+<<<<<<< HEAD
 			 ad->selinux_audit_data->slad->denied ? "denied" : "granted");
 	avc_dump_av(ab, ad->selinux_audit_data->slad->tclass,
 			ad->selinux_audit_data->slad->audited);
+=======
+			 ad->selinux_audit_data.denied ? "denied" : "granted");
+	avc_dump_av(ab, ad->selinux_audit_data.tclass,
+			ad->selinux_audit_data.audited);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	audit_log_format(ab, " for ");
 }
 
@@ -452,6 +458,7 @@ static void avc_audit_post_callback(struct audit_buffer *ab, void *a)
 {
 	struct common_audit_data *ad = a;
 	audit_log_format(ab, " ");
+<<<<<<< HEAD
 	avc_dump_query(ab, ad->selinux_audit_data->slad->ssid,
 			   ad->selinux_audit_data->slad->tsid,
 			   ad->selinux_audit_data->slad->tclass);
@@ -494,6 +501,11 @@ static noinline int slow_avc_audit(u32 ssid, u32 tsid, u16 tclass,
 	a->selinux_audit_data->slad = &slad;
 	common_lsm_audit(a, avc_audit_pre_callback, avc_audit_post_callback);
 	return 0;
+=======
+	avc_dump_query(ab, ad->selinux_audit_data.ssid,
+			   ad->selinux_audit_data.tsid,
+			   ad->selinux_audit_data.tclass);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -516,17 +528,31 @@ static noinline int slow_avc_audit(u32 ssid, u32 tsid, u16 tclass,
  * be performed under a lock, to allow the lock to be released
  * before calling the auditing code.
  */
+<<<<<<< HEAD
 inline int avc_audit(u32 ssid, u32 tsid,
+=======
+int avc_audit(u32 ssid, u32 tsid,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       u16 tclass, u32 requested,
 	       struct av_decision *avd, int result, struct common_audit_data *a,
 	       unsigned flags)
 {
+<<<<<<< HEAD
 	u32 denied, audited;
 	denied = requested & ~avd->allowed;
 	if (unlikely(denied)) {
 		audited = denied & avd->auditdeny;
 		/*
 		 * a->selinux_audit_data->auditdeny is TRICKY!  Setting a bit in
+=======
+	struct common_audit_data stack_data;
+	u32 denied, audited;
+	denied = requested & ~avd->allowed;
+	if (denied) {
+		audited = denied & avd->auditdeny;
+		/*
+		 * a->selinux_audit_data.auditdeny is TRICKY!  Setting a bit in
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * this field means that ANY denials should NOT be audited if
 		 * the policy contains an explicit dontaudit rule for that
 		 * permission.  Take notice that this is unrelated to the
@@ -535,26 +561,67 @@ inline int avc_audit(u32 ssid, u32 tsid,
 		 *
 		 * denied == READ
 		 * avd.auditdeny & ACCESS == 0 (not set means explicit rule)
+<<<<<<< HEAD
 		 * selinux_audit_data->auditdeny & ACCESS == 1
+=======
+		 * selinux_audit_data.auditdeny & ACCESS == 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 *
 		 * We will NOT audit the denial even though the denied
 		 * permission was READ and the auditdeny checks were for
 		 * ACCESS
 		 */
 		if (a &&
+<<<<<<< HEAD
 		    a->selinux_audit_data->auditdeny &&
 		    !(a->selinux_audit_data->auditdeny & avd->auditdeny))
+=======
+		    a->selinux_audit_data.auditdeny &&
+		    !(a->selinux_audit_data.auditdeny & avd->auditdeny))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			audited = 0;
 	} else if (result)
 		audited = denied = requested;
 	else
 		audited = requested & avd->auditallow;
+<<<<<<< HEAD
 	if (likely(!audited))
 		return 0;
 
 	return slow_avc_audit(ssid, tsid, tclass,
 		requested, audited, denied,
 		a, flags);
+=======
+	if (!audited)
+		return 0;
+
+	if (!a) {
+		a = &stack_data;
+		COMMON_AUDIT_DATA_INIT(a, NONE);
+	}
+
+	/*
+	 * When in a RCU walk do the audit on the RCU retry.  This is because
+	 * the collection of the dname in an inode audit message is not RCU
+	 * safe.  Note this may drop some audits when the situation changes
+	 * during retry. However this is logically just as if the operation
+	 * happened a little later.
+	 */
+	if ((a->type == LSM_AUDIT_DATA_INODE) &&
+	    (flags & IPERM_FLAG_RCU))
+		return -ECHILD;
+
+	a->selinux_audit_data.tclass = tclass;
+	a->selinux_audit_data.requested = requested;
+	a->selinux_audit_data.ssid = ssid;
+	a->selinux_audit_data.tsid = tsid;
+	a->selinux_audit_data.audited = audited;
+	a->selinux_audit_data.denied = denied;
+	a->lsm_pre_audit = avc_audit_pre_callback;
+	a->lsm_post_audit = avc_audit_post_callback;
+	common_lsm_audit(a);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -744,6 +811,7 @@ int avc_ss_reset(u32 seqno)
 	return rc;
 }
 
+<<<<<<< HEAD
 /*
  * Slow-path helper function for avc_has_perm_noaudit,
  * when the avc_node lookup fails. We get called with
@@ -779,6 +847,8 @@ static noinline int avc_denied(u32 ssid, u32 tsid,
 }
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * avc_has_perm_noaudit - Check permissions but perform no auditing.
  * @ssid: source security identifier
@@ -799,7 +869,11 @@ static noinline int avc_denied(u32 ssid, u32 tsid,
  * auditing, e.g. in cases where a lock must be held for the check but
  * should be released for the auditing.
  */
+<<<<<<< HEAD
 inline int avc_has_perm_noaudit(u32 ssid, u32 tsid,
+=======
+int avc_has_perm_noaudit(u32 ssid, u32 tsid,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 u16 tclass, u32 requested,
 			 unsigned flags,
 			 struct av_decision *avd)
@@ -814,15 +888,35 @@ inline int avc_has_perm_noaudit(u32 ssid, u32 tsid,
 
 	node = avc_lookup(ssid, tsid, tclass);
 	if (unlikely(!node)) {
+<<<<<<< HEAD
 		node = avc_compute_av(ssid, tsid, tclass, avd);
+=======
+		rcu_read_unlock();
+		security_compute_av(ssid, tsid, tclass, avd);
+		rcu_read_lock();
+		node = avc_insert(ssid, tsid, tclass, avd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		memcpy(avd, &node->ae.avd, sizeof(*avd));
 		avd = &node->ae.avd;
 	}
 
 	denied = requested & ~(avd->allowed);
+<<<<<<< HEAD
 	if (unlikely(denied))
 		rc = avc_denied(ssid, tsid, tclass, requested, flags, avd);
+=======
+
+	if (denied) {
+		if (flags & AVC_STRICT)
+			rc = -EACCES;
+		else if (!selinux_enforcing || (avd->flags & AVD_FLAGS_PERMISSIVE))
+			avc_update_node(AVC_CALLBACK_GRANT, requested, ssid,
+					tsid, tclass, avd->seqno);
+		else
+			rc = -EACCES;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rcu_read_unlock();
 	return rc;

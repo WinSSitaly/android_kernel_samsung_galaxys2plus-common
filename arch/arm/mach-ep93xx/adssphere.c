@@ -16,11 +16,17 @@
 
 #include <mach/hardware.h>
 
+<<<<<<< HEAD
 #include <asm/hardware/vic.h>
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 
 #include "soc.h"
+=======
+#include <asm/mach-types.h>
+#include <asm/mach/arch.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct ep93xx_eth_data __initdata adssphere_eth_data = {
 	.phy_id		= 1,
@@ -35,6 +41,7 @@ static void __init adssphere_init_machine(void)
 
 MACHINE_START(ADSSPHERE, "ADS Sphere board")
 	/* Maintainer: Lennert Buytenhek <buytenh@wantstofly.org> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= ep93xx_map_io,
 	.init_irq	= ep93xx_init_irq,
@@ -42,4 +49,11 @@ MACHINE_START(ADSSPHERE, "ADS Sphere board")
 	.timer		= &ep93xx_timer,
 	.init_machine	= adssphere_init_machine,
 	.restart	= ep93xx_restart,
+=======
+	.boot_params	= EP93XX_SDCE3_PHYS_BASE_SYNC + 0x100,
+	.map_io		= ep93xx_map_io,
+	.init_irq	= ep93xx_init_irq,
+	.timer		= &ep93xx_timer,
+	.init_machine	= adssphere_init_machine,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

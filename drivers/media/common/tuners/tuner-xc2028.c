@@ -24,6 +24,7 @@
 #include <linux/dvb/frontend.h>
 #include "dvb_frontend.h"
 
+<<<<<<< HEAD
 /* Registers (Write-only) */
 #define XREG_INIT         0x00
 #define XREG_RF_FREQ      0x02
@@ -39,6 +40,8 @@
 #define XREG_SNR          0x40
 
 #define XREG_ADC_ENV      0x0100
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int debug;
 module_param(debug, int, 0644);
@@ -326,7 +329,11 @@ static int load_all_firmwares(struct dvb_frontend *fe)
 		   n_array, fname, name,
 		   priv->firm_version >> 8, priv->firm_version & 0xff);
 
+<<<<<<< HEAD
 	priv->firm = kcalloc(n_array, sizeof(*priv->firm), GFP_KERNEL);
+=======
+	priv->firm = kzalloc(sizeof(*priv->firm) * n_array, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (priv->firm == NULL) {
 		tuner_err("Not enough memory to load firmware file.\n");
 		rc = -ENOMEM;
@@ -629,6 +636,7 @@ static int load_firmware(struct dvb_frontend *fe, unsigned int type,
 			p += len;
 			size -= len;
 		}
+<<<<<<< HEAD
 
 		/* silently fail if the frontend doesn't support I2C flush */
 		rc = do_tuner_callback(fe, XC2028_I2C_FLUSH, 0);
@@ -636,6 +644,8 @@ static int load_firmware(struct dvb_frontend *fe, unsigned int type,
 			tuner_err("error executing flush: %d\n", rc);
 			return rc;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }
@@ -900,16 +910,27 @@ static int xc2028_signal(struct dvb_frontend *fe, u16 *strength)
 	mutex_lock(&priv->lock);
 
 	/* Sync Lock Indicator */
+<<<<<<< HEAD
 	rc = xc2028_get_reg(priv, XREG_LOCK, &frq_lock);
+=======
+	rc = xc2028_get_reg(priv, 0x0002, &frq_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc < 0)
 		goto ret;
 
 	/* Frequency is locked */
 	if (frq_lock == 1)
+<<<<<<< HEAD
 		signal = 1 << 11;
 
 	/* Get SNR of the video signal */
 	rc = xc2028_get_reg(priv, XREG_SNR, &signal);
+=======
+		signal = 32768;
+
+	/* Get SNR of the video signal */
+	rc = xc2028_get_reg(priv, 0x0040, &signal);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc < 0)
 		goto ret;
 
@@ -955,6 +976,7 @@ static int generic_set_freq(struct dvb_frontend *fe, u32 freq /* in HZ */,
 	 * that xc2028 will be in a safe state.
 	 * Maybe this might also be needed for DTV.
 	 */
+<<<<<<< HEAD
 	switch (new_type) {
 	case V4L2_TUNER_ANALOG_TV:
 		rc = send_seq(priv, {0x00, 0x00});
@@ -965,6 +987,13 @@ static int generic_set_freq(struct dvb_frontend *fe, u32 freq /* in HZ */,
 		/* Radio mode requires offset = 0 */
 		break;
 	case V4L2_TUNER_DIGITAL_TV:
+=======
+	if (new_type == V4L2_TUNER_ANALOG_TV) {
+		rc = send_seq(priv, {0x00, 0x00});
+
+		/* Analog modes require offset = 0 */
+	} else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Digital modes require an offset to adjust to the
 		 * proper frequency. The offset depends on what
@@ -977,6 +1006,7 @@ static int generic_set_freq(struct dvb_frontend *fe, u32 freq /* in HZ */,
 		 * For DTV 7/8, the firmware uses BW = 8000, so it needs a
 		 * further adjustment to get the frequency center on VHF
 		 */
+<<<<<<< HEAD
 
 		/*
 		 * The firmware DTV78 used to work fine in UHF band (8 MHz
@@ -995,6 +1025,16 @@ static int generic_set_freq(struct dvb_frontend *fe, u32 freq /* in HZ */,
 			offset = 1750000;
 		else	/* DTV7 or DTV8 or DTV78 */
 			offset = 2750000;
+=======
+		if (priv->cur_fw.type & DTV6)
+			offset = 1750000;
+		else if (priv->cur_fw.type & DTV7)
+			offset = 2250000;
+		else	/* DTV8 or DTV78 */
+			offset = 2750000;
+		if ((priv->cur_fw.type & DTV78) && freq < 470000000)
+			offset -= 500000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * xc3028 additional "magic"
@@ -1004,13 +1044,24 @@ static int generic_set_freq(struct dvb_frontend *fe, u32 freq /* in HZ */,
 		 * newer firmwares
 		 */
 
+<<<<<<< HEAD
+=======
+#if 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * The proper adjustment would be to do it at s-code table.
 		 * However, this didn't work, as reported by
 		 * Robert Lowery <rglowery@exemail.com.au>
 		 */
 
+<<<<<<< HEAD
 #if 0
+=======
+		if (priv->cur_fw.type & DTV7)
+			offset += 500000;
+
+#else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Still need tests for XC3028L (firmware 3.2 or upper)
 		 * So, for now, let's just comment the per-firmware
@@ -1034,9 +1085,15 @@ static int generic_set_freq(struct dvb_frontend *fe, u32 freq /* in HZ */,
 
 	/* CMD= Set frequency */
 	if (priv->firm_version < 0x0202)
+<<<<<<< HEAD
 		rc = send_seq(priv, {0x00, XREG_RF_FREQ, 0x00, 0x00});
 	else
 		rc = send_seq(priv, {0x80, XREG_RF_FREQ, 0x00, 0x00});
+=======
+		rc = send_seq(priv, {0x00, 0x02, 0x00, 0x00});
+	else
+		rc = send_seq(priv, {0x80, 0x02, 0x00, 0x00});
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc < 0)
 		goto ret;
 
@@ -1105,6 +1162,7 @@ static int xc2028_set_analog_freq(struct dvb_frontend *fe,
 				V4L2_TUNER_ANALOG_TV, type, p->std, 0);
 }
 
+<<<<<<< HEAD
 static int xc2028_set_params(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
@@ -1112,21 +1170,82 @@ static int xc2028_set_params(struct dvb_frontend *fe)
 	u32 bw = c->bandwidth_hz;
 	struct xc2028_data *priv = fe->tuner_priv;
 	unsigned int       type=0;
+=======
+static int xc2028_set_params(struct dvb_frontend *fe,
+			     struct dvb_frontend_parameters *p)
+{
+	struct xc2028_data *priv = fe->tuner_priv;
+	unsigned int       type=0;
+	fe_bandwidth_t     bw = BANDWIDTH_8_MHZ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16                demod = 0;
 
 	tuner_dbg("%s called\n", __func__);
 
+<<<<<<< HEAD
 	switch (delsys) {
 	case SYS_DVBT:
 	case SYS_DVBT2:
+=======
+	switch(fe->ops.info.type) {
+	case FE_OFDM:
+		bw = p->u.ofdm.bandwidth;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * The only countries with 6MHz seem to be Taiwan/Uruguay.
 		 * Both seem to require QAM firmware for OFDM decoding
 		 * Tested in Taiwan by Terry Wu <terrywu2009@gmail.com>
 		 */
+<<<<<<< HEAD
 		if (bw <= 6000000)
 			type |= QAM;
 
+=======
+		if (bw == BANDWIDTH_6_MHZ)
+			type |= QAM;
+		break;
+	case FE_ATSC:
+		bw = BANDWIDTH_6_MHZ;
+		/* The only ATSC firmware (at least on v2.7) is D2633 */
+		type |= ATSC | D2633;
+		break;
+	/* DVB-S and pure QAM (FE_QAM) are not supported */
+	default:
+		return -EINVAL;
+	}
+
+	switch (bw) {
+	case BANDWIDTH_8_MHZ:
+		if (p->frequency < 470000000)
+			priv->ctrl.vhfbw7 = 0;
+		else
+			priv->ctrl.uhfbw8 = 1;
+		type |= (priv->ctrl.vhfbw7 && priv->ctrl.uhfbw8) ? DTV78 : DTV8;
+		type |= F8MHZ;
+		break;
+	case BANDWIDTH_7_MHZ:
+		if (p->frequency < 470000000)
+			priv->ctrl.vhfbw7 = 1;
+		else
+			priv->ctrl.uhfbw8 = 0;
+		type |= (priv->ctrl.vhfbw7 && priv->ctrl.uhfbw8) ? DTV78 : DTV7;
+		type |= F8MHZ;
+		break;
+	case BANDWIDTH_6_MHZ:
+		type |= DTV6;
+		priv->ctrl.vhfbw7 = 0;
+		priv->ctrl.uhfbw8 = 0;
+		break;
+	default:
+		tuner_err("error: bandwidth not supported.\n");
+	};
+
+	/*
+	  Selects between D2633 or D2620 firmware.
+	  It doesn't make sense for ATSC, since it should be D2633 on all cases
+	 */
+	if (fe->ops.info.type != FE_ATSC) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		switch (priv->ctrl.type) {
 		case XC2028_D2633:
 			type |= D2633;
@@ -1142,6 +1261,7 @@ static int xc2028_set_params(struct dvb_frontend *fe)
 			else
 				type |= D2620;
 		}
+<<<<<<< HEAD
 		break;
 	case SYS_ATSC:
 		/* The only ATSC firmware (at least on v2.7) is D2633 */
@@ -1170,6 +1290,8 @@ static int xc2028_set_params(struct dvb_frontend *fe)
 			priv->ctrl.uhfbw8 = 1;
 		type |= (priv->ctrl.vhfbw7 && priv->ctrl.uhfbw8) ? DTV78 : DTV8;
 		type |= F8MHZ;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* All S-code tables need a 200kHz shift */
@@ -1194,7 +1316,11 @@ static int xc2028_set_params(struct dvb_frontend *fe)
 		 */
 	}
 
+<<<<<<< HEAD
 	return generic_set_freq(fe, c->frequency,
+=======
+	return generic_set_freq(fe, p->frequency,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				V4L2_TUNER_DIGITAL_TV, type, 0, demod);
 }
 
@@ -1216,9 +1342,15 @@ static int xc2028_sleep(struct dvb_frontend *fe)
 	mutex_lock(&priv->lock);
 
 	if (priv->firm_version < 0x0202)
+<<<<<<< HEAD
 		rc = send_seq(priv, {0x00, XREG_POWER_DOWN, 0x00, 0x00});
 	else
 		rc = send_seq(priv, {0x80, XREG_POWER_DOWN, 0x00, 0x00});
+=======
+		rc = send_seq(priv, {0x00, 0x08, 0x00, 0x00});
+	else
+		rc = send_seq(priv, {0x80, 0x08, 0x00, 0x00});
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	priv->cur_fw.type = 0;	/* need firmware reload */
 

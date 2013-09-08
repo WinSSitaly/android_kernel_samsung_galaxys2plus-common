@@ -1,6 +1,7 @@
 #ifndef __REGDB_H__
 #define __REGDB_H__
 
+<<<<<<< HEAD
 /*
  * Copyright 2009 John W. Linville <linville@tuxdriver.com>
  *
@@ -17,6 +18,8 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern const struct ieee80211_regdomain *reg_regdb[];
 extern int reg_regdb_size;
 

@@ -81,7 +81,10 @@
 #include <linux/timer.h>
 #include <linux/wait.h>
 #include <linux/kthread.h>
+<<<<<<< HEAD
 #include <linux/ratelimit.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef VERBOSE_DEBUG
 static int usbatm_print_packet(const unsigned char *data, int len);
@@ -669,7 +672,12 @@ static int usbatm_atm_send(struct atm_vcc *vcc, struct sk_buff *skb)
 	/* racy disconnection check - fine */
 	if (!instance || instance->disconnected) {
 #ifdef DEBUG
+<<<<<<< HEAD
 		printk_ratelimited(KERN_DEBUG "%s: %s!\n", __func__, instance ? "disconnected" : "NULL instance");
+=======
+		if (printk_ratelimit())
+			printk(KERN_DEBUG "%s: %s!\n", __func__, instance ? "disconnected" : "NULL instance");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 		err = -ENODEV;
 		goto fail;

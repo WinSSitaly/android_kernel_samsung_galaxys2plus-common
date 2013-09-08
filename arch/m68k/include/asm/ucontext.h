@@ -7,7 +7,15 @@ typedef greg_t gregset_t[NGREG];
 
 typedef struct fpregset {
 	int f_fpcntl[3];
+<<<<<<< HEAD
 	int f_fpregs[8*3];
+=======
+#ifdef __mcoldfire__
+	int f_fpregs[8][2];
+#else
+	int f_fpregs[8*3];
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } fpregset_t;
 
 struct mcontext {

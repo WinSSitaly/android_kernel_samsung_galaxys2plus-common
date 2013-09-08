@@ -145,7 +145,10 @@ work_notifysig:
 	 mov	r15, r4
 	mov	r12, r5		! set arg1(save_r0)
 	mov	r0, r6
+<<<<<<< HEAD
 	sti
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mov.l	2f, r1
 	mov.l	3f, r0
 	jmp	@r1

@@ -28,7 +28,10 @@
  *  such damages.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "pnfs.h"
 
 #define NFSDBG_FACILITY		NFSDBG_PNFS
@@ -43,7 +46,10 @@
 static struct hlist_head nfs4_deviceid_cache[NFS4_DEVICE_ID_HASH_SIZE];
 static DEFINE_SPINLOCK(nfs4_deviceid_lock);
 
+<<<<<<< HEAD
 #ifdef NFS_DEBUG
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void
 nfs4_print_deviceid(const struct nfs4_deviceid *id)
 {
@@ -53,7 +59,10 @@ nfs4_print_deviceid(const struct nfs4_deviceid *id)
 		p[0], p[1], p[2], p[3]);
 }
 EXPORT_SYMBOL_GPL(nfs4_print_deviceid);
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline u32
 nfs4_deviceid_hash(const struct nfs4_deviceid *id)
@@ -94,7 +103,11 @@ _lookup_deviceid(const struct pnfs_layoutdriver_type *ld,
  * @clp nfs_client associated with deviceid
  * @id deviceid to look up
  */
+<<<<<<< HEAD
 static struct nfs4_deviceid_node *
+=======
+struct nfs4_deviceid_node *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 _find_get_deviceid(const struct pnfs_layoutdriver_type *ld,
 		   const struct nfs_client *clp, const struct nfs4_deviceid *id,
 		   long hash)
@@ -103,8 +116,13 @@ _find_get_deviceid(const struct pnfs_layoutdriver_type *ld,
 
 	rcu_read_lock();
 	d = _lookup_deviceid(ld, clp, id, hash);
+<<<<<<< HEAD
 	if (d != NULL)
 		atomic_inc(&d->ref);
+=======
+	if (d && !atomic_inc_not_zero(&d->ref))
+		d = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rcu_read_unlock();
 	return d;
 }
@@ -118,15 +136,24 @@ nfs4_find_get_deviceid(const struct pnfs_layoutdriver_type *ld,
 EXPORT_SYMBOL_GPL(nfs4_find_get_deviceid);
 
 /*
+<<<<<<< HEAD
  * Remove a deviceid from cache
+=======
+ * Unhash and put deviceid
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * @clp nfs_client associated with deviceid
  * @id the deviceid to unhash
  *
  * @ret the unhashed node, if found and dereferenced to zero, NULL otherwise.
  */
+<<<<<<< HEAD
 void
 nfs4_delete_deviceid(const struct pnfs_layoutdriver_type *ld,
+=======
+struct nfs4_deviceid_node *
+nfs4_unhash_put_deviceid(const struct pnfs_layoutdriver_type *ld,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 const struct nfs_client *clp, const struct nfs4_deviceid *id)
 {
 	struct nfs4_deviceid_node *d;
@@ -137,7 +164,11 @@ nfs4_delete_deviceid(const struct pnfs_layoutdriver_type *ld,
 	rcu_read_unlock();
 	if (!d) {
 		spin_unlock(&nfs4_deviceid_lock);
+<<<<<<< HEAD
 		return;
+=======
+		return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	hlist_del_init_rcu(&d->node);
 	spin_unlock(&nfs4_deviceid_lock);
@@ -145,7 +176,32 @@ nfs4_delete_deviceid(const struct pnfs_layoutdriver_type *ld,
 
 	/* balance the initial ref set in pnfs_insert_deviceid */
 	if (atomic_dec_and_test(&d->ref))
+<<<<<<< HEAD
 		d->ld->free_deviceid_node(d);
+=======
+		return d;
+
+	return NULL;
+}
+EXPORT_SYMBOL_GPL(nfs4_unhash_put_deviceid);
+
+/*
+ * Delete a deviceid from cache
+ *
+ * @clp struct nfs_client qualifying the deviceid
+ * @id deviceid to delete
+ */
+void
+nfs4_delete_deviceid(const struct pnfs_layoutdriver_type *ld,
+		     const struct nfs_client *clp, const struct nfs4_deviceid *id)
+{
+	struct nfs4_deviceid_node *d;
+
+	d = nfs4_unhash_put_deviceid(ld, clp, id);
+	if (!d)
+		return;
+	d->ld->free_deviceid_node(d);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(nfs4_delete_deviceid);
 
@@ -159,7 +215,10 @@ nfs4_init_deviceid_node(struct nfs4_deviceid_node *d,
 	INIT_HLIST_NODE(&d->tmpnode);
 	d->ld = ld;
 	d->nfs_client = nfs_client;
+<<<<<<< HEAD
 	d->flags = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	d->deviceid = *id;
 	atomic_set(&d->ref, 1);
 }
@@ -204,15 +263,27 @@ EXPORT_SYMBOL_GPL(nfs4_insert_deviceid_node);
  *
  * @d deviceid node to put
  *
+<<<<<<< HEAD
  * return true iff the node was deleted
  * Note that since the test for d->ref == 0 is sufficient to establish
  * that the node is no longer hashed in the global device id cache.
+=======
+ * @ret true iff the node was deleted
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 bool
 nfs4_put_deviceid_node(struct nfs4_deviceid_node *d)
 {
+<<<<<<< HEAD
 	if (!atomic_dec_and_test(&d->ref))
 		return false;
+=======
+	if (!atomic_dec_and_lock(&d->ref, &nfs4_deviceid_lock))
+		return false;
+	hlist_del_init_rcu(&d->node);
+	spin_unlock(&nfs4_deviceid_lock);
+	synchronize_rcu();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	d->ld->free_deviceid_node(d);
 	return true;
 }
@@ -257,6 +328,7 @@ nfs4_deviceid_purge_client(const struct nfs_client *clp)
 	for (h = 0; h < NFS4_DEVICE_ID_HASH_SIZE; h++)
 		_deviceid_purge_client(clp, h);
 }
+<<<<<<< HEAD
 
 /*
  * Stop use of all deviceids associated with an nfs_client
@@ -276,3 +348,5 @@ nfs4_deviceid_mark_client_invalid(struct nfs_client *clp)
 	}
 	rcu_read_unlock();
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

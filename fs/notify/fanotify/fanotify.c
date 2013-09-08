@@ -18,6 +18,7 @@ static bool should_merge(struct fsnotify_event *old, struct fsnotify_event *new)
 	    old->tgid == new->tgid) {
 		switch (old->data_type) {
 		case (FSNOTIFY_EVENT_PATH):
+<<<<<<< HEAD
 #ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
 			/* dont merge two permission events */
 			if ((old->mask & FAN_ALL_PERM_EVENTS) &&
@@ -28,6 +29,11 @@ static bool should_merge(struct fsnotify_event *old, struct fsnotify_event *new)
 			    (old->path.dentry == new->path.dentry))
 				return true;
 			break;
+=======
+			if ((old->path.mnt == new->path.mnt) &&
+			    (old->path.dentry == new->path.dentry))
+				return true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case (FSNOTIFY_EVENT_NONE):
 			return true;
 		default:

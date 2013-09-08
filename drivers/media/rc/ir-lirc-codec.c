@@ -14,7 +14,10 @@
 
 #include <linux/sched.h>
 #include <linux/wait.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/lirc.h>
 #include <media/lirc_dev.h>
 #include <media/rc-core.h>
@@ -99,24 +102,41 @@ static int ir_lirc_decode(struct rc_dev *dev, struct ir_raw_event ev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static ssize_t ir_lirc_transmit_ir(struct file *file, const char __user *buf,
+=======
+static ssize_t ir_lirc_transmit_ir(struct file *file, const char *buf,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   size_t n, loff_t *ppos)
 {
 	struct lirc_codec *lirc;
 	struct rc_dev *dev;
+<<<<<<< HEAD
 	unsigned int *txbuf; /* buffer with values to transmit */
 	ssize_t ret = 0;
+=======
+	int *txbuf; /* buffer with values to transmit */
+	int ret = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	size_t count;
 
 	lirc = lirc_get_pdata(file);
 	if (!lirc)
 		return -EFAULT;
 
+<<<<<<< HEAD
 	if (n < sizeof(unsigned) || n % sizeof(unsigned))
 		return -EINVAL;
 
 	count = n / sizeof(unsigned);
 	if (count > LIRCBUF_SIZE || count % 2 == 0)
+=======
+	if (n % sizeof(int))
+		return -EINVAL;
+
+	count = n / sizeof(int);
+	if (count > LIRCBUF_SIZE || count % 2 == 0 || n % sizeof(int) != 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	txbuf = memdup_user(buf, n);
@@ -130,10 +150,14 @@ static ssize_t ir_lirc_transmit_ir(struct file *file, const char __user *buf,
 	}
 
 	if (dev->tx_ir)
+<<<<<<< HEAD
 		ret = dev->tx_ir(dev, txbuf, count);
 
 	if (ret > 0)
 		ret *= sizeof(unsigned);
+=======
+		ret = dev->tx_ir(dev, txbuf, (u32)n);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	kfree(txbuf);
@@ -141,11 +165,18 @@ out:
 }
 
 static long ir_lirc_ioctl(struct file *filep, unsigned int cmd,
+<<<<<<< HEAD
 			unsigned long arg)
 {
 	struct lirc_codec *lirc;
 	struct rc_dev *dev;
 	u32 __user *argp = (u32 __user *)(arg);
+=======
+			unsigned long __user arg)
+{
+	struct lirc_codec *lirc;
+	struct rc_dev *dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 	__u32 val = 0, tmp;
 
@@ -158,7 +189,11 @@ static long ir_lirc_ioctl(struct file *filep, unsigned int cmd,
 		return -EFAULT;
 
 	if (_IOC_DIR(cmd) & _IOC_WRITE) {
+<<<<<<< HEAD
 		ret = get_user(val, argp);
+=======
+		ret = get_user(val, (__u32 *)arg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret)
 			return ret;
 	}
@@ -267,7 +302,11 @@ static long ir_lirc_ioctl(struct file *filep, unsigned int cmd,
 	}
 
 	if (_IOC_DIR(cmd) & _IOC_READ)
+<<<<<<< HEAD
 		ret = put_user(val, argp);
+=======
+		ret = put_user(val, (__u32 *)arg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }

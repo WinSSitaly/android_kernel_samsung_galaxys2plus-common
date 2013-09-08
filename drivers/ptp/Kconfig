@@ -72,6 +72,7 @@ config DP83640_PHY
 	  In order for this to work, your MAC driver must also
 	  implement the skb_tx_timetamp() function.
 
+<<<<<<< HEAD
 config PTP_1588_CLOCK_PCH
 	tristate "Intel PCH EG20T as PTP clock"
 	depends on PTP_1588_CLOCK
@@ -85,4 +86,6 @@ config PTP_1588_CLOCK_PCH
 	  To compile this driver as a module, choose M here: the module
 	  will be called ptp_pch.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endmenu

@@ -25,8 +25,11 @@ struct xfs_perag;
 struct xfs_trans;
 struct xfs_busy_extent;
 
+<<<<<<< HEAD
 extern struct workqueue_struct *xfs_alloc_wq;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Freespace allocation types.  Argument to xfs_alloc_[v]extent.
  */
@@ -121,9 +124,12 @@ typedef struct xfs_alloc_arg {
 	char		isfl;		/* set if is freelist blocks - !acctg */
 	char		userdata;	/* set if this is user data */
 	xfs_fsblock_t	firstblock;	/* io first block allocated */
+<<<<<<< HEAD
 	struct completion *done;
 	struct work_struct work;
 	int		result;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } xfs_alloc_arg_t;
 
 /*
@@ -248,6 +254,7 @@ xfs_alloc_lookup_le(
 	xfs_extlen_t		len,	/* length of extent */
 	int			*stat);	/* success/failure */
 
+<<<<<<< HEAD
 int				/* error */
 xfs_alloc_lookup_ge(
 	struct xfs_btree_cur	*cur,	/* btree cursor */
@@ -255,6 +262,8 @@ xfs_alloc_lookup_ge(
 	xfs_extlen_t		len,	/* length of extent */
 	int			*stat);	/* success/failure */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int					/* error */
 xfs_alloc_get_rec(
 	struct xfs_btree_cur	*cur,	/* btree cursor */

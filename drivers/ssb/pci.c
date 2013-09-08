@@ -1,7 +1,11 @@
 /*
  * Sonics Silicon Backplane PCI-Hostbus related functions.
  *
+<<<<<<< HEAD
  * Copyright (C) 2005-2006 Michael Buesch <m@bues.ch>
+=======
+ * Copyright (C) 2005-2006 Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (C) 2005 Martin Langer <martin-langer@gmx.de>
  * Copyright (C) 2005 Stefano Brivio <st3@riseup.net>
  * Copyright (C) 2005 Danny van Dyk <kugelfang@gentoo.org>
@@ -331,6 +335,10 @@ static void sprom_extract_r123(struct ssb_sprom *out, const u16 *in)
 {
 	int i;
 	u16 v;
+<<<<<<< HEAD
+=======
+	s8 gain;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 loc[3];
 
 	if (out->revision == 3)			/* rev 3 moved MAC */
@@ -389,12 +397,29 @@ static void sprom_extract_r123(struct ssb_sprom *out, const u16 *in)
 		SPEX(boardflags_hi, SSB_SPROM2_BFLHI, 0xFFFF, 0);
 
 	/* Extract the antenna gain values. */
+<<<<<<< HEAD
 	out->antenna_gain.a0 = r123_extract_antgain(out->revision, in,
 						    SSB_SPROM1_AGAIN_BG,
 						    SSB_SPROM1_AGAIN_BG_SHIFT);
 	out->antenna_gain.a1 = r123_extract_antgain(out->revision, in,
 						    SSB_SPROM1_AGAIN_A,
 						    SSB_SPROM1_AGAIN_A_SHIFT);
+=======
+	gain = r123_extract_antgain(out->revision, in,
+				    SSB_SPROM1_AGAIN_BG,
+				    SSB_SPROM1_AGAIN_BG_SHIFT);
+	out->antenna_gain.ghz24.a0 = gain;
+	out->antenna_gain.ghz24.a1 = gain;
+	out->antenna_gain.ghz24.a2 = gain;
+	out->antenna_gain.ghz24.a3 = gain;
+	gain = r123_extract_antgain(out->revision, in,
+				    SSB_SPROM1_AGAIN_A,
+				    SSB_SPROM1_AGAIN_A_SHIFT);
+	out->antenna_gain.ghz5.a0 = gain;
+	out->antenna_gain.ghz5.a1 = gain;
+	out->antenna_gain.ghz5.a2 = gain;
+	out->antenna_gain.ghz5.a3 = gain;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Revs 4 5 and 8 have partially shared layout */
@@ -495,6 +520,7 @@ static void sprom_extract_r45(struct ssb_sprom *out, const u16 *in)
 	}
 
 	/* Extract the antenna gain values. */
+<<<<<<< HEAD
 	SPEX(antenna_gain.a0, SSB_SPROM4_AGAIN01,
 	     SSB_SPROM4_AGAIN0, SSB_SPROM4_AGAIN0_SHIFT);
 	SPEX(antenna_gain.a1, SSB_SPROM4_AGAIN01,
@@ -503,6 +529,18 @@ static void sprom_extract_r45(struct ssb_sprom *out, const u16 *in)
 	     SSB_SPROM4_AGAIN2, SSB_SPROM4_AGAIN2_SHIFT);
 	SPEX(antenna_gain.a3, SSB_SPROM4_AGAIN23,
 	     SSB_SPROM4_AGAIN3, SSB_SPROM4_AGAIN3_SHIFT);
+=======
+	SPEX(antenna_gain.ghz24.a0, SSB_SPROM4_AGAIN01,
+	     SSB_SPROM4_AGAIN0, SSB_SPROM4_AGAIN0_SHIFT);
+	SPEX(antenna_gain.ghz24.a1, SSB_SPROM4_AGAIN01,
+	     SSB_SPROM4_AGAIN1, SSB_SPROM4_AGAIN1_SHIFT);
+	SPEX(antenna_gain.ghz24.a2, SSB_SPROM4_AGAIN23,
+	     SSB_SPROM4_AGAIN2, SSB_SPROM4_AGAIN2_SHIFT);
+	SPEX(antenna_gain.ghz24.a3, SSB_SPROM4_AGAIN23,
+	     SSB_SPROM4_AGAIN3, SSB_SPROM4_AGAIN3_SHIFT);
+	memcpy(&out->antenna_gain.ghz5, &out->antenna_gain.ghz24,
+	       sizeof(out->antenna_gain.ghz5));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sprom_extract_r458(out, in);
 
@@ -512,6 +550,7 @@ static void sprom_extract_r45(struct ssb_sprom *out, const u16 *in)
 static void sprom_extract_r8(struct ssb_sprom *out, const u16 *in)
 {
 	int i;
+<<<<<<< HEAD
 	u16 v, o;
 	u16 pwr_info_offset[] = {
 		SSB_SROM8_PWR_INFO_CORE0, SSB_SROM8_PWR_INFO_CORE1,
@@ -519,6 +558,9 @@ static void sprom_extract_r8(struct ssb_sprom *out, const u16 *in)
 	};
 	BUILD_BUG_ON(ARRAY_SIZE(pwr_info_offset) !=
 			ARRAY_SIZE(out->core_pwr_info));
+=======
+	u16 v;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* extract the MAC address */
 	for (i = 0; i < 3; i++) {
@@ -591,6 +633,7 @@ static void sprom_extract_r8(struct ssb_sprom *out, const u16 *in)
 	SPEX32(ofdm5ghpo, SSB_SPROM8_OFDM5GHPO, 0xFFFFFFFF, 0);
 
 	/* Extract the antenna gain values. */
+<<<<<<< HEAD
 	SPEX(antenna_gain.a0, SSB_SPROM8_AGAIN01,
 	     SSB_SPROM8_AGAIN0, SSB_SPROM8_AGAIN0_SHIFT);
 	SPEX(antenna_gain.a1, SSB_SPROM8_AGAIN01,
@@ -654,6 +697,18 @@ static void sprom_extract_r8(struct ssb_sprom *out, const u16 *in)
 		SSB_SROM8_FEM_TR_ISO, SSB_SROM8_FEM_TR_ISO_SHIFT);
 	SPEX(fem.ghz5.antswlut, SSB_SPROM8_FEM5G,
 		SSB_SROM8_FEM_ANTSWLUT, SSB_SROM8_FEM_ANTSWLUT_SHIFT);
+=======
+	SPEX(antenna_gain.ghz24.a0, SSB_SPROM8_AGAIN01,
+	     SSB_SPROM8_AGAIN0, SSB_SPROM8_AGAIN0_SHIFT);
+	SPEX(antenna_gain.ghz24.a1, SSB_SPROM8_AGAIN01,
+	     SSB_SPROM8_AGAIN1, SSB_SPROM8_AGAIN1_SHIFT);
+	SPEX(antenna_gain.ghz24.a2, SSB_SPROM8_AGAIN23,
+	     SSB_SPROM8_AGAIN2, SSB_SPROM8_AGAIN2_SHIFT);
+	SPEX(antenna_gain.ghz24.a3, SSB_SPROM8_AGAIN23,
+	     SSB_SPROM8_AGAIN3, SSB_SPROM8_AGAIN3_SHIFT);
+	memcpy(&out->antenna_gain.ghz5, &out->antenna_gain.ghz24,
+	       sizeof(out->antenna_gain.ghz5));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sprom_extract_r458(out, in);
 
@@ -782,9 +837,18 @@ out_free:
 static void ssb_pci_get_boardinfo(struct ssb_bus *bus,
 				  struct ssb_boardinfo *bi)
 {
+<<<<<<< HEAD
 	bi->vendor = bus->host_pci->subsystem_vendor;
 	bi->type = bus->host_pci->subsystem_device;
 	bi->rev = bus->host_pci->revision;
+=======
+	pci_read_config_word(bus->host_pci, PCI_SUBSYSTEM_VENDOR_ID,
+			     &bi->vendor);
+	pci_read_config_word(bus->host_pci, PCI_SUBSYSTEM_ID,
+			     &bi->type);
+	pci_read_config_word(bus->host_pci, PCI_REVISION_ID,
+			     &bi->rev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int ssb_pci_get_invariants(struct ssb_bus *bus,

@@ -286,7 +286,11 @@
 #include <plat/omap24xx.h>
 #include <plat/omap34xx.h>
 #include <plat/omap44xx.h>
+<<<<<<< HEAD
 #include <plat/ti81xx.h>
 #include <plat/am33xx.h>
+=======
+#include <plat/ti816x.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif	/* __ASM_ARCH_OMAP_HARDWARE_H */

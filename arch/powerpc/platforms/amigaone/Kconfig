@@ -8,7 +8,11 @@ config AMIGAONE
 	select NOT_COHERENT_CACHE
 	select CHECK_CACHE_COHERENCY
 	select DEFAULT_UIMAGE
+<<<<<<< HEAD
 	select HAVE_PCSPKR_PLATFORM
+=======
+	select PCSPKR_PLATFORM
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	Select AmigaOne for the following machines:
 	- AmigaOne SE/Teron CX (G3 only)

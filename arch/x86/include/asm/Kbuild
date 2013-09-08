@@ -14,15 +14,25 @@ header-y += msr.h
 header-y += mtrr.h
 header-y += posix_types_32.h
 header-y += posix_types_64.h
+<<<<<<< HEAD
 header-y += posix_types_x32.h
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 header-y += prctl.h
 header-y += processor-flags.h
 header-y += ptrace-abi.h
 header-y += sigcontext32.h
 header-y += ucontext.h
+<<<<<<< HEAD
 header-y += vm86.h
 header-y += vsyscall.h
 
 genhdr-y += unistd_32.h
 genhdr-y += unistd_64.h
 genhdr-y += unistd_x32.h
+=======
+header-y += unistd_32.h
+header-y += unistd_64.h
+header-y += vm86.h
+header-y += vsyscall.h
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -55,6 +55,7 @@ ENTRY(cpu_v6_proc_fin)
  *	- loc   - location to jump to for soft reset
  */
 	.align	5
+<<<<<<< HEAD
 	.pushsection	.idmap.text, "ax"
 ENTRY(cpu_v6_reset)
 	mrc	p15, 0, r1, c1, c0, 0		@ ctrl register
@@ -65,6 +66,10 @@ ENTRY(cpu_v6_reset)
 	mov	pc, r0
 ENDPROC(cpu_v6_reset)
 	.popsection
+=======
+ENTRY(cpu_v6_reset)
+	mov	pc, r0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  *	cpu_v6_do_idle()
@@ -131,6 +136,7 @@ ENTRY(cpu_v6_set_pte_ext)
 
 /* Suspend/resume support: taken from arch/arm/mach-s3c64xx/sleep.S */
 .globl	cpu_v6_suspend_size
+<<<<<<< HEAD
 .equ	cpu_v6_suspend_size, 4 * 6
 #ifdef CONFIG_ARM_CPU_SUSPEND
 ENTRY(cpu_v6_do_suspend)
@@ -143,6 +149,22 @@ ENTRY(cpu_v6_do_suspend)
 	mrc	p15, 0, r9, c1, c0, 0	@ control register
 	stmia	r0, {r4 - r9}
 	ldmfd	sp!, {r4- r9, pc}
+=======
+.equ	cpu_v6_suspend_size, 4 * 8
+#ifdef CONFIG_PM_SLEEP
+ENTRY(cpu_v6_do_suspend)
+	stmfd	sp!, {r4 - r11, lr}
+	mrc	p15, 0, r4, c13, c0, 0	@ FCSE/PID
+	mrc	p15, 0, r5, c13, c0, 1	@ Context ID
+	mrc	p15, 0, r6, c3, c0, 0	@ Domain ID
+	mrc	p15, 0, r7, c2, c0, 0	@ Translation table base 0
+	mrc	p15, 0, r8, c2, c0, 1	@ Translation table base 1
+	mrc	p15, 0, r9, c1, c0, 1	@ auxiliary control register
+	mrc	p15, 0, r10, c1, c0, 2	@ co-processor access control
+	mrc	p15, 0, r11, c1, c0, 0	@ control register
+	stmia	r0, {r4 - r11}
+	ldmfd	sp!, {r4- r11, pc}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ENDPROC(cpu_v6_do_suspend)
 
 ENTRY(cpu_v6_do_resume)
@@ -151,6 +173,7 @@ ENTRY(cpu_v6_do_resume)
 	mcr	p15, 0, ip, c7, c5, 0	@ invalidate I cache
 	mcr	p15, 0, ip, c7, c15, 0	@ clean+invalidate cache
 	mcr	p15, 0, ip, c7, c10, 4	@ drain write buffer
+<<<<<<< HEAD
 	mcr	p15, 0, ip, c13, c0, 1	@ set reserved context ID
 	ldmia	r0, {r4 - r9}
 	mcr	p15, 0, r4, c13, c0, 0	@ FCSE/PID
@@ -169,6 +192,37 @@ ENDPROC(cpu_v6_do_resume)
 #endif
 
 	string	cpu_v6_name, "ARMv6-compatible processor"
+=======
+	ldmia	r0, {r4 - r11}
+	mcr	p15, 0, r4, c13, c0, 0	@ FCSE/PID
+	mcr	p15, 0, r5, c13, c0, 1	@ Context ID
+	mcr	p15, 0, r6, c3, c0, 0	@ Domain ID
+	mcr	p15, 0, r7, c2, c0, 0	@ Translation table base 0
+	mcr	p15, 0, r8, c2, c0, 1	@ Translation table base 1
+	mcr	p15, 0, r9, c1, c0, 1	@ auxiliary control register
+	mcr	p15, 0, r10, c1, c0, 2	@ co-processor access control
+	mcr	p15, 0, ip, c2, c0, 2	@ TTB control register
+	mcr	p15, 0, ip, c7, c5, 4	@ ISB
+	mov	r0, r11			@ control register
+	mov	r2, r7, lsr #14		@ get TTB0 base
+	mov	r2, r2, lsl #14
+	ldr	r3, cpu_resume_l1_flags
+	b	cpu_resume_mmu
+ENDPROC(cpu_v6_do_resume)
+cpu_resume_l1_flags:
+	ALT_SMP(.long PMD_TYPE_SECT | PMD_SECT_AP_WRITE | PMD_FLAGS_SMP)
+	ALT_UP(.long  PMD_TYPE_SECT | PMD_SECT_AP_WRITE | PMD_FLAGS_UP)
+#else
+#define cpu_v6_do_suspend 0
+#define cpu_v6_do_resume 0
+#endif
+
+
+	.type	cpu_v6_name, #object
+cpu_v6_name:
+	.asciz	"ARMv6-compatible processor"
+	.size	cpu_v6_name, . - cpu_v6_name
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.align
 
@@ -220,6 +274,7 @@ __v6_setup:
 	mrc	p15, 0, r0, c1, c0, 0		@ read control register
 	bic	r0, r0, r5			@ clear bits them
 	orr	r0, r0, r6			@ set them
+<<<<<<< HEAD
 #ifdef CONFIG_ARM_ERRATA_364296
 	/*
 	 * Workaround for the 364296 ARM1136 r0p2 erratum (possible cache data
@@ -236,6 +291,8 @@ __v6_setup:
 	mcreq	p15, 0, r5, c1, c0, 1		@ write aux control reg
 	orreq	r0, r0, #(1 << 21)		@ low interrupt latency configuration
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mov	pc, lr				@ return to head.S:__ret
 
 	/*
@@ -250,6 +307,7 @@ v6_crval:
 
 	__INITDATA
 
+<<<<<<< HEAD
 	@ define struct processor (see <asm/proc-fns.h> and proc-macros.S)
 	define_processor_functions v6, dabort=v6_early_abort, pabort=v6_pabort, suspend=1
 
@@ -257,6 +315,35 @@ v6_crval:
 
 	string	cpu_arch_name, "armv6"
 	string	cpu_elf_name, "v6"
+=======
+	.type	v6_processor_functions, #object
+ENTRY(v6_processor_functions)
+	.word	v6_early_abort
+	.word	v6_pabort
+	.word	cpu_v6_proc_init
+	.word	cpu_v6_proc_fin
+	.word	cpu_v6_reset
+	.word	cpu_v6_do_idle
+	.word	cpu_v6_dcache_clean_area
+	.word	cpu_v6_switch_mm
+	.word	cpu_v6_set_pte_ext
+	.word	cpu_v6_suspend_size
+	.word	cpu_v6_do_suspend
+	.word	cpu_v6_do_resume
+	.size	v6_processor_functions, . - v6_processor_functions
+
+	.section ".rodata"
+
+	.type	cpu_arch_name, #object
+cpu_arch_name:
+	.asciz	"armv6"
+	.size	cpu_arch_name, . - cpu_arch_name
+
+	.type	cpu_elf_name, #object
+cpu_elf_name:
+	.asciz	"v6"
+	.size	cpu_elf_name, . - cpu_elf_name
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.align
 
 	.section ".proc.info.init", #alloc, #execinstr

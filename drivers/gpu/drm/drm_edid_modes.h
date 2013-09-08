@@ -378,6 +378,7 @@ static const struct {
 	{ 1920, 1440, 75, 0 },
 };
 static const int num_est3_modes = sizeof(est3_modes) / sizeof(est3_modes[0]);
+<<<<<<< HEAD
 
 /*
  * Probably taken from CEA-861 spec.
@@ -662,3 +663,5 @@ static const struct drm_display_mode edid_cea_modes[] = {
 };
 static const int drm_num_cea_modes =
 	sizeof (edid_cea_modes) / sizeof (edid_cea_modes[0]);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -48,6 +48,7 @@
 #define EX_R14		(4 * 8)
 #define EX_R15		(5 * 8)
 
+<<<<<<< HEAD
 /*
  * The TLB miss exception uses different slots.
  *
@@ -64,10 +65,23 @@
 #define EX_TLB_CR	( 5 * 8)
 #define EX_TLB_R12	( 6 * 8)
 #define EX_TLB_R13	( 7 * 8)
+=======
+/* The TLB miss exception uses different slots */
+
+#define EX_TLB_R10	( 0 * 8)
+#define EX_TLB_R11	( 1 * 8)
+#define EX_TLB_R12	( 2 * 8)
+#define EX_TLB_R13	( 3 * 8)
+#define EX_TLB_R14	( 4 * 8)
+#define EX_TLB_R15	( 5 * 8)
+#define EX_TLB_R16	( 6 * 8)
+#define EX_TLB_CR	( 7 * 8)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define EX_TLB_DEAR	( 8 * 8) /* Level 0 and 2 only */
 #define EX_TLB_ESR	( 9 * 8) /* Level 0 and 2 only */
 #define EX_TLB_SRR0	(10 * 8)
 #define EX_TLB_SRR1	(11 * 8)
+<<<<<<< HEAD
 #ifdef CONFIG_BOOK3E_MMU_TLB_STATS
 #define EX_TLB_R8	(12 * 8)
 #define EX_TLB_R9	(13 * 8)
@@ -75,6 +89,18 @@
 #define EX_TLB_SIZE	(15 * 8)
 #else
 #define EX_TLB_SIZE	(12 * 8)
+=======
+#define EX_TLB_MMUCR0	(12 * 8) /* Level 0 */
+#define EX_TLB_MAS1	(12 * 8) /* Level 0 */
+#define EX_TLB_MAS2	(13 * 8) /* Level 0 */
+#ifdef CONFIG_BOOK3E_MMU_TLB_STATS
+#define EX_TLB_R8	(14 * 8)
+#define EX_TLB_R9	(15 * 8)
+#define EX_TLB_LR	(16 * 8)
+#define EX_TLB_SIZE	(17 * 8)
+#else
+#define EX_TLB_SIZE	(14 * 8)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #define	START_EXCEPTION(label)						\
@@ -171,6 +197,7 @@ exc_##label##_book3e:
 	ld	r9,EX_TLB_R9(r12);					    \
 	ld	r8,EX_TLB_R8(r12);					    \
 	mtlr	r16;
+<<<<<<< HEAD
 #define TLB_MISS_PROLOG_STATS_BOLTED						    \
 	mflr	r10;							    \
 	std	r8,PACA_EXTLB+EX_TLB_R8(r13);				    \
@@ -181,6 +208,8 @@ exc_##label##_book3e:
 	ld	r9,PACA_EXTLB+EX_TLB_R9(r13);				    \
 	ld	r8,PACA_EXTLB+EX_TLB_R8(r13);				    \
 	mtlr	r16;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define TLB_MISS_STATS_D(name)						    \
 	addi	r9,r13,MMSTAT_DSTATS+name;				    \
 	bl	.tlb_stat_inc;
@@ -196,6 +225,7 @@ exc_##label##_book3e:
 61:	addi	r9,r13,MMSTAT_ISTATS+name;				    \
 62:	bl	.tlb_stat_inc;
 #define TLB_MISS_STATS_SAVE_INFO					    \
+<<<<<<< HEAD
 	std	r14,EX_TLB_ESR(r12);	/* save ESR */
 #define TLB_MISS_STATS_SAVE_INFO_BOLTED					    \
 	std	r14,PACA_EXTLB+EX_TLB_ESR(r13);	/* save ESR */
@@ -204,12 +234,23 @@ exc_##label##_book3e:
 #define TLB_MISS_RESTORE_STATS
 #define TLB_MISS_PROLOG_STATS_BOLTED
 #define TLB_MISS_RESTORE_STATS_BOLTED
+=======
+	std	r14,EX_TLB_ESR(r12);	/* save ESR */			    \
+
+
+#else
+#define TLB_MISS_PROLOG_STATS
+#define TLB_MISS_RESTORE_STATS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define TLB_MISS_STATS_D(name)
 #define TLB_MISS_STATS_I(name)
 #define TLB_MISS_STATS_X(name)
 #define TLB_MISS_STATS_Y(name)
 #define TLB_MISS_STATS_SAVE_INFO
+<<<<<<< HEAD
 #define TLB_MISS_STATS_SAVE_INFO_BOLTED
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #define SET_IVOR(vector_number, vector_offset)	\

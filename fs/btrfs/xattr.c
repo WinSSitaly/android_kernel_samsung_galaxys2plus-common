@@ -102,6 +102,7 @@ static int do_setxattr(struct btrfs_trans_handle *trans,
 	if (!path)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	if (flags & XATTR_REPLACE) {
 		di = btrfs_lookup_xattr(trans, root, path, btrfs_ino(inode), name,
 					name_len, -1);
@@ -170,14 +171,56 @@ again:
 			goto again;
 		}
 	}
+=======
+	/* first lets see if we already have this xattr */
+	di = btrfs_lookup_xattr(trans, root, path, btrfs_ino(inode), name,
+				strlen(name), -1);
+	if (IS_ERR(di)) {
+		ret = PTR_ERR(di);
+		goto out;
+	}
+
+	/* ok we already have this xattr, lets remove it */
+	if (di) {
+		/* if we want create only exit */
+		if (flags & XATTR_CREATE) {
+			ret = -EEXIST;
+			goto out;
+		}
+
+		ret = btrfs_delete_one_dir_name(trans, root, path, di);
+		BUG_ON(ret);
+		btrfs_release_path(path);
+
+		/* if we don't have a value then we are removing the xattr */
+		if (!value)
+			goto out;
+	} else {
+		btrfs_release_path(path);
+
+		if (flags & XATTR_REPLACE) {
+			/* we couldn't find the attr to replace */
+			ret = -ENODATA;
+			goto out;
+		}
+	}
+
+	/* ok we have to create a completely new xattr */
+	ret = btrfs_insert_xattr_item(trans, root, path, btrfs_ino(inode),
+				      name, name_len, value, size);
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	btrfs_free_path(path);
 	return ret;
 }
 
+<<<<<<< HEAD
 /*
  * @value: "" makes the attribute to empty, NULL removes it
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int __btrfs_setxattr(struct btrfs_trans_handle *trans,
 		     struct inode *inode, const char *name,
 		     const void *value, size_t size, int flags)
@@ -200,7 +243,11 @@ int __btrfs_setxattr(struct btrfs_trans_handle *trans,
 	ret = btrfs_update_inode(trans, root, inode);
 	BUG_ON(ret);
 out:
+<<<<<<< HEAD
 	btrfs_end_transaction(trans, root);
+=======
+	btrfs_end_transaction_throttle(trans, root);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -394,6 +441,7 @@ int btrfs_removexattr(struct dentry *dentry, const char *name)
 				XATTR_REPLACE);
 }
 
+<<<<<<< HEAD
 int btrfs_initxattrs(struct inode *inode, const struct xattr *xattr_array,
 		     void *fs_info)
 {
@@ -426,4 +474,38 @@ int btrfs_xattr_security_init(struct btrfs_trans_handle *trans,
 {
 	return security_inode_init_security(inode, dir, qstr,
 					    &btrfs_initxattrs, trans);
+=======
+int btrfs_xattr_security_init(struct btrfs_trans_handle *trans,
+			      struct inode *inode, struct inode *dir,
+			      const struct qstr *qstr)
+{
+	int err;
+	size_t len;
+	void *value;
+	char *suffix;
+	char *name;
+
+	err = security_inode_init_security(inode, dir, qstr, &suffix, &value,
+					   &len);
+	if (err) {
+		if (err == -EOPNOTSUPP)
+			return 0;
+		return err;
+	}
+
+	name = kmalloc(XATTR_SECURITY_PREFIX_LEN + strlen(suffix) + 1,
+		       GFP_NOFS);
+	if (!name) {
+		err = -ENOMEM;
+	} else {
+		strcpy(name, XATTR_SECURITY_PREFIX);
+		strcpy(name + XATTR_SECURITY_PREFIX_LEN, suffix);
+		err = __btrfs_setxattr(trans, inode, name, value, len, 0);
+		kfree(name);
+	}
+
+	kfree(suffix);
+	kfree(value);
+	return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

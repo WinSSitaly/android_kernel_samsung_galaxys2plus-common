@@ -134,6 +134,7 @@ unsigned int kmem_cache_size(struct kmem_cache *);
 #define KMALLOC_MAX_ORDER	(KMALLOC_SHIFT_HIGH - PAGE_SHIFT)
 
 /*
+<<<<<<< HEAD
  * Some archs want to perform DMA into kmalloc caches and need a guaranteed
  * alignment larger than the alignment of a 64-bit integer.
  * Setting ARCH_KMALLOC_MINALIGN in arch headers allows that.
@@ -154,6 +155,8 @@ unsigned int kmem_cache_size(struct kmem_cache *);
 #endif
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Common kmalloc functions provided by all allocators
  */
 void * __must_check __krealloc(const void *, size_t, gfp_t);
@@ -190,7 +193,11 @@ size_t ksize(const void *);
 #endif
 
 /**
+<<<<<<< HEAD
  * kmalloc_array - allocate memory for an array.
+=======
+ * kcalloc - allocate memory for an array. The memory is set to zero.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @n: number of elements.
  * @size: element size.
  * @flags: the type of memory to allocate.
@@ -240,6 +247,7 @@ size_t ksize(const void *);
  * for general use, and so are not documented here. For a full list of
  * potential flags, always refer to linux/gfp.h.
  */
+<<<<<<< HEAD
 static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
 {
 	if (size != 0 && n > ULONG_MAX / size)
@@ -256,6 +264,13 @@ static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
 static inline void *kcalloc(size_t n, size_t size, gfp_t flags)
 {
 	return kmalloc_array(n, size, flags | __GFP_ZERO);
+=======
+static inline void *kcalloc(size_t n, size_t size, gfp_t flags)
+{
+	if (size != 0 && n > ULONG_MAX / size)
+		return NULL;
+	return __kmalloc(n * size, flags | __GFP_ZERO);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #if !defined(CONFIG_NUMA) && !defined(CONFIG_SLOB)

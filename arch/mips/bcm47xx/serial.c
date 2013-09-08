@@ -23,11 +23,18 @@ static struct platform_device uart8250_device = {
 	},
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_BCM47XX_SSB
 static int __init uart8250_init_ssb(void)
 {
 	int i;
 	struct ssb_mipscore *mcore = &(bcm47xx_bus.ssb.mipscore);
+=======
+static int __init uart8250_init(void)
+{
+	int i;
+	struct ssb_mipscore *mcore = &(ssb_bcm47xx.mipscore);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memset(&uart8250_data, 0,  sizeof(uart8250_data));
 
@@ -45,6 +52,7 @@ static int __init uart8250_init_ssb(void)
 	}
 	return platform_device_register(&uart8250_device);
 }
+<<<<<<< HEAD
 #endif
 
 #ifdef CONFIG_BCM47XX_BCMA
@@ -86,6 +94,8 @@ static int __init uart8250_init(void)
 	}
 	return -EINVAL;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_init(uart8250_init);
 

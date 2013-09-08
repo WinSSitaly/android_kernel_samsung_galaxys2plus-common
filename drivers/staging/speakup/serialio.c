@@ -8,6 +8,7 @@
 
 static void start_serial_interrupt(int irq);
 
+<<<<<<< HEAD
 static const struct old_serial_port rs_table[] = {
 	SERIAL_PORT_DFNS
 };
@@ -15,13 +16,29 @@ static const struct old_serial_port *serstate;
 static int timeouts;
 
 const struct old_serial_port *spk_serial_init(int index)
+=======
+static struct serial_state rs_table[] = {
+	SERIAL_PORT_DFNS
+};
+static struct serial_state *serstate;
+static int timeouts;
+
+struct serial_state *spk_serial_init(int index)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int baud = 9600, quot = 0;
 	unsigned int cval = 0;
 	int cflag = CREAD | HUPCL | CLOCAL | B9600 | CS8;
+<<<<<<< HEAD
 	const struct old_serial_port *ser = rs_table + index;
 	int err;
 
+=======
+	struct serial_state *ser = NULL;
+	int err;
+
+	ser = rs_table + index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*	Divisor, bytesize and parity */
 	quot = ser->baud_base / baud;
 	cval = cflag & (CSIZE | CSTOPB);
@@ -40,7 +57,11 @@ const struct old_serial_port *spk_serial_init(int index)
 		__release_region(&ioport_resource, ser->port, 8);
 		err = synth_request_region(ser->port, 8);
 		if (err) {
+<<<<<<< HEAD
 			pr_warn("Unable to allocate port at %x, errno %i",
+=======
+			pr_warn("Unable to allocate port at %lx, errno %i",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ser->port, err);
 			return NULL;
 		}

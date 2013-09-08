@@ -55,7 +55,11 @@ enum smbios_attr_enum {
 	SMBIOS_ATTR_INSTANCE_SHOW,
 };
 
+<<<<<<< HEAD
 static size_t
+=======
+static mode_t
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 find_smbios_instance_string(struct pci_dev *pdev, char *buf,
 			    enum smbios_attr_enum attribute)
 {
@@ -89,7 +93,11 @@ find_smbios_instance_string(struct pci_dev *pdev, char *buf,
 	return 0;
 }
 
+<<<<<<< HEAD
 static umode_t
+=======
+static mode_t
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 smbios_instance_string_exist(struct kobject *kobj, struct attribute *attr,
 			     int n)
 {
@@ -275,7 +283,11 @@ device_has_dsm(struct device *dev)
 	return FALSE;
 }
 
+<<<<<<< HEAD
 static umode_t
+=======
+static mode_t
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 acpi_index_string_exist(struct kobject *kobj, struct attribute *attr, int n)
 {
 	struct device *dev;

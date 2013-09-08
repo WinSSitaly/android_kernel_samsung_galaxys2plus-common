@@ -327,7 +327,11 @@ static int stb6100_set_frequency(struct dvb_frontend *fe, u32 frequency)
 	int rc;
 	const struct stb6100_lkup *ptr;
 	struct stb6100_state *state = fe->tuner_priv;
+<<<<<<< HEAD
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+	struct dvb_frontend_parameters p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	u32 srate = 0, fvco, nint, nfrac;
 	u8 regs[STB6100_NUMREGS];
@@ -337,9 +341,15 @@ static int stb6100_set_frequency(struct dvb_frontend *fe, u32 frequency)
 
 	if (fe->ops.get_frontend) {
 		dprintk(verbose, FE_DEBUG, 1, "Get frontend parameters");
+<<<<<<< HEAD
 		fe->ops.get_frontend(fe);
 	}
 	srate = p->symbol_rate;
+=======
+		fe->ops.get_frontend(fe, &p);
+	}
+	srate = p.u.qpsk.symbol_rate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Set up tuner cleanly, LPF calibration on */
 	rc = stb6100_write_reg(state, STB6100_FCCK, 0x4d | STB6100_FCCK_FCCK);

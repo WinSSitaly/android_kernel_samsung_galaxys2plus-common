@@ -35,7 +35,10 @@
 #include <linux/delay.h>
 #include <linux/kfifo.h>
 #include <linux/scatterlist.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/tcp.h>
 #include <scsi/scsi_cmnd.h>
 #include <scsi/scsi_device.h>
@@ -684,8 +687,15 @@ static int iscsi_sw_tcp_conn_set_param(struct iscsi_cls_conn *cls_conn,
 				       int buflen)
 {
 	struct iscsi_conn *conn = cls_conn->dd_data;
+<<<<<<< HEAD
 	struct iscsi_tcp_conn *tcp_conn = conn->dd_data;
 	struct iscsi_sw_tcp_conn *tcp_sw_conn = tcp_conn->dd_data;
+=======
+	struct iscsi_session *session = conn->session;
+	struct iscsi_tcp_conn *tcp_conn = conn->dd_data;
+	struct iscsi_sw_tcp_conn *tcp_sw_conn = tcp_conn->dd_data;
+	int value;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch(param) {
 	case ISCSI_PARAM_HDRDGST_EN:
@@ -697,7 +707,20 @@ static int iscsi_sw_tcp_conn_set_param(struct iscsi_cls_conn *cls_conn,
 			sock_no_sendpage : tcp_sw_conn->sock->ops->sendpage;
 		break;
 	case ISCSI_PARAM_MAX_R2T:
+<<<<<<< HEAD
 		return iscsi_tcp_set_max_r2t(conn, buf);
+=======
+		sscanf(buf, "%d", &value);
+		if (value <= 0 || !is_power_of_2(value))
+			return -EINVAL;
+		if (session->max_r2t == value)
+			break;
+		iscsi_tcp_r2tpool_free(session);
+		iscsi_set_param(cls_conn, param, buf, buflen);
+		if (iscsi_tcp_r2tpool_alloc(session))
+			return -ENOMEM;
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return iscsi_set_param(cls_conn, param, buf, buflen);
 	}
@@ -862,6 +885,7 @@ static void iscsi_sw_tcp_session_destroy(struct iscsi_cls_session *cls_session)
 	iscsi_host_free(shost);
 }
 
+<<<<<<< HEAD
 static umode_t iscsi_sw_tcp_attr_is_visible(int param_type, int param)
 {
 	switch (param_type) {
@@ -917,6 +941,8 @@ static umode_t iscsi_sw_tcp_attr_is_visible(int param_type, int param)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int iscsi_sw_tcp_slave_alloc(struct scsi_device *sdev)
 {
 	set_bit(QUEUE_FLAG_BIDI, &sdev->request_queue->queue_flags);
@@ -955,6 +981,36 @@ static struct iscsi_transport iscsi_sw_tcp_transport = {
 	.name			= "tcp",
 	.caps			= CAP_RECOVERY_L0 | CAP_MULTI_R2T | CAP_HDRDGST
 				  | CAP_DATADGST,
+<<<<<<< HEAD
+=======
+	.param_mask		= ISCSI_MAX_RECV_DLENGTH |
+				  ISCSI_MAX_XMIT_DLENGTH |
+				  ISCSI_HDRDGST_EN |
+				  ISCSI_DATADGST_EN |
+				  ISCSI_INITIAL_R2T_EN |
+				  ISCSI_MAX_R2T |
+				  ISCSI_IMM_DATA_EN |
+				  ISCSI_FIRST_BURST |
+				  ISCSI_MAX_BURST |
+				  ISCSI_PDU_INORDER_EN |
+				  ISCSI_DATASEQ_INORDER_EN |
+				  ISCSI_ERL |
+				  ISCSI_CONN_PORT |
+				  ISCSI_CONN_ADDRESS |
+				  ISCSI_EXP_STATSN |
+				  ISCSI_PERSISTENT_PORT |
+				  ISCSI_PERSISTENT_ADDRESS |
+				  ISCSI_TARGET_NAME | ISCSI_TPGT |
+				  ISCSI_USERNAME | ISCSI_PASSWORD |
+				  ISCSI_USERNAME_IN | ISCSI_PASSWORD_IN |
+				  ISCSI_FAST_ABORT | ISCSI_ABORT_TMO |
+				  ISCSI_LU_RESET_TMO | ISCSI_TGT_RESET_TMO |
+				  ISCSI_PING_TMO | ISCSI_RECV_TMO |
+				  ISCSI_IFACE_NAME | ISCSI_INITIATOR_NAME,
+	.host_param_mask	= ISCSI_HOST_HWADDRESS | ISCSI_HOST_IPADDRESS |
+				  ISCSI_HOST_INITIATOR_NAME |
+				  ISCSI_HOST_NETDEV_NAME,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* session management */
 	.create_session		= iscsi_sw_tcp_session_create,
 	.destroy_session	= iscsi_sw_tcp_session_destroy,
@@ -962,7 +1018,10 @@ static struct iscsi_transport iscsi_sw_tcp_transport = {
 	.create_conn		= iscsi_sw_tcp_conn_create,
 	.bind_conn		= iscsi_sw_tcp_conn_bind,
 	.destroy_conn		= iscsi_sw_tcp_conn_destroy,
+<<<<<<< HEAD
 	.attr_is_visible	= iscsi_sw_tcp_attr_is_visible,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.set_param		= iscsi_sw_tcp_conn_set_param,
 	.get_conn_param		= iscsi_sw_tcp_conn_get_param,
 	.get_session_param	= iscsi_session_get_param,

@@ -28,6 +28,10 @@
 #include <linux/blkdev.h>
 #include <linux/bitops.h>
 #include <trace/events/jbd2.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Default IO end handler for temporary BJ_IO buffer_heads.
@@ -285,10 +289,17 @@ static __u32 jbd2_checksum_data(__u32 crc32_sum, struct buffer_head *bh)
 	char *addr;
 	__u32 checksum;
 
+<<<<<<< HEAD
 	addr = kmap_atomic(page);
 	checksum = crc32_be(crc32_sum,
 		(void *)(addr + offset_in_page(bh->b_data)), bh->b_size);
 	kunmap_atomic(addr);
+=======
+	addr = kmap_atomic(page, KM_USER0);
+	checksum = crc32_be(crc32_sum,
+		(void *)(addr + offset_in_page(bh->b_data)), bh->b_size);
+	kunmap_atomic(addr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return checksum;
 }
@@ -325,15 +336,22 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 	int space_left = 0;
 	int first_tag = 0;
 	int tag_flag;
+<<<<<<< HEAD
 	int i;
+=======
+	int i, to_free = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int tag_bytes = journal_tag_bytes(journal);
 	struct buffer_head *cbh = NULL; /* For transactional checksums */
 	__u32 crc32_sum = ~0;
 	struct blk_plug plug;
+<<<<<<< HEAD
 	/* Tail of the journal */
 	unsigned long first_block;
 	tid_t first_tid;
 	int update_tail;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * First job: lock down the current transaction and wait for
@@ -343,6 +361,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 	/* Do we need to erase the effects of a prior jbd2_journal_flush? */
 	if (journal->j_flags & JBD2_FLUSHED) {
 		jbd_debug(3, "super block updated\n");
+<<<<<<< HEAD
 		mutex_lock(&journal->j_checkpoint_mutex);
 		/*
 		 * We hold j_checkpoint_mutex so tail cannot change under us.
@@ -355,6 +374,9 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 						journal->j_tail,
 						WRITE_SYNC);
 		mutex_unlock(&journal->j_checkpoint_mutex);
+=======
+		jbd2_journal_update_superblock(journal, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		jbd_debug(3, "superblock not updated\n");
 	}
@@ -366,7 +388,11 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 	J_ASSERT(commit_transaction->t_state == T_RUNNING);
 
 	trace_jbd2_start_commit(journal, commit_transaction);
+<<<<<<< HEAD
 	jbd_debug(1, "JBD2: starting commit of transaction %d\n",
+=======
+	jbd_debug(1, "JBD: starting commit of transaction %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			commit_transaction->t_tid);
 
 	write_lock(&journal->j_state_lock);
@@ -441,6 +467,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 	__jbd2_journal_clean_checkpoint_list(journal);
 	spin_unlock(&journal->j_list_lock);
 
+<<<<<<< HEAD
 	jbd_debug(3, "JBD2: commit phase 1\n");
 
 	/*
@@ -448,6 +475,9 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 	 * in the next transaction which is going to be started.
 	 */
 	jbd2_clear_buffer_revoked_flags(journal);
+=======
+	jbd_debug (3, "JBD: commit phase 1\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Switch to a new revoke table.
@@ -467,7 +497,11 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 	wake_up(&journal->j_wait_transaction_locked);
 	write_unlock(&journal->j_state_lock);
 
+<<<<<<< HEAD
 	jbd_debug(3, "JBD2: commit phase 2\n");
+=======
+	jbd_debug (3, "JBD: commit phase 2\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Now start flushing things to disk, in the order they appear
@@ -482,7 +516,11 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 					  WRITE_SYNC);
 	blk_finish_plug(&plug);
 
+<<<<<<< HEAD
 	jbd_debug(3, "JBD2: commit phase 2\n");
+=======
+	jbd_debug(3, "JBD: commit phase 2\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Way to go: we have now written out all of the data for a
@@ -542,7 +580,11 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 
 			J_ASSERT (bufs == 0);
 
+<<<<<<< HEAD
 			jbd_debug(4, "JBD2: get descriptor\n");
+=======
+			jbd_debug(4, "JBD: get descriptor\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			descriptor = jbd2_journal_get_descriptor_buffer(journal);
 			if (!descriptor) {
@@ -551,7 +593,11 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 			}
 
 			bh = jh2bh(descriptor);
+<<<<<<< HEAD
 			jbd_debug(4, "JBD2: got buffer %llu (%p)\n",
+=======
+			jbd_debug(4, "JBD: got buffer %llu (%p)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				(unsigned long long)bh->b_blocknr, bh->b_data);
 			header = (journal_header_t *)&bh->b_data[0];
 			header->h_magic     = cpu_to_be32(JBD2_MAGIC_NUMBER);
@@ -645,7 +691,11 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 		    commit_transaction->t_buffers == NULL ||
 		    space_left < tag_bytes + 16) {
 
+<<<<<<< HEAD
 			jbd_debug(4, "JBD2: Submit %d IOs\n", bufs);
+=======
+			jbd_debug(4, "JBD: Submit %d IOs\n", bufs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* Write an end-of-descriptor marker before
                            submitting the IOs.  "tag" still points to
@@ -691,6 +741,7 @@ start_journal_io:
 		err = 0;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * Get current oldest transaction in the log before we issue flush
 	 * to the filesystem device. After the flush we can be sure that
@@ -715,6 +766,12 @@ start_journal_io:
 	commit_transaction->t_state = T_COMMIT_DFLUSH;
 	write_unlock(&journal->j_state_lock);
 
+=======
+	write_lock(&journal->j_state_lock);
+	J_ASSERT(commit_transaction->t_state == T_COMMIT);
+	commit_transaction->t_state = T_COMMIT_DFLUSH;
+	write_unlock(&journal->j_state_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* 
 	 * If the journal is not located on the file system device,
 	 * then we must flush the file system device before we issue
@@ -747,7 +804,11 @@ start_journal_io:
 	   so we incur less scheduling load.
 	*/
 
+<<<<<<< HEAD
 	jbd_debug(3, "JBD2: commit phase 3\n");
+=======
+	jbd_debug(3, "JBD: commit phase 3\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * akpm: these are BJ_IO, and j_list_lock is not needed.
@@ -811,7 +872,11 @@ wait_for_iobuf:
 
 	J_ASSERT (commit_transaction->t_shadow_list == NULL);
 
+<<<<<<< HEAD
 	jbd_debug(3, "JBD2: commit phase 4\n");
+=======
+	jbd_debug(3, "JBD: commit phase 4\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Here we wait for the revoke record and descriptor record buffers */
  wait_for_ctlbuf:
@@ -841,7 +906,11 @@ wait_for_iobuf:
 	if (err)
 		jbd2_journal_abort(journal, err);
 
+<<<<<<< HEAD
 	jbd_debug(3, "JBD2: commit phase 5\n");
+=======
+	jbd_debug(3, "JBD: commit phase 5\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	write_lock(&journal->j_state_lock);
 	J_ASSERT(commit_transaction->t_state == T_COMMIT_DFLUSH);
 	commit_transaction->t_state = T_COMMIT_JFLUSH;
@@ -865,6 +934,7 @@ wait_for_iobuf:
 	if (err)
 		jbd2_journal_abort(journal, err);
 
+<<<<<<< HEAD
 	/*
 	 * Now disk caches for filesystem device are flushed so we are safe to
 	 * erase checkpointed transactions from the log by updating journal
@@ -873,12 +943,18 @@ wait_for_iobuf:
 	if (update_tail)
 		jbd2_update_log_tail(journal, first_tid, first_block);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* End of a transaction!  Finally, we can do checkpoint
            processing: any buffers committed as a result of this
            transaction can be removed from any checkpoint list it was on
            before. */
 
+<<<<<<< HEAD
 	jbd_debug(3, "JBD2: commit phase 6\n");
+=======
+	jbd_debug(3, "JBD: commit phase 6\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	J_ASSERT(list_empty(&commit_transaction->t_inode_list));
 	J_ASSERT(commit_transaction->t_buffers == NULL);
@@ -1012,7 +1088,11 @@ restart_loop:
 
 	/* Done with this transaction! */
 
+<<<<<<< HEAD
 	jbd_debug(3, "JBD2: commit phase 7\n");
+=======
+	jbd_debug(3, "JBD: commit phase 7\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	J_ASSERT(commit_transaction->t_state == T_COMMIT_JFLUSH);
 
@@ -1044,7 +1124,11 @@ restart_loop:
 	journal->j_stats.run.rs_blocks_logged += stats.run.rs_blocks_logged;
 	spin_unlock(&journal->j_history_lock);
 
+<<<<<<< HEAD
 	commit_transaction->t_state = T_COMMIT_CALLBACK;
+=======
+	commit_transaction->t_state = T_FINISHED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	J_ASSERT(commit_transaction == journal->j_committing_transaction);
 	journal->j_commit_sequence = commit_transaction->t_tid;
 	journal->j_committing_transaction = NULL;
@@ -1059,6 +1143,7 @@ restart_loop:
 				journal->j_average_commit_time*3) / 4;
 	else
 		journal->j_average_commit_time = commit_time;
+<<<<<<< HEAD
 
 	write_unlock(&journal->j_state_lock);
 
@@ -1080,10 +1165,37 @@ restart_loop:
 	/* Drop all spin_locks because commit_callback may be block.
 	 * __journal_remove_checkpoint() can not destroy transaction
 	 * under us because it is not marked as T_FINISHED yet */
+=======
+	write_unlock(&journal->j_state_lock);
+
+	if (commit_transaction->t_checkpoint_list == NULL &&
+	    commit_transaction->t_checkpoint_io_list == NULL) {
+		__jbd2_journal_drop_transaction(journal, commit_transaction);
+		to_free = 1;
+	} else {
+		if (journal->j_checkpoint_transactions == NULL) {
+			journal->j_checkpoint_transactions = commit_transaction;
+			commit_transaction->t_cpnext = commit_transaction;
+			commit_transaction->t_cpprev = commit_transaction;
+		} else {
+			commit_transaction->t_cpnext =
+				journal->j_checkpoint_transactions;
+			commit_transaction->t_cpprev =
+				commit_transaction->t_cpnext->t_cpprev;
+			commit_transaction->t_cpnext->t_cpprev =
+				commit_transaction;
+			commit_transaction->t_cpprev->t_cpnext =
+				commit_transaction;
+		}
+	}
+	spin_unlock(&journal->j_list_lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (journal->j_commit_callback)
 		journal->j_commit_callback(journal, commit_transaction);
 
 	trace_jbd2_end_commit(journal, commit_transaction);
+<<<<<<< HEAD
 	jbd_debug(1, "JBD2: commit %d complete, head %d\n",
 		  journal->j_commit_sequence, journal->j_tail_sequence);
 
@@ -1098,5 +1210,12 @@ restart_loop:
 	}
 	spin_unlock(&journal->j_list_lock);
 	write_unlock(&journal->j_state_lock);
+=======
+	jbd_debug(1, "JBD: commit %d complete, head %d\n",
+		  journal->j_commit_sequence, journal->j_tail_sequence);
+	if (to_free)
+		kfree(commit_transaction);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wake_up(&journal->j_wait_done_commit);
 }

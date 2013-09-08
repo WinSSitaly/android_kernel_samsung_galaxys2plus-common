@@ -53,8 +53,13 @@
 
 static int v9fs_dentry_delete(const struct dentry *dentry)
 {
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, " dentry: %s (%p)\n",
 		 dentry->d_name.name, dentry);
+=======
+	P9_DPRINTK(P9_DEBUG_VFS, " dentry: %s (%p)\n", dentry->d_name.name,
+									dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 1;
 }
@@ -66,8 +71,13 @@ static int v9fs_dentry_delete(const struct dentry *dentry)
  */
 static int v9fs_cached_dentry_delete(const struct dentry *dentry)
 {
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, " dentry: %s (%p)\n",
 		 dentry->d_name.name, dentry);
+=======
+	P9_DPRINTK(P9_DEBUG_VFS, " dentry: %s (%p)\n",
+		   dentry->d_name.name, dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Don't cache negative dentries */
 	if (!dentry->d_inode)
@@ -86,8 +96,13 @@ static void v9fs_dentry_release(struct dentry *dentry)
 	struct v9fs_dentry *dent;
 	struct p9_fid *temp, *current_fid;
 
+<<<<<<< HEAD
 	p9_debug(P9_DEBUG_VFS, " dentry: %s (%p)\n",
 		 dentry->d_name.name, dentry);
+=======
+	P9_DPRINTK(P9_DEBUG_VFS, " dentry: %s (%p)\n", dentry->d_name.name,
+									dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dent = dentry->d_fsdata;
 	if (dent) {
 		list_for_each_entry_safe(current_fid, temp, &dent->fidlist,

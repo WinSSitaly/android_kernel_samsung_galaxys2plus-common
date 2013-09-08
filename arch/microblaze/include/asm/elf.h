@@ -16,15 +16,24 @@
  * I've snaffled the value from the microblaze binutils source code
  * /binutils/microblaze/include/elf/microblaze.h
  */
+<<<<<<< HEAD
 #define EM_MICROBLAZE		189
 #define EM_MICROBLAZE_OLD	0xbaab
 #define ELF_ARCH		EM_MICROBLAZE
+=======
+#define EM_XILINX_MICROBLAZE	0xbaab
+#define ELF_ARCH		EM_XILINX_MICROBLAZE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * This is used to ensure we don't load something for the wrong architecture.
  */
+<<<<<<< HEAD
 #define elf_check_arch(x)	((x)->e_machine == EM_MICROBLAZE \
 				 || (x)->e_machine == EM_MICROBLAZE_OLD)
+=======
+#define elf_check_arch(x)	((x)->e_machine == EM_XILINX_MICROBLAZE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * These are used to set parameters in the core dumps.

@@ -4,7 +4,11 @@
 /*
  * OMAP2/3 PRCM base and module definitions
  *
+<<<<<<< HEAD
  * Copyright (C) 2007-2009, 2011 Texas Instruments, Inc.
+=======
+ * Copyright (C) 2007-2009 Texas Instruments, Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (C) 2007-2009 Nokia Corporation
  *
  * Written by Paul Walmsley
@@ -201,8 +205,11 @@
 #define OMAP3430_EN_MMC2_SHIFT				25
 #define OMAP3430_EN_MMC1_MASK				(1 << 24)
 #define OMAP3430_EN_MMC1_SHIFT				24
+<<<<<<< HEAD
 #define OMAP3430_EN_UART4_MASK				(1 << 23)
 #define OMAP3430_EN_UART4_SHIFT				23
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define OMAP3430_EN_MCSPI4_MASK				(1 << 21)
 #define OMAP3430_EN_MCSPI4_SHIFT			21
 #define OMAP3430_EN_MCSPI3_MASK				(1 << 20)
@@ -410,6 +417,7 @@
 extern void __iomem *prm_base;
 extern void __iomem *cm_base;
 extern void __iomem *cm2_base;
+<<<<<<< HEAD
 
 /**
  * struct omap_prcm_irq - describes a PRCM interrupt bit
@@ -483,6 +491,8 @@ extern int omap_prcm_event_to_irq(const char *event);
 extern void omap_prcm_irq_prepare(void);
 extern void omap_prcm_irq_complete(void);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # endif
 
 #endif

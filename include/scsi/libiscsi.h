@@ -115,7 +115,11 @@ struct iscsi_task {
 	/* copied values in case we need to send tmfs */
 	itt_t			hdr_itt;
 	__be32			cmdsn;
+<<<<<<< HEAD
 	struct scsi_lun		lun;
+=======
+	uint8_t			lun[8];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int			itt;		/* this ITT */
 
@@ -268,7 +272,11 @@ struct iscsi_session {
 	int			lu_reset_timeout;
 	int			tgt_reset_timeout;
 	int			initial_r2t_en;
+<<<<<<< HEAD
 	unsigned short		max_r2t;
+=======
+	unsigned		max_r2t;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			imm_data_en;
 	unsigned		first_burst;
 	unsigned		max_burst;
@@ -284,7 +292,10 @@ struct iscsi_session {
 	char			*password;
 	char			*password_in;
 	char			*targetname;
+<<<<<<< HEAD
 	char			*targetalias;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char			*ifacename;
 	char			*initiatorname;
 	/* control data */

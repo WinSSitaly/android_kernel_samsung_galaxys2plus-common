@@ -42,6 +42,10 @@ struct ndfc_controller {
 	struct nand_chip chip;
 	int chip_select;
 	struct nand_hw_control ndfc_control;
+<<<<<<< HEAD
+=======
+	struct mtd_partition *parts;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct ndfc_controller ndfc_ctrl[NDFC_MAX_CS];
@@ -158,9 +162,19 @@ static int ndfc_verify_buf(struct mtd_info *mtd, const uint8_t *buf, int len)
 static int ndfc_chip_init(struct ndfc_controller *ndfc,
 			  struct device_node *node)
 {
+<<<<<<< HEAD
 	struct device_node *flash_np;
 	struct nand_chip *chip = &ndfc->chip;
 	struct mtd_part_parser_data ppdata;
+=======
+#ifdef CONFIG_MTD_CMDLINE_PARTS
+	static const char *part_types[] = { "cmdlinepart", NULL };
+#else
+	static const char *part_types[] = { NULL };
+#endif
+	struct device_node *flash_np;
+	struct nand_chip *chip = &ndfc->chip;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	chip->IO_ADDR_R = ndfc->ndfcbase + NDFC_DATA;
@@ -179,7 +193,10 @@ static int ndfc_chip_init(struct ndfc_controller *ndfc,
 	chip->ecc.mode = NAND_ECC_HW;
 	chip->ecc.size = 256;
 	chip->ecc.bytes = 3;
+<<<<<<< HEAD
 	chip->ecc.strength = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	chip->priv = ndfc;
 
 	ndfc->mtd.priv = chip;
@@ -189,7 +206,10 @@ static int ndfc_chip_init(struct ndfc_controller *ndfc,
 	if (!flash_np)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	ppdata.of_node = flash_np;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ndfc->mtd.name = kasprintf(GFP_KERNEL, "%s.%s",
 			dev_name(&ndfc->ofdev->dev), flash_np->name);
 	if (!ndfc->mtd.name) {
@@ -201,7 +221,22 @@ static int ndfc_chip_init(struct ndfc_controller *ndfc,
 	if (ret)
 		goto err;
 
+<<<<<<< HEAD
 	ret = mtd_device_parse_register(&ndfc->mtd, NULL, &ppdata, NULL, 0);
+=======
+	ret = parse_mtd_partitions(&ndfc->mtd, part_types, &ndfc->parts, 0);
+	if (ret < 0)
+		goto err;
+
+	if (ret == 0) {
+		ret = of_mtd_parse_partitions(&ndfc->ofdev->dev, flash_np,
+					      &ndfc->parts);
+		if (ret < 0)
+			goto err;
+	}
+
+	ret = mtd_device_register(&ndfc->mtd, ndfc->parts, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 err:
 	of_node_put(flash_np);
@@ -274,7 +309,10 @@ static int __devexit ndfc_remove(struct platform_device *ofdev)
 	struct ndfc_controller *ndfc = dev_get_drvdata(&ofdev->dev);
 
 	nand_release(&ndfc->mtd);
+<<<<<<< HEAD
 	kfree(ndfc->mtd.name);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -295,7 +333,22 @@ static struct platform_driver ndfc_driver = {
 	.remove = __devexit_p(ndfc_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(ndfc_driver);
+=======
+static int __init ndfc_nand_init(void)
+{
+	return platform_driver_register(&ndfc_driver);
+}
+
+static void __exit ndfc_nand_exit(void)
+{
+	platform_driver_unregister(&ndfc_driver);
+}
+
+module_init(ndfc_nand_init);
+module_exit(ndfc_nand_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Thomas Gleixner <tglx@linutronix.de>");

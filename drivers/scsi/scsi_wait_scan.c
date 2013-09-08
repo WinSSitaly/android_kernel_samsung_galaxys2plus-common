@@ -12,7 +12,11 @@
 
 #include <linux/module.h>
 #include <linux/device.h>
+<<<<<<< HEAD
 #include "scsi_priv.h"
+=======
+#include <scsi/scsi_scan.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __init wait_scan_init(void)
 {

@@ -42,6 +42,10 @@
 #include <linux/cdev.h>
 #include <linux/dma-mapping.h>
 #include <linux/io.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "comedidev.h"
 #include "internal.h"
@@ -501,11 +505,15 @@ int comedi_buf_alloc(struct comedi_device *dev, struct comedi_subdevice *s,
 		}
 		if (i == n_pages) {
 			async->prealloc_buf =
+<<<<<<< HEAD
 #ifdef PAGE_KERNEL_NOCACHE
 			    vmap(pages, n_pages, VM_MAP, PAGE_KERNEL_NOCACHE);
 #else
 			    vmap(pages, n_pages, VM_MAP, PAGE_KERNEL);
 #endif
+=======
+			    vmap(pages, n_pages, VM_MAP, PAGE_KERNEL_NOCACHE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		vfree(pages);
 
@@ -822,14 +830,34 @@ static int comedi_auto_config(struct device *hardware_device,
 	int minor;
 	struct comedi_device_file_info *dev_file_info;
 	int retval;
+<<<<<<< HEAD
 
 	if (!comedi_autoconfig)
 		return 0;
+=======
+	unsigned *private_data = NULL;
+
+	if (!comedi_autoconfig) {
+		dev_set_drvdata(hardware_device, NULL);
+		return 0;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	minor = comedi_alloc_board_minor(hardware_device);
 	if (minor < 0)
 		return minor;
 
+<<<<<<< HEAD
+=======
+	private_data = kmalloc(sizeof(unsigned), GFP_KERNEL);
+	if (private_data == NULL) {
+		retval = -ENOMEM;
+		goto cleanup;
+	}
+	*private_data = minor;
+	dev_set_drvdata(hardware_device, private_data);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_file_info = comedi_get_device_file_info(minor);
 
 	memset(&it, 0, sizeof(it));
@@ -842,13 +870,22 @@ static int comedi_auto_config(struct device *hardware_device,
 	retval = comedi_device_attach(dev_file_info->device, &it);
 	mutex_unlock(&dev_file_info->device->mutex);
 
+<<<<<<< HEAD
 	if (retval < 0)
 		comedi_free_board_minor(minor);
+=======
+cleanup:
+	if (retval < 0) {
+		kfree(private_data);
+		comedi_free_board_minor(minor);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return retval;
 }
 
 static void comedi_auto_unconfig(struct device *hardware_device)
 {
+<<<<<<< HEAD
 	int minor;
 
 	if (hardware_device == NULL)
@@ -858,6 +895,17 @@ static void comedi_auto_unconfig(struct device *hardware_device)
 		return;
 	BUG_ON(minor >= COMEDI_NUM_BOARD_MINORS);
 	comedi_free_board_minor(minor);
+=======
+	unsigned *minor = (unsigned *)dev_get_drvdata(hardware_device);
+	if (minor == NULL)
+		return;
+
+	BUG_ON(*minor >= COMEDI_NUM_BOARD_MINORS);
+
+	comedi_free_board_minor(*minor);
+	dev_set_drvdata(hardware_device, NULL);
+	kfree(minor);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int comedi_pci_auto_config(struct pci_dev *pcidev, const char *board_name)

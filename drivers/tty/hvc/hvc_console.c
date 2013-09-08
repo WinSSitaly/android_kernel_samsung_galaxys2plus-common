@@ -39,7 +39,10 @@
 #include <linux/delay.h>
 #include <linux/freezer.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/serial_core.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/uaccess.h>
 
@@ -187,7 +190,11 @@ static struct tty_driver *hvc_console_device(struct console *c, int *index)
 }
 
 static int __init hvc_console_setup(struct console *co, char *options)
+<<<<<<< HEAD
 {	
+=======
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (co->index < 0 || co->index >= MAX_NR_HVC_CONSOLES)
 		return -ENODEV;
 
@@ -388,7 +395,11 @@ static void hvc_close(struct tty_struct *tty, struct file * filp)
 		 * there is no buffered data otherwise sleeps on a wait queue
 		 * waking periodically to check chars_in_buffer().
 		 */
+<<<<<<< HEAD
 		tty_wait_until_sent_from_close(tty, HVC_CLOSE_WAIT);
+=======
+		tty_wait_until_sent(tty, HVC_CLOSE_WAIT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		if (hp->count < 0)
 			printk(KERN_ERR "hvc_close %X: oops, count is %d\n",
@@ -748,6 +759,7 @@ static int khvcd(void *unused)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int hvc_tiocmget(struct tty_struct *tty)
 {
 	struct hvc_struct *hp = tty->driver_data;
@@ -800,6 +812,8 @@ static void hvc_poll_put_char(struct tty_driver *driver, int line, char ch)
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct tty_operations hvc_ops = {
 	.open = hvc_open,
 	.close = hvc_close,
@@ -808,6 +822,7 @@ static const struct tty_operations hvc_ops = {
 	.unthrottle = hvc_unthrottle,
 	.write_room = hvc_write_room,
 	.chars_in_buffer = hvc_chars_in_buffer,
+<<<<<<< HEAD
 	.tiocmget = hvc_tiocmget,
 	.tiocmset = hvc_tiocmset,
 #ifdef CONFIG_CONSOLE_POLL
@@ -815,6 +830,8 @@ static const struct tty_operations hvc_ops = {
 	.poll_get_char = hvc_poll_get_char,
 	.poll_put_char = hvc_poll_put_char,
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct hvc_struct *hvc_alloc(uint32_t vtermno, int data,
@@ -917,6 +934,10 @@ static int hvc_init(void)
 		goto out;
 	}
 
+<<<<<<< HEAD
+=======
+	drv->owner = THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	drv->driver_name = "hvc";
 	drv->name = "hvc";
 	drv->major = HVC_MAJOR;

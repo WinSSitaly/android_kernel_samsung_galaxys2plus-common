@@ -10,7 +10,11 @@
 #include <linux/seq_file.h>
 #include <linux/swap.h>
 #include <linux/vmstat.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/page.h>
 #include <asm/pgtable.h>
 #include "internal.h"
@@ -104,6 +108,18 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
 #ifdef CONFIG_TRANSPARENT_HUGEPAGE
 		"AnonHugePages:  %8lu kB\n"
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_CMA
+		"CmaFree:        %8lu kB\n"
+		"CmaA(active):   %8lu kB\n"
+		"CmaA(inactive): %8lu kB\n"
+		"CmaF(active):   %8lu kB\n"
+		"CmaF(inactive): %8lu kB\n"
+		"CmaUnevictable: %8lu kB\n"
+		"ContigAlloc:    %8lu kB\n"
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		,
 		K(i.totalram),
 		K(i.freeram),
@@ -164,6 +180,18 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
 		,K(global_page_state(NR_ANON_TRANSPARENT_HUGEPAGES) *
 		   HPAGE_PMD_NR)
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_CMA
+		, K(global_page_state(NR_FREE_CMA_PAGES))
+		, K(global_page_state(NR_CMA_ACTIVE_ANON))
+		, K(global_page_state(NR_CMA_INACTIVE_ANON))
+		, K(global_page_state(NR_CMA_ACTIVE_FILE))
+		, K(global_page_state(NR_CMA_INACTIVE_FILE))
+		, K(global_page_state(NR_CMA_UNEVICTABLE))
+		, K(global_page_state(NR_CONTIG_PAGES))
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		);
 
 	hugetlb_report_meminfo(m);

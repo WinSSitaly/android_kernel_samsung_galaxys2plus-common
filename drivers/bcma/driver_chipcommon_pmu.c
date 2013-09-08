@@ -2,13 +2,18 @@
  * Broadcom specific AMBA
  * ChipCommon Power Management Unit driver
  *
+<<<<<<< HEAD
  * Copyright 2009, Michael Buesch <m@bues.ch>
+=======
+ * Copyright 2009, Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright 2007, Broadcom Corporation
  *
  * Licensed under the GNU/GPL. See COPYING for details.
  */
 
 #include "bcma_private.h"
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/bcma/bcma.h>
 
@@ -53,6 +58,24 @@ void bcma_chipco_regctl_maskset(struct bcma_drv_cc *cc, u32 offset, u32 mask,
 	bcma_cc_maskset32(cc, BCMA_CC_REGCTL_DATA, mask, set);
 }
 EXPORT_SYMBOL_GPL(bcma_chipco_regctl_maskset);
+=======
+#include <linux/bcma/bcma.h>
+
+static void bcma_chipco_chipctl_maskset(struct bcma_drv_cc *cc,
+					u32 offset, u32 mask, u32 set)
+{
+	u32 value;
+
+	bcma_cc_read32(cc, BCMA_CC_CHIPCTL_ADDR);
+	bcma_cc_write32(cc, BCMA_CC_CHIPCTL_ADDR, offset);
+	bcma_cc_read32(cc, BCMA_CC_CHIPCTL_ADDR);
+	value = bcma_cc_read32(cc, BCMA_CC_CHIPCTL_DATA);
+	value &= mask;
+	value |= set;
+	bcma_cc_write32(cc, BCMA_CC_CHIPCTL_DATA, value);
+	bcma_cc_read32(cc, BCMA_CC_CHIPCTL_DATA);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void bcma_pmu_pll_init(struct bcma_drv_cc *cc)
 {
@@ -80,9 +103,13 @@ static void bcma_pmu_resources_init(struct bcma_drv_cc *cc)
 		min_msk = 0x200D;
 		max_msk = 0xFFFF;
 		break;
+<<<<<<< HEAD
 	case 0x4331:
 	case 43224:
 	case 43225:
+=======
+	case 43224:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		pr_err("PMU resource config unknown for device 0x%04X\n",
@@ -104,7 +131,10 @@ void bcma_pmu_swreg_init(struct bcma_drv_cc *cc)
 	case 0x4313:
 	case 0x4331:
 	case 43224:
+<<<<<<< HEAD
 	case 43225:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		pr_err("PMU switch/regulators init unknown for device "
@@ -112,6 +142,7 @@ void bcma_pmu_swreg_init(struct bcma_drv_cc *cc)
 	}
 }
 
+<<<<<<< HEAD
 /* Disable to allow reading SPROM. Don't know the adventages of enabling it. */
 void bcma_chipco_bcm4331_ext_pa_lines_ctl(struct bcma_drv_cc *cc, bool enable)
 {
@@ -130,6 +161,8 @@ void bcma_chipco_bcm4331_ext_pa_lines_ctl(struct bcma_drv_cc *cc, bool enable)
 	bcma_cc_write32(cc, BCMA_CC_CHIPCTL, val);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void bcma_pmu_workarounds(struct bcma_drv_cc *cc)
 {
 	struct bcma_bus *bus = cc->core->bus;
@@ -139,21 +172,32 @@ void bcma_pmu_workarounds(struct bcma_drv_cc *cc)
 		bcma_chipco_chipctl_maskset(cc, 0, ~0, 0x7);
 		break;
 	case 0x4331:
+<<<<<<< HEAD
 	case 43431:
 		/* Ext PA lines must be enabled for tx on BCM4331 */
 		bcma_chipco_bcm4331_ext_pa_lines_ctl(cc, true);
+=======
+		pr_err("Enabling Ext PA lines not implemented\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case 43224:
 		if (bus->chipinfo.rev == 0) {
 			pr_err("Workarounds for 43224 rev 0 not fully "
 				"implemented\n");
+<<<<<<< HEAD
 			bcma_chipco_chipctl_maskset(cc, 0, ~0, 0x00F000F0);
+=======
+			bcma_chipco_chipctl_maskset(cc, 0, ~0, 0xF0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			bcma_chipco_chipctl_maskset(cc, 0, ~0, 0xF0);
 		}
 		break;
+<<<<<<< HEAD
 	case 43225:
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		pr_err("Workarounds unknown for device 0x%04X\n",
 			bus->chipinfo.id);
@@ -185,6 +229,7 @@ void bcma_pmu_init(struct bcma_drv_cc *cc)
 	bcma_pmu_swreg_init(cc);
 	bcma_pmu_workarounds(cc);
 }
+<<<<<<< HEAD
 
 u32 bcma_pmu_alp_clock(struct bcma_drv_cc *cc)
 {
@@ -311,3 +356,5 @@ u32 bcma_pmu_get_clockcpu(struct bcma_drv_cc *cc)
 
 	return bcma_pmu_get_clockcontrol(cc);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

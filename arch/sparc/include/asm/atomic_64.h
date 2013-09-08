@@ -8,7 +8,11 @@
 #define __ARCH_SPARC64_ATOMIC__
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <asm/cmpxchg.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define ATOMIC_INIT(i)		{ (i) }
 #define ATOMIC64_INIT(i)	{ (i) }
@@ -70,7 +74,11 @@ extern long atomic64_sub_ret(long, atomic64_t *);
 #define atomic_cmpxchg(v, o, n) (cmpxchg(&((v)->counter), (o), (n)))
 #define atomic_xchg(v, new) (xchg(&((v)->counter), new))
 
+<<<<<<< HEAD
 static inline int __atomic_add_unless(atomic_t *v, int a, int u)
+=======
+static inline int atomic_add_unless(atomic_t *v, int a, int u)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int c, old;
 	c = atomic_read(v);
@@ -82,9 +90,17 @@ static inline int __atomic_add_unless(atomic_t *v, int a, int u)
 			break;
 		c = old;
 	}
+<<<<<<< HEAD
 	return c;
 }
 
+=======
+	return c != (u);
+}
+
+#define atomic_inc_not_zero(v) atomic_add_unless((v), 1, 0)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define atomic64_cmpxchg(v, o, n) \
 	((__typeof__((v)->counter))cmpxchg(&((v)->counter), (o), (n)))
 #define atomic64_xchg(v, new) (xchg(&((v)->counter), new))
@@ -112,4 +128,8 @@ static inline long atomic64_add_unless(atomic64_t *v, long a, long u)
 #define smp_mb__before_atomic_inc()	barrier()
 #define smp_mb__after_atomic_inc()	barrier()
 
+<<<<<<< HEAD
+=======
+#include <asm-generic/atomic-long.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* !(__ARCH_SPARC64_ATOMIC__) */

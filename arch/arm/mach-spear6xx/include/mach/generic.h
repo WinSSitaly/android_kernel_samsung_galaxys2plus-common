@@ -41,8 +41,11 @@ void __init spear6xx_init(void);
 void __init spear600_init(void);
 void __init spear6xx_clk_init(void);
 
+<<<<<<< HEAD
 void spear_restart(char, const char *);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Add spear600 machine device structure declarations here */
 
 #endif /* __MACH_GENERIC_H */

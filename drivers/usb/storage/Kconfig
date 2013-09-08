@@ -40,10 +40,13 @@ config USB_STORAGE_REALTEK
 
 	  If this driver is compiled as a module, it will be named ums-realtek.
 
+<<<<<<< HEAD
 config REALTEK_AUTOPM
 	bool "Realtek Card Reader autosuspend support"
 	depends on USB_STORAGE_REALTEK && PM_RUNTIME
 	default y
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config USB_STORAGE_DATAFAB
 	tristate "Datafab Compact Flash Reader support"
@@ -191,8 +194,13 @@ config USB_STORAGE_ENE_UB6250
 	depends on USB && SCSI
 	depends on USB_STORAGE
 	---help---
+<<<<<<< HEAD
 	  Say Y here if you wish to control a ENE SD/MS Card reader.
 	  To use SM card, please build driver/staging/keucr/keucr.ko
+=======
+	  Say Y here if you wish to control a ENE SD Card reader.
+	  To use SM/MS card, please build driver/staging/keucr/keucr.ko
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	  This option depends on 'SCSI' support being enabled, but you
 	  probably also need 'SCSI device support: SCSI disk support'
@@ -203,7 +211,11 @@ config USB_STORAGE_ENE_UB6250
 
 config USB_UAS
 	tristate "USB Attached SCSI"
+<<<<<<< HEAD
 	depends on USB && SCSI && BROKEN
+=======
+	depends on USB && SCSI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  The USB Attached SCSI protocol is supported by some USB
 	  storage devices.  It permits higher performance by supporting
@@ -222,8 +234,22 @@ config USB_LIBUSUAL
 	  for usb-storage and ub drivers, and allows to switch binding
 	  of these devices without rebuilding modules.
 
+<<<<<<< HEAD
 	  Typical syntax of /etc/modprobe.d/*conf is:
+=======
+	  Typical syntax of /etc/modprobe.conf is:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		options libusual bias="ub"
 
 	  If unsure, say N.
+<<<<<<< HEAD
+=======
+
+config USB_STORAGE_MEDIA_SCAN
+	boolean "USB STORAGE SCSI MEDIA SCAN"
+	depends on USB
+	help
+	  It will check that the connected usb devices have the SCSI media or not.
+	  that is used by usb storage devices
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

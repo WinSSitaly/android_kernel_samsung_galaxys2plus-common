@@ -42,7 +42,11 @@ TODO:
 
 
 Please send patches to:
+<<<<<<< HEAD
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+=======
+        Greg Kroah-Hartman <gregkh@suse.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 and Cc: Lior Dotan <liodot@gmail.com> and Christopher Harrer
 <charrer@alacritech.com> as well as they are also able to test out any
 changes.

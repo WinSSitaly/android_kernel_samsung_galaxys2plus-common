@@ -12,7 +12,10 @@
 #include <linux/kernel.h>
 #include <linux/slab.h>
 #include <linux/list.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/net_namespace.h>
 #include <net/sock.h>
 #include <net/fib_rules.h>
@@ -476,11 +479,16 @@ static int fib_nl_delrule(struct sk_buff *skb, struct nlmsghdr* nlh, void *arg)
 
 		list_del_rcu(&rule->list);
 
+<<<<<<< HEAD
 		if (rule->action == FR_ACT_GOTO) {
 			ops->nr_goto_rules--;
 			if (rtnl_dereference(rule->ctarget) == NULL)
 				ops->unresolved_rules--;
 		}
+=======
+		if (rule->action == FR_ACT_GOTO)
+			ops->nr_goto_rules--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * Check if this rule is a target to any of them. If so,
@@ -491,7 +499,11 @@ static int fib_nl_delrule(struct sk_buff *skb, struct nlmsghdr* nlh, void *arg)
 		if (ops->nr_goto_rules > 0) {
 			list_for_each_entry(tmp, &ops->rules_list, list) {
 				if (rtnl_dereference(tmp->ctarget) == rule) {
+<<<<<<< HEAD
 					RCU_INIT_POINTER(tmp->ctarget, NULL);
+=======
+					rcu_assign_pointer(tmp->ctarget, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					ops->unresolved_rules++;
 				}
 			}
@@ -549,7 +561,11 @@ static int fib_nl_fill_rule(struct sk_buff *skb, struct fib_rule *rule,
 	frh->flags = rule->flags;
 
 	if (rule->action == FR_ACT_GOTO &&
+<<<<<<< HEAD
 	    rcu_access_pointer(rule->ctarget) == NULL)
+=======
+	    rcu_dereference_raw(rule->ctarget) == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		frh->flags |= FIB_RULE_UNRESOLVED;
 
 	if (rule->iifname[0]) {
@@ -744,9 +760,15 @@ static struct pernet_operations fib_rules_net_ops = {
 static int __init fib_rules_init(void)
 {
 	int err;
+<<<<<<< HEAD
 	rtnl_register(PF_UNSPEC, RTM_NEWRULE, fib_nl_newrule, NULL, NULL);
 	rtnl_register(PF_UNSPEC, RTM_DELRULE, fib_nl_delrule, NULL, NULL);
 	rtnl_register(PF_UNSPEC, RTM_GETRULE, NULL, fib_nl_dumprule, NULL);
+=======
+	rtnl_register(PF_UNSPEC, RTM_NEWRULE, fib_nl_newrule, NULL);
+	rtnl_register(PF_UNSPEC, RTM_DELRULE, fib_nl_delrule, NULL);
+	rtnl_register(PF_UNSPEC, RTM_GETRULE, NULL, fib_nl_dumprule);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = register_pernet_subsys(&fib_rules_net_ops);
 	if (err < 0)

@@ -96,10 +96,15 @@ static int xfrm6_fill_dst(struct xfrm_dst *xdst, struct net_device *dev,
 	dev_hold(dev);
 
 	xdst->u.rt6.rt6i_idev = in6_dev_get(dev);
+<<<<<<< HEAD
 	if (!xdst->u.rt6.rt6i_idev) {
 		dev_put(dev);
 		return -ENODEV;
 	}
+=======
+	if (!xdst->u.rt6.rt6i_idev)
+		return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	xdst->u.rt6.rt6i_peer = rt->rt6i_peer;
 	if (rt->rt6i_peer)
@@ -134,8 +139,13 @@ _decode_session6(struct sk_buff *skb, struct flowi *fl, int reverse)
 	memset(fl6, 0, sizeof(struct flowi6));
 	fl6->flowi6_mark = skb->mark;
 
+<<<<<<< HEAD
 	fl6->daddr = reverse ? hdr->saddr : hdr->daddr;
 	fl6->saddr = reverse ? hdr->daddr : hdr->saddr;
+=======
+	ipv6_addr_copy(&fl6->daddr, reverse ? &hdr->saddr : &hdr->daddr);
+	ipv6_addr_copy(&fl6->saddr, reverse ? &hdr->daddr : &hdr->saddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (nh + offset + 1 < skb->data ||
 	       pskb_may_pull(skb, nh + offset + 1 - skb->data)) {

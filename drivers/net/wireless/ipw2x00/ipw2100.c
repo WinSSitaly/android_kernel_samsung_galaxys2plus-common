@@ -161,12 +161,19 @@ that only one external action is invoked at a time.
 #include <linux/firmware.h>
 #include <linux/acpi.h>
 #include <linux/ctype.h>
+<<<<<<< HEAD
 #include <linux/pm_qos.h>
+=======
+#include <linux/pm_qos_params.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <net/lib80211.h>
 
 #include "ipw2100.h"
+<<<<<<< HEAD
 #include "ipw.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define IPW2100_VERSION "git-1.2.2"
 
@@ -175,7 +182,11 @@ that only one external action is invoked at a time.
 #define DRV_DESCRIPTION	"Intel(R) PRO/Wireless 2100 Network Driver"
 #define DRV_COPYRIGHT	"Copyright(c) 2003-2006 Intel Corporation"
 
+<<<<<<< HEAD
 static struct pm_qos_request ipw2100_pm_qos_req;
+=======
+static struct pm_qos_request_list ipw2100_pm_qos_req;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Debugging stuff */
 #ifdef CONFIG_IPW2100_DEBUG
@@ -288,7 +299,11 @@ static const char *command_types[] = {
 	"unused",		/* HOST_INTERRUPT_COALESCING */
 	"undefined",
 	"CARD_DISABLE_PHY_OFF",
+<<<<<<< HEAD
 	"MSDU_TX_RATES",
+=======
+	"MSDU_TX_RATES" "undefined",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"undefined",
 	"SET_STATION_STAT_BITS",
 	"CLEAR_STATIONS_STAT_BITS",
@@ -299,6 +314,11 @@ static const char *command_types[] = {
 };
 #endif
 
+<<<<<<< HEAD
+=======
+#define WEXT_USECHANNELS 1
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const long ipw2100_frequencies[] = {
 	2412, 2417, 2422, 2427,
 	2432, 2437, 2442, 2447,
@@ -308,6 +328,16 @@ static const long ipw2100_frequencies[] = {
 
 #define FREQ_COUNT	ARRAY_SIZE(ipw2100_frequencies)
 
+<<<<<<< HEAD
+=======
+static const long ipw2100_rates_11b[] = {
+	1000000,
+	2000000,
+	5500000,
+	11000000
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct ieee80211_rate ipw2100_bg_rates[] = {
 	{ .bitrate = 10 },
 	{ .bitrate = 20, .flags = IEEE80211_RATE_SHORT_PREAMBLE },
@@ -315,7 +345,11 @@ static struct ieee80211_rate ipw2100_bg_rates[] = {
 	{ .bitrate = 110, .flags = IEEE80211_RATE_SHORT_PREAMBLE },
 };
 
+<<<<<<< HEAD
 #define RATE_COUNT ARRAY_SIZE(ipw2100_bg_rates)
+=======
+#define RATE_COUNT ARRAY_SIZE(ipw2100_rates_11b)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Pre-decl until we get the code solid and then we can clean it up */
 static void ipw2100_tx_send_commands(struct ipw2100_priv *priv);
@@ -1895,6 +1929,7 @@ static void ipw2100_down(struct ipw2100_priv *priv)
 static int ipw2100_net_init(struct net_device *dev)
 {
 	struct ipw2100_priv *priv = libipw_priv(dev);
+<<<<<<< HEAD
 
 	return ipw2100_up(priv, 1);
 }
@@ -1906,6 +1941,17 @@ static int ipw2100_wdev_init(struct net_device *dev)
 	struct wireless_dev *wdev = &priv->ieee->wdev;
 	int i;
 
+=======
+	const struct libipw_geo *geo = libipw_get_geo(priv->ieee);
+	struct wireless_dev *wdev = &priv->ieee->wdev;
+	int ret;
+	int i;
+
+	ret = ipw2100_up(priv, 1);
+	if (ret)
+		return ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy(wdev->wiphy->perm_addr, priv->mac_addr, ETH_ALEN);
 
 	/* fill-out priv->ieee->bg_band */
@@ -1947,9 +1993,12 @@ static int ipw2100_wdev_init(struct net_device *dev)
 		wdev->wiphy->bands[IEEE80211_BAND_2GHZ] = bg_band;
 	}
 
+<<<<<<< HEAD
 	wdev->wiphy->cipher_suites = ipw_cipher_suites;
 	wdev->wiphy->n_cipher_suites = ARRAY_SIZE(ipw_cipher_suites);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_wiphy_dev(wdev->wiphy, &priv->pci_dev->dev);
 	if (wiphy_register(wdev->wiphy)) {
 		ipw2100_down(priv);
@@ -3459,8 +3508,16 @@ static int ipw2100_msg_allocate(struct ipw2100_priv *priv)
 	priv->msg_buffers =
 	    kmalloc(IPW_COMMAND_POOL_SIZE * sizeof(struct ipw2100_tx_packet),
 		    GFP_KERNEL);
+<<<<<<< HEAD
 	if (!priv->msg_buffers)
 		return -ENOMEM;
+=======
+	if (!priv->msg_buffers) {
+		printk(KERN_ERR DRV_NAME ": %s: PCI alloc failed for msg "
+		       "buffers.\n", priv->net_dev->name);
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < IPW_COMMAND_POOL_SIZE; i++) {
 		v = pci_alloc_consistent(priv->pci_dev,
@@ -5973,8 +6030,13 @@ static void ipw_ethtool_get_drvinfo(struct net_device *dev,
 	struct ipw2100_priv *priv = libipw_priv(dev);
 	char fw_ver[64], ucode_ver[64];
 
+<<<<<<< HEAD
 	strlcpy(info->driver, DRV_NAME, sizeof(info->driver));
 	strlcpy(info->version, DRV_VERSION, sizeof(info->version));
+=======
+	strcpy(info->driver, DRV_NAME);
+	strcpy(info->version, DRV_VERSION);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ipw2100_get_fwversion(priv, fw_ver, sizeof(fw_ver));
 	ipw2100_get_ucodeversion(priv, ucode_ver, sizeof(ucode_ver));
@@ -5982,8 +6044,12 @@ static void ipw_ethtool_get_drvinfo(struct net_device *dev,
 	snprintf(info->fw_version, sizeof(info->fw_version), "%s:%d:%s",
 		 fw_ver, priv->eeprom_version, ucode_ver);
 
+<<<<<<< HEAD
 	strlcpy(info->bus_info, pci_name(priv->pci_dev),
 		sizeof(info->bus_info));
+=======
+	strcpy(info->bus_info, pci_name(priv->pci_dev));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static u32 ipw2100_ethtool_get_link(struct net_device *dev)
@@ -6345,6 +6411,7 @@ static int ipw2100_pci_init_one(struct pci_dev *pci_dev,
 		       "Error calling register_netdev.\n");
 		goto fail;
 	}
+<<<<<<< HEAD
 	registered = 1;
 
 	err = ipw2100_wdev_init(dev);
@@ -6352,6 +6419,11 @@ static int ipw2100_pci_init_one(struct pci_dev *pci_dev,
 		goto fail;
 
 	mutex_lock(&priv->action_mutex);
+=======
+
+	mutex_lock(&priv->action_mutex);
+	registered = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	IPW_DEBUG_INFO("%s: Bound to %s\n", dev->name, pci_name(pci_dev));
 
@@ -6388,8 +6460,12 @@ static int ipw2100_pci_init_one(struct pci_dev *pci_dev,
 
       fail_unlock:
 	mutex_unlock(&priv->action_mutex);
+<<<<<<< HEAD
 	wiphy_unregister(priv->ieee->wdev.wiphy);
 	kfree(priv->ieee->bg_band.channels);
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
       fail:
 	if (dev) {
 		if (registered)
@@ -6888,7 +6964,11 @@ static int ipw2100_wx_get_range(struct net_device *dev,
 	range->num_bitrates = RATE_COUNT;
 
 	for (i = 0; i < RATE_COUNT && i < IW_MAX_BITRATES; i++) {
+<<<<<<< HEAD
 		range->bitrate[i] = ipw2100_bg_rates[i].bitrate * 100 * 1000;
+=======
+		range->bitrate[i] = ipw2100_rates_11b[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	range->min_rts = MIN_RTS_THRESHOLD;
@@ -8100,6 +8180,7 @@ static int ipw2100_wx_get_crc_check(struct net_device *dev,
 #endif				/* CONFIG_IPW2100_MONITOR */
 
 static iw_handler ipw2100_wx_handlers[] = {
+<<<<<<< HEAD
 	IW_HANDLER(SIOCGIWNAME, ipw2100_wx_get_name),
 	IW_HANDLER(SIOCSIWFREQ, ipw2100_wx_set_freq),
 	IW_HANDLER(SIOCGIWFREQ, ipw2100_wx_get_freq),
@@ -8135,6 +8216,63 @@ static iw_handler ipw2100_wx_handlers[] = {
 	IW_HANDLER(SIOCGIWAUTH, ipw2100_wx_get_auth),
 	IW_HANDLER(SIOCSIWENCODEEXT, ipw2100_wx_set_encodeext),
 	IW_HANDLER(SIOCGIWENCODEEXT, ipw2100_wx_get_encodeext),
+=======
+	NULL,			/* SIOCSIWCOMMIT */
+	ipw2100_wx_get_name,	/* SIOCGIWNAME */
+	NULL,			/* SIOCSIWNWID */
+	NULL,			/* SIOCGIWNWID */
+	ipw2100_wx_set_freq,	/* SIOCSIWFREQ */
+	ipw2100_wx_get_freq,	/* SIOCGIWFREQ */
+	ipw2100_wx_set_mode,	/* SIOCSIWMODE */
+	ipw2100_wx_get_mode,	/* SIOCGIWMODE */
+	NULL,			/* SIOCSIWSENS */
+	NULL,			/* SIOCGIWSENS */
+	NULL,			/* SIOCSIWRANGE */
+	ipw2100_wx_get_range,	/* SIOCGIWRANGE */
+	NULL,			/* SIOCSIWPRIV */
+	NULL,			/* SIOCGIWPRIV */
+	NULL,			/* SIOCSIWSTATS */
+	NULL,			/* SIOCGIWSTATS */
+	NULL,			/* SIOCSIWSPY */
+	NULL,			/* SIOCGIWSPY */
+	NULL,			/* SIOCGIWTHRSPY */
+	NULL,			/* SIOCWIWTHRSPY */
+	ipw2100_wx_set_wap,	/* SIOCSIWAP */
+	ipw2100_wx_get_wap,	/* SIOCGIWAP */
+	ipw2100_wx_set_mlme,	/* SIOCSIWMLME */
+	NULL,			/* SIOCGIWAPLIST -- deprecated */
+	ipw2100_wx_set_scan,	/* SIOCSIWSCAN */
+	ipw2100_wx_get_scan,	/* SIOCGIWSCAN */
+	ipw2100_wx_set_essid,	/* SIOCSIWESSID */
+	ipw2100_wx_get_essid,	/* SIOCGIWESSID */
+	ipw2100_wx_set_nick,	/* SIOCSIWNICKN */
+	ipw2100_wx_get_nick,	/* SIOCGIWNICKN */
+	NULL,			/* -- hole -- */
+	NULL,			/* -- hole -- */
+	ipw2100_wx_set_rate,	/* SIOCSIWRATE */
+	ipw2100_wx_get_rate,	/* SIOCGIWRATE */
+	ipw2100_wx_set_rts,	/* SIOCSIWRTS */
+	ipw2100_wx_get_rts,	/* SIOCGIWRTS */
+	ipw2100_wx_set_frag,	/* SIOCSIWFRAG */
+	ipw2100_wx_get_frag,	/* SIOCGIWFRAG */
+	ipw2100_wx_set_txpow,	/* SIOCSIWTXPOW */
+	ipw2100_wx_get_txpow,	/* SIOCGIWTXPOW */
+	ipw2100_wx_set_retry,	/* SIOCSIWRETRY */
+	ipw2100_wx_get_retry,	/* SIOCGIWRETRY */
+	ipw2100_wx_set_encode,	/* SIOCSIWENCODE */
+	ipw2100_wx_get_encode,	/* SIOCGIWENCODE */
+	ipw2100_wx_set_power,	/* SIOCSIWPOWER */
+	ipw2100_wx_get_power,	/* SIOCGIWPOWER */
+	NULL,			/* -- hole -- */
+	NULL,			/* -- hole -- */
+	ipw2100_wx_set_genie,	/* SIOCSIWGENIE */
+	ipw2100_wx_get_genie,	/* SIOCGIWGENIE */
+	ipw2100_wx_set_auth,	/* SIOCSIWAUTH */
+	ipw2100_wx_get_auth,	/* SIOCGIWAUTH */
+	ipw2100_wx_set_encodeext,	/* SIOCSIWENCODEEXT */
+	ipw2100_wx_get_encodeext,	/* SIOCGIWENCODEEXT */
+	NULL,			/* SIOCSIWPMKSA */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define IPW2100_PRIV_SET_MONITOR	SIOCIWFIRSTPRIV

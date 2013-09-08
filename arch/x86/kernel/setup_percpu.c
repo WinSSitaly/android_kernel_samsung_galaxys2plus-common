@@ -185,6 +185,7 @@ void __init setup_per_cpu_areas(void)
 #endif
 	rc = -EINVAL;
 	if (pcpu_chosen_fc != PCPU_FC_PAGE) {
+<<<<<<< HEAD
 		const size_t dyn_size = PERCPU_MODULE_RESERVE +
 			PERCPU_DYNAMIC_RESERVE - PERCPU_FIRST_CHUNK_RESERVE;
 		size_t atom_size;
@@ -201,6 +202,12 @@ void __init setup_per_cpu_areas(void)
 #else
 		atom_size = PAGE_SIZE;
 #endif
+=======
+		const size_t atom_size = cpu_has_pse ? PMD_SIZE : PAGE_SIZE;
+		const size_t dyn_size = PERCPU_MODULE_RESERVE +
+			PERCPU_DYNAMIC_RESERVE - PERCPU_FIRST_CHUNK_RESERVE;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = pcpu_embed_first_chunk(PERCPU_FIRST_CHUNK_RESERVE,
 					    dyn_size, atom_size,
 					    pcpu_cpu_distance,

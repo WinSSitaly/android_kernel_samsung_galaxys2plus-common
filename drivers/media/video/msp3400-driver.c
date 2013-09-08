@@ -69,12 +69,21 @@ MODULE_LICENSE("GPL");
 /* module parameters */
 static int opmode   = OPMODE_AUTO;
 int msp_debug;		 /* msp_debug output */
+<<<<<<< HEAD
 bool msp_once;		 /* no continuous stereo monitoring */
 bool msp_amsound;	 /* hard-wire AM sound at 6.5 Hz (france),
 			    the autoscan seems work well only with FM... */
 int msp_standard = 1;    /* Override auto detect of audio msp_standard,
 			    if needed. */
 bool msp_dolby;
+=======
+int msp_once;		 /* no continuous stereo monitoring */
+int msp_amsound;	 /* hard-wire AM sound at 6.5 Hz (france),
+			    the autoscan seems work well only with FM... */
+int msp_standard = 1;    /* Override auto detect of audio msp_standard,
+			    if needed. */
+int msp_dolby;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int msp_stereo_thresh = 0x190; /* a2 threshold for stereo/bilingual
 					(msp34xxg only) 0x00a0-0x03c0 */
@@ -426,6 +435,7 @@ static int msp_s_frequency(struct v4l2_subdev *sd, struct v4l2_frequency *freq)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int msp_querystd(struct v4l2_subdev *sd, v4l2_std_id *id)
 {
 	struct msp_state *state = to_state(sd);
@@ -440,6 +450,8 @@ static int msp_querystd(struct v4l2_subdev *sd, v4l2_std_id *id)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int msp_s_std(struct v4l2_subdev *sd, v4l2_std_id id)
 {
 	struct msp_state *state = to_state(sd);
@@ -630,10 +642,13 @@ static const struct v4l2_subdev_core_ops msp_core_ops = {
 	.s_std = msp_s_std,
 };
 
+<<<<<<< HEAD
 static const struct v4l2_subdev_video_ops msp_video_ops = {
 	.querystd = msp_querystd,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct v4l2_subdev_tuner_ops msp_tuner_ops = {
 	.s_frequency = msp_s_frequency,
 	.g_tuner = msp_g_tuner,
@@ -648,7 +663,10 @@ static const struct v4l2_subdev_audio_ops msp_audio_ops = {
 
 static const struct v4l2_subdev_ops msp_ops = {
 	.core = &msp_core_ops,
+<<<<<<< HEAD
 	.video = &msp_video_ops,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.tuner = &msp_tuner_ops,
 	.audio = &msp_audio_ops,
 };
@@ -683,7 +701,10 @@ static int msp_probe(struct i2c_client *client, const struct i2c_device_id *id)
 	v4l2_i2c_subdev_init(sd, client, &msp_ops);
 
 	state->v4l2_std = V4L2_STD_NTSC;
+<<<<<<< HEAD
 	state->detected_std = V4L2_STD_ALL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	state->audmode = V4L2_TUNER_MODE_STEREO;
 	state->input = -1;
 	state->i2s_mode = 0;
@@ -881,7 +902,22 @@ static struct i2c_driver msp_driver = {
 	.id_table	= msp_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(msp_driver);
+=======
+static __init int init_msp(void)
+{
+	return i2c_add_driver(&msp_driver);
+}
+
+static __exit void exit_msp(void)
+{
+	i2c_del_driver(&msp_driver);
+}
+
+module_init(init_msp);
+module_exit(exit_msp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Overrides for Emacs so that we follow Linus's tabbing style.

@@ -50,9 +50,20 @@
  * by the buffer lock.
  */
 
+<<<<<<< HEAD
 #include "ext3.h"
 #include <linux/mbcache.h>
 #include <linux/quotaops.h>
+=======
+#include <linux/init.h>
+#include <linux/fs.h>
+#include <linux/slab.h>
+#include <linux/ext3_jbd.h>
+#include <linux/ext3_fs.h>
+#include <linux/mbcache.h>
+#include <linux/quotaops.h>
+#include <linux/rwsem.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "xattr.h"
 #include "acl.h"
 

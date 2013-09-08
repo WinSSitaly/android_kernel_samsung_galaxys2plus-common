@@ -160,10 +160,17 @@ static int hidp_sock_compat_ioctl(struct socket *sock, unsigned int cmd, unsigne
 {
 	if (cmd == HIDPGETCONNLIST) {
 		struct hidp_connlist_req cl;
+<<<<<<< HEAD
 		u32 uci;
 		int err;
 
 		if (get_user(cl.cnum, (u32 __user *) arg) ||
+=======
+		uint32_t uci;
+		int err;
+
+		if (get_user(cl.cnum, (uint32_t __user *) arg) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				get_user(uci, (u32 __user *) (arg + 4)))
 			return -EFAULT;
 
@@ -174,7 +181,11 @@ static int hidp_sock_compat_ioctl(struct socket *sock, unsigned int cmd, unsigne
 
 		err = hidp_get_connlist(&cl);
 
+<<<<<<< HEAD
 		if (!err && put_user(cl.cnum, (u32 __user *) arg))
+=======
+		if (!err && put_user(cl.cnum, (uint32_t __user *) arg))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			err = -EFAULT;
 
 		return err;

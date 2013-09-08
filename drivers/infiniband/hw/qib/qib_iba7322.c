@@ -40,7 +40,10 @@
 #include <linux/delay.h>
 #include <linux/io.h>
 #include <linux/jiffies.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <rdma/ib_verbs.h>
 #include <rdma/ib_smi.h>
 
@@ -115,10 +118,13 @@ static ushort qib_singleport;
 module_param_named(singleport, qib_singleport, ushort, S_IRUGO);
 MODULE_PARM_DESC(singleport, "Use only IB port 1; more per-port buffer space");
 
+<<<<<<< HEAD
 static ushort qib_krcvq01_no_msi;
 module_param_named(krcvq01_no_msi, qib_krcvq01_no_msi, ushort, S_IRUGO);
 MODULE_PARM_DESC(krcvq01_no_msi, "No MSI for kctx < 2");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Receive header queue sizes
  */
@@ -402,6 +408,10 @@ MODULE_PARM_DESC(txselect, \
 #define crp_txdroppedpkt CREG_IDX(TxDroppedPktCnt)
 #define crp_txhdrerr CREG_IDX(TxHeadersErrCnt)
 #define crp_txlenerr CREG_IDX(TxLenErrCnt)
+<<<<<<< HEAD
+=======
+#define crp_txlenerr CREG_IDX(TxLenErrCnt)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define crp_txminmaxlenerr CREG_IDX(TxMaxMinLenErrCnt)
 #define crp_txsdmadesc CREG_IDX(TxSDmaDescCnt)
 #define crp_txunderrun CREG_IDX(TxUnderrunCnt)
@@ -541,7 +551,12 @@ struct qib_chip_specific {
 	u32 lastbuf_for_pio;
 	u32 stay_in_freeze;
 	u32 recovery_ports_initted;
+<<<<<<< HEAD
 	struct qib_msix_entry *msix_entries;
+=======
+	struct msix_entry *msix_entries;
+	void  **msix_arg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long *sendchkenable;
 	unsigned long *sendgrhchk;
 	unsigned long *sendibchk;
@@ -614,8 +629,13 @@ struct qib_chippport_specific {
 	u64 ibmalfsnap;
 	u64 ibcctrl_a; /* krp_ibcctrl_a shadow */
 	u64 ibcctrl_b; /* krp_ibcctrl_b shadow */
+<<<<<<< HEAD
 	unsigned long qdr_dfe_time;
 	unsigned long chase_end;
+=======
+	u64 qdr_dfe_time;
+	u64 chase_end;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 autoneg_tries;
 	u32 recovery_init;
 	u32 qdr_dfe_on;
@@ -638,6 +658,7 @@ static struct {
 	int lsb;
 	int port; /* 0 if not port-specific, else port # */
 } irq_table[] = {
+<<<<<<< HEAD
 	{ "", qib_7322intr, -1, 0 },
 	{ " (buf avail)", qib_7322bufavail,
 		SYM_LSB(IntStatus, SendBufAvail), 0 },
@@ -656,6 +677,26 @@ static struct {
 	{ " (sdmaC 0)", sdma_cleanup_intr,
 		SYM_LSB(IntStatus, SDmaCleanupDone_0), 1 },
 	{ " (sdmaC 1)", sdma_cleanup_intr,
+=======
+	{ QIB_DRV_NAME, qib_7322intr, -1, 0 },
+	{ QIB_DRV_NAME " (buf avail)", qib_7322bufavail,
+		SYM_LSB(IntStatus, SendBufAvail), 0 },
+	{ QIB_DRV_NAME " (sdma 0)", sdma_intr,
+		SYM_LSB(IntStatus, SDmaInt_0), 1 },
+	{ QIB_DRV_NAME " (sdma 1)", sdma_intr,
+		SYM_LSB(IntStatus, SDmaInt_1), 2 },
+	{ QIB_DRV_NAME " (sdmaI 0)", sdma_idle_intr,
+		SYM_LSB(IntStatus, SDmaIdleInt_0), 1 },
+	{ QIB_DRV_NAME " (sdmaI 1)", sdma_idle_intr,
+		SYM_LSB(IntStatus, SDmaIdleInt_1), 2 },
+	{ QIB_DRV_NAME " (sdmaP 0)", sdma_progress_intr,
+		SYM_LSB(IntStatus, SDmaProgressInt_0), 1 },
+	{ QIB_DRV_NAME " (sdmaP 1)", sdma_progress_intr,
+		SYM_LSB(IntStatus, SDmaProgressInt_1), 2 },
+	{ QIB_DRV_NAME " (sdmaC 0)", sdma_cleanup_intr,
+		SYM_LSB(IntStatus, SDmaCleanupDone_0), 1 },
+	{ QIB_DRV_NAME " (sdmaC 1)", sdma_cleanup_intr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		SYM_LSB(IntStatus, SDmaCleanupDone_1), 2 },
 };
 
@@ -1110,9 +1151,15 @@ static inline u32 read_7322_creg32_port(const struct qib_pportdata *ppd,
 #define AUTONEG_TRIES 3 /* sequential retries to negotiate DDR */
 
 #define HWE_AUTO(fldname) { .mask = SYM_MASK(HwErrMask, fldname##Mask), \
+<<<<<<< HEAD
 	.msg = #fldname , .sz = sizeof(#fldname) }
 #define HWE_AUTO_P(fldname, port) { .mask = SYM_MASK(HwErrMask, \
 	fldname##Mask##_##port), .msg = #fldname , .sz = sizeof(#fldname) }
+=======
+	.msg = #fldname }
+#define HWE_AUTO_P(fldname, port) { .mask = SYM_MASK(HwErrMask, \
+	fldname##Mask##_##port), .msg = #fldname }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct qib_hwerror_msgs qib_7322_hwerror_msgs[] = {
 	HWE_AUTO_P(IBSerdesPClkNotDetect, 1),
 	HWE_AUTO_P(IBSerdesPClkNotDetect, 0),
@@ -1130,6 +1177,7 @@ static const struct qib_hwerror_msgs qib_7322_hwerror_msgs[] = {
 	HWE_AUTO_P(IBCBusFromSPCParityErr, 0),
 	HWE_AUTO(statusValidNoEop),
 	HWE_AUTO(LATriggered),
+<<<<<<< HEAD
 	{ .mask = 0, .sz = 0 }
 };
 
@@ -1140,6 +1188,16 @@ static const struct qib_hwerror_msgs qib_7322_hwerror_msgs[] = {
 static const struct qib_hwerror_msgs qib_7322error_msgs[] = {
 	E_AUTO(RcvEgrFullErr),
 	E_AUTO(RcvHdrFullErr),
+=======
+	{ .mask = 0 }
+};
+
+#define E_AUTO(fldname) { .mask = SYM_MASK(ErrMask, fldname##Mask), \
+	.msg = #fldname }
+#define E_P_AUTO(fldname) { .mask = SYM_MASK(ErrMask_0, fldname##Mask), \
+	.msg = #fldname }
+static const struct qib_hwerror_msgs qib_7322error_msgs[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	E_AUTO(ResetNegated),
 	E_AUTO(HardwareErr),
 	E_AUTO(InvalidAddrErr),
@@ -1152,7 +1210,13 @@ static const struct qib_hwerror_msgs qib_7322error_msgs[] = {
 	E_AUTO(SendSpecialTriggerErr),
 	E_AUTO(SDmaWrongPortErr),
 	E_AUTO(SDmaBufMaskDuplicateErr),
+<<<<<<< HEAD
 	{ .mask = 0, .sz = 0 }
+=======
+	E_AUTO(RcvHdrFullErr),
+	E_AUTO(RcvEgrFullErr),
+	{ .mask = 0 }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct  qib_hwerror_msgs qib_7322p_error_msgs[] = {
@@ -1162,8 +1226,12 @@ static const struct  qib_hwerror_msgs qib_7322p_error_msgs[] = {
 	/*
 	 * SDmaHaltErr is not really an error, make it clearer;
 	 */
+<<<<<<< HEAD
 	{.mask = SYM_MASK(ErrMask_0, SDmaHaltErrMask), .msg = "SDmaHalted",
 		.sz = 11},
+=======
+	{.mask = SYM_MASK(ErrMask_0, SDmaHaltErrMask), .msg = "SDmaHalted"},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	E_P_AUTO(SDmaDescAddrMisalignErr),
 	E_P_AUTO(SDmaUnexpDataErr),
 	E_P_AUTO(SDmaMissingDwErr),
@@ -1199,7 +1267,11 @@ static const struct  qib_hwerror_msgs qib_7322p_error_msgs[] = {
 	E_P_AUTO(RcvICRCErr),
 	E_P_AUTO(RcvVCRCErr),
 	E_P_AUTO(RcvFormatErr),
+<<<<<<< HEAD
 	{ .mask = 0, .sz = 0 }
+=======
+	{ .mask = 0 }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -1207,17 +1279,29 @@ static const struct  qib_hwerror_msgs qib_7322p_error_msgs[] = {
  * context
  */
 #define INTR_AUTO(fldname) { .mask = SYM_MASK(IntMask, fldname##Mask), \
+<<<<<<< HEAD
 	.msg = #fldname, .sz = sizeof(#fldname) }
+=======
+	.msg = #fldname }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Below generates "auto-message" for interrupts specific to a port */
 #define INTR_AUTO_P(fldname) { .mask = MASK_ACROSS(\
 	SYM_LSB(IntMask, fldname##Mask##_0), \
 	SYM_LSB(IntMask, fldname##Mask##_1)), \
+<<<<<<< HEAD
 	.msg = #fldname "_P", .sz = sizeof(#fldname "_P") }
+=======
+	.msg = #fldname "_P" }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* For some reason, the SerDesTrimDone bits are reversed */
 #define INTR_AUTO_PI(fldname) { .mask = MASK_ACROSS(\
 	SYM_LSB(IntMask, fldname##Mask##_1), \
 	SYM_LSB(IntMask, fldname##Mask##_0)), \
+<<<<<<< HEAD
 	.msg = #fldname "_P", .sz = sizeof(#fldname "_P") }
+=======
+	.msg = #fldname "_P" }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Below generates "auto-message" for interrupts specific to a context,
  * with ctxt-number appended
@@ -1225,7 +1309,11 @@ static const struct  qib_hwerror_msgs qib_7322p_error_msgs[] = {
 #define INTR_AUTO_C(fldname) { .mask = MASK_ACROSS(\
 	SYM_LSB(IntMask, fldname##0IntMask), \
 	SYM_LSB(IntMask, fldname##17IntMask)), \
+<<<<<<< HEAD
 	.msg = #fldname "_C", .sz = sizeof(#fldname "_C") }
+=======
+	.msg = #fldname "_C"}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const struct  qib_hwerror_msgs qib_7322_intr_msgs[] = {
 	INTR_AUTO_P(SDmaInt),
@@ -1239,12 +1327,20 @@ static const struct  qib_hwerror_msgs qib_7322_intr_msgs[] = {
 	INTR_AUTO_P(SendDoneInt),
 	INTR_AUTO(SendBufAvailInt),
 	INTR_AUTO_C(RcvAvail),
+<<<<<<< HEAD
 	{ .mask = 0, .sz = 0 }
 };
 
 #define TXSYMPTOM_AUTO_P(fldname) \
 	{ .mask = SYM_MASK(SendHdrErrSymptom_0, fldname), \
 	.msg = #fldname, .sz = sizeof(#fldname) }
+=======
+	{ .mask = 0 }
+};
+
+#define TXSYMPTOM_AUTO_P(fldname) \
+	{ .mask = SYM_MASK(SendHdrErrSymptom_0, fldname), .msg = #fldname }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct  qib_hwerror_msgs hdrchk_msgs[] = {
 	TXSYMPTOM_AUTO_P(NonKeyPacket),
 	TXSYMPTOM_AUTO_P(GRHFail),
@@ -1253,7 +1349,11 @@ static const struct  qib_hwerror_msgs hdrchk_msgs[] = {
 	TXSYMPTOM_AUTO_P(SLIDFail),
 	TXSYMPTOM_AUTO_P(RawIPV6),
 	TXSYMPTOM_AUTO_P(PacketTooSmall),
+<<<<<<< HEAD
 	{ .mask = 0, .sz = 0 }
+=======
+	{ .mask = 0 }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define IBA7322_HDRHEAD_PKTINT_SHIFT 32 /* interrupt cnt in upper 32 bits */
@@ -1298,7 +1398,11 @@ static void err_decode(char *msg, size_t len, u64 errs,
 	u64 these, lmask;
 	int took, multi, n = 0;
 
+<<<<<<< HEAD
 	while (errs && msp && msp->mask) {
+=======
+	while (msp && msp->mask) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		multi = (msp->mask & (msp->mask - 1));
 		while (errs & msp->mask) {
 			these = (errs & msp->mask);
@@ -1309,6 +1413,7 @@ static void err_decode(char *msg, size_t len, u64 errs,
 					*msg++ = ',';
 					len--;
 				}
+<<<<<<< HEAD
 				BUG_ON(!msp->sz);
 				/* msp->sz counts the nul */
 				took = min_t(size_t, msp->sz - (size_t)1, len);
@@ -1317,6 +1422,11 @@ static void err_decode(char *msg, size_t len, u64 errs,
 				msg += took;
 				if (len)
 					*msg = '\0';
+=======
+				took = scnprintf(msg, len, "%s", msp->msg);
+				len -= took;
+				msg += took;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			errs &= ~lmask;
 			if (len && multi) {
@@ -1654,6 +1764,7 @@ done:
 	return;
 }
 
+<<<<<<< HEAD
 static void qib_error_tasklet(unsigned long data)
 {
 	struct qib_devdata *dd = (struct qib_devdata *)data;
@@ -1662,6 +1773,8 @@ static void qib_error_tasklet(unsigned long data)
 	qib_write_kreg(dd, kr_errmask, dd->cspec->errormask);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void reenable_chase(unsigned long opaque)
 {
 	struct qib_pportdata *ppd = (struct qib_pportdata *)opaque;
@@ -1671,8 +1784,12 @@ static void reenable_chase(unsigned long opaque)
 		QLOGIC_IB_IBCC_LINKINITCMD_POLL);
 }
 
+<<<<<<< HEAD
 static void disable_chase(struct qib_pportdata *ppd, unsigned long tnow,
 		u8 ibclt)
+=======
+static void disable_chase(struct qib_pportdata *ppd, u64 tnow, u8 ibclt)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	ppd->cpspec->chase_end = 0;
 
@@ -1688,7 +1805,11 @@ static void disable_chase(struct qib_pportdata *ppd, unsigned long tnow,
 static void handle_serdes_issues(struct qib_pportdata *ppd, u64 ibcst)
 {
 	u8 ibclt;
+<<<<<<< HEAD
 	unsigned long tnow;
+=======
+	u64 tnow;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ibclt = (u8)SYM_FIELD(ibcst, IBCStatusA_0, LinkTrainingState);
 
@@ -1703,9 +1824,15 @@ static void handle_serdes_issues(struct qib_pportdata *ppd, u64 ibcst)
 	case IB_7322_LT_STATE_CFGWAITRMT:
 	case IB_7322_LT_STATE_TXREVLANES:
 	case IB_7322_LT_STATE_CFGENH:
+<<<<<<< HEAD
 		tnow = jiffies;
 		if (ppd->cpspec->chase_end &&
 		     time_after(tnow, ppd->cpspec->chase_end))
+=======
+		tnow = get_jiffies_64();
+		if (ppd->cpspec->chase_end &&
+		     time_after64(tnow, ppd->cpspec->chase_end))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			disable_chase(ppd, tnow, ibclt);
 		else if (!ppd->cpspec->chase_end)
 			ppd->cpspec->chase_end = tnow + QIB_CHASE_TIME;
@@ -2307,11 +2434,22 @@ static int qib_7322_bringup_serdes(struct qib_pportdata *ppd)
 		SYM_LSB(IBCCtrlA_0, MaxPktLen);
 	ppd->cpspec->ibcctrl_a = ibc; /* without linkcmd or linkinitcmd! */
 
+<<<<<<< HEAD
+=======
+	/* initially come up waiting for TS1, without sending anything. */
+	val = ppd->cpspec->ibcctrl_a | (QLOGIC_IB_IBCC_LINKINITCMD_DISABLE <<
+		QLOGIC_IB_IBCC_LINKINITCMD_SHIFT);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Reset the PCS interface to the serdes (and also ibc, which is still
 	 * in reset from above).  Writes new value of ibcctrl_a as last step.
 	 */
 	qib_7322_mini_pcs_reset(ppd);
+<<<<<<< HEAD
+=======
+	qib_write_kreg(dd, kr_scratch, 0ULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!ppd->cpspec->ibcctrl_b) {
 		unsigned lse = ppd->link_speed_enabled;
@@ -2377,6 +2515,7 @@ static int qib_7322_bringup_serdes(struct qib_pportdata *ppd)
 	ppd->cpspec->ibcctrl_a |= SYM_MASK(IBCCtrlA_0, IBLinkEn);
 	set_vls(ppd);
 
+<<<<<<< HEAD
 	/* initially come up DISABLED, without sending anything. */
 	val = ppd->cpspec->ibcctrl_a | (QLOGIC_IB_IBCC_LINKINITCMD_DISABLE <<
 					QLOGIC_IB_IBCC_LINKINITCMD_SHIFT);
@@ -2385,12 +2524,22 @@ static int qib_7322_bringup_serdes(struct qib_pportdata *ppd)
 	/* clear the linkinit cmds */
 	ppd->cpspec->ibcctrl_a = val & ~SYM_MASK(IBCCtrlA_0, LinkInitCmd);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* be paranoid against later code motion, etc. */
 	spin_lock_irqsave(&dd->cspec->rcvmod_lock, flags);
 	ppd->p_rcvctrl |= SYM_MASK(RcvCtrl_0, RcvIBPortEnable);
 	qib_write_kreg_port(ppd, krp_rcvctrl, ppd->p_rcvctrl);
 	spin_unlock_irqrestore(&dd->cspec->rcvmod_lock, flags);
 
+<<<<<<< HEAD
+=======
+	/* Hold the link state machine for mezz boards */
+	if (IS_QMH(dd) || IS_QME(dd))
+		qib_set_ib_7322_lstate(ppd, 0,
+				       QLOGIC_IB_IBCC_LINKINITCMD_DISABLE);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Also enable IBSTATUSCHG interrupt.  */
 	val = qib_read_kreg_port(ppd, krp_errmask);
 	qib_write_kreg_port(ppd, krp_errmask,
@@ -2566,6 +2715,7 @@ static void qib_7322_nomsix(struct qib_devdata *dd)
 		int i;
 
 		dd->cspec->num_msix_entries = 0;
+<<<<<<< HEAD
 		for (i = 0; i < n; i++) {
 			irq_set_affinity_hint(
 			  dd->cspec->msix_entries[i].msix.vector, NULL);
@@ -2573,6 +2723,11 @@ static void qib_7322_nomsix(struct qib_devdata *dd)
 			free_irq(dd->cspec->msix_entries[i].msix.vector,
 			   dd->cspec->msix_entries[i].arg);
 		}
+=======
+		for (i = 0; i < n; i++)
+			free_irq(dd->cspec->msix_entries[i].vector,
+				 dd->cspec->msix_arg[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		qib_nomsix(dd);
 	}
 	/* make sure no MSIx interrupts are left pending */
@@ -2600,6 +2755,10 @@ static void qib_setup_7322_cleanup(struct qib_devdata *dd)
 	kfree(dd->cspec->sendgrhchk);
 	kfree(dd->cspec->sendibchk);
 	kfree(dd->cspec->msix_entries);
+<<<<<<< HEAD
+=======
+	kfree(dd->cspec->msix_arg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < dd->num_pports; i++) {
 		unsigned long flags;
 		u32 mask = QSFP_GPIO_MOD_PRS_N |
@@ -2717,7 +2876,11 @@ static noinline void unknown_7322_gpio_intr(struct qib_devdata *dd)
 			pins >>= SYM_LSB(EXTStatus, GPIOIn);
 			if (!(pins & mask)) {
 				++handled;
+<<<<<<< HEAD
 				qd->t_insert = jiffies;
+=======
+				qd->t_insert = get_jiffies_64();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				queue_work(ib_wq, &qd->work);
 			}
 		}
@@ -2745,10 +2908,15 @@ static noinline void unlikely_7322_intr(struct qib_devdata *dd, u64 istat)
 		unknown_7322_ibits(dd, istat);
 	if (istat & QIB_I_GPIO)
 		unknown_7322_gpio_intr(dd);
+<<<<<<< HEAD
 	if (istat & QIB_I_C_ERROR) {
 		qib_write_kreg(dd, kr_errmask, 0ULL);
 		tasklet_schedule(&dd->error_tasklet);
 	}
+=======
+	if (istat & QIB_I_C_ERROR)
+		handle_7322_errors(dd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (istat & INT_MASK_P(Err, 0) && dd->rcd[0])
 		handle_7322_p_errors(dd->rcd[0]->ppd);
 	if (istat & INT_MASK_P(Err, 1) && dd->rcd[1])
@@ -2855,8 +3023,14 @@ static irqreturn_t qib_7322intr(int irq, void *data)
 		for (i = 0; i < dd->first_user_ctxt; i++) {
 			if (ctxtrbits & rmask) {
 				ctxtrbits &= ~rmask;
+<<<<<<< HEAD
 				if (dd->rcd[i])
 					qib_kreceive(dd->rcd[i], NULL, &npkts);
+=======
+				if (dd->rcd[i]) {
+					qib_kreceive(dd->rcd[i], NULL, &npkts);
+				}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			rmask <<= 1;
 		}
@@ -3072,8 +3246,11 @@ static void qib_setup_7322_interrupt(struct qib_devdata *dd, int clearpend)
 	int ret, i, msixnum;
 	u64 redirect[6];
 	u64 mask;
+<<<<<<< HEAD
 	const struct cpumask *local_mask;
 	int firstcpu, secondcpu = 0, currrcvcpu = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!dd->num_pports)
 		return;
@@ -3122,6 +3299,7 @@ try_intx:
 	memset(redirect, 0, sizeof redirect);
 	mask = ~0ULL;
 	msixnum = 0;
+<<<<<<< HEAD
 	local_mask = cpumask_of_pcibus(dd->pcidev->bus);
 	firstcpu = cpumask_first(local_mask);
 	if (firstcpu >= nr_cpu_ids ||
@@ -3137,13 +3315,21 @@ try_intx:
 	}
 	for (i = 0; msixnum < dd->cspec->num_msix_entries; i++) {
 		irq_handler_t handler;
+=======
+	for (i = 0; msixnum < dd->cspec->num_msix_entries; i++) {
+		irq_handler_t handler;
+		const char *name;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		void *arg;
 		u64 val;
 		int lsb, reg, sh;
 
+<<<<<<< HEAD
 		dd->cspec->msix_entries[msixnum].
 			name[sizeof(dd->cspec->msix_entries[msixnum].name) - 1]
 			= '\0';
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (i < ARRAY_SIZE(irq_table)) {
 			if (irq_table[i].port) {
 				/* skip if for a non-configured port */
@@ -3154,11 +3340,15 @@ try_intx:
 				arg = dd;
 			lsb = irq_table[i].lsb;
 			handler = irq_table[i].handler;
+<<<<<<< HEAD
 			snprintf(dd->cspec->msix_entries[msixnum].name,
 				sizeof(dd->cspec->msix_entries[msixnum].name)
 				 - 1,
 				QIB_DRV_NAME "%d%s", dd->unit,
 				irq_table[i].name);
+=======
+			name = irq_table[i].name;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			unsigned ctxt;
 
@@ -3167,6 +3357,7 @@ try_intx:
 			arg = dd->rcd[ctxt];
 			if (!arg)
 				continue;
+<<<<<<< HEAD
 			if (qib_krcvq01_no_msi && ctxt < 2)
 				continue;
 			lsb = QIB_I_RCVAVAIL_LSB + ctxt;
@@ -3180,12 +3371,21 @@ try_intx:
 			dd->cspec->msix_entries[msixnum].msix.vector,
 			handler, 0, dd->cspec->msix_entries[msixnum].name,
 			arg);
+=======
+			lsb = QIB_I_RCVAVAIL_LSB + ctxt;
+			handler = qib_7322pintr;
+			name = QIB_DRV_NAME " (kctx)";
+		}
+		ret = request_irq(dd->cspec->msix_entries[msixnum].vector,
+				  handler, 0, name, arg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret) {
 			/*
 			 * Shouldn't happen since the enable said we could
 			 * have as many as we are trying to setup here.
 			 */
 			qib_dev_err(dd, "Couldn't setup MSIx "
+<<<<<<< HEAD
 				"interrupt (vec=%d, irq=%d): %d\n", msixnum,
 				dd->cspec->msix_entries[msixnum].msix.vector,
 				ret);
@@ -3193,6 +3393,15 @@ try_intx:
 			goto try_intx;
 		}
 		dd->cspec->msix_entries[msixnum].arg = arg;
+=======
+				    "interrupt (vec=%d, irq=%d): %d\n", msixnum,
+				    dd->cspec->msix_entries[msixnum].vector,
+				    ret);
+			qib_7322_nomsix(dd);
+			goto try_intx;
+		}
+		dd->cspec->msix_arg[msixnum] = arg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (lsb >= 0) {
 			reg = lsb / IBA7322_REDIRECT_VEC_PER_REG;
 			sh = (lsb % IBA7322_REDIRECT_VEC_PER_REG) *
@@ -3202,6 +3411,7 @@ try_intx:
 		}
 		val = qib_read_kreg64(dd, 2 * msixnum + 1 +
 			(QIB_7322_MsixTable_OFFS / sizeof(u64)));
+<<<<<<< HEAD
 		if (firstcpu < nr_cpu_ids &&
 			zalloc_cpumask_var(
 				&dd->cspec->msix_entries[msixnum].mask,
@@ -3221,14 +3431,19 @@ try_intx:
 				dd->cspec->msix_entries[msixnum].msix.vector,
 				dd->cspec->msix_entries[msixnum].mask);
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		msixnum++;
 	}
 	/* Initialize the vector mapping */
 	for (i = 0; i < ARRAY_SIZE(redirect); i++)
 		qib_write_kreg(dd, kr_intredirect + i, redirect[i]);
 	dd->cspec->main_int_mask = mask;
+<<<<<<< HEAD
 	tasklet_init(&dd->error_tasklet, qib_error_tasklet,
 		(unsigned long)dd);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bail:;
 }
 
@@ -3412,7 +3627,11 @@ static int qib_do_7322_reset(struct qib_devdata *dd)
 	if (msix_entries) {
 		/* restore the MSIx vector address and data if saved above */
 		for (i = 0; i < msix_entries; i++) {
+<<<<<<< HEAD
 			dd->cspec->msix_entries[i].msix.entry = i;
+=======
+			dd->cspec->msix_entries[i].entry = i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!msix_vecsave || !msix_vecsave[2 * i])
 				continue;
 			qib_write_kreg(dd, 2 * i +
@@ -3650,7 +3869,11 @@ static void qib_7322_config_ctxts(struct qib_devdata *dd)
 	if (qib_rcvhdrcnt)
 		dd->rcvhdrcnt = max(dd->cspec->rcvegrcnt, qib_rcvhdrcnt);
 	else
+<<<<<<< HEAD
 		dd->rcvhdrcnt = 2 * max(dd->cspec->rcvegrcnt,
+=======
+		dd->rcvhdrcnt = max(dd->cspec->rcvegrcnt,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    dd->num_pports > 1 ? 1024U : 2048U);
 }
 
@@ -4844,7 +5067,11 @@ static void qib_get_7322_faststats(unsigned long opaque)
 		    (ppd->lflags & (QIBL_LINKINIT | QIBL_LINKARMED |
 				    QIBL_LINKACTIVE)) &&
 		    ppd->cpspec->qdr_dfe_time &&
+<<<<<<< HEAD
 		    time_is_before_jiffies(ppd->cpspec->qdr_dfe_time)) {
+=======
+		    time_after64(get_jiffies_64(), ppd->cpspec->qdr_dfe_time)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ppd->cpspec->qdr_dfe_on = 0;
 
 			qib_write_kreg_port(ppd, krp_static_adapt_dis(2),
@@ -5278,8 +5505,11 @@ static int qib_7322_ib_updown(struct qib_pportdata *ppd, int ibup, u64 ibcs)
 				     QIBL_IB_AUTONEG_INPROG)))
 			set_7322_ibspeed_fast(ppd, ppd->link_speed_enabled);
 		if (!(ppd->lflags & QIBL_IB_AUTONEG_INPROG)) {
+<<<<<<< HEAD
 			struct qib_qsfp_data *qd =
 				&ppd->cpspec->qsfp_data;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* unlock the Tx settings, speed may change */
 			qib_write_kreg_port(ppd, krp_tx_deemph_override,
 				SYM_MASK(IBSD_TX_DEEMPHASIS_OVERRIDE_0,
@@ -5287,12 +5517,15 @@ static int qib_7322_ib_updown(struct qib_pportdata *ppd, int ibup, u64 ibcs)
 			qib_cancel_sends(ppd);
 			/* on link down, ensure sane pcs state */
 			qib_7322_mini_pcs_reset(ppd);
+<<<<<<< HEAD
 			/* schedule the qsfp refresh which should turn the link
 			   off */
 			if (ppd->dd->flags & QIB_HAS_QSFP) {
 				qd->t_insert = jiffies;
 				queue_work(ib_wq, &qd->work);
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			spin_lock_irqsave(&ppd->sdma_lock, flags);
 			if (__qib_sdma_running(ppd))
 				__qib_sdma_process_event(ppd,
@@ -5642,13 +5875,18 @@ static void qsfp_7322_event(struct work_struct *work)
 {
 	struct qib_qsfp_data *qd;
 	struct qib_pportdata *ppd;
+<<<<<<< HEAD
 	unsigned long pwrup;
 	unsigned long flags;
+=======
+	u64 pwrup;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 	u32 le2;
 
 	qd = container_of(work, struct qib_qsfp_data, work);
 	ppd = qd->ppd;
+<<<<<<< HEAD
 	pwrup = qd->t_insert +
 		msecs_to_jiffies(QSFP_PWR_LAG_MSEC - QSFP_MODPRS_LAG_MSEC);
 
@@ -5715,6 +5953,40 @@ static void qsfp_7322_event(struct work_struct *work)
 			spin_unlock_irqrestore(&ppd->lflags_lock, flags);
 		}
 	}
+=======
+	pwrup = qd->t_insert + msecs_to_jiffies(QSFP_PWR_LAG_MSEC);
+
+	/*
+	 * Some QSFP's not only do not respond until the full power-up
+	 * time, but may behave badly if we try. So hold off responding
+	 * to insertion.
+	 */
+	while (1) {
+		u64 now = get_jiffies_64();
+		if (time_after64(now, pwrup))
+			break;
+		msleep(20);
+	}
+	ret = qib_refresh_qsfp_cache(ppd, &qd->cache);
+	/*
+	 * Need to change LE2 back to defaults if we couldn't
+	 * read the cable type (to handle cable swaps), so do this
+	 * even on failure to read cable information.  We don't
+	 * get here for QME, so IS_QME check not needed here.
+	 */
+	if (!ret && !ppd->dd->cspec->r1) {
+		if (QSFP_IS_ACTIVE_FAR(qd->cache.tech))
+			le2 = LE2_QME;
+		else if (qd->cache.atten[1] >= qib_long_atten &&
+			 QSFP_IS_CU(qd->cache.tech))
+			le2 = LE2_5m;
+		else
+			le2 = LE2_DEFAULT;
+	} else
+		le2 = LE2_DEFAULT;
+	ibsd_wr_allchans(ppd, 13, (le2 << 7), BMASK(9, 7));
+	init_txdds_table(ppd, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -5818,8 +6090,12 @@ static void set_no_qsfp_atten(struct qib_devdata *dd, int change)
 			/* now change the IBC and serdes, overriding generic */
 			init_txdds_table(ppd, 1);
 			/* Re-enable the physical state machine on mezz boards
+<<<<<<< HEAD
 			 * now that the correct settings have been set.
 			 * QSFP boards are handles by the QSFP event handler */
+=======
+			 * now that the correct settings have been set. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (IS_QMH(dd) || IS_QME(dd))
 				qib_set_ib_7322_lstate(ppd, 0,
 					    QLOGIC_IB_IBCC_LINKINITCMD_SLEEP);
@@ -6297,8 +6573,11 @@ static int qib_init_7322_variables(struct qib_devdata *dd)
 
 	/* we always allocate at least 2048 bytes for eager buffers */
 	dd->rcvegrbufsize = max(mtu, 2048);
+<<<<<<< HEAD
 	BUG_ON(!is_power_of_2(dd->rcvegrbufsize));
 	dd->rcvegrbufsize_shift = ilog2(dd->rcvegrbufsize);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	qib_7322_tidtemplate(dd);
 
@@ -6906,6 +7185,7 @@ struct qib_devdata *qib_init_iba7322_funcs(struct pci_dev *pdev,
 		    (i >= ARRAY_SIZE(irq_table) &&
 		     dd->rcd[i - ARRAY_SIZE(irq_table)]))
 			actual_cnt++;
+<<<<<<< HEAD
 	/* reduce by ctxt's < 2 */
 	if (qib_krcvq01_no_msi)
 		actual_cnt -= dd->num_pports;
@@ -6914,11 +7194,23 @@ struct qib_devdata *qib_init_iba7322_funcs(struct pci_dev *pdev,
 	dd->cspec->msix_entries = kmalloc(tabsize *
 			sizeof(struct qib_msix_entry), GFP_KERNEL);
 	if (!dd->cspec->msix_entries) {
+=======
+	tabsize = actual_cnt;
+	dd->cspec->msix_entries = kmalloc(tabsize *
+			sizeof(struct msix_entry), GFP_KERNEL);
+	dd->cspec->msix_arg = kmalloc(tabsize *
+			sizeof(void *), GFP_KERNEL);
+	if (!dd->cspec->msix_entries || !dd->cspec->msix_arg) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		qib_dev_err(dd, "No memory for MSIx table\n");
 		tabsize = 0;
 	}
 	for (i = 0; i < tabsize; i++)
+<<<<<<< HEAD
 		dd->cspec->msix_entries[i].msix.entry = i;
+=======
+		dd->cspec->msix_entries[i].entry = i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (qib_pcie_params(dd, 8, &tabsize, dd->cspec->msix_entries))
 		qib_dev_err(dd, "Failed to setup PCIe or interrupts; "
@@ -7239,8 +7531,12 @@ static void find_best_ent(struct qib_pportdata *ppd,
 		}
 	}
 
+<<<<<<< HEAD
 	/* Active cables don't have attenuation so we only set SERDES
 	 * settings to account for the attenuation of the board traces. */
+=======
+	/* Lookup serdes setting by cable type and attenuation */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!override && QSFP_IS_ACTIVE(qd->tech)) {
 		*sdr_dds = txdds_sdr + ppd->dd->board_atten;
 		*ddr_dds = txdds_ddr + ppd->dd->board_atten;
@@ -7553,10 +7849,23 @@ static int serdes_7322_init_old(struct qib_pportdata *ppd)
 
 static int serdes_7322_init_new(struct qib_pportdata *ppd)
 {
+<<<<<<< HEAD
 	unsigned long tend;
 	u32 le_val, rxcaldone;
 	int chan, chan_done = (1 << SERDES_CHANS) - 1;
 
+=======
+	u64 tstart;
+	u32 le_val, rxcaldone;
+	int chan, chan_done = (1 << SERDES_CHANS) - 1;
+
+	/*
+	 * Initialize the Tx DDS tables.  Also done every QSFP event,
+	 * for adapters with QSFP
+	 */
+	init_txdds_table(ppd, 0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Clear cmode-override, may be set from older driver */
 	ahb_mod(ppd->dd, IBSD(ppd->hw_pidx), 5, 10, 0 << 14, 1 << 14);
 
@@ -7658,8 +7967,15 @@ static int serdes_7322_init_new(struct qib_pportdata *ppd)
 	msleep(20);
 	/*       Start Calibration */
 	ibsd_wr_allchans(ppd, 4, (1 << 10), BMASK(10, 10));
+<<<<<<< HEAD
 	tend = jiffies + msecs_to_jiffies(500);
 	while (chan_done && !time_is_before_jiffies(tend)) {
+=======
+	tstart = get_jiffies_64();
+	while (chan_done &&
+	       !time_after64(get_jiffies_64(),
+			tstart + msecs_to_jiffies(500))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		msleep(20);
 		for (chan = 0; chan < SERDES_CHANS; ++chan) {
 			rxcaldone = ahb_mod(ppd->dd, IBSD(ppd->hw_pidx),
@@ -7740,12 +8056,15 @@ static int serdes_7322_init_new(struct qib_pportdata *ppd)
 	/* VGA output common mode */
 	ibsd_wr_allchans(ppd, 12, (3 << 2), BMASK(3, 2));
 
+<<<<<<< HEAD
 	/*
 	 * Initialize the Tx DDS tables.  Also done every QSFP event,
 	 * for adapters with QSFP
 	 */
 	init_txdds_table(ppd, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

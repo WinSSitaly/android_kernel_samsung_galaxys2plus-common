@@ -21,6 +21,10 @@
  *	Mostly done:	ioctls for setting modes/timing
  *	Partly done:	hooks so you can pull off frames to non tty devs
  *	Restart DLCI 0 when it closes ?
+<<<<<<< HEAD
+=======
+ *	Test basic encoding
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	Improve the tx engine
  *	Resolve tx side locking by adding a queue_head and routing
  *		all control traffic via it
@@ -57,15 +61,19 @@
 #include <linux/serial.h>
 #include <linux/kfifo.h>
 #include <linux/skbuff.h>
+<<<<<<< HEAD
 #include <net/arp.h>
 #include <linux/ip.h>
 #include <linux/netdevice.h>
 #include <linux/etherdevice.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/gsmmux.h>
 
 static int debug;
 module_param(debug, int, 0600);
 
+<<<<<<< HEAD
 /* Defaults: these are from the specification */
 
 #define T1	10		/* 100mS */
@@ -76,12 +84,23 @@ module_param(debug, int, 0600);
 #ifdef DEBUG_TIMING
 #define T1	100
 #define T2	200
+=======
+#define T1	(HZ/10)
+#define T2	(HZ/3)
+#define N2	3
+
+/* Use long timers for testing at low speed with debug on */
+#ifdef DEBUG_TIMING
+#define T1	HZ
+#define T2	(2 * HZ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /*
  * Semi-arbitrary buffer size limits. 0710 is normally run with 32-64 byte
  * limits so this is plenty
  */
+<<<<<<< HEAD
 #define MAX_MRU 1500
 #define MAX_MTU 1500
 #define	GSM_NET_TX_TIMEOUT (HZ*10)
@@ -100,6 +119,10 @@ struct gsm_mux_net {
 };
 
 #define STATS(net) (((struct gsm_mux_net *)netdev_priv(net))->stats)
+=======
+#define MAX_MRU 512
+#define MAX_MTU 512
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  *	Each block of data we have queued to go out is in the form of
@@ -134,8 +157,11 @@ struct gsm_dlci {
 #define DLCI_OPENING		1	/* Sending SABM not seen UA */
 #define DLCI_OPEN		2	/* SABM/UA complete */
 #define DLCI_CLOSING		3	/* Sending DISC not seen UA/DM */
+<<<<<<< HEAD
 	struct kref ref;		/* freed from port or mux close */
 	struct mutex mutex;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Link layer */
 	spinlock_t lock;	/* Protects the internal state */
@@ -146,7 +172,10 @@ struct gsm_dlci {
 	struct kfifo *fifo;	/* Queue fifo for the DLCI */
 	struct kfifo _fifo;	/* For new fifo API porting only */
 	int adaption;		/* Adaption layer in use */
+<<<<<<< HEAD
 	int prev_adaption;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 modem_rx;		/* Our incoming virtual modem lines */
 	u32 modem_tx;		/* Our outgoing modem lines */
 	int dead;		/* Refuse re-open */
@@ -158,8 +187,11 @@ struct gsm_dlci {
 	struct sk_buff_head skb_list;	/* Queued frames */
 	/* Data handling callback */
 	void (*data)(struct gsm_dlci *dlci, u8 *data, int len);
+<<<<<<< HEAD
 	void (*prev_data)(struct gsm_dlci *dlci, u8 *data, int len);
 	struct net_device *net; /* network interface, if created */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* DLCI 0, 62/63 are special or reseved see gsmtty_open */
@@ -195,8 +227,11 @@ struct gsm_control {
 struct gsm_mux {
 	struct tty_struct *tty;		/* The tty our ldisc is bound to */
 	spinlock_t lock;
+<<<<<<< HEAD
 	unsigned int num;
 	struct kref ref;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Events on the GSM channel */
 	wait_queue_head_t event;
@@ -278,8 +313,11 @@ struct gsm_mux {
 static struct gsm_mux *gsm_mux[MAX_MUX];	/* GSM muxes */
 static spinlock_t gsm_mux_lock;
 
+<<<<<<< HEAD
 static struct tty_driver *gsm_tty_driver;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *	This section of the driver logic implements the GSM encodings
  *	both the basic and the 'advanced'. Reliable transport is not
@@ -811,6 +849,7 @@ static int gsm_dlci_data_output(struct gsm_mux *gsm, struct gsm_dlci *dlci)
 {
 	struct gsm_msg *msg;
 	u8 *dp;
+<<<<<<< HEAD
 	int len, total_size, size;
 	int h = dlci->adaption - 1;
 
@@ -846,6 +885,40 @@ static int gsm_dlci_data_output(struct gsm_mux *gsm, struct gsm_dlci *dlci)
 	}
 	/* Bytes of data we used up */
 	return total_size;
+=======
+	int len, size;
+	int h = dlci->adaption - 1;
+
+	len = kfifo_len(dlci->fifo);
+	if (len == 0)
+		return 0;
+
+	/* MTU/MRU count only the data bits */
+	if (len > gsm->mtu)
+		len = gsm->mtu;
+
+	size = len + h;
+
+	msg = gsm_data_alloc(gsm, dlci->addr, size, gsm->ftype);
+	/* FIXME: need a timer or something to kick this so it can't
+	   get stuck with no work outstanding and no buffer free */
+	if (msg == NULL)
+		return -ENOMEM;
+	dp = msg->data;
+	switch (dlci->adaption) {
+	case 1:	/* Unstructured */
+		break;
+	case 2:	/* Unstructed with modem bits. Always one byte as we never
+		   send inline break data */
+		*dp += gsm_encode_modem(dlci);
+		len--;
+		break;
+	}
+	WARN_ON(kfifo_out_locked(dlci->fifo, dp , len, &dlci->lock) != len);
+	__gsm_data_queue(dlci, msg);
+	/* Bytes of data we used up */
+	return size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -875,7 +948,11 @@ static int gsm_dlci_data_output_framed(struct gsm_mux *gsm,
 
 	/* dlci->skb is locked by tx_lock */
 	if (dlci->skb == NULL) {
+<<<<<<< HEAD
 		dlci->skb = skb_dequeue_tail(&dlci->skb_list);
+=======
+		dlci->skb = skb_dequeue(&dlci->skb_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (dlci->skb == NULL)
 			return 0;
 		first = 1;
@@ -899,11 +976,16 @@ static int gsm_dlci_data_output_framed(struct gsm_mux *gsm,
 
 	/* FIXME: need a timer or something to kick this so it can't
 	   get stuck with no work outstanding and no buffer free */
+<<<<<<< HEAD
 	if (msg == NULL) {
 		skb_queue_tail(&dlci->skb_list, dlci->skb);
 		dlci->skb = NULL;
 		return -ENOMEM;
 	}
+=======
+	if (msg == NULL)
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dp = msg->data;
 
 	if (dlci->adaption == 4) { /* Interruptible framed (Packetised Data) */
@@ -914,10 +996,15 @@ static int gsm_dlci_data_output_framed(struct gsm_mux *gsm,
 	memcpy(dp, dlci->skb->data, len);
 	skb_pull(dlci->skb, len);
 	__gsm_data_queue(dlci, msg);
+<<<<<<< HEAD
 	if (last) {
 		kfree_skb(dlci->skb);
 		dlci->skb = NULL;
 	}
+=======
+	if (last)
+		dlci->skb = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return size;
 }
 
@@ -950,7 +1037,11 @@ static void gsm_dlci_data_sweep(struct gsm_mux *gsm)
 			i++;
 			continue;
 		}
+<<<<<<< HEAD
 		if (dlci->adaption < 3 && !dlci->net)
+=======
+		if (dlci->adaption < 3)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			len = gsm_dlci_data_output(gsm, dlci);
 		else
 			len = gsm_dlci_data_output_framed(gsm, dlci);
@@ -974,6 +1065,7 @@ static void gsm_dlci_data_sweep(struct gsm_mux *gsm)
 static void gsm_dlci_data_kick(struct gsm_dlci *dlci)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	int sweep;
 
 	spin_lock_irqsave(&dlci->gsm->tx_lock, flags);
@@ -987,6 +1079,15 @@ static void gsm_dlci_data_kick(struct gsm_dlci *dlci)
 	}
 	if (sweep)
  		gsm_dlci_data_sweep(dlci->gsm);
+=======
+
+	spin_lock_irqsave(&dlci->gsm->tx_lock, flags);
+	/* If we have nothing running then we need to fire up */
+	if (dlci->gsm->tx_bytes == 0)
+		gsm_dlci_data_output(dlci->gsm, dlci);
+	else if (dlci->gsm->tx_bytes < TX_THRESH_LO)
+		gsm_dlci_data_sweep(dlci->gsm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&dlci->gsm->tx_lock, flags);
 }
 
@@ -1196,8 +1297,11 @@ static void gsm_control_message(struct gsm_mux *gsm, unsigned int command,
 							u8 *data, int clen)
 {
 	u8 buf[1];
+<<<<<<< HEAD
 	unsigned long flags;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (command) {
 	case CMD_CLD: {
 		struct gsm_dlci *dlci = gsm->dlci[0];
@@ -1223,9 +1327,13 @@ static void gsm_control_message(struct gsm_mux *gsm, unsigned int command,
 		gsm->constipated = 0;
 		gsm_control_reply(gsm, CMD_FCOFF, NULL, 0);
 		/* Kick the link in case it is idling */
+<<<<<<< HEAD
 		spin_lock_irqsave(&gsm->tx_lock, flags);
 		gsm_data_kick(gsm);
 		spin_unlock_irqrestore(&gsm->tx_lock, flags);
+=======
+		gsm_data_kick(gsm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case CMD_MSC:
 		/* Out of band modem line change indicator for a DLCI */
@@ -1636,8 +1744,11 @@ static struct gsm_dlci *gsm_dlci_alloc(struct gsm_mux *gsm, int addr)
 	if (dlci == NULL)
 		return NULL;
 	spin_lock_init(&dlci->lock);
+<<<<<<< HEAD
 	kref_init(&dlci->ref);
 	mutex_init(&dlci->mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dlci->fifo = &dlci->_fifo;
 	if (kfifo_alloc(&dlci->_fifo, 4096, GFP_KERNEL) < 0) {
 		kfree(dlci);
@@ -1663,6 +1774,7 @@ static struct gsm_dlci *gsm_dlci_alloc(struct gsm_mux *gsm, int addr)
 }
 
 /**
+<<<<<<< HEAD
  *	gsm_dlci_free		-	free DLCI
  *	@dlci: DLCI to free
  *
@@ -1721,6 +1833,28 @@ static void gsm_dlci_release(struct gsm_dlci *dlci)
 	}
 	dlci->state = DLCI_CLOSED;
 	dlci_put(dlci);
+=======
+ *	gsm_dlci_free		-	release DLCI
+ *	@dlci: DLCI to destroy
+ *
+ *	Free up a DLCI. Currently to keep the lifetime rules sane we only
+ *	clean up DLCI objects when the MUX closes rather than as the port
+ *	is closed down on both the tty and mux levels.
+ *
+ *	Can sleep.
+ */
+static void gsm_dlci_free(struct gsm_dlci *dlci)
+{
+	struct tty_struct *tty = tty_port_tty_get(&dlci->port);
+	if (tty) {
+		tty_vhangup(tty);
+		tty_kref_put(tty);
+	}
+	del_timer_sync(&dlci->t1);
+	dlci->gsm->dlci[dlci->addr] = NULL;
+	kfifo_free(dlci->fifo);
+	kfree(dlci);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2030,7 +2164,10 @@ void gsm_cleanup_mux(struct gsm_mux *gsm)
 	int i;
 	struct gsm_dlci *dlci = gsm->dlci[0];
 	struct gsm_msg *txq;
+<<<<<<< HEAD
 	struct gsm_control *gc;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	gsm->dead = 1;
 
@@ -2044,6 +2181,7 @@ void gsm_cleanup_mux(struct gsm_mux *gsm)
 	spin_unlock(&gsm_mux_lock);
 	WARN_ON(i == MAX_MUX);
 
+<<<<<<< HEAD
 	/* In theory disconnecting DLCI 0 is sufficient but for some
 	   modems this is apparently not the case. */
 	if (dlci) {
@@ -2051,6 +2189,8 @@ void gsm_cleanup_mux(struct gsm_mux *gsm)
 		if (gc)
 			gsm_control_wait(gsm, gc);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	del_timer_sync(&gsm->t2_timer);
 	/* Now we are sure T2 has stopped */
 	if (dlci) {
@@ -2062,7 +2202,11 @@ void gsm_cleanup_mux(struct gsm_mux *gsm)
 	/* Free up any link layer users */
 	for (i = 0; i < NUM_DLCI; i++)
 		if (gsm->dlci[i])
+<<<<<<< HEAD
 			gsm_dlci_release(gsm->dlci[i]);
+=======
+			gsm_dlci_free(gsm->dlci[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Now wipe the queues */
 	for (txq = gsm->tx_head; txq != NULL; txq = gsm->tx_head) {
 		gsm->tx_head = txq->next;
@@ -2102,7 +2246,10 @@ int gsm_activate_mux(struct gsm_mux *gsm)
 	spin_lock(&gsm_mux_lock);
 	for (i = 0; i < MAX_MUX; i++) {
 		if (gsm_mux[i] == NULL) {
+<<<<<<< HEAD
 			gsm->num = i;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			gsm_mux[i] = gsm;
 			break;
 		}
@@ -2123,7 +2270,12 @@ EXPORT_SYMBOL_GPL(gsm_activate_mux);
  *	gsm_free_mux		-	free up a mux
  *	@mux: mux to free
  *
+<<<<<<< HEAD
  *	Dispose of allocated resources for a dead mux
+=======
+ *	Dispose of allocated resources for a dead mux. No refcounting
+ *	at present so the mux must be truly dead.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void gsm_free_mux(struct gsm_mux *gsm)
 {
@@ -2134,6 +2286,7 @@ void gsm_free_mux(struct gsm_mux *gsm)
 EXPORT_SYMBOL_GPL(gsm_free_mux);
 
 /**
+<<<<<<< HEAD
  *	gsm_free_muxr		-	free up a mux
  *	@mux: mux to free
  *
@@ -2156,6 +2309,8 @@ static inline void mux_put(struct gsm_mux *gsm)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	gsm_alloc_mux		-	allocate a mux
  *
  *	Creates a new mux ready for activation.
@@ -2178,12 +2333,19 @@ struct gsm_mux *gsm_alloc_mux(void)
 		return NULL;
 	}
 	spin_lock_init(&gsm->lock);
+<<<<<<< HEAD
 	kref_init(&gsm->ref);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	gsm->t1 = T1;
 	gsm->t2 = T2;
 	gsm->n2 = N2;
 	gsm->ftype = UIH;
+<<<<<<< HEAD
+=======
+	gsm->initiator = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gsm->adaption = 1;
 	gsm->encoding = 1;
 	gsm->mru = 64;	/* Default to encoding 1 so these should be 64 */
@@ -2229,20 +2391,27 @@ static int gsmld_output(struct gsm_mux *gsm, u8 *data, int len)
 
 static int gsmld_attach_gsm(struct tty_struct *tty, struct gsm_mux *gsm)
 {
+<<<<<<< HEAD
 	int ret, i;
 	int base = gsm->num << 6; /* Base for this MUX */
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	gsm->tty = tty_kref_get(tty);
 	gsm->output = gsmld_output;
 	ret =  gsm_activate_mux(gsm);
 	if (ret != 0)
 		tty_kref_put(gsm->tty);
+<<<<<<< HEAD
 	else {
 		/* Don't register device 0 - this is the control channel and not
 		   a usable tty interface */
 		for (i = 1; i < NUM_DLCI; i++)
 			tty_register_device(gsm_tty_driver, base + i, NULL);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -2257,12 +2426,16 @@ static int gsmld_attach_gsm(struct tty_struct *tty, struct gsm_mux *gsm)
 
 static void gsmld_detach_gsm(struct tty_struct *tty, struct gsm_mux *gsm)
 {
+<<<<<<< HEAD
 	int i;
 	int base = gsm->num << 6; /* Base for this MUX */
 
 	WARN_ON(tty != gsm->tty);
 	for (i = 1; i < NUM_DLCI; i++)
 		tty_unregister_device(gsm_tty_driver, base + i);
+=======
+	WARN_ON(tty != gsm->tty);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gsm_cleanup_mux(gsm);
 	tty_kref_put(gsm->tty);
 	gsm->tty = NULL;
@@ -2350,7 +2523,11 @@ static void gsmld_close(struct tty_struct *tty)
 
 	gsmld_flush_buffer(tty);
 	/* Do other clean up here */
+<<<<<<< HEAD
 	mux_put(gsm);
+=======
+	gsm_free_mux(gsm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -2399,12 +2576,21 @@ static void gsmld_write_wakeup(struct tty_struct *tty)
 
 	/* Queue poll */
 	clear_bit(TTY_DO_WRITE_WAKEUP, &tty->flags);
+<<<<<<< HEAD
 	spin_lock_irqsave(&gsm->tx_lock, flags);
 	gsm_data_kick(gsm);
 	if (gsm->tx_bytes < TX_THRESH_LO) {
 		gsm_dlci_data_sweep(gsm);
 	}
 	spin_unlock_irqrestore(&gsm->tx_lock, flags);
+=======
+	gsm_data_kick(gsm);
+	if (gsm->tx_bytes < TX_THRESH_LO) {
+		spin_lock_irqsave(&gsm->tx_lock, flags);
+		gsm_dlci_data_sweep(gsm);
+		spin_unlock_irqrestore(&gsm->tx_lock, flags);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -2602,6 +2788,7 @@ static int gsmld_ioctl(struct tty_struct *tty, struct file *file,
 	}
 }
 
+<<<<<<< HEAD
 /*
  *	Network interface
  *
@@ -2816,6 +3003,8 @@ static int gsm_create_network(struct gsm_dlci *dlci, struct gsm_netconfig *nc)
 	}
 	return net->ifindex;	/* return network index */
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Line discipline for real tty */
 struct tty_ldisc_ops tty_ldisc_packet = {
@@ -2911,10 +3100,13 @@ static int gsmtty_open(struct tty_struct *tty, struct file *filp)
 	gsm = gsm_mux[mux];
 	if (gsm->dead)
 		return -EL2HLT;
+<<<<<<< HEAD
 	/* If DLCI 0 is not yet fully open return an error. This is ok from a locking
 	   perspective as we don't have to worry about this if DLCI0 is lost */
 	if (gsm->dlci[0] && gsm->dlci[0]->state != DLCI_OPEN)
 		return -EL2NSYNC;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dlci = gsm->dlci[line];
 	if (dlci == NULL)
 		dlci = gsm_dlci_alloc(gsm, line);
@@ -2923,9 +3115,12 @@ static int gsmtty_open(struct tty_struct *tty, struct file *filp)
 	port = &dlci->port;
 	port->count++;
 	tty->driver_data = dlci;
+<<<<<<< HEAD
 	dlci_get(dlci);
 	dlci_get(dlci->gsm->dlci[0]);
 	mux_get(dlci->gsm);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tty_port_tty_set(port, tty);
 
 	dlci->modem_rx = 0;
@@ -2941,6 +3136,7 @@ static int gsmtty_open(struct tty_struct *tty, struct file *filp)
 static void gsmtty_close(struct tty_struct *tty, struct file *filp)
 {
 	struct gsm_dlci *dlci = tty->driver_data;
+<<<<<<< HEAD
 	struct gsm_mux *gsm;
 
 	if (dlci == NULL)
@@ -2960,13 +3156,25 @@ out:
 	dlci_put(dlci);
 	dlci_put(gsm->dlci[0]);
 	mux_put(gsm);
+=======
+	if (dlci == NULL)
+		return;
+	if (tty_port_close_start(&dlci->port, tty, filp) == 0)
+		return;
+	gsm_dlci_begin_close(dlci);
+	tty_port_close_end(&dlci->port, tty);
+	tty_port_tty_set(&dlci->port, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void gsmtty_hangup(struct tty_struct *tty)
 {
 	struct gsm_dlci *dlci = tty->driver_data;
+<<<<<<< HEAD
 	if (dlci->state == DLCI_CLOSED)
 		return;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tty_port_hangup(&dlci->port);
 	gsm_dlci_begin_close(dlci);
 }
@@ -2974,12 +3182,18 @@ static void gsmtty_hangup(struct tty_struct *tty)
 static int gsmtty_write(struct tty_struct *tty, const unsigned char *buf,
 								    int len)
 {
+<<<<<<< HEAD
 	int sent;
 	struct gsm_dlci *dlci = tty->driver_data;
 	if (dlci->state == DLCI_CLOSED)
 		return -EINVAL;
 	/* Stuff the bytes into the fifo queue */
 	sent = kfifo_in_locked(dlci->fifo, buf, len, &dlci->lock);
+=======
+	struct gsm_dlci *dlci = tty->driver_data;
+	/* Stuff the bytes into the fifo queue */
+	int sent = kfifo_in_locked(dlci->fifo, buf, len, &dlci->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Need to kick the channel */
 	gsm_dlci_data_kick(dlci);
 	return sent;
@@ -2988,24 +3202,33 @@ static int gsmtty_write(struct tty_struct *tty, const unsigned char *buf,
 static int gsmtty_write_room(struct tty_struct *tty)
 {
 	struct gsm_dlci *dlci = tty->driver_data;
+<<<<<<< HEAD
 	if (dlci->state == DLCI_CLOSED)
 		return -EINVAL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return TX_SIZE - kfifo_len(dlci->fifo);
 }
 
 static int gsmtty_chars_in_buffer(struct tty_struct *tty)
 {
 	struct gsm_dlci *dlci = tty->driver_data;
+<<<<<<< HEAD
 	if (dlci->state == DLCI_CLOSED)
 		return -EINVAL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return kfifo_len(dlci->fifo);
 }
 
 static void gsmtty_flush_buffer(struct tty_struct *tty)
 {
 	struct gsm_dlci *dlci = tty->driver_data;
+<<<<<<< HEAD
 	if (dlci->state == DLCI_CLOSED)
 		return;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Caution needed: If we implement reliable transport classes
 	   then the data being transmitted can't simply be junked once
 	   it has first hit the stack. Until then we can just blow it
@@ -3024,8 +3247,11 @@ static void gsmtty_wait_until_sent(struct tty_struct *tty, int timeout)
 static int gsmtty_tiocmget(struct tty_struct *tty)
 {
 	struct gsm_dlci *dlci = tty->driver_data;
+<<<<<<< HEAD
 	if (dlci->state == DLCI_CLOSED)
 		return -EINVAL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return dlci->modem_rx;
 }
 
@@ -3035,9 +3261,13 @@ static int gsmtty_tiocmset(struct tty_struct *tty,
 	struct gsm_dlci *dlci = tty->driver_data;
 	unsigned int modem_tx = dlci->modem_tx;
 
+<<<<<<< HEAD
 	if (dlci->state == DLCI_CLOSED)
 		return -EINVAL;
 	modem_tx &= ~clear;
+=======
+	modem_tx &= clear;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	modem_tx |= set;
 
 	if (modem_tx != dlci->modem_tx) {
@@ -3051,6 +3281,7 @@ static int gsmtty_tiocmset(struct tty_struct *tty,
 static int gsmtty_ioctl(struct tty_struct *tty,
 			unsigned int cmd, unsigned long arg)
 {
+<<<<<<< HEAD
 	struct gsm_dlci *dlci = tty->driver_data;
 	struct gsm_netconfig nc;
 	int index;
@@ -3079,13 +3310,19 @@ static int gsmtty_ioctl(struct tty_struct *tty,
 	default:
 		return -ENOIOCTLCMD;
 	}
+=======
+	return -ENOIOCTLCMD;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void gsmtty_set_termios(struct tty_struct *tty, struct ktermios *old)
 {
+<<<<<<< HEAD
 	struct gsm_dlci *dlci = tty->driver_data;
 	if (dlci->state == DLCI_CLOSED)
 		return;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* For the moment its fixed. In actual fact the speed information
 	   for the virtual channel can be propogated in both directions by
 	   the RPN control message. This however rapidly gets nasty as we
@@ -3097,8 +3334,11 @@ static void gsmtty_set_termios(struct tty_struct *tty, struct ktermios *old)
 static void gsmtty_throttle(struct tty_struct *tty)
 {
 	struct gsm_dlci *dlci = tty->driver_data;
+<<<<<<< HEAD
 	if (dlci->state == DLCI_CLOSED)
 		return;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (tty->termios->c_cflag & CRTSCTS)
 		dlci->modem_tx &= ~TIOCM_DTR;
 	dlci->throttled = 1;
@@ -3109,8 +3349,11 @@ static void gsmtty_throttle(struct tty_struct *tty)
 static void gsmtty_unthrottle(struct tty_struct *tty)
 {
 	struct gsm_dlci *dlci = tty->driver_data;
+<<<<<<< HEAD
 	if (dlci->state == DLCI_CLOSED)
 		return;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (tty->termios->c_cflag & CRTSCTS)
 		dlci->modem_tx |= TIOCM_DTR;
 	dlci->throttled = 0;
@@ -3122,8 +3365,11 @@ static int gsmtty_break_ctl(struct tty_struct *tty, int state)
 {
 	struct gsm_dlci *dlci = tty->driver_data;
 	int encode = 0;	/* Off */
+<<<<<<< HEAD
 	if (dlci->state == DLCI_CLOSED)
 		return -EINVAL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (state == -1)	/* "On indefinitely" - we can't encode this
 				    properly */
@@ -3136,6 +3382,10 @@ static int gsmtty_break_ctl(struct tty_struct *tty, int state)
 	return gsmtty_modem_update(dlci, encode);
 }
 
+<<<<<<< HEAD
+=======
+static struct tty_driver *gsm_tty_driver;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Virtual ttys for the demux */
 static const struct tty_operations gsmtty_ops = {
@@ -3174,6 +3424,10 @@ static int __init gsm_init(void)
 		pr_err("gsm_init: tty allocation failed.\n");
 		return -EINVAL;
 	}
+<<<<<<< HEAD
+=======
+	gsm_tty_driver->owner	= THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gsm_tty_driver->driver_name	= "gsmtty";
 	gsm_tty_driver->name		= "gsmtty";
 	gsm_tty_driver->major		= 0;	/* Dynamic */

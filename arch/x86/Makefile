@@ -82,6 +82,7 @@ ifdef CONFIG_CC_STACKPROTECTOR
         endif
 endif
 
+<<<<<<< HEAD
 ifdef CONFIG_X86_X32
 	x32_ld_ok := $(call try-run,\
 			/bin/echo -e '1: .quad 1b' | \
@@ -98,6 +99,8 @@ ifdef CONFIG_X86_X32
 endif
 export CONFIG_X86_X32_ABI
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # Don't unroll struct assignments with kmemcheck enabled
 ifeq ($(CONFIG_KMEMCHECK),y)
 	KBUILD_CFLAGS += $(call cc-option,-fno-builtin-memcpy)
@@ -129,11 +132,15 @@ KBUILD_CFLAGS += -Wno-sign-compare
 KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
 # prevent gcc from generating any FP code by mistake
 KBUILD_CFLAGS += $(call cc-option,-mno-sse -mno-mmx -mno-sse2 -mno-3dnow,)
+<<<<<<< HEAD
 KBUILD_CFLAGS += $(call cc-option,-mno-avx,)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 KBUILD_CFLAGS += $(mflags-y)
 KBUILD_AFLAGS += $(mflags-y)
 
+<<<<<<< HEAD
 archscripts:
 	$(Q)$(MAKE) $(build)=arch/x86/tools relocs
 
@@ -143,6 +150,8 @@ archscripts:
 archheaders:
 	$(Q)$(MAKE) $(build)=arch/x86/syscalls all
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ###
 # Kernel objects
 
@@ -206,7 +215,10 @@ archclean:
 	$(Q)rm -rf $(objtree)/arch/i386
 	$(Q)rm -rf $(objtree)/arch/x86_64
 	$(Q)$(MAKE) $(clean)=$(boot)
+<<<<<<< HEAD
 	$(Q)$(MAKE) $(clean)=arch/x86/tools
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 define archhelp
   echo  '* bzImage      - Compressed kernel image (arch/x86/boot/bzImage)'

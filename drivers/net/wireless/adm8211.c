@@ -16,7 +16,10 @@
  */
 
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/if.h>
 #include <linux/skbuff.h>
 #include <linux/slab.h>
@@ -25,7 +28,10 @@
 #include <linux/delay.h>
 #include <linux/crc32.h>
 #include <linux/eeprom_93cx6.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/mac80211.h>
 
 #include "adm8211.h"
@@ -1250,8 +1256,12 @@ static int adm8211_hw_reset(struct ieee80211_hw *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static u64 adm8211_get_tsft(struct ieee80211_hw *dev,
 			    struct ieee80211_vif *vif)
+=======
+static u64 adm8211_get_tsft(struct ieee80211_hw *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct adm8211_priv *priv = dev->priv;
 	u32 tsftl;

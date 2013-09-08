@@ -2,7 +2,10 @@
 #include <linux/slab.h>
 #include <asm/processor.h>
 #include <asm/fpu.h>
+<<<<<<< HEAD
 #include <asm/traps.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int init_fpu(struct task_struct *tsk)
 {

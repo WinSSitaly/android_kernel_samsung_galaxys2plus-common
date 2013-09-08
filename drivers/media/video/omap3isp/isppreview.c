@@ -76,6 +76,7 @@ static struct omap3isp_prev_csc flr_prev_csc = {
 
 #define DEF_DETECT_CORRECT_VAL	0xe
 
+<<<<<<< HEAD
 /*
  * Margins and image size limits.
  *
@@ -121,6 +122,11 @@ static struct omap3isp_prev_csc flr_prev_csc = {
 #define PREV_MAX_OUT_WIDTH_REV_1	1280
 #define PREV_MAX_OUT_WIDTH_REV_2	3300
 #define PREV_MAX_OUT_WIDTH_REV_15	4096
+=======
+#define PREV_MIN_WIDTH		64
+#define PREV_MIN_HEIGHT		8
+#define PREV_MAX_HEIGHT		16384
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Coeficient Tables for the submodules in Preview.
@@ -1021,13 +1027,17 @@ static void preview_config_averager(struct isp_prev_device *prev, u8 average)
  * enabled when reporting source pad formats to userspace. If this assumption is
  * not true, rows and columns must be manually cropped at the preview engine
  * input to avoid overflows at the end of lines and frames.
+<<<<<<< HEAD
  *
  * See the explanation at the PREV_MARGIN_* definitions for more details.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void preview_config_input_size(struct isp_prev_device *prev)
 {
 	struct isp_device *isp = to_isp_device(prev);
 	struct prev_params *params = &prev->params;
+<<<<<<< HEAD
 	unsigned int sph = prev->crop.left;
 	unsigned int eph = prev->crop.left + prev->crop.width - 1;
 	unsigned int slv = prev->crop.top;
@@ -1051,6 +1061,49 @@ static void preview_config_input_size(struct isp_prev_device *prev)
 	}
 	if (params->features & (PREV_CHROMA_SUPPRESS | PREV_LUMA_ENHANCE))
 		sph -= 2;
+=======
+	struct v4l2_mbus_framefmt *format = &prev->formats[PREV_PAD_SINK];
+	unsigned int sph = 0;
+	unsigned int eph = format->width - 1;
+	unsigned int slv = 0;
+	unsigned int elv = format->height - 1;
+
+	if (prev->input == PREVIEW_INPUT_CCDC) {
+		sph += 2;
+		eph -= 2;
+	}
+
+	/*
+	 * Median filter	4 pixels
+	 * Noise filter		4 pixels, 4 lines
+	 * or faulty pixels correction
+	 * CFA filter		4 pixels, 4 lines in Bayer mode
+	 *				  2 lines in other modes
+	 * Color suppression	2 pixels
+	 * or luma enhancement
+	 * -------------------------------------------------------------
+	 * Maximum total	14 pixels, 8 lines
+	 */
+
+	if (!(params->features & PREV_CFA)) {
+		sph += 2;
+		eph -= 2;
+		slv += 2;
+		elv -= 2;
+	}
+	if (!(params->features & (PREV_DEFECT_COR | PREV_NOISE_FILTER))) {
+		sph += 2;
+		eph -= 2;
+		slv += 2;
+		elv -= 2;
+	}
+	if (!(params->features & PREV_HORZ_MEDIAN_FILTER)) {
+		sph += 2;
+		eph -= 2;
+	}
+	if (!(params->features & (PREV_CHROMA_SUPPRESS | PREV_LUMA_ENHANCE)))
+		sph += 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	isp_reg_writel(isp, (sph << ISPPRV_HORZ_INFO_SPH_SHIFT) | eph,
 		       OMAP3_ISP_IOMEM_PREV, ISPPRV_HORZ_INFO);
@@ -1254,6 +1307,10 @@ static void preview_init_params(struct isp_prev_device *prev)
 	/* Init values */
 	params->contrast = ISPPRV_CONTRAST_DEF * ISPPRV_CONTRAST_UNITS;
 	params->brightness = ISPPRV_BRIGHT_DEF * ISPPRV_BRIGHT_UNITS;
+<<<<<<< HEAD
+=======
+	params->average = NO_AVE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	params->cfa.format = OMAP3ISP_CFAFMT_BAYER;
 	memcpy(params->cfa.table, cfa_coef_table,
 	       sizeof(params->cfa.table));
@@ -1306,6 +1363,7 @@ static unsigned int preview_max_out_width(struct isp_prev_device *prev)
 
 	switch (isp->revision) {
 	case ISP_REVISION_1_0:
+<<<<<<< HEAD
 		return PREV_MAX_OUT_WIDTH_REV_1;
 
 	case ISP_REVISION_2_0:
@@ -1314,6 +1372,16 @@ static unsigned int preview_max_out_width(struct isp_prev_device *prev)
 
 	case ISP_REVISION_15_0:
 		return PREV_MAX_OUT_WIDTH_REV_15;
+=======
+		return ISPPRV_MAXOUTPUT_WIDTH;
+
+	case ISP_REVISION_2_0:
+	default:
+		return ISPPRV_MAXOUTPUT_WIDTH_ES2;
+
+	case ISP_REVISION_15_0:
+		return ISPPRV_MAXOUTPUT_WIDTH_3630;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1321,6 +1389,11 @@ static void preview_configure(struct isp_prev_device *prev)
 {
 	struct isp_device *isp = to_isp_device(prev);
 	struct v4l2_mbus_framefmt *format;
+<<<<<<< HEAD
+=======
+	unsigned int max_out_width;
+	unsigned int format_avg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	preview_setup_hw(prev);
 
@@ -1358,7 +1431,14 @@ static void preview_configure(struct isp_prev_device *prev)
 		preview_config_outlineoffset(prev,
 				ALIGN(format->width, 0x10) * 2);
 
+<<<<<<< HEAD
 	preview_config_averager(prev, 0);
+=======
+	max_out_width = preview_max_out_width(prev);
+
+	format_avg = fls(DIV_ROUND_UP(format->width, max_out_width) - 1);
+	preview_config_averager(prev, format_avg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	preview_config_ycpos(prev, format->code);
 }
 
@@ -1404,14 +1484,24 @@ static void preview_isr_buffer(struct isp_prev_device *prev)
 	int restart = 0;
 
 	if (prev->input == PREVIEW_INPUT_MEMORY) {
+<<<<<<< HEAD
 		buffer = omap3isp_video_buffer_next(&prev->video_in);
+=======
+		buffer = omap3isp_video_buffer_next(&prev->video_in,
+						    prev->error);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (buffer != NULL)
 			preview_set_inaddr(prev, buffer->isp_addr);
 		pipe->state |= ISP_PIPELINE_IDLE_INPUT;
 	}
 
 	if (prev->output & PREVIEW_OUTPUT_MEMORY) {
+<<<<<<< HEAD
 		buffer = omap3isp_video_buffer_next(&prev->video_out);
+=======
+		buffer = omap3isp_video_buffer_next(&prev->video_out,
+						    prev->error);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (buffer != NULL) {
 			preview_set_outaddr(prev, buffer->isp_addr);
 			restart = 1;
@@ -1438,6 +1528,11 @@ static void preview_isr_buffer(struct isp_prev_device *prev)
 	default:
 		return;
 	}
+<<<<<<< HEAD
+=======
+
+	prev->error = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1561,6 +1656,10 @@ static int preview_set_stream(struct v4l2_subdev *sd, int enable)
 		omap3isp_subclk_enable(isp, OMAP3_ISP_SUBCLK_PREVIEW);
 		preview_configure(prev);
 		atomic_set(&prev->stopping, 0);
+<<<<<<< HEAD
+=======
+		prev->error = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		preview_print_status(prev);
 	}
 
@@ -1612,6 +1711,7 @@ __preview_get_format(struct isp_prev_device *prev, struct v4l2_subdev_fh *fh,
 		return &prev->formats[pad];
 }
 
+<<<<<<< HEAD
 static struct v4l2_rect *
 __preview_get_crop(struct isp_prev_device *prev, struct v4l2_subdev_fh *fh,
 		   enum v4l2_subdev_format_whence which)
@@ -1622,6 +1722,8 @@ __preview_get_crop(struct isp_prev_device *prev, struct v4l2_subdev_fh *fh,
 		return &prev->crop;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* previewer format descriptions */
 static const unsigned int preview_input_fmts[] = {
 	V4L2_MBUS_FMT_SGRBG10_1X10,
@@ -1636,6 +1738,7 @@ static const unsigned int preview_output_fmts[] = {
 };
 
 /*
+<<<<<<< HEAD
  * preview_try_format - Validate a format
  * @prev: ISP preview engine
  * @fh: V4L2 subdev file handle
@@ -1645,16 +1748,33 @@ static const unsigned int preview_output_fmts[] = {
  *
  * Validate and adjust the given format for the given pad based on the preview
  * engine limits and the format and crop rectangles on other pads.
+=======
+ * preview_try_format - Handle try format by pad subdev method
+ * @prev: ISP preview device
+ * @fh : V4L2 subdev file handle
+ * @pad: pad num
+ * @fmt: pointer to v4l2 format structure
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void preview_try_format(struct isp_prev_device *prev,
 			       struct v4l2_subdev_fh *fh, unsigned int pad,
 			       struct v4l2_mbus_framefmt *fmt,
 			       enum v4l2_subdev_format_whence which)
 {
+<<<<<<< HEAD
 	enum v4l2_mbus_pixelcode pixelcode;
 	struct v4l2_rect *crop;
 	unsigned int i;
 
+=======
+	struct v4l2_mbus_framefmt *format;
+	unsigned int max_out_width;
+	enum v4l2_mbus_pixelcode pixelcode;
+	unsigned int i;
+
+	max_out_width = preview_max_out_width(prev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (pad) {
 	case PREV_PAD_SINK:
 		/* When reading data from the CCDC, the input size has already
@@ -1667,11 +1787,18 @@ static void preview_try_format(struct isp_prev_device *prev,
 		 * filter array interpolation.
 		 */
 		if (prev->input == PREVIEW_INPUT_MEMORY) {
+<<<<<<< HEAD
 			fmt->width = clamp_t(u32, fmt->width, PREV_MIN_IN_WIDTH,
 					     preview_max_out_width(prev));
 			fmt->height = clamp_t(u32, fmt->height,
 					      PREV_MIN_IN_HEIGHT,
 					      PREV_MAX_IN_HEIGHT);
+=======
+			fmt->width = clamp_t(u32, fmt->width, PREV_MIN_WIDTH,
+					     max_out_width * 8);
+			fmt->height = clamp_t(u32, fmt->height, PREV_MIN_HEIGHT,
+					      PREV_MAX_HEIGHT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		fmt->colorspace = V4L2_COLORSPACE_SRGB;
@@ -1688,8 +1815,20 @@ static void preview_try_format(struct isp_prev_device *prev,
 
 	case PREV_PAD_SOURCE:
 		pixelcode = fmt->code;
+<<<<<<< HEAD
 		*fmt = *__preview_get_format(prev, fh, PREV_PAD_SINK, which);
 
+=======
+		format = __preview_get_format(prev, fh, PREV_PAD_SINK, which);
+		memcpy(fmt, format, sizeof(*fmt));
+
+		/* The preview module output size is configurable through the
+		 * input interface (horizontal and vertical cropping) and the
+		 * averager (horizontal scaling by 1/1, 1/2, 1/4 or 1/8). In
+		 * spite of this, hardcode the output size to the biggest
+		 * possible value for simplicity reasons.
+		 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		switch (pixelcode) {
 		case V4L2_MBUS_FMT_YUYV8_1X16:
 		case V4L2_MBUS_FMT_UYVY8_1X16:
@@ -1701,6 +1840,7 @@ static void preview_try_format(struct isp_prev_device *prev,
 			break;
 		}
 
+<<<<<<< HEAD
 		/* The preview module output size is configurable through the
 		 * averager (horizontal scaling by 1/1, 1/2, 1/4 or 1/8). This
 		 * is not supported yet, hardcode the output size to the crop
@@ -1709,6 +1849,33 @@ static void preview_try_format(struct isp_prev_device *prev,
 		crop = __preview_get_crop(prev, fh, which);
 		fmt->width = crop->width;
 		fmt->height = crop->height;
+=======
+		/* The TRM states (12.1.4.7.1.2) that 2 pixels must be cropped
+		 * from the left and right sides when the input source is the
+		 * CCDC. This seems not to be needed in practice, investigation
+		 * is required.
+		 */
+		if (prev->input == PREVIEW_INPUT_CCDC)
+			fmt->width -= 4;
+
+		/* The preview module can output a maximum of 3312 pixels
+		 * horizontally due to fixed memory-line sizes. Compute the
+		 * horizontal averaging factor accordingly. Note that the limit
+		 * applies to the noise filter and CFA interpolation blocks, so
+		 * it doesn't take cropping by further blocks into account.
+		 *
+		 * ES 1.0 hardware revision is limited to 1280 pixels
+		 * horizontally.
+		 */
+		fmt->width >>= fls(DIV_ROUND_UP(fmt->width, max_out_width) - 1);
+
+		/* Assume that all blocks are enabled and crop pixels and lines
+		 * accordingly. See preview_config_input_size() for more
+		 * information.
+		 */
+		fmt->width -= 14;
+		fmt->height -= 8;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		fmt->colorspace = V4L2_COLORSPACE_JPEG;
 		break;
@@ -1718,6 +1885,7 @@ static void preview_try_format(struct isp_prev_device *prev,
 }
 
 /*
+<<<<<<< HEAD
  * preview_try_crop - Validate a crop rectangle
  * @prev: ISP preview engine
  * @sink: format on the sink pad
@@ -1761,6 +1929,8 @@ static void preview_try_crop(struct isp_prev_device *prev,
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * preview_enum_mbus_code - Handle pixel format enumeration
  * @sd     : pointer to v4l2 subdev structure
  * @fh     : V4L2 subdev file handle
@@ -1822,6 +1992,7 @@ static int preview_enum_frame_size(struct v4l2_subdev *sd,
 }
 
 /*
+<<<<<<< HEAD
  * preview_get_crop - Retrieve the crop rectangle on a pad
  * @sd: ISP preview V4L2 subdevice
  * @fh: V4L2 subdev file handle
@@ -1876,6 +2047,8 @@ static int preview_set_crop(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh,
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * preview_get_format - Handle get format by pads subdev method
  * @sd : pointer to v4l2 subdev structure
  * @fh : V4L2 subdev file handle
@@ -1908,7 +2081,10 @@ static int preview_set_format(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh,
 {
 	struct isp_prev_device *prev = v4l2_get_subdevdata(sd);
 	struct v4l2_mbus_framefmt *format;
+<<<<<<< HEAD
 	struct v4l2_rect *crop;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	format = __preview_get_format(prev, fh, fmt->pad, fmt->which);
 	if (format == NULL)
@@ -1919,6 +2095,7 @@ static int preview_set_format(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh,
 
 	/* Propagate the format from sink to source */
 	if (fmt->pad == PREV_PAD_SINK) {
+<<<<<<< HEAD
 		/* Reset the crop rectangle. */
 		crop = __preview_get_crop(prev, fh, fmt->which);
 		crop->left = 0;
@@ -1931,6 +2108,11 @@ static int preview_set_format(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh,
 		/* Update the source format. */
 		format = __preview_get_format(prev, fh, PREV_PAD_SOURCE,
 					      fmt->which);
+=======
+		format = __preview_get_format(prev, fh, PREV_PAD_SOURCE,
+					      fmt->which);
+		*format = fmt->format;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		preview_try_format(prev, fh, PREV_PAD_SOURCE, format,
 				   fmt->which);
 	}
@@ -1979,8 +2161,11 @@ static const struct v4l2_subdev_pad_ops preview_v4l2_pad_ops = {
 	.enum_frame_size = preview_enum_frame_size,
 	.get_fmt = preview_get_format,
 	.set_fmt = preview_set_format,
+<<<<<<< HEAD
 	.get_crop = preview_get_crop,
 	.set_crop = preview_set_crop,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* subdev operations */
@@ -2078,6 +2263,7 @@ static const struct media_entity_operations preview_media_ops = {
 	.link_setup = preview_link_setup,
 };
 
+<<<<<<< HEAD
 void omap3isp_preview_unregister_entities(struct isp_prev_device *prev)
 {
 	v4l2_device_unregister_subdev(&prev->subdev);
@@ -2116,6 +2302,10 @@ error:
 
 /*
  * preview_init_entities - Initialize subdev and media entity.
+=======
+/*
+ * review_init_entities - Initialize subdev and media entity.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @prev : Pointer to preview structure
  * return -ENOMEM or zero on success
  */
@@ -2172,21 +2362,34 @@ static int preview_init_entities(struct isp_prev_device *prev)
 
 	ret = omap3isp_video_init(&prev->video_in, "preview");
 	if (ret < 0)
+<<<<<<< HEAD
 		goto error_video_in;
 
 	ret = omap3isp_video_init(&prev->video_out, "preview");
 	if (ret < 0)
 		goto error_video_out;
+=======
+		return ret;
+
+	ret = omap3isp_video_init(&prev->video_out, "preview");
+	if (ret < 0)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Connect the video nodes to the previewer subdev. */
 	ret = media_entity_create_link(&prev->video_in.video.entity, 0,
 			&prev->subdev.entity, PREV_PAD_SINK, 0);
 	if (ret < 0)
+<<<<<<< HEAD
 		goto error_link;
+=======
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = media_entity_create_link(&prev->subdev.entity, PREV_PAD_SOURCE,
 			&prev->video_out.video.entity, 0, 0);
 	if (ret < 0)
+<<<<<<< HEAD
 		goto error_link;
 
 	return 0;
@@ -2200,6 +2403,56 @@ error_video_in:
 	return ret;
 }
 
+=======
+		return ret;
+
+	return 0;
+}
+
+void omap3isp_preview_unregister_entities(struct isp_prev_device *prev)
+{
+	media_entity_cleanup(&prev->subdev.entity);
+
+	v4l2_device_unregister_subdev(&prev->subdev);
+	v4l2_ctrl_handler_free(&prev->ctrls);
+	omap3isp_video_unregister(&prev->video_in);
+	omap3isp_video_unregister(&prev->video_out);
+}
+
+int omap3isp_preview_register_entities(struct isp_prev_device *prev,
+	struct v4l2_device *vdev)
+{
+	int ret;
+
+	/* Register the subdev and video nodes. */
+	ret = v4l2_device_register_subdev(vdev, &prev->subdev);
+	if (ret < 0)
+		goto error;
+
+	ret = omap3isp_video_register(&prev->video_in, vdev);
+	if (ret < 0)
+		goto error;
+
+	ret = omap3isp_video_register(&prev->video_out, vdev);
+	if (ret < 0)
+		goto error;
+
+	return 0;
+
+error:
+	omap3isp_preview_unregister_entities(prev);
+	return ret;
+}
+
+/* -----------------------------------------------------------------------------
+ * ISP previewer initialisation and cleanup
+ */
+
+void omap3isp_preview_cleanup(struct isp_device *isp)
+{
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * isp_preview_init - Previewer initialization.
  * @dev : Pointer to ISP device
@@ -2208,11 +2461,16 @@ error_video_in:
 int omap3isp_preview_init(struct isp_device *isp)
 {
 	struct isp_prev_device *prev = &isp->isp_prev;
+<<<<<<< HEAD
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_init(&prev->lock);
 	init_waitqueue_head(&prev->wait);
 	preview_init_params(prev);
 
+<<<<<<< HEAD
 	return preview_init_entities(prev);
 }
 
@@ -2224,4 +2482,15 @@ void omap3isp_preview_cleanup(struct isp_device *isp)
 	omap3isp_video_cleanup(&prev->video_in);
 	omap3isp_video_cleanup(&prev->video_out);
 	media_entity_cleanup(&prev->subdev.entity);
+=======
+	ret = preview_init_entities(prev);
+	if (ret < 0)
+		goto out;
+
+out:
+	if (ret)
+		omap3isp_preview_cleanup(isp);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

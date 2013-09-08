@@ -38,6 +38,10 @@
 #include <mach/hardware.h>
 #include <mach/common.h>
 #include <mach/iomux-mx35.h>
+<<<<<<< HEAD
+=======
+#include <mach/audmux.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "devices-imx35.h"
 
@@ -192,12 +196,27 @@ static struct gpio_led eukrea_mbimxsd_leds[] = {
 	},
 };
 
+<<<<<<< HEAD
 static const struct gpio_led_platform_data
 		eukrea_mbimxsd_led_info __initconst = {
+=======
+static struct gpio_led_platform_data eukrea_mbimxsd_led_info = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.leds		= eukrea_mbimxsd_leds,
 	.num_leds	= ARRAY_SIZE(eukrea_mbimxsd_leds),
 };
 
+<<<<<<< HEAD
+=======
+static struct platform_device eukrea_mbimxsd_leds_gpio = {
+	.name	= "leds-gpio",
+	.id	= -1,
+	.dev	= {
+		.platform_data	= &eukrea_mbimxsd_led_info,
+	},
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct gpio_keys_button eukrea_mbimxsd_gpio_buttons[] = {
 	{
 		.gpio		= GPIO_SWITCH1,
@@ -215,6 +234,10 @@ static const struct gpio_keys_platform_data
 };
 
 static struct platform_device *platform_devices[] __initdata = {
+<<<<<<< HEAD
+=======
+	&eukrea_mbimxsd_leds_gpio,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&eukrea_mbimxsd_lcd_powerdev,
 };
 
@@ -235,8 +258,12 @@ struct imx_ssi_platform_data eukrea_mbimxsd_ssi_pdata __initconst = {
 
 static struct esdhc_platform_data sd1_pdata = {
 	.cd_gpio = GPIO_SD1CD,
+<<<<<<< HEAD
 	.cd_type = ESDHC_CD_GPIO,
 	.wp_type = ESDHC_WP_NONE,
+=======
+	.wp_gpio = -EINVAL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -251,6 +278,25 @@ void __init eukrea_mbimxsd35_baseboard_init(void)
 			ARRAY_SIZE(eukrea_mbimxsd_pads)))
 		printk(KERN_ERR "error setting mbimxsd pads !\n");
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SND_SOC_EUKREA_TLV320)
+	/* SSI unit master I2S codec connected to SSI_AUD4 */
+	mxc_audmux_v2_configure_port(0,
+			MXC_AUDMUX_V2_PTCR_SYN |
+			MXC_AUDMUX_V2_PTCR_TFSDIR |
+			MXC_AUDMUX_V2_PTCR_TFSEL(3) |
+			MXC_AUDMUX_V2_PTCR_TCLKDIR |
+			MXC_AUDMUX_V2_PTCR_TCSEL(3),
+			MXC_AUDMUX_V2_PDCR_RXDSEL(3)
+	);
+	mxc_audmux_v2_configure_port(3,
+			MXC_AUDMUX_V2_PTCR_SYN,
+			MXC_AUDMUX_V2_PDCR_RXDSEL(0)
+	);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	imx35_add_imx_uart1(&uart_pdata);
 	imx35_add_ipu_core(&mx3_ipu_data);
 	imx35_add_mx3_sdc_fb(&mx3fb_pdata);
@@ -275,6 +321,9 @@ void __init eukrea_mbimxsd35_baseboard_init(void)
 				ARRAY_SIZE(eukrea_mbimxsd_i2c_devices));
 
 	platform_add_devices(platform_devices, ARRAY_SIZE(platform_devices));
+<<<<<<< HEAD
 	gpio_led_register_device(-1, &eukrea_mbimxsd_led_info);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	imx_add_gpio_keys(&eukrea_mbimxsd_button_data);
 }

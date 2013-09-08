@@ -21,7 +21,11 @@
 #include <asm/bootinfo.h>
 #endif
 
+<<<<<<< HEAD
 static bool nologo;
+=======
+static int nologo;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(nologo, bool, 0);
 MODULE_PARM_DESC(nologo, "Disables startup logo");
 

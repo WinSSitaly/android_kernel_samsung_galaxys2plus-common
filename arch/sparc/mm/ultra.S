@@ -53,6 +53,7 @@ __flush_tlb_mm:		/* 18 insns */
 	nop
 
 	.align		32
+<<<<<<< HEAD
 	.globl		__flush_tlb_page
 __flush_tlb_page:	/* 22 insns */
 	/* %o0 = context, %o1 = vaddr */
@@ -80,6 +81,8 @@ __flush_tlb_page:	/* 22 insns */
 	nop
 
 	.align		32
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.globl		__flush_tlb_pending
 __flush_tlb_pending:	/* 26 insns */
 	/* %o0 = context, %o1 = nr, %o2 = vaddrs[] */
@@ -230,6 +233,7 @@ __cheetah_flush_tlb_mm: /* 19 insns */
 	retl
 	 wrpr		%g7, 0x0, %pstate
 
+<<<<<<< HEAD
 __cheetah_flush_tlb_page:	/* 22 insns */
 	/* %o0 = context, %o1 = vaddr */
 	rdpr		%pstate, %g7
@@ -255,6 +259,8 @@ __cheetah_flush_tlb_page:	/* 22 insns */
 	retl
 	 wrpr		%g7, 0x0, %pstate
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 __cheetah_flush_tlb_pending:	/* 27 insns */
 	/* %o0 = context, %o1 = nr, %o2 = vaddrs[] */
 	rdpr		%pstate, %g7
@@ -321,6 +327,7 @@ __hypervisor_flush_tlb_mm: /* 10 insns */
 	retl
 	 nop
 
+<<<<<<< HEAD
 __hypervisor_flush_tlb_page: /* 11 insns */
 	/* %o0 = context, %o1 = vaddr */
 	mov		%o0, %g2
@@ -335,6 +342,8 @@ __hypervisor_flush_tlb_page: /* 11 insns */
 	retl
 	 nop
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 __hypervisor_flush_tlb_pending: /* 16 insns */
 	/* %o0 = context, %o1 = nr, %o2 = vaddrs[] */
 	sllx		%o1, 3, %g1
@@ -405,6 +414,7 @@ cheetah_patch_cachetlbops:
 	call		tlb_patch_one
 	 mov		19, %o2
 
+<<<<<<< HEAD
 	sethi		%hi(__flush_tlb_page), %o0
 	or		%o0, %lo(__flush_tlb_page), %o0
 	sethi		%hi(__cheetah_flush_tlb_page), %o1
@@ -412,6 +422,8 @@ cheetah_patch_cachetlbops:
 	call		tlb_patch_one
 	 mov		22, %o2
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sethi		%hi(__flush_tlb_pending), %o0
 	or		%o0, %lo(__flush_tlb_pending), %o0
 	sethi		%hi(__cheetah_flush_tlb_pending), %o1
@@ -470,9 +482,16 @@ xcall_flush_tlb_mm:	/* 21 insns */
 	nop
 	nop
 
+<<<<<<< HEAD
 	.globl		xcall_flush_tlb_page
 xcall_flush_tlb_page:	/* 17 insns */
 	/* %g5=context, %g1=vaddr */
+=======
+	.globl		xcall_flush_tlb_pending
+xcall_flush_tlb_pending:	/* 21 insns */
+	/* %g5=context, %g1=nr, %g7=vaddrs[] */
+	sllx		%g1, 3, %g1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mov		PRIMARY_CONTEXT, %g4
 	ldxa		[%g4] ASI_DMMU, %g2
 	srlx		%g2, CTX_PGSZ1_NUC_SHIFT, %g4
@@ -480,6 +499,7 @@ xcall_flush_tlb_page:	/* 17 insns */
 	or		%g5, %g4, %g5
 	mov		PRIMARY_CONTEXT, %g4
 	stxa		%g5, [%g4] ASI_DMMU
+<<<<<<< HEAD
 	andcc		%g1, 0x1, %g0
 	be,pn		%icc, 2f
 	 andn		%g1, 0x1, %g5
@@ -490,6 +510,22 @@ xcall_flush_tlb_page:	/* 17 insns */
 	retry
 	nop
 	nop
+=======
+1:	sub		%g1, (1 << 3), %g1
+	ldx		[%g7 + %g1], %g5
+	andcc		%g5, 0x1, %g0
+	be,pn		%icc, 2f
+
+	 andn		%g5, 0x1, %g5
+	stxa		%g0, [%g5] ASI_IMMU_DEMAP
+2:	stxa		%g0, [%g5] ASI_DMMU_DEMAP
+	membar		#Sync
+	brnz,pt		%g1, 1b
+	 nop
+	stxa		%g2, [%g4] ASI_DMMU
+	retry
+	nop
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.globl		xcall_flush_tlb_kernel_range
 xcall_flush_tlb_kernel_range:	/* 25 insns */
@@ -563,11 +599,19 @@ xcall_fetch_glob_regs:
 	stx		%o7, [%g1 + GR_SNAP_O7]
 	stx		%i7, [%g1 + GR_SNAP_I7]
 	/* Don't try this at home kids... */
+<<<<<<< HEAD
 	rdpr		%cwp, %g3
 	sub		%g3, 1, %g7
 	wrpr		%g7, %cwp
 	mov		%i7, %g7
 	wrpr		%g3, %cwp
+=======
+	rdpr		%cwp, %g2
+	sub		%g2, 1, %g7
+	wrpr		%g7, %cwp
+	mov		%i7, %g7
+	wrpr		%g2, %cwp
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	stx		%g7, [%g1 + GR_SNAP_RPC]
 	sethi		%hi(trap_block), %g7
 	or		%g7, %lo(trap_block), %g7
@@ -664,6 +708,7 @@ __hypervisor_xcall_flush_tlb_mm: /* 21 insns */
 	membar		#Sync
 	retry
 
+<<<<<<< HEAD
 	.globl		__hypervisor_xcall_flush_tlb_page
 __hypervisor_xcall_flush_tlb_page: /* 17 insns */
 	/* %g5=ctx, %g1=vaddr */
@@ -671,6 +716,17 @@ __hypervisor_xcall_flush_tlb_page: /* 17 insns */
 	mov		%o1, %g3
 	mov		%o2, %g4
 	mov		%g1, %o0	        /* ARG0: virtual address */
+=======
+	.globl		__hypervisor_xcall_flush_tlb_pending
+__hypervisor_xcall_flush_tlb_pending: /* 21 insns */
+	/* %g5=ctx, %g1=nr, %g7=vaddrs[], %g2,%g3,%g4,g6=scratch */
+	sllx		%g1, 3, %g1
+	mov		%o0, %g2
+	mov		%o1, %g3
+	mov		%o2, %g4
+1:	sub		%g1, (1 << 3), %g1
+	ldx		[%g7 + %g1], %o0	/* ARG0: virtual address */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mov		%g5, %o1		/* ARG1: mmu context */
 	mov		HV_MMU_ALL, %o2		/* ARG2: flags */
 	srlx		%o0, PAGE_SHIFT, %o0
@@ -679,6 +735,11 @@ __hypervisor_xcall_flush_tlb_page: /* 17 insns */
 	mov		HV_MMU_UNMAP_ADDR_TRAP, %g6
 	brnz,a,pn	%o0, __hypervisor_tlb_xcall_error
 	 mov		%o0, %g5
+<<<<<<< HEAD
+=======
+	brnz,pt		%g1, 1b
+	 nop
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mov		%g2, %o0
 	mov		%g3, %o1
 	mov		%g4, %o2
@@ -761,6 +822,7 @@ hypervisor_patch_cachetlbops:
 	call		tlb_patch_one
 	 mov		10, %o2
 
+<<<<<<< HEAD
 	sethi		%hi(__flush_tlb_page), %o0
 	or		%o0, %lo(__flush_tlb_page), %o0
 	sethi		%hi(__hypervisor_flush_tlb_page), %o1
@@ -768,6 +830,8 @@ hypervisor_patch_cachetlbops:
 	call		tlb_patch_one
 	 mov		11, %o2
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sethi		%hi(__flush_tlb_pending), %o0
 	or		%o0, %lo(__flush_tlb_pending), %o0
 	sethi		%hi(__hypervisor_flush_tlb_pending), %o1
@@ -799,12 +863,21 @@ hypervisor_patch_cachetlbops:
 	call		tlb_patch_one
 	 mov		21, %o2
 
+<<<<<<< HEAD
 	sethi		%hi(xcall_flush_tlb_page), %o0
 	or		%o0, %lo(xcall_flush_tlb_page), %o0
 	sethi		%hi(__hypervisor_xcall_flush_tlb_page), %o1
 	or		%o1, %lo(__hypervisor_xcall_flush_tlb_page), %o1
 	call		tlb_patch_one
 	 mov		17, %o2
+=======
+	sethi		%hi(xcall_flush_tlb_pending), %o0
+	or		%o0, %lo(xcall_flush_tlb_pending), %o0
+	sethi		%hi(__hypervisor_xcall_flush_tlb_pending), %o1
+	or		%o1, %lo(__hypervisor_xcall_flush_tlb_pending), %o1
+	call		tlb_patch_one
+	 mov		21, %o2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sethi		%hi(xcall_flush_tlb_kernel_range), %o0
 	or		%o0, %lo(xcall_flush_tlb_kernel_range), %o0

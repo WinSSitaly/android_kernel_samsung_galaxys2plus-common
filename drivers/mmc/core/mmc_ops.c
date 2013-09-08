@@ -10,7 +10,10 @@
  */
 
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/types.h>
 #include <linux/scatterlist.h>
 
@@ -234,7 +237,11 @@ static int
 mmc_send_cxd_data(struct mmc_card *card, struct mmc_host *host,
 		u32 opcode, void *buf, unsigned len)
 {
+<<<<<<< HEAD
 	struct mmc_request mrq = {NULL};
+=======
+	struct mmc_request mrq = {0};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mmc_command cmd = {0};
 	struct mmc_data data = {0};
 	struct scatterlist sg;
@@ -399,6 +406,11 @@ int mmc_switch(struct mmc_card *card, u8 set, u8 index, u8 value,
 	if (err)
 		return err;
 
+<<<<<<< HEAD
+=======
+	mdelay( 1 );
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Must check status to be sure of no errors */
 	do {
 		err = mmc_send_status(card, &status);
@@ -408,14 +420,22 @@ int mmc_switch(struct mmc_card *card, u8 set, u8 index, u8 value,
 			break;
 		if (mmc_host_is_spi(card->host))
 			break;
+<<<<<<< HEAD
 	} while (R1_CURRENT_STATE(status) == R1_STATE_PRG);
+=======
+	} while (R1_CURRENT_STATE(status) == 7);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mmc_host_is_spi(card->host)) {
 		if (status & R1_SPI_ILLEGAL_COMMAND)
 			return -EBADMSG;
 	} else {
 		if (status & 0xFDFFA000)
+<<<<<<< HEAD
 			pr_warning("%s: unexpected status %#x after "
+=======
+			printk(KERN_WARNING "%s: unexpected status %#x after "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       "switch", mmc_hostname(card->host), status);
 		if (status & R1_SWITCH_ERROR)
 			return -EBADMSG;
@@ -455,7 +475,11 @@ static int
 mmc_send_bus_test(struct mmc_card *card, struct mmc_host *host, u8 opcode,
 		  u8 len)
 {
+<<<<<<< HEAD
 	struct mmc_request mrq = {NULL};
+=======
+	struct mmc_request mrq = {0};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mmc_command cmd = {0};
 	struct mmc_data data = {0};
 	struct scatterlist sg;
@@ -477,7 +501,11 @@ mmc_send_bus_test(struct mmc_card *card, struct mmc_host *host, u8 opcode,
 	else if (len == 4)
 		test_buf = testdata_4bit;
 	else {
+<<<<<<< HEAD
 		pr_err("%s: Invalid bus_width %d\n",
+=======
+		printk(KERN_ERR "%s: Invalid bus_width %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       mmc_hostname(host), len);
 		kfree(data_buf);
 		return -EINVAL;
@@ -548,6 +576,7 @@ int mmc_bus_test(struct mmc_card *card, u8 bus_width)
 	err = mmc_send_bus_test(card, card->host, MMC_BUS_TEST_R, width);
 	return err;
 }
+<<<<<<< HEAD
 
 int mmc_send_hpi_cmd(struct mmc_card *card, u32 *status)
 {
@@ -583,3 +612,5 @@ int mmc_send_hpi_cmd(struct mmc_card *card, u32 *status)
 
 	return 0;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

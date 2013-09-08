@@ -95,7 +95,11 @@ struct lapb_cb {
 	struct sk_buff_head	write_queue;
 	struct sk_buff_head	ack_queue;
 	unsigned char		window;
+<<<<<<< HEAD
 	const struct lapb_register_struct *callbacks;
+=======
+	struct lapb_register_struct callbacks;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* FRMR control information */
 	struct lapb_frame	frmr_data;

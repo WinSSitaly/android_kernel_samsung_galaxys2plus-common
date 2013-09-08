@@ -118,4 +118,10 @@ extern void *memmove(void *__dest, __const__ void *__src, size_t __n);
 /* Don't build bcopy at all ...  */
 #define __HAVE_ARCH_BCOPY
 
+<<<<<<< HEAD
+=======
+#define __HAVE_ARCH_MEMSCAN
+#define memscan memchr
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* _XTENSA_STRING_H */

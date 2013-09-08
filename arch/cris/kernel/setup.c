@@ -20,7 +20,10 @@
 #include <linux/pfn.h>
 #include <linux/cpu.h>
 #include <asm/setup.h>
+<<<<<<< HEAD
 #include <arch/system.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Setup options

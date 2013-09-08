@@ -485,7 +485,11 @@ void card_send_command(struct ft1000_device *ft1000dev, void *ptempbuffer,
 
 	DEBUG("card_send_command: enter card_send_command... size=%d\n", size);
 
+<<<<<<< HEAD
 	commandbuf = kmalloc(size + 2, GFP_KERNEL);
+=======
+	commandbuf = (unsigned char *)kmalloc(size + 2, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy((void *)commandbuf + 2, (void *)ptempbuffer, size);
 
 	ft1000_read_register(ft1000dev, &temp, FT1000_REG_DOORBELL);
@@ -601,7 +605,11 @@ static void ft1000_reset_asic(struct net_device *dev)
 
 	mdelay(1);
 
+<<<<<<< HEAD
 	/* set watermark to -1 in order to not generate an interrupt */
+=======
+	/* set watermark to -1 in order to not generate an interrrupt */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ft1000_write_register(ft1000dev, 0xffff, FT1000_REG_MAG_WATERMARK);
 
 	/* clear interrupts */
@@ -671,6 +679,10 @@ static int ft1000_reset_card(struct net_device *dev)
 	return TRUE;
 }
 
+<<<<<<< HEAD
+=======
+#ifdef HAVE_NET_DEVICE_OPS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct net_device_ops ftnet_ops =
 {
 	.ndo_open = &ft1000_open,
@@ -678,6 +690,10 @@ static const struct net_device_ops ftnet_ops =
 	.ndo_start_xmit = &ft1000_start_xmit,
 	.ndo_get_stats = &ft1000_netdev_stats,
 };
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 //---------------------------------------------------------------------------
@@ -762,7 +778,18 @@ int init_ft1000_netdev(struct ft1000_device *ft1000dev)
 
 	INIT_LIST_HEAD(&pInfo->nodes.list);
 
+<<<<<<< HEAD
 	netdev->netdev_ops = &ftnet_ops;
+=======
+#ifdef HAVE_NET_DEVICE_OPS
+	netdev->netdev_ops = &ftnet_ops;
+#else
+	netdev->hard_start_xmit = &ft1000_start_xmit;
+	netdev->get_stats = &ft1000_netdev_stats;
+	netdev->open = &ft1000_open;
+	netdev->stop = &ft1000_close;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ft1000dev->net = netdev;
 

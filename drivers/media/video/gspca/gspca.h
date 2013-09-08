@@ -14,12 +14,20 @@
 #ifdef GSPCA_DEBUG
 /* GSPCA our debug messages */
 extern int gspca_debug;
+<<<<<<< HEAD
 #define PDEBUG(level, fmt, ...)					\
 do {								\
 	if (gspca_debug & (level))				\
 		pr_info(fmt, ##__VA_ARGS__);			\
 } while (0)
 
+=======
+#define PDEBUG(level, fmt, args...) \
+	do {\
+		if (gspca_debug & (level)) \
+			printk(KERN_INFO MODULE_NAME ": " fmt "\n", ## args); \
+	} while (0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define D_ERR  0x01
 #define D_PROBE 0x02
 #define D_CONF 0x04
@@ -30,8 +38,22 @@ do {								\
 #define D_USBO 0x00
 #define D_V4L2 0x0100
 #else
+<<<<<<< HEAD
 #define PDEBUG(level, fmt, ...)
 #endif
+=======
+#define PDEBUG(level, fmt, args...)
+#endif
+#undef err
+#define err(fmt, args...) \
+	printk(KERN_ERR MODULE_NAME ": " fmt "\n", ## args)
+#undef info
+#define info(fmt, args...) \
+	printk(KERN_INFO MODULE_NAME ": " fmt "\n", ## args)
+#undef warn
+#define warn(fmt, args...) \
+	printk(KERN_WARNING MODULE_NAME ": " fmt "\n", ## args)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define GSPCA_MAX_FRAMES 16	/* maximum number of video frame buffers */
 /* image transfers */
@@ -69,9 +91,13 @@ struct cam {
 	u8 bulk;		/* image transfer by 0:isoc / 1:bulk */
 	u8 npkt;		/* number of packets in an ISOC message
 				 * 0 is the default value: 32 packets */
+<<<<<<< HEAD
 	u8 needs_full_bandwidth;/* Set this flag to notify the bandwidth calc.
 				 * code that the cam fills all image buffers to
 				 * the max, even when using compression. */
+=======
+	u8 reverse_alts;	/* Alt settings are in high to low order */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct gspca_dev;
@@ -210,6 +236,10 @@ struct gspca_dev {
 	char memory;			/* memory type (V4L2_MEMORY_xxx) */
 	__u8 iface;			/* USB interface number */
 	__u8 alt;			/* USB alternate setting */
+<<<<<<< HEAD
+=======
+	__u8 nbalt;			/* number of USB alternate settings */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 audio;			/* presence of audio device */
 };
 

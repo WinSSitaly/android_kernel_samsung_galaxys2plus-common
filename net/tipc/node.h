@@ -42,6 +42,7 @@
 #include "net.h"
 #include "bearer.h"
 
+<<<<<<< HEAD
 /*
  * Out-of-range value for node signature
  */
@@ -53,6 +54,8 @@
 #define WAIT_NAMES_GONE	0x0002	/* wait for peer's publications to be purged */
 #define WAIT_NODE_DOWN	0x0004	/* wait until peer node is declared down */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct tipc_node - TIPC node structure
  * @addr: network address of node
@@ -63,6 +66,7 @@
  * @active_links: pointers to active links to node
  * @links: pointers to all links to node
  * @working_links: number of working links to node (both active and standby)
+<<<<<<< HEAD
  * @block_setup: bit mask of conditions preventing link establishment to node
  * @link_cnt: number of links to node
  * @permit_changeover: non-zero if node has redundant links to this system
@@ -75,6 +79,18 @@
  *    @last_sent: sequence # of last b'cast message sent by node
  *    @oos_state: state tracker for handling OOS b'cast messages
  *    @deferred_size: number of OOS b'cast messages in deferred queue
+=======
+ * @cleanup_required: non-zero if cleaning up after a prior loss of contact
+ * @link_cnt: number of links to node
+ * @permit_changeover: non-zero if node has redundant links to this system
+ * @bclink: broadcast-related info
+ *    @supported: non-zero if node supports TIPC b'cast capability
+ *    @acked: sequence # of last outbound b'cast message acknowledged by node
+ *    @last_in: sequence # of last in-sequence b'cast message received from node
+ *    @gap_after: sequence # of last message not requiring a NAK request
+ *    @gap_to: sequence # of last message requiring a NAK request
+ *    @nack_sync: counter that determines when NAK requests should be sent
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *    @deferred_head: oldest OOS b'cast message received from node
  *    @deferred_tail: newest OOS b'cast message received from node
  *    @defragm: list of partially reassembled b'cast message fragments from node
@@ -86,6 +102,7 @@ struct tipc_node {
 	struct hlist_node hash;
 	struct list_head list;
 	struct list_head nsub;
+<<<<<<< HEAD
 	struct tipc_link *active_links[2];
 	struct tipc_link *links[MAX_BEARERS];
 	int link_cnt;
@@ -101,12 +118,28 @@ struct tipc_node {
 		u32 last_sent;
 		u32 oos_state;
 		u32 deferred_size;
+=======
+	struct link *active_links[2];
+	struct link *links[MAX_BEARERS];
+	int link_cnt;
+	int working_links;
+	int cleanup_required;
+	int permit_changeover;
+	struct {
+		int supported;
+		u32 acked;
+		u32 last_in;
+		u32 gap_after;
+		u32 gap_to;
+		u32 nack_sync;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct sk_buff *deferred_head;
 		struct sk_buff *deferred_tail;
 		struct sk_buff *defragm;
 	} bclink;
 };
 
+<<<<<<< HEAD
 extern struct list_head tipc_node_list;
 
 struct tipc_node *tipc_node_find(u32 addr);
@@ -116,6 +149,31 @@ void tipc_node_attach_link(struct tipc_node *n_ptr, struct tipc_link *l_ptr);
 void tipc_node_detach_link(struct tipc_node *n_ptr, struct tipc_link *l_ptr);
 void tipc_node_link_down(struct tipc_node *n_ptr, struct tipc_link *l_ptr);
 void tipc_node_link_up(struct tipc_node *n_ptr, struct tipc_link *l_ptr);
+=======
+#define NODE_HTABLE_SIZE 512
+extern struct list_head tipc_node_list;
+
+/*
+ * A trivial power-of-two bitmask technique is used for speed, since this
+ * operation is done for every incoming TIPC packet. The number of hash table
+ * entries has been chosen so that no hash chain exceeds 8 nodes and will
+ * usually be much smaller (typically only a single node).
+ */
+static inline unsigned int tipc_hashfn(u32 addr)
+{
+	return addr & (NODE_HTABLE_SIZE - 1);
+}
+
+extern u32 tipc_own_tag;
+
+struct tipc_node *tipc_node_find(u32 addr);
+struct tipc_node *tipc_node_create(u32 addr);
+void tipc_node_delete(struct tipc_node *n_ptr);
+void tipc_node_attach_link(struct tipc_node *n_ptr, struct link *l_ptr);
+void tipc_node_detach_link(struct tipc_node *n_ptr, struct link *l_ptr);
+void tipc_node_link_down(struct tipc_node *n_ptr, struct link *l_ptr);
+void tipc_node_link_up(struct tipc_node *n_ptr, struct link *l_ptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int tipc_node_active_links(struct tipc_node *n_ptr);
 int tipc_node_redundant_links(struct tipc_node *n_ptr);
 int tipc_node_is_up(struct tipc_node *n_ptr);

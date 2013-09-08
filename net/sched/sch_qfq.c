@@ -211,7 +211,10 @@ static int qfq_change_class(struct Qdisc *sch, u32 classid, u32 parentid,
 	struct nlattr *tb[TCA_QFQ_MAX + 1];
 	u32 weight, lmax, inv_w;
 	int i, err;
+<<<<<<< HEAD
 	int delta_w;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (tca[TCA_OPTIONS] == NULL) {
 		pr_notice("qfq: no options\n");
@@ -233,10 +236,16 @@ static int qfq_change_class(struct Qdisc *sch, u32 classid, u32 parentid,
 
 	inv_w = ONE_FP / weight;
 	weight = ONE_FP / inv_w;
+<<<<<<< HEAD
 	delta_w = weight - (cl ? ONE_FP / cl->inv_w : 0);
 	if (q->wsum + delta_w > QFQ_MAX_WSUM) {
 		pr_notice("qfq: total weight out of range (%u + %u)\n",
 			  delta_w, q->wsum);
+=======
+	if (q->wsum + weight > QFQ_MAX_WSUM) {
+		pr_notice("qfq: total weight out of range (%u + %u)\n",
+			  weight, q->wsum);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -258,12 +267,22 @@ static int qfq_change_class(struct Qdisc *sch, u32 classid, u32 parentid,
 				return err;
 		}
 
+<<<<<<< HEAD
 		if (inv_w != cl->inv_w) {
 			sch_tree_lock(sch);
 			q->wsum += delta_w;
 			cl->inv_w = inv_w;
 			sch_tree_unlock(sch);
 		}
+=======
+		sch_tree_lock(sch);
+		if (tb[TCA_QFQ_WEIGHT]) {
+			q->wsum = weight - ONE_FP / cl->inv_w;
+			cl->inv_w = inv_w;
+		}
+		sch_tree_unlock(sch);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
@@ -278,6 +297,10 @@ static int qfq_change_class(struct Qdisc *sch, u32 classid, u32 parentid,
 	i = qfq_calc_index(cl->inv_w, cl->lmax);
 
 	cl->grp = &q->groups[i];
+<<<<<<< HEAD
+=======
+	q->wsum += weight;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cl->qdisc = qdisc_create_dflt(sch->dev_queue,
 				      &pfifo_qdisc_ops, classid);
@@ -294,7 +317,10 @@ static int qfq_change_class(struct Qdisc *sch, u32 classid, u32 parentid,
 			return err;
 		}
 	}
+<<<<<<< HEAD
 	q->wsum += weight;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sch_tree_lock(sch);
 	qdisc_class_hash_insert(&q->clhash, &cl->common);
@@ -818,11 +844,19 @@ skip_unblock:
 static void qfq_update_start(struct qfq_sched *q, struct qfq_class *cl)
 {
 	unsigned long mask;
+<<<<<<< HEAD
 	u64 limit, roundedF;
 	int slot_shift = cl->grp->slot_shift;
 
 	roundedF = qfq_round_down(cl->F, slot_shift);
 	limit = qfq_round_down(q->V, slot_shift) + (1ULL << slot_shift);
+=======
+	uint32_t limit, roundedF;
+	int slot_shift = cl->grp->slot_shift;
+
+	roundedF = qfq_round_down(cl->F, slot_shift);
+	limit = qfq_round_down(q->V, slot_shift) + (1UL << slot_shift);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!qfq_gt(cl->F, q->V) || qfq_gt(roundedF, limit)) {
 		/* timestamp was stale */
@@ -830,10 +864,14 @@ static void qfq_update_start(struct qfq_sched *q, struct qfq_class *cl)
 		if (mask) {
 			struct qfq_group *next = qfq_ffs(q, mask);
 			if (qfq_gt(roundedF, next->F)) {
+<<<<<<< HEAD
 				if (qfq_gt(limit, next->F))
 					cl->S = next->F;
 				else /* preserve timestamp correctness */
 					cl->S = limit;
+=======
+				cl->S = next->F;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return;
 			}
 		}

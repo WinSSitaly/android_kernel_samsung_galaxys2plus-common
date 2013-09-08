@@ -20,10 +20,16 @@
 #define __VLYNQ_H__
 
 #include <linux/device.h>
+<<<<<<< HEAD
 #include <linux/types.h>
 
 struct module;
 
+=======
+#include <linux/module.h>
+#include <linux/types.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define VLYNQ_NUM_IRQS 32
 
 struct vlynq_mapping {

@@ -256,7 +256,11 @@ u64 guest_vhpt_lookup(u64 iha, u64 *pte)
 			"srlz.d;;"
 			"ssm psr.i;;"
 			"srlz.d;;"
+<<<<<<< HEAD
 			: "=&r"(ret) : "r"(iha), "r"(pte) : "memory");
+=======
+			: "=r"(ret) : "r"(iha), "r"(pte):"memory");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }

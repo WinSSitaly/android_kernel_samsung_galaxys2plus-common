@@ -60,6 +60,7 @@ struct calling_interface_structure {
 	struct calling_interface_token tokens[];
 } __packed;
 
+<<<<<<< HEAD
 struct quirk_entry {
 	u8 touchpad_led;
 };
@@ -76,6 +77,8 @@ static int dmi_matched(const struct dmi_system_id *dmi)
 	return 1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int da_command_address;
 static int da_command_code;
 static int da_num_tokens;
@@ -117,7 +120,10 @@ static const struct dmi_system_id __initdata dell_device_table[] = {
 	},
 	{ }
 };
+<<<<<<< HEAD
 MODULE_DEVICE_TABLE(dmi, dell_device_table);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct dmi_system_id __devinitdata dell_blacklist[] = {
 	/* Supported by compal-laptop */
@@ -166,6 +172,7 @@ static struct dmi_system_id __devinitdata dell_blacklist[] = {
 	{}
 };
 
+<<<<<<< HEAD
 static struct dmi_system_id __devinitdata dell_quirks[] = {
 	{
 		.callback = dmi_matched,
@@ -215,6 +222,8 @@ static struct dmi_system_id __devinitdata dell_quirks[] = {
 	{ }
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct calling_interface_buffer *buffer;
 static struct page *bufferpage;
 static DEFINE_MUTEX(buffer_mutex);
@@ -265,7 +274,13 @@ static void __init find_tokens(const struct dmi_header *dm, void *dummy)
 {
 	switch (dm->type) {
 	case 0xd4: /* Indexed IO */
+<<<<<<< HEAD
 	case 0xd5: /* Protected Area Type 1 */
+=======
+		break;
+	case 0xd5: /* Protected Area Type 1 */
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case 0xd6: /* Protected Area Type 2 */
 		break;
 	case 0xda: /* Calling interface */
@@ -616,6 +631,7 @@ static const struct backlight_ops dell_ops = {
 	.update_status  = dell_send_intensity,
 };
 
+<<<<<<< HEAD
 static void touchpad_led_on(void)
 {
 	int command = 0x97;
@@ -655,6 +671,8 @@ static void touchpad_led_exit(void)
 	led_classdev_unregister(&touchpad_led);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static bool dell_laptop_i8042_filter(unsigned char data, unsigned char str,
 			      struct serio *port)
 {
@@ -687,10 +705,13 @@ static int __init dell_init(void)
 	if (!dmi_check_system(dell_device_table))
 		return -ENODEV;
 
+<<<<<<< HEAD
 	quirks = NULL;
 	/* find if this machine support other functions */
 	dmi_check_system(dell_quirks);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dmi_walk(find_tokens, NULL);
 
 	if (!da_tokens)  {
@@ -719,6 +740,10 @@ static int __init dell_init(void)
 	if (!bufferpage)
 		goto fail_buffer;
 	buffer = page_address(bufferpage);
+<<<<<<< HEAD
+=======
+	mutex_init(&buffer_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = dell_setup_rfkill();
 
@@ -733,9 +758,12 @@ static int __init dell_init(void)
 		goto fail_filter;
 	}
 
+<<<<<<< HEAD
 	if (quirks && quirks->touchpad_led)
 		touchpad_led_init(&platform_device->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dell_laptop_dir = debugfs_create_dir("dell_laptop", NULL);
 	if (dell_laptop_dir != NULL)
 		debugfs_create_file("rfkill", 0444, dell_laptop_dir, NULL,
@@ -802,8 +830,11 @@ fail_platform_driver:
 static void __exit dell_exit(void)
 {
 	debugfs_remove_recursive(dell_laptop_dir);
+<<<<<<< HEAD
 	if (quirks && quirks->touchpad_led)
 		touchpad_led_exit();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	i8042_remove_filter(dell_laptop_i8042_filter);
 	cancel_delayed_work_sync(&dell_rfkill_work);
 	backlight_device_unregister(dell_backlight_device);
@@ -822,3 +853,9 @@ module_exit(dell_exit);
 MODULE_AUTHOR("Matthew Garrett <mjg@redhat.com>");
 MODULE_DESCRIPTION("Dell laptop driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+MODULE_ALIAS("dmi:*svnDellInc.:*:ct8:*");
+MODULE_ALIAS("dmi:*svnDellInc.:*:ct9:*");
+MODULE_ALIAS("dmi:*svnDellComputerCorporation.:*:ct8:*");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

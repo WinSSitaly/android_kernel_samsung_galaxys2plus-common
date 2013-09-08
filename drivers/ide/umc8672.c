@@ -160,7 +160,11 @@ static int __init umc8672_probe(void)
 	return ide_legacy_device_add(&umc8672_port_info, 0);
 }
 
+<<<<<<< HEAD
 static bool probe_umc8672;
+=======
+static int probe_umc8672;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_named(probe, probe_umc8672, bool, 0);
 MODULE_PARM_DESC(probe, "probe for UMC8672 chipset");

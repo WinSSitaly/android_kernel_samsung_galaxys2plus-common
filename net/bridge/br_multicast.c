@@ -24,7 +24,11 @@
 #include <linux/slab.h>
 #include <linux/timer.h>
 #include <net/ip.h>
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/ipv6.h>
 #include <net/mld.h>
 #include <net/addrconf.h>
@@ -36,7 +40,11 @@
 #define mlock_dereference(X, br) \
 	rcu_dereference_protected(X, lockdep_is_held(&br->multicast_lock))
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int ipv6_is_transient_multicast(const struct in6_addr *addr)
 {
 	if (ipv6_addr_is_multicast(addr) && IPV6_ADDR_MC_FLAG_TRANSIENT(addr))
@@ -52,7 +60,11 @@ static inline int br_ip_equal(const struct br_ip *a, const struct br_ip *b)
 	switch (a->proto) {
 	case htons(ETH_P_IP):
 		return a->u.ip4 == b->u.ip4;
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case htons(ETH_P_IPV6):
 		return ipv6_addr_equal(&a->u.ip6, &b->u.ip6);
 #endif
@@ -65,7 +77,11 @@ static inline int __br_ip4_hash(struct net_bridge_mdb_htable *mdb, __be32 ip)
 	return jhash_1word(mdb->secret, (__force u32)ip) & (mdb->max - 1);
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int __br_ip6_hash(struct net_bridge_mdb_htable *mdb,
 				const struct in6_addr *ip)
 {
@@ -79,7 +95,11 @@ static inline int br_ip_hash(struct net_bridge_mdb_htable *mdb,
 	switch (ip->proto) {
 	case htons(ETH_P_IP):
 		return __br_ip4_hash(mdb, ip->u.ip4);
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case htons(ETH_P_IPV6):
 		return __br_ip6_hash(mdb, &ip->u.ip6);
 #endif
@@ -121,13 +141,21 @@ static struct net_bridge_mdb_entry *br_mdb_ip4_get(
 	return br_mdb_ip_get(mdb, &br_dst);
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct net_bridge_mdb_entry *br_mdb_ip6_get(
 	struct net_bridge_mdb_htable *mdb, const struct in6_addr *dst)
 {
 	struct br_ip br_dst;
 
+<<<<<<< HEAD
 	br_dst.u.ip6 = *dst;
+=======
+	ipv6_addr_copy(&br_dst.u.ip6, dst);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	br_dst.proto = htons(ETH_P_IPV6);
 
 	return br_mdb_ip_get(mdb, &br_dst);
@@ -152,9 +180,15 @@ struct net_bridge_mdb_entry *br_mdb_get(struct net_bridge *br,
 	case htons(ETH_P_IP):
 		ip.u.ip4 = ip_hdr(skb)->daddr;
 		break;
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
 	case htons(ETH_P_IPV6):
 		ip.u.ip6 = ipv6_hdr(skb)->daddr;
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+	case htons(ETH_P_IPV6):
+		ipv6_addr_copy(&ip.u.ip6, &ipv6_hdr(skb)->daddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 #endif
 	default:
@@ -409,7 +443,11 @@ out:
 	return skb;
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct sk_buff *br_ip6_multicast_alloc_query(struct net_bridge *br,
 						    const struct in6_addr *group)
 {
@@ -467,16 +505,25 @@ static struct sk_buff *br_ip6_multicast_alloc_query(struct net_bridge *br,
 	skb_set_transport_header(skb, skb->len);
 	mldq = (struct mld_msg *) icmp6_hdr(skb);
 
+<<<<<<< HEAD
 	interval = ipv6_addr_any(group) ?
 			br->multicast_query_response_interval :
 			br->multicast_last_member_interval;
+=======
+	interval = ipv6_addr_any(group) ? br->multicast_last_member_interval :
+					  br->multicast_query_response_interval;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mldq->mld_type = ICMPV6_MGM_QUERY;
 	mldq->mld_code = 0;
 	mldq->mld_cksum = 0;
 	mldq->mld_maxdelay = htons((u16)jiffies_to_msecs(interval));
 	mldq->mld_reserved = 0;
+<<<<<<< HEAD
 	mldq->mld_mca = *group;
+=======
+	ipv6_addr_copy(&mldq->mld_mca, group);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* checksum */
 	mldq->mld_cksum = csum_ipv6_magic(&ip6h->saddr, &ip6h->daddr,
@@ -498,7 +545,11 @@ static struct sk_buff *br_multicast_alloc_query(struct net_bridge *br,
 	switch (addr->proto) {
 	case htons(ETH_P_IP):
 		return br_ip4_multicast_alloc_query(br, addr->u.ip4);
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case htons(ETH_P_IPV6):
 		return br_ip6_multicast_alloc_query(br, &addr->u.ip6);
 #endif
@@ -703,7 +754,11 @@ static int br_ip4_multicast_add_group(struct net_bridge *br,
 	return br_multicast_add_group(br, port, &br_group);
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int br_ip6_multicast_add_group(struct net_bridge *br,
 				      struct net_bridge_port *port,
 				      const struct in6_addr *group)
@@ -713,7 +768,11 @@ static int br_ip6_multicast_add_group(struct net_bridge *br,
 	if (!ipv6_is_transient_multicast(group))
 		return 0;
 
+<<<<<<< HEAD
 	br_group.u.ip6 = *group;
+=======
+	ipv6_addr_copy(&br_group.u.ip6, group);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	br_group.proto = htons(ETH_P_IPV6);
 
 	return br_multicast_add_group(br, port, &br_group);
@@ -775,7 +834,11 @@ static void br_multicast_send_query(struct net_bridge *br,
 	br_group.proto = htons(ETH_P_IP);
 	__br_multicast_send_query(br, port, &br_group);
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	br_group.proto = htons(ETH_P_IPV6);
 	__br_multicast_send_query(br, port, &br_group);
 #endif
@@ -919,7 +982,11 @@ static int br_ip4_multicast_igmp3_report(struct net_bridge *br,
 	return err;
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int br_ip6_multicast_mld2_report(struct net_bridge *br,
 					struct net_bridge_port *port,
 					struct sk_buff *skb)
@@ -1115,7 +1182,11 @@ out:
 	return err;
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int br_ip6_multicast_query(struct net_bridge *br,
 				  struct net_bridge_port *port,
 				  struct sk_buff *skb)
@@ -1155,8 +1226,12 @@ static int br_ip6_multicast_query(struct net_bridge *br,
 		mld2q = (struct mld2_query *)icmp6_hdr(skb);
 		if (!mld2q->mld2q_nsrcs)
 			group = &mld2q->mld2q_mca;
+<<<<<<< HEAD
 
 		max_delay = max(msecs_to_jiffies(MLDV2_MRC(ntohs(mld2q->mld2q_mrc))), 1UL);
+=======
+		max_delay = mld2q->mld2q_mrc ? MLDV2_MRC(mld2q->mld2q_mrc) : 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (!group)
@@ -1259,7 +1334,11 @@ static void br_ip4_multicast_leave_group(struct net_bridge *br,
 	br_multicast_leave_group(br, port, &br_group);
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void br_ip6_multicast_leave_group(struct net_bridge *br,
 					 struct net_bridge_port *port,
 					 const struct in6_addr *group)
@@ -1269,7 +1348,11 @@ static void br_ip6_multicast_leave_group(struct net_bridge *br,
 	if (!ipv6_is_transient_multicast(group))
 		return;
 
+<<<<<<< HEAD
 	br_group.u.ip6 = *group;
+=======
+	ipv6_addr_copy(&br_group.u.ip6, group);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	br_group.proto = htons(ETH_P_IPV6);
 
 	br_multicast_leave_group(br, port, &br_group);
@@ -1374,7 +1457,11 @@ err_out:
 	return err;
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int br_multicast_ipv6_rcv(struct net_bridge *br,
 				 struct net_bridge_port *port,
 				 struct sk_buff *skb)
@@ -1383,7 +1470,10 @@ static int br_multicast_ipv6_rcv(struct net_bridge *br,
 	const struct ipv6hdr *ip6h;
 	u8 icmp6_type;
 	u8 nexthdr;
+<<<<<<< HEAD
 	__be16 frag_off;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned len;
 	int offset;
 	int err;
@@ -1409,7 +1499,11 @@ static int br_multicast_ipv6_rcv(struct net_bridge *br,
 		return -EINVAL;
 
 	nexthdr = ip6h->nexthdr;
+<<<<<<< HEAD
 	offset = ipv6_skip_exthdr(skb, sizeof(*ip6h), &nexthdr, &frag_off);
+=======
+	offset = ipv6_skip_exthdr(skb, sizeof(*ip6h), &nexthdr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (offset < 0 || nexthdr != IPPROTO_ICMPV6)
 		return 0;
@@ -1427,8 +1521,11 @@ static int br_multicast_ipv6_rcv(struct net_bridge *br,
 
 	__skb_pull(skb2, offset);
 	skb_reset_transport_header(skb2);
+<<<<<<< HEAD
 	skb_postpull_rcsum(skb2, skb_network_header(skb2),
 			   skb_network_header_len(skb2));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	icmp6_type = icmp6_hdr(skb2)->icmp6_type;
 
@@ -1521,7 +1618,11 @@ int br_multicast_rcv(struct net_bridge *br, struct net_bridge_port *port,
 	switch (skb->protocol) {
 	case htons(ETH_P_IP):
 		return br_multicast_ipv4_rcv(br, port, skb);
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case htons(ETH_P_IPV6):
 		return br_multicast_ipv6_rcv(br, port, skb);
 #endif
@@ -1697,7 +1798,11 @@ int br_multicast_toggle(struct net_bridge *br, unsigned long val)
 	int err = 0;
 	struct net_bridge_mdb_htable *mdb;
 
+<<<<<<< HEAD
 	spin_lock_bh(&br->multicast_lock);
+=======
+	spin_lock(&br->multicast_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (br->multicast_disabled == !val)
 		goto unlock;
 
@@ -1733,7 +1838,11 @@ rollback:
 	}
 
 unlock:
+<<<<<<< HEAD
 	spin_unlock_bh(&br->multicast_lock);
+=======
+	spin_unlock(&br->multicast_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }

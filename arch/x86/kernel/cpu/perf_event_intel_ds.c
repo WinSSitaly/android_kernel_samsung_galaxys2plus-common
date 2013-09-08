@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <linux/bitops.h>
 #include <linux/types.h>
 #include <linux/slab.h>
@@ -6,6 +7,12 @@
 #include <asm/insn.h>
 
 #include "perf_event.h"
+=======
+#ifdef CONFIG_CPU_SUP_INTEL
+
+/* The maximal number of PEBS events: */
+#define MAX_PEBS_EVENTS		4
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* The size of a BTS record in bytes: */
 #define BTS_RECORD_SIZE		24
@@ -41,7 +48,28 @@ struct pebs_record_nhm {
 	u64 status, dla, dse, lat;
 };
 
+<<<<<<< HEAD
 void init_debug_store_on_cpu(int cpu)
+=======
+/*
+ * A debug store configuration.
+ *
+ * We only support architectures that use 64bit fields.
+ */
+struct debug_store {
+	u64	bts_buffer_base;
+	u64	bts_index;
+	u64	bts_absolute_maximum;
+	u64	bts_interrupt_threshold;
+	u64	pebs_buffer_base;
+	u64	pebs_index;
+	u64	pebs_absolute_maximum;
+	u64	pebs_interrupt_threshold;
+	u64	pebs_event_reset[MAX_PEBS_EVENTS];
+};
+
+static void init_debug_store_on_cpu(int cpu)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct debug_store *ds = per_cpu(cpu_hw_events, cpu).ds;
 
@@ -53,7 +81,11 @@ void init_debug_store_on_cpu(int cpu)
 		     (u32)((u64)(unsigned long)ds >> 32));
 }
 
+<<<<<<< HEAD
 void fini_debug_store_on_cpu(int cpu)
+=======
+static void fini_debug_store_on_cpu(int cpu)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (!per_cpu(cpu_hw_events, cpu).ds)
 		return;
@@ -162,7 +194,11 @@ static void release_ds_buffer(int cpu)
 	kfree(ds);
 }
 
+<<<<<<< HEAD
 void release_ds_buffers(void)
+=======
+static void release_ds_buffers(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int cpu;
 
@@ -181,7 +217,11 @@ void release_ds_buffers(void)
 	put_online_cpus();
 }
 
+<<<<<<< HEAD
 void reserve_ds_buffers(void)
+=======
+static void reserve_ds_buffers(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int bts_err = 0, pebs_err = 0;
 	int cpu;
@@ -247,10 +287,17 @@ void reserve_ds_buffers(void)
  * BTS
  */
 
+<<<<<<< HEAD
 struct event_constraint bts_constraint =
 	EVENT_CONSTRAINT(0, 1ULL << X86_PMC_IDX_FIXED_BTS, 0);
 
 void intel_pmu_enable_bts(u64 config)
+=======
+static struct event_constraint bts_constraint =
+	EVENT_CONSTRAINT(0, 1ULL << X86_PMC_IDX_FIXED_BTS, 0);
+
+static void intel_pmu_enable_bts(u64 config)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long debugctlmsr;
 
@@ -269,7 +316,11 @@ void intel_pmu_enable_bts(u64 config)
 	update_debugctlmsr(debugctlmsr);
 }
 
+<<<<<<< HEAD
 void intel_pmu_disable_bts(void)
+=======
+static void intel_pmu_disable_bts(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 	unsigned long debugctlmsr;
@@ -286,7 +337,11 @@ void intel_pmu_disable_bts(void)
 	update_debugctlmsr(debugctlmsr);
 }
 
+<<<<<<< HEAD
 int intel_pmu_drain_bts_buffer(void)
+=======
+static int intel_pmu_drain_bts_buffer(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 	struct debug_store *ds = cpuc->ds;
@@ -327,7 +382,11 @@ int intel_pmu_drain_bts_buffer(void)
 	 */
 	perf_prepare_sample(&header, &data, event, &regs);
 
+<<<<<<< HEAD
 	if (perf_output_begin(&handle, event, header.size * (top - at)))
+=======
+	if (perf_output_begin(&handle, event, header.size * (top - at), 1, 1))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 
 	for (; at < top; at++) {
@@ -348,7 +407,11 @@ int intel_pmu_drain_bts_buffer(void)
 /*
  * PEBS
  */
+<<<<<<< HEAD
 struct event_constraint intel_core2_pebs_event_constraints[] = {
+=======
+static struct event_constraint intel_core2_pebs_event_constraints[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INTEL_UEVENT_CONSTRAINT(0x00c0, 0x1), /* INST_RETIRED.ANY */
 	INTEL_UEVENT_CONSTRAINT(0xfec1, 0x1), /* X87_OPS_RETIRED.ANY */
 	INTEL_UEVENT_CONSTRAINT(0x00c5, 0x1), /* BR_INST_RETIRED.MISPRED */
@@ -357,14 +420,22 @@ struct event_constraint intel_core2_pebs_event_constraints[] = {
 	EVENT_CONSTRAINT_END
 };
 
+<<<<<<< HEAD
 struct event_constraint intel_atom_pebs_event_constraints[] = {
+=======
+static struct event_constraint intel_atom_pebs_event_constraints[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INTEL_UEVENT_CONSTRAINT(0x00c0, 0x1), /* INST_RETIRED.ANY */
 	INTEL_UEVENT_CONSTRAINT(0x00c5, 0x1), /* MISPREDICTED_BRANCH_RETIRED */
 	INTEL_EVENT_CONSTRAINT(0xcb, 0x1),    /* MEM_LOAD_RETIRED.* */
 	EVENT_CONSTRAINT_END
 };
 
+<<<<<<< HEAD
 struct event_constraint intel_nehalem_pebs_event_constraints[] = {
+=======
+static struct event_constraint intel_nehalem_pebs_event_constraints[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INTEL_EVENT_CONSTRAINT(0x0b, 0xf),    /* MEM_INST_RETIRED.* */
 	INTEL_EVENT_CONSTRAINT(0x0f, 0xf),    /* MEM_UNCORE_RETIRED.* */
 	INTEL_UEVENT_CONSTRAINT(0x010c, 0xf), /* MEM_STORE_RETIRED.DTLB_MISS */
@@ -379,7 +450,11 @@ struct event_constraint intel_nehalem_pebs_event_constraints[] = {
 	EVENT_CONSTRAINT_END
 };
 
+<<<<<<< HEAD
 struct event_constraint intel_westmere_pebs_event_constraints[] = {
+=======
+static struct event_constraint intel_westmere_pebs_event_constraints[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INTEL_EVENT_CONSTRAINT(0x0b, 0xf),    /* MEM_INST_RETIRED.* */
 	INTEL_EVENT_CONSTRAINT(0x0f, 0xf),    /* MEM_UNCORE_RETIRED.* */
 	INTEL_UEVENT_CONSTRAINT(0x010c, 0xf), /* MEM_STORE_RETIRED.DTLB_MISS */
@@ -394,7 +469,11 @@ struct event_constraint intel_westmere_pebs_event_constraints[] = {
 	EVENT_CONSTRAINT_END
 };
 
+<<<<<<< HEAD
 struct event_constraint intel_snb_pebs_event_constraints[] = {
+=======
+static struct event_constraint intel_snb_pebs_events[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INTEL_UEVENT_CONSTRAINT(0x01c0, 0x2), /* INST_RETIRED.PRECDIST */
 	INTEL_UEVENT_CONSTRAINT(0x01c2, 0xf), /* UOPS_RETIRED.ALL */
 	INTEL_UEVENT_CONSTRAINT(0x02c2, 0xf), /* UOPS_RETIRED.RETIRE_SLOTS */
@@ -415,7 +494,12 @@ struct event_constraint intel_snb_pebs_event_constraints[] = {
 	EVENT_CONSTRAINT_END
 };
 
+<<<<<<< HEAD
 struct event_constraint *intel_pebs_constraints(struct perf_event *event)
+=======
+static struct event_constraint *
+intel_pebs_constraints(struct perf_event *event)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct event_constraint *c;
 
@@ -432,7 +516,11 @@ struct event_constraint *intel_pebs_constraints(struct perf_event *event)
 	return &emptyconstraint;
 }
 
+<<<<<<< HEAD
 void intel_pmu_pebs_enable(struct perf_event *event)
+=======
+static void intel_pmu_pebs_enable(struct perf_event *event)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 	struct hw_perf_event *hwc = &event->hw;
@@ -440,9 +528,19 @@ void intel_pmu_pebs_enable(struct perf_event *event)
 	hwc->config &= ~ARCH_PERFMON_EVENTSEL_INT;
 
 	cpuc->pebs_enabled |= 1ULL << hwc->idx;
+<<<<<<< HEAD
 }
 
 void intel_pmu_pebs_disable(struct perf_event *event)
+=======
+	WARN_ON_ONCE(cpuc->enabled);
+
+	if (x86_pmu.intel_cap.pebs_trap && event->attr.precise_ip > 1)
+		intel_pmu_lbr_enable(event);
+}
+
+static void intel_pmu_pebs_disable(struct perf_event *event)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 	struct hw_perf_event *hwc = &event->hw;
@@ -452,9 +550,18 @@ void intel_pmu_pebs_disable(struct perf_event *event)
 		wrmsrl(MSR_IA32_PEBS_ENABLE, cpuc->pebs_enabled);
 
 	hwc->config |= ARCH_PERFMON_EVENTSEL_INT;
+<<<<<<< HEAD
 }
 
 void intel_pmu_pebs_enable_all(void)
+=======
+
+	if (x86_pmu.intel_cap.pebs_trap && event->attr.precise_ip > 1)
+		intel_pmu_lbr_disable(event);
+}
+
+static void intel_pmu_pebs_enable_all(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 
@@ -462,7 +569,11 @@ void intel_pmu_pebs_enable_all(void)
 		wrmsrl(MSR_IA32_PEBS_ENABLE, cpuc->pebs_enabled);
 }
 
+<<<<<<< HEAD
 void intel_pmu_pebs_disable_all(void)
+=======
+static void intel_pmu_pebs_disable_all(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 
@@ -470,6 +581,20 @@ void intel_pmu_pebs_disable_all(void)
 		wrmsrl(MSR_IA32_PEBS_ENABLE, 0);
 }
 
+<<<<<<< HEAD
+=======
+#include <asm/insn.h>
+
+static inline bool kernel_ip(unsigned long ip)
+{
+#ifdef CONFIG_X86_32
+	return ip > PAGE_OFFSET;
+#else
+	return (long)ip < 0;
+#endif
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int intel_pmu_pebs_fixup_ip(struct pt_regs *regs)
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
@@ -548,6 +673,11 @@ static int intel_pmu_pebs_fixup_ip(struct pt_regs *regs)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int intel_pmu_save_and_restart(struct perf_event *event);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __intel_pmu_pebs_event(struct perf_event *event,
 				   struct pt_regs *iregs, void *__pebs)
 {
@@ -556,7 +686,10 @@ static void __intel_pmu_pebs_event(struct perf_event *event,
 	 * both formats and we don't use the other fields in this
 	 * routine.
 	 */
+<<<<<<< HEAD
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pebs_record_core *pebs = __pebs;
 	struct perf_sample_data data;
 	struct pt_regs regs;
@@ -587,10 +720,14 @@ static void __intel_pmu_pebs_event(struct perf_event *event,
 	else
 		regs.flags &= ~PERF_EFLAGS_EXACT;
 
+<<<<<<< HEAD
 	if (has_branch_stack(event))
 		data.br_stack = &cpuc->lbr_stack;
 
 	if (perf_event_overflow(event, &data, &regs))
+=======
+	if (perf_event_overflow(event, 1, &data, &regs))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		x86_pmu_stop(event, 0);
 }
 
@@ -690,7 +827,11 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs)
  * BTS, PEBS probe and setup
  */
 
+<<<<<<< HEAD
 void intel_ds_init(void)
+=======
+static void intel_ds_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * No support for 32bit formats
@@ -724,6 +865,7 @@ void intel_ds_init(void)
 	}
 }
 
+<<<<<<< HEAD
 void perf_restore_debug_store(void)
 {
 	struct debug_store *ds = __this_cpu_read(cpu_hw_events.ds);
@@ -733,3 +875,16 @@ void perf_restore_debug_store(void)
 
 	wrmsrl(MSR_IA32_DS_AREA, (unsigned long)ds);
 }
+=======
+#else /* CONFIG_CPU_SUP_INTEL */
+
+static void reserve_ds_buffers(void)
+{
+}
+
+static void release_ds_buffers(void)
+{
+}
+
+#endif /* CONFIG_CPU_SUP_INTEL */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

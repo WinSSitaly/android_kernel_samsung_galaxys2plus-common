@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #ifndef __ARCH_ARM_FAULT_H
 #define __ARCH_ARM_FAULT_H
 
@@ -26,3 +27,8 @@ void do_bad_area(unsigned long addr, unsigned int fsr, struct pt_regs *regs);
 unsigned long search_exception_table(unsigned long addr);
 
 #endif	/* __ARCH_ARM_FAULT_H */
+=======
+void do_bad_area(unsigned long addr, unsigned int fsr, struct pt_regs *regs);
+
+unsigned long search_exception_table(unsigned long addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

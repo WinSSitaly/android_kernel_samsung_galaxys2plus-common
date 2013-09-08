@@ -171,7 +171,11 @@ static irqreturn_t intr_handler(int irq, void *d)
 	struct comedi_subdevice *s = dev->subdevices;
 
 	if (!dev->attached || devpriv->das6402_ignoreirq) {
+<<<<<<< HEAD
 		dev_warn(dev->hw_dev, "BUG: spurious interrupt\n");
+=======
+		printk("das6402: BUG: spurious interrupt\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return IRQ_HANDLED;
 	}
 #ifdef DEBUG
@@ -228,7 +232,13 @@ static int das6402_ai_cancel(struct comedi_device *dev,
 	 */
 
 	devpriv->das6402_ignoreirq = 1;
+<<<<<<< HEAD
 	dev_dbg(dev->hw_dev, "Stopping acquisition\n");
+=======
+#ifdef DEBUG
+	printk("das6402: Stopping acquisition\n");
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	devpriv->das6402_ignoreirq = 1;
 	outb_p(0x02, dev->iobase + 10);	/* disable external trigging */
 	outw_p(SCANL, dev->iobase + 2);	/* resets the card fifo */
@@ -244,7 +254,14 @@ static int das6402_ai_mode2(struct comedi_device *dev,
 			    struct comedi_subdevice *s, comedi_trig * it)
 {
 	devpriv->das6402_ignoreirq = 1;
+<<<<<<< HEAD
 	dev_dbg(dev->hw_dev, "Starting acquisition\n");
+=======
+
+#ifdef DEBUG
+	printk("das6402: Starting acquisition\n");
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	outb_p(0x03, dev->iobase + 10);	/* enable external trigging */
 	outw_p(SCANL, dev->iobase + 2);	/* resets the card fifo */
 	outb_p(IRQ | CONVSRC | BURSTEN | INTE, dev->iobase + 9);
@@ -324,8 +341,15 @@ static int das6402_attach(struct comedi_device *dev,
 	if (iobase == 0)
 		iobase = 0x300;
 
+<<<<<<< HEAD
 	if (!request_region(iobase, DAS6402_SIZE, "das6402")) {
 		dev_err(dev->hw_dev, "I/O port conflict\n");
+=======
+	printk("comedi%d: das6402: 0x%04lx", dev->minor, iobase);
+
+	if (!request_region(iobase, DAS6402_SIZE, "das6402")) {
+		printk(" I/O port conflict\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	}
 	dev->iobase = iobase;
@@ -333,12 +357,23 @@ static int das6402_attach(struct comedi_device *dev,
 	/* should do a probe here */
 
 	irq = it->options[0];
+<<<<<<< HEAD
 	dev_dbg(dev->hw_dev, "( irq = %u )\n", irq);
 	ret = request_irq(irq, intr_handler, 0, "das6402", dev);
 	if (ret < 0)
 		return ret;
 
 	dev->irq = irq;
+=======
+	printk(" ( irq = %u )", irq);
+	ret = request_irq(irq, intr_handler, 0, "das6402", dev);
+	if (ret < 0) {
+		printk("irq conflict\n");
+		return ret;
+	}
+	dev->irq = irq;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = alloc_private(dev, sizeof(struct das6402_private));
 	if (ret < 0)
 		return ret;

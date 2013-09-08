@@ -4,8 +4,13 @@
 #ifdef CONFIG_64BIT
 
 #define SECTION_SIZE_BITS	28
+<<<<<<< HEAD
 #define MAX_PHYSADDR_BITS	46
 #define MAX_PHYSMEM_BITS	46
+=======
+#define MAX_PHYSADDR_BITS	42
+#define MAX_PHYSMEM_BITS	42
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #else
 

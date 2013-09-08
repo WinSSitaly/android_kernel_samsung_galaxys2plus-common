@@ -38,7 +38,10 @@
 #define IRQ_MASK_HIGH_OFF	0x0014
 
 #define TIMER_VIRT_BASE		(BRIDGE_VIRT_BASE | 0x0300)
+<<<<<<< HEAD
 #define TIMER_PHYS_BASE		(BRIDGE_PHYS_BASE | 0x0300)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define L2_CONFIG_REG		(BRIDGE_VIRT_BASE | 0x0128)
 #define L2_WRITETHROUGH		0x00000010

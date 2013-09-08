@@ -53,7 +53,10 @@
 #include <linux/slab.h>
 #include <linux/gameport.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 #include <sound/core.h>
@@ -3836,7 +3839,11 @@ int __devinit snd_cs46xx_create(struct snd_card *card,
 	}
 
 	if (request_irq(pci->irq, snd_cs46xx_interrupt, IRQF_SHARED,
+<<<<<<< HEAD
 			KBUILD_MODNAME, chip)) {
+=======
+			"CS46XX", chip)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printk(KERN_ERR "unable to grab IRQ %d\n", pci->irq);
 		snd_cs46xx_free(chip);
 		return -EBUSY;

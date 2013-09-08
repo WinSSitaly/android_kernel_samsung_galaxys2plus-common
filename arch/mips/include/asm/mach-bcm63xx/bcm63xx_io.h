@@ -49,11 +49,17 @@
 #define bcm_readb(a)	(*(volatile unsigned char *)	BCM_REGS_VA(a))
 #define bcm_readw(a)	(*(volatile unsigned short *)	BCM_REGS_VA(a))
 #define bcm_readl(a)	(*(volatile unsigned int *)	BCM_REGS_VA(a))
+<<<<<<< HEAD
 #define bcm_readq(a)	(*(volatile u64 *)		BCM_REGS_VA(a))
 #define bcm_writeb(v, a) (*(volatile unsigned char *) BCM_REGS_VA((a)) = (v))
 #define bcm_writew(v, a) (*(volatile unsigned short *) BCM_REGS_VA((a)) = (v))
 #define bcm_writel(v, a) (*(volatile unsigned int *) BCM_REGS_VA((a)) = (v))
 #define bcm_writeq(v, a) (*(volatile u64 *) BCM_REGS_VA((a)) = (v))
+=======
+#define bcm_writeb(v, a) (*(volatile unsigned char *) BCM_REGS_VA((a)) = (v))
+#define bcm_writew(v, a) (*(volatile unsigned short *) BCM_REGS_VA((a)) = (v))
+#define bcm_writel(v, a) (*(volatile unsigned int *) BCM_REGS_VA((a)) = (v))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * IO helpers to access register set for current CPU

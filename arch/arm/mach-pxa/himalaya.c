@@ -24,7 +24,12 @@
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 
+<<<<<<< HEAD
 #include <mach/pxa25x.h>
+=======
+#include <mach/mfp-pxa25x.h>
+#include <mach/hardware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "generic.h"
 
@@ -158,6 +163,7 @@ static void __init himalaya_init(void)
 
 
 MACHINE_START(HIMALAYA, "HTC Himalaya")
+<<<<<<< HEAD
 	.atag_offset = 0x100,
 	.map_io = pxa25x_map_io,
 	.nr_irqs = PXA_NR_IRQS,
@@ -166,4 +172,11 @@ MACHINE_START(HIMALAYA, "HTC Himalaya")
 	.init_machine = himalaya_init,
 	.timer = &pxa_timer,
 	.restart	= pxa_restart,
+=======
+	.boot_params = 0xa0000100,
+	.map_io = pxa25x_map_io,
+	.init_irq = pxa25x_init_irq,
+	.init_machine = himalaya_init,
+	.timer = &pxa_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

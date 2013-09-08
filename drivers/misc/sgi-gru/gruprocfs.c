@@ -324,7 +324,11 @@ static const struct file_operations gru_fops = {
 
 static struct proc_entry {
 	char *name;
+<<<<<<< HEAD
 	umode_t mode;
+=======
+	int mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const struct file_operations *fops;
 	struct proc_dir_entry *entry;
 } proc_files[] = {

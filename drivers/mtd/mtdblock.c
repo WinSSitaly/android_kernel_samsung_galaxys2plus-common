@@ -44,7 +44,11 @@ struct mtdblk_dev {
 	enum { STATE_EMPTY, STATE_CLEAN, STATE_DIRTY } cache_state;
 };
 
+<<<<<<< HEAD
 static DEFINE_MUTEX(mtdblks_lock);
+=======
+static struct mutex mtdblks_lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Cache stuff...
@@ -85,7 +89,11 @@ static int erase_write (struct mtd_info *mtd, unsigned long pos,
 	set_current_state(TASK_INTERRUPTIBLE);
 	add_wait_queue(&wait_q, &wait);
 
+<<<<<<< HEAD
 	ret = mtd_erase(mtd, &erase);
+=======
+	ret = mtd->erase(mtd, &erase);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret) {
 		set_current_state(TASK_RUNNING);
 		remove_wait_queue(&wait_q, &wait);
@@ -102,7 +110,11 @@ static int erase_write (struct mtd_info *mtd, unsigned long pos,
 	 * Next, write the data to flash.
 	 */
 
+<<<<<<< HEAD
 	ret = mtd_write(mtd, pos, len, &retlen, buf);
+=======
+	ret = mtd->write(mtd, pos, len, &retlen, buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 	if (retlen != len)
@@ -119,7 +131,11 @@ static int write_cached_data (struct mtdblk_dev *mtdblk)
 	if (mtdblk->cache_state != STATE_DIRTY)
 		return 0;
 
+<<<<<<< HEAD
 	pr_debug("mtdblock: writing cached data for \"%s\" "
+=======
+	DEBUG(MTD_DEBUG_LEVEL2, "mtdblock: writing cached data for \"%s\" "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"at 0x%lx, size 0x%x\n", mtd->name,
 			mtdblk->cache_offset, mtdblk->cache_size);
 
@@ -148,11 +164,19 @@ static int do_cached_write (struct mtdblk_dev *mtdblk, unsigned long pos,
 	size_t retlen;
 	int ret;
 
+<<<<<<< HEAD
 	pr_debug("mtdblock: write on \"%s\" at 0x%lx, size 0x%x\n",
 		mtd->name, pos, len);
 
 	if (!sect_size)
 		return mtd_write(mtd, pos, len, &retlen, buf);
+=======
+	DEBUG(MTD_DEBUG_LEVEL2, "mtdblock: write on \"%s\" at 0x%lx, size 0x%x\n",
+		mtd->name, pos, len);
+
+	if (!sect_size)
+		return mtd->write(mtd, pos, len, &retlen, buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (len > 0) {
 		unsigned long sect_start = (pos/sect_size)*sect_size;
@@ -184,8 +208,13 @@ static int do_cached_write (struct mtdblk_dev *mtdblk, unsigned long pos,
 			    mtdblk->cache_offset != sect_start) {
 				/* fill the cache with the current sector */
 				mtdblk->cache_state = STATE_EMPTY;
+<<<<<<< HEAD
 				ret = mtd_read(mtd, sect_start, sect_size,
 					       &retlen, mtdblk->cache_data);
+=======
+				ret = mtd->read(mtd, sect_start, sect_size,
+						&retlen, mtdblk->cache_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				if (ret)
 					return ret;
 				if (retlen != sect_size)
@@ -218,11 +247,19 @@ static int do_cached_read (struct mtdblk_dev *mtdblk, unsigned long pos,
 	size_t retlen;
 	int ret;
 
+<<<<<<< HEAD
 	pr_debug("mtdblock: read on \"%s\" at 0x%lx, size 0x%x\n",
 			mtd->name, pos, len);
 
 	if (!sect_size)
 		return mtd_read(mtd, pos, len, &retlen, buf);
+=======
+	DEBUG(MTD_DEBUG_LEVEL2, "mtdblock: read on \"%s\" at 0x%lx, size 0x%x\n",
+			mtd->name, pos, len);
+
+	if (!sect_size)
+		return mtd->read(mtd, pos, len, &retlen, buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (len > 0) {
 		unsigned long sect_start = (pos/sect_size)*sect_size;
@@ -241,7 +278,11 @@ static int do_cached_read (struct mtdblk_dev *mtdblk, unsigned long pos,
 		    mtdblk->cache_offset == sect_start) {
 			memcpy (buf, mtdblk->cache_data + offset, size);
 		} else {
+<<<<<<< HEAD
 			ret = mtd_read(mtd, pos, size, &retlen, buf);
+=======
+			ret = mtd->read(mtd, pos, size, &retlen, buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret)
 				return ret;
 			if (retlen != size)
@@ -283,7 +324,11 @@ static int mtdblock_open(struct mtd_blktrans_dev *mbd)
 {
 	struct mtdblk_dev *mtdblk = container_of(mbd, struct mtdblk_dev, mbd);
 
+<<<<<<< HEAD
 	pr_debug("mtdblock_open\n");
+=======
+	DEBUG(MTD_DEBUG_LEVEL1,"mtdblock_open\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&mtdblks_lock);
 	if (mtdblk->count) {
@@ -303,7 +348,11 @@ static int mtdblock_open(struct mtd_blktrans_dev *mbd)
 
 	mutex_unlock(&mtdblks_lock);
 
+<<<<<<< HEAD
 	pr_debug("ok\n");
+=======
+	DEBUG(MTD_DEBUG_LEVEL1, "ok\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -312,7 +361,11 @@ static int mtdblock_release(struct mtd_blktrans_dev *mbd)
 {
 	struct mtdblk_dev *mtdblk = container_of(mbd, struct mtdblk_dev, mbd);
 
+<<<<<<< HEAD
 	pr_debug("mtdblock_release\n");
+=======
+   	DEBUG(MTD_DEBUG_LEVEL1, "mtdblock_release\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&mtdblks_lock);
 
@@ -321,18 +374,28 @@ static int mtdblock_release(struct mtd_blktrans_dev *mbd)
 	mutex_unlock(&mtdblk->cache_mutex);
 
 	if (!--mtdblk->count) {
+<<<<<<< HEAD
 		/*
 		 * It was the last usage. Free the cache, but only sync if
 		 * opened for writing.
 		 */
 		if (mbd->file_mode & FMODE_WRITE)
 			mtd_sync(mbd->mtd);
+=======
+		/* It was the last usage. Free the cache */
+		if (mbd->mtd->sync)
+			mbd->mtd->sync(mbd->mtd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		vfree(mtdblk->cache_data);
 	}
 
 	mutex_unlock(&mtdblks_lock);
 
+<<<<<<< HEAD
 	pr_debug("ok\n");
+=======
+	DEBUG(MTD_DEBUG_LEVEL1, "ok\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -344,7 +407,13 @@ static int mtdblock_flush(struct mtd_blktrans_dev *dev)
 	mutex_lock(&mtdblk->cache_mutex);
 	write_cached_data(mtdblk);
 	mutex_unlock(&mtdblk->cache_mutex);
+<<<<<<< HEAD
 	mtd_sync(dev->mtd);
+=======
+
+	if (dev->mtd->sync)
+		dev->mtd->sync(dev->mtd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -390,6 +459,11 @@ static struct mtd_blktrans_ops mtdblock_tr = {
 
 static int __init init_mtdblock(void)
 {
+<<<<<<< HEAD
+=======
+	mutex_init(&mtdblks_lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return register_mtd_blktrans(&mtdblock_tr);
 }
 

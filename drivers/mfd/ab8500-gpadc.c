@@ -18,9 +18,15 @@
 #include <linux/err.h>
 #include <linux/slab.h>
 #include <linux/list.h>
+<<<<<<< HEAD
 #include <linux/mfd/abx500.h>
 #include <linux/mfd/abx500/ab8500.h>
 #include <linux/mfd/abx500/ab8500-gpadc.h>
+=======
+#include <linux/mfd/ab8500.h>
+#include <linux/mfd/abx500.h>
+#include <linux/mfd/ab8500/gpadc.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * GPADC register offsets
@@ -143,15 +149,23 @@ struct ab8500_gpadc *ab8500_gpadc_get(char *name)
 }
 EXPORT_SYMBOL(ab8500_gpadc_get);
 
+<<<<<<< HEAD
 /**
  * ab8500_gpadc_ad_to_voltage() - Convert a raw ADC value to a voltage
  */
 int ab8500_gpadc_ad_to_voltage(struct ab8500_gpadc *gpadc, u8 channel,
+=======
+static int ab8500_gpadc_ad_to_voltage(struct ab8500_gpadc *gpadc, u8 input,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ad_value)
 {
 	int res;
 
+<<<<<<< HEAD
 	switch (channel) {
+=======
+	switch (input) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case MAIN_CHARGER_V:
 		/* For some reason we don't have calibrated data */
 		if (!gpadc->cal_data[ADC_INPUT_VMAIN].gain) {
@@ -235,15 +249,23 @@ int ab8500_gpadc_ad_to_voltage(struct ab8500_gpadc *gpadc, u8 channel,
 	}
 	return res;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(ab8500_gpadc_ad_to_voltage);
 
 /**
  * ab8500_gpadc_convert() - gpadc conversion
  * @channel:	analog channel to be converted to digital data
+=======
+
+/**
+ * ab8500_gpadc_convert() - gpadc conversion
+ * @input:	analog input to be converted to digital data
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This function converts the selected analog i/p to digital
  * data.
  */
+<<<<<<< HEAD
 int ab8500_gpadc_convert(struct ab8500_gpadc *gpadc, u8 channel)
 {
 	int ad_value;
@@ -275,6 +297,12 @@ EXPORT_SYMBOL(ab8500_gpadc_convert);
 int ab8500_gpadc_read_raw(struct ab8500_gpadc *gpadc, u8 channel)
 {
 	int ret;
+=======
+int ab8500_gpadc_convert(struct ab8500_gpadc *gpadc, u8 input)
+{
+	int ret;
+	u16 data = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int looplimit = 0;
 	u8 val, low_data, high_data;
 
@@ -309,9 +337,15 @@ int ab8500_gpadc_read_raw(struct ab8500_gpadc *gpadc, u8 channel)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	/* Select the channel source and set average samples to 16 */
 	ret = abx500_set_register_interruptible(gpadc->dev, AB8500_GPADC,
 		AB8500_GPADC_CTRL2_REG, (channel | SW_AVG_16));
+=======
+	/* Select the input source and set average samples to 16 */
+	ret = abx500_set_register_interruptible(gpadc->dev, AB8500_GPADC,
+		AB8500_GPADC_CTRL2_REG, (input | SW_AVG_16));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		dev_err(gpadc->dev,
 			"gpadc_conversion: set avg samples failed\n");
@@ -323,7 +357,11 @@ int ab8500_gpadc_read_raw(struct ab8500_gpadc *gpadc, u8 channel)
 	 * charging current sense if it needed, ABB 3.0 needs some special
 	 * treatment too.
 	 */
+<<<<<<< HEAD
 	switch (channel) {
+=======
+	switch (input) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case MAIN_CHARGER_C:
 	case USB_CHARGER_C:
 		ret = abx500_mask_and_set_register_interruptible(gpadc->dev,
@@ -390,6 +428,10 @@ int ab8500_gpadc_read_raw(struct ab8500_gpadc *gpadc, u8 channel)
 		goto out;
 	}
 
+<<<<<<< HEAD
+=======
+	data = (high_data << 8) | low_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Disable GPADC */
 	ret = abx500_set_register_interruptible(gpadc->dev, AB8500_GPADC,
 		AB8500_GPADC_CTRL1_REG, DIS_GPADC);
@@ -400,8 +442,13 @@ int ab8500_gpadc_read_raw(struct ab8500_gpadc *gpadc, u8 channel)
 	/* Disable VTVout LDO this is required for GPADC */
 	regulator_disable(gpadc->regu);
 	mutex_unlock(&gpadc->ab8500_gpadc_lock);
+<<<<<<< HEAD
 
 	return (high_data << 8) | low_data;
+=======
+	ret = ab8500_gpadc_ad_to_voltage(gpadc, input, data);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	/*
@@ -415,10 +462,17 @@ out:
 	regulator_disable(gpadc->regu);
 	mutex_unlock(&gpadc->ab8500_gpadc_lock);
 	dev_err(gpadc->dev,
+<<<<<<< HEAD
 		"gpadc_conversion: Failed to AD convert channel %d\n", channel);
 	return ret;
 }
 EXPORT_SYMBOL(ab8500_gpadc_read_raw);
+=======
+		"gpadc_conversion: Failed to AD convert channel %d\n", input);
+	return ret;
+}
+EXPORT_SYMBOL(ab8500_gpadc_convert);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * ab8500_bm_gpswadcconvend_handler() - isr for s/w gpadc conversion completion

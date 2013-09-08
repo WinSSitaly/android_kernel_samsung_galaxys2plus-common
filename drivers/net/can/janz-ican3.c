@@ -22,7 +22,10 @@
 #include <linux/can/error.h>
 
 #include <linux/mfd/janz.h>
+<<<<<<< HEAD
 #include <asm/io.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* the DPM has 64k of memory, organized into 256x 256 byte pages */
 #define DPM_NUM_PAGES		256
@@ -1250,6 +1253,10 @@ static irqreturn_t ican3_irq(int irq, void *dev_id)
  */
 static int ican3_reset_module(struct ican3_dev *mod)
 {
+<<<<<<< HEAD
+=======
+	u8 val = 1 << mod->num;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long start;
 	u8 runold, runnew;
 
@@ -1263,7 +1270,12 @@ static int ican3_reset_module(struct ican3_dev *mod)
 	runold = ioread8(mod->dpm + TARGET_RUNNING);
 
 	/* reset the module */
+<<<<<<< HEAD
 	iowrite8(0x00, &mod->dpmctrl->hwreset);
+=======
+	iowrite8(val, &mod->ctrl->reset_assert);
+	iowrite8(val, &mod->ctrl->reset_deassert);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* wait until the module has finished resetting and is running */
 	start = jiffies;
@@ -1801,9 +1813,27 @@ static struct platform_driver ican3_driver = {
 	.remove		= __devexit_p(ican3_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(ican3_driver);
+=======
+static int __init ican3_init(void)
+{
+	return platform_driver_register(&ican3_driver);
+}
+
+static void __exit ican3_exit(void)
+{
+	platform_driver_unregister(&ican3_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Ira W. Snyder <iws@ovro.caltech.edu>");
 MODULE_DESCRIPTION("Janz MODULbus VMOD-ICAN3 Driver");
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:janz-ican3");
+<<<<<<< HEAD
+=======
+
+module_init(ican3_init);
+module_exit(ican3_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

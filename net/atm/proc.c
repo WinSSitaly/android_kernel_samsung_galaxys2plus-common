@@ -27,7 +27,11 @@
 #include <net/atmclip.h>
 #include <linux/uaccess.h>
 #include <linux/param.h> /* for HZ */
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "resources.h"
 #include "common.h" /* atm_proc_init prototype */
 #include "signaling.h" /* to get sigd - ugly too */

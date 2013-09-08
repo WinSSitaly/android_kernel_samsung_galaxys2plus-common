@@ -3,7 +3,11 @@
  * This file contains helper routines that handle ELS requests
  * and responses.
  *
+<<<<<<< HEAD
  * Copyright (c) 2008 - 2011 Broadcom Corporation
+=======
+ * Copyright (c) 2008 - 2010 Broadcom Corporation
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +87,11 @@ int bnx2fc_send_rrq(struct bnx2fc_cmd *aborted_io_req)
 	rrq.rrq_cmd = ELS_RRQ;
 	hton24(rrq.rrq_s_id, sid);
 	rrq.rrq_ox_id = htons(aborted_io_req->xid);
+<<<<<<< HEAD
 	rrq.rrq_rx_id = htons(aborted_io_req->task->rxwr_txrd.var_ctx.rx_id);
+=======
+	rrq.rrq_rx_id = htons(aborted_io_req->task->rx_wr_tx_rd.rx_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 retry_rrq:
 	rc = bnx2fc_initiate_els(tgt, ELS_RRQ, &rrq, sizeof(rrq),
@@ -253,6 +261,7 @@ int bnx2fc_send_rls(struct bnx2fc_rport *tgt, struct fc_frame *fp)
 	return rc;
 }
 
+<<<<<<< HEAD
 void bnx2fc_srr_compl(struct bnx2fc_els_cb_arg *cb_arg)
 {
 	struct bnx2fc_mp_req *mp_req;
@@ -660,13 +669,19 @@ srr_err:
 	return rc;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int bnx2fc_initiate_els(struct bnx2fc_rport *tgt, unsigned int op,
 			void *data, u32 data_len,
 			void (*cb_func)(struct bnx2fc_els_cb_arg *cb_arg),
 			struct bnx2fc_els_cb_arg *cb_arg, u32 timer_msec)
 {
 	struct fcoe_port *port = tgt->port;
+<<<<<<< HEAD
 	struct bnx2fc_interface *interface = port->priv;
+=======
+	struct bnx2fc_hba *hba = port->priv;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct fc_rport *rport = tgt->rport;
 	struct fc_lport *lport = port->lport;
 	struct bnx2fc_cmd *els_req;
@@ -681,12 +696,20 @@ static int bnx2fc_initiate_els(struct bnx2fc_rport *tgt, unsigned int op,
 
 	rc = fc_remote_port_chkready(rport);
 	if (rc) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "els 0x%x: rport not ready\n", op);
+=======
+		printk(KERN_ALERT PFX "els 0x%x: rport not ready\n", op);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -EINVAL;
 		goto els_err;
 	}
 	if (lport->state != LPORT_ST_READY || !(lport->link_up)) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "els 0x%x: link is not ready\n", op);
+=======
+		printk(KERN_ALERT PFX "els 0x%x: link is not ready\n", op);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -EINVAL;
 		goto els_err;
 	}
@@ -712,7 +735,11 @@ static int bnx2fc_initiate_els(struct bnx2fc_rport *tgt, unsigned int op,
 	mp_req = (struct bnx2fc_mp_req *)&(els_req->mp_req);
 	rc = bnx2fc_init_mp_req(els_req);
 	if (rc == FAILED) {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "ELS MP request init failed\n");
+=======
+		printk(KERN_ALERT PFX "ELS MP request init failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_lock_bh(&tgt->tgt_lock);
 		kref_put(&els_req->refcount, bnx2fc_cmd_release);
 		spin_unlock_bh(&tgt->tgt_lock);
@@ -731,7 +758,11 @@ static int bnx2fc_initiate_els(struct bnx2fc_rport *tgt, unsigned int op,
 	if ((op >= ELS_LS_RJT) && (op <= ELS_AUTH_ELS)) {
 		memcpy(mp_req->req_buf, data, data_len);
 	} else {
+<<<<<<< HEAD
 		printk(KERN_ERR PFX "Invalid ELS op 0x%x\n", op);
+=======
+		printk(KERN_ALERT PFX "Invalid ELS op 0x%x\n", op);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		els_req->cb_func = NULL;
 		els_req->cb_arg = NULL;
 		spin_lock_bh(&tgt->tgt_lock);
@@ -749,6 +780,7 @@ static int bnx2fc_initiate_els(struct bnx2fc_rport *tgt, unsigned int op,
 	did = tgt->rport->port_id;
 	sid = tgt->sid;
 
+<<<<<<< HEAD
 	if (op == ELS_SRR)
 		__fc_fill_fc_hdr(fc_hdr, FC_RCTL_ELS4_REQ, did, sid,
 				   FC_TYPE_FCP, FC_FC_FIRST_SEQ |
@@ -757,6 +789,11 @@ static int bnx2fc_initiate_els(struct bnx2fc_rport *tgt, unsigned int op,
 		__fc_fill_fc_hdr(fc_hdr, FC_RCTL_ELS_REQ, did, sid,
 				   FC_TYPE_ELS, FC_FC_FIRST_SEQ |
 				   FC_FC_END_SEQ | FC_FC_SEQ_INIT, 0);
+=======
+	__fc_fill_fc_hdr(fc_hdr, FC_RCTL_ELS_REQ, did, sid,
+			   FC_TYPE_ELS, FC_FC_FIRST_SEQ | FC_FC_END_SEQ |
+			   FC_FC_SEQ_INIT, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Obtain exchange id */
 	xid = els_req->xid;
@@ -764,8 +801,12 @@ static int bnx2fc_initiate_els(struct bnx2fc_rport *tgt, unsigned int op,
 	index = xid % BNX2FC_TASKS_PER_PAGE;
 
 	/* Initialize task context for this IO request */
+<<<<<<< HEAD
 	task_page = (struct fcoe_task_ctx_entry *)
 			interface->hba->task_ctx[task_idx];
+=======
+	task_page = (struct fcoe_task_ctx_entry *) hba->task_ctx[task_idx];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	task = &(task_page[index]);
 	bnx2fc_init_mp_task(els_req, task);
 
@@ -830,13 +871,21 @@ void bnx2fc_process_els_compl(struct bnx2fc_cmd *els_req,
 
 	hdr = (u64 *)fc_hdr;
 	temp_hdr = (u64 *)
+<<<<<<< HEAD
 		&task->rxwr_only.union_ctx.comp_info.mp_rsp.fc_hdr;
+=======
+		&task->cmn.general.cmd_info.mp_fc_frame.fc_hdr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hdr[0] = cpu_to_be64(temp_hdr[0]);
 	hdr[1] = cpu_to_be64(temp_hdr[1]);
 	hdr[2] = cpu_to_be64(temp_hdr[2]);
 
+<<<<<<< HEAD
 	mp_req->resp_len =
 		task->rxwr_only.union_ctx.comp_info.mp_rsp.mp_payload_len;
+=======
+	mp_req->resp_len = task->rx_wr_only.sgl_ctx.mul_sges.cur_sge_off;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Parse ELS response */
 	if ((els_req->cb_func) && (els_req->cb_arg)) {
@@ -909,8 +958,13 @@ struct fc_seq *bnx2fc_elsct_send(struct fc_lport *lport, u32 did,
 				      void *arg, u32 timeout)
 {
 	struct fcoe_port *port = lport_priv(lport);
+<<<<<<< HEAD
 	struct bnx2fc_interface *interface = port->priv;
 	struct fcoe_ctlr *fip = &interface->ctlr;
+=======
+	struct bnx2fc_hba *hba = port->priv;
+	struct fcoe_ctlr *fip = &hba->ctlr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct fc_frame_header *fh = fc_frame_header_get(fp);
 
 	switch (op) {

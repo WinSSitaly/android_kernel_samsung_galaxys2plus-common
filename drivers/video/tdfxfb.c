@@ -169,7 +169,11 @@ static int nowrap = 1;      /* not implemented (yet) */
 static int hwcursor = 1;
 static char *mode_option __devinitdata;
 /* mtrr option */
+<<<<<<< HEAD
 static bool nomtrr __devinitdata;
+=======
+static int nomtrr __devinitdata;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* -------------------------------------------------------------------------
  *			Hardware-specific funcions

@@ -17,10 +17,13 @@
  */
 
 #include <linux/clk.h>
+<<<<<<< HEAD
 #include <linux/completion.h>
 #include <linux/dmaengine.h>
 #include <linux/dma-direction.h>
 #include <linux/dma-mapping.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/err.h>
 #include <linux/init.h>
 #include <linux/module.h>
@@ -31,7 +34,10 @@
 #include <linux/mtd/nand.h>
 #include <linux/mtd/nand_ecc.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/of.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mtd/partitions.h>
 #include <linux/io.h>
 #include <linux/slab.h>
@@ -39,7 +45,11 @@
 #include <linux/amba/bus.h>
 #include <mtd/mtd-abi.h>
 
+<<<<<<< HEAD
 static struct nand_ecclayout fsmc_ecc1_128_layout = {
+=======
+static struct nand_ecclayout fsmc_ecc1_layout = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.eccbytes = 24,
 	.eccpos = {2, 3, 4, 18, 19, 20, 34, 35, 36, 50, 51, 52,
 		66, 67, 68, 82, 83, 84, 98, 99, 100, 114, 115, 116},
@@ -55,6 +65,7 @@ static struct nand_ecclayout fsmc_ecc1_128_layout = {
 	}
 };
 
+<<<<<<< HEAD
 static struct nand_ecclayout fsmc_ecc1_64_layout = {
 	.eccbytes = 12,
 	.eccpos = {2, 3, 4, 18, 19, 20, 34, 35, 36, 50, 51, 52},
@@ -176,6 +187,9 @@ static struct nand_ecclayout fsmc_ecc4_224_layout = {
  * bytes are free for use.
  */
 static struct nand_ecclayout fsmc_ecc4_128_layout = {
+=======
+static struct nand_ecclayout fsmc_ecc4_lp_layout = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.eccbytes = 104,
 	.eccpos = {  2,   3,   4,   5,   6,   7,   8,
 		9,  10,  11,  12,  13,  14,
@@ -207,6 +221,7 @@ static struct nand_ecclayout fsmc_ecc4_128_layout = {
 };
 
 /*
+<<<<<<< HEAD
  * ECC4 layout for NAND of pagesize 2048 bytes & OOBsize 64 bytes. 13*4 bytes of
  * OOB size is reserved for ECC, Byte no. 0 & 1 reserved for bad block and 10
  * bytes are free for use.
@@ -246,6 +261,8 @@ static struct nand_ecclayout fsmc_ecc4_16_layout = {
 };
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * ECC placement definitions in oobfree type format.
  * There are 13 bytes of ecc for every 512 byte block and it has to be read
  * consecutively and immediately after the 512 byte data block for hardware to
@@ -267,6 +284,19 @@ static struct fsmc_eccplace fsmc_ecc4_lp_place = {
 	}
 };
 
+<<<<<<< HEAD
+=======
+static struct nand_ecclayout fsmc_ecc4_sp_layout = {
+	.eccbytes = 13,
+	.eccpos = { 0,  1,  2,  3,  6,  7, 8,
+		9, 10, 11, 12, 13, 14
+	},
+	.oobfree = {
+		{.offset = 15, .length = 1},
+	}
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct fsmc_eccplace fsmc_ecc4_sp_place = {
 	.eccplace = {
 		{.offset = 0, .length = 4},
@@ -274,6 +304,70 @@ static struct fsmc_eccplace fsmc_ecc4_sp_place = {
 	}
 };
 
+<<<<<<< HEAD
+=======
+/*
+ * Default partition tables to be used if the partition information not
+ * provided through platform data.
+ *
+ * Default partition layout for small page(= 512 bytes) devices
+ * Size for "Root file system" is updated in driver based on actual device size
+ */
+static struct mtd_partition partition_info_16KB_blk[] = {
+	{
+		.name = "X-loader",
+		.offset = 0,
+		.size = 4*0x4000,
+	},
+	{
+		.name = "U-Boot",
+		.offset = 0x10000,
+		.size = 20*0x4000,
+	},
+	{
+		.name = "Kernel",
+		.offset = 0x60000,
+		.size = 256*0x4000,
+	},
+	{
+		.name = "Root File System",
+		.offset = 0x460000,
+		.size = 0,
+	},
+};
+
+/*
+ * Default partition layout for large page(> 512 bytes) devices
+ * Size for "Root file system" is updated in driver based on actual device size
+ */
+static struct mtd_partition partition_info_128KB_blk[] = {
+	{
+		.name = "X-loader",
+		.offset = 0,
+		.size = 4*0x20000,
+	},
+	{
+		.name = "U-Boot",
+		.offset = 0x80000,
+		.size = 12*0x20000,
+	},
+	{
+		.name = "Kernel",
+		.offset = 0x200000,
+		.size = 48*0x20000,
+	},
+	{
+		.name = "Root File System",
+		.offset = 0x800000,
+		.size = 0,
+	},
+};
+
+#ifdef CONFIG_MTD_CMDLINE_PARTS
+const char *part_probes[] = { "cmdlinepart", NULL };
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct fsmc_nand_data - structure for FSMC NAND device state
  *
@@ -287,11 +381,14 @@ static struct fsmc_eccplace fsmc_ecc4_sp_place = {
  * @bank:		Bank number for probed device.
  * @clk:		Clock structure for FSMC.
  *
+<<<<<<< HEAD
  * @read_dma_chan:	DMA channel for read access
  * @write_dma_chan:	DMA channel for write access to NAND
  * @dma_access_complete: Completion structure
  *
  * @data_pa:		NAND Physical port for Data.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @data_va:		NAND port for Data.
  * @cmd_va:		NAND port for Command.
  * @addr_va:		NAND port for Address.
@@ -306,6 +403,7 @@ struct fsmc_nand_data {
 
 	struct fsmc_eccplace	*ecc_place;
 	unsigned int		bank;
+<<<<<<< HEAD
 	struct device		*dev;
 	enum access_mode	mode;
 	struct clk		*clk;
@@ -318,6 +416,15 @@ struct fsmc_nand_data {
 	struct fsmc_nand_timings *dev_timings;
 
 	dma_addr_t		data_pa;
+=======
+	struct clk		*clk;
+
+	struct resource		*resregs;
+	struct resource		*rescmd;
+	struct resource		*resaddr;
+	struct resource		*resdata;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void __iomem		*data_va;
 	void __iomem		*cmd_va;
 	void __iomem		*addr_va;
@@ -361,6 +468,7 @@ static void fsmc_cmd_ctrl(struct mtd_info *mtd, int cmd, unsigned int ctrl)
 	struct nand_chip *this = mtd->priv;
 	struct fsmc_nand_data *host = container_of(mtd,
 					struct fsmc_nand_data, mtd);
+<<<<<<< HEAD
 	void *__iomem *regs = host->regs_va;
 	unsigned int bank = host->bank;
 
@@ -384,6 +492,30 @@ static void fsmc_cmd_ctrl(struct mtd_info *mtd, int cmd, unsigned int ctrl)
 		else
 			pc &= ~FSMC_ENABLE;
 		writel(pc, FSMC_NAND_REG(regs, bank, PC));
+=======
+	struct fsmc_regs *regs = host->regs_va;
+	unsigned int bank = host->bank;
+
+	if (ctrl & NAND_CTRL_CHANGE) {
+		if (ctrl & NAND_CLE) {
+			this->IO_ADDR_R = (void __iomem *)host->cmd_va;
+			this->IO_ADDR_W = (void __iomem *)host->cmd_va;
+		} else if (ctrl & NAND_ALE) {
+			this->IO_ADDR_R = (void __iomem *)host->addr_va;
+			this->IO_ADDR_W = (void __iomem *)host->addr_va;
+		} else {
+			this->IO_ADDR_R = (void __iomem *)host->data_va;
+			this->IO_ADDR_W = (void __iomem *)host->data_va;
+		}
+
+		if (ctrl & NAND_NCE) {
+			writel(readl(&regs->bank_regs[bank].pc) | FSMC_ENABLE,
+					&regs->bank_regs[bank].pc);
+		} else {
+			writel(readl(&regs->bank_regs[bank].pc) & ~FSMC_ENABLE,
+				       &regs->bank_regs[bank].pc);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	mb();
@@ -398,6 +530,7 @@ static void fsmc_cmd_ctrl(struct mtd_info *mtd, int cmd, unsigned int ctrl)
  * This routine initializes timing parameters related to NAND memory access in
  * FSMC registers
  */
+<<<<<<< HEAD
 static void fsmc_nand_setup(void __iomem *regs, uint32_t bank,
 			   uint32_t busw, struct fsmc_nand_timings *timings)
 {
@@ -434,6 +567,24 @@ static void fsmc_nand_setup(void __iomem *regs, uint32_t bank,
 			FSMC_NAND_REG(regs, bank, PC));
 	writel(thiz | thold | twait | tset, FSMC_NAND_REG(regs, bank, COMM));
 	writel(thiz | thold | twait | tset, FSMC_NAND_REG(regs, bank, ATTRIB));
+=======
+static void __init fsmc_nand_setup(struct fsmc_regs *regs, uint32_t bank,
+				   uint32_t busw)
+{
+	uint32_t value = FSMC_DEVTYPE_NAND | FSMC_ENABLE | FSMC_WAITON;
+
+	if (busw)
+		writel(value | FSMC_DEVWID_16, &regs->bank_regs[bank].pc);
+	else
+		writel(value | FSMC_DEVWID_8, &regs->bank_regs[bank].pc);
+
+	writel(readl(&regs->bank_regs[bank].pc) | FSMC_TCLR_1 | FSMC_TAR_1,
+	       &regs->bank_regs[bank].pc);
+	writel(FSMC_THIZ_1 | FSMC_THOLD_4 | FSMC_TWAIT_6 | FSMC_TSET_0,
+	       &regs->bank_regs[bank].comm);
+	writel(FSMC_THIZ_1 | FSMC_THOLD_4 | FSMC_TWAIT_6 | FSMC_TSET_0,
+	       &regs->bank_regs[bank].attrib);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -443,6 +594,7 @@ static void fsmc_enable_hwecc(struct mtd_info *mtd, int mode)
 {
 	struct fsmc_nand_data *host = container_of(mtd,
 					struct fsmc_nand_data, mtd);
+<<<<<<< HEAD
 	void __iomem *regs = host->regs_va;
 	uint32_t bank = host->bank;
 
@@ -452,6 +604,17 @@ static void fsmc_enable_hwecc(struct mtd_info *mtd, int mode)
 			FSMC_NAND_REG(regs, bank, PC));
 	writel(readl(FSMC_NAND_REG(regs, bank, PC)) | FSMC_ECCEN,
 			FSMC_NAND_REG(regs, bank, PC));
+=======
+	struct fsmc_regs *regs = host->regs_va;
+	uint32_t bank = host->bank;
+
+	writel(readl(&regs->bank_regs[bank].pc) & ~FSMC_ECCPLEN_256,
+		       &regs->bank_regs[bank].pc);
+	writel(readl(&regs->bank_regs[bank].pc) & ~FSMC_ECCEN,
+			&regs->bank_regs[bank].pc);
+	writel(readl(&regs->bank_regs[bank].pc) | FSMC_ECCEN,
+			&regs->bank_regs[bank].pc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -464,42 +627,66 @@ static int fsmc_read_hwecc_ecc4(struct mtd_info *mtd, const uint8_t *data,
 {
 	struct fsmc_nand_data *host = container_of(mtd,
 					struct fsmc_nand_data, mtd);
+<<<<<<< HEAD
 	void __iomem *regs = host->regs_va;
+=======
+	struct fsmc_regs *regs = host->regs_va;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint32_t bank = host->bank;
 	uint32_t ecc_tmp;
 	unsigned long deadline = jiffies + FSMC_BUSY_WAIT_TIMEOUT;
 
 	do {
+<<<<<<< HEAD
 		if (readl(FSMC_NAND_REG(regs, bank, STS)) & FSMC_CODE_RDY)
+=======
+		if (readl(&regs->bank_regs[bank].sts) & FSMC_CODE_RDY)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		else
 			cond_resched();
 	} while (!time_after_eq(jiffies, deadline));
 
+<<<<<<< HEAD
 	if (time_after_eq(jiffies, deadline)) {
 		dev_err(host->dev, "calculate ecc timed out\n");
 		return -ETIMEDOUT;
 	}
 
 	ecc_tmp = readl(FSMC_NAND_REG(regs, bank, ECC1));
+=======
+	ecc_tmp = readl(&regs->bank_regs[bank].ecc1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ecc[0] = (uint8_t) (ecc_tmp >> 0);
 	ecc[1] = (uint8_t) (ecc_tmp >> 8);
 	ecc[2] = (uint8_t) (ecc_tmp >> 16);
 	ecc[3] = (uint8_t) (ecc_tmp >> 24);
 
+<<<<<<< HEAD
 	ecc_tmp = readl(FSMC_NAND_REG(regs, bank, ECC2));
+=======
+	ecc_tmp = readl(&regs->bank_regs[bank].ecc2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ecc[4] = (uint8_t) (ecc_tmp >> 0);
 	ecc[5] = (uint8_t) (ecc_tmp >> 8);
 	ecc[6] = (uint8_t) (ecc_tmp >> 16);
 	ecc[7] = (uint8_t) (ecc_tmp >> 24);
 
+<<<<<<< HEAD
 	ecc_tmp = readl(FSMC_NAND_REG(regs, bank, ECC3));
+=======
+	ecc_tmp = readl(&regs->bank_regs[bank].ecc3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ecc[8] = (uint8_t) (ecc_tmp >> 0);
 	ecc[9] = (uint8_t) (ecc_tmp >> 8);
 	ecc[10] = (uint8_t) (ecc_tmp >> 16);
 	ecc[11] = (uint8_t) (ecc_tmp >> 24);
 
+<<<<<<< HEAD
 	ecc_tmp = readl(FSMC_NAND_REG(regs, bank, STS));
+=======
+	ecc_tmp = readl(&regs->bank_regs[bank].sts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ecc[12] = (uint8_t) (ecc_tmp >> 16);
 
 	return 0;
@@ -515,11 +702,19 @@ static int fsmc_read_hwecc_ecc1(struct mtd_info *mtd, const uint8_t *data,
 {
 	struct fsmc_nand_data *host = container_of(mtd,
 					struct fsmc_nand_data, mtd);
+<<<<<<< HEAD
 	void __iomem *regs = host->regs_va;
 	uint32_t bank = host->bank;
 	uint32_t ecc_tmp;
 
 	ecc_tmp = readl(FSMC_NAND_REG(regs, bank, ECC1));
+=======
+	struct fsmc_regs *regs = host->regs_va;
+	uint32_t bank = host->bank;
+	uint32_t ecc_tmp;
+
+	ecc_tmp = readl(&regs->bank_regs[bank].ecc1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ecc[0] = (uint8_t) (ecc_tmp >> 0);
 	ecc[1] = (uint8_t) (ecc_tmp >> 8);
 	ecc[2] = (uint8_t) (ecc_tmp >> 16);
@@ -527,6 +722,7 @@ static int fsmc_read_hwecc_ecc1(struct mtd_info *mtd, const uint8_t *data,
 	return 0;
 }
 
+<<<<<<< HEAD
 /* Count the number of 0's in buff upto a max of max_bits */
 static int count_written_bits(uint8_t *buff, int size, int max_bits)
 {
@@ -687,6 +883,8 @@ static void fsmc_write_buf_dma(struct mtd_info *mtd, const uint8_t *buf,
 	dma_xfer(host, (void *)buf, len, DMA_TO_DEVICE);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * fsmc_read_page_hwecc
  * @mtd:	mtd info structure
@@ -722,6 +920,10 @@ static int fsmc_read_page_hwecc(struct mtd_info *mtd, struct nand_chip *chip,
 	uint8_t *oob = (uint8_t *)&ecc_oob[0];
 
 	for (i = 0, s = 0; s < eccsteps; s++, i += eccbytes, p += eccsize) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		chip->cmdfunc(mtd, NAND_CMD_READ0, s * eccsize, page);
 		chip->ecc.hwctl(mtd, NAND_ECC_READ);
 		chip->read_buf(mtd, p, eccsize);
@@ -732,6 +934,7 @@ static int fsmc_read_page_hwecc(struct mtd_info *mtd, struct nand_chip *chip,
 			group++;
 
 			/*
+<<<<<<< HEAD
 			 * length is intentionally kept a higher multiple of 2
 			 * to read at least 13 bytes even in case of 16 bit NAND
 			 * devices
@@ -739,12 +942,23 @@ static int fsmc_read_page_hwecc(struct mtd_info *mtd, struct nand_chip *chip,
 			if (chip->options & NAND_BUSWIDTH_16)
 				len = roundup(len, 2);
 
+=======
+			* length is intentionally kept a higher multiple of 2
+			* to read at least 13 bytes even in case of 16 bit NAND
+			* devices
+			*/
+			len = roundup(len, 2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			chip->cmdfunc(mtd, NAND_CMD_READOOB, off, page);
 			chip->read_buf(mtd, oob + j, len);
 			j += len;
 		}
 
+<<<<<<< HEAD
 		memcpy(&ecc_code[i], oob, chip->ecc.bytes);
+=======
+		memcpy(&ecc_code[i], oob, 13);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		chip->ecc.calculate(mtd, p, &ecc_calc[i]);
 
 		stat = chip->ecc.correct(mtd, p, &ecc_code[i], &ecc_calc[i]);
@@ -758,7 +972,11 @@ static int fsmc_read_page_hwecc(struct mtd_info *mtd, struct nand_chip *chip,
 }
 
 /*
+<<<<<<< HEAD
  * fsmc_bch8_correct_data
+=======
+ * fsmc_correct_data
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @mtd:	mtd info structure
  * @dat:	buffer of read data
  * @read_ecc:	ecc read from device spare area
@@ -767,11 +985,16 @@ static int fsmc_read_page_hwecc(struct mtd_info *mtd, struct nand_chip *chip,
  * calc_ecc is a 104 bit information containing maximum of 8 error
  * offset informations of 13 bits each in 512 bytes of read data.
  */
+<<<<<<< HEAD
 static int fsmc_bch8_correct_data(struct mtd_info *mtd, uint8_t *dat,
+=======
+static int fsmc_correct_data(struct mtd_info *mtd, uint8_t *dat,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     uint8_t *read_ecc, uint8_t *calc_ecc)
 {
 	struct fsmc_nand_data *host = container_of(mtd,
 					struct fsmc_nand_data, mtd);
+<<<<<<< HEAD
 	struct nand_chip *chip = mtd->priv;
 	void __iomem *regs = host->regs_va;
 	unsigned int bank = host->bank;
@@ -812,6 +1035,16 @@ static int fsmc_bch8_correct_data(struct mtd_info *mtd, uint8_t *dat,
 
 		return -EBADMSG;
 	}
+=======
+	struct fsmc_regs *regs = host->regs_va;
+	unsigned int bank = host->bank;
+	uint16_t err_idx[8];
+	uint64_t ecc_data[2];
+	uint32_t num_err, i;
+
+	/* The calculated ecc is actually the correction index in data */
+	memcpy(ecc_data, calc_ecc, 13);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * ------------------- calc_ecc[] bit wise -----------|--13 bits--|
@@ -822,6 +1055,7 @@ static int fsmc_bch8_correct_data(struct mtd_info *mtd, uint8_t *dat,
 	 * uint64_t array and error offset indexes are populated in err_idx
 	 * array
 	 */
+<<<<<<< HEAD
 	ecc1 = readl(FSMC_NAND_REG(regs, bank, ECC1));
 	ecc2 = readl(FSMC_NAND_REG(regs, bank, ECC2));
 	ecc3 = readl(FSMC_NAND_REG(regs, bank, ECC3));
@@ -835,13 +1069,33 @@ static int fsmc_bch8_correct_data(struct mtd_info *mtd, uint8_t *dat,
 	err_idx[5] = (ecc3 >> 1) & 0x1FFF;
 	err_idx[6] = (ecc3 >> 14) & 0x1FFF;
 	err_idx[7] = (((ecc4 >> 16) & 0xFF) << 5) | ((ecc3 >> 27) & 0x1F);
+=======
+	for (i = 0; i < 8; i++) {
+		if (i == 4) {
+			err_idx[4] = ((ecc_data[1] & 0x1) << 12) | ecc_data[0];
+			ecc_data[1] >>= 1;
+			continue;
+		}
+		err_idx[i] = (ecc_data[i/4] & 0x1FFF);
+		ecc_data[i/4] >>= 13;
+	}
+
+	num_err = (readl(&regs->bank_regs[bank].sts) >> 10) & 0xF;
+
+	if (num_err == 0xF)
+		return -EBADMSG;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	i = 0;
 	while (num_err--) {
 		change_bit(0, (unsigned long *)&err_idx[i]);
 		change_bit(1, (unsigned long *)&err_idx[i]);
 
+<<<<<<< HEAD
 		if (err_idx[i] < chip->ecc.size * 8) {
+=======
+		if (err_idx[i] <= 512 * 8) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			change_bit(err_idx[i], (unsigned long *)dat);
 			i++;
 		}
@@ -849,6 +1103,7 @@ static int fsmc_bch8_correct_data(struct mtd_info *mtd, uint8_t *dat,
 	return i;
 }
 
+<<<<<<< HEAD
 static bool filter(struct dma_chan *chan, void *slave)
 {
 	chan->private = slave;
@@ -887,6 +1142,8 @@ static int __devinit fsmc_nand_probe_config_dt(struct platform_device *pdev,
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * fsmc_nand_probe - Probe function
  * @pdev:       platform device structure
@@ -894,6 +1151,7 @@ static int __devinit fsmc_nand_probe_config_dt(struct platform_device *pdev,
 static int __init fsmc_nand_probe(struct platform_device *pdev)
 {
 	struct fsmc_nand_platform_data *pdata = dev_get_platdata(&pdev->dev);
+<<<<<<< HEAD
 	struct device_node __maybe_unused *np = pdev->dev.of_node;
 	struct mtd_part_parser_data ppdata = {};
 	struct fsmc_nand_data *host;
@@ -901,10 +1159,18 @@ static int __init fsmc_nand_probe(struct platform_device *pdev)
 	struct nand_chip *nand;
 	struct resource *res;
 	dma_cap_mask_t mask;
+=======
+	struct fsmc_nand_data *host;
+	struct mtd_info *mtd;
+	struct nand_chip *nand;
+	struct fsmc_regs *regs;
+	struct resource *res;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 	u32 pid;
 	int i;
 
+<<<<<<< HEAD
 	if (np) {
 		pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
 		pdev->dev.platform_data = pdata;
@@ -915,19 +1181,26 @@ static int __init fsmc_nand_probe(struct platform_device *pdev)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!pdata) {
 		dev_err(&pdev->dev, "platform data is NULL\n");
 		return -EINVAL;
 	}
 
 	/* Allocate memory for the device structure (and zero it) */
+<<<<<<< HEAD
 	host = devm_kzalloc(&pdev->dev, sizeof(*host), GFP_KERNEL);
+=======
+	host = kzalloc(sizeof(*host), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!host) {
 		dev_err(&pdev->dev, "failed to allocate device structure\n");
 		return -ENOMEM;
 	}
 
 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "nand_data");
+<<<<<<< HEAD
 	if (!res)
 		return -EINVAL;
 
@@ -986,17 +1259,90 @@ static int __init fsmc_nand_probe(struct platform_device *pdev)
 	if (!host->regs_va) {
 		dev_err(&pdev->dev, "regs ioremap failed\n");
 		return -ENOMEM;
+=======
+	if (!res) {
+		ret = -EIO;
+		goto err_probe1;
+	}
+
+	host->resdata = request_mem_region(res->start, resource_size(res),
+			pdev->name);
+	if (!host->resdata) {
+		ret = -EIO;
+		goto err_probe1;
+	}
+
+	host->data_va = ioremap(res->start, resource_size(res));
+	if (!host->data_va) {
+		ret = -EIO;
+		goto err_probe1;
+	}
+
+	host->resaddr = request_mem_region(res->start + PLAT_NAND_ALE,
+			resource_size(res), pdev->name);
+	if (!host->resaddr) {
+		ret = -EIO;
+		goto err_probe1;
+	}
+
+	host->addr_va = ioremap(res->start + PLAT_NAND_ALE, resource_size(res));
+	if (!host->addr_va) {
+		ret = -EIO;
+		goto err_probe1;
+	}
+
+	host->rescmd = request_mem_region(res->start + PLAT_NAND_CLE,
+			resource_size(res), pdev->name);
+	if (!host->rescmd) {
+		ret = -EIO;
+		goto err_probe1;
+	}
+
+	host->cmd_va = ioremap(res->start + PLAT_NAND_CLE, resource_size(res));
+	if (!host->cmd_va) {
+		ret = -EIO;
+		goto err_probe1;
+	}
+
+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "fsmc_regs");
+	if (!res) {
+		ret = -EIO;
+		goto err_probe1;
+	}
+
+	host->resregs = request_mem_region(res->start, resource_size(res),
+			pdev->name);
+	if (!host->resregs) {
+		ret = -EIO;
+		goto err_probe1;
+	}
+
+	host->regs_va = ioremap(res->start, resource_size(res));
+	if (!host->regs_va) {
+		ret = -EIO;
+		goto err_probe1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	host->clk = clk_get(&pdev->dev, NULL);
 	if (IS_ERR(host->clk)) {
 		dev_err(&pdev->dev, "failed to fetch block clock\n");
+<<<<<<< HEAD
 		return PTR_ERR(host->clk);
+=======
+		ret = PTR_ERR(host->clk);
+		host->clk = NULL;
+		goto err_probe1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ret = clk_enable(host->clk);
 	if (ret)
+<<<<<<< HEAD
 		goto err_clk_enable;
+=======
+		goto err_probe1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * This device ID is actually a common AMBA ID as used on the
@@ -1012,6 +1358,7 @@ static int __init fsmc_nand_probe(struct platform_device *pdev)
 
 	host->bank = pdata->bank;
 	host->select_chip = pdata->select_bank;
+<<<<<<< HEAD
 	host->partitions = pdata->partitions;
 	host->nr_partitions = pdata->nr_partitions;
 	host->dev = &pdev->dev;
@@ -1020,6 +1367,9 @@ static int __init fsmc_nand_probe(struct platform_device *pdev)
 
 	if (host->mode == USE_DMA_ACCESS)
 		init_completion(&host->dma_access_complete);
+=======
+	regs = host->regs_va;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Link all private pointers */
 	mtd = &host->mtd;
@@ -1038,11 +1388,15 @@ static int __init fsmc_nand_probe(struct platform_device *pdev)
 	nand->ecc.size = 512;
 	nand->options = pdata->options;
 	nand->select_chip = fsmc_select_chip;
+<<<<<<< HEAD
 	nand->badblockbits = 7;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (pdata->width == FSMC_NAND_BW16)
 		nand->options |= NAND_BUSWIDTH_16;
 
+<<<<<<< HEAD
 	switch (host->mode) {
 	case USE_DMA_ACCESS:
 		dma_cap_zero(mask);
@@ -1073,18 +1427,29 @@ static int __init fsmc_nand_probe(struct platform_device *pdev)
 	fsmc_nand_setup(host->regs_va, host->bank,
 			nand->options & NAND_BUSWIDTH_16,
 			host->dev_timings);
+=======
+	fsmc_nand_setup(regs, host->bank, nand->options & NAND_BUSWIDTH_16);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (AMBA_REV_BITS(host->pid) >= 8) {
 		nand->ecc.read_page = fsmc_read_page_hwecc;
 		nand->ecc.calculate = fsmc_read_hwecc_ecc4;
+<<<<<<< HEAD
 		nand->ecc.correct = fsmc_bch8_correct_data;
 		nand->ecc.bytes = 13;
 		nand->ecc.strength = 8;
+=======
+		nand->ecc.correct = fsmc_correct_data;
+		nand->ecc.bytes = 13;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		nand->ecc.calculate = fsmc_read_hwecc_ecc1;
 		nand->ecc.correct = nand_correct_data;
 		nand->ecc.bytes = 3;
+<<<<<<< HEAD
 		nand->ecc.strength = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -1093,6 +1458,7 @@ static int __init fsmc_nand_probe(struct platform_device *pdev)
 	if (nand_scan_ident(&host->mtd, 1, NULL)) {
 		ret = -ENXIO;
 		dev_err(&pdev->dev, "No NAND Device found!\n");
+<<<<<<< HEAD
 		goto err_scan_ident;
 	}
 
@@ -1139,6 +1505,21 @@ static int __init fsmc_nand_probe(struct platform_device *pdev)
 			       "oobsize %d\n", mtd->oobsize);
 			BUG();
 		}
+=======
+		goto err_probe;
+	}
+
+	if (AMBA_REV_BITS(host->pid) >= 8) {
+		if (host->mtd.writesize == 512) {
+			nand->ecc.layout = &fsmc_ecc4_sp_layout;
+			host->ecc_place = &fsmc_ecc4_sp_place;
+		} else {
+			nand->ecc.layout = &fsmc_ecc4_lp_layout;
+			host->ecc_place = &fsmc_ecc4_lp_place;
+		}
+	} else {
+		nand->ecc.layout = &fsmc_ecc1_layout;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Second stage of scan to fill MTD data-structures */
@@ -1154,6 +1535,7 @@ static int __init fsmc_nand_probe(struct platform_device *pdev)
 	 * platform data,
 	 * default partition information present in driver.
 	 */
+<<<<<<< HEAD
 	/*
 	 * Check for partition info passed
 	 */
@@ -1161,6 +1543,67 @@ static int __init fsmc_nand_probe(struct platform_device *pdev)
 	ppdata.of_node = np;
 	ret = mtd_device_parse_register(&host->mtd, NULL, &ppdata,
 					host->partitions, host->nr_partitions);
+=======
+#ifdef CONFIG_MTD_CMDLINE_PARTS
+	/*
+	 * Check if partition info passed via command line
+	 */
+	host->mtd.name = "nand";
+	host->nr_partitions = parse_mtd_partitions(&host->mtd, part_probes,
+			&host->partitions, 0);
+	if (host->nr_partitions <= 0) {
+#endif
+		/*
+		 * Check if partition info passed via command line
+		 */
+		if (pdata->partitions) {
+			host->partitions = pdata->partitions;
+			host->nr_partitions = pdata->nr_partitions;
+		} else {
+			struct mtd_partition *partition;
+			int i;
+
+			/* Select the default partitions info */
+			switch (host->mtd.size) {
+			case 0x01000000:
+			case 0x02000000:
+			case 0x04000000:
+				host->partitions = partition_info_16KB_blk;
+				host->nr_partitions =
+					sizeof(partition_info_16KB_blk) /
+					sizeof(struct mtd_partition);
+				break;
+			case 0x08000000:
+			case 0x10000000:
+			case 0x20000000:
+			case 0x40000000:
+				host->partitions = partition_info_128KB_blk;
+				host->nr_partitions =
+					sizeof(partition_info_128KB_blk) /
+					sizeof(struct mtd_partition);
+				break;
+			default:
+				ret = -ENXIO;
+				pr_err("Unsupported NAND size\n");
+				goto err_probe;
+			}
+
+			partition = host->partitions;
+			for (i = 0; i < host->nr_partitions; i++, partition++) {
+				if (partition->size == 0) {
+					partition->size = host->mtd.size -
+						partition->offset;
+					break;
+				}
+			}
+		}
+#ifdef CONFIG_MTD_CMDLINE_PARTS
+	}
+#endif
+
+	ret = mtd_device_register(&host->mtd, host->partitions,
+				  host->nr_partitions);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto err_probe;
 
@@ -1169,6 +1612,7 @@ static int __init fsmc_nand_probe(struct platform_device *pdev)
 	return 0;
 
 err_probe:
+<<<<<<< HEAD
 err_scan_ident:
 	if (host->mode == USE_DMA_ACCESS)
 		dma_release_channel(host->write_dma_chan);
@@ -1179,6 +1623,34 @@ err_req_read_chnl:
 	clk_disable(host->clk);
 err_clk_enable:
 	clk_put(host->clk);
+=======
+	clk_disable(host->clk);
+err_probe1:
+	if (host->clk)
+		clk_put(host->clk);
+	if (host->regs_va)
+		iounmap(host->regs_va);
+	if (host->resregs)
+		release_mem_region(host->resregs->start,
+				resource_size(host->resregs));
+	if (host->cmd_va)
+		iounmap(host->cmd_va);
+	if (host->rescmd)
+		release_mem_region(host->rescmd->start,
+				resource_size(host->rescmd));
+	if (host->addr_va)
+		iounmap(host->addr_va);
+	if (host->resaddr)
+		release_mem_region(host->resaddr->start,
+				resource_size(host->resaddr));
+	if (host->data_va)
+		iounmap(host->data_va);
+	if (host->resdata)
+		release_mem_region(host->resdata->start,
+				resource_size(host->resdata));
+
+	kfree(host);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1192,6 +1664,7 @@ static int fsmc_nand_remove(struct platform_device *pdev)
 	platform_set_drvdata(pdev, NULL);
 
 	if (host) {
+<<<<<<< HEAD
 		nand_release(&host->mtd);
 
 		if (host->mode == USE_DMA_ACCESS) {
@@ -1202,6 +1675,27 @@ static int fsmc_nand_remove(struct platform_device *pdev)
 		clk_put(host->clk);
 	}
 
+=======
+		mtd_device_unregister(&host->mtd);
+		clk_disable(host->clk);
+		clk_put(host->clk);
+
+		iounmap(host->regs_va);
+		release_mem_region(host->resregs->start,
+				resource_size(host->resregs));
+		iounmap(host->cmd_va);
+		release_mem_region(host->rescmd->start,
+				resource_size(host->rescmd));
+		iounmap(host->addr_va);
+		release_mem_region(host->resaddr->start,
+				resource_size(host->resaddr));
+		iounmap(host->data_va);
+		release_mem_region(host->resdata->start,
+				resource_size(host->resdata));
+
+		kfree(host);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1217,6 +1711,7 @@ static int fsmc_nand_suspend(struct device *dev)
 static int fsmc_nand_resume(struct device *dev)
 {
 	struct fsmc_nand_data *host = dev_get_drvdata(dev);
+<<<<<<< HEAD
 	if (host) {
 		clk_enable(host->clk);
 		fsmc_nand_setup(host->regs_va, host->bank,
@@ -1235,6 +1730,17 @@ static const struct of_device_id fsmc_nand_id_table[] = {
 	{}
 };
 MODULE_DEVICE_TABLE(of, fsmc_nand_id_table);
+=======
+	if (host)
+		clk_enable(host->clk);
+	return 0;
+}
+
+static const struct dev_pm_ops fsmc_nand_pm_ops = {
+	.suspend = fsmc_nand_suspend,
+	.resume = fsmc_nand_resume,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 static struct platform_driver fsmc_nand_driver = {
@@ -1242,7 +1748,10 @@ static struct platform_driver fsmc_nand_driver = {
 	.driver = {
 		.owner = THIS_MODULE,
 		.name = "fsmc-nand",
+<<<<<<< HEAD
 		.of_match_table = of_match_ptr(fsmc_nand_id_table),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PM
 		.pm = &fsmc_nand_pm_ops,
 #endif

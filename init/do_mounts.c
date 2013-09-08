@@ -28,7 +28,11 @@ int __initdata rd_doload;	/* 1 = load RAM disk, 0 = don't load */
 int root_mountflags = MS_RDONLY | MS_SILENT;
 static char * __initdata root_device_name;
 static char __initdata saved_root_name[64];
+<<<<<<< HEAD
 static int root_wait;
+=======
+static int __initdata root_wait;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 dev_t ROOT_DEV;
 
@@ -85,15 +89,22 @@ no_match:
 
 /**
  * devt_from_partuuid - looks up the dev_t of a partition by its UUID
+<<<<<<< HEAD
  * @uuid:	min 36 byte char array containing a hex ascii UUID
+=======
+ * @uuid:	36 byte char array containing a hex ascii UUID
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * The function will return the first partition which contains a matching
  * UUID value in its partition_meta_info struct.  This does not search
  * by filesystem UUIDs.
  *
+<<<<<<< HEAD
  * If @uuid is followed by a "/PARTNROFF=%d", then the number will be
  * extracted and used as an offset from the partition identified by the UUID.
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Returns the matching dev_t on success or 0 on failure.
  */
 static dev_t devt_from_partuuid(char *uuid_str)
@@ -101,6 +112,7 @@ static dev_t devt_from_partuuid(char *uuid_str)
 	dev_t res = 0;
 	struct device *dev = NULL;
 	u8 uuid[16];
+<<<<<<< HEAD
 	struct gendisk *disk;
 	struct hd_struct *part;
 	int offset = 0;
@@ -123,6 +135,8 @@ static dev_t devt_from_partuuid(char *uuid_str)
 			goto done;
 		}
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Pack the requested UUID in the expected format. */
 	part_pack_uuid(uuid_str, uuid);
@@ -132,6 +146,7 @@ static dev_t devt_from_partuuid(char *uuid_str)
 		goto done;
 
 	res = dev->devt;
+<<<<<<< HEAD
 
 	/* Attempt to find the partition by offset. */
 	if (!offset)
@@ -147,6 +162,10 @@ static dev_t devt_from_partuuid(char *uuid_str)
 
 no_offset:
 	put_device(dev);
+=======
+	put_device(dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 done:
 	return res;
 }
@@ -164,8 +183,11 @@ done:
  *	   used when disk name of partitioned disk ends on a digit.
  *	6) PARTUUID=00112233-4455-6677-8899-AABBCCDDEEFF representing the
  *	   unique id of a partition if the partition table provides it.
+<<<<<<< HEAD
  *	7) PARTUUID=<UUID>/PARTNROFF=<int> to select a partition in relation to
  *	   a partition with a known unique id.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *	If name doesn't have fall into the categories above, we return (0,0).
  *	block_class is used to check if something is a disk name. If the disk
@@ -183,6 +205,11 @@ dev_t name_to_dev_t(char *name)
 #ifdef CONFIG_BLOCK
 	if (strncmp(name, "PARTUUID=", 9) == 0) {
 		name += 9;
+<<<<<<< HEAD
+=======
+		if (strlen(name) != 36)
+			goto fail;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		res = devt_from_partuuid(name);
 		if (!res)
 			goto fail;
@@ -325,12 +352,16 @@ static void __init get_fs_names(char *page)
 
 static int __init do_mount_root(char *name, char *fs, int flags, void *data)
 {
+<<<<<<< HEAD
 	struct super_block *s;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err = sys_mount(name, "/root", fs, flags, data);
 	if (err)
 		return err;
 
 	sys_chdir((const char __user __force *)"/root");
+<<<<<<< HEAD
 	s = current->fs->pwd.dentry->d_sb;
 	ROOT_DEV = s->s_dev;
 	printk(KERN_INFO
@@ -338,6 +369,14 @@ static int __init do_mount_root(char *name, char *fs, int flags, void *data)
 	       s->s_type->name,
 	       s->s_flags & MS_RDONLY ?  " readonly" : "",
 	       MAJOR(ROOT_DEV), MINOR(ROOT_DEV));
+=======
+	ROOT_DEV = current->fs->pwd.mnt->mnt_sb->s_dev;
+	printk(KERN_INFO
+	       "VFS: Mounted root (%s filesystem)%s on device %u:%u.\n",
+	       current->fs->pwd.mnt->mnt_sb->s_type->name,
+	       current->fs->pwd.mnt->mnt_sb->s_flags & MS_RDONLY ?
+	       " readonly" : "", MAJOR(ROOT_DEV), MINOR(ROOT_DEV));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -373,8 +412,13 @@ retry:
 #ifdef CONFIG_BLOCK
 		__bdevname(ROOT_DEV, b);
 #endif
+<<<<<<< HEAD
 		printk("VFS: Cannot open root device \"%s\" or %s: error %d\n",
 				root_device_name, b, err);
+=======
+		printk("VFS: Cannot open root device \"%s\" or %s\n",
+				root_device_name, b);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk("Please append a correct \"root=\" boot option; here are the available partitions:\n");
 
 		printk_all_partitions();
@@ -472,7 +516,11 @@ void __init change_floppy(char *fmt, ...)
 void __init mount_root(void)
 {
 #ifdef CONFIG_ROOT_NFS
+<<<<<<< HEAD
 	if (ROOT_DEV == Root_NFS) {
+=======
+	if (MAJOR(ROOT_DEV) == UNNAMED_MAJOR) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (mount_nfs_root())
 			return;
 

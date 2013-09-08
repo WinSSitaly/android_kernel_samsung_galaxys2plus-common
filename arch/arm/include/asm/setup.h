@@ -187,12 +187,20 @@ struct tagtable {
 
 #define __tag __used __attribute__((__section__(".taglist.init")))
 #define __tagtable(tag, fn) \
+<<<<<<< HEAD
 static const struct tagtable __tagtable_##fn __tag = { tag, fn }
+=======
+static struct tagtable __tagtable_##fn __tag = { tag, fn }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Memory map description
  */
+<<<<<<< HEAD
 #define NR_BANKS	CONFIG_ARM_NR_BANKS
+=======
+#define NR_BANKS 8
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct membank {
 	phys_addr_t start;

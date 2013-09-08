@@ -231,7 +231,11 @@ static struct dentry *fuse_ctl_add_dentry(struct dentry *parent,
 	if (iop)
 		inode->i_op = iop;
 	inode->i_fop = fop;
+<<<<<<< HEAD
 	set_nlink(inode, nlink);
+=======
+	inode->i_nlink = nlink;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	inode->i_private = fc;
 	d_add(dentry, inode);
 	return dentry;

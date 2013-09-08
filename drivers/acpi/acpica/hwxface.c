@@ -6,7 +6,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,7 +46,10 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <acpi/acpi.h>
 #include "accommon.h"
 #include "acnamesp.h"
@@ -138,6 +145,14 @@ acpi_status acpi_read(u64 *return_value, struct acpi_generic_address *reg)
 		return (status);
 	}
 
+<<<<<<< HEAD
+=======
+	width = reg->bit_width;
+	if (width == 64) {
+		width = 32;	/* Break into two 32-bit transfers */
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Initialize entire 64-bit return value to zero */
 
 	*return_value = 0;
@@ -149,6 +164,7 @@ acpi_status acpi_read(u64 *return_value, struct acpi_generic_address *reg)
 	 */
 	if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) {
 		status = acpi_os_read_memory((acpi_physical_address)
+<<<<<<< HEAD
 					     address, return_value,
 					     reg->bit_width);
 		if (ACPI_FAILURE(status)) {
@@ -160,6 +176,26 @@ acpi_status acpi_read(u64 *return_value, struct acpi_generic_address *reg)
 		if (width == 64) {
 			width = 32;	/* Break into two 32-bit transfers */
 		}
+=======
+					     address, &value, width);
+		if (ACPI_FAILURE(status)) {
+			return (status);
+		}
+		*return_value = value;
+
+		if (reg->bit_width == 64) {
+
+			/* Read the top 32 bits */
+
+			status = acpi_os_read_memory((acpi_physical_address)
+						     (address + 4), &value, 32);
+			if (ACPI_FAILURE(status)) {
+				return (status);
+			}
+			*return_value |= ((u64)value << 32);
+		}
+	} else {		/* ACPI_ADR_SPACE_SYSTEM_IO, validated earlier */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		status = acpi_hw_read_port((acpi_io_address)
 					   address, &value, width);
@@ -219,12 +255,21 @@ acpi_status acpi_write(u64 value, struct acpi_generic_address *reg)
 		return (status);
 	}
 
+<<<<<<< HEAD
+=======
+	width = reg->bit_width;
+	if (width == 64) {
+		width = 32;	/* Break into two 32-bit transfers */
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Two address spaces supported: Memory or IO. PCI_Config is
 	 * not supported here because the GAS structure is insufficient
 	 */
 	if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) {
 		status = acpi_os_write_memory((acpi_physical_address)
+<<<<<<< HEAD
 					      address, value, reg->bit_width);
 		if (ACPI_FAILURE(status)) {
 			return (status);
@@ -235,6 +280,23 @@ acpi_status acpi_write(u64 value, struct acpi_generic_address *reg)
 		if (width == 64) {
 			width = 32;	/* Break into two 32-bit transfers */
 		}
+=======
+					      address, ACPI_LODWORD(value),
+					      width);
+		if (ACPI_FAILURE(status)) {
+			return (status);
+		}
+
+		if (reg->bit_width == 64) {
+			status = acpi_os_write_memory((acpi_physical_address)
+						      (address + 4),
+						      ACPI_HIDWORD(value), 32);
+			if (ACPI_FAILURE(status)) {
+				return (status);
+			}
+		}
+	} else {		/* ACPI_ADR_SPACE_SYSTEM_IO, validated earlier */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		status = acpi_hw_write_port((acpi_io_address)
 					    address, ACPI_LODWORD(value),
@@ -264,7 +326,10 @@ acpi_status acpi_write(u64 value, struct acpi_generic_address *reg)
 
 ACPI_EXPORT_SYMBOL(acpi_write)
 
+<<<<<<< HEAD
 #if (!ACPI_REDUCED_HARDWARE)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*******************************************************************************
  *
  * FUNCTION:    acpi_read_bit_register
@@ -335,7 +400,11 @@ ACPI_EXPORT_SYMBOL(acpi_read_bit_register)
  *
  * PARAMETERS:  register_id     - ID of ACPI Bit Register to access
  *              Value           - Value to write to the register, in bit
+<<<<<<< HEAD
  *                                position zero. The bit is automatically
+=======
+ *                                position zero. The bit is automaticallly
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *                                shifted to the correct position.
  *
  * RETURN:      Status
@@ -432,7 +501,11 @@ unlock_and_exit:
 }
 
 ACPI_EXPORT_SYMBOL(acpi_write_bit_register)
+<<<<<<< HEAD
 #endif				/* !ACPI_REDUCED_HARDWARE */
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*******************************************************************************
  *
  * FUNCTION:    acpi_get_sleep_type_data

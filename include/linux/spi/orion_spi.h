@@ -11,6 +11,10 @@
 
 struct orion_spi_info {
 	u32	tclk;		/* no <linux/clk.h> support yet */
+<<<<<<< HEAD
+=======
+	u32	enable_clock_fix;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 

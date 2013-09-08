@@ -443,7 +443,11 @@ static int aaci_pcm_open(struct snd_pcm_substream *substream)
 	mutex_lock(&aaci->irq_lock);
 	if (!aaci->users++) {
 		ret = request_irq(aaci->dev->irq[0], aaci_irq,
+<<<<<<< HEAD
 			   IRQF_SHARED, DRIVER_NAME, aaci);
+=======
+			   IRQF_SHARED | IRQF_DISABLED, DRIVER_NAME, aaci);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret != 0)
 			aaci->users--;
 	}
@@ -1097,8 +1101,11 @@ static struct amba_id aaci_ids[] = {
 	{ 0, 0 },
 };
 
+<<<<<<< HEAD
 MODULE_DEVICE_TABLE(amba, aaci_ids);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct amba_driver aaci_driver = {
 	.drv		= {
 		.name	= DRIVER_NAME,
@@ -1110,7 +1117,22 @@ static struct amba_driver aaci_driver = {
 	.id_table	= aaci_ids,
 };
 
+<<<<<<< HEAD
 module_amba_driver(aaci_driver);
+=======
+static int __init aaci_init(void)
+{
+	return amba_driver_register(&aaci_driver);
+}
+
+static void __exit aaci_exit(void)
+{
+	amba_driver_unregister(&aaci_driver);
+}
+
+module_init(aaci_init);
+module_exit(aaci_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("ARM PrimeCell PL041 Advanced Audio CODEC Interface driver");

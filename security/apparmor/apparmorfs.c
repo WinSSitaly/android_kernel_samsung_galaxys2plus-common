@@ -18,14 +18,20 @@
 #include <linux/seq_file.h>
 #include <linux/uaccess.h>
 #include <linux/namei.h>
+<<<<<<< HEAD
 #include <linux/capability.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "include/apparmor.h"
 #include "include/apparmorfs.h"
 #include "include/audit.h"
 #include "include/context.h"
 #include "include/policy.h"
+<<<<<<< HEAD
 #include "include/resource.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * aa_simple_write_to_buffer - common routine for getting policy from user
@@ -144,6 +150,7 @@ static const struct file_operations aa_fs_profile_remove = {
 	.llseek = default_llseek,
 };
 
+<<<<<<< HEAD
 static int aa_fs_seq_show(struct seq_file *seq, void *v)
 {
 	struct aa_fs_entry *fs_file = seq->private;
@@ -304,6 +311,40 @@ static void __init aafs_remove_dir(struct aa_fs_entry *fs_dir)
 	}
 
 	aafs_remove_file(fs_dir);
+=======
+/** Base file system setup **/
+
+static struct dentry *aa_fs_dentry __initdata;
+
+static void __init aafs_remove(const char *name)
+{
+	struct dentry *dentry;
+
+	dentry = lookup_one_len(name, aa_fs_dentry, strlen(name));
+	if (!IS_ERR(dentry)) {
+		securityfs_remove(dentry);
+		dput(dentry);
+	}
+}
+
+/**
+ * aafs_create - create an entry in the apparmor filesystem
+ * @name: name of the entry (NOT NULL)
+ * @mask: file permission mask of the file
+ * @fops: file operations for the file (NOT NULL)
+ *
+ * Used aafs_remove to remove entries created with this fn.
+ */
+static int __init aafs_create(const char *name, int mask,
+			      const struct file_operations *fops)
+{
+	struct dentry *dentry;
+
+	dentry = securityfs_create_file(name, S_IFREG | mask, aa_fs_dentry,
+					NULL, fops);
+
+	return IS_ERR(dentry) ? PTR_ERR(dentry) : 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -313,7 +354,18 @@ static void __init aafs_remove_dir(struct aa_fs_entry *fs_dir)
  */
 void __init aa_destroy_aafs(void)
 {
+<<<<<<< HEAD
 	aafs_remove_dir(&aa_fs_entry);
+=======
+	if (aa_fs_dentry) {
+		aafs_remove(".remove");
+		aafs_remove(".replace");
+		aafs_remove(".load");
+
+		securityfs_remove(aa_fs_dentry);
+		aa_fs_dentry = NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -323,20 +375,45 @@ void __init aa_destroy_aafs(void)
  *
  * Returns: error on failure
  */
+<<<<<<< HEAD
 static int __init aa_create_aafs(void)
+=======
+int __init aa_create_aafs(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int error;
 
 	if (!apparmor_initialized)
 		return 0;
 
+<<<<<<< HEAD
 	if (aa_fs_entry.dentry) {
+=======
+	if (aa_fs_dentry) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		AA_ERROR("%s: AppArmor securityfs already exists\n", __func__);
 		return -EEXIST;
 	}
 
+<<<<<<< HEAD
 	/* Populate fs tree. */
 	error = aafs_create_dir(&aa_fs_entry, NULL);
+=======
+	aa_fs_dentry = securityfs_create_dir("apparmor", NULL);
+	if (IS_ERR(aa_fs_dentry)) {
+		error = PTR_ERR(aa_fs_dentry);
+		aa_fs_dentry = NULL;
+		goto error;
+	}
+
+	error = aafs_create(".load", 0640, &aa_fs_profile_load);
+	if (error)
+		goto error;
+	error = aafs_create(".replace", 0640, &aa_fs_profile_replace);
+	if (error)
+		goto error;
+	error = aafs_create(".remove", 0640, &aa_fs_profile_remove);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error)
 		goto error;
 

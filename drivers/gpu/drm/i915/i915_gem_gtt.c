@@ -29,6 +29,7 @@
 #include "i915_trace.h"
 #include "intel_drv.h"
 
+<<<<<<< HEAD
 /* PPGTT support for Sandybdrige/Gen6 and later */
 static void i915_ppgtt_clear_range(struct i915_hw_ppgtt *ppgtt,
 				   unsigned first_entry,
@@ -293,6 +294,8 @@ void i915_ppgtt_unbind_object(struct i915_hw_ppgtt *ppgtt,
 			       obj->base.size >> PAGE_SHIFT);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* XXX kill agp_type! */
 static unsigned int cache_level_to_agp_type(struct drm_device *dev,
 					    enum i915_cache_level cache_level)
@@ -313,6 +316,7 @@ static unsigned int cache_level_to_agp_type(struct drm_device *dev,
 	}
 }
 
+<<<<<<< HEAD
 static bool do_idling(struct drm_i915_private *dev_priv)
 {
 	bool ret = dev_priv->mm.interruptible;
@@ -335,6 +339,8 @@ static void undo_idling(struct drm_i915_private *dev_priv, bool interruptible)
 		dev_priv->mm.interruptible = interruptible;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void i915_gem_restore_gtt_mappings(struct drm_device *dev)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
@@ -345,8 +351,29 @@ void i915_gem_restore_gtt_mappings(struct drm_device *dev)
 			      (dev_priv->mm.gtt_end - dev_priv->mm.gtt_start) / PAGE_SIZE);
 
 	list_for_each_entry(obj, &dev_priv->mm.gtt_list, gtt_list) {
+<<<<<<< HEAD
 		i915_gem_clflush_object(obj);
 		i915_gem_gtt_rebind_object(obj, obj->cache_level);
+=======
+		unsigned int agp_type =
+			cache_level_to_agp_type(dev, obj->cache_level);
+
+		i915_gem_clflush_object(obj);
+
+		if (dev_priv->mm.gtt->needs_dmar) {
+			BUG_ON(!obj->sg_list);
+
+			intel_gtt_insert_sg_entries(obj->sg_list,
+						    obj->num_sg,
+						    obj->gtt_space->start >> PAGE_SHIFT,
+						    agp_type);
+		} else
+			intel_gtt_insert_pages(obj->gtt_space->start
+						   >> PAGE_SHIFT,
+					       obj->base.size >> PAGE_SHIFT,
+					       obj->pages,
+					       agp_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	intel_gtt_chipset_flush();
@@ -380,6 +407,7 @@ int i915_gem_gtt_bind_object(struct drm_i915_gem_object *obj)
 	return 0;
 }
 
+<<<<<<< HEAD
 void i915_gem_gtt_rebind_object(struct drm_i915_gem_object *obj,
 				enum i915_cache_level cache_level)
 {
@@ -409,6 +437,10 @@ void i915_gem_gtt_unbind_object(struct drm_i915_gem_object *obj)
 
 	interruptible = do_idling(dev_priv);
 
+=======
+void i915_gem_gtt_unbind_object(struct drm_i915_gem_object *obj)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	intel_gtt_clear_range(obj->gtt_space->start >> PAGE_SHIFT,
 			      obj->base.size >> PAGE_SHIFT);
 
@@ -416,6 +448,9 @@ void i915_gem_gtt_unbind_object(struct drm_i915_gem_object *obj)
 		intel_gtt_unmap_memory(obj->sg_list, obj->num_sg);
 		obj->sg_list = NULL;
 	}
+<<<<<<< HEAD
 
 	undo_idling(dev_priv, interruptible);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

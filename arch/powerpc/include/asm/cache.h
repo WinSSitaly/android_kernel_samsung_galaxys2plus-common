@@ -42,6 +42,7 @@ extern struct ppc64_caches ppc64_caches;
 #endif /* __powerpc64__ && ! __ASSEMBLY__ */
 
 #if !defined(__ASSEMBLY__)
+<<<<<<< HEAD
 
 #define __read_mostly __attribute__((__section__(".data..read_mostly")))
 
@@ -61,5 +62,10 @@ extern void cacheable_memzero(void *p, unsigned int nb);
 extern void *cacheable_memcpy(void *, const void *, unsigned int);
 
 #endif /* !__ASSEMBLY__ */
+=======
+#define __read_mostly __attribute__((__section__(".data..read_mostly")))
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __KERNEL__ */
 #endif /* _ASM_POWERPC_CACHE_H */

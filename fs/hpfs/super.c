@@ -181,6 +181,10 @@ static struct inode *hpfs_alloc_inode(struct super_block *sb)
 static void hpfs_i_callback(struct rcu_head *head)
 {
 	struct inode *inode = container_of(head, struct inode, i_rcu);
+<<<<<<< HEAD
+=======
+	INIT_LIST_HEAD(&inode->i_dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kmem_cache_free(hpfs_inode_cachep, hpfs_i(inode));
 }
 
@@ -552,6 +556,7 @@ static int hpfs_fill_super(struct super_block *s, void *options, int silent)
 	sbi->sb_cp_table = NULL;
 	sbi->sb_c_bitmap = -1;
 	sbi->sb_max_fwd_alloc = 0xffffff;
+<<<<<<< HEAD
 
 	if (sbi->sb_fs_size >= 0x80000000) {
 		hpfs_error(s, "invalid size in superblock: %08x",
@@ -559,6 +564,9 @@ static int hpfs_fill_super(struct super_block *s, void *options, int silent)
 		goto bail4;
 	}
 
+=======
+	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Load bitmap directory */
 	if (!(sbi->sb_bmp_dir = hpfs_load_bitmap_directory(s, le32_to_cpu(superblock->bitmaps))))
 		goto bail4;
@@ -631,9 +639,17 @@ static int hpfs_fill_super(struct super_block *s, void *options, int silent)
 	hpfs_init_inode(root);
 	hpfs_read_inode(root);
 	unlock_new_inode(root);
+<<<<<<< HEAD
 	s->s_root = d_make_root(root);
 	if (!s->s_root)
 		goto bail0;
+=======
+	s->s_root = d_alloc_root(root);
+	if (!s->s_root) {
+		iput(root);
+		goto bail0;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * find the root directory's . pointer & finish filling in the inode

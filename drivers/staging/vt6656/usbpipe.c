@@ -168,11 +168,14 @@ int PIPEnsControlOut(
     if (pDevice->Flags & fMP_CONTROL_WRITES)
         return STATUS_FAILURE;
 
+<<<<<<< HEAD
 	if (pDevice->Flags & fMP_CONTROL_READS)
 		return STATUS_FAILURE;
 
 	MP_SET_FLAG(pDevice, fMP_CONTROL_WRITES);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pDevice->sUsbCtlRequest.bRequestType = 0x40;
 	pDevice->sUsbCtlRequest.bRequest = byRequest;
 	pDevice->sUsbCtlRequest.wValue = cpu_to_le16p(&wValue);
@@ -187,6 +190,7 @@ int PIPEnsControlOut(
 
 	ntStatus = usb_submit_urb(pDevice->pControlURB, GFP_ATOMIC);
 	if (ntStatus != 0) {
+<<<<<<< HEAD
 		DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO
 			"control send request submission failed: %d\n",
 				ntStatus);
@@ -194,6 +198,14 @@ int PIPEnsControlOut(
 		return STATUS_FAILURE;
 	}
 
+=======
+		DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"control send request submission failed: %d\n", ntStatus);
+		return STATUS_FAILURE;
+	}
+	else {
+	    MP_SET_FLAG(pDevice, fMP_CONTROL_WRITES);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irq(&pDevice->lock);
     for (ii = 0; ii <= USB_CTL_WAIT; ii ++) {
 
@@ -233,11 +245,14 @@ int PIPEnsControlIn(
     if (pDevice->Flags & fMP_CONTROL_READS)
 	return STATUS_FAILURE;
 
+<<<<<<< HEAD
 	if (pDevice->Flags & fMP_CONTROL_WRITES)
 		return STATUS_FAILURE;
 
 	MP_SET_FLAG(pDevice, fMP_CONTROL_READS);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pDevice->sUsbCtlRequest.bRequestType = 0xC0;
 	pDevice->sUsbCtlRequest.bRequest = byRequest;
 	pDevice->sUsbCtlRequest.wValue = cpu_to_le16p(&wValue);
@@ -251,11 +266,18 @@ int PIPEnsControlIn(
 
 	ntStatus = usb_submit_urb(pDevice->pControlURB, GFP_ATOMIC);
 	if (ntStatus != 0) {
+<<<<<<< HEAD
 		DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO
 			"control request submission failed: %d\n", ntStatus);
 		MP_CLEAR_FLAG(pDevice, fMP_CONTROL_READS);
 		return STATUS_FAILURE;
 	}
+=======
+		DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"control request submission failed: %d\n", ntStatus);
+	}else {
+		MP_SET_FLAG(pDevice, fMP_CONTROL_READS);
+    }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_irq(&pDevice->lock);
     for (ii = 0; ii <= USB_CTL_WAIT; ii ++) {

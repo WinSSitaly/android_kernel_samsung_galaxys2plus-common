@@ -444,7 +444,11 @@ static inline void bfin_set_irq_handler(unsigned irq, irq_flow_handler_t handle)
 static DECLARE_BITMAP(gpio_enabled, MAX_BLACKFIN_GPIOS);
 extern void bfin_gpio_irq_prepare(unsigned gpio);
 
+<<<<<<< HEAD
 #if !BFIN_GPIO_PINT
+=======
+#if !defined(CONFIG_BF54x)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void bfin_gpio_ack_irq(struct irq_data *d)
 {
@@ -633,7 +637,11 @@ void bfin_demux_gpio_irq(unsigned int inta_irq,
 	bfin_demux_gpio_block(irq);
 }
 
+<<<<<<< HEAD
 #else
+=======
+#else				/* CONFIG_BF54x */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define NR_PINT_SYS_IRQS	4
 #define NR_PINT_BITS		32
@@ -647,11 +655,32 @@ void bfin_demux_gpio_irq(unsigned int inta_irq,
 static unsigned char irq2pint_lut[NR_PINTS];
 static unsigned char pint2irq_lut[NR_PINT_SYS_IRQS * NR_PINT_BITS];
 
+<<<<<<< HEAD
 static struct bfin_pint_regs * const pint[NR_PINT_SYS_IRQS] = {
 	(struct bfin_pint_regs *)PINT0_MASK_SET,
 	(struct bfin_pint_regs *)PINT1_MASK_SET,
 	(struct bfin_pint_regs *)PINT2_MASK_SET,
 	(struct bfin_pint_regs *)PINT3_MASK_SET,
+=======
+struct pin_int_t {
+	unsigned int mask_set;
+	unsigned int mask_clear;
+	unsigned int request;
+	unsigned int assign;
+	unsigned int edge_set;
+	unsigned int edge_clear;
+	unsigned int invert_set;
+	unsigned int invert_clear;
+	unsigned int pinstate;
+	unsigned int latch;
+};
+
+static struct pin_int_t *pint[NR_PINT_SYS_IRQS] = {
+	(struct pin_int_t *)PINT0_MASK_SET,
+	(struct pin_int_t *)PINT1_MASK_SET,
+	(struct pin_int_t *)PINT2_MASK_SET,
+	(struct pin_int_t *)PINT3_MASK_SET,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 inline unsigned int get_irq_base(u32 bank, u8 bmap)
@@ -968,7 +997,11 @@ int __init init_arch_irq(void)
 
 	local_irq_disable();
 
+<<<<<<< HEAD
 #if BFIN_GPIO_PINT
+=======
+#ifdef CONFIG_BF54x
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # ifdef CONFIG_PINTx_REASSIGN
 	pint[0]->assign = CONFIG_PINT0_ASSIGN;
 	pint[1]->assign = CONFIG_PINT1_ASSIGN;
@@ -986,16 +1019,28 @@ int __init init_arch_irq(void)
 			irq_set_chip(irq, &bfin_internal_irqchip);
 
 		switch (irq) {
+<<<<<<< HEAD
 #if BFIN_GPIO_PINT
 		case IRQ_PINT0:
 		case IRQ_PINT1:
 		case IRQ_PINT2:
 		case IRQ_PINT3:
 #elif defined(BF537_FAMILY)
+=======
+#if defined(BF537_FAMILY)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case IRQ_PH_INTA_MAC_RX:
 		case IRQ_PF_INTA_PG_INTA:
 #elif defined(BF533_FAMILY)
 		case IRQ_PROG_INTA:
+<<<<<<< HEAD
+=======
+#elif defined(CONFIG_BF54x)
+		case IRQ_PINT0:
+		case IRQ_PINT1:
+		case IRQ_PINT2:
+		case IRQ_PINT3:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #elif defined(CONFIG_BF52x) || defined(CONFIG_BF51x)
 		case IRQ_PORTF_INTA:
 		case IRQ_PORTG_INTA:

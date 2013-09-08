@@ -5,6 +5,10 @@
  *
  * Author:	Torsten Schenk <torsten.schenk@zoho.com>
  * Created:	Jan 01, 2011
+<<<<<<< HEAD
+=======
+ * Version:	0.3.0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright:	(C) Torsten Schenk
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,13 +32,21 @@
 #include <sound/initval.h>
 
 MODULE_AUTHOR("Torsten Schenk <torsten.schenk@zoho.com>");
+<<<<<<< HEAD
 MODULE_DESCRIPTION("TerraTec DMX 6Fire USB audio driver");
+=======
+MODULE_DESCRIPTION("TerraTec DMX 6Fire USB audio driver, version 0.3.0");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("GPL v2");
 MODULE_SUPPORTED_DEVICE("{{TerraTec, DMX 6Fire USB}}");
 
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX; /* Index 0-max */
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR; /* Id for card */
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP; /* Enable card */
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP; /* Enable card */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct sfire_chip *chips[SNDRV_CARDS] = SNDRV_DEFAULT_PTR;
 static struct usb_device *devices[SNDRV_CARDS] = SNDRV_DEFAULT_PTR;
 
@@ -210,11 +222,30 @@ static struct usb_device_id device_table[] = {
 
 MODULE_DEVICE_TABLE(usb, device_table);
 
+<<<<<<< HEAD
 static struct usb_driver usb_driver = {
+=======
+static struct usb_driver driver = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name = "snd-usb-6fire",
 	.probe = usb6fire_chip_probe,
 	.disconnect = usb6fire_chip_disconnect,
 	.id_table = device_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(usb_driver);
+=======
+static int __init usb6fire_chip_init(void)
+{
+	return usb_register(&driver);
+}
+
+static void __exit usb6fire_chip_cleanup(void)
+{
+	usb_deregister(&driver);
+}
+
+module_init(usb6fire_chip_init);
+module_exit(usb6fire_chip_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

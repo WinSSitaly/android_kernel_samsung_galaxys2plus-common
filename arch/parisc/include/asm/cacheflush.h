@@ -140,7 +140,11 @@ static inline void *kmap(struct page *page)
 
 #define kunmap(page)			kunmap_parisc(page_address(page))
 
+<<<<<<< HEAD
 static inline void *kmap_atomic(struct page *page)
+=======
+static inline void *__kmap_atomic(struct page *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	pagefault_disable();
 	return page_address(page);

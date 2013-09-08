@@ -19,6 +19,7 @@
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/irq.h>
 #include <linux/io.h>
@@ -26,6 +27,11 @@
 #include <mach/intc.h>
 #include <mach/irqs.h>
 #include <mach/sh73a0.h>
+=======
+#include <linux/irq.h>
+#include <linux/io.h>
+#include <linux/sh_intc.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/hardware/gic.h>
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
@@ -259,6 +265,7 @@ static int sh73a0_set_wake(struct irq_data *data, unsigned int on)
 	return 0; /* always allow wakeup */
 }
 
+<<<<<<< HEAD
 #define RELOC_BASE 0x1000
 
 /* INTCA IRQ pins at INTCS + 0x1000 to make space for GIC+INTC handling */
@@ -425,20 +432,31 @@ void __init sh73a0_init_irq(void)
 	void __iomem *gic_cpu_base = IOMEM(0xf0000100);
 	void __iomem *intevtsa = ioremap_nocache(0xffd20100, PAGE_SIZE);
 	int k, n;
+=======
+void __init sh73a0_init_irq(void)
+{
+	void __iomem *gic_dist_base = __io(0xf0001000);
+	void __iomem *gic_cpu_base = __io(0xf0000100);
+	void __iomem *intevtsa = ioremap_nocache(0xffd20100, PAGE_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	gic_init(0, 29, gic_dist_base, gic_cpu_base);
 	gic_arch_extn.irq_set_wake = sh73a0_set_wake;
 
 	register_intc_controller(&intcs_desc);
+<<<<<<< HEAD
 	register_intc_controller(&intca_irq_pins_desc);
 	register_intc_controller(&intc_pint0_desc);
 	register_intc_controller(&intc_pint1_desc);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* demux using INTEVTSA */
 	sh73a0_intcs_cascade.name = "INTCS cascade";
 	sh73a0_intcs_cascade.handler = sh73a0_intcs_demux;
 	sh73a0_intcs_cascade.dev_id = intevtsa;
 	setup_irq(gic_spi(50), &sh73a0_intcs_cascade);
+<<<<<<< HEAD
 
 	/* IRQ pins require special handling through INTCA and GIC */
 	for (k = 0; k < 32; k++) {
@@ -461,4 +479,6 @@ void __init sh73a0_init_irq(void)
 	sh73a0_pint1_cascade.name = "PINT1 cascade";
 	sh73a0_pint1_cascade.handler = sh73a0_pint1_demux;
 	setup_irq(gic_spi(34), &sh73a0_pint1_cascade);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

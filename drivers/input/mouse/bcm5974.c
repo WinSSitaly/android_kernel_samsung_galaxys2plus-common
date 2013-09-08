@@ -67,6 +67,7 @@
 #define USB_DEVICE_ID_APPLE_WELLSPRING5_ANSI	0x0245
 #define USB_DEVICE_ID_APPLE_WELLSPRING5_ISO	0x0246
 #define USB_DEVICE_ID_APPLE_WELLSPRING5_JIS	0x0247
+<<<<<<< HEAD
 /* MacbookAir4,1 (unibody, July 2011) */
 #define USB_DEVICE_ID_APPLE_WELLSPRING6A_ANSI	0x0249
 #define USB_DEVICE_ID_APPLE_WELLSPRING6A_ISO	0x024a
@@ -83,6 +84,8 @@
 #define USB_DEVICE_ID_APPLE_WELLSPRING7_ANSI	0x0262
 #define USB_DEVICE_ID_APPLE_WELLSPRING7_ISO	0x0263
 #define USB_DEVICE_ID_APPLE_WELLSPRING7_JIS	0x0264
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define BCM5974_DEVICE(prod) {					\
 	.match_flags = (USB_DEVICE_ID_MATCH_DEVICE |		\
@@ -120,6 +123,7 @@ static const struct usb_device_id bcm5974_table[] = {
 	BCM5974_DEVICE(USB_DEVICE_ID_APPLE_WELLSPRING5_ANSI),
 	BCM5974_DEVICE(USB_DEVICE_ID_APPLE_WELLSPRING5_ISO),
 	BCM5974_DEVICE(USB_DEVICE_ID_APPLE_WELLSPRING5_JIS),
+<<<<<<< HEAD
 	/* MacbookAir4,1 */
 	BCM5974_DEVICE(USB_DEVICE_ID_APPLE_WELLSPRING6A_ANSI),
 	BCM5974_DEVICE(USB_DEVICE_ID_APPLE_WELLSPRING6A_ISO),
@@ -136,6 +140,8 @@ static const struct usb_device_id bcm5974_table[] = {
 	BCM5974_DEVICE(USB_DEVICE_ID_APPLE_WELLSPRING7_ANSI),
 	BCM5974_DEVICE(USB_DEVICE_ID_APPLE_WELLSPRING7_ISO),
 	BCM5974_DEVICE(USB_DEVICE_ID_APPLE_WELLSPRING7_JIS),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Terminating entry */
 	{}
 };
@@ -326,6 +332,7 @@ static const struct bcm5974_config bcm5974_config_table[] = {
 		{ DIM_X, DIM_X / SN_COORD, -4415, 5050 },
 		{ DIM_Y, DIM_Y / SN_COORD, -55, 6680 }
 	},
+<<<<<<< HEAD
 	{
 		USB_DEVICE_ID_APPLE_WELLSPRING6_ANSI,
 		USB_DEVICE_ID_APPLE_WELLSPRING6_ISO,
@@ -374,6 +381,8 @@ static const struct bcm5974_config bcm5974_config_table[] = {
 		{ DIM_X, DIM_X / SN_COORD, -4750, 5280 },
 		{ DIM_Y, DIM_Y / SN_COORD, -150, 6730 }
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{}
 };
 
@@ -453,10 +462,13 @@ static void setup_events_to_report(struct input_dev *input_dev,
 	__set_bit(BTN_TOOL_QUADTAP, input_dev->keybit);
 	__set_bit(BTN_LEFT, input_dev->keybit);
 
+<<<<<<< HEAD
 	__set_bit(INPUT_PROP_POINTER, input_dev->propbit);
 	if (cfg->caps & HAS_INTEGRATED_BUTTON)
 		__set_bit(INPUT_PROP_BUTTONPAD, input_dev->propbit);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	input_set_events_per_packet(input_dev, 60);
 }
 
@@ -964,4 +976,20 @@ static struct usb_driver bcm5974_driver = {
 	.supports_autosuspend	= 1,
 };
 
+<<<<<<< HEAD
 module_usb_driver(bcm5974_driver);
+=======
+static int __init bcm5974_init(void)
+{
+	return usb_register(&bcm5974_driver);
+}
+
+static void __exit bcm5974_exit(void)
+{
+	usb_deregister(&bcm5974_driver);
+}
+
+module_init(bcm5974_init);
+module_exit(bcm5974_exit);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -19,6 +19,10 @@
 #include <linux/delay.h>
 
 #include <asm/setup.h>
+<<<<<<< HEAD
+=======
+#include <trace/stm.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "trace_output.h"
 
@@ -147,8 +151,12 @@ int trace_event_raw_init(struct ftrace_event_call *call)
 }
 EXPORT_SYMBOL_GPL(trace_event_raw_init);
 
+<<<<<<< HEAD
 int ftrace_event_reg(struct ftrace_event_call *call,
 		     enum trace_reg type, void *data)
+=======
+int ftrace_event_reg(struct ftrace_event_call *call, enum trace_reg type)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	switch (type) {
 	case TRACE_REG_REGISTER:
@@ -171,11 +179,14 @@ int ftrace_event_reg(struct ftrace_event_call *call,
 					    call->class->perf_probe,
 					    call);
 		return 0;
+<<<<<<< HEAD
 	case TRACE_REG_PERF_OPEN:
 	case TRACE_REG_PERF_CLOSE:
 	case TRACE_REG_PERF_ADD:
 	case TRACE_REG_PERF_DEL:
 		return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	}
 	return 0;
@@ -215,7 +226,11 @@ static int ftrace_event_enable_disable(struct ftrace_event_call *call,
 				tracing_stop_cmdline_record();
 				call->flags &= ~TRACE_EVENT_FL_RECORDED_CMD;
 			}
+<<<<<<< HEAD
 			call->class->reg(call, TRACE_REG_UNREGISTER, NULL);
+=======
+			call->class->reg(call, TRACE_REG_UNREGISTER);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		break;
 	case 1:
@@ -224,7 +239,11 @@ static int ftrace_event_enable_disable(struct ftrace_event_call *call,
 				tracing_start_cmdline_record();
 				call->flags |= TRACE_EVENT_FL_RECORDED_CMD;
 			}
+<<<<<<< HEAD
 			ret = call->class->reg(call, TRACE_REG_REGISTER, NULL);
+=======
+			ret = call->class->reg(call, TRACE_REG_REGISTER);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret) {
 				tracing_stop_cmdline_record();
 				pr_info("event trace: Could not enable event "
@@ -294,9 +313,12 @@ static int __ftrace_set_clr_event(const char *match, const char *sub,
 		if (!call->name || !call->class || !call->class->reg)
 			continue;
 
+<<<<<<< HEAD
 		if (call->flags & TRACE_EVENT_FL_IGNORE_ENABLE)
 			continue;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (match &&
 		    strcmp(match, call->name) != 0 &&
 		    strcmp(match, call->class->system) != 0)
@@ -524,11 +546,28 @@ event_enable_write(struct file *filp, const char __user *ubuf, size_t cnt,
 		   loff_t *ppos)
 {
 	struct ftrace_event_call *call = filp->private_data;
+<<<<<<< HEAD
 	unsigned long val;
 	int ret;
 
 	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
 	if (ret)
+=======
+	char buf[64];
+	unsigned long val;
+	int ret;
+
+	if (cnt >= sizeof(buf))
+		return -EINVAL;
+
+	if (copy_from_user(&buf, ubuf, cnt))
+		return -EFAULT;
+
+	buf[cnt] = 0;
+
+	ret = strict_strtoul(buf, 10, &val);
+	if (ret < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 
 	ret = tracing_update_buffers();
@@ -601,10 +640,26 @@ system_enable_write(struct file *filp, const char __user *ubuf, size_t cnt,
 	struct event_subsystem *system = filp->private_data;
 	const char *name = NULL;
 	unsigned long val;
+<<<<<<< HEAD
 	ssize_t ret;
 
 	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
 	if (ret)
+=======
+	char buf[64];
+	ssize_t ret;
+
+	if (cnt >= sizeof(buf))
+		return -EINVAL;
+
+	if (copy_from_user(&buf, ubuf, cnt))
+		return -EFAULT;
+
+	buf[cnt] = 0;
+
+	ret = strict_strtoul(buf, 10, &val);
+	if (ret < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 
 	ret = tracing_update_buffers();
@@ -1167,7 +1222,11 @@ event_create_dir(struct ftrace_event_call *call, struct dentry *d_events,
 		return -1;
 	}
 
+<<<<<<< HEAD
 	if (call->class->reg && !(call->flags & TRACE_EVENT_FL_IGNORE_ENABLE))
+=======
+	if (call->class->reg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		trace_create_file("enable", 0644, call->dir, call,
 				  enable);
 
@@ -1712,6 +1771,11 @@ function_test_events_call(unsigned long ip, unsigned long parent_ip)
 
 	trace_nowake_buffer_unlock_commit(buffer, event, flags, pc);
 
+<<<<<<< HEAD
+=======
+	stm_ftrace(ip, parent_ip);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  out:
 	atomic_dec(&per_cpu(ftrace_test_event_disable, cpu));
 	preempt_enable_notrace();

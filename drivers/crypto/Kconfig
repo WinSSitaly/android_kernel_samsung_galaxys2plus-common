@@ -64,6 +64,10 @@ config CRYPTO_DEV_GEODE
 config ZCRYPT
 	tristate "Support for PCI-attached cryptographic adapters"
 	depends on S390
+<<<<<<< HEAD
+=======
+	select ZCRYPT_MONOLITHIC if ZCRYPT="y"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select HW_RANDOM
 	help
 	  Select this option if you want to use a PCI-attached cryptographic
@@ -76,6 +80,17 @@ config ZCRYPT
 	  + Crypto Express3 Coprocessor (CEX3C)
 	  + Crypto Express3 Accelerator (CEX3A)
 
+<<<<<<< HEAD
+=======
+config ZCRYPT_MONOLITHIC
+	bool "Monolithic zcrypt module"
+	depends on ZCRYPT
+	help
+	  Select this option if you want to have a single module z90crypt,
+	  that contains all parts of the crypto device driver (ap bus,
+	  request router and all the card drivers).
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config CRYPTO_SHA1_S390
 	tristate "SHA1 digest algorithm"
 	depends on S390
@@ -164,7 +179,10 @@ config CRYPTO_DEV_MV_CESA
 	select CRYPTO_ALGAPI
 	select CRYPTO_AES
 	select CRYPTO_BLKCIPHER2
+<<<<<<< HEAD
 	select CRYPTO_HASH
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  This driver allows you to utilize the Cryptographic Engines and
 	  Security Accelerator (CESA) which can be found on the Marvell Orion
@@ -192,7 +210,10 @@ config CRYPTO_DEV_HIFN_795X
 	select CRYPTO_BLKCIPHER
 	select HW_RANDOM if CRYPTO_DEV_HIFN_795X_RNG
 	depends on PCI
+<<<<<<< HEAD
 	depends on !ARCH_DMA_ADDR_T_64BIT
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  This option allows you to have support for HIFN 795x crypto adapters.
 
@@ -259,7 +280,11 @@ config CRYPTO_DEV_OMAP_AES
 
 config CRYPTO_DEV_PICOXCELL
 	tristate "Support for picoXcell IPSEC and Layer2 crypto engines"
+<<<<<<< HEAD
 	depends on ARCH_PICOXCELL && HAVE_CLK
+=======
+	depends on ARCH_PICOXCELL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select CRYPTO_AES
 	select CRYPTO_AUTHENC
 	select CRYPTO_ALGAPI
@@ -285,6 +310,7 @@ config CRYPTO_DEV_S5P
 	  Select this to offload Samsung S5PV210 or S5PC110 from AES
 	  algorithms execution.
 
+<<<<<<< HEAD
 config CRYPTO_DEV_TEGRA_AES
 	tristate "Support for TEGRA AES hw engine"
 	depends on ARCH_TEGRA
@@ -295,5 +321,23 @@ config CRYPTO_DEV_TEGRA_AES
 
 	  To compile this driver as a module, choose M here: the module
 	  will be called tegra-aes.
+=======
+config CRYPTO_DEV_BRCM_SPUM_HASH
+	tristate "Support for BRCM SPUM accelerator."
+	depends on ARCH_KONA
+	select CRYPTO_SHA1
+	select CRYPTO_SHA256
+	select CRYPTO_MD5
+	help
+	 Driver for Rhea SPUM crypto accelerator.
+
+config CRYPTO_DEV_BRCM_SPUM_AES
+	tristate "Support for BRCM SPUM AES accelerator."
+	depends on ARCH_KONA
+	select CRYPTO_AES
+	select CRYPTO_CTR
+	help
+	 Driver for Rhea SPUM crypto accelerator.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 endif # CRYPTO_HW

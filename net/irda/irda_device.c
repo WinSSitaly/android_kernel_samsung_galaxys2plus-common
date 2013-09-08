@@ -42,7 +42,10 @@
 #include <linux/kmod.h>
 #include <linux/spinlock.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/ioctls.h>
 #include <asm/uaccess.h>
@@ -263,7 +266,11 @@ static void irda_task_timer_expired(void *data)
 
 	IRDA_DEBUG(2, "%s()\n", __func__);
 
+<<<<<<< HEAD
 	task = data;
+=======
+	task = (struct irda_task *) data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	irda_task_kick(task);
 }

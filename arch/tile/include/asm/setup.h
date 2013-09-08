@@ -31,6 +31,7 @@ void early_panic(const char *fmt, ...);
 void warn_early_printk(void);
 void __init disable_early_printk(void);
 
+<<<<<<< HEAD
 /* Init-time routine to do tile-specific per-cpu setup. */
 void setup_cpu(int boot);
 
@@ -53,6 +54,8 @@ int hardwall_deactivate(struct task_struct *task);
 } while (0)
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __KERNEL__ */
 
 #endif /* _ASM_TILE_SETUP_H */

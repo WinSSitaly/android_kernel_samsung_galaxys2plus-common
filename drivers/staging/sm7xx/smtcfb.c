@@ -35,7 +35,10 @@
 #include <linux/init.h>
 #include <linux/slab.h>
 #include <linux/uaccess.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/console.h>
 #include <linux/screen_info.h>
 
@@ -442,7 +445,11 @@ static int smtc_setcolreg(unsigned regno, unsigned red, unsigned green,
 }
 
 #ifdef __BIG_ENDIAN
+<<<<<<< HEAD
 static ssize_t smtcfb_read(struct fb_info *info, char __user *buf, size_t
+=======
+static ssize_t smtcfb_read(struct fb_info *info, char __user * buf, size_t
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				count, loff_t *ppos)
 {
 	unsigned long p = *ppos;
@@ -1023,9 +1030,15 @@ failed_free:
 
 /* Jason (08/11/2009) PCI_DRV wrapper essential structs */
 static DEFINE_PCI_DEVICE_TABLE(smtcfb_pci_table) = {
+<<<<<<< HEAD
 	{ PCI_DEVICE(0x126f, 0x710), },
 	{ PCI_DEVICE(0x126f, 0x712), },
 	{ PCI_DEVICE(0x126f, 0x720), },
+=======
+	{0x126f, 0x710, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
+	{0x126f, 0x712, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
+	{0x126f, 0x720, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{0,}
 };
 

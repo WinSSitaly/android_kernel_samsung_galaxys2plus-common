@@ -18,6 +18,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/types.h>
 #include <asm/spu.h>
 #include <asm/spu_priv1.h>

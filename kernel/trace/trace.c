@@ -36,8 +36,13 @@
 #include <linux/ctype.h>
 #include <linux/init.h>
 #include <linux/poll.h>
+<<<<<<< HEAD
 #include <linux/nmi.h>
 #include <linux/fs.h>
+=======
+#include <linux/fs.h>
+#include <trace/stm.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "trace.h"
 #include "trace_output.h"
@@ -339,6 +344,7 @@ static DECLARE_WAIT_QUEUE_HEAD(trace_wait);
 /* trace_flags holds trace_options default values */
 unsigned long trace_flags = TRACE_ITER_PRINT_PARENT | TRACE_ITER_PRINTK |
 	TRACE_ITER_ANNOTATE | TRACE_ITER_CONTEXT_INFO | TRACE_ITER_SLEEP_TIME |
+<<<<<<< HEAD
 	TRACE_ITER_GRAPH_TIME | TRACE_ITER_RECORD_CMD | TRACE_ITER_OVERWRITE |
 	TRACE_ITER_IRQ_INFO;
 
@@ -404,10 +410,17 @@ int tracing_is_on(void)
 	return !global_trace.buffer_disabled;
 }
 EXPORT_SYMBOL_GPL(tracing_is_on);
+=======
+	TRACE_ITER_GRAPH_TIME | TRACE_ITER_RECORD_CMD | TRACE_ITER_OVERWRITE;
+
+static int trace_stop_count;
+static DEFINE_SPINLOCK(tracing_start_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * trace_wake_up - wake up tasks waiting for trace input
  *
+<<<<<<< HEAD
  * Schedules a delayed work to wake up any task that is blocked on the
  * trace_wait queue. These is used with trace_poll for tasks polling the
  * trace.
@@ -419,6 +432,25 @@ void trace_wake_up(void)
 	if (trace_flags & TRACE_ITER_BLOCK)
 		return;
 	schedule_delayed_work(&wakeup_work, delay);
+=======
+ * Simply wakes up any task that is blocked on the trace_wait
+ * queue. These is used with trace_poll for tasks polling the trace.
+ */
+void trace_wake_up(void)
+{
+	int cpu;
+
+	if (trace_flags & TRACE_ITER_BLOCK)
+		return;
+	/*
+	 * The runqueue_is_locked() can fail, but this is the best we
+	 * have for now:
+	 */
+	cpu = get_cpu();
+	if (!runqueue_is_locked(cpu))
+		wake_up(&trace_wait);
+	put_cpu();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __init set_buf_size(char *str)
@@ -480,8 +512,11 @@ static const char *trace_options[] = {
 	"graph-time",
 	"record-cmd",
 	"overwrite",
+<<<<<<< HEAD
 	"disable_on_free",
 	"irq-info",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL
 };
 
@@ -491,7 +526,10 @@ static struct {
 } trace_clocks[] = {
 	{ trace_clock_local,	"local" },
 	{ trace_clock_global,	"global" },
+<<<<<<< HEAD
 	{ trace_clock_counter,	"counter" },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int trace_clock_id;
@@ -687,6 +725,7 @@ __update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
 
 	memcpy(max_data->comm, tsk->comm, TASK_COMM_LEN);
 	max_data->pid = tsk->pid;
+<<<<<<< HEAD
 	/*
 	 * If tsk == current, then use current_uid(), as that does not use
 	 * RCU. The irq tracer can be called out of RCU scope.
@@ -696,6 +735,9 @@ __update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
 	else
 		max_data->uid = task_uid(tsk);
 
+=======
+	max_data->uid = task_uid(tsk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	max_data->nice = tsk->static_prio - 20 - MAX_RT_PRIO;
 	max_data->policy = tsk->policy;
 	max_data->rt_priority = tsk->rt_priority;
@@ -716,7 +758,11 @@ __update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
 void
 update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
 {
+<<<<<<< HEAD
 	struct ring_buffer *buf;
+=======
+	struct ring_buffer *buf = tr->buffer;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (trace_stop_count)
 		return;
@@ -728,7 +774,10 @@ update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
 	}
 	arch_spin_lock(&ftrace_max_lock);
 
+<<<<<<< HEAD
 	buf = tr->buffer;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tr->buffer = max_tr.buffer;
 	max_tr.buffer = buf;
 
@@ -1026,7 +1075,11 @@ void tracing_start(void)
 	if (tracing_disabled)
 		return;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&tracing_start_lock, flags);
+=======
+	spin_lock_irqsave(&tracing_start_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (--trace_stop_count) {
 		if (trace_stop_count < 0) {
 			/* Someone screwed up their debugging */
@@ -1051,7 +1104,11 @@ void tracing_start(void)
 
 	ftrace_start();
  out:
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&tracing_start_lock, flags);
+=======
+	spin_unlock_irqrestore(&tracing_start_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1066,7 +1123,11 @@ void tracing_stop(void)
 	unsigned long flags;
 
 	ftrace_stop();
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&tracing_start_lock, flags);
+=======
+	spin_lock_irqsave(&tracing_start_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (trace_stop_count++)
 		goto out;
 
@@ -1084,7 +1145,11 @@ void tracing_stop(void)
 	arch_spin_unlock(&ftrace_max_lock);
 
  out:
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&tracing_start_lock, flags);
+=======
+	spin_unlock_irqrestore(&tracing_start_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void trace_stop_cmdline_recording(void);
@@ -1259,6 +1324,7 @@ void trace_nowake_buffer_unlock_commit(struct ring_buffer *buffer,
 }
 EXPORT_SYMBOL_GPL(trace_nowake_buffer_unlock_commit);
 
+<<<<<<< HEAD
 void trace_nowake_buffer_unlock_commit_regs(struct ring_buffer *buffer,
 					    struct ring_buffer_event *event,
 					    unsigned long flags, int pc,
@@ -1271,6 +1337,8 @@ void trace_nowake_buffer_unlock_commit_regs(struct ring_buffer *buffer,
 }
 EXPORT_SYMBOL_GPL(trace_nowake_buffer_unlock_commit_regs);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void trace_current_buffer_discard_commit(struct ring_buffer *buffer,
 					 struct ring_buffer_event *event)
 {
@@ -1302,6 +1370,11 @@ trace_function(struct trace_array *tr,
 
 	if (!filter_check_discard(call, entry, buffer, event))
 		ring_buffer_unlock_commit(buffer, event);
+<<<<<<< HEAD
+=======
+
+	stm_ftrace(ip, parent_ip);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void
@@ -1314,6 +1387,7 @@ ftrace(struct trace_array *tr, struct trace_array_cpu *data,
 }
 
 #ifdef CONFIG_STACKTRACE
+<<<<<<< HEAD
 
 #define FTRACE_STACK_MAX_ENTRIES (PAGE_SIZE / sizeof(unsigned long))
 struct ftrace_stack {
@@ -1326,11 +1400,17 @@ static DEFINE_PER_CPU(int, ftrace_stack_reserve);
 static void __ftrace_trace_stack(struct ring_buffer *buffer,
 				 unsigned long flags,
 				 int skip, int pc, struct pt_regs *regs)
+=======
+static void __ftrace_trace_stack(struct ring_buffer *buffer,
+				 unsigned long flags,
+				 int skip, int pc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ftrace_event_call *call = &event_kernel_stack;
 	struct ring_buffer_event *event;
 	struct stack_entry *entry;
 	struct stack_trace trace;
+<<<<<<< HEAD
 	int use_stack;
 	int size = FTRACE_STACK_ENTRIES;
 
@@ -1411,6 +1491,26 @@ void ftrace_trace_stack_regs(struct ring_buffer *buffer, unsigned long flags,
 		return;
 
 	__ftrace_trace_stack(buffer, flags, skip, pc, regs);
+=======
+
+	event = trace_buffer_lock_reserve(buffer, TRACE_STACK,
+					  sizeof(*entry), flags, pc);
+	if (!event)
+		return;
+	entry	= ring_buffer_event_data(event);
+	memset(&entry->caller, 0, sizeof(entry->caller));
+
+	trace.nr_entries	= 0;
+	trace.max_entries	= FTRACE_STACK_ENTRIES;
+	trace.skip		= skip;
+	trace.entries		= entry->caller;
+
+	save_stack_trace(&trace);
+	if (!filter_check_discard(call, entry, buffer, event))
+		ring_buffer_unlock_commit(buffer, event);
+
+	stm_stack_trace(trace.entries);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void ftrace_trace_stack(struct ring_buffer *buffer, unsigned long flags,
@@ -1419,13 +1519,21 @@ void ftrace_trace_stack(struct ring_buffer *buffer, unsigned long flags,
 	if (!(trace_flags & TRACE_ITER_STACKTRACE))
 		return;
 
+<<<<<<< HEAD
 	__ftrace_trace_stack(buffer, flags, skip, pc, NULL);
+=======
+	__ftrace_trace_stack(buffer, flags, skip, pc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __trace_stack(struct trace_array *tr, unsigned long flags, int skip,
 		   int pc)
 {
+<<<<<<< HEAD
 	__ftrace_trace_stack(tr->buffer, flags, skip, pc, NULL);
+=======
+	__ftrace_trace_stack(tr->buffer, flags, skip, pc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1441,7 +1549,11 @@ void trace_dump_stack(void)
 	local_save_flags(flags);
 
 	/* skipping 3 traces, seems to get us at the caller of this function */
+<<<<<<< HEAD
 	__ftrace_trace_stack(global_trace.buffer, flags, 3, preempt_count(), NULL);
+=======
+	__ftrace_trace_stack(global_trace.buffer, flags, 3, preempt_count());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static DEFINE_PER_CPU(int, user_stack_count);
@@ -1566,6 +1678,11 @@ int trace_vbprintk(unsigned long ip, const char *fmt, va_list args)
 		ftrace_trace_stack(buffer, flags, 6, pc);
 	}
 
+<<<<<<< HEAD
+=======
+	stm_trace_bprintk_buf(ip, fmt, trace_buf, sizeof(u32) * len);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_unlock:
 	arch_spin_unlock(&trace_buf_lock);
 	local_irq_restore(flags);
@@ -1642,6 +1759,10 @@ int trace_array_vprintk(struct trace_array *tr,
 		ftrace_trace_stack(buffer, irq_flags, 6, pc);
 	}
 
+<<<<<<< HEAD
+=======
+	stm_trace_printk_buf(ip, trace_buf, len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  out_unlock:
 	arch_spin_unlock(&trace_buf_lock);
 	raw_local_irq_restore(irq_flags);
@@ -1689,12 +1810,16 @@ peek_next_entry(struct trace_iterator *iter, int cpu, u64 *ts,
 
 	ftrace_enable_cpu();
 
+<<<<<<< HEAD
 	if (event) {
 		iter->ent_size = ring_buffer_event_length(event);
 		return ring_buffer_event_data(event);
 	}
 	iter->ent_size = 0;
 	return NULL;
+=======
+	return event ? ring_buffer_event_data(event) : NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct trace_entry *
@@ -1707,7 +1832,10 @@ __find_next_entry(struct trace_iterator *iter, int *ent_cpu,
 	int cpu_file = iter->cpu_file;
 	u64 next_ts = 0, ts;
 	int next_cpu = -1;
+<<<<<<< HEAD
 	int next_size = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int cpu;
 
 	/*
@@ -1739,12 +1867,18 @@ __find_next_entry(struct trace_iterator *iter, int *ent_cpu,
 			next_cpu = cpu;
 			next_ts = ts;
 			next_lost = lost_events;
+<<<<<<< HEAD
 			next_size = iter->ent_size;
 		}
 	}
 
 	iter->ent_size = next_size;
 
+=======
+		}
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ent_cpu)
 		*ent_cpu = next_cpu;
 
@@ -1912,6 +2046,7 @@ static void s_stop(struct seq_file *m, void *p)
 	trace_event_read_unlock();
 }
 
+<<<<<<< HEAD
 static void
 get_total_entries(struct trace_array *tr, unsigned long *total, unsigned long *entries)
 {
@@ -1939,6 +2074,8 @@ get_total_entries(struct trace_array *tr, unsigned long *total, unsigned long *e
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void print_lat_help_header(struct seq_file *m)
 {
 	seq_puts(m, "#                  _------=> CPU#            \n");
@@ -1951,6 +2088,7 @@ static void print_lat_help_header(struct seq_file *m)
 	seq_puts(m, "#     \\   /      |||||  \\    |   /           \n");
 }
 
+<<<<<<< HEAD
 static void print_event_info(struct trace_array *tr, struct seq_file *m)
 {
 	unsigned long total;
@@ -1980,6 +2118,14 @@ static void print_func_help_header_irq(struct trace_array *tr, struct seq_file *
 	seq_puts(m, "#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION\n");
 	seq_puts(m, "#              | |       |   ||||       |         |\n");
 }
+=======
+static void print_func_help_header(struct seq_file *m)
+{
+	seq_puts(m, "#           TASK-PID    CPU#    TIMESTAMP  FUNCTION\n");
+	seq_puts(m, "#              | |       |          |         |\n");
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void
 print_trace_header(struct seq_file *m, struct trace_iterator *iter)
@@ -1988,14 +2134,42 @@ print_trace_header(struct seq_file *m, struct trace_iterator *iter)
 	struct trace_array *tr = iter->tr;
 	struct trace_array_cpu *data = tr->data[tr->cpu];
 	struct tracer *type = current_trace;
+<<<<<<< HEAD
 	unsigned long entries;
 	unsigned long total;
 	const char *name = "preemption";
+=======
+	unsigned long entries = 0;
+	unsigned long total = 0;
+	unsigned long count;
+	const char *name = "preemption";
+	int cpu;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (type)
 		name = type->name;
 
+<<<<<<< HEAD
 	get_total_entries(tr, &total, &entries);
+=======
+
+	for_each_tracing_cpu(cpu) {
+		count = ring_buffer_entries_cpu(tr->buffer, cpu);
+		/*
+		 * If this buffer has skipped entries, then we hold all
+		 * entries for the trace and we need to ignore the
+		 * ones before the time stamp.
+		 */
+		if (tr->data[cpu]->skipped_entries) {
+			count -= tr->data[cpu]->skipped_entries;
+			/* total is the same as the entries */
+			total += count;
+		} else
+			total += count +
+				ring_buffer_overrun_cpu(tr->buffer, cpu);
+		entries += count;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	seq_printf(m, "# %s latency trace v1.1.5 on %s\n",
 		   name, UTS_RELEASE);
@@ -2241,6 +2415,7 @@ enum print_line_t print_trace_line(struct trace_iterator *iter)
 	return print_trace_fmt(iter);
 }
 
+<<<<<<< HEAD
 void trace_latency_header(struct seq_file *m)
 {
 	struct trace_iterator *iter = m->private;
@@ -2256,13 +2431,18 @@ void trace_latency_header(struct seq_file *m)
 		print_lat_help_header(m);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void trace_default_header(struct seq_file *m)
 {
 	struct trace_iterator *iter = m->private;
 
+<<<<<<< HEAD
 	if (!(trace_flags & TRACE_ITER_CONTEXT_INFO))
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (iter->iter_flags & TRACE_FILE_LAT_FMT) {
 		/* print nothing if the buffers are empty */
 		if (trace_empty(iter))
@@ -2271,6 +2451,7 @@ void trace_default_header(struct seq_file *m)
 		if (!(trace_flags & TRACE_ITER_VERBOSE))
 			print_lat_help_header(m);
 	} else {
+<<<<<<< HEAD
 		if (!(trace_flags & TRACE_ITER_VERBOSE)) {
 			if (trace_flags & TRACE_ITER_IRQ_INFO)
 				print_func_help_header_irq(iter->tr, m);
@@ -2288,6 +2469,13 @@ static void test_ftrace_alive(struct seq_file *m)
 	seq_printf(m, "#          MAY BE MISSING FUNCTION EVENTS\n");
 }
 
+=======
+		if (!(trace_flags & TRACE_ITER_VERBOSE))
+			print_func_help_header(m);
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int s_show(struct seq_file *m, void *v)
 {
 	struct trace_iterator *iter = v;
@@ -2297,7 +2485,10 @@ static int s_show(struct seq_file *m, void *v)
 		if (iter->tr) {
 			seq_printf(m, "# tracer: %s\n", iter->trace->name);
 			seq_puts(m, "#\n");
+<<<<<<< HEAD
 			test_ftrace_alive(m);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		if (iter->trace && iter->trace->print_header)
 			iter->trace->print_header(m);
@@ -2657,12 +2848,18 @@ tracing_cpumask_write(struct file *filp, const char __user *ubuf,
 		if (cpumask_test_cpu(cpu, tracing_cpumask) &&
 				!cpumask_test_cpu(cpu, tracing_cpumask_new)) {
 			atomic_inc(&global_trace.data[cpu]->disabled);
+<<<<<<< HEAD
 			ring_buffer_record_disable_cpu(global_trace.buffer, cpu);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		if (!cpumask_test_cpu(cpu, tracing_cpumask) &&
 				cpumask_test_cpu(cpu, tracing_cpumask_new)) {
 			atomic_dec(&global_trace.data[cpu]->disabled);
+<<<<<<< HEAD
 			ring_buffer_record_enable_cpu(global_trace.buffer, cpu);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	arch_spin_unlock(&ftrace_max_lock);
@@ -2751,6 +2948,7 @@ static int set_tracer_option(struct tracer *trace, char *cmp, int neg)
 	return -EINVAL;
 }
 
+<<<<<<< HEAD
 /* Some tracers require overwrite to stay enabled */
 int trace_keep_overwrite(struct tracer *tracer, u32 mask, int set)
 {
@@ -2770,6 +2968,13 @@ int set_tracer_flag(unsigned int mask, int enabled)
 	if (current_trace->flag_changed)
 		if (current_trace->flag_changed(current_trace, mask, !!enabled))
 			return -EINVAL;
+=======
+static void set_tracer_flags(unsigned int mask, int enabled)
+{
+	/* do nothing if flag is already set */
+	if (!!(trace_flags & mask) == !!enabled)
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (enabled)
 		trace_flags |= mask;
@@ -2781,8 +2986,11 @@ int set_tracer_flag(unsigned int mask, int enabled)
 
 	if (mask == TRACE_ITER_OVERWRITE)
 		ring_buffer_change_overwrite(global_trace.buffer, enabled);
+<<<<<<< HEAD
 
 	return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t
@@ -2792,7 +3000,11 @@ tracing_trace_options_write(struct file *filp, const char __user *ubuf,
 	char buf[64];
 	char *cmp;
 	int neg = 0;
+<<<<<<< HEAD
 	int ret = -ENODEV;
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	if (cnt >= sizeof(buf))
@@ -2809,16 +3021,23 @@ tracing_trace_options_write(struct file *filp, const char __user *ubuf,
 		cmp += 2;
 	}
 
+<<<<<<< HEAD
 	mutex_lock(&trace_types_lock);
 
 	for (i = 0; trace_options[i]; i++) {
 		if (strcmp(cmp, trace_options[i]) == 0) {
 			ret = set_tracer_flag(1 << i, !neg);
+=======
+	for (i = 0; trace_options[i]; i++) {
+		if (strcmp(cmp, trace_options[i]) == 0) {
+			set_tracer_flags(1 << i, !neg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	}
 
 	/* If no option could be set, test the specific tracer options */
+<<<<<<< HEAD
 	if (!trace_options[i])
 		ret = set_tracer_option(current_trace, cmp, neg);
 
@@ -2826,6 +3045,15 @@ tracing_trace_options_write(struct file *filp, const char __user *ubuf,
 
 	if (ret < 0)
 		return ret;
+=======
+	if (!trace_options[i]) {
+		mutex_lock(&trace_types_lock);
+		ret = set_tracer_option(current_trace, cmp, neg);
+		mutex_unlock(&trace_types_lock);
+		if (ret)
+			return ret;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	*ppos += cnt;
 
@@ -2851,6 +3079,7 @@ static const char readme_msg[] =
 	"tracing mini-HOWTO:\n\n"
 	"# mount -t debugfs nodev /sys/kernel/debug\n\n"
 	"# cat /sys/kernel/debug/tracing/available_tracers\n"
+<<<<<<< HEAD
 	"wakeup wakeup_rt preemptirqsoff preemptoff irqsoff function nop\n\n"
 	"# cat /sys/kernel/debug/tracing/current_tracer\n"
 	"nop\n"
@@ -2863,6 +3092,20 @@ static const char readme_msg[] =
 	"# echo 1 > /sys/kernel/debug/tracing/tracing_on\n"
 	"# cat /sys/kernel/debug/tracing/trace > /tmp/trace.txt\n"
 	"# echo 0 > /sys/kernel/debug/tracing/tracing_on\n"
+=======
+	"wakeup preemptirqsoff preemptoff irqsoff function sched_switch nop\n\n"
+	"# cat /sys/kernel/debug/tracing/current_tracer\n"
+	"nop\n"
+	"# echo sched_switch > /sys/kernel/debug/tracing/current_tracer\n"
+	"# cat /sys/kernel/debug/tracing/current_tracer\n"
+	"sched_switch\n"
+	"# cat /sys/kernel/debug/tracing/trace_options\n"
+	"noprint-parent nosym-offset nosym-addr noverbose\n"
+	"# echo print-parent > /sys/kernel/debug/tracing/trace_options\n"
+	"# echo 1 > /sys/kernel/debug/tracing/tracing_enabled\n"
+	"# cat /sys/kernel/debug/tracing/trace > /tmp/trace.txt\n"
+	"# echo 0 > /sys/kernel/debug/tracing/tracing_enabled\n"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ;
 
 static ssize_t
@@ -2946,11 +3189,28 @@ tracing_ctrl_write(struct file *filp, const char __user *ubuf,
 		   size_t cnt, loff_t *ppos)
 {
 	struct trace_array *tr = filp->private_data;
+<<<<<<< HEAD
 	unsigned long val;
 	int ret;
 
 	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
 	if (ret)
+=======
+	char buf[64];
+	unsigned long val;
+	int ret;
+
+	if (cnt >= sizeof(buf))
+		return -EINVAL;
+
+	if (copy_from_user(&buf, ubuf, cnt))
+		return -EFAULT;
+
+	buf[cnt] = 0;
+
+	ret = strict_strtoul(buf, 10, &val);
+	if (ret < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 
 	val = !!val;
@@ -3003,7 +3263,11 @@ int tracer_init(struct tracer *t, struct trace_array *tr)
 	return t->init(tr);
 }
 
+<<<<<<< HEAD
 static int __tracing_resize_ring_buffer(unsigned long size)
+=======
+static int tracing_resize_ring_buffer(unsigned long size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 
@@ -3055,6 +3319,7 @@ static int __tracing_resize_ring_buffer(unsigned long size)
 	return ret;
 }
 
+<<<<<<< HEAD
 static ssize_t tracing_resize_ring_buffer(unsigned long size)
 {
 	int cpu, ret = size;
@@ -3090,6 +3355,8 @@ static ssize_t tracing_resize_ring_buffer(unsigned long size)
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * tracing_update_buffers - used by tracing facility to expand ring buffers
@@ -3107,7 +3374,11 @@ int tracing_update_buffers(void)
 
 	mutex_lock(&trace_types_lock);
 	if (!ring_buffer_expanded)
+<<<<<<< HEAD
 		ret = __tracing_resize_ring_buffer(trace_buf_size);
+=======
+		ret = tracing_resize_ring_buffer(trace_buf_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&trace_types_lock);
 
 	return ret;
@@ -3131,7 +3402,11 @@ static int tracing_set_tracer(const char *buf)
 	mutex_lock(&trace_types_lock);
 
 	if (!ring_buffer_expanded) {
+<<<<<<< HEAD
 		ret = __tracing_resize_ring_buffer(trace_buf_size);
+=======
+		ret = tracing_resize_ring_buffer(trace_buf_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0)
 			goto out;
 		ret = 0;
@@ -3149,9 +3424,12 @@ static int tracing_set_tracer(const char *buf)
 		goto out;
 
 	trace_branch_disable();
+<<<<<<< HEAD
 
 	current_trace->enabled = false;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (current_trace && current_trace->reset)
 		current_trace->reset(tr);
 	if (current_trace && current_trace->use_max_tr) {
@@ -3181,7 +3459,10 @@ static int tracing_set_tracer(const char *buf)
 			goto out;
 	}
 
+<<<<<<< HEAD
 	current_trace->enabled = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_branch_enable(tr);
  out:
 	mutex_unlock(&trace_types_lock);
@@ -3241,11 +3522,28 @@ tracing_max_lat_write(struct file *filp, const char __user *ubuf,
 		      size_t cnt, loff_t *ppos)
 {
 	unsigned long *ptr = filp->private_data;
+<<<<<<< HEAD
 	unsigned long val;
 	int ret;
 
 	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
 	if (ret)
+=======
+	char buf[64];
+	unsigned long val;
+	int ret;
+
+	if (cnt >= sizeof(buf))
+		return -EINVAL;
+
+	if (copy_from_user(&buf, ubuf, cnt))
+		return -EFAULT;
+
+	buf[cnt] = 0;
+
+	ret = strict_strtoul(buf, 10, &val);
+	if (ret < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 
 	*ptr = val * 1000;
@@ -3478,7 +3776,10 @@ waitagain:
 	memset(&iter->seq, 0,
 	       sizeof(struct trace_iterator) -
 	       offsetof(struct trace_iterator, seq));
+<<<<<<< HEAD
 	cpumask_clear(iter->started);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iter->pos = -1;
 
 	trace_event_read_lock();
@@ -3597,7 +3898,10 @@ static ssize_t tracing_splice_read_pipe(struct file *filp,
 		.pages		= pages_def,
 		.partial	= partial_def,
 		.nr_pages	= 0, /* This gets updated below. */
+<<<<<<< HEAD
 		.nr_pages_max	= PIPE_DEF_BUFFERS,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags		= flags,
 		.ops		= &tracing_pipe_buf_ops,
 		.spd_release	= tracing_spd_release_pipe,
@@ -3669,7 +3973,11 @@ static ssize_t tracing_splice_read_pipe(struct file *filp,
 
 	ret = splice_to_pipe(pipe, &spd);
 out:
+<<<<<<< HEAD
 	splice_shrink_spd(&spd);
+=======
+	splice_shrink_spd(pipe, &spd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 
 out_err:
@@ -3702,6 +4010,7 @@ tracing_entries_write(struct file *filp, const char __user *ubuf,
 		      size_t cnt, loff_t *ppos)
 {
 	unsigned long val;
+<<<<<<< HEAD
 	int ret;
 
 	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
@@ -3772,12 +4081,84 @@ tracing_free_buffer_release(struct inode *inode, struct file *filp)
 	tracing_resize_ring_buffer(0);
 
 	return 0;
+=======
+	char buf[64];
+	int ret, cpu;
+
+	if (cnt >= sizeof(buf))
+		return -EINVAL;
+
+	if (copy_from_user(&buf, ubuf, cnt))
+		return -EFAULT;
+
+	buf[cnt] = 0;
+
+	ret = strict_strtoul(buf, 10, &val);
+	if (ret < 0)
+		return ret;
+
+	/* must have at least 1 entry */
+	if (!val)
+		return -EINVAL;
+
+	mutex_lock(&trace_types_lock);
+
+	tracing_stop();
+
+	/* disable all cpu buffers */
+	for_each_tracing_cpu(cpu) {
+		if (global_trace.data[cpu])
+			atomic_inc(&global_trace.data[cpu]->disabled);
+		if (max_tr.data[cpu])
+			atomic_inc(&max_tr.data[cpu]->disabled);
+	}
+
+	/* value is in KB */
+	val <<= 10;
+
+	if (val != global_trace.entries) {
+		ret = tracing_resize_ring_buffer(val);
+		if (ret < 0) {
+			cnt = ret;
+			goto out;
+		}
+	}
+
+	*ppos += cnt;
+
+	/* If check pages failed, return ENOMEM */
+	if (tracing_disabled)
+		cnt = -ENOMEM;
+ out:
+	for_each_tracing_cpu(cpu) {
+		if (global_trace.data[cpu])
+			atomic_dec(&global_trace.data[cpu]->disabled);
+		if (max_tr.data[cpu])
+			atomic_dec(&max_tr.data[cpu]->disabled);
+	}
+
+	tracing_start();
+	mutex_unlock(&trace_types_lock);
+
+	return cnt;
+}
+
+static int mark_printk(const char *fmt, ...)
+{
+	int ret;
+	va_list args;
+	va_start(args, fmt);
+	ret = trace_vprintk(0, fmt, args);
+	va_end(args);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t
 tracing_mark_write(struct file *filp, const char __user *ubuf,
 					size_t cnt, loff_t *fpos)
 {
+<<<<<<< HEAD
 	unsigned long addr = (unsigned long)ubuf;
 	struct ring_buffer_event *event;
 	struct ring_buffer *buffer;
@@ -3792,6 +4173,10 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
 	int size;
 	int len;
 	int ret;
+=======
+	char *buf;
+	size_t written;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (tracing_disabled)
 		return -EINVAL;
@@ -3799,6 +4184,7 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
 	if (cnt > TRACE_BUF_SIZE)
 		cnt = TRACE_BUF_SIZE;
 
+<<<<<<< HEAD
 	/*
 	 * Userspace is injecting traces into the kernel trace buffer.
 	 * We want to be as non intrusive as possible.
@@ -3874,6 +4260,30 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
 	while (nr_pages > 0)
 		put_page(pages[--nr_pages]);
  out:
+=======
+	buf = kmalloc(cnt + 2, GFP_KERNEL);
+	if (buf == NULL)
+		return -ENOMEM;
+
+	if (copy_from_user(buf, ubuf, cnt)) {
+		kfree(buf);
+		return -EFAULT;
+	}
+	if (buf[cnt-1] != '\n') {
+		buf[cnt] = '\n';
+		buf[cnt+1] = '\0';
+	} else
+		buf[cnt] = '\0';
+
+	written = mark_printk("%s", buf);
+	kfree(buf);
+	*fpos += written;
+
+	/* don't tell userspace we wrote more - it might confuse them */
+	if (written > cnt)
+		written = cnt;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return written;
 }
 
@@ -3974,6 +4384,7 @@ static const struct file_operations tracing_entries_fops = {
 	.llseek		= generic_file_llseek,
 };
 
+<<<<<<< HEAD
 static const struct file_operations tracing_total_entries_fops = {
 	.open		= tracing_open_generic,
 	.read		= tracing_total_entries_read,
@@ -3985,6 +4396,8 @@ static const struct file_operations tracing_free_buffer_fops = {
 	.release	= tracing_free_buffer_release,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct file_operations tracing_mark_fops = {
 	.open		= tracing_open_generic,
 	.write		= tracing_mark_write,
@@ -4041,7 +4454,11 @@ tracing_buffers_read(struct file *filp, char __user *ubuf,
 		return 0;
 
 	if (!info->spare)
+<<<<<<< HEAD
 		info->spare = ring_buffer_alloc_read_page(info->tr->buffer, info->cpu);
+=======
+		info->spare = ring_buffer_alloc_read_page(info->tr->buffer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!info->spare)
 		return -ENOMEM;
 
@@ -4159,7 +4576,10 @@ tracing_buffers_splice_read(struct file *file, loff_t *ppos,
 	struct splice_pipe_desc spd = {
 		.pages		= pages_def,
 		.partial	= partial_def,
+<<<<<<< HEAD
 		.nr_pages_max	= PIPE_DEF_BUFFERS,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags		= flags,
 		.ops		= &buffer_pipe_buf_ops,
 		.spd_release	= buffer_spd_release,
@@ -4199,7 +4619,11 @@ tracing_buffers_splice_read(struct file *file, loff_t *ppos,
 
 		ref->ref = 1;
 		ref->buffer = info->tr->buffer;
+<<<<<<< HEAD
 		ref->page = ring_buffer_alloc_read_page(ref->buffer, info->cpu);
+=======
+		ref->page = ring_buffer_alloc_read_page(ref->buffer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!ref->page) {
 			kfree(ref);
 			break;
@@ -4208,7 +4632,12 @@ tracing_buffers_splice_read(struct file *file, loff_t *ppos,
 		r = ring_buffer_read_page(ref->buffer, &ref->page,
 					  len, info->cpu, 1);
 		if (r < 0) {
+<<<<<<< HEAD
 			ring_buffer_free_read_page(ref->buffer, ref->page);
+=======
+			ring_buffer_free_read_page(ref->buffer,
+						   ref->page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			kfree(ref);
 			break;
 		}
@@ -4247,7 +4676,11 @@ tracing_buffers_splice_read(struct file *file, loff_t *ppos,
 	}
 
 	ret = splice_to_pipe(pipe, &spd);
+<<<<<<< HEAD
 	splice_shrink_spd(&spd);
+=======
+	splice_shrink_spd(pipe, &spd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return ret;
 }
@@ -4268,8 +4701,11 @@ tracing_stats_read(struct file *filp, char __user *ubuf,
 	struct trace_array *tr = &global_trace;
 	struct trace_seq *s;
 	unsigned long cnt;
+<<<<<<< HEAD
 	unsigned long long t;
 	unsigned long usec_rem;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	s = kmalloc(sizeof(*s), GFP_KERNEL);
 	if (!s)
@@ -4286,6 +4722,7 @@ tracing_stats_read(struct file *filp, char __user *ubuf,
 	cnt = ring_buffer_commit_overrun_cpu(tr->buffer, cpu);
 	trace_seq_printf(s, "commit overrun: %ld\n", cnt);
 
+<<<<<<< HEAD
 	cnt = ring_buffer_bytes_cpu(tr->buffer, cpu);
 	trace_seq_printf(s, "bytes: %ld\n", cnt);
 
@@ -4297,6 +4734,8 @@ tracing_stats_read(struct file *filp, char __user *ubuf,
 	usec_rem = do_div(t, USEC_PER_SEC);
 	trace_seq_printf(s, "now ts: %5llu.%06lu\n", t, usec_rem);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	count = simple_read_from_buffer(ubuf, count, ppos, s->buffer, s->len);
 
 	kfree(s);
@@ -4457,10 +4896,26 @@ trace_options_write(struct file *filp, const char __user *ubuf, size_t cnt,
 {
 	struct trace_option_dentry *topt = filp->private_data;
 	unsigned long val;
+<<<<<<< HEAD
 	int ret;
 
 	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
 	if (ret)
+=======
+	char buf[64];
+	int ret;
+
+	if (cnt >= sizeof(buf))
+		return -EINVAL;
+
+	if (copy_from_user(&buf, ubuf, cnt))
+		return -EFAULT;
+
+	buf[cnt] = 0;
+
+	ret = strict_strtoul(buf, 10, &val);
+	if (ret < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 
 	if (val != 0 && val != 1)
@@ -4508,6 +4963,7 @@ trace_options_core_write(struct file *filp, const char __user *ubuf, size_t cnt,
 			 loff_t *ppos)
 {
 	long index = (long)filp->private_data;
+<<<<<<< HEAD
 	unsigned long val;
 	int ret;
 
@@ -4525,6 +4981,28 @@ trace_options_core_write(struct file *filp, const char __user *ubuf, size_t cnt,
 	if (ret < 0)
 		return ret;
 
+=======
+	char buf[64];
+	unsigned long val;
+	int ret;
+
+	if (cnt >= sizeof(buf))
+		return -EINVAL;
+
+	if (copy_from_user(&buf, ubuf, cnt))
+		return -EFAULT;
+
+	buf[cnt] = 0;
+
+	ret = strict_strtoul(buf, 10, &val);
+	if (ret < 0)
+		return ret;
+
+	if (val != 0 && val != 1)
+		return -EINVAL;
+	set_tracer_flags(1 << index, val);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*ppos += cnt;
 
 	return cnt;
@@ -4538,7 +5016,11 @@ static const struct file_operations trace_options_core_fops = {
 };
 
 struct dentry *trace_create_file(const char *name,
+<<<<<<< HEAD
 				 umode_t mode,
+=======
+				 mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 struct dentry *parent,
 				 void *data,
 				 const struct file_operations *fops)
@@ -4667,6 +5149,7 @@ static __init void create_trace_options_dir(void)
 		create_trace_option_core_file(trace_options[i], i);
 }
 
+<<<<<<< HEAD
 static ssize_t
 rb_simple_read(struct file *filp, char __user *ubuf,
 	       size_t cnt, loff_t *ppos)
@@ -4718,6 +5201,8 @@ static const struct file_operations rb_simple_fops = {
 	.llseek		= default_llseek,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __init int tracer_init_debugfs(void)
 {
 	struct dentry *d_tracer;
@@ -4726,8 +5211,11 @@ static __init int tracer_init_debugfs(void)
 	trace_access_lock_init();
 
 	d_tracer = tracing_init_dentry();
+<<<<<<< HEAD
 	if (!d_tracer)
 		return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	trace_create_file("tracing_enabled", 0644, d_tracer,
 			&global_trace, &tracing_ctrl_fops);
@@ -4764,12 +5252,15 @@ static __init int tracer_init_debugfs(void)
 	trace_create_file("buffer_size_kb", 0644, d_tracer,
 			&global_trace, &tracing_entries_fops);
 
+<<<<<<< HEAD
 	trace_create_file("buffer_total_size_kb", 0444, d_tracer,
 			&global_trace, &tracing_total_entries_fops);
 
 	trace_create_file("free_buffer", 0644, d_tracer,
 			&global_trace, &tracing_free_buffer_fops);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_create_file("trace_marker", 0220, d_tracer,
 			NULL, &tracing_mark_fops);
 
@@ -4779,9 +5270,12 @@ static __init int tracer_init_debugfs(void)
 	trace_create_file("trace_clock", 0644, d_tracer, NULL,
 			  &trace_clock_fops);
 
+<<<<<<< HEAD
 	trace_create_file("tracing_on", 0644, d_tracer,
 			    &global_trace, &rb_simple_fops);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_DYNAMIC_FTRACE
 	trace_create_file("dyn_ftrace_total_info", 0444, d_tracer,
 			&ftrace_update_tot_cnt, &tracing_dyn_info_fops);
@@ -4864,6 +5358,7 @@ void trace_init_global_iter(struct trace_iterator *iter)
 	iter->cpu_file = TRACE_PIPE_ALL_CPU;
 }
 
+<<<<<<< HEAD
 void ftrace_dump(enum ftrace_dump_mode oops_dump_mode)
 {
 	/* use static because iter can be a bit big for the stack */
@@ -4890,6 +5385,32 @@ void ftrace_dump(enum ftrace_dump_mode oops_dump_mode)
 	tracing_off();
 
 	local_irq_save(flags);
+=======
+static void
+__ftrace_dump(bool disable_tracing, enum ftrace_dump_mode oops_dump_mode)
+{
+	static arch_spinlock_t ftrace_dump_lock =
+		(arch_spinlock_t)__ARCH_SPIN_LOCK_UNLOCKED;
+	/* use static because iter can be a bit big for the stack */
+	static struct trace_iterator iter;
+	unsigned int old_userobj;
+	static int dump_ran;
+	unsigned long flags;
+	int cnt = 0, cpu;
+
+	/* only one dump */
+	local_irq_save(flags);
+	arch_spin_lock(&ftrace_dump_lock);
+	if (dump_ran)
+		goto out;
+
+	dump_ran = 1;
+
+	tracing_off();
+
+	if (disable_tracing)
+		ftrace_kill();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	trace_init_global_iter(&iter);
 
@@ -4922,12 +5443,15 @@ void ftrace_dump(enum ftrace_dump_mode oops_dump_mode)
 
 	printk(KERN_TRACE "Dumping ftrace buffer:\n");
 
+<<<<<<< HEAD
 	/* Did function tracer already get disabled? */
 	if (ftrace_is_dead()) {
 		printk("# WARNING: FUNCTION TRACING IS CORRUPTED\n");
 		printk("#          MAY BE MISSING FUNCTION EVENTS\n");
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * We need to stop all tracing on all CPUS to read the
 	 * the next buffer. This is a bit expensive, but is
@@ -4956,7 +5480,10 @@ void ftrace_dump(enum ftrace_dump_mode oops_dump_mode)
 			if (ret != TRACE_TYPE_NO_CONSUME)
 				trace_consume(&iter);
 		}
+<<<<<<< HEAD
 		touch_nmi_watchdog();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		trace_printk_seq(&iter.seq);
 	}
@@ -4967,6 +5494,7 @@ void ftrace_dump(enum ftrace_dump_mode oops_dump_mode)
 		printk(KERN_TRACE "---------------------------------\n");
 
  out_enable:
+<<<<<<< HEAD
 	trace_flags |= old_userobj;
 
 	for_each_tracing_cpu(cpu) {
@@ -4976,6 +5504,28 @@ void ftrace_dump(enum ftrace_dump_mode oops_dump_mode)
 	local_irq_restore(flags);
 }
 EXPORT_SYMBOL_GPL(ftrace_dump);
+=======
+	/* Re-enable tracing if requested */
+	if (!disable_tracing) {
+		trace_flags |= old_userobj;
+
+		for_each_tracing_cpu(cpu) {
+			atomic_dec(&iter.tr->data[cpu]->disabled);
+		}
+		tracing_on();
+	}
+
+ out:
+	arch_spin_unlock(&ftrace_dump_lock);
+	local_irq_restore(flags);
+}
+
+/* By default: disable tracing after the dump */
+void ftrace_dump(enum ftrace_dump_mode oops_dump_mode)
+{
+	__ftrace_dump(true, oops_dump_mode);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 __init static int tracer_alloc_buffers(void)
 {
@@ -5010,8 +5560,11 @@ __init static int tracer_alloc_buffers(void)
 		goto out_free_cpumask;
 	}
 	global_trace.entries = ring_buffer_size(global_trace.buffer);
+<<<<<<< HEAD
 	if (global_trace.buffer_disabled)
 		tracing_off();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 #ifdef CONFIG_TRACER_MAX_TRACE

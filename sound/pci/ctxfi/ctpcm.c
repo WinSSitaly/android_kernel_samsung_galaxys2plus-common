@@ -404,7 +404,11 @@ int ct_alsa_pcm_create(struct ct_atc *atc,
 	int err;
 	int playback_count, capture_count;
 
+<<<<<<< HEAD
 	playback_count = (IEC958 == device) ? 1 : 256;
+=======
+	playback_count = (IEC958 == device) ? 1 : 8;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	capture_count = (FRONT == device) ? 1 : 0;
 	err = snd_pcm_new(atc->card, "ctxfi", device,
 			  playback_count, capture_count, &pcm);

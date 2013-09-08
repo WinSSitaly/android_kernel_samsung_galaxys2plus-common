@@ -34,7 +34,10 @@
 #include <linux/slab.h>
 #include <net/sock.h>
 #include <linux/in.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "rds.h"
 
@@ -155,7 +158,11 @@ static void rds_recv_incoming_exthdrs(struct rds_incoming *inc, struct rds_sock 
  * tell us which roles the addrs in the conn are playing for this message.
  */
 void rds_recv_incoming(struct rds_connection *conn, __be32 saddr, __be32 daddr,
+<<<<<<< HEAD
 		       struct rds_incoming *inc, gfp_t gfp)
+=======
+		       struct rds_incoming *inc, gfp_t gfp, enum km_type km)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct rds_sock *rs = NULL;
 	struct sock *sk;
@@ -410,8 +417,11 @@ int rds_recvmsg(struct kiocb *iocb, struct socket *sock, struct msghdr *msg,
 
 	rdsdebug("size %zu flags 0x%x timeo %ld\n", size, msg_flags, timeo);
 
+<<<<<<< HEAD
 	msg->msg_namelen = 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (msg_flags & MSG_OOB)
 		goto out;
 
@@ -487,7 +497,10 @@ int rds_recvmsg(struct kiocb *iocb, struct socket *sock, struct msghdr *msg,
 			sin->sin_port = inc->i_hdr.h_sport;
 			sin->sin_addr.s_addr = inc->i_saddr;
 			memset(sin->sin_zero, 0, sizeof(sin->sin_zero));
+<<<<<<< HEAD
 			msg->msg_namelen = sizeof(*sin);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		break;
 	}

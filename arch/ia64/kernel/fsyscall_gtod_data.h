@@ -6,7 +6,11 @@
  */
 
 struct fsyscall_gtod_data_t {
+<<<<<<< HEAD
 	seqcount_t	seq;
+=======
+	seqlock_t	lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct timespec	wall_time;
 	struct timespec monotonic_time;
 	cycle_t		clk_mask;

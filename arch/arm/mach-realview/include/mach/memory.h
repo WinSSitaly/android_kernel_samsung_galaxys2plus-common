@@ -29,6 +29,13 @@
 #define PLAT_PHYS_OFFSET		UL(0x00000000)
 #endif
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ZONE_DMA
+#define ARM_DMA_ZONE_SIZE	SZ_256M
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SPARSEMEM
 
 /*

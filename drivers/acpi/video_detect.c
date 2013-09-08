@@ -23,7 +23,11 @@
  * Depending on whether ACPI graphics extensions (cmp. ACPI spec Appendix B)
  * are available, video.ko should be used to handle the device.
  *
+<<<<<<< HEAD
  * Otherwise vendor specific drivers like thinkpad_acpi, asus-laptop,
+=======
+ * Otherwise vendor specific drivers like thinkpad_acpi, asus_acpi,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * sony_acpi,... can take care about backlight brightness.
  *
  * If CONFIG_ACPI_VIDEO is neither set as "compiled in" (y) nor as a module (m)
@@ -33,7 +37,10 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/acpi.h>
 #include <linux/dmi.h>
 #include <linux/pci.h>

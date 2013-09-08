@@ -15,7 +15,10 @@
 
 #include <linux/rtnetlink.h>
 #include <linux/notifier.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/netevent.h>
 
 static ATOMIC_NOTIFIER_HEAD(netevent_notif_chain);

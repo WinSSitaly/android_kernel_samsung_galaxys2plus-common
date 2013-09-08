@@ -32,6 +32,10 @@
 #include <linux/namei.h>
 #include <linux/security.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 
 #include "nfs4_fs.h"
@@ -48,9 +52,17 @@ static int nfs_superblock_set_dummy_root(struct super_block *sb, struct inode *i
 {
 	/* The mntroot acts as the dummy root dentry for this superblock */
 	if (sb->s_root == NULL) {
+<<<<<<< HEAD
 		sb->s_root = d_make_root(inode);
 		if (sb->s_root == NULL)
 			return -ENOMEM;
+=======
+		sb->s_root = d_alloc_root(inode);
+		if (sb->s_root == NULL) {
+			iput(inode);
+			return -ENOMEM;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ihold(inode);
 		/*
 		 * Ensure that this dentry is invisible to d_find_alias().

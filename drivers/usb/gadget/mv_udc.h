@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Copyright (C) 2011 Marvell International Ltd. All rights reserved.
  *
@@ -6,6 +7,8 @@
  * Free Software Foundation;  either version 2 of the  License, or (at your
  * option) any later version.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifndef __MV_UDC_H
 #define __MV_UDC_H
@@ -180,7 +183,11 @@ struct mv_udc {
 
 	struct mv_cap_regs __iomem	*cap_regs;
 	struct mv_op_regs __iomem	*op_regs;
+<<<<<<< HEAD
 	void __iomem                    *phy_regs;
+=======
+	unsigned int			phy_regs;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int			max_eps;
 	struct mv_dqh			*ep_dqh;
 	size_t				ep_dqh_size;
@@ -202,13 +209,17 @@ struct mv_udc {
 	unsigned int		ep0_dir;
 
 	unsigned int		dev_addr;
+<<<<<<< HEAD
 	unsigned int		test_mode;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int			errors;
 	unsigned		softconnect:1,
 				vbus_active:1,
 				remote_wakeup:1,
 				softconnected:1,
+<<<<<<< HEAD
 				force_fs:1,
 				clock_gating:1,
 				active:1,
@@ -224,6 +235,10 @@ struct mv_udc {
 	/* some SOC has mutiple clock sources for USB*/
 	unsigned int    clknum;
 	struct clk      *clk[0];
+=======
+				force_fs:1;
+	struct clk		*clk;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* endpoint data structure */
@@ -247,7 +262,10 @@ struct mv_req {
 	struct mv_dtd		*dtd, *head, *tail;
 	struct mv_ep		*ep;
 	struct list_head	queue;
+<<<<<<< HEAD
 	unsigned int            test_mode;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned		dtd_count;
 	unsigned		mapped:1;
 };
@@ -312,4 +330,9 @@ struct mv_dtd {
 	struct mv_dtd *next_dtd_virt;
 };
 
+<<<<<<< HEAD
+=======
+extern int mv_udc_phy_init(unsigned int base);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

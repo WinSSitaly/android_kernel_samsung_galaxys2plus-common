@@ -108,6 +108,16 @@ config IOMMU_HELPER
 	depends on IOMMU_SBA || IOMMU_CCIO
 	default y
 
+<<<<<<< HEAD
+=======
+#config PCI_EPIC
+#	bool "EPIC/SAGA PCI support"
+#	depends on PCI
+#	default y
+#	help
+#	  Say Y here for V-class PCI, DMA/IOMMU, IRQ subsystem support.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 source "drivers/pcmcia/Kconfig"
 
 source "drivers/pci/hotplug/Kconfig"

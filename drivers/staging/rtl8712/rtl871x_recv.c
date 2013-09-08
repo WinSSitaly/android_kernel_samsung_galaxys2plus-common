@@ -28,9 +28,12 @@
 
 #define _RTL871X_RECV_C_
 
+<<<<<<< HEAD
 #include <linux/slab.h>
 #include <linux/kmemleak.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "osdep_service.h"
 #include "drv_types.h"
 #include "recv_osdep.h"
@@ -76,7 +79,10 @@ sint _r8712_init_recv_priv(struct recv_priv *precvpriv,
 					   RXFRAME_ALIGN_SZ);
 	if (precvpriv->pallocated_frame_buf == NULL)
 		return _FAIL;
+<<<<<<< HEAD
 	kmemleak_not_leak(precvpriv->pallocated_frame_buf);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(precvpriv->pallocated_frame_buf, 0, NR_RECVFRAME *
 		sizeof(union recv_frame) + RXFRAME_ALIGN_SZ);
 	precvpriv->precv_frame_buf = precvpriv->pallocated_frame_buf +
@@ -93,6 +99,10 @@ sint _r8712_init_recv_priv(struct recv_priv *precvpriv,
 		precvframe++;
 	}
 	precvpriv->rx_pending_cnt = 1;
+<<<<<<< HEAD
+=======
+	sema_init(&precvpriv->allrxreturnevt, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return r8712_init_recv_priv(precvpriv, padapter);
 }
 

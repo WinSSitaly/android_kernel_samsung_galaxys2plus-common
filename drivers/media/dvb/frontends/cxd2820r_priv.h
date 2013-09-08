@@ -48,16 +48,31 @@ struct reg_val_mask {
 
 struct cxd2820r_priv {
 	struct i2c_adapter *i2c;
+<<<<<<< HEAD
 	struct dvb_frontend fe;
 	struct cxd2820r_config cfg;
 
 	bool ber_running;
+=======
+	struct dvb_frontend fe[2];
+	struct cxd2820r_config cfg;
+	struct i2c_adapter tuner_i2c_adapter;
+
+	struct mutex fe_lock; /* FE lock */
+	int active_fe:2; /* FE lock, -1=NONE, 0=DVB-T/T2, 1=DVB-C */
+
+	int ber_running:1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	u8 bank[2];
 	u8 gpio[3];
 
 	fe_delivery_system_t delivery_system;
+<<<<<<< HEAD
 	bool last_tune_failed; /* for switch between T and T2 tune */
+=======
+	int last_tune_failed:1; /* for switch between T and T2 tune */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* cxd2820r_core.c */
@@ -86,9 +101,17 @@ int cxd2820r_rd_reg(struct cxd2820r_priv *priv, u32 reg, u8 *val);
 
 /* cxd2820r_c.c */
 
+<<<<<<< HEAD
 int cxd2820r_get_frontend_c(struct dvb_frontend *fe);
 
 int cxd2820r_set_frontend_c(struct dvb_frontend *fe);
+=======
+int cxd2820r_get_frontend_c(struct dvb_frontend *fe,
+	struct dvb_frontend_parameters *p);
+
+int cxd2820r_set_frontend_c(struct dvb_frontend *fe,
+	struct dvb_frontend_parameters *params);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int cxd2820r_read_status_c(struct dvb_frontend *fe, fe_status_t *status);
 
@@ -109,9 +132,17 @@ int cxd2820r_get_tune_settings_c(struct dvb_frontend *fe,
 
 /* cxd2820r_t.c */
 
+<<<<<<< HEAD
 int cxd2820r_get_frontend_t(struct dvb_frontend *fe);
 
 int cxd2820r_set_frontend_t(struct dvb_frontend *fe);
+=======
+int cxd2820r_get_frontend_t(struct dvb_frontend *fe,
+	struct dvb_frontend_parameters *p);
+
+int cxd2820r_set_frontend_t(struct dvb_frontend *fe,
+	struct dvb_frontend_parameters *params);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int cxd2820r_read_status_t(struct dvb_frontend *fe, fe_status_t *status);
 
@@ -132,9 +163,17 @@ int cxd2820r_get_tune_settings_t(struct dvb_frontend *fe,
 
 /* cxd2820r_t2.c */
 
+<<<<<<< HEAD
 int cxd2820r_get_frontend_t2(struct dvb_frontend *fe);
 
 int cxd2820r_set_frontend_t2(struct dvb_frontend *fe);
+=======
+int cxd2820r_get_frontend_t2(struct dvb_frontend *fe,
+	struct dvb_frontend_parameters *p);
+
+int cxd2820r_set_frontend_t2(struct dvb_frontend *fe,
+	struct dvb_frontend_parameters *params);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int cxd2820r_read_status_t2(struct dvb_frontend *fe, fe_status_t *status);
 

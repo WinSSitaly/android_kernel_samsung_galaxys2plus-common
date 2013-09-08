@@ -88,6 +88,7 @@ static unsigned long div2_recalc(struct clk *clk)
 	return clk->parent->rate / 2;
 }
 
+<<<<<<< HEAD
 static struct sh_clk_ops div2_clk_ops = {
 	.recalc		= div2_recalc,
 };
@@ -110,6 +111,12 @@ static struct sh_clk_ops div13_clk_ops = {
 	.recalc		= div13_recalc,
 };
 
+=======
+static struct clk_ops div2_clk_ops = {
+	.recalc		= div2_recalc,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Divide extal1 by two */
 static struct clk extal1_div2_clk = {
 	.ops		= &div2_clk_ops,
@@ -122,7 +129,11 @@ static struct clk extal2_div2_clk = {
 	.parent		= &sh73a0_extal2_clk,
 };
 
+<<<<<<< HEAD
 static struct sh_clk_ops main_clk_ops = {
+=======
+static struct clk_ops main_clk_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.recalc		= followparent_recalc,
 };
 
@@ -131,12 +142,15 @@ static struct clk main_clk = {
 	.ops		= &main_clk_ops,
 };
 
+<<<<<<< HEAD
 /* Divide Main clock by two */
 static struct clk main_div2_clk = {
 	.ops		= &div2_clk_ops,
 	.parent		= &main_clk,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* PLL0, PLL1, PLL2, PLL3 */
 static unsigned long pll_recalc(struct clk *clk)
 {
@@ -156,7 +170,11 @@ static unsigned long pll_recalc(struct clk *clk)
 	return clk->parent->rate * mult;
 }
 
+<<<<<<< HEAD
 static struct sh_clk_ops pll_clk_ops = {
+=======
+static struct clk_ops pll_clk_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.recalc		= pll_recalc,
 };
 
@@ -192,12 +210,17 @@ static struct clk pll3_clk = {
 	.enable_bit	= 3,
 };
 
+<<<<<<< HEAD
 /* Divide PLL */
+=======
+/* Divide PLL1 by two */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct clk pll1_div2_clk = {
 	.ops		= &div2_clk_ops,
 	.parent		= &pll1_clk,
 };
 
+<<<<<<< HEAD
 static struct clk pll1_div7_clk = {
 	.ops		= &div7_clk_ops,
 	.parent		= &pll1_clk,
@@ -215,6 +238,8 @@ struct clk sh73a0_extcki_clk = {
 struct clk sh73a0_extalr_clk = {
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct clk *main_clks[] = {
 	&r_clk,
 	&sh73a0_extal1_clk,
@@ -222,16 +247,22 @@ static struct clk *main_clks[] = {
 	&extal1_div2_clk,
 	&extal2_div2_clk,
 	&main_clk,
+<<<<<<< HEAD
 	&main_div2_clk,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&pll0_clk,
 	&pll1_clk,
 	&pll2_clk,
 	&pll3_clk,
 	&pll1_div2_clk,
+<<<<<<< HEAD
 	&pll1_div7_clk,
 	&pll1_div13_clk,
 	&sh73a0_extcki_clk,
 	&sh73a0_extalr_clk,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void div4_kick(struct clk *clk)
@@ -285,6 +316,7 @@ enum { DIV6_VCK1, DIV6_VCK2, DIV6_VCK3, DIV6_ZB1,
 	DIV6_DSIT, DIV6_DSI0P, DIV6_DSI1P,
 	DIV6_NR };
 
+<<<<<<< HEAD
 static struct clk *vck_parent[8] = {
 	[0] = &pll1_div2_clk,
 	[1] = &pll2_clk,
@@ -471,6 +503,29 @@ static struct clk dsi1phy_clk = {
 static struct clk *late_main_clks[] = {
 	&dsi0phy_clk,
 	&dsi1phy_clk,
+=======
+static struct clk div6_clks[DIV6_NR] = {
+	[DIV6_VCK1] = SH_CLK_DIV6(&pll1_div2_clk, VCLKCR1, 0),
+	[DIV6_VCK2] = SH_CLK_DIV6(&pll1_div2_clk, VCLKCR2, 0),
+	[DIV6_VCK3] = SH_CLK_DIV6(&pll1_div2_clk, VCLKCR3, 0),
+	[DIV6_ZB1] = SH_CLK_DIV6(&pll1_div2_clk, ZBCKCR, 0),
+	[DIV6_FLCTL] = SH_CLK_DIV6(&pll1_div2_clk, FLCKCR, 0),
+	[DIV6_SDHI0] = SH_CLK_DIV6(&pll1_div2_clk, SD0CKCR, 0),
+	[DIV6_SDHI1] = SH_CLK_DIV6(&pll1_div2_clk, SD1CKCR, 0),
+	[DIV6_SDHI2] = SH_CLK_DIV6(&pll1_div2_clk, SD2CKCR, 0),
+	[DIV6_FSIA] = SH_CLK_DIV6(&pll1_div2_clk, FSIACKCR, 0),
+	[DIV6_FSIB] = SH_CLK_DIV6(&pll1_div2_clk, FSIBCKCR, 0),
+	[DIV6_SUB] = SH_CLK_DIV6(&sh73a0_extal2_clk, SUBCKCR, 0),
+	[DIV6_SPUA] = SH_CLK_DIV6(&pll1_div2_clk, SPUACKCR, 0),
+	[DIV6_SPUV] = SH_CLK_DIV6(&pll1_div2_clk, SPUVCKCR, 0),
+	[DIV6_MSU] = SH_CLK_DIV6(&pll1_div2_clk, MSUCKCR, 0),
+	[DIV6_HSI] = SH_CLK_DIV6(&pll1_div2_clk, HSICKCR, 0),
+	[DIV6_MFG1] = SH_CLK_DIV6(&pll1_div2_clk, MFCK1CR, 0),
+	[DIV6_MFG2] = SH_CLK_DIV6(&pll1_div2_clk, MFCK2CR, 0),
+	[DIV6_DSIT] = SH_CLK_DIV6(&pll1_div2_clk, DSITCKCR, 0),
+	[DIV6_DSI0P] = SH_CLK_DIV6(&pll1_div2_clk, DSI0PCKCR, 0),
+	[DIV6_DSI1P] = SH_CLK_DIV6(&pll1_div2_clk, DSI1PCKCR, 0),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum { MSTP001,
@@ -479,7 +534,10 @@ enum { MSTP001,
 	MSTP207, MSTP206, MSTP204, MSTP203, MSTP202, MSTP201, MSTP200,
 	MSTP331, MSTP329, MSTP325, MSTP323, MSTP318,
 	MSTP314, MSTP313, MSTP312, MSTP311,
+<<<<<<< HEAD
 	MSTP303, MSTP302, MSTP301, MSTP300,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	MSTP411, MSTP410, MSTP403,
 	MSTP_NR };
 
@@ -513,15 +571,25 @@ static struct clk mstp_clks[MSTP_NR] = {
 	[MSTP313] = MSTP(&div6_clks[DIV6_SDHI1], SMSTPCR3, 13, 0), /* SDHI1 */
 	[MSTP312] = MSTP(&div4_clks[DIV4_HP], SMSTPCR3, 12, 0), /* MMCIF0 */
 	[MSTP311] = MSTP(&div6_clks[DIV6_SDHI2], SMSTPCR3, 11, 0), /* SDHI2 */
+<<<<<<< HEAD
 	[MSTP303] = MSTP(&main_div2_clk, SMSTPCR3, 3, 0), /* TPU1 */
 	[MSTP302] = MSTP(&main_div2_clk, SMSTPCR3, 2, 0), /* TPU2 */
 	[MSTP301] = MSTP(&main_div2_clk, SMSTPCR3, 1, 0), /* TPU3 */
 	[MSTP300] = MSTP(&main_div2_clk, SMSTPCR3, 0, 0), /* TPU4 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[MSTP411] = MSTP(&div4_clks[DIV4_HP], SMSTPCR4, 11, 0), /* IIC3 */
 	[MSTP410] = MSTP(&div4_clks[DIV4_HP], SMSTPCR4, 10, 0), /* IIC4 */
 	[MSTP403] = MSTP(&r_clk, SMSTPCR4, 3, 0), /* KEYSC */
 };
 
+<<<<<<< HEAD
+=======
+#define CLKDEV_CON_ID(_id, _clk) { .con_id = _id, .clk = _clk }
+#define CLKDEV_DEV_ID(_id, _clk) { .dev_id = _id, .clk = _clk }
+#define CLKDEV_ICK_ID(_cid, _did, _clk) { .con_id = _cid, .dev_id = _did, .clk = _clk }
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct clk_lookup lookups[] = {
 	/* main clocks */
 	CLKDEV_CON_ID("r_clk", &r_clk),
@@ -535,10 +603,15 @@ static struct clk_lookup lookups[] = {
 	CLKDEV_CON_ID("sdhi2_clk", &div6_clks[DIV6_SDHI2]),
 	CLKDEV_ICK_ID("dsit_clk", "sh-mipi-dsi.0", &div6_clks[DIV6_DSIT]),
 	CLKDEV_ICK_ID("dsit_clk", "sh-mipi-dsi.1", &div6_clks[DIV6_DSIT]),
+<<<<<<< HEAD
 	CLKDEV_ICK_ID("dsip_clk", "sh-mipi-dsi.0", &div6_clks[DIV6_DSI0P]),
 	CLKDEV_ICK_ID("dsip_clk", "sh-mipi-dsi.1", &div6_clks[DIV6_DSI1P]),
 	CLKDEV_ICK_ID("dsiphy_clk", "sh-mipi-dsi.0", &dsi0phy_clk),
 	CLKDEV_ICK_ID("dsiphy_clk", "sh-mipi-dsi.1", &dsi1phy_clk),
+=======
+	CLKDEV_ICK_ID("dsi0p_clk", "sh-mipi-dsi.0", &div6_clks[DIV6_DSI0P]),
+	CLKDEV_ICK_ID("dsi1p_clk", "sh-mipi-dsi.1", &div6_clks[DIV6_DSI1P]),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* MSTP32 clocks */
 	CLKDEV_DEV_ID("i2c-sh_mobile.2", &mstp_clks[MSTP001]), /* I2C2 */
@@ -568,10 +641,13 @@ static struct clk_lookup lookups[] = {
 	CLKDEV_DEV_ID("sh_mobile_sdhi.1", &mstp_clks[MSTP313]), /* SDHI1 */
 	CLKDEV_DEV_ID("sh_mmcif.0", &mstp_clks[MSTP312]), /* MMCIF0 */
 	CLKDEV_DEV_ID("sh_mobile_sdhi.2", &mstp_clks[MSTP311]), /* SDHI2 */
+<<<<<<< HEAD
 	CLKDEV_DEV_ID("leds-renesas-tpu.12", &mstp_clks[MSTP303]), /* TPU1 */
 	CLKDEV_DEV_ID("leds-renesas-tpu.21", &mstp_clks[MSTP302]), /* TPU2 */
 	CLKDEV_DEV_ID("leds-renesas-tpu.30", &mstp_clks[MSTP301]), /* TPU3 */
 	CLKDEV_DEV_ID("leds-renesas-tpu.41", &mstp_clks[MSTP300]), /* TPU4 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CLKDEV_DEV_ID("i2c-sh_mobile.3", &mstp_clks[MSTP411]), /* I2C3 */
 	CLKDEV_DEV_ID("i2c-sh_mobile.4", &mstp_clks[MSTP410]), /* I2C4 */
 	CLKDEV_DEV_ID("sh_keysc.0", &mstp_clks[MSTP403]), /* KEYSC */
@@ -587,7 +663,11 @@ void __init sh73a0_clock_init(void)
 	__raw_writel(0x108, SD2CKCR);
 
 	/* detect main clock parent */
+<<<<<<< HEAD
 	switch ((__raw_readl(CKSCR) >> 28) & 0x03) {
+=======
+	switch ((__raw_readl(CKSCR) >> 24) & 0x03) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case 0:
 		main_clk.parent = &sh73a0_extal1_clk;
 		break;
@@ -609,11 +689,16 @@ void __init sh73a0_clock_init(void)
 		ret = sh_clk_div4_register(div4_clks, DIV4_NR, &div4_table);
 
 	if (!ret)
+<<<<<<< HEAD
 		ret = sh_clk_div6_reparent_register(div6_clks, DIV6_NR);
+=======
+		ret = sh_clk_div6_register(div6_clks, DIV6_NR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!ret)
 		ret = sh_clk_mstp32_register(mstp_clks, MSTP_NR);
 
+<<<<<<< HEAD
 	for (k = 0; !ret && (k < ARRAY_SIZE(late_main_clks)); k++)
 		ret = clk_register(late_main_clks[k]);
 
@@ -621,6 +706,12 @@ void __init sh73a0_clock_init(void)
 
 	if (!ret)
 		shmobile_clk_init();
+=======
+	clkdev_add_table(lookups, ARRAY_SIZE(lookups));
+
+	if (!ret)
+		clk_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		panic("failed to setup sh73a0 clocks\n");
 }

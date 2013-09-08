@@ -25,3 +25,7 @@ config SENSORS_HMC5843
 	  will be called hmc5843
 
 endmenu
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

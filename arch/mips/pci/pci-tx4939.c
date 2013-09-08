@@ -101,7 +101,11 @@ void __init tx4939_setup_pcierr_irq(void)
 {
 	if (request_irq(TXX9_IRQ_BASE + TX4939_IR_PCIERR,
 			tx4927_pcierr_interrupt,
+<<<<<<< HEAD
 			0, "PCI error",
+=======
+			IRQF_DISABLED, "PCI error",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			(void *)TX4939_PCIC_REG))
 		pr_warning("Failed to request irq for PCIERR\n");
 }

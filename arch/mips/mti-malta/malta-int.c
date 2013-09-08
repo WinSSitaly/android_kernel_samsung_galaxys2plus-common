@@ -44,7 +44,10 @@
 #include <asm/msc01_ic.h>
 #include <asm/gic.h>
 #include <asm/gcmpregs.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int gcmp_present = -1;
 int gic_present;
@@ -323,13 +326,21 @@ static irqreturn_t ipi_call_interrupt(int irq, void *dev_id)
 
 static struct irqaction irq_resched = {
 	.handler	= ipi_resched_interrupt,
+<<<<<<< HEAD
 	.flags		= IRQF_PERCPU,
+=======
+	.flags		= IRQF_DISABLED|IRQF_PERCPU,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name		= "IPI_resched"
 };
 
 static struct irqaction irq_call = {
 	.handler	= ipi_call_interrupt,
+<<<<<<< HEAD
 	.flags		= IRQF_PERCPU,
+=======
+	.flags		= IRQF_DISABLED|IRQF_PERCPU,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name		= "IPI_call"
 };
 #endif /* CONFIG_MIPS_MT_SMP */
@@ -351,14 +362,22 @@ unsigned int plat_ipi_resched_int_xlate(unsigned int cpu)
 
 static struct irqaction i8259irq = {
 	.handler = no_action,
+<<<<<<< HEAD
 	.name = "XT-PIC cascade",
 	.flags = IRQF_NO_THREAD,
+=======
+	.name = "XT-PIC cascade"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct irqaction corehi_irqaction = {
 	.handler = no_action,
+<<<<<<< HEAD
 	.name = "CoreHi",
 	.flags = IRQF_NO_THREAD,
+=======
+	.name = "CoreHi"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static msc_irqmap_t __initdata msc_irqmap[] = {

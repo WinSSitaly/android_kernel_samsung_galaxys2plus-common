@@ -3,7 +3,11 @@
 #
 
 menu "Input device support"
+<<<<<<< HEAD
 	depends on !S390 && !UML
+=======
+	depends on !S390
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config INPUT
 	tristate "Generic input layer (needed for keyboard, mouse, ...)" if EXPERT
@@ -25,10 +29,13 @@ config INPUT
 
 if INPUT
 
+<<<<<<< HEAD
 config INPUT_OF_MATRIX_KEYMAP
 	depends on USE_OF
 	bool
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config INPUT_FF_MEMLESS
 	tristate "Support for memoryless force-feedback devices"
 	help
@@ -165,6 +172,18 @@ config INPUT_APMPOWER
 	  To compile this driver as a module, choose M here: the
 	  module will be called apm-power.
 
+<<<<<<< HEAD
+=======
+config INPUT_KEYRESET
+	tristate "Reset key"
+	depends on INPUT
+	---help---
+	  Say Y here if you want to reboot when some keys are pressed;
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called keyreset.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 comment "Input Device Drivers"
 
 source "drivers/input/keyboard/Kconfig"

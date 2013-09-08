@@ -316,7 +316,21 @@ static struct i2c_driver max7359_i2c_driver = {
 	.id_table	= max7359_ids,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(max7359_i2c_driver);
+=======
+static int __init max7359_init(void)
+{
+	return i2c_add_driver(&max7359_i2c_driver);
+}
+module_init(max7359_init);
+
+static void __exit max7359_exit(void)
+{
+	i2c_del_driver(&max7359_i2c_driver);
+}
+module_exit(max7359_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Kim Kyuwon <q1.kim@samsung.com>");
 MODULE_DESCRIPTION("MAX7359 Key Switch Controller Driver");

@@ -23,16 +23,22 @@ config IA64
 	select HAVE_ARCH_TRACEHOOK
 	select HAVE_DMA_API_DEBUG
 	select HAVE_GENERIC_HARDIRQS
+<<<<<<< HEAD
 	select HAVE_MEMBLOCK
 	select HAVE_MEMBLOCK_NODE_MAP
 	select ARCH_DISCARD_MEMBLOCK
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select GENERIC_IRQ_PROBE
 	select GENERIC_PENDING_IRQ if SMP
 	select IRQ_PER_CPU
 	select GENERIC_IRQ_SHOW
+<<<<<<< HEAD
 	select ARCH_WANT_OPTIONAL_GPIOLIB
 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
 	select GENERIC_IOMAP
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default y
 	help
 	  The Itanium Processor Family is Intel's 64-bit successor to
@@ -95,9 +101,12 @@ config GENERIC_TIME_VSYSCALL
 config HAVE_SETUP_PER_CPU_AREA
 	def_bool y
 
+<<<<<<< HEAD
 config GENERIC_GPIO
 	bool
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config DMI
 	bool
 	default y
@@ -106,8 +115,14 @@ config EFI
 	bool
 	default y
 
+<<<<<<< HEAD
 config ARCH_CLOCKSOURCE_DATA
 	def_bool y
+=======
+config GENERIC_IOMAP
+	bool
+	default y
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config SCHED_OMIT_FRAME_POINTER
 	bool
@@ -162,6 +177,10 @@ config IA64_GENERIC
 	select ACPI_NUMA
 	select SWIOTLB
 	select PCI_MSI
+<<<<<<< HEAD
+=======
+	select DMAR
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  This selects the system type of your hardware.  A "generic" kernel
 	  will run on any supported IA-64 system.  However, if you configure
@@ -474,6 +493,12 @@ config NODES_SHIFT
 	  MAX_NUMNODES will be 2^(This value).
 	  If in doubt, use the default.
 
+<<<<<<< HEAD
+=======
+config ARCH_POPULATES_NODE_MAP
+	def_bool y
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # VIRTUAL_MEM_MAP and FLAT_NODE_MEM_MAP are functionally equivalent.
 # VIRTUAL_MEM_MAP has been retained for historical reasons.
 config VIRTUAL_MEM_MAP
@@ -631,6 +656,30 @@ source "drivers/pci/hotplug/Kconfig"
 
 source "drivers/pcmcia/Kconfig"
 
+<<<<<<< HEAD
+=======
+config DMAR
+        bool "Support for DMA Remapping Devices (EXPERIMENTAL)"
+        depends on IA64_GENERIC && ACPI && EXPERIMENTAL
+	help
+	  DMA remapping (DMAR) devices support enables independent address
+	  translations for Direct Memory Access (DMA) from devices.
+	  These DMA remapping devices are reported via ACPI tables
+	  and include PCI device scope covered by these DMA
+	  remapping devices.
+
+config DMAR_DEFAULT_ON
+	def_bool y
+	prompt "Enable DMA Remapping Devices by default"
+	depends on DMAR
+	help
+	  Selecting this option will enable a DMAR device at boot time if
+	  one is found. If this option is not selected, DMAR support can
+	  be enabled by passing intel_iommu=on to the kernel. It is
+	  recommended you say N here while the DMAR code remains
+	  experimental.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endmenu
 
 endif
@@ -664,3 +713,9 @@ source "lib/Kconfig"
 
 config IOMMU_HELPER
 	def_bool (IA64_HP_ZX1 || IA64_HP_ZX1_SWIOTLB || IA64_GENERIC || SWIOTLB)
+<<<<<<< HEAD
+=======
+
+config IOMMU_API
+	def_bool (DMAR)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -22,18 +22,30 @@
 #include <linux/sched.h>
 #include <linux/uaccess.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/cpu.h>
 #include <linux/bitops.h>
 #include <linux/device.h>
+=======
+#include <linux/highmem.h>
+#include <linux/cpu.h>
+#include <linux/bitops.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/apic.h>
 #include <asm/stacktrace.h>
 #include <asm/nmi.h>
+<<<<<<< HEAD
 #include <asm/smp.h>
 #include <asm/alternative.h>
 #include <asm/timer.h>
 
 #include "perf_event.h"
+=======
+#include <asm/compat.h>
+#include <asm/smp.h>
+#include <asm/alternative.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if 0
 #undef wrmsrl
@@ -46,6 +58,7 @@ do {								\
 } while (0)
 #endif
 
+<<<<<<< HEAD
 struct x86_pmu x86_pmu __read_mostly;
 
 DEFINE_PER_CPU(struct cpu_hw_events, cpu_hw_events) = {
@@ -57,6 +70,275 @@ u64 __read_mostly hw_cache_event_ids
 				[PERF_COUNT_HW_CACHE_OP_MAX]
 				[PERF_COUNT_HW_CACHE_RESULT_MAX];
 u64 __read_mostly hw_cache_extra_regs
+=======
+/*
+ * best effort, GUP based copy_from_user() that assumes IRQ or NMI context
+ */
+static unsigned long
+copy_from_user_nmi(void *to, const void __user *from, unsigned long n)
+{
+	unsigned long offset, addr = (unsigned long)from;
+	unsigned long size, len = 0;
+	struct page *page;
+	void *map;
+	int ret;
+
+	do {
+		ret = __get_user_pages_fast(addr, 1, 0, &page);
+		if (!ret)
+			break;
+
+		offset = addr & (PAGE_SIZE - 1);
+		size = min(PAGE_SIZE - offset, n - len);
+
+		map = kmap_atomic(page);
+		memcpy(to, map+offset, size);
+		kunmap_atomic(map);
+		put_page(page);
+
+		len  += size;
+		to   += size;
+		addr += size;
+
+	} while (len < n);
+
+	return len;
+}
+
+struct event_constraint {
+	union {
+		unsigned long	idxmsk[BITS_TO_LONGS(X86_PMC_IDX_MAX)];
+		u64		idxmsk64;
+	};
+	u64	code;
+	u64	cmask;
+	int	weight;
+};
+
+struct amd_nb {
+	int nb_id;  /* NorthBridge id */
+	int refcnt; /* reference count */
+	struct perf_event *owners[X86_PMC_IDX_MAX];
+	struct event_constraint event_constraints[X86_PMC_IDX_MAX];
+};
+
+struct intel_percore;
+
+#define MAX_LBR_ENTRIES		16
+
+struct cpu_hw_events {
+	/*
+	 * Generic x86 PMC bits
+	 */
+	struct perf_event	*events[X86_PMC_IDX_MAX]; /* in counter order */
+	unsigned long		active_mask[BITS_TO_LONGS(X86_PMC_IDX_MAX)];
+	unsigned long		running[BITS_TO_LONGS(X86_PMC_IDX_MAX)];
+	int			enabled;
+
+	int			n_events;
+	int			n_added;
+	int			n_txn;
+	int			assign[X86_PMC_IDX_MAX]; /* event to counter assignment */
+	u64			tags[X86_PMC_IDX_MAX];
+	struct perf_event	*event_list[X86_PMC_IDX_MAX]; /* in enabled order */
+
+	unsigned int		group_flag;
+
+	/*
+	 * Intel DebugStore bits
+	 */
+	struct debug_store	*ds;
+	u64			pebs_enabled;
+
+	/*
+	 * Intel LBR bits
+	 */
+	int				lbr_users;
+	void				*lbr_context;
+	struct perf_branch_stack	lbr_stack;
+	struct perf_branch_entry	lbr_entries[MAX_LBR_ENTRIES];
+
+	/*
+	 * Intel percore register state.
+	 * Coordinate shared resources between HT threads.
+	 */
+	int				percore_used; /* Used by this CPU? */
+	struct intel_percore		*per_core;
+
+	/*
+	 * AMD specific bits
+	 */
+	struct amd_nb		*amd_nb;
+};
+
+#define __EVENT_CONSTRAINT(c, n, m, w) {\
+	{ .idxmsk64 = (n) },		\
+	.code = (c),			\
+	.cmask = (m),			\
+	.weight = (w),			\
+}
+
+#define EVENT_CONSTRAINT(c, n, m)	\
+	__EVENT_CONSTRAINT(c, n, m, HWEIGHT(n))
+
+/*
+ * Constraint on the Event code.
+ */
+#define INTEL_EVENT_CONSTRAINT(c, n)	\
+	EVENT_CONSTRAINT(c, n, ARCH_PERFMON_EVENTSEL_EVENT)
+
+/*
+ * Constraint on the Event code + UMask + fixed-mask
+ *
+ * filter mask to validate fixed counter events.
+ * the following filters disqualify for fixed counters:
+ *  - inv
+ *  - edge
+ *  - cnt-mask
+ *  The other filters are supported by fixed counters.
+ *  The any-thread option is supported starting with v3.
+ */
+#define FIXED_EVENT_CONSTRAINT(c, n)	\
+	EVENT_CONSTRAINT(c, (1ULL << (32+n)), X86_RAW_EVENT_MASK)
+
+/*
+ * Constraint on the Event code + UMask
+ */
+#define INTEL_UEVENT_CONSTRAINT(c, n)	\
+	EVENT_CONSTRAINT(c, n, INTEL_ARCH_EVENT_MASK)
+
+#define EVENT_CONSTRAINT_END		\
+	EVENT_CONSTRAINT(0, 0, 0)
+
+#define for_each_event_constraint(e, c)	\
+	for ((e) = (c); (e)->weight; (e)++)
+
+/*
+ * Extra registers for specific events.
+ * Some events need large masks and require external MSRs.
+ * Define a mapping to these extra registers.
+ */
+struct extra_reg {
+	unsigned int		event;
+	unsigned int		msr;
+	u64			config_mask;
+	u64			valid_mask;
+};
+
+#define EVENT_EXTRA_REG(e, ms, m, vm) {	\
+	.event = (e),		\
+	.msr = (ms),		\
+	.config_mask = (m),	\
+	.valid_mask = (vm),	\
+	}
+#define INTEL_EVENT_EXTRA_REG(event, msr, vm)	\
+	EVENT_EXTRA_REG(event, msr, ARCH_PERFMON_EVENTSEL_EVENT, vm)
+#define EVENT_EXTRA_END EVENT_EXTRA_REG(0, 0, 0, 0)
+
+union perf_capabilities {
+	struct {
+		u64	lbr_format    : 6;
+		u64	pebs_trap     : 1;
+		u64	pebs_arch_reg : 1;
+		u64	pebs_format   : 4;
+		u64	smm_freeze    : 1;
+	};
+	u64	capabilities;
+};
+
+/*
+ * struct x86_pmu - generic x86 pmu
+ */
+struct x86_pmu {
+	/*
+	 * Generic x86 PMC bits
+	 */
+	const char	*name;
+	int		version;
+	int		(*handle_irq)(struct pt_regs *);
+	void		(*disable_all)(void);
+	void		(*enable_all)(int added);
+	void		(*enable)(struct perf_event *);
+	void		(*disable)(struct perf_event *);
+	int		(*hw_config)(struct perf_event *event);
+	int		(*schedule_events)(struct cpu_hw_events *cpuc, int n, int *assign);
+	unsigned	eventsel;
+	unsigned	perfctr;
+	u64		(*event_map)(int);
+	int		max_events;
+	int		num_counters;
+	int		num_counters_fixed;
+	int		cntval_bits;
+	u64		cntval_mask;
+	int		apic;
+	u64		max_period;
+	struct event_constraint *
+			(*get_event_constraints)(struct cpu_hw_events *cpuc,
+						 struct perf_event *event);
+
+	void		(*put_event_constraints)(struct cpu_hw_events *cpuc,
+						 struct perf_event *event);
+	struct event_constraint *event_constraints;
+	struct event_constraint *percore_constraints;
+	void		(*quirks)(void);
+	int		perfctr_second_write;
+
+	int		(*cpu_prepare)(int cpu);
+	void		(*cpu_starting)(int cpu);
+	void		(*cpu_dying)(int cpu);
+	void		(*cpu_dead)(int cpu);
+
+	/*
+	 * Intel Arch Perfmon v2+
+	 */
+	u64			intel_ctrl;
+	union perf_capabilities intel_cap;
+
+	/*
+	 * Intel DebugStore bits
+	 */
+	int		bts, pebs;
+	int		bts_active, pebs_active;
+	int		pebs_record_size;
+	void		(*drain_pebs)(struct pt_regs *regs);
+	struct event_constraint *pebs_constraints;
+
+	/*
+	 * Intel LBR
+	 */
+	unsigned long	lbr_tos, lbr_from, lbr_to; /* MSR base regs       */
+	int		lbr_nr;			   /* hardware stack size */
+
+	/*
+	 * Extra registers for events
+	 */
+	struct extra_reg *extra_regs;
+};
+
+static struct x86_pmu x86_pmu __read_mostly;
+
+static DEFINE_PER_CPU(struct cpu_hw_events, cpu_hw_events) = {
+	.enabled = 1,
+};
+
+static int x86_perf_event_set_period(struct perf_event *event);
+
+/*
+ * Generalized hw caching related hw_event table, filled
+ * in on a per model basis. A value of 0 means
+ * 'not supported', -1 means 'hw_event makes no sense on
+ * this CPU', any other value means the raw hw_event
+ * ID.
+ */
+
+#define C(x) PERF_COUNT_HW_CACHE_##x
+
+static u64 __read_mostly hw_cache_event_ids
+				[PERF_COUNT_HW_CACHE_MAX]
+				[PERF_COUNT_HW_CACHE_OP_MAX]
+				[PERF_COUNT_HW_CACHE_RESULT_MAX];
+static u64 __read_mostly hw_cache_extra_regs
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				[PERF_COUNT_HW_CACHE_MAX]
 				[PERF_COUNT_HW_CACHE_OP_MAX]
 				[PERF_COUNT_HW_CACHE_RESULT_MAX];
@@ -66,7 +348,12 @@ u64 __read_mostly hw_cache_extra_regs
  * Can only be executed on the CPU where the event is active.
  * Returns the delta events processed.
  */
+<<<<<<< HEAD
 u64 x86_perf_event_update(struct perf_event *event)
+=======
+static u64
+x86_perf_event_update(struct perf_event *event)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hw_perf_event *hwc = &event->hw;
 	int shift = 64 - x86_pmu.cntval_bits;
@@ -109,15 +396,49 @@ again:
 	return new_raw_count;
 }
 
+<<<<<<< HEAD
+=======
+static inline int x86_pmu_addr_offset(int index)
+{
+	int offset;
+
+	/* offset = X86_FEATURE_PERFCTR_CORE ? index << 1 : index */
+	alternative_io(ASM_NOP2,
+		       "shll $1, %%eax",
+		       X86_FEATURE_PERFCTR_CORE,
+		       "=a" (offset),
+		       "a"  (index));
+
+	return offset;
+}
+
+static inline unsigned int x86_pmu_config_addr(int index)
+{
+	return x86_pmu.eventsel + x86_pmu_addr_offset(index);
+}
+
+static inline unsigned int x86_pmu_event_addr(int index)
+{
+	return x86_pmu.perfctr + x86_pmu_addr_offset(index);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Find and validate any extra registers to set up.
  */
 static int x86_pmu_extra_regs(u64 config, struct perf_event *event)
 {
+<<<<<<< HEAD
 	struct hw_perf_event_extra *reg;
 	struct extra_reg *er;
 
 	reg = &event->hw.extra_reg;
+=======
+	struct extra_reg *er;
+
+	event->hw.extra_reg = 0;
+	event->hw.extra_config = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!x86_pmu.extra_regs)
 		return 0;
@@ -127,10 +448,15 @@ static int x86_pmu_extra_regs(u64 config, struct perf_event *event)
 			continue;
 		if (event->attr.config1 & ~er->valid_mask)
 			return -EINVAL;
+<<<<<<< HEAD
 
 		reg->idx = er->idx;
 		reg->config = event->attr.config1;
 		reg->reg = er->msr;
+=======
+		event->hw.extra_reg = er->msr;
+		event->hw.extra_config = event->attr.config1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 	return 0;
@@ -244,6 +570,12 @@ msr_fail:
 	return false;
 }
 
+<<<<<<< HEAD
+=======
+static void reserve_ds_buffers(void);
+static void release_ds_buffers(void);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void hw_perf_event_destroy(struct perf_event *event)
 {
 	if (atomic_dec_and_mutex_lock(&active_events, &pmc_reserve_mutex)) {
@@ -292,7 +624,11 @@ set_ext_hw_attr(struct hw_perf_event *hwc, struct perf_event *event)
 	return x86_pmu_extra_regs(val, event);
 }
 
+<<<<<<< HEAD
 int x86_setup_perfctr(struct perf_event *event)
+=======
+static int x86_setup_perfctr(struct perf_event *event)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct perf_event_attr *attr = &event->attr;
 	struct hw_perf_event *hwc = &event->hw;
@@ -313,8 +649,17 @@ int x86_setup_perfctr(struct perf_event *event)
 			return -EOPNOTSUPP;
 	}
 
+<<<<<<< HEAD
 	if (attr->type == PERF_TYPE_RAW)
 		return x86_pmu_extra_regs(event->attr.config, event);
+=======
+	/*
+	 * Do not allow config1 (extended registers) to propagate,
+	 * there's no sane user-space generalization yet:
+	 */
+	if (attr->type == PERF_TYPE_RAW)
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (attr->type == PERF_TYPE_HW_CACHE)
 		return set_ext_hw_attr(hwc, event);
@@ -352,6 +697,7 @@ int x86_setup_perfctr(struct perf_event *event)
 	return 0;
 }
 
+<<<<<<< HEAD
 /*
  * check that branch_sample_type is compatible with
  * settings needed for precise_ip > 1 which implies
@@ -383,6 +729,9 @@ static inline int precise_br_compat(struct perf_event *event)
 }
 
 int x86_pmu_hw_config(struct perf_event *event)
+=======
+static int x86_pmu_hw_config(struct perf_event *event)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (event->attr.precise_ip) {
 		int precise = 0;
@@ -398,6 +747,7 @@ int x86_pmu_hw_config(struct perf_event *event)
 
 		if (event->attr.precise_ip > precise)
 			return -EOPNOTSUPP;
+<<<<<<< HEAD
 		/*
 		 * check that PEBS LBR correction does not conflict with
 		 * whatever the user is asking with attr->branch_sample_type
@@ -428,6 +778,8 @@ int x86_pmu_hw_config(struct perf_event *event)
 					*br_type |= PERF_SAMPLE_BRANCH_KERNEL;
 			}
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -482,6 +834,7 @@ static int __x86_pmu_event_init(struct perf_event *event)
 	event->hw.last_cpu = -1;
 	event->hw.last_tag = ~0ULL;
 
+<<<<<<< HEAD
 	/* mark unused */
 	event->hw.extra_reg.idx = EXTRA_REG_NONE;
 
@@ -493,6 +846,12 @@ static int __x86_pmu_event_init(struct perf_event *event)
 }
 
 void x86_pmu_disable_all(void)
+=======
+	return x86_pmu.hw_config(event);
+}
+
+static void x86_pmu_disable_all(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 	int idx;
@@ -527,7 +886,19 @@ static void x86_pmu_disable(struct pmu *pmu)
 	x86_pmu.disable_all();
 }
 
+<<<<<<< HEAD
 void x86_pmu_enable_all(int added)
+=======
+static inline void __x86_pmu_enable_event(struct hw_perf_event *hwc,
+					  u64 enable_mask)
+{
+	if (hwc->extra_reg)
+		wrmsrl(hwc->extra_reg, hwc->extra_config);
+	wrmsrl(hwc->config_base, hwc->config | enable_mask);
+}
+
+static void x86_pmu_enable_all(int added)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 	int idx;
@@ -549,6 +920,7 @@ static inline int is_x86_event(struct perf_event *event)
 	return event->pmu == &pmu;
 }
 
+<<<<<<< HEAD
 /*
  * Event scheduler state:
  *
@@ -729,15 +1101,28 @@ int x86_schedule_events(struct cpu_hw_events *cpuc, int n, int *assign)
 	struct event_constraint *c, *constraints[X86_PMC_IDX_MAX];
 	unsigned long used_mask[BITS_TO_LONGS(X86_PMC_IDX_MAX)];
 	int i, wmin, wmax, num = 0;
+=======
+static int x86_schedule_events(struct cpu_hw_events *cpuc, int n, int *assign)
+{
+	struct event_constraint *c, *constraints[X86_PMC_IDX_MAX];
+	unsigned long used_mask[BITS_TO_LONGS(X86_PMC_IDX_MAX)];
+	int i, j, w, wmax, num = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct hw_perf_event *hwc;
 
 	bitmap_zero(used_mask, X86_PMC_IDX_MAX);
 
+<<<<<<< HEAD
 	for (i = 0, wmin = X86_PMC_IDX_MAX, wmax = 0; i < n; i++) {
 		c = x86_pmu.get_event_constraints(cpuc, cpuc->event_list[i]);
 		constraints[i] = c;
 		wmin = min(wmin, c->weight);
 		wmax = max(wmax, c->weight);
+=======
+	for (i = 0; i < n; i++) {
+		c = x86_pmu.get_event_constraints(cpuc, cpuc->event_list[i]);
+		constraints[i] = c;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -763,12 +1148,69 @@ int x86_schedule_events(struct cpu_hw_events *cpuc, int n, int *assign)
 		if (assign)
 			assign[i] = hwc->idx;
 	}
+<<<<<<< HEAD
 
 	/* slow path */
 	if (i != n)
 		num = perf_assign_events(constraints, n, wmin, wmax, assign);
 
 	/*
+=======
+	if (i == n)
+		goto done;
+
+	/*
+	 * begin slow path
+	 */
+
+	bitmap_zero(used_mask, X86_PMC_IDX_MAX);
+
+	/*
+	 * weight = number of possible counters
+	 *
+	 * 1    = most constrained, only works on one counter
+	 * wmax = least constrained, works on any counter
+	 *
+	 * assign events to counters starting with most
+	 * constrained events.
+	 */
+	wmax = x86_pmu.num_counters;
+
+	/*
+	 * when fixed event counters are present,
+	 * wmax is incremented by 1 to account
+	 * for one more choice
+	 */
+	if (x86_pmu.num_counters_fixed)
+		wmax++;
+
+	for (w = 1, num = n; num && w <= wmax; w++) {
+		/* for each event */
+		for (i = 0; num && i < n; i++) {
+			c = constraints[i];
+			hwc = &cpuc->event_list[i]->hw;
+
+			if (c->weight != w)
+				continue;
+
+			for_each_set_bit(j, c->idxmsk, X86_PMC_IDX_MAX) {
+				if (!test_bit(j, used_mask))
+					break;
+			}
+
+			if (j == X86_PMC_IDX_MAX)
+				break;
+
+			__set_bit(j, used_mask);
+
+			if (assign)
+				assign[i] = j;
+			num--;
+		}
+	}
+done:
+	/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * scheduling failed or is just a simulation,
 	 * free resources if necessary
 	 */
@@ -778,7 +1220,11 @@ int x86_schedule_events(struct cpu_hw_events *cpuc, int n, int *assign)
 				x86_pmu.put_event_constraints(cpuc, cpuc->event_list[i]);
 		}
 	}
+<<<<<<< HEAD
 	return num ? -EINVAL : 0;
+=======
+	return num ? -ENOSPC : 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -797,7 +1243,11 @@ static int collect_events(struct cpu_hw_events *cpuc, struct perf_event *leader,
 
 	if (is_x86_event(leader)) {
 		if (n >= max_count)
+<<<<<<< HEAD
 			return -EINVAL;
+=======
+			return -ENOSPC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cpuc->event_list[n] = leader;
 		n++;
 	}
@@ -810,7 +1260,11 @@ static int collect_events(struct cpu_hw_events *cpuc, struct perf_event *leader,
 			continue;
 
 		if (n >= max_count)
+<<<<<<< HEAD
 			return -EINVAL;
+=======
+			return -ENOSPC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		cpuc->event_list[n] = event;
 		n++;
@@ -849,6 +1303,10 @@ static inline int match_prev_assignment(struct hw_perf_event *hwc,
 }
 
 static void x86_pmu_start(struct perf_event *event, int flags);
+<<<<<<< HEAD
+=======
+static void x86_pmu_stop(struct perf_event *event, int flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void x86_pmu_enable(struct pmu *pmu)
 {
@@ -920,13 +1378,28 @@ static void x86_pmu_enable(struct pmu *pmu)
 	x86_pmu.enable_all(added);
 }
 
+<<<<<<< HEAD
+=======
+static inline void x86_pmu_disable_event(struct perf_event *event)
+{
+	struct hw_perf_event *hwc = &event->hw;
+
+	wrmsrl(hwc->config_base, hwc->config);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEFINE_PER_CPU(u64 [X86_PMC_IDX_MAX], pmc_prev_left);
 
 /*
  * Set the next IRQ period, based on the hwc->period_left value.
  * To be called with the event disabled in hw:
  */
+<<<<<<< HEAD
 int x86_perf_event_set_period(struct perf_event *event)
+=======
+static int
+x86_perf_event_set_period(struct perf_event *event)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hw_perf_event *hwc = &event->hw;
 	s64 left = local64_read(&hwc->period_left);
@@ -986,7 +1459,11 @@ int x86_perf_event_set_period(struct perf_event *event)
 	return ret;
 }
 
+<<<<<<< HEAD
 void x86_pmu_enable_event(struct perf_event *event)
+=======
+static void x86_pmu_enable_event(struct perf_event *event)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (__this_cpu_read(cpu_hw_events.enabled))
 		__x86_pmu_enable_event(&event->hw,
@@ -1125,7 +1602,11 @@ void perf_event_print_debug(void)
 	local_irq_restore(flags);
 }
 
+<<<<<<< HEAD
 void x86_pmu_stop(struct perf_event *event, int flags)
+=======
+static void x86_pmu_stop(struct perf_event *event, int flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cpu_hw_events *cpuc = &__get_cpu_var(cpu_hw_events);
 	struct hw_perf_event *hwc = &event->hw;
@@ -1178,7 +1659,11 @@ static void x86_pmu_del(struct perf_event *event, int flags)
 	perf_event_update_userpage(event);
 }
 
+<<<<<<< HEAD
 int x86_pmu_handle_irq(struct pt_regs *regs)
+=======
+static int x86_pmu_handle_irq(struct pt_regs *regs)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct perf_sample_data data;
 	struct cpu_hw_events *cpuc;
@@ -1227,7 +1712,11 @@ int x86_pmu_handle_irq(struct pt_regs *regs)
 		if (!x86_perf_event_set_period(event))
 			continue;
 
+<<<<<<< HEAD
 		if (perf_event_overflow(event, &data, regs))
+=======
+		if (perf_event_overflow(event, 1, &data, regs))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			x86_pmu_stop(event, 0);
 	}
 
@@ -1248,6 +1737,7 @@ void perf_events_lapic_init(void)
 	apic_write(APIC_LVTPC, APIC_DM_NMI);
 }
 
+<<<<<<< HEAD
 static int __kprobes
 perf_event_nmi_handler(unsigned int cmd, struct pt_regs *regs)
 {
@@ -1259,32 +1749,140 @@ perf_event_nmi_handler(unsigned int cmd, struct pt_regs *regs)
 
 struct event_constraint emptyconstraint;
 struct event_constraint unconstrained;
+=======
+struct pmu_nmi_state {
+	unsigned int	marked;
+	int		handled;
+};
+
+static DEFINE_PER_CPU(struct pmu_nmi_state, pmu_nmi);
+
+static int __kprobes
+perf_event_nmi_handler(struct notifier_block *self,
+			 unsigned long cmd, void *__args)
+{
+	struct die_args *args = __args;
+	unsigned int this_nmi;
+	int handled;
+
+	if (!atomic_read(&active_events))
+		return NOTIFY_DONE;
+
+	switch (cmd) {
+	case DIE_NMI:
+		break;
+	case DIE_NMIUNKNOWN:
+		this_nmi = percpu_read(irq_stat.__nmi_count);
+		if (this_nmi != __this_cpu_read(pmu_nmi.marked))
+			/* let the kernel handle the unknown nmi */
+			return NOTIFY_DONE;
+		/*
+		 * This one is a PMU back-to-back nmi. Two events
+		 * trigger 'simultaneously' raising two back-to-back
+		 * NMIs. If the first NMI handles both, the latter
+		 * will be empty and daze the CPU. So, we drop it to
+		 * avoid false-positive 'unknown nmi' messages.
+		 */
+		return NOTIFY_STOP;
+	default:
+		return NOTIFY_DONE;
+	}
+
+	handled = x86_pmu.handle_irq(args->regs);
+	if (!handled)
+		return NOTIFY_DONE;
+
+	this_nmi = percpu_read(irq_stat.__nmi_count);
+	if ((handled > 1) ||
+		/* the next nmi could be a back-to-back nmi */
+	    ((__this_cpu_read(pmu_nmi.marked) == this_nmi) &&
+	     (__this_cpu_read(pmu_nmi.handled) > 1))) {
+		/*
+		 * We could have two subsequent back-to-back nmis: The
+		 * first handles more than one counter, the 2nd
+		 * handles only one counter and the 3rd handles no
+		 * counter.
+		 *
+		 * This is the 2nd nmi because the previous was
+		 * handling more than one counter. We will mark the
+		 * next (3rd) and then drop it if unhandled.
+		 */
+		__this_cpu_write(pmu_nmi.marked, this_nmi + 1);
+		__this_cpu_write(pmu_nmi.handled, handled);
+	}
+
+	return NOTIFY_STOP;
+}
+
+static __read_mostly struct notifier_block perf_event_nmi_notifier = {
+	.notifier_call		= perf_event_nmi_handler,
+	.next			= NULL,
+	.priority		= NMI_LOCAL_LOW_PRIOR,
+};
+
+static struct event_constraint unconstrained;
+static struct event_constraint emptyconstraint;
+
+static struct event_constraint *
+x86_get_event_constraints(struct cpu_hw_events *cpuc, struct perf_event *event)
+{
+	struct event_constraint *c;
+
+	if (x86_pmu.event_constraints) {
+		for_each_event_constraint(c, x86_pmu.event_constraints) {
+			if ((event->hw.config & c->cmask) == c->code)
+				return c;
+		}
+	}
+
+	return &unconstrained;
+}
+
+#include "perf_event_amd.c"
+#include "perf_event_p6.c"
+#include "perf_event_p4.c"
+#include "perf_event_intel_lbr.c"
+#include "perf_event_intel_ds.c"
+#include "perf_event_intel.c"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __cpuinit
 x86_pmu_notifier(struct notifier_block *self, unsigned long action, void *hcpu)
 {
 	unsigned int cpu = (long)hcpu;
+<<<<<<< HEAD
 	struct cpu_hw_events *cpuc = &per_cpu(cpu_hw_events, cpu);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = NOTIFY_OK;
 
 	switch (action & ~CPU_TASKS_FROZEN) {
 	case CPU_UP_PREPARE:
+<<<<<<< HEAD
 		cpuc->kfree_on_online = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (x86_pmu.cpu_prepare)
 			ret = x86_pmu.cpu_prepare(cpu);
 		break;
 
 	case CPU_STARTING:
+<<<<<<< HEAD
 		if (x86_pmu.attr_rdpmc)
 			set_in_cr4(X86_CR4_PCE);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (x86_pmu.cpu_starting)
 			x86_pmu.cpu_starting(cpu);
 		break;
 
+<<<<<<< HEAD
 	case CPU_ONLINE:
 		kfree(cpuc->kfree_on_online);
 		break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case CPU_DYING:
 		if (x86_pmu.cpu_dying)
 			x86_pmu.cpu_dying(cpu);
@@ -1313,6 +1911,7 @@ static void __init pmu_check_apic(void)
 	pr_info("no hardware sampling interrupt available.\n");
 }
 
+<<<<<<< HEAD
 static struct attribute_group x86_pmu_format_group = {
 	.name = "format",
 	.attrs = NULL,
@@ -1321,6 +1920,10 @@ static struct attribute_group x86_pmu_format_group = {
 static int __init init_hw_perf_events(void)
 {
 	struct x86_pmu_quirk *quirk;
+=======
+static int __init init_hw_perf_events(void)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct event_constraint *c;
 	int err;
 
@@ -1349,8 +1952,13 @@ static int __init init_hw_perf_events(void)
 
 	pr_cont("%s PMU driver.\n", x86_pmu.name);
 
+<<<<<<< HEAD
 	for (quirk = x86_pmu.quirks; quirk; quirk = quirk->next)
 		quirk->func();
+=======
+	if (x86_pmu.quirks)
+		x86_pmu.quirks();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (x86_pmu.num_counters > X86_PMC_MAX_GENERIC) {
 		WARN(1, KERN_ERR "hw perf events %d > max(%d), clipping!",
@@ -1369,6 +1977,7 @@ static int __init init_hw_perf_events(void)
 		((1LL << x86_pmu.num_counters_fixed)-1) << X86_PMC_IDX_FIXED;
 
 	perf_events_lapic_init();
+<<<<<<< HEAD
 	register_nmi_handler(NMI_LOCAL, perf_event_nmi_handler, 0, "PMI");
 
 	unconstrained = (struct event_constraint)
@@ -1385,15 +1994,30 @@ static int __init init_hw_perf_events(void)
 			    || c->idxmsk64 == X86_PMC_MSK_FIXED_REF_CYCLES) {
 				continue;
 			}
+=======
+	register_die_notifier(&perf_event_nmi_notifier);
+
+	unconstrained = (struct event_constraint)
+		__EVENT_CONSTRAINT(0, (1ULL << x86_pmu.num_counters) - 1,
+				   0, x86_pmu.num_counters);
+
+	if (x86_pmu.event_constraints) {
+		for_each_event_constraint(c, x86_pmu.event_constraints) {
+			if (c->cmask != X86_RAW_EVENT_MASK)
+				continue;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			c->idxmsk64 |= (1ULL << x86_pmu.num_counters) - 1;
 			c->weight += x86_pmu.num_counters;
 		}
 	}
 
+<<<<<<< HEAD
 	x86_pmu.attr_rdpmc = 1; /* enable userspace RDPMC usage by default */
 	x86_pmu_format_group.attrs = x86_pmu.format_attrs;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pr_info("... version:                %d\n",     x86_pmu.version);
 	pr_info("... bit width:              %d\n",     x86_pmu.cntval_bits);
 	pr_info("... generic registers:      %d\n",     x86_pmu.num_counters);
@@ -1472,6 +2096,7 @@ static int x86_pmu_commit_txn(struct pmu *pmu)
 	perf_pmu_enable(pmu);
 	return 0;
 }
+<<<<<<< HEAD
 /*
  * a fake_cpuc is used to validate event groups. Due to
  * the extra reg logic, we need to also allocate a fake
@@ -1506,6 +2131,8 @@ error:
 	free_fake_cpuc(cpuc);
 	return ERR_PTR(-ENOMEM);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * validate that we can schedule this event
@@ -1516,19 +2143,33 @@ static int validate_event(struct perf_event *event)
 	struct event_constraint *c;
 	int ret = 0;
 
+<<<<<<< HEAD
 	fake_cpuc = allocate_fake_cpuc();
 	if (IS_ERR(fake_cpuc))
 		return PTR_ERR(fake_cpuc);
+=======
+	fake_cpuc = kmalloc(sizeof(*fake_cpuc), GFP_KERNEL | __GFP_ZERO);
+	if (!fake_cpuc)
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	c = x86_pmu.get_event_constraints(fake_cpuc, event);
 
 	if (!c || !c->weight)
+<<<<<<< HEAD
 		ret = -EINVAL;
+=======
+		ret = -ENOSPC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (x86_pmu.put_event_constraints)
 		x86_pmu.put_event_constraints(fake_cpuc, event);
 
+<<<<<<< HEAD
 	free_fake_cpuc(fake_cpuc);
+=======
+	kfree(fake_cpuc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -1548,32 +2189,59 @@ static int validate_group(struct perf_event *event)
 {
 	struct perf_event *leader = event->group_leader;
 	struct cpu_hw_events *fake_cpuc;
+<<<<<<< HEAD
 	int ret = -EINVAL, n;
 
 	fake_cpuc = allocate_fake_cpuc();
 	if (IS_ERR(fake_cpuc))
 		return PTR_ERR(fake_cpuc);
+=======
+	int ret, n;
+
+	ret = -ENOMEM;
+	fake_cpuc = kmalloc(sizeof(*fake_cpuc), GFP_KERNEL | __GFP_ZERO);
+	if (!fake_cpuc)
+		goto out;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * the event is not yet connected with its
 	 * siblings therefore we must first collect
 	 * existing siblings, then add the new event
 	 * before we can simulate the scheduling
 	 */
+<<<<<<< HEAD
 	n = collect_events(fake_cpuc, leader, true);
 	if (n < 0)
 		goto out;
+=======
+	ret = -ENOSPC;
+	n = collect_events(fake_cpuc, leader, true);
+	if (n < 0)
+		goto out_free;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fake_cpuc->n_events = n;
 	n = collect_events(fake_cpuc, event, false);
 	if (n < 0)
+<<<<<<< HEAD
 		goto out;
+=======
+		goto out_free;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fake_cpuc->n_events = n;
 
 	ret = x86_pmu.schedule_events(fake_cpuc, n, NULL);
 
+<<<<<<< HEAD
 out:
 	free_fake_cpuc(fake_cpuc);
+=======
+out_free:
+	kfree(fake_cpuc);
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1617,6 +2285,7 @@ static int x86_pmu_event_init(struct perf_event *event)
 	return err;
 }
 
+<<<<<<< HEAD
 static int x86_pmu_event_idx(struct perf_event *event)
 {
 	int idx = event->hw.idx;
@@ -1699,10 +2368,24 @@ static struct pmu pmu = {
 	.start			= x86_pmu_start,
 	.stop			= x86_pmu_stop,
 	.read			= x86_pmu_read,
+=======
+static struct pmu pmu = {
+	.pmu_enable	= x86_pmu_enable,
+	.pmu_disable	= x86_pmu_disable,
+
+	.event_init	= x86_pmu_event_init,
+
+	.add		= x86_pmu_add,
+	.del		= x86_pmu_del,
+	.start		= x86_pmu_start,
+	.stop		= x86_pmu_stop,
+	.read		= x86_pmu_read,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.start_txn	= x86_pmu_start_txn,
 	.cancel_txn	= x86_pmu_cancel_txn,
 	.commit_txn	= x86_pmu_commit_txn,
+<<<<<<< HEAD
 
 	.event_idx	= x86_pmu_event_idx,
 	.flush_branch_stack	= x86_pmu_flush_branch_stack,
@@ -1726,6 +2409,10 @@ void arch_perf_update_userpage(struct perf_event_mmap_page *userpg, u64 now)
 	userpg->time_offset = this_cpu_read(cyc2ns_offset) - now;
 }
 
+=======
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * callchain support
  */
@@ -1762,9 +2449,12 @@ perf_callchain_kernel(struct perf_callchain_entry *entry, struct pt_regs *regs)
 }
 
 #ifdef CONFIG_COMPAT
+<<<<<<< HEAD
 
 #include <asm/compat.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int
 perf_callchain_user32(struct pt_regs *regs, struct perf_callchain_entry *entry)
 {
@@ -1872,6 +2562,7 @@ unsigned long perf_misc_flags(struct pt_regs *regs)
 
 	return misc;
 }
+<<<<<<< HEAD
 
 void perf_get_x86_pmu_capability(struct x86_pmu_capability *cap)
 {
@@ -1884,3 +2575,5 @@ void perf_get_x86_pmu_capability(struct x86_pmu_capability *cap)
 	cap->events_mask_len	= x86_pmu.events_mask_len;
 }
 EXPORT_SYMBOL_GPL(perf_get_x86_pmu_capability);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

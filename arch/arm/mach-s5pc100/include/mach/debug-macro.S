@@ -22,7 +22,11 @@
 	 * aligned and add in the offset when we load the value here.
 	 */
 
+<<<<<<< HEAD
 	.macro addruart, rp, rv, tmp
+=======
+	.macro addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ldr	\rp, = S3C_PA_UART
 		ldr	\rv, = S3C_VA_UART
 #if CONFIG_DEBUG_S3C_UART != 0

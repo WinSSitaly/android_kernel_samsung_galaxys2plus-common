@@ -3,11 +3,17 @@
 
 #ifdef __ASSEMBLY__
 # define __ASM_FORM(x)	x
+<<<<<<< HEAD
 # define __ASM_FORM_COMMA(x) x,
 # define __ASM_EX_SEC	.section __ex_table, "a"
 #else
 # define __ASM_FORM(x)	" " #x " "
 # define __ASM_FORM_COMMA(x) " " #x ","
+=======
+# define __ASM_EX_SEC	.section __ex_table, "a"
+#else
+# define __ASM_FORM(x)	" " #x " "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # define __ASM_EX_SEC	" .section __ex_table,\"a\"\n"
 #endif
 
@@ -17,8 +23,12 @@
 # define __ASM_SEL(a,b) __ASM_FORM(b)
 #endif
 
+<<<<<<< HEAD
 #define __ASM_SIZE(inst, ...)	__ASM_SEL(inst##l##__VA_ARGS__, \
 					  inst##q##__VA_ARGS__)
+=======
+#define __ASM_SIZE(inst)	__ASM_SEL(inst##l, inst##q)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define __ASM_REG(reg)		__ASM_SEL(e##reg, r##reg)
 
 #define _ASM_PTR	__ASM_SEL(.long, .quad)

@@ -49,6 +49,10 @@ CONFIG_BLK_DEV_RAM=y
 CONFIG_NETDEVICES=y
 CONFIG_NET_ETHERNET=y
 CONFIG_FEC=y
+<<<<<<< HEAD
+=======
+CONFIG_FEC2=y
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # CONFIG_NETDEV_1000 is not set
 # CONFIG_NETDEV_10000 is not set
 CONFIG_PPP=y

@@ -41,7 +41,10 @@
  */
 #include <linux/spinlock.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "uwb-internal.h"
 
@@ -184,7 +187,11 @@ int uwb_est_create(void)
 
 	uwb_est_size = 2;
 	uwb_est_used = 0;
+<<<<<<< HEAD
 	uwb_est = kcalloc(uwb_est_size, sizeof(uwb_est[0]), GFP_KERNEL);
+=======
+	uwb_est = kzalloc(uwb_est_size * sizeof(uwb_est[0]), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (uwb_est == NULL)
 		return -ENOMEM;
 

@@ -27,10 +27,24 @@
  * if you can arrange appropriate host side drivers.
  */
 
+<<<<<<< HEAD
+=======
+struct gser_descs {
+	struct usb_endpoint_descriptor	*in;
+	struct usb_endpoint_descriptor	*out;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct f_gser {
 	struct gserial			port;
 	u8				data_id;
 	u8				port_num;
+<<<<<<< HEAD
+=======
+
+	struct gser_descs		fs;
+	struct gser_descs		hs;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline struct f_gser *func_to_gser(struct usb_function *f)
@@ -99,6 +113,7 @@ static struct usb_descriptor_header *gser_hs_function[] __initdata = {
 	NULL,
 };
 
+<<<<<<< HEAD
 static struct usb_endpoint_descriptor gser_ss_in_desc __initdata = {
 	.bLength =		USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType =	USB_DT_ENDPOINT,
@@ -127,6 +142,8 @@ static struct usb_descriptor_header *gser_ss_function[] __initdata = {
 	NULL,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* string descriptors: */
 
 static struct usb_string gser_string_defs[] = {
@@ -156,6 +173,7 @@ static int gser_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
 	if (gser->port.in->driver_data) {
 		DBG(cdev, "reset generic ttyGS%d\n", gser->port_num);
 		gserial_disconnect(&gser->port);
+<<<<<<< HEAD
 	}
 	if (!gser->port.in->desc || !gser->port.out->desc) {
 		DBG(cdev, "activate generic ttyGS%d\n", gser->port_num);
@@ -165,6 +183,14 @@ static int gser_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
 			gser->port.out->desc = NULL;
 			return -EINVAL;
 		}
+=======
+	} else {
+		DBG(cdev, "activate generic ttyGS%d\n", gser->port_num);
+		gser->port.in_desc = ep_choose(cdev->gadget,
+				gser->hs.in, gser->fs.in);
+		gser->port.out_desc = ep_choose(cdev->gadget,
+				gser->hs.out, gser->fs.out);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	gserial_connect(&gser->port, gser->port_num);
 	return 0;
@@ -216,6 +242,15 @@ gser_bind(struct usb_configuration *c, struct usb_function *f)
 	/* copy descriptors, and track endpoint copies */
 	f->descriptors = usb_copy_descriptors(gser_fs_function);
 
+<<<<<<< HEAD
+=======
+	gser->fs.in = usb_find_endpoint(gser_fs_function,
+			f->descriptors, &gser_fs_in_desc);
+	gser->fs.out = usb_find_endpoint(gser_fs_function,
+			f->descriptors, &gser_fs_out_desc);
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* support all relevant hardware speeds... we expect that when
 	 * hardware is dual speed, all bulk-capable endpoints work at
 	 * both speeds
@@ -228,6 +263,7 @@ gser_bind(struct usb_configuration *c, struct usb_function *f)
 
 		/* copy descriptors, and track endpoint copies */
 		f->hs_descriptors = usb_copy_descriptors(gser_hs_function);
+<<<<<<< HEAD
 	}
 	if (gadget_is_superspeed(c->cdev->gadget)) {
 		gser_ss_in_desc.bEndpointAddress =
@@ -239,11 +275,21 @@ gser_bind(struct usb_configuration *c, struct usb_function *f)
 		f->ss_descriptors = usb_copy_descriptors(gser_ss_function);
 		if (!f->ss_descriptors)
 			goto fail;
+=======
+
+		gser->hs.in = usb_find_endpoint(gser_hs_function,
+				f->hs_descriptors, &gser_hs_in_desc);
+		gser->hs.out = usb_find_endpoint(gser_hs_function,
+				f->hs_descriptors, &gser_hs_out_desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	DBG(cdev, "generic ttyGS%d: %s speed IN/%s OUT/%s\n",
 			gser->port_num,
+<<<<<<< HEAD
 			gadget_is_superspeed(c->cdev->gadget) ? "super" :
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			gadget_is_dualspeed(c->cdev->gadget) ? "dual" : "full",
 			gser->port.in->name, gser->port.out->name);
 	return 0;
@@ -265,8 +311,11 @@ gser_unbind(struct usb_configuration *c, struct usb_function *f)
 {
 	if (gadget_is_dualspeed(c->cdev->gadget))
 		usb_free_descriptors(f->hs_descriptors);
+<<<<<<< HEAD
 	if (gadget_is_superspeed(c->cdev->gadget))
 		usb_free_descriptors(f->ss_descriptors);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usb_free_descriptors(f->descriptors);
 	kfree(func_to_gser(f));
 }

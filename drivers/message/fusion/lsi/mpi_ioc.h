@@ -857,7 +857,11 @@ typedef struct _EVENT_DATA_SAS_DISCOVERY
 #define MPI_EVENT_SAS_DSCVRY_PHY_BITS_MASK                  (0xFFFF0000)
 #define MPI_EVENT_SAS_DSCVRY_PHY_BITS_SHIFT                 (16)
 
+<<<<<<< HEAD
 /* SAS Discovery Error Event data */
+=======
+/* SAS Discovery Errror Event data */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct _EVENT_DATA_DISCOVERY_ERROR
 {

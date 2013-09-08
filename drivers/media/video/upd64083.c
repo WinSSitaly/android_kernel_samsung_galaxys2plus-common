@@ -34,7 +34,11 @@ MODULE_DESCRIPTION("uPD64083 driver");
 MODULE_AUTHOR("T. Adachi, Takeru KOMORIYA, Hans Verkuil");
 MODULE_LICENSE("GPL");
 
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(debug, bool, 0644);
 
 MODULE_PARM_DESC(debug, "Debug level (0-1)");
@@ -243,4 +247,19 @@ static struct i2c_driver upd64083_driver = {
 	.id_table	= upd64083_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(upd64083_driver);
+=======
+static __init int init_upd64083(void)
+{
+	return i2c_add_driver(&upd64083_driver);
+}
+
+static __exit void exit_upd64083(void)
+{
+	i2c_del_driver(&upd64083_driver);
+}
+
+module_init(init_upd64083);
+module_exit(exit_upd64083);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

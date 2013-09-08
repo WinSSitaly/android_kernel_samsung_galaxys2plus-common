@@ -35,24 +35,45 @@ static int mwifiex_add_bss_prio_tbl(struct mwifiex_private *priv)
 {
 	struct mwifiex_adapter *adapter = priv->adapter;
 	struct mwifiex_bss_prio_node *bss_prio;
+<<<<<<< HEAD
 	struct mwifiex_bss_prio_tbl *tbl = adapter->bss_prio_tbl;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	bss_prio = kzalloc(sizeof(struct mwifiex_bss_prio_node), GFP_KERNEL);
 	if (!bss_prio) {
 		dev_err(adapter->dev, "%s: failed to alloc bss_prio\n",
+<<<<<<< HEAD
 			__func__);
+=======
+						__func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 
 	bss_prio->priv = priv;
 	INIT_LIST_HEAD(&bss_prio->list);
+<<<<<<< HEAD
 	if (!tbl[priv->bss_priority].bss_prio_cur)
 		tbl[priv->bss_priority].bss_prio_cur = bss_prio;
 
 	spin_lock_irqsave(&tbl[priv->bss_priority].bss_prio_lock, flags);
 	list_add_tail(&bss_prio->list, &tbl[priv->bss_priority].bss_prio_head);
 	spin_unlock_irqrestore(&tbl[priv->bss_priority].bss_prio_lock, flags);
+=======
+	if (!adapter->bss_prio_tbl[priv->bss_priority].bss_prio_cur)
+		adapter->bss_prio_tbl[priv->bss_priority].bss_prio_cur =
+			bss_prio;
+
+	spin_lock_irqsave(&adapter->bss_prio_tbl[priv->bss_priority]
+			.bss_prio_lock, flags);
+	list_add_tail(&bss_prio->list,
+			&adapter->bss_prio_tbl[priv->bss_priority]
+			.bss_prio_head);
+	spin_unlock_irqrestore(&adapter->bss_prio_tbl[priv->bss_priority]
+			.bss_prio_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -72,13 +93,21 @@ static int mwifiex_init_priv(struct mwifiex_private *priv)
 	memset(priv->curr_addr, 0xff, ETH_ALEN);
 
 	priv->pkt_tx_ctrl = 0;
+<<<<<<< HEAD
 	priv->bss_mode = NL80211_IFTYPE_UNSPECIFIED;
+=======
+	priv->bss_mode = NL80211_IFTYPE_STATION;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	priv->data_rate = 0;	/* Initially indicate the rate as auto */
 	priv->is_data_rate_auto = true;
 	priv->bcn_avg_factor = DEFAULT_BCN_AVG_FACTOR;
 	priv->data_avg_factor = DEFAULT_DATA_AVG_FACTOR;
 
+<<<<<<< HEAD
 	priv->sec_info.wep_enabled = 0;
+=======
+	priv->sec_info.wep_status = MWIFIEX_802_11_WEP_DISABLED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	priv->sec_info.authentication_mode = NL80211_AUTHTYPE_OPEN_SYSTEM;
 	priv->sec_info.encryption_mode = 0;
 	for (i = 0; i < ARRAY_SIZE(priv->wep_key); i++)
@@ -148,18 +177,42 @@ static int mwifiex_init_priv(struct mwifiex_private *priv)
 static int mwifiex_allocate_adapter(struct mwifiex_adapter *adapter)
 {
 	int ret;
+<<<<<<< HEAD
+=======
+	u32 buf_size;
+	struct mwifiex_bssdescriptor *temp_scan_table;
+
+	/* Allocate buffer to store the BSSID list */
+	buf_size = sizeof(struct mwifiex_bssdescriptor) * IW_MAX_AP;
+	temp_scan_table = kzalloc(buf_size, GFP_KERNEL);
+	if (!temp_scan_table) {
+		dev_err(adapter->dev, "%s: failed to alloc temp_scan_table\n",
+		       __func__);
+		return -ENOMEM;
+	}
+
+	adapter->scan_table = temp_scan_table;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Allocate command buffer */
 	ret = mwifiex_alloc_cmd_buffer(adapter);
 	if (ret) {
 		dev_err(adapter->dev, "%s: failed to alloc cmd buffer\n",
+<<<<<<< HEAD
 			__func__);
+=======
+		       __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 
 	adapter->sleep_cfm =
 		dev_alloc_skb(sizeof(struct mwifiex_opt_sleep_confirm)
+<<<<<<< HEAD
 			      + INTF_HEADER_LEN);
+=======
+				+ INTF_HEADER_LEN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!adapter->sleep_cfm) {
 		dev_err(adapter->dev, "%s: failed to alloc sleep cfm"
@@ -183,6 +236,7 @@ static void mwifiex_init_adapter(struct mwifiex_adapter *adapter)
 	struct mwifiex_opt_sleep_confirm *sleep_cfm_buf = NULL;
 
 	skb_put(adapter->sleep_cfm, sizeof(struct mwifiex_opt_sleep_confirm));
+<<<<<<< HEAD
 
 	adapter->cmd_sent = false;
 
@@ -191,6 +245,13 @@ static void mwifiex_init_adapter(struct mwifiex_adapter *adapter)
 	else
 		adapter->data_sent = true;
 
+=======
+	sleep_cfm_buf = (struct mwifiex_opt_sleep_confirm *)
+						(adapter->sleep_cfm->data);
+
+	adapter->cmd_sent = false;
+	adapter->data_sent = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	adapter->cmd_resp_received = false;
 	adapter->event_received = false;
 	adapter->data_received = false;
@@ -208,8 +269,19 @@ static void mwifiex_init_adapter(struct mwifiex_adapter *adapter)
 	adapter->active_scan_time = MWIFIEX_ACTIVE_SCAN_CHAN_TIME;
 	adapter->passive_scan_time = MWIFIEX_PASSIVE_SCAN_CHAN_TIME;
 
+<<<<<<< HEAD
 	adapter->scan_probes = 1;
 
+=======
+	adapter->num_in_scan_table = 0;
+	memset(adapter->scan_table, 0,
+	       (sizeof(struct mwifiex_bssdescriptor) * IW_MAX_AP));
+	adapter->scan_probes = 1;
+
+	memset(adapter->bcn_buf, 0, sizeof(adapter->bcn_buf));
+	adapter->bcn_buf_end = adapter->bcn_buf;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	adapter->multiple_dtim = 1;
 
 	adapter->local_listen_interval = 0;	/* default value in firmware
@@ -242,14 +314,21 @@ static void mwifiex_init_adapter(struct mwifiex_adapter *adapter)
 	memset(adapter->event_body, 0, sizeof(adapter->event_body));
 	adapter->hw_dot_11n_dev_cap = 0;
 	adapter->hw_dev_mcs_support = 0;
+<<<<<<< HEAD
 	adapter->sec_chan_offset = 0;
+=======
+	adapter->chan_offset = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	adapter->adhoc_11n_enabled = false;
 
 	mwifiex_wmm_init(adapter);
 
 	if (adapter->sleep_cfm) {
+<<<<<<< HEAD
 		sleep_cfm_buf = (struct mwifiex_opt_sleep_confirm *)
 						adapter->sleep_cfm->data;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		memset(sleep_cfm_buf, 0, adapter->sleep_cfm->len);
 		sleep_cfm_buf->command =
 				cpu_to_le16(HostCmd_CMD_802_11_PS_MODE_ENH);
@@ -276,6 +355,7 @@ static void mwifiex_init_adapter(struct mwifiex_adapter *adapter)
 	adapter->adhoc_awake_period = 0;
 	memset(&adapter->arp_filter, 0, sizeof(adapter->arp_filter));
 	adapter->arp_filter_size = 0;
+<<<<<<< HEAD
 	adapter->channel_type = NL80211_CHAN_HT20;
 }
 
@@ -344,6 +424,8 @@ static void mwifiex_free_lock_list(struct mwifiex_adapter *adapter)
 			list_del(&priv->rx_reorder_tbl_ptr);
 		}
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -376,11 +458,20 @@ mwifiex_free_adapter(struct mwifiex_adapter *adapter)
 	del_timer(&adapter->cmd_timer);
 
 	dev_dbg(adapter->dev, "info: free scan table\n");
+<<<<<<< HEAD
 
 	adapter->if_ops.cleanup_if(adapter);
 
 	if (adapter->sleep_cfm)
 		dev_kfree_skb_any(adapter->sleep_cfm);
+=======
+	kfree(adapter->scan_table);
+	adapter->scan_table = NULL;
+
+	adapter->if_ops.cleanup_if(adapter);
+
+	dev_kfree_skb_any(adapter->sleep_cfm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -396,7 +487,10 @@ int mwifiex_init_lock_list(struct mwifiex_adapter *adapter)
 	spin_lock_init(&adapter->int_lock);
 	spin_lock_init(&adapter->main_proc_lock);
 	spin_lock_init(&adapter->mwifiex_cmd_lock);
+<<<<<<< HEAD
 	spin_lock_init(&adapter->queue_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < adapter->priv_num; i++) {
 		if (adapter->priv[i]) {
 			priv = adapter->priv[i];
@@ -442,6 +536,37 @@ int mwifiex_init_lock_list(struct mwifiex_adapter *adapter)
 }
 
 /*
+<<<<<<< HEAD
+=======
+ *  This function releases the lock variables and frees the locks and
+ *  associated locks.
+ */
+void mwifiex_free_lock_list(struct mwifiex_adapter *adapter)
+{
+	struct mwifiex_private *priv;
+	s32 i, j;
+
+	/* Free lists */
+	list_del(&adapter->cmd_free_q);
+	list_del(&adapter->cmd_pending_q);
+	list_del(&adapter->scan_pending_q);
+
+	for (i = 0; i < adapter->priv_num; i++)
+		list_del(&adapter->bss_prio_tbl[i].bss_prio_head);
+
+	for (i = 0; i < adapter->priv_num; i++) {
+		if (adapter->priv[i]) {
+			priv = adapter->priv[i];
+			for (j = 0; j < MAX_NUM_TID; ++j)
+				list_del(&priv->wmm.tid_tbl_ptr[j].ra_list);
+			list_del(&priv->tx_ba_stream_tbl_ptr);
+			list_del(&priv->rx_reorder_tbl_ptr);
+		}
+	}
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This function initializes the firmware.
  *
  * The following operations are performed sequentially -
@@ -516,7 +641,11 @@ static void mwifiex_delete_bss_prio_tbl(struct mwifiex_private *priv)
 	struct mwifiex_adapter *adapter = priv->adapter;
 	struct mwifiex_bss_prio_node *bssprio_node, *tmp_node, **cur;
 	struct list_head *head;
+<<<<<<< HEAD
 	spinlock_t *lock; /* bss priority lock */
+=======
+	spinlock_t *lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	for (i = 0; i < adapter->priv_num; ++i) {
@@ -524,9 +653,14 @@ static void mwifiex_delete_bss_prio_tbl(struct mwifiex_private *priv)
 		cur = &adapter->bss_prio_tbl[i].bss_prio_cur;
 		lock = &adapter->bss_prio_tbl[i].bss_prio_lock;
 		dev_dbg(adapter->dev, "info: delete BSS priority table,"
+<<<<<<< HEAD
 				" bss_type = %d, bss_num = %d, i = %d,"
 				" head = %p, cur = %p\n",
 			      priv->bss_type, priv->bss_num, i, head, *cur);
+=======
+				" index = %d, i = %d, head = %p, cur = %p\n",
+			      priv->bss_index, i, head, *cur);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (*cur) {
 			spin_lock_irqsave(lock, flags);
 			if (list_empty(head)) {
@@ -625,6 +759,7 @@ mwifiex_shutdown_drv(struct mwifiex_adapter *adapter)
 int mwifiex_dnld_fw(struct mwifiex_adapter *adapter,
 		    struct mwifiex_fw_image *pmfw)
 {
+<<<<<<< HEAD
 	int ret;
 	u32 poll_num = 1;
 
@@ -635,14 +770,31 @@ int mwifiex_dnld_fw(struct mwifiex_adapter *adapter,
 	if (!ret) {
 		dev_notice(adapter->dev,
 			   "WLAN FW already running! Skip FW download\n");
+=======
+	int ret, winner;
+	u32 poll_num = 1;
+
+	/* Check if firmware is already running */
+	ret = adapter->if_ops.check_fw_status(adapter, poll_num, &winner);
+	if (!ret) {
+		dev_notice(adapter->dev,
+				"WLAN FW already running! Skip FW download\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto done;
 	}
 	poll_num = MAX_FIRMWARE_POLL_TRIES;
 
 	/* Check if we are the winner for downloading FW */
+<<<<<<< HEAD
 	if (!adapter->winner) {
 		dev_notice(adapter->dev,
 			   "Other intf already running! Skip FW download\n");
+=======
+	if (!winner) {
+		dev_notice(adapter->dev,
+				"Other interface already running!"
+				" Skip FW download\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		poll_num = MAX_MULTI_INTERFACE_POLL_TRIES;
 		goto poll_fw;
 	}
@@ -657,7 +809,11 @@ int mwifiex_dnld_fw(struct mwifiex_adapter *adapter,
 
 poll_fw:
 	/* Check if the firmware is downloaded successfully or not */
+<<<<<<< HEAD
 	ret = adapter->if_ops.check_fw_status(adapter, poll_num);
+=======
+	ret = adapter->if_ops.check_fw_status(adapter, poll_num, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret) {
 		dev_err(adapter->dev, "FW failed to be active in time\n");
 		return -1;

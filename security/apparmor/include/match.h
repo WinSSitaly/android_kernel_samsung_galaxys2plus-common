@@ -116,9 +116,12 @@ unsigned int aa_dfa_match_len(struct aa_dfa *dfa, unsigned int start,
 			      const char *str, int len);
 unsigned int aa_dfa_match(struct aa_dfa *dfa, unsigned int start,
 			  const char *str);
+<<<<<<< HEAD
 unsigned int aa_dfa_next(struct aa_dfa *dfa, unsigned int state,
 			 const char c);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void aa_dfa_free_kref(struct kref *kref);
 
 /**

@@ -32,7 +32,11 @@
 #include <asm/ptrace.h>
 #include <asm/irq.h>
 #include <asm/bitops.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/traps.h>
 #include <asm/bitsperlong.h>
 

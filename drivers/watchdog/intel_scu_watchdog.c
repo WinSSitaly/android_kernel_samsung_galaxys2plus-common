@@ -22,8 +22,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/compiler.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -45,7 +48,11 @@
 #include <linux/signal.h>
 #include <linux/sfi.h>
 #include <asm/irq.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/intel_scu_ipc.h>
 #include <asm/apb_timer.h>
 #include <asm/mrst.h>
@@ -98,6 +105,7 @@ static struct intel_scu_watchdog_dev watchdog_device;
 static void watchdog_fire(void)
 {
 	if (force_boot) {
+<<<<<<< HEAD
 		pr_crit("Initiating system reboot\n");
 		emergency_restart();
 		pr_crit("Reboot didn't ?????\n");
@@ -106,6 +114,17 @@ static void watchdog_fire(void)
 	else {
 		pr_crit("Immediate Reboot Disabled\n");
 		pr_crit("System will reset when watchdog timer times out!\n");
+=======
+		printk(KERN_CRIT PFX "Initiating system reboot.\n");
+		emergency_restart();
+		printk(KERN_CRIT PFX "Reboot didn't ?????\n");
+	}
+
+	else {
+		printk(KERN_CRIT PFX "Immediate Reboot Disabled\n");
+		printk(KERN_CRIT PFX
+			"System will reset when watchdog timer times out!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -113,8 +132,13 @@ static int check_timer_margin(int new_margin)
 {
 	if ((new_margin < MIN_TIME_CYCLE) ||
 	    (new_margin > MAX_TIME - timer_set)) {
+<<<<<<< HEAD
 		pr_debug("value of new_margin %d is out of the range %d to %d\n",
 			 new_margin, MIN_TIME_CYCLE, MAX_TIME - timer_set);
+=======
+		pr_debug("Watchdog timer: value of new_margin %d is out of the range %d to %d\n",
+			  new_margin, MIN_TIME_CYCLE, MAX_TIME - timer_set);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 	return 0;
@@ -157,14 +181,22 @@ static irqreturn_t watchdog_timer_interrupt(int irq, void *dev_id)
 	int int_status;
 	int_status = ioread32(watchdog_device.timer_interrupt_status_addr);
 
+<<<<<<< HEAD
 	pr_debug("irq, int_status: %x\n", int_status);
+=======
+	pr_debug("Watchdog timer: irq, int_status: %x\n", int_status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (int_status != 0)
 		return IRQ_NONE;
 
 	/* has the timer been started? If not, then this is spurious */
 	if (watchdog_device.timer_started == 0) {
+<<<<<<< HEAD
 		pr_debug("spurious interrupt received\n");
+=======
+		pr_debug("Watchdog timer: spurious interrupt received\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return IRQ_HANDLED;
 	}
 
@@ -221,6 +253,7 @@ static int intel_scu_set_heartbeat(u32 t)
 		(watchdog_device.timer_set - timer_margin)
 		* watchdog_device.timer_tbl_ptr->freq_hz;
 
+<<<<<<< HEAD
 	pr_debug("set_heartbeat: timer freq is %d\n",
 		 watchdog_device.timer_tbl_ptr->freq_hz);
 	pr_debug("set_heartbeat: timer_set is %x (hex)\n",
@@ -230,6 +263,18 @@ static int intel_scu_set_heartbeat(u32 t)
 		 watchdog_device.threshold);
 	pr_debug("set_heartbeat: soft_threshold is %x (hex)\n",
 		 watchdog_device.soft_threshold);
+=======
+	pr_debug("Watchdog timer: set_heartbeat: timer freq is %d\n",
+		watchdog_device.timer_tbl_ptr->freq_hz);
+	pr_debug("Watchdog timer: set_heartbeat: timer_set is %x (hex)\n",
+		watchdog_device.timer_set);
+	pr_debug("Watchdog timer: set_hearbeat: timer_margin is %x (hex)\n",
+		timer_margin);
+	pr_debug("Watchdog timer: set_heartbeat: threshold is %x (hex)\n",
+		watchdog_device.threshold);
+	pr_debug("Watchdog timer: set_heartbeat: soft_threshold is %x (hex)\n",
+		watchdog_device.soft_threshold);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Adjust thresholds by FREQ_ADJUSTMENT factor, to make the */
 	/* watchdog timing come out right. */
@@ -264,7 +309,11 @@ static int intel_scu_set_heartbeat(u32 t)
 
 		if (MAX_RETRY < retry_count++) {
 			/* Unable to set timer value */
+<<<<<<< HEAD
 			pr_err("Unable to set timer\n");
+=======
+			pr_err("Watchdog timer: Unable to set timer\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ENODEV;
 		}
 
@@ -321,17 +370,30 @@ static int intel_scu_release(struct inode *inode, struct file *file)
 	 */
 
 	if (!test_and_clear_bit(0, &watchdog_device.driver_open)) {
+<<<<<<< HEAD
 		pr_debug("intel_scu_release, without open\n");
+=======
+		pr_debug("Watchdog timer: intel_scu_release, without open\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOTTY;
 	}
 
 	if (!watchdog_device.timer_started) {
 		/* Just close, since timer has not been started */
+<<<<<<< HEAD
 		pr_debug("closed, without starting timer\n");
 		return 0;
 	}
 
 	pr_crit("Unexpected close of /dev/watchdog!\n");
+=======
+		pr_debug("Watchdog timer: closed, without starting timer\n");
+		return 0;
+	}
+
+	printk(KERN_CRIT PFX
+	       "Unexpected close of /dev/watchdog!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Since the timer was started, prevent future reopens */
 	watchdog_device.driver_closed = 1;
@@ -453,8 +515,14 @@ static int __init intel_scu_watchdog_init(void)
 	/* Check value of timer_set boot parameter */
 	if ((timer_set < MIN_TIME_CYCLE) ||
 	    (timer_set > MAX_TIME - MIN_TIME_CYCLE)) {
+<<<<<<< HEAD
 		pr_err("value of timer_set %x (hex) is out of range from %x to %x (hex)\n",
 		       timer_set, MIN_TIME_CYCLE, MAX_TIME - MIN_TIME_CYCLE);
+=======
+		pr_err("Watchdog timer: value of timer_set %x (hex) "
+		  "is out of range from %x to %x (hex)\n",
+		  timer_set, MIN_TIME_CYCLE, MAX_TIME - MIN_TIME_CYCLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -465,18 +533,32 @@ static int __init intel_scu_watchdog_init(void)
 	watchdog_device.timer_tbl_ptr = sfi_get_mtmr(sfi_mtimer_num-1);
 
 	if (watchdog_device.timer_tbl_ptr == NULL) {
+<<<<<<< HEAD
 		pr_debug("timer is not available\n");
+=======
+		pr_debug("Watchdog timer - Intel SCU watchdog: timer is not available\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 	/* make sure the timer exists */
 	if (watchdog_device.timer_tbl_ptr->phys_addr == 0) {
+<<<<<<< HEAD
 		pr_debug("timer %d does not have valid physical memory\n",
 			 sfi_mtimer_num);
+=======
+		pr_debug("Watchdog timer - Intel SCU watchdog - timer %d does not have valid physical memory\n",
+								sfi_mtimer_num);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
 	if (watchdog_device.timer_tbl_ptr->irq == 0) {
+<<<<<<< HEAD
 		pr_debug("timer %d invalid irq\n", sfi_mtimer_num);
+=======
+		pr_debug("Watchdog timer: timer %d invalid irq\n",
+							sfi_mtimer_num);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
@@ -484,7 +566,11 @@ static int __init intel_scu_watchdog_init(void)
 			20);
 
 	if (tmp_addr == NULL) {
+<<<<<<< HEAD
 		pr_debug("timer unable to ioremap\n");
+=======
+		pr_debug("Watchdog timer: timer unable to ioremap\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 
@@ -509,7 +595,11 @@ static int __init intel_scu_watchdog_init(void)
 
 	ret = register_reboot_notifier(&watchdog_device.intel_scu_notifier);
 	if (ret) {
+<<<<<<< HEAD
 		pr_err("cannot register notifier %d)\n", ret);
+=======
+		pr_err("Watchdog timer: cannot register notifier %d)\n", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto register_reboot_error;
 	}
 
@@ -519,8 +609,13 @@ static int __init intel_scu_watchdog_init(void)
 
 	ret = misc_register(&watchdog_device.miscdev);
 	if (ret) {
+<<<<<<< HEAD
 		pr_err("cannot register miscdev %d err =%d\n",
 		       WATCHDOG_MINOR, ret);
+=======
+		pr_err("Watchdog timer: cannot register miscdev %d err =%d\n",
+							WATCHDOG_MINOR, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto misc_register_error;
 	}
 
@@ -529,7 +624,11 @@ static int __init intel_scu_watchdog_init(void)
 		IRQF_SHARED, "watchdog",
 		&watchdog_device.timer_load_count_addr);
 	if (ret) {
+<<<<<<< HEAD
 		pr_err("error requesting irq %d\n", ret);
+=======
+		pr_err("Watchdog timer: error requesting irq %d\n", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto request_irq_error;
 	}
 	/* Make sure timer is disabled before returning */

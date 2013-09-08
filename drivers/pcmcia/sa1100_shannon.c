@@ -15,6 +15,7 @@
 #include <asm/irq.h>
 #include "sa1100_generic.h"
 
+<<<<<<< HEAD
 static int shannon_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
 {
 	/* All those are inputs */
@@ -36,14 +37,47 @@ static int shannon_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
 	}
 
 	return 0;
+=======
+static struct pcmcia_irqs irqs[] = {
+	{ 0, SHANNON_IRQ_GPIO_EJECT_0, "PCMCIA_CD_0" },
+	{ 1, SHANNON_IRQ_GPIO_EJECT_1, "PCMCIA_CD_1" },
+};
+
+static int shannon_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
+{
+	/* All those are inputs */
+	GPDR &= ~(SHANNON_GPIO_EJECT_0 | SHANNON_GPIO_EJECT_1 | 
+		  SHANNON_GPIO_RDY_0 | SHANNON_GPIO_RDY_1);
+	GAFR &= ~(SHANNON_GPIO_EJECT_0 | SHANNON_GPIO_EJECT_1 | 
+		  SHANNON_GPIO_RDY_0 | SHANNON_GPIO_RDY_1);
+
+	skt->socket.pci_irq = skt->nr ? SHANNON_IRQ_GPIO_RDY_1 : SHANNON_IRQ_GPIO_RDY_0;
+
+	return soc_pcmcia_request_irqs(skt, irqs, ARRAY_SIZE(irqs));
+}
+
+static void shannon_pcmcia_hw_shutdown(struct soc_pcmcia_socket *skt)
+{
+	soc_pcmcia_free_irqs(skt, irqs, ARRAY_SIZE(irqs));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
 shannon_pcmcia_socket_state(struct soc_pcmcia_socket *skt,
 			    struct pcmcia_state *state)
 {
+<<<<<<< HEAD
 	switch (skt->nr) {
 	case 0:
+=======
+	unsigned long levels = GPLR;
+
+	switch (skt->nr) {
+	case 0:
+		state->detect = (levels & SHANNON_GPIO_EJECT_0) ? 0 : 1;
+		state->ready  = (levels & SHANNON_GPIO_RDY_0) ? 1 : 0;
+		state->wrprot = 0; /* Not available on Shannon. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		state->bvd1   = 1; 
 		state->bvd2   = 1; 
 		state->vs_3v  = 1; /* FIXME Can only apply 3.3V on Shannon. */
@@ -51,6 +85,12 @@ shannon_pcmcia_socket_state(struct soc_pcmcia_socket *skt,
 		break;
 
 	case 1:
+<<<<<<< HEAD
+=======
+		state->detect = (levels & SHANNON_GPIO_EJECT_1) ? 0 : 1;
+		state->ready  = (levels & SHANNON_GPIO_RDY_1) ? 1 : 0;
+		state->wrprot = 0; /* Not available on Shannon. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		state->bvd1   = 1; 
 		state->bvd2   = 1; 
 		state->vs_3v  = 1; /* FIXME Can only apply 3.3V on Shannon. */
@@ -84,11 +124,33 @@ shannon_pcmcia_configure_socket(struct soc_pcmcia_socket *skt,
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct pcmcia_low_level shannon_pcmcia_ops = {
 	.owner			= THIS_MODULE,
 	.hw_init		= shannon_pcmcia_hw_init,
 	.socket_state		= shannon_pcmcia_socket_state,
 	.configure_socket	= shannon_pcmcia_configure_socket,
+=======
+static void shannon_pcmcia_socket_init(struct soc_pcmcia_socket *skt)
+{
+	soc_pcmcia_enable_irqs(skt, irqs, ARRAY_SIZE(irqs));
+}
+
+static void shannon_pcmcia_socket_suspend(struct soc_pcmcia_socket *skt)
+{
+	soc_pcmcia_disable_irqs(skt, irqs, ARRAY_SIZE(irqs));
+}
+
+static struct pcmcia_low_level shannon_pcmcia_ops = {
+	.owner			= THIS_MODULE,
+	.hw_init		= shannon_pcmcia_hw_init,
+	.hw_shutdown		= shannon_pcmcia_hw_shutdown,
+	.socket_state		= shannon_pcmcia_socket_state,
+	.configure_socket	= shannon_pcmcia_configure_socket,
+
+	.socket_init		= shannon_pcmcia_socket_init,
+	.socket_suspend		= shannon_pcmcia_socket_suspend,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int __devinit pcmcia_shannon_init(struct device *dev)

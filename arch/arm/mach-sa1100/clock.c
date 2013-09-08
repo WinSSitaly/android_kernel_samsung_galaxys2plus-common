@@ -11,6 +11,7 @@
 #include <linux/clk.h>
 #include <linux/spinlock.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/io.h>
 #include <linux/clkdev.h>
 
@@ -34,6 +35,19 @@ struct clk clk_##_name = {				\
 static DEFINE_SPINLOCK(clocks_lock);
 
 static void clk_gpio27_enable(struct clk *clk)
+=======
+
+#include <mach/hardware.h>
+
+/*
+ * Very simple clock implementation - we only have one clock to deal with.
+ */
+struct clk {
+	unsigned int		enabled;
+};
+
+static void clk_gpio27_enable(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * First, set up the 3.6864MHz clock on GPIO 27 for the SA-1111:
@@ -44,17 +58,42 @@ static void clk_gpio27_enable(struct clk *clk)
 	TUCR = TUCR_3_6864MHz;
 }
 
+<<<<<<< HEAD
 static void clk_gpio27_disable(struct clk *clk)
+=======
+static void clk_gpio27_disable(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	TUCR = 0;
 	GPDR &= ~GPIO_32_768kHz;
 	GAFR &= ~GPIO_32_768kHz;
 }
 
+<<<<<<< HEAD
+=======
+static struct clk clk_gpio27;
+
+static DEFINE_SPINLOCK(clocks_lock);
+
+struct clk *clk_get(struct device *dev, const char *id)
+{
+	const char *devname = dev_name(dev);
+
+	return strcmp(devname, "sa1111.0") ? ERR_PTR(-ENOENT) : &clk_gpio27;
+}
+EXPORT_SYMBOL(clk_get);
+
+void clk_put(struct clk *clk)
+{
+}
+EXPORT_SYMBOL(clk_put);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int clk_enable(struct clk *clk)
 {
 	unsigned long flags;
 
+<<<<<<< HEAD
 	if (clk) {
 		spin_lock_irqsave(&clocks_lock, flags);
 		if (clk->enabled++ == 0)
@@ -62,6 +101,12 @@ int clk_enable(struct clk *clk)
 		spin_unlock_irqrestore(&clocks_lock, flags);
 	}
 
+=======
+	spin_lock_irqsave(&clocks_lock, flags);
+	if (clk->enabled++ == 0)
+		clk_gpio27_enable();
+	spin_unlock_irqrestore(&clocks_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL(clk_enable);
@@ -70,6 +115,7 @@ void clk_disable(struct clk *clk)
 {
 	unsigned long flags;
 
+<<<<<<< HEAD
 	if (clk) {
 		WARN_ON(clk->enabled == 0);
 		spin_lock_irqsave(&clocks_lock, flags);
@@ -98,3 +144,19 @@ static int __init sa11xx_clk_init(void)
 	return 0;
 }
 core_initcall(sa11xx_clk_init);
+=======
+	WARN_ON(clk->enabled == 0);
+
+	spin_lock_irqsave(&clocks_lock, flags);
+	if (--clk->enabled == 0)
+		clk_gpio27_disable();
+	spin_unlock_irqrestore(&clocks_lock, flags);
+}
+EXPORT_SYMBOL(clk_disable);
+
+unsigned long clk_get_rate(struct clk *clk)
+{
+	return 3686400;
+}
+EXPORT_SYMBOL(clk_get_rate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -102,6 +102,7 @@
 #define P4_CONFIG_HT			(1ULL << P4_CONFIG_HT_SHIFT)
 
 /*
+<<<<<<< HEAD
  * If an event has alias it should be marked
  * with a special bit. (Don't forget to check
  * P4_PEBS_CONFIG_MASK and related bits on
@@ -110,6 +111,8 @@
 #define P4_CONFIG_ALIASABLE		(1 << 9)
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * The bits we allow to pass for RAW events
  */
 #define P4_CONFIG_MASK_ESCR		\
@@ -131,6 +134,7 @@
 	(p4_config_pack_escr(P4_CONFIG_MASK_ESCR))	| \
 	(p4_config_pack_cccr(P4_CONFIG_MASK_CCCR))
 
+<<<<<<< HEAD
 /*
  * In case of event aliasing we need to preserve some
  * caller bits, otherwise the mapping won't be complete.
@@ -156,6 +160,8 @@
 			     P4_CCCR_OVF_PMI_T1		| \
 			     P4_CONFIG_ALIASABLE))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline bool p4_is_event_cascaded(u64 config)
 {
 	u32 cccr = p4_config_unpack_cccr(config);

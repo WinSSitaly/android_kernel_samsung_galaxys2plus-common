@@ -33,7 +33,10 @@
 #include "tea5767.h"
 #include "tda18271.h"
 #include "xc5000.h"
+<<<<<<< HEAD
 #include "s5h1411.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* commly used strings */
 static char name_mute[]    = "mute";
@@ -4952,9 +4955,14 @@ struct saa7134_board saa7134_boards[] = {
 		.audio_clock    = 0x00187de7,
 		.tuner_type     = TUNER_XC2028,
 		.radio_type     = UNSET,
+<<<<<<< HEAD
 		.tuner_addr	= 0x61,
 		.radio_addr	= ADDR_UNSET,
 		.mpeg           = SAA7134_MPEG_DVB,
+=======
+		.tuner_addr	= ADDR_UNSET,
+		.radio_addr	= ADDR_UNSET,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.inputs = {{
 			.name   = name_tv,
 			.vmux   = 3,
@@ -5692,6 +5700,7 @@ struct saa7134_board saa7134_boards[] = {
 			.amux = LINE1,
 		},
 	},
+<<<<<<< HEAD
 	[SAA7134_BOARD_SENSORAY811_911] = {
 		.name		= "Sensoray 811/911",
 		.audio_clock	= 0x00200000,
@@ -5743,6 +5752,8 @@ struct saa7134_board saa7134_boards[] = {
 			.gpio	= 0x0000000,
 		},
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 };
 
@@ -6337,12 +6348,15 @@ struct pci_device_id saa7134_pci_tbl[] = {
 		.driver_data  = SAA7134_BOARD_KWORLD_ATSC110, /* ATSC 115 */
 	},{
 		.vendor       = PCI_VENDOR_ID_PHILIPS,
+<<<<<<< HEAD
 		.device       = PCI_DEVICE_ID_PHILIPS_SAA7133, /* SAA7135HL */
 		.subvendor    = 0x17de,
 		.subdevice    = 0xa134,
 		.driver_data  = SAA7134_BOARD_KWORLD_PC150U,
 	}, {
 		.vendor       = PCI_VENDOR_ID_PHILIPS,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.device       = PCI_DEVICE_ID_PHILIPS_SAA7134,
 		.subvendor    = 0x1461,
 		.subdevice    = 0x7360,
@@ -6972,6 +6986,7 @@ struct pci_device_id saa7134_pci_tbl[] = {
 		.subdevice    = 0xd136,
 		.driver_data  = SAA7134_BOARD_MAGICPRO_PROHDTV_PRO2,
 	}, {
+<<<<<<< HEAD
 		.vendor       = PCI_VENDOR_ID_PHILIPS,
 		.device       = PCI_DEVICE_ID_PHILIPS_SAA7133,
 		.subvendor    = 0x6000,
@@ -6984,6 +6999,8 @@ struct pci_device_id saa7134_pci_tbl[] = {
 		.subdevice    = 0x0911,
 		.driver_data  = SAA7134_BOARD_SENSORAY811_911,
 	}, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* --- boards without eeprom + subsystem ID --- */
 		.vendor       = PCI_VENDOR_ID_PHILIPS,
 		.device       = PCI_DEVICE_ID_PHILIPS_SAA7134,
@@ -7063,11 +7080,14 @@ static int saa7134_xc2028_callback(struct saa7134_dev *dev,
 			msleep(10);
 			saa7134_set_gpio(dev, 18, 1);
 		break;
+<<<<<<< HEAD
 		case SAA7134_BOARD_VIDEOMATE_T750:
 			saa7134_set_gpio(dev, 20, 0);
 			msleep(10);
 			saa7134_set_gpio(dev, 20, 1);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	return 0;
 	}
@@ -7171,6 +7191,7 @@ static inline int saa7134_kworld_sbtvd_toggle_agc(struct saa7134_dev *dev,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int saa7134_kworld_pc150u_toggle_agc(struct saa7134_dev *dev,
 					    enum tda18271_mode mode)
 {
@@ -7188,6 +7209,8 @@ static int saa7134_kworld_pc150u_toggle_agc(struct saa7134_dev *dev,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int saa7134_tda8290_18271_callback(struct saa7134_dev *dev,
 					  int command, int arg)
 {
@@ -7204,9 +7227,12 @@ static int saa7134_tda8290_18271_callback(struct saa7134_dev *dev,
 		case SAA7134_BOARD_KWORLD_PCI_SBTVD_FULLSEG:
 			ret = saa7134_kworld_sbtvd_toggle_agc(dev, arg);
 			break;
+<<<<<<< HEAD
 		case SAA7134_BOARD_KWORLD_PC150U:
 			ret = saa7134_kworld_pc150u_toggle_agc(dev, arg);
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			break;
 		}
@@ -7228,7 +7254,10 @@ static int saa7134_tda8290_callback(struct saa7134_dev *dev,
 	case SAA7134_BOARD_HAUPPAUGE_HVR1120:
 	case SAA7134_BOARD_AVERMEDIA_M733A:
 	case SAA7134_BOARD_KWORLD_PCI_SBTVD_FULLSEG:
+<<<<<<< HEAD
 	case SAA7134_BOARD_KWORLD_PC150U:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SAA7134_BOARD_MAGICPRO_PROHDTV_PRO2:
 		/* tda8290 + tda18271 */
 		ret = saa7134_tda8290_18271_callback(dev, command, arg);
@@ -7510,7 +7539,10 @@ int saa7134_board_init1(struct saa7134_dev *dev)
 	case SAA7134_BOARD_BEHOLD_X7:
 	case SAA7134_BOARD_BEHOLD_H7:
 	case SAA7134_BOARD_BEHOLD_A7:
+<<<<<<< HEAD
 	case SAA7134_BOARD_KWORLD_PC150U:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev->has_remote = SAA7134_REMOTE_I2C;
 		break;
 	case SAA7134_BOARD_AVERMEDIA_A169_B:
@@ -7549,11 +7581,14 @@ int saa7134_board_init1(struct saa7134_dev *dev)
 		saa_andorl(SAA7134_GPIO_GPMODE0 >> 2,   0x0e050000, 0x0c050000);
 		saa_andorl(SAA7134_GPIO_GPSTATUS0 >> 2, 0x0e050000, 0x0c050000);
 		break;
+<<<<<<< HEAD
 	case SAA7134_BOARD_VIDEOMATE_T750:
 		/* enable the analog tuner */
 		saa_andorl(SAA7134_GPIO_GPMODE0 >> 2,   0x00008000, 0x00008000);
 		saa_andorl(SAA7134_GPIO_GPSTATUS0 >> 2, 0x00008000, 0x00008000);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }

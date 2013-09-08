@@ -4,7 +4,10 @@
  */
 
 #include <linux/mm.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <asm/pgtable.h>
 #include <asm/tlbflush.h>
@@ -12,6 +15,10 @@
 #include "mem_user.h"
 #include "os.h"
 #include "skas.h"
+<<<<<<< HEAD
+=======
+#include "tlb.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct host_vm_change {
 	struct host_vm_op {
@@ -287,7 +294,11 @@ void fix_range_common(struct mm_struct *mm, unsigned long start_addr,
 	}
 }
 
+<<<<<<< HEAD
 static int flush_tlb_kernel_range_common(unsigned long start, unsigned long end)
+=======
+int flush_tlb_kernel_range_common(unsigned long start, unsigned long end)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct mm_struct *mm;
 	pgd_t *pgd;
@@ -499,7 +510,10 @@ void flush_tlb_range(struct vm_area_struct *vma, unsigned long start,
 		flush_tlb_kernel_range_common(start, end);
 	else fix_range(vma->vm_mm, start, end, 0);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(flush_tlb_range);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
 			unsigned long end)

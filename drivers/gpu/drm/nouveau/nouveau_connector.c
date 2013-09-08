@@ -35,13 +35,21 @@
 #include "nouveau_encoder.h"
 #include "nouveau_crtc.h"
 #include "nouveau_connector.h"
+<<<<<<< HEAD
 #include "nouveau_gpio.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "nouveau_hw.h"
 
 static void nouveau_connector_hotplug(void *, int);
 
+<<<<<<< HEAD
 struct nouveau_encoder *
 find_encoder(struct drm_connector *connector, int type)
+=======
+static struct nouveau_encoder *
+find_encoder_by_type(struct drm_connector *connector, int type)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_device *dev = connector->dev;
 	struct nouveau_encoder *nv_encoder;
@@ -79,11 +87,35 @@ nouveau_encoder_connector_get(struct nouveau_encoder *encoder)
 	return NULL;
 }
 
+<<<<<<< HEAD
+=======
+/*TODO: This could use improvement, and learn to handle the fixed
+ *      BIOS tables etc.  It's fine currently, for its only user.
+ */
+int
+nouveau_connector_bpp(struct drm_connector *connector)
+{
+	struct nouveau_connector *nv_connector = nouveau_connector(connector);
+
+	if (nv_connector->edid && nv_connector->edid->revision >= 4) {
+		u8 bpc = ((nv_connector->edid->input & 0x70) >> 3) + 4;
+		if (bpc > 4)
+			return bpc;
+	}
+
+	return 18;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 nouveau_connector_destroy(struct drm_connector *connector)
 {
 	struct nouveau_connector *nv_connector = nouveau_connector(connector);
 	struct drm_nouveau_private *dev_priv;
+<<<<<<< HEAD
+=======
+	struct nouveau_gpio_engine *pgpio;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct drm_device *dev;
 
 	if (!nv_connector)
@@ -93,11 +125,24 @@ nouveau_connector_destroy(struct drm_connector *connector)
 	dev_priv = dev->dev_private;
 	NV_DEBUG_KMS(dev, "\n");
 
+<<<<<<< HEAD
 	if (nv_connector->hpd != DCB_GPIO_UNUSED) {
 		nouveau_gpio_isr_del(dev, 0, nv_connector->hpd, 0xff,
 				     nouveau_connector_hotplug, connector);
 	}
 
+=======
+	pgpio = &dev_priv->engine.gpio;
+	if (pgpio->irq_unregister) {
+		pgpio->irq_unregister(dev, nv_connector->dcb->gpio_tag,
+				      nouveau_connector_hotplug, connector);
+	}
+
+	if (connector->connector_type == DRM_MODE_CONNECTOR_LVDS ||
+	    connector->connector_type == DRM_MODE_CONNECTOR_eDP)
+		nouveau_backlight_exit(connector);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(nv_connector->edid);
 	drm_sysfs_connector_remove(connector);
 	drm_connector_cleanup(connector);
@@ -148,8 +193,13 @@ nouveau_connector_of_detect(struct drm_connector *connector)
 	struct device_node *cn, *dn = pci_device_to_OF_node(dev->pdev);
 
 	if (!dn ||
+<<<<<<< HEAD
 	    !((nv_encoder = find_encoder(connector, OUTPUT_TMDS)) ||
 	      (nv_encoder = find_encoder(connector, OUTPUT_ANALOG))))
+=======
+	    !((nv_encoder = find_encoder_by_type(connector, OUTPUT_TMDS)) ||
+	      (nv_encoder = find_encoder_by_type(connector, OUTPUT_ANALOG))))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 
 	for_each_child_of_node(dn, cn) {
@@ -180,10 +230,13 @@ nouveau_connector_set_encoder(struct drm_connector *connector,
 		return;
 	nv_connector->detected_encoder = nv_encoder;
 
+<<<<<<< HEAD
 	if (dev_priv->card_type >= NV_50) {
 		connector->interlace_allowed = true;
 		connector->doublescan_allowed = true;
 	} else
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (nv_encoder->dcb->type == OUTPUT_LVDS ||
 	    nv_encoder->dcb->type == OUTPUT_TMDS) {
 		connector->doublescan_allowed = false;
@@ -200,7 +253,11 @@ nouveau_connector_set_encoder(struct drm_connector *connector,
 			connector->interlace_allowed = true;
 	}
 
+<<<<<<< HEAD
 	if (nv_connector->type == DCB_CONNECTOR_DVI_I) {
+=======
+	if (nv_connector->dcb->type == DCB_CONNECTOR_DVI_I) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		drm_connector_property_set_value(connector,
 			dev->mode_config.dvi_i_subconnector_property,
 			nv_encoder->dcb->type == OUTPUT_TMDS ?
@@ -215,7 +272,10 @@ nouveau_connector_detect(struct drm_connector *connector, bool force)
 	struct drm_device *dev = connector->dev;
 	struct nouveau_connector *nv_connector = nouveau_connector(connector);
 	struct nouveau_encoder *nv_encoder = NULL;
+<<<<<<< HEAD
 	struct nouveau_encoder *nv_partner;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct nouveau_i2c_chan *i2c;
 	int type;
 
@@ -249,6 +309,7 @@ nouveau_connector_detect(struct drm_connector *connector, bool force)
 		 * same i2c channel so the value returned from ddc_detect
 		 * isn't necessarily correct.
 		 */
+<<<<<<< HEAD
 		nv_partner = NULL;
 		if (nv_encoder->dcb->type == OUTPUT_TMDS)
 			nv_partner = find_encoder(connector, OUTPUT_ANALOG);
@@ -259,12 +320,25 @@ nouveau_connector_detect(struct drm_connector *connector, bool force)
 				    nv_partner->dcb->type == OUTPUT_TMDS) ||
 				   (nv_encoder->dcb->type == OUTPUT_TMDS &&
 				    nv_partner->dcb->type == OUTPUT_ANALOG))) {
+=======
+		if (nv_connector->dcb->type == DCB_CONNECTOR_DVI_I) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (nv_connector->edid->input & DRM_EDID_INPUT_DIGITAL)
 				type = OUTPUT_TMDS;
 			else
 				type = OUTPUT_ANALOG;
 
+<<<<<<< HEAD
 			nv_encoder = find_encoder(connector, type);
+=======
+			nv_encoder = find_encoder_by_type(connector, type);
+			if (!nv_encoder) {
+				NV_ERROR(dev, "Detected %d encoder on %s, "
+					      "but no object!\n", type,
+					 drm_get_connector_name(connector));
+				return connector_status_disconnected;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		nouveau_connector_set_encoder(connector, nv_encoder);
@@ -278,9 +352,15 @@ nouveau_connector_detect(struct drm_connector *connector, bool force)
 	}
 
 detect_analog:
+<<<<<<< HEAD
 	nv_encoder = find_encoder(connector, OUTPUT_ANALOG);
 	if (!nv_encoder && !nouveau_tv_disable)
 		nv_encoder = find_encoder(connector, OUTPUT_TV);
+=======
+	nv_encoder = find_encoder_by_type(connector, OUTPUT_ANALOG);
+	if (!nv_encoder && !nouveau_tv_disable)
+		nv_encoder = find_encoder_by_type(connector, OUTPUT_TV);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (nv_encoder && force) {
 		struct drm_encoder *encoder = to_drm_encoder(nv_encoder);
 		struct drm_encoder_helper_funcs *helper =
@@ -313,7 +393,11 @@ nouveau_connector_detect_lvds(struct drm_connector *connector, bool force)
 		nv_connector->edid = NULL;
 	}
 
+<<<<<<< HEAD
 	nv_encoder = find_encoder(connector, OUTPUT_LVDS);
+=======
+	nv_encoder = find_encoder_by_type(connector, OUTPUT_LVDS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!nv_encoder)
 		return connector_status_disconnected;
 
@@ -383,7 +467,11 @@ nouveau_connector_force(struct drm_connector *connector)
 	struct nouveau_encoder *nv_encoder;
 	int type;
 
+<<<<<<< HEAD
 	if (nv_connector->type == DCB_CONNECTOR_DVI_I) {
+=======
+	if (nv_connector->dcb->type == DCB_CONNECTOR_DVI_I) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (connector->force == DRM_FORCE_ON_DIGITAL)
 			type = OUTPUT_TMDS;
 		else
@@ -391,7 +479,11 @@ nouveau_connector_force(struct drm_connector *connector)
 	} else
 		type = OUTPUT_ANY;
 
+<<<<<<< HEAD
 	nv_encoder = find_encoder(connector, type);
+=======
+	nv_encoder = find_encoder_by_type(connector, type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!nv_encoder) {
 		NV_ERROR(connector->dev, "can't find encoder to force %s on!\n",
 			 drm_get_connector_name(connector));
@@ -406,12 +498,16 @@ static int
 nouveau_connector_set_property(struct drm_connector *connector,
 			       struct drm_property *property, uint64_t value)
 {
+<<<<<<< HEAD
 	struct drm_nouveau_private *dev_priv = connector->dev->dev_private;
 	struct nouveau_display_engine *disp = &dev_priv->engine.display;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct nouveau_connector *nv_connector = nouveau_connector(connector);
 	struct nouveau_encoder *nv_encoder = nv_connector->detected_encoder;
 	struct drm_encoder *encoder = to_drm_encoder(nv_encoder);
 	struct drm_device *dev = connector->dev;
+<<<<<<< HEAD
 	struct nouveau_crtc *nv_crtc;
 	int ret;
 
@@ -421,6 +517,13 @@ nouveau_connector_set_property(struct drm_connector *connector,
 
 	/* Scaling mode */
 	if (property == dev->mode_config.scaling_mode_property) {
+=======
+	int ret;
+
+	/* Scaling mode */
+	if (property == dev->mode_config.scaling_mode_property) {
+		struct nouveau_crtc *nv_crtc = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bool modeset = false;
 
 		switch (value) {
@@ -446,6 +549,11 @@ nouveau_connector_set_property(struct drm_connector *connector,
 			modeset = true;
 		nv_connector->scaling_mode = value;
 
+<<<<<<< HEAD
+=======
+		if (connector->encoder && connector->encoder->crtc)
+			nv_crtc = nouveau_crtc(connector->encoder->crtc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!nv_crtc)
 			return 0;
 
@@ -457,7 +565,11 @@ nouveau_connector_set_property(struct drm_connector *connector,
 			if (!ret)
 				return -EINVAL;
 		} else {
+<<<<<<< HEAD
 			ret = nv_crtc->set_scale(nv_crtc, true);
+=======
+			ret = nv_crtc->set_scale(nv_crtc, value, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret)
 				return ret;
 		}
@@ -465,6 +577,7 @@ nouveau_connector_set_property(struct drm_connector *connector,
 		return 0;
 	}
 
+<<<<<<< HEAD
 	/* Underscan */
 	if (property == disp->underscan_property) {
 		if (nv_connector->underscan != value) {
@@ -530,6 +643,25 @@ nouveau_connector_set_property(struct drm_connector *connector,
 			nv_crtc->color_vibrance = value - 100;
 			return nv_crtc->set_color_vibrance(nv_crtc, true);
 		}
+=======
+	/* Dithering */
+	if (property == dev->mode_config.dithering_mode_property) {
+		struct nouveau_crtc *nv_crtc = NULL;
+
+		if (value == DRM_MODE_DITHERING_ON)
+			nv_connector->use_dithering = true;
+		else
+			nv_connector->use_dithering = false;
+
+		if (connector->encoder && connector->encoder->crtc)
+			nv_crtc = nouveau_crtc(connector->encoder->crtc);
+
+		if (!nv_crtc || !nv_crtc->set_dither)
+			return 0;
+
+		return nv_crtc->set_dither(nv_crtc, nv_connector->use_dithering,
+					   true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (nv_encoder && nv_encoder->dcb->type == OUTPUT_TV)
@@ -640,6 +772,7 @@ nouveau_connector_scaler_modes_add(struct drm_connector *connector)
 	return modes;
 }
 
+<<<<<<< HEAD
 static void
 nouveau_connector_detect_depth(struct drm_connector *connector)
 {
@@ -689,6 +822,8 @@ nouveau_connector_detect_depth(struct drm_connector *connector)
 		connector->display_info.bpc = 8;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int
 nouveau_connector_get_modes(struct drm_connector *connector)
 {
@@ -718,12 +853,15 @@ nouveau_connector_get_modes(struct drm_connector *connector)
 		nv_connector->native_mode = drm_mode_duplicate(dev, &mode);
 	}
 
+<<<<<<< HEAD
 	/* Determine display colour depth for everything except LVDS now,
 	 * DP requires this before mode_valid() is called.
 	 */
 	if (connector->connector_type != DRM_MODE_CONNECTOR_LVDS)
 		nouveau_connector_detect_depth(connector);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Find the native mode if this is a digital panel, if we didn't
 	 * find any modes through DDC previously add the native mode to
 	 * the list of modes.
@@ -739,6 +877,7 @@ nouveau_connector_get_modes(struct drm_connector *connector)
 		ret = 1;
 	}
 
+<<<<<<< HEAD
 	/* Determine LVDS colour depth, must happen after determining
 	 * "native" mode as some VBIOS tables require us to use the
 	 * pixel clock as part of the lookup...
@@ -752,6 +891,14 @@ nouveau_connector_get_modes(struct drm_connector *connector)
 	if (nv_connector->type == DCB_CONNECTOR_LVDS ||
 	    nv_connector->type == DCB_CONNECTOR_LVDS_SPWG ||
 	    nv_connector->type == DCB_CONNECTOR_eDP)
+=======
+	if (nv_encoder->dcb->type == OUTPUT_TV)
+		ret = get_slave_funcs(encoder)->get_modes(encoder, connector);
+
+	if (nv_connector->dcb->type == DCB_CONNECTOR_LVDS ||
+	    nv_connector->dcb->type == DCB_CONNECTOR_LVDS_SPWG ||
+	    nv_connector->dcb->type == DCB_CONNECTOR_eDP)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret += nouveau_connector_scaler_modes_add(connector);
 
 	return ret;
@@ -808,9 +955,18 @@ nouveau_connector_mode_valid(struct drm_connector *connector,
 	case OUTPUT_TV:
 		return get_slave_funcs(encoder)->mode_valid(encoder, mode);
 	case OUTPUT_DP:
+<<<<<<< HEAD
 		max_clock  = nv_encoder->dp.link_nr;
 		max_clock *= nv_encoder->dp.link_bw;
 		clock = clock * (connector->display_info.bpc * 3) / 10;
+=======
+		if (nv_encoder->dp.link_bw == DP_LINK_BW_2_7)
+			max_clock = nv_encoder->dp.link_nr * 270000;
+		else
+			max_clock = nv_encoder->dp.link_nr * 162000;
+
+		clock = clock * nouveau_connector_bpp(connector) / 8;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		BUG_ON(1);
@@ -868,6 +1024,7 @@ nouveau_connector_funcs_lvds = {
 	.force = nouveau_connector_force
 };
 
+<<<<<<< HEAD
 static int
 drm_conntype_from_dcb(enum dcb_connector_type dcb)
 {
@@ -895,11 +1052,14 @@ drm_conntype_from_dcb(enum dcb_connector_type dcb)
 	return DRM_MODE_CONNECTOR_Unknown;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct drm_connector *
 nouveau_connector_create(struct drm_device *dev, int index)
 {
 	const struct drm_connector_funcs *funcs = &nouveau_connector_funcs;
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
+<<<<<<< HEAD
 	struct nouveau_display_engine *disp = &dev_priv->engine.display;
 	struct nouveau_connector *nv_connector = NULL;
 	struct drm_connector *connector;
@@ -912,11 +1072,62 @@ nouveau_connector_create(struct drm_device *dev, int index)
 		nv_connector = nouveau_connector(connector);
 		if (nv_connector->index == index)
 			return connector;
+=======
+	struct nouveau_gpio_engine *pgpio = &dev_priv->engine.gpio;
+	struct nouveau_connector *nv_connector = NULL;
+	struct dcb_connector_table_entry *dcb = NULL;
+	struct drm_connector *connector;
+	int type, ret = 0;
+
+	NV_DEBUG_KMS(dev, "\n");
+
+	if (index >= dev_priv->vbios.dcb.connector.entries)
+		return ERR_PTR(-EINVAL);
+
+	dcb = &dev_priv->vbios.dcb.connector.entry[index];
+	if (dcb->drm)
+		return dcb->drm;
+
+	switch (dcb->type) {
+	case DCB_CONNECTOR_VGA:
+		type = DRM_MODE_CONNECTOR_VGA;
+		break;
+	case DCB_CONNECTOR_TV_0:
+	case DCB_CONNECTOR_TV_1:
+	case DCB_CONNECTOR_TV_3:
+		type = DRM_MODE_CONNECTOR_TV;
+		break;
+	case DCB_CONNECTOR_DVI_I:
+		type = DRM_MODE_CONNECTOR_DVII;
+		break;
+	case DCB_CONNECTOR_DVI_D:
+		type = DRM_MODE_CONNECTOR_DVID;
+		break;
+	case DCB_CONNECTOR_HDMI_0:
+	case DCB_CONNECTOR_HDMI_1:
+		type = DRM_MODE_CONNECTOR_HDMIA;
+		break;
+	case DCB_CONNECTOR_LVDS:
+	case DCB_CONNECTOR_LVDS_SPWG:
+		type = DRM_MODE_CONNECTOR_LVDS;
+		funcs = &nouveau_connector_funcs_lvds;
+		break;
+	case DCB_CONNECTOR_DP:
+		type = DRM_MODE_CONNECTOR_DisplayPort;
+		break;
+	case DCB_CONNECTOR_eDP:
+		type = DRM_MODE_CONNECTOR_eDP;
+		break;
+	default:
+		NV_ERROR(dev, "unknown connector type: 0x%02x!!\n", dcb->type);
+		return ERR_PTR(-EINVAL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	nv_connector = kzalloc(sizeof(*nv_connector), GFP_KERNEL);
 	if (!nv_connector)
 		return ERR_PTR(-ENOMEM);
+<<<<<<< HEAD
 
 	connector = &nv_connector->base;
 	nv_connector->index = index;
@@ -1050,12 +1261,50 @@ nouveau_connector_create(struct drm_device *dev, int index)
 					      150);
 
 	switch (nv_connector->type) {
+=======
+	nv_connector->dcb = dcb;
+	connector = &nv_connector->base;
+
+	/* defaults, will get overridden in detect() */
+	connector->interlace_allowed = false;
+	connector->doublescan_allowed = false;
+
+	drm_connector_init(dev, connector, funcs, type);
+	drm_connector_helper_add(connector, &nouveau_connector_helper_funcs);
+
+	/* Check if we need dithering enabled */
+	if (connector->connector_type == DRM_MODE_CONNECTOR_LVDS) {
+		bool dummy, is_24bit = false;
+
+		ret = nouveau_bios_parse_lvds_table(dev, 0, &dummy, &is_24bit);
+		if (ret) {
+			NV_ERROR(dev, "Error parsing LVDS table, disabling "
+				 "LVDS\n");
+			goto fail;
+		}
+
+		nv_connector->use_dithering = !is_24bit;
+	}
+
+	/* Init DVI-I specific properties */
+	if (dcb->type == DCB_CONNECTOR_DVI_I) {
+		drm_mode_create_dvi_i_properties(dev);
+		drm_connector_attach_property(connector, dev->mode_config.dvi_i_subconnector_property, 0);
+		drm_connector_attach_property(connector, dev->mode_config.dvi_i_select_subconnector_property, 0);
+	}
+
+	switch (dcb->type) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case DCB_CONNECTOR_VGA:
 		if (dev_priv->card_type >= NV_50) {
 			drm_connector_attach_property(connector,
 					dev->mode_config.scaling_mode_property,
 					nv_connector->scaling_mode);
 		}
+<<<<<<< HEAD
+=======
+		connector->polled = DRM_CONNECTOR_POLL_CONNECT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* fall-through */
 	case DCB_CONNECTOR_TV_0:
 	case DCB_CONNECTOR_TV_1:
@@ -1068,6 +1317,7 @@ nouveau_connector_create(struct drm_device *dev, int index)
 		drm_connector_attach_property(connector,
 				dev->mode_config.scaling_mode_property,
 				nv_connector->scaling_mode);
+<<<<<<< HEAD
 		if (disp->dithering_mode) {
 			nv_connector->dithering_mode = DITHERING_MODE_AUTO;
 			drm_connector_attach_property(connector,
@@ -1079,10 +1329,23 @@ nouveau_connector_create(struct drm_device *dev, int index)
 			drm_connector_attach_property(connector,
 						disp->dithering_depth,
 						nv_connector->dithering_depth);
+=======
+		drm_connector_attach_property(connector,
+				dev->mode_config.dithering_mode_property,
+				nv_connector->use_dithering ?
+				DRM_MODE_DITHERING_ON : DRM_MODE_DITHERING_OFF);
+
+		if (connector->connector_type != DRM_MODE_CONNECTOR_LVDS) {
+			if (dev_priv->card_type >= NV_50)
+				connector->polled = DRM_CONNECTOR_POLL_HPD;
+			else
+				connector->polled = DRM_CONNECTOR_POLL_CONNECT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		break;
 	}
 
+<<<<<<< HEAD
 	connector->polled = DRM_CONNECTOR_POLL_CONNECT;
 	if (nv_connector->hpd != DCB_GPIO_UNUSED) {
 		ret = nouveau_gpio_isr_add(dev, 0, nv_connector->hpd, 0xff,
@@ -1094,6 +1357,27 @@ nouveau_connector_create(struct drm_device *dev, int index)
 
 	drm_sysfs_connector_add(connector);
 	return connector;
+=======
+	if (pgpio->irq_register) {
+		pgpio->irq_register(dev, nv_connector->dcb->gpio_tag,
+				    nouveau_connector_hotplug, connector);
+	}
+
+	drm_sysfs_connector_add(connector);
+
+	if (connector->connector_type == DRM_MODE_CONNECTOR_LVDS ||
+	    connector->connector_type == DRM_MODE_CONNECTOR_eDP)
+		nouveau_backlight_init(connector);
+
+	dcb->drm = connector;
+	return dcb->drm;
+
+fail:
+	drm_connector_cleanup(connector);
+	kfree(connector);
+	return ERR_PTR(ret);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -1102,6 +1386,7 @@ nouveau_connector_hotplug(void *data, int plugged)
 	struct drm_connector *connector = data;
 	struct drm_device *dev = connector->dev;
 
+<<<<<<< HEAD
 	NV_DEBUG(dev, "%splugged %s\n", plugged ? "" : "un",
 		 drm_get_connector_name(connector));
 
@@ -1109,6 +1394,24 @@ nouveau_connector_hotplug(void *data, int plugged)
 		drm_helper_connector_dpms(connector, DRM_MODE_DPMS_ON);
 	else
 		drm_helper_connector_dpms(connector, DRM_MODE_DPMS_OFF);
+=======
+	NV_INFO(dev, "%splugged %s\n", plugged ? "" : "un",
+		drm_get_connector_name(connector));
+
+	if (connector->encoder && connector->encoder->crtc &&
+	    connector->encoder->crtc->enabled) {
+		struct nouveau_encoder *nv_encoder = nouveau_encoder(connector->encoder);
+		struct drm_encoder_helper_funcs *helper =
+			connector->encoder->helper_private;
+
+		if (nv_encoder->dcb->type == OUTPUT_DP) {
+			if (plugged)
+				helper->dpms(connector->encoder, DRM_MODE_DPMS_ON);
+			else
+				helper->dpms(connector->encoder, DRM_MODE_DPMS_OFF);
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	drm_helper_hpd_irq_event(dev);
 }

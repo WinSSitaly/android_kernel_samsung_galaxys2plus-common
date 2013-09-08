@@ -67,7 +67,11 @@ _raw_spin_unlock_irqrestore(raw_spinlock_t *lock, unsigned long flags)
 #define _raw_spin_trylock_bh(lock) __raw_spin_trylock_bh(lock)
 #endif
 
+<<<<<<< HEAD
 #ifndef CONFIG_UNINLINE_SPIN_UNLOCK
+=======
+#ifdef CONFIG_INLINE_SPIN_UNLOCK
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define _raw_spin_unlock(lock) __raw_spin_unlock(lock)
 #endif
 

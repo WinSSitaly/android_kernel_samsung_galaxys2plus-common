@@ -5,7 +5,11 @@
  ******************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -61,6 +65,7 @@ static void acpi_rs_out_integer64(char *title, u64 value);
 
 static void acpi_rs_out_title(char *title);
 
+<<<<<<< HEAD
 static void acpi_rs_dump_byte_list(u16 length, u8 *data);
 
 static void acpi_rs_dump_word_list(u16 length, u16 *data);
@@ -68,6 +73,13 @@ static void acpi_rs_dump_word_list(u16 length, u16 *data);
 static void acpi_rs_dump_dword_list(u8 length, u32 *data);
 
 static void acpi_rs_dump_short_byte_list(u8 length, u8 *data);
+=======
+static void acpi_rs_dump_byte_list(u16 length, u8 * data);
+
+static void acpi_rs_dump_dword_list(u8 length, u32 * data);
+
+static void acpi_rs_dump_short_byte_list(u8 length, u8 * data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void
 acpi_rs_dump_resource_source(struct acpi_resource_source *resource_source);
@@ -311,6 +323,7 @@ struct acpi_rsdump_info acpi_rs_dump_generic_reg[6] = {
 	{ACPI_RSD_UINT64, ACPI_RSD_OFFSET(generic_reg.address), "Address", NULL}
 };
 
+<<<<<<< HEAD
 struct acpi_rsdump_info acpi_rs_dump_gpio[16] = {
 	{ACPI_RSD_TITLE, ACPI_RSD_TABLE_SIZE(acpi_rs_dump_gpio), "GPIO", NULL},
 	{ACPI_RSD_UINT8, ACPI_RSD_OFFSET(gpio.revision_id), "RevisionId", NULL},
@@ -430,6 +443,8 @@ struct acpi_rsdump_info acpi_rs_dump_uart_serial_bus[19] = {
 	 "ConnectionSpeed", NULL},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Tables used for common address descriptor flag fields
  */
@@ -534,6 +549,7 @@ acpi_rs_dump_descriptor(void *resource, struct acpi_rsdump_info *table)
 			/* Data items, 8/16/32/64 bit */
 
 		case ACPI_RSD_UINT8:
+<<<<<<< HEAD
 			if (table->pointer) {
 				acpi_rs_out_string(name, ACPI_CAST_PTR(char,
 								       table->
@@ -542,6 +558,9 @@ acpi_rs_dump_descriptor(void *resource, struct acpi_rsdump_info *table)
 			} else {
 				acpi_rs_out_integer8(name, ACPI_GET8(target));
 			}
+=======
+			acpi_rs_out_integer8(name, ACPI_GET8(target));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case ACPI_RSD_UINT16:
@@ -572,6 +591,7 @@ acpi_rs_dump_descriptor(void *resource, struct acpi_rsdump_info *table)
 								       0x03]));
 			break;
 
+<<<<<<< HEAD
 		case ACPI_RSD_3BITFLAG:
 			acpi_rs_out_string(name, ACPI_CAST_PTR(char,
 							       table->
@@ -579,6 +599,8 @@ acpi_rs_dump_descriptor(void *resource, struct acpi_rsdump_info *table)
 								       0x07]));
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case ACPI_RSD_SHORTLIST:
 			/*
 			 * Short byte list (single line output) for DMA and IRQ resources
@@ -591,6 +613,7 @@ acpi_rs_dump_descriptor(void *resource, struct acpi_rsdump_info *table)
 			}
 			break;
 
+<<<<<<< HEAD
 		case ACPI_RSD_SHORTLISTX:
 			/*
 			 * Short byte list (single line output) for GPIO vendor data
@@ -605,6 +628,8 @@ acpi_rs_dump_descriptor(void *resource, struct acpi_rsdump_info *table)
 			}
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case ACPI_RSD_LONGLIST:
 			/*
 			 * Long byte list for Vendor resource data
@@ -629,6 +654,7 @@ acpi_rs_dump_descriptor(void *resource, struct acpi_rsdump_info *table)
 			}
 			break;
 
+<<<<<<< HEAD
 		case ACPI_RSD_WORDLIST:
 			/*
 			 * Word list for GPIO Pin Table
@@ -641,6 +667,8 @@ acpi_rs_dump_descriptor(void *resource, struct acpi_rsdump_info *table)
 			}
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case ACPI_RSD_ADDRESS:
 			/*
 			 * Common flags for all Address resources
@@ -788,6 +816,7 @@ void acpi_rs_dump_resource_list(struct acpi_resource *resource_list)
 
 		/* Dump the resource descriptor */
 
+<<<<<<< HEAD
 		if (type == ACPI_RESOURCE_TYPE_SERIAL_BUS) {
 			acpi_rs_dump_descriptor(&resource_list->data,
 						acpi_gbl_dump_serial_bus_dispatch
@@ -802,6 +831,16 @@ void acpi_rs_dump_resource_list(struct acpi_resource *resource_list)
 		/* Point to the next resource structure */
 
 		resource_list = ACPI_NEXT_RESOURCE(resource_list);
+=======
+		acpi_rs_dump_descriptor(&resource_list->data,
+					acpi_gbl_dump_resource_dispatch[type]);
+
+		/* Point to the next resource structure */
+
+		resource_list =
+		    ACPI_ADD_PTR(struct acpi_resource, resource_list,
+				 resource_list->length);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Exit when END_TAG descriptor is reached */
 
@@ -935,6 +974,7 @@ static void acpi_rs_dump_dword_list(u8 length, u32 * data)
 	}
 }
 
+<<<<<<< HEAD
 static void acpi_rs_dump_word_list(u16 length, u16 *data)
 {
 	u16 i;
@@ -944,4 +984,6 @@ static void acpi_rs_dump_word_list(u16 length, u16 *data)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

@@ -8,10 +8,14 @@
 #define _MACH_GPIO_H_
 
 #define MAX_BLACKFIN_GPIOS 16
+<<<<<<< HEAD
 #ifdef CONFIG_GPIOLIB
 /* We only use the special logic with GPIOLIB devices */
 #define BFIN_SPECIAL_GPIO_BANKS 3
 #endif
+=======
+#define BFIN_SPECIAL_GPIO_BANKS 3
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define GPIO_PF0	0	/* PF */
 #define GPIO_PF1	1

@@ -21,7 +21,11 @@
 #ifndef _LINUX_NFS_IOSTAT
 #define _LINUX_NFS_IOSTAT
 
+<<<<<<< HEAD
 #define NFS_IOSTAT_VERS		"1.1"
+=======
+#define NFS_IOSTAT_VERS		"1.0"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * NFS byte counters

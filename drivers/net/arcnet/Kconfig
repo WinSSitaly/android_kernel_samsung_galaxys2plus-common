@@ -3,7 +3,11 @@
 #
 
 menuconfig ARCNET
+<<<<<<< HEAD
 	depends on NETDEVICES && (ISA || PCI || PCMCIA)
+=======
+	depends on NETDEVICES && (ISA || PCI)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tristate "ARCnet support"
 	---help---
 	  If you have a network card of this type, say Y and check out the
@@ -123,6 +127,7 @@ config ARCNET_COM20020_PCI
 	tristate "Support for COM20020 on PCI"
 	depends on ARCNET_COM20020 && PCI
 
+<<<<<<< HEAD
 config ARCNET_COM20020_CS
 	tristate "COM20020 ARCnet PCMCIA support"
 	depends on ARCNET_COM20020 && PCMCIA
@@ -133,4 +138,6 @@ config ARCNET_COM20020_CS
 	  To compile this driver as a module, choose M here: the module will be
 	  called com20020_cs.  If unsure, say N.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endif # ARCNET

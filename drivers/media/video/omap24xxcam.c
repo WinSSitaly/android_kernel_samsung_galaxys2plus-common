@@ -31,19 +31,30 @@
 #include <linux/interrupt.h>
 #include <linux/videodev2.h>
 #include <linux/pci.h>		/* needed for videobufs */
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/platform_device.h>
 #include <linux/clk.h>
 #include <linux/io.h>
 #include <linux/slab.h>
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <media/v4l2-common.h>
 #include <media/v4l2-ioctl.h>
 
 #include "omap24xxcam.h"
 
+<<<<<<< HEAD
 #define OMAP24XXCAM_VERSION "0.0.1"
+=======
+#define OMAP24XXCAM_VERSION KERNEL_VERSION(0, 0, 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define RESET_TIMEOUT_NS 10000
 
@@ -309,11 +320,19 @@ static int omap24xxcam_vbq_alloc_mmap_buffer(struct videobuf_buffer *vb)
 			order--;
 
 		/* try to allocate as many contiguous pages as possible */
+<<<<<<< HEAD
 		page = alloc_pages(GFP_KERNEL, order);
 		/* if allocation fails, try to allocate smaller amount */
 		while (page == NULL) {
 			order--;
 			page = alloc_pages(GFP_KERNEL, order);
+=======
+		page = alloc_pages(GFP_KERNEL | GFP_DMA, order);
+		/* if allocation fails, try to allocate smaller amount */
+		while (page == NULL) {
+			order--;
+			page = alloc_pages(GFP_KERNEL | GFP_DMA, order);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (page == NULL && !order) {
 				err = -ENOMEM;
 				goto out;
@@ -993,6 +1012,10 @@ static int vidioc_querycap(struct file *file, void *fh,
 
 	strlcpy(cap->driver, CAM_NAME, sizeof(cap->driver));
 	strlcpy(cap->card, cam->vfd->name, sizeof(cap->card));
+<<<<<<< HEAD
+=======
+	cap->version = OMAP24XXCAM_VERSION;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cap->capabilities = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
 
 	return 0;
@@ -1767,13 +1790,22 @@ static int __devinit omap24xxcam_probe(struct platform_device *pdev)
 		dev_err(cam->dev, "no mem resource?\n");
 		goto err;
 	}
+<<<<<<< HEAD
 	if (!request_mem_region(mem->start, resource_size(mem), pdev->name)) {
+=======
+	if (!request_mem_region(mem->start, (mem->end - mem->start) + 1,
+				pdev->name)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_err(cam->dev,
 			"cannot reserve camera register I/O region\n");
 		goto err;
 	}
 	cam->mmio_base_phys = mem->start;
+<<<<<<< HEAD
 	cam->mmio_size = resource_size(mem);
+=======
+	cam->mmio_size = (mem->end - mem->start) + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* map the region */
 	cam->mmio_base = (unsigned long)
@@ -1868,15 +1900,42 @@ static struct platform_driver omap24xxcam_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(omap24xxcam_driver);
+=======
+/*
+ *
+ * Module initialisation and deinitialisation
+ *
+ */
+
+static int __init omap24xxcam_init(void)
+{
+	return platform_driver_register(&omap24xxcam_driver);
+}
+
+static void __exit omap24xxcam_cleanup(void)
+{
+	platform_driver_unregister(&omap24xxcam_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Sakari Ailus <sakari.ailus@nokia.com>");
 MODULE_DESCRIPTION("OMAP24xx Video for Linux camera driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_VERSION(OMAP24XXCAM_VERSION);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(video_nr, int, 0);
 MODULE_PARM_DESC(video_nr,
 		 "Minor number for video device (-1 ==> auto assign)");
 module_param(capture_mem, int, 0);
 MODULE_PARM_DESC(capture_mem, "Maximum amount of memory for capture "
 		 "buffers (default 4800kiB)");
+<<<<<<< HEAD
+=======
+
+module_init(omap24xxcam_init);
+module_exit(omap24xxcam_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

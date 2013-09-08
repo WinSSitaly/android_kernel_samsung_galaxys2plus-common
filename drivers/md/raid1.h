@@ -1,8 +1,15 @@
 #ifndef _RAID1_H
 #define _RAID1_H
 
+<<<<<<< HEAD
 struct mirror_info {
 	struct md_rdev	*rdev;
+=======
+typedef struct mirror_info mirror_info_t;
+
+struct mirror_info {
+	mdk_rdev_t	*rdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sector_t	head_position;
 };
 
@@ -12,6 +19,7 @@ struct mirror_info {
  * pool was allocated for, so they know how much to allocate and free.
  * mddev->raid_disks cannot be used, as it can change while a pool is active
  * These two datums are stored in a kmalloced struct.
+<<<<<<< HEAD
  * The 'raid_disks' here is twice the raid_disks in r1conf.
  * This allows space for each 'real' device can have a replacement in the
  * second half of the array.
@@ -60,11 +68,38 @@ struct r1conf {
 	 * See more details description in raid1.c near raise_barrier().
 	 */
 	wait_queue_head_t	wait_barrier;
+=======
+ */
+
+struct pool_info {
+	mddev_t *mddev;
+	int	raid_disks;
+};
+
+
+typedef struct r1bio_s r1bio_t;
+
+struct r1_private_data_s {
+	mddev_t			*mddev;
+	mirror_info_t		*mirrors;
+	int			raid_disks;
+	int			last_used;
+	sector_t		next_seq_sect;
+	spinlock_t		device_lock;
+
+	struct list_head	retry_list;
+	/* queue pending writes and submit them on unplug */
+	struct bio_list		pending_bio_list;
+
+	/* for use when syncing mirrors: */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spinlock_t		resync_lock;
 	int			nr_pending;
 	int			nr_waiting;
 	int			nr_queued;
 	int			barrier;
+<<<<<<< HEAD
 
 	/* Set to 1 if a full sync is needed, (fresh device added).
 	 * Cleared when a sync completes.
@@ -89,13 +124,37 @@ struct r1conf {
 	 */
 	struct page		*tmppage;
 
+=======
+	sector_t		next_resync;
+	int			fullsync;  /* set to 1 if a full sync is needed,
+					    * (fresh device added).
+					    * Cleared when a sync completes.
+					    */
+
+	wait_queue_head_t	wait_barrier;
+
+	struct pool_info	*poolinfo;
+
+	struct page		*tmppage;
+
+	mempool_t *r1bio_pool;
+	mempool_t *r1buf_pool;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* When taking over an array from a different personality, we store
 	 * the new thread here until we fully activate the array.
 	 */
+<<<<<<< HEAD
 	struct md_thread	*thread;
 };
 
+=======
+	struct mdk_thread_s	*thread;
+};
+
+typedef struct r1_private_data_s conf_t;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * this is our 'private' RAID1 bio.
  *
@@ -103,7 +162,11 @@ struct r1conf {
  * for this RAID1 operation, and about their status:
  */
 
+<<<<<<< HEAD
 struct r1bio {
+=======
+struct r1bio_s {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atomic_t		remaining; /* 'have we finished' count,
 					    * used from IRQ handlers
 					    */
@@ -113,7 +176,11 @@ struct r1bio {
 	sector_t		sector;
 	int			sectors;
 	unsigned long		state;
+<<<<<<< HEAD
 	struct mddev		*mddev;
+=======
+	mddev_t			*mddev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * original bio going to /dev/mdx
 	 */
@@ -125,7 +192,11 @@ struct r1bio {
 
 	struct list_head	retry_list;
 	/* Next two are only valid when R1BIO_BehindIO is set */
+<<<<<<< HEAD
 	struct bio_vec		*behind_bvecs;
+=======
+	struct page		**behind_pages;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			behind_page_count;
 	/*
 	 * if the IO is in WRITE direction, then multiple bios are used.
@@ -140,6 +211,7 @@ struct r1bio {
  * correct the read error.  To keep track of bad blocks on a per-bio
  * level, we store IO_BLOCKED in the appropriate 'bios' pointer
  */
+<<<<<<< HEAD
 #define IO_BLOCKED ((struct bio *)1)
 /* When we successfully write to a known bad-block, we need to remove the
  * bad-block marking which must be done from process context.  So we record
@@ -148,16 +220,22 @@ struct r1bio {
 #define IO_MADE_GOOD ((struct bio *)2)
 
 #define BIO_SPECIAL(bio) ((unsigned long)bio <= 2)
+=======
+#define IO_BLOCKED ((struct bio*)1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* bits for r1bio.state */
 #define	R1BIO_Uptodate	0
 #define	R1BIO_IsSync	1
 #define	R1BIO_Degraded	2
 #define	R1BIO_BehindIO	3
+<<<<<<< HEAD
 /* Set ReadError on bios that experience a readerror so that
  * raid1d knows what to do with them.
  */
 #define R1BIO_ReadError 4
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* For write-behind requests, we call bi_end_io when
  * the last non-write-behind device completes, providing
  * any write was successful.  Otherwise we call when
@@ -166,6 +244,7 @@ struct r1bio {
  * Record that bi_end_io was called with this flag...
  */
 #define	R1BIO_Returned 6
+<<<<<<< HEAD
 /* If a write for this request means we can clear some
  * known-bad-block records, we set this flag
  */
@@ -173,5 +252,9 @@ struct r1bio {
 #define	R1BIO_WriteError 8
 
 extern int md_raid1_congested(struct mddev *mddev, int bits);
+=======
+
+extern int md_raid1_congested(mddev_t *mddev, int bits);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

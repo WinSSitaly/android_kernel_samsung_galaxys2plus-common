@@ -9,7 +9,11 @@
  */
 
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <asm/ebcdic.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "qeth_l3.h"
 
 #define QETH_DEVICE_ATTR(_id, _name, _mode, _show, _store) \
@@ -308,8 +312,11 @@ static ssize_t qeth_l3_dev_sniffer_store(struct device *dev,
 
 	if (card->info.type != QETH_CARD_TYPE_IQD)
 		return -EPERM;
+<<<<<<< HEAD
 	if (card->options.cq == QETH_CQ_ENABLED)
 		return -EPERM;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&card->conf_mutex);
 	if ((card->state != CARD_STATE_DOWN) &&
@@ -335,10 +342,17 @@ static ssize_t qeth_l3_dev_sniffer_store(struct device *dev,
 					QETH_IN_BUF_COUNT_MAX)
 				qeth_realloc_buffer_pool(card,
 					QETH_IN_BUF_COUNT_MAX);
+<<<<<<< HEAD
 		} else
 			rc = -EPERM;
 		break;
 	default:
+=======
+			break;
+		} else
+			rc = -EPERM;
+	default:   /* fall through */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -EINVAL;
 	}
 out:
@@ -349,6 +363,7 @@ out:
 static DEVICE_ATTR(sniffer, 0644, qeth_l3_dev_sniffer_show,
 		qeth_l3_dev_sniffer_store);
 
+<<<<<<< HEAD
 
 static ssize_t qeth_l3_dev_hsuid_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
@@ -454,6 +469,8 @@ static DEVICE_ATTR(hsuid, 0644, qeth_l3_dev_hsuid_show,
 		   qeth_l3_dev_hsuid_store);
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct attribute *qeth_l3_device_attrs[] = {
 	&dev_attr_route4.attr,
 	&dev_attr_route6.attr,
@@ -461,7 +478,10 @@ static struct attribute *qeth_l3_device_attrs[] = {
 	&dev_attr_broadcast_mode.attr,
 	&dev_attr_canonical_macaddr.attr,
 	&dev_attr_sniffer.attr,
+<<<<<<< HEAD
 	&dev_attr_hsuid.attr,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL,
 };
 

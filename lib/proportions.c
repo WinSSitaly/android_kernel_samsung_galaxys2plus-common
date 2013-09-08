@@ -190,7 +190,11 @@ prop_adjust_shift(int *pl_shift, unsigned long *pl_period, int new_shift)
 
 int prop_local_init_percpu(struct prop_local_percpu *pl)
 {
+<<<<<<< HEAD
 	raw_spin_lock_init(&pl->lock);
+=======
+	spin_lock_init(&pl->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pl->shift = 0;
 	pl->period = 0;
 	return percpu_counter_init(&pl->events, 0);
@@ -226,7 +230,11 @@ void prop_norm_percpu(struct prop_global *pg, struct prop_local_percpu *pl)
 	if (pl->period == global_period)
 		return;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&pl->lock, flags);
+=======
+	spin_lock_irqsave(&pl->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	prop_adjust_shift(&pl->shift, &pl->period, pg->shift);
 
 	/*
@@ -247,7 +255,11 @@ void prop_norm_percpu(struct prop_global *pg, struct prop_local_percpu *pl)
 		percpu_counter_set(&pl->events, 0);
 
 	pl->period = global_period;
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&pl->lock, flags);
+=======
+	spin_unlock_irqrestore(&pl->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -324,7 +336,11 @@ void prop_fraction_percpu(struct prop_descriptor *pd,
 
 int prop_local_init_single(struct prop_local_single *pl)
 {
+<<<<<<< HEAD
 	raw_spin_lock_init(&pl->lock);
+=======
+	spin_lock_init(&pl->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pl->shift = 0;
 	pl->period = 0;
 	pl->events = 0;
@@ -356,7 +372,11 @@ void prop_norm_single(struct prop_global *pg, struct prop_local_single *pl)
 	if (pl->period == global_period)
 		return;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&pl->lock, flags);
+=======
+	spin_lock_irqsave(&pl->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	prop_adjust_shift(&pl->shift, &pl->period, pg->shift);
 	/*
 	 * For each missed period, we half the local counter.
@@ -367,7 +387,11 @@ void prop_norm_single(struct prop_global *pg, struct prop_local_single *pl)
 	else
 		pl->events = 0;
 	pl->period = global_period;
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&pl->lock, flags);
+=======
+	spin_unlock_irqrestore(&pl->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*

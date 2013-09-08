@@ -48,9 +48,13 @@ struct nfgenmsg {
 #define NFNL_SUBSYS_ULOG		4
 #define NFNL_SUBSYS_OSF			5
 #define NFNL_SUBSYS_IPSET		6
+<<<<<<< HEAD
 #define NFNL_SUBSYS_ACCT		7
 #define NFNL_SUBSYS_CTNETLINK_TIMEOUT	8
 #define NFNL_SUBSYS_COUNT		9
+=======
+#define NFNL_SUBSYS_COUNT		7
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef __KERNEL__
 
@@ -62,9 +66,12 @@ struct nfnl_callback {
 	int (*call)(struct sock *nl, struct sk_buff *skb, 
 		    const struct nlmsghdr *nlh,
 		    const struct nlattr * const cda[]);
+<<<<<<< HEAD
 	int (*call_rcu)(struct sock *nl, struct sk_buff *skb, 
 		    const struct nlmsghdr *nlh,
 		    const struct nlattr * const cda[]);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const struct nla_policy *policy;	/* netlink attribute policy */
 	const u_int16_t attr_count;		/* number of nlattr's */
 };

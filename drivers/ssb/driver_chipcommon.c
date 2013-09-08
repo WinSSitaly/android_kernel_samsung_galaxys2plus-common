@@ -3,14 +3,21 @@
  * Broadcom ChipCommon core driver
  *
  * Copyright 2005, Broadcom Corporation
+<<<<<<< HEAD
  * Copyright 2006, 2007, Michael Buesch <m@bues.ch>
+=======
+ * Copyright 2006, 2007, Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Licensed under the GNU/GPL. See COPYING for details.
  */
 
 #include <linux/ssb/ssb.h>
 #include <linux/ssb/ssb_regs.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pci.h>
 
 #include "ssb_private.h"

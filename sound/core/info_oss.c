@@ -22,7 +22,10 @@
 #include <linux/slab.h>
 #include <linux/time.h>
 #include <linux/string.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/minors.h>
 #include <sound/info.h>

@@ -72,7 +72,10 @@ DEFINE_IDR(ib_uverbs_ah_idr);
 DEFINE_IDR(ib_uverbs_cq_idr);
 DEFINE_IDR(ib_uverbs_qp_idr);
 DEFINE_IDR(ib_uverbs_srq_idr);
+<<<<<<< HEAD
 DEFINE_IDR(ib_uverbs_xrcd_idr);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static DEFINE_SPINLOCK(map_lock);
 static DECLARE_BITMAP(dev_map, IB_UVERBS_MAX_DEVICES);
@@ -108,10 +111,13 @@ static ssize_t (*uverbs_cmd_table[])(struct ib_uverbs_file *file,
 	[IB_USER_VERBS_CMD_MODIFY_SRQ]		= ib_uverbs_modify_srq,
 	[IB_USER_VERBS_CMD_QUERY_SRQ]		= ib_uverbs_query_srq,
 	[IB_USER_VERBS_CMD_DESTROY_SRQ]		= ib_uverbs_destroy_srq,
+<<<<<<< HEAD
 	[IB_USER_VERBS_CMD_OPEN_XRCD]		= ib_uverbs_open_xrcd,
 	[IB_USER_VERBS_CMD_CLOSE_XRCD]		= ib_uverbs_close_xrcd,
 	[IB_USER_VERBS_CMD_CREATE_XSRQ]		= ib_uverbs_create_xsrq,
 	[IB_USER_VERBS_CMD_OPEN_QP]		= ib_uverbs_open_qp
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void ib_uverbs_add_one(struct ib_device *device);
@@ -207,12 +213,17 @@ static int ib_uverbs_cleanup_ucontext(struct ib_uverbs_file *file,
 			container_of(uobj, struct ib_uqp_object, uevent.uobject);
 
 		idr_remove_uobj(&ib_uverbs_qp_idr, uobj);
+<<<<<<< HEAD
 		if (qp != qp->real_qp) {
 			ib_close_qp(qp);
 		} else {
 			ib_uverbs_detach_umcast(qp, uqp);
 			ib_destroy_qp(qp);
 		}
+=======
+		ib_uverbs_detach_umcast(qp, uqp);
+		ib_destroy_qp(qp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ib_uverbs_release_uevent(file, &uqp->uevent);
 		kfree(uqp);
 	}
@@ -250,6 +261,7 @@ static int ib_uverbs_cleanup_ucontext(struct ib_uverbs_file *file,
 		kfree(uobj);
 	}
 
+<<<<<<< HEAD
 	mutex_lock(&file->device->xrcd_tree_mutex);
 	list_for_each_entry_safe(uobj, tmp, &context->xrcd_list, list) {
 		struct ib_xrcd *xrcd = uobj->object;
@@ -262,6 +274,8 @@ static int ib_uverbs_cleanup_ucontext(struct ib_uverbs_file *file,
 	}
 	mutex_unlock(&file->device->xrcd_tree_mutex);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry_safe(uobj, tmp, &context->pd_list, list) {
 		struct ib_pd *pd = uobj->object;
 
@@ -578,7 +592,12 @@ static ssize_t ib_uverbs_write(struct file *filp, const char __user *buf,
 	if (hdr.in_words * 4 != count)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	if (hdr.command >= ARRAY_SIZE(uverbs_cmd_table) ||
+=======
+	if (hdr.command < 0				||
+	    hdr.command >= ARRAY_SIZE(uverbs_cmd_table) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    !uverbs_cmd_table[hdr.command])
 		return -EINVAL;
 
@@ -761,8 +780,11 @@ static void ib_uverbs_add_one(struct ib_device *device)
 
 	kref_init(&uverbs_dev->ref);
 	init_completion(&uverbs_dev->comp);
+<<<<<<< HEAD
 	uverbs_dev->xrcd_tree = RB_ROOT;
 	mutex_init(&uverbs_dev->xrcd_tree_mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock(&map_lock);
 	devnum = find_first_zero_bit(dev_map, IB_UVERBS_MAX_DEVICES);
@@ -846,7 +868,11 @@ static void ib_uverbs_remove_one(struct ib_device *device)
 	kfree(uverbs_dev);
 }
 
+<<<<<<< HEAD
 static char *uverbs_devnode(struct device *dev, umode_t *mode)
+=======
+static char *uverbs_devnode(struct device *dev, mode_t *mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (mode)
 		*mode = 0666;

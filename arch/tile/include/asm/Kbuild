@@ -1,5 +1,6 @@
 include include/asm-generic/Kbuild.asm
 
+<<<<<<< HEAD
 header-y += ../arch/
 
 header-y += ucontext.h
@@ -42,3 +43,7 @@ generic-y += termios.h
 generic-y += types.h
 generic-y += ucontext.h
 generic-y += xor.h
+=======
+header-y += ucontext.h
+header-y += hardwall.h
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

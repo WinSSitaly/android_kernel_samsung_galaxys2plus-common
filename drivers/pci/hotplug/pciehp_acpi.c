@@ -27,7 +27,10 @@
 #include <linux/pci.h>
 #include <linux/pci_hotplug.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "pciehp.h"
 
 #define PCIEHP_DETECT_PCIE	(0)

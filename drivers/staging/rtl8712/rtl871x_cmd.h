@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2010 Realtek Corporation. All rights reserved.
@@ -23,6 +24,8 @@
  * Larry Finger <Larry.Finger@lwfinger.net>
  *
  ******************************************************************************/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __RTL871X_CMD_H_
 #define __RTL871X_CMD_H_
 
@@ -320,6 +323,7 @@ struct setdatarate_parm {
 	u8	datarates[NumRates];
 };
 
+<<<<<<< HEAD
 enum _RT_CHANNEL_DOMAIN {
 	RT_CHANNEL_DOMAIN_FCC = 0,
 	RT_CHANNEL_DOMAIN_IC = 1,
@@ -349,6 +353,8 @@ struct SetChannelPlan_param {
 	enum _RT_CHANNEL_DOMAIN ChannelPlan;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
 Caller Mode: Any
 
@@ -421,10 +427,13 @@ struct writeBB_parm {
 	u8	value;
 };
 
+<<<<<<< HEAD
 struct writePTM_parm {
 	u8	type;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct readRF_parm {
 	u8	offset;
 };
@@ -704,6 +713,7 @@ struct SetChannel_parm {
 	u32 curr_ch;
 };
 
+<<<<<<< HEAD
 /*H2C Handler index: 61 */
 struct DisconnectCtrlEx_param {
 	/* MAXTIME = (2 * FirstStageTO) + (TryPktCnt * TryPktInterval) */
@@ -712,6 +722,11 @@ struct DisconnectCtrlEx_param {
 	unsigned char TryPktInterval; /* Unit: ms */
 	unsigned char rsvd;
 	unsigned int  FirstStageTO; /* Unit: ms */
+=======
+/*H2C Handler index: 56 */
+struct PT_param {
+	u8 PT_En;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define GEN_CMD_CODE(cmd)	cmd ## _CMD_
@@ -747,17 +762,24 @@ u8 r8712_disassoc_cmd(struct _adapter *padapter);
 u8 r8712_setopmode_cmd(struct _adapter *padapter,
 		 enum NDIS_802_11_NETWORK_INFRASTRUCTURE networktype);
 u8 r8712_setdatarate_cmd(struct _adapter *padapter, u8 *rateset);
+<<<<<<< HEAD
 u8 r8712_set_chplan_cmd(struct _adapter  *padapter, int chplan);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u8 r8712_setbasicrate_cmd(struct _adapter *padapter, u8 *rateset);
 u8 r8712_getrfreg_cmd(struct _adapter *padapter, u8 offset, u8 * pval);
 u8 r8712_setrfintfs_cmd(struct _adapter *padapter, u8 mode);
 u8 r8712_setrfreg_cmd(struct _adapter  *padapter, u8 offset, u32 val);
 u8 r8712_setrttbl_cmd(struct _adapter  *padapter,
 		      struct setratable_parm *prate_table);
+<<<<<<< HEAD
 u8 r8712_gettssi_cmd(struct _adapter  *padapter, u8 offset, u8 *pval);
 u8 r8712_setptm_cmd(struct _adapter *padapter, u8 type);
 u8 r8712_setfwdig_cmd(struct _adapter *padapter, u8 type);
 u8 r8712_setfwra_cmd(struct _adapter *padapter, u8 type);
+=======
+u8 r8712_setptm_cmd(struct _adapter *padapter, u8 type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u8 r8712_addbareq_cmd(struct _adapter *padapter, u8 tid);
 u8 r8712_wdg_wk_cmd(struct _adapter *padapter);
 void r8712_survey_cmd_callback(struct _adapter  *padapter,
@@ -770,14 +792,20 @@ void r8712_createbss_cmd_callback(struct _adapter *padapter,
 				  struct cmd_obj *pcmd);
 void r8712_getbbrfreg_cmdrsp_callback(struct _adapter *padapter,
 				      struct cmd_obj *pcmd);
+<<<<<<< HEAD
 void r8712_readtssi_cmdrsp_callback(struct _adapter *padapter,
 				struct cmd_obj *pcmd);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void r8712_setstaKey_cmdrsp_callback(struct _adapter  *padapter,
 				     struct cmd_obj *pcmd);
 void r8712_setassocsta_cmdrsp_callback(struct _adapter  *padapter,
 				       struct cmd_obj *pcmd);
+<<<<<<< HEAD
 u8 r8712_disconnectCtrlEx_cmd(struct _adapter *adapter, u32 enableDrvCtrl,
 			u32 tryPktCnt, u32 tryPktInterval, u32 firstStageTO);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct _cmd_callback {
 	u32	cmd_code;

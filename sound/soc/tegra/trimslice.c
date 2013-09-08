@@ -115,6 +115,23 @@ static const struct snd_soc_dapm_route trimslice_audio_map[] = {
 	{"RLINEIN", NULL, "Line In"},
 };
 
+<<<<<<< HEAD
+=======
+static int trimslice_asoc_init(struct snd_soc_pcm_runtime *rtd)
+{
+	struct snd_soc_codec *codec = rtd->codec;
+	struct snd_soc_dapm_context *dapm = &codec->dapm;
+
+	snd_soc_dapm_nc_pin(dapm, "LHPOUT");
+	snd_soc_dapm_nc_pin(dapm, "RHPOUT");
+	snd_soc_dapm_nc_pin(dapm, "MICIN");
+
+	snd_soc_dapm_sync(dapm);
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct snd_soc_dai_link trimslice_tlv320aic23_dai = {
 	.name = "TLV320AIC23",
 	.stream_name = "AIC23",
@@ -122,12 +139,19 @@ static struct snd_soc_dai_link trimslice_tlv320aic23_dai = {
 	.platform_name = "tegra-pcm-audio",
 	.cpu_dai_name = "tegra-i2s.0",
 	.codec_dai_name = "tlv320aic23-hifi",
+<<<<<<< HEAD
+=======
+	.init = trimslice_asoc_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ops = &trimslice_asoc_ops,
 };
 
 static struct snd_soc_card snd_soc_trimslice = {
 	.name = "tegra-trimslice",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link = &trimslice_tlv320aic23_dai,
 	.num_links = 1,
 
@@ -135,7 +159,10 @@ static struct snd_soc_card snd_soc_trimslice = {
 	.num_dapm_widgets = ARRAY_SIZE(trimslice_dapm_widgets),
 	.dapm_routes = trimslice_audio_map,
 	.num_dapm_routes = ARRAY_SIZE(trimslice_audio_map),
+<<<<<<< HEAD
 	.fully_routed = true,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static __devinit int tegra_snd_trimslice_probe(struct platform_device *pdev)
@@ -144,17 +171,28 @@ static __devinit int tegra_snd_trimslice_probe(struct platform_device *pdev)
 	struct tegra_trimslice *trimslice;
 	int ret;
 
+<<<<<<< HEAD
 	trimslice = devm_kzalloc(&pdev->dev, sizeof(struct tegra_trimslice),
 				 GFP_KERNEL);
 	if (!trimslice) {
 		dev_err(&pdev->dev, "Can't allocate tegra_trimslice\n");
 		ret = -ENOMEM;
 		goto err;
+=======
+	trimslice = kzalloc(sizeof(struct tegra_trimslice), GFP_KERNEL);
+	if (!trimslice) {
+		dev_err(&pdev->dev, "Can't allocate tegra_trimslice\n");
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ret = tegra_asoc_utils_init(&trimslice->util_data, &pdev->dev);
 	if (ret)
+<<<<<<< HEAD
 		goto err;
+=======
+		goto err_free_trimslice;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	card->dev = &pdev->dev;
 	platform_set_drvdata(pdev, card);
@@ -171,7 +209,12 @@ static __devinit int tegra_snd_trimslice_probe(struct platform_device *pdev)
 
 err_fini_utils:
 	tegra_asoc_utils_fini(&trimslice->util_data);
+<<<<<<< HEAD
 err:
+=======
+err_free_trimslice:
+	kfree(trimslice);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -184,6 +227,11 @@ static int __devexit tegra_snd_trimslice_remove(struct platform_device *pdev)
 
 	tegra_asoc_utils_fini(&trimslice->util_data);
 
+<<<<<<< HEAD
+=======
+	kfree(trimslice);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -195,7 +243,22 @@ static struct platform_driver tegra_snd_trimslice_driver = {
 	.probe = tegra_snd_trimslice_probe,
 	.remove = __devexit_p(tegra_snd_trimslice_remove),
 };
+<<<<<<< HEAD
 module_platform_driver(tegra_snd_trimslice_driver);
+=======
+
+static int __init snd_tegra_trimslice_init(void)
+{
+	return platform_driver_register(&tegra_snd_trimslice_driver);
+}
+module_init(snd_tegra_trimslice_init);
+
+static void __exit snd_tegra_trimslice_exit(void)
+{
+	platform_driver_unregister(&tegra_snd_trimslice_driver);
+}
+module_exit(snd_tegra_trimslice_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Mike Rapoport <mike@compulab.co.il>");
 MODULE_DESCRIPTION("Trimslice machine ASoC driver");

@@ -18,7 +18,11 @@
  * software indicates your acceptance of these terms and conditions.  If you do
  * not agree with these terms and conditions, do not use the software.
  *
+<<<<<<< HEAD
  * Copyright Â© 2003 Agere Systems Inc.
+=======
+ * Copyright © 2003 Agere Systems Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source or binary forms, with or without
@@ -39,7 +43,11 @@
  *
  * Disclaimer
  *
+<<<<<<< HEAD
  * THIS SOFTWARE IS PROVIDED Â“AS ISÂ” AND ANY EXPRESS OR IMPLIED WARRANTIES,
+=======
+ * THIS SOFTWARE IS PROVIDED “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * INCLUDING, BUT NOT LIMITED TO, INFRINGEMENT AND THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  ANY
  * USE, MODIFICATION OR DISTRIBUTION OF THIS SOFTWARE IS SOLELY AT THE USERS OWN
@@ -75,6 +83,7 @@
 #include <wl_wext.h>
 #include <wl_priv.h>
 
+<<<<<<< HEAD
 /*******************************************************************************
  * global definitions
  ******************************************************************************/
@@ -300,6 +309,31 @@ static int hermes_set_wep_keys(struct wl_private *lp, u16 key_idx,
 out:
 	return ret;
 }
+=======
+
+
+/* If WIRELESS_EXT is not defined (as a result of HAS_WIRELESS_EXTENSIONS
+   #including linux/wireless.h), then these functions do not need to be included
+   in the build. */
+#ifdef WIRELESS_EXT
+
+#define IWE_STREAM_ADD_EVENT(info, buf, end, iwe, len) \
+    iwe_stream_add_event(info, buf, end, iwe, len)
+#define IWE_STREAM_ADD_POINT(info, buf, end, iwe, msg) \
+    iwe_stream_add_point(info, buf, end, iwe, msg)
+
+
+
+/*******************************************************************************
+ * global definitions
+ ******************************************************************************/
+#if DBG
+extern dbg_info_t *DbgInfo;
+#endif  // DBG
+
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*******************************************************************************
  *	wireless_commit()
@@ -526,8 +560,21 @@ static int wireless_get_frequency(struct net_device *dev, struct iw_request_info
 	if( ret == HCF_SUCCESS ) {
 		hcf_16 channel = CNV_LITTLE_TO_INT( lp->ltvRecord.u.u16[0] );
 
+<<<<<<< HEAD
 		freq->m = wl_get_freq_from_chan( channel ) * 100000;
 		freq->e = 1;
+=======
+#ifdef USE_FREQUENCY
+
+		freq->m = wl_get_freq_from_chan( channel ) * 100000;
+		freq->e = 1;
+#else
+
+		freq->m = channel;
+		freq->e = 0;
+
+#endif /* USE_FREQUENCY */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
     	wl_act_int_on( lp );
@@ -654,6 +701,11 @@ retry:
 
 
 	/* Link quality */
+<<<<<<< HEAD
+=======
+#ifdef USE_DBM
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	range->max_qual.qual     = (u_char)HCF_MAX_COMM_QUALITY;
 
 	/* If the value returned in /proc/net/wireless is greater than the maximum range,
@@ -662,6 +714,16 @@ retry:
 
 	range->max_qual.level   = (u_char)( dbm( HCF_MIN_SIGNAL_LEVEL ) - 1 );
 	range->max_qual.noise   = (u_char)( dbm( HCF_MIN_NOISE_LEVEL ) - 1 );
+<<<<<<< HEAD
+=======
+#else
+
+	range->max_qual.qual    = 100;
+	range->max_qual.level   = 100;
+	range->max_qual.noise   = 100;
+
+#endif /* USE_DBM */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 	/* Set available rates */
@@ -693,6 +755,11 @@ retry:
 
 	/* Encryption */
 
+<<<<<<< HEAD
+=======
+#if WIRELESS_EXT > 8
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Holding the lock too long, make a gap to allow other processes */
 	wl_unlock(lp, &flags);
 	wl_lock( lp, &flags );
@@ -709,17 +776,35 @@ retry:
 		range->max_encoding_tokens   = MAX_KEYS;
 	}
 
+<<<<<<< HEAD
+=======
+#endif /* WIRELESS_EXT > 8 */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Tx Power Info */
 	range->txpower_capa  = IW_TXPOW_MWATT;
 	range->num_txpower   = 1;
 	range->txpower[0]    = RADIO_TX_POWER_MWATT;
 
+<<<<<<< HEAD
+=======
+#if WIRELESS_EXT > 10
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Wireless Extension Info */
 	range->we_version_compiled   = WIRELESS_EXT;
 	range->we_version_source     = WIRELESS_SUPPORT;
 
 	// Retry Limits and Lifetime - NOT SUPPORTED
 
+<<<<<<< HEAD
+=======
+#endif
+
+
+#if WIRELESS_EXT > 11
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Holding the lock too long, make a gap to allow other processes */
 	wl_unlock(lp, &flags);
 	wl_lock( lp, &flags );
@@ -729,6 +814,7 @@ retry:
 	range->avg_qual = lp->wstats.qual;
 	DBG_TRACE( DbgInfo, "wl_wireless_stats done\n" );
 
+<<<<<<< HEAD
 	/* Event capability (kernel + driver) */
 	IW_EVENT_CAPA_SET_KERNEL(range->event_capa);
 	IW_EVENT_CAPA_SET(range->event_capa, SIOCGIWAP);
@@ -741,6 +827,20 @@ retry:
 
 	range->enc_capa = IW_ENC_CAPA_WPA | IW_ENC_CAPA_CIPHER_TKIP;
 	range->scan_capa = IW_SCAN_CAPA_NONE;
+=======
+#endif
+
+	/* Event capability (kernel + driver) */
+	range->event_capa[0] = (IW_EVENT_CAPA_K_0 |
+				IW_EVENT_CAPA_MASK(SIOCGIWAP) |
+				IW_EVENT_CAPA_MASK(SIOCGIWSCAN));
+	range->event_capa[1] = IW_EVENT_CAPA_K_1;
+	range->event_capa[4] = (IW_EVENT_CAPA_MASK(IWEVREGISTERED) |
+				IW_EVENT_CAPA_MASK(IWEVCUSTOM) |
+				IW_EVENT_CAPA_MASK(IWEVEXPIRED));
+
+	range->enc_capa = IW_ENC_CAPA_WPA | IW_ENC_CAPA_CIPHER_TKIP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out_unlock:
     	wl_act_int_on( lp );
@@ -1249,6 +1349,12 @@ static int wireless_get_essid(struct net_device *dev, struct iw_request_info *in
 		/* Copy the information into the user buffer */
 		data->length = pName->length;
 
+<<<<<<< HEAD
+=======
+		/* NOTE: Null terminating is necessary for proper display of the SSID in
+		   the wireless tools */
+		data->length = pName->length + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if( pName->length < HCF_MAX_NAME_LEN ) {
 			pName->name[pName->length] = '\0';
 		}
@@ -1258,6 +1364,10 @@ static int wireless_get_essid(struct net_device *dev, struct iw_request_info *in
 
 #if 1 //;? (HCF_TYPE) & HCF_TYPE_STA
 					//;?should we return an error status in AP mode
+<<<<<<< HEAD
+=======
+#ifdef RETURN_CURRENT_NETWORKNAME
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* if desired is null ("any"), return current or "any" */
 		if( pName->name[0] == '\0' ) {
@@ -1274,7 +1384,15 @@ static int wireless_get_essid(struct net_device *dev, struct iw_request_info *in
 				pName->length = CNV_LITTLE_TO_INT( pName->length );
 
 				/* Copy the information into the user buffer */
+<<<<<<< HEAD
 				data->length = pName->length;
+=======
+				data->length = pName->length + 1;
+				if( pName->length < HCF_MAX_NAME_LEN ) {
+					pName->name[pName->length] = '\0';
+				}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				data->flags = 1;
 			} else {
 				ret = -EFAULT;
@@ -1282,8 +1400,16 @@ static int wireless_get_essid(struct net_device *dev, struct iw_request_info *in
 			}
 		}
 
+<<<<<<< HEAD
 #endif // HCF_STA
 
+=======
+#endif // RETURN_CURRENT_NETWORKNAME
+#endif // HCF_STA
+
+		data->length--;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (pName->length > IW_ESSID_MAX_SIZE) {
 			ret = -EFAULT;
 			goto out_unlock;
@@ -1332,6 +1458,7 @@ static int wireless_set_encode(struct net_device *dev, struct iw_request_info *i
 {
 	struct wl_private *lp = wl_priv(dev);
 	unsigned long flags;
+<<<<<<< HEAD
 	int key_idx = (erq->flags & IW_ENCODE_INDEX) - 1;
 	int ret = 0;
 	bool enable = true;
@@ -1339,10 +1466,25 @@ static int wireless_set_encode(struct net_device *dev, struct iw_request_info *i
 	DBG_ENTER(DbgInfo);
 
 	if (lp->portState == WVLAN_PORT_STATE_DISABLED) {
+=======
+	int     ret = 0;
+
+#if 1 //;? #if WIRELESS_EXT > 8 - used unconditionally in the rest of the code...
+	hcf_8   encryption_state;
+#endif // WIRELESS_EXT > 8
+	/*------------------------------------------------------------------------*/
+
+
+	DBG_FUNC( "wireless_set_encode" );
+	DBG_ENTER( DbgInfo );
+
+	if(lp->portState == WVLAN_PORT_STATE_DISABLED) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EBUSY;
 		goto out;
 	}
 
+<<<<<<< HEAD
 	if (erq->flags & IW_ENCODE_DISABLED)
 		enable = false;
 
@@ -1358,13 +1500,148 @@ static int wireless_set_encode(struct net_device *dev, struct iw_request_info *i
 		wl_wext_event_encode(dev);
 
 	wl_act_int_on(lp);
+=======
+	wl_lock( lp, &flags );
+
+    	wl_act_int_off( lp );
+
+	/* Is encryption supported? */
+	if( !wl_has_wep( &( lp->hcfCtx ))) {
+		DBG_WARNING( DbgInfo, "WEP not supported on this device\n" );
+		ret = -EOPNOTSUPP;
+		goto out_unlock;
+	}
+
+	DBG_NOTICE( DbgInfo, "pointer: %p, length: %d, flags: %#x\n",
+				keybuf, erq->length,
+				erq->flags);
+
+	/* Save state of Encryption switch */
+	encryption_state = lp->EnableEncryption;
+
+	/* Basic checking: do we have a key to set? */
+	if((erq->length) != 0) {
+		int index   = ( erq->flags & IW_ENCODE_INDEX ) - 1;
+		int tk      = lp->TransmitKeyID - 1;		// current key
+
+
+		/* Check the size of the key */
+		switch(erq->length) {
+		case 0:
+			break;
+
+		case MIN_KEY_SIZE:
+		case MAX_KEY_SIZE:
+
+			/* Check the index */
+			if(( index < 0 ) || ( index >= MAX_KEYS )) {
+				index = tk;
+			}
+
+			/* Cleanup */
+			memset( lp->DefaultKeys.key[index].key, 0, MAX_KEY_SIZE );
+
+			/* Copy the key in the driver */
+			memcpy( lp->DefaultKeys.key[index].key, keybuf, erq->length);
+
+			/* Set the length */
+			lp->DefaultKeys.key[index].len = erq->length;
+
+			DBG_NOTICE( DbgInfo, "encoding.length: %d\n", erq->length );
+			DBG_NOTICE( DbgInfo, "set key: %s(%d) [%d]\n", lp->DefaultKeys.key[index].key,
+						lp->DefaultKeys.key[index].len, index );
+
+			/* Enable WEP (if possible) */
+			if(( index == tk ) && ( lp->DefaultKeys.key[tk].len > 0 )) {
+				lp->EnableEncryption = 1;
+			}
+
+			break;
+
+		default:
+			DBG_WARNING( DbgInfo, "Invalid Key length\n" );
+			ret = -EINVAL;
+			goto out_unlock;
+		}
+	} else {
+		int index = ( erq->flags & IW_ENCODE_INDEX ) - 1;
+
+
+		/* Do we want to just set the current transmit key? */
+		if(( index >= 0 ) && ( index < MAX_KEYS )) {
+			DBG_NOTICE( DbgInfo, "index: %d; len: %d\n", index,
+						lp->DefaultKeys.key[index].len );
+
+			if( lp->DefaultKeys.key[index].len > 0 ) {
+				lp->TransmitKeyID       = index + 1;
+				lp->EnableEncryption    = 1;
+			} else {
+				DBG_WARNING( DbgInfo, "Problem setting the current TxKey\n" );
+				DBG_LEAVE( DbgInfo );
+				ret = -EINVAL;
+			}
+		}
+	}
+
+	/* Read the flags */
+	if( erq->flags & IW_ENCODE_DISABLED ) {
+		lp->EnableEncryption = 0;	// disable encryption
+	} else {
+		lp->EnableEncryption = 1;
+	}
+
+	if( erq->flags & IW_ENCODE_RESTRICTED ) {
+		DBG_WARNING( DbgInfo, "IW_ENCODE_RESTRICTED invalid\n" );
+		ret = -EINVAL;		// Invalid
+	}
+
+	DBG_TRACE( DbgInfo, "encryption_state :       %d\n", encryption_state );
+	DBG_TRACE( DbgInfo, "lp->EnableEncryption :   %d\n", lp->EnableEncryption );
+	DBG_TRACE( DbgInfo, "erq->length            : %d\n",
+			   erq->length);
+	DBG_TRACE( DbgInfo, "erq->flags             : 0x%x\n",
+			   erq->flags);
+
+	/* Write the changes to the card */
+	if( ret == 0 ) {
+		DBG_NOTICE( DbgInfo, "encrypt: %d, ID: %d\n", lp->EnableEncryption,
+					lp->TransmitKeyID );
+
+		if( lp->EnableEncryption == encryption_state ) {
+			if( erq->length != 0 ) {
+				/* Dynamic WEP key update */
+				wl_set_wep_keys( lp );
+			}
+		} else {
+			/* To switch encryption on/off, soft reset is required */
+			wl_apply( lp );
+		}
+	}
+
+	/* Send an event that Encryption has been set */
+	wl_wext_event_encode( dev );
+
+out_unlock:
+
+    	wl_act_int_on( lp );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wl_unlock(lp, &flags);
 
 out:
+<<<<<<< HEAD
 	DBG_LEAVE(DbgInfo);
 	return ret;
 }
+=======
+	DBG_LEAVE( DbgInfo );
+	return ret;
+} // wireless_set_encode
+/*============================================================================*/
+
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*******************************************************************************
  *	wireless_get_encode()
@@ -2069,9 +2346,17 @@ static int wireless_set_rts_threshold (struct net_device *dev, struct iw_request
 		goto out;
 	}
 
+<<<<<<< HEAD
 	if( rts->disabled ) {
 		rthr = 2347;
 	}
+=======
+#if WIRELESS_EXT > 8
+	if( rts->disabled ) {
+		rthr = 2347;
+	}
+#endif /* WIRELESS_EXT > 8 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if(( rthr < 256 ) || ( rthr > 2347 )) {
 		ret = -EINVAL;
@@ -2139,8 +2424,17 @@ static int wireless_get_rts_threshold (struct net_device *dev, struct iw_request
 
 	rts->value = lp->RTSThreshold;
 
+<<<<<<< HEAD
 	rts->disabled = ( rts->value == 2347 );
 
+=======
+#if WIRELESS_EXT > 8
+
+	rts->disabled = ( rts->value == 2347 );
+
+#endif /* WIRELESS_EXT > 8 */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rts->fixed = 1;
 
     	wl_act_int_on( lp );
@@ -2567,6 +2861,11 @@ out:
 
 
 
+<<<<<<< HEAD
+=======
+#if WIRELESS_EXT > 13
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*******************************************************************************
  *	wireless_set_scan()
  *******************************************************************************
@@ -2775,8 +3074,13 @@ static int wireless_get_scan(struct net_device *dev, struct iw_request_info *inf
 		memcpy( iwe.u.ap_addr.sa_data, probe_resp->BSSID, ETH_ALEN);
 		iwe.len                 = IW_EV_ADDR_LEN;
 
+<<<<<<< HEAD
 		buf = iwe_stream_add_event(info, buf, buf_end,
 					   &iwe, IW_EV_ADDR_LEN);
+=======
+		buf = IWE_STREAM_ADD_EVENT(info, buf, buf_end, &iwe, IW_EV_ADDR_LEN);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Use the mode to indicate if it's a station or AP */
 		/* Won't always be an AP if in IBSS mode */
@@ -2792,8 +3096,13 @@ static int wireless_get_scan(struct net_device *dev, struct iw_request_info *inf
 
 		iwe.len = IW_EV_UINT_LEN;
 
+<<<<<<< HEAD
 		buf = iwe_stream_add_event(info, buf, buf_end,
 					   &iwe, IW_EV_UINT_LEN);
+=======
+		buf = IWE_STREAM_ADD_EVENT(info, buf, buf_end, &iwe, IW_EV_UINT_LEN);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Any quality information */
 		memset(&iwe, 0, sizeof(iwe));
@@ -2805,8 +3114,12 @@ static int wireless_get_scan(struct net_device *dev, struct iw_request_info *inf
 		iwe.u.qual.updated  = lp->probe_results.scan_complete | IW_QUAL_DBM;
 		iwe.len             = IW_EV_QUAL_LEN;
 
+<<<<<<< HEAD
 		buf = iwe_stream_add_event(info, buf, buf_end,
 					   &iwe, IW_EV_QUAL_LEN);
+=======
+		buf = IWE_STREAM_ADD_EVENT(info, buf, buf_end, &iwe, IW_EV_QUAL_LEN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 		/* ESSID information */
@@ -2817,8 +3130,12 @@ static int wireless_get_scan(struct net_device *dev, struct iw_request_info *inf
 			iwe.u.data.length = probe_resp->rawData[1];
 			iwe.u.data.flags = 1;
 
+<<<<<<< HEAD
 			buf = iwe_stream_add_point(info, buf, buf_end,
 					       &iwe, &probe_resp->rawData[2]);
+=======
+			buf = IWE_STREAM_ADD_POINT(info, buf, buf_end, &iwe, &probe_resp->rawData[2]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 
@@ -2836,7 +3153,11 @@ static int wireless_get_scan(struct net_device *dev, struct iw_request_info *inf
 			iwe.u.data.flags |= IW_ENCODE_DISABLED;
 		}
 
+<<<<<<< HEAD
 		buf = iwe_stream_add_point(info, buf, buf_end, &iwe, NULL);
+=======
+		buf = IWE_STREAM_ADD_POINT(info, buf, buf_end, &iwe, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 		/* Frequency Info */
@@ -2847,10 +3168,17 @@ static int wireless_get_scan(struct net_device *dev, struct iw_request_info *inf
 		iwe.u.freq.m = wl_parse_ds_ie( probe_resp );
 		iwe.u.freq.e = 0;
 
+<<<<<<< HEAD
 		buf = iwe_stream_add_event(info, buf, buf_end,
 					   &iwe, IW_EV_FREQ_LEN);
 
 
+=======
+		buf = IWE_STREAM_ADD_EVENT(info, buf, buf_end, &iwe, IW_EV_FREQ_LEN);
+
+
+#if WIRELESS_EXT > 14
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Custom info (Beacon Interval) */
 		memset( &iwe, 0, sizeof( iwe ));
 		memset( msg, 0, sizeof( msg ));
@@ -2859,15 +3187,23 @@ static int wireless_get_scan(struct net_device *dev, struct iw_request_info *inf
 		sprintf( msg, "beacon_interval=%d", probe_resp->beaconInterval );
 		iwe.u.data.length = strlen( msg );
 
+<<<<<<< HEAD
 		buf = iwe_stream_add_point(info, buf, buf_end, &iwe, msg);
 
 
 		/* WPA-IE */
+=======
+		buf = IWE_STREAM_ADD_POINT(info, buf, buf_end, &iwe, msg);
+
+
+		/* Custom info (WPA-IE) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wpa_ie = NULL;
 		wpa_ie_len = 0;
 
 		wpa_ie = wl_parse_wpa_ie( probe_resp, &wpa_ie_len );
 		if( wpa_ie != NULL ) {
+<<<<<<< HEAD
 			memset(&iwe, 0, sizeof(iwe));
 
 			iwe.cmd = IWEVGENIE;
@@ -2878,6 +3214,20 @@ static int wireless_get_scan(struct net_device *dev, struct iw_request_info *inf
 		}
 
 		/* Add other custom info in formatted string format as needed... */
+=======
+			memset( &iwe, 0, sizeof( iwe ));
+			memset( msg, 0, sizeof( msg ));
+
+			iwe.cmd = IWEVCUSTOM;
+			sprintf( msg, "wpa_ie=%s", wl_print_wpa_ie( wpa_ie, wpa_ie_len ));
+			iwe.u.data.length = strlen( msg );
+
+			buf = IWE_STREAM_ADD_POINT(info, buf, buf_end, &iwe, msg);
+		}
+
+		/* Add other custom info in formatted string format as needed... */
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	data->length = buf - extra;
@@ -2894,6 +3244,7 @@ out:
 } // wireless_get_scan
 /*============================================================================*/
 
+<<<<<<< HEAD
 #if DBG
 static const char * const auth_names[] = {
 	"IW_AUTH_WPA_VERSION",
@@ -2912,6 +3263,12 @@ static const char * const auth_names[] = {
 	"Unsupported"
 };
 #endif
+=======
+#endif  // WIRELESS_EXT > 13
+
+
+#if WIRELESS_EXT > 17
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int wireless_set_auth(struct net_device *dev,
 			  struct iw_request_info *info,
@@ -2919,15 +3276,25 @@ static int wireless_set_auth(struct net_device *dev,
 {
 	struct wl_private *lp = wl_priv(dev);
 	unsigned long flags;
+<<<<<<< HEAD
 	ltv_t ltv;
 	int ret;
 	int iwa_idx = data->flags & IW_AUTH_INDEX;
 	int iwa_val = data->value;
+=======
+	int			      ret;
+	int			      iwa_idx = data->flags & IW_AUTH_INDEX;
+	int			      iwa_val = data->value;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	DBG_FUNC( "wireless_set_auth" );
 	DBG_ENTER( DbgInfo );
 
+<<<<<<< HEAD
 	if (lp->portState == WVLAN_PORT_STATE_DISABLED) {
+=======
+	if(lp->portState == WVLAN_PORT_STATE_DISABLED) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EBUSY;
 		goto out;
 	}
@@ -2936,6 +3303,7 @@ static int wireless_set_auth(struct net_device *dev,
 
     	wl_act_int_off( lp );
 
+<<<<<<< HEAD
 	if (iwa_idx > IW_AUTH_MFP)
 		iwa_idx = IW_AUTH_MFP + 1;
 	DBG_TRACE(DbgInfo, "%s\n", auth_names[iwa_idx]);
@@ -3032,6 +3400,91 @@ static int wireless_set_auth(struct net_device *dev,
 		/* return an error */
 		ret = -EOPNOTSUPP;
 		break;
+=======
+	switch (iwa_idx) {
+		case IW_AUTH_WPA_VERSION:
+			DBG_TRACE( DbgInfo, "IW_AUTH_WPA_VERSION\n");
+			/* We do support WPA only; how should DISABLED be treated? */
+			if (iwa_val == IW_AUTH_WPA_VERSION_WPA)
+				ret = 0;
+			else
+				ret = -EINVAL;
+			break;
+
+		case IW_AUTH_WPA_ENABLED:
+			DBG_TRACE( DbgInfo, "IW_AUTH_WPA_ENABLED: val = %d\n", iwa_val);
+			if (iwa_val)
+				lp->EnableEncryption = 2;
+			else
+				lp->EnableEncryption = 0;
+			ret = 0;
+			break;
+
+		case IW_AUTH_TKIP_COUNTERMEASURES:
+			DBG_TRACE( DbgInfo, "IW_AUTH_TKIP_COUNTERMEASURES\n");
+			lp->driverEnable = !iwa_val;
+			if(lp->driverEnable)
+				hcf_cntl(&(lp->hcfCtx), HCF_CNTL_ENABLE | HCF_PORT_0);
+			else
+				hcf_cntl(&(lp->hcfCtx), HCF_CNTL_DISABLE | HCF_PORT_0);
+			ret = 0;
+			break;
+
+		case IW_AUTH_DROP_UNENCRYPTED:
+			DBG_TRACE( DbgInfo, "IW_AUTH_DROP_UNENCRYPTED\n");
+			/* We do not actually do anything here, just to silence
+			 * wpa_supplicant */
+			ret = 0;
+			break;
+
+		case IW_AUTH_CIPHER_PAIRWISE:
+			DBG_TRACE( DbgInfo, "IW_AUTH_CIPHER_PAIRWISE\n");
+			/* not implemented, return an error */
+			ret = -EINVAL;
+			break;
+
+		case IW_AUTH_CIPHER_GROUP:
+			DBG_TRACE( DbgInfo, "IW_AUTH_CIPHER_GROUP\n");
+			/* not implemented, return an error */
+			ret = -EINVAL;
+			break;
+
+		case IW_AUTH_KEY_MGMT:
+			DBG_TRACE( DbgInfo, "IW_AUTH_KEY_MGMT\n");
+			/* not implemented, return an error */
+			ret = -EINVAL;
+			break;
+
+		case IW_AUTH_80211_AUTH_ALG:
+			DBG_TRACE( DbgInfo, "IW_AUTH_80211_AUTH_ALG\n");
+			/* not implemented, return an error */
+			ret = -EINVAL;
+			break;
+
+		case IW_AUTH_RX_UNENCRYPTED_EAPOL:
+			DBG_TRACE( DbgInfo, "IW_AUTH_RX_UNENCRYPTED_EAPOL\n");
+			/* not implemented, return an error */
+			ret = -EINVAL;
+			break;
+
+		case IW_AUTH_ROAMING_CONTROL:
+			DBG_TRACE( DbgInfo, "IW_AUTH_ROAMING_CONTROL\n");
+			/* not implemented, return an error */
+			ret = -EINVAL;
+			break;
+
+		case IW_AUTH_PRIVACY_INVOKED:
+			DBG_TRACE( DbgInfo, "IW_AUTH_PRIVACY_INVOKED\n");
+			/* not implemented, return an error */
+			ret = -EINVAL;
+			break;
+
+		default:
+			DBG_TRACE( DbgInfo, "IW_AUTH_?? (%d) unknown\n", iwa_idx);
+			/* return an error */
+			ret = -EINVAL;
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
     	wl_act_int_on( lp );
@@ -3045,6 +3498,7 @@ out:
 /*============================================================================*/
 
 
+<<<<<<< HEAD
 static void flush_tx(struct wl_private *lp)
 {
 	ltv_t ltv;
@@ -3185,17 +3639,256 @@ static int wireless_set_encodeext(struct net_device *dev,
 out_unlock:
 
 	wl_act_int_on(lp);
+=======
 
-	wl_unlock(lp, &flags);
+static int hermes_set_key(ltv_t *ltv, int alg, int key_idx, u8 *addr,
+			  int set_tx, u8 *seq, u8 *key, size_t key_len)
+{
+	int ret = -EINVAL;
+	// int   count = 0;
+	int   buf_idx = 0;
+	hcf_8 tsc[IW_ENCODE_SEQ_MAX_SIZE] =
+		{ 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00 };
 
-out:
-	DBG_LEAVE(DbgInfo);
+	DBG_FUNC( "hermes_set_key" );
+	DBG_ENTER( DbgInfo );
+
+	/*
+         * Check the key index here; if 0, load as Pairwise Key, otherwise,
+         * load as a group key. Note that for the Hermes, the RIDs for
+         * group/pariwise keys are different from each other and different
+         * than the default WEP keys as well.
+         */
+	switch (alg)
+	{
+	case IW_ENCODE_ALG_TKIP:
+		DBG_TRACE( DbgInfo, "IW_ENCODE_ALG_TKIP: key(%d)\n", key_idx);
+#if 0
+		/*
+                 * Make sure that there is no data queued up in the firmware
+                 * before setting the TKIP keys. If this check is not
+                 * performed, some data may be sent out with incorrect MIC
+                 * and cause synchronizarion errors with the AP
+                 */
+		/* Check every 1ms for 100ms */
+		for( count = 0; count < 100; count++ )
+		{
+			usleep( 1000 );
+
+			ltv.len = 2;
+			ltv.typ = 0xFD91;  // This RID not defined in HCF yet!!!
+			ltv.u.u16[0] = 0;
+
+			wl_get_info( sock, &ltv, ifname );
+
+			if( ltv.u.u16[0] == 0 )
+			{
+				break;
+			}
+		}
+
+		if( count == 100 )
+		{
+			wpa_printf( MSG_DEBUG, "Timed out waiting for TxQ!" );
+		}
+#endif
+
+		switch (key_idx) {
+		case 0:
+			ltv->len = 28;
+			ltv->typ = CFG_ADD_TKIP_MAPPED_KEY;
+
+			/* Load the BSSID */
+			memcpy(&ltv->u.u8[buf_idx], addr, ETH_ALEN);
+			buf_idx += ETH_ALEN;
+
+			/* Load the TKIP key */
+			memcpy(&ltv->u.u8[buf_idx], &key[0], 16);
+			buf_idx += 16;
+
+			/* Load the TSC */
+			memcpy(&ltv->u.u8[buf_idx], tsc, IW_ENCODE_SEQ_MAX_SIZE);
+			buf_idx += IW_ENCODE_SEQ_MAX_SIZE;
+
+			/* Load the RSC */
+			memcpy(&ltv->u.u8[buf_idx], seq, IW_ENCODE_SEQ_MAX_SIZE);
+			buf_idx += IW_ENCODE_SEQ_MAX_SIZE;
+
+			/* Load the TxMIC key */
+			memcpy(&ltv->u.u8[buf_idx], &key[16], 8);
+			buf_idx += 8;
+
+			/* Load the RxMIC key */
+			memcpy(&ltv->u.u8[buf_idx], &key[24], 8);
+
+			ret = 0;
+			break;
+		case 1:
+		case 2:
+		case 3:
+			ltv->len = 26;
+			ltv->typ = CFG_ADD_TKIP_DEFAULT_KEY;
+
+			/* Load the key Index */
+			ltv->u.u16[buf_idx] = key_idx;
+			/* If this is a Tx Key, set bit 8000 */
+			if(set_tx)
+				ltv->u.u16[buf_idx] |= 0x8000;
+			buf_idx += 2;
+
+			/* Load the RSC */
+			memcpy(&ltv->u.u8[buf_idx], seq, IW_ENCODE_SEQ_MAX_SIZE);
+			buf_idx += IW_ENCODE_SEQ_MAX_SIZE;
+
+			/* Load the TKIP, TxMIC, and RxMIC keys in one shot, because in
+			   CFG_ADD_TKIP_DEFAULT_KEY they are back-to-back */
+			memcpy(&ltv->u.u8[buf_idx], key, key_len);
+			buf_idx += key_len;
+
+			/* Load the TSC */
+			memcpy(&ltv->u.u8[buf_idx], tsc, IW_ENCODE_SEQ_MAX_SIZE);
+
+			ltv->u.u16[0] = CNV_INT_TO_LITTLE(ltv->u.u16[0]);
+
+			ret = 0;
+			break;
+		default:
+			break;
+		}
+
+		break;
+
+	case IW_ENCODE_ALG_WEP:
+		DBG_TRACE( DbgInfo, "IW_ENCODE_ALG_WEP: key(%d)\n", key_idx);
+		break;
+
+	case IW_ENCODE_ALG_CCMP:
+		DBG_TRACE( DbgInfo, "IW_ENCODE_ALG_CCMP: key(%d)\n", key_idx);
+		break;
+
+	case IW_ENCODE_ALG_NONE:
+		DBG_TRACE( DbgInfo, "IW_ENCODE_ALG_NONE: key(%d)\n", key_idx);
+		switch (key_idx) {
+		case 0:
+			if (memcmp(addr, "\xff\xff\xff\xff\xff\xff", ETH_ALEN) != 0) {
+			//if (addr != NULL) {
+				ltv->len = 7;
+				ltv->typ = CFG_REMOVE_TKIP_MAPPED_KEY;
+				memcpy(&ltv->u.u8[0], addr, ETH_ALEN);
+				ret = 0;
+			}
+			break;
+		case 1:
+		case 2:
+		case 3:
+			/* Clear the Group TKIP keys by index */
+			ltv->len = 2;
+			ltv->typ = CFG_REMOVE_TKIP_DEFAULT_KEY;
+			ltv->u.u16[0] = key_idx;
+
+			ret = 0;
+			break;
+		default:
+			break;
+		}
+		break;
+	default:
+		DBG_TRACE( DbgInfo, "IW_ENCODE_??: key(%d)\n", key_idx);
+		break;
+	}
+
+	DBG_LEAVE( DbgInfo );
 	return ret;
-}
+} // hermes_set_key
 /*============================================================================*/
 
 
 
+static int wireless_set_encodeext (struct net_device *dev,
+					struct iw_request_info *info,
+					struct iw_point *erq, char *keybuf)
+{
+	struct wl_private *lp = wl_priv(dev);
+	unsigned long flags;
+	int			      ret;
+	int key_idx = (erq->flags&IW_ENCODE_INDEX) - 1;
+	ltv_t ltv;
+	struct iw_encode_ext *ext = (struct iw_encode_ext *)keybuf;
+
+	DBG_FUNC( "wireless_set_encodeext" );
+	DBG_ENTER( DbgInfo );
+
+	if(lp->portState == WVLAN_PORT_STATE_DISABLED) {
+		ret = -EBUSY;
+		goto out;
+	}
+
+	if (sizeof(ext->rx_seq) != 8) {
+		DBG_TRACE(DbgInfo, "rz_seq size mismatch\n");
+		DBG_LEAVE(DbgInfo);
+		return -EINVAL;
+	}
+
+	/* Handle WEP keys via the old set encode procedure */
+	if(ext->alg == IW_ENCODE_ALG_WEP) {
+		struct iw_point  wep_erq;
+		char            *wep_keybuf;
+
+		/* Build request structure */
+		wep_erq.flags  = erq->flags;   // take over flags with key index
+		wep_erq.length = ext->key_len; // take length from extended key info
+		wep_keybuf     = ext->key;     // pointer to the key text
+
+		/* Call wireless_set_encode tot handle the WEP key */
+		ret = wireless_set_encode(dev, info, &wep_erq, wep_keybuf);
+		goto out;
+	}
+
+	/* Proceed for extended encode functions for WAP and NONE */
+	wl_lock( lp, &flags );
+
+    	wl_act_int_off( lp );
+
+	memset(&ltv, 0, sizeof(ltv));
+	ret = hermes_set_key(&ltv, ext->alg, key_idx, ext->addr.sa_data,
+				ext->ext_flags & IW_ENCODE_EXT_SET_TX_KEY,
+				ext->rx_seq, ext->key, ext->key_len);
+
+	if (ret != 0) {
+		DBG_TRACE( DbgInfo, "hermes_set_key returned != 0, key not set\n");
+		goto out_unlock;
+	}
+
+	/* Put the key in HCF */
+	ret = hcf_put_info(&(lp->hcfCtx), (LTVP)&ltv);
+
+out_unlock:
+	if(ret == HCF_SUCCESS) {
+		DBG_TRACE( DbgInfo, "Put key info succes\n");
+	} else {
+		DBG_TRACE( DbgInfo, "Put key info failed, key not set\n");
+	}
+
+    	wl_act_int_on( lp );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+
+	wl_unlock(lp, &flags);
+
+out:
+<<<<<<< HEAD
+	DBG_LEAVE(DbgInfo);
+	return ret;
+}
+=======
+	DBG_LEAVE( DbgInfo );
+	return ret;
+} // wireless_set_encodeext
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
+/*============================================================================*/
+
+
+
+<<<<<<< HEAD
 static int wireless_set_genie(struct net_device *dev,
 			      struct iw_request_info *info,
 			      struct iw_point *data, char *extra)
@@ -3210,11 +3903,54 @@ static int wireless_set_genie(struct net_device *dev,
 	ret = 0;
 
 	DBG_LEAVE(DbgInfo);
+=======
+static int wireless_get_genie(struct net_device *dev,
+					   struct iw_request_info *info,
+					   struct iw_point *data, char *extra)
+
+{
+	struct wl_private *lp = wl_priv(dev);
+	unsigned long flags;
+	int   ret = 0;
+	ltv_t ltv;
+
+	DBG_FUNC( "wireless_get_genie" );
+	DBG_ENTER( DbgInfo );
+
+	if(lp->portState == WVLAN_PORT_STATE_DISABLED) {
+		ret = -EBUSY;
+		goto out;
+	}
+
+	wl_lock( lp, &flags );
+
+    	wl_act_int_off( lp );
+
+	memset(&ltv, 0, sizeof(ltv));
+	ltv.len = 2;
+	ltv.typ = CFG_SET_WPA_AUTH_KEY_MGMT_SUITE;
+	lp->AuthKeyMgmtSuite = ltv.u.u16[0] = 4;
+	ltv.u.u16[0]  = CNV_INT_TO_LITTLE(ltv.u.u16[0]);
+
+	ret = hcf_put_info(&(lp->hcfCtx), (LTVP)&ltv);
+
+    	wl_act_int_on( lp );
+
+	wl_unlock(lp, &flags);
+
+out:
+	DBG_LEAVE( DbgInfo );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 /*============================================================================*/
 
 
+<<<<<<< HEAD
+=======
+#endif // WIRELESS_EXT > 17
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*******************************************************************************
  *	wl_wireless_stats()
  *******************************************************************************
@@ -3268,6 +4004,10 @@ struct iw_statistics * wl_wireless_stats( struct net_device *dev )
 		if( status == HCF_SUCCESS ) {
 			pQual = (CFG_COMMS_QUALITY_STRCT *)&( lp->ltvRecord );
 
+<<<<<<< HEAD
+=======
+#ifdef USE_DBM
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pStats->qual.qual  = (u_char) CNV_LITTLE_TO_INT( pQual->coms_qual );
 			pStats->qual.level = (u_char) dbm( CNV_LITTLE_TO_INT( pQual->signal_lvl ));
 			pStats->qual.noise = (u_char) dbm( CNV_LITTLE_TO_INT( pQual->noise_lvl ));
@@ -3276,6 +4016,26 @@ struct iw_statistics * wl_wireless_stats( struct net_device *dev )
                                                  IW_QUAL_LEVEL_UPDATED |
                                                  IW_QUAL_NOISE_UPDATED |
                                                  IW_QUAL_DBM);
+<<<<<<< HEAD
+=======
+#else
+			pStats->qual.qual = percent( CNV_LITTLE_TO_INT( pQual->coms_qual ),
+						     HCF_MIN_COMM_QUALITY,
+						     HCF_MAX_COMM_QUALITY );
+
+			pStats->qual.level = percent( CNV_LITTLE_TO_INT( pQual->signal_lvl ),
+						      HCF_MIN_SIGNAL_LEVEL,
+						      HCF_MAX_SIGNAL_LEVEL );
+
+			pStats->qual.noise = percent( CNV_LITTLE_TO_INT( pQual->noise_lvl ),
+						      HCF_MIN_NOISE_LEVEL,
+						      HCF_MAX_NOISE_LEVEL );
+
+			pStats->qual.updated |= (IW_QUAL_QUAL_UPDATED  |
+                                                 IW_QUAL_LEVEL_UPDATED |
+                                                 IW_QUAL_NOISE_UPDATED);
+#endif /* USE_DBM */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			memset( &( pStats->qual ), 0, sizeof( pStats->qual ));
 		}
@@ -3446,6 +4206,10 @@ inline void wl_spy_gather( struct net_device *dev, u_char *mac )
  ******************************************************************************/
 void wl_wext_event_freq( struct net_device *dev )
 {
+<<<<<<< HEAD
+=======
+#if WIRELESS_EXT > 13
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	union iwreq_data wrqu;
 	struct wl_private *lp = wl_priv(dev);
 	/*------------------------------------------------------------------------*/
@@ -3457,6 +4221,10 @@ void wl_wext_event_freq( struct net_device *dev )
 	wrqu.freq.e = 0;
 
 	wireless_send_event( dev, SIOCSIWFREQ, &wrqu, NULL );
+<<<<<<< HEAD
+=======
+#endif /* WIRELESS_EXT > 13 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return;
 } // wl_wext_event_freq
@@ -3486,6 +4254,10 @@ void wl_wext_event_freq( struct net_device *dev )
  ******************************************************************************/
 void wl_wext_event_mode( struct net_device *dev )
 {
+<<<<<<< HEAD
+=======
+#if WIRELESS_EXT > 13
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	union iwreq_data wrqu;
 	struct wl_private *lp = wl_priv(dev);
 	/*------------------------------------------------------------------------*/
@@ -3500,6 +4272,10 @@ void wl_wext_event_mode( struct net_device *dev )
 	}
 
 	wireless_send_event( dev, SIOCSIWMODE, &wrqu, NULL );
+<<<<<<< HEAD
+=======
+#endif /* WIRELESS_EXT > 13 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return;
 } // wl_wext_event_mode
@@ -3529,6 +4305,10 @@ void wl_wext_event_mode( struct net_device *dev )
  ******************************************************************************/
 void wl_wext_event_essid( struct net_device *dev )
 {
+<<<<<<< HEAD
+=======
+#if WIRELESS_EXT > 13
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	union iwreq_data wrqu;
 	struct wl_private *lp = wl_priv(dev);
 	/*------------------------------------------------------------------------*/
@@ -3545,6 +4325,10 @@ void wl_wext_event_essid( struct net_device *dev )
 	wrqu.essid.flags   = 1;
 
 	wireless_send_event( dev, SIOCSIWESSID, &wrqu, lp->NetworkName );
+<<<<<<< HEAD
+=======
+#endif /* WIRELESS_EXT > 13 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return;
 } // wl_wext_event_essid
@@ -3574,6 +4358,10 @@ void wl_wext_event_essid( struct net_device *dev )
  ******************************************************************************/
 void wl_wext_event_encode( struct net_device *dev )
 {
+<<<<<<< HEAD
+=======
+#if WIRELESS_EXT > 13
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	union iwreq_data wrqu;
 	struct wl_private *lp = wl_priv(dev);
 	int index = 0;
@@ -3615,6 +4403,10 @@ void wl_wext_event_encode( struct net_device *dev )
 
 	wireless_send_event( dev, SIOCSIWENCODE, &wrqu,
 						 lp->DefaultKeys.key[index].key );
+<<<<<<< HEAD
+=======
+#endif /* WIRELESS_EXT > 13 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return;
 } // wl_wext_event_encode
@@ -3644,6 +4436,10 @@ void wl_wext_event_encode( struct net_device *dev )
  ******************************************************************************/
 void wl_wext_event_ap( struct net_device *dev )
 {
+<<<<<<< HEAD
+=======
+#if WIRELESS_EXT > 13
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	union iwreq_data wrqu;
 	struct wl_private *lp = wl_priv(dev);
 	int status;
@@ -3672,6 +4468,11 @@ void wl_wext_event_ap( struct net_device *dev )
 		wireless_send_event( dev, SIOCGIWAP, &wrqu, NULL );
 	}
 
+<<<<<<< HEAD
+=======
+#endif /* WIRELESS_EXT > 13 */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 } // wl_wext_event_ap
 /*============================================================================*/
@@ -3699,6 +4500,10 @@ void wl_wext_event_ap( struct net_device *dev )
  ******************************************************************************/
 void wl_wext_event_scan_complete( struct net_device *dev )
 {
+<<<<<<< HEAD
+=======
+#if WIRELESS_EXT > 13
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	union iwreq_data wrqu;
 	/*------------------------------------------------------------------------*/
 
@@ -3707,6 +4512,10 @@ void wl_wext_event_scan_complete( struct net_device *dev )
 
 	wrqu.addr.sa_family = ARPHRD_ETHER;
 	wireless_send_event( dev, SIOCGIWSCAN, &wrqu, NULL );
+<<<<<<< HEAD
+=======
+#endif /* WIRELESS_EXT > 13 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return;
 } // wl_wext_event_scan_complete
@@ -3736,6 +4545,10 @@ void wl_wext_event_scan_complete( struct net_device *dev )
  ******************************************************************************/
 void wl_wext_event_new_sta( struct net_device *dev )
 {
+<<<<<<< HEAD
+=======
+#if WIRELESS_EXT > 14
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	union iwreq_data wrqu;
 	/*------------------------------------------------------------------------*/
 
@@ -3746,6 +4559,10 @@ void wl_wext_event_new_sta( struct net_device *dev )
 	memcpy( wrqu.addr.sa_data, dev->dev_addr, ETH_ALEN );
 	wrqu.addr.sa_family = ARPHRD_ETHER;
 	wireless_send_event( dev, IWEVREGISTERED, &wrqu, NULL );
+<<<<<<< HEAD
+=======
+#endif /* WIRELESS_EXT > 14 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return;
 } // wl_wext_event_new_sta
@@ -3775,6 +4592,10 @@ void wl_wext_event_new_sta( struct net_device *dev )
  ******************************************************************************/
 void wl_wext_event_expired_sta( struct net_device *dev )
 {
+<<<<<<< HEAD
+=======
+#if WIRELESS_EXT > 14
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	union iwreq_data wrqu;
 	/*------------------------------------------------------------------------*/
 
@@ -3784,6 +4605,10 @@ void wl_wext_event_expired_sta( struct net_device *dev )
 	memcpy( wrqu.addr.sa_data, dev->dev_addr, ETH_ALEN );
 	wrqu.addr.sa_family = ARPHRD_ETHER;
 	wireless_send_event( dev, IWEVEXPIRED, &wrqu, NULL );
+<<<<<<< HEAD
+=======
+#endif /* WIRELESS_EXT > 14 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return;
 } // wl_wext_event_expired_sta
@@ -3812,9 +4637,16 @@ void wl_wext_event_expired_sta( struct net_device *dev )
  ******************************************************************************/
 void wl_wext_event_mic_failed( struct net_device *dev )
 {
+<<<<<<< HEAD
 	union iwreq_data   wrqu;
 	struct wl_private *lp = wl_priv(dev);
 	struct iw_michaelmicfailure wxmic;
+=======
+#if WIRELESS_EXT > 14
+	char               msg[512];
+	union iwreq_data   wrqu;
+	struct wl_private *lp = wl_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int                key_idx;
 	char              *addr1;
 	char              *addr2;
@@ -3836,6 +4668,7 @@ void wl_wext_event_mic_failed( struct net_device *dev )
 	DBG_PRINT( "MIC FAIL - KEY USED : %d, STATUS : 0x%04x\n", key_idx,
 			   hdr->status );
 
+<<<<<<< HEAD
 	memset(&wrqu, 0, sizeof(wrqu));
 	memset(&wxmic, 0, sizeof(wxmic));
 
@@ -3847,6 +4680,33 @@ void wl_wext_event_mic_failed( struct net_device *dev )
 
 	wrqu.data.length = sizeof(wxmic);
 	wireless_send_event(dev, IWEVMICHAELMICFAILURE, &wrqu, (char *)&wxmic);
+=======
+	memset( &wrqu, 0, sizeof( wrqu ));
+	memset( msg, 0, sizeof( msg ));
+
+
+	/* Because MIC failures are not part of the Wireless Extensions yet, they
+	   must be passed as a string using an IWEVCUSTOM event. In order for the
+	   event to be effective, the string format must be known by both the
+	   driver and the supplicant. The following is the string format used by the
+	   hostap project's WPA supplicant, and will be used here until the Wireless
+	   Extensions interface adds this support:
+
+	   MLME-MICHAELMICFAILURE.indication(keyid=# broadcast/unicast addr=addr2)
+   */
+
+	/* NOTE: Format of MAC address (using colons to separate bytes) may cause
+			 a problem in future versions of the supplicant, if they ever
+			 actually parse these parameters */
+#if DBG
+	sprintf(msg, "MLME-MICHAELMICFAILURE.indication(keyid=%d %scast "
+			"addr=%pM)", key_idx, addr1[0] & 0x01 ? "broad" : "uni",
+			addr2);
+#endif
+	wrqu.data.length = strlen( msg );
+	wireless_send_event( dev, IWEVCUSTOM, &wrqu, msg );
+#endif /* WIRELESS_EXT > 14 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return;
 } // wl_wext_event_mic_failed
@@ -3876,6 +4736,11 @@ void wl_wext_event_mic_failed( struct net_device *dev )
  ******************************************************************************/
 void wl_wext_event_assoc_ie( struct net_device *dev )
 {
+<<<<<<< HEAD
+=======
+#if WIRELESS_EXT > 14
+	char               msg[512];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	union iwreq_data   wrqu;
 	struct wl_private *lp = wl_priv(dev);
 	int status;
@@ -3886,6 +4751,10 @@ void wl_wext_event_assoc_ie( struct net_device *dev )
 
 
 	memset( &wrqu, 0, sizeof( wrqu ));
+<<<<<<< HEAD
+=======
+	memset( msg, 0, sizeof( msg ));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Retrieve the Association Request IE */
 	lp->ltvRecord.len = 45;
@@ -3898,6 +4767,7 @@ void wl_wext_event_assoc_ie( struct net_device *dev )
 		memcpy( &data.rawData, &( lp->ltvRecord.u.u8[1] ), 88 );
 		wpa_ie = wl_parse_wpa_ie( &data, &length );
 
+<<<<<<< HEAD
 		if( length != 0 )
 		{
 			wrqu.data.length = wpa_ie[1] + 2;
@@ -3910,6 +4780,26 @@ void wl_wext_event_assoc_ie( struct net_device *dev )
 					    &wrqu, wpa_ie);
 		}
 	}
+=======
+		/* Because this event (Association WPA-IE) is not part of the Wireless
+		Extensions yet, it must be passed as a string using an IWEVCUSTOM event.
+		In order for the event to be effective, the string format must be known
+		by both the driver and the supplicant. The following is the string format
+		used by the hostap project's WPA supplicant, and will be used here until
+		the Wireless Extensions interface adds this support:
+
+		ASSOCINFO(ReqIEs=WPA-IE RespIEs=WPA-IE)
+		*/
+
+		if( length != 0 )
+		{
+			sprintf( msg, "ASSOCINFO(ReqIEs=%s)", wl_print_wpa_ie( wpa_ie, length ));
+			wrqu.data.length = strlen( msg );
+			wireless_send_event( dev, IWEVCUSTOM, &wrqu, msg );
+		}
+	}
+#endif /* WIRELESS_EXT > 14 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return;
 }  // wl_wext_event_assoc_ie
@@ -3918,6 +4808,7 @@ void wl_wext_event_assoc_ie( struct net_device *dev )
 
 static const iw_handler wl_handler[] =
 {
+<<<<<<< HEAD
 	IW_HANDLER(SIOCSIWCOMMIT, (iw_handler) wireless_commit),
 	IW_HANDLER(SIOCGIWNAME, (iw_handler) wireless_get_protocol),
 	IW_HANDLER(SIOCSIWFREQ, (iw_handler) wireless_set_frequency),
@@ -3951,6 +4842,68 @@ static const iw_handler wl_handler[] =
 	IW_HANDLER(SIOCSIWGENIE, (iw_handler) wireless_set_genie),
 	IW_HANDLER(SIOCSIWAUTH, (iw_handler) wireless_set_auth),
 	IW_HANDLER(SIOCSIWENCODEEXT, (iw_handler) wireless_set_encodeext),
+=======
+                (iw_handler) wireless_commit,           /* SIOCSIWCOMMIT */
+                (iw_handler) wireless_get_protocol,     /* SIOCGIWNAME */
+                (iw_handler) NULL,                      /* SIOCSIWNWID */
+                (iw_handler) NULL,                      /* SIOCGIWNWID */
+                (iw_handler) wireless_set_frequency,    /* SIOCSIWFREQ */
+                (iw_handler) wireless_get_frequency,    /* SIOCGIWFREQ */
+                (iw_handler) wireless_set_porttype,     /* SIOCSIWMODE */
+                (iw_handler) wireless_get_porttype,     /* SIOCGIWMODE */
+                (iw_handler) wireless_set_sensitivity,  /* SIOCSIWSENS */
+                (iw_handler) wireless_get_sensitivity,  /* SIOCGIWSENS */
+                (iw_handler) NULL ,                     /* SIOCSIWRANGE */
+                (iw_handler) wireless_get_range,        /* SIOCGIWRANGE */
+                (iw_handler) NULL ,                     /* SIOCSIWPRIV */
+                (iw_handler) NULL /* kernel code */,    /* SIOCGIWPRIV */
+                (iw_handler) NULL ,                     /* SIOCSIWSTATS */
+                (iw_handler) NULL /* kernel code */,    /* SIOCGIWSTATS */
+                iw_handler_set_spy,                     /* SIOCSIWSPY */
+                iw_handler_get_spy,                     /* SIOCGIWSPY */
+                NULL,                                   /* SIOCSIWTHRSPY */
+                NULL,                                   /* SIOCGIWTHRSPY */
+                (iw_handler) NULL,                      /* SIOCSIWAP */
+#if 1 //;? (HCF_TYPE) & HCF_TYPE_STA
+                (iw_handler) wireless_get_bssid,        /* SIOCGIWAP */
+#else
+                (iw_handler) NULL,                      /* SIOCGIWAP */
+#endif
+                (iw_handler) NULL,                      /* SIOCSIWMLME */
+                (iw_handler) wireless_get_ap_list,      /* SIOCGIWAPLIST */
+                (iw_handler) wireless_set_scan,         /* SIOCSIWSCAN */
+                (iw_handler) wireless_get_scan,         /* SIOCGIWSCAN */
+                (iw_handler) wireless_set_essid,        /* SIOCSIWESSID */
+                (iw_handler) wireless_get_essid,        /* SIOCGIWESSID */
+                (iw_handler) wireless_set_nickname,     /* SIOCSIWNICKN */
+                (iw_handler) wireless_get_nickname,     /* SIOCGIWNICKN */
+                (iw_handler) NULL,                      /* -- hole -- */
+                (iw_handler) NULL,                      /* -- hole -- */
+                (iw_handler) wireless_set_rate,         /* SIOCSIWRATE */
+                (iw_handler) wireless_get_rate,         /* SIOCGIWRATE */
+                (iw_handler) wireless_set_rts_threshold,/* SIOCSIWRTS */
+                (iw_handler) wireless_get_rts_threshold,/* SIOCGIWRTS */
+                (iw_handler) NULL,                      /* SIOCSIWFRAG */
+                (iw_handler) NULL,                      /* SIOCGIWFRAG */
+                (iw_handler) NULL,                      /* SIOCSIWTXPOW */
+                (iw_handler) wireless_get_tx_power,     /* SIOCGIWTXPOW */
+                (iw_handler) NULL,                      /* SIOCSIWRETRY */
+                (iw_handler) NULL,                      /* SIOCGIWRETRY */
+                (iw_handler) wireless_set_encode,       /* SIOCSIWENCODE */
+                (iw_handler) wireless_get_encode,       /* SIOCGIWENCODE */
+                (iw_handler) wireless_set_power,        /* SIOCSIWPOWER */
+                (iw_handler) wireless_get_power,        /* SIOCGIWPOWER */
+                (iw_handler) NULL,                      /* -- hole -- */
+                (iw_handler) NULL,                      /* -- hole -- */
+                (iw_handler) wireless_get_genie,        /* SIOCSIWGENIE */
+                (iw_handler) NULL,                      /* SIOCGIWGENIE */
+                (iw_handler) wireless_set_auth,         /* SIOCSIWAUTH */
+                (iw_handler) NULL,                      /* SIOCGIWAUTH */
+                (iw_handler) wireless_set_encodeext,    /* SIOCSIWENCODEEXT */
+                (iw_handler) NULL,                      /* SIOCGIWENCODEEXT */
+                (iw_handler) NULL,                      /* SIOCSIWPMKSA */
+                (iw_handler) NULL,                      /* -- hole -- */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const iw_handler wl_private_handler[] =
@@ -3986,3 +4939,8 @@ const struct iw_handler_def wl_iw_handler_def =
         .standard           = (iw_handler *) wl_handler,
         .get_wireless_stats = wl_get_wireless_stats,
 };
+<<<<<<< HEAD
+=======
+
+#endif // WIRELESS_EXT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

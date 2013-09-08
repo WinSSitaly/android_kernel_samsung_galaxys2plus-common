@@ -58,8 +58,11 @@
 #include <scsi/sas_ata.h>
 #include "host.h"
 
+<<<<<<< HEAD
 #define ISCI_TERMINATION_TIMEOUT_MSEC 500
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct isci_request;
 
 /**
@@ -86,6 +89,11 @@ enum isci_tmf_function_codes {
 	isci_tmf_func_none      = 0,
 	isci_tmf_ssp_task_abort = TMF_ABORT_TASK,
 	isci_tmf_ssp_lun_reset  = TMF_LU_RESET,
+<<<<<<< HEAD
+=======
+	isci_tmf_sata_srst_high = TMF_LU_RESET + 0x100, /* Non SCSI */
+	isci_tmf_sata_srst_low  = TMF_LU_RESET + 0x101  /* Non SCSI */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 /**
  * struct isci_tmf - This class represents the task management object which
@@ -104,6 +112,10 @@ struct isci_tmf {
 	} resp;
 	unsigned char lun[8];
 	u16 io_tag;
+<<<<<<< HEAD
+=======
+	struct isci_remote_device *device;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	enum isci_tmf_function_codes tmf_code;
 	int status;
 
@@ -117,10 +129,17 @@ struct isci_tmf {
 
 };
 
+<<<<<<< HEAD
 static inline void isci_print_tmf(struct isci_host *ihost, struct isci_tmf *tmf)
 {
 	if (SAS_PROTOCOL_SATA == tmf->proto)
 		dev_dbg(&ihost->pdev->dev,
+=======
+static inline void isci_print_tmf(struct isci_tmf *tmf)
+{
+	if (SAS_PROTOCOL_SATA == tmf->proto)
+		dev_dbg(&tmf->device->isci_port->isci_host->pdev->dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"%s: status = %x\n"
 			"tmf->resp.d2h_fis.status = %x\n"
 			"tmf->resp.d2h_fis.error = %x\n",
@@ -129,7 +148,11 @@ static inline void isci_print_tmf(struct isci_host *ihost, struct isci_tmf *tmf)
 			tmf->resp.d2h_fis.status,
 			tmf->resp.d2h_fis.error);
 	else
+<<<<<<< HEAD
 		dev_dbg(&ihost->pdev->dev,
+=======
+		dev_dbg(&tmf->device->isci_port->isci_host->pdev->dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"%s: status = %x\n"
 			"tmf->resp.resp_iu.data_present = %x\n"
 			"tmf->resp.resp_iu.status = %x\n"
@@ -208,6 +231,11 @@ int isci_queuecommand(
 	struct scsi_cmnd *scsi_cmd,
 	void (*donefunc)(struct scsi_cmnd *));
 
+<<<<<<< HEAD
+=======
+int isci_bus_reset_handler(struct scsi_cmnd *cmd);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * enum isci_completion_selection - This enum defines the possible actions to
  *    take with respect to a given request's notification back to libsas.
@@ -221,6 +249,38 @@ enum isci_completion_selection {
 	isci_perform_error_io_completion        /* Use sas_task_abort */
 };
 
+<<<<<<< HEAD
+=======
+static inline void isci_set_task_doneflags(
+	struct sas_task *task)
+{
+	/* Since no futher action will be taken on this task,
+	 * make sure to mark it complete from the lldd perspective.
+	 */
+	task->task_state_flags |= SAS_TASK_STATE_DONE;
+	task->task_state_flags &= ~SAS_TASK_AT_INITIATOR;
+	task->task_state_flags &= ~SAS_TASK_STATE_PENDING;
+}
+/**
+ * isci_task_all_done() - This function clears the task bits to indicate the
+ *    LLDD is done with the task.
+ *
+ *
+ */
+static inline void isci_task_all_done(
+	struct sas_task *task)
+{
+	unsigned long flags;
+
+	/* Since no futher action will be taken on this task,
+	 * make sure to mark it complete from the lldd perspective.
+	 */
+	spin_lock_irqsave(&task->task_state_lock, flags);
+	isci_set_task_doneflags(task);
+	spin_unlock_irqrestore(&task->task_state_lock, flags);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * isci_task_set_completion_status() - This function sets the completion status
  *    for the request.
@@ -254,6 +314,7 @@ isci_task_set_completion_status(
 	task->task_status.resp = response;
 	task->task_status.stat = status;
 
+<<<<<<< HEAD
 	switch (task->task_proto) {
 
 	case SAS_PROTOCOL_SATA:
@@ -273,6 +334,8 @@ isci_task_set_completion_status(
 		break;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (task_notification_selection) {
 
 	case isci_perform_error_io_completion:
@@ -302,9 +365,13 @@ isci_task_set_completion_status(
 		/* Fall through to the normal case... */
 	case isci_perform_normal_io_completion:
 		/* Normal notification (task_done) */
+<<<<<<< HEAD
 		task->task_state_flags |= SAS_TASK_STATE_DONE;
 		task->task_state_flags &= ~(SAS_TASK_AT_INITIATOR |
 					    SAS_TASK_STATE_PENDING);
+=======
+		isci_set_task_doneflags(task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		WARN_ONCE(1, "unknown task_notification_selection: %d\n",
@@ -317,4 +384,43 @@ isci_task_set_completion_status(
 	return task_notification_selection;
 
 }
+<<<<<<< HEAD
+=======
+/**
+* isci_execpath_callback() - This function is called from the task
+* execute path when the task needs to callback libsas about the submit-time
+* task failure.  The callback occurs either through the task's done function
+* or through sas_task_abort.  In the case of regular non-discovery SATA/STP I/O
+* requests, libsas takes the host lock before calling execute task.  Therefore
+* in this situation the host lock must be managed before calling the func.
+*
+* @ihost: This parameter is the controller to which the I/O request was sent.
+* @task: This parameter is the I/O request.
+* @func: This parameter is the function to call in the correct context.
+* @status: This parameter is the status code for the completed task.
+*
+*/
+static inline void isci_execpath_callback(struct isci_host *ihost,
+					  struct sas_task  *task,
+					  void (*func)(struct sas_task *))
+{
+	struct domain_device *dev = task->dev;
+
+	if (dev_is_sata(dev) && task->uldd_task) {
+		unsigned long flags;
+
+		/* Since we are still in the submit path, and since
+		 * libsas takes the host lock on behalf of SATA
+		 * devices before I/O starts (in the non-discovery case),
+		 * we need to unlock before we can call the callback function.
+		 */
+		raw_local_irq_save(flags);
+		spin_unlock(dev->sata_dev.ap->lock);
+		func(task);
+		spin_lock(dev->sata_dev.ap->lock);
+		raw_local_irq_restore(flags);
+	} else
+		func(task);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* !defined(_SCI_TASK_H_) */

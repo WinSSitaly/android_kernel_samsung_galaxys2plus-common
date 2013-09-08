@@ -18,10 +18,14 @@ enum tcp_conntrack {
 	TCP_CONNTRACK_LISTEN,	/* obsolete */
 #define TCP_CONNTRACK_SYN_SENT2	TCP_CONNTRACK_LISTEN
 	TCP_CONNTRACK_MAX,
+<<<<<<< HEAD
 	TCP_CONNTRACK_IGNORE,
 	TCP_CONNTRACK_RETRANS,
 	TCP_CONNTRACK_UNACK,
 	TCP_CONNTRACK_TIMEOUT_MAX
+=======
+	TCP_CONNTRACK_IGNORE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Window scaling is advertised by the sender */

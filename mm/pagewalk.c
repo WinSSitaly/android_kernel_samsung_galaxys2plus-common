@@ -126,6 +126,7 @@ static int walk_hugetlb_range(struct vm_area_struct *vma,
 
 	return 0;
 }
+<<<<<<< HEAD
 
 #else /* CONFIG_HUGETLB_PAGE */
 static int walk_hugetlb_range(struct vm_area_struct *vma,
@@ -138,6 +139,9 @@ static int walk_hugetlb_range(struct vm_area_struct *vma,
 #endif /* CONFIG_HUGETLB_PAGE */
 
 
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * walk_page_range - walk a memory map's page tables with a callback
@@ -155,15 +159,22 @@ static int walk_hugetlb_range(struct vm_area_struct *vma,
  * associated range, and a copy of the original mm_walk for access to
  * the ->private or ->mm fields.
  *
+<<<<<<< HEAD
  * Usually no locks are taken, but splitting transparent huge page may
  * take page table lock. And the bottom level iterator will map PTE
+=======
+ * No locks are taken, but the bottom level iterator will map PTE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * directories from highmem if necessary.
  *
  * If any callback returns a non-zero value, the walk is aborted and
  * the return value is propagated back to the caller. Otherwise 0 is returned.
+<<<<<<< HEAD
  *
  * walk->mm->mmap_sem must be held for at least read if walk->hugetlb_entry
  * is !NULL.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int walk_page_range(unsigned long addr, unsigned long end,
 		    struct mm_walk *walk)
@@ -178,6 +189,7 @@ int walk_page_range(unsigned long addr, unsigned long end,
 	if (!walk->mm)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	VM_BUG_ON(!rwsem_is_locked(&walk->mm->mmap_sem));
 
 	pgd = pgd_offset(walk->mm, addr);
@@ -227,6 +239,35 @@ int walk_page_range(unsigned long addr, unsigned long end,
 			}
 		}
 
+=======
+	pgd = pgd_offset(walk->mm, addr);
+	do {
+		struct vm_area_struct *uninitialized_var(vma);
+
+		next = pgd_addr_end(addr, end);
+
+#ifdef CONFIG_HUGETLB_PAGE
+		/*
+		 * handle hugetlb vma individually because pagetable walk for
+		 * the hugetlb page is dependent on the architecture and
+		 * we can't handled it in the same manner as non-huge pages.
+		 */
+		vma = find_vma(walk->mm, addr);
+		if (vma && is_vm_hugetlb_page(vma)) {
+			if (vma->vm_end < next)
+				next = vma->vm_end;
+			/*
+			 * Hugepage is very tightly coupled with vma, so
+			 * walk through hugetlb entries within a given vma.
+			 */
+			err = walk_hugetlb_range(vma, addr, next, walk);
+			if (err)
+				break;
+			pgd = pgd_offset(walk->mm, next);
+			continue;
+		}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (pgd_none_or_clear_bad(pgd)) {
 			if (walk->pte_hole)
 				err = walk->pte_hole(addr, next, walk);

@@ -41,8 +41,11 @@
 
 #define VERSION "1.3"
 
+<<<<<<< HEAD
 static bool amp;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct vhci_data {
 	struct hci_dev *hdev;
 
@@ -61,7 +64,11 @@ static int vhci_open_dev(struct hci_dev *hdev)
 
 static int vhci_close_dev(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	struct vhci_data *data = hci_get_drvdata(hdev);
+=======
+	struct vhci_data *data = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!test_and_clear_bit(HCI_RUNNING, &hdev->flags))
 		return 0;
@@ -73,7 +80,11 @@ static int vhci_close_dev(struct hci_dev *hdev)
 
 static int vhci_flush(struct hci_dev *hdev)
 {
+<<<<<<< HEAD
 	struct vhci_data *data = hci_get_drvdata(hdev);
+=======
+	struct vhci_data *data = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	skb_queue_purge(&data->readq);
 
@@ -93,7 +104,11 @@ static int vhci_send_frame(struct sk_buff *skb)
 	if (!test_bit(HCI_RUNNING, &hdev->flags))
 		return -EBUSY;
 
+<<<<<<< HEAD
 	data = hci_get_drvdata(hdev);
+=======
+	data = hdev->driver_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memcpy(skb_push(skb, 1), &bt_cb(skb)->pkt_type, 1);
 	skb_queue_tail(&data->readq, skb);
@@ -103,6 +118,14 @@ static int vhci_send_frame(struct sk_buff *skb)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void vhci_destruct(struct hci_dev *hdev)
+{
+	kfree(hdev->driver_data);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline ssize_t vhci_get_user(struct vhci_data *data,
 					const char __user *buf, size_t count)
 {
@@ -234,15 +257,25 @@ static int vhci_open(struct inode *inode, struct file *file)
 	data->hdev = hdev;
 
 	hdev->bus = HCI_VIRTUAL;
+<<<<<<< HEAD
 	hci_set_drvdata(hdev, data);
 
 	if (amp)
 		hdev->dev_type = HCI_AMP;
+=======
+	hdev->driver_data = data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hdev->open     = vhci_open_dev;
 	hdev->close    = vhci_close_dev;
 	hdev->flush    = vhci_flush;
 	hdev->send     = vhci_send_frame;
+<<<<<<< HEAD
+=======
+	hdev->destruct = vhci_destruct;
+
+	hdev->owner = THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (hci_register_dev(hdev) < 0) {
 		BT_ERR("Can't register HCI device");
@@ -261,11 +294,21 @@ static int vhci_release(struct inode *inode, struct file *file)
 	struct vhci_data *data = file->private_data;
 	struct hci_dev *hdev = data->hdev;
 
+<<<<<<< HEAD
 	hci_unregister_dev(hdev);
 	hci_free_dev(hdev);
 
 	file->private_data = NULL;
 	kfree(data);
+=======
+	if (hci_unregister_dev(hdev) < 0) {
+		BT_ERR("Can't unregister HCI device %s", hdev->name);
+	}
+
+	hci_free_dev(hdev);
+
+	file->private_data = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -301,9 +344,12 @@ static void __exit vhci_exit(void)
 module_init(vhci_init);
 module_exit(vhci_exit);
 
+<<<<<<< HEAD
 module_param(amp, bool, 0644);
 MODULE_PARM_DESC(amp, "Create AMP controller device");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_AUTHOR("Marcel Holtmann <marcel@holtmann.org>");
 MODULE_DESCRIPTION("Bluetooth virtual HCI driver ver " VERSION);
 MODULE_VERSION(VERSION);

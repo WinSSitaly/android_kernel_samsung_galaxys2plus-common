@@ -275,11 +275,16 @@ void __init find_and_init_phbs(void)
 	of_node_put(root);
 	pci_devs_phb_init();
 
+<<<<<<< HEAD
 	/* Create EEH devices for all PHBs */
 	eeh_dev_phb_init();
 
 	/*
 	 * PCI_PROBE_ONLY and PCI_REASSIGN_ALL_BUS can be set via properties
+=======
+	/*
+	 * pci_probe_only and pci_assign_all_buses can be set via properties
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * in chosen.
 	 */
 	if (of_chosen) {
@@ -287,18 +292,27 @@ void __init find_and_init_phbs(void)
 
 		prop = of_get_property(of_chosen,
 				"linux,pci-probe-only", NULL);
+<<<<<<< HEAD
 		if (prop) {
 			if (*prop)
 				pci_add_flags(PCI_PROBE_ONLY);
 			else
 				pci_clear_flags(PCI_PROBE_ONLY);
 		}
+=======
+		if (prop)
+			pci_probe_only = *prop;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_PPC32 /* Will be made generic soon */
 		prop = of_get_property(of_chosen,
 				"linux,pci-assign-all-buses", NULL);
 		if (prop && *prop)
+<<<<<<< HEAD
 			pci_add_flags(PCI_REASSIGN_ALL_BUS);
+=======
+			ppc_pci_flags |= PPC_PCI_REASSIGN_ALL_BUS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_PPC32 */
 	}
 }

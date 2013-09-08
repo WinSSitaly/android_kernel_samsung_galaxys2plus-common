@@ -28,7 +28,10 @@
  */
 
 #include "drmP.h"
+<<<<<<< HEAD
 #include "ttm/ttm_page_alloc.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "nouveau_drm.h"
 #include "nouveau_drv.h"
@@ -50,12 +53,23 @@ nouveau_bo_del_ttm(struct ttm_buffer_object *bo)
 		DRM_ERROR("bo %p still attached to GEM object\n", bo);
 
 	nv10_mem_put_tile_region(dev, nvbo->tile, NULL);
+<<<<<<< HEAD
+=======
+	if (nvbo->vma.node) {
+		nouveau_vm_unmap(&nvbo->vma);
+		nouveau_vm_put(&nvbo->vma);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(nvbo);
 }
 
 static void
 nouveau_bo_fixup_align(struct nouveau_bo *nvbo, u32 flags,
+<<<<<<< HEAD
 		       int *align, int *size)
+=======
+		       int *align, int *size, int *page_shift)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_nouveau_private *dev_priv = nouveau_bdev(nvbo->bo.bdev);
 
@@ -79,14 +93,29 @@ nouveau_bo_fixup_align(struct nouveau_bo *nvbo, u32 flags,
 			}
 		}
 	} else {
+<<<<<<< HEAD
 		*size = roundup(*size, (1 << nvbo->page_shift));
 		*align = max((1 <<  nvbo->page_shift), *align);
+=======
+		if (likely(dev_priv->chan_vm)) {
+			if (!(flags & TTM_PL_FLAG_TT) &&  *size > 256 * 1024)
+				*page_shift = dev_priv->chan_vm->lpg_shift;
+			else
+				*page_shift = dev_priv->chan_vm->spg_shift;
+		} else {
+			*page_shift = 12;
+		}
+
+		*size = roundup(*size, (1 << *page_shift));
+		*align = max((1 << *page_shift), *align);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	*size = roundup(*size, PAGE_SIZE);
 }
 
 int
+<<<<<<< HEAD
 nouveau_bo_new(struct drm_device *dev, int size, int align,
 	       uint32_t flags, uint32_t tile_mode, uint32_t tile_flags,
 	       struct nouveau_bo **pnvbo)
@@ -95,17 +124,30 @@ nouveau_bo_new(struct drm_device *dev, int size, int align,
 	struct nouveau_bo *nvbo;
 	size_t acc_size;
 	int ret;
+=======
+nouveau_bo_new(struct drm_device *dev, struct nouveau_channel *chan,
+	       int size, int align, uint32_t flags, uint32_t tile_mode,
+	       uint32_t tile_flags, struct nouveau_bo **pnvbo)
+{
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	struct nouveau_bo *nvbo;
+	int ret = 0, page_shift = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nvbo = kzalloc(sizeof(struct nouveau_bo), GFP_KERNEL);
 	if (!nvbo)
 		return -ENOMEM;
 	INIT_LIST_HEAD(&nvbo->head);
 	INIT_LIST_HEAD(&nvbo->entry);
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&nvbo->vma_list);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nvbo->tile_mode = tile_mode;
 	nvbo->tile_flags = tile_flags;
 	nvbo->bo.bdev = &dev_priv->ttm.bdev;
 
+<<<<<<< HEAD
 	nvbo->page_shift = 12;
 	if (dev_priv->bar1_vm) {
 		if (!(flags & TTM_PL_FLAG_TT) && size > 256 * 1024)
@@ -123,11 +165,39 @@ nouveau_bo_new(struct drm_device *dev, int size, int align,
 			  ttm_bo_type_device, &nvbo->placement,
 			  align >> PAGE_SHIFT, 0, false, NULL, acc_size,
 			  nouveau_bo_del_ttm);
+=======
+	nouveau_bo_fixup_align(nvbo, flags, &align, &size, &page_shift);
+	align >>= PAGE_SHIFT;
+
+	if (dev_priv->chan_vm) {
+		ret = nouveau_vm_get(dev_priv->chan_vm, size, page_shift,
+				     NV_MEM_ACCESS_RW, &nvbo->vma);
+		if (ret) {
+			kfree(nvbo);
+			return ret;
+		}
+	}
+
+	nvbo->bo.mem.num_pages = size >> PAGE_SHIFT;
+	nouveau_bo_placement_set(nvbo, flags, 0);
+
+	nvbo->channel = chan;
+	ret = ttm_bo_init(&dev_priv->ttm.bdev, &nvbo->bo, size,
+			  ttm_bo_type_device, &nvbo->placement, align, 0,
+			  false, NULL, size, nouveau_bo_del_ttm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret) {
 		/* ttm will call nouveau_bo_del_ttm if it fails.. */
 		return ret;
 	}
+<<<<<<< HEAD
 
+=======
+	nvbo->channel = NULL;
+
+	if (nvbo->vma.node)
+		nvbo->bo.offset = nvbo->vma.offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*pnvbo = nvbo;
 	return 0;
 }
@@ -153,7 +223,11 @@ set_placement_range(struct nouveau_bo *nvbo, uint32_t type)
 
 	if (dev_priv->card_type == NV_10 &&
 	    nvbo->tile_mode && (type & TTM_PL_FLAG_VRAM) &&
+<<<<<<< HEAD
 	    nvbo->bo.mem.num_pages < vram_pages / 4) {
+=======
+	    nvbo->bo.mem.num_pages < vram_pages / 2) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Make sure that the color and depth buffers are handled
 		 * by independent memory controller units. Up to a 9x
@@ -297,6 +371,11 @@ nouveau_bo_validate(struct nouveau_bo *nvbo, bool interruptible,
 	if (ret)
 		return ret;
 
+<<<<<<< HEAD
+=======
+	if (nvbo->vma.node)
+		nvbo->bo.offset = nvbo->vma.offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -348,10 +427,15 @@ nouveau_bo_wr32(struct nouveau_bo *nvbo, unsigned index, u32 val)
 		*mem = val;
 }
 
+<<<<<<< HEAD
 static struct ttm_tt *
 nouveau_ttm_tt_create(struct ttm_bo_device *bdev,
 		      unsigned long size, uint32_t page_flags,
 		      struct page *dummy_read_page)
+=======
+static struct ttm_backend *
+nouveau_bo_create_ttm_backend_entry(struct ttm_bo_device *bdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_nouveau_private *dev_priv = nouveau_bdev(bdev);
 	struct drm_device *dev = dev_priv->dev;
@@ -359,6 +443,7 @@ nouveau_ttm_tt_create(struct ttm_bo_device *bdev,
 	switch (dev_priv->gart_info.type) {
 #if __OS_HAS_AGP
 	case NOUVEAU_GART_AGP:
+<<<<<<< HEAD
 		return ttm_agp_tt_create(bdev, dev->agp->bridge,
 					 size, page_flags, dummy_read_page);
 #endif
@@ -366,6 +451,13 @@ nouveau_ttm_tt_create(struct ttm_bo_device *bdev,
 	case NOUVEAU_GART_HW:
 		return nouveau_sgdma_create_ttm(bdev, size, page_flags,
 						dummy_read_page);
+=======
+		return ttm_agp_backend_init(bdev, dev->agp->bridge);
+#endif
+	case NOUVEAU_GART_PDMA:
+	case NOUVEAU_GART_HW:
+		return nouveau_sgdma_init_ttm(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		NV_ERROR(dev, "Unknown GART type %d\n",
 			 dev_priv->gart_info.type);
@@ -427,6 +519,10 @@ nouveau_bo_init_mem_type(struct ttm_bo_device *bdev, uint32_t type,
 				     TTM_MEMTYPE_FLAG_CMA;
 			man->available_caching = TTM_PL_MASK_CACHING;
 			man->default_caching = TTM_PL_FLAG_CACHED;
+<<<<<<< HEAD
+=======
+			man->gpu_offset = dev_priv->gart_info.aper_base;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		default:
 			NV_ERROR(dev, "Unknown GART type: %d\n",
@@ -487,12 +583,28 @@ static int
 nvc0_bo_move_m2mf(struct nouveau_channel *chan, struct ttm_buffer_object *bo,
 		  struct ttm_mem_reg *old_mem, struct ttm_mem_reg *new_mem)
 {
+<<<<<<< HEAD
 	struct nouveau_mem *node = old_mem->mm_node;
 	u64 src_offset = node->vma[0].offset;
 	u64 dst_offset = node->vma[1].offset;
 	u32 page_count = new_mem->num_pages;
 	int ret;
 
+=======
+	struct nouveau_mem *old_node = old_mem->mm_node;
+	struct nouveau_mem *new_node = new_mem->mm_node;
+	struct nouveau_bo *nvbo = nouveau_bo(bo);
+	u32 page_count = new_mem->num_pages;
+	u64 src_offset, dst_offset;
+	int ret;
+
+	src_offset = old_node->tmp_vma.offset;
+	if (new_node->tmp_vma.node)
+		dst_offset = new_node->tmp_vma.offset;
+	else
+		dst_offset = nvbo->vma.offset;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	page_count = new_mem->num_pages;
 	while (page_count) {
 		int line_count = (page_count > 2047) ? 2047 : page_count;
@@ -526,6 +638,7 @@ static int
 nv50_bo_move_m2mf(struct nouveau_channel *chan, struct ttm_buffer_object *bo,
 		  struct ttm_mem_reg *old_mem, struct ttm_mem_reg *new_mem)
 {
+<<<<<<< HEAD
 	struct nouveau_mem *node = old_mem->mm_node;
 	struct nouveau_bo *nvbo = nouveau_bo(bo);
 	u64 length = (new_mem->num_pages << PAGE_SHIFT);
@@ -533,6 +646,21 @@ nv50_bo_move_m2mf(struct nouveau_channel *chan, struct ttm_buffer_object *bo,
 	u64 dst_offset = node->vma[1].offset;
 	int ret;
 
+=======
+	struct nouveau_mem *old_node = old_mem->mm_node;
+	struct nouveau_mem *new_node = new_mem->mm_node;
+	struct nouveau_bo *nvbo = nouveau_bo(bo);
+	u64 length = (new_mem->num_pages << PAGE_SHIFT);
+	u64 src_offset, dst_offset;
+	int ret;
+
+	src_offset = old_node->tmp_vma.offset;
+	if (new_node->tmp_vma.node)
+		dst_offset = new_node->tmp_vma.offset;
+	else
+		dst_offset = nvbo->vma.offset;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (length) {
 		u32 amount, stride, height;
 
@@ -668,6 +796,7 @@ nv04_bo_move_m2mf(struct nouveau_channel *chan, struct ttm_buffer_object *bo,
 }
 
 static int
+<<<<<<< HEAD
 nouveau_vma_getmap(struct nouveau_channel *chan, struct nouveau_bo *nvbo,
 		   struct ttm_mem_reg *mem, struct nouveau_vma *vma)
 {
@@ -688,11 +817,14 @@ nouveau_vma_getmap(struct nouveau_channel *chan, struct nouveau_bo *nvbo,
 }
 
 static int
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 nouveau_bo_move_m2mf(struct ttm_buffer_object *bo, int evict, bool intr,
 		     bool no_wait_reserve, bool no_wait_gpu,
 		     struct ttm_mem_reg *new_mem)
 {
 	struct drm_nouveau_private *dev_priv = nouveau_bdev(bo->bdev);
+<<<<<<< HEAD
 	struct nouveau_channel *chan = chan = dev_priv->channel;
 	struct nouveau_bo *nvbo = nouveau_bo(bo);
 	struct ttm_mem_reg *old_mem = &bo->mem;
@@ -714,6 +846,44 @@ nouveau_bo_move_m2mf(struct ttm_buffer_object *bo, int evict, bool intr,
 		ret = nouveau_vma_getmap(chan, nvbo, new_mem, &node->vma[1]);
 		if (ret)
 			goto out;
+=======
+	struct nouveau_bo *nvbo = nouveau_bo(bo);
+	struct ttm_mem_reg *old_mem = &bo->mem;
+	struct nouveau_channel *chan;
+	int ret;
+
+	chan = nvbo->channel;
+	if (!chan) {
+		chan = dev_priv->channel;
+		mutex_lock_nested(&chan->mutex, NOUVEAU_KCHANNEL_MUTEX);
+	}
+
+	/* create temporary vma for old memory, this will get cleaned
+	 * up after ttm destroys the ttm_mem_reg
+	 */
+	if (dev_priv->card_type >= NV_50) {
+		struct nouveau_mem *node = old_mem->mm_node;
+		if (!node->tmp_vma.node) {
+			u32 page_shift = nvbo->vma.node->type;
+			if (old_mem->mem_type == TTM_PL_TT)
+				page_shift = nvbo->vma.vm->spg_shift;
+
+			ret = nouveau_vm_get(chan->vm,
+					     old_mem->num_pages << PAGE_SHIFT,
+					     page_shift, NV_MEM_ACCESS_RO,
+					     &node->tmp_vma);
+			if (ret)
+				goto out;
+		}
+
+		if (old_mem->mem_type == TTM_PL_VRAM)
+			nouveau_vm_map(&node->tmp_vma, node);
+		else {
+			nouveau_vm_map_sg(&node->tmp_vma, 0,
+					  old_mem->num_pages << PAGE_SHIFT,
+					  node, node->pages);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (dev_priv->card_type < NV_50)
@@ -730,7 +900,12 @@ nouveau_bo_move_m2mf(struct ttm_buffer_object *bo, int evict, bool intr,
 	}
 
 out:
+<<<<<<< HEAD
 	mutex_unlock(&chan->mutex);
+=======
+	if (chan == dev_priv->channel)
+		mutex_unlock(&chan->mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -739,6 +914,10 @@ nouveau_bo_move_flipd(struct ttm_buffer_object *bo, bool evict, bool intr,
 		      bool no_wait_reserve, bool no_wait_gpu,
 		      struct ttm_mem_reg *new_mem)
 {
+<<<<<<< HEAD
+=======
+	struct drm_nouveau_private *dev_priv = nouveau_bdev(bo->bdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 placement_memtype = TTM_PL_FLAG_TT | TTM_PL_MASK_CACHING;
 	struct ttm_placement placement;
 	struct ttm_mem_reg tmp_mem;
@@ -758,7 +937,27 @@ nouveau_bo_move_flipd(struct ttm_buffer_object *bo, bool evict, bool intr,
 	if (ret)
 		goto out;
 
+<<<<<<< HEAD
 	ret = nouveau_bo_move_m2mf(bo, true, intr, no_wait_reserve, no_wait_gpu, &tmp_mem);
+=======
+	if (dev_priv->card_type >= NV_50) {
+		struct nouveau_bo *nvbo = nouveau_bo(bo);
+		struct nouveau_mem *node = tmp_mem.mm_node;
+		struct nouveau_vma *vma = &nvbo->vma;
+		if (vma->node->type != vma->vm->spg_shift)
+			vma = &node->tmp_vma;
+		nouveau_vm_map_sg(vma, 0, tmp_mem.num_pages << PAGE_SHIFT,
+				  node, node->pages);
+	}
+
+	ret = nouveau_bo_move_m2mf(bo, true, intr, no_wait_reserve, no_wait_gpu, &tmp_mem);
+
+	if (dev_priv->card_type >= NV_50) {
+		struct nouveau_bo *nvbo = nouveau_bo(bo);
+		nouveau_vm_unmap(&nvbo->vma);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto out;
 
@@ -804,6 +1003,7 @@ out:
 static void
 nouveau_bo_move_ntfy(struct ttm_buffer_object *bo, struct ttm_mem_reg *new_mem)
 {
+<<<<<<< HEAD
 	struct nouveau_bo *nvbo = nouveau_bo(bo);
 	struct nouveau_vma *vma;
 
@@ -823,6 +1023,32 @@ nouveau_bo_move_ntfy(struct ttm_buffer_object *bo, struct ttm_mem_reg *new_mem)
 		} else {
 			nouveau_vm_unmap(vma);
 		}
+=======
+	struct drm_nouveau_private *dev_priv = nouveau_bdev(bo->bdev);
+	struct nouveau_mem *node = new_mem->mm_node;
+	struct nouveau_bo *nvbo = nouveau_bo(bo);
+	struct nouveau_vma *vma = &nvbo->vma;
+	struct nouveau_vm *vm = vma->vm;
+
+	if (dev_priv->card_type < NV_50)
+		return;
+
+	switch (new_mem->mem_type) {
+	case TTM_PL_VRAM:
+		nouveau_vm_map(vma, node);
+		break;
+	case TTM_PL_TT:
+		if (vma->node->type != vm->spg_shift) {
+			nouveau_vm_unmap(vma);
+			vma = &node->tmp_vma;
+		}
+		nouveau_vm_map_sg(vma, 0, new_mem->num_pages << PAGE_SHIFT,
+				  node, node->pages);
+		break;
+	default:
+		nouveau_vm_unmap(&nvbo->vma);
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -962,7 +1188,11 @@ nouveau_ttm_io_mem_reserve(struct ttm_bo_device *bdev, struct ttm_mem_reg *mem)
 			break;
 		}
 
+<<<<<<< HEAD
 		if (dev_priv->card_type >= NV_C0)
+=======
+		if (dev_priv->card_type == NV_C0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			page_shift = node->page_shift;
 		else
 			page_shift = 12;
@@ -1030,7 +1260,11 @@ nouveau_ttm_fault_reserve_notify(struct ttm_buffer_object *bo)
 
 	nvbo->placement.fpfn = 0;
 	nvbo->placement.lpfn = dev_priv->fb_mappable_pages;
+<<<<<<< HEAD
 	nouveau_bo_placement_set(nvbo, TTM_PL_FLAG_VRAM, 0);
+=======
+	nouveau_bo_placement_set(nvbo, TTM_PL_VRAM, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return nouveau_bo_validate(nvbo, false, true, false);
 }
 
@@ -1050,6 +1284,7 @@ nouveau_bo_fence(struct nouveau_bo *nvbo, struct nouveau_fence *fence)
 	nouveau_fence_unref(&old_fence);
 }
 
+<<<<<<< HEAD
 static int
 nouveau_ttm_tt_populate(struct ttm_tt *ttm)
 {
@@ -1138,6 +1373,10 @@ struct ttm_bo_driver nouveau_bo_driver = {
 	.ttm_tt_create = &nouveau_ttm_tt_create,
 	.ttm_tt_populate = &nouveau_ttm_tt_populate,
 	.ttm_tt_unpopulate = &nouveau_ttm_tt_unpopulate,
+=======
+struct ttm_bo_driver nouveau_bo_driver = {
+	.create_ttm_backend_entry = nouveau_bo_create_ttm_backend_entry,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.invalidate_caches = nouveau_bo_invalidate_caches,
 	.init_mem_type = nouveau_bo_init_mem_type,
 	.evict_flags = nouveau_bo_evict_flags,
@@ -1154,6 +1393,7 @@ struct ttm_bo_driver nouveau_bo_driver = {
 	.io_mem_free = &nouveau_ttm_io_mem_free,
 };
 
+<<<<<<< HEAD
 struct nouveau_vma *
 nouveau_bo_vma_find(struct nouveau_bo *nvbo, struct nouveau_vm *vm)
 {
@@ -1205,3 +1445,5 @@ nouveau_bo_vma_del(struct nouveau_bo *nvbo, struct nouveau_vma *vma)
 		list_del(&vma->head);
 	}
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

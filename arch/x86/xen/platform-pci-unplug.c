@@ -35,7 +35,11 @@ EXPORT_SYMBOL_GPL(xen_platform_pci_unplug);
 #ifdef CONFIG_XEN_PVHVM
 static int xen_emul_unplug;
 
+<<<<<<< HEAD
 static int check_platform_magic(void)
+=======
+static int __init check_platform_magic(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	short magic;
 	char protocol;

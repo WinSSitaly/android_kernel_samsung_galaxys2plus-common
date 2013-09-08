@@ -59,7 +59,11 @@
 #ifndef __ETHERNET_DEFINES_H__
 #define __ETHERNET_DEFINES_H__
 
+<<<<<<< HEAD
 #include <asm/octeon/cvmx-config.h>
+=======
+#include "cvmx-config.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 #define OCTEON_ETHERNET_VERSION "1.9"

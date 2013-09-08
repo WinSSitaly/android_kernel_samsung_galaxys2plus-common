@@ -47,7 +47,10 @@
 
 static void musb_port_suspend(struct musb *musb, bool do_suspend)
 {
+<<<<<<< HEAD
 	struct usb_otg	*otg = musb->xceiv->otg;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8		power;
 	void __iomem	*mbase = musb->mregs;
 
@@ -82,19 +85,34 @@ static void musb_port_suspend(struct musb *musb, bool do_suspend)
 		case OTG_STATE_A_HOST:
 			musb->xceiv->state = OTG_STATE_A_SUSPEND;
 			musb->is_active = is_otg_enabled(musb)
+<<<<<<< HEAD
 					&& otg->host->b_hnp_enable;
+=======
+					&& musb->xceiv->host->b_hnp_enable;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (musb->is_active)
 				mod_timer(&musb->otg_timer, jiffies
 					+ msecs_to_jiffies(
 						OTG_TIME_A_AIDL_BDIS));
 			musb_platform_try_idle(musb, 0);
 			break;
+<<<<<<< HEAD
 		case OTG_STATE_B_HOST:
 			musb->xceiv->state = OTG_STATE_B_WAIT_ACON;
 			musb->is_active = is_otg_enabled(musb)
 					&& otg->host->b_hnp_enable;
 			musb_platform_try_idle(musb, 0);
 			break;
+=======
+#ifdef	CONFIG_USB_MUSB_OTG
+		case OTG_STATE_B_HOST:
+			musb->xceiv->state = OTG_STATE_B_WAIT_ACON;
+			musb->is_active = is_otg_enabled(musb)
+					&& musb->xceiv->host->b_hnp_enable;
+			musb_platform_try_idle(musb, 0);
+			break;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			dev_dbg(musb->controller, "bogus rh suspend? %s\n",
 				otg_state_string(musb->xceiv->state));
@@ -117,11 +135,19 @@ static void musb_port_reset(struct musb *musb, bool do_reset)
 	u8		power;
 	void __iomem	*mbase = musb->mregs;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_MUSB_OTG
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (musb->xceiv->state == OTG_STATE_B_IDLE) {
 		dev_dbg(musb->controller, "HNP: Returning from HNP; no hub reset from b_idle\n");
 		musb->port1_status &= ~USB_PORT_STAT_RESET;
 		return;
 	}
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!is_host_active(musb))
 		return;
@@ -180,8 +206,11 @@ static void musb_port_reset(struct musb *musb, bool do_reset)
 
 void musb_root_disconnect(struct musb *musb)
 {
+<<<<<<< HEAD
 	struct usb_otg	*otg = musb->xceiv->otg;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	musb->port1_status = USB_PORT_STAT_POWER
 			| (USB_PORT_STAT_C_CONNECTION << 16);
 
@@ -190,12 +219,22 @@ void musb_root_disconnect(struct musb *musb)
 
 	switch (musb->xceiv->state) {
 	case OTG_STATE_A_SUSPEND:
+<<<<<<< HEAD
 		if (is_otg_enabled(musb)
 				&& otg->host->b_hnp_enable) {
+=======
+#ifdef	CONFIG_USB_MUSB_OTG
+		if (is_otg_enabled(musb)
+				&& musb->xceiv->host->b_hnp_enable) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			musb->xceiv->state = OTG_STATE_A_PERIPHERAL;
 			musb->g.is_a_peripheral = 1;
 			break;
 		}
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* FALLTHROUGH */
 	case OTG_STATE_A_HOST:
 		musb->xceiv->state = OTG_STATE_A_WAIT_BCON;

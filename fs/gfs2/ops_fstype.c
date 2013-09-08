@@ -14,7 +14,10 @@
 #include <linux/buffer_head.h>
 #include <linux/blkdev.h>
 #include <linux/kthread.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/namei.h>
 #include <linux/mount.h>
 #include <linux/gfs2_ondisk.h>
@@ -68,12 +71,15 @@ static struct gfs2_sbd *init_sbd(struct super_block *sb)
 
 	sb->s_fs_info = sdp;
 	sdp->sd_vfs = sb;
+<<<<<<< HEAD
 	sdp->sd_lkstats = alloc_percpu(struct gfs2_pcpu_lkstats);
 	if (!sdp->sd_lkstats) {
 		kfree(sdp);
 		return NULL;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_bit(SDF_NOJOURNALID, &sdp->sd_flags);
 	gfs2_tune_init(&sdp->sd_tune);
 
@@ -83,7 +89,13 @@ static struct gfs2_sbd *init_sbd(struct super_block *sb)
 	spin_lock_init(&sdp->sd_statfs_spin);
 
 	spin_lock_init(&sdp->sd_rindex_spin);
+<<<<<<< HEAD
 	sdp->sd_rindex_tree.rb_node = NULL;
+=======
+	mutex_init(&sdp->sd_rindex_mutex);
+	INIT_LIST_HEAD(&sdp->sd_rindex_list);
+	INIT_LIST_HEAD(&sdp->sd_rindex_mru_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	INIT_LIST_HEAD(&sdp->sd_jindex_list);
 	spin_lock_init(&sdp->sd_jindex_spin);
@@ -436,9 +448,16 @@ static int gfs2_lookup_root(struct super_block *sb, struct dentry **dptr,
 		fs_err(sdp, "can't read in %s inode: %ld\n", name, PTR_ERR(inode));
 		return PTR_ERR(inode);
 	}
+<<<<<<< HEAD
 	dentry = d_make_root(inode);
 	if (!dentry) {
 		fs_err(sdp, "can't alloc %s dentry\n", name);
+=======
+	dentry = d_alloc_root(inode);
+	if (!dentry) {
+		fs_err(sdp, "can't alloc %s dentry\n", name);
+		iput(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 	*dptr = dentry;
@@ -566,12 +585,17 @@ static void gfs2_others_may_mount(struct gfs2_sbd *sdp)
 {
 	char *message = "FIRSTMOUNT=Done";
 	char *envp[] = { message, NULL };
+<<<<<<< HEAD
 
 	fs_info(sdp, "first mount done, others may mount\n");
 
 	if (sdp->sd_lockstruct.ls_ops->lm_first_done)
 		sdp->sd_lockstruct.ls_ops->lm_first_done(sdp);
 
+=======
+	struct lm_lockstruct *ls = &sdp->sd_lockstruct;
+	ls->ls_first_done = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kobject_uevent_env(&sdp->sd_kobj, KOBJ_CHANGE, envp);
 }
 
@@ -660,6 +684,10 @@ static int init_journal(struct gfs2_sbd *sdp, int undo)
 		fs_err(sdp, "can't lookup journal index: %d\n", error);
 		return PTR_ERR(sdp->sd_jindex);
 	}
+<<<<<<< HEAD
+=======
+	ip = GFS2_I(sdp->sd_jindex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Load in the journal index special file */
 
@@ -771,6 +799,10 @@ fail:
 static int init_inodes(struct gfs2_sbd *sdp, int undo)
 {
 	int error = 0;
+<<<<<<< HEAD
+=======
+	struct gfs2_inode *ip;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct inode *master = sdp->sd_master_dir->d_inode;
 
 	if (undo)
@@ -795,6 +827,10 @@ static int init_inodes(struct gfs2_sbd *sdp, int undo)
 		fs_err(sdp, "can't get resource index inode: %d\n", error);
 		goto fail_statfs;
 	}
+<<<<<<< HEAD
+=======
+	ip = GFS2_I(sdp->sd_rindex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sdp->sd_rindex_uptodate = 0;
 
 	/* Read in the quota inode */
@@ -804,11 +840,14 @@ static int init_inodes(struct gfs2_sbd *sdp, int undo)
 		fs_err(sdp, "can't get quota file inode: %d\n", error);
 		goto fail_rindex;
 	}
+<<<<<<< HEAD
 
 	error = gfs2_rindex_update(sdp);
 	if (error)
 		goto fail_qinode;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 fail_qinode:
@@ -957,6 +996,10 @@ static int gfs2_lm_mount(struct gfs2_sbd *sdp, int silent)
 	struct gfs2_args *args = &sdp->sd_args;
 	const char *proto = sdp->sd_proto_name;
 	const char *table = sdp->sd_table_name;
+<<<<<<< HEAD
+=======
+	const char *fsname;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *o, *options;
 	int ret;
 
@@ -1016,12 +1059,28 @@ hostdata_error:
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	if (sdp->sd_args.ar_spectator)
+		snprintf(sdp->sd_fsname, GFS2_FSNAME_LEN, "%s.s", table);
+	else
+		snprintf(sdp->sd_fsname, GFS2_FSNAME_LEN, "%s.%u", table,
+			 sdp->sd_lockstruct.ls_jid);
+
+	fsname = strchr(table, ':');
+	if (fsname)
+		fsname++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (lm->lm_mount == NULL) {
 		fs_info(sdp, "Now mounting FS...\n");
 		complete_all(&sdp->sd_locking_init);
 		return 0;
 	}
+<<<<<<< HEAD
 	ret = lm->lm_mount(sdp, table);
+=======
+	ret = lm->lm_mount(sdp, fsname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret == 0)
 		fs_info(sdp, "Joined cluster. Now mounting FS...\n");
 	complete_all(&sdp->sd_locking_init);
@@ -1087,14 +1146,21 @@ static int fill_super(struct super_block *sb, struct gfs2_args *args, int silent
 
 	if (sdp->sd_args.ar_spectator) {
                 sb->s_flags |= MS_RDONLY;
+<<<<<<< HEAD
 		set_bit(SDF_RORECOVERY, &sdp->sd_flags);
+=======
+		set_bit(SDF_NORECOVERY, &sdp->sd_flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (sdp->sd_args.ar_posix_acl)
 		sb->s_flags |= MS_POSIXACL;
 	if (sdp->sd_args.ar_nobarrier)
 		set_bit(SDF_NOBARRIERS, &sdp->sd_flags);
 
+<<<<<<< HEAD
 	sb->s_flags |= MS_NOSEC;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sb->s_magic = GFS2_MAGIC;
 	sb->s_op = &gfs2_super_ops;
 	sb->s_d_op = &gfs2_dops;
@@ -1127,8 +1193,11 @@ static int fill_super(struct super_block *sb, struct gfs2_args *args, int silent
 	if (error)
 		goto fail;
 
+<<<<<<< HEAD
 	snprintf(sdp->sd_fsname, GFS2_FSNAME_LEN, "%s", sdp->sd_table_name);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gfs2_create_debugfs_file(sdp);
 
 	error = gfs2_sys_fs_add(sdp);
@@ -1165,6 +1234,7 @@ static int fill_super(struct super_block *sb, struct gfs2_args *args, int silent
 		goto fail_sb;
 	}
 
+<<<<<<< HEAD
 	if (sdp->sd_args.ar_spectator)
 		snprintf(sdp->sd_fsname, GFS2_FSNAME_LEN, "%s.s",
 			 sdp->sd_table_name);
@@ -1172,6 +1242,8 @@ static int fill_super(struct super_block *sb, struct gfs2_args *args, int silent
 		snprintf(sdp->sd_fsname, GFS2_FSNAME_LEN, "%s.%u",
 			 sdp->sd_table_name, sdp->sd_lockstruct.ls_jid);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	error = init_inodes(sdp, DO);
 	if (error)
 		goto fail_sb;
@@ -1225,7 +1297,10 @@ fail_sys:
 	gfs2_sys_fs_del(sdp);
 fail:
 	gfs2_delete_debugfs_file(sdp);
+<<<<<<< HEAD
 	free_percpu(sdp->sd_lkstats);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(sdp);
 	sb->s_fs_info = NULL;
 	return error;
@@ -1398,7 +1473,10 @@ static void gfs2_kill_sb(struct super_block *sb)
 	shrink_dcache_sb(sb);
 	kill_block_super(sb);
 	gfs2_delete_debugfs_file(sdp);
+<<<<<<< HEAD
 	free_percpu(sdp->sd_lkstats);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(sdp);
 }
 

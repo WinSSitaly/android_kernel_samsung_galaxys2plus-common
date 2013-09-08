@@ -1,6 +1,10 @@
 #ifndef __ASM_SH_FUTEX_IRQ_H
 #define __ASM_SH_FUTEX_IRQ_H
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int atomic_futex_op_xchg_set(int oparg, u32 __user *uaddr,
 					   int *oldval)

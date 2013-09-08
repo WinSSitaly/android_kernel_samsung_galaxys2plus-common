@@ -21,6 +21,10 @@
 #include <asm/page.h>
 #include <asm/pgtable.h>
 #include <asm/r4kcache.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mmu_context.h>
 #include <asm/war.h>
 
@@ -80,9 +84,15 @@ static void octeon_flush_icache_all_cores(struct vm_area_struct *vma)
 	if (vma)
 		mask = *mm_cpumask(vma->vm_mm);
 	else
+<<<<<<< HEAD
 		mask = *cpu_online_mask;
 	cpumask_clear_cpu(cpu, &mask);
 	for_each_cpu(cpu, &mask)
+=======
+		mask = cpu_online_map;
+	cpu_clear(cpu, mask);
+	for_each_cpu_mask(cpu, mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		octeon_send_ipi_single(cpu, SMP_ICACHE_FLUSH);
 
 	preempt_enable();
@@ -168,10 +178,13 @@ static void octeon_flush_cache_page(struct vm_area_struct *vma,
 		octeon_flush_icache_all_cores(vma);
 }
 
+<<<<<<< HEAD
 static void octeon_flush_kernel_vmap_range(unsigned long vaddr, int size)
 {
 	BUG();
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * Probe Octeon's caches
@@ -222,7 +235,11 @@ static void __cpuinit probe_octeon(void)
 		break;
 
 	default:
+<<<<<<< HEAD
 		panic("Unsupported Cavium Networks CPU type");
+=======
+		panic("Unsupported Cavium Networks CPU type\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -276,8 +293,11 @@ void __cpuinit octeon_cache_init(void)
 	flush_icache_range		= octeon_flush_icache_range;
 	local_flush_icache_range	= local_octeon_flush_icache_range;
 
+<<<<<<< HEAD
 	__flush_kernel_vmap_range	= octeon_flush_kernel_vmap_range;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	build_clear_page();
 	build_copy_page();
 }

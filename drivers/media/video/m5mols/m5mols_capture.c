@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The Capture code for Fujitsu M-5MOLS ISP
  *
@@ -19,18 +22,48 @@
 #include <linux/irq.h>
 #include <linux/interrupt.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
 #include <linux/regulator/consumer.h>
 #include <linux/videodev2.h>
+=======
+#include <linux/version.h>
+#include <linux/gpio.h>
+#include <linux/regulator/consumer.h>
+#include <linux/videodev2.h>
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/v4l2-ctrls.h>
 #include <media/v4l2-device.h>
 #include <media/v4l2-subdev.h>
 #include <media/m5mols.h>
+<<<<<<< HEAD
 #include <media/s5p_fimc.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "m5mols.h"
 #include "m5mols_reg.h"
 
+<<<<<<< HEAD
+=======
+static int m5mols_capture_error_handler(struct m5mols_info *info,
+					int timeout)
+{
+	int ret;
+
+	/* Disable all interrupts and clear relevant interrupt staus bits */
+	ret = m5mols_write(&info->sd, SYSTEM_INT_ENABLE,
+			   info->interrupt & ~(REG_INT_CAPTURE));
+	if (ret)
+		return ret;
+
+	if (timeout == 0)
+		return -ETIMEDOUT;
+
+	return 0;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * m5mols_read_rational - I2C read of a rational number
  *
@@ -107,6 +140,7 @@ int m5mols_start_capture(struct m5mols_info *info)
 {
 	struct v4l2_subdev *sd = &info->sd;
 	u8 resolution = info->resolution;
+<<<<<<< HEAD
 	int ret;
 
 	/*
@@ -128,10 +162,42 @@ int m5mols_start_capture(struct m5mols_info *info)
 	if (!ret)
 		/* Wait until a frame is captured to ISP internal memory */
 		ret = m5mols_wait_interrupt(sd, REG_INT_CAPTURE, 2000);
+=======
+	int timeout;
+	int ret;
+
+	/*
+	 * Preparing capture. Setting control & interrupt before entering
+	 * capture mode
+	 *
+	 * 1) change to MONITOR mode for operating control & interrupt
+	 * 2) set controls (considering v4l2_control value & lock 3A)
+	 * 3) set interrupt
+	 * 4) change to CAPTURE mode
+	 */
+	ret = m5mols_mode(info, REG_MONITOR);
+	if (!ret)
+		ret = m5mols_sync_controls(info);
+	if (!ret)
+		ret = m5mols_lock_3a(info, true);
+	if (!ret)
+		ret = m5mols_enable_interrupt(sd, REG_INT_CAPTURE);
+	if (!ret)
+		ret = m5mols_mode(info, REG_CAPTURE);
+	if (!ret) {
+		/* Wait for capture interrupt, after changing capture mode */
+		timeout = wait_event_interruptible_timeout(info->irq_waitq,
+					   test_bit(ST_CAPT_IRQ, &info->flags),
+					   msecs_to_jiffies(2000));
+		if (test_and_clear_bit(ST_CAPT_IRQ, &info->flags))
+			ret = m5mols_capture_error_handler(info, timeout);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ret)
 		ret = m5mols_lock_3a(info, false);
 	if (ret)
 		return ret;
+<<<<<<< HEAD
 
 	/*
 	 * Initiate the captured data transfer to a MIPI-CSI receiver.
@@ -157,4 +223,38 @@ int m5mols_start_capture(struct m5mols_info *info)
 	}
 
 	return ret;
+=======
+	/*
+	 * Starting capture. Setting capture frame count and resolution and
+	 * the format(available format: JPEG, Bayer RAW, YUV).
+	 *
+	 * 1) select single or multi(enable to 25), format, size
+	 * 2) set interrupt
+	 * 3) start capture(for main image, now)
+	 * 4) get information
+	 * 5) notify file size to v4l2 device(e.g, to s5p-fimc v4l2 device)
+	 */
+	ret = m5mols_write(sd, CAPC_SEL_FRAME, 1);
+	if (!ret)
+		ret = m5mols_write(sd, CAPP_YUVOUT_MAIN, REG_JPEG);
+	if (!ret)
+		ret = m5mols_write(sd, CAPP_MAIN_IMAGE_SIZE, resolution);
+	if (!ret)
+		ret = m5mols_enable_interrupt(sd, REG_INT_CAPTURE);
+	if (!ret)
+		ret = m5mols_write(sd, CAPC_START, REG_CAP_START_MAIN);
+	if (!ret) {
+		/* Wait for the capture completion interrupt */
+		timeout = wait_event_interruptible_timeout(info->irq_waitq,
+					   test_bit(ST_CAPT_IRQ, &info->flags),
+					   msecs_to_jiffies(2000));
+		if (test_and_clear_bit(ST_CAPT_IRQ, &info->flags)) {
+			ret = m5mols_capture_info(info);
+			if (!ret)
+				v4l2_subdev_notify(sd, 0, &info->cap.total);
+		}
+	}
+
+	return m5mols_capture_error_handler(info, timeout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

@@ -16,8 +16,11 @@
  *  - JASTEC USB touch controller/DigiTech DTR-02U
  *  - Zytronic capacitive touchscreen
  *  - NEXIO/iNexio
+<<<<<<< HEAD
  *  - Elo TouchSystems 2700 IntelliTouch
  *  - EasyTouch USB Dual/Multi touch controller from Data Modul
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Copyright (C) 2004-2007 by Daniel Ritz <daniel.ritz@gmx.ch>
  * Copyright (C) by Todd E. Johnson (mtouchusb.c)
@@ -61,11 +64,19 @@
 #define DRIVER_AUTHOR		"Daniel Ritz <daniel.ritz@gmx.ch>"
 #define DRIVER_DESC		"USB Touchscreen Driver"
 
+<<<<<<< HEAD
 static bool swap_xy;
 module_param(swap_xy, bool, 0644);
 MODULE_PARM_DESC(swap_xy, "If set X and Y axes are swapped.");
 
 static bool hwcalib_xy;
+=======
+static int swap_xy;
+module_param(swap_xy, bool, 0644);
+MODULE_PARM_DESC(swap_xy, "If set X and Y axes are swapped.");
+
+static int hwcalib_xy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(hwcalib_xy, bool, 0644);
 MODULE_PARM_DESC(hwcalib_xy, "If set hw-calibrated X/Y are used if available");
 
@@ -140,8 +151,11 @@ enum {
 	DEVTYPE_ZYTRONIC,
 	DEVTYPE_TC45USB,
 	DEVTYPE_NEXIO,
+<<<<<<< HEAD
 	DEVTYPE_ELO,
 	DEVTYPE_ETOUCH,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define USB_DEVICE_HID_CLASS(vend, prod) \
@@ -243,6 +257,7 @@ static const struct usb_device_id usbtouch_devices[] = {
 		.driver_info = DEVTYPE_NEXIO},
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCHSCREEN_USB_ELO
 	{USB_DEVICE(0x04e7, 0x0020), .driver_info = DEVTYPE_ELO},
 #endif
@@ -251,6 +266,8 @@ static const struct usb_device_id usbtouch_devices[] = {
 	{USB_DEVICE(0x7374, 0x0001), .driver_info = DEVTYPE_ETOUCH},
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{}
 };
 
@@ -332,6 +349,7 @@ static int egalax_get_pkt_len(unsigned char *buf, int len)
 }
 #endif
 
+<<<<<<< HEAD
 /*****************************************************************************
  * EasyTouch part
  */
@@ -377,6 +395,8 @@ static int etouch_get_pkt_len(unsigned char *buf, int len)
 	return 0;
 }
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*****************************************************************************
  * PanJit Part
@@ -1002,6 +1022,7 @@ static int nexio_read_data(struct usbtouch_usb *usbtouch, unsigned char *pkt)
 
 
 /*****************************************************************************
+<<<<<<< HEAD
  * ELO part
  */
 
@@ -1020,6 +1041,8 @@ static int elo_read_data(struct usbtouch_usb *dev, unsigned char *pkt)
 
 
 /*****************************************************************************
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * the different device descriptors
  */
 #ifdef MULTI_PACKET
@@ -1028,6 +1051,7 @@ static void usbtouch_process_multi(struct usbtouch_usb *usbtouch,
 #endif
 
 static struct usbtouch_device_info usbtouch_dev_info[] = {
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCHSCREEN_USB_ELO
 	[DEVTYPE_ELO] = {
 		.min_xc		= 0x0,
@@ -1040,6 +1064,8 @@ static struct usbtouch_device_info usbtouch_dev_info[] = {
 	},
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_TOUCHSCREEN_USB_EGALAX
 	[DEVTYPE_EGALAX] = {
 		.min_xc		= 0x0,
@@ -1226,6 +1252,7 @@ static struct usbtouch_device_info usbtouch_dev_info[] = {
 		.exit		= nexio_exit,
 	},
 #endif
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCHSCREEN_USB_EASYTOUCH
 	[DEVTYPE_ETOUCH] = {
 		.min_xc		= 0x0,
@@ -1238,6 +1265,8 @@ static struct usbtouch_device_info usbtouch_dev_info[] = {
 		.read_data	= etouch_read_data,
 	},
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -1679,7 +1708,22 @@ static struct usb_driver usbtouch_driver = {
 	.supports_autosuspend = 1,
 };
 
+<<<<<<< HEAD
 module_usb_driver(usbtouch_driver);
+=======
+static int __init usbtouch_init(void)
+{
+	return usb_register(&usbtouch_driver);
+}
+
+static void __exit usbtouch_cleanup(void)
+{
+	usb_deregister(&usbtouch_driver);
+}
+
+module_init(usbtouch_init);
+module_exit(usbtouch_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR(DRIVER_AUTHOR);
 MODULE_DESCRIPTION(DRIVER_DESC);

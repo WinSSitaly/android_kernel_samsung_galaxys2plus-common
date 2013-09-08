@@ -7,8 +7,11 @@
 #ifndef	NETROM_KERNEL_H
 #define	NETROM_KERNEL_H
 
+<<<<<<< HEAD
 #include <linux/ax25.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NETROM_MTU	236
 
 #define NETROM_T1	1

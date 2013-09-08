@@ -12,6 +12,10 @@
 #include <linux/init.h>
 #include <linux/platform_device.h>
 #include <linux/serial_8250.h>
+<<<<<<< HEAD
+=======
+#include <linux/mbus.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ata_platform.h>
 #include <linux/mtd/nand.h>
 #include <linux/dma-mapping.h>
@@ -30,7 +34,10 @@
 #include <plat/ehci-orion.h>
 #include <plat/common.h>
 #include <plat/time.h>
+<<<<<<< HEAD
 #include <plat/addr-map.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "common.h"
 
 /*****************************************************************************
@@ -74,7 +81,12 @@ unsigned int kirkwood_clk_ctrl = CGC_DUNIT | CGC_RESERVED;
 void __init kirkwood_ehci_init(void)
 {
 	kirkwood_clk_ctrl |= CGC_USB0;
+<<<<<<< HEAD
 	orion_ehci_init(USB_PHYS_BASE, IRQ_KIRKWOOD_USB, EHCI_PHY_NA);
+=======
+	orion_ehci_init(&kirkwood_mbus_dram_info,
+			USB_PHYS_BASE, IRQ_KIRKWOOD_USB, EHCI_PHY_NA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -85,7 +97,11 @@ void __init kirkwood_ge00_init(struct mv643xx_eth_platform_data *eth_data)
 {
 	kirkwood_clk_ctrl |= CGC_GE0;
 
+<<<<<<< HEAD
 	orion_ge00_init(eth_data,
+=======
+	orion_ge00_init(eth_data, &kirkwood_mbus_dram_info,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			GE00_PHYS_BASE, IRQ_KIRKWOOD_GE00_SUM,
 			IRQ_KIRKWOOD_GE00_ERR, kirkwood_tclk);
 }
@@ -99,7 +115,11 @@ void __init kirkwood_ge01_init(struct mv643xx_eth_platform_data *eth_data)
 
 	kirkwood_clk_ctrl |= CGC_GE1;
 
+<<<<<<< HEAD
 	orion_ge01_init(eth_data,
+=======
+	orion_ge01_init(eth_data, &kirkwood_mbus_dram_info,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			GE01_PHYS_BASE, IRQ_KIRKWOOD_GE01_SUM,
 			IRQ_KIRKWOOD_GE01_ERR, kirkwood_tclk);
 }
@@ -178,7 +198,12 @@ void __init kirkwood_sata_init(struct mv_sata_platform_data *sata_data)
 	if (sata_data->n_ports > 1)
 		kirkwood_clk_ctrl |= CGC_SATA1;
 
+<<<<<<< HEAD
 	orion_sata_init(sata_data, SATA_PHYS_BASE, IRQ_KIRKWOOD_SATA);
+=======
+	orion_sata_init(sata_data, &kirkwood_mbus_dram_info,
+			SATA_PHYS_BASE, IRQ_KIRKWOOD_SATA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -220,6 +245,10 @@ void __init kirkwood_sdio_init(struct mvsdio_platform_data *mvsdio_data)
 		mvsdio_data->clock = 100000000;
 	else
 		mvsdio_data->clock = 200000000;
+<<<<<<< HEAD
+=======
+	mvsdio_data->dram = &kirkwood_mbus_dram_info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kirkwood_clk_ctrl |= CGC_SDIO;
 	kirkwood_sdio.dev.platform_data = mvsdio_data;
 	platform_device_register(&kirkwood_sdio);
@@ -279,11 +308,20 @@ void __init kirkwood_crypto_init(void)
 /*****************************************************************************
  * XOR0
  ****************************************************************************/
+<<<<<<< HEAD
 void __init kirkwood_xor0_init(void)
 {
 	kirkwood_clk_ctrl |= CGC_XOR0;
 
 	orion_xor0_init(XOR0_PHYS_BASE, XOR0_HIGH_PHYS_BASE,
+=======
+static void __init kirkwood_xor0_init(void)
+{
+	kirkwood_clk_ctrl |= CGC_XOR0;
+
+	orion_xor0_init(&kirkwood_mbus_dram_info,
+			XOR0_PHYS_BASE, XOR0_HIGH_PHYS_BASE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			IRQ_KIRKWOOD_XOR_00, IRQ_KIRKWOOD_XOR_01);
 }
 
@@ -291,7 +329,11 @@ void __init kirkwood_xor0_init(void)
 /*****************************************************************************
  * XOR1
  ****************************************************************************/
+<<<<<<< HEAD
 void __init kirkwood_xor1_init(void)
+=======
+static void __init kirkwood_xor1_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	kirkwood_clk_ctrl |= CGC_XOR1;
 
@@ -303,7 +345,11 @@ void __init kirkwood_xor1_init(void)
 /*****************************************************************************
  * Watchdog
  ****************************************************************************/
+<<<<<<< HEAD
 void __init kirkwood_wdt_init(void)
+=======
+static void __init kirkwood_wdt_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	orion_wdt_init(kirkwood_tclk);
 }
@@ -361,6 +407,10 @@ static struct resource kirkwood_i2s_resources[] = {
 };
 
 static struct kirkwood_asoc_platform_data kirkwood_i2s_data = {
+<<<<<<< HEAD
+=======
+	.dram        = &kirkwood_mbus_dram_info,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.burst       = 128,
 };
 
@@ -392,7 +442,11 @@ void __init kirkwood_audio_init(void)
 /*
  * Identify device ID and revision.
  */
+<<<<<<< HEAD
 char * __init kirkwood_id(void)
+=======
+static char * __init kirkwood_id(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 dev, rev;
 
@@ -426,8 +480,11 @@ char * __init kirkwood_id(void)
 	} else if (dev == MV88F6282_DEV_ID) {
 		if (rev == MV88F6282_REV_A0)
 			return "MV88F6282-Rev-A0";
+<<<<<<< HEAD
 		else if (rev == MV88F6282_REV_A1)
 			return "MV88F6282-Rev-A1";
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		else
 			return "MV88F6282-Rev-Unsupported";
 	} else {
@@ -435,7 +492,11 @@ char * __init kirkwood_id(void)
 	}
 }
 
+<<<<<<< HEAD
 void __init kirkwood_l2_init(void)
+=======
+static void __init kirkwood_l2_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 #ifdef CONFIG_CACHE_FEROCEON_L2_WRITETHROUGH
 	writel(readl(L2_CONFIG_REG) | L2_WRITETHROUGH, L2_CONFIG_REG);
@@ -450,6 +511,10 @@ void __init kirkwood_init(void)
 {
 	printk(KERN_INFO "Kirkwood: %s, TCLK=%d.\n",
 		kirkwood_id(), kirkwood_tclk);
+<<<<<<< HEAD
+=======
+	kirkwood_i2s_data.tclk = kirkwood_tclk;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Disable propagation of mbus errors to the CPU local bus,
@@ -531,6 +596,7 @@ static int __init kirkwood_clock_gate(void)
 	return 0;
 }
 late_initcall(kirkwood_clock_gate);
+<<<<<<< HEAD
 
 void kirkwood_restart(char mode, const char *cmd)
 {
@@ -547,3 +613,5 @@ void kirkwood_restart(char mode, const char *cmd)
 	while (1)
 		;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

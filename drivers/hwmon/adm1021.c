@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
  * adm1021.c - Part of lm_sensors, Linux kernel modules for hardware
  *	       monitoring
  * Copyright (c) 1998, 1999  Frodo Looijaard <frodol@dds.nl> and
@@ -18,6 +19,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+=======
+    adm1021.c - Part of lm_sensors, Linux kernel modules for hardware
+		monitoring
+    Copyright (c) 1998, 1999  Frodo Looijaard <frodol@dds.nl> and
+    Philip Edelbrock <phil@netroedge.com>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/module.h>
 #include <linux/init.h>
@@ -70,12 +92,19 @@ enum chips {
 
 /* Initial values */
 
+<<<<<<< HEAD
 /*
  * Note: Even though I left the low and high limits named os and hyst,
  * they don't quite work like a thermostat the way the LM75 does.  I.e.,
  * a lower temp than THYST actually triggers an alarm instead of
  * clearing it.  Weird, ey?   --Phil
  */
+=======
+/* Note: Even though I left the low and high limits named os and hyst,
+they don't quite work like a thermostat the way the LM75 does.  I.e.,
+a lower temp than THYST actually triggers an alarm instead of
+clearing it.  Weird, ey?   --Phil  */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Each client has this additional data */
 struct adm1021_data {
@@ -105,7 +134,11 @@ static int adm1021_remove(struct i2c_client *client);
 static struct adm1021_data *adm1021_update_device(struct device *dev);
 
 /* (amalysh) read only mode, otherwise any limit's writing confuse BIOS */
+<<<<<<< HEAD
 static bool read_only;
+=======
+static int read_only;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 static const struct i2c_device_id adm1021_id[] = {
@@ -184,6 +217,7 @@ static ssize_t set_temp_max(struct device *dev,
 	int index = to_sensor_dev_attr(devattr)->index;
 	struct i2c_client *client = to_i2c_client(dev);
 	struct adm1021_data *data = i2c_get_clientdata(client);
+<<<<<<< HEAD
 	long temp;
 	int err;
 
@@ -191,6 +225,9 @@ static ssize_t set_temp_max(struct device *dev,
 	if (err)
 		return err;
 	temp /= 1000;
+=======
+	long temp = simple_strtol(buf, NULL, 10) / 1000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&data->update_lock);
 	data->temp_max[index] = SENSORS_LIMIT(temp, -128, 127);
@@ -209,6 +246,7 @@ static ssize_t set_temp_min(struct device *dev,
 	int index = to_sensor_dev_attr(devattr)->index;
 	struct i2c_client *client = to_i2c_client(dev);
 	struct adm1021_data *data = i2c_get_clientdata(client);
+<<<<<<< HEAD
 	long temp;
 	int err;
 
@@ -216,6 +254,9 @@ static ssize_t set_temp_min(struct device *dev,
 	if (err)
 		return err;
 	temp /= 1000;
+=======
+	long temp = simple_strtol(buf, NULL, 10) / 1000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&data->update_lock);
 	data->temp_min[index] = SENSORS_LIMIT(temp, -128, 127);
@@ -240,6 +281,7 @@ static ssize_t set_low_power(struct device *dev,
 {
 	struct i2c_client *client = to_i2c_client(dev);
 	struct adm1021_data *data = i2c_get_clientdata(client);
+<<<<<<< HEAD
 	char low_power;
 	unsigned long val;
 	int err;
@@ -248,6 +290,9 @@ static ssize_t set_low_power(struct device *dev,
 	if (err)
 		return err;
 	low_power = val != 0;
+=======
+	int low_power = simple_strtol(buf, NULL, 10) != 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&data->update_lock);
 	if (low_power != data->low_power) {
@@ -332,24 +377,33 @@ static int adm1021_detect(struct i2c_client *client,
 	man_id = i2c_smbus_read_byte_data(client, ADM1021_REG_MAN_ID);
 	dev_id = i2c_smbus_read_byte_data(client, ADM1021_REG_DEV_ID);
 
+<<<<<<< HEAD
 	if (man_id < 0 || dev_id < 0)
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (man_id == 0x4d && dev_id == 0x01)
 		type_name = "max1617a";
 	else if (man_id == 0x41) {
 		if ((dev_id & 0xF0) == 0x30)
 			type_name = "adm1023";
+<<<<<<< HEAD
 		else if ((dev_id & 0xF0) == 0x00)
 			type_name = "adm1021";
 		else
 			return -ENODEV;
+=======
+		else
+			type_name = "adm1021";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (man_id == 0x49)
 		type_name = "thmc10";
 	else if (man_id == 0x23)
 		type_name = "gl523sm";
 	else if (man_id == 0x54)
 		type_name = "mc1066";
+<<<<<<< HEAD
 	else {
 		int lte, rte, lhi, rhi, llo, rlo;
 
@@ -394,6 +448,15 @@ static int adm1021_detect(struct i2c_client *client,
 			type_name = "max1617";
 		}
 	}
+=======
+	/* LM84 Mfr ID in a different place, and it has more unused bits */
+	else if (conv_rate == 0x00
+		 && (config & 0x7F) == 0x00
+		 && (status & 0xAB) == 0x00)
+		type_name = "lm84";
+	else
+		type_name = "max1617";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pr_debug("adm1021: Detected chip %s at adapter %d, address 0x%02x.\n",
 		 type_name, i2c_adapter_id(adapter), client->addr);
@@ -424,8 +487,12 @@ static int adm1021_probe(struct i2c_client *client,
 		adm1021_init_client(client);
 
 	/* Register sysfs hooks */
+<<<<<<< HEAD
 	err = sysfs_create_group(&client->dev.kobj, &adm1021_group);
 	if (err)
+=======
+	if ((err = sysfs_create_group(&client->dev.kobj, &adm1021_group)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error1;
 
 	data->hwmon_dev = hwmon_device_register(&client->dev);
@@ -491,10 +558,15 @@ static struct adm1021_data *adm1021_update_device(struct device *dev)
 		data->alarms = i2c_smbus_read_byte_data(client,
 						ADM1021_REG_STATUS) & 0x7c;
 		if (data->type == adm1023) {
+<<<<<<< HEAD
 			/*
 			 * The ADM1023 provides 3 extra bits of precision for
 			 * the remote sensor in extra registers.
 			 */
+=======
+			/* The ADM1023 provides 3 extra bits of precision for
+			 * the remote sensor in extra registers. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			data->temp[1] += 125 * (i2c_smbus_read_byte_data(
 				client, ADM1023_REG_REM_TEMP_PREC) >> 5);
 			data->temp_max[1] += 125 * (i2c_smbus_read_byte_data(
@@ -517,12 +589,32 @@ static struct adm1021_data *adm1021_update_device(struct device *dev)
 	return data;
 }
 
+<<<<<<< HEAD
 module_i2c_driver(adm1021_driver);
 
 MODULE_AUTHOR("Frodo Looijaard <frodol@dds.nl> and "
+=======
+static int __init sensors_adm1021_init(void)
+{
+	return i2c_add_driver(&adm1021_driver);
+}
+
+static void __exit sensors_adm1021_exit(void)
+{
+	i2c_del_driver(&adm1021_driver);
+}
+
+MODULE_AUTHOR ("Frodo Looijaard <frodol@dds.nl> and "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"Philip Edelbrock <phil@netroedge.com>");
 MODULE_DESCRIPTION("adm1021 driver");
 MODULE_LICENSE("GPL");
 
 module_param(read_only, bool, 0);
 MODULE_PARM_DESC(read_only, "Don't set any values, read only mode");
+<<<<<<< HEAD
+=======
+
+module_init(sensors_adm1021_init)
+module_exit(sensors_adm1021_exit)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

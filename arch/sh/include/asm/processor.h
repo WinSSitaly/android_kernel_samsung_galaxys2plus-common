@@ -101,10 +101,13 @@ extern struct sh_cpuinfo cpu_data[];
 #define cpu_sleep()	__asm__ __volatile__ ("sleep" : : : "memory")
 #define cpu_relax()	barrier()
 
+<<<<<<< HEAD
 void default_idle(void);
 void cpu_idle_wait(void);
 void stop_this_cpu(void *);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Forward decl */
 struct seq_operations;
 struct task_struct;
@@ -165,6 +168,7 @@ int vsyscall_init(void);
 #define vsyscall_init() do { } while (0)
 #endif
 
+<<<<<<< HEAD
 /*
  * SH-2A has both 16 and 32-bit opcodes, do lame encoding checks.
  */
@@ -176,6 +180,8 @@ extern unsigned int instruction_size(unsigned int insn);
 #define instruction_size(insn)	(4)
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ASSEMBLY__ */
 
 #ifdef CONFIG_SUPERH32

@@ -55,9 +55,16 @@ static void __init cdb89712_map_io(void)
 
 MACHINE_START(CDB89712, "Cirrus-CDB89712")
 	/* Maintainer: Ray Lehtiniemi */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= cdb89712_map_io,
 	.init_irq	= clps711x_init_irq,
 	.timer		= &clps711x_timer,
 	.restart	= clps711x_restart,
+=======
+	.boot_params	= 0xc0000100,
+	.map_io		= cdb89712_map_io,
+	.init_irq	= clps711x_init_irq,
+	.timer		= &clps711x_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

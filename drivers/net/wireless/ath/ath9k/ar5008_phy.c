@@ -158,7 +158,11 @@ static void ar5008_hw_force_bias(struct ath_hw *ah, u16 synth_freq)
 	/* pre-reverse this field */
 	tmp_reg = ath9k_hw_reverse_bits(new_bias, 3);
 
+<<<<<<< HEAD
 	ath_dbg(common, CONFIG, "Force rf_pwd_icsyndiv to %1d on %4d\n",
+=======
+	ath_dbg(common, ATH_DBG_CONFIG, "Force rf_pwd_icsyndiv to %1d on %4d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		new_bias, synth_freq);
 
 	/* swizzle rf_pwd_icsyndiv */
@@ -624,11 +628,14 @@ static void ar5008_hw_init_bb(struct ath_hw *ah,
 	else
 		synthDelay /= 10;
 
+<<<<<<< HEAD
 	if (IS_CHAN_HALF_RATE(chan))
 		synthDelay *= 2;
 	else if (IS_CHAN_QUARTER_RATE(chan))
 		synthDelay *= 4;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	REG_WRITE(ah, AR_PHY_ACTIVE, AR_PHY_ACTIVE_EN);
 
 	udelay(synthDelay + BASE_ACTIVATE_DELAY);
@@ -701,10 +708,15 @@ static void ar5008_hw_override_ini(struct ath_hw *ah,
 		REG_WRITE(ah, AR_PCU_MISC_MODE2, val);
 	}
 
+<<<<<<< HEAD
 	REG_SET_BIT(ah, AR_PHY_CCK_DETECT,
 		    AR_PHY_CCK_DETECT_BB_ENABLE_ANT_FAST_DIV);
 
 	if (AR_SREV_9280_20_OR_LATER(ah))
+=======
+	if (!AR_SREV_5416_20_OR_LATER(ah) ||
+	    AR_SREV_9280_20_OR_LATER(ah))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	/*
 	 * Disable BB clock gating
@@ -760,8 +772,15 @@ static void ar5008_hw_set_channel_regs(struct ath_hw *ah,
 static int ar5008_hw_process_ini(struct ath_hw *ah,
 				 struct ath9k_channel *chan)
 {
+<<<<<<< HEAD
 	struct ath_common *common = ath9k_hw_common(ah);
 	int i, regWrites = 0;
+=======
+	struct ath_regulatory *regulatory = ath9k_hw_regulatory(ah);
+	struct ath_common *common = ath9k_hw_common(ah);
+	int i, regWrites = 0;
+	struct ieee80211_channel *channel = chan->chan;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 modesIndex, freqIndex;
 
 	switch (chan->chanmode) {
@@ -799,8 +818,12 @@ static int ar5008_hw_process_ini(struct ath_hw *ah,
 
 	/* Write ADDAC shifts */
 	REG_WRITE(ah, AR_PHY_ADC_SERIAL_CTL, AR_PHY_SEL_EXTERNAL_RADIO);
+<<<<<<< HEAD
 	if (ah->eep_ops->set_addac)
 		ah->eep_ops->set_addac(ah, chan);
+=======
+	ah->eep_ops->set_addac(ah, chan);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	REG_WRITE_ARRAY(&ah->iniAddac, 1, regWrites);
 	REG_WRITE(ah, AR_PHY_ADC_SERIAL_CTL, AR_PHY_SEL_INTERNAL_ADDAC);
@@ -834,10 +857,16 @@ static int ar5008_hw_process_ini(struct ath_hw *ah,
 	    AR_SREV_9287_11_OR_LATER(ah))
 		REG_WRITE_ARRAY(&ah->iniModesTxGain, modesIndex, regWrites);
 
+<<<<<<< HEAD
 	if (AR_SREV_9271_10(ah)) {
 		REG_SET_BIT(ah, AR_PHY_SPECTRAL_SCAN, AR_PHY_SPECTRAL_SCAN_ENA);
 		REG_RMW_FIELD(ah, AR_PHY_RF_CTL3, AR_PHY_TX_END_TO_ADC_ON, 0xa);
 	}
+=======
+	if (AR_SREV_9271_10(ah))
+		REG_WRITE_ARRAY(&ah->iniModes_9271_1_0_only,
+				modesIndex, regWrites);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ENABLE_REGWRITE_BUFFER(ah);
 
@@ -859,17 +888,46 @@ static int ar5008_hw_process_ini(struct ath_hw *ah,
 
 	REGWRITE_BUFFER_FLUSH(ah);
 
+<<<<<<< HEAD
 	REG_WRITE_ARRAY(&ah->iniBB_RfGain, freqIndex, regWrites);
 
 	if (IS_CHAN_A_FAST_CLOCK(ah, chan))
 		REG_WRITE_ARRAY(&ah->iniModesFastClock, modesIndex,
 				regWrites);
+=======
+	if (AR_SREV_9271(ah)) {
+		if (ah->eep_ops->get_eeprom(ah, EEP_TXGAIN_TYPE) == 1)
+			REG_WRITE_ARRAY(&ah->iniModes_high_power_tx_gain_9271,
+					modesIndex, regWrites);
+		else
+			REG_WRITE_ARRAY(&ah->iniModes_normal_power_tx_gain_9271,
+					modesIndex, regWrites);
+	}
+
+	REG_WRITE_ARRAY(&ah->iniBB_RfGain, freqIndex, regWrites);
+
+	if (IS_CHAN_A_FAST_CLOCK(ah, chan)) {
+		REG_WRITE_ARRAY(&ah->iniModesAdditional, modesIndex,
+				regWrites);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ar5008_hw_override_ini(ah, chan);
 	ar5008_hw_set_channel_regs(ah, chan);
 	ar5008_hw_init_chain_masks(ah);
 	ath9k_olc_init(ah);
+<<<<<<< HEAD
 	ath9k_hw_apply_txpower(ah, chan, false);
+=======
+
+	/* Set TX power */
+	ah->eep_ops->set_txpower(ah, chan,
+				 ath9k_regd_get_ctl(regulatory, chan),
+				 channel->max_antenna_gain * 2,
+				 channel->max_power * 2,
+				 min((u32) MAX_RATE_POWER,
+				 (u32) regulatory->power_limit), false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Write analog registers */
 	if (!ath9k_hw_set_rf_regs(ah, chan, freqIndex)) {
@@ -969,6 +1027,27 @@ static void ar5008_restore_chainmask(struct ath_hw *ah)
 	}
 }
 
+<<<<<<< HEAD
+=======
+static void ar5008_set_diversity(struct ath_hw *ah, bool value)
+{
+	u32 v = REG_READ(ah, AR_PHY_CCK_DETECT);
+	if (value)
+		v |= AR_PHY_CCK_DETECT_BB_ENABLE_ANT_FAST_DIV;
+	else
+		v &= ~AR_PHY_CCK_DETECT_BB_ENABLE_ANT_FAST_DIV;
+	REG_WRITE(ah, AR_PHY_CCK_DETECT, v);
+}
+
+static u32 ar9100_hw_compute_pll_control(struct ath_hw *ah,
+					 struct ath9k_channel *chan)
+{
+	if (chan && IS_CHAN_5GHZ(chan))
+		return 0x1450;
+	return 0x1458;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u32 ar9160_hw_compute_pll_control(struct ath_hw *ah,
 					 struct ath9k_channel *chan)
 {
@@ -1021,7 +1100,12 @@ static bool ar5008_hw_ani_control_old(struct ath_hw *ah,
 		u32 level = param;
 
 		if (level >= ARRAY_SIZE(ah->totalSizeDesired)) {
+<<<<<<< HEAD
 			ath_dbg(common, ANI, "level out of range (%u > %zu)\n",
+=======
+			ath_dbg(common, ATH_DBG_ANI,
+				"level out of range (%u > %zu)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				level, ARRAY_SIZE(ah->totalSizeDesired));
 			return false;
 		}
@@ -1124,7 +1208,12 @@ static bool ar5008_hw_ani_control_old(struct ath_hw *ah,
 		u32 level = param;
 
 		if (level >= ARRAY_SIZE(firstep)) {
+<<<<<<< HEAD
 			ath_dbg(common, ANI, "level out of range (%u > %zu)\n",
+=======
+			ath_dbg(common, ATH_DBG_ANI,
+				"level out of range (%u > %zu)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				level, ARRAY_SIZE(firstep));
 			return false;
 		}
@@ -1143,7 +1232,12 @@ static bool ar5008_hw_ani_control_old(struct ath_hw *ah,
 		u32 level = param;
 
 		if (level >= ARRAY_SIZE(cycpwrThr1)) {
+<<<<<<< HEAD
 			ath_dbg(common, ANI, "level out of range (%u > %zu)\n",
+=======
+			ath_dbg(common, ATH_DBG_ANI,
+				"level out of range (%u > %zu)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				level, ARRAY_SIZE(cycpwrThr1));
 			return false;
 		}
@@ -1160,22 +1254,40 @@ static bool ar5008_hw_ani_control_old(struct ath_hw *ah,
 	case ATH9K_ANI_PRESENT:
 		break;
 	default:
+<<<<<<< HEAD
 		ath_dbg(common, ANI, "invalid cmd %u\n", cmd);
 		return false;
 	}
 
 	ath_dbg(common, ANI, "ANI parameters:\n");
 	ath_dbg(common, ANI,
+=======
+		ath_dbg(common, ATH_DBG_ANI, "invalid cmd %u\n", cmd);
+		return false;
+	}
+
+	ath_dbg(common, ATH_DBG_ANI, "ANI parameters:\n");
+	ath_dbg(common, ATH_DBG_ANI,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"noiseImmunityLevel=%d, spurImmunityLevel=%d, ofdmWeakSigDetectOff=%d\n",
 		aniState->noiseImmunityLevel,
 		aniState->spurImmunityLevel,
 		!aniState->ofdmWeakSigDetectOff);
+<<<<<<< HEAD
 	ath_dbg(common, ANI,
+=======
+	ath_dbg(common, ATH_DBG_ANI,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"cckWeakSigThreshold=%d, firstepLevel=%d, listenTime=%d\n",
 		aniState->cckWeakSigThreshold,
 		aniState->firstepLevel,
 		aniState->listenTime);
+<<<<<<< HEAD
 	ath_dbg(common, ANI, "ofdmPhyErrCount=%d, cckPhyErrCount=%d\n\n",
+=======
+	ath_dbg(common, ATH_DBG_ANI,
+		"ofdmPhyErrCount=%d, cckPhyErrCount=%d\n\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		aniState->ofdmPhyErrCount,
 		aniState->cckPhyErrCount);
 
@@ -1259,7 +1371,11 @@ static bool ar5008_hw_ani_control_new(struct ath_hw *ah,
 				    AR_PHY_SFCORR_LOW_USE_SELF_CORR_LOW);
 
 		if (!on != aniState->ofdmWeakSigDetectOff) {
+<<<<<<< HEAD
 			ath_dbg(common, ANI,
+=======
+			ath_dbg(common, ATH_DBG_ANI,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"** ch %d: ofdm weak signal: %s=>%s\n",
 				chan->channel,
 				!aniState->ofdmWeakSigDetectOff ?
@@ -1277,7 +1393,11 @@ static bool ar5008_hw_ani_control_new(struct ath_hw *ah,
 		u32 level = param;
 
 		if (level >= ARRAY_SIZE(firstep_table)) {
+<<<<<<< HEAD
 			ath_dbg(common, ANI,
+=======
+			ath_dbg(common, ATH_DBG_ANI,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"ATH9K_ANI_FIRSTEP_LEVEL: level out of range (%u > %zu)\n",
 				level, ARRAY_SIZE(firstep_table));
 			return false;
@@ -1314,7 +1434,11 @@ static bool ar5008_hw_ani_control_new(struct ath_hw *ah,
 			      AR_PHY_FIND_SIG_FIRSTEP_LOW, value2);
 
 		if (level != aniState->firstepLevel) {
+<<<<<<< HEAD
 			ath_dbg(common, ANI,
+=======
+			ath_dbg(common, ATH_DBG_ANI,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"** ch %d: level %d=>%d[def:%d] firstep[level]=%d ini=%d\n",
 				chan->channel,
 				aniState->firstepLevel,
@@ -1322,7 +1446,11 @@ static bool ar5008_hw_ani_control_new(struct ath_hw *ah,
 				ATH9K_ANI_FIRSTEP_LVL_NEW,
 				value,
 				aniState->iniDef.firstep);
+<<<<<<< HEAD
 			ath_dbg(common, ANI,
+=======
+			ath_dbg(common, ATH_DBG_ANI,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"** ch %d: level %d=>%d[def:%d] firstep_low[level]=%d ini=%d\n",
 				chan->channel,
 				aniState->firstepLevel,
@@ -1342,7 +1470,11 @@ static bool ar5008_hw_ani_control_new(struct ath_hw *ah,
 		u32 level = param;
 
 		if (level >= ARRAY_SIZE(cycpwrThr1_table)) {
+<<<<<<< HEAD
 			ath_dbg(common, ANI,
+=======
+			ath_dbg(common, ATH_DBG_ANI,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"ATH9K_ANI_SPUR_IMMUNITY_LEVEL: level out of range (%u > %zu)\n",
 				level, ARRAY_SIZE(cycpwrThr1_table));
 			return false;
@@ -1378,7 +1510,11 @@ static bool ar5008_hw_ani_control_new(struct ath_hw *ah,
 			      AR_PHY_EXT_TIMING5_CYCPWR_THR1, value2);
 
 		if (level != aniState->spurImmunityLevel) {
+<<<<<<< HEAD
 			ath_dbg(common, ANI,
+=======
+			ath_dbg(common, ATH_DBG_ANI,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"** ch %d: level %d=>%d[def:%d] cycpwrThr1[level]=%d ini=%d\n",
 				chan->channel,
 				aniState->spurImmunityLevel,
@@ -1386,7 +1522,11 @@ static bool ar5008_hw_ani_control_new(struct ath_hw *ah,
 				ATH9K_ANI_SPUR_IMMUNE_LVL_NEW,
 				value,
 				aniState->iniDef.cycpwrThr1);
+<<<<<<< HEAD
 			ath_dbg(common, ANI,
+=======
+			ath_dbg(common, ATH_DBG_ANI,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"** ch %d: level %d=>%d[def:%d] cycpwrThr1Ext[level]=%d ini=%d\n",
 				chan->channel,
 				aniState->spurImmunityLevel,
@@ -1412,11 +1552,19 @@ static bool ar5008_hw_ani_control_new(struct ath_hw *ah,
 	case ATH9K_ANI_PRESENT:
 		break;
 	default:
+<<<<<<< HEAD
 		ath_dbg(common, ANI, "invalid cmd %u\n", cmd);
 		return false;
 	}
 
 	ath_dbg(common, ANI,
+=======
+		ath_dbg(common, ATH_DBG_ANI, "invalid cmd %u\n", cmd);
+		return false;
+	}
+
+	ath_dbg(common, ATH_DBG_ANI,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"ANI parameters: SI=%d, ofdmWS=%s FS=%d MRCcck=%s listenTime=%d ofdmErrs=%d cckErrs=%d\n",
 		aniState->spurImmunityLevel,
 		!aniState->ofdmWeakSigDetectOff ? "on" : "off",
@@ -1470,7 +1618,11 @@ static void ar5008_hw_ani_cache_ini_regs(struct ath_hw *ah)
 
 	iniDef = &aniState->iniDef;
 
+<<<<<<< HEAD
 	ath_dbg(common, ANI, "ver %d.%d opmode %u chan %d Mhz/0x%x\n",
+=======
+	ath_dbg(common, ATH_DBG_ANI, "ver %d.%d opmode %u chan %d Mhz/0x%x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ah->hw_version.macVersion,
 		ah->hw_version.macRev,
 		ah->opmode,
@@ -1594,6 +1746,10 @@ void ar5008_hw_attach_phy_ops(struct ath_hw *ah)
 	priv_ops->rfbus_req = ar5008_hw_rfbus_req;
 	priv_ops->rfbus_done = ar5008_hw_rfbus_done;
 	priv_ops->restore_chainmask = ar5008_restore_chainmask;
+<<<<<<< HEAD
+=======
+	priv_ops->set_diversity = ar5008_set_diversity;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	priv_ops->do_getnf = ar5008_hw_do_getnf;
 	priv_ops->set_radar_params = ar5008_hw_set_radar_params;
 
@@ -1603,7 +1759,13 @@ void ar5008_hw_attach_phy_ops(struct ath_hw *ah)
 	} else
 		priv_ops->ani_control = ar5008_hw_ani_control_old;
 
+<<<<<<< HEAD
 	if (AR_SREV_9100(ah) || AR_SREV_9160_10_OR_LATER(ah))
+=======
+	if (AR_SREV_9100(ah))
+		priv_ops->compute_pll_control = ar9100_hw_compute_pll_control;
+	else if (AR_SREV_9160_10_OR_LATER(ah))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		priv_ops->compute_pll_control = ar9160_hw_compute_pll_control;
 	else
 		priv_ops->compute_pll_control = ar5008_hw_compute_pll_control;

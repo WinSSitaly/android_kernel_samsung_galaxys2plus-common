@@ -128,7 +128,13 @@ struct hd_struct {
 #define GENHD_FL_EXT_DEVT			64 /* allow extended devt */
 #define GENHD_FL_NATIVE_CAPACITY		128
 #define GENHD_FL_BLOCK_EVENTS_ON_EXCL_WRITE	256
+<<<<<<< HEAD
 #define GENHD_FL_NO_PART_SCAN			512
+=======
+#ifdef CONFIG_USB_STORAGE_MEDIA_SCAN
+#define GENHD_IF_USB	1
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum {
 	DISK_EVENT_MEDIA_CHANGE			= 1 << 0, /* media changed */
@@ -163,7 +169,11 @@ struct gendisk {
                                          * disks that can't be partitioned. */
 
 	char disk_name[DISK_NAME_LEN];	/* name of major driver */
+<<<<<<< HEAD
 	char *(*devnode)(struct gendisk *gd, umode_t *mode);
+=======
+	char *(*devnode)(struct gendisk *gd, mode_t *mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	unsigned int events;		/* supported events */
 	unsigned int async_events;	/* async events, subset of all */
@@ -191,6 +201,13 @@ struct gendisk {
 	struct blk_integrity *integrity;
 #endif
 	int node_id;
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_STORAGE_MEDIA_SCAN
+	int media_present;
+	int interfaces;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline struct gendisk *part_to_disk(struct hd_struct *part)
@@ -222,6 +239,15 @@ static inline void part_pack_uuid(const u8 *uuid_str, u8 *to)
 	}
 }
 
+<<<<<<< HEAD
+=======
+static inline char *part_unpack_uuid(const u8 *uuid, char *out)
+{
+	sprintf(out, "%pU", uuid);
+	return out;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int disk_max_parts(struct gendisk *disk)
 {
 	if (disk->flags & GENHD_FL_EXT_DEVT)
@@ -229,10 +255,16 @@ static inline int disk_max_parts(struct gendisk *disk)
 	return disk->minors;
 }
 
+<<<<<<< HEAD
 static inline bool disk_part_scan_enabled(struct gendisk *disk)
 {
 	return disk_max_parts(disk) > 1 &&
 		!(disk->flags & GENHD_FL_NO_PART_SCAN);
+=======
+static inline bool disk_partitionable(struct gendisk *disk)
+{
+	return disk_max_parts(disk) > 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline dev_t disk_devt(struct gendisk *disk)
@@ -416,7 +448,11 @@ static inline int get_disk_ro(struct gendisk *disk)
 
 extern void disk_block_events(struct gendisk *disk);
 extern void disk_unblock_events(struct gendisk *disk);
+<<<<<<< HEAD
 extern void disk_flush_events(struct gendisk *disk, unsigned int mask);
+=======
+extern void disk_check_events(struct gendisk *disk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern unsigned int disk_clear_events(struct gendisk *disk, unsigned int mask);
 
 /* drivers/char/random.c */

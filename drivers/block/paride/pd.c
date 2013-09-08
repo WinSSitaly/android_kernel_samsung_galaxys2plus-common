@@ -124,9 +124,14 @@
    by default.
 
 */
+<<<<<<< HEAD
 #include <linux/types.h>
 
 static bool verbose = 0;
+=======
+
+static int verbose = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int major = PD_MAJOR;
 static char *name = PD_NAME;
 static int cluster = 64;

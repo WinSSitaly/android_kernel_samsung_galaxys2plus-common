@@ -4,7 +4,10 @@
 #include <linux/types.h>
 #include <asm/schid.h>
 #include <asm/ccwdev.h>
+<<<<<<< HEAD
 #include <asm/irq.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "css.h"
 #include "orb.h"
 
@@ -111,9 +114,12 @@ enum cdev_todo {
 	CDEV_TODO_UNREG_EVAL,
 };
 
+<<<<<<< HEAD
 #define FAKE_CMD_IRB	1
 #define FAKE_TM_IRB	2
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ccw_device_private {
 	struct ccw_device *cdev;
 	struct subchannel *sch;
@@ -141,7 +147,11 @@ struct ccw_device_private {
 		unsigned int doverify:1;    /* delayed path verification */
 		unsigned int donotify:1;    /* call notify function */
 		unsigned int recog_done:1;  /* dev. recog. complete */
+<<<<<<< HEAD
 		unsigned int fake_irb:2;    /* deliver faked irb */
+=======
+		unsigned int fake_irb:1;    /* deliver faked irb */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned int resuming:1;    /* recognition while resume */
 		unsigned int pgroup:1;	    /* pathgroup is set up */
 		unsigned int mpath:1;	    /* multipathing is set up */
@@ -161,7 +171,10 @@ struct ccw_device_private {
 	struct list_head cmb_list;	/* list of measured devices */
 	u64 cmb_start_time;		/* clock value of cmb reset */
 	void *cmb_wait;			/* deferred cmb enable/disable */
+<<<<<<< HEAD
 	enum interruption_class int_class;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline int rsch(struct subchannel_id schid)

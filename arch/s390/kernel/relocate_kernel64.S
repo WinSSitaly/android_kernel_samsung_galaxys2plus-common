@@ -8,8 +8,11 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/linkage.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * moves the new kernel to its destination...
  * %r2 = pointer to first kimage_entry_t
@@ -25,7 +28,12 @@
  */
 
 	.text
+<<<<<<< HEAD
 ENTRY(relocate_kernel)
+=======
+	.globl		relocate_kernel
+	relocate_kernel:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		basr	%r13,0		# base address
 	.base:
 		stnsm	sys_msk-.base(%r13),0xfb	# disable DAT
@@ -116,7 +124,10 @@ ENTRY(relocate_kernel)
 		.byte	0
 		.align	8
 	relocate_kernel_end:
+<<<<<<< HEAD
 	.align 8
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.globl	relocate_kernel_len
 	relocate_kernel_len:
 		.quad	relocate_kernel_end - relocate_kernel

@@ -2,7 +2,10 @@
  * linux/arch/arm/mach-tegra/include/mach/pinmux.h
  *
  * Copyright (C) 2010 Google, Inc.
+<<<<<<< HEAD
  * Copyright (C) 2010,2011 Nvidia, Inc.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -18,13 +21,25 @@
 #ifndef __MACH_TEGRA_PINMUX_H
 #define __MACH_TEGRA_PINMUX_H
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_ARCH_TEGRA_2x_SOC)
+#include "pinmux-t2.h"
+#else
+#error "Undefined Tegra architecture"
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum tegra_mux_func {
 	TEGRA_MUX_RSVD = 0x8000,
 	TEGRA_MUX_RSVD1 = 0x8000,
 	TEGRA_MUX_RSVD2 = 0x8001,
 	TEGRA_MUX_RSVD3 = 0x8002,
 	TEGRA_MUX_RSVD4 = 0x8003,
+<<<<<<< HEAD
 	TEGRA_MUX_INVALID = 0x4000,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	TEGRA_MUX_NONE = -1,
 	TEGRA_MUX_AHB_CLK,
 	TEGRA_MUX_APB_CLK,
@@ -86,6 +101,7 @@ enum tegra_mux_func {
 	TEGRA_MUX_VI,
 	TEGRA_MUX_VI_SENSOR_CLK,
 	TEGRA_MUX_XIO,
+<<<<<<< HEAD
 	TEGRA_MUX_BLINK,
 	TEGRA_MUX_CEC,
 	TEGRA_MUX_CLK12,
@@ -129,6 +145,8 @@ enum tegra_mux_func {
 	TEGRA_MUX_VGP4,
 	TEGRA_MUX_VGP5,
 	TEGRA_MUX_VGP6,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	TEGRA_MUX_SAFE,
 	TEGRA_MAX_MUX,
 };
@@ -144,11 +162,14 @@ enum tegra_tristate {
 	TEGRA_TRI_TRISTATE = 1,
 };
 
+<<<<<<< HEAD
 enum tegra_pin_io {
 	TEGRA_PIN_OUTPUT = 0,
 	TEGRA_PIN_INPUT = 1,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum tegra_vddio {
 	TEGRA_VDDIO_BB = 0,
 	TEGRA_VDDIO_LCD,
@@ -159,6 +180,7 @@ enum tegra_vddio {
 	TEGRA_VDDIO_SYS,
 	TEGRA_VDDIO_AUDIO,
 	TEGRA_VDDIO_SD,
+<<<<<<< HEAD
 	TEGRA_VDDIO_CAM,
 	TEGRA_VDDIO_GMI,
 	TEGRA_VDDIO_PEXCTL,
@@ -169,6 +191,12 @@ enum tegra_vddio {
 
 struct tegra_pingroup_config {
 	int pingroup;
+=======
+};
+
+struct tegra_pingroup_config {
+	enum tegra_pingroup	pingroup;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	enum tegra_mux_func	func;
 	enum tegra_pullupdown	pupd;
 	enum tegra_tristate	tristate;
@@ -237,7 +265,11 @@ enum tegra_schmitt {
 };
 
 struct tegra_drive_pingroup_config {
+<<<<<<< HEAD
 	int pingroup;
+=======
+	enum tegra_drive_pingroup pingroup;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	enum tegra_hsm hsm;
 	enum tegra_schmitt schmitt;
 	enum tegra_drive drive;
@@ -249,7 +281,10 @@ struct tegra_drive_pingroup_config {
 
 struct tegra_drive_pingroup_desc {
 	const char *name;
+<<<<<<< HEAD
 	s16 reg_bank;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	s16 reg;
 };
 
@@ -258,16 +293,20 @@ struct tegra_pingroup_desc {
 	int funcs[4];
 	int func_safe;
 	int vddio;
+<<<<<<< HEAD
 	enum tegra_pin_io io_default;
 	s16 tri_bank;	/* Register bank the tri_reg exists within */
 	s16 mux_bank;	/* Register bank the mux_reg exists within */
 	s16 pupd_bank;	/* Register bank the pupd_reg exists within */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	s16 tri_reg; 	/* offset into the TRISTATE_REG_* register bank */
 	s16 mux_reg;	/* offset into the PIN_MUX_CTL_* register bank */
 	s16 pupd_reg;	/* offset into the PULL_UPDOWN_REG_* register bank */
 	s8 tri_bit; 	/* offset into the TRISTATE_REG_* register bit */
 	s8 mux_bit;	/* offset into the PIN_MUX_CTL_* register bit */
 	s8 pupd_bit;	/* offset into the PULL_UPDOWN_REG_* register bit */
+<<<<<<< HEAD
 	s8 lock_bit;	/* offset of the LOCK bit into mux register bit */
 	s8 od_bit;	/* offset of the OD bit into mux register bit */
 	s8 ioreset_bit;	/* offset of the IO_RESET bit into mux register bit */
@@ -285,6 +324,17 @@ void tegra30_pinmux_init(const struct tegra_pingroup_desc **pg, int *pg_max,
 
 int tegra_pinmux_set_tristate(int pg, enum tegra_tristate tristate);
 int tegra_pinmux_set_pullupdown(int pg, enum tegra_pullupdown pupd);
+=======
+};
+
+extern const struct tegra_pingroup_desc tegra_soc_pingroups[];
+extern const struct tegra_drive_pingroup_desc tegra_soc_drive_pingroups[];
+
+int tegra_pinmux_set_tristate(enum tegra_pingroup pg,
+	enum tegra_tristate tristate);
+int tegra_pinmux_set_pullupdown(enum tegra_pingroup pg,
+	enum tegra_pullupdown pupd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void tegra_pinmux_config_table(const struct tegra_pingroup_config *config,
 	int len);
@@ -300,3 +350,7 @@ void tegra_pinmux_config_tristate_table(const struct tegra_pingroup_config *conf
 void tegra_pinmux_config_pullupdown_table(const struct tegra_pingroup_config *config,
 	int len, enum tegra_pullupdown pupd);
 #endif
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

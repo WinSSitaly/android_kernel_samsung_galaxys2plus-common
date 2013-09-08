@@ -2,7 +2,10 @@
 #define _LINUX_NETFILTER_XT_IPRANGE_H 1
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/netfilter.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum {
 	IPRANGE_SRC     = 1 << 0,	/* match source IP address */

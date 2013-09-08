@@ -171,9 +171,13 @@ struct qib_ctxtdata {
 	/* how many alloc_pages() chunks in rcvegrbuf_pages */
 	u32 rcvegrbuf_chunks;
 	/* how many egrbufs per chunk */
+<<<<<<< HEAD
 	u16 rcvegrbufs_perchunk;
 	/* ilog2 of above */
 	u16 rcvegrbufs_perchunk_shift;
+=======
+	u32 rcvegrbufs_perchunk;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* order for rcvegrbuf_pages */
 	size_t rcvegrbuf_size;
 	/* rcvhdrq size (for freeing) */
@@ -223,9 +227,12 @@ struct qib_ctxtdata {
 	/* ctxt rcvhdrq head offset */
 	u32 head;
 	u32 pkt_count;
+<<<<<<< HEAD
 	/* lookaside fields */
 	struct qib_qp *lookaside_qp;
 	u32 lookaside_qpn;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* QPs waiting for context processing */
 	struct list_head qp_wait_list;
 };
@@ -427,6 +434,7 @@ struct qib_verbs_txreq {
 /* how often we check for packet activity for "power on hours (in seconds) */
 #define ACTIVITY_TIMER 5
 
+<<<<<<< HEAD
 #define MAX_NAME_SIZE 64
 struct qib_msix_entry {
 	struct msix_entry msix;
@@ -435,6 +443,8 @@ struct qib_msix_entry {
 	cpumask_var_t mask;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Below is an opaque struct. Each chip (device) can maintain
  * private data needed for its operation, but not germane to the
  * rest of the driver.  For convenience, we define another that
@@ -820,10 +830,13 @@ struct qib_devdata {
 	 * supports, less gives more pio bufs/ctxt, etc.
 	 */
 	u32 cfgctxts;
+<<<<<<< HEAD
 	/*
 	 * number of ctxts available for PSM open
 	 */
 	u32 freectxts;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * hint that we should update pioavailshadow before
@@ -953,9 +966,13 @@ struct qib_devdata {
 	/* chip address space used by 4k pio buffers */
 	u32 align4k;
 	/* size of each rcvegrbuffer */
+<<<<<<< HEAD
 	u16 rcvegrbufsize;
 	/* log2 of above */
 	u16 rcvegrbufsize_shift;
+=======
+	u32 rcvegrbufsize;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* localbus width (1, 2,4,8,16,32) from config space  */
 	u32 lbus_width;
 	/* localbus speed in MHz */
@@ -1031,8 +1048,11 @@ struct qib_devdata {
 	u8 psxmitwait_supported;
 	/* cycle length of PS* counters in HW (in picoseconds) */
 	u16 psxmitwait_check_rate;
+<<<<<<< HEAD
 	/* high volume overflow errors defered to tasklet */
 	struct tasklet_struct error_tasklet;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* hol_state values */
@@ -1363,7 +1383,11 @@ int qib_pcie_init(struct pci_dev *, const struct pci_device_id *);
 int qib_pcie_ddinit(struct qib_devdata *, struct pci_dev *,
 		    const struct pci_device_id *);
 void qib_pcie_ddcleanup(struct qib_devdata *);
+<<<<<<< HEAD
 int qib_pcie_params(struct qib_devdata *, u32, u32 *, struct qib_msix_entry *);
+=======
+int qib_pcie_params(struct qib_devdata *, u32, u32 *, struct msix_entry *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int qib_reinit_intr(struct qib_devdata *);
 void qib_enable_intx(struct pci_dev *);
 void qib_nomsi(struct qib_devdata *);
@@ -1454,7 +1478,10 @@ extern struct mutex qib_mutex;
 struct qib_hwerror_msgs {
 	u64 mask;
 	const char *msg;
+<<<<<<< HEAD
 	size_t sz;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define QLOGIC_IB_HWE_MSG(a, b) { .mask = a, .msg = b }

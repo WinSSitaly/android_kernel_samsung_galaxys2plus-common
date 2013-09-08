@@ -28,7 +28,10 @@
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
+<<<<<<< HEAD
 #include <asm/irq.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/pxa25x.h>
 #include <mach/h5000.h>
@@ -203,6 +206,7 @@ static void __init h5000_init(void)
 }
 
 MACHINE_START(H5400, "HP iPAQ H5000")
+<<<<<<< HEAD
 	.atag_offset = 0x100,
 	.map_io = pxa25x_map_io,
 	.nr_irqs = PXA_NR_IRQS,
@@ -211,4 +215,11 @@ MACHINE_START(H5400, "HP iPAQ H5000")
 	.timer = &pxa_timer,
 	.init_machine = h5000_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params = 0xa0000100,
+	.map_io = pxa25x_map_io,
+	.init_irq = pxa25x_init_irq,
+	.timer = &pxa_timer,
+	.init_machine = h5000_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

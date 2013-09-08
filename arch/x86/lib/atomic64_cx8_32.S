@@ -55,6 +55,11 @@ ENDPROC(atomic64_set_cx8)
 ENTRY(atomic64_xchg_cx8)
 	CFI_STARTPROC
 
+<<<<<<< HEAD
+=======
+	movl %ebx, %eax
+	movl %ecx, %edx
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 1:
 	LOCK_PREFIX
 	cmpxchg8b (%esi)
@@ -76,7 +81,11 @@ ENTRY(atomic64_\func\()_return_cx8)
 	movl %edx, %edi
 	movl %ecx, %ebp
 
+<<<<<<< HEAD
 	read64 %ecx
+=======
+	read64 %ebp
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 1:
 	movl %eax, %ebx
 	movl %edx, %ecx
@@ -157,22 +166,39 @@ ENTRY(atomic64_add_unless_cx8)
 	SAVE ebx
 /* these just push these two parameters on the stack */
 	SAVE edi
+<<<<<<< HEAD
 	SAVE ecx
 
 	movl %eax, %ebp
 	movl %edx, %edi
 
 	read64 %esi
+=======
+	SAVE esi
+
+	movl %ecx, %ebp
+	movl %eax, %esi
+	movl %edx, %edi
+
+	read64 %ebp
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 1:
 	cmpl %eax, 0(%esp)
 	je 4f
 2:
 	movl %eax, %ebx
 	movl %edx, %ecx
+<<<<<<< HEAD
 	addl %ebp, %ebx
 	adcl %edi, %ecx
 	LOCK_PREFIX
 	cmpxchg8b (%esi)
+=======
+	addl %esi, %ebx
+	adcl %edi, %ecx
+	LOCK_PREFIX
+	cmpxchg8b (%ebp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	jne 1b
 
 	movl $1, %eax
@@ -196,6 +222,7 @@ ENTRY(atomic64_inc_not_zero_cx8)
 
 	read64 %esi
 1:
+<<<<<<< HEAD
 	movl %eax, %ecx
 	orl %edx, %ecx
 	jz 3f
@@ -203,6 +230,15 @@ ENTRY(atomic64_inc_not_zero_cx8)
 	xorl %ecx, %ecx
 	addl $1, %ebx
 	adcl %edx, %ecx
+=======
+	testl %eax, %eax
+	je 4f
+2:
+	movl %eax, %ebx
+	movl %edx, %ecx
+	addl $1, %ebx
+	adcl $0, %ecx
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	LOCK_PREFIX
 	cmpxchg8b (%esi)
 	jne 1b
@@ -211,5 +247,12 @@ ENTRY(atomic64_inc_not_zero_cx8)
 3:
 	RESTORE ebx
 	ret
+<<<<<<< HEAD
+=======
+4:
+	testl %edx, %edx
+	jne 2b
+	jmp 3b
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CFI_ENDPROC
 ENDPROC(atomic64_inc_not_zero_cx8)

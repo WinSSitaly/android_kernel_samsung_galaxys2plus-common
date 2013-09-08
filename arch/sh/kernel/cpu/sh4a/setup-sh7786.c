@@ -1,7 +1,11 @@
 /*
  * SH7786 Setup
  *
+<<<<<<< HEAD
  * Copyright (C) 2009 - 2011  Renesas Solutions Corp.
+=======
+ * Copyright (C) 2009 - 2010  Renesas Solutions Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Kuninori Morimoto <morimoto.kuninori@renesas.com>
  * Paul Mundt <paul.mundt@renesas.com>
  *
@@ -33,7 +37,10 @@ static struct plat_sci_port scif0_platform_data = {
 	.scbrr_algo_id	= SCBRR_ALGO_1,
 	.type		= PORT_SCIF,
 	.irqs		= { 40, 41, 43, 42 },
+<<<<<<< HEAD
 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device scif0_device = {
@@ -54,7 +61,10 @@ static struct plat_sci_port scif1_platform_data = {
 	.scbrr_algo_id	= SCBRR_ALGO_1,
 	.type		= PORT_SCIF,
 	.irqs		= { 44, 44, 44, 44 },
+<<<<<<< HEAD
 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device scif1_device = {
@@ -72,7 +82,10 @@ static struct plat_sci_port scif2_platform_data = {
 	.scbrr_algo_id	= SCBRR_ALGO_1,
 	.type		= PORT_SCIF,
 	.irqs		= { 50, 50, 50, 50 },
+<<<<<<< HEAD
 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device scif2_device = {
@@ -90,7 +103,10 @@ static struct plat_sci_port scif3_platform_data = {
 	.scbrr_algo_id	= SCBRR_ALGO_1,
 	.type		= PORT_SCIF,
 	.irqs		= { 51, 51, 51, 51 },
+<<<<<<< HEAD
 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device scif3_device = {
@@ -108,7 +124,10 @@ static struct plat_sci_port scif4_platform_data = {
 	.scbrr_algo_id	= SCBRR_ALGO_1,
 	.type		= PORT_SCIF,
 	.irqs		= { 52, 52, 52, 52 },
+<<<<<<< HEAD
 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device scif4_device = {
@@ -126,7 +145,10 @@ static struct plat_sci_port scif5_platform_data = {
 	.scbrr_algo_id	= SCBRR_ALGO_1,
 	.type		= PORT_SCIF,
 	.irqs		= { 53, 53, 53, 53 },
+<<<<<<< HEAD
 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device scif5_device = {
@@ -518,7 +540,11 @@ static struct resource dmac0_resources[] = {
 		.end	= 0xfe00900b,
 		.flags	= IORESOURCE_MEM,
 	}, {
+<<<<<<< HEAD
 		.name	= "error_irq",
+=======
+		/* DMA error IRQ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.start	= evt2irq(0x5c0),
 		.end	= evt2irq(0x5c0),
 		.flags	= IORESOURCE_IRQ,

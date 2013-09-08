@@ -74,6 +74,7 @@ static struct tracer_flags tracer_flags = {
 
 static struct trace_array *graph_array;
 
+<<<<<<< HEAD
 /*
  * DURATION column is being also used to display IRQ signs,
  * following values are used by print_graph_irq and others
@@ -88,6 +89,8 @@ enum {
 static enum print_line_t
 print_graph_duration(unsigned long long duration, struct trace_seq *s,
 		     u32 flags);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Add a function return address to the trace stack on thread info.*/
 int
@@ -227,7 +230,11 @@ int __trace_graph_entry(struct trace_array *tr,
 
 static inline int ftrace_graph_ignore_irqs(void)
 {
+<<<<<<< HEAD
 	if (!ftrace_graph_skip_irqs || trace_recursion_test(TRACE_IRQ_BIT))
+=======
+	if (!ftrace_graph_skip_irqs)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	return in_irq();
@@ -591,6 +598,35 @@ get_return_for_leaf(struct trace_iterator *iter,
 	return next;
 }
 
+<<<<<<< HEAD
+=======
+/* Signal a overhead of time execution to the output */
+static int
+print_graph_overhead(unsigned long long duration, struct trace_seq *s,
+		     u32 flags)
+{
+	/* If duration disappear, we don't need anything */
+	if (!(flags & TRACE_GRAPH_PRINT_DURATION))
+		return 1;
+
+	/* Non nested entry or return */
+	if (duration == -1)
+		return trace_seq_printf(s, "  ");
+
+	if (flags & TRACE_GRAPH_PRINT_OVERHEAD) {
+		/* Duration exceeded 100 msecs */
+		if (duration > 100000ULL)
+			return trace_seq_printf(s, "! ");
+
+		/* Duration exceeded 10 msecs */
+		if (duration > 10000ULL)
+			return trace_seq_printf(s, "+ ");
+	}
+
+	return trace_seq_printf(s, "  ");
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int print_graph_abs_time(u64 t, struct trace_seq *s)
 {
 	unsigned long usecs_rem;
@@ -613,6 +649,7 @@ print_graph_irq(struct trace_iterator *iter, unsigned long addr,
 		addr >= (unsigned long)__irqentry_text_end)
 		return TRACE_TYPE_UNHANDLED;
 
+<<<<<<< HEAD
 	if (trace_flags & TRACE_ITER_CONTEXT_INFO) {
 		/* Absolute time */
 		if (flags & TRACE_GRAPH_PRINT_ABS_TIME) {
@@ -643,6 +680,36 @@ print_graph_irq(struct trace_iterator *iter, unsigned long addr,
 	ret = print_graph_duration(DURATION_FILL_START, s, flags);
 	if (ret != TRACE_TYPE_HANDLED)
 		return ret;
+=======
+	/* Absolute time */
+	if (flags & TRACE_GRAPH_PRINT_ABS_TIME) {
+		ret = print_graph_abs_time(iter->ts, s);
+		if (!ret)
+			return TRACE_TYPE_PARTIAL_LINE;
+	}
+
+	/* Cpu */
+	if (flags & TRACE_GRAPH_PRINT_CPU) {
+		ret = print_graph_cpu(s, cpu);
+		if (ret == TRACE_TYPE_PARTIAL_LINE)
+			return TRACE_TYPE_PARTIAL_LINE;
+	}
+
+	/* Proc */
+	if (flags & TRACE_GRAPH_PRINT_PROC) {
+		ret = print_graph_proc(s, pid);
+		if (ret == TRACE_TYPE_PARTIAL_LINE)
+			return TRACE_TYPE_PARTIAL_LINE;
+		ret = trace_seq_printf(s, " | ");
+		if (!ret)
+			return TRACE_TYPE_PARTIAL_LINE;
+	}
+
+	/* No overhead */
+	ret = print_graph_overhead(-1, s, flags);
+	if (!ret)
+		return TRACE_TYPE_PARTIAL_LINE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (type == TRACE_GRAPH_ENT)
 		ret = trace_seq_printf(s, "==========>");
@@ -652,10 +719,16 @@ print_graph_irq(struct trace_iterator *iter, unsigned long addr,
 	if (!ret)
 		return TRACE_TYPE_PARTIAL_LINE;
 
+<<<<<<< HEAD
 	ret = print_graph_duration(DURATION_FILL_END, s, flags);
 	if (ret != TRACE_TYPE_HANDLED)
 		return ret;
 
+=======
+	/* Don't close the duration column if haven't one */
+	if (flags & TRACE_GRAPH_PRINT_DURATION)
+		trace_seq_printf(s, " |");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = trace_seq_printf(s, "\n");
 
 	if (!ret)
@@ -707,6 +780,7 @@ trace_print_graph_duration(unsigned long long duration, struct trace_seq *s)
 }
 
 static enum print_line_t
+<<<<<<< HEAD
 print_graph_duration(unsigned long long duration, struct trace_seq *s,
 		     u32 flags)
 {
@@ -750,6 +824,11 @@ print_graph_duration(unsigned long long duration, struct trace_seq *s,
 	/* Catching here any failure happenned above */
 	if (!ret)
 		return TRACE_TYPE_PARTIAL_LINE;
+=======
+print_graph_duration(unsigned long long duration, struct trace_seq *s)
+{
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = trace_print_graph_duration(duration, s);
 	if (ret != TRACE_TYPE_HANDLED)
@@ -798,11 +877,26 @@ print_graph_entry_leaf(struct trace_iterator *iter,
 			cpu_data->enter_funcs[call->depth] = 0;
 	}
 
+<<<<<<< HEAD
 	/* Overhead and duration */
 	ret = print_graph_duration(duration, s, flags);
 	if (ret == TRACE_TYPE_PARTIAL_LINE)
 		return TRACE_TYPE_PARTIAL_LINE;
 
+=======
+	/* Overhead */
+	ret = print_graph_overhead(duration, s, flags);
+	if (!ret)
+		return TRACE_TYPE_PARTIAL_LINE;
+
+	/* Duration */
+	if (flags & TRACE_GRAPH_PRINT_DURATION) {
+		ret = print_graph_duration(duration, s);
+		if (ret == TRACE_TYPE_PARTIAL_LINE)
+			return TRACE_TYPE_PARTIAL_LINE;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Function */
 	for (i = 0; i < call->depth * TRACE_GRAPH_INDENT; i++) {
 		ret = trace_seq_printf(s, " ");
@@ -839,10 +933,24 @@ print_graph_entry_nested(struct trace_iterator *iter,
 			cpu_data->enter_funcs[call->depth] = call->func;
 	}
 
+<<<<<<< HEAD
 	/* No time */
 	ret = print_graph_duration(DURATION_FILL_FULL, s, flags);
 	if (ret != TRACE_TYPE_HANDLED)
 		return ret;
+=======
+	/* No overhead */
+	ret = print_graph_overhead(-1, s, flags);
+	if (!ret)
+		return TRACE_TYPE_PARTIAL_LINE;
+
+	/* No time */
+	if (flags & TRACE_GRAPH_PRINT_DURATION) {
+		ret = trace_seq_printf(s, "            |  ");
+		if (!ret)
+			return TRACE_TYPE_PARTIAL_LINE;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Function */
 	for (i = 0; i < call->depth * TRACE_GRAPH_INDENT; i++) {
@@ -882,9 +990,12 @@ print_graph_prologue(struct trace_iterator *iter, struct trace_seq *s,
 			return TRACE_TYPE_PARTIAL_LINE;
 	}
 
+<<<<<<< HEAD
 	if (!(trace_flags & TRACE_ITER_CONTEXT_INFO))
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Absolute time */
 	if (flags & TRACE_GRAPH_PRINT_ABS_TIME) {
 		ret = print_graph_abs_time(iter->ts, s);
@@ -1098,11 +1209,26 @@ print_graph_return(struct ftrace_graph_ret *trace, struct trace_seq *s,
 	if (print_graph_prologue(iter, s, 0, 0, flags))
 		return TRACE_TYPE_PARTIAL_LINE;
 
+<<<<<<< HEAD
 	/* Overhead and duration */
 	ret = print_graph_duration(duration, s, flags);
 	if (ret == TRACE_TYPE_PARTIAL_LINE)
 		return TRACE_TYPE_PARTIAL_LINE;
 
+=======
+	/* Overhead */
+	ret = print_graph_overhead(duration, s, flags);
+	if (!ret)
+		return TRACE_TYPE_PARTIAL_LINE;
+
+	/* Duration */
+	if (flags & TRACE_GRAPH_PRINT_DURATION) {
+		ret = print_graph_duration(duration, s);
+		if (ret == TRACE_TYPE_PARTIAL_LINE)
+			return TRACE_TYPE_PARTIAL_LINE;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Closing brace */
 	for (i = 0; i < trace->depth * TRACE_GRAPH_INDENT; i++) {
 		ret = trace_seq_printf(s, " ");
@@ -1159,10 +1285,24 @@ print_graph_comment(struct trace_seq *s, struct trace_entry *ent,
 	if (print_graph_prologue(iter, s, 0, 0, flags))
 		return TRACE_TYPE_PARTIAL_LINE;
 
+<<<<<<< HEAD
 	/* No time */
 	ret = print_graph_duration(DURATION_FILL_FULL, s, flags);
 	if (ret != TRACE_TYPE_HANDLED)
 		return ret;
+=======
+	/* No overhead */
+	ret = print_graph_overhead(-1, s, flags);
+	if (!ret)
+		return TRACE_TYPE_PARTIAL_LINE;
+
+	/* No time */
+	if (flags & TRACE_GRAPH_PRINT_DURATION) {
+		ret = trace_seq_printf(s, "            |  ");
+		if (!ret)
+			return TRACE_TYPE_PARTIAL_LINE;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Indentation */
 	if (depth > 0)
@@ -1213,7 +1353,11 @@ print_graph_comment(struct trace_seq *s, struct trace_entry *ent,
 
 
 enum print_line_t
+<<<<<<< HEAD
 print_graph_function_flags(struct trace_iterator *iter, u32 flags)
+=======
+__print_graph_function_flags(struct trace_iterator *iter, u32 flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ftrace_graph_ent_entry *field;
 	struct fgraph_data *data = iter->private;
@@ -1276,7 +1420,22 @@ print_graph_function_flags(struct trace_iterator *iter, u32 flags)
 static enum print_line_t
 print_graph_function(struct trace_iterator *iter)
 {
+<<<<<<< HEAD
 	return print_graph_function_flags(iter, tracer_flags.val);
+=======
+	return __print_graph_function_flags(iter, tracer_flags.val);
+}
+
+enum print_line_t print_graph_function_flags(struct trace_iterator *iter,
+					     u32 flags)
+{
+	if (trace_flags & TRACE_ITER_LATENCY_FMT)
+		flags |= TRACE_GRAPH_PRINT_DURATION;
+	else
+		flags |= TRACE_GRAPH_PRINT_ABS_TIME;
+
+	return __print_graph_function_flags(iter, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static enum print_line_t
@@ -1304,7 +1463,12 @@ static void print_lat_header(struct seq_file *s, u32 flags)
 	seq_printf(s, "#%.*s / _----=> need-resched    \n", size, spaces);
 	seq_printf(s, "#%.*s| / _---=> hardirq/softirq \n", size, spaces);
 	seq_printf(s, "#%.*s|| / _--=> preempt-depth   \n", size, spaces);
+<<<<<<< HEAD
 	seq_printf(s, "#%.*s||| /                      \n", size, spaces);
+=======
+	seq_printf(s, "#%.*s||| / _-=> lock-depth      \n", size, spaces);
+	seq_printf(s, "#%.*s|||| /                     \n", size, spaces);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __print_graph_headers_flags(struct seq_file *s, u32 flags)
@@ -1323,7 +1487,11 @@ static void __print_graph_headers_flags(struct seq_file *s, u32 flags)
 	if (flags & TRACE_GRAPH_PRINT_PROC)
 		seq_printf(s, "  TASK/PID       ");
 	if (lat)
+<<<<<<< HEAD
 		seq_printf(s, "||||");
+=======
+		seq_printf(s, "|||||");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (flags & TRACE_GRAPH_PRINT_DURATION)
 		seq_printf(s, "  DURATION   ");
 	seq_printf(s, "               FUNCTION CALLS\n");
@@ -1337,7 +1505,11 @@ static void __print_graph_headers_flags(struct seq_file *s, u32 flags)
 	if (flags & TRACE_GRAPH_PRINT_PROC)
 		seq_printf(s, "   |    |        ");
 	if (lat)
+<<<<<<< HEAD
 		seq_printf(s, "||||");
+=======
+		seq_printf(s, "|||||");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (flags & TRACE_GRAPH_PRINT_DURATION)
 		seq_printf(s, "   |   |      ");
 	seq_printf(s, "               |   |   |   |\n");
@@ -1352,16 +1524,25 @@ void print_graph_headers_flags(struct seq_file *s, u32 flags)
 {
 	struct trace_iterator *iter = s->private;
 
+<<<<<<< HEAD
 	if (!(trace_flags & TRACE_ITER_CONTEXT_INFO))
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (trace_flags & TRACE_ITER_LATENCY_FMT) {
 		/* print nothing if the buffers are empty */
 		if (trace_empty(iter))
 			return;
 
 		print_trace_header(s, iter);
+<<<<<<< HEAD
 	}
+=======
+		flags |= TRACE_GRAPH_PRINT_DURATION;
+	} else
+		flags |= TRACE_GRAPH_PRINT_ABS_TIME;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	__print_graph_headers_flags(s, flags);
 }

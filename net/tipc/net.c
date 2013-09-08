@@ -117,7 +117,11 @@ static void net_route_named_msg(struct sk_buff *buf)
 	u32 dport;
 
 	if (!msg_named(msg)) {
+<<<<<<< HEAD
 		kfree_skb(buf);
+=======
+		buf_discard(buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -141,6 +145,20 @@ void tipc_net_route_msg(struct sk_buff *buf)
 		return;
 	msg = buf_msg(buf);
 
+<<<<<<< HEAD
+=======
+	msg_incr_reroute_cnt(msg);
+	if (msg_reroute_cnt(msg) > 6) {
+		if (msg_errcode(msg)) {
+			buf_discard(buf);
+		} else {
+			tipc_reject_msg(buf, msg_destport(msg) ?
+					TIPC_ERR_NO_PORT : TIPC_ERR_NO_NAME);
+		}
+		return;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Handle message for this node */
 	dnode = msg_short(msg) ? tipc_own_addr : msg_destnode(msg);
 	if (tipc_in_scope(dnode, tipc_own_addr)) {
@@ -161,7 +179,11 @@ void tipc_net_route_msg(struct sk_buff *buf)
 			tipc_port_recv_proto_msg(buf);
 			break;
 		default:
+<<<<<<< HEAD
 			kfree_skb(buf);
+=======
+			buf_discard(buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		return;
 	}
@@ -174,15 +196,32 @@ void tipc_net_route_msg(struct sk_buff *buf)
 int tipc_net_start(u32 addr)
 {
 	char addr_string[16];
+<<<<<<< HEAD
+=======
+	int res;
+
+	if (tipc_mode != TIPC_NODE_MODE)
+		return -ENOPROTOOPT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tipc_subscr_stop();
 	tipc_cfg_stop();
 
 	tipc_own_addr = addr;
+<<<<<<< HEAD
 	tipc_named_reinit();
 	tipc_port_reinit();
 
 	tipc_bclink_init();
+=======
+	tipc_mode = TIPC_NET_MODE;
+	tipc_named_reinit();
+	tipc_port_reinit();
+
+	res = tipc_bclink_init();
+	if (res)
+		return res;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tipc_k_signal((Handler)tipc_subscr_start, 0);
 	tipc_k_signal((Handler)tipc_cfg_init, 0);
@@ -197,10 +236,18 @@ void tipc_net_stop(void)
 {
 	struct tipc_node *node, *t_node;
 
+<<<<<<< HEAD
 	if (!tipc_own_addr)
 		return;
 	write_lock_bh(&tipc_net_lock);
 	tipc_bearer_stop();
+=======
+	if (tipc_mode != TIPC_NET_MODE)
+		return;
+	write_lock_bh(&tipc_net_lock);
+	tipc_bearer_stop();
+	tipc_mode = TIPC_NODE_MODE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tipc_bclink_stop();
 	list_for_each_entry_safe(node, t_node, &tipc_node_list, list)
 		tipc_node_delete(node);

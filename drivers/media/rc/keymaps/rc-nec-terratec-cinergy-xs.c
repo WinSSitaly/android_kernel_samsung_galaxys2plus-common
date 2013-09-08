@@ -11,15 +11,21 @@
  */
 
 #include <media/rc-map.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Terratec Cinergy Hybrid T USB XS FM
    Mauro Carvalho Chehab <mchehab@redhat.com>
  */
 
 static struct rc_map_table nec_terratec_cinergy_xs[] = {
+<<<<<<< HEAD
 
 	/* Terratec Grey IR, with most keys in orange */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0x1441, KEY_HOME},
 	{ 0x1401, KEY_POWER2},
 
@@ -80,6 +86,7 @@ static struct rc_map_table nec_terratec_cinergy_xs[] = {
 	{ 0x144e, KEY_REWIND},
 	{ 0x144f, KEY_FASTFORWARD},
 	{ 0x145c, KEY_NEXT},
+<<<<<<< HEAD
 
 	/* Terratec Black IR, with most keys in black */
 	{ 0x04eb01, KEY_POWER2},
@@ -130,6 +137,8 @@ static struct rc_map_table nec_terratec_cinergy_xs[] = {
 	{ 0x04eb54, KEY_REWIND},
 	{ 0x04eb48, KEY_STOP},
 	{ 0x04eb5c, KEY_NEXT},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct rc_map_list nec_terratec_cinergy_xs_map = {

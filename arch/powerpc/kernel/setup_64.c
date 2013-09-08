@@ -12,7 +12,11 @@
 
 #undef DEBUG
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/string.h>
 #include <linux/sched.h>
 #include <linux/init.h>
@@ -35,8 +39,11 @@
 #include <linux/pci.h>
 #include <linux/lockdep.h>
 #include <linux/memblock.h>
+<<<<<<< HEAD
 #include <linux/hugetlb.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/kdump.h>
 #include <asm/prom.h>
@@ -52,6 +59,10 @@
 #include <asm/btext.h>
 #include <asm/nvram.h>
 #include <asm/setup.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/rtas.h>
 #include <asm/iommu.h>
 #include <asm/serial.h>
@@ -64,8 +75,11 @@
 #include <asm/kexec.h>
 #include <asm/mmu_context.h>
 #include <asm/code-patching.h>
+<<<<<<< HEAD
 #include <asm/kvm_ppc.h>
 #include <asm/hugetlb.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "setup.h"
 
@@ -76,7 +90,11 @@
 #endif
 
 int boot_cpuid = 0;
+<<<<<<< HEAD
 int __initdata spinning_secondaries;
+=======
+int __initdata boot_cpu_count;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u64 ppc64_pft_size;
 
 /* Pick defaults since we might want to patch instructions
@@ -219,6 +237,7 @@ void __init early_setup(unsigned long dt_ptr)
 	/* Initialize the hash table or TLB handling */
 	early_init_mmu();
 
+<<<<<<< HEAD
 	/*
 	 * Reserve any gigantic pages requested on the command line.
 	 * memblock needs to have been initialized by the time this is
@@ -226,6 +245,8 @@ void __init early_setup(unsigned long dt_ptr)
 	 */
 	reserve_hugetlb_gpages();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DBG(" <- early_setup()\n");
 }
 
@@ -263,11 +284,19 @@ void smp_release_cpus(void)
 	for (i = 0; i < 100000; i++) {
 		mb();
 		HMT_low();
+<<<<<<< HEAD
 		if (spinning_secondaries == 0)
 			break;
 		udelay(1);
 	}
 	DBG("spinning_secondaries = %d\n", spinning_secondaries);
+=======
+		if (boot_cpu_count == 0)
+			break;
+		udelay(1);
+	}
+	DBG("boot_cpu_count = %d\n", boot_cpu_count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	DBG(" <- smp_release_cpus()\n");
 }
@@ -287,6 +316,7 @@ static void __init initialize_cache_info(void)
 
 	DBG(" -> initialize_cache_info()\n");
 
+<<<<<<< HEAD
 	for_each_node_by_type(np, "cpu") {
 		num_cpus += 1;
 
@@ -295,6 +325,16 @@ static void __init initialize_cache_info(void)
 		 * d-cache and i-cache sizes... -Peter
 		 */
 		if (num_cpus == 1) {
+=======
+	for (np = NULL; (np = of_find_node_by_type(np, "cpu"));) {
+		num_cpus += 1;
+
+		/* We're assuming *all* of the CPUs have the same
+		 * d-cache and i-cache sizes... -Peter
+		 */
+
+		if ( num_cpus == 1 ) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			const u32 *sizep, *lsizep;
 			u32 size, lsize;
 
@@ -303,6 +343,7 @@ static void __init initialize_cache_info(void)
 			sizep = of_get_property(np, "d-cache-size", NULL);
 			if (sizep != NULL)
 				size = *sizep;
+<<<<<<< HEAD
 			lsizep = of_get_property(np, "d-cache-block-size",
 						 NULL);
 			/* fallback if block size missing */
@@ -310,6 +351,12 @@ static void __init initialize_cache_info(void)
 				lsizep = of_get_property(np,
 							 "d-cache-line-size",
 							 NULL);
+=======
+			lsizep = of_get_property(np, "d-cache-block-size", NULL);
+			/* fallback if block size missing */
+			if (lsizep == NULL)
+				lsizep = of_get_property(np, "d-cache-line-size", NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (lsizep != NULL)
 				lsize = *lsizep;
 			if (sizep == 0 || lsizep == 0)
@@ -326,12 +373,18 @@ static void __init initialize_cache_info(void)
 			sizep = of_get_property(np, "i-cache-size", NULL);
 			if (sizep != NULL)
 				size = *sizep;
+<<<<<<< HEAD
 			lsizep = of_get_property(np, "i-cache-block-size",
 						 NULL);
 			if (lsizep == NULL)
 				lsizep = of_get_property(np,
 							 "i-cache-line-size",
 							 NULL);
+=======
+			lsizep = of_get_property(np, "i-cache-block-size", NULL);
+			if (lsizep == NULL)
+				lsizep = of_get_property(np, "i-cache-line-size", NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (lsizep != NULL)
 				lsize = *lsizep;
 			if (sizep == 0 || lsizep == 0)
@@ -597,8 +650,11 @@ void __init setup_arch(char **cmdline_p)
 	/* Initialize the MMU context management stuff */
 	mmu_context_init();
 
+<<<<<<< HEAD
 	kvm_linear_init();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ppc64_boot_msg(0x15, "Setup Done");
 }
 

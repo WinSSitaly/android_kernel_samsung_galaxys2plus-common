@@ -43,12 +43,26 @@
 #include <scsi/scsi.h>
 #include <scsi/scsi_tcq.h>
 #include <scsi/sas_ata.h>
+<<<<<<< HEAD
 #include "mv_defs.h"
 
 #define DRV_NAME		"mvsas"
 #define DRV_VERSION		"0.8.16"
 #define MVS_ID_NOT_MAPPED	0x7f
 #define WIDE_PORT_MAX_PHY		4
+=======
+#include <linux/version.h>
+#include "mv_defs.h"
+
+#define DRV_NAME		"mvsas"
+#define DRV_VERSION		"0.8.2"
+#define _MV_DUMP		0
+#define MVS_ID_NOT_MAPPED	0x7f
+/* #define DISABLE_HOTPLUG_DMA_FIX */
+// #define MAX_EXP_RUNNING_REQ	2
+#define WIDE_PORT_MAX_PHY		4
+#define	MV_DISABLE_NCQ	0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define mv_printk(fmt, arg ...)	\
 	printk(KERN_DEBUG"%s %d:" fmt, __FILE__, __LINE__, ## arg)
 #ifdef MV_DEBUG
@@ -59,7 +73,10 @@
 #endif
 #define MV_MAX_U32			0xffffffff
 
+<<<<<<< HEAD
 extern int interrupt_coalescing;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct mvs_tgt_initiator mvs_tgt;
 extern struct mvs_info *tgt_mvi;
 extern const struct mvs_dispatch mvs_64xx_dispatch;
@@ -69,7 +86,11 @@ extern struct kmem_cache *mvs_task_list_cache;
 #define DEV_IS_EXPANDER(type)	\
 	((type == EDGE_DEV) || (type == FANOUT_DEV))
 
+<<<<<<< HEAD
 #define bit(n) ((u64)1 << n)
+=======
+#define bit(n) ((u32)1 << n)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define for_each_phy(__lseq_mask, __mc, __lseq)			\
 	for ((__mc) = (__lseq_mask), (__lseq) = 0;		\
@@ -95,11 +116,14 @@ enum dev_status {
 	MVS_DEV_EH	= 0x1,
 };
 
+<<<<<<< HEAD
 enum dev_reset {
 	MVS_SOFT_RESET	= 0,
 	MVS_HARD_RESET	= 1,
 	MVS_PHY_TUNE	= 2,
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct mvs_info;
 
@@ -131,6 +155,10 @@ struct mvs_dispatch {
 	u32 (*read_port_irq_mask)(struct mvs_info *mvi, u32 port);
 	void (*write_port_irq_mask)(struct mvs_info *mvi, u32 port, u32 val);
 
+<<<<<<< HEAD
+=======
+	void (*get_sas_addr)(void *buf, u32 buflen);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void (*command_active)(struct mvs_info *mvi, u32 slot_idx);
 	void (*clear_srs_irq)(struct mvs_info *mvi, u8 reg_set, u8 clear_all);
 	void (*issue_stop)(struct mvs_info *mvi, enum mvs_port_type type,
@@ -167,10 +195,16 @@ struct mvs_dispatch {
 						);
 	int (*spi_issuecmd)(struct mvs_info *mvi, u32 cmd);
 	int (*spi_waitdataready)(struct mvs_info *mvi, u32 timeout);
+<<<<<<< HEAD
 	void (*dma_fix)(struct mvs_info *mvi, u32 phy_mask,
 				int buf_len, int from, void *prd);
 	void (*tune_interrupt)(struct mvs_info *mvi, u32 time);
 	void (*non_spec_ncq_error)(struct mvs_info *mvi);
+=======
+#ifndef DISABLE_HOTPLUG_DMA_FIX
+	void (*dma_fix)(dma_addr_t buf_dma, int buf_len, int from, void *prd);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 };
 
@@ -180,11 +214,17 @@ struct mvs_chip_info {
 	u32 		fis_offs;
 	u32 		fis_count;
 	u32 		srs_sz;
+<<<<<<< HEAD
 	u32		sg_width;
 	u32 		slot_width;
 	const struct mvs_dispatch *dispatch;
 };
 #define MVS_MAX_SG		(1U << mvi->chip->sg_width)
+=======
+	u32 		slot_width;
+	const struct mvs_dispatch *dispatch;
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MVS_CHIP_SLOT_SZ	(1U << mvi->chip->slot_width)
 #define MVS_RX_FISL_SZ		\
 	(mvi->chip->fis_offs + (mvi->chip->fis_count * 0x100))
@@ -252,6 +292,7 @@ struct mvs_device {
 	u16 reserved;
 };
 
+<<<<<<< HEAD
 /* Generate  PHY tunning parameters */
 struct phy_tuning {
 	/* 1 bit,  transmitter emphasis enable	*/
@@ -319,6 +360,8 @@ struct hba_info_page {
 	u32 reserved3[10];
 };	/* total 256 bytes */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct mvs_slot_info {
 	struct list_head entry;
 	union {
@@ -334,6 +377,12 @@ struct mvs_slot_info {
 	 */
 	void *buf;
 	dma_addr_t buf_dma;
+<<<<<<< HEAD
+=======
+#if _MV_DUMP
+	u32 cmd_size;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *response;
 	struct mvs_port *port;
 	struct mvs_device	*device;
@@ -387,10 +436,19 @@ struct mvs_info {
 	const struct mvs_chip_info *chip;
 
 	int tags_num;
+<<<<<<< HEAD
 	unsigned long *tags;
 	/* further per-slot information */
 	struct mvs_phy phy[MVS_MAX_PHYS];
 	struct mvs_port port[MVS_MAX_PHYS];
+=======
+	DECLARE_BITMAP(tags, MVS_SLOTS);
+	/* further per-slot information */
+	struct mvs_phy phy[MVS_MAX_PHYS];
+	struct mvs_port port[MVS_MAX_PHYS];
+	u32 irq;
+	u32 exp_req;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 id;
 	u64 sata_reg_set;
 	struct list_head *hba_list;
@@ -402,6 +460,7 @@ struct mvs_info {
 	u32 flashsectSize;
 
 	void *addon;
+<<<<<<< HEAD
 	struct hba_info_page hba_info_param;
 	struct mvs_device	devices[MVS_MAX_DEVICES];
 	void *bulk_buffer;
@@ -409,6 +468,14 @@ struct mvs_info {
 	void *bulk_buffer1;
 	dma_addr_t bulk_buffer_dma1;
 #define TRASH_BUCKET_SIZE    	0x20000
+=======
+	struct mvs_device	devices[MVS_MAX_DEVICES];
+#ifndef DISABLE_HOTPLUG_DMA_FIX
+	void *bulk_buffer;
+	dma_addr_t bulk_buffer_dma;
+#define TRASH_BUCKET_SIZE    	0x20000
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *dma_pool;
 	struct mvs_slot_info slot_info[0];
 };
@@ -416,10 +483,15 @@ struct mvs_info {
 struct mvs_prv_info{
 	u8 n_host;
 	u8 n_phy;
+<<<<<<< HEAD
 	u8 scan_finished;
 	u8 reserve;
 	struct mvs_info *mvi[2];
 	struct tasklet_struct mv_tasklet;
+=======
+	u16 reserve;
+	struct mvs_info *mvi[2];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct mvs_wq {
@@ -458,6 +530,11 @@ int mvs_phy_control(struct asd_sas_phy *sas_phy, enum phy_func func,
 			void *funcdata);
 void __devinit mvs_set_sas_addr(struct mvs_info *mvi, int port_id,
 				u32 off_lo, u32 off_hi, u64 sas_addr);
+<<<<<<< HEAD
+=======
+int mvs_slave_alloc(struct scsi_device *scsi_dev);
+int mvs_slave_configure(struct scsi_device *sdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void mvs_scan_start(struct Scsi_Host *shost);
 int mvs_scan_finished(struct Scsi_Host *shost, unsigned long time);
 int mvs_queue_command(struct sas_task *task, const int num,
@@ -481,6 +558,10 @@ void mvs_do_release_task(struct mvs_info *mvi, int phy_no,
 void mvs_int_port(struct mvs_info *mvi, int phy_no, u32 events);
 void mvs_update_phyinfo(struct mvs_info *mvi, int i, int get_st);
 int mvs_int_rx(struct mvs_info *mvi, bool self_clear);
+<<<<<<< HEAD
 struct mvs_device *mvs_find_dev_by_reg_set(struct mvs_info *mvi, u8 reg_set);
+=======
+void mvs_hexdump(u32 size, u8 *data, u32 baseaddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 

@@ -65,6 +65,7 @@ void radeon_driver_irq_preinstall_kms(struct drm_device *dev)
 	unsigned i;
 
 	/* Disable *all* interrupts */
+<<<<<<< HEAD
 	for (i = 0; i < RADEON_NUM_RINGS; i++)
 		rdev->irq.sw_int[i] = false;
 	rdev->irq.gui_idle = false;
@@ -72,6 +73,14 @@ void radeon_driver_irq_preinstall_kms(struct drm_device *dev)
 		rdev->irq.hpd[i] = false;
 	for (i = 0; i < RADEON_MAX_CRTCS; i++) {
 		rdev->irq.crtc_vblank_int[i] = false;
+=======
+	rdev->irq.sw_int = false;
+	rdev->irq.gui_idle = false;
+	for (i = 0; i < rdev->num_crtc; i++)
+		rdev->irq.crtc_vblank_int[i] = false;
+	for (i = 0; i < 6; i++) {
+		rdev->irq.hpd[i] = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rdev->irq.pflip[i] = false;
 	}
 	radeon_irq_set(rdev);
@@ -82,11 +91,17 @@ void radeon_driver_irq_preinstall_kms(struct drm_device *dev)
 int radeon_driver_irq_postinstall_kms(struct drm_device *dev)
 {
 	struct radeon_device *rdev = dev->dev_private;
+<<<<<<< HEAD
 	unsigned i;
 
 	dev->max_vblank_count = 0x001fffff;
 	for (i = 0; i < RADEON_NUM_RINGS; i++)
 		rdev->irq.sw_int[i] = true;
+=======
+
+	dev->max_vblank_count = 0x001fffff;
+	rdev->irq.sw_int = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	radeon_irq_set(rdev);
 	return 0;
 }
@@ -100,6 +115,7 @@ void radeon_driver_irq_uninstall_kms(struct drm_device *dev)
 		return;
 	}
 	/* Disable *all* interrupts */
+<<<<<<< HEAD
 	for (i = 0; i < RADEON_NUM_RINGS; i++)
 		rdev->irq.sw_int[i] = false;
 	rdev->irq.gui_idle = false;
@@ -107,6 +123,14 @@ void radeon_driver_irq_uninstall_kms(struct drm_device *dev)
 		rdev->irq.hpd[i] = false;
 	for (i = 0; i < RADEON_MAX_CRTCS; i++) {
 		rdev->irq.crtc_vblank_int[i] = false;
+=======
+	rdev->irq.sw_int = false;
+	rdev->irq.gui_idle = false;
+	for (i = 0; i < rdev->num_crtc; i++)
+		rdev->irq.crtc_vblank_int[i] = false;
+	for (i = 0; i < 6; i++) {
+		rdev->irq.hpd[i] = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rdev->irq.pflip[i] = false;
 	}
 	radeon_irq_set(rdev);
@@ -147,6 +171,7 @@ static bool radeon_msi_ok(struct radeon_device *rdev)
 	    (rdev->pdev->subsystem_device == 0x01fd))
 		return true;
 
+<<<<<<< HEAD
 	/* Gateway RS690 only seems to work with MSIs. */
 	if ((rdev->pdev->device == 0x791f) &&
 	    (rdev->pdev->subsystem_vendor == 0x107b) &&
@@ -157,6 +182,8 @@ static bool radeon_msi_ok(struct radeon_device *rdev)
 	if (rdev->family == CHIP_RS690)
 		return true;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* RV515 seems to have MSI issues where it loses
 	 * MSI rearms occasionally. This leads to lockups and freezes.
 	 * disable it by default.
@@ -220,26 +247,45 @@ void radeon_irq_kms_fini(struct radeon_device *rdev)
 	flush_work_sync(&rdev->hotplug_work);
 }
 
+<<<<<<< HEAD
 void radeon_irq_kms_sw_irq_get(struct radeon_device *rdev, int ring)
+=======
+void radeon_irq_kms_sw_irq_get(struct radeon_device *rdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long irqflags;
 
 	spin_lock_irqsave(&rdev->irq.sw_lock, irqflags);
+<<<<<<< HEAD
 	if (rdev->ddev->irq_enabled && (++rdev->irq.sw_refcount[ring] == 1)) {
 		rdev->irq.sw_int[ring] = true;
+=======
+	if (rdev->ddev->irq_enabled && (++rdev->irq.sw_refcount == 1)) {
+		rdev->irq.sw_int = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		radeon_irq_set(rdev);
 	}
 	spin_unlock_irqrestore(&rdev->irq.sw_lock, irqflags);
 }
 
+<<<<<<< HEAD
 void radeon_irq_kms_sw_irq_put(struct radeon_device *rdev, int ring)
+=======
+void radeon_irq_kms_sw_irq_put(struct radeon_device *rdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long irqflags;
 
 	spin_lock_irqsave(&rdev->irq.sw_lock, irqflags);
+<<<<<<< HEAD
 	BUG_ON(rdev->ddev->irq_enabled && rdev->irq.sw_refcount[ring] <= 0);
 	if (rdev->ddev->irq_enabled && (--rdev->irq.sw_refcount[ring] == 0)) {
 		rdev->irq.sw_int[ring] = false;
+=======
+	BUG_ON(rdev->ddev->irq_enabled && rdev->irq.sw_refcount <= 0);
+	if (rdev->ddev->irq_enabled && (--rdev->irq.sw_refcount == 0)) {
+		rdev->irq.sw_int = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		radeon_irq_set(rdev);
 	}
 	spin_unlock_irqrestore(&rdev->irq.sw_lock, irqflags);

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Copyright (C) 1992, 1993, 1994, 1995
  * Remy Card (card@masi.ibp.fr)
@@ -631,6 +632,10 @@ static inline void verify_offsets(void)
 	A(EXT2_SB_BSIZE_OFFSET, s_log_block_size);
 #undef A
 }
+=======
+#include <linux/fs.h>
+#include <linux/ext2_fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * ext2 mount options
@@ -741,7 +746,11 @@ extern struct ext2_dir_entry_2 * ext2_dotdot (struct inode *, struct page **);
 extern void ext2_set_link(struct inode *, struct ext2_dir_entry_2 *, struct page *, struct inode *, int);
 
 /* ialloc.c */
+<<<<<<< HEAD
 extern struct inode * ext2_new_inode (struct inode *, umode_t, const struct qstr *);
+=======
+extern struct inode * ext2_new_inode (struct inode *, int, const struct qstr *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void ext2_free_inode (struct inode *);
 extern unsigned long ext2_count_free_inodes (struct super_block *);
 extern void ext2_check_inodes_bitmap (struct super_block *);
@@ -766,10 +775,17 @@ extern long ext2_compat_ioctl(struct file *, unsigned int, unsigned long);
 struct dentry *ext2_get_parent(struct dentry *child);
 
 /* super.c */
+<<<<<<< HEAD
 extern __printf(3, 4)
 void ext2_error(struct super_block *, const char *, const char *, ...);
 extern __printf(3, 4)
 void ext2_msg(struct super_block *, const char *, const char *, ...);
+=======
+extern void ext2_error (struct super_block *, const char *, const char *, ...)
+	__attribute__ ((format (printf, 3, 4)));
+extern void ext2_msg(struct super_block *, const char *, const char *, ...)
+	__attribute__ ((format (printf, 3, 4)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void ext2_update_dynamic_rev (struct super_block *sb);
 extern void ext2_write_super (struct super_block *);
 
@@ -781,8 +797,12 @@ extern void ext2_write_super (struct super_block *);
 extern const struct file_operations ext2_dir_operations;
 
 /* file.c */
+<<<<<<< HEAD
 extern int ext2_fsync(struct file *file, loff_t start, loff_t end,
 		      int datasync);
+=======
+extern int ext2_fsync(struct file *file, int datasync);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern const struct inode_operations ext2_file_inode_operations;
 extern const struct file_operations ext2_file_operations;
 extern const struct file_operations ext2_xip_file_operations;

@@ -72,16 +72,26 @@ static void intel_lvds_enable(struct intel_lvds *intel_lvds)
 {
 	struct drm_device *dev = intel_lvds->base.base.dev;
 	struct drm_i915_private *dev_priv = dev->dev_private;
+<<<<<<< HEAD
 	u32 ctl_reg, lvds_reg, stat_reg;
+=======
+	u32 ctl_reg, lvds_reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (HAS_PCH_SPLIT(dev)) {
 		ctl_reg = PCH_PP_CONTROL;
 		lvds_reg = PCH_LVDS;
+<<<<<<< HEAD
 		stat_reg = PCH_PP_STATUS;
 	} else {
 		ctl_reg = PP_CONTROL;
 		lvds_reg = LVDS;
 		stat_reg = PP_STATUS;
+=======
+	} else {
+		ctl_reg = PP_CONTROL;
+		lvds_reg = LVDS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	I915_WRITE(lvds_reg, I915_READ(lvds_reg) | LVDS_PORT_EN);
@@ -96,16 +106,29 @@ static void intel_lvds_enable(struct intel_lvds *intel_lvds)
 		DRM_DEBUG_KMS("applying panel-fitter: %x, %x\n",
 			      intel_lvds->pfit_control,
 			      intel_lvds->pfit_pgm_ratios);
+<<<<<<< HEAD
 
 		I915_WRITE(PFIT_PGM_RATIOS, intel_lvds->pfit_pgm_ratios);
 		I915_WRITE(PFIT_CONTROL, intel_lvds->pfit_control);
 		intel_lvds->pfit_dirty = false;
+=======
+		if (wait_for((I915_READ(PP_STATUS) & PP_ON) == 0, 1000)) {
+			DRM_ERROR("timed out waiting for panel to power off\n");
+		} else {
+			I915_WRITE(PFIT_PGM_RATIOS, intel_lvds->pfit_pgm_ratios);
+			I915_WRITE(PFIT_CONTROL, intel_lvds->pfit_control);
+			intel_lvds->pfit_dirty = false;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	I915_WRITE(ctl_reg, I915_READ(ctl_reg) | POWER_TARGET_ON);
 	POSTING_READ(lvds_reg);
+<<<<<<< HEAD
 	if (wait_for((I915_READ(stat_reg) & PP_ON) != 0, 1000))
 		DRM_ERROR("timed out waiting for panel to power on\n");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	intel_panel_enable_backlight(dev);
 }
@@ -114,25 +137,43 @@ static void intel_lvds_disable(struct intel_lvds *intel_lvds)
 {
 	struct drm_device *dev = intel_lvds->base.base.dev;
 	struct drm_i915_private *dev_priv = dev->dev_private;
+<<<<<<< HEAD
 	u32 ctl_reg, lvds_reg, stat_reg;
+=======
+	u32 ctl_reg, lvds_reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (HAS_PCH_SPLIT(dev)) {
 		ctl_reg = PCH_PP_CONTROL;
 		lvds_reg = PCH_LVDS;
+<<<<<<< HEAD
 		stat_reg = PCH_PP_STATUS;
 	} else {
 		ctl_reg = PP_CONTROL;
 		lvds_reg = LVDS;
 		stat_reg = PP_STATUS;
+=======
+	} else {
+		ctl_reg = PP_CONTROL;
+		lvds_reg = LVDS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	intel_panel_disable_backlight(dev);
 
 	I915_WRITE(ctl_reg, I915_READ(ctl_reg) & ~POWER_TARGET_ON);
+<<<<<<< HEAD
 	if (wait_for((I915_READ(stat_reg) & PP_ON) == 0, 1000))
 		DRM_ERROR("timed out waiting for panel to power off\n");
 
 	if (intel_lvds->pfit_control) {
+=======
+
+	if (intel_lvds->pfit_control) {
+		if (wait_for((I915_READ(PP_STATUS) & PP_ON) == 0, 1000))
+			DRM_ERROR("timed out waiting for panel to power off\n");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		I915_WRITE(PFIT_CONTROL, 0);
 		intel_lvds->pfit_dirty = true;
 	}
@@ -187,8 +228,11 @@ centre_horizontally(struct drm_display_mode *mode,
 
 	mode->crtc_hsync_start = mode->crtc_hblank_start + sync_pos;
 	mode->crtc_hsync_end = mode->crtc_hsync_start + sync_width;
+<<<<<<< HEAD
 
 	mode->private_flags |= INTEL_MODE_CRTC_TIMINGS_SET;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -210,8 +254,11 @@ centre_vertically(struct drm_display_mode *mode,
 
 	mode->crtc_vsync_start = mode->crtc_vblank_start + sync_pos;
 	mode->crtc_vsync_end = mode->crtc_vsync_start + sync_width;
+<<<<<<< HEAD
 
 	mode->private_flags |= INTEL_MODE_CRTC_TIMINGS_SET;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline u32 panel_fitter_scaling(u32 source, u32 target)
@@ -287,8 +334,11 @@ static bool intel_lvds_mode_fixup(struct drm_encoder *encoder,
 	for_each_pipe(pipe)
 		I915_WRITE(BCLRPAT(pipe), 0);
 
+<<<<<<< HEAD
 	drm_mode_set_crtcinfo(adjusted_mode, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (intel_lvds->fitting_mode) {
 	case DRM_MODE_SCALE_CENTER:
 		/*
@@ -406,15 +456,64 @@ out:
 
 static void intel_lvds_prepare(struct drm_encoder *encoder)
 {
+<<<<<<< HEAD
 	struct intel_lvds *intel_lvds = to_intel_lvds(encoder);
 
 	intel_lvds_disable(intel_lvds);
+=======
+	struct drm_device *dev = encoder->dev;
+	struct drm_i915_private *dev_priv = dev->dev_private;
+	struct intel_lvds *intel_lvds = to_intel_lvds(encoder);
+
+	/* We try to do the minimum that is necessary in order to unlock
+	 * the registers for mode setting.
+	 *
+	 * On Ironlake, this is quite simple as we just set the unlock key
+	 * and ignore all subtleties. (This may cause some issues...)
+	 *
+	 * Prior to Ironlake, we must disable the pipe if we want to adjust
+	 * the panel fitter. However at all other times we can just reset
+	 * the registers regardless.
+	 */
+
+	if (HAS_PCH_SPLIT(dev)) {
+		I915_WRITE(PCH_PP_CONTROL,
+			   I915_READ(PCH_PP_CONTROL) | PANEL_UNLOCK_REGS);
+	} else if (intel_lvds->pfit_dirty) {
+		I915_WRITE(PP_CONTROL,
+			   (I915_READ(PP_CONTROL) | PANEL_UNLOCK_REGS)
+			   & ~POWER_TARGET_ON);
+	} else {
+		I915_WRITE(PP_CONTROL,
+			   I915_READ(PP_CONTROL) | PANEL_UNLOCK_REGS);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void intel_lvds_commit(struct drm_encoder *encoder)
 {
+<<<<<<< HEAD
 	struct intel_lvds *intel_lvds = to_intel_lvds(encoder);
 
+=======
+	struct drm_device *dev = encoder->dev;
+	struct drm_i915_private *dev_priv = dev->dev_private;
+	struct intel_lvds *intel_lvds = to_intel_lvds(encoder);
+
+	/* Undo any unlocking done in prepare to prevent accidental
+	 * adjustment of the registers.
+	 */
+	if (HAS_PCH_SPLIT(dev)) {
+		u32 val = I915_READ(PCH_PP_CONTROL);
+		if ((val & PANEL_UNLOCK_REGS) == PANEL_UNLOCK_REGS)
+			I915_WRITE(PCH_PP_CONTROL, val & 0x3);
+	} else {
+		u32 val = I915_READ(PP_CONTROL);
+		if ((val & PANEL_UNLOCK_REGS) == PANEL_UNLOCK_REGS)
+			I915_WRITE(PP_CONTROL, val & 0x3);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Always do a full power on as we do not know what state
 	 * we were left in.
 	 */
@@ -552,8 +651,11 @@ static void intel_lvds_destroy(struct drm_connector *connector)
 	struct drm_device *dev = connector->dev;
 	struct drm_i915_private *dev_priv = dev->dev_private;
 
+<<<<<<< HEAD
 	intel_panel_destroy_backlight(dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dev_priv->lid_notifier.notifier_call)
 		acpi_lid_notifier_unregister(&dev_priv->lid_notifier);
 	drm_sysfs_connector_remove(connector);
@@ -662,6 +764,7 @@ static const struct dmi_system_id intel_no_lvds[] = {
 	},
 	{
 		.callback = intel_no_lvds_dmi_callback,
+<<<<<<< HEAD
 		.ident = "Dell OptiPlex FX170",
 		.matches = {
 			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
@@ -670,6 +773,8 @@ static const struct dmi_system_id intel_no_lvds[] = {
 	},
 	{
 		.callback = intel_no_lvds_dmi_callback,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.ident = "AOpen Mini PC",
 		.matches = {
 			DMI_MATCH(DMI_SYS_VENDOR, "AOpen"),
@@ -716,6 +821,7 @@ static const struct dmi_system_id intel_no_lvds[] = {
 		},
 	},
 	{
+<<<<<<< HEAD
                 .callback = intel_no_lvds_dmi_callback,
                 .ident = "Clientron E830",
                 .matches = {
@@ -724,6 +830,8 @@ static const struct dmi_system_id intel_no_lvds[] = {
                 },
         },
         {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.callback = intel_no_lvds_dmi_callback,
 		.ident = "Asus EeeBox PC EB1007",
 		.matches = {
@@ -733,6 +841,7 @@ static const struct dmi_system_id intel_no_lvds[] = {
 	},
 	{
 		.callback = intel_no_lvds_dmi_callback,
+<<<<<<< HEAD
 		.ident = "Asus AT5NM10T-I",
 		.matches = {
 			DMI_MATCH(DMI_BOARD_VENDOR, "ASUSTeK Computer INC."),
@@ -765,12 +874,15 @@ static const struct dmi_system_id intel_no_lvds[] = {
 	},
 	{
 		.callback = intel_no_lvds_dmi_callback,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.ident = "MSI Wind Box DC500",
 		.matches = {
 			DMI_MATCH(DMI_BOARD_VENDOR, "MICRO-STAR INTERNATIONAL CO., LTD"),
 			DMI_MATCH(DMI_BOARD_NAME, "MS-7469"),
 		},
 	},
+<<<<<<< HEAD
 	{
 		.callback = intel_no_lvds_dmi_callback,
 		.ident = "Gigabyte GA-D525TUD",
@@ -795,6 +907,8 @@ static const struct dmi_system_id intel_no_lvds[] = {
 			DMI_MATCH(DMI_PRODUCT_NAME, "ESPRIMO Q900"),
 		},
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	{ }	/* terminating entry */
 };
@@ -900,6 +1014,7 @@ static bool lvds_is_present_in_vbt(struct drm_device *dev,
 	return false;
 }
 
+<<<<<<< HEAD
 static bool intel_lvds_supported(struct drm_device *dev)
 {
 	/* With the introduction of the PCH we gained a dedicated
@@ -912,6 +1027,8 @@ static bool intel_lvds_supported(struct drm_device *dev)
 	return IS_MOBILE(dev) && !IS_I830(dev);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * intel_lvds_init - setup LVDS connectors on this device
  * @dev: drm device
@@ -933,9 +1050,12 @@ bool intel_lvds_init(struct drm_device *dev)
 	int pipe;
 	u8 pin;
 
+<<<<<<< HEAD
 	if (!intel_lvds_supported(dev))
 		return false;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Skip init on machines we know falsely report LVDS */
 	if (dmi_check_system(intel_no_lvds))
 		return false;
@@ -983,11 +1103,17 @@ bool intel_lvds_init(struct drm_device *dev)
 	intel_encoder->type = INTEL_OUTPUT_LVDS;
 
 	intel_encoder->clone_mask = (1 << INTEL_LVDS_CLONE_BIT);
+<<<<<<< HEAD
 	if (HAS_PCH_SPLIT(dev))
 		intel_encoder->crtc_mask = (1 << 0) | (1 << 1) | (1 << 2);
 	else
 		intel_encoder->crtc_mask = (1 << 1);
 
+=======
+	intel_encoder->crtc_mask = (1 << 1);
+	if (INTEL_INFO(dev)->gen >= 5)
+		intel_encoder->crtc_mask |= (1 << 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	drm_encoder_helper_add(encoder, &intel_lvds_helper_funcs);
 	drm_connector_helper_add(connector, &intel_lvds_connector_helper_funcs);
 	connector->display_info.subpixel_order = SubPixelHorizontalRGB;
@@ -1091,8 +1217,12 @@ bool intel_lvds_init(struct drm_device *dev)
 		goto failed;
 
 out:
+<<<<<<< HEAD
 	if (HAS_PCH_SPLIT(dev) &&
 	    !(dev_priv->quirks & QUIRK_NO_PCH_PWM_ENABLE)) {
+=======
+	if (HAS_PCH_SPLIT(dev)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u32 pwm;
 
 		pipe = (I915_READ(PCH_LVDS) & LVDS_PIPEB_SELECT) ? 1 : 0;
@@ -1110,6 +1240,7 @@ out:
 		pwm = I915_READ(BLC_PWM_PCH_CTL1);
 		pwm |= PWM_PCH_ENABLE;
 		I915_WRITE(BLC_PWM_PCH_CTL1, pwm);
+<<<<<<< HEAD
 		/*
 		 * Unlock registers and just
 		 * leave them unlocked
@@ -1123,6 +1254,8 @@ out:
 		 */
 		I915_WRITE(PP_CONTROL,
 			   I915_READ(PP_CONTROL) | PANEL_UNLOCK_REGS);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	dev_priv->lid_notifier.notifier_call = intel_lid_notify;
 	if (acpi_lid_notifier_register(&dev_priv->lid_notifier)) {
@@ -1132,9 +1265,12 @@ out:
 	/* keep the LVDS connector */
 	dev_priv->int_lvds_connector = connector;
 	drm_sysfs_connector_add(connector);
+<<<<<<< HEAD
 
 	intel_panel_setup_backlight(dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return true;
 
 failed:

@@ -14,6 +14,7 @@ typedef struct {
 
 #define ATOMIC64_INIT(val)	{ (val) }
 
+<<<<<<< HEAD
 #define __ATOMIC64_DECL(sym) void atomic64_##sym(atomic64_t *, ...)
 #ifndef ATOMIC64_EXPORT
 #define ATOMIC64_DECL_ONE __ATOMIC64_DECL
@@ -60,6 +61,15 @@ ATOMIC64_DECL(add_unless);
 #undef ATOMIC64_DECL_ONE
 #undef __ATOMIC64_DECL
 #undef ATOMIC64_EXPORT
+=======
+#ifdef CONFIG_X86_CMPXCHG64
+#define ATOMIC64_ALTERNATIVE_(f, g) "call atomic64_" #g "_cx8"
+#else
+#define ATOMIC64_ALTERNATIVE_(f, g) ALTERNATIVE("call atomic64_" #f "_386", "call atomic64_" #g "_cx8", X86_FEATURE_CX8)
+#endif
+
+#define ATOMIC64_ALTERNATIVE(f) ATOMIC64_ALTERNATIVE_(f, f)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * atomic64_cmpxchg - cmpxchg atomic64 variable
@@ -89,9 +99,17 @@ static inline long long atomic64_xchg(atomic64_t *v, long long n)
 	long long o;
 	unsigned high = (unsigned)(n >> 32);
 	unsigned low = (unsigned)n;
+<<<<<<< HEAD
 	alternative_atomic64(xchg, "=&A" (o),
 			     "S" (v), "b" (low), "c" (high)
 			     : "memory");
+=======
+	asm volatile(ATOMIC64_ALTERNATIVE(xchg)
+		     : "=A" (o), "+b" (low), "+c" (high)
+		     : "S" (v)
+		     : "memory"
+		     );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return o;
 }
 
@@ -106,9 +124,17 @@ static inline void atomic64_set(atomic64_t *v, long long i)
 {
 	unsigned high = (unsigned)(i >> 32);
 	unsigned low = (unsigned)i;
+<<<<<<< HEAD
 	alternative_atomic64(set, /* no output */,
 			     "S" (v), "b" (low), "c" (high)
 			     : "eax", "edx", "memory");
+=======
+	asm volatile(ATOMIC64_ALTERNATIVE(set)
+		     : "+b" (low), "+c" (high)
+		     : "S" (v)
+		     : "eax", "edx", "memory"
+		     );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -117,10 +143,20 @@ static inline void atomic64_set(atomic64_t *v, long long i)
  *
  * Atomically reads the value of @v and returns it.
  */
+<<<<<<< HEAD
 static inline long long atomic64_read(const atomic64_t *v)
 {
 	long long r;
 	alternative_atomic64(read, "=&A" (r), "c" (v) : "memory");
+=======
+static inline long long atomic64_read(atomic64_t *v)
+{
+	long long r;
+	asm volatile(ATOMIC64_ALTERNATIVE(read)
+		     : "=A" (r), "+c" (v)
+		     : : "memory"
+		     );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return r;
  }
 
@@ -133,9 +169,16 @@ static inline long long atomic64_read(const atomic64_t *v)
  */
 static inline long long atomic64_add_return(long long i, atomic64_t *v)
 {
+<<<<<<< HEAD
 	alternative_atomic64(add_return,
 			     ASM_OUTPUT2("+A" (i), "+c" (v)),
 			     ASM_NO_INPUT_CLOBBER("memory"));
+=======
+	asm volatile(ATOMIC64_ALTERNATIVE(add_return)
+		     : "+A" (i), "+c" (v)
+		     : : "memory"
+		     );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return i;
 }
 
@@ -144,25 +187,48 @@ static inline long long atomic64_add_return(long long i, atomic64_t *v)
  */
 static inline long long atomic64_sub_return(long long i, atomic64_t *v)
 {
+<<<<<<< HEAD
 	alternative_atomic64(sub_return,
 			     ASM_OUTPUT2("+A" (i), "+c" (v)),
 			     ASM_NO_INPUT_CLOBBER("memory"));
+=======
+	asm volatile(ATOMIC64_ALTERNATIVE(sub_return)
+		     : "+A" (i), "+c" (v)
+		     : : "memory"
+		     );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return i;
 }
 
 static inline long long atomic64_inc_return(atomic64_t *v)
 {
 	long long a;
+<<<<<<< HEAD
 	alternative_atomic64(inc_return, "=&A" (a),
 			     "S" (v) : "memory", "ecx");
+=======
+	asm volatile(ATOMIC64_ALTERNATIVE(inc_return)
+		     : "=A" (a)
+		     : "S" (v)
+		     : "memory", "ecx"
+		     );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return a;
 }
 
 static inline long long atomic64_dec_return(atomic64_t *v)
 {
 	long long a;
+<<<<<<< HEAD
 	alternative_atomic64(dec_return, "=&A" (a),
 			     "S" (v) : "memory", "ecx");
+=======
+	asm volatile(ATOMIC64_ALTERNATIVE(dec_return)
+		     : "=A" (a)
+		     : "S" (v)
+		     : "memory", "ecx"
+		     );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return a;
 }
 
@@ -175,9 +241,16 @@ static inline long long atomic64_dec_return(atomic64_t *v)
  */
 static inline long long atomic64_add(long long i, atomic64_t *v)
 {
+<<<<<<< HEAD
 	__alternative_atomic64(add, add_return,
 			       ASM_OUTPUT2("+A" (i), "+c" (v)),
 			       ASM_NO_INPUT_CLOBBER("memory"));
+=======
+	asm volatile(ATOMIC64_ALTERNATIVE_(add, add_return)
+		     : "+A" (i), "+c" (v)
+		     : : "memory"
+		     );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return i;
 }
 
@@ -190,9 +263,16 @@ static inline long long atomic64_add(long long i, atomic64_t *v)
  */
 static inline long long atomic64_sub(long long i, atomic64_t *v)
 {
+<<<<<<< HEAD
 	__alternative_atomic64(sub, sub_return,
 			       ASM_OUTPUT2("+A" (i), "+c" (v)),
 			       ASM_NO_INPUT_CLOBBER("memory"));
+=======
+	asm volatile(ATOMIC64_ALTERNATIVE_(sub, sub_return)
+		     : "+A" (i), "+c" (v)
+		     : : "memory"
+		     );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return i;
 }
 
@@ -218,8 +298,15 @@ static inline int atomic64_sub_and_test(long long i, atomic64_t *v)
  */
 static inline void atomic64_inc(atomic64_t *v)
 {
+<<<<<<< HEAD
 	__alternative_atomic64(inc, inc_return, /* no output */,
 			       "S" (v) : "memory", "eax", "ecx", "edx");
+=======
+	asm volatile(ATOMIC64_ALTERNATIVE_(inc, inc_return)
+		     : : "S" (v)
+		     : "memory", "eax", "ecx", "edx"
+		     );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -230,8 +317,15 @@ static inline void atomic64_inc(atomic64_t *v)
  */
 static inline void atomic64_dec(atomic64_t *v)
 {
+<<<<<<< HEAD
 	__alternative_atomic64(dec, dec_return, /* no output */,
 			       "S" (v) : "memory", "eax", "ecx", "edx");
+=======
+	asm volatile(ATOMIC64_ALTERNATIVE_(dec, dec_return)
+		     : : "S" (v)
+		     : "memory", "eax", "ecx", "edx"
+		     );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -281,15 +375,25 @@ static inline int atomic64_add_negative(long long i, atomic64_t *v)
  * @u: ...unless v is equal to u.
  *
  * Atomically adds @a to @v, so long as it was not @u.
+<<<<<<< HEAD
  * Returns non-zero if the add was done, zero otherwise.
+=======
+ * Returns non-zero if @v was not @u, and zero otherwise.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static inline int atomic64_add_unless(atomic64_t *v, long long a, long long u)
 {
 	unsigned low = (unsigned)u;
 	unsigned high = (unsigned)(u >> 32);
+<<<<<<< HEAD
 	alternative_atomic64(add_unless,
 			     ASM_OUTPUT2("+A" (a), "+c" (low), "+D" (high)),
 			     "S" (v) : "memory");
+=======
+	asm volatile(ATOMIC64_ALTERNATIVE(add_unless) "\n\t"
+		     : "+A" (a), "+c" (v), "+S" (low), "+D" (high)
+		     : : "memory");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return (int)a;
 }
 
@@ -297,14 +401,23 @@ static inline int atomic64_add_unless(atomic64_t *v, long long a, long long u)
 static inline int atomic64_inc_not_zero(atomic64_t *v)
 {
 	int r;
+<<<<<<< HEAD
 	alternative_atomic64(inc_not_zero, "=&a" (r),
 			     "S" (v) : "ecx", "edx", "memory");
+=======
+	asm volatile(ATOMIC64_ALTERNATIVE(inc_not_zero)
+		     : "=a" (r)
+		     : "S" (v)
+		     : "ecx", "edx", "memory"
+		     );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return r;
 }
 
 static inline long long atomic64_dec_if_positive(atomic64_t *v)
 {
 	long long r;
+<<<<<<< HEAD
 	alternative_atomic64(dec_if_positive, "=&A" (r),
 			     "S" (v) : "ecx", "memory");
 	return r;
@@ -312,5 +425,17 @@ static inline long long atomic64_dec_if_positive(atomic64_t *v)
 
 #undef alternative_atomic64
 #undef __alternative_atomic64
+=======
+	asm volatile(ATOMIC64_ALTERNATIVE(dec_if_positive)
+		     : "=A" (r)
+		     : "S" (v)
+		     : "ecx", "memory"
+		     );
+	return r;
+}
+
+#undef ATOMIC64_ALTERNATIVE
+#undef ATOMIC64_ALTERNATIVE_
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* _ASM_X86_ATOMIC64_32_H */

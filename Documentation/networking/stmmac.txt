@@ -4,6 +4,7 @@ Copyright (C) 2007-2010  STMicroelectronics Ltd
 Author: Giuseppe Cavallaro <peppe.cavallaro@st.com>
 
 This is the driver for the MAC 10/100/1000 on-chip Ethernet controllers
+<<<<<<< HEAD
 (Synopsys IP blocks).
 
 Currently this network device driver is for all STM embedded MAC/GMAC
@@ -14,6 +15,16 @@ DWC Ether MAC 10/100/1000 Universal version 3.60a (and older) and DWC Ether MAC 
 Universal version 4.0 have been used for developing this driver.
 
 This driver supports both the platform bus and PCI.
+=======
+(Synopsys IP blocks); it has been fully tested on STLinux platforms.
+
+Currently this network device driver is for all STM embedded MAC/GMAC
+(7xxx SoCs). Other platforms start using it i.e. ARM SPEAr.
+
+DWC Ether MAC 10/100/1000 Universal version 3.41a and DWC Ether MAC 10/100
+Universal version 4.0 have been used for developing the first code
+implementation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 Please, for more information also visit: www.stlinux.com
 
@@ -73,11 +84,16 @@ Several performance tests on STM platforms showed this optimisation allows to sp
 the CPU while having the maximum throughput.
 
 4.4) WOL
+<<<<<<< HEAD
 Wake up on Lan feature through Magic and Unicast frames are supported for the GMAC
+=======
+Wake up on Lan feature through Magic Frame is only supported for the GMAC
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 core.
 
 4.5) DMA descriptors
 Driver handles both normal and enhanced descriptors. The latter has been only
+<<<<<<< HEAD
 tested on DWC Ether MAC 10/100/1000 Universal version 3.41a and later.
 
 STMMAC supports DMA descriptor to operate both in dual buffer (RING)
@@ -88,6 +104,9 @@ buffer pointer. RING mode is the default.
 In CHAINED mode each descriptor will have pointer to next descriptor in
 the list, hence creating the explicit chaining in the descriptor itself,
 whereas such explicit chaining is not possible in RING mode.
+=======
+tested on DWC Ether MAC 10/100/1000 Universal version 3.41a.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 4.6) Ethtool support
 Ethtool is supported. Driver statistics and internal errors can be taken using:
@@ -102,6 +121,7 @@ LRO is not supported.
 The driver is compatible with PAL to work with PHY and GPHY devices.
 
 4.9) Platform information
+<<<<<<< HEAD
 Several driver's information can be passed through the platform
 These are included in the include/linux/stmmac.h header file
 and detailed below as well:
@@ -111,6 +131,13 @@ and detailed below as well:
 	int phy_addr;
 	int interface;
 	struct stmmac_mdio_bus_data *mdio_bus_data;
+=======
+Several information came from the platform; please refer to the
+driver's Header file in include/linux directory.
+
+struct plat_stmmacenet_data {
+	int bus_id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int pbl;
 	int clk_csr;
 	int has_gmac;
@@ -118,6 +145,7 @@ and detailed below as well:
 	int tx_coe;
 	int bugged_jumbo;
 	int pmt;
+<<<<<<< HEAD
 	int force_sf_dma_mode;
 	void (*fix_mac_speed)(void *priv, unsigned int speed);
 	void (*bus_setup)(void __iomem *ioaddr);
@@ -281,3 +309,69 @@ In fact, these can generate an huge amount of debug messages.
  o XGMAC is not supported.
  o Add the EEE - Energy Efficient Ethernet
  o Add the PTP - precision time protocol
+=======
+        void (*fix_mac_speed)(void *priv, unsigned int speed);
+        void (*bus_setup)(unsigned long ioaddr);
+#ifdef CONFIG_STM_DRIVERS
+        struct stm_pad_config *pad_config;
+#endif
+        void *bsp_priv;
+};
+
+Where:
+- pbl (Programmable Burst Length) is maximum number of
+  beats to be transferred in one DMA transaction.
+  GMAC also enables the 4xPBL by default.
+- fix_mac_speed and bus_setup are used to configure internal target
+  registers (on STM platforms);
+- has_gmac: GMAC core is on board (get it at run-time in the next step);
+- bus_id: bus identifier.
+- tx_coe: core is able to perform the tx csum in HW.
+- enh_desc: if sets the MAC will use the enhanced descriptor structure.
+- clk_csr: CSR Clock range selection.
+- bugged_jumbo: some HWs are not able to perform the csum in HW for
+  over-sized frames due to limited buffer sizes. Setting this
+  flag the csum will be done in SW on JUMBO frames.
+
+struct plat_stmmacphy_data {
+        int bus_id;
+        int phy_addr;
+        unsigned int phy_mask;
+        int interface;
+        int (*phy_reset)(void *priv);
+        void *priv;
+};
+
+Where:
+- bus_id: bus identifier;
+- phy_addr: physical address used for the attached phy device;
+            set it to -1 to get it at run-time;
+- interface: physical MII interface mode;
+- phy_reset: hook to reset HW function.
+
+SOURCES:
+- Kconfig
+- Makefile
+- stmmac_main.c: main network device driver;
+- stmmac_mdio.c: mdio functions;
+- stmmac_ethtool.c: ethtool support;
+- stmmac_timer.[ch]: timer code used for mitigating the driver dma interrupts
+  Only tested on ST40 platforms based.
+- stmmac.h: private driver structure;
+- common.h: common definitions and VFTs;
+- descs.h: descriptor structure definitions;
+- dwmac1000_core.c: GMAC core functions;
+- dwmac1000_dma.c:  dma functions for the GMAC chip;
+- dwmac1000.h: specific header file for the GMAC;
+- dwmac100_core: MAC 100 core and dma code;
+- dwmac100_dma.c: dma funtions for the MAC chip;
+- dwmac1000.h: specific header file for the MAC;
+- dwmac_lib.c: generic DMA functions shared among chips
+- enh_desc.c: functions for handling enhanced descriptors
+- norm_desc.c: functions for handling normal descriptors
+
+TODO:
+- XGMAC controller is not supported.
+- Review the timer optimisation code to use an embedded device that seems to be
+  available in new chip generations.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

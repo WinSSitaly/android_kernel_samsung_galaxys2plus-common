@@ -6,6 +6,10 @@
 #include <linux/net.h>
 #include <linux/radix-tree.h>
 #include <linux/uio.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/workqueue.h>
 
 #include "types.h"
@@ -14,6 +18,11 @@
 struct ceph_msg;
 struct ceph_connection;
 
+<<<<<<< HEAD
+=======
+extern struct workqueue_struct *ceph_msgr_wq;       /* receive work queue */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Ceph defines these callbacks for handling connection events.
  */
@@ -25,12 +34,24 @@ struct ceph_connection_operations {
 	void (*dispatch) (struct ceph_connection *con, struct ceph_msg *m);
 
 	/* authorize an outgoing connection */
+<<<<<<< HEAD
 	struct ceph_auth_handshake *(*get_authorizer) (
 				struct ceph_connection *con,
 			       int *proto, int force_new);
 	int (*verify_authorizer_reply) (struct ceph_connection *con, int len);
 	int (*invalidate_authorizer)(struct ceph_connection *con);
 
+=======
+	int (*get_authorizer) (struct ceph_connection *con,
+			       void **buf, int *len, int *proto,
+			       void **reply_buf, int *reply_len, int force_new);
+	int (*verify_authorizer_reply) (struct ceph_connection *con, int len);
+	int (*invalidate_authorizer)(struct ceph_connection *con);
+
+	/* protocol version mismatch */
+	void (*bad_proto) (struct ceph_connection *con);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* there was some error on the socket (disconnect, whatever) */
 	void (*fault) (struct ceph_connection *con);
 
@@ -49,8 +70,13 @@ struct ceph_connection_operations {
 struct ceph_messenger {
 	struct ceph_entity_inst inst;    /* my name+address */
 	struct ceph_entity_addr my_enc_addr;
+<<<<<<< HEAD
 
 	atomic_t stopping;
+=======
+	struct page *zero_page;          /* used in certain error cases */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool nocrc;
 
 	/*
@@ -78,10 +104,14 @@ struct ceph_msg {
 	unsigned nr_pages;              /* size of page array */
 	unsigned page_alignment;        /* io offset in first page */
 	struct ceph_pagelist *pagelist; /* instead of pages */
+<<<<<<< HEAD
 
 	struct ceph_connection *con;
 	struct list_head list_head;
 
+=======
+	struct list_head list_head;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct kref kref;
 	struct bio  *bio;		/* instead of pages/pagelist */
 	struct bio  *bio_iter;		/* bio iterator */
@@ -91,7 +121,10 @@ struct ceph_msg {
 	bool more_to_follow;
 	bool needs_out_seq;
 	int front_max;
+<<<<<<< HEAD
 	unsigned long ack_stamp;        /* tx: when we were acked */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct ceph_msgpool *pool;
 };
@@ -99,7 +132,11 @@ struct ceph_msg {
 struct ceph_msg_pos {
 	int page, page_pos;  /* which page; offset in page */
 	int data_pos;        /* offset in data payload */
+<<<<<<< HEAD
 	bool did_page_crc;   /* true if we've calculated crc for current page */
+=======
+	int did_page_crc;    /* true if we've calculated crc for current page */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* ceph connection fault delay defaults, for exponential backoff */
@@ -107,6 +144,26 @@ struct ceph_msg_pos {
 #define MAX_DELAY_INTERVAL	(5 * 60 * HZ)
 
 /*
+<<<<<<< HEAD
+=======
+ * ceph_connection state bit flags
+ */
+#define LOSSYTX         0  /* we can close channel or drop messages on errors */
+#define CONNECTING	1
+#define NEGOTIATING	2
+#define KEEPALIVE_PENDING      3
+#define WRITE_PENDING	4  /* we have data ready to send */
+#define STANDBY		8  /* no outgoing messages, socket closed.  we keep
+			    * the ceph_connection around to maintain shared
+			    * state with the peer. */
+#define CLOSED		10 /* we've closed the connection */
+#define SOCK_CLOSED	11 /* socket state changed to closed */
+#define OPENING         13 /* open connection w/ (possibly new) peer */
+#define DEAD            14 /* dead, about to kfree */
+#define BACKOFF         15
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * A single connection with another host.
  *
  * We maintain a queue of outgoing messages, and some session state to
@@ -115,10 +172,15 @@ struct ceph_msg_pos {
  */
 struct ceph_connection {
 	void *private;
+<<<<<<< HEAD
+=======
+	atomic_t nref;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	const struct ceph_connection_operations *ops;
 
 	struct ceph_messenger *msgr;
+<<<<<<< HEAD
 
 	atomic_t sock_state;
 	struct socket *sock;
@@ -131,6 +193,15 @@ struct ceph_connection {
 
 	struct ceph_entity_name peer_name; /* peer name */
 
+=======
+	struct socket *sock;
+	unsigned long state;	/* connection state (see flags above) */
+	const char *error_msg;  /* error message, if any */
+
+	struct ceph_entity_addr peer_addr; /* peer address */
+	struct ceph_entity_name peer_name; /* peer name */
+	struct ceph_entity_addr peer_addr_for_me;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned peer_features;
 	u32 connect_seq;      /* identify the most recent connection
 				 attempt for this connection, client */
@@ -151,8 +222,21 @@ struct ceph_connection {
 
 	/* connection negotiation temps */
 	char in_banner[CEPH_BANNER_MAX_LEN];
+<<<<<<< HEAD
 	struct ceph_msg_connect out_connect;
 	struct ceph_msg_connect_reply in_reply;
+=======
+	union {
+		struct {  /* outgoing connection */
+			struct ceph_msg_connect out_connect;
+			struct ceph_msg_connect_reply in_reply;
+		};
+		struct {  /* incoming */
+			struct ceph_msg_connect in_connect;
+			struct ceph_msg_connect_reply out_reply;
+		};
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ceph_entity_addr actual_peer_addr;
 
 	/* message out temps */
@@ -195,6 +279,7 @@ extern int ceph_msgr_init(void);
 extern void ceph_msgr_exit(void);
 extern void ceph_msgr_flush(void);
 
+<<<<<<< HEAD
 extern void ceph_messenger_init(struct ceph_messenger *msgr,
 			struct ceph_entity_addr *myaddr,
 			u32 supported_features,
@@ -206,10 +291,21 @@ extern void ceph_con_init(struct ceph_connection *con, void *private,
 			struct ceph_messenger *msgr);
 extern void ceph_con_open(struct ceph_connection *con,
 			  __u8 entity_type, __u64 entity_num,
+=======
+extern struct ceph_messenger *ceph_messenger_create(
+	struct ceph_entity_addr *myaddr,
+	u32 features, u32 required);
+extern void ceph_messenger_destroy(struct ceph_messenger *);
+
+extern void ceph_con_init(struct ceph_messenger *msgr,
+			  struct ceph_connection *con);
+extern void ceph_con_open(struct ceph_connection *con,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  struct ceph_entity_addr *addr);
 extern bool ceph_con_opened(struct ceph_connection *con);
 extern void ceph_con_close(struct ceph_connection *con);
 extern void ceph_con_send(struct ceph_connection *con, struct ceph_msg *msg);
+<<<<<<< HEAD
 
 extern void ceph_msg_revoke(struct ceph_msg *msg);
 extern void ceph_msg_revoke_incoming(struct ceph_msg *msg);
@@ -218,6 +314,16 @@ extern void ceph_con_keepalive(struct ceph_connection *con);
 
 extern struct ceph_msg *ceph_msg_new(int type, int front_len, gfp_t flags,
 				     bool can_fail);
+=======
+extern void ceph_con_revoke(struct ceph_connection *con, struct ceph_msg *msg);
+extern void ceph_con_revoke_message(struct ceph_connection *con,
+				  struct ceph_msg *msg);
+extern void ceph_con_keepalive(struct ceph_connection *con);
+extern struct ceph_connection *ceph_con_get(struct ceph_connection *con);
+extern void ceph_con_put(struct ceph_connection *con);
+
+extern struct ceph_msg *ceph_msg_new(int type, int front_len, gfp_t flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void ceph_msg_kfree(struct ceph_msg *m);
 
 

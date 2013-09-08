@@ -56,7 +56,11 @@
 /* Structure used to define /proc entries */
 typedef struct _i2o_proc_entry_t {
 	char *name;		/* entry name */
+<<<<<<< HEAD
 	umode_t mode;		/* mode */
+=======
+	mode_t mode;		/* mode */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const struct file_operations *fops;	/* open function */
 } i2o_proc_entry;
 

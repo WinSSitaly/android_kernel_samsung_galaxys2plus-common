@@ -165,6 +165,7 @@ static struct of_pdt_ops prom_olpc_ops __initdata = {
 	.pkg2path = olpc_dt_pkg2path,
 };
 
+<<<<<<< HEAD
 static phandle __init olpc_dt_finddevice(const char *path)
 {
 	phandle node;
@@ -266,6 +267,8 @@ void __init olpc_dt_fixup(void)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init olpc_dt_build_devicetree(void)
 {
 	phandle root;
@@ -273,8 +276,11 @@ void __init olpc_dt_build_devicetree(void)
 	if (!olpc_ofw_is_installed())
 		return;
 
+<<<<<<< HEAD
 	olpc_dt_fixup();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	root = olpc_dt_getsibling(0);
 	if (!root) {
 		pr_err("PROM: unable to get root node from OFW!\n");

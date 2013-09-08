@@ -36,7 +36,10 @@
 #include <linux/resource.h>
 #include <linux/notifier.h>
 #include <linux/suspend.h>
+<<<<<<< HEAD
 #include <linux/rwsem.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 
 #include <trace/events/module.h>
@@ -51,7 +54,10 @@ static struct workqueue_struct *khelper_wq;
 static kernel_cap_t usermodehelper_bset = CAP_FULL_SET;
 static kernel_cap_t usermodehelper_inheritable = CAP_FULL_SET;
 static DEFINE_SPINLOCK(umh_sysctl_lock);
+<<<<<<< HEAD
 static DECLARE_RWSEM(umhelper_sem);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_MODULES
 
@@ -60,6 +66,7 @@ static DECLARE_RWSEM(umhelper_sem);
 */
 char modprobe_path[KMOD_PATH_LEN] = "/sbin/modprobe";
 
+<<<<<<< HEAD
 static void free_modprobe_argv(struct subprocess_info *info)
 {
 	kfree(info->argv[3]); /* check call_modprobe() */
@@ -97,6 +104,8 @@ out:
 	return -ENOMEM;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * __request_module - try to load a kernel module
  * @wait: wait (or not) for the operation to complete
@@ -118,6 +127,14 @@ int __request_module(bool wait, const char *fmt, ...)
 	char module_name[MODULE_NAME_LEN];
 	unsigned int max_modprobes;
 	int ret;
+<<<<<<< HEAD
+=======
+	char *argv[] = { modprobe_path, "-q", "--", module_name, NULL };
+	static char *envp[] = { "HOME=/",
+				"TERM=linux",
+				"PATH=/sbin:/usr/sbin:/bin:/usr/bin",
+				NULL };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	static atomic_t kmod_concurrent = ATOMIC_INIT(0);
 #define MAX_KMOD_CONCURRENT 50	/* Completely arbitrary value - KAO */
 	static int kmod_loop_msg;
@@ -160,7 +177,13 @@ int __request_module(bool wait, const char *fmt, ...)
 
 	trace_module_request(module_name, wait, _RET_IP_);
 
+<<<<<<< HEAD
 	ret = call_modprobe(module_name, wait ? UMH_WAIT_PROC : UMH_WAIT_EXEC);
+=======
+	ret = call_usermodehelper_fns(modprobe_path, argv, envp,
+			wait ? UMH_WAIT_PROC : UMH_WAIT_EXEC,
+			NULL, NULL, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	atomic_dec(&kmod_concurrent);
 	return ret;
@@ -218,7 +241,11 @@ static int ____call_usermodehelper(void *data)
 	/* Exec failed? */
 fail:
 	sub_info->retval = retval;
+<<<<<<< HEAD
 	return 0;
+=======
+	do_exit(0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void call_usermodehelper_freeinfo(struct subprocess_info *info)
@@ -229,6 +256,7 @@ void call_usermodehelper_freeinfo(struct subprocess_info *info)
 }
 EXPORT_SYMBOL(call_usermodehelper_freeinfo);
 
+<<<<<<< HEAD
 static void umh_complete(struct subprocess_info *sub_info)
 {
 	struct completion *comp = xchg(&sub_info->complete, NULL);
@@ -242,6 +270,8 @@ static void umh_complete(struct subprocess_info *sub_info)
 		call_usermodehelper_freeinfo(sub_info);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Keventd can't block, but this (a child) can. */
 static int wait_for_helper(void *data)
 {
@@ -278,7 +308,11 @@ static int wait_for_helper(void *data)
 			sub_info->retval = ret;
 	}
 
+<<<<<<< HEAD
 	umh_complete(sub_info);
+=======
+	complete(sub_info->complete);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -287,7 +321,11 @@ static void __call_usermodehelper(struct work_struct *work)
 {
 	struct subprocess_info *sub_info =
 		container_of(work, struct subprocess_info, work);
+<<<<<<< HEAD
 	int wait = sub_info->wait & ~UMH_KILLABLE;
+=======
+	enum umh_wait wait = sub_info->wait;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pid_t pid;
 
 	/* CLONE_VFORK: wait until the usermode helper has execve'd
@@ -312,7 +350,11 @@ static void __call_usermodehelper(struct work_struct *work)
 	case UMH_WAIT_EXEC:
 		if (pid < 0)
 			sub_info->retval = pid;
+<<<<<<< HEAD
 		umh_complete(sub_info);
+=======
+		complete(sub_info->complete);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -320,20 +362,30 @@ static void __call_usermodehelper(struct work_struct *work)
  * If set, call_usermodehelper_exec() will exit immediately returning -EBUSY
  * (used for preventing user land processes from being created after the user
  * land has been frozen during a system-wide hibernation or suspend operation).
+<<<<<<< HEAD
  * Should always be manipulated under umhelper_sem acquired for write.
  */
 static enum umh_disable_depth usermodehelper_disabled = UMH_DISABLED;
+=======
+ */
+static int usermodehelper_disabled;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Number of helpers running */
 static atomic_t running_helpers = ATOMIC_INIT(0);
 
 /*
+<<<<<<< HEAD
  * Wait queue head used by usermodehelper_disable() to wait for all running
+=======
+ * Wait queue head used by usermodehelper_pm_callback() to wait for all running
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * helpers to finish.
  */
 static DECLARE_WAIT_QUEUE_HEAD(running_helpers_waitq);
 
 /*
+<<<<<<< HEAD
  * Used by usermodehelper_read_lock_wait() to wait for usermodehelper_disabled
  * to become 'false'.
  */
@@ -440,6 +492,22 @@ int __usermodehelper_disable(enum umh_disable_depth depth)
 	usermodehelper_disabled = depth;
 	up_write(&umhelper_sem);
 
+=======
+ * Time to wait for running_helpers to become zero before the setting of
+ * usermodehelper_disabled in usermodehelper_pm_callback() fails
+ */
+#define RUNNING_HELPERS_TIMEOUT	(5 * HZ)
+
+/**
+ * usermodehelper_disable - prevent new helpers from being started
+ */
+int usermodehelper_disable(void)
+{
+	long retval;
+
+	usermodehelper_disabled = 1;
+	smp_mb();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * From now on call_usermodehelper_exec() won't start any new
 	 * helpers, so it is sufficient if running_helpers turns out to
@@ -452,10 +520,34 @@ int __usermodehelper_disable(enum umh_disable_depth depth)
 	if (retval)
 		return 0;
 
+<<<<<<< HEAD
 	__usermodehelper_set_disable_depth(UMH_ENABLED);
 	return -EAGAIN;
 }
 
+=======
+	usermodehelper_disabled = 0;
+	return -EAGAIN;
+}
+
+/**
+ * usermodehelper_enable - allow new helpers to be started again
+ */
+void usermodehelper_enable(void)
+{
+	usermodehelper_disabled = 0;
+}
+
+/**
+ * usermodehelper_is_disabled - check if new helpers are allowed to be started
+ */
+bool usermodehelper_is_disabled(void)
+{
+	return usermodehelper_disabled;
+}
+EXPORT_SYMBOL_GPL(usermodehelper_is_disabled);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void helper_lock(void)
 {
 	atomic_inc(&running_helpers);
@@ -535,17 +627,25 @@ EXPORT_SYMBOL(call_usermodehelper_setfns);
  * asynchronously if wait is not set, and runs as a child of keventd.
  * (ie. it runs with full root capabilities).
  */
+<<<<<<< HEAD
 int call_usermodehelper_exec(struct subprocess_info *sub_info, int wait)
+=======
+int call_usermodehelper_exec(struct subprocess_info *sub_info,
+			     enum umh_wait wait)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	DECLARE_COMPLETION_ONSTACK(done);
 	int retval = 0;
 
 	helper_lock();
+<<<<<<< HEAD
 	if (!sub_info->path) {
 		retval = -EINVAL;
 		goto out;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (sub_info->path[0] == '\0')
 		goto out;
 
@@ -560,6 +660,7 @@ int call_usermodehelper_exec(struct subprocess_info *sub_info, int wait)
 	queue_work(khelper_wq, &sub_info->work);
 	if (wait == UMH_NO_WAIT)	/* task has freed sub_info */
 		goto unlock;
+<<<<<<< HEAD
 
 	if (wait & UMH_KILLABLE) {
 		retval = wait_for_completion_killable(&done);
@@ -575,6 +676,11 @@ int call_usermodehelper_exec(struct subprocess_info *sub_info, int wait)
 	wait_for_completion(&done);
 wait_done:
 	retval = sub_info->retval;
+=======
+	wait_for_completion(&done);
+	retval = sub_info->retval;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	call_usermodehelper_freeinfo(sub_info);
 unlock:

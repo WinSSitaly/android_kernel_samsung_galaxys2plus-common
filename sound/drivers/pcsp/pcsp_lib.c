@@ -14,7 +14,11 @@
 #include <asm/io.h>
 #include "pcsp.h"
 
+<<<<<<< HEAD
 static bool nforce_wa;
+=======
+static int nforce_wa;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(nforce_wa, bool, 0444);
 MODULE_PARM_DESC(nforce_wa, "Apply NForce chipset workaround "
 		"(expect bad sound)");

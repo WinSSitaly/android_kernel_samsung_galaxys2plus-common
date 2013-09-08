@@ -7,7 +7,10 @@
 #define CACHEID_VIPT			(CACHEID_VIPT_ALIASING|CACHEID_VIPT_NONALIASING)
 #define CACHEID_ASID_TAGGED		(1 << 3)
 #define CACHEID_VIPT_I_ALIASING		(1 << 4)
+<<<<<<< HEAD
 #define CACHEID_PIPT			(1 << 5)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern unsigned int cacheid;
 
@@ -17,7 +20,10 @@ extern unsigned int cacheid;
 #define cache_is_vipt_aliasing()	cacheid_is(CACHEID_VIPT_ALIASING)
 #define icache_is_vivt_asid_tagged()	cacheid_is(CACHEID_ASID_TAGGED)
 #define icache_is_vipt_aliasing()	cacheid_is(CACHEID_VIPT_I_ALIASING)
+<<<<<<< HEAD
 #define icache_is_pipt()		cacheid_is(CACHEID_PIPT)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * __LINUX_ARM_ARCH__ is the minimum supported CPU architecture
@@ -28,8 +34,12 @@ extern unsigned int cacheid;
 #if __LINUX_ARM_ARCH__ >= 7
 #define __CACHEID_ARCH_MIN	(CACHEID_VIPT_NONALIASING |\
 				 CACHEID_ASID_TAGGED |\
+<<<<<<< HEAD
 				 CACHEID_VIPT_I_ALIASING |\
 				 CACHEID_PIPT)
+=======
+				 CACHEID_VIPT_I_ALIASING)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #elif __LINUX_ARM_ARCH__ >= 6
 #define	__CACHEID_ARCH_MIN	(~CACHEID_VIVT)
 #else

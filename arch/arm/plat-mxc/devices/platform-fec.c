@@ -6,25 +6,38 @@
  * the terms of the GNU General Public License version 2 as published by the
  * Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/sizes.h>
 #include <mach/hardware.h>
 #include <mach/devices-common.h>
 
+<<<<<<< HEAD
 #define imx_fec_data_entry_single(soc, _devid)				\
 	{								\
 		.devid = _devid,					\
+=======
+#define imx_fec_data_entry_single(soc)					\
+	{								\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.iobase = soc ## _FEC_BASE_ADDR,			\
 		.irq = soc ## _INT_FEC,					\
 	}
 
 #ifdef CONFIG_SOC_IMX25
 const struct imx_fec_data imx25_fec_data __initconst =
+<<<<<<< HEAD
 	imx_fec_data_entry_single(MX25, "imx25-fec");
+=======
+	imx_fec_data_entry_single(MX25);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* ifdef CONFIG_SOC_IMX25 */
 
 #ifdef CONFIG_SOC_IMX27
 const struct imx_fec_data imx27_fec_data __initconst =
+<<<<<<< HEAD
 	imx_fec_data_entry_single(MX27, "imx27-fec");
 #endif /* ifdef CONFIG_SOC_IMX27 */
 
@@ -50,6 +63,29 @@ const struct imx_fec_data imx51_fec_data __initconst =
 /* i.mx53 has the i.mx25 type fec */
 const struct imx_fec_data imx53_fec_data __initconst =
 	imx_fec_data_entry_single(MX53, "imx25-fec");
+=======
+	imx_fec_data_entry_single(MX27);
+#endif /* ifdef CONFIG_SOC_IMX27 */
+
+#ifdef CONFIG_SOC_IMX35
+const struct imx_fec_data imx35_fec_data __initconst =
+	imx_fec_data_entry_single(MX35);
+#endif
+
+#ifdef CONFIG_SOC_IMX50
+const struct imx_fec_data imx50_fec_data __initconst =
+	imx_fec_data_entry_single(MX50);
+#endif
+
+#ifdef CONFIG_SOC_IMX51
+const struct imx_fec_data imx51_fec_data __initconst =
+	imx_fec_data_entry_single(MX51);
+#endif
+
+#ifdef CONFIG_SOC_IMX53
+const struct imx_fec_data imx53_fec_data __initconst =
+	imx_fec_data_entry_single(MX53);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 struct platform_device *__init imx_add_fec(
@@ -68,7 +104,11 @@ struct platform_device *__init imx_add_fec(
 		},
 	};
 
+<<<<<<< HEAD
 	return imx_add_platform_device_dmamask(data->devid, 0,
+=======
+	return imx_add_platform_device_dmamask("fec", 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			res, ARRAY_SIZE(res),
 			pdata, sizeof(*pdata), DMA_BIT_MASK(32));
 }

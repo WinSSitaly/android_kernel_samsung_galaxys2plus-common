@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2010 Realtek Corporation. All rights reserved.
@@ -23,6 +24,8 @@
  * Larry Finger <Larry.Finger@lwfinger.net>
  *
  ******************************************************************************/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __RTL871X_MP_H_
 #define __RTL871X_MP_H_
 
@@ -126,6 +129,10 @@ struct mp_xmit_frame {
 	struct urb *pxmit_urb[8];
 	u8 bpending[8];
 	u8 last[8];
+<<<<<<< HEAD
+=======
+	uint mem[(MAX_MP_XMITBUF_SZ >> 2)];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct mp_wiparam {

@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+/*
+ * $Id: libsbew.h,v 2.1 2005/10/27 18:54:19 rickd PMCC4_3_1B $
+ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef _INC_LIBSBEW_H_
 #define _INC_LIBSBEW_H_
 
@@ -21,8 +28,37 @@
  * For further information, contact via email: support@sbei.com
  * SBE, Inc.  San Ramon, California  U.S.A.
  *-----------------------------------------------------------------------------
+<<<<<<< HEAD
  */
 
+=======
+ * RCS info:
+ * RCS revision: $Revision: 2.1 $
+ * Last changed on $Date: 2005/10/27 18:54:19 $
+ * Changed by $Author: rickd $
+ *-----------------------------------------------------------------------------
+ * $Log: libsbew.h,v $
+ * Revision 2.1  2005/10/27 18:54:19  rickd
+ * Add E1PLAIN support.
+ *
+ * Revision 2.0  2005/09/28 00:10:08  rickd
+ * Customized for PMCC4 comet-per-port design.
+ *
+ * Revision 1.15  2005/03/29 00:51:31  rickd
+ * File imported from C1T3 port, Revision 1.15
+ *-----------------------------------------------------------------------------
+ */
+
+#ifndef __KERNEL__
+#include <sys/types.h>
+#endif
+
+#ifdef __cplusplus
+extern      "C"
+{
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /********************************/
 /**  set driver logging level  **/
 /********************************/
@@ -295,7 +331,11 @@ struct sbecom_port_param
 #define CFG_CH_DINV_TX      0x02
 
 
+<<<<<<< HEAD
 /* Possible resettable chipsets/functions */
+=======
+/* Posssible resettable chipsets/functions */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define RESET_DEV_TEMUX     1
 #define RESET_DEV_TECT3     RESET_DEV_TEMUX
 #define RESET_DEV_PLL       2
@@ -546,4 +586,11 @@ struct sbecom_port_param
     extern int  wancfg_set_tsioc (wcfg_t *, struct wanc1t3_ts_param *);
 #endif
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif                          /*** _INC_LIBSBEW_H_ ***/

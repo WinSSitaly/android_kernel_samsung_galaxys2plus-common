@@ -5,7 +5,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +45,10 @@
  * POSSIBILITY OF SUCH DAMAGES.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <acpi/acpi.h>
 #include "accommon.h"
 #include "acevents.h"
@@ -50,7 +57,10 @@
 #define _COMPONENT          ACPI_EVENTS
 ACPI_MODULE_NAME("evxfgpe")
 
+<<<<<<< HEAD
 #if (!ACPI_REDUCED_HARDWARE)	/* Entire module */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /******************************************************************************
  *
  * FUNCTION:    acpi_update_all_gpes
@@ -696,4 +706,7 @@ acpi_get_gpe_device(u32 index, acpi_handle *gpe_device)
 }
 
 ACPI_EXPORT_SYMBOL(acpi_get_gpe_device)
+<<<<<<< HEAD
 #endif				/* !ACPI_REDUCED_HARDWARE */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

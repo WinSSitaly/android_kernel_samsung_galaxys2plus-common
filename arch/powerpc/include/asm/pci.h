@@ -44,7 +44,16 @@ struct pci_dev;
  * bus numbers (don't do that on ppc64 yet !)
  */
 #define pcibios_assign_all_busses() \
+<<<<<<< HEAD
 	(pci_has_flag(PCI_REASSIGN_ALL_BUS))
+=======
+	(ppc_pci_has_flag(PPC_PCI_REASSIGN_ALL_BUS))
+
+static inline void pcibios_set_master(struct pci_dev *dev)
+{
+	/* No special bus mastering setup handling */
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void pcibios_penalize_isa_irq(int irq, int active)
 {
@@ -154,6 +163,17 @@ extern int pci_mmap_legacy_page_range(struct pci_bus *bus,
 
 #endif /* CONFIG_PPC64 */
 
+<<<<<<< HEAD
+=======
+extern void pcibios_resource_to_bus(struct pci_dev *dev,
+			struct pci_bus_region *region,
+			struct resource *res);
+
+extern void pcibios_bus_to_resource(struct pci_dev *dev,
+			struct resource *res,
+			struct pci_bus_region *region);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void pcibios_claim_one_bus(struct pci_bus *b);
 
 extern void pcibios_finish_adding_to_bus(struct pci_bus *bus);
@@ -166,11 +186,21 @@ extern int remove_phb_dynamic(struct pci_controller *phb);
 extern struct pci_dev *of_create_pci_dev(struct device_node *node,
 					struct pci_bus *bus, int devfn);
 
+<<<<<<< HEAD
 extern void of_scan_pci_bridge(struct pci_dev *dev);
+=======
+extern void of_scan_pci_bridge(struct device_node *node,
+				struct pci_dev *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void of_scan_bus(struct device_node *node, struct pci_bus *bus);
 extern void of_rescan_bus(struct device_node *node, struct pci_bus *bus);
 
+<<<<<<< HEAD
+=======
+extern int pci_read_irq_line(struct pci_dev *dev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct file;
 extern pgprot_t	pci_phys_mem_access_prot(struct file *file,
 					 unsigned long pfn,
@@ -182,7 +212,10 @@ extern void pci_resource_to_user(const struct pci_dev *dev, int bar,
 				 const struct resource *rsrc,
 				 resource_size_t *start, resource_size_t *end);
 
+<<<<<<< HEAD
 extern resource_size_t pcibios_io_space_offset(struct pci_controller *hose);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void pcibios_setup_bus_devices(struct pci_bus *bus);
 extern void pcibios_setup_bus_self(struct pci_bus *bus);
 extern void pcibios_setup_phb_io_space(struct pci_controller *hose);

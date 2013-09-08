@@ -30,7 +30,11 @@ static void master_clk_init(struct clk *clk)
 	       pll1rate[(__raw_readw(FREQCR) >> 8) & 0x0007];
 }
 
+<<<<<<< HEAD
 static struct sh_clk_ops sh7201_master_clk_ops = {
+=======
+static struct clk_ops sh7201_master_clk_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init		= master_clk_init,
 };
 
@@ -40,7 +44,11 @@ static unsigned long module_clk_recalc(struct clk *clk)
 	return clk->parent->rate / pfc_divisors[idx];
 }
 
+<<<<<<< HEAD
 static struct sh_clk_ops sh7201_module_clk_ops = {
+=======
+static struct clk_ops sh7201_module_clk_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.recalc		= module_clk_recalc,
 };
 
@@ -50,7 +58,11 @@ static unsigned long bus_clk_recalc(struct clk *clk)
 	return clk->parent->rate / pfc_divisors[idx];
 }
 
+<<<<<<< HEAD
 static struct sh_clk_ops sh7201_bus_clk_ops = {
+=======
+static struct clk_ops sh7201_bus_clk_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.recalc		= bus_clk_recalc,
 };
 
@@ -60,18 +72,30 @@ static unsigned long cpu_clk_recalc(struct clk *clk)
 	return clk->parent->rate / ifc_divisors[idx];
 }
 
+<<<<<<< HEAD
 static struct sh_clk_ops sh7201_cpu_clk_ops = {
 	.recalc		= cpu_clk_recalc,
 };
 
 static struct sh_clk_ops *sh7201_clk_ops[] = {
+=======
+static struct clk_ops sh7201_cpu_clk_ops = {
+	.recalc		= cpu_clk_recalc,
+};
+
+static struct clk_ops *sh7201_clk_ops[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&sh7201_master_clk_ops,
 	&sh7201_module_clk_ops,
 	&sh7201_bus_clk_ops,
 	&sh7201_cpu_clk_ops,
 };
 
+<<<<<<< HEAD
 void __init arch_init_clk_ops(struct sh_clk_ops **ops, int idx)
+=======
+void __init arch_init_clk_ops(struct clk_ops **ops, int idx)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (test_mode_pin(MODE_PIN1 | MODE_PIN0))
 		pll2_mult = 1;

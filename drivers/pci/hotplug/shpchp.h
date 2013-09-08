@@ -43,10 +43,18 @@
 	#define MY_NAME	THIS_MODULE->name
 #endif
 
+<<<<<<< HEAD
 extern bool shpchp_poll_mode;
 extern int shpchp_poll_time;
 extern bool shpchp_debug;
 extern struct workqueue_struct *shpchp_wq;
+=======
+extern int shpchp_poll_mode;
+extern int shpchp_poll_time;
+extern int shpchp_debug;
+extern struct workqueue_struct *shpchp_wq;
+extern struct workqueue_struct *shpchp_ordered_wq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define dbg(format, arg...)						\
 do {									\

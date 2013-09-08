@@ -85,7 +85,11 @@ static int __init uclinux_mtd_init(void)
 	}
 
 	mtd->owner = THIS_MODULE;
+<<<<<<< HEAD
 	mtd->_point = uclinux_point;
+=======
+	mtd->point = uclinux_point;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mtd->priv = mapp;
 
 	uclinux_ram_mtdinfo = mtd;

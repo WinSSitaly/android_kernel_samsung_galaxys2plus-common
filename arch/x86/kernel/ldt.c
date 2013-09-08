@@ -15,6 +15,10 @@
 #include <linux/vmalloc.h>
 #include <linux/uaccess.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/ldt.h>
 #include <asm/desc.h>
 #include <asm/mmu_context.h>

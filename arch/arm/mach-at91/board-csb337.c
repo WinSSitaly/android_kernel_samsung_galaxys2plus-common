@@ -19,7 +19,10 @@
  */
 
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/mm.h>
 #include <linux/module.h>
@@ -39,6 +42,10 @@
 
 #include <mach/hardware.h>
 #include <mach/board.h>
+<<<<<<< HEAD
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "generic.h"
 
@@ -46,7 +53,11 @@
 static void __init csb337_init_early(void)
 {
 	/* Initialize processor: 3.6864 MHz crystal */
+<<<<<<< HEAD
 	at91_initialize(3686400);
+=======
+	at91rm9200_initialize(3686400);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Setup the LEDs */
 	at91_init_leds(AT91_PIN_PB0, AT91_PIN_PB1);
@@ -58,13 +69,23 @@ static void __init csb337_init_early(void)
 	at91_set_serial_console(0);
 }
 
+<<<<<<< HEAD
 static struct macb_platform_data __initdata csb337_eth_data = {
+=======
+static void __init csb337_init_irq(void)
+{
+	at91rm9200_init_interrupts(NULL);
+}
+
+static struct at91_eth_data __initdata csb337_eth_data = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.phy_irq_pin	= AT91_PIN_PC2,
 	.is_rmii	= 0,
 };
 
 static struct at91_usbh_data __initdata csb337_usbh_data = {
 	.ports		= 2,
+<<<<<<< HEAD
 	.vbus_pin	= {-EINVAL, -EINVAL},
 	.overcurrent_pin= {-EINVAL, -EINVAL},
 };
@@ -72,6 +93,13 @@ static struct at91_usbh_data __initdata csb337_usbh_data = {
 static struct at91_udc_data __initdata csb337_udc_data = {
 	.pullup_pin	= AT91_PIN_PA24,
 	.vbus_pin	= -EINVAL,
+=======
+};
+
+static struct at91_udc_data __initdata csb337_udc_data = {
+	// this has no VBUS sensing pin
+	.pullup_pin	= AT91_PIN_PA24,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct i2c_board_info __initdata csb337_i2c_devices[] = {
@@ -100,7 +128,10 @@ static struct at91_mmc_data __initdata csb337_mmc_data = {
 	.slot_b		= 0,
 	.wire4		= 1,
 	.wp_pin		= AT91_PIN_PD6,
+<<<<<<< HEAD
 	.vcc_pin	= -EINVAL,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct spi_board_info csb337_spi_devices[] = {
@@ -256,8 +287,14 @@ static void __init csb337_board_init(void)
 MACHINE_START(CSB337, "Cogent CSB337")
 	/* Maintainer: Bill Gatliff */
 	.timer		= &at91rm9200_timer,
+<<<<<<< HEAD
 	.map_io		= at91_map_io,
 	.init_early	= csb337_init_early,
 	.init_irq	= at91_init_irq_default,
+=======
+	.map_io		= at91rm9200_map_io,
+	.init_early	= csb337_init_early,
+	.init_irq	= csb337_init_irq,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= csb337_board_init,
 MACHINE_END

@@ -34,6 +34,33 @@
 #include <asm/unaligned.h>
 #include <asm/dwarf.h>
 
+<<<<<<< HEAD
+=======
+void *module_alloc(unsigned long size)
+{
+	if (size == 0)
+		return NULL;
+
+	return vmalloc_exec(size);
+}
+
+
+/* Free memory returned from module_alloc */
+void module_free(struct module *mod, void *module_region)
+{
+	vfree(module_region);
+}
+
+/* We don't need anything special. */
+int module_frob_arch_sections(Elf_Ehdr *hdr,
+			      Elf_Shdr *sechdrs,
+			      char *secstrings,
+			      struct module *mod)
+{
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int apply_relocate_add(Elf32_Shdr *sechdrs,
 		   const char *strtab,
 		   unsigned int symindex,
@@ -109,6 +136,20 @@ int apply_relocate_add(Elf32_Shdr *sechdrs,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+int apply_relocate(Elf32_Shdr *sechdrs,
+		       const char *strtab,
+		       unsigned int symindex,
+		       unsigned int relsec,
+		       struct module *me)
+{
+	printk(KERN_ERR "module %s: REL RELOCATION unsupported\n",
+	       me->name);
+	return -ENOEXEC;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int module_finalize(const Elf_Ehdr *hdr,
 		    const Elf_Shdr *sechdrs,
 		    struct module *me)

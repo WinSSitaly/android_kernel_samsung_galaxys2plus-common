@@ -2,7 +2,10 @@
 
 #include <linux/types.h>
 #include <linux/proc_fs.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/lib80211.h>
 
 #include "hostap_wlan.h"

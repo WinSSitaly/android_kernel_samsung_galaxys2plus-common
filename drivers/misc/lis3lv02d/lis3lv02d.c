@@ -111,8 +111,11 @@ static struct kernel_param_ops param_ops_axis = {
 	.get = param_get_int,
 };
 
+<<<<<<< HEAD
 #define param_check_axis(name, p) param_check_int(name, p)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_array_named(axes, lis3_dev.ac.as_array, axis, NULL, 0644);
 MODULE_PARM_DESC(axes, "Axis-mapping for x,y,z directions");
 
@@ -165,7 +168,11 @@ static void lis3lv02d_get_xyz(struct lis3lv02d *lis3, int *x, int *y, int *z)
 	int i;
 
 	if (lis3->blkread) {
+<<<<<<< HEAD
 		if (lis3->whoami == WAI_12B) {
+=======
+		if (lis3_dev.whoami == WAI_12B) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			u16 data[3];
 			lis3->blkread(lis3, OUTX_L, 6, (u8 *)data);
 			for (i = 0; i < 3; i++)
@@ -197,11 +204,16 @@ static int lis3_8_rates[2] = {100, 400};
 static int lis3_3dc_rates[16] = {0, 1, 10, 25, 50, 100, 200, 400, 1600, 5000};
 
 /* ODR is Output Data Rate */
+<<<<<<< HEAD
 static int lis3lv02d_get_odr(struct lis3lv02d *lis3)
+=======
+static int lis3lv02d_get_odr(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u8 ctrl;
 	int shift;
 
+<<<<<<< HEAD
 	lis3->read(lis3, CTRL_REG1, &ctrl);
 	ctrl &= lis3->odr_mask;
 	shift = ffs(lis3->odr_mask) - 1;
@@ -221,6 +233,15 @@ static int lis3lv02d_get_pwron_wait(struct lis3lv02d *lis3)
 }
 
 static int lis3lv02d_set_odr(struct lis3lv02d *lis3, int rate)
+=======
+	lis3_dev.read(&lis3_dev, CTRL_REG1, &ctrl);
+	ctrl &= lis3_dev.odr_mask;
+	shift = ffs(lis3_dev.odr_mask) - 1;
+	return lis3_dev.odrs[(ctrl >> shift)];
+}
+
+static int lis3lv02d_set_odr(int rate)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u8 ctrl;
 	int i, len, shift;
@@ -228,6 +249,7 @@ static int lis3lv02d_set_odr(struct lis3lv02d *lis3, int rate)
 	if (!rate)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	lis3->read(lis3, CTRL_REG1, &ctrl);
 	ctrl &= ~lis3->odr_mask;
 	len = 1 << hweight_long(lis3->odr_mask); /* # of possible values */
@@ -236,6 +258,16 @@ static int lis3lv02d_set_odr(struct lis3lv02d *lis3, int rate)
 	for (i = 0; i < len; i++)
 		if (lis3->odrs[i] == rate) {
 			lis3->write(lis3, CTRL_REG1,
+=======
+	lis3_dev.read(&lis3_dev, CTRL_REG1, &ctrl);
+	ctrl &= ~lis3_dev.odr_mask;
+	len = 1 << hweight_long(lis3_dev.odr_mask); /* # of possible values */
+	shift = ffs(lis3_dev.odr_mask) - 1;
+
+	for (i = 0; i < len; i++)
+		if (lis3_dev.odrs[i] == rate) {
+			lis3_dev.write(&lis3_dev, CTRL_REG1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					ctrl | (i << shift));
 			return 0;
 		}
@@ -254,12 +286,20 @@ static int lis3lv02d_selftest(struct lis3lv02d *lis3, s16 results[3])
 	mutex_lock(&lis3->mutex);
 
 	irq_cfg = lis3->irq_cfg;
+<<<<<<< HEAD
 	if (lis3->whoami == WAI_8B) {
+=======
+	if (lis3_dev.whoami == WAI_8B) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		lis3->data_ready_count[IRQ_LINE0] = 0;
 		lis3->data_ready_count[IRQ_LINE1] = 0;
 
 		/* Change interrupt cfg to data ready for selftest */
+<<<<<<< HEAD
 		atomic_inc(&lis3->wake_thread);
+=======
+		atomic_inc(&lis3_dev.wake_thread);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		lis3->irq_cfg = LIS3_IRQ1_DATA_READY | LIS3_IRQ2_DATA_READY;
 		lis3->read(lis3, CTRL_REG3, &ctrl_reg_data);
 		lis3->write(lis3, CTRL_REG3, (ctrl_reg_data &
@@ -267,12 +307,20 @@ static int lis3lv02d_selftest(struct lis3lv02d *lis3, s16 results[3])
 				(LIS3_IRQ1_DATA_READY | LIS3_IRQ2_DATA_READY));
 	}
 
+<<<<<<< HEAD
 	if (lis3->whoami == WAI_3DC) {
+=======
+	if (lis3_dev.whoami == WAI_3DC) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ctlreg = CTRL_REG4;
 		selftest = CTRL4_ST0;
 	} else {
 		ctlreg = CTRL_REG1;
+<<<<<<< HEAD
 		if (lis3->whoami == WAI_12B)
+=======
+		if (lis3_dev.whoami == WAI_12B)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			selftest = CTRL1_ST;
 		else
 			selftest = CTRL1_STP;
@@ -280,9 +328,13 @@ static int lis3lv02d_selftest(struct lis3lv02d *lis3, s16 results[3])
 
 	lis3->read(lis3, ctlreg, &reg);
 	lis3->write(lis3, ctlreg, (reg | selftest));
+<<<<<<< HEAD
 	ret = lis3lv02d_get_pwron_wait(lis3);
 	if (ret)
 		goto fail;
+=======
+	msleep(lis3->pwron_delay / lis3lv02d_get_odr());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Read directly to avoid axis remap */
 	x = lis3->read_data(lis3, OUTX);
@@ -291,9 +343,13 @@ static int lis3lv02d_selftest(struct lis3lv02d *lis3, s16 results[3])
 
 	/* back to normal settings */
 	lis3->write(lis3, ctlreg, reg);
+<<<<<<< HEAD
 	ret = lis3lv02d_get_pwron_wait(lis3);
 	if (ret)
 		goto fail;
+=======
+	msleep(lis3->pwron_delay / lis3lv02d_get_odr());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	results[0] = x - lis3->read_data(lis3, OUTX);
 	results[1] = y - lis3->read_data(lis3, OUTY);
@@ -301,9 +357,15 @@ static int lis3lv02d_selftest(struct lis3lv02d *lis3, s16 results[3])
 
 	ret = 0;
 
+<<<<<<< HEAD
 	if (lis3->whoami == WAI_8B) {
 		/* Restore original interrupt configuration */
 		atomic_dec(&lis3->wake_thread);
+=======
+	if (lis3_dev.whoami == WAI_8B) {
+		/* Restore original interrupt configuration */
+		atomic_dec(&lis3_dev.wake_thread);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		lis3->write(lis3, CTRL_REG3, ctrl_reg_data);
 		lis3->irq_cfg = irq_cfg;
 
@@ -381,9 +443,14 @@ void lis3lv02d_poweroff(struct lis3lv02d *lis3)
 }
 EXPORT_SYMBOL_GPL(lis3lv02d_poweroff);
 
+<<<<<<< HEAD
 int lis3lv02d_poweron(struct lis3lv02d *lis3)
 {
 	int err;
+=======
+void lis3lv02d_poweron(struct lis3lv02d *lis3)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 reg;
 
 	lis3->init(lis3);
@@ -403,6 +470,7 @@ int lis3lv02d_poweron(struct lis3lv02d *lis3)
 		lis3->write(lis3, CTRL_REG2, reg);
 	}
 
+<<<<<<< HEAD
 	err = lis3lv02d_get_pwron_wait(lis3);
 	if (err)
 		return err;
@@ -411,26 +479,45 @@ int lis3lv02d_poweron(struct lis3lv02d *lis3)
 		lis3_context_restore(lis3);
 
 	return 0;
+=======
+	/* LIS3 power on delay is quite long */
+	msleep(lis3->pwron_delay / lis3lv02d_get_odr());
+
+	if (lis3->reg_ctrl)
+		lis3_context_restore(lis3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(lis3lv02d_poweron);
 
 
 static void lis3lv02d_joystick_poll(struct input_polled_dev *pidev)
 {
+<<<<<<< HEAD
 	struct lis3lv02d *lis3 = pidev->private;
 	int x, y, z;
 
 	mutex_lock(&lis3->mutex);
 	lis3lv02d_get_xyz(lis3, &x, &y, &z);
+=======
+	int x, y, z;
+
+	mutex_lock(&lis3_dev.mutex);
+	lis3lv02d_get_xyz(&lis3_dev, &x, &y, &z);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	input_report_abs(pidev->input, ABS_X, x);
 	input_report_abs(pidev->input, ABS_Y, y);
 	input_report_abs(pidev->input, ABS_Z, z);
 	input_sync(pidev->input);
+<<<<<<< HEAD
 	mutex_unlock(&lis3->mutex);
+=======
+	mutex_unlock(&lis3_dev.mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void lis3lv02d_joystick_open(struct input_polled_dev *pidev)
 {
+<<<<<<< HEAD
 	struct lis3lv02d *lis3 = pidev->private;
 
 	if (lis3->pm_dev)
@@ -438,6 +525,13 @@ static void lis3lv02d_joystick_open(struct input_polled_dev *pidev)
 
 	if (lis3->pdata && lis3->whoami == WAI_8B && lis3->idev)
 		atomic_set(&lis3->wake_thread, 1);
+=======
+	if (lis3_dev.pm_dev)
+		pm_runtime_get_sync(lis3_dev.pm_dev);
+
+	if (lis3_dev.pdata && lis3_dev.whoami == WAI_8B && lis3_dev.idev)
+		atomic_set(&lis3_dev.wake_thread, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Update coordinates for the case where poll interval is 0 and
 	 * the chip in running purely under interrupt control
@@ -447,6 +541,7 @@ static void lis3lv02d_joystick_open(struct input_polled_dev *pidev)
 
 static void lis3lv02d_joystick_close(struct input_polled_dev *pidev)
 {
+<<<<<<< HEAD
 	struct lis3lv02d *lis3 = pidev->private;
 
 	atomic_set(&lis3->wake_thread, 0);
@@ -459,6 +554,16 @@ static irqreturn_t lis302dl_interrupt(int irq, void *data)
 	struct lis3lv02d *lis3 = data;
 
 	if (!test_bit(0, &lis3->misc_opened))
+=======
+	atomic_set(&lis3_dev.wake_thread, 0);
+	if (lis3_dev.pm_dev)
+		pm_runtime_put(lis3_dev.pm_dev);
+}
+
+static irqreturn_t lis302dl_interrupt(int irq, void *dummy)
+{
+	if (!test_bit(0, &lis3_dev.misc_opened))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	/*
@@ -466,12 +571,21 @@ static irqreturn_t lis302dl_interrupt(int irq, void *data)
 	 * the lid is closed. This leads to interrupts as soon as a little move
 	 * is done.
 	 */
+<<<<<<< HEAD
 	atomic_inc(&lis3->count);
 
 	wake_up_interruptible(&lis3->misc_wait);
 	kill_fasync(&lis3->async_queue, SIGIO, POLL_IN);
 out:
 	if (atomic_read(&lis3->wake_thread))
+=======
+	atomic_inc(&lis3_dev.count);
+
+	wake_up_interruptible(&lis3_dev.misc_wait);
+	kill_fasync(&lis3_dev.async_queue, SIGIO, POLL_IN);
+out:
+	if (atomic_read(&lis3_dev.wake_thread))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return IRQ_WAKE_THREAD;
 	return IRQ_HANDLED;
 }
@@ -543,6 +657,7 @@ static irqreturn_t lis302dl_interrupt_thread2_8b(int irq, void *data)
 
 static int lis3lv02d_misc_open(struct inode *inode, struct file *file)
 {
+<<<<<<< HEAD
 	struct lis3lv02d *lis3 = container_of(file->private_data,
 					      struct lis3lv02d, miscdev);
 
@@ -553,11 +668,21 @@ static int lis3lv02d_misc_open(struct inode *inode, struct file *file)
 		pm_runtime_get_sync(lis3->pm_dev);
 
 	atomic_set(&lis3->count, 0);
+=======
+	if (test_and_set_bit(0, &lis3_dev.misc_opened))
+		return -EBUSY; /* already open */
+
+	if (lis3_dev.pm_dev)
+		pm_runtime_get_sync(lis3_dev.pm_dev);
+
+	atomic_set(&lis3_dev.count, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int lis3lv02d_misc_release(struct inode *inode, struct file *file)
 {
+<<<<<<< HEAD
 	struct lis3lv02d *lis3 = container_of(file->private_data,
 					      struct lis3lv02d, miscdev);
 
@@ -565,15 +690,24 @@ static int lis3lv02d_misc_release(struct inode *inode, struct file *file)
 	clear_bit(0, &lis3->misc_opened); /* release the device */
 	if (lis3->pm_dev)
 		pm_runtime_put(lis3->pm_dev);
+=======
+	fasync_helper(-1, file, 0, &lis3_dev.async_queue);
+	clear_bit(0, &lis3_dev.misc_opened); /* release the device */
+	if (lis3_dev.pm_dev)
+		pm_runtime_put(lis3_dev.pm_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static ssize_t lis3lv02d_misc_read(struct file *file, char __user *buf,
 				size_t count, loff_t *pos)
 {
+<<<<<<< HEAD
 	struct lis3lv02d *lis3 = container_of(file->private_data,
 					      struct lis3lv02d, miscdev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DECLARE_WAITQUEUE(wait, current);
 	u32 data;
 	unsigned char byte_data;
@@ -582,10 +716,17 @@ static ssize_t lis3lv02d_misc_read(struct file *file, char __user *buf,
 	if (count < 1)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	add_wait_queue(&lis3->misc_wait, &wait);
 	while (true) {
 		set_current_state(TASK_INTERRUPTIBLE);
 		data = atomic_xchg(&lis3->count, 0);
+=======
+	add_wait_queue(&lis3_dev.misc_wait, &wait);
+	while (true) {
+		set_current_state(TASK_INTERRUPTIBLE);
+		data = atomic_xchg(&lis3_dev.count, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (data)
 			break;
 
@@ -615,28 +756,41 @@ static ssize_t lis3lv02d_misc_read(struct file *file, char __user *buf,
 
 out:
 	__set_current_state(TASK_RUNNING);
+<<<<<<< HEAD
 	remove_wait_queue(&lis3->misc_wait, &wait);
+=======
+	remove_wait_queue(&lis3_dev.misc_wait, &wait);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return retval;
 }
 
 static unsigned int lis3lv02d_misc_poll(struct file *file, poll_table *wait)
 {
+<<<<<<< HEAD
 	struct lis3lv02d *lis3 = container_of(file->private_data,
 					      struct lis3lv02d, miscdev);
 
 	poll_wait(file, &lis3->misc_wait, wait);
 	if (atomic_read(&lis3->count))
+=======
+	poll_wait(file, &lis3_dev.misc_wait, wait);
+	if (atomic_read(&lis3_dev.count))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return POLLIN | POLLRDNORM;
 	return 0;
 }
 
 static int lis3lv02d_misc_fasync(int fd, struct file *file, int on)
 {
+<<<<<<< HEAD
 	struct lis3lv02d *lis3 = container_of(file->private_data,
 					      struct lis3lv02d, miscdev);
 
 	return fasync_helper(fd, file, on, &lis3->async_queue);
+=======
+	return fasync_helper(fd, file, on, &lis3_dev.async_queue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct file_operations lis3lv02d_misc_fops = {
@@ -649,13 +803,24 @@ static const struct file_operations lis3lv02d_misc_fops = {
 	.fasync  = lis3lv02d_misc_fasync,
 };
 
+<<<<<<< HEAD
 int lis3lv02d_joystick_enable(struct lis3lv02d *lis3)
+=======
+static struct miscdevice lis3lv02d_misc_device = {
+	.minor   = MISC_DYNAMIC_MINOR,
+	.name    = "freefall",
+	.fops    = &lis3lv02d_misc_fops,
+};
+
+int lis3lv02d_joystick_enable(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct input_dev *input_dev;
 	int err;
 	int max_val, fuzz, flat;
 	int btns[] = {BTN_X, BTN_Y, BTN_Z};
 
+<<<<<<< HEAD
 	if (lis3->idev)
 		return -EINVAL;
 
@@ -671,29 +836,59 @@ int lis3lv02d_joystick_enable(struct lis3lv02d *lis3)
 	lis3->idev->poll_interval_max = MDPS_POLL_MAX;
 	lis3->idev->private = lis3;
 	input_dev = lis3->idev->input;
+=======
+	if (lis3_dev.idev)
+		return -EINVAL;
+
+	lis3_dev.idev = input_allocate_polled_device();
+	if (!lis3_dev.idev)
+		return -ENOMEM;
+
+	lis3_dev.idev->poll = lis3lv02d_joystick_poll;
+	lis3_dev.idev->open = lis3lv02d_joystick_open;
+	lis3_dev.idev->close = lis3lv02d_joystick_close;
+	lis3_dev.idev->poll_interval = MDPS_POLL_INTERVAL;
+	lis3_dev.idev->poll_interval_min = MDPS_POLL_MIN;
+	lis3_dev.idev->poll_interval_max = MDPS_POLL_MAX;
+	input_dev = lis3_dev.idev->input;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	input_dev->name       = "ST LIS3LV02DL Accelerometer";
 	input_dev->phys       = DRIVER_NAME "/input0";
 	input_dev->id.bustype = BUS_HOST;
 	input_dev->id.vendor  = 0;
+<<<<<<< HEAD
 	input_dev->dev.parent = &lis3->pdev->dev;
 
 	set_bit(EV_ABS, input_dev->evbit);
 	max_val = (lis3->mdps_max_val * lis3->scale) / LIS3_ACCURACY;
 	if (lis3->whoami == WAI_12B) {
+=======
+	input_dev->dev.parent = &lis3_dev.pdev->dev;
+
+	set_bit(EV_ABS, input_dev->evbit);
+	max_val = (lis3_dev.mdps_max_val * lis3_dev.scale) / LIS3_ACCURACY;
+	if (lis3_dev.whoami == WAI_12B) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fuzz = LIS3_DEFAULT_FUZZ_12B;
 		flat = LIS3_DEFAULT_FLAT_12B;
 	} else {
 		fuzz = LIS3_DEFAULT_FUZZ_8B;
 		flat = LIS3_DEFAULT_FLAT_8B;
 	}
+<<<<<<< HEAD
 	fuzz = (fuzz * lis3->scale) / LIS3_ACCURACY;
 	flat = (flat * lis3->scale) / LIS3_ACCURACY;
+=======
+	fuzz = (fuzz * lis3_dev.scale) / LIS3_ACCURACY;
+	flat = (flat * lis3_dev.scale) / LIS3_ACCURACY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	input_set_abs_params(input_dev, ABS_X, -max_val, max_val, fuzz, flat);
 	input_set_abs_params(input_dev, ABS_Y, -max_val, max_val, fuzz, flat);
 	input_set_abs_params(input_dev, ABS_Z, -max_val, max_val, fuzz, flat);
 
+<<<<<<< HEAD
 	lis3->mapped_btns[0] = lis3lv02d_get_axis(abs(lis3->ac.x), btns);
 	lis3->mapped_btns[1] = lis3lv02d_get_axis(abs(lis3->ac.y), btns);
 	lis3->mapped_btns[2] = lis3lv02d_get_axis(abs(lis3->ac.z), btns);
@@ -702,12 +897,23 @@ int lis3lv02d_joystick_enable(struct lis3lv02d *lis3)
 	if (err) {
 		input_free_polled_device(lis3->idev);
 		lis3->idev = NULL;
+=======
+	lis3_dev.mapped_btns[0] = lis3lv02d_get_axis(abs(lis3_dev.ac.x), btns);
+	lis3_dev.mapped_btns[1] = lis3lv02d_get_axis(abs(lis3_dev.ac.y), btns);
+	lis3_dev.mapped_btns[2] = lis3lv02d_get_axis(abs(lis3_dev.ac.z), btns);
+
+	err = input_register_polled_device(lis3_dev.idev);
+	if (err) {
+		input_free_polled_device(lis3_dev.idev);
+		lis3_dev.idev = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return err;
 }
 EXPORT_SYMBOL_GPL(lis3lv02d_joystick_enable);
 
+<<<<<<< HEAD
 void lis3lv02d_joystick_disable(struct lis3lv02d *lis3)
 {
 	if (lis3->irq)
@@ -723,6 +929,23 @@ void lis3lv02d_joystick_disable(struct lis3lv02d *lis3)
 	input_unregister_polled_device(lis3->idev);
 	input_free_polled_device(lis3->idev);
 	lis3->idev = NULL;
+=======
+void lis3lv02d_joystick_disable(void)
+{
+	if (lis3_dev.irq)
+		free_irq(lis3_dev.irq, &lis3_dev);
+	if (lis3_dev.pdata && lis3_dev.pdata->irq2)
+		free_irq(lis3_dev.pdata->irq2, &lis3_dev);
+
+	if (!lis3_dev.idev)
+		return;
+
+	if (lis3_dev.irq)
+		misc_deregister(&lis3lv02d_misc_device);
+	input_unregister_polled_device(lis3_dev.idev);
+	input_free_polled_device(lis3_dev.idev);
+	lis3_dev.idev = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(lis3lv02d_joystick_disable);
 
@@ -747,7 +970,10 @@ static void lis3lv02d_sysfs_poweron(struct lis3lv02d *lis3)
 static ssize_t lis3lv02d_selftest_show(struct device *dev,
 				struct device_attribute *attr, char *buf)
 {
+<<<<<<< HEAD
 	struct lis3lv02d *lis3 = dev_get_drvdata(dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	s16 values[3];
 
 	static const char ok[] = "OK";
@@ -755,8 +981,13 @@ static ssize_t lis3lv02d_selftest_show(struct device *dev,
 	static const char irq[] = "FAIL_IRQ";
 	const char *res;
 
+<<<<<<< HEAD
 	lis3lv02d_sysfs_poweron(lis3);
 	switch (lis3lv02d_selftest(lis3, values)) {
+=======
+	lis3lv02d_sysfs_poweron(&lis3_dev);
+	switch (lis3lv02d_selftest(&lis3_dev, values)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SELFTEST_FAIL:
 		res = fail;
 		break;
@@ -775,6 +1006,7 @@ static ssize_t lis3lv02d_selftest_show(struct device *dev,
 static ssize_t lis3lv02d_position_show(struct device *dev,
 				struct device_attribute *attr, char *buf)
 {
+<<<<<<< HEAD
 	struct lis3lv02d *lis3 = dev_get_drvdata(dev);
 	int x, y, z;
 
@@ -782,30 +1014,51 @@ static ssize_t lis3lv02d_position_show(struct device *dev,
 	mutex_lock(&lis3->mutex);
 	lis3lv02d_get_xyz(lis3, &x, &y, &z);
 	mutex_unlock(&lis3->mutex);
+=======
+	int x, y, z;
+
+	lis3lv02d_sysfs_poweron(&lis3_dev);
+	mutex_lock(&lis3_dev.mutex);
+	lis3lv02d_get_xyz(&lis3_dev, &x, &y, &z);
+	mutex_unlock(&lis3_dev.mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return sprintf(buf, "(%d,%d,%d)\n", x, y, z);
 }
 
 static ssize_t lis3lv02d_rate_show(struct device *dev,
 			struct device_attribute *attr, char *buf)
 {
+<<<<<<< HEAD
 	struct lis3lv02d *lis3 = dev_get_drvdata(dev);
 
 	lis3lv02d_sysfs_poweron(lis3);
 	return sprintf(buf, "%d\n", lis3lv02d_get_odr(lis3));
+=======
+	lis3lv02d_sysfs_poweron(&lis3_dev);
+	return sprintf(buf, "%d\n", lis3lv02d_get_odr());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ssize_t lis3lv02d_rate_set(struct device *dev,
 				struct device_attribute *attr, const char *buf,
 				size_t count)
 {
+<<<<<<< HEAD
 	struct lis3lv02d *lis3 = dev_get_drvdata(dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long rate;
 
 	if (strict_strtoul(buf, 0, &rate))
 		return -EINVAL;
 
+<<<<<<< HEAD
 	lis3lv02d_sysfs_poweron(lis3);
 	if (lis3lv02d_set_odr(lis3, rate))
+=======
+	lis3lv02d_sysfs_poweron(&lis3_dev);
+	if (lis3lv02d_set_odr(rate))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	return count;
@@ -834,7 +1087,10 @@ static int lis3lv02d_add_fs(struct lis3lv02d *lis3)
 	if (IS_ERR(lis3->pdev))
 		return PTR_ERR(lis3->pdev);
 
+<<<<<<< HEAD
 	platform_set_drvdata(lis3->pdev, lis3);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return sysfs_create_group(&lis3->pdev->dev.kobj, &lis3lv02d_attribute_group);
 }
 
@@ -848,7 +1104,11 @@ int lis3lv02d_remove_fs(struct lis3lv02d *lis3)
 
 		/* SYSFS may have left chip running. Turn off if necessary */
 		if (!pm_runtime_suspended(lis3->pm_dev))
+<<<<<<< HEAD
 			lis3lv02d_poweroff(lis3);
+=======
+			lis3lv02d_poweroff(&lis3_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		pm_runtime_disable(lis3->pm_dev);
 		pm_runtime_set_suspended(lis3->pm_dev);
@@ -858,13 +1118,18 @@ int lis3lv02d_remove_fs(struct lis3lv02d *lis3)
 }
 EXPORT_SYMBOL_GPL(lis3lv02d_remove_fs);
 
+<<<<<<< HEAD
 static void lis3lv02d_8b_configure(struct lis3lv02d *lis3,
+=======
+static void lis3lv02d_8b_configure(struct lis3lv02d *dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				struct lis3lv02d_platform_data *p)
 {
 	int err;
 	int ctrl2 = p->hipass_ctrl;
 
 	if (p->click_flags) {
+<<<<<<< HEAD
 		lis3->write(lis3, CLICK_CFG, p->click_flags);
 		lis3->write(lis3, CLICK_TIMELIMIT, p->click_time_limit);
 		lis3->write(lis3, CLICK_LATENCY, p->click_latency);
@@ -876,6 +1141,19 @@ static void lis3lv02d_8b_configure(struct lis3lv02d *lis3,
 
 		if (lis3->idev) {
 			struct input_dev *input_dev = lis3->idev->input;
+=======
+		dev->write(dev, CLICK_CFG, p->click_flags);
+		dev->write(dev, CLICK_TIMELIMIT, p->click_time_limit);
+		dev->write(dev, CLICK_LATENCY, p->click_latency);
+		dev->write(dev, CLICK_WINDOW, p->click_window);
+		dev->write(dev, CLICK_THSZ, p->click_thresh_z & 0xf);
+		dev->write(dev, CLICK_THSY_X,
+			(p->click_thresh_x & 0xf) |
+			(p->click_thresh_y << 4));
+
+		if (dev->idev) {
+			struct input_dev *input_dev = lis3_dev.idev->input;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			input_set_capability(input_dev, EV_KEY, BTN_X);
 			input_set_capability(input_dev, EV_KEY, BTN_Y);
 			input_set_capability(input_dev, EV_KEY, BTN_Z);
@@ -883,14 +1161,22 @@ static void lis3lv02d_8b_configure(struct lis3lv02d *lis3,
 	}
 
 	if (p->wakeup_flags) {
+<<<<<<< HEAD
 		lis3->write(lis3, FF_WU_CFG_1, p->wakeup_flags);
 		lis3->write(lis3, FF_WU_THS_1, p->wakeup_thresh & 0x7f);
 		/* pdata value + 1 to keep this backward compatible*/
 		lis3->write(lis3, FF_WU_DURATION_1, p->duration1 + 1);
+=======
+		dev->write(dev, FF_WU_CFG_1, p->wakeup_flags);
+		dev->write(dev, FF_WU_THS_1, p->wakeup_thresh & 0x7f);
+		/* pdata value + 1 to keep this backward compatible*/
+		dev->write(dev, FF_WU_DURATION_1, p->duration1 + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ctrl2 ^= HP_FF_WU1; /* Xor to keep compatible with old pdata*/
 	}
 
 	if (p->wakeup_flags2) {
+<<<<<<< HEAD
 		lis3->write(lis3, FF_WU_CFG_2, p->wakeup_flags2);
 		lis3->write(lis3, FF_WU_THS_2, p->wakeup_thresh2 & 0x7f);
 		/* pdata value + 1 to keep this backward compatible*/
@@ -899,6 +1185,16 @@ static void lis3lv02d_8b_configure(struct lis3lv02d *lis3,
 	}
 	/* Configure hipass filters */
 	lis3->write(lis3, CTRL_REG2, ctrl2);
+=======
+		dev->write(dev, FF_WU_CFG_2, p->wakeup_flags2);
+		dev->write(dev, FF_WU_THS_2, p->wakeup_thresh2 & 0x7f);
+		/* pdata value + 1 to keep this backward compatible*/
+		dev->write(dev, FF_WU_DURATION_2, p->duration2 + 1);
+		ctrl2 ^= HP_FF_WU2; /* Xor to keep compatible with old pdata*/
+	}
+	/* Configure hipass filters */
+	dev->write(dev, CTRL_REG2, ctrl2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (p->irq2) {
 		err = request_threaded_irq(p->irq2,
@@ -906,7 +1202,11 @@ static void lis3lv02d_8b_configure(struct lis3lv02d *lis3,
 					lis302dl_interrupt_thread2_8b,
 					IRQF_TRIGGER_RISING | IRQF_ONESHOT |
 					(p->irq_flags2 & IRQF_TRIGGER_MASK),
+<<<<<<< HEAD
 					DRIVER_NAME, lis3);
+=======
+					DRIVER_NAME, &lis3_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err < 0)
 			pr_err("No second IRQ. Limited functionality\n");
 	}
@@ -916,12 +1216,17 @@ static void lis3lv02d_8b_configure(struct lis3lv02d *lis3,
  * Initialise the accelerometer and the various subsystems.
  * Should be rather independent of the bus system.
  */
+<<<<<<< HEAD
 int lis3lv02d_init_device(struct lis3lv02d *lis3)
+=======
+int lis3lv02d_init_device(struct lis3lv02d *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int err;
 	irq_handler_t thread_fn;
 	int irq_flags = 0;
 
+<<<<<<< HEAD
 	lis3->whoami = lis3lv02d_read_8(lis3, WHO_AM_I);
 
 	switch (lis3->whoami) {
@@ -965,10 +1270,56 @@ int lis3lv02d_init_device(struct lis3lv02d *lis3)
 				     sizeof(lis3_wai12_regs)), GFP_KERNEL);
 
 	if (lis3->reg_cache == NULL) {
+=======
+	dev->whoami = lis3lv02d_read_8(dev, WHO_AM_I);
+
+	switch (dev->whoami) {
+	case WAI_12B:
+		pr_info("12 bits sensor found\n");
+		dev->read_data = lis3lv02d_read_12;
+		dev->mdps_max_val = 2048;
+		dev->pwron_delay = LIS3_PWRON_DELAY_WAI_12B;
+		dev->odrs = lis3_12_rates;
+		dev->odr_mask = CTRL1_DF0 | CTRL1_DF1;
+		dev->scale = LIS3_SENSITIVITY_12B;
+		dev->regs = lis3_wai12_regs;
+		dev->regs_size = ARRAY_SIZE(lis3_wai12_regs);
+		break;
+	case WAI_8B:
+		pr_info("8 bits sensor found\n");
+		dev->read_data = lis3lv02d_read_8;
+		dev->mdps_max_val = 128;
+		dev->pwron_delay = LIS3_PWRON_DELAY_WAI_8B;
+		dev->odrs = lis3_8_rates;
+		dev->odr_mask = CTRL1_DR;
+		dev->scale = LIS3_SENSITIVITY_8B;
+		dev->regs = lis3_wai8_regs;
+		dev->regs_size = ARRAY_SIZE(lis3_wai8_regs);
+		break;
+	case WAI_3DC:
+		pr_info("8 bits 3DC sensor found\n");
+		dev->read_data = lis3lv02d_read_8;
+		dev->mdps_max_val = 128;
+		dev->pwron_delay = LIS3_PWRON_DELAY_WAI_8B;
+		dev->odrs = lis3_3dc_rates;
+		dev->odr_mask = CTRL1_ODR0|CTRL1_ODR1|CTRL1_ODR2|CTRL1_ODR3;
+		dev->scale = LIS3_SENSITIVITY_8B;
+		break;
+	default:
+		pr_err("unknown sensor type 0x%X\n", dev->whoami);
+		return -EINVAL;
+	}
+
+	dev->reg_cache = kzalloc(max(sizeof(lis3_wai8_regs),
+				     sizeof(lis3_wai12_regs)), GFP_KERNEL);
+
+	if (dev->reg_cache == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR DRIVER_NAME "out of memory\n");
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	mutex_init(&lis3->mutex);
 	atomic_set(&lis3->wake_thread, 0);
 
@@ -985,10 +1336,25 @@ int lis3lv02d_init_device(struct lis3lv02d *lis3)
 	}
 
 	if (lis3lv02d_joystick_enable(lis3))
+=======
+	mutex_init(&dev->mutex);
+	atomic_set(&dev->wake_thread, 0);
+
+	lis3lv02d_add_fs(dev);
+	lis3lv02d_poweron(dev);
+
+	if (dev->pm_dev) {
+		pm_runtime_set_active(dev->pm_dev);
+		pm_runtime_enable(dev->pm_dev);
+	}
+
+	if (lis3lv02d_joystick_enable())
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_err("joystick initialization failed\n");
 
 	/* passing in platform specific data is purely optional and only
 	 * used by the SPI transport layer at the moment */
+<<<<<<< HEAD
 	if (lis3->pdata) {
 		struct lis3lv02d_platform_data *p = lis3->pdata;
 
@@ -1007,6 +1373,26 @@ int lis3lv02d_init_device(struct lis3lv02d *lis3)
 
 	/* bail if we did not get an IRQ from the bus layer */
 	if (!lis3->irq) {
+=======
+	if (dev->pdata) {
+		struct lis3lv02d_platform_data *p = dev->pdata;
+
+		if (dev->whoami == WAI_8B)
+			lis3lv02d_8b_configure(dev, p);
+
+		irq_flags = p->irq_flags1 & IRQF_TRIGGER_MASK;
+
+		dev->irq_cfg = p->irq_cfg;
+		if (p->irq_cfg)
+			dev->write(dev, CTRL_REG3, p->irq_cfg);
+
+		if (p->default_rate)
+			lis3lv02d_set_odr(p->default_rate);
+	}
+
+	/* bail if we did not get an IRQ from the bus layer */
+	if (!dev->irq) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_debug("No IRQ. Disabling /dev/freefall\n");
 		goto out;
 	}
@@ -1022,27 +1408,43 @@ int lis3lv02d_init_device(struct lis3lv02d *lis3)
 	 * io-apic is not configurable (and generates a warning) but I keep it
 	 * in case of support for other hardware.
 	 */
+<<<<<<< HEAD
 	if (lis3->pdata && lis3->whoami == WAI_8B)
+=======
+	if (dev->pdata && dev->whoami == WAI_8B)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		thread_fn = lis302dl_interrupt_thread1_8b;
 	else
 		thread_fn = NULL;
 
+<<<<<<< HEAD
 	err = request_threaded_irq(lis3->irq, lis302dl_interrupt,
 				thread_fn,
 				IRQF_TRIGGER_RISING | IRQF_ONESHOT |
 				irq_flags,
 				DRIVER_NAME, lis3);
+=======
+	err = request_threaded_irq(dev->irq, lis302dl_interrupt,
+				thread_fn,
+				IRQF_TRIGGER_RISING | IRQF_ONESHOT |
+				irq_flags,
+				DRIVER_NAME, &lis3_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (err < 0) {
 		pr_err("Cannot get IRQ\n");
 		goto out;
 	}
 
+<<<<<<< HEAD
 	lis3->miscdev.minor	= MISC_DYNAMIC_MINOR;
 	lis3->miscdev.name	= "freefall";
 	lis3->miscdev.fops	= &lis3lv02d_misc_fops;
 
 	if (misc_register(&lis3->miscdev))
+=======
+	if (misc_register(&lis3lv02d_misc_device))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_err("misc_register failed\n");
 out:
 	return 0;

@@ -264,6 +264,7 @@ static int init_symlink(struct inode * inode)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int create_dir(struct config_item *k, struct dentry *d)
 {
 	int error;
@@ -271,6 +272,13 @@ static int create_dir(struct config_item *k, struct dentry *d)
 	struct dentry *p = d->d_parent;
 
 	BUG_ON(!k);
+=======
+static int create_dir(struct config_item * k, struct dentry * p,
+		      struct dentry * d)
+{
+	int error;
+	umode_t mode = S_IFDIR| S_IRWXU | S_IRUGO | S_IXUGO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	error = configfs_dirent_exists(p->d_fsdata, d->d_name.name);
 	if (!error)
@@ -306,7 +314,23 @@ static int create_dir(struct config_item *k, struct dentry *d)
 
 static int configfs_create_dir(struct config_item * item, struct dentry *dentry)
 {
+<<<<<<< HEAD
 	int error = create_dir(item, dentry);
+=======
+	struct dentry * parent;
+	int error = 0;
+
+	BUG_ON(!item);
+
+	if (item->ci_parent)
+		parent = item->ci_parent->ci_dentry;
+	else if (configfs_mount && configfs_mount->mnt_sb)
+		parent = configfs_mount->mnt_sb->s_root;
+	else
+		return -EFAULT;
+
+	error = create_dir(item,parent,dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!error)
 		item->ci_dentry = dentry;
 	return error;
@@ -1069,24 +1093,39 @@ int configfs_depend_item(struct configfs_subsystem *subsys,
 	int ret;
 	struct configfs_dirent *p, *root_sd, *subsys_sd = NULL;
 	struct config_item *s_item = &subsys->su_group.cg_item;
+<<<<<<< HEAD
 	struct dentry *root;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Pin the configfs filesystem.  This means we can safely access
 	 * the root of the configfs filesystem.
 	 */
+<<<<<<< HEAD
 	root = configfs_pin_fs();
 	if (IS_ERR(root))
 		return PTR_ERR(root);
+=======
+	ret = configfs_pin_fs();
+	if (ret)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Next, lock the root directory.  We're going to check that the
 	 * subsystem is really registered, and so we need to lock out
 	 * configfs_[un]register_subsystem().
 	 */
+<<<<<<< HEAD
 	mutex_lock(&root->d_inode->i_mutex);
 
 	root_sd = root->d_fsdata;
+=======
+	mutex_lock(&configfs_sb->s_root->d_inode->i_mutex);
+
+	root_sd = configfs_sb->s_root->d_fsdata;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_for_each_entry(p, &root_sd->s_children, s_sibling) {
 		if (p->s_type & CONFIGFS_DIR) {
@@ -1120,7 +1159,11 @@ int configfs_depend_item(struct configfs_subsystem *subsys,
 out_unlock_dirent_lock:
 	spin_unlock(&configfs_dirent_lock);
 out_unlock_fs:
+<<<<<<< HEAD
 	mutex_unlock(&root->d_inode->i_mutex);
+=======
+	mutex_unlock(&configfs_sb->s_root->d_inode->i_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If we succeeded, the fs is pinned via other methods.  If not,
@@ -1161,7 +1204,11 @@ void configfs_undepend_item(struct configfs_subsystem *subsys,
 }
 EXPORT_SYMBOL(configfs_undepend_item);
 
+<<<<<<< HEAD
 static int configfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+=======
+static int configfs_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret = 0;
 	int module_got = 0;
@@ -1174,6 +1221,14 @@ static int configfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode
 	struct module *subsys_owner = NULL, *new_item_owner = NULL;
 	char *name;
 
+<<<<<<< HEAD
+=======
+	if (dentry->d_parent == configfs_sb->s_root) {
+		ret = -EPERM;
+		goto out;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sd = dentry->d_parent->d_fsdata;
 
 	/*
@@ -1345,6 +1400,12 @@ static int configfs_rmdir(struct inode *dir, struct dentry *dentry)
 	struct module *subsys_owner = NULL, *dead_item_owner = NULL;
 	int ret;
 
+<<<<<<< HEAD
+=======
+	if (dentry->d_parent == configfs_sb->s_root)
+		return -EPERM;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sd = dentry->d_fsdata;
 	if (sd->s_type & CONFIGFS_USET_DEFAULT)
 		return -EPERM;
@@ -1442,11 +1503,14 @@ const struct inode_operations configfs_dir_inode_operations = {
 	.setattr	= configfs_setattr,
 };
 
+<<<<<<< HEAD
 const struct inode_operations configfs_root_inode_operations = {
 	.lookup		= configfs_lookup,
 	.setattr	= configfs_setattr,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if 0
 int configfs_rename_dir(struct config_item * item, const char *new_name)
 {
@@ -1534,7 +1598,10 @@ static inline unsigned char dt_type(struct configfs_dirent *sd)
 static int configfs_readdir(struct file * filp, void * dirent, filldir_t filldir)
 {
 	struct dentry *dentry = filp->f_path.dentry;
+<<<<<<< HEAD
 	struct super_block *sb = dentry->d_sb;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct configfs_dirent * parent_sd = dentry->d_fsdata;
 	struct configfs_dirent *cursor = filp->private_data;
 	struct list_head *p, *q = &cursor->s_sibling;
@@ -1597,7 +1664,11 @@ static int configfs_readdir(struct file * filp, void * dirent, filldir_t filldir
 					ino = inode->i_ino;
 				spin_unlock(&configfs_dirent_lock);
 				if (!inode)
+<<<<<<< HEAD
 					ino = iunique(sb, 2);
+=======
+					ino = iunique(configfs_sb, 2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				if (filldir(dirent, name, len, filp->f_pos, ino,
 						 dt_type(next)) < 0)
@@ -1669,27 +1740,47 @@ int configfs_register_subsystem(struct configfs_subsystem *subsys)
 	struct config_group *group = &subsys->su_group;
 	struct qstr name;
 	struct dentry *dentry;
+<<<<<<< HEAD
 	struct dentry *root;
 	struct configfs_dirent *sd;
 
 	root = configfs_pin_fs();
 	if (IS_ERR(root))
 		return PTR_ERR(root);
+=======
+	struct configfs_dirent *sd;
+
+	err = configfs_pin_fs();
+	if (err)
+		return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!group->cg_item.ci_name)
 		group->cg_item.ci_name = group->cg_item.ci_namebuf;
 
+<<<<<<< HEAD
 	sd = root->d_fsdata;
 	link_group(to_config_group(sd->s_element), group);
 
 	mutex_lock_nested(&root->d_inode->i_mutex, I_MUTEX_PARENT);
+=======
+	sd = configfs_sb->s_root->d_fsdata;
+	link_group(to_config_group(sd->s_element), group);
+
+	mutex_lock_nested(&configfs_sb->s_root->d_inode->i_mutex,
+			I_MUTEX_PARENT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	name.name = group->cg_item.ci_name;
 	name.len = strlen(name.name);
 	name.hash = full_name_hash(name.name, name.len);
 
 	err = -ENOMEM;
+<<<<<<< HEAD
 	dentry = d_alloc(root, &name);
+=======
+	dentry = d_alloc(configfs_sb->s_root, &name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dentry) {
 		d_add(dentry, NULL);
 
@@ -1706,7 +1797,11 @@ int configfs_register_subsystem(struct configfs_subsystem *subsys)
 		}
 	}
 
+<<<<<<< HEAD
 	mutex_unlock(&root->d_inode->i_mutex);
+=======
+	mutex_unlock(&configfs_sb->s_root->d_inode->i_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (err) {
 		unlink_group(group);
@@ -1720,14 +1815,23 @@ void configfs_unregister_subsystem(struct configfs_subsystem *subsys)
 {
 	struct config_group *group = &subsys->su_group;
 	struct dentry *dentry = group->cg_item.ci_dentry;
+<<<<<<< HEAD
 	struct dentry *root = dentry->d_sb->s_root;
 
 	if (dentry->d_parent != root) {
+=======
+
+	if (dentry->d_parent != configfs_sb->s_root) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR "configfs: Tried to unregister non-subsystem!\n");
 		return;
 	}
 
+<<<<<<< HEAD
 	mutex_lock_nested(&root->d_inode->i_mutex,
+=======
+	mutex_lock_nested(&configfs_sb->s_root->d_inode->i_mutex,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  I_MUTEX_PARENT);
 	mutex_lock_nested(&dentry->d_inode->i_mutex, I_MUTEX_CHILD);
 	mutex_lock(&configfs_symlink_mutex);
@@ -1744,7 +1848,11 @@ void configfs_unregister_subsystem(struct configfs_subsystem *subsys)
 
 	d_delete(dentry);
 
+<<<<<<< HEAD
 	mutex_unlock(&root->d_inode->i_mutex);
+=======
+	mutex_unlock(&configfs_sb->s_root->d_inode->i_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dput(dentry);
 

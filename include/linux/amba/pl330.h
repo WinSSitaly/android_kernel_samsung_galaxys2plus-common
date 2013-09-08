@@ -12,7 +12,24 @@
 #ifndef	__AMBA_PL330_H_
 #define	__AMBA_PL330_H_
 
+<<<<<<< HEAD
 #include <linux/dmaengine.h>
+=======
+#include <asm/hardware/pl330.h>
+
+struct dma_pl330_peri {
+	/*
+	 * Peri_Req i/f of the DMAC that is
+	 * peripheral could be reached from.
+	 */
+	u8 peri_id; /* {0, 31} */
+	enum pl330_reqtype rqtype;
+
+	/* For M->D and D->M Channels */
+	int burst_sz; /* in power of 2 */
+	dma_addr_t fifo_addr;
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct dma_pl330_platdata {
 	/*
@@ -24,12 +41,19 @@ struct dma_pl330_platdata {
 	 */
 	u8 nr_valid_peri;
 	/* Array of valid peripherals */
+<<<<<<< HEAD
 	u8 *peri_id;
 	/* Operational capabilities */
 	dma_cap_mask_t cap_mask;
+=======
+	struct dma_pl330_peri *peri;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Bytes to allocate for MC buffer */
 	unsigned mcbuf_sz;
 };
 
+<<<<<<< HEAD
 extern bool pl330_filter(struct dma_chan *chan, void *param);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* __AMBA_PL330_H_ */

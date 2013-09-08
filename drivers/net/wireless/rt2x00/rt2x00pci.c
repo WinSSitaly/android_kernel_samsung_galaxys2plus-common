@@ -52,8 +52,13 @@ int rt2x00pci_regbusy_read(struct rt2x00_dev *rt2x00dev,
 		udelay(REGISTER_BUSY_DELAY);
 	}
 
+<<<<<<< HEAD
 	printk_once(KERN_ERR "%s() Indirect register access failed: "
 	      "offset=0x%.08x, value=0x%.08x\n", __func__, offset, *reg);
+=======
+	ERROR(rt2x00dev, "Indirect register access failed: "
+	      "offset=0x%.08x, value=0x%.08x\n", offset, *reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*reg = ~0;
 
 	return 0;

@@ -2,7 +2,11 @@
  * smdk_wm9713.c  --  SoC audio for SMDK
  *
  * Copyright 2010 Samsung Electronics Co. Ltd.
+<<<<<<< HEAD
  * Author: Jaswinder Singh Brar <jassisinghbrar@gmail.com>
+=======
+ * Author: Jaswinder Singh Brar <jassi.brar@samsung.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -11,7 +15,10 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/soc.h>
 
 static struct snd_soc_card smdk;
@@ -50,7 +57,10 @@ static struct snd_soc_dai_link smdk_dai = {
 
 static struct snd_soc_card smdk = {
 	.name = "SMDK WM9713",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link = &smdk_dai,
 	.num_links = 1,
 };
@@ -103,6 +113,10 @@ module_init(smdk_init);
 module_exit(smdk_exit);
 
 /* Module information */
+<<<<<<< HEAD
 MODULE_AUTHOR("Jaswinder Singh Brar, jassisinghbrar@gmail.com");
+=======
+MODULE_AUTHOR("Jaswinder Singh Brar, jassi.brar@samsung.com");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("ALSA SoC SMDK+WM9713");
 MODULE_LICENSE("GPL");

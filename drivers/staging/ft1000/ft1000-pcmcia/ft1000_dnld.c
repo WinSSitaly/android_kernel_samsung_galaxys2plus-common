@@ -34,6 +34,10 @@
 #include <asm/uaccess.h>
 #include <linux/vmalloc.h>
 
+<<<<<<< HEAD
+=======
+#include "ft1000_dev.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "ft1000.h"
 #include "boot.h"
 
@@ -86,6 +90,7 @@
 #define  STATE_DONE_PROV         0x06
 #define  STATE_DONE_FILE         0x07
 
+<<<<<<< HEAD
 u16 get_handshake(struct net_device *dev, u16 expected_value);
 void put_handshake(struct net_device *dev, u16 handshake_value);
 u16 get_request_type(struct net_device *dev);
@@ -94,6 +99,28 @@ void put_request_value(struct net_device *dev, long lvalue);
 u16 hdr_checksum(struct pseudo_hdr *pHdr);
 
 struct dsp_file_hdr {
+=======
+USHORT get_handshake(struct net_device *dev, USHORT expected_value);
+void put_handshake(struct net_device *dev, USHORT handshake_value);
+USHORT get_request_type(struct net_device *dev);
+long get_request_value(struct net_device *dev);
+void put_request_value(struct net_device *dev, long lvalue);
+USHORT hdr_checksum(PPSEUDO_HDR pHdr);
+
+typedef struct _DSP_FILE_HDR {
+	u32  build_date;
+	u32  dsp_coff_date;
+	u32  loader_code_address;
+	u32  loader_code_size;
+	u32  loader_code_end;
+	u32  dsp_code_address;
+	u32  dsp_code_size;
+	u32  dsp_code_end;
+	u32  reserved[8];
+} __attribute__ ((packed)) DSP_FILE_HDR, *PDSP_FILE_HDR;
+
+typedef struct _DSP_FILE_HDR_5 {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32  version_id;	// Version ID of this image format.
 	u32  package_id;	// Package ID of code release.
 	u32  build_date;	// Date/time stamp when file was built.
@@ -105,9 +132,24 @@ struct dsp_file_hdr {
 	u32  version_data_offset;	// Offset were scrambled version data begins.
 	u32  version_data_size;	// Size, in words, of scrambled version data.
 	u32  nDspImages;	// Number of DSP images in file.
+<<<<<<< HEAD
 } __attribute__ ((packed));
 
 struct dsp_image_info {
+=======
+} __attribute__ ((packed)) DSP_FILE_HDR_5, *PDSP_FILE_HDR_5;
+
+typedef struct _DSP_IMAGE_INFO {
+	u32  coff_date;		// Date/time when DSP Coff image was built.
+	u32  begin_offset;	// Offset in file where image begins.
+	u32  end_offset;	// Offset in file where image begins.
+	u32  run_address;	// On chip Start address of DSP code.
+	u32  image_size;	// Size of image.
+	u32  version;		// Embedded version # of DSP code.
+} __attribute__ ((packed)) DSP_IMAGE_INFO, *PDSP_IMAGE_INFO;
+
+typedef struct _DSP_IMAGE_INFO_V6 {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32  coff_date;		// Date/time when DSP Coff image was built.
 	u32  begin_offset;	// Offset in file where image begins.
 	u32  end_offset;	// Offset in file where image begins.
@@ -116,6 +158,7 @@ struct dsp_image_info {
 	u32  version;		// Embedded version # of DSP code.
 	unsigned short checksum;	// Dsp File checksum
 	unsigned short pad1;
+<<<<<<< HEAD
 } __attribute__ ((packed));
 
 void card_bootload(struct net_device *dev)
@@ -130,6 +173,22 @@ void card_bootload(struct net_device *dev)
 	DEBUG(0, "card_bootload is called\n");
 
 	pdata = (u32 *) bootimage;
+=======
+} __attribute__ ((packed)) DSP_IMAGE_INFO_V6, *PDSP_IMAGE_INFO_V6;
+
+void card_bootload(struct net_device *dev)
+{
+	FT1000_INFO *info = (PFT1000_INFO) netdev_priv(dev);
+	unsigned long flags;
+	PULONG pdata;
+	UINT size;
+	UINT i;
+	ULONG templong;
+
+	DEBUG(0, "card_bootload is called\n");
+
+	pdata = (PULONG) bootimage;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	size = sizeof(bootimage);
 
 	// check for odd word
@@ -150,11 +209,19 @@ void card_bootload(struct net_device *dev)
 	spin_unlock_irqrestore(&info->dpram_lock, flags);
 }
 
+<<<<<<< HEAD
 u16 get_handshake(struct net_device *dev, u16 expected_value)
 {
 	struct ft1000_info *info = (struct ft1000_info *) netdev_priv(dev);
 	u16 handshake;
 	u32 tempx;
+=======
+USHORT get_handshake(struct net_device *dev, USHORT expected_value)
+{
+	FT1000_INFO *info = (PFT1000_INFO) netdev_priv(dev);
+	USHORT handshake;
+	ULONG tempx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int loopcnt;
 
 	loopcnt = 0;
@@ -168,7 +235,11 @@ u16 get_handshake(struct net_device *dev, u16 expected_value)
 			tempx =
 				ntohl(ft1000_read_dpram_mag_32
 				  (dev, DWNLD_MAG_HANDSHAKE_LOC));
+<<<<<<< HEAD
 			handshake = (u16) tempx;
+=======
+			handshake = (USHORT) tempx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if ((handshake == expected_value)
@@ -185,27 +256,46 @@ u16 get_handshake(struct net_device *dev, u16 expected_value)
 
 }
 
+<<<<<<< HEAD
 void put_handshake(struct net_device *dev, u16 handshake_value)
 {
 	struct ft1000_info *info = (struct ft1000_info *) netdev_priv(dev);
 	u32 tempx;
+=======
+void put_handshake(struct net_device *dev, USHORT handshake_value)
+{
+	FT1000_INFO *info = (PFT1000_INFO) netdev_priv(dev);
+	ULONG tempx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (info->AsicID == ELECTRABUZZ_ID) {
 		ft1000_write_reg(dev, FT1000_REG_DPRAM_ADDR,
 				 DWNLD_HANDSHAKE_LOC);
 		ft1000_write_reg(dev, FT1000_REG_DPRAM_DATA, handshake_value);	/* Handshake */
 	} else {
+<<<<<<< HEAD
 		tempx = (u32) handshake_value;
+=======
+		tempx = (ULONG) handshake_value;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tempx = ntohl(tempx);
 		ft1000_write_dpram_mag_32(dev, DWNLD_MAG_HANDSHAKE_LOC, tempx);	/* Handshake */
 	}
 }
 
+<<<<<<< HEAD
 u16 get_request_type(struct net_device *dev)
 {
 	struct ft1000_info *info = (struct ft1000_info *) netdev_priv(dev);
 	u16 request_type;
 	u32 tempx;
+=======
+USHORT get_request_type(struct net_device *dev)
+{
+	FT1000_INFO *info = (PFT1000_INFO) netdev_priv(dev);
+	USHORT request_type;
+	ULONG tempx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (info->AsicID == ELECTRABUZZ_ID) {
 		ft1000_write_reg(dev, FT1000_REG_DPRAM_ADDR, DWNLD_TYPE_LOC);
@@ -213,7 +303,11 @@ u16 get_request_type(struct net_device *dev)
 	} else {
 		tempx = ft1000_read_dpram_mag_32(dev, DWNLD_MAG_TYPE_LOC);
 		tempx = ntohl(tempx);
+<<<<<<< HEAD
 		request_type = (u16) tempx;
+=======
+		request_type = (USHORT) tempx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return request_type;
@@ -222,9 +316,15 @@ u16 get_request_type(struct net_device *dev)
 
 long get_request_value(struct net_device *dev)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info = (struct ft1000_info *) netdev_priv(dev);
 	long value;
 	u16 w_val;
+=======
+	FT1000_INFO *info = (PFT1000_INFO) netdev_priv(dev);
+	long value;
+	USHORT w_val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (info->AsicID == ELECTRABUZZ_ID) {
 		ft1000_write_reg(dev, FT1000_REG_DPRAM_ADDR,
@@ -251,19 +351,32 @@ long get_request_value(struct net_device *dev)
 
 void put_request_value(struct net_device *dev, long lvalue)
 {
+<<<<<<< HEAD
 	struct ft1000_info *info = (struct ft1000_info *) netdev_priv(dev);
 	u16 size;
 	u32 tempx;
 
 	if (info->AsicID == ELECTRABUZZ_ID) {
 		size = (u16) (lvalue >> 16);
+=======
+	FT1000_INFO *info = (PFT1000_INFO) netdev_priv(dev);
+	USHORT size;
+	ULONG tempx;
+
+	if (info->AsicID == ELECTRABUZZ_ID) {
+		size = (USHORT) (lvalue >> 16);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ft1000_write_reg(dev, FT1000_REG_DPRAM_ADDR,
 				 DWNLD_SIZE_MSW_LOC);
 
 		ft1000_write_reg(dev, FT1000_REG_DPRAM_DATA, size);
 
+<<<<<<< HEAD
 		size = (u16) (lvalue);
+=======
+		size = (USHORT) (lvalue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ft1000_write_reg(dev, FT1000_REG_DPRAM_ADDR,
 				 DWNLD_SIZE_LSW_LOC);
@@ -276,10 +389,17 @@ void put_request_value(struct net_device *dev, long lvalue)
 
 }
 
+<<<<<<< HEAD
 u16 hdr_checksum(struct pseudo_hdr *pHdr)
 {
 	u16 *usPtr = (u16 *) pHdr;
 	u16 chksum;
+=======
+USHORT hdr_checksum(PPSEUDO_HDR pHdr)
+{
+	USHORT *usPtr = (USHORT *) pHdr;
+	USHORT chksum;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	chksum = ((((((usPtr[0] ^ usPtr[1]) ^ usPtr[2]) ^ usPtr[3]) ^
 			usPtr[4]) ^ usPtr[5]) ^ usPtr[6]);
@@ -287,6 +407,7 @@ u16 hdr_checksum(struct pseudo_hdr *pHdr)
 	return chksum;
 }
 
+<<<<<<< HEAD
 int card_download(struct net_device *dev, const u8 *pFileStart,
 		  size_t FileLength)
 {
@@ -311,6 +432,34 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 	u8 *pUcFile = NULL;
 	u8 *pBootEnd = NULL;
 	u8 *pCodeEnd = NULL;
+=======
+int card_download(struct net_device *dev, const u8 *pFileStart, UINT FileLength)
+{
+	FT1000_INFO *info = (PFT1000_INFO) netdev_priv(dev);
+	int Status = SUCCESS;
+	USHORT DspWordCnt = 0;
+	UINT uiState;
+	USHORT handshake;
+	PPSEUDO_HDR pHdr;
+	USHORT usHdrLength;
+	PDSP_FILE_HDR pFileHdr;
+	long word_length;
+	USHORT request;
+	USHORT temp;
+	PPROV_RECORD pprov_record;
+	PUCHAR pbuffer;
+	PDSP_FILE_HDR_5 pFileHdr5;
+	PDSP_IMAGE_INFO pDspImageInfo = NULL;
+	PDSP_IMAGE_INFO_V6 pDspImageInfoV6 = NULL;
+	long requested_version;
+	BOOLEAN bGoodVersion = 0;
+	PDRVMSG pMailBoxData;
+	USHORT *pUsData = NULL;
+	USHORT *pUsFile = NULL;
+	UCHAR *pUcFile = NULL;
+	UCHAR *pBootEnd = NULL;
+	UCHAR *pCodeEnd = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int imageN;
 	long file_version;
 	long loader_code_address = 0;
@@ -321,6 +470,7 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 	unsigned long templong;
 	unsigned long image_chksum = 0;
 
+<<<<<<< HEAD
 	file_version = *(long *)pFileStart;
 	if (file_version != 6) {
 		printk(KERN_ERR "ft1000: unsupported firmware version %ld\n", file_version);
@@ -337,6 +487,38 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 	loader_code_address = pFileHdr5->loader_code_address;
 	loader_code_size = pFileHdr5->loader_code_size;
 	bGoodVersion = false;
+=======
+	//
+	// Get version id of file, at first 4 bytes of file, for newer files.
+	//
+	file_version = *(long *)pFileStart;
+
+	uiState = STATE_START_DWNLD;
+
+	pFileHdr = (PDSP_FILE_HDR) pFileStart;
+	pFileHdr5 = (PDSP_FILE_HDR_5) pFileStart;
+
+	switch (file_version) {
+	case 5:
+	case 6:
+		pUsFile =
+			(USHORT *) ((long)pFileStart + pFileHdr5->loader_offset);
+		pUcFile =
+			(UCHAR *) ((long)pFileStart + pFileHdr5->loader_offset);
+
+		pBootEnd =
+			(UCHAR *) ((long)pFileStart + pFileHdr5->loader_code_end);
+
+		loader_code_address = pFileHdr5->loader_code_address;
+		loader_code_size = pFileHdr5->loader_code_size;
+		bGoodVersion = FALSE;
+		break;
+
+	default:
+		Status = FAILURE;
+		break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while ((Status == SUCCESS) && (uiState != STATE_DONE_FILE)) {
 
@@ -373,8 +555,13 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 					break;
 				case REQUEST_DONE_BL:
 					/* Reposition ptrs to beginning of code section */
+<<<<<<< HEAD
 					pUsFile = (u16 *) ((long)pBootEnd);
 					pUcFile = (u8 *) ((long)pBootEnd);
+=======
+					pUsFile = (USHORT *) ((long)pBootEnd);
+					pUcFile = (UCHAR *) ((long)pBootEnd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					uiState = STATE_CODE_DWNLD;
 					break;
 				case REQUEST_CODE_SEGMENT:
@@ -394,6 +581,7 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 					// Provide mutual exclusive access while reading ASIC registers.
 					spin_lock_irqsave(&info->dpram_lock,
 							  flags);
+<<<<<<< HEAD
 					/*
 					 * Position ASIC DPRAM auto-increment pointer.
 					 */
@@ -412,6 +600,47 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 						outl(templong,
 							 dev->base_addr +
 							 FT1000_REG_MAG_DPDATAL);
+=======
+					if (file_version == 5) {
+						/*
+						 * Position ASIC DPRAM auto-increment pointer.
+						 */
+						ft1000_write_reg(dev,
+								 FT1000_REG_DPRAM_ADDR,
+								 DWNLD_PS_HDR_LOC);
+
+						for (; word_length > 0; word_length--) {	/* In words */
+							//temp = *pUsFile;
+							//temp = RtlUshortByteSwap(temp);
+							ft1000_write_reg(dev,
+									 FT1000_REG_DPRAM_DATA,
+									 *pUsFile);
+							pUsFile++;
+							pUcFile += 2;
+							DspWordCnt++;
+						}
+					} else {
+						/*
+						 * Position ASIC DPRAM auto-increment pointer.
+						 */
+						outw(DWNLD_MAG_PS_HDR_LOC,
+							 dev->base_addr +
+							 FT1000_REG_DPRAM_ADDR);
+						if (word_length & 0x01) {
+							word_length++;
+						}
+						word_length = word_length / 2;
+
+						for (; word_length > 0; word_length--) {	/* In words */
+							templong = *pUsFile++;
+							templong |=
+								(*pUsFile++ << 16);
+							pUcFile += 4;
+							outl(templong,
+								 dev->base_addr +
+								 FT1000_REG_MAG_DPDATAL);
+						}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 					spin_unlock_irqrestore(&info->
 								   dpram_lock,
@@ -461,8 +690,29 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 					break;
 				case REQUEST_DONE_CL:
 					/* Reposition ptrs to beginning of provisioning section */
+<<<<<<< HEAD
 					pUsFile = (u16 *) ((long)pFileStart + pFileHdr5->commands_offset);
 					pUcFile = (u8 *) ((long)pFileStart + pFileHdr5->commands_offset);
+=======
+					switch (file_version) {
+					case 5:
+					case 6:
+						pUsFile =
+							(USHORT *) ((long)pFileStart
+								+
+								pFileHdr5->
+								commands_offset);
+						pUcFile =
+							(UCHAR *) ((long)pFileStart
+								   +
+								   pFileHdr5->
+								   commands_offset);
+						break;
+					default:
+						Status = FAILURE;
+						break;
+					}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					uiState = STATE_DONE_DWNLD;
 					break;
 				case REQUEST_CODE_SEGMENT:
@@ -483,6 +733,7 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 						Status = FAILURE;
 						break;
 					}
+<<<<<<< HEAD
 					/*
 					 * Position ASIC DPRAM auto-increment pointer.
 					 */
@@ -501,6 +752,47 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 						outl(templong,
 							 dev->base_addr +
 							 FT1000_REG_MAG_DPDATAL);
+=======
+					if (file_version == 5) {
+						/*
+						 * Position ASIC DPRAM auto-increment pointer.
+						 */
+						ft1000_write_reg(dev,
+								 FT1000_REG_DPRAM_ADDR,
+								 DWNLD_PS_HDR_LOC);
+
+						for (; word_length > 0; word_length--) {	/* In words */
+							//temp = *pUsFile;
+							//temp = RtlUshortByteSwap(temp);
+							ft1000_write_reg(dev,
+									 FT1000_REG_DPRAM_DATA,
+									 *pUsFile);
+							pUsFile++;
+							pUcFile += 2;
+							DspWordCnt++;
+						}
+					} else {
+						/*
+						 * Position ASIC DPRAM auto-increment pointer.
+						 */
+						outw(DWNLD_MAG_PS_HDR_LOC,
+							 dev->base_addr +
+							 FT1000_REG_DPRAM_ADDR);
+						if (word_length & 0x01) {
+							word_length++;
+						}
+						word_length = word_length / 2;
+
+						for (; word_length > 0; word_length--) {	/* In words */
+							templong = *pUsFile++;
+							templong |=
+								(*pUsFile++ << 16);
+							pUcFile += 4;
+							outl(templong,
+								 dev->base_addr +
+								 FT1000_REG_MAG_DPDATAL);
+						}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 					break;
 
@@ -510,9 +802,15 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 						(long)(info->DSPInfoBlklen + 1) / 2;
 					put_request_value(dev, word_length);
 					pMailBoxData =
+<<<<<<< HEAD
 						(struct drv_msg *) & info->DSPInfoBlk[0];
 					pUsData =
 						(u16 *) & pMailBoxData->data[0];
+=======
+						(PDRVMSG) & info->DSPInfoBlk[0];
+					pUsData =
+						(USHORT *) & pMailBoxData->data[0];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					// Provide mutual exclusive access while reading ASIC registers.
 					spin_lock_irqsave(&info->dpram_lock,
 							  flags);
@@ -562,12 +860,17 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 						pFileHdr5->version_data_size;
 					put_request_value(dev, word_length);
 					pUsFile =
+<<<<<<< HEAD
 						(u16 *) ((long)pFileStart +
+=======
+						(USHORT *) ((long)pFileStart +
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 							pFileHdr5->
 							version_data_offset);
 					// Provide mutual exclusive access while reading ASIC registers.
 					spin_lock_irqsave(&info->dpram_lock,
 							  flags);
+<<<<<<< HEAD
 					/*
 					 * Position ASIC DPRAM auto-increment pointer.
 					 */
@@ -588,6 +891,47 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 						outl(templong,
 							 dev->base_addr +
 							 FT1000_REG_MAG_DPDATAL);
+=======
+					if (file_version == 5) {
+						/*
+						 * Position ASIC DPRAM auto-increment pointer.
+						 */
+						ft1000_write_reg(dev,
+								 FT1000_REG_DPRAM_ADDR,
+								 DWNLD_PS_HDR_LOC);
+
+						for (; word_length > 0; word_length--) {	/* In words */
+							ft1000_write_reg(dev,
+									 FT1000_REG_DPRAM_DATA,
+									 *pUsFile
+									 /*temp */
+								);
+							pUsFile++;
+						}
+					} else {
+						/*
+						 * Position ASIC DPRAM auto-increment pointer.
+						 */
+						outw(DWNLD_MAG_PS_HDR_LOC,
+							 dev->base_addr +
+							 FT1000_REG_DPRAM_ADDR);
+						if (word_length & 0x01) {
+							word_length++;
+						}
+						word_length = word_length / 2;
+
+						for (; word_length > 0; word_length--) {	/* In words */
+							templong =
+								ntohs(*pUsFile++);
+							temp =
+								ntohs(*pUsFile++);
+							templong |=
+								(temp << 16);
+							outl(templong,
+								 dev->base_addr +
+								 FT1000_REG_MAG_DPDATAL);
+						}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 					spin_unlock_irqrestore(&info->
 								   dpram_lock,
@@ -595,6 +939,7 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 					break;
 
 				case REQUEST_CODE_BY_VERSION:
+<<<<<<< HEAD
 					bGoodVersion = false;
 					requested_version =
 						get_request_value(dev);
@@ -660,6 +1005,122 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 							break;
 						}
 						pDspImageInfoV6++;
+=======
+					bGoodVersion = FALSE;
+					requested_version =
+						get_request_value(dev);
+					if (file_version == 5) {
+						pDspImageInfo =
+							(PDSP_IMAGE_INFO) ((long)
+									   pFileStart
+									   +
+									   sizeof
+									   (DSP_FILE_HDR_5));
+						for (imageN = 0;
+							 imageN <
+							 pFileHdr5->nDspImages;
+							 imageN++) {
+							if (pDspImageInfo->
+								version ==
+								requested_version) {
+								bGoodVersion =
+									TRUE;
+								pUsFile =
+									(USHORT
+									 *) ((long)
+									 pFileStart
+									 +
+									 pDspImageInfo->
+									 begin_offset);
+								pUcFile =
+									(UCHAR
+									 *) ((long)
+									 pFileStart
+									 +
+									 pDspImageInfo->
+									 begin_offset);
+								pCodeEnd =
+									(UCHAR
+									 *) ((long)
+									 pFileStart
+									 +
+									 pDspImageInfo->
+									 end_offset);
+								run_address =
+									pDspImageInfo->
+									run_address;
+								run_size =
+									pDspImageInfo->
+									image_size;
+								break;
+							}
+							pDspImageInfo++;
+						}
+					} else {
+						pDspImageInfoV6 =
+							(PDSP_IMAGE_INFO_V6) ((long)
+									  pFileStart
+									  +
+									  sizeof
+									  (DSP_FILE_HDR_5));
+						for (imageN = 0;
+							 imageN <
+							 pFileHdr5->nDspImages;
+							 imageN++) {
+							temp = (USHORT)
+								(pDspImageInfoV6->
+								 version);
+							templong = temp;
+							temp = (USHORT)
+								(pDspImageInfoV6->
+								 version >> 16);
+							templong |=
+								(temp << 16);
+							if (templong ==
+								requested_version) {
+								bGoodVersion =
+									TRUE;
+								pUsFile =
+									(USHORT
+									 *) ((long)
+									 pFileStart
+									 +
+									 pDspImageInfoV6->
+									 begin_offset);
+								pUcFile =
+									(UCHAR
+									 *) ((long)
+									 pFileStart
+									 +
+									 pDspImageInfoV6->
+									 begin_offset);
+								pCodeEnd =
+									(UCHAR
+									 *) ((long)
+									 pFileStart
+									 +
+									 pDspImageInfoV6->
+									 end_offset);
+								run_address =
+									pDspImageInfoV6->
+									run_address;
+								run_size =
+									pDspImageInfoV6->
+									image_size;
+								image_chksum =
+									(ULONG)
+									pDspImageInfoV6->
+									checksum;
+								DEBUG(0,
+									  "ft1000_dnld: image_chksum = 0x%8x\n",
+									  (unsigned
+									   int)
+									  image_chksum);
+								break;
+							}
+							pDspImageInfoV6++;
+						}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 					if (!bGoodVersion) {
 						/*
@@ -688,7 +1149,11 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 				break;
 			}
 
+<<<<<<< HEAD
 			pHdr = (struct pseudo_hdr *) pUsFile;
+=======
+			pHdr = (PPSEUDO_HDR) pUsFile;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (pHdr->portdest == 0x80	/* DspOAM */
 				&& (pHdr->portsrc == 0x00	/* Driver */
@@ -708,7 +1173,11 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 
 		case STATE_SECTION_PROV:
 
+<<<<<<< HEAD
 			pHdr = (struct pseudo_hdr *) pUcFile;
+=======
+			pHdr = (PPSEUDO_HDR) pUcFile;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (pHdr->checksum == hdr_checksum(pHdr)) {
 				if (pHdr->portdest != 0x80 /* Dsp OAM */ ) {
@@ -719,6 +1188,7 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 
 				// Get buffer for provisioning data
 				pbuffer =
+<<<<<<< HEAD
 					kmalloc((usHdrLength + sizeof(struct pseudo_hdr)),
 						GFP_ATOMIC);
 				if (pbuffer) {
@@ -728,6 +1198,17 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 					// link provisioning data
 					pprov_record =
 						kmalloc(sizeof(struct prov_record),
+=======
+					kmalloc((usHdrLength + sizeof(PSEUDO_HDR)),
+						GFP_ATOMIC);
+				if (pbuffer) {
+					memcpy(pbuffer, (void *)pUcFile,
+						   (UINT) (usHdrLength +
+							   sizeof(PSEUDO_HDR)));
+					// link provisioning data
+					pprov_record =
+						kmalloc(sizeof(PROV_RECORD),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 							GFP_ATOMIC);
 					if (pprov_record) {
 						pprov_record->pprov_data =
@@ -737,8 +1218,13 @@ int card_download(struct net_device *dev, const u8 *pFileStart,
 								  &info->prov_list);
 						// Move to next entry if available
 						pUcFile =
+<<<<<<< HEAD
 							(u8 *) ((unsigned long) pUcFile +
 								   (unsigned long) ((usHdrLength + 1) & 0xFFFFFFFE) + sizeof(struct pseudo_hdr));
+=======
+							(UCHAR *) ((unsigned long) pUcFile +
+								   (unsigned long) ((usHdrLength + 1) & 0xFFFFFFFE) + sizeof(PSEUDO_HDR));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						if ((unsigned long) (pUcFile) -
 							(unsigned long) (pFileStart) >=
 							(unsigned long) FileLength) {

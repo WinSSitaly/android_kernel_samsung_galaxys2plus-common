@@ -24,7 +24,11 @@
 
 #include <asm/page.h>
 #include <asm/pgtable.h>
+<<<<<<< HEAD
 #include <linux/io.h>
+=======
+#include <asm/io.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/hugetlb.h>
 #include <linux/node.h>
@@ -53,6 +57,7 @@ static unsigned long __initdata default_hstate_size;
  */
 static DEFINE_SPINLOCK(hugetlb_lock);
 
+<<<<<<< HEAD
 static inline void unlock_or_release_subpool(struct hugepage_subpool *spool)
 {
 	bool free = (spool->count == 0) && (spool->used_hpages == 0);
@@ -131,6 +136,8 @@ static inline struct hugepage_subpool *subpool_vma(struct vm_area_struct *vma)
 	return subpool_inode(vma->vm_file->f_dentry->d_inode);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Region tracking -- allows tracking of reservations and instantiated pages
  *                    across the pages in a mapping.
@@ -140,10 +147,17 @@ static inline struct hugepage_subpool *subpool_vma(struct vm_area_struct *vma)
  * must either hold the mmap_sem for write, or the mmap_sem for read and
  * the hugetlb_instantiation mutex:
  *
+<<<<<<< HEAD
  *	down_write(&mm->mmap_sem);
  * or
  *	down_read(&mm->mmap_sem);
  *	mutex_lock(&hugetlb_instantiation_mutex);
+=======
+ * 	down_write(&mm->mmap_sem);
+ * or
+ * 	down_read(&mm->mmap_sem);
+ * 	mutex_lock(&hugetlb_instantiation_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct file_region {
 	struct list_head link;
@@ -538,10 +552,15 @@ static struct page *dequeue_huge_page_vma(struct hstate *h,
 	struct zonelist *zonelist;
 	struct zone *zone;
 	struct zoneref *z;
+<<<<<<< HEAD
 	unsigned int cpuset_mems_cookie;
 
 retry_cpuset:
 	cpuset_mems_cookie = get_mems_allowed();
+=======
+
+	get_mems_allowed();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	zonelist = huge_zonelist(vma, address,
 					htlb_alloc_mask, &mpol, &nodemask);
 	/*
@@ -568,6 +587,7 @@ retry_cpuset:
 			}
 		}
 	}
+<<<<<<< HEAD
 
 	mpol_cond_put(mpol);
 	if (unlikely(!put_mems_allowed(cpuset_mems_cookie) && !page))
@@ -577,6 +597,12 @@ retry_cpuset:
 err:
 	mpol_cond_put(mpol);
 	return NULL;
+=======
+err:
+	mpol_cond_put(mpol);
+	put_mems_allowed();
+	return page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void update_and_free_page(struct hstate *h, struct page *page)
@@ -588,10 +614,16 @@ static void update_and_free_page(struct hstate *h, struct page *page)
 	h->nr_huge_pages--;
 	h->nr_huge_pages_node[page_to_nid(page)]--;
 	for (i = 0; i < pages_per_huge_page(h); i++) {
+<<<<<<< HEAD
 		page[i].flags &= ~(1 << PG_locked | 1 << PG_error |
 				1 << PG_referenced | 1 << PG_dirty |
 				1 << PG_active | 1 << PG_reserved |
 				1 << PG_private | 1 << PG_writeback);
+=======
+		page[i].flags &= ~(1 << PG_locked | 1 << PG_error | 1 << PG_referenced |
+				1 << PG_dirty | 1 << PG_active | 1 << PG_reserved |
+				1 << PG_private | 1<< PG_writeback);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	set_compound_page_dtor(page, NULL);
 	set_page_refcounted(page);
@@ -618,9 +650,15 @@ static void free_huge_page(struct page *page)
 	 */
 	struct hstate *h = page_hstate(page);
 	int nid = page_to_nid(page);
+<<<<<<< HEAD
 	struct hugepage_subpool *spool =
 		(struct hugepage_subpool *)page_private(page);
 
+=======
+	struct address_space *mapping;
+
+	mapping = (struct address_space *) page_private(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_page_private(page, 0);
 	page->mapping = NULL;
 	BUG_ON(page_count(page));
@@ -636,7 +674,12 @@ static void free_huge_page(struct page *page)
 		enqueue_huge_page(h, page);
 	}
 	spin_unlock(&hugetlb_lock);
+<<<<<<< HEAD
 	hugepage_subpool_put_pages(spool, 1);
+=======
+	if (mapping)
+		hugetlb_put_quota(mapping, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void prep_new_huge_page(struct hstate *h, struct page *page, int nid)
@@ -677,6 +720,7 @@ int PageHuge(struct page *page)
 
 	return dtor == free_huge_page;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(PageHuge);
 
 pgoff_t __basepage_index(struct page *page)
@@ -695,6 +739,10 @@ pgoff_t __basepage_index(struct page *page)
 
 	return (index << compound_order(page_head)) + compound_idx;
 }
+=======
+
+EXPORT_SYMBOL_GPL(PageHuge);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct page *alloc_fresh_huge_page_node(struct hstate *h, int nid)
 {
@@ -901,7 +949,11 @@ static struct page *alloc_buddy_huge_page(struct hstate *h, int nid)
 
 	if (page && arch_prepare_hugepage(page)) {
 		__free_pages(page, huge_page_order(h));
+<<<<<<< HEAD
 		page = NULL;
+=======
+		return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	spin_lock(&hugetlb_lock);
@@ -953,7 +1005,10 @@ static int gather_surplus_pages(struct hstate *h, int delta)
 	struct page *page, *tmp;
 	int ret, i;
 	int needed, allocated;
+<<<<<<< HEAD
 	bool alloc_ok = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	needed = (h->resv_huge_pages + delta) - h->free_huge_pages;
 	if (needed <= 0) {
@@ -969,6 +1024,7 @@ retry:
 	spin_unlock(&hugetlb_lock);
 	for (i = 0; i < needed; i++) {
 		page = alloc_buddy_huge_page(h, NUMA_NO_NODE);
+<<<<<<< HEAD
 		if (!page) {
 			alloc_ok = false;
 			break;
@@ -976,6 +1032,19 @@ retry:
 		list_add(&page->lru, &surplus_list);
 	}
 	allocated += i;
+=======
+		if (!page)
+			/*
+			 * We were not able to allocate enough pages to
+			 * satisfy the entire reservation so we free what
+			 * we've allocated so far.
+			 */
+			goto free;
+
+		list_add(&page->lru, &surplus_list);
+	}
+	allocated += needed;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * After retaking hugetlb_lock, we need to recalculate 'needed'
@@ -984,6 +1053,7 @@ retry:
 	spin_lock(&hugetlb_lock);
 	needed = (h->resv_huge_pages + delta) -
 			(h->free_huge_pages + allocated);
+<<<<<<< HEAD
 	if (needed > 0) {
 		if (alloc_ok)
 			goto retry;
@@ -994,6 +1064,11 @@ retry:
 		 */
 		goto free;
 	}
+=======
+	if (needed > 0)
+		goto retry;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * The surplus_list now contains _at_least_ the number of extra pages
 	 * needed to accommodate the reservation.  Add the appropriate number
@@ -1019,10 +1094,17 @@ retry:
 		VM_BUG_ON(page_count(page));
 		enqueue_huge_page(h, page);
 	}
+<<<<<<< HEAD
 free:
 	spin_unlock(&hugetlb_lock);
 
 	/* Free unnecessary surplus pages to the buddy allocator */
+=======
+	spin_unlock(&hugetlb_lock);
+
+	/* Free unnecessary surplus pages to the buddy allocator */
+free:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!list_empty(&surplus_list)) {
 		list_for_each_entry_safe(page, tmp, &surplus_list, lru) {
 			list_del(&page->lru);
@@ -1071,12 +1153,20 @@ static void return_unused_surplus_pages(struct hstate *h,
 /*
  * Determine if the huge page at addr within the vma has an associated
  * reservation.  Where it does not we will need to logically increase
+<<<<<<< HEAD
  * reservation and actually increase subpool usage before an allocation
  * can occur.  Where any new reservation would be required the
  * reservation change is prepared, but not committed.  Once the page
  * has been allocated from the subpool and instantiated the change should
  * be committed via vma_commit_reservation.  No action is required on
  * failure.
+=======
+ * reservation and actually increase quota before an allocation can occur.
+ * Where any new reservation would be required the reservation change is
+ * prepared, but not committed.  Once the page has been quota'd allocated
+ * an instantiated the change should be committed via vma_commit_reservation.
+ * No action is required on failure.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static long vma_needs_reservation(struct hstate *h,
 			struct vm_area_struct *vma, unsigned long addr)
@@ -1125,6 +1215,7 @@ static void vma_commit_reservation(struct hstate *h,
 static struct page *alloc_huge_page(struct vm_area_struct *vma,
 				    unsigned long addr, int avoid_reserve)
 {
+<<<<<<< HEAD
 	struct hugepage_subpool *spool = subpool_vma(vma);
 	struct hstate *h = hstate_vma(vma);
 	struct page *page;
@@ -1137,12 +1228,30 @@ static struct page *alloc_huge_page(struct vm_area_struct *vma,
 	 * satisfying the allocation MAP_NORESERVE mappings may also
 	 * need pages and subpool limit allocated allocated if no reserve
 	 * mapping overlaps.
+=======
+	struct hstate *h = hstate_vma(vma);
+	struct page *page;
+	struct address_space *mapping = vma->vm_file->f_mapping;
+	struct inode *inode = mapping->host;
+	long chg;
+
+	/*
+	 * Processes that did not create the mapping will have no reserves and
+	 * will not have accounted against quota. Check that the quota can be
+	 * made before satisfying the allocation
+	 * MAP_NORESERVE mappings may also need pages and quota allocated
+	 * if no reserve mapping overlaps.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	chg = vma_needs_reservation(h, vma, addr);
 	if (chg < 0)
 		return ERR_PTR(-VM_FAULT_OOM);
 	if (chg)
+<<<<<<< HEAD
 		if (hugepage_subpool_get_pages(spool, chg))
+=======
+		if (hugetlb_get_quota(inode->i_mapping, chg))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return ERR_PTR(-VM_FAULT_SIGBUS);
 
 	spin_lock(&hugetlb_lock);
@@ -1152,12 +1261,20 @@ static struct page *alloc_huge_page(struct vm_area_struct *vma,
 	if (!page) {
 		page = alloc_buddy_huge_page(h, NUMA_NO_NODE);
 		if (!page) {
+<<<<<<< HEAD
 			hugepage_subpool_put_pages(spool, chg);
+=======
+			hugetlb_put_quota(inode->i_mapping, chg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return ERR_PTR(-VM_FAULT_SIGBUS);
 		}
 	}
 
+<<<<<<< HEAD
 	set_page_private(page, (unsigned long)spool);
+=======
+	set_page_private(page, (unsigned long) mapping);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	vma_commit_reservation(h, vma, addr);
 
@@ -1212,6 +1329,7 @@ static void __init gather_bootmem_prealloc(void)
 	struct huge_bootmem_page *m;
 
 	list_for_each_entry(m, &huge_boot_pages, list) {
+<<<<<<< HEAD
 		struct hstate *h = m->hstate;
 		struct page *page;
 
@@ -1222,6 +1340,10 @@ static void __init gather_bootmem_prealloc(void)
 #else
 		page = virt_to_page(m);
 #endif
+=======
+		struct page *page = virt_to_page(m);
+		struct hstate *h = m->hstate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__ClearPageReserved(page);
 		WARN_ON(page_count(page) != 1);
 		prep_compound_huge_page(page, h->order);
@@ -1698,9 +1820,15 @@ static void __init hugetlb_sysfs_init(void)
 
 /*
  * node_hstate/s - associate per node hstate attributes, via their kobjects,
+<<<<<<< HEAD
  * with node devices in node_devices[] using a parallel array.  The array
  * index of a node device or _hstate == node id.
  * This is here to avoid any static dependency of the node device driver, in
+=======
+ * with node sysdevs in node_devices[] using a parallel array.  The array
+ * index of a node sysdev or _hstate == node id.
+ * This is here to avoid any static dependency of the node sysdev driver, in
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * the base kernel, on the hugetlb module.
  */
 struct node_hstate {
@@ -1710,7 +1838,11 @@ struct node_hstate {
 struct node_hstate node_hstates[MAX_NUMNODES];
 
 /*
+<<<<<<< HEAD
  * A subset of global hstate attributes for node devices
+=======
+ * A subset of global hstate attributes for node sysdevs
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static struct attribute *per_node_hstate_attrs[] = {
 	&nr_hugepages_attr.attr,
@@ -1724,7 +1856,11 @@ static struct attribute_group per_node_hstate_attr_group = {
 };
 
 /*
+<<<<<<< HEAD
  * kobj_to_node_hstate - lookup global hstate for node device hstate attr kobj.
+=======
+ * kobj_to_node_hstate - lookup global hstate for node sysdev hstate attr kobj.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Returns node id via non-NULL nidp.
  */
 static struct hstate *kobj_to_node_hstate(struct kobject *kobj, int *nidp)
@@ -1747,13 +1883,21 @@ static struct hstate *kobj_to_node_hstate(struct kobject *kobj, int *nidp)
 }
 
 /*
+<<<<<<< HEAD
  * Unregister hstate attributes from a single node device.
+=======
+ * Unregister hstate attributes from a single node sysdev.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * No-op if no hstate attributes attached.
  */
 void hugetlb_unregister_node(struct node *node)
 {
 	struct hstate *h;
+<<<<<<< HEAD
 	struct node_hstate *nhs = &node_hstates[node->dev.id];
+=======
+	struct node_hstate *nhs = &node_hstates[node->sysdev.id];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!nhs->hugepages_kobj)
 		return;		/* no hstate attributes */
@@ -1769,7 +1913,11 @@ void hugetlb_unregister_node(struct node *node)
 }
 
 /*
+<<<<<<< HEAD
  * hugetlb module exit:  unregister hstate attributes from node devices
+=======
+ * hugetlb module exit:  unregister hstate attributes from node sysdevs
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * that have them.
  */
 static void hugetlb_unregister_all_nodes(void)
@@ -1777,7 +1925,11 @@ static void hugetlb_unregister_all_nodes(void)
 	int nid;
 
 	/*
+<<<<<<< HEAD
 	 * disable node device registrations.
+=======
+	 * disable node sysdev registrations.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	register_hugetlbfs_with_node(NULL, NULL);
 
@@ -1789,20 +1941,32 @@ static void hugetlb_unregister_all_nodes(void)
 }
 
 /*
+<<<<<<< HEAD
  * Register hstate attributes for a single node device.
+=======
+ * Register hstate attributes for a single node sysdev.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * No-op if attributes already registered.
  */
 void hugetlb_register_node(struct node *node)
 {
 	struct hstate *h;
+<<<<<<< HEAD
 	struct node_hstate *nhs = &node_hstates[node->dev.id];
+=======
+	struct node_hstate *nhs = &node_hstates[node->sysdev.id];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err;
 
 	if (nhs->hugepages_kobj)
 		return;		/* already allocated */
 
 	nhs->hugepages_kobj = kobject_create_and_add("hugepages",
+<<<<<<< HEAD
 							&node->dev.kobj);
+=======
+							&node->sysdev.kobj);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!nhs->hugepages_kobj)
 		return;
 
@@ -1813,7 +1977,11 @@ void hugetlb_register_node(struct node *node)
 		if (err) {
 			printk(KERN_ERR "Hugetlb: Unable to add hstate %s"
 					" for node %d\n",
+<<<<<<< HEAD
 						h->name, node->dev.id);
+=======
+						h->name, node->sysdev.id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			hugetlb_unregister_node(node);
 			break;
 		}
@@ -1822,8 +1990,13 @@ void hugetlb_register_node(struct node *node)
 
 /*
  * hugetlb init time:  register hstate attributes for all registered node
+<<<<<<< HEAD
  * devices of nodes that have memory.  All on-line nodes should have
  * registered their associated device by this time.
+=======
+ * sysdevs of nodes that have memory.  All on-line nodes should have
+ * registered their associated sysdev by this time.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void hugetlb_register_all_nodes(void)
 {
@@ -1831,12 +2004,20 @@ static void hugetlb_register_all_nodes(void)
 
 	for_each_node_state(nid, N_HIGH_MEMORY) {
 		struct node *node = &node_devices[nid];
+<<<<<<< HEAD
 		if (node->dev.id == nid)
+=======
+		if (node->sysdev.id == nid)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			hugetlb_register_node(node);
 	}
 
 	/*
+<<<<<<< HEAD
 	 * Let the node device driver know we're here so it can
+=======
+	 * Let the node sysdev driver know we're here so it can
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * [un]register hstate attributes on node hotplug.
 	 */
 	register_hugetlbfs_with_node(hugetlb_register_node,
@@ -2113,12 +2294,17 @@ int hugetlb_report_node_meminfo(int nid, char *buf)
 /* Return the number pages of memory we physically have, in PAGE_SIZE units. */
 unsigned long hugetlb_total_pages(void)
 {
+<<<<<<< HEAD
 	struct hstate *h;
 	unsigned long nr_total_pages = 0;
 
 	for_each_hstate(h)
 		nr_total_pages += h->nr_huge_pages * pages_per_huge_page(h);
 	return nr_total_pages;
+=======
+	struct hstate *h = &default_hstate;
+	return h->nr_huge_pages * pages_per_huge_page(h);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int hugetlb_acct_memory(struct hstate *h, long delta)
@@ -2178,6 +2364,7 @@ static void hugetlb_vm_op_open(struct vm_area_struct *vma)
 		kref_get(&reservations->refs);
 }
 
+<<<<<<< HEAD
 static void resv_map_put(struct vm_area_struct *vma)
 {
 	struct resv_map *reservations = vma_resv_map(vma);
@@ -2187,11 +2374,16 @@ static void resv_map_put(struct vm_area_struct *vma)
 	kref_put(&reservations->refs, resv_map_release);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void hugetlb_vm_op_close(struct vm_area_struct *vma)
 {
 	struct hstate *h = hstate_vma(vma);
 	struct resv_map *reservations = vma_resv_map(vma);
+<<<<<<< HEAD
 	struct hugepage_subpool *spool = subpool_vma(vma);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long reserve;
 	unsigned long start;
 	unsigned long end;
@@ -2203,11 +2395,19 @@ static void hugetlb_vm_op_close(struct vm_area_struct *vma)
 		reserve = (end - start) -
 			region_count(&reservations->regions, start, end);
 
+<<<<<<< HEAD
 		resv_map_put(vma);
 
 		if (reserve) {
 			hugetlb_acct_memory(h, -reserve);
 			hugepage_subpool_put_pages(spool, reserve);
+=======
+		kref_put(&reservations->refs, resv_map_release);
+
+		if (reserve) {
+			hugetlb_acct_memory(h, -reserve);
+			hugetlb_put_quota(vma->vm_file->f_mapping, reserve);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }
@@ -2253,8 +2453,14 @@ static void set_huge_ptep_writable(struct vm_area_struct *vma,
 	pte_t entry;
 
 	entry = pte_mkwrite(pte_mkdirty(huge_ptep_get(ptep)));
+<<<<<<< HEAD
 	if (huge_ptep_set_access_flags(vma, address, ptep, entry, 1))
 		update_mmu_cache(vma, address, ptep);
+=======
+	if (huge_ptep_set_access_flags(vma, address, ptep, entry, 1)) {
+		update_mmu_cache(vma, address, ptep);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -2309,9 +2515,15 @@ static int is_hugetlb_entry_migration(pte_t pte)
 	if (huge_pte_none(pte) || pte_present(pte))
 		return 0;
 	swp = pte_to_swp_entry(pte);
+<<<<<<< HEAD
 	if (non_swap_entry(swp) && is_migration_entry(swp))
 		return 1;
 	else
+=======
+	if (non_swap_entry(swp) && is_migration_entry(swp)) {
+		return 1;
+	} else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 }
 
@@ -2322,9 +2534,15 @@ static int is_hugetlb_entry_hwpoisoned(pte_t pte)
 	if (huge_pte_none(pte) || pte_present(pte))
 		return 0;
 	swp = pte_to_swp_entry(pte);
+<<<<<<< HEAD
 	if (non_swap_entry(swp) && is_hwpoison_entry(swp))
 		return 1;
 	else
+=======
+	if (non_swap_entry(swp) && is_hwpoison_entry(swp)) {
+		return 1;
+	} else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 }
 
@@ -2361,6 +2579,7 @@ void __unmap_hugepage_range(struct vm_area_struct *vma, unsigned long start,
 		if (huge_pmd_unshare(mm, &address, ptep))
 			continue;
 
+<<<<<<< HEAD
 		pte = huge_ptep_get(ptep);
 		if (huge_pte_none(pte))
 			continue;
@@ -2372,12 +2591,21 @@ void __unmap_hugepage_range(struct vm_area_struct *vma, unsigned long start,
 			continue;
 
 		page = pte_page(pte);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * If a reference page is supplied, it is because a specific
 		 * page is being unmapped, not a range. Ensure the page we
 		 * are about to unmap is the actual page of interest.
 		 */
 		if (ref_page) {
+<<<<<<< HEAD
+=======
+			pte = huge_ptep_get(ptep);
+			if (huge_pte_none(pte))
+				continue;
+			page = pte_page(pte);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (page != ref_page)
 				continue;
 
@@ -2390,6 +2618,7 @@ void __unmap_hugepage_range(struct vm_area_struct *vma, unsigned long start,
 		}
 
 		pte = huge_ptep_get_and_clear(mm, address, ptep);
+<<<<<<< HEAD
 		if (pte_dirty(pte))
 			set_page_dirty(page);
 		list_add(&page->lru, &page_list);
@@ -2400,6 +2629,24 @@ void __unmap_hugepage_range(struct vm_area_struct *vma, unsigned long start,
 	}
 	flush_tlb_range(vma, start, end);
 	spin_unlock(&mm->page_table_lock);
+=======
+		if (huge_pte_none(pte))
+			continue;
+
+		/*
+		 * HWPoisoned hugepage is already unmapped and dropped reference
+		 */
+		if (unlikely(is_hugetlb_entry_hwpoisoned(pte)))
+			continue;
+
+		page = pte_page(pte);
+		if (pte_dirty(pte))
+			set_page_dirty(page);
+		list_add(&page->lru, &page_list);
+	}
+	spin_unlock(&mm->page_table_lock);
+	flush_tlb_range(vma, start, end);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mmu_notifier_invalidate_range_end(mm, start, end);
 	list_for_each_entry_safe(page, tmp, &page_list, lru) {
 		page_remove_rmap(page);
@@ -2413,6 +2660,7 @@ void unmap_hugepage_range(struct vm_area_struct *vma, unsigned long start,
 {
 	mutex_lock(&vma->vm_file->f_mapping->i_mmap_mutex);
 	__unmap_hugepage_range(vma, start, end, ref_page);
+<<<<<<< HEAD
 	/*
 	 * Clear this flag so that x86's huge_pmd_share page_table_shareable
 	 * test will fail on a vma being torn down, and not grab a page table
@@ -2429,6 +2677,8 @@ void unmap_hugepage_range(struct vm_area_struct *vma, unsigned long start,
 	 * surprises later.
 	 */
 	vma->vm_flags &= ~VM_MAYSHARE;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&vma->vm_file->f_mapping->i_mmap_mutex);
 }
 
@@ -2452,9 +2702,15 @@ static int unmap_ref_private(struct mm_struct *mm, struct vm_area_struct *vma,
 	 * from page cache lookup which is in HPAGE_SIZE units.
 	 */
 	address = address & huge_page_mask(h);
+<<<<<<< HEAD
 	pgoff = ((address - vma->vm_start) >> PAGE_SHIFT) +
 			vma->vm_pgoff;
 	mapping = vma->vm_file->f_dentry->d_inode->i_mapping;
+=======
+	pgoff = ((address - vma->vm_start) >> PAGE_SHIFT)
+		+ (vma->vm_pgoff >> PAGE_SHIFT);
+	mapping = (struct address_space *)page_private(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Take the mapping lock for the duration of the table walk. As
@@ -2486,9 +2742,12 @@ static int unmap_ref_private(struct mm_struct *mm, struct vm_area_struct *vma,
 
 /*
  * Hugetlb_cow() should be called with page lock of the original hugepage held.
+<<<<<<< HEAD
  * Called with hugetlb_instantiation_mutex held and pte_page locked so we
  * cannot race with other handlers or page migration.
  * Keep the pte_same checks anyway to make transition from the mutex easier.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int hugetlb_cow(struct mm_struct *mm, struct vm_area_struct *vma,
 			unsigned long address, pte_t *ptep, pte_t pte,
@@ -2545,6 +2804,7 @@ retry_avoidcopy:
 		if (outside_reserve) {
 			BUG_ON(huge_pte_none(pte));
 			if (unmap_ref_private(mm, vma, old_page, address)) {
+<<<<<<< HEAD
 				BUG_ON(huge_pte_none(pte));
 				spin_lock(&mm->page_table_lock);
 				ptep = huge_pte_offset(mm, address & huge_page_mask(h));
@@ -2555,6 +2815,12 @@ retry_avoidcopy:
 				 * our job is done.
 				 */
 				return 0;
+=======
+				BUG_ON(page_count(old_page) != 1);
+				BUG_ON(huge_pte_none(pte));
+				spin_lock(&mm->page_table_lock);
+				goto retry_avoidcopy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			WARN_ON_ONCE(1);
 		}
@@ -2645,7 +2911,10 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
 {
 	struct hstate *h = hstate_vma(vma);
 	int ret = VM_FAULT_SIGBUS;
+<<<<<<< HEAD
 	int anon_rmap = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pgoff_t idx;
 	unsigned long size;
 	struct page *page;
@@ -2700,13 +2969,21 @@ retry:
 			spin_lock(&inode->i_lock);
 			inode->i_blocks += blocks_per_huge_page(h);
 			spin_unlock(&inode->i_lock);
+<<<<<<< HEAD
+=======
+			page_dup_rmap(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			lock_page(page);
 			if (unlikely(anon_vma_prepare(vma))) {
 				ret = VM_FAULT_OOM;
 				goto backout_unlocked;
 			}
+<<<<<<< HEAD
 			anon_rmap = 1;
+=======
+			hugepage_add_new_anon_rmap(page, vma, address);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		/*
@@ -2715,10 +2992,18 @@ retry:
 		 * So we need to block hugepage fault by PG_hwpoison bit check.
 		 */
 		if (unlikely(PageHWPoison(page))) {
+<<<<<<< HEAD
 			ret = VM_FAULT_HWPOISON |
 			      VM_FAULT_SET_HINDEX(h - hstates);
 			goto backout_unlocked;
 		}
+=======
+			ret = VM_FAULT_HWPOISON | 
+			      VM_FAULT_SET_HINDEX(h - hstates);
+			goto backout_unlocked;
+		}
+		page_dup_rmap(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -2742,10 +3027,13 @@ retry:
 	if (!huge_pte_none(huge_ptep_get(ptep)))
 		goto backout;
 
+<<<<<<< HEAD
 	if (anon_rmap)
 		hugepage_add_new_anon_rmap(page, vma, address);
 	else
 		page_dup_rmap(page);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	new_pte = make_huge_pte(vma, page, ((vma->vm_flags & VM_WRITE)
 				&& (vma->vm_flags & VM_SHARED)));
 	set_huge_pte_at(mm, address, ptep, new_pte);
@@ -2779,16 +3067,26 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
 	static DEFINE_MUTEX(hugetlb_instantiation_mutex);
 	struct hstate *h = hstate_vma(vma);
 
+<<<<<<< HEAD
 	address &= huge_page_mask(h);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ptep = huge_pte_offset(mm, address);
 	if (ptep) {
 		entry = huge_ptep_get(ptep);
 		if (unlikely(is_hugetlb_entry_migration(entry))) {
+<<<<<<< HEAD
 			migration_entry_wait_huge(mm, ptep);
 			return 0;
 		} else if (unlikely(is_hugetlb_entry_hwpoisoned(entry)))
 			return VM_FAULT_HWPOISON_LARGE |
+=======
+			migration_entry_wait(mm, (pmd_t *)ptep, address);
+			return 0;
+		} else if (unlikely(is_hugetlb_entry_hwpoisoned(entry)))
+			return VM_FAULT_HWPOISON_LARGE | 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       VM_FAULT_SET_HINDEX(h - hstates);
 	}
 
@@ -2923,6 +3221,7 @@ int follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
 			break;
 		}
 
+<<<<<<< HEAD
 		/*
 		 * We need call hugetlb_fault for both hugepages under migration
 		 * (in which case hugetlb_fault waits for the migration,) and
@@ -2934,6 +3233,9 @@ int follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
 		 * directly from any kind of swap entries.
 		 */
 		if (absent || is_swap_pte(huge_ptep_get(pte)) ||
+=======
+		if (absent ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    ((flags & FOLL_WRITE) && !pte_write(huge_ptep_get(pte)))) {
 			int ret;
 
@@ -3006,6 +3308,7 @@ void hugetlb_change_protection(struct vm_area_struct *vma,
 		}
 	}
 	spin_unlock(&mm->page_table_lock);
+<<<<<<< HEAD
 	/*
 	 * Must flush TLB before releasing i_mmap_mutex: x86's huge_pmd_unshare
 	 * may have cleared our pud entry and done put_page on the page table:
@@ -3014,6 +3317,11 @@ void hugetlb_change_protection(struct vm_area_struct *vma,
 	 */
 	flush_tlb_range(vma, start, end);
 	mutex_unlock(&vma->vm_file->f_mapping->i_mmap_mutex);
+=======
+	mutex_unlock(&vma->vm_file->f_mapping->i_mmap_mutex);
+
+	flush_tlb_range(vma, start, end);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int hugetlb_reserve_pages(struct inode *inode,
@@ -3023,12 +3331,19 @@ int hugetlb_reserve_pages(struct inode *inode,
 {
 	long ret, chg;
 	struct hstate *h = hstate_inode(inode);
+<<<<<<< HEAD
 	struct hugepage_subpool *spool = subpool_inode(inode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Only apply hugepage reservation if asked. At fault time, an
 	 * attempt will be made for VM_NORESERVE to allocate a page
+<<<<<<< HEAD
 	 * without using reserves
+=======
+	 * and filesystem quota without using reserves
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	if (vm_flags & VM_NORESERVE)
 		return 0;
@@ -3052,6 +3367,7 @@ int hugetlb_reserve_pages(struct inode *inode,
 		set_vma_resv_flags(vma, HPAGE_RESV_OWNER);
 	}
 
+<<<<<<< HEAD
 	if (chg < 0) {
 		ret = chg;
 		goto out_err;
@@ -3071,6 +3387,23 @@ int hugetlb_reserve_pages(struct inode *inode,
 	if (ret < 0) {
 		hugepage_subpool_put_pages(spool, chg);
 		goto out_err;
+=======
+	if (chg < 0)
+		return chg;
+
+	/* There must be enough filesystem quota for the mapping */
+	if (hugetlb_get_quota(inode->i_mapping, chg))
+		return -ENOSPC;
+
+	/*
+	 * Check enough hugepages are available for the reservation.
+	 * Hand back the quota if there are not
+	 */
+	ret = hugetlb_acct_memory(h, chg);
+	if (ret < 0) {
+		hugetlb_put_quota(inode->i_mapping, chg);
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -3087,23 +3420,33 @@ int hugetlb_reserve_pages(struct inode *inode,
 	if (!vma || vma->vm_flags & VM_MAYSHARE)
 		region_add(&inode->i_mapping->private_list, from, to);
 	return 0;
+<<<<<<< HEAD
 out_err:
 	if (vma)
 		resv_map_put(vma);
 	return ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void hugetlb_unreserve_pages(struct inode *inode, long offset, long freed)
 {
 	struct hstate *h = hstate_inode(inode);
 	long chg = region_truncate(&inode->i_mapping->private_list, offset);
+<<<<<<< HEAD
 	struct hugepage_subpool *spool = subpool_inode(inode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock(&inode->i_lock);
 	inode->i_blocks -= (blocks_per_huge_page(h) * freed);
 	spin_unlock(&inode->i_lock);
 
+<<<<<<< HEAD
 	hugepage_subpool_put_pages(spool, (chg - freed));
+=======
+	hugetlb_put_quota(inode->i_mapping, (chg - freed));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hugetlb_acct_memory(h, -(chg - freed));
 }
 

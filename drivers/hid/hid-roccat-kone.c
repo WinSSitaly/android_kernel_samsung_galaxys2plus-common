@@ -37,6 +37,7 @@
 
 static uint profile_numbers[5] = {0, 1, 2, 3, 4};
 
+<<<<<<< HEAD
 static void kone_profile_activated(struct kone_device *kone, uint new_profile)
 {
 	kone->actual_profile = new_profile;
@@ -91,6 +92,8 @@ static int kone_send(struct usb_device *usb_dev, uint usb_command,
 	return ((len < 0) ? len : ((len != size) ? -EIO : 0));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* kone_class is used for creating sysfs attributes via roccat char device */
 static struct class *kone_class;
 
@@ -122,7 +125,11 @@ static int kone_check_write(struct usb_device *usb_dev)
 		 */
 		msleep(80);
 
+<<<<<<< HEAD
 		retval = kone_receive(usb_dev,
+=======
+		retval = roccat_common_receive(usb_dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				kone_command_confirm_write, &data, 1);
 		if (retval)
 			return retval;
@@ -150,7 +157,11 @@ static int kone_check_write(struct usb_device *usb_dev)
 static int kone_get_settings(struct usb_device *usb_dev,
 		struct kone_settings *buf)
 {
+<<<<<<< HEAD
 	return kone_receive(usb_dev, kone_command_settings, buf,
+=======
+	return roccat_common_receive(usb_dev, kone_command_settings, buf,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sizeof(struct kone_settings));
 }
 
@@ -163,7 +174,11 @@ static int kone_set_settings(struct usb_device *usb_dev,
 		struct kone_settings const *settings)
 {
 	int retval;
+<<<<<<< HEAD
 	retval = kone_send(usb_dev, kone_command_settings,
+=======
+	retval = roccat_common_send(usb_dev, kone_command_settings,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			settings, sizeof(struct kone_settings));
 	if (retval)
 		return retval;
@@ -236,7 +251,11 @@ static int kone_get_weight(struct usb_device *usb_dev, int *result)
 	int retval;
 	uint8_t data;
 
+<<<<<<< HEAD
 	retval = kone_receive(usb_dev, kone_command_weight, &data, 1);
+=======
+	retval = roccat_common_receive(usb_dev, kone_command_weight, &data, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (retval)
 		return retval;
@@ -255,7 +274,11 @@ static int kone_get_firmware_version(struct usb_device *usb_dev, int *result)
 	int retval;
 	uint16_t data;
 
+<<<<<<< HEAD
 	retval = kone_receive(usb_dev, kone_command_firmware_version,
+=======
+	retval = roccat_common_receive(usb_dev, kone_command_firmware_version,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			&data, 2);
 	if (retval)
 		return retval;
@@ -296,7 +319,11 @@ static ssize_t kone_sysfs_write_settings(struct file *fp, struct kobject *kobj,
 			container_of(kobj, struct device, kobj)->parent->parent;
 	struct kone_device *kone = hid_get_drvdata(dev_get_drvdata(dev));
 	struct usb_device *usb_dev = interface_to_usbdev(to_usb_interface(dev));
+<<<<<<< HEAD
 	int retval = 0, difference, old_profile;
+=======
+	int retval = 0, difference;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* I need to get my data in one piece */
 	if (off != 0 || count != sizeof(struct kone_settings))
@@ -307,6 +334,7 @@ static ssize_t kone_sysfs_write_settings(struct file *fp, struct kobject *kobj,
 	if (difference) {
 		retval = kone_set_settings(usb_dev,
 				(struct kone_settings const *)buf);
+<<<<<<< HEAD
 		if (retval) {
 			mutex_unlock(&kone->kone_lock);
 			return retval;
@@ -322,6 +350,24 @@ static ssize_t kone_sysfs_write_settings(struct file *fp, struct kobject *kobj,
 	}
 	mutex_unlock(&kone->kone_lock);
 
+=======
+		if (!retval)
+			memcpy(&kone->settings, buf,
+					sizeof(struct kone_settings));
+	}
+	mutex_unlock(&kone->kone_lock);
+
+	if (retval)
+		return retval;
+
+	/*
+	 * If we get here, treat settings as okay and update actual values
+	 * according to startup_profile
+	 */
+	kone->actual_profile = kone->settings.startup_profile;
+	kone->actual_dpi = kone->profiles[kone->actual_profile - 1].startup_dpi;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return sizeof(struct kone_settings);
 }
 
@@ -437,7 +483,11 @@ static int kone_tcu_command(struct usb_device *usb_dev, int number)
 {
 	unsigned char value;
 	value = number;
+<<<<<<< HEAD
 	return kone_send(usb_dev, kone_command_calibrate, &value, 1);
+=======
+	return roccat_common_send(usb_dev, kone_command_calibrate, &value, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -513,8 +563,11 @@ static ssize_t kone_sysfs_set_tcu(struct device *dev,
 				goto exit_no_settings;
 			goto exit_unlock;
 		}
+<<<<<<< HEAD
 		/* calibration resets profile */
 		kone_profile_activated(kone, kone->settings.startup_profile);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	retval = size;
@@ -558,6 +611,7 @@ static ssize_t kone_sysfs_set_startup_profile(struct device *dev,
 	kone_set_settings_checksum(&kone->settings);
 
 	retval = kone_set_settings(usb_dev, &kone->settings);
+<<<<<<< HEAD
 	if (retval) {
 		mutex_unlock(&kone->kone_lock);
 		return retval;
@@ -568,6 +622,18 @@ static ssize_t kone_sysfs_set_startup_profile(struct device *dev,
 	kone_profile_report(kone, new_startup_profile);
 
 	mutex_unlock(&kone->kone_lock);
+=======
+
+	mutex_unlock(&kone->kone_lock);
+
+	if (retval)
+		return retval;
+
+	/* changing the startup profile immediately activates this profile */
+	kone->actual_profile = new_startup_profile;
+	kone->actual_dpi = kone->profiles[kone->actual_profile - 1].startup_dpi;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return size;
 }
 
@@ -679,7 +745,12 @@ static int kone_init_kone_device_struct(struct usb_device *usb_dev,
 	if (retval)
 		return retval;
 
+<<<<<<< HEAD
 	kone_profile_activated(kone, kone->settings.startup_profile);
+=======
+	kone->actual_profile = kone->settings.startup_profile;
+	kone->actual_dpi = kone->profiles[kone->actual_profile].startup_dpi;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -789,10 +860,17 @@ static void kone_keep_values_up_to_date(struct kone_device *kone,
 {
 	switch (event->event) {
 	case kone_mouse_event_switch_profile:
+<<<<<<< HEAD
 		kone->actual_dpi = kone->profiles[event->value - 1].
 				startup_dpi;
 	case kone_mouse_event_osd_profile:
 		kone->actual_profile = event->value;
+=======
+	case kone_mouse_event_osd_profile:
+		kone->actual_profile = event->value;
+		kone->actual_dpi = kone->profiles[kone->actual_profile - 1].
+				startup_dpi;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case kone_mouse_event_switch_dpi:
 	case kone_mouse_event_osd_dpi:
@@ -845,9 +923,12 @@ static int kone_raw_event(struct hid_device *hdev, struct hid_report *report,
 	if (size != sizeof(struct kone_mouse_event))
 		return 0;
 
+<<<<<<< HEAD
 	if (kone == NULL)
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Firmware 1.38 introduced new behaviour for tilt and special buttons.
 	 * Pressed button is reported in each movement event.

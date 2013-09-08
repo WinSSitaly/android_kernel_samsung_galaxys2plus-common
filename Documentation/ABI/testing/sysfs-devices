@@ -1,6 +1,10 @@
 What:		/sys/devices
 Date:		February 2006
+<<<<<<< HEAD
 Contact:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+=======
+Contact:	Greg Kroah-Hartman <gregkh@suse.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Description:
 		The /sys/devices tree contains a snapshot of the
 		internal state of the kernel device tree.  Devices will

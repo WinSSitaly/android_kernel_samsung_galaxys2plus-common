@@ -4,7 +4,11 @@
 
   DMA ringbuffer and descriptor allocation/management
 
+<<<<<<< HEAD
   Copyright (c) 2005, 2006 Michael Buesch <m@bues.ch>
+=======
+  Copyright (c) 2005, 2006 Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
   Some code in this file is derived from the b44.c driver
   Copyright (C) 2002 David S. Miller
@@ -42,9 +46,16 @@
 
 /* 32bit DMA ops. */
 static
+<<<<<<< HEAD
 struct b43legacy_dmadesc32 *op32_idx2desc(struct b43legacy_dmaring *ring,
 					  int slot,
 					  struct b43legacy_dmadesc_meta **meta)
+=======
+struct b43legacy_dmadesc_generic *op32_idx2desc(
+					struct b43legacy_dmaring *ring,
+					int slot,
+					struct b43legacy_dmadesc_meta **meta)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct b43legacy_dmadesc32 *desc;
 
@@ -52,11 +63,19 @@ struct b43legacy_dmadesc32 *op32_idx2desc(struct b43legacy_dmaring *ring,
 	desc = ring->descbase;
 	desc = &(desc[slot]);
 
+<<<<<<< HEAD
 	return (struct b43legacy_dmadesc32 *)desc;
 }
 
 static void op32_fill_descriptor(struct b43legacy_dmaring *ring,
 				 struct b43legacy_dmadesc32 *desc,
+=======
+	return (struct b43legacy_dmadesc_generic *)desc;
+}
+
+static void op32_fill_descriptor(struct b43legacy_dmaring *ring,
+				 struct b43legacy_dmadesc_generic *desc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 dma_addr_t dmaaddr, u16 bufsize,
 				 int start, int end, int irq)
 {
@@ -66,13 +85,21 @@ static void op32_fill_descriptor(struct b43legacy_dmaring *ring,
 	u32 addr;
 	u32 addrext;
 
+<<<<<<< HEAD
 	slot = (int)(desc - descbase);
+=======
+	slot = (int)(&(desc->dma32) - descbase);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	B43legacy_WARN_ON(!(slot >= 0 && slot < ring->nr_slots));
 
 	addr = (u32)(dmaaddr & ~SSB_DMA_TRANSLATION_MASK);
 	addrext = (u32)(dmaaddr & SSB_DMA_TRANSLATION_MASK)
 		   >> SSB_DMA_TRANSLATION_SHIFT;
+<<<<<<< HEAD
 	addr |= ring->dev->dma.translation;
+=======
+	addr |= ssb_dma_translation(ring->dev->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ctl = (bufsize - ring->frameoffset)
 	      & B43legacy_DMA32_DCTL_BYTECNT;
 	if (slot == ring->nr_slots - 1)
@@ -86,8 +113,13 @@ static void op32_fill_descriptor(struct b43legacy_dmaring *ring,
 	ctl |= (addrext << B43legacy_DMA32_DCTL_ADDREXT_SHIFT)
 	       & B43legacy_DMA32_DCTL_ADDREXT_MASK;
 
+<<<<<<< HEAD
 	desc->control = cpu_to_le32(ctl);
 	desc->address = cpu_to_le32(addr);
+=======
+	desc->dma32.control = cpu_to_le32(ctl);
+	desc->dma32.address = cpu_to_le32(addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void op32_poke_tx(struct b43legacy_dmaring *ring, int slot)
@@ -127,6 +159,124 @@ static void op32_set_current_rxslot(struct b43legacy_dmaring *ring,
 			    (u32)(slot * sizeof(struct b43legacy_dmadesc32)));
 }
 
+<<<<<<< HEAD
+=======
+static const struct b43legacy_dma_ops dma32_ops = {
+	.idx2desc		= op32_idx2desc,
+	.fill_descriptor	= op32_fill_descriptor,
+	.poke_tx		= op32_poke_tx,
+	.tx_suspend		= op32_tx_suspend,
+	.tx_resume		= op32_tx_resume,
+	.get_current_rxslot	= op32_get_current_rxslot,
+	.set_current_rxslot	= op32_set_current_rxslot,
+};
+
+/* 64bit DMA ops. */
+static
+struct b43legacy_dmadesc_generic *op64_idx2desc(
+					struct b43legacy_dmaring *ring,
+					int slot,
+					struct b43legacy_dmadesc_meta
+					**meta)
+{
+	struct b43legacy_dmadesc64 *desc;
+
+	*meta = &(ring->meta[slot]);
+	desc = ring->descbase;
+	desc = &(desc[slot]);
+
+	return (struct b43legacy_dmadesc_generic *)desc;
+}
+
+static void op64_fill_descriptor(struct b43legacy_dmaring *ring,
+				 struct b43legacy_dmadesc_generic *desc,
+				 dma_addr_t dmaaddr, u16 bufsize,
+				 int start, int end, int irq)
+{
+	struct b43legacy_dmadesc64 *descbase = ring->descbase;
+	int slot;
+	u32 ctl0 = 0;
+	u32 ctl1 = 0;
+	u32 addrlo;
+	u32 addrhi;
+	u32 addrext;
+
+	slot = (int)(&(desc->dma64) - descbase);
+	B43legacy_WARN_ON(!(slot >= 0 && slot < ring->nr_slots));
+
+	addrlo = (u32)(dmaaddr & 0xFFFFFFFF);
+	addrhi = (((u64)dmaaddr >> 32) & ~SSB_DMA_TRANSLATION_MASK);
+	addrext = (((u64)dmaaddr >> 32) & SSB_DMA_TRANSLATION_MASK)
+		  >> SSB_DMA_TRANSLATION_SHIFT;
+	addrhi |= ssb_dma_translation(ring->dev->dev);
+	if (slot == ring->nr_slots - 1)
+		ctl0 |= B43legacy_DMA64_DCTL0_DTABLEEND;
+	if (start)
+		ctl0 |= B43legacy_DMA64_DCTL0_FRAMESTART;
+	if (end)
+		ctl0 |= B43legacy_DMA64_DCTL0_FRAMEEND;
+	if (irq)
+		ctl0 |= B43legacy_DMA64_DCTL0_IRQ;
+	ctl1 |= (bufsize - ring->frameoffset)
+		& B43legacy_DMA64_DCTL1_BYTECNT;
+	ctl1 |= (addrext << B43legacy_DMA64_DCTL1_ADDREXT_SHIFT)
+		& B43legacy_DMA64_DCTL1_ADDREXT_MASK;
+
+	desc->dma64.control0 = cpu_to_le32(ctl0);
+	desc->dma64.control1 = cpu_to_le32(ctl1);
+	desc->dma64.address_low = cpu_to_le32(addrlo);
+	desc->dma64.address_high = cpu_to_le32(addrhi);
+}
+
+static void op64_poke_tx(struct b43legacy_dmaring *ring, int slot)
+{
+	b43legacy_dma_write(ring, B43legacy_DMA64_TXINDEX,
+			    (u32)(slot * sizeof(struct b43legacy_dmadesc64)));
+}
+
+static void op64_tx_suspend(struct b43legacy_dmaring *ring)
+{
+	b43legacy_dma_write(ring, B43legacy_DMA64_TXCTL,
+			    b43legacy_dma_read(ring, B43legacy_DMA64_TXCTL)
+			    | B43legacy_DMA64_TXSUSPEND);
+}
+
+static void op64_tx_resume(struct b43legacy_dmaring *ring)
+{
+	b43legacy_dma_write(ring, B43legacy_DMA64_TXCTL,
+			    b43legacy_dma_read(ring, B43legacy_DMA64_TXCTL)
+			    & ~B43legacy_DMA64_TXSUSPEND);
+}
+
+static int op64_get_current_rxslot(struct b43legacy_dmaring *ring)
+{
+	u32 val;
+
+	val = b43legacy_dma_read(ring, B43legacy_DMA64_RXSTATUS);
+	val &= B43legacy_DMA64_RXSTATDPTR;
+
+	return (val / sizeof(struct b43legacy_dmadesc64));
+}
+
+static void op64_set_current_rxslot(struct b43legacy_dmaring *ring,
+				    int slot)
+{
+	b43legacy_dma_write(ring, B43legacy_DMA64_RXINDEX,
+			    (u32)(slot * sizeof(struct b43legacy_dmadesc64)));
+}
+
+static const struct b43legacy_dma_ops dma64_ops = {
+	.idx2desc		= op64_idx2desc,
+	.fill_descriptor	= op64_fill_descriptor,
+	.poke_tx		= op64_poke_tx,
+	.tx_suspend		= op64_tx_suspend,
+	.tx_resume		= op64_tx_resume,
+	.get_current_rxslot	= op64_get_current_rxslot,
+	.set_current_rxslot	= op64_set_current_rxslot,
+};
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int free_slots(struct b43legacy_dmaring *ring)
 {
 	return (ring->nr_slots - ring->used_slots);
@@ -242,6 +392,17 @@ return 0;
 static u16 b43legacy_dmacontroller_base(enum b43legacy_dmatype type,
 					int controller_idx)
 {
+<<<<<<< HEAD
+=======
+	static const u16 map64[] = {
+		B43legacy_MMIO_DMA64_BASE0,
+		B43legacy_MMIO_DMA64_BASE1,
+		B43legacy_MMIO_DMA64_BASE2,
+		B43legacy_MMIO_DMA64_BASE3,
+		B43legacy_MMIO_DMA64_BASE4,
+		B43legacy_MMIO_DMA64_BASE5,
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	static const u16 map32[] = {
 		B43legacy_MMIO_DMA32_BASE0,
 		B43legacy_MMIO_DMA32_BASE1,
@@ -251,6 +412,14 @@ static u16 b43legacy_dmacontroller_base(enum b43legacy_dmatype type,
 		B43legacy_MMIO_DMA32_BASE5,
 	};
 
+<<<<<<< HEAD
+=======
+	if (type == B43legacy_DMA_64BIT) {
+		B43legacy_WARN_ON(!(controller_idx >= 0 &&
+				  controller_idx < ARRAY_SIZE(map64)));
+		return map64[controller_idx];
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	B43legacy_WARN_ON(!(controller_idx >= 0 &&
 			  controller_idx < ARRAY_SIZE(map32)));
 	return map32[controller_idx];
@@ -362,6 +531,7 @@ static int b43legacy_dmacontroller_rx_reset(struct b43legacy_wldev *dev,
 
 	might_sleep();
 
+<<<<<<< HEAD
 	offset = B43legacy_DMA32_RXCTL;
 	b43legacy_write32(dev, mmio_base + offset, 0);
 	for (i = 0; i < 10; i++) {
@@ -371,6 +541,27 @@ static int b43legacy_dmacontroller_rx_reset(struct b43legacy_wldev *dev,
 		if (value == B43legacy_DMA32_RXSTAT_DISABLED) {
 			i = -1;
 			break;
+=======
+	offset = (type == B43legacy_DMA_64BIT) ?
+		 B43legacy_DMA64_RXCTL : B43legacy_DMA32_RXCTL;
+	b43legacy_write32(dev, mmio_base + offset, 0);
+	for (i = 0; i < 10; i++) {
+		offset = (type == B43legacy_DMA_64BIT) ?
+			 B43legacy_DMA64_RXSTATUS : B43legacy_DMA32_RXSTATUS;
+		value = b43legacy_read32(dev, mmio_base + offset);
+		if (type == B43legacy_DMA_64BIT) {
+			value &= B43legacy_DMA64_RXSTAT;
+			if (value == B43legacy_DMA64_RXSTAT_DISABLED) {
+				i = -1;
+				break;
+			}
+		} else {
+			value &= B43legacy_DMA32_RXSTATE;
+			if (value == B43legacy_DMA32_RXSTAT_DISABLED) {
+				i = -1;
+				break;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		msleep(1);
 	}
@@ -394,6 +585,7 @@ static int b43legacy_dmacontroller_tx_reset(struct b43legacy_wldev *dev,
 	might_sleep();
 
 	for (i = 0; i < 10; i++) {
+<<<<<<< HEAD
 		offset = B43legacy_DMA32_TXSTATUS;
 		value = b43legacy_read32(dev, mmio_base + offset);
 		value &= B43legacy_DMA32_TXSTATE;
@@ -412,6 +604,45 @@ static int b43legacy_dmacontroller_tx_reset(struct b43legacy_wldev *dev,
 		if (value == B43legacy_DMA32_TXSTAT_DISABLED) {
 			i = -1;
 			break;
+=======
+		offset = (type == B43legacy_DMA_64BIT) ?
+			 B43legacy_DMA64_TXSTATUS : B43legacy_DMA32_TXSTATUS;
+		value = b43legacy_read32(dev, mmio_base + offset);
+		if (type == B43legacy_DMA_64BIT) {
+			value &= B43legacy_DMA64_TXSTAT;
+			if (value == B43legacy_DMA64_TXSTAT_DISABLED ||
+			    value == B43legacy_DMA64_TXSTAT_IDLEWAIT ||
+			    value == B43legacy_DMA64_TXSTAT_STOPPED)
+				break;
+		} else {
+			value &= B43legacy_DMA32_TXSTATE;
+			if (value == B43legacy_DMA32_TXSTAT_DISABLED ||
+			    value == B43legacy_DMA32_TXSTAT_IDLEWAIT ||
+			    value == B43legacy_DMA32_TXSTAT_STOPPED)
+				break;
+		}
+		msleep(1);
+	}
+	offset = (type == B43legacy_DMA_64BIT) ? B43legacy_DMA64_TXCTL :
+						 B43legacy_DMA32_TXCTL;
+	b43legacy_write32(dev, mmio_base + offset, 0);
+	for (i = 0; i < 10; i++) {
+		offset = (type == B43legacy_DMA_64BIT) ?
+			 B43legacy_DMA64_TXSTATUS : B43legacy_DMA32_TXSTATUS;
+		value = b43legacy_read32(dev, mmio_base + offset);
+		if (type == B43legacy_DMA_64BIT) {
+			value &= B43legacy_DMA64_TXSTAT;
+			if (value == B43legacy_DMA64_TXSTAT_DISABLED) {
+				i = -1;
+				break;
+			}
+		} else {
+			value &= B43legacy_DMA32_TXSTATE;
+			if (value == B43legacy_DMA32_TXSTAT_DISABLED) {
+				i = -1;
+				break;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		msleep(1);
 	}
@@ -443,6 +674,12 @@ static bool b43legacy_dma_mapping_error(struct b43legacy_dmaring *ring,
 		if ((u64)addr + buffersize > (1ULL << 32))
 			goto address_error;
 		break;
+<<<<<<< HEAD
+=======
+	case B43legacy_DMA_64BIT:
+		/* Currently we can't have addresses beyond 64 bits in the kernel. */
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* The address is OK. */
@@ -456,7 +693,11 @@ address_error:
 }
 
 static int setup_rx_descbuffer(struct b43legacy_dmaring *ring,
+<<<<<<< HEAD
 			       struct b43legacy_dmadesc32 *desc,
+=======
+			       struct b43legacy_dmadesc_generic *desc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       struct b43legacy_dmadesc_meta *meta,
 			       gfp_t gfp_flags)
 {
@@ -492,7 +733,12 @@ static int setup_rx_descbuffer(struct b43legacy_dmaring *ring,
 
 	meta->skb = skb;
 	meta->dmaaddr = dmaaddr;
+<<<<<<< HEAD
 	op32_fill_descriptor(ring, desc, dmaaddr, ring->rx_buffersize, 0, 0, 0);
+=======
+	ring->ops->fill_descriptor(ring, desc, dmaaddr,
+				   ring->rx_buffersize, 0, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rxhdr = (struct b43legacy_rxhdr_fw3 *)(skb->data);
 	rxhdr->frame_len = 0;
@@ -509,11 +755,19 @@ static int alloc_initial_descbuffers(struct b43legacy_dmaring *ring)
 {
 	int i;
 	int err = -ENOMEM;
+<<<<<<< HEAD
 	struct b43legacy_dmadesc32 *desc;
 	struct b43legacy_dmadesc_meta *meta;
 
 	for (i = 0; i < ring->nr_slots; i++) {
 		desc = op32_idx2desc(ring, i, &meta);
+=======
+	struct b43legacy_dmadesc_generic *desc;
+	struct b43legacy_dmadesc_meta *meta;
+
+	for (i = 0; i < ring->nr_slots; i++) {
+		desc = ring->ops->idx2desc(ring, i, &meta);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		err = setup_rx_descbuffer(ring, desc, meta, GFP_KERNEL);
 		if (err) {
@@ -530,7 +784,11 @@ out:
 
 err_unwind:
 	for (i--; i >= 0; i--) {
+<<<<<<< HEAD
 		desc = op32_idx2desc(ring, i, &meta);
+=======
+		desc = ring->ops->idx2desc(ring, i, &meta);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		unmap_descbuffer(ring, meta->dmaaddr, ring->rx_buffersize, 0);
 		dev_kfree_skb(meta->skb);
@@ -547,6 +805,7 @@ static int dmacontroller_setup(struct b43legacy_dmaring *ring)
 	int err = 0;
 	u32 value;
 	u32 addrext;
+<<<<<<< HEAD
 	u32 trans = ring->dev->dma.translation;
 	u32 ringbase = (u32)(ring->dmabase);
 
@@ -560,10 +819,47 @@ static int dmacontroller_setup(struct b43legacy_dmaring *ring)
 		b43legacy_dma_write(ring, B43legacy_DMA32_TXRING,
 				    (ringbase & ~SSB_DMA_TRANSLATION_MASK)
 				    | trans);
+=======
+	u32 trans = ssb_dma_translation(ring->dev->dev);
+
+	if (ring->tx) {
+		if (ring->type == B43legacy_DMA_64BIT) {
+			u64 ringbase = (u64)(ring->dmabase);
+
+			addrext = ((ringbase >> 32) & SSB_DMA_TRANSLATION_MASK)
+				  >> SSB_DMA_TRANSLATION_SHIFT;
+			value = B43legacy_DMA64_TXENABLE;
+			value |= (addrext << B43legacy_DMA64_TXADDREXT_SHIFT)
+				& B43legacy_DMA64_TXADDREXT_MASK;
+			b43legacy_dma_write(ring, B43legacy_DMA64_TXCTL,
+					    value);
+			b43legacy_dma_write(ring, B43legacy_DMA64_TXRINGLO,
+					    (ringbase & 0xFFFFFFFF));
+			b43legacy_dma_write(ring, B43legacy_DMA64_TXRINGHI,
+					    ((ringbase >> 32)
+					    & ~SSB_DMA_TRANSLATION_MASK)
+					    | trans);
+		} else {
+			u32 ringbase = (u32)(ring->dmabase);
+
+			addrext = (ringbase & SSB_DMA_TRANSLATION_MASK)
+				  >> SSB_DMA_TRANSLATION_SHIFT;
+			value = B43legacy_DMA32_TXENABLE;
+			value |= (addrext << B43legacy_DMA32_TXADDREXT_SHIFT)
+				& B43legacy_DMA32_TXADDREXT_MASK;
+			b43legacy_dma_write(ring, B43legacy_DMA32_TXCTL,
+					    value);
+			b43legacy_dma_write(ring, B43legacy_DMA32_TXRING,
+					    (ringbase &
+					    ~SSB_DMA_TRANSLATION_MASK)
+					    | trans);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		err = alloc_initial_descbuffers(ring);
 		if (err)
 			goto out;
+<<<<<<< HEAD
 
 		addrext = (ringbase & SSB_DMA_TRANSLATION_MASK)
 			  >> SSB_DMA_TRANSLATION_SHIFT;
@@ -577,6 +873,48 @@ static int dmacontroller_setup(struct b43legacy_dmaring *ring)
 				    (ringbase & ~SSB_DMA_TRANSLATION_MASK)
 				    | trans);
 		b43legacy_dma_write(ring, B43legacy_DMA32_RXINDEX, 200);
+=======
+		if (ring->type == B43legacy_DMA_64BIT) {
+			u64 ringbase = (u64)(ring->dmabase);
+
+			addrext = ((ringbase >> 32) & SSB_DMA_TRANSLATION_MASK)
+				  >> SSB_DMA_TRANSLATION_SHIFT;
+			value = (ring->frameoffset <<
+				 B43legacy_DMA64_RXFROFF_SHIFT);
+			value |= B43legacy_DMA64_RXENABLE;
+			value |= (addrext << B43legacy_DMA64_RXADDREXT_SHIFT)
+				& B43legacy_DMA64_RXADDREXT_MASK;
+			b43legacy_dma_write(ring, B43legacy_DMA64_RXCTL,
+					    value);
+			b43legacy_dma_write(ring, B43legacy_DMA64_RXRINGLO,
+					    (ringbase & 0xFFFFFFFF));
+			b43legacy_dma_write(ring, B43legacy_DMA64_RXRINGHI,
+					    ((ringbase >> 32) &
+					    ~SSB_DMA_TRANSLATION_MASK) |
+					    trans);
+			b43legacy_dma_write(ring, B43legacy_DMA64_RXINDEX,
+					    200);
+		} else {
+			u32 ringbase = (u32)(ring->dmabase);
+
+			addrext = (ringbase & SSB_DMA_TRANSLATION_MASK)
+				  >> SSB_DMA_TRANSLATION_SHIFT;
+			value = (ring->frameoffset <<
+				 B43legacy_DMA32_RXFROFF_SHIFT);
+			value |= B43legacy_DMA32_RXENABLE;
+			value |= (addrext <<
+				 B43legacy_DMA32_RXADDREXT_SHIFT)
+				 & B43legacy_DMA32_RXADDREXT_MASK;
+			b43legacy_dma_write(ring, B43legacy_DMA32_RXCTL,
+					    value);
+			b43legacy_dma_write(ring, B43legacy_DMA32_RXRING,
+					    (ringbase &
+					    ~SSB_DMA_TRANSLATION_MASK)
+					    | trans);
+			b43legacy_dma_write(ring, B43legacy_DMA32_RXINDEX,
+					    200);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 out:
@@ -589,23 +927,47 @@ static void dmacontroller_cleanup(struct b43legacy_dmaring *ring)
 	if (ring->tx) {
 		b43legacy_dmacontroller_tx_reset(ring->dev, ring->mmio_base,
 						 ring->type);
+<<<<<<< HEAD
 		b43legacy_dma_write(ring, B43legacy_DMA32_TXRING, 0);
 	} else {
 		b43legacy_dmacontroller_rx_reset(ring->dev, ring->mmio_base,
 						 ring->type);
 		b43legacy_dma_write(ring, B43legacy_DMA32_RXRING, 0);
+=======
+		if (ring->type == B43legacy_DMA_64BIT) {
+			b43legacy_dma_write(ring, B43legacy_DMA64_TXRINGLO, 0);
+			b43legacy_dma_write(ring, B43legacy_DMA64_TXRINGHI, 0);
+		} else
+			b43legacy_dma_write(ring, B43legacy_DMA32_TXRING, 0);
+	} else {
+		b43legacy_dmacontroller_rx_reset(ring->dev, ring->mmio_base,
+						 ring->type);
+		if (ring->type == B43legacy_DMA_64BIT) {
+			b43legacy_dma_write(ring, B43legacy_DMA64_RXRINGLO, 0);
+			b43legacy_dma_write(ring, B43legacy_DMA64_RXRINGHI, 0);
+		} else
+			b43legacy_dma_write(ring, B43legacy_DMA32_RXRING, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
 static void free_all_descbuffers(struct b43legacy_dmaring *ring)
 {
+<<<<<<< HEAD
+=======
+	struct b43legacy_dmadesc_generic *desc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct b43legacy_dmadesc_meta *meta;
 	int i;
 
 	if (!ring->used_slots)
 		return;
 	for (i = 0; i < ring->nr_slots; i++) {
+<<<<<<< HEAD
 		op32_idx2desc(ring, i, &meta);
+=======
+		desc = ring->ops->idx2desc(ring, i, &meta);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (!meta->skb) {
 			B43legacy_WARN_ON(!ring->tx);
@@ -626,6 +988,12 @@ static u64 supported_dma_mask(struct b43legacy_wldev *dev)
 	u32 tmp;
 	u16 mmio_base;
 
+<<<<<<< HEAD
+=======
+	tmp = b43legacy_read32(dev, SSB_TMSHIGH);
+	if (tmp & SSB_TMSHIGH_DMA64)
+		return DMA_BIT_MASK(64);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mmio_base = b43legacy_dmacontroller_base(0, 0);
 	b43legacy_write32(dev,
 			mmio_base + B43legacy_DMA32_TXCTL,
@@ -644,6 +1012,11 @@ static enum b43legacy_dmatype dma_mask_to_engine_type(u64 dmamask)
 		return B43legacy_DMA_30BIT;
 	if (dmamask == DMA_BIT_MASK(32))
 		return B43legacy_DMA_32BIT;
+<<<<<<< HEAD
+=======
+	if (dmamask == DMA_BIT_MASK(64))
+		return B43legacy_DMA_64BIT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	B43legacy_WARN_ON(1);
 	return B43legacy_DMA_30BIT;
 }
@@ -714,8 +1087,17 @@ struct b43legacy_dmaring *b43legacy_setup_dmaring(struct b43legacy_wldev *dev,
 	ring->nr_slots = nr_slots;
 	ring->mmio_base = b43legacy_dmacontroller_base(type, controller_index);
 	ring->index = controller_index;
+<<<<<<< HEAD
 	if (for_tx) {
 		ring->tx = true;
+=======
+	if (type == B43legacy_DMA_64BIT)
+		ring->ops = &dma64_ops;
+	else
+		ring->ops = &dma32_ops;
+	if (for_tx) {
+		ring->tx = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ring->current_slot = -1;
 	} else {
 		if (ring->index == 0) {
@@ -727,6 +1109,10 @@ struct b43legacy_dmaring *b43legacy_setup_dmaring(struct b43legacy_wldev *dev,
 		} else
 			B43legacy_WARN_ON(1);
 	}
+<<<<<<< HEAD
+=======
+	spin_lock_init(&ring->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_B43LEGACY_DEBUG
 	ring->last_injected_overflow = jiffies;
 #endif
@@ -805,7 +1191,11 @@ void b43legacy_dma_free(struct b43legacy_wldev *dev)
 static int b43legacy_dma_set_mask(struct b43legacy_wldev *dev, u64 mask)
 {
 	u64 orig_mask = mask;
+<<<<<<< HEAD
 	bool fallback = false;
+=======
+	bool fallback = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err;
 
 	/* Try to set the DMA mask. If it fails, try falling back to a
@@ -819,12 +1209,20 @@ static int b43legacy_dma_set_mask(struct b43legacy_wldev *dev, u64 mask)
 		}
 		if (mask == DMA_BIT_MASK(64)) {
 			mask = DMA_BIT_MASK(32);
+<<<<<<< HEAD
 			fallback = true;
+=======
+			fallback = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 		if (mask == DMA_BIT_MASK(32)) {
 			mask = DMA_BIT_MASK(30);
+<<<<<<< HEAD
 			fallback = true;
+=======
+			fallback = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 		b43legacyerr(dev->wl, "The machine/kernel does not support "
@@ -857,7 +1255,11 @@ int b43legacy_dma_init(struct b43legacy_wldev *dev)
 #ifdef CONFIG_B43LEGACY_PIO
 		b43legacywarn(dev->wl, "DMA for this device not supported. "
 			"Falling back to PIO\n");
+<<<<<<< HEAD
 		dev->__using_pio = true;
+=======
+		dev->__using_pio = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EAGAIN;
 #else
 		b43legacyerr(dev->wl, "DMA for this device not supported and "
@@ -865,7 +1267,10 @@ int b43legacy_dma_init(struct b43legacy_wldev *dev)
 		return -EOPNOTSUPP;
 #endif
 	}
+<<<<<<< HEAD
 	dma->translation = ssb_dma_translation(dev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = -ENOMEM;
 	/* setup TX DMA channels. */
@@ -1019,11 +1424,19 @@ static int dma_tx_fragment(struct b43legacy_dmaring *ring,
 			    struct sk_buff **in_skb)
 {
 	struct sk_buff *skb = *in_skb;
+<<<<<<< HEAD
+=======
+	const struct b43legacy_dma_ops *ops = ring->ops;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
 	u8 *header;
 	int slot, old_top_slot, old_used_slots;
 	int err;
+<<<<<<< HEAD
 	struct b43legacy_dmadesc32 *desc;
+=======
+	struct b43legacy_dmadesc_generic *desc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct b43legacy_dmadesc_meta *meta;
 	struct b43legacy_dmadesc_meta *meta_hdr;
 	struct sk_buff *bounce_skb;
@@ -1036,7 +1449,11 @@ static int dma_tx_fragment(struct b43legacy_dmaring *ring,
 
 	/* Get a slot for the header. */
 	slot = request_slot(ring);
+<<<<<<< HEAD
 	desc = op32_idx2desc(ring, slot, &meta_hdr);
+=======
+	desc = ops->idx2desc(ring, slot, &meta_hdr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(meta_hdr, 0, sizeof(*meta_hdr));
 
 	header = &(ring->txhdr_cache[slot * sizeof(
@@ -1058,16 +1475,28 @@ static int dma_tx_fragment(struct b43legacy_dmaring *ring,
 		ring->used_slots = old_used_slots;
 		return -EIO;
 	}
+<<<<<<< HEAD
 	op32_fill_descriptor(ring, desc, meta_hdr->dmaaddr,
+=======
+	ops->fill_descriptor(ring, desc, meta_hdr->dmaaddr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     sizeof(struct b43legacy_txhdr_fw3), 1, 0, 0);
 
 	/* Get a slot for the payload. */
 	slot = request_slot(ring);
+<<<<<<< HEAD
 	desc = op32_idx2desc(ring, slot, &meta);
 	memset(meta, 0, sizeof(*meta));
 
 	meta->skb = skb;
 	meta->is_last_fragment = true;
+=======
+	desc = ops->idx2desc(ring, slot, &meta);
+	memset(meta, 0, sizeof(*meta));
+
+	meta->skb = skb;
+	meta->is_last_fragment = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	meta->dmaaddr = map_descbuffer(ring, skb->data, skb->len, 1);
 	/* create a bounce buffer in zone_dma on mapping failure. */
@@ -1099,12 +1528,20 @@ static int dma_tx_fragment(struct b43legacy_dmaring *ring,
 		}
 	}
 
+<<<<<<< HEAD
 	op32_fill_descriptor(ring, desc, meta->dmaaddr,
+=======
+	ops->fill_descriptor(ring, desc, meta->dmaaddr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     skb->len, 0, 1, 1);
 
 	wmb();	/* previous stuff MUST be done */
 	/* Now transfer the whole frame. */
+<<<<<<< HEAD
 	op32_poke_tx(ring, next_slot(ring, slot));
+=======
+	ops->poke_tx(ring, next_slot(ring, slot));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 out_free_bounce:
@@ -1142,9 +1579,19 @@ int b43legacy_dma_tx(struct b43legacy_wldev *dev,
 		     struct sk_buff *skb)
 {
 	struct b43legacy_dmaring *ring;
+<<<<<<< HEAD
 	int err = 0;
 
 	ring = priority_to_txring(dev, skb_get_queue_mapping(skb));
+=======
+	struct ieee80211_hdr *hdr;
+	int err = 0;
+	unsigned long flags;
+	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
+
+	ring = priority_to_txring(dev, skb_get_queue_mapping(skb));
+	spin_lock_irqsave(&ring->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	B43legacy_WARN_ON(!ring->tx);
 
 	if (unlikely(ring->stopped)) {
@@ -1154,55 +1601,100 @@ int b43legacy_dma_tx(struct b43legacy_wldev *dev,
 		 * For now, just refuse the transmit. */
 		if (b43legacy_debug(dev, B43legacy_DBG_DMAVERBOSE))
 			b43legacyerr(dev->wl, "Packet after queue stopped\n");
+<<<<<<< HEAD
 		return -ENOSPC;
+=======
+		err = -ENOSPC;
+		goto out_unlock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (unlikely(WARN_ON(free_slots(ring) < SLOTS_PER_PACKET))) {
 		/* If we get here, we have a real error with the queue
 		 * full, but queues not stopped. */
 		b43legacyerr(dev->wl, "DMA queue overflow\n");
+<<<<<<< HEAD
 		return -ENOSPC;
+=======
+		err = -ENOSPC;
+		goto out_unlock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* dma_tx_fragment might reallocate the skb, so invalidate pointers pointing
 	 * into the skb data or cb now. */
+<<<<<<< HEAD
+=======
+	hdr = NULL;
+	info = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = dma_tx_fragment(ring, &skb);
 	if (unlikely(err == -ENOKEY)) {
 		/* Drop this packet, as we don't have the encryption key
 		 * anymore and must not transmit it unencrypted. */
 		dev_kfree_skb_any(skb);
+<<<<<<< HEAD
 		return 0;
 	}
 	if (unlikely(err)) {
 		b43legacyerr(dev->wl, "DMA tx mapping failure\n");
 		return err;
+=======
+		err = 0;
+		goto out_unlock;
+	}
+	if (unlikely(err)) {
+		b43legacyerr(dev->wl, "DMA tx mapping failure\n");
+		goto out_unlock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if ((free_slots(ring) < SLOTS_PER_PACKET) ||
 	    should_inject_overflow(ring)) {
 		/* This TX ring is full. */
+<<<<<<< HEAD
 		unsigned int skb_mapping = skb_get_queue_mapping(skb);
 		ieee80211_stop_queue(dev->wl->hw, skb_mapping);
 		dev->wl->tx_queue_stopped[skb_mapping] = 1;
 		ring->stopped = true;
+=======
+		ieee80211_stop_queue(dev->wl->hw, txring_to_priority(ring));
+		ring->stopped = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (b43legacy_debug(dev, B43legacy_DBG_DMAVERBOSE))
 			b43legacydbg(dev->wl, "Stopped TX ring %d\n",
 			       ring->index);
 	}
+<<<<<<< HEAD
+=======
+out_unlock:
+	spin_unlock_irqrestore(&ring->lock, flags);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
 void b43legacy_dma_handle_txstatus(struct b43legacy_wldev *dev,
 				 const struct b43legacy_txstatus *status)
 {
+<<<<<<< HEAD
 	struct b43legacy_dmaring *ring;
 	struct b43legacy_dmadesc_meta *meta;
 	int retry_limit;
 	int slot;
 	int firstused;
+=======
+	const struct b43legacy_dma_ops *ops;
+	struct b43legacy_dmaring *ring;
+	struct b43legacy_dmadesc_generic *desc;
+	struct b43legacy_dmadesc_meta *meta;
+	int retry_limit;
+	int slot;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ring = parse_cookie(dev, status->cookie, &slot);
 	if (unlikely(!ring))
 		return;
+<<<<<<< HEAD
 	B43legacy_WARN_ON(!ring->tx);
 
 	/* Sanity check: TX packets are processed in-order on one ring.
@@ -1224,6 +1716,16 @@ void b43legacy_dma_handle_txstatus(struct b43legacy_wldev *dev,
 	while (1) {
 		B43legacy_WARN_ON(!(slot >= 0 && slot < ring->nr_slots));
 		op32_idx2desc(ring, slot, &meta);
+=======
+	B43legacy_WARN_ON(!irqs_disabled());
+	spin_lock(&ring->lock);
+
+	B43legacy_WARN_ON(!ring->tx);
+	ops = ring->ops;
+	while (1) {
+		B43legacy_WARN_ON(!(slot >= 0 && slot < ring->nr_slots));
+		desc = ops->idx2desc(ring, slot, &meta);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (meta->skb)
 			unmap_descbuffer(ring, meta->dmaaddr,
@@ -1293,6 +1795,7 @@ void b43legacy_dma_handle_txstatus(struct b43legacy_wldev *dev,
 	dev->stats.last_tx = jiffies;
 	if (ring->stopped) {
 		B43legacy_WARN_ON(free_slots(ring) < SLOTS_PER_PACKET);
+<<<<<<< HEAD
 		ring->stopped = false;
 	}
 
@@ -1308,12 +1811,27 @@ void b43legacy_dma_handle_txstatus(struct b43legacy_wldev *dev,
 	}
 	/* Add work to the queue. */
 	ieee80211_queue_work(dev->wl->hw, &dev->wl->tx_work);
+=======
+		ieee80211_wake_queue(dev->wl->hw, txring_to_priority(ring));
+		ring->stopped = 0;
+		if (b43legacy_debug(dev, B43legacy_DBG_DMAVERBOSE))
+			b43legacydbg(dev->wl, "Woke up TX ring %d\n",
+			       ring->index);
+	}
+
+	spin_unlock(&ring->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void dma_rx(struct b43legacy_dmaring *ring,
 		   int *slot)
 {
+<<<<<<< HEAD
 	struct b43legacy_dmadesc32 *desc;
+=======
+	const struct b43legacy_dma_ops *ops = ring->ops;
+	struct b43legacy_dmadesc_generic *desc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct b43legacy_dmadesc_meta *meta;
 	struct b43legacy_rxhdr_fw3 *rxhdr;
 	struct sk_buff *skb;
@@ -1321,7 +1839,11 @@ static void dma_rx(struct b43legacy_dmaring *ring,
 	int err;
 	dma_addr_t dmaaddr;
 
+<<<<<<< HEAD
 	desc = op32_idx2desc(ring, *slot, &meta);
+=======
+	desc = ops->idx2desc(ring, *slot, &meta);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sync_descbuffer_for_cpu(ring, meta->dmaaddr, ring->rx_buffersize);
 	skb = meta->skb;
@@ -1373,7 +1895,11 @@ static void dma_rx(struct b43legacy_dmaring *ring,
 		s32 tmp = len;
 
 		while (1) {
+<<<<<<< HEAD
 			desc = op32_idx2desc(ring, *slot, &meta);
+=======
+			desc = ops->idx2desc(ring, *slot, &meta);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* recycle the descriptor buffer. */
 			sync_descbuffer_for_device(ring, meta->dmaaddr,
 						   ring->rx_buffersize);
@@ -1410,12 +1936,20 @@ drop:
 
 void b43legacy_dma_rx(struct b43legacy_dmaring *ring)
 {
+<<<<<<< HEAD
+=======
+	const struct b43legacy_dma_ops *ops = ring->ops;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int slot;
 	int current_slot;
 	int used_slots = 0;
 
 	B43legacy_WARN_ON(ring->tx);
+<<<<<<< HEAD
 	current_slot = op32_get_current_rxslot(ring);
+=======
+	current_slot = ops->get_current_rxslot(ring);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	B43legacy_WARN_ON(!(current_slot >= 0 && current_slot <
 			   ring->nr_slots));
 
@@ -1424,20 +1958,42 @@ void b43legacy_dma_rx(struct b43legacy_dmaring *ring)
 		dma_rx(ring, &slot);
 		update_max_used_slots(ring, ++used_slots);
 	}
+<<<<<<< HEAD
 	op32_set_current_rxslot(ring, slot);
+=======
+	ops->set_current_rxslot(ring, slot);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ring->current_slot = slot;
 }
 
 static void b43legacy_dma_tx_suspend_ring(struct b43legacy_dmaring *ring)
 {
+<<<<<<< HEAD
 	B43legacy_WARN_ON(!ring->tx);
 	op32_tx_suspend(ring);
+=======
+	unsigned long flags;
+
+	spin_lock_irqsave(&ring->lock, flags);
+	B43legacy_WARN_ON(!ring->tx);
+	ring->ops->tx_suspend(ring);
+	spin_unlock_irqrestore(&ring->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void b43legacy_dma_tx_resume_ring(struct b43legacy_dmaring *ring)
 {
+<<<<<<< HEAD
 	B43legacy_WARN_ON(!ring->tx);
 	op32_tx_resume(ring);
+=======
+	unsigned long flags;
+
+	spin_lock_irqsave(&ring->lock, flags);
+	B43legacy_WARN_ON(!ring->tx);
+	ring->ops->tx_resume(ring);
+	spin_unlock_irqrestore(&ring->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void b43legacy_dma_tx_suspend(struct b43legacy_wldev *dev)

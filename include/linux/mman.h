@@ -14,7 +14,11 @@
 #include <linux/mm.h>
 #include <linux/percpu_counter.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int sysctl_overcommit_memory;
 extern int sysctl_overcommit_ratio;

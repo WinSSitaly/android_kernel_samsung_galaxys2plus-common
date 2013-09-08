@@ -8,6 +8,11 @@
  * Copyright (c) 2002-2007 Volkswagen Group Electronic Research
  * All rights reserved.
  *
+<<<<<<< HEAD
+=======
+ * Send feedback to <socketcan-users@lists.berlios.de>
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #ifndef CAN_H
@@ -76,7 +81,11 @@ struct can_frame {
  * @can_addr:    protocol specific address information
  */
 struct sockaddr_can {
+<<<<<<< HEAD
 	__kernel_sa_family_t can_family;
+=======
+	sa_family_t can_family;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int         can_ifindex;
 	union {
 		/* transport protocol class address information (e.g. ISOTP) */

@@ -45,6 +45,7 @@
 
 /* Reserved 1Fh-27h */
 
+<<<<<<< HEAD
 #define VIDEO_STD_MASK			 (0x07 >> 1)
 #define TVP5150_VIDEO_STD                0x28 /* Video standard */
 #define VIDEO_STD_AUTO_SWITCH_BIT	 0x00
@@ -61,6 +62,9 @@
 #define VIDEO_STD_PAL_COMBINATION_N_BIT_AS	 0x07
 #define VIDEO_STD_NTSC_4_43_BIT_AS		 0x09
 #define VIDEO_STD_SECAM_BIT_AS		         0x0b
+=======
+#define TVP5150_VIDEO_STD           0x28 /* Video standard */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Reserved 29h-2bh */
 

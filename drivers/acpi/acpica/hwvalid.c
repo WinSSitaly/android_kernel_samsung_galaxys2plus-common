@@ -6,7 +6,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -134,8 +138,11 @@ acpi_hw_validate_io_request(acpi_io_address address, u32 bit_width)
 	/* Supported widths are 8/16/32 */
 
 	if ((bit_width != 8) && (bit_width != 16) && (bit_width != 32)) {
+<<<<<<< HEAD
 		ACPI_ERROR((AE_INFO,
 			    "Bad BitWidth parameter: %8.8X", bit_width));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return AE_BAD_PARAMETER;
 	}
 

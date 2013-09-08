@@ -22,10 +22,13 @@
 
 #include <linux/types.h>
 
+<<<<<<< HEAD
 /* Select powerpc specific features in <linux/kvm.h> */
 #define __KVM_HAVE_SPAPR_TCE
 #define __KVM_HAVE_PPC_SMT
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct kvm_regs {
 	__u64 pc;
 	__u64 cr;
@@ -170,8 +173,13 @@ struct kvm_sregs {
 			} ppc64;
 			struct {
 				__u32 sr[16];
+<<<<<<< HEAD
 				__u64 ibat[8];
 				__u64 dbat[8];
+=======
+				__u64 ibat[8]; 
+				__u64 dbat[8]; 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} ppc32;
 		} s;
 		struct {
@@ -265,14 +273,24 @@ struct kvm_debug_exit_arch {
 struct kvm_guest_debug_arch {
 };
 
+<<<<<<< HEAD
 /* definition of registers in kvm_run */
 struct kvm_sync_regs {
 };
+=======
+#define KVM_REG_MASK		0x001f
+#define KVM_REG_EXT_MASK	0xffe0
+#define KVM_REG_GPR		0x0000
+#define KVM_REG_FPR		0x0020
+#define KVM_REG_QPR		0x0040
+#define KVM_REG_FQPR		0x0060
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define KVM_INTERRUPT_SET	-1U
 #define KVM_INTERRUPT_UNSET	-2U
 #define KVM_INTERRUPT_SET_LEVEL	-3U
 
+<<<<<<< HEAD
 #define KVM_CPU_440		1
 #define KVM_CPU_E500V2		2
 #define KVM_CPU_3S_32		3
@@ -326,4 +344,6 @@ struct kvm_book3e_206_tlb_params {
 
 #define KVM_REG_PPC_HIOR	(KVM_REG_PPC | KVM_REG_SIZE_U64 | 0x1)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __LINUX_KVM_POWERPC_H */

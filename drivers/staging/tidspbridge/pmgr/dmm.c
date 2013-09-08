@@ -28,6 +28,12 @@
 /*  ----------------------------------- DSP/BIOS Bridge */
 #include <dspbridge/dbdefs.h>
 
+<<<<<<< HEAD
+=======
+/*  ----------------------------------- Trace & Debug */
+#include <dspbridge/dbc.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*  ----------------------------------- OS Adaptation Layer */
 #include <dspbridge/sync.h>
 
@@ -51,6 +57,11 @@ struct dmm_object {
 	spinlock_t dmm_lock;	/* Lock to access dmm mgr */
 };
 
+<<<<<<< HEAD
+=======
+/*  ----------------------------------- Globals */
+static u32 refs;		/* module reference count */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct map_page {
 	u32 region_size:15;
 	u32 mapped_size:15;
@@ -118,6 +129,11 @@ int dmm_create(struct dmm_object **dmm_manager,
 {
 	struct dmm_object *dmm_obj = NULL;
 	int status = 0;
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+	DBC_REQUIRE(dmm_manager != NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	*dmm_manager = NULL;
 	/* create, zero, and tag a cmm mgr object */
@@ -142,6 +158,10 @@ int dmm_destroy(struct dmm_object *dmm_mgr)
 	struct dmm_object *dmm_obj = (struct dmm_object *)dmm_mgr;
 	int status = 0;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dmm_mgr) {
 		status = dmm_delete_tables(dmm_obj);
 		if (!status)
@@ -161,6 +181,10 @@ int dmm_delete_tables(struct dmm_object *dmm_mgr)
 {
 	int status = 0;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Delete all DMM tables */
 	if (dmm_mgr)
 		vfree(virtual_mapping_table);
@@ -170,6 +194,22 @@ int dmm_delete_tables(struct dmm_object *dmm_mgr)
 }
 
 /*
+<<<<<<< HEAD
+=======
+ *  ======== dmm_exit ========
+ *  Purpose:
+ *      Discontinue usage of module; free resources when reference count
+ *      reaches 0.
+ */
+void dmm_exit(void)
+{
+	DBC_REQUIRE(refs > 0);
+
+	refs--;
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  ======== dmm_get_handle ========
  *  Purpose:
  *      Return the dynamic memory manager object for this device.
@@ -180,6 +220,11 @@ int dmm_get_handle(void *hprocessor, struct dmm_object **dmm_manager)
 	int status = 0;
 	struct dev_object *hdev_obj;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(refs > 0);
+	DBC_REQUIRE(dmm_manager != NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (hprocessor != NULL)
 		status = proc_get_dev_object(hprocessor, &hdev_obj);
 	else
@@ -192,6 +237,31 @@ int dmm_get_handle(void *hprocessor, struct dmm_object **dmm_manager)
 }
 
 /*
+<<<<<<< HEAD
+=======
+ *  ======== dmm_init ========
+ *  Purpose:
+ *      Initializes private state of DMM module.
+ */
+bool dmm_init(void)
+{
+	bool ret = true;
+
+	DBC_REQUIRE(refs >= 0);
+
+	if (ret)
+		refs++;
+
+	DBC_ENSURE((ret && (refs > 0)) || (!ret && (refs >= 0)));
+
+	virtual_mapping_table = NULL;
+	table_size = 0;
+
+	return ret;
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  ======== dmm_map_memory ========
  *  Purpose:
  *      Add a mapping block to the reserved chunk. DMM assumes that this block

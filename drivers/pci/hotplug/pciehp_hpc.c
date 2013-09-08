@@ -241,6 +241,7 @@ static int pcie_write_cmd(struct controller *ctrl, u16 cmd, u16 mask)
 	return retval;
 }
 
+<<<<<<< HEAD
 static bool check_link_active(struct controller *ctrl)
 {
 	bool ret = false;
@@ -262,10 +263,27 @@ static void __pcie_wait_link_active(struct controller *ctrl, bool active)
 	int timeout = 1000;
 
 	if (check_link_active(ctrl) == active)
+=======
+static inline int check_link_active(struct controller *ctrl)
+{
+	u16 link_status;
+
+	if (pciehp_readw(ctrl, PCI_EXP_LNKSTA, &link_status))
+		return 0;
+	return !!(link_status & PCI_EXP_LNKSTA_DLLLA);
+}
+
+static void pcie_wait_link_active(struct controller *ctrl)
+{
+	int timeout = 1000;
+
+	if (check_link_active(ctrl))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	while (timeout > 0) {
 		msleep(10);
 		timeout -= 10;
+<<<<<<< HEAD
 		if (check_link_active(ctrl) == active)
 			return;
 	}
@@ -307,19 +325,29 @@ static bool pci_bus_check_dev(struct pci_bus *bus, int devfn)
 			PCI_FUNC(devfn), count, step, l);
 
 	return found;
+=======
+		if (check_link_active(ctrl))
+			return;
+	}
+	ctrl_dbg(ctrl, "Data Link Layer Link Active not set in 1000 msec\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int pciehp_check_link_status(struct controller *ctrl)
 {
 	u16 lnk_status;
 	int retval = 0;
+<<<<<<< HEAD
 	bool found = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
         /*
          * Data Link Layer Link Active Reporting must be capable for
          * hot-plug capable downstream port. But old controller might
          * not implement it. In this case, we wait for 1000 ms.
          */
+<<<<<<< HEAD
         if (ctrl->link_active_reporting)
                 pcie_wait_link_active(ctrl);
         else
@@ -330,6 +358,20 @@ int pciehp_check_link_status(struct controller *ctrl)
 	found = pci_bus_check_dev(ctrl->pcie->port->subordinate,
 					PCI_DEVFN(0, 0));
 
+=======
+        if (ctrl->link_active_reporting){
+                /* Wait for Data Link Layer Link Active bit to be set */
+                pcie_wait_link_active(ctrl);
+                /*
+                 * We must wait for 100 ms after the Data Link Layer
+                 * Link Active bit reads 1b before initiating a
+                 * configuration access to the hot added device.
+                 */
+                msleep(100);
+        } else
+                msleep(1000);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	retval = pciehp_readw(ctrl, PCI_EXP_LNKSTA, &lnk_status);
 	if (retval) {
 		ctrl_err(ctrl, "Cannot read LNKSTATUS register\n");
@@ -344,6 +386,7 @@ int pciehp_check_link_status(struct controller *ctrl)
 		return retval;
 	}
 
+<<<<<<< HEAD
 	pcie_update_link_speed(ctrl->pcie->port->subordinate, lnk_status);
 
 	if (!found && !retval)
@@ -388,6 +431,11 @@ static int pciehp_link_disable(struct controller *ctrl)
 	return __pciehp_link_set(ctrl, false);
 }
 
+=======
+	return retval;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int pciehp_get_attention_status(struct slot *slot, u8 *status)
 {
 	struct controller *ctrl = slot->ctrl;
@@ -575,6 +623,10 @@ int pciehp_power_on_slot(struct slot * slot)
 	u16 slot_cmd;
 	u16 cmd_mask;
 	u16 slot_status;
+<<<<<<< HEAD
+=======
+	u16 lnk_status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int retval = 0;
 
 	/* Clear sticky power-fault bit from previous power failures */
@@ -606,9 +658,19 @@ int pciehp_power_on_slot(struct slot * slot)
 	ctrl_dbg(ctrl, "%s: SLOTCTRL %x write cmd %x\n", __func__,
 		 pci_pcie_cap(ctrl->pcie->port) + PCI_EXP_SLTCTL, slot_cmd);
 
+<<<<<<< HEAD
 	retval = pciehp_link_enable(ctrl);
 	if (retval)
 		ctrl_err(ctrl, "%s: Can not enable the link!\n", __func__);
+=======
+	retval = pciehp_readw(ctrl, PCI_EXP_LNKSTA, &lnk_status);
+	if (retval) {
+		ctrl_err(ctrl, "%s: Cannot read LNKSTA register\n",
+				__func__);
+		return retval;
+	}
+	pcie_update_link_speed(ctrl->pcie->port->subordinate, lnk_status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return retval;
 }
@@ -620,6 +682,7 @@ int pciehp_power_off_slot(struct slot * slot)
 	u16 cmd_mask;
 	int retval;
 
+<<<<<<< HEAD
 	/* Disable the link at first */
 	pciehp_link_disable(ctrl);
 	/* wait the link is down */
@@ -628,6 +691,8 @@ int pciehp_power_off_slot(struct slot * slot)
 	else
 		msleep(1000);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	slot_cmd = POWER_OFF;
 	cmd_mask = PCI_EXP_SLTCTL_PCC;
 	retval = pcie_write_cmd(ctrl, slot_cmd, cmd_mask);
@@ -874,32 +939,46 @@ static void pcie_shutdown_notification(struct controller *ctrl)
 static int pcie_init_slot(struct controller *ctrl)
 {
 	struct slot *slot;
+<<<<<<< HEAD
 	char name[32];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	slot = kzalloc(sizeof(*slot), GFP_KERNEL);
 	if (!slot)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	snprintf(name, sizeof(name), "pciehp-%u", PSN(ctrl));
 	slot->wq = alloc_workqueue(name, 0, 0);
 	if (!slot->wq)
 		goto abort;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	slot->ctrl = ctrl;
 	mutex_init(&slot->lock);
 	INIT_DELAYED_WORK(&slot->work, pciehp_queue_pushbutton_work);
 	ctrl->slot = slot;
 	return 0;
+<<<<<<< HEAD
 abort:
 	kfree(slot);
 	return -ENOMEM;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void pcie_cleanup_slot(struct controller *ctrl)
 {
 	struct slot *slot = ctrl->slot;
 	cancel_delayed_work(&slot->work);
+<<<<<<< HEAD
 	destroy_workqueue(slot->wq);
+=======
+	flush_workqueue(pciehp_wq);
+	flush_workqueue(pciehp_ordered_wq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(slot);
 }
 

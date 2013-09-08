@@ -70,14 +70,22 @@ static unsigned int help(struct sk_buff *skb,
 
 static void __exit nf_nat_amanda_fini(void)
 {
+<<<<<<< HEAD
 	RCU_INIT_POINTER(nf_nat_amanda_hook, NULL);
+=======
+	rcu_assign_pointer(nf_nat_amanda_hook, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	synchronize_rcu();
 }
 
 static int __init nf_nat_amanda_init(void)
 {
 	BUG_ON(nf_nat_amanda_hook != NULL);
+<<<<<<< HEAD
 	RCU_INIT_POINTER(nf_nat_amanda_hook, help);
+=======
+	rcu_assign_pointer(nf_nat_amanda_hook, help);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

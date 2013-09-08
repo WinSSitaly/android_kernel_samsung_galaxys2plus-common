@@ -3,7 +3,10 @@
  */
 
 #include <linux/nl80211.h>
+<<<<<<< HEAD
 #include <net/cfg80211.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "ieee80211_i.h"
 
 static enum ieee80211_chan_mode
@@ -21,6 +24,7 @@ __ieee80211_get_channel_mode(struct ieee80211_local *local,
 		if (!ieee80211_sdata_running(sdata))
 			continue;
 
+<<<<<<< HEAD
 		switch (sdata->vif.type) {
 		case NL80211_IFTYPE_MONITOR:
 			continue;
@@ -29,10 +33,21 @@ __ieee80211_get_channel_mode(struct ieee80211_local *local,
 				continue;
 			break;
 		case NL80211_IFTYPE_ADHOC:
+=======
+		if (sdata->vif.type == NL80211_IFTYPE_MONITOR)
+			continue;
+
+		if (sdata->vif.type == NL80211_IFTYPE_STATION &&
+		    !sdata->u.mgd.associated)
+			continue;
+
+		if (sdata->vif.type == NL80211_IFTYPE_ADHOC) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!sdata->u.ibss.ssid_len)
 				continue;
 			if (!sdata->u.ibss.fixed_channel)
 				return CHAN_MODE_HOPPING;
+<<<<<<< HEAD
 			break;
 		case NL80211_IFTYPE_AP_VLAN:
 			/* will also have _AP interface */
@@ -45,6 +60,14 @@ __ieee80211_get_channel_mode(struct ieee80211_local *local,
 			break;
 		}
 
+=======
+		}
+
+		if (sdata->vif.type == NL80211_IFTYPE_AP &&
+		    !sdata->u.ap.beacon)
+			continue;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return CHAN_MODE_FIXED;
 	}
 
@@ -135,6 +158,7 @@ bool ieee80211_set_channel_type(struct ieee80211_local *local,
 
 	return result;
 }
+<<<<<<< HEAD
 
 /*
  * ieee80211_get_tx_channel_type returns the channel type we should
@@ -161,3 +185,5 @@ enum nl80211_channel_type ieee80211_get_tx_channel_type(
 	}
 	return channel_type;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

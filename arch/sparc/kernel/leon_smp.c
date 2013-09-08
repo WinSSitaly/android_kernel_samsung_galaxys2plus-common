@@ -23,13 +23,20 @@
 #include <linux/pm.h>
 #include <linux/delay.h>
 #include <linux/gfp.h>
+<<<<<<< HEAD
 #include <linux/cpu.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/cacheflush.h>
 #include <asm/tlbflush.h>
 
 #include <asm/ptrace.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/irq_regs.h>
 #include <asm/traps.h>
 
@@ -79,8 +86,11 @@ void __cpuinit leon_callin(void)
 	local_flush_tlb_all();
 	leon_configure_cache_smp();
 
+<<<<<<< HEAD
 	notify_cpu_starting(cpuid);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Get our local ticker going. */
 	smp_setup_percpu_timer();
 

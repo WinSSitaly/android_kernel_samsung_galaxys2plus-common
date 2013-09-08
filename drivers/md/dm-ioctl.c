@@ -128,6 +128,7 @@ static struct hash_cell *__get_uuid_cell(const char *str)
 	return NULL;
 }
 
+<<<<<<< HEAD
 static struct hash_cell *__get_dev_cell(uint64_t dev)
 {
 	struct mapped_device *md;
@@ -146,6 +147,8 @@ static struct hash_cell *__get_dev_cell(uint64_t dev)
 	return hc;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*-----------------------------------------------------------------
  * Inserting, removing and renaming a device.
  *---------------------------------------------------------------*/
@@ -736,6 +739,7 @@ static int dev_create(struct dm_ioctl *param, size_t param_size)
  */
 static struct hash_cell *__find_device_hash_cell(struct dm_ioctl *param)
 {
+<<<<<<< HEAD
 	struct hash_cell *hc = NULL;
 
 	if (*param->uuid) {
@@ -775,6 +779,27 @@ static struct hash_cell *__find_device_hash_cell(struct dm_ioctl *param)
 		param->flags &= ~DM_INACTIVE_PRESENT_FLAG;
 
 	return hc;
+=======
+	struct mapped_device *md;
+	void *mdptr = NULL;
+
+	if (*param->uuid)
+		return __get_uuid_cell(param->uuid);
+
+	if (*param->name)
+		return __get_name_cell(param->name);
+
+	md = dm_get_md(huge_decode_dev(param->dev));
+	if (!md)
+		goto out;
+
+	mdptr = dm_get_mdptr(md);
+	if (!mdptr)
+		dm_put(md);
+
+out:
+	return mdptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct mapped_device *find_device(struct dm_ioctl *param)
@@ -784,8 +809,29 @@ static struct mapped_device *find_device(struct dm_ioctl *param)
 
 	down_read(&_hash_lock);
 	hc = __find_device_hash_cell(param);
+<<<<<<< HEAD
 	if (hc)
 		md = hc->md;
+=======
+	if (hc) {
+		md = hc->md;
+
+		/*
+		 * Sneakily write in both the name and the uuid
+		 * while we have the cell.
+		 */
+		strlcpy(param->name, hc->name, sizeof(param->name));
+		if (hc->uuid)
+			strlcpy(param->uuid, hc->uuid, sizeof(param->uuid));
+		else
+			param->uuid[0] = '\0';
+
+		if (hc->new_map)
+			param->flags |= DM_INACTIVE_PRESENT_FLAG;
+		else
+			param->flags &= ~DM_INACTIVE_PRESENT_FLAG;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	up_read(&_hash_lock);
 
 	return md;
@@ -880,7 +926,10 @@ static int dev_set_geometry(struct dm_ioctl *param, size_t param_size)
 	struct hd_geometry geometry;
 	unsigned long indata[4];
 	char *geostr = (char *) param + param->data_start;
+<<<<<<< HEAD
 	char dummy;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	md = find_device(param);
 	if (!md)
@@ -892,8 +941,13 @@ static int dev_set_geometry(struct dm_ioctl *param, size_t param_size)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	x = sscanf(geostr, "%lu %lu %lu %lu%c", indata,
 		   indata + 1, indata + 2, indata + 3, &dummy);
+=======
+	x = sscanf(geostr, "%lu %lu %lu %lu", indata,
+		   indata + 1, indata + 2, indata + 3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (x != 4) {
 		DMWARN("Unable to interpret geometry settings.");
@@ -1216,7 +1270,10 @@ static int table_load(struct dm_ioctl *param, size_t param_size)
 	struct hash_cell *hc;
 	struct dm_table *t;
 	struct mapped_device *md;
+<<<<<<< HEAD
 	struct target_type *immutable_target_type;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	md = find_device(param);
 	if (!md)
@@ -1232,6 +1289,7 @@ static int table_load(struct dm_ioctl *param, size_t param_size)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	immutable_target_type = dm_get_immutable_target_type(md);
 	if (immutable_target_type &&
 	    (immutable_target_type != dm_table_get_immutable_target_type(t))) {
@@ -1242,6 +1300,8 @@ static int table_load(struct dm_ioctl *param, size_t param_size)
 		goto out;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Protect md->type and md->queue against concurrent table loads. */
 	dm_lock_md_type(md);
 	if (dm_get_md_type(md) == DM_TYPE_NONE)
@@ -1436,11 +1496,14 @@ static int target_message(struct dm_ioctl *param, size_t param_size)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	if (!argc) {
 		DMWARN("Empty message received.");
 		goto out_argv;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	table = dm_get_live_table(md);
 	if (!table)
 		goto out_argv;
@@ -1563,6 +1626,7 @@ static int copy_params(struct dm_ioctl __user *user, struct dm_ioctl **param)
 	if (copy_from_user(dmi, user, tmp.data_size))
 		goto bad;
 
+<<<<<<< HEAD
 	/*
 	 * Abort if something changed the ioctl data while it was being copied.
 	 */
@@ -1571,6 +1635,8 @@ static int copy_params(struct dm_ioctl __user *user, struct dm_ioctl **param)
 		goto bad;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Wipe the user buffer so we do not return it to userspace */
 	if (secure_data && clear_user(user, tmp.data_size))
 		goto bad;

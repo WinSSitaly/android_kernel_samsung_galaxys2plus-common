@@ -2,7 +2,11 @@
  * arch/arm/plat-omap/include/mach/serial.h
  *
  * Copyright (C) 2009 Texas Instruments
+<<<<<<< HEAD
  * Added OMAP4 support- Santosh Shilimkar <santosh.shilimkar@ti.com>
+=======
+ * Addded OMAP4 support- Santosh Shilimkar <santosh.shilimkar@ti.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,8 +20,13 @@
 #include <linux/init.h>
 
 /*
+<<<<<<< HEAD
  * Memory entry used for the DEBUG_LL UART configuration, relative to
  * start of RAM. See also uncompress.h and debug-macro.S.
+=======
+ * Memory entry used for the DEBUG_LL UART configuration. See also
+ * uncompress.h and debug-macro.S.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Note that using a memory location for storing the UART configuration
  * has at least two limitations:
@@ -27,7 +36,11 @@
  * 2. We assume printascii is called at least once before paging_init,
  *    and addruart has a chance to read OMAP_UART_INFO
  */
+<<<<<<< HEAD
 #define OMAP_UART_INFO_OFS	0x3ffc
+=======
+#define OMAP_UART_INFO		(PLAT_PHYS_OFFSET + 0x3ffc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* OMAP1 serial ports */
 #define OMAP1_UART1_BASE	0xfffb0000
@@ -44,7 +57,10 @@
 #define OMAP3_UART2_BASE	OMAP2_UART2_BASE
 #define OMAP3_UART3_BASE	0x49020000
 #define OMAP3_UART4_BASE	0x49042000	/* Only on 36xx */
+<<<<<<< HEAD
 #define OMAP3_UART4_AM35XX_BASE	0x4809E000	/* Only on AM35xx */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* OMAP4 serial ports */
 #define OMAP4_UART1_BASE	OMAP2_UART1_BASE
@@ -52,6 +68,7 @@
 #define OMAP4_UART3_BASE	0x48020000
 #define OMAP4_UART4_BASE	0x4806e000
 
+<<<<<<< HEAD
 /* TI81XX serial ports */
 #define TI81XX_UART1_BASE	0x48020000
 #define TI81XX_UART2_BASE	0x48022000
@@ -59,6 +76,12 @@
 
 /* AM3505/3517 UART4 */
 #define AM35XX_UART4_BASE	0x4809E000	/* Only on AM3505/3517 */
+=======
+/* TI816X serial ports */
+#define TI816X_UART1_BASE	0x48020000
+#define TI816X_UART2_BASE	0x48022000
+#define TI816X_UART3_BASE	0x48024000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* External port on Zoom2/3 */
 #define ZOOM_UART_BASE		0x10000000
@@ -90,9 +113,15 @@
 #define OMAP4UART2		OMAP2UART2
 #define OMAP4UART3		43
 #define OMAP4UART4		44
+<<<<<<< HEAD
 #define TI81XXUART1		81
 #define TI81XXUART2		82
 #define TI81XXUART3		83
+=======
+#define TI816XUART1		81
+#define TI816XUART2		82
+#define TI816XUART3		83
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ZOOM_UART		95		/* Only on zoom2/3 */
 
 /* This is only used by 8250.c for omap1510 */
@@ -107,12 +136,24 @@
 #ifndef __ASSEMBLER__
 
 struct omap_board_data;
+<<<<<<< HEAD
 struct omap_uart_port_info;
 
 extern void omap_serial_init(void);
 extern void omap_serial_board_init(struct omap_uart_port_info *platform_data);
 extern void omap_serial_init_port(struct omap_board_data *bdata,
 		struct omap_uart_port_info *platform_data);
+=======
+
+extern void omap_serial_init(void);
+extern void omap_serial_init_port(struct omap_board_data *bdata);
+extern int omap_uart_can_sleep(void);
+extern void omap_uart_check_wakeup(void);
+extern void omap_uart_prepare_suspend(void);
+extern void omap_uart_prepare_idle(int num);
+extern void omap_uart_resume_idle(int num);
+extern void omap_uart_enable_irqs(int enable);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #endif

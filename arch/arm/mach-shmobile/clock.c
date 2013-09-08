@@ -22,9 +22,14 @@
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/sh_clk.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 
 int __init shmobile_clk_init(void)
+=======
+
+int __init clk_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Kick the child clocks.. */
 	recalculate_root_clocks();

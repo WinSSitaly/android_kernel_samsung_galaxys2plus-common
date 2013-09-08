@@ -14,6 +14,10 @@
 #include <linux/module.h>
 #include <linux/fs.h>
 #include <linux/major.h>
+<<<<<<< HEAD
+=======
+#include <linux/kobj_map.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/cdev.h>
 
 #include <linux/device.h>

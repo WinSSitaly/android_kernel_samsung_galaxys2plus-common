@@ -6,7 +6,11 @@
  * needed to reduce the lookup overhead since most of these queries happen on
  * a per-packet basis.
  *
+<<<<<<< HEAD
  * Author: Paul Moore <paul@paul-moore.com>
+=======
+ * Author: Paul Moore <paul.moore@hp.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This code is heavily based on the "netif" concept originally developed by
  * James Morris <jmorris@redhat.com>
@@ -69,6 +73,25 @@ static DEFINE_SPINLOCK(sel_netnode_lock);
 static struct sel_netnode_bkt sel_netnode_hash[SEL_NETNODE_HASH_SIZE];
 
 /**
+<<<<<<< HEAD
+=======
+ * sel_netnode_free - Frees a node entry
+ * @p: the entry's RCU field
+ *
+ * Description:
+ * This function is designed to be used as a callback to the call_rcu()
+ * function so that memory allocated to a hash table node entry can be
+ * released safely.
+ *
+ */
+static void sel_netnode_free(struct rcu_head *p)
+{
+	struct sel_netnode *node = container_of(p, struct sel_netnode, rcu);
+	kfree(node);
+}
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * sel_netnode_hashfn_ipv4 - IPv4 hashing function for the node table
  * @addr: IPv4 address
  *
@@ -174,11 +197,18 @@ static void sel_netnode_insert(struct sel_netnode *node)
 	if (sel_netnode_hash[idx].size == SEL_NETNODE_HASH_BKT_LIMIT) {
 		struct sel_netnode *tail;
 		tail = list_entry(
+<<<<<<< HEAD
 			rcu_dereference_protected(sel_netnode_hash[idx].list.prev,
 						  lockdep_is_held(&sel_netnode_lock)),
 			struct sel_netnode, list);
 		list_del_rcu(&tail->list);
 		kfree_rcu(tail, rcu);
+=======
+			rcu_dereference(sel_netnode_hash[idx].list.prev),
+			struct sel_netnode, list);
+		list_del_rcu(&tail->list);
+		call_rcu(&tail->rcu, sel_netnode_free);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		sel_netnode_hash[idx].size++;
 }
@@ -221,7 +251,11 @@ static int sel_netnode_sid_slow(void *addr, u16 family, u32 *sid)
 	case PF_INET6:
 		ret = security_node_sid(PF_INET6,
 					addr, sizeof(struct in6_addr), sid);
+<<<<<<< HEAD
 		new->nsec.addr.ipv6 = *(struct in6_addr *)addr;
+=======
+		ipv6_addr_copy(&new->nsec.addr.ipv6, addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		BUG();
@@ -291,7 +325,11 @@ static void sel_netnode_flush(void)
 		list_for_each_entry_safe(node, node_tmp,
 					 &sel_netnode_hash[idx].list, list) {
 				list_del_rcu(&node->list);
+<<<<<<< HEAD
 				kfree_rcu(node, rcu);
+=======
+				call_rcu(&node->rcu, sel_netnode_free);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		sel_netnode_hash[idx].size = 0;
 	}

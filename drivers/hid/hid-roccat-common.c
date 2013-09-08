@@ -11,6 +11,7 @@
  * any later version.
  */
 
+<<<<<<< HEAD
 #include <linux/hid.h>
 #include <linux/slab.h>
 #include <linux/module.h>
@@ -22,6 +23,12 @@ static inline uint16_t roccat_common_feature_report(uint8_t report_id)
 }
 
 int roccat_common_receive(struct usb_device *usb_dev, uint report_id,
+=======
+#include <linux/slab.h>
+#include "hid-roccat-common.h"
+
+int roccat_common_receive(struct usb_device *usb_dev, uint usb_command,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		void *data, uint size)
 {
 	char *buf;
@@ -32,10 +39,16 @@ int roccat_common_receive(struct usb_device *usb_dev, uint report_id,
 		return -ENOMEM;
 
 	len = usb_control_msg(usb_dev, usb_rcvctrlpipe(usb_dev, 0),
+<<<<<<< HEAD
 			HID_REQ_GET_REPORT,
 			USB_TYPE_CLASS | USB_RECIP_INTERFACE | USB_DIR_IN,
 			roccat_common_feature_report(report_id),
 			0, buf, size, USB_CTRL_SET_TIMEOUT);
+=======
+			USB_REQ_CLEAR_FEATURE,
+			USB_TYPE_CLASS | USB_RECIP_INTERFACE | USB_DIR_IN,
+			usb_command, 0, buf, size, USB_CTRL_SET_TIMEOUT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memcpy(data, buf, size);
 	kfree(buf);
@@ -43,12 +56,17 @@ int roccat_common_receive(struct usb_device *usb_dev, uint report_id,
 }
 EXPORT_SYMBOL_GPL(roccat_common_receive);
 
+<<<<<<< HEAD
 int roccat_common_send(struct usb_device *usb_dev, uint report_id,
+=======
+int roccat_common_send(struct usb_device *usb_dev, uint usb_command,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		void const *data, uint size)
 {
 	char *buf;
 	int len;
 
+<<<<<<< HEAD
 	buf = kmemdup(data, size, GFP_KERNEL);
 	if (buf == NULL)
 		return -ENOMEM;
@@ -58,6 +76,18 @@ int roccat_common_send(struct usb_device *usb_dev, uint report_id,
 			USB_TYPE_CLASS | USB_RECIP_INTERFACE | USB_DIR_OUT,
 			roccat_common_feature_report(report_id),
 			0, buf, size, USB_CTRL_SET_TIMEOUT);
+=======
+	buf = kmalloc(size, GFP_KERNEL);
+	if (buf == NULL)
+		return -ENOMEM;
+
+	memcpy(buf, data, size);
+
+	len = usb_control_msg(usb_dev, usb_sndctrlpipe(usb_dev, 0),
+			USB_REQ_SET_CONFIGURATION,
+			USB_TYPE_CLASS | USB_RECIP_INTERFACE | USB_DIR_OUT,
+			usb_command, 0, buf, size, USB_CTRL_SET_TIMEOUT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kfree(buf);
 	return ((len < 0) ? len : ((len != size) ? -EIO : 0));

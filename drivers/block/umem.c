@@ -513,6 +513,7 @@ static void process_page(unsigned long data)
 	}
 }
 
+<<<<<<< HEAD
 struct mm_plug_cb {
 	struct blk_plug_cb cb;
 	struct cardinfo *card;
@@ -552,6 +553,9 @@ static int mm_check_plugged(struct cardinfo *card)
 }
 
 static void mm_make_request(struct request_queue *q, struct bio *bio)
+=======
+static int mm_make_request(struct request_queue *q, struct bio *bio)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cardinfo *card = q->queuedata;
 	pr_debug("mm_make_request %llu %u\n",
@@ -561,11 +565,17 @@ static void mm_make_request(struct request_queue *q, struct bio *bio)
 	*card->biotail = bio;
 	bio->bi_next = NULL;
 	card->biotail = &bio->bi_next;
+<<<<<<< HEAD
 	if (bio->bi_rw & REQ_SYNC || !mm_check_plugged(card))
 		activate(card);
 	spin_unlock_irq(&card->lock);
 
 	return;
+=======
+	spin_unlock_irq(&card->lock);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static irqreturn_t mm_interrupt(int irq, void *__card)

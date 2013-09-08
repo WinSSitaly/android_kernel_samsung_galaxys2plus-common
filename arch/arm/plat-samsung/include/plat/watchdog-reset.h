@@ -10,23 +10,42 @@
  * published by the Free Software Foundation.
 */
 
+<<<<<<< HEAD
 #include <plat/clock.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/regs-watchdog.h>
 #include <mach/map.h>
 
 #include <linux/clk.h>
 #include <linux/err.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/delay.h>
 
 static inline void arch_wdt_reset(void)
 {
+=======
+
+static inline void arch_wdt_reset(void)
+{
+	struct clk *wdtclk;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk("arch_reset: attempting watchdog reset\n");
 
 	__raw_writel(0, S3C2410_WTCON);	  /* disable watchdog, to be safe  */
 
+<<<<<<< HEAD
 	if (!IS_ERR(s3c2410_wdtclk))
 		clk_enable(s3c2410_wdtclk);
+=======
+	wdtclk = clk_get(NULL, "watchdog");
+	if (!IS_ERR(wdtclk)) {
+		clk_enable(wdtclk);
+	} else
+		printk(KERN_WARNING "%s: warning: cannot get watchdog clock\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* put initial values into count and data */
 	__raw_writel(0x80, S3C2410_WTCNT);

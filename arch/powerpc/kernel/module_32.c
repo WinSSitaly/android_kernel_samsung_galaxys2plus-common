@@ -174,10 +174,28 @@ int module_frob_arch_sections(Elf32_Ehdr *hdr,
 	return 0;
 }
 
+<<<<<<< HEAD
 static inline int entry_matches(struct ppc_plt_entry *entry, Elf32_Addr val)
 {
 	if (entry->jump[0] == 0x3d800000 + ((val + 0x8000) >> 16)
 	    && entry->jump[1] == 0x398c0000 + (val & 0xffff))
+=======
+int apply_relocate(Elf32_Shdr *sechdrs,
+		   const char *strtab,
+		   unsigned int symindex,
+		   unsigned int relsec,
+		   struct module *module)
+{
+	printk(KERN_ERR "%s: Non-ADD RELOCATION unsupported\n",
+	       module->name);
+	return -ENOEXEC;
+}
+
+static inline int entry_matches(struct ppc_plt_entry *entry, Elf32_Addr val)
+{
+	if (entry->jump[0] == 0x3d600000 + ((val + 0x8000) >> 16)
+	    && entry->jump[1] == 0x396b0000 + (val & 0xffff))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 	return 0;
 }
@@ -204,9 +222,16 @@ static uint32_t do_plt_call(void *location,
 		entry++;
 	}
 
+<<<<<<< HEAD
 	entry->jump[0] = 0x3d800000+((val+0x8000)>>16); /* lis r12,sym@ha */
 	entry->jump[1] = 0x398c0000 + (val&0xffff);     /* addi r12,r12,sym@l*/
 	entry->jump[2] = 0x7d8903a6;                    /* mtctr r12 */
+=======
+	/* Stolen from Paul Mackerras as well... */
+	entry->jump[0] = 0x3d600000+((val+0x8000)>>16);	/* lis r11,sym@ha */
+	entry->jump[1] = 0x396b0000 + (val&0xffff);	/* addi r11,r11,sym@l*/
+	entry->jump[2] = 0x7d6903a6;			/* mtctr r11 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	entry->jump[3] = 0x4e800420;			/* bctr */
 
 	DEBUGP("Initialized plt for 0x%x at %p\n", val, entry);

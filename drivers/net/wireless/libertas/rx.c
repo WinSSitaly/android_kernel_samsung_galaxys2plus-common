@@ -5,10 +5,15 @@
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
 #include <linux/etherdevice.h>
+<<<<<<< HEAD
 #include <linux/hardirq.h>
 #include <linux/slab.h>
 #include <linux/types.h>
 #include <linux/export.h>
+=======
+#include <linux/slab.h>
+#include <linux/types.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/cfg80211.h>
 
 #include "defs.h"
@@ -16,7 +21,10 @@
 #include "radiotap.h"
 #include "decl.h"
 #include "dev.h"
+<<<<<<< HEAD
 #include "mesh.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct eth803hdr {
 	u8 dest_addr[6];

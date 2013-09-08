@@ -110,6 +110,7 @@ static void __init ar913x_clocks_init(void)
 	ath79_uart_clk.rate = ath79_ahb_clk.rate;
 }
 
+<<<<<<< HEAD
 static void __init ar933x_clocks_init(void)
 {
 	u32 clock_ctrl;
@@ -163,6 +164,8 @@ static void __init ar933x_clocks_init(void)
 	ath79_uart_clk.rate = ath79_ref_clk.rate;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init ath79_clocks_init(void)
 {
 	if (soc_is_ar71xx())
@@ -171,8 +174,11 @@ void __init ath79_clocks_init(void)
 		ar724x_clocks_init();
 	else if (soc_is_ar913x())
 		ar913x_clocks_init();
+<<<<<<< HEAD
 	else if (soc_is_ar933x())
 		ar933x_clocks_init();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		BUG();
 

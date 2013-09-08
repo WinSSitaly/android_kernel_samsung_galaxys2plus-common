@@ -1,6 +1,10 @@
 /******************************************************************************
  *
+<<<<<<< HEAD
  * Copyright(c) 2009-2012  Realtek Corporation.
+=======
+ * Copyright(c) 2009-2010  Realtek Corporation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
@@ -27,7 +31,10 @@
  *
  *****************************************************************************/
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "wifi.h"
 #include "base.h"
 #include "ps.h"
@@ -44,11 +51,18 @@ bool rtl_ps_enable_nic(struct ieee80211_hw *hw)
 
 	if (is_hal_stop(rtlhal))
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_WARNING,
+<<<<<<< HEAD
 			 "Driver is already down!\n");
 
 	/*<2> Enable Adapter */
 	if (rtlpriv->cfg->ops->hw_init(hw))
 		return 1;
+=======
+			 ("Driver is already down!\n"));
+
+	/*<2> Enable Adapter */
+	rtlpriv->cfg->ops->hw_init(hw);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	RT_CLEAR_PS_LEVEL(ppsc, RT_RF_OFF_LEVL_HALT_NIC);
 
 	/*<3> Enable Interrupt */
@@ -70,7 +84,10 @@ bool rtl_ps_disable_nic(struct ieee80211_hw *hw)
 
 	/*<2> Disable Interrupt */
 	rtlpriv->cfg->ops->disable_interrupt(hw);
+<<<<<<< HEAD
 	tasklet_kill(&rtlpriv->works.irq_tasklet);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*<3> Disable Adapter */
 	rtlpriv->cfg->ops->hw_disable(hw);
@@ -81,18 +98,77 @@ EXPORT_SYMBOL(rtl_ps_disable_nic);
 
 bool rtl_ps_set_rf_state(struct ieee80211_hw *hw,
 			 enum rf_pwrstate state_toset,
+<<<<<<< HEAD
 			 u32 changesource)
 {
 	struct rtl_priv *rtlpriv = rtl_priv(hw);
 	struct rtl_ps_ctl *ppsc = rtl_psc(rtl_priv(hw));
 	bool actionallowed = false;
+=======
+			 u32 changesource, bool protect_or_not)
+{
+	struct rtl_priv *rtlpriv = rtl_priv(hw);
+	struct rtl_ps_ctl *ppsc = rtl_psc(rtl_priv(hw));
+	enum rf_pwrstate rtstate;
+	bool actionallowed = false;
+	u16 rfwait_cnt = 0;
+	unsigned long flag;
+
+	/*protect_or_not = true; */
+
+	if (protect_or_not)
+		goto no_protect;
+
+	/*
+	 *Only one thread can change
+	 *the RF state at one time, and others
+	 *should wait to be executed.
+	 */
+	while (true) {
+		spin_lock_irqsave(&rtlpriv->locks.rf_ps_lock, flag);
+		if (ppsc->rfchange_inprogress) {
+			spin_unlock_irqrestore(&rtlpriv->locks.rf_ps_lock,
+					       flag);
+
+			RT_TRACE(rtlpriv, COMP_ERR, DBG_WARNING,
+				 ("RF Change in progress!"
+				  "Wait to set..state_toset(%d).\n",
+				  state_toset));
+
+			/* Set RF after the previous action is done.  */
+			while (ppsc->rfchange_inprogress) {
+				rfwait_cnt++;
+				mdelay(1);
+
+				/*
+				 *Wait too long, return false to avoid
+				 *to be stuck here.
+				 */
+				if (rfwait_cnt > 100)
+					return false;
+			}
+		} else {
+			ppsc->rfchange_inprogress = true;
+			spin_unlock_irqrestore(&rtlpriv->locks.rf_ps_lock,
+					       flag);
+			break;
+		}
+	}
+
+no_protect:
+	rtstate = ppsc->rfpwr_state;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (state_toset) {
 	case ERFON:
 		ppsc->rfoff_reason &= (~changesource);
 
 		if ((changesource == RF_CHANGE_BY_HW) &&
+<<<<<<< HEAD
 		    (ppsc->hwradiooff)) {
+=======
+		    (ppsc->hwradiooff == true)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ppsc->hwradiooff = false;
 		}
 
@@ -105,7 +181,12 @@ bool rtl_ps_set_rf_state(struct ieee80211_hw *hw,
 
 	case ERFOFF:
 
+<<<<<<< HEAD
 		if ((changesource == RF_CHANGE_BY_HW) && !ppsc->hwradiooff) {
+=======
+		if ((changesource == RF_CHANGE_BY_HW)
+		    && (ppsc->hwradiooff == false)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ppsc->hwradiooff = true;
 		}
 
@@ -120,13 +201,26 @@ bool rtl_ps_set_rf_state(struct ieee80211_hw *hw,
 
 	default:
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+<<<<<<< HEAD
 			 "switch case not processed\n");
+=======
+			 ("switch case not process\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
 	if (actionallowed)
 		rtlpriv->cfg->ops->set_rf_power_state(hw, state_toset);
 
+<<<<<<< HEAD
+=======
+	if (!protect_or_not) {
+		spin_lock_irqsave(&rtlpriv->locks.rf_ps_lock, flag);
+		ppsc->rfchange_inprogress = false;
+		spin_unlock_irqrestore(&rtlpriv->locks.rf_ps_lock, flag);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return actionallowed;
 }
 EXPORT_SYMBOL(rtl_ps_set_rf_state);
@@ -149,7 +243,12 @@ static void _rtl_ps_inactive_ps(struct ieee80211_hw *hw)
 		}
 	}
 
+<<<<<<< HEAD
 	rtl_ps_set_rf_state(hw, ppsc->inactive_pwrstate, RF_CHANGE_BY_IPS);
+=======
+	rtl_ps_set_rf_state(hw, ppsc->inactive_pwrstate,
+			    RF_CHANGE_BY_IPS, false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ppsc->inactive_pwrstate == ERFOFF &&
 	    rtlhal->interface == INTF_PCI) {
@@ -176,7 +275,11 @@ void rtl_ips_nic_off_wq_callback(void *data)
 
 	if (mac->opmode != NL80211_IFTYPE_STATION) {
 		RT_TRACE(rtlpriv, COMP_ERR, DBG_WARNING,
+<<<<<<< HEAD
 			 "not station return\n");
+=======
+			 ("not station return\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -207,7 +310,11 @@ void rtl_ips_nic_off_wq_callback(void *data)
 		    (mac->link_state == MAC80211_NOLINK) &&
 		    !mac->act_scanning) {
 			RT_TRACE(rtlpriv, COMP_RF, DBG_TRACE,
+<<<<<<< HEAD
 				 "IPSEnter(): Turn off RF\n");
+=======
+				 ("IPSEnter(): Turn off RF.\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			ppsc->inactive_pwrstate = ERFOFF;
 			ppsc->in_powersavemode = true;
@@ -280,7 +387,12 @@ static bool rtl_get_fwlps_doze(struct ieee80211_hw *hw)
 
 	if (ps_timediff < 2000) {
 		RT_TRACE(rtlpriv, COMP_POWER, DBG_LOUD,
+<<<<<<< HEAD
 			 "Delay enter Fw LPS for DHCP, ARP, or EAPOL exchanging state\n");
+=======
+			 ("Delay enter Fw LPS for DHCP, ARP,"
+			  " or EAPOL exchanging state.\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return false;
 	}
 
@@ -327,8 +439,13 @@ static void rtl_lps_set_psmode(struct ieee80211_hw *hw, u8 rt_psmode)
 		bool fw_current_inps;
 		if (ppsc->dot11_psmode == EACTIVE) {
 			RT_TRACE(rtlpriv, COMP_RF, DBG_DMESG,
+<<<<<<< HEAD
 				 "FW LPS leave ps_mode:%x\n",
 				 FW_PS_ACTIVE_MODE);
+=======
+				 ("FW LPS leave ps_mode:%x\n",
+				  FW_PS_ACTIVE_MODE));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			rpwm_val = 0x0C;	/* RF on */
 			fw_pwrmode = FW_PS_ACTIVE_MODE;
@@ -346,8 +463,13 @@ static void rtl_lps_set_psmode(struct ieee80211_hw *hw, u8 rt_psmode)
 		} else {
 			if (rtl_get_fwlps_doze(hw)) {
 				RT_TRACE(rtlpriv, COMP_RF, DBG_DMESG,
+<<<<<<< HEAD
 					 "FW LPS enter ps_mode:%x\n",
 					 ppsc->fwctrl_psmode);
+=======
+						("FW LPS enter ps_mode:%x\n",
+						 ppsc->fwctrl_psmode));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				rpwm_val = 0x02;	/* RF off */
 				fw_current_inps = true;
@@ -375,6 +497,10 @@ void rtl_lps_enter(struct ieee80211_hw *hw)
 	struct rtl_mac *mac = rtl_mac(rtl_priv(hw));
 	struct rtl_ps_ctl *ppsc = rtl_psc(rtl_priv(hw));
 	struct rtl_priv *rtlpriv = rtl_priv(hw);
+<<<<<<< HEAD
+=======
+	unsigned long flag;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!ppsc->fwctrl_lps)
 		return;
@@ -395,19 +521,31 @@ void rtl_lps_enter(struct ieee80211_hw *hw)
 	if (mac->link_state != MAC80211_LINKED)
 		return;
 
+<<<<<<< HEAD
 	mutex_lock(&rtlpriv->locks.ps_mutex);
+=======
+	spin_lock_irqsave(&rtlpriv->locks.lps_lock, flag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Idle for a while if we connect to AP a while ago. */
 	if (mac->cnt_after_linked >= 2) {
 		if (ppsc->dot11_psmode == EACTIVE) {
 			RT_TRACE(rtlpriv, COMP_POWER, DBG_LOUD,
+<<<<<<< HEAD
 				 "Enter 802.11 power save mode...\n");
+=======
+					("Enter 802.11 power save mode...\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			rtl_lps_set_psmode(hw, EAUTOPS);
 		}
 	}
 
+<<<<<<< HEAD
 	mutex_unlock(&rtlpriv->locks.ps_mutex);
+=======
+	spin_unlock_irqrestore(&rtlpriv->locks.lps_lock, flag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*Leave the leisure power save mode.*/
@@ -416,8 +554,14 @@ void rtl_lps_leave(struct ieee80211_hw *hw)
 	struct rtl_priv *rtlpriv = rtl_priv(hw);
 	struct rtl_ps_ctl *ppsc = rtl_psc(rtl_priv(hw));
 	struct rtl_hal *rtlhal = rtl_hal(rtl_priv(hw));
+<<<<<<< HEAD
 
 	mutex_lock(&rtlpriv->locks.ps_mutex);
+=======
+	unsigned long flag;
+
+	spin_lock_irqsave(&rtlpriv->locks.lps_lock, flag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ppsc->fwctrl_lps) {
 		if (ppsc->dot11_psmode != EACTIVE) {
@@ -433,12 +577,20 @@ void rtl_lps_leave(struct ieee80211_hw *hw)
 			}
 
 			RT_TRACE(rtlpriv, COMP_POWER, DBG_LOUD,
+<<<<<<< HEAD
 				 "Busy Traffic,Leave 802.11 power save..\n");
+=======
+				 ("Busy Traffic,Leave 802.11 power save..\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			rtl_lps_set_psmode(hw, EACTIVE);
 		}
 	}
+<<<<<<< HEAD
 	mutex_unlock(&rtlpriv->locks.ps_mutex);
+=======
+	spin_unlock_irqrestore(&rtlpriv->locks.lps_lock, flag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* For sw LPS*/
@@ -517,8 +669,13 @@ void rtl_swlps_beacon(struct ieee80211_hw *hw, void *data, unsigned int len)
 		queue_delayed_work(rtlpriv->works.rtl_wq,
 				&rtlpriv->works.ps_work, MSECS(5));
 	} else {
+<<<<<<< HEAD
 		RT_TRACE(rtlpriv, COMP_POWER, DBG_DMESG,
 			 "u_bufferd: %x, m_buffered: %x\n", u_buffed, m_buffed);
+=======
+		RT_TRACE(rtlpriv, COMP_POWER, DBG_DMESG, ("u_bufferd: %x, "
+				"m_buffered: %x\n", u_buffed, m_buffed));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -527,6 +684,10 @@ void rtl_swlps_rf_awake(struct ieee80211_hw *hw)
 	struct rtl_priv *rtlpriv = rtl_priv(hw);
 	struct rtl_ps_ctl *ppsc = rtl_psc(rtl_priv(hw));
 	struct rtl_mac *mac = rtl_mac(rtl_priv(hw));
+<<<<<<< HEAD
+=======
+	unsigned long flag;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!rtlpriv->psc.swctrl_lps)
 		return;
@@ -539,9 +700,15 @@ void rtl_swlps_rf_awake(struct ieee80211_hw *hw)
 		RT_CLEAR_PS_LEVEL(ppsc, RT_PS_LEVEL_ASPM);
 	}
 
+<<<<<<< HEAD
 	mutex_lock(&rtlpriv->locks.ps_mutex);
 	rtl_ps_set_rf_state(hw, ERFON, RF_CHANGE_BY_PS);
 	mutex_unlock(&rtlpriv->locks.ps_mutex);
+=======
+	spin_lock_irqsave(&rtlpriv->locks.lps_lock, flag);
+	rtl_ps_set_rf_state(hw, ERFON, RF_CHANGE_BY_PS, false);
+	spin_unlock_irqrestore(&rtlpriv->locks.lps_lock, flag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void rtl_swlps_rfon_wq_callback(void *data)
@@ -558,6 +725,10 @@ void rtl_swlps_rf_sleep(struct ieee80211_hw *hw)
 	struct rtl_priv *rtlpriv = rtl_priv(hw);
 	struct rtl_mac *mac = rtl_mac(rtl_priv(hw));
 	struct rtl_ps_ctl *ppsc = rtl_psc(rtl_priv(hw));
+<<<<<<< HEAD
+=======
+	unsigned long flag;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 sleep_intv;
 
 	if (!rtlpriv->psc.sw_ps_enabled)
@@ -574,9 +745,22 @@ void rtl_swlps_rf_sleep(struct ieee80211_hw *hw)
 	if (rtlpriv->link_info.busytraffic)
 		return;
 
+<<<<<<< HEAD
 	mutex_lock(&rtlpriv->locks.ps_mutex);
 	rtl_ps_set_rf_state(hw, ERFSLEEP, RF_CHANGE_BY_PS);
 	mutex_unlock(&rtlpriv->locks.ps_mutex);
+=======
+	spin_lock_irqsave(&rtlpriv->locks.rf_ps_lock, flag);
+	if (rtlpriv->psc.rfchange_inprogress) {
+		spin_unlock_irqrestore(&rtlpriv->locks.rf_ps_lock, flag);
+		return;
+	}
+	spin_unlock_irqrestore(&rtlpriv->locks.rf_ps_lock, flag);
+
+	spin_lock_irqsave(&rtlpriv->locks.lps_lock, flag);
+	rtl_ps_set_rf_state(hw, ERFSLEEP, RF_CHANGE_BY_PS, false);
+	spin_unlock_irqrestore(&rtlpriv->locks.lps_lock, flag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ppsc->reg_rfps_level & RT_RF_OFF_LEVL_ASPM &&
 		!RT_IN_PS_LEVEL(ppsc, RT_PS_LEVEL_ASPM)) {
@@ -606,8 +790,13 @@ void rtl_swlps_rf_sleep(struct ieee80211_hw *hw)
 	 * sleep  = dtim_period, that meaons, we should
 	 * awake before every dtim */
 	RT_TRACE(rtlpriv, COMP_POWER, DBG_DMESG,
+<<<<<<< HEAD
 		 "dtim_counter:%x will sleep :%d beacon_intv\n",
 		 rtlpriv->psc.dtim_counter, sleep_intv);
+=======
+		 ("dtim_counter:%x will sleep :%d"
+		 " beacon_intv\n", rtlpriv->psc.dtim_counter, sleep_intv));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* we tested that 40ms is enough for sw & hw sw delay */
 	queue_delayed_work(rtlpriv->works.rtl_wq, &rtlpriv->works.ps_rfon_wq,

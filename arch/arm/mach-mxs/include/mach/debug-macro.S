@@ -14,15 +14,33 @@
 #include <mach/mx23.h>
 #include <mach/mx28.h>
 
+<<<<<<< HEAD
 #ifdef CONFIG_DEBUG_IMX23_UART
 #define UART_PADDR	MX23_DUART_BASE_ADDR
 #elif defined (CONFIG_DEBUG_IMX28_UART)
+=======
+#ifdef CONFIG_SOC_IMX23
+#ifdef UART_PADDR
+#error "CONFIG_DEBUG_LL is incompatible with multiple archs"
+#endif
+#define UART_PADDR	MX23_DUART_BASE_ADDR
+#endif
+
+#ifdef CONFIG_SOC_IMX28
+#ifdef UART_PADDR
+#error "CONFIG_DEBUG_LL is incompatible with multiple archs"
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define UART_PADDR	MX28_DUART_BASE_ADDR
 #endif
 
 #define UART_VADDR	MXS_IO_ADDRESS(UART_PADDR)
 
+<<<<<<< HEAD
 		.macro	addruart, rp, rv, tmp
+=======
+		.macro	addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ldr	\rp, =UART_PADDR	@ physical
 		ldr	\rv, =UART_VADDR	@ virtual
 		.endm

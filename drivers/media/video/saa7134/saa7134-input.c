@@ -210,6 +210,7 @@ static int get_key_msi_tvanywhere_plus(struct IR_i2c *ir, u32 *ir_key,
 	return 1;
 }
 
+<<<<<<< HEAD
 /* copied and modified from get_key_msi_tvanywhere_plus() */
 static int get_key_kworld_pc150u(struct IR_i2c *ir, u32 *ir_key,
 					u32 *ir_raw)
@@ -258,6 +259,8 @@ static int get_key_kworld_pc150u(struct IR_i2c *ir, u32 *ir_key,
 	return 1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int get_key_purpletv(struct IR_i2c *ir, u32 *ir_key, u32 *ir_raw)
 {
 	unsigned char b;
@@ -283,12 +286,17 @@ static int get_key_purpletv(struct IR_i2c *ir, u32 *ir_key, u32 *ir_raw)
 
 static int get_key_hvr1110(struct IR_i2c *ir, u32 *ir_key, u32 *ir_raw)
 {
+<<<<<<< HEAD
 	unsigned char buf[5];
+=======
+	unsigned char buf[5], cod4, code3, code4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* poll IR chip */
 	if (5 != i2c_master_recv(ir->c, buf, 5))
 		return -EIO;
 
+<<<<<<< HEAD
 	/* Check if some key were pressed */
 	if (!(buf[0] & 0x80))
 		return 0;
@@ -302,6 +310,18 @@ static int get_key_hvr1110(struct IR_i2c *ir, u32 *ir_key, u32 *ir_raw)
 	 */
 	*ir_key = 0x1fff & ((buf[3] << 8) | (buf[4] >> 2));
 	*ir_raw = *ir_key;
+=======
+	cod4	= buf[4];
+	code4	= (cod4 >> 2);
+	code3	= buf[3];
+	if (code3 == 0)
+		/* no key pressed */
+		return 0;
+
+	/* return key */
+	*ir_key = code4;
+	*ir_raw = code4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
@@ -803,7 +823,11 @@ int saa7134_input_init1(struct saa7134_dev *dev)
 		polling      = 50; /* ms */
 		break;
 	case SAA7134_BOARD_VIDEOMATE_M1F:
+<<<<<<< HEAD
 		ir_codes     = RC_MAP_VIDEOMATE_K100;
+=======
+		ir_codes     = RC_MAP_VIDEOMATE_M1F;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mask_keycode = 0x0ff00;
 		mask_keyup   = 0x040000;
 		break;
@@ -949,6 +973,7 @@ void saa7134_probe_i2c_ir(struct saa7134_dev *dev)
 			msg_msi.addr, dev->i2c_adap.name,
 			(1 == rc) ? "yes" : "no");
 		break;
+<<<<<<< HEAD
 	case SAA7134_BOARD_KWORLD_PC150U:
 		/* copied and modified from MSI TV@nywhere Plus */
 		dev->init_data.name = "Kworld PC150-U";
@@ -964,6 +989,8 @@ void saa7134_probe_i2c_ir(struct saa7134_dev *dev)
 			msg_msi.addr, dev->i2c_adap.name,
 			(1 == rc) ? "yes" : "no");
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SAA7134_BOARD_HAUPPAUGE_HVR1110:
 		dev->init_data.name = "HVR 1110";
 		dev->init_data.get_key = get_key_hvr1110;

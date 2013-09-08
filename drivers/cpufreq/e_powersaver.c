@@ -16,6 +16,7 @@
 #include <linux/io.h>
 #include <linux/delay.h>
 
+<<<<<<< HEAD
 #include <asm/cpu_device_id.h>
 #include <asm/msr.h>
 #include <asm/tsc.h>
@@ -25,6 +26,11 @@
 #include <acpi/processor.h>
 #endif
 
+=======
+#include <asm/msr.h>
+#include <asm/tsc.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define EPS_BRAND_C7M	0
 #define EPS_BRAND_C7	1
 #define EPS_BRAND_EDEN	2
@@ -33,14 +39,18 @@
 
 struct eps_cpu_data {
 	u32 fsb;
+<<<<<<< HEAD
 #if defined CONFIG_ACPI_PROCESSOR || defined CONFIG_ACPI_PROCESSOR_MODULE
 	u32 bios_limit;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct cpufreq_frequency_table freq_table[];
 };
 
 static struct eps_cpu_data *eps_cpu[NR_CPUS];
 
+<<<<<<< HEAD
 /* Module parameters */
 static int freq_failsafe_off;
 static int voltage_failsafe_off;
@@ -86,6 +96,8 @@ static int eps_acpi_exit(struct cpufreq_policy *policy)
 	return 0;
 }
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static unsigned int eps_get(unsigned int cpu)
 {
@@ -218,9 +230,12 @@ static int eps_cpu_init(struct cpufreq_policy *policy)
 	int k, step, voltage;
 	int ret;
 	int states;
+<<<<<<< HEAD
 #if defined CONFIG_ACPI_PROCESSOR || defined CONFIG_ACPI_PROCESSOR_MODULE
 	unsigned int limit;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (policy->cpu != 0)
 		return -ENODEV;
@@ -301,6 +316,7 @@ static int eps_cpu_init(struct cpufreq_policy *policy)
 		return -EINVAL;
 	if (current_voltage > 0x1f || max_voltage > 0x1f)
 		return -EINVAL;
+<<<<<<< HEAD
 	if (max_voltage < min_voltage
 	    || current_voltage < min_voltage
 	    || current_voltage > max_voltage)
@@ -357,6 +373,13 @@ static int eps_cpu_init(struct cpufreq_policy *policy)
 		}
 	}
 
+=======
+	if (max_voltage < min_voltage)
+		return -EINVAL;
+
+	/* Calc FSB speed */
+	fsb = cpu_khz / current_multiplier;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Calc number of p-states supported */
 	if (brand == EPS_BRAND_C7M)
 		states = max_multiplier - min_multiplier + 1;
@@ -373,9 +396,12 @@ static int eps_cpu_init(struct cpufreq_policy *policy)
 
 	/* Copy basic values */
 	centaur->fsb = fsb;
+<<<<<<< HEAD
 #if defined CONFIG_ACPI_PROCESSOR || defined CONFIG_ACPI_PROCESSOR_MODULE
 	centaur->bios_limit = limit;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Fill frequency and MSR value table */
 	f_table = &centaur->freq_table[0];
@@ -414,7 +440,21 @@ static int eps_cpu_init(struct cpufreq_policy *policy)
 static int eps_cpu_exit(struct cpufreq_policy *policy)
 {
 	unsigned int cpu = policy->cpu;
+<<<<<<< HEAD
 
+=======
+	struct eps_cpu_data *centaur;
+	u32 lo, hi;
+
+	if (eps_cpu[cpu] == NULL)
+		return -ENODEV;
+	centaur = eps_cpu[cpu];
+
+	/* Get max frequency */
+	rdmsr(MSR_IA32_PERF_STATUS, lo, hi);
+	/* Set max frequency */
+	eps_set_state(centaur, cpu, hi & 0xffff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Bye */
 	cpufreq_frequency_table_put_attr(policy->cpu);
 	kfree(eps_cpu[cpu]);
@@ -438,6 +478,7 @@ static struct cpufreq_driver eps_driver = {
 	.attr		= eps_attr,
 };
 
+<<<<<<< HEAD
 
 /* This driver will work only on Centaur C7 processors with
  * Enhanced SpeedStep/PowerSaver registers */
@@ -451,6 +492,20 @@ static int __init eps_init(void)
 {
 	if (!x86_match_cpu(eps_cpu_id) || boot_cpu_data.x86_model < 10)
 		return -ENODEV;
+=======
+static int __init eps_init(void)
+{
+	struct cpuinfo_x86 *c = &cpu_data(0);
+
+	/* This driver will work only on Centaur C7 processors with
+	 * Enhanced SpeedStep/PowerSaver registers */
+	if (c->x86_vendor != X86_VENDOR_CENTAUR
+	    || c->x86 != 6 || c->x86_model < 10)
+		return -ENODEV;
+	if (!cpu_has(c, X86_FEATURE_EST))
+		return -ENODEV;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cpufreq_register_driver(&eps_driver))
 		return -EINVAL;
 	return 0;
@@ -461,6 +516,7 @@ static void __exit eps_exit(void)
 	cpufreq_unregister_driver(&eps_driver);
 }
 
+<<<<<<< HEAD
 /* Allow user to overclock his machine or to change frequency to higher after
  * unloading module */
 module_param(freq_failsafe_off, int, 0644);
@@ -474,6 +530,8 @@ MODULE_PARM_DESC(ignore_acpi_limit, "Don't check ACPI's processor speed limit");
 module_param(set_max_voltage, int, 0644);
 MODULE_PARM_DESC(set_max_voltage, "Set maximum CPU voltage (mV) C7-M only");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_AUTHOR("Rafal Bilski <rafalbilski@interia.pl>");
 MODULE_DESCRIPTION("Enhanced PowerSaver driver for VIA C7 CPU's.");
 MODULE_LICENSE("GPL");

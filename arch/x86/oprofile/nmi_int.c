@@ -55,12 +55,17 @@ u64 op_x86_get_ctrl(struct op_x86_model_spec const *model,
 	val |= counter_config->extra;
 	event &= model->event_mask ? model->event_mask : 0xFF;
 	val |= event & 0xFF;
+<<<<<<< HEAD
 	val |= (u64)(event & 0x0F00) << 24;
+=======
+	val |= (event & 0x0F00) << 24;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return val;
 }
 
 
+<<<<<<< HEAD
 static int profile_exceptions_notify(unsigned int val, struct pt_regs *regs)
 {
 	if (ctr_running)
@@ -70,6 +75,28 @@ static int profile_exceptions_notify(unsigned int val, struct pt_regs *regs)
 	else
 		model->stop(&__get_cpu_var(cpu_msrs));
 	return NMI_HANDLED;
+=======
+static int profile_exceptions_notify(struct notifier_block *self,
+				     unsigned long val, void *data)
+{
+	struct die_args *args = (struct die_args *)data;
+	int ret = NOTIFY_DONE;
+
+	switch (val) {
+	case DIE_NMI:
+		if (ctr_running)
+			model->check_ctrs(args->regs, &__get_cpu_var(cpu_msrs));
+		else if (!nmi_enabled)
+			break;
+		else
+			model->stop(&__get_cpu_var(cpu_msrs));
+		ret = NOTIFY_STOP;
+		break;
+	default:
+		break;
+	}
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void nmi_cpu_save_registers(struct op_msrs *msrs)
@@ -344,14 +371,30 @@ static void nmi_cpu_setup(void *dummy)
 	int cpu = smp_processor_id();
 	struct op_msrs *msrs = &per_cpu(cpu_msrs, cpu);
 	nmi_cpu_save_registers(msrs);
+<<<<<<< HEAD
 	raw_spin_lock(&oprofilefs_lock);
 	model->setup_ctrs(model, msrs);
 	nmi_cpu_setup_mux(cpu, msrs);
 	raw_spin_unlock(&oprofilefs_lock);
+=======
+	spin_lock(&oprofilefs_lock);
+	model->setup_ctrs(model, msrs);
+	nmi_cpu_setup_mux(cpu, msrs);
+	spin_unlock(&oprofilefs_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	per_cpu(saved_lvtpc, cpu) = apic_read(APIC_LVTPC);
 	apic_write(APIC_LVTPC, APIC_DM_NMI);
 }
 
+<<<<<<< HEAD
+=======
+static struct notifier_block profile_exceptions_nb = {
+	.notifier_call = profile_exceptions_notify,
+	.next = NULL,
+	.priority = NMI_LOCAL_LOW_PRIOR,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void nmi_cpu_restore_registers(struct op_msrs *msrs)
 {
 	struct op_msr *counters = msrs->counters;
@@ -385,6 +428,11 @@ static void nmi_cpu_shutdown(void *dummy)
 	apic_write(APIC_LVTPC, per_cpu(saved_lvtpc, cpu));
 	apic_write(APIC_LVTERR, v);
 	nmi_cpu_restore_registers(msrs);
+<<<<<<< HEAD
+=======
+	if (model->cpu_down)
+		model->cpu_down();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void nmi_cpu_up(void *dummy)
@@ -489,8 +537,12 @@ static int nmi_setup(void)
 	ctr_running = 0;
 	/* make variables visible to the nmi handler: */
 	smp_mb();
+<<<<<<< HEAD
 	err = register_nmi_handler(NMI_LOCAL, profile_exceptions_notify,
 					0, "oprofile");
+=======
+	err = register_die_notifier(&profile_exceptions_nb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		goto fail;
 
@@ -520,7 +572,11 @@ static void nmi_shutdown(void)
 	put_online_cpus();
 	/* make variables visible to the nmi handler: */
 	smp_mb();
+<<<<<<< HEAD
 	unregister_nmi_handler(NMI_LOCAL, "oprofile");
+=======
+	unregister_die_notifier(&profile_exceptions_nb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	msrs = &get_cpu_var(cpu_msrs);
 	model->shutdown(msrs);
 	free_msrs();
@@ -595,6 +651,7 @@ static int __init p4_init(char **cpu_type)
 	return 0;
 }
 
+<<<<<<< HEAD
 enum __force_cpu_type {
 	reserved = 0,		/* do not force */
 	timer,
@@ -613,18 +670,34 @@ static int set_cpu_type(const char *str, struct kernel_param *kp)
 		printk(KERN_INFO "oprofile: forcing architectural perfmon\n");
 	} else {
 		force_cpu_type = 0;
+=======
+static int force_arch_perfmon;
+static int force_cpu_type(const char *str, struct kernel_param *kp)
+{
+	if (!strcmp(str, "arch_perfmon")) {
+		force_arch_perfmon = 1;
+		printk(KERN_INFO "oprofile: forcing architectural perfmon\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
 }
+<<<<<<< HEAD
 module_param_call(cpu_type, set_cpu_type, NULL, NULL, 0);
+=======
+module_param_call(cpu_type, force_cpu_type, NULL, NULL, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __init ppro_init(char **cpu_type)
 {
 	__u8 cpu_model = boot_cpu_data.x86_model;
 	struct op_x86_model_spec *spec = &op_ppro_spec;	/* default */
 
+<<<<<<< HEAD
 	if (force_cpu_type == arch_perfmon && cpu_has_arch_perfmon)
+=======
+	if (force_arch_perfmon && cpu_has_arch_perfmon)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	/*
@@ -691,9 +764,12 @@ int __init op_nmi_init(struct oprofile_operations *ops)
 	if (!cpu_has_apic)
 		return -ENODEV;
 
+<<<<<<< HEAD
 	if (force_cpu_type == timer)
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (vendor) {
 	case X86_VENDOR_AMD:
 		/* Needs to be at least an Athlon (or hammer in 32bit mode) */

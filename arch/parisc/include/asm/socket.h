@@ -61,6 +61,7 @@
 
 #define SO_RXQ_OVFL             0x4021
 
+<<<<<<< HEAD
 #define SO_WIFI_STATUS		0x4022
 #define SCM_WIFI_STATUS		SO_WIFI_STATUS
 #define SO_PEEK_OFF		0x4023
@@ -69,6 +70,8 @@
 #define SO_NOFCS		0x4024
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* O_NONBLOCK clashes with the bits used for socket types.  Therefore we
  * have to define SOCK_NONBLOCK to a different value here.
  */

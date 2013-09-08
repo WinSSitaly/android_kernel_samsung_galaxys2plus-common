@@ -5,11 +5,18 @@
 #include <linux/of_platform.h> /* temporary until merge */
 
 #ifdef CONFIG_OF_DEVICE
+<<<<<<< HEAD
 #include <linux/of.h>
 #include <linux/mod_devicetable.h>
 
 struct device;
 
+=======
+#include <linux/device.h>
+#include <linux/of.h>
+#include <linux/mod_devicetable.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern const struct of_device_id *of_match_device(
 	const struct of_device_id *matches, const struct device *dev);
 extern void of_device_make_bus_id(struct device *dev);
@@ -35,8 +42,12 @@ extern void of_device_unregister(struct platform_device *ofdev);
 extern ssize_t of_device_get_modalias(struct device *dev,
 					char *str, ssize_t len);
 
+<<<<<<< HEAD
 extern void of_device_uevent(struct device *dev, struct kobj_uevent_env *env);
 extern int of_device_uevent_modalias(struct device *dev, struct kobj_uevent_env *env);
+=======
+extern int of_device_uevent(struct device *dev, struct kobj_uevent_env *env);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void of_device_node_put(struct device *dev)
 {
@@ -51,10 +62,14 @@ static inline int of_driver_match_device(struct device *dev,
 	return 0;
 }
 
+<<<<<<< HEAD
 static inline void of_device_uevent(struct device *dev,
 			struct kobj_uevent_env *env) { }
 
 static inline int of_device_uevent_modalias(struct device *dev,
+=======
+static inline int of_device_uevent(struct device *dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   struct kobj_uevent_env *env)
 {
 	return -ENODEV;

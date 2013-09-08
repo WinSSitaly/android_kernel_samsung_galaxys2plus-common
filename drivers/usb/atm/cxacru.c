@@ -686,8 +686,12 @@ static int cxacru_cm_get_array(struct cxacru_data *instance, enum cxacru_cm_requ
 {
 	int ret, len;
 	__le32 *buf;
+<<<<<<< HEAD
 	int offb;
 	unsigned int offd;
+=======
+	int offb, offd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const int stride = CMD_PACKET_SIZE / (4 * 2) - 1;
 	int buflen =  ((size - 1) / stride + 1 + size * 2) * 4;
 
@@ -1373,7 +1377,22 @@ static struct usb_driver cxacru_usb_driver = {
 	.id_table	= cxacru_usb_ids
 };
 
+<<<<<<< HEAD
 module_usb_driver(cxacru_usb_driver);
+=======
+static int __init cxacru_init(void)
+{
+	return usb_register(&cxacru_usb_driver);
+}
+
+static void __exit cxacru_cleanup(void)
+{
+	usb_deregister(&cxacru_usb_driver);
+}
+
+module_init(cxacru_init);
+module_exit(cxacru_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR(DRIVER_AUTHOR);
 MODULE_DESCRIPTION(DRIVER_DESC);

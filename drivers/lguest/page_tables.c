@@ -17,6 +17,10 @@
 #include <linux/percpu.h>
 #include <asm/tlbflush.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/bootparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "lg.h"
 
 /*M:008
@@ -155,7 +159,11 @@ static pte_t *spte_addr(struct lg_cpu *cpu, pgd_t spgd, unsigned long vaddr)
 }
 
 /*
+<<<<<<< HEAD
  * These functions are just like the above, except they access the Guest
+=======
+ * These functions are just like the above two, except they access the Guest
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * page tables.  Hence they return a Guest address.
  */
 static unsigned long gpgd_addr(struct lg_cpu *cpu, unsigned long vaddr)
@@ -195,7 +203,11 @@ static unsigned long gpte_addr(struct lg_cpu *cpu,
 #endif
 /*:*/
 
+<<<<<<< HEAD
 /*M:007
+=======
+/*M:014
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * get_pfn is slow: we could probably try to grab batches of pages here as
  * an optimization (ie. pre-faulting).
 :*/
@@ -324,6 +336,7 @@ bool demand_page(struct lg_cpu *cpu, unsigned long vaddr, int errcode)
 #endif
 
 	/* First step: get the top-level Guest page table entry. */
+<<<<<<< HEAD
 	if (unlikely(cpu->linear_pages)) {
 		/* Faking up a linear mapping. */
 		gpgd = __pgd(CHECK_GPGD_MASK);
@@ -333,6 +346,12 @@ bool demand_page(struct lg_cpu *cpu, unsigned long vaddr, int errcode)
 		if (!(pgd_flags(gpgd) & _PAGE_PRESENT))
 			return false;
 	}
+=======
+	gpgd = lgread(cpu, gpgd_addr(cpu, vaddr), pgd_t);
+	/* Toplevel not present?  We can't map it in. */
+	if (!(pgd_flags(gpgd) & _PAGE_PRESENT))
+		return false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Now look at the matching shadow entry. */
 	spgd = spgd_addr(cpu, cpu->cpu_pgd, vaddr);
@@ -357,6 +376,7 @@ bool demand_page(struct lg_cpu *cpu, unsigned long vaddr, int errcode)
 	}
 
 #ifdef CONFIG_X86_PAE
+<<<<<<< HEAD
 	if (unlikely(cpu->linear_pages)) {
 		/* Faking up a linear mapping. */
 		gpmd = __pmd(_PAGE_TABLE);
@@ -366,6 +386,12 @@ bool demand_page(struct lg_cpu *cpu, unsigned long vaddr, int errcode)
 		if (!(pmd_flags(gpmd) & _PAGE_PRESENT))
 			return false;
 	}
+=======
+	gpmd = lgread(cpu, gpmd_addr(gpgd, vaddr), pmd_t);
+	/* Middle level not present?  We can't map it in. */
+	if (!(pmd_flags(gpmd) & _PAGE_PRESENT))
+		return false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Now look at the matching shadow entry. */
 	spmd = spmd_addr(cpu, *spgd, vaddr);
@@ -406,6 +432,7 @@ bool demand_page(struct lg_cpu *cpu, unsigned long vaddr, int errcode)
 	gpte_ptr = gpte_addr(cpu, gpgd, vaddr);
 #endif
 
+<<<<<<< HEAD
 	if (unlikely(cpu->linear_pages)) {
 		/* Linear?  Make up a PTE which points to same page. */
 		gpte = __pte((vaddr & PAGE_MASK) | _PAGE_RW | _PAGE_PRESENT);
@@ -413,6 +440,10 @@ bool demand_page(struct lg_cpu *cpu, unsigned long vaddr, int errcode)
 		/* Read the actual PTE value. */
 		gpte = lgread(cpu, gpte_ptr, pte_t);
 	}
+=======
+	/* Read the actual PTE value. */
+	gpte = lgread(cpu, gpte_ptr, pte_t);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* If this page isn't in the Guest page tables, we can't page it in. */
 	if (!(pte_flags(gpte) & _PAGE_PRESENT))
@@ -468,8 +499,12 @@ bool demand_page(struct lg_cpu *cpu, unsigned long vaddr, int errcode)
 	 * Finally, we write the Guest PTE entry back: we've set the
 	 * _PAGE_ACCESSED and maybe the _PAGE_DIRTY flags.
 	 */
+<<<<<<< HEAD
 	if (likely(!cpu->linear_pages))
 		lgwrite(cpu, gpte_ptr, pte_t, gpte);
+=======
+	lgwrite(cpu, gpte_ptr, pte_t, gpte);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * The fault is fixed, the page table is populated, the mapping
@@ -627,11 +662,14 @@ unsigned long guest_pa(struct lg_cpu *cpu, unsigned long vaddr)
 #ifdef CONFIG_X86_PAE
 	pmd_t gpmd;
 #endif
+<<<<<<< HEAD
 
 	/* Still not set up?  Just map 1:1. */
 	if (unlikely(cpu->linear_pages))
 		return vaddr;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* First step: get the top-level Guest page table entry. */
 	gpgd = lgread(cpu, gpgd_addr(cpu, vaddr), pgd_t);
 	/* Toplevel not present?  We can't map it in. */
@@ -728,6 +766,35 @@ static unsigned int new_pgdir(struct lg_cpu *cpu,
 	return next;
 }
 
+<<<<<<< HEAD
+=======
+/*H:430
+ * (iv) Switching page tables
+ *
+ * Now we've seen all the page table setting and manipulation, let's see
+ * what happens when the Guest changes page tables (ie. changes the top-level
+ * pgdir).  This occurs on almost every context switch.
+ */
+void guest_new_pagetable(struct lg_cpu *cpu, unsigned long pgtable)
+{
+	int newpgdir, repin = 0;
+
+	/* Look to see if we have this one already. */
+	newpgdir = find_pgdir(cpu->lg, pgtable);
+	/*
+	 * If not, we allocate or mug an existing one: if it's a fresh one,
+	 * repin gets set to 1.
+	 */
+	if (newpgdir == ARRAY_SIZE(cpu->lg->pgdirs))
+		newpgdir = new_pgdir(cpu, pgtable, &repin);
+	/* Change the current pgd index to the new one. */
+	cpu->cpu_pgd = newpgdir;
+	/* If it was completely blank, we map in the Guest kernel stack */
+	if (repin)
+		pin_stack_pages(cpu);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*H:470
  * Finally, a routine which throws away everything: all PGD entries in all
  * the shadow page tables, including the Guest's kernel mappings.  This is used
@@ -774,6 +841,7 @@ void guest_pagetable_clear_all(struct lg_cpu *cpu)
 	/* We need the Guest kernel stack mapped again. */
 	pin_stack_pages(cpu);
 }
+<<<<<<< HEAD
 
 /*H:430
  * (iv) Switching page tables
@@ -812,6 +880,8 @@ void guest_new_pagetable(struct lg_cpu *cpu, unsigned long pgtable)
 	if (repin)
 		pin_stack_pages(cpu);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*:*/
 
 /*M:009
@@ -951,6 +1021,7 @@ void guest_set_pmd(struct lguest *lg, unsigned long pmdp, u32 idx)
 }
 #endif
 
+<<<<<<< HEAD
 /*H:500
  * (vii) Setting up the page tables initially.
  *
@@ -971,6 +1042,170 @@ int init_guest_pagetable(struct lguest *lg)
 
 	/* We start with a linear mapping until the initialize. */
 	cpu->linear_pages = true;
+=======
+/*H:505
+ * To get through boot, we construct simple identity page mappings (which
+ * set virtual == physical) and linear mappings which will get the Guest far
+ * enough into the boot to create its own.  The linear mapping means we
+ * simplify the Guest boot, but it makes assumptions about their PAGE_OFFSET,
+ * as you'll see.
+ *
+ * We lay them out of the way, just below the initrd (which is why we need to
+ * know its size here).
+ */
+static unsigned long setup_pagetables(struct lguest *lg,
+				      unsigned long mem,
+				      unsigned long initrd_size)
+{
+	pgd_t __user *pgdir;
+	pte_t __user *linear;
+	unsigned long mem_base = (unsigned long)lg->mem_base;
+	unsigned int mapped_pages, i, linear_pages;
+#ifdef CONFIG_X86_PAE
+	pmd_t __user *pmds;
+	unsigned int j;
+	pgd_t pgd;
+	pmd_t pmd;
+#else
+	unsigned int phys_linear;
+#endif
+
+	/*
+	 * We have mapped_pages frames to map, so we need linear_pages page
+	 * tables to map them.
+	 */
+	mapped_pages = mem / PAGE_SIZE;
+	linear_pages = (mapped_pages + PTRS_PER_PTE - 1) / PTRS_PER_PTE;
+
+	/* We put the toplevel page directory page at the top of memory. */
+	pgdir = (pgd_t *)(mem + mem_base - initrd_size - PAGE_SIZE);
+
+	/* Now we use the next linear_pages pages as pte pages */
+	linear = (void *)pgdir - linear_pages * PAGE_SIZE;
+
+#ifdef CONFIG_X86_PAE
+	/*
+	 * And the single mid page goes below that.  We only use one, but
+	 * that's enough to map 1G, which definitely gets us through boot.
+	 */
+	pmds = (void *)linear - PAGE_SIZE;
+#endif
+	/*
+	 * Linear mapping is easy: put every page's address into the
+	 * mapping in order.
+	 */
+	for (i = 0; i < mapped_pages; i++) {
+		pte_t pte;
+		pte = pfn_pte(i, __pgprot(_PAGE_PRESENT|_PAGE_RW|_PAGE_USER));
+		if (copy_to_user(&linear[i], &pte, sizeof(pte)) != 0)
+			return -EFAULT;
+	}
+
+#ifdef CONFIG_X86_PAE
+	/*
+	 * Make the Guest PMD entries point to the corresponding place in the
+	 * linear mapping (up to one page worth of PMD).
+	 */
+	for (i = j = 0; i < mapped_pages && j < PTRS_PER_PMD;
+	     i += PTRS_PER_PTE, j++) {
+		pmd = pfn_pmd(((unsigned long)&linear[i] - mem_base)/PAGE_SIZE,
+			      __pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER));
+
+		if (copy_to_user(&pmds[j], &pmd, sizeof(pmd)) != 0)
+			return -EFAULT;
+	}
+
+	/* One PGD entry, pointing to that PMD page. */
+	pgd = __pgd(((unsigned long)pmds - mem_base) | _PAGE_PRESENT);
+	/* Copy it in as the first PGD entry (ie. addresses 0-1G). */
+	if (copy_to_user(&pgdir[0], &pgd, sizeof(pgd)) != 0)
+		return -EFAULT;
+	/*
+	 * And the other PGD entry to make the linear mapping at PAGE_OFFSET
+	 */
+	if (copy_to_user(&pgdir[KERNEL_PGD_BOUNDARY], &pgd, sizeof(pgd)))
+		return -EFAULT;
+#else
+	/*
+	 * The top level points to the linear page table pages above.
+	 * We setup the identity and linear mappings here.
+	 */
+	phys_linear = (unsigned long)linear - mem_base;
+	for (i = 0; i < mapped_pages; i += PTRS_PER_PTE) {
+		pgd_t pgd;
+		/*
+		 * Create a PGD entry which points to the right part of the
+		 * linear PTE pages.
+		 */
+		pgd = __pgd((phys_linear + i * sizeof(pte_t)) |
+			    (_PAGE_PRESENT | _PAGE_RW | _PAGE_USER));
+
+		/*
+		 * Copy it into the PGD page at 0 and PAGE_OFFSET.
+		 */
+		if (copy_to_user(&pgdir[i / PTRS_PER_PTE], &pgd, sizeof(pgd))
+		    || copy_to_user(&pgdir[pgd_index(PAGE_OFFSET)
+					   + i / PTRS_PER_PTE],
+				    &pgd, sizeof(pgd)))
+			return -EFAULT;
+	}
+#endif
+
+	/*
+	 * We return the top level (guest-physical) address: we remember where
+	 * this is to write it into lguest_data when the Guest initializes.
+	 */
+	return (unsigned long)pgdir - mem_base;
+}
+
+/*H:500
+ * (vii) Setting up the page tables initially.
+ *
+ * When a Guest is first created, the Launcher tells us where the toplevel of
+ * its first page table is.  We set some things up here:
+ */
+int init_guest_pagetable(struct lguest *lg)
+{
+	u64 mem;
+	u32 initrd_size;
+	struct boot_params __user *boot = (struct boot_params *)lg->mem_base;
+#ifdef CONFIG_X86_PAE
+	pgd_t *pgd;
+	pmd_t *pmd_table;
+#endif
+	/*
+	 * Get the Guest memory size and the ramdisk size from the boot header
+	 * located at lg->mem_base (Guest address 0).
+	 */
+	if (copy_from_user(&mem, &boot->e820_map[0].size, sizeof(mem))
+	    || get_user(initrd_size, &boot->hdr.ramdisk_size))
+		return -EFAULT;
+
+	/*
+	 * We start on the first shadow page table, and give it a blank PGD
+	 * page.
+	 */
+	lg->pgdirs[0].gpgdir = setup_pagetables(lg, mem, initrd_size);
+	if (IS_ERR_VALUE(lg->pgdirs[0].gpgdir))
+		return lg->pgdirs[0].gpgdir;
+	lg->pgdirs[0].pgdir = (pgd_t *)get_zeroed_page(GFP_KERNEL);
+	if (!lg->pgdirs[0].pgdir)
+		return -ENOMEM;
+
+#ifdef CONFIG_X86_PAE
+	/* For PAE, we also create the initial mid-level. */
+	pgd = lg->pgdirs[0].pgdir;
+	pmd_table = (pmd_t *) get_zeroed_page(GFP_KERNEL);
+	if (!pmd_table)
+		return -ENOMEM;
+
+	set_pgd(pgd + SWITCHER_PGD_INDEX,
+		__pgd(__pa(pmd_table) | _PAGE_PRESENT));
+#endif
+
+	/* This is the current page table. */
+	lg->cpus[0].cpu_pgd = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -985,10 +1220,17 @@ void page_table_guest_data_init(struct lg_cpu *cpu)
 		 * of virtual addresses used by the Switcher.
 		 */
 		|| put_user(RESERVE_MEM * 1024 * 1024,
+<<<<<<< HEAD
 			    &cpu->lg->lguest_data->reserve_mem)) {
 		kill_guest(cpu, "bad guest page %p", cpu->lg->lguest_data);
 		return;
 	}
+=======
+			&cpu->lg->lguest_data->reserve_mem)
+		|| put_user(cpu->lg->pgdirs[0].gpgdir,
+			&cpu->lg->lguest_data->pgdir))
+		kill_guest(cpu, "bad guest page %p", cpu->lg->lguest_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * In flush_user_mappings() we loop from 0 to

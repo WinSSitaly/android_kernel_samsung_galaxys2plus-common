@@ -32,6 +32,7 @@ struct poll_table_struct;
  */
 typedef void (*poll_queue_proc)(struct file *, wait_queue_head_t *, struct poll_table_struct *);
 
+<<<<<<< HEAD
 /*
  * Do not touch the structure directly, use the access functions
  * poll_does_not_wait() and poll_requested_events() instead.
@@ -39,10 +40,16 @@ typedef void (*poll_queue_proc)(struct file *, wait_queue_head_t *, struct poll_
 typedef struct poll_table_struct {
 	poll_queue_proc _qproc;
 	unsigned long _key;
+=======
+typedef struct poll_table_struct {
+	poll_queue_proc qproc;
+	unsigned long key;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } poll_table;
 
 static inline void poll_wait(struct file * filp, wait_queue_head_t * wait_address, poll_table *p)
 {
+<<<<<<< HEAD
 	if (p && p->_qproc && wait_address)
 		p->_qproc(filp, wait_address, p);
 }
@@ -66,12 +73,21 @@ static inline bool poll_does_not_wait(const poll_table *p)
 static inline unsigned long poll_requested_events(const poll_table *p)
 {
 	return p ? p->_key : ~0UL;
+=======
+	if (p && wait_address)
+		p->qproc(filp, wait_address, p);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void init_poll_funcptr(poll_table *pt, poll_queue_proc qproc)
 {
+<<<<<<< HEAD
 	pt->_qproc = qproc;
 	pt->_key   = ~0UL; /* all events enabled */
+=======
+	pt->qproc = qproc;
+	pt->key   = ~0UL; /* all events enabled */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct poll_table_entry {

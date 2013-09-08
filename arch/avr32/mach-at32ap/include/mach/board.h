@@ -6,8 +6,11 @@
 
 #include <linux/types.h>
 #include <linux/serial.h>
+<<<<<<< HEAD
 #include <linux/platform_data/macb.h>
 #include <linux/platform_data/atmel.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define GPIO_PIN_NONE	(-1)
 
@@ -44,8 +47,17 @@ struct atmel_uart_data {
 void at32_map_usart(unsigned int hw_id, unsigned int line, int flags);
 struct platform_device *at32_add_device_usart(unsigned int id);
 
+<<<<<<< HEAD
 struct platform_device *
 at32_add_device_eth(unsigned int id, struct macb_platform_data *data);
+=======
+struct eth_platform_data {
+	u32	phy_mask;
+	u8	is_rmii;
+};
+struct platform_device *
+at32_add_device_eth(unsigned int id, struct eth_platform_data *data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct spi_board_info;
 struct platform_device *
@@ -117,6 +129,20 @@ struct platform_device *
 at32_add_device_cf(unsigned int id, unsigned int extint,
 		struct cf_platform_data *data);
 
+<<<<<<< HEAD
+=======
+/* NAND / SmartMedia */
+struct atmel_nand_data {
+	int	enable_pin;	/* chip enable */
+	int	det_pin;	/* card detect */
+	int	rdy_pin;	/* ready/busy */
+	u8	rdy_pin_active_low;	/* rdy_pin value is inverted */
+	u8	ale;		/* address line number connected to ALE */
+	u8	cle;		/* address line number connected to CLE */
+	u8	bus_width_16;	/* buswidth is 16 bit */
+	struct mtd_partition *(*partition_info)(int size, int *num_partitions);
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct platform_device *
 at32_add_device_nand(unsigned int id, struct atmel_nand_data *data);
 

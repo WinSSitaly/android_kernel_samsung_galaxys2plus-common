@@ -475,7 +475,11 @@ static void __devexit bcm63xx_cb_exit(struct pci_dev *dev)
 	bcm63xx_cb_dev = NULL;
 }
 
+<<<<<<< HEAD
 static DEFINE_PCI_DEVICE_TABLE(bcm63xx_cb_table) = {
+=======
+static struct pci_device_id bcm63xx_cb_table[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.vendor		= PCI_VENDOR_ID_BROADCOM,
 		.device		= BCM6348_CPU_ID,

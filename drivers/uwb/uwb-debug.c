@@ -159,6 +159,16 @@ static int cmd_ie_rm(struct uwb_rc *rc, struct uwb_dbg_cmd_ie *ie_to_rm)
 	return uwb_rc_ie_rm(rc, ie_to_rm->data[0]);
 }
 
+<<<<<<< HEAD
+=======
+static int command_open(struct inode *inode, struct file *file)
+{
+	file->private_data = inode->i_private;
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t command_write(struct file *file, const char __user *buf,
 			 size_t len, loff_t *off)
 {
@@ -199,7 +209,11 @@ static ssize_t command_write(struct file *file, const char __user *buf,
 }
 
 static const struct file_operations command_fops = {
+<<<<<<< HEAD
 	.open	= simple_open,
+=======
+	.open   = command_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.write  = command_write,
 	.read   = NULL,
 	.llseek = no_llseek,

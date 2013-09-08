@@ -24,7 +24,10 @@
  *     Alex Deucher <alexander.deucher@amd.com>
  */
 
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/types.h>
 #include <linux/kernel.h>
 

@@ -13,7 +13,10 @@
 #include <linux/types.h>
 #include <linux/skbuff.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <net/mac80211.h>
 #include "rate.h"

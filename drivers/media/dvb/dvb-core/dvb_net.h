@@ -32,8 +32,11 @@
 
 #define DVB_NET_DEVICES_MAX 10
 
+<<<<<<< HEAD
 #ifdef CONFIG_DVB_NET
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct dvb_net {
 	struct dvb_device *dvbdev;
 	struct net_device *device[DVB_NET_DEVICES_MAX];
@@ -42,6 +45,7 @@ struct dvb_net {
 	struct dmx_demux *demux;
 };
 
+<<<<<<< HEAD
 void dvb_net_release(struct dvb_net *);
 int  dvb_net_init(struct dvb_adapter *, struct dvb_net *, struct dmx_demux *);
 
@@ -63,4 +67,10 @@ static inline int dvb_net_init(struct dvb_adapter *adap,
 
 #endif /* ifdef CONFIG_DVB_NET */
 
+=======
+
+void dvb_net_release(struct dvb_net *);
+int  dvb_net_init(struct dvb_adapter *, struct dvb_net *, struct dmx_demux *);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

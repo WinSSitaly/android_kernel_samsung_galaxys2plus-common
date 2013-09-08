@@ -915,7 +915,21 @@ static struct usb_driver hwarc_driver = {
 	.post_reset =   hwarc_post_reset,
 };
 
+<<<<<<< HEAD
 module_usb_driver(hwarc_driver);
+=======
+static int __init hwarc_driver_init(void)
+{
+	return usb_register(&hwarc_driver);
+}
+module_init(hwarc_driver_init);
+
+static void __exit hwarc_driver_exit(void)
+{
+	usb_deregister(&hwarc_driver);
+}
+module_exit(hwarc_driver_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>");
 MODULE_DESCRIPTION("Host Wireless Adapter Radio Control Driver");

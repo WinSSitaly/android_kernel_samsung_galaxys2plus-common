@@ -10,7 +10,10 @@
 #ifndef LINUX_MMC_CARD_H
 #define LINUX_MMC_CARD_H
 
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mmc/core.h>
 #include <linux/mod_devicetable.h>
 
@@ -51,12 +54,17 @@ struct mmc_ext_csd {
 	u8			rel_sectors;
 	u8			rel_param;
 	u8			part_config;
+<<<<<<< HEAD
 	u8			cache_ctrl;
 	u8			rst_n_function;
 	unsigned int		part_time;		/* Units: ms */
 	unsigned int		sa_timeout;		/* Units: 100ns */
 	unsigned int		generic_cmd6_time;	/* Units: 10ms */
 	unsigned int            power_off_longtime;     /* Units: ms */
+=======
+	unsigned int		part_time;		/* Units: ms */
+	unsigned int		sa_timeout;		/* Units: 100ns */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int		hs_max_dtr;
 	unsigned int		sectors;
 	unsigned int		card_type;
@@ -68,6 +76,7 @@ struct mmc_ext_csd {
 	bool			enhanced_area_en;	/* enable bit */
 	unsigned long long	enhanced_area_offset;	/* Units: Byte */
 	unsigned int		enhanced_area_size;	/* Units: KB */
+<<<<<<< HEAD
 	unsigned int		cache_size;		/* Units: KB */
 	bool			hpi_en;			/* HPI enablebit */
 	bool			hpi;			/* HPI support bit */
@@ -76,11 +85,18 @@ struct mmc_ext_csd {
 	unsigned int            data_tag_unit_size;     /* DATA TAG UNIT size */
 	unsigned int		boot_ro_lock;		/* ro lock support */
 	bool			boot_ro_lockable;
+=======
+	unsigned int		boot_size;		/* in bytes */
+	unsigned int		rpmb_size;		/* in bytes */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8			raw_partition_support;	/* 160 */
 	u8			raw_erased_mem_count;	/* 181 */
 	u8			raw_ext_csd_structure;	/* 194 */
 	u8			raw_card_type;		/* 196 */
+<<<<<<< HEAD
 	u8			out_of_int_time;	/* 198 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8			raw_s_a_timeout;		/* 217 */
 	u8			raw_hc_erase_gap_size;	/* 221 */
 	u8			raw_erase_timeout_mult;	/* 223 */
@@ -91,8 +107,15 @@ struct mmc_ext_csd {
 	u8			raw_trim_mult;		/* 232 */
 	u8			raw_sectors[4];		/* 212 - 4 bytes */
 
+<<<<<<< HEAD
 	unsigned int            feature_support;
 #define MMC_DISCARD_FEATURE	BIT(0)                  /* CMD38 feature */
+=======
+#ifdef CONFIG_MMC_DISCARD_SAMSUNG_eMMC_SUPPORT
+	unsigned int            optimized_features;
+#define MMC_DISCARD_FEATURE	BIT(0)                  /* CMD38 feature */
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct sd_scr {
@@ -115,7 +138,10 @@ struct sd_ssr {
 struct sd_switch_caps {
 	unsigned int		hs_max_dtr;
 	unsigned int		uhs_max_dtr;
+<<<<<<< HEAD
 #define HIGH_SPEED_MAX_DTR	50000000
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define UHS_SDR104_MAX_DTR	208000000
 #define UHS_SDR50_MAX_DTR	100000000
 #define UHS_DDR50_MAX_DTR	50000000
@@ -123,13 +149,19 @@ struct sd_switch_caps {
 #define UHS_SDR12_MAX_DTR	25000000
 	unsigned int		sd3_bus_mode;
 #define UHS_SDR12_BUS_SPEED	0
+<<<<<<< HEAD
 #define HIGH_SPEED_BUS_SPEED	1
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define UHS_SDR25_BUS_SPEED	1
 #define UHS_SDR50_BUS_SPEED	2
 #define UHS_SDR104_BUS_SPEED	3
 #define UHS_DDR50_BUS_SPEED	4
 
+<<<<<<< HEAD
 #define SD_MODE_HIGH_SPEED	(1 << HIGH_SPEED_BUS_SPEED)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SD_MODE_UHS_SDR12	(1 << UHS_SDR12_BUS_SPEED)
 #define SD_MODE_UHS_SDR25	(1 << UHS_SDR25_BUS_SPEED)
 #define SD_MODE_UHS_SDR50	(1 << UHS_SDR50_BUS_SPEED)
@@ -176,6 +208,7 @@ struct sdio_func_tuple;
 
 #define SDIO_MAX_FUNCS		7
 
+<<<<<<< HEAD
 /* The number of MMC physical partitions.  These consist of:
  * boot partitions (2), general purpose partitions (4) in MMC v4.4.
  */
@@ -198,6 +231,8 @@ struct mmc_part {
 #define MMC_BLK_DATA_AREA_GP	(1<<2)
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * MMC device
  */
@@ -218,9 +253,12 @@ struct mmc_card {
 #define MMC_STATE_HIGHSPEED_DDR (1<<4)		/* card is in high speed mode */
 #define MMC_STATE_ULTRAHIGHSPEED (1<<5)		/* card is in ultra high speed mode */
 #define MMC_CARD_SDXC		(1<<6)		/* card is SDXC */
+<<<<<<< HEAD
 #define MMC_CARD_REMOVED	(1<<7)		/* card has been removed */
 #define MMC_STATE_HIGHSPEED_200	(1<<8)		/* card is in HS200 mode */
 #define MMC_STATE_SLEEP		(1<<9)		/* card is in sleep state */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int		quirks; 	/* card quirks */
 #define MMC_QUIRK_LENIENT_FN0	(1<<0)		/* allow SDIO FN0 writes outside of the VS CCCR range */
 #define MMC_QUIRK_BLKSZ_FOR_BYTE_MODE (1<<1)	/* use func->cur_blksize */
@@ -232,6 +270,7 @@ struct mmc_card {
 #define MMC_QUIRK_DISABLE_CD	(1<<5)		/* disconnect CD/DAT[3] resistor */
 #define MMC_QUIRK_INAND_CMD38	(1<<6)		/* iNAND devices have broken CMD38 */
 #define MMC_QUIRK_BLK_NO_CMD23	(1<<7)		/* Avoid CMD23 for regular multiblock */
+<<<<<<< HEAD
 #define MMC_QUIRK_BROKEN_BYTE_MODE_512 (1<<8)	/* Avoid sending 512 bytes in */
 #define MMC_QUIRK_LONG_READ_TIME (1<<9)		/* Data read time > CSD says */
 #define MMC_QUIRK_SEC_ERASE_TRIM_BROKEN (1<<10)	/* Skip secure for erase/trim */
@@ -241,6 +280,12 @@ struct mmc_card {
 #define MMC_POWERED_ON			1
 #define MMC_POWEROFF_SHORT		2
 #define MMC_POWEROFF_LONG		3
+=======
+#define MMC_QUIRK_BLK_DISABLE_CMD23 (1<<8)  /* completely disable CMD23. MMC_QUIRK_BLK_NO_CMD23 
+                                             * still allows CMD23 for reliable writes.
+                                             */
+#define MMC_QUIRK_RESET_FOR_CARD_INIT	(1<<9)	/* S/W reset for next card init process */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	unsigned int		erase_size;	/* erase size in sectors */
  	unsigned int		erase_shift;	/* if erase unit is power 2 */
@@ -269,6 +314,7 @@ struct mmc_card {
 	unsigned int		sd_bus_speed;	/* Bus Speed Mode set for the card */
 
 	struct dentry		*debugfs_root;
+<<<<<<< HEAD
 	struct mmc_part	part[MMC_NUM_PHY_PARTITION]; /* physical partitions */
 	unsigned int    nr_parts;
 };
@@ -289,6 +335,11 @@ static inline void mmc_part_add(struct mmc_card *card, unsigned int size,
 }
 
 /*
+=======
+};
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  The world is not perfect and supplies us with broken mmc/sdio devices.
  *  For at least some of these bugs we need a work-around.
  */
@@ -380,6 +431,7 @@ static inline void __maybe_unused remove_quirk(struct mmc_card *card, int data)
 #define mmc_card_present(c)	((c)->state & MMC_STATE_PRESENT)
 #define mmc_card_readonly(c)	((c)->state & MMC_STATE_READONLY)
 #define mmc_card_highspeed(c)	((c)->state & MMC_STATE_HIGHSPEED)
+<<<<<<< HEAD
 #define mmc_card_hs200(c)	((c)->state & MMC_STATE_HIGHSPEED_200)
 #define mmc_card_blockaddr(c)	((c)->state & MMC_STATE_BLOCKADDR)
 #define mmc_card_ddr_mode(c)	((c)->state & MMC_STATE_HIGHSPEED_DDR)
@@ -388,10 +440,17 @@ static inline void __maybe_unused remove_quirk(struct mmc_card *card, int data)
 #define mmc_card_ext_capacity(c) ((c)->state & MMC_CARD_SDXC)
 #define mmc_card_removed(c)	((c) && ((c)->state & MMC_CARD_REMOVED))
 #define mmc_card_is_sleep(c)	((c)->state & MMC_STATE_SLEEP)
+=======
+#define mmc_card_blockaddr(c)	((c)->state & MMC_STATE_BLOCKADDR)
+#define mmc_card_ddr_mode(c)	((c)->state & MMC_STATE_HIGHSPEED_DDR)
+#define mmc_sd_card_uhs(c) ((c)->state & MMC_STATE_ULTRAHIGHSPEED)
+#define mmc_card_ext_capacity(c) ((c)->state & MMC_CARD_SDXC)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define mmc_card_set_present(c)	((c)->state |= MMC_STATE_PRESENT)
 #define mmc_card_set_readonly(c) ((c)->state |= MMC_STATE_READONLY)
 #define mmc_card_set_highspeed(c) ((c)->state |= MMC_STATE_HIGHSPEED)
+<<<<<<< HEAD
 #define mmc_card_set_hs200(c)	((c)->state |= MMC_STATE_HIGHSPEED_200)
 #define mmc_card_set_blockaddr(c) ((c)->state |= MMC_STATE_BLOCKADDR)
 #define mmc_card_set_ddr_mode(c) ((c)->state |= MMC_STATE_HIGHSPEED_DDR)
@@ -402,6 +461,14 @@ static inline void __maybe_unused remove_quirk(struct mmc_card *card, int data)
 #define mmc_card_set_sleep(c)	((c)->state |= MMC_STATE_SLEEP)
 
 #define mmc_card_clr_sleep(c)	((c)->state &= ~MMC_STATE_SLEEP)
+=======
+#define mmc_card_set_blockaddr(c) ((c)->state |= MMC_STATE_BLOCKADDR)
+#define mmc_card_set_ddr_mode(c) ((c)->state |= MMC_STATE_HIGHSPEED_DDR)
+#define mmc_sd_card_set_uhs(c) ((c)->state |= MMC_STATE_ULTRAHIGHSPEED)
+#define mmc_card_set_uhs(c) ((c)->state |= MMC_STATE_ULTRAHIGHSPEED)
+#define mmc_card_set_ext_capacity(c) ((c)->state |= MMC_CARD_SDXC)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Quirk add/remove for MMC products.
  */
@@ -456,6 +523,7 @@ static inline int mmc_card_nonstd_func_interface(const struct mmc_card *c)
 	return c->quirks & MMC_QUIRK_NONSTD_FUNC_IF;
 }
 
+<<<<<<< HEAD
 static inline int mmc_card_broken_byte_mode_512(const struct mmc_card *c)
 {
 	return c->quirks & MMC_QUIRK_BROKEN_BYTE_MODE_512;
@@ -466,6 +534,8 @@ static inline int mmc_card_long_read_time(const struct mmc_card *c)
 	return c->quirks & MMC_QUIRK_LONG_READ_TIME;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define mmc_card_name(c)	((c)->cid.prod_name)
 #define mmc_card_id(c)		(dev_name(&(c)->dev))
 
@@ -482,7 +552,11 @@ struct mmc_driver {
 	struct device_driver drv;
 	int (*probe)(struct mmc_card *);
 	void (*remove)(struct mmc_card *);
+<<<<<<< HEAD
 	int (*suspend)(struct mmc_card *);
+=======
+	int (*suspend)(struct mmc_card *, pm_message_t);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*resume)(struct mmc_card *);
 };
 
@@ -492,4 +566,8 @@ extern void mmc_unregister_driver(struct mmc_driver *);
 extern void mmc_fixup_device(struct mmc_card *card,
 			     const struct mmc_fixup *table);
 
+<<<<<<< HEAD
 #endif /* LINUX_MMC_CARD_H */
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

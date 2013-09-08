@@ -21,7 +21,10 @@
 #include <linux/rtnetlink.h>
 #include <linux/slab.h>
 
+<<<<<<< HEAD
 #include <net/sock.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/inet_frag.h>
 
 static void inet_frag_secret_rebuild(unsigned long dummy)
@@ -272,7 +275,10 @@ struct inet_frag_queue *inet_frag_find(struct netns_frags *nf,
 {
 	struct inet_frag_queue *q;
 	struct hlist_node *n;
+<<<<<<< HEAD
 	int depth = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hlist_for_each_entry(q, n, &f->hash[hash], list) {
 		if (q->net == nf && f->match(q, key)) {
@@ -280,6 +286,7 @@ struct inet_frag_queue *inet_frag_find(struct netns_frags *nf,
 			read_unlock(&f->lock);
 			return q;
 		}
+<<<<<<< HEAD
 		depth++;
 	}
 	read_unlock(&f->lock);
@@ -302,3 +309,11 @@ void inet_frag_maybe_warn_overflow(struct inet_frag_queue *q,
 		LIMIT_NETDEBUG(KERN_WARNING "%s%s", prefix, msg);
 }
 EXPORT_SYMBOL(inet_frag_maybe_warn_overflow);
+=======
+	}
+	read_unlock(&f->lock);
+
+	return inet_frag_create(nf, f, key);
+}
+EXPORT_SYMBOL(inet_frag_find);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

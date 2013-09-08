@@ -16,15 +16,34 @@
 #include <asm/mach/time.h>
 #include <asm/mach/irq.h>
 #include <asm/hardware/gic.h>
+<<<<<<< HEAD
 #include <asm/hardware/cache-l2x0.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/cns3xxx.h>
 #include "core.h"
 
 static struct map_desc cns3xxx_io_desc[] __initdata = {
 	{
+<<<<<<< HEAD
 		.virtual	= CNS3XXX_TC11MP_SCU_BASE_VIRT,
 		.pfn		= __phys_to_pfn(CNS3XXX_TC11MP_SCU_BASE),
 		.length		= SZ_8K,
+=======
+		.virtual	= CNS3XXX_TC11MP_TWD_BASE_VIRT,
+		.pfn		= __phys_to_pfn(CNS3XXX_TC11MP_TWD_BASE),
+		.length		= SZ_4K,
+		.type		= MT_DEVICE,
+	}, {
+		.virtual	= CNS3XXX_TC11MP_GIC_CPU_BASE_VIRT,
+		.pfn		= __phys_to_pfn(CNS3XXX_TC11MP_GIC_CPU_BASE),
+		.length		= SZ_4K,
+		.type		= MT_DEVICE,
+	}, {
+		.virtual	= CNS3XXX_TC11MP_GIC_DIST_BASE_VIRT,
+		.pfn		= __phys_to_pfn(CNS3XXX_TC11MP_GIC_DIST_BASE),
+		.length		= SZ_4K,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.type		= MT_DEVICE,
 	}, {
 		.virtual	= CNS3XXX_TIMER1_2_3_BASE_VIRT,
@@ -62,13 +81,22 @@ void __init cns3xxx_map_io(void)
 /* used by entry-macro.S */
 void __init cns3xxx_init_irq(void)
 {
+<<<<<<< HEAD
 	gic_init(0, 29, IOMEM(CNS3XXX_TC11MP_GIC_DIST_BASE_VIRT),
 		 IOMEM(CNS3XXX_TC11MP_GIC_CPU_BASE_VIRT));
+=======
+	gic_init(0, 29, __io(CNS3XXX_TC11MP_GIC_DIST_BASE_VIRT),
+		 __io(CNS3XXX_TC11MP_GIC_CPU_BASE_VIRT));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void cns3xxx_power_off(void)
 {
+<<<<<<< HEAD
 	u32 __iomem *pm_base = IOMEM(CNS3XXX_PM_BASE_VIRT);
+=======
+	u32 __iomem *pm_base = __io(CNS3XXX_PM_BASE_VIRT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 clkctrl;
 
 	printk(KERN_INFO "powering system down...\n");
@@ -227,7 +255,11 @@ static void __init __cns3xxx_timer_init(unsigned int timer_irq)
 
 static void __init cns3xxx_timer_init(void)
 {
+<<<<<<< HEAD
 	cns3xxx_tmr1 = IOMEM(CNS3XXX_TIMER1_2_3_BASE_VIRT);
+=======
+	cns3xxx_tmr1 = __io(CNS3XXX_TIMER1_2_3_BASE_VIRT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	__cns3xxx_timer_init(IRQ_CNS3XXX_TIMER0);
 }
@@ -235,6 +267,7 @@ static void __init cns3xxx_timer_init(void)
 struct sys_timer cns3xxx_timer = {
 	.init = cns3xxx_timer_init,
 };
+<<<<<<< HEAD
 
 #ifdef CONFIG_CACHE_L2X0
 
@@ -277,3 +310,5 @@ void __init cns3xxx_l2x0_init(void)
 }
 
 #endif /* CONFIG_CACHE_L2X0 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

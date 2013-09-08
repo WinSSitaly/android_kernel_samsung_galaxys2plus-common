@@ -76,7 +76,11 @@ int sbusfb_mmap_helper(struct sbus_mmap_map *map,
 				map_offset = (physbase + map[i].poff) & POFF_MASK;
 				break;
 			}
+<<<<<<< HEAD
 		if (!map_size) {
+=======
+		if (!map_size){
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			page += PAGE_SIZE;
 			continue;
 		}

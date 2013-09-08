@@ -1,6 +1,10 @@
 /******************************************************************************
  *
+<<<<<<< HEAD
  * Copyright(c) 2009-2012  Realtek Corporation.
+=======
+ * Copyright(c) 2009-2010  Realtek Corporation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
@@ -1074,10 +1078,17 @@
 #define _SRL(x)					(((x) & 0x3F) << 8)
 
 #define _SIFS_CCK_CTX(x)			((x) & 0xFF)
+<<<<<<< HEAD
 #define _SIFS_CCK_TRX(x)			(((x) & 0xFF) << 8)
 
 #define _SIFS_OFDM_CTX(x)			((x) & 0xFF)
 #define _SIFS_OFDM_TRX(x)			(((x) & 0xFF) << 8)
+=======
+#define _SIFS_CCK_TRX(x)			(((x) & 0xFF) << 8);
+
+#define _SIFS_OFDM_CTX(x)			((x) & 0xFF)
+#define _SIFS_OFDM_TRX(x)			(((x) & 0xFF) << 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define _TBTT_PROHIBIT_HOLD(x)			(((x) & 0xFF) << 8)
 
@@ -1190,6 +1201,10 @@
 
 #define USB_AGG_EN				BIT(3)
 
+<<<<<<< HEAD
+=======
+#define MAC_ADDR_LEN				6
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define LAST_ENTRY_OF_TX_PKT_BUFFER		255
 
 #define POLLING_LLT_THRESHOLD			20
@@ -1202,9 +1217,13 @@
 #define EPROM_CMD_CONFIG			0x3
 #define EPROM_CMD_LOAD				1
 
+<<<<<<< HEAD
 #define HWSET_MAX_SIZE				128
 #define	HWSET_MAX_SIZE_92S			HWSET_MAX_SIZE
 #define EFUSE_MAX_SECTION			16
+=======
+#define	HWSET_MAX_SIZE_92S			HWSET_MAX_SIZE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define	WL_HWPDN_EN				BIT(0)
 

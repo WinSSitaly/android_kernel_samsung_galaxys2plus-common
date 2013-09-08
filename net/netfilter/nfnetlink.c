@@ -23,6 +23,10 @@
 #include <linux/net.h>
 #include <linux/skbuff.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/sock.h>
 #include <net/netlink.h>
 #include <linux/init.h>
@@ -36,7 +40,11 @@ MODULE_ALIAS_NET_PF_PROTO(PF_NETLINK, NETLINK_NETFILTER);
 
 static char __initdata nfversion[] = "0.30";
 
+<<<<<<< HEAD
 static const struct nfnetlink_subsystem __rcu *subsys_table[NFNL_SUBSYS_COUNT];
+=======
+static const struct nfnetlink_subsystem *subsys_table[NFNL_SUBSYS_COUNT];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEFINE_MUTEX(nfnl_mutex);
 
 void nfnl_lock(void)
@@ -58,7 +66,11 @@ int nfnetlink_subsys_register(const struct nfnetlink_subsystem *n)
 		nfnl_unlock();
 		return -EBUSY;
 	}
+<<<<<<< HEAD
 	rcu_assign_pointer(subsys_table[n->subsys_id], n);
+=======
+	subsys_table[n->subsys_id] = n;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nfnl_unlock();
 
 	return 0;
@@ -70,7 +82,11 @@ int nfnetlink_subsys_unregister(const struct nfnetlink_subsystem *n)
 	nfnl_lock();
 	subsys_table[n->subsys_id] = NULL;
 	nfnl_unlock();
+<<<<<<< HEAD
 	synchronize_rcu();
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL_GPL(nfnetlink_subsys_unregister);
@@ -82,7 +98,11 @@ static inline const struct nfnetlink_subsystem *nfnetlink_get_subsys(u_int16_t t
 	if (subsys_id >= NFNL_SUBSYS_COUNT)
 		return NULL;
 
+<<<<<<< HEAD
 	return rcu_dereference(subsys_table[subsys_id]);
+=======
+	return subsys_table[subsys_id];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline const struct nfnl_callback *
@@ -129,7 +149,11 @@ static int nfnetlink_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 	const struct nfnetlink_subsystem *ss;
 	int type, err;
 
+<<<<<<< HEAD
 	if (!capable(CAP_NET_ADMIN))
+=======
+	if (security_netlink_recv(skb, CAP_NET_ADMIN))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EPERM;
 
 	/* All the messages must at least contain nfgenmsg */
@@ -138,6 +162,7 @@ static int nfnetlink_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 
 	type = nlh->nlmsg_type;
 replay:
+<<<<<<< HEAD
 	rcu_read_lock();
 	ss = nfnetlink_get_subsys(type);
 	if (!ss) {
@@ -159,6 +184,23 @@ replay:
 		rcu_read_unlock();
 		return -EINVAL;
 	}
+=======
+	ss = nfnetlink_get_subsys(type);
+	if (!ss) {
+#ifdef CONFIG_MODULES
+		nfnl_unlock();
+		request_module("nfnetlink-subsys-%d", NFNL_SUBSYS_ID(type));
+		nfnl_lock();
+		ss = nfnetlink_get_subsys(type);
+		if (!ss)
+#endif
+			return -EINVAL;
+	}
+
+	nc = nfnetlink_find_client(type, ss);
+	if (!nc)
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	{
 		int min_len = NLMSG_SPACE(sizeof(struct nfgenmsg));
@@ -172,6 +214,7 @@ replay:
 		if (err < 0)
 			return err;
 
+<<<<<<< HEAD
 		if (nc->call_rcu) {
 			err = nc->call_rcu(net->nfnl, skb, nlh,
 					   (const struct nlattr **)cda);
@@ -189,6 +232,9 @@ replay:
 						   (const struct nlattr **)cda);
 			nfnl_unlock();
 		}
+=======
+		err = nc->call(net->nfnl, skb, nlh, (const struct nlattr **)cda);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err == -EAGAIN)
 			goto replay;
 		return err;
@@ -197,7 +243,13 @@ replay:
 
 static void nfnetlink_rcv(struct sk_buff *skb)
 {
+<<<<<<< HEAD
 	netlink_rcv_skb(skb, &nfnetlink_rcv_msg);
+=======
+	nfnl_lock();
+	netlink_rcv_skb(skb, &nfnetlink_rcv_msg);
+	nfnl_unlock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __net_init nfnetlink_net_init(struct net *net)
@@ -218,7 +270,11 @@ static void __net_exit nfnetlink_net_exit_batch(struct list_head *net_exit_list)
 	struct net *net;
 
 	list_for_each_entry(net, net_exit_list, exit_list)
+<<<<<<< HEAD
 		RCU_INIT_POINTER(net->nfnl, NULL);
+=======
+		rcu_assign_pointer(net->nfnl, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	synchronize_net();
 	list_for_each_entry(net, net_exit_list, exit_list)
 		netlink_kernel_release(net->nfnl_stash);

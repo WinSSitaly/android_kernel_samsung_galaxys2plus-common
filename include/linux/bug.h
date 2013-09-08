@@ -11,6 +11,7 @@ enum bug_trap_type {
 
 struct pt_regs;
 
+<<<<<<< HEAD
 #ifdef __CHECKER__
 #define BUILD_BUG_ON_NOT_POWER_OF_2(n)
 #define BUILD_BUG_ON_ZERO(e) (0)
@@ -72,6 +73,8 @@ extern int __build_bug_on_failed;
 
 #endif	/* __CHECKER__ */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_GENERIC_BUG
 #include <asm-generic/bug.h>
 

@@ -21,7 +21,10 @@
  */
 
 #include "rc-core-priv.h"
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define RC5_SZ_NBITS		15
 #define RC5_UNIT		888888 /* ns */

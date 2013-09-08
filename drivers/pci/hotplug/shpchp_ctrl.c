@@ -456,7 +456,11 @@ void shpchp_queue_pushbutton_work(struct work_struct *work)
 		kfree(info);
 		goto out;
 	}
+<<<<<<< HEAD
 	queue_work(shpchp_wq, &info->work);
+=======
+	queue_work(shpchp_ordered_wq, &info->work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  out:
 	mutex_unlock(&p_slot->lock);
 }

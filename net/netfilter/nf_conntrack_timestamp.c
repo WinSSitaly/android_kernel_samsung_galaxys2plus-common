@@ -15,7 +15,11 @@
 #include <net/netfilter/nf_conntrack_extend.h>
 #include <net/netfilter/nf_conntrack_timestamp.h>
 
+<<<<<<< HEAD
 static bool nf_ct_tstamp __read_mostly;
+=======
+static int nf_ct_tstamp __read_mostly;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_named(tstamp, nf_ct_tstamp, bool, 0644);
 MODULE_PARM_DESC(tstamp, "Enable connection tracking flow timestamping.");

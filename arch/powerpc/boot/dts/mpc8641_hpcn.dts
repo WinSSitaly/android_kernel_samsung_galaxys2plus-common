@@ -26,6 +26,16 @@
 		serial1 = &serial1;
 		pci0 = &pci0;
 		pci1 = &pci1;
+<<<<<<< HEAD
+=======
+/*
+ * Only one of Rapid IO or PCI can be present due to HW limitations and
+ * due to the fact that the 2 now share address space in the new memory
+ * map.  The most likely case is that we have PCI, so comment out the
+ * rapidio node.  Leave it here for reference.
+ */
+		/* rapidio0 = &rapidio0; */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	};
 
 	cpus {
@@ -328,7 +338,11 @@
 		serial0: serial@4500 {
 			cell-index = <0>;
 			device_type = "serial";
+<<<<<<< HEAD
 			compatible = "fsl,ns16550", "ns16550";
+=======
+			compatible = "ns16550";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			reg = <0x4500 0x100>;
 			clock-frequency = <0>;
 			interrupts = <42 2>;
@@ -338,7 +352,11 @@
 		serial1: serial@4600 {
 			cell-index = <1>;
 			device_type = "serial";
+<<<<<<< HEAD
 			compatible = "fsl,ns16550", "ns16550";
+=======
+			compatible = "ns16550";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			reg = <0x4600 0x100>;
 			clock-frequency = <0>;
 			interrupts = <28 2>;
@@ -354,6 +372,7 @@
 			device_type = "open-pic";
 		};
 
+<<<<<<< HEAD
 		rmu: rmu@d3000 {
 			#address-cells = <1>;
 			#size-cells = <1>;
@@ -389,6 +408,8 @@
 			};
 		};
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		global-utilities@e0000 {
 			compatible = "fsl,mpc8641-guts";
 			reg = <0xe0000 0x1000>;
@@ -640,6 +661,7 @@
 		};
 	};
 /*
+<<<<<<< HEAD
  * Only one of Rapid IO or PCI can be present due to HW limitations and
  * due to the fact that the 2 now share address space in the new memory
  * map.  The most likely case is that we have PCI, so comment out the
@@ -661,6 +683,18 @@
 			cell-index = <1>;
 			ranges = <0 0 0x80000000 0 0x20000000>;
 		};
+=======
+	rapidio0: rapidio@ffec0000 {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		compatible = "fsl,rapidio-delta";
+		reg = <0xffec0000 0x20000>;
+		ranges = <0 0 0x80000000 0 0x20000000>;
+		interrupt-parent = <&mpic>;
+		// err_irq bell_outb_irq bell_inb_irq
+		//	msg1_tx_irq msg1_rx_irq	msg2_tx_irq msg2_rx_irq
+		interrupts = <48 2 49 2 50 2 53 2 54 2 55 2 56 2>;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	};
 */
 

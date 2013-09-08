@@ -11,6 +11,10 @@
 
 #include <linux/init.h>
 #include <linux/module.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/videodev2.h>
 #include <linux/platform_device.h>
 #include <linux/clk.h>
@@ -109,12 +113,18 @@ struct mx3_camera_dev {
 
 	unsigned long		platform_flags;
 	unsigned long		mclk;
+<<<<<<< HEAD
 	u16			width_flags;	/* max 15 bits */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct list_head	capture;
 	spinlock_t		lock;		/* Protects video buffer lists */
 	struct mx3_camera_buffer *active;
+<<<<<<< HEAD
 	size_t			buf_total;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct vb2_alloc_ctx	*alloc_ctx;
 	enum v4l2_field		field;
 	int			sequence;
@@ -192,6 +202,7 @@ static void mx3_cam_dma_done(void *arg)
  * Calculate the __buffer__ (not data) size and number of buffers.
  */
 static int mx3_videobuf_setup(struct vb2_queue *vq,
+<<<<<<< HEAD
 			const struct v4l2_format *fmt,
 			unsigned int *count, unsigned int *num_planes,
 			unsigned int sizes[], void *alloc_ctxs[])
@@ -201,10 +212,24 @@ static int mx3_videobuf_setup(struct vb2_queue *vq,
 	struct mx3_camera_dev *mx3_cam = ici->priv;
 	int bytes_per_line;
 	unsigned int height;
+=======
+			unsigned int *count, unsigned int *num_planes,
+			unsigned long sizes[], void *alloc_ctxs[])
+{
+	struct soc_camera_device *icd = soc_camera_from_vb2q(vq);
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+	struct mx3_camera_dev *mx3_cam = ici->priv;
+	int bytes_per_line = soc_mbus_bytes_per_line(icd->user_width,
+						icd->current_fmt->host_fmt);
+
+	if (bytes_per_line < 0)
+		return bytes_per_line;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!mx3_cam->idmac_channel[0])
 		return -EINVAL;
 
+<<<<<<< HEAD
 	if (fmt) {
 		const struct soc_camera_format_xlate *xlate = soc_camera_xlate_by_fourcc(icd,
 								fmt->fmt.pix.pixelformat);
@@ -239,6 +264,66 @@ static int mx3_videobuf_setup(struct vb2_queue *vq,
 			sizes[0];
 
 	*num_planes = 1;
+=======
+	*num_planes = 1;
+
+	mx3_cam->sequence = 0;
+	sizes[0] = bytes_per_line * icd->user_height;
+	alloc_ctxs[0] = mx3_cam->alloc_ctx;
+
+	if (!*count)
+		*count = 32;
+
+	if (sizes[0] * *count > MAX_VIDEO_MEM * 1024 * 1024)
+		*count = MAX_VIDEO_MEM * 1024 * 1024 / sizes[0];
+
+	return 0;
+}
+
+static int mx3_videobuf_prepare(struct vb2_buffer *vb)
+{
+	struct soc_camera_device *icd = soc_camera_from_vb2q(vb->vb2_queue);
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+	struct mx3_camera_dev *mx3_cam = ici->priv;
+	struct idmac_channel *ichan = mx3_cam->idmac_channel[0];
+	struct scatterlist *sg;
+	struct mx3_camera_buffer *buf;
+	size_t new_size;
+	int bytes_per_line = soc_mbus_bytes_per_line(icd->user_width,
+						icd->current_fmt->host_fmt);
+
+	if (bytes_per_line < 0)
+		return bytes_per_line;
+
+	buf = to_mx3_vb(vb);
+	sg = &buf->sg;
+
+	new_size = bytes_per_line * icd->user_height;
+
+	if (vb2_plane_size(vb, 0) < new_size) {
+		dev_err(icd->dev.parent, "Buffer too small (%lu < %zu)\n",
+			vb2_plane_size(vb, 0), new_size);
+		return -ENOBUFS;
+	}
+
+	if (buf->state == CSI_BUF_NEEDS_INIT) {
+		sg_dma_address(sg)	= vb2_dma_contig_plane_paddr(vb, 0);
+		sg_dma_len(sg)		= new_size;
+
+		buf->txd = ichan->dma_chan.device->device_prep_slave_sg(
+			&ichan->dma_chan, sg, 1, DMA_FROM_DEVICE,
+			DMA_PREP_INTERRUPT);
+		if (!buf->txd)
+			return -EIO;
+
+		buf->txd->callback_param	= buf->txd;
+		buf->txd->callback		= mx3_cam_dma_done;
+
+		buf->state = CSI_BUF_PREPARED;
+	}
+
+	vb2_set_plane_payload(vb, 0, new_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -259,6 +344,7 @@ static enum pixel_fmt fourcc_to_ipu_pix(__u32 fourcc)
 static void mx3_videobuf_queue(struct vb2_buffer *vb)
 {
 	struct soc_camera_device *icd = soc_camera_from_vb2q(vb->vb2_queue);
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
 	struct mx3_camera_dev *mx3_cam = ici->priv;
 	struct mx3_camera_buffer *buf = to_mx3_vb(vb);
@@ -314,6 +400,33 @@ static void mx3_videobuf_queue(struct vb2_buffer *vb)
 		 * horizontal parameters in this case are expressed in bytes,
 		 * not in pixels.
 		 */
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+	struct mx3_camera_dev *mx3_cam = ici->priv;
+	struct mx3_camera_buffer *buf = to_mx3_vb(vb);
+	struct dma_async_tx_descriptor *txd = buf->txd;
+	struct idmac_channel *ichan = to_idmac_chan(txd->chan);
+	struct idmac_video_param *video = &ichan->params.video;
+	dma_cookie_t cookie;
+	u32 fourcc = icd->current_fmt->host_fmt->fourcc;
+	unsigned long flags;
+
+	/* This is the configuration of one sg-element */
+	video->out_pixel_fmt	= fourcc_to_ipu_pix(fourcc);
+
+	if (video->out_pixel_fmt == IPU_PIX_FMT_GENERIC) {
+		/*
+		 * If the IPU DMA channel is configured to transport
+		 * generic 8-bit data, we have to set up correctly the
+		 * geometry parameters upon the current pixel format.
+		 * So, since the DMA horizontal parameters are expressed
+		 * in bytes not pixels, convert these in the right unit.
+		 */
+		int bytes_per_line = soc_mbus_bytes_per_line(icd->user_width,
+						icd->current_fmt->host_fmt);
+		BUG_ON(bytes_per_line <= 0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		video->out_width	= bytes_per_line;
 		video->out_height	= icd->user_height;
 		video->out_stride	= bytes_per_line;
@@ -342,7 +455,11 @@ static void mx3_videobuf_queue(struct vb2_buffer *vb)
 	spin_unlock_irq(&mx3_cam->lock);
 
 	cookie = txd->tx_submit(txd);
+<<<<<<< HEAD
 	dev_dbg(icd->parent, "Submitted cookie %d DMA 0x%08x\n",
+=======
+	dev_dbg(icd->dev.parent, "Submitted cookie %d DMA 0x%08x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cookie, sg_dma_address(&buf->sg));
 
 	if (cookie >= 0)
@@ -357,20 +474,31 @@ static void mx3_videobuf_queue(struct vb2_buffer *vb)
 		mx3_cam->active = NULL;
 
 	spin_unlock_irqrestore(&mx3_cam->lock, flags);
+<<<<<<< HEAD
 error:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vb2_buffer_done(vb, VB2_BUF_STATE_ERROR);
 }
 
 static void mx3_videobuf_release(struct vb2_buffer *vb)
 {
 	struct soc_camera_device *icd = soc_camera_from_vb2q(vb->vb2_queue);
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mx3_camera_dev *mx3_cam = ici->priv;
 	struct mx3_camera_buffer *buf = to_mx3_vb(vb);
 	struct dma_async_tx_descriptor *txd = buf->txd;
 	unsigned long flags;
 
+<<<<<<< HEAD
 	dev_dbg(icd->parent,
+=======
+	dev_dbg(icd->dev.parent,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"Release%s DMA 0x%08x, queue %sempty\n",
 		mx3_cam->active == buf ? " active" : "", sg_dma_address(&buf->sg),
 		list_empty(&buf->queue) ? "" : "not ");
@@ -391,24 +519,35 @@ static void mx3_videobuf_release(struct vb2_buffer *vb)
 	}
 
 	spin_unlock_irqrestore(&mx3_cam->lock, flags);
+<<<<<<< HEAD
 
 	mx3_cam->buf_total -= vb2_plane_size(vb, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int mx3_videobuf_init(struct vb2_buffer *vb)
 {
+<<<<<<< HEAD
 	struct soc_camera_device *icd = soc_camera_from_vb2q(vb->vb2_queue);
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
 	struct mx3_camera_dev *mx3_cam = ici->priv;
 	struct mx3_camera_buffer *buf = to_mx3_vb(vb);
 
+=======
+	struct mx3_camera_buffer *buf = to_mx3_vb(vb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* This is for locking debugging only */
 	INIT_LIST_HEAD(&buf->queue);
 	sg_init_table(&buf->sg, 1);
 
 	buf->state = CSI_BUF_NEEDS_INIT;
+<<<<<<< HEAD
 
 	mx3_cam->buf_total += vb2_plane_size(vb, 0);
+=======
+	buf->txd = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -416,15 +555,27 @@ static int mx3_videobuf_init(struct vb2_buffer *vb)
 static int mx3_stop_streaming(struct vb2_queue *q)
 {
 	struct soc_camera_device *icd = soc_camera_from_vb2q(q);
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
 	struct mx3_camera_dev *mx3_cam = ici->priv;
 	struct idmac_channel *ichan = mx3_cam->idmac_channel[0];
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+	struct mx3_camera_dev *mx3_cam = ici->priv;
+	struct idmac_channel *ichan = mx3_cam->idmac_channel[0];
+	struct dma_chan *chan;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mx3_camera_buffer *buf, *tmp;
 	unsigned long flags;
 
 	if (ichan) {
+<<<<<<< HEAD
 		struct dma_chan *chan = &ichan->dma_chan;
 		chan->device->device_control(chan, DMA_PAUSE, 0);
+=======
+		chan = &ichan->dma_chan;
+		chan->device->device_control(chan, DMA_TERMINATE_ALL, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	spin_lock_irqsave(&mx3_cam->lock, flags);
@@ -432,8 +583,13 @@ static int mx3_stop_streaming(struct vb2_queue *q)
 	mx3_cam->active = NULL;
 
 	list_for_each_entry_safe(buf, tmp, &mx3_cam->capture, queue) {
+<<<<<<< HEAD
 		list_del_init(&buf->queue);
 		vb2_buffer_done(&buf->vb, VB2_BUF_STATE_ERROR);
+=======
+		buf->state = CSI_BUF_NEEDS_INIT;
+		list_del_init(&buf->queue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	spin_unlock_irqrestore(&mx3_cam->lock, flags);
@@ -443,6 +599,10 @@ static int mx3_stop_streaming(struct vb2_queue *q)
 
 static struct vb2_ops mx3_videobuf_ops = {
 	.queue_setup	= mx3_videobuf_setup,
+<<<<<<< HEAD
+=======
+	.buf_prepare	= mx3_videobuf_prepare,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.buf_queue	= mx3_videobuf_queue,
 	.buf_cleanup	= mx3_videobuf_release,
 	.buf_init	= mx3_videobuf_init,
@@ -510,7 +670,11 @@ static void mx3_camera_activate(struct mx3_camera_dev *mx3_cam,
 
 	clk_enable(mx3_cam->clk);
 	rate = clk_round_rate(mx3_cam->clk, mx3_cam->mclk);
+<<<<<<< HEAD
 	dev_dbg(icd->parent, "Set SENS_CONF to %x, rate %ld\n", conf, rate);
+=======
+	dev_dbg(icd->dev.parent, "Set SENS_CONF to %x, rate %ld\n", conf, rate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rate)
 		clk_set_rate(mx3_cam->clk, rate);
 }
@@ -518,7 +682,11 @@ static void mx3_camera_activate(struct mx3_camera_dev *mx3_cam,
 /* Called with .video_lock held */
 static int mx3_camera_add_device(struct soc_camera_device *icd)
 {
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mx3_camera_dev *mx3_cam = ici->priv;
 
 	if (mx3_cam->icd)
@@ -526,10 +694,16 @@ static int mx3_camera_add_device(struct soc_camera_device *icd)
 
 	mx3_camera_activate(mx3_cam, icd);
 
+<<<<<<< HEAD
 	mx3_cam->buf_total = 0;
 	mx3_cam->icd = icd;
 
 	dev_info(icd->parent, "MX3 Camera driver attached to camera %d\n",
+=======
+	mx3_cam->icd = icd;
+
+	dev_info(icd->dev.parent, "MX3 Camera driver attached to camera %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 icd->devnum);
 
 	return 0;
@@ -538,7 +712,11 @@ static int mx3_camera_add_device(struct soc_camera_device *icd)
 /* Called with .video_lock held */
 static void mx3_camera_remove_device(struct soc_camera_device *icd)
 {
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mx3_camera_dev *mx3_cam = ici->priv;
 	struct idmac_channel **ichan = &mx3_cam->idmac_channel[0];
 
@@ -553,7 +731,11 @@ static void mx3_camera_remove_device(struct soc_camera_device *icd)
 
 	mx3_cam->icd = NULL;
 
+<<<<<<< HEAD
 	dev_info(icd->parent, "MX3 Camera driver detached from camera %d\n",
+=======
+	dev_info(icd->dev.parent, "MX3 Camera driver detached from camera %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 icd->devnum);
 }
 
@@ -561,6 +743,7 @@ static int test_platform_param(struct mx3_camera_dev *mx3_cam,
 			       unsigned char buswidth, unsigned long *flags)
 {
 	/*
+<<<<<<< HEAD
 	 * If requested data width is supported by the platform, use it or any
 	 * possible lower value - i.MX31 is smart enough to shift bits
 	 */
@@ -568,11 +751,14 @@ static int test_platform_param(struct mx3_camera_dev *mx3_cam,
 		return -EINVAL;
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Platform specified synchronization and pixel clock polarities are
 	 * only a recommendation and are only used during probing. MX3x
 	 * camera interface only works in master mode, i.e., uses HSYNC and
 	 * VSYNC signals from the sensor
 	 */
+<<<<<<< HEAD
 	*flags = V4L2_MBUS_MASTER |
 		V4L2_MBUS_HSYNC_ACTIVE_HIGH |
 		V4L2_MBUS_HSYNC_ACTIVE_LOW |
@@ -582,6 +768,55 @@ static int test_platform_param(struct mx3_camera_dev *mx3_cam,
 		V4L2_MBUS_PCLK_SAMPLE_FALLING |
 		V4L2_MBUS_DATA_ACTIVE_HIGH |
 		V4L2_MBUS_DATA_ACTIVE_LOW;
+=======
+	*flags = SOCAM_MASTER |
+		SOCAM_HSYNC_ACTIVE_HIGH |
+		SOCAM_HSYNC_ACTIVE_LOW |
+		SOCAM_VSYNC_ACTIVE_HIGH |
+		SOCAM_VSYNC_ACTIVE_LOW |
+		SOCAM_PCLK_SAMPLE_RISING |
+		SOCAM_PCLK_SAMPLE_FALLING |
+		SOCAM_DATA_ACTIVE_HIGH |
+		SOCAM_DATA_ACTIVE_LOW;
+
+	/*
+	 * If requested data width is supported by the platform, use it or any
+	 * possible lower value - i.MX31 is smart enough to schift bits
+	 */
+	if (mx3_cam->platform_flags & MX3_CAMERA_DATAWIDTH_15)
+		*flags |= SOCAM_DATAWIDTH_15 | SOCAM_DATAWIDTH_10 |
+			SOCAM_DATAWIDTH_8 | SOCAM_DATAWIDTH_4;
+	else if (mx3_cam->platform_flags & MX3_CAMERA_DATAWIDTH_10)
+		*flags |= SOCAM_DATAWIDTH_10 | SOCAM_DATAWIDTH_8 |
+			SOCAM_DATAWIDTH_4;
+	else if (mx3_cam->platform_flags & MX3_CAMERA_DATAWIDTH_8)
+		*flags |= SOCAM_DATAWIDTH_8 | SOCAM_DATAWIDTH_4;
+	else if (mx3_cam->platform_flags & MX3_CAMERA_DATAWIDTH_4)
+		*flags |= SOCAM_DATAWIDTH_4;
+
+	switch (buswidth) {
+	case 15:
+		if (!(*flags & SOCAM_DATAWIDTH_15))
+			return -EINVAL;
+		break;
+	case 10:
+		if (!(*flags & SOCAM_DATAWIDTH_10))
+			return -EINVAL;
+		break;
+	case 8:
+		if (!(*flags & SOCAM_DATAWIDTH_8))
+			return -EINVAL;
+		break;
+	case 4:
+		if (!(*flags & SOCAM_DATAWIDTH_4))
+			return -EINVAL;
+		break;
+	default:
+		dev_warn(mx3_cam->soc_host.v4l2_dev.dev,
+			 "Unsupported bus width %d\n", buswidth);
+		return -EINVAL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -589,6 +824,7 @@ static int test_platform_param(struct mx3_camera_dev *mx3_cam,
 static int mx3_camera_try_bus_param(struct soc_camera_device *icd,
 				    const unsigned int depth)
 {
+<<<<<<< HEAD
 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
 	struct mx3_camera_dev *mx3_cam = ici->priv;
@@ -597,10 +833,19 @@ static int mx3_camera_try_bus_param(struct soc_camera_device *icd,
 	int ret = test_platform_param(mx3_cam, depth, &bus_flags);
 
 	dev_dbg(icd->parent, "request bus width %d bit: %d\n", depth, ret);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+	struct mx3_camera_dev *mx3_cam = ici->priv;
+	unsigned long bus_flags, camera_flags;
+	int ret = test_platform_param(mx3_cam, depth, &bus_flags);
+
+	dev_dbg(icd->dev.parent, "request bus width %d bit: %d\n", depth, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ret < 0)
 		return ret;
 
+<<<<<<< HEAD
 	ret = v4l2_subdev_call(sd, video, g_mbus_config, &cfg);
 	if (!ret) {
 		common_flags = soc_mbus_config_compatible(&cfg,
@@ -616,6 +861,17 @@ static int mx3_camera_try_bus_param(struct soc_camera_device *icd,
 	}
 
 	return 0;
+=======
+	camera_flags = icd->ops->query_bus_param(icd);
+
+	ret = soc_camera_bus_param_compatible(camera_flags, bus_flags);
+	if (ret < 0)
+		dev_warn(icd->dev.parent,
+			 "Flags incompatible: camera %lx, host %lx\n",
+			 camera_flags, bus_flags);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static bool chan_filter(struct dma_chan *chan, void *arg)
@@ -665,7 +921,11 @@ static int mx3_camera_get_formats(struct soc_camera_device *icd, unsigned int id
 				  struct soc_camera_format_xlate *xlate)
 {
 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
+<<<<<<< HEAD
 	struct device *dev = icd->parent;
+=======
+	struct device *dev = icd->dev.parent;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int formats = 0, ret;
 	enum v4l2_mbus_pixelcode code;
 	const struct soc_mbus_pixelfmt *fmt;
@@ -677,7 +937,11 @@ static int mx3_camera_get_formats(struct soc_camera_device *icd, unsigned int id
 
 	fmt = soc_mbus_get_fmtdesc(code);
 	if (!fmt) {
+<<<<<<< HEAD
 		dev_warn(icd->parent,
+=======
+		dev_warn(icd->dev.parent,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 "Unsupported format code #%u: %d\n", idx, code);
 		return 0;
 	}
@@ -805,7 +1069,11 @@ static int mx3_camera_set_crop(struct soc_camera_device *icd,
 			       struct v4l2_crop *a)
 {
 	struct v4l2_rect *rect = &a->c;
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mx3_camera_dev *mx3_cam = ici->priv;
 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
 	struct v4l2_mbus_framefmt mf;
@@ -838,7 +1106,11 @@ static int mx3_camera_set_crop(struct soc_camera_device *icd,
 		configure_geometry(mx3_cam, mf.width, mf.height,
 				   icd->current_fmt->host_fmt);
 
+<<<<<<< HEAD
 	dev_dbg(icd->parent, "Sensor cropped %dx%d\n",
+=======
+	dev_dbg(icd->dev.parent, "Sensor cropped %dx%d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mf.width, mf.height);
 
 	icd->user_width		= mf.width;
@@ -850,7 +1122,11 @@ static int mx3_camera_set_crop(struct soc_camera_device *icd,
 static int mx3_camera_set_fmt(struct soc_camera_device *icd,
 			      struct v4l2_format *f)
 {
+<<<<<<< HEAD
 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
+=======
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mx3_camera_dev *mx3_cam = ici->priv;
 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
 	const struct soc_camera_format_xlate *xlate;
@@ -860,13 +1136,21 @@ static int mx3_camera_set_fmt(struct soc_camera_device *icd,
 
 	xlate = soc_camera_xlate_by_fourcc(icd, pix->pixelformat);
 	if (!xlate) {
+<<<<<<< HEAD
 		dev_warn(icd->parent, "Format %x not found\n",
+=======
+		dev_warn(icd->dev.parent, "Format %x not found\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 pix->pixelformat);
 		return -EINVAL;
 	}
 
 	stride_align(&pix->width);
+<<<<<<< HEAD
 	dev_dbg(icd->parent, "Set format %dx%d\n", pix->width, pix->height);
+=======
+	dev_dbg(icd->dev.parent, "Set format %dx%d\n", pix->width, pix->height);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Might have to perform a complete interface initialisation like in
@@ -902,7 +1186,17 @@ static int mx3_camera_set_fmt(struct soc_camera_device *icd,
 	pix->colorspace		= mf.colorspace;
 	icd->current_fmt	= xlate;
 
+<<<<<<< HEAD
 	dev_dbg(icd->parent, "Sensor set %dx%d\n", pix->width, pix->height);
+=======
+	pix->bytesperline = soc_mbus_bytes_per_line(pix->width,
+						    xlate->host_fmt);
+	if (pix->bytesperline < 0)
+		return pix->bytesperline;
+	pix->sizeimage = pix->height * pix->bytesperline;
+
+	dev_dbg(icd->dev.parent, "Sensor set %dx%d\n", pix->width, pix->height);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -919,7 +1213,11 @@ static int mx3_camera_try_fmt(struct soc_camera_device *icd,
 
 	xlate = soc_camera_xlate_by_fourcc(icd, pixfmt);
 	if (pixfmt && !xlate) {
+<<<<<<< HEAD
 		dev_warn(icd->parent, "Format %x not found\n", pixfmt);
+=======
+		dev_warn(icd->dev.parent, "Format %x not found\n", pixfmt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -929,6 +1227,15 @@ static int mx3_camera_try_fmt(struct soc_camera_device *icd,
 	if (pix->width > 4096)
 		pix->width = 4096;
 
+<<<<<<< HEAD
+=======
+	pix->bytesperline = soc_mbus_bytes_per_line(pix->width,
+						    xlate->host_fmt);
+	if (pix->bytesperline < 0)
+		return pix->bytesperline;
+	pix->sizeimage = pix->height * pix->bytesperline;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* limit to sensor capabilities */
 	mf.width	= pix->width;
 	mf.height	= pix->height;
@@ -951,7 +1258,11 @@ static int mx3_camera_try_fmt(struct soc_camera_device *icd,
 	case V4L2_FIELD_NONE:
 		break;
 	default:
+<<<<<<< HEAD
 		dev_err(icd->parent, "Field type %d unsupported.\n",
+=======
+		dev_err(icd->dev.parent, "Field type %d unsupported.\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mf.field);
 		ret = -EINVAL;
 	}
@@ -977,11 +1288,16 @@ static int mx3_camera_querycap(struct soc_camera_host *ici,
 {
 	/* cap->name is set by the firendly caller:-> */
 	strlcpy(cap->card, "i.MX3x Camera", sizeof(cap->card));
+<<<<<<< HEAD
+=======
+	cap->version = KERNEL_VERSION(0, 2, 2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cap->capabilities = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int mx3_camera_set_bus_param(struct soc_camera_device *icd)
 {
 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
@@ -990,31 +1306,52 @@ static int mx3_camera_set_bus_param(struct soc_camera_device *icd)
 	struct v4l2_mbus_config cfg = {.type = V4L2_MBUS_PARALLEL,};
 	u32 pixfmt = icd->current_fmt->host_fmt->fourcc;
 	unsigned long bus_flags, common_flags;
+=======
+static int mx3_camera_set_bus_param(struct soc_camera_device *icd, __u32 pixfmt)
+{
+	struct soc_camera_host *ici = to_soc_camera_host(icd->dev.parent);
+	struct mx3_camera_dev *mx3_cam = ici->priv;
+	unsigned long bus_flags, camera_flags, common_flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 dw, sens_conf;
 	const struct soc_mbus_pixelfmt *fmt;
 	int buswidth;
 	int ret;
 	const struct soc_camera_format_xlate *xlate;
+<<<<<<< HEAD
 	struct device *dev = icd->parent;
+=======
+	struct device *dev = icd->dev.parent;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fmt = soc_mbus_get_fmtdesc(icd->current_fmt->code);
 	if (!fmt)
 		return -EINVAL;
 
+<<<<<<< HEAD
+=======
+	buswidth = fmt->bits_per_sample;
+	ret = test_platform_param(mx3_cam, buswidth, &bus_flags);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	xlate = soc_camera_xlate_by_fourcc(icd, pixfmt);
 	if (!xlate) {
 		dev_warn(dev, "Format %x not found\n", pixfmt);
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	buswidth = fmt->bits_per_sample;
 	ret = test_platform_param(mx3_cam, buswidth, &bus_flags);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_dbg(dev, "requested bus width %d bit: %d\n", buswidth, ret);
 
 	if (ret < 0)
 		return ret;
 
+<<<<<<< HEAD
 	ret = v4l2_subdev_call(sd, video, g_mbus_config, &cfg);
 	if (!ret) {
 		common_flags = soc_mbus_config_compatible(&cfg,
@@ -1071,6 +1408,71 @@ static int mx3_camera_set_bus_param(struct soc_camera_device *icd)
 	ret = v4l2_subdev_call(sd, video, s_mbus_config, &cfg);
 	if (ret < 0 && ret != -ENOIOCTLCMD) {
 		dev_dbg(dev, "camera s_mbus_config(0x%lx) returned %d\n",
+=======
+	camera_flags = icd->ops->query_bus_param(icd);
+
+	common_flags = soc_camera_bus_param_compatible(camera_flags, bus_flags);
+	dev_dbg(dev, "Flags cam: 0x%lx host: 0x%lx common: 0x%lx\n",
+		camera_flags, bus_flags, common_flags);
+	if (!common_flags) {
+		dev_dbg(dev, "no common flags");
+		return -EINVAL;
+	}
+
+	/* Make choices, based on platform preferences */
+	if ((common_flags & SOCAM_HSYNC_ACTIVE_HIGH) &&
+	    (common_flags & SOCAM_HSYNC_ACTIVE_LOW)) {
+		if (mx3_cam->platform_flags & MX3_CAMERA_HSP)
+			common_flags &= ~SOCAM_HSYNC_ACTIVE_HIGH;
+		else
+			common_flags &= ~SOCAM_HSYNC_ACTIVE_LOW;
+	}
+
+	if ((common_flags & SOCAM_VSYNC_ACTIVE_HIGH) &&
+	    (common_flags & SOCAM_VSYNC_ACTIVE_LOW)) {
+		if (mx3_cam->platform_flags & MX3_CAMERA_VSP)
+			common_flags &= ~SOCAM_VSYNC_ACTIVE_HIGH;
+		else
+			common_flags &= ~SOCAM_VSYNC_ACTIVE_LOW;
+	}
+
+	if ((common_flags & SOCAM_DATA_ACTIVE_HIGH) &&
+	    (common_flags & SOCAM_DATA_ACTIVE_LOW)) {
+		if (mx3_cam->platform_flags & MX3_CAMERA_DP)
+			common_flags &= ~SOCAM_DATA_ACTIVE_HIGH;
+		else
+			common_flags &= ~SOCAM_DATA_ACTIVE_LOW;
+	}
+
+	if ((common_flags & SOCAM_PCLK_SAMPLE_RISING) &&
+	    (common_flags & SOCAM_PCLK_SAMPLE_FALLING)) {
+		if (mx3_cam->platform_flags & MX3_CAMERA_PCP)
+			common_flags &= ~SOCAM_PCLK_SAMPLE_RISING;
+		else
+			common_flags &= ~SOCAM_PCLK_SAMPLE_FALLING;
+	}
+
+	/*
+	 * Make the camera work in widest common mode, we'll take care of
+	 * the rest
+	 */
+	if (common_flags & SOCAM_DATAWIDTH_15)
+		common_flags = (common_flags & ~SOCAM_DATAWIDTH_MASK) |
+			SOCAM_DATAWIDTH_15;
+	else if (common_flags & SOCAM_DATAWIDTH_10)
+		common_flags = (common_flags & ~SOCAM_DATAWIDTH_MASK) |
+			SOCAM_DATAWIDTH_10;
+	else if (common_flags & SOCAM_DATAWIDTH_8)
+		common_flags = (common_flags & ~SOCAM_DATAWIDTH_MASK) |
+			SOCAM_DATAWIDTH_8;
+	else
+		common_flags = (common_flags & ~SOCAM_DATAWIDTH_MASK) |
+			SOCAM_DATAWIDTH_4;
+
+	ret = icd->ops->set_bus_param(icd, common_flags);
+	if (ret < 0) {
+		dev_dbg(dev, "camera set_bus_param(%lx) returned %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			common_flags, ret);
 		return ret;
 	}
@@ -1094,6 +1496,7 @@ static int mx3_camera_set_bus_param(struct soc_camera_device *icd)
 	/* This has been set in mx3_camera_activate(), but we clear it above */
 	sens_conf |= CSI_SENS_CONF_DATA_FMT_BAYER;
 
+<<<<<<< HEAD
 	if (common_flags & V4L2_MBUS_PCLK_SAMPLE_FALLING)
 		sens_conf |= 1 << CSI_SENS_CONF_PIX_CLK_POL_SHIFT;
 	if (common_flags & V4L2_MBUS_HSYNC_ACTIVE_LOW)
@@ -1101,6 +1504,15 @@ static int mx3_camera_set_bus_param(struct soc_camera_device *icd)
 	if (common_flags & V4L2_MBUS_VSYNC_ACTIVE_LOW)
 		sens_conf |= 1 << CSI_SENS_CONF_VSYNC_POL_SHIFT;
 	if (common_flags & V4L2_MBUS_DATA_ACTIVE_LOW)
+=======
+	if (common_flags & SOCAM_PCLK_SAMPLE_FALLING)
+		sens_conf |= 1 << CSI_SENS_CONF_PIX_CLK_POL_SHIFT;
+	if (common_flags & SOCAM_HSYNC_ACTIVE_LOW)
+		sens_conf |= 1 << CSI_SENS_CONF_HSYNC_POL_SHIFT;
+	if (common_flags & SOCAM_VSYNC_ACTIVE_LOW)
+		sens_conf |= 1 << CSI_SENS_CONF_VSYNC_POL_SHIFT;
+	if (common_flags & SOCAM_DATA_ACTIVE_LOW)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sens_conf |= 1 << CSI_SENS_CONF_DATA_POL_SHIFT;
 
 	/* Just do what we're asked to do */
@@ -1185,6 +1597,7 @@ static int __devinit mx3_camera_probe(struct platform_device *pdev)
 			 "data widths, using default 8 bit\n");
 		mx3_cam->platform_flags |= MX3_CAMERA_DATAWIDTH_8;
 	}
+<<<<<<< HEAD
 	if (mx3_cam->platform_flags & MX3_CAMERA_DATAWIDTH_4)
 		mx3_cam->width_flags = 1 << 3;
 	if (mx3_cam->platform_flags & MX3_CAMERA_DATAWIDTH_8)
@@ -1193,6 +1606,8 @@ static int __devinit mx3_camera_probe(struct platform_device *pdev)
 		mx3_cam->width_flags |= 1 << 9;
 	if (mx3_cam->platform_flags & MX3_CAMERA_DATAWIDTH_15)
 		mx3_cam->width_flags |= 1 << 14;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mx3_cam->mclk = mx3_cam->pdata->mclk_10khz * 10000;
 	if (!mx3_cam->mclk) {
@@ -1275,6 +1690,11 @@ static int __devexit mx3_camera_remove(struct platform_device *pdev)
 
 	dmaengine_put();
 
+<<<<<<< HEAD
+=======
+	dev_info(&pdev->dev, "i.MX3x Camera driver unloaded\n");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1286,10 +1706,29 @@ static struct platform_driver mx3_camera_driver = {
 	.remove		= __devexit_p(mx3_camera_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(mx3_camera_driver);
+=======
+
+static int __init mx3_camera_init(void)
+{
+	return platform_driver_register(&mx3_camera_driver);
+}
+
+static void __exit mx3_camera_exit(void)
+{
+	platform_driver_unregister(&mx3_camera_driver);
+}
+
+module_init(mx3_camera_init);
+module_exit(mx3_camera_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("i.MX3x SoC Camera Host driver");
 MODULE_AUTHOR("Guennadi Liakhovetski <lg@denx.de>");
 MODULE_LICENSE("GPL v2");
+<<<<<<< HEAD
 MODULE_VERSION("0.2.3");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_ALIAS("platform:" MX3_CAM_DRV_NAME);

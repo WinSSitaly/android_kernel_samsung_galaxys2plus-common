@@ -47,9 +47,22 @@
 #define PTRACE_GETREGSET	0x4204
 #define PTRACE_SETREGSET	0x4205
 
+<<<<<<< HEAD
 #define PTRACE_SEIZE		0x4206
 #define PTRACE_INTERRUPT	0x4207
 #define PTRACE_LISTEN		0x4208
+=======
+/* options set using PTRACE_SETOPTIONS */
+#define PTRACE_O_TRACESYSGOOD	0x00000001
+#define PTRACE_O_TRACEFORK	0x00000002
+#define PTRACE_O_TRACEVFORK	0x00000004
+#define PTRACE_O_TRACECLONE	0x00000008
+#define PTRACE_O_TRACEEXEC	0x00000010
+#define PTRACE_O_TRACEVFORKDONE	0x00000020
+#define PTRACE_O_TRACEEXIT	0x00000040
+
+#define PTRACE_O_MASK		0x0000007f
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Wait extended result codes for the above trace options.  */
 #define PTRACE_EVENT_FORK	1
@@ -58,6 +71,7 @@
 #define PTRACE_EVENT_EXEC	4
 #define PTRACE_EVENT_VFORK_DONE	5
 #define PTRACE_EVENT_EXIT	6
+<<<<<<< HEAD
 /* Extended result codes which enabled by means other than options.  */
 #define PTRACE_EVENT_STOP	128
 
@@ -71,6 +85,8 @@
 #define PTRACE_O_TRACEEXIT	(1 << PTRACE_EVENT_EXIT)
 
 #define PTRACE_O_MASK		0x0000007f
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/ptrace.h>
 
@@ -83,6 +99,7 @@
  * flags.  When the a task is stopped the ptracer owns task->ptrace.
  */
 
+<<<<<<< HEAD
 #define PT_SEIZED	0x00010000	/* SEIZE used, enable new behavior */
 #define PT_PTRACED	0x00000001
 #define PT_DTRACE	0x00000002	/* delayed trace (used on m68k, i386) */
@@ -98,6 +115,20 @@
 #define PT_TRACE_EXEC		PT_EVENT_FLAG(PTRACE_EVENT_EXEC)
 #define PT_TRACE_VFORK_DONE	PT_EVENT_FLAG(PTRACE_EVENT_VFORK_DONE)
 #define PT_TRACE_EXIT		PT_EVENT_FLAG(PTRACE_EVENT_EXIT)
+=======
+#define PT_PTRACED	0x00000001
+#define PT_DTRACE	0x00000002	/* delayed trace (used on m68k, i386) */
+#define PT_TRACESYSGOOD	0x00000004
+#define PT_PTRACE_CAP	0x00000008	/* ptracer can follow suid-exec */
+#define PT_TRACE_FORK	0x00000010
+#define PT_TRACE_VFORK	0x00000020
+#define PT_TRACE_CLONE	0x00000040
+#define PT_TRACE_EXEC	0x00000080
+#define PT_TRACE_VFORK_DONE	0x00000100
+#define PT_TRACE_EXIT	0x00000200
+
+#define PT_TRACE_MASK	0x000003f4
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* single stepping state bits (used on ARM and PA-RISC) */
 #define PT_SINGLESTEP_BIT	31
@@ -107,8 +138,11 @@
 
 #include <linux/compiler.h>		/* For unlikely.  */
 #include <linux/sched.h>		/* For struct task_struct.  */
+<<<<<<< HEAD
 #include <linux/err.h>			/* for IS_ERR_VALUE */
 #include <linux/bug.h>			/* For BUG_ON.  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 extern long arch_ptrace(struct task_struct *child, long request,
@@ -116,7 +150,11 @@ extern long arch_ptrace(struct task_struct *child, long request,
 extern int ptrace_readdata(struct task_struct *tsk, unsigned long src, char __user *dst, int len);
 extern int ptrace_writedata(struct task_struct *tsk, char __user *src, unsigned long dst, int len);
 extern void ptrace_disable(struct task_struct *);
+<<<<<<< HEAD
 extern int ptrace_check_attach(struct task_struct *task, bool ignore_state);
+=======
+extern int ptrace_check_attach(struct task_struct *task, int kill);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int ptrace_request(struct task_struct *child, long request,
 			  unsigned long addr, unsigned long data);
 extern void ptrace_notify(int exit_code);
@@ -124,9 +162,14 @@ extern void __ptrace_link(struct task_struct *child,
 			  struct task_struct *new_parent);
 extern void __ptrace_unlink(struct task_struct *child);
 extern void exit_ptrace(struct task_struct *tracer);
+<<<<<<< HEAD
 #define PTRACE_MODE_READ	0x01
 #define PTRACE_MODE_ATTACH	0x02
 #define PTRACE_MODE_NOAUDIT	0x04
+=======
+#define PTRACE_MODE_READ   1
+#define PTRACE_MODE_ATTACH 2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Returns 0 on success, -errno on denial. */
 extern int __ptrace_may_access(struct task_struct *task, unsigned int mode);
 /* Returns true on success, false on denial. */
@@ -134,7 +177,11 @@ extern bool ptrace_may_access(struct task_struct *task, unsigned int mode);
 
 static inline int ptrace_reparented(struct task_struct *child)
 {
+<<<<<<< HEAD
 	return !same_thread_group(child->real_parent, child->parent);
+=======
+	return child->real_parent != child->parent;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void ptrace_unlink(struct task_struct *child)
@@ -149,6 +196,7 @@ int generic_ptrace_pokedata(struct task_struct *tsk, unsigned long addr,
 			    unsigned long data);
 
 /**
+<<<<<<< HEAD
  * ptrace_parent - return the task that is tracing the given task
  * @task: task to consider
  *
@@ -178,10 +226,21 @@ static inline struct task_struct *ptrace_parent(struct task_struct *task)
 static inline bool ptrace_event_enabled(struct task_struct *task, int event)
 {
 	return task->ptrace & PT_EVENT_FLAG(event);
+=======
+ * task_ptrace - return %PT_* flags that apply to a task
+ * @task:	pointer to &task_struct in question
+ *
+ * Returns the %PT_* flags that apply to @task.
+ */
+static inline int task_ptrace(struct task_struct *task)
+{
+	return task->ptrace;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
  * ptrace_event - possibly stop for a ptrace event notification
+<<<<<<< HEAD
  * @event:	%PTRACE_EVENT_* value to report
  * @message:	value for %PTRACE_GETEVENTMSG to return
  *
@@ -200,6 +259,26 @@ static inline void ptrace_event(int event, unsigned long message)
 		if ((current->ptrace & (PT_PTRACED|PT_SEIZED)) == PT_PTRACED)
 			send_sig(SIGTRAP, current, 0);
 	}
+=======
+ * @mask:	%PT_* bit to check in @current->ptrace
+ * @event:	%PTRACE_EVENT_* value to report if @mask is set
+ * @message:	value for %PTRACE_GETEVENTMSG to return
+ *
+ * This checks the @mask bit to see if ptrace wants stops for this event.
+ * If so we stop, reporting @event and @message to the ptrace parent.
+ *
+ * Returns nonzero if we did a ptrace notification, zero if not.
+ *
+ * Called without locks.
+ */
+static inline int ptrace_event(int mask, int event, unsigned long message)
+{
+	if (mask && likely(!(current->ptrace & mask)))
+		return 0;
+	current->ptrace_message = message;
+	ptrace_notify((event << 8) | SIGTRAP);
+	return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -216,6 +295,7 @@ static inline void ptrace_init_task(struct task_struct *child, bool ptrace)
 {
 	INIT_LIST_HEAD(&child->ptrace_entry);
 	INIT_LIST_HEAD(&child->ptraced);
+<<<<<<< HEAD
 #ifdef CONFIG_HAVE_HW_BREAKPOINT
 	atomic_set(&child->ptrace_bp_refcnt, 1);
 #endif
@@ -234,6 +314,18 @@ static inline void ptrace_init_task(struct task_struct *child, bool ptrace)
 
 		set_tsk_thread_flag(child, TIF_SIGPENDING);
 	}
+=======
+	child->parent = child->real_parent;
+	child->ptrace = 0;
+	if (unlikely(ptrace) && (current->ptrace & PT_PTRACED)) {
+		child->ptrace = current->ptrace;
+		__ptrace_link(child, current->parent);
+	}
+
+#ifdef CONFIG_HAVE_HW_BREAKPOINT
+	atomic_set(&child->ptrace_bp_refcnt, 1);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -264,6 +356,7 @@ static inline void ptrace_release_task(struct task_struct *task)
 #define force_successful_syscall_return() do { } while (0)
 #endif
 
+<<<<<<< HEAD
 #ifndef is_syscall_success
 /*
  * On most systems we can tell if a syscall is a success based on if the retval
@@ -273,6 +366,8 @@ static inline void ptrace_release_task(struct task_struct *task)
 #define is_syscall_success(regs) (!IS_ERR_VALUE((unsigned long)(regs_return_value(regs))))
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * <asm/ptrace.h> should define the following things inside #ifdef __KERNEL__.
  *

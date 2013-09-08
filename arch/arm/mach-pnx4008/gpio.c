@@ -13,13 +13,21 @@
  * is licensed "as is" without any warranty of any kind, whether express
  * or implied.
  */
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/types.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/io.h>
 #include <mach/hardware.h>
 #include <mach/platform.h>
+<<<<<<< HEAD
 #include <mach/gpio-pnx4008.h>
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* register definitions */
 #define PIO_VA_BASE	IO_ADDRESS(PNX4008_PIO_BASE)

@@ -1,5 +1,9 @@
 #include <linux/syscalls.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/fs.h>
 #include <linux/file.h>
 #include <linux/mount.h>
@@ -7,7 +11,10 @@
 #include <linux/statfs.h>
 #include <linux/security.h>
 #include <linux/uaccess.h>
+<<<<<<< HEAD
 #include "internal.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int flags_by_mnt(int mnt_flags)
 {
@@ -46,7 +53,11 @@ static int calculate_f_flags(struct vfsmount *mnt)
 		flags_by_sb(mnt->mnt_sb->s_flags);
 }
 
+<<<<<<< HEAD
 static int statfs_by_dentry(struct dentry *dentry, struct kstatfs *buf)
+=======
+int statfs_by_dentry(struct dentry *dentry, struct kstatfs *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int retval;
 
@@ -206,6 +217,7 @@ SYSCALL_DEFINE3(fstatfs64, unsigned int, fd, size_t, sz, struct statfs64 __user 
 	return error;
 }
 
+<<<<<<< HEAD
 int vfs_ustat(dev_t dev, struct kstatfs *sbuf)
 {
 	struct super_block *s = user_get_super(dev);
@@ -223,6 +235,21 @@ SYSCALL_DEFINE2(ustat, unsigned, dev, struct ustat __user *, ubuf)
 	struct ustat tmp;
 	struct kstatfs sbuf;
 	int err = vfs_ustat(new_decode_dev(dev), &sbuf);
+=======
+SYSCALL_DEFINE2(ustat, unsigned, dev, struct ustat __user *, ubuf)
+{
+	struct super_block *s;
+	struct ustat tmp;
+	struct kstatfs sbuf;
+	int err;
+
+	s = user_get_super(new_decode_dev(dev));
+	if (!s)
+		return -EINVAL;
+
+	err = statfs_by_dentry(s->s_root, &sbuf);
+	drop_super(s);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		return err;
 

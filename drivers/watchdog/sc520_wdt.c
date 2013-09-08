@@ -52,8 +52,11 @@
  *  This driver uses memory mapped IO, and spinlock.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/types.h>
@@ -69,6 +72,13 @@
 #include <linux/io.h>
 #include <linux/uaccess.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+
+#define OUR_NAME "sc520_wdt"
+#define PFX OUR_NAME ": "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * The AMD Elan SC520 timeout value is 492us times a power of 2 (0-7)
@@ -96,8 +106,13 @@ MODULE_PARM_DESC(timeout,
 	"Watchdog timeout in seconds. (1 <= timeout <= 3600, default="
 				__MODULE_STRING(WATCHDOG_TIMEOUT) ")");
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 module_param(nowayout, bool, 0);
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout,
 		"Watchdog cannot be stopped once started (default="
 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
@@ -149,7 +164,12 @@ static void wdt_timer_ping(unsigned long data)
 		/* Re-set the timer interval */
 		mod_timer(&timer, jiffies + WDT_INTERVAL);
 	} else
+<<<<<<< HEAD
 		pr_warn("Heartbeat lost! Will not ping the watchdog\n");
+=======
+		printk(KERN_WARNING PFX
+			"Heartbeat lost! Will not ping the watchdog\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -184,7 +204,11 @@ static int wdt_startup(void)
 	/* Start the watchdog */
 	wdt_config(WDT_ENB | WDT_WRST_ENB | WDT_EXP_SEL_04);
 
+<<<<<<< HEAD
 	pr_info("Watchdog timer is now enabled\n");
+=======
+	printk(KERN_INFO PFX "Watchdog timer is now enabled.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -196,7 +220,11 @@ static int wdt_turnoff(void)
 	/* Stop the watchdog */
 	wdt_config(0);
 
+<<<<<<< HEAD
 	pr_info("Watchdog timer is now disabled...\n");
+=======
+	printk(KERN_INFO PFX "Watchdog timer is now disabled...\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -267,7 +295,12 @@ static int fop_close(struct inode *inode, struct file *file)
 	if (wdt_expect_close == 42)
 		wdt_turnoff();
 	else {
+<<<<<<< HEAD
 		pr_crit("Unexpected close, not stopping watchdog!\n");
+=======
+		printk(KERN_CRIT PFX
+			"Unexpected close, not stopping watchdog!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wdt_keepalive();
 	}
 	clear_bit(0, &wdt_is_open);
@@ -389,6 +422,7 @@ static int __init sc520_wdt_init(void)
 	   if not reset to the default */
 	if (wdt_set_heartbeat(timeout)) {
 		wdt_set_heartbeat(WATCHDOG_TIMEOUT);
+<<<<<<< HEAD
 		pr_info("timeout value must be 1 <= timeout <= 3600, using %d\n",
 			WATCHDOG_TIMEOUT);
 	}
@@ -396,18 +430,34 @@ static int __init sc520_wdt_init(void)
 	wdtmrctl = ioremap(MMCR_BASE + OFFS_WDTMRCTL, 2);
 	if (!wdtmrctl) {
 		pr_err("Unable to remap memory\n");
+=======
+		printk(KERN_INFO PFX
+		    "timeout value must be 1 <= timeout <= 3600, using %d\n",
+							WATCHDOG_TIMEOUT);
+	}
+
+	wdtmrctl = ioremap((unsigned long)(MMCR_BASE + OFFS_WDTMRCTL), 2);
+	if (!wdtmrctl) {
+		printk(KERN_ERR PFX "Unable to remap memory\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -ENOMEM;
 		goto err_out_region2;
 	}
 
 	rc = register_reboot_notifier(&wdt_notifier);
 	if (rc) {
+<<<<<<< HEAD
 		pr_err("cannot register reboot notifier (err=%d)\n", rc);
+=======
+		printk(KERN_ERR PFX
+			"cannot register reboot notifier (err=%d)\n", rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_out_ioremap;
 	}
 
 	rc = misc_register(&wdt_miscdev);
 	if (rc) {
+<<<<<<< HEAD
 		pr_err("cannot register miscdev on minor=%d (err=%d)\n",
 		       WATCHDOG_MINOR, rc);
 		goto err_out_notifier;
@@ -415,6 +465,17 @@ static int __init sc520_wdt_init(void)
 
 	pr_info("WDT driver for SC520 initialised. timeout=%d sec (nowayout=%d)\n",
 		timeout, nowayout);
+=======
+		printk(KERN_ERR PFX
+			"cannot register miscdev on minor=%d (err=%d)\n",
+							WATCHDOG_MINOR, rc);
+		goto err_out_notifier;
+	}
+
+	printk(KERN_INFO PFX
+	   "WDT driver for SC520 initialised. timeout=%d sec (nowayout=%d)\n",
+							timeout, nowayout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 

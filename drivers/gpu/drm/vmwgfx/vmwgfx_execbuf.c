@@ -44,6 +44,7 @@ static int vmw_cmd_ok(struct vmw_private *dev_priv,
 	return 0;
 }
 
+<<<<<<< HEAD
 static void vmw_resource_to_validate_list(struct vmw_sw_context *sw_context,
 					  struct vmw_resource **p_res)
 {
@@ -103,12 +104,17 @@ static int vmw_bo_to_validate_list(struct vmw_sw_context *sw_context,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int vmw_cmd_cid_check(struct vmw_private *dev_priv,
 			     struct vmw_sw_context *sw_context,
 			     SVGA3dCmdHeader *header)
 {
+<<<<<<< HEAD
 	struct vmw_resource *ctx;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct vmw_cid_cmd {
 		SVGA3dCmdHeader header;
 		__le32 cid;
@@ -119,8 +125,12 @@ static int vmw_cmd_cid_check(struct vmw_private *dev_priv,
 	if (likely(sw_context->cid_valid && cmd->cid == sw_context->last_cid))
 		return 0;
 
+<<<<<<< HEAD
 	ret = vmw_context_check(dev_priv, sw_context->tfile, cmd->cid,
 				&ctx);
+=======
+	ret = vmw_context_check(dev_priv, sw_context->tfile, cmd->cid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(ret != 0)) {
 		DRM_ERROR("Could not find or use context %u\n",
 			  (unsigned) cmd->cid);
@@ -129,8 +139,11 @@ static int vmw_cmd_cid_check(struct vmw_private *dev_priv,
 
 	sw_context->last_cid = cmd->cid;
 	sw_context->cid_valid = true;
+<<<<<<< HEAD
 	sw_context->cur_ctx = ctx;
 	vmw_resource_to_validate_list(sw_context, &ctx);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -139,6 +152,7 @@ static int vmw_cmd_sid_check(struct vmw_private *dev_priv,
 			     struct vmw_sw_context *sw_context,
 			     uint32_t *sid)
 {
+<<<<<<< HEAD
 	struct vmw_surface *srf;
 	int ret;
 	struct vmw_resource *res;
@@ -178,6 +192,31 @@ static int vmw_cmd_sid_check(struct vmw_private *dev_priv,
 
 	res = &srf->res;
 	vmw_resource_to_validate_list(sw_context, &res);
+=======
+	if (*sid == SVGA3D_INVALID_ID)
+		return 0;
+
+	if (unlikely((!sw_context->sid_valid  ||
+		      *sid != sw_context->last_sid))) {
+		int real_id;
+		int ret = vmw_surface_check(dev_priv, sw_context->tfile,
+					    *sid, &real_id);
+
+		if (unlikely(ret != 0)) {
+			DRM_ERROR("Could ot find or use surface 0x%08x "
+				  "address 0x%08lx\n",
+				  (unsigned int) *sid,
+				  (unsigned long) sid);
+			return ret;
+		}
+
+		sw_context->last_sid = *sid;
+		sw_context->sid_valid = true;
+		*sid = real_id;
+		sw_context->sid_translation = real_id;
+	} else
+		*sid = sw_context->sid_translation;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -246,12 +285,15 @@ static int vmw_cmd_blt_surf_screen_check(struct vmw_private *dev_priv,
 	} *cmd;
 
 	cmd = container_of(header, struct vmw_sid_cmd, header);
+<<<<<<< HEAD
 
 	if (unlikely(!sw_context->kernel)) {
 		DRM_ERROR("Kernel only SVGA3d command: %u.\n", cmd->header.id);
 		return -EPERM;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return vmw_cmd_sid_check(dev_priv, sw_context, &cmd->body.srcImage.sid);
 }
 
@@ -264,6 +306,7 @@ static int vmw_cmd_present_check(struct vmw_private *dev_priv,
 		SVGA3dCmdPresent body;
 	} *cmd;
 
+<<<<<<< HEAD
 
 	cmd = container_of(header, struct vmw_sid_cmd, header);
 
@@ -437,6 +480,12 @@ static void vmw_query_switch_backoff(struct vmw_sw_context *sw_context)
 	}
 }
 
+=======
+	cmd = container_of(header, struct vmw_sid_cmd, header);
+	return vmw_cmd_sid_check(dev_priv, sw_context, &cmd->body.sid);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int vmw_translate_guest_ptr(struct vmw_private *dev_priv,
 				   struct vmw_sw_context *sw_context,
 				   SVGAGuestPtr *ptr,
@@ -446,6 +495,11 @@ static int vmw_translate_guest_ptr(struct vmw_private *dev_priv,
 	struct ttm_buffer_object *bo;
 	uint32_t handle = ptr->gmrId;
 	struct vmw_relocation *reloc;
+<<<<<<< HEAD
+=======
+	uint32_t cur_validate_node;
+	struct ttm_validate_buffer *val_buf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	ret = vmw_user_dmabuf_lookup(sw_context->tfile, handle, &vmw_bo);
@@ -465,11 +519,30 @@ static int vmw_translate_guest_ptr(struct vmw_private *dev_priv,
 	reloc = &sw_context->relocs[sw_context->cur_reloc++];
 	reloc->location = ptr;
 
+<<<<<<< HEAD
 	ret = vmw_bo_to_validate_list(sw_context, bo, DRM_VMW_FENCE_FLAG_EXEC,
 				      &reloc->index);
 	if (unlikely(ret != 0))
 		goto out_no_reloc;
 
+=======
+	cur_validate_node = vmw_dmabuf_validate_node(bo, sw_context->cur_val_buf);
+	if (unlikely(cur_validate_node >= VMWGFX_MAX_GMRS)) {
+		DRM_ERROR("Max number of DMA buffers per submission"
+			  " exceeded.\n");
+		ret = -EINVAL;
+		goto out_no_reloc;
+	}
+
+	reloc->index = cur_validate_node;
+	if (unlikely(cur_validate_node == sw_context->cur_val_buf)) {
+		val_buf = &sw_context->val_bufs[cur_validate_node];
+		val_buf->bo = ttm_bo_reference(bo);
+		val_buf->new_sync_obj_arg = (void *) dev_priv;
+		list_add_tail(&val_buf->head, &sw_context->validate_nodes);
+		++sw_context->cur_val_buf;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*vmw_bo_p = vmw_bo;
 	return 0;
 
@@ -501,11 +574,16 @@ static int vmw_cmd_end_query(struct vmw_private *dev_priv,
 	if (unlikely(ret != 0))
 		return ret;
 
+<<<<<<< HEAD
 	ret = vmw_query_bo_switch_prepare(dev_priv, cmd->q.cid,
 					  &vmw_bo->base, sw_context);
 
 	vmw_dmabuf_unreference(&vmw_bo);
 	return ret;
+=======
+	vmw_dmabuf_unreference(&vmw_bo);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int vmw_cmd_wait_query(struct vmw_private *dev_priv,
@@ -518,7 +596,10 @@ static int vmw_cmd_wait_query(struct vmw_private *dev_priv,
 		SVGA3dCmdWaitForQuery q;
 	} *cmd;
 	int ret;
+<<<<<<< HEAD
 	struct vmw_resource *ctx;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cmd = container_of(header, struct vmw_query_cmd, header);
 	ret = vmw_cmd_cid_check(dev_priv, sw_context, header);
@@ -532,6 +613,7 @@ static int vmw_cmd_wait_query(struct vmw_private *dev_priv,
 		return ret;
 
 	vmw_dmabuf_unreference(&vmw_bo);
+<<<<<<< HEAD
 
 	/*
 	 * This wait will act as a barrier for previous waits for this
@@ -545,6 +627,12 @@ static int vmw_cmd_wait_query(struct vmw_private *dev_priv,
 	return 0;
 }
 
+=======
+	return 0;
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int vmw_cmd_dma(struct vmw_private *dev_priv,
 		       struct vmw_sw_context *sw_context,
 		       SVGA3dCmdHeader *header)
@@ -557,7 +645,10 @@ static int vmw_cmd_dma(struct vmw_private *dev_priv,
 		SVGA3dCmdSurfaceDMA dma;
 	} *cmd;
 	int ret;
+<<<<<<< HEAD
 	struct vmw_resource *res;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cmd = container_of(header, struct vmw_dma_cmd, header);
 	ret = vmw_translate_guest_ptr(dev_priv, sw_context,
@@ -574,6 +665,7 @@ static int vmw_cmd_dma(struct vmw_private *dev_priv,
 		goto out_no_reloc;
 	}
 
+<<<<<<< HEAD
 	ret = vmw_surface_validate(dev_priv, srf);
 	if (unlikely(ret != 0)) {
 		if (ret != -ERESTARTSYS)
@@ -596,6 +688,20 @@ static int vmw_cmd_dma(struct vmw_private *dev_priv,
 
 out_no_validate:
 	vmw_surface_unreference(&srf);
+=======
+	/**
+	 * Patch command stream with device SID.
+	 */
+
+	cmd->dma.host.sid = srf->res.id;
+	vmw_kms_cursor_snoop(srf, sw_context->tfile, bo, header);
+	/**
+	 * FIXME: May deadlock here when called from the
+	 * command parsing code.
+	 */
+	vmw_surface_unreference(&srf);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_no_reloc:
 	vmw_dmabuf_unreference(&vmw_bo);
 	return ret;
@@ -685,6 +791,7 @@ static int vmw_cmd_tex_state(struct vmw_private *dev_priv,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int vmw_cmd_check_define_gmrfb(struct vmw_private *dev_priv,
 				      struct vmw_sw_context *sw_context,
 				      void *buf)
@@ -750,6 +857,8 @@ static int vmw_cmd_check_not_3d(struct vmw_private *dev_priv,
 
 	return 0;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef int (*vmw_cmd_func) (struct vmw_private *,
 			     struct vmw_sw_context *,
@@ -802,11 +911,19 @@ static int vmw_cmd_check(struct vmw_private *dev_priv,
 	SVGA3dCmdHeader *header = (SVGA3dCmdHeader *) buf;
 	int ret;
 
+<<<<<<< HEAD
 	cmd_id = le32_to_cpu(((uint32_t *)buf)[0]);
 	/* Handle any none 3D commands */
 	if (unlikely(cmd_id < SVGA_CMD_MAX))
 		return vmw_cmd_check_not_3d(dev_priv, sw_context, buf, size);
 
+=======
+	cmd_id = ((uint32_t *)buf)[0];
+	if (cmd_id == SVGA_CMD_UPDATE) {
+		*size = 5 << 2;
+		return 0;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cmd_id = le32_to_cpu(header->id);
 	*size = le32_to_cpu(header->size) + sizeof(SVGA3dCmdHeader);
@@ -831,8 +948,12 @@ out_err:
 
 static int vmw_cmd_check_all(struct vmw_private *dev_priv,
 			     struct vmw_sw_context *sw_context,
+<<<<<<< HEAD
 			     void *buf,
 			     uint32_t size)
+=======
+			     void *buf, uint32_t size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int32_t cur_size = size;
 	int ret;
@@ -882,11 +1003,15 @@ static void vmw_apply_relocations(struct vmw_sw_context *sw_context)
 static void vmw_clear_validations(struct vmw_sw_context *sw_context)
 {
 	struct ttm_validate_buffer *entry, *next;
+<<<<<<< HEAD
 	struct vmw_resource *res, *res_next;
 
 	/*
 	 * Drop references to DMA buffers held during command submission.
 	 */
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry_safe(entry, next, &sw_context->validate_nodes,
 				 head) {
 		list_del(&entry->head);
@@ -895,6 +1020,7 @@ static void vmw_clear_validations(struct vmw_sw_context *sw_context)
 		sw_context->cur_val_buf--;
 	}
 	BUG_ON(sw_context->cur_val_buf != 0);
+<<<<<<< HEAD
 
 	/*
 	 * Drop references to resources held during command submission.
@@ -905,6 +1031,8 @@ static void vmw_clear_validations(struct vmw_sw_context *sw_context)
 		list_del_init(&res->validate_head);
 		vmw_resource_unreference(&res);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int vmw_validate_single_buffer(struct vmw_private *dev_priv,
@@ -912,6 +1040,7 @@ static int vmw_validate_single_buffer(struct vmw_private *dev_priv,
 {
 	int ret;
 
+<<<<<<< HEAD
 
 	/*
 	 * Don't validate pinned buffers.
@@ -922,6 +1051,8 @@ static int vmw_validate_single_buffer(struct vmw_private *dev_priv,
 	     dev_priv->dummy_query_bo_pinned))
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/**
 	 * Put BO in VRAM if there is space, otherwise as a GMR.
 	 * If there is no space in VRAM and GMR ids are all used up,
@@ -958,6 +1089,7 @@ static int vmw_validate_buffers(struct vmw_private *dev_priv,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int vmw_resize_cmd_bounce(struct vmw_sw_context *sw_context,
 				 uint32_t size)
 {
@@ -1141,12 +1273,54 @@ int vmw_execbuf_process(struct drm_file *file_priv,
 		kernel_commands = sw_context->cmd_bounce;
 	} else
 		sw_context->kernel = true;
+=======
+int vmw_execbuf_ioctl(struct drm_device *dev, void *data,
+		      struct drm_file *file_priv)
+{
+	struct vmw_private *dev_priv = vmw_priv(dev);
+	struct drm_vmw_execbuf_arg *arg = (struct drm_vmw_execbuf_arg *)data;
+	struct drm_vmw_fence_rep fence_rep;
+	struct drm_vmw_fence_rep __user *user_fence_rep;
+	int ret;
+	void *user_cmd;
+	void *cmd;
+	uint32_t sequence;
+	struct vmw_sw_context *sw_context = &dev_priv->ctx;
+	struct vmw_master *vmaster = vmw_master(file_priv->master);
+
+	ret = ttm_read_lock(&vmaster->lock, true);
+	if (unlikely(ret != 0))
+		return ret;
+
+	ret = mutex_lock_interruptible(&dev_priv->cmdbuf_mutex);
+	if (unlikely(ret != 0)) {
+		ret = -ERESTARTSYS;
+		goto out_no_cmd_mutex;
+	}
+
+	cmd = vmw_fifo_reserve(dev_priv, arg->command_size);
+	if (unlikely(cmd == NULL)) {
+		DRM_ERROR("Failed reserving fifo space for commands.\n");
+		ret = -ENOMEM;
+		goto out_unlock;
+	}
+
+	user_cmd = (void __user *)(unsigned long)arg->commands;
+	ret = copy_from_user(cmd, user_cmd, arg->command_size);
+
+	if (unlikely(ret != 0)) {
+		ret = -EFAULT;
+		DRM_ERROR("Failed copying commands.\n");
+		goto out_commit;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sw_context->tfile = vmw_fpriv(file_priv)->tfile;
 	sw_context->cid_valid = false;
 	sw_context->sid_valid = false;
 	sw_context->cur_reloc = 0;
 	sw_context->cur_val_buf = 0;
+<<<<<<< HEAD
 	sw_context->fence_flags = 0;
 	INIT_LIST_HEAD(&sw_context->query_list);
 	INIT_LIST_HEAD(&sw_context->resource_list);
@@ -1161,6 +1335,14 @@ int vmw_execbuf_process(struct drm_file *file_priv,
 	if (unlikely(ret != 0))
 		goto out_err;
 
+=======
+
+	INIT_LIST_HEAD(&sw_context->validate_nodes);
+
+	ret = vmw_cmd_check_all(dev_priv, sw_context, cmd, arg->command_size);
+	if (unlikely(ret != 0))
+		goto out_err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = ttm_eu_reserve_buffers(&sw_context->validate_nodes);
 	if (unlikely(ret != 0))
 		goto out_err;
@@ -1171,6 +1353,7 @@ int vmw_execbuf_process(struct drm_file *file_priv,
 
 	vmw_apply_relocations(sw_context);
 
+<<<<<<< HEAD
 	if (throttle_us) {
 		ret = vmw_wait_lag(dev_priv, &dev_priv->fifo.marker_queue,
 				   throttle_us);
@@ -1197,11 +1380,34 @@ int vmw_execbuf_process(struct drm_file *file_priv,
 	 * This error is harmless, because if fence submission fails,
 	 * vmw_fifo_send_fence will sync. The error will be propagated to
 	 * user-space in @fence_rep
+=======
+	if (arg->throttle_us) {
+		ret = vmw_wait_lag(dev_priv, &dev_priv->fifo.fence_queue,
+				   arg->throttle_us);
+
+		if (unlikely(ret != 0))
+			goto out_err;
+	}
+
+	vmw_fifo_commit(dev_priv, arg->command_size);
+
+	ret = vmw_fifo_send_fence(dev_priv, &sequence);
+
+	ttm_eu_fence_buffer_objects(&sw_context->validate_nodes,
+				    (void *)(unsigned long) sequence);
+	vmw_clear_validations(sw_context);
+	mutex_unlock(&dev_priv->cmdbuf_mutex);
+
+	/*
+	 * This error is harmless, because if fence submission fails,
+	 * vmw_fifo_send_fence will sync.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 
 	if (ret != 0)
 		DRM_ERROR("Fence submission error. Syncing.\n");
 
+<<<<<<< HEAD
 	ttm_eu_fence_buffer_objects(&sw_context->validate_nodes,
 				    (void *) fence);
 
@@ -1377,6 +1583,34 @@ int vmw_execbuf_ioctl(struct drm_device *dev, void *data,
 	vmw_kms_cursor_post_execbuf(dev_priv);
 
 out_unlock:
+=======
+	fence_rep.error = ret;
+	fence_rep.fence_seq = (uint64_t) sequence;
+	fence_rep.pad64 = 0;
+
+	user_fence_rep = (struct drm_vmw_fence_rep __user *)
+	    (unsigned long)arg->fence_rep;
+
+	/*
+	 * copy_to_user errors will be detected by user space not
+	 * seeing fence_rep::error filled in.
+	 */
+
+	ret = copy_to_user(user_fence_rep, &fence_rep, sizeof(fence_rep));
+
+	vmw_kms_cursor_post_execbuf(dev_priv);
+	ttm_read_unlock(&vmaster->lock);
+	return 0;
+out_err:
+	vmw_free_relocations(sw_context);
+	ttm_eu_backoff_reservation(&sw_context->validate_nodes);
+	vmw_clear_validations(sw_context);
+out_commit:
+	vmw_fifo_commit(dev_priv, 0);
+out_unlock:
+	mutex_unlock(&dev_priv->cmdbuf_mutex);
+out_no_cmd_mutex:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ttm_read_unlock(&vmaster->lock);
 	return ret;
 }

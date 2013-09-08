@@ -215,7 +215,11 @@ static int read_smc(u8 cmd, const char *key, u8 *buffer, u8 len)
 	int i;
 
 	if (send_command(cmd) || send_argument(key)) {
+<<<<<<< HEAD
 		pr_warn("%.4s: read arg fail\n", key);
+=======
+		pr_warn("%s: read arg fail\n", key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	}
 
@@ -223,7 +227,11 @@ static int read_smc(u8 cmd, const char *key, u8 *buffer, u8 len)
 
 	for (i = 0; i < len; i++) {
 		if (__wait_status(0x05)) {
+<<<<<<< HEAD
 			pr_warn("%.4s: read data fail\n", key);
+=======
+			pr_warn("%s: read data fail\n", key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EIO;
 		}
 		buffer[i] = inb(APPLESMC_DATA_PORT);
@@ -344,10 +352,15 @@ static int applesmc_get_lower_bound(unsigned int *lo, const char *key)
 	while (begin != end) {
 		int middle = begin + (end - begin) / 2;
 		entry = applesmc_get_entry_by_index(middle);
+<<<<<<< HEAD
 		if (IS_ERR(entry)) {
 			*lo = 0;
 			return PTR_ERR(entry);
 		}
+=======
+		if (IS_ERR(entry))
+			return PTR_ERR(entry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (strcmp(entry->key, key) < 0)
 			begin = middle + 1;
 		else
@@ -366,10 +379,15 @@ static int applesmc_get_upper_bound(unsigned int *hi, const char *key)
 	while (begin != end) {
 		int middle = begin + (end - begin) / 2;
 		entry = applesmc_get_entry_by_index(middle);
+<<<<<<< HEAD
 		if (IS_ERR(entry)) {
 			*hi = smcreg.key_count;
 			return PTR_ERR(entry);
 		}
+=======
+		if (IS_ERR(entry))
+			return PTR_ERR(entry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (strcmp(key, entry->key) < 0)
 			end = middle;
 		else
@@ -489,13 +507,17 @@ static int applesmc_init_smcreg_try(void)
 {
 	struct applesmc_registers *s = &smcreg;
 	bool left_light_sensor, right_light_sensor;
+<<<<<<< HEAD
 	unsigned int count;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 tmp[1];
 	int ret;
 
 	if (s->init_complete)
 		return 0;
 
+<<<<<<< HEAD
 	ret = read_register_count(&count);
 	if (ret)
 		return ret;
@@ -508,6 +530,12 @@ static int applesmc_init_smcreg_try(void)
 	}
 	s->key_count = count;
 
+=======
+	ret = read_register_count(&s->key_count);
+	if (ret)
+		return ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!s->cache)
 		s->cache = kcalloc(s->key_count, sizeof(*s->cache), GFP_KERNEL);
 	if (!s->cache)
@@ -795,7 +823,11 @@ static ssize_t applesmc_store_fan_speed(struct device *dev,
 	char newkey[5];
 	u8 buffer[2];
 
+<<<<<<< HEAD
 	if (kstrtoul(sysfsbuf, 10, &speed) < 0 || speed >= 0x4000)
+=======
+	if (strict_strtoul(sysfsbuf, 10, &speed) < 0 || speed >= 0x4000)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;		/* Bigger than a 14-bit value */
 
 	sprintf(newkey, fan_speed_fmt[to_option(attr)], to_index(attr));
@@ -835,7 +867,11 @@ static ssize_t applesmc_store_fan_manual(struct device *dev,
 	unsigned long input;
 	u16 val;
 
+<<<<<<< HEAD
 	if (kstrtoul(sysfsbuf, 10, &input) < 0)
+=======
+	if (strict_strtoul(sysfsbuf, 10, &input) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	ret = applesmc_read_key(FANS_MANUAL, buffer, 2);
@@ -990,7 +1026,11 @@ static ssize_t applesmc_key_at_index_store(struct device *dev,
 {
 	unsigned long newkey;
 
+<<<<<<< HEAD
 	if (kstrtoul(sysfsbuf, 10, &newkey) < 0
+=======
+	if (strict_strtoul(sysfsbuf, 10, &newkey) < 0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    || newkey >= smcreg.key_count)
 		return -EINVAL;
 
@@ -1202,10 +1242,15 @@ static int applesmc_dmi_match(const struct dmi_system_id *id)
 	return 1;
 }
 
+<<<<<<< HEAD
 /*
  * Note that DMI_MATCH(...,"MacBook") will match "MacBookPro1,1".
  * So we need to put "Apple MacBook Pro" before "Apple MacBook".
  */
+=======
+/* Note that DMI_MATCH(...,"MacBook") will match "MacBookPro1,1".
+ * So we need to put "Apple MacBook Pro" before "Apple MacBook". */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __initdata struct dmi_system_id applesmc_whitelist[] = {
 	{ applesmc_dmi_match, "Apple MacBook Air", {
 	  DMI_MATCH(DMI_BOARD_VENDOR, "Apple"),

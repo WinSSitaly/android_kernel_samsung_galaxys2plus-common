@@ -122,9 +122,15 @@ static int get_valid_cis_sector(struct mtd_info *mtd)
 	 * is not SSFDC formatted
 	 */
 	for (k = 0, offset = 0; k < 4; k++, offset += mtd->erasesize) {
+<<<<<<< HEAD
 		if (mtd_block_isbad(mtd, offset)) {
 			ret = mtd_read(mtd, offset, SECTOR_SIZE, &retlen,
 				       sect_buf);
+=======
+		if (!mtd->block_isbad(mtd, offset)) {
+			ret = mtd->read(mtd, offset, SECTOR_SIZE, &retlen,
+				sect_buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* CIS pattern match on the sector buffer */
 			if (ret < 0 || retlen != SECTOR_SIZE) {
@@ -135,7 +141,12 @@ static int get_valid_cis_sector(struct mtd_info *mtd)
 				/* Found */
 				cis_sector = (int)(offset >> SECTOR_SHIFT);
 			} else {
+<<<<<<< HEAD
 				pr_debug("SSFDC_RO: CIS/IDI sector not found"
+=======
+				DEBUG(MTD_DEBUG_LEVEL1,
+					"SSFDC_RO: CIS/IDI sector not found"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					" on %s (mtd%d)\n", mtd->name,
 					mtd->index);
 			}
@@ -156,7 +167,11 @@ static int read_physical_sector(struct mtd_info *mtd, uint8_t *sect_buf,
 	size_t retlen;
 	loff_t offset = (loff_t)sect_no << SECTOR_SHIFT;
 
+<<<<<<< HEAD
 	ret = mtd_read(mtd, offset, SECTOR_SIZE, &retlen, sect_buf);
+=======
+	ret = mtd->read(mtd, offset, SECTOR_SIZE, &retlen, sect_buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0 || retlen != SECTOR_SIZE)
 		return -1;
 
@@ -169,13 +184,21 @@ static int read_raw_oob(struct mtd_info *mtd, loff_t offs, uint8_t *buf)
 	struct mtd_oob_ops ops;
 	int ret;
 
+<<<<<<< HEAD
 	ops.mode = MTD_OPS_RAW;
+=======
+	ops.mode = MTD_OOB_RAW;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ops.ooboffs = 0;
 	ops.ooblen = OOB_SIZE;
 	ops.oobbuf = buf;
 	ops.datbuf = NULL;
 
+<<<<<<< HEAD
 	ret = mtd_read_oob(mtd, offs, &ops);
+=======
+	ret = mtd->read_oob(mtd, offs, &ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0 || ops.oobretlen != OOB_SIZE)
 		return -1;
 
@@ -220,7 +243,12 @@ static int get_logical_address(uint8_t *oob_buf)
 			block_address >>= 1;
 
 			if (get_parity(block_address, 10) != parity) {
+<<<<<<< HEAD
 				pr_debug("SSFDC_RO: logical address field%d"
+=======
+				DEBUG(MTD_DEBUG_LEVEL0,
+					"SSFDC_RO: logical address field%d"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"parity error(0x%04X)\n", j+1,
 					block_address);
 			} else {
@@ -233,7 +261,11 @@ static int get_logical_address(uint8_t *oob_buf)
 	if (!ok)
 		block_address = -2;
 
+<<<<<<< HEAD
 	pr_debug("SSFDC_RO: get_logical_address() %d\n",
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "SSFDC_RO: get_logical_address() %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		block_address);
 
 	return block_address;
@@ -247,7 +279,11 @@ static int build_logical_block_map(struct ssfdcr_record *ssfdc)
 	int ret, block_address, phys_block;
 	struct mtd_info *mtd = ssfdc->mbd.mtd;
 
+<<<<<<< HEAD
 	pr_debug("SSFDC_RO: build_block_map() nblks=%d (%luK)\n",
+=======
+	DEBUG(MTD_DEBUG_LEVEL1, "SSFDC_RO: build_block_map() nblks=%d (%luK)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	      ssfdc->map_len,
 	      (unsigned long)ssfdc->map_len * ssfdc->erase_size / 1024);
 
@@ -255,12 +291,21 @@ static int build_logical_block_map(struct ssfdcr_record *ssfdc)
 	for (phys_block = ssfdc->cis_block + 1; phys_block < ssfdc->map_len;
 			phys_block++) {
 		offset = (unsigned long)phys_block * ssfdc->erase_size;
+<<<<<<< HEAD
 		if (mtd_block_isbad(mtd, offset))
+=======
+		if (mtd->block_isbad(mtd, offset))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;	/* skip bad blocks */
 
 		ret = read_raw_oob(mtd, offset, oob_buf);
 		if (ret < 0) {
+<<<<<<< HEAD
 			pr_debug("SSFDC_RO: mtd read_oob() failed at %lu\n",
+=======
+			DEBUG(MTD_DEBUG_LEVEL0,
+				"SSFDC_RO: mtd read_oob() failed at %lu\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				offset);
 			return -1;
 		}
@@ -276,7 +321,12 @@ static int build_logical_block_map(struct ssfdcr_record *ssfdc)
 			ssfdc->logic_block_map[block_address] =
 				(unsigned short)phys_block;
 
+<<<<<<< HEAD
 			pr_debug("SSFDC_RO: build_block_map() phys_block=%d,"
+=======
+			DEBUG(MTD_DEBUG_LEVEL2,
+				"SSFDC_RO: build_block_map() phys_block=%d,"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"logic_block_addr=%d, zone=%d\n",
 				phys_block, block_address, zone_index);
 		}
@@ -300,8 +350,16 @@ static void ssfdcr_add_mtd(struct mtd_blktrans_ops *tr, struct mtd_info *mtd)
 		return;
 
 	ssfdc = kzalloc(sizeof(struct ssfdcr_record), GFP_KERNEL);
+<<<<<<< HEAD
 	if (!ssfdc)
 		return;
+=======
+	if (!ssfdc) {
+		printk(KERN_WARNING
+			"SSFDC_RO: out of memory for data structures\n");
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ssfdc->mbd.mtd = mtd;
 	ssfdc->mbd.devnum = -1;
@@ -312,7 +370,12 @@ static void ssfdcr_add_mtd(struct mtd_blktrans_ops *tr, struct mtd_info *mtd)
 	ssfdc->erase_size = mtd->erasesize;
 	ssfdc->map_len = (u32)mtd->size / mtd->erasesize;
 
+<<<<<<< HEAD
 	pr_debug("SSFDC_RO: cis_block=%d,erase_size=%d,map_len=%d,n_zones=%d\n",
+=======
+	DEBUG(MTD_DEBUG_LEVEL1,
+		"SSFDC_RO: cis_block=%d,erase_size=%d,map_len=%d,n_zones=%d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ssfdc->cis_block, ssfdc->erase_size, ssfdc->map_len,
 		DIV_ROUND_UP(ssfdc->map_len, MAX_PHYS_BLK_PER_ZONE));
 
@@ -323,7 +386,11 @@ static void ssfdcr_add_mtd(struct mtd_blktrans_ops *tr, struct mtd_info *mtd)
 	ssfdc->cylinders = (unsigned short)(((u32)mtd->size >> SECTOR_SHIFT) /
 			((long)ssfdc->sectors * (long)ssfdc->heads));
 
+<<<<<<< HEAD
 	pr_debug("SSFDC_RO: using C:%d H:%d S:%d == %ld sects\n",
+=======
+	DEBUG(MTD_DEBUG_LEVEL1, "SSFDC_RO: using C:%d H:%d S:%d == %ld sects\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ssfdc->cylinders, ssfdc->heads , ssfdc->sectors,
 		(long)ssfdc->cylinders * (long)ssfdc->heads *
 		(long)ssfdc->sectors);
@@ -334,8 +401,16 @@ static void ssfdcr_add_mtd(struct mtd_blktrans_ops *tr, struct mtd_info *mtd)
 	/* Allocate logical block map */
 	ssfdc->logic_block_map = kmalloc(sizeof(ssfdc->logic_block_map[0]) *
 					 ssfdc->map_len, GFP_KERNEL);
+<<<<<<< HEAD
 	if (!ssfdc->logic_block_map)
 		goto out_err;
+=======
+	if (!ssfdc->logic_block_map) {
+		printk(KERN_WARNING
+			"SSFDC_RO: out of memory for data structures\n");
+		goto out_err;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(ssfdc->logic_block_map, 0xff, sizeof(ssfdc->logic_block_map[0]) *
 		ssfdc->map_len);
 
@@ -360,7 +435,11 @@ static void ssfdcr_remove_dev(struct mtd_blktrans_dev *dev)
 {
 	struct ssfdcr_record *ssfdc = (struct ssfdcr_record *)dev;
 
+<<<<<<< HEAD
 	pr_debug("SSFDC_RO: remove_dev (i=%d)\n", dev->devnum);
+=======
+	DEBUG(MTD_DEBUG_LEVEL1, "SSFDC_RO: remove_dev (i=%d)\n", dev->devnum);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	del_mtd_blktrans_dev(dev);
 	kfree(ssfdc->logic_block_map);
@@ -376,7 +455,12 @@ static int ssfdcr_readsect(struct mtd_blktrans_dev *dev,
 	offset = (int)(logic_sect_no % sectors_per_block);
 	block_address = (int)(logic_sect_no / sectors_per_block);
 
+<<<<<<< HEAD
 	pr_debug("SSFDC_RO: ssfdcr_readsect(%lu) sec_per_blk=%d, ofst=%d,"
+=======
+	DEBUG(MTD_DEBUG_LEVEL3,
+		"SSFDC_RO: ssfdcr_readsect(%lu) sec_per_blk=%d, ofst=%d,"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		" block_addr=%d\n", logic_sect_no, sectors_per_block, offset,
 		block_address);
 
@@ -385,7 +469,12 @@ static int ssfdcr_readsect(struct mtd_blktrans_dev *dev,
 
 	block_address = ssfdc->logic_block_map[block_address];
 
+<<<<<<< HEAD
 	pr_debug("SSFDC_RO: ssfdcr_readsect() phys_block_addr=%d\n",
+=======
+	DEBUG(MTD_DEBUG_LEVEL3,
+		"SSFDC_RO: ssfdcr_readsect() phys_block_addr=%d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		block_address);
 
 	if (block_address < 0xffff) {
@@ -394,7 +483,12 @@ static int ssfdcr_readsect(struct mtd_blktrans_dev *dev,
 		sect_no = (unsigned long)block_address * sectors_per_block +
 				offset;
 
+<<<<<<< HEAD
 		pr_debug("SSFDC_RO: ssfdcr_readsect() phys_sect_no=%lu\n",
+=======
+		DEBUG(MTD_DEBUG_LEVEL3,
+			"SSFDC_RO: ssfdcr_readsect() phys_sect_no=%lu\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sect_no);
 
 		if (read_physical_sector(ssfdc->mbd.mtd, buf, sect_no) < 0)
@@ -410,7 +504,11 @@ static int ssfdcr_getgeo(struct mtd_blktrans_dev *dev,  struct hd_geometry *geo)
 {
 	struct ssfdcr_record *ssfdc = (struct ssfdcr_record *)dev;
 
+<<<<<<< HEAD
 	pr_debug("SSFDC_RO: ssfdcr_getgeo() C=%d, H=%d, S=%d\n",
+=======
+	DEBUG(MTD_DEBUG_LEVEL1, "SSFDC_RO: ssfdcr_getgeo() C=%d, H=%d, S=%d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ssfdc->cylinders, ssfdc->heads, ssfdc->sectors);
 
 	geo->heads = ssfdc->heads;

@@ -43,7 +43,10 @@
 #include <linux/firmware.h>
 #include <linux/completion.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/hw_random.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/cfg80211.h>
 #include <net/mac80211.h>
 #include <linux/usb.h>
@@ -68,8 +71,11 @@
 
 #define PAYLOAD_MAX	(CARL9170_MAX_CMD_LEN / 4 - 1)
 
+<<<<<<< HEAD
 static const u8 ar9170_qmap[__AR9170_NUM_TXQ] = { 3, 2, 1, 0 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum carl9170_rf_init_mode {
 	CARL9170_RFI_NONE,
 	CARL9170_RFI_WARM,
@@ -152,7 +158,10 @@ struct carl9170_sta_tid {
 #define CARL9170_TX_TIMEOUT		2500
 #define CARL9170_JANITOR_DELAY		128
 #define CARL9170_QUEUE_STUCK_TIMEOUT	5500
+<<<<<<< HEAD
 #define CARL9170_STAT_WORK		30000
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define CARL9170_NUM_TX_AGG_MAX		30
 
@@ -179,7 +188,11 @@ struct carl9170_tx_queue_stats {
 
 struct carl9170_vif {
 	unsigned int id;
+<<<<<<< HEAD
 	struct ieee80211_vif __rcu *vif;
+=======
+	struct ieee80211_vif *vif;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct carl9170_vif_info {
@@ -284,7 +297,10 @@ struct ar9170 {
 		bool rx_stream;
 		bool tx_stream;
 		bool rx_filter;
+<<<<<<< HEAD
 		bool hw_counters;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned int mem_blocks;
 		unsigned int mem_block_size;
 		unsigned int rx_size;
@@ -314,7 +330,11 @@ struct ar9170 {
 	spinlock_t beacon_lock;
 	unsigned int global_pretbtt;
 	unsigned int global_beacon_int;
+<<<<<<< HEAD
 	struct carl9170_vif_info __rcu *beacon_iter;
+=======
+	struct carl9170_vif_info *beacon_iter;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int beacon_enabled;
 
 	/* cryptographic engine */
@@ -334,12 +354,16 @@ struct ar9170 {
 
 	/* PHY */
 	struct ieee80211_channel *channel;
+<<<<<<< HEAD
 	unsigned int num_channels;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int noise[4];
 	unsigned int chan_fail;
 	unsigned int total_chan_fail;
 	u8 heavy_clip;
 	u8 ht_settings;
+<<<<<<< HEAD
 	struct {
 		u64 active;	/* usec */
 		u64 cca;	/* usec */
@@ -349,6 +373,8 @@ struct ar9170 {
 	} tally;
 	struct delayed_work stat_work;
 	struct survey_info *survey;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* power calibration data */
 	u8 power_5G_leg[4];
@@ -402,7 +428,11 @@ struct ar9170 {
 	/* tx ampdu */
 	struct work_struct ampdu_work;
 	spinlock_t tx_ampdu_list_lock;
+<<<<<<< HEAD
 	struct carl9170_sta_tid __rcu *tx_ampdu_iter;
+=======
+	struct carl9170_sta_tid *tx_ampdu_iter;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head tx_ampdu_list;
 	atomic_t tx_ampdu_upload;
 	atomic_t tx_ampdu_scheduler;
@@ -450,6 +480,7 @@ struct ar9170 {
 		unsigned int off_override;
 		bool state;
 	} ps;
+<<<<<<< HEAD
 
 #ifdef CONFIG_CARL9170_HWRNG
 # define CARL9170_HWRNG_CACHE_SIZE	CARL9170_MAX_CMD_PAYLOAD_LEN
@@ -461,11 +492,17 @@ struct ar9170 {
 		unsigned int cache_idx;
 	} rng;
 #endif /* CONFIG_CARL9170_HWRNG */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 enum carl9170_ps_off_override_reasons {
 	PS_OFF_VIF	= BIT(0),
 	PS_OFF_BCN	= BIT(1),
+<<<<<<< HEAD
+=======
+	PS_OFF_5GHZ	= BIT(2),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct carl9170_ba_stats {
@@ -480,7 +517,11 @@ struct carl9170_sta_info {
 	bool sleeping;
 	atomic_t pending_frames;
 	unsigned int ampdu_max_len;
+<<<<<<< HEAD
 	struct carl9170_sta_tid __rcu *agg[CARL9170_NUM_TID];
+=======
+	struct carl9170_sta_tid *agg[CARL9170_NUM_TID];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct carl9170_ba_stats stats[CARL9170_NUM_TID];
 };
 
@@ -556,10 +597,17 @@ int carl9170_set_ampdu_settings(struct ar9170 *ar);
 int carl9170_set_slot_time(struct ar9170 *ar);
 int carl9170_set_mac_rates(struct ar9170 *ar);
 int carl9170_set_hwretry_limit(struct ar9170 *ar, const u32 max_retry);
+<<<<<<< HEAD
 int carl9170_upload_key(struct ar9170 *ar, const u8 id, const u8 *mac,
 	const u8 ktype, const u8 keyidx, const u8 *keydata, const int keylen);
 int carl9170_disable_key(struct ar9170 *ar, const u8 id);
 int carl9170_set_mac_tpc(struct ar9170 *ar, struct ieee80211_channel *channel);
+=======
+int carl9170_update_beacon(struct ar9170 *ar, const bool submit);
+int carl9170_upload_key(struct ar9170 *ar, const u8 id, const u8 *mac,
+	const u8 ktype, const u8 keyidx, const u8 *keydata, const int keylen);
+int carl9170_disable_key(struct ar9170 *ar, const u8 id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* RX */
 void carl9170_rx(struct ar9170 *ar, void *buf, unsigned int len);
@@ -577,7 +625,10 @@ void carl9170_tx_drop(struct ar9170 *ar, struct sk_buff *skb);
 void carl9170_tx_scheduler(struct ar9170 *ar);
 void carl9170_tx_get_skb(struct sk_buff *skb);
 int carl9170_tx_put_skb(struct sk_buff *skb);
+<<<<<<< HEAD
 int carl9170_update_beacon(struct ar9170 *ar, const bool submit);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* LEDs */
 #ifdef CONFIG_CARL9170_LEDS
@@ -594,6 +645,10 @@ int carl9170_get_noisefloor(struct ar9170 *ar);
 
 /* FW */
 int carl9170_parse_firmware(struct ar9170 *ar);
+<<<<<<< HEAD
+=======
+int carl9170_fw_fix_eeprom(struct ar9170 *ar);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern struct ieee80211_rate __carl9170_ratetable[];
 extern int modparam_noht;

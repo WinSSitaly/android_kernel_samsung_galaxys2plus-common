@@ -25,7 +25,10 @@
 #include <linux/interrupt.h>
 #include <asm/mipsregs.h>
 #include <asm/irq_cpu.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <irq.h>
 #include <irq-mapping.h>
 #include <gpio.h>

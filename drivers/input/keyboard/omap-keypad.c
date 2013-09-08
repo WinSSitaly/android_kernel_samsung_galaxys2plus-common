@@ -35,7 +35,11 @@
 #include <linux/mutex.h>
 #include <linux/errno.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <asm/gpio.h>
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/keypad.h>
 #include <plat/menelaus.h>
 #include <asm/irq.h>
@@ -473,7 +477,24 @@ static struct platform_driver omap_kp_driver = {
 		.owner	= THIS_MODULE,
 	},
 };
+<<<<<<< HEAD
 module_platform_driver(omap_kp_driver);
+=======
+
+static int __init omap_kp_init(void)
+{
+	printk(KERN_INFO "OMAP Keypad Driver\n");
+	return platform_driver_register(&omap_kp_driver);
+}
+
+static void __exit omap_kp_exit(void)
+{
+	platform_driver_unregister(&omap_kp_driver);
+}
+
+module_init(omap_kp_init);
+module_exit(omap_kp_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Timo Teräs");
 MODULE_DESCRIPTION("OMAP Keypad Driver");

@@ -43,7 +43,11 @@
 /* This will be overridden by board-specific irq headers */
 #define IRQ_BOARD_END		IRQ_BOARD_START
 
+<<<<<<< HEAD
 #ifdef CONFIG_MACH_MOP500
+=======
+#ifdef CONFIG_MACH_U8500
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/irqs-board-mop500.h>
 #endif
 

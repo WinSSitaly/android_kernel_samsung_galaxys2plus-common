@@ -13,9 +13,17 @@
 #include <sys/socket.h>
 #include <sys/wait.h>
 #include <sys/uio.h>
+<<<<<<< HEAD
 #include "kern_util.h"
 #include "os.h"
 #include "tuntap.h"
+=======
+#include "kern_constants.h"
+#include "kern_util.h"
+#include "os.h"
+#include "tuntap.h"
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int tuntap_user_init(void *data, void *dev)
 {

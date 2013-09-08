@@ -30,8 +30,16 @@
  */
 #define DRIVER_NAME	"onenand-flash"
 
+<<<<<<< HEAD
 struct onenand_info {
 	struct mtd_info		mtd;
+=======
+static const char *part_probes[] = { "cmdlinepart", NULL,  };
+
+struct onenand_info {
+	struct mtd_info		mtd;
+	struct mtd_partition	*parts;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct onenand_chip	onenand;
 };
 
@@ -70,9 +78,19 @@ static int __devinit generic_onenand_probe(struct platform_device *pdev)
 		goto out_iounmap;
 	}
 
+<<<<<<< HEAD
 	err = mtd_device_parse_register(&info->mtd, NULL, NULL,
 					pdata ? pdata->parts : NULL,
 					pdata ? pdata->nr_parts : 0);
+=======
+	err = parse_mtd_partitions(&info->mtd, part_probes, &info->parts, 0);
+	if (err > 0)
+		mtd_device_register(&info->mtd, info->parts, err);
+	else if (err <= 0 && pdata && pdata->parts)
+		mtd_device_register(&info->mtd, pdata->parts, pdata->nr_parts);
+	else
+		err = mtd_device_register(&info->mtd, NULL, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	platform_set_drvdata(pdev, info);
 
@@ -97,6 +115,10 @@ static int __devexit generic_onenand_remove(struct platform_device *pdev)
 	platform_set_drvdata(pdev, NULL);
 
 	if (info) {
+<<<<<<< HEAD
+=======
+		mtd_device_unregister(&info->mtd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		onenand_release(&info->mtd);
 		release_mem_region(res->start, size);
 		iounmap(info->onenand.base);
@@ -115,9 +137,29 @@ static struct platform_driver generic_onenand_driver = {
 	.remove		= __devexit_p(generic_onenand_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(generic_onenand_driver);
+=======
+MODULE_ALIAS("platform:" DRIVER_NAME);
+
+static int __init generic_onenand_init(void)
+{
+	return platform_driver_register(&generic_onenand_driver);
+}
+
+static void __exit generic_onenand_exit(void)
+{
+	platform_driver_unregister(&generic_onenand_driver);
+}
+
+module_init(generic_onenand_init);
+module_exit(generic_onenand_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Kyungmin Park <kyungmin.park@samsung.com>");
 MODULE_DESCRIPTION("Glue layer for OneNAND flash on generic boards");
+<<<<<<< HEAD
 MODULE_ALIAS("platform:" DRIVER_NAME);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

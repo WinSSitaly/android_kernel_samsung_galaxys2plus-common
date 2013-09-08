@@ -393,7 +393,22 @@ static struct i2c_driver pca9541_driver = {
 	.id_table = pca9541_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(pca9541_driver);
+=======
+static int __init pca9541_init(void)
+{
+	return i2c_add_driver(&pca9541_driver);
+}
+
+static void __exit pca9541_exit(void)
+{
+	i2c_del_driver(&pca9541_driver);
+}
+
+module_init(pca9541_init);
+module_exit(pca9541_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Guenter Roeck <guenter.roeck@ericsson.com>");
 MODULE_DESCRIPTION("PCA9541 I2C master selector driver");

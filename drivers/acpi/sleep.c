@@ -17,8 +17,11 @@
 #include <linux/suspend.h>
 #include <linux/reboot.h>
 #include <linux/acpi.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/pm_runtime.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/io.h>
 
@@ -28,6 +31,7 @@
 #include "internal.h"
 #include "sleep.h"
 
+<<<<<<< HEAD
 u8 wake_sleep_flags = ACPI_NO_OPTIONAL_METHODS;
 static unsigned int gts, bfs;
 static int set_param_wake_flag(const char *val, struct kernel_param *kp)
@@ -56,6 +60,8 @@ module_param_call(bfs, set_param_wake_flag, param_get_int, &bfs, 0644);
 MODULE_PARM_DESC(gts, "Enable evaluation of _GTS on suspend.");
 MODULE_PARM_DESC(bfs, "Enable evaluation of _BFS on resume".);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u8 sleep_states[ACPI_S_STATE_COUNT];
 
 static void acpi_sleep_tts_switch(u32 acpi_state)
@@ -138,6 +144,7 @@ void __init acpi_old_suspend_ordering(void)
 	old_suspend_ordering = true;
 }
 
+<<<<<<< HEAD
 static int __init init_old_suspend_ordering(const struct dmi_system_id *d)
 {
 	acpi_old_suspend_ordering();
@@ -320,6 +327,8 @@ static void acpi_sleep_dmi_check(void)
 	dmi_check_system(acpisleep_dmi_table);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * acpi_pm_freeze - Disable the GPEs and suspend EC transactions.
  */
@@ -409,7 +418,10 @@ static void acpi_pm_end(void)
 }
 #else /* !CONFIG_ACPI_SLEEP */
 #define acpi_target_sleep_state	ACPI_STATE_S0
+<<<<<<< HEAD
 static inline void acpi_sleep_dmi_check(void) {}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_ACPI_SLEEP */
 
 #ifdef CONFIG_SUSPEND
@@ -463,7 +475,11 @@ static int acpi_suspend_enter(suspend_state_t pm_state)
 	switch (acpi_state) {
 	case ACPI_STATE_S1:
 		barrier();
+<<<<<<< HEAD
 		status = acpi_enter_sleep_state(acpi_state, wake_sleep_flags);
+=======
+		status = acpi_enter_sleep_state(acpi_state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case ACPI_STATE_S3:
@@ -478,7 +494,11 @@ static int acpi_suspend_enter(suspend_state_t pm_state)
 	acpi_write_bit_register(ACPI_BITREG_SCI_ENABLE, 1);
 
 	/* Reprogram control registers and execute _BFS */
+<<<<<<< HEAD
 	acpi_leave_sleep_state_prep(acpi_state, wake_sleep_flags);
+=======
+	acpi_leave_sleep_state_prep(acpi_state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* ACPI 3.0 specs (P62) says that it's the responsibility
 	 * of the OSPM to clear the status bit [ implying that the
@@ -554,6 +574,114 @@ static const struct platform_suspend_ops acpi_suspend_ops_old = {
 	.end = acpi_pm_end,
 	.recover = acpi_pm_finish,
 };
+<<<<<<< HEAD
+=======
+
+static int __init init_old_suspend_ordering(const struct dmi_system_id *d)
+{
+	old_suspend_ordering = true;
+	return 0;
+}
+
+static int __init init_nvs_nosave(const struct dmi_system_id *d)
+{
+	acpi_nvs_nosave();
+	return 0;
+}
+
+static struct dmi_system_id __initdata acpisleep_dmi_table[] = {
+	{
+	.callback = init_old_suspend_ordering,
+	.ident = "Abit KN9 (nForce4 variant)",
+	.matches = {
+		DMI_MATCH(DMI_BOARD_VENDOR, "http://www.abit.com.tw/"),
+		DMI_MATCH(DMI_BOARD_NAME, "KN9 Series(NF-CK804)"),
+		},
+	},
+	{
+	.callback = init_old_suspend_ordering,
+	.ident = "HP xw4600 Workstation",
+	.matches = {
+		DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
+		DMI_MATCH(DMI_PRODUCT_NAME, "HP xw4600 Workstation"),
+		},
+	},
+	{
+	.callback = init_old_suspend_ordering,
+	.ident = "Asus Pundit P1-AH2 (M2N8L motherboard)",
+	.matches = {
+		DMI_MATCH(DMI_BOARD_VENDOR, "ASUSTek Computer INC."),
+		DMI_MATCH(DMI_BOARD_NAME, "M2N8L"),
+		},
+	},
+	{
+	.callback = init_old_suspend_ordering,
+	.ident = "Panasonic CF51-2L",
+	.matches = {
+		DMI_MATCH(DMI_BOARD_VENDOR,
+				"Matsushita Electric Industrial Co.,Ltd."),
+		DMI_MATCH(DMI_BOARD_NAME, "CF51-2L"),
+		},
+	},
+	{
+	.callback = init_nvs_nosave,
+	.ident = "Sony Vaio VGN-SR11M",
+	.matches = {
+		DMI_MATCH(DMI_SYS_VENDOR, "Sony Corporation"),
+		DMI_MATCH(DMI_PRODUCT_NAME, "VGN-SR11M"),
+		},
+	},
+	{
+	.callback = init_nvs_nosave,
+	.ident = "Everex StepNote Series",
+	.matches = {
+		DMI_MATCH(DMI_SYS_VENDOR, "Everex Systems, Inc."),
+		DMI_MATCH(DMI_PRODUCT_NAME, "Everex StepNote Series"),
+		},
+	},
+	{
+	.callback = init_nvs_nosave,
+	.ident = "Sony Vaio VPCEB1Z1E",
+	.matches = {
+		DMI_MATCH(DMI_SYS_VENDOR, "Sony Corporation"),
+		DMI_MATCH(DMI_PRODUCT_NAME, "VPCEB1Z1E"),
+		},
+	},
+	{
+	.callback = init_nvs_nosave,
+	.ident = "Sony Vaio VGN-NW130D",
+	.matches = {
+		DMI_MATCH(DMI_SYS_VENDOR, "Sony Corporation"),
+		DMI_MATCH(DMI_PRODUCT_NAME, "VGN-NW130D"),
+		},
+	},
+	{
+	.callback = init_nvs_nosave,
+	.ident = "Averatec AV1020-ED2",
+	.matches = {
+		DMI_MATCH(DMI_SYS_VENDOR, "AVERATEC"),
+		DMI_MATCH(DMI_PRODUCT_NAME, "1000 Series"),
+		},
+	},
+	{
+	.callback = init_nvs_nosave,
+	.ident = "Asus K54C",
+	.matches = {
+		DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK Computer Inc."),
+		DMI_MATCH(DMI_PRODUCT_NAME, "K54C"),
+		},
+	},
+	{
+	.callback = init_nvs_nosave,
+	.ident = "Asus K54HR",
+	.matches = {
+		DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK Computer Inc."),
+		DMI_MATCH(DMI_PRODUCT_NAME, "K54HR"),
+		},
+	},
+	{},
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_SUSPEND */
 
 #ifdef CONFIG_HIBERNATION
@@ -586,9 +714,15 @@ static int acpi_hibernation_enter(void)
 	ACPI_FLUSH_CPU_CACHE();
 
 	/* This shouldn't return.  If it returns, we have a problem */
+<<<<<<< HEAD
 	status = acpi_enter_sleep_state(ACPI_STATE_S4, wake_sleep_flags);
 	/* Reprogram control registers and execute _BFS */
 	acpi_leave_sleep_state_prep(ACPI_STATE_S4, wake_sleep_flags);
+=======
+	status = acpi_enter_sleep_state(ACPI_STATE_S4);
+	/* Reprogram control registers and execute _BFS */
+	acpi_leave_sleep_state_prep(ACPI_STATE_S4);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ACPI_SUCCESS(status) ? 0 : -EFAULT;
 }
@@ -601,7 +735,11 @@ static void acpi_hibernation_leave(void)
 	 */
 	acpi_enable();
 	/* Reprogram control registers and execute _BFS */
+<<<<<<< HEAD
 	acpi_leave_sleep_state_prep(ACPI_STATE_S4, wake_sleep_flags);
+=======
+	acpi_leave_sleep_state_prep(ACPI_STATE_S4);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Check the hardware signature */
 	if (facs && s4_hardware_signature != facs->hardware_signature) {
 		printk(KERN_EMERG "ACPI: Hardware changed while hibernated, "
@@ -754,8 +892,13 @@ int acpi_pm_device_sleep_state(struct device *dev, int *d_min_p)
 	 * can wake the system.  _S0W may be valid, too.
 	 */
 	if (acpi_target_sleep_state == ACPI_STATE_S0 ||
+<<<<<<< HEAD
 	    (device_may_wakeup(dev) && adev->wakeup.flags.valid &&
 	     adev->wakeup.sleep_state >= acpi_target_sleep_state)) {
+=======
+	    (device_may_wakeup(dev) &&
+	     adev->wakeup.sleep_state <= acpi_target_sleep_state)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		acpi_status status;
 
 		acpi_method[3] = 'W';
@@ -782,6 +925,7 @@ int acpi_pm_device_sleep_state(struct device *dev, int *d_min_p)
 
 #ifdef CONFIG_PM_SLEEP
 /**
+<<<<<<< HEAD
  * acpi_pm_device_run_wake - Enable/disable wake-up for given device.
  * @phys_dev: Device to enable/disable the platform to wake-up the system for.
  * @enable: Whether enable or disable the wake-up functionality.
@@ -816,6 +960,8 @@ int acpi_pm_device_run_wake(struct device *phys_dev, bool enable)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	acpi_pm_device_sleep_wake - enable or disable the system wake-up
  *                                  capability of given device
  *	@dev: device to handle
@@ -859,7 +1005,11 @@ static void acpi_power_off(void)
 	/* acpi_sleep_prepare(ACPI_STATE_S5) should have already been called */
 	printk(KERN_DEBUG "%s called\n", __func__);
 	local_irq_disable();
+<<<<<<< HEAD
 	acpi_enter_sleep_state(ACPI_STATE_S5, wake_sleep_flags);
+=======
+	acpi_enter_sleep_state(ACPI_STATE_S5);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -874,13 +1024,21 @@ static void __init acpi_gts_bfs_check(void)
 {
 	acpi_handle dummy;
 
+<<<<<<< HEAD
 	if (ACPI_SUCCESS(acpi_get_handle(ACPI_ROOT_OBJECT, METHOD_PATHNAME__GTS, &dummy)))
+=======
+	if (ACPI_SUCCESS(acpi_get_handle(ACPI_ROOT_OBJECT, METHOD_NAME__GTS, &dummy)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		printk(KERN_NOTICE PREFIX "BIOS offers _GTS\n");
 		printk(KERN_NOTICE PREFIX "If \"acpi.gts=1\" improves suspend, "
 			"please notify linux-acpi@vger.kernel.org\n");
 	}
+<<<<<<< HEAD
 	if (ACPI_SUCCESS(acpi_get_handle(ACPI_ROOT_OBJECT, METHOD_PATHNAME__BFS, &dummy)))
+=======
+	if (ACPI_SUCCESS(acpi_get_handle(ACPI_ROOT_OBJECT, METHOD_NAME__BFS, &dummy)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		printk(KERN_NOTICE PREFIX "BIOS offers _BFS\n");
 		printk(KERN_NOTICE PREFIX "If \"acpi.bfs=1\" improves resume, "
@@ -894,13 +1052,21 @@ int __init acpi_sleep_init(void)
 	u8 type_a, type_b;
 #ifdef CONFIG_SUSPEND
 	int i = 0;
+<<<<<<< HEAD
+=======
+
+	dmi_check_system(acpisleep_dmi_table);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	if (acpi_disabled)
 		return 0;
 
+<<<<<<< HEAD
 	acpi_sleep_dmi_check();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sleep_states[ACPI_STATE_S0] = 1;
 	printk(KERN_INFO PREFIX "(supports S0");
 

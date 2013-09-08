@@ -9,6 +9,7 @@
 #define __ASM_CMPXCHG_H
 
 #include <linux/irqflags.h>
+<<<<<<< HEAD
 #include <asm/war.h>
 
 static inline unsigned long __xchg_u32(volatile int * m, unsigned int val)
@@ -133,6 +134,8 @@ static inline unsigned long __xchg(unsigned long x, volatile void * ptr, int siz
 	((__typeof__(*(ptr)))						\
 		__xchg((unsigned long)(x), (ptr), sizeof(*(ptr))));	\
 })
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define __HAVE_ARCH_CMPXCHG 1
 

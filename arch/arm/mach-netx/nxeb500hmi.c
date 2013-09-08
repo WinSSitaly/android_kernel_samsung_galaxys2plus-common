@@ -28,7 +28,10 @@
 #include <mach/hardware.h>
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
+<<<<<<< HEAD
 #include <asm/hardware/vic.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/netx-regs.h>
 #include <mach/eth.h>
 
@@ -178,6 +181,7 @@ static void __init nxeb500hmi_init(void)
 }
 
 MACHINE_START(NXEB500HMI, "Hilscher nxeb500hmi")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= netx_map_io,
 	.init_irq	= netx_init_irq,
@@ -185,4 +189,11 @@ MACHINE_START(NXEB500HMI, "Hilscher nxeb500hmi")
 	.timer		= &netx_timer,
 	.init_machine	= nxeb500hmi_init,
 	.restart	= netx_restart,
+=======
+	.boot_params	= 0x80000100,
+	.map_io		= netx_map_io,
+	.init_irq	= netx_init_irq,
+	.timer		= &netx_timer,
+	.init_machine	= nxeb500hmi_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

@@ -18,7 +18,11 @@
 #include <linux/delay.h>
 #include <linux/pm.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/regmap.h>
+=======
+#include <linux/platform_device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <sound/core.h>
 #include <sound/pcm.h>
@@ -30,6 +34,7 @@
 
 #include "wm8978.h"
 
+<<<<<<< HEAD
 static const struct reg_default wm8978_reg_defaults[] = {
 	{ 1, 0x0000 },
 	{ 2, 0x0000 },
@@ -98,6 +103,31 @@ static bool wm8978_volatile(struct device *dev, unsigned int reg)
 /* codec private data */
 struct wm8978_priv {
 	struct regmap *regmap;
+=======
+/* wm8978 register cache. Note that register 0 is not included in the cache. */
+static const u16 wm8978_reg[WM8978_CACHEREGNUM] = {
+	0x0000, 0x0000, 0x0000, 0x0000,	/* 0x00...0x03 */
+	0x0050, 0x0000, 0x0140, 0x0000,	/* 0x04...0x07 */
+	0x0000, 0x0000, 0x0000, 0x00ff,	/* 0x08...0x0b */
+	0x00ff, 0x0000, 0x0100, 0x00ff,	/* 0x0c...0x0f */
+	0x00ff, 0x0000, 0x012c, 0x002c,	/* 0x10...0x13 */
+	0x002c, 0x002c, 0x002c, 0x0000,	/* 0x14...0x17 */
+	0x0032, 0x0000, 0x0000, 0x0000,	/* 0x18...0x1b */
+	0x0000, 0x0000, 0x0000, 0x0000,	/* 0x1c...0x1f */
+	0x0038, 0x000b, 0x0032, 0x0000,	/* 0x20...0x23 */
+	0x0008, 0x000c, 0x0093, 0x00e9,	/* 0x24...0x27 */
+	0x0000, 0x0000, 0x0000, 0x0000,	/* 0x28...0x2b */
+	0x0033, 0x0010, 0x0010, 0x0100,	/* 0x2c...0x2f */
+	0x0100, 0x0002, 0x0001, 0x0001,	/* 0x30...0x33 */
+	0x0039, 0x0039, 0x0039, 0x0039,	/* 0x34...0x37 */
+	0x0001,	0x0001,			/* 0x38...0x3b */
+};
+
+/* codec private data */
+struct wm8978_priv {
+	enum snd_soc_control_type control_type;
+	void *control_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int f_pllout;
 	unsigned int f_mclk;
 	unsigned int f_256fs;
@@ -350,7 +380,11 @@ static const struct snd_soc_dapm_widget wm8978_dapm_widgets[] = {
 	SND_SOC_DAPM_OUTPUT("RSPK"),
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dapm_route wm8978_dapm_routes[] = {
+=======
+static const struct snd_soc_dapm_route audio_map[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Output mixer */
 	{"Right Output Mixer", "PCM Playback Switch", "Right DAC"},
 	{"Right Output Mixer", "Aux Playback Switch", "RAUX"},
@@ -399,6 +433,21 @@ static const struct snd_soc_dapm_route wm8978_dapm_routes[] = {
 	{"Left Input Mixer", "MicP Switch", "LMICP"},
 };
 
+<<<<<<< HEAD
+=======
+static int wm8978_add_widgets(struct snd_soc_codec *codec)
+{
+	struct snd_soc_dapm_context *dapm = &codec->dapm;
+
+	snd_soc_dapm_new_controls(dapm, wm8978_dapm_widgets,
+				  ARRAY_SIZE(wm8978_dapm_widgets));
+	/* set up the WM8978 audio map */
+	snd_soc_dapm_add_routes(dapm, audio_map, ARRAY_SIZE(audio_map));
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* PLL divisors */
 struct wm8978_pll_div {
 	u32 k;
@@ -783,7 +832,11 @@ static int wm8978_hw_params(struct snd_pcm_substream *substream,
 		wm8978->mclk_idx = -1;
 		f_sel = wm8978->f_mclk;
 	} else {
+<<<<<<< HEAD
 		if (!wm8978->f_opclk) {
+=======
+		if (!wm8978->f_pllout) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* We only enter here, if OPCLK is not used */
 			int ret = wm8978_configure_pll(codec);
 			if (ret < 0)
@@ -899,7 +952,11 @@ static int wm8978_set_bias_level(struct snd_soc_codec *codec,
 #define WM8978_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE | \
 	SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops wm8978_dai_ops = {
+=======
+static struct snd_soc_dai_ops wm8978_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params	= wm8978_hw_params,
 	.digital_mute	= wm8978_mute,
 	.set_fmt	= wm8978_set_dai_fmt,
@@ -927,25 +984,46 @@ static struct snd_soc_dai_driver wm8978_dai = {
 	.ops = &wm8978_dai_ops,
 };
 
+<<<<<<< HEAD
 static int wm8978_suspend(struct snd_soc_codec *codec)
 {
 	struct wm8978_priv *wm8978 = snd_soc_codec_get_drvdata(codec);
 
+=======
+static int wm8978_suspend(struct snd_soc_codec *codec, pm_message_t state)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wm8978_set_bias_level(codec, SND_SOC_BIAS_OFF);
 	/* Also switch PLL off */
 	snd_soc_write(codec, WM8978_POWER_MANAGEMENT_1, 0);
 
+<<<<<<< HEAD
 	regcache_mark_dirty(wm8978->regmap);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int wm8978_resume(struct snd_soc_codec *codec)
 {
 	struct wm8978_priv *wm8978 = snd_soc_codec_get_drvdata(codec);
+<<<<<<< HEAD
 
 	/* Sync reg_cache with the hardware */
 	regcache_sync(wm8978->regmap);
+=======
+	int i;
+	u16 *cache = codec->reg_cache;
+
+	/* Sync reg_cache with the hardware */
+	for (i = 0; i < ARRAY_SIZE(wm8978_reg); i++) {
+		if (i == WM8978_RESET)
+			continue;
+		if (cache[i] != wm8978_reg[i])
+			snd_soc_write(codec, i, cache[i]);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wm8978_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
 
@@ -985,8 +1063,13 @@ static int wm8978_probe(struct snd_soc_codec *codec)
 	 * default hardware setting
 	 */
 	wm8978->sysclk = WM8978_PLL;
+<<<<<<< HEAD
 	codec->control_data = wm8978->regmap;
 	ret = snd_soc_codec_set_cache_io(codec, 7, 9, SND_SOC_REGMAP);
+=======
+	codec->control_data = wm8978->control_data;
+	ret = snd_soc_codec_set_cache_io(codec, 7, 9, SND_SOC_I2C);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		dev_err(codec->dev, "Failed to set cache I/O: %d\n", ret);
 		return ret;
@@ -1000,8 +1083,24 @@ static int wm8978_probe(struct snd_soc_codec *codec)
 	for (i = 0; i < ARRAY_SIZE(update_reg); i++)
 		snd_soc_update_bits(codec, update_reg[i], 0x100, 0x100);
 
+<<<<<<< HEAD
 	wm8978_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
 
+=======
+	/* Reset the codec */
+	ret = snd_soc_write(codec, WM8978_RESET, 0);
+	if (ret < 0) {
+		dev_err(codec->dev, "Failed to issue reset\n");
+		return ret;
+	}
+
+	wm8978_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
+
+	snd_soc_add_controls(codec, wm8978_snd_controls,
+			     ARRAY_SIZE(wm8978_snd_controls));
+	wm8978_add_widgets(codec);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1018,6 +1117,7 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8978 = {
 	.suspend =	wm8978_suspend,
 	.resume =	wm8978_resume,
 	.set_bias_level = wm8978_set_bias_level,
+<<<<<<< HEAD
 
 	.controls = wm8978_snd_controls,
 	.num_controls = ARRAY_SIZE(wm8978_snd_controls),
@@ -1039,12 +1139,21 @@ static const struct regmap_config wm8978_regmap_config = {
 	.num_reg_defaults = ARRAY_SIZE(wm8978_reg_defaults),
 };
 
+=======
+	.reg_cache_size = ARRAY_SIZE(wm8978_reg),
+	.reg_word_size = sizeof(u16),
+	.reg_cache_default = wm8978_reg,
+};
+
+#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __devinit int wm8978_i2c_probe(struct i2c_client *i2c,
 				      const struct i2c_device_id *id)
 {
 	struct wm8978_priv *wm8978;
 	int ret;
 
+<<<<<<< HEAD
 	wm8978 = devm_kzalloc(&i2c->dev, sizeof(struct wm8978_priv),
 			      GFP_KERNEL);
 	if (wm8978 == NULL)
@@ -1077,16 +1186,34 @@ static __devinit int wm8978_i2c_probe(struct i2c_client *i2c,
 
 err:
 	regmap_exit(wm8978->regmap);
+=======
+	wm8978 = kzalloc(sizeof(struct wm8978_priv), GFP_KERNEL);
+	if (wm8978 == NULL)
+		return -ENOMEM;
+
+	i2c_set_clientdata(i2c, wm8978);
+	wm8978->control_data = i2c;
+
+	ret = snd_soc_register_codec(&i2c->dev,
+			&soc_codec_dev_wm8978, &wm8978_dai, 1);
+	if (ret < 0)
+		kfree(wm8978);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static __devexit int wm8978_i2c_remove(struct i2c_client *client)
 {
+<<<<<<< HEAD
 	struct wm8978_priv *wm8978 = i2c_get_clientdata(client);
 
 	snd_soc_unregister_codec(&client->dev);
 	regmap_exit(wm8978->regmap);
 
+=======
+	snd_soc_unregister_codec(&client->dev);
+	kfree(i2c_get_clientdata(client));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1105,22 +1232,40 @@ static struct i2c_driver wm8978_i2c_driver = {
 	.remove =   __devexit_p(wm8978_i2c_remove),
 	.id_table = wm8978_i2c_id,
 };
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __init wm8978_modinit(void)
 {
 	int ret = 0;
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = i2c_add_driver(&wm8978_i2c_driver);
 	if (ret != 0) {
 		printk(KERN_ERR "Failed to register WM8978 I2C driver: %d\n",
 		       ret);
 	}
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 module_init(wm8978_modinit);
 
 static void __exit wm8978_exit(void)
 {
+<<<<<<< HEAD
 	i2c_del_driver(&wm8978_i2c_driver);
+=======
+#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
+	i2c_del_driver(&wm8978_i2c_driver);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 module_exit(wm8978_exit);
 

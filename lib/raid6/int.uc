@@ -11,7 +11,11 @@
  * ----------------------------------------------------------------------- */
 
 /*
+<<<<<<< HEAD
  * int$#.c
+=======
+ * raid6int$#.c
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * $#-way unrolled portable integer math RAID-6 instruction set
  *

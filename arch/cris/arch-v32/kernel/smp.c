@@ -7,7 +7,11 @@
 #include <asm/mmu_context.h>
 #include <hwregs/asm/mmu_defs_asm.h>
 #include <hwregs/supp_reg.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/err.h>
 #include <linux/init.h>

@@ -75,7 +75,11 @@ static void dump_completed_IO(struct inode * inode)
  * to written.
  * The function return the number of pending IOs on success.
  */
+<<<<<<< HEAD
 int ext4_flush_completed_IO(struct inode *inode)
+=======
+extern int ext4_flush_completed_IO(struct inode *inode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	ext4_io_end_t *io;
 	struct ext4_inode_info *ei = EXT4_I(inode);
@@ -83,13 +87,22 @@ int ext4_flush_completed_IO(struct inode *inode)
 	int ret = 0;
 	int ret2 = 0;
 
+<<<<<<< HEAD
+=======
+	if (list_empty(&ei->i_completed_io_list))
+		return ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dump_completed_IO(inode);
 	spin_lock_irqsave(&ei->i_completed_io_lock, flags);
 	while (!list_empty(&ei->i_completed_io_list)){
 		io = list_entry(ei->i_completed_io_list.next,
 				ext4_io_end_t, list);
+<<<<<<< HEAD
 		list_del_init(&io->list);
 		io->flag |= EXT4_IO_END_IN_FSYNC;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Calling ext4_end_io_nolock() to convert completed
 		 * IO to written.
@@ -106,10 +119,18 @@ int ext4_flush_completed_IO(struct inode *inode)
 		 */
 		spin_unlock_irqrestore(&ei->i_completed_io_lock, flags);
 		ret = ext4_end_io_nolock(io);
+<<<<<<< HEAD
 		if (ret < 0)
 			ret2 = ret;
 		spin_lock_irqsave(&ei->i_completed_io_lock, flags);
 		io->flag &= ~EXT4_IO_END_IN_FSYNC;
+=======
+		spin_lock_irqsave(&ei->i_completed_io_lock, flags);
+		if (ret < 0)
+			ret2 = ret;
+		else
+			list_del_init(&io->list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	spin_unlock_irqrestore(&ei->i_completed_io_lock, flags);
 	return (ret2 < 0) ? ret2 : 0;
@@ -127,6 +148,7 @@ static int ext4_sync_parent(struct inode *inode)
 {
 	struct writeback_control wbc;
 	struct dentry *dentry = NULL;
+<<<<<<< HEAD
 	struct inode *next;
 	int ret = 0;
 
@@ -151,6 +173,17 @@ static int ext4_sync_parent(struct inode *inode)
 			break;
 		iput(inode);
 		inode = next;
+=======
+	int ret = 0;
+
+	while (inode && ext4_test_inode_state(inode, EXT4_STATE_NEWENTRY)) {
+		ext4_clear_inode_state(inode, EXT4_STATE_NEWENTRY);
+		dentry = list_entry(inode->i_dentry.next,
+				    struct dentry, d_alias);
+		if (!dentry || !dentry->d_parent || !dentry->d_parent->d_inode)
+			break;
+		inode = dentry->d_parent->d_inode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = sync_mapping_buffers(inode->i_mapping);
 		if (ret)
 			break;
@@ -161,6 +194,7 @@ static int ext4_sync_parent(struct inode *inode)
 		if (ret)
 			break;
 	}
+<<<<<<< HEAD
 	iput(inode);
 	return ret;
 }
@@ -188,6 +222,8 @@ static int __sync_inode(struct inode *inode, int datasync)
 	err = sync_inode_metadata(inode, 1);
 	if (ret == 0)
 		ret = err;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -205,7 +241,11 @@ static int __sync_inode(struct inode *inode, int datasync)
  * i_mutex lock is held when entering and exiting this function
  */
 
+<<<<<<< HEAD
 int ext4_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+=======
+int ext4_sync_file(struct file *file, int datasync)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inode *inode = file->f_mapping->host;
 	struct ext4_inode_info *ei = EXT4_I(inode);
@@ -218,6 +258,7 @@ int ext4_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
 
 	trace_ext4_sync_file_enter(file, datasync);
 
+<<<<<<< HEAD
 	ret = filemap_write_and_wait_range(inode->i_mapping, start, end);
 	if (ret)
 		return ret;
@@ -225,13 +266,21 @@ int ext4_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
 
 	if (inode->i_sb->s_flags & MS_RDONLY)
 		goto out;
+=======
+	if (inode->i_sb->s_flags & MS_RDONLY)
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = ext4_flush_completed_IO(inode);
 	if (ret < 0)
 		goto out;
 
 	if (!journal) {
+<<<<<<< HEAD
 		ret = __sync_inode(inode, datasync);
+=======
+		ret = generic_file_fsync(file, datasync);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!ret && !list_empty(&inode->i_dentry))
 			ret = ext4_sync_parent(inode);
 		goto out;
@@ -265,7 +314,10 @@ int ext4_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
 	if (needs_barrier)
 		blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL, NULL);
  out:
+<<<<<<< HEAD
 	mutex_unlock(&inode->i_mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trace_ext4_sync_file_exit(inode, ret);
 	return ret;
 }

@@ -4,6 +4,10 @@
 #include <linux/futex.h>
 #include <linux/uaccess.h>
 #include <asm/errno.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define __futex_atomic_op1(insn, ret, oldval, uaddr, oparg) \
 do {									\
@@ -106,15 +110,27 @@ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
 		return -EFAULT;
 
 	{
+<<<<<<< HEAD
 		register unsigned long r8 __asm ("r8") = 0;
 		unsigned long prev;
 		__asm__ __volatile__(
 			"	mf;;					\n"
+=======
+		register unsigned long r8 __asm ("r8");
+		unsigned long prev;
+		__asm__ __volatile__(
+			"	mf;;					\n"
+			"	mov %0=r0				\n"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"	mov ar.ccv=%4;;				\n"
 			"[1:]	cmpxchg4.acq %1=[%2],%3,ar.ccv		\n"
 			"	.xdata4 \"__ex_table\", 1b-., 2f-.	\n"
 			"[2:]"
+<<<<<<< HEAD
 			: "+r" (r8), "=&r" (prev)
+=======
+			: "=r" (r8), "=r" (prev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			: "r" (uaddr), "r" (newval),
 			  "rO" ((long) (unsigned) oldval)
 			: "memory");

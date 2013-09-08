@@ -237,11 +237,17 @@ static int __init cs553x_init_one(int cs, int mmio, unsigned long adr)
 	this->ecc.hwctl  = cs_enable_hwecc;
 	this->ecc.calculate = cs_calculate_ecc;
 	this->ecc.correct  = nand_correct_data;
+<<<<<<< HEAD
 	this->ecc.strength = 1;
 
 	/* Enable the following for a flash based bad block table */
 	this->bbt_options = NAND_BBT_USE_FLASH;
 	this->options = NAND_NO_AUTOINCR;
+=======
+
+	/* Enable the following for a flash based bad block table */
+	this->options = NAND_USE_FLASH_BBT | NAND_NO_AUTOINCR;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Scan to find existence of the device */
 	if (nand_scan(new_mtd, 1)) {
@@ -279,11 +285,21 @@ static int is_geode(void)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static const char *part_probes[] = { "cmdlinepart", NULL };
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init cs553x_init(void)
 {
 	int err = -ENXIO;
 	int i;
 	uint64_t val;
+<<<<<<< HEAD
+=======
+	int mtd_parts_nb = 0;
+	struct mtd_partition *mtd_parts = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* If the CPU isn't a Geode GX or LX, abort */
 	if (!is_geode())
@@ -313,9 +329,19 @@ static int __init cs553x_init(void)
 	   do mtdconcat etc. if we want to. */
 	for (i = 0; i < NR_CS553X_CONTROLLERS; i++) {
 		if (cs553x_mtd[i]) {
+<<<<<<< HEAD
 			/* If any devices registered, return success. Else the last error. */
 			mtd_device_parse_register(cs553x_mtd[i], NULL, NULL,
 						  NULL, 0);
+=======
+
+			/* If any devices registered, return success. Else the last error. */
+			mtd_parts_nb = parse_mtd_partitions(cs553x_mtd[i], part_probes, &mtd_parts, 0);
+			if (mtd_parts_nb > 0)
+				printk(KERN_NOTICE "Using command line partition definition\n");
+			mtd_device_register(cs553x_mtd[i], mtd_parts,
+					    mtd_parts_nb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			err = 0;
 		}
 	}

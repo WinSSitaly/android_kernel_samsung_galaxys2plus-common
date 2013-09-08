@@ -54,7 +54,10 @@ static struct snd_soc_dai_link em_x270_dai[] = {
 
 static struct snd_soc_card em_x270 = {
 	.name = "EM-X270",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link = em_x270_dai,
 	.num_links = ARRAY_SIZE(em_x270_dai),
 };

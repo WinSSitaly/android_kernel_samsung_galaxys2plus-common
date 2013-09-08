@@ -10,16 +10,22 @@
 #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
 
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "zfcp_ext.h"
 #include "zfcp_qdio.h"
 
 #define QBUFF_PER_PAGE		(PAGE_SIZE / sizeof(struct qdio_buffer))
 
+<<<<<<< HEAD
 static bool enable_multibuffer;
 module_param_named(datarouter, enable_multibuffer, bool, 0400);
 MODULE_PARM_DESC(datarouter, "Enable hardware data router support");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int zfcp_qdio_buffers_enqueue(struct qdio_buffer **sbal)
 {
 	int pos;
@@ -42,11 +48,16 @@ static void zfcp_qdio_handler_error(struct zfcp_qdio *qdio, char *id,
 
 	dev_warn(&adapter->ccw_device->dev, "A QDIO problem occurred\n");
 
+<<<<<<< HEAD
 	if (qdio_err & QDIO_ERROR_SLSB_STATE) {
 		zfcp_qdio_siosl(adapter);
 		zfcp_erp_adapter_shutdown(adapter, 0, id);
 		return;
 	}
+=======
+	if (qdio_err & QDIO_ERROR_SLSB_STATE)
+		zfcp_qdio_siosl(adapter);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	zfcp_erp_adapter_reopen(adapter,
 				ZFCP_STATUS_ADAPTER_LINK_UNPLUGGED |
 				ZFCP_STATUS_COMMON_ERP_FAILED, id);
@@ -101,6 +112,7 @@ static void zfcp_qdio_int_resp(struct ccw_device *cdev, unsigned int qdio_err,
 			       unsigned long parm)
 {
 	struct zfcp_qdio *qdio = (struct zfcp_qdio *) parm;
+<<<<<<< HEAD
 	struct zfcp_adapter *adapter = qdio->adapter;
 	int sbal_no, sbal_idx;
 
@@ -126,6 +138,11 @@ static void zfcp_qdio_int_resp(struct ccw_device *cdev, unsigned int qdio_err,
 			}
 			zfcp_dbf_hba_def_err(adapter, req_id, scount, pl);
 		}
+=======
+	int sbal_idx, sbal_no;
+
+	if (unlikely(qdio_err)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		zfcp_qdio_handler_error(qdio, "qdires1", qdio_err);
 		return;
 	}
@@ -185,7 +202,11 @@ zfcp_qdio_sbal_chain(struct zfcp_qdio *qdio, struct zfcp_qdio_req *q_req)
 static struct qdio_buffer_element *
 zfcp_qdio_sbale_next(struct zfcp_qdio *qdio, struct zfcp_qdio_req *q_req)
 {
+<<<<<<< HEAD
 	if (q_req->sbale_curr == qdio->max_sbale_per_sbal - 1)
+=======
+	if (q_req->sbale_curr == ZFCP_QDIO_LAST_SBALE_PER_SBAL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return zfcp_qdio_sbal_chain(qdio, q_req);
 	q_req->sbale_curr++;
 	return zfcp_qdio_sbale_curr(qdio, q_req);
@@ -197,12 +218,20 @@ zfcp_qdio_sbale_next(struct zfcp_qdio *qdio, struct zfcp_qdio_req *q_req)
  * @q_req: pointer to struct zfcp_qdio_req
  * @sg: scatter-gather list
  * @max_sbals: upper bound for number of SBALs to be used
+<<<<<<< HEAD
  * Returns: zero or -EINVAL on error
+=======
+ * Returns: number of bytes, or error (negativ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int zfcp_qdio_sbals_from_sg(struct zfcp_qdio *qdio, struct zfcp_qdio_req *q_req,
 			    struct scatterlist *sg)
 {
 	struct qdio_buffer_element *sbale;
+<<<<<<< HEAD
+=======
+	int bytes = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* set storage-block type for this request */
 	sbale = zfcp_qdio_sbale_req(qdio, q_req);
@@ -216,17 +245,36 @@ int zfcp_qdio_sbals_from_sg(struct zfcp_qdio *qdio, struct zfcp_qdio_req *q_req,
 					     q_req->sbal_number);
 			return -EINVAL;
 		}
+<<<<<<< HEAD
 		sbale->addr = sg_virt(sg);
 		sbale->length = sg->length;
 	}
 	return 0;
+=======
+
+		sbale->addr = sg_virt(sg);
+		sbale->length = sg->length;
+
+		bytes += sg->length;
+	}
+
+	return bytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int zfcp_qdio_sbal_check(struct zfcp_qdio *qdio)
 {
+<<<<<<< HEAD
 	if (atomic_read(&qdio->req_q_free) ||
 	    !(atomic_read(&qdio->adapter->status) & ZFCP_STATUS_ADAPTER_QDIOUP))
 		return 1;
+=======
+	spin_lock_irq(&qdio->req_q_lock);
+	if (atomic_read(&qdio->req_q_free) ||
+	    !(atomic_read(&qdio->adapter->status) & ZFCP_STATUS_ADAPTER_QDIOUP))
+		return 1;
+	spin_unlock_irq(&qdio->req_q_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -244,8 +292,14 @@ int zfcp_qdio_sbal_get(struct zfcp_qdio *qdio)
 {
 	long ret;
 
+<<<<<<< HEAD
 	ret = wait_event_interruptible_lock_irq_timeout(qdio->req_q_wq,
 		       zfcp_qdio_sbal_check(qdio), qdio->req_q_lock, 5 * HZ);
+=======
+	spin_unlock_irq(&qdio->req_q_lock);
+	ret = wait_event_interruptible_timeout(qdio->req_q_wq,
+			       zfcp_qdio_sbal_check(qdio), 5 * HZ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!(atomic_read(&qdio->adapter->status) & ZFCP_STATUS_ADAPTER_QDIOUP))
 		return -EIO;
@@ -259,6 +313,10 @@ int zfcp_qdio_sbal_get(struct zfcp_qdio *qdio)
 		zfcp_erp_adapter_reopen(qdio->adapter, 0, "qdsbg_1");
 	}
 
+<<<<<<< HEAD
+=======
+	spin_lock_irq(&qdio->req_q_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -EIO;
 }
 
@@ -304,8 +362,11 @@ static void zfcp_qdio_setup_init_data(struct qdio_initialize *id,
 	memcpy(id->adapter_name, dev_name(&id->cdev->dev), 8);
 	ASCEBC(id->adapter_name, 8);
 	id->qib_rflags = QIB_RFLAGS_ENABLE_DATA_DIV;
+<<<<<<< HEAD
 	if (enable_multibuffer)
 		id->qdr_ac |= QDR_AC_MULTI_BUFFER_ENABLE;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	id->no_input_qs = 1;
 	id->no_output_qs = 1;
 	id->input_handler = zfcp_qdio_int_resp;
@@ -401,6 +462,7 @@ int zfcp_qdio_open(struct zfcp_qdio *qdio)
 		atomic_set_mask(ZFCP_STATUS_ADAPTER_DATA_DIV_ENABLED,
 				&qdio->adapter->status);
 
+<<<<<<< HEAD
 	if (ssqd.qdioac2 & CHSC_AC2_MULTI_BUFFER_ENABLED) {
 		atomic_set_mask(ZFCP_STATUS_ADAPTER_MB_ACT, &adapter->status);
 		qdio->max_sbale_per_sbal = QDIO_MAX_ELEMENTS_PER_BUFFER;
@@ -412,6 +474,8 @@ int zfcp_qdio_open(struct zfcp_qdio *qdio)
 	qdio->max_sbale_per_req =
 		ZFCP_QDIO_MAX_SBALS_PER_REQ * qdio->max_sbale_per_sbal
 		- 2;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (qdio_activate(cdev))
 		goto failed_qdio;
 
@@ -431,11 +495,14 @@ int zfcp_qdio_open(struct zfcp_qdio *qdio)
 	atomic_set(&qdio->req_q_free, QDIO_MAX_BUFFERS_PER_Q);
 	atomic_set_mask(ZFCP_STATUS_ADAPTER_QDIOUP, &qdio->adapter->status);
 
+<<<<<<< HEAD
 	if (adapter->scsi_host) {
 		adapter->scsi_host->sg_tablesize = qdio->max_sbale_per_req;
 		adapter->scsi_host->max_sectors = qdio->max_sbale_per_req * 8;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 failed_qdio:

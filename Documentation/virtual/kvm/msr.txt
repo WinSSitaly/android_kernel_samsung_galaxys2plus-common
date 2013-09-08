@@ -185,6 +185,7 @@ MSR_KVM_ASYNC_PF_EN: 0x4b564d02
 
 	Currently type 2 APF will be always delivered on the same vcpu as
 	type 1 was, but guest should not rely on that.
+<<<<<<< HEAD
 
 MSR_KVM_STEAL_TIME: 0x4b564d03
 
@@ -219,3 +220,5 @@ MSR_KVM_STEAL_TIME: 0x4b564d03
 		steal: the amount of time in which this vCPU did not run, in
 		nanoseconds. Time during which the vcpu is idle, will not be
 		reported as steal time.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

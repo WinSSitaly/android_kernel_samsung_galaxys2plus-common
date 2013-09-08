@@ -86,6 +86,13 @@ struct fib6_table;
 struct rt6_info {
 	struct dst_entry		dst;
 
+<<<<<<< HEAD
+=======
+#define rt6i_dev			dst.dev
+#define rt6i_nexthop			dst.neighbour
+#define rt6i_expires			dst.expires
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Tail elements of dst_entry (__refcnt etc.)
 	 * and these elements (rarely used in hot path) are in
@@ -123,6 +130,7 @@ static inline struct inet6_dev *ip6_dst_idev(struct dst_entry *dst)
 	return ((struct rt6_info *)dst)->rt6i_idev;
 }
 
+<<<<<<< HEAD
 static inline void rt6_clean_expires(struct rt6_info *rt)
 {
 	if (!(rt->rt6i_flags & RTF_EXPIRES) && rt->dst.from)
@@ -171,6 +179,8 @@ static inline void rt6_set_from(struct rt6_info *rt, struct rt6_info *from)
 	dst_hold(new);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct fib6_walker_t {
 	struct list_head lh;
 	struct fib6_node *root, *node;
@@ -247,10 +257,13 @@ struct fib6_node		*fib6_locate(struct fib6_node *root,
 					     const struct in6_addr *daddr, int dst_len,
 					     const struct in6_addr *saddr, int src_len);
 
+<<<<<<< HEAD
 extern void			fib6_clean_all_ro(struct net *net,
 					       int (*func)(struct rt6_info *, void *arg),
 					       int prune, void *arg);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void			fib6_clean_all(struct net *net,
 					       int (*func)(struct rt6_info *, void *arg),
 					       int prune, void *arg);

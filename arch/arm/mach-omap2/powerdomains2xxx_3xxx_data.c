@@ -1,7 +1,11 @@
 /*
  * OMAP2/3 common powerdomain definitions
  *
+<<<<<<< HEAD
  * Copyright (C) 2007-2008, 2011 Texas Instruments, Inc.
+=======
+ * Copyright (C) 2007-2008 Texas Instruments, Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (C) 2007-2011 Nokia Corporation
  *
  * Paul Walmsley, Jouni Högander
@@ -12,6 +16,23 @@
  */
 
 /*
+<<<<<<< HEAD
+=======
+ * To Do List
+ * -> Move the Sleep/Wakeup dependencies from Power Domain framework to
+ *    Clock Domain Framework
+ */
+
+/*
+ * This file contains all of the powerdomains that have some element
+ * of software control for the OMAP24xx and OMAP34xx chips.
+ *
+ * This is not an exhaustive listing of powerdomains on the chips; only
+ * powerdomains that can be controlled in software.
+ */
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * The names for the DSP/IVA2 powerdomains are confusing.
  *
  * Most OMAP chips have an on-board DSP.
@@ -45,6 +66,11 @@
 struct powerdomain gfx_omap2_pwrdm = {
 	.name		  = "gfx_pwrdm",
 	.prcm_offs	  = GFX_MOD,
+<<<<<<< HEAD
+=======
+	.omap_chip	  = OMAP_CHIP_INIT(CHIP_IS_OMAP24XX |
+					   CHIP_IS_OMAP3430ES1),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.pwrsts		  = PWRSTS_OFF_RET_ON,
 	.pwrsts_logic_ret = PWRSTS_RET,
 	.banks		  = 1,
@@ -54,12 +80,20 @@ struct powerdomain gfx_omap2_pwrdm = {
 	.pwrsts_mem_on	  = {
 		[0] = PWRSTS_ON,  /* MEMONSTATE */
 	},
+<<<<<<< HEAD
 	.voltdm           = { .name = "core" },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct powerdomain wkup_omap2_pwrdm = {
 	.name		= "wkup_pwrdm",
 	.prcm_offs	= WKUP_MOD,
+<<<<<<< HEAD
 	.pwrsts		= PWRSTS_ON,
 	.voltdm         = { .name = "wakeup" },
+=======
+	.omap_chip	= OMAP_CHIP_INIT(CHIP_IS_OMAP24XX | CHIP_IS_OMAP3430),
+	.pwrsts		= PWRSTS_ON,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };

@@ -39,7 +39,10 @@
 
 #include <linux/seq_file.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drmP.h"
 
 /***************************************************
@@ -96,6 +99,10 @@ int drm_proc_create_files(struct drm_info_list *files, int count,
 	struct drm_device *dev = minor->dev;
 	struct proc_dir_entry *ent;
 	struct drm_info_node *tmp;
+<<<<<<< HEAD
+=======
+	char name[64];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i, ret;
 
 	for (i = 0; i < count; i++) {
@@ -118,7 +125,11 @@ int drm_proc_create_files(struct drm_info_list *files, int count,
 				       &drm_proc_fops, tmp);
 		if (!ent) {
 			DRM_ERROR("Cannot create /proc/dri/%s/%s\n",
+<<<<<<< HEAD
 				  root->name, files[i].name);
+=======
+				  name, files[i].name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			list_del(&tmp->list);
 			kfree(tmp);
 			ret = -1;

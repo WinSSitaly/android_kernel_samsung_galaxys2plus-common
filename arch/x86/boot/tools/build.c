@@ -29,6 +29,7 @@
 #include <stdarg.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+<<<<<<< HEAD
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -41,6 +42,20 @@ typedef unsigned int   u32;
 #define DEFAULT_MAJOR_ROOT 0
 #define DEFAULT_MINOR_ROOT 0
 #define DEFAULT_ROOT_DEV (DEFAULT_MAJOR_ROOT << 8 | DEFAULT_MINOR_ROOT)
+=======
+#include <sys/sysmacros.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <asm/boot.h>
+
+typedef unsigned char  u8;
+typedef unsigned short u16;
+typedef unsigned long  u32;
+
+#define DEFAULT_MAJOR_ROOT 0
+#define DEFAULT_MINOR_ROOT 0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Minimal number of setup sectors */
 #define SETUP_SECT_MIN 5
@@ -130,25 +145,65 @@ static void die(const char * str, ...)
 
 static void usage(void)
 {
+<<<<<<< HEAD
 	die("Usage: build setup system [> image]");
+=======
+	die("Usage: build setup system [rootdev] [> image]");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int main(int argc, char ** argv)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_EFI_STUB
 	unsigned int file_sz, pe_header;
 #endif
 	unsigned int i, sz, setup_sectors;
 	int c;
 	u32 sys_size;
+=======
+	unsigned int i, sz, setup_sectors;
+	int c;
+	u32 sys_size;
+	u8 major_root, minor_root;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct stat sb;
 	FILE *file;
 	int fd;
 	void *kernel;
 	u32 crc = 0xffffffffUL;
 
+<<<<<<< HEAD
 	if (argc != 3)
 		usage();
+=======
+	if ((argc < 3) || (argc > 4))
+		usage();
+	if (argc > 3) {
+		if (!strcmp(argv[3], "CURRENT")) {
+			if (stat("/", &sb)) {
+				perror("/");
+				die("Couldn't stat /");
+			}
+			major_root = major(sb.st_dev);
+			minor_root = minor(sb.st_dev);
+		} else if (strcmp(argv[3], "FLOPPY")) {
+			if (stat(argv[3], &sb)) {
+				perror(argv[3]);
+				die("Couldn't stat root device.");
+			}
+			major_root = major(sb.st_rdev);
+			minor_root = minor(sb.st_rdev);
+		} else {
+			major_root = 0;
+			minor_root = 0;
+		}
+	} else {
+		major_root = DEFAULT_MAJOR_ROOT;
+		minor_root = DEFAULT_MINOR_ROOT;
+	}
+	fprintf(stderr, "Root device is (%d, %d)\n", major_root, minor_root);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Copy the setup code */
 	file = fopen(argv[1], "r");
@@ -159,7 +214,11 @@ int main(int argc, char ** argv)
 		die("read-error on `setup'");
 	if (c < 1024)
 		die("The setup must be at least 1024 bytes");
+<<<<<<< HEAD
 	if (get_unaligned_le16(&buf[510]) != 0xAA55)
+=======
+	if (buf[510] != 0x55 || buf[511] != 0xaa)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		die("Boot block hasn't got boot flag (0xAA55)");
 	fclose(file);
 
@@ -171,7 +230,12 @@ int main(int argc, char ** argv)
 	memset(buf+c, 0, i-c);
 
 	/* Set the default root device */
+<<<<<<< HEAD
 	put_unaligned_le16(DEFAULT_ROOT_DEV, &buf[508]);
+=======
+	buf[508] = minor_root;
+	buf[509] = major_root;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fprintf(stderr, "Setup is %d bytes (padded to %d bytes).\n", c, i);
 
@@ -191,6 +255,7 @@ int main(int argc, char ** argv)
 
 	/* Patch the setup code with the appropriate size parameters */
 	buf[0x1f1] = setup_sectors-1;
+<<<<<<< HEAD
 	put_unaligned_le32(sys_size, &buf[0x1f4]);
 
 #ifdef CONFIG_EFI_STUB
@@ -236,6 +301,12 @@ int main(int argc, char ** argv)
 
 #endif /* CONFIG_X86_32 */
 #endif /* CONFIG_EFI_STUB */
+=======
+	buf[0x1f4] = sys_size;
+	buf[0x1f5] = sys_size >> 8;
+	buf[0x1f6] = sys_size >> 16;
+	buf[0x1f7] = sys_size >> 24;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	crc = partial_crc32(buf, i, crc);
 	if (fwrite(buf, 1, i, stdout) != i)
@@ -254,9 +325,14 @@ int main(int argc, char ** argv)
 	}
 
 	/* Write the CRC */
+<<<<<<< HEAD
 	fprintf(stderr, "CRC %x\n", crc);
 	put_unaligned_le32(crc, buf);
 	if (fwrite(buf, 1, 4, stdout) != 4)
+=======
+	fprintf(stderr, "CRC %lx\n", crc);
+	if (fwrite(&crc, 1, 4, stdout) != 4)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		die("Writing CRC failed");
 
 	close(fd);

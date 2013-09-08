@@ -11,7 +11,10 @@
 #include <linux/inetdevice.h>
 #include <linux/inet.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/netpoll.h>
 #include <linux/sched.h>
 #include <linux/delay.h>
@@ -29,8 +32,11 @@
 #include <trace/events/skb.h>
 #include <trace/events/net.h>
 #include <trace/events/napi.h>
+<<<<<<< HEAD
 #include <trace/events/sock.h>
 #include <trace/events/udp.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 EXPORT_TRACEPOINT_SYMBOL_GPL(kfree_skb);
 

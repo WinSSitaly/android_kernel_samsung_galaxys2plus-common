@@ -3,7 +3,11 @@
  *
  * Copyright (c) 2006 Rik Snel <rsnel@cube.dyndns.org>
  *
+<<<<<<< HEAD
  * Based on ecb.c
+=======
+ * Based om ecb.c
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (c) 2006 Herbert Xu <herbert@gondor.apana.org.au>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -16,7 +20,10 @@
  * http://www.mail-archive.com/stds-p1619@listserv.ieee.org/msg00173.html
  *
  * The test vectors are included in the testing module tcrypt.[ch] */
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <crypto/algapi.h>
 #include <linux/err.h>
 #include <linux/init.h>
@@ -27,11 +34,29 @@
 
 #include <crypto/b128ops.h>
 #include <crypto/gf128mul.h>
+<<<<<<< HEAD
 #include <crypto/lrw.h>
 
 struct priv {
 	struct crypto_cipher *child;
 	struct lrw_table_ctx table;
+=======
+
+struct priv {
+	struct crypto_cipher *child;
+	/* optimizes multiplying a random (non incrementing, as at the
+	 * start of a new sector) value with key2, we could also have
+	 * used 4k optimization tables or no optimization at all. In the
+	 * latter case we would have to store key2 here */
+	struct gf128mul_64k *table;
+	/* stores:
+	 *  key2*{ 0,0,...0,0,0,0,1 }, key2*{ 0,0,...0,0,0,1,1 },
+	 *  key2*{ 0,0,...0,0,1,1,1 }, key2*{ 0,0,...0,1,1,1,1 }
+	 *  key2*{ 0,0,...1,1,1,1,1 }, etc
+	 * needed for optimized multiplication of incrementing values
+	 * with key2 */
+	be128 mulinc[128];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline void setbit128_bbe(void *b, int bit)
@@ -45,16 +70,39 @@ static inline void setbit128_bbe(void *b, int bit)
 			), b);
 }
 
+<<<<<<< HEAD
 int lrw_init_table(struct lrw_table_ctx *ctx, const u8 *tweak)
 {
 	be128 tmp = { 0 };
 	int i;
+=======
+static int setkey(struct crypto_tfm *parent, const u8 *key,
+		  unsigned int keylen)
+{
+	struct priv *ctx = crypto_tfm_ctx(parent);
+	struct crypto_cipher *child = ctx->child;
+	int err, i;
+	be128 tmp = { 0 };
+	int bsize = crypto_cipher_blocksize(child);
+
+	crypto_cipher_clear_flags(child, CRYPTO_TFM_REQ_MASK);
+	crypto_cipher_set_flags(child, crypto_tfm_get_flags(parent) &
+				       CRYPTO_TFM_REQ_MASK);
+	if ((err = crypto_cipher_setkey(child, key, keylen - bsize)))
+		return err;
+	crypto_tfm_set_flags(parent, crypto_cipher_get_flags(child) &
+				     CRYPTO_TFM_RES_MASK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ctx->table)
 		gf128mul_free_64k(ctx->table);
 
 	/* initialize multiplication table for Key2 */
+<<<<<<< HEAD
 	ctx->table = gf128mul_init_64k_bbe((be128 *)tweak);
+=======
+	ctx->table = gf128mul_init_64k_bbe((be128 *)(key + keylen - bsize));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!ctx->table)
 		return -ENOMEM;
 
@@ -67,6 +115,7 @@ int lrw_init_table(struct lrw_table_ctx *ctx, const u8 *tweak)
 
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(lrw_init_table);
 
 void lrw_free_table(struct lrw_table_ctx *ctx)
@@ -95,6 +144,8 @@ static int setkey(struct crypto_tfm *parent, const u8 *key,
 
 	return lrw_init_table(&ctx->table, tweak);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct sinfo {
 	be128 t;
@@ -141,7 +192,11 @@ static int crypt(struct blkcipher_desc *d,
 {
 	int err;
 	unsigned int avail;
+<<<<<<< HEAD
 	const int bs = LRW_BLOCK_SIZE;
+=======
+	const int bs = crypto_cipher_blocksize(ctx->child);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sinfo s = {
 		.tfm = crypto_cipher_tfm(ctx->child),
 		.fn = fn
@@ -162,7 +217,11 @@ static int crypt(struct blkcipher_desc *d,
 	s.t = *iv;
 
 	/* T <- I*Key2 */
+<<<<<<< HEAD
 	gf128mul_64k_bbe(&s.t, ctx->table.table);
+=======
+	gf128mul_64k_bbe(&s.t, ctx->table);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	goto first;
 
@@ -170,8 +229,12 @@ static int crypt(struct blkcipher_desc *d,
 		do {
 			/* T <- I*Key2, using the optimization
 			 * discussed in the specification */
+<<<<<<< HEAD
 			be128_xor(&s.t, &s.t,
 				  &ctx->table.mulinc[get_index128(iv)]);
+=======
+			be128_xor(&s.t, &s.t, &ctx->mulinc[get_index128(iv)]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			inc(iv);
 
 first:
@@ -214,6 +277,7 @@ static int decrypt(struct blkcipher_desc *desc, struct scatterlist *dst,
 		     crypto_cipher_alg(ctx->child)->cia_decrypt);
 }
 
+<<<<<<< HEAD
 int lrw_crypt(struct blkcipher_desc *desc, struct scatterlist *sdst,
 	      struct scatterlist *ssrc, unsigned int nbytes,
 	      struct lrw_crypt_req *req)
@@ -293,6 +357,8 @@ first:
 }
 EXPORT_SYMBOL_GPL(lrw_crypt);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int init_tfm(struct crypto_tfm *tfm)
 {
 	struct crypto_cipher *cipher;
@@ -305,9 +371,14 @@ static int init_tfm(struct crypto_tfm *tfm)
 	if (IS_ERR(cipher))
 		return PTR_ERR(cipher);
 
+<<<<<<< HEAD
 	if (crypto_cipher_blocksize(cipher) != LRW_BLOCK_SIZE) {
 		*flags |= CRYPTO_TFM_RES_BAD_BLOCK_LEN;
 		crypto_free_cipher(cipher);
+=======
+	if (crypto_cipher_blocksize(cipher) != 16) {
+		*flags |= CRYPTO_TFM_RES_BAD_BLOCK_LEN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -318,8 +389,13 @@ static int init_tfm(struct crypto_tfm *tfm)
 static void exit_tfm(struct crypto_tfm *tfm)
 {
 	struct priv *ctx = crypto_tfm_ctx(tfm);
+<<<<<<< HEAD
 
 	lrw_free_table(&ctx->table);
+=======
+	if (ctx->table)
+		gf128mul_free_64k(ctx->table);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	crypto_free_cipher(ctx->child);
 }
 

@@ -93,7 +93,11 @@ config SATA_FSL
 	  If unsure, say N.
 
 config SATA_INIC162X
+<<<<<<< HEAD
 	tristate "Initio 162x SATA support (Very Experimental)"
+=======
+	tristate "Initio 162x SATA support"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	depends on PCI
 	help
 	  This option enables support for Initio 162x Serial ATA.
@@ -313,7 +317,10 @@ config PATA_AMD
 
 config PATA_ARASAN_CF
 	tristate "ARASAN CompactFlash PATA Controller Support"
+<<<<<<< HEAD
 	depends on DMADEVICES
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select DMA_ENGINE
 	help
 	  Say Y here to support the ARASAN CompactFlash PATA controller
@@ -468,6 +475,7 @@ config PATA_ICSIDE
 	  interface card.  This is not required for ICS partition support.
 	  If you are unsure, say N to this.
 
+<<<<<<< HEAD
 config PATA_IMX
 	tristate "PATA support for Freescale iMX"
 	depends on ARCH_MXC
@@ -477,6 +485,8 @@ config PATA_IMX
 
 	  If unsure, say N.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config PATA_IT8213
 	tristate "IT8213 PATA support (Experimental)"
 	depends on PCI && EXPERIMENTAL
@@ -820,7 +830,11 @@ config PATA_PLATFORM
 
 config PATA_OF_PLATFORM
 	tristate "OpenFirmware platform device PATA support"
+<<<<<<< HEAD
 	depends on PATA_PLATFORM && OF
+=======
+	depends on PATA_PLATFORM && PPC_OF
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  This option enables support for generic directly connected ATA
 	  devices commonly found on embedded systems with OpenFirmware
@@ -831,7 +845,10 @@ config PATA_OF_PLATFORM
 config PATA_QDI
 	tristate "QDI VLB PATA support"
 	depends on ISA
+<<<<<<< HEAD
 	select PATA_LEGACY
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Support for QDI 6500 and 6580 PATA controllers on VESA local bus.
 

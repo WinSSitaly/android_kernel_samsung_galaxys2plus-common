@@ -227,6 +227,7 @@ int hwspinlock_example2(void)
 
 4. API for implementors
 
+<<<<<<< HEAD
   int hwspin_lock_register(struct hwspinlock_device *bank, struct device *dev,
 		const struct hwspinlock_ops *ops, int base_id, int num_locks);
    - to be called from the underlying platform-specific implementation, in
@@ -239,10 +240,22 @@ int hwspinlock_example2(void)
    - to be called from the underlying vendor-specific implementation, in order
      to unregister an hwspinlock device (which is usually a bank of numerous
      locks).
+=======
+  int hwspin_lock_register(struct hwspinlock *hwlock);
+   - to be called from the underlying platform-specific implementation, in
+     order to register a new hwspinlock instance. Should be called from
+     a process context (this function might sleep).
+     Returns 0 on success, or appropriate error code on failure.
+
+  struct hwspinlock *hwspin_lock_unregister(unsigned int id);
+   - to be called from the underlying vendor-specific implementation, in order
+     to unregister an existing (and unused) hwspinlock instance.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
      Should be called from a process context (this function might sleep).
      Returns the address of hwspinlock on success, or NULL on error (e.g.
      if the hwspinlock is sill in use).
 
+<<<<<<< HEAD
 5. Important structs
 
 struct hwspinlock_device is a device which usually contains a bank
@@ -283,6 +296,33 @@ struct hwspinlock {
 When registering a bank of locks, the hwspinlock driver only needs to
 set the priv members of the locks. The rest of the members are set and
 initialized by the hwspinlock core itself.
+=======
+5. struct hwspinlock
+
+This struct represents an hwspinlock instance. It is registered by the
+underlying hwspinlock implementation using the hwspin_lock_register() API.
+
+/**
+ * struct hwspinlock - vendor-specific hwspinlock implementation
+ *
+ * @dev: underlying device, will be used with runtime PM api
+ * @ops: vendor-specific hwspinlock handlers
+ * @id: a global, unique, system-wide, index of the lock.
+ * @lock: initialized and used by hwspinlock core
+ * @owner: underlying implementation module, used to maintain module ref count
+ */
+struct hwspinlock {
+	struct device *dev;
+	const struct hwspinlock_ops *ops;
+	int id;
+	spinlock_t lock;
+	struct module *owner;
+};
+
+The underlying implementation is responsible to assign the dev, ops, id and
+owner members. The lock member, OTOH, is initialized and used by the hwspinlock
+core.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 6. Implementation callbacks
 

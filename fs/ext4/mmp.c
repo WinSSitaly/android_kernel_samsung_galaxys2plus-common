@@ -109,7 +109,11 @@ static int kmmpd(void *data)
 	mmp->mmp_check_interval = cpu_to_le16(mmp_check_interval);
 	bdevname(bh->b_bdev, mmp->mmp_bdevname);
 
+<<<<<<< HEAD
 	memcpy(mmp->mmp_nodename, init_utsname()->nodename,
+=======
+	memcpy(mmp->mmp_nodename, init_utsname()->sysname,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       sizeof(mmp->mmp_nodename));
 
 	while (!kthread_should_stop()) {
@@ -125,9 +129,14 @@ static int kmmpd(void *data)
 		 * Don't spew too many error messages. Print one every
 		 * (s_mmp_update_interval * 60) seconds.
 		 */
+<<<<<<< HEAD
 		if (retval) {
 			if ((failed_writes % 60) == 0)
 				ext4_error(sb, "Error writing to MMP block");
+=======
+		if (retval && (failed_writes % 60) == 0) {
+			ext4_error(sb, "Error writing to MMP block");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			failed_writes++;
 		}
 
@@ -257,8 +266,13 @@ int ext4_multi_mount_protect(struct super_block *sb,
 	 * If check_interval in MMP block is larger, use that instead of
 	 * update_interval from the superblock.
 	 */
+<<<<<<< HEAD
 	if (le16_to_cpu(mmp->mmp_check_interval) > mmp_check_interval)
 		mmp_check_interval = le16_to_cpu(mmp->mmp_check_interval);
+=======
+	if (mmp->mmp_check_interval > mmp_check_interval)
+		mmp_check_interval = mmp->mmp_check_interval;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	seq = le32_to_cpu(mmp->mmp_seq);
 	if (seq == EXT4_MMP_SEQ_CLEAN)
@@ -296,8 +310,12 @@ skip:
 	/*
 	 * write a new random sequence number.
 	 */
+<<<<<<< HEAD
 	seq = mmp_new_seq();
 	mmp->mmp_seq = cpu_to_le32(seq);
+=======
+	mmp->mmp_seq = seq = cpu_to_le32(mmp_new_seq());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	retval = write_mmp_block(bh);
 	if (retval)

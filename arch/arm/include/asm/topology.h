@@ -1,6 +1,7 @@
 #ifndef _ASM_ARM_TOPOLOGY_H
 #define _ASM_ARM_TOPOLOGY_H
 
+<<<<<<< HEAD
 #ifdef CONFIG_ARM_CPU_TOPOLOGY
 
 #include <linux/cpumask.h>
@@ -34,6 +35,8 @@ static inline void store_cpu_topology(unsigned int cpuid) { }
 
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm-generic/topology.h>
 
 #endif /* _ASM_ARM_TOPOLOGY_H */

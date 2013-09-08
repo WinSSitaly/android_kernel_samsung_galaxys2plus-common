@@ -198,8 +198,11 @@ typedef struct _drm_i915_sarea {
 #define DRM_I915_OVERLAY_PUT_IMAGE	0x27
 #define DRM_I915_OVERLAY_ATTRS	0x28
 #define DRM_I915_GEM_EXECBUFFER2	0x29
+<<<<<<< HEAD
 #define DRM_I915_GET_SPRITE_COLORKEY	0x2a
 #define DRM_I915_SET_SPRITE_COLORKEY	0x2b
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRM_IOCTL_I915_INIT		DRM_IOW( DRM_COMMAND_BASE + DRM_I915_INIT, drm_i915_init_t)
 #define DRM_IOCTL_I915_FLUSH		DRM_IO ( DRM_COMMAND_BASE + DRM_I915_FLUSH)
@@ -241,8 +244,11 @@ typedef struct _drm_i915_sarea {
 #define DRM_IOCTL_I915_GEM_MADVISE	DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_GEM_MADVISE, struct drm_i915_gem_madvise)
 #define DRM_IOCTL_I915_OVERLAY_PUT_IMAGE	DRM_IOW(DRM_COMMAND_BASE + DRM_I915_OVERLAY_PUT_IMAGE, struct drm_intel_overlay_put_image)
 #define DRM_IOCTL_I915_OVERLAY_ATTRS	DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_OVERLAY_ATTRS, struct drm_intel_overlay_attrs)
+<<<<<<< HEAD
 #define DRM_IOCTL_I915_SET_SPRITE_COLORKEY DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_SET_SPRITE_COLORKEY, struct drm_intel_sprite_colorkey)
 #define DRM_IOCTL_I915_GET_SPRITE_COLORKEY DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_SET_SPRITE_COLORKEY, struct drm_intel_sprite_colorkey)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Allow drivers to submit batchbuffers directly to hardware, relying
  * on the security mechanisms provided by hardware.
@@ -295,8 +301,11 @@ typedef struct drm_i915_irq_wait {
 #define I915_PARAM_HAS_COHERENT_RINGS	 13
 #define I915_PARAM_HAS_EXEC_CONSTANTS	 14
 #define I915_PARAM_HAS_RELAXED_DELTA	 15
+<<<<<<< HEAD
 #define I915_PARAM_HAS_GEN7_SOL_RESET	 16
 #define I915_PARAM_HAS_LLC     	 17
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct drm_i915_getparam {
 	int param;
@@ -659,9 +668,12 @@ struct drm_i915_gem_execbuffer2 {
 	__u64 rsvd2;
 };
 
+<<<<<<< HEAD
 /** Resets the SO write offset registers for transform feedback on gen7. */
 #define I915_EXEC_GEN7_SOL_RESET	(1<<8)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct drm_i915_gem_pin {
 	/** Handle of the buffer to be pinned. */
 	__u32 handle;
@@ -853,6 +865,7 @@ struct drm_intel_overlay_attrs {
 	__u32 gamma5;
 };
 
+<<<<<<< HEAD
 /*
  * Intel sprite handling
  *
@@ -885,4 +898,6 @@ struct drm_intel_sprite_colorkey {
 	__u32 flags;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif				/* _I915_DRM_H_ */

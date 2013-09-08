@@ -37,7 +37,10 @@
 
 #include <linux/init.h>
 #include <linux/wait.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <sound/core.h>
 #include <sound/rawmidi.h>

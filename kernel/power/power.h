@@ -50,8 +50,11 @@ static inline char *check_image_kernel(struct swsusp_info *info)
 #define SPARE_PAGES	((1024 * 1024) >> PAGE_SHIFT)
 
 /* kernel/power/hibernate.c */
+<<<<<<< HEAD
 extern bool freezer_test_done;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int hibernation_snapshot(int platform_mode);
 extern int hibernation_restore(int platform_mode);
 extern int hibernation_platform_enter(void);
@@ -148,7 +151,10 @@ extern int swsusp_swap_in_use(void);
  */
 #define SF_PLATFORM_MODE	1
 #define SF_NOCOMPRESS_MODE	2
+<<<<<<< HEAD
 #define SF_CRC32_MODE	        4
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* kernel/power/hibernate.c */
 extern int swsusp_check(void);
@@ -177,11 +183,19 @@ extern const char *const pm_states[];
 
 extern bool valid_state(suspend_state_t state);
 extern int suspend_devices_and_enter(suspend_state_t state);
+<<<<<<< HEAD
+=======
+extern int enter_state(suspend_state_t state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else /* !CONFIG_SUSPEND */
 static inline int suspend_devices_and_enter(suspend_state_t state)
 {
 	return -ENOSYS;
 }
+<<<<<<< HEAD
+=======
+static inline int enter_state(suspend_state_t state) { return -ENOSYS; }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline bool valid_state(suspend_state_t state) { return false; }
 #endif /* !CONFIG_SUSPEND */
 
@@ -229,6 +243,7 @@ extern int pm_test_level;
 #ifdef CONFIG_SUSPEND_FREEZER
 static inline int suspend_freeze_processes(void)
 {
+<<<<<<< HEAD
 	int error;
 
 	error = freeze_processes();
@@ -248,6 +263,9 @@ static inline int suspend_freeze_processes(void)
 		thaw_processes();
 
 	return error;
+=======
+	return freeze_processes();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void suspend_thaw_processes(void)
@@ -264,3 +282,30 @@ static inline void suspend_thaw_processes(void)
 {
 }
 #endif
+<<<<<<< HEAD
+=======
+
+#ifdef CONFIG_WAKELOCK
+/* kernel/power/wakelock.c */
+extern struct workqueue_struct *suspend_work_queue;
+extern struct wake_lock main_wake_lock;
+extern suspend_state_t requested_suspend_state;
+#endif
+
+#ifdef CONFIG_USER_WAKELOCK
+ssize_t wake_lock_show(struct kobject *kobj, struct kobj_attribute *attr,
+			char *buf);
+ssize_t wake_lock_store(struct kobject *kobj, struct kobj_attribute *attr,
+			const char *buf, size_t n);
+ssize_t wake_unlock_show(struct kobject *kobj, struct kobj_attribute *attr,
+			char *buf);
+ssize_t  wake_unlock_store(struct kobject *kobj, struct kobj_attribute *attr,
+			const char *buf, size_t n);
+#endif
+
+#ifdef CONFIG_EARLYSUSPEND
+/* kernel/power/earlysuspend.c */
+void request_suspend_state(suspend_state_t state);
+suspend_state_t get_suspend_state(void);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

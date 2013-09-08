@@ -19,8 +19,11 @@
  *  bfad_im.c Linux driver IM module.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "bfad_drv.h"
 #include "bfad_im.h"
 #include "bfa_fcs.h"
@@ -177,11 +180,29 @@ bfad_im_info(struct Scsi_Host *shost)
 	struct bfad_im_port_s *im_port =
 			(struct bfad_im_port_s *) shost->hostdata[0];
 	struct bfad_s *bfad = im_port->bfad;
+<<<<<<< HEAD
 
 	memset(bfa_buf, 0, sizeof(bfa_buf));
 	snprintf(bfa_buf, sizeof(bfa_buf),
 		"Brocade FC/FCOE Adapter, " "hwpath: %s driver: %s",
 		bfad->pci_name, BFAD_DRIVER_VERSION);
+=======
+	struct bfa_s *bfa = &bfad->bfa;
+	struct bfa_ioc_s *ioc = &bfa->ioc;
+	char model[BFA_ADAPTER_MODEL_NAME_LEN];
+
+	bfa_get_adapter_model(bfa, model);
+
+	memset(bfa_buf, 0, sizeof(bfa_buf));
+	if (ioc->ctdev && !ioc->fcmode)
+		snprintf(bfa_buf, sizeof(bfa_buf),
+		"Brocade FCOE Adapter, " "model: %s hwpath: %s driver: %s",
+		 model, bfad->pci_name, BFAD_DRIVER_VERSION);
+	else
+		snprintf(bfa_buf, sizeof(bfa_buf),
+		"Brocade FC Adapter, " "model: %s hwpath: %s driver: %s",
+		model, bfad->pci_name, BFAD_DRIVER_VERSION);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return bfa_buf;
 }
@@ -564,6 +585,12 @@ bfad_im_scsi_host_alloc(struct bfad_s *bfad, struct bfad_im_port_s *im_port,
 		goto out_fc_rel;
 	}
 
+<<<<<<< HEAD
+=======
+	/* setup host fixed attribute if the lk supports */
+	bfad_fc_host_init(im_port);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 out_fc_rel:
@@ -658,6 +685,7 @@ bfad_im_port_clean(struct bfad_im_port_s *im_port)
 	spin_unlock_irqrestore(&bfad->bfad_lock, flags);
 }
 
+<<<<<<< HEAD
 static void bfad_aen_im_notify_handler(struct work_struct *work)
 {
 	struct bfad_im_s *im =
@@ -683,6 +711,8 @@ static void bfad_aen_im_notify_handler(struct work_struct *work)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bfa_status_t
 bfad_im_probe(struct bfad_s *bfad)
 {
@@ -703,7 +733,10 @@ bfad_im_probe(struct bfad_s *bfad)
 		rc = BFA_STATUS_FAILED;
 	}
 
+<<<<<<< HEAD
 	INIT_WORK(&im->aen_im_notify_work, bfad_aen_im_notify_handler);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ext:
 	return rc;
 }
@@ -728,9 +761,12 @@ bfad_scsi_host_alloc(struct bfad_im_port_s *im_port, struct bfad_s *bfad)
 	else
 		sht = &bfad_im_vport_template;
 
+<<<<<<< HEAD
 	if (max_xfer_size != BFAD_MAX_SECTORS >> 1)
 		sht->max_sectors = max_xfer_size << 1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sht->sg_tablesize = bfad->cfg_data.io_max_sge;
 
 	return scsi_host_alloc(sht, sizeof(unsigned long));
@@ -808,8 +844,12 @@ struct scsi_host_template bfad_im_scsi_host_template = {
 	.cmd_per_lun = 3,
 	.use_clustering = ENABLE_CLUSTERING,
 	.shost_attrs = bfad_im_host_attrs,
+<<<<<<< HEAD
 	.max_sectors = BFAD_MAX_SECTORS,
 	.vendor_id = BFA_PCI_VENDOR_ID_BROCADE,
+=======
+	.max_sectors = 0xFFFF,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct scsi_host_template bfad_im_vport_template = {
@@ -830,7 +870,11 @@ struct scsi_host_template bfad_im_vport_template = {
 	.cmd_per_lun = 3,
 	.use_clustering = ENABLE_CLUSTERING,
 	.shost_attrs = bfad_im_vport_attrs,
+<<<<<<< HEAD
 	.max_sectors = BFAD_MAX_SECTORS,
+=======
+	.max_sectors = 0xFFFF,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 bfa_status_t
@@ -918,6 +962,7 @@ bfad_get_itnim(struct bfad_im_port_s *im_port, int id)
 }
 
 /*
+<<<<<<< HEAD
  * Function is invoked from the SCSI Host Template slave_alloc() entry point.
  * Has the logic to query the LUN Mask database to check if this LUN needs to
  * be made visible to the SCSI mid-layer or not.
@@ -949,19 +994,25 @@ bfad_im_check_if_make_lun_visible(struct scsi_device *sdev,
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Scsi_Host template entry slave_alloc
  */
 static int
 bfad_im_slave_alloc(struct scsi_device *sdev)
 {
 	struct fc_rport *rport = starget_to_rport(scsi_target(sdev));
+<<<<<<< HEAD
 	struct bfad_itnim_data_s *itnim_data =
 				(struct bfad_itnim_data_s *) rport->dd_data;
 	struct bfa_s *bfa = itnim_data->itnim->bfa_itnim->bfa;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!rport || fc_remote_port_chkready(rport))
 		return -ENXIO;
 
+<<<<<<< HEAD
 	if (bfa_get_lun_mask_status(bfa) == BFA_LUNMASK_ENABLED) {
 		/*
 		 * We should not mask LUN 0 - since this will translate
@@ -982,6 +1033,8 @@ bfad_im_slave_alloc(struct scsi_device *sdev)
 			return -ENXIO;
 	}
 done:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sdev->hostdata = rport->dd_data;
 
 	return 0;
@@ -998,10 +1051,14 @@ bfad_im_supported_speeds(struct bfa_s *bfa)
 		return 0;
 
 	bfa_ioc_get_attr(&bfa->ioc, ioc_attr);
+<<<<<<< HEAD
 	if (ioc_attr->adapter_attr.max_speed == BFA_PORT_SPEED_16GBPS)
 		supported_speed |=  FC_PORTSPEED_16GBIT | FC_PORTSPEED_8GBIT |
 				FC_PORTSPEED_4GBIT | FC_PORTSPEED_2GBIT;
 	else if (ioc_attr->adapter_attr.max_speed == BFA_PORT_SPEED_8GBPS) {
+=======
+	if (ioc_attr->adapter_attr.max_speed == BFA_PORT_SPEED_8GBPS) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ioc_attr->adapter_attr.is_mezz) {
 			supported_speed |= FC_PORTSPEED_8GBIT |
 				FC_PORTSPEED_4GBIT |
@@ -1091,8 +1148,11 @@ bfad_im_fc_rport_add(struct bfad_im_port_s *im_port, struct bfad_itnim_s *itnim)
 	    && (fc_rport->scsi_target_id < MAX_FCP_TARGET))
 		itnim->scsi_tgt_id = fc_rport->scsi_target_id;
 
+<<<<<<< HEAD
 	itnim->channel = fc_rport->channel;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 }
 

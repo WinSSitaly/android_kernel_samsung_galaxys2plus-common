@@ -247,7 +247,11 @@ adfs_iget(struct super_block *sb, struct object_info *obj)
 	inode->i_gid	 = ADFS_SB(sb)->s_gid;
 	inode->i_ino	 = obj->file_id;
 	inode->i_size	 = obj->size;
+<<<<<<< HEAD
 	set_nlink(inode, 2);
+=======
+	inode->i_nlink	 = 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	inode->i_blocks	 = (inode->i_size + sb->s_blocksize - 1) >>
 			    sb->s_blocksize_bits;
 

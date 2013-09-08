@@ -15,6 +15,10 @@
 
 #include <asm/openprom.h>
 #include <asm/oplib.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/ldc.h>
 
 static int prom_service_exists(const char *service_name)

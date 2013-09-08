@@ -78,6 +78,7 @@ in software. This is currently WIP.
 
 See header include/net/mac802154.h and several drivers in drivers/ieee802154/.
 
+<<<<<<< HEAD
 6LoWPAN Linux implementation
 ============================
 
@@ -105,3 +106,5 @@ To setup 6lowpan interface you need (busybox release > 1.17.0):
 3. Set MAC (if needs):
    # ip link set lowpan0 address de:ad:be:ef:ca:fe:ba:be
 4. Bring up 'lowpan0' interface
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

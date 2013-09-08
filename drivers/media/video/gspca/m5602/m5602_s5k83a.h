@@ -41,7 +41,11 @@
 
 /* Kernel module parameters */
 extern int force_sensor;
+<<<<<<< HEAD
 extern bool dump_sensor;
+=======
+extern int dump_sensor;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int s5k83a_probe(struct sd *sd);
 int s5k83a_init(struct sd *sd);

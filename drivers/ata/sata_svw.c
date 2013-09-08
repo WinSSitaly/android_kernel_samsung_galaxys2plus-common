@@ -142,6 +142,7 @@ static int k2_sata_scr_write(struct ata_link *link,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int k2_sata_softreset(struct ata_link *link,
 			     unsigned int *class, unsigned long deadline)
 {
@@ -175,6 +176,8 @@ static int k2_sata_hardreset(struct ata_link *link,
 
 	return sata_sff_hardreset(link, class, deadline);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void k2_sata_tf_load(struct ata_port *ap, const struct ata_taskfile *tf)
 {
@@ -379,8 +382,11 @@ static struct scsi_host_template k2_sata_sht = {
 
 static struct ata_port_operations k2_sata_ops = {
 	.inherits		= &ata_bmdma_port_ops,
+<<<<<<< HEAD
 	.softreset              = k2_sata_softreset,
 	.hardreset              = k2_sata_hardreset,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.sff_tf_load		= k2_sata_tf_load,
 	.sff_tf_read		= k2_sata_tf_read,
 	.sff_check_status	= k2_stat_check_status,
@@ -449,13 +455,22 @@ static void k2_sata_setup_port(struct ata_ioports *port, void __iomem *base)
 
 static int k2_sata_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
 {
+<<<<<<< HEAD
+=======
+	static int printed_version;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const struct ata_port_info *ppi[] =
 		{ &k2_port_info[ent->driver_data], NULL };
 	struct ata_host *host;
 	void __iomem *mmio_base;
 	int n_ports, i, rc, bar_pos;
 
+<<<<<<< HEAD
 	ata_print_version_once(&pdev->dev, DRV_VERSION);
+=======
+	if (!printed_version++)
+		dev_printk(KERN_DEBUG, &pdev->dev, "version " DRV_VERSION "\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* allocate host */
 	n_ports = 4;

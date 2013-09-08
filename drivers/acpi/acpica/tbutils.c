@@ -5,7 +5,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -118,7 +122,10 @@ acpi_tb_check_xsdt(acpi_physical_address address)
 		return AE_OK;
 }
 
+<<<<<<< HEAD
 #if (!ACPI_REDUCED_HARDWARE)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*******************************************************************************
  *
  * FUNCTION:    acpi_tb_initialize_facs
@@ -136,6 +143,7 @@ acpi_status acpi_tb_initialize_facs(void)
 {
 	acpi_status status;
 
+<<<<<<< HEAD
 	/* If Hardware Reduced flag is set, there is no FACS */
 
 	if (acpi_gbl_reduced_hardware) {
@@ -143,13 +151,18 @@ acpi_status acpi_tb_initialize_facs(void)
 		return (AE_OK);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = acpi_get_table_by_index(ACPI_TABLE_INDEX_FACS,
 					 ACPI_CAST_INDIRECT_PTR(struct
 								acpi_table_header,
 								&acpi_gbl_FACS));
 	return status;
 }
+<<<<<<< HEAD
 #endif				/* !ACPI_REDUCED_HARDWARE */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*******************************************************************************
  *
@@ -446,7 +459,11 @@ struct acpi_table_header *acpi_tb_copy_dsdt(u32 table_index)
  * RETURN:      None
  *
  * DESCRIPTION: Install an ACPI table into the global data structure. The
+<<<<<<< HEAD
  *              table override mechanism is called to allow the host
+=======
+ *              table override mechanism is implemented here to allow the host
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *              OS to replace any table before it is installed in the root
  *              table array.
  *
@@ -456,9 +473,17 @@ void
 acpi_tb_install_table(acpi_physical_address address,
 		      char *signature, u32 table_index)
 {
+<<<<<<< HEAD
 	struct acpi_table_header *table;
 	struct acpi_table_header *final_table;
 	struct acpi_table_desc *table_desc;
+=======
+	u8 flags;
+	acpi_status status;
+	struct acpi_table_header *table_to_install;
+	struct acpi_table_header *mapped_table;
+	struct acpi_table_header *override_table = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!address) {
 		ACPI_ERROR((AE_INFO,
@@ -469,24 +494,39 @@ acpi_tb_install_table(acpi_physical_address address,
 
 	/* Map just the table header */
 
+<<<<<<< HEAD
 	table = acpi_os_map_memory(address, sizeof(struct acpi_table_header));
 	if (!table) {
 		ACPI_ERROR((AE_INFO,
 			    "Could not map memory for table [%s] at %p",
 			    signature, ACPI_CAST_PTR(void, address)));
+=======
+	mapped_table =
+	    acpi_os_map_memory(address, sizeof(struct acpi_table_header));
+	if (!mapped_table) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
 	/* If a particular signature is expected (DSDT/FACS), it must match */
 
+<<<<<<< HEAD
 	if (signature && !ACPI_COMPARE_NAME(table->signature, signature)) {
 		ACPI_ERROR((AE_INFO,
 			    "Invalid signature 0x%X for ACPI table, expected [%s]",
 			    *ACPI_CAST_PTR(u32, table->signature), signature));
+=======
+	if (signature && !ACPI_COMPARE_NAME(mapped_table->signature, signature)) {
+		ACPI_ERROR((AE_INFO,
+			    "Invalid signature 0x%X for ACPI table, expected [%s]",
+			    *ACPI_CAST_PTR(u32, mapped_table->signature),
+			    signature));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto unmap_and_exit;
 	}
 
 	/*
+<<<<<<< HEAD
 	 * Initialize the table entry. Set the pointer to NULL, since the
 	 * table is not fully mapped at this time.
 	 */
@@ -499,11 +539,14 @@ acpi_tb_install_table(acpi_physical_address address,
 	ACPI_MOVE_32_TO_32(table_desc->signature.ascii, table->signature);
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * ACPI Table Override:
 	 *
 	 * Before we install the table, let the host OS override it with a new
 	 * one if desired. Any table within the RSDT/XSDT can be replaced,
 	 * including the DSDT which is pointed to by the FADT.
+<<<<<<< HEAD
 	 *
 	 * NOTE: If the table is overridden, then final_table will contain a
 	 * mapped pointer to the full new table. If the table is not overridden,
@@ -541,6 +584,49 @@ acpi_tb_install_table(acpi_physical_address address,
 	/* Always unmap the table header that we mapped above */
 
 	acpi_os_unmap_memory(table, sizeof(struct acpi_table_header));
+=======
+	 */
+	status = acpi_os_table_override(mapped_table, &override_table);
+	if (ACPI_SUCCESS(status) && override_table) {
+		ACPI_INFO((AE_INFO,
+			   "%4.4s @ 0x%p Table override, replaced with:",
+			   mapped_table->signature, ACPI_CAST_PTR(void,
+								  address)));
+
+		acpi_gbl_root_table_list.tables[table_index].pointer =
+		    override_table;
+		address = ACPI_PTR_TO_PHYSADDR(override_table);
+
+		table_to_install = override_table;
+		flags = ACPI_TABLE_ORIGIN_OVERRIDE;
+	} else {
+		table_to_install = mapped_table;
+		flags = ACPI_TABLE_ORIGIN_MAPPED;
+	}
+
+	/* Initialize the table entry */
+
+	acpi_gbl_root_table_list.tables[table_index].address = address;
+	acpi_gbl_root_table_list.tables[table_index].length =
+	    table_to_install->length;
+	acpi_gbl_root_table_list.tables[table_index].flags = flags;
+
+	ACPI_MOVE_32_TO_32(&
+			   (acpi_gbl_root_table_list.tables[table_index].
+			    signature), table_to_install->signature);
+
+	acpi_tb_print_table_header(address, table_to_install);
+
+	if (table_index == ACPI_TABLE_INDEX_DSDT) {
+
+		/* Global integer width is based upon revision of the DSDT */
+
+		acpi_ut_set_integer_width(table_to_install->revision);
+	}
+
+      unmap_and_exit:
+	acpi_os_unmap_memory(mapped_table, sizeof(struct acpi_table_header));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*******************************************************************************

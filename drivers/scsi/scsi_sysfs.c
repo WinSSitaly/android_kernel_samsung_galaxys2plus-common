@@ -246,6 +246,7 @@ show_shost_active_mode(struct device *dev,
 
 static DEVICE_ATTR(active_mode, S_IRUGO | S_IWUSR, show_shost_active_mode, NULL);
 
+<<<<<<< HEAD
 static int check_reset_type(const char *str)
 {
 	if (sysfs_streq(str, "adapter"))
@@ -280,6 +281,8 @@ exit_store_host_reset:
 
 static DEVICE_ATTR(host_reset, S_IWUSR, NULL, store_host_reset);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 shost_rd_attr(unique_id, "%u\n");
 shost_rd_attr(host_busy, "%hu\n");
 shost_rd_attr(cmd_per_lun, "%hd\n");
@@ -306,7 +309,10 @@ static struct attribute *scsi_sysfs_shost_attrs[] = {
 	&dev_attr_active_mode.attr,
 	&dev_attr_prot_capabilities.attr,
 	&dev_attr_prot_guard_type.attr,
+<<<<<<< HEAD
 	&dev_attr_host_reset.attr,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL
 };
 
@@ -968,8 +974,16 @@ void __scsi_remove_device(struct scsi_device *sdev)
 		sdev->host->hostt->slave_destroy(sdev);
 	transport_destroy_device(dev);
 
+<<<<<<< HEAD
 	/* Freeing the queue signals to block that we're done */
 	blk_cleanup_queue(sdev->request_queue);
+=======
+	/* cause the request function to reject all I/O requests */
+	sdev->request_queue->queuedata = NULL;
+
+	/* Freeing the queue signals to block that we're done */
+	scsi_free_queue(sdev->request_queue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	put_device(dev);
 }
 
@@ -994,6 +1008,10 @@ static void __scsi_remove_target(struct scsi_target *starget)
 	struct scsi_device *sdev;
 
 	spin_lock_irqsave(shost->host_lock, flags);
+<<<<<<< HEAD
+=======
+	starget->reap_ref++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  restart:
 	list_for_each_entry(sdev, &shost->__devices, siblings) {
 		if (sdev->channel != starget->channel ||
@@ -1007,6 +1025,17 @@ static void __scsi_remove_target(struct scsi_target *starget)
 		goto restart;
 	}
 	spin_unlock_irqrestore(shost->host_lock, flags);
+<<<<<<< HEAD
+=======
+	scsi_target_reap(starget);
+}
+
+static int __remove_child (struct device * dev, void * data)
+{
+	if (scsi_is_target_device(dev))
+		__scsi_remove_target(to_scsi_target(dev));
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1019,6 +1048,7 @@ static void __scsi_remove_target(struct scsi_target *starget)
  */
 void scsi_remove_target(struct device *dev)
 {
+<<<<<<< HEAD
 	struct Scsi_Host *shost = dev_to_shost(dev->parent);
 	struct scsi_target *starget, *last = NULL;
 	unsigned long flags;
@@ -1045,6 +1075,16 @@ void scsi_remove_target(struct device *dev)
 
 	if (last)
 		scsi_target_reap(last);
+=======
+	if (scsi_is_target_device(dev)) {
+		__scsi_remove_target(to_scsi_target(dev));
+		return;
+	}
+
+	get_device(dev);
+	device_for_each_child(dev, NULL, __remove_child);
+	put_device(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(scsi_remove_target);
 

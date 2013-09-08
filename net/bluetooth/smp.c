@@ -23,15 +23,22 @@
 #include <net/bluetooth/bluetooth.h>
 #include <net/bluetooth/hci_core.h>
 #include <net/bluetooth/l2cap.h>
+<<<<<<< HEAD
 #include <net/bluetooth/mgmt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/bluetooth/smp.h>
 #include <linux/crypto.h>
 #include <linux/scatterlist.h>
 #include <crypto/b128ops.h>
 
+<<<<<<< HEAD
 #define SMP_TIMEOUT	msecs_to_jiffies(30000)
 
 #define AUTH_REQ_MASK   0x07
+=======
+#define SMP_TIMEOUT 30000 /* 30 seconds */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void swap128(u8 src[16], u8 dst[16])
 {
@@ -184,6 +191,7 @@ static void smp_send_cmd(struct l2cap_conn *conn, u8 code, u16 len, void *data)
 	if (!skb)
 		return;
 
+<<<<<<< HEAD
 	skb->priority = HCI_PRIO_MAX;
 	hci_send_acl(conn->hchan, skb, 0);
 
@@ -206,6 +214,18 @@ static __u8 seclevel_to_authreq(__u8 sec_level)
 		return SMP_AUTH_MITM | SMP_AUTH_BONDING;
 	case BT_SECURITY_MEDIUM:
 		return SMP_AUTH_BONDING;
+=======
+	hci_send_acl(conn->hcon, skb, 0);
+}
+
+static __u8 seclevel_to_authreq(__u8 level)
+{
+	switch (level) {
+	case BT_SECURITY_HIGH:
+		/* Right now we don't support bonding */
+		return SMP_AUTH_MITM;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return SMP_AUTH_NONE;
 	}
@@ -216,6 +236,7 @@ static void build_pairing_cmd(struct l2cap_conn *conn,
 				struct smp_cmd_pairing *rsp,
 				__u8 authreq)
 {
+<<<<<<< HEAD
 	u8 dist_keys = 0;
 
 	if (test_bit(HCI_PAIRABLE, &conn->hcon->hdev->dev_flags)) {
@@ -223,34 +244,58 @@ static void build_pairing_cmd(struct l2cap_conn *conn,
 		authreq |= SMP_AUTH_BONDING;
 	} else {
 		authreq &= ~SMP_AUTH_BONDING;
+=======
+	u8 dist_keys;
+
+	dist_keys = 0;
+	if (test_bit(HCI_PAIRABLE, &conn->hcon->hdev->flags)) {
+		dist_keys = SMP_DIST_ENC_KEY | SMP_DIST_ID_KEY | SMP_DIST_SIGN;
+		authreq |= SMP_AUTH_BONDING;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (rsp == NULL) {
 		req->io_capability = conn->hcon->io_capability;
 		req->oob_flag = SMP_OOB_NOT_PRESENT;
 		req->max_key_size = SMP_MAX_ENC_KEY_SIZE;
+<<<<<<< HEAD
 		req->init_key_dist = 0;
 		req->resp_key_dist = dist_keys;
 		req->auth_req = (authreq & AUTH_REQ_MASK);
+=======
+		req->init_key_dist = dist_keys;
+		req->resp_key_dist = dist_keys;
+		req->auth_req = authreq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
 	rsp->io_capability = conn->hcon->io_capability;
 	rsp->oob_flag = SMP_OOB_NOT_PRESENT;
 	rsp->max_key_size = SMP_MAX_ENC_KEY_SIZE;
+<<<<<<< HEAD
 	rsp->init_key_dist = 0;
 	rsp->resp_key_dist = req->resp_key_dist & dist_keys;
 	rsp->auth_req = (authreq & AUTH_REQ_MASK);
+=======
+	rsp->init_key_dist = req->init_key_dist & dist_keys;
+	rsp->resp_key_dist = req->resp_key_dist & dist_keys;
+	rsp->auth_req = authreq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static u8 check_enc_key_size(struct l2cap_conn *conn, __u8 max_key_size)
 {
+<<<<<<< HEAD
 	struct smp_chan *smp = conn->smp_chan;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((max_key_size > SMP_MAX_ENC_KEY_SIZE) ||
 			(max_key_size < SMP_MIN_ENC_KEY_SIZE))
 		return SMP_ENC_KEY_SIZE;
 
+<<<<<<< HEAD
 	smp->enc_key_size = max_key_size;
 
 	return 0;
@@ -561,6 +606,9 @@ int smp_user_confirm_reply(struct hci_conn *hcon, u16 mgmt_op, __le32 passkey)
 	/* If it is our turn to send Pairing Confirm, do so now */
 	if (test_bit(SMP_FLAG_CFM_PENDING, &smp->smp_flags))
 		queue_work(hcon->hdev->workqueue, &smp->confirm);
+=======
+	conn->smp_key_size = max_key_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -568,6 +616,7 @@ int smp_user_confirm_reply(struct hci_conn *hcon, u16 mgmt_op, __le32 passkey)
 static u8 smp_cmd_pairing_req(struct l2cap_conn *conn, struct sk_buff *skb)
 {
 	struct smp_cmd_pairing rsp, *req = (void *) skb->data;
+<<<<<<< HEAD
 	struct smp_chan *smp;
 	u8 key_size;
 	u8 auth = SMP_AUTH_NONE;
@@ -594,11 +643,27 @@ static u8 smp_cmd_pairing_req(struct l2cap_conn *conn, struct sk_buff *skb)
 	conn->hcon->pending_sec_level = authreq_to_seclevel(auth);
 
 	build_pairing_cmd(conn, req, &rsp, auth);
+=======
+	u8 key_size;
+
+	BT_DBG("conn %p", conn);
+
+	conn->preq[0] = SMP_CMD_PAIRING_REQ;
+	memcpy(&conn->preq[1], req, sizeof(*req));
+	skb_pull(skb, sizeof(*req));
+
+	if (req->oob_flag)
+		return SMP_OOB_NOT_AVAIL;
+
+	/* We didn't start the pairing, so no requirements */
+	build_pairing_cmd(conn, req, &rsp, SMP_AUTH_NONE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	key_size = min(req->max_key_size, rsp.max_key_size);
 	if (check_enc_key_size(conn, key_size))
 		return SMP_ENC_KEY_SIZE;
 
+<<<<<<< HEAD
 	ret = smp_rand(smp->prnd);
 	if (ret)
 		return SMP_UNSPECIFIED;
@@ -612,6 +677,18 @@ static u8 smp_cmd_pairing_req(struct l2cap_conn *conn, struct sk_buff *skb)
 	ret = tk_request(conn, 0, auth, rsp.io_capability, req->io_capability);
 	if (ret)
 		return SMP_UNSPECIFIED;
+=======
+	/* Just works */
+	memset(conn->tk, 0, sizeof(conn->tk));
+
+	conn->prsp[0] = SMP_CMD_PAIRING_RSP;
+	memcpy(&conn->prsp[1], &rsp, sizeof(rsp));
+
+	smp_send_cmd(conn, SMP_CMD_PAIRING_RSP, sizeof(rsp), &rsp);
+
+	mod_timer(&conn->security_timer, jiffies +
+					msecs_to_jiffies(SMP_TIMEOUT));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -619,6 +696,7 @@ static u8 smp_cmd_pairing_req(struct l2cap_conn *conn, struct sk_buff *skb)
 static u8 smp_cmd_pairing_rsp(struct l2cap_conn *conn, struct sk_buff *skb)
 {
 	struct smp_cmd_pairing *req, *rsp = (void *) skb->data;
+<<<<<<< HEAD
 	struct smp_chan *smp = conn->smp_chan;
 	struct hci_dev *hdev = conn->hcon->hdev;
 	u8 key_size, auth = SMP_AUTH_NONE;
@@ -632,11 +710,24 @@ static u8 smp_cmd_pairing_rsp(struct l2cap_conn *conn, struct sk_buff *skb)
 	skb_pull(skb, sizeof(*rsp));
 
 	req = (void *) &smp->preq[1];
+=======
+	struct smp_cmd_pairing_confirm cp;
+	struct crypto_blkcipher *tfm = conn->hcon->hdev->tfm;
+	int ret;
+	u8 res[16], key_size;
+
+	BT_DBG("conn %p", conn);
+
+	skb_pull(skb, sizeof(*rsp));
+
+	req = (void *) &conn->preq[1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	key_size = min(req->max_key_size, rsp->max_key_size);
 	if (check_enc_key_size(conn, key_size))
 		return SMP_ENC_KEY_SIZE;
 
+<<<<<<< HEAD
 	ret = smp_rand(smp->prnd);
 	if (ret)
 		return SMP_UNSPECIFIED;
@@ -661,12 +752,36 @@ static u8 smp_cmd_pairing_rsp(struct l2cap_conn *conn, struct sk_buff *skb)
 		return 0;
 
 	queue_work(hdev->workqueue, &smp->confirm);
+=======
+	if (rsp->oob_flag)
+		return SMP_OOB_NOT_AVAIL;
+
+	/* Just works */
+	memset(conn->tk, 0, sizeof(conn->tk));
+
+	conn->prsp[0] = SMP_CMD_PAIRING_RSP;
+	memcpy(&conn->prsp[1], rsp, sizeof(*rsp));
+
+	ret = smp_rand(conn->prnd);
+	if (ret)
+		return SMP_UNSPECIFIED;
+
+	ret = smp_c1(tfm, conn->tk, conn->prnd, conn->preq, conn->prsp, 0,
+			conn->src, conn->hcon->dst_type, conn->dst, res);
+	if (ret)
+		return SMP_UNSPECIFIED;
+
+	swap128(res, cp.confirm_val);
+
+	smp_send_cmd(conn, SMP_CMD_PAIRING_CONFIRM, sizeof(cp), &cp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 static u8 smp_cmd_pairing_confirm(struct l2cap_conn *conn, struct sk_buff *skb)
 {
+<<<<<<< HEAD
 	struct smp_chan *smp = conn->smp_chan;
 	struct hci_dev *hdev = conn->hcon->hdev;
 
@@ -674,10 +789,19 @@ static u8 smp_cmd_pairing_confirm(struct l2cap_conn *conn, struct sk_buff *skb)
 
 	memcpy(smp->pcnf, skb->data, sizeof(smp->pcnf));
 	skb_pull(skb, sizeof(smp->pcnf));
+=======
+	struct crypto_blkcipher *tfm = conn->hcon->hdev->tfm;
+
+	BT_DBG("conn %p %s", conn, conn->hcon->out ? "master" : "slave");
+
+	memcpy(conn->pcnf, skb->data, sizeof(conn->pcnf));
+	skb_pull(skb, sizeof(conn->pcnf));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (conn->hcon->out) {
 		u8 random[16];
 
+<<<<<<< HEAD
 		swap128(smp->prnd, random);
 		smp_send_cmd(conn, SMP_CMD_PAIRING_RANDOM, sizeof(random),
 								random);
@@ -687,11 +811,40 @@ static u8 smp_cmd_pairing_confirm(struct l2cap_conn *conn, struct sk_buff *skb)
 		set_bit(SMP_FLAG_CFM_PENDING, &smp->smp_flags);
 	}
 
+=======
+		swap128(conn->prnd, random);
+		smp_send_cmd(conn, SMP_CMD_PAIRING_RANDOM, sizeof(random),
+								random);
+	} else {
+		struct smp_cmd_pairing_confirm cp;
+		int ret;
+		u8 res[16];
+
+		ret = smp_rand(conn->prnd);
+		if (ret)
+			return SMP_UNSPECIFIED;
+
+		ret = smp_c1(tfm, conn->tk, conn->prnd, conn->preq, conn->prsp,
+						conn->hcon->dst_type, conn->dst,
+						0, conn->src, res);
+		if (ret)
+			return SMP_CONFIRM_FAILED;
+
+		swap128(res, cp.confirm_val);
+
+		smp_send_cmd(conn, SMP_CMD_PAIRING_CONFIRM, sizeof(cp), &cp);
+	}
+
+	mod_timer(&conn->security_timer, jiffies +
+					msecs_to_jiffies(SMP_TIMEOUT));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static u8 smp_cmd_pairing_random(struct l2cap_conn *conn, struct sk_buff *skb)
 {
+<<<<<<< HEAD
 	struct smp_chan *smp = conn->smp_chan;
 	struct hci_dev *hdev = conn->hcon->hdev;
 
@@ -723,11 +876,80 @@ static u8 smp_ltk_encrypt(struct l2cap_conn *conn)
 	return 1;
 
 }
+=======
+	struct hci_conn *hcon = conn->hcon;
+	struct crypto_blkcipher *tfm = hcon->hdev->tfm;
+	int ret;
+	u8 key[16], res[16], random[16], confirm[16];
+
+	swap128(skb->data, random);
+	skb_pull(skb, sizeof(random));
+
+	if (conn->hcon->out)
+		ret = smp_c1(tfm, conn->tk, random, conn->preq, conn->prsp, 0,
+				conn->src, conn->hcon->dst_type, conn->dst,
+				res);
+	else
+		ret = smp_c1(tfm, conn->tk, random, conn->preq, conn->prsp,
+				conn->hcon->dst_type, conn->dst, 0, conn->src,
+				res);
+	if (ret)
+		return SMP_UNSPECIFIED;
+
+	BT_DBG("conn %p %s", conn, conn->hcon->out ? "master" : "slave");
+
+	swap128(res, confirm);
+
+	if (memcmp(conn->pcnf, confirm, sizeof(conn->pcnf)) != 0) {
+		BT_ERR("Pairing failed (confirmation values mismatch)");
+		return SMP_CONFIRM_FAILED;
+	}
+
+	if (conn->hcon->out) {
+		u8 stk[16], rand[8];
+		__le16 ediv;
+
+		memset(rand, 0, sizeof(rand));
+		ediv = 0;
+
+		smp_s1(tfm, conn->tk, random, conn->prnd, key);
+		swap128(key, stk);
+
+		memset(stk + conn->smp_key_size, 0,
+				SMP_MAX_ENC_KEY_SIZE - conn->smp_key_size);
+
+		hci_le_start_enc(hcon, ediv, rand, stk);
+		hcon->enc_key_size = conn->smp_key_size;
+	} else {
+		u8 stk[16], r[16], rand[8];
+		__le16 ediv;
+
+		memset(rand, 0, sizeof(rand));
+		ediv = 0;
+
+		swap128(conn->prnd, r);
+		smp_send_cmd(conn, SMP_CMD_PAIRING_RANDOM, sizeof(r), r);
+
+		smp_s1(tfm, conn->tk, conn->prnd, random, key);
+		swap128(key, stk);
+
+		memset(stk + conn->smp_key_size, 0,
+				SMP_MAX_ENC_KEY_SIZE - conn->smp_key_size);
+
+		hci_add_ltk(conn->hcon->hdev, 0, conn->dst, conn->smp_key_size,
+							ediv, rand, stk);
+	}
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u8 smp_cmd_security_req(struct l2cap_conn *conn, struct sk_buff *skb)
 {
 	struct smp_cmd_security_req *rp = (void *) skb->data;
 	struct smp_cmd_pairing cp;
 	struct hci_conn *hcon = conn->hcon;
+<<<<<<< HEAD
 	struct smp_chan *smp;
 
 	BT_DBG("conn %p", conn);
@@ -742,11 +964,20 @@ static u8 smp_cmd_security_req(struct l2cap_conn *conn, struct sk_buff *skb)
 
 	smp = smp_chan_create(conn);
 
+=======
+
+	BT_DBG("conn %p", conn);
+
+	if (test_bit(HCI_CONN_ENCRYPT_PEND, &hcon->pend))
+		return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skb_pull(skb, sizeof(*rp));
 
 	memset(&cp, 0, sizeof(cp));
 	build_pairing_cmd(conn, &cp, NULL, rp->auth_req);
 
+<<<<<<< HEAD
 	smp->preq[0] = SMP_CMD_PAIRING_REQ;
 	memcpy(&smp->preq[1], &cp, sizeof(cp));
 
@@ -759,6 +990,24 @@ int smp_conn_security(struct hci_conn *hcon, __u8 sec_level)
 {
 	struct l2cap_conn *conn = hcon->l2cap_data;
 	struct smp_chan *smp = conn->smp_chan;
+=======
+	conn->preq[0] = SMP_CMD_PAIRING_REQ;
+	memcpy(&conn->preq[1], &cp, sizeof(cp));
+
+	smp_send_cmd(conn, SMP_CMD_PAIRING_REQ, sizeof(cp), &cp);
+
+	mod_timer(&conn->security_timer, jiffies +
+					msecs_to_jiffies(SMP_TIMEOUT));
+
+	set_bit(HCI_CONN_ENCRYPT_PEND, &hcon->pend);
+
+	return 0;
+}
+
+int smp_conn_security(struct l2cap_conn *conn, __u8 sec_level)
+{
+	struct hci_conn *hcon = conn->hcon;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__u8 authreq;
 
 	BT_DBG("conn %p hcon %p level 0x%2.2x", conn, hcon, sec_level);
@@ -766,6 +1015,7 @@ int smp_conn_security(struct hci_conn *hcon, __u8 sec_level)
 	if (!lmp_host_le_capable(hcon->hdev))
 		return 1;
 
+<<<<<<< HEAD
 	if (sec_level == BT_SECURITY_LOW)
 		return 1;
 
@@ -781,16 +1031,51 @@ int smp_conn_security(struct hci_conn *hcon, __u8 sec_level)
 
 	smp = smp_chan_create(conn);
 	if (!smp)
+=======
+	if (IS_ERR(hcon->hdev->tfm))
+		return 1;
+
+	if (test_bit(HCI_CONN_ENCRYPT_PEND, &hcon->pend))
+		return 0;
+
+	if (sec_level == BT_SECURITY_LOW)
+		return 1;
+
+	if (hcon->sec_level >= sec_level)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 
 	authreq = seclevel_to_authreq(sec_level);
 
 	if (hcon->link_mode & HCI_LM_MASTER) {
 		struct smp_cmd_pairing cp;
+<<<<<<< HEAD
 
 		build_pairing_cmd(conn, &cp, NULL, authreq);
 		smp->preq[0] = SMP_CMD_PAIRING_REQ;
 		memcpy(&smp->preq[1], &cp, sizeof(cp));
+=======
+		struct link_key *key;
+
+		key = hci_find_link_key_type(hcon->hdev, conn->dst,
+							HCI_LK_SMP_LTK);
+		if (key) {
+			struct key_master_id *master = (void *) key->data;
+
+			hci_le_start_enc(hcon, master->ediv, master->rand,
+								key->val);
+			hcon->enc_key_size = key->pin_len;
+
+			goto done;
+		}
+
+		build_pairing_cmd(conn, &cp, NULL, authreq);
+		conn->preq[0] = SMP_CMD_PAIRING_REQ;
+		memcpy(&conn->preq[1], &cp, sizeof(cp));
+
+		mod_timer(&conn->security_timer, jiffies +
+					msecs_to_jiffies(SMP_TIMEOUT));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		smp_send_cmd(conn, SMP_CMD_PAIRING_REQ, sizeof(cp), &cp);
 	} else {
@@ -801,6 +1086,10 @@ int smp_conn_security(struct hci_conn *hcon, __u8 sec_level)
 
 done:
 	hcon->pending_sec_level = sec_level;
+<<<<<<< HEAD
+=======
+	set_bit(HCI_CONN_ENCRYPT_PEND, &hcon->pend);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -808,11 +1097,18 @@ done:
 static int smp_cmd_encrypt_info(struct l2cap_conn *conn, struct sk_buff *skb)
 {
 	struct smp_cmd_encrypt_info *rp = (void *) skb->data;
+<<<<<<< HEAD
 	struct smp_chan *smp = conn->smp_chan;
 
 	skb_pull(skb, sizeof(*rp));
 
 	memcpy(smp->tk, rp->ltk, sizeof(smp->tk));
+=======
+
+	skb_pull(skb, sizeof(*rp));
+
+	memcpy(conn->tk, rp->ltk, sizeof(conn->tk));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -820,6 +1116,7 @@ static int smp_cmd_encrypt_info(struct l2cap_conn *conn, struct sk_buff *skb)
 static int smp_cmd_master_ident(struct l2cap_conn *conn, struct sk_buff *skb)
 {
 	struct smp_cmd_master_ident *rp = (void *) skb->data;
+<<<<<<< HEAD
 	struct smp_chan *smp = conn->smp_chan;
 	struct hci_dev *hdev = conn->hcon->hdev;
 	struct hci_conn *hcon = conn->hcon;
@@ -834,6 +1131,15 @@ static int smp_cmd_master_ident(struct l2cap_conn *conn, struct sk_buff *skb)
 		    rp->ediv, rp->rand);
 	smp_distribute_keys(conn, 1);
 	hci_dev_unlock(hdev);
+=======
+
+	skb_pull(skb, sizeof(*rp));
+
+	hci_add_ltk(conn->hcon->hdev, 1, conn->src, conn->smp_key_size,
+						rp->ediv, rp->rand, conn->tk);
+
+	smp_distribute_keys(conn, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -850,6 +1156,7 @@ int smp_sig_channel(struct l2cap_conn *conn, struct sk_buff *skb)
 		goto done;
 	}
 
+<<<<<<< HEAD
 	skb_pull(skb, sizeof(code));
 
 	/*
@@ -865,13 +1172,26 @@ int smp_sig_channel(struct l2cap_conn *conn, struct sk_buff *skb)
 		return -ENOTSUPP;
 	}
 
+=======
+	if (IS_ERR(conn->hcon->hdev->tfm)) {
+		err = PTR_ERR(conn->hcon->hdev->tfm);
+		reason = SMP_PAIRING_NOTSUPP;
+		goto done;
+	}
+
+	skb_pull(skb, sizeof(code));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (code) {
 	case SMP_CMD_PAIRING_REQ:
 		reason = smp_cmd_pairing_req(conn, skb);
 		break;
 
 	case SMP_CMD_PAIRING_FAIL:
+<<<<<<< HEAD
 		smp_failure(conn, skb->data[0], 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reason = 0;
 		err = -EPERM;
 		break;
@@ -917,7 +1237,12 @@ int smp_sig_channel(struct l2cap_conn *conn, struct sk_buff *skb)
 
 done:
 	if (reason)
+<<<<<<< HEAD
 		smp_failure(conn, reason, 1);
+=======
+		smp_send_cmd(conn, SMP_CMD_PAIRING_FAIL, sizeof(reason),
+								&reason);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kfree_skb(skb);
 	return err;
@@ -926,21 +1251,35 @@ done:
 int smp_distribute_keys(struct l2cap_conn *conn, __u8 force)
 {
 	struct smp_cmd_pairing *req, *rsp;
+<<<<<<< HEAD
 	struct smp_chan *smp = conn->smp_chan;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__u8 *keydist;
 
 	BT_DBG("conn %p force %d", conn, force);
 
+<<<<<<< HEAD
 	if (!test_bit(HCI_CONN_LE_SMP_PEND, &conn->hcon->flags))
 		return 0;
 
 	rsp = (void *) &smp->prsp[1];
+=======
+	if (IS_ERR(conn->hcon->hdev->tfm))
+		return PTR_ERR(conn->hcon->hdev->tfm);
+
+	rsp = (void *) &conn->prsp[1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* The responder sends its keys first */
 	if (!force && conn->hcon->out && (rsp->resp_key_dist & 0x07))
 		return 0;
 
+<<<<<<< HEAD
 	req = (void *) &smp->preq[1];
+=======
+	req = (void *) &conn->preq[1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (conn->hcon->out) {
 		keydist = &rsp->init_key_dist;
@@ -956,8 +1295,11 @@ int smp_distribute_keys(struct l2cap_conn *conn, __u8 force)
 	if (*keydist & SMP_DIST_ENC_KEY) {
 		struct smp_cmd_encrypt_info enc;
 		struct smp_cmd_master_ident ident;
+<<<<<<< HEAD
 		struct hci_conn *hcon = conn->hcon;
 		u8 authenticated;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__le16 ediv;
 
 		get_random_bytes(enc.ltk, sizeof(enc.ltk));
@@ -966,10 +1308,15 @@ int smp_distribute_keys(struct l2cap_conn *conn, __u8 force)
 
 		smp_send_cmd(conn, SMP_CMD_ENCRYPT_INFO, sizeof(enc), &enc);
 
+<<<<<<< HEAD
 		authenticated = hcon->sec_level == BT_SECURITY_HIGH;
 		hci_add_ltk(conn->hcon->hdev, conn->dst, hcon->dst_type,
 			    HCI_SMP_LTK_SLAVE, 1, authenticated,
 			    enc.ltk, smp->enc_key_size, ediv, ident.rand);
+=======
+		hci_add_ltk(conn->hcon->hdev, 1, conn->dst, conn->smp_key_size,
+						ediv, ident.rand, enc.ltk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ident.ediv = cpu_to_le16(ediv);
 
@@ -1008,11 +1355,14 @@ int smp_distribute_keys(struct l2cap_conn *conn, __u8 force)
 		*keydist &= ~SMP_DIST_SIGN;
 	}
 
+<<<<<<< HEAD
 	if (conn->hcon->out || force) {
 		clear_bit(HCI_CONN_LE_SMP_PEND, &conn->hcon->flags);
 		cancel_delayed_work_sync(&conn->security_timer);
 		smp_chan_destroy(conn);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }

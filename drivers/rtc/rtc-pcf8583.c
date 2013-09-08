@@ -320,7 +320,22 @@ static struct i2c_driver pcf8583_driver = {
 	.id_table	= pcf8583_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(pcf8583_driver);
+=======
+static __init int pcf8583_init(void)
+{
+	return i2c_add_driver(&pcf8583_driver);
+}
+
+static __exit void pcf8583_exit(void)
+{
+	i2c_del_driver(&pcf8583_driver);
+}
+
+module_init(pcf8583_init);
+module_exit(pcf8583_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Russell King");
 MODULE_DESCRIPTION("PCF8583 I2C RTC driver");

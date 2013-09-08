@@ -44,7 +44,11 @@
 #define	METHOD_NAME__SUN	"_SUN"
 #define	METHOD_NAME_OSHP	"OSHP"
 
+<<<<<<< HEAD
 static bool debug_acpi;
+=======
+static int debug_acpi;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static acpi_status
 decode_type0_hpx_record(union acpi_object *record, struct hotplug_params *hpx)
@@ -408,7 +412,11 @@ got_one:
 }
 EXPORT_SYMBOL(acpi_get_hp_hw_control_from_firmware);
 
+<<<<<<< HEAD
 static int pcihp_is_ejectable(acpi_handle handle)
+=======
+static int is_ejectable(acpi_handle handle)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	acpi_status status;
 	acpi_handle tmp;
@@ -442,7 +450,11 @@ int acpi_pci_check_ejectable(struct pci_bus *pbus, acpi_handle handle)
 		return 0;
 	if (bridge_handle != parent_handle)
 		return 0;
+<<<<<<< HEAD
 	return pcihp_is_ejectable(handle);
+=======
+	return is_ejectable(handle);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(acpi_pci_check_ejectable);
 
@@ -450,7 +462,11 @@ static acpi_status
 check_hotplug(acpi_handle handle, u32 lvl, void *context, void **rv)
 {
 	int *found = (int *)context;
+<<<<<<< HEAD
 	if (pcihp_is_ejectable(handle)) {
+=======
+	if (is_ejectable(handle)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*found = 1;
 		return AE_CTRL_TERMINATE;
 	}

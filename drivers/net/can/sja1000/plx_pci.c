@@ -43,8 +43,12 @@ MODULE_SUPPORTED_DEVICE("Adlink PCI-7841/cPCI-7841, "
 			"TEWS TECHNOLOGIES TPMC810, "
 			"esd CAN-PCI/CPCI/PCI104/200, "
 			"esd CAN-PCI/PMC/266, "
+<<<<<<< HEAD
 			"esd CAN-PCIe/2000, "
 			"IXXAT PC-I 04/PCI")
+=======
+			"esd CAN-PCIe/2000")
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("GPL v2");
 
 #define PLX_PCI_MAX_CHAN 2
@@ -122,10 +126,13 @@ struct plx_pci_card {
 #define ESD_PCI_SUB_SYS_ID_PCIE2000	0x0200
 #define ESD_PCI_SUB_SYS_ID_PCI104200	0x0501
 
+<<<<<<< HEAD
 #define IXXAT_PCI_VENDOR_ID		0x10b5
 #define IXXAT_PCI_DEVICE_ID		0x9050
 #define IXXAT_PCI_SUB_SYS_ID		0x2540
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MARATHON_PCI_DEVICE_ID		0x2715
 
 #define TEWS_PCI_VENDOR_ID		0x1498
@@ -198,6 +205,7 @@ static struct plx_pci_card_info plx_pci_card_info_esd2000 __devinitdata = {
 	/* based on PEX8311 */
 };
 
+<<<<<<< HEAD
 static struct plx_pci_card_info plx_pci_card_info_ixxat __devinitdata = {
 	"IXXAT PC-I 04/PCI", 2,
 	PLX_PCI_CAN_CLOCK, PLX_PCI_OCR, PLX_PCI_CDR,
@@ -206,6 +214,8 @@ static struct plx_pci_card_info plx_pci_card_info_ixxat __devinitdata = {
 	/* based on PLX9050 */
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct plx_pci_card_info plx_pci_card_info_marathon __devinitdata = {
 	"Marathon CAN-bus-PCI", 2,
 	PLX_PCI_CAN_CLOCK, PLX_PCI_OCR, PLX_PCI_CDR,
@@ -280,6 +290,7 @@ static DEFINE_PCI_DEVICE_TABLE(plx_pci_tbl) = {
 		(kernel_ulong_t)&plx_pci_card_info_esd2000
 	},
 	{
+<<<<<<< HEAD
 		/* IXXAT PC-I 04/PCI card */
 		IXXAT_PCI_VENDOR_ID, IXXAT_PCI_DEVICE_ID,
 		PCI_ANY_ID, IXXAT_PCI_SUB_SYS_ID,
@@ -287,6 +298,8 @@ static DEFINE_PCI_DEVICE_TABLE(plx_pci_tbl) = {
 		(kernel_ulong_t)&plx_pci_card_info_ixxat
 	},
 	{
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Marathon CAN-bus-PCI card */
 		PCI_VENDOR_ID_PLX, MARATHON_PCI_DEVICE_ID,
 		PCI_ANY_ID, PCI_ANY_ID,
@@ -329,7 +342,11 @@ static inline int plx_pci_check_sja1000(const struct sja1000_priv *priv)
 	 */
 	if ((priv->read_reg(priv, REG_CR) & REG_CR_BASICCAN_INITIAL_MASK) ==
 	    REG_CR_BASICCAN_INITIAL &&
+<<<<<<< HEAD
 	    (priv->read_reg(priv, SJA1000_REG_SR) == REG_SR_BASICCAN_INITIAL) &&
+=======
+	    (priv->read_reg(priv, REG_SR) == REG_SR_BASICCAN_INITIAL) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    (priv->read_reg(priv, REG_IR) == REG_IR_BASICCAN_INITIAL))
 		flag = 1;
 
@@ -341,7 +358,11 @@ static inline int plx_pci_check_sja1000(const struct sja1000_priv *priv)
 	 * See states on p. 23 of the Datasheet.
 	 */
 	if (priv->read_reg(priv, REG_MOD) == REG_MOD_PELICAN_INITIAL &&
+<<<<<<< HEAD
 	    priv->read_reg(priv, SJA1000_REG_SR) == REG_SR_PELICAN_INITIAL &&
+=======
+	    priv->read_reg(priv, REG_SR) == REG_SR_PELICAN_INITIAL &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    priv->read_reg(priv, REG_IR) == REG_IR_PELICAN_INITIAL)
 		return flag;
 
@@ -428,7 +449,11 @@ static void plx_pci_del_card(struct pci_dev *pdev)
 	struct sja1000_priv *priv;
 	int i = 0;
 
+<<<<<<< HEAD
 	for (i = 0; i < PLX_PCI_MAX_CHAN; i++) {
+=======
+	for (i = 0; i < card->channels; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev = card->net_dev[i];
 		if (!dev)
 			continue;
@@ -556,6 +581,10 @@ static int __devinit plx_pci_add_card(struct pci_dev *pdev,
 			if (err) {
 				dev_err(&pdev->dev, "Registering device failed "
 					"(err=%d)\n", err);
+<<<<<<< HEAD
+=======
+				free_sja1000dev(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto failure_cleanup;
 			}
 
@@ -568,7 +597,10 @@ static int __devinit plx_pci_add_card(struct pci_dev *pdev,
 			dev_err(&pdev->dev, "Channel #%d not detected\n",
 				i + 1);
 			free_sja1000dev(dev);
+<<<<<<< HEAD
 			card->net_dev[i] = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 

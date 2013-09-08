@@ -19,7 +19,10 @@
 
 #include <linux/device.h>
 #include <linux/kallsyms.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mutex.h>
 #include <linux/pm.h>
 #include <linux/pm_runtime.h>
@@ -28,12 +31,19 @@
 #include <linux/sched.h>
 #include <linux/async.h>
 #include <linux/suspend.h>
+<<<<<<< HEAD
+=======
+#include <linux/timer.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "../base.h"
 #include "power.h"
 
+<<<<<<< HEAD
 typedef int (*pm_callback_t)(struct device *);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The entries in the dpm_list list are in a depth first order, simply
  * because children are guaranteed to be discovered after parents, and
@@ -47,6 +57,7 @@ typedef int (*pm_callback_t)(struct device *);
 LIST_HEAD(dpm_list);
 LIST_HEAD(dpm_prepared_list);
 LIST_HEAD(dpm_suspended_list);
+<<<<<<< HEAD
 LIST_HEAD(dpm_late_early_list);
 LIST_HEAD(dpm_noirq_list);
 
@@ -54,6 +65,19 @@ struct suspend_stats suspend_stats;
 static DEFINE_MUTEX(dpm_list_mtx);
 static pm_message_t pm_transition;
 
+=======
+LIST_HEAD(dpm_noirq_list);
+
+static DEFINE_MUTEX(dpm_list_mtx);
+static pm_message_t pm_transition;
+
+static void dpm_drv_timeout(unsigned long data);
+struct dpm_drv_wd_data {
+	struct device *dev;
+	struct task_struct *tsk;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int async_error;
 
 /**
@@ -70,7 +94,10 @@ void device_pm_init(struct device *dev)
 	spin_lock_init(&dev->power.lock);
 	pm_runtime_init(dev);
 	INIT_LIST_HEAD(&dev->power.entry);
+<<<<<<< HEAD
 	dev->power.power_state = PMSG_INVALID;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -102,7 +129,10 @@ void device_pm_add(struct device *dev)
 		dev_warn(dev, "parent %s should not be sleeping\n",
 			dev_name(dev->parent));
 	list_add_tail(&dev->power.entry, &dpm_list);
+<<<<<<< HEAD
 	dev_pm_qos_constraints_init(dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&dpm_list_mtx);
 }
 
@@ -116,7 +146,10 @@ void device_pm_remove(struct device *dev)
 		 dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
 	complete_all(&dev->power.completion);
 	mutex_lock(&dpm_list_mtx);
+<<<<<<< HEAD
 	dev_pm_qos_constraints_destroy(dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_del_init(&dev->power.entry);
 	mutex_unlock(&dpm_list_mtx);
 	device_wakeup_disable(dev);
@@ -167,9 +200,14 @@ static ktime_t initcall_debug_start(struct device *dev)
 	ktime_t calltime = ktime_set(0, 0);
 
 	if (initcall_debug) {
+<<<<<<< HEAD
 		pr_info("calling  %s+ @ %i, parent: %s\n",
 			dev_name(dev), task_pid_nr(current),
 			dev->parent ? dev_name(dev->parent) : "none");
+=======
+		pr_info("calling  %s+ @ %i\n",
+				dev_name(dev), task_pid_nr(current));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		calltime = ktime_get();
 	}
 
@@ -215,6 +253,7 @@ static void dpm_wait_for_children(struct device *dev, bool async)
 }
 
 /**
+<<<<<<< HEAD
  * pm_op - Return the PM operation appropriate for given PM event.
  * @ops: PM operations to choose from.
  * @state: PM transition of the system being carried out.
@@ -262,10 +301,41 @@ static pm_callback_t pm_late_early_op(const struct dev_pm_ops *ops,
 		return ops->suspend_late;
 	case PM_EVENT_RESUME:
 		return ops->resume_early;
+=======
+ * pm_op - Execute the PM operation appropriate for given PM event.
+ * @dev: Device to handle.
+ * @ops: PM operations to choose from.
+ * @state: PM transition of the system being carried out.
+ */
+static int pm_op(struct device *dev,
+		 const struct dev_pm_ops *ops,
+		 pm_message_t state)
+{
+	int error = 0;
+	ktime_t calltime;
+
+	calltime = initcall_debug_start(dev);
+
+	switch (state.event) {
+#ifdef CONFIG_SUSPEND
+	case PM_EVENT_SUSPEND:
+		if (ops->suspend) {
+			error = ops->suspend(dev);
+			suspend_report_result(ops->suspend, error);
+		}
+		break;
+	case PM_EVENT_RESUME:
+		if (ops->resume) {
+			error = ops->resume(dev);
+			suspend_report_result(ops->resume, error);
+		}
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_SUSPEND */
 #ifdef CONFIG_HIBERNATE_CALLBACKS
 	case PM_EVENT_FREEZE:
 	case PM_EVENT_QUIESCE:
+<<<<<<< HEAD
 		return ops->freeze_late;
 	case PM_EVENT_HIBERNATE:
 		return ops->poweroff_late;
@@ -282,12 +352,52 @@ static pm_callback_t pm_late_early_op(const struct dev_pm_ops *ops,
 
 /**
  * pm_noirq_op - Return the PM operation appropriate for given PM event.
+=======
+		if (ops->freeze) {
+			error = ops->freeze(dev);
+			suspend_report_result(ops->freeze, error);
+		}
+		break;
+	case PM_EVENT_HIBERNATE:
+		if (ops->poweroff) {
+			error = ops->poweroff(dev);
+			suspend_report_result(ops->poweroff, error);
+		}
+		break;
+	case PM_EVENT_THAW:
+	case PM_EVENT_RECOVER:
+		if (ops->thaw) {
+			error = ops->thaw(dev);
+			suspend_report_result(ops->thaw, error);
+		}
+		break;
+	case PM_EVENT_RESTORE:
+		if (ops->restore) {
+			error = ops->restore(dev);
+			suspend_report_result(ops->restore, error);
+		}
+		break;
+#endif /* CONFIG_HIBERNATE_CALLBACKS */
+	default:
+		error = -EINVAL;
+	}
+
+	initcall_debug_report(dev, calltime, error);
+
+	return error;
+}
+
+/**
+ * pm_noirq_op - Execute the PM operation appropriate for given PM event.
+ * @dev: Device to handle.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ops: PM operations to choose from.
  * @state: PM transition of the system being carried out.
  *
  * The driver of @dev will not receive interrupts while this function is being
  * executed.
  */
+<<<<<<< HEAD
 static pm_callback_t pm_noirq_op(const struct dev_pm_ops *ops, pm_message_t state)
 {
 	switch (state.event) {
@@ -296,10 +406,41 @@ static pm_callback_t pm_noirq_op(const struct dev_pm_ops *ops, pm_message_t stat
 		return ops->suspend_noirq;
 	case PM_EVENT_RESUME:
 		return ops->resume_noirq;
+=======
+static int pm_noirq_op(struct device *dev,
+			const struct dev_pm_ops *ops,
+			pm_message_t state)
+{
+	int error = 0;
+	ktime_t calltime = ktime_set(0, 0), delta, rettime;
+
+	if (initcall_debug) {
+		pr_info("calling  %s+ @ %i, parent: %s\n",
+				dev_name(dev), task_pid_nr(current),
+				dev->parent ? dev_name(dev->parent) : "none");
+		calltime = ktime_get();
+	}
+
+	switch (state.event) {
+#ifdef CONFIG_SUSPEND
+	case PM_EVENT_SUSPEND:
+		if (ops->suspend_noirq) {
+			error = ops->suspend_noirq(dev);
+			suspend_report_result(ops->suspend_noirq, error);
+		}
+		break;
+	case PM_EVENT_RESUME:
+		if (ops->resume_noirq) {
+			error = ops->resume_noirq(dev);
+			suspend_report_result(ops->resume_noirq, error);
+		}
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_SUSPEND */
 #ifdef CONFIG_HIBERNATE_CALLBACKS
 	case PM_EVENT_FREEZE:
 	case PM_EVENT_QUIESCE:
+<<<<<<< HEAD
 		return ops->freeze_noirq;
 	case PM_EVENT_HIBERNATE:
 		return ops->poweroff_noirq;
@@ -312,6 +453,46 @@ static pm_callback_t pm_noirq_op(const struct dev_pm_ops *ops, pm_message_t stat
 	}
 
 	return NULL;
+=======
+		if (ops->freeze_noirq) {
+			error = ops->freeze_noirq(dev);
+			suspend_report_result(ops->freeze_noirq, error);
+		}
+		break;
+	case PM_EVENT_HIBERNATE:
+		if (ops->poweroff_noirq) {
+			error = ops->poweroff_noirq(dev);
+			suspend_report_result(ops->poweroff_noirq, error);
+		}
+		break;
+	case PM_EVENT_THAW:
+	case PM_EVENT_RECOVER:
+		if (ops->thaw_noirq) {
+			error = ops->thaw_noirq(dev);
+			suspend_report_result(ops->thaw_noirq, error);
+		}
+		break;
+	case PM_EVENT_RESTORE:
+		if (ops->restore_noirq) {
+			error = ops->restore_noirq(dev);
+			suspend_report_result(ops->restore_noirq, error);
+		}
+		break;
+#endif /* CONFIG_HIBERNATE_CALLBACKS */
+	default:
+		error = -EINVAL;
+	}
+
+	if (initcall_debug) {
+		rettime = ktime_get();
+		delta = ktime_sub(rettime, calltime);
+		printk("initcall %s_i+ returned %d after %Ld usecs\n",
+			dev_name(dev), error,
+			(unsigned long long)ktime_to_ns(delta) >> 10);
+	}
+
+	return error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static char *pm_verb(int event)
@@ -369,6 +550,7 @@ static void dpm_show_time(ktime_t starttime, pm_message_t state, char *info)
 		usecs / USEC_PER_MSEC, usecs % USEC_PER_MSEC);
 }
 
+<<<<<<< HEAD
 static int dpm_run_callback(pm_callback_t cb, struct device *dev,
 			    pm_message_t state, char *info)
 {
@@ -389,6 +571,8 @@ static int dpm_run_callback(pm_callback_t cb, struct device *dev,
 	return error;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*------------------------- Resume routines -------------------------*/
 
 /**
@@ -401,13 +585,17 @@ static int dpm_run_callback(pm_callback_t cb, struct device *dev,
  */
 static int device_resume_noirq(struct device *dev, pm_message_t state)
 {
+<<<<<<< HEAD
 	pm_callback_t callback = NULL;
 	char *info = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int error = 0;
 
 	TRACE_DEVICE(dev);
 	TRACE_RESUME(0);
 
+<<<<<<< HEAD
 	if (dev->pm_domain) {
 		info = "noirq power domain ";
 		callback = pm_noirq_op(&dev->pm_domain->ops, state);
@@ -429,11 +617,28 @@ static int device_resume_noirq(struct device *dev, pm_message_t state)
 
 	error = dpm_run_callback(callback, dev, state, info);
 
+=======
+	if (dev->pwr_domain) {
+		pm_dev_dbg(dev, state, "EARLY power domain ");
+		error = pm_noirq_op(dev, &dev->pwr_domain->ops, state);
+	} else if (dev->type && dev->type->pm) {
+		pm_dev_dbg(dev, state, "EARLY type ");
+		error = pm_noirq_op(dev, dev->type->pm, state);
+	} else if (dev->class && dev->class->pm) {
+		pm_dev_dbg(dev, state, "EARLY class ");
+		error = pm_noirq_op(dev, dev->class->pm, state);
+	} else if (dev->bus && dev->bus->pm) {
+		pm_dev_dbg(dev, state, "EARLY ");
+		error = pm_noirq_op(dev, dev->bus->pm, state);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	TRACE_RESUME(error);
 	return error;
 }
 
 /**
+<<<<<<< HEAD
  * dpm_resume_noirq - Execute "noirq resume" callbacks for all devices.
  * @state: PM transition of the system being carried out.
  *
@@ -441,6 +646,15 @@ static int device_resume_noirq(struct device *dev, pm_message_t state)
  * enable device drivers to receive interrupts.
  */
 static void dpm_resume_noirq(pm_message_t state)
+=======
+ * dpm_resume_noirq - Execute "early resume" callbacks for non-sysdev devices.
+ * @state: PM transition of the system being carried out.
+ *
+ * Call the "noirq" resume handlers for all devices marked as DPM_OFF_IRQ and
+ * enable device drivers to receive interrupts.
+ */
+void dpm_resume_noirq(pm_message_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	ktime_t starttime = ktime_get();
 
@@ -450,6 +664,7 @@ static void dpm_resume_noirq(pm_message_t state)
 		int error;
 
 		get_device(dev);
+<<<<<<< HEAD
 		list_move_tail(&dev->power.entry, &dpm_late_early_list);
 		mutex_unlock(&dpm_list_mtx);
 
@@ -460,11 +675,20 @@ static void dpm_resume_noirq(pm_message_t state)
 			dpm_save_failed_dev(dev_name(dev));
 			pm_dev_err(dev, state, " noirq", error);
 		}
+=======
+		list_move_tail(&dev->power.entry, &dpm_suspended_list);
+		mutex_unlock(&dpm_list_mtx);
+
+		error = device_resume_noirq(dev, state);
+		if (error)
+			pm_dev_err(dev, state, " early", error);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		mutex_lock(&dpm_list_mtx);
 		put_device(dev);
 	}
 	mutex_unlock(&dpm_list_mtx);
+<<<<<<< HEAD
 	dpm_show_time(starttime, state, "noirq");
 	resume_device_irqs();
 }
@@ -507,10 +731,35 @@ static int device_resume_early(struct device *dev, pm_message_t state)
 	error = dpm_run_callback(callback, dev, state, info);
 
 	TRACE_RESUME(error);
+=======
+	dpm_show_time(starttime, state, "early");
+	resume_device_irqs();
+}
+EXPORT_SYMBOL_GPL(dpm_resume_noirq);
+
+/**
+ * legacy_resume - Execute a legacy (bus or class) resume callback for device.
+ * @dev: Device to resume.
+ * @cb: Resume callback to execute.
+ */
+static int legacy_resume(struct device *dev, int (*cb)(struct device *dev))
+{
+	int error;
+	ktime_t calltime;
+
+	calltime = initcall_debug_start(dev);
+
+	error = cb(dev);
+	suspend_report_result(cb, error);
+
+	initcall_debug_report(dev, calltime, error);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error;
 }
 
 /**
+<<<<<<< HEAD
  * dpm_resume_early - Execute "early resume" callbacks for all devices.
  * @state: PM transition of the system being carried out.
  */
@@ -554,6 +803,8 @@ void dpm_resume_start(pm_message_t state)
 EXPORT_SYMBOL_GPL(dpm_resume_start);
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * device_resume - Execute "resume" callbacks for given device.
  * @dev: Device to handle.
  * @state: PM transition of the system being carried out.
@@ -561,10 +812,14 @@ EXPORT_SYMBOL_GPL(dpm_resume_start);
  */
 static int device_resume(struct device *dev, pm_message_t state, bool async)
 {
+<<<<<<< HEAD
 	pm_callback_t callback = NULL;
 	char *info = NULL;
 	int error = 0;
 	bool put = false;
+=======
+	int error = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	TRACE_DEVICE(dev);
 	TRACE_RESUME(0);
@@ -581,6 +836,7 @@ static int device_resume(struct device *dev, pm_message_t state, bool async)
 	if (!dev->power.is_suspended)
 		goto Unlock;
 
+<<<<<<< HEAD
 	pm_runtime_enable(dev);
 	put = true;
 
@@ -594,22 +850,44 @@ static int device_resume(struct device *dev, pm_message_t state, bool async)
 		info = "type ";
 		callback = pm_op(dev->type->pm, state);
 		goto Driver;
+=======
+	if (dev->pwr_domain) {
+		pm_dev_dbg(dev, state, "power domain ");
+		error = pm_op(dev, &dev->pwr_domain->ops, state);
+		goto End;
+	}
+
+	if (dev->type && dev->type->pm) {
+		pm_dev_dbg(dev, state, "type ");
+		error = pm_op(dev, dev->type->pm, state);
+		goto End;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (dev->class) {
 		if (dev->class->pm) {
+<<<<<<< HEAD
 			info = "class ";
 			callback = pm_op(dev->class->pm, state);
 			goto Driver;
 		} else if (dev->class->resume) {
 			info = "legacy class ";
 			callback = dev->class->resume;
+=======
+			pm_dev_dbg(dev, state, "class ");
+			error = pm_op(dev, dev->class->pm, state);
+			goto End;
+		} else if (dev->class->resume) {
+			pm_dev_dbg(dev, state, "legacy class ");
+			error = legacy_resume(dev, dev->class->resume);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto End;
 		}
 	}
 
 	if (dev->bus) {
 		if (dev->bus->pm) {
+<<<<<<< HEAD
 			info = "bus ";
 			callback = pm_op(dev->bus->pm, state);
 		} else if (dev->bus->resume) {
@@ -627,6 +905,17 @@ static int device_resume(struct device *dev, pm_message_t state, bool async)
 
  End:
 	error = dpm_run_callback(callback, dev, state, info);
+=======
+			pm_dev_dbg(dev, state, "");
+			error = pm_op(dev, dev->bus->pm, state);
+		} else if (dev->bus->resume) {
+			pm_dev_dbg(dev, state, "legacy ");
+			error = legacy_resume(dev, dev->bus->resume);
+		}
+	}
+
+ End:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->power.is_suspended = false;
 
  Unlock:
@@ -634,10 +923,13 @@ static int device_resume(struct device *dev, pm_message_t state, bool async)
 	complete_all(&dev->power.completion);
 
 	TRACE_RESUME(error);
+<<<<<<< HEAD
 
 	if (put)
 		pm_runtime_put_sync(dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error;
 }
 
@@ -659,6 +951,37 @@ static bool is_async(struct device *dev)
 }
 
 /**
+<<<<<<< HEAD
+=======
+ *	dpm_drv_timeout - Driver suspend / resume watchdog handler
+ *	@data: struct device which timed out
+ *
+ * 	Called when a driver has timed out suspending or resuming.
+ * 	There's not much we can do here to recover so
+ * 	BUG() out for a crash-dump
+ *
+ */
+static void dpm_drv_timeout(unsigned long data)
+{
+	struct dpm_drv_wd_data *wd_data = (void *)data;
+	struct device *dev = wd_data->dev;
+	struct task_struct *tsk = wd_data->tsk;
+
+	printk(KERN_EMERG "**** DPM device timeout: %s (%s)\n", dev_name(dev),
+	       (dev->driver ? dev->driver->name : "no driver"));
+
+	printk(KERN_EMERG "**** DPM device timeout: preempt_count=%d\n",
+		preempt_count());
+	sysrq_timer_list_show();
+
+	printk(KERN_EMERG "dpm suspend stack:\n");
+	show_stack(tsk, NULL);
+
+	BUG();
+}
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * dpm_resume - Execute "resume" callbacks for non-sysdev devices.
  * @state: PM transition of the system being carried out.
  *
@@ -693,12 +1016,17 @@ void dpm_resume(pm_message_t state)
 			mutex_unlock(&dpm_list_mtx);
 
 			error = device_resume(dev, state, false);
+<<<<<<< HEAD
 			if (error) {
 				suspend_stats.failed_resume++;
 				dpm_save_failed_step(SUSPEND_RESUME);
 				dpm_save_failed_dev(dev_name(dev));
 				pm_dev_err(dev, state, "", error);
 			}
+=======
+			if (error)
+				pm_dev_err(dev, state, "", error);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			mutex_lock(&dpm_list_mtx);
 		}
@@ -718,6 +1046,7 @@ void dpm_resume(pm_message_t state)
  */
 static void device_complete(struct device *dev, pm_message_t state)
 {
+<<<<<<< HEAD
 	void (*callback)(struct device *) = NULL;
 	char *info = NULL;
 
@@ -745,6 +1074,26 @@ static void device_complete(struct device *dev, pm_message_t state)
 	if (callback) {
 		pm_dev_dbg(dev, state, info);
 		callback(dev);
+=======
+	device_lock(dev);
+
+	if (dev->pwr_domain) {
+		pm_dev_dbg(dev, state, "completing power domain ");
+		if (dev->pwr_domain->ops.complete)
+			dev->pwr_domain->ops.complete(dev);
+	} else if (dev->type && dev->type->pm) {
+		pm_dev_dbg(dev, state, "completing type ");
+		if (dev->type->pm->complete)
+			dev->type->pm->complete(dev);
+	} else if (dev->class && dev->class->pm) {
+		pm_dev_dbg(dev, state, "completing class ");
+		if (dev->class->pm->complete)
+			dev->class->pm->complete(dev);
+	} else if (dev->bus && dev->bus->pm) {
+		pm_dev_dbg(dev, state, "completing ");
+		if (dev->bus->pm->complete)
+			dev->bus->pm->complete(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	device_unlock(dev);
@@ -830,6 +1179,7 @@ static pm_message_t resume_event(pm_message_t sleep_state)
  */
 static int device_suspend_noirq(struct device *dev, pm_message_t state)
 {
+<<<<<<< HEAD
 	pm_callback_t callback = NULL;
 	char *info = NULL;
 
@@ -857,18 +1207,54 @@ static int device_suspend_noirq(struct device *dev, pm_message_t state)
 
 /**
  * dpm_suspend_noirq - Execute "noirq suspend" callbacks for all devices.
+=======
+	int error;
+
+	if (dev->pwr_domain) {
+		pm_dev_dbg(dev, state, "LATE power domain ");
+		error = pm_noirq_op(dev, &dev->pwr_domain->ops, state);
+		if (error)
+			return error;
+	} else if (dev->type && dev->type->pm) {
+		pm_dev_dbg(dev, state, "LATE type ");
+		error = pm_noirq_op(dev, dev->type->pm, state);
+		if (error)
+			return error;
+	} else if (dev->class && dev->class->pm) {
+		pm_dev_dbg(dev, state, "LATE class ");
+		error = pm_noirq_op(dev, dev->class->pm, state);
+		if (error)
+			return error;
+	} else if (dev->bus && dev->bus->pm) {
+		pm_dev_dbg(dev, state, "LATE ");
+		error = pm_noirq_op(dev, dev->bus->pm, state);
+		if (error)
+			return error;
+	}
+
+	return 0;
+}
+
+/**
+ * dpm_suspend_noirq - Execute "late suspend" callbacks for non-sysdev devices.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @state: PM transition of the system being carried out.
  *
  * Prevent device drivers from receiving interrupts and call the "noirq" suspend
  * handlers for all non-sysdev devices.
  */
+<<<<<<< HEAD
 static int dpm_suspend_noirq(pm_message_t state)
+=======
+int dpm_suspend_noirq(pm_message_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	ktime_t starttime = ktime_get();
 	int error = 0;
 
 	suspend_device_irqs();
 	mutex_lock(&dpm_list_mtx);
+<<<<<<< HEAD
 	while (!list_empty(&dpm_late_early_list)) {
 		struct device *dev = to_device(dpm_late_early_list.prev);
 
@@ -942,29 +1328,43 @@ static int dpm_suspend_late(pm_message_t state)
 	int error = 0;
 
 	mutex_lock(&dpm_list_mtx);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (!list_empty(&dpm_suspended_list)) {
 		struct device *dev = to_device(dpm_suspended_list.prev);
 
 		get_device(dev);
 		mutex_unlock(&dpm_list_mtx);
 
+<<<<<<< HEAD
 		error = device_suspend_late(dev, state);
+=======
+		error = device_suspend_noirq(dev, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		mutex_lock(&dpm_list_mtx);
 		if (error) {
 			pm_dev_err(dev, state, " late", error);
+<<<<<<< HEAD
 			suspend_stats.failed_suspend_late++;
 			dpm_save_failed_step(SUSPEND_SUSPEND_LATE);
 			dpm_save_failed_dev(dev_name(dev));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			put_device(dev);
 			break;
 		}
 		if (!list_empty(&dev->power.entry))
+<<<<<<< HEAD
 			list_move(&dev->power.entry, &dpm_late_early_list);
+=======
+			list_move(&dev->power.entry, &dpm_noirq_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		put_device(dev);
 	}
 	mutex_unlock(&dpm_list_mtx);
 	if (error)
+<<<<<<< HEAD
 		dpm_resume_early(resume_event(state));
 	else
 		dpm_show_time(starttime, state, "late");
@@ -991,6 +1391,14 @@ int dpm_suspend_end(pm_message_t state)
 	return 0;
 }
 EXPORT_SYMBOL_GPL(dpm_suspend_end);
+=======
+		dpm_resume_noirq(resume_event(state));
+	else
+		dpm_show_time(starttime, state, "late");
+	return error;
+}
+EXPORT_SYMBOL_GPL(dpm_suspend_noirq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * legacy_suspend - Execute a legacy (bus or class) suspend callback for device.
@@ -1022,6 +1430,7 @@ static int legacy_suspend(struct device *dev, pm_message_t state,
  */
 static int __device_suspend(struct device *dev, pm_message_t state, bool async)
 {
+<<<<<<< HEAD
 	pm_callback_t callback = NULL;
 	char *info = NULL;
 	int error = 0;
@@ -1053,13 +1462,55 @@ static int __device_suspend(struct device *dev, pm_message_t state, bool async)
 		info = "type ";
 		callback = pm_op(dev->type->pm, state);
 		goto Run;
+=======
+	int error = 0;
+	struct timer_list timer;
+	struct dpm_drv_wd_data data;
+
+	dpm_wait_for_children(dev, async);
+
+	data.dev = dev;
+	data.tsk = get_current();
+	init_timer_on_stack(&timer);
+	timer.expires = jiffies + HZ * 12;
+	timer.function = dpm_drv_timeout;
+	timer.data = (unsigned long)&data;
+	add_timer(&timer);
+
+	device_lock(dev);
+
+	if (async_error)
+		goto Unlock;
+
+	if (pm_wakeup_pending()) {
+		async_error = -EBUSY;
+		goto Unlock;
+	}
+
+	if (dev->pwr_domain) {
+		pm_dev_dbg(dev, state, "power domain ");
+		error = pm_op(dev, &dev->pwr_domain->ops, state);
+		goto End;
+	}
+
+	if (dev->type && dev->type->pm) {
+		pm_dev_dbg(dev, state, "type ");
+		error = pm_op(dev, dev->type->pm, state);
+		goto End;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (dev->class) {
 		if (dev->class->pm) {
+<<<<<<< HEAD
 			info = "class ";
 			callback = pm_op(dev->class->pm, state);
 			goto Run;
+=======
+			pm_dev_dbg(dev, state, "class ");
+			error = pm_op(dev, dev->class->pm, state);
+			goto End;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else if (dev->class->suspend) {
 			pm_dev_dbg(dev, state, "legacy class ");
 			error = legacy_suspend(dev, state, dev->class->suspend);
@@ -1069,6 +1520,7 @@ static int __device_suspend(struct device *dev, pm_message_t state, bool async)
 
 	if (dev->bus) {
 		if (dev->bus->pm) {
+<<<<<<< HEAD
 			info = "bus ";
 			callback = pm_op(dev->bus->pm, state);
 		} else if (dev->bus->suspend) {
@@ -1105,6 +1557,29 @@ static int __device_suspend(struct device *dev, pm_message_t state, bool async)
 	} else if (dev->power.is_suspended) {
 		__pm_runtime_disable(dev, false);
 	}
+=======
+			pm_dev_dbg(dev, state, "");
+			error = pm_op(dev, dev->bus->pm, state);
+		} else if (dev->bus->suspend) {
+			pm_dev_dbg(dev, state, "legacy ");
+			error = legacy_suspend(dev, state, dev->bus->suspend);
+		}
+	}
+
+ End:
+	dev->power.is_suspended = !error;
+
+ Unlock:
+	device_unlock(dev);
+
+	del_timer_sync(&timer);
+	destroy_timer_on_stack(&timer);
+
+	complete_all(&dev->power.completion);
+
+	if (error)
+		async_error = error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return error;
 }
@@ -1115,10 +1590,15 @@ static void async_suspend(void *data, async_cookie_t cookie)
 	int error;
 
 	error = __device_suspend(dev, pm_transition, true);
+<<<<<<< HEAD
 	if (error) {
 		dpm_save_failed_dev(dev_name(dev));
 		pm_dev_err(dev, pm_transition, " async", error);
 	}
+=======
+	if (error)
+		pm_dev_err(dev, pm_transition, " async", error);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	put_device(dev);
 }
@@ -1140,6 +1620,59 @@ static int device_suspend(struct device *dev)
  * dpm_suspend - Execute "suspend" callbacks for all non-sysdev devices.
  * @state: PM transition of the system being carried out.
  */
+<<<<<<< HEAD
+=======
+#define DPM_HISTORY_SIZE 2048
+struct dmp_sched_event {
+	u32 time;
+	u32 to_task;
+};
+static struct dmp_sched_event sched_history[DPM_HISTORY_SIZE];
+static u32 switch_cnt_in_dpm_suspend_task;
+struct dmp_irq_event {
+	u32 time;
+	u32 irq;
+};
+static struct dmp_irq_event irq_history[DPM_HISTORY_SIZE];
+static u32 irq_cnt_in_dpm_suspend_task;
+
+static u32 dpm_suspend_task;
+
+static void dpm_log_dump(void)
+{
+	u32 i;
+	for (i = 0; i < switch_cnt_in_dpm_suspend_task; i++)
+		printk(KERN_EMERG "time = %u, to task 0x%x\n",
+		sched_history[i].time, sched_history[i].to_task);
+
+	for (i = 0; i < irq_cnt_in_dpm_suspend_task; i++)
+		printk(KERN_EMERG "time = %u, irq %d\n",
+		irq_history[i].time, irq_history[i].irq);
+}
+
+void dpm_log_sched(struct task_struct *next)
+{
+	u32 i;
+	if (!dpm_suspend_task)
+		return;
+	i = switch_cnt_in_dpm_suspend_task%DPM_HISTORY_SIZE;
+	sched_history[i].time = local_clock();
+	sched_history[i].to_task = next;
+	switch_cnt_in_dpm_suspend_task++;
+}
+void dpm_log_irq(u32 irq)
+{
+	u32 i;
+	if (!dpm_suspend_task)
+		return;
+	i = irq_cnt_in_dpm_suspend_task%DPM_HISTORY_SIZE;
+	irq_history[i].time = local_clock();
+	irq_history[i].irq = irq;
+	irq_cnt_in_dpm_suspend_task++;
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int dpm_suspend(pm_message_t state)
 {
 	ktime_t starttime = ktime_get();
@@ -1147,6 +1680,16 @@ int dpm_suspend(pm_message_t state)
 
 	might_sleep();
 
+<<<<<<< HEAD
+=======
+	dpm_suspend_task = current;
+	switch_cnt_in_dpm_suspend_task = 0;
+	irq_cnt_in_dpm_suspend_task = 0;
+	printk(KERN_EMERG "**** dpm_suspend thread: task=0x%x\n",
+		dpm_suspend_task);
+	printk(KERN_EMERG "**** dpm_suspend thread: local_clock=%u",
+		(u32)local_clock());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&dpm_list_mtx);
 	pm_transition = state;
 	async_error = 0;
@@ -1161,7 +1704,10 @@ int dpm_suspend(pm_message_t state)
 		mutex_lock(&dpm_list_mtx);
 		if (error) {
 			pm_dev_err(dev, state, "", error);
+<<<<<<< HEAD
 			dpm_save_failed_dev(dev_name(dev));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			put_device(dev);
 			break;
 		}
@@ -1175,11 +1721,21 @@ int dpm_suspend(pm_message_t state)
 	async_synchronize_full();
 	if (!error)
 		error = async_error;
+<<<<<<< HEAD
 	if (error) {
 		suspend_stats.failed_suspend++;
 		dpm_save_failed_step(SUSPEND_SUSPEND);
 	} else
 		dpm_show_time(starttime, state, NULL);
+=======
+	if (!error)
+		dpm_show_time(starttime, state, NULL);
+
+	dpm_suspend_task = 0;
+	printk(KERN_EMERG "**** dpm_suspend thread: switch=%d, irq=%d\n",
+		switch_cnt_in_dpm_suspend_task, irq_cnt_in_dpm_suspend_task);
+	/*dpm_log_dump();*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error;
 }
 
@@ -1193,12 +1749,16 @@ int dpm_suspend(pm_message_t state)
  */
 static int device_prepare(struct device *dev, pm_message_t state)
 {
+<<<<<<< HEAD
 	int (*callback)(struct device *) = NULL;
 	char *info = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int error = 0;
 
 	device_lock(dev);
 
+<<<<<<< HEAD
 	dev->power.wakeup_path = device_may_wakeup(dev);
 
 	if (dev->pm_domain) {
@@ -1225,6 +1785,37 @@ static int device_prepare(struct device *dev, pm_message_t state)
 		suspend_report_result(callback, error);
 	}
 
+=======
+	if (dev->pwr_domain) {
+		pm_dev_dbg(dev, state, "preparing power domain ");
+		if (dev->pwr_domain->ops.prepare)
+			error = dev->pwr_domain->ops.prepare(dev);
+		suspend_report_result(dev->pwr_domain->ops.prepare, error);
+		if (error)
+			goto End;
+	} else if (dev->type && dev->type->pm) {
+		pm_dev_dbg(dev, state, "preparing type ");
+		if (dev->type->pm->prepare)
+			error = dev->type->pm->prepare(dev);
+		suspend_report_result(dev->type->pm->prepare, error);
+		if (error)
+			goto End;
+	} else if (dev->class && dev->class->pm) {
+		pm_dev_dbg(dev, state, "preparing class ");
+		if (dev->class->pm->prepare)
+			error = dev->class->pm->prepare(dev);
+		suspend_report_result(dev->class->pm->prepare, error);
+		if (error)
+			goto End;
+	} else if (dev->bus && dev->bus->pm) {
+		pm_dev_dbg(dev, state, "preparing ");
+		if (dev->bus->pm->prepare)
+			error = dev->bus->pm->prepare(dev);
+		suspend_report_result(dev->bus->pm->prepare, error);
+	}
+
+ End:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	device_unlock(dev);
 
 	return error;
@@ -1249,7 +1840,17 @@ int dpm_prepare(pm_message_t state)
 		get_device(dev);
 		mutex_unlock(&dpm_list_mtx);
 
+<<<<<<< HEAD
 		error = device_prepare(dev, state);
+=======
+		pm_runtime_get_noresume(dev);
+		if (pm_runtime_barrier(dev) && device_may_wakeup(dev))
+			pm_wakeup_event(dev, 0);
+
+		pm_runtime_put_sync(dev);
+		error = pm_wakeup_pending() ?
+				-EBUSY : device_prepare(dev, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		mutex_lock(&dpm_list_mtx);
 		if (error) {
@@ -1285,10 +1886,14 @@ int dpm_suspend_start(pm_message_t state)
 	int error;
 
 	error = dpm_prepare(state);
+<<<<<<< HEAD
 	if (error) {
 		suspend_stats.failed_prepare++;
 		dpm_save_failed_step(SUSPEND_PREPARE);
 	} else
+=======
+	if (!error)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		error = dpm_suspend(state);
 	return error;
 }

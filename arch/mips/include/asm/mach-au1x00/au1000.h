@@ -136,7 +136,10 @@ static inline int au1xxx_cpu_needs_config_od(void)
 #define ALCHEMY_CPU_AU1100	2
 #define ALCHEMY_CPU_AU1550	3
 #define ALCHEMY_CPU_AU1200	4
+<<<<<<< HEAD
 #define ALCHEMY_CPU_AU1300	5
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int alchemy_get_cputype(void)
 {
@@ -157,9 +160,12 @@ static inline int alchemy_get_cputype(void)
 	case 0x05030000:
 		return ALCHEMY_CPU_AU1200;
 		break;
+<<<<<<< HEAD
 	case 0x800c0000:
 		return ALCHEMY_CPU_AU1300;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ALCHEMY_CPU_UNKNOWN;
@@ -170,7 +176,10 @@ static inline int alchemy_get_uarts(int type)
 {
 	switch (type) {
 	case ALCHEMY_CPU_AU1000:
+<<<<<<< HEAD
 	case ALCHEMY_CPU_AU1300:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 4;
 	case ALCHEMY_CPU_AU1500:
 	case ALCHEMY_CPU_AU1200:
@@ -248,6 +257,7 @@ extern unsigned long au1xxx_calc_clock(void);
 /* PM: arch/mips/alchemy/common/sleeper.S, power.c, irq.c */
 void alchemy_sleep_au1000(void);
 void alchemy_sleep_au1550(void);
+<<<<<<< HEAD
 void alchemy_sleep_au1300(void);
 void au_sleep(void);
 
@@ -345,17 +355,27 @@ extern void au1300_vss_block_control(int block, int enable);
 
 /* SOC Interrupt numbers */
 /* Au1000-style (IC0/1): 2 controllers with 32 sources each */
+=======
+void au_sleep(void);
+
+
+/* SOC Interrupt numbers */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AU1000_INTC0_INT_BASE	(MIPS_CPU_IRQ_BASE + 8)
 #define AU1000_INTC0_INT_LAST	(AU1000_INTC0_INT_BASE + 31)
 #define AU1000_INTC1_INT_BASE	(AU1000_INTC0_INT_LAST + 1)
 #define AU1000_INTC1_INT_LAST	(AU1000_INTC1_INT_BASE + 31)
 #define AU1000_MAX_INTR 	AU1000_INTC1_INT_LAST
 
+<<<<<<< HEAD
 /* Au1300-style (GPIC): 1 controller with up to 128 sources */
 #define ALCHEMY_GPIC_INT_BASE	(MIPS_CPU_IRQ_BASE + 8)
 #define ALCHEMY_GPIC_INT_NUM	128
 #define ALCHEMY_GPIC_INT_LAST	(ALCHEMY_GPIC_INT_BASE + ALCHEMY_GPIC_INT_NUM - 1)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum soc_au1000_ints {
 	AU1000_FIRST_INT	= AU1000_INTC0_INT_BASE,
 	AU1000_UART0_INT	= AU1000_FIRST_INT,
@@ -676,6 +696,7 @@ enum soc_au1200_ints {
 
 #endif /* !defined (_LANGUAGE_ASSEMBLY) */
 
+<<<<<<< HEAD
 /* Au1300 peripheral interrupt numbers */
 #define AU1300_FIRST_INT	(ALCHEMY_GPIC_INT_BASE)
 #define AU1300_UART1_INT	(AU1300_FIRST_INT + 17)
@@ -868,16 +889,49 @@ enum soc_au1200_ints {
 #define AU1000_MEM_SDSMCKE		0x0034
 
 /* MEM_SDMODE register content definitions */
+=======
+/*
+ * SDRAM register offsets
+ */
+#if defined(CONFIG_SOC_AU1000) || defined(CONFIG_SOC_AU1500) || \
+    defined(CONFIG_SOC_AU1100)
+#define MEM_SDMODE0		0x0000
+#define MEM_SDMODE1		0x0004
+#define MEM_SDMODE2		0x0008
+#define MEM_SDADDR0		0x000C
+#define MEM_SDADDR1		0x0010
+#define MEM_SDADDR2		0x0014
+#define MEM_SDREFCFG		0x0018
+#define MEM_SDPRECMD		0x001C
+#define MEM_SDAUTOREF		0x0020
+#define MEM_SDWRMD0		0x0024
+#define MEM_SDWRMD1		0x0028
+#define MEM_SDWRMD2		0x002C
+#define MEM_SDSLEEP		0x0030
+#define MEM_SDSMCKE		0x0034
+
+/*
+ * MEM_SDMODE register content definitions
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MEM_SDMODE_F		(1 << 22)
 #define MEM_SDMODE_SR		(1 << 21)
 #define MEM_SDMODE_BS		(1 << 20)
 #define MEM_SDMODE_RS		(3 << 18)
 #define MEM_SDMODE_CS		(7 << 15)
+<<<<<<< HEAD
 #define MEM_SDMODE_TRAS		(15 << 11)
 #define MEM_SDMODE_TMRD		(3 << 9)
 #define MEM_SDMODE_TWR		(3 << 7)
 #define MEM_SDMODE_TRP		(3 << 5)
 #define MEM_SDMODE_TRCD		(3 << 3)
+=======
+#define MEM_SDMODE_TRAS 	(15 << 11)
+#define MEM_SDMODE_TMRD 	(3 << 9)
+#define MEM_SDMODE_TWR		(3 << 7)
+#define MEM_SDMODE_TRP		(3 << 5)
+#define MEM_SDMODE_TRCD 	(3 << 3)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MEM_SDMODE_TCL		(7 << 0)
 
 #define MEM_SDMODE_BS_2Bank	(0 << 20)
@@ -899,13 +953,22 @@ enum soc_au1200_ints {
 #define MEM_SDMODE_TRCD_N(N)	((N) << 3)
 #define MEM_SDMODE_TCL_N(N)	((N) << 0)
 
+<<<<<<< HEAD
 /* MEM_SDADDR register contents definitions */
 #define MEM_SDADDR_E		(1 << 20)
 #define MEM_SDADDR_CSBA		(0x03FF << 10)
+=======
+/*
+ * MEM_SDADDR register contents definitions
+ */
+#define MEM_SDADDR_E		(1 << 20)
+#define MEM_SDADDR_CSBA 	(0x03FF << 10)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MEM_SDADDR_CSMASK	(0x03FF << 0)
 #define MEM_SDADDR_CSBA_N(N)	((N) & (0x03FF << 22) >> 12)
 #define MEM_SDADDR_CSMASK_N(N)	((N)&(0x03FF << 22) >> 22)
 
+<<<<<<< HEAD
 /* MEM_SDREFCFG register content definitions */
 #define MEM_SDREFCFG_TRC	(15 << 28)
 #define MEM_SDREFCFG_TRPM	(3 << 26)
@@ -936,6 +999,166 @@ enum soc_au1200_ints {
 #define AU1550_MEM_SDAUTOREF		0x08C8
 #define AU1550_MEM_SDSREF		0x08D0
 #define AU1550_MEM_SDSLEEP		MEM_SDSREF
+=======
+/*
+ * MEM_SDREFCFG register content definitions
+ */
+#define MEM_SDREFCFG_TRC	(15 << 28)
+#define MEM_SDREFCFG_TRPM	(3 << 26)
+#define MEM_SDREFCFG_E		(1 << 25)
+#define MEM_SDREFCFG_RE 	(0x1ffffff << 0)
+#define MEM_SDREFCFG_TRC_N(N)	((N) << MEM_SDREFCFG_TRC)
+#define MEM_SDREFCFG_TRPM_N(N)	((N) << MEM_SDREFCFG_TRPM)
+#define MEM_SDREFCFG_REF_N(N)	(N)
+#endif
+
+/***********************************************************************/
+
+/*
+ * Au1550 SDRAM Register Offsets
+ */
+
+/***********************************************************************/
+
+#if defined(CONFIG_SOC_AU1550) || defined(CONFIG_SOC_AU1200)
+#define MEM_SDMODE0		0x0800
+#define MEM_SDMODE1		0x0808
+#define MEM_SDMODE2		0x0810
+#define MEM_SDADDR0		0x0820
+#define MEM_SDADDR1		0x0828
+#define MEM_SDADDR2		0x0830
+#define MEM_SDCONFIGA		0x0840
+#define MEM_SDCONFIGB		0x0848
+#define MEM_SDSTAT		0x0850
+#define MEM_SDERRADDR		0x0858
+#define MEM_SDSTRIDE0		0x0860
+#define MEM_SDSTRIDE1		0x0868
+#define MEM_SDSTRIDE2		0x0870
+#define MEM_SDWRMD0		0x0880
+#define MEM_SDWRMD1		0x0888
+#define MEM_SDWRMD2		0x0890
+#define MEM_SDPRECMD		0x08C0
+#define MEM_SDAUTOREF		0x08C8
+#define MEM_SDSREF		0x08D0
+#define MEM_SDSLEEP		MEM_SDSREF
+
+#endif
+
+/*
+ * Physical base addresses for integrated peripherals
+ * 0..au1000 1..au1500 2..au1100 3..au1550 4..au1200
+ */
+
+#define AU1000_AC97_PHYS_ADDR		0x10000000 /* 012 */
+#define AU1000_USBD_PHYS_ADDR		0x10200000 /* 0123 */
+#define AU1000_IC0_PHYS_ADDR		0x10400000 /* 01234 */
+#define AU1000_MAC0_PHYS_ADDR		0x10500000 /* 023 */
+#define AU1000_MAC1_PHYS_ADDR		0x10510000 /* 023 */
+#define AU1000_MACEN_PHYS_ADDR		0x10520000 /* 023 */
+#define AU1100_SD0_PHYS_ADDR		0x10600000 /* 24 */
+#define AU1100_SD1_PHYS_ADDR		0x10680000 /* 24 */
+#define AU1000_I2S_PHYS_ADDR		0x11000000 /* 02 */
+#define AU1500_MAC0_PHYS_ADDR		0x11500000 /* 1 */
+#define AU1500_MAC1_PHYS_ADDR		0x11510000 /* 1 */
+#define AU1500_MACEN_PHYS_ADDR		0x11520000 /* 1 */
+#define AU1000_UART0_PHYS_ADDR		0x11100000 /* 01234 */
+#define AU1000_UART1_PHYS_ADDR		0x11200000 /* 0234 */
+#define AU1000_UART2_PHYS_ADDR		0x11300000 /* 0 */
+#define AU1000_UART3_PHYS_ADDR		0x11400000 /* 0123 */
+#define AU1500_GPIO2_PHYS_ADDR		0x11700000 /* 1234 */
+#define AU1000_IC1_PHYS_ADDR		0x11800000 /* 01234 */
+#define AU1000_SYS_PHYS_ADDR		0x11900000 /* 01234 */
+#define AU1000_DMA_PHYS_ADDR		0x14002000 /* 012 */
+#define AU1550_DBDMA_PHYS_ADDR		0x14002000 /* 34 */
+#define AU1550_DBDMA_CONF_PHYS_ADDR	0x14003000 /* 34 */
+#define AU1000_MACDMA0_PHYS_ADDR	0x14004000 /* 0123 */
+#define AU1000_MACDMA1_PHYS_ADDR	0x14004200 /* 0123 */
+
+
+#ifdef CONFIG_SOC_AU1000
+#define	MEM_PHYS_ADDR		0x14000000
+#define	STATIC_MEM_PHYS_ADDR	0x14001000
+#define	USBH_PHYS_ADDR		0x10100000
+#define	IRDA_PHYS_ADDR		0x10300000
+#define	SSI0_PHYS_ADDR		0x11600000
+#define	SSI1_PHYS_ADDR		0x11680000
+#define PCMCIA_IO_PHYS_ADDR	0xF00000000ULL
+#define PCMCIA_ATTR_PHYS_ADDR	0xF40000000ULL
+#define PCMCIA_MEM_PHYS_ADDR	0xF80000000ULL
+#endif
+
+/********************************************************************/
+
+#ifdef CONFIG_SOC_AU1500
+#define	MEM_PHYS_ADDR		0x14000000
+#define	STATIC_MEM_PHYS_ADDR	0x14001000
+#define	USBH_PHYS_ADDR		0x10100000
+#define PCI_PHYS_ADDR		0x14005000
+#define PCI_MEM_PHYS_ADDR	0x400000000ULL
+#define PCI_IO_PHYS_ADDR	0x500000000ULL
+#define PCI_CONFIG0_PHYS_ADDR	0x600000000ULL
+#define PCI_CONFIG1_PHYS_ADDR	0x680000000ULL
+#define PCMCIA_IO_PHYS_ADDR	0xF00000000ULL
+#define PCMCIA_ATTR_PHYS_ADDR	0xF40000000ULL
+#define PCMCIA_MEM_PHYS_ADDR	0xF80000000ULL
+#endif
+
+/********************************************************************/
+
+#ifdef CONFIG_SOC_AU1100
+#define	MEM_PHYS_ADDR		0x14000000
+#define	STATIC_MEM_PHYS_ADDR	0x14001000
+#define	USBH_PHYS_ADDR		0x10100000
+#define	IRDA_PHYS_ADDR		0x10300000
+#define	SSI0_PHYS_ADDR		0x11600000
+#define	SSI1_PHYS_ADDR		0x11680000
+#define LCD_PHYS_ADDR		0x15000000
+#define PCMCIA_IO_PHYS_ADDR	0xF00000000ULL
+#define PCMCIA_ATTR_PHYS_ADDR	0xF40000000ULL
+#define PCMCIA_MEM_PHYS_ADDR	0xF80000000ULL
+#endif
+
+/***********************************************************************/
+
+#ifdef CONFIG_SOC_AU1550
+#define	MEM_PHYS_ADDR		0x14000000
+#define	STATIC_MEM_PHYS_ADDR	0x14001000
+#define	USBH_PHYS_ADDR		0x14020000
+#define PCI_PHYS_ADDR		0x14005000
+#define PE_PHYS_ADDR		0x14008000
+#define PSC0_PHYS_ADDR		0x11A00000
+#define PSC1_PHYS_ADDR		0x11B00000
+#define PSC2_PHYS_ADDR		0x10A00000
+#define PSC3_PHYS_ADDR		0x10B00000
+#define PCI_MEM_PHYS_ADDR	0x400000000ULL
+#define PCI_IO_PHYS_ADDR	0x500000000ULL
+#define PCI_CONFIG0_PHYS_ADDR	0x600000000ULL
+#define PCI_CONFIG1_PHYS_ADDR	0x680000000ULL
+#define PCMCIA_IO_PHYS_ADDR	0xF00000000ULL
+#define PCMCIA_ATTR_PHYS_ADDR	0xF40000000ULL
+#define PCMCIA_MEM_PHYS_ADDR	0xF80000000ULL
+#endif
+
+/***********************************************************************/
+
+#ifdef CONFIG_SOC_AU1200
+#define	MEM_PHYS_ADDR		0x14000000
+#define	STATIC_MEM_PHYS_ADDR	0x14001000
+#define AES_PHYS_ADDR		0x10300000
+#define CIM_PHYS_ADDR		0x14004000
+#define USBM_PHYS_ADDR		0x14020000
+#define	USBH_PHYS_ADDR		0x14020100
+#define PSC0_PHYS_ADDR	 	0x11A00000
+#define PSC1_PHYS_ADDR	 	0x11B00000
+#define LCD_PHYS_ADDR		0x15000000
+#define SWCNT_PHYS_ADDR		0x1110010C
+#define MAEFE_PHYS_ADDR		0x14012000
+#define MAEBE_PHYS_ADDR		0x14010000
+#define PCMCIA_IO_PHYS_ADDR	0xF00000000ULL
+#define PCMCIA_ATTR_PHYS_ADDR	0xF40000000ULL
+#define PCMCIA_MEM_PHYS_ADDR	0xF80000000ULL
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Static Bus Controller */
 #define MEM_STCFG0		0xB4001000
@@ -954,13 +1177,87 @@ enum soc_au1200_ints {
 #define MEM_STTIME3		0xB4001034
 #define MEM_STADDR3		0xB4001038
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SOC_AU1550) || defined(CONFIG_SOC_AU1200)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MEM_STNDCTL		0xB4001100
 #define MEM_STSTAT		0xB4001104
 
 #define MEM_STNAND_CMD		0x0
 #define MEM_STNAND_ADDR 	0x4
 #define MEM_STNAND_DATA 	0x20
+<<<<<<< HEAD
 
+=======
+#endif
+
+
+
+
+/* Au1000 */
+#ifdef CONFIG_SOC_AU1000
+
+#define USB_OHCI_BASE		0x10100000	/* phys addr for ioremap */
+#define USB_HOST_CONFIG 	0xB017FFFC
+#define FOR_PLATFORM_C_USB_HOST_INT AU1000_USB_HOST_INT
+#endif /* CONFIG_SOC_AU1000 */
+
+/* Au1500 */
+#ifdef CONFIG_SOC_AU1500
+
+#define USB_OHCI_BASE		0x10100000	/* phys addr for ioremap */
+#define USB_HOST_CONFIG 	0xB017fffc
+#define FOR_PLATFORM_C_USB_HOST_INT AU1500_USB_HOST_INT
+#endif /* CONFIG_SOC_AU1500 */
+
+/* Au1100 */
+#ifdef CONFIG_SOC_AU1100
+
+#define USB_OHCI_BASE		0x10100000	/* phys addr for ioremap */
+#define USB_HOST_CONFIG 	0xB017FFFC
+#define FOR_PLATFORM_C_USB_HOST_INT AU1100_USB_HOST_INT
+#endif /* CONFIG_SOC_AU1100 */
+
+#ifdef CONFIG_SOC_AU1550
+
+#define USB_OHCI_BASE		0x14020000	/* phys addr for ioremap */
+#define USB_OHCI_LEN		0x00060000
+#define USB_HOST_CONFIG 	0xB4027ffc
+#define FOR_PLATFORM_C_USB_HOST_INT AU1550_USB_HOST_INT
+#endif /* CONFIG_SOC_AU1550 */
+
+
+#ifdef CONFIG_SOC_AU1200
+
+#define USB_UOC_BASE		0x14020020
+#define USB_UOC_LEN		0x20
+#define USB_OHCI_BASE		0x14020100
+#define USB_OHCI_LEN		0x100
+#define USB_EHCI_BASE		0x14020200
+#define USB_EHCI_LEN		0x100
+#define USB_UDC_BASE		0x14022000
+#define USB_UDC_LEN		0x2000
+#define USB_MSR_BASE		0xB4020000
+#define USB_MSR_MCFG		4
+#define USBMSRMCFG_OMEMEN	0
+#define USBMSRMCFG_OBMEN	1
+#define USBMSRMCFG_EMEMEN	2
+#define USBMSRMCFG_EBMEN	3
+#define USBMSRMCFG_DMEMEN	4
+#define USBMSRMCFG_DBMEN	5
+#define USBMSRMCFG_GMEMEN	6
+#define USBMSRMCFG_OHCCLKEN	16
+#define USBMSRMCFG_EHCCLKEN	17
+#define USBMSRMCFG_UDCCLKEN	18
+#define USBMSRMCFG_PHYPLLEN	19
+#define USBMSRMCFG_RDCOMB	30
+#define USBMSRMCFG_PFEN 	31
+
+#define FOR_PLATFORM_C_USB_HOST_INT AU1200_USB_INT
+
+#endif /* CONFIG_SOC_AU1200 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Programmable Counters 0 and 1 */
 #define SYS_BASE		0xB1900000
@@ -1032,6 +1329,59 @@ enum soc_au1200_ints {
 #  define I2S_CONTROL_D 	(1 << 1)
 #  define I2S_CONTROL_CE	(1 << 0)
 
+<<<<<<< HEAD
+=======
+/* USB Host Controller */
+#ifndef USB_OHCI_LEN
+#define USB_OHCI_LEN		0x00100000
+#endif
+
+#ifndef CONFIG_SOC_AU1200
+
+/* USB Device Controller */
+#define USBD_EP0RD		0xB0200000
+#define USBD_EP0WR		0xB0200004
+#define USBD_EP2WR		0xB0200008
+#define USBD_EP3WR		0xB020000C
+#define USBD_EP4RD		0xB0200010
+#define USBD_EP5RD		0xB0200014
+#define USBD_INTEN		0xB0200018
+#define USBD_INTSTAT		0xB020001C
+#  define USBDEV_INT_SOF	(1 << 12)
+#  define USBDEV_INT_HF_BIT	6
+#  define USBDEV_INT_HF_MASK	(0x3f << USBDEV_INT_HF_BIT)
+#  define USBDEV_INT_CMPLT_BIT	0
+#  define USBDEV_INT_CMPLT_MASK (0x3f << USBDEV_INT_CMPLT_BIT)
+#define USBD_CONFIG		0xB0200020
+#define USBD_EP0CS		0xB0200024
+#define USBD_EP2CS		0xB0200028
+#define USBD_EP3CS		0xB020002C
+#define USBD_EP4CS		0xB0200030
+#define USBD_EP5CS		0xB0200034
+#  define USBDEV_CS_SU		(1 << 14)
+#  define USBDEV_CS_NAK 	(1 << 13)
+#  define USBDEV_CS_ACK 	(1 << 12)
+#  define USBDEV_CS_BUSY	(1 << 11)
+#  define USBDEV_CS_TSIZE_BIT	1
+#  define USBDEV_CS_TSIZE_MASK	(0x3ff << USBDEV_CS_TSIZE_BIT)
+#  define USBDEV_CS_STALL	(1 << 0)
+#define USBD_EP0RDSTAT		0xB0200040
+#define USBD_EP0WRSTAT		0xB0200044
+#define USBD_EP2WRSTAT		0xB0200048
+#define USBD_EP3WRSTAT		0xB020004C
+#define USBD_EP4RDSTAT		0xB0200050
+#define USBD_EP5RDSTAT		0xB0200054
+#  define USBDEV_FSTAT_FLUSH	(1 << 6)
+#  define USBDEV_FSTAT_UF	(1 << 5)
+#  define USBDEV_FSTAT_OF	(1 << 4)
+#  define USBDEV_FSTAT_FCNT_BIT 0
+#  define USBDEV_FSTAT_FCNT_MASK (0x0f << USBDEV_FSTAT_FCNT_BIT)
+#define USBD_ENABLE		0xB0200058
+#  define USBDEV_ENABLE 	(1 << 1)
+#  define USBDEV_CE		(1 << 0)
+
+#endif /* !CONFIG_SOC_AU1200 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Ethernet Controllers  */
 
@@ -1265,6 +1615,7 @@ enum soc_au1200_ints {
 #define SSI_ENABLE_CD		(1 << 1)
 #define SSI_ENABLE_E		(1 << 0)
 
+<<<<<<< HEAD
 
 /*
  * The IrDA peripheral has an IRFIRSEL pin, but on the DB/PB boards it's not
@@ -1279,6 +1630,46 @@ struct au1k_irda_platform_data {
 	void(*set_phy_mode)(int mode);
 };
 
+=======
+/* IrDA Controller */
+#define IRDA_BASE		0xB0300000
+#define IR_RING_PTR_STATUS	(IRDA_BASE + 0x00)
+#define IR_RING_BASE_ADDR_H	(IRDA_BASE + 0x04)
+#define IR_RING_BASE_ADDR_L	(IRDA_BASE + 0x08)
+#define IR_RING_SIZE		(IRDA_BASE + 0x0C)
+#define IR_RING_PROMPT		(IRDA_BASE + 0x10)
+#define IR_RING_ADDR_CMPR	(IRDA_BASE + 0x14)
+#define IR_INT_CLEAR		(IRDA_BASE + 0x18)
+#define IR_CONFIG_1		(IRDA_BASE + 0x20)
+#  define IR_RX_INVERT_LED	(1 << 0)
+#  define IR_TX_INVERT_LED	(1 << 1)
+#  define IR_ST 		(1 << 2)
+#  define IR_SF 		(1 << 3)
+#  define IR_SIR		(1 << 4)
+#  define IR_MIR		(1 << 5)
+#  define IR_FIR		(1 << 6)
+#  define IR_16CRC		(1 << 7)
+#  define IR_TD 		(1 << 8)
+#  define IR_RX_ALL		(1 << 9)
+#  define IR_DMA_ENABLE 	(1 << 10)
+#  define IR_RX_ENABLE		(1 << 11)
+#  define IR_TX_ENABLE		(1 << 12)
+#  define IR_LOOPBACK		(1 << 14)
+#  define IR_SIR_MODE		(IR_SIR | IR_DMA_ENABLE | \
+				 IR_RX_ALL | IR_RX_ENABLE | IR_SF | IR_16CRC)
+#define IR_SIR_FLAGS		(IRDA_BASE + 0x24)
+#define IR_ENABLE		(IRDA_BASE + 0x28)
+#  define IR_RX_STATUS		(1 << 9)
+#  define IR_TX_STATUS		(1 << 10)
+#define IR_READ_PHY_CONFIG	(IRDA_BASE + 0x2C)
+#define IR_WRITE_PHY_CONFIG	(IRDA_BASE + 0x30)
+#define IR_MAX_PKT_LEN		(IRDA_BASE + 0x34)
+#define IR_RX_BYTE_CNT		(IRDA_BASE + 0x38)
+#define IR_CONFIG_2		(IRDA_BASE + 0x3C)
+#  define IR_MODE_INV		(1 << 0)
+#  define IR_ONE_PIN		(1 << 1)
+#define IR_INTERFACE_CONFIG	(IRDA_BASE + 0x40)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* GPIO */
 #define SYS_PINFUNC		0xB190002C
@@ -1322,6 +1713,10 @@ struct au1k_irda_platform_data {
 #  define SYS_PF_MUST_BE_SET	((1 << 5) | (1 << 2))
 
 /* Au1200 only */
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SOC_AU1200
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SYS_PINFUNC_DMA 	(1 << 31)
 #define SYS_PINFUNC_S0A 	(1 << 30)
 #define SYS_PINFUNC_S1A 	(1 << 29)
@@ -1349,6 +1744,10 @@ struct au1k_irda_platform_data {
 #define SYS_PINFUNC_P0B 	(1 << 4)
 #define SYS_PINFUNC_U0T 	(1 << 3)
 #define SYS_PINFUNC_S1B 	(1 << 2)
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Power Management */
 #define SYS_SCRATCH0		0xB1900018
@@ -1404,12 +1803,20 @@ struct au1k_irda_platform_data {
 #  define SYS_CS_MI2_MASK	(0x7 << SYS_CS_MI2_BIT)
 #  define SYS_CS_DI2		(1 << 16)
 #  define SYS_CS_CI2		(1 << 15)
+<<<<<<< HEAD
 
+=======
+#ifdef CONFIG_SOC_AU1100
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #  define SYS_CS_ML_BIT 	7
 #  define SYS_CS_ML_MASK	(0x7 << SYS_CS_ML_BIT)
 #  define SYS_CS_DL		(1 << 6)
 #  define SYS_CS_CL		(1 << 5)
+<<<<<<< HEAD
 
+=======
+#else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #  define SYS_CS_MUH_BIT	12
 #  define SYS_CS_MUH_MASK	(0x7 << SYS_CS_MUH_BIT)
 #  define SYS_CS_DUH		(1 << 11)
@@ -1418,7 +1825,11 @@ struct au1k_irda_platform_data {
 #  define SYS_CS_MUD_MASK	(0x7 << SYS_CS_MUD_BIT)
 #  define SYS_CS_DUD		(1 << 6)
 #  define SYS_CS_CUD		(1 << 5)
+<<<<<<< HEAD
 
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #  define SYS_CS_MIR_BIT	2
 #  define SYS_CS_MIR_MASK	(0x7 << SYS_CS_MIR_BIT)
 #  define SYS_CS_DIR		(1 << 1)
@@ -1465,6 +1876,7 @@ struct au1k_irda_platform_data {
 #  define AC97C_RS		(1 << 1)
 #  define AC97C_CE		(1 << 0)
 
+<<<<<<< HEAD
 
 /* The PCI chip selects are outside the 32bit space, and since we can't
  * just program the 36bit addresses into BARs, we have to take a chunk
@@ -1482,13 +1894,64 @@ struct au1k_irda_platform_data {
 #define ALCHEMY_PCI_IOWIN_END		0x0000FFFF
 
 #ifdef CONFIG_PCI
+=======
+#if defined(CONFIG_SOC_AU1500) || defined(CONFIG_SOC_AU1550)
+/* Au1500 PCI Controller */
+#define Au1500_CFG_BASE 	0xB4005000	/* virtual, KSEG1 addr */
+#define Au1500_PCI_CMEM 	(Au1500_CFG_BASE + 0)
+#define Au1500_PCI_CFG		(Au1500_CFG_BASE + 4)
+#  define PCI_ERROR		((1 << 22) | (1 << 23) | (1 << 24) | \
+				 (1 << 25) | (1 << 26) | (1 << 27))
+#define Au1500_PCI_B2BMASK_CCH	(Au1500_CFG_BASE + 8)
+#define Au1500_PCI_B2B0_VID	(Au1500_CFG_BASE + 0xC)
+#define Au1500_PCI_B2B1_ID	(Au1500_CFG_BASE + 0x10)
+#define Au1500_PCI_MWMASK_DEV	(Au1500_CFG_BASE + 0x14)
+#define Au1500_PCI_MWBASE_REV_CCL (Au1500_CFG_BASE + 0x18)
+#define Au1500_PCI_ERR_ADDR	(Au1500_CFG_BASE + 0x1C)
+#define Au1500_PCI_SPEC_INTACK	(Au1500_CFG_BASE + 0x20)
+#define Au1500_PCI_ID		(Au1500_CFG_BASE + 0x100)
+#define Au1500_PCI_STATCMD	(Au1500_CFG_BASE + 0x104)
+#define Au1500_PCI_CLASSREV	(Au1500_CFG_BASE + 0x108)
+#define Au1500_PCI_HDRTYPE	(Au1500_CFG_BASE + 0x10C)
+#define Au1500_PCI_MBAR 	(Au1500_CFG_BASE + 0x110)
+
+#define Au1500_PCI_HDR		0xB4005100	/* virtual, KSEG1 addr */
+
+/*
+ * All of our structures, like PCI resource, have 32-bit members.
+ * Drivers are expected to do an ioremap on the PCI MEM resource, but it's
+ * hard to store 0x4 0000 0000 in a 32-bit type.  We require a small patch
+ * to __ioremap to check for addresses between (u32)Au1500_PCI_MEM_START and
+ * (u32)Au1500_PCI_MEM_END and change those to the full 36-bit PCI MEM
+ * addresses.  For PCI I/O, it's simpler because we get to do the ioremap
+ * ourselves and then adjust the device's resources.
+ */
+#define Au1500_EXT_CFG		0x600000000ULL
+#define Au1500_EXT_CFG_TYPE1	0x680000000ULL
+#define Au1500_PCI_IO_START	0x500000000ULL
+#define Au1500_PCI_IO_END	0x5000FFFFFULL
+#define Au1500_PCI_MEM_START	0x440000000ULL
+#define Au1500_PCI_MEM_END	0x44FFFFFFFULL
+
+#define PCI_IO_START	0x00001000
+#define PCI_IO_END	0x000FFFFF
+#define PCI_MEM_START	0x40000000
+#define PCI_MEM_END	0x4FFFFFFF
+
+#define PCI_FIRST_DEVFN (0 << 3)
+#define PCI_LAST_DEVFN	(19 << 3)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define IOPORT_RESOURCE_START	0x00001000	/* skip legacy probing */
 #define IOPORT_RESOURCE_END	0xffffffff
 #define IOMEM_RESOURCE_START	0x10000000
 #define IOMEM_RESOURCE_END	0xfffffffffULL
 
+<<<<<<< HEAD
 #else
+=======
+#else /* Au1000 and Au1100 and Au1200 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Don't allow any legacy ports probing */
 #define IOPORT_RESOURCE_START	0x10000000
@@ -1496,6 +1959,7 @@ struct au1k_irda_platform_data {
 #define IOMEM_RESOURCE_START	0x10000000
 #define IOMEM_RESOURCE_END	0xfffffffffULL
 
+<<<<<<< HEAD
 #endif
 
 /* PCI controller block register offsets */
@@ -1568,5 +2032,15 @@ struct au1k_irda_platform_data {
 #define PCI_PARAM_CLS(x)	((x) & 0xff)
 #define PCI_TIMEOUT_RETRIES(x)	(((x) & 0xff) << 8)	/* max retries */
 #define PCI_TIMEOUT_TO(x)	((x) & 0xff)	/* target ready timeout */
+=======
+#define PCI_IO_START	0
+#define PCI_IO_END	0
+#define PCI_MEM_START	0
+#define PCI_MEM_END	0
+#define PCI_FIRST_DEVFN 0
+#define PCI_LAST_DEVFN	0
+
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

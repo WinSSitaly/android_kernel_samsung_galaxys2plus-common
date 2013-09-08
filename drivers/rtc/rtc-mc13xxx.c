@@ -309,7 +309,11 @@ static irqreturn_t mc13xxx_rtc_reset_handler(int irq, void *dev)
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
 static int __init mc13xxx_rtc_probe(struct platform_device *pdev)
+=======
+static int __devinit mc13xxx_rtc_probe(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 	struct mc13xxx_rtc *priv;
@@ -378,7 +382,11 @@ err_reset_irq_request:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int __exit mc13xxx_rtc_remove(struct platform_device *pdev)
+=======
+static int __devexit mc13xxx_rtc_remove(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct mc13xxx_rtc *priv = platform_get_drvdata(pdev);
 
@@ -399,7 +407,11 @@ static int __exit mc13xxx_rtc_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct platform_device_id mc13xxx_rtc_idtable[] = {
+=======
+const struct platform_device_id mc13xxx_rtc_idtable[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.name = "mc13783-rtc",
 	}, {
@@ -410,7 +422,11 @@ static const struct platform_device_id mc13xxx_rtc_idtable[] = {
 
 static struct platform_driver mc13xxx_rtc_driver = {
 	.id_table = mc13xxx_rtc_idtable,
+<<<<<<< HEAD
 	.remove = __exit_p(mc13xxx_rtc_remove),
+=======
+	.remove = __devexit_p(mc13xxx_rtc_remove),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.driver = {
 		.name = DRIVER_NAME,
 		.owner = THIS_MODULE,

@@ -18,12 +18,22 @@ defcmd dumpcommon "" "Common kdb debugging"
 endefcmd
 
 defcmd dumpall "" "First line debugging"
+<<<<<<< HEAD
+=======
+  set BTSYMARG 1
+  set BTARGS 9
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   pid R
   -dumpcommon
   -bta
 endefcmd
 
 defcmd dumpcpu "" "Same as dumpall but only tasks on cpus"
+<<<<<<< HEAD
+=======
+  set BTSYMARG 1
+  set BTARGS 9
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   pid R
   -dumpcommon
   -btc

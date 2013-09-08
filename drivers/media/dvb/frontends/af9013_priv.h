@@ -2,7 +2,10 @@
  * Afatech AF9013 demodulator driver
  *
  * Copyright (C) 2007 Antti Palosaari <crope@iki.fi>
+<<<<<<< HEAD
  * Copyright (C) 2011 Antti Palosaari <crope@iki.fi>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Thanks to Afatech who kindly provided information.
  *
@@ -22,6 +25,7 @@
  *
  */
 
+<<<<<<< HEAD
 #ifndef AF9013_PRIV_H
 #define AF9013_PRIV_H
 
@@ -35,6 +39,26 @@
 #define dbg(f, arg...) \
 	if (af9013_debug) \
 		printk(KERN_INFO   LOG_PREFIX": " f "\n" , ## arg)
+=======
+#ifndef _AF9013_PRIV_
+#define _AF9013_PRIV_
+
+#define LOG_PREFIX "af9013"
+extern int af9013_debug;
+
+#define dprintk(var, level, args...) \
+	    do { if ((var & level)) printk(args); } while (0)
+
+#define debug_dump(b, l, func) {\
+	int loop_; \
+	for (loop_ = 0; loop_ < l; loop_++) \
+		func("%02x ", b[loop_]); \
+	func("\n");\
+}
+
+#define deb_info(args...) dprintk(af9013_debug, 0x01, args)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #undef err
 #define err(f, arg...)  printk(KERN_ERR     LOG_PREFIX": " f "\n" , ## arg)
 #undef info
@@ -44,25 +68,40 @@
 
 #define AF9013_DEFAULT_FIRMWARE     "dvb-fe-af9013.fw"
 
+<<<<<<< HEAD
 struct af9013_reg_bit {
+=======
+struct regdesc {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 addr;
 	u8  pos:4;
 	u8  len:4;
 	u8  val;
 };
 
+<<<<<<< HEAD
 struct af9013_snr {
+=======
+struct snr_table {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 val;
 	u8 snr;
 };
 
+<<<<<<< HEAD
 struct af9013_coeff {
 	u32 clock;
 	u32 bandwidth_hz;
+=======
+struct coeff {
+	u32 adc_clock;
+	fe_bandwidth_t bw;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 val[24];
 };
 
 /* pre-calculated coeff lookup table */
+<<<<<<< HEAD
 static const struct af9013_coeff coeff_lut[] = {
 	/* 28.800 MHz */
 	{ 28800000, 8000000, { 0x02, 0x8a, 0x28, 0xa3, 0x05, 0x14,
@@ -102,13 +141,58 @@ static const struct af9013_coeff coeff_lut[] = {
 		0xb8, 0x14, 0x00, 0xa3, 0xdc, 0x29, 0x00, 0xa3, 0xd7,
 		0x0a, 0x00, 0xa3, 0xd1, 0xec, 0x01, 0x47, 0xae, 0x05 } },
 	{ 25000000, 6000000, { 0x02, 0x31, 0xbc, 0xb5, 0x04, 0x63,
+=======
+static struct coeff coeff_table[] = {
+	/* 28.800 MHz */
+	{ 28800, BANDWIDTH_8_MHZ, { 0x02, 0x8a, 0x28, 0xa3, 0x05, 0x14,
+		0x51, 0x11, 0x00, 0xa2, 0x8f, 0x3d, 0x00, 0xa2, 0x8a,
+		0x29, 0x00, 0xa2, 0x85, 0x14, 0x01, 0x45, 0x14, 0x14 } },
+	{ 28800, BANDWIDTH_7_MHZ, { 0x02, 0x38, 0xe3, 0x8e, 0x04, 0x71,
+		0xc7, 0x07, 0x00, 0x8e, 0x3d, 0x55, 0x00, 0x8e, 0x38,
+		0xe4, 0x00, 0x8e, 0x34, 0x72, 0x01, 0x1c, 0x71, 0x32 } },
+	{ 28800, BANDWIDTH_6_MHZ, { 0x01, 0xe7, 0x9e, 0x7a, 0x03, 0xcf,
+		0x3c, 0x3d, 0x00, 0x79, 0xeb, 0x6e, 0x00, 0x79, 0xe7,
+		0x9e, 0x00, 0x79, 0xe3, 0xcf, 0x00, 0xf3, 0xcf, 0x0f } },
+	/* 20.480 MHz */
+	{ 20480, BANDWIDTH_8_MHZ, { 0x03, 0x92, 0x49, 0x26, 0x07, 0x24,
+		0x92, 0x13, 0x00, 0xe4, 0x99, 0x6e, 0x00, 0xe4, 0x92,
+		0x49, 0x00, 0xe4, 0x8b, 0x25, 0x01, 0xc9, 0x24, 0x25 } },
+	{ 20480, BANDWIDTH_7_MHZ, { 0x03, 0x20, 0x00, 0x01, 0x06, 0x40,
+		0x00, 0x00, 0x00, 0xc8, 0x06, 0x40, 0x00, 0xc8, 0x00,
+		0x00, 0x00, 0xc7, 0xf9, 0xc0, 0x01, 0x90, 0x00, 0x00 } },
+	{ 20480, BANDWIDTH_6_MHZ, { 0x02, 0xad, 0xb6, 0xdc, 0x05, 0x5b,
+		0x6d, 0x2e, 0x00, 0xab, 0x73, 0x13, 0x00, 0xab, 0x6d,
+		0xb7, 0x00, 0xab, 0x68, 0x5c, 0x01, 0x56, 0xdb, 0x1c } },
+	/* 28.000 MHz */
+	{ 28000, BANDWIDTH_8_MHZ, { 0x02, 0x9c, 0xbc, 0x15, 0x05, 0x39,
+		0x78, 0x0a, 0x00, 0xa7, 0x34, 0x3f, 0x00, 0xa7, 0x2f,
+		0x05, 0x00, 0xa7, 0x29, 0xcc, 0x01, 0x4e, 0x5e, 0x03 } },
+	{ 28000, BANDWIDTH_7_MHZ, { 0x02, 0x49, 0x24, 0x92, 0x04, 0x92,
+		0x49, 0x09, 0x00, 0x92, 0x4d, 0xb7, 0x00, 0x92, 0x49,
+		0x25, 0x00, 0x92, 0x44, 0x92, 0x01, 0x24, 0x92, 0x12 } },
+	{ 28000, BANDWIDTH_6_MHZ, { 0x01, 0xf5, 0x8d, 0x10, 0x03, 0xeb,
+		0x1a, 0x08, 0x00, 0x7d, 0x67, 0x2f, 0x00, 0x7d, 0x63,
+		0x44, 0x00, 0x7d, 0x5f, 0x59, 0x00, 0xfa, 0xc6, 0x22 } },
+	/* 25.000 MHz */
+	{ 25000, BANDWIDTH_8_MHZ, { 0x02, 0xec, 0xfb, 0x9d, 0x05, 0xd9,
+		0xf7, 0x0e, 0x00, 0xbb, 0x44, 0xc1, 0x00, 0xbb, 0x3e,
+		0xe7, 0x00, 0xbb, 0x39, 0x0d, 0x01, 0x76, 0x7d, 0x34 } },
+	{ 25000, BANDWIDTH_7_MHZ, { 0x02, 0x8f, 0x5c, 0x29, 0x05, 0x1e,
+		0xb8, 0x14, 0x00, 0xa3, 0xdc, 0x29, 0x00, 0xa3, 0xd7,
+		0x0a, 0x00, 0xa3, 0xd1, 0xec, 0x01, 0x47, 0xae, 0x05 } },
+	{ 25000, BANDWIDTH_6_MHZ, { 0x02, 0x31, 0xbc, 0xb5, 0x04, 0x63,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		0x79, 0x1b, 0x00, 0x8c, 0x73, 0x91, 0x00, 0x8c, 0x6f,
 		0x2d, 0x00, 0x8c, 0x6a, 0xca, 0x01, 0x18, 0xde, 0x17 } },
 };
 
 /* QPSK SNR lookup table */
+<<<<<<< HEAD
 static const struct af9013_snr qpsk_snr_lut[] = {
 	{ 0x000000,  0 },
+=======
+static struct snr_table qpsk_snr_table[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0x0b4771,  0 },
 	{ 0x0c1aed,  1 },
 	{ 0x0d0d27,  2 },
@@ -128,8 +212,12 @@ static const struct af9013_snr qpsk_snr_lut[] = {
 };
 
 /* QAM16 SNR lookup table */
+<<<<<<< HEAD
 static const struct af9013_snr qam16_snr_lut[] = {
 	{ 0x000000,  0 },
+=======
+static struct snr_table qam16_snr_table[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0x05eb62,  5 },
 	{ 0x05fecf,  6 },
 	{ 0x060b80,  7 },
@@ -149,8 +237,12 @@ static const struct af9013_snr qam16_snr_lut[] = {
 };
 
 /* QAM64 SNR lookup table */
+<<<<<<< HEAD
 static const struct af9013_snr qam64_snr_lut[] = {
 	{ 0x000000,  0 },
+=======
+static struct snr_table qam64_snr_table[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0x03109b, 12 },
 	{ 0x0310d4, 13 },
 	{ 0x031920, 14 },
@@ -169,7 +261,11 @@ static const struct af9013_snr qam64_snr_lut[] = {
 	{ 0xffffff, 27 },
 };
 
+<<<<<<< HEAD
 static const struct af9013_reg_bit ofsm_init[] = {
+=======
+static struct regdesc ofsm_init[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0xd73a, 0, 8, 0xa1 },
 	{ 0xd73b, 0, 8, 0x1f },
 	{ 0xd73c, 4, 4, 0x0a },
@@ -251,7 +347,11 @@ static const struct af9013_reg_bit ofsm_init[] = {
 
 /* Panasonic ENV77H11D5 tuner init
    AF9013_TUNER_ENV77H11D5 = 129 */
+<<<<<<< HEAD
 static const struct af9013_reg_bit tuner_init_env77h11d5[] = {
+=======
+static struct regdesc tuner_init_env77h11d5[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0x9bd5, 0, 8, 0x01 },
 	{ 0x9bd6, 0, 8, 0x03 },
 	{ 0x9bbe, 0, 8, 0x01 },
@@ -317,7 +417,11 @@ static const struct af9013_reg_bit tuner_init_env77h11d5[] = {
 
 /* Microtune MT2060 tuner init
    AF9013_TUNER_MT2060     = 130 */
+<<<<<<< HEAD
 static const struct af9013_reg_bit tuner_init_mt2060[] = {
+=======
+static struct regdesc tuner_init_mt2060[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0x9bd5, 0, 8, 0x01 },
 	{ 0x9bd6, 0, 8, 0x07 },
 	{ 0xd1a0, 1, 1, 0x01 },
@@ -394,7 +498,11 @@ static const struct af9013_reg_bit tuner_init_mt2060[] = {
 
 /* Microtune MT2060 tuner init
    AF9013_TUNER_MT2060_2   = 147 */
+<<<<<<< HEAD
 static const struct af9013_reg_bit tuner_init_mt2060_2[] = {
+=======
+static struct regdesc tuner_init_mt2060_2[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0x9bd5, 0, 8, 0x01 },
 	{ 0x9bd6, 0, 8, 0x06 },
 	{ 0x9bbe, 0, 8, 0x01 },
@@ -461,7 +569,11 @@ static const struct af9013_reg_bit tuner_init_mt2060_2[] = {
 
 /* MaxLinear MXL5003 tuner init
    AF9013_TUNER_MXL5003D   =   3 */
+<<<<<<< HEAD
 static const struct af9013_reg_bit tuner_init_mxl5003d[] = {
+=======
+static struct regdesc tuner_init_mxl5003d[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0x9bd5, 0, 8, 0x01 },
 	{ 0x9bd6, 0, 8, 0x09 },
 	{ 0xd1a0, 1, 1, 0x01 },
@@ -533,7 +645,11 @@ static const struct af9013_reg_bit tuner_init_mxl5003d[] = {
    AF9013_TUNER_MXL5005D   =  13
    AF9013_TUNER_MXL5005R   =  30
    AF9013_TUNER_MXL5007T   = 177 */
+<<<<<<< HEAD
 static const struct af9013_reg_bit tuner_init_mxl5005[] = {
+=======
+static struct regdesc tuner_init_mxl5005[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0x9bd5, 0, 8, 0x01 },
 	{ 0x9bd6, 0, 8, 0x07 },
 	{ 0xd1a0, 1, 1, 0x01 },
@@ -612,7 +728,11 @@ static const struct af9013_reg_bit tuner_init_mxl5005[] = {
 /* Quantek QT1010 tuner init
    AF9013_TUNER_QT1010     = 134
    AF9013_TUNER_QT1010A    = 162 */
+<<<<<<< HEAD
 static const struct af9013_reg_bit tuner_init_qt1010[] = {
+=======
+static struct regdesc tuner_init_qt1010[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0x9bd5, 0, 8, 0x01 },
 	{ 0x9bd6, 0, 8, 0x09 },
 	{ 0xd1a0, 1, 1, 0x01 },
@@ -689,7 +809,11 @@ static const struct af9013_reg_bit tuner_init_qt1010[] = {
 
 /* Freescale MC44S803 tuner init
    AF9013_TUNER_MC44S803   = 133 */
+<<<<<<< HEAD
 static const struct af9013_reg_bit tuner_init_mc44s803[] = {
+=======
+static struct regdesc tuner_init_mc44s803[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0x9bd5, 0, 8, 0x01 },
 	{ 0x9bd6, 0, 8, 0x06 },
 	{ 0xd1a0, 1, 1, 0x01 },
@@ -771,7 +895,11 @@ static const struct af9013_reg_bit tuner_init_mc44s803[] = {
 
 /* unknown, probably for tin can tuner, tuner init
    AF9013_TUNER_UNKNOWN   = 140 */
+<<<<<<< HEAD
 static const struct af9013_reg_bit tuner_init_unknown[] = {
+=======
+static struct regdesc tuner_init_unknown[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0x9bd5, 0, 8, 0x01 },
 	{ 0x9bd6, 0, 8, 0x02 },
 	{ 0xd1a0, 1, 1, 0x01 },
@@ -844,7 +972,11 @@ static const struct af9013_reg_bit tuner_init_unknown[] = {
 /* NXP TDA18271 & TDA18218 tuner init
    AF9013_TUNER_TDA18271   = 156
    AF9013_TUNER_TDA18218   = 179 */
+<<<<<<< HEAD
 static const struct af9013_reg_bit tuner_init_tda18271[] = {
+=======
+static struct regdesc tuner_init_tda18271[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ 0x9bd5, 0, 8, 0x01 },
 	{ 0x9bd6, 0, 8, 0x04 },
 	{ 0xd1a0, 1, 1, 0x01 },
@@ -919,4 +1051,8 @@ static const struct af9013_reg_bit tuner_init_tda18271[] = {
 	{ 0x9bee, 0, 1, 0x01 },
 };
 
+<<<<<<< HEAD
 #endif /* AF9013_PRIV_H */
+=======
+#endif /* _AF9013_PRIV_ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

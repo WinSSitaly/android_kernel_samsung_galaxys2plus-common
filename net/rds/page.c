@@ -32,8 +32,11 @@
  */
 #include <linux/highmem.h>
 #include <linux/gfp.h>
+<<<<<<< HEAD
 #include <linux/cpu.h>
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "rds.h"
 

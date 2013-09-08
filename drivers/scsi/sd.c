@@ -50,9 +50,17 @@
 #include <linux/string_helpers.h>
 #include <linux/async.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/pm_runtime.h>
 #include <asm/uaccess.h>
 #include <asm/unaligned.h>
+=======
+#include <asm/uaccess.h>
+#include <asm/unaligned.h>
+#ifdef CONFIG_USB_STORAGE_MEDIA_SCAN
+#include <linux/kthread.h>
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <scsi/scsi.h>
 #include <scsi/scsi_cmnd.h>
@@ -107,7 +115,10 @@ static int sd_suspend(struct device *, pm_message_t state);
 static int sd_resume(struct device *);
 static void sd_rescan(struct device *);
 static int sd_done(struct scsi_cmnd *);
+<<<<<<< HEAD
 static int sd_eh_action(struct scsi_cmnd *, unsigned char *, int, int);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void sd_read_capacity(struct scsi_disk *sdkp, unsigned char *buffer);
 static void scsi_disk_release(struct device *cdev);
 static void sd_print_sense_hdr(struct scsi_disk *, struct scsi_sense_hdr *);
@@ -140,7 +151,10 @@ sd_store_cache_type(struct device *dev, struct device_attribute *attr,
 	char *buffer_data;
 	struct scsi_mode_data data;
 	struct scsi_sense_hdr sshdr;
+<<<<<<< HEAD
 	static const char temp[] = "temporary ";
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int len;
 
 	if (sdp->type != TYPE_DISK)
@@ -149,6 +163,7 @@ sd_store_cache_type(struct device *dev, struct device_attribute *attr,
 		 * it's not worth the risk */
 		return -EINVAL;
 
+<<<<<<< HEAD
 	if (strncmp(buf, temp, sizeof(temp) - 1) == 0) {
 		buf += sizeof(temp) - 1;
 		sdkp->cache_override = 1;
@@ -156,6 +171,8 @@ sd_store_cache_type(struct device *dev, struct device_attribute *attr,
 		sdkp->cache_override = 0;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < ARRAY_SIZE(sd_cache_types); i++) {
 		len = strlen(sd_cache_types[i]);
 		if (strncmp(sd_cache_types[i], buf, len) == 0 &&
@@ -168,6 +185,7 @@ sd_store_cache_type(struct device *dev, struct device_attribute *attr,
 		return -EINVAL;
 	rcd = ct & 0x01 ? 1 : 0;
 	wce = ct & 0x02 ? 1 : 0;
+<<<<<<< HEAD
 
 	if (sdkp->cache_override) {
 		sdkp->WCE = wce;
@@ -175,6 +193,8 @@ sd_store_cache_type(struct device *dev, struct device_attribute *attr,
 		return count;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (scsi_mode_sense(sdp, 0x08, 8, buffer, sizeof(buffer), SD_TIMEOUT,
 			    SD_MAX_RETRIES, &data, NULL))
 		return -EINVAL;
@@ -362,6 +382,7 @@ sd_store_provisioning_mode(struct device *dev, struct device_attribute *attr,
 	return count;
 }
 
+<<<<<<< HEAD
 static ssize_t
 sd_show_max_medium_access_timeouts(struct device *dev,
 				   struct device_attribute *attr, char *buf)
@@ -387,6 +408,8 @@ sd_store_max_medium_access_timeouts(struct device *dev,
 	return err ? err : count;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct device_attribute sd_disk_attrs[] = {
 	__ATTR(cache_type, S_IRUGO|S_IWUSR, sd_show_cache_type,
 	       sd_store_cache_type),
@@ -401,9 +424,12 @@ static struct device_attribute sd_disk_attrs[] = {
 	__ATTR(thin_provisioning, S_IRUGO, sd_show_thin_provisioning, NULL),
 	__ATTR(provisioning_mode, S_IRUGO|S_IWUSR, sd_show_provisioning_mode,
 	       sd_store_provisioning_mode),
+<<<<<<< HEAD
 	__ATTR(max_medium_access_timeouts, S_IRUGO|S_IWUSR,
 	       sd_show_max_medium_access_timeouts,
 	       sd_store_max_medium_access_timeouts),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__ATTR_NULL,
 };
 
@@ -426,7 +452,10 @@ static struct scsi_driver sd_template = {
 	},
 	.rescan			= sd_rescan,
 	.done			= sd_done,
+<<<<<<< HEAD
 	.eh_action		= sd_eh_action,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -542,8 +571,11 @@ static void sd_config_discard(struct scsi_disk *sdkp, unsigned int mode)
 		max(sdkp->physical_block_size,
 		    sdkp->unmap_granularity * logical_block_size);
 
+<<<<<<< HEAD
 	sdkp->provisioning_mode = mode;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (mode) {
 
 	case SD_LBP_DISABLE:
@@ -571,6 +603,11 @@ static void sd_config_discard(struct scsi_disk *sdkp, unsigned int mode)
 
 	q->limits.max_discard_sectors = max_blocks * (logical_block_size >> 9);
 	queue_flag_set_unlocked(QUEUE_FLAG_DISCARD, q);
+<<<<<<< HEAD
+=======
+
+	sdkp->provisioning_mode = mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -672,12 +709,16 @@ static int scsi_setup_flush_cmnd(struct scsi_device *sdp, struct request *rq)
 
 static void sd_unprep_fn(struct request_queue *q, struct request *rq)
 {
+<<<<<<< HEAD
 	struct scsi_cmnd *SCpnt = rq->special;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rq->cmd_flags & REQ_DISCARD) {
 		free_page((unsigned long)rq->buffer);
 		rq->buffer = NULL;
 	}
+<<<<<<< HEAD
 	if (SCpnt->cmnd != rq->cmd) {
 		mempool_free(SCpnt->cmnd, sd_cdb_pool);
 		SCpnt->cmnd = NULL;
@@ -687,6 +728,12 @@ static void sd_unprep_fn(struct request_queue *q, struct request *rq)
 
 /**
  *	sd_prep_fn - build a scsi (read or write) command from
+=======
+}
+
+/**
+ *	sd_init_command - build a scsi (read or write) command from
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	information in the request structure.
  *	@SCpnt: pointer to mid-level's per scsi command structure that
  *	contains request and into which the scsi command is written
@@ -733,7 +780,11 @@ static int sd_prep_fn(struct request_queue *q, struct request *rq)
 	ret = BLKPREP_KILL;
 
 	SCSI_LOG_HLQUEUE(1, scmd_printk(KERN_INFO, SCpnt,
+<<<<<<< HEAD
 					"sd_prep_fn: block=%llu, "
+=======
+					"sd_init_command: block=%llu, "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"count=%d\n",
 					(unsigned long long)block,
 					this_count));
@@ -1119,6 +1170,7 @@ static int sd_ioctl(struct block_device *bdev, fmode_t mode,
 		    unsigned int cmd, unsigned long arg)
 {
 	struct gendisk *disk = bdev->bd_disk;
+<<<<<<< HEAD
 	struct scsi_disk *sdkp = scsi_disk(disk);
 	struct scsi_device *sdp = sdkp->device;
 	void __user *p = (void __user *)arg;
@@ -1126,6 +1178,14 @@ static int sd_ioctl(struct block_device *bdev, fmode_t mode,
     
 	SCSI_LOG_IOCTL(1, sd_printk(KERN_INFO, sdkp, "sd_ioctl: disk=%s, "
 				    "cmd=0x%x\n", disk->disk_name, cmd));
+=======
+	struct scsi_device *sdp = scsi_disk(disk)->device;
+	void __user *p = (void __user *)arg;
+	int error;
+    
+	SCSI_LOG_IOCTL(1, printk("sd_ioctl: disk=%s, cmd=0x%x\n",
+						disk->disk_name, cmd));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	error = scsi_verify_blk_ioctl(bdev, cmd);
 	if (error < 0)
@@ -1234,6 +1294,7 @@ static unsigned int sd_check_events(struct gendisk *disk, unsigned int clearing)
 	retval = -ENODEV;
 
 	if (scsi_block_when_processing_errors(sdp)) {
+<<<<<<< HEAD
 		retval = scsi_autopm_get_device(sdp);
 		if (retval)
 			goto out;
@@ -1242,6 +1303,11 @@ static unsigned int sd_check_events(struct gendisk *disk, unsigned int clearing)
 		retval = scsi_test_unit_ready(sdp, SD_TIMEOUT, SD_MAX_RETRIES,
 					      sshdr);
 		scsi_autopm_put_device(sdp);
+=======
+		sshdr  = kzalloc(sizeof(*sshdr), GFP_KERNEL);
+		retval = scsi_test_unit_ready(sdp, SD_TIMEOUT, SD_MAX_RETRIES,
+					      sshdr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* failed to execute TUR, assume media not present */
@@ -1332,7 +1398,11 @@ static int sd_compat_ioctl(struct block_device *bdev, fmode_t mode,
 
 	ret = scsi_verify_blk_ioctl(bdev, cmd);
 	if (ret < 0)
+<<<<<<< HEAD
 		return ret;
+=======
+		return -ENOIOCTLCMD;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If we are in the middle of error recovery, don't let anyone
@@ -1370,6 +1440,7 @@ static const struct block_device_operations sd_fops = {
 	.unlock_native_capacity	= sd_unlock_native_capacity,
 };
 
+<<<<<<< HEAD
 /**
  *	sd_eh_action - error handling callback
  *	@scmd:		sd-issued command that has failed
@@ -1419,6 +1490,8 @@ static int sd_eh_action(struct scsi_cmnd *scmd, unsigned char *eh_cmnd,
 	return eh_disp;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned int sd_completed_bytes(struct scsi_cmnd *scmd)
 {
 	u64 start_lba = blk_rq_pos(scmd->request);
@@ -1508,8 +1581,11 @@ static int sd_done(struct scsi_cmnd *SCpnt)
 	    (!sense_valid || sense_deferred))
 		goto out;
 
+<<<<<<< HEAD
 	sdkp->medium_access_timed_out = 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (sshdr.sense_key) {
 	case HARDWARE_ERROR:
 	case MEDIUM_ERROR:
@@ -1546,6 +1622,24 @@ static int sd_done(struct scsi_cmnd *SCpnt)
 	if (rq_data_dir(SCpnt->request) == READ && scsi_prot_sg_count(SCpnt))
 		sd_dif_complete(SCpnt, good_bytes);
 
+<<<<<<< HEAD
+=======
+	if (scsi_host_dif_capable(sdkp->device->host, sdkp->protection_type)
+	    == SD_DIF_TYPE2_PROTECTION && SCpnt->cmnd != SCpnt->request->cmd) {
+
+		/* We have to print a failed command here as the
+		 * extended CDB gets freed before scsi_io_completion()
+		 * is called.
+		 */
+		if (result)
+			scsi_print_command(SCpnt);
+
+		mempool_free(SCpnt->cmnd, sd_cdb_pool);
+		SCpnt->cmnd = NULL;
+		SCpnt->cmd_len = 0;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return good_bytes;
 }
 
@@ -1905,8 +1999,11 @@ static int sd_try_rc16_first(struct scsi_device *sdp)
 {
 	if (sdp->host->max_cmd_len < 16)
 		return 0;
+<<<<<<< HEAD
 	if (sdp->try_rc_10_first)
 		return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (sdp->scsi_level > SCSI_SPC_2)
 		return 1;
 	if (scsi_device_protection(sdp))
@@ -2133,10 +2230,13 @@ sd_read_cache_type(struct scsi_disk *sdkp, unsigned char *buffer)
 	int old_rcd = sdkp->RCD;
 	int old_dpofua = sdkp->DPOFUA;
 
+<<<<<<< HEAD
 
 	if (sdkp->cache_override)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	first_len = 4;
 	if (sdp->skip_ms_page_8) {
 		if (sdp->type == TYPE_RBC)
@@ -2225,9 +2325,20 @@ sd_read_cache_type(struct scsi_disk *sdkp, unsigned char *buffer)
 			}
 		}
 
+<<<<<<< HEAD
 		sd_printk(KERN_ERR, sdkp, "No Caching mode page found\n");
 		goto defaults;
 
+=======
+		if (modepage == 0x3F) {
+			sd_printk(KERN_ERR, sdkp, "No Caching mode page "
+				  "present\n");
+			goto defaults;
+		} else if ((buffer[offset] & 0x3f) != modepage) {
+			sd_printk(KERN_ERR, sdkp, "Got wrong page\n");
+			goto defaults;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	Page_found:
 		if (modepage == 8) {
 			sdkp->WCE = ((buffer[offset + 2] & 0x04) != 0);
@@ -2443,7 +2554,11 @@ static int sd_try_extended_inquiry(struct scsi_device *sdp)
 	 * some USB ones crash on receiving them, and the pages
 	 * we currently ask for are for SPC-3 and beyond
 	 */
+<<<<<<< HEAD
 	if (sdp->scsi_level > SCSI_SPC_2 && !sdp->skip_vpd_pages)
+=======
+	if (sdp->scsi_level > SCSI_SPC_2)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 	return 0;
 }
@@ -2484,6 +2599,12 @@ static int sd_revalidate_disk(struct gendisk *disk)
 	 * react badly if we do.
 	 */
 	if (sdkp->media_present) {
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_STORAGE_MEDIA_SCAN
+		disk->media_present = 1;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sd_read_capacity(sdkp, buffer);
 
 		if (sd_try_extended_inquiry(sdp)) {
@@ -2584,6 +2705,108 @@ static int sd_format_disk_name(char *prefix, int index, char *buf, int buflen)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_STORAGE_MEDIA_SCAN
+static void sd_media_state_emit(struct scsi_disk *sdkp)
+{
+	struct gendisk *gd = sdkp->disk;
+	struct device *ddev = disk_to_dev(gd);
+	int idx = 0;
+	char *envp[3];
+
+	envp[idx++] = "DISC_MEDIA_CHANGE=1";
+	envp[idx++] = NULL;
+
+	kobject_uevent_env(&ddev->kobj, KOBJ_CHANGE, envp);
+}
+
+static void sd_scanpartition_async(void *data, async_cookie_t cookie)
+{
+	struct scsi_disk *sdkp = data;
+	struct block_device *bdev;
+	struct gendisk *gd = sdkp->disk;
+	struct device *ddev = disk_to_dev(gd);
+	struct disk_part_iter piter;
+	struct hd_struct *part;
+	int err;
+
+	/* delay uevents, until we scanned partition table */
+	dev_set_uevent_suppress(ddev, 1);
+
+	/* No minors to use for partitions */
+	if (!disk_partitionable(gd)) {
+		sd_printk(KERN_NOTICE, sdkp, "No disc partitions\n");
+		goto exit;
+	}
+	bdev = bdget_disk(gd, 0);
+	if (!bdev) {
+		sd_printk(KERN_NOTICE, sdkp, "bdget_disk, bdev is NULL\n");
+		goto exit;
+	}
+	bdev->bd_invalidated = 1;
+	err = blkdev_get(bdev, FMODE_READ, NULL);
+	if (err < 0) {
+		sd_printk(KERN_NOTICE, sdkp, "no media, delete partition\n");
+		disk_part_iter_init(&piter, gd, DISK_PITER_INCL_EMPTY);
+		while ((part = disk_part_iter_next(&piter)))
+			delete_partition(gd, part->partno);
+		disk_part_iter_exit(&piter);
+
+		check_disk_size_change(gd, bdev);
+		bdev->bd_invalidated = 0;
+		goto exit;
+	}
+	blkdev_put(bdev, FMODE_READ);
+
+exit:
+	/* announce disk after possible partitions are created */
+	dev_set_uevent_suppress(ddev, 0);
+
+	/* announce disk change state */
+	sd_media_state_emit(sdkp);
+
+	/* announce possible partitions */
+	disk_part_iter_init(&piter, gd, 0);
+	while ((part = disk_part_iter_next(&piter)))
+		kobject_uevent(&part_to_dev(part)->kobj, KOBJ_ADD);
+	disk_part_iter_exit(&piter);
+
+	sdkp->async_end = 1;
+	wake_up_interruptible(&sdkp->delay_wait);
+}
+
+static int sd_media_scan_thread(void *__sdkp)
+{
+	struct scsi_disk *sdkp = __sdkp;
+	int ret;
+	sdkp->async_end = 1;
+	sdkp->device->changed = 0;
+	while (!kthread_should_stop()) {
+		wait_event_interruptible_timeout(sdkp->delay_wait,
+			(sdkp->thread_remove && sdkp->async_end), 3*HZ);
+		if (sdkp->thread_remove && sdkp->async_end)
+			break;
+		ret = sd_check_events(sdkp->disk, 0);
+
+		if (sdkp->prv_media_present
+				!= sdkp->media_present) {
+			sd_printk(KERN_NOTICE, sdkp,
+				"sd_check_ret=%d prv_media=%d media=%d\n",
+					ret, sdkp->prv_media_present
+							, sdkp->media_present);
+			sdkp->disk->media_present = 0;
+			sdkp->async_end = 0;
+			async_schedule(sd_scanpartition_async, sdkp);
+			sdkp->prv_media_present = sdkp->media_present;
+		}
+	}
+	sd_printk(KERN_NOTICE, sdkp, "sd_media_scan_thread exit\n");
+	complete_and_exit(&sdkp->scanning_done, 0);
+}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The asynchronous part of sd_probe
  */
@@ -2613,12 +2836,18 @@ static void sd_probe_async(void *data, async_cookie_t cookie)
 	sdkp->capacity = 0;
 	sdkp->media_present = 1;
 	sdkp->write_prot = 0;
+<<<<<<< HEAD
 	sdkp->cache_override = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sdkp->WCE = 0;
 	sdkp->RCD = 0;
 	sdkp->ATO = 0;
 	sdkp->first_scan = 1;
+<<<<<<< HEAD
 	sdkp->max_medium_access_timeouts = SD_MAX_MEDIUM_TIMEOUTS;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sd_revalidate_disk(gd);
 
@@ -2631,8 +2860,21 @@ static void sd_probe_async(void *data, async_cookie_t cookie)
 		gd->flags |= GENHD_FL_REMOVABLE;
 		gd->events |= DISK_EVENT_MEDIA_CHANGE;
 	}
+<<<<<<< HEAD
 
 	add_disk(gd);
+=======
+#ifdef CONFIG_USB_STORAGE_MEDIA_SCAN
+	if (sdp->host->by_usb)
+		gd->interfaces = GENHD_IF_USB;
+	msleep(500);
+#endif
+
+	add_disk(gd);
+#ifdef CONFIG_USB_STORAGE_MEDIA_SCAN
+	sdkp->prv_media_present = sdkp->media_present;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sd_dif_config_host(sdkp);
 
 	sd_revalidate_disk(gd);
@@ -2641,6 +2883,15 @@ static void sd_probe_async(void *data, async_cookie_t cookie)
 		  sdp->removable ? "removable " : "");
 	scsi_autopm_put_device(sdp);
 	put_device(&sdkp->dev);
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_STORAGE_MEDIA_SCAN
+	if (sdp->host->by_usb) {
+		if (!IS_ERR(sdkp->th))
+			wake_up_process(sdkp->th);
+	}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -2658,8 +2909,13 @@ static void sd_probe_async(void *data, async_cookie_t cookie)
  *	(e.g. /dev/sda). More precisely it is the block device major 
  *	and minor number that is chosen here.
  *
+<<<<<<< HEAD
  *	Assume sd_probe is not re-entrant (for time being)
  *	Also think about sd_probe() and sd_remove() running coincidentally.
+=======
+ *	Assume sd_attach is not re-entrant (for time being)
+ *	Also think about sd_attach() and sd_remove() running coincidentally.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  **/
 static int sd_probe(struct device *dev)
 {
@@ -2674,7 +2930,11 @@ static int sd_probe(struct device *dev)
 		goto out;
 
 	SCSI_LOG_HLQUEUE(3, sdev_printk(KERN_INFO, sdp,
+<<<<<<< HEAD
 					"sd_probe\n"));
+=======
+					"sd_attach\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	error = -ENOMEM;
 	sdkp = kzalloc(sizeof(*sdkp), GFP_KERNEL);
@@ -2694,6 +2954,7 @@ static int sd_probe(struct device *dev)
 		spin_unlock(&sd_index_lock);
 	} while (error == -EAGAIN);
 
+<<<<<<< HEAD
 	if (error) {
 		sdev_printk(KERN_WARNING, sdp, "sd_probe: memory exhausted.\n");
 		goto out_put;
@@ -2704,6 +2965,20 @@ static int sd_probe(struct device *dev)
 		sdev_printk(KERN_WARNING, sdp, "SCSI disk (sd) name length exceeded.\n");
 		goto out_free_index;
 	}
+=======
+	if (error)
+		goto out_put;
+
+	if (index >= SD_MAX_DISKS) {
+		error = -ENODEV;
+		sdev_printk(KERN_WARNING, sdp, "SCSI disk (sd) name space exhausted.\n");
+		goto out_free_index;
+	}
+
+	error = sd_format_disk_name("sd", index, gd->disk_name, DISK_NAME_LEN);
+	if (error)
+		goto out_free_index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sdkp->device = sdp;
 	sdkp->driver = &sd_template;
@@ -2730,6 +3005,23 @@ static int sd_probe(struct device *dev)
 	get_device(dev);
 	dev_set_drvdata(dev, sdkp);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_STORAGE_MEDIA_SCAN
+	if (sdp->host->by_usb) {
+		init_waitqueue_head(&sdkp->delay_wait);
+		init_completion(&sdkp->scanning_done);
+		sdkp->thread_remove = 0;
+		sdkp->th = kthread_create(sd_media_scan_thread,
+				sdkp, "sd-media-scan");
+		if (IS_ERR(sdkp->th)) {
+			pr_err("Unable to start the device-scanning thread\n");
+			complete(&sdkp->scanning_done);
+		}
+	}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	get_device(&sdkp->dev);	/* prevent release before async_schedule */
 	async_schedule(sd_probe_async, sdkp);
 
@@ -2765,6 +3057,19 @@ static int sd_remove(struct device *dev)
 	sdkp = dev_get_drvdata(dev);
 	scsi_autopm_get_device(sdkp->device);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_STORAGE_MEDIA_SCAN
+	sdkp->disk->media_present = 0;
+	if (sdkp->device->host->by_usb) {
+		sdkp->thread_remove = 1;
+		wake_up_interruptible(&sdkp->delay_wait);
+		wait_for_completion(&sdkp->scanning_done);
+		sd_printk(KERN_NOTICE, sdkp, "scan thread kill success\n");
+	}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	async_synchronize_full();
 	blk_queue_prep_rq(sdkp->device->request_queue, scsi_prep_fn);
 	blk_queue_unprep_rq(sdkp->device->request_queue, NULL);
@@ -2845,9 +3150,12 @@ static void sd_shutdown(struct device *dev)
 	if (!sdkp)
 		return;         /* this can happen */
 
+<<<<<<< HEAD
 	if (pm_runtime_suspended(dev))
 		goto exit;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (sdkp->WCE) {
 		sd_printk(KERN_NOTICE, sdkp, "Synchronizing SCSI cache\n");
 		sd_sync_cache(sdkp);
@@ -2858,7 +3166,10 @@ static void sd_shutdown(struct device *dev)
 		sd_start_stop_device(sdkp, 0);
 	}
 
+<<<<<<< HEAD
 exit:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	scsi_disk_put(sdkp);
 }
 
@@ -2926,6 +3237,13 @@ static int __init init_sd(void)
 	if (err)
 		goto err_out;
 
+<<<<<<< HEAD
+=======
+	err = scsi_register_driver(&sd_template.gendrv);
+	if (err)
+		goto err_out_class;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sd_cdb_cache = kmem_cache_create("sd_ext_cdb", SD_EXT_CDB_SIZE,
 					 0, 0, NULL);
 	if (!sd_cdb_cache) {
@@ -2939,6 +3257,7 @@ static int __init init_sd(void)
 		goto err_out_cache;
 	}
 
+<<<<<<< HEAD
 	err = scsi_register_driver(&sd_template.gendrv);
 	if (err)
 		goto err_out_driver;
@@ -2948,6 +3267,10 @@ static int __init init_sd(void)
 err_out_driver:
 	mempool_destroy(sd_cdb_pool);
 
+=======
+	return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_out_cache:
 	kmem_cache_destroy(sd_cdb_cache);
 
@@ -2970,10 +3293,17 @@ static void __exit exit_sd(void)
 
 	SCSI_LOG_HLQUEUE(3, printk("exit_sd: exiting sd driver\n"));
 
+<<<<<<< HEAD
 	scsi_unregister_driver(&sd_template.gendrv);
 	mempool_destroy(sd_cdb_pool);
 	kmem_cache_destroy(sd_cdb_cache);
 
+=======
+	mempool_destroy(sd_cdb_pool);
+	kmem_cache_destroy(sd_cdb_cache);
+
+	scsi_unregister_driver(&sd_template.gendrv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	class_unregister(&sd_disk_class);
 
 	for (i = 0; i < SD_MAJORS; i++)

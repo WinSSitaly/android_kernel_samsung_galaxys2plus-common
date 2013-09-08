@@ -40,7 +40,11 @@ static int softsynth_is_alive(struct spk_synth *synth);
 static unsigned char get_index(void);
 
 static struct miscdevice synth_device;
+<<<<<<< HEAD
 static int init_pos;
+=======
+static int initialized;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int misc_registered;
 
 static struct var_t vars[] = {
@@ -194,7 +198,11 @@ static int softsynth_close(struct inode *inode, struct file *fp)
 	unsigned long flags;
 	spk_lock(flags);
 	synth_soft.alive = 0;
+<<<<<<< HEAD
 	init_pos = 0;
+=======
+	initialized = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spk_unlock(flags);
 	/* Make sure we let applications go before leaving */
 	speakup_start_ttys();
@@ -239,8 +247,18 @@ static ssize_t softsynth_read(struct file *fp, char *buf, size_t count,
 			ch = '\x18';
 		} else if (synth_buffer_empty()) {
 			break;
+<<<<<<< HEAD
 		} else if (init[init_pos]) {
 			ch = init[init_pos++];
+=======
+		} else if (!initialized) {
+			if (*init) {
+				ch = *init;
+				init++;
+			} else {
+				initialized = 1;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			ch = synth_buffer_getc();
 		}
@@ -268,8 +286,20 @@ static ssize_t softsynth_write(struct file *fp, const char *buf, size_t count,
 {
 	unsigned long supplied_index = 0;
 	int converted;
+<<<<<<< HEAD
 
 	converted = kstrtoul_from_user(buf, count, 0, &supplied_index);
+=======
+	char indbuf[5];
+	if (count >= sizeof(indbuf))
+		return -EINVAL;
+
+	if (copy_from_user(indbuf, buf, count))
+		return -EFAULT;
+	indbuf[count] = '\0';
+
+	converted = strict_strtoul(indbuf, 0, &supplied_index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (converted < 0)
 		return converted;

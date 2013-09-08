@@ -24,13 +24,24 @@
 #include <linux/types.h>
 #include <linux/input/matrix_keypad.h>
 
+<<<<<<< HEAD
 #define KBC_MAX_GPIO	24
 #define KBC_MAX_KPENT	8
+=======
+#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+#define KBC_MAX_GPIO	24
+#define KBC_MAX_KPENT	8
+#else
+#define KBC_MAX_GPIO	20
+#define KBC_MAX_KPENT	7
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define KBC_MAX_ROW	16
 #define KBC_MAX_COL	8
 #define KBC_MAX_KEY	(KBC_MAX_ROW * KBC_MAX_COL)
 
+<<<<<<< HEAD
 enum tegra_pin_type {
 	PIN_CFG_IGNORE,
 	PIN_CFG_COL,
@@ -39,6 +50,10 @@ enum tegra_pin_type {
 
 struct tegra_kbc_pin_cfg {
 	enum tegra_pin_type type;
+=======
+struct tegra_kbc_pin_cfg {
+	bool is_row;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char num;
 };
 
@@ -54,7 +69,10 @@ struct tegra_kbc_platform_data {
 	struct tegra_kbc_pin_cfg pin_cfg[KBC_MAX_GPIO];
 	const struct matrix_keymap_data *keymap_data;
 
+<<<<<<< HEAD
 	u32 wakeup_key;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool wakeup;
 	bool use_fn_map;
 	bool use_ghost_filter;

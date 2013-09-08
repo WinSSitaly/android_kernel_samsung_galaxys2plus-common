@@ -268,6 +268,7 @@ static void debug_print_object(struct debug_obj *obj, char *msg)
  * Try to repair the damage, so we have a better chance to get useful
  * debug output.
  */
+<<<<<<< HEAD
 static int
 debug_object_fixup(int (*fixup)(void *addr, enum debug_obj_state state),
 		   void * addr, enum debug_obj_state state)
@@ -278,6 +279,14 @@ debug_object_fixup(int (*fixup)(void *addr, enum debug_obj_state state),
 		fixed = fixup(addr, state);
 	debug_objects_fixups += fixed;
 	return fixed;
+=======
+static void
+debug_object_fixup(int (*fixup)(void *addr, enum debug_obj_state state),
+		   void * addr, enum debug_obj_state state)
+{
+	if (fixup)
+		debug_objects_fixups += fixup(addr, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void debug_object_is_on_stack(void *addr, int onstack)
@@ -390,9 +399,12 @@ void debug_object_activate(void *addr, struct debug_obj_descr *descr)
 	struct debug_bucket *db;
 	struct debug_obj *obj;
 	unsigned long flags;
+<<<<<<< HEAD
 	struct debug_obj o = { .object = addr,
 			       .state = ODEBUG_STATE_NOTAVAILABLE,
 			       .descr = descr };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!debug_objects_enabled)
 		return;
@@ -432,9 +444,14 @@ void debug_object_activate(void *addr, struct debug_obj_descr *descr)
 	 * let the type specific code decide whether this is
 	 * true or not.
 	 */
+<<<<<<< HEAD
 	if (debug_object_fixup(descr->fixup_activate, addr,
 			   ODEBUG_STATE_NOTAVAILABLE))
 		debug_print_object(&o, "activate");
+=======
+	debug_object_fixup(descr->fixup_activate, addr,
+			   ODEBUG_STATE_NOTAVAILABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -571,6 +588,7 @@ out_unlock:
 }
 
 /**
+<<<<<<< HEAD
  * debug_object_assert_init - debug checks when object should be init-ed
  * @addr:	address of the object
  * @descr:	pointer to an object specific debug description structure
@@ -609,6 +627,8 @@ void debug_object_assert_init(void *addr, struct debug_obj_descr *descr)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * debug_object_active_state - debug checks object usage state machine
  * @addr:	address of the object
  * @descr:	pointer to an object specific debug description structure
@@ -818,9 +838,23 @@ static int __init fixup_activate(void *addr, enum debug_obj_state state)
 		if (obj->static_init == 1) {
 			debug_object_init(obj, &descr_type_test);
 			debug_object_activate(obj, &descr_type_test);
+<<<<<<< HEAD
 			return 0;
 		}
 		return 1;
+=======
+			/*
+			 * Real code should return 0 here ! This is
+			 * not a fixup of some bad behaviour. We
+			 * merily call the debug_init function to keep
+			 * track of the object.
+			 */
+			return 1;
+		} else {
+			/* Real code needs to emit a warning here */
+		}
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	case ODEBUG_STATE_ACTIVE:
 		debug_object_deactivate(obj, &descr_type_test);
@@ -959,7 +993,11 @@ static void __init debug_objects_selftest(void)
 
 	obj.static_init = 1;
 	debug_object_activate(&obj, &descr_type_test);
+<<<<<<< HEAD
 	if (check_results(&obj, ODEBUG_STATE_ACTIVE, fixups, warnings))
+=======
+	if (check_results(&obj, ODEBUG_STATE_ACTIVE, ++fixups, warnings))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	debug_object_init(&obj, &descr_type_test);
 	if (check_results(&obj, ODEBUG_STATE_INIT, ++fixups, ++warnings))

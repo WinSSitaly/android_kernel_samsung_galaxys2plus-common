@@ -265,11 +265,19 @@ static ssize_t keymap_store(struct kobject *kobj, struct kobj_attribute *attr,
 	unsigned long flags;
 
 	spk_lock(flags);
+<<<<<<< HEAD
 	in_buff = kmemdup(buf, count + 1, GFP_ATOMIC);
+=======
+	in_buff = kmalloc(count + 1, GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!in_buff) {
 		spk_unlock(flags);
 		return -ENOMEM;
 	}
+<<<<<<< HEAD
+=======
+	memcpy(in_buff, buf, count + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (strchr("dDrR", *in_buff)) {
 		set_key_info(key_defaults, key_buf);
 		pr_info("keymap set to default values\n");

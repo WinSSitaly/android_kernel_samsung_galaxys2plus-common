@@ -19,6 +19,10 @@
 
 #include <mach/hardware.h>
 #include <asm/hardware/ioc.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define FORCE_ONES	0xdc
 #define SCL		0x02

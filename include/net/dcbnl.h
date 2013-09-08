@@ -23,6 +23,7 @@
 #include <linux/dcbnl.h>
 
 struct dcb_app_type {
+<<<<<<< HEAD
 	int	ifindex;
 	struct dcb_app	  app;
 	struct list_head  list;
@@ -39,6 +40,15 @@ int dcbnl_ieee_notify(struct net_device *dev, int event, int cmd,
 		      u32 seq, u32 pid);
 int dcbnl_cee_notify(struct net_device *dev, int event, int cmd,
 		     u32 seq, u32 pid);
+=======
+	char		  name[IFNAMSIZ];
+	struct dcb_app	  app;
+	struct list_head  list;
+};
+
+u8 dcb_setapp(struct net_device *, struct dcb_app *);
+u8 dcb_getapp(struct net_device *, struct dcb_app *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Ops struct for the netlink callbacks.  Used by DCB-enabled drivers through
@@ -52,7 +62,10 @@ struct dcbnl_rtnl_ops {
 	int (*ieee_setpfc) (struct net_device *, struct ieee_pfc *);
 	int (*ieee_getapp) (struct net_device *, struct dcb_app *);
 	int (*ieee_setapp) (struct net_device *, struct dcb_app *);
+<<<<<<< HEAD
 	int (*ieee_delapp) (struct net_device *, struct dcb_app *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*ieee_peer_getets) (struct net_device *, struct ieee_ets *);
 	int (*ieee_peer_getpfc) (struct net_device *, struct ieee_pfc *);
 
@@ -72,8 +85,13 @@ struct dcbnl_rtnl_ops {
 	void (*getpfccfg)(struct net_device *, int, u8 *);
 	u8   (*setall)(struct net_device *);
 	u8   (*getcap)(struct net_device *, int, u8 *);
+<<<<<<< HEAD
 	int  (*getnumtcs)(struct net_device *, int, u8 *);
 	int  (*setnumtcs)(struct net_device *, int, u8);
+=======
+	u8   (*getnumtcs)(struct net_device *, int, u8 *);
+	u8   (*setnumtcs)(struct net_device *, int, u8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8   (*getpfcstate)(struct net_device *);
 	void (*setpfcstate)(struct net_device *, u8);
 	void (*getbcncfg)(struct net_device *, int, u32 *);

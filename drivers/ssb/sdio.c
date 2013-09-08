@@ -6,7 +6,11 @@
  *
  * Based on drivers/ssb/pcmcia.c
  * Copyright 2006 Johannes Berg <johannes@sipsolutions.net>
+<<<<<<< HEAD
  * Copyright 2007-2008 Michael Buesch <m@bues.ch>
+=======
+ * Copyright 2007-2008 Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Licensed under the GNU/GPL. See COPYING for details.
  *
@@ -551,10 +555,21 @@ int ssb_sdio_get_invariants(struct ssb_bus *bus,
 			case SSB_SDIO_CIS_ANTGAIN:
 				GOTO_ERROR_ON(tuple->size != 2,
 					      "antg tpl size");
+<<<<<<< HEAD
 				sprom->antenna_gain.a0 = tuple->data[1];
 				sprom->antenna_gain.a1 = tuple->data[1];
 				sprom->antenna_gain.a2 = tuple->data[1];
 				sprom->antenna_gain.a3 = tuple->data[1];
+=======
+				sprom->antenna_gain.ghz24.a0 = tuple->data[1];
+				sprom->antenna_gain.ghz24.a1 = tuple->data[1];
+				sprom->antenna_gain.ghz24.a2 = tuple->data[1];
+				sprom->antenna_gain.ghz24.a3 = tuple->data[1];
+				sprom->antenna_gain.ghz5.a0 = tuple->data[1];
+				sprom->antenna_gain.ghz5.a1 = tuple->data[1];
+				sprom->antenna_gain.ghz5.a2 = tuple->data[1];
+				sprom->antenna_gain.ghz5.a3 = tuple->data[1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 			case SSB_SDIO_CIS_BFLAGS:
 				GOTO_ERROR_ON((tuple->size != 3) &&

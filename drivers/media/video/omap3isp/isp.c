@@ -403,7 +403,10 @@ static inline void isp_isr_dbg(struct isp_device *isp, u32 irqstatus)
 static void isp_isr_sbl(struct isp_device *isp)
 {
 	struct device *dev = isp->dev;
+<<<<<<< HEAD
 	struct isp_pipeline *pipe;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 sbl_pcr;
 
 	/*
@@ -417,6 +420,7 @@ static void isp_isr_sbl(struct isp_device *isp)
 	if (sbl_pcr)
 		dev_dbg(dev, "SBL overflow (PCR = 0x%08x)\n", sbl_pcr);
 
+<<<<<<< HEAD
 	if (sbl_pcr & ISPSBL_PCR_CSIB_WBL_OVF) {
 		pipe = to_isp_pipeline(&isp->isp_ccp2.subdev.entity);
 		if (pipe != NULL)
@@ -439,16 +443,37 @@ static void isp_isr_sbl(struct isp_device *isp)
 		pipe = to_isp_pipeline(&isp->isp_prev.subdev.entity);
 		if (pipe != NULL)
 			pipe->error = true;
+=======
+	if (sbl_pcr & (ISPSBL_PCR_CCDC_WBL_OVF | ISPSBL_PCR_CSIA_WBL_OVF
+		     | ISPSBL_PCR_CSIB_WBL_OVF)) {
+		isp->isp_ccdc.error = 1;
+		if (isp->isp_ccdc.output & CCDC_OUTPUT_PREVIEW)
+			isp->isp_prev.error = 1;
+		if (isp->isp_ccdc.output & CCDC_OUTPUT_RESIZER)
+			isp->isp_res.error = 1;
+	}
+
+	if (sbl_pcr & ISPSBL_PCR_PRV_WBL_OVF) {
+		isp->isp_prev.error = 1;
+		if (isp->isp_res.input == RESIZER_INPUT_VP &&
+		    !(isp->isp_ccdc.output & CCDC_OUTPUT_RESIZER))
+			isp->isp_res.error = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (sbl_pcr & (ISPSBL_PCR_RSZ1_WBL_OVF
 		       | ISPSBL_PCR_RSZ2_WBL_OVF
 		       | ISPSBL_PCR_RSZ3_WBL_OVF
+<<<<<<< HEAD
 		       | ISPSBL_PCR_RSZ4_WBL_OVF)) {
 		pipe = to_isp_pipeline(&isp->isp_res.subdev.entity);
 		if (pipe != NULL)
 			pipe->error = true;
 	}
+=======
+		       | ISPSBL_PCR_RSZ4_WBL_OVF))
+		isp->isp_res.error = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (sbl_pcr & ISPSBL_PCR_H3A_AF_WBL_OVF)
 		omap3isp_stat_sbl_overflow(&isp->isp_af);
@@ -476,17 +501,35 @@ static irqreturn_t isp_isr(int irq, void *_isp)
 				       IRQ0STATUS_HS_VS_IRQ;
 	struct isp_device *isp = _isp;
 	u32 irqstatus;
+<<<<<<< HEAD
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	irqstatus = isp_reg_readl(isp, OMAP3_ISP_IOMEM_MAIN, ISP_IRQ0STATUS);
 	isp_reg_writel(isp, irqstatus, OMAP3_ISP_IOMEM_MAIN, ISP_IRQ0STATUS);
 
 	isp_isr_sbl(isp);
 
+<<<<<<< HEAD
 	if (irqstatus & IRQ0STATUS_CSIA_IRQ)
 		omap3isp_csi2_isr(&isp->isp_csi2a);
 
 	if (irqstatus & IRQ0STATUS_CSIB_IRQ)
 		omap3isp_ccp2_isr(&isp->isp_ccp2);
+=======
+	if (irqstatus & IRQ0STATUS_CSIA_IRQ) {
+		ret = omap3isp_csi2_isr(&isp->isp_csi2a);
+		if (ret)
+			isp->isp_ccdc.error = 1;
+	}
+
+	if (irqstatus & IRQ0STATUS_CSIB_IRQ) {
+		ret = omap3isp_ccp2_isr(&isp->isp_ccp2);
+		if (ret)
+			isp->isp_ccdc.error = 1;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (irqstatus & IRQ0STATUS_CCDC_VD0_IRQ) {
 		if (isp->isp_ccdc.output & CCDC_OUTPUT_PREVIEW)
@@ -737,7 +780,11 @@ static int isp_pipeline_enable(struct isp_pipeline *pipe,
 	struct media_pad *pad;
 	struct v4l2_subdev *subdev;
 	unsigned long flags;
+<<<<<<< HEAD
 	int ret;
+=======
+	int ret = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&pipe->lock, flags);
 	pipe->state &= ~(ISP_PIPELINE_IDLE_INPUT | ISP_PIPELINE_IDLE_OUTPUT);
@@ -761,7 +808,11 @@ static int isp_pipeline_enable(struct isp_pipeline *pipe,
 
 		ret = v4l2_subdev_call(subdev, video, s_stream, mode);
 		if (ret < 0 && ret != -ENOIOCTLCMD)
+<<<<<<< HEAD
 			return ret;
+=======
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (subdev == &isp->isp_ccdc.subdev) {
 			v4l2_subdev_call(&isp->isp_aewb.subdev, video,
@@ -782,7 +833,11 @@ static int isp_pipeline_enable(struct isp_pipeline *pipe,
 	if (pipe->do_propagation && mode == ISP_PIPELINE_STREAM_SINGLESHOT)
 		atomic_inc(&pipe->frame_number);
 
+<<<<<<< HEAD
 	return 0;
+=======
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int isp_pipeline_wait_resizer(struct isp_device *isp)
@@ -1112,7 +1167,12 @@ isp_restore_context(struct isp_device *isp, struct isp_reg *reg_list)
 static void isp_save_ctx(struct isp_device *isp)
 {
 	isp_save_context(isp, isp_reg_list);
+<<<<<<< HEAD
 	omap_iommu_save_ctx(isp->dev);
+=======
+	if (isp->iommu)
+		iommu_save_ctx(isp->iommu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1125,7 +1185,12 @@ static void isp_save_ctx(struct isp_device *isp)
 static void isp_restore_ctx(struct isp_device *isp)
 {
 	isp_restore_context(isp, isp_reg_list);
+<<<<<<< HEAD
 	omap_iommu_restore_ctx(isp->dev);
+=======
+	if (isp->iommu)
+		iommu_restore_ctx(isp->iommu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap3isp_ccdc_restore_context(isp);
 	omap3isp_preview_restore_context(isp);
 }
@@ -1700,7 +1765,10 @@ static int isp_register_entities(struct isp_device *isp)
 	isp->media_dev.dev = isp->dev;
 	strlcpy(isp->media_dev.model, "TI OMAP3 ISP",
 		sizeof(isp->media_dev.model));
+<<<<<<< HEAD
 	isp->media_dev.hw_revision = isp->revision;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	isp->media_dev.link_notify = isp_pipeline_link_notify;
 	ret = media_device_register(&isp->media_dev);
 	if (ret < 0) {
@@ -1979,8 +2047,12 @@ static int isp_remove(struct platform_device *pdev)
 	isp_cleanup_modules(isp);
 
 	omap3isp_get(isp);
+<<<<<<< HEAD
 	iommu_detach_device(isp->domain, &pdev->dev);
 	iommu_domain_free(isp->domain);
+=======
+	iommu_put(isp->iommu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap3isp_put(isp);
 
 	free_irq(isp->irq_num, isp);
@@ -2127,6 +2199,7 @@ static int isp_probe(struct platform_device *pdev)
 		}
 	}
 
+<<<<<<< HEAD
 	isp->domain = iommu_domain_alloc(pdev->dev.bus);
 	if (!isp->domain) {
 		dev_err(isp->dev, "can't alloc iommu domain\n");
@@ -2140,18 +2213,36 @@ static int isp_probe(struct platform_device *pdev)
 		goto free_domain;
 	}
 
+=======
+	/* IOMMU */
+	isp->iommu = iommu_get("isp");
+	if (IS_ERR_OR_NULL(isp->iommu)) {
+		isp->iommu = NULL;
+		ret = -ENODEV;
+		goto error_isp;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Interrupt */
 	isp->irq_num = platform_get_irq(pdev, 0);
 	if (isp->irq_num <= 0) {
 		dev_err(isp->dev, "No IRQ resource\n");
 		ret = -ENODEV;
+<<<<<<< HEAD
 		goto detach_dev;
+=======
+		goto error_isp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (request_irq(isp->irq_num, isp_isr, IRQF_SHARED, "OMAP3 ISP", isp)) {
 		dev_err(isp->dev, "Unable to request IRQ\n");
 		ret = -EINVAL;
+<<<<<<< HEAD
 		goto detach_dev;
+=======
+		goto error_isp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Entities */
@@ -2172,11 +2263,16 @@ error_modules:
 	isp_cleanup_modules(isp);
 error_irq:
 	free_irq(isp->irq_num, isp);
+<<<<<<< HEAD
 detach_dev:
 	iommu_detach_device(isp->domain, &pdev->dev);
 free_domain:
 	iommu_domain_free(isp->domain);
 error_isp:
+=======
+error_isp:
+	iommu_put(isp->iommu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap3isp_put(isp);
 error:
 	isp_put_clocks(isp);
@@ -2196,8 +2292,11 @@ error:
 	regulator_put(isp->isp_csiphy2.vdd);
 	regulator_put(isp->isp_csiphy1.vdd);
 	platform_set_drvdata(pdev, NULL);
+<<<<<<< HEAD
 
 	mutex_destroy(&isp->isp_mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(isp);
 
 	return ret;
@@ -2227,9 +2326,33 @@ static struct platform_driver omap3isp_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(omap3isp_driver);
+=======
+/*
+ * isp_init - ISP module initialization.
+ */
+static int __init isp_init(void)
+{
+	return platform_driver_register(&omap3isp_driver);
+}
+
+/*
+ * isp_cleanup - ISP module cleanup.
+ */
+static void __exit isp_cleanup(void)
+{
+	platform_driver_unregister(&omap3isp_driver);
+}
+
+module_init(isp_init);
+module_exit(isp_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Nokia Corporation");
 MODULE_DESCRIPTION("TI OMAP3 ISP driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_VERSION(ISP_VIDEO_DRIVER_VERSION);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

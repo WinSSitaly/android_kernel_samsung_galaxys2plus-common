@@ -6,7 +6,10 @@
  * This defines a simple but solid secure-computing mode.
  */
 
+<<<<<<< HEAD
 #include <linux/audit.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/seccomp.h>
 #include <linux/sched.h>
 #include <linux/compat.h>
@@ -55,7 +58,10 @@ void __secure_computing(int this_syscall)
 #ifdef SECCOMP_DEBUG
 	dump_stack();
 #endif
+<<<<<<< HEAD
 	audit_seccomp(this_syscall);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do_exit(SIGKILL);
 }
 

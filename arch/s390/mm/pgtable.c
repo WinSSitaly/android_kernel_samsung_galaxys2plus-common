@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  *    Copyright IBM Corp. 2007,2011
+=======
+ *    Copyright IBM Corp. 2007,2009
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *    Author(s): Martin Schwidefsky <schwidefsky@de.ibm.com>
  */
 
@@ -16,8 +20,13 @@
 #include <linux/module.h>
 #include <linux/quicklist.h>
 #include <linux/rcupdate.h>
+<<<<<<< HEAD
 #include <linux/slab.h>
 
+=======
+
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/pgtable.h>
 #include <asm/pgalloc.h>
 #include <asm/tlb.h>
@@ -32,6 +41,20 @@
 #define FRAG_MASK	0x03
 #endif
 
+<<<<<<< HEAD
+=======
+unsigned long VMALLOC_START = VMALLOC_END - VMALLOC_SIZE;
+EXPORT_SYMBOL(VMALLOC_START);
+
+static int __init parse_vmalloc(char *arg)
+{
+	if (!arg)
+		return -EINVAL;
+	VMALLOC_START = (VMALLOC_END - memparse(arg, &arg)) & PAGE_MASK;
+	return 0;
+}
+early_param("vmalloc", parse_vmalloc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unsigned long *crst_table_alloc(struct mm_struct *mm)
 {
@@ -85,6 +108,10 @@ repeat:
 		crst_table_free(mm, table);
 	if (mm->context.asce_limit < limit)
 		goto repeat;
+<<<<<<< HEAD
+=======
+	update_mm(mm, current);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -92,6 +119,12 @@ void crst_table_downgrade(struct mm_struct *mm, unsigned long limit)
 {
 	pgd_t *pgd;
 
+<<<<<<< HEAD
+=======
+	if (mm->context.asce_limit <= limit)
+		return;
+	__tlb_flush_mm(mm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (mm->context.asce_limit > limit) {
 		pgd = mm->pgd;
 		switch (pgd_val(*pgd) & _REGION_ENTRY_TYPE_MASK) {
@@ -114,6 +147,7 @@ void crst_table_downgrade(struct mm_struct *mm, unsigned long limit)
 		mm->task_size = mm->context.asce_limit;
 		crst_table_free(mm, (unsigned long *) pgd);
 	}
+<<<<<<< HEAD
 }
 #endif
 
@@ -540,10 +574,36 @@ static inline unsigned long *page_table_alloc_pgste(struct mm_struct *mm,
 	struct page *page;
 	unsigned long *table;
 	struct gmap_pgtable *mp;
+=======
+	update_mm(mm, current);
+}
+#endif
+
+static inline unsigned int atomic_xor_bits(atomic_t *v, unsigned int bits)
+{
+	unsigned int old, new;
+
+	do {
+		old = atomic_read(v);
+		new = old ^ bits;
+	} while (atomic_cmpxchg(v, old, new) != old);
+	return new;
+}
+
+/*
+ * page table entry allocation/free routines.
+ */
+#ifdef CONFIG_PGSTE
+static inline unsigned long *page_table_alloc_pgste(struct mm_struct *mm)
+{
+	struct page *page;
+	unsigned long *table;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	page = alloc_page(GFP_KERNEL|__GFP_REPEAT);
 	if (!page)
 		return NULL;
+<<<<<<< HEAD
 	mp = kmalloc(sizeof(*mp), GFP_KERNEL|__GFP_REPEAT);
 	if (!mp) {
 		__free_page(page);
@@ -553,6 +613,9 @@ static inline unsigned long *page_table_alloc_pgste(struct mm_struct *mm,
 	mp->vmaddr = vmaddr & PMD_MASK;
 	INIT_LIST_HEAD(&mp->mapper);
 	page->index = (unsigned long) mp;
+=======
+	pgtable_page_ctor(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atomic_set(&page->_mapcount, 3);
 	table = (unsigned long *) page_to_phys(page);
 	clear_table(table, _PAGE_TYPE_EMPTY, PAGE_SIZE/2);
@@ -563,6 +626,7 @@ static inline unsigned long *page_table_alloc_pgste(struct mm_struct *mm,
 static inline void page_table_free_pgste(unsigned long *table)
 {
 	struct page *page;
+<<<<<<< HEAD
 	struct gmap_pgtable *mp;
 
 	page = pfn_to_page(__pa(table) >> PAGE_SHIFT);
@@ -608,13 +672,31 @@ static inline unsigned int atomic_xor_bits(atomic_t *v, unsigned int bits)
  * page table entry allocation/free routines.
  */
 unsigned long *page_table_alloc(struct mm_struct *mm, unsigned long vmaddr)
+=======
+
+	page = pfn_to_page(__pa(table) >> PAGE_SHIFT);
+	pgtable_page_ctor(page);
+	atomic_set(&page->_mapcount, -1);
+	__free_page(page);
+}
+#endif
+
+unsigned long *page_table_alloc(struct mm_struct *mm)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct page *page;
 	unsigned long *table;
 	unsigned int mask, bit;
 
+<<<<<<< HEAD
 	if (mm_has_pgste(mm))
 		return page_table_alloc_pgste(mm, vmaddr);
+=======
+#ifdef CONFIG_PGSTE
+	if (mm_has_pgste(mm))
+		return page_table_alloc_pgste(mm);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Allocate fragments of a 4K page as 1K/2K page table */
 	spin_lock_bh(&mm->context.list_lock);
 	mask = FRAG_MASK;
@@ -652,10 +734,17 @@ void page_table_free(struct mm_struct *mm, unsigned long *table)
 	struct page *page;
 	unsigned int bit, mask;
 
+<<<<<<< HEAD
 	if (mm_has_pgste(mm)) {
 		gmap_unmap_notifier(mm, table);
 		return page_table_free_pgste(table);
 	}
+=======
+#ifdef CONFIG_PGSTE
+	if (mm_has_pgste(mm))
+		return page_table_free_pgste(table);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Free 1K/2K page table fragment of a 4K page */
 	page = pfn_to_page(__pa(table) >> PAGE_SHIFT);
 	bit = 1 << ((__pa(table) & ~PAGE_MASK)/(PTRS_PER_PTE*sizeof(pte_t)));
@@ -677,8 +766,15 @@ static void __page_table_free_rcu(void *table, unsigned bit)
 {
 	struct page *page;
 
+<<<<<<< HEAD
 	if (bit == FRAG_MASK)
 		return page_table_free_pgste(table);
+=======
+#ifdef CONFIG_PGSTE
+	if (bit == FRAG_MASK)
+		return page_table_free_pgste(table);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Free 1K/2K page table fragment of a 4K page */
 	page = pfn_to_page(__pa(table) >> PAGE_SHIFT);
 	if (atomic_xor_bits(&page->_mapcount, bit) == 0) {
@@ -695,12 +791,21 @@ void page_table_free_rcu(struct mmu_gather *tlb, unsigned long *table)
 	unsigned int bit, mask;
 
 	mm = tlb->mm;
+<<<<<<< HEAD
 	if (mm_has_pgste(mm)) {
 		gmap_unmap_notifier(mm, table);
+=======
+#ifdef CONFIG_PGSTE
+	if (mm_has_pgste(mm)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		table = (unsigned long *) (__pa(table) | FRAG_MASK);
 		tlb_remove_table(tlb, table);
 		return;
 	}
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bit = 1 << ((__pa(table) & ~PAGE_MASK) / (PTRS_PER_PTE*sizeof(pte_t)));
 	page = pfn_to_page(__pa(table) >> PAGE_SHIFT);
 	spin_lock_bh(&mm->context.list_lock);

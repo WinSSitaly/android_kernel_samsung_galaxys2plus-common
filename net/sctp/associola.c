@@ -280,9 +280,12 @@ static struct sctp_association *sctp_association_init(struct sctp_association *a
 	asoc->peer.asconf_capable = 0;
 	if (sctp_addip_noauth)
 		asoc->peer.asconf_capable = 1;
+<<<<<<< HEAD
 	asoc->asconf_addr_del_pending = NULL;
 	asoc->src_out_of_asoc_ok = 0;
 	asoc->new_transport = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Create an input queue.  */
 	sctp_inq_init(&asoc->base.inqueue);
@@ -449,10 +452,13 @@ void sctp_association_free(struct sctp_association *asoc)
 
 	sctp_asconf_queue_teardown(asoc);
 
+<<<<<<< HEAD
 	/* Free pending address space being deleted */
 	if (asoc->asconf_addr_del_pending != NULL)
 		kfree(asoc->asconf_addr_del_pending);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* AUTH - Free the endpoint shared keys */
 	sctp_auth_destroy_keys(&asoc->endpoint_shared_keys);
 
@@ -1050,7 +1056,11 @@ struct sctp_transport *sctp_assoc_lookup_tsn(struct sctp_association *asoc,
 			transports) {
 
 		if (transport == active)
+<<<<<<< HEAD
 			continue;
+=======
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_for_each_entry(chunk, &transport->transmitted,
 				transmitted_list) {
 			if (key == chunk->subh.data_hdr->tsn) {

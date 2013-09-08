@@ -27,6 +27,7 @@
 #include "nouveau_drv.h"
 #include "nouveau_drm.h"
 #include "nouveau_dma.h"
+<<<<<<< HEAD
 #include "nouveau_ramht.h"
 
 static int
@@ -61,12 +62,26 @@ nouveau_channel_pushbuf_init(struct nouveau_channel *chan)
 		if (ret)
 			goto out;
 
+=======
+
+static int
+nouveau_channel_pushbuf_ctxdma_init(struct nouveau_channel *chan)
+{
+	struct drm_device *dev = chan->dev;
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	struct nouveau_bo *pb = chan->pushbuf_bo;
+	struct nouveau_gpuobj *pushbuf = NULL;
+	int ret = 0;
+
+	if (dev_priv->card_type >= NV_50) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (dev_priv->card_type < NV_C0) {
 			ret = nouveau_gpuobj_dma_new(chan,
 						     NV_CLASS_DMA_IN_MEMORY, 0,
 						     (1ULL << 40),
 						     NV_MEM_ACCESS_RO,
 						     NV_MEM_TARGET_VM,
+<<<<<<< HEAD
 						     &chan->pushbuf);
 		}
 		chan->pushbuf_base = chan->pushbuf_vma.offset;
@@ -77,13 +92,30 @@ nouveau_channel_pushbuf_init(struct nouveau_channel *chan)
 					     NV_MEM_ACCESS_RO,
 					     NV_MEM_TARGET_GART,
 					     &chan->pushbuf);
+=======
+						     &pushbuf);
+		}
+		chan->pushbuf_base = pb->bo.offset;
+	} else
+	if (pb->bo.mem.mem_type == TTM_PL_TT) {
+		ret = nouveau_gpuobj_dma_new(chan, NV_CLASS_DMA_IN_MEMORY, 0,
+					     dev_priv->gart_info.aper_size,
+					     NV_MEM_ACCESS_RO,
+					     NV_MEM_TARGET_GART, &pushbuf);
+		chan->pushbuf_base = pb->bo.mem.start << PAGE_SHIFT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 	if (dev_priv->card_type != NV_04) {
 		ret = nouveau_gpuobj_dma_new(chan, NV_CLASS_DMA_IN_MEMORY, 0,
 					     dev_priv->fb_available_size,
 					     NV_MEM_ACCESS_RO,
+<<<<<<< HEAD
 					     NV_MEM_TARGET_VRAM,
 					     &chan->pushbuf);
+=======
+					     NV_MEM_TARGET_VRAM, &pushbuf);
+		chan->pushbuf_base = pb->bo.mem.start << PAGE_SHIFT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		/* NV04 cmdbuf hack, from original ddx.. not sure of it's
 		 * exact reason for existing :)  PCI access to cmdbuf in
@@ -93,6 +125,7 @@ nouveau_channel_pushbuf_init(struct nouveau_channel *chan)
 					     pci_resource_start(dev->pdev, 1),
 					     dev_priv->fb_available_size,
 					     NV_MEM_ACCESS_RO,
+<<<<<<< HEAD
 					     NV_MEM_TARGET_PCI,
 					     &chan->pushbuf);
 	}
@@ -109,6 +142,49 @@ out:
 	}
 
 	return 0;
+=======
+					     NV_MEM_TARGET_PCI, &pushbuf);
+		chan->pushbuf_base = pb->bo.mem.start << PAGE_SHIFT;
+	}
+
+	nouveau_gpuobj_ref(pushbuf, &chan->pushbuf);
+	nouveau_gpuobj_ref(NULL, &pushbuf);
+	return ret;
+}
+
+static struct nouveau_bo *
+nouveau_channel_user_pushbuf_alloc(struct drm_device *dev)
+{
+	struct nouveau_bo *pushbuf = NULL;
+	int location, ret;
+
+	if (nouveau_vram_pushbuf)
+		location = TTM_PL_FLAG_VRAM;
+	else
+		location = TTM_PL_FLAG_TT;
+
+	ret = nouveau_bo_new(dev, NULL, 65536, 0, location, 0, 0x0000, &pushbuf);
+	if (ret) {
+		NV_ERROR(dev, "error allocating DMA push buffer: %d\n", ret);
+		return NULL;
+	}
+
+	ret = nouveau_bo_pin(pushbuf, location);
+	if (ret) {
+		NV_ERROR(dev, "error pinning DMA push buffer: %d\n", ret);
+		nouveau_bo_ref(NULL, &pushbuf);
+		return NULL;
+	}
+
+	ret = nouveau_bo_map(pushbuf);
+	if (ret) {
+		nouveau_bo_unpin(pushbuf);
+		nouveau_bo_ref(NULL, &pushbuf);
+		return NULL;
+	}
+
+	return pushbuf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* allocates and initializes a fifo for user space consumption */
@@ -119,10 +195,16 @@ nouveau_channel_alloc(struct drm_device *dev, struct nouveau_channel **chan_ret,
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct nouveau_fifo_engine *pfifo = &dev_priv->engine.fifo;
+<<<<<<< HEAD
 	struct nouveau_fpriv *fpriv = nouveau_fpriv(file_priv);
 	struct nouveau_channel *chan;
 	unsigned long flags;
 	int ret, i;
+=======
+	struct nouveau_channel *chan;
+	unsigned long flags;
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* allocate and lock channel structure */
 	chan = kzalloc(sizeof(*chan), GFP_KERNEL);
@@ -160,14 +242,29 @@ nouveau_channel_alloc(struct drm_device *dev, struct nouveau_channel **chan_ret,
 	INIT_LIST_HEAD(&chan->fence.pending);
 	spin_lock_init(&chan->fence.lock);
 
+<<<<<<< HEAD
 	/* setup channel's memory and vm */
 	ret = nouveau_gpuobj_channel_init(chan, vram_handle, gart_handle);
 	if (ret) {
 		NV_ERROR(dev, "gpuobj %d\n", ret);
+=======
+	/* Allocate DMA push buffer */
+	chan->pushbuf_bo = nouveau_channel_user_pushbuf_alloc(dev);
+	if (!chan->pushbuf_bo) {
+		ret = -ENOMEM;
+		NV_ERROR(dev, "pushbuf %d\n", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nouveau_channel_put(&chan);
 		return ret;
 	}
 
+<<<<<<< HEAD
+=======
+	nouveau_dma_pre_init(chan);
+	chan->user_put = 0x40;
+	chan->user_get = 0x44;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Allocate space for per-channel fixed notifier memory */
 	ret = nouveau_notifier_init_channel(chan);
 	if (ret) {
@@ -176,19 +273,36 @@ nouveau_channel_alloc(struct drm_device *dev, struct nouveau_channel **chan_ret,
 		return ret;
 	}
 
+<<<<<<< HEAD
 	/* Allocate DMA push buffer */
 	ret = nouveau_channel_pushbuf_init(chan);
 	if (ret) {
 		NV_ERROR(dev, "pushbuf %d\n", ret);
+=======
+	/* Setup channel's default objects */
+	ret = nouveau_gpuobj_channel_init(chan, vram_handle, gart_handle);
+	if (ret) {
+		NV_ERROR(dev, "gpuobj %d\n", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nouveau_channel_put(&chan);
 		return ret;
 	}
 
+<<<<<<< HEAD
 	nouveau_dma_init(chan);
 	chan->user_put = 0x40;
 	chan->user_get = 0x44;
 	if (dev_priv->card_type >= NV_50)
                 chan->user_get_hi = 0x60;
+=======
+	/* Create a dma object for the push buffer */
+	ret = nouveau_channel_pushbuf_ctxdma_init(chan);
+	if (ret) {
+		NV_ERROR(dev, "pbctxdma %d\n", ret);
+		nouveau_channel_put(&chan);
+		return ret;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* disable the fifo caches */
 	pfifo->reassign(dev, false);
@@ -202,6 +316,7 @@ nouveau_channel_alloc(struct drm_device *dev, struct nouveau_channel **chan_ret,
 
 	pfifo->reassign(dev, true);
 
+<<<<<<< HEAD
 	/* Insert NOPs for NOUVEAU_DMA_SKIPS */
 	ret = RING_SPACE(chan, NOUVEAU_DMA_SKIPS);
 	if (ret) {
@@ -214,6 +329,11 @@ nouveau_channel_alloc(struct drm_device *dev, struct nouveau_channel **chan_ret,
 	FIRE_RING(chan);
 
 	ret = nouveau_fence_channel_init(chan);
+=======
+	ret = nouveau_dma_init(chan);
+	if (!ret)
+		ret = nouveau_fence_channel_init(chan);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret) {
 		nouveau_channel_put(&chan);
 		return ret;
@@ -222,11 +342,14 @@ nouveau_channel_alloc(struct drm_device *dev, struct nouveau_channel **chan_ret,
 	nouveau_debugfs_channel_init(chan);
 
 	NV_DEBUG(dev, "channel %d initialised\n", chan->id);
+<<<<<<< HEAD
 	if (fpriv) {
 		spin_lock(&fpriv->lock);
 		list_add(&chan->list, &fpriv->channels);
 		spin_unlock(&fpriv->lock);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*chan_ret = chan;
 	return 0;
 }
@@ -243,6 +366,7 @@ nouveau_channel_get_unlocked(struct nouveau_channel *ref)
 }
 
 struct nouveau_channel *
+<<<<<<< HEAD
 nouveau_channel_get(struct drm_file *file_priv, int id)
 {
 	struct nouveau_fpriv *fpriv = nouveau_fpriv(file_priv);
@@ -260,6 +384,31 @@ nouveau_channel_get(struct drm_file *file_priv, int id)
 	spin_unlock(&fpriv->lock);
 
 	return ERR_PTR(-EINVAL);
+=======
+nouveau_channel_get(struct drm_device *dev, struct drm_file *file_priv, int id)
+{
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	struct nouveau_channel *chan;
+	unsigned long flags;
+
+	if (unlikely(id < 0 || id >= NOUVEAU_MAX_CHANNEL_NR))
+		return ERR_PTR(-EINVAL);
+
+	spin_lock_irqsave(&dev_priv->channels.lock, flags);
+	chan = nouveau_channel_get_unlocked(dev_priv->channels.ptr[id]);
+	spin_unlock_irqrestore(&dev_priv->channels.lock, flags);
+
+	if (unlikely(!chan))
+		return ERR_PTR(-EINVAL);
+
+	if (unlikely(file_priv && chan->file_priv != file_priv)) {
+		nouveau_channel_put_unlocked(&chan);
+		return ERR_PTR(-EINVAL);
+	}
+
+	mutex_lock(&chan->mutex);
+	return chan;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void
@@ -313,14 +462,22 @@ nouveau_channel_put_unlocked(struct nouveau_channel **pchan)
 	/* destroy any resources the channel owned */
 	nouveau_gpuobj_ref(NULL, &chan->pushbuf);
 	if (chan->pushbuf_bo) {
+<<<<<<< HEAD
 		nouveau_bo_vma_del(chan->pushbuf_bo, &chan->pushbuf_vma);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nouveau_bo_unmap(chan->pushbuf_bo);
 		nouveau_bo_unpin(chan->pushbuf_bo);
 		nouveau_bo_ref(NULL, &chan->pushbuf_bo);
 	}
+<<<<<<< HEAD
 	nouveau_ramht_ref(NULL, &chan->ramht, chan);
 	nouveau_notifier_takedown_channel(chan);
 	nouveau_gpuobj_channel_takedown(chan);
+=======
+	nouveau_gpuobj_channel_takedown(chan);
+	nouveau_notifier_takedown_channel(chan);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nouveau_channel_ref(NULL, pchan);
 }
@@ -386,11 +543,18 @@ nouveau_channel_cleanup(struct drm_device *dev, struct drm_file *file_priv)
 
 	NV_DEBUG(dev, "clearing FIFO enables from file_priv\n");
 	for (i = 0; i < engine->fifo.channels; i++) {
+<<<<<<< HEAD
 		chan = nouveau_channel_get(file_priv, i);
 		if (IS_ERR(chan))
 			continue;
 
 		list_del(&chan->list);
+=======
+		chan = nouveau_channel_get(dev, file_priv, i);
+		if (IS_ERR(chan))
+			continue;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		atomic_dec(&chan->users);
 		nouveau_channel_put(&chan);
 	}
@@ -423,6 +587,7 @@ nouveau_ioctl_fifo_alloc(struct drm_device *dev, void *data,
 		return ret;
 	init->channel  = chan->id;
 
+<<<<<<< HEAD
 	if (nouveau_vram_pushbuf == 0) {
 		if (chan->dma.ib_max)
 			init->pushbuf_domains = NOUVEAU_GEM_DOMAIN_VRAM |
@@ -441,6 +606,29 @@ nouveau_ioctl_fifo_alloc(struct drm_device *dev, void *data,
 		init->subchan[1].handle = NvSw;
 		init->subchan[1].grclass = NV_SW;
 		init->nr_subchan = 2;
+=======
+	if (chan->dma.ib_max)
+		init->pushbuf_domains = NOUVEAU_GEM_DOMAIN_VRAM |
+					NOUVEAU_GEM_DOMAIN_GART;
+	else if (chan->pushbuf_bo->bo.mem.mem_type == TTM_PL_VRAM)
+		init->pushbuf_domains = NOUVEAU_GEM_DOMAIN_VRAM;
+	else
+		init->pushbuf_domains = NOUVEAU_GEM_DOMAIN_GART;
+
+	if (dev_priv->card_type < NV_C0) {
+		init->subchan[0].handle = NvM2MF;
+		if (dev_priv->card_type < NV_50)
+			init->subchan[0].grclass = 0x0039;
+		else
+			init->subchan[0].grclass = 0x5039;
+		init->subchan[1].handle = NvSw;
+		init->subchan[1].grclass = NV_SW;
+		init->nr_subchan = 2;
+	} else {
+		init->subchan[0].handle  = 0x9039;
+		init->subchan[0].grclass = 0x9039;
+		init->nr_subchan = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Named memory object area */
@@ -460,11 +648,18 @@ nouveau_ioctl_fifo_free(struct drm_device *dev, void *data,
 	struct drm_nouveau_channel_free *req = data;
 	struct nouveau_channel *chan;
 
+<<<<<<< HEAD
 	chan = nouveau_channel_get(file_priv, req->channel);
 	if (IS_ERR(chan))
 		return PTR_ERR(chan);
 
 	list_del(&chan->list);
+=======
+	chan = nouveau_channel_get(dev, file_priv, req->channel);
+	if (IS_ERR(chan))
+		return PTR_ERR(chan);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atomic_dec(&chan->users);
 	nouveau_channel_put(&chan);
 	return 0;

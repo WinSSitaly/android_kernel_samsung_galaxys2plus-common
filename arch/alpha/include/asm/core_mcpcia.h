@@ -7,7 +7,10 @@
 
 #include <linux/types.h>
 #include <asm/compiler.h>
+<<<<<<< HEAD
 #include <asm/mce.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * MCPCIA is the internal name for a core logic chipset which provides

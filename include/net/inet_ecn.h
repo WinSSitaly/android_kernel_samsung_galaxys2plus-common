@@ -30,6 +30,7 @@ static inline int INET_ECN_is_capable(__u8 dsfield)
 	return dsfield & INET_ECN_ECT_0;
 }
 
+<<<<<<< HEAD
 /*
  * RFC 3168 9.1.1
  *  The full-functionality option for ECN encapsulation is to copy the
@@ -38,6 +39,8 @@ static inline int INET_ECN_is_capable(__u8 dsfield)
  *  ECN codepoint of the outside header to ECT(0) if the ECN codepoint of
  *  the inside header is CE.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline __u8 INET_ECN_encapsulate(__u8 outer, __u8 inner)
 {
 	outer &= ~INET_ECN_MASK;

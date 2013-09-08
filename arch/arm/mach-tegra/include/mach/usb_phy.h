@@ -58,7 +58,11 @@ struct tegra_usb_phy {
 	struct clk *pad_clk;
 	enum tegra_usb_phy_mode mode;
 	void *config;
+<<<<<<< HEAD
 	struct usb_phy *ulpi;
+=======
+	struct otg_transceiver *ulpi;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct tegra_usb_phy *tegra_usb_phy_open(int instance, void __iomem *regs,

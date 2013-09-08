@@ -75,7 +75,11 @@ static int nommu_map_sg(struct device *hwdev, struct scatterlist *sg,
 }
 
 static void nommu_free_coherent(struct device *dev, size_t size, void *vaddr,
+<<<<<<< HEAD
 				dma_addr_t dma_addr, struct dma_attrs *attrs)
+=======
+				dma_addr_t dma_addr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	free_pages((unsigned long)vaddr, get_order(size));
 }
@@ -96,8 +100,13 @@ static void nommu_sync_sg_for_device(struct device *dev,
 }
 
 struct dma_map_ops nommu_dma_ops = {
+<<<<<<< HEAD
 	.alloc			= dma_generic_alloc_coherent,
 	.free			= nommu_free_coherent,
+=======
+	.alloc_coherent		= dma_generic_alloc_coherent,
+	.free_coherent		= nommu_free_coherent,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_sg			= nommu_map_sg,
 	.map_page		= nommu_map_page,
 	.sync_single_for_device = nommu_sync_single_for_device,

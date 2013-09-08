@@ -36,7 +36,12 @@
 
 #define XEN_BUS_ID_SIZE			20
 
+<<<<<<< HEAD
 struct xen_bus_type {
+=======
+struct xen_bus_type
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *root;
 	unsigned int levels;
 	int (*get_bus_id)(char bus_id[XEN_BUS_ID_SIZE], const char *nodename);
@@ -47,13 +52,22 @@ struct xen_bus_type {
 	struct bus_type bus;
 };
 
+<<<<<<< HEAD
 extern struct device_attribute xenbus_dev_attrs[];
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int xenbus_match(struct device *_dev, struct device_driver *_drv);
 extern int xenbus_dev_probe(struct device *_dev);
 extern int xenbus_dev_remove(struct device *_dev);
 extern int xenbus_register_driver_common(struct xenbus_driver *drv,
+<<<<<<< HEAD
 					 struct xen_bus_type *bus);
+=======
+					 struct xen_bus_type *bus,
+					 struct module *owner,
+					 const char *mod_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int xenbus_probe_node(struct xen_bus_type *bus,
 			     const char *type,
 			     const char *nodename);
@@ -74,6 +88,9 @@ extern void xenbus_otherend_changed(struct xenbus_watch *watch,
 extern int xenbus_read_otherend_details(struct xenbus_device *xendev,
 					char *id_node, char *path_node);
 
+<<<<<<< HEAD
 void xenbus_ring_ops_init(void);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

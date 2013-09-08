@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2008-2011 Freescale Semiconductor, Inc. All rights reserved.
+=======
+ * Copyright (C) 2008 Freescale Semiconductor, Inc. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Author: Yu Liu, <yu.liu@freescale.com>
  *
@@ -15,7 +19,10 @@
 #include <linux/kvm_host.h>
 #include <linux/slab.h>
 #include <linux/err.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/reg.h>
 #include <asm/cputable.h>
@@ -42,11 +49,14 @@ void kvmppc_core_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
 void kvmppc_core_vcpu_put(struct kvm_vcpu *vcpu)
 {
 	kvmppc_e500_tlb_put(vcpu);
+<<<<<<< HEAD
 
 #ifdef CONFIG_SPE
 	if (vcpu->arch.shadow_msr & MSR_SPE)
 		kvmppc_vcpu_disable_spe(vcpu);
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int kvmppc_core_check_processor_compat(void)
@@ -71,7 +81,12 @@ int kvmppc_core_vcpu_setup(struct kvm_vcpu *vcpu)
 	vcpu->arch.pvr = mfspr(SPRN_PVR);
 	vcpu_e500->svr = mfspr(SPRN_SVR);
 
+<<<<<<< HEAD
 	vcpu->arch.cpu_type = KVM_CPU_E500V2;
+=======
+	/* Since booke kvm only support one core, update all vcpus' PIR to 0 */
+	vcpu->vcpu_id = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -115,12 +130,21 @@ void kvmppc_core_get_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
 	sregs->u.e.impl.fsl.hid0 = vcpu_e500->hid0;
 	sregs->u.e.impl.fsl.mcar = vcpu_e500->mcar;
 
+<<<<<<< HEAD
 	sregs->u.e.mas0 = vcpu->arch.shared->mas0;
 	sregs->u.e.mas1 = vcpu->arch.shared->mas1;
 	sregs->u.e.mas2 = vcpu->arch.shared->mas2;
 	sregs->u.e.mas7_3 = vcpu->arch.shared->mas7_3;
 	sregs->u.e.mas4 = vcpu->arch.shared->mas4;
 	sregs->u.e.mas6 = vcpu->arch.shared->mas6;
+=======
+	sregs->u.e.mas0 = vcpu_e500->mas0;
+	sregs->u.e.mas1 = vcpu_e500->mas1;
+	sregs->u.e.mas2 = vcpu_e500->mas2;
+	sregs->u.e.mas7_3 = ((u64)vcpu_e500->mas7 << 32) | vcpu_e500->mas3;
+	sregs->u.e.mas4 = vcpu_e500->mas4;
+	sregs->u.e.mas6 = vcpu_e500->mas6;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sregs->u.e.mmucfg = mfspr(SPRN_MMUCFG);
 	sregs->u.e.tlbcfg[0] = vcpu_e500->tlb0cfg;
@@ -148,12 +172,22 @@ int kvmppc_core_set_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
 	}
 
 	if (sregs->u.e.features & KVM_SREGS_E_ARCH206_MMU) {
+<<<<<<< HEAD
 		vcpu->arch.shared->mas0 = sregs->u.e.mas0;
 		vcpu->arch.shared->mas1 = sregs->u.e.mas1;
 		vcpu->arch.shared->mas2 = sregs->u.e.mas2;
 		vcpu->arch.shared->mas7_3 = sregs->u.e.mas7_3;
 		vcpu->arch.shared->mas4 = sregs->u.e.mas4;
 		vcpu->arch.shared->mas6 = sregs->u.e.mas6;
+=======
+		vcpu_e500->mas0 = sregs->u.e.mas0;
+		vcpu_e500->mas1 = sregs->u.e.mas1;
+		vcpu_e500->mas2 = sregs->u.e.mas2;
+		vcpu_e500->mas7 = sregs->u.e.mas7_3 >> 32;
+		vcpu_e500->mas3 = (u32)sregs->u.e.mas7_3;
+		vcpu_e500->mas4 = sregs->u.e.mas4;
+		vcpu_e500->mas6 = sregs->u.e.mas6;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (!(sregs->u.e.features & KVM_SREGS_E_IVOR))
@@ -229,10 +263,13 @@ static int __init kvmppc_e500_init(void)
 	unsigned long ivor[3];
 	unsigned long max_ivor = 0;
 
+<<<<<<< HEAD
 	r = kvmppc_core_check_processor_compat();
 	if (r)
 		return r;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = kvmppc_booke_init();
 	if (r)
 		return r;

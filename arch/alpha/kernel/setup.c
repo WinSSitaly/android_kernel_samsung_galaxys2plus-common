@@ -43,7 +43,10 @@
 #include <asm/setup.h>
 #include <asm/io.h>
 #include <linux/log2.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern struct atomic_notifier_head panic_notifier_list;
 static int alpha_panic_event(struct notifier_block *, unsigned long, void *);
@@ -55,6 +58,10 @@ static struct notifier_block alpha_panic_block = {
 
 #include <asm/uaccess.h>
 #include <asm/pgtable.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/hwrpb.h>
 #include <asm/dma.h>
 #include <asm/mmu_context.h>

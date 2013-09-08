@@ -28,7 +28,10 @@
  */
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mm.h>
 #include <linux/init.h>
 #include <linux/highmem.h>
@@ -36,12 +39,16 @@
 #include <linux/preempt.h>
 #include <linux/spinlock.h>
 #include <linux/memblock.h>
+<<<<<<< HEAD
 #include <linux/of_fdt.h>
 #include <linux/hugetlb.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/tlbflush.h>
 #include <asm/tlb.h>
 #include <asm/code-patching.h>
+<<<<<<< HEAD
 #include <asm/hugetlb.h>
 
 #include "mmu_decl.h"
@@ -80,6 +87,12 @@ struct mmu_psize_def mmu_psize_defs[MMU_PAGE_COUNT] = {
 	},
 };
 #else
+=======
+
+#include "mmu_decl.h"
+
+#ifdef CONFIG_PPC_BOOK3E
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct mmu_psize_def mmu_psize_defs[MMU_PAGE_COUNT] = {
 	[MMU_PAGE_4K] = {
 		.shift	= 12,
@@ -113,8 +126,11 @@ struct mmu_psize_def mmu_psize_defs[MMU_PAGE_COUNT] = {
 		.enc	= BOOK3E_PAGESZ_1GB,
 	},
 };
+<<<<<<< HEAD
 #endif /* CONFIG_FSL_BOOKE */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int mmu_get_tsize(int psize)
 {
 	return mmu_psize_defs[psize].enc;
@@ -125,7 +141,11 @@ static inline int mmu_get_tsize(int psize)
 	/* This isn't used on !Book3E for now */
 	return 0;
 }
+<<<<<<< HEAD
 #endif /* CONFIG_PPC_BOOK3E_MMU */
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* The variables below are currently only used on 64-bit Book3E
  * though this will probably be made common with other nohash
@@ -141,12 +161,15 @@ unsigned long linear_map_top;	/* Top of linear mapping */
 
 #endif /* CONFIG_PPC64 */
 
+<<<<<<< HEAD
 #ifdef CONFIG_PPC_FSL_BOOK3E
 /* next_tlbcam_idx is used to round-robin tlbcam entry assignment */
 DEFINE_PER_CPU(int, next_tlbcam_idx);
 EXPORT_PER_CPU_SYMBOL(next_tlbcam_idx);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Base TLB flushing operations:
  *
@@ -304,11 +327,14 @@ void __flush_tlb_page(struct mm_struct *mm, unsigned long vmaddr,
 
 void flush_tlb_page(struct vm_area_struct *vma, unsigned long vmaddr)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_HUGETLB_PAGE
 	if (is_vm_hugetlb_page(vma))
 		flush_hugetlb_page(vma, vmaddr);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__flush_tlb_page(vma ? vma->vm_mm : NULL, vmaddr,
 			 mmu_get_tsize(mmu_virtual_psize), 0);
 }
@@ -316,6 +342,7 @@ EXPORT_SYMBOL(flush_tlb_page);
 
 #endif /* CONFIG_SMP */
 
+<<<<<<< HEAD
 #ifdef CONFIG_PPC_47x
 void __init early_init_mmu_47x(void)
 {
@@ -327,6 +354,8 @@ void __init early_init_mmu_47x(void)
 }
 #endif /* CONFIG_PPC_47x */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Flush kernel TLB entries in the given range
  */
@@ -504,6 +533,7 @@ static void setup_page_sizes(void)
 	}
 }
 
+<<<<<<< HEAD
 static void __patch_exception(int exc, unsigned long addr)
 {
 	extern unsigned int interrupt_base_book3e;
@@ -525,6 +555,16 @@ static void __patch_exception(int exc, unsigned long addr)
 
 static void setup_mmu_htw(void)
 {
+=======
+static void setup_mmu_htw(void)
+{
+	extern unsigned int interrupt_base_book3e;
+	extern unsigned int exc_data_tlb_miss_htw_book3e;
+	extern unsigned int exc_instruction_tlb_miss_htw_book3e;
+
+	unsigned int *ibase = &interrupt_base_book3e;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Check if HW tablewalk is present, and if yes, enable it by:
 	 *
 	 * - patching the TLB miss handlers to branch to the
@@ -536,12 +576,28 @@ static void setup_mmu_htw(void)
 
 	if ((tlb0cfg & TLBnCFG_IND) &&
 	    (tlb0cfg & TLBnCFG_PT)) {
+<<<<<<< HEAD
 		patch_exception(0x1c0, exc_data_tlb_miss_htw_book3e);
 		patch_exception(0x1e0, exc_instruction_tlb_miss_htw_book3e);
 		book3e_htw_enabled = 1;
 	}
 	pr_info("MMU: Book3E HW tablewalk %s\n",
 		book3e_htw_enabled ? "enabled" : "not supported");
+=======
+		/* Our exceptions vectors start with a NOP and -then- a branch
+		 * to deal with single stepping from userspace which stops on
+		 * the second instruction. Thus we need to patch the second
+		 * instruction of the exception, not the first one
+		 */
+		patch_branch(ibase + (0x1c0 / 4) + 1,
+			     (unsigned long)&exc_data_tlb_miss_htw_book3e, 0);
+		patch_branch(ibase + (0x1e0 / 4) + 1,
+			     (unsigned long)&exc_instruction_tlb_miss_htw_book3e, 0);
+		book3e_htw_enabled = 1;
+	}
+	pr_info("MMU: Book3E Page Tables %s\n",
+		book3e_htw_enabled ? "Enabled" : "Disabled");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -615,9 +671,13 @@ static void __early_init_mmu(int boot_cpu)
 
 		/* limit memory so we dont have linear faults */
 		memblock_enforce_memory_limit(linear_map_top);
+<<<<<<< HEAD
 
 		patch_exception(0x1c0, exc_data_tlb_miss_bolted_book3e);
 		patch_exception(0x1e0, exc_instruction_tlb_miss_bolted_book3e);
+=======
+		memblock_analyze();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 #endif
 
@@ -642,6 +702,7 @@ void __cpuinit early_init_mmu_secondary(void)
 void setup_initial_memory_limit(phys_addr_t first_memblock_base,
 				phys_addr_t first_memblock_size)
 {
+<<<<<<< HEAD
 	/* On non-FSL Embedded 64-bit, we adjust the RMA size to match
 	 * the bolted TLB entry. We know for now that only 1G
 	 * entries are supported though that may eventually
@@ -664,10 +725,20 @@ void setup_initial_memory_limit(phys_addr_t first_memblock_base,
 	} else
 #endif
 		ppc64_rma_size = min_t(u64, first_memblock_size, 0x40000000);
+=======
+	/* On Embedded 64-bit, we adjust the RMA size to match
+	 * the bolted TLB entry. We know for now that only 1G
+	 * entries are supported though that may eventually
+	 * change. We crop it to the size of the first MEMBLOCK to
+	 * avoid going over total available memory just in case...
+	 */
+	ppc64_rma_size = min_t(u64, first_memblock_size, 0x40000000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Finally limit subsequent allocations */
 	memblock_set_current_limit(first_memblock_base + ppc64_rma_size);
 }
+<<<<<<< HEAD
 #else /* ! CONFIG_PPC64 */
 void __init early_init_mmu(void)
 {
@@ -675,4 +746,6 @@ void __init early_init_mmu(void)
 	early_init_mmu_47x();
 #endif
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_PPC64 */

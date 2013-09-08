@@ -10,8 +10,11 @@
 struct ramoops_platform_data {
 	unsigned long	mem_size;
 	unsigned long	mem_address;
+<<<<<<< HEAD
 	unsigned long	record_size;
 	int		dump_oops;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif

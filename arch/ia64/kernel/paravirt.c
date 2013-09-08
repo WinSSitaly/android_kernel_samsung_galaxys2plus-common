@@ -634,8 +634,11 @@ struct pv_irq_ops pv_irq_ops = {
  * pv_time_ops
  * time operations
  */
+<<<<<<< HEAD
 struct static_key paravirt_steal_enabled;
 struct static_key paravirt_steal_rq_enabled;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int
 ia64_native_do_steal_accounting(unsigned long *new_itm)

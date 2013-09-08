@@ -20,7 +20,10 @@
 #include <linux/io.h>
 
 #include <asm/cacheflush.h>
+<<<<<<< HEAD
 #include <asm/suspend.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/hardware.h>
 #include <mach/map.h>
 
@@ -232,7 +235,11 @@ static void __maybe_unused s3c_pm_show_resume_irqs(int start,
 
 
 void (*pm_cpu_prep)(void);
+<<<<<<< HEAD
 int (*pm_cpu_sleep)(unsigned long);
+=======
+void (*pm_cpu_sleep)(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define any_allowed(mask, allow) (((mask) & (allow)) != (allow))
 
@@ -268,8 +275,12 @@ static int s3c_pm_enter(suspend_state_t state)
 
 	/* save all necessary core registers not covered by the drivers */
 
+<<<<<<< HEAD
 	samsung_pm_save_gpios();
 	samsung_pm_saved_gpios();
+=======
+	s3c_pm_save_gpios();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	s3c_pm_save_uarts();
 	s3c_pm_save_core();
 
@@ -296,18 +307,34 @@ static int s3c_pm_enter(suspend_state_t state)
 
 	s3c_pm_arch_stop_clocks();
 
+<<<<<<< HEAD
 	/* this will also act as our return point from when
 	 * we resume as it saves its own register state and restores it
 	 * during the resume.  */
 
 	cpu_suspend(0, pm_cpu_sleep);
+=======
+	/* s3c_cpu_save will also act as our return point from when
+	 * we resume as it saves its own register state and restores it
+	 * during the resume.  */
+
+	s3c_cpu_save(0, PLAT_PHYS_OFFSET - PAGE_OFFSET);
+
+	/* restore the cpu state using the kernel's cpu init code. */
+
+	cpu_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* restore the system state */
 
 	s3c_pm_restore_core();
 	s3c_pm_restore_uarts();
+<<<<<<< HEAD
 	samsung_pm_restore_gpios();
 	s3c_pm_restored_gpios();
+=======
+	s3c_pm_restore_gpios();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	s3c_pm_debug_init();
 

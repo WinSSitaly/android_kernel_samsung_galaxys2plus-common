@@ -10,7 +10,11 @@ use strict;
 my $P = $0;
 $P =~ s@.*/@@g;
 
+<<<<<<< HEAD
 my $V = '0.32';
+=======
+my $V = '0.31';
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 use Getopt::Long qw(:config no_auto_abbrev);
 
@@ -26,6 +30,7 @@ my $check = 0;
 my $summary = 1;
 my $mailback = 0;
 my $summary_file = 0;
+<<<<<<< HEAD
 my $show_types = 0;
 my $root;
 my %debug;
@@ -33,6 +38,11 @@ my %ignore_type = ();
 my @ignore = ();
 my $help = 0;
 my $configuration_file = ".checkpatch.conf";
+=======
+my $root;
+my %debug;
+my $help = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 sub help {
 	my ($exitcode) = @_;
@@ -50,8 +60,11 @@ Options:
   --terse                    one line per report
   -f, --file                 treat FILE as regular source file
   --subjective, --strict     enable more subjective tests
+<<<<<<< HEAD
   --ignore TYPE(,TYPE2...)   ignore various comma separated message types
   --show-types               show the message "types" in the output
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   --root=PATH                PATH to the kernel tree root
   --no-summary               suppress the per-file summary
   --mailback                 only produce a report in case of warnings/errors
@@ -69,6 +82,7 @@ EOM
 	exit($exitcode);
 }
 
+<<<<<<< HEAD
 my $conf = which_conf($configuration_file);
 if (-f $conf) {
 	my @conf_args;
@@ -95,6 +109,8 @@ if (-f $conf) {
 	unshift(@ARGV, @conf_args) if @conf_args;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 GetOptions(
 	'q|quiet+'	=> \$quiet,
 	'tree!'		=> \$tree,
@@ -105,8 +121,11 @@ GetOptions(
 	'f|file!'	=> \$file,
 	'subjective!'	=> \$check,
 	'strict!'	=> \$check,
+<<<<<<< HEAD
 	'ignore=s'	=> \@ignore,
 	'show-types!'	=> \$show_types,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	'root=s'	=> \$root,
 	'summary!'	=> \$summary,
 	'mailback!'	=> \$mailback,
@@ -127,6 +146,7 @@ if ($#ARGV < 0) {
 	exit(1);
 }
 
+<<<<<<< HEAD
 @ignore = split(/,/, join(',',@ignore));
 foreach my $word (@ignore) {
 	$word =~ s/\s*\n?$//g;
@@ -140,6 +160,8 @@ foreach my $word (@ignore) {
 	$ignore_type{$word}++;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 my $dbg_values = 0;
 my $dbg_possible = 0;
 my $dbg_type = 0;
@@ -192,8 +214,12 @@ our $Sparse	= qr{
 			__must_check|
 			__init_refok|
 			__kprobes|
+<<<<<<< HEAD
 			__ref|
 			__rcu
+=======
+			__ref
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}x;
 
 # Notes to $Attribute:
@@ -227,7 +253,11 @@ our $Inline	= qr{inline|__always_inline|noinline};
 our $Member	= qr{->$Ident|\.$Ident|\[[^]]*\]};
 our $Lval	= qr{$Ident(?:$Member)*};
 
+<<<<<<< HEAD
 our $Constant	= qr{(?i:(?:[0-9]+|0x[0-9a-f]+)[ul]*)};
+=======
+our $Constant	= qr{(?:[0-9]+|0x[0-9a-fA-F]+)[UL]*};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 our $Assignment	= qr{(?:\*\=|/=|%=|\+=|-=|<<=|>>=|&=|\^=|\|=|=)};
 our $Compare    = qr{<=|>=|==|!=|<|>};
 our $Operators	= qr{
@@ -240,8 +270,14 @@ our $NonptrType;
 our $Type;
 our $Declare;
 
+<<<<<<< HEAD
 our $NON_ASCII_UTF8	= qr{
 	[\xC2-\xDF][\x80-\xBF]               # non-overlong 2-byte
+=======
+our $UTF8	= qr {
+	[\x09\x0A\x0D\x20-\x7E]              # ASCII
+	| [\xC2-\xDF][\x80-\xBF]             # non-overlong 2-byte
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	|  \xE0[\xA0-\xBF][\x80-\xBF]        # excluding overlongs
 	| [\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}  # straight 3-byte
 	|  \xED[\x80-\x9F][\x80-\xBF]        # excluding surrogates
@@ -250,24 +286,34 @@ our $NON_ASCII_UTF8	= qr{
 	|  \xF4[\x80-\x8F][\x80-\xBF]{2}     # plane 16
 }x;
 
+<<<<<<< HEAD
 our $UTF8	= qr{
 	[\x09\x0A\x0D\x20-\x7E]              # ASCII
 	| $NON_ASCII_UTF8
 }x;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 our $typeTypedefs = qr{(?x:
 	(?:__)?(?:u|s|be|le)(?:8|16|32|64)|
 	atomic_t
 )};
 
 our $logFunctions = qr{(?x:
+<<<<<<< HEAD
 	printk(?:_ratelimited|_once|)|
 	[a-z0-9]+_(?:printk|emerg|alert|crit|err|warning|warn|notice|info|debug|dbg|vdbg|devel|cont|WARN)(?:_ratelimited|_once|)|
 	WARN(?:_RATELIMIT|_ONCE|)|
+=======
+	printk|
+	[a-z]+_(emerg|alert|crit|err|warning|warn|notice|info|debug|dbg|vdbg|devel|cont|WARN)|
+	WARN|
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	panic|
 	MODULE_[A-Z_]+
 )};
 
+<<<<<<< HEAD
 our $signature_tags = qr{(?xi:
 	Signed-off-by:|
 	Acked-by:|
@@ -278,6 +324,8 @@ our $signature_tags = qr{(?xi:
 	Cc:
 )};
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 our @typeList = (
 	qr{void},
 	qr{(?:unsigned\s+)?char},
@@ -315,7 +363,11 @@ sub build_types {
 	$NonptrType	= qr{
 			(?:$Modifier\s+|const\s+)*
 			(?:
+<<<<<<< HEAD
 				(?:typeof|__typeof__)\s*\([^\)]*\)|
+=======
+				(?:typeof|__typeof__)\s*\(\s*\**\s*$Ident\s*\)|
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				(?:$typeTypedefs\b)|
 				(?:${all}\b)
 			)
@@ -323,13 +375,18 @@ sub build_types {
 		  }x;
 	$Type	= qr{
 			$NonptrType
+<<<<<<< HEAD
 			(?:(?:\s|\*|\[\])+\s*const|(?:\s|\*|\[\])+|(?:\s*\[\s*\])+)?
+=======
+			(?:[\s\*]+\s*const|[\s\*]+|(?:\s*\[\s*\])+)?
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			(?:\s+$Inline|\s+$Modifier)*
 		  }x;
 	$Declare	= qr{(?:$Storage\s+)?$Type};
 }
 build_types();
 
+<<<<<<< HEAD
 
 our $Typecast	= qr{\s*(\(\s*$NonptrType\s*\)){0,1}\s*};
 
@@ -350,6 +407,8 @@ sub deparenthesize {
 	return $string;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 $chk_signoff = 0 if ($file);
 
 my @dep_includes = ();
@@ -421,6 +480,7 @@ sub top_of_kernel_tree {
 		}
 	}
 	return 1;
+<<<<<<< HEAD
     }
 
 sub parse_email {
@@ -503,6 +563,8 @@ sub which_conf {
 	}
 
 	return "";
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 sub expand_tabs {
@@ -682,10 +744,13 @@ sub ctx_statement_block {
 			if ($off >= $len) {
 				last;
 			}
+<<<<<<< HEAD
 			if ($level == 0 && substr($blk, $off) =~ /^.\s*#\s*define/) {
 				$level++;
 				$type = '#';
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		$p = $c;
 		$c = substr($blk, $off, 1);
@@ -748,6 +813,7 @@ sub ctx_statement_block {
 				last;
 			}
 		}
+<<<<<<< HEAD
 		# Preprocessor commands end at the newline unless escaped.
 		if ($type eq '#' && $c eq "\n" && $p ne "\\") {
 			$level--;
@@ -755,6 +821,8 @@ sub ctx_statement_block {
 			$off++;
 			last;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		$off++;
 	}
 	# We are truly at the end, so shuffle to the next line.
@@ -1037,7 +1105,11 @@ sub annotate_values {
 		} elsif ($cur =~ /^(\(\s*$Type\s*)\)/ && $av_pending eq '_') {
 			print "CAST($1)\n" if ($dbg_values > 1);
 			push(@av_paren_type, $type);
+<<<<<<< HEAD
 			$type = 'c';
+=======
+			$type = 'C';
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		} elsif ($cur =~ /^($Type)\s*(?:$Ident|,|\)|\(|\s*$)/) {
 			print "DECLARE($1)\n" if ($dbg_values > 1);
@@ -1229,9 +1301,13 @@ sub possible {
 			case|
 			else|
 			asm|__asm__|
+<<<<<<< HEAD
 			do|
 			\#|
 			\#\#|
+=======
+			do
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		)(?:\s|$)|
 		^(?:typedef|struct|enum)\b
 	    )}x;
@@ -1263,6 +1339,7 @@ sub possible {
 
 my $prefix = '';
 
+<<<<<<< HEAD
 sub show_type {
        return !defined $ignore_type{$_[0]};
 }
@@ -1278,6 +1355,14 @@ sub report {
 	} else {
 		$line = "$prefix$_[0]: $_[2]\n";
 	}
+=======
+sub report {
+	if (defined $tst_only && $_[0] !~ /\Q$tst_only\E/) {
+		return 0;
+	}
+	my $line = $prefix . $_[0];
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	$line = (split('\n', $line))[0] . "\n" if ($terse);
 
 	push(our @report, $line);
@@ -1287,21 +1372,34 @@ sub report {
 sub report_dump {
 	our @report;
 }
+<<<<<<< HEAD
 
 sub ERROR {
 	if (report("ERROR", $_[0], $_[1])) {
+=======
+sub ERROR {
+	if (report("ERROR: $_[0]\n")) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		our $clean = 0;
 		our $cnt_error++;
 	}
 }
 sub WARN {
+<<<<<<< HEAD
 	if (report("WARNING", $_[0], $_[1])) {
+=======
+	if (report("WARNING: $_[0]\n")) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		our $clean = 0;
 		our $cnt_warn++;
 	}
 }
 sub CHK {
+<<<<<<< HEAD
 	if ($check && report("CHECK", $_[0], $_[1])) {
+=======
+	if ($check && report("CHECK: $_[0]\n")) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		our $clean = 0;
 		our $cnt_chk++;
 	}
@@ -1330,6 +1428,7 @@ sub check_absolute_file {
 
 	##print "prefix<$prefix>\n";
 	if ($prefix ne ".../") {
+<<<<<<< HEAD
 		WARN("USE_RELATIVE_PATH",
 		     "use relative pathname instead of absolute in changelog text\n" . $herecurr);
 	}
@@ -1365,6 +1464,12 @@ sub pos_last_openparen {
 	return $last_openparen + 1;
 }
 
+=======
+		WARN("use relative pathname instead of absolute in changelog text\n" . $herecurr);
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 sub process {
 	my $filename = shift;
 
@@ -1383,9 +1488,12 @@ sub process {
 	my $signoff = 0;
 	my $is_patch = 0;
 
+<<<<<<< HEAD
 	my $in_header_lines = 1;
 	my $in_commit_log = 0;		#Scanning lines before patch
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	our @report = ();
 	our $cnt_lines = 0;
 	our $cnt_error = 0;
@@ -1408,7 +1516,10 @@ sub process {
 	my %suppress_ifbraces;
 	my %suppress_whiletrailers;
 	my %suppress_export;
+<<<<<<< HEAD
 	my $suppress_statement = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	# Pre-scan the patch sanitizing the lines.
 	# Pre-scan the patch looking for any __setup documentation.
@@ -1518,7 +1629,10 @@ sub process {
 			%suppress_ifbraces = ();
 			%suppress_whiletrailers = ();
 			%suppress_export = ();
+<<<<<<< HEAD
 			$suppress_statement = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			next;
 
 # track the line number as we move through the hunk, note that
@@ -1555,15 +1669,23 @@ sub process {
 		if ($line =~ /^diff --git.*?(\S+)$/) {
 			$realfile = $1;
 			$realfile =~ s@^([^/]*)/@@;
+<<<<<<< HEAD
 			$in_commit_log = 0;
 		} elsif ($line =~ /^\+\+\+\s+(\S+)/) {
 			$realfile = $1;
 			$realfile =~ s@^([^/]*)/@@;
 			$in_commit_log = 0;
+=======
+
+		} elsif ($line =~ /^\+\+\+\s+(\S+)/) {
+			$realfile = $1;
+			$realfile =~ s@^([^/]*)/@@;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			$p1_prefix = $1;
 			if (!$file && $tree && $p1_prefix ne '' &&
 			    -e "$root/$p1_prefix") {
+<<<<<<< HEAD
 				WARN("PATCH_PREFIX",
 				     "patch prefix '$p1_prefix' exists, appears to be a -p0 patch\n");
 			}
@@ -1571,6 +1693,13 @@ sub process {
 			if ($realfile =~ m@^include/asm/@) {
 				ERROR("MODIFIED_INCLUDE_ASM",
 				      "do not modify files in include/asm, change architecture specific files in include/asm-<architecture>\n" . "$here$rawline\n");
+=======
+				WARN("patch prefix '$p1_prefix' exists, appears to be a -p0 patch\n");
+			}
+
+			if ($realfile =~ m@^include/asm/@) {
+				ERROR("do not modify files in include/asm, change architecture specific files in include/asm-<architecture>\n" . "$here$rawline\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			next;
 		}
@@ -1587,6 +1716,7 @@ sub process {
 		if ($line =~ /^new (file )?mode.*[7531]\d{0,2}$/) {
 			my $permhere = $here . "FILE: $realfile\n";
 			if ($realfile =~ /(Makefile|Kconfig|\.c|\.h|\.S|\.tmpl)$/) {
+<<<<<<< HEAD
 				ERROR("EXECUTE_PERMISSIONS",
 				      "do not set execute permissions for source files\n" . $permhere);
 			}
@@ -1637,13 +1767,34 @@ sub process {
 					WARN("BAD_SIGN_OFF",
 					     "email address '$email' might be better as '$suggested_email$comment'\n" . $herecurr);
 				}
+=======
+				ERROR("do not set execute permissions for source files\n" . $permhere);
+			}
+		}
+
+#check the patch for a signoff:
+		if ($line =~ /^\s*signed-off-by:/i) {
+			# This is a signoff, if ugly, so do not double report.
+			$signoff++;
+			if (!($line =~ /^\s*Signed-off-by:/)) {
+				WARN("Signed-off-by: is the preferred form\n" .
+					$herecurr);
+			}
+			if ($line =~ /^\s*signed-off-by:\S/i) {
+				WARN("space required after Signed-off-by:\n" .
+					$herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
 # Check for wrappage within a valid hunk of the file
 		if ($realcnt != 0 && $line !~ m{^(?:\+|-| |\\ No newline|$)}) {
+<<<<<<< HEAD
 			ERROR("CORRUPTED_PATCH",
 			      "patch seems to be corrupt (line wrapped?)\n" .
+=======
+			ERROR("patch seems to be corrupt (line wrapped?)\n" .
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				$herecurr) if (!$emitted_corrupt++);
 		}
 
@@ -1670,6 +1821,7 @@ sub process {
 			my $ptr = substr($blank, 0, length($utf8_prefix)) . "^";
 			my $hereptr = "$hereline$ptr\n";
 
+<<<<<<< HEAD
 			CHK("INVALID_UTF8",
 			    "Invalid UTF-8, patch and commit message should be encoded in UTF-8\n" . $hereptr);
 		}
@@ -1687,6 +1839,9 @@ sub process {
 		    $rawline =~ /$NON_ASCII_UTF8/) {
 			CHK("UTF8_BEFORE_PATCH",
 			    "8-bit UTF-8 used in possible commit log\n" . $herecurr);
+=======
+			ERROR("Invalid UTF-8, patch and commit message should be encoded in UTF-8\n" . $hereptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # ignore non-hunk lines and lines being removed
@@ -1695,6 +1850,7 @@ sub process {
 #trailing whitespace
 		if ($line =~ /^\+.*\015/) {
 			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
+<<<<<<< HEAD
 			ERROR("DOS_LINE_ENDINGS",
 			      "DOS line endings\n" . $herevet);
 
@@ -1702,6 +1858,13 @@ sub process {
 			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
 			ERROR("TRAILING_WHITESPACE",
 			      "trailing whitespace\n" . $herevet);
+=======
+			ERROR("DOS line endings\n" . $herevet);
+
+		} elsif ($rawline =~ /^\+.*\S\s+$/ || $rawline =~ /^\+\s+$/) {
+			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
+			ERROR("trailing whitespace\n" . $herevet);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			$rpt_cleaners = 1;
 		}
 
@@ -1709,11 +1872,16 @@ sub process {
 # Only applies when adding the entry originally, after that we do not have
 # sufficient context to determine whether it is indeed long enough.
 		if ($realfile =~ /Kconfig/ &&
+<<<<<<< HEAD
 		    $line =~ /.\s*config\s+/) {
+=======
+		    $line =~ /\+\s*(?:---)?help(?:---)?$/) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			my $length = 0;
 			my $cnt = $realcnt;
 			my $ln = $linenr + 1;
 			my $f;
+<<<<<<< HEAD
 			my $is_start = 0;
 			my $is_end = 0;
 			for (; $cnt > 0 && defined $lines[$ln - 1]; $ln++) {
@@ -1729,6 +1897,16 @@ sub process {
 					$length = -1;
 				}
 
+=======
+			my $is_end = 0;
+			while ($cnt > 0 && defined $lines[$ln - 1]) {
+				$f = $lines[$ln - 1];
+				$cnt-- if ($lines[$ln - 1] !~ /^-/);
+				$is_end = $lines[$ln - 1] =~ /^\+/;
+				$ln++;
+
+				next if ($f =~ /^-/);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				$f =~ s/^.//;
 				$f =~ s/#.*//;
 				$f =~ s/^\s+//;
@@ -1739,6 +1917,7 @@ sub process {
 				}
 				$length++;
 			}
+<<<<<<< HEAD
 			WARN("CONFIG_DESCRIPTION",
 			     "please write a paragraph that describes the config symbol fully\n" . $herecurr) if ($is_start && $is_end && $length < 4);
 			#print "is_start<$is_start> is_end<$is_end> length<$length>\n";
@@ -1756,6 +1935,10 @@ sub process {
 
 			WARN("DEPRECATED_VARIABLE",
 			     "Use of $flag is deprecated, please use \`$replacement->{$flag} instead.\n" . $herecurr) if ($replacement->{$flag});
+=======
+			WARN("please write a paragraph that describes the config symbol fully\n" . $herecurr) if ($is_end && $length < 4);
+			#print "is_end<$is_end> length<$length>\n";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check we are in a valid source file if not then ignore this hunk
@@ -1768,6 +1951,7 @@ sub process {
 		    $line =~ /^\+\s*"[^"]*"\s*(?:\s*|,|\)\s*;)\s*$/) &&
 		    $length > 80)
 		{
+<<<<<<< HEAD
 			WARN("LONG_LINE",
 			     "line over 80 characters\n" . $herecurr);
 		}
@@ -1785,24 +1969,36 @@ sub process {
 		    $prevrawline !~ /\\n(?:\\t)*"\s*$/) {
 			WARN("SPLIT_STRING",
 			     "quoted string split across lines\n" . $hereprev);
+=======
+			WARN("line over 80 characters\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check for spaces before a quoted newline
 		if ($rawline =~ /^.*\".*\s\\n/) {
+<<<<<<< HEAD
 			WARN("QUOTED_WHITESPACE_BEFORE_NEWLINE",
 			     "unnecessary whitespace before a quoted newline\n" . $herecurr);
+=======
+			WARN("unnecessary whitespace before a quoted newline\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check for adding lines without a newline.
 		if ($line =~ /^\+/ && defined $lines[$linenr] && $lines[$linenr] =~ /^\\ No newline at end of file/) {
+<<<<<<< HEAD
 			WARN("MISSING_EOF_NEWLINE",
 			     "adding a line without newline at end of file\n" . $herecurr);
+=======
+			WARN("adding a line without newline at end of file\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # Blackfin: use hi/lo macros
 		if ($realfile =~ m@arch/blackfin/.*\.S$@) {
 			if ($line =~ /\.[lL][[:space:]]*=.*&[[:space:]]*0x[fF][fF][fF][fF]/) {
 				my $herevet = "$here\n" . cat_vet($line) . "\n";
+<<<<<<< HEAD
 				ERROR("LO_MACRO",
 				      "use the LO() macro, not (... & 0xFFFF)\n" . $herevet);
 			}
@@ -1810,6 +2006,13 @@ sub process {
 				my $herevet = "$here\n" . cat_vet($line) . "\n";
 				ERROR("HI_MACRO",
 				      "use the HI() macro, not (... >> 16)\n" . $herevet);
+=======
+				ERROR("use the LO() macro, not (... & 0xFFFF)\n" . $herevet);
+			}
+			if ($line =~ /\.[hH][[:space:]]*=.*>>[[:space:]]*16/) {
+				my $herevet = "$here\n" . cat_vet($line) . "\n";
+				ERROR("use the HI() macro, not (... >> 16)\n" . $herevet);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
@@ -1821,14 +2024,19 @@ sub process {
 		if ($rawline =~ /^\+\s* \t\s*\S/ ||
 		    $rawline =~ /^\+\s*        \s*/) {
 			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
+<<<<<<< HEAD
 			ERROR("CODE_INDENT",
 			      "code indent should use tabs where possible\n" . $herevet);
+=======
+			ERROR("code indent should use tabs where possible\n" . $herevet);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			$rpt_cleaners = 1;
 		}
 
 # check for space before tabs.
 		if ($rawline =~ /^\+/ && $rawline =~ / \t/) {
 			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
+<<<<<<< HEAD
 			WARN("SPACE_BEFORE_TAB",
 			     "please, no space before tabs\n" . $herevet);
 		}
@@ -1867,6 +2075,9 @@ sub process {
 		if ($line =~ /^\+.*\*[ \t]*\)[ \t]+/) {
 			CHK("SPACING",
 			    "No space is necessary after a cast\n" . $hereprev);
+=======
+			WARN("please, no space before tabs\n" . $herevet);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check for spaces at the beginning of a line.
@@ -1876,8 +2087,12 @@ sub process {
 #  3) hanging labels
 		if ($rawline =~ /^\+ / && $line !~ /\+ *(?:$;|#|$Ident:)/)  {
 			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
+<<<<<<< HEAD
 			WARN("LEADING_SPACE",
 			     "please, no spaces at the start of a line\n" . $herevet);
+=======
+			WARN("please, no spaces at the start of a line\n" . $herevet);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check we are in a valid C source file if not then ignore this hunk
@@ -1885,13 +2100,18 @@ sub process {
 
 # check for RCS/CVS revision markers
 		if ($rawline =~ /^\+.*\$(Revision|Log|Id)(?:\$|)/) {
+<<<<<<< HEAD
 			WARN("CVS_KEYWORD",
 			     "CVS style keyword markers, these will _not_ be updated\n". $herecurr);
+=======
+			WARN("CVS style keyword markers, these will _not_ be updated\n". $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # Blackfin: don't use __builtin_bfin_[cs]sync
 		if ($line =~ /__builtin_bfin_csync/) {
 			my $herevet = "$here\n" . cat_vet($line) . "\n";
+<<<<<<< HEAD
 			ERROR("CSYNC",
 			      "use the CSYNC() macro in asm/blackfin.h\n" . $herevet);
 		}
@@ -1899,19 +2119,31 @@ sub process {
 			my $herevet = "$here\n" . cat_vet($line) . "\n";
 			ERROR("SSYNC",
 			      "use the SSYNC() macro in asm/blackfin.h\n" . $herevet);
+=======
+			ERROR("use the CSYNC() macro in asm/blackfin.h\n" . $herevet);
+		}
+		if ($line =~ /__builtin_bfin_ssync/) {
+			my $herevet = "$here\n" . cat_vet($line) . "\n";
+			ERROR("use the SSYNC() macro in asm/blackfin.h\n" . $herevet);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # Check for potential 'bare' types
 		my ($stat, $cond, $line_nr_next, $remain_next, $off_next,
 		    $realline_next);
+<<<<<<< HEAD
 #print "LINE<$line>\n";
 		if ($linenr >= $suppress_statement &&
 		    $realcnt && $line =~ /.\s*\S/) {
+=======
+		if ($realcnt && $line =~ /.\s*\S/) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			($stat, $cond, $line_nr_next, $remain_next, $off_next) =
 				ctx_statement_block($linenr, $realcnt, 0);
 			$stat =~ s/\n./\n /g;
 			$cond =~ s/\n./\n /g;
 
+<<<<<<< HEAD
 #print "linenr<$linenr> <$stat>\n";
 			# If this statement has no statement boundaries within
 			# it there is no point in retrying a statement scan
@@ -1922,6 +2154,8 @@ sub process {
 				$suppress_statement = $line_nr_next;
 			}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			# Find the real next line.
 			$realline_next = $line_nr_next;
 			if (defined $realline_next &&
@@ -1999,8 +2233,12 @@ sub process {
 				}
 			}
 			if ($err ne '') {
+<<<<<<< HEAD
 				ERROR("SWITCH_CASE_INDENT_LEVEL",
 				      "switch and case should be at the same indent\n$hereline$err");
+=======
+				ERROR("switch and case should be at the same indent\n$hereline$err");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
@@ -2010,12 +2248,15 @@ sub process {
 			my $pre_ctx = "$1$2";
 
 			my ($level, @ctx) = ctx_statement_level($linenr, $realcnt, 0);
+<<<<<<< HEAD
 
 			if ($line =~ /^\+\t{6,}/) {
 				WARN("DEEP_INDENTATION",
 				     "Too many leading tabs - consider code refactoring\n" . $herecurr);
 			}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			my $ctx_cnt = $realcnt - $#ctx - 1;
 			my $ctx = join("\n", @ctx);
 
@@ -2034,8 +2275,12 @@ sub process {
 			#print "pre<$pre_ctx>\nline<$line>\nctx<$ctx>\nnext<$lines[$ctx_ln - 1]>\n";
 
 			if ($ctx !~ /{\s*/ && defined($lines[$ctx_ln -1]) && $lines[$ctx_ln - 1] =~ /^\+\s*{/) {
+<<<<<<< HEAD
 				ERROR("OPEN_BRACE",
 				      "that open brace { should be on the previous line\n" .
+=======
+				ERROR("that open brace { should be on the previous line\n" .
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"$here\n$ctx\n$rawlines[$ctx_ln - 1]\n");
 			}
 			if ($level == 0 && $pre_ctx !~ /}\s*while\s*\($/ &&
@@ -2044,8 +2289,12 @@ sub process {
 			{
 				my ($nlength, $nindent) = line_stats($lines[$ctx_ln - 1]);
 				if ($nindent > $indent) {
+<<<<<<< HEAD
 					WARN("TRAILING_SEMICOLON",
 					     "trailing semicolon indicates no statements, indent implies otherwise\n" .
+=======
+					WARN("trailing semicolon indicates no statements, indent implies otherwise\n" .
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						"$here\n$ctx\n$rawlines[$ctx_ln - 1]\n");
 				}
 			}
@@ -2053,9 +2302,12 @@ sub process {
 
 # Check relative indent for conditionals and blocks.
 		if ($line =~ /\b(?:(?:if|while|for)\s*\(|do\b)/ && $line !~ /^.\s*#/ && $line !~ /\}\s*while\s*/) {
+<<<<<<< HEAD
 			($stat, $cond, $line_nr_next, $remain_next, $off_next) =
 				ctx_statement_block($linenr, $realcnt, 0)
 					if (!defined $stat);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			my ($s, $c) = ($stat, $cond);
 
 			substr($s, 0, length($c), '');
@@ -2136,8 +2388,12 @@ sub process {
 
 			if ($check && (($sindent % 8) != 0 ||
 			    ($sindent <= $indent && $s ne ''))) {
+<<<<<<< HEAD
 				WARN("SUSPECT_CODE_INDENT",
 				     "suspect code indent for conditional statements ($indent, $sindent)\n" . $herecurr . "$stat_real\n");
+=======
+				WARN("suspect code indent for conditional statements ($indent, $sindent)\n" . $herecurr . "$stat_real\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
@@ -2160,22 +2416,34 @@ sub process {
 # TEST: allow direct testing of the type matcher.
 		if ($dbg_type) {
 			if ($line =~ /^.\s*$Declare\s*$/) {
+<<<<<<< HEAD
 				ERROR("TEST_TYPE",
 				      "TEST: is type\n" . $herecurr);
 			} elsif ($dbg_type > 1 && $line =~ /^.+($Declare)/) {
 				ERROR("TEST_NOT_TYPE",
 				      "TEST: is not type ($1 is)\n". $herecurr);
+=======
+				ERROR("TEST: is type\n" . $herecurr);
+			} elsif ($dbg_type > 1 && $line =~ /^.+($Declare)/) {
+				ERROR("TEST: is not type ($1 is)\n". $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			next;
 		}
 # TEST: allow direct testing of the attribute matcher.
 		if ($dbg_attr) {
 			if ($line =~ /^.\s*$Modifier\s*$/) {
+<<<<<<< HEAD
 				ERROR("TEST_ATTR",
 				      "TEST: is attr\n" . $herecurr);
 			} elsif ($dbg_attr > 1 && $line =~ /^.+($Modifier)/) {
 				ERROR("TEST_NOT_ATTR",
 				      "TEST: is not attr ($1 is)\n". $herecurr);
+=======
+				ERROR("TEST: is attr\n" . $herecurr);
+			} elsif ($dbg_attr > 1 && $line =~ /^.+($Modifier)/) {
+				ERROR("TEST: is not attr ($1 is)\n". $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			next;
 		}
@@ -2183,8 +2451,12 @@ sub process {
 # check for initialisation to aggregates open brace on the next line
 		if ($line =~ /^.\s*{/ &&
 		    $prevline =~ /(?:^|[^=])=\s*$/) {
+<<<<<<< HEAD
 			ERROR("OPEN_BRACE",
 			      "that open brace { should be on the previous line\n" . $hereprev);
+=======
+			ERROR("that open brace { should be on the previous line\n" . $hereprev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 #
@@ -2195,16 +2467,24 @@ sub process {
 		if ($rawline =~ m{^.\s*\#\s*include\s+[<"](.*)[">]}) {
 			my $path = $1;
 			if ($path =~ m{//}) {
+<<<<<<< HEAD
 				ERROR("MALFORMED_INCLUDE",
 				      "malformed #include filename\n" .
+=======
+				ERROR("malformed #include filename\n" .
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					$herecurr);
 			}
 		}
 
 # no C99 // comments
 		if ($line =~ m{//}) {
+<<<<<<< HEAD
 			ERROR("C99_COMMENTS",
 			      "do not use C99 // comments\n" . $herecurr);
+=======
+			ERROR("do not use C99 // comments\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		# Remove C99 comments.
 		$line =~ s@//.*@@;
@@ -2223,7 +2503,11 @@ sub process {
 			#   XXX(foo);
 			#   EXPORT_SYMBOL(something_foo);
 			my $name = $1;
+<<<<<<< HEAD
 			if ($stat =~ /^(?:.\s*}\s*\n)?.([A-Z_]+)\s*\(\s*($Ident)/ &&
+=======
+			if ($stat =~ /^.([A-Z_]+)\s*\(\s*($Ident)/ &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    $name =~ /^${Ident}_$2/) {
 #print "FOO C name<$name>\n";
 				$suppress_export{$realline_next} = 1;
@@ -2251,41 +2535,65 @@ sub process {
 		}
 		if (defined $suppress_export{$linenr} &&
 		    $suppress_export{$linenr} == 2) {
+<<<<<<< HEAD
 			WARN("EXPORT_SYMBOL",
 			     "EXPORT_SYMBOL(foo); should immediately follow its function/variable\n" . $herecurr);
+=======
+			WARN("EXPORT_SYMBOL(foo); should immediately follow its function/variable\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check for global initialisers.
 		if ($line =~ /^.$Type\s*$Ident\s*(?:\s+$Modifier)*\s*=\s*(0|NULL|false)\s*;/) {
+<<<<<<< HEAD
 			ERROR("GLOBAL_INITIALISERS",
 			      "do not initialise globals to 0 or NULL\n" .
+=======
+			ERROR("do not initialise globals to 0 or NULL\n" .
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				$herecurr);
 		}
 # check for static initialisers.
 		if ($line =~ /\bstatic\s.*=\s*(0|NULL|false)\s*;/) {
+<<<<<<< HEAD
 			ERROR("INITIALISED_STATIC",
 			      "do not initialise statics to 0 or NULL\n" .
+=======
+			ERROR("do not initialise statics to 0 or NULL\n" .
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				$herecurr);
 		}
 
 # check for static const char * arrays.
 		if ($line =~ /\bstatic\s+const\s+char\s*\*\s*(\w+)\s*\[\s*\]\s*=\s*/) {
+<<<<<<< HEAD
 			WARN("STATIC_CONST_CHAR_ARRAY",
 			     "static const char * array should probably be static const char * const\n" .
+=======
+			WARN("static const char * array should probably be static const char * const\n" .
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				$herecurr);
                }
 
 # check for static char foo[] = "bar" declarations.
 		if ($line =~ /\bstatic\s+char\s+(\w+)\s*\[\s*\]\s*=\s*"/) {
+<<<<<<< HEAD
 			WARN("STATIC_CONST_CHAR_ARRAY",
 			     "static char array declaration should probably be static const char\n" .
+=======
+			WARN("static char array declaration should probably be static const char\n" .
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				$herecurr);
                }
 
 # check for declarations of struct pci_device_id
 		if ($line =~ /\bstruct\s+pci_device_id\s+\w+\s*\[\s*\]\s*\=\s*\{/) {
+<<<<<<< HEAD
 			WARN("DEFINE_PCI_DEVICE_TABLE",
 			     "Use DEFINE_PCI_DEVICE_TABLE for struct pci_device_id\n" . $herecurr);
+=======
+			WARN("Use DEFINE_PCI_DEVICE_TABLE for struct pci_device_id\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check for new typedefs, only function parameters and sparse annotations
@@ -2295,15 +2603,24 @@ sub process {
 		    $line !~ /\btypedef\s+$Type\s+$Ident\s*\(/ &&
 		    $line !~ /\b$typeTypedefs\b/ &&
 		    $line !~ /\b__bitwise(?:__|)\b/) {
+<<<<<<< HEAD
 			WARN("NEW_TYPEDEFS",
 			     "do not add new typedefs\n" . $herecurr);
+=======
+			WARN("do not add new typedefs\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # * goes on variable not on type
 		# (char*[ const])
+<<<<<<< HEAD
 		while ($line =~ m{(\($NonptrType(\s*(?:$Modifier\b\s*|\*\s*)+)\))}g) {
 			#print "AA<$1>\n";
 			my ($from, $to) = ($2, $2);
+=======
+		if ($line =~ m{\($NonptrType(\s*(?:$Modifier\b\s*|\*\s*)+)\)}) {
+			my ($from, $to) = ($1, $1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			# Should start with a space.
 			$to =~ s/^(\S)/ $1/;
@@ -2315,6 +2632,7 @@ sub process {
 
 			#print "from<$from> to<$to>\n";
 			if ($from ne $to) {
+<<<<<<< HEAD
 				ERROR("POINTER_LOCATION",
 				      "\"(foo$from)\" should be \"(foo$to)\"\n" .  $herecurr);
 			}
@@ -2322,6 +2640,12 @@ sub process {
 		while ($line =~ m{(\b$NonptrType(\s*(?:$Modifier\b\s*|\*\s*)+)($Ident))}g) {
 			#print "BB<$1>\n";
 			my ($from, $to, $ident) = ($2, $2, $3);
+=======
+				ERROR("\"(foo$from)\" should be \"(foo$to)\"\n" .  $herecurr);
+			}
+		} elsif ($line =~ m{\b$NonptrType(\s*(?:$Modifier\b\s*|\*\s*)+)($Ident)}) {
+			my ($from, $to, $ident) = ($1, $1, $2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			# Should start with a space.
 			$to =~ s/^(\S)/ $1/;
@@ -2335,8 +2659,12 @@ sub process {
 
 			#print "from<$from> to<$to> ident<$ident>\n";
 			if ($from ne $to && $ident !~ /^$Modifier$/) {
+<<<<<<< HEAD
 				ERROR("POINTER_LOCATION",
 				      "\"foo${from}bar\" should be \"foo${to}bar\"\n" .  $herecurr);
+=======
+				ERROR("\"foo${from}bar\" should be \"foo${to}bar\"\n" .  $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
@@ -2348,14 +2676,22 @@ sub process {
 # 		}
 
 		if ($line =~ /\bLINUX_VERSION_CODE\b/) {
+<<<<<<< HEAD
 			WARN("LINUX_VERSION_CODE",
 			     "LINUX_VERSION_CODE should be avoided, code should be for the version to which it is merged\n" . $herecurr);
+=======
+			WARN("LINUX_VERSION_CODE should be avoided, code should be for the version to which it is merged\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check for uses of printk_ratelimit
 		if ($line =~ /\bprintk_ratelimit\s*\(/) {
+<<<<<<< HEAD
 			WARN("PRINTK_RATELIMITED",
 "Prefer printk_ratelimited or pr_<level>_ratelimited to printk_ratelimit\n" . $herecurr);
+=======
+			WARN("Prefer printk_ratelimited or pr_<level>_ratelimited to printk_ratelimit\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # printk should use KERN_* levels.  Note that follow on printk's on the
@@ -2377,8 +2713,12 @@ sub process {
 				}
 			}
 			if ($ok == 0) {
+<<<<<<< HEAD
 				WARN("PRINTK_WITHOUT_KERN_LEVEL",
 				     "printk() should include KERN_ facility level\n" . $herecurr);
+=======
+				WARN("printk() should include KERN_ facility level\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
@@ -2386,21 +2726,33 @@ sub process {
 # or if closed on same line
 		if (($line=~/$Type\s*$Ident\(.*\).*\s{/) and
 		    !($line=~/\#\s*define.*do\s{/) and !($line=~/}/)) {
+<<<<<<< HEAD
 			ERROR("OPEN_BRACE",
 			      "open brace '{' following function declarations go on the next line\n" . $herecurr);
+=======
+			ERROR("open brace '{' following function declarations go on the next line\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # open braces for enum, union and struct go on the same line.
 		if ($line =~ /^.\s*{/ &&
 		    $prevline =~ /^.\s*(?:typedef\s+)?(enum|union|struct)(?:\s+$Ident)?\s*$/) {
+<<<<<<< HEAD
 			ERROR("OPEN_BRACE",
 			      "open brace '{' following $1 go on the same line\n" . $hereprev);
+=======
+			ERROR("open brace '{' following $1 go on the same line\n" . $hereprev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # missing space after union, struct or enum definition
 		if ($line =~ /^.\s*(?:typedef\s+)?(enum|union|struct)(?:\s+$Ident)?(?:\s+$Ident)?[=\{]/) {
+<<<<<<< HEAD
 		    WARN("SPACING",
 			 "missing space after $1 definition\n" . $herecurr);
+=======
+		    WARN("missing space after $1 definition\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check for spacing round square brackets; allowed:
@@ -2411,9 +2763,14 @@ sub process {
 			my ($where, $prefix) = ($-[1], $1);
 			if ($prefix !~ /$Type\s+$/ &&
 			    ($where != 0 || $prefix !~ /^.\s+$/) &&
+<<<<<<< HEAD
 			    $prefix !~ /[{,]\s+$/) {
 				ERROR("BRACKET_SPACE",
 				      "space prohibited before open square bracket '['\n" . $herecurr);
+=======
+			    $prefix !~ /{\s+$/) {
+				ERROR("space prohibited before open square bracket '['\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
@@ -2444,8 +2801,12 @@ sub process {
 			} elsif ($ctx =~ /$Type$/) {
 
 			} else {
+<<<<<<< HEAD
 				WARN("SPACING",
 				     "space prohibited between function name and open parenthesis '('\n" . $herecurr);
+=======
+				WARN("space prohibited between function name and open parenthesis '('\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 # Check operator spacing.
@@ -2519,8 +2880,12 @@ sub process {
 				} elsif ($op eq ';') {
 					if ($ctx !~ /.x[WEBC]/ &&
 					    $cc !~ /^\\/ && $cc !~ /^;/) {
+<<<<<<< HEAD
 						ERROR("SPACING",
 						      "space required after that '$op' $at\n" . $hereptr);
+=======
+						ERROR("space required after that '$op' $at\n" . $hereptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 
 				# // is a comment
@@ -2531,15 +2896,23 @@ sub process {
 				#   :   when part of a bitfield
 				} elsif ($op eq '->' || $opv eq ':B') {
 					if ($ctx =~ /Wx.|.xW/) {
+<<<<<<< HEAD
 						ERROR("SPACING",
 						      "spaces prohibited around that '$op' $at\n" . $hereptr);
+=======
+						ERROR("spaces prohibited around that '$op' $at\n" . $hereptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 
 				# , must have a space on the right.
 				} elsif ($op eq ',') {
 					if ($ctx !~ /.x[WEC]/ && $cc !~ /^}/) {
+<<<<<<< HEAD
 						ERROR("SPACING",
 						      "space required after that '$op' $at\n" . $hereptr);
+=======
+						ERROR("space required after that '$op' $at\n" . $hereptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 
 				# '*' as part of a type definition -- reported already.
@@ -2553,20 +2926,29 @@ sub process {
 					 $opv eq '*U' || $opv eq '-U' ||
 					 $opv eq '&U' || $opv eq '&&U') {
 					if ($ctx !~ /[WEBC]x./ && $ca !~ /(?:\)|!|~|\*|-|\&|\||\+\+|\-\-|\{)$/) {
+<<<<<<< HEAD
 						ERROR("SPACING",
 						      "space required before that '$op' $at\n" . $hereptr);
+=======
+						ERROR("space required before that '$op' $at\n" . $hereptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 					if ($op eq '*' && $cc =~/\s*$Modifier\b/) {
 						# A unary '*' may be const
 
 					} elsif ($ctx =~ /.xW/) {
+<<<<<<< HEAD
 						ERROR("SPACING",
 						      "space prohibited after that '$op' $at\n" . $hereptr);
+=======
+						ERROR("space prohibited after that '$op' $at\n" . $hereptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 
 				# unary ++ and unary -- are allowed no space on one side.
 				} elsif ($op eq '++' or $op eq '--') {
 					if ($ctx !~ /[WEOBC]x[^W]/ && $ctx !~ /[^W]x[WOBEC]/) {
+<<<<<<< HEAD
 						ERROR("SPACING",
 						      "space required one side of that '$op' $at\n" . $hereptr);
 					}
@@ -2578,6 +2960,16 @@ sub process {
 					if ($ctx =~ /ExW/) {
 						ERROR("SPACING",
 						      "space prohibited after that '$op' $at\n" . $hereptr);
+=======
+						ERROR("space required one side of that '$op' $at\n" . $hereptr);
+					}
+					if ($ctx =~ /Wx[BE]/ ||
+					    ($ctx =~ /Wx./ && $cc =~ /^;/)) {
+						ERROR("space prohibited before that '$op' $at\n" . $hereptr);
+					}
+					if ($ctx =~ /ExW/) {
+						ERROR("space prohibited after that '$op' $at\n" . $hereptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 
 
@@ -2589,8 +2981,12 @@ sub process {
 					 $op eq '%')
 				{
 					if ($ctx =~ /Wx[^WCE]|[^WCE]xW/) {
+<<<<<<< HEAD
 						ERROR("SPACING",
 						      "need consistent spacing around '$op' $at\n" .
+=======
+						ERROR("need consistent spacing around '$op' $at\n" .
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 							$hereptr);
 					}
 
@@ -2598,8 +2994,12 @@ sub process {
 				# terminating a case value or a label.
 				} elsif ($opv eq ':C' || $opv eq ':L') {
 					if ($ctx =~ /Wx./) {
+<<<<<<< HEAD
 						ERROR("SPACING",
 						      "space prohibited before that '$op' $at\n" . $hereptr);
+=======
+						ERROR("space prohibited before that '$op' $at\n" . $hereptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 
 				# All the others need spaces both sides.
@@ -2622,8 +3022,12 @@ sub process {
 					}
 
 					if ($ok == 0) {
+<<<<<<< HEAD
 						ERROR("SPACING",
 						      "spaces required around that '$op' $at\n" . $hereptr);
+=======
+						ERROR("spaces required around that '$op' $at\n" . $hereptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 				}
 				$off += length($elements[$n + 1]);
@@ -2632,8 +3036,12 @@ sub process {
 
 # check for multiple assignments
 		if ($line =~ /^.\s*$Lval\s*=\s*$Lval\s*=(?!=)/) {
+<<<<<<< HEAD
 			CHK("MULTIPLE_ASSIGNMENTS",
 			    "multiple assignments should be avoided\n" . $herecurr);
+=======
+			CHK("multiple assignments should be avoided\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 ## # check for multiple declarations, allowing for a function declaration
@@ -2647,53 +3055,84 @@ sub process {
 ## 			while ($ln =~ s/\([^\(\)]*\)//g) {
 ## 			}
 ## 			if ($ln =~ /,/) {
+<<<<<<< HEAD
 ## 				WARN("MULTIPLE_DECLARATION",
 ##				     "declaring multiple variables together should be avoided\n" . $herecurr);
+=======
+## 				WARN("declaring multiple variables together should be avoided\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ## 			}
 ## 		}
 
 #need space before brace following if, while, etc
 		if (($line =~ /\(.*\){/ && $line !~ /\($Type\){/) ||
 		    $line =~ /do{/) {
+<<<<<<< HEAD
 			ERROR("SPACING",
 			      "space required before the open brace '{'\n" . $herecurr);
+=======
+			ERROR("space required before the open brace '{'\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # closing brace should have a space following it when it has anything
 # on the line
 		if ($line =~ /}(?!(?:,|;|\)))\S/) {
+<<<<<<< HEAD
 			ERROR("SPACING",
 			      "space required after that close brace '}'\n" . $herecurr);
+=======
+			ERROR("space required after that close brace '}'\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check spacing on square brackets
 		if ($line =~ /\[\s/ && $line !~ /\[\s*$/) {
+<<<<<<< HEAD
 			ERROR("SPACING",
 			      "space prohibited after that open square bracket '['\n" . $herecurr);
 		}
 		if ($line =~ /\s\]/) {
 			ERROR("SPACING",
 			      "space prohibited before that close square bracket ']'\n" . $herecurr);
+=======
+			ERROR("space prohibited after that open square bracket '['\n" . $herecurr);
+		}
+		if ($line =~ /\s\]/) {
+			ERROR("space prohibited before that close square bracket ']'\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check spacing on parentheses
 		if ($line =~ /\(\s/ && $line !~ /\(\s*(?:\\)?$/ &&
 		    $line !~ /for\s*\(\s+;/) {
+<<<<<<< HEAD
 			ERROR("SPACING",
 			      "space prohibited after that open parenthesis '('\n" . $herecurr);
+=======
+			ERROR("space prohibited after that open parenthesis '('\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		if ($line =~ /(\s+)\)/ && $line !~ /^.\s*\)/ &&
 		    $line !~ /for\s*\(.*;\s+\)/ &&
 		    $line !~ /:\s+\)/) {
+<<<<<<< HEAD
 			ERROR("SPACING",
 			      "space prohibited before that close parenthesis ')'\n" . $herecurr);
+=======
+			ERROR("space prohibited before that close parenthesis ')'\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 #goto labels aren't indented, allow a single space however
 		if ($line=~/^.\s+[A-Za-z\d_]+:(?![0-9]+)/ and
 		   !($line=~/^. [A-Za-z\d_]+:/) and !($line=~/^.\s+default:/)) {
+<<<<<<< HEAD
 			WARN("INDENTED_LABEL",
 			     "labels should not be indented\n" . $herecurr);
+=======
+			WARN("labels should not be indented\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # Return is not a function.
@@ -2704,7 +3143,11 @@ sub process {
 			# Flatten any parentheses
 			$value =~ s/\(/ \(/g;
 			$value =~ s/\)/\) /g;
+<<<<<<< HEAD
 			while ($value =~ s/\[[^\[\]]*\]/1/ ||
+=======
+			while ($value =~ s/\[[^\{\}]*\]/1/ ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       $value !~ /(?:$Ident|-?$Constant)\s*
 					     $Compare\s*
 					     (?:$Ident|-?$Constant)/x &&
@@ -2712,34 +3155,52 @@ sub process {
 			}
 #print "value<$value>\n";
 			if ($value =~ /^\s*(?:$Ident|-?$Constant)\s*$/) {
+<<<<<<< HEAD
 				ERROR("RETURN_PARENTHESES",
 				      "return is not a function, parentheses are not required\n" . $herecurr);
 
 			} elsif ($spacing !~ /\s+/) {
 				ERROR("SPACING",
 				      "space required before the open parenthesis '('\n" . $herecurr);
+=======
+				ERROR("return is not a function, parentheses are not required\n" . $herecurr);
+
+			} elsif ($spacing !~ /\s+/) {
+				ERROR("space required before the open parenthesis '('\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 # Return of what appears to be an errno should normally be -'ve
 		if ($line =~ /^.\s*return\s*(E[A-Z]*)\s*;/) {
 			my $name = $1;
 			if ($name ne 'EOF' && $name ne 'ERROR') {
+<<<<<<< HEAD
 				WARN("USE_NEGATIVE_ERRNO",
 				     "return of an errno should typically be -ve (return -$1)\n" . $herecurr);
+=======
+				WARN("return of an errno should typically be -ve (return -$1)\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
 # Need a space before open parenthesis after if, while etc
 		if ($line=~/\b(if|while|for|switch)\(/) {
+<<<<<<< HEAD
 			ERROR("SPACING", "space required before the open parenthesis '('\n" . $herecurr);
+=======
+			ERROR("space required before the open parenthesis '('\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # Check for illegal assignment in if conditional -- and check for trailing
 # statements after the conditional.
 		if ($line =~ /do\s*(?!{)/) {
+<<<<<<< HEAD
 			($stat, $cond, $line_nr_next, $remain_next, $off_next) =
 				ctx_statement_block($linenr, $realcnt, 0)
 					if (!defined $stat);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			my ($stat_next) = ctx_statement_block($line_nr_next,
 						$remain_next, $off_next);
 			$stat_next =~ s/\n./\n /g;
@@ -2762,8 +3223,12 @@ sub process {
 			my ($s, $c) = ($stat, $cond);
 
 			if ($c =~ /\bif\s*\(.*[^<>!=]=[^=].*/s) {
+<<<<<<< HEAD
 				ERROR("ASSIGN_IN_IF",
 				      "do not use assignment in if condition\n" . $herecurr);
+=======
+				ERROR("do not use assignment in if condition\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 
 			# Find out what is on the end of the line after the
@@ -2785,8 +3250,12 @@ sub process {
 					$stat_real = "[...]\n$stat_real";
 				}
 
+<<<<<<< HEAD
 				ERROR("TRAILING_STATEMENTS",
 				      "trailing statements should be on next line\n" . $herecurr . $stat_real);
+=======
+				ERROR("trailing statements should be on next line\n" . $herecurr . $stat_real);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
@@ -2802,8 +3271,12 @@ sub process {
 				(?:\&\&|\|\||\)|\])
 			)/x)
 		{
+<<<<<<< HEAD
 			WARN("HEXADECIMAL_BOOLEAN_TEST",
 			     "boolean test with hexadecimal, perhaps just 1 \& or \|?\n" . $herecurr);
+=======
+			WARN("boolean test with hexadecimal, perhaps just 1 \& or \|?\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # if and else should not have general statements after it
@@ -2811,14 +3284,22 @@ sub process {
 			my $s = $1;
 			$s =~ s/$;//g; 	# Remove any comments
 			if ($s !~ /^\s*(?:\sif|(?:{|)\s*\\?\s*$)/) {
+<<<<<<< HEAD
 				ERROR("TRAILING_STATEMENTS",
 				      "trailing statements should be on next line\n" . $herecurr);
+=======
+				ERROR("trailing statements should be on next line\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 # if should not continue a brace
 		if ($line =~ /}\s*if\b/) {
+<<<<<<< HEAD
 			ERROR("TRAILING_STATEMENTS",
 			      "trailing statements should be on next line\n" .
+=======
+			ERROR("trailing statements should be on next line\n" .
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				$herecurr);
 		}
 # case and default should not have general statements after them
@@ -2828,16 +3309,24 @@ sub process {
 			\s*return\s+
 		    )/xg)
 		{
+<<<<<<< HEAD
 			ERROR("TRAILING_STATEMENTS",
 			      "trailing statements should be on next line\n" . $herecurr);
+=======
+			ERROR("trailing statements should be on next line\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		# Check for }<nl>else {, these must be at the same
 		# indent level to be relevant to each other.
 		if ($prevline=~/}\s*$/ and $line=~/^.\s*else\s*/ and
 						$previndent == $indent) {
+<<<<<<< HEAD
 			ERROR("ELSE_AFTER_BRACE",
 			      "else should follow close brace '}'\n" . $hereprev);
+=======
+			ERROR("else should follow close brace '}'\n" . $hereprev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if ($prevline=~/}\s*$/ and $line=~/^.\s*while\s*/ and
@@ -2850,8 +3339,12 @@ sub process {
 			$s =~ s/\n.*//g;
 
 			if ($s =~ /^\s*;/) {
+<<<<<<< HEAD
 				ERROR("WHILE_AFTER_BRACE",
 				      "while should follow close brace '}'\n" . $hereprev);
+=======
+				ERROR("while should follow close brace '}'\n" . $hereprev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
@@ -2864,8 +3357,12 @@ sub process {
 
 #no spaces allowed after \ in define
 		if ($line=~/\#\s*define.*\\\s$/) {
+<<<<<<< HEAD
 			WARN("WHITESPACE_AFTER_LINE_CONTINUATION",
 			     "Whitepspace after \\ makes next lines useless\n" . $herecurr);
+=======
+			WARN("Whitepspace after \\ makes next lines useless\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 #warn if <asm/foo.h> is #included and <linux/foo.h> is available (uses RAW line)
@@ -2877,11 +3374,17 @@ sub process {
 			    $1 !~ /$allowed_asm_includes/)
 			{
 				if ($realfile =~ m{^arch/}) {
+<<<<<<< HEAD
 					CHK("ARCH_INCLUDE_LINUX",
 					    "Consider using #include <linux/$file> instead of <asm/$file>\n" . $herecurr);
 				} else {
 					WARN("INCLUDE_LINUX",
 					     "Use #include <linux/$file> instead of <asm/$file>\n" . $herecurr);
+=======
+					CHK("Consider using #include <linux/$file> instead of <asm/$file>\n" . $herecurr);
+				} else {
+					WARN("Use #include <linux/$file> instead of <asm/$file>\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				}
 			}
 		}
@@ -2895,6 +3398,7 @@ sub process {
 			my $cnt = $realcnt;
 			my ($off, $dstat, $dcond, $rest);
 			my $ctx = '';
+<<<<<<< HEAD
 			($dstat, $dcond, $ln, $cnt, $off) =
 				ctx_statement_block($linenr, $realcnt, 0);
 			$ctx = $dstat;
@@ -2902,6 +3406,49 @@ sub process {
 			#print "LINE<$lines[$ln-1]> len<" . length($lines[$ln-1]) . "\n";
 
 			$dstat =~ s/^.\s*\#\s*define\s+$Ident(?:\([^\)]*\))?\s*//;
+=======
+
+			my $args = defined($1);
+
+			# Find the end of the macro and limit our statement
+			# search to that.
+			while ($cnt > 0 && defined $lines[$ln - 1] &&
+				$lines[$ln - 1] =~ /^(?:-|..*\\$)/)
+			{
+				$ctx .= $rawlines[$ln - 1] . "\n";
+				$cnt-- if ($lines[$ln - 1] !~ /^-/);
+				$ln++;
+			}
+			$ctx .= $rawlines[$ln - 1];
+
+			($dstat, $dcond, $ln, $cnt, $off) =
+				ctx_statement_block($linenr, $ln - $linenr + 1, 0);
+			#print "dstat<$dstat> dcond<$dcond> cnt<$cnt> off<$off>\n";
+			#print "LINE<$lines[$ln-1]> len<" . length($lines[$ln-1]) . "\n";
+
+			# Extract the remainder of the define (if any) and
+			# rip off surrounding spaces, and trailing \'s.
+			$rest = '';
+			while ($off != 0 || ($cnt > 0 && $rest =~ /\\\s*$/)) {
+				#print "ADDING cnt<$cnt> $off <" . substr($lines[$ln - 1], $off) . "> rest<$rest>\n";
+				if ($off != 0 || $lines[$ln - 1] !~ /^-/) {
+					$rest .= substr($lines[$ln - 1], $off) . "\n";
+					$cnt--;
+				}
+				$ln++;
+				$off = 0;
+			}
+			$rest =~ s/\\\n.//g;
+			$rest =~ s/^\s*//s;
+			$rest =~ s/\s*$//s;
+
+			# Clean up the original statement.
+			if ($args) {
+				substr($dstat, 0, length($dcond), '');
+			} else {
+				$dstat =~ s/^.\s*\#\s*define\s+$Ident\s*//;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			$dstat =~ s/$;//g;
 			$dstat =~ s/\\\n.//g;
 			$dstat =~ s/^\s*//s;
@@ -2910,6 +3457,7 @@ sub process {
 			# Flatten any parentheses and braces
 			while ($dstat =~ s/\([^\(\)]*\)/1/ ||
 			       $dstat =~ s/\{[^\{\}]*\}/1/ ||
+<<<<<<< HEAD
 			       $dstat =~ s/\[[^\[\]]*\]/1/)
 			{
 			}
@@ -2917,6 +3465,9 @@ sub process {
 			# Flatten any obvious string concatentation.
 			while ($dstat =~ s/("X*")\s*$Ident/$1/ ||
 			       $dstat =~ s/$Ident\s*("X*")/$1/)
+=======
+			       $dstat =~ s/\[[^\{\}]*\]/1/)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			{
 			}
 
@@ -2933,6 +3484,7 @@ sub process {
 				^\"|\"$
 			}x;
 			#print "REST<$rest> dstat<$dstat> ctx<$ctx>\n";
+<<<<<<< HEAD
 			if ($dstat ne '' &&
 			    $dstat !~ /^(?:$Ident|-?$Constant),$/ &&			# 10, // foo(),
 			    $dstat !~ /^(?:$Ident|-?$Constant);$/ &&			# foo();
@@ -2960,6 +3512,23 @@ sub process {
 				} else {
 					ERROR("COMPLEX_MACRO",
 					      "Macros with complex values should be enclosed in parenthesis\n" . "$herectx");
+=======
+			if ($rest ne '' && $rest ne ',') {
+				if ($rest !~ /while\s*\(/ &&
+				    $dstat !~ /$exceptions/)
+				{
+					ERROR("Macros with multiple statements should be enclosed in a do - while loop\n" . "$here\n$ctx\n");
+				}
+
+			} elsif ($ctx !~ /;/) {
+				if ($dstat ne '' &&
+				    $dstat !~ /^(?:$Ident|-?$Constant)$/ &&
+				    $dstat !~ /$exceptions/ &&
+				    $dstat !~ /^\.$Ident\s*=/ &&
+				    $dstat =~ /$Operators/)
+				{
+					ERROR("Macros with complex values should be enclosed in parenthesis\n" . "$here\n$ctx\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				}
 			}
 		}
@@ -2970,8 +3539,12 @@ sub process {
 #	ALIGN(...)
 #	VMLINUX_SYMBOL(...)
 		if ($realfile eq 'vmlinux.lds.h' && $line =~ /(?:(?:^|\s)$Ident\s*=|=\s*$Ident(?:\s|$))/) {
+<<<<<<< HEAD
 			WARN("MISSING_VMLINUX_SYMBOL",
 			     "vmlinux.lds.h needs VMLINUX_SYMBOL() around C-visible symbols\n" . $herecurr);
+=======
+			WARN("vmlinux.lds.h needs VMLINUX_SYMBOL() around C-visible symbols\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check for redundant bracing round if etc
@@ -2981,8 +3554,12 @@ sub process {
 			#print "chunks<$#chunks> linenr<$linenr> endln<$endln> level<$level>\n";
 			#print "APW: <<$chunks[1][0]>><<$chunks[1][1]>>\n";
 			if ($#chunks > 0 && $level == 0) {
+<<<<<<< HEAD
 				my @allowed = ();
 				my $allow = 0;
+=======
+				my $allowed = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				my $seen = 0;
 				my $herectx = $here . "\n";
 				my $ln = $linenr - 1;
@@ -2993,7 +3570,10 @@ sub process {
 					my ($whitespace) = ($cond =~ /^((?:\s*\n[+-])*\s*)/s);
 					my $offset = statement_rawlines($whitespace) - 1;
 
+<<<<<<< HEAD
 					$allowed[$allow] = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					#print "COND<$cond> whitespace<$whitespace> offset<$offset>\n";
 
 					# We have looked at and allowed this specific line.
@@ -3006,6 +3586,7 @@ sub process {
 
 					$seen++ if ($block =~ /^\s*{/);
 
+<<<<<<< HEAD
 					#print "cond<$cond> block<$block> allowed<$allowed[$allow]>\n";
 					if (statement_lines($cond) > 1) {
 						#print "APW: ALLOWED: cond<$cond>\n";
@@ -3034,6 +3615,24 @@ sub process {
 						CHK("BRACES",
 						    "braces {} should be used on all arms of this statement\n" . $herectx);
 					}
+=======
+					#print "cond<$cond> block<$block> allowed<$allowed>\n";
+					if (statement_lines($cond) > 1) {
+						#print "APW: ALLOWED: cond<$cond>\n";
+						$allowed = 1;
+					}
+					if ($block =~/\b(?:if|for|while)\b/) {
+						#print "APW: ALLOWED: block<$block>\n";
+						$allowed = 1;
+					}
+					if (statement_block_size($block) > 1) {
+						#print "APW: ALLOWED: lines block<$block>\n";
+						$allowed = 1;
+					}
+				}
+				if ($seen && !$allowed) {
+					WARN("braces {} are not necessary for any arm of this statement\n" . $herectx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				}
 			}
 		}
@@ -3080,6 +3679,7 @@ sub process {
 				}
 			}
 			if ($level == 0 && $block =~ /^\s*\{/ && !$allowed) {
+<<<<<<< HEAD
 				my $herectx = $here . "\n";
 				my $cnt = statement_rawlines($block);
 
@@ -3089,36 +3689,62 @@ sub process {
 
 				WARN("BRACES",
 				     "braces {} are not necessary for single statement blocks\n" . $herectx);
+=======
+				my $herectx = $here . "\n";;
+				my $cnt = statement_rawlines($block);
+
+				for (my $n = 0; $n < $cnt; $n++) {
+					$herectx .= raw_line($linenr, $n) . "\n";;
+				}
+
+				WARN("braces {} are not necessary for single statement blocks\n" . $herectx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
 # don't include deprecated include files (uses RAW line)
 		for my $inc (@dep_includes) {
 			if ($rawline =~ m@^.\s*\#\s*include\s*\<$inc>@) {
+<<<<<<< HEAD
 				ERROR("DEPRECATED_INCLUDE",
 				      "Don't use <$inc>: see Documentation/feature-removal-schedule.txt\n" . $herecurr);
+=======
+				ERROR("Don't use <$inc>: see Documentation/feature-removal-schedule.txt\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
 # don't use deprecated functions
 		for my $func (@dep_functions) {
 			if ($line =~ /\b$func\b/) {
+<<<<<<< HEAD
 				ERROR("DEPRECATED_FUNCTION",
 				      "Don't use $func(): see Documentation/feature-removal-schedule.txt\n" . $herecurr);
+=======
+				ERROR("Don't use $func(): see Documentation/feature-removal-schedule.txt\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
 # no volatiles please
 		my $asm_volatile = qr{\b(__asm__|asm)\s+(__volatile__|volatile)\b};
 		if ($line =~ /\bvolatile\b/ && $line !~ /$asm_volatile/) {
+<<<<<<< HEAD
 			WARN("VOLATILE",
 			     "Use of volatile is usually wrong: see Documentation/volatile-considered-harmful.txt\n" . $herecurr);
+=======
+			WARN("Use of volatile is usually wrong: see Documentation/volatile-considered-harmful.txt\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # warn about #if 0
 		if ($line =~ /^.\s*\#\s*if\s+0\b/) {
+<<<<<<< HEAD
 			CHK("REDUNDANT_CODE",
 			    "if this code is redundant consider removing it\n" .
+=======
+			CHK("if this code is redundant consider removing it\n" .
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				$herecurr);
 		}
 
@@ -3126,16 +3752,24 @@ sub process {
 		if ($prevline =~ /\bif\s*\(([^\)]*)\)/) {
 			my $expr = $1;
 			if ($line =~ /\bkfree\(\Q$expr\E\);/) {
+<<<<<<< HEAD
 				WARN("NEEDLESS_KFREE",
 				     "kfree(NULL) is safe this check is probably not required\n" . $hereprev);
+=======
+				WARN("kfree(NULL) is safe this check is probably not required\n" . $hereprev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 # check for needless usb_free_urb() checks
 		if ($prevline =~ /\bif\s*\(([^\)]*)\)/) {
 			my $expr = $1;
 			if ($line =~ /\busb_free_urb\(\Q$expr\E\);/) {
+<<<<<<< HEAD
 				WARN("NEEDLESS_USB_FREE_URB",
 				     "usb_free_urb(NULL) is safe this check is probably not required\n" . $hereprev);
+=======
+				WARN("usb_free_urb(NULL) is safe this check is probably not required\n" . $hereprev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
@@ -3143,16 +3777,24 @@ sub process {
 		if ($line =~ /\budelay\s*\(\s*(\w+)\s*\)/) {
 			# ignore udelay's < 10, however
 			if (! (($1 =~ /(\d+)/) && ($1 < 10)) ) {
+<<<<<<< HEAD
 				CHK("USLEEP_RANGE",
 				    "usleep_range is preferred over udelay; see Documentation/timers/timers-howto.txt\n" . $line);
+=======
+				CHK("usleep_range is preferred over udelay; see Documentation/timers/timers-howto.txt\n" . $line);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
 # warn about unexpectedly long msleep's
 		if ($line =~ /\bmsleep\s*\((\d+)\);/) {
 			if ($1 < 20) {
+<<<<<<< HEAD
 				WARN("MSLEEP",
 				     "msleep < 20ms can sleep for up to 20ms; see Documentation/timers/timers-howto.txt\n" . $line);
+=======
+				WARN("msleep < 20ms can sleep for up to 20ms; see Documentation/timers/timers-howto.txt\n" . $line);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
@@ -3165,8 +3807,12 @@ sub process {
 
 # warn about spacing in #ifdefs
 		if ($line =~ /^.\s*\#\s*(ifdef|ifndef|elif)\s\s+/) {
+<<<<<<< HEAD
 			ERROR("SPACING",
 			      "exactly one space required after that #$1\n" . $herecurr);
+=======
+			ERROR("exactly one space required after that #$1\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check for spinlock_t definitions without a comment.
@@ -3174,45 +3820,70 @@ sub process {
 		    $line =~ /^.\s*(DEFINE_MUTEX)\s*\(/) {
 			my $which = $1;
 			if (!ctx_has_comment($first_line, $linenr)) {
+<<<<<<< HEAD
 				CHK("UNCOMMENTED_DEFINITION",
 				    "$1 definition without comment\n" . $herecurr);
+=======
+				CHK("$1 definition without comment\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 # check for memory barriers without a comment.
 		if ($line =~ /\b(mb|rmb|wmb|read_barrier_depends|smp_mb|smp_rmb|smp_wmb|smp_read_barrier_depends)\(/) {
 			if (!ctx_has_comment($first_line, $linenr)) {
+<<<<<<< HEAD
 				CHK("MEMORY_BARRIER",
 				    "memory barrier without comment\n" . $herecurr);
+=======
+				CHK("memory barrier without comment\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 # check of hardware specific defines
 		if ($line =~ m@^.\s*\#\s*if.*\b(__i386__|__powerpc64__|__sun__|__s390x__)\b@ && $realfile !~ m@include/asm-@) {
+<<<<<<< HEAD
 			CHK("ARCH_DEFINES",
 			    "architecture specific defines should be avoided\n" .  $herecurr);
+=======
+			CHK("architecture specific defines should be avoided\n" .  $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # Check that the storage class is at the beginning of a declaration
 		if ($line =~ /\b$Storage\b/ && $line !~ /^.\s*$Storage\b/) {
+<<<<<<< HEAD
 			WARN("STORAGE_CLASS",
 			     "storage class should be at the beginning of the declaration\n" . $herecurr)
+=======
+			WARN("storage class should be at the beginning of the declaration\n" . $herecurr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check the location of the inline attribute, that it is between
 # storage class and type.
 		if ($line =~ /\b$Type\s+$Inline\b/ ||
 		    $line =~ /\b$Inline\s+$Storage\b/) {
+<<<<<<< HEAD
 			ERROR("INLINE_LOCATION",
 			      "inline keyword should sit between storage class and type\n" . $herecurr);
+=======
+			ERROR("inline keyword should sit between storage class and type\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # Check for __inline__ and __inline, prefer inline
 		if ($line =~ /\b(__inline__|__inline)\b/) {
+<<<<<<< HEAD
 			WARN("INLINE",
 			     "plain inline is preferred over $1\n" . $herecurr);
+=======
+			WARN("plain inline is preferred over $1\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # Check for __attribute__ packed, prefer __packed
 		if ($line =~ /\b__attribute__\s*\(\s*\(.*\bpacked\b/) {
+<<<<<<< HEAD
 			WARN("PREFER_PACKED",
 			     "__packed is preferred over __attribute__((packed))\n" . $herecurr);
 		}
@@ -3233,16 +3904,24 @@ sub process {
 		if ($line =~ /\b__attribute__\s*\(\s*\(\s*format\s*\(\s*scanf\b/) {
 			WARN("PREFER_SCANF",
 			     "__scanf(string-index, first-to-check) is preferred over __attribute__((format(scanf, string-index, first-to-check)))\n" . $herecurr);
+=======
+			WARN("__packed is preferred over __attribute__((packed))\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check for sizeof(&)
 		if ($line =~ /\bsizeof\s*\(\s*\&/) {
+<<<<<<< HEAD
 			WARN("SIZEOF_ADDRESS",
 			     "sizeof(& should be avoided\n" . $herecurr);
+=======
+			WARN("sizeof(& should be avoided\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check for line continuations in quoted strings with odd counts of "
 		if ($rawline =~ /\\$/ && $rawline =~ tr/"/"/ % 2) {
+<<<<<<< HEAD
 			WARN("LINE_CONTINUATIONS",
 			     "Avoid line continuations in quoted strings\n" . $herecurr);
 		}
@@ -3287,6 +3966,9 @@ sub process {
 				WARN("MINMAX",
 				     "$call() should probably be ${call}_t($cast, $arg1, $arg2)\n" . "$here\n$stat\n");
 			}
+=======
+			WARN("Avoid line continuations in quoted strings\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check for new externs in .c files.
@@ -3303,6 +3985,7 @@ sub process {
 			if ($s =~ /^\s*;/ &&
 			    $function_name ne 'uninitialized_var')
 			{
+<<<<<<< HEAD
 				WARN("AVOID_EXTERNS",
 				     "externs should be avoided in .c files\n" .  $herecurr);
 			}
@@ -3310,13 +3993,24 @@ sub process {
 			if ($paren_space =~ /\n/) {
 				WARN("FUNCTION_ARGUMENTS",
 				     "arguments for function declarations should follow identifier\n" . $herecurr);
+=======
+				WARN("externs should be avoided in .c files\n" .  $herecurr);
+			}
+
+			if ($paren_space =~ /\n/) {
+				WARN("arguments for function declarations should follow identifier\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 
 		} elsif ($realfile =~ /\.c$/ && defined $stat &&
 		    $stat =~ /^.\s*extern\s+/)
 		{
+<<<<<<< HEAD
 			WARN("AVOID_EXTERNS",
 			     "externs should be avoided in .c files\n" .  $herecurr);
+=======
+			WARN("externs should be avoided in .c files\n" .  $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # checks for new __setup's
@@ -3324,25 +4018,38 @@ sub process {
 			my $name = $1;
 
 			if (!grep(/$name/, @setup_docs)) {
+<<<<<<< HEAD
 				CHK("UNDOCUMENTED_SETUP",
 				    "__setup appears un-documented -- check Documentation/kernel-parameters.txt\n" . $herecurr);
+=======
+				CHK("__setup appears un-documented -- check Documentation/kernel-parameters.txt\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
 # check for pointless casting of kmalloc return
 		if ($line =~ /\*\s*\)\s*[kv][czm]alloc(_node){0,1}\b/) {
+<<<<<<< HEAD
 			WARN("UNNECESSARY_CASTS",
 			     "unnecessary cast may hide bugs, see http://c-faq.com/malloc/mallocnocast.html\n" . $herecurr);
+=======
+			WARN("unnecessary cast may hide bugs, see http://c-faq.com/malloc/mallocnocast.html\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check for multiple semicolons
 		if ($line =~ /;\s*;\s*$/) {
+<<<<<<< HEAD
 		    WARN("ONE_SEMICOLON",
 			 "Statements terminations use 1 semicolon\n" . $herecurr);
+=======
+		    WARN("Statements terminations use 1 semicolon\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check for gcc specific __FUNCTION__
 		if ($line =~ /__FUNCTION__/) {
+<<<<<<< HEAD
 			WARN("USE_FUNC",
 			     "__func__ should be used instead of gcc specific __FUNCTION__\n"  . $herecurr);
 		}
@@ -3351,10 +4058,14 @@ sub process {
 		if ($line =~ /\byield\s*\(\s*\)/) {
 			WARN("YIELD",
 			     "Using yield() is generally wrong. See yield() kernel-doc (sched/core.c)\n"  . $herecurr);
+=======
+			WARN("__func__ should be used instead of gcc specific __FUNCTION__\n"  . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check for semaphores initialized locked
 		if ($line =~ /^.\s*sema_init.+,\W?0\W?\)/) {
+<<<<<<< HEAD
 			WARN("CONSIDER_COMPLETION",
 			     "consider using a completion\n" . $herecurr);
 		}
@@ -3371,6 +4082,19 @@ sub process {
 			     "please use device_initcall() instead of __initcall()\n" . $herecurr);
 		}
 
+=======
+			WARN("consider using a completion\n" . $herecurr);
+
+		}
+# recommend kstrto* over simple_strto*
+		if ($line =~ /\bsimple_(strto.*?)\s*\(/) {
+			WARN("consider using kstrto* in preference to simple_$1\n" . $herecurr);
+		}
+# check for __initcall(), use device_initcall() explicitly please
+		if ($line =~ /^.\s*__initcall\s*\(/) {
+			WARN("please use device_initcall() instead of __initcall()\n" . $herecurr);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # check for various ops structs, ensure they are const.
 		my $struct_ops = qr{acpi_dock_ops|
 				address_space_operations|
@@ -3411,8 +4135,12 @@ sub process {
 				wd_ops}x;
 		if ($line !~ /\bconst\b/ &&
 		    $line =~ /\bstruct\s+($struct_ops)\b/) {
+<<<<<<< HEAD
 			WARN("CONST_STRUCT",
 			     "struct $1 should normally be const\n" .
+=======
+			WARN("struct $1 should normally be const\n" .
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				$herecurr);
 		}
 
@@ -3425,8 +4153,12 @@ sub process {
 		    $line !~ /\[[^\]]*\.\.\.[^\]]*NR_CPUS[^\]]*\]/ &&
 		    $line !~ /\[[^\]]*NR_CPUS[^\]]*\.\.\.[^\]]*\]/)
 		{
+<<<<<<< HEAD
 			WARN("NR_CPUS",
 			     "usage of NR_CPUS is often wrong - consider using cpu_possible(), num_possible_cpus(), for_each_possible_cpu(), etc\n" . $herecurr);
+=======
+			WARN("usage of NR_CPUS is often wrong - consider using cpu_possible(), num_possible_cpus(), for_each_possible_cpu(), etc\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 # check for %L{u,d,i} in strings
@@ -3435,8 +4167,12 @@ sub process {
 			$string = substr($rawline, $-[1], $+[1] - $-[1]);
 			$string =~ s/%%/__/g;
 			if ($string =~ /(?<!%)%L[udi]/) {
+<<<<<<< HEAD
 				WARN("PRINTF_L",
 				     "\%Ld/%Lu are not-standard C, use %lld/%llu\n" . $herecurr);
+=======
+				WARN("\%Ld/%Lu are not-standard C, use %lld/%llu\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				last;
 			}
 		}
@@ -3444,11 +4180,17 @@ sub process {
 # whine mightly about in_atomic
 		if ($line =~ /\bin_atomic\s*\(/) {
 			if ($realfile =~ m@^drivers/@) {
+<<<<<<< HEAD
 				ERROR("IN_ATOMIC",
 				      "do not use in_atomic in drivers\n" . $herecurr);
 			} elsif ($realfile !~ m@^kernel/@) {
 				WARN("IN_ATOMIC",
 				     "use of in_atomic() is incorrect outside core kernel code\n" . $herecurr);
+=======
+				ERROR("do not use in_atomic in drivers\n" . $herecurr);
+			} elsif ($realfile !~ m@^kernel/@) {
+				WARN("use of in_atomic() is incorrect outside core kernel code\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
@@ -3458,15 +4200,28 @@ sub process {
 			if ($realfile !~ m@^kernel/lockdep@ &&
 			    $realfile !~ m@^include/linux/lockdep@ &&
 			    $realfile !~ m@^drivers/base/core@) {
+<<<<<<< HEAD
 				ERROR("LOCKDEP",
 				      "lockdep_no_validate class is reserved for device->mutex.\n" . $herecurr);
+=======
+				ERROR("lockdep_no_validate class is reserved for device->mutex.\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
 		if ($line =~ /debugfs_create_file.*S_IWUGO/ ||
 		    $line =~ /DEVICE_ATTR.*S_IWUGO/ ) {
+<<<<<<< HEAD
 			WARN("EXPORTED_WORLD_WRITABLE",
 			     "Exporting world writable files is usually an error. Consider more restrictive permissions.\n" . $herecurr);
+=======
+			WARN("Exporting world writable files is usually an error. Consider more restrictive permissions.\n" . $herecurr);
+		}
+
+		# Check for memset with swapped arguments
+		if ($line =~ /memset.*\,(\ |)(0x|)0(\ |0|)\);/) {
+			ERROR("memset size is 3rd argument, not the second.\n" . $herecurr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -3489,12 +4244,19 @@ sub process {
 	}
 
 	if (!$is_patch) {
+<<<<<<< HEAD
 		ERROR("NOT_UNIFIED_DIFF",
 		      "Does not appear to be a unified-diff format patch\n");
 	}
 	if ($is_patch && $chk_signoff && $signoff == 0) {
 		ERROR("MISSING_SIGN_OFF",
 		      "Missing Signed-off-by: line(s)\n");
+=======
+		ERROR("Does not appear to be a unified-diff format patch\n");
+	}
+	if ($is_patch && $chk_signoff && $signoff == 0) {
+		ERROR("Missing Signed-off-by: line(s)\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	print report_dump();
@@ -3507,12 +4269,15 @@ sub process {
 	}
 
 	if ($quiet == 0) {
+<<<<<<< HEAD
 
 		if ($^V lt 5.10.0) {
 			print("NOTE: perl $^V is not modern enough to detect all possible issues.\n");
 			print("An upgrade to at least perl v5.10.0 is suggested.\n\n");
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		# If there were whitespace errors which cleanpatch can fix
 		# then suggest that.
 		if ($rpt_cleaners) {
@@ -3522,6 +4287,7 @@ sub process {
 		}
 	}
 
+<<<<<<< HEAD
 	if ($quiet == 0 && keys %ignore_type) {
 	    print "NOTE: Ignored message types:";
 	    foreach my $ignore (sort keys %ignore_type) {
@@ -3530,16 +4296,24 @@ sub process {
 	    print "\n\n";
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ($clean == 1 && $quiet == 0) {
 		print "$vname has no obvious style problems and is ready for submission.\n"
 	}
 	if ($clean == 0 && $quiet == 0) {
+<<<<<<< HEAD
 		print << "EOM";
 $vname has style problems, please review.
 
 If any of these errors are false positives, please report
 them to the maintainer, see CHECKPATCH in MAINTAINERS.
 EOM
+=======
+		print "$vname has style problems, please review.  If any of these errors\n";
+		print "are false positives report them to the maintainer, see\n";
+		print "CHECKPATCH in MAINTAINERS.\n";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return $clean;

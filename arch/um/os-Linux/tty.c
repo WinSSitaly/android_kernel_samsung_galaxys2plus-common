@@ -7,8 +7,15 @@
 #include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
+<<<<<<< HEAD
 #include "kern_util.h"
 #include "os.h"
+=======
+#include "kern_constants.h"
+#include "kern_util.h"
+#include "os.h"
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct grantpt_info {
 	int fd;

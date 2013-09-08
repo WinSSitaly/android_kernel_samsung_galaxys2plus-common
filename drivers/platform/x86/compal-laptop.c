@@ -189,7 +189,11 @@ struct compal_data{
 /* =============== */
 /* General globals */
 /* =============== */
+<<<<<<< HEAD
 static bool force;
+=======
+static int force;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(force, bool, 0);
 MODULE_PARM_DESC(force, "Force driver load, ignore DMI data");
 
@@ -882,7 +886,10 @@ static struct dmi_system_id __initdata compal_dmi_table[] = {
 	},
 	{ }
 };
+<<<<<<< HEAD
 MODULE_DEVICE_TABLE(dmi, compal_dmi_table);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void initialize_power_supply_data(struct compal_data *data)
 {
@@ -1098,3 +1105,19 @@ MODULE_AUTHOR("Roald Frederickx (roald.frederickx@gmail.com)");
 MODULE_DESCRIPTION("Compal Laptop Support");
 MODULE_VERSION(DRIVER_VERSION);
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+MODULE_ALIAS("dmi:*:rnIFL90:rvrIFT00:*");
+MODULE_ALIAS("dmi:*:rnIFL90:rvrREFERENCE:*");
+MODULE_ALIAS("dmi:*:rnIFL91:rvrIFT00:*");
+MODULE_ALIAS("dmi:*:rnJFL92:rvrIFT00:*");
+MODULE_ALIAS("dmi:*:rnIFT00:rvrIFT00:*");
+MODULE_ALIAS("dmi:*:rnJHL90:rvrREFERENCE:*");
+MODULE_ALIAS("dmi:*:svnDellInc.:pnInspiron910:*");
+MODULE_ALIAS("dmi:*:svnDellInc.:pnInspiron1010:*");
+MODULE_ALIAS("dmi:*:svnDellInc.:pnInspiron1011:*");
+MODULE_ALIAS("dmi:*:svnDellInc.:pnInspiron1012:*");
+MODULE_ALIAS("dmi:*:svnDellInc.:pnInspiron1110:*");
+MODULE_ALIAS("dmi:*:svnDellInc.:pnInspiron1210:*");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

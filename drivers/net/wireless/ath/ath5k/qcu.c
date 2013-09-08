@@ -17,12 +17,17 @@
  */
 
 /********************************************\
+<<<<<<< HEAD
 Queue Control Unit, DCF Control Unit Functions
+=======
+Queue Control Unit, DFS Control Unit Functions
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 \********************************************/
 
 #include "ath5k.h"
 #include "reg.h"
 #include "debug.h"
+<<<<<<< HEAD
 #include <linux/log2.h>
 
 /**
@@ -46,12 +51,16 @@ Queue Control Unit, DCF Control Unit Functions
  * the DCU it goes to PCU for further processing and then to PHY for
  * the actual transmission.
  */
+=======
+#include "base.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /******************\
 * Helper functions *
 \******************/
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_num_tx_pending() - Get number of pending frames for a  given queue
  * @ah: The &struct ath5k_hw
@@ -59,6 +68,13 @@ Queue Control Unit, DCF Control Unit Functions
  */
 u32
 ath5k_hw_num_tx_pending(struct ath5k_hw *ah, unsigned int queue)
+=======
+/*
+ * Get number of pending frames
+ * for a specific queue [5211+]
+ */
+u32 ath5k_hw_num_tx_pending(struct ath5k_hw *ah, unsigned int queue)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 pending;
 	AR5K_ASSERT_ENTRY(queue, ah->ah_capabilities.cap_queues.q_tx_num);
@@ -83,6 +99,7 @@ ath5k_hw_num_tx_pending(struct ath5k_hw *ah, unsigned int queue)
 	return pending;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_release_tx_queue() - Set a transmit queue inactive
  * @ah: The &struct ath5k_hw
@@ -90,6 +107,12 @@ ath5k_hw_num_tx_pending(struct ath5k_hw *ah, unsigned int queue)
  */
 void
 ath5k_hw_release_tx_queue(struct ath5k_hw *ah, unsigned int queue)
+=======
+/*
+ * Set a transmit queue inactive
+ */
+void ath5k_hw_release_tx_queue(struct ath5k_hw *ah, unsigned int queue)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (WARN_ON(queue >= ah->ah_capabilities.cap_queues.q_tx_num))
 		return;
@@ -100,6 +123,7 @@ ath5k_hw_release_tx_queue(struct ath5k_hw *ah, unsigned int queue)
 	AR5K_Q_DISABLE_BITS(ah->ah_txq_status, queue);
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_cw_validate() - Make sure the given cw is valid
  * @cw_req: The contention window value to check
@@ -134,12 +158,33 @@ ath5k_cw_validate(u16 cw_req)
  */
 int
 ath5k_hw_get_tx_queueprops(struct ath5k_hw *ah, int queue,
+=======
+/*
+ * Make sure cw is a power of 2 minus 1 and smaller than 1024
+ */
+static u16 ath5k_cw_validate(u16 cw_req)
+{
+	u32 cw = 1;
+	cw_req = min(cw_req, (u16)1023);
+
+	while (cw < cw_req)
+		cw = (cw << 1) | 1;
+
+	return cw;
+}
+
+/*
+ * Get properties for a transmit queue
+ */
+int ath5k_hw_get_tx_queueprops(struct ath5k_hw *ah, int queue,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct ath5k_txq_info *queue_info)
 {
 	memcpy(queue_info, &ah->ah_txq[queue], sizeof(struct ath5k_txq_info));
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_set_tx_queueprops() - Set properties for a transmit queue
  * @ah: The &struct ath5k_hw
@@ -150,6 +195,12 @@ ath5k_hw_get_tx_queueprops(struct ath5k_hw *ah, int queue,
  */
 int
 ath5k_hw_set_tx_queueprops(struct ath5k_hw *ah, int queue,
+=======
+/*
+ * Set properties for a transmit queue
+ */
+int ath5k_hw_set_tx_queueprops(struct ath5k_hw *ah, int queue,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				const struct ath5k_txq_info *qinfo)
 {
 	struct ath5k_txq_info *qi;
@@ -189,6 +240,7 @@ ath5k_hw_set_tx_queueprops(struct ath5k_hw *ah, int queue,
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_setup_tx_queue() - Initialize a transmit queue
  * @ah: The &struct ath5k_hw
@@ -199,6 +251,12 @@ ath5k_hw_set_tx_queueprops(struct ath5k_hw *ah, int queue,
  */
 int
 ath5k_hw_setup_tx_queue(struct ath5k_hw *ah, enum ath5k_tx_queue queue_type,
+=======
+/*
+ * Initialize a transmit queue
+ */
+int ath5k_hw_setup_tx_queue(struct ath5k_hw *ah, enum ath5k_tx_queue queue_type,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct ath5k_txq_info *queue_info)
 {
 	unsigned int queue;
@@ -240,6 +298,16 @@ ath5k_hw_setup_tx_queue(struct ath5k_hw *ah, enum ath5k_tx_queue queue_type,
 		case AR5K_TX_QUEUE_CAB:
 			queue = AR5K_TX_QUEUE_ID_CAB;
 			break;
+<<<<<<< HEAD
+=======
+		case AR5K_TX_QUEUE_XR_DATA:
+			if (ah->ah_version != AR5K_AR5212)
+				ATH5K_ERR(ah->ah_sc,
+					"XR data queues only supported in"
+					" 5212!\n");
+			queue = AR5K_TX_QUEUE_ID_XR_DATA;
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			return -EINVAL;
 		}
@@ -273,6 +341,7 @@ ath5k_hw_setup_tx_queue(struct ath5k_hw *ah, enum ath5k_tx_queue queue_type,
 * Single QCU/DCU initialization *
 \*******************************/
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_set_tx_retry_limits() - Set tx retry limits on DCU
  * @ah: The &struct ath5k_hw
@@ -283,6 +352,12 @@ ath5k_hw_setup_tx_queue(struct ath5k_hw *ah, enum ath5k_tx_queue queue_type,
  */
 void
 ath5k_hw_set_tx_retry_limits(struct ath5k_hw *ah,
+=======
+/*
+ * Set tx retry limits on DCU
+ */
+void ath5k_hw_set_tx_retry_limits(struct ath5k_hw *ah,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  unsigned int queue)
 {
 	/* Single data queue on AR5210 */
@@ -317,6 +392,7 @@ ath5k_hw_set_tx_retry_limits(struct ath5k_hw *ah,
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_reset_tx_queue() - Initialize a single hw queue
  * @ah: The &struct ath5k_hw
  * @queue: One of enum ath5k_tx_queue_id
@@ -326,6 +402,17 @@ ath5k_hw_set_tx_retry_limits(struct ath5k_hw *ah,
  */
 int
 ath5k_hw_reset_tx_queue(struct ath5k_hw *ah, unsigned int queue)
+=======
+ * ath5k_hw_reset_tx_queue - Initialize a single hw queue
+ *
+ * @ah The &struct ath5k_hw
+ * @queue The hw queue number
+ *
+ * Set DFS properties for the given transmit queue on DCU
+ * and configures all queue-specific parameters.
+ */
+int ath5k_hw_reset_tx_queue(struct ath5k_hw *ah, unsigned int queue)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath5k_txq_info *tq = &ah->ah_txq[queue];
 
@@ -553,9 +640,16 @@ ath5k_hw_reset_tx_queue(struct ath5k_hw *ah, unsigned int queue)
 \**************************/
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_set_ifs_intervals()  - Set global inter-frame spaces on DCU
  * @ah: The &struct ath5k_hw
  * @slot_time: Slot time in us
+=======
+ * ath5k_hw_set_ifs_intervals  - Set global inter-frame spaces on DCU
+ *
+ * @ah The &struct ath5k_hw
+ * @slot_time Slot time in us
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Sets the global IFS intervals on DCU (also works on AR5210) for
  * the given slot time and the current bwmode.
@@ -563,6 +657,10 @@ ath5k_hw_reset_tx_queue(struct ath5k_hw *ah, unsigned int queue)
 int ath5k_hw_set_ifs_intervals(struct ath5k_hw *ah, unsigned int slot_time)
 {
 	struct ieee80211_channel *channel = ah->ah_current_channel;
+<<<<<<< HEAD
+=======
+	struct ath5k_softc *sc = ah->ah_sc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ieee80211_rate *rate;
 	u32 ack_tx_time, eifs, eifs_clock, sifs, sifs_clock;
 	u32 slot_time_clock = ath5k_hw_htoclock(ah, slot_time);
@@ -597,10 +695,17 @@ int ath5k_hw_set_ifs_intervals(struct ath5k_hw *ah, unsigned int slot_time)
 	 *
 	 * Also we have different lowest rate for 802.11a
 	 */
+<<<<<<< HEAD
 	if (channel->band == IEEE80211_BAND_5GHZ)
 		rate = &ah->sbands[IEEE80211_BAND_5GHZ].bitrates[0];
 	else
 		rate = &ah->sbands[IEEE80211_BAND_2GHZ].bitrates[0];
+=======
+	if (channel->hw_value & CHANNEL_5GHZ)
+		rate = &sc->sbands[IEEE80211_BAND_5GHZ].bitrates[0];
+	else
+		rate = &sc->sbands[IEEE80211_BAND_2GHZ].bitrates[0];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ack_tx_time = ath5k_hw_get_frame_duration(ah, 10, rate, false);
 
@@ -658,6 +763,7 @@ int ath5k_hw_set_ifs_intervals(struct ath5k_hw *ah, unsigned int slot_time)
 }
 
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_init_queues() - Initialize tx queues
  * @ah: The &struct ath5k_hw
@@ -667,6 +773,9 @@ int ath5k_hw_set_ifs_intervals(struct ath5k_hw *ah, unsigned int slot_time)
  */
 int
 ath5k_hw_init_queues(struct ath5k_hw *ah)
+=======
+int ath5k_hw_init_queues(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i, ret;
 
@@ -682,7 +791,11 @@ ath5k_hw_init_queues(struct ath5k_hw *ah)
 		for (i = 0; i < ah->ah_capabilities.cap_queues.q_tx_num; i++) {
 			ret = ath5k_hw_reset_tx_queue(ah, i);
 			if (ret) {
+<<<<<<< HEAD
 				ATH5K_ERR(ah,
+=======
+				ATH5K_ERR(ah->ah_sc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"failed to reset TX queue #%d\n", i);
 				return ret;
 			}

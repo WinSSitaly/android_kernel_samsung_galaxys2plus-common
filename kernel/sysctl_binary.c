@@ -1,6 +1,10 @@
 #include <linux/stat.h>
 #include <linux/sysctl.h>
+<<<<<<< HEAD
 #include "../fs/xfs/xfs_sysctl.h"
+=======
+#include "../fs/xfs/linux-2.6/xfs_sysctl.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sunrpc/debug.h>
 #include <linux/string.h>
 #include <net/ip_vs.h>
@@ -214,7 +218,11 @@ static const struct bin_table bin_net_ipv4_route_table[] = {
 	{ CTL_INT,	NET_IPV4_ROUTE_GC_MIN_INTERVAL,		"gc_min_interval" },
 	{ CTL_INT,	NET_IPV4_ROUTE_GC_MIN_INTERVAL_MS,	"gc_min_interval_ms" },
 	{ CTL_INT,	NET_IPV4_ROUTE_GC_TIMEOUT,		"gc_timeout" },
+<<<<<<< HEAD
 	/* NET_IPV4_ROUTE_GC_INTERVAL "gc_interval" no longer used */
+=======
+	{ CTL_INT,	NET_IPV4_ROUTE_GC_INTERVAL,		"gc_interval" },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ CTL_INT,	NET_IPV4_ROUTE_REDIRECT_LOAD,		"redirect_load" },
 	{ CTL_INT,	NET_IPV4_ROUTE_REDIRECT_NUMBER,		"redirect_number" },
 	{ CTL_INT,	NET_IPV4_ROUTE_REDIRECT_SILENCE,	"redirect_silence" },
@@ -1194,10 +1202,16 @@ static ssize_t bin_dn_node_address(struct file *file,
 
 		/* Convert the decnet address to binary */
 		result = -EIO;
+<<<<<<< HEAD
 		nodep = strchr(buf, '.');
 		if (!nodep)
 			goto out;
 		++nodep;
+=======
+		nodep = strchr(buf, '.') + 1;
+		if (!nodep)
+			goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		area = simple_strtoul(buf, NULL, 10);
 		node = simple_strtoul(nodep, NULL, 10);

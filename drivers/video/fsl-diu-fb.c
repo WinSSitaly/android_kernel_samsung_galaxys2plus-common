@@ -30,12 +30,18 @@
 #include <linux/clk.h>
 #include <linux/uaccess.h>
 #include <linux/vmalloc.h>
+<<<<<<< HEAD
 #include <linux/spinlock.h>
+=======
+
+#include <linux/of_platform.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <sysdev/fsl_soc.h>
 #include <linux/fsl-diu-fb.h>
 #include "edid.h"
 
+<<<<<<< HEAD
 #define NUM_AOIS	5	/* 1 for plane 0, 2 for planes 1 & 2 each */
 
 /* HW cursor parameters */
@@ -57,6 +63,32 @@
  */
 static struct fb_videomode __devinitdata fsl_diu_mode_db[] = {
 	{
+=======
+/*
+ * These parameters give default parameters
+ * for video output 1024x768,
+ * FIXME - change timing to proper amounts
+ * hsync 31.5kHz, vsync 60Hz
+ */
+static struct fb_videomode __devinitdata fsl_diu_default_mode = {
+	.refresh	= 60,
+	.xres		= 1024,
+	.yres		= 768,
+	.pixclock	= 15385,
+	.left_margin	= 160,
+	.right_margin	= 24,
+	.upper_margin	= 29,
+	.lower_margin	= 3,
+	.hsync_len	= 136,
+	.vsync_len	= 6,
+	.sync		= FB_SYNC_COMP_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
+	.vmode		= FB_VMODE_NONINTERLACED
+};
+
+static struct fb_videomode __devinitdata fsl_diu_mode_db[] = {
+	{
+		.name		= "1024x768-60",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.refresh	= 60,
 		.xres		= 1024,
 		.yres		= 768,
@@ -71,6 +103,7 @@ static struct fb_videomode __devinitdata fsl_diu_mode_db[] = {
 		.vmode		= FB_VMODE_NONINTERLACED
 	},
 	{
+<<<<<<< HEAD
 		.refresh	= 60,
 		.xres		= 320,
 		.yres		= 240,
@@ -197,6 +230,9 @@ static struct fb_videomode __devinitdata fsl_diu_mode_db[] = {
 		.vmode		= FB_VMODE_NONINTERLACED
 	},
 	{
+=======
+		.name		= "1024x768-70",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.refresh	= 70,
 		.xres		= 1024,
 		.yres		= 768,
@@ -211,6 +247,10 @@ static struct fb_videomode __devinitdata fsl_diu_mode_db[] = {
 		.vmode		= FB_VMODE_NONINTERLACED
 	},
 	{
+<<<<<<< HEAD
+=======
+		.name		= "1024x768-75",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.refresh	= 75,
 		.xres		= 1024,
 		.yres		= 768,
@@ -225,6 +265,7 @@ static struct fb_videomode __devinitdata fsl_diu_mode_db[] = {
 		.vmode		= FB_VMODE_NONINTERLACED
 	},
 	{
+<<<<<<< HEAD
 		.refresh	= 60,
 		.xres		= 1280,
 		.yres		= 480,
@@ -253,6 +294,9 @@ static struct fb_videomode __devinitdata fsl_diu_mode_db[] = {
 		.vmode		= FB_VMODE_NONINTERLACED
 	},
 	{
+=======
+		.name		= "1280x1024-60",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.refresh	= 60,
 		.xres		= 1280,
 		.yres		= 1024,
@@ -267,6 +311,10 @@ static struct fb_videomode __devinitdata fsl_diu_mode_db[] = {
 		.vmode		= FB_VMODE_NONINTERLACED
 	},
 	{
+<<<<<<< HEAD
+=======
+		.name		= "1280x1024-70",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.refresh	= 70,
 		.xres		= 1280,
 		.yres		= 1024,
@@ -281,6 +329,10 @@ static struct fb_videomode __devinitdata fsl_diu_mode_db[] = {
 		.vmode		= FB_VMODE_NONINTERLACED
 	},
 	{
+<<<<<<< HEAD
+=======
+		.name		= "1280x1024-75",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.refresh	= 75,
 		.xres		= 1280,
 		.yres		= 1024,
@@ -295,6 +347,7 @@ static struct fb_videomode __devinitdata fsl_diu_mode_db[] = {
 		.vmode		= FB_VMODE_NONINTERLACED
 	},
 	{
+<<<<<<< HEAD
 		.refresh	= 60,
 		.xres		= 1920,
 		.yres		= 1080,
@@ -305,15 +358,49 @@ static struct fb_videomode __devinitdata fsl_diu_mode_db[] = {
 		.lower_margin	= 1,
 		.hsync_len	= 208,
 		.vsync_len	= 3,
+=======
+		.name		= "320x240",		/* for AOI only */
+		.refresh	= 60,
+		.xres		= 320,
+		.yres		= 240,
+		.pixclock	= 15385,
+		.left_margin	= 0,
+		.right_margin	= 0,
+		.upper_margin	= 0,
+		.lower_margin	= 0,
+		.hsync_len	= 0,
+		.vsync_len	= 0,
+		.sync		= FB_SYNC_COMP_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
+		.vmode		= FB_VMODE_NONINTERLACED
+	},
+	{
+		.name		= "1280x480-60",
+		.refresh	= 60,
+		.xres		= 1280,
+		.yres		= 480,
+		.pixclock	= 18939,
+		.left_margin	= 353,
+		.right_margin	= 47,
+		.upper_margin	= 39,
+		.lower_margin	= 4,
+		.hsync_len	= 8,
+		.vsync_len	= 2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.sync		= FB_SYNC_COMP_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
 		.vmode		= FB_VMODE_NONINTERLACED
 	},
 };
 
+<<<<<<< HEAD
 static char *fb_mode;
 static unsigned long default_bpp = 32;
 static enum fsl_diu_monitor_port monitor_port;
 static char *monitor_string;
+=======
+static char *fb_mode = "1024x768-32@60";
+static unsigned long default_bpp = 32;
+static int monitor_port;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if defined(CONFIG_NOT_COHERENT_CACHE)
 static u8 *coherence_data;
@@ -323,6 +410,7 @@ static unsigned int d_cache_line_size;
 
 static DEFINE_SPINLOCK(diu_lock);
 
+<<<<<<< HEAD
 enum mfb_index {
 	PLANE0 = 0,	/* Plane 0, only one AOI that fills the screen */
 	PLANE1_AOI0,	/* Plane 1, first AOI */
@@ -335,6 +423,25 @@ struct mfb_info {
 	enum mfb_index index;
 	char *id;
 	int registered;
+=======
+struct fsl_diu_data {
+	struct fb_info *fsl_diu_info[FSL_AOI_NUM - 1];
+				/*FSL_AOI_NUM has one dummy AOI */
+	struct device_attribute dev_attr;
+	struct diu_ad *dummy_ad;
+	void *dummy_aoi_virt;
+	unsigned int irq;
+	int fb_enabled;
+	int monitor_port;
+};
+
+struct mfb_info {
+	int index;
+	int type;
+	char *id;
+	int registered;
+	int blank;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long pseudo_palette[16];
 	struct diu_ad *ad;
 	int cursor_reset;
@@ -346,6 +453,7 @@ struct mfb_info {
 	u8 *edid_data;
 };
 
+<<<<<<< HEAD
 /**
  * struct fsl_diu_data - per-DIU data structure
  * @dma_addr: DMA address of this structure
@@ -459,6 +567,104 @@ static enum fsl_diu_monitor_port fsl_diu_name_to_port(const char *s)
 	}
 
 	return diu_ops.valid_monitor_port(port);
+=======
+
+static struct mfb_info mfb_template[] = {
+	{		/* AOI 0 for plane 0 */
+	.index = 0,
+	.type = MFB_TYPE_OUTPUT,
+	.id = "Panel0",
+	.registered = 0,
+	.count = 0,
+	.x_aoi_d = 0,
+	.y_aoi_d = 0,
+	},
+	{		/* AOI 0 for plane 1 */
+	.index = 1,
+	.type = MFB_TYPE_OUTPUT,
+	.id = "Panel1 AOI0",
+	.registered = 0,
+	.g_alpha = 0xff,
+	.count = 0,
+	.x_aoi_d = 0,
+	.y_aoi_d = 0,
+	},
+	{		/* AOI 1 for plane 1 */
+	.index = 2,
+	.type = MFB_TYPE_OUTPUT,
+	.id = "Panel1 AOI1",
+	.registered = 0,
+	.g_alpha = 0xff,
+	.count = 0,
+	.x_aoi_d = 0,
+	.y_aoi_d = 480,
+	},
+	{		/* AOI 0 for plane 2 */
+	.index = 3,
+	.type = MFB_TYPE_OUTPUT,
+	.id = "Panel2 AOI0",
+	.registered = 0,
+	.g_alpha = 0xff,
+	.count = 0,
+	.x_aoi_d = 640,
+	.y_aoi_d = 0,
+	},
+	{		/* AOI 1 for plane 2 */
+	.index = 4,
+	.type = MFB_TYPE_OUTPUT,
+	.id = "Panel2 AOI1",
+	.registered = 0,
+	.g_alpha = 0xff,
+	.count = 0,
+	.x_aoi_d = 640,
+	.y_aoi_d = 480,
+	},
+};
+
+static struct diu_hw dr = {
+	.mode = MFB_MODE1,
+	.reg_lock = __SPIN_LOCK_UNLOCKED(diu_hw.reg_lock),
+};
+
+static struct diu_pool pool;
+
+/**
+ * fsl_diu_alloc - allocate memory for the DIU
+ * @size: number of bytes to allocate
+ * @param: returned physical address of memory
+ *
+ * This function allocates a physically-contiguous block of memory.
+ */
+static void *fsl_diu_alloc(size_t size, phys_addr_t *phys)
+{
+	void *virt;
+
+	pr_debug("size=%zu\n", size);
+
+	virt = alloc_pages_exact(size, GFP_DMA | __GFP_ZERO);
+	if (virt) {
+		*phys = virt_to_phys(virt);
+		pr_debug("virt=%p phys=%llx\n", virt,
+			(unsigned long long)*phys);
+	}
+
+	return virt;
+}
+
+/**
+ * fsl_diu_free - release DIU memory
+ * @virt: pointer returned by fsl_diu_alloc()
+ * @size: number of bytes allocated by fsl_diu_alloc()
+ *
+ * This function releases memory allocated by fsl_diu_alloc().
+ */
+static void fsl_diu_free(void *virt, size_t size)
+{
+	pr_debug("virt=%p size=%zu\n", virt, size);
+
+	if (virt && size)
+		free_pages_exact(virt, size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -472,6 +678,7 @@ void wr_reg_wa(u32 *reg, u32 val)
 	} while (in_be32(reg) != val);
 }
 
+<<<<<<< HEAD
 static void fsl_diu_enable_panel(struct fb_info *info)
 {
 	struct mfb_info *pmfbi, *cmfbi, *mfbi = info->par;
@@ -539,69 +746,207 @@ static void fsl_diu_disable_panel(struct fb_info *info)
 		break;
 	case PLANE1_AOI0:
 		cmfbi = &data->mfb[2];
+=======
+static int fsl_diu_enable_panel(struct fb_info *info)
+{
+	struct mfb_info *pmfbi, *cmfbi, *mfbi = info->par;
+	struct diu *hw = dr.diu_reg;
+	struct diu_ad *ad = mfbi->ad;
+	struct fsl_diu_data *machine_data = mfbi->parent;
+	int res = 0;
+
+	pr_debug("enable_panel index %d\n", mfbi->index);
+	if (mfbi->type != MFB_TYPE_OFF) {
+		switch (mfbi->index) {
+		case 0:				/* plane 0 */
+			if (hw->desc[0] != ad->paddr)
+				wr_reg_wa(&hw->desc[0], ad->paddr);
+			break;
+		case 1:				/* plane 1 AOI 0 */
+			cmfbi = machine_data->fsl_diu_info[2]->par;
+			if (hw->desc[1] != ad->paddr) {	/* AOI0 closed */
+				if (cmfbi->count > 0)	/* AOI1 open */
+					ad->next_ad =
+						cpu_to_le32(cmfbi->ad->paddr);
+				else
+					ad->next_ad = 0;
+				wr_reg_wa(&hw->desc[1], ad->paddr);
+			}
+			break;
+		case 3:				/* plane 2 AOI 0 */
+			cmfbi = machine_data->fsl_diu_info[4]->par;
+			if (hw->desc[2] != ad->paddr) {	/* AOI0 closed */
+				if (cmfbi->count > 0)	/* AOI1 open */
+					ad->next_ad =
+						cpu_to_le32(cmfbi->ad->paddr);
+				else
+					ad->next_ad = 0;
+				wr_reg_wa(&hw->desc[2], ad->paddr);
+			}
+			break;
+		case 2:				/* plane 1 AOI 1 */
+			pmfbi = machine_data->fsl_diu_info[1]->par;
+			ad->next_ad = 0;
+			if (hw->desc[1] == machine_data->dummy_ad->paddr)
+				wr_reg_wa(&hw->desc[1], ad->paddr);
+			else					/* AOI0 open */
+				pmfbi->ad->next_ad = cpu_to_le32(ad->paddr);
+			break;
+		case 4:				/* plane 2 AOI 1 */
+			pmfbi = machine_data->fsl_diu_info[3]->par;
+			ad->next_ad = 0;
+			if (hw->desc[2] == machine_data->dummy_ad->paddr)
+				wr_reg_wa(&hw->desc[2], ad->paddr);
+			else				/* AOI0 was open */
+				pmfbi->ad->next_ad = cpu_to_le32(ad->paddr);
+			break;
+		default:
+			res = -EINVAL;
+			break;
+		}
+	} else
+		res = -EINVAL;
+	return res;
+}
+
+static int fsl_diu_disable_panel(struct fb_info *info)
+{
+	struct mfb_info *pmfbi, *cmfbi, *mfbi = info->par;
+	struct diu *hw = dr.diu_reg;
+	struct diu_ad *ad = mfbi->ad;
+	struct fsl_diu_data *machine_data = mfbi->parent;
+	int res = 0;
+
+	switch (mfbi->index) {
+	case 0:					/* plane 0 */
+		if (hw->desc[0] != machine_data->dummy_ad->paddr)
+			wr_reg_wa(&hw->desc[0], machine_data->dummy_ad->paddr);
+		break;
+	case 1:					/* plane 1 AOI 0 */
+		cmfbi = machine_data->fsl_diu_info[2]->par;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (cmfbi->count > 0)	/* AOI1 is open */
 			wr_reg_wa(&hw->desc[1], cmfbi->ad->paddr);
 					/* move AOI1 to the first */
 		else			/* AOI1 was closed */
+<<<<<<< HEAD
 			wr_reg_wa(&hw->desc[1], data->dummy_ad.paddr);
 					/* close AOI 0 */
 		break;
 	case PLANE2_AOI0:
 		cmfbi = &data->mfb[4];
+=======
+			wr_reg_wa(&hw->desc[1], machine_data->dummy_ad->paddr);
+					/* close AOI 0 */
+		break;
+	case 3:					/* plane 2 AOI 0 */
+		cmfbi = machine_data->fsl_diu_info[4]->par;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (cmfbi->count > 0)	/* AOI1 is open */
 			wr_reg_wa(&hw->desc[2], cmfbi->ad->paddr);
 					/* move AOI1 to the first */
 		else			/* AOI1 was closed */
+<<<<<<< HEAD
 			wr_reg_wa(&hw->desc[2], data->dummy_ad.paddr);
 					/* close AOI 0 */
 		break;
 	case PLANE1_AOI1:
 		pmfbi = &data->mfb[1];
+=======
+			wr_reg_wa(&hw->desc[2], machine_data->dummy_ad->paddr);
+					/* close AOI 0 */
+		break;
+	case 2:					/* plane 1 AOI 1 */
+		pmfbi = machine_data->fsl_diu_info[1]->par;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (hw->desc[1] != ad->paddr) {
 				/* AOI1 is not the first in the chain */
 			if (pmfbi->count > 0)
 					/* AOI0 is open, must be the first */
 				pmfbi->ad->next_ad = 0;
 		} else			/* AOI1 is the first in the chain */
+<<<<<<< HEAD
 			wr_reg_wa(&hw->desc[1], data->dummy_ad.paddr);
 					/* close AOI 1 */
 		break;
 	case PLANE2_AOI1:
 		pmfbi = &data->mfb[3];
+=======
+			wr_reg_wa(&hw->desc[1], machine_data->dummy_ad->paddr);
+					/* close AOI 1 */
+		break;
+	case 4:					/* plane 2 AOI 1 */
+		pmfbi = machine_data->fsl_diu_info[3]->par;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (hw->desc[2] != ad->paddr) {
 				/* AOI1 is not the first in the chain */
 			if (pmfbi->count > 0)
 				/* AOI0 is open, must be the first */
 				pmfbi->ad->next_ad = 0;
 		} else		/* AOI1 is the first in the chain */
+<<<<<<< HEAD
 			wr_reg_wa(&hw->desc[2], data->dummy_ad.paddr);
 				/* close AOI 1 */
 		break;
 	}
+=======
+			wr_reg_wa(&hw->desc[2], machine_data->dummy_ad->paddr);
+				/* close AOI 1 */
+		break;
+	default:
+		res = -EINVAL;
+		break;
+	}
+
+	return res;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void enable_lcdc(struct fb_info *info)
 {
+<<<<<<< HEAD
 	struct mfb_info *mfbi = info->par;
 	struct fsl_diu_data *data = mfbi->parent;
 	struct diu __iomem *hw = data->diu_reg;
 
 	out_be32(&hw->diu_mode, MFB_MODE1);
+=======
+	struct diu *hw = dr.diu_reg;
+	struct mfb_info *mfbi = info->par;
+	struct fsl_diu_data *machine_data = mfbi->parent;
+
+	if (!machine_data->fb_enabled) {
+		out_be32(&hw->diu_mode, dr.mode);
+		machine_data->fb_enabled++;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void disable_lcdc(struct fb_info *info)
 {
+<<<<<<< HEAD
 	struct mfb_info *mfbi = info->par;
 	struct fsl_diu_data *data = mfbi->parent;
 	struct diu __iomem *hw = data->diu_reg;
 
 	out_be32(&hw->diu_mode, 0);
+=======
+	struct diu *hw = dr.diu_reg;
+	struct mfb_info *mfbi = info->par;
+	struct fsl_diu_data *machine_data = mfbi->parent;
+
+	if (machine_data->fb_enabled) {
+		out_be32(&hw->diu_mode, 0);
+		machine_data->fb_enabled = 0;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void adjust_aoi_size_position(struct fb_var_screeninfo *var,
 				struct fb_info *info)
 {
 	struct mfb_info *lower_aoi_mfbi, *upper_aoi_mfbi, *mfbi = info->par;
+<<<<<<< HEAD
 	struct fsl_diu_data *data = mfbi->parent;
 	int available_height, upper_aoi_bottom;
 	enum mfb_index index = mfbi->index;
@@ -610,21 +955,40 @@ static void adjust_aoi_size_position(struct fb_var_screeninfo *var,
 
 	base_plane_width = data->fsl_diu_info[0].var.xres;
 	base_plane_height = data->fsl_diu_info[0].var.yres;
+=======
+	struct fsl_diu_data *machine_data = mfbi->parent;
+	int available_height, upper_aoi_bottom, index = mfbi->index;
+	int lower_aoi_is_open, upper_aoi_is_open;
+	__u32 base_plane_width, base_plane_height, upper_aoi_height;
+
+	base_plane_width = machine_data->fsl_diu_info[0]->var.xres;
+	base_plane_height = machine_data->fsl_diu_info[0]->var.yres;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mfbi->x_aoi_d < 0)
 		mfbi->x_aoi_d = 0;
 	if (mfbi->y_aoi_d < 0)
 		mfbi->y_aoi_d = 0;
 	switch (index) {
+<<<<<<< HEAD
 	case PLANE0:
+=======
+	case 0:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (mfbi->x_aoi_d != 0)
 			mfbi->x_aoi_d = 0;
 		if (mfbi->y_aoi_d != 0)
 			mfbi->y_aoi_d = 0;
 		break;
+<<<<<<< HEAD
 	case PLANE1_AOI0:
 	case PLANE2_AOI0:
 		lower_aoi_mfbi = data->fsl_diu_info[index+1].par;
+=======
+	case 1:			/* AOI 0 */
+	case 3:
+		lower_aoi_mfbi = machine_data->fsl_diu_info[index+1]->par;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		lower_aoi_is_open = lower_aoi_mfbi->count > 0 ? 1 : 0;
 		if (var->xres > base_plane_width)
 			var->xres = base_plane_width;
@@ -640,10 +1004,18 @@ static void adjust_aoi_size_position(struct fb_var_screeninfo *var,
 		if ((mfbi->y_aoi_d + var->yres) > available_height)
 			mfbi->y_aoi_d = available_height - var->yres;
 		break;
+<<<<<<< HEAD
 	case PLANE1_AOI1:
 	case PLANE2_AOI1:
 		upper_aoi_mfbi = data->fsl_diu_info[index-1].par;
 		upper_aoi_height = data->fsl_diu_info[index-1].var.yres;
+=======
+	case 2:			/* AOI 1 */
+	case 4:
+		upper_aoi_mfbi = machine_data->fsl_diu_info[index-1]->par;
+		upper_aoi_height =
+				machine_data->fsl_diu_info[index-1]->var.yres;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		upper_aoi_bottom = upper_aoi_mfbi->y_aoi_d + upper_aoi_height;
 		upper_aoi_is_open = upper_aoi_mfbi->count > 0 ? 1 : 0;
 		if (var->xres > base_plane_width)
@@ -676,6 +1048,12 @@ static void adjust_aoi_size_position(struct fb_var_screeninfo *var,
 static int fsl_diu_check_var(struct fb_var_screeninfo *var,
 				struct fb_info *info)
 {
+<<<<<<< HEAD
+=======
+	pr_debug("check_var xres: %d\n", var->xres);
+	pr_debug("check_var yres: %d\n", var->yres);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (var->xres_virtual < var->xres)
 		var->xres_virtual = var->xres;
 	if (var->yres_virtual < var->yres)
@@ -770,7 +1148,11 @@ static void set_fix(struct fb_info *info)
 	struct fb_var_screeninfo *var = &info->var;
 	struct mfb_info *mfbi = info->par;
 
+<<<<<<< HEAD
 	strncpy(fix->id, mfbi->id, sizeof(fix->id));
+=======
+	strncpy(fix->id, mfbi->id, strlen(mfbi->id));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fix->line_length = var->xres_virtual * var->bits_per_pixel / 8;
 	fix->type = FB_TYPE_PACKED_PIXELS;
 	fix->accel = FB_ACCEL_NONE;
@@ -783,6 +1165,7 @@ static void update_lcdc(struct fb_info *info)
 {
 	struct fb_var_screeninfo *var = &info->var;
 	struct mfb_info *mfbi = info->par;
+<<<<<<< HEAD
 	struct fsl_diu_data *data = mfbi->parent;
 	struct diu __iomem *hw;
 	int i, j;
@@ -804,17 +1187,56 @@ static void update_lcdc(struct fb_info *info)
 	if (diu_ops.set_gamma_table)
 		diu_ops.set_gamma_table(data->monitor_port, data->gamma);
 
+=======
+	struct fsl_diu_data *machine_data = mfbi->parent;
+	struct diu *hw;
+	int i, j;
+	char __iomem *cursor_base, *gamma_table_base;
+
+	u32 temp;
+
+	hw = dr.diu_reg;
+
+	if (mfbi->type == MFB_TYPE_OFF) {
+		fsl_diu_disable_panel(info);
+		return;
+	}
+
+	diu_ops.set_monitor_port(machine_data->monitor_port);
+	gamma_table_base = pool.gamma.vaddr;
+	cursor_base = pool.cursor.vaddr;
+	/* Prep for DIU init  - gamma table, cursor table */
+
+	for (i = 0; i <= 2; i++)
+	   for (j = 0; j <= 255; j++)
+	      *gamma_table_base++ = j;
+
+	diu_ops.set_gamma_table(machine_data->monitor_port, pool.gamma.vaddr);
+
+	pr_debug("update-lcdc: HW - %p\n Disabling DIU\n", hw);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	disable_lcdc(info);
 
 	/* Program DIU registers */
 
+<<<<<<< HEAD
 	out_be32(&hw->gamma, DMA_ADDR(data, gamma));
 	out_be32(&hw->cursor, DMA_ADDR(data, cursor));
+=======
+	out_be32(&hw->gamma, pool.gamma.paddr);
+	out_be32(&hw->cursor, pool.cursor.paddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	out_be32(&hw->bgnd, 0x007F7F7F); 	/* BGND */
 	out_be32(&hw->bgnd_wb, 0); 		/* BGND_WB */
 	out_be32(&hw->disp_size, (var->yres << 16 | var->xres));
 						/* DISP SIZE */
+<<<<<<< HEAD
+=======
+	pr_debug("DIU xres: %d\n", var->xres);
+	pr_debug("DIU yres: %d\n", var->yres);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	out_be32(&hw->wb_size, 0); /* WB SIZE */
 	out_be32(&hw->wb_mem_addr, 0); /* WB MEM ADDR */
 
@@ -831,6 +1253,18 @@ static void update_lcdc(struct fb_info *info)
 
 	out_be32(&hw->vsyn_para, temp);
 
+<<<<<<< HEAD
+=======
+	pr_debug("DIU right_margin - %d\n", var->right_margin);
+	pr_debug("DIU left_margin - %d\n", var->left_margin);
+	pr_debug("DIU hsync_len - %d\n", var->hsync_len);
+	pr_debug("DIU upper_margin - %d\n", var->upper_margin);
+	pr_debug("DIU lower_margin - %d\n", var->lower_margin);
+	pr_debug("DIU vsync_len - %d\n", var->vsync_len);
+	pr_debug("DIU HSYNC - 0x%08x\n", hw->hsyn_para);
+	pr_debug("DIU VSYNC - 0x%08x\n", hw->vsyn_para);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	diu_ops.set_pixel_clock(var->pixclock);
 
 	out_be32(&hw->syn_pol, 0);	/* SYNC SIGNALS POLARITY */
@@ -844,6 +1278,7 @@ static void update_lcdc(struct fb_info *info)
 
 static int map_video_memory(struct fb_info *info)
 {
+<<<<<<< HEAD
 	u32 smem_len = info->fix.line_length * info->var.yres_virtual;
 	void *p;
 
@@ -855,26 +1290,57 @@ static int map_video_memory(struct fb_info *info)
 	mutex_lock(&info->mm_lock);
 	info->screen_base = p;
 	info->fix.smem_start = virt_to_phys(info->screen_base);
+=======
+	phys_addr_t phys;
+	u32 smem_len = info->fix.line_length * info->var.yres_virtual;
+
+	pr_debug("info->var.xres_virtual = %d\n", info->var.xres_virtual);
+	pr_debug("info->var.yres_virtual = %d\n", info->var.yres_virtual);
+	pr_debug("info->fix.line_length  = %d\n", info->fix.line_length);
+	pr_debug("MAP_VIDEO_MEMORY: smem_len = %u\n", smem_len);
+
+	info->screen_base = fsl_diu_alloc(smem_len, &phys);
+	if (info->screen_base == NULL) {
+		printk(KERN_ERR "Unable to allocate fb memory\n");
+		return -ENOMEM;
+	}
+	mutex_lock(&info->mm_lock);
+	info->fix.smem_start = (unsigned long) phys;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info->fix.smem_len = smem_len;
 	mutex_unlock(&info->mm_lock);
 	info->screen_size = info->fix.smem_len;
 
+<<<<<<< HEAD
+=======
+	pr_debug("Allocated fb @ paddr=0x%08lx, size=%d.\n",
+		 info->fix.smem_start, info->fix.smem_len);
+	pr_debug("screen base %p\n", info->screen_base);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static void unmap_video_memory(struct fb_info *info)
 {
+<<<<<<< HEAD
 	void *p = info->screen_base;
 	size_t l = info->fix.smem_len;
 
+=======
+	fsl_diu_free(info->screen_base, info->fix.smem_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&info->mm_lock);
 	info->screen_base = NULL;
 	info->fix.smem_start = 0;
 	info->fix.smem_len = 0;
 	mutex_unlock(&info->mm_lock);
+<<<<<<< HEAD
 
 	if (p)
 		free_pages_exact(p, l);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -893,6 +1359,7 @@ static int fsl_diu_set_aoi(struct fb_info *info)
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * fsl_diu_get_pixel_format: return the pixel format for a given color depth
  *
@@ -946,6 +1413,8 @@ static u32 fsl_diu_get_pixel_format(unsigned int bits_per_pixel)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Using the fb_var_screeninfo in fb_info we set the resolution of this
  * particular framebuffer. This function alters the fb_fix_screeninfo stored
@@ -959,11 +1428,19 @@ static int fsl_diu_set_par(struct fb_info *info)
 	unsigned long len;
 	struct fb_var_screeninfo *var = &info->var;
 	struct mfb_info *mfbi = info->par;
+<<<<<<< HEAD
 	struct fsl_diu_data *data = mfbi->parent;
 	struct diu_ad *ad = mfbi->ad;
 	struct diu __iomem *hw;
 
 	hw = data->diu_reg;
+=======
+	struct fsl_diu_data *machine_data = mfbi->parent;
+	struct diu_ad *ad = mfbi->ad;
+	struct diu *hw;
+
+	hw = dr.diu_reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	set_fix(info);
 	mfbi->cursor_reset = 1;
@@ -973,20 +1450,34 @@ static int fsl_diu_set_par(struct fb_info *info)
 	if (len != info->fix.smem_len) {
 		if (info->fix.smem_start)
 			unmap_video_memory(info);
+<<<<<<< HEAD
 
 		/* Memory allocation for framebuffer */
 		if (map_video_memory(info)) {
 			dev_err(info->dev, "unable to allocate fb memory 1\n");
+=======
+		pr_debug("SET PAR: smem_len = %d\n", info->fix.smem_len);
+
+		/* Memory allocation for framebuffer */
+		if (map_video_memory(info)) {
+			printk(KERN_ERR "Unable to allocate fb memory 1\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ENOMEM;
 		}
 	}
 
+<<<<<<< HEAD
 	if (diu_ops.get_pixel_format)
 		ad->pix_fmt = diu_ops.get_pixel_format(data->monitor_port,
 						       var->bits_per_pixel);
 	else
 		ad->pix_fmt = fsl_diu_get_pixel_format(var->bits_per_pixel);
 
+=======
+	ad->pix_fmt =
+		diu_ops.get_pixel_format(var->bits_per_pixel,
+					 machine_data->monitor_port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ad->addr    = cpu_to_le32(info->fix.smem_start);
 	ad->src_size_g_alpha = cpu_to_le32((var->yres_virtual << 12) |
 				var->xres_virtual) | mfbi->g_alpha;
@@ -1004,14 +1495,22 @@ static int fsl_diu_set_par(struct fb_info *info)
 	ad->ckmin_g = 255;
 	ad->ckmin_b = 255;
 
+<<<<<<< HEAD
 	if (mfbi->index == PLANE0)
+=======
+	if (mfbi->index == 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		update_lcdc(info);
 	return 0;
 }
 
 static inline __u32 CNVT_TOHW(__u32 val, __u32 width)
 {
+<<<<<<< HEAD
 	return ((val << width) + 0x7FFF - val) >> 16;
+=======
+	return ((val<<width) + 0x7FFF - val)>>16;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1023,9 +1522,14 @@ static inline __u32 CNVT_TOHW(__u32 val, __u32 width)
  * pseudo_palette in struct fb_info. For pseudocolor mode we have a limited
  * color palette.
  */
+<<<<<<< HEAD
 static int fsl_diu_setcolreg(unsigned int regno, unsigned int red,
 			     unsigned int green, unsigned int blue,
 			     unsigned int transp, struct fb_info *info)
+=======
+static int fsl_diu_setcolreg(unsigned regno, unsigned red, unsigned green,
+			   unsigned blue, unsigned transp, struct fb_info *info)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret = 1;
 
@@ -1060,6 +1564,12 @@ static int fsl_diu_setcolreg(unsigned int regno, unsigned int red,
 			ret = 0;
 		}
 		break;
+<<<<<<< HEAD
+=======
+	case FB_VISUAL_STATIC_PSEUDOCOLOR:
+	case FB_VISUAL_PSEUDOCOLOR:
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;
@@ -1095,6 +1605,40 @@ static int fsl_diu_pan_display(struct fb_var_screeninfo *var,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * Blank the screen if blank_mode != 0, else unblank. Return 0 if blanking
+ * succeeded, != 0 if un-/blanking failed.
+ * blank_mode == 2: suspend vsync
+ * blank_mode == 3: suspend hsync
+ * blank_mode == 4: powerdown
+ */
+static int fsl_diu_blank(int blank_mode, struct fb_info *info)
+{
+	struct mfb_info *mfbi = info->par;
+
+	mfbi->blank = blank_mode;
+
+	switch (blank_mode) {
+	case FB_BLANK_VSYNC_SUSPEND:
+	case FB_BLANK_HSYNC_SUSPEND:
+	/* FIXME: fixes to enable_panel and enable lcdc needed */
+	case FB_BLANK_NORMAL:
+	/*	fsl_diu_disable_panel(info);*/
+		break;
+	case FB_BLANK_POWERDOWN:
+	/*	disable_lcdc(info);	*/
+		break;
+	case FB_BLANK_UNBLANK:
+	/*	fsl_diu_enable_panel(info);*/
+		break;
+	}
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int fsl_diu_ioctl(struct fb_info *info, unsigned int cmd,
 		       unsigned long arg)
 {
@@ -1109,29 +1653,46 @@ static int fsl_diu_ioctl(struct fb_info *info, unsigned int cmd,
 	if (!arg)
 		return -EINVAL;
 	switch (cmd) {
+<<<<<<< HEAD
 	case MFB_SET_PIXFMT_OLD:
 		dev_warn(info->dev,
 			 "MFB_SET_PIXFMT value of 0x%08x is deprecated.\n",
 			 MFB_SET_PIXFMT_OLD);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case MFB_SET_PIXFMT:
 		if (copy_from_user(&pix_fmt, buf, sizeof(pix_fmt)))
 			return -EFAULT;
 		ad->pix_fmt = pix_fmt;
+<<<<<<< HEAD
 		break;
 	case MFB_GET_PIXFMT_OLD:
 		dev_warn(info->dev,
 			 "MFB_GET_PIXFMT value of 0x%08x is deprecated.\n",
 			 MFB_GET_PIXFMT_OLD);
+=======
+		pr_debug("Set pixel format to 0x%08x\n", ad->pix_fmt);
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case MFB_GET_PIXFMT:
 		pix_fmt = ad->pix_fmt;
 		if (copy_to_user(buf, &pix_fmt, sizeof(pix_fmt)))
 			return -EFAULT;
+<<<<<<< HEAD
+=======
+		pr_debug("get pixel format 0x%08x\n", ad->pix_fmt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case MFB_SET_AOID:
 		if (copy_from_user(&aoi_d, buf, sizeof(aoi_d)))
 			return -EFAULT;
 		mfbi->x_aoi_d = aoi_d.x_aoi_d;
 		mfbi->y_aoi_d = aoi_d.y_aoi_d;
+<<<<<<< HEAD
+=======
+		pr_debug("set AOI display offset of index %d to (%d,%d)\n",
+				 mfbi->index, aoi_d.x_aoi_d, aoi_d.y_aoi_d);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fsl_diu_check_var(&info->var, info);
 		fsl_diu_set_aoi(info);
 		break;
@@ -1140,11 +1701,20 @@ static int fsl_diu_ioctl(struct fb_info *info, unsigned int cmd,
 		aoi_d.y_aoi_d = mfbi->y_aoi_d;
 		if (copy_to_user(buf, &aoi_d, sizeof(aoi_d)))
 			return -EFAULT;
+<<<<<<< HEAD
+=======
+		pr_debug("get AOI display offset of index %d (%d,%d)\n",
+				mfbi->index, aoi_d.x_aoi_d, aoi_d.y_aoi_d);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case MFB_GET_ALPHA:
 		global_alpha = mfbi->g_alpha;
 		if (copy_to_user(buf, &global_alpha, sizeof(global_alpha)))
 			return -EFAULT;
+<<<<<<< HEAD
+=======
+		pr_debug("get global alpha of index %d\n", mfbi->index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case MFB_SET_ALPHA:
 		/* set panel information */
@@ -1153,6 +1723,10 @@ static int fsl_diu_ioctl(struct fb_info *info, unsigned int cmd,
 		ad->src_size_g_alpha = (ad->src_size_g_alpha & (~0xff)) |
 							(global_alpha & 0xff);
 		mfbi->g_alpha = global_alpha;
+<<<<<<< HEAD
+=======
+		pr_debug("set global alpha for index %d\n", mfbi->index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case MFB_SET_CHROMA_KEY:
 		/* set panel winformation */
@@ -1180,9 +1754,33 @@ static int fsl_diu_ioctl(struct fb_info *info, unsigned int cmd,
 			ad->ckmin_g = ck.green_min;
 			ad->ckmin_b = ck.blue_min;
 		}
+<<<<<<< HEAD
 		break;
 	default:
 		dev_err(info->dev, "unknown ioctl command (0x%08X)\n", cmd);
+=======
+		pr_debug("set chroma key\n");
+		break;
+	case FBIOGET_GWINFO:
+		if (mfbi->type == MFB_TYPE_OFF)
+			return -ENODEV;
+		/* get graphic window information */
+		if (copy_to_user(buf, ad, sizeof(*ad)))
+			return -EFAULT;
+		break;
+	case FBIOGET_HWCINFO:
+		pr_debug("FBIOGET_HWCINFO:0x%08x\n", FBIOGET_HWCINFO);
+		break;
+	case FBIOPUT_MODEINFO:
+		pr_debug("FBIOPUT_MODEINFO:0x%08x\n", FBIOPUT_MODEINFO);
+		break;
+	case FBIOGET_DISPINFO:
+		pr_debug("FBIOGET_DISPINFO:0x%08x\n", FBIOGET_DISPINFO);
+		break;
+
+	default:
+		printk(KERN_ERR "Unknown ioctl command (0x%08X)\n", cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOIOCTLCMD;
 	}
 
@@ -1197,18 +1795,34 @@ static int fsl_diu_open(struct fb_info *info, int user)
 	int res = 0;
 
 	/* free boot splash memory on first /dev/fb0 open */
+<<<<<<< HEAD
 	if ((mfbi->index == PLANE0) && diu_ops.release_bootmem)
+=======
+	if (!mfbi->index && diu_ops.release_bootmem)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		diu_ops.release_bootmem();
 
 	spin_lock(&diu_lock);
 	mfbi->count++;
 	if (mfbi->count == 1) {
+<<<<<<< HEAD
+=======
+		pr_debug("open plane index %d\n", mfbi->index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fsl_diu_check_var(&info->var, info);
 		res = fsl_diu_set_par(info);
 		if (res < 0)
 			mfbi->count--;
+<<<<<<< HEAD
 		else
 			fsl_diu_enable_panel(info);
+=======
+		else {
+			res = fsl_diu_enable_panel(info);
+			if (res < 0)
+				mfbi->count--;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	spin_unlock(&diu_lock);
@@ -1224,9 +1838,18 @@ static int fsl_diu_release(struct fb_info *info, int user)
 
 	spin_lock(&diu_lock);
 	mfbi->count--;
+<<<<<<< HEAD
 	if (mfbi->count == 0)
 		fsl_diu_disable_panel(info);
 
+=======
+	if (mfbi->count == 0) {
+		pr_debug("release plane index %d\n", mfbi->index);
+		res = fsl_diu_disable_panel(info);
+		if (res < 0)
+			mfbi->count++;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&diu_lock);
 	return res;
 }
@@ -1236,6 +1859,10 @@ static struct fb_ops fsl_diu_ops = {
 	.fb_check_var = fsl_diu_check_var,
 	.fb_set_par = fsl_diu_set_par,
 	.fb_setcolreg = fsl_diu_setcolreg,
+<<<<<<< HEAD
+=======
+	.fb_blank = fsl_diu_blank,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.fb_pan_display = fsl_diu_pan_display,
 	.fb_fillrect = cfb_fillrect,
 	.fb_copyarea = cfb_copyarea,
@@ -1245,6 +1872,24 @@ static struct fb_ops fsl_diu_ops = {
 	.fb_release = fsl_diu_release,
 };
 
+<<<<<<< HEAD
+=======
+static int init_fbinfo(struct fb_info *info)
+{
+	struct mfb_info *mfbi = info->par;
+
+	info->device = NULL;
+	info->var.activate = FB_ACTIVATE_NOW;
+	info->fbops = &fsl_diu_ops;
+	info->flags = FBINFO_FLAG_DEFAULT;
+	info->pseudo_palette = &mfbi->pseudo_palette;
+
+	/* Allocate colormap */
+	fb_alloc_cmap(&info->cmap, 16, 0);
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit install_fb(struct fb_info *info)
 {
 	int rc;
@@ -1254,6 +1899,7 @@ static int __devinit install_fb(struct fb_info *info)
 	unsigned int dbsize = ARRAY_SIZE(fsl_diu_mode_db);
 	int has_default_mode = 1;
 
+<<<<<<< HEAD
 	info->var.activate = FB_ACTIVATE_NOW;
 	info->fbops = &fsl_diu_ops;
 	info->flags = FBINFO_DEFAULT | FBINFO_VIRTFB | FBINFO_PARTIAL_PAN_OK |
@@ -1265,6 +1911,12 @@ static int __devinit install_fb(struct fb_info *info)
 		return rc;
 
 	if (mfbi->index == PLANE0) {
+=======
+	if (init_fbinfo(info))
+		return -EINVAL;
+
+	if (mfbi->index == 0) {	/* plane 0 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (mfbi->edid_data) {
 			/* Now build modedb from EDID */
 			fb_edid_to_monspecs(mfbi->edid_data, &info->monspecs);
@@ -1278,23 +1930,61 @@ static int __devinit install_fb(struct fb_info *info)
 	} else {
 		aoi_mode = init_aoi_mode;
 	}
+<<<<<<< HEAD
 	rc = fb_find_mode(&info->var, info, aoi_mode, db, dbsize, NULL,
 			  default_bpp);
 	if (!rc) {
+=======
+	pr_debug("mode used = %s\n", aoi_mode);
+	rc = fb_find_mode(&info->var, info, aoi_mode, db, dbsize,
+			  &fsl_diu_default_mode, default_bpp);
+	switch (rc) {
+	case 1:
+		pr_debug("using mode specified in @mode\n");
+		break;
+	case 2:
+		pr_debug("using mode specified in @mode "
+			"with ignored refresh rate\n");
+		break;
+	case 3:
+		pr_debug("using mode default mode\n");
+		break;
+	case 4:
+		pr_debug("using mode from list\n");
+		break;
+	default:
+		pr_debug("rc = %d\n", rc);
+		pr_debug("failed to find mode\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * For plane 0 we continue and look into
 		 * driver's internal modedb.
 		 */
+<<<<<<< HEAD
 		if ((mfbi->index == PLANE0) && mfbi->edid_data)
 			has_default_mode = 0;
 		else
 			return -EINVAL;
+=======
+		if (mfbi->index == 0 && mfbi->edid_data)
+			has_default_mode = 0;
+		else
+			return -EINVAL;
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (!has_default_mode) {
 		rc = fb_find_mode(&info->var, info, aoi_mode, fsl_diu_mode_db,
+<<<<<<< HEAD
 			ARRAY_SIZE(fsl_diu_mode_db), NULL, default_bpp);
 		if (rc)
+=======
+				  ARRAY_SIZE(fsl_diu_mode_db),
+				  &fsl_diu_default_mode,
+				  default_bpp);
+		if (rc > 0 && rc < 5)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			has_default_mode = 1;
 	}
 
@@ -1322,22 +2012,47 @@ static int __devinit install_fb(struct fb_info *info)
 		fb_videomode_to_var(&info->var, modedb);
 	}
 
+<<<<<<< HEAD
 	if (fsl_diu_check_var(&info->var, info)) {
 		dev_err(info->dev, "fsl_diu_check_var failed\n");
 		unmap_video_memory(info);
+=======
+	pr_debug("xres_virtual %d\n", info->var.xres_virtual);
+	pr_debug("bits_per_pixel %d\n", info->var.bits_per_pixel);
+
+	pr_debug("info->var.yres_virtual = %d\n", info->var.yres_virtual);
+	pr_debug("info->fix.line_length = %d\n", info->fix.line_length);
+
+	if (mfbi->type == MFB_TYPE_OFF)
+		mfbi->blank = FB_BLANK_NORMAL;
+	else
+		mfbi->blank = FB_BLANK_UNBLANK;
+
+	if (fsl_diu_check_var(&info->var, info)) {
+		printk(KERN_ERR "fb_check_var failed");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fb_dealloc_cmap(&info->cmap);
 		return -EINVAL;
 	}
 
 	if (register_framebuffer(info) < 0) {
+<<<<<<< HEAD
 		dev_err(info->dev, "register_framebuffer failed\n");
+=======
+		printk(KERN_ERR "register_framebuffer failed");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unmap_video_memory(info);
 		fb_dealloc_cmap(&info->cmap);
 		return -EINVAL;
 	}
 
 	mfbi->registered = 1;
+<<<<<<< HEAD
 	dev_info(info->dev, "%s registered successfully\n", mfbi->id);
+=======
+	printk(KERN_INFO "fb%d: %s fb device registered successfully.\n",
+		 info->node, info->fix.id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1349,7 +2064,11 @@ static void uninstall_fb(struct fb_info *info)
 	if (!mfbi->registered)
 		return;
 
+<<<<<<< HEAD
 	if (mfbi->index == PLANE0)
+=======
+	if (mfbi->index == 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(mfbi->edid_data);
 
 	unregister_framebuffer(info);
@@ -1362,20 +2081,31 @@ static void uninstall_fb(struct fb_info *info)
 
 static irqreturn_t fsl_diu_isr(int irq, void *dev_id)
 {
+<<<<<<< HEAD
 	struct diu __iomem *hw = dev_id;
+=======
+	struct diu *hw = dr.diu_reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int status = in_be32(&hw->int_status);
 
 	if (status) {
 		/* This is the workaround for underrun */
 		if (status & INT_UNDRUN) {
 			out_be32(&hw->diu_mode, 0);
+<<<<<<< HEAD
+=======
+			pr_debug("Err: DIU occurs underrun!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			udelay(1);
 			out_be32(&hw->diu_mode, 1);
 		}
 #if defined(CONFIG_NOT_COHERENT_CACHE)
 		else if (status & INT_VSYNC) {
 			unsigned int i;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			for (i = 0; i < coherence_data_size;
 				i += d_cache_line_size)
 				__asm__ __volatile__ (
@@ -1388,6 +2118,7 @@ static irqreturn_t fsl_diu_isr(int irq, void *dev_id)
 	return IRQ_NONE;
 }
 
+<<<<<<< HEAD
 static int request_irq_local(struct fsl_diu_data *data)
 {
 	struct diu __iomem *hw = data->diu_reg;
@@ -1399,10 +2130,28 @@ static int request_irq_local(struct fsl_diu_data *data)
 
 	ret = request_irq(data->irq, fsl_diu_isr, 0, "fsl-diu-fb", hw);
 	if (!ret) {
+=======
+static int request_irq_local(int irq)
+{
+	unsigned long status, ints;
+	struct diu *hw;
+	int ret;
+
+	hw = dr.diu_reg;
+
+	/* Read to clear the status */
+	status = in_be32(&hw->int_status);
+
+	ret = request_irq(irq, fsl_diu_isr, 0, "diu", NULL);
+	if (ret)
+		pr_info("Request diu IRQ failed.\n");
+	else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ints = INT_PARERR | INT_LS_BF_VS;
 #if !defined(CONFIG_NOT_COHERENT_CACHE)
 		ints |=	INT_VSYNC;
 #endif
+<<<<<<< HEAD
 
 		/* Read to clear the status */
 		in_be32(&hw->int_status);
@@ -1415,11 +2164,30 @@ static int request_irq_local(struct fsl_diu_data *data)
 static void free_irq_local(struct fsl_diu_data *data)
 {
 	struct diu __iomem *hw = data->diu_reg;
+=======
+		if (dr.mode == MFB_MODE2 || dr.mode == MFB_MODE3)
+			ints |= INT_VSYNC_WB;
+
+		/* Read to clear the status */
+		status = in_be32(&hw->int_status);
+		out_be32(&hw->int_mask, ints);
+	}
+	return ret;
+}
+
+static void free_irq_local(int irq)
+{
+	struct diu *hw = dr.diu_reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Disable all LCDC interrupt */
 	out_be32(&hw->int_mask, 0x1f);
 
+<<<<<<< HEAD
 	free_irq(data->irq, NULL);
+=======
+	free_irq(irq, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_PM
@@ -1429,20 +2197,34 @@ static void free_irq_local(struct fsl_diu_data *data)
  */
 static int fsl_diu_suspend(struct platform_device *ofdev, pm_message_t state)
 {
+<<<<<<< HEAD
 	struct fsl_diu_data *data;
 
 	data = dev_get_drvdata(&ofdev->dev);
 	disable_lcdc(data->fsl_diu_info);
+=======
+	struct fsl_diu_data *machine_data;
+
+	machine_data = dev_get_drvdata(&ofdev->dev);
+	disable_lcdc(machine_data->fsl_diu_info[0]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 static int fsl_diu_resume(struct platform_device *ofdev)
 {
+<<<<<<< HEAD
 	struct fsl_diu_data *data;
 
 	data = dev_get_drvdata(&ofdev->dev);
 	enable_lcdc(data->fsl_diu_info);
+=======
+	struct fsl_diu_data *machine_data;
+
+	machine_data = dev_get_drvdata(&ofdev->dev);
+	enable_lcdc(machine_data->fsl_diu_info[0]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1452,6 +2234,7 @@ static int fsl_diu_resume(struct platform_device *ofdev)
 #define fsl_diu_resume NULL
 #endif				/* CONFIG_PM */
 
+<<<<<<< HEAD
 static ssize_t store_monitor(struct device *device,
 	struct device_attribute *attr, const char *buf, size_t count)
 {
@@ -1470,6 +2253,65 @@ static ssize_t store_monitor(struct device *device,
 
 		for (i=0; i < NUM_AOIS; i++)
 			fsl_diu_set_par(&data->fsl_diu_info[i]);
+=======
+/* Align to 64-bit(8-byte), 32-byte, etc. */
+static int allocate_buf(struct device *dev, struct diu_addr *buf, u32 size,
+			u32 bytes_align)
+{
+	u32 offset, ssize;
+	u32 mask;
+	dma_addr_t paddr = 0;
+
+	ssize = size + bytes_align;
+	buf->vaddr = dma_alloc_coherent(dev, ssize, &paddr, GFP_DMA |
+							     __GFP_ZERO);
+	if (!buf->vaddr)
+		return -ENOMEM;
+
+	buf->paddr = (__u32) paddr;
+
+	mask = bytes_align - 1;
+	offset = (u32)buf->paddr & mask;
+	if (offset) {
+		buf->offset = bytes_align - offset;
+		buf->paddr = (u32)buf->paddr + offset;
+	} else
+		buf->offset = 0;
+	return 0;
+}
+
+static void free_buf(struct device *dev, struct diu_addr *buf, u32 size,
+		     u32 bytes_align)
+{
+	dma_free_coherent(dev, size + bytes_align,
+				buf->vaddr, (buf->paddr - buf->offset));
+	return;
+}
+
+static ssize_t store_monitor(struct device *device,
+	struct device_attribute *attr, const char *buf, size_t count)
+{
+	int old_monitor_port;
+	unsigned long val;
+	struct fsl_diu_data *machine_data =
+		container_of(attr, struct fsl_diu_data, dev_attr);
+
+	if (strict_strtoul(buf, 10, &val))
+		return 0;
+
+	old_monitor_port = machine_data->monitor_port;
+	machine_data->monitor_port = diu_ops.set_sysfs_monitor_port(val);
+
+	if (old_monitor_port != machine_data->monitor_port) {
+		/* All AOIs need adjust pixel format
+		 * fsl_diu_set_par only change the pixsel format here
+		 * unlikely to fail. */
+		fsl_diu_set_par(machine_data->fsl_diu_info[0]);
+		fsl_diu_set_par(machine_data->fsl_diu_info[1]);
+		fsl_diu_set_par(machine_data->fsl_diu_info[2]);
+		fsl_diu_set_par(machine_data->fsl_diu_info[3]);
+		fsl_diu_set_par(machine_data->fsl_diu_info[4]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return count;
 }
@@ -1477,6 +2319,7 @@ static ssize_t store_monitor(struct device *device,
 static ssize_t show_monitor(struct device *device,
 	struct device_attribute *attr, char *buf)
 {
+<<<<<<< HEAD
 	struct fsl_diu_data *data =
 		container_of(attr, struct fsl_diu_data, dev_attr);
 
@@ -1544,6 +2387,40 @@ static int __devinit fsl_diu_probe(struct platform_device *pdev)
 		mfbi->ad = &data->ad[i];
 
 		if (mfbi->index == PLANE0) {
+=======
+	struct fsl_diu_data *machine_data =
+		container_of(attr, struct fsl_diu_data, dev_attr);
+	return diu_ops.show_monitor_port(machine_data->monitor_port, buf);
+}
+
+static int __devinit fsl_diu_probe(struct platform_device *ofdev)
+{
+	struct device_node *np = ofdev->dev.of_node;
+	struct mfb_info *mfbi;
+	phys_addr_t dummy_ad_addr;
+	int ret, i, error = 0;
+	struct resource res;
+	struct fsl_diu_data *machine_data;
+	int diu_mode;
+
+	machine_data = kzalloc(sizeof(struct fsl_diu_data), GFP_KERNEL);
+	if (!machine_data)
+		return -ENOMEM;
+
+	for (i = 0; i < ARRAY_SIZE(machine_data->fsl_diu_info); i++) {
+		machine_data->fsl_diu_info[i] =
+			framebuffer_alloc(sizeof(struct mfb_info), &ofdev->dev);
+		if (!machine_data->fsl_diu_info[i]) {
+			dev_err(&ofdev->dev, "cannot allocate memory\n");
+			ret = -ENOMEM;
+			goto error2;
+		}
+		mfbi = machine_data->fsl_diu_info[i]->par;
+		memcpy(mfbi, &mfb_template[i], sizeof(struct mfb_info));
+		mfbi->parent = machine_data;
+
+		if (mfbi->index == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			const u8 *prop;
 			int len;
 
@@ -1555,6 +2432,7 @@ static int __devinit fsl_diu_probe(struct platform_device *pdev)
 		}
 	}
 
+<<<<<<< HEAD
 	data->diu_reg = of_iomap(np, 0);
 	if (!data->diu_reg) {
 		dev_err(&pdev->dev, "cannot map DIU registers\n");
@@ -1585,11 +2463,81 @@ static int __devinit fsl_diu_probe(struct platform_device *pdev)
 	data->dummy_ad.offset_xyd = 0;
 	data->dummy_ad.next_ad = 0;
 	data->dummy_ad.paddr = DMA_ADDR(data, dummy_ad);
+=======
+	ret = of_address_to_resource(np, 0, &res);
+	if (ret) {
+		dev_err(&ofdev->dev, "could not obtain DIU address\n");
+		goto error;
+	}
+	if (!res.start) {
+		dev_err(&ofdev->dev, "invalid DIU address\n");
+		goto error;
+	}
+	dev_dbg(&ofdev->dev, "%s, res.start: 0x%08x\n", __func__, res.start);
+
+	dr.diu_reg = ioremap(res.start, sizeof(struct diu));
+	if (!dr.diu_reg) {
+		dev_err(&ofdev->dev, "Err: can't map DIU registers!\n");
+		ret = -EFAULT;
+		goto error2;
+	}
+
+	diu_mode = in_be32(&dr.diu_reg->diu_mode);
+	if (diu_mode != MFB_MODE1)
+		out_be32(&dr.diu_reg->diu_mode, 0);	/* disable DIU */
+
+	/* Get the IRQ of the DIU */
+	machine_data->irq = irq_of_parse_and_map(np, 0);
+
+	if (!machine_data->irq) {
+		dev_err(&ofdev->dev, "could not get DIU IRQ\n");
+		ret = -EINVAL;
+		goto error;
+	}
+	machine_data->monitor_port = monitor_port;
+
+	/* Area descriptor memory pool aligns to 64-bit boundary */
+	if (allocate_buf(&ofdev->dev, &pool.ad,
+			 sizeof(struct diu_ad) * FSL_AOI_NUM, 8))
+		return -ENOMEM;
+
+	/* Get memory for Gamma Table  - 32-byte aligned memory */
+	if (allocate_buf(&ofdev->dev, &pool.gamma, 768, 32)) {
+		ret = -ENOMEM;
+		goto error;
+	}
+
+	/* For performance, cursor bitmap buffer aligns to 32-byte boundary */
+	if (allocate_buf(&ofdev->dev, &pool.cursor, MAX_CURS * MAX_CURS * 2,
+			 32)) {
+		ret = -ENOMEM;
+		goto error;
+	}
+
+	i = ARRAY_SIZE(machine_data->fsl_diu_info);
+	machine_data->dummy_ad = (struct diu_ad *)
+			((u32)pool.ad.vaddr + pool.ad.offset) + i;
+	machine_data->dummy_ad->paddr = pool.ad.paddr +
+			i * sizeof(struct diu_ad);
+	machine_data->dummy_aoi_virt = fsl_diu_alloc(64, &dummy_ad_addr);
+	if (!machine_data->dummy_aoi_virt) {
+		ret = -ENOMEM;
+		goto error;
+	}
+	machine_data->dummy_ad->addr = cpu_to_le32(dummy_ad_addr);
+	machine_data->dummy_ad->pix_fmt = 0x88882317;
+	machine_data->dummy_ad->src_size_g_alpha = cpu_to_le32((4 << 12) | 4);
+	machine_data->dummy_ad->aoi_size = cpu_to_le32((4 << 16) |  2);
+	machine_data->dummy_ad->offset_xyi = 0;
+	machine_data->dummy_ad->offset_xyd = 0;
+	machine_data->dummy_ad->next_ad = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Let DIU display splash screen if it was pre-initialized
 	 * by the bootloader, set dummy area descriptor otherwise.
 	 */
+<<<<<<< HEAD
 	if (diu_mode == MFB_MODE0)
 		out_be32(&data->diu_reg->desc[0], data->dummy_ad.paddr);
 
@@ -1600,10 +2548,30 @@ static int __devinit fsl_diu_probe(struct platform_device *pdev)
 		ret = install_fb(&data->fsl_diu_info[i]);
 		if (ret) {
 			dev_err(&pdev->dev, "could not register fb %d\n", i);
+=======
+	if (diu_mode != MFB_MODE1)
+		out_be32(&dr.diu_reg->desc[0], machine_data->dummy_ad->paddr);
+
+	out_be32(&dr.diu_reg->desc[1], machine_data->dummy_ad->paddr);
+	out_be32(&dr.diu_reg->desc[2], machine_data->dummy_ad->paddr);
+
+	for (i = 0; i < ARRAY_SIZE(machine_data->fsl_diu_info); i++) {
+		machine_data->fsl_diu_info[i]->fix.smem_start = 0;
+		mfbi = machine_data->fsl_diu_info[i]->par;
+		mfbi->ad = (struct diu_ad *)((u32)pool.ad.vaddr
+					+ pool.ad.offset) + i;
+		mfbi->ad->paddr = pool.ad.paddr + i * sizeof(struct diu_ad);
+		ret = install_fb(machine_data->fsl_diu_info[i]);
+		if (ret) {
+			dev_err(&ofdev->dev,
+				"Failed to register framebuffer %d\n",
+				i);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto error;
 		}
 	}
 
+<<<<<<< HEAD
 	if (request_irq_local(data)) {
 		dev_err(&pdev->dev, "could not claim irq\n");
 		goto error;
@@ -1631,10 +2599,56 @@ error:
 
 	dma_free_coherent(&pdev->dev, sizeof(struct fsl_diu_data), data,
 			  data->dma_addr);
+=======
+	if (request_irq_local(machine_data->irq)) {
+		dev_err(machine_data->fsl_diu_info[0]->dev,
+			"could not request irq for diu.");
+		goto error;
+	}
+
+	sysfs_attr_init(&machine_data->dev_attr.attr);
+	machine_data->dev_attr.attr.name = "monitor";
+	machine_data->dev_attr.attr.mode = S_IRUGO|S_IWUSR;
+	machine_data->dev_attr.show = show_monitor;
+	machine_data->dev_attr.store = store_monitor;
+	error = device_create_file(machine_data->fsl_diu_info[0]->dev,
+				  &machine_data->dev_attr);
+	if (error) {
+		dev_err(machine_data->fsl_diu_info[0]->dev,
+			"could not create sysfs %s file\n",
+			machine_data->dev_attr.attr.name);
+	}
+
+	dev_set_drvdata(&ofdev->dev, machine_data);
+	return 0;
+
+error:
+	for (i = ARRAY_SIZE(machine_data->fsl_diu_info);
+		i > 0; i--)
+		uninstall_fb(machine_data->fsl_diu_info[i - 1]);
+	if (pool.ad.vaddr)
+		free_buf(&ofdev->dev, &pool.ad,
+			 sizeof(struct diu_ad) * FSL_AOI_NUM, 8);
+	if (pool.gamma.vaddr)
+		free_buf(&ofdev->dev, &pool.gamma, 768, 32);
+	if (pool.cursor.vaddr)
+		free_buf(&ofdev->dev, &pool.cursor, MAX_CURS * MAX_CURS * 2,
+			 32);
+	if (machine_data->dummy_aoi_virt)
+		fsl_diu_free(machine_data->dummy_aoi_virt, 64);
+	iounmap(dr.diu_reg);
+
+error2:
+	for (i = 0; i < ARRAY_SIZE(machine_data->fsl_diu_info); i++)
+		if (machine_data->fsl_diu_info[i])
+			framebuffer_release(machine_data->fsl_diu_info[i]);
+	kfree(machine_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
 
+<<<<<<< HEAD
 static int fsl_diu_remove(struct platform_device *pdev)
 {
 	struct fsl_diu_data *data;
@@ -1651,6 +2665,34 @@ static int fsl_diu_remove(struct platform_device *pdev)
 
 	dma_free_coherent(&pdev->dev, sizeof(struct fsl_diu_data), data,
 			  data->dma_addr);
+=======
+
+static int fsl_diu_remove(struct platform_device *ofdev)
+{
+	struct fsl_diu_data *machine_data;
+	int i;
+
+	machine_data = dev_get_drvdata(&ofdev->dev);
+	disable_lcdc(machine_data->fsl_diu_info[0]);
+	free_irq_local(machine_data->irq);
+	for (i = ARRAY_SIZE(machine_data->fsl_diu_info); i > 0; i--)
+		uninstall_fb(machine_data->fsl_diu_info[i - 1]);
+	if (pool.ad.vaddr)
+		free_buf(&ofdev->dev, &pool.ad,
+			 sizeof(struct diu_ad) * FSL_AOI_NUM, 8);
+	if (pool.gamma.vaddr)
+		free_buf(&ofdev->dev, &pool.gamma, 768, 32);
+	if (pool.cursor.vaddr)
+		free_buf(&ofdev->dev, &pool.cursor, MAX_CURS * MAX_CURS * 2,
+			 32);
+	if (machine_data->dummy_aoi_virt)
+		fsl_diu_free(machine_data->dummy_aoi_virt, 64);
+	iounmap(dr.diu_reg);
+	for (i = 0; i < ARRAY_SIZE(machine_data->fsl_diu_info); i++)
+		if (machine_data->fsl_diu_info[i])
+			framebuffer_release(machine_data->fsl_diu_info[i]);
+	kfree(machine_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1668,7 +2710,12 @@ static int __init fsl_diu_setup(char *options)
 		if (!*opt)
 			continue;
 		if (!strncmp(opt, "monitor=", 8)) {
+<<<<<<< HEAD
 			monitor_port = fsl_diu_name_to_port(opt + 8);
+=======
+			if (!strict_strtoul(opt + 8, 10, &val) && (val <= 2))
+				monitor_port = val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else if (!strncmp(opt, "bpp=", 4)) {
 			if (!strict_strtoul(opt + 4, 10, &val))
 				default_bpp = val;
@@ -1695,7 +2742,11 @@ MODULE_DEVICE_TABLE(of, fsl_diu_match);
 
 static struct platform_driver fsl_diu_driver = {
 	.driver = {
+<<<<<<< HEAD
 		.name = "fsl-diu-fb",
+=======
+		.name = "fsl_diu",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.owner = THIS_MODULE,
 		.of_match_table = fsl_diu_match,
 	},
@@ -1721,47 +2772,74 @@ static int __init fsl_diu_init(void)
 	if (fb_get_options("fslfb", &option))
 		return -ENODEV;
 	fsl_diu_setup(option);
+<<<<<<< HEAD
 #else
 	monitor_port = fsl_diu_name_to_port(monitor_string);
 #endif
 	pr_info("Freescale Display Interface Unit (DIU) framebuffer driver\n");
+=======
+#endif
+	printk(KERN_INFO "Freescale DIU driver\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_NOT_COHERENT_CACHE
 	np = of_find_node_by_type(NULL, "cpu");
 	if (!np) {
+<<<<<<< HEAD
 		pr_err("fsl-diu-fb: can't find 'cpu' device node\n");
+=======
+		printk(KERN_ERR "Err: can't find device node 'cpu'\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
 	prop = of_get_property(np, "d-cache-size", NULL);
 	if (prop == NULL) {
+<<<<<<< HEAD
 		pr_err("fsl-diu-fb: missing 'd-cache-size' property' "
 		       "in 'cpu' node\n");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		of_node_put(np);
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * Freescale PLRU requires 13/8 times the cache size to do a proper
 	 * displacement flush
 	 */
 	coherence_data_size = be32_to_cpup(prop) * 13;
+=======
+	/* Freescale PLRU requires 13/8 times the cache size to do a proper
+	   displacement flush
+	 */
+	coherence_data_size = *prop * 13;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	coherence_data_size /= 8;
 
 	prop = of_get_property(np, "d-cache-line-size", NULL);
 	if (prop == NULL) {
+<<<<<<< HEAD
 		pr_err("fsl-diu-fb: missing 'd-cache-line-size' property' "
 		       "in 'cpu' node\n");
 		of_node_put(np);
 		return -ENODEV;
 	}
 	d_cache_line_size = be32_to_cpup(prop);
+=======
+		of_node_put(np);
+		return -ENODEV;
+	}
+	d_cache_line_size = *prop;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	of_node_put(np);
 	coherence_data = vmalloc(coherence_data_size);
 	if (!coherence_data)
 		return -ENOMEM;
 #endif
+<<<<<<< HEAD
 
 	ret = platform_driver_register(&fsl_diu_driver);
 	if (ret) {
@@ -1769,6 +2847,16 @@ static int __init fsl_diu_init(void)
 #if defined(CONFIG_NOT_COHERENT_CACHE)
 		vfree(coherence_data);
 #endif
+=======
+	ret = platform_driver_register(&fsl_diu_driver);
+	if (ret) {
+		printk(KERN_ERR
+			"fsl-diu: failed to register platform driver\n");
+#if defined(CONFIG_NOT_COHERENT_CACHE)
+		vfree(coherence_data);
+#endif
+		iounmap(dr.diu_reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return ret;
 }
@@ -1792,8 +2880,15 @@ module_param_named(mode, fb_mode, charp, 0);
 MODULE_PARM_DESC(mode,
 	"Specify resolution as \"<xres>x<yres>[-<bpp>][@<refresh>]\" ");
 module_param_named(bpp, default_bpp, ulong, 0);
+<<<<<<< HEAD
 MODULE_PARM_DESC(bpp, "Specify bit-per-pixel if not specified in 'mode'");
 module_param_named(monitor, monitor_string, charp, 0);
 MODULE_PARM_DESC(monitor, "Specify the monitor port "
 	"(\"dvi\", \"lvds\", or \"dlvds\") if supported by the platform");
+=======
+MODULE_PARM_DESC(bpp, "Specify bit-per-pixel if not specified mode");
+module_param_named(monitor, monitor_port, int, 0);
+MODULE_PARM_DESC(monitor,
+	"Specify the monitor port (0, 1 or 2) if supported by the platform");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 

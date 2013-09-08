@@ -96,13 +96,20 @@ static irqreturn_t ip6_action(int cpl, void *dev_id)
 struct irqaction ip6_irqaction = {
 	.handler = ip6_action,
 	.name = "cascade",
+<<<<<<< HEAD
 	.flags = IRQF_SHARED | IRQF_NO_THREAD,
+=======
+	.flags = IRQF_SHARED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct irqaction cascade_irqaction = {
 	.handler = no_action,
 	.name = "cascade",
+<<<<<<< HEAD
 	.flags = IRQF_NO_THREAD,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void __init mach_init_irq(void)

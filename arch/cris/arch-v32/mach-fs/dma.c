@@ -9,6 +9,10 @@
 #include <hwregs/config_defs.h>
 #include <hwregs/strmux_defs.h>
 #include <linux/errno.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/arbiter.h>
 
 static char used_dma_channels[MAX_DMA_CHANNELS];

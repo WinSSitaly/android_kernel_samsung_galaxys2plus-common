@@ -30,7 +30,10 @@
  * SOFTWARE.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <rdma/ib_marshall.h>
 
 void ib_copy_ah_attr_to_user(struct ib_uverbs_ah_attr *dst,

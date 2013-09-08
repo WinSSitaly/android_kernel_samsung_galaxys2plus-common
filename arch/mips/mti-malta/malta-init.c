@@ -26,8 +26,13 @@
 #include <asm/bootinfo.h>
 #include <asm/gt64120.h>
 #include <asm/io.h>
+<<<<<<< HEAD
 #include <asm/cacheflush.h>
 #include <asm/smp-ops.h>
+=======
+#include <asm/system.h>
+#include <asm/cacheflush.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/traps.h>
 
 #include <asm/gcmpregs.h>
@@ -358,6 +363,7 @@ void __init prom_init(void)
 #ifdef CONFIG_SERIAL_8250_CONSOLE
 	console_config();
 #endif
+<<<<<<< HEAD
 	/* Early detection of CMP support */
 	if (gcmp_probe(GCMP_BASE_ADDR, GCMP_ADDRSPACE_SZ))
 		if (!register_cmp_smp_ops())
@@ -366,6 +372,17 @@ void __init prom_init(void)
 	if (!register_vsmp_smp_ops())
 		return;
 
+=======
+#ifdef CONFIG_MIPS_CMP
+	/* Early detection of CMP support */
+	if (gcmp_probe(GCMP_BASE_ADDR, GCMP_ADDRSPACE_SZ))
+		register_smp_ops(&cmp_smp_ops);
+	else
+#endif
+#ifdef CONFIG_MIPS_MT_SMP
+		register_smp_ops(&vsmp_smp_ops);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_MIPS_MT_SMTC
 	register_smp_ops(&msmtc_smp_ops);
 #endif

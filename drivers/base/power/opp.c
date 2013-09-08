@@ -17,7 +17,10 @@
 #include <linux/init.h>
 #include <linux/slab.h>
 #include <linux/cpufreq.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/list.h>
 #include <linux/rculist.h>
 #include <linux/rcupdate.h>
@@ -74,7 +77,10 @@ struct opp {
  *		RCU usage: nodes are not modified in the list of device_opp,
  *		however addition is possible and is secured by dev_opp_list_lock
  * @dev:	device pointer
+<<<<<<< HEAD
  * @head:	notifier head to notify the OPP availability changes.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @opp_list:	list of opps
  *
  * This is an internal data structure maintaining the link to opps attached to
@@ -85,7 +91,10 @@ struct device_opp {
 	struct list_head node;
 
 	struct device *dev;
+<<<<<<< HEAD
 	struct srcu_notifier_head head;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head opp_list;
 };
 
@@ -407,7 +416,10 @@ int opp_add(struct device *dev, unsigned long freq, unsigned long u_volt)
 		}
 
 		dev_opp->dev = dev;
+<<<<<<< HEAD
 		srcu_init_notifier_head(&dev_opp->head);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		INIT_LIST_HEAD(&dev_opp->opp_list);
 
 		/* Secure the device list modification */
@@ -432,11 +444,14 @@ int opp_add(struct device *dev, unsigned long freq, unsigned long u_volt)
 	list_add_rcu(&new_opp->node, head);
 	mutex_unlock(&dev_opp_list_lock);
 
+<<<<<<< HEAD
 	/*
 	 * Notify the changes in the availability of the operable
 	 * frequency/voltage list.
 	 */
 	srcu_notifier_call_chain(&dev_opp->head, OPP_EVENT_ADD, new_opp);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -462,7 +477,11 @@ int opp_add(struct device *dev, unsigned long freq, unsigned long u_volt)
 static int opp_set_availability(struct device *dev, unsigned long freq,
 		bool availability_req)
 {
+<<<<<<< HEAD
 	struct device_opp *tmp_dev_opp, *dev_opp = ERR_PTR(-ENODEV);
+=======
+	struct device_opp *tmp_dev_opp, *dev_opp = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct opp *new_opp, *tmp_opp, *opp = ERR_PTR(-ENODEV);
 	int r = 0;
 
@@ -513,6 +532,7 @@ static int opp_set_availability(struct device *dev, unsigned long freq,
 	mutex_unlock(&dev_opp_list_lock);
 	synchronize_rcu();
 
+<<<<<<< HEAD
 	/* Notify the change of the OPP availability */
 	if (availability_req)
 		srcu_notifier_call_chain(&dev_opp->head, OPP_EVENT_ENABLE,
@@ -521,6 +541,8 @@ static int opp_set_availability(struct device *dev, unsigned long freq,
 		srcu_notifier_call_chain(&dev_opp->head, OPP_EVENT_DISABLE,
 					 new_opp);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* clean up old opp */
 	new_opp = opp;
 	goto out;
@@ -642,6 +664,7 @@ int opp_init_cpufreq_table(struct device *dev,
 
 	return 0;
 }
+<<<<<<< HEAD
 
 /**
  * opp_free_cpufreq_table() - free the cpufreq table
@@ -674,3 +697,6 @@ struct srcu_notifier_head *opp_get_notifier(struct device *dev)
 
 	return &dev_opp->head;
 }
+=======
+#endif		/* CONFIG_CPU_FREQ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

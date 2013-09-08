@@ -2,7 +2,11 @@
 #include <linux/stacktrace.h>
 #include <linux/thread_info.h>
 #include <linux/ftrace.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/ptrace.h>
 #include <asm/stacktrace.h>
 

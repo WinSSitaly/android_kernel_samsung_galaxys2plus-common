@@ -64,7 +64,17 @@ static const char *const tcp_conntrack_names[] = {
 #define HOURS * 60 MINS
 #define DAYS * 24 HOURS
 
+<<<<<<< HEAD
 static unsigned int tcp_timeouts[TCP_CONNTRACK_TIMEOUT_MAX] __read_mostly = {
+=======
+/* RFC1122 says the R2 limit should be at least 100 seconds.
+   Linux uses 15 packets as limit, which corresponds
+   to ~13-30min depending on RTO. */
+static unsigned int nf_ct_tcp_timeout_max_retrans __read_mostly    =   5 MINS;
+static unsigned int nf_ct_tcp_timeout_unacknowledged __read_mostly =   5 MINS;
+
+static unsigned int tcp_timeouts[TCP_CONNTRACK_MAX] __read_mostly = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[TCP_CONNTRACK_SYN_SENT]	= 2 MINS,
 	[TCP_CONNTRACK_SYN_RECV]	= 60 SECS,
 	[TCP_CONNTRACK_ESTABLISHED]	= 5 DAYS,
@@ -74,11 +84,14 @@ static unsigned int tcp_timeouts[TCP_CONNTRACK_TIMEOUT_MAX] __read_mostly = {
 	[TCP_CONNTRACK_TIME_WAIT]	= 2 MINS,
 	[TCP_CONNTRACK_CLOSE]		= 10 SECS,
 	[TCP_CONNTRACK_SYN_SENT2]	= 2 MINS,
+<<<<<<< HEAD
 /* RFC1122 says the R2 limit should be at least 100 seconds.
    Linux uses 15 packets as limit, which corresponds
    to ~13-30min depending on RTO. */
 	[TCP_CONNTRACK_RETRANS]		= 5 MINS,
 	[TCP_CONNTRACK_UNACK]		= 5 MINS,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define sNO TCP_CONNTRACK_NONE
@@ -158,11 +171,16 @@ static const u8 tcp_conntracks[2][6][TCP_CONNTRACK_MAX] = {
  *	sCL -> sSS
  */
 /* 	     sNO, sSS, sSR, sES, sFW, sCW, sLA, sTW, sCL, sS2	*/
+<<<<<<< HEAD
 /*synack*/ { sIV, sIV, sSR, sIV, sIV, sIV, sIV, sIV, sIV, sSR },
+=======
+/*synack*/ { sIV, sIV, sIG, sIG, sIG, sIG, sIG, sIG, sIG, sSR },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *	sNO -> sIV	Too late and no reason to do anything
  *	sSS -> sIV	Client can't send SYN and then SYN/ACK
  *	sS2 -> sSR	SYN/ACK sent to SYN2 in simultaneous open
+<<<<<<< HEAD
  *	sSR -> sSR	Late retransmitted SYN/ACK in simultaneous open
  *	sES -> sIV	Invalid SYN/ACK packets sent by the client
  *	sFW -> sIV
@@ -170,6 +188,18 @@ static const u8 tcp_conntracks[2][6][TCP_CONNTRACK_MAX] = {
  *	sLA -> sIV
  *	sTW -> sIV
  *	sCL -> sIV
+=======
+ *	sSR -> sIG
+ *	sES -> sIG	Error: SYNs in window outside the SYN_SENT state
+ *			are errors. Receiver will reply with RST
+ *			and close the connection.
+ *			Or we are not in sync and hold a dead connection.
+ *	sFW -> sIG
+ *	sCW -> sIG
+ *	sLA -> sIG
+ *	sTW -> sIG
+ *	sCL -> sIG
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 /* 	     sNO, sSS, sSR, sES, sFW, sCW, sLA, sTW, sCL, sS2	*/
 /*fin*/    { sIV, sIV, sFW, sFW, sLA, sLA, sLA, sTW, sCL, sIV },
@@ -405,7 +435,11 @@ static void tcp_options(const struct sk_buff *skb,
 			if (opsize < 2) /* "silly options" */
 				return;
 			if (opsize > length)
+<<<<<<< HEAD
 				return;	/* don't parse partial options */
+=======
+				break;	/* don't parse partial options */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (opcode == TCPOPT_SACK_PERM
 			    && opsize == TCPOLEN_SACK_PERM)
@@ -443,7 +477,11 @@ static void tcp_sack(const struct sk_buff *skb, unsigned int dataoff,
 	BUG_ON(ptr == NULL);
 
 	/* Fast path for timestamp-only option */
+<<<<<<< HEAD
 	if (length == TCPOLEN_TSTAMP_ALIGNED
+=======
+	if (length == TCPOLEN_TSTAMP_ALIGNED*4
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    && *(__be32 *)ptr == htonl((TCPOPT_NOP << 24)
 				       | (TCPOPT_NOP << 16)
 				       | (TCPOPT_TIMESTAMP << 8)
@@ -465,7 +503,11 @@ static void tcp_sack(const struct sk_buff *skb, unsigned int dataoff,
 			if (opsize < 2) /* "silly options" */
 				return;
 			if (opsize > length)
+<<<<<<< HEAD
 				return;	/* don't parse partial options */
+=======
+				break;	/* don't parse partial options */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (opcode == TCPOPT_SACK
 			    && opsize >= (TCPOLEN_SACK_BASE
@@ -581,8 +623,13 @@ static bool tcp_in_window(const struct nf_conn *ct,
 			 * Let's try to use the data from the packet.
 			 */
 			sender->td_end = end;
+<<<<<<< HEAD
 			swin = win << sender->td_scale;
 			sender->td_maxwin = (swin == 0 ? 1 : swin);
+=======
+			win <<= sender->td_scale;
+			sender->td_maxwin = (win == 0 ? 1 : win);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sender->td_maxend = end + sender->td_maxwin;
 			/*
 			 * We haven't seen traffic in the other direction yet
@@ -624,9 +671,21 @@ static bool tcp_in_window(const struct nf_conn *ct,
 		ack = sack = receiver->td_end;
 	}
 
+<<<<<<< HEAD
 	if (tcph->rst && seq == 0 && state->state == TCP_CONNTRACK_SYN_SENT)
 		/*
 		 * RST sent answering SYN.
+=======
+	if (seq == end
+	    && (!tcph->rst
+		|| (seq == 0 && state->state == TCP_CONNTRACK_SYN_SENT)))
+		/*
+		 * Packets contains no data: we assume it is valid
+		 * and check the ack value only.
+		 * However RST segments are always validated by their
+		 * SEQ number, except when seq == 0 (reset sent answering
+		 * SYN.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 */
 		seq = end = sender->td_end;
 
@@ -804,19 +863,26 @@ static int tcp_error(struct net *net, struct nf_conn *tmpl,
 	return NF_ACCEPT;
 }
 
+<<<<<<< HEAD
 static unsigned int *tcp_get_timeouts(struct net *net)
 {
 	return tcp_timeouts;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Returns verdict for packet, or -1 for invalid. */
 static int tcp_packet(struct nf_conn *ct,
 		      const struct sk_buff *skb,
 		      unsigned int dataoff,
 		      enum ip_conntrack_info ctinfo,
 		      u_int8_t pf,
+<<<<<<< HEAD
 		      unsigned int hooknum,
 		      unsigned int *timeouts)
+=======
+		      unsigned int hooknum)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct net *net = nf_ct_net(ct);
 	struct nf_conntrack_tuple *tuple;
@@ -1011,6 +1077,7 @@ static int tcp_packet(struct nf_conn *ct,
 		ct->proto.tcp.seen[dir].flags |= IP_CT_TCP_FLAG_CLOSE_INIT;
 
 	if (ct->proto.tcp.retrans >= nf_ct_tcp_max_retrans &&
+<<<<<<< HEAD
 	    timeouts[new_state] > timeouts[TCP_CONNTRACK_RETRANS])
 		timeout = timeouts[TCP_CONNTRACK_RETRANS];
 	else if ((ct->proto.tcp.seen[0].flags | ct->proto.tcp.seen[1].flags) &
@@ -1019,6 +1086,16 @@ static int tcp_packet(struct nf_conn *ct,
 		timeout = timeouts[TCP_CONNTRACK_UNACK];
 	else
 		timeout = timeouts[new_state];
+=======
+	    tcp_timeouts[new_state] > nf_ct_tcp_timeout_max_retrans)
+		timeout = nf_ct_tcp_timeout_max_retrans;
+	else if ((ct->proto.tcp.seen[0].flags | ct->proto.tcp.seen[1].flags) &
+		 IP_CT_TCP_FLAG_DATA_UNACKNOWLEDGED &&
+		 tcp_timeouts[new_state] > nf_ct_tcp_timeout_unacknowledged)
+		timeout = nf_ct_tcp_timeout_unacknowledged;
+	else
+		timeout = tcp_timeouts[new_state];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_bh(&ct->lock);
 
 	if (new_state != old_state)
@@ -1050,7 +1127,11 @@ static int tcp_packet(struct nf_conn *ct,
 
 /* Called when a new connection for this protocol found. */
 static bool tcp_new(struct nf_conn *ct, const struct sk_buff *skb,
+<<<<<<< HEAD
 		    unsigned int dataoff, unsigned int *timeouts)
+=======
+		    unsigned int dataoff)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	enum tcp_conntrack new_state;
 	const struct tcphdr *th;
@@ -1122,7 +1203,11 @@ static bool tcp_new(struct nf_conn *ct, const struct sk_buff *skb,
 	return true;
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK)
+=======
+#if defined(CONFIG_NF_CT_NETLINK) || defined(CONFIG_NF_CT_NETLINK_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/netfilter/nfnetlink.h>
 #include <linux/netfilter/nfnetlink_conntrack.h>
@@ -1235,6 +1320,7 @@ static int tcp_nlattr_tuple_size(void)
 }
 #endif
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
 
 #include <linux/netfilter/nfnetlink.h>
@@ -1342,6 +1428,8 @@ static const struct nla_policy tcp_timeout_nla_policy[CTA_TIMEOUT_TCP_MAX+1] = {
 };
 #endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SYSCTL
 static unsigned int tcp_sysctl_table_users;
 static struct ctl_table_header *tcp_sysctl_header;
@@ -1404,14 +1492,22 @@ static struct ctl_table tcp_sysctl_table[] = {
 	},
 	{
 		.procname	= "nf_conntrack_tcp_timeout_max_retrans",
+<<<<<<< HEAD
 		.data		= &tcp_timeouts[TCP_CONNTRACK_RETRANS],
+=======
+		.data		= &nf_ct_tcp_timeout_max_retrans,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.maxlen		= sizeof(unsigned int),
 		.mode		= 0644,
 		.proc_handler	= proc_dointvec_jiffies,
 	},
 	{
 		.procname	= "nf_conntrack_tcp_timeout_unacknowledged",
+<<<<<<< HEAD
 		.data		= &tcp_timeouts[TCP_CONNTRACK_UNACK],
+=======
+		.data		= &nf_ct_tcp_timeout_unacknowledged,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.maxlen		= sizeof(unsigned int),
 		.mode		= 0644,
 		.proc_handler	= proc_dointvec_jiffies,
@@ -1507,7 +1603,11 @@ static struct ctl_table tcp_compat_sysctl_table[] = {
 	},
 	{
 		.procname	= "ip_conntrack_tcp_timeout_max_retrans",
+<<<<<<< HEAD
 		.data		= &tcp_timeouts[TCP_CONNTRACK_RETRANS],
+=======
+		.data		= &nf_ct_tcp_timeout_max_retrans,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.maxlen		= sizeof(unsigned int),
 		.mode		= 0644,
 		.proc_handler	= proc_dointvec_jiffies,
@@ -1548,10 +1648,16 @@ struct nf_conntrack_l4proto nf_conntrack_l4proto_tcp4 __read_mostly =
 	.print_tuple 		= tcp_print_tuple,
 	.print_conntrack 	= tcp_print_conntrack,
 	.packet 		= tcp_packet,
+<<<<<<< HEAD
 	.get_timeouts		= tcp_get_timeouts,
 	.new 			= tcp_new,
 	.error			= tcp_error,
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK)
+=======
+	.new 			= tcp_new,
+	.error			= tcp_error,
+#if defined(CONFIG_NF_CT_NETLINK) || defined(CONFIG_NF_CT_NETLINK_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.to_nlattr		= tcp_to_nlattr,
 	.nlattr_size		= tcp_nlattr_size,
 	.from_nlattr		= nlattr_to_tcp,
@@ -1560,6 +1666,7 @@ struct nf_conntrack_l4proto nf_conntrack_l4proto_tcp4 __read_mostly =
 	.nlattr_tuple_size	= tcp_nlattr_tuple_size,
 	.nla_policy		= nf_ct_port_nla_policy,
 #endif
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
 	.ctnl_timeout		= {
 		.nlattr_to_obj	= tcp_timeout_nlattr_to_obj,
@@ -1570,6 +1677,8 @@ struct nf_conntrack_l4proto nf_conntrack_l4proto_tcp4 __read_mostly =
 		.nla_policy	= tcp_timeout_nla_policy,
 	},
 #endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SYSCTL
 	.ctl_table_users	= &tcp_sysctl_table_users,
 	.ctl_table_header	= &tcp_sysctl_header,
@@ -1591,10 +1700,16 @@ struct nf_conntrack_l4proto nf_conntrack_l4proto_tcp6 __read_mostly =
 	.print_tuple 		= tcp_print_tuple,
 	.print_conntrack 	= tcp_print_conntrack,
 	.packet 		= tcp_packet,
+<<<<<<< HEAD
 	.get_timeouts		= tcp_get_timeouts,
 	.new 			= tcp_new,
 	.error			= tcp_error,
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK)
+=======
+	.new 			= tcp_new,
+	.error			= tcp_error,
+#if defined(CONFIG_NF_CT_NETLINK) || defined(CONFIG_NF_CT_NETLINK_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.to_nlattr		= tcp_to_nlattr,
 	.nlattr_size		= tcp_nlattr_size,
 	.from_nlattr		= nlattr_to_tcp,
@@ -1603,6 +1718,7 @@ struct nf_conntrack_l4proto nf_conntrack_l4proto_tcp6 __read_mostly =
 	.nlattr_tuple_size	= tcp_nlattr_tuple_size,
 	.nla_policy		= nf_ct_port_nla_policy,
 #endif
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
 	.ctnl_timeout		= {
 		.nlattr_to_obj	= tcp_timeout_nlattr_to_obj,
@@ -1613,6 +1729,8 @@ struct nf_conntrack_l4proto nf_conntrack_l4proto_tcp6 __read_mostly =
 		.nla_policy	= tcp_timeout_nla_policy,
 	},
 #endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SYSCTL
 	.ctl_table_users	= &tcp_sysctl_table_users,
 	.ctl_table_header	= &tcp_sysctl_header,

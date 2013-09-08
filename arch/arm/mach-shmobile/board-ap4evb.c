@@ -42,8 +42,11 @@
 #include <linux/leds.h>
 #include <linux/input/sh_keysc.h>
 #include <linux/usb/r8a66597.h>
+<<<<<<< HEAD
 #include <linux/pm_clock.h>
 #include <linux/dma-mapping.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <media/sh_mobile_ceu.h>
 #include <media/sh_mobile_csi2.h>
@@ -61,6 +64,11 @@
 
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
+<<<<<<< HEAD
+=======
+#include <asm/mach/map.h>
+#include <asm/mach/time.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/setup.h>
 
 /*
@@ -198,8 +206,13 @@ static struct physmap_flash_data nor_flash_data = {
 
 static struct resource nor_flash_resources[] = {
 	[0]	= {
+<<<<<<< HEAD
 		.start	= 0x20000000, /* CS0 shadow instead of regular CS0 */
 		.end	= 0x28000000 - 1, /* needed by USB MASK ROM boot */
+=======
+		.start	= 0x00000000,
+		.end	= 0x08000000 - 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_MEM,
 	}
 };
@@ -256,6 +269,7 @@ static struct sh_mobile_meram_info meram_info = {
 
 static struct resource meram_resources[] = {
 	[0] = {
+<<<<<<< HEAD
 		.name	= "regs",
 		.start	= 0xe8000000,
 		.end	= 0xe807ffff,
@@ -266,6 +280,12 @@ static struct resource meram_resources[] = {
 		.start	= 0xe8080000,
 		.end	= 0xe81fffff,
 		.flags	= IORESOURCE_MEM,
+=======
+		.name   = "MERAM",
+		.start  = 0xe8000000,
+		.end    = 0xe81fffff,
+		.flags  = IORESOURCE_MEM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 
@@ -299,6 +319,18 @@ static struct resource sh_mmcif_resources[] = {
 	},
 };
 
+<<<<<<< HEAD
+=======
+static struct sh_mmcif_dma sh_mmcif_dma = {
+	.chan_priv_rx	= {
+		.slave_id	= SHDMA_SLAVE_MMCIF_RX,
+	},
+	.chan_priv_tx	= {
+		.slave_id	= SHDMA_SLAVE_MMCIF_TX,
+	},
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct sh_mmcif_plat_data sh_mmcif_plat = {
 	.sup_pclk	= 0,
 	.ocr		= MMC_VDD_165_195 | MMC_VDD_32_33 | MMC_VDD_33_34,
@@ -306,8 +338,12 @@ static struct sh_mmcif_plat_data sh_mmcif_plat = {
 			  MMC_CAP_8_BIT_DATA |
 			  MMC_CAP_NEEDS_POLL,
 	.get_cd		= slot_cn7_get_cd,
+<<<<<<< HEAD
 	.slave_id_tx	= SHDMA_SLAVE_MMCIF_TX,
 	.slave_id_rx	= SHDMA_SLAVE_MMCIF_RX,
+=======
+	.dma		= &sh_mmcif_dma,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device sh_mmcif_device = {
@@ -441,6 +477,85 @@ static struct platform_device usb1_host_device = {
 	.resource	= usb1_host_resources,
 };
 
+<<<<<<< HEAD
+=======
+const static struct fb_videomode ap4evb_lcdc_modes[] = {
+	{
+#ifdef CONFIG_AP4EVB_QHD
+		.name		= "R63302(QHD)",
+		.xres		= 544,
+		.yres		= 961,
+		.left_margin	= 72,
+		.right_margin	= 600,
+		.hsync_len	= 16,
+		.upper_margin	= 8,
+		.lower_margin	= 8,
+		.vsync_len	= 2,
+		.sync		= FB_SYNC_VERT_HIGH_ACT | FB_SYNC_HOR_HIGH_ACT,
+#else
+		.name		= "WVGA Panel",
+		.xres		= 800,
+		.yres		= 480,
+		.left_margin	= 220,
+		.right_margin	= 110,
+		.hsync_len	= 70,
+		.upper_margin	= 20,
+		.lower_margin	= 5,
+		.vsync_len	= 5,
+		.sync		= 0,
+#endif
+	},
+};
+static struct sh_mobile_meram_cfg lcd_meram_cfg = {
+	.icb[0] = {
+		.marker_icb     = 28,
+		.cache_icb      = 24,
+		.meram_offset   = 0x0,
+		.meram_size     = 0x40,
+	},
+	.icb[1] = {
+		.marker_icb     = 29,
+		.cache_icb      = 25,
+		.meram_offset   = 0x40,
+		.meram_size     = 0x40,
+	},
+};
+
+static struct sh_mobile_lcdc_info lcdc_info = {
+	.meram_dev = &meram_info,
+	.ch[0] = {
+		.chan = LCDC_CHAN_MAINLCD,
+		.bpp = 16,
+		.lcd_cfg = ap4evb_lcdc_modes,
+		.num_cfg = ARRAY_SIZE(ap4evb_lcdc_modes),
+		.meram_cfg = &lcd_meram_cfg,
+	}
+};
+
+static struct resource lcdc_resources[] = {
+	[0] = {
+		.name	= "LCDC",
+		.start	= 0xfe940000, /* P4-only space */
+		.end	= 0xfe943fff,
+		.flags	= IORESOURCE_MEM,
+	},
+	[1] = {
+		.start	= intcs_evt2irq(0x580),
+		.flags	= IORESOURCE_IRQ,
+	},
+};
+
+static struct platform_device lcdc_device = {
+	.name		= "sh_mobile_lcdc_fb",
+	.num_resources	= ARRAY_SIZE(lcdc_resources),
+	.resource	= lcdc_resources,
+	.dev	= {
+		.platform_data	= &lcdc_info,
+		.coherent_dma_mask = ~0,
+	},
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * QHD display
  */
@@ -484,6 +599,7 @@ static struct platform_device keysc_device = {
 };
 
 /* MIPI-DSI */
+<<<<<<< HEAD
 static int sh_mipi_set_dot_clock(struct platform_device *pdev,
 				 void __iomem *base,
 				 int enable)
@@ -513,6 +629,8 @@ static int sh_mipi_set_dot_clock(struct platform_device *pdev,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct resource mipidsi0_resources[] = {
 	[0] = {
 		.start  = 0xffc60000,
@@ -526,6 +644,7 @@ static struct resource mipidsi0_resources[] = {
 	},
 };
 
+<<<<<<< HEAD
 static struct sh_mobile_lcdc_info lcdc_info;
 
 static struct sh_mipi_dsi_info mipidsi0_info = {
@@ -537,6 +656,12 @@ static struct sh_mipi_dsi_info mipidsi0_info = {
 	.flags		= SH_MIPI_DSI_SYNC_PULSES_MODE |
 			  SH_MIPI_DSI_HSbyteCLK,
 	.set_dot_clock	= sh_mipi_set_dot_clock,
+=======
+static struct sh_mipi_dsi_info mipidsi0_info = {
+	.data_format	= MIPI_RGB888,
+	.lcd_chan	= &lcdc_info.ch[0],
+	.vsynw_offset	= 17,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device mipidsi0_device = {
@@ -555,6 +680,7 @@ static struct platform_device *qhd_devices[] __initdata = {
 };
 #endif /* CONFIG_AP4EVB_QHD */
 
+<<<<<<< HEAD
 /* LCDC0 */
 static const struct fb_videomode ap4evb_lcdc_modes[] = {
 	{
@@ -630,6 +756,8 @@ static struct platform_device lcdc_device = {
 	},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* FSI */
 #define IRQ_FSI		evt2irq(0x1840)
 static int __fsi_set_rate(struct clk *clk, long rate, int enable)
@@ -748,6 +876,7 @@ fsi_set_rate_end:
 	return ret;
 }
 
+<<<<<<< HEAD
 static struct sh_fsi_platform_info fsi_info = {
 	.port_a = {
 		.flags		= SH_FSI_BRS_INV,
@@ -760,6 +889,28 @@ static struct sh_fsi_platform_info fsi_info = {
 				  SH_FSI_FMT_SPDIF,
 		.set_rate	= fsi_hdmi_set_rate,
 	},
+=======
+static int fsi_set_rate(struct device *dev, int is_porta, int rate, int enable)
+{
+	int ret;
+
+	if (is_porta)
+		ret = fsi_ak4642_set_rate(dev, rate, enable);
+	else
+		ret = fsi_hdmi_set_rate(dev, rate, enable);
+
+	return ret;
+}
+
+static struct sh_fsi_platform_info fsi_info = {
+	.porta_flags = SH_FSI_BRS_INV,
+
+	.portb_flags = SH_FSI_BRS_INV |
+		       SH_FSI_BRM_INV |
+		       SH_FSI_LRS_INV |
+		       SH_FSI_FMT_SPDIF,
+	.set_rate = fsi_set_rate,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct resource fsi_resources[] = {
@@ -785,6 +936,7 @@ static struct platform_device fsi_device = {
 	},
 };
 
+<<<<<<< HEAD
 static struct fsi_ak4642_info fsi2_ak4643_info = {
 	.name		= "AK4643",
 	.card		= "FSI2A-AK4643",
@@ -806,6 +958,70 @@ static long ap4evb_clk_optimize(unsigned long target, unsigned long *best_freq,
 				unsigned long *parent_freq);
 
 static struct sh_mobile_hdmi_info hdmi_info = {
+=======
+static struct platform_device fsi_ak4643_device = {
+	.name		= "sh_fsi2_a_ak4643",
+};
+static struct sh_mobile_meram_cfg hdmi_meram_cfg = {
+	.icb[0] = {
+		.marker_icb     = 30,
+		.cache_icb      = 26,
+		.meram_offset   = 0x80,
+		.meram_size     = 0x100,
+	},
+	.icb[1] = {
+		.marker_icb     = 31,
+		.cache_icb      = 27,
+		.meram_offset   = 0x180,
+		.meram_size     = 0x100,
+	},
+};
+
+static struct sh_mobile_lcdc_info sh_mobile_lcdc1_info = {
+	.clock_source = LCDC_CLK_EXTERNAL,
+	.meram_dev = &meram_info,
+	.ch[0] = {
+		.chan = LCDC_CHAN_MAINLCD,
+		.bpp = 16,
+		.interface_type = RGB24,
+		.clock_divider = 1,
+		.flags = LCDC_FLAGS_DWPOL,
+		.meram_cfg = &hdmi_meram_cfg,
+	}
+};
+
+static struct resource lcdc1_resources[] = {
+	[0] = {
+		.name	= "LCDC1",
+		.start	= 0xfe944000,
+		.end	= 0xfe947fff,
+		.flags	= IORESOURCE_MEM,
+	},
+	[1] = {
+		.start	= intcs_evt2irq(0x1780),
+		.flags	= IORESOURCE_IRQ,
+	},
+};
+
+static struct platform_device lcdc1_device = {
+	.name		= "sh_mobile_lcdc_fb",
+	.num_resources	= ARRAY_SIZE(lcdc1_resources),
+	.resource	= lcdc1_resources,
+	.id             = 1,
+	.dev	= {
+		.platform_data	= &sh_mobile_lcdc1_info,
+		.coherent_dma_mask = ~0,
+	},
+};
+
+static long ap4evb_clk_optimize(unsigned long target, unsigned long *best_freq,
+				unsigned long *parent_freq);
+
+
+static struct sh_mobile_hdmi_info hdmi_info = {
+	.lcd_chan = &sh_mobile_lcdc1_info.ch[0],
+	.lcd_dev = &lcdc1_device.dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.flags = HDMI_SND_SRC_SPDIF,
 	.clk_optimize_parent = ap4evb_clk_optimize,
 };
@@ -834,6 +1050,13 @@ static struct platform_device hdmi_device = {
 	},
 };
 
+<<<<<<< HEAD
+=======
+static struct platform_device fsi_hdmi_device = {
+	.name		= "sh_fsi2_b_hdmi",
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static long ap4evb_clk_optimize(unsigned long target, unsigned long *best_freq,
 				unsigned long *parent_freq)
 {
@@ -853,6 +1076,7 @@ static long ap4evb_clk_optimize(unsigned long target, unsigned long *best_freq,
 	return error;
 }
 
+<<<<<<< HEAD
 static const struct sh_mobile_meram_cfg hdmi_meram_cfg = {
 	.icb[0] = {
 		.meram_size     = 0x100,
@@ -904,6 +1128,8 @@ static struct platform_device fsi_hdmi_device = {
 	.name		= "sh_fsi2_b_hdmi",
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct gpio_led ap4evb_leds[] = {
 	{
 		.name			= "led4",
@@ -962,7 +1188,11 @@ static struct platform_device ap4evb_camera = {
 static struct sh_csi2_client_config csi2_clients[] = {
 	{
 		.phy		= SH_CSI2_PHY_MAIN,
+<<<<<<< HEAD
 		.lanes		= 0,		/* default: 2 lanes */
+=======
+		.lanes		= 3,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.channel	= 0,
 		.pdev		= &ap4evb_camera,
 	},
@@ -988,16 +1218,31 @@ static struct resource csi2_resources[] = {
 	},
 };
 
+<<<<<<< HEAD
 static struct sh_mobile_ceu_companion csi2 = {
 	.id		= 0,
 	.num_resources	= ARRAY_SIZE(csi2_resources),
 	.resource	= csi2_resources,
 	.platform_data	= &csi2_info,
+=======
+static struct platform_device csi2_device = {
+	.name   = "sh-mobile-csi2",
+	.id     = 0,
+	.num_resources	= ARRAY_SIZE(csi2_resources),
+	.resource	= csi2_resources,
+	.dev    = {
+		.platform_data = &csi2_info,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct sh_mobile_ceu_info sh_mobile_ceu_info = {
 	.flags = SH_CEU_FLAG_USE_8BIT_BUS,
+<<<<<<< HEAD
 	.csi2 = &csi2,
+=======
+	.csi2_dev = &csi2_device.dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct resource ceu_resources[] = {
@@ -1038,9 +1283,16 @@ static struct platform_device *ap4evb_devices[] __initdata = {
 	&fsi_ak4643_device,
 	&fsi_hdmi_device,
 	&sh_mmcif_device,
+<<<<<<< HEAD
 	&hdmi_device,
 	&lcdc_device,
 	&lcdc1_device,
+=======
+	&lcdc1_device,
+	&lcdc_device,
+	&hdmi_device,
+	&csi2_device,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&ceu_device,
 	&ap4evb_camera,
 	&meram_device,
@@ -1186,6 +1438,29 @@ static struct i2c_board_info i2c1_devices[] = {
 	},
 };
 
+<<<<<<< HEAD
+=======
+static struct map_desc ap4evb_io_desc[] __initdata = {
+	/* create a 1:1 entity map for 0xe6xxxxxx
+	 * used by CPGA, INTC and PFC.
+	 */
+	{
+		.virtual	= 0xe6000000,
+		.pfn		= __phys_to_pfn(0xe6000000),
+		.length		= 256 << 20,
+		.type		= MT_DEVICE_NONSHARED
+	},
+};
+
+static void __init ap4evb_map_io(void)
+{
+	iotable_init(ap4evb_io_desc, ARRAY_SIZE(ap4evb_io_desc));
+
+	/* setup early devices and console here as well */
+	sh7372_add_early_devices();
+	shmobile_setup_console();
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define GPIO_PORT9CR	0xE6051009
 #define GPIO_PORT10CR	0xE605100A
@@ -1195,9 +1470,12 @@ static void __init ap4evb_init(void)
 	u32 srcr4;
 	struct clk *clk;
 
+<<<<<<< HEAD
 	/* External clock source */
 	clk_set_rate(&sh7372_dv_clki_clk, 27000000);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sh7372_pinmux_init();
 
 	/* enable SCIFA0 */
@@ -1334,8 +1612,13 @@ static void __init ap4evb_init(void)
 	lcdc_info.ch[0].interface_type		= RGB24;
 	lcdc_info.ch[0].clock_divider		= 1;
 	lcdc_info.ch[0].flags			= LCDC_FLAGS_DWPOL;
+<<<<<<< HEAD
 	lcdc_info.ch[0].panel_cfg.width		= 44;
 	lcdc_info.ch[0].panel_cfg.height	= 79;
+=======
+	lcdc_info.ch[0].lcd_size_cfg.width	= 44;
+	lcdc_info.ch[0].lcd_size_cfg.height	= 79;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	platform_add_devices(qhd_devices, ARRAY_SIZE(qhd_devices));
 
@@ -1376,8 +1659,13 @@ static void __init ap4evb_init(void)
 	lcdc_info.ch[0].interface_type		= RGB18;
 	lcdc_info.ch[0].clock_divider		= 3;
 	lcdc_info.ch[0].flags			= 0;
+<<<<<<< HEAD
 	lcdc_info.ch[0].panel_cfg.width		= 152;
 	lcdc_info.ch[0].panel_cfg.height	= 91;
+=======
+	lcdc_info.ch[0].lcd_size_cfg.width	= 152;
+	lcdc_info.ch[0].lcd_size_cfg.height	= 91;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* enable TouchScreen */
 	irq_set_irq_type(IRQ7, IRQ_TYPE_LEVEL_LOW);
@@ -1418,6 +1706,7 @@ static void __init ap4evb_init(void)
 
 	platform_add_devices(ap4evb_devices, ARRAY_SIZE(ap4evb_devices));
 
+<<<<<<< HEAD
 	sh7372_add_device_to_domain(&sh7372_a4lc, &lcdc1_device);
 	sh7372_add_device_to_domain(&sh7372_a4lc, &lcdc_device);
 	sh7372_add_device_to_domain(&sh7372_a4mp, &fsi_device);
@@ -1441,4 +1730,30 @@ MACHINE_START(AP4EVB, "ap4evb")
 	.handle_irq	= shmobile_handle_irq_intc,
 	.init_machine	= ap4evb_init,
 	.timer		= &shmobile_timer,
+=======
+	hdmi_init_pm_clock();
+	fsi_init_pm_clock();
+	sh7372_pm_init();
+}
+
+static void __init ap4evb_timer_init(void)
+{
+	sh7372_clock_init();
+	shmobile_timer.init();
+
+	/* External clock source */
+	clk_set_rate(&sh7372_dv_clki_clk, 27000000);
+}
+
+static struct sys_timer ap4evb_timer = {
+	.init		= ap4evb_timer_init,
+};
+
+MACHINE_START(AP4EVB, "ap4evb")
+	.map_io		= ap4evb_map_io,
+	.init_irq	= sh7372_init_irq,
+	.handle_irq	= shmobile_handle_irq_intc,
+	.init_machine	= ap4evb_init,
+	.timer		= &ap4evb_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

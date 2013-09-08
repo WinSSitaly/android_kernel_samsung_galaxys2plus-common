@@ -191,6 +191,7 @@ void ceph_count_locks(struct inode *inode, int *fcntl_count, int *flock_count)
 }
 
 /**
+<<<<<<< HEAD
  * Encode the flock and fcntl locks for the given inode into the ceph_filelock
  * array. Must be called with lock_flocks() already held.
  * If we encounter more of a specific lock type than expected, return -ENOSPC.
@@ -208,6 +209,29 @@ int ceph_encode_locks_to_buffer(struct inode *inode,
 	dout("encoding %d flock and %d fcntl locks", num_flock_locks,
 	     num_fcntl_locks);
 
+=======
+ * Encode the flock and fcntl locks for the given inode into the pagelist.
+ * Format is: #fcntl locks, sequential fcntl locks, #flock locks,
+ * sequential flock locks.
+ * Must be called with lock_flocks() already held.
+ * If we encounter more of a specific lock type than expected,
+ * we return the value 1.
+ */
+int ceph_encode_locks(struct inode *inode, struct ceph_pagelist *pagelist,
+		      int num_fcntl_locks, int num_flock_locks)
+{
+	struct file_lock *lock;
+	struct ceph_filelock cephlock;
+	int err = 0;
+	int seen_fcntl = 0;
+	int seen_flock = 0;
+
+	dout("encoding %d flock and %d fcntl locks", num_flock_locks,
+	     num_fcntl_locks);
+	err = ceph_pagelist_append(pagelist, &num_fcntl_locks, sizeof(u32));
+	if (err)
+		goto fail;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (lock = inode->i_flock; lock != NULL; lock = lock->fl_next) {
 		if (lock->fl_flags & FL_POSIX) {
 			++seen_fcntl;
@@ -215,12 +239,28 @@ int ceph_encode_locks_to_buffer(struct inode *inode,
 				err = -ENOSPC;
 				goto fail;
 			}
+<<<<<<< HEAD
 			err = lock_to_ceph_filelock(lock, &flocks[l]);
 			if (err)
 				goto fail;
 			++l;
 		}
 	}
+=======
+			err = lock_to_ceph_filelock(lock, &cephlock);
+			if (err)
+				goto fail;
+			err = ceph_pagelist_append(pagelist, &cephlock,
+					   sizeof(struct ceph_filelock));
+		}
+		if (err)
+			goto fail;
+	}
+
+	err = ceph_pagelist_append(pagelist, &num_flock_locks, sizeof(u32));
+	if (err)
+		goto fail;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (lock = inode->i_flock; lock != NULL; lock = lock->fl_next) {
 		if (lock->fl_flags & FL_FLOCK) {
 			++seen_flock;
@@ -228,16 +268,28 @@ int ceph_encode_locks_to_buffer(struct inode *inode,
 				err = -ENOSPC;
 				goto fail;
 			}
+<<<<<<< HEAD
 			err = lock_to_ceph_filelock(lock, &flocks[l]);
 			if (err)
 				goto fail;
 			++l;
 		}
+=======
+			err = lock_to_ceph_filelock(lock, &cephlock);
+			if (err)
+				goto fail;
+			err = ceph_pagelist_append(pagelist, &cephlock,
+					   sizeof(struct ceph_filelock));
+		}
+		if (err)
+			goto fail;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 fail:
 	return err;
 }
 
+<<<<<<< HEAD
 /**
  * Copy the encoded flock and fcntl locks into the pagelist.
  * Format is: #fcntl locks, sequential fcntl locks, #flock locks,
@@ -273,6 +325,8 @@ out_fail:
 	return err;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Given a pointer to a lock, convert it to a ceph filelock
  */

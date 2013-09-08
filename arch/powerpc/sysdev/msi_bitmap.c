@@ -12,7 +12,10 @@
 #include <linux/kernel.h>
 #include <linux/bitmap.h>
 #include <asm/msi_bitmap.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int msi_bitmap_alloc_hwirqs(struct msi_bitmap *bmp, int num)
 {

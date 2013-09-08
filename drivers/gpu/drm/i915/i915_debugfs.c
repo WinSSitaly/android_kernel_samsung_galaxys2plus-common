@@ -29,7 +29,10 @@
 #include <linux/seq_file.h>
 #include <linux/debugfs.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drmP.h"
 #include "drm.h"
 #include "intel_drv.h"
@@ -62,7 +65,10 @@ static int i915_capabilities(struct seq_file *m, void *data)
 	const struct intel_device_info *info = INTEL_INFO(dev);
 
 	seq_printf(m, "gen: %d\n", info->gen);
+<<<<<<< HEAD
 	seq_printf(m, "pch: %d\n", INTEL_PCH_TYPE(dev));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define B(x) seq_printf(m, #x ": %s\n", yesno(info->x))
 	B(is_mobile);
 	B(is_i85x);
@@ -83,7 +89,10 @@ static int i915_capabilities(struct seq_file *m, void *data)
 	B(supports_tv);
 	B(has_bsd_ring);
 	B(has_blt_ring);
+<<<<<<< HEAD
 	B(has_llc);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #undef B
 
 	return 0;
@@ -101,12 +110,21 @@ static const char *get_pin_flag(struct drm_i915_gem_object *obj)
 
 static const char *get_tiling_flag(struct drm_i915_gem_object *obj)
 {
+<<<<<<< HEAD
 	switch (obj->tiling_mode) {
 	default:
 	case I915_TILING_NONE: return " ";
 	case I915_TILING_X: return "X";
 	case I915_TILING_Y: return "Y";
 	}
+=======
+    switch (obj->tiling_mode) {
+    default:
+    case I915_TILING_NONE: return " ";
+    case I915_TILING_X: return "X";
+    case I915_TILING_Y: return "Y";
+    }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const char *cache_level_str(int type)
@@ -122,11 +140,19 @@ static const char *cache_level_str(int type)
 static void
 describe_obj(struct seq_file *m, struct drm_i915_gem_object *obj)
 {
+<<<<<<< HEAD
 	seq_printf(m, "%pK: %s%s %8zdKiB %04x %04x %d %d%s%s%s",
 		   &obj->base,
 		   get_pin_flag(obj),
 		   get_tiling_flag(obj),
 		   obj->base.size / 1024,
+=======
+	seq_printf(m, "%p: %s%s %8zd %04x %04x %d %d%s%s%s",
+		   &obj->base,
+		   get_pin_flag(obj),
+		   get_tiling_flag(obj),
+		   obj->base.size,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   obj->base.read_domains,
 		   obj->base.write_domain,
 		   obj->last_rendering_seqno,
@@ -220,7 +246,11 @@ static int i915_gem_object_list_info(struct seq_file *m, void *data)
 			++mappable_count; \
 		} \
 	} \
+<<<<<<< HEAD
 } while (0)
+=======
+} while(0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int i915_gem_object_info(struct seq_file *m, void* data)
 {
@@ -502,7 +532,11 @@ static int i915_interrupt_info(struct seq_file *m, void *data)
 	seq_printf(m, "Interrupts received: %d\n",
 		   atomic_read(&dev_priv->irq_received));
 	for (i = 0; i < I915_NUM_RINGS; i++) {
+<<<<<<< HEAD
 		if (IS_GEN6(dev) || IS_GEN7(dev)) {
+=======
+		if (IS_GEN6(dev)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			seq_printf(m, "Graphics Interrupt mask (%s):	%08x\n",
 				   dev_priv->ring[i].name,
 				   I915_READ_IMR(&dev_priv->ring[i]));
@@ -564,6 +598,48 @@ static int i915_hws_info(struct seq_file *m, void *data)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void i915_dump_object(struct seq_file *m,
+			     struct io_mapping *mapping,
+			     struct drm_i915_gem_object *obj)
+{
+	int page, page_count, i;
+
+	page_count = obj->base.size / PAGE_SIZE;
+	for (page = 0; page < page_count; page++) {
+		u32 *mem = io_mapping_map_wc(mapping,
+					     obj->gtt_offset + page * PAGE_SIZE);
+		for (i = 0; i < PAGE_SIZE; i += 4)
+			seq_printf(m, "%08x :  %08x\n", i, mem[i / 4]);
+		io_mapping_unmap(mem);
+	}
+}
+
+static int i915_batchbuffer_info(struct seq_file *m, void *data)
+{
+	struct drm_info_node *node = (struct drm_info_node *) m->private;
+	struct drm_device *dev = node->minor->dev;
+	drm_i915_private_t *dev_priv = dev->dev_private;
+	struct drm_i915_gem_object *obj;
+	int ret;
+
+	ret = mutex_lock_interruptible(&dev->struct_mutex);
+	if (ret)
+		return ret;
+
+	list_for_each_entry(obj, &dev_priv->mm.active_list, mm_list) {
+		if (obj->base.read_domains & I915_GEM_DOMAIN_COMMAND) {
+		    seq_printf(m, "--- gtt_offset = 0x%08x\n", obj->gtt_offset);
+		    i915_dump_object(m, dev_priv->mm.gtt_mapping, obj);
+		}
+	}
+
+	mutex_unlock(&dev->struct_mutex);
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int i915_ringbuffer_data(struct seq_file *m, void *data)
 {
 	struct drm_info_node *node = (struct drm_info_node *) m->private;
@@ -599,40 +675,59 @@ static int i915_ringbuffer_info(struct seq_file *m, void *data)
 	struct drm_device *dev = node->minor->dev;
 	drm_i915_private_t *dev_priv = dev->dev_private;
 	struct intel_ring_buffer *ring;
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ring = &dev_priv->ring[(uintptr_t)node->info_ent->data];
 	if (ring->size == 0)
 		return 0;
 
+<<<<<<< HEAD
 	ret = mutex_lock_interruptible(&dev->struct_mutex);
 	if (ret)
 		return ret;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	seq_printf(m, "Ring %s:\n", ring->name);
 	seq_printf(m, "  Head :    %08x\n", I915_READ_HEAD(ring) & HEAD_ADDR);
 	seq_printf(m, "  Tail :    %08x\n", I915_READ_TAIL(ring) & TAIL_ADDR);
 	seq_printf(m, "  Size :    %08x\n", ring->size);
 	seq_printf(m, "  Active :  %08x\n", intel_ring_get_active_head(ring));
 	seq_printf(m, "  NOPID :   %08x\n", I915_READ_NOPID(ring));
+<<<<<<< HEAD
 	if (IS_GEN6(dev) || IS_GEN7(dev)) {
+=======
+	if (IS_GEN6(dev)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		seq_printf(m, "  Sync 0 :   %08x\n", I915_READ_SYNC_0(ring));
 		seq_printf(m, "  Sync 1 :   %08x\n", I915_READ_SYNC_1(ring));
 	}
 	seq_printf(m, "  Control : %08x\n", I915_READ_CTL(ring));
 	seq_printf(m, "  Start :   %08x\n", I915_READ_START(ring));
 
+<<<<<<< HEAD
 	mutex_unlock(&dev->struct_mutex);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static const char *ring_str(int ring)
 {
 	switch (ring) {
+<<<<<<< HEAD
 	case RCS: return "render";
 	case VCS: return "bsd";
 	case BCS: return "blt";
+=======
+	case RING_RENDER: return " render";
+	case RING_BSD: return " bsd";
+	case RING_BLT: return " blt";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default: return "";
 	}
 }
@@ -675,7 +770,11 @@ static void print_error_buffers(struct seq_file *m,
 	seq_printf(m, "%s [%d]:\n", name, count);
 
 	while (count--) {
+<<<<<<< HEAD
 		seq_printf(m, "  %08x %8u %04x %04x %08x%s%s%s%s%s%s%s",
+=======
+		seq_printf(m, "  %08x %8u %04x %04x %08x%s%s%s%s%s%s",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   err->gtt_offset,
 			   err->size,
 			   err->read_domains,
@@ -685,7 +784,10 @@ static void print_error_buffers(struct seq_file *m,
 			   tiling_flag(err->tiling),
 			   dirty_flag(err->dirty),
 			   purgeable_flag(err->purgeable),
+<<<<<<< HEAD
 			   err->ring != -1 ? " " : "",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   ring_str(err->ring),
 			   cache_level_str(err->cache_level));
 
@@ -699,6 +801,7 @@ static void print_error_buffers(struct seq_file *m,
 	}
 }
 
+<<<<<<< HEAD
 static void i915_ring_error_state(struct seq_file *m,
 				  struct drm_device *dev,
 				  struct drm_i915_error_state *error,
@@ -731,6 +834,8 @@ static void i915_ring_error_state(struct seq_file *m,
 	seq_printf(m, "  ring->tail: 0x%08x\n", error->cpu_ring_tail[ring]);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int i915_error_state(struct seq_file *m, void *unused)
 {
 	struct drm_info_node *node = (struct drm_info_node *) m->private;
@@ -738,7 +843,11 @@ static int i915_error_state(struct seq_file *m, void *unused)
 	drm_i915_private_t *dev_priv = dev->dev_private;
 	struct drm_i915_error_state *error;
 	unsigned long flags;
+<<<<<<< HEAD
 	int i, j, page, offset, elt;
+=======
+	int i, page, offset, elt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&dev_priv->error_lock, flags);
 	if (!dev_priv->first_error) {
@@ -753,6 +862,7 @@ static int i915_error_state(struct seq_file *m, void *unused)
 	seq_printf(m, "PCI ID: 0x%04x\n", dev->pci_device);
 	seq_printf(m, "EIR: 0x%08x\n", error->eir);
 	seq_printf(m, "PGTBL_ER: 0x%08x\n", error->pgtbl_er);
+<<<<<<< HEAD
 
 	for (i = 0; i < dev_priv->num_fence_regs; i++)
 		seq_printf(m, "  fence[%d] = %08llx\n", i, error->fence[i]);
@@ -767,6 +877,37 @@ static int i915_error_state(struct seq_file *m, void *unused)
 		i915_ring_error_state(m, dev, error, BCS);
 	if (HAS_BSD(dev))
 		i915_ring_error_state(m, dev, error, VCS);
+=======
+	if (INTEL_INFO(dev)->gen >= 6) {
+		seq_printf(m, "ERROR: 0x%08x\n", error->error);
+		seq_printf(m, "Blitter command stream:\n");
+		seq_printf(m, "  ACTHD:    0x%08x\n", error->bcs_acthd);
+		seq_printf(m, "  IPEIR:    0x%08x\n", error->bcs_ipeir);
+		seq_printf(m, "  IPEHR:    0x%08x\n", error->bcs_ipehr);
+		seq_printf(m, "  INSTDONE: 0x%08x\n", error->bcs_instdone);
+		seq_printf(m, "  seqno:    0x%08x\n", error->bcs_seqno);
+		seq_printf(m, "Video (BSD) command stream:\n");
+		seq_printf(m, "  ACTHD:    0x%08x\n", error->vcs_acthd);
+		seq_printf(m, "  IPEIR:    0x%08x\n", error->vcs_ipeir);
+		seq_printf(m, "  IPEHR:    0x%08x\n", error->vcs_ipehr);
+		seq_printf(m, "  INSTDONE: 0x%08x\n", error->vcs_instdone);
+		seq_printf(m, "  seqno:    0x%08x\n", error->vcs_seqno);
+	}
+	seq_printf(m, "Render command stream:\n");
+	seq_printf(m, "  ACTHD: 0x%08x\n", error->acthd);
+	seq_printf(m, "  IPEIR: 0x%08x\n", error->ipeir);
+	seq_printf(m, "  IPEHR: 0x%08x\n", error->ipehr);
+	seq_printf(m, "  INSTDONE: 0x%08x\n", error->instdone);
+	if (INTEL_INFO(dev)->gen >= 4) {
+		seq_printf(m, "  INSTDONE1: 0x%08x\n", error->instdone1);
+		seq_printf(m, "  INSTPS: 0x%08x\n", error->instps);
+	}
+	seq_printf(m, "  INSTPM: 0x%08x\n", error->instpm);
+	seq_printf(m, "  seqno: 0x%08x\n", error->seqno);
+
+	for (i = 0; i < dev_priv->num_fence_regs; i++)
+		seq_printf(m, "  fence[%d] = %08llx\n", i, error->fence[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (error->active_bo)
 		print_error_buffers(m, "Active",
@@ -778,10 +919,17 @@ static int i915_error_state(struct seq_file *m, void *unused)
 				    error->pinned_bo,
 				    error->pinned_bo_count);
 
+<<<<<<< HEAD
 	for (i = 0; i < ARRAY_SIZE(error->ring); i++) {
 		struct drm_i915_error_object *obj;
 
 		if ((obj = error->ring[i].batchbuffer)) {
+=======
+	for (i = 0; i < ARRAY_SIZE(error->batchbuffer); i++) {
+		if (error->batchbuffer[i]) {
+			struct drm_i915_error_object *obj = error->batchbuffer[i];
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			seq_printf(m, "%s --- gtt_offset = 0x%08x\n",
 				   dev_priv->ring[i].name,
 				   obj->gtt_offset);
@@ -793,6 +941,7 @@ static int i915_error_state(struct seq_file *m, void *unused)
 				}
 			}
 		}
+<<<<<<< HEAD
 
 		if (error->ring[i].num_requests) {
 			seq_printf(m, "%s --- %d requests\n",
@@ -807,6 +956,13 @@ static int i915_error_state(struct seq_file *m, void *unused)
 		}
 
 		if ((obj = error->ring[i].ringbuffer)) {
+=======
+	}
+
+	for (i = 0; i < ARRAY_SIZE(error->ringbuffer); i++) {
+		if (error->ringbuffer[i]) {
+			struct drm_i915_error_object *obj = error->ringbuffer[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			seq_printf(m, "%s --- ringbuffer = 0x%08x\n",
 				   dev_priv->ring[i].name,
 				   obj->gtt_offset);
@@ -839,6 +995,7 @@ static int i915_rstdby_delays(struct seq_file *m, void *unused)
 	struct drm_info_node *node = (struct drm_info_node *) m->private;
 	struct drm_device *dev = node->minor->dev;
 	drm_i915_private_t *dev_priv = dev->dev_private;
+<<<<<<< HEAD
 	u16 crstanddelay;
 	int ret;
 
@@ -849,6 +1006,9 @@ static int i915_rstdby_delays(struct seq_file *m, void *unused)
 	crstanddelay = I915_READ16(CRSTANDVID);
 
 	mutex_unlock(&dev->struct_mutex);
+=======
+	u16 crstanddelay = I915_READ16(CRSTANDVID);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	seq_printf(m, "w/ctx: %d, w/o ctx: %d\n", (crstanddelay >> 8) & 0x3f, (crstanddelay & 0x3f));
 
@@ -946,11 +1106,15 @@ static int i915_delayfreq_table(struct seq_file *m, void *unused)
 	struct drm_device *dev = node->minor->dev;
 	drm_i915_private_t *dev_priv = dev->dev_private;
 	u32 delayfreq;
+<<<<<<< HEAD
 	int ret, i;
 
 	ret = mutex_lock_interruptible(&dev->struct_mutex);
 	if (ret)
 		return ret;
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < 16; i++) {
 		delayfreq = I915_READ(PXVFREQ_BASE + i * 4);
@@ -958,8 +1122,11 @@ static int i915_delayfreq_table(struct seq_file *m, void *unused)
 			   (delayfreq & PXVFREQ_PX_MASK) >> PXVFREQ_PX_SHIFT);
 	}
 
+<<<<<<< HEAD
 	mutex_unlock(&dev->struct_mutex);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -974,27 +1141,39 @@ static int i915_inttoext_table(struct seq_file *m, void *unused)
 	struct drm_device *dev = node->minor->dev;
 	drm_i915_private_t *dev_priv = dev->dev_private;
 	u32 inttoext;
+<<<<<<< HEAD
 	int ret, i;
 
 	ret = mutex_lock_interruptible(&dev->struct_mutex);
 	if (ret)
 		return ret;
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 1; i <= 32; i++) {
 		inttoext = I915_READ(INTTOEXT_BASE_ILK + i * 4);
 		seq_printf(m, "INTTOEXT%02d: 0x%08x\n", i, inttoext);
 	}
 
+<<<<<<< HEAD
 	mutex_unlock(&dev->struct_mutex);
 
 	return 0;
 }
 
 static int ironlake_drpc_info(struct seq_file *m)
+=======
+	return 0;
+}
+
+static int i915_drpc_info(struct seq_file *m, void *unused)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_info_node *node = (struct drm_info_node *) m->private;
 	struct drm_device *dev = node->minor->dev;
 	drm_i915_private_t *dev_priv = dev->dev_private;
+<<<<<<< HEAD
 	u32 rgvmodectl, rstdbyctl;
 	u16 crstandvid;
 	int ret;
@@ -1008,6 +1187,11 @@ static int ironlake_drpc_info(struct seq_file *m)
 	crstandvid = I915_READ16(CRSTANDVID);
 
 	mutex_unlock(&dev->struct_mutex);
+=======
+	u32 rgvmodectl = I915_READ(MEMMODECTL);
+	u32 rstdbyctl = I915_READ(RSTDBYCTL);
+	u16 crstandvid = I915_READ16(CRSTANDVID);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	seq_printf(m, "HD boost: %s\n", (rgvmodectl & MEMMODE_BOOST_EN) ?
 		   "yes" : "no");
@@ -1057,6 +1241,7 @@ static int ironlake_drpc_info(struct seq_file *m)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int gen6_drpc_info(struct seq_file *m)
 {
 
@@ -1146,6 +1331,8 @@ static int i915_drpc_info(struct seq_file *m, void *unused)
 		return ironlake_drpc_info(m);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int i915_fbc_status(struct seq_file *m, void *unused)
 {
 	struct drm_info_node *node = (struct drm_info_node *) m->private;
@@ -1224,9 +1411,12 @@ static int i915_emon_status(struct seq_file *m, void *unused)
 	unsigned long temp, chipset, gfx;
 	int ret;
 
+<<<<<<< HEAD
 	if (!IS_GEN5(dev))
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = mutex_lock_interruptible(&dev->struct_mutex);
 	if (ret)
 		return ret;
@@ -1244,6 +1434,7 @@ static int i915_emon_status(struct seq_file *m, void *unused)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int i915_ring_freq_table(struct seq_file *m, void *unused)
 {
 	struct drm_info_node *node = (struct drm_info_node *) m->private;
@@ -1282,11 +1473,14 @@ static int i915_ring_freq_table(struct seq_file *m, void *unused)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int i915_gfxec(struct seq_file *m, void *unused)
 {
 	struct drm_info_node *node = (struct drm_info_node *) m->private;
 	struct drm_device *dev = node->minor->dev;
 	drm_i915_private_t *dev_priv = dev->dev_private;
+<<<<<<< HEAD
 	int ret;
 
 	ret = mutex_lock_interruptible(&dev->struct_mutex);
@@ -1297,6 +1491,11 @@ static int i915_gfxec(struct seq_file *m, void *unused)
 
 	mutex_unlock(&dev->struct_mutex);
 
+=======
+
+	seq_printf(m, "GFXEC: %ld\n", (unsigned long)I915_READ(0x112f4));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1395,6 +1594,7 @@ static int i915_gen6_forcewake_count_info(struct seq_file *m, void *data)
 	struct drm_info_node *node = (struct drm_info_node *) m->private;
 	struct drm_device *dev = node->minor->dev;
 	struct drm_i915_private *dev_priv = dev->dev_private;
+<<<<<<< HEAD
 	unsigned forcewake_count;
 
 	spin_lock_irq(&dev_priv->gt_lock);
@@ -1402,10 +1602,16 @@ static int i915_gen6_forcewake_count_info(struct seq_file *m, void *data)
 	spin_unlock_irq(&dev_priv->gt_lock);
 
 	seq_printf(m, "forcewake count = %u\n", forcewake_count);
+=======
+
+	seq_printf(m, "forcewake count = %d\n",
+		   atomic_read(&dev_priv->forcewake_count));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static const char *swizzle_string(unsigned swizzle)
 {
 	switch(swizzle) {
@@ -1502,6 +1708,13 @@ static int i915_ppgtt_info(struct seq_file *m, void *data)
 	seq_printf(m, "ECOCHK: 0x%08x\n", I915_READ(GAM_ECOCHK));
 	mutex_unlock(&dev->struct_mutex);
 
+=======
+static int
+i915_wedged_open(struct inode *inode,
+		 struct file *filp)
+{
+	filp->private_data = inode->i_private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1516,12 +1729,21 @@ i915_wedged_read(struct file *filp,
 	char buf[80];
 	int len;
 
+<<<<<<< HEAD
 	len = snprintf(buf, sizeof(buf),
 		       "wedged :  %d\n",
 		       atomic_read(&dev_priv->mm.wedged));
 
 	if (len > sizeof(buf))
 		len = sizeof(buf);
+=======
+	len = snprintf(buf, sizeof (buf),
+		       "wedged :  %d\n",
+		       atomic_read(&dev_priv->mm.wedged));
+
+	if (len > sizeof (buf))
+		len = sizeof (buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return simple_read_from_buffer(ubuf, max, ppos, buf, len);
 }
@@ -1537,7 +1759,11 @@ i915_wedged_write(struct file *filp,
 	int val = 1;
 
 	if (cnt > 0) {
+<<<<<<< HEAD
 		if (cnt > sizeof(buf) - 1)
+=======
+		if (cnt > sizeof (buf) - 1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EINVAL;
 
 		if (copy_from_user(buf, ubuf, cnt))
@@ -1555,12 +1781,17 @@ i915_wedged_write(struct file *filp,
 
 static const struct file_operations i915_wedged_fops = {
 	.owner = THIS_MODULE,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = i915_wedged_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.read = i915_wedged_read,
 	.write = i915_wedged_write,
 	.llseek = default_llseek,
 };
 
+<<<<<<< HEAD
 static ssize_t
 i915_max_freq_read(struct file *filp,
 		   char __user *ubuf,
@@ -1694,6 +1925,8 @@ static const struct file_operations i915_cache_sharing_fops = {
 	.llseek = default_llseek,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* As the drm_debugfs_init() routines are called before dev->dev_private is
  * allocated we need to hook into the minor for release. */
 static int
@@ -1712,21 +1945,47 @@ drm_add_fake_info_node(struct drm_minor *minor,
 	node->minor = minor;
 	node->dent = ent;
 	node->info_ent = (void *) key;
+<<<<<<< HEAD
 
 	mutex_lock(&minor->debugfs_lock);
 	list_add(&node->list, &minor->debugfs_list);
 	mutex_unlock(&minor->debugfs_lock);
+=======
+	list_add(&node->list, &minor->debugfs_nodes.list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int i915_wedged_create(struct dentry *root, struct drm_minor *minor)
+{
+	struct drm_device *dev = minor->dev;
+	struct dentry *ent;
+
+	ent = debugfs_create_file("i915_wedged",
+				  S_IRUGO | S_IWUSR,
+				  root, dev,
+				  &i915_wedged_fops);
+	if (IS_ERR(ent))
+		return PTR_ERR(ent);
+
+	return drm_add_fake_info_node(minor, ent, &i915_wedged_fops);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int i915_forcewake_open(struct inode *inode, struct file *file)
 {
 	struct drm_device *dev = inode->i_private;
 	struct drm_i915_private *dev_priv = dev->dev_private;
 	int ret;
 
+<<<<<<< HEAD
 	if (INTEL_INFO(dev)->gen < 6)
+=======
+	if (!IS_GEN6(dev))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	ret = mutex_lock_interruptible(&dev->struct_mutex);
@@ -1743,7 +2002,11 @@ int i915_forcewake_release(struct inode *inode, struct file *file)
 	struct drm_device *dev = inode->i_private;
 	struct drm_i915_private *dev_priv = dev->dev_private;
 
+<<<<<<< HEAD
 	if (INTEL_INFO(dev)->gen < 6)
+=======
+	if (!IS_GEN6(dev))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	/*
@@ -1781,6 +2044,7 @@ static int i915_forcewake_create(struct dentry *root, struct drm_minor *minor)
 	return drm_add_fake_info_node(minor, ent, &i915_forcewake_fops);
 }
 
+<<<<<<< HEAD
 static int i915_debugfs_create(struct dentry *root,
 			       struct drm_minor *minor,
 			       const char *name,
@@ -1799,6 +2063,8 @@ static int i915_debugfs_create(struct dentry *root,
 	return drm_add_fake_info_node(minor, ent, fops);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct drm_info_list i915_debugfs_list[] = {
 	{"i915_capabilities", i915_capabilities, 0},
 	{"i915_gem_objects", i915_gem_object_info, 0},
@@ -1822,6 +2088,10 @@ static struct drm_info_list i915_debugfs_list[] = {
 	{"i915_bsd_ringbuffer_info", i915_ringbuffer_info, 0, (void *)VCS},
 	{"i915_blt_ringbuffer_data", i915_ringbuffer_data, 0, (void *)BCS},
 	{"i915_blt_ringbuffer_info", i915_ringbuffer_info, 0, (void *)BCS},
+<<<<<<< HEAD
+=======
+	{"i915_batchbuffers", i915_batchbuffer_info, 0},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{"i915_error_state", i915_error_state, 0},
 	{"i915_rstdby_delays", i915_rstdby_delays, 0},
 	{"i915_cur_delayinfo", i915_cur_delayinfo, 0},
@@ -1829,7 +2099,10 @@ static struct drm_info_list i915_debugfs_list[] = {
 	{"i915_inttoext_table", i915_inttoext_table, 0},
 	{"i915_drpc_info", i915_drpc_info, 0},
 	{"i915_emon_status", i915_emon_status, 0},
+<<<<<<< HEAD
 	{"i915_ring_freq_table", i915_ring_freq_table, 0},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{"i915_gfxec", i915_gfxec, 0},
 	{"i915_fbc_status", i915_fbc_status, 0},
 	{"i915_sr_status", i915_sr_status, 0},
@@ -1837,8 +2110,11 @@ static struct drm_info_list i915_debugfs_list[] = {
 	{"i915_gem_framebuffer", i915_gem_framebuffer_info, 0},
 	{"i915_context_status", i915_context_status, 0},
 	{"i915_gen6_forcewake_count", i915_gen6_forcewake_count_info, 0},
+<<<<<<< HEAD
 	{"i915_swizzle_info", i915_swizzle_info, 0},
 	{"i915_ppgtt_info", i915_ppgtt_info, 0},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #define I915_DEBUGFS_ENTRIES ARRAY_SIZE(i915_debugfs_list)
 
@@ -1846,9 +2122,13 @@ int i915_debugfs_init(struct drm_minor *minor)
 {
 	int ret;
 
+<<<<<<< HEAD
 	ret = i915_debugfs_create(minor->debugfs_root, minor,
 				  "i915_wedged",
 				  &i915_wedged_fops);
+=======
+	ret = i915_wedged_create(minor->debugfs_root, minor);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -1856,6 +2136,7 @@ int i915_debugfs_init(struct drm_minor *minor)
 	if (ret)
 		return ret;
 
+<<<<<<< HEAD
 	ret = i915_debugfs_create(minor->debugfs_root, minor,
 				  "i915_max_freq",
 				  &i915_max_freq_fops);
@@ -1868,6 +2149,8 @@ int i915_debugfs_init(struct drm_minor *minor)
 	if (ret)
 		return ret;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return drm_debugfs_create_files(i915_debugfs_list,
 					I915_DEBUGFS_ENTRIES,
 					minor->debugfs_root, minor);
@@ -1881,10 +2164,13 @@ void i915_debugfs_cleanup(struct drm_minor *minor)
 				 1, minor);
 	drm_debugfs_remove_files((struct drm_info_list *) &i915_wedged_fops,
 				 1, minor);
+<<<<<<< HEAD
 	drm_debugfs_remove_files((struct drm_info_list *) &i915_max_freq_fops,
 				 1, minor);
 	drm_debugfs_remove_files((struct drm_info_list *) &i915_cache_sharing_fops,
 				 1, minor);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #endif /* CONFIG_DEBUG_FS */

@@ -2,7 +2,10 @@
  * omap_hwmod implementation for OMAP2/3/4
  *
  * Copyright (C) 2009-2011 Nokia Corporation
+<<<<<<< HEAD
  * Copyright (C) 2011 Texas Instruments, Inc.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Paul Walmsley, Benoît Cousson, Kevin Hilman
  *
@@ -136,9 +139,14 @@
 #include <linux/list.h>
 #include <linux/mutex.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/slab.h>
 
 #include "common.h"
+=======
+
+#include <plat/common.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/cpu.h>
 #include "clockdomain.h"
 #include "powerdomain.h"
@@ -147,10 +155,16 @@
 #include <plat/prcm.h>
 
 #include "cm2xxx_3xxx.h"
+<<<<<<< HEAD
 #include "cminst44xx.h"
 #include "prm2xxx_3xxx.h"
 #include "prm44xx.h"
 #include "prminst44xx.h"
+=======
+#include "cm44xx.h"
+#include "prm2xxx_3xxx.h"
+#include "prm44xx.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "mux.h"
 
 /* Maximum microseconds to wait for OMAP module to softreset */
@@ -382,6 +396,7 @@ static int _set_module_autoidle(struct omap_hwmod *oh, u8 autoidle,
 }
 
 /**
+<<<<<<< HEAD
  * _set_idle_ioring_wakeup - enable/disable IO pad wakeup on hwmod idle for mux
  * @oh: struct omap_hwmod *
  * @set_wake: bool value indicating to set (true) or clear (false) wakeup enable
@@ -427,6 +442,8 @@ static void _set_idle_ioring_wakeup(struct omap_hwmod *oh, bool set_wake)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * _enable_wakeup: set OCP_SYSCONFIG.ENAWAKEUP bit in the hardware
  * @oh: struct omap_hwmod *
  *
@@ -435,10 +452,18 @@ static void _set_idle_ioring_wakeup(struct omap_hwmod *oh, bool set_wake)
  */
 static int _enable_wakeup(struct omap_hwmod *oh, u32 *v)
 {
+<<<<<<< HEAD
 	if (!oh->class->sysc ||
 	    !((oh->class->sysc->sysc_flags & SYSC_HAS_ENAWAKEUP) ||
 	      (oh->class->sysc->idlemodes & SIDLE_SMART_WKUP) ||
 	      (oh->class->sysc->idlemodes & MSTANDBY_SMART_WKUP)))
+=======
+	u32 wakeup_mask;
+
+	if (!oh->class->sysc ||
+	    !((oh->class->sysc->sysc_flags & SYSC_HAS_ENAWAKEUP) ||
+	      (oh->class->sysc->idlemodes & SIDLE_SMART_WKUP)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	if (!oh->class->sysc->sysc_fields) {
@@ -446,6 +471,7 @@ static int _enable_wakeup(struct omap_hwmod *oh, u32 *v)
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	if (oh->class->sysc->sysc_flags & SYSC_HAS_ENAWAKEUP)
 		*v |= 0x1 << oh->class->sysc->sysc_fields->enwkup_shift;
 
@@ -453,6 +479,14 @@ static int _enable_wakeup(struct omap_hwmod *oh, u32 *v)
 		_set_slave_idlemode(oh, HWMOD_IDLEMODE_SMART_WKUP, v);
 	if (oh->class->sysc->idlemodes & MSTANDBY_SMART_WKUP)
 		_set_master_standbymode(oh, HWMOD_IDLEMODE_SMART_WKUP, v);
+=======
+	wakeup_mask = (0x1 << oh->class->sysc->sysc_fields->enwkup_shift);
+
+	*v |= wakeup_mask;
+
+	if (oh->class->sysc->idlemodes & SIDLE_SMART_WKUP)
+		_set_slave_idlemode(oh, HWMOD_IDLEMODE_SMART_WKUP, v);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* XXX test pwrdm_get_wken for this hwmod's subsystem */
 
@@ -470,10 +504,18 @@ static int _enable_wakeup(struct omap_hwmod *oh, u32 *v)
  */
 static int _disable_wakeup(struct omap_hwmod *oh, u32 *v)
 {
+<<<<<<< HEAD
 	if (!oh->class->sysc ||
 	    !((oh->class->sysc->sysc_flags & SYSC_HAS_ENAWAKEUP) ||
 	      (oh->class->sysc->idlemodes & SIDLE_SMART_WKUP) ||
 	      (oh->class->sysc->idlemodes & MSTANDBY_SMART_WKUP)))
+=======
+	u32 wakeup_mask;
+
+	if (!oh->class->sysc ||
+	    !((oh->class->sysc->sysc_flags & SYSC_HAS_ENAWAKEUP) ||
+	      (oh->class->sysc->idlemodes & SIDLE_SMART_WKUP)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	if (!oh->class->sysc->sysc_fields) {
@@ -481,6 +523,7 @@ static int _disable_wakeup(struct omap_hwmod *oh, u32 *v)
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	if (oh->class->sysc->sysc_flags & SYSC_HAS_ENAWAKEUP)
 		*v &= ~(0x1 << oh->class->sysc->sysc_fields->enwkup_shift);
 
@@ -488,6 +531,14 @@ static int _disable_wakeup(struct omap_hwmod *oh, u32 *v)
 		_set_slave_idlemode(oh, HWMOD_IDLEMODE_SMART, v);
 	if (oh->class->sysc->idlemodes & MSTANDBY_SMART_WKUP)
 		_set_master_standbymode(oh, HWMOD_IDLEMODE_SMART_WKUP, v);
+=======
+	wakeup_mask = (0x1 << oh->class->sysc->sysc_fields->enwkup_shift);
+
+	*v &= ~wakeup_mask;
+
+	if (oh->class->sysc->idlemodes & SIDLE_SMART_WKUP)
+		_set_slave_idlemode(oh, HWMOD_IDLEMODE_SMART, v);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* XXX test pwrdm_get_wken for this hwmod's subsystem */
 
@@ -726,6 +777,7 @@ static void _disable_optional_clocks(struct omap_hwmod *oh)
 }
 
 /**
+<<<<<<< HEAD
  * _enable_module - enable CLKCTRL modulemode on OMAP4
  * @oh: struct omap_hwmod *
  *
@@ -883,6 +935,8 @@ static int _count_ocp_if_addr_spaces(struct omap_hwmod_ocp_if *os)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * _find_mpu_port_index - find hwmod OCP slave port ID intended for MPU use
  * @oh: struct omap_hwmod *
  *
@@ -927,7 +981,12 @@ static void __iomem * __init _find_mpu_rt_base(struct omap_hwmod *oh, u8 index)
 {
 	struct omap_hwmod_ocp_if *os;
 	struct omap_hwmod_addr_space *mem;
+<<<<<<< HEAD
 	int i = 0, found = 0;
+=======
+	int i;
+	int found = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void __iomem *va_start;
 
 	if (!oh || oh->slaves_cnt == 0)
@@ -935,6 +994,7 @@ static void __iomem * __init _find_mpu_rt_base(struct omap_hwmod *oh, u8 index)
 
 	os = oh->slaves[index];
 
+<<<<<<< HEAD
 	if (!os->addr)
 		return NULL;
 
@@ -943,6 +1003,14 @@ static void __iomem * __init _find_mpu_rt_base(struct omap_hwmod *oh, u8 index)
 		if (mem->flags & ADDR_TYPE_RT)
 			found = 1;
 	} while (!found && mem->pa_start != mem->pa_end);
+=======
+	for (i = 0, mem = os->addr; i < os->addr_cnt; i++, mem++) {
+		if (mem->flags & ADDR_TYPE_RT) {
+			found = 1;
+			break;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (found) {
 		va_start = ioremap(mem->pa_start, mem->pa_end - mem->pa_start);
@@ -987,6 +1055,7 @@ static void _enable_sysc(struct omap_hwmod *oh)
 	}
 
 	if (sf & SYSC_HAS_MIDLEMODE) {
+<<<<<<< HEAD
 		if (oh->flags & HWMOD_SWSUP_MSTANDBY) {
 			idlemode = HWMOD_IDLEMODE_NO;
 		} else {
@@ -997,6 +1066,10 @@ static void _enable_sysc(struct omap_hwmod *oh)
 			else
 				idlemode = HWMOD_IDLEMODE_SMART;
 		}
+=======
+		idlemode = (oh->flags & HWMOD_SWSUP_MSTANDBY) ?
+			HWMOD_IDLEMODE_NO : HWMOD_IDLEMODE_SMART;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		_set_master_standbymode(oh, idlemode, &v);
 	}
 
@@ -1054,6 +1127,7 @@ static void _idle_sysc(struct omap_hwmod *oh)
 	}
 
 	if (sf & SYSC_HAS_MIDLEMODE) {
+<<<<<<< HEAD
 		if (oh->flags & HWMOD_SWSUP_MSTANDBY) {
 			idlemode = HWMOD_IDLEMODE_FORCE;
 		} else {
@@ -1064,6 +1138,10 @@ static void _idle_sysc(struct omap_hwmod *oh)
 			else
 				idlemode = HWMOD_IDLEMODE_SMART;
 		}
+=======
+		idlemode = (oh->flags & HWMOD_SWSUP_MSTANDBY) ?
+			HWMOD_IDLEMODE_FORCE : HWMOD_IDLEMODE_SMART;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		_set_master_standbymode(oh, idlemode, &v);
 	}
 
@@ -1125,6 +1203,7 @@ static struct omap_hwmod *_lookup(const char *name)
 
 	return oh;
 }
+<<<<<<< HEAD
 /**
  * _init_clkdm - look up a clockdomain name, store pointer in omap_hwmod
  * @oh: struct omap_hwmod *
@@ -1159,6 +1238,11 @@ static int _init_clkdm(struct omap_hwmod *oh)
 /**
  * _init_clocks - clk_get() all clocks associated with this hwmod. Retrieve as
  * well the clockdomain.
+=======
+
+/**
+ * _init_clocks - clk_get() all clocks associated with this hwmod
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @oh: struct omap_hwmod *
  * @data: not used; pass NULL
  *
@@ -1178,12 +1262,18 @@ static int _init_clocks(struct omap_hwmod *oh, void *data)
 	ret |= _init_main_clk(oh);
 	ret |= _init_interface_clks(oh);
 	ret |= _init_opt_clks(oh);
+<<<<<<< HEAD
 	ret |= _init_clkdm(oh);
 
 	if (!ret)
 		oh->_state = _HWMOD_STATE_CLKS_INITED;
 	else
 		pr_warning("omap_hwmod: %s: cannot _init_clocks\n", oh->name);
+=======
+
+	if (!ret)
+		oh->_state = _HWMOD_STATE_CLKS_INITED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -1195,7 +1285,11 @@ static int _init_clocks(struct omap_hwmod *oh, void *data)
  * Wait for a module @oh to leave slave idle.  Returns 0 if the module
  * does not have an IDLEST bit or if the module successfully leaves
  * slave idle; otherwise, pass along the return value of the
+<<<<<<< HEAD
  * appropriate *_cm*_wait_module_ready() function.
+=======
+ * appropriate *_cm_wait_module_ready() function.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int _wait_target_ready(struct omap_hwmod *oh)
 {
@@ -1222,6 +1316,7 @@ static int _wait_target_ready(struct omap_hwmod *oh)
 						 oh->prcm.omap2.idlest_reg_id,
 						 oh->prcm.omap2.idlest_idle_bit);
 	} else if (cpu_is_omap44xx()) {
+<<<<<<< HEAD
 		if (!oh->clkdm)
 			return -EINVAL;
 
@@ -1229,6 +1324,9 @@ static int _wait_target_ready(struct omap_hwmod *oh)
 						     oh->clkdm->cm_inst,
 						     oh->clkdm->clkdm_offs,
 						     oh->prcm.omap4.clkctrl_offs);
+=======
+		ret = omap4_cm_wait_module_ready(oh->prcm.omap4.clkctrl_reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		BUG();
 	};
@@ -1292,10 +1390,15 @@ static int _assert_hardreset(struct omap_hwmod *oh, const char *name)
 		return omap2_prm_assert_hardreset(oh->prcm.omap2.module_offs,
 						  ohri.rst_shift);
 	else if (cpu_is_omap44xx())
+<<<<<<< HEAD
 		return omap4_prminst_assert_hardreset(ohri.rst_shift,
 				  oh->clkdm->pwrdm.ptr->prcm_partition,
 				  oh->clkdm->pwrdm.ptr->prcm_offs,
 				  oh->prcm.omap4.rstctrl_offs);
+=======
+		return omap4_prm_assert_hardreset(oh->prcm.omap4.rstctrl_reg,
+						  ohri.rst_shift);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		return -EINVAL;
 }
@@ -1330,10 +1433,15 @@ static int _deassert_hardreset(struct omap_hwmod *oh, const char *name)
 		if (ohri.st_shift)
 			pr_err("omap_hwmod: %s: %s: hwmod data error: OMAP4 does not support st_shift\n",
 			       oh->name, name);
+<<<<<<< HEAD
 		ret = omap4_prminst_deassert_hardreset(ohri.rst_shift,
 				  oh->clkdm->pwrdm.ptr->prcm_partition,
 				  oh->clkdm->pwrdm.ptr->prcm_offs,
 				  oh->prcm.omap4.rstctrl_offs);
+=======
+		ret = omap4_prm_deassert_hardreset(oh->prcm.omap4.rstctrl_reg,
+						   ohri.rst_shift);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		return -EINVAL;
 	}
@@ -1368,10 +1476,15 @@ static int _read_hardreset(struct omap_hwmod *oh, const char *name)
 		return omap2_prm_is_hardreset_asserted(oh->prcm.omap2.module_offs,
 						       ohri.st_shift);
 	} else if (cpu_is_omap44xx()) {
+<<<<<<< HEAD
 		return omap4_prminst_is_hardreset_asserted(ohri.rst_shift,
 				  oh->clkdm->pwrdm.ptr->prcm_partition,
 				  oh->clkdm->pwrdm.ptr->prcm_offs,
 				  oh->prcm.omap4.rstctrl_offs);
+=======
+		return omap4_prm_is_hardreset_asserted(oh->prcm.omap4.rstctrl_reg,
+						       ohri.rst_shift);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		return -EINVAL;
 	}
@@ -1395,7 +1508,11 @@ static int _read_hardreset(struct omap_hwmod *oh, const char *name)
  */
 static int _ocp_softreset(struct omap_hwmod *oh)
 {
+<<<<<<< HEAD
 	u32 v, softrst_mask;
+=======
+	u32 v;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int c = 0;
 	int ret = 0;
 
@@ -1422,14 +1539,18 @@ static int _ocp_softreset(struct omap_hwmod *oh)
 		goto dis_opt_clks;
 	_write_sysconfig(v, oh);
 
+<<<<<<< HEAD
 	if (oh->class->sysc->srst_udelay)
 		udelay(oh->class->sysc->srst_udelay);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (oh->class->sysc->sysc_flags & SYSS_HAS_RESET_STATUS)
 		omap_test_timeout((omap_hwmod_read(oh,
 						    oh->class->sysc->syss_offs)
 				   & SYSS_RESETDONE_MASK),
 				  MAX_MODULE_SOFTRESET_WAIT, c);
+<<<<<<< HEAD
 	else if (oh->class->sysc->sysc_flags & SYSC_HAS_RESET_STATUS) {
 		softrst_mask = (0x1 << oh->class->sysc->sysc_fields->srst_shift);
 		omap_test_timeout(!(omap_hwmod_read(oh,
@@ -1437,6 +1558,13 @@ static int _ocp_softreset(struct omap_hwmod *oh)
 				   & softrst_mask),
 				  MAX_MODULE_SOFTRESET_WAIT, c);
 	}
+=======
+	else if (oh->class->sysc->sysc_flags & SYSC_HAS_RESET_STATUS)
+		omap_test_timeout(!(omap_hwmod_read(oh,
+						     oh->class->sysc->sysc_offs)
+				   & SYSC_TYPE2_SOFTRESET_MASK),
+				  MAX_MODULE_SOFTRESET_WAIT, c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (c == MAX_MODULE_SOFTRESET_WAIT)
 		pr_warning("omap_hwmod: %s: softreset failed (waited %d usec)\n",
@@ -1482,11 +1610,14 @@ static int _reset(struct omap_hwmod *oh)
 
 	ret = (oh->class->reset) ? oh->class->reset(oh) : _ocp_softreset(oh);
 
+<<<<<<< HEAD
 	if (oh->class->sysc) {
 		_update_sysc_cache(oh);
 		_enable_sysc(oh);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1501,6 +1632,7 @@ static int _reset(struct omap_hwmod *oh)
 static int _enable(struct omap_hwmod *oh)
 {
 	int r;
+<<<<<<< HEAD
 	int hwsup = 0;
 
 	pr_debug("omap_hwmod: %s: enabling\n", oh->name);
@@ -1523,10 +1655,13 @@ static int _enable(struct omap_hwmod *oh)
 		oh->_int_flags &= ~_HWMOD_SKIP_ENABLE;
 		return 0;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (oh->_state != _HWMOD_STATE_INITIALIZED &&
 	    oh->_state != _HWMOD_STATE_IDLE &&
 	    oh->_state != _HWMOD_STATE_DISABLED) {
+<<<<<<< HEAD
 		WARN(1, "omap_hwmod: %s: enabled state can only be entered from initialized, idle, or disabled state\n",
 			oh->name);
 		return -EINVAL;
@@ -1536,6 +1671,18 @@ static int _enable(struct omap_hwmod *oh)
 	/*
 	 * If an IP contains only one HW reset line, then de-assert it in order
 	 * to allow the module state transition. Otherwise the PRCM will return
+=======
+		WARN(1, "omap_hwmod: %s: enabled state can only be entered "
+		     "from initialized, idle, or disabled state\n", oh->name);
+		return -EINVAL;
+	}
+
+	pr_debug("omap_hwmod: %s: enabling\n", oh->name);
+
+	/*
+	 * If an IP contains only one HW reset line, then de-assert it in order
+	 * to allow to enable the clocks. Otherwise the PRCM will return
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Intransition status, and the init will failed.
 	 */
 	if ((oh->_state == _HWMOD_STATE_INITIALIZED ||
@@ -1549,6 +1696,7 @@ static int _enable(struct omap_hwmod *oh)
 		omap_hwmod_mux(oh->mux, _HWMOD_STATE_ENABLED);
 
 	_add_initiator_dep(oh, mpu_oh);
+<<<<<<< HEAD
 
 	if (oh->clkdm) {
 		/*
@@ -1577,6 +1725,12 @@ static int _enable(struct omap_hwmod *oh)
 		if (oh->clkdm && hwsup)
 			clkdm_allow_idle(oh->clkdm);
 
+=======
+	_enable_clocks(oh);
+
+	r = _wait_target_ready(oh);
+	if (!r) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		oh->_state = _HWMOD_STATE_ENABLED;
 
 		/* Access the sysconfig only if the target is ready */
@@ -1589,9 +1743,12 @@ static int _enable(struct omap_hwmod *oh)
 		_disable_clocks(oh);
 		pr_debug("omap_hwmod: %s: _wait_target_ready: %d\n",
 			 oh->name, r);
+<<<<<<< HEAD
 
 		if (oh->clkdm)
 			clkdm_hwmod_disable(oh->clkdm, oh);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return r;
@@ -1607,6 +1764,7 @@ static int _enable(struct omap_hwmod *oh)
  */
 static int _idle(struct omap_hwmod *oh)
 {
+<<<<<<< HEAD
 	pr_debug("omap_hwmod: %s: idling\n", oh->name);
 
 	if (oh->_state != _HWMOD_STATE_ENABLED) {
@@ -1630,6 +1788,20 @@ static int _idle(struct omap_hwmod *oh)
 	_disable_clocks(oh);
 	if (oh->clkdm)
 		clkdm_hwmod_disable(oh->clkdm, oh);
+=======
+	if (oh->_state != _HWMOD_STATE_ENABLED) {
+		WARN(1, "omap_hwmod: %s: idle state can only be entered from "
+		     "enabled state\n", oh->name);
+		return -EINVAL;
+	}
+
+	pr_debug("omap_hwmod: %s: idling\n", oh->name);
+
+	if (oh->class->sysc)
+		_idle_sysc(oh);
+	_del_initiator_dep(oh, mpu_oh);
+	_disable_clocks(oh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Mux pins for device idle if populated */
 	if (oh->mux && oh->mux->pads_dynamic)
@@ -1692,8 +1864,13 @@ static int _shutdown(struct omap_hwmod *oh)
 
 	if (oh->_state != _HWMOD_STATE_IDLE &&
 	    oh->_state != _HWMOD_STATE_ENABLED) {
+<<<<<<< HEAD
 		WARN(1, "omap_hwmod: %s: disabled state can only be entered from idle, or enabled state\n",
 			oh->name);
+=======
+		WARN(1, "omap_hwmod: %s: disabled state can only be entered "
+		     "from idle, or enabled state\n", oh->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -1711,16 +1888,29 @@ static int _shutdown(struct omap_hwmod *oh)
 		}
 	}
 
+<<<<<<< HEAD
 	if (oh->class->sysc) {
 		if (oh->_state == _HWMOD_STATE_IDLE)
 			_enable(oh);
 		_shutdown_sysc(oh);
 	}
+=======
+	if (oh->class->sysc)
+		_shutdown_sysc(oh);
+
+	/*
+	 * If an IP contains only one HW reset line, then assert it
+	 * before disabling the clocks and shutting down the IP.
+	 */
+	if (oh->rst_lines_cnt == 1)
+		_assert_hardreset(oh, oh->rst_lines[0].name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* clocks and deps are already disabled in idle */
 	if (oh->_state == _HWMOD_STATE_ENABLED) {
 		_del_initiator_dep(oh, mpu_oh);
 		/* XXX what about the other system initiators here? dma, dsp */
+<<<<<<< HEAD
 		_omap4_disable_module(oh);
 		_disable_clocks(oh);
 		if (oh->clkdm)
@@ -1735,6 +1925,12 @@ static int _shutdown(struct omap_hwmod *oh)
 	if (oh->rst_lines_cnt == 1)
 		_assert_hardreset(oh, oh->rst_lines[0].name);
 
+=======
+		_disable_clocks(oh);
+	}
+	/* XXX Should this code also force-disable the optional clocks? */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Mux pins to safe mode or use populated off mode values */
 	if (oh->mux)
 		omap_hwmod_mux(oh->mux, _HWMOD_STATE_DISABLED);
@@ -1796,9 +1992,26 @@ static int _setup(struct omap_hwmod *oh, void *data)
 		return 0;
 	}
 
+<<<<<<< HEAD
 	if (!(oh->flags & HWMOD_INIT_NO_RESET))
 		_reset(oh);
 
+=======
+	if (!(oh->flags & HWMOD_INIT_NO_RESET)) {
+		_reset(oh);
+
+		/*
+		 * OCP_SYSCONFIG bits need to be reprogrammed after a softreset.
+		 * The _enable() function should be split to
+		 * avoid the rewrite of the OCP_SYSCONFIG register.
+		 */
+		if (oh->class->sysc) {
+			_update_sysc_cache(oh);
+			_enable_sysc(oh);
+		}
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	postsetup_state = oh->_postsetup_state;
 	if (postsetup_state == _HWMOD_STATE_UNKNOWN)
 		postsetup_state = _HWMOD_STATE_ENABLED;
@@ -1808,10 +2021,15 @@ static int _setup(struct omap_hwmod *oh, void *data)
 	 * it should be set by the core code as a runtime flag during startup
 	 */
 	if ((oh->flags & HWMOD_INIT_NO_IDLE) &&
+<<<<<<< HEAD
 	    (postsetup_state == _HWMOD_STATE_IDLE)) {
 		oh->_int_flags |= _HWMOD_SKIP_ENABLE;
 		postsetup_state = _HWMOD_STATE_ENABLED;
 	}
+=======
+	    (postsetup_state == _HWMOD_STATE_IDLE))
+		postsetup_state = _HWMOD_STATE_ENABLED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (postsetup_state == _HWMOD_STATE_IDLE)
 		_idle(oh);
@@ -1896,6 +2114,7 @@ void omap_hwmod_write(u32 v, struct omap_hwmod *oh, u16 reg_offs)
 }
 
 /**
+<<<<<<< HEAD
  * omap_hwmod_softreset - reset a module via SYSCONFIG.SOFTRESET bit
  * @oh: struct omap_hwmod *
  *
@@ -1923,6 +2142,8 @@ error:
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * omap_hwmod_set_slave_idlemode - set the hwmod's OCP slave idlemode
  * @oh: struct omap_hwmod *
  * @idlemode: SIDLEMODE field bits (shifted to bit 0)
@@ -2020,6 +2241,12 @@ int __init omap_hwmod_register(struct omap_hwmod **ohs)
 
 	i = 0;
 	do {
+<<<<<<< HEAD
+=======
+		if (!omap_chip_is(ohs[i]->omap_chip))
+			continue;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r = _register(ohs[i]);
 		WARN(r, "omap_hwmod: %s: _register returned %d\n", ohs[i]->name,
 		     r);
@@ -2043,6 +2270,12 @@ static int __init _populate_mpu_rt_base(struct omap_hwmod *oh, void *data)
 		return 0;
 
 	oh->_mpu_rt_va = _find_mpu_rt_base(oh, oh->_mpu_port_index);
+<<<<<<< HEAD
+=======
+	if (!oh->_mpu_rt_va)
+		pr_warning("omap_hwmod: %s found no _mpu_rt_va for %s\n",
+				__func__, oh->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -2239,8 +2472,13 @@ void omap_hwmod_ocp_barrier(struct omap_hwmod *oh)
 	BUG_ON(!oh);
 
 	if (!oh->class->sysc || !oh->class->sysc->sysc_flags) {
+<<<<<<< HEAD
 		WARN(1, "omap_device: %s: OCP barrier impossible due to device configuration\n",
 			oh->name);
+=======
+		WARN(1, "omap_device: %s: OCP barrier impossible due to "
+		      "device configuration\n", oh->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -2294,10 +2532,17 @@ int omap_hwmod_count_resources(struct omap_hwmod *oh)
 {
 	int ret, i;
 
+<<<<<<< HEAD
 	ret = _count_mpu_irqs(oh) + _count_sdma_reqs(oh);
 
 	for (i = 0; i < oh->slaves_cnt; i++)
 		ret += _count_ocp_if_addr_spaces(oh->slaves[i]);
+=======
+	ret = oh->mpu_irqs_cnt + oh->sdma_reqs_cnt;
+
+	for (i = 0; i < oh->slaves_cnt; i++)
+		ret += oh->slaves[i]->addr_cnt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -2314,13 +2559,21 @@ int omap_hwmod_count_resources(struct omap_hwmod *oh)
  */
 int omap_hwmod_fill_resources(struct omap_hwmod *oh, struct resource *res)
 {
+<<<<<<< HEAD
 	int i, j, mpu_irqs_cnt, sdma_reqs_cnt;
+=======
+	int i, j;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int r = 0;
 
 	/* For each IRQ, DMA, memory area, fill in array.*/
 
+<<<<<<< HEAD
 	mpu_irqs_cnt = _count_mpu_irqs(oh);
 	for (i = 0; i < mpu_irqs_cnt; i++) {
+=======
+	for (i = 0; i < oh->mpu_irqs_cnt; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		(res + r)->name = (oh->mpu_irqs + i)->name;
 		(res + r)->start = (oh->mpu_irqs + i)->irq;
 		(res + r)->end = (oh->mpu_irqs + i)->irq;
@@ -2328,8 +2581,12 @@ int omap_hwmod_fill_resources(struct omap_hwmod *oh, struct resource *res)
 		r++;
 	}
 
+<<<<<<< HEAD
 	sdma_reqs_cnt = _count_sdma_reqs(oh);
 	for (i = 0; i < sdma_reqs_cnt; i++) {
+=======
+	for (i = 0; i < oh->sdma_reqs_cnt; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		(res + r)->name = (oh->sdma_reqs + i)->name;
 		(res + r)->start = (oh->sdma_reqs + i)->dma_req;
 		(res + r)->end = (oh->sdma_reqs + i)->dma_req;
@@ -2339,12 +2596,19 @@ int omap_hwmod_fill_resources(struct omap_hwmod *oh, struct resource *res)
 
 	for (i = 0; i < oh->slaves_cnt; i++) {
 		struct omap_hwmod_ocp_if *os;
+<<<<<<< HEAD
 		int addr_cnt;
 
 		os = oh->slaves[i];
 		addr_cnt = _count_ocp_if_addr_spaces(os);
 
 		for (j = 0; j < addr_cnt; j++) {
+=======
+
+		os = oh->slaves[i];
+
+		for (j = 0; j < os->addr_cnt; j++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			(res + r)->name = (os->addr + j)->name;
 			(res + r)->start = (os->addr + j)->pa_start;
 			(res + r)->end = (os->addr + j)->pa_end;
@@ -2462,6 +2726,7 @@ int omap_hwmod_del_initiator_dep(struct omap_hwmod *oh,
  * @oh: struct omap_hwmod *
  *
  * Sets the module OCP socket ENAWAKEUP bit to allow the module to
+<<<<<<< HEAD
  * send wakeups to the PRCM, and enable I/O ring wakeup events for
  * this IP block if it has dynamic mux entries.  Eventually this
  * should set PRCM wakeup registers to cause the PRCM to receive
@@ -2469,12 +2734,21 @@ int omap_hwmod_del_initiator_dep(struct omap_hwmod *oh,
  * registers beyond this point - if the module is to wake up any other
  * module or subsystem, that must be set separately.  Called by
  * omap_device code.  Returns -EINVAL on error or 0 upon success.
+=======
+ * send wakeups to the PRCM.  Eventually this should sets PRCM wakeup
+ * registers to cause the PRCM to receive wakeup events from the
+ * module.  Does not set any wakeup routing registers beyond this
+ * point - if the module is to wake up any other module or subsystem,
+ * that must be set separately.  Called by omap_device code.  Returns
+ * -EINVAL on error or 0 upon success.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int omap_hwmod_enable_wakeup(struct omap_hwmod *oh)
 {
 	unsigned long flags;
 	u32 v;
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&oh->_lock, flags);
 
 	if (oh->class->sysc &&
@@ -2485,6 +2759,16 @@ int omap_hwmod_enable_wakeup(struct omap_hwmod *oh)
 	}
 
 	_set_idle_ioring_wakeup(oh, true);
+=======
+	if (!oh->class->sysc ||
+	    !(oh->class->sysc->sysc_flags & SYSC_HAS_ENAWAKEUP))
+		return -EINVAL;
+
+	spin_lock_irqsave(&oh->_lock, flags);
+	v = oh->_sysc_cache;
+	_enable_wakeup(oh, &v);
+	_write_sysconfig(v, oh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&oh->_lock, flags);
 
 	return 0;
@@ -2495,6 +2779,7 @@ int omap_hwmod_enable_wakeup(struct omap_hwmod *oh)
  * @oh: struct omap_hwmod *
  *
  * Clears the module OCP socket ENAWAKEUP bit to prevent the module
+<<<<<<< HEAD
  * from sending wakeups to the PRCM, and disable I/O ring wakeup
  * events for this IP block if it has dynamic mux entries.  Eventually
  * this should clear PRCM wakeup registers to cause the PRCM to ignore
@@ -2502,12 +2787,21 @@ int omap_hwmod_enable_wakeup(struct omap_hwmod *oh)
  * registers beyond this point - if the module is to wake up any other
  * module or subsystem, that must be set separately.  Called by
  * omap_device code.  Returns -EINVAL on error or 0 upon success.
+=======
+ * from sending wakeups to the PRCM.  Eventually this should clear
+ * PRCM wakeup registers to cause the PRCM to ignore wakeup events
+ * from the module.  Does not set any wakeup routing registers beyond
+ * this point - if the module is to wake up any other module or
+ * subsystem, that must be set separately.  Called by omap_device
+ * code.  Returns -EINVAL on error or 0 upon success.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int omap_hwmod_disable_wakeup(struct omap_hwmod *oh)
 {
 	unsigned long flags;
 	u32 v;
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&oh->_lock, flags);
 
 	if (oh->class->sysc &&
@@ -2518,6 +2812,16 @@ int omap_hwmod_disable_wakeup(struct omap_hwmod *oh)
 	}
 
 	_set_idle_ioring_wakeup(oh, false);
+=======
+	if (!oh->class->sysc ||
+	    !(oh->class->sysc->sysc_flags & SYSC_HAS_ENAWAKEUP))
+		return -EINVAL;
+
+	spin_lock_irqsave(&oh->_lock, flags);
+	v = oh->_sysc_cache;
+	_disable_wakeup(oh, &v);
+	_write_sysconfig(v, oh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&oh->_lock, flags);
 
 	return 0;
@@ -2697,7 +3001,11 @@ ohsps_unlock:
  * Returns the context loss count of the powerdomain assocated with @oh
  * upon success, or zero if no powerdomain exists for @oh.
  */
+<<<<<<< HEAD
 int omap_hwmod_get_context_loss_count(struct omap_hwmod *oh)
+=======
+u32 omap_hwmod_get_context_loss_count(struct omap_hwmod *oh)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct powerdomain *pwrdm;
 	int ret = 0;
@@ -2734,6 +3042,7 @@ int omap_hwmod_no_setup_reset(struct omap_hwmod *oh)
 
 	return 0;
 }
+<<<<<<< HEAD
 
 /**
  * omap_hwmod_pad_route_irq - route an I/O pad wakeup to a particular MPU IRQ
@@ -2788,3 +3097,5 @@ int omap_hwmod_pad_route_irq(struct omap_hwmod *oh, int pad_idx, int irq_idx)
 
 	return 0;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

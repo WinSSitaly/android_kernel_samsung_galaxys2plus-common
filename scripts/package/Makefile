@@ -118,12 +118,19 @@ perf-tar=perf-$(KERNELVERSION)
 
 quiet_cmd_perf_tar = TAR
       cmd_perf_tar = \
+<<<<<<< HEAD
 git --git-dir=$(srctree)/.git archive --prefix=$(perf-tar)/         \
 	HEAD^{tree} $$(cd $(srctree);                               \
 		       echo $$(cat $(srctree)/tools/perf/MANIFEST)) \
 	-o $(perf-tar).tar;                                         \
 mkdir -p $(perf-tar);                                               \
 git --git-dir=$(srctree)/.git rev-parse HEAD > $(perf-tar)/HEAD;    \
+=======
+git archive --prefix=$(perf-tar)/ HEAD^{tree}                       \
+	$$(cat $(srctree)/tools/perf/MANIFEST) -o $(perf-tar).tar;  \
+mkdir -p $(perf-tar);                                               \
+git rev-parse HEAD > $(perf-tar)/HEAD;                              \
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 tar rf $(perf-tar).tar $(perf-tar)/HEAD;                            \
 rm -r $(perf-tar);                                                  \
 $(if $(findstring tar-src,$@),,                                     \
@@ -141,7 +148,11 @@ perf-%pkg: FORCE
 help: FORCE
 	@echo '  rpm-pkg             - Build both source and binary RPM kernel packages'
 	@echo '  binrpm-pkg          - Build only the binary kernel package'
+<<<<<<< HEAD
 	@echo '  deb-pkg             - Build the kernel as a deb package'
+=======
+	@echo '  deb-pkg             - Build the kernel as an deb package'
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	@echo '  tar-pkg             - Build the kernel as an uncompressed tarball'
 	@echo '  targz-pkg           - Build the kernel as a gzip compressed tarball'
 	@echo '  tarbz2-pkg          - Build the kernel as a bzip2 compressed tarball'

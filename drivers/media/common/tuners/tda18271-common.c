@@ -676,6 +676,7 @@ fail:
 	return ret;
 }
 
+<<<<<<< HEAD
 int _tda_printk(struct tda18271_priv *state, const char *level,
 		const char *func, const char *fmt, ...)
 {
@@ -701,3 +702,12 @@ int _tda_printk(struct tda18271_priv *state, const char *level,
 
 	return rtn;
 }
+=======
+/*
+ * Overrides for Emacs so that we follow Linus's tabbing style.
+ * ---------------------------------------------------------------------------
+ * Local variables:
+ * c-basic-offset: 8
+ * End:
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

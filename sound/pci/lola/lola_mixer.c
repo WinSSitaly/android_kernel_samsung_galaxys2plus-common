@@ -144,12 +144,17 @@ int __devinit lola_init_mixer_widget(struct lola *chip, int nid)
 	chip->mixer.dest_stream_ins = chip->pcm[CAPT].num_streams;
 	chip->mixer.dest_phys_outs = chip->pin[PLAY].num_pins;
 
+<<<<<<< HEAD
 	/* mixer matrix may have unused areas between PhysIn and
+=======
+	/* mixer matrix can have unused areas between PhysIn and
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Play or Record and PhysOut zones
 	 */
 	chip->mixer.src_stream_out_ofs = chip->mixer.src_phys_ins +
 		LOLA_MIXER_SRC_INPUT_PLAY_SEPARATION(val);
 	chip->mixer.dest_phys_out_ofs = chip->mixer.dest_stream_ins +
+<<<<<<< HEAD
 		LOLA_MIXER_DEST_REC_OUTPUT_SEPARATION(val);
 
 	/* example : MixerMatrix of LoLa881 (LoLa16161 uses unused zones)
@@ -199,6 +204,36 @@ int __devinit lola_init_mixer_widget(struct lola *chip, int nid)
 	 * |r|  +---V----V-------------------+
 	 * |a|  | dest_mix_gain_enable array |
 	 * |y|  +----------------------------+
+=======
+		LOLA_MIXER_DEST_REC_OUTPUT_SEPATATION(val);
+
+	/* example : MixerMatrix of LoLa881
+	 * 0-------8------16-------8------16
+	 * |       |       |       |       |
+	 * | INPUT |       | INPUT |       |
+	 * | ->    |unused | ->    |unused |
+	 * | RECORD|       | OUTPUT|       |
+	 * |       |       |       |       |
+	 * 8--------------------------------
+	 * |       |       |       |       |
+	 * |       |       |       |       |
+	 * |unused |unused |unused |unused |
+	 * |       |       |       |       |
+	 * |       |       |       |       |
+	 * 16-------------------------------
+	 * |       |       |       |       |
+	 * | PLAY  |       | PLAY  |       |
+	 * |  ->   |unused | ->    |unused |
+	 * | RECORD|       | OUTPUT|       |
+	 * |       |       |       |       |
+	 * 8--------------------------------
+	 * |       |       |       |       |
+	 * |       |       |       |       |
+	 * |unused |unused |unused |unused |
+	 * |       |       |       |       |
+	 * |       |       |       |       |
+	 * 16-------------------------------
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	if (chip->mixer.src_stream_out_ofs > MAX_AUDIO_INOUT_COUNT ||
 	    chip->mixer.dest_phys_out_ofs > MAX_STREAM_IN_COUNT) {
@@ -213,9 +248,12 @@ int __devinit lola_init_mixer_widget(struct lola *chip, int nid)
 		(((1U << chip->mixer.dest_phys_outs) - 1)
 		 << chip->mixer.dest_phys_out_ofs);
 
+<<<<<<< HEAD
 	snd_printdd("Mixer src_mask=%x, dest_mask=%x\n",
 		    chip->mixer.src_mask, chip->mixer.dest_mask);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -226,11 +264,16 @@ static int lola_mixer_set_src_gain(struct lola *chip, unsigned int id,
 
 	if (!(chip->mixer.src_mask & (1 << id)))
 		return -EINVAL;
+<<<<<<< HEAD
+=======
+	writew(gain, &chip->mixer.array->src_gain[id]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	oldval = val = readl(&chip->mixer.array->src_gain_enable);
 	if (on)
 		val |= (1 << id);
 	else
 		val &= ~(1 << id);
+<<<<<<< HEAD
 	/* test if values unchanged */
 	if ((val == oldval) &&
 	    (gain == readw(&chip->mixer.array->src_gain[id])))
@@ -239,6 +282,8 @@ static int lola_mixer_set_src_gain(struct lola *chip, unsigned int id,
 	snd_printdd("lola_mixer_set_src_gain (id=%d, gain=%d) enable=%x\n",
 			id, gain, val);
 	writew(gain, &chip->mixer.array->src_gain[id]);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writel(val, &chip->mixer.array->src_gain_enable);
 	lola_codec_flush(chip);
 	/* inform micro-controller about the new source gain */
@@ -300,7 +345,10 @@ static int lola_mixer_set_mapping_gain(struct lola *chip,
 				src, dest);
 }
 
+<<<<<<< HEAD
 #if 0 /* not used */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int lola_mixer_set_dest_gains(struct lola *chip, unsigned int id,
 				     unsigned int mask, unsigned short *gains)
 {
@@ -321,7 +369,10 @@ static int lola_mixer_set_dest_gains(struct lola *chip, unsigned int id,
 	return lola_codec_write(chip, chip->mixer.nid,
 				LOLA_VERB_SET_DESTINATION_GAIN, id, 0);
 }
+<<<<<<< HEAD
 #endif /* not used */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  */
@@ -409,8 +460,11 @@ static int set_analog_volume(struct lola *chip, int dir,
 		return 0;
 	if (external_call)
 		lola_codec_flush(chip);
+<<<<<<< HEAD
 	snd_printdd("set_analog_volume (dir=%d idx=%d, volume=%d)\n",
 			dir, idx, val);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = lola_codec_write(chip, pin->nid,
 			       LOLA_VERB_SET_AMP_GAIN_MUTE, val, 0);
 	if (err < 0)
@@ -462,6 +516,7 @@ static int init_mixer_values(struct lola *chip)
 {
 	int i;
 
+<<<<<<< HEAD
 	/* all sample rate converters on */
 	lola_set_src_config(chip, (1 << chip->pin[CAPT].num_pins) - 1, false);
 
@@ -483,19 +538,36 @@ static int init_mixer_values(struct lola *chip)
 		lola_mixer_set_src_gain(chip, i, 336, true); /* 0dB */
 
 	/* set all digital playback source (master) gains to 0dB */
+=======
+	/* all src on */
+	lola_set_src_config(chip, (1 << chip->pin[CAPT].num_pins) - 1, false);
+
+	/* clear all matrix */
+	memset_io(chip->mixer.array, 0, sizeof(*chip->mixer.array));
+	/* set src gain to 0dB */
+	for (i = 0; i < chip->mixer.src_phys_ins; i++)
+		lola_mixer_set_src_gain(chip, i, 336, true); /* 0dB */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < chip->mixer.src_stream_outs; i++)
 		lola_mixer_set_src_gain(chip,
 					i + chip->mixer.src_stream_out_ofs,
 					336, true); /* 0dB */
+<<<<<<< HEAD
 	/* set gain value 0dB diagonally in matrix - part INPUT -> CAPTURE */
+=======
+	/* set 1:1 dest gain */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < chip->mixer.dest_stream_ins; i++) {
 		int src = i % chip->mixer.src_phys_ins;
 		lola_mixer_set_mapping_gain(chip, src, i, 336, true);
 	}
+<<<<<<< HEAD
 	/* set gain value 0dB diagonally in matrix , part PLAYBACK -> OUTPUT
 	 * (LoLa280 : playback channel 0,2,4,6 linked to output channel 0)
 	 * (LoLa280 : playback channel 1,3,5,7 linked to output channel 1)
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < chip->mixer.src_stream_outs; i++) {
 		int src = chip->mixer.src_stream_out_ofs + i;
 		int dst = chip->mixer.dest_phys_out_ofs +
@@ -745,7 +817,10 @@ static int __devinit create_src_gain_mixer(struct lola *chip,
 			   snd_ctl_new1(&lola_src_gain_mixer, chip));
 }
 
+<<<<<<< HEAD
 #if 0 /* not used */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * destination gain (matrix-like) mixer
  */
@@ -834,7 +909,10 @@ static int __devinit create_dest_gain_mixer(struct lola *chip,
 	return snd_ctl_add(chip->card,
 			  snd_ctl_new1(&lola_dest_gain_mixer, chip));
 }
+<<<<<<< HEAD
 #endif /* not used */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  */
@@ -852,16 +930,26 @@ int __devinit lola_create_mixer(struct lola *chip)
 	if (err < 0)
 		return err;
 	err = create_src_gain_mixer(chip, chip->mixer.src_phys_ins, 0,
+<<<<<<< HEAD
 				    "Digital Capture Volume");
+=======
+				    "Line Source Gain Volume");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0)
 		return err;
 	err = create_src_gain_mixer(chip, chip->mixer.src_stream_outs,
 				    chip->mixer.src_stream_out_ofs,
+<<<<<<< HEAD
 				    "Digital Playback Volume");
 	if (err < 0)
 		return err;
 #if 0
 /* FIXME: buggy mixer matrix handling */
+=======
+				    "Stream Source Gain Volume");
+	if (err < 0)
+		return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = create_dest_gain_mixer(chip,
 				     chip->mixer.src_phys_ins, 0,
 				     chip->mixer.dest_stream_ins, 0,
@@ -890,6 +978,10 @@ int __devinit lola_create_mixer(struct lola *chip)
 				     "Stream Playback Volume");
 	if (err < 0)
 		return err;
+<<<<<<< HEAD
 #endif /* FIXME */
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return init_mixer_values(chip);
 }

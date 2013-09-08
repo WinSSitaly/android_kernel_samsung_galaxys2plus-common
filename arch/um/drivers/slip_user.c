@@ -11,10 +11,18 @@
 #include <string.h>
 #include <sys/termios.h>
 #include <sys/wait.h>
+<<<<<<< HEAD
+=======
+#include "kern_constants.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "net_user.h"
 #include "os.h"
 #include "slip.h"
 #include "um_malloc.h"
+<<<<<<< HEAD
+=======
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int slip_user_init(void *data, void *dev)
 {
@@ -100,7 +108,11 @@ static int slip_tramp(char **argv, int fd)
 		       "buffer\n");
 		os_kill_process(pid, 1);
 		err = -ENOMEM;
+<<<<<<< HEAD
 		goto out_close;
+=======
+		goto out_free;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	close(fds[1]);
@@ -110,6 +122,10 @@ static int slip_tramp(char **argv, int fd)
 	err = helper_wait(pid);
 	close(fds[0]);
 
+<<<<<<< HEAD
+=======
+out_free:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(output);
 	return err;
 

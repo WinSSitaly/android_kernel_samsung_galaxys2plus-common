@@ -27,7 +27,11 @@
 #ifndef PWC_KIARA_H
 #define PWC_KIARA_H
 
+<<<<<<< HEAD
 #include "pwc.h"
+=======
+#include <media/pwc-ioctl.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PWC_FPS_MAX_KIARA 6
 

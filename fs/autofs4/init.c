@@ -31,11 +31,19 @@ static int __init init_autofs4_fs(void)
 {
 	int err;
 
+<<<<<<< HEAD
 	autofs_dev_ioctl_init();
 
 	err = register_filesystem(&autofs_fs_type);
 	if (err)
 		autofs_dev_ioctl_exit();
+=======
+	err = register_filesystem(&autofs_fs_type);
+	if (err)
+		return err;
+
+	autofs_dev_ioctl_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }

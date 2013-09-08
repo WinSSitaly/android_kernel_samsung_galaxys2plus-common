@@ -34,7 +34,10 @@
 #include <asm/tce.h>
 #include <asm/calgary.h>
 #include <asm/proto.h>
+<<<<<<< HEAD
 #include <asm/cacheflush.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* flush a tce at 'tceaddr' to main memory */
 static inline void flush_tce(void* tceaddr)

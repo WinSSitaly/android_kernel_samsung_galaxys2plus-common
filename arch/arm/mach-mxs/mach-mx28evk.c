@@ -15,11 +15,16 @@
 #include <linux/delay.h>
 #include <linux/platform_device.h>
 #include <linux/gpio.h>
+<<<<<<< HEAD
 #include <linux/leds.h>
 #include <linux/clk.h>
 #include <linux/i2c.h>
 #include <linux/regulator/machine.h>
 #include <linux/regulator/fixed.h>
+=======
+#include <linux/irq.h>
+#include <linux/clk.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
@@ -27,6 +32,7 @@
 
 #include <mach/common.h>
 #include <mach/iomux-mx28.h>
+<<<<<<< HEAD
 #include <mach/digctl.h>
 
 #include "devices-mx28.h"
@@ -34,6 +40,14 @@
 #define MX28EVK_FLEXCAN_SWITCH	MXS_GPIO_NR(2, 13)
 #define MX28EVK_FEC_PHY_POWER	MXS_GPIO_NR(2, 15)
 #define MX28EVK_GPIO_LED	MXS_GPIO_NR(3, 5)
+=======
+
+#include "devices-mx28.h"
+#include "gpio.h"
+
+#define MX28EVK_FLEXCAN_SWITCH	MXS_GPIO_NR(2, 13)
+#define MX28EVK_FEC_PHY_POWER	MXS_GPIO_NR(2, 15)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MX28EVK_BL_ENABLE	MXS_GPIO_NR(3, 18)
 #define MX28EVK_LCD_ENABLE	MXS_GPIO_NR(3, 30)
 #define MX28EVK_FEC_PHY_RESET	MXS_GPIO_NR(4, 13)
@@ -183,6 +197,7 @@ static const iomux_cfg_t mx28evk_pads[] __initconst = {
 	/* slot power enable */
 	MX28_PAD_PWM4__GPIO_3_29 |
 		(MXS_PAD_4MA | MXS_PAD_3V3 | MXS_PAD_NOPULL),
+<<<<<<< HEAD
 
 	/* led */
 	MX28_PAD_AUART1_TX__GPIO_3_5 | MXS_PAD_CTRL,
@@ -218,19 +233,56 @@ static const struct gpio_led mx28evk_leds[] __initconst = {
 static const struct gpio_led_platform_data mx28evk_led_data __initconst = {
 	.leds = mx28evk_leds,
 	.num_leds = ARRAY_SIZE(mx28evk_leds),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* fec */
 static void __init mx28evk_fec_reset(void)
 {
+<<<<<<< HEAD
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct clk *clk;
 
 	/* Enable fec phy clock */
 	clk = clk_get_sys("pll2", NULL);
 	if (!IS_ERR(clk))
+<<<<<<< HEAD
 		clk_prepare_enable(clk);
 
 	gpio_set_value(MX28EVK_FEC_PHY_RESET, 0);
+=======
+		clk_enable(clk);
+
+	/* Power up fec phy */
+	ret = gpio_request(MX28EVK_FEC_PHY_POWER, "fec-phy-power");
+	if (ret) {
+		pr_err("Failed to request gpio fec-phy-%s: %d\n", "power", ret);
+		return;
+	}
+
+	ret = gpio_direction_output(MX28EVK_FEC_PHY_POWER, 0);
+	if (ret) {
+		pr_err("Failed to drive gpio fec-phy-%s: %d\n", "power", ret);
+		return;
+	}
+
+	/* Reset fec phy */
+	ret = gpio_request(MX28EVK_FEC_PHY_RESET, "fec-phy-reset");
+	if (ret) {
+		pr_err("Failed to request gpio fec-phy-%s: %d\n", "reset", ret);
+		return;
+	}
+
+	gpio_direction_output(MX28EVK_FEC_PHY_RESET, 0);
+	if (ret) {
+		pr_err("Failed to drive gpio fec-phy-%s: %d\n", "reset", ret);
+		return;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mdelay(1);
 	gpio_set_value(MX28EVK_FEC_PHY_RESET, 1);
 }
@@ -252,14 +304,22 @@ static int __init mx28evk_fec_get_mac(void)
 	const u32 *ocotp = mxs_get_ocotp();
 
 	if (!ocotp)
+<<<<<<< HEAD
 		return -ETIMEDOUT;
+=======
+		goto error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * OCOTP only stores the last 4 octets for each mac address,
 	 * so hard-code Freescale OUI (00:04:9f) here.
 	 */
 	for (i = 0; i < 2; i++) {
+<<<<<<< HEAD
 		val = ocotp[i];
+=======
+		val = ocotp[i * 4];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mx28_fec_pdata[i].mac[0] = 0x00;
 		mx28_fec_pdata[i].mac[1] = 0x04;
 		mx28_fec_pdata[i].mac[2] = 0x9f;
@@ -269,6 +329,13 @@ static int __init mx28evk_fec_get_mac(void)
 	}
 
 	return 0;
+<<<<<<< HEAD
+=======
+
+error:
+	pr_err("%s: timeout when reading fec mac from OCOTP\n", __func__);
+	return -ETIMEDOUT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -343,6 +410,7 @@ static struct mxs_mmc_platform_data mx28evk_mmc_pdata[] __initdata = {
 	},
 };
 
+<<<<<<< HEAD
 static struct i2c_board_info mxs_i2c0_board_info[] __initdata = {
 	{
 		I2C_BOARD_INFO("sgtl5000", 0x0a),
@@ -409,6 +477,8 @@ static const struct mxs_saif_platform_data
 	},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init mx28evk_init(void)
 {
 	int ret;
@@ -422,14 +492,18 @@ static void __init mx28evk_init(void)
 	if (mx28evk_fec_get_mac())
 		pr_warn("%s: failed on fec mac setup\n", __func__);
 
+<<<<<<< HEAD
 	ret = gpio_request_array(mx28evk_gpios, ARRAY_SIZE(mx28evk_gpios));
 	if (ret)
 		pr_err("One or more GPIOs failed to be requested: %d\n", ret);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mx28evk_fec_reset();
 	mx28_add_fec(0, &mx28_fec_pdata[0]);
 	mx28_add_fec(1, &mx28_fec_pdata[1]);
 
+<<<<<<< HEAD
 	mx28_add_flexcan(0, &mx28evk_flexcan_pdata[0]);
 	mx28_add_flexcan(1, &mx28evk_flexcan_pdata[1]);
 
@@ -454,6 +528,43 @@ static void __init mx28evk_init(void)
 	mx28_add_rtc_stmp3xxx();
 
 	gpio_led_register_device(0, &mx28evk_led_data);
+=======
+	ret = gpio_request_one(MX28EVK_FLEXCAN_SWITCH, GPIOF_DIR_OUT,
+				"flexcan-switch");
+	if (ret) {
+		pr_err("failed to request gpio flexcan-switch: %d\n", ret);
+	} else {
+		mx28_add_flexcan(0, &mx28evk_flexcan_pdata[0]);
+		mx28_add_flexcan(1, &mx28evk_flexcan_pdata[1]);
+	}
+
+	ret = gpio_request_one(MX28EVK_LCD_ENABLE, GPIOF_DIR_OUT, "lcd-enable");
+	if (ret)
+		pr_warn("failed to request gpio lcd-enable: %d\n", ret);
+	else
+		gpio_set_value(MX28EVK_LCD_ENABLE, 1);
+
+	ret = gpio_request_one(MX28EVK_BL_ENABLE, GPIOF_DIR_OUT, "bl-enable");
+	if (ret)
+		pr_warn("failed to request gpio bl-enable: %d\n", ret);
+	else
+		gpio_set_value(MX28EVK_BL_ENABLE, 1);
+
+	mx28_add_mxsfb(&mx28evk_mxsfb_pdata);
+
+	/* power on mmc slot by writing 0 to the gpio */
+	ret = gpio_request_one(MX28EVK_MMC0_SLOT_POWER, GPIOF_OUT_INIT_LOW,
+			       "mmc0-slot-power");
+	if (ret)
+		pr_warn("failed to request gpio mmc0-slot-power: %d\n", ret);
+	mx28_add_mxs_mmc(0, &mx28evk_mmc_pdata[0]);
+
+	ret = gpio_request_one(MX28EVK_MMC1_SLOT_POWER, GPIOF_OUT_INIT_LOW,
+			       "mmc1-slot-power");
+	if (ret)
+		pr_warn("failed to request gpio mmc1-slot-power: %d\n", ret);
+	mx28_add_mxs_mmc(1, &mx28evk_mmc_pdata[1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __init mx28evk_timer_init(void)
@@ -469,7 +580,12 @@ MACHINE_START(MX28EVK, "Freescale MX28 EVK")
 	/* Maintainer: Freescale Semiconductor, Inc. */
 	.map_io		= mx28_map_io,
 	.init_irq	= mx28_init_irq,
+<<<<<<< HEAD
 	.timer		= &mx28evk_timer,
 	.init_machine	= mx28evk_init,
 	.restart	= mxs_restart,
+=======
+	.init_machine	= mx28evk_init,
+	.timer		= &mx28evk_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

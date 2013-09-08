@@ -294,7 +294,11 @@ EXPORT(sysn32_call_table)
 	PTR	sys_ni_syscall			/* 6170, was get_kernel_syms */
 	PTR	sys_ni_syscall			/* was query_module */
 	PTR	sys_quotactl
+<<<<<<< HEAD
 	PTR	sys_ni_syscall			/* was nfsservctl */
+=======
+	PTR	compat_sys_nfsservctl
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	PTR	sys_ni_syscall			/* res. for getpmsg */
 	PTR	sys_ni_syscall			/* 6175  for putpmsg */
 	PTR	sys_ni_syscall			/* res. for afs_syscall */
@@ -315,7 +319,11 @@ EXPORT(sysn32_call_table)
 	PTR	sys_fremovexattr
 	PTR	sys_tkill
 	PTR	sys_ni_syscall
+<<<<<<< HEAD
 	PTR	sys_32_futex
+=======
+	PTR	compat_sys_futex
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	PTR	compat_sys_sched_setaffinity	/* 6195 */
 	PTR	compat_sys_sched_getaffinity
 	PTR	sys_cacheflush
@@ -428,8 +436,12 @@ EXPORT(sysn32_call_table)
 	PTR	sys_open_by_handle_at
 	PTR	compat_sys_clock_adjtime	/* 6305 */
 	PTR	sys_syncfs
+<<<<<<< HEAD
 	PTR	compat_sys_sendmmsg
 	PTR	sys_setns
 	PTR	compat_sys_process_vm_readv
 	PTR	compat_sys_process_vm_writev	/* 6310 */
+=======
+	PTR	sys_setns
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.size	sysn32_call_table,.-sysn32_call_table

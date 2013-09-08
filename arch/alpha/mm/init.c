@@ -22,6 +22,10 @@
 #include <linux/vmalloc.h>
 #include <linux/gfp.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <asm/pgtable.h>
 #include <asm/pgalloc.h>
@@ -30,7 +34,10 @@
 #include <asm/mmu_context.h>
 #include <asm/console.h>
 #include <asm/tlb.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void die_if_kernel(char *,struct pt_regs *,long);
 

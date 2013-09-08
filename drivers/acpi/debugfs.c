@@ -2,7 +2,10 @@
  * debugfs.c - ACPI debugfs interface to userspace.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/debugfs.h>
 #include <acpi/acpi_drivers.h>

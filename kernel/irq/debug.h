@@ -4,10 +4,17 @@
 
 #include <linux/kallsyms.h>
 
+<<<<<<< HEAD
 #define ___P(f) if (desc->status_use_accessors & f) printk("%14s set\n", #f)
 #define ___PS(f) if (desc->istate & f) printk("%14s set\n", #f)
 /* FIXME */
 #define ___PD(f) do { } while (0)
+=======
+#define P(f) if (desc->status_use_accessors & f) printk("%14s set\n", #f)
+#define PS(f) if (desc->istate & f) printk("%14s set\n", #f)
+/* FIXME */
+#define PD(f) do { } while (0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void print_irq_desc(unsigned int irq, struct irq_desc *desc)
 {
@@ -23,6 +30,7 @@ static inline void print_irq_desc(unsigned int irq, struct irq_desc *desc)
 		print_symbol("%s\n", (unsigned long)desc->action->handler);
 	}
 
+<<<<<<< HEAD
 	___P(IRQ_LEVEL);
 	___P(IRQ_PER_CPU);
 	___P(IRQ_NOPROBE);
@@ -43,3 +51,25 @@ static inline void print_irq_desc(unsigned int irq, struct irq_desc *desc)
 #undef ___P
 #undef ___PS
 #undef ___PD
+=======
+	P(IRQ_LEVEL);
+	P(IRQ_PER_CPU);
+	P(IRQ_NOPROBE);
+	P(IRQ_NOREQUEST);
+	P(IRQ_NOTHREAD);
+	P(IRQ_NOAUTOEN);
+
+	PS(IRQS_AUTODETECT);
+	PS(IRQS_REPLAY);
+	PS(IRQS_WAITING);
+	PS(IRQS_PENDING);
+
+	PD(IRQS_INPROGRESS);
+	PD(IRQS_DISABLED);
+	PD(IRQS_MASKED);
+}
+
+#undef P
+#undef PS
+#undef PD
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

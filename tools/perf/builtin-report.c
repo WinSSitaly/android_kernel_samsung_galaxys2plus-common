@@ -25,7 +25,10 @@
 #include "util/evsel.h"
 #include "util/header.h"
 #include "util/session.h"
+<<<<<<< HEAD
 #include "util/tool.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "util/parse-options.h"
 #include "util/parse-events.h"
@@ -34,6 +37,7 @@
 #include "util/sort.h"
 #include "util/hist.h"
 
+<<<<<<< HEAD
 #include <linux/bitmap.h>
 
 struct perf_report {
@@ -134,14 +138,40 @@ static int perf_evsel__add_hist_entry(struct perf_evsel *evsel,
 				      struct addr_location *al,
 				      struct perf_sample *sample,
 				      struct machine *machine)
+=======
+static char		const *input_name = "perf.data";
+
+static bool		force, use_tui, use_stdio;
+static bool		hide_unresolved;
+static bool		dont_use_callchains;
+
+static bool		show_threads;
+static struct perf_read_values	show_threads_values;
+
+static const char	default_pretty_printing_style[] = "normal";
+static const char	*pretty_printing_style = default_pretty_printing_style;
+
+static char		callchain_default_opt[] = "fractal,0.5";
+static symbol_filter_t	annotate_init;
+
+static int perf_session__add_hist_entry(struct perf_session *session,
+					struct addr_location *al,
+					struct perf_sample *sample,
+					struct perf_evsel *evsel)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct symbol *parent = NULL;
 	int err = 0;
 	struct hist_entry *he;
 
 	if ((sort__has_parent || symbol_conf.use_callchain) && sample->callchain) {
+<<<<<<< HEAD
 		err = machine__resolve_callchain(machine, evsel, al->thread,
 						 sample->callchain, &parent);
+=======
+		err = perf_session__resolve_callchain(session, al->thread,
+						      sample->callchain, &parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err)
 			return err;
 	}
@@ -151,8 +181,12 @@ static int perf_evsel__add_hist_entry(struct perf_evsel *evsel,
 		return -ENOMEM;
 
 	if (symbol_conf.use_callchain) {
+<<<<<<< HEAD
 		err = callchain_append(he->callchain,
 				       &evsel->hists.callchain_cursor,
+=======
+		err = callchain_append(he->callchain, &session->callchain_cursor,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				       sample->period);
 		if (err)
 			return err;
@@ -168,7 +202,12 @@ static int perf_evsel__add_hist_entry(struct perf_evsel *evsel,
 		assert(evsel != NULL);
 
 		err = -ENOMEM;
+<<<<<<< HEAD
 		if (notes->src == NULL && symbol__alloc_hist(he->ms.sym) < 0)
+=======
+		if (notes->src == NULL &&
+		    symbol__alloc_hist(he->ms.sym, session->evlist->nr_entries) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out;
 
 		err = hist_entry__inc_addr_samples(he, evsel->idx, al->addr);
@@ -181,6 +220,7 @@ out:
 }
 
 
+<<<<<<< HEAD
 static int process_sample_event(struct perf_tool *tool,
 				union perf_event *event,
 				struct perf_sample *sample,
@@ -192,11 +232,23 @@ static int process_sample_event(struct perf_tool *tool,
 
 	if (perf_event__preprocess_sample(event, machine, &al, sample,
 					  rep->annotate_init) < 0) {
+=======
+static int process_sample_event(union perf_event *event,
+				struct perf_sample *sample,
+				struct perf_evsel *evsel,
+				struct perf_session *session)
+{
+	struct addr_location al;
+
+	if (perf_event__preprocess_sample(event, session, &al, sample,
+					  annotate_init) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fprintf(stderr, "problem processing %d event, skipping it.\n",
 			event->header.type);
 		return -1;
 	}
 
+<<<<<<< HEAD
 	if (al.filtered || (rep->hide_unresolved && al.sym == NULL))
 		return 0;
 
@@ -232,6 +284,31 @@ static int process_read_event(struct perf_tool *tool,
 	if (rep->show_threads) {
 		const char *name = evsel ? event_name(evsel) : "unknown";
 		perf_read_values_add_value(&rep->show_threads_values,
+=======
+	if (al.filtered || (hide_unresolved && al.sym == NULL))
+		return 0;
+
+	if (al.map != NULL)
+		al.map->dso->hit = 1;
+
+	if (perf_session__add_hist_entry(session, &al, sample, evsel)) {
+		pr_debug("problem incrementing symbol period, skipping event\n");
+		return -1;
+	}
+
+	return 0;
+}
+
+static int process_read_event(union perf_event *event,
+			      struct perf_sample *sample __used,
+			      struct perf_session *session)
+{
+	struct perf_evsel *evsel = perf_evlist__id2evsel(session->evlist,
+							 event->read.id);
+	if (show_threads) {
+		const char *name = evsel ? event_name(evsel) : "unknown";
+		perf_read_values_add_value(&show_threads_values,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					   event->read.pid, event->read.tid,
 					   event->read.id,
 					   name,
@@ -245,6 +322,7 @@ static int process_read_event(struct perf_tool *tool,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int perf_report__setup_sample_type(struct perf_report *rep)
 {
 	struct perf_session *self = rep->session;
@@ -268,10 +346,34 @@ static int perf_report__setup_sample_type(struct perf_report *rep)
 			if (callchain_register_param(&callchain_param) < 0) {
 				ui__warning("Can't register callchain "
 					    "params.\n");
+=======
+static int perf_session__setup_sample_type(struct perf_session *self)
+{
+	if (!(self->sample_type & PERF_SAMPLE_CALLCHAIN)) {
+		if (sort__has_parent) {
+			fprintf(stderr, "selected --sort parent, but no"
+					" callchain data. Did you call"
+					" perf record without -g?\n");
+			return -EINVAL;
+		}
+		if (symbol_conf.use_callchain) {
+			fprintf(stderr, "selected -g but no callchain data."
+					" Did you call perf record without"
+					" -g?\n");
+			return -1;
+		}
+	} else if (!dont_use_callchains && callchain_param.mode != CHAIN_NONE &&
+		   !symbol_conf.use_callchain) {
+			symbol_conf.use_callchain = true;
+			if (callchain_register_param(&callchain_param) < 0) {
+				fprintf(stderr, "Can't register callchain"
+						" params\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return -EINVAL;
 			}
 	}
 
+<<<<<<< HEAD
 	if (sort__branch_mode == 1) {
 		if (!(self->sample_type & PERF_SAMPLE_BRANCH_STACK)) {
 			fprintf(stderr, "selected -b but no branch data."
@@ -284,6 +386,27 @@ static int perf_report__setup_sample_type(struct perf_report *rep)
 	return 0;
 }
 
+=======
+	return 0;
+}
+
+static struct perf_event_ops event_ops = {
+	.sample		 = process_sample_event,
+	.mmap		 = perf_event__process_mmap,
+	.comm		 = perf_event__process_comm,
+	.exit		 = perf_event__process_task,
+	.fork		 = perf_event__process_task,
+	.lost		 = perf_event__process_lost,
+	.read		 = process_read_event,
+	.attr		 = perf_event__process_attr,
+	.event_type	 = perf_event__process_event_type,
+	.tracing_data	 = perf_event__process_tracing_data,
+	.build_id	 = perf_event__process_build_id,
+	.ordered_samples = true,
+	.ordering_requires_timestamps = true,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern volatile int session_done;
 
 static void sig_handler(int sig __used)
@@ -306,17 +429,30 @@ static size_t hists__fprintf_nr_sample_events(struct hists *self,
 }
 
 static int perf_evlist__tty_browse_hists(struct perf_evlist *evlist,
+<<<<<<< HEAD
 					 struct perf_report *rep,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					 const char *help)
 {
 	struct perf_evsel *pos;
 
 	list_for_each_entry(pos, &evlist->entries, node) {
 		struct hists *hists = &pos->hists;
+<<<<<<< HEAD
 		const char *evname = event_name(pos);
 
 		hists__fprintf_nr_sample_events(hists, evname, stdout);
 		hists__fprintf(hists, NULL, false, true, 0, 0, stdout);
+=======
+		const char *evname = NULL;
+
+		if (rb_first(&hists->entries) != rb_last(&hists->entries))
+			evname = event_name(pos);
+
+		hists__fprintf_nr_sample_events(hists, evname, stdout);
+		hists__fprintf(hists, NULL, false, stdout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fprintf(stdout, "\n\n");
 	}
 
@@ -324,22 +460,38 @@ static int perf_evlist__tty_browse_hists(struct perf_evlist *evlist,
 	    parent_pattern == default_parent_pattern) {
 		fprintf(stdout, "#\n# (%s)\n#\n", help);
 
+<<<<<<< HEAD
 		if (rep->show_threads) {
 			bool style = !strcmp(rep->pretty_printing_style, "raw");
 			perf_read_values_display(stdout, &rep->show_threads_values,
 						 style);
 			perf_read_values_destroy(&rep->show_threads_values);
+=======
+		if (show_threads) {
+			bool style = !strcmp(pretty_printing_style, "raw");
+			perf_read_values_display(stdout, &show_threads_values,
+						 style);
+			perf_read_values_destroy(&show_threads_values);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int __cmd_report(struct perf_report *rep)
 {
 	int ret = -EINVAL;
 	u64 nr_samples;
 	struct perf_session *session = rep->session;
+=======
+static int __cmd_report(void)
+{
+	int ret = -EINVAL;
+	u64 nr_samples;
+	struct perf_session *session;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct perf_evsel *pos;
 	struct map *kernel_map;
 	struct kmap *kernel_kmap;
@@ -347,6 +499,7 @@ static int __cmd_report(struct perf_report *rep)
 
 	signal(SIGINT, sig_handler);
 
+<<<<<<< HEAD
 	if (rep->cpu_list) {
 		ret = perf_session__cpu_bitmap(session, rep->cpu_list,
 					       rep->cpu_bitmap);
@@ -365,6 +518,20 @@ static int __cmd_report(struct perf_report *rep)
 		goto out_delete;
 
 	ret = perf_session__process_events(session, &rep->tool);
+=======
+	session = perf_session__new(input_name, O_RDONLY, force, false, &event_ops);
+	if (session == NULL)
+		return -ENOMEM;
+
+	if (show_threads)
+		perf_read_values_init(&show_threads_values);
+
+	ret = perf_session__setup_sample_type(session);
+	if (ret)
+		goto out_delete;
+
+	ret = perf_session__process_events(session, &event_ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto out_delete;
 
@@ -374,6 +541,7 @@ static int __cmd_report(struct perf_report *rep)
 	    (kernel_map->dso->hit &&
 	     (kernel_kmap->ref_reloc_sym == NULL ||
 	      kernel_kmap->ref_reloc_sym->addr == 0))) {
+<<<<<<< HEAD
 		const char *desc =
 		    "As no suitable kallsyms nor vmlinux was found, kernel samples\n"
 		    "can't be resolved.";
@@ -385,12 +553,22 @@ static int __cmd_report(struct perf_report *rep)
 				       "kexec) symbols may be misresolved.";
 			}
 		}
+=======
+		const struct dso *kdso = kernel_map->dso;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ui__warning(
 "Kernel address maps (/proc/{kallsyms,modules}) were restricted.\n\n"
 "Check /proc/sys/kernel/kptr_restrict before running 'perf record'.\n\n%s\n\n"
 "Samples in kernel modules can't be resolved as well.\n\n",
+<<<<<<< HEAD
 		desc);
+=======
+			    RB_EMPTY_ROOT(&kdso->symbols[MAP__FUNCTION]) ?
+"As no suitable kallsyms nor vmlinux was found, kernel samples\n"
+"can't be resolved." :
+"If some relocation was applied (e.g. kexec) symbols may be misresolved.");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (dump_trace) {
@@ -408,15 +586,19 @@ static int __cmd_report(struct perf_report *rep)
 	list_for_each_entry(pos, &session->evlist->entries, node) {
 		struct hists *hists = &pos->hists;
 
+<<<<<<< HEAD
 		if (pos->idx == 0)
 			hists->symbol_filter_str = rep->symbol_filter_str;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hists__collapse_resort(hists);
 		hists__output_resort(hists);
 		nr_samples += hists->stats.nr_events[PERF_RECORD_SAMPLE];
 	}
 
 	if (nr_samples == 0) {
+<<<<<<< HEAD
 		ui__warning("The %s file has no samples!\n", session->filename);
 		goto out_delete;
 	}
@@ -431,6 +613,16 @@ static int __cmd_report(struct perf_report *rep)
 		}
 	} else
 		perf_evlist__tty_browse_hists(session->evlist, rep, help);
+=======
+		ui__warning("The %s file has no samples!\n", input_name);
+		goto out_delete;
+	}
+
+	if (use_browser > 0)
+		perf_evlist__tui_browse_hists(session->evlist, help);
+	else
+		perf_evlist__tty_browse_hists(session->evlist, help);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out_delete:
 	/*
@@ -449,9 +641,15 @@ out_delete:
 }
 
 static int
+<<<<<<< HEAD
 parse_callchain_opt(const struct option *opt, const char *arg, int unset)
 {
 	struct perf_report *rep = (struct perf_report *)opt->value;
+=======
+parse_callchain_opt(const struct option *opt __used, const char *arg,
+		    int unset)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *tok, *tok2;
 	char *endptr;
 
@@ -459,7 +657,11 @@ parse_callchain_opt(const struct option *opt, const char *arg, int unset)
 	 * --no-call-graph
 	 */
 	if (unset) {
+<<<<<<< HEAD
 		rep->dont_use_callchains = true;
+=======
+		dont_use_callchains = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
@@ -497,10 +699,15 @@ parse_callchain_opt(const struct option *opt, const char *arg, int unset)
 	if (!tok)
 		goto setup;
 
+<<<<<<< HEAD
+=======
+	tok2 = strtok(NULL, ",");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	callchain_param.min_percent = strtod(tok, &endptr);
 	if (tok == endptr)
 		return -1;
 
+<<<<<<< HEAD
 	/* get the print limit */
 	tok2 = strtok(NULL, ",");
 	if (!tok2)
@@ -520,6 +727,10 @@ parse_callchain_opt(const struct option *opt, const char *arg, int unset)
 		callchain_param.order = ORDER_CALLEE;
 	else
 		return -1;
+=======
+	if (tok2)
+		callchain_param.print_limit = strtod(tok2, &endptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 setup:
 	if (callchain_register_param(&callchain_param) < 0) {
 		fprintf(stderr, "Can't register callchain params\n");
@@ -528,6 +739,7 @@ setup:
 	return 0;
 }
 
+<<<<<<< HEAD
 static int
 parse_branch_mode(const struct option *opt __used, const char *str __used, int unset)
 {
@@ -566,6 +778,15 @@ int cmd_report(int argc, const char **argv, const char *prefix __used)
 	};
 	const struct option options[] = {
 	OPT_STRING('i', "input", &report.input_name, "file",
+=======
+static const char * const report_usage[] = {
+	"perf report [<options>] <command>",
+	NULL
+};
+
+static const struct option options[] = {
+	OPT_STRING('i', "input", &input_name, "file",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    "input file name"),
 	OPT_INCR('v', "verbose", &verbose,
 		    "be more verbose (show symbol address, etc)"),
@@ -575,11 +796,16 @@ int cmd_report(int argc, const char **argv, const char *prefix __used)
 		   "file", "vmlinux pathname"),
 	OPT_STRING(0, "kallsyms", &symbol_conf.kallsyms_name,
 		   "file", "kallsyms pathname"),
+<<<<<<< HEAD
 	OPT_BOOLEAN('f', "force", &report.force, "don't complain, do it"),
+=======
+	OPT_BOOLEAN('f', "force", &force, "don't complain, do it"),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	OPT_BOOLEAN('m', "modules", &symbol_conf.use_modules,
 		    "load module symbols - WARNING: use only with -k and LIVE kernel"),
 	OPT_BOOLEAN('n', "show-nr-samples", &symbol_conf.show_nr_samples,
 		    "Show a column with the number of samples"),
+<<<<<<< HEAD
 	OPT_BOOLEAN('T', "threads", &report.show_threads,
 		    "Show per-thread event counters"),
 	OPT_STRING(0, "pretty", &report.pretty_printing_style, "key",
@@ -591,12 +817,23 @@ int cmd_report(int argc, const char **argv, const char *prefix __used)
 	OPT_STRING('s', "sort", &sort_order, "key[,key2...]",
 		   "sort by key(s): pid, comm, dso, symbol, parent, dso_to,"
 		   " dso_from, symbol_to, symbol_from, mispredict"),
+=======
+	OPT_BOOLEAN('T', "threads", &show_threads,
+		    "Show per-thread event counters"),
+	OPT_STRING(0, "pretty", &pretty_printing_style, "key",
+		   "pretty printing style key: normal raw"),
+	OPT_BOOLEAN(0, "tui", &use_tui, "Use the TUI interface"),
+	OPT_BOOLEAN(0, "stdio", &use_stdio, "Use the stdio interface"),
+	OPT_STRING('s', "sort", &sort_order, "key[,key2...]",
+		   "sort by key(s): pid, comm, dso, symbol, parent"),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	OPT_BOOLEAN(0, "showcpuutilization", &symbol_conf.show_cpu_utilization,
 		    "Show sample percentage for different cpu modes"),
 	OPT_STRING('p', "parent", &parent_pattern, "regex",
 		   "regex filter to identify parent, see: '--sort parent'"),
 	OPT_BOOLEAN('x', "exclude-other", &symbol_conf.exclude_other,
 		    "Only display entries with parent-match"),
+<<<<<<< HEAD
 	OPT_CALLBACK_DEFAULT('g', "call-graph", &report, "output_type,min_percent[,print_limit],call_order",
 		     "Display callchains using output_type (graph, flat, fractal, or none) , min percent threshold, optional print limit and callchain order. "
 		     "Default: fractal,0.5,callee", &parse_callchain_opt, callchain_default_opt),
@@ -610,12 +847,24 @@ int cmd_report(int argc, const char **argv, const char *prefix __used)
 		   "only consider these symbols"),
 	OPT_STRING(0, "symbol-filter", &report.symbol_filter_str, "filter",
 		   "only show symbols that (partially) match with this filter"),
+=======
+	OPT_CALLBACK_DEFAULT('g', "call-graph", NULL, "output_type,min_percent",
+		     "Display callchains using output_type (graph, flat, fractal, or none) and min percent threshold. "
+		     "Default: fractal,0.5", &parse_callchain_opt, callchain_default_opt),
+	OPT_STRING('d', "dsos", &symbol_conf.dso_list_str, "dso[,dso...]",
+		   "only consider symbols in these dsos"),
+	OPT_STRING('C', "comms", &symbol_conf.comm_list_str, "comm[,comm...]",
+		   "only consider symbols in these comms"),
+	OPT_STRING('S', "symbols", &symbol_conf.sym_list_str, "symbol[,symbol...]",
+		   "only consider these symbols"),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	OPT_STRING('w', "column-widths", &symbol_conf.col_width_list_str,
 		   "width[,width...]",
 		   "don't try to adjust column width, use these fixed values"),
 	OPT_STRING('t', "field-separator", &symbol_conf.field_sep, "separator",
 		   "separator for columns, no spaces will be added between "
 		   "columns '.' is reserved."),
+<<<<<<< HEAD
 	OPT_BOOLEAN('U', "hide-unresolved", &report.hide_unresolved,
 		    "Only display entries resolved to a symbol"),
 	OPT_STRING(0, "symfs", &symbol_conf.symfs, "directory",
@@ -689,6 +938,28 @@ int cmd_report(int argc, const char **argv, const char *prefix __used)
 		use_browser = 0;
 	}
 
+=======
+	OPT_BOOLEAN('U', "hide-unresolved", &hide_unresolved,
+		    "Only display entries resolved to a symbol"),
+	OPT_STRING(0, "symfs", &symbol_conf.symfs, "directory",
+		    "Look for files with symbols relative to this directory"),
+	OPT_END()
+};
+
+int cmd_report(int argc, const char **argv, const char *prefix __used)
+{
+	argc = parse_options(argc, argv, options, report_usage, 0);
+
+	if (use_stdio)
+		use_browser = 0;
+	else if (use_tui)
+		use_browser = 1;
+
+	if (strcmp(input_name, "-") != 0)
+		setup_browser(true);
+	else
+		use_browser = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Only in the newt browser we are doing integrated annotation,
 	 * so don't allocate extra space that won't be used in the stdio
@@ -696,7 +967,11 @@ int cmd_report(int argc, const char **argv, const char *prefix __used)
 	 */
 	if (use_browser > 0) {
 		symbol_conf.priv_size = sizeof(struct annotation);
+<<<<<<< HEAD
 		report.annotate_init  = symbol__annotate_init;
+=======
+		annotate_init	      = symbol__annotate_init;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
  		 * For searching by name on the "Browse map details".
  		 * providing it only in verbose mode not to bloat too
@@ -715,12 +990,17 @@ int cmd_report(int argc, const char **argv, const char *prefix __used)
 	}
 
 	if (symbol__init() < 0)
+<<<<<<< HEAD
 		goto error;
+=======
+		return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	setup_sorting(report_usage, options);
 
 	if (parent_pattern != default_parent_pattern) {
 		if (sort_dimension__add("parent") < 0)
+<<<<<<< HEAD
 			goto error;
 
 		/*
@@ -760,4 +1040,22 @@ int cmd_report(int argc, const char **argv, const char *prefix __used)
 error:
 	perf_session__delete(session);
 	return ret;
+=======
+			return -1;
+		sort_parent.elide = 1;
+	} else
+		symbol_conf.exclude_other = false;
+
+	/*
+	 * Any (unrecognized) arguments left?
+	 */
+	if (argc)
+		usage_with_options(report_usage, options);
+
+	sort_entry__setup_elide(&sort_dso, symbol_conf.dso_list, "dso", stdout);
+	sort_entry__setup_elide(&sort_comm, symbol_conf.comm_list, "comm", stdout);
+	sort_entry__setup_elide(&sort_sym, symbol_conf.sym_list, "symbol", stdout);
+
+	return __cmd_report();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

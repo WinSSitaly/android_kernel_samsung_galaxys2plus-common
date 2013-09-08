@@ -27,9 +27,12 @@
 #include <linux/mtd/nand.h>
 #include <linux/mtd/partitions.h>
 #include <linux/mtd/nand-gpio.h>
+<<<<<<< HEAD
 #include <linux/of.h>
 #include <linux/of_address.h>
 #include <linux/of_gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct gpiomtd {
 	void __iomem		*io_sync;
@@ -174,6 +177,7 @@ static int gpio_nand_devready(struct mtd_info *mtd)
 	return gpio_get_value(gpiomtd->plat.gpio_rdy);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_OF
 static const struct of_device_id gpio_nand_id_table[] = {
 	{ .compatible = "gpio-control-nand" },
@@ -264,6 +268,8 @@ gpio_nand_get_io_sync(struct platform_device *pdev)
 	return platform_get_resource(pdev, IORESOURCE_MEM, 1);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devexit gpio_nand_remove(struct platform_device *dev)
 {
 	struct gpiomtd *gpiomtd = platform_get_drvdata(dev);
@@ -271,7 +277,11 @@ static int __devexit gpio_nand_remove(struct platform_device *dev)
 
 	nand_release(&gpiomtd->mtd_info);
 
+<<<<<<< HEAD
 	res = gpio_nand_get_io_sync(dev);
+=======
+	res = platform_get_resource(dev, IORESOURCE_MEM, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iounmap(gpiomtd->io_sync);
 	if (res)
 		release_mem_region(res->start, resource_size(res));
@@ -319,10 +329,16 @@ static int __devinit gpio_nand_probe(struct platform_device *dev)
 	struct gpiomtd *gpiomtd;
 	struct nand_chip *this;
 	struct resource *res0, *res1;
+<<<<<<< HEAD
 	struct mtd_part_parser_data ppdata = {};
 	int ret = 0;
 
 	if (!dev->dev.of_node && !dev->dev.platform_data)
+=======
+	int ret;
+
+	if (!dev->dev.platform_data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	res0 = platform_get_resource(dev, IORESOURCE_MEM, 0);
@@ -342,7 +358,11 @@ static int __devinit gpio_nand_probe(struct platform_device *dev)
 		goto err_map;
 	}
 
+<<<<<<< HEAD
 	res1 = gpio_nand_get_io_sync(dev);
+=======
+	res1 = platform_get_resource(dev, IORESOURCE_MEM, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (res1) {
 		gpiomtd->io_sync = request_and_remap(res1, 4, "NAND sync", &ret);
 		if (!gpiomtd->io_sync) {
@@ -351,9 +371,13 @@ static int __devinit gpio_nand_probe(struct platform_device *dev)
 		}
 	}
 
+<<<<<<< HEAD
 	ret = gpio_nand_get_config(&dev->dev, &gpiomtd->plat);
 	if (ret)
 		goto err_nce;
+=======
+	memcpy(&gpiomtd->plat, dev->dev.platform_data, sizeof(gpiomtd->plat));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = gpio_request(gpiomtd->plat.gpio_nce, "NAND NCE");
 	if (ret)
@@ -412,12 +436,17 @@ static int __devinit gpio_nand_probe(struct platform_device *dev)
 		gpiomtd->plat.adjust_parts(&gpiomtd->plat,
 					   gpiomtd->mtd_info.size);
 
+<<<<<<< HEAD
 	ppdata.of_node = dev->dev.of_node;
 	ret = mtd_device_parse_register(&gpiomtd->mtd_info, NULL, &ppdata,
 					gpiomtd->plat.parts,
 					gpiomtd->plat.num_parts);
 	if (ret)
 		goto err_wp;
+=======
+	mtd_device_register(&gpiomtd->mtd_info, gpiomtd->plat.parts,
+			    gpiomtd->plat.num_parts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_set_drvdata(dev, gpiomtd);
 
 	return 0;
@@ -452,7 +481,10 @@ static struct platform_driver gpio_nand_driver = {
 	.remove		= gpio_nand_remove,
 	.driver		= {
 		.name	= "gpio-nand",
+<<<<<<< HEAD
 		.of_match_table = gpio_nand_id_table,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

@@ -38,7 +38,10 @@ nv50_evo_channel_del(struct nouveau_channel **pevo)
 		return;
 	*pevo = NULL;
 
+<<<<<<< HEAD
 	nouveau_ramht_ref(NULL, &evo->ramht, evo);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nouveau_gpuobj_channel_takedown(evo);
 	nouveau_bo_unmap(evo->pushbuf_bo);
 	nouveau_bo_ref(NULL, &evo->pushbuf_bo);
@@ -117,7 +120,11 @@ nv50_evo_channel_new(struct drm_device *dev, int chid,
 	evo->user_get = 4;
 	evo->user_put = 0;
 
+<<<<<<< HEAD
 	ret = nouveau_bo_new(dev, 4096, 0, TTM_PL_FLAG_VRAM, 0, 0,
+=======
+	ret = nouveau_bo_new(dev, NULL, 4096, 0, TTM_PL_FLAG_VRAM, 0, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     &evo->pushbuf_bo);
 	if (ret == 0)
 		ret = nouveau_bo_pin(evo->pushbuf_bo, TTM_PL_FLAG_VRAM);
@@ -154,7 +161,11 @@ nv50_evo_channel_init(struct nouveau_channel *evo)
 {
 	struct drm_device *dev = evo->dev;
 	int id = evo->id, ret, i;
+<<<<<<< HEAD
 	u64 pushbuf = evo->pushbuf_bo->bo.offset;
+=======
+	u64 pushbuf = evo->pushbuf_bo->bo.mem.start << PAGE_SHIFT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 tmp;
 
 	tmp = nv_rd32(dev, NV50_PDISPLAY_EVO_CTRL(id));
@@ -218,7 +229,11 @@ nv50_evo_channel_fini(struct nouveau_channel *evo)
 	}
 }
 
+<<<<<<< HEAD
 void
+=======
+static void
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 nv50_evo_destroy(struct drm_device *dev)
 {
 	struct nv50_display *disp = nv50_display(dev);
@@ -235,7 +250,11 @@ nv50_evo_destroy(struct drm_device *dev)
 	nv50_evo_channel_del(&disp->master);
 }
 
+<<<<<<< HEAD
 int
+=======
+static int
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 nv50_evo_create(struct drm_device *dev)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
@@ -332,15 +351,26 @@ nv50_evo_create(struct drm_device *dev)
 		if (ret)
 			goto err;
 
+<<<<<<< HEAD
 		ret = nouveau_bo_new(dev, 4096, 0x1000, TTM_PL_FLAG_VRAM,
 				     0, 0x0000, &dispc->sem.bo);
 		if (!ret) {
+=======
+		ret = nouveau_bo_new(dev, NULL, 4096, 0x1000, TTM_PL_FLAG_VRAM,
+				     0, 0x0000, &dispc->sem.bo);
+		if (!ret) {
+			offset = dispc->sem.bo->bo.mem.start << PAGE_SHIFT;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = nouveau_bo_pin(dispc->sem.bo, TTM_PL_FLAG_VRAM);
 			if (!ret)
 				ret = nouveau_bo_map(dispc->sem.bo);
 			if (ret)
 				nouveau_bo_ref(NULL, &dispc->sem.bo);
+<<<<<<< HEAD
 			offset = dispc->sem.bo->bo.offset;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (ret)
@@ -388,6 +418,15 @@ nv50_evo_init(struct drm_device *dev)
 	struct nv50_display *disp = nv50_display(dev);
 	int ret, i;
 
+<<<<<<< HEAD
+=======
+	if (!disp->master) {
+		ret = nv50_evo_create(dev);
+		if (ret)
+			return ret;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = nv50_evo_channel_init(disp->master);
 	if (ret)
 		return ret;
@@ -414,4 +453,9 @@ nv50_evo_fini(struct drm_device *dev)
 
 	if (disp->master)
 		nv50_evo_channel_fini(disp->master);
+<<<<<<< HEAD
+=======
+
+	nv50_evo_destroy(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

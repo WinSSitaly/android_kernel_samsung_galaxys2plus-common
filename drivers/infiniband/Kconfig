@@ -55,7 +55,10 @@ source "drivers/infiniband/hw/nes/Kconfig"
 source "drivers/infiniband/ulp/ipoib/Kconfig"
 
 source "drivers/infiniband/ulp/srp/Kconfig"
+<<<<<<< HEAD
 source "drivers/infiniband/ulp/srpt/Kconfig"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 source "drivers/infiniband/ulp/iser/Kconfig"
 

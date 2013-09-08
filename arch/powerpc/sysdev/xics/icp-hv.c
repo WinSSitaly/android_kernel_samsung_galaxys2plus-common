@@ -27,6 +27,7 @@ static inline unsigned int icp_hv_get_xirr(unsigned char cppr)
 {
 	unsigned long retbuf[PLPAR_HCALL_BUFSIZE];
 	long rc;
+<<<<<<< HEAD
 	unsigned int ret = XICS_IRQ_SPURIOUS;
 
 	rc = plpar_hcall(H_XIRR, retbuf, cppr);
@@ -60,10 +61,32 @@ static inline void icp_hv_set_xirr(unsigned int value)
 		WARN_ON_ONCE(1);
 		icp_hv_set_cppr(value >> 24);
 	}
+=======
+
+	rc = plpar_hcall(H_XIRR, retbuf, cppr);
+	if (rc != H_SUCCESS)
+		panic(" bad return code xirr - rc = %lx\n", rc);
+	return (unsigned int)retbuf[0];
+}
+
+static inline void icp_hv_set_xirr(unsigned int value)
+{
+	long rc = plpar_hcall_norets(H_EOI, value);
+	if (rc != H_SUCCESS)
+		panic("bad return code EOI - rc = %ld, value=%x\n", rc, value);
+}
+
+static inline void icp_hv_set_cppr(u8 value)
+{
+	long rc = plpar_hcall_norets(H_CPPR, value);
+	if (rc != H_SUCCESS)
+		panic("bad return code cppr - rc = %lx\n", rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void icp_hv_set_qirr(int n_cpu , u8 value)
 {
+<<<<<<< HEAD
 	int hw_cpu = get_hard_smp_processor_id(n_cpu);
 	long rc;
 
@@ -75,6 +98,12 @@ static inline void icp_hv_set_qirr(int n_cpu , u8 value)
 			"returned %ld\n", __func__, n_cpu, hw_cpu, value, rc);
 		WARN_ON_ONCE(1);
 	}
+=======
+	long rc = plpar_hcall_norets(H_IPI, get_hard_smp_processor_id(n_cpu),
+				     value);
+	if (rc != H_SUCCESS)
+		panic("bad return code qirr - rc = %lx\n", rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void icp_hv_eoi(struct irq_data *d)

@@ -23,6 +23,10 @@
 
 #include <mach/common.h>
 #include <mach/hardware.h>
+<<<<<<< HEAD
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/irqs.h>
 #include <mach/iomux-v1.h>
 
@@ -43,6 +47,7 @@ void __init imx1_init_early(void)
 			MX1_NUM_GPIO_PORT);
 }
 
+<<<<<<< HEAD
 void __init mx1_init_irq(void)
 {
 	mxc_init_irq(MX1_IO_ADDRESS(MX1_AVIC_BASE_ADDR));
@@ -58,4 +63,17 @@ void __init imx1_soc_init(void)
 						MX1_GPIO_INT_PORTC, 0);
 	mxc_register_gpio("imx1-gpio", 3, MX1_GPIO4_BASE_ADDR, SZ_256,
 						MX1_GPIO_INT_PORTD, 0);
+=======
+static struct mxc_gpio_port imx1_gpio_ports[] = {
+	DEFINE_IMX_GPIO_PORT_IRQ(MX1, 0, 1, MX1_GPIO_INT_PORTA),
+	DEFINE_IMX_GPIO_PORT_IRQ(MX1, 1, 2, MX1_GPIO_INT_PORTB),
+	DEFINE_IMX_GPIO_PORT_IRQ(MX1, 2, 3, MX1_GPIO_INT_PORTC),
+	DEFINE_IMX_GPIO_PORT_IRQ(MX1, 3, 4, MX1_GPIO_INT_PORTD),
+};
+
+void __init mx1_init_irq(void)
+{
+	mxc_init_irq(MX1_IO_ADDRESS(MX1_AVIC_BASE_ADDR));
+	mxc_gpio_init(imx1_gpio_ports,	ARRAY_SIZE(imx1_gpio_ports));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

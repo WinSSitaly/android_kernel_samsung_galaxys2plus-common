@@ -49,6 +49,12 @@ static cycle_t read_hrt(struct clocksource *cs)
 	return (cycle_t) inl(scx200_cb_base + SCx200_TIMER_OFFSET);
 }
 
+<<<<<<< HEAD
+=======
+#define HRT_SHIFT_1	22
+#define HRT_SHIFT_27	26
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct clocksource cs_hrt = {
 	.name		= "scx200_hrt",
 	.rating		= 250,
@@ -60,7 +66,10 @@ static struct clocksource cs_hrt = {
 
 static int __init init_hrt_clocksource(void)
 {
+<<<<<<< HEAD
 	u32 freq;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Make sure scx200 has initialized the configuration block */
 	if (!scx200_cb_present())
 		return -ENODEV;
@@ -69,7 +78,11 @@ static int __init init_hrt_clocksource(void)
 	if (!request_region(scx200_cb_base + SCx200_TIMER_OFFSET,
 			    SCx200_TIMER_SIZE,
 			    "NatSemi SCx200 High-Resolution Timer")) {
+<<<<<<< HEAD
 		pr_warn("unable to lock timer region\n");
+=======
+		printk(KERN_WARNING NAME ": unable to lock timer region\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
@@ -77,6 +90,7 @@ static int __init init_hrt_clocksource(void)
 	outb(HR_TMEN | (mhz27 ? HR_TMCLKSEL : 0),
 	     scx200_cb_base + SCx200_TMCNFG_OFFSET);
 
+<<<<<<< HEAD
 	freq = (HRT_FREQ + ppm);
 	if (mhz27)
 		freq *= 27;
@@ -84,6 +98,21 @@ static int __init init_hrt_clocksource(void)
 	pr_info("enabling scx200 high-res timer (%s MHz +%d ppm)\n", mhz27 ? "27":"1", ppm);
 
 	return clocksource_register_hz(&cs_hrt, freq);
+=======
+	if (mhz27) {
+		cs_hrt.shift = HRT_SHIFT_27;
+		cs_hrt.mult = clocksource_hz2mult((HRT_FREQ + ppm) * 27,
+						  cs_hrt.shift);
+	} else {
+		cs_hrt.shift = HRT_SHIFT_1;
+		cs_hrt.mult = clocksource_hz2mult(HRT_FREQ + ppm,
+						  cs_hrt.shift);
+	}
+	printk(KERN_INFO "enabling scx200 high-res timer (%s MHz +%d ppm)\n",
+		mhz27 ? "27":"1", ppm);
+
+	return clocksource_register(&cs_hrt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(init_hrt_clocksource);

@@ -311,7 +311,11 @@ public slots:
 	void listFocusChanged(void);
 	void goBack(void);
 	void loadConfig(void);
+<<<<<<< HEAD
 	bool saveConfig(void);
+=======
+	void saveConfig(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void saveConfigAs(void);
 	void searchConfig(void);
 	void showSingleView(void);

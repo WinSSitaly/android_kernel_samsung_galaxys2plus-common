@@ -229,7 +229,11 @@ static struct resource cpmac_low_res[] = {
 		.name	= "irq",
 		.flags	= IORESOURCE_IRQ,
 		.start	= 27,
+<<<<<<< HEAD
 		.end	= 27,
+=======
+		.end 	= 27,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 
@@ -462,6 +466,7 @@ static struct gpio_led fb_fon_leds[] = {
 	},
 };
 
+<<<<<<< HEAD
 static struct gpio_led gt701_leds[] = {
 	{
 		.name			= "inet:green",
@@ -496,6 +501,8 @@ static struct gpio_led gt701_leds[] = {
         },
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct gpio_led_platform_data ar7_led_data;
 
 static struct platform_device ar7_gpio_leds = {
@@ -537,9 +544,12 @@ static void __init detect_leds(void)
 	} else if (strstr(prid, "CYWM") || strstr(prid, "CYWL")) {
 		ar7_led_data.num_leds = ARRAY_SIZE(titan_leds);
 		ar7_led_data.leds = titan_leds;
+<<<<<<< HEAD
 	} else if (strstr(prid, "GT701")) {
 		ar7_led_data.num_leds = ARRAY_SIZE(gt701_leds);
 		ar7_led_data.leds = gt701_leds;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -573,7 +583,11 @@ static int __init ar7_register_uarts(void)
 
 	bus_clk = clk_get(NULL, "bus");
 	if (IS_ERR(bus_clk))
+<<<<<<< HEAD
 		panic("unable to get bus clk");
+=======
+		panic("unable to get bus clk\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	uart_port.type		= PORT_AR7;
 	uart_port.uartclk	= clk_get_rate(bus_clk) / 2;

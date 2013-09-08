@@ -25,6 +25,10 @@
 #ifndef __INTEL_SCU_WATCHDOG_H
 #define __INTEL_SCU_WATCHDOG_H
 
+<<<<<<< HEAD
+=======
+#define PFX "Intel_SCU: "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define WDT_VER "0.3"
 
 /* minimum time between interrupts */

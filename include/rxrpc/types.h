@@ -17,7 +17,11 @@
 #include <linux/socket.h>
 #include <linux/in.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef uint32_t	rxrpc_seq_t;	/* Rx message sequence number */
 typedef uint32_t	rxrpc_serial_t;	/* Rx message serial number */

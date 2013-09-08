@@ -84,6 +84,7 @@ compiler optimizes the section accessing atomic_t variables.
 
 *** YOU HAVE BEEN WARNED! ***
 
+<<<<<<< HEAD
 Properly aligned pointers, longs, ints, and chars (and unsigned
 equivalents) may be atomically loaded from and stored to in the same
 sense as described for atomic_read() and atomic_set().  The ACCESS_ONCE()
@@ -171,6 +172,8 @@ locks, or atomic operations if variable a can change at runtime!
 
 *** WARNING: ACCESS_ONCE() DOES NOT IMPLY A BARRIER! ***
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Now, we move onto the atomic operation interfaces typically implemented with
 the help of assembly code.
 

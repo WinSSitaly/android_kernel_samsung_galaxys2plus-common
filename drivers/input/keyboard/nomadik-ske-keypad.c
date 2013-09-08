@@ -18,7 +18,10 @@
 #include <linux/input.h>
 #include <linux/slab.h>
 #include <linux/clk.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <plat/ske.h>
 
@@ -88,7 +91,11 @@ static void ske_keypad_set_bits(struct ske_keypad *keypad, u16 addr,
  *
  * Enable Multi key press detection, auto scan mode
  */
+<<<<<<< HEAD
 static int __init ske_keypad_chip_init(struct ske_keypad *keypad)
+=======
+static int __devinit ske_keypad_chip_init(struct ske_keypad *keypad)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 value;
 	int timeout = 50;
@@ -198,7 +205,11 @@ static irqreturn_t ske_keypad_irq(int irq, void *dev_id)
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
 static int __init ske_keypad_probe(struct platform_device *pdev)
+=======
+static int __devinit ske_keypad_probe(struct platform_device *pdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const struct ske_keypad_platform_data *plat = pdev->dev.platform_data;
 	struct ske_keypad *keypad;
@@ -344,7 +355,11 @@ static int __devexit ske_keypad_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM_SLEEP
+=======
+#ifdef CONFIG_PM
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ske_keypad_suspend(struct device *dev)
 {
 	struct platform_device *pdev = to_platform_device(dev);
@@ -372,6 +387,7 @@ static int ske_keypad_resume(struct device *dev)
 
 	return 0;
 }
+<<<<<<< HEAD
 #endif
 
 static SIMPLE_DEV_PM_OPS(ske_keypad_dev_pm_ops,
@@ -383,6 +399,24 @@ static struct platform_driver ske_keypad_driver = {
 		.owner  = THIS_MODULE,
 		.pm = &ske_keypad_dev_pm_ops,
 	},
+=======
+
+static const struct dev_pm_ops ske_keypad_dev_pm_ops = {
+	.suspend = ske_keypad_suspend,
+	.resume = ske_keypad_resume,
+};
+#endif
+
+struct platform_driver ske_keypad_driver = {
+	.driver = {
+		.name = "nmk-ske-keypad",
+		.owner  = THIS_MODULE,
+#ifdef CONFIG_PM
+		.pm = &ske_keypad_dev_pm_ops,
+#endif
+	},
+	.probe = ske_keypad_probe,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.remove = __devexit_p(ske_keypad_remove),
 };
 

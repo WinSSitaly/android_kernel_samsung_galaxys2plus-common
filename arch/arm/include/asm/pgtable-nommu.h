@@ -79,6 +79,10 @@ extern unsigned int kobjsize(const void *objp);
  * No page table caches to initialise.
  */
 #define pgtable_cache_init()	do { } while (0)
+<<<<<<< HEAD
+=======
+#define io_remap_page_range	remap_page_range
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define io_remap_pfn_range	remap_pfn_range
 
 

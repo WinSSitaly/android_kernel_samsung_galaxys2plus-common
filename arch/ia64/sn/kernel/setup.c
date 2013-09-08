@@ -33,9 +33,15 @@
 #include <asm/io.h>
 #include <asm/sal.h>
 #include <asm/machvec.h>
+<<<<<<< HEAD
 #include <asm/processor.h>
 #include <asm/vga.h>
 #include <asm/setup.h>
+=======
+#include <asm/system.h>
+#include <asm/processor.h>
+#include <asm/vga.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/sn/arch.h>
 #include <asm/sn/addrs.h>
 #include <asm/sn/pda.h>

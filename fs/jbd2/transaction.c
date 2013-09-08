@@ -27,12 +27,16 @@
 #include <linux/highmem.h>
 #include <linux/hrtimer.h>
 #include <linux/backing-dev.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 
 static void __jbd2_journal_temp_unlink_buffer(struct journal_head *jh);
 static void __jbd2_journal_unfile_buffer(struct journal_head *jh);
 
+<<<<<<< HEAD
 static struct kmem_cache *transaction_cache;
 int __init jbd2_journal_init_transaction_cache(void)
 {
@@ -62,6 +66,8 @@ void jbd2_journal_free_transaction(transaction_t *transaction)
 	kmem_cache_free(transaction_cache, transaction);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * jbd2_get_transaction: obtain a new transaction_t object.
  *
@@ -145,7 +151,11 @@ static inline void update_t_max_wait(transaction_t *transaction,
  */
 
 static int start_this_handle(journal_t *journal, handle_t *handle,
+<<<<<<< HEAD
 			     gfp_t gfp_mask)
+=======
+			     int gfp_mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	transaction_t	*transaction, *new_transaction = NULL;
 	tid_t		tid;
@@ -154,7 +164,11 @@ static int start_this_handle(journal_t *journal, handle_t *handle,
 	unsigned long ts = jiffies;
 
 	if (nblocks > journal->j_max_transaction_buffers) {
+<<<<<<< HEAD
 		printk(KERN_ERR "JBD2: %s wants too many credits (%d > %d)\n",
+=======
+		printk(KERN_ERR "JBD: %s wants too many credits (%d > %d)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       current->comm, nblocks,
 		       journal->j_max_transaction_buffers);
 		return -ENOSPC;
@@ -162,8 +176,12 @@ static int start_this_handle(journal_t *journal, handle_t *handle,
 
 alloc_transaction:
 	if (!journal->j_running_transaction) {
+<<<<<<< HEAD
 		new_transaction = kmem_cache_alloc(transaction_cache,
 						   gfp_mask | __GFP_ZERO);
+=======
+		new_transaction = kzalloc(sizeof(*new_transaction), gfp_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!new_transaction) {
 			/*
 			 * If __GFP_FS is not present, then we may be
@@ -192,7 +210,11 @@ repeat:
 	if (is_journal_aborted(journal) ||
 	    (journal->j_errno != 0 && !(journal->j_flags & JBD2_ACK_ERR))) {
 		read_unlock(&journal->j_state_lock);
+<<<<<<< HEAD
 		jbd2_journal_free_transaction(new_transaction);
+=======
+		kfree(new_transaction);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EROFS;
 	}
 
@@ -315,7 +337,11 @@ repeat:
 	read_unlock(&journal->j_state_lock);
 
 	lock_map_acquire(&handle->h_lockdep_map);
+<<<<<<< HEAD
 	jbd2_journal_free_transaction(new_transaction);
+=======
+	kfree(new_transaction);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -352,7 +378,11 @@ static handle_t *new_handle(int nblocks)
  * Return a pointer to a newly allocated handle, or an ERR_PTR() value
  * on failure.
  */
+<<<<<<< HEAD
 handle_t *jbd2__journal_start(journal_t *journal, int nblocks, gfp_t gfp_mask)
+=======
+handle_t *jbd2__journal_start(journal_t *journal, int nblocks, int gfp_mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	handle_t *handle = journal_current_handle();
 	int err;
@@ -475,7 +505,11 @@ out:
  * transaction capabable of guaranteeing the requested number of
  * credits.
  */
+<<<<<<< HEAD
 int jbd2__journal_restart(handle_t *handle, int nblocks, gfp_t gfp_mask)
+=======
+int jbd2__journal_restart(handle_t *handle, int nblocks, int gfp_mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	transaction_t *transaction = handle->h_transaction;
 	journal_t *journal = transaction->t_journal;
@@ -500,10 +534,17 @@ int jbd2__journal_restart(handle_t *handle, int nblocks, gfp_t gfp_mask)
 		   &transaction->t_outstanding_credits);
 	if (atomic_dec_and_test(&transaction->t_updates))
 		wake_up(&journal->j_wait_updates);
+<<<<<<< HEAD
 	tid = transaction->t_tid;
 	spin_unlock(&transaction->t_handle_lock);
 
 	jbd_debug(2, "restarting handle %p\n", handle);
+=======
+	spin_unlock(&transaction->t_handle_lock);
+
+	jbd_debug(2, "restarting handle %p\n", handle);
+	tid = transaction->t_tid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	need_to_start = !tid_geq(journal->j_commit_request, tid);
 	read_unlock(&journal->j_state_lock);
 	if (need_to_start)
@@ -548,6 +589,7 @@ void jbd2_journal_lock_updates(journal_t *journal)
 			break;
 
 		spin_lock(&transaction->t_handle_lock);
+<<<<<<< HEAD
 		prepare_to_wait(&journal->j_wait_updates, &wait,
 				TASK_UNINTERRUPTIBLE);
 		if (!atomic_read(&transaction->t_updates)) {
@@ -555,6 +597,14 @@ void jbd2_journal_lock_updates(journal_t *journal)
 			finish_wait(&journal->j_wait_updates, &wait);
 			break;
 		}
+=======
+		if (!atomic_read(&transaction->t_updates)) {
+			spin_unlock(&transaction->t_handle_lock);
+			break;
+		}
+		prepare_to_wait(&journal->j_wait_updates, &wait,
+				TASK_UNINTERRUPTIBLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock(&transaction->t_handle_lock);
 		write_unlock(&journal->j_state_lock);
 		schedule();
@@ -596,7 +646,11 @@ static void warn_dirty_buffer(struct buffer_head *bh)
 	char b[BDEVNAME_SIZE];
 
 	printk(KERN_WARNING
+<<<<<<< HEAD
 	       "JBD2: Spotted dirty metadata buffer (dev = %s, blocknr = %llu). "
+=======
+	       "JBD: Spotted dirty metadata buffer (dev = %s, blocknr = %llu). "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       "There's a risk of filesystem corruption in case of system "
 	       "crash.\n",
 	       bdevname(bh->b_bdev, b), (unsigned long long)bh->b_blocknr);
@@ -814,12 +868,20 @@ done:
 			    "Possible IO failure.\n");
 		page = jh2bh(jh)->b_page;
 		offset = offset_in_page(jh2bh(jh)->b_data);
+<<<<<<< HEAD
 		source = kmap_atomic(page);
+=======
+		source = kmap_atomic(page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Fire data frozen trigger just before we copy the data */
 		jbd2_buffer_frozen_trigger(jh, source + offset,
 					   jh->b_triggers);
 		memcpy(jh->b_frozen_data, source+offset, jh2bh(jh)->b_size);
+<<<<<<< HEAD
 		kunmap_atomic(source);
+=======
+		kunmap_atomic(source, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * Now that the frozen data is saved off, we need to store
@@ -1047,12 +1109,18 @@ out:
 void jbd2_journal_set_triggers(struct buffer_head *bh,
 			       struct jbd2_buffer_trigger_type *type)
 {
+<<<<<<< HEAD
 	struct journal_head *jh = jbd2_journal_grab_journal_head(bh);
 
 	if (WARN_ON(!jh))
 		return;
 	jh->b_triggers = type;
 	jbd2_journal_put_journal_head(jh);
+=======
+	struct journal_head *jh = bh2jh(bh);
+
+	jh->b_triggers = type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void jbd2_buffer_frozen_trigger(struct journal_head *jh, void *mapped_data,
@@ -1085,10 +1153,13 @@ void jbd2_buffer_abort_trigger(struct journal_head *jh,
  * mark dirty metadata which needs to be journaled as part of the current
  * transaction.
  *
+<<<<<<< HEAD
  * The buffer must have previously had jbd2_journal_get_write_access()
  * called so that it has a valid journal_head attached to the buffer
  * head.
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * The buffer is placed on the transaction's metadata list and is marked
  * as belonging to the transaction.
  *
@@ -1104,6 +1175,7 @@ int jbd2_journal_dirty_metadata(handle_t *handle, struct buffer_head *bh)
 {
 	transaction_t *transaction = handle->h_transaction;
 	journal_t *journal = transaction->t_journal;
+<<<<<<< HEAD
 	struct journal_head *jh;
 	int ret = 0;
 
@@ -1116,6 +1188,14 @@ int jbd2_journal_dirty_metadata(handle_t *handle, struct buffer_head *bh)
 	}
 	jbd_debug(5, "journal_head %p\n", jh);
 	JBUFFER_TRACE(jh, "entry");
+=======
+	struct journal_head *jh = bh2jh(bh);
+
+	jbd_debug(5, "journal_head %p\n", jh);
+	JBUFFER_TRACE(jh, "entry");
+	if (is_handle_aborted(handle))
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	jbd_lock_bh_state(bh);
 
@@ -1139,6 +1219,7 @@ int jbd2_journal_dirty_metadata(handle_t *handle, struct buffer_head *bh)
 	 */
 	if (jh->b_transaction == transaction && jh->b_jlist == BJ_Metadata) {
 		JBUFFER_TRACE(jh, "fastpath");
+<<<<<<< HEAD
 		if (unlikely(jh->b_transaction !=
 			     journal->j_running_transaction)) {
 			printk(KERN_EMERG "JBD: %s: "
@@ -1153,6 +1234,10 @@ int jbd2_journal_dirty_metadata(handle_t *handle, struct buffer_head *bh)
 			       journal->j_running_transaction->t_tid : 0);
 			ret = -EINVAL;
 		}
+=======
+		J_ASSERT_JH(jh, jh->b_transaction ==
+					journal->j_running_transaction);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_unlock_bh;
 	}
 
@@ -1166,6 +1251,7 @@ int jbd2_journal_dirty_metadata(handle_t *handle, struct buffer_head *bh)
 	 */
 	if (jh->b_transaction != transaction) {
 		JBUFFER_TRACE(jh, "already on other transaction");
+<<<<<<< HEAD
 		if (unlikely(jh->b_transaction !=
 			     journal->j_committing_transaction)) {
 			printk(KERN_EMERG "JBD: %s: "
@@ -1192,6 +1278,11 @@ int jbd2_journal_dirty_metadata(handle_t *handle, struct buffer_head *bh)
 			       transaction, transaction->t_tid);
 			ret = -EINVAL;
 		}
+=======
+		J_ASSERT_JH(jh, jh->b_transaction ==
+					journal->j_committing_transaction);
+		J_ASSERT_JH(jh, jh->b_next_transaction == transaction);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* And this case is illegal: we can't reuse another
 		 * transaction's data buffer, ever. */
 		goto out_unlock_bh;
@@ -1206,11 +1297,17 @@ int jbd2_journal_dirty_metadata(handle_t *handle, struct buffer_head *bh)
 	spin_unlock(&journal->j_list_lock);
 out_unlock_bh:
 	jbd_unlock_bh_state(bh);
+<<<<<<< HEAD
 	jbd2_journal_put_journal_head(jh);
 out:
 	JBUFFER_TRACE(jh, "exit");
 	WARN_ON(ret);	/* All errors are bugs, so dump the stack */
 	return ret;
+=======
+out:
+	JBUFFER_TRACE(jh, "exit");
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1585,9 +1682,15 @@ __blist_del_buffer(struct journal_head **list, struct journal_head *jh)
  * of these pointers, it could go bad.  Generally the caller needs to re-read
  * the pointer from the transaction_t.
  *
+<<<<<<< HEAD
  * Called under j_list_lock.
  */
 static void __jbd2_journal_temp_unlink_buffer(struct journal_head *jh)
+=======
+ * Called under j_list_lock.  The journal may not be locked.
+ */
+void __jbd2_journal_temp_unlink_buffer(struct journal_head *jh)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct journal_head **list = NULL;
 	transaction_t *transaction;
@@ -1682,8 +1785,15 @@ __journal_try_to_free_buffer(journal_t *journal, struct buffer_head *bh)
 	spin_lock(&journal->j_list_lock);
 	if (jh->b_cp_transaction != NULL && jh->b_transaction == NULL) {
 		/* written-back checkpointed metadata buffer */
+<<<<<<< HEAD
 		JBUFFER_TRACE(jh, "remove from checkpoint list");
 		__jbd2_journal_remove_checkpoint(jh);
+=======
+		if (jh->b_jlist == BJ_None) {
+			JBUFFER_TRACE(jh, "remove from checkpoint list");
+			__jbd2_journal_remove_checkpoint(jh);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	spin_unlock(&journal->j_list_lock);
 out:

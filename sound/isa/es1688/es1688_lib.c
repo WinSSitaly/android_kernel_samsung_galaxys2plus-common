@@ -24,7 +24,10 @@
 #include <linux/delay.h>
 #include <linux/slab.h>
 #include <linux/ioport.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/es1688.h>
 #include <sound/initval.h>
@@ -662,7 +665,11 @@ int snd_es1688_create(struct snd_card *card,
 		snd_printk(KERN_ERR "es1688: can't grab port 0x%lx\n", port + 4);
 		return -EBUSY;
 	}
+<<<<<<< HEAD
 	if (request_irq(irq, snd_es1688_interrupt, 0, "ES1688", (void *) chip)) {
+=======
+	if (request_irq(irq, snd_es1688_interrupt, IRQF_DISABLED, "ES1688", (void *) chip)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printk(KERN_ERR "es1688: can't grab IRQ %d\n", irq);
 		return -EBUSY;
 	}

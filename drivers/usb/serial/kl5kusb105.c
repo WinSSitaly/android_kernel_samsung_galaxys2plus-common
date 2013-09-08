@@ -49,7 +49,11 @@
 #include <linux/usb/serial.h>
 #include "kl5kusb105.h"
 
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Version Information
@@ -91,6 +95,10 @@ static struct usb_driver kl5kusb105d_driver = {
 	.probe =	usb_serial_probe,
 	.disconnect =	usb_serial_disconnect,
 	.id_table =	id_table,
+<<<<<<< HEAD
+=======
+	.no_dynamic_id =	1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct usb_serial_driver kl5kusb105d_device = {
@@ -99,6 +107,10 @@ static struct usb_serial_driver kl5kusb105d_device = {
 		.name =		"kl5kusb105d",
 	},
 	.description =		"KL5KUSB105D / PalmConnect",
+<<<<<<< HEAD
+=======
+	.usb_driver =		&kl5kusb105d_driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table =		id_table,
 	.num_ports =		1,
 	.bulk_out_size =	64,
@@ -116,10 +128,13 @@ static struct usb_serial_driver kl5kusb105d_device = {
 	.prepare_write_buffer =	klsi_105_prepare_write_buffer,
 };
 
+<<<<<<< HEAD
 static struct usb_serial_driver * const serial_drivers[] = {
 	&kl5kusb105d_device, NULL
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct klsi_105_port_settings {
 	__u8	pktlen;		/* always 5, it seems */
 	__u8	baudrate;
@@ -692,11 +707,47 @@ static int klsi_105_tiocmset(struct tty_struct *tty,
 	return retval;
 }
 
+<<<<<<< HEAD
 module_usb_serial_driver(kl5kusb105d_driver, serial_drivers);
+=======
+
+static int __init klsi_105_init(void)
+{
+	int retval;
+	retval = usb_serial_register(&kl5kusb105d_device);
+	if (retval)
+		goto failed_usb_serial_register;
+	retval = usb_register(&kl5kusb105d_driver);
+	if (retval)
+		goto failed_usb_register;
+
+	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_VERSION ":"
+	       DRIVER_DESC "\n");
+	return 0;
+failed_usb_register:
+	usb_serial_deregister(&kl5kusb105d_device);
+failed_usb_serial_register:
+	return retval;
+}
+
+static void __exit klsi_105_exit(void)
+{
+	usb_deregister(&kl5kusb105d_driver);
+	usb_serial_deregister(&kl5kusb105d_device);
+}
+
+
+module_init(klsi_105_init);
+module_exit(klsi_105_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR(DRIVER_AUTHOR);
 MODULE_DESCRIPTION(DRIVER_DESC);
 MODULE_LICENSE("GPL");
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(debug, bool, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(debug, "enable extensive debugging messages");

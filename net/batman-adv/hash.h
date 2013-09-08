@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2006-2012 B.A.T.M.A.N. contributors:
+=======
+ * Copyright (C) 2006-2011 B.A.T.M.A.N. contributors:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Simon Wunderlich, Marek Lindner
  *
@@ -28,22 +32,38 @@
  * compare 2 element datas for their keys,
  * return 0 if same and not 0 if not
  * same */
+<<<<<<< HEAD
 typedef int (*hashdata_compare_cb)(const struct hlist_node *, const void *);
+=======
+typedef int (*hashdata_compare_cb)(struct hlist_node *, void *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* the hashfunction, should return an index
  * based on the key in the data of the first
  * argument and the size the second */
+<<<<<<< HEAD
 typedef uint32_t (*hashdata_choose_cb)(const void *, uint32_t);
+=======
+typedef int (*hashdata_choose_cb)(void *, int);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef void (*hashdata_free_cb)(struct hlist_node *, void *);
 
 struct hashtable_t {
 	struct hlist_head *table;   /* the hashtable itself with the buckets */
 	spinlock_t *list_locks;     /* spinlock for each hash list entry */
+<<<<<<< HEAD
 	uint32_t size;		    /* size of hashtable */
 };
 
 /* allocates and clears the hash */
 struct hashtable_t *hash_new(uint32_t size);
+=======
+	int size;		    /* size of hashtable */
+};
+
+/* allocates and clears the hash */
+struct hashtable_t *hash_new(int size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* free only the hashtable and the hash itself. */
 void hash_destroy(struct hashtable_t *hash);
@@ -57,7 +77,11 @@ static inline void hash_delete(struct hashtable_t *hash,
 	struct hlist_head *head;
 	struct hlist_node *node, *node_tmp;
 	spinlock_t *list_lock; /* spinlock to protect write access */
+<<<<<<< HEAD
 	uint32_t i;
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < hash->size; i++) {
 		head = &hash->table[i];
@@ -76,6 +100,7 @@ static inline void hash_delete(struct hashtable_t *hash,
 	hash_destroy(hash);
 }
 
+<<<<<<< HEAD
 /**
  *	hash_add - adds data to the hashtable
  *	@hash: storage hash table
@@ -95,12 +120,25 @@ static inline int hash_add(struct hashtable_t *hash,
 {
 	uint32_t index;
 	int ret = -1;
+=======
+/* adds data to the hashtable. returns 0 on success, -1 on error */
+static inline int hash_add(struct hashtable_t *hash,
+			   hashdata_compare_cb compare,
+			   hashdata_choose_cb choose,
+			   void *data, struct hlist_node *data_node)
+{
+	int index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct hlist_head *head;
 	struct hlist_node *node;
 	spinlock_t *list_lock; /* spinlock to protect write access */
 
 	if (!hash)
+<<<<<<< HEAD
 		goto out;
+=======
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	index = choose(data, hash->size);
 	head = &hash->table[index];
@@ -111,7 +149,10 @@ static inline int hash_add(struct hashtable_t *hash,
 		if (!compare(node, data))
 			continue;
 
+<<<<<<< HEAD
 		ret = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_unlock;
 	}
 	rcu_read_unlock();
@@ -121,6 +162,7 @@ static inline int hash_add(struct hashtable_t *hash,
 	hlist_add_head_rcu(data_node, head);
 	spin_unlock_bh(list_lock);
 
+<<<<<<< HEAD
 	ret = 0;
 	goto out;
 
@@ -128,6 +170,14 @@ err_unlock:
 	rcu_read_unlock();
 out:
 	return ret;
+=======
+	return 0;
+
+err_unlock:
+	rcu_read_unlock();
+err:
+	return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* removes data from hash, if found. returns pointer do data on success, so you
@@ -138,7 +188,11 @@ static inline void *hash_remove(struct hashtable_t *hash,
 				hashdata_compare_cb compare,
 				hashdata_choose_cb choose, void *data)
 {
+<<<<<<< HEAD
 	uint32_t index;
+=======
+	size_t index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct hlist_node *node;
 	struct hlist_head *head;
 	void *data_save = NULL;

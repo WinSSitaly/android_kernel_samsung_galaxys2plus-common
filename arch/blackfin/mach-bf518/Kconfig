@@ -11,6 +11,7 @@ menu "BF518 Specific Configuration"
 comment "Alternative Multiplexing Scheme"
 
 choice
+<<<<<<< HEAD
 	prompt "PWM Channel Pins"
 	default BF518_PWM_ALL_PORTF
 	help
@@ -80,6 +81,57 @@ config BF518_PPI_TMR_PG12
 	help
 	  PG{12,13,14} <-> {PPICLK/TMRCLK,TMR0/PPIFS1,TMR1/PPIFS2}
 
+=======
+	prompt "SPORT0"
+	default BF518_SPORT0_PORTG
+	help
+	  Select PORT used for SPORT0. See Hardware Reference Manual
+
+config BF518_SPORT0_PORTF
+	bool "PORT F"
+	help
+	  PORT F
+
+config BF518_SPORT0_PORTG
+	bool "PORT G"
+	help
+	  PORT G
+endchoice
+
+choice
+	prompt "SPORT0 TSCLK Location"
+	depends on BF518_SPORT0_PORTG
+	default BF518_SPORT0_TSCLK_PG10
+	help
+	  Select PIN used for SPORT0_TSCLK. See Hardware Reference Manual
+
+config BF518_SPORT0_TSCLK_PG10
+	bool "PORT PG10"
+	help
+	  PORT PG10
+
+config BF518_SPORT0_TSCLK_PG14
+	bool "PORT PG14"
+	help
+	  PORT PG14
+endchoice
+
+choice
+	prompt "UART1"
+	default BF518_UART1_PORTF
+	help
+	  Select PORT used for UART1. See Hardware Reference Manual
+
+config BF518_UART1_PORTF
+	bool "PORT F"
+	help
+	  PORT F
+
+config BF518_UART1_PORTG
+	bool "PORT G"
+	help
+	  PORT G
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endchoice
 
 comment "Hysteresis/Schmitt Trigger Control"

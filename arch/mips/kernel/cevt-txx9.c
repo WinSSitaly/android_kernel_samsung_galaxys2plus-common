@@ -146,7 +146,11 @@ static irqreturn_t txx9tmr_interrupt(int irq, void *dev_id)
 
 static struct irqaction txx9tmr_irq = {
 	.handler	= txx9tmr_interrupt,
+<<<<<<< HEAD
 	.flags		= IRQF_PERCPU | IRQF_TIMER,
+=======
+	.flags		= IRQF_DISABLED | IRQF_PERCPU | IRQF_TIMER,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name		= "txx9tmr",
 	.dev_id		= &txx9_clock_event_device,
 };

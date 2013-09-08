@@ -20,7 +20,11 @@
  *  Heavily rewritten for 'one fs - one tree' dcache architecture. AV, Mar 2000
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/acct.h>
 #include <linux/blkdev.h>
@@ -32,13 +36,17 @@
 #include <linux/backing-dev.h>
 #include <linux/rculist_bl.h>
 #include <linux/cleancache.h>
+<<<<<<< HEAD
 #include <linux/fsnotify.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "internal.h"
 
 
 LIST_HEAD(super_blocks);
 DEFINE_SPINLOCK(sb_lock);
 
+<<<<<<< HEAD
 /*
  * One thing we have to be careful of with a per-sb shrinker is that we don't
  * drop the last active reference to the superblock from within the shrinker.
@@ -102,6 +110,8 @@ static int prune_super(struct shrinker *shrink, struct shrink_control *sc)
 	return total_objects;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  *	alloc_super	-	create new superblock
  *	@type:	filesystem type superblock should belong to
@@ -137,6 +147,7 @@ static struct super_block *alloc_super(struct file_system_type *type)
 		INIT_LIST_HEAD(&s->s_files);
 #endif
 		s->s_bdi = &default_backing_dev_info;
+<<<<<<< HEAD
 		INIT_HLIST_NODE(&s->s_instances);
 		INIT_HLIST_BL_HEAD(&s->s_anon);
 		INIT_LIST_HEAD(&s->s_inodes);
@@ -144,6 +155,12 @@ static struct super_block *alloc_super(struct file_system_type *type)
 		INIT_LIST_HEAD(&s->s_inode_lru);
 		spin_lock_init(&s->s_inode_lru_lock);
 		INIT_LIST_HEAD(&s->s_mounts);
+=======
+		INIT_LIST_HEAD(&s->s_instances);
+		INIT_HLIST_BL_HEAD(&s->s_anon);
+		INIT_LIST_HEAD(&s->s_inodes);
+		INIT_LIST_HEAD(&s->s_dentry_lru);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		init_rwsem(&s->s_umount);
 		mutex_init(&s->s_lock);
 		lockdep_set_class(&s->s_umount, &type->s_umount_key);
@@ -181,10 +198,13 @@ static struct super_block *alloc_super(struct file_system_type *type)
 		s->s_op = &default_op;
 		s->s_time_gran = 1000000000;
 		s->cleancache_poolid = -1;
+<<<<<<< HEAD
 
 		s->s_shrink.seeks = DEFAULT_SEEKS;
 		s->s_shrink.shrink = prune_super;
 		s->s_shrink.batch = 1024;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 out:
 	return s;
@@ -202,7 +222,10 @@ static inline void destroy_super(struct super_block *s)
 	free_percpu(s->s_files);
 #endif
 	security_sb_free(s);
+<<<<<<< HEAD
 	WARN_ON(!list_empty(&s->s_mounts));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(s->s_subtype);
 	kfree(s->s_options);
 	kfree(s);
@@ -213,7 +236,11 @@ static inline void destroy_super(struct super_block *s)
 /*
  * Drop a superblock's refcount.  The caller must hold sb_lock.
  */
+<<<<<<< HEAD
 static void __put_super(struct super_block *sb)
+=======
+void __put_super(struct super_block *sb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (!--sb->s_count) {
 		list_del_init(&sb->s_list);
@@ -228,7 +255,11 @@ static void __put_super(struct super_block *sb)
  *	Drops a temporary reference, frees superblock if there's no
  *	references left.
  */
+<<<<<<< HEAD
 static void put_super(struct super_block *sb)
+=======
+void put_super(struct super_block *sb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	spin_lock(&sb_lock);
 	__put_super(sb);
@@ -251,12 +282,17 @@ void deactivate_locked_super(struct super_block *s)
 {
 	struct file_system_type *fs = s->s_type;
 	if (atomic_dec_and_test(&s->s_active)) {
+<<<<<<< HEAD
 		cleancache_invalidate_fs(s);
 		fs->kill_sb(s);
 
 		/* caches are now gone, we can safely kill the shrinker now */
 		unregister_shrinker(&s->s_shrink);
 
+=======
+		cleancache_flush_fs(s);
+		fs->kill_sb(s);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * We need to call rcu_barrier so all the delayed rcu free
 		 * inodes are flushed before we release the fs module.
@@ -298,6 +334,7 @@ EXPORT_SYMBOL(deactivate_super);
  *	and want to turn it into a full-blown active reference.  grab_super()
  *	is called with sb_lock held and drops it.  Returns 1 in case of
  *	success, 0 if we had failed (superblock contents was already dead or
+<<<<<<< HEAD
  *	dying when grab_super() had been called).  Note that this is only
  *	called for superblocks not in rundown mode (== ones still on ->fs_supers
  *	of their type), so increment of ->s_count is OK here.
@@ -311,12 +348,28 @@ static int grab_super(struct super_block *s) __releases(sb_lock)
 		put_super(s);
 		return 1;
 	}
+=======
+ *	dying when grab_super() had been called).
+ */
+static int grab_super(struct super_block *s) __releases(sb_lock)
+{
+	if (atomic_inc_not_zero(&s->s_active)) {
+		spin_unlock(&sb_lock);
+		return 1;
+	}
+	/* it's going away */
+	s->s_count++;
+	spin_unlock(&sb_lock);
+	/* wait for it to die */
+	down_write(&s->s_umount);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	up_write(&s->s_umount);
 	put_super(s);
 	return 0;
 }
 
 /*
+<<<<<<< HEAD
  *	grab_super_passive - acquire a passive reference
  *	@s: reference we are trying to grab
  *
@@ -350,15 +403,25 @@ bool grab_super_passive(struct super_block *sb)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Superblock locking.  We really ought to get rid of these two.
  */
 void lock_super(struct super_block * sb)
 {
+<<<<<<< HEAD
+=======
+	get_fs_excl();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&sb->s_lock);
 }
 
 void unlock_super(struct super_block * sb)
 {
+<<<<<<< HEAD
+=======
+	put_fs_excl();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&sb->s_lock);
 }
 
@@ -383,9 +446,17 @@ void generic_shutdown_super(struct super_block *sb)
 {
 	const struct super_operations *sop = sb->s_op;
 
+<<<<<<< HEAD
 	if (sb->s_root) {
 		shrink_dcache_for_umount(sb);
 		sync_filesystem(sb);
+=======
+
+	if (sb->s_root) {
+		shrink_dcache_for_umount(sb);
+		sync_filesystem(sb);
+		get_fs_excl();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sb->s_flags &= ~MS_ACTIVE;
 
 		fsnotify_unmount_inodes(&sb->s_inodes);
@@ -400,10 +471,18 @@ void generic_shutdown_super(struct super_block *sb)
 			   "Self-destruct in 5 seconds.  Have a nice day...\n",
 			   sb->s_id);
 		}
+<<<<<<< HEAD
 	}
 	spin_lock(&sb_lock);
 	/* should be initialized for __put_super_and_need_restart() */
 	hlist_del_init(&sb->s_instances);
+=======
+		put_fs_excl();
+	}
+	spin_lock(&sb_lock);
+	/* should be initialized for __put_super_and_need_restart() */
+	list_del_init(&sb->s_instances);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&sb_lock);
 	up_write(&sb->s_umount);
 }
@@ -423,14 +502,21 @@ struct super_block *sget(struct file_system_type *type,
 			void *data)
 {
 	struct super_block *s = NULL;
+<<<<<<< HEAD
 	struct hlist_node *node;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct super_block *old;
 	int err;
 
 retry:
 	spin_lock(&sb_lock);
 	if (test) {
+<<<<<<< HEAD
 		hlist_for_each_entry(old, node, &type->fs_supers, s_instances) {
+=======
+		list_for_each_entry(old, &type->fs_supers, s_instances) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!test(old, data))
 				continue;
 			if (!grab_super(old))
@@ -440,6 +526,14 @@ retry:
 				destroy_super(s);
 				s = NULL;
 			}
+<<<<<<< HEAD
+=======
+			down_write(&old->s_umount);
+			if (unlikely(!(old->s_flags & MS_BORN))) {
+				deactivate_locked_super(old);
+				goto retry;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return old;
 		}
 	}
@@ -461,10 +555,16 @@ retry:
 	s->s_type = type;
 	strlcpy(s->s_id, type->name, sizeof(s->s_id));
 	list_add_tail(&s->s_list, &super_blocks);
+<<<<<<< HEAD
 	hlist_add_head(&s->s_instances, &type->fs_supers);
 	spin_unlock(&sb_lock);
 	get_filesystem(type);
 	register_shrinker(&s->s_shrink);
+=======
+	list_add(&s->s_instances, &type->fs_supers);
+	spin_unlock(&sb_lock);
+	get_filesystem(type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return s;
 }
 
@@ -496,14 +596,22 @@ void sync_supers(void)
 
 	spin_lock(&sb_lock);
 	list_for_each_entry(sb, &super_blocks, s_list) {
+<<<<<<< HEAD
 		if (hlist_unhashed(&sb->s_instances))
+=======
+		if (list_empty(&sb->s_instances))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		if (sb->s_op->write_super && sb->s_dirt) {
 			sb->s_count++;
 			spin_unlock(&sb_lock);
 
 			down_read(&sb->s_umount);
+<<<<<<< HEAD
 			if (sb->s_root && sb->s_dirt && (sb->s_flags & MS_BORN))
+=======
+			if (sb->s_root && sb->s_dirt)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				sb->s_op->write_super(sb);
 			up_read(&sb->s_umount);
 
@@ -532,13 +640,21 @@ void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
 
 	spin_lock(&sb_lock);
 	list_for_each_entry(sb, &super_blocks, s_list) {
+<<<<<<< HEAD
 		if (hlist_unhashed(&sb->s_instances))
+=======
+		if (list_empty(&sb->s_instances))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		sb->s_count++;
 		spin_unlock(&sb_lock);
 
 		down_read(&sb->s_umount);
+<<<<<<< HEAD
 		if (sb->s_root && (sb->s_flags & MS_BORN))
+=======
+		if (sb->s_root)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			f(sb, arg);
 		up_read(&sb->s_umount);
 
@@ -553,6 +669,7 @@ void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
 }
 
 /**
+<<<<<<< HEAD
  *	iterate_supers_type - call function for superblocks of given type
  *	@type: fs type
  *	@f: function to call
@@ -590,6 +707,8 @@ void iterate_supers_type(struct file_system_type *type,
 EXPORT_SYMBOL(iterate_supers_type);
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	get_super - get the superblock of a device
  *	@bdev: device to get the superblock for
  *	
@@ -607,14 +726,22 @@ struct super_block *get_super(struct block_device *bdev)
 	spin_lock(&sb_lock);
 rescan:
 	list_for_each_entry(sb, &super_blocks, s_list) {
+<<<<<<< HEAD
 		if (hlist_unhashed(&sb->s_instances))
+=======
+		if (list_empty(&sb->s_instances))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		if (sb->s_bdev == bdev) {
 			sb->s_count++;
 			spin_unlock(&sb_lock);
 			down_read(&sb->s_umount);
 			/* still alive? */
+<<<<<<< HEAD
 			if (sb->s_root && (sb->s_flags & MS_BORN))
+=======
+			if (sb->s_root)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return sb;
 			up_read(&sb->s_umount);
 			/* nope, got unmounted */
@@ -630,6 +757,7 @@ rescan:
 EXPORT_SYMBOL(get_super);
 
 /**
+<<<<<<< HEAD
  *	get_super_thawed - get thawed superblock of a device
  *	@bdev: device to get the superblock for
  *
@@ -652,6 +780,8 @@ struct super_block *get_super_thawed(struct block_device *bdev)
 EXPORT_SYMBOL(get_super_thawed);
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * get_active_super - get an active reference to the superblock of a device
  * @bdev: device to get the superblock for
  *
@@ -669,6 +799,7 @@ struct super_block *get_active_super(struct block_device *bdev)
 restart:
 	spin_lock(&sb_lock);
 	list_for_each_entry(sb, &super_blocks, s_list) {
+<<<<<<< HEAD
 		if (hlist_unhashed(&sb->s_instances))
 			continue;
 		if (sb->s_bdev == bdev) {
@@ -676,6 +807,15 @@ restart:
 				goto restart;
 			up_write(&sb->s_umount);
 			return sb;
+=======
+		if (list_empty(&sb->s_instances))
+			continue;
+		if (sb->s_bdev == bdev) {
+			if (grab_super(sb)) /* drops sb_lock */
+				return sb;
+			else
+				goto restart;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	spin_unlock(&sb_lock);
@@ -689,14 +829,22 @@ struct super_block *user_get_super(dev_t dev)
 	spin_lock(&sb_lock);
 rescan:
 	list_for_each_entry(sb, &super_blocks, s_list) {
+<<<<<<< HEAD
 		if (hlist_unhashed(&sb->s_instances))
+=======
+		if (list_empty(&sb->s_instances))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		if (sb->s_dev ==  dev) {
 			sb->s_count++;
 			spin_unlock(&sb_lock);
 			down_read(&sb->s_umount);
 			/* still alive? */
+<<<<<<< HEAD
 			if (sb->s_root && (sb->s_flags & MS_BORN))
+=======
+			if (sb->s_root)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return sb;
 			up_read(&sb->s_umount);
 			/* nope, got unmounted */
@@ -741,6 +889,7 @@ int do_remount_sb(struct super_block *sb, int flags, void *data, int force)
 	/* If we are remounting RDONLY and current sb is read/write,
 	   make sure there are no rw files opened */
 	if (remount_ro) {
+<<<<<<< HEAD
 		if (force) {
 			mark_files_ro(sb);
 		} else {
@@ -748,10 +897,17 @@ int do_remount_sb(struct super_block *sb, int flags, void *data, int force)
 			if (retval)
 				return retval;
 		}
+=======
+		if (force)
+			mark_files_ro(sb);
+		else if (!fs_may_remount_ro(sb))
+			return -EBUSY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (sb->s_op->remount_fs) {
 		retval = sb->s_op->remount_fs(sb, &flags, data);
+<<<<<<< HEAD
 		if (retval) {
 			if (!force)
 				goto cancel_readonly;
@@ -764,6 +920,12 @@ int do_remount_sb(struct super_block *sb, int flags, void *data, int force)
 	/* Needs to be ordered wrt mnt_is_readonly() */
 	smp_wmb();
 	sb->s_readonly_remount = 0;
+=======
+		if (retval)
+			return retval;
+	}
+	sb->s_flags = (sb->s_flags & ~MS_RMT_MASK) | (flags & MS_RMT_MASK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Some filesystems modify their metadata via some other path than the
@@ -776,10 +938,13 @@ int do_remount_sb(struct super_block *sb, int flags, void *data, int force)
 	if (remount_ro && sb->s_bdev)
 		invalidate_bdev(sb->s_bdev);
 	return 0;
+<<<<<<< HEAD
 
 cancel_readonly:
 	sb->s_readonly_remount = 0;
 	return retval;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void do_emergency_remount(struct work_struct *work)
@@ -788,13 +953,21 @@ static void do_emergency_remount(struct work_struct *work)
 
 	spin_lock(&sb_lock);
 	list_for_each_entry(sb, &super_blocks, s_list) {
+<<<<<<< HEAD
 		if (hlist_unhashed(&sb->s_instances))
+=======
+		if (list_empty(&sb->s_instances))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		sb->s_count++;
 		spin_unlock(&sb_lock);
 		down_write(&sb->s_umount);
+<<<<<<< HEAD
 		if (sb->s_root && sb->s_bdev && (sb->s_flags & MS_BORN) &&
 		    !(sb->s_flags & MS_RDONLY)) {
+=======
+		if (sb->s_root && sb->s_bdev && !(sb->s_flags & MS_RDONLY)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * What lock protects sb->s_flags??
 			 */
@@ -833,7 +1006,11 @@ static DEFINE_IDA(unnamed_dev_ida);
 static DEFINE_SPINLOCK(unnamed_dev_lock);/* protects the above */
 static int unnamed_dev_start = 0; /* don't bother trying below it */
 
+<<<<<<< HEAD
 int get_anon_bdev(dev_t *p)
+=======
+int set_anon_super(struct super_block *s, void *data)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int dev;
 	int error;
@@ -860,6 +1037,7 @@ int get_anon_bdev(dev_t *p)
 		spin_unlock(&unnamed_dev_lock);
 		return -EMFILE;
 	}
+<<<<<<< HEAD
 	*p = MKDEV(0, dev & MINORMASK);
 	return 0;
 }
@@ -868,12 +1046,27 @@ EXPORT_SYMBOL(get_anon_bdev);
 void free_anon_bdev(dev_t dev)
 {
 	int slot = MINOR(dev);
+=======
+	s->s_dev = MKDEV(0, dev & MINORMASK);
+	s->s_bdi = &noop_backing_dev_info;
+	return 0;
+}
+
+EXPORT_SYMBOL(set_anon_super);
+
+void kill_anon_super(struct super_block *sb)
+{
+	int slot = MINOR(sb->s_dev);
+
+	generic_shutdown_super(sb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&unnamed_dev_lock);
 	ida_remove(&unnamed_dev_ida, slot);
 	if (slot < unnamed_dev_start)
 		unnamed_dev_start = slot;
 	spin_unlock(&unnamed_dev_lock);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(free_anon_bdev);
 
 int set_anon_super(struct super_block *s, void *data)
@@ -892,6 +1085,8 @@ void kill_anon_super(struct super_block *sb)
 	generic_shutdown_super(sb);
 	free_anon_bdev(dev);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 EXPORT_SYMBOL(kill_anon_super);
 
@@ -1177,11 +1372,14 @@ int freeze_super(struct super_block *sb)
 		return -EBUSY;
 	}
 
+<<<<<<< HEAD
 	if (!(sb->s_flags & MS_BORN)) {
 		up_write(&sb->s_umount);
 		return 0;	/* sic - it's "nothing to do" */
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (sb->s_flags & MS_RDONLY) {
 		sb->s_frozen = SB_FREEZE_TRANS;
 		smp_wmb();
@@ -1204,8 +1402,11 @@ int freeze_super(struct super_block *sb)
 			printk(KERN_ERR
 				"VFS:Filesystem freeze failed\n");
 			sb->s_frozen = SB_UNFROZEN;
+<<<<<<< HEAD
 			smp_wmb();
 			wake_up(&sb->s_wait_unfrozen);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			deactivate_locked_super(sb);
 			return ret;
 		}

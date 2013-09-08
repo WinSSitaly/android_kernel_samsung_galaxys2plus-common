@@ -305,9 +305,15 @@ struct nv50_gpuobj_node {
 	u32 align;
 };
 
+<<<<<<< HEAD
 int
 nv50_instmem_get(struct nouveau_gpuobj *gpuobj, struct nouveau_channel *chan,
 		 u32 size, u32 align)
+=======
+
+int
+nv50_instmem_get(struct nouveau_gpuobj *gpuobj, u32 size, u32 align)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_device *dev = gpuobj->dev;
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
@@ -336,7 +342,11 @@ nv50_instmem_get(struct nouveau_gpuobj *gpuobj, struct nouveau_channel *chan,
 		if (!(gpuobj->flags & NVOBJ_FLAG_VM_USER))
 			flags |= NV_MEM_ACCESS_SYS;
 
+<<<<<<< HEAD
 		ret = nouveau_vm_get(chan->vm, size, 12, flags,
+=======
+		ret = nouveau_vm_get(dev_priv->chan_vm, size, 12, flags,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     &node->chan_vma);
 		if (ret) {
 			vram->put(dev, &node->vram);
@@ -345,7 +355,11 @@ nv50_instmem_get(struct nouveau_gpuobj *gpuobj, struct nouveau_channel *chan,
 		}
 
 		nouveau_vm_map(&node->chan_vma, node->vram);
+<<<<<<< HEAD
 		gpuobj->linst = node->chan_vma.offset;
+=======
+		gpuobj->vinst = node->chan_vma.offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	gpuobj->size = size;

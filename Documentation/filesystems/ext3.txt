@@ -73,6 +73,17 @@ nobarrier	(*)	This also requires an IO stack which can support
 			also be used to enable or disable barriers, for
 			consistency with other ext3 mount options.
 
+<<<<<<< HEAD
+=======
+orlov		(*)	This enables the new Orlov block allocator. It is
+			enabled by default.
+
+oldalloc		This disables the Orlov block allocator and enables
+			the old block allocator.  Orlov should have better
+			performance - we'd like to get some feedback if it's
+			the contrary for you.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 user_xattr		Enables Extended User Attributes.  Additionally, you
 			need to have extended attribute support enabled in the
 			kernel configuration (CONFIG_EXT3_FS_XATTR).  See the
@@ -139,6 +150,18 @@ grpjquota=<file>	during journal replay. They replace the above
 			package for more details
 			(http://sourceforge.net/projects/linuxquota).
 
+<<<<<<< HEAD
+=======
+bh		(*)	ext3 associates buffer heads to data pages to
+nobh			(a) cache disk block mapping information
+			(b) link pages into transaction to provide
+			    ordering guarantees.
+			"bh" option forces use of buffer heads.
+			"nobh" option tries to avoid associating buffer
+			heads (supported only for "writeback" mode).
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Specification
 =============
 Ext3 shares all disk implementation with the ext2 filesystem, and adds
@@ -210,5 +233,10 @@ kernel source:	<file:fs/ext3/>
 programs: 	http://e2fsprogs.sourceforge.net/
 		http://ext2resize.sourceforge.net
 
+<<<<<<< HEAD
 useful links:	http://www.ibm.com/developerworks/library/l-fs7/index.html
         http://www.ibm.com/developerworks/library/l-fs8/index.html
+=======
+useful links:	http://www.ibm.com/developerworks/library/l-fs7.html
+		http://www.ibm.com/developerworks/library/l-fs8.html
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

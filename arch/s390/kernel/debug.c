@@ -2,8 +2,13 @@
  *  arch/s390/kernel/debug.c
  *   S/390 debug facility
  *
+<<<<<<< HEAD
  *    Copyright IBM Corp. 1999, 2012
  *
+=======
+ *    Copyright (C) 1999, 2000 IBM Deutschland Entwicklung GmbH,
+ *                             IBM Corporation
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *    Author(s): Michael Holzheu (holzheu@de.ibm.com),
  *               Holger Smolinski (Holger.Smolinski@de.ibm.com)
  *
@@ -74,7 +79,11 @@ static ssize_t debug_input(struct file *file, const char __user *user_buf,
 static int debug_open(struct inode *inode, struct file *file);
 static int debug_close(struct inode *inode, struct file *file);
 static debug_info_t *debug_info_create(const char *name, int pages_per_area,
+<<<<<<< HEAD
 			int nr_areas, int buf_size, umode_t mode);
+=======
+			int nr_areas, int buf_size, mode_t mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void debug_info_get(debug_info_t *);
 static void debug_info_put(debug_info_t *);
 static int debug_prolog_level_fn(debug_info_t * id,
@@ -167,7 +176,10 @@ static debug_info_t *debug_area_last = NULL;
 static DEFINE_MUTEX(debug_mutex);
 
 static int initialized;
+<<<<<<< HEAD
 static int debug_critical;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const struct file_operations debug_file_ops = {
 	.owner   = THIS_MODULE,
@@ -331,7 +343,11 @@ debug_info_free(debug_info_t* db_info){
 
 static debug_info_t*
 debug_info_create(const char *name, int pages_per_area, int nr_areas,
+<<<<<<< HEAD
 		  int buf_size, umode_t mode)
+=======
+		  int buf_size, mode_t mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	debug_info_t* rc;
 
@@ -689,7 +705,11 @@ debug_close(struct inode *inode, struct file *file)
  */
 
 debug_info_t *debug_register_mode(const char *name, int pages_per_area,
+<<<<<<< HEAD
 				  int nr_areas, int buf_size, umode_t mode,
+=======
+				  int nr_areas, int buf_size, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  uid_t uid, gid_t gid)
 {
 	debug_info_t *rc = NULL;
@@ -933,11 +953,14 @@ debug_stop_all(void)
 }
 
 
+<<<<<<< HEAD
 void debug_set_critical(void)
 {
 	debug_critical = 1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * debug_event_common:
  * - write debug entry with given size
@@ -951,11 +974,15 @@ debug_event_common(debug_info_t * id, int level, const void *buf, int len)
 
 	if (!debug_active || !id->areas)
 		return NULL;
+<<<<<<< HEAD
 	if (debug_critical) {
 		if (!spin_trylock_irqsave(&id->lock, flags))
 			return NULL;
 	} else
 		spin_lock_irqsave(&id->lock, flags);
+=======
+	spin_lock_irqsave(&id->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	active = get_active_entry(id);
 	memset(DEBUG_DATA(active), 0, id->buf_size);
 	memcpy(DEBUG_DATA(active), buf, min(len, id->buf_size));
@@ -978,11 +1005,15 @@ debug_entry_t
 
 	if (!debug_active || !id->areas)
 		return NULL;
+<<<<<<< HEAD
 	if (debug_critical) {
 		if (!spin_trylock_irqsave(&id->lock, flags))
 			return NULL;
 	} else
 		spin_lock_irqsave(&id->lock, flags);
+=======
+	spin_lock_irqsave(&id->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	active = get_active_entry(id);
 	memset(DEBUG_DATA(active), 0, id->buf_size);
 	memcpy(DEBUG_DATA(active), buf, min(len, id->buf_size));
@@ -1027,11 +1058,15 @@ debug_sprintf_event(debug_info_t* id, int level,char *string,...)
 		return NULL;
 	numargs=debug_count_numargs(string);
 
+<<<<<<< HEAD
 	if (debug_critical) {
 		if (!spin_trylock_irqsave(&id->lock, flags))
 			return NULL;
 	} else
 		spin_lock_irqsave(&id->lock, flags);
+=======
+	spin_lock_irqsave(&id->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	active = get_active_entry(id);
 	curr_event=(debug_sprintf_entry_t *) DEBUG_DATA(active);
 	va_start(ap,string);
@@ -1065,11 +1100,15 @@ debug_sprintf_exception(debug_info_t* id, int level,char *string,...)
 
 	numargs=debug_count_numargs(string);
 
+<<<<<<< HEAD
 	if (debug_critical) {
 		if (!spin_trylock_irqsave(&id->lock, flags))
 			return NULL;
 	} else
 		spin_lock_irqsave(&id->lock, flags);
+=======
+	spin_lock_irqsave(&id->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	active = get_active_entry(id);
 	curr_event=(debug_sprintf_entry_t *)DEBUG_DATA(active);
 	va_start(ap,string);
@@ -1112,7 +1151,11 @@ debug_register_view(debug_info_t * id, struct debug_view *view)
 	int rc = 0;
 	int i;
 	unsigned long flags;
+<<<<<<< HEAD
 	umode_t mode;
+=======
+	mode_t mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dentry *pde;
 
 	if (!id)
@@ -1450,10 +1493,17 @@ debug_hex_ascii_format_fn(debug_info_t * id, struct debug_view *view,
 	rc += sprintf(out_buf + rc, "| ");
 	for (i = 0; i < id->buf_size; i++) {
 		unsigned char c = in_buf[i];
+<<<<<<< HEAD
 		if (isascii(c) && isprint(c))
 			rc += sprintf(out_buf + rc, "%c", c);
 		else
 			rc += sprintf(out_buf + rc, ".");
+=======
+		if (!isprint(c))
+			rc += sprintf(out_buf + rc, ".");
+		else
+			rc += sprintf(out_buf + rc, "%c", c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	rc += sprintf(out_buf + rc, "\n");
 	return rc;

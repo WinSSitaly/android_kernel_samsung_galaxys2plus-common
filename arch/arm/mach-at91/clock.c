@@ -23,12 +23,16 @@
 #include <linux/delay.h>
 #include <linux/clk.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/of_address.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/hardware.h>
 #include <mach/at91_pmc.h>
 #include <mach/cpu.h>
 
+<<<<<<< HEAD
 #include <asm/proc-fns.h>
 
 #include "clock.h"
@@ -36,6 +40,11 @@
 
 void __iomem *at91_pmc_base;
 EXPORT_SYMBOL_GPL(at91_pmc_base);
+=======
+#include "clock.h"
+#include "generic.h"
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * There's a lot more which can be done with clocks, including cpufreq
@@ -52,6 +61,7 @@ EXPORT_SYMBOL_GPL(at91_pmc_base);
 /*
  * Chips have some kind of clocks : group them by functionality
  */
+<<<<<<< HEAD
 #define cpu_has_utmi()		(  cpu_is_at91sam9rl() \
 				|| cpu_is_at91sam9g45() \
 				|| cpu_is_at91sam9x5())
@@ -59,21 +69,36 @@ EXPORT_SYMBOL_GPL(at91_pmc_base);
 #define cpu_has_800M_plla()	(  cpu_is_at91sam9g20() \
 				|| cpu_is_at91sam9g45() \
 				|| cpu_is_at91sam9x5())
+=======
+#define cpu_has_utmi()		(  cpu_is_at91cap9() \
+				|| cpu_is_at91sam9rl() \
+				|| cpu_is_at91sam9g45())
+
+#define cpu_has_800M_plla()	(  cpu_is_at91sam9g20() \
+				|| cpu_is_at91sam9g45())
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define cpu_has_300M_plla()	(cpu_is_at91sam9g10())
 
 #define cpu_has_pllb()		(!(cpu_is_at91sam9rl() \
+<<<<<<< HEAD
 				|| cpu_is_at91sam9g45() \
 				|| cpu_is_at91sam9x5()))
 
 #define cpu_has_upll()		(cpu_is_at91sam9g45() \
 				|| cpu_is_at91sam9x5())
+=======
+				|| cpu_is_at91sam9g45()))
+
+#define cpu_has_upll()		(cpu_is_at91sam9g45())
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* USB host HS & FS */
 #define cpu_has_uhp()		(!cpu_is_at91sam9rl())
 
 /* USB device FS only */
 #define cpu_has_udpfs()		(!(cpu_is_at91sam9rl() \
+<<<<<<< HEAD
 				|| cpu_is_at91sam9g45() \
 				|| cpu_is_at91sam9x5()))
 
@@ -84,6 +109,9 @@ EXPORT_SYMBOL_GPL(at91_pmc_base);
 				|| cpu_is_at91sam9x5())
 
 #define cpu_has_alt_prescaler()	(cpu_is_at91sam9x5())
+=======
+				|| cpu_is_at91sam9g45()))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static LIST_HEAD(clocks);
 static DEFINE_SPINLOCK(clk_lock);
@@ -128,11 +156,19 @@ static void pllb_mode(struct clk *clk, int is_on)
 		value = 0;
 
 	// REVISIT: Add work-around for AT91RM9200 Errata #26 ?
+<<<<<<< HEAD
 	at91_pmc_write(AT91_CKGR_PLLBR, value);
 
 	do {
 		cpu_relax();
 	} while ((at91_pmc_read(AT91_PMC_SR) & AT91_PMC_LOCKB) != is_on);
+=======
+	at91_sys_write(AT91_CKGR_PLLBR, value);
+
+	do {
+		cpu_relax();
+	} while ((at91_sys_read(AT91_PMC_SR) & AT91_PMC_LOCKB) != is_on);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct clk pllb = {
@@ -147,13 +183,20 @@ static struct clk pllb = {
 static void pmc_sys_mode(struct clk *clk, int is_on)
 {
 	if (is_on)
+<<<<<<< HEAD
 		at91_pmc_write(AT91_PMC_SCER, clk->pmc_mask);
 	else
 		at91_pmc_write(AT91_PMC_SCDR, clk->pmc_mask);
+=======
+		at91_sys_write(AT91_PMC_SCER, clk->pmc_mask);
+	else
+		at91_sys_write(AT91_PMC_SCDR, clk->pmc_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void pmc_uckr_mode(struct clk *clk, int is_on)
 {
+<<<<<<< HEAD
 	unsigned int uckr = at91_pmc_read(AT91_CKGR_UCKR);
 
 	if (is_on) {
@@ -165,6 +208,26 @@ static void pmc_uckr_mode(struct clk *clk, int is_on)
 	do {
 		cpu_relax();
 	} while ((at91_pmc_read(AT91_PMC_SR) & AT91_PMC_LOCKU) != is_on);
+=======
+	unsigned int uckr = at91_sys_read(AT91_CKGR_UCKR);
+
+	if (cpu_is_at91sam9g45()) {
+		if (is_on)
+			uckr |= AT91_PMC_BIASEN;
+		else
+			uckr &= ~AT91_PMC_BIASEN;
+	}
+
+	if (is_on) {
+		is_on = AT91_PMC_LOCKU;
+		at91_sys_write(AT91_CKGR_UCKR, uckr | clk->pmc_mask);
+	} else
+		at91_sys_write(AT91_CKGR_UCKR, uckr & ~(clk->pmc_mask));
+
+	do {
+		cpu_relax();
+	} while ((at91_sys_read(AT91_PMC_SR) & AT91_PMC_LOCKU) != is_on);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* USB function clocks (PLLB must be 48 MHz) */
@@ -200,9 +263,15 @@ struct clk mck = {
 static void pmc_periph_mode(struct clk *clk, int is_on)
 {
 	if (is_on)
+<<<<<<< HEAD
 		at91_pmc_write(AT91_PMC_PCER, clk->pmc_mask);
 	else
 		at91_pmc_write(AT91_PMC_PCDR, clk->pmc_mask);
+=======
+		at91_sys_write(AT91_PMC_PCER, clk->pmc_mask);
+	else
+		at91_sys_write(AT91_PMC_PCDR, clk->pmc_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct clk __init *at91_css_to_clk(unsigned long css)
@@ -220,15 +289,19 @@ static struct clk __init *at91_css_to_clk(unsigned long css)
 				return &utmi_clk;
 			else if (cpu_has_pllb())
 				return &pllb;
+<<<<<<< HEAD
 			break;
 		/* alternate PMC: can use master clock */
 		case AT91_PMC_CSS_MASTER:
 			return &mck;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return NULL;
 }
 
+<<<<<<< HEAD
 static int pmc_prescaler_divider(u32 reg)
 {
 	if (cpu_has_alt_prescaler()) {
@@ -238,6 +311,8 @@ static int pmc_prescaler_divider(u32 reg)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __clk_enable(struct clk *clk)
 {
 	if (clk->parent)
@@ -339,13 +414,17 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
 {
 	unsigned long	flags;
 	unsigned	prescale;
+<<<<<<< HEAD
 	unsigned long	prescale_offset, css_mask;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long	actual;
 
 	if (!clk_is_programmable(clk))
 		return -EINVAL;
 	if (clk->users)
 		return -EBUSY;
+<<<<<<< HEAD
 
 	if (cpu_has_alt_prescaler()) {
 		prescale_offset = PMC_ALT_PRES_OFFSET;
@@ -355,6 +434,8 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
 		css_mask = AT91_PMC_CSS;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&clk_lock, flags);
 
 	actual = clk->parent->rate_hz;
@@ -362,10 +443,17 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
 		if (actual && actual <= rate) {
 			u32	pckr;
 
+<<<<<<< HEAD
 			pckr = at91_pmc_read(AT91_PMC_PCKR(clk->id));
 			pckr &= css_mask;	/* keep clock selection */
 			pckr |= prescale << prescale_offset;
 			at91_pmc_write(AT91_PMC_PCKR(clk->id), pckr);
+=======
+			pckr = at91_sys_read(AT91_PMC_PCKR(clk->id));
+			pckr &= AT91_PMC_CSS;	/* clock selection */
+			pckr |= prescale << 2;
+			at91_sys_write(AT91_PMC_PCKR(clk->id), pckr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			clk->rate_hz = actual;
 			break;
 		}
@@ -399,7 +487,11 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
 
 	clk->rate_hz = parent->rate_hz;
 	clk->parent = parent;
+<<<<<<< HEAD
 	at91_pmc_write(AT91_PMC_PCKR(clk->id), parent->id);
+=======
+	at91_sys_write(AT91_PMC_PCKR(clk->id), parent->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_irqrestore(&clk_lock, flags);
 	return 0;
@@ -411,6 +503,7 @@ static void __init init_programmable_clock(struct clk *clk)
 {
 	struct clk	*parent;
 	u32		pckr;
+<<<<<<< HEAD
 	unsigned int	css_mask;
 
 	if (cpu_has_alt_prescaler())
@@ -422,6 +515,13 @@ static void __init init_programmable_clock(struct clk *clk)
 	parent = at91_css_to_clk(pckr & css_mask);
 	clk->parent = parent;
 	clk->rate_hz = parent->rate_hz / pmc_prescaler_divider(pckr);
+=======
+
+	pckr = at91_sys_read(AT91_PMC_PCKR(clk->id));
+	parent = at91_css_to_clk(pckr & AT91_PMC_CSS);
+	clk->parent = parent;
+	clk->rate_hz = parent->rate_hz / (1 << ((pckr & AT91_PMC_PRES) >> 2));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #endif	/* CONFIG_AT91_PROGRAMMABLE_CLOCKS */
@@ -435,6 +535,7 @@ static int at91_clk_show(struct seq_file *s, void *unused)
 	u32		scsr, pcsr, uckr = 0, sr;
 	struct clk	*clk;
 
+<<<<<<< HEAD
 	scsr = at91_pmc_read(AT91_PMC_SCSR);
 	pcsr = at91_pmc_read(AT91_PMC_PCSR);
 	sr = at91_pmc_read(AT91_PMC_SR);
@@ -453,6 +554,21 @@ static int at91_clk_show(struct seq_file *s, void *unused)
 	if (cpu_has_upll())
 		seq_printf(s, "USB  = %8x\n", at91_pmc_read(AT91_PMC_USB));
 	seq_printf(s, "SR   = %8x\n", sr);
+=======
+	seq_printf(s, "SCSR = %8x\n", scsr = at91_sys_read(AT91_PMC_SCSR));
+	seq_printf(s, "PCSR = %8x\n", pcsr = at91_sys_read(AT91_PMC_PCSR));
+	seq_printf(s, "MOR  = %8x\n", at91_sys_read(AT91_CKGR_MOR));
+	seq_printf(s, "MCFR = %8x\n", at91_sys_read(AT91_CKGR_MCFR));
+	seq_printf(s, "PLLA = %8x\n", at91_sys_read(AT91_CKGR_PLLAR));
+	if (cpu_has_pllb())
+		seq_printf(s, "PLLB = %8x\n", at91_sys_read(AT91_CKGR_PLLBR));
+	if (cpu_has_utmi())
+		seq_printf(s, "UCKR = %8x\n", uckr = at91_sys_read(AT91_CKGR_UCKR));
+	seq_printf(s, "MCKR = %8x\n", at91_sys_read(AT91_PMC_MCKR));
+	if (cpu_has_upll())
+		seq_printf(s, "USB  = %8x\n", at91_sys_read(AT91_PMC_USB));
+	seq_printf(s, "SR   = %8x\n", sr = at91_sys_read(AT91_PMC_SR));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	seq_printf(s, "\n");
 
@@ -640,14 +756,25 @@ static void __init at91_pllb_usbfs_clock_init(unsigned long main_clock)
 	if (cpu_is_at91rm9200()) {
 		uhpck.pmc_mask = AT91RM9200_PMC_UHP;
 		udpck.pmc_mask = AT91RM9200_PMC_UDP;
+<<<<<<< HEAD
 		at91_pmc_write(AT91_PMC_SCER, AT91RM9200_PMC_MCKUDP);
+=======
+		at91_sys_write(AT91_PMC_SCER, AT91RM9200_PMC_MCKUDP);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (cpu_is_at91sam9260() || cpu_is_at91sam9261() ||
 		   cpu_is_at91sam9263() || cpu_is_at91sam9g20() ||
 		   cpu_is_at91sam9g10()) {
 		uhpck.pmc_mask = AT91SAM926x_PMC_UHP;
 		udpck.pmc_mask = AT91SAM926x_PMC_UDP;
+<<<<<<< HEAD
 	}
 	at91_pmc_write(AT91_CKGR_PLLBR, 0);
+=======
+	} else if (cpu_is_at91cap9()) {
+		uhpck.pmc_mask = AT91CAP9_PMC_UHP;
+	}
+	at91_sys_write(AT91_CKGR_PLLBR, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	udpck.rate_hz = at91_usb_rate(&pllb, pllb.rate_hz, at91_pllb_usb_init);
 	uhpck.rate_hz = at91_usb_rate(&pllb, pllb.rate_hz, at91_pllb_usb_init);
@@ -664,16 +791,27 @@ static void __init at91_upll_usbfs_clock_init(unsigned long main_clock)
 	/* Setup divider by 10 to reach 48 MHz */
 	usbr |= ((10 - 1) << 8) & AT91_PMC_OHCIUSBDIV;
 
+<<<<<<< HEAD
 	at91_pmc_write(AT91_PMC_USB, usbr);
+=======
+	at91_sys_write(AT91_PMC_USB, usbr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Now set uhpck values */
 	uhpck.parent = &utmi_clk;
 	uhpck.pmc_mask = AT91SAM926x_PMC_UHP;
 	uhpck.rate_hz = utmi_clk.rate_hz;
+<<<<<<< HEAD
 	uhpck.rate_hz /= 1 + ((at91_pmc_read(AT91_PMC_USB) & AT91_PMC_OHCIUSBDIV) >> 8);
 }
 
 static int __init at91_pmc_init(unsigned long main_clock)
+=======
+	uhpck.rate_hz /= 1 + ((at91_sys_read(AT91_PMC_USB) & AT91_PMC_OHCIUSBDIV) >> 8);
+}
+
+int __init at91_clock_init(unsigned long main_clock)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned tmp, freq, mckr;
 	int i;
@@ -687,14 +825,22 @@ static int __init at91_pmc_init(unsigned long main_clock)
 	 */
 	if (!main_clock) {
 		do {
+<<<<<<< HEAD
 			tmp = at91_pmc_read(AT91_CKGR_MCFR);
+=======
+			tmp = at91_sys_read(AT91_CKGR_MCFR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} while (!(tmp & AT91_PMC_MAINRDY));
 		main_clock = (tmp & AT91_PMC_MAINF) * (AT91_SLOW_CLOCK / 16);
 	}
 	main_clk.rate_hz = main_clock;
 
 	/* report if PLLA is more than mildly overclocked */
+<<<<<<< HEAD
 	plla.rate_hz = at91_pll_rate(&plla, main_clock, at91_pmc_read(AT91_CKGR_PLLAR));
+=======
+	plla.rate_hz = at91_pll_rate(&plla, main_clock, at91_sys_read(AT91_CKGR_PLLAR));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cpu_has_300M_plla()) {
 		if (plla.rate_hz > 300000000)
 			pll_overclock = true;
@@ -708,8 +854,13 @@ static int __init at91_pmc_init(unsigned long main_clock)
 	if (pll_overclock)
 		pr_info("Clocks: PLLA overclocked, %ld MHz\n", plla.rate_hz / 1000000);
 
+<<<<<<< HEAD
 	if (cpu_has_plladiv2()) {
 		mckr = at91_pmc_read(AT91_PMC_MCKR);
+=======
+	if (cpu_is_at91sam9g45()) {
+		mckr = at91_sys_read(AT91_PMC_MCKR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		plla.rate_hz /= (1 << ((mckr & AT91_PMC_PLLADIV2) >> 12));	/* plla divisor by 2 */
 	}
 
@@ -730,10 +881,13 @@ static int __init at91_pmc_init(unsigned long main_clock)
 		 * (obtain the USB High Speed 480 MHz when input is 12 MHz)
 		 */
 		utmi_clk.rate_hz = 40 * utmi_clk.parent->rate_hz;
+<<<<<<< HEAD
 
 		/* UTMI bias and PLL are managed at the same time */
 		if (cpu_has_upll())
 			utmi_clk.pmc_mask |= AT91_PMC_BIASEN;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -749,10 +903,17 @@ static int __init at91_pmc_init(unsigned long main_clock)
 	 * MCK and CPU derive from one of those primary clocks.
 	 * For now, assume this parentage won't change.
 	 */
+<<<<<<< HEAD
 	mckr = at91_pmc_read(AT91_PMC_MCKR);
 	mck.parent = at91_css_to_clk(mckr & AT91_PMC_CSS);
 	freq = mck.parent->rate_hz;
 	freq /= pmc_prescaler_divider(mckr);					/* prescale */
+=======
+	mckr = at91_sys_read(AT91_PMC_MCKR);
+	mck.parent = at91_css_to_clk(mckr & AT91_PMC_CSS);
+	freq = mck.parent->rate_hz;
+	freq /= (1 << ((mckr & AT91_PMC_PRES) >> 2));				/* prescale */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cpu_is_at91rm9200()) {
 		mck.rate_hz = freq / (1 + ((mckr & AT91_PMC_MDIV) >> 8));	/* mdiv */
 	} else if (cpu_is_at91sam9g20()) {
@@ -760,19 +921,26 @@ static int __init at91_pmc_init(unsigned long main_clock)
 			freq / ((mckr & AT91_PMC_MDIV) >> 7) : freq;	/* mdiv ; (x >> 7) = ((x >> 8) * 2) */
 		if (mckr & AT91_PMC_PDIV)
 			freq /= 2;		/* processor clock division */
+<<<<<<< HEAD
 	} else if (cpu_has_mdiv3()) {
+=======
+	} else if (cpu_is_at91sam9g45()) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mck.rate_hz = (mckr & AT91_PMC_MDIV) == AT91SAM9_PMC_MDIV_3 ?
 			freq / 3 : freq / (1 << ((mckr & AT91_PMC_MDIV) >> 8));	/* mdiv */
 	} else {
 		mck.rate_hz = freq / (1 << ((mckr & AT91_PMC_MDIV) >> 8));		/* mdiv */
 	}
 
+<<<<<<< HEAD
 	if (cpu_has_alt_prescaler()) {
 		/* Programmable clocks can use MCK */
 		mck.type |= CLK_TYPE_PRIMARY;
 		mck.id = 4;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Register the PMC's standard clocks */
 	for (i = 0; i < ARRAY_SIZE(standard_pmc_clocks); i++)
 		at91_clk_add(standard_pmc_clocks[i]);
@@ -800,6 +968,7 @@ static int __init at91_pmc_init(unsigned long main_clock)
 	return 0;
 }
 
+<<<<<<< HEAD
 #if defined(CONFIG_OF)
 static struct of_device_id pmc_ids[] = {
 	{ .compatible = "atmel,at91rm9200-pmc" },
@@ -849,6 +1018,8 @@ int __init at91_clock_init(unsigned long main_clock)
 	return at91_pmc_init(main_clock);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Several unused clocks may be active.  Turn them off.
  */
@@ -871,15 +1042,23 @@ static int __init at91_clock_reset(void)
 		pr_debug("Clocks: disable unused %s\n", clk->name);
 	}
 
+<<<<<<< HEAD
 	at91_pmc_write(AT91_PMC_PCDR, pcdr);
 	at91_pmc_write(AT91_PMC_SCDR, scdr);
+=======
+	at91_sys_write(AT91_PMC_PCDR, pcdr);
+	at91_sys_write(AT91_PMC_SCDR, scdr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 late_initcall(at91_clock_reset);
+<<<<<<< HEAD
 
 void at91sam9_idle(void)
 {
 	at91_pmc_write(AT91_PMC_SCDR, AT91_PMC_PCK);
 	cpu_do_idle();
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -19,6 +19,10 @@
 
 #include <linux/device.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/fs.h>
 #include <linux/init.h>
 #include <asm/uaccess.h>
@@ -35,9 +39,16 @@
 #include <asm/mipsmtregs.h>
 #include <asm/mips_mt.h>
 #include <asm/cacheflush.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
 #include <asm/cpu.h>
 #include <asm/processor.h>
+=======
+#include <asm/atomic.h>
+#include <asm/cpu.h>
+#include <asm/processor.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/vpe.h>
 #include <asm/rtlx.h>
 
@@ -472,6 +483,10 @@ static const struct file_operations rtlx_fops = {
 
 static struct irqaction rtlx_irq = {
 	.handler	= rtlx_interrupt,
+<<<<<<< HEAD
+=======
+	.flags		= IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name		= "RTLX",
 };
 

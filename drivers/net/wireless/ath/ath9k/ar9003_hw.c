@@ -19,10 +19,13 @@
 #include "ar9003_2p2_initvals.h"
 #include "ar9485_initvals.h"
 #include "ar9340_initvals.h"
+<<<<<<< HEAD
 #include "ar9330_1p1_initvals.h"
 #include "ar9330_1p2_initvals.h"
 #include "ar9580_1p0_initvals.h"
 #include "ar9462_2p0_initvals.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* General hardware code for the AR9003 hadware family */
 
@@ -33,6 +36,7 @@
  */
 static void ar9003_hw_init_mode_regs(struct ath_hw *ah)
 {
+<<<<<<< HEAD
 #define PCIE_PLL_ON_CREQ_DIS_L1_2P0 \
 		ar9462_pciephy_pll_on_clkreq_disable_L1_2p0
 
@@ -148,6 +152,9 @@ static void ar9003_hw_init_mode_regs(struct ath_hw *ah)
 					ar9331_1p2_xtal_40M,
 					ARRAY_SIZE(ar9331_1p2_xtal_40M), 2);
 	} else if (AR_SREV_9340(ah)) {
+=======
+	if (AR_SREV_9340(ah)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* mac */
 		INIT_INI_ARRAY(&ah->iniMac[ATH_INI_PRE], NULL, 0, 0);
 		INIT_INI_ARRAY(&ah->iniMac[ATH_INI_CORE],
@@ -194,16 +201,27 @@ static void ar9003_hw_init_mode_regs(struct ath_hw *ah)
 				ARRAY_SIZE(ar9340Modes_high_ob_db_tx_gain_table_1p0),
 				5);
 
+<<<<<<< HEAD
 		INIT_INI_ARRAY(&ah->iniModesFastClock,
+=======
+		INIT_INI_ARRAY(&ah->iniModesAdditional,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ar9340Modes_fast_clock_1p0,
 				ARRAY_SIZE(ar9340Modes_fast_clock_1p0),
 				3);
 
+<<<<<<< HEAD
 		if (!ah->is_clk_25mhz)
 			INIT_INI_ARRAY(&ah->iniAdditional,
 				       ar9340_1p0_radio_core_40M,
 				       ARRAY_SIZE(ar9340_1p0_radio_core_40M),
 				       2);
+=======
+		INIT_INI_ARRAY(&ah->iniModesAdditional_40M,
+				ar9340_1p0_radio_core_40M,
+				ARRAY_SIZE(ar9340_1p0_radio_core_40M),
+				2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (AR_SREV_9485_11(ah)) {
 		/* mac */
 		INIT_INI_ARRAY(&ah->iniMac[ATH_INI_PRE], NULL, 0, 0);
@@ -264,6 +282,7 @@ static void ar9003_hw_init_mode_regs(struct ath_hw *ah)
 				ar9485_1_1_pcie_phy_clkreq_disable_L1,
 				ARRAY_SIZE(ar9485_1_1_pcie_phy_clkreq_disable_L1),
 				2);
+<<<<<<< HEAD
 	} else if (AR_SREV_9462_20(ah)) {
 
 		INIT_INI_ARRAY(&ah->iniMac[ATH_INI_PRE], NULL, 0, 0);
@@ -383,6 +402,8 @@ static void ar9003_hw_init_mode_regs(struct ath_hw *ah)
 				ar9580_1p0_modes_fast_clock,
 				ARRAY_SIZE(ar9580_1p0_modes_fast_clock),
 				3);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		/* mac */
 		INIT_INI_ARRAY(&ah->iniMac[ATH_INI_PRE], NULL, 0, 0);
@@ -446,13 +467,18 @@ static void ar9003_hw_init_mode_regs(struct ath_hw *ah)
 				2);
 
 		/* Fast clock modal settings */
+<<<<<<< HEAD
 		INIT_INI_ARRAY(&ah->iniModesFastClock,
+=======
+		INIT_INI_ARRAY(&ah->iniModesAdditional,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ar9300Modes_fast_clock_2p2,
 				ARRAY_SIZE(ar9300Modes_fast_clock_2p2),
 				3);
 	}
 }
 
+<<<<<<< HEAD
 static void ar9003_tx_gain_table_mode0(struct ath_hw *ah)
 {
 	if (AR_SREV_9330_12(ah))
@@ -599,11 +625,14 @@ static void ar9003_tx_gain_table_mode3(struct ath_hw *ah)
 			5);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ar9003_tx_gain_table_apply(struct ath_hw *ah)
 {
 	switch (ar9003_hw_get_tx_gain_idx(ah)) {
 	case 0:
 	default:
+<<<<<<< HEAD
 		ar9003_tx_gain_table_mode0(ah);
 		break;
 	case 1:
@@ -614,10 +643,79 @@ static void ar9003_tx_gain_table_apply(struct ath_hw *ah)
 		break;
 	case 3:
 		ar9003_tx_gain_table_mode3(ah);
+=======
+		if (AR_SREV_9340(ah))
+			INIT_INI_ARRAY(&ah->iniModesTxGain,
+					ar9340Modes_lowest_ob_db_tx_gain_table_1p0,
+				       ARRAY_SIZE(ar9340Modes_lowest_ob_db_tx_gain_table_1p0),
+				       5);
+		else if (AR_SREV_9485_11(ah))
+			INIT_INI_ARRAY(&ah->iniModesTxGain,
+				       ar9485_modes_lowest_ob_db_tx_gain_1_1,
+				       ARRAY_SIZE(ar9485_modes_lowest_ob_db_tx_gain_1_1),
+				       5);
+		else
+			INIT_INI_ARRAY(&ah->iniModesTxGain,
+				       ar9300Modes_lowest_ob_db_tx_gain_table_2p2,
+				       ARRAY_SIZE(ar9300Modes_lowest_ob_db_tx_gain_table_2p2),
+				       5);
+		break;
+	case 1:
+		if (AR_SREV_9340(ah))
+			INIT_INI_ARRAY(&ah->iniModesTxGain,
+					ar9340Modes_lowest_ob_db_tx_gain_table_1p0,
+				       ARRAY_SIZE(ar9340Modes_lowest_ob_db_tx_gain_table_1p0),
+				       5);
+		else if (AR_SREV_9485_11(ah))
+			INIT_INI_ARRAY(&ah->iniModesTxGain,
+				       ar9485Modes_high_ob_db_tx_gain_1_1,
+				       ARRAY_SIZE(ar9485Modes_high_ob_db_tx_gain_1_1),
+				       5);
+		else
+			INIT_INI_ARRAY(&ah->iniModesTxGain,
+				       ar9300Modes_high_ob_db_tx_gain_table_2p2,
+				       ARRAY_SIZE(ar9300Modes_high_ob_db_tx_gain_table_2p2),
+				       5);
+		break;
+	case 2:
+		if (AR_SREV_9340(ah))
+			INIT_INI_ARRAY(&ah->iniModesTxGain,
+					ar9340Modes_lowest_ob_db_tx_gain_table_1p0,
+				       ARRAY_SIZE(ar9340Modes_lowest_ob_db_tx_gain_table_1p0),
+				       5);
+		else if (AR_SREV_9485_11(ah))
+			INIT_INI_ARRAY(&ah->iniModesTxGain,
+				       ar9485Modes_low_ob_db_tx_gain_1_1,
+				       ARRAY_SIZE(ar9485Modes_low_ob_db_tx_gain_1_1),
+				       5);
+		else
+			INIT_INI_ARRAY(&ah->iniModesTxGain,
+				       ar9300Modes_low_ob_db_tx_gain_table_2p2,
+				       ARRAY_SIZE(ar9300Modes_low_ob_db_tx_gain_table_2p2),
+				       5);
+		break;
+	case 3:
+		if (AR_SREV_9340(ah))
+			INIT_INI_ARRAY(&ah->iniModesTxGain,
+					ar9340Modes_lowest_ob_db_tx_gain_table_1p0,
+				       ARRAY_SIZE(ar9340Modes_lowest_ob_db_tx_gain_table_1p0),
+				       5);
+		else if (AR_SREV_9485_11(ah))
+			INIT_INI_ARRAY(&ah->iniModesTxGain,
+				       ar9485Modes_high_power_tx_gain_1_1,
+				       ARRAY_SIZE(ar9485Modes_high_power_tx_gain_1_1),
+				       5);
+		else
+			INIT_INI_ARRAY(&ah->iniModesTxGain,
+				       ar9300Modes_high_power_tx_gain_table_2p2,
+				       ARRAY_SIZE(ar9300Modes_high_power_tx_gain_table_2p2),
+				       5);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 }
 
+<<<<<<< HEAD
 static void ar9003_rx_gain_table_mode0(struct ath_hw *ah)
 {
 	if (AR_SREV_9330_12(ah))
@@ -704,11 +802,14 @@ static void ar9003_rx_gain_table_mode2(struct ath_hw *ah)
 			       ARRAY_SIZE(ar9462_common_mixed_rx_gain_table_2p0), 2);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ar9003_rx_gain_table_apply(struct ath_hw *ah)
 {
 	switch (ar9003_hw_get_rx_gain_idx(ah)) {
 	case 0:
 	default:
+<<<<<<< HEAD
 		ar9003_rx_gain_table_mode0(ah);
 		break;
 	case 1:
@@ -716,6 +817,40 @@ static void ar9003_rx_gain_table_apply(struct ath_hw *ah)
 		break;
 	case 2:
 		ar9003_rx_gain_table_mode2(ah);
+=======
+		if (AR_SREV_9340(ah))
+			INIT_INI_ARRAY(&ah->iniModesRxGain,
+				       ar9340Common_rx_gain_table_1p0,
+				       ARRAY_SIZE(ar9340Common_rx_gain_table_1p0),
+				       2);
+		else if (AR_SREV_9485_11(ah))
+			INIT_INI_ARRAY(&ah->iniModesRxGain,
+				       ar9485Common_wo_xlna_rx_gain_1_1,
+				       ARRAY_SIZE(ar9485Common_wo_xlna_rx_gain_1_1),
+				       2);
+		else
+			INIT_INI_ARRAY(&ah->iniModesRxGain,
+				       ar9300Common_rx_gain_table_2p2,
+				       ARRAY_SIZE(ar9300Common_rx_gain_table_2p2),
+				       2);
+		break;
+	case 1:
+		if (AR_SREV_9340(ah))
+			INIT_INI_ARRAY(&ah->iniModesRxGain,
+				       ar9340Common_wo_xlna_rx_gain_table_1p0,
+				       ARRAY_SIZE(ar9340Common_wo_xlna_rx_gain_table_1p0),
+				       2);
+		else if (AR_SREV_9485_11(ah))
+			INIT_INI_ARRAY(&ah->iniModesRxGain,
+				       ar9485Common_wo_xlna_rx_gain_1_1,
+				       ARRAY_SIZE(ar9485Common_wo_xlna_rx_gain_1_1),
+				       2);
+		else
+			INIT_INI_ARRAY(&ah->iniModesRxGain,
+				       ar9300Common_wo_xlna_rx_gain_table_2p2,
+				       ARRAY_SIZE(ar9300Common_wo_xlna_rx_gain_table_2p2),
+				       2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 }
@@ -737,10 +872,21 @@ static void ar9003_hw_init_mode_gain_regs(struct ath_hw *ah)
  * register as the other analog registers.  Hence the 9 writes.
  */
 static void ar9003_hw_configpcipowersave(struct ath_hw *ah,
+<<<<<<< HEAD
 					 bool power_off)
 {
 	/* Nothing to do on restore for 11N */
 	if (!power_off /* !restore */) {
+=======
+					 int restore,
+					 int power_off)
+{
+	if (ah->is_pciexpress != true || ah->aspm_enabled != true)
+		return;
+
+	/* Nothing to do on restore for 11N */
+	if (!restore) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* set bit 19 to allow forcing of pcie core into L1 state */
 		REG_SET_BIT(ah, AR_PCIE_PM_CTRL, AR_PCIE_PM_CTRL_ENA);
 

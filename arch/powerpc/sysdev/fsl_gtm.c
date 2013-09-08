@@ -22,7 +22,10 @@
 #include <linux/spinlock.h>
 #include <linux/bitops.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/fsl_gtm.h>
 
 #define GTCFR_STP(x)		((x) & 1 ? 1 << 5 : 1 << 1)

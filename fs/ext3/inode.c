@@ -22,17 +22,39 @@
  *  Assorted race fixes, rewrite of ext3_get_block() by Al Viro, 2000
  */
 
+<<<<<<< HEAD
 #include <linux/highuid.h>
 #include <linux/quotaops.h>
 #include <linux/writeback.h>
 #include <linux/mpage.h>
 #include <linux/namei.h>
 #include "ext3.h"
+=======
+#include <linux/module.h>
+#include <linux/fs.h>
+#include <linux/time.h>
+#include <linux/ext3_jbd.h>
+#include <linux/jbd.h>
+#include <linux/highuid.h>
+#include <linux/pagemap.h>
+#include <linux/quotaops.h>
+#include <linux/string.h>
+#include <linux/buffer_head.h>
+#include <linux/writeback.h>
+#include <linux/mpage.h>
+#include <linux/uio.h>
+#include <linux/bio.h>
+#include <linux/fiemap.h>
+#include <linux/namei.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "xattr.h"
 #include "acl.h"
 
 static int ext3_writepage_trans_blocks(struct inode *inode);
+<<<<<<< HEAD
 static int ext3_block_truncate_page(struct inode *inode, loff_t from);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Test whether an inode is a fast symlink.
@@ -61,7 +83,10 @@ int ext3_forget(handle_t *handle, int is_metadata, struct inode *inode,
 
 	might_sleep();
 
+<<<<<<< HEAD
 	trace_ext3_forget(inode, is_metadata, blocknr);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BUFFER_TRACE(bh, "enter");
 
 	jbd_debug(4, "forgetting bh %p: is_metadata = %d, mode %o, "
@@ -186,17 +211,24 @@ static int truncate_restart_transaction(handle_t *handle, struct inode *inode)
  */
 void ext3_evict_inode (struct inode *inode)
 {
+<<<<<<< HEAD
 	struct ext3_inode_info *ei = EXT3_I(inode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ext3_block_alloc_info *rsv;
 	handle_t *handle;
 	int want_delete = 0;
 
+<<<<<<< HEAD
 	trace_ext3_evict_inode(inode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!inode->i_nlink && !is_bad_inode(inode)) {
 		dquot_initialize(inode);
 		want_delete = 1;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * When journalling data dirty buffers are tracked only in the journal.
 	 * So although mm thinks everything is clean and ready for reaping the
@@ -232,6 +264,13 @@ void ext3_evict_inode (struct inode *inode)
 	ext3_discard_reservation(inode);
 	rsv = ei->i_block_alloc_info;
 	ei->i_block_alloc_info = NULL;
+=======
+	truncate_inode_pages(&inode->i_data, 0);
+
+	ext3_discard_reservation(inode);
+	rsv = EXT3_I(inode)->i_block_alloc_info;
+	EXT3_I(inode)->i_block_alloc_info = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(rsv))
 		kfree(rsv);
 
@@ -255,6 +294,7 @@ void ext3_evict_inode (struct inode *inode)
 	if (inode->i_blocks)
 		ext3_truncate(inode);
 	/*
+<<<<<<< HEAD
 	 * Kill off the orphan record created when the inode lost the last
 	 * link.  Note that ext3_orphan_del() has to be able to cope with the
 	 * deletion of a non-existent orphan - ext3_truncate() could
@@ -262,6 +302,17 @@ void ext3_evict_inode (struct inode *inode)
 	 */
 	ext3_orphan_del(handle, inode);
 	ei->i_dtime = get_seconds();
+=======
+	 * Kill off the orphan record which ext3_truncate created.
+	 * AKPM: I think this can be inside the above `if'.
+	 * Note that ext3_orphan_del() has to be able to cope with the
+	 * deletion of a non-existent orphan - this is because we don't
+	 * know if ext3_truncate() actually created an orphan record.
+	 * (Well, we could do this if we need to, but heck - it works)
+	 */
+	ext3_orphan_del(handle, inode);
+	EXT3_I(inode)->i_dtime	= get_seconds();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * One subtle ordering requirement: if anything has gone wrong
@@ -747,7 +798,10 @@ static int ext3_splice_branch(handle_t *handle, struct inode *inode,
 	struct ext3_block_alloc_info *block_i;
 	ext3_fsblk_t current_block;
 	struct ext3_inode_info *ei = EXT3_I(inode);
+<<<<<<< HEAD
 	struct timespec now;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	block_i = ei->i_block_alloc_info;
 	/*
@@ -787,11 +841,17 @@ static int ext3_splice_branch(handle_t *handle, struct inode *inode,
 	}
 
 	/* We are done with atomic stuff, now do the rest of housekeeping */
+<<<<<<< HEAD
 	now = CURRENT_TIME_SEC;
 	if (!timespec_equal(&inode->i_ctime, &now) || !where->bh) {
 		inode->i_ctime = now;
 		ext3_mark_inode_dirty(handle, inode);
 	}
+=======
+
+	inode->i_ctime = CURRENT_TIME_SEC;
+	ext3_mark_inode_dirty(handle, inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* ext3_mark_inode_dirty already updated i_sync_tid */
 	atomic_set(&ei->i_datasync_tid, handle->h_transaction->t_tid);
 
@@ -867,7 +927,10 @@ int ext3_get_blocks_handle(handle_t *handle, struct inode *inode,
 	ext3_fsblk_t first_block = 0;
 
 
+<<<<<<< HEAD
 	trace_ext3_get_blocks_enter(inode, iblock, maxblocks, create);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	J_ASSERT(handle != NULL || create == 0);
 	depth = ext3_block_to_path(inode,iblock,offsets,&blocks_to_boundary);
 
@@ -912,9 +975,12 @@ int ext3_get_blocks_handle(handle_t *handle, struct inode *inode,
 	if (!create || err == -EIO)
 		goto cleanup;
 
+<<<<<<< HEAD
 	/*
 	 * Block out ext3_truncate while we alter the tree
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&ei->truncate_mutex);
 
 	/*
@@ -963,6 +1029,12 @@ int ext3_get_blocks_handle(handle_t *handle, struct inode *inode,
 	 */
 	count = ext3_blks_to_allocate(partial, indirect_blks,
 					maxblocks, blocks_to_boundary);
+<<<<<<< HEAD
+=======
+	/*
+	 * Block out ext3_truncate while we alter the tree
+	 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = ext3_alloc_branch(handle, inode, indirect_blks, &count, goal,
 				offsets + (partial - chain), partial);
 
@@ -996,9 +1068,12 @@ cleanup:
 	}
 	BUFFER_TRACE(bh_result, "returned");
 out:
+<<<<<<< HEAD
 	trace_ext3_get_blocks_exit(inode, iblock,
 				   depth ? le32_to_cpu(chain[depth-1].key) : 0,
 				   count, err);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -1129,11 +1204,17 @@ struct buffer_head *ext3_bread(handle_t *handle, struct inode *inode,
 	bh = ext3_getblk(handle, inode, block, create, err);
 	if (!bh)
 		return bh;
+<<<<<<< HEAD
 	if (bh_uptodate_or_lock(bh))
 		return bh;
 	get_bh(bh);
 	bh->b_end_io = end_buffer_read_sync;
 	submit_bh(READ | REQ_META | REQ_PRIO, bh);
+=======
+	if (buffer_uptodate(bh))
+		return bh;
+	ll_rw_block(READ_META, 1, &bh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wait_on_buffer(bh);
 	if (buffer_uptodate(bh))
 		return bh;
@@ -1233,6 +1314,7 @@ static void ext3_truncate_failed_write(struct inode *inode)
 	ext3_truncate(inode);
 }
 
+<<<<<<< HEAD
 /*
  * Truncate blocks that were not used by direct IO write. We have to zero out
  * the last file block as well because direct IO might have written to it.
@@ -1243,6 +1325,8 @@ static void ext3_truncate_failed_direct_write(struct inode *inode)
 	ext3_truncate(inode);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ext3_write_begin(struct file *file, struct address_space *mapping,
 				loff_t pos, unsigned len, unsigned flags,
 				struct page **pagep, void **fsdata)
@@ -1258,8 +1342,11 @@ static int ext3_write_begin(struct file *file, struct address_space *mapping,
 	 * we allocate blocks but write fails for some reason */
 	int needed_blocks = ext3_writepage_trans_blocks(inode) + 1;
 
+<<<<<<< HEAD
 	trace_ext3_write_begin(inode, pos, len, flags);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	index = pos >> PAGE_CACHE_SHIFT;
 	from = pos & (PAGE_CACHE_SIZE - 1);
 	to = from + len;
@@ -1375,7 +1462,10 @@ static int ext3_ordered_write_end(struct file *file,
 	unsigned from, to;
 	int ret = 0, ret2;
 
+<<<<<<< HEAD
 	trace_ext3_ordered_write_end(inode, pos, len, copied);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	copied = block_write_end(file, mapping, pos, len, copied, page, fsdata);
 
 	from = pos & (PAGE_CACHE_SIZE - 1);
@@ -1411,7 +1501,10 @@ static int ext3_writeback_write_end(struct file *file,
 	struct inode *inode = file->f_mapping->host;
 	int ret;
 
+<<<<<<< HEAD
 	trace_ext3_writeback_write_end(inode, pos, len, copied);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	copied = block_write_end(file, mapping, pos, len, copied, page, fsdata);
 	update_file_sizes(inode, pos, copied);
 	/*
@@ -1436,12 +1529,18 @@ static int ext3_journalled_write_end(struct file *file,
 {
 	handle_t *handle = ext3_journal_current_handle();
 	struct inode *inode = mapping->host;
+<<<<<<< HEAD
 	struct ext3_inode_info *ei = EXT3_I(inode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0, ret2;
 	int partial = 0;
 	unsigned from, to;
 
+<<<<<<< HEAD
 	trace_ext3_journalled_write_end(inode, pos, len, copied);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	from = pos & (PAGE_CACHE_SIZE - 1);
 	to = from + len;
 
@@ -1466,9 +1565,14 @@ static int ext3_journalled_write_end(struct file *file,
 	if (pos + len > inode->i_size && ext3_can_truncate(inode))
 		ext3_orphan_add(handle, inode);
 	ext3_set_inode_state(inode, EXT3_STATE_JDATA);
+<<<<<<< HEAD
 	atomic_set(&ei->i_datasync_tid, handle->h_transaction->t_tid);
 	if (inode->i_size > ei->i_disksize) {
 		ei->i_disksize = inode->i_size;
+=======
+	if (inode->i_size > EXT3_I(inode)->i_disksize) {
+		EXT3_I(inode)->i_disksize = inode->i_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret2 = ext3_mark_inode_dirty(handle, inode);
 		if (!ret)
 			ret = ret2;
@@ -1631,7 +1735,10 @@ static int ext3_ordered_writepage(struct page *page,
 	if (ext3_journal_current_handle())
 		goto out_fail;
 
+<<<<<<< HEAD
 	trace_ext3_ordered_writepage(page);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!page_has_buffers(page)) {
 		create_empty_buffers(page, inode->i_sb->s_blocksize,
 				(1 << BH_Dirty)|(1 << BH_Uptodate));
@@ -1708,7 +1815,10 @@ static int ext3_writeback_writepage(struct page *page,
 	if (ext3_journal_current_handle())
 		goto out_fail;
 
+<<<<<<< HEAD
 	trace_ext3_writeback_writepage(page);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (page_has_buffers(page)) {
 		if (!walk_page_buffers(NULL, page_buffers(page), 0,
 				      PAGE_CACHE_SIZE, NULL, buffer_unmapped)) {
@@ -1757,7 +1867,10 @@ static int ext3_journalled_writepage(struct page *page,
 	if (ext3_journal_current_handle())
 		goto no_write;
 
+<<<<<<< HEAD
 	trace_ext3_journalled_writepage(page);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	handle = ext3_journal_start(inode, ext3_writepage_trans_blocks(inode));
 	if (IS_ERR(handle)) {
 		ret = PTR_ERR(handle);
@@ -1784,8 +1897,11 @@ static int ext3_journalled_writepage(struct page *page,
 		if (ret == 0)
 			ret = err;
 		ext3_set_inode_state(inode, EXT3_STATE_JDATA);
+<<<<<<< HEAD
 		atomic_set(&EXT3_I(inode)->i_datasync_tid,
 			   handle->h_transaction->t_tid);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unlock_page(page);
 	} else {
 		/*
@@ -1810,7 +1926,10 @@ out_unlock:
 
 static int ext3_readpage(struct file *file, struct page *page)
 {
+<<<<<<< HEAD
 	trace_ext3_readpage(page);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return mpage_readpage(page, ext3_get_block);
 }
 
@@ -1825,8 +1944,11 @@ static void ext3_invalidatepage(struct page *page, unsigned long offset)
 {
 	journal_t *journal = EXT3_JOURNAL(page->mapping->host);
 
+<<<<<<< HEAD
 	trace_ext3_invalidatepage(page, offset);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * If it's a full truncate we just forget about the pending dirtying
 	 */
@@ -1840,7 +1962,10 @@ static int ext3_releasepage(struct page *page, gfp_t wait)
 {
 	journal_t *journal = EXT3_JOURNAL(page->mapping->host);
 
+<<<<<<< HEAD
 	trace_ext3_releasepage(page);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	WARN_ON(PageChecked(page));
 	if (!page_has_buffers(page))
 		return 0;
@@ -1869,8 +1994,11 @@ static ssize_t ext3_direct_IO(int rw, struct kiocb *iocb,
 	size_t count = iov_length(iov, nr_segs);
 	int retries = 0;
 
+<<<<<<< HEAD
 	trace_ext3_direct_IO_enter(inode, offset, iov_length(iov, nr_segs), rw);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rw == WRITE) {
 		loff_t final_size = offset + count;
 
@@ -1893,8 +2021,14 @@ static ssize_t ext3_direct_IO(int rw, struct kiocb *iocb,
 	}
 
 retry:
+<<<<<<< HEAD
 	ret = blockdev_direct_IO(rw, iocb, inode, iov, offset, nr_segs,
 				 ext3_get_block);
+=======
+	ret = blockdev_direct_IO(rw, iocb, inode, inode->i_sb->s_bdev, iov,
+				 offset, nr_segs,
+				 ext3_get_block, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * In case of error extending write may have instantiated a few
 	 * blocks outside i_size. Trim these off again.
@@ -1904,7 +2038,11 @@ retry:
 		loff_t end = offset + iov_length(iov, nr_segs);
 
 		if (end > isize)
+<<<<<<< HEAD
 			ext3_truncate_failed_direct_write(inode);
+=======
+			vmtruncate(inode, isize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (ret == -ENOSPC && ext3_should_retry_alloc(inode->i_sb, &retries))
 		goto retry;
@@ -1918,7 +2056,11 @@ retry:
 			/* This is really bad luck. We've written the data
 			 * but cannot extend i_size. Truncate allocated blocks
 			 * and pretend the write failed... */
+<<<<<<< HEAD
 			ext3_truncate_failed_direct_write(inode);
+=======
+			ext3_truncate(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = PTR_ERR(handle);
 			goto out;
 		}
@@ -1944,8 +2086,11 @@ retry:
 			ret = err;
 	}
 out:
+<<<<<<< HEAD
 	trace_ext3_direct_IO_exit(inode, offset,
 				iov_length(iov, nr_segs), rw, ret);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -2028,6 +2173,7 @@ void ext3_set_aops(struct inode *inode)
  * This required during truncate. We need to physically zero the tail end
  * of that block so it doesn't yield old data if the file is later grown.
  */
+<<<<<<< HEAD
 static int ext3_block_truncate_page(struct inode *inode, loff_t from)
 {
 	ext3_fsblk_t index = from >> PAGE_CACHE_SHIFT;
@@ -2046,6 +2192,19 @@ static int ext3_block_truncate_page(struct inode *inode, loff_t from)
 	page = grab_cache_page(inode->i_mapping, index);
 	if (!page)
 		return -ENOMEM;
+=======
+static int ext3_block_truncate_page(handle_t *handle, struct page *page,
+		struct address_space *mapping, loff_t from)
+{
+	ext3_fsblk_t index = from >> PAGE_CACHE_SHIFT;
+	unsigned offset = from & (PAGE_CACHE_SIZE-1);
+	unsigned blocksize, iblock, length, pos;
+	struct inode *inode = mapping->host;
+	struct buffer_head *bh;
+	int err = 0;
+
+	blocksize = inode->i_sb->s_blocksize;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	length = blocksize - (offset & (blocksize - 1));
 	iblock = index << (PAGE_CACHE_SHIFT - inode->i_sb->s_blocksize_bits);
 
@@ -2081,6 +2240,7 @@ static int ext3_block_truncate_page(struct inode *inode, loff_t from)
 	if (PageUptodate(page))
 		set_buffer_uptodate(bh);
 
+<<<<<<< HEAD
 	if (!bh_uptodate_or_lock(bh)) {
 		err = bh_submit_read(bh);
 		/* Uhhuh. Read error. Complain and punt. */
@@ -2100,11 +2260,26 @@ static int ext3_block_truncate_page(struct inode *inode, loff_t from)
 		}
 	}
 
+=======
+	if (!buffer_uptodate(bh)) {
+		err = -EIO;
+		ll_rw_block(READ, 1, &bh);
+		wait_on_buffer(bh);
+		/* Uhhuh. Read error. Complain and punt. */
+		if (!buffer_uptodate(bh))
+			goto unlock;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ext3_should_journal_data(inode)) {
 		BUFFER_TRACE(bh, "get write access");
 		err = ext3_journal_get_write_access(handle, bh);
 		if (err)
+<<<<<<< HEAD
 			goto stop;
+=======
+			goto unlock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	zero_user(page, offset, length);
@@ -2118,9 +2293,12 @@ static int ext3_block_truncate_page(struct inode *inode, loff_t from)
 			err = ext3_journal_dirty_data(handle, bh);
 		mark_buffer_dirty(bh);
 	}
+<<<<<<< HEAD
 stop:
 	if (handle)
 		ext3_journal_stop(handle);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unlock:
 	unlock_page(page);
@@ -2489,6 +2667,11 @@ static void ext3_free_branches(handle_t *handle, struct inode *inode,
 
 int ext3_can_truncate(struct inode *inode)
 {
+<<<<<<< HEAD
+=======
+	if (IS_APPEND(inode) || IS_IMMUTABLE(inode))
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (S_ISREG(inode->i_mode))
 		return 1;
 	if (S_ISDIR(inode->i_mode))
@@ -2505,7 +2688,11 @@ int ext3_can_truncate(struct inode *inode)
  * transaction, and VFS/VM ensures that ext3_truncate() cannot run
  * simultaneously on behalf of the same inode.
  *
+<<<<<<< HEAD
  * As we work through the truncate and commit bits of it to the journal there
+=======
+ * As we work through the truncate and commmit bits of it to the journal there
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * is one core, guiding principle: the file's tree must always be consistent on
  * disk.  We must be able to restart the truncate after a crash.
  *
@@ -2532,6 +2719,10 @@ void ext3_truncate(struct inode *inode)
 	struct ext3_inode_info *ei = EXT3_I(inode);
 	__le32 *i_data = ei->i_data;
 	int addr_per_block = EXT3_ADDR_PER_BLOCK(inode->i_sb);
+<<<<<<< HEAD
+=======
+	struct address_space *mapping = inode->i_mapping;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int offsets[4];
 	Indirect chain[4];
 	Indirect *partial;
@@ -2539,8 +2730,12 @@ void ext3_truncate(struct inode *inode)
 	int n;
 	long last_block;
 	unsigned blocksize = inode->i_sb->s_blocksize;
+<<<<<<< HEAD
 
 	trace_ext3_truncate_enter(inode);
+=======
+	struct page *page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!ext3_can_truncate(inode))
 		goto out_notrans;
@@ -2548,12 +2743,46 @@ void ext3_truncate(struct inode *inode)
 	if (inode->i_size == 0 && ext3_should_writeback_data(inode))
 		ext3_set_inode_state(inode, EXT3_STATE_FLUSH_ON_CLOSE);
 
+<<<<<<< HEAD
 	handle = start_transaction(inode);
 	if (IS_ERR(handle))
 		goto out_notrans;
 
 	last_block = (inode->i_size + blocksize-1)
 					>> EXT3_BLOCK_SIZE_BITS(inode->i_sb);
+=======
+	/*
+	 * We have to lock the EOF page here, because lock_page() nests
+	 * outside journal_start().
+	 */
+	if ((inode->i_size & (blocksize - 1)) == 0) {
+		/* Block boundary? Nothing to do */
+		page = NULL;
+	} else {
+		page = grab_cache_page(mapping,
+				inode->i_size >> PAGE_CACHE_SHIFT);
+		if (!page)
+			goto out_notrans;
+	}
+
+	handle = start_transaction(inode);
+	if (IS_ERR(handle)) {
+		if (page) {
+			clear_highpage(page);
+			flush_dcache_page(page);
+			unlock_page(page);
+			page_cache_release(page);
+		}
+		goto out_notrans;
+	}
+
+	last_block = (inode->i_size + blocksize-1)
+					>> EXT3_BLOCK_SIZE_BITS(inode->i_sb);
+
+	if (page)
+		ext3_block_truncate_page(handle, page, mapping, inode->i_size);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	n = ext3_block_to_path(inode, last_block, offsets, NULL);
 	if (n == 0)
 		goto out_stop;	/* error */
@@ -2668,7 +2897,10 @@ out_stop:
 		ext3_orphan_del(handle, inode);
 
 	ext3_journal_stop(handle);
+<<<<<<< HEAD
 	trace_ext3_truncate_exit(inode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return;
 out_notrans:
 	/*
@@ -2677,7 +2909,10 @@ out_notrans:
 	 */
 	if (inode->i_nlink)
 		ext3_orphan_del(NULL, inode);
+<<<<<<< HEAD
 	trace_ext3_truncate_exit(inode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static ext3_fsblk_t ext3_get_inode_block(struct super_block *sb,
@@ -2819,10 +3054,16 @@ make_io:
 		 * has in-inode xattrs, or we don't have this inode in memory.
 		 * Read the block from disk.
 		 */
+<<<<<<< HEAD
 		trace_ext3_load_inode(inode);
 		get_bh(bh);
 		bh->b_end_io = end_buffer_read_sync;
 		submit_bh(READ | REQ_META | REQ_PRIO, bh);
+=======
+		get_bh(bh);
+		bh->b_end_io = end_buffer_read_sync;
+		submit_bh(READ_META, bh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wait_on_buffer(bh);
 		if (!buffer_uptodate(bh)) {
 			ext3_error(inode->i_sb, "ext3_get_inode_loc",
@@ -2914,7 +3155,11 @@ struct inode *ext3_iget(struct super_block *sb, unsigned long ino)
 		inode->i_uid |= le16_to_cpu(raw_inode->i_uid_high) << 16;
 		inode->i_gid |= le16_to_cpu(raw_inode->i_gid_high) << 16;
 	}
+<<<<<<< HEAD
 	set_nlink(inode, le16_to_cpu(raw_inode->i_links_count));
+=======
+	inode->i_nlink = le16_to_cpu(raw_inode->i_links_count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	inode->i_size = le32_to_cpu(raw_inode->i_size);
 	inode->i_atime.tv_sec = (signed)le32_to_cpu(raw_inode->i_atime);
 	inode->i_ctime.tv_sec = (signed)le32_to_cpu(raw_inode->i_ctime);
@@ -3069,8 +3314,11 @@ static int ext3_do_update_inode(handle_t *handle,
 	struct ext3_inode_info *ei = EXT3_I(inode);
 	struct buffer_head *bh = iloc->bh;
 	int err = 0, rc, block;
+<<<<<<< HEAD
 	int need_datasync = 0;
 	__le32 disksize;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 again:
 	/* we can't allow multiple procs in here at once, its a bit racey */
@@ -3108,11 +3356,15 @@ again:
 		raw_inode->i_gid_high = 0;
 	}
 	raw_inode->i_links_count = cpu_to_le16(inode->i_nlink);
+<<<<<<< HEAD
 	disksize = cpu_to_le32(ei->i_disksize);
 	if (disksize != raw_inode->i_size) {
 		need_datasync = 1;
 		raw_inode->i_size = disksize;
 	}
+=======
+	raw_inode->i_size = cpu_to_le32(ei->i_disksize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	raw_inode->i_atime = cpu_to_le32(inode->i_atime.tv_sec);
 	raw_inode->i_ctime = cpu_to_le32(inode->i_ctime.tv_sec);
 	raw_inode->i_mtime = cpu_to_le32(inode->i_mtime.tv_sec);
@@ -3128,11 +3380,16 @@ again:
 	if (!S_ISREG(inode->i_mode)) {
 		raw_inode->i_dir_acl = cpu_to_le32(ei->i_dir_acl);
 	} else {
+<<<<<<< HEAD
 		disksize = cpu_to_le32(ei->i_disksize >> 32);
 		if (disksize != raw_inode->i_size_high) {
 			raw_inode->i_size_high = disksize;
 			need_datasync = 1;
 		}
+=======
+		raw_inode->i_size_high =
+			cpu_to_le32(ei->i_disksize >> 32);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ei->i_disksize > 0x7fffffffULL) {
 			struct super_block *sb = inode->i_sb;
 			if (!EXT3_HAS_RO_COMPAT_FEATURE(sb,
@@ -3185,8 +3442,11 @@ again:
 	ext3_clear_inode_state(inode, EXT3_STATE_NEW);
 
 	atomic_set(&ei->i_sync_tid, handle->h_transaction->t_tid);
+<<<<<<< HEAD
 	if (need_datasync)
 		atomic_set(&ei->i_datasync_tid, handle->h_transaction->t_tid);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_brelse:
 	brelse (bh);
 	ext3_std_error(inode->i_sb, err);
@@ -3301,9 +3561,12 @@ int ext3_setattr(struct dentry *dentry, struct iattr *attr)
 		ext3_journal_stop(handle);
 	}
 
+<<<<<<< HEAD
 	if (attr->ia_valid & ATTR_SIZE)
 		inode_dio_wait(inode);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (S_ISREG(inode->i_mode) &&
 	    attr->ia_valid & ATTR_SIZE && attr->ia_size < inode->i_size) {
 		handle_t *handle;
@@ -3315,6 +3578,7 @@ int ext3_setattr(struct dentry *dentry, struct iattr *attr)
 		}
 
 		error = ext3_orphan_add(handle, inode);
+<<<<<<< HEAD
 		if (error) {
 			ext3_journal_stop(handle);
 			goto err_out;
@@ -3339,12 +3603,25 @@ int ext3_setattr(struct dentry *dentry, struct iattr *attr)
 			ext3_journal_stop(handle);
 			goto err_out;
 		}
+=======
+		EXT3_I(inode)->i_disksize = attr->ia_size;
+		rc = ext3_mark_inode_dirty(handle, inode);
+		if (!error)
+			error = rc;
+		ext3_journal_stop(handle);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if ((attr->ia_valid & ATTR_SIZE) &&
 	    attr->ia_size != i_size_read(inode)) {
+<<<<<<< HEAD
 		truncate_setsize(inode, attr->ia_size);
 		ext3_truncate(inode);
+=======
+		rc = vmtruncate(inode, attr->ia_size);
+		if (rc)
+			goto err_out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	setattr_copy(inode, attr);
@@ -3478,7 +3755,10 @@ int ext3_mark_inode_dirty(handle_t *handle, struct inode *inode)
 	int err;
 
 	might_sleep();
+<<<<<<< HEAD
 	trace_ext3_mark_inode_dirty(inode, _RET_IP_);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = ext3_reserve_inode_write(handle, inode, &iloc);
 	if (!err)
 		err = ext3_mark_iloc_dirty(handle, inode, &iloc);

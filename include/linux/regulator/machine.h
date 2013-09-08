@@ -57,6 +57,10 @@ struct regulator_state {
 	unsigned int mode; /* suspend regulator operating mode */
 	int enabled; /* is regulator enabled in this suspend state */
 	int disabled; /* is the regulator disbled in this suspend state */
+<<<<<<< HEAD
+=======
+	int always; /* always control for all op mode */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -71,7 +75,11 @@ struct regulator_state {
  * @uV_offset: Offset applied to voltages from consumer to compensate for
  *             voltage drops.
  *
+<<<<<<< HEAD
  * @min_uA: Smallest current consumers may set.
+=======
+ * @min_uA: Smallest consumers consumers may set.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @max_uA: Largest current consumers may set.
  *
  * @valid_modes_mask: Mask of modes which may be configured by consumers.
@@ -95,7 +103,11 @@ struct regulator_state {
  */
 struct regulation_constraints {
 
+<<<<<<< HEAD
 	const char *name;
+=======
+	char *name;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* voltage output range (inclusive) - for voltage control */
 	int min_uV;
@@ -134,13 +146,26 @@ struct regulation_constraints {
 /**
  * struct regulator_consumer_supply - supply -> device mapping
  *
+<<<<<<< HEAD
  * This maps a supply name to a device. Use of dev_name allows support for
  * buses which make struct device available late such as I2C.
  *
+=======
+ * This maps a supply name to a device.  Only one of dev or dev_name
+ * can be specified.  Use of dev_name allows support for buses which
+ * make struct device available late such as I2C and is the preferred
+ * form.
+ *
+ * @dev: Device structure for the consumer.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @dev_name: Result of dev_name() for the consumer.
  * @supply: Name for the supply.
  */
 struct regulator_consumer_supply {
+<<<<<<< HEAD
+=======
+	struct device *dev;	/* consumer */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const char *dev_name;   /* dev_name() for consumer */
 	const char *supply;	/* consumer supply - e.g. "vcc" */
 };

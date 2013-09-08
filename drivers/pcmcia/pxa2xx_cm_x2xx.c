@@ -12,8 +12,14 @@
 
 #include <linux/module.h>
 
+<<<<<<< HEAD
 #include <asm/mach-types.h>
 #include <mach/hardware.h>
+=======
+#include <asm/system.h>
+#include <asm/mach-types.h>
+#include <mach/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int cmx255_pcmcia_init(void);
 int cmx270_pcmcia_init(void);

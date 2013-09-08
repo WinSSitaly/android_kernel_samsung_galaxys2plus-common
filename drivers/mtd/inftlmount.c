@@ -53,7 +53,11 @@ static int find_boot_record(struct INFTLrecord *inftl)
 	struct INFTLPartition *ip;
 	size_t retlen;
 
+<<<<<<< HEAD
 	pr_debug("INFTL: find_boot_record(inftl=%p)\n", inftl);
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "INFTL: find_boot_record(inftl=%p)\n", inftl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
         /*
 	 * Assume logical EraseSize == physical erasesize for starting the
@@ -73,8 +77,13 @@ static int find_boot_record(struct INFTLrecord *inftl)
 		 * Check for BNAND header first. Then whinge if it's found
 		 * but later checks fail.
 		 */
+<<<<<<< HEAD
 		ret = mtd_read(mtd, block * inftl->EraseSize, SECTORSIZE,
 			       &retlen, buf);
+=======
+		ret = mtd->read(mtd, block * inftl->EraseSize,
+				SECTORSIZE, &retlen, buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* We ignore ret in case the ECC of the MediaHeader is invalid
 		   (which is apparently acceptable) */
 		if (retlen != SECTORSIZE) {
@@ -118,8 +127,13 @@ static int find_boot_record(struct INFTLrecord *inftl)
 		memcpy(mh, buf, sizeof(struct INFTLMediaHeader));
 
 		/* Read the spare media header at offset 4096 */
+<<<<<<< HEAD
 		mtd_read(mtd, block * inftl->EraseSize + 4096, SECTORSIZE,
 			 &retlen, buf);
+=======
+		mtd->read(mtd, block * inftl->EraseSize + 4096,
+			  SECTORSIZE, &retlen, buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (retlen != SECTORSIZE) {
 			printk(KERN_WARNING "INFTL: Unable to read spare "
 			       "Media Header\n");
@@ -139,6 +153,7 @@ static int find_boot_record(struct INFTLrecord *inftl)
 		mh->FormatFlags = le32_to_cpu(mh->FormatFlags);
 		mh->PercentUsed = le32_to_cpu(mh->PercentUsed);
 
+<<<<<<< HEAD
 		pr_debug("INFTL: Media Header ->\n"
 			 "    bootRecordID          = %s\n"
 			 "    NoOfBootImageBlocks   = %d\n"
@@ -153,6 +168,26 @@ static int find_boot_record(struct INFTLrecord *inftl)
 			 mh->NoOfBDTLPartitions,
 			 mh->BlockMultiplierBits, mh->FormatFlags,
 			 mh->OsakVersion, mh->PercentUsed);
+=======
+#ifdef CONFIG_MTD_DEBUG_VERBOSE
+		if (CONFIG_MTD_DEBUG_VERBOSE >= 2) {
+			printk("INFTL: Media Header ->\n"
+				"    bootRecordID          = %s\n"
+				"    NoOfBootImageBlocks   = %d\n"
+				"    NoOfBinaryPartitions  = %d\n"
+				"    NoOfBDTLPartitions    = %d\n"
+				"    BlockMultiplerBits    = %d\n"
+				"    FormatFlgs            = %d\n"
+				"    OsakVersion           = 0x%x\n"
+				"    PercentUsed           = %d\n",
+				mh->bootRecordID, mh->NoOfBootImageBlocks,
+				mh->NoOfBinaryPartitions,
+				mh->NoOfBDTLPartitions,
+				mh->BlockMultiplierBits, mh->FormatFlags,
+				mh->OsakVersion, mh->PercentUsed);
+		}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (mh->NoOfBDTLPartitions == 0) {
 			printk(KERN_WARNING "INFTL: Media Header sanity check "
@@ -196,6 +231,7 @@ static int find_boot_record(struct INFTLrecord *inftl)
 			ip->spareUnits = le32_to_cpu(ip->spareUnits);
 			ip->Reserved0 = le32_to_cpu(ip->Reserved0);
 
+<<<<<<< HEAD
 			pr_debug("    PARTITION[%d] ->\n"
 				 "        virtualUnits    = %d\n"
 				 "        firstUnit       = %d\n"
@@ -205,6 +241,21 @@ static int find_boot_record(struct INFTLrecord *inftl)
 				 i, ip->virtualUnits, ip->firstUnit,
 				 ip->lastUnit, ip->flags,
 				 ip->spareUnits);
+=======
+#ifdef CONFIG_MTD_DEBUG_VERBOSE
+			if (CONFIG_MTD_DEBUG_VERBOSE >= 2) {
+				printk("    PARTITION[%d] ->\n"
+					"        virtualUnits    = %d\n"
+					"        firstUnit       = %d\n"
+					"        lastUnit        = %d\n"
+					"        flags           = 0x%x\n"
+					"        spareUnits      = %d\n",
+					i, ip->virtualUnits, ip->firstUnit,
+					ip->lastUnit, ip->flags,
+					ip->spareUnits);
+			}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (ip->Reserved0 != ip->firstUnit) {
 				struct erase_info *instr = &inftl->instr;
@@ -220,7 +271,11 @@ static int find_boot_record(struct INFTLrecord *inftl)
 				 */
 				instr->addr = ip->Reserved0 * inftl->EraseSize;
 				instr->len = inftl->EraseSize;
+<<<<<<< HEAD
 				mtd_erase(mtd, instr);
+=======
+				mtd->erase(mtd, instr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			if ((ip->lastUnit - ip->firstUnit + 1) < ip->virtualUnits) {
 				printk(KERN_WARNING "INFTL: Media Header "
@@ -306,8 +361,12 @@ static int find_boot_record(struct INFTLrecord *inftl)
 			/* If any of the physical eraseblocks are bad, don't
 			   use the unit. */
 			for (physblock = 0; physblock < inftl->EraseSize; physblock += inftl->mbd.mtd->erasesize) {
+<<<<<<< HEAD
 				if (mtd_block_isbad(inftl->mbd.mtd,
 						    i * inftl->EraseSize + physblock))
+=======
+				if (inftl->mbd.mtd->block_isbad(inftl->mbd.mtd, i * inftl->EraseSize + physblock))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					inftl->PUtable[i] = BLOCK_RESERVED;
 			}
 		}
@@ -343,7 +402,11 @@ static int check_free_sectors(struct INFTLrecord *inftl, unsigned int address,
 	int i;
 
 	for (i = 0; i < len; i += SECTORSIZE) {
+<<<<<<< HEAD
 		if (mtd_read(mtd, address, SECTORSIZE, &retlen, buf))
+=======
+		if (mtd->read(mtd, address, SECTORSIZE, &retlen, buf))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -1;
 		if (memcmpb(buf, 0xff, SECTORSIZE) != 0)
 			return -1;
@@ -368,7 +431,11 @@ static int check_free_sectors(struct INFTLrecord *inftl, unsigned int address,
  *
  * Return: 0 when succeed, -1 on error.
  *
+<<<<<<< HEAD
  * ToDo: 1. Is it necessary to check_free_sector after erasing ??
+=======
+ * ToDo: 1. Is it neceressary to check_free_sector after erasing ??
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int INFTL_formatblock(struct INFTLrecord *inftl, int block)
 {
@@ -378,7 +445,12 @@ int INFTL_formatblock(struct INFTLrecord *inftl, int block)
 	struct mtd_info *mtd = inftl->mbd.mtd;
 	int physblock;
 
+<<<<<<< HEAD
 	pr_debug("INFTL: INFTL_formatblock(inftl=%p,block=%d)\n", inftl, block);
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "INFTL: INFTL_formatblock(inftl=%p,"
+		"block=%d)\n", inftl, block);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memset(instr, 0, sizeof(struct erase_info));
 
@@ -394,7 +466,11 @@ int INFTL_formatblock(struct INFTLrecord *inftl, int block)
 	   mark only the failed block in the bbt. */
 	for (physblock = 0; physblock < inftl->EraseSize;
 	     physblock += instr->len, instr->addr += instr->len) {
+<<<<<<< HEAD
 		mtd_erase(inftl->mbd.mtd, instr);
+=======
+		mtd->erase(inftl->mbd.mtd, instr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (instr->state == MTD_ERASE_FAILED) {
 			printk(KERN_WARNING "INFTL: error while formatting block %d\n",
@@ -424,7 +500,11 @@ int INFTL_formatblock(struct INFTLrecord *inftl, int block)
 fail:
 	/* could not format, update the bad block table (caller is responsible
 	   for setting the PUtable to BLOCK_RESERVED on failure) */
+<<<<<<< HEAD
 	mtd_block_markbad(inftl->mbd.mtd, instr->addr);
+=======
+	inftl->mbd.mtd->block_markbad(inftl->mbd.mtd, instr->addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -1;
 }
 
@@ -468,6 +548,7 @@ void INFTL_dumptables(struct INFTLrecord *s)
 {
 	int i;
 
+<<<<<<< HEAD
 	pr_debug("-------------------------------------------"
 		"----------------------------------\n");
 
@@ -492,6 +573,32 @@ void INFTL_dumptables(struct INFTLrecord *s)
 		"----------------------------------\n");
 
 	pr_debug("INFTL ->\n"
+=======
+	printk("-------------------------------------------"
+		"----------------------------------\n");
+
+	printk("VUtable[%d] ->", s->nb_blocks);
+	for (i = 0; i < s->nb_blocks; i++) {
+		if ((i % 8) == 0)
+			printk("\n%04x: ", i);
+		printk("%04x ", s->VUtable[i]);
+	}
+
+	printk("\n-------------------------------------------"
+		"----------------------------------\n");
+
+	printk("PUtable[%d-%d=%d] ->", s->firstEUN, s->lastEUN, s->nb_blocks);
+	for (i = 0; i <= s->lastEUN; i++) {
+		if ((i % 8) == 0)
+			printk("\n%04x: ", i);
+		printk("%04x ", s->PUtable[i]);
+	}
+
+	printk("\n-------------------------------------------"
+		"----------------------------------\n");
+
+	printk("INFTL ->\n"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"  EraseSize       = %d\n"
 		"  h/s/c           = %d/%d/%d\n"
 		"  numvunits       = %d\n"
@@ -505,7 +612,11 @@ void INFTL_dumptables(struct INFTLrecord *s)
 		s->numvunits, s->firstEUN, s->lastEUN, s->numfreeEUNs,
 		s->LastFreeEUN, s->nb_blocks, s->nb_boot_blocks);
 
+<<<<<<< HEAD
 	pr_debug("\n-------------------------------------------"
+=======
+	printk("\n-------------------------------------------"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"----------------------------------\n");
 }
 
@@ -513,25 +624,45 @@ void INFTL_dumpVUchains(struct INFTLrecord *s)
 {
 	int logical, block, i;
 
+<<<<<<< HEAD
 	pr_debug("-------------------------------------------"
 		"----------------------------------\n");
 
 	pr_debug("INFTL Virtual Unit Chains:\n");
+=======
+	printk("-------------------------------------------"
+		"----------------------------------\n");
+
+	printk("INFTL Virtual Unit Chains:\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (logical = 0; logical < s->nb_blocks; logical++) {
 		block = s->VUtable[logical];
 		if (block > s->nb_blocks)
 			continue;
+<<<<<<< HEAD
 		pr_debug("  LOGICAL %d --> %d ", logical, block);
+=======
+		printk("  LOGICAL %d --> %d ", logical, block);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (i = 0; i < s->nb_blocks; i++) {
 			if (s->PUtable[block] == BLOCK_NIL)
 				break;
 			block = s->PUtable[block];
+<<<<<<< HEAD
 			pr_debug("%d ", block);
 		}
 		pr_debug("\n");
 	}
 
 	pr_debug("-------------------------------------------"
+=======
+			printk("%d ", block);
+		}
+		printk("\n");
+	}
+
+	printk("-------------------------------------------"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"----------------------------------\n");
 }
 
@@ -547,7 +678,11 @@ int INFTL_mount(struct INFTLrecord *s)
 	int i;
 	u8 *ANACtable, ANAC;
 
+<<<<<<< HEAD
 	pr_debug("INFTL: INFTL_mount(inftl=%p)\n", s);
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "INFTL: INFTL_mount(inftl=%p)\n", s);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Search for INFTL MediaHeader and Spare INFTL Media Header */
 	if (find_boot_record(s) < 0) {
@@ -577,7 +712,11 @@ int INFTL_mount(struct INFTLrecord *s)
 	 * NOTEXPLORED state. Then at the end we will try to format it and
 	 * mark it as free.
 	 */
+<<<<<<< HEAD
 	pr_debug("INFTL: pass 1, explore each unit\n");
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "INFTL: pass 1, explore each unit\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (first_block = s->firstEUN; first_block <= s->lastEUN; first_block++) {
 		if (s->PUtable[first_block] != BLOCK_NOTEXPLORED)
 			continue;
@@ -709,14 +848,25 @@ int INFTL_mount(struct INFTLrecord *s)
 		logical_block = BLOCK_NIL;
 	}
 
+<<<<<<< HEAD
 	INFTL_dumptables(s);
+=======
+#ifdef CONFIG_MTD_DEBUG_VERBOSE
+	if (CONFIG_MTD_DEBUG_VERBOSE >= 2)
+		INFTL_dumptables(s);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Second pass, check for infinite loops in chains. These are
 	 * possible because we don't update the previous pointers when
 	 * we fold chains. No big deal, just fix them up in PUtable.
 	 */
+<<<<<<< HEAD
 	pr_debug("INFTL: pass 2, validate virtual chains\n");
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "INFTL: pass 2, validate virtual chains\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (logical_block = 0; logical_block < s->numvunits; logical_block++) {
 		block = s->VUtable[logical_block];
 		last_block = BLOCK_NIL;
@@ -761,8 +911,17 @@ int INFTL_mount(struct INFTLrecord *s)
 		}
 	}
 
+<<<<<<< HEAD
 	INFTL_dumptables(s);
 	INFTL_dumpVUchains(s);
+=======
+#ifdef CONFIG_MTD_DEBUG_VERBOSE
+	if (CONFIG_MTD_DEBUG_VERBOSE >= 2)
+		INFTL_dumptables(s);
+	if (CONFIG_MTD_DEBUG_VERBOSE >= 2)
+		INFTL_dumpVUchains(s);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Third pass, format unreferenced blocks and init free block count.
@@ -770,7 +929,11 @@ int INFTL_mount(struct INFTLrecord *s)
 	s->numfreeEUNs = 0;
 	s->LastFreeEUN = BLOCK_NIL;
 
+<<<<<<< HEAD
 	pr_debug("INFTL: pass 3, format unused blocks\n");
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "INFTL: pass 3, format unused blocks\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (block = s->firstEUN; block <= s->lastEUN; block++) {
 		if (s->PUtable[block] == BLOCK_NOTEXPLORED) {
 			printk("INFTL: unreferenced block %d, formatting it\n",

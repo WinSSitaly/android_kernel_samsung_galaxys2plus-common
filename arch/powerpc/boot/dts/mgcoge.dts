@@ -213,6 +213,7 @@
 				linux,network-index = <2>;
 				fsl,cpm-command = <0x16200300>;
 			};
+<<<<<<< HEAD
 
 			usb@11b60 {
 				compatible = "fsl,mpc8272-cpm-usb";
@@ -222,6 +223,8 @@
 				interrupt-parent = <&PIC>;
 				usb-clock = <5>;
 			};
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		};
 
 		cpm2_pio_c: gpio-controller@10d40 {

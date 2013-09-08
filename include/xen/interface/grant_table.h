@@ -85,22 +85,29 @@
  */
 
 /*
+<<<<<<< HEAD
  * Reference to a grant entry in a specified domain's grant table.
  */
 typedef uint32_t grant_ref_t;
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * A grant table comprises a packed array of grant entries in one or more
  * page frames shared between Xen and a guest.
  * [XEN]: This field is written by Xen and read by the sharing guest.
  * [GST]: This field is written by the guest and read by Xen.
  */
+<<<<<<< HEAD
 
 /*
  * Version 1 of the grant table entry structure is maintained purely
  * for backwards compatibility.  New guests should use version 2.
  */
 struct grant_entry_v1 {
+=======
+struct grant_entry {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     /* GTF_xxx: various type and flag information.  [XEN,GST] */
     uint16_t flags;
     /* The domain being granted foreign privileges. [GST] */
@@ -118,13 +125,19 @@ struct grant_entry_v1 {
  *  GTF_permit_access: Allow @domid to map/access @frame.
  *  GTF_accept_transfer: Allow @domid to transfer ownership of one page frame
  *                       to this guest. Xen writes the page number to @frame.
+<<<<<<< HEAD
  *  GTF_transitive: Allow @domid to transitively access a subrange of
  *                  @trans_grant in @trans_domid.  No mappings are allowed.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 #define GTF_invalid         (0U<<0)
 #define GTF_permit_access   (1U<<0)
 #define GTF_accept_transfer (2U<<0)
+<<<<<<< HEAD
 #define GTF_transitive      (3U<<0)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define GTF_type_mask       (3U<<0)
 
 /*
@@ -132,9 +145,12 @@ struct grant_entry_v1 {
  *  GTF_readonly: Restrict @domid to read-only mappings and accesses. [GST]
  *  GTF_reading: Grant entry is currently mapped for reading by @domid. [XEN]
  *  GTF_writing: Grant entry is currently mapped for writing by @domid. [XEN]
+<<<<<<< HEAD
  *  GTF_sub_page: Grant access to only a subrange of the page.  @domid
  *                will only be allowed to copy from the grant, and not
  *                map it. [GST]
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 #define _GTF_readonly       (2)
 #define GTF_readonly        (1U<<_GTF_readonly)
@@ -142,8 +158,11 @@ struct grant_entry_v1 {
 #define GTF_reading         (1U<<_GTF_reading)
 #define _GTF_writing        (4)
 #define GTF_writing         (1U<<_GTF_writing)
+<<<<<<< HEAD
 #define _GTF_sub_page       (8)
 #define GTF_sub_page        (1U<<_GTF_sub_page)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Subflags for GTF_accept_transfer:
@@ -160,6 +179,7 @@ struct grant_entry_v1 {
 #define _GTF_transfer_completed (3)
 #define GTF_transfer_completed  (1U<<_GTF_transfer_completed)
 
+<<<<<<< HEAD
 /*
  * Version 2 grant table entries.  These fulfil the same role as
  * version 1 entries, but can represent more complicated operations.
@@ -235,6 +255,17 @@ typedef uint16_t grant_status_t;
 /***********************************
  * GRANT TABLE QUERIES AND USES
  */
+=======
+
+/***********************************
+ * GRANT TABLE QUERIES AND USES
+ */
+
+/*
+ * Reference to a grant entry in a specified domain's grant table.
+ */
+typedef uint32_t grant_ref_t;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Handle to track a mapping created via a grant reference.
@@ -406,6 +437,7 @@ struct gnttab_query_size {
 DEFINE_GUEST_HANDLE_STRUCT(gnttab_query_size);
 
 /*
+<<<<<<< HEAD
  * GNTTABOP_unmap_and_replace: Destroy one or more grant-reference mappings
  * tracked by <handle> but atomically replace the page table entry with one
  * pointing to the machine address under <new_addr>.  <new_addr> will be
@@ -479,6 +511,8 @@ struct gnttab_get_version {
 DEFINE_GUEST_HANDLE_STRUCT(gnttab_get_version);
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Bitfield values for update_pin_status.flags.
  */
  /* Map the grant entry for access by I/O devices. */

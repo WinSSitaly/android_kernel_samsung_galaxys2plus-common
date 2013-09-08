@@ -25,8 +25,14 @@
 #include <linux/io.h>
 #include <linux/uaccess.h>
 
+<<<<<<< HEAD
 
 static bool nowayout = WATCHDOG_NOWAYOUT;
+=======
+#include <asm/system.h>
+
+static int nowayout = WATCHDOG_NOWAYOUT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned int margin = 60;	/* (secs) Default is 1 minute */
 static unsigned long wdt_status;
 static DEFINE_MUTEX(wdt_lock);
@@ -170,7 +176,12 @@ static int fitpc2_wdt_release(struct inode *inode, struct file *file)
 		wdt_disable();
 		pr_info("Device disabled\n");
 	} else {
+<<<<<<< HEAD
 		pr_warn("Device closed unexpectedly - timer will not stop\n");
+=======
+		pr_warning("Device closed unexpectedly -"
+			" timer will not stop\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wdt_enable();
 	}
 
@@ -220,8 +231,13 @@ static int __init fitpc2_wdt_init(void)
 	}
 
 	if (margin < 31 || margin > 255) {
+<<<<<<< HEAD
 		pr_err("margin must be in range 31 - 255 seconds, you tried to set %d\n",
 		       margin);
+=======
+		pr_err("margin must be in range 31 - 255"
+		       " seconds, you tried to set %d\n", margin);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = -EINVAL;
 		goto err_margin;
 	}
@@ -229,7 +245,11 @@ static int __init fitpc2_wdt_init(void)
 	err = misc_register(&fitpc2_wdt_miscdev);
 	if (err) {
 		pr_err("cannot register miscdev on minor=%d (err=%d)\n",
+<<<<<<< HEAD
 		       WATCHDOG_MINOR, err);
+=======
+							WATCHDOG_MINOR, err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_margin;
 	}
 
@@ -259,7 +279,11 @@ MODULE_DESCRIPTION("SBC-FITPC2 Watchdog");
 module_param(margin, int, 0);
 MODULE_PARM_DESC(margin, "Watchdog margin in seconds (default 60s)");
 
+<<<<<<< HEAD
 module_param(nowayout, bool, 0);
+=======
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started");
 
 MODULE_LICENSE("GPL");

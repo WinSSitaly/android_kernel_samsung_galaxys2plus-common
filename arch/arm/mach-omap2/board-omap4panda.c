@@ -25,6 +25,7 @@
 #include <linux/gpio.h>
 #include <linux/usb/otg.h>
 #include <linux/i2c/twl.h>
+<<<<<<< HEAD
 #include <linux/mfd/twl6040.h>
 #include <linux/regulator/machine.h>
 #include <linux/regulator/fixed.h>
@@ -33,16 +34,32 @@
 
 #include <mach/hardware.h>
 #include <asm/hardware/gic.h>
+=======
+#include <linux/regulator/machine.h>
+#include <linux/regulator/fixed.h>
+#include <linux/wl12xx.h>
+
+#include <mach/hardware.h>
+#include <mach/omap4-common.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 #include <video/omapdss.h>
 
 #include <plat/board.h>
+<<<<<<< HEAD
 #include "common.h"
 #include <plat/usb.h>
 #include <plat/mmc.h>
 #include <video/omap-panel-dvi.h>
+=======
+#include <plat/common.h>
+#include <plat/usb.h>
+#include <plat/mmc.h>
+#include <video/omap-panel-generic-dpi.h>
+#include "timer-gp.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "hsmmc.h"
 #include "control.h"
@@ -93,6 +110,7 @@ static struct platform_device leds_gpio = {
 	},
 };
 
+<<<<<<< HEAD
 static struct omap_abe_twl6040_data panda_abe_audio_data = {
 	/* Audio out */
 	.has_hs		= ABE_TWL6040_LEFT | ABE_TWL6040_RIGHT,
@@ -129,6 +147,19 @@ static struct platform_device *panda_devices[] __initdata = {
 	&btwilink_device,
 };
 
+=======
+static struct platform_device *panda_devices[] __initdata = {
+	&leds_gpio,
+	&wl1271_device,
+};
+
+static void __init omap4_panda_init_early(void)
+{
+	omap2_init_common_infrastructure();
+	omap2_init_common_devices(NULL, NULL);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct usbhs_omap_board_data usbhs_bdata __initconst = {
 	.port_mode[0] = OMAP_EHCI_PORT_MODE_PHY,
 	.port_mode[1] = OMAP_USBHS_PORT_MODE_UNUSED,
@@ -182,6 +213,17 @@ static struct omap_musb_board_data musb_board_data = {
 	.power			= 100,
 };
 
+<<<<<<< HEAD
+=======
+static struct twl4030_usb_data omap4_usbphy_data = {
+	.phy_init	= omap4430_phy_init,
+	.phy_exit	= omap4430_phy_exit,
+	.phy_power	= omap4430_phy_power,
+	.phy_set_clock	= omap4430_phy_set_clk,
+	.phy_suspend	= omap4430_phy_suspend,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct omap2_hsmmc_info mmc[] = {
 	{
 		.mmc		= 1,
@@ -201,16 +243,34 @@ static struct omap2_hsmmc_info mmc[] = {
 	{}	/* Terminator */
 };
 
+<<<<<<< HEAD
 static struct regulator_consumer_supply omap4_panda_vmmc5_supply[] = {
 	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.4"),
+=======
+static struct regulator_consumer_supply omap4_panda_vmmc_supply[] = {
+	{
+		.supply = "vmmc",
+		.dev_name = "omap_hsmmc.0",
+	},
+};
+
+static struct regulator_consumer_supply omap4_panda_vmmc5_supply = {
+	.supply = "vmmc",
+	.dev_name = "omap_hsmmc.4",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct regulator_init_data panda_vmmc5 = {
 	.constraints = {
 		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
 	},
+<<<<<<< HEAD
 	.num_consumer_supplies = ARRAY_SIZE(omap4_panda_vmmc5_supply),
 	.consumer_supplies = omap4_panda_vmmc5_supply,
+=======
+	.num_consumer_supplies = 1,
+	.consumer_supplies = &omap4_panda_vmmc5_supply,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct fixed_voltage_config panda_vwlan = {
@@ -232,13 +292,21 @@ static struct platform_device omap_vwlan_device = {
 };
 
 struct wl12xx_platform_data omap_panda_wlan_data  __initdata = {
+<<<<<<< HEAD
+=======
+	.irq = OMAP_GPIO_IRQ(GPIO_WIFI_IRQ),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* PANDA ref clock is 38.4 MHz */
 	.board_ref_clock = 2,
 };
 
 static int omap4_twl6030_hsmmc_late_init(struct device *dev)
 {
+<<<<<<< HEAD
 	int irq = 0;
+=======
+	int ret = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct platform_device *pdev = container_of(dev,
 				struct platform_device, dev);
 	struct omap_mmc_platform_data *pdata = dev->platform_data;
@@ -249,6 +317,7 @@ static int omap4_twl6030_hsmmc_late_init(struct device *dev)
 	}
 	/* Setting MMC1 Card detect Irq */
 	if (pdev->id == 0) {
+<<<<<<< HEAD
 		irq = twl6030_mmc_card_detect_config();
 		if (irq < 0) {
 			dev_err(dev, "%s: Error card detect config(%d)\n",
@@ -258,6 +327,16 @@ static int omap4_twl6030_hsmmc_late_init(struct device *dev)
 		pdata->slots[0].card_detect = twl6030_mmc_card_detect;
 	}
 	return 0;
+=======
+		ret = twl6030_mmc_card_detect_config();
+		 if (ret)
+			dev_err(dev, "%s: Error card detect config(%d)\n",
+				__func__, ret);
+		 else
+			pdata->slots[0].card_detect = twl6030_mmc_card_detect;
+	}
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static __init void omap4_twl6030_hsmmc_set_late_init(struct device *dev)
@@ -278,13 +357,20 @@ static int __init omap4_twl6030_hsmmc_init(struct omap2_hsmmc_info *controllers)
 {
 	struct omap2_hsmmc_info *c;
 
+<<<<<<< HEAD
 	omap_hsmmc_init(controllers);
 	for (c = controllers; c->mmc; c++)
 		omap4_twl6030_hsmmc_set_late_init(&c->pdev->dev);
+=======
+	omap2_hsmmc_init(controllers);
+	for (c = controllers; c->mmc; c++)
+		omap4_twl6030_hsmmc_set_late_init(c->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct twl6040_codec_data twl6040_codec = {
 	/* single-step ramp for headset and handsfree */
 	.hs_left_step	= 0x0f,
@@ -301,6 +387,130 @@ static struct twl6040_platform_data twl6040_data = {
 
 /* Panda board uses the common PMIC configuration */
 static struct twl4030_platform_data omap4_panda_twldata;
+=======
+static struct regulator_init_data omap4_panda_vaux2 = {
+	.constraints = {
+		.min_uV			= 1200000,
+		.max_uV			= 2800000,
+		.apply_uV		= true,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask	 = REGULATOR_CHANGE_VOLTAGE
+					| REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+};
+
+static struct regulator_init_data omap4_panda_vaux3 = {
+	.constraints = {
+		.min_uV			= 1000000,
+		.max_uV			= 3000000,
+		.apply_uV		= true,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask	 = REGULATOR_CHANGE_VOLTAGE
+					| REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+};
+
+/* VMMC1 for MMC1 card */
+static struct regulator_init_data omap4_panda_vmmc = {
+	.constraints = {
+		.min_uV			= 1200000,
+		.max_uV			= 3000000,
+		.apply_uV		= true,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask	 = REGULATOR_CHANGE_VOLTAGE
+					| REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies  = 1,
+	.consumer_supplies      = omap4_panda_vmmc_supply,
+};
+
+static struct regulator_init_data omap4_panda_vpp = {
+	.constraints = {
+		.min_uV			= 1800000,
+		.max_uV			= 2500000,
+		.apply_uV		= true,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask	 = REGULATOR_CHANGE_VOLTAGE
+					| REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+};
+
+static struct regulator_init_data omap4_panda_vana = {
+	.constraints = {
+		.min_uV			= 2100000,
+		.max_uV			= 2100000,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask	 = REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+};
+
+static struct regulator_init_data omap4_panda_vcxio = {
+	.constraints = {
+		.min_uV			= 1800000,
+		.max_uV			= 1800000,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask	 = REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+};
+
+static struct regulator_init_data omap4_panda_vdac = {
+	.constraints = {
+		.min_uV			= 1800000,
+		.max_uV			= 1800000,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask	 = REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+};
+
+static struct regulator_init_data omap4_panda_vusb = {
+	.constraints = {
+		.min_uV			= 3300000,
+		.max_uV			= 3300000,
+		.apply_uV		= true,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL
+					| REGULATOR_MODE_STANDBY,
+		.valid_ops_mask	 =	REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+};
+
+static struct regulator_init_data omap4_panda_clk32kg = {
+	.constraints = {
+		.valid_ops_mask		= REGULATOR_CHANGE_STATUS,
+	},
+};
+
+static struct twl4030_platform_data omap4_panda_twldata = {
+	.irq_base	= TWL6030_IRQ_BASE,
+	.irq_end	= TWL6030_IRQ_END,
+
+	/* Regulators */
+	.vmmc		= &omap4_panda_vmmc,
+	.vpp		= &omap4_panda_vpp,
+	.vana		= &omap4_panda_vana,
+	.vcxio		= &omap4_panda_vcxio,
+	.vdac		= &omap4_panda_vdac,
+	.vusb		= &omap4_panda_vusb,
+	.vaux2		= &omap4_panda_vaux2,
+	.vaux3		= &omap4_panda_vaux3,
+	.clk32kg	= &omap4_panda_clk32kg,
+	.usb		= &omap4_usbphy_data,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Display monitor features are burnt in their EEPROM as EDID data. The EEPROM
@@ -314,6 +524,7 @@ static struct i2c_board_info __initdata panda_i2c_eeprom[] = {
 
 static int __init omap4_panda_i2c_init(void)
 {
+<<<<<<< HEAD
 	omap4_pmic_get_config(&omap4_panda_twldata, TWL_COMMON_PDATA_USB,
 			TWL_COMMON_REGULATOR_VDAC |
 			TWL_COMMON_REGULATOR_VAUX2 |
@@ -326,6 +537,9 @@ static int __init omap4_panda_i2c_init(void)
 			TWL_COMMON_REGULATOR_CLK32KG);
 	omap4_pmic_init("twl6030", &omap4_panda_twldata,
 			&twl6040_data, OMAP44XX_IRQ_SYS_2N);
+=======
+	omap4_pmic_init("twl6030", &omap4_panda_twldata);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap_register_i2c_bus(2, 400, NULL, 0);
 	/*
 	 * Bus 3 is attached to the DVI port where devices like the pico DLP
@@ -413,8 +627,79 @@ static struct omap_board_mux board_mux[] __initdata = {
 	{ .reg_offset = OMAP_MUX_TERMINATOR },
 };
 
+<<<<<<< HEAD
 #else
 #define board_mux	NULL
+=======
+static struct omap_device_pad serial2_pads[] __initdata = {
+	OMAP_MUX_STATIC("uart2_cts.uart2_cts",
+			 OMAP_PIN_INPUT_PULLUP | OMAP_MUX_MODE0),
+	OMAP_MUX_STATIC("uart2_rts.uart2_rts",
+			 OMAP_PIN_OUTPUT | OMAP_MUX_MODE0),
+	OMAP_MUX_STATIC("uart2_rx.uart2_rx",
+			 OMAP_PIN_INPUT_PULLUP | OMAP_MUX_MODE0),
+	OMAP_MUX_STATIC("uart2_tx.uart2_tx",
+			 OMAP_PIN_OUTPUT | OMAP_MUX_MODE0),
+};
+
+static struct omap_device_pad serial3_pads[] __initdata = {
+	OMAP_MUX_STATIC("uart3_cts_rctx.uart3_cts_rctx",
+			 OMAP_PIN_INPUT_PULLUP | OMAP_MUX_MODE0),
+	OMAP_MUX_STATIC("uart3_rts_sd.uart3_rts_sd",
+			 OMAP_PIN_OUTPUT | OMAP_MUX_MODE0),
+	OMAP_MUX_STATIC("uart3_rx_irrx.uart3_rx_irrx",
+			 OMAP_PIN_INPUT | OMAP_MUX_MODE0),
+	OMAP_MUX_STATIC("uart3_tx_irtx.uart3_tx_irtx",
+			 OMAP_PIN_OUTPUT | OMAP_MUX_MODE0),
+};
+
+static struct omap_device_pad serial4_pads[] __initdata = {
+	OMAP_MUX_STATIC("uart4_rx.uart4_rx",
+			 OMAP_PIN_INPUT | OMAP_MUX_MODE0),
+	OMAP_MUX_STATIC("uart4_tx.uart4_tx",
+			 OMAP_PIN_OUTPUT | OMAP_MUX_MODE0),
+};
+
+static struct omap_board_data serial2_data __initdata = {
+	.id             = 1,
+	.pads           = serial2_pads,
+	.pads_cnt       = ARRAY_SIZE(serial2_pads),
+};
+
+static struct omap_board_data serial3_data __initdata = {
+	.id             = 2,
+	.pads           = serial3_pads,
+	.pads_cnt       = ARRAY_SIZE(serial3_pads),
+};
+
+static struct omap_board_data serial4_data __initdata = {
+	.id             = 3,
+	.pads           = serial4_pads,
+	.pads_cnt       = ARRAY_SIZE(serial4_pads),
+};
+
+static inline void board_serial_init(void)
+{
+	struct omap_board_data bdata;
+	bdata.flags     = 0;
+	bdata.pads      = NULL;
+	bdata.pads_cnt  = 0;
+	bdata.id        = 0;
+	/* pass dummy data for UART1 */
+	omap_serial_init_port(&bdata);
+
+	omap_serial_init_port(&serial2_data);
+	omap_serial_init_port(&serial3_data);
+	omap_serial_init_port(&serial4_data);
+}
+#else
+#define board_mux	NULL
+
+static inline void board_serial_init(void)
+{
+	omap_serial_init();
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /* Display DVI */
@@ -432,16 +717,27 @@ static void omap4_panda_disable_dvi(struct omap_dss_device *dssdev)
 }
 
 /* Using generic display panel */
+<<<<<<< HEAD
 static struct panel_dvi_platform_data omap4_dvi_panel = {
 	.platform_enable	= omap4_panda_enable_dvi,
 	.platform_disable	= omap4_panda_disable_dvi,
 	.i2c_bus_num = 3,
+=======
+static struct panel_generic_dpi_data omap4_dvi_panel = {
+	.name			= "generic",
+	.platform_enable	= omap4_panda_enable_dvi,
+	.platform_disable	= omap4_panda_disable_dvi,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct omap_dss_device omap4_panda_dvi_device = {
 	.type			= OMAP_DISPLAY_TYPE_DPI,
 	.name			= "dvi",
+<<<<<<< HEAD
 	.driver_name		= "dvi",
+=======
+	.driver_name		= "generic_dpi_panel",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.data			= &omap4_dvi_panel,
 	.phy.dpi.data_lines	= 24,
 	.reset_gpio		= PANDA_DVI_TFP410_POWER_DOWN_GPIO,
@@ -461,6 +757,20 @@ int __init omap4_panda_dvi_init(void)
 	return r;
 }
 
+<<<<<<< HEAD
+=======
+
+static void omap4_panda_hdmi_mux_init(void)
+{
+	omap_mux_init_signal("hdmi_cec",
+			OMAP_PIN_INPUT_PULLUP);
+	omap_mux_init_signal("hdmi_ddc_scl",
+			OMAP_PIN_INPUT_PULLUP);
+	omap_mux_init_signal("hdmi_ddc_sda",
+			OMAP_PIN_INPUT_PULLUP);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct gpio panda_hdmi_gpios[] = {
 	{ HDMI_GPIO_CT_CP_HPD, GPIOF_OUT_INIT_HIGH, "hdmi_gpio_ct_cp_hpd" },
 	{ HDMI_GPIO_LS_OE,	GPIOF_OUT_INIT_HIGH, "hdmi_gpio_ls_oe" },
@@ -509,7 +819,11 @@ static struct omap_dss_board_info omap4_panda_dss_data = {
 	.default_device	= &omap4_panda_dvi_device,
 };
 
+<<<<<<< HEAD
 void __init omap4_panda_display_init(void)
+=======
+void omap4_panda_display_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int r;
 
@@ -517,6 +831,7 @@ void __init omap4_panda_display_init(void)
 	if (r)
 		pr_err("error initializing panda DVI\n");
 
+<<<<<<< HEAD
 	omap_display_init(&omap4_panda_dss_data);
 
 	/*
@@ -528,11 +843,17 @@ void __init omap4_panda_display_init(void)
 	else
 		omap_hdmi_init(0);
 
+=======
+	omap4_panda_hdmi_mux_init();
+	omap_display_init(&omap4_panda_dss_data);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap_mux_init_gpio(HDMI_GPIO_LS_OE, OMAP_PIN_OUTPUT);
 	omap_mux_init_gpio(HDMI_GPIO_CT_CP_HPD, OMAP_PIN_OUTPUT);
 	omap_mux_init_gpio(HDMI_GPIO_HPD, OMAP_PIN_INPUT_PULLDOWN);
 }
 
+<<<<<<< HEAD
 static void omap4_panda_init_rev(void)
 {
 	if (cpu_is_omap443x()) {
@@ -551,11 +872,17 @@ static void __init omap4_panda_init(void)
 {
 	int package = OMAP_PACKAGE_CBS;
 	int ret;
+=======
+static void __init omap4_panda_init(void)
+{
+	int package = OMAP_PACKAGE_CBS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (omap_rev() == OMAP4430_REV_ES1_0)
 		package = OMAP_PACKAGE_CBL;
 	omap4_mux_init(board_mux, NULL, package);
 
+<<<<<<< HEAD
 	omap_panda_wlan_data.irq = gpio_to_irq(GPIO_WIFI_IRQ);
 	ret = wl12xx_set_platform_data(&omap_panda_wlan_data);
 	if (ret)
@@ -567,12 +894,22 @@ static void __init omap4_panda_init(void)
 	platform_device_register(&omap_vwlan_device);
 	omap_serial_init();
 	omap_sdrc_init(NULL, NULL);
+=======
+	if (wl12xx_set_platform_data(&omap_panda_wlan_data))
+		pr_err("error setting wl12xx data\n");
+
+	omap4_panda_i2c_init();
+	platform_add_devices(panda_devices, ARRAY_SIZE(panda_devices));
+	platform_device_register(&omap_vwlan_device);
+	board_serial_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap4_twl6030_hsmmc_init(mmc);
 	omap4_ehci_init();
 	usb_musb_init(&musb_board_data);
 	omap4_panda_display_init();
 }
 
+<<<<<<< HEAD
 MACHINE_START(OMAP4_PANDA, "OMAP4 Panda board")
 	/* Maintainer: David Anders - Texas Instruments Inc */
 	.atag_offset	= 0x100,
@@ -584,4 +921,21 @@ MACHINE_START(OMAP4_PANDA, "OMAP4 Panda board")
 	.init_machine	= omap4_panda_init,
 	.timer		= &omap4_timer,
 	.restart	= omap_prcm_restart,
+=======
+static void __init omap4_panda_map_io(void)
+{
+	omap2_set_globals_443x();
+	omap44xx_map_common_io();
+}
+
+MACHINE_START(OMAP4_PANDA, "OMAP4 Panda board")
+	/* Maintainer: David Anders - Texas Instruments Inc */
+	.boot_params	= 0x80000100,
+	.reserve	= omap_reserve,
+	.map_io		= omap4_panda_map_io,
+	.init_early	= omap4_panda_init_early,
+	.init_irq	= gic_init_irq,
+	.init_machine	= omap4_panda_init,
+	.timer		= &omap_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

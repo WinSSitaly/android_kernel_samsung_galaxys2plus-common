@@ -99,7 +99,11 @@ int pcibios_plat_dev_init(struct pci_dev *dev)
 	 */
 	pci_write_config_byte(dev, PCI_CACHE_LINE_SIZE, 64 / 4);
 	/* Set latency timers for all devices */
+<<<<<<< HEAD
 	pci_write_config_byte(dev, PCI_LATENCY_TIMER, 64);
+=======
+	pci_write_config_byte(dev, PCI_LATENCY_TIMER, 48);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Enable reporting System errors and parity errors on all devices */
 	/* Enable parity checking and error reporting */
@@ -109,7 +113,11 @@ int pcibios_plat_dev_init(struct pci_dev *dev)
 
 	if (dev->subordinate) {
 		/* Set latency timers on sub bridges */
+<<<<<<< HEAD
 		pci_write_config_byte(dev, PCI_SEC_LATENCY_TIMER, 64);
+=======
+		pci_write_config_byte(dev, PCI_SEC_LATENCY_TIMER, 48);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* More bridge error detection */
 		pci_read_config_word(dev, PCI_BRIDGE_CONTROL, &config);
 		config |= PCI_BRIDGE_CTL_PARITY | PCI_BRIDGE_CTL_SERR;
@@ -121,10 +129,21 @@ int pcibios_plat_dev_init(struct pci_dev *dev)
 	if (pos) {
 		/* Update Device Control */
 		pci_read_config_word(dev, pos + PCI_EXP_DEVCTL, &config);
+<<<<<<< HEAD
 		config |= PCI_EXP_DEVCTL_CERE; /* Correctable Error Reporting */
 		config |= PCI_EXP_DEVCTL_NFERE; /* Non-Fatal Error Reporting */
 		config |= PCI_EXP_DEVCTL_FERE;  /* Fatal Error Reporting */
 		config |= PCI_EXP_DEVCTL_URRE;  /* Unsupported Request */
+=======
+		/* Correctable Error Reporting */
+		config |= PCI_EXP_DEVCTL_CERE;
+		/* Non-Fatal Error Reporting */
+		config |= PCI_EXP_DEVCTL_NFERE;
+		/* Fatal Error Reporting */
+		config |= PCI_EXP_DEVCTL_FERE;
+		/* Unsupported Request */
+		config |= PCI_EXP_DEVCTL_URRE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pci_write_config_word(dev, pos + PCI_EXP_DEVCTL, config);
 	}
 

@@ -25,11 +25,15 @@
 #include <linux/moduleparam.h>
 #include <linux/device.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/pcm.h>
 #include <sound/soc.h>
 #include <sound/soc-dapm.h>
+<<<<<<< HEAD
 #include <sound/tlv.h>
 #include <asm/mach-types.h>
 #include <mach/iomux-mx27.h>
@@ -55,6 +59,13 @@ static const int mx27vis_amp_pins[] = {
 	MX27VIS_PIN_SDL | GPIO_GPIO | GPIO_OUT,
 	MX27VIS_PIN_SDR | GPIO_GPIO | GPIO_OUT,
 };
+=======
+#include <asm/mach-types.h>
+#include <mach/audmux.h>
+
+#include "../codecs/tlv320aic32x4.h"
+#include "imx-ssi.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int mx27vis_aic32x4_hw_params(struct snd_pcm_substream *substream,
 			    struct snd_pcm_hw_params *params)
@@ -95,6 +106,7 @@ static struct snd_soc_ops mx27vis_aic32x4_snd_ops = {
 	.hw_params	= mx27vis_aic32x4_hw_params,
 };
 
+<<<<<<< HEAD
 static int mx27vis_amp_set(struct snd_kcontrol *kcontrol,
 			    struct snd_ctl_elem_value *ucontrol)
 {
@@ -165,6 +177,8 @@ static const struct snd_soc_dapm_route aic32x4_dapm_routes[] = {
 	{"IN3_L", NULL, "Mic Bias"},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct snd_soc_dai_link mx27vis_aic32x4_dai = {
 	.name		= "tlv320aic32x4",
 	.stream_name	= "TLV320AIC32X4",
@@ -177,6 +191,7 @@ static struct snd_soc_dai_link mx27vis_aic32x4_dai = {
 
 static struct snd_soc_card mx27vis_aic32x4 = {
 	.name		= "visstrim_m10-audio",
+<<<<<<< HEAD
 	.owner		= THIS_MODULE,
 	.dai_link	= &mx27vis_aic32x4_dai,
 	.num_links	= 1,
@@ -238,8 +253,58 @@ static struct platform_driver mx27vis_aic32x4_audio_driver = {
 };
 
 module_platform_driver(mx27vis_aic32x4_audio_driver);
+=======
+	.dai_link	= &mx27vis_aic32x4_dai,
+	.num_links	= 1,
+};
+
+static struct platform_device *mx27vis_aic32x4_snd_device;
+
+static int __init mx27vis_aic32x4_init(void)
+{
+	int ret;
+
+	mx27vis_aic32x4_snd_device = platform_device_alloc("soc-audio", -1);
+	if (!mx27vis_aic32x4_snd_device)
+		return -ENOMEM;
+
+	platform_set_drvdata(mx27vis_aic32x4_snd_device, &mx27vis_aic32x4);
+	ret = platform_device_add(mx27vis_aic32x4_snd_device);
+
+	if (ret) {
+		printk(KERN_ERR "ASoC: Platform device allocation failed\n");
+		platform_device_put(mx27vis_aic32x4_snd_device);
+	}
+
+	/* Connect SSI0 as clock slave to SSI1 external pins */
+	mxc_audmux_v1_configure_port(MX27_AUDMUX_HPCR1_SSI0,
+			MXC_AUDMUX_V1_PCR_SYN |
+			MXC_AUDMUX_V1_PCR_TFSDIR |
+			MXC_AUDMUX_V1_PCR_TCLKDIR |
+			MXC_AUDMUX_V1_PCR_TFCSEL(MX27_AUDMUX_PPCR1_SSI_PINS_1) |
+			MXC_AUDMUX_V1_PCR_RXDSEL(MX27_AUDMUX_PPCR1_SSI_PINS_1)
+	);
+	mxc_audmux_v1_configure_port(MX27_AUDMUX_PPCR1_SSI_PINS_1,
+			MXC_AUDMUX_V1_PCR_SYN |
+			MXC_AUDMUX_V1_PCR_RXDSEL(MX27_AUDMUX_HPCR1_SSI0)
+	);
+
+	return ret;
+}
+
+static void __exit mx27vis_aic32x4_exit(void)
+{
+	platform_device_unregister(mx27vis_aic32x4_snd_device);
+}
+
+module_init(mx27vis_aic32x4_init);
+module_exit(mx27vis_aic32x4_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Javier Martin <javier.martin@vista-silicon.com>");
 MODULE_DESCRIPTION("ALSA SoC AIC32X4 mx27 visstrim");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_ALIAS("platform:mx27vis");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -316,6 +316,7 @@ s_MgrMakeProbeRequest(
     return pTxPacket;
 }
 
+<<<<<<< HEAD
 void vCommandTimerWait(void *hDeviceContext, unsigned long MSecond)
 {
 	PSDevice pDevice = (PSDevice)hDeviceContext;
@@ -329,6 +330,19 @@ void vCommandTimerWait(void *hDeviceContext, unsigned long MSecond)
 	add_timer(&pDevice->sTimerCommand);
 
 	return;
+=======
+void vCommandTimerWait(void *hDeviceContext, unsigned int MSecond)
+{
+    PSDevice        pDevice = (PSDevice)hDeviceContext;
+
+    init_timer(&pDevice->sTimerCommand);
+    pDevice->sTimerCommand.data = (unsigned long)pDevice;
+    pDevice->sTimerCommand.function = (TimerFunction)vRunCommand;
+    // RUN_AT :1 msec ~= (HZ/1024)
+    pDevice->sTimerCommand.expires = (unsigned int)RUN_AT((MSecond * HZ) >> 10);
+    add_timer(&pDevice->sTimerCommand);
+    return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void vRunCommand(void *hDeviceContext)

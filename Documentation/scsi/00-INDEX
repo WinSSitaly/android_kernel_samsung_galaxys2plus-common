@@ -28,8 +28,11 @@ LICENSE.FlashPoint
 	- Licence of the Flashpoint driver
 LICENSE.qla2xxx
 	- License for QLogic Linux Fibre Channel HBA Driver firmware.
+<<<<<<< HEAD
 LICENSE.qla4xxx
 	- License for QLogic Linux iSCSI HBA Driver.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Mylex.txt
 	- info on driver for Mylex adapters
 NinjaSCSI.txt
@@ -94,5 +97,8 @@ sym53c8xx_2.txt
 	- info on second generation driver for sym53c8xx based adapters
 tmscsim.txt
 	- info on driver for AM53c974 based adapters
+<<<<<<< HEAD
 ufs.txt
 	- info on Universal Flash Storage(UFS) and UFS host controller driver.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

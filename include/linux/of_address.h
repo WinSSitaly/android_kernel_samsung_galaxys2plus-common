@@ -1,6 +1,7 @@
 #ifndef __OF_ADDRESS_H
 #define __OF_ADDRESS_H
 #include <linux/ioport.h>
+<<<<<<< HEAD
 #include <linux/errno.h>
 #include <linux/of.h>
 
@@ -12,6 +13,13 @@ extern struct device_node *of_find_matching_node_by_address(
 					struct device_node *from,
 					const struct of_device_id *matches,
 					u64 base_address);
+=======
+#include <linux/of.h>
+
+extern u64 of_translate_address(struct device_node *np, const __be32 *addr);
+extern int of_address_to_resource(struct device_node *dev, int index,
+				  struct resource *r);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void __iomem *of_iomap(struct device_node *device, int index);
 
 /* Extract an address from a device, returns the region size and
@@ -26,6 +34,7 @@ static inline unsigned long pci_address_to_pio(phys_addr_t addr) { return -1; }
 #define pci_address_to_pio pci_address_to_pio
 #endif
 
+<<<<<<< HEAD
 #else /* CONFIG_OF_ADDRESS */
 static inline int of_address_to_resource(struct device_node *dev, int index,
 					 struct resource *r)
@@ -52,11 +61,18 @@ static inline const u32 *of_get_address(struct device_node *dev, int index,
 
 
 #if defined(CONFIG_OF_ADDRESS) && defined(CONFIG_PCI)
+=======
+#ifdef CONFIG_PCI
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern const __be32 *of_get_pci_address(struct device_node *dev, int bar_no,
 			       u64 *size, unsigned int *flags);
 extern int of_pci_address_to_resource(struct device_node *dev, int bar,
 				      struct resource *r);
+<<<<<<< HEAD
 #else /* CONFIG_OF_ADDRESS && CONFIG_PCI */
+=======
+#else /* CONFIG_PCI */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int of_pci_address_to_resource(struct device_node *dev, int bar,
 				             struct resource *r)
 {
@@ -68,7 +84,12 @@ static inline const __be32 *of_get_pci_address(struct device_node *dev,
 {
 	return NULL;
 }
+<<<<<<< HEAD
 #endif /* CONFIG_OF_ADDRESS && CONFIG_PCI */
+=======
+#endif /* CONFIG_PCI */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __OF_ADDRESS_H */
 

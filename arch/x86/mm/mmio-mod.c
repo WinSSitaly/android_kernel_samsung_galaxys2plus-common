@@ -29,11 +29,19 @@
 #include <linux/slab.h>
 #include <linux/uaccess.h>
 #include <linux/io.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kallsyms.h>
 #include <asm/pgtable.h>
 #include <linux/mmiotrace.h>
 #include <asm/e820.h> /* for ISA_START_ADDRESS */
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/percpu.h>
 #include <linux/cpu.h>
 
@@ -75,8 +83,13 @@ static LIST_HEAD(trace_list);		/* struct remap_trace */
 
 /* module parameters */
 static unsigned long	filter_offset;
+<<<<<<< HEAD
 static bool		nommiotrace;
 static bool		trace_pc;
+=======
+static int		nommiotrace;
+static int		trace_pc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(filter_offset, ulong, 0);
 module_param(nommiotrace, bool, 0);

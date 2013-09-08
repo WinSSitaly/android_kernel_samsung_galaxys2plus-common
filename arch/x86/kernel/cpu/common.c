@@ -15,21 +15,33 @@
 #include <asm/stackprotector.h>
 #include <asm/perf_event.h>
 #include <asm/mmu_context.h>
+<<<<<<< HEAD
 #include <asm/archrandom.h>
 #include <asm/hypervisor.h>
 #include <asm/processor.h>
 #include <asm/debugreg.h>
+=======
+#include <asm/hypervisor.h>
+#include <asm/processor.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/sections.h>
 #include <linux/topology.h>
 #include <linux/cpumask.h>
 #include <asm/pgtable.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/proto.h>
 #include <asm/setup.h>
 #include <asm/apic.h>
 #include <asm/desc.h>
 #include <asm/i387.h>
+<<<<<<< HEAD
 #include <asm/fpu-internal.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mtrr.h>
 #include <linux/numa.h>
 #include <asm/asm.h>
@@ -678,6 +690,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
 	if (this_cpu->c_early_init)
 		this_cpu->c_early_init(c);
 
+<<<<<<< HEAD
 	c->cpu_index = 0;
 	filter_cpuid_features(c, false);
 
@@ -685,6 +698,14 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
 
 	if (this_cpu->c_bsp_init)
 		this_cpu->c_bsp_init(c);
+=======
+#ifdef CONFIG_SMP
+	c->cpu_index = 0;
+#endif
+	filter_cpuid_features(c, false);
+
+	setup_smep(c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __init early_cpu_init(void)
@@ -764,7 +785,14 @@ static void __cpuinit generic_identify(struct cpuinfo_x86 *c)
 		c->apicid = c->initial_apicid;
 # endif
 #endif
+<<<<<<< HEAD
 		c->phys_proc_id = c->initial_apicid;
+=======
+
+#ifdef CONFIG_X86_HT
+		c->phys_proc_id = c->initial_apicid;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	setup_smep(c);
@@ -858,7 +886,10 @@ static void __cpuinit identify_cpu(struct cpuinfo_x86 *c)
 #endif
 
 	init_hypervisor(c);
+<<<<<<< HEAD
 	x86_init_rdrand(c);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Clear/Set all flags overriden by options, need do it
@@ -935,7 +966,11 @@ static const struct msr_range msr_range_array[] __cpuinitconst = {
 	{ 0xc0011000, 0xc001103b},
 };
 
+<<<<<<< HEAD
 static void __cpuinit __print_cpu_msr(void)
+=======
+static void __cpuinit print_cpu_msr(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned index_min, index_max;
 	unsigned index;
@@ -999,6 +1034,7 @@ void __cpuinit print_cpu_info(struct cpuinfo_x86 *c)
 	else
 		printk(KERN_CONT "\n");
 
+<<<<<<< HEAD
 	print_cpu_msr(c);
 }
 
@@ -1006,6 +1042,15 @@ void __cpuinit print_cpu_msr(struct cpuinfo_x86 *c)
 {
 	if (c->cpu_index < show_msr)
 		__print_cpu_msr();
+=======
+#ifdef CONFIG_SMP
+	if (c->cpu_index < show_msr)
+		print_cpu_msr();
+#else
+	if (show_msr)
+		print_cpu_msr();
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static __init int setup_disablecpuid(char *arg)
@@ -1023,8 +1068,11 @@ __setup("clearcpuid=", setup_disablecpuid);
 
 #ifdef CONFIG_X86_64
 struct desc_ptr idt_descr = { NR_VECTORS * 16 - 1, (unsigned long) idt_table };
+<<<<<<< HEAD
 struct desc_ptr nmi_idt_descr = { NR_VECTORS * 16 - 1,
 				    (unsigned long) nmi_idt_table };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 DEFINE_PER_CPU_FIRST(union irq_stack_union,
 		     irq_stack_union) __aligned(PAGE_SIZE);
@@ -1046,8 +1094,11 @@ DEFINE_PER_CPU(char *, irq_stack_ptr) =
 
 DEFINE_PER_CPU(unsigned int, irq_count) = -1;
 
+<<<<<<< HEAD
 DEFINE_PER_CPU(struct task_struct *, fpu_owner_task);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Special IST stacks which the CPU switches to when it calls
  * an IST-marked descriptor entry. Up to 7 stacks (hardware
@@ -1091,6 +1142,7 @@ unsigned long kernel_eflags;
  */
 DEFINE_PER_CPU(struct orig_ist, orig_ist);
 
+<<<<<<< HEAD
 static DEFINE_PER_CPU(unsigned long, debug_stack_addr);
 DEFINE_PER_CPU(int, debug_stack_usage);
 
@@ -1111,11 +1163,16 @@ void debug_stack_reset(void)
 	load_idt((const struct desc_ptr *)&idt_descr);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else	/* CONFIG_X86_64 */
 
 DEFINE_PER_CPU(struct task_struct *, current_task) = &init_task;
 EXPORT_PER_CPU_SYMBOL(current_task);
+<<<<<<< HEAD
 DEFINE_PER_CPU(struct task_struct *, fpu_owner_task);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_CC_STACKPROTECTOR
 DEFINE_PER_CPU_ALIGNED(struct stack_canary, stack_canary);
@@ -1230,8 +1287,11 @@ void __cpuinit cpu_init(void)
 			estacks += exception_stack_sizes[v];
 			oist->ist[v] = t->x86_tss.ist[v] =
 					(unsigned long)estacks;
+<<<<<<< HEAD
 			if (v == DEBUG_STACK-1)
 				per_cpu(debug_stack_addr, cpu) = (unsigned long)estacks;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 

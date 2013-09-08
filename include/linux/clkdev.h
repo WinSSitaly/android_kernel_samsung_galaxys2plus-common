@@ -24,6 +24,7 @@ struct clk_lookup {
 	struct clk		*clk;
 };
 
+<<<<<<< HEAD
 #define CLKDEV_INIT(d, n, c)	\
 	{			\
 		.dev_id = d,	\
@@ -31,6 +32,8 @@ struct clk_lookup {
 		.clk = c,	\
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct clk_lookup *clkdev_alloc(struct clk *clk, const char *con_id,
 	const char *dev_fmt, ...);
 

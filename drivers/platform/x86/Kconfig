@@ -26,15 +26,24 @@ config ACER_WMI
 	depends on RFKILL || RFKILL = n
 	depends on ACPI_WMI
 	select INPUT_SPARSEKMAP
+<<<<<<< HEAD
 	# Acer WMI depends on ACPI_VIDEO when ACPI is enabled
 	# but for select to work, need to select ACPI_VIDEO's dependencies, ick
         select VIDEO_OUTPUT_CONTROL if ACPI
         select ACPI_VIDEO if ACPI
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	---help---
 	  This is a driver for newer Acer (and Wistron) laptops. It adds
 	  wireless radio and bluetooth control, and on some laptops,
 	  exposes the mail LED and LCD backlight.
 
+<<<<<<< HEAD
+=======
+	  For more information about this driver see
+	  <file:Documentation/laptops/acer-wmi.txt>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	  If you have an ACPI-WMI compatible Acer/ Wistron laptop, say Y or M
 	  here.
 
@@ -58,12 +67,17 @@ config ACERHDF
 config ASUS_LAPTOP
 	tristate "Asus Laptop Extras"
 	depends on ACPI
+<<<<<<< HEAD
+=======
+	depends on !ACPI_ASUS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select LEDS_CLASS
 	select NEW_LEDS
 	select BACKLIGHT_CLASS_DEVICE
 	depends on INPUT
 	depends on RFKILL || RFKILL = n
 	select INPUT_SPARSEKMAP
+<<<<<<< HEAD
 	select INPUT_POLLDEV
 	---help---
 	  This is a driver for Asus laptops, Lenovo SL and the Pegatron
@@ -76,6 +90,17 @@ config ASUS_LAPTOP
 	  to blink those fancy LEDs.
 
 	  For more information see <http://acpi4asus.sf.net>.
+=======
+	---help---
+	  This is the new Linux driver for Asus laptops. It may also support some
+	  MEDION, JVC or VICTOR laptops. It makes all the extra buttons generate
+	  standard ACPI events and input events. It also adds
+	  support for video output switching, LCD backlight control, Bluetooth and
+	  Wlan control, and most importantly, allows you to blink those fancy LEDs.
+
+	  For more information and a userspace daemon for handling the extra
+	  buttons see <http://acpi4asus.sf.net>.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	  If you have an ACPI-compatible ASUS laptop, say Y or M here.
 
@@ -86,10 +111,15 @@ config DELL_LAPTOP
 	depends on EXPERIMENTAL
 	depends on BACKLIGHT_CLASS_DEVICE
 	depends on RFKILL || RFKILL = n
+<<<<<<< HEAD
 	depends on SERIO_I8042
 	select POWER_SUPPLY
 	select LEDS_CLASS
 	select NEW_LEDS
+=======
+	depends on POWER_SUPPLY
+	depends on SERIO_I8042
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default n
 	---help---
 	This driver adds support for rfkill and backlight control to Dell
@@ -146,6 +176,7 @@ config FUJITSU_LAPTOP_DEBUG
 
 	  If you are not sure, say N here.
 
+<<<<<<< HEAD
 config FUJITSU_TABLET
        tristate "Fujitsu Tablet Extras"
        depends on ACPI
@@ -170,6 +201,8 @@ config AMILO_RFKILL
 	  This is a driver for enabling wifi on some Fujitsu-Siemens Amilo
 	  laptops.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TC1100_WMI
 	tristate "HP Compaq TC1100 Tablet WMI Extras (EXPERIMENTAL)"
 	depends on !X86_64
@@ -193,7 +226,11 @@ config HP_ACCEL
 
 	  Support for a led indicating disk protection will be provided as
 	  hp::hddprotect. For more information on the feature, refer to
+<<<<<<< HEAD
 	  Documentation/misc-devices/lis3lv02d.
+=======
+	  Documentation/hwmon/lis3lv02d.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	  To compile this driver as a module, choose M here: the module will
 	  be called hp_accel.
@@ -463,9 +500,16 @@ config INTEL_MENLOW
 	  If unsure, say N.
 
 config EEEPC_LAPTOP
+<<<<<<< HEAD
 	tristate "Eee PC Hotkey Driver"
 	depends on ACPI
 	depends on INPUT
+=======
+	tristate "Eee PC Hotkey Driver (EXPERIMENTAL)"
+	depends on ACPI
+	depends on INPUT
+	depends on EXPERIMENTAL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	depends on RFKILL || RFKILL = n
 	depends on HOTPLUG_PCI
 	select BACKLIGHT_CLASS_DEVICE
@@ -484,10 +528,18 @@ config EEEPC_LAPTOP
 	  doesn't work on your Eee PC, try eeepc-wmi instead.
 
 config ASUS_WMI
+<<<<<<< HEAD
 	tristate "ASUS WMI Driver"
 	depends on ACPI_WMI
 	depends on INPUT
 	depends on HWMON
+=======
+	tristate "ASUS WMI Driver (EXPERIMENTAL)"
+	depends on ACPI_WMI
+	depends on INPUT
+	depends on HWMON
+	depends on EXPERIMENTAL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	depends on BACKLIGHT_CLASS_DEVICE
 	depends on RFKILL || RFKILL = n
 	depends on HOTPLUG_PCI
@@ -502,7 +554,11 @@ config ASUS_WMI
 	  be called asus-wmi.
 
 config ASUS_NB_WMI
+<<<<<<< HEAD
 	tristate "Asus Notebook WMI Driver"
+=======
+	tristate "Asus Notebook WMI Driver (EXPERIMENTAL)"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	depends on ASUS_WMI
 	---help---
 	  This is a driver for newer Asus notebooks. It adds extra features
@@ -515,7 +571,11 @@ config ASUS_NB_WMI
 	  here.
 
 config EEEPC_WMI
+<<<<<<< HEAD
 	tristate "Eee PC WMI Driver"
+=======
+	tristate "Eee PC WMI Driver (EXPERIMENTAL)"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	depends on ASUS_WMI
 	---help---
 	  This is a driver for newer Eee PC laptops. It adds extra features
@@ -560,6 +620,41 @@ config MSI_WMI
 	 To compile this driver as a module, choose M here: the module will
 	 be called msi-wmi.
 
+<<<<<<< HEAD
+=======
+config ACPI_ASUS
+	tristate "ASUS/Medion Laptop Extras (DEPRECATED)"
+	depends on ACPI
+	select BACKLIGHT_CLASS_DEVICE
+	---help---
+	  This driver provides support for extra features of ACPI-compatible
+	  ASUS laptops. As some of Medion laptops are made by ASUS, it may also
+	  support some Medion laptops (such as 9675 for example).  It makes all
+	  the extra buttons generate standard ACPI events that go through
+	  /proc/acpi/events, and (on some models) adds support for changing the
+	  display brightness and output, switching the LCD backlight on and off,
+	  and most importantly, allows you to blink those fancy LEDs intended
+	  for reporting mail and wireless status.
+
+	  Note: display switching code is currently considered EXPERIMENTAL,
+	  toying with these values may even lock your machine.
+
+	  All settings are changed via /proc/acpi/asus directory entries. Owner
+	  and group for these entries can be set with asus_uid and asus_gid
+	  parameters.
+
+	  More information and a userspace daemon for handling the extra buttons
+	  at <http://acpi4asus.sf.net>.
+
+	  If you have an ACPI-compatible ASUS laptop, say Y or M here. This
+	  driver is still under development, so if your laptop is unsupported or
+	  something works not quite as expected, please use the mailing list
+	  available on the above page (acpi4asus-user@lists.sourceforge.net).
+
+	  NOTE: This driver is deprecated and will probably be removed soon,
+	  use asus-laptop instead.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config TOPSTAR_LAPTOP
 	tristate "Topstar Laptop Extras"
 	depends on ACPI
@@ -573,7 +668,10 @@ config TOPSTAR_LAPTOP
 config ACPI_TOSHIBA
 	tristate "Toshiba Laptop Extras"
 	depends on ACPI
+<<<<<<< HEAD
 	depends on ACPI_WMI
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select LEDS_CLASS
 	select NEW_LEDS
 	depends on BACKLIGHT_CLASS_DEVICE
@@ -633,7 +731,11 @@ config ACPI_CMPC
 
 config INTEL_SCU_IPC
 	bool "Intel SCU IPC Support"
+<<<<<<< HEAD
 	depends on X86_INTEL_MID
+=======
+	depends on X86_MRST
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default y
 	---help---
 	  IPC is used to bridge the communications between kernel and SCU on
@@ -666,11 +768,40 @@ config INTEL_MID_POWER_BUTTON
 
 config INTEL_MFLD_THERMAL
        tristate "Thermal driver for Intel Medfield platform"
+<<<<<<< HEAD
        depends on MFD_INTEL_MSIC && THERMAL
+=======
+       depends on INTEL_SCU_IPC && THERMAL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
        help
          Say Y here to enable thermal driver support for the  Intel Medfield
          platform.
 
+<<<<<<< HEAD
+=======
+config RAR_REGISTER
+	bool "Restricted Access Region Register Driver"
+	depends on PCI && X86_MRST
+	default n
+	---help---
+	  This driver allows other kernel drivers access to the
+	  contents of the restricted access region control registers.
+
+	  The restricted access region control registers
+	  (rar_registers) are used to pass address and
+	  locking information on restricted access regions
+	  to other drivers that use restricted access regions.
+
+	  The restricted access regions are regions of memory
+	  on the Intel MID Platform that are not accessible to
+	  the x86 processor, but are accessible to dedicated
+	  processors on board peripheral devices.
+
+	  The purpose of the restricted access regions is to
+	  protect sensitive data from compromise by unauthorized
+	  programs running on the x86 processor.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config INTEL_IPS
 	tristate "Intel Intelligent Power Sharing"
 	depends on ACPI
@@ -716,6 +847,7 @@ config XO15_EBOOK
 
 config SAMSUNG_LAPTOP
 	tristate "Samsung Laptop driver"
+<<<<<<< HEAD
 	depends on X86
 	depends on RFKILL || RFKILL = n
 	depends on BACKLIGHT_CLASS_DEVICE
@@ -728,6 +860,15 @@ config SAMSUNG_LAPTOP
 
 	  It may also provide some sysfs files described in
 	  <file:Documentation/ABI/testing/sysfs-platform-samsung-laptop>
+=======
+	depends on RFKILL && BACKLIGHT_CLASS_DEVICE && X86
+	---help---
+	  This module implements a driver for a wide range of different
+	  Samsung laptops.  It offers control over the different
+	  function keys, wireless LED, LCD backlight level, and
+	  sometimes provides a "performance_control" sysfs file to allow
+	  the performance level of the laptop to be changed.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	  To compile this driver as a module, choose M here: the module
 	  will be called samsung-laptop.
@@ -748,6 +889,7 @@ config INTEL_OAKTRAIL
 	  enable/disable the Camera, WiFi, BT etc. devices. If in doubt, say Y
 	  here; it will only load on supported platforms.
 
+<<<<<<< HEAD
 config SAMSUNG_Q10
 	tristate "Samsung Q10 Extras"
 	depends on SERIO_I8042
@@ -766,4 +908,6 @@ config APPLE_GMUX
 	  graphics as well as the backlight. Currently only backlight
 	  control is supported by the driver.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endif # X86_PLATFORM_DEVICES

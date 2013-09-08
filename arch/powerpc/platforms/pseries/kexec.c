@@ -25,6 +25,7 @@ static void pseries_kexec_cpu_down(int crash_shutdown, int secondary)
 {
 	/* Don't risk a hypervisor call if we're crashing */
 	if (firmware_has_feature(FW_FEATURE_SPLPAR) && !crash_shutdown) {
+<<<<<<< HEAD
 		int ret;
 		int cpu = smp_processor_id();
 		int hwcpu = hard_smp_processor_id();
@@ -49,6 +50,33 @@ static void pseries_kexec_cpu_down(int crash_shutdown, int secondary)
 		if (ret) {
 			pr_err("WARNING: VPA deregistration for cpu %d "
 			       "(hw %d) failed with %d\n", cpu, hwcpu, ret);
+=======
+		unsigned long addr;
+		int ret;
+
+		if (get_lppaca()->dtl_enable_mask) {
+			ret = unregister_dtl(hard_smp_processor_id());
+			if (ret) {
+				pr_err("WARNING: DTL deregistration for cpu "
+				       "%d (hw %d) failed with %d\n",
+				       smp_processor_id(),
+				       hard_smp_processor_id(), ret);
+			}
+		}
+
+		addr = __pa(get_slb_shadow());
+		if (unregister_slb_shadow(hard_smp_processor_id(), addr))
+			printk("SLB shadow buffer deregistration of "
+			       "cpu %u (hw_cpu_id %d) failed\n",
+			       smp_processor_id(),
+			       hard_smp_processor_id());
+
+		addr = __pa(get_lppaca());
+		if (unregister_vpa(hard_smp_processor_id(), addr)) {
+			printk("VPA deregistration of cpu %u (hw_cpu_id %d) "
+					"failed\n", smp_processor_id(),
+					hard_smp_processor_id());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }

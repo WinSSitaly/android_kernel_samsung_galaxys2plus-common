@@ -20,8 +20,13 @@
 #include <linux/netdevice.h>
 #include <linux/interrupt.h>
 #include <linux/irq.h>
+<<<<<<< HEAD
 #include <linux/rtc.h>
 
+=======
+
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/pgtable.h>
 #include <asm/machdep.h>
 #include <asm/MC68VZ328.h>
@@ -33,7 +38,11 @@
 
 /***************************************************************************/
 
+<<<<<<< HEAD
 int m68328_hwclk(int set, struct rtc_time *t);
+=======
+void m68328_timer_gettod(int *year, int *mon, int *day, int *hour, int *min, int *sec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /***************************************************************************/
 /*                        Init Drangon Engine hardware                     */
@@ -181,7 +190,11 @@ void config_BSP(char *command, int size)
 
 	init_hardware(command, size);
 
+<<<<<<< HEAD
 	mach_hwclk = m68328_hwclk;
+=======
+	mach_gettod = m68328_timer_gettod;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mach_reset = m68vz328_reset;
 }
 

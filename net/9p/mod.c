@@ -24,11 +24,15 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
 #include <linux/module.h>
 #include <linux/errno.h>
 #include <linux/sched.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/moduleparam.h>
 #include <net/9p/9p.h>
 #include <linux/fs.h>
@@ -43,6 +47,7 @@ unsigned int p9_debug_level = 0;	/* feature-rific global debug level  */
 EXPORT_SYMBOL(p9_debug_level);
 module_param_named(debug, p9_debug_level, uint, 0);
 MODULE_PARM_DESC(debug, "9P debugging level");
+<<<<<<< HEAD
 
 void _p9_debug(enum p9_debug_flags level, const char *func,
 		const char *fmt, ...)
@@ -66,6 +71,8 @@ void _p9_debug(enum p9_debug_flags level, const char *func,
 	va_end(args);
 }
 EXPORT_SYMBOL(_p9_debug);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /*
@@ -107,14 +114,22 @@ EXPORT_SYMBOL(v9fs_unregister_trans);
  * @name: string identifying transport
  *
  */
+<<<<<<< HEAD
 struct p9_trans_module *v9fs_get_trans_by_name(char *s)
+=======
+struct p9_trans_module *v9fs_get_trans_by_name(const substring_t *name)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct p9_trans_module *t, *found = NULL;
 
 	spin_lock(&v9fs_trans_lock);
 
 	list_for_each_entry(t, &v9fs_trans_list, list)
+<<<<<<< HEAD
 		if (strcmp(t->name, s) == 0 &&
+=======
+		if (strncmp(t->name, name->from, name->to-name->from) == 0 &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    try_module_get(t->owner)) {
 			found = t;
 			break;
@@ -174,7 +189,11 @@ static int __init init_p9(void)
 	int ret = 0;
 
 	p9_error_init();
+<<<<<<< HEAD
 	pr_info("Installing 9P2000 support\n");
+=======
+	printk(KERN_INFO "Installing 9P2000 support\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	p9_trans_fd_init();
 
 	return ret;
@@ -187,7 +206,11 @@ static int __init init_p9(void)
 
 static void __exit exit_p9(void)
 {
+<<<<<<< HEAD
 	pr_info("Unloading 9P2000 support\n");
+=======
+	printk(KERN_INFO "Unloading 9P2000 support\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	p9_trans_fd_exit();
 }

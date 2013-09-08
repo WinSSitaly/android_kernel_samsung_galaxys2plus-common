@@ -20,7 +20,10 @@
 #include <linux/etherdevice.h>
 #include <linux/delay.h>
 #include <linux/completion.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/mac80211.h>
 
 #include "p54.h"
@@ -624,6 +627,7 @@ static void __devexit p54p_remove(struct pci_dev *pdev)
 }
 
 #ifdef CONFIG_PM
+<<<<<<< HEAD
 static int p54p_suspend(struct device *device)
 {
 	struct pci_dev *pdev = to_pci_dev(device);
@@ -657,6 +661,38 @@ static const struct dev_pm_ops p54pci_pm_ops = {
 #define P54P_PM_OPS (&p54pci_pm_ops)
 #else
 #define P54P_PM_OPS (NULL)
+=======
+static int p54p_suspend(struct pci_dev *pdev, pm_message_t state)
+{
+	struct ieee80211_hw *dev = pci_get_drvdata(pdev);
+	struct p54p_priv *priv = dev->priv;
+
+	if (priv->common.mode != NL80211_IFTYPE_UNSPECIFIED) {
+		ieee80211_stop_queues(dev);
+		p54p_stop(dev);
+	}
+
+	pci_save_state(pdev);
+	pci_set_power_state(pdev, pci_choose_state(pdev, state));
+	return 0;
+}
+
+static int p54p_resume(struct pci_dev *pdev)
+{
+	struct ieee80211_hw *dev = pci_get_drvdata(pdev);
+	struct p54p_priv *priv = dev->priv;
+
+	pci_set_power_state(pdev, PCI_D0);
+	pci_restore_state(pdev);
+
+	if (priv->common.mode != NL80211_IFTYPE_UNSPECIFIED) {
+		p54p_open(dev);
+		ieee80211_wake_queues(dev);
+	}
+
+	return 0;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_PM */
 
 static struct pci_driver p54p_driver = {
@@ -664,7 +700,14 @@ static struct pci_driver p54p_driver = {
 	.id_table	= p54p_table,
 	.probe		= p54p_probe,
 	.remove		= __devexit_p(p54p_remove),
+<<<<<<< HEAD
 	.driver.pm	= P54P_PM_OPS,
+=======
+#ifdef CONFIG_PM
+	.suspend	= p54p_suspend,
+	.resume		= p54p_resume,
+#endif /* CONFIG_PM */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init p54p_init(void)

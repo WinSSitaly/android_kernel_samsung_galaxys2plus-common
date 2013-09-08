@@ -25,7 +25,11 @@
 #include <linux/netdevice.h>
 #include <linux/timer.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <linux/route.h> /* RTF_xxx */
 #include <net/neighbour.h>
@@ -147,6 +151,7 @@ static void dn_rehash_zone(struct dn_zone *dz)
 
 	old_divisor = dz->dz_divisor;
 
+<<<<<<< HEAD
 	switch (old_divisor) {
 	case 16:
 		new_divisor = 256;
@@ -159,6 +164,19 @@ static void dn_rehash_zone(struct dn_zone *dz)
 		new_divisor = 1024;
 		new_hashmask = 0x3FF;
 		break;
+=======
+	switch(old_divisor) {
+		case 16:
+			new_divisor = 256;
+			new_hashmask = 0xFF;
+			break;
+		default:
+			printk(KERN_DEBUG "DECnet: dn_rehash_zone: BUG! %d\n", old_divisor);
+		case 256:
+			new_divisor = 1024;
+			new_hashmask = 0x3FF;
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ht = kcalloc(new_divisor, sizeof(struct dn_fib_node*), GFP_KERNEL);

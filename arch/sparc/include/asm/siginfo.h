@@ -16,6 +16,11 @@
 
 #ifdef __KERNEL__
 
+<<<<<<< HEAD
+=======
+#include <linux/compat.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_COMPAT
 
 struct compat_siginfo;

@@ -83,6 +83,7 @@
 					CKCTL_6358_USBSU_EN |		\
 					CKCTL_6358_EPHY_EN)
 
+<<<<<<< HEAD
 #define CKCTL_6368_VDSL_QPROC_EN	(1 << 2)
 #define CKCTL_6368_VDSL_AFE_EN		(1 << 3)
 #define CKCTL_6368_VDSL_BONDING_EN	(1 << 4)
@@ -114,11 +115,14 @@
 					CKCTL_6368_NAND_CLK_EN |	\
 					CKCTL_6368_IPSEC_CLK_EN)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* System PLL Control register  */
 #define PERF_SYS_PLL_CTL_REG		0x8
 #define SYS_PLL_SOFT_RESET		0x1
 
 /* Interrupt Mask register */
+<<<<<<< HEAD
 #define PERF_IRQMASK_6338_REG		0xc
 #define PERF_IRQMASK_6345_REG		0xc
 #define PERF_IRQMASK_6348_REG		0xc
@@ -163,6 +167,28 @@
 /* Soft Reset register */
 #define PERF_SOFTRESET_REG		0x28
 #define PERF_SOFTRESET_6368_REG		0x10
+=======
+#define PERF_IRQMASK_REG		0xc
+#define PERF_IRQSTAT_REG		0x10
+
+/* Interrupt Status register */
+#define PERF_IRQSTAT_REG		0x10
+
+/* External Interrupt Configuration register */
+#define PERF_EXTIRQ_CFG_REG		0x14
+#define EXTIRQ_CFG_SENSE(x)		(1 << (x))
+#define EXTIRQ_CFG_STAT(x)		(1 << (x + 5))
+#define EXTIRQ_CFG_CLEAR(x)		(1 << (x + 10))
+#define EXTIRQ_CFG_MASK(x)		(1 << (x + 15))
+#define EXTIRQ_CFG_BOTHEDGE(x)		(1 << (x + 20))
+#define EXTIRQ_CFG_LEVELSENSE(x)	(1 << (x + 25))
+
+#define EXTIRQ_CFG_CLEAR_ALL		(0xf << 10)
+#define EXTIRQ_CFG_MASK_ALL		(0xf << 15)
+
+/* Soft Reset register */
+#define PERF_SOFTRESET_REG		0x28
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define SOFTRESET_6338_SPI_MASK		(1 << 0)
 #define SOFTRESET_6338_ENET_MASK	(1 << 2)
@@ -203,6 +229,7 @@
 				  SOFTRESET_6348_ACLC_MASK |		\
 				  SOFTRESET_6348_ADSLMIPSPLL_MASK)
 
+<<<<<<< HEAD
 #define SOFTRESET_6368_SPI_MASK		(1 << 0)
 #define SOFTRESET_6368_MPI_MASK		(1 << 3)
 #define SOFTRESET_6368_EPHY_MASK	(1 << 6)
@@ -212,6 +239,8 @@
 #define SOFTRESET_6368_USBH_MASK	(1 << 12)
 #define SOFTRESET_6368_PCM_MASK		(1 << 13)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* MIPS PLL control register */
 #define PERF_MIPSPLLCTL_REG		0x34
 #define MIPSPLLCTL_N1_SHIFT		20
@@ -437,7 +466,10 @@
 #define GPIO_CTL_LO_REG			0x4
 #define GPIO_DATA_HI_REG		0x8
 #define GPIO_DATA_LO_REG		0xC
+<<<<<<< HEAD
 #define GPIO_DATA_LO_REG_6345		0x8
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* GPIO mux registers and constants */
 #define GPIO_MODE_REG			0x18
@@ -468,6 +500,7 @@
 #define GPIO_MODE_6358_SERIAL_LED	(1 << 10)
 #define GPIO_MODE_6358_UTOPIA		(1 << 12)
 
+<<<<<<< HEAD
 #define GPIO_MODE_6368_ANALOG_AFE_0	(1 << 0)
 #define GPIO_MODE_6368_ANALOG_AFE_1	(1 << 1)
 #define GPIO_MODE_6368_SYS_IRQ		(1 << 2)
@@ -506,6 +539,8 @@
 #define GPIO_BASEMODE_6368_GPIO		0x0
 #define GPIO_BASEMODE_6368_MASK		0x7
 /* those bits must be kept as read in gpio basemode register*/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*************************************************************************
  * _REG relative to RSET_ENET
@@ -652,6 +687,7 @@
 
 
 /*************************************************************************
+<<<<<<< HEAD
  * _REG relative to RSET_ENETDMAC
  *************************************************************************/
 
@@ -702,6 +738,8 @@
 
 
 /*************************************************************************
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * _REG relative to RSET_OHCI_PRIV
  *************************************************************************/
 
@@ -716,9 +754,13 @@
  * _REG relative to RSET_USBH_PRIV
  *************************************************************************/
 
+<<<<<<< HEAD
 #define USBH_PRIV_SWAP_6358_REG		0x0
 #define USBH_PRIV_SWAP_6368_REG		0x1c
 
+=======
+#define USBH_PRIV_SWAP_REG		0x0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define USBH_PRIV_SWAP_EHCI_ENDN_SHIFT	4
 #define USBH_PRIV_SWAP_EHCI_ENDN_MASK	(1 << USBH_PRIV_SWAP_EHCI_ENDN_SHIFT)
 #define USBH_PRIV_SWAP_EHCI_DATA_SHIFT	3
@@ -728,6 +770,7 @@
 #define USBH_PRIV_SWAP_OHCI_DATA_SHIFT	0
 #define USBH_PRIV_SWAP_OHCI_DATA_MASK	(1 << USBH_PRIV_SWAP_OHCI_DATA_SHIFT)
 
+<<<<<<< HEAD
 #define USBH_PRIV_TEST_6358_REG		0x24
 #define USBH_PRIV_TEST_6368_REG		0x14
 
@@ -735,6 +778,9 @@
 #define USBH_PRIV_SETUP_IOC_SHIFT	4
 #define USBH_PRIV_SETUP_IOC_MASK	(1 << USBH_PRIV_SETUP_IOC_SHIFT)
 
+=======
+#define USBH_PRIV_TEST_REG		0x24
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /*************************************************************************
@@ -896,8 +942,11 @@
 #define SDRAM_CFG_BANK_SHIFT		13
 #define SDRAM_CFG_BANK_MASK		(1 << SDRAM_CFG_BANK_SHIFT)
 
+<<<<<<< HEAD
 #define SDRAM_MBASE_REG			0xc
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SDRAM_PRIO_REG			0x2C
 #define SDRAM_PRIO_MIPS_SHIFT		29
 #define SDRAM_PRIO_MIPS_MASK		(1 << SDRAM_PRIO_MIPS_SHIFT)
@@ -932,6 +981,7 @@
 #define DMIPSPLLCFG_N2_SHIFT		29
 #define DMIPSPLLCFG_N2_MASK		(0x7 << DMIPSPLLCFG_N2_SHIFT)
 
+<<<<<<< HEAD
 #define DDR_DMIPSPLLCFG_6368_REG	0x20
 #define DMIPSPLLCFG_6368_P1_SHIFT	0
 #define DMIPSPLLCFG_6368_P1_MASK	(0xf << DMIPSPLLCFG_6368_P1_SHIFT)
@@ -973,4 +1023,6 @@
 #define M2M_SRCID_REG(x)		((x) * 0x40 + 0x14)
 #define M2M_DSTID_REG(x)		((x) * 0x40 + 0x18)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* BCM63XX_REGS_H_ */

@@ -33,7 +33,11 @@ static unsigned long pll_recalc(struct clk *clk)
 	return clk->parent->rate * multiplier;
 }
 
+<<<<<<< HEAD
 static struct sh_clk_ops pll_clk_ops = {
+=======
+static struct clk_ops pll_clk_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.recalc		= pll_recalc,
 };
 
@@ -79,7 +83,11 @@ struct clk div4_clks[DIV4_NR] = {
 #define MSTPCR1		0xffc80034
 #define MSTPCR2		0xffc10028
 
+<<<<<<< HEAD
 enum { MSTP004, MSTP000, MSTP127, MSTP114, MSTP113, MSTP112,
+=======
+enum { MSTP004, MSTP000, MSTP114, MSTP113, MSTP112,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
        MSTP111, MSTP110, MSTP103, MSTP102, MSTP220,
        MSTP_NR };
 
@@ -89,7 +97,10 @@ static struct clk mstp_clks[MSTP_NR] = {
 	[MSTP000] = SH_CLK_MSTP32(&div4_clks[DIV4_P], MSTPCR0, 0, 0),
 
 	/* MSTPCR1 */
+<<<<<<< HEAD
 	[MSTP127] = SH_CLK_MSTP32(&div4_clks[DIV4_P], MSTPCR1, 27, 0),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[MSTP114] = SH_CLK_MSTP32(&div4_clks[DIV4_P], MSTPCR1, 14, 0),
 	[MSTP113] = SH_CLK_MSTP32(&div4_clks[DIV4_P], MSTPCR1, 13, 0),
 	[MSTP112] = SH_CLK_MSTP32(&div4_clks[DIV4_P], MSTPCR1, 12, 0),
@@ -102,6 +113,11 @@ static struct clk mstp_clks[MSTP_NR] = {
 	[MSTP220] = SH_CLK_MSTP32(&div4_clks[DIV4_P], MSTPCR2, 20, 0),
 };
 
+<<<<<<< HEAD
+=======
+#define CLKDEV_CON_ID(_id, _clk) { .con_id = _id, .clk = _clk }
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct clk_lookup lookups[] = {
 	/* main clocks */
 	CLKDEV_CON_ID("extal", &extal_clk),
@@ -113,6 +129,7 @@ static struct clk_lookup lookups[] = {
 	CLKDEV_CON_ID("cpu_clk", &div4_clks[DIV4_I]),
 
 	/* MSTP32 clocks */
+<<<<<<< HEAD
 	CLKDEV_DEV_ID("sh_mobile_sdhi.0", &mstp_clks[MSTP004]),
 	CLKDEV_CON_ID("riic0", &mstp_clks[MSTP000]),
 	CLKDEV_CON_ID("riic1", &mstp_clks[MSTP000]),
@@ -133,6 +150,39 @@ static struct clk_lookup lookups[] = {
 	CLKDEV_DEV_ID("renesas_usbhs.0", &mstp_clks[MSTP102]),
 	CLKDEV_CON_ID("mmc0", &mstp_clks[MSTP220]),
 	CLKDEV_CON_ID("rspi2", &mstp_clks[MSTP127]),
+=======
+	CLKDEV_CON_ID("sdhi0", &mstp_clks[MSTP004]),
+	CLKDEV_CON_ID("riic", &mstp_clks[MSTP000]),
+	{
+		/* TMU0 */
+		.dev_id		= "sh_tmu.0",
+		.con_id		= "tmu_fck",
+		.clk		= &mstp_clks[MSTP113],
+	}, {
+		/* TMU1 */
+		.dev_id		= "sh_tmu.1",
+		.con_id		= "tmu_fck",
+		.clk		= &mstp_clks[MSTP114],
+	},
+	{
+		/* SCIF4 (But, ID is 2) */
+		.dev_id		= "sh-sci.2",
+		.con_id		= "sci_fck",
+		.clk		= &mstp_clks[MSTP112],
+	}, {
+		/* SCIF3 */
+		.dev_id		= "sh-sci.1",
+		.con_id		= "sci_fck",
+		.clk		= &mstp_clks[MSTP111],
+	}, {
+		/* SCIF2 */
+		.dev_id		= "sh-sci.0",
+		.con_id		= "sci_fck",
+		.clk		= &mstp_clks[MSTP110],
+	},
+	CLKDEV_CON_ID("usb0", &mstp_clks[MSTP102]),
+	CLKDEV_CON_ID("mmc0", &mstp_clks[MSTP220]),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int __init arch_clk_init(void)

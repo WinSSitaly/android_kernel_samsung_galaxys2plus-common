@@ -24,6 +24,7 @@
 #include "extent_io.h"
 #include "locking.h"
 
+<<<<<<< HEAD
 void btrfs_assert_tree_read_locked(struct extent_buffer *eb);
 
 /*
@@ -159,10 +160,122 @@ int btrfs_try_tree_write_lock(struct extent_buffer *eb)
 	atomic_inc(&eb->write_locks);
 	atomic_inc(&eb->spinning_writers);
 	eb->lock_owner = current->pid;
+=======
+static inline void spin_nested(struct extent_buffer *eb)
+{
+	spin_lock(&eb->lock);
+}
+
+/*
+ * Setting a lock to blocking will drop the spinlock and set the
+ * flag that forces other procs who want the lock to wait.  After
+ * this you can safely schedule with the lock held.
+ */
+void btrfs_set_lock_blocking(struct extent_buffer *eb)
+{
+	if (!test_bit(EXTENT_BUFFER_BLOCKING, &eb->bflags)) {
+		set_bit(EXTENT_BUFFER_BLOCKING, &eb->bflags);
+		spin_unlock(&eb->lock);
+	}
+	/* exit with the spin lock released and the bit set */
+}
+
+/*
+ * clearing the blocking flag will take the spinlock again.
+ * After this you can't safely schedule
+ */
+void btrfs_clear_lock_blocking(struct extent_buffer *eb)
+{
+	if (test_bit(EXTENT_BUFFER_BLOCKING, &eb->bflags)) {
+		spin_nested(eb);
+		clear_bit(EXTENT_BUFFER_BLOCKING, &eb->bflags);
+		smp_mb__after_clear_bit();
+	}
+	/* exit with the spin lock held */
+}
+
+/*
+ * unfortunately, many of the places that currently set a lock to blocking
+ * don't end up blocking for very long, and often they don't block
+ * at all.  For a dbench 50 run, if we don't spin on the blocking bit
+ * at all, the context switch rate can jump up to 400,000/sec or more.
+ *
+ * So, we're still stuck with this crummy spin on the blocking bit,
+ * at least until the most common causes of the short blocks
+ * can be dealt with.
+ */
+static int btrfs_spin_on_block(struct extent_buffer *eb)
+{
+	int i;
+
+	for (i = 0; i < 512; i++) {
+		if (!test_bit(EXTENT_BUFFER_BLOCKING, &eb->bflags))
+			return 1;
+		if (need_resched())
+			break;
+		cpu_relax();
+	}
+	return 0;
+}
+
+/*
+ * This is somewhat different from trylock.  It will take the
+ * spinlock but if it finds the lock is set to blocking, it will
+ * return without the lock held.
+ *
+ * returns 1 if it was able to take the lock and zero otherwise
+ *
+ * After this call, scheduling is not safe without first calling
+ * btrfs_set_lock_blocking()
+ */
+int btrfs_try_spin_lock(struct extent_buffer *eb)
+{
+	int i;
+
+	if (btrfs_spin_on_block(eb)) {
+		spin_nested(eb);
+		if (!test_bit(EXTENT_BUFFER_BLOCKING, &eb->bflags))
+			return 1;
+		spin_unlock(&eb->lock);
+	}
+	/* spin for a bit on the BLOCKING flag */
+	for (i = 0; i < 2; i++) {
+		cpu_relax();
+		if (!btrfs_spin_on_block(eb))
+			break;
+
+		spin_nested(eb);
+		if (!test_bit(EXTENT_BUFFER_BLOCKING, &eb->bflags))
+			return 1;
+		spin_unlock(&eb->lock);
+	}
+	return 0;
+}
+
+/*
+ * the autoremove wake function will return 0 if it tried to wake up
+ * a process that was already awake, which means that process won't
+ * count as an exclusive wakeup.  The waitq code will continue waking
+ * procs until it finds one that was actually sleeping.
+ *
+ * For btrfs, this isn't quite what we want.  We want a single proc
+ * to be notified that the lock is ready for taking.  If that proc
+ * already happen to be awake, great, it will loop around and try for
+ * the lock.
+ *
+ * So, btrfs_wake_function always returns 1, even when the proc that we
+ * tried to wake up was already awake.
+ */
+static int btrfs_wake_function(wait_queue_t *wait, unsigned mode,
+			       int sync, void *key)
+{
+	autoremove_wake_function(wait, mode, sync, key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
 /*
+<<<<<<< HEAD
  * drop a spinning read lock
  */
 void btrfs_tree_read_unlock(struct extent_buffer *eb)
@@ -264,4 +377,74 @@ void btrfs_assert_tree_locked(struct extent_buffer *eb)
 void btrfs_assert_tree_read_locked(struct extent_buffer *eb)
 {
 	BUG_ON(!atomic_read(&eb->read_locks));
+=======
+ * returns with the extent buffer spinlocked.
+ *
+ * This will spin and/or wait as required to take the lock, and then
+ * return with the spinlock held.
+ *
+ * After this call, scheduling is not safe without first calling
+ * btrfs_set_lock_blocking()
+ */
+int btrfs_tree_lock(struct extent_buffer *eb)
+{
+	DEFINE_WAIT(wait);
+	wait.func = btrfs_wake_function;
+
+	if (!btrfs_spin_on_block(eb))
+		goto sleep;
+
+	while(1) {
+		spin_nested(eb);
+
+		/* nobody is blocking, exit with the spinlock held */
+		if (!test_bit(EXTENT_BUFFER_BLOCKING, &eb->bflags))
+			return 0;
+
+		/*
+		 * we have the spinlock, but the real owner is blocking.
+		 * wait for them
+		 */
+		spin_unlock(&eb->lock);
+
+		/*
+		 * spin for a bit, and if the blocking flag goes away,
+		 * loop around
+		 */
+		cpu_relax();
+		if (btrfs_spin_on_block(eb))
+			continue;
+sleep:
+		prepare_to_wait_exclusive(&eb->lock_wq, &wait,
+					  TASK_UNINTERRUPTIBLE);
+
+		if (test_bit(EXTENT_BUFFER_BLOCKING, &eb->bflags))
+			schedule();
+
+		finish_wait(&eb->lock_wq, &wait);
+	}
+	return 0;
+}
+
+int btrfs_tree_unlock(struct extent_buffer *eb)
+{
+	/*
+	 * if we were a blocking owner, we don't have the spinlock held
+	 * just clear the bit and look for waiters
+	 */
+	if (test_and_clear_bit(EXTENT_BUFFER_BLOCKING, &eb->bflags))
+		smp_mb__after_clear_bit();
+	else
+		spin_unlock(&eb->lock);
+
+	if (waitqueue_active(&eb->lock_wq))
+		wake_up(&eb->lock_wq);
+	return 0;
+}
+
+void btrfs_assert_tree_locked(struct extent_buffer *eb)
+{
+	if (!test_bit(EXTENT_BUFFER_BLOCKING, &eb->bflags))
+		assert_spin_locked(&eb->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

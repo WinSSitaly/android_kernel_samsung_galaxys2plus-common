@@ -6,8 +6,11 @@
 
 #include <linux/bcma/bcma_driver_chipcommon.h>
 #include <linux/bcma/bcma_driver_pci.h>
+<<<<<<< HEAD
 #include <linux/bcma/bcma_driver_mips.h>
 #include <linux/ssb/ssb.h> /* SPROM sharing */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "bcma_regs.h"
 
@@ -15,9 +18,15 @@ struct bcma_device;
 struct bcma_bus;
 
 enum bcma_hosttype {
+<<<<<<< HEAD
 	BCMA_HOSTTYPE_PCI,
 	BCMA_HOSTTYPE_SDIO,
 	BCMA_HOSTTYPE_SOC,
+=======
+	BCMA_HOSTTYPE_NONE,
+	BCMA_HOSTTYPE_PCI,
+	BCMA_HOSTTYPE_SDIO,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct bcma_chipinfo {
@@ -26,11 +35,14 @@ struct bcma_chipinfo {
 	u8 pkg;
 };
 
+<<<<<<< HEAD
 enum bcma_clkmode {
 	BCMA_CLKMODE_FAST,
 	BCMA_CLKMODE_DYNAMIC,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct bcma_host_ops {
 	u8 (*read8)(struct bcma_device *core, u16 offset);
 	u16 (*read16)(struct bcma_device *core, u16 offset);
@@ -38,12 +50,15 @@ struct bcma_host_ops {
 	void (*write8)(struct bcma_device *core, u16 offset, u8 value);
 	void (*write16)(struct bcma_device *core, u16 offset, u16 value);
 	void (*write32)(struct bcma_device *core, u16 offset, u32 value);
+<<<<<<< HEAD
 #ifdef CONFIG_BCMA_BLOCKIO
 	void (*block_read)(struct bcma_device *core, void *buffer,
 			   size_t count, u16 offset, u8 reg_width);
 	void (*block_write)(struct bcma_device *core, const void *buffer,
 			    size_t count, u16 offset, u8 reg_width);
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Agent ops */
 	u32 (*aread32)(struct bcma_device *core, u16 offset);
 	void (*awrite32)(struct bcma_device *core, u16 offset, u32 value);
@@ -130,6 +145,7 @@ struct bcma_device {
 	struct bcma_device_id id;
 
 	struct device dev;
+<<<<<<< HEAD
 	struct device *dma_dev;
 
 	unsigned int irq;
@@ -137,13 +153,21 @@ struct bcma_device {
 
 	u8 core_index;
 	u8 core_unit;
+=======
+	bool dev_registered;
+
+	u8 core_index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	u32 addr;
 	u32 wrap;
 
+<<<<<<< HEAD
 	void __iomem *io_addr;
 	void __iomem *io_wrap;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *drvdata;
 	struct list_head list;
 };
@@ -163,7 +187,11 @@ struct bcma_driver {
 
 	int (*probe)(struct bcma_device *dev);
 	void (*remove)(struct bcma_device *dev);
+<<<<<<< HEAD
 	int (*suspend)(struct bcma_device *dev);
+=======
+	int (*suspend)(struct bcma_device *dev, pm_message_t state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*resume)(struct bcma_device *dev);
 	void (*shutdown)(struct bcma_device *dev);
 
@@ -171,6 +199,7 @@ struct bcma_driver {
 };
 extern
 int __bcma_driver_register(struct bcma_driver *drv, struct module *owner);
+<<<<<<< HEAD
 #define bcma_driver_register(drv) \
 	__bcma_driver_register(drv, THIS_MODULE)
 
@@ -182,6 +211,14 @@ extern int bcma_arch_register_fallback_sprom(
 		int (*sprom_callback)(struct bcma_bus *bus,
 		struct ssb_sprom *out));
 
+=======
+static inline int bcma_driver_register(struct bcma_driver *drv)
+{
+	return __bcma_driver_register(drv, THIS_MODULE);
+}
+extern void bcma_driver_unregister(struct bcma_driver *drv);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct bcma_bus {
 	/* The MMIO area. */
 	void __iomem *mmio;
@@ -201,6 +238,7 @@ struct bcma_bus {
 	struct bcma_device *mapped_core;
 	struct list_head cores;
 	u8 nr_cores;
+<<<<<<< HEAD
 	u8 init_done:1;
 	u8 num;
 
@@ -226,20 +264,49 @@ static inline u32 bcma_read32(struct bcma_device *core, u16 offset)
 	return core->bus->ops->read32(core, offset);
 }
 static inline
+=======
+
+	struct bcma_drv_cc drv_cc;
+	struct bcma_drv_pci drv_pci;
+};
+
+extern inline u32 bcma_read8(struct bcma_device *core, u16 offset)
+{
+	return core->bus->ops->read8(core, offset);
+}
+extern inline u32 bcma_read16(struct bcma_device *core, u16 offset)
+{
+	return core->bus->ops->read16(core, offset);
+}
+extern inline u32 bcma_read32(struct bcma_device *core, u16 offset)
+{
+	return core->bus->ops->read32(core, offset);
+}
+extern inline
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void bcma_write8(struct bcma_device *core, u16 offset, u32 value)
 {
 	core->bus->ops->write8(core, offset, value);
 }
+<<<<<<< HEAD
 static inline
+=======
+extern inline
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void bcma_write16(struct bcma_device *core, u16 offset, u32 value)
 {
 	core->bus->ops->write16(core, offset, value);
 }
+<<<<<<< HEAD
 static inline
+=======
+extern inline
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void bcma_write32(struct bcma_device *core, u16 offset, u32 value)
 {
 	core->bus->ops->write32(core, offset, value);
 }
+<<<<<<< HEAD
 #ifdef CONFIG_BCMA_BLOCKIO
 static inline void bcma_block_read(struct bcma_device *core, void *buffer,
 				   size_t count, u16 offset, u8 reg_width)
@@ -258,11 +325,19 @@ static inline u32 bcma_aread32(struct bcma_device *core, u16 offset)
 	return core->bus->ops->aread32(core, offset);
 }
 static inline
+=======
+extern inline u32 bcma_aread32(struct bcma_device *core, u16 offset)
+{
+	return core->bus->ops->aread32(core, offset);
+}
+extern inline
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void bcma_awrite32(struct bcma_device *core, u16 offset, u32 value)
 {
 	core->bus->ops->awrite32(core, offset, value);
 }
 
+<<<<<<< HEAD
 static inline void bcma_mask32(struct bcma_device *cc, u16 offset, u32 mask)
 {
 	bcma_write32(cc, offset, bcma_read32(cc, offset) & mask);
@@ -303,5 +378,9 @@ extern void bcma_core_pll_ctl(struct bcma_device *core, u32 req, u32 status,
 #define  BCMA_DMA_TRANSLATION_DMA32_CMT	0x40000000 /* Client Mode Translation for 32-bit DMA */
 #define  BCMA_DMA_TRANSLATION_DMA64_CMT	0x80000000 /* Client Mode Translation for 64-bit DMA */
 extern u32 bcma_core_dma_translation(struct bcma_device *core);
+=======
+extern bool bcma_core_is_enabled(struct bcma_device *core);
+extern int bcma_core_enable(struct bcma_device *core, u32 flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* LINUX_BCMA_H_ */

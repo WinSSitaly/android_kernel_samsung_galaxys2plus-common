@@ -9,6 +9,10 @@
  *  it under the terms of the GNU General Public License version 2 as
  *  published by the Free Software Foundation.
  */
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/types.h>
 #include <linux/io.h>
@@ -18,8 +22,13 @@
 
 #include <linux/serial_core.h>
 #include <linux/serial_reg.h>
+<<<<<<< HEAD
 
 #include <mach/gpio-pnx4008.h>
+=======
+#include <mach/gpio.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/clock.h>
 
 #define UART_3		0

@@ -40,7 +40,11 @@
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;	/* Index 0-MAX */
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;	/* ID for this card */
 /* Enable this card */
+<<<<<<< HEAD
 static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;
+=======
+static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_array(index, int, NULL, 0444);
 MODULE_PARM_DESC(index, "Index value for Sun CS4231 soundcard.");
@@ -2118,4 +2122,19 @@ static struct platform_driver cs4231_driver = {
 	.remove		= __devexit_p(cs4231_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(cs4231_driver);
+=======
+static int __init cs4231_init(void)
+{
+	return platform_driver_register(&cs4231_driver);
+}
+
+static void __exit cs4231_exit(void)
+{
+	platform_driver_unregister(&cs4231_driver);
+}
+
+module_init(cs4231_init);
+module_exit(cs4231_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

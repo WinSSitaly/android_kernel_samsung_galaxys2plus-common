@@ -2,7 +2,11 @@
  * Shared interrupt handling code for IPR and INTC2 types of IRQs.
  *
  * Copyright (C) 2007, 2008 Magnus Damm
+<<<<<<< HEAD
  * Copyright (C) 2009 - 2012 Paul Mundt
+=======
+ * Copyright (C) 2009, 2010 Paul Mundt
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Based on intc2.c and ipr.c
  *
@@ -22,28 +26,45 @@
 #include <linux/irq.h>
 #include <linux/io.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/stat.h>
 #include <linux/interrupt.h>
 #include <linux/sh_intc.h>
 #include <linux/device.h>
+=======
+#include <linux/interrupt.h>
+#include <linux/sh_intc.h>
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/syscore_ops.h>
 #include <linux/list.h>
 #include <linux/spinlock.h>
 #include <linux/radix-tree.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/sort.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "internals.h"
 
 LIST_HEAD(intc_list);
 DEFINE_RAW_SPINLOCK(intc_big_lock);
+<<<<<<< HEAD
 static unsigned int nr_intc_controllers;
+=======
+unsigned int nr_intc_controllers;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Default priority level
  * - this needs to be at least 2 for 5-bit priorities on 7780
  */
 static unsigned int default_prio_level = 2;	/* 2 - 16 */
+<<<<<<< HEAD
 static unsigned int intc_prio_level[INTC_NR_IRQS];	/* for now */
+=======
+static unsigned int intc_prio_level[NR_IRQS];	/* for now */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unsigned int intc_get_dfl_prio_level(void)
 {
@@ -268,9 +289,12 @@ int __init register_intc_controller(struct intc_desc *desc)
 			k += save_reg(d, k, hw->prio_regs[i].set_reg, smp);
 			k += save_reg(d, k, hw->prio_regs[i].clr_reg, smp);
 		}
+<<<<<<< HEAD
 
 		sort(d->prio, hw->nr_prio_regs, sizeof(*d->prio),
 		     intc_handle_int_cmp, NULL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (hw->sense_regs) {
@@ -281,9 +305,12 @@ int __init register_intc_controller(struct intc_desc *desc)
 
 		for (i = 0; i < hw->nr_sense_regs; i++)
 			k += save_reg(d, k, hw->sense_regs[i].reg, 0);
+<<<<<<< HEAD
 
 		sort(d->sense, hw->nr_sense_regs, sizeof(*d->sense),
 		     intc_handle_int_cmp, NULL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (hw->subgroups)
@@ -361,8 +388,11 @@ int __init register_intc_controller(struct intc_desc *desc)
 	if (desc->force_enable)
 		intc_enable_disable_enum(desc, d, desc->force_enable, 1);
 
+<<<<<<< HEAD
 	d->skip_suspend = desc->skip_syscore_suspend;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nr_intc_controllers++;
 
 	return 0;
@@ -395,9 +425,12 @@ static int intc_suspend(void)
 	list_for_each_entry(d, &intc_list, list) {
 		int irq;
 
+<<<<<<< HEAD
 		if (d->skip_suspend)
 			continue;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* enable wakeup irqs belonging to this intc controller */
 		for_each_active_irq(irq) {
 			struct irq_data *data;
@@ -421,9 +454,12 @@ static void intc_resume(void)
 	list_for_each_entry(d, &intc_list, list) {
 		int irq;
 
+<<<<<<< HEAD
 		if (d->skip_suspend)
 			continue;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for_each_active_irq(irq) {
 			struct irq_data *data;
 			struct irq_chip *chip;
@@ -449,6 +485,7 @@ struct syscore_ops intc_syscore_ops = {
 	.resume		= intc_resume,
 };
 
+<<<<<<< HEAD
 struct bus_type intc_subsys = {
 	.name		= "intc",
 	.dev_name	= "intc",
@@ -460,19 +497,38 @@ show_intc_name(struct device *dev, struct device_attribute *attr, char *buf)
 	struct intc_desc_int *d;
 
 	d = container_of(dev, struct intc_desc_int, dev);
+=======
+struct sysdev_class intc_sysdev_class = {
+	.name		= "intc",
+};
+
+static ssize_t
+show_intc_name(struct sys_device *dev, struct sysdev_attribute *attr, char *buf)
+{
+	struct intc_desc_int *d;
+
+	d = container_of(dev, struct intc_desc_int, sysdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return sprintf(buf, "%s\n", d->chip.name);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(name, S_IRUGO, show_intc_name, NULL);
 
 static int __init register_intc_devs(void)
+=======
+static SYSDEV_ATTR(name, S_IRUGO, show_intc_name, NULL);
+
+static int __init register_intc_sysdevs(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct intc_desc_int *d;
 	int error;
 
 	register_syscore_ops(&intc_syscore_ops);
 
+<<<<<<< HEAD
 	error = subsys_system_register(&intc_subsys, NULL);
 	if (!error) {
 		list_for_each_entry(d, &intc_list, list) {
@@ -482,14 +538,33 @@ static int __init register_intc_devs(void)
 			if (error == 0)
 				error = device_create_file(&d->dev,
 							   &dev_attr_name);
+=======
+	error = sysdev_class_register(&intc_sysdev_class);
+	if (!error) {
+		list_for_each_entry(d, &intc_list, list) {
+			d->sysdev.id = d->index;
+			d->sysdev.cls = &intc_sysdev_class;
+			error = sysdev_register(&d->sysdev);
+			if (error == 0)
+				error = sysdev_create_file(&d->sysdev,
+							   &attr_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (error)
 				break;
 		}
 	}
 
 	if (error)
+<<<<<<< HEAD
 		pr_err("device registration error\n");
 
 	return error;
 }
 device_initcall(register_intc_devs);
+=======
+		pr_err("sysdev registration error\n");
+
+	return error;
+}
+device_initcall(register_intc_sysdevs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

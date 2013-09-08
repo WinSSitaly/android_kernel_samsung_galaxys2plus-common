@@ -29,6 +29,10 @@
 
 #include <asm/bootinfo.h>
 #include <asm/setup.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/pgtable.h>
 #include <asm/amigahw.h>
 #include <asm/amigaints.h>
@@ -510,7 +514,12 @@ static unsigned long amiga_gettimeoffset(void)
 	return ticks + offset;
 }
 
+<<<<<<< HEAD
 static void amiga_reset(void)  __noreturn;
+=======
+static NORET_TYPE void amiga_reset(void)
+    ATTRIB_NORET;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void amiga_reset(void)
 {

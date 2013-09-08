@@ -12,4 +12,10 @@
 #include "bitops.h"
                 .text
 
+<<<<<<< HEAD
 testop	_test_and_set_bit, orreq, streq
+=======
+ENTRY(_test_and_set_bit)
+	testop	orreq, streq
+ENDPROC(_test_and_set_bit)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -13,8 +13,11 @@
 
 #include <linux/clk.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/of.h>
 #include <linux/of_platform.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* interface and function clocks */
 static struct clk *iclk, *fclk;
@@ -117,8 +120,11 @@ static const struct hc_driver ehci_atmel_hc_driver = {
 	.clear_tt_buffer_complete	= ehci_clear_tt_buffer_complete,
 };
 
+<<<<<<< HEAD
 static u64 at91_ehci_dma_mask = DMA_BIT_MASK(32);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit ehci_atmel_drv_probe(struct platform_device *pdev)
 {
 	struct usb_hcd *hcd;
@@ -141,6 +147,7 @@ static int __devinit ehci_atmel_drv_probe(struct platform_device *pdev)
 		goto fail_create_hcd;
 	}
 
+<<<<<<< HEAD
 	/* Right now device-tree probed devices don't get dma_mask set.
 	 * Since shared usb code relies on it, set it here for now.
 	 * Once we have dma capability bindings this can go away.
@@ -148,6 +155,8 @@ static int __devinit ehci_atmel_drv_probe(struct platform_device *pdev)
 	if (!pdev->dev.dma_mask)
 		pdev->dev.dma_mask = &at91_ehci_dma_mask;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hcd = usb_create_hcd(driver, &pdev->dev, dev_name(&pdev->dev));
 	if (!hcd) {
 		retval = -ENOMEM;
@@ -236,6 +245,7 @@ static int __devexit ehci_atmel_drv_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_OF
 static const struct of_device_id atmel_ehci_dt_ids[] = {
 	{ .compatible = "atmel,at91sam9g45-ehci" },
@@ -245,12 +255,18 @@ static const struct of_device_id atmel_ehci_dt_ids[] = {
 MODULE_DEVICE_TABLE(of, atmel_ehci_dt_ids);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver ehci_atmel_driver = {
 	.probe		= ehci_atmel_drv_probe,
 	.remove		= __devexit_p(ehci_atmel_drv_remove),
 	.shutdown	= usb_hcd_platform_shutdown,
+<<<<<<< HEAD
 	.driver		= {
 		.name	= "atmel-ehci",
 		.of_match_table	= of_match_ptr(atmel_ehci_dt_ids),
 	},
+=======
+	.driver.name	= "atmel-ehci",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };

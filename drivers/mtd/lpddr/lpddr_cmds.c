@@ -27,7 +27,10 @@
 #include <linux/mtd/pfow.h>
 #include <linux/mtd/qinfo.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int lpddr_read(struct mtd_info *mtd, loff_t adr, size_t len,
 					size_t *retlen, u_char *buf);
@@ -40,7 +43,11 @@ static int lpddr_lock(struct mtd_info *mtd, loff_t ofs, uint64_t len);
 static int lpddr_unlock(struct mtd_info *mtd, loff_t ofs, uint64_t len);
 static int lpddr_point(struct mtd_info *mtd, loff_t adr, size_t len,
 			size_t *retlen, void **mtdbuf, resource_size_t *phys);
+<<<<<<< HEAD
 static int lpddr_unpoint(struct mtd_info *mtd, loff_t adr, size_t len);
+=======
+static void lpddr_unpoint(struct mtd_info *mtd, loff_t adr, size_t len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int get_chip(struct map_info *map, struct flchip *chip, int mode);
 static int chip_ready(struct map_info *map, struct flchip *chip, int mode);
 static void put_chip(struct map_info *map, struct flchip *chip);
@@ -63,6 +70,7 @@ struct mtd_info *lpddr_cmdset(struct map_info *map)
 	mtd->type = MTD_NORFLASH;
 
 	/* Fill in the default mtd operations */
+<<<<<<< HEAD
 	mtd->_read = lpddr_read;
 	mtd->type = MTD_NORFLASH;
 	mtd->flags = MTD_CAP_NORFLASH;
@@ -76,6 +84,28 @@ struct mtd_info *lpddr_cmdset(struct map_info *map)
 		mtd->_point = lpddr_point;
 		mtd->_unpoint = lpddr_unpoint;
 	}
+=======
+	mtd->read = lpddr_read;
+	mtd->type = MTD_NORFLASH;
+	mtd->flags = MTD_CAP_NORFLASH;
+	mtd->flags &= ~MTD_BIT_WRITEABLE;
+	mtd->erase = lpddr_erase;
+	mtd->write = lpddr_write_buffers;
+	mtd->writev = lpddr_writev;
+	mtd->read_oob = NULL;
+	mtd->write_oob = NULL;
+	mtd->sync = NULL;
+	mtd->lock = lpddr_lock;
+	mtd->unlock = lpddr_unlock;
+	mtd->suspend = NULL;
+	mtd->resume = NULL;
+	if (map_is_linear(map)) {
+		mtd->point = lpddr_point;
+		mtd->unpoint = lpddr_unpoint;
+	}
+	mtd->block_isbad = NULL;
+	mtd->block_markbad = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mtd->size = 1 << lpddr->qinfo->DevSizeShift;
 	mtd->erasesize = 1 << lpddr->qinfo->UniformBlockSizeShift;
 	mtd->writesize = 1 << lpddr->qinfo->BufSizeShift;
@@ -530,12 +560,22 @@ static int lpddr_point(struct mtd_info *mtd, loff_t adr, size_t len,
 	struct flchip *chip = &lpddr->chips[chipnum];
 	int ret = 0;
 
+<<<<<<< HEAD
 	if (!map->virt)
+=======
+	if (!map->virt || (adr + len > mtd->size))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	/* ofs: offset within the first chip that the first read should start */
 	ofs = adr - (chipnum << lpddr->chipshift);
+<<<<<<< HEAD
 	*mtdbuf = (void *)map->virt + chip->start + ofs;
+=======
+
+	*mtdbuf = (void *)map->virt + chip->start + ofs;
+	*retlen = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (len) {
 		unsigned long thislen;
@@ -573,11 +613,19 @@ static int lpddr_point(struct mtd_info *mtd, loff_t adr, size_t len,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int lpddr_unpoint (struct mtd_info *mtd, loff_t adr, size_t len)
 {
 	struct map_info *map = mtd->priv;
 	struct lpddr_private *lpddr = map->fldrv_priv;
 	int chipnum = adr >> lpddr->chipshift, err = 0;
+=======
+static void lpddr_unpoint (struct mtd_info *mtd, loff_t adr, size_t len)
+{
+	struct map_info *map = mtd->priv;
+	struct lpddr_private *lpddr = map->fldrv_priv;
+	int chipnum = adr >> lpddr->chipshift;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long ofs;
 
 	/* ofs: offset within the first chip that the first read should start */
@@ -601,11 +649,17 @@ static int lpddr_unpoint (struct mtd_info *mtd, loff_t adr, size_t len)
 			chip->ref_point_counter--;
 			if (chip->ref_point_counter == 0)
 				chip->state = FL_READY;
+<<<<<<< HEAD
 		} else {
 			printk(KERN_WARNING "%s: Warning: unpoint called on non"
 					"pointed region\n", map->name);
 			err = -EINVAL;
 		}
+=======
+		} else
+			printk(KERN_WARNING "%s: Warning: unpoint called on non"
+					"pointed region\n", map->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		put_chip(map, chip);
 		mutex_unlock(&chip->mutex);
@@ -614,8 +668,11 @@ static int lpddr_unpoint (struct mtd_info *mtd, loff_t adr, size_t len)
 		ofs = 0;
 		chipnum++;
 	}
+<<<<<<< HEAD
 
 	return err;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int lpddr_write_buffers(struct mtd_info *mtd, loff_t to, size_t len,
@@ -639,11 +696,19 @@ static int lpddr_writev(struct mtd_info *mtd, const struct kvec *vecs,
 	int chipnum;
 	unsigned long ofs, vec_seek, i;
 	int wbufsize = 1 << lpddr->qinfo->BufSizeShift;
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	size_t len = 0;
 
 	for (i = 0; i < count; i++)
 		len += vecs[i].iov_len;
 
+<<<<<<< HEAD
+=======
+	*retlen = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!len)
 		return 0;
 
@@ -688,6 +753,12 @@ static int lpddr_erase(struct mtd_info *mtd, struct erase_info *instr)
 	ofs = instr->addr;
 	len = instr->len;
 
+<<<<<<< HEAD
+=======
+	if (ofs > mtd->size || (len + ofs) > mtd->size)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (len > 0) {
 		ret = do_erase_oneblock(mtd, ofs);
 		if (ret)

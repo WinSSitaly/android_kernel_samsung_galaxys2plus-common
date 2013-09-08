@@ -10,7 +10,10 @@
  */
 
 #include <linux/device-mapper.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "dm-path-selector.h"
 

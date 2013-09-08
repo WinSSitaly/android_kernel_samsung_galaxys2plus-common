@@ -34,5 +34,8 @@ header-y += termios.h
 header-y += types.h
 header-y += ucontext.h
 header-y += unistd.h
+<<<<<<< HEAD
 
 generic-y += rwsem.h
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -28,8 +28,11 @@ extern int usb_remove_device(struct usb_device *udev);
 
 extern int usb_get_device_descriptor(struct usb_device *dev,
 		unsigned int size);
+<<<<<<< HEAD
 extern int usb_get_bos_descriptor(struct usb_device *dev);
 extern void usb_release_bos_descriptor(struct usb_device *dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern char *usb_cache_string(struct usb_device *udev, int index);
 extern int usb_set_configuration(struct usb_device *dev, int configuration);
 extern int usb_choose_configuration(struct usb_device *udev);
@@ -56,7 +59,10 @@ extern void usb_major_cleanup(void);
 
 extern int usb_suspend(struct device *dev, pm_message_t msg);
 extern int usb_resume(struct device *dev, pm_message_t msg);
+<<<<<<< HEAD
 extern int usb_resume_complete(struct device *dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int usb_port_suspend(struct usb_device *dev, pm_message_t msg);
 extern int usb_port_resume(struct usb_device *dev, pm_message_t msg);
@@ -75,6 +81,15 @@ static inline int usb_port_resume(struct usb_device *udev, pm_message_t msg)
 
 #endif
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_OTG
+extern void usb_hnp_polling_work(struct work_struct *work);
+extern void usb_host_test_device_sessend_work(struct work_struct *work);
+extern void usb_host_suspend_test_device(struct usb_device *udev);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_USB_SUSPEND
 
 extern void usb_autosuspend_device(struct usb_device *udev);
@@ -83,7 +98,10 @@ extern int usb_remote_wakeup(struct usb_device *dev);
 extern int usb_runtime_suspend(struct device *dev);
 extern int usb_runtime_resume(struct device *dev);
 extern int usb_runtime_idle(struct device *dev);
+<<<<<<< HEAD
 extern int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #else
 
@@ -98,10 +116,13 @@ static inline int usb_remote_wakeup(struct usb_device *udev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static inline int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable)
 {
 	return 0;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 extern struct bus_type usb_bus_type;
@@ -133,6 +154,23 @@ static inline int is_usb_device_driver(struct device_driver *drv)
 			for_devices;
 }
 
+<<<<<<< HEAD
+=======
+/* translate USB error codes to codes user space understands */
+static inline int usb_translate_errors(int error_code)
+{
+	switch (error_code) {
+	case 0:
+	case -ENOMEM:
+	case -ENODEV:
+		return error_code;
+	default:
+		return -EIO;
+	}
+}
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* for labeling diagnostics */
 extern const char *usbcore_name;
 

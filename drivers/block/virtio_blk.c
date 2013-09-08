@@ -3,13 +3,17 @@
 #include <linux/slab.h>
 #include <linux/blkdev.h>
 #include <linux/hdreg.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/mutex.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/virtio.h>
 #include <linux/virtio_blk.h>
 #include <linux/scatterlist.h>
 #include <linux/string_helpers.h>
 #include <scsi/scsi_cmnd.h>
+<<<<<<< HEAD
 #include <linux/idr.h>
 
 #define PART_BITS 4
@@ -17,6 +21,12 @@
 static int major;
 static DEFINE_IDA(vd_index_ida);
 
+=======
+
+#define PART_BITS 4
+
+static int major, index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct workqueue_struct *virtblk_wq;
 
 struct virtio_blk
@@ -37,6 +47,7 @@ struct virtio_blk
 	/* Process context for config space updates */
 	struct work_struct config_work;
 
+<<<<<<< HEAD
 	/* Lock for config space updates */
 	struct mutex config_lock;
 
@@ -49,6 +60,11 @@ struct virtio_blk
 	/* Ida index - used to track minor number allocations. */
 	int index;
 
+=======
+	/* What host tells us, plus 2 for header & tailer. */
+	unsigned int sg_elems;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Scatterlist: can be too big for stack. */
 	struct scatterlist sg[/*sg_elems*/];
 };
@@ -179,7 +195,11 @@ static bool do_req(struct request_queue *q, struct virtio_blk *vblk,
 		}
 	}
 
+<<<<<<< HEAD
 	if (virtqueue_add_buf(vblk->vq, vblk->sg, out, in, vbr, GFP_ATOMIC)<0) {
+=======
+	if (virtqueue_add_buf(vblk->vq, vblk->sg, out, in, vbr) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mempool_free(vbr, vblk->pool);
 		return false;
 	}
@@ -290,11 +310,14 @@ static int index_to_minor(int index)
 	return index << PART_BITS;
 }
 
+<<<<<<< HEAD
 static int minor_to_index(int minor)
 {
 	return minor >> PART_BITS;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t virtblk_serial_show(struct device *dev,
 				struct device_attribute *attr, char *buf)
 {
@@ -325,10 +348,13 @@ static void virtblk_config_changed_work(struct work_struct *work)
 	char cap_str_2[10], cap_str_10[10];
 	u64 capacity, size;
 
+<<<<<<< HEAD
 	mutex_lock(&vblk->config_lock);
 	if (!vblk->config_enable)
 		goto done;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Host must always specify the capacity. */
 	vdev->config->get(vdev, offsetof(struct virtio_blk_config, capacity),
 			  &capacity, sizeof(capacity));
@@ -351,9 +377,12 @@ static void virtblk_config_changed_work(struct work_struct *work)
 		  cap_str_10, cap_str_2);
 
 	set_capacity(vblk->disk, capacity);
+<<<<<<< HEAD
 	revalidate_disk(vblk->disk);
 done:
 	mutex_unlock(&vblk->config_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void virtblk_config_changed(struct virtio_device *vdev)
@@ -363,6 +392,7 @@ static void virtblk_config_changed(struct virtio_device *vdev)
 	queue_work(virtblk_wq, &vblk->config_work);
 }
 
+<<<<<<< HEAD
 static int init_vq(struct virtio_blk *vblk)
 {
 	int err = 0;
@@ -403,21 +433,32 @@ static int virtblk_name_format(char *prefix, int index, char *buf, int buflen)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit virtblk_probe(struct virtio_device *vdev)
 {
 	struct virtio_blk *vblk;
 	struct request_queue *q;
+<<<<<<< HEAD
 	int err, index;
+=======
+	int err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64 cap;
 	u32 v, blk_size, sg_elems, opt_io_size;
 	u16 min_io_size;
 	u8 physical_block_exp, alignment_offset;
 
+<<<<<<< HEAD
 	err = ida_simple_get(&vd_index_ida, 0, minor_to_index(1 << MINORBITS),
 			     GFP_KERNEL);
 	if (err < 0)
 		goto out;
 	index = err;
+=======
+	if (index_to_minor(index) >= 1 << MINORBITS)
+		return -ENOSPC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* We need to know how many segments before we allocate. */
 	err = virtio_config_val(vdev, VIRTIO_BLK_F_SEG_MAX,
@@ -434,7 +475,11 @@ static int __devinit virtblk_probe(struct virtio_device *vdev)
 				    sizeof(vblk->sg[0]) * sg_elems, GFP_KERNEL);
 	if (!vblk) {
 		err = -ENOMEM;
+<<<<<<< HEAD
 		goto out_free_index;
+=======
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	INIT_LIST_HEAD(&vblk->reqs);
@@ -442,6 +487,7 @@ static int __devinit virtblk_probe(struct virtio_device *vdev)
 	vblk->vdev = vdev;
 	vblk->sg_elems = sg_elems;
 	sg_init_table(vblk->sg, vblk->sg_elems);
+<<<<<<< HEAD
 	mutex_init(&vblk->config_lock);
 	INIT_WORK(&vblk->config_work, virtblk_config_changed_work);
 	vblk->config_enable = true;
@@ -449,6 +495,16 @@ static int __devinit virtblk_probe(struct virtio_device *vdev)
 	err = init_vq(vblk);
 	if (err)
 		goto out_free_vblk;
+=======
+	INIT_WORK(&vblk->config_work, virtblk_config_changed_work);
+
+	/* We expect one virtqueue, for output. */
+	vblk->vq = virtio_find_single_vq(vdev, blk_done, "requests");
+	if (IS_ERR(vblk->vq)) {
+		err = PTR_ERR(vblk->vq);
+		goto out_free_vblk;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	vblk->pool = mempool_create_kmalloc_pool(1,sizeof(struct virtblk_req));
 	if (!vblk->pool) {
@@ -471,14 +527,33 @@ static int __devinit virtblk_probe(struct virtio_device *vdev)
 
 	q->queuedata = vblk;
 
+<<<<<<< HEAD
 	virtblk_name_format("vd", index, vblk->disk->disk_name, DISK_NAME_LEN);
+=======
+	if (index < 26) {
+		sprintf(vblk->disk->disk_name, "vd%c", 'a' + index % 26);
+	} else if (index < (26 + 1) * 26) {
+		sprintf(vblk->disk->disk_name, "vd%c%c",
+			'a' + index / 26 - 1, 'a' + index % 26);
+	} else {
+		const unsigned int m1 = (index / 26 - 1) / 26 - 1;
+		const unsigned int m2 = (index / 26 - 1) % 26;
+		const unsigned int m3 =  index % 26;
+		sprintf(vblk->disk->disk_name, "vd%c%c%c",
+			'a' + m1, 'a' + m2, 'a' + m3);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	vblk->disk->major = major;
 	vblk->disk->first_minor = index_to_minor(index);
 	vblk->disk->private_data = vblk;
 	vblk->disk->fops = &virtblk_fops;
 	vblk->disk->driverfs_dev = &vdev->dev;
+<<<<<<< HEAD
 	vblk->index = index;
+=======
+	index++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* configure queue flush support */
 	if (virtio_has_feature(vdev, VIRTIO_BLK_F_FLUSH))
@@ -573,8 +648,11 @@ out_free_vq:
 	vdev->config->del_vqs(vdev);
 out_free_vblk:
 	kfree(vblk);
+<<<<<<< HEAD
 out_free_index:
 	ida_simple_remove(&vd_index_ida, index);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return err;
 }
@@ -582,12 +660,17 @@ out:
 static void __devexit virtblk_remove(struct virtio_device *vdev)
 {
 	struct virtio_blk *vblk = vdev->priv;
+<<<<<<< HEAD
 	int index = vblk->index;
 
 	/* Prevent config work handler from accessing the device. */
 	mutex_lock(&vblk->config_lock);
 	vblk->config_enable = false;
 	mutex_unlock(&vblk->config_lock);
+=======
+
+	flush_work(&vblk->config_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Nothing should be pending. */
 	BUG_ON(!list_empty(&vblk->reqs));
@@ -595,14 +678,18 @@ static void __devexit virtblk_remove(struct virtio_device *vdev)
 	/* Stop all the virtqueues. */
 	vdev->config->reset(vdev);
 
+<<<<<<< HEAD
 	flush_work(&vblk->config_work);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	del_gendisk(vblk->disk);
 	blk_cleanup_queue(vblk->disk->queue);
 	put_disk(vblk->disk);
 	mempool_destroy(vblk->pool);
 	vdev->config->del_vqs(vdev);
 	kfree(vblk);
+<<<<<<< HEAD
 	ida_simple_remove(&vd_index_ida, index);
 }
 
@@ -645,6 +732,9 @@ static int virtblk_restore(struct virtio_device *vdev)
 	return ret;
 }
 #endif
+=======
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const struct virtio_device_id id_table[] = {
 	{ VIRTIO_ID_BLOCK, VIRTIO_DEV_ANY_ID },
@@ -671,10 +761,13 @@ static struct virtio_driver __refdata virtio_blk = {
 	.probe			= virtblk_probe,
 	.remove			= __devexit_p(virtblk_remove),
 	.config_changed		= virtblk_config_changed,
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 	.freeze			= virtblk_freeze,
 	.restore		= virtblk_restore,
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init init(void)

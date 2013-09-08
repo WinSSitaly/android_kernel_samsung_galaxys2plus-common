@@ -48,8 +48,11 @@
 * Aug  8, 1998	acme		Initial version.
 */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>		/* __init */
 #include <linux/module.h>
 #include <linux/kernel.h>	/* printk(), and other useful stuff */
@@ -83,9 +86,16 @@ static u16 checksum(u8 *buf, u32 len);
 /* Global Data */
 
 /* private data */
+<<<<<<< HEAD
 static const char fullname[] = "Cyclom 2X Support Module";
 static const char copyright[] =
 	"(c) 1998-2003 Arnaldo Carvalho de Melo <acme@conectiva.com.br>";
+=======
+static const char modname[] = "cycx_drv";
+static const char fullname[] = "Cyclom 2X Support Module";
+static const char copyright[] = "(c) 1998-2003 Arnaldo Carvalho de Melo "
+			  "<acme@conectiva.com.br>";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Hardware configuration options.
  * These are arrays of configuration options used by verification routines.
@@ -111,8 +121,13 @@ static const long cycx_2x_irq_options[]  = { 7, 3, 5, 9, 10, 11, 12, 15 };
 
 static int __init cycx_drv_init(void)
 {
+<<<<<<< HEAD
 	pr_info("%s v%u.%u %s\n",
 		fullname, MOD_VERSION, MOD_RELEASE, copyright);
+=======
+	printk(KERN_INFO "%s v%u.%u %s\n", fullname, MOD_VERSION, MOD_RELEASE,
+			 copyright);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -140,16 +155,29 @@ int cycx_setup(struct cycx_hw *hw, void *cfm, u32 len, unsigned long dpmbase)
 
 	/* Verify IRQ configuration options */
 	if (!get_option_index(cycx_2x_irq_options, hw->irq)) {
+<<<<<<< HEAD
 		pr_err("IRQ %d is invalid!\n", hw->irq);
+=======
+		printk(KERN_ERR "%s: IRQ %d is invalid!\n", modname, hw->irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
 	/* Setup adapter dual-port memory window and test memory */
 	if (!dpmbase) {
+<<<<<<< HEAD
 		pr_err("you must specify the dpm address!\n");
  		return -EINVAL;
 	} else if (!get_option_index(cyc2x_dpmbase_options, dpmbase)) {
 		pr_err("memory address 0x%lX is invalid!\n", dpmbase);
+=======
+		printk(KERN_ERR "%s: you must specify the dpm address!\n",
+				modname);
+ 		return -EINVAL;
+	} else if (!get_option_index(cyc2x_dpmbase_options, dpmbase)) {
+		printk(KERN_ERR "%s: memory address 0x%lX is invalid!\n",
+				modname, dpmbase);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -157,12 +185,22 @@ int cycx_setup(struct cycx_hw *hw, void *cfm, u32 len, unsigned long dpmbase)
 	hw->dpmsize = CYCX_WINDOWSIZE;
 
 	if (!detect_cyc2x(hw->dpmbase)) {
+<<<<<<< HEAD
 		pr_err("adapter Cyclom 2X not found at address 0x%lX!\n",
 		       dpmbase);
 		return -EINVAL;
 	}
 
 	pr_info("found Cyclom 2X card at address 0x%lX\n", dpmbase);
+=======
+		printk(KERN_ERR "%s: adapter Cyclom 2X not found at "
+				"address 0x%lX!\n", modname, dpmbase);
+		return -EINVAL;
+	}
+
+	printk(KERN_INFO "%s: found Cyclom 2X card at address 0x%lX.\n",
+			 modname, dpmbase);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Load firmware. If loader fails then shut down adapter */
 	err = load_cyc2x(hw, cfm, len);
@@ -337,7 +375,11 @@ static int cycx_data_boot(void __iomem *addr, u8 *code, u32 len)
 	for (i = 0 ; i < len ; i += CFM_LOAD_BUFSZ)
 		if (buffer_load(addr, code + i,
 				min_t(u32, CFM_LOAD_BUFSZ, (len - i))) < 0) {
+<<<<<<< HEAD
 			pr_err("Error !!\n");
+=======
+			printk(KERN_ERR "%s: Error !!\n", modname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -1;
 		}
 
@@ -368,7 +410,11 @@ static int cycx_code_boot(void __iomem *addr, u8 *code, u32 len)
 	for (i = 0 ; i < len ; i += CFM_LOAD_BUFSZ)
 		if (buffer_load(addr, code + i,
 				min_t(u32, CFM_LOAD_BUFSZ, (len - i)))) {
+<<<<<<< HEAD
 			pr_err("Error !!\n");
+=======
+			printk(KERN_ERR "%s: Error !!\n", modname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -1;
 		}
 
@@ -389,6 +435,7 @@ static int load_cyc2x(struct cycx_hw *hw, struct cycx_firmware *cfm, u32 len)
 	u16 cksum;
 
 	/* Announce */
+<<<<<<< HEAD
 	pr_info("firmware signature=\"%s\"\n", cfm->signature);
 
 	/* Verify firmware signature */
@@ -403,6 +450,25 @@ static int load_cyc2x(struct cycx_hw *hw, struct cycx_firmware *cfm, u32 len)
 	if (cfm->version != CFM_VERSION) {
 		pr_err("%s: firmware format %u rejected! Expecting %u.\n",
 		       __func__, cfm->version, CFM_VERSION);
+=======
+	printk(KERN_INFO "%s: firmware signature=\"%s\"\n", modname,
+							    cfm->signature);
+
+	/* Verify firmware signature */
+	if (strcmp(cfm->signature, CFM_SIGNATURE)) {
+		printk(KERN_ERR "%s:load_cyc2x: not Cyclom-2X firmware!\n",
+				modname);
+		return -EINVAL;
+	}
+
+	printk(KERN_INFO "%s: firmware version=%u\n", modname, cfm->version);
+
+	/* Verify firmware module format version */
+	if (cfm->version != CFM_VERSION) {
+		printk(KERN_ERR "%s:%s: firmware format %u rejected! "
+				"Expecting %u.\n",
+				modname, __func__, cfm->version, CFM_VERSION);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -414,22 +480,39 @@ static int load_cyc2x(struct cycx_hw *hw, struct cycx_firmware *cfm, u32 len)
 	if (((len - sizeof(struct cycx_firmware) - 1) != cfm->info.codesize) ||
 */
 	if (cksum != cfm->checksum) {
+<<<<<<< HEAD
 		pr_err("%s: firmware corrupted!\n", __func__);
 		pr_err(" cdsize = 0x%x (expected 0x%lx)\n",
 		       len - (int)sizeof(struct cycx_firmware) - 1,
 		       cfm->info.codesize);
 		pr_err(" chksum = 0x%x (expected 0x%x)\n",
 		       cksum, cfm->checksum);
+=======
+		printk(KERN_ERR "%s:%s: firmware corrupted!\n",
+				modname, __func__);
+		printk(KERN_ERR " cdsize = 0x%x (expected 0x%lx)\n",
+				len - (int)sizeof(struct cycx_firmware) - 1,
+				cfm->info.codesize);
+		printk(KERN_ERR " chksum = 0x%x (expected 0x%x)\n",
+				cksum, cfm->checksum);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
 	/* If everything is ok, set reset, data and code pointers */
 	img_hdr = (struct cycx_fw_header *)&cfm->image;
 #ifdef FIRMWARE_DEBUG
+<<<<<<< HEAD
 	pr_info("%s: image sizes\n", __func__);
 	pr_info(" reset=%lu\n", img_hdr->reset_size);
 	pr_info("  data=%lu\n", img_hdr->data_size);
 	pr_info("  code=%lu\n", img_hdr->code_size);
+=======
+	printk(KERN_INFO "%s:%s: image sizes\n", __func__, modname);
+	printk(KERN_INFO " reset=%lu\n", img_hdr->reset_size);
+	printk(KERN_INFO "  data=%lu\n", img_hdr->data_size);
+	printk(KERN_INFO "  code=%lu\n", img_hdr->code_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	reset_image = ((u8 *)img_hdr) + sizeof(struct cycx_fw_header);
 	data_image = reset_image + img_hdr->reset_size;
@@ -437,14 +520,25 @@ static int load_cyc2x(struct cycx_hw *hw, struct cycx_firmware *cfm, u32 len)
 
 	/*---- Start load ----*/
 	/* Announce */
+<<<<<<< HEAD
 	pr_info("loading firmware %s (ID=%u)...\n",
 		cfm->descr[0] ? cfm->descr : "unknown firmware",
 		cfm->info.codeid);
+=======
+	printk(KERN_INFO "%s: loading firmware %s (ID=%u)...\n", modname,
+			 cfm->descr[0] ? cfm->descr : "unknown firmware",
+			 cfm->info.codeid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0 ; i < 5 ; i++) {
 		/* Reset Cyclom hardware */
 		if (!reset_cyc2x(hw->dpmbase)) {
+<<<<<<< HEAD
 			pr_err("dpm problem or board not found\n");
+=======
+			printk(KERN_ERR "%s: dpm problem or board not found\n",
+					modname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EINVAL;
 		}
 
@@ -461,19 +555,31 @@ static int load_cyc2x(struct cycx_hw *hw, struct cycx_firmware *cfm, u32 len)
 				msleep_interruptible(1 * 1000);
 	}
 
+<<<<<<< HEAD
 	pr_err("reset not started\n");
+=======
+	printk(KERN_ERR "%s: reset not started.\n", modname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -EINVAL;
 
 reset_loaded:
 	/* Load data.bin */
 	if (cycx_data_boot(hw->dpmbase, data_image, img_hdr->data_size)) {
+<<<<<<< HEAD
 		pr_err("cannot load data file\n");
+=======
+		printk(KERN_ERR "%s: cannot load data file.\n", modname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
 	/* Load code.bin */
 	if (cycx_code_boot(hw->dpmbase, code_image, img_hdr->code_size)) {
+<<<<<<< HEAD
 		pr_err("cannot load code file\n");
+=======
+		printk(KERN_ERR "%s: cannot load code file.\n", modname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -486,7 +592,11 @@ reset_loaded:
 	/* Arthur Ganzert's tip: wait a while after the firmware loading...
 	   seg abr 26 17:17:12 EST 1999 - acme */
 	msleep_interruptible(7 * 1000);
+<<<<<<< HEAD
 	pr_info("firmware loaded!\n");
+=======
+	printk(KERN_INFO "%s: firmware loaded!\n", modname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* enable interrupts */
 	cycx_inten(hw);

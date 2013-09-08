@@ -49,6 +49,12 @@ struct smsdvb_client_t {
 
 	struct completion       tune_done;
 
+<<<<<<< HEAD
+=======
+	/* todo: save freq/band instead whole struct */
+	struct dvb_frontend_parameters fe_params;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct SMSHOSTLIB_STATISTICS_DVB_S sms_stat_dvb;
 	int event_fe_state;
 	int event_unc_state;
@@ -588,7 +594,12 @@ static int smsdvb_get_tune_settings(struct dvb_frontend *fe,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int smsdvb_dvbt_set_frontend(struct dvb_frontend *fe)
+=======
+static int smsdvb_dvbt_set_frontend(struct dvb_frontend *fe,
+				    struct dvb_frontend_parameters *p)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
 	struct smsdvb_client_t *client =
@@ -654,7 +665,12 @@ static int smsdvb_dvbt_set_frontend(struct dvb_frontend *fe)
 					   &client->tune_done);
 }
 
+<<<<<<< HEAD
 static int smsdvb_isdbt_set_frontend(struct dvb_frontend *fe)
+=======
+static int smsdvb_isdbt_set_frontend(struct dvb_frontend *fe,
+				     struct dvb_frontend_parameters *p)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
 	struct smsdvb_client_t *client =
@@ -718,7 +734,12 @@ static int smsdvb_isdbt_set_frontend(struct dvb_frontend *fe)
 					   &client->tune_done);
 }
 
+<<<<<<< HEAD
 static int smsdvb_set_frontend(struct dvb_frontend *fe)
+=======
+static int smsdvb_set_frontend(struct dvb_frontend *fe,
+			       struct dvb_frontend_parameters *fep)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct smsdvb_client_t *client =
 		container_of(fe, struct smsdvb_client_t, frontend);
@@ -727,15 +748,23 @@ static int smsdvb_set_frontend(struct dvb_frontend *fe)
 	switch (smscore_get_device_mode(coredev)) {
 	case DEVICE_MODE_DVBT:
 	case DEVICE_MODE_DVBT_BDA:
+<<<<<<< HEAD
 		return smsdvb_dvbt_set_frontend(fe);
 	case DEVICE_MODE_ISDBT:
 	case DEVICE_MODE_ISDBT_BDA:
 		return smsdvb_isdbt_set_frontend(fe);
+=======
+		return smsdvb_dvbt_set_frontend(fe, fep);
+	case DEVICE_MODE_ISDBT:
+	case DEVICE_MODE_ISDBT_BDA:
+		return smsdvb_isdbt_set_frontend(fe, fep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return -EINVAL;
 	}
 }
 
+<<<<<<< HEAD
 static int smsdvb_get_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *fep = &fe->dtv_property_cache;
@@ -859,6 +888,19 @@ static int smsdvb_get_frontend(struct dvb_frontend *fe)
 	default:
 		return -EINVAL;
 	}
+=======
+static int smsdvb_get_frontend(struct dvb_frontend *fe,
+			       struct dvb_frontend_parameters *fep)
+{
+	struct smsdvb_client_t *client =
+		container_of(fe, struct smsdvb_client_t, frontend);
+
+	sms_debug("");
+
+	/* todo: */
+	memcpy(fep, &client->fe_params,
+	       sizeof(struct dvb_frontend_parameters));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -895,6 +937,10 @@ static void smsdvb_release(struct dvb_frontend *fe)
 static struct dvb_frontend_ops smsdvb_fe_ops = {
 	.info = {
 		.name			= "Siano Mobile Digital MDTV Receiver",
+<<<<<<< HEAD
+=======
+		.type			= FE_OFDM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min		= 44250000,
 		.frequency_max		= 867250000,
 		.frequency_stepsize	= 250000,
@@ -978,6 +1024,7 @@ static int smsdvb_hotplug(struct smscore_device_t *coredev,
 	memcpy(&client->frontend.ops, &smsdvb_fe_ops,
 	       sizeof(struct dvb_frontend_ops));
 
+<<<<<<< HEAD
 	switch (smscore_get_device_mode(coredev)) {
 	case DEVICE_MODE_DVBT:
 	case DEVICE_MODE_DVBT_BDA:
@@ -989,6 +1036,8 @@ static int smsdvb_hotplug(struct smscore_device_t *coredev,
 		break;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = dvb_register_frontend(&client->adapter, &client->frontend);
 	if (rc < 0) {
 		sms_err("frontend registration failed %d", rc);

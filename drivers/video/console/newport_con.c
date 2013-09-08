@@ -22,15 +22,27 @@
 
 #include <asm/io.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
 #include <asm/page.h>
 #include <asm/pgtable.h>
 #include <asm/gio_device.h>
 
+=======
+#include <asm/system.h>
+#include <asm/page.h>
+#include <asm/pgtable.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <video/newport.h>
 
 #include <linux/linux_logo.h>
 #include <linux/font.h>
 
+<<<<<<< HEAD
+=======
+
+extern unsigned long sgi_gfxaddr;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define FONT_DATA ((unsigned char *)font_vga_8x16.data)
 
 /* borrowed from fbcon.c */
@@ -302,6 +314,15 @@ static const char *newport_startup(void)
 {
 	int i;
 
+<<<<<<< HEAD
+=======
+	if (!sgi_gfxaddr)
+		return NULL;
+
+	if (!npregs)
+		npregs = (struct newport_regs *)/* ioremap cannot fail */
+			ioremap(sgi_gfxaddr, sizeof(struct newport_regs));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	npregs->cset.config = NPORT_CFG_GD0;
 
 	if (newport_wait(npregs))
@@ -735,6 +756,7 @@ const struct consw newport_con = {
 	.con_save_screen  = DUMMY
 };
 
+<<<<<<< HEAD
 static int newport_probe(struct gio_device *dev,
 			 const struct gio_device_id *id)
 {
@@ -757,10 +779,28 @@ static int newport_probe(struct gio_device *dev,
 }
 
 static void newport_remove(struct gio_device *dev)
+=======
+#ifdef MODULE
+static int __init newport_console_init(void)
+{
+	if (!sgi_gfxaddr)
+		return 0;
+
+	if (!npregs)
+		npregs = (struct newport_regs *)/* ioremap cannot fail */
+			ioremap(sgi_gfxaddr, sizeof(struct newport_regs));
+
+	return take_over_console(&newport_con, 0, MAX_NR_CONSOLES - 1, 1);
+}
+module_init(newport_console_init);
+
+static void __exit newport_console_exit(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	give_up_console(&newport_con);
 	iounmap((void *)npregs);
 }
+<<<<<<< HEAD
 
 static struct gio_device_id newport_ids[] = {
 	{ .id = 0x7e },
@@ -788,5 +828,9 @@ void __exit newport_console_exit(void)
 
 module_init(newport_console_init);
 module_exit(newport_console_exit);
+=======
+module_exit(newport_console_exit);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");

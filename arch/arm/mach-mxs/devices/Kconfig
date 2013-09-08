@@ -12,9 +12,12 @@ config MXS_HAVE_PLATFORM_FLEXCAN
 	select HAVE_CAN_FLEXCAN if CAN
 	bool
 
+<<<<<<< HEAD
 config MXS_HAVE_PLATFORM_GPMI_NAND
 	bool
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config MXS_HAVE_PLATFORM_MXS_I2C
 	bool
 
@@ -26,9 +29,12 @@ config MXS_HAVE_PLATFORM_MXS_PWM
 
 config MXS_HAVE_PLATFORM_MXSFB
 	bool
+<<<<<<< HEAD
 
 config MXS_HAVE_PLATFORM_MXS_SAIF
 	bool
 
 config MXS_HAVE_PLATFORM_RTC_STMP3XXX
 	bool
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

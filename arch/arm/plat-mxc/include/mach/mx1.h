@@ -12,6 +12,11 @@
 #ifndef __MACH_MX1_H__
 #define __MACH_MX1_H__
 
+<<<<<<< HEAD
+=======
+#include <mach/vmalloc.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Memory map
  */

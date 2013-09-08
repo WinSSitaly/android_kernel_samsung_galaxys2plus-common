@@ -27,12 +27,19 @@
 #include <linux/dmapool.h>
 #include <linux/kernel.h>
 #include <linux/list.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mutex.h>
 #include <linux/poison.h>
 #include <linux/sched.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/stat.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/spinlock.h>
 #include <linux/string.h>
 #include <linux/types.h>
@@ -50,6 +57,10 @@ struct dma_pool {		/* the pool */
 	size_t allocation;
 	size_t boundary;
 	char name[32];
+<<<<<<< HEAD
+=======
+	wait_queue_head_t waitq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head pools;
 };
 
@@ -61,6 +72,11 @@ struct dma_page {		/* cacheable header for 'allocation' bytes */
 	unsigned int offset;
 };
 
+<<<<<<< HEAD
+=======
+#define	POOL_TIMEOUT_JIFFIES	((100 /* msec */ * HZ) / 1000)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEFINE_MUTEX(pools_lock);
 
 static ssize_t
@@ -169,6 +185,10 @@ struct dma_pool *dma_pool_create(const char *name, struct device *dev,
 	retval->size = size;
 	retval->boundary = boundary;
 	retval->allocation = allocation;
+<<<<<<< HEAD
+=======
+	init_waitqueue_head(&retval->waitq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dev) {
 		int ret;
@@ -223,6 +243,10 @@ static struct dma_page *pool_alloc_page(struct dma_pool *pool, gfp_t mem_flags)
 		memset(page->vaddr, POOL_POISON_FREED, pool->allocation);
 #endif
 		pool_initialise_page(pool, page);
+<<<<<<< HEAD
+=======
+		list_add(&page->page_list, &pool->page_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		page->in_use = 0;
 		page->offset = 0;
 	} else {
@@ -310,10 +334,15 @@ void *dma_pool_alloc(struct dma_pool *pool, gfp_t mem_flags,
 	might_sleep_if(mem_flags & __GFP_WAIT);
 
 	spin_lock_irqsave(&pool->lock, flags);
+<<<<<<< HEAD
+=======
+ restart:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(page, &pool->page_list, page_list) {
 		if (page->offset < pool->allocation)
 			goto ready;
 	}
+<<<<<<< HEAD
 
 	/* pool_alloc_page() might sleep, so temporarily drop &pool->lock */
 	spin_unlock_irqrestore(&pool->lock, flags);
@@ -325,6 +354,27 @@ void *dma_pool_alloc(struct dma_pool *pool, gfp_t mem_flags,
 	spin_lock_irqsave(&pool->lock, flags);
 
 	list_add(&page->page_list, &pool->page_list);
+=======
+	page = pool_alloc_page(pool, GFP_ATOMIC);
+	if (!page) {
+		if (mem_flags & __GFP_WAIT) {
+			DECLARE_WAITQUEUE(wait, current);
+
+			__set_current_state(TASK_UNINTERRUPTIBLE);
+			__add_wait_queue(&pool->waitq, &wait);
+			spin_unlock_irqrestore(&pool->lock, flags);
+
+			schedule_timeout(POOL_TIMEOUT_JIFFIES);
+
+			spin_lock_irqsave(&pool->lock, flags);
+			__remove_wait_queue(&pool->waitq, &wait);
+			goto restart;
+		}
+		retval = NULL;
+		goto done;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  ready:
 	page->in_use++;
 	offset = page->offset;
@@ -334,6 +384,10 @@ void *dma_pool_alloc(struct dma_pool *pool, gfp_t mem_flags,
 #ifdef	DMAPOOL_DEBUG
 	memset(retval, POOL_POISON_ALLOCATED, pool->size);
 #endif
+<<<<<<< HEAD
+=======
+ done:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&pool->lock, flags);
 	return retval;
 }
@@ -420,6 +474,11 @@ void dma_pool_free(struct dma_pool *pool, void *vaddr, dma_addr_t dma)
 	page->in_use--;
 	*(int *)vaddr = page->offset;
 	page->offset = offset;
+<<<<<<< HEAD
+=======
+	if (waitqueue_active(&pool->waitq))
+		wake_up_locked(&pool->waitq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Resist a temptation to do
 	 *    if (!is_page_busy(page)) pool_free_page(pool, page);
@@ -484,7 +543,12 @@ void dmam_pool_destroy(struct dma_pool *pool)
 {
 	struct device *dev = pool->dev;
 
+<<<<<<< HEAD
 	WARN_ON(devres_destroy(dev, dmam_pool_release, dmam_pool_match, pool));
 	dma_pool_destroy(pool);
+=======
+	dma_pool_destroy(pool);
+	WARN_ON(devres_destroy(dev, dmam_pool_release, dmam_pool_match, pool));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(dmam_pool_destroy);

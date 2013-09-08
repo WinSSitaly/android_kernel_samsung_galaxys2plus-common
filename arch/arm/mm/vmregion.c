@@ -1,8 +1,13 @@
+<<<<<<< HEAD
 #include <linux/fs.h>
 #include <linux/spinlock.h>
 #include <linux/list.h>
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
+=======
+#include <linux/spinlock.h>
+#include <linux/list.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 
 #include "vmregion.h"
@@ -39,7 +44,11 @@
 
 struct arm_vmregion *
 arm_vmregion_alloc(struct arm_vmregion_head *head, size_t align,
+<<<<<<< HEAD
 		   size_t size, gfp_t gfp, const void *caller)
+=======
+		   size_t size, gfp_t gfp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long start = head->vm_start, addr = head->vm_end;
 	unsigned long flags;
@@ -55,8 +64,11 @@ arm_vmregion_alloc(struct arm_vmregion_head *head, size_t align,
 	if (!new)
 		goto out;
 
+<<<<<<< HEAD
 	new->caller = caller;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&head->vm_lock, flags);
 
 	addr = rounddown(addr - size, align);
@@ -134,6 +146,7 @@ void arm_vmregion_free(struct arm_vmregion_head *head, struct arm_vmregion *c)
 
 	kfree(c);
 }
+<<<<<<< HEAD
 
 #ifdef CONFIG_PROC_FS
 static int arm_vmregion_show(struct seq_file *m, void *p)
@@ -203,3 +216,5 @@ int arm_vmregion_create_proc(const char *path, struct arm_vmregion_head *h)
 	return 0;
 }
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

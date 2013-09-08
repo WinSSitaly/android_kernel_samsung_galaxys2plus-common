@@ -36,6 +36,7 @@ int wl128x_cmd_general_parms(struct wl1271 *wl);
 int wl1271_cmd_radio_parms(struct wl1271 *wl);
 int wl128x_cmd_radio_parms(struct wl1271 *wl);
 int wl1271_cmd_ext_radio_parms(struct wl1271 *wl);
+<<<<<<< HEAD
 int wl12xx_cmd_role_enable(struct wl1271 *wl, u8 *addr, u8 role_type,
 			   u8 *role_id);
 int wl12xx_cmd_role_disable(struct wl1271 *wl, u8 *role_id);
@@ -46,10 +47,14 @@ int wl12xx_cmd_role_stop_ap(struct wl1271 *wl, struct wl12xx_vif *wlvif);
 int wl12xx_cmd_role_start_ibss(struct wl1271 *wl, struct wl12xx_vif *wlvif);
 int wl12xx_start_dev(struct wl1271 *wl, struct wl12xx_vif *wlvif);
 int wl12xx_stop_dev(struct wl1271 *wl, struct wl12xx_vif *wlvif);
+=======
+int wl1271_cmd_join(struct wl1271 *wl, u8 bss_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int wl1271_cmd_test(struct wl1271 *wl, void *buf, size_t buf_len, u8 answer);
 int wl1271_cmd_interrogate(struct wl1271 *wl, u16 id, void *buf, size_t len);
 int wl1271_cmd_configure(struct wl1271 *wl, u16 id, void *buf, size_t len);
 int wl1271_cmd_data_path(struct wl1271 *wl, bool enable);
+<<<<<<< HEAD
 int wl1271_cmd_ps_mode(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		       u8 ps_mode, u16 auto_ps_timeout);
 int wl1271_cmd_read_memory(struct wl1271 *wl, u32 addr, void *answer,
@@ -157,6 +162,82 @@ enum wl1271_commands {
 	CMD_NOP			= 48,
 	CMD_LAST_COMMAND,
 
+=======
+int wl1271_cmd_ps_mode(struct wl1271 *wl, u8 ps_mode);
+int wl1271_cmd_read_memory(struct wl1271 *wl, u32 addr, void *answer,
+			   size_t len);
+int wl1271_cmd_template_set(struct wl1271 *wl, u16 template_id,
+			    void *buf, size_t buf_len, int index, u32 rates);
+int wl1271_cmd_build_null_data(struct wl1271 *wl);
+int wl1271_cmd_build_ps_poll(struct wl1271 *wl, u16 aid);
+int wl1271_cmd_build_probe_req(struct wl1271 *wl,
+			       const u8 *ssid, size_t ssid_len,
+			       const u8 *ie, size_t ie_len, u8 band);
+struct sk_buff *wl1271_cmd_build_ap_probe_req(struct wl1271 *wl,
+					      struct sk_buff *skb);
+int wl1271_cmd_build_arp_rsp(struct wl1271 *wl, __be32 ip_addr);
+int wl1271_build_qos_null_data(struct wl1271 *wl);
+int wl1271_cmd_build_klv_null_data(struct wl1271 *wl);
+int wl1271_cmd_set_sta_default_wep_key(struct wl1271 *wl, u8 id);
+int wl1271_cmd_set_ap_default_wep_key(struct wl1271 *wl, u8 id);
+int wl1271_cmd_set_sta_key(struct wl1271 *wl, u16 action, u8 id, u8 key_type,
+			   u8 key_size, const u8 *key, const u8 *addr,
+			   u32 tx_seq_32, u16 tx_seq_16);
+int wl1271_cmd_set_ap_key(struct wl1271 *wl, u16 action, u8 id, u8 key_type,
+			  u8 key_size, const u8 *key, u8 hlid, u32 tx_seq_32,
+			  u16 tx_seq_16);
+int wl1271_cmd_disconnect(struct wl1271 *wl);
+int wl1271_cmd_set_sta_state(struct wl1271 *wl);
+int wl1271_cmd_start_bss(struct wl1271 *wl);
+int wl1271_cmd_stop_bss(struct wl1271 *wl);
+int wl1271_cmd_add_sta(struct wl1271 *wl, struct ieee80211_sta *sta, u8 hlid);
+int wl1271_cmd_remove_sta(struct wl1271 *wl, u8 hlid);
+
+enum wl1271_commands {
+	CMD_INTERROGATE     = 1,    /*use this to read information elements*/
+	CMD_CONFIGURE       = 2,    /*use this to write information elements*/
+	CMD_ENABLE_RX       = 3,
+	CMD_ENABLE_TX       = 4,
+	CMD_DISABLE_RX      = 5,
+	CMD_DISABLE_TX      = 6,
+	CMD_SCAN            = 8,
+	CMD_STOP_SCAN       = 9,
+	CMD_START_JOIN      = 11,
+	CMD_SET_KEYS        = 12,
+	CMD_READ_MEMORY     = 13,
+	CMD_WRITE_MEMORY    = 14,
+	CMD_SET_TEMPLATE    = 19,
+	CMD_TEST            = 23,
+	CMD_NOISE_HIST      = 28,
+	CMD_LNA_CONTROL     = 32,
+	CMD_SET_BCN_MODE    = 33,
+	CMD_MEASUREMENT      = 34,
+	CMD_STOP_MEASUREMENT = 35,
+	CMD_DISCONNECT       = 36,
+	CMD_SET_PS_MODE      = 37,
+	CMD_CHANNEL_SWITCH   = 38,
+	CMD_STOP_CHANNEL_SWICTH = 39,
+	CMD_AP_DISCOVERY     = 40,
+	CMD_STOP_AP_DISCOVERY = 41,
+	CMD_SPS_SCAN = 42,
+	CMD_STOP_SPS_SCAN = 43,
+	CMD_HEALTH_CHECK     = 45,
+	CMD_DEBUG            = 46,
+	CMD_TRIGGER_SCAN_TO  = 47,
+	CMD_CONNECTION_SCAN_CFG      = 48,
+	CMD_CONNECTION_SCAN_SSID_CFG = 49,
+	CMD_START_PERIODIC_SCAN      = 50,
+	CMD_STOP_PERIODIC_SCAN       = 51,
+	CMD_SET_STA_STATE            = 52,
+
+	/* AP mode commands */
+	CMD_BSS_START                = 60,
+	CMD_BSS_STOP                 = 61,
+	CMD_ADD_STA                  = 62,
+	CMD_REMOVE_STA               = 63,
+
+	NUM_COMMANDS,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	MAX_COMMAND_ID = 0xFFFF,
 };
 
@@ -183,6 +264,7 @@ enum cmd_templ {
 	CMD_TEMPL_CTS,           /*
 				  * For CTS-to-self (FastCTS) mechanism
 				  * for BT/WLAN coexistence (SoftGemini). */
+<<<<<<< HEAD
 	CMD_TEMPL_AP_BEACON,
 	CMD_TEMPL_AP_PROBE_RESPONSE,
 	CMD_TEMPL_ARP_RSP,
@@ -190,13 +272,28 @@ enum cmd_templ {
 	CMD_TEMPL_TEMPORARY,
 	CMD_TEMPL_LINK_MEASUREMENT_REPORT,
 
+=======
+	CMD_TEMPL_ARP_RSP,
+	CMD_TEMPL_LINK_MEASUREMENT_REPORT,
+
+	/* AP-mode specific */
+	CMD_TEMPL_AP_BEACON = 13,
+	CMD_TEMPL_AP_PROBE_RESPONSE,
+	CMD_TEMPL_AP_ARP_RSP,
+	CMD_TEMPL_DEAUTH_AP,
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CMD_TEMPL_MAX = 0xff
 };
 
 /* unit ms */
 #define WL1271_COMMAND_TIMEOUT     2000
+<<<<<<< HEAD
 #define WL1271_CMD_TEMPL_DFLT_SIZE 252
 #define WL1271_CMD_TEMPL_MAX_SIZE  512
+=======
+#define WL1271_CMD_TEMPL_MAX_SIZE  252
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define WL1271_EVENT_TIMEOUT       750
 
 struct wl1271_cmd_header {
@@ -228,8 +325,11 @@ enum {
 	CMD_STATUS_WRONG_NESTING		= 19,
 	CMD_STATUS_TIMEOUT		= 21, /* Driver internal use.*/
 	CMD_STATUS_FW_RESET		= 22, /* Driver internal use.*/
+<<<<<<< HEAD
 	CMD_STATUS_TEMPLATE_OOM		= 23,
 	CMD_STATUS_NO_RX_BA_SESSION	= 24,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	MAX_COMMAND_STATUS		= 0xff
 };
 
@@ -247,6 +347,7 @@ enum {
 #define WL1271_JOIN_CMD_TX_SESSION_OFFSET 1
 #define WL1271_JOIN_CMD_BSS_TYPE_5GHZ 0x10
 
+<<<<<<< HEAD
 struct wl12xx_cmd_role_enable {
 	struct wl1271_cmd_header header;
 
@@ -357,6 +458,40 @@ struct wl12xx_cmd_role_stop {
 	u8 role_id;
 	u8 disc_type; /* only STA and P2P_CLI */
 	__le16 reason; /* only STA and P2P_CLI */
+=======
+struct wl1271_cmd_join {
+	struct wl1271_cmd_header header;
+
+	__le32 bssid_lsb;
+	__le16 bssid_msb;
+	__le16 beacon_interval; /* in TBTTs */
+	__le32 rx_config_options;
+	__le32 rx_filter_options;
+
+	/*
+	 * The target uses this field to determine the rate at
+	 * which to transmit control frame responses (such as
+	 * ACK or CTS frames).
+	 */
+	__le32 basic_rate_set;
+	__le32 supported_rate_set;
+	u8 dtim_interval;
+	/*
+	 * bits 0-2: This bitwise field specifies the type
+	 * of BSS to start or join (BSS_TYPE_*).
+	 * bit 4: Band - The radio band in which to join
+	 * or start.
+	 *  0 - 2.4GHz band
+	 *  1 - 5GHz band
+	 * bits 3, 5-7: Reserved
+	 */
+	u8 bss_type;
+	u8 channel;
+	u8 ssid_len;
+	u8 ssid[IW_ESSID_MAX_SIZE];
+	u8 ctrl; /* JOIN_CMD_CTRL_* */
+	u8 reserved[3];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } __packed;
 
 struct cmd_enabledisable_path {
@@ -371,18 +506,27 @@ struct cmd_enabledisable_path {
 struct wl1271_cmd_template_set {
 	struct wl1271_cmd_header header;
 
+<<<<<<< HEAD
 	u8 role_id;
 	u8 template_type;
 	__le16 len;
 	u8 index;  /* relevant only for KLV_TEMPLATE type */
 	u8 padding[3];
 
+=======
+	__le16 len;
+	u8 template_type;
+	u8 index;  /* relevant only for KLV_TEMPLATE type */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__le32 enabled_rates;
 	u8 short_retry_limit;
 	u8 long_retry_limit;
 	u8 aflags;
 	u8 reserved;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 template_data[WL1271_CMD_TEMPL_MAX_SIZE];
 } __packed;
 
@@ -399,7 +543,10 @@ struct wl1271_tim {
 } __packed;
 
 enum wl1271_cmd_ps_mode {
+<<<<<<< HEAD
 	STATION_AUTO_PS_MODE,   /* Dynamic Power Save */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	STATION_ACTIVE_MODE,
 	STATION_POWER_SAVE_MODE
 };
@@ -407,9 +554,14 @@ enum wl1271_cmd_ps_mode {
 struct wl1271_cmd_ps_params {
 	struct wl1271_cmd_header header;
 
+<<<<<<< HEAD
 	u8 role_id;
 	u8 ps_mode; /* STATION_* */
 	u16 auto_ps_timeout;
+=======
+	u8 ps_mode; /* STATION_* */
+	u8 padding[3];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } __packed;
 
 /* HW encryption keys */
@@ -422,12 +574,15 @@ enum wl1271_cmd_key_action {
 	MAX_KEY_ACTION     = 0xffff,
 };
 
+<<<<<<< HEAD
 enum wl1271_cmd_lid_key_type {
 	UNICAST_LID_TYPE     = 0,
 	BROADCAST_LID_TYPE   = 1,
 	WEP_DEFAULT_LID_TYPE = 2
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum wl1271_cmd_key_type {
 	KEY_NONE = 0,
 	KEY_WEP  = 1,
@@ -436,7 +591,48 @@ enum wl1271_cmd_key_type {
 	KEY_GEM  = 4,
 };
 
+<<<<<<< HEAD
 struct wl1271_cmd_set_keys {
+=======
+/* FIXME: Add description for key-types */
+
+struct wl1271_cmd_set_sta_keys {
+	struct wl1271_cmd_header header;
+
+	/* Ignored for default WEP key */
+	u8 addr[ETH_ALEN];
+
+	/* key_action_e */
+	__le16 key_action;
+
+	__le16 reserved_1;
+
+	/* key size in bytes */
+	u8 key_size;
+
+	/* key_type_e */
+	u8 key_type;
+	u8 ssid_profile;
+
+	/*
+	 * TKIP, AES: frame's key id field.
+	 * For WEP default key: key id;
+	 */
+	u8 id;
+	u8 reserved_2[6];
+	u8 key[MAX_KEY_SIZE];
+	__le16 ac_seq_num16[NUM_ACCESS_CATEGORIES_COPY];
+	__le32 ac_seq_num32[NUM_ACCESS_CATEGORIES_COPY];
+} __packed;
+
+enum wl1271_cmd_lid_key_type {
+	UNICAST_LID_TYPE     = 0,
+	BROADCAST_LID_TYPE   = 1,
+	WEP_DEFAULT_LID_TYPE = 2
+};
+
+struct wl1271_cmd_set_ap_keys {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct wl1271_cmd_header header;
 
 	/*
@@ -586,6 +782,7 @@ enum wl1271_disconnect_type {
 	DISCONNECT_DISASSOC
 };
 
+<<<<<<< HEAD
 #define WL1271_CMD_STA_STATE_CONNECTED  1
 
 struct wl12xx_cmd_set_peer_state {
@@ -626,6 +823,71 @@ enum wl1271_psd_type {
 };
 
 struct wl12xx_cmd_add_peer {
+=======
+struct wl1271_cmd_disconnect {
+	struct wl1271_cmd_header header;
+
+	__le32 rx_config_options;
+	__le32 rx_filter_options;
+
+	__le16 reason;
+	u8  type;
+
+	u8  padding;
+} __packed;
+
+#define WL1271_CMD_STA_STATE_CONNECTED  1
+
+struct wl1271_cmd_set_sta_state {
+	struct wl1271_cmd_header header;
+
+	u8 state;
+	u8 padding[3];
+} __packed;
+
+enum wl1271_ssid_type {
+	SSID_TYPE_PUBLIC = 0,
+	SSID_TYPE_HIDDEN = 1
+};
+
+struct wl1271_cmd_bss_start {
+	struct wl1271_cmd_header header;
+
+	/* wl1271_ssid_type */
+	u8 ssid_type;
+	u8 ssid_len;
+	u8 ssid[IW_ESSID_MAX_SIZE];
+	u8 padding_1[2];
+
+	/* Basic rate set */
+	__le32 basic_rate_set;
+	/* Aging period in seconds*/
+	__le16 aging_period;
+
+	/*
+	 * This field specifies the time between target beacon
+	 * transmission times (TBTTs), in time units (TUs).
+	 * Valid values are 1 to 1024.
+	 */
+	__le16 beacon_interval;
+	u8 bssid[ETH_ALEN];
+	u8 bss_index;
+	/* Radio band */
+	u8 band;
+	u8 channel;
+	/* The host link id for the AP's global queue */
+	u8 global_hlid;
+	/* The host link id for the AP's broadcast queue */
+	u8 broadcast_hlid;
+	/* DTIM count */
+	u8 dtim_interval;
+	/* Beacon expiry time in ms */
+	u8 beacon_expiry;
+	u8 padding_2[3];
+} __packed;
+
+struct wl1271_cmd_add_sta {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct wl1271_cmd_header header;
 
 	u8 addr[ETH_ALEN];
@@ -639,7 +901,11 @@ struct wl12xx_cmd_add_peer {
 	u8 padding1;
 } __packed;
 
+<<<<<<< HEAD
 struct wl12xx_cmd_remove_peer {
+=======
+struct wl1271_cmd_remove_sta {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct wl1271_cmd_header header;
 
 	u8 hlid;
@@ -648,6 +914,7 @@ struct wl12xx_cmd_remove_peer {
 	u8 padding1;
 } __packed;
 
+<<<<<<< HEAD
 /*
  * Continuous mode - packets are transferred to the host periodically
  * via the data path.
@@ -725,4 +992,6 @@ struct wl12xx_cmd_stop_channel_switch {
 	struct wl1271_cmd_header header;
 } __packed;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __WL1271_CMD_H__ */

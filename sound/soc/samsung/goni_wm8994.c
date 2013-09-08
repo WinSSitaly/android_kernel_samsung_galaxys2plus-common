@@ -11,7 +11,10 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/soc.h>
 #include <sound/jack.h>
 
@@ -100,6 +103,17 @@ static int goni_wm8994_init(struct snd_soc_pcm_runtime *rtd)
 	struct snd_soc_dapm_context *dapm = &codec->dapm;
 	int ret;
 
+<<<<<<< HEAD
+=======
+	/* add goni specific widgets */
+	snd_soc_dapm_new_controls(dapm, goni_dapm_widgets,
+			ARRAY_SIZE(goni_dapm_widgets));
+
+	/* set up goni specific audio routes */
+	snd_soc_dapm_add_routes(dapm, goni_dapm_routes,
+			ARRAY_SIZE(goni_dapm_routes));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* set endpoints to not connected */
 	snd_soc_dapm_nc_pin(dapm, "IN2LP:VXRN");
 	snd_soc_dapm_nc_pin(dapm, "IN2RP:VXRP");
@@ -113,6 +127,11 @@ static int goni_wm8994_init(struct snd_soc_pcm_runtime *rtd)
 		snd_soc_dapm_nc_pin(dapm, "SPKOUTRP");
 	}
 
+<<<<<<< HEAD
+=======
+	snd_soc_dapm_sync(dapm);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Headset jack detection */
 	ret = snd_soc_jack_new(codec, "Headset Jack",
 			SND_JACK_HEADSET | SND_JACK_MECHANICAL | SND_JACK_AVOUT,
@@ -244,6 +263,7 @@ static struct snd_soc_dai_link goni_dai[] = {
 
 static struct snd_soc_card goni = {
 	.name = "goni",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
 	.dai_link = goni_dai,
 	.num_links = ARRAY_SIZE(goni_dai),
@@ -252,6 +272,10 @@ static struct snd_soc_card goni = {
 	.num_dapm_widgets = ARRAY_SIZE(goni_dapm_widgets),
 	.dapm_routes = goni_dapm_routes,
 	.num_dapm_routes = ARRAY_SIZE(goni_dapm_routes),
+=======
+	.dai_link = goni_dai,
+	.num_links = ARRAY_SIZE(goni_dai),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init goni_init(void)

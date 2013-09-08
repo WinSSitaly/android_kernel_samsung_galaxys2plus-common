@@ -5,6 +5,10 @@
  * Largely rewritten by Cort Dougan (cort@cs.nmt.edu)
  * and Paul Mackerras.
  *
+<<<<<<< HEAD
+=======
+ * Adapted for iSeries by Mike Corrigan (mikejc@us.ibm.com)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * PPC64 updates by Dave Engebretsen (engebret@us.ibm.com)
  *
  * setjmp/longjmp code by Paul Mackerras.

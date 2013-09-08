@@ -41,7 +41,10 @@
 #include <linux/idr.h>
 #include <linux/inetdevice.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <net/tcp.h>
 #include <net/ipv6.h>
@@ -82,7 +85,10 @@ static DEFINE_IDR(sdp_ps);
 static DEFINE_IDR(tcp_ps);
 static DEFINE_IDR(udp_ps);
 static DEFINE_IDR(ipoib_ps);
+<<<<<<< HEAD
 static DEFINE_IDR(ib_ps);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct cma_device {
 	struct list_head	list;
@@ -361,10 +367,13 @@ static int cma_acquire_dev(struct rdma_id_private *id_priv)
 	enum rdma_link_layer dev_ll = dev_addr->dev_type == ARPHRD_INFINIBAND ?
 		IB_LINK_LAYER_INFINIBAND : IB_LINK_LAYER_ETHERNET;
 
+<<<<<<< HEAD
 	if (dev_ll != IB_LINK_LAYER_INFINIBAND &&
 	    id_priv->id.ps == RDMA_PS_IPOIB)
 		return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&lock);
 	iboe_addr_get_sgid(dev_addr, &iboe_gid);
 	memcpy(&gid, dev_addr->src_dev_addr +
@@ -412,6 +421,14 @@ static int cma_disable_callback(struct rdma_id_private *id_priv,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int cma_has_cm_dev(struct rdma_id_private *id_priv)
+{
+	return (id_priv->id.device && id_priv->cm_id.ib);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct rdma_cm_id *rdma_create_id(rdma_cm_event_handler event_handler,
 				  void *context, enum rdma_port_space ps,
 				  enum ib_qp_type qp_type)
@@ -921,11 +938,19 @@ void rdma_destroy_id(struct rdma_cm_id *id)
 	if (id_priv->cma_dev) {
 		switch (rdma_node_get_transport(id_priv->id.device->node_type)) {
 		case RDMA_TRANSPORT_IB:
+<<<<<<< HEAD
 			if (id_priv->cm_id.ib)
 				ib_destroy_cm_id(id_priv->cm_id.ib);
 			break;
 		case RDMA_TRANSPORT_IWARP:
 			if (id_priv->cm_id.iw)
+=======
+			if (id_priv->cm_id.ib && !IS_ERR(id_priv->cm_id.ib))
+				ib_destroy_cm_id(id_priv->cm_id.ib);
+			break;
+		case RDMA_TRANSPORT_IWARP:
+			if (id_priv->cm_id.iw && !IS_ERR(id_priv->cm_id.iw))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				iw_destroy_cm_id(id_priv->cm_id.iw);
 			break;
 		default:
@@ -1086,12 +1111,20 @@ static struct rdma_id_private *cma_new_conn_id(struct rdma_cm_id *listen_id,
 
 	if (cma_get_net_info(ib_event->private_data, listen_id->ps,
 			     &ip_ver, &port, &src, &dst))
+<<<<<<< HEAD
 		return NULL;
+=======
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	id = rdma_create_id(listen_id->event_handler, listen_id->context,
 			    listen_id->ps, ib_event->param.req_rcvd.qp_type);
 	if (IS_ERR(id))
+<<<<<<< HEAD
 		return NULL;
+=======
+		goto err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cma_save_net_info(&id->route.addr, &listen_id->route.addr,
 			  ip_ver, port, src, dst);
@@ -1101,7 +1134,11 @@ static struct rdma_id_private *cma_new_conn_id(struct rdma_cm_id *listen_id,
 	rt->path_rec = kmalloc(sizeof *rt->path_rec * rt->num_paths,
 			       GFP_KERNEL);
 	if (!rt->path_rec)
+<<<<<<< HEAD
 		goto err;
+=======
+		goto destroy_id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rt->path_rec[0] = *ib_event->param.req_rcvd.primary_path;
 	if (rt->num_paths == 2)
@@ -1110,12 +1147,20 @@ static struct rdma_id_private *cma_new_conn_id(struct rdma_cm_id *listen_id,
 	if (cma_any_addr((struct sockaddr *) &rt->addr.src_addr)) {
 		rt->addr.dev_addr.dev_type = ARPHRD_INFINIBAND;
 		rdma_addr_set_sgid(&rt->addr.dev_addr, &rt->path_rec[0].sgid);
+<<<<<<< HEAD
 		ib_addr_set_pkey(&rt->addr.dev_addr, be16_to_cpu(rt->path_rec[0].pkey));
+=======
+		ib_addr_set_pkey(&rt->addr.dev_addr, rt->path_rec[0].pkey);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		ret = rdma_translate_ip((struct sockaddr *) &rt->addr.src_addr,
 					&rt->addr.dev_addr);
 		if (ret)
+<<<<<<< HEAD
 			goto err;
+=======
+			goto destroy_id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	rdma_addr_set_dgid(&rt->addr.dev_addr, &rt->path_rec[0].dgid);
 
@@ -1123,8 +1168,14 @@ static struct rdma_id_private *cma_new_conn_id(struct rdma_cm_id *listen_id,
 	id_priv->state = RDMA_CM_CONNECT;
 	return id_priv;
 
+<<<<<<< HEAD
 err:
 	rdma_destroy_id(id);
+=======
+destroy_id:
+	rdma_destroy_id(id);
+err:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NULL;
 }
 
@@ -1181,6 +1232,7 @@ static void cma_set_req_event_data(struct rdma_cm_event *event,
 	event->param.conn.qp_num = req_data->remote_qpn;
 }
 
+<<<<<<< HEAD
 static int cma_check_req_qp_type(struct rdma_cm_id *id, struct ib_cm_event *ib_event)
 {
 	return (((ib_event->event == IB_CM_REQ_RECEIVED) ||
@@ -1190,6 +1242,8 @@ static int cma_check_req_qp_type(struct rdma_cm_id *id, struct ib_cm_event *ib_e
 		(!id->qp_type));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int cma_req_handler(struct ib_cm_id *cm_id, struct ib_cm_event *ib_event)
 {
 	struct rdma_id_private *listen_id, *conn_id;
@@ -1197,16 +1251,23 @@ static int cma_req_handler(struct ib_cm_id *cm_id, struct ib_cm_event *ib_event)
 	int offset, ret;
 
 	listen_id = cm_id->context;
+<<<<<<< HEAD
 	if (!cma_check_req_qp_type(&listen_id->id, ib_event))
 		return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cma_disable_callback(listen_id, RDMA_CM_LISTEN))
 		return -ECONNABORTED;
 
 	memset(&event, 0, sizeof event);
 	offset = cma_user_data_offset(listen_id->id.ps);
 	event.event = RDMA_CM_EVENT_CONNECT_REQUEST;
+<<<<<<< HEAD
 	if (ib_event->event == IB_CM_SIDR_REQ_RECEIVED) {
+=======
+	if (listen_id->id.qp_type == IB_QPT_UD) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		conn_id = cma_new_udp_id(&listen_id->id, ib_event);
 		event.param.ud.private_data = ib_event->private_data + offset;
 		event.param.ud.private_data_len =
@@ -1342,8 +1403,11 @@ static int cma_iw_handler(struct iw_cm_id *iw_id, struct iw_cm_event *iw_event)
 		switch (iw_event->status) {
 		case 0:
 			event.event = RDMA_CM_EVENT_ESTABLISHED;
+<<<<<<< HEAD
 			event.param.conn.initiator_depth = iw_event->ird;
 			event.param.conn.responder_resources = iw_event->ord;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case -ECONNRESET:
 		case -ECONNREFUSED:
@@ -1359,8 +1423,11 @@ static int cma_iw_handler(struct iw_cm_id *iw_id, struct iw_cm_event *iw_event)
 		break;
 	case IW_CM_EVENT_ESTABLISHED:
 		event.event = RDMA_CM_EVENT_ESTABLISHED;
+<<<<<<< HEAD
 		event.param.conn.initiator_depth = iw_event->ird;
 		event.param.conn.responder_resources = iw_event->ord;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		BUG_ON(1);
@@ -1451,8 +1518,13 @@ static int iw_conn_req_handler(struct iw_cm_id *cm_id,
 	event.event = RDMA_CM_EVENT_CONNECT_REQUEST;
 	event.param.conn.private_data = iw_event->private_data;
 	event.param.conn.private_data_len = iw_event->private_data_len;
+<<<<<<< HEAD
 	event.param.conn.initiator_depth = iw_event->ird;
 	event.param.conn.responder_resources = iw_event->ord;
+=======
+	event.param.conn.initiator_depth = attr.max_qp_init_rd_atom;
+	event.param.conn.responder_resources = attr.max_qp_rd_atom;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Protect against the user destroying conn_id from another thread
@@ -1484,6 +1556,7 @@ static int cma_ib_listen(struct rdma_id_private *id_priv)
 {
 	struct ib_cm_compare_data compare_data;
 	struct sockaddr *addr;
+<<<<<<< HEAD
 	struct ib_cm_id	*id;
 	__be64 svc_id;
 	int ret;
@@ -1493,6 +1566,15 @@ static int cma_ib_listen(struct rdma_id_private *id_priv)
 		return PTR_ERR(id);
 
 	id_priv->cm_id.ib = id;
+=======
+	__be64 svc_id;
+	int ret;
+
+	id_priv->cm_id.ib = ib_create_cm_id(id_priv->id.device, cma_req_handler,
+					    id_priv);
+	if (IS_ERR(id_priv->cm_id.ib))
+		return PTR_ERR(id_priv->cm_id.ib);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	addr = (struct sockaddr *) &id_priv->id.route.addr.src_addr;
 	svc_id = cma_get_service_id(id_priv->id.ps, addr);
@@ -1515,6 +1597,7 @@ static int cma_iw_listen(struct rdma_id_private *id_priv, int backlog)
 {
 	int ret;
 	struct sockaddr_in *sin;
+<<<<<<< HEAD
 	struct iw_cm_id	*id;
 
 	id = iw_create_cm_id(id_priv->id.device,
@@ -1524,6 +1607,14 @@ static int cma_iw_listen(struct rdma_id_private *id_priv, int backlog)
 		return PTR_ERR(id);
 
 	id_priv->cm_id.iw = id;
+=======
+
+	id_priv->cm_id.iw = iw_create_cm_id(id_priv->id.device,
+					    iw_conn_req_handler,
+					    id_priv);
+	if (IS_ERR(id_priv->cm_id.iw))
+		return PTR_ERR(id_priv->cm_id.iw);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sin = (struct sockaddr_in *) &id_priv->id.route.addr.src_addr;
 	id_priv->cm_id.iw->local_addr = *sin;
@@ -2005,11 +2096,19 @@ static int cma_resolve_loopback(struct rdma_id_private *id_priv)
 	if (cma_zero_addr(src)) {
 		dst = (struct sockaddr *) &id_priv->id.route.addr.dst_addr;
 		if ((src->sa_family = dst->sa_family) == AF_INET) {
+<<<<<<< HEAD
 			((struct sockaddr_in *)src)->sin_addr =
 				((struct sockaddr_in *)dst)->sin_addr;
 		} else {
 			((struct sockaddr_in6 *)src)->sin6_addr =
 				((struct sockaddr_in6 *)dst)->sin6_addr;
+=======
+			((struct sockaddr_in *) src)->sin_addr.s_addr =
+				((struct sockaddr_in *) dst)->sin_addr.s_addr;
+		} else {
+			ipv6_addr_copy(&((struct sockaddr_in6 *) src)->sin6_addr,
+				       &((struct sockaddr_in6 *) dst)->sin6_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -2252,9 +2351,12 @@ static int cma_get_port(struct rdma_id_private *id_priv)
 	case RDMA_PS_IPOIB:
 		ps = &ipoib_ps;
 		break;
+<<<<<<< HEAD
 	case RDMA_PS_IB:
 		ps = &ib_ps;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return -EPROTONOSUPPORT;
 	}
@@ -2508,14 +2610,20 @@ static int cma_resolve_ib_udp(struct rdma_id_private *id_priv,
 {
 	struct ib_cm_sidr_req_param req;
 	struct rdma_route *route;
+<<<<<<< HEAD
 	struct ib_cm_id	*id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	req.private_data_len = sizeof(struct cma_hdr) +
 			       conn_param->private_data_len;
+<<<<<<< HEAD
 	if (req.private_data_len < conn_param->private_data_len)
 		return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	req.private_data = kzalloc(req.private_data_len, GFP_ATOMIC);
 	if (!req.private_data)
 		return -ENOMEM;
@@ -2529,6 +2637,7 @@ static int cma_resolve_ib_udp(struct rdma_id_private *id_priv,
 	if (ret)
 		goto out;
 
+<<<<<<< HEAD
 	id = ib_create_cm_id(id_priv->id.device, cma_sidr_rep_handler,
 			     id_priv);
 	if (IS_ERR(id)) {
@@ -2536,6 +2645,14 @@ static int cma_resolve_ib_udp(struct rdma_id_private *id_priv,
 		goto out;
 	}
 	id_priv->cm_id.ib = id;
+=======
+	id_priv->cm_id.ib = ib_create_cm_id(id_priv->id.device,
+					    cma_sidr_rep_handler, id_priv);
+	if (IS_ERR(id_priv->cm_id.ib)) {
+		ret = PTR_ERR(id_priv->cm_id.ib);
+		goto out;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	req.path = route->path_rec;
 	req.service_id = cma_get_service_id(id_priv->id.ps,
@@ -2559,15 +2676,21 @@ static int cma_connect_ib(struct rdma_id_private *id_priv,
 	struct ib_cm_req_param req;
 	struct rdma_route *route;
 	void *private_data;
+<<<<<<< HEAD
 	struct ib_cm_id	*id;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int offset, ret;
 
 	memset(&req, 0, sizeof req);
 	offset = cma_user_data_offset(id_priv->id.ps);
 	req.private_data_len = offset + conn_param->private_data_len;
+<<<<<<< HEAD
 	if (req.private_data_len < conn_param->private_data_len)
 		return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	private_data = kzalloc(req.private_data_len, GFP_ATOMIC);
 	if (!private_data)
 		return -ENOMEM;
@@ -2576,12 +2699,21 @@ static int cma_connect_ib(struct rdma_id_private *id_priv,
 		memcpy(private_data + offset, conn_param->private_data,
 		       conn_param->private_data_len);
 
+<<<<<<< HEAD
 	id = ib_create_cm_id(id_priv->id.device, cma_ib_handler, id_priv);
 	if (IS_ERR(id)) {
 		ret = PTR_ERR(id);
 		goto out;
 	}
 	id_priv->cm_id.ib = id;
+=======
+	id_priv->cm_id.ib = ib_create_cm_id(id_priv->id.device, cma_ib_handler,
+					    id_priv);
+	if (IS_ERR(id_priv->cm_id.ib)) {
+		ret = PTR_ERR(id_priv->cm_id.ib);
+		goto out;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	route = &id_priv->id.route;
 	ret = cma_format_hdr(private_data, id_priv->id.ps, route);
@@ -2596,7 +2728,11 @@ static int cma_connect_ib(struct rdma_id_private *id_priv,
 	req.service_id = cma_get_service_id(id_priv->id.ps,
 					    (struct sockaddr *) &route->addr.dst_addr);
 	req.qp_num = id_priv->qp_num;
+<<<<<<< HEAD
 	req.qp_type = id_priv->id.qp_type;
+=======
+	req.qp_type = IB_QPT_RC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	req.starting_psn = id_priv->seq_num;
 	req.responder_resources = conn_param->responder_resources;
 	req.initiator_depth = conn_param->initiator_depth;
@@ -2610,8 +2746,13 @@ static int cma_connect_ib(struct rdma_id_private *id_priv,
 
 	ret = ib_send_cm_req(id_priv->cm_id.ib, &req);
 out:
+<<<<<<< HEAD
 	if (ret && !IS_ERR(id)) {
 		ib_destroy_cm_id(id);
+=======
+	if (ret && !IS_ERR(id_priv->cm_id.ib)) {
+		ib_destroy_cm_id(id_priv->cm_id.ib);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		id_priv->cm_id.ib = NULL;
 	}
 
@@ -2628,8 +2769,15 @@ static int cma_connect_iw(struct rdma_id_private *id_priv,
 	struct iw_cm_conn_param iw_param;
 
 	cm_id = iw_create_cm_id(id_priv->id.device, cma_iw_handler, id_priv);
+<<<<<<< HEAD
 	if (IS_ERR(cm_id))
 		return PTR_ERR(cm_id);
+=======
+	if (IS_ERR(cm_id)) {
+		ret = PTR_ERR(cm_id);
+		goto out;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	id_priv->cm_id.iw = cm_id;
 
@@ -2643,6 +2791,7 @@ static int cma_connect_iw(struct rdma_id_private *id_priv,
 	if (ret)
 		goto out;
 
+<<<<<<< HEAD
 	if (conn_param) {
 		iw_param.ord = conn_param->initiator_depth;
 		iw_param.ird = conn_param->responder_resources;
@@ -2656,6 +2805,19 @@ static int cma_connect_iw(struct rdma_id_private *id_priv,
 	ret = iw_cm_connect(cm_id, &iw_param);
 out:
 	if (ret) {
+=======
+	iw_param.ord = conn_param->initiator_depth;
+	iw_param.ird = conn_param->responder_resources;
+	iw_param.private_data = conn_param->private_data;
+	iw_param.private_data_len = conn_param->private_data_len;
+	if (id_priv->id.qp)
+		iw_param.qpn = id_priv->qp_num;
+	else
+		iw_param.qpn = conn_param->qp_num;
+	ret = iw_cm_connect(cm_id, &iw_param);
+out:
+	if (ret && !IS_ERR(cm_id)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iw_destroy_cm_id(cm_id);
 		id_priv->cm_id.iw = NULL;
 	}
@@ -2794,6 +2956,7 @@ int rdma_accept(struct rdma_cm_id *id, struct rdma_conn_param *conn_param)
 
 	switch (rdma_node_get_transport(id->device->node_type)) {
 	case RDMA_TRANSPORT_IB:
+<<<<<<< HEAD
 		if (id->qp_type == IB_QPT_UD) {
 			if (conn_param)
 				ret = cma_send_sidr_rep(id_priv, IB_SIDR_SUCCESS,
@@ -2808,6 +2971,16 @@ int rdma_accept(struct rdma_cm_id *id, struct rdma_conn_param *conn_param)
 			else
 				ret = cma_rep_recv(id_priv);
 		}
+=======
+		if (id->qp_type == IB_QPT_UD)
+			ret = cma_send_sidr_rep(id_priv, IB_SIDR_SUCCESS,
+						conn_param->private_data,
+						conn_param->private_data_len);
+		else if (conn_param)
+			ret = cma_accept_ib(id_priv, conn_param);
+		else
+			ret = cma_rep_recv(id_priv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case RDMA_TRANSPORT_IWARP:
 		ret = cma_accept_iw(id_priv, conn_param);
@@ -2834,7 +3007,11 @@ int rdma_notify(struct rdma_cm_id *id, enum ib_event_type event)
 	int ret;
 
 	id_priv = container_of(id, struct rdma_id_private, id);
+<<<<<<< HEAD
 	if (!id_priv->cm_id.ib)
+=======
+	if (!cma_has_cm_dev(id_priv))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	switch (id->device->node_type) {
@@ -2856,7 +3033,11 @@ int rdma_reject(struct rdma_cm_id *id, const void *private_data,
 	int ret;
 
 	id_priv = container_of(id, struct rdma_id_private, id);
+<<<<<<< HEAD
 	if (!id_priv->cm_id.ib)
+=======
+	if (!cma_has_cm_dev(id_priv))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	switch (rdma_node_get_transport(id->device->node_type)) {
@@ -2887,7 +3068,11 @@ int rdma_disconnect(struct rdma_cm_id *id)
 	int ret;
 
 	id_priv = container_of(id, struct rdma_id_private, id);
+<<<<<<< HEAD
 	if (!id_priv->cm_id.ib)
+=======
+	if (!cma_has_cm_dev(id_priv))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	switch (rdma_node_get_transport(id->device->node_type)) {
@@ -2926,7 +3111,11 @@ static int cma_ib_mc_handler(int status, struct ib_sa_multicast *multicast)
 	mutex_lock(&id_priv->qp_mutex);
 	if (!status && id_priv->id.qp)
 		status = ib_attach_mcast(id_priv->id.qp, &multicast->rec.mgid,
+<<<<<<< HEAD
 					 be16_to_cpu(multicast->rec.mlid));
+=======
+					 multicast->rec.mlid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&id_priv->qp_mutex);
 
 	memset(&event, 0, sizeof event);
@@ -3187,7 +3376,11 @@ void rdma_leave_multicast(struct rdma_cm_id *id, struct sockaddr *addr)
 			if (id->qp)
 				ib_detach_mcast(id->qp,
 						&mc->multicast.ib->rec.mgid,
+<<<<<<< HEAD
 						be16_to_cpu(mc->multicast.ib->rec.mlid));
+=======
+						mc->multicast.ib->rec.mlid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (rdma_node_get_transport(id_priv->cma_dev->device->node_type) == RDMA_TRANSPORT_IB) {
 				switch (rdma_port_get_link_layer(id->device, id->port_num)) {
 				case IB_LINK_LAYER_INFINIBAND:
@@ -3451,8 +3644,12 @@ out:
 }
 
 static const struct ibnl_client_cbs cma_cb_table[] = {
+<<<<<<< HEAD
 	[RDMA_NL_RDMA_CM_ID_STATS] = { .dump = cma_get_id_stats,
 				       .module = THIS_MODULE },
+=======
+	[RDMA_NL_RDMA_CM_ID_STATS] = { .dump = cma_get_id_stats },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init cma_init(void)
@@ -3496,7 +3693,10 @@ static void __exit cma_cleanup(void)
 	idr_destroy(&tcp_ps);
 	idr_destroy(&udp_ps);
 	idr_destroy(&ipoib_ps);
+<<<<<<< HEAD
 	idr_destroy(&ib_ps);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(cma_init);

@@ -21,6 +21,7 @@ static inline int access_ok(int type, const void __user *addr,
 }
 
 /*
+<<<<<<< HEAD
  * Not all varients of the 68k family support the notion of address spaces.
  * The traditional 680x0 parts do, and they use the sfc/dfc registers and
  * the "moves" instruction to access user space from kernel space. Other
@@ -37,6 +38,8 @@ static inline int access_ok(int type, const void __user *addr,
 #endif
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * The exception table consists of pairs of addresses: the first is the
  * address of an instruction that is allowed to fault, and the second is
  * the address at which the program should continue.  No registers are
@@ -59,7 +62,11 @@ extern int __get_user_bad(void);
 
 #define __put_user_asm(res, x, ptr, bwl, reg, err)	\
 asm volatile ("\n"					\
+<<<<<<< HEAD
 	"1:	"MOVES"."#bwl"	%2,%1\n"		\
+=======
+	"1:	moves."#bwl"	%2,%1\n"		\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"2:\n"						\
 	"	.section .fixup,\"ax\"\n"		\
 	"	.even\n"				\
@@ -99,8 +106,13 @@ asm volatile ("\n"					\
  	    {								\
  		const void __user *__pu_ptr = (ptr);			\
 		asm volatile ("\n"					\
+<<<<<<< HEAD
 			"1:	"MOVES".l	%2,(%1)+\n"		\
 			"2:	"MOVES".l	%R2,(%1)\n"		\
+=======
+			"1:	moves.l	%2,(%1)+\n"			\
+			"2:	moves.l	%R2,(%1)\n"			\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"3:\n"						\
 			"	.section .fixup,\"ax\"\n"		\
 			"	.even\n"				\
@@ -131,12 +143,20 @@ asm volatile ("\n"					\
 #define __get_user_asm(res, x, ptr, type, bwl, reg, err) ({	\
 	type __gu_val;						\
 	asm volatile ("\n"					\
+<<<<<<< HEAD
 		"1:	"MOVES"."#bwl"	%2,%1\n"		\
+=======
+		"1:	moves."#bwl"	%2,%1\n"		\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"2:\n"						\
 		"	.section .fixup,\"ax\"\n"		\
 		"	.even\n"				\
 		"10:	move.l	%3,%0\n"			\
+<<<<<<< HEAD
 		"	sub.l	%1,%1\n"			\
+=======
+		"	sub."#bwl"	%1,%1\n"		\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"	jra	2b\n"				\
 		"	.previous\n"				\
 		"\n"						\
@@ -168,8 +188,13 @@ asm volatile ("\n"					\
  		const void *__gu_ptr = (ptr);				\
  		u64 __gu_val;						\
 		asm volatile ("\n"					\
+<<<<<<< HEAD
 			"1:	"MOVES".l	(%2)+,%1\n"		\
 			"2:	"MOVES".l	(%2),%R1\n"		\
+=======
+			"1:	moves.l	(%2)+,%1\n"			\
+			"2:	moves.l	(%2),%R1\n"			\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"3:\n"						\
 			"	.section .fixup,\"ax\"\n"		\
 			"	.even\n"				\
@@ -204,12 +229,21 @@ unsigned long __generic_copy_to_user(void __user *to, const void *from, unsigned
 
 #define __constant_copy_from_user_asm(res, to, from, tmp, n, s1, s2, s3)\
 	asm volatile ("\n"						\
+<<<<<<< HEAD
 		"1:	"MOVES"."#s1"	(%2)+,%3\n"			\
 		"	move."#s1"	%3,(%1)+\n"			\
 		"2:	"MOVES"."#s2"	(%2)+,%3\n"			\
 		"	move."#s2"	%3,(%1)+\n"			\
 		"	.ifnc	\""#s3"\",\"\"\n"			\
 		"3:	"MOVES"."#s3"	(%2)+,%3\n"			\
+=======
+		"1:	moves."#s1"	(%2)+,%3\n"			\
+		"	move."#s1"	%3,(%1)+\n"			\
+		"2:	moves."#s2"	(%2)+,%3\n"			\
+		"	move."#s2"	%3,(%1)+\n"			\
+		"	.ifnc	\""#s3"\",\"\"\n"			\
+		"3:	moves."#s3"	(%2)+,%3\n"			\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"	move."#s3"	%3,(%1)+\n"			\
 		"	.endif\n"					\
 		"4:\n"							\
@@ -285,6 +319,7 @@ __constant_copy_from_user(void *to, const void __user *from, unsigned long n)
 #define __constant_copy_to_user_asm(res, to, from, tmp, n, s1, s2, s3)	\
 	asm volatile ("\n"						\
 		"	move."#s1"	(%2)+,%3\n"			\
+<<<<<<< HEAD
 		"11:	"MOVES"."#s1"	%3,(%1)+\n"			\
 		"12:	move."#s2"	(%2)+,%3\n"			\
 		"21:	"MOVES"."#s2"	%3,(%1)+\n"			\
@@ -292,6 +327,15 @@ __constant_copy_from_user(void *to, const void __user *from, unsigned long n)
 		"	.ifnc	\""#s3"\",\"\"\n"			\
 		"	move."#s3"	(%2)+,%3\n"			\
 		"31:	"MOVES"."#s3"	%3,(%1)+\n"			\
+=======
+		"11:	moves."#s1"	%3,(%1)+\n"			\
+		"12:	move."#s2"	(%2)+,%3\n"			\
+		"21:	moves."#s2"	%3,(%1)+\n"			\
+		"22:\n"							\
+		"	.ifnc	\""#s3"\",\"\"\n"			\
+		"	move."#s3"	(%2)+,%3\n"			\
+		"31:	moves."#s3"	%3,(%1)+\n"			\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"32:\n"							\
 		"	.endif\n"					\
 		"4:\n"							\

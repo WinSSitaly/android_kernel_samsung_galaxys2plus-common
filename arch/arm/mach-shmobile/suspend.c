@@ -12,8 +12,13 @@
 #include <linux/suspend.h>
 #include <linux/module.h>
 #include <linux/err.h>
+<<<<<<< HEAD
 #include <asm/io.h>
 #include <asm/system_misc.h>
+=======
+#include <asm/system.h>
+#include <asm/io.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int shmobile_suspend_default_enter(suspend_state_t suspend_state)
 {

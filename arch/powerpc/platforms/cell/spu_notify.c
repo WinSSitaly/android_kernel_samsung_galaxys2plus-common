@@ -21,8 +21,12 @@
 
 #undef DEBUG
 
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/notifier.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/spu.h>
 #include "spufs/spufs.h"
 

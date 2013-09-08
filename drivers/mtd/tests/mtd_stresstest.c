@@ -30,7 +30,11 @@
 
 #define PRINT_PREF KERN_INFO "mtd_stresstest: "
 
+<<<<<<< HEAD
 static int dev = -EINVAL;
+=======
+static int dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(dev, int, S_IRUGO);
 MODULE_PARM_DESC(dev, "MTD device number to use");
 
@@ -112,7 +116,11 @@ static int erase_eraseblock(int ebnum)
 	ei.addr = addr;
 	ei.len  = mtd->erasesize;
 
+<<<<<<< HEAD
 	err = mtd_erase(mtd, &ei);
+=======
+	err = mtd->erase(mtd, &ei);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(err)) {
 		printk(PRINT_PREF "error %d while erasing EB %d\n", err, ebnum);
 		return err;
@@ -132,7 +140,11 @@ static int is_block_bad(int ebnum)
 	loff_t addr = ebnum * mtd->erasesize;
 	int ret;
 
+<<<<<<< HEAD
 	ret = mtd_block_isbad(mtd, addr);
+=======
+	ret = mtd->block_isbad(mtd, addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		printk(PRINT_PREF "block %d is bad\n", ebnum);
 	return ret;
@@ -140,7 +152,11 @@ static int is_block_bad(int ebnum)
 
 static int do_read(void)
 {
+<<<<<<< HEAD
 	size_t read;
+=======
+	size_t read = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int eb = rand_eb();
 	int offs = rand_offs();
 	int len = rand_len(offs), err;
@@ -153,8 +169,13 @@ static int do_read(void)
 			len = mtd->erasesize - offs;
 	}
 	addr = eb * mtd->erasesize + offs;
+<<<<<<< HEAD
 	err = mtd_read(mtd, addr, len, &read, readbuf);
 	if (mtd_is_bitflip(err))
+=======
+	err = mtd->read(mtd, addr, len, &read, readbuf);
+	if (err == -EUCLEAN)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = 0;
 	if (unlikely(err || read != len)) {
 		printk(PRINT_PREF "error: read failed at 0x%llx\n",
@@ -169,7 +190,11 @@ static int do_read(void)
 static int do_write(void)
 {
 	int eb = rand_eb(), offs, err, len;
+<<<<<<< HEAD
 	size_t written;
+=======
+	size_t written = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	loff_t addr;
 
 	offs = offsets[eb];
@@ -192,7 +217,11 @@ static int do_write(void)
 		}
 	}
 	addr = eb * mtd->erasesize + offs;
+<<<<<<< HEAD
 	err = mtd_write(mtd, addr, len, &written, writebuf);
+=======
+	err = mtd->write(mtd, addr, len, &written, writebuf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(err || written != len)) {
 		printk(PRINT_PREF "error: write failed at 0x%llx\n",
 		       (long long)addr);
@@ -227,7 +256,12 @@ static int scan_for_bad_eraseblocks(void)
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	if (!mtd_can_have_bb(mtd))
+=======
+	/* NOR flash does not implement block_isbad */
+	if (mtd->block_isbad == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	printk(PRINT_PREF "scanning for bad eraseblocks\n");
@@ -249,6 +283,7 @@ static int __init mtd_stresstest_init(void)
 
 	printk(KERN_INFO "\n");
 	printk(KERN_INFO "=================================================\n");
+<<<<<<< HEAD
 
 	if (dev < 0) {
 		printk(PRINT_PREF "Please specify a valid mtd-device via module paramter\n");
@@ -256,6 +291,8 @@ static int __init mtd_stresstest_init(void)
 		return -EINVAL;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk(PRINT_PREF "MTD device: %d\n", dev);
 
 	mtd = get_mtd_device(NULL, dev);

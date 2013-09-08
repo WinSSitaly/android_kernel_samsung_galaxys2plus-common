@@ -72,7 +72,14 @@ enum {
 };
 
 unsigned long lx_dsp_reg_read(struct lx6464es *chip, int port);
+<<<<<<< HEAD
 void lx_dsp_reg_write(struct lx6464es *chip, int port, unsigned data);
+=======
+void lx_dsp_reg_readbuf(struct lx6464es *chip, int port, u32 *data, u32 len);
+void lx_dsp_reg_write(struct lx6464es *chip, int port, unsigned data);
+void lx_dsp_reg_writebuf(struct lx6464es *chip, int port, const u32 *data,
+			 u32 len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* plx register access */
 enum {
@@ -113,7 +120,11 @@ int __devinit lx_dsp_get_version(struct lx6464es *chip, u32 *rdsp_version);
 int lx_dsp_get_clock_frequency(struct lx6464es *chip, u32 *rfreq);
 int lx_dsp_set_granularity(struct lx6464es *chip, u32 gran);
 int lx_dsp_read_async_events(struct lx6464es *chip, u32 *data);
+<<<<<<< HEAD
 int lx_dsp_get_mac(struct lx6464es *chip);
+=======
+int lx_dsp_get_mac(struct lx6464es *chip, u8 *mac_address);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /* low-level pipe handling */

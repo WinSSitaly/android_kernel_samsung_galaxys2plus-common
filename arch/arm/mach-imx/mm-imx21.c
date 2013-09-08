@@ -22,9 +22,15 @@
 #include <linux/init.h>
 #include <mach/hardware.h>
 #include <mach/common.h>
+<<<<<<< HEAD
 #include <mach/devices-common.h>
 #include <asm/pgtable.h>
 #include <asm/mach/map.h>
+=======
+#include <asm/pgtable.h>
+#include <asm/mach/map.h>
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/irqs.h>
 #include <mach/iomux-v1.h>
 
@@ -70,6 +76,7 @@ void __init imx21_init_early(void)
 			MX21_NUM_GPIO_PORT);
 }
 
+<<<<<<< HEAD
 void __init mx21_init_irq(void)
 {
 	mxc_init_irq(MX21_IO_ADDRESS(MX21_AVIC_BASE_ADDR));
@@ -91,4 +98,19 @@ void __init imx21_soc_init(void)
 	imx_add_imx_dma();
 	platform_device_register_simple("imx21-audmux", 0, imx21_audmux_res,
 					ARRAY_SIZE(imx21_audmux_res));
+=======
+static struct mxc_gpio_port imx21_gpio_ports[] = {
+	DEFINE_IMX_GPIO_PORT_IRQ(MX21, 0, 1, MX21_INT_GPIO),
+	DEFINE_IMX_GPIO_PORT(MX21, 1, 2),
+	DEFINE_IMX_GPIO_PORT(MX21, 2, 3),
+	DEFINE_IMX_GPIO_PORT(MX21, 3, 4),
+	DEFINE_IMX_GPIO_PORT(MX21, 4, 5),
+	DEFINE_IMX_GPIO_PORT(MX21, 5, 6),
+};
+
+void __init mx21_init_irq(void)
+{
+	mxc_init_irq(MX21_IO_ADDRESS(MX21_AVIC_BASE_ADDR));
+	mxc_gpio_init(imx21_gpio_ports,	ARRAY_SIZE(imx21_gpio_ports));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

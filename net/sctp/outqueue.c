@@ -205,8 +205,11 @@ static inline int sctp_cacc_skip(struct sctp_transport *primary,
  */
 void sctp_outq_init(struct sctp_association *asoc, struct sctp_outq *q)
 {
+<<<<<<< HEAD
 	memset(q, 0, sizeof(struct sctp_outq));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	q->asoc = asoc;
 	INIT_LIST_HEAD(&q->out_chunk_list);
 	INIT_LIST_HEAD(&q->control_chunk_list);
@@ -214,12 +217,26 @@ void sctp_outq_init(struct sctp_association *asoc, struct sctp_outq *q)
 	INIT_LIST_HEAD(&q->sacked);
 	INIT_LIST_HEAD(&q->abandoned);
 
+<<<<<<< HEAD
 	q->empty = 1;
+=======
+	q->fast_rtx = 0;
+	q->outstanding_bytes = 0;
+	q->empty = 1;
+	q->cork  = 0;
+
+	q->malloced = 0;
+	q->out_qlen = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Free the outqueue structure and any related pending chunks.
  */
+<<<<<<< HEAD
 static void __sctp_outq_teardown(struct sctp_outq *q)
+=======
+void sctp_outq_teardown(struct sctp_outq *q)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sctp_transport *transport;
 	struct list_head *lchunk, *temp;
@@ -272,6 +289,11 @@ static void __sctp_outq_teardown(struct sctp_outq *q)
 		sctp_chunk_free(chunk);
 	}
 
+<<<<<<< HEAD
+=======
+	q->error = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Throw away any leftover control chunks. */
 	list_for_each_entry_safe(chunk, tmp, &q->control_chunk_list, list) {
 		list_del_init(&chunk->list);
@@ -279,17 +301,24 @@ static void __sctp_outq_teardown(struct sctp_outq *q)
 	}
 }
 
+<<<<<<< HEAD
 void sctp_outq_teardown(struct sctp_outq *q)
 {
 	__sctp_outq_teardown(q);
 	sctp_outq_init(q->asoc, q);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Free the outqueue structure and any related pending chunks.  */
 void sctp_outq_free(struct sctp_outq *q)
 {
 	/* Throw away leftover chunks. */
+<<<<<<< HEAD
 	__sctp_outq_teardown(q);
+=======
+	sctp_outq_teardown(q);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* If we were kmalloc()'d, free the memory.  */
 	if (q->malloced)
@@ -752,6 +781,7 @@ static int sctp_outq_flush(struct sctp_outq *q, int rtx_timeout)
 	 */
 
 	list_for_each_entry_safe(chunk, tmp, &q->control_chunk_list, list) {
+<<<<<<< HEAD
 		/* RFC 5061, 5.3
 		 * F1) This means that until such time as the ASCONF
 		 * containing the add is acknowledged, the sender MUST
@@ -762,6 +792,8 @@ static int sctp_outq_flush(struct sctp_outq *q, int rtx_timeout)
 		    chunk->chunk_hdr->type != SCTP_CID_ASCONF)
 			continue;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_del_init(&chunk->list);
 
 		/* Pick the right transport to use. */
@@ -889,9 +921,12 @@ static int sctp_outq_flush(struct sctp_outq *q, int rtx_timeout)
 		}
 	}
 
+<<<<<<< HEAD
 	if (q->asoc->src_out_of_asoc_ok)
 		goto sctp_flush_out;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Is it OK to send data chunks?  */
 	switch (asoc->state) {
 	case SCTP_STATE_COOKIE_ECHOED:
@@ -915,8 +950,11 @@ static int sctp_outq_flush(struct sctp_outq *q, int rtx_timeout)
 		 * current cwnd).
 		 */
 		if (!list_empty(&q->retransmit)) {
+<<<<<<< HEAD
 			if (asoc->peer.retran_path->state == SCTP_UNCONFIRMED)
 				goto sctp_flush_out;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (transport == asoc->peer.retran_path)
 				goto retran;
 
@@ -989,8 +1027,11 @@ static int sctp_outq_flush(struct sctp_outq *q, int rtx_timeout)
 			    ((new_transport->state == SCTP_INACTIVE) ||
 			     (new_transport->state == SCTP_UNCONFIRMED)))
 				new_transport = asoc->peer.active_path;
+<<<<<<< HEAD
 			if (new_transport->state == SCTP_UNCONFIRMED)
 				continue;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* Change packets if necessary.  */
 			if (new_transport != transport) {

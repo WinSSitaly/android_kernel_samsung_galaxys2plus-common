@@ -31,12 +31,23 @@
  */
 #include <linux/list.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drm.h"
 #include "drmP.h"
 #include "drm_crtc.h"
 #include "drm_edid.h"
+<<<<<<< HEAD
 #include "drm_fourcc.h"
+=======
+
+struct drm_prop_enum_list {
+	int type;
+	char *name;
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Avoid boilerplate.  I'm tired of typing. */
 #define DRM_ENUM_NAME_FN(fnname, list)				\
@@ -159,7 +170,10 @@ static struct drm_conn_prop_enum_list drm_connector_enum_list[] =
 	{ DRM_MODE_CONNECTOR_HDMIB, "HDMI-B", 0 },
 	{ DRM_MODE_CONNECTOR_TV, "TV", 0 },
 	{ DRM_MODE_CONNECTOR_eDP, "eDP", 0 },
+<<<<<<< HEAD
 	{ DRM_MODE_CONNECTOR_VIRTUAL, "Virtual", 0},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct drm_prop_enum_list drm_encoder_enum_list[] =
@@ -168,7 +182,10 @@ static struct drm_prop_enum_list drm_encoder_enum_list[] =
 	{ DRM_MODE_ENCODER_TMDS, "TMDS" },
 	{ DRM_MODE_ENCODER_LVDS, "LVDS" },
 	{ DRM_MODE_ENCODER_TVDAC, "TV" },
+<<<<<<< HEAD
 	{ DRM_MODE_ENCODER_VIRTUAL, "Virtual" },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 char *drm_get_encoder_name(struct drm_encoder *encoder)
@@ -293,8 +310,14 @@ int drm_framebuffer_init(struct drm_device *dev, struct drm_framebuffer *fb,
 	int ret;
 
 	ret = drm_mode_object_get(dev, &fb->base, DRM_MODE_OBJECT_FB);
+<<<<<<< HEAD
 	if (ret)
 		return ret;
+=======
+	if (ret) {
+		return ret;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fb->dev = dev;
 	fb->funcs = funcs;
@@ -319,7 +342,10 @@ void drm_framebuffer_cleanup(struct drm_framebuffer *fb)
 {
 	struct drm_device *dev = fb->dev;
 	struct drm_crtc *crtc;
+<<<<<<< HEAD
 	struct drm_plane *plane;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct drm_mode_set set;
 	int ret;
 
@@ -336,6 +362,7 @@ void drm_framebuffer_cleanup(struct drm_framebuffer *fb)
 		}
 	}
 
+<<<<<<< HEAD
 	list_for_each_entry(plane, &dev->mode_config.plane_list, head) {
 		if (plane->fb == fb) {
 			/* should turn off the crtc */
@@ -348,6 +375,8 @@ void drm_framebuffer_cleanup(struct drm_framebuffer *fb)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	drm_mode_object_put(dev, &fb->base);
 	list_del(&fb->head);
 	dev->mode_config.num_fb--;
@@ -364,6 +393,7 @@ EXPORT_SYMBOL(drm_framebuffer_cleanup);
  * Caller must hold mode config lock.
  *
  * Inits a new object created as base part of an driver crtc object.
+<<<<<<< HEAD
  *
  * RETURNS:
  * Zero on success, error code on failure.
@@ -373,10 +403,17 @@ int drm_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
 {
 	int ret;
 
+=======
+ */
+void drm_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
+		   const struct drm_crtc_funcs *funcs)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	crtc->dev = dev;
 	crtc->funcs = funcs;
 
 	mutex_lock(&dev->mode_config.mutex);
+<<<<<<< HEAD
 
 	ret = drm_mode_object_get(dev, &crtc->base, DRM_MODE_OBJECT_CRTC);
 	if (ret)
@@ -389,6 +426,13 @@ int drm_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
 	mutex_unlock(&dev->mode_config.mutex);
 
 	return ret;
+=======
+	drm_mode_object_get(dev, &crtc->base, DRM_MODE_OBJECT_CRTC);
+
+	list_add_tail(&crtc->head, &dev->mode_config.crtc_list);
+	dev->mode_config.num_crtc++;
+	mutex_unlock(&dev->mode_config.mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(drm_crtc_init);
 
@@ -448,7 +492,11 @@ void drm_mode_remove(struct drm_connector *connector,
 		     struct drm_display_mode *mode)
 {
 	list_del(&mode->head);
+<<<<<<< HEAD
 	drm_mode_destroy(connector->dev, mode);
+=======
+	kfree(mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(drm_mode_remove);
 
@@ -460,6 +508,7 @@ EXPORT_SYMBOL(drm_mode_remove);
  * @name: user visible name of the connector
  *
  * LOCKING:
+<<<<<<< HEAD
  * Takes mode config lock.
  *
  * Initialises a preallocated connector. Connectors should be
@@ -483,6 +532,23 @@ int drm_connector_init(struct drm_device *dev,
 
 	connector->dev = dev;
 	connector->funcs = funcs;
+=======
+ * Caller must hold @dev's mode_config lock.
+ *
+ * Initialises a preallocated connector. Connectors should be
+ * subclassed as part of driver connector objects.
+ */
+void drm_connector_init(struct drm_device *dev,
+		     struct drm_connector *connector,
+		     const struct drm_connector_funcs *funcs,
+		     int connector_type)
+{
+	mutex_lock(&dev->mode_config.mutex);
+
+	connector->dev = dev;
+	connector->funcs = funcs;
+	drm_mode_object_get(dev, &connector->base, DRM_MODE_OBJECT_CONNECTOR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	connector->connector_type = connector_type;
 	connector->connector_type_id =
 		++drm_connector_enum_list[connector_type].count; /* TODO */
@@ -494,18 +560,27 @@ int drm_connector_init(struct drm_device *dev,
 	list_add_tail(&connector->head, &dev->mode_config.connector_list);
 	dev->mode_config.num_connector++;
 
+<<<<<<< HEAD
 	if (connector_type != DRM_MODE_CONNECTOR_VIRTUAL)
 		drm_connector_attach_property(connector,
 					      dev->mode_config.edid_property,
 					      0);
+=======
+	drm_connector_attach_property(connector,
+				      dev->mode_config.edid_property, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	drm_connector_attach_property(connector,
 				      dev->mode_config.dpms_property, 0);
 
+<<<<<<< HEAD
  out:
 	mutex_unlock(&dev->mode_config.mutex);
 
 	return ret;
+=======
+	mutex_unlock(&dev->mode_config.mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(drm_connector_init);
 
@@ -514,7 +589,11 @@ EXPORT_SYMBOL(drm_connector_init);
  * @connector: connector to cleanup
  *
  * LOCKING:
+<<<<<<< HEAD
  * Takes mode config lock.
+=======
+ * Caller must hold @dev's mode_config lock.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Cleans up the connector but doesn't free the object.
  */
@@ -535,11 +614,15 @@ void drm_connector_cleanup(struct drm_connector *connector)
 	mutex_lock(&dev->mode_config.mutex);
 	drm_mode_object_put(dev, &connector->base);
 	list_del(&connector->head);
+<<<<<<< HEAD
 	dev->mode_config.num_connector--;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&dev->mode_config.mutex);
 }
 EXPORT_SYMBOL(drm_connector_cleanup);
 
+<<<<<<< HEAD
 void drm_connector_unplug_all(struct drm_device *dev)
 {
 	struct drm_connector *connector;
@@ -552,10 +635,14 @@ void drm_connector_unplug_all(struct drm_device *dev)
 EXPORT_SYMBOL(drm_connector_unplug_all);
 
 int drm_encoder_init(struct drm_device *dev,
+=======
+void drm_encoder_init(struct drm_device *dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      struct drm_encoder *encoder,
 		      const struct drm_encoder_funcs *funcs,
 		      int encoder_type)
 {
+<<<<<<< HEAD
 	int ret;
 
 	mutex_lock(&dev->mode_config.mutex);
@@ -565,16 +652,27 @@ int drm_encoder_init(struct drm_device *dev,
 		goto out;
 
 	encoder->dev = dev;
+=======
+	mutex_lock(&dev->mode_config.mutex);
+
+	encoder->dev = dev;
+
+	drm_mode_object_get(dev, &encoder->base, DRM_MODE_OBJECT_ENCODER);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	encoder->encoder_type = encoder_type;
 	encoder->funcs = funcs;
 
 	list_add_tail(&encoder->head, &dev->mode_config.encoder_list);
 	dev->mode_config.num_encoder++;
 
+<<<<<<< HEAD
  out:
 	mutex_unlock(&dev->mode_config.mutex);
 
 	return ret;
+=======
+	mutex_unlock(&dev->mode_config.mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(drm_encoder_init);
 
@@ -584,11 +682,15 @@ void drm_encoder_cleanup(struct drm_encoder *encoder)
 	mutex_lock(&dev->mode_config.mutex);
 	drm_mode_object_put(dev, &encoder->base);
 	list_del(&encoder->head);
+<<<<<<< HEAD
 	dev->mode_config.num_encoder--;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&dev->mode_config.mutex);
 }
 EXPORT_SYMBOL(drm_encoder_cleanup);
 
+<<<<<<< HEAD
 int drm_plane_init(struct drm_device *dev, struct drm_plane *plane,
 		   unsigned long possible_crtcs,
 		   const struct drm_plane_funcs *funcs,
@@ -652,6 +754,8 @@ void drm_plane_cleanup(struct drm_plane *plane)
 }
 EXPORT_SYMBOL(drm_plane_cleanup);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * drm_mode_create - create a new display mode
  * @dev: DRM device
@@ -672,11 +776,15 @@ struct drm_display_mode *drm_mode_create(struct drm_device *dev)
 	if (!nmode)
 		return NULL;
 
+<<<<<<< HEAD
 	if (drm_mode_object_get(dev, &nmode->base, DRM_MODE_OBJECT_MODE)) {
 		kfree(nmode);
 		return NULL;
 	}
 
+=======
+	drm_mode_object_get(dev, &nmode->base, DRM_MODE_OBJECT_MODE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return nmode;
 }
 EXPORT_SYMBOL(drm_mode_create);
@@ -693,9 +801,12 @@ EXPORT_SYMBOL(drm_mode_create);
  */
 void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode)
 {
+<<<<<<< HEAD
 	if (!mode)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	drm_mode_object_put(dev, &mode->base);
 
 	kfree(mode);
@@ -706,6 +817,10 @@ static int drm_mode_create_standard_connector_properties(struct drm_device *dev)
 {
 	struct drm_property *edid;
 	struct drm_property *dpms;
+<<<<<<< HEAD
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Standard properties (apply to all connectors)
@@ -715,9 +830,17 @@ static int drm_mode_create_standard_connector_properties(struct drm_device *dev)
 				   "EDID", 0);
 	dev->mode_config.edid_property = edid;
 
+<<<<<<< HEAD
 	dpms = drm_property_create_enum(dev, 0,
 				   "DPMS", drm_dpms_enum_list,
 				   ARRAY_SIZE(drm_dpms_enum_list));
+=======
+	dpms = drm_property_create(dev, DRM_MODE_PROP_ENUM,
+				   "DPMS", ARRAY_SIZE(drm_dpms_enum_list));
+	for (i = 0; i < ARRAY_SIZE(drm_dpms_enum_list); i++)
+		drm_property_add_enum(dpms, i, drm_dpms_enum_list[i].type,
+				      drm_dpms_enum_list[i].name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->mode_config.dpms_property = dpms;
 
 	return 0;
@@ -733,11 +856,16 @@ int drm_mode_create_dvi_i_properties(struct drm_device *dev)
 {
 	struct drm_property *dvi_i_selector;
 	struct drm_property *dvi_i_subconnector;
+<<<<<<< HEAD
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dev->mode_config.dvi_i_select_subconnector_property)
 		return 0;
 
 	dvi_i_selector =
+<<<<<<< HEAD
 		drm_property_create_enum(dev, 0,
 				    "select subconnector",
 				    drm_dvi_i_select_enum_list,
@@ -748,6 +876,26 @@ int drm_mode_create_dvi_i_properties(struct drm_device *dev)
 				    "subconnector",
 				    drm_dvi_i_subconnector_enum_list,
 				    ARRAY_SIZE(drm_dvi_i_subconnector_enum_list));
+=======
+		drm_property_create(dev, DRM_MODE_PROP_ENUM,
+				    "select subconnector",
+				    ARRAY_SIZE(drm_dvi_i_select_enum_list));
+	for (i = 0; i < ARRAY_SIZE(drm_dvi_i_select_enum_list); i++)
+		drm_property_add_enum(dvi_i_selector, i,
+				      drm_dvi_i_select_enum_list[i].type,
+				      drm_dvi_i_select_enum_list[i].name);
+	dev->mode_config.dvi_i_select_subconnector_property = dvi_i_selector;
+
+	dvi_i_subconnector =
+		drm_property_create(dev, DRM_MODE_PROP_ENUM |
+				    DRM_MODE_PROP_IMMUTABLE,
+				    "subconnector",
+				    ARRAY_SIZE(drm_dvi_i_subconnector_enum_list));
+	for (i = 0; i < ARRAY_SIZE(drm_dvi_i_subconnector_enum_list); i++)
+		drm_property_add_enum(dvi_i_subconnector, i,
+				      drm_dvi_i_subconnector_enum_list[i].type,
+				      drm_dvi_i_subconnector_enum_list[i].name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->mode_config.dvi_i_subconnector_property = dvi_i_subconnector;
 
 	return 0;
@@ -778,6 +926,7 @@ int drm_mode_create_tv_properties(struct drm_device *dev, int num_modes,
 	/*
 	 * Basic connector properties
 	 */
+<<<<<<< HEAD
 	tv_selector = drm_property_create_enum(dev, 0,
 					  "select subconnector",
 					  drm_tv_select_enum_list,
@@ -789,12 +938,32 @@ int drm_mode_create_tv_properties(struct drm_device *dev, int num_modes,
 				    "subconnector",
 				    drm_tv_subconnector_enum_list,
 				    ARRAY_SIZE(drm_tv_subconnector_enum_list));
+=======
+	tv_selector = drm_property_create(dev, DRM_MODE_PROP_ENUM,
+					  "select subconnector",
+					  ARRAY_SIZE(drm_tv_select_enum_list));
+	for (i = 0; i < ARRAY_SIZE(drm_tv_select_enum_list); i++)
+		drm_property_add_enum(tv_selector, i,
+				      drm_tv_select_enum_list[i].type,
+				      drm_tv_select_enum_list[i].name);
+	dev->mode_config.tv_select_subconnector_property = tv_selector;
+
+	tv_subconnector =
+		drm_property_create(dev, DRM_MODE_PROP_ENUM |
+				    DRM_MODE_PROP_IMMUTABLE, "subconnector",
+				    ARRAY_SIZE(drm_tv_subconnector_enum_list));
+	for (i = 0; i < ARRAY_SIZE(drm_tv_subconnector_enum_list); i++)
+		drm_property_add_enum(tv_subconnector, i,
+				      drm_tv_subconnector_enum_list[i].type,
+				      drm_tv_subconnector_enum_list[i].name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->mode_config.tv_subconnector_property = tv_subconnector;
 
 	/*
 	 * Other, TV specific properties: margins & TV modes.
 	 */
 	dev->mode_config.tv_left_margin_property =
+<<<<<<< HEAD
 		drm_property_create_range(dev, 0, "left margin", 0, 100);
 
 	dev->mode_config.tv_right_margin_property =
@@ -805,6 +974,30 @@ int drm_mode_create_tv_properties(struct drm_device *dev, int num_modes,
 
 	dev->mode_config.tv_bottom_margin_property =
 		drm_property_create_range(dev, 0, "bottom margin", 0, 100);
+=======
+		drm_property_create(dev, DRM_MODE_PROP_RANGE,
+				    "left margin", 2);
+	dev->mode_config.tv_left_margin_property->values[0] = 0;
+	dev->mode_config.tv_left_margin_property->values[1] = 100;
+
+	dev->mode_config.tv_right_margin_property =
+		drm_property_create(dev, DRM_MODE_PROP_RANGE,
+				    "right margin", 2);
+	dev->mode_config.tv_right_margin_property->values[0] = 0;
+	dev->mode_config.tv_right_margin_property->values[1] = 100;
+
+	dev->mode_config.tv_top_margin_property =
+		drm_property_create(dev, DRM_MODE_PROP_RANGE,
+				    "top margin", 2);
+	dev->mode_config.tv_top_margin_property->values[0] = 0;
+	dev->mode_config.tv_top_margin_property->values[1] = 100;
+
+	dev->mode_config.tv_bottom_margin_property =
+		drm_property_create(dev, DRM_MODE_PROP_RANGE,
+				    "bottom margin", 2);
+	dev->mode_config.tv_bottom_margin_property->values[0] = 0;
+	dev->mode_config.tv_bottom_margin_property->values[1] = 100;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev->mode_config.tv_mode_property =
 		drm_property_create(dev, DRM_MODE_PROP_ENUM,
@@ -814,6 +1007,7 @@ int drm_mode_create_tv_properties(struct drm_device *dev, int num_modes,
 				      i, modes[i]);
 
 	dev->mode_config.tv_brightness_property =
+<<<<<<< HEAD
 		drm_property_create_range(dev, 0, "brightness", 0, 100);
 
 	dev->mode_config.tv_contrast_property =
@@ -830,6 +1024,42 @@ int drm_mode_create_tv_properties(struct drm_device *dev, int num_modes,
 
 	dev->mode_config.tv_hue_property =
 		drm_property_create_range(dev, 0, "hue", 0, 100);
+=======
+		drm_property_create(dev, DRM_MODE_PROP_RANGE,
+				    "brightness", 2);
+	dev->mode_config.tv_brightness_property->values[0] = 0;
+	dev->mode_config.tv_brightness_property->values[1] = 100;
+
+	dev->mode_config.tv_contrast_property =
+		drm_property_create(dev, DRM_MODE_PROP_RANGE,
+				    "contrast", 2);
+	dev->mode_config.tv_contrast_property->values[0] = 0;
+	dev->mode_config.tv_contrast_property->values[1] = 100;
+
+	dev->mode_config.tv_flicker_reduction_property =
+		drm_property_create(dev, DRM_MODE_PROP_RANGE,
+				    "flicker reduction", 2);
+	dev->mode_config.tv_flicker_reduction_property->values[0] = 0;
+	dev->mode_config.tv_flicker_reduction_property->values[1] = 100;
+
+	dev->mode_config.tv_overscan_property =
+		drm_property_create(dev, DRM_MODE_PROP_RANGE,
+				    "overscan", 2);
+	dev->mode_config.tv_overscan_property->values[0] = 0;
+	dev->mode_config.tv_overscan_property->values[1] = 100;
+
+	dev->mode_config.tv_saturation_property =
+		drm_property_create(dev, DRM_MODE_PROP_RANGE,
+				    "saturation", 2);
+	dev->mode_config.tv_saturation_property->values[0] = 0;
+	dev->mode_config.tv_saturation_property->values[1] = 100;
+
+	dev->mode_config.tv_hue_property =
+		drm_property_create(dev, DRM_MODE_PROP_RANGE,
+				    "hue", 2);
+	dev->mode_config.tv_hue_property->values[0] = 0;
+	dev->mode_config.tv_hue_property->values[1] = 100;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -845,14 +1075,27 @@ EXPORT_SYMBOL(drm_mode_create_tv_properties);
 int drm_mode_create_scaling_mode_property(struct drm_device *dev)
 {
 	struct drm_property *scaling_mode;
+<<<<<<< HEAD
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dev->mode_config.scaling_mode_property)
 		return 0;
 
 	scaling_mode =
+<<<<<<< HEAD
 		drm_property_create_enum(dev, 0, "scaling mode",
 				drm_scaling_mode_enum_list,
 				    ARRAY_SIZE(drm_scaling_mode_enum_list));
+=======
+		drm_property_create(dev, DRM_MODE_PROP_ENUM, "scaling mode",
+				    ARRAY_SIZE(drm_scaling_mode_enum_list));
+	for (i = 0; i < ARRAY_SIZE(drm_scaling_mode_enum_list); i++)
+		drm_property_add_enum(scaling_mode, i,
+				      drm_scaling_mode_enum_list[i].type,
+				      drm_scaling_mode_enum_list[i].name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev->mode_config.scaling_mode_property = scaling_mode;
 
@@ -870,14 +1113,27 @@ EXPORT_SYMBOL(drm_mode_create_scaling_mode_property);
 int drm_mode_create_dithering_property(struct drm_device *dev)
 {
 	struct drm_property *dithering_mode;
+<<<<<<< HEAD
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dev->mode_config.dithering_mode_property)
 		return 0;
 
 	dithering_mode =
+<<<<<<< HEAD
 		drm_property_create_enum(dev, 0, "dithering",
 				drm_dithering_mode_enum_list,
 				    ARRAY_SIZE(drm_dithering_mode_enum_list));
+=======
+		drm_property_create(dev, DRM_MODE_PROP_ENUM, "dithering",
+				    ARRAY_SIZE(drm_dithering_mode_enum_list));
+	for (i = 0; i < ARRAY_SIZE(drm_dithering_mode_enum_list); i++)
+		drm_property_add_enum(dithering_mode, i,
+				      drm_dithering_mode_enum_list[i].type,
+				      drm_dithering_mode_enum_list[i].name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->mode_config.dithering_mode_property = dithering_mode;
 
 	return 0;
@@ -894,15 +1150,30 @@ EXPORT_SYMBOL(drm_mode_create_dithering_property);
 int drm_mode_create_dirty_info_property(struct drm_device *dev)
 {
 	struct drm_property *dirty_info;
+<<<<<<< HEAD
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dev->mode_config.dirty_info_property)
 		return 0;
 
 	dirty_info =
+<<<<<<< HEAD
 		drm_property_create_enum(dev, DRM_MODE_PROP_IMMUTABLE,
 				    "dirty",
 				    drm_dirty_info_enum_list,
 				    ARRAY_SIZE(drm_dirty_info_enum_list));
+=======
+		drm_property_create(dev, DRM_MODE_PROP_ENUM |
+				    DRM_MODE_PROP_IMMUTABLE,
+				    "dirty",
+				    ARRAY_SIZE(drm_dirty_info_enum_list));
+	for (i = 0; i < ARRAY_SIZE(drm_dirty_info_enum_list); i++)
+		drm_property_add_enum(dirty_info, i,
+				      drm_dirty_info_enum_list[i].type,
+				      drm_dirty_info_enum_list[i].name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->mode_config.dirty_info_property = dirty_info;
 
 	return 0;
@@ -929,7 +1200,10 @@ void drm_mode_config_init(struct drm_device *dev)
 	INIT_LIST_HEAD(&dev->mode_config.encoder_list);
 	INIT_LIST_HEAD(&dev->mode_config.property_list);
 	INIT_LIST_HEAD(&dev->mode_config.property_blob_list);
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&dev->mode_config.plane_list);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	idr_init(&dev->mode_config.crtc_idr);
 
 	mutex_lock(&dev->mode_config.mutex);
@@ -986,7 +1260,10 @@ int drm_mode_group_init_legacy_group(struct drm_device *dev,
 
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(drm_mode_group_init_legacy_group);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * drm_mode_config_cleanup - free up DRM mode_config info
@@ -1007,7 +1284,10 @@ void drm_mode_config_cleanup(struct drm_device *dev)
 	struct drm_encoder *encoder, *enct;
 	struct drm_framebuffer *fb, *fbt;
 	struct drm_property *property, *pt;
+<<<<<<< HEAD
 	struct drm_plane *plane, *plt;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_for_each_entry_safe(encoder, enct, &dev->mode_config.encoder_list,
 				 head) {
@@ -1028,17 +1308,23 @@ void drm_mode_config_cleanup(struct drm_device *dev)
 		fb->funcs->destroy(fb);
 	}
 
+<<<<<<< HEAD
 	list_for_each_entry_safe(plane, plt, &dev->mode_config.plane_list,
 				 head) {
 		plane->funcs->destroy(plane);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry_safe(crtc, ct, &dev->mode_config.crtc_list, head) {
 		crtc->funcs->destroy(crtc);
 	}
 
+<<<<<<< HEAD
 	idr_remove_all(&dev->mode_config.crtc_idr);
 	idr_destroy(&dev->mode_config.crtc_idr);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(drm_mode_config_cleanup);
 
@@ -1053,6 +1339,7 @@ EXPORT_SYMBOL(drm_mode_config_cleanup);
  * Convert a drm_display_mode into a drm_mode_modeinfo structure to return to
  * the user.
  */
+<<<<<<< HEAD
 static void drm_crtc_convert_to_umode(struct drm_mode_modeinfo *out,
 				      const struct drm_display_mode *in)
 {
@@ -1063,6 +1350,11 @@ static void drm_crtc_convert_to_umode(struct drm_mode_modeinfo *out,
 	     in->vtotal > USHRT_MAX || in->vscan > USHRT_MAX,
 	     "timing values too large for mode info\n");
 
+=======
+void drm_crtc_convert_to_umode(struct drm_mode_modeinfo *out,
+			       struct drm_display_mode *in)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	out->clock = in->clock;
 	out->hdisplay = in->hdisplay;
 	out->hsync_start = in->hsync_start;
@@ -1091,6 +1383,7 @@ static void drm_crtc_convert_to_umode(struct drm_mode_modeinfo *out,
  *
  * Convert a drm_mode_modeinfo into a drm_display_mode structure to return to
  * the caller.
+<<<<<<< HEAD
  *
  * RETURNS:
  * Zero on success, errno on failure.
@@ -1101,6 +1394,12 @@ static int drm_crtc_convert_umode(struct drm_display_mode *out,
 	if (in->clock > INT_MAX || in->vrefresh > INT_MAX)
 		return -ERANGE;
 
+=======
+ */
+void drm_crtc_convert_umode(struct drm_display_mode *out,
+			    struct drm_mode_modeinfo *in)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	out->clock = in->clock;
 	out->hdisplay = in->hdisplay;
 	out->hsync_start = in->hsync_start;
@@ -1117,8 +1416,11 @@ static int drm_crtc_convert_umode(struct drm_display_mode *out,
 	out->type = in->type;
 	strncpy(out->name, in->name, DRM_DISPLAY_MODE_LEN);
 	out->name[DRM_DISPLAY_MODE_LEN-1] = 0;
+<<<<<<< HEAD
 
 	return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1317,7 +1619,11 @@ out:
  * @arg: arg from ioctl
  *
  * LOCKING:
+<<<<<<< HEAD
  * Takes mode config lock.
+=======
+ * Caller? (FIXME)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Construct a CRTC configuration structure to return to the user.
  *
@@ -1377,7 +1683,11 @@ out:
  * @arg: arg from ioctl
  *
  * LOCKING:
+<<<<<<< HEAD
  * Takes mode config lock.
+=======
+ * Caller? (FIXME)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Construct a connector configuration structure to return to the user.
  *
@@ -1462,7 +1772,11 @@ int drm_mode_getconnector(struct drm_device *dev, void *data,
 	 */
 	if ((out_resp->count_modes >= mode_count) && mode_count) {
 		copied = 0;
+<<<<<<< HEAD
 		mode_ptr = (struct drm_mode_modeinfo __user *)(unsigned long)out_resp->modes_ptr;
+=======
+		mode_ptr = (struct drm_mode_modeinfo *)(unsigned long)out_resp->modes_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_for_each_entry(mode, &connector->modes, head) {
 			drm_crtc_convert_to_umode(&u_mode, mode);
 			if (copy_to_user(mode_ptr + copied,
@@ -1477,8 +1791,13 @@ int drm_mode_getconnector(struct drm_device *dev, void *data,
 
 	if ((out_resp->count_props >= props_count) && props_count) {
 		copied = 0;
+<<<<<<< HEAD
 		prop_ptr = (uint32_t __user *)(unsigned long)(out_resp->props_ptr);
 		prop_values = (uint64_t __user *)(unsigned long)(out_resp->prop_values_ptr);
+=======
+		prop_ptr = (uint32_t *)(unsigned long)(out_resp->props_ptr);
+		prop_values = (uint64_t *)(unsigned long)(out_resp->prop_values_ptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (i = 0; i < DRM_CONNECTOR_MAX_PROPERTY; i++) {
 			if (connector->property_ids[i] != 0) {
 				if (put_user(connector->property_ids[i],
@@ -1500,7 +1819,11 @@ int drm_mode_getconnector(struct drm_device *dev, void *data,
 
 	if ((out_resp->count_encoders >= encoders_count) && encoders_count) {
 		copied = 0;
+<<<<<<< HEAD
 		encoder_ptr = (uint32_t __user *)(unsigned long)(out_resp->encoders_ptr);
+=======
+		encoder_ptr = (uint32_t *)(unsigned long)(out_resp->encoders_ptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (i = 0; i < DRM_CONNECTOR_MAX_ENCODER; i++) {
 			if (connector->encoder_ids[i] != 0) {
 				if (put_user(connector->encoder_ids[i],
@@ -1554,6 +1877,7 @@ out:
 }
 
 /**
+<<<<<<< HEAD
  * drm_mode_getplane_res - get plane info
  * @dev: DRM device
  * @data: ioctl data
@@ -1802,6 +2126,8 @@ out:
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * drm_mode_setcrtc - set CRTC configuration
  * @inode: inode from the ioctl
  * @filp: file * from the ioctl
@@ -1809,7 +2135,11 @@ out:
  * @arg: arg from ioctl
  *
  * LOCKING:
+<<<<<<< HEAD
  * Takes mode config lock.
+=======
+ * Caller? (FIXME)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Build a new CRTC configuration based on user request.
  *
@@ -1824,7 +2154,11 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
 	struct drm_mode_config *config = &dev->mode_config;
 	struct drm_mode_crtc *crtc_req = data;
 	struct drm_mode_object *obj;
+<<<<<<< HEAD
 	struct drm_crtc *crtc;
+=======
+	struct drm_crtc *crtc, *crtcfb;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct drm_connector **connector_set = NULL, *connector;
 	struct drm_framebuffer *fb = NULL;
 	struct drm_display_mode *mode = NULL;
@@ -1836,10 +2170,13 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
 	if (!drm_core_check_feature(dev, DRIVER_MODESET))
 		return -EINVAL;
 
+<<<<<<< HEAD
 	/* For some reason crtc x/y offsets are signed internally. */
 	if (crtc_req->x > INT_MAX || crtc_req->y > INT_MAX)
 		return -ERANGE;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&dev->mode_config.mutex);
 	obj = drm_mode_object_find(dev, crtc_req->crtc_id,
 				   DRM_MODE_OBJECT_CRTC);
@@ -1855,12 +2192,23 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
 		/* If we have a mode we need a framebuffer. */
 		/* If we pass -1, set the mode with the currently bound fb */
 		if (crtc_req->fb_id == -1) {
+<<<<<<< HEAD
 			if (!crtc->fb) {
 				DRM_DEBUG_KMS("CRTC doesn't have current FB\n");
 				ret = -EINVAL;
 				goto out;
 			}
 			fb = crtc->fb;
+=======
+			list_for_each_entry(crtcfb,
+					    &dev->mode_config.crtc_list, head) {
+				if (crtcfb == crtc) {
+					DRM_DEBUG_KMS("Using current fb for "
+							"setmode\n");
+					fb = crtc->fb;
+				}
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			obj = drm_mode_object_find(dev, crtc_req->fb_id,
 						   DRM_MODE_OBJECT_FB);
@@ -1874,6 +2222,7 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
 		}
 
 		mode = drm_mode_create(dev);
+<<<<<<< HEAD
 		if (!mode) {
 			ret = -ENOMEM;
 			goto out;
@@ -1898,6 +2247,10 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
 			ret = -ENOSPC;
 			goto out;
 		}
+=======
+		drm_crtc_convert_umode(mode, &crtc_req->mode);
+		drm_mode_set_crtcinfo(mode, CRTC_INTERLACE_HALVE_V);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (crtc_req->count_connectors == 0 && mode) {
@@ -1931,7 +2284,11 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
 		}
 
 		for (i = 0; i < crtc_req->count_connectors; i++) {
+<<<<<<< HEAD
 			set_connectors_ptr = (uint32_t __user *)(unsigned long)crtc_req->set_connectors_ptr;
+=======
+			set_connectors_ptr = (uint32_t *)(unsigned long)crtc_req->set_connectors_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (get_user(out_id, &set_connectors_ptr[i])) {
 				ret = -EFAULT;
 				goto out;
@@ -1965,7 +2322,10 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
 
 out:
 	kfree(connector_set);
+<<<<<<< HEAD
 	drm_mode_destroy(dev, mode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&dev->mode_config.mutex);
 	return ret;
 }
@@ -1981,8 +2341,15 @@ int drm_mode_cursor_ioctl(struct drm_device *dev,
 	if (!drm_core_check_feature(dev, DRIVER_MODESET))
 		return -EINVAL;
 
+<<<<<<< HEAD
 	if (!req->flags || (~DRM_MODE_CURSOR_FLAGS & req->flags))
 		return -EINVAL;
+=======
+	if (!req->flags) {
+		DRM_ERROR("no operation set\n");
+		return -EINVAL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&dev->mode_config.mutex);
 	obj = drm_mode_object_find(dev, req->crtc_id, DRM_MODE_OBJECT_CRTC);
@@ -1995,6 +2362,10 @@ int drm_mode_cursor_ioctl(struct drm_device *dev,
 
 	if (req->flags & DRM_MODE_CURSOR_BO) {
 		if (!crtc->funcs->cursor_set) {
+<<<<<<< HEAD
+=======
+			DRM_ERROR("crtc does not support cursor\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = -ENXIO;
 			goto out;
 		}
@@ -2007,6 +2378,10 @@ int drm_mode_cursor_ioctl(struct drm_device *dev,
 		if (crtc->funcs->cursor_move) {
 			ret = crtc->funcs->cursor_move(crtc, req->x, req->y);
 		} else {
+<<<<<<< HEAD
+=======
+			DRM_ERROR("crtc does not support cursor\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = -EFAULT;
 			goto out;
 		}
@@ -2016,6 +2391,7 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 /* Original addfb only supported RGB formats, so figure out which one */
 uint32_t drm_mode_legacy_fb_format(uint32_t bpp, uint32_t depth)
 {
@@ -2052,6 +2428,8 @@ uint32_t drm_mode_legacy_fb_format(uint32_t bpp, uint32_t depth)
 }
 EXPORT_SYMBOL(drm_mode_legacy_fb_format);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * drm_mode_addfb - add an FB to the graphics configuration
  * @inode: inode from the ioctl
@@ -2072,6 +2450,7 @@ EXPORT_SYMBOL(drm_mode_legacy_fb_format);
 int drm_mode_addfb(struct drm_device *dev,
 		   void *data, struct drm_file *file_priv)
 {
+<<<<<<< HEAD
 	struct drm_mode_fb_cmd *or = data;
 	struct drm_mode_fb_cmd2 r = {};
 	struct drm_mode_config *config = &dev->mode_config;
@@ -2206,6 +2585,9 @@ int drm_mode_addfb2(struct drm_device *dev,
 		    void *data, struct drm_file *file_priv)
 {
 	struct drm_mode_fb_cmd2 *r = data;
+=======
+	struct drm_mode_fb_cmd *r = data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct drm_mode_config *config = &dev->mode_config;
 	struct drm_framebuffer *fb;
 	int ret = 0;
@@ -2214,6 +2596,7 @@ int drm_mode_addfb2(struct drm_device *dev,
 		return -EINVAL;
 
 	if ((config->min_width > r->width) || (r->width > config->max_width)) {
+<<<<<<< HEAD
 		DRM_ERROR("bad framebuffer width %d, should be >= %d && <= %d\n",
 			  r->width, config->min_width, config->max_width);
 		return -EINVAL;
@@ -2232,6 +2615,21 @@ int drm_mode_addfb2(struct drm_device *dev,
 
 	mutex_lock(&dev->mode_config.mutex);
 
+=======
+		DRM_ERROR("mode new framebuffer width not within limits\n");
+		return -EINVAL;
+	}
+	if ((config->min_height > r->height) || (r->height > config->max_height)) {
+		DRM_ERROR("mode new framebuffer height not within limits\n");
+		return -EINVAL;
+	}
+
+	mutex_lock(&dev->mode_config.mutex);
+
+	/* TODO check buffer is sufficiently large */
+	/* TODO setup destructor callback */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fb = dev->mode_config.funcs->fb_create(dev, file_priv, r);
 	if (IS_ERR(fb)) {
 		DRM_ERROR("could not create framebuffer\n");
@@ -2282,6 +2680,10 @@ int drm_mode_rmfb(struct drm_device *dev,
 	obj = drm_mode_object_find(dev, *id, DRM_MODE_OBJECT_FB);
 	/* TODO check that we really get a framebuffer back. */
 	if (!obj) {
+<<<<<<< HEAD
+=======
+		DRM_ERROR("mode invalid framebuffer id\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EINVAL;
 		goto out;
 	}
@@ -2292,6 +2694,10 @@ int drm_mode_rmfb(struct drm_device *dev,
 			found = 1;
 
 	if (!found) {
+<<<<<<< HEAD
+=======
+		DRM_ERROR("tried to remove a fb that we didn't own\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EINVAL;
 		goto out;
 	}
@@ -2315,7 +2721,11 @@ out:
  * @arg: arg from ioctl
  *
  * LOCKING:
+<<<<<<< HEAD
  * Takes mode config lock.
+=======
+ * Caller? (FIXME)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Lookup the FB given its ID and return info about it.
  *
@@ -2338,6 +2748,10 @@ int drm_mode_getfb(struct drm_device *dev,
 	mutex_lock(&dev->mode_config.mutex);
 	obj = drm_mode_object_find(dev, r->fb_id, DRM_MODE_OBJECT_FB);
 	if (!obj) {
+<<<<<<< HEAD
+=======
+		DRM_ERROR("invalid framebuffer id\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EINVAL;
 		goto out;
 	}
@@ -2347,7 +2761,11 @@ int drm_mode_getfb(struct drm_device *dev,
 	r->width = fb->width;
 	r->depth = fb->depth;
 	r->bpp = fb->bits_per_pixel;
+<<<<<<< HEAD
 	r->pitch = fb->pitches[0];
+=======
+	r->pitch = fb->pitch;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fb->funcs->create_handle(fb, file_priv, &r->handle);
 
 out:
@@ -2373,13 +2791,21 @@ int drm_mode_dirtyfb_ioctl(struct drm_device *dev,
 	mutex_lock(&dev->mode_config.mutex);
 	obj = drm_mode_object_find(dev, r->fb_id, DRM_MODE_OBJECT_FB);
 	if (!obj) {
+<<<<<<< HEAD
+=======
+		DRM_ERROR("invalid framebuffer id\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EINVAL;
 		goto out_err1;
 	}
 	fb = obj_to_fb(obj);
 
 	num_clips = r->num_clips;
+<<<<<<< HEAD
 	clips_ptr = (struct drm_clip_rect __user *)(unsigned long)r->clips_ptr;
+=======
+	clips_ptr = (struct drm_clip_rect *)(unsigned long)r->clips_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!num_clips != !clips_ptr) {
 		ret = -EINVAL;
@@ -2464,6 +2890,7 @@ void drm_fb_release(struct drm_file *priv)
  *
  * Add @mode to @connector's user mode list.
  */
+<<<<<<< HEAD
 static void drm_mode_attachmode(struct drm_device *dev,
 				struct drm_connector *connector,
 				struct drm_display_mode *mode)
@@ -2506,6 +2933,40 @@ int drm_mode_attachmode_crtc(struct drm_device *dev, struct drm_crtc *crtc,
 		drm_mode_destroy(dev, dup_mode);
 
 	return ret;
+=======
+static int drm_mode_attachmode(struct drm_device *dev,
+			       struct drm_connector *connector,
+			       struct drm_display_mode *mode)
+{
+	int ret = 0;
+
+	list_add_tail(&mode->head, &connector->user_modes);
+	return ret;
+}
+
+int drm_mode_attachmode_crtc(struct drm_device *dev, struct drm_crtc *crtc,
+			     struct drm_display_mode *mode)
+{
+	struct drm_connector *connector;
+	int ret = 0;
+	struct drm_display_mode *dup_mode;
+	int need_dup = 0;
+	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
+		if (!connector->encoder)
+			break;
+		if (connector->encoder->crtc == crtc) {
+			if (need_dup)
+				dup_mode = drm_mode_duplicate(dev, mode);
+			else
+				dup_mode = mode;
+			ret = drm_mode_attachmode(dev, connector, dup_mode);
+			if (ret)
+				return ret;
+			need_dup = 1;
+		}
+	}
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(drm_mode_attachmode_crtc);
 
@@ -2584,6 +3045,7 @@ int drm_mode_attachmode_ioctl(struct drm_device *dev,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	ret = drm_crtc_convert_umode(mode, umode);
 	if (ret) {
 		DRM_DEBUG_KMS("Invalid mode\n");
@@ -2592,6 +3054,11 @@ int drm_mode_attachmode_ioctl(struct drm_device *dev,
 	}
 
 	drm_mode_attachmode(dev, connector, mode);
+=======
+	drm_crtc_convert_umode(mode, umode);
+
+	ret = drm_mode_attachmode(dev, connector, mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	mutex_unlock(&dev->mode_config.mutex);
 	return ret;
@@ -2632,12 +3099,16 @@ int drm_mode_detachmode_ioctl(struct drm_device *dev,
 	}
 	connector = obj_to_connector(obj);
 
+<<<<<<< HEAD
 	ret = drm_crtc_convert_umode(&mode, umode);
 	if (ret) {
 		DRM_DEBUG_KMS("Invalid mode\n");
 		goto out;
 	}
 
+=======
+	drm_crtc_convert_umode(&mode, umode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = drm_mode_detachmode(dev, connector, &mode);
 out:
 	mutex_unlock(&dev->mode_config.mutex);
@@ -2648,7 +3119,10 @@ struct drm_property *drm_property_create(struct drm_device *dev, int flags,
 					 const char *name, int num_values)
 {
 	struct drm_property *property = NULL;
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	property = kzalloc(sizeof(struct drm_property), GFP_KERNEL);
 	if (!property)
@@ -2660,28 +3134,41 @@ struct drm_property *drm_property_create(struct drm_device *dev, int flags,
 			goto fail;
 	}
 
+<<<<<<< HEAD
 	ret = drm_mode_object_get(dev, &property->base, DRM_MODE_OBJECT_PROPERTY);
 	if (ret)
 		goto fail;
 
+=======
+	drm_mode_object_get(dev, &property->base, DRM_MODE_OBJECT_PROPERTY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	property->flags = flags;
 	property->num_values = num_values;
 	INIT_LIST_HEAD(&property->enum_blob_list);
 
+<<<<<<< HEAD
 	if (name) {
 		strncpy(property->name, name, DRM_PROP_NAME_LEN);
 		property->name[DRM_PROP_NAME_LEN-1] = '\0';
 	}
+=======
+	if (name)
+		strncpy(property->name, name, DRM_PROP_NAME_LEN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	list_add_tail(&property->head, &dev->mode_config.property_list);
 	return property;
 fail:
+<<<<<<< HEAD
 	kfree(property->values);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(property);
 	return NULL;
 }
 EXPORT_SYMBOL(drm_property_create);
 
+<<<<<<< HEAD
 struct drm_property *drm_property_create_enum(struct drm_device *dev, int flags,
 					 const char *name,
 					 const struct drm_prop_enum_list *props,
@@ -2729,6 +3216,8 @@ struct drm_property *drm_property_create_range(struct drm_device *dev, int flags
 }
 EXPORT_SYMBOL(drm_property_create_range);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int drm_property_add_enum(struct drm_property *property, int index,
 			  uint64_t value, const char *name)
 {
@@ -2847,7 +3336,11 @@ int drm_mode_getproperty_ioctl(struct drm_device *dev,
 	struct drm_property_enum *prop_enum;
 	struct drm_mode_property_enum __user *enum_ptr;
 	struct drm_property_blob *prop_blob;
+<<<<<<< HEAD
 	uint32_t __user *blob_id_ptr;
+=======
+	uint32_t *blob_id_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint64_t __user *values_ptr;
 	uint32_t __user *blob_length_ptr;
 
@@ -2877,7 +3370,11 @@ int drm_mode_getproperty_ioctl(struct drm_device *dev,
 	out_resp->flags = property->flags;
 
 	if ((out_resp->count_values >= value_count) && value_count) {
+<<<<<<< HEAD
 		values_ptr = (uint64_t __user *)(unsigned long)out_resp->values_ptr;
+=======
+		values_ptr = (uint64_t *)(unsigned long)out_resp->values_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (i = 0; i < value_count; i++) {
 			if (copy_to_user(values_ptr + i, &property->values[i], sizeof(uint64_t))) {
 				ret = -EFAULT;
@@ -2890,7 +3387,11 @@ int drm_mode_getproperty_ioctl(struct drm_device *dev,
 	if (property->flags & DRM_MODE_PROP_ENUM) {
 		if ((out_resp->count_enum_blobs >= enum_count) && enum_count) {
 			copied = 0;
+<<<<<<< HEAD
 			enum_ptr = (struct drm_mode_property_enum __user *)(unsigned long)out_resp->enum_blob_ptr;
+=======
+			enum_ptr = (struct drm_mode_property_enum *)(unsigned long)out_resp->enum_blob_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			list_for_each_entry(prop_enum, &property->enum_blob_list, head) {
 
 				if (copy_to_user(&enum_ptr[copied].value, &prop_enum->value, sizeof(uint64_t))) {
@@ -2912,8 +3413,13 @@ int drm_mode_getproperty_ioctl(struct drm_device *dev,
 	if (property->flags & DRM_MODE_PROP_BLOB) {
 		if ((out_resp->count_enum_blobs >= blob_count) && blob_count) {
 			copied = 0;
+<<<<<<< HEAD
 			blob_id_ptr = (uint32_t __user *)(unsigned long)out_resp->enum_blob_ptr;
 			blob_length_ptr = (uint32_t __user *)(unsigned long)out_resp->values_ptr;
+=======
+			blob_id_ptr = (uint32_t *)(unsigned long)out_resp->enum_blob_ptr;
+			blob_length_ptr = (uint32_t *)(unsigned long)out_resp->values_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			list_for_each_entry(prop_blob, &property->enum_blob_list, head) {
 				if (put_user(prop_blob->base.id, blob_id_ptr + copied)) {
@@ -2940,7 +3446,10 @@ static struct drm_property_blob *drm_property_create_blob(struct drm_device *dev
 							  void *data)
 {
 	struct drm_property_blob *blob;
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!length || !data)
 		return NULL;
@@ -2949,16 +3458,25 @@ static struct drm_property_blob *drm_property_create_blob(struct drm_device *dev
 	if (!blob)
 		return NULL;
 
+<<<<<<< HEAD
 	ret = drm_mode_object_get(dev, &blob->base, DRM_MODE_OBJECT_BLOB);
 	if (ret) {
 		kfree(blob);
 		return NULL;
 	}
 
+=======
+	blob->data = (void *)((char *)blob + sizeof(struct drm_property_blob));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	blob->length = length;
 
 	memcpy(blob->data, data, length);
 
+<<<<<<< HEAD
+=======
+	drm_mode_object_get(dev, &blob->base, DRM_MODE_OBJECT_BLOB);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_add_tail(&blob->head, &dev->mode_config.property_blob_list);
 	return blob;
 }
@@ -2978,7 +3496,11 @@ int drm_mode_getblob_ioctl(struct drm_device *dev,
 	struct drm_mode_get_blob *out_resp = data;
 	struct drm_property_blob *blob;
 	int ret = 0;
+<<<<<<< HEAD
 	void __user *blob_ptr;
+=======
+	void *blob_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!drm_core_check_feature(dev, DRIVER_MODESET))
 		return -EINVAL;
@@ -2992,7 +3514,11 @@ int drm_mode_getblob_ioctl(struct drm_device *dev,
 	blob = obj_to_blob(obj);
 
 	if (out_resp->length == blob->length) {
+<<<<<<< HEAD
 		blob_ptr = (void __user *)(unsigned long)out_resp->data;
+=======
+		blob_ptr = (void *)(unsigned long)out_resp->data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (copy_to_user(blob_ptr, blob->data, blob->length)){
 			ret = -EFAULT;
 			goto done;
@@ -3137,7 +3663,11 @@ void drm_mode_connector_detach_encoder(struct drm_connector *connector,
 }
 EXPORT_SYMBOL(drm_mode_connector_detach_encoder);
 
+<<<<<<< HEAD
 int drm_mode_crtc_set_gamma_size(struct drm_crtc *crtc,
+=======
+bool drm_mode_crtc_set_gamma_size(struct drm_crtc *crtc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  int gamma_size)
 {
 	crtc->gamma_size = gamma_size;
@@ -3145,10 +3675,17 @@ int drm_mode_crtc_set_gamma_size(struct drm_crtc *crtc,
 	crtc->gamma_store = kzalloc(gamma_size * sizeof(uint16_t) * 3, GFP_KERNEL);
 	if (!crtc->gamma_store) {
 		crtc->gamma_size = 0;
+<<<<<<< HEAD
 		return -ENOMEM;
 	}
 
 	return 0;
+=======
+		return false;
+	}
+
+	return true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(drm_mode_crtc_set_gamma_size);
 
@@ -3294,6 +3831,7 @@ int drm_mode_page_flip_ioctl(struct drm_device *dev,
 		goto out;
 	fb = obj_to_fb(obj);
 
+<<<<<<< HEAD
 	if (crtc->mode.hdisplay > fb->width ||
 	    crtc->mode.vdisplay > fb->height ||
 	    crtc->x > fb->width - crtc->mode.hdisplay ||
@@ -3306,6 +3844,8 @@ int drm_mode_page_flip_ioctl(struct drm_device *dev,
 		goto out;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (page_flip->flags & DRM_MODE_PAGE_FLIP_EVENT) {
 		ret = -ENOMEM;
 		spin_lock_irqsave(&dev->event_lock, flags);
@@ -3335,12 +3875,19 @@ int drm_mode_page_flip_ioctl(struct drm_device *dev,
 
 	ret = crtc->funcs->page_flip(crtc, fb, e);
 	if (ret) {
+<<<<<<< HEAD
 		if (page_flip->flags & DRM_MODE_PAGE_FLIP_EVENT) {
 			spin_lock_irqsave(&dev->event_lock, flags);
 			file_priv->event_space += sizeof e->event;
 			spin_unlock_irqrestore(&dev->event_lock, flags);
 			kfree(e);
 		}
+=======
+		spin_lock_irqsave(&dev->event_lock, flags);
+		file_priv->event_space += sizeof e->event;
+		spin_unlock_irqrestore(&dev->event_lock, flags);
+		kfree(e);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 out:
@@ -3400,6 +3947,7 @@ int drm_mode_destroy_dumb_ioctl(struct drm_device *dev,
 
 	return dev->driver->dumb_destroy(file_priv, dev, args->handle);
 }
+<<<<<<< HEAD
 
 /*
  * Just need to support RGB formats here for compat with code that doesn't
@@ -3469,3 +4017,5 @@ void drm_fb_get_bpp_depth(uint32_t format, unsigned int *depth,
 	}
 }
 EXPORT_SYMBOL(drm_fb_get_bpp_depth);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

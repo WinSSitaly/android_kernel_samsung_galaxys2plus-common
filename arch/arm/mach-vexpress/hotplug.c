@@ -13,8 +13,11 @@
 #include <linux/smp.h>
 
 #include <asm/cacheflush.h>
+<<<<<<< HEAD
 #include <asm/smp_plat.h>
 #include <asm/cp15.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern volatile int pen_release;
 
@@ -64,9 +67,21 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
 	 * code will have already disabled interrupts
 	 */
 	for (;;) {
+<<<<<<< HEAD
 		wfi();
 
 		if (pen_release == cpu_logical_map(cpu)) {
+=======
+		/*
+		 * here's the WFI
+		 */
+		asm(".word	0xe320f003\n"
+		    :
+		    :
+		    : "memory", "cc");
+
+		if (pen_release == cpu) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * OK, proper wakeup, we're done
 			 */

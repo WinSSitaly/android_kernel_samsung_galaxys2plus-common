@@ -10,6 +10,11 @@
 #ifndef	__EDAC_MODULE_H__
 #define	__EDAC_MODULE_H__
 
+<<<<<<< HEAD
+=======
+#include <linux/sysdev.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "edac_core.h"
 
 /*

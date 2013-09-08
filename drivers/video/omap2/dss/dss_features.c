@@ -41,19 +41,28 @@ struct omap_dss_features {
 	const struct dss_reg_field *reg_fields;
 	const int num_reg_fields;
 
+<<<<<<< HEAD
 	const enum dss_feat_id *features;
 	const int num_features;
+=======
+	const u32 has_feature;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	const int num_mgrs;
 	const int num_ovls;
 	const enum omap_display_type *supported_displays;
 	const enum omap_color_mode *supported_color_modes;
+<<<<<<< HEAD
 	const enum omap_overlay_caps *overlay_caps;
 	const char * const *clksrc_names;
 	const struct dss_param_range *dss_params;
 
 	const u32 buffer_size_unit;
 	const u32 burst_size_unit;
+=======
+	const char * const *clksrc_names;
+	const struct dss_param_range *dss_params;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* This struct is assigned to one of the below during initialization */
@@ -190,8 +199,12 @@ static const enum omap_color_mode omap4_dss_supported_color_modes[] = {
 	OMAP_DSS_COLOR_RGB16 | OMAP_DSS_COLOR_RGB24U |
 	OMAP_DSS_COLOR_RGB24P | OMAP_DSS_COLOR_ARGB32 |
 	OMAP_DSS_COLOR_RGBA32 | OMAP_DSS_COLOR_RGBX32 |
+<<<<<<< HEAD
 	OMAP_DSS_COLOR_ARGB16_1555 | OMAP_DSS_COLOR_RGBX16 |
 	OMAP_DSS_COLOR_RGBA16 | OMAP_DSS_COLOR_XRGB16_1555,
+=======
+	OMAP_DSS_COLOR_ARGB16_1555,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* OMAP_DSS_VIDEO1 */
 	OMAP_DSS_COLOR_RGB16 | OMAP_DSS_COLOR_RGB12U |
@@ -212,6 +225,7 @@ static const enum omap_color_mode omap4_dss_supported_color_modes[] = {
 	OMAP_DSS_COLOR_ARGB16 | OMAP_DSS_COLOR_XRGB16_1555 |
 	OMAP_DSS_COLOR_ARGB32 | OMAP_DSS_COLOR_RGBX16 |
 	OMAP_DSS_COLOR_RGBX32,
+<<<<<<< HEAD
 
 	/* OMAP_DSS_VIDEO3 */
 	OMAP_DSS_COLOR_RGB16 | OMAP_DSS_COLOR_RGB12U |
@@ -274,6 +288,8 @@ static const enum omap_overlay_caps omap4_dss_overlay_caps[] = {
 	/* OMAP_DSS_VIDEO3 */
 	OMAP_DSS_OVL_CAP_SCALE | OMAP_DSS_OVL_CAP_GLOBAL_ALPHA |
 		OMAP_DSS_OVL_CAP_PRE_MULT_ALPHA | OMAP_DSS_OVL_CAP_ZORDER,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const char * const omap2_dss_clk_source_names[] = {
@@ -298,43 +314,59 @@ static const char * const omap4_dss_clk_source_names[] = {
 
 static const struct dss_param_range omap2_dss_param_range[] = {
 	[FEAT_PARAM_DSS_FCK]			= { 0, 173000000 },
+<<<<<<< HEAD
 	[FEAT_PARAM_DSS_PCD]			= { 2, 255 },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[FEAT_PARAM_DSIPLL_REGN]		= { 0, 0 },
 	[FEAT_PARAM_DSIPLL_REGM]		= { 0, 0 },
 	[FEAT_PARAM_DSIPLL_REGM_DISPC]		= { 0, 0 },
 	[FEAT_PARAM_DSIPLL_REGM_DSI]		= { 0, 0 },
 	[FEAT_PARAM_DSIPLL_FINT]		= { 0, 0 },
 	[FEAT_PARAM_DSIPLL_LPDIV]		= { 0, 0 },
+<<<<<<< HEAD
 	[FEAT_PARAM_DOWNSCALE]			= { 1, 2 },
 	/*
 	 * Assuming the line width buffer to be 768 pixels as OMAP2 DISPC
 	 * scaler cannot scale a image with width more than 768.
 	 */
 	[FEAT_PARAM_LINEWIDTH]			= { 1, 768 },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct dss_param_range omap3_dss_param_range[] = {
 	[FEAT_PARAM_DSS_FCK]			= { 0, 173000000 },
+<<<<<<< HEAD
 	[FEAT_PARAM_DSS_PCD]			= { 1, 255 },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[FEAT_PARAM_DSIPLL_REGN]		= { 0, (1 << 7) - 1 },
 	[FEAT_PARAM_DSIPLL_REGM]		= { 0, (1 << 11) - 1 },
 	[FEAT_PARAM_DSIPLL_REGM_DISPC]		= { 0, (1 << 4) - 1 },
 	[FEAT_PARAM_DSIPLL_REGM_DSI]		= { 0, (1 << 4) - 1 },
 	[FEAT_PARAM_DSIPLL_FINT]		= { 750000, 2100000 },
 	[FEAT_PARAM_DSIPLL_LPDIV]		= { 1, (1 << 13) - 1},
+<<<<<<< HEAD
 	[FEAT_PARAM_DOWNSCALE]			= { 1, 4 },
 	[FEAT_PARAM_LINEWIDTH]			= { 1, 1024 },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct dss_param_range omap4_dss_param_range[] = {
 	[FEAT_PARAM_DSS_FCK]			= { 0, 186000000 },
+<<<<<<< HEAD
 	[FEAT_PARAM_DSS_PCD]			= { 1, 255 },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[FEAT_PARAM_DSIPLL_REGN]		= { 0, (1 << 8) - 1 },
 	[FEAT_PARAM_DSIPLL_REGM]		= { 0, (1 << 12) - 1 },
 	[FEAT_PARAM_DSIPLL_REGM_DISPC]		= { 0, (1 << 5) - 1 },
 	[FEAT_PARAM_DSIPLL_REGM_DSI]		= { 0, (1 << 5) - 1 },
 	[FEAT_PARAM_DSIPLL_FINT]		= { 500000, 2500000 },
 	[FEAT_PARAM_DSIPLL_LPDIV]		= { 0, (1 << 13) - 1 },
+<<<<<<< HEAD
 	[FEAT_PARAM_DOWNSCALE]			= { 1, 4 },
 	[FEAT_PARAM_LINEWIDTH]			= { 1, 2048 },
 };
@@ -434,6 +466,8 @@ static const enum dss_feat_id omap4_dss_feat_list[] = {
 	FEAT_FIR_COEF_V,
 	FEAT_ALPHA_FREE_ZORDER,
 	FEAT_FIFO_MERGE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* OMAP2 DSS Features */
@@ -441,18 +475,30 @@ static const struct omap_dss_features omap2_dss_features = {
 	.reg_fields = omap2_dss_reg_fields,
 	.num_reg_fields = ARRAY_SIZE(omap2_dss_reg_fields),
 
+<<<<<<< HEAD
 	.features = omap2_dss_feat_list,
 	.num_features = ARRAY_SIZE(omap2_dss_feat_list),
+=======
+	.has_feature	=
+		FEAT_LCDENABLEPOL | FEAT_LCDENABLESIGNAL |
+		FEAT_PCKFREEENABLE | FEAT_FUNCGATED |
+		FEAT_ROWREPEATENABLE | FEAT_RESIZECONF,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.num_mgrs = 2,
 	.num_ovls = 3,
 	.supported_displays = omap2_dss_supported_displays,
 	.supported_color_modes = omap2_dss_supported_color_modes,
+<<<<<<< HEAD
 	.overlay_caps = omap2_dss_overlay_caps,
 	.clksrc_names = omap2_dss_clk_source_names,
 	.dss_params = omap2_dss_param_range,
 	.buffer_size_unit = 1,
 	.burst_size_unit = 8,
+=======
+	.clksrc_names = omap2_dss_clk_source_names,
+	.dss_params = omap2_dss_param_range,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* OMAP3 DSS Features */
@@ -460,36 +506,65 @@ static const struct omap_dss_features omap3430_dss_features = {
 	.reg_fields = omap3_dss_reg_fields,
 	.num_reg_fields = ARRAY_SIZE(omap3_dss_reg_fields),
 
+<<<<<<< HEAD
 	.features = omap3430_dss_feat_list,
 	.num_features = ARRAY_SIZE(omap3430_dss_feat_list),
+=======
+	.has_feature	=
+		FEAT_GLOBAL_ALPHA | FEAT_LCDENABLEPOL |
+		FEAT_LCDENABLESIGNAL | FEAT_PCKFREEENABLE |
+		FEAT_FUNCGATED | FEAT_ROWREPEATENABLE |
+		FEAT_LINEBUFFERSPLIT | FEAT_RESIZECONF |
+		FEAT_DSI_PLL_FREQSEL | FEAT_DSI_REVERSE_TXCLKESC,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.num_mgrs = 2,
 	.num_ovls = 3,
 	.supported_displays = omap3430_dss_supported_displays,
 	.supported_color_modes = omap3_dss_supported_color_modes,
+<<<<<<< HEAD
 	.overlay_caps = omap3430_dss_overlay_caps,
 	.clksrc_names = omap3_dss_clk_source_names,
 	.dss_params = omap3_dss_param_range,
 	.buffer_size_unit = 1,
 	.burst_size_unit = 8,
+=======
+	.clksrc_names = omap3_dss_clk_source_names,
+	.dss_params = omap3_dss_param_range,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct omap_dss_features omap3630_dss_features = {
 	.reg_fields = omap3_dss_reg_fields,
 	.num_reg_fields = ARRAY_SIZE(omap3_dss_reg_fields),
 
+<<<<<<< HEAD
 	.features = omap3630_dss_feat_list,
 	.num_features = ARRAY_SIZE(omap3630_dss_feat_list),
+=======
+	.has_feature    =
+		FEAT_GLOBAL_ALPHA | FEAT_LCDENABLEPOL |
+		FEAT_LCDENABLESIGNAL | FEAT_PCKFREEENABLE |
+		FEAT_PRE_MULT_ALPHA | FEAT_FUNCGATED |
+		FEAT_ROWREPEATENABLE | FEAT_LINEBUFFERSPLIT |
+		FEAT_RESIZECONF | FEAT_DSI_PLL_PWR_BUG |
+		FEAT_DSI_PLL_FREQSEL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.num_mgrs = 2,
 	.num_ovls = 3,
 	.supported_displays = omap3630_dss_supported_displays,
 	.supported_color_modes = omap3_dss_supported_color_modes,
+<<<<<<< HEAD
 	.overlay_caps = omap3630_dss_overlay_caps,
 	.clksrc_names = omap3_dss_clk_source_names,
 	.dss_params = omap3_dss_param_range,
 	.buffer_size_unit = 1,
 	.burst_size_unit = 8,
+=======
+	.clksrc_names = omap3_dss_clk_source_names,
+	.dss_params = omap3_dss_param_range,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* OMAP4 DSS Features */
@@ -498,6 +573,7 @@ static const struct omap_dss_features omap4430_es1_0_dss_features  = {
 	.reg_fields = omap4_dss_reg_fields,
 	.num_reg_fields = ARRAY_SIZE(omap4_dss_reg_fields),
 
+<<<<<<< HEAD
 	.features = omap4430_es1_0_dss_feat_list,
 	.num_features = ARRAY_SIZE(omap4430_es1_0_dss_feat_list),
 
@@ -529,6 +605,21 @@ static const struct omap_dss_features omap4430_es2_0_1_2_dss_features = {
 	.dss_params = omap4_dss_param_range,
 	.buffer_size_unit = 16,
 	.burst_size_unit = 16,
+=======
+	.has_feature	=
+		FEAT_GLOBAL_ALPHA | FEAT_PRE_MULT_ALPHA |
+		FEAT_MGR_LCD2 | FEAT_GLOBAL_ALPHA_VID1 |
+		FEAT_CORE_CLK_DIV | FEAT_LCD_CLK_SRC |
+		FEAT_DSI_DCS_CMD_CONFIG_VC | FEAT_DSI_VC_OCP_WIDTH |
+		FEAT_DSI_GNQ | FEAT_HANDLE_UV_SEPARATE | FEAT_ATTR2,
+
+	.num_mgrs = 3,
+	.num_ovls = 3,
+	.supported_displays = omap4_dss_supported_displays,
+	.supported_color_modes = omap4_dss_supported_color_modes,
+	.clksrc_names = omap4_dss_clk_source_names,
+	.dss_params = omap4_dss_param_range,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* For all the other OMAP4 versions */
@@ -536,6 +627,7 @@ static const struct omap_dss_features omap4_dss_features = {
 	.reg_fields = omap4_dss_reg_fields,
 	.num_reg_fields = ARRAY_SIZE(omap4_dss_reg_fields),
 
+<<<<<<< HEAD
 	.features = omap4_dss_feat_list,
 	.num_features = ARRAY_SIZE(omap4_dss_feat_list),
 
@@ -580,6 +672,24 @@ void dss_init_hdmi_ip_ops(struct hdmi_ip_data *ip_data)
 }
 #endif
 
+=======
+	.has_feature	=
+		FEAT_GLOBAL_ALPHA | FEAT_PRE_MULT_ALPHA |
+		FEAT_MGR_LCD2 | FEAT_GLOBAL_ALPHA_VID1 |
+		FEAT_CORE_CLK_DIV | FEAT_LCD_CLK_SRC |
+		FEAT_DSI_DCS_CMD_CONFIG_VC | FEAT_DSI_VC_OCP_WIDTH |
+		FEAT_DSI_GNQ | FEAT_HDMI_CTS_SWMODE |
+		FEAT_HANDLE_UV_SEPARATE | FEAT_ATTR2,
+
+	.num_mgrs = 3,
+	.num_ovls = 3,
+	.supported_displays = omap4_dss_supported_displays,
+	.supported_color_modes = omap4_dss_supported_color_modes,
+	.clksrc_names = omap4_dss_clk_source_names,
+	.dss_params = omap4_dss_param_range,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Functions returning values related to a DSS feature */
 int dss_feat_get_num_mgrs(void)
 {
@@ -611,11 +721,14 @@ enum omap_color_mode dss_feat_get_supported_color_modes(enum omap_plane plane)
 	return omap_current_dss_features->supported_color_modes[plane];
 }
 
+<<<<<<< HEAD
 enum omap_overlay_caps dss_feat_get_overlay_caps(enum omap_plane plane)
 {
 	return omap_current_dss_features->overlay_caps[plane];
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bool dss_feat_color_mode_supported(enum omap_plane plane,
 		enum omap_color_mode color_mode)
 {
@@ -628,6 +741,7 @@ const char *dss_feat_get_clk_source_name(enum omap_dss_clk_source id)
 	return omap_current_dss_features->clksrc_names[id];
 }
 
+<<<<<<< HEAD
 u32 dss_feat_get_buffer_size_unit(void)
 {
 	return omap_current_dss_features->buffer_size_unit;
@@ -651,6 +765,12 @@ bool dss_has_feature(enum dss_feat_id id)
 	}
 
 	return false;
+=======
+/* DSS has_feature check */
+bool dss_has_feature(enum dss_feat_id id)
+{
+	return omap_current_dss_features->has_feature & id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void dss_feat_get_reg_field(enum dss_feat_reg_field id, u8 *start, u8 *end)
@@ -672,10 +792,13 @@ void dss_features_init(void)
 		omap_current_dss_features = &omap3430_dss_features;
 	else if (omap_rev() == OMAP4430_REV_ES1_0)
 		omap_current_dss_features = &omap4430_es1_0_dss_features;
+<<<<<<< HEAD
 	else if (omap_rev() == OMAP4430_REV_ES2_0 ||
 		omap_rev() == OMAP4430_REV_ES2_1 ||
 		omap_rev() == OMAP4430_REV_ES2_2)
 		omap_current_dss_features = &omap4430_es2_0_1_2_dss_features;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else if (cpu_is_omap44xx())
 		omap_current_dss_features = &omap4_dss_features;
 	else

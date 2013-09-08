@@ -6,13 +6,21 @@
  * Copyright    by Karsten Keil      <keil@isdn4linux.de>
  *              by Matt Henderson,
  *                 Traverse Technologies P/L www.traverse.com.au
+<<<<<<< HEAD
  *
+=======
+ * 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This software may be used and distributed according to the terms
  * of the GNU General Public License, incorporated herein by reference.
  *
  */
 
+<<<<<<< HEAD
 #define byteout(addr, val) outb(val, addr)
+=======
+#define byteout(addr,val) outb(val,addr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define bytein(addr) inb(addr)
 
 #define NETJET_CTRL	0x00
@@ -67,3 +75,7 @@ void netjet_fill_dma(struct BCState *bcs);
 void netjet_interrupt(int intno, void *dev_id);
 void inittiger(struct IsdnCardState *cs);
 void release_io_netjet(struct IsdnCardState *cs);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

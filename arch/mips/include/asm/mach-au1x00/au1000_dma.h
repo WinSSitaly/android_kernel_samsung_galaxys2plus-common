@@ -33,6 +33,10 @@
 #include <linux/io.h>		/* need byte IO */
 #include <linux/spinlock.h>	/* And spinlocks */
 #include <linux/delay.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define NUM_AU1000_DMA_CHANNELS	8
 

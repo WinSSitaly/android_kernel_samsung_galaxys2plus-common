@@ -44,16 +44,26 @@
 #include <linux/wait.h>
 #include <linux/workqueue.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "core.h"
 
 /*
  * ABI version history is documented in linux/firewire-cdev.h.
  */
+<<<<<<< HEAD
 #define FW_CDEV_KERNEL_VERSION			5
 #define FW_CDEV_VERSION_EVENT_REQUEST2		4
 #define FW_CDEV_VERSION_ALLOCATE_REGION_END	4
 #define FW_CDEV_VERSION_AUTO_FLUSH_ISO_OVERFLOW	5
+=======
+#define FW_CDEV_KERNEL_VERSION			4
+#define FW_CDEV_VERSION_EVENT_REQUEST2		4
+#define FW_CDEV_VERSION_ALLOCATE_REGION_END	4
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct client {
 	u32 version;
@@ -389,7 +399,11 @@ static void queue_bus_reset_event(struct client *client)
 
 	e = kzalloc(sizeof(*e), GFP_KERNEL);
 	if (e == NULL) {
+<<<<<<< HEAD
 		fw_notice(client->device->card, "out of memory when allocating event\n");
+=======
+		fw_notify("Out of memory when allocating event\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -438,7 +452,10 @@ union ioctl_arg {
 	struct fw_cdev_send_phy_packet		send_phy_packet;
 	struct fw_cdev_receive_phy_packets	receive_phy_packets;
 	struct fw_cdev_set_iso_channels		set_iso_channels;
+<<<<<<< HEAD
 	struct fw_cdev_flush_iso		flush_iso;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int ioctl_get_info(struct client *client, union ioctl_arg *arg)
@@ -472,8 +489,13 @@ static int ioctl_get_info(struct client *client, union ioctl_arg *arg)
 	client->bus_reset_closure = a->bus_reset_closure;
 	if (a->bus_reset != 0) {
 		fill_bus_reset_event(&bus_reset, client);
+<<<<<<< HEAD
 		/* unaligned size of bus_reset is 36 bytes */
 		ret = copy_to_user(u64_to_uptr(a->bus_reset), &bus_reset, 36);
+=======
+		ret = copy_to_user(u64_to_uptr(a->bus_reset),
+				   &bus_reset, sizeof(bus_reset));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (ret == 0 && list_empty(&client->link))
 		list_add_tail(&client->link, &client->device->client_list);
@@ -692,7 +714,11 @@ static void handle_request(struct fw_card *card, struct fw_request *request,
 	r = kmalloc(sizeof(*r), GFP_ATOMIC);
 	e = kmalloc(sizeof(*e), GFP_ATOMIC);
 	if (r == NULL || e == NULL) {
+<<<<<<< HEAD
 		fw_notice(card, "out of memory when allocating event\n");
+=======
+		fw_notify("Out of memory when allocating event\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto failed;
 	}
 	r->card    = card;
@@ -929,7 +955,11 @@ static void iso_callback(struct fw_iso_context *context, u32 cycle,
 
 	e = kmalloc(sizeof(*e) + header_length, GFP_ATOMIC);
 	if (e == NULL) {
+<<<<<<< HEAD
 		fw_notice(context->card, "out of memory when allocating event\n");
+=======
+		fw_notify("Out of memory when allocating event\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 	e->interrupt.type      = FW_CDEV_EVENT_ISO_INTERRUPT;
@@ -949,7 +979,11 @@ static void iso_mc_callback(struct fw_iso_context *context,
 
 	e = kmalloc(sizeof(*e), GFP_ATOMIC);
 	if (e == NULL) {
+<<<<<<< HEAD
 		fw_notice(context->card, "out of memory when allocating event\n");
+=======
+		fw_notify("Out of memory when allocating event\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 	e->interrupt.type      = FW_CDEV_EVENT_ISO_INTERRUPT_MULTICHANNEL;
@@ -999,8 +1033,11 @@ static int ioctl_create_iso_context(struct client *client, union ioctl_arg *arg)
 			a->channel, a->speed, a->header_size, cb, client);
 	if (IS_ERR(context))
 		return PTR_ERR(context);
+<<<<<<< HEAD
 	if (client->version < FW_CDEV_VERSION_AUTO_FLUSH_ISO_OVERFLOW)
 		context->drop_overflow_headers = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* We only support one context at this time. */
 	spin_lock_irq(&client->lock);
@@ -1171,6 +1208,7 @@ static int ioctl_stop_iso(struct client *client, union ioctl_arg *arg)
 	return fw_iso_context_stop(client->iso_context);
 }
 
+<<<<<<< HEAD
 static int ioctl_flush_iso(struct client *client, union ioctl_arg *arg)
 {
 	struct fw_cdev_flush_iso *a = &arg->flush_iso;
@@ -1181,6 +1219,8 @@ static int ioctl_flush_iso(struct client *client, union ioctl_arg *arg)
 	return fw_iso_context_flush_completions(client->iso_context);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ioctl_get_cycle_timer2(struct client *client, union ioctl_arg *arg)
 {
 	struct fw_cdev_get_cycle_timer2 *a = &arg->get_cycle_timer2;
@@ -1561,7 +1601,11 @@ void fw_cdev_handle_phy_packet(struct fw_card *card, struct fw_packet *p)
 	list_for_each_entry(client, &card->phy_receiver_list, phy_receiver_link) {
 		e = kmalloc(sizeof(*e) + 8, GFP_ATOMIC);
 		if (e == NULL) {
+<<<<<<< HEAD
 			fw_notice(card, "out of memory when allocating event\n");
+=======
+			fw_notify("Out of memory when allocating event\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 		e->phy_packet.closure	= client->phy_receiver_closure;
@@ -1602,7 +1646,10 @@ static int (* const ioctl_handlers[])(struct client *, union ioctl_arg *) = {
 	[0x15] = ioctl_send_phy_packet,
 	[0x16] = ioctl_receive_phy_packets,
 	[0x17] = ioctl_set_iso_channels,
+<<<<<<< HEAD
 	[0x18] = ioctl_flush_iso,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int dispatch_ioctl(struct client *client,

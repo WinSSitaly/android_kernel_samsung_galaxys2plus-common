@@ -16,6 +16,10 @@
 #include <linux/of.h>
 #include <linux/of_device.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <asm/pgtable.h>
 #include <asm/io.h>
@@ -215,6 +219,21 @@ static struct platform_driver flash_driver = {
 	.remove		= __devexit_p(flash_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(flash_driver);
 
+=======
+static int __init flash_init(void)
+{
+	return platform_driver_register(&flash_driver);
+}
+
+static void __exit flash_cleanup(void)
+{
+	platform_driver_unregister(&flash_driver);
+}
+
+module_init(flash_init);
+module_exit(flash_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("GPL");

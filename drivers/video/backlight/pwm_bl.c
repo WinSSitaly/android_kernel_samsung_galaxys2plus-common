@@ -17,9 +17,16 @@
 #include <linux/fb.h>
 #include <linux/backlight.h>
 #include <linux/err.h>
+<<<<<<< HEAD
 #include <linux/pwm.h>
 #include <linux/pwm_backlight.h>
 #include <linux/slab.h>
+=======
+#include <linux/pwm/pwm.h>
+#include <linux/pwm_backlight.h>
+#include <linux/slab.h>
+#include <linux/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct pwm_bl_data {
 	struct pwm_device	*pwm;
@@ -28,9 +35,15 @@ struct pwm_bl_data {
 	unsigned int		lth_brightness;
 	int			(*notify)(struct device *,
 					  int brightness);
+<<<<<<< HEAD
 	void			(*notify_after)(struct device *,
 					int brightness);
 	int			(*check_fb)(struct device *, struct fb_info *);
+=======
+	int			(*check_fb)(struct device *, struct fb_info *);
+	int			pwm_started;
+	int			gpio;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int pwm_backlight_update_status(struct backlight_device *bl)
@@ -48,6 +61,7 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
 	if (pb->notify)
 		brightness = pb->notify(pb->dev, brightness);
 
+<<<<<<< HEAD
 	if (brightness == 0) {
 		pwm_config(pb->pwm, 0, pb->period);
 		pwm_disable(pb->pwm);
@@ -61,6 +75,28 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
 	if (pb->notify_after)
 		pb->notify_after(pb->dev, brightness);
 
+=======
+	pwm_set_period_ns(pb->pwm, pb->period);
+	if (brightness == 0) {
+		pwm_set_duty_ns(pb->pwm, 0);
+		if (pb->pwm_started != 0) {
+			pwm_stop(pb->pwm);
+			pb->pwm_started = 0;
+		}
+	} else {
+		pwm_set_duty_ns(pb->pwm, brightness * pb->period / max);
+		if (pb->pwm_started == 0) {
+			pwm_start(pb->pwm);
+			pb->pwm_started = 1;
+		}
+	}
+	if (pb->gpio >= 0) {
+		if (brightness == 0)
+			gpio_set_value(pb->gpio, 0);
+		else
+			gpio_set_value(pb->gpio, 1);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -102,7 +138,11 @@ static int pwm_backlight_probe(struct platform_device *pdev)
 			return ret;
 	}
 
+<<<<<<< HEAD
 	pb = devm_kzalloc(&pdev->dev, sizeof(*pb), GFP_KERNEL);
+=======
+	pb = kzalloc(sizeof(*pb), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!pb) {
 		dev_err(&pdev->dev, "no memory for state\n");
 		ret = -ENOMEM;
@@ -111,12 +151,16 @@ static int pwm_backlight_probe(struct platform_device *pdev)
 
 	pb->period = data->pwm_period_ns;
 	pb->notify = data->notify;
+<<<<<<< HEAD
 	pb->notify_after = data->notify_after;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pb->check_fb = data->check_fb;
 	pb->lth_brightness = data->lth_brightness *
 		(data->pwm_period_ns / data->max_brightness);
 	pb->dev = &pdev->dev;
 
+<<<<<<< HEAD
 	pb->pwm = pwm_request(data->pwm_id, "backlight");
 	if (IS_ERR(pb->pwm)) {
 		dev_err(&pdev->dev, "unable to request PWM for backlight\n");
@@ -125,6 +169,27 @@ static int pwm_backlight_probe(struct platform_device *pdev)
 	} else
 		dev_dbg(&pdev->dev, "got pwm for backlight\n");
 
+=======
+	pb->pwm = pwm_request(data->pwm_name, "backlight");
+	if (IS_ERR(pb->pwm)) {
+		dev_err(&pdev->dev, "unable to request PWM for backlight\n");
+		ret = PTR_ERR(pb->pwm);
+		goto err_pwm;
+	} else
+		dev_dbg(&pdev->dev, "got pwm for backlight\n");
+
+	if (data->enable_gpio >= 0) {
+		ret = gpio_request_one(data->enable_gpio,
+				       GPIOF_OUT_INIT_HIGH, "Backlight Enable");
+		pb->gpio = data->enable_gpio;
+		printk(KERN_INFO "%s() Backlight GPIO requested: %d, status: %d\n",
+		       __func__, data->enable_gpio, ret);
+		if (ret)
+			return ret;
+	} else
+		pb->gpio = -1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(&props, 0, sizeof(struct backlight_properties));
 	props.type = BACKLIGHT_RAW;
 	props.max_brightness = data->max_brightness;
@@ -137,13 +202,32 @@ static int pwm_backlight_probe(struct platform_device *pdev)
 	}
 
 	bl->props.brightness = data->dft_brightness;
+<<<<<<< HEAD
 	backlight_update_status(bl);
 
+=======
+	pwm_set_polarity(pb->pwm, data->polarity);
+	backlight_update_status(bl);
+
+	if (data->enable_gpio >= 0) {
+		if (bl->props.brightness == 0)
+			gpio_set_value(data->enable_gpio, 0);
+		else
+			gpio_set_value(data->enable_gpio, 1);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_set_drvdata(pdev, bl);
 	return 0;
 
 err_bl:
+<<<<<<< HEAD
 	pwm_free(pb->pwm);
+=======
+	pwm_release(pb->pwm);
+err_pwm:
+	kfree(pb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_alloc:
 	if (data->exit)
 		data->exit(&pdev->dev);
@@ -157,14 +241,23 @@ static int pwm_backlight_remove(struct platform_device *pdev)
 	struct pwm_bl_data *pb = dev_get_drvdata(&bl->dev);
 
 	backlight_device_unregister(bl);
+<<<<<<< HEAD
 	pwm_config(pb->pwm, 0, pb->period);
 	pwm_disable(pb->pwm);
 	pwm_free(pb->pwm);
+=======
+	pwm_set_duty_ns(pb->pwm, 0);
+	pwm_stop(pb->pwm);
+	pwm_release(pb->pwm);
+
+	kfree(pb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (data->exit)
 		data->exit(&pdev->dev);
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 static int pwm_backlight_suspend(struct device *dev)
 {
@@ -193,19 +286,38 @@ static SIMPLE_DEV_PM_OPS(pwm_backlight_pm_ops, pwm_backlight_suspend,
 
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver pwm_backlight_driver = {
 	.driver		= {
 		.name	= "pwm-backlight",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 		.pm	= &pwm_backlight_pm_ops,
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.probe		= pwm_backlight_probe,
 	.remove		= pwm_backlight_remove,
 };
 
+<<<<<<< HEAD
 module_platform_driver(pwm_backlight_driver);
+=======
+static int __init pwm_backlight_init(void)
+{
+	return platform_driver_register(&pwm_backlight_driver);
+}
+module_init(pwm_backlight_init);
+
+static void __exit pwm_backlight_exit(void)
+{
+	platform_driver_unregister(&pwm_backlight_driver);
+}
+module_exit(pwm_backlight_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("PWM based Backlight Driver");
 MODULE_LICENSE("GPL");

@@ -11,14 +11,22 @@
 
 #include <linux/clockchips.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/i8253.h>
 #include <linux/time.h>
 #include <linux/export.h>
+=======
+#include <linux/time.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mca.h>
 
 #include <asm/vsyscall.h>
 #include <asm/x86_init.h>
 #include <asm/i8259.h>
+<<<<<<< HEAD
+=======
+#include <asm/i8253.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/timer.h>
 #include <asm/hpet.h>
 #include <asm/time.h>
@@ -57,6 +65,12 @@ EXPORT_SYMBOL(profile_pc);
  */
 static irqreturn_t timer_interrupt(int irq, void *dev_id)
 {
+<<<<<<< HEAD
+=======
+	/* Keep nmi watchdog up to date */
+	inc_irq_stat(irq0_irqs);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	global_clock_event->event_handler(global_clock_event);
 
 	/* MCA bus quirk: Acknowledge irq0 by setting bit 7 in port 0x61 */

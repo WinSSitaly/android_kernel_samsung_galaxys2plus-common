@@ -12,6 +12,14 @@
  * published by the Free Software Foundation.
 */
 
+<<<<<<< HEAD
+=======
+#define gpio_get_value	__gpio_get_value
+#define gpio_set_value	__gpio_set_value
+#define gpio_cansleep	__gpio_cansleep
+#define gpio_to_irq	__gpio_to_irq
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* GPIO bank sizes */
 #define S3C64XX_GPIO_A_NR	(8)
 #define S3C64XX_GPIO_B_NR	(7)
@@ -88,6 +96,14 @@ enum s3c_gpio_number {
 /* define the number of gpios we need to the one after the GPQ() range */
 #define GPIO_BOARD_START (S3C64XX_GPQ(S3C64XX_GPIO_Q_NR) + 1)
 
+<<<<<<< HEAD
 #define BOARD_NR_GPIOS	(16 + CONFIG_SAMSUNG_GPIO_EXTRA)
 
 #define ARCH_NR_GPIOS	(GPIO_BOARD_START + BOARD_NR_GPIOS)
+=======
+#define BOARD_NR_GPIOS 16
+
+#define ARCH_NR_GPIOS	(GPIO_BOARD_START + BOARD_NR_GPIOS)
+
+#include <asm-generic/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

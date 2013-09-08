@@ -96,6 +96,10 @@ struct svc_export {
 	struct auth_domain *	ex_client;
 	int			ex_flags;
 	struct path		ex_path;
+<<<<<<< HEAD
+=======
+	char			*ex_pathname;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uid_t			ex_anon_uid;
 	gid_t			ex_anon_gid;
 	int			ex_fsid;
@@ -132,11 +136,19 @@ __be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp);
 int			nfsd_export_init(void);
 void			nfsd_export_shutdown(void);
 void			nfsd_export_flush(void);
+<<<<<<< HEAD
+=======
+void			exp_readlock(void);
+void			exp_readunlock(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct svc_export *	rqst_exp_get_by_name(struct svc_rqst *,
 					     struct path *);
 struct svc_export *	rqst_exp_parent(struct svc_rqst *,
 					struct path *);
+<<<<<<< HEAD
 struct svc_export *	rqst_find_fsidzero_export(struct svc_rqst *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int			exp_rootfh(struct auth_domain *, 
 					char *path, struct knfsd_fh *, int maxsize);
 __be32			exp_pseudoroot(struct svc_rqst *, struct svc_fh *);

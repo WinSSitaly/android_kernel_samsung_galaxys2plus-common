@@ -17,7 +17,11 @@
 #include <linux/errno.h>
 #include <linux/err.h>
 #include <linux/clk.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 
 #include <mach/hardware.h>
@@ -31,12 +35,20 @@
 #include <plat/pll.h>
 #include <plat/s5p-clock.h>
 #include <plat/clock-clksrc.h>
+<<<<<<< HEAD
 
 #include "common.h"
+=======
+#include <plat/s5p6450.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct clksrc_clk clk_mout_dpll = {
 	.clk	= {
 		.name		= "mout_dpll",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.sources	= &clk_src_dpll,
 	.reg_src	= { .reg = S5P64X0_CLK_SRC0, .shift = 5, .size = 1 },
@@ -96,6 +108,10 @@ static struct clk_ops s5p6450_epll_ops = {
 static struct clksrc_clk clk_dout_epll = {
 	.clk	= {
 		.name		= "dout_epll",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_mout_epll.clk,
 	},
 	.reg_div	= { .reg = S5P64X0_CLK_DIV1, .shift = 24, .size = 4 },
@@ -104,6 +120,10 @@ static struct clksrc_clk clk_dout_epll = {
 static struct clksrc_clk clk_mout_hclk_sel = {
 	.clk	= {
 		.name		= "mout_hclk_sel",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.sources	= &clkset_hclk_low,
 	.reg_src	= { .reg = S5P64X0_OTHERS, .shift = 15, .size = 1 },
@@ -122,6 +142,10 @@ static struct clksrc_sources clkset_hclk = {
 static struct clksrc_clk clk_hclk = {
 	.clk	= {
 		.name		= "clk_hclk",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.sources	= &clkset_hclk,
 	.reg_src	= { .reg = S5P64X0_OTHERS, .shift = 14, .size = 1 },
@@ -131,6 +155,10 @@ static struct clksrc_clk clk_hclk = {
 static struct clksrc_clk clk_pclk = {
 	.clk	= {
 		.name		= "clk_pclk",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_hclk.clk,
 	},
 	.reg_div = { .reg = S5P64X0_CLK_DIV0, .shift = 12, .size = 4 },
@@ -138,6 +166,10 @@ static struct clksrc_clk clk_pclk = {
 static struct clksrc_clk clk_dout_pwm_ratio0 = {
 	.clk	= {
 		.name		= "clk_dout_pwm_ratio0",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_mout_hclk_sel.clk,
 	},
 	.reg_div	= { .reg = S5P64X0_CLK_DIV3, .shift = 16, .size = 4 },
@@ -146,6 +178,10 @@ static struct clksrc_clk clk_dout_pwm_ratio0 = {
 static struct clksrc_clk clk_pclk_to_wdt_pwm = {
 	.clk	= {
 		.name		= "clk_pclk_to_wdt_pwm",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_dout_pwm_ratio0.clk,
 	},
 	.reg_div	= { .reg = S5P64X0_CLK_DIV3, .shift = 20, .size = 4 },
@@ -154,6 +190,10 @@ static struct clksrc_clk clk_pclk_to_wdt_pwm = {
 static struct clksrc_clk clk_hclk_low = {
 	.clk	= {
 		.name		= "clk_hclk_low",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.sources	= &clkset_hclk_low,
 	.reg_src	= { .reg = S5P64X0_OTHERS, .shift = 6, .size = 1 },
@@ -163,6 +203,10 @@ static struct clksrc_clk clk_hclk_low = {
 static struct clksrc_clk clk_pclk_low = {
 	.clk	= {
 		.name		= "clk_pclk_low",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_hclk_low.clk,
 	},
 	.reg_div	= { .reg = S5P64X0_CLK_DIV3, .shift = 12, .size = 4 },
@@ -176,102 +220,175 @@ static struct clksrc_clk clk_pclk_low = {
 static struct clk init_clocks_off[] = {
 	{
 		.name		= "usbhost",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_hclk_low.clk,
 		.enable		= s5p64x0_hclk0_ctrl,
 		.ctrlbit	= (1 << 3),
 	}, {
+<<<<<<< HEAD
 		.name		= "dma",
 		.devname	= "dma-pl330",
+=======
+		.name		= "pdma",
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_hclk_low.clk,
 		.enable		= s5p64x0_hclk0_ctrl,
 		.ctrlbit	= (1 << 12),
 	}, {
 		.name		= "hsmmc",
+<<<<<<< HEAD
 		.devname	= "s3c-sdhci.0",
+=======
+		.id		= 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_hclk_low.clk,
 		.enable		= s5p64x0_hclk0_ctrl,
 		.ctrlbit	= (1 << 17),
 	}, {
 		.name		= "hsmmc",
+<<<<<<< HEAD
 		.devname	= "s3c-sdhci.1",
+=======
+		.id		= 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_hclk_low.clk,
 		.enable		= s5p64x0_hclk0_ctrl,
 		.ctrlbit	= (1 << 18),
 	}, {
 		.name		= "hsmmc",
+<<<<<<< HEAD
 		.devname	= "s3c-sdhci.2",
+=======
+		.id		= 2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_hclk_low.clk,
 		.enable		= s5p64x0_hclk0_ctrl,
 		.ctrlbit	= (1 << 19),
 	}, {
 		.name		= "usbotg",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_hclk_low.clk,
 		.enable		= s5p64x0_hclk0_ctrl,
 		.ctrlbit	= (1 << 20),
 	}, {
 		.name		= "lcd",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_h,
 		.enable		= s5p64x0_hclk1_ctrl,
 		.ctrlbit	= (1 << 1),
 	}, {
 		.name		= "watchdog",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk_low.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 5),
 	}, {
 		.name		= "rtc",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk_low.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 6),
 	}, {
 		.name		= "adc",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk_low.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 12),
 	}, {
 		.name		= "i2c",
+<<<<<<< HEAD
 		.devname	= "s3c2440-i2c.0",
+=======
+		.id		= 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk_low.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 17),
 	}, {
 		.name		= "spi",
+<<<<<<< HEAD
 		.devname	= "s3c64xx-spi.0",
+=======
+		.id		= 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk_low.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 21),
 	}, {
 		.name		= "spi",
+<<<<<<< HEAD
 		.devname	= "s3c64xx-spi.1",
+=======
+		.id		= 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk_low.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 22),
 	}, {
 		.name		= "iis",
+<<<<<<< HEAD
 		.devname	= "samsung-i2s.0",
+=======
+		.id		= 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk_low.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 26),
 	}, {
 		.name		= "iis",
+<<<<<<< HEAD
 		.devname	= "samsung-i2s.1",
+=======
+		.id		= 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk_low.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 15),
 	}, {
 		.name		= "iis",
+<<<<<<< HEAD
 		.devname	= "samsung-i2s.2",
+=======
+		.id		= 2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk_low.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 16),
 	}, {
 		.name		= "i2c",
+<<<<<<< HEAD
 		.devname	= "s3c2440-i2c.1",
+=======
+		.id		= 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk_low.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 27),
 	}, {
 		.name		= "dmc0",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 30),
@@ -284,45 +401,77 @@ static struct clk init_clocks_off[] = {
 static struct clk init_clocks[] = {
 	{
 		.name		= "intc",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_hclk.clk,
 		.enable		= s5p64x0_hclk0_ctrl,
 		.ctrlbit	= (1 << 1),
 	}, {
 		.name		= "mem",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_hclk.clk,
 		.enable		= s5p64x0_hclk0_ctrl,
 		.ctrlbit	= (1 << 21),
 	}, {
 		.name		= "uart",
+<<<<<<< HEAD
 		.devname	= "s3c6400-uart.0",
+=======
+		.id		= 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk_low.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 1),
 	}, {
 		.name		= "uart",
+<<<<<<< HEAD
 		.devname	= "s3c6400-uart.1",
+=======
+		.id		= 1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk_low.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 2),
 	}, {
 		.name		= "uart",
+<<<<<<< HEAD
 		.devname	= "s3c6400-uart.2",
+=======
+		.id		= 2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk_low.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 3),
 	}, {
 		.name		= "uart",
+<<<<<<< HEAD
 		.devname	= "s3c6400-uart.3",
+=======
+		.id		= 3,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk_low.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 4),
 	}, {
 		.name		= "timers",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk_to_wdt_pwm.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 7),
 	}, {
 		.name		= "gpio",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.parent		= &clk_pclk_low.clk,
 		.enable		= s5p64x0_pclk_ctrl,
 		.ctrlbit	= (1 << 18),
@@ -402,6 +551,10 @@ static struct clksrc_sources clkset_sclk_audio0 = {
 static struct clksrc_clk clk_sclk_audio0 = {
 	.clk		= {
 		.name		= "audio-bus",
+<<<<<<< HEAD
+=======
+		.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.enable		= s5p64x0_sclk_ctrl,
 		.ctrlbit	= (1 << 8),
 		.parent		= &clk_dout_epll.clk,
@@ -414,7 +567,72 @@ static struct clksrc_clk clk_sclk_audio0 = {
 static struct clksrc_clk clksrcs[] = {
 	{
 		.clk	= {
+<<<<<<< HEAD
 			.name		= "sclk_fimc",
+=======
+			.name		= "sclk_mmc",
+			.id		= 0,
+			.ctrlbit	= (1 << 24),
+			.enable		= s5p64x0_sclk_ctrl,
+		},
+		.sources = &clkset_group2,
+		.reg_src = { .reg = S5P64X0_CLK_SRC0, .shift = 18, .size = 2 },
+		.reg_div = { .reg = S5P64X0_CLK_DIV1, .shift = 0, .size = 4 },
+	}, {
+		.clk	= {
+			.name		= "sclk_mmc",
+			.id		= 1,
+			.ctrlbit	= (1 << 25),
+			.enable		= s5p64x0_sclk_ctrl,
+		},
+		.sources = &clkset_group2,
+		.reg_src = { .reg = S5P64X0_CLK_SRC0, .shift = 20, .size = 2 },
+		.reg_div = { .reg = S5P64X0_CLK_DIV1, .shift = 4, .size = 4 },
+	}, {
+		.clk	= {
+			.name		= "sclk_mmc",
+			.id		= 2,
+			.ctrlbit	= (1 << 26),
+			.enable		= s5p64x0_sclk_ctrl,
+		},
+		.sources = &clkset_group2,
+		.reg_src = { .reg = S5P64X0_CLK_SRC0, .shift = 22, .size = 2 },
+		.reg_div = { .reg = S5P64X0_CLK_DIV1, .shift = 8, .size = 4 },
+	}, {
+		.clk	= {
+			.name		= "uclk1",
+			.id		= -1,
+			.ctrlbit	= (1 << 5),
+			.enable		= s5p64x0_sclk_ctrl,
+		},
+		.sources = &clkset_uart,
+		.reg_src = { .reg = S5P64X0_CLK_SRC0, .shift = 13, .size = 1 },
+		.reg_div = { .reg = S5P64X0_CLK_DIV2, .shift = 16, .size = 4 },
+	}, {
+		.clk	= {
+			.name		= "sclk_spi",
+			.id		= 0,
+			.ctrlbit	= (1 << 20),
+			.enable		= s5p64x0_sclk_ctrl,
+		},
+		.sources = &clkset_group2,
+		.reg_src = { .reg = S5P64X0_CLK_SRC0, .shift = 14, .size = 2 },
+		.reg_div = { .reg = S5P64X0_CLK_DIV2, .shift = 0, .size = 4 },
+	}, {
+		.clk	= {
+			.name		= "sclk_spi",
+			.id		= 1,
+			.ctrlbit	= (1 << 21),
+			.enable		= s5p64x0_sclk_ctrl,
+		},
+		.sources = &clkset_group2,
+		.reg_src = { .reg = S5P64X0_CLK_SRC0, .shift = 16, .size = 2 },
+		.reg_div = { .reg = S5P64X0_CLK_DIV2, .shift = 4, .size = 4 },
+	}, {
+		.clk	= {
+			.name		= "sclk_fimc",
+			.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.ctrlbit	= (1 << 10),
 			.enable		= s5p64x0_sclk_ctrl,
 		},
@@ -424,6 +642,10 @@ static struct clksrc_clk clksrcs[] = {
 	}, {
 		.clk	= {
 			.name		= "aclk_mali",
+<<<<<<< HEAD
+=======
+			.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.ctrlbit	= (1 << 2),
 			.enable		= s5p64x0_sclk1_ctrl,
 		},
@@ -433,6 +655,10 @@ static struct clksrc_clk clksrcs[] = {
 	}, {
 		.clk	= {
 			.name		= "sclk_2d",
+<<<<<<< HEAD
+=======
+			.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.ctrlbit	= (1 << 12),
 			.enable		= s5p64x0_sclk_ctrl,
 		},
@@ -442,6 +668,10 @@ static struct clksrc_clk clksrcs[] = {
 	}, {
 		.clk	= {
 			.name		= "sclk_usi",
+<<<<<<< HEAD
+=======
+			.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.ctrlbit	= (1 << 7),
 			.enable		= s5p64x0_sclk_ctrl,
 		},
@@ -451,6 +681,10 @@ static struct clksrc_clk clksrcs[] = {
 	}, {
 		.clk	= {
 			.name		= "sclk_camif",
+<<<<<<< HEAD
+=======
+			.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.ctrlbit	= (1 << 6),
 			.enable		= s5p64x0_sclk_ctrl,
 		},
@@ -460,6 +694,10 @@ static struct clksrc_clk clksrcs[] = {
 	}, {
 		.clk	= {
 			.name		= "sclk_dispcon",
+<<<<<<< HEAD
+=======
+			.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.ctrlbit	= (1 << 1),
 			.enable		= s5p64x0_sclk1_ctrl,
 		},
@@ -469,6 +707,10 @@ static struct clksrc_clk clksrcs[] = {
 	}, {
 		.clk	= {
 			.name		= "sclk_hsmmc44",
+<<<<<<< HEAD
+=======
+			.id		= -1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.ctrlbit	= (1 << 30),
 			.enable		= s5p64x0_sclk_ctrl,
 		},
@@ -478,6 +720,7 @@ static struct clksrc_clk clksrcs[] = {
 	},
 };
 
+<<<<<<< HEAD
 static struct clksrc_clk clk_sclk_mmc0 = {
 	.clk	= {
 		.name		= "sclk_mmc",
@@ -569,6 +812,8 @@ static struct clk_lookup s5p6450_clk_lookup[] = {
 	CLKDEV_INIT("s3c-sdhci.2", "mmc_busclk.2", &clk_sclk_mmc2.clk),
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Clock initialization code */
 static struct clksrc_clk *sysclks[] = {
 	&clk_mout_apll,
@@ -587,11 +832,14 @@ static struct clksrc_clk *sysclks[] = {
 	&clk_sclk_audio0,
 };
 
+<<<<<<< HEAD
 static struct clk dummy_apb_pclk = {
 	.name		= "apb_pclk",
 	.id		= -1,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init_or_cpufreq s5p6450_setup_clocks(void)
 {
 	struct clk *xtal_clk;
@@ -667,6 +915,7 @@ void __init s5p6450_register_clocks(void)
 
 	s3c_register_clksrc(clksrcs, ARRAY_SIZE(clksrcs));
 	s3c_register_clocks(init_clocks, ARRAY_SIZE(init_clocks));
+<<<<<<< HEAD
 	for (ptr = 0; ptr < ARRAY_SIZE(clksrc_cdev); ptr++)
 		s3c_register_clksrc(clksrc_cdev[ptr], 1);
 
@@ -675,6 +924,11 @@ void __init s5p6450_register_clocks(void)
 	clkdev_add_table(s5p6450_clk_lookup, ARRAY_SIZE(s5p6450_clk_lookup));
 
 	s3c24xx_register_clock(&dummy_apb_pclk);
+=======
+
+	s3c_register_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
+	s3c_disable_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	s3c_pwmclk_init();
 }

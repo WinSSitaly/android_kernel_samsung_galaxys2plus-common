@@ -1,10 +1,16 @@
 #ifndef _LINUX_BLKDEV_H
 #define _LINUX_BLKDEV_H
 
+<<<<<<< HEAD
 #include <linux/sched.h>
 
 #ifdef CONFIG_BLOCK
 
+=======
+#ifdef CONFIG_BLOCK
+
+#include <linux/sched.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/major.h>
 #include <linux/genhd.h>
 #include <linux/list.h>
@@ -15,6 +21,10 @@
 #include <linux/wait.h>
 #include <linux/mempool.h>
 #include <linux/bio.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/stringify.h>
 #include <linux/gfp.h>
 #include <linux/bsg.h>
@@ -22,7 +32,10 @@
 
 #include <asm/scatterlist.h>
 
+<<<<<<< HEAD
 struct module;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct scsi_ioctl_command;
 
 struct request_queue;
@@ -31,7 +44,10 @@ struct request_pm_state;
 struct blk_trace;
 struct request;
 struct sg_io_hdr;
+<<<<<<< HEAD
 struct bsg_job;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define BLKDEV_MIN_RQ	4
 #define BLKDEV_MAX_RQ	128	/* Default maximum */
@@ -75,7 +91,11 @@ enum rq_cmd_type_bits {
 
 /*
  * try to put the fields that are referenced together in the same cacheline.
+<<<<<<< HEAD
  * if you modify this structure, be sure to check block/blk-core.c:blk_rq_init()
+=======
+ * if you modify this structure, be sure to check block/blk-core.c:rq_init()
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * as well!
  */
 struct request {
@@ -112,6 +132,7 @@ struct request {
 	 * Three pointers are available for the IO schedulers, if they need
 	 * more they have to dynamically allocate it.  Flush requests are
 	 * never put on the IO scheduler. So let the flush fields share
+<<<<<<< HEAD
 	 * space with the elevator data.
 	 */
 	union {
@@ -124,6 +145,15 @@ struct request {
 			unsigned int		seq;
 			struct list_head	list;
 			rq_end_io_fn		*saved_end_io;
+=======
+	 * space with the three elevator_private pointers.
+	 */
+	union {
+		void *elevator_private[3];
+		struct {
+			unsigned int		seq;
+			struct list_head	list;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} flush;
 	};
 
@@ -200,7 +230,11 @@ struct request_pm_state
 #include <linux/elevator.h>
 
 typedef void (request_fn_proc) (struct request_queue *q);
+<<<<<<< HEAD
 typedef void (make_request_fn) (struct request_queue *q, struct bio *bio);
+=======
+typedef int (make_request_fn) (struct request_queue *q, struct bio *bio);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef int (prep_rq_fn) (struct request_queue *, struct request *);
 typedef void (unprep_rq_fn) (struct request_queue *, struct request *);
 
@@ -216,7 +250,10 @@ typedef int (merge_bvec_fn) (struct request_queue *, struct bvec_merge_data *,
 typedef void (softirq_done_fn)(struct request *);
 typedef int (dma_drain_needed_fn)(struct request *);
 typedef int (lld_busy_fn) (struct request_queue *q);
+<<<<<<< HEAD
 typedef int (bsg_job_fn) (struct bsg_job *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum blk_eh_timer_return {
 	BLK_EH_NOT_HANDLED,
@@ -268,7 +305,12 @@ struct queue_limits {
 	unsigned char		discard_zeroes_data;
 };
 
+<<<<<<< HEAD
 struct request_queue {
+=======
+struct request_queue
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Together with queue_head for cacheline sharing
 	 */
@@ -311,6 +353,7 @@ struct request_queue {
 	void			*queuedata;
 
 	/*
+<<<<<<< HEAD
 	 * various queue flags, see QUEUE_* below
 	 */
 	unsigned long		queue_flags;
@@ -325,6 +368,16 @@ struct request_queue {
 	 * queue needs bounce pages for pages above this limit
 	 */
 	gfp_t			bounce_gfp;
+=======
+	 * queue needs bounce pages for pages above this limit
+	 */
+	gfp_t			bounce_gfp;
+
+	/*
+	 * various queue flags, see QUEUE_* below
+	 */
+	unsigned long		queue_flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * protects queue structures from reentrancy. ->__queue_lock should
@@ -347,8 +400,13 @@ struct request_queue {
 	unsigned int		nr_congestion_off;
 	unsigned int		nr_batching;
 
+<<<<<<< HEAD
 	unsigned int		dma_drain_size;
 	void			*dma_drain_buffer;
+=======
+	void			*dma_drain_buffer;
+	unsigned int		dma_drain_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int		dma_pad_mask;
 	unsigned int		dma_alignment;
 
@@ -362,8 +420,11 @@ struct request_queue {
 	struct timer_list	timeout;
 	struct list_head	timeout_list;
 
+<<<<<<< HEAD
 	struct list_head	icq_list;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct queue_limits	limits;
 
 	/*
@@ -391,8 +452,11 @@ struct request_queue {
 	struct mutex		sysfs_lock;
 
 #if defined(CONFIG_BLK_DEV_BSG)
+<<<<<<< HEAD
 	bsg_job_fn		*bsg_job_fn;
 	int			bsg_job_size;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bsg_class_device bsg_dev;
 #endif
 
@@ -410,7 +474,11 @@ struct request_queue {
 #define QUEUE_FLAG_ELVSWITCH	6	/* don't use elevator, just do FIFO */
 #define QUEUE_FLAG_BIDI		7	/* queue supports bidi requests */
 #define QUEUE_FLAG_NOMERGES     8	/* disable merge attempts */
+<<<<<<< HEAD
 #define QUEUE_FLAG_SAME_COMP	9	/* complete on same CPU-group */
+=======
+#define QUEUE_FLAG_SAME_COMP	9	/* force complete on same CPU */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define QUEUE_FLAG_FAIL_IO     10	/* fake timeout */
 #define QUEUE_FLAG_STACKABLE   11	/* supports request stacking */
 #define QUEUE_FLAG_NONROT      12	/* non-rotational device (SSD) */
@@ -420,17 +488,31 @@ struct request_queue {
 #define QUEUE_FLAG_NOXMERGES   15	/* No extended merges */
 #define QUEUE_FLAG_ADD_RANDOM  16	/* Contributes to random pool */
 #define QUEUE_FLAG_SECDISCARD  17	/* supports SECDISCARD */
+<<<<<<< HEAD
 #define QUEUE_FLAG_SAME_FORCE  18	/* force complete on same CPU */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define QUEUE_FLAG_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
 				 (1 << QUEUE_FLAG_STACKABLE)	|	\
 				 (1 << QUEUE_FLAG_SAME_COMP)	|	\
 				 (1 << QUEUE_FLAG_ADD_RANDOM))
 
+<<<<<<< HEAD
 static inline void queue_lockdep_assert_held(struct request_queue *q)
 {
 	if (q->queue_lock)
 		lockdep_assert_held(q->queue_lock);
+=======
+static inline int queue_is_locked(struct request_queue *q)
+{
+#ifdef CONFIG_SMP
+	spinlock_t *lock = q->queue_lock;
+	return lock && spin_is_locked(lock);
+#else
+	return 1;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void queue_flag_set_unlocked(unsigned int flag,
@@ -442,7 +524,11 @@ static inline void queue_flag_set_unlocked(unsigned int flag,
 static inline int queue_flag_test_and_clear(unsigned int flag,
 					    struct request_queue *q)
 {
+<<<<<<< HEAD
 	queue_lockdep_assert_held(q);
+=======
+	WARN_ON_ONCE(!queue_is_locked(q));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (test_bit(flag, &q->queue_flags)) {
 		__clear_bit(flag, &q->queue_flags);
@@ -455,7 +541,11 @@ static inline int queue_flag_test_and_clear(unsigned int flag,
 static inline int queue_flag_test_and_set(unsigned int flag,
 					  struct request_queue *q)
 {
+<<<<<<< HEAD
 	queue_lockdep_assert_held(q);
+=======
+	WARN_ON_ONCE(!queue_is_locked(q));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!test_bit(flag, &q->queue_flags)) {
 		__set_bit(flag, &q->queue_flags);
@@ -467,7 +557,11 @@ static inline int queue_flag_test_and_set(unsigned int flag,
 
 static inline void queue_flag_set(unsigned int flag, struct request_queue *q)
 {
+<<<<<<< HEAD
 	queue_lockdep_assert_held(q);
+=======
+	WARN_ON_ONCE(!queue_is_locked(q));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__set_bit(flag, &q->queue_flags);
 }
 
@@ -484,13 +578,20 @@ static inline int queue_in_flight(struct request_queue *q)
 
 static inline void queue_flag_clear(unsigned int flag, struct request_queue *q)
 {
+<<<<<<< HEAD
 	queue_lockdep_assert_held(q);
+=======
+	WARN_ON_ONCE(!queue_is_locked(q));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__clear_bit(flag, &q->queue_flags);
 }
 
 #define blk_queue_tagged(q)	test_bit(QUEUE_FLAG_QUEUED, &(q)->queue_flags)
 #define blk_queue_stopped(q)	test_bit(QUEUE_FLAG_STOPPED, &(q)->queue_flags)
+<<<<<<< HEAD
 #define blk_queue_dead(q)	test_bit(QUEUE_FLAG_DEAD, &(q)->queue_flags)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define blk_queue_nomerges(q)	test_bit(QUEUE_FLAG_NOMERGES, &(q)->queue_flags)
 #define blk_queue_noxmerges(q)	\
 	test_bit(QUEUE_FLAG_NOXMERGES, &(q)->queue_flags)
@@ -670,6 +771,10 @@ extern void __blk_put_request(struct request_queue *, struct request *);
 extern struct request *blk_get_request(struct request_queue *, int, gfp_t);
 extern struct request *blk_make_request(struct request_queue *, struct bio *,
 					gfp_t);
+<<<<<<< HEAD
+=======
+extern void blk_insert_request(struct request_queue *, struct request *, int, void *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void blk_requeue_request(struct request_queue *, struct request *);
 extern void blk_add_request_payload(struct request *rq, struct page *page,
 		unsigned int len);
@@ -692,8 +797,11 @@ extern int scsi_cmd_ioctl(struct request_queue *, struct gendisk *, fmode_t,
 extern int sg_scsi_ioctl(struct request_queue *, struct gendisk *, fmode_t,
 			 struct scsi_ioctl_command __user *);
 
+<<<<<<< HEAD
 extern void blk_queue_bio(struct request_queue *q, struct bio *bio);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * A queue has just exitted congestion.  Note this in the global counter of
  * congested queues, and wake up anyone who was waiting for requests to be
@@ -838,7 +946,10 @@ extern void blk_queue_io_min(struct request_queue *q, unsigned int min);
 extern void blk_limits_io_opt(struct queue_limits *limits, unsigned int opt);
 extern void blk_queue_io_opt(struct request_queue *q, unsigned int opt);
 extern void blk_set_default_limits(struct queue_limits *lim);
+<<<<<<< HEAD
 extern void blk_set_stacking_limits(struct queue_limits *lim);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
 			    sector_t offset);
 extern int bdev_stack_limits(struct queue_limits *t, struct block_device *bdev,
@@ -869,11 +980,16 @@ extern int blk_rq_map_sg(struct request_queue *, struct request *, struct scatte
 extern void blk_dump_rq_flags(struct request *, char *);
 extern long nr_blockdev_pages(void);
 
+<<<<<<< HEAD
 bool __must_check blk_get_queue(struct request_queue *);
+=======
+int blk_get_queue(struct request_queue *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct request_queue *blk_alloc_queue(gfp_t);
 struct request_queue *blk_alloc_queue_node(gfp_t, int);
 extern void blk_put_queue(struct request_queue *);
 
+<<<<<<< HEAD
 /*
  * blk_plug permits building a queue of related requests by holding the I/O
  * fragments for a short period. This allows merging of sequential requests
@@ -894,6 +1010,14 @@ struct blk_plug {
 };
 #define BLK_MAX_REQUEST_COUNT 16
 
+=======
+struct blk_plug {
+	unsigned long magic;
+	struct list_head list;
+	struct list_head cb_list;
+	unsigned int should_sort;
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct blk_plug_cb {
 	struct list_head list;
 	void (*callback)(struct blk_plug_cb *);
@@ -1207,6 +1331,23 @@ static inline uint64_t rq_io_start_time_ns(struct request *req)
 }
 #endif
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_BLK_DEV_THROTTLING
+extern int blk_throtl_init(struct request_queue *q);
+extern void blk_throtl_exit(struct request_queue *q);
+extern int blk_throtl_bio(struct request_queue *q, struct bio **bio);
+#else /* CONFIG_BLK_DEV_THROTTLING */
+static inline int blk_throtl_bio(struct request_queue *q, struct bio **bio)
+{
+	return 0;
+}
+
+static inline int blk_throtl_init(struct request_queue *q) { return 0; }
+static inline int blk_throtl_exit(struct request_queue *q) { return 0; }
+#endif /* CONFIG_BLK_DEV_THROTTLING */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MODULE_ALIAS_BLOCKDEV(major,minor) \
 	MODULE_ALIAS("block-major-" __stringify(major) "-" __stringify(minor))
 #define MODULE_ALIAS_BLOCKDEV_MAJOR(major) \
@@ -1292,6 +1433,7 @@ queue_max_integrity_segments(struct request_queue *q)
 
 #else /* CONFIG_BLK_DEV_INTEGRITY */
 
+<<<<<<< HEAD
 struct bio;
 struct block_device;
 struct gendisk;
@@ -1356,6 +1498,21 @@ static inline bool blk_integrity_is_initialized(struct gendisk *g)
 {
 	return 0;
 }
+=======
+#define blk_integrity_rq(rq)			(0)
+#define blk_rq_count_integrity_sg(a, b)		(0)
+#define blk_rq_map_integrity_sg(a, b, c)	(0)
+#define bdev_get_integrity(a)			(0)
+#define blk_get_integrity(a)			(0)
+#define blk_integrity_compare(a, b)		(0)
+#define blk_integrity_register(a, b)		(0)
+#define blk_integrity_unregister(a)		do { } while (0)
+#define blk_queue_max_integrity_segments(a, b)	do { } while (0)
+#define queue_max_integrity_segments(a)		(0)
+#define blk_integrity_merge_rq(a, b, c)		(0)
+#define blk_integrity_merge_bio(a, b, c)	(0)
+#define blk_integrity_is_initialized(a)		(0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* CONFIG_BLK_DEV_INTEGRITY */
 

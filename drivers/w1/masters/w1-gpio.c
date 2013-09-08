@@ -13,11 +13,19 @@
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 #include <linux/w1-gpio.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "../w1.h"
 #include "../w1_int.h"
 
+<<<<<<< HEAD
+=======
+#include <asm/gpio.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void w1_gpio_write_bit_dir(void *data, u8 bit)
 {
 	struct w1_gpio_platform_data *pdata = data;

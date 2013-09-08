@@ -42,7 +42,10 @@
 #include <linux/slab.h>
 #include <linux/rtc.h>
 #include <linux/spi/spi.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRV_VERSION "0.6"
 
@@ -264,7 +267,10 @@ static int __devinit pcf2123_probe(struct spi_device *spi)
 
 	if (!(rxbuf[0] & 0x20)) {
 		dev_err(&spi->dev, "chip not found\n");
+<<<<<<< HEAD
 		ret = -ENODEV;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto kfree_exit;
 	}
 
@@ -341,15 +347,37 @@ static int __devexit pcf2123_remove(struct spi_device *spi)
 static struct spi_driver pcf2123_driver = {
 	.driver	= {
 			.name	= "rtc-pcf2123",
+<<<<<<< HEAD
+=======
+			.bus	= &spi_bus_type,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.owner	= THIS_MODULE,
 	},
 	.probe	= pcf2123_probe,
 	.remove	= __devexit_p(pcf2123_remove),
 };
 
+<<<<<<< HEAD
 module_spi_driver(pcf2123_driver);
+=======
+static int __init pcf2123_init(void)
+{
+	return spi_register_driver(&pcf2123_driver);
+}
+
+static void __exit pcf2123_exit(void)
+{
+	spi_unregister_driver(&pcf2123_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Chris Verges <chrisv@cyberswitching.com>");
 MODULE_DESCRIPTION("NXP PCF2123 RTC driver");
 MODULE_LICENSE("GPL");
 MODULE_VERSION(DRV_VERSION);
+<<<<<<< HEAD
+=======
+
+module_init(pcf2123_init);
+module_exit(pcf2123_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

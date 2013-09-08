@@ -35,7 +35,10 @@
 #include <linux/module.h>
 #include <linux/platform_device.h>
 #include <linux/rtc.h>
+<<<<<<< HEAD
 #include <linux/sched.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/workqueue.h>
 
 /* DryIce Register Definitions */
@@ -392,8 +395,11 @@ static int dryice_rtc_probe(struct platform_device *pdev)
 	if (imxdi->ioaddr == NULL)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	spin_lock_init(&imxdi->irq_lock);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	imxdi->irq = platform_get_irq(pdev, 0);
 	if (imxdi->irq < 0)
 		return imxdi->irq;

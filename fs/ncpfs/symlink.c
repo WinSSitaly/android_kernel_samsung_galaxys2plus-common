@@ -108,7 +108,11 @@ int ncp_symlink(struct inode *dir, struct dentry *dentry, const char *symname) {
 	char *rawlink;
 	int length, err, i, outlen;
 	int kludge;
+<<<<<<< HEAD
 	umode_t mode;
+=======
+	int mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__le32 attr;
 	unsigned int hdr;
 

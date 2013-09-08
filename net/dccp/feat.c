@@ -12,7 +12,10 @@
  *  -----------
  *  o Feature negotiation is coordinated with connection setup (as in TCP), wild
  *    changes of parameters of an established connection are not supported.
+<<<<<<< HEAD
  *  o Changing non-negotiable (NN) values is supported in state OPEN/PARTOPEN.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  o All currently known SP features have 1-byte quantities. If in the future
  *    extensions of RFCs 4340..42 define features with item lengths larger than
  *    one byte, a feature-specific extension of the code will be required.
@@ -344,6 +347,7 @@ static int __dccp_feat_activate(struct sock *sk, const int idx,
 	return dccp_feat_table[idx].activation_hdlr(sk, val, rx);
 }
 
+<<<<<<< HEAD
 /**
  * dccp_feat_activate  -  Activate feature value on socket
  * @sk: fully connected DCCP socket (after handshake is complete)
@@ -358,6 +362,8 @@ static int dccp_feat_activate(struct sock *sk, u8 feat_num, bool local,
 	return __dccp_feat_activate(sk, dccp_feat_index(feat_num), local, fval);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Test for "Req'd" feature (RFC 4340, 6.4) */
 static inline int dccp_feat_must_be_understood(u8 feat_num)
 {
@@ -490,8 +496,13 @@ static int dccp_feat_push_change(struct list_head *fn_list, u8 feat, u8 local,
 	new->feat_num	     = feat;
 	new->is_local	     = local;
 	new->state	     = FEAT_INITIALISING;
+<<<<<<< HEAD
 	new->needs_confirm   = false;
 	new->empty_confirm   = false;
+=======
+	new->needs_confirm   = 0;
+	new->empty_confirm   = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	new->val	     = *fval;
 	new->needs_mandatory = mandatory;
 
@@ -517,12 +528,20 @@ static int dccp_feat_push_confirm(struct list_head *fn_list, u8 feat, u8 local,
 	new->feat_num	     = feat;
 	new->is_local	     = local;
 	new->state	     = FEAT_STABLE;	/* transition in 6.6.2 */
+<<<<<<< HEAD
 	new->needs_confirm   = true;
+=======
+	new->needs_confirm   = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	new->empty_confirm   = (fval == NULL);
 	new->val.nn	     = 0;		/* zeroes the whole structure */
 	if (!new->empty_confirm)
 		new->val     = *fval;
+<<<<<<< HEAD
 	new->needs_mandatory = false;
+=======
+	new->needs_mandatory = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -665,6 +684,7 @@ int dccp_feat_insert_opts(struct dccp_sock *dp, struct dccp_request_sock *dreq,
 			return -1;
 		if (pos->needs_mandatory && dccp_insert_option_mandatory(skb))
 			return -1;
+<<<<<<< HEAD
 
 		if (skb->sk->sk_state == DCCP_OPEN &&
 		    (opt == DCCPO_CONFIRM_R || opt == DCCPO_CONFIRM_L)) {
@@ -681,6 +701,13 @@ int dccp_feat_insert_opts(struct dccp_sock *dp, struct dccp_request_sock *dreq,
 			if (pos->state == FEAT_INITIALISING)
 				pos->state = FEAT_CHANGING;
 		}
+=======
+		/*
+		 * Enter CHANGING after transmitting the Change option (6.6.2).
+		 */
+		if (pos->state == FEAT_INITIALISING)
+			pos->state = FEAT_CHANGING;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }
@@ -756,6 +783,7 @@ int dccp_feat_register_sp(struct sock *sk, u8 feat, u8 is_local,
 				  0, list, len);
 }
 
+<<<<<<< HEAD
 /**
  * dccp_feat_nn_get  -  Query current/pending value of NN feature
  * @sk: DCCP socket of an established connection
@@ -820,6 +848,8 @@ int dccp_feat_signal_nn_change(struct sock *sk, u8 feat, u64 nn_val)
 	return dccp_feat_push_change(fn, feat, 1, 0, &fval);
 }
 EXPORT_SYMBOL_GPL(dccp_feat_signal_nn_change);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  *	Tracking features whose value depend on the choice of CCID
@@ -1155,7 +1185,11 @@ static u8 dccp_feat_change_recv(struct list_head *fn, u8 is_mandatory, u8 opt,
 	}
 
 	if (dccp_feat_reconcile(&entry->val, val, len, server, true)) {
+<<<<<<< HEAD
 		entry->empty_confirm = false;
+=======
+		entry->empty_confirm = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (is_mandatory) {
 		return DCCP_RESET_CODE_MANDATORY_ERROR;
 	} else if (entry->state == FEAT_INITIALISING) {
@@ -1171,10 +1205,17 @@ static u8 dccp_feat_change_recv(struct list_head *fn, u8 is_mandatory, u8 opt,
 		defval = dccp_feat_default_value(feat);
 		if (!dccp_feat_reconcile(&entry->val, &defval, 1, server, true))
 			return DCCP_RESET_CODE_OPTION_ERROR;
+<<<<<<< HEAD
 		entry->empty_confirm = true;
 	}
 	entry->needs_confirm   = true;
 	entry->needs_mandatory = false;
+=======
+		entry->empty_confirm = 1;
+	}
+	entry->needs_confirm   = 1;
+	entry->needs_mandatory = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	entry->state	       = FEAT_STABLE;
 	return 0;
 
@@ -1277,6 +1318,7 @@ confirmation_failed:
 }
 
 /**
+<<<<<<< HEAD
  * dccp_feat_handle_nn_established  -  Fast-path reception of NN options
  * @sk:		socket of an established DCCP connection
  * @mandatory:	whether @opt was preceded by a Mandatory option
@@ -1371,6 +1413,8 @@ fast_path_failed:
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * dccp_feat_parse_options  -  Process Feature-Negotiation Options
  * @sk: for general use and used by the client during connection setup
  * @dreq: used by the server during connection setup
@@ -1405,6 +1449,7 @@ int dccp_feat_parse_options(struct sock *sk, struct dccp_request_sock *dreq,
 			return dccp_feat_confirm_recv(fn, mandatory, opt, feat,
 						      val, len, server);
 		}
+<<<<<<< HEAD
 		break;
 	/*
 	 *	Support for exchanging NN options on an established connection.
@@ -1413,6 +1458,8 @@ int dccp_feat_parse_options(struct sock *sk, struct dccp_request_sock *dreq,
 	case DCCP_PARTOPEN:
 		return dccp_feat_handle_nn_established(sk, mandatory, opt, feat,
 						       val, len);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;	/* ignore FN options in all other states */
 }

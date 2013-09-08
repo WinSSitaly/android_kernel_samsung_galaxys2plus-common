@@ -54,12 +54,20 @@ static inline int ext2_acl_count(size_t size)
 #ifdef CONFIG_EXT2_FS_POSIX_ACL
 
 /* acl.c */
+<<<<<<< HEAD
 extern struct posix_acl *ext2_get_acl(struct inode *inode, int type);
+=======
+extern int ext2_check_acl (struct inode *, int, unsigned int);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int ext2_acl_chmod (struct inode *);
 extern int ext2_init_acl (struct inode *, struct inode *);
 
 #else
 #include <linux/sched.h>
+<<<<<<< HEAD
+=======
+#define ext2_check_acl	NULL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ext2_get_acl	NULL
 #define ext2_set_acl	NULL
 

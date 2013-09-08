@@ -17,11 +17,19 @@ reports supported by a device are also provided by sysfs in
 class/input/event*/device/capabilities/, and the properties of a device are
 provided in class/input/event*/device/properties.
 
+<<<<<<< HEAD
 Event types:
 ===========
 Event types are groupings of codes under a logical input construct. Each
 type has a set of applicable codes to be used in generating events. See the
 Codes section for details on valid codes for each type.
+=======
+Types:
+==========
+Types are groupings of codes under a logical input construct. Each type has a
+set of applicable codes to be used in generating events. See the Codes section
+for details on valid codes for each type.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 * EV_SYN:
   - Used as markers to separate events. Events may be separated in time or in
@@ -63,9 +71,15 @@ Codes section for details on valid codes for each type.
 * EV_FF_STATUS:
   - Used to receive force feedback device status.
 
+<<<<<<< HEAD
 Event codes:
 ===========
 Event codes define the precise type of event.
+=======
+Codes:
+==========
+Codes define the precise type of event.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 EV_SYN:
 ----------
@@ -220,6 +234,7 @@ EV_PWR:
 EV_PWR events are a special type of event used specifically for power
 mangement. Its usage is not well defined. To be addressed later.
 
+<<<<<<< HEAD
 Device properties:
 =================
 Normally, userspace sets up an input device based on the data it emits,
@@ -270,6 +285,8 @@ gestures can normally be extracted from it.
 If INPUT_PROP_SEMI_MT is not set, the device is assumed to be a true MT
 device.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Guidelines:
 ==========
 The guidelines below ensure proper single-touch and multi-finger functionality.
@@ -290,8 +307,11 @@ used to report when a touch is active on the screen.
 BTN_{MOUSE,LEFT,MIDDLE,RIGHT} must not be reported as the result of touch
 contact. BTN_TOOL_<name> events should be reported where possible.
 
+<<<<<<< HEAD
 For new hardware, INPUT_PROP_DIRECT should be set.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Trackpads:
 ----------
 Legacy trackpads that only provide relative position information must report
@@ -302,8 +322,11 @@ location of the touch. BTN_TOUCH should be used to report when a touch is active
 on the trackpad. Where multi-finger support is available, BTN_TOOL_<name> should
 be used to report the number of touches active on the trackpad.
 
+<<<<<<< HEAD
 For new hardware, INPUT_PROP_POINTER should be set.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Tablets:
 ----------
 BTN_TOOL_<name> events must be reported when a stylus or other tool is active on
@@ -314,5 +337,8 @@ button may be used for buttons on the tablet except BTN_{MOUSE,LEFT}.
 BTN_{0,1,2,etc} are good generic codes for unlabeled buttons. Do not use
 meaningful buttons, like BTN_FORWARD, unless the button is labeled for that
 purpose on the device.
+<<<<<<< HEAD
 
 For new hardware, both INPUT_PROP_DIRECT and INPUT_PROP_POINTER should be set.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

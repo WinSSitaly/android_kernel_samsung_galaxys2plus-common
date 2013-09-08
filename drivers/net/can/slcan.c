@@ -1,7 +1,11 @@
 /*
  * slcan.c - serial line CAN interface driver (using tty line discipline)
  *
+<<<<<<< HEAD
  * This file is derived from linux/drivers/net/slip/slip.c
+=======
+ * This file is derived from linux/drivers/net/slip.c
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * slip.c Authors  : Laurence Culhane <loz@holmes.demon.co.uk>
  *                   Fred N. van Kempen <waltje@uwalt.nl.mugnet.org>
@@ -35,11 +39,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
  *
+<<<<<<< HEAD
+=======
+ * Send feedback to <socketcan-users@lists.berlios.de>
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/uaccess.h>
 #include <linux/bitops.h>
 #include <linux/string.h>
@@ -53,7 +66,10 @@
 #include <linux/sched.h>
 #include <linux/delay.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/kernel.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/can.h>
 
 static __initdata const char banner[] =
@@ -93,6 +109,13 @@ struct slcan {
 	unsigned long		flags;		/* Flag values/ mode etc     */
 #define SLF_INUSE		0		/* Channel in use            */
 #define SLF_ERROR		1               /* Parity, etc. error        */
+<<<<<<< HEAD
+=======
+
+	unsigned char		leased;
+	dev_t			line;
+	pid_t			pid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct net_device **slcan_devs;
@@ -136,6 +159,24 @@ static struct net_device **slcan_devs;
   *			STANDARD SLCAN DECAPSULATION			 *
   ************************************************************************/
 
+<<<<<<< HEAD
+=======
+static int asc2nibble(char c)
+{
+
+	if ((c >= '0') && (c <= '9'))
+		return c - '0';
+
+	if ((c >= 'A') && (c <= 'F'))
+		return c - 'A' + 10;
+
+	if ((c >= 'a') && (c <= 'f'))
+		return c - 'a' + 10;
+
+	return 16; /* error */
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Send one completely decapsulated can_frame to the network layer */
 static void slc_bump(struct slcan *sl)
 {
@@ -174,16 +215,30 @@ static void slc_bump(struct slcan *sl)
 	*(u64 *) (&cf.data) = 0; /* clear payload */
 
 	for (i = 0, dlc_pos++; i < cf.can_dlc; i++) {
+<<<<<<< HEAD
 		tmp = hex_to_bin(sl->rbuff[dlc_pos++]);
 		if (tmp < 0)
 			return;
 		cf.data[i] = (tmp << 4);
 		tmp = hex_to_bin(sl->rbuff[dlc_pos++]);
 		if (tmp < 0)
+=======
+
+		tmp = asc2nibble(sl->rbuff[dlc_pos++]);
+		if (tmp > 0x0F)
+			return;
+		cf.data[i] = (tmp << 4);
+		tmp = asc2nibble(sl->rbuff[dlc_pos++]);
+		if (tmp > 0x0F)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 		cf.data[i] |= tmp;
 	}
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skb = dev_alloc_skb(sizeof(struct can_frame));
 	if (!skb)
 		return;
@@ -194,7 +249,11 @@ static void slc_bump(struct slcan *sl)
 	skb->ip_summed = CHECKSUM_UNNECESSARY;
 	memcpy(skb_put(skb, sizeof(struct can_frame)),
 	       &cf, sizeof(struct can_frame));
+<<<<<<< HEAD
 	netif_rx_ni(skb);
+=======
+	netif_rx(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sl->dev->stats.rx_packets++;
 	sl->dev->stats.rx_bytes += cf.can_dlc;
@@ -386,7 +445,11 @@ static void slc_setup(struct net_device *dev)
 
 	/* New-style flags. */
 	dev->flags		= IFF_NOARP;
+<<<<<<< HEAD
 	dev->features           = NETIF_F_HW_CSUM;
+=======
+	dev->features           = NETIF_F_NO_CSUM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /******************************************
@@ -439,7 +502,11 @@ static void slc_sync(void)
 			break;
 
 		sl = netdev_priv(dev);
+<<<<<<< HEAD
 		if (sl->tty)
+=======
+		if (sl->tty || sl->leased)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		if (dev->flags & IFF_UP)
 			dev_close(dev);
@@ -450,10 +517,19 @@ static void slc_sync(void)
 static struct slcan *slc_alloc(dev_t line)
 {
 	int i;
+<<<<<<< HEAD
 	char name[IFNAMSIZ];
 	struct net_device *dev = NULL;
 	struct slcan       *sl;
 
+=======
+	struct net_device *dev = NULL;
+	struct slcan       *sl;
+
+	if (slcan_devs == NULL)
+		return NULL;	/* Master array missing ! */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < maxdev; i++) {
 		dev = slcan_devs[i];
 		if (dev == NULL)
@@ -465,12 +541,34 @@ static struct slcan *slc_alloc(dev_t line)
 	if (i >= maxdev)
 		return NULL;
 
+<<<<<<< HEAD
 	sprintf(name, "slcan%d", i);
 	dev = alloc_netdev(sizeof(*sl), name, slc_setup);
 	if (!dev)
 		return NULL;
 
 	dev->base_addr  = i;
+=======
+	if (dev) {
+		sl = netdev_priv(dev);
+		if (test_bit(SLF_INUSE, &sl->flags)) {
+			unregister_netdevice(dev);
+			dev = NULL;
+			slcan_devs[i] = NULL;
+		}
+	}
+
+	if (!dev) {
+		char name[IFNAMSIZ];
+		sprintf(name, "slcan%d", i);
+
+		dev = alloc_netdev(sizeof(*sl), name, slc_setup);
+		if (!dev)
+			return NULL;
+		dev->base_addr  = i;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sl = netdev_priv(dev);
 
 	/* Initialize channel control data */
@@ -527,6 +625,11 @@ static int slcan_open(struct tty_struct *tty)
 
 	sl->tty = tty;
 	tty->disc_data = sl;
+<<<<<<< HEAD
+=======
+	sl->line = tty_devnum(tty);
+	sl->pid = current->pid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!test_bit(SLF_INUSE, &sl->flags)) {
 		/* Perform the low-level SLCAN initialization. */
@@ -577,6 +680,11 @@ static void slcan_close(struct tty_struct *tty)
 
 	tty->disc_data = NULL;
 	sl->tty = NULL;
+<<<<<<< HEAD
+=======
+	if (!sl->leased)
+		sl->line = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Flush network side */
 	unregister_netdev(sl->dev);
@@ -638,8 +746,15 @@ static int __init slcan_init(void)
 	printk(KERN_INFO "slcan: %d dynamic interface channels.\n", maxdev);
 
 	slcan_devs = kzalloc(sizeof(struct net_device *)*maxdev, GFP_KERNEL);
+<<<<<<< HEAD
 	if (!slcan_devs)
 		return -ENOMEM;
+=======
+	if (!slcan_devs) {
+		printk(KERN_ERR "slcan: can't allocate slcan device array!\n");
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Fill in our line protocol discipline, and register it */
 	status = tty_register_ldisc(N_SLCAN, &slc_ldisc);

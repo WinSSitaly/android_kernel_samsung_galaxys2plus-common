@@ -23,8 +23,12 @@
  *
  * configfs Copyright (C) 2005 Oracle.  All rights reserved.
  *
+<<<<<<< HEAD
  * Please see Documentation/filesystems/configfs/configfs.txt for more
  * information.
+=======
+ * Please see Documentation/filesystems/configfs.txt for more information.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #undef DEBUG
@@ -44,6 +48,11 @@
 static struct lock_class_key default_group_class[MAX_LOCK_DEPTH];
 #endif
 
+<<<<<<< HEAD
+=======
+extern struct super_block * configfs_sb;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct address_space_operations configfs_aops = {
 	.readpage	= simple_readpage,
 	.write_begin	= simple_write_begin,
@@ -114,7 +123,11 @@ int configfs_setattr(struct dentry * dentry, struct iattr * iattr)
 	return error;
 }
 
+<<<<<<< HEAD
 static inline void set_default_inode_attr(struct inode * inode, umode_t mode)
+=======
+static inline void set_default_inode_attr(struct inode * inode, mode_t mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	inode->i_mode = mode;
 	inode->i_atime = inode->i_mtime = inode->i_ctime = CURRENT_TIME;
@@ -130,10 +143,16 @@ static inline void set_inode_attr(struct inode * inode, struct iattr * iattr)
 	inode->i_ctime = iattr->ia_ctime;
 }
 
+<<<<<<< HEAD
 struct inode *configfs_new_inode(umode_t mode, struct configfs_dirent *sd,
 				 struct super_block *s)
 {
 	struct inode * inode = new_inode(s);
+=======
+struct inode * configfs_new_inode(mode_t mode, struct configfs_dirent * sd)
+{
+	struct inode * inode = new_inode(configfs_sb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (inode) {
 		inode->i_ino = get_next_ino();
 		inode->i_mapping->a_ops = &configfs_aops;
@@ -184,6 +203,7 @@ static void configfs_set_inode_lock_class(struct configfs_dirent *sd,
 
 #endif /* CONFIG_LOCKDEP */
 
+<<<<<<< HEAD
 int configfs_create(struct dentry * dentry, umode_t mode, int (*init)(struct inode *))
 {
 	int error = 0;
@@ -216,6 +236,41 @@ int configfs_create(struct dentry * dentry, umode_t mode, int (*init)(struct ino
 	d_instantiate(dentry, inode);
 	if (S_ISDIR(mode) || S_ISLNK(mode))
 		dget(dentry);  /* pin link and directory dentries in core */
+=======
+int configfs_create(struct dentry * dentry, int mode, int (*init)(struct inode *))
+{
+	int error = 0;
+	struct inode * inode = NULL;
+	if (dentry) {
+		if (!dentry->d_inode) {
+			struct configfs_dirent *sd = dentry->d_fsdata;
+			if ((inode = configfs_new_inode(mode, sd))) {
+				if (dentry->d_parent && dentry->d_parent->d_inode) {
+					struct inode *p_inode = dentry->d_parent->d_inode;
+					p_inode->i_mtime = p_inode->i_ctime = CURRENT_TIME;
+				}
+				configfs_set_inode_lock_class(sd, inode);
+				goto Proceed;
+			}
+			else
+				error = -ENOMEM;
+		} else
+			error = -EEXIST;
+	} else
+		error = -ENOENT;
+	goto Done;
+
+ Proceed:
+	if (init)
+		error = init(inode);
+	if (!error) {
+		d_instantiate(dentry, inode);
+		if (S_ISDIR(mode) || S_ISLNK(mode))
+			dget(dentry);  /* pin link and directory dentries in core */
+	} else
+		iput(inode);
+ Done:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error;
 }
 
@@ -290,7 +345,11 @@ int __init configfs_inode_init(void)
 	return bdi_init(&configfs_backing_dev_info);
 }
 
+<<<<<<< HEAD
 void configfs_inode_exit(void)
+=======
+void __exit configfs_inode_exit(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	bdi_destroy(&configfs_backing_dev_info);
 }

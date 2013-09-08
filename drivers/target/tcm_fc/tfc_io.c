@@ -28,6 +28,10 @@
 
 #include <linux/module.h>
 #include <linux/moduleparam.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <generated/utsrelease.h>
 #include <linux/utsname.h>
 #include <linux/init.h>
@@ -38,7 +42,10 @@
 #include <linux/configfs.h>
 #include <linux/ctype.h>
 #include <linux/hash.h>
+<<<<<<< HEAD
 #include <linux/ratelimit.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/unaligned.h>
 #include <scsi/scsi.h>
 #include <scsi/scsi_host.h>
@@ -48,8 +55,17 @@
 #include <scsi/fc_encode.h>
 
 #include <target/target_core_base.h>
+<<<<<<< HEAD
 #include <target/target_core_fabric.h>
 #include <target/target_core_configfs.h>
+=======
+#include <target/target_core_transport.h>
+#include <target/target_core_fabric_ops.h>
+#include <target/target_core_device.h>
+#include <target/target_core_tpg.h>
+#include <target/target_core_configfs.h>
+#include <target/target_core_base.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <target/configfs_macros.h>
 
 #include "tcm_fc.h"
@@ -61,6 +77,7 @@
 int ft_queue_data_in(struct se_cmd *se_cmd)
 {
 	struct ft_cmd *cmd = container_of(se_cmd, struct ft_cmd, se_cmd);
+<<<<<<< HEAD
 	struct fc_frame *fp = NULL;
 	struct fc_exch *ep;
 	struct fc_lport *lport;
@@ -75,18 +92,39 @@ int ft_queue_data_in(struct se_cmd *se_cmd)
 	size_t tlen;
 	size_t off_in_page;
 	struct page *page = NULL;
+=======
+	struct se_transport_task *task;
+	struct fc_frame *fp = NULL;
+	struct fc_exch *ep;
+	struct fc_lport *lport;
+	struct se_mem *mem;
+	size_t remaining;
+	u32 f_ctl = FC_FC_EX_CTX | FC_FC_REL_OFF;
+	u32 mem_off;
+	u32 fh_off = 0;
+	u32 frame_off = 0;
+	size_t frame_len = 0;
+	size_t mem_len;
+	size_t tlen;
+	size_t off_in_page;
+	struct page *page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int use_sg;
 	int error;
 	void *page_addr;
 	void *from;
 	void *to = NULL;
 
+<<<<<<< HEAD
 	if (cmd->aborted)
 		return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ep = fc_seq_exch(cmd->seq);
 	lport = ep->lp;
 	cmd->seq = lport->tt.seq_start_next(cmd->seq);
 
+<<<<<<< HEAD
 	remaining = se_cmd->data_length;
 
 	/*
@@ -98,6 +136,26 @@ int ft_queue_data_in(struct se_cmd *se_cmd)
 		mem_len = sg->length;
 		mem_off = sg->offset;
 		page = sg_page(sg);
+=======
+	task = T_TASK(se_cmd);
+	BUG_ON(!task);
+	remaining = se_cmd->data_length;
+
+	/*
+	 * Setup to use first mem list entry if any.
+	 */
+	if (task->t_tasks_se_num) {
+		mem = list_first_entry(task->t_mem_list,
+			 struct se_mem, se_list);
+		mem_len = mem->se_len;
+		mem_off = mem->se_off;
+		page = mem->se_page;
+	} else {
+		mem = NULL;
+		mem_len = remaining;
+		mem_off = 0;
+		page = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* no scatter/gather in skb for odd word length due to fc_seq_send() */
@@ -105,10 +163,19 @@ int ft_queue_data_in(struct se_cmd *se_cmd)
 
 	while (remaining) {
 		if (!mem_len) {
+<<<<<<< HEAD
 			sg = sg_next(sg);
 			mem_len = min((size_t)sg->length, remaining);
 			mem_off = sg->offset;
 			page = sg_page(sg);
+=======
+			BUG_ON(!mem);
+			mem = list_entry(mem->se_list.next,
+				struct se_mem, se_list);
+			mem_len = min((size_t)mem->se_len, remaining);
+			mem_off = mem->se_off;
+			page = mem->se_page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		if (!frame_len) {
 			/*
@@ -136,7 +203,22 @@ int ft_queue_data_in(struct se_cmd *se_cmd)
 		tlen = min(mem_len, frame_len);
 
 		if (use_sg) {
+<<<<<<< HEAD
 			off_in_page = mem_off;
+=======
+			if (!mem) {
+				BUG_ON(!task->t_task_buf);
+				page_addr = task->t_task_buf + mem_off;
+				/*
+				 * In this case, offset is 'offset_in_page' of
+				 * (t_task_buf + mem_off) instead of 'mem_off'.
+				 */
+				off_in_page = offset_in_page(page_addr);
+				page = virt_to_page(page_addr);
+				tlen = min(tlen, PAGE_SIZE - off_in_page);
+			} else
+				off_in_page = mem_off;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			BUG_ON(!page);
 			get_page(page);
 			skb_fill_page_desc(fp_skb(fp),
@@ -146,15 +228,30 @@ int ft_queue_data_in(struct se_cmd *se_cmd)
 			fp_skb(fp)->data_len += tlen;
 			fp_skb(fp)->truesize +=
 					PAGE_SIZE << compound_order(page);
+<<<<<<< HEAD
 		} else {
 			BUG_ON(!page);
 			from = kmap_atomic(page + (mem_off >> PAGE_SHIFT));
+=======
+		} else if (mem) {
+			BUG_ON(!page);
+			from = kmap_atomic(page + (mem_off >> PAGE_SHIFT),
+					   KM_SOFTIRQ0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			page_addr = from;
 			from += mem_off & ~PAGE_MASK;
 			tlen = min(tlen, (size_t)(PAGE_SIZE -
 						(mem_off & ~PAGE_MASK)));
 			memcpy(to, from, tlen);
+<<<<<<< HEAD
 			kunmap_atomic(page_addr);
+=======
+			kunmap_atomic(page_addr, KM_SOFTIRQ0);
+			to += tlen;
+		} else {
+			from = task->t_task_buf + mem_off;
+			memcpy(to, from, tlen);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			to += tlen;
 		}
 
@@ -173,7 +270,12 @@ int ft_queue_data_in(struct se_cmd *se_cmd)
 		error = lport->tt.seq_send(lport, cmd->seq, fp);
 		if (error) {
 			/* XXX For now, initiator will retry */
+<<<<<<< HEAD
 			pr_err_ratelimited("%s: Failed to send frame %p, "
+=======
+			if (printk_ratelimit())
+				printk(KERN_ERR "%s: Failed to send frame %p, "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						"xid <0x%x>, remaining %zu, "
 						"lso_max <0x%x>\n",
 						__func__, fp, ep->xid,
@@ -192,6 +294,7 @@ void ft_recv_write_data(struct ft_cmd *cmd, struct fc_frame *fp)
 	struct fc_seq *seq = cmd->seq;
 	struct fc_exch *ep;
 	struct fc_lport *lport;
+<<<<<<< HEAD
 	struct fc_frame_header *fh;
 	struct scatterlist *sg = NULL;
 	u32 mem_off = 0;
@@ -200,16 +303,34 @@ void ft_recv_write_data(struct ft_cmd *cmd, struct fc_frame *fp)
 	size_t mem_len = 0;
 	size_t tlen;
 	struct page *page = NULL;
+=======
+	struct se_transport_task *task;
+	struct fc_frame_header *fh;
+	struct se_mem *mem;
+	u32 mem_off;
+	u32 rel_off;
+	size_t frame_len;
+	size_t mem_len;
+	size_t tlen;
+	struct page *page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *page_addr;
 	void *from;
 	void *to;
 	u32 f_ctl;
 	void *buf;
 
+<<<<<<< HEAD
+=======
+	task = T_TASK(se_cmd);
+	BUG_ON(!task);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fh = fc_frame_header_get(fp);
 	if (!(ntoh24(fh->fh_f_ctl) & FC_FC_REL_OFF))
 		goto drop;
 
+<<<<<<< HEAD
 	f_ctl = ntoh24(fh->fh_f_ctl);
 	ep = fc_seq_exch(seq);
 	lport = ep->lp;
@@ -250,6 +371,63 @@ void ft_recv_write_data(struct ft_cmd *cmd, struct fc_frame *fp)
 			goto last_frame;
 		else
 			goto drop;
+=======
+	/*
+	 * Doesn't expect even single byte of payload. Payload
+	 * is expected to be copied directly to user buffers
+	 * due to DDP (Large Rx offload) feature, hence
+	 * BUG_ON if BUF is non-NULL
+	 */
+	buf = fc_frame_payload_get(fp, 1);
+	if (cmd->was_ddp_setup && buf) {
+		printk(KERN_INFO "%s: When DDP was setup, not expected to"
+				 "receive frame with payload, Payload shall be"
+				 "copied directly to buffer instead of coming "
+				 "via. legacy receive queues\n", __func__);
+		BUG_ON(buf);
+	}
+
+	/*
+	 * If ft_cmd indicated 'ddp_setup', in that case only the last frame
+	 * should come with 'TSI bit being set'. If 'TSI bit is not set and if
+	 * data frame appears here, means error condition. In both the cases
+	 * release the DDP context (ddp_put) and in error case, as well
+	 * initiate error recovery mechanism.
+	 */
+	ep = fc_seq_exch(seq);
+	if (cmd->was_ddp_setup) {
+		BUG_ON(!ep);
+		lport = ep->lp;
+		BUG_ON(!lport);
+	}
+	if (cmd->was_ddp_setup && ep->xid != FC_XID_UNKNOWN) {
+		f_ctl = ntoh24(fh->fh_f_ctl);
+		/*
+		 * If TSI bit set in f_ctl, means last write data frame is
+		 * received successfully where payload is posted directly
+		 * to user buffer and only the last frame's header is posted
+		 * in legacy receive queue
+		 */
+		if (f_ctl & FC_FC_SEQ_INIT) { /* TSI bit set in FC frame */
+			cmd->write_data_len = lport->tt.ddp_done(lport,
+								ep->xid);
+			goto last_frame;
+		} else {
+			/*
+			 * Updating the write_data_len may be meaningless at
+			 * this point, but just in case if required in future
+			 * for debugging or any other purpose
+			 */
+			printk(KERN_ERR "%s: Received frame with TSI bit not"
+					" being SET, dropping the frame, "
+					"cmd->sg <%p>, cmd->sg_cnt <0x%x>\n",
+					__func__, cmd->sg, cmd->sg_cnt);
+			cmd->write_data_len = lport->tt.ddp_done(lport,
+							      ep->xid);
+			lport->tt.seq_exch_abort(cmd->seq, 0);
+			goto drop;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	rel_off = ntohl(fh->fh_parm_offset);
@@ -264,6 +442,7 @@ void ft_recv_write_data(struct ft_cmd *cmd, struct fc_frame *fp)
 		frame_len = se_cmd->data_length - rel_off;
 
 	/*
+<<<<<<< HEAD
 	 * Setup to use first mem list entry, unless no data.
 	 */
 	BUG_ON(frame_len && !se_cmd->t_data_sg);
@@ -272,14 +451,38 @@ void ft_recv_write_data(struct ft_cmd *cmd, struct fc_frame *fp)
 		mem_len = sg->length;
 		mem_off = sg->offset;
 		page = sg_page(sg);
+=======
+	 * Setup to use first mem list entry if any.
+	 */
+	if (task->t_tasks_se_num) {
+		mem = list_first_entry(task->t_mem_list,
+				       struct se_mem, se_list);
+		mem_len = mem->se_len;
+		mem_off = mem->se_off;
+		page = mem->se_page;
+	} else {
+		mem = NULL;
+		page = NULL;
+		mem_off = 0;
+		mem_len = frame_len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	while (frame_len) {
 		if (!mem_len) {
+<<<<<<< HEAD
 			sg = sg_next(sg);
 			mem_len = sg->length;
 			mem_off = sg->offset;
 			page = sg_page(sg);
+=======
+			BUG_ON(!mem);
+			mem = list_entry(mem->se_list.next,
+					 struct se_mem, se_list);
+			mem_len = mem->se_len;
+			mem_off = mem->se_off;
+			page = mem->se_page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		if (rel_off >= mem_len) {
 			rel_off -= mem_len;
@@ -292,6 +495,7 @@ void ft_recv_write_data(struct ft_cmd *cmd, struct fc_frame *fp)
 
 		tlen = min(mem_len, frame_len);
 
+<<<<<<< HEAD
 		to = kmap_atomic(page + (mem_off >> PAGE_SHIFT));
 		page_addr = to;
 		to += mem_off & ~PAGE_MASK;
@@ -300,6 +504,21 @@ void ft_recv_write_data(struct ft_cmd *cmd, struct fc_frame *fp)
 		memcpy(to, from, tlen);
 		kunmap_atomic(page_addr);
 
+=======
+		if (mem) {
+			to = kmap_atomic(page + (mem_off >> PAGE_SHIFT),
+					 KM_SOFTIRQ0);
+			page_addr = to;
+			to += mem_off & ~PAGE_MASK;
+			tlen = min(tlen, (size_t)(PAGE_SIZE -
+						(mem_off & ~PAGE_MASK)));
+			memcpy(to, from, tlen);
+			kunmap_atomic(page_addr, KM_SOFTIRQ0);
+		} else {
+			to = task->t_task_buf + mem_off;
+			memcpy(to, from, tlen);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		from += tlen;
 		frame_len -= tlen;
 		mem_off += tlen;
@@ -312,6 +531,7 @@ last_frame:
 drop:
 	fc_frame_free(fp);
 }
+<<<<<<< HEAD
 
 /*
  * Handle and cleanup any HW specific resources if
@@ -348,3 +568,5 @@ void ft_invl_hw_context(struct ft_cmd *cmd)
 		}
 	}
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

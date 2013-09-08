@@ -34,7 +34,10 @@
 
 #include <linux/err.h>
 #include <linux/vmalloc.h>
+<<<<<<< HEAD
 #include <linux/jhash.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "qib.h"
 
@@ -205,6 +208,7 @@ static void free_qpn(struct qib_qpn_table *qpt, u32 qpn)
 		clear_bit(qpn & BITS_PER_PAGE_MASK, map->page);
 }
 
+<<<<<<< HEAD
 static inline unsigned qpn_hash(struct qib_ibdev *dev, u32 qpn)
 {
 	return jhash_1word(qpn, dev->qp_rnd) &
@@ -212,6 +216,8 @@ static inline unsigned qpn_hash(struct qib_ibdev *dev, u32 qpn)
 }
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Put the QP into the hash table.
  * The hash table holds a reference to the QP.
@@ -219,6 +225,7 @@ static inline unsigned qpn_hash(struct qib_ibdev *dev, u32 qpn)
 static void insert_qp(struct qib_ibdev *dev, struct qib_qp *qp)
 {
 	struct qib_ibport *ibp = to_iport(qp->ibqp.device, qp->port_num);
+<<<<<<< HEAD
 	unsigned long flags;
 	unsigned n = qpn_hash(dev, qp->ibqp.qp_num);
 
@@ -236,6 +243,24 @@ static void insert_qp(struct qib_ibdev *dev, struct qib_qp *qp)
 
 	spin_unlock_irqrestore(&dev->qpt_lock, flags);
 	synchronize_rcu();
+=======
+	unsigned n = qp->ibqp.qp_num % dev->qp_table_size;
+	unsigned long flags;
+
+	spin_lock_irqsave(&dev->qpt_lock, flags);
+
+	if (qp->ibqp.qp_num == 0)
+		ibp->qp0 = qp;
+	else if (qp->ibqp.qp_num == 1)
+		ibp->qp1 = qp;
+	else {
+		qp->next = dev->qp_table[n];
+		dev->qp_table[n] = qp;
+	}
+	atomic_inc(&qp->refcount);
+
+	spin_unlock_irqrestore(&dev->qpt_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -245,6 +270,7 @@ static void insert_qp(struct qib_ibdev *dev, struct qib_qp *qp)
 static void remove_qp(struct qib_ibdev *dev, struct qib_qp *qp)
 {
 	struct qib_ibport *ibp = to_iport(qp->ibqp.device, qp->port_num);
+<<<<<<< HEAD
 	unsigned n = qpn_hash(dev, qp->ibqp.qp_num);
 	unsigned long flags;
 
@@ -271,6 +297,31 @@ static void remove_qp(struct qib_ibdev *dev, struct qib_qp *qp)
 
 	spin_unlock_irqrestore(&dev->qpt_lock, flags);
 	synchronize_rcu();
+=======
+	struct qib_qp *q, **qpp;
+	unsigned long flags;
+
+	qpp = &dev->qp_table[qp->ibqp.qp_num % dev->qp_table_size];
+
+	spin_lock_irqsave(&dev->qpt_lock, flags);
+
+	if (ibp->qp0 == qp) {
+		ibp->qp0 = NULL;
+		atomic_dec(&qp->refcount);
+	} else if (ibp->qp1 == qp) {
+		ibp->qp1 = NULL;
+		atomic_dec(&qp->refcount);
+	} else
+		for (; (q = *qpp) != NULL; qpp = &q->next)
+			if (q == qp) {
+				*qpp = qp->next;
+				qp->next = NULL;
+				atomic_dec(&qp->refcount);
+				break;
+			}
+
+	spin_unlock_irqrestore(&dev->qpt_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -292,24 +343,38 @@ unsigned qib_free_all_qps(struct qib_devdata *dd)
 
 		if (!qib_mcast_tree_empty(ibp))
 			qp_inuse++;
+<<<<<<< HEAD
 		rcu_read_lock();
 		if (rcu_dereference(ibp->qp0))
 			qp_inuse++;
 		if (rcu_dereference(ibp->qp1))
 			qp_inuse++;
 		rcu_read_unlock();
+=======
+		if (ibp->qp0)
+			qp_inuse++;
+		if (ibp->qp1)
+			qp_inuse++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	spin_lock_irqsave(&dev->qpt_lock, flags);
 	for (n = 0; n < dev->qp_table_size; n++) {
 		qp = dev->qp_table[n];
+<<<<<<< HEAD
 		rcu_assign_pointer(dev->qp_table[n], NULL);
+=======
+		dev->qp_table[n] = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		for (; qp; qp = qp->next)
 			qp_inuse++;
 	}
 	spin_unlock_irqrestore(&dev->qpt_lock, flags);
+<<<<<<< HEAD
 	synchronize_rcu();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return qp_inuse;
 }
@@ -324,6 +389,7 @@ unsigned qib_free_all_qps(struct qib_devdata *dd)
  */
 struct qib_qp *qib_lookup_qpn(struct qib_ibport *ibp, u32 qpn)
 {
+<<<<<<< HEAD
 	struct qib_qp *qp = NULL;
 
 	if (unlikely(qpn <= 1)) {
@@ -346,6 +412,27 @@ struct qib_qp *qib_lookup_qpn(struct qib_ibport *ibp, u32 qpn)
 			qp = NULL;
 
 	rcu_read_unlock();
+=======
+	struct qib_ibdev *dev = &ppd_from_ibp(ibp)->dd->verbs_dev;
+	unsigned long flags;
+	struct qib_qp *qp;
+
+	spin_lock_irqsave(&dev->qpt_lock, flags);
+
+	if (qpn == 0)
+		qp = ibp->qp0;
+	else if (qpn == 1)
+		qp = ibp->qp1;
+	else
+		for (qp = dev->qp_table[qpn % dev->qp_table_size]; qp;
+		     qp = qp->next)
+			if (qp->ibqp.qp_num == qpn)
+				break;
+	if (qp)
+		atomic_inc(&qp->refcount);
+
+	spin_unlock_irqrestore(&dev->qpt_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return qp;
 }
 
@@ -783,10 +870,15 @@ int qib_modify_qp(struct ib_qp *ibqp, struct ib_qp_attr *attr,
 		}
 	}
 
+<<<<<<< HEAD
 	if (attr_mask & IB_QP_PATH_MTU) {
 		qp->path_mtu = pmtu;
 		qp->pmtu = ib_mtu_enum_to_int(pmtu);
 	}
+=======
+	if (attr_mask & IB_QP_PATH_MTU)
+		qp->path_mtu = pmtu;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (attr_mask & IB_QP_RETRY_CNT) {
 		qp->s_retry_cnt = attr->retry_cnt;
@@ -801,12 +893,17 @@ int qib_modify_qp(struct ib_qp *ibqp, struct ib_qp_attr *attr,
 	if (attr_mask & IB_QP_MIN_RNR_TIMER)
 		qp->r_min_rnr_timer = attr->min_rnr_timer;
 
+<<<<<<< HEAD
 	if (attr_mask & IB_QP_TIMEOUT) {
 		qp->timeout = attr->timeout;
 		qp->timeout_jiffies =
 			usecs_to_jiffies((4096UL * (1UL << qp->timeout)) /
 				1000UL);
 	}
+=======
+	if (attr_mask & IB_QP_TIMEOUT)
+		qp->timeout = attr->timeout;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (attr_mask & IB_QP_QKEY)
 		qp->qkey = attr->qkey;
@@ -1037,10 +1134,13 @@ struct ib_qp *qib_create_qp(struct ib_pd *ibpd,
 			ret = ERR_PTR(-ENOMEM);
 			goto bail_swq;
 		}
+<<<<<<< HEAD
 		RCU_INIT_POINTER(qp->next, NULL);
 		qp->timeout_jiffies =
 			usecs_to_jiffies((4096UL * (1UL << qp->timeout)) /
 				1000UL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (init_attr->srq)
 			sz = 0;
 		else {

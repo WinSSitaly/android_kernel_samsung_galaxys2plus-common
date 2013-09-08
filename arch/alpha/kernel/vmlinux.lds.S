@@ -2,7 +2,10 @@
 #include <asm/thread_info.h>
 #include <asm/cache.h>
 #include <asm/page.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 OUTPUT_FORMAT("elf64-alpha")
 OUTPUT_ARCH(alpha)
@@ -26,7 +29,10 @@ SECTIONS
 		*(.fixup)
 		*(.gnu.warning)
 	} :kernel
+<<<<<<< HEAD
 	swapper_pg_dir = SWAPPER_PGD;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	_etext = .;	/* End of text section */
 
 	NOTES :kernel :note

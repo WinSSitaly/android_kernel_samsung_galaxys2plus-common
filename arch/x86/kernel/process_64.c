@@ -14,6 +14,10 @@
  * This file handles the architecture-dependent parts of process handling..
  */
 
+<<<<<<< HEAD
+=======
+#include <linux/stackprotector.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/cpu.h>
 #include <linux/errno.h>
 #include <linux/sched.h>
@@ -31,15 +35,25 @@
 #include <linux/notifier.h>
 #include <linux/kprobes.h>
 #include <linux/kdebug.h>
+<<<<<<< HEAD
+=======
+#include <linux/tick.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/prctl.h>
 #include <linux/uaccess.h>
 #include <linux/io.h>
 #include <linux/ftrace.h>
 
 #include <asm/pgtable.h>
+<<<<<<< HEAD
 #include <asm/processor.h>
 #include <asm/i387.h>
 #include <asm/fpu-internal.h>
+=======
+#include <asm/system.h>
+#include <asm/processor.h>
+#include <asm/i387.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mmu_context.h>
 #include <asm/prctl.h>
 #include <asm/desc.h>
@@ -48,11 +62,100 @@
 #include <asm/idle.h>
 #include <asm/syscalls.h>
 #include <asm/debugreg.h>
+<<<<<<< HEAD
 #include <asm/switch_to.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 asmlinkage extern void ret_from_fork(void);
 
 DEFINE_PER_CPU(unsigned long, old_rsp);
+<<<<<<< HEAD
+=======
+static DEFINE_PER_CPU(unsigned char, is_idle);
+
+void enter_idle(void)
+{
+	percpu_write(is_idle, 1);
+	idle_notifier_call_chain(IDLE_START);
+}
+
+static void __exit_idle(void)
+{
+	if (x86_test_and_clear_bit_percpu(0, is_idle) == 0)
+		return;
+	idle_notifier_call_chain(IDLE_END);
+}
+
+/* Called from interrupts to signify idle end */
+void exit_idle(void)
+{
+	/* idle loop has pid 0 */
+	if (current->pid)
+		return;
+	__exit_idle();
+}
+
+#ifndef CONFIG_SMP
+static inline void play_dead(void)
+{
+	BUG();
+}
+#endif
+
+/*
+ * The idle thread. There's no useful work to be
+ * done, so just try to conserve power and have a
+ * low exit latency (ie sit in a loop waiting for
+ * somebody to say that they'd like to reschedule)
+ */
+void cpu_idle(void)
+{
+	current_thread_info()->status |= TS_POLLING;
+
+	/*
+	 * If we're the non-boot CPU, nothing set the stack canary up
+	 * for us.  CPU0 already has it initialized but no harm in
+	 * doing it again.  This is a good place for updating it, as
+	 * we wont ever return from this function (so the invalid
+	 * canaries already on the stack wont ever trigger).
+	 */
+	boot_init_stack_canary();
+
+	/* endless idle loop with no priority at all */
+	while (1) {
+		tick_nohz_stop_sched_tick(1);
+		while (!need_resched()) {
+
+			rmb();
+
+			if (cpu_is_offline(smp_processor_id()))
+				play_dead();
+			/*
+			 * Idle routines should keep interrupts disabled
+			 * from here on, until they go to idle.
+			 * Otherwise, idle callbacks can misfire.
+			 */
+			local_irq_disable();
+			enter_idle();
+			/* Don't trace irqs off for idle */
+			stop_critical_timings();
+			pm_idle();
+			start_critical_timings();
+
+			/* In many cases the interrupt that ended idle
+			   has already called exit_idle. But some idle
+			   loops can be woken up without interrupt. */
+			__exit_idle();
+		}
+
+		tick_nohz_restart_sched_tick();
+		preempt_enable_no_resched();
+		schedule();
+		preempt_disable();
+	}
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Prints also some state that isn't saved in the pt_regs */
 void __show_regs(struct pt_regs *regs, int all)
@@ -178,7 +281,10 @@ int copy_thread(unsigned long clone_flags, unsigned long sp,
 
 	set_tsk_thread_flag(p, TIF_FORK);
 
+<<<<<<< HEAD
 	p->fpu_counter = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	p->thread.io_bitmap_ptr = NULL;
 
 	savesegment(gs, p->thread.gsindex);
@@ -192,12 +298,21 @@ int copy_thread(unsigned long clone_flags, unsigned long sp,
 	memset(p->thread.ptrace_bps, 0, sizeof(p->thread.ptrace_bps));
 
 	if (unlikely(test_tsk_thread_flag(me, TIF_IO_BITMAP))) {
+<<<<<<< HEAD
 		p->thread.io_bitmap_ptr = kmemdup(me->thread.io_bitmap_ptr,
 						  IO_BITMAP_BYTES, GFP_KERNEL);
+=======
+		p->thread.io_bitmap_ptr = kmalloc(IO_BITMAP_BYTES, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!p->thread.io_bitmap_ptr) {
 			p->thread.io_bitmap_max = 0;
 			return -ENOMEM;
 		}
+<<<<<<< HEAD
+=======
+		memcpy(p->thread.io_bitmap_ptr, me->thread.io_bitmap_ptr,
+				IO_BITMAP_BYTES);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_tsk_thread_flag(p, TIF_IO_BITMAP);
 	}
 
@@ -234,7 +349,10 @@ start_thread_common(struct pt_regs *regs, unsigned long new_ip,
 	loadsegment(es, _ds);
 	loadsegment(ds, _ds);
 	load_gs_index(0);
+<<<<<<< HEAD
 	current->thread.usersp	= new_sp;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	regs->ip		= new_ip;
 	regs->sp		= new_sp;
 	percpu_write(old_rsp, new_sp);
@@ -258,9 +376,13 @@ start_thread(struct pt_regs *regs, unsigned long new_ip, unsigned long new_sp)
 void start_thread_ia32(struct pt_regs *regs, u32 new_ip, u32 new_sp)
 {
 	start_thread_common(regs, new_ip, new_sp,
+<<<<<<< HEAD
 			    test_thread_flag(TIF_X32)
 			    ? __USER_CS : __USER32_CS,
 			    __USER_DS, __USER_DS);
+=======
+			    __USER32_CS, __USER32_DS, __USER32_DS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif
 
@@ -284,7 +406,11 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
 	unsigned fsindex, gsindex;
 	fpu_switch_t fpu;
 
+<<<<<<< HEAD
 	fpu = switch_fpu_prepare(prev_p, next_p, cpu);
+=======
+	fpu = switch_fpu_prepare(prev_p, next_p);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Reload esp0, LDT and the page table pointer:
@@ -383,8 +509,11 @@ void set_personality_64bit(void)
 
 	/* Make sure to be in 64bit mode */
 	clear_thread_flag(TIF_IA32);
+<<<<<<< HEAD
 	clear_thread_flag(TIF_ADDR32);
 	clear_thread_flag(TIF_X32);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Ensure the corresponding mm is not marked. */
 	if (current->mm)
@@ -397,17 +526,27 @@ void set_personality_64bit(void)
 	current->personality &= ~READ_IMPLIES_EXEC;
 }
 
+<<<<<<< HEAD
 void set_personality_ia32(bool x32)
+=======
+void set_personality_ia32(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* inherit personality from parent */
 
 	/* Make sure to be in 32bit mode */
+<<<<<<< HEAD
 	set_thread_flag(TIF_ADDR32);
+=======
+	set_thread_flag(TIF_IA32);
+	current->personality |= force_personality32;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Mark the associated mm as containing 32-bit tasks. */
 	if (current->mm)
 		current->mm->context.ia32_compat = 1;
 
+<<<<<<< HEAD
 	if (x32) {
 		clear_thread_flag(TIF_IA32);
 		set_thread_flag(TIF_X32);
@@ -424,6 +563,11 @@ void set_personality_ia32(bool x32)
 	}
 }
 EXPORT_SYMBOL_GPL(set_personality_ia32);
+=======
+	/* Prepare the first "return" to user space */
+	current_thread_info()->status |= TS_COMPAT;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unsigned long get_wchan(struct task_struct *p)
 {

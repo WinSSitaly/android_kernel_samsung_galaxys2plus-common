@@ -21,6 +21,11 @@
 #ifndef _ASM_GT64120_H
 #define _ASM_GT64120_H
 
+<<<<<<< HEAD
+=======
+#include <linux/clocksource.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/addrspace.h>
 #include <asm/byteorder.h>
 

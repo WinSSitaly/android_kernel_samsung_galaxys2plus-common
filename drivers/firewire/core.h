@@ -1,8 +1,11 @@
 #ifndef _FIREWIRE_CORE_H
 #define _FIREWIRE_CORE_H
 
+<<<<<<< HEAD
 #include <linux/compiler.h>
 #include <linux/device.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/fs.h>
 #include <linux/list.h>
 #include <linux/idr.h>
@@ -11,7 +14,11 @@
 #include <linux/slab.h>
 #include <linux/types.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct device;
 struct fw_card;
@@ -25,11 +32,14 @@ struct fw_packet;
 
 /* -card */
 
+<<<<<<< HEAD
 extern __printf(2, 3)
 void fw_err(const struct fw_card *card, const char *fmt, ...);
 extern __printf(2, 3)
 void fw_notice(const struct fw_card *card, const char *fmt, ...);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* bitfields within the PHY registers */
 #define PHY_LINK_ACTIVE		0x80
 #define PHY_CONTENDER		0x40
@@ -106,8 +116,11 @@ struct fw_card_driver {
 
 	void (*flush_queue_iso)(struct fw_iso_context *ctx);
 
+<<<<<<< HEAD
 	int (*flush_iso_completions)(struct fw_iso_context *ctx);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int (*stop_iso)(struct fw_iso_context *ctx);
 };
 
@@ -150,6 +163,7 @@ extern struct rw_semaphore fw_device_rwsem;
 extern struct idr fw_device_idr;
 extern int fw_cdev_major;
 
+<<<<<<< HEAD
 static inline struct fw_device *fw_device_get(struct fw_device *device)
 {
 	get_device(&device->device);
@@ -162,6 +176,8 @@ static inline void fw_device_put(struct fw_device *device)
 	put_device(&device->device);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct fw_device *fw_device_get_by_devt(dev_t devt);
 int fw_device_set_broadcast_channel(struct device *dev, void *gen);
 void fw_node_event(struct fw_card *card, struct fw_node *node, int event);

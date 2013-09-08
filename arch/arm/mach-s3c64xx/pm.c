@@ -16,13 +16,19 @@
 #include <linux/suspend.h>
 #include <linux/serial_core.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
 #include <linux/pm_domain.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/map.h>
 #include <mach/irqs.h>
 
+<<<<<<< HEAD
 #include <plat/devs.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/pm.h>
 #include <plat/wakeup-mask.h>
 
@@ -31,6 +37,7 @@
 #include <mach/regs-clock.h>
 #include <mach/regs-syscon-power.h>
 #include <mach/regs-gpio-memport.h>
+<<<<<<< HEAD
 #include <mach/regs-modem.h>
 
 struct s3c64xx_pm_domain {
@@ -174,6 +181,8 @@ static struct s3c64xx_pm_domain *s3c64xx_pm_domains[] = {
 	&s3c64xx_pm_s,
 	&s3c64xx_pm_f,
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_S3C_PM_DEBUG_LED_SMDK
 void s3c_pm_debug_smdkled(u32 set, u32 clear)
@@ -230,11 +239,14 @@ static struct sleep_save misc_save[] = {
 	SAVE_ITEM(S3C64XX_MEM0CONSLP0),
 	SAVE_ITEM(S3C64XX_MEM0CONSLP1),
 	SAVE_ITEM(S3C64XX_MEM1CONSLP),
+<<<<<<< HEAD
 
 	SAVE_ITEM(S3C64XX_SDMA_SEL),
 	SAVE_ITEM(S3C64XX_MODEM_MIFPCON),
 
 	SAVE_ITEM(S3C64XX_NORMAL_CFG),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void s3c_pm_configure_extint(void)
@@ -263,7 +275,11 @@ void s3c_pm_save_core(void)
  * this.
  */
 
+<<<<<<< HEAD
 static int s3c64xx_cpu_suspend(unsigned long arg)
+=======
+static void s3c64xx_cpu_suspend(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long tmp;
 
@@ -325,6 +341,7 @@ static void s3c64xx_pm_prepare(void)
 	__raw_writel(__raw_readl(S3C64XX_WAKEUP_STAT), S3C64XX_WAKEUP_STAT);
 }
 
+<<<<<<< HEAD
 int __init s3c64xx_pm_init(void)
 {
 	int i;
@@ -345,6 +362,9 @@ int __init s3c64xx_pm_init(void)
 }
 
 static __init int s3c64xx_pm_initcall(void)
+=======
+static int s3c64xx_pm_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	pm_cpu_prep = s3c64xx_pm_prepare;
 	pm_cpu_sleep = s3c64xx_cpu_suspend;
@@ -363,6 +383,7 @@ static __init int s3c64xx_pm_initcall(void)
 
 	return 0;
 }
+<<<<<<< HEAD
 arch_initcall(s3c64xx_pm_initcall);
 
 static __init int s3c64xx_pm_late_initcall(void)
@@ -372,3 +393,7 @@ static __init int s3c64xx_pm_late_initcall(void)
 	return 0;
 }
 late_initcall(s3c64xx_pm_late_initcall);
+=======
+
+arch_initcall(s3c64xx_pm_init);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

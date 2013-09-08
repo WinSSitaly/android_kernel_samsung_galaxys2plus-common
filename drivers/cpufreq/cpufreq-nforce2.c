@@ -385,6 +385,7 @@ static struct cpufreq_driver nforce2_driver = {
 	.owner = THIS_MODULE,
 };
 
+<<<<<<< HEAD
 #ifdef MODULE
 static DEFINE_PCI_DEVICE_TABLE(nforce2_ids) = {
 	{ PCI_VENDOR_ID_NVIDIA, PCI_DEVICE_ID_NVIDIA_NFORCE2 },
@@ -393,6 +394,8 @@ static DEFINE_PCI_DEVICE_TABLE(nforce2_ids) = {
 MODULE_DEVICE_TABLE(pci, nforce2_ids);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * nforce2_detect_chipset - detect the Southbridge which contains FSB PLL logic
  *

@@ -25,7 +25,11 @@
 #include <linux/pci.h>
 #include <linux/time.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+#include <linux/moduleparam.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/interrupt.h>
 #include <linux/delay.h>
 #include <sound/core.h>
@@ -40,7 +44,11 @@ MODULE_SUPPORTED_DEVICE("{{SiS,SiS7019 Audio Accelerator}}");
 
 static int index = SNDRV_DEFAULT_IDX1;	/* Index 0-MAX */
 static char *id = SNDRV_DEFAULT_STR1;	/* ID for this card */
+<<<<<<< HEAD
 static bool enable = 1;
+=======
+static int enable = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int codecs = 1;
 
 module_param(index, int, 0444);
@@ -983,7 +991,11 @@ timeout:
 	mutex_unlock(&sis->ac97_mutex);
 
 	if (!count) {
+<<<<<<< HEAD
 		dev_err(&sis->pci->dev, "ac97 codec %d timeout cmd 0x%08x\n",
+=======
+		printk(KERN_ERR "sis7019: ac97 codec %d timeout cmd 0x%08x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					codec, cmd);
 	}
 
@@ -1142,13 +1154,22 @@ static int sis_chip_init(struct sis7019 *sis)
 	/* All done, check for errors.
 	 */
 	if (!sis->codecs_present) {
+<<<<<<< HEAD
 		dev_err(&sis->pci->dev, "could not find any codecs\n");
+=======
+		printk(KERN_ERR "sis7019: could not find any codecs\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	}
 
 	if (sis->codecs_present != codecs) {
+<<<<<<< HEAD
 		dev_warn(&sis->pci->dev, "missing codecs, found %0x, expected %0x\n",
 					 sis->codecs_present, codecs);
+=======
+		printk(KERN_WARNING "sis7019: missing codecs, found %0x, expected %0x\n",
+		       sis->codecs_present, codecs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Let the hardware know that the audio driver is alive,
@@ -1256,11 +1277,16 @@ static int sis_resume(struct pci_dev *pci)
 	pci_restore_state(pci);
 
 	if (pci_enable_device(pci) < 0) {
+<<<<<<< HEAD
 		dev_err(&pci->dev, "unable to re-enable device\n");
+=======
+		printk(KERN_ERR "sis7019: unable to re-enable device\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error;
 	}
 
 	if (sis_chip_init(sis)) {
+<<<<<<< HEAD
 		dev_err(&pci->dev, "unable to re-init controller\n");
 		goto error;
 	}
@@ -1268,6 +1294,15 @@ static int sis_resume(struct pci_dev *pci)
 	if (request_irq(pci->irq, sis_interrupt, IRQF_SHARED,
 			KBUILD_MODNAME, sis)) {
 		dev_err(&pci->dev, "unable to regain IRQ %d\n", pci->irq);
+=======
+		printk(KERN_ERR "sis7019: unable to re-init controller\n");
+		goto error;
+	}
+
+	if (request_irq(pci->irq, sis_interrupt, IRQF_DISABLED|IRQF_SHARED,
+				card->shortname, sis)) {
+		printk(KERN_ERR "sis7019: unable to regain IRQ %d\n", pci->irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error;
 	}
 
@@ -1335,7 +1370,12 @@ static int __devinit sis_chip_create(struct snd_card *card,
 		goto error_out;
 
 	if (pci_set_dma_mask(pci, DMA_BIT_MASK(30)) < 0) {
+<<<<<<< HEAD
 		dev_err(&pci->dev, "architecture does not support 30-bit PCI busmaster DMA");
+=======
+		printk(KERN_ERR "sis7019: architecture does not support "
+					"30-bit PCI busmaster DMA");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error_out_enabled;
 	}
 
@@ -1349,20 +1389,32 @@ static int __devinit sis_chip_create(struct snd_card *card,
 
 	rc = pci_request_regions(pci, "SiS7019");
 	if (rc) {
+<<<<<<< HEAD
 		dev_err(&pci->dev, "unable request regions\n");
+=======
+		printk(KERN_ERR "sis7019: unable request regions\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error_out_enabled;
 	}
 
 	rc = -EIO;
 	sis->ioaddr = ioremap_nocache(pci_resource_start(pci, 1), 0x4000);
 	if (!sis->ioaddr) {
+<<<<<<< HEAD
 		dev_err(&pci->dev, "unable to remap MMIO, aborting\n");
+=======
+		printk(KERN_ERR "sis7019: unable to remap MMIO, aborting\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error_out_cleanup;
 	}
 
 	rc = sis_alloc_suspend(sis);
 	if (rc < 0) {
+<<<<<<< HEAD
 		dev_err(&pci->dev, "unable to allocate state storage\n");
+=======
+		printk(KERN_ERR "sis7019: unable to allocate state storage\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error_out_cleanup;
 	}
 
@@ -1370,9 +1422,15 @@ static int __devinit sis_chip_create(struct snd_card *card,
 	if (rc)
 		goto error_out_cleanup;
 
+<<<<<<< HEAD
 	if (request_irq(pci->irq, sis_interrupt, IRQF_SHARED, KBUILD_MODNAME,
 			sis)) {
 		dev_err(&pci->dev, "unable to allocate irq %d\n", sis->irq);
+=======
+	if (request_irq(pci->irq, sis_interrupt, IRQF_DISABLED|IRQF_SHARED,
+				card->shortname, sis)) {
+		printk(KERN_ERR "unable to allocate irq %d\n", sis->irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error_out_cleanup;
 	}
 
@@ -1477,7 +1535,11 @@ static void __devexit snd_sis7019_remove(struct pci_dev *pci)
 }
 
 static struct pci_driver sis7019_driver = {
+<<<<<<< HEAD
 	.name = KBUILD_MODNAME,
+=======
+	.name = "SiS7019",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table = snd_sis7019_ids,
 	.probe = snd_sis7019_probe,
 	.remove = __devexit_p(snd_sis7019_remove),

@@ -1,6 +1,10 @@
 /******************************************************************************
  *
+<<<<<<< HEAD
  * Copyright(c) 2009-2012  Realtek Corporation.
+=======
+ * Copyright(c) 2009-2010  Realtek Corporation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
@@ -27,11 +31,19 @@
  *
  *****************************************************************************/
 
+<<<<<<< HEAD
 #include "../wifi.h"
 #include "../core.h"
 #include "../pci.h"
 #include "../base.h"
 #include "../pci.h"
+=======
+#include <linux/vmalloc.h>
+
+#include "../wifi.h"
+#include "../core.h"
+#include "../pci.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "reg.h"
 #include "def.h"
 #include "phy.h"
@@ -42,8 +54,11 @@
 #include "trx.h"
 #include "led.h"
 
+<<<<<<< HEAD
 #include <linux/module.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void rtl92s_init_aspm_vars(struct ieee80211_hw *hw)
 {
 	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
@@ -88,6 +103,7 @@ static void rtl92s_init_aspm_vars(struct ieee80211_hw *hw)
 	rtlpci->const_support_pciaspm = 2;
 }
 
+<<<<<<< HEAD
 static void rtl92se_fw_cb(const struct firmware *firmware, void *context)
 {
 	struct ieee80211_hw *hw = context;
@@ -132,16 +148,29 @@ static void rtl92se_fw_cb(const struct firmware *firmware, void *context)
 	rtl_init_rfkill(hw);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int rtl92s_init_sw_vars(struct ieee80211_hw *hw)
 {
 	struct rtl_priv *rtlpriv = rtl_priv(hw);
 	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
+<<<<<<< HEAD
 	int err = 0;
 	u16 earlyrxthreshold = 7;
 
 	rtlpriv->dm.dm_initialgain_enable = true;
 	rtlpriv->dm.dm_flag = 0;
 	rtlpriv->dm.disable_framebursting = false;
+=======
+	const struct firmware *firmware;
+	struct rt_firmware *pfirmware = NULL;
+	int err = 0;
+	u16 earlyrxthreshold = 7;
+
+	rtlpriv->dm.dm_initialgain_enable = 1;
+	rtlpriv->dm.dm_flag = 0;
+	rtlpriv->dm.disable_framebursting = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtlpriv->dm.thermalvalue = 0;
 	rtlpriv->dm.useramask = true;
 
@@ -202,16 +231,22 @@ static int rtl92s_init_sw_vars(struct ieee80211_hw *hw)
 
 	rtlpci->first_init = true;
 
+<<<<<<< HEAD
 	/* for debug level */
 	rtlpriv->dbg.global_debuglevel = rtlpriv->cfg->mod_params->debug;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* for LPS & IPS */
 	rtlpriv->psc.inactiveps = rtlpriv->cfg->mod_params->inactiveps;
 	rtlpriv->psc.swctrl_lps = rtlpriv->cfg->mod_params->swctrl_lps;
 	rtlpriv->psc.fwctrl_lps = rtlpriv->cfg->mod_params->fwctrl_lps;
+<<<<<<< HEAD
 	if (!rtlpriv->psc.inactiveps)
 		pr_info("Power Save off (module option)\n");
 	if (!rtlpriv->psc.fwctrl_lps)
 		pr_info("FW Power Save off (module option)\n");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtlpriv->psc.reg_fwctrl_lps = 3;
 	rtlpriv->psc.reg_max_lps_awakeintvl = 5;
 	/* for ASPM, you can close aspm through
@@ -227,6 +262,7 @@ static int rtl92s_init_sw_vars(struct ieee80211_hw *hw)
 
 	/* for firmware buf */
 	rtlpriv->rtlhal.pfirmware = vzalloc(sizeof(struct rt_firmware));
+<<<<<<< HEAD
 	if (!rtlpriv->rtlhal.pfirmware)
 		return 1;
 
@@ -244,6 +280,36 @@ static int rtl92s_init_sw_vars(struct ieee80211_hw *hw)
 		return 1;
 	}
 
+=======
+	if (!rtlpriv->rtlhal.pfirmware) {
+		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+			 ("Can't alloc buffer for fw.\n"));
+		return 1;
+	}
+
+	printk(KERN_INFO "rtl8192se: Driver for Realtek RTL8192SE/RTL8191SE\n"
+	       "           Loading firmware %s\n", rtlpriv->cfg->fw_name);
+	/* request fw */
+	err = request_firmware(&firmware, rtlpriv->cfg->fw_name,
+			rtlpriv->io.dev);
+	if (err) {
+		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+			 ("Failed to request firmware!\n"));
+		return 1;
+	}
+	if (firmware->size > sizeof(struct rt_firmware)) {
+		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+			 ("Firmware is too big!\n"));
+		release_firmware(firmware);
+		return 1;
+	}
+
+	pfirmware = (struct rt_firmware *)rtlpriv->rtlhal.pfirmware;
+	memcpy(pfirmware->sz_fw_tmpbuffer, firmware->data, firmware->size);
+	pfirmware->sz_fw_tmpbufferlen = firmware->size;
+	release_firmware(firmware);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -305,7 +371,10 @@ static struct rtl_mod_params rtl92se_mod_params = {
 	.inactiveps = true,
 	.swctrl_lps = true,
 	.fwctrl_lps = false,
+<<<<<<< HEAD
 	.debug = DBG_EMERG,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* Because memory R/W bursting will cause system hang/crash
@@ -338,7 +407,10 @@ static struct rtl_hal_cfg rtl92se_hal_cfg = {
 	.maps[EFUSE_HWSET_MAX_SIZE] = HWSET_MAX_SIZE_92S,
 	.maps[EFUSE_MAX_SECTION_MAP] = EFUSE_MAX_SECTION,
 	.maps[EFUSE_REAL_CONTENT_SIZE] = EFUSE_REAL_CONTENT_LEN,
+<<<<<<< HEAD
 	.maps[EFUSE_OOB_PROTECT_BYTES_LEN] = EFUSE_OOB_PROTECT_BYTES,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.maps[RWCAM] = REG_RWCAM,
 	.maps[WCAMI] = REG_WCAMI,
@@ -387,6 +459,7 @@ static struct rtl_hal_cfg rtl92se_hal_cfg = {
 	.maps[RTL_IMR_ROK] = IMR_ROK,
 	.maps[RTL_IBSS_INT_MASKS] = (IMR_BCNINT | IMR_TBDOK | IMR_TBDER),
 
+<<<<<<< HEAD
 	.maps[RTL_RC_CCK_RATE1M] = DESC92_RATE1M,
 	.maps[RTL_RC_CCK_RATE2M] = DESC92_RATE2M,
 	.maps[RTL_RC_CCK_RATE5_5M] = DESC92_RATE5_5M,
@@ -402,6 +475,23 @@ static struct rtl_hal_cfg rtl92se_hal_cfg = {
 
 	.maps[RTL_RC_HT_RATEMCS7] = DESC92_RATEMCS7,
 	.maps[RTL_RC_HT_RATEMCS15] = DESC92_RATEMCS15,
+=======
+	.maps[RTL_RC_CCK_RATE1M] = DESC92S_RATE1M,
+	.maps[RTL_RC_CCK_RATE2M] = DESC92S_RATE2M,
+	.maps[RTL_RC_CCK_RATE5_5M] = DESC92S_RATE5_5M,
+	.maps[RTL_RC_CCK_RATE11M] = DESC92S_RATE11M,
+	.maps[RTL_RC_OFDM_RATE6M] = DESC92S_RATE6M,
+	.maps[RTL_RC_OFDM_RATE9M] = DESC92S_RATE9M,
+	.maps[RTL_RC_OFDM_RATE12M] = DESC92S_RATE12M,
+	.maps[RTL_RC_OFDM_RATE18M] = DESC92S_RATE18M,
+	.maps[RTL_RC_OFDM_RATE24M] = DESC92S_RATE24M,
+	.maps[RTL_RC_OFDM_RATE36M] = DESC92S_RATE36M,
+	.maps[RTL_RC_OFDM_RATE48M] = DESC92S_RATE48M,
+	.maps[RTL_RC_OFDM_RATE54M] = DESC92S_RATE54M,
+
+	.maps[RTL_RC_HT_RATEMCS7] = DESC92S_RATEMCS7,
+	.maps[RTL_RC_HT_RATEMCS15] = DESC92S_RATEMCS15,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct pci_device_id rtl92se_pci_ids[] __devinitdata = {
@@ -417,12 +507,16 @@ MODULE_DEVICE_TABLE(pci, rtl92se_pci_ids);
 
 MODULE_AUTHOR("lizhaoming	<chaoming_li@realsil.com.cn>");
 MODULE_AUTHOR("Realtek WlanFAE	<wlanfae@realtek.com>");
+<<<<<<< HEAD
 MODULE_AUTHOR("Larry Finger	<Larry.Finger@lwfinger.net>");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Realtek 8192S/8191S 802.11n PCI wireless");
 MODULE_FIRMWARE("rtlwifi/rtl8192sefw.bin");
 
 module_param_named(swenc, rtl92se_mod_params.sw_crypto, bool, 0444);
+<<<<<<< HEAD
 module_param_named(debug, rtl92se_mod_params.debug, int, 0444);
 module_param_named(ips, rtl92se_mod_params.inactiveps, bool, 0444);
 module_param_named(swlps, rtl92se_mod_params.swctrl_lps, bool, 0444);
@@ -441,13 +535,32 @@ static const struct dev_pm_ops rtlwifi_pm_ops = {
 	.poweroff = rtl_pci_suspend,
 	.restore = rtl_pci_resume,
 };
+=======
+module_param_named(ips, rtl92se_mod_params.inactiveps, bool, 0444);
+module_param_named(swlps, rtl92se_mod_params.swctrl_lps, bool, 0444);
+module_param_named(fwlps, rtl92se_mod_params.fwctrl_lps, bool, 0444);
+MODULE_PARM_DESC(swenc, "using hardware crypto (default 0 [hardware])\n");
+MODULE_PARM_DESC(ips, "using no link power save (default 1 is open)\n");
+MODULE_PARM_DESC(swlps, "using linked sw control power save (default 1 is "
+		 "open)\n");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct pci_driver rtl92se_driver = {
 	.name = KBUILD_MODNAME,
 	.id_table = rtl92se_pci_ids,
 	.probe = rtl_pci_probe,
 	.remove = rtl_pci_disconnect,
+<<<<<<< HEAD
 	.driver.pm = &rtlwifi_pm_ops,
+=======
+
+#ifdef CONFIG_PM
+	.suspend = rtl_pci_suspend,
+	.resume = rtl_pci_resume,
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init rtl92se_module_init(void)
@@ -456,7 +569,11 @@ static int __init rtl92se_module_init(void)
 
 	ret = pci_register_driver(&rtl92se_driver);
 	if (ret)
+<<<<<<< HEAD
 		RT_ASSERT(false, "No device found\n");
+=======
+		RT_ASSERT(false, (": No device found\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }

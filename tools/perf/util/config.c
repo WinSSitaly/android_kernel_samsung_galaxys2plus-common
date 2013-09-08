@@ -1,8 +1,12 @@
 /*
+<<<<<<< HEAD
  * config.c
  *
  * Helper functions for parsing config items.
  * Originally copied from GIT source.
+=======
+ * GIT - The information manager from hell
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Copyright (C) Linus Torvalds, 2005
  * Copyright (C) Johannes Schindelin, 2005
@@ -344,7 +348,11 @@ const char *perf_config_dirname(const char *name, const char *value)
 
 static int perf_default_core_config(const char *var __used, const char *value __used)
 {
+<<<<<<< HEAD
 	/* Add other config variables here. */
+=======
+	/* Add other config variables here and to Documentation/config.txt. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -353,7 +361,11 @@ int perf_default_config(const char *var, const char *value, void *dummy __used)
 	if (!prefixcmp(var, "core."))
 		return perf_default_core_config(var, value);
 
+<<<<<<< HEAD
 	/* Add other config variables here. */
+=======
+	/* Add other config variables here and to Documentation/config.txt. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -416,6 +428,7 @@ int perf_config(config_fn_t fn, void *data)
 	home = getenv("HOME");
 	if (perf_config_global() && home) {
 		char *user_config = strdup(mkpath("%s/.perfconfig", home));
+<<<<<<< HEAD
 		struct stat st;
 
 		if (user_config == NULL) {
@@ -442,6 +455,15 @@ out_free:
 		free(user_config);
 	}
 out:
+=======
+		if (!access(user_config, R_OK)) {
+			ret += perf_config_from_file(fn, user_config, data);
+			found += 1;
+		}
+		free(user_config);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (found == 0)
 		return -1;
 	return ret;

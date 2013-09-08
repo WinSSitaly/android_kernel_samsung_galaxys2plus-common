@@ -9,6 +9,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #ifndef __U_ETHER_H
@@ -43,6 +55,13 @@ struct gether {
 	struct usb_ep			*in_ep;
 	struct usb_ep			*out_ep;
 
+<<<<<<< HEAD
+=======
+	/* descriptors match device speed at gether_connect() time */
+	struct usb_endpoint_descriptor	*in;
+	struct usb_endpoint_descriptor	*out;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool				is_zlp_ok;
 
 	u16				cdc_filter;
@@ -73,6 +92,12 @@ struct gether {
 /* netdev setup/teardown as directed by the gadget driver */
 int gether_setup(struct usb_gadget *g, u8 ethaddr[ETH_ALEN]);
 void gether_cleanup(void);
+<<<<<<< HEAD
+=======
+/* variant of gether_setup that allows customizing network device name */
+int gether_setup_name(struct usb_gadget *g, u8 ethaddr[ETH_ALEN],
+		const char *netname);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* connect/disconnect is handled by individual functions */
 struct net_device *gether_connect(struct gether *);
@@ -99,16 +124,37 @@ int eem_bind_config(struct usb_configuration *c);
 
 #ifdef USB_ETH_RNDIS
 
+<<<<<<< HEAD
 int rndis_bind_config(struct usb_configuration *c, u8 ethaddr[ETH_ALEN]);
+=======
+int rndis_bind_config(struct usb_configuration *c, u8 ethaddr[ETH_ALEN],
+				u32 vendorID, const char *manufacturer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #else
 
 static inline int
+<<<<<<< HEAD
 rndis_bind_config(struct usb_configuration *c, u8 ethaddr[ETH_ALEN])
+=======
+rndis_bind_config(struct usb_configuration *c, u8 ethaddr[ETH_ALEN],
+				u32 vendorID, const char *manufacturer)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }
 
 #endif
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_BRCM_NETCONSOLE
+extern void brcm_current_netcon_status(unsigned char status);
+extern unsigned char brcm_get_netcon_status(void);
+#endif
+#ifdef CONFIG_USB_ETH_SKB_ALLOC_OPTIMIZATION
+extern void ncm_ntb_out_size(u32 ntb_out_size);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __U_ETHER_H */

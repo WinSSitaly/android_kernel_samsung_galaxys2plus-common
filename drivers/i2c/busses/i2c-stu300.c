@@ -916,7 +916,11 @@ stu300_probe(struct platform_device *pdev)
 	}
 
 	dev->irq = platform_get_irq(pdev, 0);
+<<<<<<< HEAD
 	if (request_irq(dev->irq, stu300_irh, 0,
+=======
+	if (request_irq(dev->irq, stu300_irh, IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			NAME, dev)) {
 		ret = -EIO;
 		goto err_no_irq;

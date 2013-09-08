@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2010 Realtek Corporation. All rights reserved.
@@ -23,6 +24,8 @@
  * Larry Finger <Larry.Finger@lwfinger.net>
  *
  ******************************************************************************/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef _IO_H_
 #define _IO_H_
 
@@ -117,6 +120,10 @@ struct io_req {
 	u32	command;
 	u32	status;
 	u8	*pbuf;
+<<<<<<< HEAD
+=======
+	struct semaphore sema;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void (*_async_io_callback)(struct _adapter *padater,
 				   struct io_req *pio_req, u8 *cnxt);
 	u8 *cnxt;

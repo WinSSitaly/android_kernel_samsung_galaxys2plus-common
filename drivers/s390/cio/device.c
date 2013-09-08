@@ -21,7 +21,10 @@
 #include <linux/device.h>
 #include <linux/workqueue.h>
 #include <linux/timer.h>
+<<<<<<< HEAD
 #include <linux/kernel_stat.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/ccwdev.h>
 #include <asm/cio.h>
@@ -748,7 +751,10 @@ static int io_subchannel_initialize_dev(struct subchannel *sch,
 					struct ccw_device *cdev)
 {
 	cdev->private->cdev = cdev;
+<<<<<<< HEAD
 	cdev->private->int_class = IOINT_CIO;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atomic_set(&cdev->private->onoff, 0);
 	cdev->dev.parent = &sch->dev;
 	cdev->dev.release = ccw_device_release;
@@ -1012,8 +1018,11 @@ static void io_subchannel_irq(struct subchannel *sch)
 	CIO_TRACE_EVENT(6, dev_name(&sch->dev));
 	if (cdev)
 		dev_fsm_event(cdev, DEV_EVENT_INTERRUPT);
+<<<<<<< HEAD
 	else
 		kstat_cpu(smp_processor_id()).irqs[IOINT_CIO]++;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void io_subchannel_init_config(struct subchannel *sch)
@@ -1625,7 +1634,10 @@ ccw_device_probe_console(void)
 	memset(&console_private, 0, sizeof(struct ccw_device_private));
 	console_cdev.private = &console_private;
 	console_private.cdev = &console_cdev;
+<<<<<<< HEAD
 	console_private.int_class = IOINT_CIO;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = ccw_device_console_enable(&console_cdev, sch);
 	if (ret) {
 		cio_release_console();
@@ -1676,9 +1688,21 @@ struct ccw_device *get_ccwdev_by_busid(struct ccw_driver *cdrv,
 				       const char *bus_id)
 {
 	struct device *dev;
+<<<<<<< HEAD
 
 	dev = driver_find_device(&cdrv->driver, NULL, (void *)bus_id,
 				 __ccwdev_check_busid);
+=======
+	struct device_driver *drv;
+
+	drv = get_driver(&cdrv->driver);
+	if (!drv)
+		return NULL;
+
+	dev = driver_find_device(drv, NULL, (void *)bus_id,
+				 __ccwdev_check_busid);
+	put_driver(drv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return dev ? to_ccwdev(dev) : NULL;
 }
@@ -1701,18 +1725,24 @@ ccw_device_probe (struct device *dev)
 	int ret;
 
 	cdev->drv = cdrv; /* to let the driver call _set_online */
+<<<<<<< HEAD
 	/* Note: we interpret class 0 in this context as an uninitialized
 	 * field since it translates to a non-I/O interrupt class. */
 	if (cdrv->int_class != 0)
 		cdev->private->int_class = cdrv->int_class;
 	else
 		cdev->private->int_class = IOINT_CIO;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = cdrv->probe ? cdrv->probe(cdev) : -ENODEV;
 
 	if (ret) {
 		cdev->drv = NULL;
+<<<<<<< HEAD
 		cdev->private->int_class = IOINT_CIO;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 
@@ -1746,7 +1776,10 @@ ccw_device_remove (struct device *dev)
 	}
 	ccw_device_set_timeout(cdev, 0);
 	cdev->drv = NULL;
+<<<<<<< HEAD
 	cdev->private->int_class = IOINT_CIO;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1862,9 +1895,15 @@ static void __ccw_device_pm_restore(struct ccw_device *cdev)
 	 */
 	cdev->private->flags.resuming = 1;
 	cdev->private->path_new_mask = LPM_ANYPATH;
+<<<<<<< HEAD
 	css_sched_sch_todo(sch, SCH_TODO_EVAL);
 	spin_unlock_irq(sch->lock);
 	css_wait_for_slow_path();
+=======
+	css_schedule_eval(sch->schid);
+	spin_unlock_irq(sch->lock);
+	css_complete_work();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* cdev may have been moved to a different subchannel. */
 	sch = to_subchannel(cdev->dev.parent);

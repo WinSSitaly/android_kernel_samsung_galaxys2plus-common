@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
  * hwmon.c - part of lm_sensors, Linux kernel modules for hardware monitoring
  *
  * This file defines the sysfs class "hwmon", for use by sensors drivers.
@@ -9,6 +10,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; version 2 of the License.
  */
+=======
+    hwmon.c - part of lm_sensors, Linux kernel modules for hardware monitoring
+
+    This file defines the sysfs class "hwmon", for use by sensors drivers.
+
+    Copyright (C) 2005 Mark M. Hoffman <mhoffman@lightlink.com>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
@@ -27,7 +40,12 @@
 
 static struct class *hwmon_class;
 
+<<<<<<< HEAD
 static DEFINE_IDA(hwmon_ida);
+=======
+static DEFINE_IDR(hwmon_idr);
+static DEFINE_SPINLOCK(idr_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * hwmon_device_register - register w/ hwmon
@@ -41,6 +59,7 @@ static DEFINE_IDA(hwmon_ida);
 struct device *hwmon_device_register(struct device *dev)
 {
 	struct device *hwdev;
+<<<<<<< HEAD
 	int id;
 
 	id = ida_simple_get(&hwmon_ida, 0, 0, GFP_KERNEL);
@@ -56,6 +75,35 @@ struct device *hwmon_device_register(struct device *dev)
 	return hwdev;
 }
 EXPORT_SYMBOL_GPL(hwmon_device_register);
+=======
+	int id, err;
+
+again:
+	if (unlikely(idr_pre_get(&hwmon_idr, GFP_KERNEL) == 0))
+		return ERR_PTR(-ENOMEM);
+
+	spin_lock(&idr_lock);
+	err = idr_get_new(&hwmon_idr, NULL, &id);
+	spin_unlock(&idr_lock);
+
+	if (unlikely(err == -EAGAIN))
+		goto again;
+	else if (unlikely(err))
+		return ERR_PTR(err);
+
+	id = id & MAX_ID_MASK;
+	hwdev = device_create(hwmon_class, dev, MKDEV(0, 0), NULL,
+			      HWMON_ID_FORMAT, id);
+
+	if (IS_ERR(hwdev)) {
+		spin_lock(&idr_lock);
+		idr_remove(&hwmon_idr, id);
+		spin_unlock(&idr_lock);
+	}
+
+	return hwdev;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * hwmon_device_unregister - removes the previously registered class device
@@ -68,12 +116,21 @@ void hwmon_device_unregister(struct device *dev)
 
 	if (likely(sscanf(dev_name(dev), HWMON_ID_FORMAT, &id) == 1)) {
 		device_unregister(dev);
+<<<<<<< HEAD
 		ida_simple_remove(&hwmon_ida, id);
+=======
+		spin_lock(&idr_lock);
+		idr_remove(&hwmon_idr, id);
+		spin_unlock(&idr_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		dev_dbg(dev->parent,
 			"hwmon_device_unregister() failed: bad class ID!\n");
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(hwmon_device_unregister);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void __init hwmon_pci_quirks(void)
 {
@@ -121,6 +178,12 @@ static void __exit hwmon_exit(void)
 subsys_initcall(hwmon_init);
 module_exit(hwmon_exit);
 
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL_GPL(hwmon_device_register);
+EXPORT_SYMBOL_GPL(hwmon_device_unregister);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_AUTHOR("Mark M. Hoffman <mhoffman@lightlink.com>");
 MODULE_DESCRIPTION("hardware monitoring sysfs/class support");
 MODULE_LICENSE("GPL");

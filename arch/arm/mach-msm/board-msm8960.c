@@ -20,18 +20,25 @@
 #include <linux/io.h>
 #include <linux/irq.h>
 #include <linux/clkdev.h>
+<<<<<<< HEAD
 #include <linux/memblock.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 #include <asm/hardware/gic.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/board.h>
 #include <mach/msm_iomap.h>
 
 #include "devices.h"
 
+<<<<<<< HEAD
 static void __init msm8960_fixup(struct tag *tag, char **cmdline,
 		struct meminfo *mi)
 {
@@ -48,6 +55,8 @@ static void __init msm8960_reserve(void)
 	memblock_remove(0x40000000, SZ_2M);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init msm8960_map_io(void)
 {
 	msm_map_msm8960_io();
@@ -94,22 +103,34 @@ static void __init msm8960_rumi3_init(void)
 }
 
 MACHINE_START(MSM8960_SIM, "QCT MSM8960 SIMULATOR")
+<<<<<<< HEAD
 	.fixup = msm8960_fixup,
 	.reserve = msm8960_reserve,
 	.map_io = msm8960_map_io,
 	.init_irq = msm8960_init_irq,
 	.timer = &msm_timer,
 	.handle_irq = gic_handle_irq,
+=======
+	.map_io = msm8960_map_io,
+	.init_irq = msm8960_init_irq,
+	.timer = &msm_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine = msm8960_sim_init,
 MACHINE_END
 
 MACHINE_START(MSM8960_RUMI3, "QCT MSM8960 RUMI3")
+<<<<<<< HEAD
 	.fixup = msm8960_fixup,
 	.reserve = msm8960_reserve,
 	.map_io = msm8960_map_io,
 	.init_irq = msm8960_init_irq,
 	.timer = &msm_timer,
 	.handle_irq = gic_handle_irq,
+=======
+	.map_io = msm8960_map_io,
+	.init_irq = msm8960_init_irq,
+	.timer = &msm_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine = msm8960_rumi3_init,
 MACHINE_END
 

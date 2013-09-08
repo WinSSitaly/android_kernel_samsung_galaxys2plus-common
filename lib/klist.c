@@ -35,7 +35,11 @@
  */
 
 #include <linux/klist.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 
 /*
@@ -45,6 +49,13 @@
 #define KNODE_DEAD		1LU
 #define KNODE_KLIST_MASK	~KNODE_DEAD
 
+<<<<<<< HEAD
+=======
+extern struct klist_node *CSP_knode_bcmdhd_wlan;
+extern struct klist_node *CSP_knode_bcm4329_wlan;
+extern struct klist_node *CSP_knode_bcmsdh_sdmmc;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct klist *knode_klist(struct klist_node *knode)
 {
 	return (struct klist *)
@@ -89,6 +100,10 @@ void klist_init(struct klist *k, void (*get)(struct klist_node *),
 	spin_lock_init(&k->k_lock);
 	k->get = get;
 	k->put = put;
+<<<<<<< HEAD
+=======
+//	printk("CSP klist_init \n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(klist_init);
 
@@ -109,10 +124,22 @@ static void add_tail(struct klist *k, struct klist_node *n)
 static void klist_node_init(struct klist *k, struct klist_node *n)
 {
 	INIT_LIST_HEAD(&n->n_node);
+<<<<<<< HEAD
+=======
+	if (n== CSP_knode_bcmdhd_wlan || n== CSP_knode_bcm4329_wlan || n== CSP_knode_bcmsdh_sdmmc)
+		printk("CSP klist_node_init klistnode = %x \n",n);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kref_init(&n->n_ref);
 	knode_set_klist(n, k);
 	if (k->get)
 		k->get(n);
+<<<<<<< HEAD
+=======
+	if (n== CSP_knode_bcmdhd_wlan || n== CSP_knode_bcm4329_wlan || n== CSP_knode_bcmsdh_sdmmc)
+		printk("CSP klist_node_init refcount =1 and klist added to knode \n");
+
+	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -134,6 +161,11 @@ EXPORT_SYMBOL_GPL(klist_add_head);
  */
 void klist_add_tail(struct klist_node *n, struct klist *k)
 {
+<<<<<<< HEAD
+=======
+	if (n== CSP_knode_bcmdhd_wlan || n== CSP_knode_bcm4329_wlan || n== CSP_knode_bcmsdh_sdmmc)
+		printk("CSP klist_add_tail klistnode = %x \n",n);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	klist_node_init(k, n);
 	add_tail(k, n);
 }
@@ -185,6 +217,10 @@ static void klist_release(struct kref *kref)
 {
 	struct klist_waiter *waiter, *tmp;
 	struct klist_node *n = container_of(kref, struct klist_node, n_ref);
+<<<<<<< HEAD
+=======
+        struct task_struct *process;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	WARN_ON(!knode_dead(n));
 	list_del(&n->n_node);
@@ -193,10 +229,22 @@ static void klist_release(struct kref *kref)
 		if (waiter->node != n)
 			continue;
 
+<<<<<<< HEAD
 		list_del(&waiter->list);
 		waiter->woken = 1;
 		mb();
 		wake_up_process(waiter->process);
+=======
+	if (n== CSP_knode_bcmdhd_wlan || n== CSP_knode_bcm4329_wlan || n== CSP_knode_bcmsdh_sdmmc)
+			printk("CSP klist_release  setting woken == 1 waiter node %x waiter process %x node %x\n",waiter->node,waiter->process,n);
+
+                process = waiter->process;
+
+		list_del(&waiter->list); 
+		waiter->woken = 1;
+		mb();
+		wake_up_process(process);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	spin_unlock(&klist_remove_lock);
 	knode_set_klist(n, NULL);
@@ -211,7 +259,12 @@ static void klist_put(struct klist_node *n, bool kill)
 {
 	struct klist *k = knode_klist(n);
 	void (*put)(struct klist_node *) = k->put;
+<<<<<<< HEAD
 
+=======
+	if (n== CSP_knode_bcmdhd_wlan || n== CSP_knode_bcm4329_wlan || n== CSP_knode_bcmsdh_sdmmc)
+		printk("CSP klist_put\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&k->k_lock);
 	if (kill)
 		knode_kill(n);
@@ -228,6 +281,11 @@ static void klist_put(struct klist_node *n, bool kill)
  */
 void klist_del(struct klist_node *n)
 {
+<<<<<<< HEAD
+=======
+	if (n== CSP_knode_bcmdhd_wlan || n== CSP_knode_bcm4329_wlan || n== CSP_knode_bcmsdh_sdmmc)
+		printk("CSP klist_del\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	klist_put(n, true);
 }
 EXPORT_SYMBOL_GPL(klist_del);
@@ -239,7 +297,12 @@ EXPORT_SYMBOL_GPL(klist_del);
 void klist_remove(struct klist_node *n)
 {
 	struct klist_waiter waiter;
+<<<<<<< HEAD
 
+=======
+	if (n== CSP_knode_bcmdhd_wlan || n== CSP_knode_bcm4329_wlan || n== CSP_knode_bcmsdh_sdmmc)
+		printk("CSP klist_remove node is %x \n",n);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	waiter.node = n;
 	waiter.process = current;
 	waiter.woken = 0;
@@ -248,10 +311,19 @@ void klist_remove(struct klist_node *n)
 	spin_unlock(&klist_remove_lock);
 
 	klist_del(n);
+<<<<<<< HEAD
 
 	for (;;) {
 		set_current_state(TASK_UNINTERRUPTIBLE);
 		if (waiter.woken)
+=======
+	if (n== CSP_knode_bcmdhd_wlan || n== CSP_knode_bcm4329_wlan || n== CSP_knode_bcmsdh_sdmmc)
+		printk("CSP klist_remove waiting waiter node %x waiter process %x\n",waiter.node,waiter.process);
+
+	for (;;) {
+		set_current_state(TASK_UNINTERRUPTIBLE);
+		if (waiter.woken == 1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		schedule();
 	}

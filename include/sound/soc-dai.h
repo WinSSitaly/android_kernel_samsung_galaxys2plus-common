@@ -17,7 +17,10 @@
 #include <linux/list.h>
 
 struct snd_pcm_substream;
+<<<<<<< HEAD
 struct snd_soc_dapm_widget;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * DAI hardware audio formats.
@@ -25,6 +28,7 @@ struct snd_soc_dapm_widget;
  * Describes the physical PCM data formating and clocking. Add new formats
  * to the end.
  */
+<<<<<<< HEAD
 #define SND_SOC_DAIFMT_I2S		1 /* I2S mode */
 #define SND_SOC_DAIFMT_RIGHT_J		2 /* Right Justified mode */
 #define SND_SOC_DAIFMT_LEFT_J		3 /* Left Justified mode */
@@ -32,6 +36,15 @@ struct snd_soc_dapm_widget;
 #define SND_SOC_DAIFMT_DSP_B		5 /* L data MSB during FRM LRC */
 #define SND_SOC_DAIFMT_AC97		6 /* AC97 */
 #define SND_SOC_DAIFMT_PDM		7 /* Pulse density modulation */
+=======
+#define SND_SOC_DAIFMT_I2S		0 /* I2S mode */
+#define SND_SOC_DAIFMT_RIGHT_J		1 /* Right Justified mode */
+#define SND_SOC_DAIFMT_LEFT_J		2 /* Left Justified mode */
+#define SND_SOC_DAIFMT_DSP_A		3 /* L data MSB after FRM LRC */
+#define SND_SOC_DAIFMT_DSP_B		4 /* L data MSB during FRM LRC */
+#define SND_SOC_DAIFMT_AC97		5 /* AC97 */
+#define SND_SOC_DAIFMT_PDM		6 /* Pulse density modulation */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* left and right justified also known as MSB and LSB respectively */
 #define SND_SOC_DAIFMT_MSB		SND_SOC_DAIFMT_LEFT_J
@@ -43,8 +56,13 @@ struct snd_soc_dapm_widget;
  * DAI bit clocks can be be gated (disabled) when the DAI is not
  * sending or receiving PCM data in a frame. This can be used to save power.
  */
+<<<<<<< HEAD
 #define SND_SOC_DAIFMT_CONT		(1 << 4) /* continuous clock */
 #define SND_SOC_DAIFMT_GATED		(2 << 4) /* clock is gated */
+=======
+#define SND_SOC_DAIFMT_CONT		(0 << 4) /* continuous clock */
+#define SND_SOC_DAIFMT_GATED		(1 << 4) /* clock is gated */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * DAI hardware signal inversions.
@@ -52,10 +70,17 @@ struct snd_soc_dapm_widget;
  * Specifies whether the DAI can also support inverted clocks for the specified
  * format.
  */
+<<<<<<< HEAD
 #define SND_SOC_DAIFMT_NB_NF		(1 << 8) /* normal bit clock + frame */
 #define SND_SOC_DAIFMT_NB_IF		(2 << 8) /* normal BCLK + inv FRM */
 #define SND_SOC_DAIFMT_IB_NF		(3 << 8) /* invert BCLK + nor FRM */
 #define SND_SOC_DAIFMT_IB_IF		(4 << 8) /* invert BCLK + FRM */
+=======
+#define SND_SOC_DAIFMT_NB_NF		(0 << 8) /* normal bit clock + frame */
+#define SND_SOC_DAIFMT_NB_IF		(1 << 8) /* normal BCLK + inv FRM */
+#define SND_SOC_DAIFMT_IB_NF		(2 << 8) /* invert BCLK + nor FRM */
+#define SND_SOC_DAIFMT_IB_IF		(3 << 8) /* invert BCLK + FRM */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * DAI hardware clock masters.
@@ -64,10 +89,17 @@ struct snd_soc_dapm_widget;
  * i.e. if the codec is clk and FRM master then the interface is
  * clk and frame slave.
  */
+<<<<<<< HEAD
 #define SND_SOC_DAIFMT_CBM_CFM		(1 << 12) /* codec clk & FRM master */
 #define SND_SOC_DAIFMT_CBS_CFM		(2 << 12) /* codec clk slave & FRM master */
 #define SND_SOC_DAIFMT_CBM_CFS		(3 << 12) /* codec clk master & frame slave */
 #define SND_SOC_DAIFMT_CBS_CFS		(4 << 12) /* codec clk & FRM slave */
+=======
+#define SND_SOC_DAIFMT_CBM_CFM		(0 << 12) /* codec clk & FRM master */
+#define SND_SOC_DAIFMT_CBS_CFM		(1 << 12) /* codec clk slave & FRM master */
+#define SND_SOC_DAIFMT_CBM_CFS		(2 << 12) /* codec clk master & frame slave */
+#define SND_SOC_DAIFMT_CBS_CFS		(3 << 12) /* codec clk & FRM slave */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define SND_SOC_DAIFMT_FORMAT_MASK	0x000f
 #define SND_SOC_DAIFMT_CLOCK_MASK	0x00f0
@@ -210,10 +242,13 @@ struct snd_soc_dai_driver {
 	struct snd_soc_pcm_stream capture;
 	struct snd_soc_pcm_stream playback;
 	unsigned int symmetric_rates:1;
+<<<<<<< HEAD
 
 	/* probe ordering - for components with runtime dependencies */
 	int probe_order;
 	int remove_order;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -239,13 +274,17 @@ struct snd_soc_dai {
 	unsigned char pop_wait:1;
 	unsigned char probed:1;
 
+<<<<<<< HEAD
 	struct snd_soc_dapm_widget *playback_widget;
 	struct snd_soc_dapm_widget *capture_widget;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* DAI DMA data */
 	void *playback_dma_data;
 	void *capture_dma_data;
 
+<<<<<<< HEAD
 	/* Symmetry data - only valid if symmetry is being enforced */
 	unsigned int rate;
 
@@ -253,6 +292,13 @@ struct snd_soc_dai {
 	struct snd_soc_platform *platform;
 	struct snd_soc_codec *codec;
 
+=======
+	/* parent platform/codec */
+	union {
+		struct snd_soc_platform *platform;
+		struct snd_soc_codec *codec;
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct snd_soc_card *card;
 
 	struct list_head list;

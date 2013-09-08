@@ -58,7 +58,11 @@ struct sonet_stats {
 
 #ifdef __KERNEL__
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct k_sonet_stats {
 #define __HANDLE_ITEM(i) atomic_t i

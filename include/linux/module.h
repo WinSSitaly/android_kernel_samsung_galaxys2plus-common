@@ -16,16 +16,42 @@
 #include <linux/kobject.h>
 #include <linux/moduleparam.h>
 #include <linux/tracepoint.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/percpu.h>
 #include <asm/module.h>
 
+<<<<<<< HEAD
 /* Not Yet Implemented */
 #define MODULE_SUPPORTED_DEVICE(name)
 
 #define MODULE_NAME_LEN MAX_PARAM_PREFIX_LEN
 
+=======
+#include <trace/events/module.h>
+
+/* Not Yet Implemented */
+#define MODULE_SUPPORTED_DEVICE(name)
+
+/* Some toolchains use a `_' prefix for all user symbols. */
+#ifdef CONFIG_SYMBOL_PREFIX
+#define MODULE_SYMBOL_PREFIX CONFIG_SYMBOL_PREFIX
+#else
+#define MODULE_SYMBOL_PREFIX ""
+#endif
+
+#define MODULE_NAME_LEN MAX_PARAM_PREFIX_LEN
+
+struct kernel_symbol
+{
+	unsigned long value;
+	const char *name;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct modversion_info
 {
 	unsigned long crc;
@@ -34,6 +60,7 @@ struct modversion_info
 
 struct module;
 
+<<<<<<< HEAD
 struct module_kobject {
 	struct kobject kobj;
 	struct module *mod;
@@ -46,6 +73,12 @@ struct module_attribute {
 	ssize_t (*show)(struct module_attribute *, struct module_kobject *,
 			char *);
 	ssize_t (*store)(struct module_attribute *, struct module_kobject *,
+=======
+struct module_attribute {
+        struct attribute attr;
+        ssize_t (*show)(struct module_attribute *, struct module *, char *);
+        ssize_t (*store)(struct module_attribute *, struct module *,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 const char *, size_t count);
 	void (*setup)(struct module *, const char *);
 	int (*test)(struct module *);
@@ -59,9 +92,21 @@ struct module_version_attribute {
 } __attribute__ ((__aligned__(sizeof(void *))));
 
 extern ssize_t __modver_version_show(struct module_attribute *,
+<<<<<<< HEAD
 				     struct module_kobject *, char *);
 
 extern struct module_attribute module_uevent;
+=======
+				     struct module *, char *);
+
+struct module_kobject
+{
+	struct kobject kobj;
+	struct module *mod;
+	struct kobject *drivers_dir;
+	struct module_param_attrs *mp;
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* These are either module local, or the kernel's dummy ones. */
 extern int init_module(void);
@@ -84,8 +129,16 @@ void trim_init_extable(struct module *m);
 extern const struct gtype##_id __mod_##gtype##_table		\
   __attribute__ ((unused, alias(__stringify(name))))
 
+<<<<<<< HEAD
 #else  /* !MODULE */
 #define MODULE_GENERIC_TABLE(gtype,name)
+=======
+extern struct module __this_module;
+#define THIS_MODULE (&__this_module)
+#else  /* !MODULE */
+#define MODULE_GENERIC_TABLE(gtype,name)
+#define THIS_MODULE ((struct module *)0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /* Generic info of form tag = "info" */
@@ -133,6 +186,14 @@ extern const struct gtype##_id __mod_##gtype##_table		\
 /* What your module does. */
 #define MODULE_DESCRIPTION(_description) MODULE_INFO(description, _description)
 
+<<<<<<< HEAD
+=======
+/* One for each parameter, describing how to use it.  Some files do
+   multiple of these per line, so can't just use MODULE_INFO. */
+#define MODULE_PARM_DESC(_parm, desc) \
+	__MODULE_INFO(parm, _parm, #_parm ":" desc)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MODULE_DEVICE_TABLE(type,name)		\
   MODULE_GENERIC_TABLE(type##_device,name)
 
@@ -196,6 +257,55 @@ struct module_use {
 	struct module *source, *target;
 };
 
+<<<<<<< HEAD
+=======
+#ifndef __GENKSYMS__
+#ifdef CONFIG_MODVERSIONS
+/* Mark the CRC weak since genksyms apparently decides not to
+ * generate a checksums for some symbols */
+#define __CRC_SYMBOL(sym, sec)					\
+	extern void *__crc_##sym __attribute__((weak));		\
+	static const unsigned long __kcrctab_##sym		\
+	__used							\
+	__attribute__((section("___kcrctab" sec "+" #sym), unused))	\
+	= (unsigned long) &__crc_##sym;
+#else
+#define __CRC_SYMBOL(sym, sec)
+#endif
+
+/* For every exported symbol, place a struct in the __ksymtab section */
+#define __EXPORT_SYMBOL(sym, sec)				\
+	extern typeof(sym) sym;					\
+	__CRC_SYMBOL(sym, sec)					\
+	static const char __kstrtab_##sym[]			\
+	__attribute__((section("__ksymtab_strings"), aligned(1))) \
+	= MODULE_SYMBOL_PREFIX #sym;                    	\
+	static const struct kernel_symbol __ksymtab_##sym	\
+	__used							\
+	__attribute__((section("___ksymtab" sec "+" #sym), unused))	\
+	= { (unsigned long)&sym, __kstrtab_##sym }
+
+#define EXPORT_SYMBOL(sym)					\
+	__EXPORT_SYMBOL(sym, "")
+
+#define EXPORT_SYMBOL_GPL(sym)					\
+	__EXPORT_SYMBOL(sym, "_gpl")
+
+#define EXPORT_SYMBOL_GPL_FUTURE(sym)				\
+	__EXPORT_SYMBOL(sym, "_gpl_future")
+
+
+#ifdef CONFIG_UNUSED_SYMBOLS
+#define EXPORT_UNUSED_SYMBOL(sym) __EXPORT_SYMBOL(sym, "_unused")
+#define EXPORT_UNUSED_SYMBOL_GPL(sym) __EXPORT_SYMBOL(sym, "_unused_gpl")
+#else
+#define EXPORT_UNUSED_SYMBOL(sym)
+#define EXPORT_UNUSED_SYMBOL_GPL(sym)
+#endif
+
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum module_state
 {
 	MODULE_STATE_LIVE,
@@ -203,6 +313,7 @@ enum module_state
 	MODULE_STATE_GOING,
 };
 
+<<<<<<< HEAD
 /**
  * struct module_ref - per cpu module reference counts
  * @incs: number of module get on this cpu
@@ -217,6 +328,8 @@ struct module_ref {
 	unsigned long decs;
 } __attribute((aligned(2 * sizeof(unsigned long))));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct module
 {
 	enum module_state state;
@@ -359,7 +472,14 @@ struct module
 	/* Destruction function. */
 	void (*exit)(void);
 
+<<<<<<< HEAD
 	struct module_ref __percpu *refptr;
+=======
+	struct module_ref {
+		unsigned int incs;
+		unsigned int decs;
+	} __percpu *refptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifdef CONFIG_CONSTRUCTORS
@@ -443,18 +563,52 @@ extern void __module_put_and_exit(struct module *mod, long code)
 #define module_put_and_exit(code) __module_put_and_exit(THIS_MODULE, code);
 
 #ifdef CONFIG_MODULE_UNLOAD
+<<<<<<< HEAD
 unsigned long module_refcount(struct module *mod);
+=======
+unsigned int module_refcount(struct module *mod);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __symbol_put(const char *symbol);
 #define symbol_put(x) __symbol_put(MODULE_SYMBOL_PREFIX #x)
 void symbol_put_addr(void *addr);
 
 /* Sometimes we know we already have a refcount, and it's easier not
    to handle the error case (which only happens with rmmod --wait). */
+<<<<<<< HEAD
 extern void __module_get(struct module *module);
 
 /* This is the Right Way to get a module: if it fails, it's being removed,
  * so pretend it's not there. */
 extern bool try_module_get(struct module *module);
+=======
+static inline void __module_get(struct module *module)
+{
+	if (module) {
+		preempt_disable();
+		__this_cpu_inc(module->refptr->incs);
+		trace_module_get(module, _THIS_IP_);
+		preempt_enable();
+	}
+}
+
+static inline int try_module_get(struct module *module)
+{
+	int ret = 1;
+
+	if (module) {
+		preempt_disable();
+
+		if (likely(module_is_live(module))) {
+			__this_cpu_inc(module->refptr->incs);
+			trace_module_get(module, _THIS_IP_);
+		} else
+			ret = 0;
+
+		preempt_enable();
+	}
+	return ret;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void module_put(struct module *module);
 
@@ -501,7 +655,19 @@ int unregister_module_notifier(struct notifier_block * nb);
 
 extern void print_modules(void);
 
+<<<<<<< HEAD
 #else /* !CONFIG_MODULES... */
+=======
+extern void module_update_tracepoints(void);
+extern int module_get_iter_tracepoints(struct tracepoint_iter *iter);
+
+#else /* !CONFIG_MODULES... */
+#define EXPORT_SYMBOL(sym)
+#define EXPORT_SYMBOL_GPL(sym)
+#define EXPORT_SYMBOL_GPL_FUTURE(sym)
+#define EXPORT_UNUSED_SYMBOL(sym)
+#define EXPORT_UNUSED_SYMBOL_GPL(sym)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Given an address, look for it in the exception tables. */
 static inline const struct exception_table_entry *
@@ -611,6 +777,18 @@ static inline int unregister_module_notifier(struct notifier_block * nb)
 static inline void print_modules(void)
 {
 }
+<<<<<<< HEAD
+=======
+
+static inline void module_update_tracepoints(void)
+{
+}
+
+static inline int module_get_iter_tracepoints(struct tracepoint_iter *iter)
+{
+	return 0;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_MODULES */
 
 #ifdef CONFIG_SYSFS

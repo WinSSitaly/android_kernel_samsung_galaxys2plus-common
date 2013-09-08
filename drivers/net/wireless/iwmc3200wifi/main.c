@@ -42,7 +42,10 @@
 #include <linux/ieee80211.h>
 #include <linux/wireless.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/moduleparam.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "iwm.h"
 #include "debug.h"
@@ -91,11 +94,19 @@ static struct iwm_conf def_iwm_conf = {
 	.mac_addr		= {0x00, 0x02, 0xb3, 0x01, 0x02, 0x03},
 };
 
+<<<<<<< HEAD
 static bool modparam_reset;
 module_param_named(reset, modparam_reset, bool, 0644);
 MODULE_PARM_DESC(reset, "reset on firmware errors (default 0 [not reset])");
 
 static bool modparam_wimax_enable = true;
+=======
+static int modparam_reset;
+module_param_named(reset, modparam_reset, bool, 0644);
+MODULE_PARM_DESC(reset, "reset on firmware errors (default 0 [not reset])");
+
+static int modparam_wimax_enable = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(wimax_enable, modparam_wimax_enable, bool, 0644);
 MODULE_PARM_DESC(wimax_enable, "Enable wimax core (default 1 [wimax enabled])");
 
@@ -130,7 +141,11 @@ static void iwm_disconnect_work(struct work_struct *work)
 		iwm_invalidate_mlme_profile(iwm);
 
 	clear_bit(IWM_STATUS_ASSOCIATED, &iwm->status);
+<<<<<<< HEAD
 	iwm->umac_profile_active = false;
+=======
+	iwm->umac_profile_active = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memset(iwm->bssid, 0, ETH_ALEN);
 	iwm->channel = 0;
 

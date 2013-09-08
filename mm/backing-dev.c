@@ -45,6 +45,7 @@ static struct timer_list sync_supers_timer;
 static int bdi_sync_supers(void *);
 static void sync_supers_timer_fn(unsigned long);
 
+<<<<<<< HEAD
 void bdi_lock_two(struct bdi_writeback *wb1, struct bdi_writeback *wb2)
 {
 	if (wb1 < wb2) {
@@ -56,6 +57,8 @@ void bdi_lock_two(struct bdi_writeback *wb1, struct bdi_writeback *wb2)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_DEBUG_FS
 #include <linux/debugfs.h>
 #include <linux/seq_file.h>
@@ -78,20 +81,29 @@ static int bdi_debug_stats_show(struct seq_file *m, void *v)
 	struct inode *inode;
 
 	nr_dirty = nr_io = nr_more_io = 0;
+<<<<<<< HEAD
 	spin_lock(&wb->list_lock);
+=======
+	spin_lock(&inode_wb_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry(inode, &wb->b_dirty, i_wb_list)
 		nr_dirty++;
 	list_for_each_entry(inode, &wb->b_io, i_wb_list)
 		nr_io++;
 	list_for_each_entry(inode, &wb->b_more_io, i_wb_list)
 		nr_more_io++;
+<<<<<<< HEAD
 	spin_unlock(&wb->list_lock);
+=======
+	spin_unlock(&inode_wb_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	global_dirty_limits(&background_thresh, &dirty_thresh);
 	bdi_thresh = bdi_dirty_limit(bdi, dirty_thresh);
 
 #define K(x) ((x) << (PAGE_SHIFT - 10))
 	seq_printf(m,
+<<<<<<< HEAD
 		   "BdiWriteback:       %10lu kB\n"
 		   "BdiReclaimable:     %10lu kB\n"
 		   "BdiDirtyThresh:     %10lu kB\n"
@@ -116,6 +128,22 @@ static int bdi_debug_stats_show(struct seq_file *m, void *v)
 		   nr_dirty,
 		   nr_io,
 		   nr_more_io,
+=======
+		   "BdiWriteback:     %8lu kB\n"
+		   "BdiReclaimable:   %8lu kB\n"
+		   "BdiDirtyThresh:   %8lu kB\n"
+		   "DirtyThresh:      %8lu kB\n"
+		   "BackgroundThresh: %8lu kB\n"
+		   "b_dirty:          %8lu\n"
+		   "b_io:             %8lu\n"
+		   "b_more_io:        %8lu\n"
+		   "bdi_list:         %8u\n"
+		   "state:            %8lx\n",
+		   (unsigned long) K(bdi_stat(bdi, BDI_WRITEBACK)),
+		   (unsigned long) K(bdi_stat(bdi, BDI_RECLAIMABLE)),
+		   K(bdi_thresh), K(dirty_thresh),
+		   K(background_thresh), nr_dirty, nr_io, nr_more_io,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   !list_empty(&bdi->bdi_list), bdi->state);
 #undef K
 
@@ -270,6 +298,21 @@ int bdi_has_dirty_io(struct backing_dev_info *bdi)
 	return wb_has_dirty_io(&bdi->wb);
 }
 
+<<<<<<< HEAD
+=======
+static void bdi_flush_io(struct backing_dev_info *bdi)
+{
+	struct writeback_control wbc = {
+		.sync_mode		= WB_SYNC_NONE,
+		.older_than_this	= NULL,
+		.range_cyclic		= 1,
+		.nr_to_write		= 1024,
+	};
+
+	writeback_inodes_wb(&bdi->wb, &wbc);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * kupdated() used to do this. We cannot do it from the bdi_forker_thread()
  * or we risk deadlocking on ->s_umount. The longer term solution would be
@@ -318,7 +361,11 @@ static void wakeup_timer_fn(unsigned long data)
 	if (bdi->wb.task) {
 		trace_writeback_wake_thread(bdi);
 		wake_up_process(bdi->wb.task);
+<<<<<<< HEAD
 	} else if (bdi->dev) {
+=======
+	} else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * When bdi tasks are inactive for long time, they are killed.
 		 * In this case we have to wake-up the forker thread which
@@ -361,6 +408,7 @@ static unsigned long bdi_longest_inactive(void)
 	return max(5UL * 60 * HZ, interval);
 }
 
+<<<<<<< HEAD
 /*
  * Clear pending bit and wakeup anybody waiting for flusher thread creation or
  * shutdown
@@ -372,6 +420,8 @@ static void bdi_clear_pending(struct backing_dev_info *bdi)
 	wake_up_bit(&bdi->state, BDI_pending);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int bdi_forker_thread(void *ptr)
 {
 	struct bdi_writeback *me = ptr;
@@ -403,12 +453,15 @@ static int bdi_forker_thread(void *ptr)
 		}
 
 		spin_lock_bh(&bdi_lock);
+<<<<<<< HEAD
 		/*
 		 * In the following loop we are going to check whether we have
 		 * some work to do without any synchronization with tasks
 		 * waking us up to do work for them. Set the task state here
 		 * so that we don't miss wakeups after verifying conditions.
 		 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_current_state(TASK_INTERRUPTIBLE);
 
 		list_for_each_entry(bdi, &bdi_list, bdi_list) {
@@ -472,11 +525,17 @@ static int bdi_forker_thread(void *ptr)
 			if (IS_ERR(task)) {
 				/*
 				 * If thread creation fails, force writeout of
+<<<<<<< HEAD
 				 * the bdi from the thread. Hopefully 1024 is
 				 * large enough for efficient IO.
 				 */
 				writeback_inodes_wb(&bdi->wb, 1024,
 						    WB_REASON_FORKER_THREAD);
+=======
+				 * the bdi from the thread.
+				 */
+				bdi_flush_io(bdi);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else {
 				/*
 				 * The spinlock makes sure we do not lose
@@ -489,13 +548,19 @@ static int bdi_forker_thread(void *ptr)
 				spin_unlock_bh(&bdi->wb_lock);
 				wake_up_process(task);
 			}
+<<<<<<< HEAD
 			bdi_clear_pending(bdi);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case KILL_THREAD:
 			__set_current_state(TASK_RUNNING);
 			kthread_stop(task);
+<<<<<<< HEAD
 			bdi_clear_pending(bdi);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case NO_ACTION:
@@ -511,8 +576,21 @@ static int bdi_forker_thread(void *ptr)
 			else
 				schedule_timeout(msecs_to_jiffies(dirty_writeback_interval * 10));
 			try_to_freeze();
+<<<<<<< HEAD
 			break;
 		}
+=======
+			/* Back to the main loop */
+			continue;
+		}
+
+		/*
+		 * Clear pending bit and wakeup anybody waiting to tear us down.
+		 */
+		clear_bit(BDI_pending, &bdi->state);
+		smp_mb__after_clear_bit();
+		wake_up_bit(&bdi->state, BDI_pending);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -527,7 +605,11 @@ static void bdi_remove_from_list(struct backing_dev_info *bdi)
 	list_del_rcu(&bdi->bdi_list);
 	spin_unlock_bh(&bdi_lock);
 
+<<<<<<< HEAD
 	synchronize_rcu_expedited();
+=======
+	synchronize_rcu();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int bdi_register(struct backing_dev_info *bdi, struct device *parent,
@@ -584,8 +666,11 @@ EXPORT_SYMBOL(bdi_register_dev);
  */
 static void bdi_wb_shutdown(struct backing_dev_info *bdi)
 {
+<<<<<<< HEAD
 	struct task_struct *task;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!bdi_cap_writeback_dirty(bdi))
 		return;
 
@@ -602,6 +687,7 @@ static void bdi_wb_shutdown(struct backing_dev_info *bdi)
 
 	/*
 	 * Finally, kill the kernel thread. We don't need to be RCU
+<<<<<<< HEAD
 	 * safe anymore, since the bdi is gone from visibility.
 	 */
 	spin_lock_bh(&bdi->wb_lock);
@@ -611,6 +697,16 @@ static void bdi_wb_shutdown(struct backing_dev_info *bdi)
 
 	if (task)
 		kthread_stop(task);
+=======
+	 * safe anymore, since the bdi is gone from visibility. Force
+	 * unfreeze of the thread before calling kthread_stop(), otherwise
+	 * it would never exet if it is currently stuck in the refrigerator.
+	 */
+	if (bdi->wb.task) {
+		thaw_process(bdi->wb.task);
+		kthread_stop(bdi->wb.task);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -630,9 +726,13 @@ static void bdi_prune_sb(struct backing_dev_info *bdi)
 
 void bdi_unregister(struct backing_dev_info *bdi)
 {
+<<<<<<< HEAD
 	struct device *dev = bdi->dev;
 
 	if (dev) {
+=======
+	if (bdi->dev) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bdi_set_min_ratio(bdi, 0);
 		trace_writeback_bdi_unregister(bdi);
 		bdi_prune_sb(bdi);
@@ -641,12 +741,17 @@ void bdi_unregister(struct backing_dev_info *bdi)
 		if (!bdi_cap_flush_forker(bdi))
 			bdi_wb_shutdown(bdi);
 		bdi_debug_unregister(bdi);
+<<<<<<< HEAD
 
 		spin_lock_bh(&bdi->wb_lock);
 		bdi->dev = NULL;
 		spin_unlock_bh(&bdi->wb_lock);
 
 		device_unregister(dev);
+=======
+		device_unregister(bdi->dev);
+		bdi->dev = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 EXPORT_SYMBOL(bdi_unregister);
@@ -660,6 +765,7 @@ static void bdi_wb_init(struct bdi_writeback *wb, struct backing_dev_info *bdi)
 	INIT_LIST_HEAD(&wb->b_dirty);
 	INIT_LIST_HEAD(&wb->b_io);
 	INIT_LIST_HEAD(&wb->b_more_io);
+<<<<<<< HEAD
 	spin_lock_init(&wb->list_lock);
 	setup_timer(&wb->wakeup_timer, wakeup_timer_fn, (unsigned long)bdi);
 }
@@ -669,6 +775,11 @@ static void bdi_wb_init(struct bdi_writeback *wb, struct backing_dev_info *bdi)
  */
 #define INIT_BW		(100 << (20 - PAGE_SHIFT))
 
+=======
+	setup_timer(&wb->wakeup_timer, wakeup_timer_fn, (unsigned long)bdi);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int bdi_init(struct backing_dev_info *bdi)
 {
 	int i, err;
@@ -691,6 +802,7 @@ int bdi_init(struct backing_dev_info *bdi)
 	}
 
 	bdi->dirty_exceeded = 0;
+<<<<<<< HEAD
 
 	bdi->bw_time_stamp = jiffies;
 	bdi->written_stamp = 0;
@@ -700,6 +812,8 @@ int bdi_init(struct backing_dev_info *bdi)
 	bdi->write_bandwidth = INIT_BW;
 	bdi->avg_write_bandwidth = INIT_BW;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = prop_local_init_percpu(&bdi->completions);
 
 	if (err) {
@@ -723,12 +837,20 @@ void bdi_destroy(struct backing_dev_info *bdi)
 	if (bdi_has_dirty_io(bdi)) {
 		struct bdi_writeback *dst = &default_backing_dev_info.wb;
 
+<<<<<<< HEAD
 		bdi_lock_two(&bdi->wb, dst);
 		list_splice(&bdi->wb.b_dirty, &dst->b_dirty);
 		list_splice(&bdi->wb.b_io, &dst->b_io);
 		list_splice(&bdi->wb.b_more_io, &dst->b_more_io);
 		spin_unlock(&bdi->wb.list_lock);
 		spin_unlock(&dst->list_lock);
+=======
+		spin_lock(&inode_wb_list_lock);
+		list_splice(&bdi->wb.b_dirty, &dst->b_dirty);
+		list_splice(&bdi->wb.b_io, &dst->b_io);
+		list_splice(&bdi->wb.b_more_io, &dst->b_more_io);
+		spin_unlock(&inode_wb_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	bdi_unregister(bdi);

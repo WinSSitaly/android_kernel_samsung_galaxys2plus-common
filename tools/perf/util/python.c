@@ -187,6 +187,7 @@ static PyTypeObject pyrf_throttle_event__type = {
 	.tp_repr	= (reprfunc)pyrf_throttle_event__repr,
 };
 
+<<<<<<< HEAD
 static char pyrf_lost_event__doc[] = PyDoc_STR("perf lost event object.");
 
 static PyMemberDef pyrf_lost_event__members[] = {
@@ -284,22 +285,30 @@ static PyTypeObject pyrf_sample_event__type = {
 	.tp_repr	= (reprfunc)pyrf_sample_event__repr,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int pyrf_event__setup_types(void)
 {
 	int err;
 	pyrf_mmap_event__type.tp_new =
 	pyrf_task_event__type.tp_new =
 	pyrf_comm_event__type.tp_new =
+<<<<<<< HEAD
 	pyrf_lost_event__type.tp_new =
 	pyrf_read_event__type.tp_new =
 	pyrf_sample_event__type.tp_new =
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pyrf_throttle_event__type.tp_new = PyType_GenericNew;
 	err = PyType_Ready(&pyrf_mmap_event__type);
 	if (err < 0)
 		goto out;
+<<<<<<< HEAD
 	err = PyType_Ready(&pyrf_lost_event__type);
 	if (err < 0)
 		goto out;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = PyType_Ready(&pyrf_task_event__type);
 	if (err < 0)
 		goto out;
@@ -309,26 +318,38 @@ static int pyrf_event__setup_types(void)
 	err = PyType_Ready(&pyrf_throttle_event__type);
 	if (err < 0)
 		goto out;
+<<<<<<< HEAD
 	err = PyType_Ready(&pyrf_read_event__type);
 	if (err < 0)
 		goto out;
 	err = PyType_Ready(&pyrf_sample_event__type);
 	if (err < 0)
 		goto out;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return err;
 }
 
 static PyTypeObject *pyrf_event__type[] = {
 	[PERF_RECORD_MMAP]	 = &pyrf_mmap_event__type,
+<<<<<<< HEAD
 	[PERF_RECORD_LOST]	 = &pyrf_lost_event__type,
+=======
+	[PERF_RECORD_LOST]	 = &pyrf_mmap_event__type,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[PERF_RECORD_COMM]	 = &pyrf_comm_event__type,
 	[PERF_RECORD_EXIT]	 = &pyrf_task_event__type,
 	[PERF_RECORD_THROTTLE]	 = &pyrf_throttle_event__type,
 	[PERF_RECORD_UNTHROTTLE] = &pyrf_throttle_event__type,
 	[PERF_RECORD_FORK]	 = &pyrf_task_event__type,
+<<<<<<< HEAD
 	[PERF_RECORD_READ]	 = &pyrf_read_event__type,
 	[PERF_RECORD_SAMPLE]	 = &pyrf_sample_event__type,
+=======
+	[PERF_RECORD_READ]	 = &pyrf_mmap_event__type,
+	[PERF_RECORD_SAMPLE]	 = &pyrf_mmap_event__type,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static PyObject *pyrf_event__new(union perf_event *event)
@@ -356,7 +377,11 @@ struct pyrf_cpu_map {
 static int pyrf_cpu_map__init(struct pyrf_cpu_map *pcpus,
 			      PyObject *args, PyObject *kwargs)
 {
+<<<<<<< HEAD
 	static char *kwlist[] = { "cpustr", NULL };
+=======
+	static char *kwlist[] = { "cpustr", NULL, NULL, };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *cpustr = NULL;
 
 	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|s",
@@ -425,6 +450,7 @@ struct pyrf_thread_map {
 static int pyrf_thread_map__init(struct pyrf_thread_map *pthreads,
 				 PyObject *args, PyObject *kwargs)
 {
+<<<<<<< HEAD
 	static char *kwlist[] = { "pid", "tid", "uid", NULL };
 	int pid = -1, tid = -1, uid = UINT_MAX;
 
@@ -433,6 +459,16 @@ static int pyrf_thread_map__init(struct pyrf_thread_map *pthreads,
 		return -1;
 
 	pthreads->threads = thread_map__new(pid, tid, uid);
+=======
+	static char *kwlist[] = { "pid", "tid", NULL, NULL, };
+	int pid = -1, tid = -1;
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|ii",
+					 kwlist, &pid, &tid))
+		return -1;
+
+	pthreads->threads = thread_map__new(pid, tid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pthreads->threads == NULL)
 		return -1;
 	return 0;
@@ -527,9 +563,13 @@ static int pyrf_evsel__init(struct pyrf_evsel *pevsel,
 		"wakeup_events",
 		"bp_type",
 		"bp_addr",
+<<<<<<< HEAD
 		"bp_len",
 		 NULL
 	};
+=======
+		"bp_len", NULL, NULL, };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64 sample_period = 0;
 	u32 disabled = 0,
 	    inherit = 0,
@@ -610,7 +650,11 @@ static PyObject *pyrf_evsel__open(struct pyrf_evsel *pevsel,
 	struct thread_map *threads = NULL;
 	PyObject *pcpus = NULL, *pthreads = NULL;
 	int group = 0, inherit = 0;
+<<<<<<< HEAD
 	static char *kwlist[] = { "cpus", "threads", "group", "inherit", NULL };
+=======
+	static char *kwlist[] = {"cpus", "threads", "group", "inherit", NULL, NULL};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|OOii", kwlist,
 					 &pcpus, &pthreads, &group, &inherit))
@@ -623,11 +667,15 @@ static PyObject *pyrf_evsel__open(struct pyrf_evsel *pevsel,
 		cpus = ((struct pyrf_cpu_map *)pcpus)->cpus;
 
 	evsel->attr.inherit = inherit;
+<<<<<<< HEAD
 	/*
 	 * This will group just the fds for this single evsel, to group
 	 * multiple events, use evlist.open().
 	 */
 	if (perf_evsel__open(evsel, cpus, threads, group, NULL) < 0) {
+=======
+	if (perf_evsel__open(evsel, cpus, threads, group) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		PyErr_SetFromErrno(PyExc_OSError);
 		return NULL;
 	}
@@ -697,7 +745,12 @@ static PyObject *pyrf_evlist__mmap(struct pyrf_evlist *pevlist,
 				   PyObject *args, PyObject *kwargs)
 {
 	struct perf_evlist *evlist = &pevlist->evlist;
+<<<<<<< HEAD
 	static char *kwlist[] = { "pages", "overwrite", NULL };
+=======
+	static char *kwlist[] = {"pages", "overwrite",
+				  NULL, NULL};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int pages = 128, overwrite = false;
 
 	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|ii", kwlist,
@@ -717,7 +770,11 @@ static PyObject *pyrf_evlist__poll(struct pyrf_evlist *pevlist,
 				   PyObject *args, PyObject *kwargs)
 {
 	struct perf_evlist *evlist = &pevlist->evlist;
+<<<<<<< HEAD
 	static char *kwlist[] = { "timeout", NULL };
+=======
+	static char *kwlist[] = {"timeout", NULL, NULL};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int timeout = -1, n;
 
 	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|i", kwlist, &timeout))
@@ -788,7 +845,11 @@ static PyObject *pyrf_evlist__read_on_cpu(struct pyrf_evlist *pevlist,
 	struct perf_evlist *evlist = &pevlist->evlist;
 	union perf_event *event;
 	int sample_id_all = 1, cpu;
+<<<<<<< HEAD
 	static char *kwlist[] = { "cpu", "sample_id_all", NULL };
+=======
+	static char *kwlist[] = {"cpu", "sample_id_all", NULL, NULL};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err;
 
 	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "i|i", kwlist,
@@ -807,7 +868,11 @@ static PyObject *pyrf_evlist__read_on_cpu(struct pyrf_evlist *pevlist,
 		first = list_entry(evlist->entries.next, struct perf_evsel, node);
 		err = perf_event__parse_sample(event, first->attr.sample_type,
 					       perf_evsel__sample_size(first),
+<<<<<<< HEAD
 					       sample_id_all, &pevent->sample, false);
+=======
+					       sample_id_all, &pevent->sample);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err)
 			return PyErr_Format(PyExc_OSError,
 					    "perf: can't parse sample, err=%d", err);
@@ -818,6 +883,7 @@ static PyObject *pyrf_evlist__read_on_cpu(struct pyrf_evlist *pevlist,
 	return Py_None;
 }
 
+<<<<<<< HEAD
 static PyObject *pyrf_evlist__open(struct pyrf_evlist *pevlist,
 				   PyObject *args, PyObject *kwargs)
 {
@@ -837,6 +903,8 @@ static PyObject *pyrf_evlist__open(struct pyrf_evlist *pevlist,
 	return Py_None;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static PyMethodDef pyrf_evlist__methods[] = {
 	{
 		.ml_name  = "mmap",
@@ -845,12 +913,15 @@ static PyMethodDef pyrf_evlist__methods[] = {
 		.ml_doc	  = PyDoc_STR("mmap the file descriptor table.")
 	},
 	{
+<<<<<<< HEAD
 		.ml_name  = "open",
 		.ml_meth  = (PyCFunction)pyrf_evlist__open,
 		.ml_flags = METH_VARARGS | METH_KEYWORDS,
 		.ml_doc	  = PyDoc_STR("open the file descriptors.")
 	},
 	{
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.ml_name  = "poll",
 		.ml_meth  = (PyCFunction)pyrf_evlist__poll,
 		.ml_flags = METH_VARARGS | METH_KEYWORDS,

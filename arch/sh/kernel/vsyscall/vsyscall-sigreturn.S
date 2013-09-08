@@ -34,6 +34,7 @@ __kernel_rt_sigreturn:
 1:	.short	__NR_rt_sigreturn
 .LEND_rt_sigreturn:
 	.size __kernel_rt_sigreturn,.-.LSTART_rt_sigreturn
+<<<<<<< HEAD
 	.previous
 
 	.section .eh_frame,"a",@progbits
@@ -71,4 +72,8 @@ __kernel_rt_sigreturn:
 	.align 2
 .LFDE1_end:
 
+=======
+
+	.section .eh_frame,"a",@progbits
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.previous

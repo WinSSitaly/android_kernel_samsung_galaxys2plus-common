@@ -15,14 +15,20 @@
  */
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/cfg80211.h>
 #include <net/mac80211.h>
 #include "regd.h"
 #include "regd_common.h"
 
+<<<<<<< HEAD
 static int __ath_regd_init(struct ath_regulatory *reg);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This is a set of common rules used by our world regulatory domains.
  * We have 12 world regulatory domains. To save space we consolidate
@@ -256,8 +262,11 @@ ath_reg_apply_active_scan_flags(struct wiphy *wiphy,
 	int r;
 
 	sband = wiphy->bands[IEEE80211_BAND_2GHZ];
+<<<<<<< HEAD
 	if (!sband)
 		return;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If no country IE has been received always enable active scan
@@ -349,6 +358,7 @@ static void ath_reg_apply_world_flags(struct wiphy *wiphy,
 	}
 }
 
+<<<<<<< HEAD
 static u16 ath_regd_find_country_by_name(char *alpha2)
 {
 	unsigned int i;
@@ -361,14 +371,19 @@ static u16 ath_regd_find_country_by_name(char *alpha2)
 	return -1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int ath_reg_notifier_apply(struct wiphy *wiphy,
 			   struct regulatory_request *request,
 			   struct ath_regulatory *reg)
 {
+<<<<<<< HEAD
 	struct ath_common *common = container_of(reg, struct ath_common,
 						 regulatory);
 	u16 country_code;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* We always apply this */
 	ath_reg_apply_radar_flags(wiphy);
 
@@ -381,6 +396,7 @@ int ath_reg_notifier_apply(struct wiphy *wiphy,
 		return 0;
 
 	switch (request->initiator) {
+<<<<<<< HEAD
 	case NL80211_REGDOM_SET_BY_CORE:
 		/*
 		 * If common->reg_world_copy is world roaming it means we *were*
@@ -412,6 +428,16 @@ int ath_reg_notifier_apply(struct wiphy *wiphy,
 
 		ath_reg_apply_world_flags(wiphy, request->initiator, reg);
 
+=======
+	case NL80211_REGDOM_SET_BY_DRIVER:
+	case NL80211_REGDOM_SET_BY_CORE:
+	case NL80211_REGDOM_SET_BY_USER:
+		break;
+	case NL80211_REGDOM_SET_BY_COUNTRY_IE:
+		if (ath_is_world_regd(reg))
+			ath_reg_apply_world_flags(wiphy, request->initiator,
+						  reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -549,7 +575,15 @@ static void ath_regd_sanitize(struct ath_regulatory *reg)
 	reg->current_rd = 0x64;
 }
 
+<<<<<<< HEAD
 static int __ath_regd_init(struct ath_regulatory *reg)
+=======
+int
+ath_regd_init(struct ath_regulatory *reg,
+	      struct wiphy *wiphy,
+	      int (*reg_notifier)(struct wiphy *wiphy,
+				  struct regulatory_request *request))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct country_code_to_enum_rd *country = NULL;
 	u16 regdmn;
@@ -620,6 +654,7 @@ static int __ath_regd_init(struct ath_regulatory *reg)
 	printk(KERN_DEBUG "ath: Regpair used: 0x%0x\n",
 		reg->regpair->regDmnEnum);
 
+<<<<<<< HEAD
 	return 0;
 }
 
@@ -643,6 +678,9 @@ ath_regd_init(struct ath_regulatory *reg,
 
 	ath_regd_init_wiphy(reg, wiphy, reg_notifier);
 
+=======
+	ath_regd_init_wiphy(reg, wiphy, reg_notifier);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL(ath_regd_init);

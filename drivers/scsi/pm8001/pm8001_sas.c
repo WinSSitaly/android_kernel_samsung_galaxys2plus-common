@@ -166,7 +166,10 @@ int pm8001_phy_control(struct asd_sas_phy *sas_phy, enum phy_func func,
 	struct pm8001_hba_info *pm8001_ha = NULL;
 	struct sas_phy_linkrates *rates;
 	DECLARE_COMPLETION_ONSTACK(completion);
+<<<<<<< HEAD
 	unsigned long flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pm8001_ha = sas_phy->ha->lldd_ha;
 	pm8001_ha->phy[phy_id].enable_completion = &completion;
 	switch (func) {
@@ -210,6 +213,7 @@ int pm8001_phy_control(struct asd_sas_phy *sas_phy, enum phy_func func,
 	case PHY_FUNC_DISABLE:
 		PM8001_CHIP_DISP->phy_stop_req(pm8001_ha, phy_id);
 		break;
+<<<<<<< HEAD
 	case PHY_FUNC_GET_EVENTS:
 		spin_lock_irqsave(&pm8001_ha->lock, flags);
 		if (-1 == pm8001_bar4_shift(pm8001_ha,
@@ -231,6 +235,8 @@ int pm8001_phy_control(struct asd_sas_phy *sas_phy, enum phy_func func,
 		pm8001_bar4_shift(pm8001_ha, 0);
 		spin_unlock_irqrestore(&pm8001_ha->lock, flags);
 		return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		rc = -EOPNOTSUPP;
 	}
@@ -238,6 +244,23 @@ int pm8001_phy_control(struct asd_sas_phy *sas_phy, enum phy_func func,
 	return rc;
 }
 
+<<<<<<< HEAD
+=======
+int pm8001_slave_alloc(struct scsi_device *scsi_dev)
+{
+	struct domain_device *dev = sdev_to_domain_dev(scsi_dev);
+	if (dev_is_sata(dev)) {
+		/* We don't need to rescan targets
+		* if REPORT_LUNS request is failed
+		*/
+		if (scsi_dev->lun > 0)
+			return -ENXIO;
+		scsi_dev->tagged_supported = 1;
+	}
+	return sas_slave_alloc(scsi_dev);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
   * pm8001_scan_start - we should enable all HBA phys by sending the phy_start
   * command to HBA.
@@ -256,14 +279,21 @@ void pm8001_scan_start(struct Scsi_Host *shost)
 
 int pm8001_scan_finished(struct Scsi_Host *shost, unsigned long time)
 {
+<<<<<<< HEAD
 	struct sas_ha_struct *ha = SHOST_TO_SAS_HA(shost);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* give the phy enabling interrupt event time to come in (1s
 	* is empirically about all it takes) */
 	if (time < HZ)
 		return 0;
 	/* Wait for discovery to finish */
+<<<<<<< HEAD
 	sas_drain_work(ha);
+=======
+	scsi_flush_work(shost);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
@@ -324,7 +354,26 @@ static int pm8001_task_prep_ssp(struct pm8001_hba_info *pm8001_ha,
 {
 	return PM8001_CHIP_DISP->ssp_io_req(pm8001_ha, ccb);
 }
+<<<<<<< HEAD
 
+=======
+int pm8001_slave_configure(struct scsi_device *sdev)
+{
+	struct domain_device *dev = sdev_to_domain_dev(sdev);
+	int ret = sas_slave_configure(sdev);
+	if (ret)
+		return ret;
+	if (dev_is_sata(dev)) {
+	#ifdef PM8001_DISABLE_NCQ
+		struct ata_port *ap = dev->sata_dev.ap;
+		struct ata_device *adev = ap->link.device;
+		adev->flags |= ATA_DFLAG_NCQ_OFF;
+		scsi_adjust_queue_depth(sdev, MSG_SIMPLE_TAG, 1);
+	#endif
+	}
+	return 0;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  /* Find the local port id that's attached to this device */
 static int sas_find_local_port_id(struct domain_device *dev)
 {
@@ -364,7 +413,11 @@ static int pm8001_task_exec(struct sas_task *task, const int num,
 	struct pm8001_ccb_info *ccb;
 	u32 tag = 0xdeadbeef, rc, n_elem = 0;
 	u32 n = num;
+<<<<<<< HEAD
 	unsigned long flags = 0;
+=======
+	unsigned long flags = 0, flags_libsas = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!dev->port) {
 		struct task_status_struct *tsm = &t->task_status;
@@ -380,15 +433,41 @@ static int pm8001_task_exec(struct sas_task *task, const int num,
 	do {
 		dev = t->dev;
 		pm8001_dev = dev->lldd_dev;
+<<<<<<< HEAD
 		port = &pm8001_ha->port[sas_find_local_port_id(dev)];
 		if (DEV_IS_GONE(pm8001_dev) || !port->port_attached) {
+=======
+		if (DEV_IS_GONE(pm8001_dev)) {
+			if (pm8001_dev) {
+				PM8001_IO_DBG(pm8001_ha,
+					pm8001_printk("device %d not ready.\n",
+					pm8001_dev->device_id));
+			} else {
+				PM8001_IO_DBG(pm8001_ha,
+					pm8001_printk("device %016llx not "
+					"ready.\n", SAS_ADDR(dev->sas_addr)));
+			}
+			rc = SAS_PHY_DOWN;
+			goto out_done;
+		}
+		port = &pm8001_ha->port[sas_find_local_port_id(dev)];
+		if (!port->port_attached) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (sas_protocol_ata(t->task_proto)) {
 				struct task_status_struct *ts = &t->task_status;
 				ts->resp = SAS_TASK_UNDELIVERED;
 				ts->stat = SAS_PHY_DOWN;
 
 				spin_unlock_irqrestore(&pm8001_ha->lock, flags);
+<<<<<<< HEAD
 				t->task_done(t);
+=======
+				spin_unlock_irqrestore(dev->sata_dev.ap->lock,
+						flags_libsas);
+				t->task_done(t);
+				spin_lock_irqsave(dev->sata_dev.ap->lock,
+					flags_libsas);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				spin_lock_irqsave(&pm8001_ha->lock, flags);
 				if (n > 1)
 					t = list_entry(t->list.next,
@@ -536,7 +615,10 @@ void pm8001_ccb_task_free(struct pm8001_hba_info *pm8001_ha,
 	task->lldd_task = NULL;
 	ccb->task = NULL;
 	ccb->ccb_tag = 0xFFFFFFFF;
+<<<<<<< HEAD
 	ccb->open_retry = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pm8001_ccb_free(pm8001_ha, ccb_idx);
 }
 
@@ -630,13 +712,21 @@ static int pm8001_dev_found_notify(struct domain_device *dev)
 				flag = 1; /* directly sata*/
 		}
 	} /*register this device to HBA*/
+<<<<<<< HEAD
 	PM8001_DISC_DBG(pm8001_ha, pm8001_printk("Found device\n"));
+=======
+	PM8001_DISC_DBG(pm8001_ha, pm8001_printk("Found device \n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	PM8001_CHIP_DISP->reg_dev_req(pm8001_ha, pm8001_device, flag);
 	spin_unlock_irqrestore(&pm8001_ha->lock, flags);
 	wait_for_completion(&completion);
 	if (dev->dev_type == SAS_END_DEV)
 		msleep(50);
+<<<<<<< HEAD
 	pm8001_ha->flags = PM8001F_RUN_TIME;
+=======
+	pm8001_ha->flags |= PM8001F_RUN_TIME ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 found_out:
 	spin_unlock_irqrestore(&pm8001_ha->lock, flags);
@@ -648,6 +738,33 @@ int pm8001_dev_found(struct domain_device *dev)
 	return pm8001_dev_found_notify(dev);
 }
 
+<<<<<<< HEAD
+=======
+/**
+  * pm8001_alloc_task - allocate a task structure for TMF
+  */
+static struct sas_task *pm8001_alloc_task(void)
+{
+	struct sas_task *task = kzalloc(sizeof(*task), GFP_KERNEL);
+	if (task) {
+		INIT_LIST_HEAD(&task->list);
+		spin_lock_init(&task->task_state_lock);
+		task->task_state_flags = SAS_TASK_STATE_PENDING;
+		init_timer(&task->timer);
+		init_completion(&task->completion);
+	}
+	return task;
+}
+
+static void pm8001_free_task(struct sas_task *task)
+{
+	if (task) {
+		BUG_ON(!list_empty(&task->list));
+		kfree(task);
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void pm8001_task_done(struct sas_task *task)
 {
 	if (!del_timer(&task->timer))
@@ -683,7 +800,11 @@ static int pm8001_exec_internal_tmf_task(struct domain_device *dev,
 	struct pm8001_hba_info *pm8001_ha = pm8001_find_ha_by_dev(dev);
 
 	for (retry = 0; retry < 3; retry++) {
+<<<<<<< HEAD
 		task = sas_alloc_task(GFP_KERNEL);
+=======
+		task = pm8001_alloc_task();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!task)
 			return -ENOMEM;
 
@@ -744,13 +865,22 @@ static int pm8001_exec_internal_tmf_task(struct domain_device *dev,
 				SAS_ADDR(dev->sas_addr),
 				task->task_status.resp,
 				task->task_status.stat));
+<<<<<<< HEAD
 			sas_free_task(task);
+=======
+			pm8001_free_task(task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			task = NULL;
 		}
 	}
 ex_err:
 	BUG_ON(retry == 3 && task != NULL);
+<<<<<<< HEAD
 	sas_free_task(task);
+=======
+	if (task != NULL)
+		pm8001_free_task(task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return res;
 }
 
@@ -765,7 +895,11 @@ pm8001_exec_internal_task_abort(struct pm8001_hba_info *pm8001_ha,
 	struct sas_task *task = NULL;
 
 	for (retry = 0; retry < 3; retry++) {
+<<<<<<< HEAD
 		task = sas_alloc_task(GFP_KERNEL);
+=======
+		task = pm8001_alloc_task();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!task)
 			return -ENOMEM;
 
@@ -818,13 +952,22 @@ pm8001_exec_internal_task_abort(struct pm8001_hba_info *pm8001_ha,
 				SAS_ADDR(dev->sas_addr),
 				task->task_status.resp,
 				task->task_status.stat));
+<<<<<<< HEAD
 			sas_free_task(task);
+=======
+			pm8001_free_task(task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			task = NULL;
 		}
 	}
 ex_err:
 	BUG_ON(retry == 3 && task != NULL);
+<<<<<<< HEAD
 	sas_free_task(task);
+=======
+	if (task != NULL)
+		pm8001_free_task(task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return res;
 }
 
@@ -881,6 +1024,7 @@ static int pm8001_issue_ssp_tmf(struct domain_device *dev,
 		tmf);
 }
 
+<<<<<<< HEAD
 /* retry commands by ha, by task and/or by device */
 void pm8001_open_reject_retry(
 	struct pm8001_hba_info *pm8001_ha,
@@ -952,6 +1096,8 @@ void pm8001_open_reject_retry(
 	spin_unlock_irqrestore(&pm8001_ha->lock, flags);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
   * Standard mandates link reset for ATA  (type 0) and hard reset for
   * SSP (type 1) , only for RECOVERY
@@ -967,6 +1113,7 @@ int pm8001_I_T_nexus_reset(struct domain_device *dev)
 
 	pm8001_dev = dev->lldd_dev;
 	pm8001_ha = pm8001_find_ha_by_dev(dev);
+<<<<<<< HEAD
 	phy = sas_get_local_phy(dev);
 
 	if (dev_is_sata(dev)) {
@@ -975,6 +1122,14 @@ int pm8001_I_T_nexus_reset(struct domain_device *dev)
 			rc = 0;
 			goto out;
 		}
+=======
+	phy = sas_find_local_phy(dev);
+
+	if (dev_is_sata(dev)) {
+		DECLARE_COMPLETION_ONSTACK(completion_setstate);
+		if (scsi_is_sas_phy_local(phy))
+			return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = sas_phy_reset(phy, 1);
 		msleep(2000);
 		rc = pm8001_exec_internal_task_abort(pm8001_ha, pm8001_dev ,
@@ -983,6 +1138,7 @@ int pm8001_I_T_nexus_reset(struct domain_device *dev)
 		rc = PM8001_CHIP_DISP->set_dev_state_req(pm8001_ha,
 			pm8001_dev, 0x01);
 		wait_for_completion(&completion_setstate);
+<<<<<<< HEAD
 	} else {
 		rc = sas_phy_reset(phy, 1);
 		msleep(2000);
@@ -991,6 +1147,14 @@ int pm8001_I_T_nexus_reset(struct domain_device *dev)
 		pm8001_dev->device_id, rc));
  out:
 	sas_put_local_phy(phy);
+=======
+	} else{
+	rc = sas_phy_reset(phy, 1);
+	msleep(2000);
+	}
+	PM8001_EH_DBG(pm8001_ha, pm8001_printk(" for device[%x]:rc=%d\n",
+		pm8001_dev->device_id, rc));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -1002,11 +1166,18 @@ int pm8001_lu_reset(struct domain_device *dev, u8 *lun)
 	struct pm8001_device *pm8001_dev = dev->lldd_dev;
 	struct pm8001_hba_info *pm8001_ha = pm8001_find_ha_by_dev(dev);
 	if (dev_is_sata(dev)) {
+<<<<<<< HEAD
 		struct sas_phy *phy = sas_get_local_phy(dev);
 		rc = pm8001_exec_internal_task_abort(pm8001_ha, pm8001_dev ,
 			dev, 1, 0);
 		rc = sas_phy_reset(phy, 1);
 		sas_put_local_phy(phy);
+=======
+		struct sas_phy *phy = sas_find_local_phy(dev);
+		rc = pm8001_exec_internal_task_abort(pm8001_ha, pm8001_dev ,
+			dev, 1, 0);
+		rc = sas_phy_reset(phy, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = PM8001_CHIP_DISP->set_dev_state_req(pm8001_ha,
 			pm8001_dev, 0x01);
 		msleep(2000);
@@ -1055,14 +1226,22 @@ int pm8001_query_task(struct sas_task *task)
 		/* The task is still in Lun, release it then */
 		case TMF_RESP_FUNC_SUCC:
 			PM8001_EH_DBG(pm8001_ha,
+<<<<<<< HEAD
 				pm8001_printk("The task is still in Lun\n"));
 			break;
+=======
+				pm8001_printk("The task is still in Lun \n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* The task is not in Lun or failed, reset the phy */
 		case TMF_RESP_FUNC_FAILED:
 		case TMF_RESP_FUNC_COMPLETE:
 			PM8001_EH_DBG(pm8001_ha,
 			pm8001_printk("The task is not in Lun or failed,"
+<<<<<<< HEAD
 			" reset the phy\n"));
+=======
+			" reset the phy \n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	}

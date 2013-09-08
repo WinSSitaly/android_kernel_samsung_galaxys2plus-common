@@ -24,11 +24,18 @@
 #include <linux/rtc.h>
 #include <linux/vt_kern.h>
 #include <linux/bcd.h>
+<<<<<<< HEAD
 #include <linux/platform_device.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/io.h>
 #include <asm/rtc.h>
 #include <asm/bootinfo.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/pgtable.h>
 #include <asm/setup.h>
 #include <asm/irq.h>
@@ -329,6 +336,7 @@ static int q40_set_rtc_pll(struct rtc_pll_info *pll)
 	} else
 		return -EINVAL;
 }
+<<<<<<< HEAD
 
 static __init int q40_add_kbd_device(void)
 {
@@ -344,3 +352,5 @@ static __init int q40_add_kbd_device(void)
 	return 0;
 }
 arch_initcall(q40_add_kbd_device);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

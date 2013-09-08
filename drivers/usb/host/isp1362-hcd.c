@@ -84,6 +84,10 @@
 #include <linux/prefetch.h>
 
 #include <asm/irq.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/byteorder.h>
 #include <asm/unaligned.h>
 
@@ -2357,7 +2361,11 @@ static int isp1362_hc_reset(struct usb_hcd *hcd)
 	unsigned long flags;
 	int clkrdy = 0;
 
+<<<<<<< HEAD
 	pr_debug("%s:\n", __func__);
+=======
+	pr_info("%s:\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (isp1362_hcd->board && isp1362_hcd->board->reset) {
 		isp1362_hcd->board->reset(hcd->self.controller, 1);
@@ -2394,7 +2402,11 @@ static void isp1362_hc_stop(struct usb_hcd *hcd)
 	unsigned long flags;
 	u32 tmp;
 
+<<<<<<< HEAD
 	pr_debug("%s:\n", __func__);
+=======
+	pr_info("%s:\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	del_timer_sync(&hcd->rh_timer);
 
@@ -2522,7 +2534,11 @@ static int isp1362_hc_start(struct usb_hcd *hcd)
 	u16 chipid;
 	unsigned long flags;
 
+<<<<<<< HEAD
 	pr_debug("%s:\n", __func__);
+=======
+	pr_info("%s:\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&isp1362_hcd->lock, flags);
 	chipid = isp1362_read_reg16(isp1362_hcd, HCCHIPID);
@@ -2692,9 +2708,12 @@ static int __devinit isp1362_probe(struct platform_device *pdev)
 	struct resource *irq_res;
 	unsigned int irq_flags = 0;
 
+<<<<<<< HEAD
 	if (usb_disabled())
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* basic sanity checks first.  board-specific init logic should
 	 * have initialized this the three resources and probably board
 	 * specific platform_data.  we don't probe for IRQs, and do only
@@ -2775,7 +2794,11 @@ static int __devinit isp1362_probe(struct platform_device *pdev)
 	if (irq_res->flags & IORESOURCE_IRQ_LOWLEVEL)
 		irq_flags |= IRQF_TRIGGER_LOW;
 
+<<<<<<< HEAD
 	retval = usb_add_hcd(hcd, irq, irq_flags | IRQF_SHARED);
+=======
+	retval = usb_add_hcd(hcd, irq, irq_flags | IRQF_DISABLED | IRQF_SHARED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval != 0)
 		goto err6;
 	pr_info("%s, irq %d\n", hcd->product_desc, irq);
@@ -2866,4 +2889,23 @@ static struct platform_driver isp1362_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(isp1362_driver);
+=======
+/*-------------------------------------------------------------------------*/
+
+static int __init isp1362_init(void)
+{
+	if (usb_disabled())
+		return -ENODEV;
+	pr_info("driver %s, %s\n", hcd_name, DRIVER_VERSION);
+	return platform_driver_register(&isp1362_driver);
+}
+module_init(isp1362_init);
+
+static void __exit isp1362_cleanup(void)
+{
+	platform_driver_unregister(&isp1362_driver);
+}
+module_exit(isp1362_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -9,11 +9,15 @@
  * published by the Free Software Foundation.
 */
 
+<<<<<<< HEAD
 #ifndef __ASM_PLAT_CLOCK_H
 #define __ASM_PLAT_CLOCK_H __FILE__
 
 #include <linux/spinlock.h>
 #include <linux/clkdev.h>
+=======
+#include <linux/spinlock.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct clk;
 
@@ -44,7 +48,10 @@ struct clk {
 	struct module        *owner;
 	struct clk           *parent;
 	const char           *name;
+<<<<<<< HEAD
 	const char		*devname;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int		      id;
 	int		      usage;
 	unsigned long         rate;
@@ -52,7 +59,10 @@ struct clk {
 
 	struct clk_ops		*ops;
 	int		    (*enable)(struct clk *, int enable);
+<<<<<<< HEAD
 	struct clk_lookup	lookup;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_PM_DEBUG) && defined(CONFIG_DEBUG_FS)
 	struct dentry		*dent;	/* For visible tree hierarchy */
 #endif
@@ -79,10 +89,13 @@ extern struct clk clk_epll;
 extern struct clk clk_xtal;
 extern struct clk clk_ext;
 
+<<<<<<< HEAD
 /* S3C2443/S3C2416 specific clocks */
 extern struct clksrc_clk clk_epllref;
 extern struct clksrc_clk clk_esysclk;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* S3C64XX specific clocks */
 extern struct clk clk_h2;
 extern struct clk clk_27m;
@@ -118,6 +131,7 @@ extern void s3c24xx_setup_clocks(unsigned long fclk,
 extern void s3c2410_setup_clocks(void);
 extern void s3c2412_setup_clocks(void);
 extern void s3c244x_setup_clocks(void);
+<<<<<<< HEAD
 
 /* S3C2410 specific clock functions */
 
@@ -135,6 +149,9 @@ extern void s3c2443_common_init_clocks(int xtal, pll_fn get_mpll,
 extern int s3c2443_clkcon_enable_h(struct clk *clk, int enable);
 extern int s3c2443_clkcon_enable_p(struct clk *clk, int enable);
 extern int s3c2443_clkcon_enable_s(struct clk *clk, int enable);
+=======
+extern void s3c2443_setup_clocks(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* S3C64XX specific functions and clocks */
 
@@ -144,8 +161,11 @@ extern int s3c64xx_sclk_ctrl(struct clk *clk, int enable);
 
 extern void s3c_pwmclk_init(void);
 
+<<<<<<< HEAD
 /* Global watchdog clock used by arch_wtd_reset() callback */
 
 extern struct clk *s3c2410_wdtclk;
 
 #endif /* __ASM_PLAT_CLOCK_H */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

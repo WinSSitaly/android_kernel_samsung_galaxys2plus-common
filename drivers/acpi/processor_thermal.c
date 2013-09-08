@@ -30,6 +30,10 @@
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/cpufreq.h>
+<<<<<<< HEAD
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/uaccess.h>
 
@@ -272,7 +276,11 @@ processor_set_cur_state(struct thermal_cooling_device *cdev,
 	return result;
 }
 
+<<<<<<< HEAD
 const struct thermal_cooling_device_ops processor_cooling_ops = {
+=======
+struct thermal_cooling_device_ops processor_cooling_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.get_max_state = processor_get_max_state,
 	.get_cur_state = processor_get_cur_state,
 	.set_cur_state = processor_set_cur_state,

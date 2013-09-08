@@ -135,6 +135,10 @@
 
 #include <asm/irq.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* if you have more than 8 printers, remember to increase LP_NO */
 #define LP_NO 8
@@ -705,13 +709,23 @@ static long lp_compat_ioctl(struct file *file, unsigned int cmd,
 {
 	unsigned int minor;
 	struct timeval par_timeout;
+<<<<<<< HEAD
+=======
+	struct compat_timeval __user *tc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	minor = iminor(file->f_path.dentry->d_inode);
 	mutex_lock(&lp_mutex);
 	switch (cmd) {
 	case LPSETTIMEOUT:
+<<<<<<< HEAD
 		if (compat_get_timeval(&par_timeout, compat_ptr(arg))) {
+=======
+		tc = compat_ptr(arg);
+		if (get_user(par_timeout.tv_sec, &tc->tv_sec) ||
+		    get_user(par_timeout.tv_usec, &tc->tv_usec)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = -EFAULT;
 			break;
 		}
@@ -825,7 +839,11 @@ static struct console lpcons = {
 
 static int parport_nr[LP_NO] = { [0 ... LP_NO-1] = LP_PARPORT_UNSPEC };
 static char *parport[LP_NO];
+<<<<<<< HEAD
 static bool reset;
+=======
+static int reset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_array(parport, charp, NULL, 0);
 module_param(reset, bool, 0);

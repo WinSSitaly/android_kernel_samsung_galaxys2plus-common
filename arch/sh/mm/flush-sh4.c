@@ -1,8 +1,12 @@
 #include <linux/mm.h>
 #include <asm/mmu_context.h>
+<<<<<<< HEAD
 #include <asm/cache_insns.h>
 #include <asm/cacheflush.h>
 #include <asm/traps.h>
+=======
+#include <asm/cacheflush.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Write back the dirty D-caches, but not invalidate them.

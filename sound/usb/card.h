@@ -1,7 +1,10 @@
 #ifndef __USBAUDIO_CARD_H
 #define __USBAUDIO_CARD_H
 
+<<<<<<< HEAD
 #define MAX_NR_RATES	1024
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MAX_PACKS	20
 #define MAX_PACKS_HS	(MAX_PACKS * 8)	/* in high speed mode */
 #define MAX_URBS	8
@@ -87,7 +90,10 @@ struct snd_usb_substream {
 	struct snd_urb_ctx syncurb[SYNC_URBS];	/* sync urb table */
 	char *syncbuf;				/* sync buffer for all sync URBs */
 	dma_addr_t sync_dma;			/* DMA address of syncbuf */
+<<<<<<< HEAD
 	unsigned int speed;		/* USB_SPEED_XXX */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	u64 formats;			/* format bitmasks (all or'ed) */
 	unsigned int num_formats;		/* number of supported audio formats (list) */
@@ -96,8 +102,11 @@ struct snd_usb_substream {
 	spinlock_t lock;
 
 	struct snd_urb_ops ops;		/* callbacks (must be filled at init) */
+<<<<<<< HEAD
 	int last_frame_number;          /* stored frame number */
 	int last_delay;                 /* stored delay */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct snd_usb_stream {

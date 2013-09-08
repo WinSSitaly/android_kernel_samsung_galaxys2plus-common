@@ -213,7 +213,11 @@ static int __init sb1250_pcibios_init(void)
 	uint64_t reg;
 
 	/* CFE will assign PCI resources */
+<<<<<<< HEAD
 	pci_set_flags(PCI_PROBE_ONLY);
+=======
+	pci_probe_only = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Avoid ISA compat ranges.  */
 	PCIBIOS_MIN_IO = 0x00008000UL;

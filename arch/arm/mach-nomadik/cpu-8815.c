@@ -21,9 +21,14 @@
 #include <linux/device.h>
 #include <linux/amba/bus.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/io.h>
 
 #include <plat/gpio-nomadik.h>
+=======
+#include <linux/gpio.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/hardware.h>
 #include <mach/irqs.h>
 #include <asm/mach/map.h>
@@ -33,7 +38,10 @@
 #include <asm/hardware/cache-l2x0.h>
 
 #include "clock.h"
+<<<<<<< HEAD
 #include "cpu-8815.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define __MEM_4K_RESOURCE(x) \
 	.res = {.start = (x), .end = (x) + SZ_4K - 1, .flags = IORESOURCE_MEM}
@@ -97,7 +105,16 @@ static struct platform_device cpu8815_platform_gpio[] = {
 	GPIO_DEVICE(3),
 };
 
+<<<<<<< HEAD
 static AMBA_APB_DEVICE(cpu8815_amba_rng, "rng", 0, NOMADIK_RNG_BASE, { }, NULL);
+=======
+static struct amba_device cpu8815_amba_rng = {
+	.dev = {
+		.init_name = "rng",
+	},
+	__MEM_4K_RESOURCE(NOMADIK_RNG_BASE),
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct platform_device *platform_devs[] __initdata = {
 	cpu8815_platform_gpio + 0,
@@ -107,7 +124,11 @@ static struct platform_device *platform_devs[] __initdata = {
 };
 
 static struct amba_device *amba_devs[] __initdata = {
+<<<<<<< HEAD
 	&cpu8815_amba_rng_device
+=======
+	&cpu8815_amba_rng
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init cpu8815_init(void)
@@ -161,6 +182,7 @@ void __init cpu8815_init_irq(void)
 #endif
 	 return;
 }
+<<<<<<< HEAD
 
 void cpu8815_restart(char mode, const char *cmd)
 {
@@ -171,3 +193,5 @@ void cpu8815_restart(char mode, const char *cmd)
 	/* Write anything to Reset status register */
 	writel(1, src_rstsr);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

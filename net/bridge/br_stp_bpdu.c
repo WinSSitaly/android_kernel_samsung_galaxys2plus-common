@@ -16,7 +16,10 @@
 #include <linux/etherdevice.h>
 #include <linux/llc.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/pkt_sched.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/net_namespace.h>
 #include <net/llc.h>
 #include <net/llc_pdu.h>
@@ -41,7 +44,10 @@ static void br_send_bpdu(struct net_bridge_port *p,
 
 	skb->dev = p->dev;
 	skb->protocol = htons(ETH_P_802_2);
+<<<<<<< HEAD
 	skb->priority = TC_PRIO_CONTROL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	skb_reserve(skb, LLC_RESERVE);
 	memcpy(__skb_put(skb, length), data, length);
@@ -212,6 +218,7 @@ void br_stp_rcv(const struct stp_proto *proto, struct sk_buff *skb,
 		bpdu.hello_time = br_get_ticks(buf+28);
 		bpdu.forward_delay = br_get_ticks(buf+30);
 
+<<<<<<< HEAD
 		if (bpdu.message_age > bpdu.max_age) {
 			if (net_ratelimit())
 				br_notice(p->br,
@@ -225,6 +232,12 @@ void br_stp_rcv(const struct stp_proto *proto, struct sk_buff *skb,
 
 		br_received_config_bpdu(p, &bpdu);
 	} else if (buf[0] == BPDU_TYPE_TCN) {
+=======
+		br_received_config_bpdu(p, &bpdu);
+	}
+
+	else if (buf[0] == BPDU_TYPE_TCN) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		br_received_tcn_bpdu(p);
 	}
  out:

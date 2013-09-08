@@ -7,7 +7,10 @@
  * Copyright (C) 2009, 2010 Cavium Networks, Inc.
  */
 #include <linux/clocksource.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/smp.h>
 

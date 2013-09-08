@@ -127,7 +127,11 @@ MODULE_PARM_DESC(minor,
 		 "default is -1 (automatic)");
 #endif
 
+<<<<<<< HEAD
 static int kbd_backlight = 1;
+=======
+static int kbd_backlight;	/* = 1 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(kbd_backlight, int, 0444);
 MODULE_PARM_DESC(kbd_backlight,
 		 "set this to 0 to disable keyboard backlight, "
@@ -347,7 +351,10 @@ static void sony_laptop_report_input_event(u8 event)
 	struct input_dev *jog_dev = sony_laptop_input.jog_dev;
 	struct input_dev *key_dev = sony_laptop_input.key_dev;
 	struct sony_laptop_keypress kp = { NULL };
+<<<<<<< HEAD
 	int scancode = -1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (event == SONYPI_EVENT_FNKEY_RELEASED ||
 			event == SONYPI_EVENT_ANYBUTTON_RELEASED) {
@@ -381,8 +388,13 @@ static void sony_laptop_report_input_event(u8 event)
 			dprintk("sony_laptop_report_input_event, event not known: %d\n", event);
 			break;
 		}
+<<<<<<< HEAD
 		if ((scancode = sony_laptop_input_index[event]) != -1) {
 			kp.key = sony_laptop_input_keycode_map[scancode];
+=======
+		if (sony_laptop_input_index[event] != -1) {
+			kp.key = sony_laptop_input_keycode_map[sony_laptop_input_index[event]];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (kp.key != KEY_UNKNOWN)
 				kp.dev = key_dev;
 		}
@@ -390,11 +402,17 @@ static void sony_laptop_report_input_event(u8 event)
 	}
 
 	if (kp.dev) {
+<<<<<<< HEAD
 		/* if we have a scancode we emit it so we can always
 		    remap the key */
 		if (scancode != -1)
 			input_event(kp.dev, EV_MSC, MSC_SCAN, scancode);
 		input_report_key(kp.dev, kp.key, 1);
+=======
+		input_report_key(kp.dev, kp.key, 1);
+		/* we emit the scancode so we can always remap the key */
+		input_event(kp.dev, EV_MSC, MSC_SCAN, event);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		input_sync(kp.dev);
 
 		/* schedule key release */
@@ -469,7 +487,11 @@ static int sony_laptop_setup_input(struct acpi_device *acpi_device)
 	jog_dev->name = "Sony Vaio Jogdial";
 	jog_dev->id.bustype = BUS_ISA;
 	jog_dev->id.vendor = PCI_VENDOR_ID_SONY;
+<<<<<<< HEAD
 	jog_dev->dev.parent = &acpi_device->dev;
+=======
+	key_dev->dev.parent = &acpi_device->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	input_set_capability(jog_dev, EV_KEY, BTN_MIDDLE);
 	input_set_capability(jog_dev, EV_REL, REL_WHEEL);
@@ -3284,7 +3306,11 @@ static int sony_pic_add(struct acpi_device *device)
 	/* request IRQ */
 	list_for_each_entry_reverse(irq, &spic_dev.interrupts, list) {
 		if (!request_irq(irq->irq.interrupts[0], sony_pic_irq,
+<<<<<<< HEAD
 					0, "sony-laptop", &spic_dev)) {
+=======
+					IRQF_DISABLED, "sony-laptop", &spic_dev)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dprintk("IRQ: %d - triggering: %d - "
 					"polarity: %d - shr: %d\n",
 					irq->irq.interrupts[0],

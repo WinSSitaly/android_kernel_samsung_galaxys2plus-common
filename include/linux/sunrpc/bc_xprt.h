@@ -31,11 +31,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <linux/sunrpc/xprt.h>
 #include <linux/sunrpc/sched.h>
 
+<<<<<<< HEAD
 #ifdef CONFIG_SUNRPC_BACKCHANNEL
 struct rpc_rqst *xprt_alloc_bc_request(struct rpc_xprt *xprt);
 void xprt_free_bc_request(struct rpc_rqst *req);
 int xprt_setup_backchannel(struct rpc_xprt *, unsigned int min_reqs);
 void xprt_destroy_backchannel(struct rpc_xprt *, unsigned int max_reqs);
+=======
+#ifdef CONFIG_NFS_V4_1
+struct rpc_rqst *xprt_alloc_bc_request(struct rpc_xprt *xprt);
+void xprt_free_bc_request(struct rpc_rqst *req);
+int xprt_setup_backchannel(struct rpc_xprt *, unsigned int min_reqs);
+void xprt_destroy_backchannel(struct rpc_xprt *, int max_reqs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int bc_send(struct rpc_rqst *req);
 
 /*
@@ -47,7 +55,11 @@ static inline int svc_is_backchannel(const struct svc_rqst *rqstp)
 		return 1;
 	return 0;
 }
+<<<<<<< HEAD
 #else /* CONFIG_SUNRPC_BACKCHANNEL */
+=======
+#else /* CONFIG_NFS_V4_1 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int xprt_setup_backchannel(struct rpc_xprt *xprt,
 					 unsigned int min_reqs)
 {
@@ -62,6 +74,10 @@ static inline int svc_is_backchannel(const struct svc_rqst *rqstp)
 static inline void xprt_free_bc_request(struct rpc_rqst *req)
 {
 }
+<<<<<<< HEAD
 #endif /* CONFIG_SUNRPC_BACKCHANNEL */
+=======
+#endif /* CONFIG_NFS_V4_1 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _LINUX_SUNRPC_BC_XPRT_H */
 

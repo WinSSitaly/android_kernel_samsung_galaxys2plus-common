@@ -14,6 +14,7 @@
 #include <linux/io.h>
 #include <linux/err.h>
 #include <linux/opp.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/suspend.h>
 
@@ -24,10 +25,18 @@
 #include "common.h"
 
 #include "prcm-common.h"
+=======
+
+#include <plat/omap-pm.h>
+#include <plat/omap_device.h>
+#include <plat/common.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "voltage.h"
 #include "powerdomain.h"
 #include "clockdomain.h"
 #include "pm.h"
+<<<<<<< HEAD
 #include "twl-common.h"
 
 static struct omap_device_pm_latency *pm_lats;
@@ -42,23 +51,74 @@ static int __init _init_omap_device(char *name)
 {
 	struct omap_hwmod *oh;
 	struct platform_device *pdev;
+=======
+
+static struct omap_device_pm_latency *pm_lats;
+
+static struct device *mpu_dev;
+static struct device *iva_dev;
+static struct device *l3_dev;
+static struct device *dsp_dev;
+
+struct device *omap2_get_mpuss_device(void)
+{
+	WARN_ON_ONCE(!mpu_dev);
+	return mpu_dev;
+}
+
+struct device *omap2_get_iva_device(void)
+{
+	WARN_ON_ONCE(!iva_dev);
+	return iva_dev;
+}
+
+struct device *omap2_get_l3_device(void)
+{
+	WARN_ON_ONCE(!l3_dev);
+	return l3_dev;
+}
+
+struct device *omap4_get_dsp_device(void)
+{
+	WARN_ON_ONCE(!dsp_dev);
+	return dsp_dev;
+}
+EXPORT_SYMBOL(omap4_get_dsp_device);
+
+/* static int _init_omap_device(struct omap_hwmod *oh, void *user) */
+static int _init_omap_device(char *name, struct device **new_dev)
+{
+	struct omap_hwmod *oh;
+	struct omap_device *od;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	oh = omap_hwmod_lookup(name);
 	if (WARN(!oh, "%s: could not find omap_hwmod for %s\n",
 		 __func__, name))
 		return -ENODEV;
 
+<<<<<<< HEAD
 	pdev = omap_device_build(oh->name, 0, oh, NULL, 0, pm_lats, 0, false);
 	if (WARN(IS_ERR(pdev), "%s: could not build omap_device for %s\n",
 		 __func__, name))
 		return -ENODEV;
 
+=======
+	od = omap_device_build(oh->name, 0, oh, NULL, 0, pm_lats, 0, false);
+	if (WARN(IS_ERR(od), "%s: could not build omap_device for %s\n",
+		 __func__, name))
+		return -ENODEV;
+
+	*new_dev = &od->pdev.dev;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 /*
  * Build omap_devices for processors and bus.
  */
+<<<<<<< HEAD
 static void __init omap2_init_processor_devices(void)
 {
 	_init_omap_device("mpu");
@@ -71,6 +131,20 @@ static void __init omap2_init_processor_devices(void)
 		_init_omap_device("iva");
 	} else {
 		_init_omap_device("l3_main");
+=======
+static void omap2_init_processor_devices(void)
+{
+	_init_omap_device("mpu", &mpu_dev);
+	if (omap3_has_iva())
+		_init_omap_device("iva", &iva_dev);
+
+	if (cpu_is_omap44xx()) {
+		_init_omap_device("l3_main_1", &l3_dev);
+		_init_omap_device("dsp", &dsp_dev);
+		_init_omap_device("iva", &iva_dev);
+	} else {
+		_init_omap_device("l3_main", &l3_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -78,6 +152,7 @@ static void __init omap2_init_processor_devices(void)
 #define FORCEWAKEUP_SWITCH	0
 #define LOWPOWERSTATE_SWITCH	1
 
+<<<<<<< HEAD
 int __init omap_pm_clkdms_setup(struct clockdomain *clkdm, void *unused)
 {
 	if (clkdm->flags & CLKDM_CAN_ENABLE_AUTO)
@@ -88,10 +163,13 @@ int __init omap_pm_clkdms_setup(struct clockdomain *clkdm, void *unused)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This sets pwrdm state (other than mpu & core. Currently only ON &
  * RET are supported.
  */
+<<<<<<< HEAD
 int omap_set_pwrdm_state(struct powerdomain *pwrdm, u32 pwrst)
 {
 	u8 curr_pwrst, next_pwrst;
@@ -118,10 +196,39 @@ int omap_set_pwrdm_state(struct powerdomain *pwrdm, u32 pwrst)
 		} else {
 			hwsup = clkdm_in_hwsup(pwrdm->pwrdm_clkdms[0]);
 			clkdm_wakeup(pwrdm->pwrdm_clkdms[0]);
+=======
+int omap_set_pwrdm_state(struct powerdomain *pwrdm, u32 state)
+{
+	u32 cur_state;
+	int sleep_switch = 0;
+	int ret = 0;
+
+	if (pwrdm == NULL || IS_ERR(pwrdm))
+		return -EINVAL;
+
+	while (!(pwrdm->pwrsts & (1 << state))) {
+		if (state == PWRDM_POWER_OFF)
+			return ret;
+		state--;
+	}
+
+	cur_state = pwrdm_read_next_pwrst(pwrdm);
+	if (cur_state == state)
+		return ret;
+
+	if (pwrdm_read_pwrst(pwrdm) < PWRDM_POWER_ON) {
+		if ((pwrdm_read_pwrst(pwrdm) > state) &&
+			(pwrdm->flags & PWRDM_HAS_LOWPOWERSTATECHANGE)) {
+			sleep_switch = LOWPOWERSTATE_SWITCH;
+		} else {
+			clkdm_wakeup(pwrdm->pwrdm_clkdms[0]);
+			pwrdm_wait_transition(pwrdm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sleep_switch = FORCEWAKEUP_SWITCH;
 		}
 	}
 
+<<<<<<< HEAD
 	ret = pwrdm_set_next_pwrst(pwrdm, pwrst);
 	if (ret)
 		pr_err("%s: unable to set power state of powerdomain: %s\n",
@@ -130,12 +237,25 @@ int omap_set_pwrdm_state(struct powerdomain *pwrdm, u32 pwrst)
 	switch (sleep_switch) {
 	case FORCEWAKEUP_SWITCH:
 		if (hwsup)
+=======
+	ret = pwrdm_set_next_pwrst(pwrdm, state);
+	if (ret) {
+		printk(KERN_ERR "Unable to set state of powerdomain: %s\n",
+		       pwrdm->name);
+		goto err;
+	}
+
+	switch (sleep_switch) {
+	case FORCEWAKEUP_SWITCH:
+		if (pwrdm->pwrdm_clkdms[0]->flags & CLKDM_CAN_ENABLE_AUTO)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			clkdm_allow_idle(pwrdm->pwrdm_clkdms[0]);
 		else
 			clkdm_sleep(pwrdm->pwrdm_clkdms[0]);
 		break;
 	case LOWPOWERSTATE_SWITCH:
 		pwrdm_set_lowpwrstchange(pwrdm);
+<<<<<<< HEAD
 		pwrdm_wait_transition(pwrdm);
 		pwrdm_state_switch(pwrdm);
 		break;
@@ -156,11 +276,35 @@ int omap_set_pwrdm_state(struct powerdomain *pwrdm, u32 pwrst)
  */
 static int __init omap2_set_init_voltage(char *vdd_name, char *clk_name,
 					 const char *oh_name)
+=======
+		break;
+	default:
+		return ret;
+	}
+
+	pwrdm_wait_transition(pwrdm);
+	pwrdm_state_switch(pwrdm);
+err:
+	return ret;
+}
+
+/*
+ * This API is to be called during init to put the various voltage
+ * domains to the voltage as per the opp table. Typically we boot up
+ * at the nominal voltage. So this function finds out the rate of
+ * the clock associated with the voltage domain, finds out the correct
+ * opp entry and puts the voltage domain to the voltage specifies
+ * in the opp entry
+ */
+static int __init omap2_set_init_voltage(char *vdd_name, char *clk_name,
+						struct device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct voltagedomain *voltdm;
 	struct clk *clk;
 	struct opp *opp;
 	unsigned long freq, bootup_volt;
+<<<<<<< HEAD
 	struct device *dev;
 
 	if (!vdd_name || !clk_name || !oh_name) {
@@ -178,36 +322,64 @@ static int __init omap2_set_init_voltage(char *vdd_name, char *clk_name,
 	voltdm = voltdm_lookup(vdd_name);
 	if (IS_ERR(voltdm)) {
 		pr_err("%s: unable to get vdd pointer for vdd_%s\n",
+=======
+
+	if (!vdd_name || !clk_name || !dev) {
+		printk(KERN_ERR "%s: Invalid parameters!\n", __func__);
+		goto exit;
+	}
+
+	voltdm = omap_voltage_domain_lookup(vdd_name);
+	if (IS_ERR(voltdm)) {
+		printk(KERN_ERR "%s: Unable to get vdd pointer for vdd_%s\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			__func__, vdd_name);
 		goto exit;
 	}
 
 	clk =  clk_get(NULL, clk_name);
 	if (IS_ERR(clk)) {
+<<<<<<< HEAD
 		pr_err("%s: unable to get clk %s\n", __func__, clk_name);
+=======
+		printk(KERN_ERR "%s: unable to get clk %s\n",
+			__func__, clk_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto exit;
 	}
 
 	freq = clk->rate;
 	clk_put(clk);
 
+<<<<<<< HEAD
 	rcu_read_lock();
 	opp = opp_find_freq_ceil(dev, &freq);
 	if (IS_ERR(opp)) {
 		rcu_read_unlock();
 		pr_err("%s: unable to find boot up OPP for vdd_%s\n",
+=======
+	opp = opp_find_freq_ceil(dev, &freq);
+	if (IS_ERR(opp)) {
+		printk(KERN_ERR "%s: unable to find boot up OPP for vdd_%s\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			__func__, vdd_name);
 		goto exit;
 	}
 
 	bootup_volt = opp_get_voltage(opp);
+<<<<<<< HEAD
 	rcu_read_unlock();
 	if (!bootup_volt) {
 		pr_err("%s: unable to find voltage corresponding "
+=======
+	if (!bootup_volt) {
+		printk(KERN_ERR "%s: unable to find voltage corresponding"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"to the bootup OPP for vdd_%s\n", __func__, vdd_name);
 		goto exit;
 	}
 
+<<<<<<< HEAD
 	voltdm_scale(voltdm, bootup_volt);
 	return 0;
 
@@ -266,13 +438,29 @@ static const struct platform_suspend_ops omap_pm_ops = {
 
 #endif /* CONFIG_SUSPEND */
 
+=======
+	omap_voltage_scale_vdd(voltdm, bootup_volt);
+	return 0;
+
+exit:
+	printk(KERN_ERR "%s: Unable to put vdd_%s to its init voltage\n\n",
+		__func__, vdd_name);
+	return -EINVAL;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init omap3_init_voltages(void)
 {
 	if (!cpu_is_omap34xx())
 		return;
 
+<<<<<<< HEAD
 	omap2_set_init_voltage("mpu_iva", "dpll1_ck", "mpu");
 	omap2_set_init_voltage("core", "l3_ick", "l3_main");
+=======
+	omap2_set_init_voltage("mpu", "dpll1_ck", mpu_dev);
+	omap2_set_init_voltage("core", "l3_ick", l3_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __init omap4_init_voltages(void)
@@ -280,15 +468,25 @@ static void __init omap4_init_voltages(void)
 	if (!cpu_is_omap44xx())
 		return;
 
+<<<<<<< HEAD
 	omap2_set_init_voltage("mpu", "dpll_mpu_ck", "mpu");
 	omap2_set_init_voltage("core", "l3_div_ck", "l3_main_1");
 	omap2_set_init_voltage("iva", "dpll_iva_m5x2_ck", "iva");
+=======
+	omap2_set_init_voltage("mpu", "dpll_mpu_ck", mpu_dev);
+	omap2_set_init_voltage("core", "l3_div_ck", l3_dev);
+	omap2_set_init_voltage("iva", "dpll_iva_m5x2_ck", iva_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __init omap2_common_pm_init(void)
 {
+<<<<<<< HEAD
 	if (!of_have_populated_dt())
 		omap2_init_processor_devices();
+=======
+	omap2_init_processor_devices();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap_pm_if_init();
 
 	return 0;
@@ -297,6 +495,7 @@ postcore_initcall(omap2_common_pm_init);
 
 static int __init omap2_common_pm_late_init(void)
 {
+<<<<<<< HEAD
 	/*
 	 * In the case of DT, the PMIC and SR initialization will be done using
 	 * a completely different mechanism.
@@ -307,6 +506,13 @@ static int __init omap2_common_pm_late_init(void)
 
 	/* Init the voltage layer */
 	omap_pmic_late_init();
+=======
+	/* Init the OMAP TWL parameters */
+	omap3_twl_init();
+	omap4_twl_init();
+
+	/* Init the voltage layer */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	omap_voltage_late_init();
 
 	/* Initialize the voltages */
@@ -316,10 +522,13 @@ static int __init omap2_common_pm_late_init(void)
 	/* Smartreflex device init */
 	omap_devinit_smartreflex();
 
+<<<<<<< HEAD
 #ifdef CONFIG_SUSPEND
 	suspend_set_ops(&omap_pm_ops);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 late_initcall(omap2_common_pm_late_init);

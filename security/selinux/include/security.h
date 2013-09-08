@@ -216,6 +216,7 @@ struct selinux_kernel_status {
 
 extern void selinux_status_update_setenforce(int enforcing);
 extern void selinux_status_update_policyload(int seqno);
+<<<<<<< HEAD
 extern void selinux_complete_init(void);
 extern int selinux_disable(void);
 extern void exit_sel_fs(void);
@@ -224,6 +225,8 @@ extern struct vfsmount *selinuxfs_mount;
 extern void selnl_notify_setenforce(int val);
 extern void selnl_notify_policyload(u32 seqno);
 extern int selinux_nlmsg_lookup(u16 sclass, u16 nlmsg_type, u32 *perm);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* _SELINUX_SECURITY_H_ */
 

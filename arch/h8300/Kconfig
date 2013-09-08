@@ -4,7 +4,10 @@ config H8300
 	select HAVE_IDE
 	select HAVE_GENERIC_HARDIRQS
 	select GENERIC_IRQ_SHOW
+<<<<<<< HEAD
 	select GENERIC_CPU_DEVICES
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config SYMBOL_PREFIX
 	string
@@ -161,7 +164,11 @@ config VT_CONSOLE
 
 config HW_CONSOLE
 	bool
+<<<<<<< HEAD
 	depends on VT
+=======
+	depends on VT && !S390 && !UM
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default y
 
 comment "Unix98 PTY support"
@@ -196,7 +203,11 @@ config UNIX98_PTYS
 
 source "drivers/char/pcmcia/Kconfig"
 
+<<<<<<< HEAD
 source "drivers/tty/serial/Kconfig"
+=======
+source "drivers/serial/Kconfig"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 source "drivers/i2c/Kconfig"
 

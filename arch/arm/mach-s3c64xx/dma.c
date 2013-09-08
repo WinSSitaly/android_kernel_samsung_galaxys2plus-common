@@ -16,7 +16,11 @@
 #include <linux/module.h>
 #include <linux/interrupt.h>
 #include <linux/dmapool.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/errno.h>
 #include <linux/slab.h>
 #include <linux/delay.h>
@@ -35,7 +39,11 @@
 /* dma channel state information */
 
 struct s3c64xx_dmac {
+<<<<<<< HEAD
 	struct device		dev;
+=======
+	struct sys_device	 sysdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct clk		*clk;
 	void __iomem		*regs;
 	struct s3c2410_dma_chan *channels;
@@ -147,14 +155,22 @@ static void s3c64xx_dma_fill_lli(struct s3c2410_dma_chan *chan,
 	u32 control0, control1;
 
 	switch (chan->source) {
+<<<<<<< HEAD
 	case DMA_FROM_DEVICE:
+=======
+	case S3C2410_DMASRC_HW:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		src = chan->dev_addr;
 		dst = data;
 		control0 = PL080_CONTROL_SRC_AHB2;
 		control0 |= PL080_CONTROL_DST_INCR;
 		break;
 
+<<<<<<< HEAD
 	case DMA_TO_DEVICE:
+=======
+	case S3C2410_DMASRC_MEM:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		src = data;
 		dst = chan->dev_addr;
 		control0 = PL080_CONTROL_DST_AHB2;
@@ -416,7 +432,11 @@ EXPORT_SYMBOL(s3c2410_dma_enqueue);
 
 
 int s3c2410_dma_devconfig(enum dma_ch channel,
+<<<<<<< HEAD
 			  enum dma_data_direction source,
+=======
+			  enum s3c2410_dmasrc source,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  unsigned long devaddr)
 {
 	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
@@ -437,11 +457,19 @@ int s3c2410_dma_devconfig(enum dma_ch channel,
 	pr_debug("%s: peripheral %d\n", __func__, peripheral);
 
 	switch (source) {
+<<<<<<< HEAD
 	case DMA_FROM_DEVICE:
 		config = 2 << PL080_CONFIG_FLOW_CONTROL_SHIFT;
 		config |= peripheral << PL080_CONFIG_SRC_SEL_SHIFT;
 		break;
 	case DMA_TO_DEVICE:
+=======
+	case S3C2410_DMASRC_HW:
+		config = 2 << PL080_CONFIG_FLOW_CONTROL_SHIFT;
+		config |= peripheral << PL080_CONFIG_SRC_SEL_SHIFT;
+		break;
+	case S3C2410_DMASRC_MEM:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		config = 1 << PL080_CONFIG_FLOW_CONTROL_SHIFT;
 		config |= peripheral << PL080_CONFIG_DST_SEL_SHIFT;
 		break;
@@ -631,9 +659,14 @@ static irqreturn_t s3c64xx_dma_irq(int irq, void *pw)
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
 static struct bus_type dma_subsys = {
 	.name		= "s3c64xx-dma",
 	.dev_name	= "s3c64xx-dma",
+=======
+static struct sysdev_class dma_sysclass = {
+	.name		= "s3c64xx-dma",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int s3c64xx_dma_init1(int chno, enum dma_ch chbase,
@@ -652,12 +685,21 @@ static int s3c64xx_dma_init1(int chno, enum dma_ch chbase,
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	dmac->dev.id = chno / 8;
 	dmac->dev.bus = &dma_subsys;
 
 	err = device_register(&dmac->dev);
 	if (err) {
 		printk(KERN_ERR "%s: failed to register device\n", __func__);
+=======
+	dmac->sysdev.id = chno / 8;
+	dmac->sysdev.cls = &dma_sysclass;
+
+	err = sysdev_register(&dmac->sysdev);
+	if (err) {
+		printk(KERN_ERR "%s: failed to register sysdevice\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_alloc;
 	}
 
@@ -668,7 +710,11 @@ static int s3c64xx_dma_init1(int chno, enum dma_ch chbase,
 		goto err_dev;
 	}
 
+<<<<<<< HEAD
 	snprintf(clkname, sizeof(clkname), "dma%d", dmac->dev.id);
+=======
+	snprintf(clkname, sizeof(clkname), "dma%d", dmac->sysdev.id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dmac->clk = clk_get(NULL, clkname);
 	if (IS_ERR(dmac->clk)) {
@@ -716,7 +762,11 @@ err_clk:
 err_map:
 	iounmap(regs);
 err_dev:
+<<<<<<< HEAD
 	device_unregister(&dmac->dev);
+=======
+	sysdev_unregister(&dmac->sysdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_alloc:
 	kfree(dmac);
 	return err;
@@ -734,14 +784,24 @@ static int __init s3c64xx_dma_init(void)
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	ret = subsys_system_register(&dma_subsys, NULL);
 	if (ret) {
 		printk(KERN_ERR "%s: failed to create subsys\n", __func__);
+=======
+	ret = sysdev_class_register(&dma_sysclass);
+	if (ret) {
+		printk(KERN_ERR "%s: failed to create sysclass\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENOMEM;
 	}
 
 	/* Set all DMA configuration to be DMA, not SDMA */
+<<<<<<< HEAD
 	writel(0xffffff, S3C64XX_SDMA_SEL);
+=======
+	writel(0xffffff, S3C_SYSREG(0x110));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Register standard DMA controllers */
 	s3c64xx_dma_init1(0, DMACH_UART0, IRQ_DMA0, 0x75000000);

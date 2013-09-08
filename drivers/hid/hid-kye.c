@@ -3,7 +3,10 @@
  *
  *  Copyright (c) 2009 Jiri Kosina
  *  Copyright (c) 2009 Tomas Hanak
+<<<<<<< HEAD
  *  Copyright (c) 2012 Nikolai Kondrashov
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 /*
@@ -16,6 +19,7 @@
 #include <linux/device.h>
 #include <linux/hid.h>
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/usb.h>
 #include "usbhid/usbhid.h"
 
@@ -316,10 +320,37 @@ static __u8 *kye_report_fixup(struct hid_device *hdev, __u8 *rdesc,
 			*rsize = sizeof(easypen_m610x_rdesc_fixed);
 		}
 		break;
+=======
+
+#include "hid-ids.h"
+
+/* the fixups that need to be done:
+ *   - change led usage page to button for extra buttons
+ *   - report size 8 count 1 must be size 1 count 8 for button bitfield
+ *   - change the button usage range to 4-7 for the extra buttons
+ */
+static __u8 *kye_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+		unsigned int *rsize)
+{
+	if (*rsize >= 74 &&
+		rdesc[61] == 0x05 && rdesc[62] == 0x08 &&
+		rdesc[63] == 0x19 && rdesc[64] == 0x08 &&
+		rdesc[65] == 0x29 && rdesc[66] == 0x0f &&
+		rdesc[71] == 0x75 && rdesc[72] == 0x08 &&
+		rdesc[73] == 0x95 && rdesc[74] == 0x01) {
+		hid_info(hdev,
+			 "fixing up Kye/Genius Ergo Mouse report descriptor\n");
+		rdesc[62] = 0x09;
+		rdesc[64] = 0x04;
+		rdesc[66] = 0x07;
+		rdesc[72] = 0x01;
+		rdesc[74] = 0x08;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return rdesc;
 }
 
+<<<<<<< HEAD
 /**
  * Enable fully-functional tablet mode by setting a special feature report.
  *
@@ -409,6 +440,10 @@ static const struct hid_device_id kye_devices[] = {
 				USB_DEVICE_ID_KYE_MOUSEPEN_I608X) },
 	{ HID_USB_DEVICE(USB_VENDOR_ID_KYE,
 				USB_DEVICE_ID_KYE_EASYPEN_M610X) },
+=======
+static const struct hid_device_id kye_devices[] = {
+	{ HID_USB_DEVICE(USB_VENDOR_ID_KYE, USB_DEVICE_ID_KYE_ERGO_525V) },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ }
 };
 MODULE_DEVICE_TABLE(hid, kye_devices);
@@ -416,7 +451,10 @@ MODULE_DEVICE_TABLE(hid, kye_devices);
 static struct hid_driver kye_driver = {
 	.name = "kye",
 	.id_table = kye_devices,
+<<<<<<< HEAD
 	.probe = kye_probe,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.report_fixup = kye_report_fixup,
 };
 

@@ -98,7 +98,10 @@ static void audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
 	struct ipv6hdr _ip6h;
 	const struct ipv6hdr *ih;
 	u8 nexthdr;
+<<<<<<< HEAD
 	__be16 frag_off;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int offset;
 
 	ih = skb_header_pointer(skb, skb_network_offset(skb), sizeof(_ip6h), &_ip6h);
@@ -109,7 +112,11 @@ static void audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
 
 	nexthdr = ih->nexthdr;
 	offset = ipv6_skip_exthdr(skb, skb_network_offset(skb) + sizeof(_ip6h),
+<<<<<<< HEAD
 				  &nexthdr, &frag_off);
+=======
+				  &nexthdr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	audit_log_format(ab, " saddr=%pI6c daddr=%pI6c proto=%hhu",
 			 &ih->saddr, &ih->daddr, nexthdr);
@@ -164,11 +171,14 @@ audit_tg(struct sk_buff *skb, const struct xt_action_param *par)
 		break;
 	}
 
+<<<<<<< HEAD
 #ifdef CONFIG_NETWORK_SECMARK
 	if (skb->secmark)
 		audit_log_secctx(ab, skb->secmark);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	audit_log_end(ab);
 
 errout:

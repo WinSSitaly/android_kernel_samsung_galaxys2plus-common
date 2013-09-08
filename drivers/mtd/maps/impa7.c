@@ -49,7 +49,11 @@ static struct map_info impa7_map[NUM_FLASHBANKS] = {
 /*
  * MTD partitioning stuff
  */
+<<<<<<< HEAD
 static struct mtd_partition partitions[] =
+=======
+static struct mtd_partition static_partitions[] =
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	{
 		.name = "FileSystem",
@@ -58,10 +62,22 @@ static struct mtd_partition partitions[] =
 	},
 };
 
+<<<<<<< HEAD
+=======
+static int mtd_parts_nb[NUM_FLASHBANKS];
+static struct mtd_partition *mtd_parts[NUM_FLASHBANKS];
+
+static const char *probes[] = { "cmdlinepart", NULL };
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init init_impa7(void)
 {
 	static const char *rom_probe_types[] = PROBETYPES;
 	const char **type;
+<<<<<<< HEAD
+=======
+	const char *part_type = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 	static struct { u_long addr; u_long size; } pt[NUM_FLASHBANKS] = {
 	  { WINDOW_ADDR0, WINDOW_SIZE0 },
@@ -91,9 +107,29 @@ static int __init init_impa7(void)
 		if (impa7_mtd[i]) {
 			impa7_mtd[i]->owner = THIS_MODULE;
 			devicesfound++;
+<<<<<<< HEAD
 			mtd_device_parse_register(impa7_mtd[i], NULL, NULL,
 						  partitions,
 						  ARRAY_SIZE(partitions));
+=======
+			mtd_parts_nb[i] = parse_mtd_partitions(impa7_mtd[i],
+							       probes,
+							       &mtd_parts[i],
+							       0);
+			if (mtd_parts_nb[i] > 0) {
+				part_type = "command line";
+			} else {
+				mtd_parts[i] = static_partitions;
+				mtd_parts_nb[i] = ARRAY_SIZE(static_partitions);
+				part_type = "static";
+			}
+
+			printk(KERN_NOTICE MSG_PREFIX
+			       "using %s partition definition\n",
+			       part_type);
+			mtd_device_register(impa7_mtd[i],
+					    mtd_parts[i], mtd_parts_nb[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		else
 			iounmap((void *)impa7_map[i].virt);

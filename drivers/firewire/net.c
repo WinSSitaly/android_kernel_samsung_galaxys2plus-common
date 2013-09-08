@@ -7,7 +7,10 @@
  */
 
 #include <linux/bug.h>
+<<<<<<< HEAD
 #include <linux/compiler.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/delay.h>
 #include <linux/device.h>
 #include <linux/ethtool.h>
@@ -74,7 +77,11 @@ struct rfc2734_arp {
 	__be32 fifo_lo;		/* lo 32bits of sender's FIFO addr	*/
 	__be32 sip;		/* Sender's IP Address			*/
 	__be32 tip;		/* IP Address of requested hw addr	*/
+<<<<<<< HEAD
 } __packed;
+=======
+} __attribute__((packed));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* This header format is specific to this driver implementation. */
 #define FWNET_ALEN	8
@@ -82,7 +89,11 @@ struct rfc2734_arp {
 struct fwnet_header {
 	u8 h_dest[FWNET_ALEN];	/* destination address */
 	__be16 h_proto;		/* packet type ID field */
+<<<<<<< HEAD
 } __packed;
+=======
+} __attribute__((packed));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* IPv4 and IPv6 encapsulation header */
 struct rfc2734_header {
@@ -256,22 +267,39 @@ static int fwnet_header_rebuild(struct sk_buff *skb)
 	if (get_unaligned_be16(&h->h_proto) == ETH_P_IP)
 		return arp_find((unsigned char *)&h->h_dest, skb);
 
+<<<<<<< HEAD
 	dev_notice(&skb->dev->dev, "unable to resolve type %04x addresses\n",
 		   be16_to_cpu(h->h_proto));
+=======
+	fw_notify("%s: unable to resolve type %04x addresses\n",
+		  skb->dev->name, be16_to_cpu(h->h_proto));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int fwnet_header_cache(const struct neighbour *neigh,
+<<<<<<< HEAD
 			      struct hh_cache *hh, __be16 type)
+=======
+			      struct hh_cache *hh)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct net_device *net;
 	struct fwnet_header *h;
 
+<<<<<<< HEAD
 	if (type == cpu_to_be16(ETH_P_802_3))
 		return -1;
 	net = neigh->dev;
 	h = (struct fwnet_header *)((u8 *)hh->hh_data + 16 - sizeof(*h));
 	h->h_proto = type;
+=======
+	if (hh->hh_type == cpu_to_be16(ETH_P_802_3))
+		return -1;
+	net = neigh->dev;
+	h = (struct fwnet_header *)((u8 *)hh->hh_data + 16 - sizeof(*h));
+	h->h_proto = hh->hh_type;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy(h->h_dest, neigh->ha, net->addr_len);
 	hh->hh_len = FWNET_HLEN;
 
@@ -369,7 +397,11 @@ static struct fwnet_fragment_info *fwnet_frag_new(
 
 	new = kmalloc(sizeof(*new), GFP_ATOMIC);
 	if (!new) {
+<<<<<<< HEAD
 		dev_err(&pd->skb->dev->dev, "out of memory\n");
+=======
+		fw_error("out of memory\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 	}
 
@@ -414,7 +446,11 @@ fail_w_fi:
 fail_w_new:
 	kfree(new);
 fail:
+<<<<<<< HEAD
 	dev_err(&net->dev, "out of memory\n");
+=======
+	fw_error("out of memory\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return NULL;
 }
@@ -502,7 +538,15 @@ static struct fwnet_peer *fwnet_peer_find_by_node_id(struct fwnet_device *dev,
 static unsigned fwnet_max_payload(unsigned max_rec, unsigned speed)
 {
 	max_rec = min(max_rec, speed + 8);
+<<<<<<< HEAD
 	max_rec = clamp(max_rec, 8U, 11U); /* 512...4096 */
+=======
+	max_rec = min(max_rec, 0xbU); /* <= 4096 */
+	if (max_rec < 8) {
+		fw_notify("max_rec %x out of range\n", max_rec);
+		max_rec = 8;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return (1 << (max_rec + 1)) - RFC2374_FRAG_HDR_SIZE;
 }
@@ -554,7 +598,11 @@ static int fwnet_finish_incoming_packet(struct net_device *net,
 		sspd = arp1394->sspd;
 		/* Sanity check.  OS X 10.3 PPC reportedly sends 131. */
 		if (sspd > SCODE_3200) {
+<<<<<<< HEAD
 			dev_notice(&net->dev, "sspd %x out of range\n", sspd);
+=======
+			fw_notify("sspd %x out of range\n", sspd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sspd = SCODE_3200;
 		}
 		max_payload = fwnet_max_payload(arp1394->max_rec, sspd);
@@ -574,9 +622,14 @@ static int fwnet_finish_incoming_packet(struct net_device *net,
 		spin_unlock_irqrestore(&dev->lock, flags);
 
 		if (!peer) {
+<<<<<<< HEAD
 			dev_notice(&net->dev,
 				   "no peer for ARP packet from %016llx\n",
 				   (unsigned long long)peer_guid);
+=======
+			fw_notify("No peer for ARP packet from %016llx\n",
+				  (unsigned long long)peer_guid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto no_peer;
 		}
 
@@ -692,7 +745,11 @@ static int fwnet_incoming_packet(struct fwnet_device *dev, __be32 *buf, int len,
 
 		skb = dev_alloc_skb(len + net->hard_header_len + 15);
 		if (unlikely(!skb)) {
+<<<<<<< HEAD
 			dev_err(&net->dev, "out of memory\n");
+=======
+			fw_error("out of memory\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			net->stats.rx_dropped++;
 
 			return -ENOMEM;
@@ -815,7 +872,11 @@ static void fwnet_receive_packet(struct fw_card *card, struct fw_request *r,
 		rcode = RCODE_TYPE_ERROR;
 	else if (fwnet_incoming_packet(dev, payload, length,
 				       source, generation, false) != 0) {
+<<<<<<< HEAD
 		dev_err(&dev->netdev->dev, "incoming packet failure\n");
+=======
+		fw_error("Incoming packet failure\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rcode = RCODE_CONFLICT_ERROR;
 	} else
 		rcode = RCODE_COMPLETE;
@@ -861,8 +922,13 @@ static void fwnet_receive_broadcast(struct fw_iso_context *context,
 	if (specifier_id == IANA_SPECIFIER_ID && ver == RFC2734_SW_VERSION) {
 		buf_ptr += 2;
 		length -= IEEE1394_GASP_HDR_SIZE;
+<<<<<<< HEAD
 		fwnet_incoming_packet(dev, buf_ptr, length, source_node_id,
 				      context->card->generation, true);
+=======
+		fwnet_incoming_packet(dev, buf_ptr, length,
+				      source_node_id, -1, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	packet.payload_length = dev->rcv_buffer_size;
@@ -882,7 +948,11 @@ static void fwnet_receive_broadcast(struct fw_iso_context *context,
 	if (retval >= 0)
 		fw_iso_context_queue_flush(dev->broadcast_rcv_context);
 	else
+<<<<<<< HEAD
 		dev_err(&dev->netdev->dev, "requeue failed\n");
+=======
+		fw_error("requeue failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct kmem_cache *fwnet_packet_task_cache;
@@ -937,10 +1007,16 @@ static void fwnet_transmit_packet_done(struct fwnet_packet_task *ptask)
 		case RFC2374_HDR_LASTFRAG:
 		case RFC2374_HDR_UNFRAG:
 		default:
+<<<<<<< HEAD
 			dev_err(&dev->netdev->dev,
 				"outstanding packet %x lf %x, header %x,%x\n",
 				ptask->outstanding_pkts, lf, ptask->hdr.w0,
 				ptask->hdr.w1);
+=======
+			fw_error("Outstanding packet %x lf %x, header %x,%x\n",
+				 ptask->outstanding_pkts, lf, ptask->hdr.w0,
+				 ptask->hdr.w1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			BUG();
 
 		case RFC2374_HDR_FIRSTFRAG:
@@ -958,12 +1034,16 @@ static void fwnet_transmit_packet_done(struct fwnet_packet_task *ptask)
 			break;
 		}
 
+<<<<<<< HEAD
 		if (ptask->dest_node == IEEE1394_ALL_NODES) {
 			skb_pull(skb,
 				 ptask->max_payload + IEEE1394_GASP_HDR_SIZE);
 		} else {
 			skb_pull(skb, ptask->max_payload);
 		}
+=======
+		skb_pull(skb, ptask->max_payload);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ptask->outstanding_pkts > 1) {
 			fwnet_make_sf_hdr(&ptask->hdr, RFC2374_HDR_INTFRAG,
 					  dg_size, fg_off, datagram_label);
@@ -1017,9 +1097,14 @@ static void fwnet_write_complete(struct fw_card *card, int rcode,
 		fwnet_transmit_packet_failed(ptask);
 
 		if (printk_timed_ratelimit(&j,  1000) || rcode != last_rcode) {
+<<<<<<< HEAD
 			dev_err(&ptask->dev->netdev->dev,
 				"fwnet_write_complete failed: %x (skipped %d)\n",
 				rcode, errors_skipped);
+=======
+			fw_error("fwnet_write_complete: "
+				"failed: %x (skipped %d)\n", rcode, errors_skipped);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			errors_skipped = 0;
 			last_rcode = rcode;
@@ -1067,7 +1152,11 @@ static int fwnet_send_packet(struct fwnet_packet_task *ptask)
 		smp_rmb();
 		node_id = dev->card->node_id;
 
+<<<<<<< HEAD
 		p = skb_push(ptask->skb, IEEE1394_GASP_HDR_SIZE);
+=======
+		p = skb_push(ptask->skb, 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		put_unaligned_be32(node_id << 16 | IANA_SPECIFIER_ID >> 8, p);
 		put_unaligned_be32((IANA_SPECIFIER_ID & 0xff) << 24
 						| RFC2734_SW_VERSION, &p[4]);
@@ -1129,12 +1218,25 @@ static int fwnet_broadcast_start(struct fwnet_device *dev)
 	unsigned u;
 
 	if (dev->local_fifo == FWNET_NO_FIFO_ADDR) {
+<<<<<<< HEAD
+=======
+		/* outside OHCI posted write area? */
+		static const struct fw_address_region region = {
+			.start = 0xffff00000000ULL,
+			.end   = CSR_REGISTER_BASE,
+		};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev->handler.length = 4096;
 		dev->handler.address_callback = fwnet_receive_packet;
 		dev->handler.callback_data = dev;
 
+<<<<<<< HEAD
 		retval = fw_core_add_address_handler(&dev->handler,
 					&fw_high_memory_region);
+=======
+		retval = fw_core_add_address_handler(&dev->handler, &region);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (retval < 0)
 			goto failed_initial;
 
@@ -1547,12 +1649,23 @@ static int fwnet_probe(struct device *_dev)
 	put_unaligned_be64(card->guid, net->dev_addr);
 	put_unaligned_be64(~0ULL, net->broadcast);
 	ret = register_netdev(net);
+<<<<<<< HEAD
 	if (ret)
 		goto out;
 
 	list_add_tail(&dev->dev_link, &fwnet_device_list);
 	dev_notice(&net->dev, "IPv4 over IEEE 1394 on card %s\n",
 		   dev_name(card->device));
+=======
+	if (ret) {
+		fw_error("Cannot register the driver\n");
+		goto out;
+	}
+
+	list_add_tail(&dev->dev_link, &fwnet_device_list);
+	fw_notify("%s: IPv4 over FireWire on device %016llx\n",
+		  net->name, (unsigned long long)card->guid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  have_dev:
 	ret = fwnet_add_peer(dev, unit, device);
 	if (ret && allocated_netdev) {
@@ -1654,7 +1767,11 @@ static const struct ieee1394_device_id fwnet_id_table[] = {
 static struct fw_driver fwnet_driver = {
 	.driver = {
 		.owner  = THIS_MODULE,
+<<<<<<< HEAD
 		.name   = KBUILD_MODNAME,
+=======
+		.name   = "net",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.bus    = &fw_bus_type,
 		.probe  = fwnet_probe,
 		.remove = fwnet_remove,

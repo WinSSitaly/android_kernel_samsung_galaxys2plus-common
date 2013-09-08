@@ -17,6 +17,10 @@
 #include <asm/types.h>
 #include <asm/page.h>
 #include <asm/prom.h>
+<<<<<<< HEAD
+=======
+#include <asm/firmware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct mschunks_map {
         unsigned long num_chunks;
@@ -45,12 +49,37 @@ static inline unsigned long addr_to_chunk(unsigned long addr)
 
 static inline unsigned long phys_to_abs(unsigned long pa)
 {
+<<<<<<< HEAD
 	return pa;
+=======
+	unsigned long chunk;
+
+	/* This is a no-op on non-iSeries */
+	if (!firmware_has_feature(FW_FEATURE_ISERIES))
+		return pa;
+
+	chunk = addr_to_chunk(pa);
+
+	if (chunk < mschunks_map.num_chunks)
+		chunk = mschunks_map.mapping[chunk];
+
+	return chunk_to_addr(chunk) + (pa & MSCHUNKS_OFFSET_MASK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Convenience macros */
 #define virt_to_abs(va) phys_to_abs(__pa(va))
 #define abs_to_virt(aa) __va(aa)
 
+<<<<<<< HEAD
+=======
+/*
+ * Converts Virtual Address to Real Address for
+ * Legacy iSeries Hypervisor calls
+ */
+#define iseries_hv_addr(virtaddr)	\
+	(0x8000000000000000UL | virt_to_abs(virtaddr))
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __KERNEL__ */
 #endif /* _ASM_POWERPC_ABS_ADDR_H */

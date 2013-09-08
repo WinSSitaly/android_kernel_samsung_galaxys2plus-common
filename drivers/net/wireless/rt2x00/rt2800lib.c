@@ -38,6 +38,10 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
+=======
+#include <linux/sched.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "rt2x00.h"
 #include "rt2800lib.h"
@@ -401,9 +405,13 @@ int rt2800_load_firmware(struct rt2x00_dev *rt2x00dev,
 		return -EBUSY;
 
 	if (rt2x00_is_pci(rt2x00dev)) {
+<<<<<<< HEAD
 		if (rt2x00_rt(rt2x00dev, RT3572) ||
 		    rt2x00_rt(rt2x00dev, RT5390) ||
 		    rt2x00_rt(rt2x00dev, RT5392)) {
+=======
+		if (rt2x00_rt(rt2x00dev, RT5390)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rt2800_register_read(rt2x00dev, AUX_CTRL, &reg);
 			rt2x00_set_field32(&reg, AUX_CTRL_FORCE_PCIE_CLK, 1);
 			rt2x00_set_field32(&reg, AUX_CTRL_WAKE_PCIE_EN, 1);
@@ -413,6 +421,21 @@ int rt2800_load_firmware(struct rt2x00_dev *rt2x00dev,
 	}
 
 	/*
+<<<<<<< HEAD
+=======
+	 * Disable DMA, will be reenabled later when enabling
+	 * the radio.
+	 */
+	rt2800_register_read(rt2x00dev, WPDMA_GLO_CFG, &reg);
+	rt2x00_set_field32(&reg, WPDMA_GLO_CFG_ENABLE_TX_DMA, 0);
+	rt2x00_set_field32(&reg, WPDMA_GLO_CFG_TX_DMA_BUSY, 0);
+	rt2x00_set_field32(&reg, WPDMA_GLO_CFG_ENABLE_RX_DMA, 0);
+	rt2x00_set_field32(&reg, WPDMA_GLO_CFG_RX_DMA_BUSY, 0);
+	rt2x00_set_field32(&reg, WPDMA_GLO_CFG_TX_WRITEBACK_DONE, 1);
+	rt2800_register_write(rt2x00dev, WPDMA_GLO_CFG, reg);
+
+	/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Write firmware to the device.
 	 */
 	rt2800_drv_write_firmware(rt2x00dev, data, len);
@@ -433,6 +456,7 @@ int rt2800_load_firmware(struct rt2x00_dev *rt2x00dev,
 	}
 
 	/*
+<<<<<<< HEAD
 	 * Disable DMA, will be reenabled later when enabling
 	 * the radio.
 	 */
@@ -442,12 +466,17 @@ int rt2800_load_firmware(struct rt2x00_dev *rt2x00dev,
 	rt2800_register_write(rt2x00dev, WPDMA_GLO_CFG, reg);
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Initialize firmware.
 	 */
 	rt2800_register_write(rt2x00dev, H2M_BBP_AGENT, 0);
 	rt2800_register_write(rt2x00dev, H2M_MAILBOX_CSR, 0);
+<<<<<<< HEAD
 	if (rt2x00_is_usb(rt2x00dev))
 		rt2800_register_write(rt2x00dev, H2M_INT_SRC, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	msleep(1);
 
 	return 0;
@@ -493,7 +522,11 @@ void rt2800_write_tx_data(struct queue_entry *entry,
 	rt2x00_set_field32(&word, TXWI_W1_BW_WIN_SIZE, txdesc->u.ht.ba_size);
 	rt2x00_set_field32(&word, TXWI_W1_WIRELESS_CLI_ID,
 			   test_bit(ENTRY_TXD_ENCRYPT, &txdesc->flags) ?
+<<<<<<< HEAD
 			   txdesc->key_idx : txdesc->u.ht.wcid);
+=======
+			   txdesc->key_idx : 0xff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rt2x00_set_field32(&word, TXWI_W1_MPDU_TOTAL_BYTE_COUNT,
 			   txdesc->length);
 	rt2x00_set_field32(&word, TXWI_W1_PACKETID_QUEUE, entry->queue->qid);
@@ -514,9 +547,15 @@ EXPORT_SYMBOL_GPL(rt2800_write_tx_data);
 
 static int rt2800_agc_to_rssi(struct rt2x00_dev *rt2x00dev, u32 rxwi_w2)
 {
+<<<<<<< HEAD
 	s8 rssi0 = rt2x00_get_field32(rxwi_w2, RXWI_W2_RSSI0);
 	s8 rssi1 = rt2x00_get_field32(rxwi_w2, RXWI_W2_RSSI1);
 	s8 rssi2 = rt2x00_get_field32(rxwi_w2, RXWI_W2_RSSI2);
+=======
+	int rssi0 = rt2x00_get_field32(rxwi_w2, RXWI_W2_RSSI0);
+	int rssi1 = rt2x00_get_field32(rxwi_w2, RXWI_W2_RSSI1);
+	int rssi2 = rt2x00_get_field32(rxwi_w2, RXWI_W2_RSSI2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 eeprom;
 	u8 offset0;
 	u8 offset1;
@@ -552,7 +591,11 @@ static int rt2800_agc_to_rssi(struct rt2x00_dev *rt2x00dev, u32 rxwi_w2)
 	 * which gives less energy...
 	 */
 	rssi0 = max(rssi0, rssi1);
+<<<<<<< HEAD
 	return (int)max(rssi0, rssi2);
+=======
+	return max(rssi0, rssi2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void rt2800_process_rxwi(struct queue_entry *entry,
@@ -601,7 +644,63 @@ void rt2800_process_rxwi(struct queue_entry *entry,
 }
 EXPORT_SYMBOL_GPL(rt2800_process_rxwi);
 
+<<<<<<< HEAD
 void rt2800_txdone_entry(struct queue_entry *entry, u32 status, __le32 *txwi)
+=======
+static bool rt2800_txdone_entry_check(struct queue_entry *entry, u32 reg)
+{
+	__le32 *txwi;
+	u32 word;
+	int wcid, ack, pid;
+	int tx_wcid, tx_ack, tx_pid;
+
+	if (test_bit(ENTRY_OWNER_DEVICE_DATA, &entry->flags) ||
+	    !test_bit(ENTRY_DATA_STATUS_PENDING, &entry->flags)) {
+		WARNING(entry->queue->rt2x00dev,
+			"Data pending for entry %u in queue %u\n",
+			entry->entry_idx, entry->queue->qid);
+		cond_resched();
+		return false;
+	}
+
+	wcid	= rt2x00_get_field32(reg, TX_STA_FIFO_WCID);
+	ack	= rt2x00_get_field32(reg, TX_STA_FIFO_TX_ACK_REQUIRED);
+	pid	= rt2x00_get_field32(reg, TX_STA_FIFO_PID_TYPE);
+
+	/*
+	 * This frames has returned with an IO error,
+	 * so the status report is not intended for this
+	 * frame.
+	 */
+	if (test_bit(ENTRY_DATA_IO_FAILED, &entry->flags)) {
+		rt2x00lib_txdone_noinfo(entry, TXDONE_FAILURE);
+		return false;
+	}
+
+	/*
+	 * Validate if this TX status report is intended for
+	 * this entry by comparing the WCID/ACK/PID fields.
+	 */
+	txwi = rt2800_drv_get_txwi(entry);
+
+	rt2x00_desc_read(txwi, 1, &word);
+	tx_wcid = rt2x00_get_field32(word, TXWI_W1_WIRELESS_CLI_ID);
+	tx_ack  = rt2x00_get_field32(word, TXWI_W1_ACK);
+	tx_pid  = rt2x00_get_field32(word, TXWI_W1_PACKETID);
+
+	if ((wcid != tx_wcid) || (ack != tx_ack) || (pid != tx_pid)) {
+		WARNING(entry->queue->rt2x00dev,
+			"TX status report missed for queue %d entry %d\n",
+		entry->queue->qid, entry->entry_idx);
+		rt2x00lib_txdone_noinfo(entry, TXDONE_UNKNOWN);
+		return false;
+	}
+
+	return true;
+}
+
+void rt2800_txdone_entry(struct queue_entry *entry, u32 status)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct rt2x00_dev *rt2x00dev = entry->queue->rt2x00dev;
 	struct skb_frame_desc *skbdesc = get_skb_frame_desc(entry->skb);
@@ -609,11 +708,19 @@ void rt2800_txdone_entry(struct queue_entry *entry, u32 status, __le32 *txwi)
 	u32 word;
 	u16 mcs, real_mcs;
 	int aggr, ampdu;
+<<<<<<< HEAD
+=======
+	__le32 *txwi;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Obtain the status about this packet.
 	 */
 	txdesc.flags = 0;
+<<<<<<< HEAD
+=======
+	txwi = rt2800_drv_get_txwi(entry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rt2x00_desc_read(txwi, 0, &word);
 
 	mcs = rt2x00_get_field32(word, TXWI_W0_MCS);
@@ -681,6 +788,47 @@ void rt2800_txdone_entry(struct queue_entry *entry, u32 status, __le32 *txwi)
 }
 EXPORT_SYMBOL_GPL(rt2800_txdone_entry);
 
+<<<<<<< HEAD
+=======
+void rt2800_txdone(struct rt2x00_dev *rt2x00dev)
+{
+	struct data_queue *queue;
+	struct queue_entry *entry;
+	u32 reg;
+	u8 qid;
+
+	while (kfifo_get(&rt2x00dev->txstatus_fifo, &reg)) {
+
+		/* TX_STA_FIFO_PID_QUEUE is a 2-bit field, thus
+		 * qid is guaranteed to be one of the TX QIDs
+		 */
+		qid = rt2x00_get_field32(reg, TX_STA_FIFO_PID_QUEUE);
+		queue = rt2x00queue_get_tx_queue(rt2x00dev, qid);
+		if (unlikely(!queue)) {
+			WARNING(rt2x00dev, "Got TX status for an unavailable "
+					   "queue %u, dropping\n", qid);
+			continue;
+		}
+
+		/*
+		 * Inside each queue, we process each entry in a chronological
+		 * order. We first check that the queue is not empty.
+		 */
+		entry = NULL;
+		while (!rt2x00queue_empty(queue)) {
+			entry = rt2x00queue_get_entry(queue, Q_INDEX_DONE);
+			if (rt2800_txdone_entry_check(entry, reg))
+				break;
+			entry = NULL;
+		}
+
+		if (entry)
+			rt2800_txdone_entry(entry, reg);
+	}
+}
+EXPORT_SYMBOL_GPL(rt2800_txdone);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void rt2800_write_beacon(struct queue_entry *entry, struct txentry_desc *txdesc)
 {
 	struct rt2x00_dev *rt2x00dev = entry->queue->rt2x00dev;
@@ -897,12 +1045,34 @@ static void rt2800_brightness_set(struct led_classdev *led_cdev,
 	}
 }
 
+<<<<<<< HEAD
+=======
+static int rt2800_blink_set(struct led_classdev *led_cdev,
+			    unsigned long *delay_on, unsigned long *delay_off)
+{
+	struct rt2x00_led *led =
+	    container_of(led_cdev, struct rt2x00_led, led_dev);
+	u32 reg;
+
+	rt2800_register_read(led->rt2x00dev, LED_CFG, &reg);
+	rt2x00_set_field32(&reg, LED_CFG_ON_PERIOD, *delay_on);
+	rt2x00_set_field32(&reg, LED_CFG_OFF_PERIOD, *delay_off);
+	rt2800_register_write(led->rt2x00dev, LED_CFG, reg);
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void rt2800_init_led(struct rt2x00_dev *rt2x00dev,
 		     struct rt2x00_led *led, enum led_type type)
 {
 	led->rt2x00dev = rt2x00dev;
 	led->type = type;
 	led->led_dev.brightness_set = rt2800_brightness_set;
+<<<<<<< HEAD
+=======
+	led->led_dev.blink_set = rt2800_blink_set;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	led->flags = LED_INITIALIZED;
 }
 #endif /* CONFIG_RT2X00_LIB_LEDS */
@@ -910,6 +1080,7 @@ static void rt2800_init_led(struct rt2x00_dev *rt2x00dev,
 /*
  * Configuration handlers.
  */
+<<<<<<< HEAD
 static void rt2800_config_wcid(struct rt2x00_dev *rt2x00dev,
 			       const u8 *address,
 			       int wcid)
@@ -955,6 +1126,13 @@ static void rt2800_config_wcid_attr_cipher(struct rt2x00_dev *rt2x00dev,
 					   struct rt2x00lib_crypto *crypto,
 					   struct ieee80211_key_conf *key)
 {
+=======
+static void rt2800_config_wcid_attr(struct rt2x00_dev *rt2x00dev,
+				    struct rt2x00lib_crypto *crypto,
+				    struct ieee80211_key_conf *key)
+{
+	struct mac_wcid_entry wcid_entry;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mac_iveiv_entry iveiv_entry;
 	u32 offset;
 	u32 reg;
@@ -974,6 +1152,7 @@ static void rt2800_config_wcid_attr_cipher(struct rt2x00_dev *rt2x00dev,
 				   (crypto->cipher & 0x7));
 		rt2x00_set_field32(&reg, MAC_WCID_ATTRIBUTE_CIPHER_EXT,
 				   (crypto->cipher & 0x8) >> 3);
+<<<<<<< HEAD
 		rt2x00_set_field32(&reg, MAC_WCID_ATTRIBUTE_RX_WIUDF, crypto->cipher);
 		rt2800_register_write(rt2x00dev, offset, reg);
 	} else {
@@ -984,6 +1163,16 @@ static void rt2800_config_wcid_attr_cipher(struct rt2x00_dev *rt2x00dev,
 		rt2x00_set_field32(&reg, MAC_WCID_ATTRIBUTE_CIPHER_EXT, 0);
 		rt2x00_set_field32(&reg, MAC_WCID_ATTRIBUTE_RX_WIUDF, 0);
 		rt2800_register_write(rt2x00dev, offset, reg);
+=======
+		rt2x00_set_field32(&reg, MAC_WCID_ATTRIBUTE_BSS_IDX,
+				   (crypto->bssidx & 0x7));
+		rt2x00_set_field32(&reg, MAC_WCID_ATTRIBUTE_BSS_IDX_EXT,
+				   (crypto->bssidx & 0x8) >> 3);
+		rt2x00_set_field32(&reg, MAC_WCID_ATTRIBUTE_RX_WIUDF, crypto->cipher);
+		rt2800_register_write(rt2x00dev, offset, reg);
+	} else {
+		rt2800_register_write(rt2x00dev, offset, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	offset = MAC_IVEIV_ENTRY(key->hw_key_idx);
@@ -996,6 +1185,17 @@ static void rt2800_config_wcid_attr_cipher(struct rt2x00_dev *rt2x00dev,
 	iveiv_entry.iv[3] |= key->keyidx << 6;
 	rt2800_register_multiwrite(rt2x00dev, offset,
 				      &iveiv_entry, sizeof(iveiv_entry));
+<<<<<<< HEAD
+=======
+
+	offset = MAC_WCID_ENTRY(key->hw_key_idx);
+
+	memset(&wcid_entry, 0, sizeof(wcid_entry));
+	if (crypto->cmd == SET_KEY)
+		memcpy(wcid_entry.mac, crypto->address, ETH_ALEN);
+	rt2800_register_multiwrite(rt2x00dev, offset,
+				      &wcid_entry, sizeof(wcid_entry));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int rt2800_config_shared_key(struct rt2x00_dev *rt2x00dev,
@@ -1042,15 +1242,20 @@ int rt2800_config_shared_key(struct rt2x00_dev *rt2x00dev,
 	/*
 	 * Update WCID information
 	 */
+<<<<<<< HEAD
 	rt2800_config_wcid(rt2x00dev, crypto->address, key->hw_key_idx);
 	rt2800_config_wcid_attr_bssidx(rt2x00dev, key->hw_key_idx,
 				       crypto->bssidx);
 	rt2800_config_wcid_attr_cipher(rt2x00dev, crypto, key);
+=======
+	rt2800_config_wcid_attr(rt2x00dev, crypto, key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 EXPORT_SYMBOL_GPL(rt2800_config_shared_key);
 
+<<<<<<< HEAD
 static inline int rt2800_find_wcid(struct rt2x00_dev *rt2x00dev)
 {
 	struct mac_wcid_entry wcid_entry;
@@ -1060,6 +1265,16 @@ static inline int rt2800_find_wcid(struct rt2x00_dev *rt2x00dev)
 	/*
 	 * Search for the first free WCID entry and return the corresponding
 	 * index.
+=======
+static inline int rt2800_find_pairwise_keyslot(struct rt2x00_dev *rt2x00dev)
+{
+	int idx;
+	u32 offset, reg;
+
+	/*
+	 * Search for the first free pairwise key entry and return the
+	 * corresponding index.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 *
 	 * Make sure the WCID starts _after_ the last possible shared key
 	 * entry (>32).
@@ -1069,6 +1284,7 @@ static inline int rt2800_find_wcid(struct rt2x00_dev *rt2x00dev)
 	 * first 222 entries.
 	 */
 	for (idx = 33; idx <= 222; idx++) {
+<<<<<<< HEAD
 		offset = MAC_WCID_ENTRY(idx);
 		rt2800_register_multiread(rt2x00dev, offset, &wcid_entry,
 					  sizeof(wcid_entry));
@@ -1080,6 +1296,13 @@ static inline int rt2800_find_wcid(struct rt2x00_dev *rt2x00dev)
 	 * Use -1 to indicate that we don't have any more space in the WCID
 	 * table.
 	 */
+=======
+		offset = MAC_WCID_ATTR_ENTRY(idx);
+		rt2800_register_read(rt2x00dev, offset, &reg);
+		if (!reg)
+			return idx;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -1;
 }
 
@@ -1089,6 +1312,7 @@ int rt2800_config_pairwise_key(struct rt2x00_dev *rt2x00dev,
 {
 	struct hw_key_entry key_entry;
 	u32 offset;
+<<<<<<< HEAD
 
 	if (crypto->cmd == SET_KEY) {
 		/*
@@ -1098,6 +1322,15 @@ int rt2800_config_pairwise_key(struct rt2x00_dev *rt2x00dev,
 		if (crypto->wcid < 0)
 			return -ENOSPC;
 		key->hw_key_idx = crypto->wcid;
+=======
+	int idx;
+
+	if (crypto->cmd == SET_KEY) {
+		idx = rt2800_find_pairwise_keyslot(rt2x00dev);
+		if (idx < 0)
+			return -ENOSPC;
+		key->hw_key_idx = idx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		memcpy(key_entry.key, crypto->key,
 		       sizeof(key_entry.key));
@@ -1114,12 +1347,17 @@ int rt2800_config_pairwise_key(struct rt2x00_dev *rt2x00dev,
 	/*
 	 * Update WCID information
 	 */
+<<<<<<< HEAD
 	rt2800_config_wcid_attr_cipher(rt2x00dev, crypto, key);
+=======
+	rt2800_config_wcid_attr(rt2x00dev, crypto, key);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 EXPORT_SYMBOL_GPL(rt2800_config_pairwise_key);
 
+<<<<<<< HEAD
 int rt2800_sta_add(struct rt2x00_dev *rt2x00dev, struct ieee80211_vif *vif,
 		   struct ieee80211_sta *sta)
 {
@@ -1167,6 +1405,8 @@ int rt2800_sta_remove(struct rt2x00_dev *rt2x00dev, int wcid)
 }
 EXPORT_SYMBOL_GPL(rt2800_sta_remove);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void rt2800_config_filter(struct rt2x00_dev *rt2x00dev,
 			  const unsigned int filter_flags)
 {
@@ -1203,10 +1443,15 @@ void rt2800_config_filter(struct rt2x00_dev *rt2x00dev,
 			   !(filter_flags & FIF_CONTROL));
 	rt2x00_set_field32(&reg, RX_FILTER_CFG_DROP_PSPOLL,
 			   !(filter_flags & FIF_PSPOLL));
+<<<<<<< HEAD
 	rt2x00_set_field32(&reg, RX_FILTER_CFG_DROP_BA,
 			   !(filter_flags & FIF_CONTROL));
 	rt2x00_set_field32(&reg, RX_FILTER_CFG_DROP_BAR,
 			   !(filter_flags & FIF_CONTROL));
+=======
+	rt2x00_set_field32(&reg, RX_FILTER_CFG_DROP_BA, 1);
+	rt2x00_set_field32(&reg, RX_FILTER_CFG_DROP_BAR, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rt2x00_set_field32(&reg, RX_FILTER_CFG_DROP_CNTL,
 			   !(filter_flags & FIF_CONTROL));
 	rt2800_register_write(rt2x00dev, RX_FILTER_CFG, reg);
@@ -1350,7 +1595,11 @@ static void rt2800_config_ht_opmode(struct rt2x00_dev *rt2x00dev,
 			gf20_rate = gf40_rate = 0x0003;
 		}
 		break;
+<<<<<<< HEAD
 	}
+=======
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* check for STAs not supporting greenfield mode */
 	if (any_sta_nongf)
@@ -1428,6 +1677,7 @@ void rt2800_config_erp(struct rt2x00_dev *rt2x00dev, struct rt2x00lib_erp *erp,
 }
 EXPORT_SYMBOL_GPL(rt2800_config_erp);
 
+<<<<<<< HEAD
 static void rt2800_config_3572bt_ant(struct rt2x00_dev *rt2x00dev)
 {
 	u32 reg;
@@ -1462,6 +1712,8 @@ static void rt2800_config_3572bt_ant(struct rt2x00_dev *rt2x00dev)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void rt2800_set_ant_diversity(struct rt2x00_dev *rt2x00dev,
 				     enum antenna ant)
 {
@@ -1492,10 +1744,13 @@ void rt2800_config_ant(struct rt2x00_dev *rt2x00dev, struct antenna_setup *ant)
 	rt2800_bbp_read(rt2x00dev, 1, &r1);
 	rt2800_bbp_read(rt2x00dev, 3, &r3);
 
+<<<<<<< HEAD
 	if (rt2x00_rt(rt2x00dev, RT3572) &&
 	    test_bit(CAPABILITY_BT_COEXIST, &rt2x00dev->cap_flags))
 		rt2800_config_3572bt_ant(rt2x00dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Configure the TX antenna.
 	 */
@@ -1504,11 +1759,15 @@ void rt2800_config_ant(struct rt2x00_dev *rt2x00dev, struct antenna_setup *ant)
 		rt2x00_set_field8(&r1, BBP1_TX_ANTENNA, 0);
 		break;
 	case 2:
+<<<<<<< HEAD
 		if (rt2x00_rt(rt2x00dev, RT3572) &&
 		    test_bit(CAPABILITY_BT_COEXIST, &rt2x00dev->cap_flags))
 			rt2x00_set_field8(&r1, BBP1_TX_ANTENNA, 1);
 		else
 			rt2x00_set_field8(&r1, BBP1_TX_ANTENNA, 2);
+=======
+		rt2x00_set_field8(&r1, BBP1_TX_ANTENNA, 2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case 3:
 		rt2x00_set_field8(&r1, BBP1_TX_ANTENNA, 0);
@@ -1533,6 +1792,7 @@ void rt2800_config_ant(struct rt2x00_dev *rt2x00dev, struct antenna_setup *ant)
 		rt2x00_set_field8(&r3, BBP3_RX_ANTENNA, 0);
 		break;
 	case 2:
+<<<<<<< HEAD
 		if (rt2x00_rt(rt2x00dev, RT3572) &&
 		    test_bit(CAPABILITY_BT_COEXIST, &rt2x00dev->cap_flags)) {
 			rt2x00_set_field8(&r3, BBP3_RX_ADC, 1);
@@ -1542,6 +1802,9 @@ void rt2800_config_ant(struct rt2x00_dev *rt2x00dev, struct antenna_setup *ant)
 		} else {
 			rt2x00_set_field8(&r3, BBP3_RX_ANTENNA, 1);
 		}
+=======
+		rt2x00_set_field8(&r3, BBP3_RX_ANTENNA, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case 3:
 		rt2x00_set_field8(&r3, BBP3_RX_ANTENNA, 2);
@@ -1646,6 +1909,7 @@ static void rt2800_config_channel_rf3xxx(struct rt2x00_dev *rt2x00dev,
 					 struct rf_channel *rf,
 					 struct channel_info *info)
 {
+<<<<<<< HEAD
 	struct rt2800_drv_data *drv_data = rt2x00dev->drv_data;
 	u8 rfcsr, calib_tx, calib_rx;
 
@@ -1654,6 +1918,12 @@ static void rt2800_config_channel_rf3xxx(struct rt2x00_dev *rt2x00dev,
 	rt2800_rfcsr_read(rt2x00dev, 3, &rfcsr);
 	rt2x00_set_field8(&rfcsr, RFCSR3_K, rf->rf3);
 	rt2800_rfcsr_write(rt2x00dev, 3, rfcsr);
+=======
+	u8 rfcsr;
+
+	rt2800_rfcsr_write(rt2x00dev, 2, rf->rf1);
+	rt2800_rfcsr_write(rt2x00dev, 3, rf->rf3);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rt2800_rfcsr_read(rt2x00dev, 6, &rfcsr);
 	rt2x00_set_field8(&rfcsr, RFCSR6_R1, rf->rf2);
@@ -1667,6 +1937,7 @@ static void rt2800_config_channel_rf3xxx(struct rt2x00_dev *rt2x00dev,
 	rt2x00_set_field8(&rfcsr, RFCSR13_TX_POWER, info->default_power2);
 	rt2800_rfcsr_write(rt2x00dev, 13, rfcsr);
 
+<<<<<<< HEAD
 	rt2800_rfcsr_read(rt2x00dev, 1, &rfcsr);
 	rt2x00_set_field8(&rfcsr, RFCSR1_RX0_PD, 0);
 	rt2x00_set_field8(&rfcsr, RFCSR1_TX0_PD, 0);
@@ -1708,10 +1979,13 @@ static void rt2800_config_channel_rf3xxx(struct rt2x00_dev *rt2x00dev,
 	rt2x00_set_field8(&rfcsr, RFCSR30_RF_CALIBRATION, 0);
 	rt2800_rfcsr_write(rt2x00dev, 30, rfcsr);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rt2800_rfcsr_read(rt2x00dev, 23, &rfcsr);
 	rt2x00_set_field8(&rfcsr, RFCSR23_FREQ_OFFSET, rt2x00dev->freq_offset);
 	rt2800_rfcsr_write(rt2x00dev, 23, rfcsr);
 
+<<<<<<< HEAD
 	if (rt2x00_rt(rt2x00dev, RT3390)) {
 		calib_tx = conf_is_ht40(conf) ? 0x68 : 0x4f;
 		calib_rx = conf_is_ht40(conf) ? 0x6f : 0x4f;
@@ -1732,10 +2006,15 @@ static void rt2800_config_channel_rf3xxx(struct rt2x00_dev *rt2x00dev,
 	rt2800_rfcsr_read(rt2x00dev, 31, &rfcsr);
 	rt2x00_set_field8(&rfcsr, RFCSR31_RX_CALIB, calib_rx);
 	rt2800_rfcsr_write(rt2x00dev, 31, rfcsr);
+=======
+	rt2800_rfcsr_write(rt2x00dev, 24,
+			      rt2x00dev->calibration[conf_is_ht40(conf)]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rt2800_rfcsr_read(rt2x00dev, 7, &rfcsr);
 	rt2x00_set_field8(&rfcsr, RFCSR7_RF_TUNING, 1);
 	rt2800_rfcsr_write(rt2x00dev, 7, rfcsr);
+<<<<<<< HEAD
 
 	rt2800_rfcsr_read(rt2x00dev, 30, &rfcsr);
 	rt2x00_set_field8(&rfcsr, RFCSR30_RF_CALIBRATION, 1);
@@ -1914,6 +2193,10 @@ static void rt2800_config_channel_rf3052(struct rt2x00_dev *rt2x00dev,
 	rt2x00_set_field8(&rfcsr, RFCSR7_RF_TUNING, 1);
 	rt2800_rfcsr_write(rt2x00dev, 7, rfcsr);
 }
+=======
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define RT5390_POWER_BOUND     0x27
 #define RT5390_FREQ_OFFSET_BOUND       0x5f
@@ -1990,8 +2273,12 @@ static void rt2800_config_channel_rf53xx(struct rt2x00_dev *rt2x00dev,
 						   r55_nonbt_rev[idx]);
 				rt2800_rfcsr_write(rt2x00dev, 59,
 						   r59_nonbt_rev[idx]);
+<<<<<<< HEAD
 			} else if (rt2x00_rt(rt2x00dev, RT5390) ||
 					   rt2x00_rt(rt2x00dev, RT5392)) {
+=======
+			} else if (rt2x00_rt(rt2x00dev, RT5390)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				static const char r59_non_bt[] = {0x8f, 0x8f,
 					0x8f, 0x8f, 0x8f, 0x8f, 0x8f, 0x8d,
 					0x8a, 0x88, 0x88, 0x87, 0x87, 0x86};
@@ -2029,6 +2316,7 @@ static void rt2800_config_channel(struct rt2x00_dev *rt2x00dev,
 		info->default_power2 = TXPOWER_A_TO_DEV(info->default_power2);
 	}
 
+<<<<<<< HEAD
 	switch (rt2x00dev->chip.rf) {
 	case RF2020:
 	case RF3020:
@@ -2048,6 +2336,20 @@ static void rt2800_config_channel(struct rt2x00_dev *rt2x00dev,
 	default:
 		rt2800_config_channel_rf2xxx(rt2x00dev, conf, rf, info);
 	}
+=======
+	if (rt2x00_rf(rt2x00dev, RF2020) ||
+	    rt2x00_rf(rt2x00dev, RF3020) ||
+	    rt2x00_rf(rt2x00dev, RF3021) ||
+	    rt2x00_rf(rt2x00dev, RF3022) ||
+	    rt2x00_rf(rt2x00dev, RF3052) ||
+	    rt2x00_rf(rt2x00dev, RF3320))
+		rt2800_config_channel_rf3xxx(rt2x00dev, conf, rf, info);
+	else if (rt2x00_rf(rt2x00dev, RF5370) ||
+		 rt2x00_rf(rt2x00dev, RF5390))
+		rt2800_config_channel_rf53xx(rt2x00dev, conf, rf, info);
+	else
+		rt2800_config_channel_rf2xxx(rt2x00dev, conf, rf, info);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Change BBP settings
@@ -2058,8 +2360,12 @@ static void rt2800_config_channel(struct rt2x00_dev *rt2x00dev,
 	rt2800_bbp_write(rt2x00dev, 86, 0);
 
 	if (rf->channel <= 14) {
+<<<<<<< HEAD
 		if (!rt2x00_rt(rt2x00dev, RT5390) &&
 			!rt2x00_rt(rt2x00dev, RT5392)) {
+=======
+		if (!rt2x00_rt(rt2x00dev, RT5390)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (test_bit(CAPABILITY_EXTERNAL_LNA_BG,
 				     &rt2x00dev->cap_flags)) {
 				rt2800_bbp_write(rt2x00dev, 82, 0x62);
@@ -2070,10 +2376,14 @@ static void rt2800_config_channel(struct rt2x00_dev *rt2x00dev,
 			}
 		}
 	} else {
+<<<<<<< HEAD
 		if (rt2x00_rt(rt2x00dev, RT3572))
 			rt2800_bbp_write(rt2x00dev, 82, 0x94);
 		else
 			rt2800_bbp_write(rt2x00dev, 82, 0xf2);
+=======
+		rt2800_bbp_write(rt2x00dev, 82, 0xf2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (test_bit(CAPABILITY_EXTERNAL_LNA_A, &rt2x00dev->cap_flags))
 			rt2800_bbp_write(rt2x00dev, 75, 0x46);
@@ -2087,17 +2397,25 @@ static void rt2800_config_channel(struct rt2x00_dev *rt2x00dev,
 	rt2x00_set_field32(&reg, TX_BAND_CFG_BG, rf->channel <= 14);
 	rt2800_register_write(rt2x00dev, TX_BAND_CFG, reg);
 
+<<<<<<< HEAD
 	if (rt2x00_rt(rt2x00dev, RT3572))
 		rt2800_rfcsr_write(rt2x00dev, 8, 0);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tx_pin = 0;
 
 	/* Turn on unused PA or LNA when not using 1T or 1R */
 	if (rt2x00dev->default_ant.tx_chain_num == 2) {
+<<<<<<< HEAD
 		rt2x00_set_field32(&tx_pin, TX_PIN_CFG_PA_PE_A1_EN,
 				   rf->channel > 14);
 		rt2x00_set_field32(&tx_pin, TX_PIN_CFG_PA_PE_G1_EN,
 				   rf->channel <= 14);
+=======
+		rt2x00_set_field32(&tx_pin, TX_PIN_CFG_PA_PE_A1_EN, 1);
+		rt2x00_set_field32(&tx_pin, TX_PIN_CFG_PA_PE_G1_EN, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Turn on unused PA or LNA when not using 1T or 1R */
@@ -2110,18 +2428,25 @@ static void rt2800_config_channel(struct rt2x00_dev *rt2x00dev,
 	rt2x00_set_field32(&tx_pin, TX_PIN_CFG_LNA_PE_G0_EN, 1);
 	rt2x00_set_field32(&tx_pin, TX_PIN_CFG_RFTR_EN, 1);
 	rt2x00_set_field32(&tx_pin, TX_PIN_CFG_TRSW_EN, 1);
+<<<<<<< HEAD
 	if (test_bit(CAPABILITY_BT_COEXIST, &rt2x00dev->cap_flags))
 		rt2x00_set_field32(&tx_pin, TX_PIN_CFG_PA_PE_G0_EN, 1);
 	else
 		rt2x00_set_field32(&tx_pin, TX_PIN_CFG_PA_PE_G0_EN,
 				   rf->channel <= 14);
+=======
+	rt2x00_set_field32(&tx_pin, TX_PIN_CFG_PA_PE_G0_EN, rf->channel <= 14);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rt2x00_set_field32(&tx_pin, TX_PIN_CFG_PA_PE_A0_EN, rf->channel > 14);
 
 	rt2800_register_write(rt2x00dev, TX_PIN_CFG, tx_pin);
 
+<<<<<<< HEAD
 	if (rt2x00_rt(rt2x00dev, RT3572))
 		rt2800_rfcsr_write(rt2x00dev, 8, 0x80);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rt2800_bbp_read(rt2x00dev, 4, &bbp);
 	rt2x00_set_field8(&bbp, BBP4_BANDWIDTH, 2 * conf_is_ht40(conf));
 	rt2800_bbp_write(rt2x00dev, 4, bbp);
@@ -2161,6 +2486,7 @@ static int rt2800_get_gain_calibration_delta(struct rt2x00_dev *rt2x00dev)
 	int i;
 
 	/*
+<<<<<<< HEAD
 	 * First check if temperature compensation is supported.
 	 */
 	rt2x00_eeprom_read(rt2x00dev, EEPROM_NIC_CONF1, &eeprom);
@@ -2168,6 +2494,8 @@ static int rt2800_get_gain_calibration_delta(struct rt2x00_dev *rt2x00dev)
 		return 0;
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Read TSSI boundaries for temperature compensation from
 	 * the EEPROM.
 	 *
@@ -2242,7 +2570,11 @@ static int rt2800_get_gain_calibration_delta(struct rt2x00_dev *rt2x00dev)
 	/*
 	 * Check if temperature compensation is supported.
 	 */
+<<<<<<< HEAD
 	if (tssi_bounds[4] == 0xff || step == 0xff)
+=======
+	if (tssi_bounds[4] == 0xff)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	/*
@@ -2508,6 +2840,7 @@ void rt2800_gain_calibration(struct rt2x00_dev *rt2x00dev)
 }
 EXPORT_SYMBOL_GPL(rt2800_gain_calibration);
 
+<<<<<<< HEAD
 void rt2800_vco_calibration(struct rt2x00_dev *rt2x00dev)
 {
 	u32	tx_pin;
@@ -2582,6 +2915,8 @@ void rt2800_vco_calibration(struct rt2x00_dev *rt2x00dev)
 }
 EXPORT_SYMBOL_GPL(rt2800_vco_calibration);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void rt2800_config_retry_limit(struct rt2x00_dev *rt2x00dev,
 				      struct rt2x00lib_conf *libconf)
 {
@@ -2670,8 +3005,12 @@ static u8 rt2800_get_default_vgc(struct rt2x00_dev *rt2x00dev)
 		    rt2x00_rt(rt2x00dev, RT3071) ||
 		    rt2x00_rt(rt2x00dev, RT3090) ||
 		    rt2x00_rt(rt2x00dev, RT3390) ||
+<<<<<<< HEAD
 		    rt2x00_rt(rt2x00dev, RT5390) ||
 		    rt2x00_rt(rt2x00dev, RT5392))
+=======
+		    rt2x00_rt(rt2x00dev, RT5390))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 0x1c + (2 * rt2x00dev->lna_gain);
 		else
 			return 0x2e + rt2x00dev->lna_gain;
@@ -2803,11 +3142,15 @@ static int rt2800_init_registers(struct rt2x00_dev *rt2x00dev)
 		rt2800_register_write(rt2x00dev, TX_SW_CFG0, 0x00000400);
 		rt2800_register_write(rt2x00dev, TX_SW_CFG1, 0x00000000);
 		rt2800_register_write(rt2x00dev, TX_SW_CFG2, 0x00000030);
+<<<<<<< HEAD
 	} else if (rt2x00_rt(rt2x00dev, RT3572)) {
 		rt2800_register_write(rt2x00dev, TX_SW_CFG0, 0x00000400);
 		rt2800_register_write(rt2x00dev, TX_SW_CFG1, 0x00080606);
 	} else if (rt2x00_rt(rt2x00dev, RT5390) ||
 			   rt2x00_rt(rt2x00dev, RT5392)) {
+=======
+	} else if (rt2x00_rt(rt2x00dev, RT5390)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_register_write(rt2x00dev, TX_SW_CFG0, 0x00000404);
 		rt2800_register_write(rt2x00dev, TX_SW_CFG1, 0x00080606);
 		rt2800_register_write(rt2x00dev, TX_SW_CFG2, 0x00000000);
@@ -3023,8 +3366,16 @@ static int rt2800_init_registers(struct rt2x00_dev *rt2x00dev)
 					 SHARED_KEY_MODE_ENTRY(i), 0);
 
 	for (i = 0; i < 256; i++) {
+<<<<<<< HEAD
 		rt2800_config_wcid(rt2x00dev, NULL, i);
 		rt2800_delete_wcid_attr(rt2x00dev, i);
+=======
+		static const u32 wcid[2] = { 0xffffffff, 0x00ffffff };
+		rt2800_register_multiwrite(rt2x00dev, MAC_WCID_ENTRY(i),
+					      wcid, sizeof(wcid));
+
+		rt2800_register_write(rt2x00dev, MAC_WCID_ATTR_ENTRY(i), 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_register_write(rt2x00dev, MAC_IVEIV_ENTRY(i), 0);
 	}
 
@@ -3183,31 +3534,47 @@ static int rt2800_init_bbp(struct rt2x00_dev *rt2x00dev)
 		     rt2800_wait_bbp_ready(rt2x00dev)))
 		return -EACCES;
 
+<<<<<<< HEAD
 	if (rt2x00_rt(rt2x00dev, RT5390) ||
 		rt2x00_rt(rt2x00dev, RT5392)) {
+=======
+	if (rt2x00_rt(rt2x00dev, RT5390)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_bbp_read(rt2x00dev, 4, &value);
 		rt2x00_set_field8(&value, BBP4_MAC_IF_CTRL, 1);
 		rt2800_bbp_write(rt2x00dev, 4, value);
 	}
 
 	if (rt2800_is_305x_soc(rt2x00dev) ||
+<<<<<<< HEAD
 	    rt2x00_rt(rt2x00dev, RT3572) ||
 	    rt2x00_rt(rt2x00dev, RT5390) ||
 	    rt2x00_rt(rt2x00dev, RT5392))
+=======
+	    rt2x00_rt(rt2x00dev, RT5390))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_bbp_write(rt2x00dev, 31, 0x08);
 
 	rt2800_bbp_write(rt2x00dev, 65, 0x2c);
 	rt2800_bbp_write(rt2x00dev, 66, 0x38);
 
+<<<<<<< HEAD
 	if (rt2x00_rt(rt2x00dev, RT5390) ||
 		rt2x00_rt(rt2x00dev, RT5392))
+=======
+	if (rt2x00_rt(rt2x00dev, RT5390))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_bbp_write(rt2x00dev, 68, 0x0b);
 
 	if (rt2x00_rt_rev(rt2x00dev, RT2860, REV_RT2860C)) {
 		rt2800_bbp_write(rt2x00dev, 69, 0x16);
 		rt2800_bbp_write(rt2x00dev, 73, 0x12);
+<<<<<<< HEAD
 	} else if (rt2x00_rt(rt2x00dev, RT5390) ||
 			   rt2x00_rt(rt2x00dev, RT5392)) {
+=======
+	} else if (rt2x00_rt(rt2x00dev, RT5390)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_bbp_write(rt2x00dev, 69, 0x12);
 		rt2800_bbp_write(rt2x00dev, 73, 0x13);
 		rt2800_bbp_write(rt2x00dev, 75, 0x46);
@@ -3224,9 +3591,13 @@ static int rt2800_init_bbp(struct rt2x00_dev *rt2x00dev)
 	    rt2x00_rt(rt2x00dev, RT3071) ||
 	    rt2x00_rt(rt2x00dev, RT3090) ||
 	    rt2x00_rt(rt2x00dev, RT3390) ||
+<<<<<<< HEAD
 	    rt2x00_rt(rt2x00dev, RT3572) ||
 	    rt2x00_rt(rt2x00dev, RT5390) ||
 	    rt2x00_rt(rt2x00dev, RT5392)) {
+=======
+	    rt2x00_rt(rt2x00dev, RT5390)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_bbp_write(rt2x00dev, 79, 0x13);
 		rt2800_bbp_write(rt2x00dev, 80, 0x05);
 		rt2800_bbp_write(rt2x00dev, 81, 0x33);
@@ -3238,26 +3609,39 @@ static int rt2800_init_bbp(struct rt2x00_dev *rt2x00dev)
 	}
 
 	rt2800_bbp_write(rt2x00dev, 82, 0x62);
+<<<<<<< HEAD
 	if (rt2x00_rt(rt2x00dev, RT5390) ||
 		rt2x00_rt(rt2x00dev, RT5392))
+=======
+	if (rt2x00_rt(rt2x00dev, RT5390))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_bbp_write(rt2x00dev, 83, 0x7a);
 	else
 		rt2800_bbp_write(rt2x00dev, 83, 0x6a);
 
 	if (rt2x00_rt_rev(rt2x00dev, RT2860, REV_RT2860D))
 		rt2800_bbp_write(rt2x00dev, 84, 0x19);
+<<<<<<< HEAD
 	else if (rt2x00_rt(rt2x00dev, RT5390) ||
 			 rt2x00_rt(rt2x00dev, RT5392))
+=======
+	else if (rt2x00_rt(rt2x00dev, RT5390))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_bbp_write(rt2x00dev, 84, 0x9a);
 	else
 		rt2800_bbp_write(rt2x00dev, 84, 0x99);
 
+<<<<<<< HEAD
 	if (rt2x00_rt(rt2x00dev, RT5390) ||
 		rt2x00_rt(rt2x00dev, RT5392))
+=======
+	if (rt2x00_rt(rt2x00dev, RT5390))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_bbp_write(rt2x00dev, 86, 0x38);
 	else
 		rt2800_bbp_write(rt2x00dev, 86, 0x00);
 
+<<<<<<< HEAD
 	if (rt2x00_rt(rt2x00dev, RT5392))
 		rt2800_bbp_write(rt2x00dev, 88, 0x90);
 
@@ -3265,41 +3649,62 @@ static int rt2800_init_bbp(struct rt2x00_dev *rt2x00dev)
 
 	if (rt2x00_rt(rt2x00dev, RT5390) ||
 		rt2x00_rt(rt2x00dev, RT5392))
+=======
+	rt2800_bbp_write(rt2x00dev, 91, 0x04);
+
+	if (rt2x00_rt(rt2x00dev, RT5390))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_bbp_write(rt2x00dev, 92, 0x02);
 	else
 		rt2800_bbp_write(rt2x00dev, 92, 0x00);
 
+<<<<<<< HEAD
 	if (rt2x00_rt(rt2x00dev, RT5392)) {
 		rt2800_bbp_write(rt2x00dev, 95, 0x9a);
 		rt2800_bbp_write(rt2x00dev, 98, 0x12);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rt2x00_rt_rev_gte(rt2x00dev, RT3070, REV_RT3070F) ||
 	    rt2x00_rt_rev_gte(rt2x00dev, RT3071, REV_RT3071E) ||
 	    rt2x00_rt_rev_gte(rt2x00dev, RT3090, REV_RT3090E) ||
 	    rt2x00_rt_rev_gte(rt2x00dev, RT3390, REV_RT3390E) ||
+<<<<<<< HEAD
 	    rt2x00_rt(rt2x00dev, RT3572) ||
 	    rt2x00_rt(rt2x00dev, RT5390) ||
 	    rt2x00_rt(rt2x00dev, RT5392) ||
+=======
+	    rt2x00_rt(rt2x00dev, RT5390) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    rt2800_is_305x_soc(rt2x00dev))
 		rt2800_bbp_write(rt2x00dev, 103, 0xc0);
 	else
 		rt2800_bbp_write(rt2x00dev, 103, 0x00);
 
+<<<<<<< HEAD
 	if (rt2x00_rt(rt2x00dev, RT5390) ||
 		rt2x00_rt(rt2x00dev, RT5392))
+=======
+	if (rt2x00_rt(rt2x00dev, RT5390))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_bbp_write(rt2x00dev, 104, 0x92);
 
 	if (rt2800_is_305x_soc(rt2x00dev))
 		rt2800_bbp_write(rt2x00dev, 105, 0x01);
+<<<<<<< HEAD
 	else if (rt2x00_rt(rt2x00dev, RT5390) ||
 			 rt2x00_rt(rt2x00dev, RT5392))
+=======
+	else if (rt2x00_rt(rt2x00dev, RT5390))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_bbp_write(rt2x00dev, 105, 0x3c);
 	else
 		rt2800_bbp_write(rt2x00dev, 105, 0x05);
 
 	if (rt2x00_rt(rt2x00dev, RT5390))
 		rt2800_bbp_write(rt2x00dev, 106, 0x03);
+<<<<<<< HEAD
 	else if (rt2x00_rt(rt2x00dev, RT5392))
 		rt2800_bbp_write(rt2x00dev, 106, 0x12);
 	else
@@ -3320,6 +3725,18 @@ static int rt2800_init_bbp(struct rt2x00_dev *rt2x00dev)
 	    rt2x00_rt(rt2x00dev, RT3572) ||
 	    rt2x00_rt(rt2x00dev, RT5390) ||
 	    rt2x00_rt(rt2x00dev, RT5392)) {
+=======
+	else
+		rt2800_bbp_write(rt2x00dev, 106, 0x35);
+
+	if (rt2x00_rt(rt2x00dev, RT5390))
+		rt2800_bbp_write(rt2x00dev, 128, 0x12);
+
+	if (rt2x00_rt(rt2x00dev, RT3071) ||
+	    rt2x00_rt(rt2x00dev, RT3090) ||
+	    rt2x00_rt(rt2x00dev, RT3390) ||
+	    rt2x00_rt(rt2x00dev, RT5390)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_bbp_read(rt2x00dev, 138, &value);
 
 		rt2x00_eeprom_read(rt2x00dev, EEPROM_NIC_CONF0, &eeprom);
@@ -3331,8 +3748,12 @@ static int rt2800_init_bbp(struct rt2x00_dev *rt2x00dev)
 		rt2800_bbp_write(rt2x00dev, 138, value);
 	}
 
+<<<<<<< HEAD
 	if (rt2x00_rt(rt2x00dev, RT5390) ||
 		rt2x00_rt(rt2x00dev, RT5392)) {
+=======
+	if (rt2x00_rt(rt2x00dev, RT5390)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int ant, div_mode;
 
 		rt2x00_eeprom_read(rt2x00dev, EEPROM_NIC_CONF1, &eeprom);
@@ -3447,7 +3868,10 @@ static u8 rt2800_init_rx_filter(struct rt2x00_dev *rt2x00dev,
 
 static int rt2800_init_rfcsr(struct rt2x00_dev *rt2x00dev)
 {
+<<<<<<< HEAD
 	struct rt2800_drv_data *drv_data = rt2x00dev->drv_data;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 rfcsr;
 	u8 bbp;
 	u32 reg;
@@ -3457,17 +3881,25 @@ static int rt2800_init_rfcsr(struct rt2x00_dev *rt2x00dev)
 	    !rt2x00_rt(rt2x00dev, RT3071) &&
 	    !rt2x00_rt(rt2x00dev, RT3090) &&
 	    !rt2x00_rt(rt2x00dev, RT3390) &&
+<<<<<<< HEAD
 	    !rt2x00_rt(rt2x00dev, RT3572) &&
 	    !rt2x00_rt(rt2x00dev, RT5390) &&
 	    !rt2x00_rt(rt2x00dev, RT5392) &&
+=======
+	    !rt2x00_rt(rt2x00dev, RT5390) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    !rt2800_is_305x_soc(rt2x00dev))
 		return 0;
 
 	/*
 	 * Init RF calibration.
 	 */
+<<<<<<< HEAD
 	if (rt2x00_rt(rt2x00dev, RT5390) ||
 		rt2x00_rt(rt2x00dev, RT5392)) {
+=======
+	if (rt2x00_rt(rt2x00dev, RT5390)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_rfcsr_read(rt2x00dev, 2, &rfcsr);
 		rt2x00_set_field8(&rfcsr, RFCSR2_RESCAL_EN, 1);
 		rt2800_rfcsr_write(rt2x00dev, 2, rfcsr);
@@ -3538,6 +3970,7 @@ static int rt2800_init_rfcsr(struct rt2x00_dev *rt2x00dev)
 		rt2800_rfcsr_write(rt2x00dev, 29, 0x8f);
 		rt2800_rfcsr_write(rt2x00dev, 30, 0x20);
 		rt2800_rfcsr_write(rt2x00dev, 31, 0x0f);
+<<<<<<< HEAD
 	} else if (rt2x00_rt(rt2x00dev, RT3572)) {
 		rt2800_rfcsr_write(rt2x00dev, 0, 0x70);
 		rt2800_rfcsr_write(rt2x00dev, 1, 0x81);
@@ -3570,6 +4003,8 @@ static int rt2800_init_rfcsr(struct rt2x00_dev *rt2x00dev)
 		rt2800_rfcsr_write(rt2x00dev, 29, 0x9b);
 		rt2800_rfcsr_write(rt2x00dev, 30, 0x09);
 		rt2800_rfcsr_write(rt2x00dev, 31, 0x10);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (rt2800_is_305x_soc(rt2x00dev)) {
 		rt2800_rfcsr_write(rt2x00dev, 0, 0x50);
 		rt2800_rfcsr_write(rt2x00dev, 1, 0x01);
@@ -3685,6 +4120,7 @@ static int rt2800_init_rfcsr(struct rt2x00_dev *rt2x00dev)
 			rt2800_rfcsr_write(rt2x00dev, 61, 0xdd);
 		rt2800_rfcsr_write(rt2x00dev, 62, 0x00);
 		rt2800_rfcsr_write(rt2x00dev, 63, 0x00);
+<<<<<<< HEAD
 	}	else if (rt2x00_rt(rt2x00dev, RT5392)) {
 			rt2800_rfcsr_write(rt2x00dev, 1, 0x17);
 			rt2800_rfcsr_write(rt2x00dev, 2, 0x80);
@@ -3745,6 +4181,8 @@ static int rt2800_init_rfcsr(struct rt2x00_dev *rt2x00dev)
 			rt2800_rfcsr_write(rt2x00dev, 61, 0x91);
 			rt2800_rfcsr_write(rt2x00dev, 62, 0x39);
 			rt2800_rfcsr_write(rt2x00dev, 63, 0x07);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (rt2x00_rt_rev_lt(rt2x00dev, RT3070, REV_RT3070F)) {
@@ -3779,6 +4217,7 @@ static int rt2800_init_rfcsr(struct rt2x00_dev *rt2x00dev)
 		rt2800_register_read(rt2x00dev, GPIO_SWITCH, &reg);
 		rt2x00_set_field32(&reg, GPIO_SWITCH_5, 0);
 		rt2800_register_write(rt2x00dev, GPIO_SWITCH, reg);
+<<<<<<< HEAD
 	} else if (rt2x00_rt(rt2x00dev, RT3572)) {
 		rt2800_rfcsr_read(rt2x00dev, 6, &rfcsr);
 		rt2x00_set_field8(&rfcsr, RFCSR6_R2, 1);
@@ -3792,12 +4231,15 @@ static int rt2800_init_rfcsr(struct rt2x00_dev *rt2x00dev)
 		rt2800_register_read(rt2x00dev, LDO_CFG0, &reg);
 		rt2x00_set_field32(&reg, LDO_CFG0_BGSEL, 1);
 		rt2800_register_write(rt2x00dev, LDO_CFG0, reg);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
 	 * Set RX Filter calibration for 20MHz and 40MHz
 	 */
 	if (rt2x00_rt(rt2x00dev, RT3070)) {
+<<<<<<< HEAD
 		drv_data->calibration_bw20 =
 			rt2800_init_rx_filter(rt2x00dev, false, 0x07, 0x16);
 		drv_data->calibration_bw40 =
@@ -3820,6 +4262,22 @@ static int rt2800_init_rfcsr(struct rt2x00_dev *rt2x00dev)
 
 	if (!rt2x00_rt(rt2x00dev, RT5390) &&
 		!rt2x00_rt(rt2x00dev, RT5392)) {
+=======
+		rt2x00dev->calibration[0] =
+			rt2800_init_rx_filter(rt2x00dev, false, 0x07, 0x16);
+		rt2x00dev->calibration[1] =
+			rt2800_init_rx_filter(rt2x00dev, true, 0x27, 0x19);
+	} else if (rt2x00_rt(rt2x00dev, RT3071) ||
+		   rt2x00_rt(rt2x00dev, RT3090) ||
+		   rt2x00_rt(rt2x00dev, RT3390)) {
+		rt2x00dev->calibration[0] =
+			rt2800_init_rx_filter(rt2x00dev, false, 0x07, 0x13);
+		rt2x00dev->calibration[1] =
+			rt2800_init_rx_filter(rt2x00dev, true, 0x27, 0x15);
+	}
+
+	if (!rt2x00_rt(rt2x00dev, RT5390)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Set back to initial state
 		 */
@@ -3847,8 +4305,12 @@ static int rt2800_init_rfcsr(struct rt2x00_dev *rt2x00dev)
 	rt2x00_set_field32(&reg, OPT_14_CSR_BIT0, 1);
 	rt2800_register_write(rt2x00dev, OPT_14_CSR, reg);
 
+<<<<<<< HEAD
 	if (!rt2x00_rt(rt2x00dev, RT5390) &&
 		!rt2x00_rt(rt2x00dev, RT5392)) {
+=======
+	if (!rt2x00_rt(rt2x00dev, RT5390)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_rfcsr_read(rt2x00dev, 17, &rfcsr);
 		rt2x00_set_field8(&rfcsr, RFCSR17_TX_LO1_EN, 0);
 		if (rt2x00_rt(rt2x00dev, RT3070) ||
@@ -3859,8 +4321,16 @@ static int rt2800_init_rfcsr(struct rt2x00_dev *rt2x00dev)
 				      &rt2x00dev->cap_flags))
 				rt2x00_set_field8(&rfcsr, RFCSR17_R, 1);
 		}
+<<<<<<< HEAD
 		rt2x00_set_field8(&rfcsr, RFCSR17_TXMIXER_GAIN,
 				  drv_data->txmixer_gain_24g);
+=======
+		rt2x00_eeprom_read(rt2x00dev, EEPROM_TXMIXER_GAIN_BG, &eeprom);
+		if (rt2x00_get_field16(eeprom, EEPROM_TXMIXER_GAIN_BG_VAL) >= 1)
+			rt2x00_set_field8(&rfcsr, RFCSR17_TXMIXER_GAIN,
+					rt2x00_get_field16(eeprom,
+						EEPROM_TXMIXER_GAIN_BG_VAL));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_rfcsr_write(rt2x00dev, 17, rfcsr);
 	}
 
@@ -3913,8 +4383,12 @@ static int rt2800_init_rfcsr(struct rt2x00_dev *rt2x00dev)
 		rt2800_rfcsr_write(rt2x00dev, 27, rfcsr);
 	}
 
+<<<<<<< HEAD
 	if (rt2x00_rt(rt2x00dev, RT5390) ||
 		rt2x00_rt(rt2x00dev, RT5392)) {
+=======
+	if (rt2x00_rt(rt2x00dev, RT5390)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2800_rfcsr_read(rt2x00dev, 38, &rfcsr);
 		rt2x00_set_field8(&rfcsr, RFCSR38_RX_LO1_EN, 0);
 		rt2800_rfcsr_write(rt2x00dev, 38, rfcsr);
@@ -4069,7 +4543,10 @@ EXPORT_SYMBOL_GPL(rt2800_read_eeprom_efuse);
 
 int rt2800_validate_eeprom(struct rt2x00_dev *rt2x00dev)
 {
+<<<<<<< HEAD
 	struct rt2800_drv_data *drv_data = rt2x00dev->drv_data;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u16 word;
 	u8 *mac;
 	u8 default_lna_gain;
@@ -4153,6 +4630,7 @@ int rt2800_validate_eeprom(struct rt2x00_dev *rt2x00dev)
 		rt2x00_set_field16(&word, EEPROM_RSSI_BG_OFFSET1, 0);
 	rt2x00_eeprom_write(rt2x00dev, EEPROM_RSSI_BG, word);
 
+<<<<<<< HEAD
 	rt2x00_eeprom_read(rt2x00dev, EEPROM_TXMIXER_GAIN_BG, &word);
 	if ((word & 0x00ff) != 0x00ff) {
 		drv_data->txmixer_gain_24g =
@@ -4161,6 +4639,8 @@ int rt2800_validate_eeprom(struct rt2x00_dev *rt2x00dev)
 		drv_data->txmixer_gain_24g = 0;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rt2x00_eeprom_read(rt2x00dev, EEPROM_RSSI_BG2, &word);
 	if (abs(rt2x00_get_field16(word, EEPROM_RSSI_BG2_OFFSET2)) > 10)
 		rt2x00_set_field16(&word, EEPROM_RSSI_BG2_OFFSET2, 0);
@@ -4170,6 +4650,7 @@ int rt2800_validate_eeprom(struct rt2x00_dev *rt2x00dev)
 				   default_lna_gain);
 	rt2x00_eeprom_write(rt2x00dev, EEPROM_RSSI_BG2, word);
 
+<<<<<<< HEAD
 	rt2x00_eeprom_read(rt2x00dev, EEPROM_TXMIXER_GAIN_A, &word);
 	if ((word & 0x00ff) != 0x00ff) {
 		drv_data->txmixer_gain_5g =
@@ -4178,6 +4659,8 @@ int rt2800_validate_eeprom(struct rt2x00_dev *rt2x00dev)
 		drv_data->txmixer_gain_5g = 0;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rt2x00_eeprom_read(rt2x00dev, EEPROM_RSSI_A, &word);
 	if (abs(rt2x00_get_field16(word, EEPROM_RSSI_A_OFFSET0)) > 10)
 		rt2x00_set_field16(&word, EEPROM_RSSI_A_OFFSET0, 0);
@@ -4215,8 +4698,12 @@ int rt2800_init_eeprom(struct rt2x00_dev *rt2x00dev)
 	 * RT53xx: defined in "EEPROM_CHIP_ID" field
 	 */
 	rt2800_register_read(rt2x00dev, MAC_CSR0, &reg);
+<<<<<<< HEAD
 	if (rt2x00_get_field32(reg, MAC_CSR0_CHIPSET) == RT5390 ||
 		rt2x00_get_field32(reg, MAC_CSR0_CHIPSET) == RT5392)
+=======
+	if (rt2x00_get_field32(reg, MAC_CSR0_CHIPSET) == RT5390)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rt2x00_eeprom_read(rt2x00dev, EEPROM_CHIP_ID, &value);
 	else
 		value = rt2x00_get_field16(eeprom, EEPROM_NIC_CONF0_RF_TYPE);
@@ -4224,6 +4711,7 @@ int rt2800_init_eeprom(struct rt2x00_dev *rt2x00dev)
 	rt2x00_set_chip(rt2x00dev, rt2x00_get_field32(reg, MAC_CSR0_CHIPSET),
 			value, rt2x00_get_field32(reg, MAC_CSR0_REVISION));
 
+<<<<<<< HEAD
 	switch (rt2x00dev->chip.rt) {
 	case RT2860:
 	case RT2872:
@@ -4238,6 +4726,18 @@ int rt2800_init_eeprom(struct rt2x00_dev *rt2x00dev)
 		break;
 	default:
 		ERROR(rt2x00dev, "Invalid RT chipset 0x%04x detected.\n", rt2x00dev->chip.rt);
+=======
+	if (!rt2x00_rt(rt2x00dev, RT2860) &&
+	    !rt2x00_rt(rt2x00dev, RT2872) &&
+	    !rt2x00_rt(rt2x00dev, RT2883) &&
+	    !rt2x00_rt(rt2x00dev, RT3070) &&
+	    !rt2x00_rt(rt2x00dev, RT3071) &&
+	    !rt2x00_rt(rt2x00dev, RT3090) &&
+	    !rt2x00_rt(rt2x00dev, RT3390) &&
+	    !rt2x00_rt(rt2x00dev, RT3572) &&
+	    !rt2x00_rt(rt2x00dev, RT5390)) {
+		ERROR(rt2x00dev, "Invalid RT chipset detected.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
@@ -4253,11 +4753,18 @@ int rt2800_init_eeprom(struct rt2x00_dev *rt2x00dev)
 	case RF3052:
 	case RF3320:
 	case RF5370:
+<<<<<<< HEAD
 	case RF5372:
 	case RF5390:
 		break;
 	default:
 		ERROR(rt2x00dev, "Invalid RF chipset 0x%04x detected.\n",
+=======
+	case RF5390:
+		break;
+	default:
+		ERROR(rt2x00dev, "Invalid RF chipset 0x%x detected.\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      rt2x00dev->chip.rf);
 		return -ENODEV;
 	}
@@ -4507,9 +5014,13 @@ int rt2800_probe_hw_mode(struct rt2x00_dev *rt2x00dev)
 	    IEEE80211_HW_SIGNAL_DBM |
 	    IEEE80211_HW_SUPPORTS_PS |
 	    IEEE80211_HW_PS_NULLFUNC_STACK |
+<<<<<<< HEAD
 	    IEEE80211_HW_AMPDU_AGGREGATION |
 	    IEEE80211_HW_REPORTS_TX_ACK_STATUS;
 
+=======
+	    IEEE80211_HW_AMPDU_AGGREGATION;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Don't set IEEE80211_HW_HOST_BROADCAST_PS_BUFFERING for USB devices
 	 * unless we are capable of sending the buffered frames out after the
@@ -4562,7 +5073,10 @@ int rt2800_probe_hw_mode(struct rt2x00_dev *rt2x00dev)
 		   rt2x00_rf(rt2x00dev, RF3022) ||
 		   rt2x00_rf(rt2x00dev, RF3320) ||
 		   rt2x00_rf(rt2x00dev, RF5370) ||
+<<<<<<< HEAD
 		   rt2x00_rf(rt2x00dev, RF5372) ||
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   rt2x00_rf(rt2x00dev, RF5390)) {
 		spec->num_channels = 14;
 		spec->channels = rf_vals_3x;
@@ -4634,6 +5148,7 @@ int rt2800_probe_hw_mode(struct rt2x00_dev *rt2x00dev)
 		default_power2 = rt2x00_eeprom_addr(rt2x00dev, EEPROM_TXPOWER_A2);
 
 		for (i = 14; i < spec->num_channels; i++) {
+<<<<<<< HEAD
 			info[i].default_power1 = default_power1[i - 14];
 			info[i].default_power2 = default_power2[i - 14];
 		}
@@ -4653,6 +5168,13 @@ int rt2800_probe_hw_mode(struct rt2x00_dev *rt2x00dev)
 		break;
 	}
 
+=======
+			info[i].default_power1 = default_power1[i];
+			info[i].default_power2 = default_power2[i];
+		}
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL_GPL(rt2800_probe_hw_mode);
@@ -4714,8 +5236,12 @@ int rt2800_set_rts_threshold(struct ieee80211_hw *hw, u32 value)
 }
 EXPORT_SYMBOL_GPL(rt2800_set_rts_threshold);
 
+<<<<<<< HEAD
 int rt2800_conf_tx(struct ieee80211_hw *hw,
 		   struct ieee80211_vif *vif, u16 queue_idx,
+=======
+int rt2800_conf_tx(struct ieee80211_hw *hw, u16 queue_idx,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   const struct ieee80211_tx_queue_params *params)
 {
 	struct rt2x00_dev *rt2x00dev = hw->priv;
@@ -4731,7 +5257,11 @@ int rt2800_conf_tx(struct ieee80211_hw *hw,
 	 * we are free to update the registers based on the value
 	 * in the queue parameter.
 	 */
+<<<<<<< HEAD
 	retval = rt2x00mac_conf_tx(hw, vif, queue_idx, params);
+=======
+	retval = rt2x00mac_conf_tx(hw, queue_idx, params);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval)
 		return retval;
 
@@ -4783,7 +5313,11 @@ int rt2800_conf_tx(struct ieee80211_hw *hw,
 }
 EXPORT_SYMBOL_GPL(rt2800_conf_tx);
 
+<<<<<<< HEAD
 u64 rt2800_get_tsf(struct ieee80211_hw *hw, struct ieee80211_vif *vif)
+=======
+u64 rt2800_get_tsf(struct ieee80211_hw *hw)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct rt2x00_dev *rt2x00dev = hw->priv;
 	u64 tsf;
@@ -4803,6 +5337,7 @@ int rt2800_ampdu_action(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
 			struct ieee80211_sta *sta, u16 tid, u16 *ssn,
 			u8 buf_size)
 {
+<<<<<<< HEAD
 	struct rt2x00_sta *sta_priv = (struct rt2x00_sta *)sta->drv_priv;
 	int ret = 0;
 
@@ -4816,6 +5351,10 @@ int rt2800_ampdu_action(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
 	if (sta_priv->wcid < 0)
 		return 1;
 
+=======
+	int ret = 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (action) {
 	case IEEE80211_AMPDU_RX_START:
 	case IEEE80211_AMPDU_RX_STOP:
@@ -4868,9 +5407,12 @@ int rt2800_get_survey(struct ieee80211_hw *hw, int idx,
 		survey->channel_time_ext_busy = busy_ext / 1000;
 	}
 
+<<<<<<< HEAD
 	if (!(hw->conf.flags & IEEE80211_CONF_OFFCHANNEL))
 		survey->filled |= SURVEY_INFO_IN_USE;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 }

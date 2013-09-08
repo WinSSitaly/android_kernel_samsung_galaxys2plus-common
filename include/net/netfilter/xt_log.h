@@ -6,7 +6,11 @@ struct sbuff {
 };
 static struct sbuff emergency, *emergency_ptr = &emergency;
 
+<<<<<<< HEAD
 static __printf(2, 3) int sb_add(struct sbuff *m, const char *f, ...)
+=======
+static int sb_add(struct sbuff *m, const char *f, ...)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	va_list args;
 	int len;
@@ -47,7 +51,11 @@ static void sb_close(struct sbuff *m)
 	if (likely(m != &emergency))
 		kfree(m);
 	else {
+<<<<<<< HEAD
 		emergency_ptr = m;
+=======
+		xchg(&emergency_ptr, m);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		local_bh_enable();
 	}
 }

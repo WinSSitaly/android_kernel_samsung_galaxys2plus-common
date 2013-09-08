@@ -1,10 +1,17 @@
 /*
  * omap_hwmod_common_data.h - OMAP hwmod common macros and declarations
  *
+<<<<<<< HEAD
  * Copyright (C) 2010-2011 Nokia Corporation
  * Paul Walmsley
  *
  * Copyright (C) 2010-2011 Texas Instruments, Inc.
+=======
+ * Copyright (C) 2010 Nokia Corporation
+ * Paul Walmsley
+ *
+ * Copyright (C) 2010 Texas Instruments, Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Benoît Cousson
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,6 +23,7 @@
 
 #include <plat/omap_hwmod.h>
 
+<<<<<<< HEAD
 #include "display.h"
 
 /* Common address space across OMAP2xxx */
@@ -95,11 +103,14 @@ extern struct omap_hwmod_irq_info omap2_dma_system_irqs[];
 extern struct omap_hwmod_irq_info omap2_mcspi1_mpu_irqs[];
 extern struct omap_hwmod_irq_info omap2_mcspi2_mpu_irqs[];
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* OMAP hwmod classes - forward declarations */
 extern struct omap_hwmod_class l3_hwmod_class;
 extern struct omap_hwmod_class l4_hwmod_class;
 extern struct omap_hwmod_class mpu_hwmod_class;
 extern struct omap_hwmod_class iva_hwmod_class;
+<<<<<<< HEAD
 extern struct omap_hwmod_class omap2_uart_class;
 extern struct omap_hwmod_class omap2_dss_hwmod_class;
 extern struct omap_hwmod_class omap2_dispc_hwmod_class;
@@ -114,5 +125,7 @@ extern struct omap_hwmod_class omap2xxx_mailbox_hwmod_class;
 extern struct omap_hwmod_class omap2xxx_mcspi_class;
 
 extern struct omap_dss_dispc_dev_attr omap2_3_dss_dispc_dev_attr;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

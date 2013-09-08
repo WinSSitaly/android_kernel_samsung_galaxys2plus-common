@@ -4,7 +4,11 @@
 
   Copyright (c) 2005 Martin Langer <martin-langer@gmx.de>,
 		     Stefano Brivio <stefano.brivio@polimi.it>
+<<<<<<< HEAD
 		     Michael Buesch <m@bues.ch>
+=======
+		     Michael Buesch <mbuesch@freenet.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     Danny van Dyk <kugelfang@gentoo.org>
 		     Andreas Jaggi <andreas.jaggi@waterwave.ch>
 

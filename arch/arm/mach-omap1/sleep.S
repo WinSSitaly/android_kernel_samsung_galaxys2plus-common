@@ -33,10 +33,15 @@
  */
 
 #include <linux/linkage.h>
+<<<<<<< HEAD
 
 #include <asm/assembler.h>
 
 #include "iomap.h"
+=======
+#include <asm/assembler.h>
+#include <mach/io.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "pm.h"
 
 		.text

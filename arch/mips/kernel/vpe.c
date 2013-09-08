@@ -29,6 +29,10 @@
  */
 #include <linux/kernel.h>
 #include <linux/device.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/fs.h>
 #include <linux/init.h>
 #include <asm/uaccess.h>
@@ -45,10 +49,18 @@
 #include <asm/mipsregs.h>
 #include <asm/mipsmtregs.h>
 #include <asm/cacheflush.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
 #include <asm/cpu.h>
 #include <asm/mips_mt.h>
 #include <asm/processor.h>
+=======
+#include <asm/atomic.h>
+#include <asm/cpu.h>
+#include <asm/mips_mt.h>
+#include <asm/processor.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/vpe.h>
 #include <asm/kspd.h>
 
@@ -190,7 +202,11 @@ static struct tc *get_tc(int index)
 	}
 	spin_unlock(&vpecontrol.tc_list_lock);
 
+<<<<<<< HEAD
 	return res;
+=======
+	return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* allocate a vpe and associate it with this minor (or index) */

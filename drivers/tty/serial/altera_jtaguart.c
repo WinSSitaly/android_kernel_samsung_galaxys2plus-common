@@ -18,7 +18,10 @@
 #include <linux/interrupt.h>
 #include <linux/module.h>
 #include <linux/console.h>
+<<<<<<< HEAD
 #include <linux/of.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/tty.h>
 #include <linux/tty_flip.h>
 #include <linux/serial.h>
@@ -219,7 +222,11 @@ static int altera_jtaguart_startup(struct uart_port *port)
 	unsigned long flags;
 	int ret;
 
+<<<<<<< HEAD
 	ret = request_irq(port->irq, altera_jtaguart_interrupt, 0,
+=======
+	ret = request_irq(port->irq, altera_jtaguart_interrupt, IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			DRV_NAME, port);
 	if (ret) {
 		pr_err(DRV_NAME ": unable to attach Altera JTAG UART %d "
@@ -473,6 +480,11 @@ static struct of_device_id altera_jtaguart_match[] = {
 	{},
 };
 MODULE_DEVICE_TABLE(of, altera_jtaguart_match);
+<<<<<<< HEAD
+=======
+#else
+#define altera_jtaguart_match NULL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_OF */
 
 static struct platform_driver altera_jtaguart_platform_driver = {
@@ -481,7 +493,11 @@ static struct platform_driver altera_jtaguart_platform_driver = {
 	.driver	= {
 		.name		= DRV_NAME,
 		.owner		= THIS_MODULE,
+<<<<<<< HEAD
 		.of_match_table	= of_match_ptr(altera_jtaguart_match),
+=======
+		.of_match_table	= altera_jtaguart_match,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

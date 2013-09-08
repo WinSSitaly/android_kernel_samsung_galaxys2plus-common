@@ -25,14 +25,21 @@
 #include "opl3_voice.h"
 #include <linux/init.h>
 #include <linux/moduleparam.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/initval.h>
 
 MODULE_AUTHOR("Uros Bizjak <uros@kss-loka.si>");
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("ALSA driver for OPL3 FM synth");
 
+<<<<<<< HEAD
 bool use_internal_drums = 0;
+=======
+int use_internal_drums = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(use_internal_drums, bool, 0444);
 MODULE_PARM_DESC(use_internal_drums, "Enable internal OPL2/3 drums.");
 

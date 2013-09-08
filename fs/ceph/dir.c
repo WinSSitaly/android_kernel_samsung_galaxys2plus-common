@@ -40,6 +40,17 @@ int ceph_init_dentry(struct dentry *dentry)
 	if (dentry->d_fsdata)
 		return 0;
 
+<<<<<<< HEAD
+=======
+	if (dentry->d_parent == NULL ||   /* nfs fh_to_dentry */
+	    ceph_snap(dentry->d_parent->d_inode) == CEPH_NOSNAP)
+		d_set_d_op(dentry, &ceph_dentry_ops);
+	else if (ceph_snap(dentry->d_parent->d_inode) == CEPH_SNAPDIR)
+		d_set_d_op(dentry, &ceph_snapdir_dentry_ops);
+	else
+		d_set_d_op(dentry, &ceph_snap_dentry_ops);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	di = kmem_cache_alloc(ceph_dentry_cachep, GFP_NOFS | __GFP_ZERO);
 	if (!di)
 		return -ENOMEM;          /* oh well */
@@ -50,6 +61,7 @@ int ceph_init_dentry(struct dentry *dentry)
 		kmem_cache_free(ceph_dentry_cachep, di);
 		goto out_unlock;
 	}
+<<<<<<< HEAD
 
 	if (dentry->d_parent == NULL ||   /* nfs fh_to_dentry */
 	    ceph_snap(dentry->d_parent->d_inode) == CEPH_NOSNAP)
@@ -65,12 +77,19 @@ int ceph_init_dentry(struct dentry *dentry)
 	/* avoid reordering d_fsdata setup so that the check above is safe */
 	smp_mb();
 	dentry->d_fsdata = di;
+=======
+	di->dentry = dentry;
+	di->lease_session = NULL;
+	dentry->d_fsdata = di;
+	dentry->d_time = jiffies;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ceph_dentry_lru_add(dentry);
 out_unlock:
 	spin_unlock(&dentry->d_lock);
 	return 0;
 }
 
+<<<<<<< HEAD
 struct inode *ceph_get_dentry_parent_inode(struct dentry *dentry)
 {
 	struct inode *inode = NULL;
@@ -86,6 +105,8 @@ struct inode *ceph_get_dentry_parent_inode(struct dentry *dentry)
 	spin_unlock(&dentry->d_lock);
 	return inode;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /*
@@ -108,7 +129,11 @@ static unsigned fpos_off(loff_t p)
  * falling back to a "normal" sync readdir if any dentries in the dir
  * are dropped.
  *
+<<<<<<< HEAD
  * D_COMPLETE tells indicates we have all dentries in the dir.  It is
+=======
+ * I_COMPLETE tells indicates we have all dentries in the dir.  It is
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * defined IFF we hold CEPH_CAP_FILE_SHARED (which will be revoked by
  * the MDS if/when the directory is modified).
  */
@@ -151,7 +176,11 @@ more:
 		     d_unhashed(dentry) ? "!hashed" : "hashed",
 		     parent->d_subdirs.prev, parent->d_subdirs.next);
 		if (p == &parent->d_subdirs) {
+<<<<<<< HEAD
 			fi->flags |= CEPH_F_ATEND;
+=======
+			fi->at_end = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out_unlock;
 		}
 		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
@@ -199,8 +228,13 @@ more:
 	filp->f_pos++;
 
 	/* make sure a dentry wasn't dropped while we didn't have parent lock */
+<<<<<<< HEAD
 	if (!ceph_dir_test_complete(dir)) {
 		dout(" lost D_COMPLETE on %p; falling back to mds\n", dir);
+=======
+	if (!ceph_i_test(dir, CEPH_I_COMPLETE)) {
+		dout(" lost I_COMPLETE on %p; falling back to mds\n", dir);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = -EAGAIN;
 		goto out;
 	}
@@ -252,7 +286,11 @@ static int ceph_readdir(struct file *filp, void *dirent, filldir_t filldir)
 	const int max_bytes = fsc->mount_options->max_readdir_bytes;
 
 	dout("readdir %p filp %p frag %u off %u\n", inode, filp, frag, off);
+<<<<<<< HEAD
 	if (fi->flags & CEPH_F_ATEND)
+=======
+	if (fi->at_end)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	/* always start with . and .. */
@@ -270,7 +308,11 @@ static int ceph_readdir(struct file *filp, void *dirent, filldir_t filldir)
 		off = 1;
 	}
 	if (filp->f_pos == 1) {
+<<<<<<< HEAD
 		ino_t ino = parent_ino(filp->f_dentry);
+=======
+		ino_t ino = filp->f_dentry->d_parent->d_inode->i_ino;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dout("readdir off 1 -> '..'\n");
 		if (filldir(dirent, "..", 2, ceph_make_fpos(0, 1),
 			    ceph_translate_ino(inode->i_sb, ino),
@@ -281,6 +323,7 @@ static int ceph_readdir(struct file *filp, void *dirent, filldir_t filldir)
 	}
 
 	/* can we use the dcache? */
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
 	if ((filp->f_pos == 2 || fi->dentry) &&
 	    !ceph_test_mount_opt(fsc, NOASYNCREADDIR) &&
@@ -288,11 +331,24 @@ static int ceph_readdir(struct file *filp, void *dirent, filldir_t filldir)
 	    ceph_dir_test_complete(inode) &&
 	    __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1)) {
 		spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+	if ((filp->f_pos == 2 || fi->dentry) &&
+	    !ceph_test_mount_opt(fsc, NOASYNCREADDIR) &&
+	    ceph_snap(inode) != CEPH_SNAPDIR &&
+	    (ci->i_ceph_flags & CEPH_I_COMPLETE) &&
+	    __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1)) {
+		spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = __dcache_readdir(filp, dirent, filldir);
 		if (err != -EAGAIN)
 			return err;
 	} else {
+<<<<<<< HEAD
 		spin_unlock(&ci->i_ceph_lock);
+=======
+		spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (fi->dentry) {
 		err = note_last_dentry(fi, fi->dentry->d_name.name,
@@ -351,7 +407,11 @@ more:
 
 		if (!req->r_did_prepopulate) {
 			dout("readdir !did_prepopulate");
+<<<<<<< HEAD
 			fi->dir_release_count--;    /* preclude D_COMPLETE */
+=======
+			fi->dir_release_count--;    /* preclude I_COMPLETE */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/* note next offset and last dentry name */
@@ -421,19 +481,33 @@ more:
 		dout("readdir next frag is %x\n", frag);
 		goto more;
 	}
+<<<<<<< HEAD
 	fi->flags |= CEPH_F_ATEND;
+=======
+	fi->at_end = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * if dir_release_count still matches the dir, no dentries
 	 * were released during the whole readdir, and we should have
 	 * the complete dir contents in our cache.
 	 */
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
 	if (ci->i_release_count == fi->dir_release_count) {
 		ceph_dir_set_complete(inode);
 		ci->i_max_offset = filp->f_pos;
 	}
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+	if (ci->i_release_count == fi->dir_release_count) {
+		dout(" marking %p complete\n", inode);
+		/* ci->i_ceph_flags |= CEPH_I_COMPLETE; */
+		ci->i_max_offset = filp->f_pos;
+	}
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dout("readdir %p filp %p done.\n", inode, filp);
 	return 0;
@@ -452,7 +526,11 @@ static void reset_readdir(struct ceph_file_info *fi)
 		dput(fi->dentry);
 		fi->dentry = NULL;
 	}
+<<<<<<< HEAD
 	fi->flags &= ~CEPH_F_ATEND;
+=======
+	fi->at_end = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static loff_t ceph_dir_llseek(struct file *file, loff_t offset, int origin)
@@ -463,24 +541,36 @@ static loff_t ceph_dir_llseek(struct file *file, loff_t offset, int origin)
 	loff_t retval;
 
 	mutex_lock(&inode->i_mutex);
+<<<<<<< HEAD
 	retval = -EINVAL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (origin) {
 	case SEEK_END:
 		offset += inode->i_size + 2;   /* FIXME */
 		break;
 	case SEEK_CUR:
 		offset += file->f_pos;
+<<<<<<< HEAD
 	case SEEK_SET:
 		break;
 	default:
 		goto out;
 	}
 
+=======
+	}
+	retval = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (offset >= 0 && offset <= inode->i_sb->s_maxbytes) {
 		if (offset != file->f_pos) {
 			file->f_pos = offset;
 			file->f_version = 0;
+<<<<<<< HEAD
 			fi->flags &= ~CEPH_F_ATEND;
+=======
+			fi->at_end = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		retval = offset;
 
@@ -499,12 +589,16 @@ static loff_t ceph_dir_llseek(struct file *file, loff_t offset, int origin)
 		if (offset > old_offset)
 			fi->dir_release_count--;
 	}
+<<<<<<< HEAD
 out:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&inode->i_mutex);
 	return retval;
 }
 
 /*
+<<<<<<< HEAD
  * Handle lookups for the hidden .snap directory.
  */
 int ceph_handle_snapdir(struct ceph_mds_request *req,
@@ -512,6 +606,23 @@ int ceph_handle_snapdir(struct ceph_mds_request *req,
 {
 	struct ceph_fs_client *fsc = ceph_sb_to_client(dentry->d_sb);
 	struct inode *parent = dentry->d_parent->d_inode; /* we hold i_mutex */
+=======
+ * Process result of a lookup/open request.
+ *
+ * Mainly, make sure we return the final req->r_dentry (if it already
+ * existed) in place of the original VFS-provided dentry when they
+ * differ.
+ *
+ * Gracefully handle the case where the MDS replies with -ENOENT and
+ * no trace (which it may do, at its discretion, e.g., if it doesn't
+ * care to issue a lease on the negative dentry).
+ */
+struct dentry *ceph_finish_lookup(struct ceph_mds_request *req,
+				  struct dentry *dentry, int err)
+{
+	struct ceph_fs_client *fsc = ceph_sb_to_client(dentry->d_sb);
+	struct inode *parent = dentry->d_parent->d_inode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* .snap dir? */
 	if (err == -ENOENT &&
@@ -525,6 +636,7 @@ int ceph_handle_snapdir(struct ceph_mds_request *req,
 		d_add(dentry, inode);
 		err = 0;
 	}
+<<<<<<< HEAD
 	return err;
 }
 
@@ -542,6 +654,9 @@ int ceph_handle_snapdir(struct ceph_mds_request *req,
 struct dentry *ceph_finish_lookup(struct ceph_mds_request *req,
 				  struct dentry *dentry, int err)
 {
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err == -ENOENT) {
 		/* no trace? */
 		err = 0;
@@ -597,6 +712,10 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
 	/* open (but not create!) intent? */
 	if (nd &&
 	    (nd->flags & LOOKUP_OPEN) &&
+<<<<<<< HEAD
+=======
+	    (nd->flags & LOOKUP_CONTINUE) == 0 && /* only open last component */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    !(nd->intent.open.flags & O_CREAT)) {
 		int mode = nd->intent.open.create_mode & ~current->fs->umask;
 		return ceph_lookup_open(dir, dentry, nd, mode, 1);
@@ -607,21 +726,35 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
 		struct ceph_inode_info *ci = ceph_inode(dir);
 		struct ceph_dentry_info *di = ceph_dentry(dentry);
 
+<<<<<<< HEAD
 		spin_lock(&ci->i_ceph_lock);
+=======
+		spin_lock(&dir->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dout(" dir %p flags are %d\n", dir, ci->i_ceph_flags);
 		if (strncmp(dentry->d_name.name,
 			    fsc->mount_options->snapdir_name,
 			    dentry->d_name.len) &&
 		    !is_root_ceph_dentry(dir, dentry) &&
+<<<<<<< HEAD
 		    ceph_dir_test_complete(dir) &&
 		    (__ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1))) {
 			spin_unlock(&ci->i_ceph_lock);
+=======
+		    (ci->i_ceph_flags & CEPH_I_COMPLETE) &&
+		    (__ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1))) {
+			spin_unlock(&dir->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dout(" dir %p complete, -ENOENT\n", dir);
 			d_add(dentry, NULL);
 			di->lease_shared_gen = ci->i_shared_gen;
 			return NULL;
 		}
+<<<<<<< HEAD
 		spin_unlock(&ci->i_ceph_lock);
+=======
+		spin_unlock(&dir->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	op = ceph_snap(dir) == CEPH_SNAPDIR ?
@@ -635,7 +768,10 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
 	req->r_args.getattr.mask = cpu_to_le32(CEPH_STAT_CAP_INODE);
 	req->r_locked_dir = dir;
 	err = ceph_mdsc_do_request(mdsc, NULL, req);
+<<<<<<< HEAD
 	err = ceph_handle_snapdir(req, dentry, err);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dentry = ceph_finish_lookup(req, dentry, err);
 	ceph_mdsc_put_request(req);  /* will dput(dentry) */
 	dout("lookup result=%p\n", dentry);
@@ -666,7 +802,11 @@ int ceph_handle_notrace_create(struct inode *dir, struct dentry *dentry)
 }
 
 static int ceph_mknod(struct inode *dir, struct dentry *dentry,
+<<<<<<< HEAD
 		      umode_t mode, dev_t rdev)
+=======
+		      int mode, dev_t rdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ceph_fs_client *fsc = ceph_sb_to_client(dir->i_sb);
 	struct ceph_mds_client *mdsc = fsc->mdsc;
@@ -676,7 +816,11 @@ static int ceph_mknod(struct inode *dir, struct dentry *dentry,
 	if (ceph_snap(dir) != CEPH_NOSNAP)
 		return -EROFS;
 
+<<<<<<< HEAD
 	dout("mknod in dir %p dentry %p mode 0%ho rdev %d\n",
+=======
+	dout("mknod in dir %p dentry %p mode 0%o rdev %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	     dir, dentry, mode, rdev);
 	req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_MKNOD, USE_AUTH_MDS);
 	if (IS_ERR(req)) {
@@ -699,7 +843,11 @@ static int ceph_mknod(struct inode *dir, struct dentry *dentry,
 	return err;
 }
 
+<<<<<<< HEAD
 static int ceph_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+=======
+static int ceph_create(struct inode *dir, struct dentry *dentry, int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       struct nameidata *nd)
 {
 	dout("create in dir %p dentry %p name '%.*s'\n",
@@ -753,7 +901,11 @@ static int ceph_symlink(struct inode *dir, struct dentry *dentry,
 	return err;
 }
 
+<<<<<<< HEAD
 static int ceph_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+=======
+static int ceph_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ceph_fs_client *fsc = ceph_sb_to_client(dir->i_sb);
 	struct ceph_mds_client *mdsc = fsc->mdsc;
@@ -767,7 +919,11 @@ static int ceph_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
 		dout("mksnap dir %p snap '%.*s' dn %p\n", dir,
 		     dentry->d_name.len, dentry->d_name.name, dentry);
 	} else if (ceph_snap(dir) == CEPH_NOSNAP) {
+<<<<<<< HEAD
 		dout("mkdir dir %p dn %p mode 0%ho\n", dir, dentry, mode);
+=======
+		dout("mkdir dir %p dn %p mode 0%o\n", dir, dentry, mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		op = CEPH_MDS_OP_MKDIR;
 	} else {
 		goto out;
@@ -815,7 +971,10 @@ static int ceph_link(struct dentry *old_dentry, struct inode *dir,
 	req->r_dentry = dget(dentry);
 	req->r_num_caps = 2;
 	req->r_old_dentry = dget(old_dentry); /* or inode? hrm. */
+<<<<<<< HEAD
 	req->r_old_dentry_dir = ceph_get_dentry_parent_inode(old_dentry);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	req->r_locked_dir = dir;
 	req->r_dentry_drop = CEPH_CAP_FILE_SHARED;
 	req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
@@ -841,12 +1000,20 @@ static int drop_caps_for_unlink(struct inode *inode)
 	struct ceph_inode_info *ci = ceph_inode(inode);
 	int drop = CEPH_CAP_LINK_SHARED | CEPH_CAP_LINK_EXCL;
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
+=======
+	spin_lock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (inode->i_nlink == 1) {
 		drop |= ~(__ceph_caps_wanted(ci) | CEPH_CAP_PIN);
 		ci->i_ceph_flags |= CEPH_I_NODELAY;
 	}
+<<<<<<< HEAD
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_unlock(&inode->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return drop;
 }
 
@@ -870,7 +1037,11 @@ static int ceph_unlink(struct inode *dir, struct dentry *dentry)
 	} else if (ceph_snap(dir) == CEPH_NOSNAP) {
 		dout("unlink/rmdir dir %p dn %p inode %p\n",
 		     dir, dentry, inode);
+<<<<<<< HEAD
 		op = S_ISDIR(dentry->d_inode->i_mode) ?
+=======
+		op = ((dentry->d_inode->i_mode & S_IFMT) == S_IFDIR) ?
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			CEPH_MDS_OP_RMDIR : CEPH_MDS_OP_UNLINK;
 	} else
 		goto out;
@@ -914,7 +1085,10 @@ static int ceph_rename(struct inode *old_dir, struct dentry *old_dentry,
 	req->r_dentry = dget(new_dentry);
 	req->r_num_caps = 2;
 	req->r_old_dentry = dget(old_dentry);
+<<<<<<< HEAD
 	req->r_old_dentry_dir = ceph_get_dentry_parent_inode(old_dentry);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	req->r_locked_dir = new_dir;
 	req->r_old_dentry_drop = CEPH_CAP_FILE_SHARED;
 	req->r_old_dentry_unless = CEPH_CAP_FILE_EXCL;
@@ -933,7 +1107,11 @@ static int ceph_rename(struct inode *old_dir, struct dentry *old_dentry,
 		 */
 
 		/* d_move screws up d_subdirs order */
+<<<<<<< HEAD
 		ceph_dir_clear_complete(new_dir);
+=======
+		ceph_i_clear(new_dir, CEPH_I_COMPLETE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		d_move(old_dentry, new_dentry);
 
@@ -973,12 +1151,21 @@ static int dentry_lease_is_valid(struct dentry *dentry)
 
 	spin_lock(&dentry->d_lock);
 	di = ceph_dentry(dentry);
+<<<<<<< HEAD
 	if (di->lease_session) {
 		s = di->lease_session;
 		spin_lock(&s->s_gen_ttl_lock);
 		gen = s->s_cap_gen;
 		ttl = s->s_cap_ttl;
 		spin_unlock(&s->s_gen_ttl_lock);
+=======
+	if (di && di->lease_session) {
+		s = di->lease_session;
+		spin_lock(&s->s_cap_lock);
+		gen = s->s_cap_gen;
+		ttl = s->s_cap_ttl;
+		spin_unlock(&s->s_cap_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (di->lease_gen == gen &&
 		    time_before(jiffies, dentry->d_time) &&
@@ -1015,10 +1202,17 @@ static int dir_lease_is_valid(struct inode *dir, struct dentry *dentry)
 	struct ceph_dentry_info *di = ceph_dentry(dentry);
 	int valid = 0;
 
+<<<<<<< HEAD
 	spin_lock(&ci->i_ceph_lock);
 	if (ci->i_shared_gen == di->lease_shared_gen)
 		valid = __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1);
 	spin_unlock(&ci->i_ceph_lock);
+=======
+	spin_lock(&dir->i_lock);
+	if (ci->i_shared_gen == di->lease_shared_gen)
+		valid = __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1);
+	spin_unlock(&dir->i_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dout("dir_lease_is_valid dir %p v%u dentry %p v%u = %d\n",
 	     dir, (unsigned)ci->i_shared_gen, dentry,
 	     (unsigned)di->lease_shared_gen, valid);
@@ -1030,22 +1224,34 @@ static int dir_lease_is_valid(struct inode *dir, struct dentry *dentry)
  */
 static int ceph_d_revalidate(struct dentry *dentry, struct nameidata *nd)
 {
+<<<<<<< HEAD
 	int valid = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct inode *dir;
 
 	if (nd && nd->flags & LOOKUP_RCU)
 		return -ECHILD;
 
+<<<<<<< HEAD
+=======
+	dir = dentry->d_parent->d_inode;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dout("d_revalidate %p '%.*s' inode %p offset %lld\n", dentry,
 	     dentry->d_name.len, dentry->d_name.name, dentry->d_inode,
 	     ceph_dentry(dentry)->offset);
 
+<<<<<<< HEAD
 	dir = ceph_get_dentry_parent_inode(dentry);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* always trust cached snapped dentries, snapdir dentry */
 	if (ceph_snap(dir) != CEPH_NOSNAP) {
 		dout("d_revalidate %p '%.*s' inode %p is SNAPPED\n", dentry,
 		     dentry->d_name.len, dentry->d_name.name, dentry->d_inode);
+<<<<<<< HEAD
 		valid = 1;
 	} else if (dentry->d_inode &&
 		   ceph_snap(dentry->d_inode) == CEPH_SNAPDIR) {
@@ -1062,6 +1268,23 @@ static int ceph_d_revalidate(struct dentry *dentry, struct nameidata *nd)
 		d_drop(dentry);
 	iput(dir);
 	return valid;
+=======
+		goto out_touch;
+	}
+	if (dentry->d_inode && ceph_snap(dentry->d_inode) == CEPH_SNAPDIR)
+		goto out_touch;
+
+	if (dentry_lease_is_valid(dentry) ||
+	    dir_lease_is_valid(dir, dentry))
+		goto out_touch;
+
+	dout("d_revalidate %p invalid\n", dentry);
+	d_drop(dentry);
+	return 0;
+out_touch:
+	ceph_dentry_lru_touch(dentry);
+	return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1072,11 +1295,21 @@ static void ceph_d_release(struct dentry *dentry)
 	struct ceph_dentry_info *di = ceph_dentry(dentry);
 
 	dout("d_release %p\n", dentry);
+<<<<<<< HEAD
 	ceph_dentry_lru_del(dentry);
 	if (di->lease_session)
 		ceph_put_mds_session(di->lease_session);
 	kmem_cache_free(ceph_dentry_cachep, di);
 	dentry->d_fsdata = NULL;
+=======
+	if (di) {
+		ceph_dentry_lru_del(dentry);
+		if (di->lease_session)
+			ceph_put_mds_session(di->lease_session);
+		kmem_cache_free(ceph_dentry_cachep, di);
+		dentry->d_fsdata = NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ceph_snapdir_d_revalidate(struct dentry *dentry,
@@ -1089,6 +1322,7 @@ static int ceph_snapdir_d_revalidate(struct dentry *dentry,
 	return 1;
 }
 
+<<<<<<< HEAD
 /*
  * Set/clear/test dir complete flag on the dir's dentry.
  */
@@ -1154,6 +1388,9 @@ static void ceph_d_prune(struct dentry *dentry)
 	di = ceph_dentry(dentry->d_parent);
 	clear_bit(CEPH_D_COMPLETE, &di->flags);
 }
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * read() on a dir.  This weird interface hack only works if mounted
@@ -1210,8 +1447,12 @@ static ssize_t ceph_read_dir(struct file *file, char __user *buf, size_t size,
  * an fsync() on a dir will wait for any uncommitted directory
  * operations to commit.
  */
+<<<<<<< HEAD
 static int ceph_dir_fsync(struct file *file, loff_t start, loff_t end,
 			  int datasync)
+=======
+static int ceph_dir_fsync(struct file *file, int datasync)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inode *inode = file->f_path.dentry->d_inode;
 	struct ceph_inode_info *ci = ceph_inode(inode);
@@ -1221,11 +1462,14 @@ static int ceph_dir_fsync(struct file *file, loff_t start, loff_t end,
 	int ret = 0;
 
 	dout("dir_fsync %p\n", inode);
+<<<<<<< HEAD
 	ret = filemap_write_and_wait_range(inode->i_mapping, start, end);
 	if (ret)
 		return ret;
 	mutex_lock(&inode->i_mutex);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&ci->i_unsafe_lock);
 	if (list_empty(head))
 		goto out;
@@ -1237,7 +1481,10 @@ static int ceph_dir_fsync(struct file *file, loff_t start, loff_t end,
 	do {
 		ceph_mdsc_get_request(req);
 		spin_unlock(&ci->i_unsafe_lock);
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dout("dir_fsync %p wait on tid %llu (until %llu)\n",
 		     inode, req->r_tid, last_tid);
 		if (req->r_timeout) {
@@ -1250,9 +1497,15 @@ static int ceph_dir_fsync(struct file *file, loff_t start, loff_t end,
 		} else {
 			wait_for_completion(&req->r_safe_completion);
 		}
+<<<<<<< HEAD
 		ceph_mdsc_put_request(req);
 
 		spin_lock(&ci->i_unsafe_lock);
+=======
+		spin_lock(&ci->i_unsafe_lock);
+		ceph_mdsc_put_request(req);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret || list_empty(head))
 			break;
 		req = list_entry(head->next,
@@ -1260,8 +1513,11 @@ static int ceph_dir_fsync(struct file *file, loff_t start, loff_t end,
 	} while (req->r_tid < last_tid);
 out:
 	spin_unlock(&ci->i_unsafe_lock);
+<<<<<<< HEAD
 	mutex_unlock(&inode->i_mutex);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1277,11 +1533,21 @@ void ceph_dentry_lru_add(struct dentry *dn)
 
 	dout("dentry_lru_add %p %p '%.*s'\n", di, dn,
 	     dn->d_name.len, dn->d_name.name);
+<<<<<<< HEAD
 	mdsc = ceph_sb_to_client(dn->d_sb)->mdsc;
 	spin_lock(&mdsc->dentry_lru_lock);
 	list_add_tail(&di->lru, &mdsc->dentry_lru);
 	mdsc->num_dentry++;
 	spin_unlock(&mdsc->dentry_lru_lock);
+=======
+	if (di) {
+		mdsc = ceph_sb_to_client(dn->d_sb)->mdsc;
+		spin_lock(&mdsc->dentry_lru_lock);
+		list_add_tail(&di->lru, &mdsc->dentry_lru);
+		mdsc->num_dentry++;
+		spin_unlock(&mdsc->dentry_lru_lock);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void ceph_dentry_lru_touch(struct dentry *dn)
@@ -1291,10 +1557,19 @@ void ceph_dentry_lru_touch(struct dentry *dn)
 
 	dout("dentry_lru_touch %p %p '%.*s' (offset %lld)\n", di, dn,
 	     dn->d_name.len, dn->d_name.name, di->offset);
+<<<<<<< HEAD
 	mdsc = ceph_sb_to_client(dn->d_sb)->mdsc;
 	spin_lock(&mdsc->dentry_lru_lock);
 	list_move_tail(&di->lru, &mdsc->dentry_lru);
 	spin_unlock(&mdsc->dentry_lru_lock);
+=======
+	if (di) {
+		mdsc = ceph_sb_to_client(dn->d_sb)->mdsc;
+		spin_lock(&mdsc->dentry_lru_lock);
+		list_move_tail(&di->lru, &mdsc->dentry_lru);
+		spin_unlock(&mdsc->dentry_lru_lock);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void ceph_dentry_lru_del(struct dentry *dn)
@@ -1304,19 +1579,35 @@ void ceph_dentry_lru_del(struct dentry *dn)
 
 	dout("dentry_lru_del %p %p '%.*s'\n", di, dn,
 	     dn->d_name.len, dn->d_name.name);
+<<<<<<< HEAD
 	mdsc = ceph_sb_to_client(dn->d_sb)->mdsc;
 	spin_lock(&mdsc->dentry_lru_lock);
 	list_del_init(&di->lru);
 	mdsc->num_dentry--;
 	spin_unlock(&mdsc->dentry_lru_lock);
+=======
+	if (di) {
+		mdsc = ceph_sb_to_client(dn->d_sb)->mdsc;
+		spin_lock(&mdsc->dentry_lru_lock);
+		list_del_init(&di->lru);
+		mdsc->num_dentry--;
+		spin_unlock(&mdsc->dentry_lru_lock);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * Return name hash for a given dentry.  This is dependent on
  * the parent directory's hash function.
  */
+<<<<<<< HEAD
 unsigned ceph_dentry_hash(struct inode *dir, struct dentry *dn)
 {
+=======
+unsigned ceph_dentry_hash(struct dentry *dn)
+{
+	struct inode *dir = dn->d_parent->d_inode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ceph_inode_info *dci = ceph_inode(dir);
 
 	switch (dci->i_dir_layout.dl_dir_hash) {
@@ -1362,7 +1653,10 @@ const struct inode_operations ceph_dir_iops = {
 const struct dentry_operations ceph_dentry_ops = {
 	.d_revalidate = ceph_d_revalidate,
 	.d_release = ceph_d_release,
+<<<<<<< HEAD
 	.d_prune = ceph_d_prune,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 const struct dentry_operations ceph_snapdir_dentry_ops = {
@@ -1372,5 +1666,8 @@ const struct dentry_operations ceph_snapdir_dentry_ops = {
 
 const struct dentry_operations ceph_snap_dentry_ops = {
 	.d_release = ceph_d_release,
+<<<<<<< HEAD
 	.d_prune = ceph_d_prune,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };

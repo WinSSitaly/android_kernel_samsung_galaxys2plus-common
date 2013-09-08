@@ -3,12 +3,28 @@
  *
  * Copyright (C) 2003-2008 Alan Stern
  * Copyeight (C) 2009 Samsung Electronics
+<<<<<<< HEAD
  * Author: Michal Nazarewicz (mina86@mina86.com)
+=======
+ * Author: Michal Nazarewicz (m.nazarewicz@samsung.com)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 
@@ -43,12 +59,15 @@
  * characters rather then a pointer to void.
  */
 
+<<<<<<< HEAD
 /*
  * When USB_GADGET_DEBUG_FILES is defined the module param num_buffers
  * sets the number of pipeline buffers (length of the fsg_buffhd array).
  * The valid range of num_buffers is: num >= 2 && num <= 4.
  */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/usb/storage.h>
 #include <scsi/scsi.h>
@@ -145,8 +164,53 @@
 
 #endif /* DUMP_MSGS */
 
+<<<<<<< HEAD
 /*-------------------------------------------------------------------------*/
 
+=======
+
+
+
+
+/*-------------------------------------------------------------------------*/
+
+/* Bulk-only data structures */
+
+/* Command Block Wrapper */
+struct fsg_bulk_cb_wrap {
+	__le32	Signature;		/* Contains 'USBC' */
+	u32	Tag;			/* Unique per command id */
+	__le32	DataTransferLength;	/* Size of the data */
+	u8	Flags;			/* Direction in bit 7 */
+	u8	Lun;			/* LUN (normally 0) */
+	u8	Length;			/* Of the CDB, <= MAX_COMMAND_SIZE */
+	u8	CDB[16];		/* Command Data Block */
+};
+
+#define USB_BULK_CB_WRAP_LEN	31
+#define USB_BULK_CB_SIG		0x43425355	/* Spells out USBC */
+#define USB_BULK_IN_FLAG	0x80
+
+/* Command Status Wrapper */
+struct bulk_cs_wrap {
+	__le32	Signature;		/* Should = 'USBS' */
+	u32	Tag;			/* Same as original command */
+	__le32	Residue;		/* Amount not transferred */
+	u8	Status;			/* See below */
+};
+
+#define USB_BULK_CS_WRAP_LEN	13
+#define USB_BULK_CS_SIG		0x53425355	/* Spells out 'USBS' */
+#define USB_STATUS_PASS		0
+#define USB_STATUS_FAIL		1
+#define USB_STATUS_PHASE_ERROR	2
+
+/* Bulk-only class specific requests */
+#define USB_BULK_RESET_REQUEST		0xff
+#define USB_BULK_GET_MAX_LUN_REQUEST	0xfe
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* CBI Interrupt data structure */
 struct interrupt_data {
 	u8	bType;
@@ -204,8 +268,11 @@ struct fsg_lun {
 	u32		sense_data_info;
 	u32		unit_attention_data;
 
+<<<<<<< HEAD
 	unsigned int	blkbits;	/* Bits of logical block size of bound block device */
 	unsigned int	blksize;	/* logical block size of bound block device */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct device	dev;
 };
 
@@ -221,6 +288,7 @@ static struct fsg_lun *fsg_lun_from_dev(struct device *dev)
 #define EP0_BUFSIZE	256
 #define DELAYED_STATUS	(EP0_BUFSIZE + 999)	/* An impossibly large value */
 
+<<<<<<< HEAD
 #ifdef CONFIG_USB_GADGET_DEBUG_FILES
 
 static unsigned int fsg_num_buffers = CONFIG_USB_GADGET_STORAGE_NUM_BUFFERS;
@@ -246,6 +314,10 @@ static inline int fsg_num_buffers_validate(void)
 	       fsg_num_buffers, 2 ,4);
 	return -EINVAL;
 }
+=======
+/* Number of buffers we will use.  2 is enough for double-buffering */
+#define FSG_NUM_BUFFERS	2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Default size of buffer length. */
 #define FSG_BUFLEN	((u32)16384)
@@ -475,6 +547,7 @@ static struct usb_descriptor_header *fsg_hs_function[] = {
 	NULL,
 };
 
+<<<<<<< HEAD
 static struct usb_endpoint_descriptor
 fsg_ss_bulk_in_desc = {
 	.bLength =		USB_DT_ENDPOINT_SIZE,
@@ -597,6 +670,14 @@ fsg_ep_desc(struct usb_gadget *g, struct usb_endpoint_descriptor *fs,
 	if (gadget_is_superspeed(g) && g->speed == USB_SPEED_SUPER)
 		return ss;
 	else if (gadget_is_dualspeed(g) && g->speed == USB_SPEED_HIGH)
+=======
+/* Maxpacket and other transfer characteristics vary by speed. */
+static struct usb_endpoint_descriptor *
+fsg_ep_desc(struct usb_gadget *g, struct usb_endpoint_descriptor *fs,
+		struct usb_endpoint_descriptor *hs)
+{
+	if (gadget_is_dualspeed(g) && g->speed == USB_SPEED_HIGH)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return hs;
 	return fs;
 }
@@ -678,6 +759,7 @@ static int fsg_lun_open(struct fsg_lun *curlun, const char *filename)
 		rc = (int) size;
 		goto out;
 	}
+<<<<<<< HEAD
 
 	if (curlun->cdrom) {
 		curlun->blksize = 2048;
@@ -696,6 +778,15 @@ static int fsg_lun_open(struct fsg_lun *curlun, const char *filename)
 		min_sectors = 300;	/* Smallest track is 300 frames */
 		if (num_sectors >= 256*60*75) {
 			num_sectors = 256*60*75 - 1;
+=======
+	num_sectors = size >> 9;	/* File size in 512-byte blocks */
+	min_sectors = 1;
+	if (curlun->cdrom) {
+		num_sectors &= ~3;	/* Reduce to a multiple of 2048 */
+		min_sectors = 300*4;	/* Smallest track is 300 frames */
+		if (num_sectors >= 256*60*75*4) {
+			num_sectors = (256*60*75 - 1) * 4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			LINFO(curlun, "file too big: %s\n", filename);
 			LINFO(curlun, "using only first %d blocks\n",
 					(int) num_sectors);
@@ -872,10 +963,22 @@ static ssize_t fsg_store_file(struct device *dev, struct device_attribute *attr,
 	struct rw_semaphore	*filesem = dev_get_drvdata(dev);
 	int		rc = 0;
 
+<<<<<<< HEAD
+=======
+
+#ifndef CONFIG_USB_ANDROID_MASS_STORAGE
+	/* disabled in android because we need to allow closing the backing file
+	 * if the media was removed
+	 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (curlun->prevent_medium_removal && fsg_lun_is_open(curlun)) {
 		LDBG(curlun, "eject attempt prevented\n");
 		return -EBUSY;				/* "Door is locked" */
 	}
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Remove a trailing newline */
 	if (count > 0 && buf[count-1] == '\n')

@@ -13,8 +13,13 @@
 #include <linux/cache.h>
 #include <linux/spinlock.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/atomic.h>
+=======
+#include <linux/module.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * We use a hashed array of spinlocks to provide exclusive access
@@ -29,6 +34,7 @@
  * Ensure each lock is in a separate cacheline.
  */
 static union {
+<<<<<<< HEAD
 	raw_spinlock_t lock;
 	char pad[L1_CACHE_BYTES];
 } atomic64_lock[NR_LOCKS] __cacheline_aligned_in_smp = {
@@ -38,6 +44,13 @@ static union {
 };
 
 static inline raw_spinlock_t *lock_addr(const atomic64_t *v)
+=======
+	spinlock_t lock;
+	char pad[L1_CACHE_BYTES];
+} atomic64_lock[NR_LOCKS] __cacheline_aligned_in_smp;
+
+static inline spinlock_t *lock_addr(const atomic64_t *v)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long addr = (unsigned long) v;
 
@@ -49,12 +62,21 @@ static inline raw_spinlock_t *lock_addr(const atomic64_t *v)
 long long atomic64_read(const atomic64_t *v)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	raw_spinlock_t *lock = lock_addr(v);
 	long long val;
 
 	raw_spin_lock_irqsave(lock, flags);
 	val = v->counter;
 	raw_spin_unlock_irqrestore(lock, flags);
+=======
+	spinlock_t *lock = lock_addr(v);
+	long long val;
+
+	spin_lock_irqsave(lock, flags);
+	val = v->counter;
+	spin_unlock_irqrestore(lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return val;
 }
 EXPORT_SYMBOL(atomic64_read);
@@ -62,34 +84,59 @@ EXPORT_SYMBOL(atomic64_read);
 void atomic64_set(atomic64_t *v, long long i)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	raw_spinlock_t *lock = lock_addr(v);
 
 	raw_spin_lock_irqsave(lock, flags);
 	v->counter = i;
 	raw_spin_unlock_irqrestore(lock, flags);
+=======
+	spinlock_t *lock = lock_addr(v);
+
+	spin_lock_irqsave(lock, flags);
+	v->counter = i;
+	spin_unlock_irqrestore(lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(atomic64_set);
 
 void atomic64_add(long long a, atomic64_t *v)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	raw_spinlock_t *lock = lock_addr(v);
 
 	raw_spin_lock_irqsave(lock, flags);
 	v->counter += a;
 	raw_spin_unlock_irqrestore(lock, flags);
+=======
+	spinlock_t *lock = lock_addr(v);
+
+	spin_lock_irqsave(lock, flags);
+	v->counter += a;
+	spin_unlock_irqrestore(lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(atomic64_add);
 
 long long atomic64_add_return(long long a, atomic64_t *v)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	raw_spinlock_t *lock = lock_addr(v);
 	long long val;
 
 	raw_spin_lock_irqsave(lock, flags);
 	val = v->counter += a;
 	raw_spin_unlock_irqrestore(lock, flags);
+=======
+	spinlock_t *lock = lock_addr(v);
+	long long val;
+
+	spin_lock_irqsave(lock, flags);
+	val = v->counter += a;
+	spin_unlock_irqrestore(lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return val;
 }
 EXPORT_SYMBOL(atomic64_add_return);
@@ -97,23 +144,40 @@ EXPORT_SYMBOL(atomic64_add_return);
 void atomic64_sub(long long a, atomic64_t *v)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	raw_spinlock_t *lock = lock_addr(v);
 
 	raw_spin_lock_irqsave(lock, flags);
 	v->counter -= a;
 	raw_spin_unlock_irqrestore(lock, flags);
+=======
+	spinlock_t *lock = lock_addr(v);
+
+	spin_lock_irqsave(lock, flags);
+	v->counter -= a;
+	spin_unlock_irqrestore(lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(atomic64_sub);
 
 long long atomic64_sub_return(long long a, atomic64_t *v)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	raw_spinlock_t *lock = lock_addr(v);
 	long long val;
 
 	raw_spin_lock_irqsave(lock, flags);
 	val = v->counter -= a;
 	raw_spin_unlock_irqrestore(lock, flags);
+=======
+	spinlock_t *lock = lock_addr(v);
+	long long val;
+
+	spin_lock_irqsave(lock, flags);
+	val = v->counter -= a;
+	spin_unlock_irqrestore(lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return val;
 }
 EXPORT_SYMBOL(atomic64_sub_return);
@@ -121,6 +185,7 @@ EXPORT_SYMBOL(atomic64_sub_return);
 long long atomic64_dec_if_positive(atomic64_t *v)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	raw_spinlock_t *lock = lock_addr(v);
 	long long val;
 
@@ -129,6 +194,16 @@ long long atomic64_dec_if_positive(atomic64_t *v)
 	if (val >= 0)
 		v->counter = val;
 	raw_spin_unlock_irqrestore(lock, flags);
+=======
+	spinlock_t *lock = lock_addr(v);
+	long long val;
+
+	spin_lock_irqsave(lock, flags);
+	val = v->counter - 1;
+	if (val >= 0)
+		v->counter = val;
+	spin_unlock_irqrestore(lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return val;
 }
 EXPORT_SYMBOL(atomic64_dec_if_positive);
@@ -136,6 +211,7 @@ EXPORT_SYMBOL(atomic64_dec_if_positive);
 long long atomic64_cmpxchg(atomic64_t *v, long long o, long long n)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	raw_spinlock_t *lock = lock_addr(v);
 	long long val;
 
@@ -144,6 +220,16 @@ long long atomic64_cmpxchg(atomic64_t *v, long long o, long long n)
 	if (val == o)
 		v->counter = n;
 	raw_spin_unlock_irqrestore(lock, flags);
+=======
+	spinlock_t *lock = lock_addr(v);
+	long long val;
+
+	spin_lock_irqsave(lock, flags);
+	val = v->counter;
+	if (val == o)
+		v->counter = n;
+	spin_unlock_irqrestore(lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return val;
 }
 EXPORT_SYMBOL(atomic64_cmpxchg);
@@ -151,6 +237,7 @@ EXPORT_SYMBOL(atomic64_cmpxchg);
 long long atomic64_xchg(atomic64_t *v, long long new)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	raw_spinlock_t *lock = lock_addr(v);
 	long long val;
 
@@ -158,6 +245,15 @@ long long atomic64_xchg(atomic64_t *v, long long new)
 	val = v->counter;
 	v->counter = new;
 	raw_spin_unlock_irqrestore(lock, flags);
+=======
+	spinlock_t *lock = lock_addr(v);
+	long long val;
+
+	spin_lock_irqsave(lock, flags);
+	val = v->counter;
+	v->counter = new;
+	spin_unlock_irqrestore(lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return val;
 }
 EXPORT_SYMBOL(atomic64_xchg);
@@ -165,15 +261,40 @@ EXPORT_SYMBOL(atomic64_xchg);
 int atomic64_add_unless(atomic64_t *v, long long a, long long u)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	raw_spinlock_t *lock = lock_addr(v);
 	int ret = 0;
 
 	raw_spin_lock_irqsave(lock, flags);
+=======
+	spinlock_t *lock = lock_addr(v);
+	int ret = 0;
+
+	spin_lock_irqsave(lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (v->counter != u) {
 		v->counter += a;
 		ret = 1;
 	}
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(lock, flags);
 	return ret;
 }
 EXPORT_SYMBOL(atomic64_add_unless);
+=======
+	spin_unlock_irqrestore(lock, flags);
+	return ret;
+}
+EXPORT_SYMBOL(atomic64_add_unless);
+
+static int init_atomic64_lock(void)
+{
+	int i;
+
+	for (i = 0; i < NR_LOCKS; ++i)
+		spin_lock_init(&atomic64_lock[i].lock);
+	return 0;
+}
+
+pure_initcall(init_atomic64_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

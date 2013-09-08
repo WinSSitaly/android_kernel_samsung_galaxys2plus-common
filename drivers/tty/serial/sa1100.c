@@ -38,7 +38,10 @@
 
 #include <asm/irq.h>
 #include <mach/hardware.h>
+<<<<<<< HEAD
 #include <mach/irqs.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach/serial_sa1100.h>
 
 /* We've been assigned a range on the "Low-density serial ports" major */

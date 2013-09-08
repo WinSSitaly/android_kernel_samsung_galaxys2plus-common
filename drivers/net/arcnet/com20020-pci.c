@@ -34,7 +34,10 @@
 #include <linux/errno.h>
 #include <linux/netdevice.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pci.h>
 #include <linux/arcdevice.h>
 #include <linux/com20020.h>

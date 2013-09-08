@@ -18,6 +18,7 @@ int dlm_add_lkb_callback(struct dlm_lkb *lkb, uint32_t flags, int mode,
                          int status, uint32_t sbflags, uint64_t seq);
 int dlm_rem_lkb_callback(struct dlm_ls *ls, struct dlm_lkb *lkb,
                          struct dlm_callback *cb, int *resid);
+<<<<<<< HEAD
 void dlm_add_cb(struct dlm_lkb *lkb, uint32_t flags, int mode, int status,
                 uint32_t sbflags);
 
@@ -30,3 +31,16 @@ void dlm_callback_resume(struct dlm_ls *ls);
 #endif
 
 
+=======
+void dlm_add_ast(struct dlm_lkb *lkb, uint32_t flags, int mode, int status,
+		 uint32_t sbflags);
+
+void dlm_astd_wake(void);
+int dlm_astd_start(void);
+void dlm_astd_stop(void);
+void dlm_astd_suspend(void);
+void dlm_astd_resume(void);
+
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

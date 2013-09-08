@@ -104,9 +104,12 @@
 #define IRQ_PSC4_3	  (35)
 #define IRQ_MAC_MACE_DMA  IRQ_PSC4_3
 
+<<<<<<< HEAD
 /* OSS Level 4 interrupts */
 #define IRQ_MAC_SCC	  (33)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Level 5 (PSC, AV Macs only) interrupts */
 #define IRQ_PSC5_0	  (40)
 #define IRQ_PSC5_1	  (41)
@@ -134,6 +137,12 @@
 #define IRQ_BABOON_2	  (66)
 #define IRQ_BABOON_3	  (67)
 
+<<<<<<< HEAD
+=======
+/* On non-PSC machines, the serial ports share an IRQ */
+#define IRQ_MAC_SCC	  IRQ_AUTO_4
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SLOT2IRQ(x)	  (x + 47)
 #define IRQ2SLOT(x)	  (x - 47)
 

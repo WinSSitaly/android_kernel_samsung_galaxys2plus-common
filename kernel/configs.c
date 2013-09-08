@@ -92,8 +92,16 @@ static void __exit ikconfig_cleanup(void)
 module_init(ikconfig_init);
 module_exit(ikconfig_cleanup);
 
+<<<<<<< HEAD
 #endif /* CONFIG_IKCONFIG_PROC */
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Randy Dunlap");
 MODULE_DESCRIPTION("Echo the kernel .config file used to build the kernel");
+=======
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Randy Dunlap");
+MODULE_DESCRIPTION("Echo the kernel .config file used to build the kernel");
+
+#endif /* CONFIG_IKCONFIG_PROC */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

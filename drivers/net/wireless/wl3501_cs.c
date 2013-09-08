@@ -53,6 +53,10 @@
 
 #include <asm/io.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "wl3501.h"
 
@@ -1780,7 +1784,11 @@ static int wl3501_get_encode(struct net_device *dev,
 				  keys, len_keys);
 	if (rc)
 		goto out;
+<<<<<<< HEAD
 	tocopy = min_t(u16, len_keys, wrqu->encoding.length);
+=======
+	tocopy = min_t(u8, len_keys, wrqu->encoding.length);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tocopy = min_t(u8, tocopy, 100);
 	wrqu->encoding.length = tocopy;
 	memcpy(extra, keys, tocopy);

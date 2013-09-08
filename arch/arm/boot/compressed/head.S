@@ -21,7 +21,11 @@
 
 #if defined(CONFIG_DEBUG_ICEDCC)
 
+<<<<<<< HEAD
 #if defined(CONFIG_CPU_V6) || defined(CONFIG_CPU_V6K) || defined(CONFIG_CPU_V7)
+=======
+#if defined(CONFIG_CPU_V6) || defined(CONFIG_CPU_V6K) || defined(CONFIG_CPU_V7) && !defined(CONFIG_KONA_DCACHE_INVALIDATION))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.macro	loadsp, rb, tmp
 		.endm
 		.macro	writeb, ch, rb
@@ -58,7 +62,11 @@
 		add	\rb, \rb, #0x00010000	@ Ser1
 #endif
 		.endm
+<<<<<<< HEAD
 #elif defined(CONFIG_ARCH_S3C24XX)
+=======
+#elif defined(CONFIG_ARCH_S3C2410)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.macro loadsp, rb, tmp
 		mov	\rb, #0x50000000
 		add	\rb, \rb, #0x4000 * CONFIG_S3C_LOWLEVEL_UART_PORT
@@ -170,7 +178,11 @@ not_angel:
 #ifdef CONFIG_AUTO_ZRELADDR
 		@ determine final kernel image address
 		mov	r4, pc
+<<<<<<< HEAD
 		and	r4, r4, #0xf8000000
+=======
+		and	r4, r4, #0xff000000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		add	r4, r4, #TEXT_OFFSET
 #else
 		ldr	r4, =zreladdr
@@ -216,6 +228,7 @@ restart:	adr	r0, LC0
 		mov	r10, r6
 #endif
 
+<<<<<<< HEAD
 		mov	r5, #0			@ init dtb size to 0
 #ifdef CONFIG_ARM_APPENDED_DTB
 /*
@@ -314,6 +327,8 @@ restart:	adr	r0, LC0
 dtb_check_done:
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Check to see if we will overwrite ourselves.
  *   r4  = final kernel address
@@ -321,14 +336,24 @@ dtb_check_done:
  *   r10 = end of this image, including  bss/stack/malloc space if non XIP
  * We basically want:
  *   r4 - 16k page directory >= r10 -> OK
+<<<<<<< HEAD
  *   r4 + image length <= address of wont_overwrite -> OK
+=======
+ *   r4 + image length <= current position (pc) -> OK
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 		add	r10, r10, #16384
 		cmp	r4, r10
 		bhs	wont_overwrite
 		add	r10, r4, r9
+<<<<<<< HEAD
 		adr	r9, wont_overwrite
 		cmp	r10, r9
+=======
+   ARM(		cmp	r10, pc		)
+ THUMB(		mov	lr, pc		)
+ THUMB(		cmp	r10, lr		)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bls	wont_overwrite
 
 /*
@@ -382,16 +407,24 @@ wont_overwrite:
  *   r2  = BSS start
  *   r3  = BSS end
  *   r4  = kernel execution address
+<<<<<<< HEAD
  *   r5  = appended dtb size (0 if not present)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *   r7  = architecture ID
  *   r8  = atags pointer
  *   r11 = GOT start
  *   r12 = GOT end
  *   sp  = stack pointer
  */
+<<<<<<< HEAD
 		orrs	r1, r0, r5
 		beq	not_relocated
 
+=======
+		teq	r0, #0
+		beq	not_relocated
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		add	r11, r11, r0
 		add	r12, r12, r0
 
@@ -406,6 +439,7 @@ wont_overwrite:
 
 		/*
 		 * Relocate all entries in the GOT table.
+<<<<<<< HEAD
 		 * Bump bss entries to _edata + dtb size
 		 */
 1:		ldr	r1, [r11, #0]		@ relocate entries in the GOT
@@ -421,6 +455,14 @@ wont_overwrite:
 		add	r2, r2, r5
 		add	r3, r3, r5
 
+=======
+		 */
+1:		ldr	r1, [r11, #0]		@ relocate entries in the GOT
+		add	r1, r1, r0		@ table.  This fixes up the
+		str	r1, [r11], #4		@ C references.
+		cmp	r11, r12
+		blo	1b
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 
 		/*
@@ -461,8 +503,12 @@ not_relocated:	mov	r0, #0
 		mov	r0, #0			@ must be zero
 		mov	r1, r7			@ restore architecture number
 		mov	r2, r8			@ restore atags pointer
+<<<<<<< HEAD
  ARM(		mov	pc, r4	)		@ call kernel
  THUMB(		bx	r4	)		@ entry point is always ARM
+=======
+		mov	pc, r4			@ call kernel
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		.align	2
 		.type	LC0, #object
@@ -635,9 +681,76 @@ __armv4_mmu_cache_on:
 		mcr	p15, 0, r0, c8, c7, 0	@ flush I,D TLBs
 #endif
 		mov	pc, r12
+<<<<<<< HEAD
 
 __armv7_mmu_cache_on:
 		mov	r12, lr
+=======
+#ifdef CONFIG_KONA_DCACHE_INVALIDATION 
+__armv7_mmu_dcache_inv:
+		mrc   p15, 0, r0, c0, c0, 0   @ read MIDR
+		ldr   r1, =0xff0ffff0
+		and   r0, r1                  @ extract pertinent CPUID bits
+		ldr   r1, =0x410fc090
+		cmp   r0, r1                  @ check against ARM Cortex-A9
+		movne pc, lr                  @ exit if not equal
+		mrc      p15, 0, r0, c0, c1, 5   @ read ID_MMFR1
+		tst      r0, #0xf << 16          @ hierarchical cache (ARMv7)
+		movne    pc, lr                  @   - not hierarchical, return
+		dmb
+		mov   r10, #0                 @ init cache level to 0
+		mov   r11, #0                 @   - level offset bit to 0
+__armv7_mmu_dcache_inv_level_loop:
+		mrc      p15, 1, r0, c0, c0, 1   @ read clidr
+		ldr   r1, =0x1fffff
+		and   r0, r0, r1              @ extract all valid CtypeX bits
+		lsr   r0, r0, r11             @ right-align to current level
+		ands  r0, r0, #0x7            @ extract CtypeX bits for current level
+		moveq pc, lr                  @   - exit if no cache
+		cmp   r0, #2                  @ require min d-cache or unified cache
+		addlo r10, #1                 @   - increment level
+		addlo r11, #3                 @   - increment level bit offset
+		blo   __armv7_mmu_dcache_inv_level_loop
+__armv7_mmu_dcache_inv_cont:
+		mov   r0, r10, lsl #1         @ select d- or unified-cache
+		mcr   p15, 2, r0, c0, c0, 0   @ select current cache level in csselr
+		isb                           @ sync updated csselr & csidr
+		mrc   p15, 1, r0, c0, c0, 0   @ read the new csidr
+		ldr   r1, =0x0fffe000
+		and   r1, r1, r0              @ extract the max number of sets (r1)
+		lsr   r1, r1, #13
+		ldr   r2, =0x00001ff8
+		and   r2, r2, r0              @ extract the max way associativity (r2)
+		lsr   r2, r2, #3
+		clz   r3, r2                  @ r3 = way shift bits
+		and   r0, r0, #0x7            @ extract the line size
+		add   r0, r0, #4              @ r0 = set shift bits
+__armv7_mmu_dcache_inv_way_set_loop:
+		mov   r9, r10, lsl #1         @ factor level into r9
+		orr   r9, r1, lsl r0          @ factor set into r9
+		orr   r9, r2, lsl r3          @ factor way into r9
+		mcr   p15, 0, r9, c7, c6, 2   @ invalidate by set/way
+		cmp   r1, #0                  @ check for end of set count
+		subne r1, r1, #1              @ decrement set, if not zero
+		bne   __armv7_mmu_dcache_inv_way_set_loop
+		cmp   r2, #0                  @ check for end of way count
+		addeq r10, #1                 @   - end, increment level
+		addeq r11, #3                 @   - end, increment level shift
+		beq   __armv7_mmu_dcache_inv_level_loop
+		sub   r2, r2, #1              @ decrement way
+		mrc      p15, 1, r9, c0, c0, 0   @ re-read the csidr
+		ldr   r1, =0x0fffe000
+		and     r1, r1, r9              @ extract the max number of sets (r1)
+		lsr   r1, r1, #13
+		b     __armv7_mmu_dcache_inv_way_set_loop
+#endif
+
+__armv7_mmu_cache_on:
+		mov	r12, lr
+#ifdef CONFIG_KONA_DCACHE_INVALIDATION 
+		bl    __armv7_mmu_dcache_inv
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_MMU
 		mrc	p15, 0, r11, c0, c1, 4	@ read ID_MMFR0
 		tst	r11, #0xf		@ VMSA
@@ -648,7 +761,10 @@ __armv7_mmu_cache_on:
 		mcrne	p15, 0, r0, c8, c7, 0	@ flush I,D TLBs
 #endif
 		mrc	p15, 0, r0, c1, c0, 0	@ read control reg
+<<<<<<< HEAD
 		bic	r0, r0, #1 << 28	@ clear SCTLR.TRE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		orr	r0, r0, #0x5000		@ I-cache enable, RR cache replacement
 		orr	r0, r0, #0x003c		@ write buffer
 #ifdef CONFIG_MMU
@@ -660,7 +776,10 @@ __armv7_mmu_cache_on:
 		mcrne	p15, 0, r3, c2, c0, 0	@ load page table pointer
 		mcrne	p15, 0, r1, c3, c0, 0	@ load domain access control
 #endif
+<<<<<<< HEAD
 		mcr	p15, 0, r0, c7, c5, 4	@ ISB
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mcr	p15, 0, r0, c1, c0, 0	@ load control register
 		mrc	p15, 0, r0, c1, c0, 0	@ and read it back
 		mov	r0, #0
@@ -767,6 +886,11 @@ proc_types:
 @		b	__arm6_mmu_cache_off
 @		b	__armv3_mmu_cache_flush
 
+<<<<<<< HEAD
+=======
+#if !defined(CONFIG_CPU_V7)
+		/* This collides with some V7 IDs, preventing correct detection */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.word	0x00000000		@ old ARM ID
 		.word	0x0000f000
 		mov	pc, lr
@@ -775,6 +899,10 @@ proc_types:
  THUMB(		nop				)
 		mov	pc, lr
  THUMB(		nop				)
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		.word	0x41007000		@ ARM7/710
 		.word	0xfff8fe00

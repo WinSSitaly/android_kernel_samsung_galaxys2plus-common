@@ -20,6 +20,21 @@
  *
  * Supported readers: USB TWIN, KAAN Standard Plus and SecOVID Reader Plus
  * (Adapter K), B1 Professional and KAAN Professional (Adapter B)
+<<<<<<< HEAD
+=======
+ *
+ * (21/05/2004) tw
+ *      Fix bug with P'n'P readers
+ *
+ * (28/05/2003) tw
+ *      Add support for KAAN SIM
+ *
+ * (12/09/2002) tw
+ *      Adapted to 2.5.
+ *
+ * (11/08/2002) tw
+ *      Initial version.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 
@@ -38,7 +53,11 @@
 #include <linux/ioctl.h>
 #include "kobil_sct.h"
 
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Version Information */
 #define DRIVER_VERSION "21/05/2004"
@@ -90,6 +109,10 @@ static struct usb_driver kobil_driver = {
 	.probe =	usb_serial_probe,
 	.disconnect =	usb_serial_disconnect,
 	.id_table =	id_table,
+<<<<<<< HEAD
+=======
+	.no_dynamic_id = 	1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -99,6 +122,10 @@ static struct usb_serial_driver kobil_device = {
 		.name =		"kobil",
 	},
 	.description =		"KOBIL USB smart card terminal",
+<<<<<<< HEAD
+=======
+	.usb_driver = 		&kobil_driver,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table =		id_table,
 	.num_ports =		1,
 	.attach =		kobil_startup,
@@ -115,9 +142,12 @@ static struct usb_serial_driver kobil_device = {
 	.read_int_callback =	kobil_read_int_callback,
 };
 
+<<<<<<< HEAD
 static struct usb_serial_driver * const serial_drivers[] = {
 	&kobil_device, NULL
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct kobil_private {
 	int write_int_endpoint_address;
@@ -220,6 +250,12 @@ static int kobil_open(struct tty_struct *tty, struct usb_serial_port *port)
 	dbg("%s - port %d", __func__, port->number);
 	priv = usb_get_serial_port_data(port);
 
+<<<<<<< HEAD
+=======
+	/* someone sets the dev to 0 if the close method has been called */
+	port->interrupt_in_urb->dev = port->serial->dev;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* allocate memory for transfer buffer */
 	transfer_buffer = kzalloc(transfer_buffer_length, GFP_KERNEL);
 	if (!transfer_buffer)
@@ -379,6 +415,11 @@ static void kobil_read_int_callback(struct urb *urb)
 		tty_flip_buffer_push(tty);
 	}
 	tty_kref_put(tty);
+<<<<<<< HEAD
+=======
+	/* someone sets the dev to 0 if the close method has been called */
+	port->interrupt_in_urb->dev = port->serial->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	result = usb_submit_urb(port->interrupt_in_urb, GFP_ATOMIC);
 	dbg("%s - port %d Send read URB returns: %i",
@@ -459,9 +500,23 @@ static int kobil_write(struct tty_struct *tty, struct usb_serial_port *port,
 		priv->filled = 0;
 		priv->cur_pos = 0;
 
+<<<<<<< HEAD
 		/* start reading (except TWIN and KAAN SIM) */
 		if (priv->device_type == KOBIL_ADAPTER_B_PRODUCT_ID ||
 			priv->device_type == KOBIL_ADAPTER_K_PRODUCT_ID) {
+=======
+		/* someone sets the dev to 0 if the close method
+		   has been called */
+		port->interrupt_in_urb->dev = port->serial->dev;
+
+		/* start reading (except TWIN and KAAN SIM) */
+		if (priv->device_type == KOBIL_ADAPTER_B_PRODUCT_ID ||
+			priv->device_type == KOBIL_ADAPTER_K_PRODUCT_ID) {
+			/* someone sets the dev to 0 if the close method has
+			   been called */
+			port->interrupt_in_urb->dev = port->serial->dev;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			result = usb_submit_urb(port->interrupt_in_urb,
 								GFP_NOIO);
 			dbg("%s - port %d Send read URB returns: %i",
@@ -683,7 +738,39 @@ static int kobil_ioctl(struct tty_struct *tty,
 	}
 }
 
+<<<<<<< HEAD
 module_usb_serial_driver(kobil_driver, serial_drivers);
+=======
+static int __init kobil_init(void)
+{
+	int retval;
+	retval = usb_serial_register(&kobil_device);
+	if (retval)
+		goto failed_usb_serial_register;
+	retval = usb_register(&kobil_driver);
+	if (retval)
+		goto failed_usb_register;
+
+	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_VERSION ":"
+	       DRIVER_DESC "\n");
+
+	return 0;
+failed_usb_register:
+	usb_serial_deregister(&kobil_device);
+failed_usb_serial_register:
+	return retval;
+}
+
+
+static void __exit kobil_exit(void)
+{
+	usb_deregister(&kobil_driver);
+	usb_serial_deregister(&kobil_device);
+}
+
+module_init(kobil_init);
+module_exit(kobil_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR(DRIVER_AUTHOR);
 MODULE_DESCRIPTION(DRIVER_DESC);

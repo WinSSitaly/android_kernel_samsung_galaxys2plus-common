@@ -63,6 +63,10 @@
 
 #define KMSG_COMPONENT "claw"
 
+<<<<<<< HEAD
+=======
+#include <linux/kernel_stat.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/ccwdev.h>
 #include <asm/ccwgroup.h>
 #include <asm/debug.h>
@@ -290,7 +294,10 @@ static struct ccw_driver claw_ccw_driver = {
 	.ids	= claw_ids,
 	.probe	= ccwgroup_probe_ccwdev,
 	.remove	= ccwgroup_remove_ccwdev,
+<<<<<<< HEAD
 	.int_class = IOINT_CLW,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static ssize_t
@@ -645,6 +652,10 @@ claw_irq_handler(struct ccw_device *cdev,
         struct claw_env  *p_env;
         struct chbk *p_ch_r=NULL;
 
+<<<<<<< HEAD
+=======
+	kstat_cpu(smp_processor_id()).irqs[IOINT_CLW]++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CLAW_DBF_TEXT(4, trace, "clawirq");
         /* Bypass all 'unsolicited interrupts' */
 	privptr = dev_get_drvdata(&cdev->dev);

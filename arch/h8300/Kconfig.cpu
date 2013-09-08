@@ -162,7 +162,13 @@ config H8300_TPU_CH
 	int "TPU channel"
 	depends on H8300_TPU
 
+<<<<<<< HEAD
 source "kernel/Kconfig.preempt"
+=======
+config PREEMPT
+	bool "Preemptible Kernel"
+	default n
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 source "mm/Kconfig"
 

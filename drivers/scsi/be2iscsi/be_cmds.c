@@ -660,7 +660,10 @@ int beiscsi_cmd_mccq_create(struct beiscsi_hba *phba,
 	spin_lock(&phba->ctrl.mbox_lock);
 	ctrl = &phba->ctrl;
 	wrb = wrb_from_mbox(&ctrl->mbox_mem);
+<<<<<<< HEAD
 	memset(wrb, 0, sizeof(*wrb));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	req = embedded_payload(wrb);
 	ctxt = &req->context;
 
@@ -869,6 +872,7 @@ error:
 		beiscsi_cmd_q_destroy(ctrl, NULL, QTYPE_SGL);
 	return status;
 }
+<<<<<<< HEAD
 
 int beiscsi_cmd_reset_function(struct beiscsi_hba  *phba)
 {
@@ -888,3 +892,5 @@ int beiscsi_cmd_reset_function(struct beiscsi_hba  *phba)
 	spin_unlock(&ctrl->mbox_lock);
 	return status;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

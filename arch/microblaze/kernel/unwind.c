@@ -24,7 +24,10 @@
 #include <asm/sections.h>
 #include <asm/exceptions.h>
 #include <asm/unwind.h>
+<<<<<<< HEAD
 #include <asm/switch_to.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct stack_trace;
 

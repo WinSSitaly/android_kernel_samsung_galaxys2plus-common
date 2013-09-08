@@ -45,7 +45,11 @@
  *   - incremented when a device id maps a data server already in the cache.
  *   - decremented when deviceid is removed from the cache.
  */
+<<<<<<< HEAD
 static DEFINE_SPINLOCK(nfs4_ds_cache_lock);
+=======
+DEFINE_SPINLOCK(nfs4_ds_cache_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static LIST_HEAD(nfs4_data_server_cache);
 
 /* Debug routines */
@@ -56,15 +60,24 @@ print_ds(struct nfs4_pnfs_ds *ds)
 		printk("%s NULL device\n", __func__);
 		return;
 	}
+<<<<<<< HEAD
 	printk("        ds %s\n"
 		"        ref count %d\n"
 		"        client %p\n"
 		"        cl_exchange_flags %x\n",
 		ds->ds_remotestr,
+=======
+	printk("        ip_addr %x port %hu\n"
+		"        ref count %d\n"
+		"        client %p\n"
+		"        cl_exchange_flags %x\n",
+		ntohl(ds->ds_ip_addr), ntohs(ds->ds_port),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		atomic_read(&ds->ds_count), ds->ds_clp,
 		ds->ds_clp ? ds->ds_clp->cl_exchange_flags : 0);
 }
 
+<<<<<<< HEAD
 static bool
 same_sockaddr(struct sockaddr *addr1, struct sockaddr *addr2)
 {
@@ -141,16 +154,38 @@ _data_server_lookup_locked(const struct list_head *dsaddrs)
 	list_for_each_entry(ds, &nfs4_data_server_cache, ds_node)
 		if (_same_data_server_addrs_locked(&ds->ds_addrs, dsaddrs))
 			return ds;
+=======
+/* nfs4_ds_cache_lock is held */
+static struct nfs4_pnfs_ds *
+_data_server_lookup_locked(u32 ip_addr, u32 port)
+{
+	struct nfs4_pnfs_ds *ds;
+
+	dprintk("_data_server_lookup: ip_addr=%x port=%hu\n",
+			ntohl(ip_addr), ntohs(port));
+
+	list_for_each_entry(ds, &nfs4_data_server_cache, ds_node) {
+		if (ds->ds_ip_addr == ip_addr &&
+		    ds->ds_port == port) {
+			return ds;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NULL;
 }
 
 /*
  * Create an rpc connection to the nfs4_pnfs_ds data server
+<<<<<<< HEAD
  * Currently only supports IPv4 and IPv6 addresses
+=======
+ * Currently only support IPv4
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int
 nfs4_ds_connect(struct nfs_server *mds_srv, struct nfs4_pnfs_ds *ds)
 {
+<<<<<<< HEAD
 	struct nfs_client *clp = ERR_PTR(-EIO);
 	struct nfs4_pnfs_ds_addr *da;
 	int status = 0;
@@ -171,6 +206,22 @@ nfs4_ds_connect(struct nfs_server *mds_srv, struct nfs4_pnfs_ds *ds)
 			break;
 	}
 
+=======
+	struct nfs_client *clp;
+	struct sockaddr_in sin;
+	int status = 0;
+
+	dprintk("--> %s ip:port %x:%hu au_flavor %d\n", __func__,
+		ntohl(ds->ds_ip_addr), ntohs(ds->ds_port),
+		mds_srv->nfs_client->cl_rpcclient->cl_auth->au_flavor);
+
+	sin.sin_family = AF_INET;
+	sin.sin_addr.s_addr = ds->ds_ip_addr;
+	sin.sin_port = ds->ds_port;
+
+	clp = nfs4_set_ds_client(mds_srv->nfs_client, (struct sockaddr *)&sin,
+				 sizeof(sin), IPPROTO_TCP);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(clp)) {
 		status = PTR_ERR(clp);
 		goto out;
@@ -182,8 +233,13 @@ nfs4_ds_connect(struct nfs_server *mds_srv, struct nfs4_pnfs_ds *ds)
 			goto out_put;
 		}
 		ds->ds_clp = clp;
+<<<<<<< HEAD
 		dprintk("%s [existing] server=%s\n", __func__,
 			ds->ds_remotestr);
+=======
+		dprintk("%s [existing] ip=%x, port=%hu\n", __func__,
+			ntohl(ds->ds_ip_addr), ntohs(ds->ds_port));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
@@ -202,7 +258,12 @@ nfs4_ds_connect(struct nfs_server *mds_srv, struct nfs4_pnfs_ds *ds)
 		goto out_put;
 
 	ds->ds_clp = clp;
+<<<<<<< HEAD
 	dprintk("%s [new] addr: %s\n", __func__, ds->ds_remotestr);
+=======
+	dprintk("%s [new] ip=%x, port=%hu\n", __func__, ntohl(ds->ds_ip_addr),
+		ntohs(ds->ds_port));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 out_put:
@@ -213,14 +274,18 @@ out_put:
 static void
 destroy_ds(struct nfs4_pnfs_ds *ds)
 {
+<<<<<<< HEAD
 	struct nfs4_pnfs_ds_addr *da;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dprintk("--> %s\n", __func__);
 	ifdebug(FACILITY)
 		print_ds(ds);
 
 	if (ds->ds_clp)
 		nfs_put_client(ds->ds_clp);
+<<<<<<< HEAD
 
 	while (!list_empty(&ds->ds_addrs)) {
 		da = list_first_entry(&ds->ds_addrs,
@@ -232,6 +297,8 @@ destroy_ds(struct nfs4_pnfs_ds *ds)
 	}
 
 	kfree(ds->ds_remotestr);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(ds);
 }
 
@@ -258,6 +325,7 @@ nfs4_fl_free_deviceid(struct nfs4_file_layout_dsaddr *dsaddr)
 	kfree(dsaddr);
 }
 
+<<<<<<< HEAD
 /*
  * Create a string with a human readable address and port to avoid
  * complicated setup around many dprinks.
@@ -331,10 +399,27 @@ nfs4_pnfs_ds_add(struct list_head *dsaddrs, gfp_t gfp_flags)
 		INIT_LIST_HEAD(&ds->ds_addrs);
 		list_splice_init(dsaddrs, &ds->ds_addrs);
 		ds->ds_remotestr = remotestr;
+=======
+static struct nfs4_pnfs_ds *
+nfs4_pnfs_ds_add(struct inode *inode, u32 ip_addr, u32 port, gfp_t gfp_flags)
+{
+	struct nfs4_pnfs_ds *tmp_ds, *ds;
+
+	ds = kzalloc(sizeof(*tmp_ds), gfp_flags);
+	if (!ds)
+		goto out;
+
+	spin_lock(&nfs4_ds_cache_lock);
+	tmp_ds = _data_server_lookup_locked(ip_addr, port);
+	if (tmp_ds == NULL) {
+		ds->ds_ip_addr = ip_addr;
+		ds->ds_port = port;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		atomic_set(&ds->ds_count, 1);
 		INIT_LIST_HEAD(&ds->ds_node);
 		ds->ds_clp = NULL;
 		list_add(&ds->ds_node, &nfs4_data_server_cache);
+<<<<<<< HEAD
 		dprintk("%s add new data server %s\n", __func__,
 			ds->ds_remotestr);
 	} else {
@@ -343,6 +428,15 @@ nfs4_pnfs_ds_add(struct list_head *dsaddrs, gfp_t gfp_flags)
 		atomic_inc(&tmp_ds->ds_count);
 		dprintk("%s data server %s found, inc'ed ds_count to %d\n",
 			__func__, tmp_ds->ds_remotestr,
+=======
+		dprintk("%s add new data server ip 0x%x\n", __func__,
+			ds->ds_ip_addr);
+	} else {
+		kfree(ds);
+		atomic_inc(&tmp_ds->ds_count);
+		dprintk("%s data server found ip 0x%x, inc'ed ds_count to %d\n",
+			__func__, tmp_ds->ds_ip_addr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			atomic_read(&tmp_ds->ds_count));
 		ds = tmp_ds;
 	}
@@ -352,6 +446,7 @@ out:
 }
 
 /*
+<<<<<<< HEAD
  * Currently only supports ipv4, ipv6 and one multi-path address.
  */
 static struct nfs4_pnfs_ds_addr *
@@ -368,6 +463,20 @@ decode_ds_addr(struct net *net, struct xdr_stream *streamp, gfp_t gfp_flags)
 	char *startsep = "";
 	char *endsep = "";
 
+=======
+ * Currently only support ipv4, and one multi-path address.
+ */
+static struct nfs4_pnfs_ds *
+decode_and_add_ds(struct xdr_stream *streamp, struct inode *inode, gfp_t gfp_flags)
+{
+	struct nfs4_pnfs_ds *ds = NULL;
+	char *buf;
+	const char *ipend, *pstr;
+	u32 ip_addr, port;
+	int nlen, rlen, i;
+	int tmp[2];
+	__be32 *p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* r_netid */
 	p = xdr_inline_decode(streamp, 4);
@@ -379,6 +488,7 @@ decode_ds_addr(struct net *net, struct xdr_stream *streamp, gfp_t gfp_flags)
 	if (unlikely(!p))
 		goto out_err;
 
+<<<<<<< HEAD
 	netid = kmalloc(nlen+1, gfp_flags);
 	if (unlikely(!netid))
 		goto out_err;
@@ -390,10 +500,23 @@ decode_ds_addr(struct net *net, struct xdr_stream *streamp, gfp_t gfp_flags)
 	p = xdr_inline_decode(streamp, 4);
 	if (unlikely(!p))
 		goto out_free_netid;
+=======
+	/* Check that netid is "tcp" */
+	if (nlen != 3 ||  memcmp((char *)p, "tcp", 3)) {
+		dprintk("%s: ERROR: non ipv4 TCP r_netid\n", __func__);
+		goto out_err;
+	}
+
+	/* r_addr */
+	p = xdr_inline_decode(streamp, 4);
+	if (unlikely(!p))
+		goto out_err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rlen = be32_to_cpup(p);
 
 	p = xdr_inline_decode(streamp, rlen);
 	if (unlikely(!p))
+<<<<<<< HEAD
 		goto out_free_netid;
 
 	/* port is ".ABC.DEF", 8 chars max */
@@ -401,15 +524,29 @@ decode_ds_addr(struct net *net, struct xdr_stream *streamp, gfp_t gfp_flags)
 		dprintk("%s: Invalid address, length %d\n", __func__,
 			rlen);
 		goto out_free_netid;
+=======
+		goto out_err;
+
+	/* ipv6 length plus port is legal */
+	if (rlen > INET6_ADDRSTRLEN + 8) {
+		dprintk("%s: Invalid address, length %d\n", __func__,
+			rlen);
+		goto out_err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	buf = kmalloc(rlen + 1, gfp_flags);
 	if (!buf) {
 		dprintk("%s: Not enough memory\n", __func__);
+<<<<<<< HEAD
 		goto out_free_netid;
+=======
+		goto out_err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	buf[rlen] = '\0';
 	memcpy(buf, p, rlen);
 
+<<<<<<< HEAD
 	/* replace port '.' with '-' */
 	portstr = strrchr(buf, '.');
 	if (!portstr) {
@@ -496,6 +633,36 @@ out_free_netid:
 	kfree(netid);
 out_err:
 	return NULL;
+=======
+	/* replace the port dots with dashes for the in4_pton() delimiter*/
+	for (i = 0; i < 2; i++) {
+		char *res = strrchr(buf, '.');
+		if (!res) {
+			dprintk("%s: Failed finding expected dots in port\n",
+				__func__);
+			goto out_free;
+		}
+		*res = '-';
+	}
+
+	/* Currently only support ipv4 address */
+	if (in4_pton(buf, rlen, (u8 *)&ip_addr, '-', &ipend) == 0) {
+		dprintk("%s: Only ipv4 addresses supported\n", __func__);
+		goto out_free;
+	}
+
+	/* port */
+	pstr = ipend;
+	sscanf(pstr, "-%d-%d", &tmp[0], &tmp[1]);
+	port = htons((tmp[0] << 8) | (tmp[1]));
+
+	ds = nfs4_pnfs_ds_add(inode, ip_addr, port, gfp_flags);
+	dprintk("%s: Decoded address and port %s\n", __func__, buf);
+out_free:
+	kfree(buf);
+out_err:
+	return ds;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Decode opaque device data and return the result */
@@ -512,8 +679,11 @@ decode_device(struct inode *ino, struct pnfs_device *pdev, gfp_t gfp_flags)
 	struct xdr_stream stream;
 	struct xdr_buf buf;
 	struct page *scratch;
+<<<<<<< HEAD
 	struct list_head dsaddrs;
 	struct nfs4_pnfs_ds_addr *da;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* set up xdr stream */
 	scratch = alloc_page(gfp_flags);
@@ -531,7 +701,11 @@ decode_device(struct inode *ino, struct pnfs_device *pdev, gfp_t gfp_flags)
 	cnt = be32_to_cpup(p);
 	dprintk("%s stripe count  %d\n", __func__, cnt);
 	if (cnt > NFS4_PNFS_MAX_STRIPE_CNT) {
+<<<<<<< HEAD
 		printk(KERN_WARNING "NFS: %s: stripe count %d greater than "
+=======
+		printk(KERN_WARNING "%s: stripe count %d greater than "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       "supported maximum %d\n", __func__,
 			cnt, NFS4_PNFS_MAX_STRIPE_CNT);
 		goto out_err_free_scratch;
@@ -562,7 +736,11 @@ decode_device(struct inode *ino, struct pnfs_device *pdev, gfp_t gfp_flags)
 	num = be32_to_cpup(p);
 	dprintk("%s ds_num %u\n", __func__, num);
 	if (num > NFS4_PNFS_MAX_MULTI_CNT) {
+<<<<<<< HEAD
 		printk(KERN_WARNING "NFS: %s: multipath count %d greater than "
+=======
+		printk(KERN_WARNING "%s: multipath count %d greater than "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"supported maximum %d\n", __func__,
 			num, NFS4_PNFS_MAX_MULTI_CNT);
 		goto out_err_free_stripe_indices;
@@ -570,7 +748,11 @@ decode_device(struct inode *ino, struct pnfs_device *pdev, gfp_t gfp_flags)
 
 	/* validate stripe indices are all < num */
 	if (max_stripe_index >= num) {
+<<<<<<< HEAD
 		printk(KERN_WARNING "NFS: %s: stripe index %u >= num ds %u\n",
+=======
+		printk(KERN_WARNING "%s: stripe index %u >= num ds %u\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			__func__, max_stripe_index, num);
 		goto out_err_free_stripe_indices;
 	}
@@ -590,8 +772,11 @@ decode_device(struct inode *ino, struct pnfs_device *pdev, gfp_t gfp_flags)
 				NFS_SERVER(ino)->nfs_client,
 				&pdev->dev_id);
 
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&dsaddrs);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < dsaddr->ds_num; i++) {
 		int j;
 		u32 mp_count;
@@ -601,6 +786,7 @@ decode_device(struct inode *ino, struct pnfs_device *pdev, gfp_t gfp_flags)
 			goto out_err_free_deviceid;
 
 		mp_count = be32_to_cpup(p); /* multipath count */
+<<<<<<< HEAD
 		for (j = 0; j < mp_count; j++) {
 			da = decode_ds_addr(NFS_SERVER(ino)->nfs_client->net,
 					    &stream, gfp_flags);
@@ -625,12 +811,51 @@ decode_device(struct inode *ino, struct pnfs_device *pdev, gfp_t gfp_flags)
 			list_del_init(&da->da_node);
 			kfree(da->da_remotestr);
 			kfree(da);
+=======
+		if (mp_count > 1) {
+			printk(KERN_WARNING
+			       "%s: Multipath count %d not supported, "
+			       "skipping all greater than 1\n", __func__,
+				mp_count);
+		}
+		for (j = 0; j < mp_count; j++) {
+			if (j == 0) {
+				dsaddr->ds_list[i] = decode_and_add_ds(&stream,
+					ino, gfp_flags);
+				if (dsaddr->ds_list[i] == NULL)
+					goto out_err_free_deviceid;
+			} else {
+				u32 len;
+				/* skip extra multipath */
+
+				/* read len, skip */
+				p = xdr_inline_decode(&stream, 4);
+				if (unlikely(!p))
+					goto out_err_free_deviceid;
+				len = be32_to_cpup(p);
+
+				p = xdr_inline_decode(&stream, len);
+				if (unlikely(!p))
+					goto out_err_free_deviceid;
+
+				/* read len, skip */
+				p = xdr_inline_decode(&stream, 4);
+				if (unlikely(!p))
+					goto out_err_free_deviceid;
+				len = be32_to_cpup(p);
+
+				p = xdr_inline_decode(&stream, len);
+				if (unlikely(!p))
+					goto out_err_free_deviceid;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
 	__free_page(scratch);
 	return dsaddr;
 
+<<<<<<< HEAD
 out_err_drain_dsaddrs:
 	while (!list_empty(&dsaddrs)) {
 		da = list_first_entry(&dsaddrs, struct nfs4_pnfs_ds_addr,
@@ -639,6 +864,8 @@ out_err_drain_dsaddrs:
 		kfree(da->da_remotestr);
 		kfree(da);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_err_free_deviceid:
 	nfs4_fl_free_deviceid(dsaddr);
 	/* stripe_indicies was part of dsaddr */
@@ -664,7 +891,11 @@ decode_and_add_device(struct inode *inode, struct pnfs_device *dev, gfp_t gfp_fl
 
 	new = decode_device(inode, dev, gfp_flags);
 	if (!new) {
+<<<<<<< HEAD
 		printk(KERN_WARNING "NFS: %s: Could not decode or add device\n",
+=======
+		printk(KERN_WARNING "%s: Could not decode or add device\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			__func__);
 		return NULL;
 	}
@@ -699,7 +930,11 @@ get_device_info(struct inode *inode, struct nfs4_deviceid *dev_id, gfp_t gfp_fla
 	 * GETDEVICEINFO's maxcount
 	 */
 	max_resp_sz = server->nfs_client->cl_session->fc_attrs.max_resp_sz;
+<<<<<<< HEAD
 	max_pages = nfs_page_array_len(0, max_resp_sz);
+=======
+	max_pages = max_resp_sz >> PAGE_SHIFT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dprintk("%s inode %p max_resp_sz %u max_pages %d\n",
 		__func__, inode, max_resp_sz, max_pages);
 
@@ -793,6 +1028,7 @@ nfs4_fl_select_ds_fh(struct pnfs_layout_segment *lseg, u32 j)
 
 static void
 filelayout_mark_devid_negative(struct nfs4_file_layout_dsaddr *dsaddr,
+<<<<<<< HEAD
 			       int err, const char *ds_remotestr)
 {
 	u32 *p = (u32 *)&dsaddr->id_node.deviceid;
@@ -800,6 +1036,15 @@ filelayout_mark_devid_negative(struct nfs4_file_layout_dsaddr *dsaddr,
 	printk(KERN_ERR "NFS: data server %s connection error %d."
 		" Deviceid [%x%x%x%x] marked out of use.\n",
 		ds_remotestr, err, p[0], p[1], p[2], p[3]);
+=======
+			       int err, u32 ds_addr)
+{
+	u32 *p = (u32 *)&dsaddr->id_node.deviceid;
+
+	printk(KERN_ERR "NFS: data server %x connection error %d."
+		" Deviceid [%x%x%x%x] marked out of use.\n",
+		ds_addr, err, p[0], p[1], p[2], p[3]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock(&nfs4_ds_cache_lock);
 	dsaddr->flags |= NFS4_DEVICE_ID_NEG_ENTRY;
@@ -813,7 +1058,11 @@ nfs4_fl_prepare_ds(struct pnfs_layout_segment *lseg, u32 ds_idx)
 	struct nfs4_pnfs_ds *ds = dsaddr->ds_list[ds_idx];
 
 	if (ds == NULL) {
+<<<<<<< HEAD
 		printk(KERN_ERR "NFS: %s: No data server for offset index %d\n",
+=======
+		printk(KERN_ERR "%s: No data server for offset index %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			__func__, ds_idx);
 		return NULL;
 	}
@@ -830,7 +1079,11 @@ nfs4_fl_prepare_ds(struct pnfs_layout_segment *lseg, u32 ds_idx)
 		err = nfs4_ds_connect(s, ds);
 		if (err) {
 			filelayout_mark_devid_negative(dsaddr, err,
+<<<<<<< HEAD
 						       ds->ds_remotestr);
+=======
+						       ntohl(ds->ds_ip_addr));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return NULL;
 		}
 	}

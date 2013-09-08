@@ -13,13 +13,20 @@
 #include <linux/io.h>
 #include <mach/hardware.h>
 #include <mach/iim.h>
+<<<<<<< HEAD
 #include <mach/common.h>
 
 static int mx31_cpu_rev = -1;
+=======
+
+unsigned int mx31_cpu_rev;
+EXPORT_SYMBOL(mx31_cpu_rev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct {
 	u8 srev;
 	const char *name;
+<<<<<<< HEAD
 	unsigned int rev;
 } mx31_cpu_type[] = {
 	{ .srev = 0x00, .name = "i.MX31(L)", .rev = IMX_CHIP_REVISION_1_0 },
@@ -34,11 +41,29 @@ static struct {
 };
 
 static int mx31_read_cpu_rev(void)
+=======
+	const char *v;
+	unsigned int rev;
+} mx31_cpu_type[] __initdata = {
+	{ .srev = 0x00, .name = "i.MX31(L)", .v = "1.0",  .rev = IMX_CHIP_REVISION_1_0	},
+	{ .srev = 0x10, .name = "i.MX31",    .v = "1.1",  .rev = IMX_CHIP_REVISION_1_1	},
+	{ .srev = 0x11, .name = "i.MX31L",   .v = "1.1",  .rev = IMX_CHIP_REVISION_1_1	},
+	{ .srev = 0x12, .name = "i.MX31",    .v = "1.15", .rev = IMX_CHIP_REVISION_1_1	},
+	{ .srev = 0x13, .name = "i.MX31L",   .v = "1.15", .rev = IMX_CHIP_REVISION_1_1	},
+	{ .srev = 0x14, .name = "i.MX31",    .v = "1.2",  .rev = IMX_CHIP_REVISION_1_2	},
+	{ .srev = 0x15, .name = "i.MX31L",   .v = "1.2",  .rev = IMX_CHIP_REVISION_1_2	},
+	{ .srev = 0x28, .name = "i.MX31",    .v = "2.0",  .rev = IMX_CHIP_REVISION_2_0	},
+	{ .srev = 0x29, .name = "i.MX31L",   .v = "2.0",  .rev = IMX_CHIP_REVISION_2_0	},
+};
+
+void __init mx31_read_cpu_rev(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 i, srev;
 
 	/* read SREV register from IIM module */
 	srev = __raw_readl(MX31_IO_ADDRESS(MX31_IIM_BASE_ADDR + MXC_IIMSREV));
+<<<<<<< HEAD
 	srev &= 0xff;
 
 	for (i = 0; i < ARRAY_SIZE(mx31_cpu_type); i++)
@@ -60,3 +85,20 @@ int mx31_revision(void)
 	return mx31_cpu_rev;
 }
 EXPORT_SYMBOL(mx31_revision);
+=======
+
+	for (i = 0; i < ARRAY_SIZE(mx31_cpu_type); i++)
+		if (srev == mx31_cpu_type[i].srev) {
+			printk(KERN_INFO
+				"CPU identified as %s, silicon rev %s\n",
+				mx31_cpu_type[i].name, mx31_cpu_type[i].v);
+
+			mx31_cpu_rev = mx31_cpu_type[i].rev;
+			return;
+		}
+
+	mx31_cpu_rev = IMX_CHIP_REVISION_UNKNOWN;
+
+	printk(KERN_WARNING "Unknown CPU identifier. srev = %02x\n", srev);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

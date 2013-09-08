@@ -50,8 +50,11 @@ static void __init mpc5200_simple_setup_arch(void)
 
 /* list of the supported boards */
 static const char *board[] __initdata = {
+<<<<<<< HEAD
 	"anonymous,a4m072",
 	"anon,charon",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"intercontrol,digsy-mtc",
 	"manroland,mucmc52",
 	"manroland,uc101",

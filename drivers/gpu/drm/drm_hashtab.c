@@ -36,7 +36,10 @@
 #include "drm_hashtab.h"
 #include <linux/hash.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int drm_ht_create(struct drm_open_hash *ht, unsigned int order)
 {

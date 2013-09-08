@@ -135,7 +135,22 @@ static struct platform_driver led_pwm_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(led_pwm_driver);
+=======
+static int __init led_pwm_init(void)
+{
+	return platform_driver_register(&led_pwm_driver);
+}
+
+static void __exit led_pwm_exit(void)
+{
+	platform_driver_unregister(&led_pwm_driver);
+}
+
+module_init(led_pwm_init);
+module_exit(led_pwm_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Luotao Fu <l.fu@pengutronix.de>");
 MODULE_DESCRIPTION("PWM LED driver for PXA");

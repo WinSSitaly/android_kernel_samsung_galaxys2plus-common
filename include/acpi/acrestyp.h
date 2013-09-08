@@ -61,6 +61,7 @@ typedef u32 acpi_rsdesc_size;	/* Max Resource Descriptor size is (Length+3) = (6
 #define ACPI_WRITE_COMBINING_MEMORY     (u8) 0x02
 #define ACPI_PREFETCHABLE_MEMORY        (u8) 0x03
 
+<<<<<<< HEAD
 /*! [Begin] no source code translation */
 /*
  * IO Attributes
@@ -69,6 +70,13 @@ typedef u32 acpi_rsdesc_size;	/* Max Resource Descriptor size is (Length+3) = (6
  */
 /*! [End] no source code translation !*/
 
+=======
+/*
+ * IO Attributes
+ * The ISA IO ranges are:     n000-n0_fFh, n400-n4_fFh, n800-n8_fFh, n_c00-n_cFFh.
+ * The non-ISA IO ranges are: n100-n3_fFh, n500-n7_fFh, n900-n_bFFh, n_cd0-n_fFFh.
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ACPI_NON_ISA_ONLY_RANGES        (u8) 0x01
 #define ACPI_ISA_ONLY_RANGES            (u8) 0x02
 #define ACPI_ENTIRE_RANGE               (ACPI_NON_ISA_ONLY_RANGES | ACPI_ISA_ONLY_RANGES)
@@ -84,6 +92,7 @@ typedef u32 acpi_rsdesc_size;	/* Max Resource Descriptor size is (Length+3) = (6
 #define ACPI_DECODE_16                  (u8) 0x01	/* 16-bit IO address decode */
 
 /*
+<<<<<<< HEAD
  * Interrupt attributes - used in multiple descriptors
  */
 
@@ -104,6 +113,18 @@ typedef u32 acpi_rsdesc_size;	/* Max Resource Descriptor size is (Length+3) = (6
 #define ACPI_SHARED                     (u8) 0x01
 #define ACPI_EXCLUSIVE_AND_WAKE         (u8) 0x02
 #define ACPI_SHARED_AND_WAKE            (u8) 0x03
+=======
+ * IRQ Attributes
+ */
+#define ACPI_LEVEL_SENSITIVE            (u8) 0x00
+#define ACPI_EDGE_SENSITIVE             (u8) 0x01
+
+#define ACPI_ACTIVE_HIGH                (u8) 0x00
+#define ACPI_ACTIVE_LOW                 (u8) 0x01
+
+#define ACPI_EXCLUSIVE                  (u8) 0x00
+#define ACPI_SHARED                     (u8) 0x01
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * DMA Attributes
@@ -140,8 +161,11 @@ typedef u32 acpi_rsdesc_size;	/* Max Resource Descriptor size is (Length+3) = (6
 #define ACPI_POS_DECODE                 (u8) 0x00
 #define ACPI_SUB_DECODE                 (u8) 0x01
 
+<<<<<<< HEAD
 /* Producer/Consumer */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ACPI_PRODUCER                   (u8) 0x00
 #define ACPI_CONSUMER                   (u8) 0x01
 
@@ -207,6 +231,7 @@ struct acpi_resource_fixed_io {
 	u8 address_length;
 };
 
+<<<<<<< HEAD
 struct acpi_resource_fixed_dma {
 	u16 request_lines;
 	u16 channels;
@@ -222,6 +247,8 @@ struct acpi_resource_fixed_dma {
 #define ACPI_DMA_WIDTH128                       4
 #define ACPI_DMA_WIDTH256                       5
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct acpi_resource_vendor {
 	u16 byte_length;
 	u8 byte_data[1];
@@ -359,6 +386,7 @@ struct acpi_resource_generic_register {
 	u64 address;
 };
 
+<<<<<<< HEAD
 struct acpi_resource_gpio {
 	u8 revision_id;
 	u8 connection_type;
@@ -519,6 +547,8 @@ struct acpi_resource_uart_serialbus {
 #define ACPI_UART_CLEAR_TO_SEND                 (1<<6)
 #define ACPI_UART_REQUEST_TO_SEND               (1<<7)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* ACPI_RESOURCE_TYPEs */
 
 #define ACPI_RESOURCE_TYPE_IRQ                  0
@@ -538,10 +568,14 @@ struct acpi_resource_uart_serialbus {
 #define ACPI_RESOURCE_TYPE_EXTENDED_ADDRESS64   14	/* ACPI 3.0 */
 #define ACPI_RESOURCE_TYPE_EXTENDED_IRQ         15
 #define ACPI_RESOURCE_TYPE_GENERIC_REGISTER     16
+<<<<<<< HEAD
 #define ACPI_RESOURCE_TYPE_GPIO                 17	/* ACPI 5.0 */
 #define ACPI_RESOURCE_TYPE_FIXED_DMA            18	/* ACPI 5.0 */
 #define ACPI_RESOURCE_TYPE_SERIAL_BUS           19	/* ACPI 5.0 */
 #define ACPI_RESOURCE_TYPE_MAX                  19
+=======
+#define ACPI_RESOURCE_TYPE_MAX                  16
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Master union for resource descriptors */
 
@@ -551,7 +585,10 @@ union acpi_resource_data {
 	struct acpi_resource_start_dependent start_dpf;
 	struct acpi_resource_io io;
 	struct acpi_resource_fixed_io fixed_io;
+<<<<<<< HEAD
 	struct acpi_resource_fixed_dma fixed_dma;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct acpi_resource_vendor vendor;
 	struct acpi_resource_vendor_typed vendor_typed;
 	struct acpi_resource_end_tag end_tag;
@@ -564,11 +601,14 @@ union acpi_resource_data {
 	struct acpi_resource_extended_address64 ext_address64;
 	struct acpi_resource_extended_irq extended_irq;
 	struct acpi_resource_generic_register generic_reg;
+<<<<<<< HEAD
 	struct acpi_resource_gpio gpio;
 	struct acpi_resource_i2c_serialbus i2c_serial_bus;
 	struct acpi_resource_spi_serialbus spi_serial_bus;
 	struct acpi_resource_uart_serialbus uart_serial_bus;
 	struct acpi_resource_common_serialbus common_serial_bus;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Common fields */
 

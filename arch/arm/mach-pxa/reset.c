@@ -9,7 +9,10 @@
 #include <linux/gpio.h>
 #include <linux/io.h>
 #include <asm/proc-fns.h>
+<<<<<<< HEAD
 #include <asm/system_misc.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/regs-ost.h>
 #include <mach/reset.h>
@@ -82,17 +85,26 @@ static void do_hw_reset(void)
 	OSMR3 = OSCR + 368640;	/* ... in 100 ms */
 }
 
+<<<<<<< HEAD
 void pxa_restart(char mode, const char *cmd)
 {
 	local_irq_disable();
 	local_fiq_disable();
 
+=======
+void arch_reset(char mode, const char *cmd)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clear_reset_status(RESET_STATUS_ALL);
 
 	switch (mode) {
 	case 's':
 		/* Jump into ROM at address 0 */
+<<<<<<< HEAD
 		soft_restart(0);
+=======
+		cpu_reset(0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case 'g':
 		do_gpio_reset();

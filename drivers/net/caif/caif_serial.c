@@ -4,8 +4,13 @@
  * License terms: GNU General Public License (GPL) version 2
  */
 
+<<<<<<< HEAD
 #include <linux/hardirq.h>
 #include <linux/init.h>
+=======
+#include <linux/init.h>
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/device.h>
 #include <linux/types.h>
@@ -38,6 +43,7 @@ MODULE_ALIAS_LDISC(N_CAIF);
 /*This list is protected by the rtnl lock. */
 static LIST_HEAD(ser_list);
 
+<<<<<<< HEAD
 static bool ser_loop;
 module_param(ser_loop, bool, S_IRUGO);
 MODULE_PARM_DESC(ser_loop, "Run in simulated loopback mode.");
@@ -47,6 +53,17 @@ module_param(ser_use_stx, bool, S_IRUGO);
 MODULE_PARM_DESC(ser_use_stx, "STX enabled or not.");
 
 static bool ser_use_fcs = true;
+=======
+static int ser_loop;
+module_param(ser_loop, bool, S_IRUGO);
+MODULE_PARM_DESC(ser_loop, "Run in simulated loopback mode.");
+
+static int ser_use_stx = 1;
+module_param(ser_use_stx, bool, S_IRUGO);
+MODULE_PARM_DESC(ser_use_stx, "STX enabled or not.");
+
+static int ser_use_fcs = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param(ser_use_fcs, bool, S_IRUGO);
 MODULE_PARM_DESC(ser_use_fcs, "FCS enabled or not.");
@@ -261,7 +278,11 @@ static int handle_tx(struct ser_device *ser)
 		skb_pull(skb, tty_wr);
 		if (skb->len == 0) {
 			struct sk_buff *tmp = skb_dequeue(&ser->head);
+<<<<<<< HEAD
 			WARN_ON(tmp != skb);
+=======
+			BUG_ON(tmp != skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (in_interrupt())
 				dev_kfree_skb_irq(skb);
 			else
@@ -305,7 +326,11 @@ static void ldisc_tx_wakeup(struct tty_struct *tty)
 
 	ser = tty->disc_data;
 	BUG_ON(ser == NULL);
+<<<<<<< HEAD
 	WARN_ON(ser->tty != tty);
+=======
+	BUG_ON(ser->tty != tty);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	handle_tx(ser);
 }
 
@@ -325,9 +350,12 @@ static int ldisc_open(struct tty_struct *tty)
 
 	sprintf(name, "cf%s", tty->name);
 	dev = alloc_netdev(sizeof(*ser), name, caifdev_setup);
+<<<<<<< HEAD
 	if (!dev)
 		return -ENOMEM;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ser = netdev_priv(dev);
 	ser->tty = tty_kref_get(tty);
 	ser->dev = dev;

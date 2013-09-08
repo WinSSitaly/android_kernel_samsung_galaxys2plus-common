@@ -55,7 +55,10 @@ struct netns_ipv4 {
 	int current_rt_cache_rebuild_count;
 
 	unsigned int sysctl_ping_group_range[2];
+<<<<<<< HEAD
 	long sysctl_tcp_mem[3];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	atomic_t rt_genid;
 	atomic_t dev_addr_genid;

@@ -1,6 +1,10 @@
 /******************************************************************************
  *
+<<<<<<< HEAD
  * Copyright(c) 2005 - 2012 Intel Corporation. All rights reserved.
+=======
+ * Copyright(c) 2005 - 2011 Intel Corporation. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
@@ -27,6 +31,10 @@
 #include <linux/init.h>
 #include <linux/skbuff.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
+=======
+#include <linux/wireless.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/mac80211.h>
 
 #include <linux/netdevice.h>
@@ -36,9 +44,15 @@
 #include <linux/workqueue.h>
 
 #include "iwl-dev.h"
+<<<<<<< HEAD
 #include "iwl-core.h"
 #include "iwl-agn.h"
 #include "iwl-op-mode.h"
+=======
+#include "iwl-sta.h"
+#include "iwl-core.h"
+#include "iwl-agn.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define RS_NAME "iwl-agn-rs"
 
@@ -297,10 +311,17 @@ static u8 rs_tl_add_packet(struct iwl_lq_sta *lq_data,
 		u8 *qc = ieee80211_get_qos_ctl(hdr);
 		tid = qc[0] & 0xf;
 	} else
+<<<<<<< HEAD
 		return IWL_MAX_TID_COUNT;
 
 	if (unlikely(tid >= IWL_MAX_TID_COUNT))
 		return IWL_MAX_TID_COUNT;
+=======
+		return MAX_TID_COUNT;
+
+	if (unlikely(tid >= TID_MAX_LOAD_COUNT))
+		return MAX_TID_COUNT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tl = &lq_data->load[tid];
 
@@ -313,7 +334,11 @@ static u8 rs_tl_add_packet(struct iwl_lq_sta *lq_data,
 		tl->queue_count = 1;
 		tl->head = 0;
 		tl->packet_count[0] = 1;
+<<<<<<< HEAD
 		return IWL_MAX_TID_COUNT;
+=======
+		return MAX_TID_COUNT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	time_diff = TIME_WRAP_AROUND(tl->time_stamp, curr_time);
@@ -335,24 +360,32 @@ static u8 rs_tl_add_packet(struct iwl_lq_sta *lq_data,
 }
 
 #ifdef CONFIG_MAC80211_DEBUGFS
+<<<<<<< HEAD
 /**
  * Program the device to use fixed rate for frame transmit
  * This is for debugging/testing only
  * once the device start use fixed rate, we need to reload the module
  * to being back the normal operation.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void rs_program_fix_rate(struct iwl_priv *priv,
 				struct iwl_lq_sta *lq_sta)
 {
 	struct iwl_station_priv *sta_priv =
 		container_of(lq_sta, struct iwl_station_priv, lq_sta);
+<<<<<<< HEAD
 	struct iwl_rxon_context *ctx = sta_priv->ctx;
+=======
+	struct iwl_rxon_context *ctx = sta_priv->common.ctx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lq_sta->active_legacy_rate = 0x0FFF;	/* 1 - 54 MBits, includes CCK */
 	lq_sta->active_siso_rate   = 0x1FD0;	/* 6 - 60 MBits, no 9, no CCK */
 	lq_sta->active_mimo2_rate  = 0x1FD0;	/* 6 - 60 MBits, no 9, no CCK */
 	lq_sta->active_mimo3_rate  = 0x1FD0;	/* 6 - 60 MBits, no 9, no CCK */
 
+<<<<<<< HEAD
 #ifdef CONFIG_IWLWIFI_DEVICE_TESTMODE
 	/* testmode has higher priority to overwirte the fixed rate */
 	if (priv->tm_fixed_rate)
@@ -364,6 +397,15 @@ static void rs_program_fix_rate(struct iwl_priv *priv,
 
 	if (lq_sta->dbg_fixed_rate) {
 		rs_fill_link_cmd(NULL, lq_sta, lq_sta->dbg_fixed_rate);
+=======
+	lq_sta->dbg_fixed_rate = priv->dbg_fixed_rate;
+
+	IWL_DEBUG_RATE(priv, "sta_id %d rate 0x%X\n",
+		lq_sta->lq.sta_id, priv->dbg_fixed_rate);
+
+	if (priv->dbg_fixed_rate) {
+		rs_fill_link_cmd(NULL, lq_sta, priv->dbg_fixed_rate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iwl_send_lq_cmd(lq_sta->drv, ctx, &lq_sta->lq, CMD_ASYNC,
 				false);
 	}
@@ -380,7 +422,11 @@ static u32 rs_tl_get_load(struct iwl_lq_sta *lq_data, u8 tid)
 	s32 index;
 	struct iwl_traffic_load *tl = NULL;
 
+<<<<<<< HEAD
 	if (tid >= IWL_MAX_TID_COUNT)
+=======
+	if (tid >= TID_MAX_LOAD_COUNT)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	tl = &(lq_data->load[tid]);
@@ -420,7 +466,11 @@ static int rs_tl_turn_on_agg_for_tid(struct iwl_priv *priv,
 
 	load = rs_tl_get_load(lq_data, tid);
 
+<<<<<<< HEAD
 	if ((iwlagn_mod_params.auto_agg) || (load > IWL_AGG_LOAD_THRESHOLD)) {
+=======
+	if (load > IWL_AGG_LOAD_THRESHOLD) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		IWL_DEBUG_HT(priv, "Starting Tx agg: STA: %pM tid: %d\n",
 				sta->addr, tid);
 		ret = ieee80211_start_tx_ba_session(sta, tid, 5000);
@@ -435,7 +485,11 @@ static int rs_tl_turn_on_agg_for_tid(struct iwl_priv *priv,
 			ieee80211_stop_tx_ba_session(sta, tid);
 		}
 	} else {
+<<<<<<< HEAD
 		IWL_DEBUG_HT(priv, "Aggregation not enabled for tid %d "
+=======
+		IWL_ERR(priv, "Aggregation not enabled for tid %d "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"because load = %u\n", tid, load);
 	}
 	return ret;
@@ -445,11 +499,19 @@ static void rs_tl_turn_on_agg(struct iwl_priv *priv, u8 tid,
 			      struct iwl_lq_sta *lq_data,
 			      struct ieee80211_sta *sta)
 {
+<<<<<<< HEAD
 	if (tid < IWL_MAX_TID_COUNT)
 		rs_tl_turn_on_agg_for_tid(priv, lq_data, tid, sta);
 	else
 		IWL_ERR(priv, "tid exceeds max TID count: %d/%d\n",
 			tid, IWL_MAX_TID_COUNT);
+=======
+	if (tid < TID_MAX_LOAD_COUNT)
+		rs_tl_turn_on_agg_for_tid(priv, lq_data, tid, sta);
+	else
+		IWL_ERR(priv, "tid exceeds max load count: %d/%d\n",
+			tid, TID_MAX_LOAD_COUNT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int get_num_of_ant_from_rate(u32 rate_n_flags)
@@ -709,6 +771,7 @@ static int rs_toggle_antenna(u32 valid_ant, u32 *rate_n_flags,
  */
 static bool rs_use_green(struct ieee80211_sta *sta)
 {
+<<<<<<< HEAD
 	/*
 	 * There's a bug somewhere in this code that causes the
 	 * scaling to get stuck because GF+SGI can't be combined
@@ -717,6 +780,13 @@ static bool rs_use_green(struct ieee80211_sta *sta)
 	 * GF APs since we can always receive GF transmissions.
 	 */
 	return false;
+=======
+	struct iwl_station_priv *sta_priv = (void *)sta->drv_priv;
+	struct iwl_rxon_context *ctx = sta_priv->common.ctx;
+
+	return (sta->ht_cap.cap & IEEE80211_HT_CAP_GRN_FLD) &&
+		!(ctx->ht.non_gf_sta_present);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -822,7 +892,11 @@ static u32 rs_get_lower_rate(struct iwl_lq_sta *lq_sta,
 
 		if (num_of_ant(tbl->ant_type) > 1)
 			tbl->ant_type =
+<<<<<<< HEAD
 			    first_antenna(hw_params(priv).valid_tx_ant);
+=======
+				first_antenna(priv->hw_params.valid_tx_ant);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		tbl->is_ht40 = 0;
 		tbl->is_SGI = 0;
@@ -873,21 +947,36 @@ static void rs_bt_update_lq(struct iwl_priv *priv, struct iwl_rxon_context *ctx,
 {
 	struct iwl_scale_tbl_info *tbl;
 	bool full_concurrent = priv->bt_full_concurrent;
+<<<<<<< HEAD
+=======
+	unsigned long flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (priv->bt_ant_couple_ok) {
 		/*
 		 * Is there a need to switch between
 		 * full concurrency and 3-wire?
 		 */
+<<<<<<< HEAD
+=======
+		spin_lock_irqsave(&priv->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (priv->bt_ci_compliance && priv->bt_ant_couple_ok)
 			full_concurrent = true;
 		else
 			full_concurrent = false;
+<<<<<<< HEAD
+=======
+		spin_unlock_irqrestore(&priv->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if ((priv->bt_traffic_load != priv->last_bt_traffic_load) ||
 	    (priv->bt_full_concurrent != full_concurrent)) {
 		priv->bt_full_concurrent = full_concurrent;
+<<<<<<< HEAD
 		priv->last_bt_traffic_load = priv->bt_traffic_load;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Update uCode's rate table. */
 		tbl = &(lq_sta->lq_info[lq_sta->active_tbl]);
@@ -911,15 +1000,23 @@ static void rs_tx_status(void *priv_r, struct ieee80211_supported_band *sband,
 	struct iwl_lq_sta *lq_sta = priv_sta;
 	struct iwl_link_quality_cmd *table;
 	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;
+<<<<<<< HEAD
 	struct iwl_op_mode *op_mode = (struct iwl_op_mode *)priv_r;
 	struct iwl_priv *priv = IWL_OP_MODE_GET_DVM(op_mode);
+=======
+	struct iwl_priv *priv = (struct iwl_priv *)priv_r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
 	enum mac80211_rate_control_flags mac_flags;
 	u32 tx_rate;
 	struct iwl_scale_tbl_info tbl_type;
 	struct iwl_scale_tbl_info *curr_tbl, *other_tbl, *tmp_tbl;
 	struct iwl_station_priv *sta_priv = (void *)sta->drv_priv;
+<<<<<<< HEAD
 	struct iwl_rxon_context *ctx = sta_priv->ctx;
+=======
+	struct iwl_rxon_context *ctx = sta_priv->common.ctx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	IWL_DEBUG_RATE_LIMIT(priv, "get frame ack response, update rate scale window\n");
 
@@ -1083,6 +1180,7 @@ done:
 	/* See if there's a better rate or modulation mode to try. */
 	if (sta && sta->supp_rates[sband->band])
 		rs_rate_scale_perform(priv, skb, sta, lq_sta);
+<<<<<<< HEAD
 
 #if defined(CONFIG_MAC80211_DEBUGFS) && defined(CONFIG_IWLWIFI_DEVICE_TESTMODE)
 	if ((priv->tm_fixed_rate) &&
@@ -1090,6 +1188,13 @@ done:
 		rs_program_fix_rate(priv, lq_sta);
 #endif
 	if (cfg(priv)->bt_params && cfg(priv)->bt_params->advanced_bt_coexist)
+=======
+#ifdef CONFIG_MAC80211_DEBUGFS
+	if (priv->dbg_fixed_rate != lq_sta->dbg_fixed_rate)
+		rs_program_fix_rate(priv, lq_sta);
+#endif
+	if (priv->cfg->bt_params && priv->cfg->bt_params->advanced_bt_coexist)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rs_bt_update_lq(priv, ctx, lq_sta);
 }
 
@@ -1285,7 +1390,11 @@ static int rs_switch_to_mimo2(struct iwl_priv *priv,
 	s32 rate;
 	s8 is_green = lq_sta->is_green;
 	struct iwl_station_priv *sta_priv = (void *)sta->drv_priv;
+<<<<<<< HEAD
 	struct iwl_rxon_context *ctx = sta_priv->ctx;
+=======
+	struct iwl_rxon_context *ctx = sta_priv->common.ctx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!conf_is_ht(conf) || !sta->ht_cap.ht_supported)
 		return -1;
@@ -1295,7 +1404,11 @@ static int rs_switch_to_mimo2(struct iwl_priv *priv,
 		return -1;
 
 	/* Need both Tx chains/antennas to support MIMO */
+<<<<<<< HEAD
 	if (hw_params(priv).tx_chains_num < 2)
+=======
+	if (priv->hw_params.tx_chains_num < 2)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 
 	IWL_DEBUG_RATE(priv, "LQ: try to switch to MIMO2\n");
@@ -1341,7 +1454,11 @@ static int rs_switch_to_mimo3(struct iwl_priv *priv,
 	s32 rate;
 	s8 is_green = lq_sta->is_green;
 	struct iwl_station_priv *sta_priv = (void *)sta->drv_priv;
+<<<<<<< HEAD
 	struct iwl_rxon_context *ctx = sta_priv->ctx;
+=======
+	struct iwl_rxon_context *ctx = sta_priv->common.ctx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!conf_is_ht(conf) || !sta->ht_cap.ht_supported)
 		return -1;
@@ -1351,7 +1468,11 @@ static int rs_switch_to_mimo3(struct iwl_priv *priv,
 		return -1;
 
 	/* Need both Tx chains/antennas to support MIMO */
+<<<<<<< HEAD
 	if (hw_params(priv).tx_chains_num < 3)
+=======
+	if (priv->hw_params.tx_chains_num < 3)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 
 	IWL_DEBUG_RATE(priv, "LQ: try to switch to MIMO3\n");
@@ -1398,7 +1519,11 @@ static int rs_switch_to_siso(struct iwl_priv *priv,
 	u8 is_green = lq_sta->is_green;
 	s32 rate;
 	struct iwl_station_priv *sta_priv = (void *)sta->drv_priv;
+<<<<<<< HEAD
 	struct iwl_rxon_context *ctx = sta_priv->ctx;
+=======
+	struct iwl_rxon_context *ctx = sta_priv->common.ctx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!conf_is_ht(conf) || !sta->ht_cap.ht_supported)
 		return -1;
@@ -1450,8 +1575,13 @@ static int rs_move_legacy_other(struct iwl_priv *priv,
 	u32 sz = (sizeof(struct iwl_scale_tbl_info) -
 		  (sizeof(struct iwl_rate_scale_data) * IWL_RATE_COUNT));
 	u8 start_action;
+<<<<<<< HEAD
 	u8 valid_tx_ant = hw_params(priv).valid_tx_ant;
 	u8 tx_chains_num = hw_params(priv).tx_chains_num;
+=======
+	u8 valid_tx_ant = priv->hw_params.valid_tx_ant;
+	u8 tx_chains_num = priv->hw_params.tx_chains_num;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 	u8 update_search_tbl_counter = 0;
 
@@ -1461,14 +1591,24 @@ static int rs_move_legacy_other(struct iwl_priv *priv,
 		break;
 	case IWL_BT_COEX_TRAFFIC_LOAD_LOW:
 		/* avoid antenna B unless MIMO */
+<<<<<<< HEAD
 		if (tbl->action == IWL_LEGACY_SWITCH_ANTENNA2)
 			tbl->action = IWL_LEGACY_SWITCH_SISO;
+=======
+		valid_tx_ant = first_antenna(priv->hw_params.valid_tx_ant);
+		if (tbl->action == IWL_LEGACY_SWITCH_ANTENNA2)
+			tbl->action = IWL_LEGACY_SWITCH_ANTENNA1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case IWL_BT_COEX_TRAFFIC_LOAD_HIGH:
 	case IWL_BT_COEX_TRAFFIC_LOAD_CONTINUOUS:
 		/* avoid antenna B and MIMO */
+<<<<<<< HEAD
 		valid_tx_ant =
 			first_antenna(hw_params(priv).valid_tx_ant);
+=======
+		valid_tx_ant = first_antenna(priv->hw_params.valid_tx_ant);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (tbl->action >= IWL_LEGACY_SWITCH_ANTENNA2 &&
 		    tbl->action != IWL_LEGACY_SWITCH_SISO)
 			tbl->action = IWL_LEGACY_SWITCH_SISO;
@@ -1491,8 +1631,12 @@ static int rs_move_legacy_other(struct iwl_priv *priv,
 			tbl->action = IWL_LEGACY_SWITCH_ANTENNA1;
 		else if (tbl->action >= IWL_LEGACY_SWITCH_ANTENNA2)
 			tbl->action = IWL_LEGACY_SWITCH_SISO;
+<<<<<<< HEAD
 		valid_tx_ant =
 			first_antenna(hw_params(priv).valid_tx_ant);
+=======
+		valid_tx_ant = first_antenna(priv->hw_params.valid_tx_ant);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	start_action = tbl->action;
@@ -1626,8 +1770,13 @@ static int rs_move_siso_to_other(struct iwl_priv *priv,
 	u32 sz = (sizeof(struct iwl_scale_tbl_info) -
 		  (sizeof(struct iwl_rate_scale_data) * IWL_RATE_COUNT));
 	u8 start_action;
+<<<<<<< HEAD
 	u8 valid_tx_ant = hw_params(priv).valid_tx_ant;
 	u8 tx_chains_num = hw_params(priv).tx_chains_num;
+=======
+	u8 valid_tx_ant = priv->hw_params.valid_tx_ant;
+	u8 tx_chains_num = priv->hw_params.tx_chains_num;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 update_search_tbl_counter = 0;
 	int ret;
 
@@ -1637,14 +1786,24 @@ static int rs_move_siso_to_other(struct iwl_priv *priv,
 		break;
 	case IWL_BT_COEX_TRAFFIC_LOAD_LOW:
 		/* avoid antenna B unless MIMO */
+<<<<<<< HEAD
 		if (tbl->action == IWL_SISO_SWITCH_ANTENNA2)
 			tbl->action = IWL_SISO_SWITCH_MIMO2_AB;
+=======
+		valid_tx_ant = first_antenna(priv->hw_params.valid_tx_ant);
+		if (tbl->action == IWL_SISO_SWITCH_ANTENNA2)
+			tbl->action = IWL_SISO_SWITCH_ANTENNA1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case IWL_BT_COEX_TRAFFIC_LOAD_HIGH:
 	case IWL_BT_COEX_TRAFFIC_LOAD_CONTINUOUS:
 		/* avoid antenna B and MIMO */
+<<<<<<< HEAD
 		valid_tx_ant =
 			first_antenna(hw_params(priv).valid_tx_ant);
+=======
+		valid_tx_ant = first_antenna(priv->hw_params.valid_tx_ant);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (tbl->action != IWL_SISO_SWITCH_ANTENNA1)
 			tbl->action = IWL_SISO_SWITCH_ANTENNA1;
 		break;
@@ -1661,8 +1820,12 @@ static int rs_move_siso_to_other(struct iwl_priv *priv,
 
 	/* configure as 1x1 if bt full concurrency */
 	if (priv->bt_full_concurrent) {
+<<<<<<< HEAD
 		valid_tx_ant =
 			first_antenna(hw_params(priv).valid_tx_ant);
+=======
+		valid_tx_ant = first_antenna(priv->hw_params.valid_tx_ant);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (tbl->action >= IWL_LEGACY_SWITCH_ANTENNA2)
 			tbl->action = IWL_SISO_SWITCH_ANTENNA1;
 	}
@@ -1798,8 +1961,13 @@ static int rs_move_mimo2_to_other(struct iwl_priv *priv,
 	u32 sz = (sizeof(struct iwl_scale_tbl_info) -
 		  (sizeof(struct iwl_rate_scale_data) * IWL_RATE_COUNT));
 	u8 start_action;
+<<<<<<< HEAD
 	u8 valid_tx_ant = hw_params(priv).valid_tx_ant;
 	u8 tx_chains_num = hw_params(priv).tx_chains_num;
+=======
+	u8 valid_tx_ant = priv->hw_params.valid_tx_ant;
+	u8 tx_chains_num = priv->hw_params.tx_chains_num;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 update_search_tbl_counter = 0;
 	int ret;
 
@@ -1968,8 +2136,13 @@ static int rs_move_mimo3_to_other(struct iwl_priv *priv,
 	u32 sz = (sizeof(struct iwl_scale_tbl_info) -
 		  (sizeof(struct iwl_rate_scale_data) * IWL_RATE_COUNT));
 	u8 start_action;
+<<<<<<< HEAD
 	u8 valid_tx_ant = hw_params(priv).valid_tx_ant;
 	u8 tx_chains_num = hw_params(priv).tx_chains_num;
+=======
+	u8 valid_tx_ant = priv->hw_params.valid_tx_ant;
+	u8 tx_chains_num = priv->hw_params.tx_chains_num;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 	u8 update_search_tbl_counter = 0;
 
@@ -2212,6 +2385,10 @@ static void rs_stay_in_table(struct iwl_lq_sta *lq_sta, bool force_search)
 
 /*
  * setup rate table in uCode
+<<<<<<< HEAD
+=======
+ * return rate_n_flags as used in the table
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void rs_update_rate_tbl(struct iwl_priv *priv,
 			       struct iwl_rxon_context *ctx,
@@ -2258,10 +2435,17 @@ static void rs_rate_scale_perform(struct iwl_priv *priv,
 	u8 done_search = 0;
 	u16 high_low;
 	s32 sr;
+<<<<<<< HEAD
 	u8 tid = IWL_MAX_TID_COUNT;
 	struct iwl_tid_data *tid_data;
 	struct iwl_station_priv *sta_priv = (void *)sta->drv_priv;
 	struct iwl_rxon_context *ctx = sta_priv->ctx;
+=======
+	u8 tid = MAX_TID_COUNT;
+	struct iwl_tid_data *tid_data;
+	struct iwl_station_priv *sta_priv = (void *)sta->drv_priv;
+	struct iwl_rxon_context *ctx = sta_priv->common.ctx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	IWL_DEBUG_RATE(priv, "rate scale calculate new rate for skb\n");
 
@@ -2271,12 +2455,23 @@ static void rs_rate_scale_perform(struct iwl_priv *priv,
 	    info->flags & IEEE80211_TX_CTL_NO_ACK)
 		return;
 
+<<<<<<< HEAD
 	lq_sta->supp_rates = sta->supp_rates[lq_sta->band];
 
 	tid = rs_tl_add_packet(lq_sta, hdr);
 	if ((tid != IWL_MAX_TID_COUNT) &&
 	    (lq_sta->tx_agg_tid_en & (1 << tid))) {
 		tid_data = &priv->tid_data[lq_sta->lq.sta_id][tid];
+=======
+	if (!sta || !lq_sta)
+		return;
+
+	lq_sta->supp_rates = sta->supp_rates[lq_sta->band];
+
+	tid = rs_tl_add_packet(lq_sta, hdr);
+	if ((tid != MAX_TID_COUNT) && (lq_sta->tx_agg_tid_en & (1 << tid))) {
+		tid_data = &priv->stations[lq_sta->lq.sta_id].tid[tid];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (tid_data->agg.state == IWL_AGG_OFF)
 			lq_sta->is_agg = 0;
 		else
@@ -2646,9 +2841,15 @@ lq_update:
 		    iwl_ht_enabled(priv)) {
 			if ((lq_sta->last_tpt > IWL_AGG_TPT_THREHOLD) &&
 			    (lq_sta->tx_agg_tid_en & (1 << tid)) &&
+<<<<<<< HEAD
 			    (tid != IWL_MAX_TID_COUNT)) {
 				u8 sta_id = lq_sta->lq.sta_id;
 				tid_data = &priv->tid_data[sta_id][tid];
+=======
+			    (tid != MAX_TID_COUNT)) {
+				tid_data =
+				   &priv->stations[lq_sta->lq.sta_id].tid[tid];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				if (tid_data->agg.state == IWL_AGG_OFF) {
 					IWL_DEBUG_RATE(priv,
 						       "try to aggregate tid %d\n",
@@ -2663,7 +2864,12 @@ lq_update:
 
 out:
 	tbl->current_rate = rate_n_flags_from_tbl(priv, tbl, index, is_green);
+<<<<<<< HEAD
 	lq_sta->last_txrate_idx = index;
+=======
+	i = index;
+	lq_sta->last_txrate_idx = i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -2681,6 +2887,10 @@ out:
  *       which requires station table entry to exist).
  */
 static void rs_initialize_lq(struct iwl_priv *priv,
+<<<<<<< HEAD
+=======
+			     struct ieee80211_conf *conf,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     struct ieee80211_sta *sta,
 			     struct iwl_lq_sta *lq_sta)
 {
@@ -2698,11 +2908,19 @@ static void rs_initialize_lq(struct iwl_priv *priv,
 		return;
 
 	sta_priv = (void *)sta->drv_priv;
+<<<<<<< HEAD
 	ctx = sta_priv->ctx;
 
 	i = lq_sta->last_txrate_idx;
 
 	valid_tx_ant = hw_params(priv).valid_tx_ant;
+=======
+	ctx = sta_priv->common.ctx;
+
+	i = lq_sta->last_txrate_idx;
+
+	valid_tx_ant = priv->hw_params.valid_tx_ant;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!lq_sta->search_better_tbl)
 		active_tbl = lq_sta->active_tbl;
@@ -2739,9 +2957,13 @@ static void rs_get_rate(void *priv_r, struct ieee80211_sta *sta, void *priv_sta,
 
 	struct sk_buff *skb = txrc->skb;
 	struct ieee80211_supported_band *sband = txrc->sband;
+<<<<<<< HEAD
 	struct iwl_op_mode *op_mode __maybe_unused =
 			(struct iwl_op_mode *)priv_r;
 	struct iwl_priv *priv __maybe_unused = IWL_OP_MODE_GET_DVM(op_mode);
+=======
+	struct iwl_priv *priv __maybe_unused = (struct iwl_priv *)priv_r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
 	struct iwl_lq_sta *lq_sta = priv_sta;
 	int rate_idx;
@@ -2809,10 +3031,16 @@ static void *rs_alloc_sta(void *priv_rate, struct ieee80211_sta *sta,
 			  gfp_t gfp)
 {
 	struct iwl_station_priv *sta_priv = (struct iwl_station_priv *) sta->drv_priv;
+<<<<<<< HEAD
 	struct iwl_op_mode *op_mode __maybe_unused =
 			(struct iwl_op_mode *)priv_rate;
 	struct iwl_priv *priv __maybe_unused = IWL_OP_MODE_GET_DVM(op_mode);
 
+=======
+	struct iwl_priv *priv;
+
+	priv = (struct iwl_priv *)priv_rate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	IWL_DEBUG_RATE(priv, "create station rate scale window\n");
 
 	return &sta_priv->lq_sta;
@@ -2888,6 +3116,7 @@ void iwl_rs_rate_init(struct iwl_priv *priv, struct ieee80211_sta *sta, u8 sta_i
 
 	/* These values will be overridden later */
 	lq_sta->lq.general_params.single_stream_ant_msk =
+<<<<<<< HEAD
 		first_antenna(hw_params(priv).valid_tx_ant);
 	lq_sta->lq.general_params.dual_stream_ant_msk =
 		hw_params(priv).valid_tx_ant &
@@ -2897,6 +3126,17 @@ void iwl_rs_rate_init(struct iwl_priv *priv, struct ieee80211_sta *sta, u8 sta_i
 	} else if (num_of_ant(hw_params(priv).valid_tx_ant) == 2) {
 		lq_sta->lq.general_params.dual_stream_ant_msk =
 			hw_params(priv).valid_tx_ant;
+=======
+		first_antenna(priv->hw_params.valid_tx_ant);
+	lq_sta->lq.general_params.dual_stream_ant_msk =
+		priv->hw_params.valid_tx_ant &
+		~first_antenna(priv->hw_params.valid_tx_ant);
+	if (!lq_sta->lq.general_params.dual_stream_ant_msk) {
+		lq_sta->lq.general_params.dual_stream_ant_msk = ANT_AB;
+	} else if (num_of_ant(priv->hw_params.valid_tx_ant) == 2) {
+		lq_sta->lq.general_params.dual_stream_ant_msk =
+			priv->hw_params.valid_tx_ant;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* as default allow aggregation for all tids */
@@ -2908,14 +3148,23 @@ void iwl_rs_rate_init(struct iwl_priv *priv, struct ieee80211_sta *sta, u8 sta_i
 	if (sband->band == IEEE80211_BAND_5GHZ)
 		lq_sta->last_txrate_idx += IWL_FIRST_OFDM_RATE;
 	lq_sta->is_agg = 0;
+<<<<<<< HEAD
 #ifdef CONFIG_IWLWIFI_DEVICE_TESTMODE
 	priv->tm_fixed_rate = 0;
 #endif
+=======
+
+	priv->dbg_fixed_rate = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_MAC80211_DEBUGFS
 	lq_sta->dbg_fixed_rate = 0;
 #endif
 
+<<<<<<< HEAD
 	rs_initialize_lq(priv, sta, lq_sta);
+=======
+	rs_initialize_lq(priv, conf, sta, lq_sta);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void rs_fill_link_cmd(struct iwl_priv *priv,
@@ -2942,7 +3191,11 @@ static void rs_fill_link_cmd(struct iwl_priv *priv,
 	if (priv && priv->bt_full_concurrent) {
 		/* 1x1 only */
 		tbl_type.ant_type =
+<<<<<<< HEAD
 			first_antenna(hw_params(priv).valid_tx_ant);
+=======
+			first_antenna(priv->hw_params.valid_tx_ant);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* How many times should we repeat the initial rate? */
@@ -2974,7 +3227,11 @@ static void rs_fill_link_cmd(struct iwl_priv *priv,
 		if (priv->bt_full_concurrent)
 			valid_tx_ant = ANT_A;
 		else
+<<<<<<< HEAD
 			valid_tx_ant = hw_params(priv).valid_tx_ant;
+=======
+			valid_tx_ant = priv->hw_params.valid_tx_ant;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Fill rest of rate table */
@@ -3008,7 +3265,11 @@ static void rs_fill_link_cmd(struct iwl_priv *priv,
 		if (priv && priv->bt_full_concurrent) {
 			/* 1x1 only */
 			tbl_type.ant_type =
+<<<<<<< HEAD
 			    first_antenna(hw_params(priv).valid_tx_ant);
+=======
+				first_antenna(priv->hw_params.valid_tx_ant);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/* Indicate to uCode which entries might be MIMO.
@@ -3059,11 +3320,19 @@ static void rs_fill_link_cmd(struct iwl_priv *priv,
 	 * overwrite if needed, pass aggregation time limit
 	 * to uCode in uSec
 	 */
+<<<<<<< HEAD
 	if (priv && cfg(priv)->bt_params &&
 	    cfg(priv)->bt_params->agg_time_limit &&
 	    priv->bt_traffic_load >= IWL_BT_COEX_TRAFFIC_LOAD_HIGH)
 		lq_cmd->agg_params.agg_time_limit =
 			cpu_to_le16(cfg(priv)->bt_params->agg_time_limit);
+=======
+	if (priv && priv->cfg->bt_params &&
+	    priv->cfg->bt_params->agg_time_limit &&
+	    priv->bt_traffic_load >= IWL_BT_COEX_TRAFFIC_LOAD_HIGH)
+		lq_cmd->agg_params.agg_time_limit =
+			cpu_to_le16(priv->cfg->bt_params->agg_time_limit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void *rs_alloc(struct ieee80211_hw *hw, struct dentry *debugfsdir)
@@ -3079,14 +3348,26 @@ static void rs_free(void *priv_rate)
 static void rs_free_sta(void *priv_r, struct ieee80211_sta *sta,
 			void *priv_sta)
 {
+<<<<<<< HEAD
 	struct iwl_op_mode *op_mode __maybe_unused = priv_r;
 	struct iwl_priv *priv __maybe_unused = IWL_OP_MODE_GET_DVM(op_mode);
+=======
+	struct iwl_priv *priv __maybe_unused = priv_r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	IWL_DEBUG_RATE(priv, "enter\n");
 	IWL_DEBUG_RATE(priv, "leave\n");
 }
 
 #ifdef CONFIG_MAC80211_DEBUGFS
+<<<<<<< HEAD
+=======
+static int open_file_generic(struct inode *inode, struct file *file)
+{
+	file->private_data = inode->i_private;
+	return 0;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void rs_dbgfs_set_mcs(struct iwl_lq_sta *lq_sta,
 			     u32 *rate_n_flags, int index)
 {
@@ -3095,7 +3376,11 @@ static void rs_dbgfs_set_mcs(struct iwl_lq_sta *lq_sta,
 	u8 ant_sel_tx;
 
 	priv = lq_sta->drv;
+<<<<<<< HEAD
 	valid_tx_ant = hw_params(priv).valid_tx_ant;
+=======
+	valid_tx_ant = priv->hw_params.valid_tx_ant;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (lq_sta->dbg_fixed_rate) {
 		ant_sel_tx =
 		  ((lq_sta->dbg_fixed_rate & RATE_MCS_ANT_ABC_MSK)
@@ -3105,6 +3390,10 @@ static void rs_dbgfs_set_mcs(struct iwl_lq_sta *lq_sta,
 			IWL_DEBUG_RATE(priv, "Fixed rate ON\n");
 		} else {
 			lq_sta->dbg_fixed_rate = 0;
+<<<<<<< HEAD
+=======
+			priv->dbg_fixed_rate = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			IWL_ERR(priv,
 			    "Invalid antenna selection 0x%X, Valid is 0x%X\n",
 			    ant_sel_tx, valid_tx_ant);
@@ -3132,9 +3421,15 @@ static ssize_t rs_sta_dbgfs_scale_table_write(struct file *file,
 		return -EFAULT;
 
 	if (sscanf(buf, "%x", &parsed_rate) == 1)
+<<<<<<< HEAD
 		lq_sta->dbg_fixed_rate = parsed_rate;
 	else
 		lq_sta->dbg_fixed_rate = 0;
+=======
+		priv->dbg_fixed_rate = lq_sta->dbg_fixed_rate = parsed_rate;
+	else
+		priv->dbg_fixed_rate = lq_sta->dbg_fixed_rate = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rs_program_fix_rate(priv, lq_sta);
 
@@ -3164,11 +3459,19 @@ static ssize_t rs_sta_dbgfs_scale_table_read(struct file *file,
 			lq_sta->total_failed, lq_sta->total_success,
 			lq_sta->active_legacy_rate);
 	desc += sprintf(buff+desc, "fixed rate 0x%X\n",
+<<<<<<< HEAD
 			lq_sta->dbg_fixed_rate);
 	desc += sprintf(buff+desc, "valid_tx_ant %s%s%s\n",
 	    (hw_params(priv).valid_tx_ant & ANT_A) ? "ANT_A," : "",
 	    (hw_params(priv).valid_tx_ant & ANT_B) ? "ANT_B," : "",
 	    (hw_params(priv).valid_tx_ant & ANT_C) ? "ANT_C" : "");
+=======
+			priv->dbg_fixed_rate);
+	desc += sprintf(buff+desc, "valid_tx_ant %s%s%s\n",
+	    (priv->hw_params.valid_tx_ant & ANT_A) ? "ANT_A," : "",
+	    (priv->hw_params.valid_tx_ant & ANT_B) ? "ANT_B," : "",
+	    (priv->hw_params.valid_tx_ant & ANT_C) ? "ANT_C" : "");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	desc += sprintf(buff+desc, "lq type %s\n",
 	   (is_legacy(tbl->lq_type)) ? "legacy" : "HT");
 	if (is_Ht(tbl->lq_type)) {
@@ -3225,7 +3528,11 @@ static ssize_t rs_sta_dbgfs_scale_table_read(struct file *file,
 static const struct file_operations rs_sta_dbgfs_scale_table_ops = {
 	.write = rs_sta_dbgfs_scale_table_write,
 	.read = rs_sta_dbgfs_scale_table_read,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = open_file_generic,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek = default_llseek,
 };
 static ssize_t rs_sta_dbgfs_stats_table_read(struct file *file,
@@ -3268,7 +3575,11 @@ static ssize_t rs_sta_dbgfs_stats_table_read(struct file *file,
 
 static const struct file_operations rs_sta_dbgfs_stats_table_ops = {
 	.read = rs_sta_dbgfs_stats_table_read,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = open_file_generic,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek = default_llseek,
 };
 
@@ -3294,7 +3605,11 @@ static ssize_t rs_sta_dbgfs_rate_scale_data_read(struct file *file,
 
 static const struct file_operations rs_sta_dbgfs_rate_scale_data_ops = {
 	.read = rs_sta_dbgfs_rate_scale_data_read,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = open_file_generic,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek = default_llseek,
 };
 

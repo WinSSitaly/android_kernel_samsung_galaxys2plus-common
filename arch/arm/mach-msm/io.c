@@ -20,7 +20,10 @@
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/hardware.h>
 #include <asm/page.h>
@@ -44,11 +47,18 @@ static struct map_desc msm_io_desc[] __initdata = {
 	MSM_DEVICE(VIC),
 	MSM_CHIP_DEVICE(CSR, MSM7X00),
 	MSM_DEVICE(DMOV),
+<<<<<<< HEAD
 	MSM_CHIP_DEVICE(GPIO1, MSM7X00),
 	MSM_CHIP_DEVICE(GPIO2, MSM7X00),
 	MSM_DEVICE(CLK_CTL),
 #if defined(CONFIG_DEBUG_MSM_UART1) || defined(CONFIG_DEBUG_MSM_UART2) || \
 	defined(CONFIG_DEBUG_MSM_UART3)
+=======
+	MSM_DEVICE(GPIO1),
+	MSM_DEVICE(GPIO2),
+	MSM_DEVICE(CLK_CTL),
+#ifdef CONFIG_MSM_DEBUG_UART
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	MSM_DEVICE(DEBUG_UART),
 #endif
 #ifdef CONFIG_ARCH_MSM7X30
@@ -78,15 +88,24 @@ static struct map_desc qsd8x50_io_desc[] __initdata = {
 	MSM_DEVICE(VIC),
 	MSM_CHIP_DEVICE(CSR, QSD8X50),
 	MSM_DEVICE(DMOV),
+<<<<<<< HEAD
 	MSM_CHIP_DEVICE(GPIO1, QSD8X50),
 	MSM_CHIP_DEVICE(GPIO2, QSD8X50),
+=======
+	MSM_DEVICE(GPIO1),
+	MSM_DEVICE(GPIO2),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	MSM_DEVICE(CLK_CTL),
 	MSM_DEVICE(SIRC),
 	MSM_DEVICE(SCPLL),
 	MSM_DEVICE(AD5),
 	MSM_DEVICE(MDC),
+<<<<<<< HEAD
 #if defined(CONFIG_DEBUG_MSM_UART1) || defined(CONFIG_DEBUG_MSM_UART2) || \
 	defined(CONFIG_DEBUG_MSM_UART3)
+=======
+#ifdef CONFIG_MSM_DEBUG_UART
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	MSM_DEVICE(DEBUG_UART),
 #endif
 	{
@@ -111,9 +130,12 @@ static struct map_desc msm8x60_io_desc[] __initdata = {
 	MSM_CHIP_DEVICE(TMR0, MSM8X60),
 	MSM_DEVICE(ACC),
 	MSM_DEVICE(GCC),
+<<<<<<< HEAD
 #ifdef CONFIG_DEBUG_MSM8660_UART
 	MSM_DEVICE(DEBUG_UART),
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void __init msm_map_msm8x60_io(void)
@@ -128,9 +150,12 @@ static struct map_desc msm8960_io_desc[] __initdata = {
 	MSM_CHIP_DEVICE(QGIC_CPU, MSM8960),
 	MSM_CHIP_DEVICE(TMR, MSM8960),
 	MSM_CHIP_DEVICE(TMR0, MSM8960),
+<<<<<<< HEAD
 #ifdef CONFIG_DEBUG_MSM8960_UART
 	MSM_DEVICE(DEBUG_UART),
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void __init msm_map_msm8960_io(void)
@@ -144,8 +169,13 @@ static struct map_desc msm7x30_io_desc[] __initdata = {
 	MSM_DEVICE(VIC),
 	MSM_CHIP_DEVICE(CSR, MSM7X30),
 	MSM_DEVICE(DMOV),
+<<<<<<< HEAD
 	MSM_CHIP_DEVICE(GPIO1, MSM7X30),
 	MSM_CHIP_DEVICE(GPIO2, MSM7X30),
+=======
+	MSM_DEVICE(GPIO1),
+	MSM_DEVICE(GPIO2),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	MSM_DEVICE(CLK_CTL),
 	MSM_DEVICE(CLK_CTL_SH2),
 	MSM_DEVICE(AD5),
@@ -154,8 +184,12 @@ static struct map_desc msm7x30_io_desc[] __initdata = {
 	MSM_DEVICE(SAW),
 	MSM_DEVICE(GCC),
 	MSM_DEVICE(TCSR),
+<<<<<<< HEAD
 #if defined(CONFIG_DEBUG_MSM_UART1) || defined(CONFIG_DEBUG_MSM_UART2) || \
 	defined(CONFIG_DEBUG_MSM_UART3)
+=======
+#ifdef CONFIG_MSM_DEBUG_UART
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	MSM_DEVICE(DEBUG_UART),
 #endif
 	{
@@ -172,8 +206,13 @@ void __init msm_map_msm7x30_io(void)
 }
 #endif /* CONFIG_ARCH_MSM7X30 */
 
+<<<<<<< HEAD
 void __iomem *__msm_ioremap_caller(unsigned long phys_addr, size_t size,
 				   unsigned int mtype, void *caller)
+=======
+void __iomem *
+__msm_ioremap(unsigned long phys_addr, size_t size, unsigned int mtype)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (mtype == MT_DEVICE) {
 		/* The peripherals in the 88000000 - D0000000 range
@@ -184,5 +223,12 @@ void __iomem *__msm_ioremap_caller(unsigned long phys_addr, size_t size,
 			mtype = MT_DEVICE_NONSHARED;
 	}
 
+<<<<<<< HEAD
 	return __arm_ioremap_caller(phys_addr, size, mtype, caller);
 }
+=======
+	return __arm_ioremap_caller(phys_addr, size, mtype,
+		__builtin_return_address(0));
+}
+EXPORT_SYMBOL(__msm_ioremap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

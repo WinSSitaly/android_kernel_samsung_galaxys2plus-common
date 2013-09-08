@@ -241,7 +241,11 @@ int wl1251_cmd_data_path(struct wl1251 *wl, u8 channel, bool enable)
 	if (ret < 0) {
 		wl1251_error("tx %s cmd for channel %d failed",
 			     enable ? "start" : "stop", channel);
+<<<<<<< HEAD
 		goto out;
+=======
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	wl1251_debug(DEBUG_BOOT, "tx %s cmd channel %d",

@@ -30,6 +30,11 @@ page_migration
 	- description of page migration in NUMA systems.
 pagemap.txt
 	- pagemap, from the userspace perspective
+<<<<<<< HEAD
+=======
+slabinfo.c
+	- source code for a tool to get reports about slabs.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 slub.txt
 	- a short users guide for SLUB.
 unevictable-lru.txt

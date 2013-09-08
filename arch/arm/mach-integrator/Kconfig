@@ -6,8 +6,11 @@ config ARCH_INTEGRATOR_AP
 	bool "Support Integrator/AP and Integrator/PP2 platforms"
 	select CLKSRC_MMIO
 	select MIGHT_HAVE_PCI
+<<<<<<< HEAD
 	select SERIAL_AMBA_PL010
 	select SERIAL_AMBA_PL010_CONSOLE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Include support for the ARM(R) Integrator/AP and
 	  Integrator/PP2 platforms.
@@ -17,8 +20,11 @@ config ARCH_INTEGRATOR_CP
 	select ARCH_CINTEGRATOR
 	select ARM_TIMER_SP804
 	select PLAT_VERSATILE_CLCD
+<<<<<<< HEAD
 	select SERIAL_AMBA_PL011
 	select SERIAL_AMBA_PL011_CONSOLE
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Include support for the ARM(R) Integrator CP platform.
 

@@ -33,13 +33,19 @@
 #include <linux/seq_file.h>
 #include <linux/platform_device.h>
 #include <linux/regulator/consumer.h>
+<<<<<<< HEAD
 #include <linux/pm_runtime.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <video/omapdss.h>
 #include <plat/cpu.h>
 
 #include "dss.h"
+<<<<<<< HEAD
 #include "dss_features.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Venc registers */
 #define VENC_REV_ID				0x00
@@ -294,8 +300,11 @@ static struct {
 	struct mutex venc_lock;
 	u32 wss_data;
 	struct regulator *vdda_dac_reg;
+<<<<<<< HEAD
 
 	struct clk	*tv_dac_clk;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } venc;
 
 static inline void venc_write_reg(int idx, u32 val)
@@ -384,6 +393,7 @@ static void venc_reset(void)
 #endif
 }
 
+<<<<<<< HEAD
 static int venc_runtime_get(void)
 {
 	int r;
@@ -403,6 +413,16 @@ static void venc_runtime_put(void)
 
 	r = pm_runtime_put_sync(&venc.pdev->dev);
 	WARN_ON(r < 0);
+=======
+static void venc_enable_clocks(int enable)
+{
+	if (enable)
+		dss_clk_enable(DSS_CLK_ICK | DSS_CLK_FCK | DSS_CLK_TVFCK |
+				DSS_CLK_VIDFCK);
+	else
+		dss_clk_disable(DSS_CLK_ICK | DSS_CLK_FCK | DSS_CLK_TVFCK |
+				DSS_CLK_VIDFCK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct venc_config *venc_timings_to_config(
@@ -417,10 +437,18 @@ static const struct venc_config *venc_timings_to_config(
 	BUG();
 }
 
+<<<<<<< HEAD
 static int venc_power_on(struct omap_dss_device *dssdev)
 {
 	u32 l;
 	int r;
+=======
+static void venc_power_on(struct omap_dss_device *dssdev)
+{
+	u32 l;
+
+	venc_enable_clocks(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	venc_reset();
 	venc_write_config(venc_timings_to_config(&dssdev->panel.timings));
@@ -448,6 +476,7 @@ static int venc_power_on(struct omap_dss_device *dssdev)
 	if (dssdev->platform_enable)
 		dssdev->platform_enable(dssdev);
 
+<<<<<<< HEAD
 	r = dss_mgr_enable(dssdev->manager);
 	if (r)
 		goto err;
@@ -464,6 +493,9 @@ err:
 	regulator_disable(venc.vdda_dac_reg);
 
 	return r;
+=======
+	dssdev->manager->enable(dssdev->manager);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void venc_power_off(struct omap_dss_device *dssdev)
@@ -471,12 +503,17 @@ static void venc_power_off(struct omap_dss_device *dssdev)
 	venc_write_reg(VENC_OUTPUT_CONTROL, 0);
 	dss_set_dac_pwrdn_bgz(0);
 
+<<<<<<< HEAD
 	dss_mgr_disable(dssdev->manager);
+=======
+	dssdev->manager->disable(dssdev->manager);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dssdev->platform_disable)
 		dssdev->platform_disable(dssdev);
 
 	regulator_disable(venc.vdda_dac_reg);
+<<<<<<< HEAD
 }
 
 unsigned long venc_get_pixel_clock(void)
@@ -485,6 +522,16 @@ unsigned long venc_get_pixel_clock(void)
 	return 13500000;
 }
 
+=======
+
+	venc_enable_clocks(0);
+}
+
+
+
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* driver */
 static int venc_panel_probe(struct omap_dss_device *dssdev)
 {
@@ -516,6 +563,7 @@ static int venc_panel_enable(struct omap_dss_device *dssdev)
 		goto err1;
 	}
 
+<<<<<<< HEAD
 	r = venc_runtime_get();
 	if (r)
 		goto err1;
@@ -523,6 +571,9 @@ static int venc_panel_enable(struct omap_dss_device *dssdev)
 	r = venc_power_on(dssdev);
 	if (r)
 		goto err2;
+=======
+	venc_power_on(dssdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	venc.wss_data = 0;
 
@@ -530,8 +581,11 @@ static int venc_panel_enable(struct omap_dss_device *dssdev)
 
 	mutex_unlock(&venc.venc_lock);
 	return 0;
+<<<<<<< HEAD
 err2:
 	venc_runtime_put();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err1:
 	omap_dss_stop_device(dssdev);
 err0:
@@ -557,8 +611,11 @@ static void venc_panel_disable(struct omap_dss_device *dssdev)
 
 	venc_power_off(dssdev);
 
+<<<<<<< HEAD
 	venc_runtime_put();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dssdev->state = OMAP_DSS_DISPLAY_DISABLED;
 
 	omap_dss_stop_device(dssdev);
@@ -577,6 +634,23 @@ static int venc_panel_resume(struct omap_dss_device *dssdev)
 	return venc_panel_enable(dssdev);
 }
 
+<<<<<<< HEAD
+=======
+static enum omap_dss_update_mode venc_get_update_mode(
+		struct omap_dss_device *dssdev)
+{
+	return OMAP_DSS_UPDATE_AUTO;
+}
+
+static int venc_set_update_mode(struct omap_dss_device *dssdev,
+		enum omap_dss_update_mode mode)
+{
+	if (mode != OMAP_DSS_UPDATE_AUTO)
+		return -EINVAL;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void venc_get_timings(struct omap_dss_device *dssdev,
 			struct omap_video_timings *timings)
 {
@@ -623,7 +697,10 @@ static u32 venc_get_wss(struct omap_dss_device *dssdev)
 static int venc_set_wss(struct omap_dss_device *dssdev,	u32 wss)
 {
 	const struct venc_config *config;
+<<<<<<< HEAD
 	int r;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	DSSDBG("venc_set_wss\n");
 
@@ -634,19 +711,31 @@ static int venc_set_wss(struct omap_dss_device *dssdev,	u32 wss)
 	/* Invert due to VENC_L21_WC_CTL:INV=1 */
 	venc.wss_data = (wss ^ 0xfffff) << 8;
 
+<<<<<<< HEAD
 	r = venc_runtime_get();
 	if (r)
 		goto err;
+=======
+	venc_enable_clocks(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	venc_write_reg(VENC_BSTAMP_WSS_DATA, config->bstamp_wss_data |
 			venc.wss_data);
 
+<<<<<<< HEAD
 	venc_runtime_put();
 
 err:
 	mutex_unlock(&venc.venc_lock);
 
 	return r;
+=======
+	venc_enable_clocks(0);
+
+	mutex_unlock(&venc.venc_lock);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct omap_dss_driver venc_driver = {
@@ -661,6 +750,12 @@ static struct omap_dss_driver venc_driver = {
 	.get_resolution	= omapdss_default_get_resolution,
 	.get_recommended_bpp = omapdss_default_get_recommended_bpp,
 
+<<<<<<< HEAD
+=======
+	.set_update_mode = venc_set_update_mode,
+	.get_update_mode = venc_get_update_mode,
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.get_timings	= venc_get_timings,
 	.set_timings	= venc_set_timings,
 	.check_timings	= venc_check_timings,
@@ -699,6 +794,7 @@ void venc_dump_regs(struct seq_file *s)
 {
 #define DUMPREG(r) seq_printf(s, "%-35s %08x\n", #r, venc_read_reg(r))
 
+<<<<<<< HEAD
 	if (cpu_is_omap44xx()) {
 		seq_printf(s, "VENC currently disabled on OMAP44xx\n");
 		return;
@@ -706,6 +802,9 @@ void venc_dump_regs(struct seq_file *s)
 
 	if (venc_runtime_get())
 		return;
+=======
+	venc_enable_clocks(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	DUMPREG(VENC_F_CONTROL);
 	DUMPREG(VENC_VIDOUT_CTRL);
@@ -749,11 +848,16 @@ void venc_dump_regs(struct seq_file *s)
 	DUMPREG(VENC_OUTPUT_CONTROL);
 	DUMPREG(VENC_OUTPUT_TEST);
 
+<<<<<<< HEAD
 	venc_runtime_put();
+=======
+	venc_enable_clocks(0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #undef DUMPREG
 }
 
+<<<<<<< HEAD
 static int venc_get_clocks(struct platform_device *pdev)
 {
 	struct clk *clk;
@@ -779,12 +883,17 @@ static void venc_put_clocks(void)
 		clk_put(venc.tv_dac_clk);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* VENC HW IP initialisation */
 static int omap_venchw_probe(struct platform_device *pdev)
 {
 	u8 rev_id;
 	struct resource *venc_mem;
+<<<<<<< HEAD
 	int r;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	venc.pdev = pdev;
 
@@ -797,14 +906,19 @@ static int omap_venchw_probe(struct platform_device *pdev)
 		DSSERR("can't get IORESOURCE_MEM VENC\n");
 		return -EINVAL;
 	}
+<<<<<<< HEAD
 
 	venc.base = devm_ioremap(&pdev->dev, venc_mem->start,
 				 resource_size(venc_mem));
+=======
+	venc.base = ioremap(venc_mem->start, resource_size(venc_mem));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!venc.base) {
 		DSSERR("can't ioremap VENC\n");
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	r = venc_get_clocks(pdev);
 	if (r)
 		return r;
@@ -814,10 +928,14 @@ static int omap_venchw_probe(struct platform_device *pdev)
 	r = venc_runtime_get();
 	if (r)
 		goto err_runtime_get;
+=======
+	venc_enable_clocks(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rev_id = (u8)(venc_read_reg(VENC_REV_ID) & 0xff);
 	dev_dbg(&pdev->dev, "OMAP VENC rev %d\n", rev_id);
 
+<<<<<<< HEAD
 	venc_runtime_put();
 
 	r = omap_dss_register_driver(&venc_driver);
@@ -831,6 +949,11 @@ err_runtime_get:
 	pm_runtime_disable(&pdev->dev);
 	venc_put_clocks();
 	return r;
+=======
+	venc_enable_clocks(0);
+
+	return omap_dss_register_driver(&venc_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int omap_venchw_remove(struct platform_device *pdev)
@@ -841,6 +964,7 @@ static int omap_venchw_remove(struct platform_device *pdev)
 	}
 	omap_dss_unregister_driver(&venc_driver);
 
+<<<<<<< HEAD
 	pm_runtime_disable(&pdev->dev);
 	venc_put_clocks();
 
@@ -886,13 +1010,22 @@ static const struct dev_pm_ops venc_pm_ops = {
 	.runtime_resume = venc_runtime_resume,
 };
 
+=======
+	iounmap(venc.base);
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver omap_venchw_driver = {
 	.probe          = omap_venchw_probe,
 	.remove         = omap_venchw_remove,
 	.driver         = {
 		.name   = "omapdss_venc",
 		.owner  = THIS_MODULE,
+<<<<<<< HEAD
 		.pm	= &venc_pm_ops,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

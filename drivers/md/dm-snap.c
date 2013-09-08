@@ -30,6 +30,19 @@ static const char dm_snapshot_merge_target_name[] = "snapshot-merge";
 	((ti)->type->name == dm_snapshot_merge_target_name)
 
 /*
+<<<<<<< HEAD
+=======
+ * The percentage increment we will wake up users at
+ */
+#define WAKE_UP_PERCENT 5
+
+/*
+ * kcopyd priority of snapshot operations
+ */
+#define SNAPSHOT_COPY_PRIORITY 2
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * The size of the mempool used to track chunks in use.
  */
 #define MIN_IOS 256
@@ -170,6 +183,7 @@ struct dm_snap_pending_exception {
 	 * kcopyd.
 	 */
 	int started;
+<<<<<<< HEAD
 
 	/*
 	 * For writing a complete chunk, bypassing the copy.
@@ -177,6 +191,8 @@ struct dm_snap_pending_exception {
 	struct bio *full_bio;
 	bio_end_io_t *full_bio_end_io;
 	void *full_bio_private;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -721,16 +737,27 @@ static int calc_max_buckets(void)
  */
 static int init_hash_tables(struct dm_snapshot *s)
 {
+<<<<<<< HEAD
 	sector_t hash_size, cow_dev_size, max_buckets;
+=======
+	sector_t hash_size, cow_dev_size, origin_dev_size, max_buckets;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Calculate based on the size of the original volume or
 	 * the COW volume...
 	 */
 	cow_dev_size = get_dev_size(s->cow->bdev);
+<<<<<<< HEAD
 	max_buckets = calc_max_buckets();
 
 	hash_size = cow_dev_size >> s->store->chunk_shift;
+=======
+	origin_dev_size = get_dev_size(s->origin->bdev);
+	max_buckets = calc_max_buckets();
+
+	hash_size = min(origin_dev_size, cow_dev_size) >> s->store->chunk_shift;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hash_size = min(hash_size, max_buckets);
 
 	if (hash_size < 64)
@@ -1051,7 +1078,12 @@ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 
 	s = kmalloc(sizeof(*s), GFP_KERNEL);
 	if (!s) {
+<<<<<<< HEAD
 		ti->error = "Cannot allocate private snapshot structure";
+=======
+		ti->error = "Cannot allocate snapshot context private "
+		    "structure";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r = -ENOMEM;
 		goto bad;
 	}
@@ -1116,7 +1148,10 @@ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 	s->pending_pool = mempool_create_slab_pool(MIN_IOS, pending_cache);
 	if (!s->pending_pool) {
 		ti->error = "Could not allocate mempool for pending exceptions";
+<<<<<<< HEAD
 		r = -ENOMEM;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto bad_pending_pool;
 	}
 
@@ -1376,7 +1411,10 @@ static void pending_complete(struct dm_snap_pending_exception *pe, int success)
 	struct dm_snapshot *s = pe->snap;
 	struct bio *origin_bios = NULL;
 	struct bio *snapshot_bios = NULL;
+<<<<<<< HEAD
 	struct bio *full_bio = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int error = 0;
 
 	if (!success) {
@@ -1412,6 +1450,7 @@ static void pending_complete(struct dm_snap_pending_exception *pe, int success)
 	 */
 	dm_insert_exception(&s->complete, e);
 
+<<<<<<< HEAD
 out:
 	dm_remove_exception(&pe->e);
 	snapshot_bios = bio_list_get(&pe->snapshot_bios);
@@ -1421,6 +1460,12 @@ out:
 		full_bio->bi_end_io = pe->full_bio_end_io;
 		full_bio->bi_private = pe->full_bio_private;
 	}
+=======
+ out:
+	dm_remove_exception(&pe->e);
+	snapshot_bios = bio_list_get(&pe->snapshot_bios);
+	origin_bios = bio_list_get(&pe->origin_bios);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	free_pending_exception(pe);
 
 	increment_pending_exceptions_done_count();
@@ -1428,6 +1473,7 @@ out:
 	up_write(&s->lock);
 
 	/* Submit any pending write bios */
+<<<<<<< HEAD
 	if (error) {
 		if (full_bio)
 			bio_io_error(full_bio);
@@ -1437,6 +1483,12 @@ out:
 			bio_endio(full_bio, 0);
 		flush_bios(snapshot_bios);
 	}
+=======
+	if (error)
+		error_bios(snapshot_bios);
+	else
+		flush_bios(snapshot_bios);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	retry_origin_bios(s, origin_bios);
 }
@@ -1487,6 +1539,7 @@ static void start_copy(struct dm_snap_pending_exception *pe)
 	dest.count = src.count;
 
 	/* Hand over to kcopyd */
+<<<<<<< HEAD
 	dm_kcopyd_copy(s->kcopyd_client, &src, 1, &dest, 0, copy_callback, pe);
 }
 
@@ -1514,6 +1567,10 @@ static void start_full_bio(struct dm_snap_pending_exception *pe,
 	bio->bi_private = callback_data;
 
 	generic_make_request(bio);
+=======
+	dm_kcopyd_copy(s->kcopyd_client,
+		    &src, 1, &dest, 0, copy_callback, pe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct dm_snap_pending_exception *
@@ -1551,7 +1608,10 @@ __find_pending_exception(struct dm_snapshot *s,
 	bio_list_init(&pe->origin_bios);
 	bio_list_init(&pe->snapshot_bios);
 	pe->started = 0;
+<<<<<<< HEAD
 	pe->full_bio = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (s->store->type->prepare_exception(s->store, &pe->e)) {
 		free_pending_exception(pe);
@@ -1645,6 +1705,7 @@ static int snapshot_map(struct dm_target *ti, struct bio *bio,
 		}
 
 		remap_exception(s, &pe->e, bio, chunk);
+<<<<<<< HEAD
 
 		r = DM_MAPIO_SUBMITTED;
 
@@ -1658,6 +1719,12 @@ static int snapshot_map(struct dm_target *ti, struct bio *bio,
 
 		bio_list_add(&pe->snapshot_bios, bio);
 
+=======
+		bio_list_add(&pe->snapshot_bios, bio);
+
+		r = DM_MAPIO_SUBMITTED;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!pe->started) {
 			/* this is protected by snap->lock */
 			pe->started = 1;
@@ -1670,9 +1737,15 @@ static int snapshot_map(struct dm_target *ti, struct bio *bio,
 		map_context->ptr = track_chunk(s, chunk);
 	}
 
+<<<<<<< HEAD
 out_unlock:
 	up_write(&s->lock);
 out:
+=======
+ out_unlock:
+	up_write(&s->lock);
+ out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return r;
 }
 
@@ -2016,7 +2089,11 @@ static int __origin_write(struct list_head *snapshots, sector_t sector,
 			pe_to_start_now = pe;
 		}
 
+<<<<<<< HEAD
 next_snapshot:
+=======
+ next_snapshot:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		up_write(&snap->lock);
 
 		if (pe_to_start_now) {

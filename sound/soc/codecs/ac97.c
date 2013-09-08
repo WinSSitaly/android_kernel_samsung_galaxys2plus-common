@@ -16,7 +16,10 @@
 #include <linux/slab.h>
 #include <linux/kernel.h>
 #include <linux/device.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/pcm.h>
 #include <sound/ac97_codec.h>
@@ -39,7 +42,11 @@ static int ac97_prepare(struct snd_pcm_substream *substream,
 		SNDRV_PCM_RATE_22050 | SNDRV_PCM_RATE_44100 |\
 		SNDRV_PCM_RATE_48000)
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops ac97_dai_ops = {
+=======
+static struct snd_soc_dai_ops ac97_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.prepare	= ac97_prepare,
 };
 
@@ -99,7 +106,11 @@ static int ac97_soc_remove(struct snd_soc_codec *codec)
 }
 
 #ifdef CONFIG_PM
+<<<<<<< HEAD
 static int ac97_soc_suspend(struct snd_soc_codec *codec)
+=======
+static int ac97_soc_suspend(struct snd_soc_codec *codec, pm_message_t msg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	snd_ac97_suspend(codec->ac97);
 
@@ -148,7 +159,21 @@ static struct platform_driver ac97_codec_driver = {
 	.remove = __devexit_p(ac97_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(ac97_codec_driver);
+=======
+static int __init ac97_init(void)
+{
+	return platform_driver_register(&ac97_codec_driver);
+}
+module_init(ac97_init);
+
+static void __exit ac97_exit(void)
+{
+	platform_driver_unregister(&ac97_codec_driver);
+}
+module_exit(ac97_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Soc Generic AC97 driver");
 MODULE_AUTHOR("Liam Girdwood");

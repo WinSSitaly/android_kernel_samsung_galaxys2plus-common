@@ -185,7 +185,17 @@ struct lock_chain {
 	u64				chain_key;
 };
 
+<<<<<<< HEAD
 #define MAX_LOCKDEP_KEYS_BITS		13
+=======
+#ifdef CONFIG_ARCH_CAPRI
+/* lockdep can't be used in Android capri due to big size of kernel */
+#define MAX_LOCKDEP_KEYS_BITS		12
+#else
+#define MAX_LOCKDEP_KEYS_BITS		13
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Subtract one because we offset hlock->class_idx by 1 in order
  * to make 0 mean no class. This avoids overflowing the class_idx
@@ -343,8 +353,11 @@ extern void lockdep_trace_alloc(gfp_t mask);
 
 #define lockdep_assert_held(l)	WARN_ON(debug_locks && !lockdep_is_held(l))
 
+<<<<<<< HEAD
 #define lockdep_recursing(tsk)	((tsk)->lockdep_recursion)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else /* !LOCKDEP */
 
 static inline void lockdep_off(void)
@@ -394,8 +407,11 @@ struct lock_class_key { };
 
 #define lockdep_assert_held(l)			do { } while (0)
 
+<<<<<<< HEAD
 #define lockdep_recursing(tsk)			(0)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* !LOCKDEP */
 
 #ifdef CONFIG_LOCK_STAT
@@ -552,7 +568,11 @@ do {									\
 #endif
 
 #ifdef CONFIG_PROVE_RCU
+<<<<<<< HEAD
 void lockdep_rcu_suspicious(const char *file, const int line, const char *s);
+=======
+extern void lockdep_rcu_dereference(const char *file, const int line);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #endif /* __LINUX_LOCKDEP_H */

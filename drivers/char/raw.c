@@ -308,7 +308,11 @@ static const struct file_operations raw_ctl_fops = {
 
 static struct cdev raw_cdev;
 
+<<<<<<< HEAD
 static char *raw_devnode(struct device *dev, umode_t *mode)
+=======
+static char *raw_devnode(struct device *dev, mode_t *mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return kasprintf(GFP_KERNEL, "raw/%s", dev_name(dev));
 }
@@ -324,12 +328,20 @@ static int __init raw_init(void)
 		max_raw_minors = MAX_RAW_MINORS;
 	}
 
+<<<<<<< HEAD
 	raw_devices = vzalloc(sizeof(struct raw_device_data) * max_raw_minors);
+=======
+	raw_devices = vmalloc(sizeof(struct raw_device_data) * max_raw_minors);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!raw_devices) {
 		printk(KERN_ERR "Not enough memory for raw device structures\n");
 		ret = -ENOMEM;
 		goto error;
 	}
+<<<<<<< HEAD
+=======
+	memset(raw_devices, 0, sizeof(struct raw_device_data) * max_raw_minors);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = register_chrdev_region(dev, max_raw_minors, "raw");
 	if (ret)

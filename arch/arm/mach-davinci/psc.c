@@ -25,8 +25,11 @@
 #include <mach/cputype.h>
 #include <mach/psc.h>
 
+<<<<<<< HEAD
 #include "clock.h"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Return nonzero iff the domain's clock is active */
 int __init davinci_psc_is_clk_active(unsigned int ctlr, unsigned int id)
 {
@@ -50,12 +53,20 @@ int __init davinci_psc_is_clk_active(unsigned int ctlr, unsigned int id)
 
 /* Enable or disable a PSC domain */
 void davinci_psc_config(unsigned int domain, unsigned int ctlr,
+<<<<<<< HEAD
 		unsigned int id, bool enable, u32 flags)
 {
 	u32 epcpr, ptcmd, ptstat, pdstat, pdctl, mdstat, mdctl;
 	void __iomem *psc_base;
 	struct davinci_soc_info *soc_info = &davinci_soc_info;
 	u32 next_state = PSC_STATE_ENABLE;
+=======
+		unsigned int id, u32 next_state)
+{
+	u32 epcpr, ptcmd, ptstat, pdstat, pdctl1, mdstat, mdctl;
+	void __iomem *psc_base;
+	struct davinci_soc_info *soc_info = &davinci_soc_info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!soc_info->psc_bases || (ctlr >= soc_info->psc_bases_num)) {
 		pr_warning("PSC: Bad psc data: 0x%x[%d]\n",
@@ -65,6 +76,7 @@ void davinci_psc_config(unsigned int domain, unsigned int ctlr,
 
 	psc_base = ioremap(soc_info->psc_bases[ctlr], SZ_4K);
 
+<<<<<<< HEAD
 	if (!enable) {
 		if (flags & PSC_SWRSTDISABLE)
 			next_state = PSC_STATE_SWRSTDISABLE;
@@ -84,6 +96,18 @@ void davinci_psc_config(unsigned int domain, unsigned int ctlr,
 		pdctl = __raw_readl(psc_base + PDCTL + 4 * domain);
 		pdctl |= PDCTL_NEXT;
 		__raw_writel(pdctl, psc_base + PDCTL + 4 * domain);
+=======
+	mdctl = __raw_readl(psc_base + MDCTL + 4 * id);
+	mdctl &= ~MDSTAT_STATE_MASK;
+	mdctl |= next_state;
+	__raw_writel(mdctl, psc_base + MDCTL + 4 * id);
+
+	pdstat = __raw_readl(psc_base + PDSTAT);
+	if ((pdstat & 0x00000001) == 0) {
+		pdctl1 = __raw_readl(psc_base + PDCTL1);
+		pdctl1 |= 0x1;
+		__raw_writel(pdctl1, psc_base + PDCTL1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ptcmd = 1 << domain;
 		__raw_writel(ptcmd, psc_base + PTCMD);
@@ -92,9 +116,15 @@ void davinci_psc_config(unsigned int domain, unsigned int ctlr,
 			epcpr = __raw_readl(psc_base + EPCPR);
 		} while ((((epcpr >> domain) & 1) == 0));
 
+<<<<<<< HEAD
 		pdctl = __raw_readl(psc_base + PDCTL + 4 * domain);
 		pdctl |= PDCTL_EPCGOOD;
 		__raw_writel(pdctl, psc_base + PDCTL + 4 * domain);
+=======
+		pdctl1 = __raw_readl(psc_base + PDCTL1);
+		pdctl1 |= 0x100;
+		__raw_writel(pdctl1, psc_base + PDCTL1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		ptcmd = 1 << domain;
 		__raw_writel(ptcmd, psc_base + PTCMD);

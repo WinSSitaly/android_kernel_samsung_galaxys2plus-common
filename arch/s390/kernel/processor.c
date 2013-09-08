@@ -26,14 +26,20 @@ static DEFINE_PER_CPU(struct cpuid, cpu_id);
 void __cpuinit cpu_init(void)
 {
 	struct cpuid *id = &per_cpu(cpu_id, smp_processor_id());
+<<<<<<< HEAD
 	struct s390_idle_data *idle = &__get_cpu_var(s390_idle);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	get_cpu_id(id);
 	atomic_inc(&init_mm.mm_count);
 	current->active_mm = &init_mm;
 	BUG_ON(current->mm);
 	enter_lazy_tlb(&init_mm, current);
+<<<<<<< HEAD
 	memset(idle, 0, sizeof(*idle));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -76,7 +82,11 @@ static int show_cpuinfo(struct seq_file *m, void *v)
 
 static void *c_start(struct seq_file *m, loff_t *pos)
 {
+<<<<<<< HEAD
 	return *pos < nr_cpu_ids ? (void *)((unsigned long) *pos + 1) : NULL;
+=======
+	return *pos < NR_CPUS ? (void *)((unsigned long) *pos + 1) : NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void *c_next(struct seq_file *m, void *v, loff_t *pos)

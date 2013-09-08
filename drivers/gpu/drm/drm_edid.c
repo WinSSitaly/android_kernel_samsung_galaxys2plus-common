@@ -30,7 +30,10 @@
 #include <linux/kernel.h>
 #include <linux/slab.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drmP.h"
 #include "drm_edid.h"
 #include "drm_edid_modes.h"
@@ -66,8 +69,11 @@
 #define EDID_QUIRK_FIRST_DETAILED_PREFERRED	(1 << 5)
 /* use +hsync +vsync for detailed mode */
 #define EDID_QUIRK_DETAILED_SYNC_PP		(1 << 6)
+<<<<<<< HEAD
 /* Force reduced-blanking timings for detailed modes */
 #define EDID_QUIRK_FORCE_REDUCED_BLANKING	(1 << 7)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct detailed_mode_closure {
 	struct drm_connector *connector;
@@ -122,12 +128,15 @@ static struct edid_quirk {
 	/* Samsung SyncMaster 22[5-6]BW */
 	{ "SAM", 596, EDID_QUIRK_PREFER_LARGE_60 },
 	{ "SAM", 638, EDID_QUIRK_PREFER_LARGE_60 },
+<<<<<<< HEAD
 
 	/* ViewSonic VA2026w */
 	{ "VSC", 5020, EDID_QUIRK_FORCE_REDUCED_BLANKING },
 
 	/* Medion MD 30217 PG */
 	{ "MED", 0x7b8, EDID_QUIRK_PREFER_LARGE_75 },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*** DDC fetch and block validation ***/
@@ -157,7 +166,12 @@ EXPORT_SYMBOL(drm_edid_header_is_valid);
  * Sanity check the EDID block (base or extension).  Return 0 if the block
  * doesn't check out, or 1 if it's valid.
  */
+<<<<<<< HEAD
 bool drm_edid_block_valid(u8 *raw_edid)
+=======
+static bool
+drm_edid_block_valid(u8 *raw_edid)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 	u8 csum = 0;
@@ -205,12 +219,20 @@ bool drm_edid_block_valid(u8 *raw_edid)
 bad:
 	if (raw_edid) {
 		printk(KERN_ERR "Raw EDID:\n");
+<<<<<<< HEAD
 		print_hex_dump(KERN_ERR, " \t", DUMP_PREFIX_NONE, 16, 1,
 			       raw_edid, EDID_LENGTH, false);
 	}
 	return 0;
 }
 EXPORT_SYMBOL(drm_edid_block_valid);
+=======
+		print_hex_dump_bytes(KERN_ERR, DUMP_PREFIX_NONE, raw_edid, EDID_LENGTH);
+		printk(KERN_ERR "\n");
+	}
+	return 0;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * drm_edid_is_valid - sanity check EDID data
@@ -234,6 +256,10 @@ bool drm_edid_is_valid(struct edid *edid)
 }
 EXPORT_SYMBOL(drm_edid_is_valid);
 
+<<<<<<< HEAD
+=======
+#define DDC_ADDR 0x50
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DDC_SEGMENT_ADDR 0x30
 /**
  * Get EDID information via I2C.
@@ -273,11 +299,14 @@ drm_do_probe_ddc_edid(struct i2c_adapter *adapter, unsigned char *buf,
 			}
 		};
 		ret = i2c_transfer(adapter, msgs, 2);
+<<<<<<< HEAD
 		if (ret == -ENXIO) {
 			DRM_DEBUG_KMS("drm: skipping non-existent adapter %s\n",
 					adapter->name);
 			break;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} while (ret != 2 && --retries);
 
 	return ret == 2 ? 0 : -1;
@@ -520,10 +549,32 @@ static void
 cea_for_each_detailed_block(u8 *ext, detailed_cb *cb, void *closure)
 {
 	int i, n = 0;
+<<<<<<< HEAD
 	u8 d = ext[0x02];
 	u8 *det_base = ext + d;
 
 	n = (127 - d) / 18;
+=======
+	u8 rev = ext[0x01], d = ext[0x02];
+	u8 *det_base = ext + d;
+
+	switch (rev) {
+	case 0:
+		/* can't happen */
+		return;
+	case 1:
+		/* have to infer how many blocks we have, check pixel clock */
+		for (i = 0; i < 6; i++)
+			if (det_base[18*i] || det_base[18*i+1])
+				n++;
+		break;
+	default:
+		/* explicit count */
+		n = min(ext[0x03] & 0x0f, 6);
+		break;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < n; i++)
 		cb((struct detailed_timing *)(det_base + 18 * i), closure);
 }
@@ -582,7 +633,11 @@ static bool
 drm_monitor_supports_rb(struct edid *edid)
 {
 	if (edid->revision >= 4) {
+<<<<<<< HEAD
 		bool ret = false;
+=======
+		bool ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		drm_for_each_detailed_block((u8 *)edid, is_rb, &ret);
 		return ret;
 	}
@@ -757,7 +812,11 @@ drm_mode_std(struct drm_connector *connector, struct edid *edid,
 		 */
 		mode = drm_gtf_mode(dev, hsize, vsize, vrefresh_rate, 0, 0);
 		if (drm_mode_hsync(mode) > drm_gtf2_hbreak(edid)) {
+<<<<<<< HEAD
 			drm_mode_destroy(dev, mode);
+=======
+			kfree(mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mode = drm_gtf_mode_complex(dev, hsize, vsize,
 						    vrefresh_rate, 0, 0,
 						    drm_gtf2_m(edid),
@@ -839,7 +898,11 @@ static struct drm_display_mode *drm_mode_detailed(struct drm_device *dev,
 	unsigned vblank = (pt->vactive_vblank_hi & 0xf) << 8 | pt->vblank_lo;
 	unsigned hsync_offset = (pt->hsync_vsync_offset_pulse_width_hi & 0xc0) << 2 | pt->hsync_offset_lo;
 	unsigned hsync_pulse_width = (pt->hsync_vsync_offset_pulse_width_hi & 0x30) << 4 | pt->hsync_pulse_width_lo;
+<<<<<<< HEAD
 	unsigned vsync_offset = (pt->hsync_vsync_offset_pulse_width_hi & 0xc) << 2 | pt->vsync_offset_pulse_width_lo >> 4;
+=======
+	unsigned vsync_offset = (pt->hsync_vsync_offset_pulse_width_hi & 0xc) >> 2 | pt->vsync_offset_pulse_width_lo >> 4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned vsync_pulse_width = (pt->hsync_vsync_offset_pulse_width_hi & 0x3) << 4 | (pt->vsync_offset_pulse_width_lo & 0xf);
 
 	/* ignore tiny modes */
@@ -860,6 +923,7 @@ static struct drm_display_mode *drm_mode_detailed(struct drm_device *dev,
 				"Wrong Hsync/Vsync pulse width\n");
 		return NULL;
 	}
+<<<<<<< HEAD
 
 	if (quirks & EDID_QUIRK_FORCE_REDUCED_BLANKING) {
 		mode = drm_cvt_mode(dev, hactive, vactive, 60, true, false, false);
@@ -869,10 +933,17 @@ static struct drm_display_mode *drm_mode_detailed(struct drm_device *dev,
 		goto set_size;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mode = drm_mode_create(dev);
 	if (!mode)
 		return NULL;
 
+<<<<<<< HEAD
+=======
+	mode->type = DRM_MODE_TYPE_DRIVER;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (quirks & EDID_QUIRK_135_CLOCK_TOO_HIGH)
 		timing->pixel_clock = cpu_to_le16(1088);
 
@@ -896,6 +967,11 @@ static struct drm_display_mode *drm_mode_detailed(struct drm_device *dev,
 
 	drm_mode_do_interlace_quirk(mode, pt);
 
+<<<<<<< HEAD
+=======
+	drm_mode_set_name(mode);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (quirks & EDID_QUIRK_DETAILED_SYNC_PP) {
 		pt->misc |= DRM_EDID_PT_HSYNC_POSITIVE | DRM_EDID_PT_VSYNC_POSITIVE;
 	}
@@ -905,7 +981,10 @@ static struct drm_display_mode *drm_mode_detailed(struct drm_device *dev,
 	mode->flags |= (pt->misc & DRM_EDID_PT_VSYNC_POSITIVE) ?
 		DRM_MODE_FLAG_PVSYNC : DRM_MODE_FLAG_NVSYNC;
 
+<<<<<<< HEAD
 set_size:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mode->width_mm = pt->width_mm_lo | (pt->width_height_mm_hi & 0xf0) << 4;
 	mode->height_mm = pt->height_mm_lo | (pt->width_height_mm_hi & 0xf) << 8;
 
@@ -919,10 +998,13 @@ set_size:
 		mode->height_mm = edid->height_cm * 10;
 	}
 
+<<<<<<< HEAD
 	mode->type = DRM_MODE_TYPE_DRIVER;
 	mode->vrefresh = drm_mode_vrefresh(mode);
 	drm_mode_set_name(mode);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return mode;
 }
 
@@ -1326,9 +1408,13 @@ add_detailed_modes(struct drm_connector *connector, struct edid *edid,
 
 #define HDMI_IDENTIFIER 0x000C03
 #define AUDIO_BLOCK	0x01
+<<<<<<< HEAD
 #define VIDEO_BLOCK     0x02
 #define VENDOR_BLOCK    0x03
 #define SPEAKER_BLOCK	0x04
+=======
+#define VENDOR_BLOCK    0x03
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define EDID_BASIC_AUDIO	(1 << 6)
 
 /**
@@ -1357,6 +1443,7 @@ u8 *drm_find_cea_extension(struct edid *edid)
 }
 EXPORT_SYMBOL(drm_find_cea_extension);
 
+<<<<<<< HEAD
 static int
 do_cea_modes (struct drm_connector *connector, u8 *db, u8 len)
 {
@@ -1571,6 +1658,8 @@ struct drm_connector *drm_select_eld(struct drm_encoder *encoder,
 }
 EXPORT_SYMBOL(drm_select_eld);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * drm_detect_hdmi_monitor - detect whether monitor is hdmi.
  * @edid: monitor EDID information
@@ -1675,8 +1764,11 @@ EXPORT_SYMBOL(drm_detect_monitor_audio);
 static void drm_add_display_info(struct edid *edid,
 				 struct drm_display_info *info)
 {
+<<<<<<< HEAD
 	u8 *edid_ext;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info->width_mm = edid->width_cm * 10;
 	info->height_mm = edid->height_cm * 10;
 
@@ -1721,6 +1813,7 @@ static void drm_add_display_info(struct edid *edid,
 		info->color_formats = DRM_COLOR_FORMAT_YCRCB444;
 	if (info->color_formats & DRM_EDID_FEATURE_RGB_YCRCB422)
 		info->color_formats = DRM_COLOR_FORMAT_YCRCB422;
+<<<<<<< HEAD
 
 	/* Get data from CEA blocks if present */
 	edid_ext = drm_find_cea_extension(edid);
@@ -1728,6 +1821,8 @@ static void drm_add_display_info(struct edid *edid,
 		return;
 
 	info->cea_rev = edid_ext[1];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1773,9 +1868,13 @@ int drm_add_edid_modes(struct drm_connector *connector, struct edid *edid)
 	num_modes += add_cvt_modes(connector, edid);
 	num_modes += add_standard_modes(connector, edid);
 	num_modes += add_established_modes(connector, edid);
+<<<<<<< HEAD
 	if (edid->features & DRM_EDID_FEATURE_DEFAULT_GTF)
 		num_modes += add_inferred_modes(connector, edid);
 	num_modes += add_cea_modes(connector, edid);
+=======
+	num_modes += add_inferred_modes(connector, edid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (quirks & (EDID_QUIRK_PREFER_LARGE_60 | EDID_QUIRK_PREFER_LARGE_75))
 		edid_fixup_preferred(connector, quirks);

@@ -204,7 +204,10 @@ struct buffer_head *udf_read_tagged(struct super_block *sb, uint32_t block,
 {
 	struct tag *tag_p;
 	struct buffer_head *bh = NULL;
+<<<<<<< HEAD
 	u8 checksum;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Read the block */
 	if (block == 0xFFFFFFFF)
@@ -212,8 +215,13 @@ struct buffer_head *udf_read_tagged(struct super_block *sb, uint32_t block,
 
 	bh = udf_tread(sb, block);
 	if (!bh) {
+<<<<<<< HEAD
 		udf_err(sb, "read failed, block=%u, location=%d\n",
 			block, location);
+=======
+		udf_debug("block=%d, location=%d: read failed\n",
+			  block, location);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 	}
 
@@ -228,18 +236,28 @@ struct buffer_head *udf_read_tagged(struct super_block *sb, uint32_t block,
 	}
 
 	/* Verify the tag checksum */
+<<<<<<< HEAD
 	checksum = udf_tag_checksum(tag_p);
 	if (checksum != tag_p->tagChecksum) {
 		udf_err(sb, "tag checksum failed, block %u: 0x%02x != 0x%02x\n",
 			block, checksum, tag_p->tagChecksum);
+=======
+	if (udf_tag_checksum(tag_p) != tag_p->tagChecksum) {
+		printk(KERN_ERR "udf: tag checksum failed block %d\n", block);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error_out;
 	}
 
 	/* Verify the tag version */
 	if (tag_p->descVersion != cpu_to_le16(0x0002U) &&
 	    tag_p->descVersion != cpu_to_le16(0x0003U)) {
+<<<<<<< HEAD
 		udf_err(sb, "tag version 0x%04x != 0x0002 || 0x0003, block %u\n",
 			le16_to_cpu(tag_p->descVersion), block);
+=======
+		udf_debug("tag version 0x%04x != 0x0002 || 0x0003 block %d\n",
+			  le16_to_cpu(tag_p->descVersion), block);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto error_out;
 	}
 
@@ -251,8 +269,13 @@ struct buffer_head *udf_read_tagged(struct super_block *sb, uint32_t block,
 		return bh;
 
 	udf_debug("Crc failure block %d: crc = %d, crclen = %d\n", block,
+<<<<<<< HEAD
 		  le16_to_cpu(tag_p->descCRC),
 		  le16_to_cpu(tag_p->descCRCLength));
+=======
+	    le16_to_cpu(tag_p->descCRC), le16_to_cpu(tag_p->descCRCLength));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 error_out:
 	brelse(bh);
 	return NULL;

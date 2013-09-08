@@ -136,9 +136,22 @@ struct hpux_ustat {
  */
 static int hpux_ustat(dev_t dev, struct hpux_ustat __user *ubuf)
 {
+<<<<<<< HEAD
 	struct hpux_ustat tmp;  /* Changed to hpux_ustat */
 	struct kstatfs sbuf;
 	int err = vfs_ustat(dev, &sbuf);
+=======
+	struct super_block *s;
+	struct hpux_ustat tmp;  /* Changed to hpux_ustat */
+	struct kstatfs sbuf;
+	int err = -EINVAL;
+
+	s = user_get_super(dev);
+	if (s == NULL)
+		goto out;
+	err = statfs_by_dentry(s->s_root, &sbuf);
+	drop_super(s);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		goto out;
 

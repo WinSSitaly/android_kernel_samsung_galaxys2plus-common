@@ -40,8 +40,11 @@
 #include "lnbh24.h"
 #include "lgdt330x.h"
 #include "mt2131.h"
+<<<<<<< HEAD
 #include "tda18271c2dd.h"
 #include "drxk.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /****************************************************************************/
@@ -85,6 +88,7 @@ static int tuner_attach_stv6110(struct ngene_channel *chan)
 }
 
 
+<<<<<<< HEAD
 static int drxk_gate_ctrl(struct dvb_frontend *fe, int enable)
 {
 	struct ngene_channel *chan = fe->sec_priv;
@@ -128,6 +132,8 @@ static int tuner_attach_probe(struct ngene_channel *chan)
 	return -EINVAL;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int demod_attach_stv0900(struct ngene_channel *chan)
 {
 	struct i2c_adapter *i2c;
@@ -175,6 +181,7 @@ static void cineS2_tuner_i2c_lock(struct dvb_frontend *fe, int lock)
 		up(&chan->dev->pll_mutex);
 }
 
+<<<<<<< HEAD
 static int i2c_read(struct i2c_adapter *adapter, u8 adr, u8 *val)
 {
 	struct i2c_msg msgs[1] = {{.addr = adr,  .flags = I2C_M_RD,
@@ -230,6 +237,8 @@ static int demod_attach_drxk(struct ngene_channel *chan,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int cineS2_probe(struct ngene_channel *chan)
 {
 	struct i2c_adapter *i2c;
@@ -244,6 +253,7 @@ static int cineS2_probe(struct ngene_channel *chan)
 	else
 		i2c = &chan->dev->channel[1].i2c_adapter;
 
+<<<<<<< HEAD
 	if (port_has_stv0900(i2c, chan->number)) {
 		chan->demod_type = 0;
 		fe_conf = chan->dev->card_info->fe_config[chan->number];
@@ -280,6 +290,45 @@ static int cineS2_probe(struct ngene_channel *chan)
 		printk(KERN_ERR "No demod found on chan %d\n", chan->number);
 		return -ENODEV;
 	}
+=======
+	fe_conf = chan->dev->card_info->fe_config[chan->number];
+	i2c_msg.addr = fe_conf->address;
+
+	/* probe demod */
+	i2c_msg.len = 2;
+	buf[0] = 0xf1;
+	buf[1] = 0x00;
+	rc = i2c_transfer(i2c, &i2c_msg, 1);
+	if (rc != 1)
+		return -ENODEV;
+
+	/* demod found, attach it */
+	rc = demod_attach_stv0900(chan);
+	if (rc < 0 || chan->number < 2)
+		return rc;
+
+	/* demod #2: reprogram outputs DPN1 & DPN2 */
+	i2c_msg.len = 3;
+	buf[0] = 0xf1;
+	switch (chan->number) {
+	case 2:
+		buf[1] = 0x5c;
+		buf[2] = 0xc2;
+		break;
+	case 3:
+		buf[1] = 0x61;
+		buf[2] = 0xcc;
+		break;
+	default:
+		return -ENODEV;
+	}
+	rc = i2c_transfer(i2c, &i2c_msg, 1);
+	if (rc != 1) {
+		printk(KERN_ERR DEVICE_NAME ": could not setup DPNx\n");
+		return -EIO;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -405,7 +454,11 @@ static struct ngene_info ngene_info_satixS2v2 = {
 	.io_type	= {NGENE_IO_TSIN, NGENE_IO_TSIN, NGENE_IO_TSIN, NGENE_IO_TSIN,
 			   NGENE_IO_TSOUT},
 	.demod_attach	= {demod_attach_stv0900, demod_attach_stv0900, cineS2_probe, cineS2_probe},
+<<<<<<< HEAD
 	.tuner_attach	= {tuner_attach_stv6110, tuner_attach_stv6110, tuner_attach_probe, tuner_attach_probe},
+=======
+	.tuner_attach	= {tuner_attach_stv6110, tuner_attach_stv6110, tuner_attach_stv6110, tuner_attach_stv6110},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.fe_config	= {&fe_cineS2, &fe_cineS2, &fe_cineS2_2, &fe_cineS2_2},
 	.tuner_config	= {&tuner_cineS2_0, &tuner_cineS2_1, &tuner_cineS2_0, &tuner_cineS2_1},
 	.lnb		= {0x0a, 0x08, 0x0b, 0x09},
@@ -420,7 +473,11 @@ static struct ngene_info ngene_info_cineS2v5 = {
 	.io_type	= {NGENE_IO_TSIN, NGENE_IO_TSIN, NGENE_IO_TSIN, NGENE_IO_TSIN,
 			   NGENE_IO_TSOUT},
 	.demod_attach	= {demod_attach_stv0900, demod_attach_stv0900, cineS2_probe, cineS2_probe},
+<<<<<<< HEAD
 	.tuner_attach	= {tuner_attach_stv6110, tuner_attach_stv6110, tuner_attach_probe, tuner_attach_probe},
+=======
+	.tuner_attach	= {tuner_attach_stv6110, tuner_attach_stv6110, tuner_attach_stv6110, tuner_attach_stv6110},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.fe_config	= {&fe_cineS2, &fe_cineS2, &fe_cineS2_2, &fe_cineS2_2},
 	.tuner_config	= {&tuner_cineS2_0, &tuner_cineS2_1, &tuner_cineS2_0, &tuner_cineS2_1},
 	.lnb		= {0x0a, 0x08, 0x0b, 0x09},
@@ -430,6 +487,7 @@ static struct ngene_info ngene_info_cineS2v5 = {
 };
 
 
+<<<<<<< HEAD
 static struct ngene_info ngene_info_duoFlex = {
 	.type           = NGENE_SIDEWINDER,
 	.name           = "Digital Devices DuoFlex PCIe or miniPCIe",
@@ -437,6 +495,15 @@ static struct ngene_info ngene_info_duoFlex = {
 			   NGENE_IO_TSOUT},
 	.demod_attach   = {cineS2_probe, cineS2_probe, cineS2_probe, cineS2_probe},
 	.tuner_attach   = {tuner_attach_probe, tuner_attach_probe, tuner_attach_probe, tuner_attach_probe},
+=======
+static struct ngene_info ngene_info_duoFlexS2 = {
+	.type           = NGENE_SIDEWINDER,
+	.name           = "Digital Devices DuoFlex S2 miniPCIe",
+	.io_type        = {NGENE_IO_TSIN, NGENE_IO_TSIN, NGENE_IO_TSIN, NGENE_IO_TSIN,
+			   NGENE_IO_TSOUT},
+	.demod_attach   = {cineS2_probe, cineS2_probe, cineS2_probe, cineS2_probe},
+	.tuner_attach   = {tuner_attach_stv6110, tuner_attach_stv6110, tuner_attach_stv6110, tuner_attach_stv6110},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.fe_config      = {&fe_cineS2, &fe_cineS2, &fe_cineS2_2, &fe_cineS2_2},
 	.tuner_config   = {&tuner_cineS2_0, &tuner_cineS2_1, &tuner_cineS2_0, &tuner_cineS2_1},
 	.lnb            = {0x0a, 0x08, 0x0b, 0x09},
@@ -484,8 +551,13 @@ static const struct pci_device_id ngene_id_tbl[] __devinitdata = {
 	NGENE_ID(0x18c3, 0xdb01, ngene_info_satixS2),
 	NGENE_ID(0x18c3, 0xdb02, ngene_info_satixS2v2),
 	NGENE_ID(0x18c3, 0xdd00, ngene_info_cineS2v5),
+<<<<<<< HEAD
 	NGENE_ID(0x18c3, 0xdd10, ngene_info_duoFlex),
 	NGENE_ID(0x18c3, 0xdd20, ngene_info_duoFlex),
+=======
+	NGENE_ID(0x18c3, 0xdd10, ngene_info_duoFlexS2),
+	NGENE_ID(0x18c3, 0xdd20, ngene_info_duoFlexS2),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NGENE_ID(0x1461, 0x062e, ngene_info_m780),
 	{0}
 };

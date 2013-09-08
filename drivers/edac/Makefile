@@ -8,6 +8,10 @@
 
 obj-$(CONFIG_EDAC)			:= edac_stub.o
 obj-$(CONFIG_EDAC_MM_EDAC)		+= edac_core.o
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_EDAC_MCE)			+= edac_mce.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 edac_core-y	:= edac_mc.o edac_device.o edac_mc_sysfs.o edac_pci_sysfs.o
 edac_core-y	+= edac_module.o edac_device_sysfs.o
@@ -28,7 +32,10 @@ obj-$(CONFIG_EDAC_I5100)		+= i5100_edac.o
 obj-$(CONFIG_EDAC_I5400)		+= i5400_edac.o
 obj-$(CONFIG_EDAC_I7300)		+= i7300_edac.o
 obj-$(CONFIG_EDAC_I7CORE)		+= i7core_edac.o
+<<<<<<< HEAD
 obj-$(CONFIG_EDAC_SBRIDGE)		+= sb_edac.o
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_EDAC_E7XXX)		+= e7xxx_edac.o
 obj-$(CONFIG_EDAC_E752X)		+= e752x_edac.o
 obj-$(CONFIG_EDAC_I82443BXGX)		+= i82443bxgx_edac.o

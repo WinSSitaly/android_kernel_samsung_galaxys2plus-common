@@ -10,3 +10,10 @@
 	orr	\base, \base, #ioc_base_low
 	.endif
 	.endm
+<<<<<<< HEAD
+=======
+
+	.macro  arch_ret_to_user, tmp1, tmp2
+	.endm
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

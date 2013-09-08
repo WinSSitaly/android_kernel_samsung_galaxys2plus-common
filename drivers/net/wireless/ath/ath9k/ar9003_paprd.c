@@ -14,12 +14,16 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "hw.h"
 #include "ar9003_phy.h"
 
 void ar9003_paprd_enable(struct ath_hw *ah, bool val)
 {
+<<<<<<< HEAD
 	struct ath9k_channel *chan = ah->curchan;
 	struct ar9300_eeprom *eep = &ah->eeprom.ar9300_eep;
 
@@ -55,6 +59,20 @@ void ar9003_paprd_enable(struct ath_hw *ah, bool val)
 	if (val) {
 		ah->paprd_table_write_done = true;
 		ath9k_hw_apply_txpower(ah, chan, false);
+=======
+	struct ath_regulatory *regulatory = ath9k_hw_regulatory(ah);
+	struct ath9k_channel *chan = ah->curchan;
+
+	if (val) {
+		ah->paprd_table_write_done = true;
+
+		ah->eep_ops->set_txpower(ah, chan,
+				ath9k_regd_get_ctl(regulatory, chan),
+				chan->chan->max_antenna_gain * 2,
+				chan->chan->max_power * 2,
+				min((u32) MAX_RATE_POWER,
+				(u32) regulatory->power_limit), false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	REG_RMW_FIELD(ah, AR_PHY_PAPRD_CTRL0_B0,
@@ -70,10 +88,18 @@ EXPORT_SYMBOL(ar9003_paprd_enable);
 
 static int ar9003_get_training_power_2g(struct ath_hw *ah)
 {
+<<<<<<< HEAD
 	struct ath9k_channel *chan = ah->curchan;
 	unsigned int power, scale, delta;
 
 	scale = ar9003_get_paprd_scale_factor(ah, chan);
+=======
+	struct ar9300_eeprom *eep = &ah->eeprom.ar9300_eep;
+	struct ar9300_modal_eep_header *hdr = &eep->modalHeader2G;
+	unsigned int power, scale, delta;
+
+	scale = MS(le32_to_cpu(hdr->papdRateMaskHt20), AR9300_PAPRD_SCALE_1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	power = REG_READ_FIELD(ah, AR_PHY_POWERTX_RATE5,
 			       AR_PHY_POWERTX_RATE5_POWERTXHT20_0);
 
@@ -90,10 +116,27 @@ static int ar9003_get_training_power_2g(struct ath_hw *ah)
 static int ar9003_get_training_power_5g(struct ath_hw *ah)
 {
 	struct ath_common *common = ath9k_hw_common(ah);
+<<<<<<< HEAD
 	struct ath9k_channel *chan = ah->curchan;
 	unsigned int power, scale, delta;
 
 	scale = ar9003_get_paprd_scale_factor(ah, chan);
+=======
+	struct ar9300_eeprom *eep = &ah->eeprom.ar9300_eep;
+	struct ar9300_modal_eep_header *hdr = &eep->modalHeader5G;
+	struct ath9k_channel *chan = ah->curchan;
+	unsigned int power, scale, delta;
+
+	if (chan->channel >= 5700)
+		scale = MS(le32_to_cpu(hdr->papdRateMaskHt20),
+			   AR9300_PAPRD_SCALE_1);
+	else if (chan->channel >= 5400)
+		scale = MS(le32_to_cpu(hdr->papdRateMaskHt40),
+			   AR9300_PAPRD_SCALE_2);
+	else
+		scale = MS(le32_to_cpu(hdr->papdRateMaskHt40),
+			   AR9300_PAPRD_SCALE_1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (IS_CHAN_HT40(chan))
 		power = REG_READ_FIELD(ah, AR_PHY_POWERTX_RATE8,
@@ -107,6 +150,7 @@ static int ar9003_get_training_power_5g(struct ath_hw *ah)
 	if (delta > scale)
 		return -1;
 
+<<<<<<< HEAD
 	switch (get_streams(ah->txchainmask)) {
 	case 1:
 		delta = 6;
@@ -124,6 +168,9 @@ static int ar9003_get_training_power_5g(struct ath_hw *ah)
 	}
 
 	power += delta;
+=======
+	power += 2 * get_streams(common->tx_chainmask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return power;
 }
 
@@ -141,13 +188,18 @@ static int ar9003_paprd_setup_single_table(struct ath_hw *ah)
 		AR_PHY_PAPRD_CTRL1_B2
 	};
 	int training_power;
+<<<<<<< HEAD
 	int i, val;
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (IS_CHAN_2GHZ(ah->curchan))
 		training_power = ar9003_get_training_power_2g(ah);
 	else
 		training_power = ar9003_get_training_power_5g(ah);
 
+<<<<<<< HEAD
 	ath_dbg(common, CALIBRATE, "Training power: %d, Target power: %d\n",
 		training_power, ah->paprd_target_power);
 
@@ -157,6 +209,17 @@ static int ar9003_paprd_setup_single_table(struct ath_hw *ah)
 		return -ERANGE;
 	}
 	ah->paprd_training_power = training_power;
+=======
+	if (training_power < 0) {
+		ath_dbg(common, ATH_DBG_CALIBRATE,
+			"PAPRD target power delta out of range");
+		return -ERANGE;
+	}
+	ah->paprd_training_power = training_power;
+	ath_dbg(common, ATH_DBG_CALIBRATE,
+		"Training power: %d, Target power: %d\n",
+		ah->paprd_training_power, ah->paprd_target_power);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	REG_RMW_FIELD(ah, AR_PHY_PAPRD_AM2AM, AR_PHY_PAPRD_AM2AM_MASK,
 		      ah->paprd_ratemask);
@@ -200,9 +263,14 @@ static int ar9003_paprd_setup_single_table(struct ath_hw *ah)
 		      AR_PHY_PAPRD_TRAINER_CNTL1_CF_PAPRD_AGC2_SETTLING, 28);
 	REG_RMW_FIELD(ah, AR_PHY_PAPRD_TRAINER_CNTL1,
 		      AR_PHY_PAPRD_TRAINER_CNTL1_CF_CF_PAPRD_TRAIN_ENABLE, 1);
+<<<<<<< HEAD
 	val = AR_SREV_9462(ah) ? 0x91 : 147;
 	REG_RMW_FIELD(ah, AR_PHY_PAPRD_TRAINER_CNTL2,
 		      AR_PHY_PAPRD_TRAINER_CNTL2_CF_PAPRD_INIT_RX_BB_GAIN, val);
+=======
+	REG_RMW_FIELD(ah, AR_PHY_PAPRD_TRAINER_CNTL2,
+		      AR_PHY_PAPRD_TRAINER_CNTL2_CF_PAPRD_INIT_RX_BB_GAIN, 147);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	REG_RMW_FIELD(ah, AR_PHY_PAPRD_TRAINER_CNTL3,
 		      AR_PHY_PAPRD_TRAINER_CNTL3_CF_PAPRD_FINE_CORR_LEN, 4);
 	REG_RMW_FIELD(ah, AR_PHY_PAPRD_TRAINER_CNTL3,
@@ -211,7 +279,11 @@ static int ar9003_paprd_setup_single_table(struct ath_hw *ah)
 		      AR_PHY_PAPRD_TRAINER_CNTL3_CF_PAPRD_NUM_CORR_STAGES, 7);
 	REG_RMW_FIELD(ah, AR_PHY_PAPRD_TRAINER_CNTL3,
 		      AR_PHY_PAPRD_TRAINER_CNTL3_CF_PAPRD_MIN_LOOPBACK_DEL, 1);
+<<<<<<< HEAD
 	if (AR_SREV_9485(ah) || AR_SREV_9462(ah))
+=======
+	if (AR_SREV_9485(ah))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		REG_RMW_FIELD(ah, AR_PHY_PAPRD_TRAINER_CNTL3,
 			      AR_PHY_PAPRD_TRAINER_CNTL3_CF_PAPRD_QUICK_DROP,
 			      -3);
@@ -219,10 +291,16 @@ static int ar9003_paprd_setup_single_table(struct ath_hw *ah)
 		REG_RMW_FIELD(ah, AR_PHY_PAPRD_TRAINER_CNTL3,
 			      AR_PHY_PAPRD_TRAINER_CNTL3_CF_PAPRD_QUICK_DROP,
 			      -6);
+<<<<<<< HEAD
 	val = AR_SREV_9462(ah) ? -10 : -15;
 	REG_RMW_FIELD(ah, AR_PHY_PAPRD_TRAINER_CNTL3,
 		      AR_PHY_PAPRD_TRAINER_CNTL3_CF_PAPRD_ADC_DESIRED_SIZE,
 		      val);
+=======
+	REG_RMW_FIELD(ah, AR_PHY_PAPRD_TRAINER_CNTL3,
+		      AR_PHY_PAPRD_TRAINER_CNTL3_CF_PAPRD_ADC_DESIRED_SIZE,
+		      -15);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	REG_RMW_FIELD(ah, AR_PHY_PAPRD_TRAINER_CNTL3,
 		      AR_PHY_PAPRD_TRAINER_CNTL3_CF_PAPRD_BBTXMIX_DISABLE, 1);
 	REG_RMW_FIELD(ah, AR_PHY_PAPRD_TRAINER_CNTL4,
@@ -261,7 +339,11 @@ static void ar9003_paprd_get_gain_table(struct ath_hw *ah)
 	memset(entry, 0, sizeof(ah->paprd_gain_table_entries));
 	memset(index, 0, sizeof(ah->paprd_gain_table_index));
 
+<<<<<<< HEAD
 	for (i = 0; i < PAPRD_GAIN_TABLE_ENTRIES; i++) {
+=======
+	for (i = 0; i < 32; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		entry[i] = REG_READ(ah, reg);
 		index[i] = (entry[i] >> 24) & 0xff;
 		reg += 4;
@@ -271,13 +353,21 @@ static void ar9003_paprd_get_gain_table(struct ath_hw *ah)
 static unsigned int ar9003_get_desired_gain(struct ath_hw *ah, int chain,
 					    int target_power)
 {
+<<<<<<< HEAD
 	int olpc_gain_delta = 0, cl_gain_mod;
+=======
+	int olpc_gain_delta = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int alpha_therm, alpha_volt;
 	int therm_cal_value, volt_cal_value;
 	int therm_value, volt_value;
 	int thermal_gain_corr, voltage_gain_corr;
 	int desired_scale, desired_gain = 0;
+<<<<<<< HEAD
 	u32 reg_olpc  = 0, reg_cl_gain  = 0;
+=======
+	u32 reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	REG_CLR_BIT(ah, AR_PHY_PAPRD_TRAINER_STAT1,
 		    AR_PHY_PAPRD_TRAINER_STAT1_PAPRD_TRAIN_DONE);
@@ -296,6 +386,7 @@ static unsigned int ar9003_get_desired_gain(struct ath_hw *ah, int chain,
 	volt_value = REG_READ_FIELD(ah, AR_PHY_BB_THERM_ADC_4,
 				    AR_PHY_BB_THERM_ADC_4_LATEST_VOLT_VALUE);
 
+<<<<<<< HEAD
 	switch (chain) {
 	case 0:
 		reg_olpc = AR_PHY_TPC_11_B0;
@@ -319,6 +410,17 @@ static unsigned int ar9003_get_desired_gain(struct ath_hw *ah, int chain,
 					 AR_PHY_TPC_11_OLPC_GAIN_DELTA);
 	cl_gain_mod = REG_READ_FIELD(ah, reg_cl_gain,
 					 AR_PHY_CL_TAB_CL_GAIN_MOD);
+=======
+	if (chain == 0)
+		reg = AR_PHY_TPC_11_B0;
+	else if (chain == 1)
+		reg = AR_PHY_TPC_11_B1;
+	else
+		reg = AR_PHY_TPC_11_B2;
+
+	olpc_gain_delta = REG_READ_FIELD(ah, reg,
+					 AR_PHY_TPC_11_OLPC_GAIN_DELTA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (olpc_gain_delta >= 128)
 		olpc_gain_delta = olpc_gain_delta - 256;
@@ -328,7 +430,11 @@ static unsigned int ar9003_get_desired_gain(struct ath_hw *ah, int chain,
 	voltage_gain_corr = (alpha_volt * (volt_value - volt_cal_value) +
 			     (128 / 2)) / 128;
 	desired_gain = target_power - olpc_gain_delta - thermal_gain_corr -
+<<<<<<< HEAD
 	    voltage_gain_corr + desired_scale + cl_gain_mod;
+=======
+	    voltage_gain_corr + desired_scale;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return desired_gain;
 }
@@ -752,7 +858,10 @@ void ar9003_paprd_populate_single_table(struct ath_hw *ah,
 			      training_power);
 
 	if (ah->caps.tx_chainmask & BIT(2))
+<<<<<<< HEAD
 		/* val AR_PHY_PAPRD_CTRL1_PAPRD_POWER_AT_AM2AM_CAL correct? */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		REG_RMW_FIELD(ah, AR_PHY_PAPRD_CTRL1_B2,
 			      AR_PHY_PAPRD_CTRL1_PAPRD_POWER_AT_AM2AM_CAL,
 			      training_power);
@@ -767,7 +876,11 @@ int ar9003_paprd_setup_gain_table(struct ath_hw *ah, int chain)
 	desired_gain = ar9003_get_desired_gain(ah, chain, train_power);
 
 	gain_index = 0;
+<<<<<<< HEAD
 	for (i = 0; i < PAPRD_GAIN_TABLE_ENTRIES; i++) {
+=======
+	for (i = 0; i < 32; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ah->paprd_gain_table_index[i] >= desired_gain)
 			break;
 		gain_index++;
@@ -841,6 +954,7 @@ EXPORT_SYMBOL(ar9003_paprd_init_table);
 
 bool ar9003_paprd_is_done(struct ath_hw *ah)
 {
+<<<<<<< HEAD
 	int paprd_done, agc2_pwr;
 	paprd_done = REG_READ_FIELD(ah, AR_PHY_PAPRD_TRAINER_STAT1,
 				AR_PHY_PAPRD_TRAINER_STAT1_PAPRD_TRAIN_DONE);
@@ -862,5 +976,9 @@ bool ar9003_paprd_is_done(struct ath_hw *ah)
 	}
 
 	return !!paprd_done;
+=======
+	return !!REG_READ_FIELD(ah, AR_PHY_PAPRD_TRAINER_STAT1,
+				AR_PHY_PAPRD_TRAINER_STAT1_PAPRD_TRAIN_DONE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(ar9003_paprd_is_done);

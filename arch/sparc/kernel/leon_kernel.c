@@ -4,6 +4,10 @@
  */
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/errno.h>
 #include <linux/mutex.h>
 #include <linux/of.h>
@@ -104,11 +108,19 @@ static int irq_choose_cpu(const struct cpumask *affinity)
 {
 	cpumask_t mask;
 
+<<<<<<< HEAD
 	cpumask_and(&mask, cpu_online_mask, affinity);
 	if (cpumask_equal(&mask, cpu_online_mask) || cpumask_empty(&mask))
 		return boot_cpu_id;
 	else
 		return cpumask_first(&mask);
+=======
+	cpus_and(mask, cpu_online_map, *affinity);
+	if (cpus_equal(mask, cpu_online_map) || cpus_empty(mask))
+		return boot_cpu_id;
+	else
+		return first_cpu(mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #else
 #define irq_choose_cpu(affinity) boot_cpu_id

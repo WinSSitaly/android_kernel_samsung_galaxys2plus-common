@@ -22,18 +22,25 @@
 #include <linux/mutex.h>
 #include <linux/slab.h>
 #include <linux/security.h>
+<<<<<<< HEAD
 #include <linux/hash.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "sysfs.h"
 
 DEFINE_MUTEX(sysfs_mutex);
 DEFINE_SPINLOCK(sysfs_assoc_lock);
 
+<<<<<<< HEAD
 #define to_sysfs_dirent(X) rb_entry((X), struct sysfs_dirent, s_rb);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEFINE_SPINLOCK(sysfs_ino_lock);
 static DEFINE_IDA(sysfs_ino_ida);
 
 /**
+<<<<<<< HEAD
  *	sysfs_name_hash
  *	@ns:   Namespace tag to hash
  *	@name: Null terminated string to hash
@@ -78,10 +85,17 @@ static int sysfs_sd_compare(const struct sysfs_dirent *left,
  *	@sd: sysfs_dirent of interest
  *
  *	Link @sd into its sibling rbtree which starts from
+=======
+ *	sysfs_link_sibling - link sysfs_dirent into sibling list
+ *	@sd: sysfs_dirent of interest
+ *
+ *	Link @sd into its sibling list which starts from
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	sd->s_parent->s_dir.children.
  *
  *	Locking:
  *	mutex_lock(sysfs_mutex)
+<<<<<<< HEAD
  *
  *	RETURNS:
  *	0 on susccess -EEXIST on failure.
@@ -119,6 +133,33 @@ static int sysfs_link_sibling(struct sysfs_dirent *sd)
  *	@sd: sysfs_dirent of interest
  *
  *	Unlink @sd from its sibling rbtree which starts from
+=======
+ */
+static void sysfs_link_sibling(struct sysfs_dirent *sd)
+{
+	struct sysfs_dirent *parent_sd = sd->s_parent;
+	struct sysfs_dirent **pos;
+
+	BUG_ON(sd->s_sibling);
+
+	/* Store directory entries in order by ino.  This allows
+	 * readdir to properly restart without having to add a
+	 * cursor into the s_dir.children list.
+	 */
+	for (pos = &parent_sd->s_dir.children; *pos; pos = &(*pos)->s_sibling) {
+		if (sd->s_ino < (*pos)->s_ino)
+			break;
+	}
+	sd->s_sibling = *pos;
+	*pos = sd;
+}
+
+/**
+ *	sysfs_unlink_sibling - unlink sysfs_dirent from sibling list
+ *	@sd: sysfs_dirent of interest
+ *
+ *	Unlink @sd from its sibling list which starts from
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	sd->s_parent->s_dir.children.
  *
  *	Locking:
@@ -126,10 +167,23 @@ static int sysfs_link_sibling(struct sysfs_dirent *sd)
  */
 static void sysfs_unlink_sibling(struct sysfs_dirent *sd)
 {
+<<<<<<< HEAD
 	if (sysfs_type(sd) == SYSFS_DIR)
 		sd->s_parent->s_dir.subdirs--;
 
 	rb_erase(&sd->s_rb, &sd->s_parent->s_dir.children);
+=======
+	struct sysfs_dirent **pos;
+
+	for (pos = &sd->s_parent->s_dir.children; *pos;
+	     pos = &(*pos)->s_sibling) {
+		if (*pos == sd) {
+			*pos = sd->s_sibling;
+			sd->s_sibling = NULL;
+			break;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -175,6 +229,10 @@ struct sysfs_dirent *sysfs_get_active(struct sysfs_dirent *sd)
  */
 void sysfs_put_active(struct sysfs_dirent *sd)
 {
+<<<<<<< HEAD
+=======
+	struct completion *cmpl;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int v;
 
 	if (unlikely(!sd))
@@ -186,9 +244,16 @@ void sysfs_put_active(struct sysfs_dirent *sd)
 		return;
 
 	/* atomic_dec_return() is a mb(), we'll always see the updated
+<<<<<<< HEAD
 	 * sd->u.completion.
 	 */
 	complete(sd->u.completion);
+=======
+	 * sd->s_sibling.
+	 */
+	cmpl = (void *)sd->s_sibling;
+	complete(cmpl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -202,16 +267,28 @@ static void sysfs_deactivate(struct sysfs_dirent *sd)
 	DECLARE_COMPLETION_ONSTACK(wait);
 	int v;
 
+<<<<<<< HEAD
 	BUG_ON(!(sd->s_flags & SYSFS_FLAG_REMOVED));
+=======
+	BUG_ON(sd->s_sibling || !(sd->s_flags & SYSFS_FLAG_REMOVED));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!(sysfs_type(sd) & SYSFS_ACTIVE_REF))
 		return;
 
+<<<<<<< HEAD
 	sd->u.completion = (void *)&wait;
 
 	rwsem_acquire(&sd->dep_map, 0, 0, _RET_IP_);
 	/* atomic_add_return() is a mb(), put_active() will always see
 	 * the updated sd->u.completion.
+=======
+	sd->s_sibling = (void *)&wait;
+
+	rwsem_acquire(&sd->dep_map, 0, 0, _RET_IP_);
+	/* atomic_add_return() is a mb(), put_active() will always see
+	 * the updated sd->s_sibling.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	v = atomic_add_return(SD_DEACTIVATED_BIAS, &sd->s_active);
 
@@ -220,11 +297,20 @@ static void sysfs_deactivate(struct sysfs_dirent *sd)
 		wait_for_completion(&wait);
 	}
 
+<<<<<<< HEAD
+=======
+	sd->s_sibling = NULL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lock_acquired(&sd->dep_map, _RET_IP_);
 	rwsem_release(&sd->dep_map, 1, _RET_IP_);
 }
 
+<<<<<<< HEAD
 static int sysfs_alloc_ino(unsigned int *pino)
+=======
+static int sysfs_alloc_ino(ino_t *pino)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ino, rc;
 
@@ -243,7 +329,11 @@ static int sysfs_alloc_ino(unsigned int *pino)
 	return rc;
 }
 
+<<<<<<< HEAD
 static void sysfs_free_ino(unsigned int ino)
+=======
+static void sysfs_free_ino(ino_t ino)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	spin_lock(&sysfs_ino_lock);
 	ida_remove(&sysfs_ino_ida, ino);
@@ -428,6 +518,7 @@ void sysfs_addrm_start(struct sysfs_addrm_cxt *acxt,
 int __sysfs_add_one(struct sysfs_addrm_cxt *acxt, struct sysfs_dirent *sd)
 {
 	struct sysfs_inode_attrs *ps_iattr;
+<<<<<<< HEAD
 	int ret;
 
 	if (!!sysfs_ns_type(acxt->parent_sd) != !!sd->s_ns) {
@@ -443,6 +534,15 @@ int __sysfs_add_one(struct sysfs_addrm_cxt *acxt, struct sysfs_dirent *sd)
 	ret = sysfs_link_sibling(sd);
 	if (ret)
 		return ret;
+=======
+
+	if (sysfs_find_dirent(acxt->parent_sd, sd->s_ns, sd->s_name))
+		return -EEXIST;
+
+	sd->s_parent = sysfs_get(acxt->parent_sd);
+
+	sysfs_link_sibling(sd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Update timestamps on the parent */
 	ps_iattr = acxt->parent_sd->s_iattr;
@@ -457,18 +557,33 @@ int __sysfs_add_one(struct sysfs_addrm_cxt *acxt, struct sysfs_dirent *sd)
 /**
  *	sysfs_pathname - return full path to sysfs dirent
  *	@sd: sysfs_dirent whose path we want
+<<<<<<< HEAD
  *	@path: caller allocated buffer of size PATH_MAX
  *
  *	Gives the name "/" to the sysfs_root entry; any path returned
  *	is relative to wherever sysfs is mounted.
+=======
+ *	@path: caller allocated buffer
+ *
+ *	Gives the name "/" to the sysfs_root entry; any path returned
+ *	is relative to wherever sysfs is mounted.
+ *
+ *	XXX: does no error checking on @path size
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static char *sysfs_pathname(struct sysfs_dirent *sd, char *path)
 {
 	if (sd->s_parent) {
 		sysfs_pathname(sd->s_parent, path);
+<<<<<<< HEAD
 		strlcat(path, "/", PATH_MAX);
 	}
 	strlcat(path, sd->s_name, PATH_MAX);
+=======
+		strcat(path, "/");
+	}
+	strcat(path, sd->s_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return path;
 }
 
@@ -501,11 +616,17 @@ int sysfs_add_one(struct sysfs_addrm_cxt *acxt, struct sysfs_dirent *sd)
 		char *path = kzalloc(PATH_MAX, GFP_KERNEL);
 		WARN(1, KERN_WARNING
 		     "sysfs: cannot create duplicate filename '%s'\n",
+<<<<<<< HEAD
 		     (path == NULL) ? sd->s_name
 				    : (sysfs_pathname(acxt->parent_sd, path),
 				       strlcat(path, "/", PATH_MAX),
 				       strlcat(path, sd->s_name, PATH_MAX),
 				       path));
+=======
+		     (path == NULL) ? sd->s_name :
+		     strcat(strcat(sysfs_pathname(acxt->parent_sd, path), "/"),
+		            sd->s_name));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(path);
 	}
 
@@ -543,7 +664,11 @@ void sysfs_remove_one(struct sysfs_addrm_cxt *acxt, struct sysfs_dirent *sd)
 	}
 
 	sd->s_flags |= SYSFS_FLAG_REMOVED;
+<<<<<<< HEAD
 	sd->u.removed_list = acxt->removed;
+=======
+	sd->s_sibling = acxt->removed;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	acxt->removed = sd;
 }
 
@@ -567,7 +692,12 @@ void sysfs_addrm_finish(struct sysfs_addrm_cxt *acxt)
 	while (acxt->removed) {
 		struct sysfs_dirent *sd = acxt->removed;
 
+<<<<<<< HEAD
 		acxt->removed = sd->u.removed_list;
+=======
+		acxt->removed = sd->s_sibling;
+		sd->s_sibling = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		sysfs_deactivate(sd);
 		unmap_bin_file(sd);
@@ -592,6 +722,7 @@ struct sysfs_dirent *sysfs_find_dirent(struct sysfs_dirent *parent_sd,
 				       const void *ns,
 				       const unsigned char *name)
 {
+<<<<<<< HEAD
 	struct rb_node *node = parent_sd->s_dir.children.rb_node;
 	unsigned int hash;
 
@@ -614,6 +745,14 @@ struct sysfs_dirent *sysfs_find_dirent(struct sysfs_dirent *parent_sd,
 		else if (result > 0)
 			node = node->rb_right;
 		else
+=======
+	struct sysfs_dirent *sd;
+
+	for (sd = parent_sd->s_dir.children; sd; sd = sd->s_sibling) {
+		if (ns && sd->s_ns && (sd->s_ns != ns))
+			continue;
+		if (!strcmp(sd->s_name, name))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return sd;
 	}
 	return NULL;
@@ -729,9 +868,12 @@ int sysfs_create_dir(struct kobject * kobj)
 	else
 		parent_sd = &sysfs_root;
 
+<<<<<<< HEAD
 	if (!parent_sd)
 		return -ENOENT;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (sysfs_ns_type(parent_sd))
 		ns = kobj->ktype->namespace(kobj);
 	type = sysfs_read_ns_type(kobj);
@@ -815,19 +957,34 @@ void sysfs_remove_subdir(struct sysfs_dirent *sd)
 static void __sysfs_remove_dir(struct sysfs_dirent *dir_sd)
 {
 	struct sysfs_addrm_cxt acxt;
+<<<<<<< HEAD
 	struct rb_node *pos;
+=======
+	struct sysfs_dirent **pos;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!dir_sd)
 		return;
 
 	pr_debug("sysfs %s: removing dir\n", dir_sd->s_name);
 	sysfs_addrm_start(&acxt, dir_sd);
+<<<<<<< HEAD
 	pos = rb_first(&dir_sd->s_dir.children);
 	while (pos) {
 		struct sysfs_dirent *sd = to_sysfs_dirent(pos);
 		pos = rb_next(pos);
 		if (sysfs_type(sd) != SYSFS_DIR)
 			sysfs_remove_one(&acxt, sd);
+=======
+	pos = &dir_sd->s_dir.children;
+	while (*pos) {
+		struct sysfs_dirent *sd = *pos;
+
+		if (sysfs_type(sd) != SYSFS_DIR)
+			sysfs_remove_one(&acxt, sd);
+		else
+			pos = &(*pos)->s_sibling;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	sysfs_addrm_finish(&acxt);
 
@@ -883,6 +1040,7 @@ int sysfs_rename(struct sysfs_dirent *sd,
 		sd->s_name = new_name;
 	}
 
+<<<<<<< HEAD
 	/* Move to the appropriate place in the appropriate directories rbtree. */
 	sysfs_unlink_sibling(sd);
 	sysfs_get(new_parent_sd);
@@ -891,6 +1049,17 @@ int sysfs_rename(struct sysfs_dirent *sd,
 	sd->s_hash = sysfs_name_hash(sd->s_ns, sd->s_name);
 	sd->s_parent = new_parent_sd;
 	sysfs_link_sibling(sd);
+=======
+	/* Remove from old parent's list and insert into new parent's list. */
+	if (sd->s_parent != new_parent_sd) {
+		sysfs_unlink_sibling(sd);
+		sysfs_get(new_parent_sd);
+		sysfs_put(sd->s_parent);
+		sd->s_parent = new_parent_sd;
+		sysfs_link_sibling(sd);
+	}
+	sd->s_ns = new_ns;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	error = 0;
  out:
@@ -938,16 +1107,25 @@ static int sysfs_dir_release(struct inode *inode, struct file *filp)
 }
 
 static struct sysfs_dirent *sysfs_dir_pos(const void *ns,
+<<<<<<< HEAD
 	struct sysfs_dirent *parent_sd,	loff_t hash, struct sysfs_dirent *pos)
+=======
+	struct sysfs_dirent *parent_sd,	ino_t ino, struct sysfs_dirent *pos)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (pos) {
 		int valid = !(pos->s_flags & SYSFS_FLAG_REMOVED) &&
 			pos->s_parent == parent_sd &&
+<<<<<<< HEAD
 			hash == pos->s_hash;
+=======
+			ino == pos->s_ino;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sysfs_put(pos);
 		if (!valid)
 			pos = NULL;
 	}
+<<<<<<< HEAD
 	if (!pos && (hash > 1) && (hash < INT_MAX)) {
 		struct rb_node *node = parent_sd->s_dir.children.rb_node;
 		while (node) {
@@ -969,6 +1147,15 @@ static struct sysfs_dirent *sysfs_dir_pos(const void *ns,
 		else
 			pos = to_sysfs_dirent(node);
 	}
+=======
+	if (!pos && (ino > 1) && (ino < INT_MAX)) {
+		pos = parent_sd->s_dir.children;
+		while (pos && (ino > pos->s_ino))
+			pos = pos->s_sibling;
+	}
+	while (pos && pos->s_ns && pos->s_ns != ns)
+		pos = pos->s_sibling;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return pos;
 }
 
@@ -976,6 +1163,7 @@ static struct sysfs_dirent *sysfs_dir_next_pos(const void *ns,
 	struct sysfs_dirent *parent_sd,	ino_t ino, struct sysfs_dirent *pos)
 {
 	pos = sysfs_dir_pos(ns, parent_sd, ino, pos);
+<<<<<<< HEAD
 	if (pos) do {
 		struct rb_node *node = rb_next(&pos->s_rb);
 		if (!node)
@@ -983,6 +1171,12 @@ static struct sysfs_dirent *sysfs_dir_next_pos(const void *ns,
 		else
 			pos = to_sysfs_dirent(node);
 	} while (pos && pos->s_ns != ns);
+=======
+	if (pos)
+		pos = pos->s_sibling;
+	while (pos && pos->s_ns && pos->s_ns != ns)
+		pos = pos->s_sibling;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return pos;
 }
 
@@ -994,7 +1188,10 @@ static int sysfs_readdir(struct file * filp, void * dirent, filldir_t filldir)
 	enum kobj_ns_type type;
 	const void *ns;
 	ino_t ino;
+<<<<<<< HEAD
 	loff_t off;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	type = sysfs_ns_type(parent_sd);
 	ns = sysfs_info(dentry->d_sb)->ns[type];
@@ -1003,8 +1200,11 @@ static int sysfs_readdir(struct file * filp, void * dirent, filldir_t filldir)
 		ino = parent_sd->s_ino;
 		if (filldir(dirent, ".", 1, filp->f_pos, ino, DT_DIR) == 0)
 			filp->f_pos++;
+<<<<<<< HEAD
 		else
 			return 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (filp->f_pos == 1) {
 		if (parent_sd->s_parent)
@@ -1013,11 +1213,16 @@ static int sysfs_readdir(struct file * filp, void * dirent, filldir_t filldir)
 			ino = parent_sd->s_ino;
 		if (filldir(dirent, "..", 2, filp->f_pos, ino, DT_DIR) == 0)
 			filp->f_pos++;
+<<<<<<< HEAD
 		else
 			return 0;
 	}
 	mutex_lock(&sysfs_mutex);
 	off = filp->f_pos;
+=======
+	}
+	mutex_lock(&sysfs_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (pos = sysfs_dir_pos(ns, parent_sd, filp->f_pos, pos);
 	     pos;
 	     pos = sysfs_dir_next_pos(ns, parent_sd, filp->f_pos, pos)) {
@@ -1029,16 +1234,25 @@ static int sysfs_readdir(struct file * filp, void * dirent, filldir_t filldir)
 		len = strlen(name);
 		ino = pos->s_ino;
 		type = dt_type(pos);
+<<<<<<< HEAD
 		off = filp->f_pos = pos->s_hash;
 		filp->private_data = sysfs_get(pos);
 
 		mutex_unlock(&sysfs_mutex);
 		ret = filldir(dirent, name, len, off, ino, type);
+=======
+		filp->f_pos = ino;
+		filp->private_data = sysfs_get(pos);
+
+		mutex_unlock(&sysfs_mutex);
+		ret = filldir(dirent, name, len, filp->f_pos, ino, type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mutex_lock(&sysfs_mutex);
 		if (ret < 0)
 			break;
 	}
 	mutex_unlock(&sysfs_mutex);
+<<<<<<< HEAD
 
 	/* don't reference last entry if its refcount is dropped */
 	if (!pos) {
@@ -1047,10 +1261,16 @@ static int sysfs_readdir(struct file * filp, void * dirent, filldir_t filldir)
 		/* EOF and not changed as 0 or 1 in read/write path */
 		if (off == filp->f_pos && off > 1)
 			filp->f_pos = INT_MAX;
+=======
+	if ((filp->f_pos > 1) && !pos) { /* EOF */
+		filp->f_pos = INT_MAX;
+		filp->private_data = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }
 
+<<<<<<< HEAD
 static loff_t sysfs_dir_llseek(struct file *file, loff_t offset, int whence)
 {
 	struct inode *inode = file->f_path.dentry->d_inode;
@@ -1062,10 +1282,16 @@ static loff_t sysfs_dir_llseek(struct file *file, loff_t offset, int whence)
 
 	return ret;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 const struct file_operations sysfs_dir_operations = {
 	.read		= generic_read_dir,
 	.readdir	= sysfs_readdir,
 	.release	= sysfs_dir_release,
+<<<<<<< HEAD
 	.llseek		= sysfs_dir_llseek,
+=======
+	.llseek		= generic_file_llseek,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };

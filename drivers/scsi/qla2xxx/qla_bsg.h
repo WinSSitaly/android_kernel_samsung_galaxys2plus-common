@@ -16,6 +16,7 @@
 #define QL_VND_FCP_PRIO_CFG_CMD	0x06
 #define QL_VND_READ_FLASH	0x07
 #define QL_VND_UPDATE_FLASH	0x08
+<<<<<<< HEAD
 #define QL_VND_SET_FRU_VERSION	0x0B
 #define QL_VND_READ_FRU_STATUS	0x0C
 #define QL_VND_WRITE_FRU_STATUS	0x0D
@@ -26,6 +27,8 @@
 #define EXT_STATUS_INVALID_PARAM	6
 #define EXT_STATUS_MAILBOX		11
 #define EXT_STATUS_NO_MEMORY		17
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* BSG definations for interpreting CommandSent field */
 #define INT_DEF_LB_LOOPBACK_CMD         0
@@ -151,6 +154,7 @@ struct qla_port_param {
 	uint16_t mode;
 	uint16_t speed;
 } __attribute__ ((packed));
+<<<<<<< HEAD
 
 
 /* FRU VPD */
@@ -183,4 +187,6 @@ struct qla_status_reg {
 	uint8_t reserved[7];
 } __packed;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

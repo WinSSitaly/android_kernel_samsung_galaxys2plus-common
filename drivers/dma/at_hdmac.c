@@ -23,11 +23,16 @@
 #include <linux/module.h>
 #include <linux/platform_device.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/of.h>
 #include <linux/of_device.h>
 
 #include "at_hdmac_regs.h"
 #include "dmaengine.h"
+=======
+
+#include "at_hdmac_regs.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Glossary
@@ -110,11 +115,18 @@ static struct at_desc *atc_desc_get(struct at_dma_chan *atchan)
 {
 	struct at_desc *desc, *_desc;
 	struct at_desc *ret = NULL;
+<<<<<<< HEAD
 	unsigned long flags;
 	unsigned int i = 0;
 	LIST_HEAD(tmp_list);
 
 	spin_lock_irqsave(&atchan->lock, flags);
+=======
+	unsigned int i = 0;
+	LIST_HEAD(tmp_list);
+
+	spin_lock_bh(&atchan->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry_safe(desc, _desc, &atchan->free_list, desc_node) {
 		i++;
 		if (async_tx_test_ack(&desc->txd)) {
@@ -125,7 +137,11 @@ static struct at_desc *atc_desc_get(struct at_dma_chan *atchan)
 		dev_dbg(chan2dev(&atchan->chan_common),
 				"desc %p not ACKed\n", desc);
 	}
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&atchan->lock, flags);
+=======
+	spin_unlock_bh(&atchan->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_vdbg(chan2dev(&atchan->chan_common),
 		"scanned %u descriptors on freelist\n", i);
 
@@ -133,9 +149,15 @@ static struct at_desc *atc_desc_get(struct at_dma_chan *atchan)
 	if (!ret) {
 		ret = atc_alloc_descriptor(&atchan->chan_common, GFP_ATOMIC);
 		if (ret) {
+<<<<<<< HEAD
 			spin_lock_irqsave(&atchan->lock, flags);
 			atchan->descs_allocated++;
 			spin_unlock_irqrestore(&atchan->lock, flags);
+=======
+			spin_lock_bh(&atchan->lock);
+			atchan->descs_allocated++;
+			spin_unlock_bh(&atchan->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			dev_err(chan2dev(&atchan->chan_common),
 					"not enough descriptors available\n");
@@ -154,9 +176,14 @@ static void atc_desc_put(struct at_dma_chan *atchan, struct at_desc *desc)
 {
 	if (desc) {
 		struct at_desc *child;
+<<<<<<< HEAD
 		unsigned long flags;
 
 		spin_lock_irqsave(&atchan->lock, flags);
+=======
+
+		spin_lock_bh(&atchan->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_for_each_entry(child, &desc->tx_list, desc_node)
 			dev_vdbg(chan2dev(&atchan->chan_common),
 					"moving child desc %p to freelist\n",
@@ -165,7 +192,11 @@ static void atc_desc_put(struct at_dma_chan *atchan, struct at_desc *desc)
 		dev_vdbg(chan2dev(&atchan->chan_common),
 			 "moving desc %p to freelist\n", desc);
 		list_add(&desc->desc_node, &atchan->free_list);
+<<<<<<< HEAD
 		spin_unlock_irqrestore(&atchan->lock, flags);
+=======
+		spin_unlock_bh(&atchan->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -193,6 +224,30 @@ static void atc_desc_chain(struct at_desc **first, struct at_desc **prev,
 }
 
 /**
+<<<<<<< HEAD
+=======
+ * atc_assign_cookie - compute and assign new cookie
+ * @atchan: channel we work on
+ * @desc: descriptor to assign cookie for
+ *
+ * Called with atchan->lock held and bh disabled
+ */
+static dma_cookie_t
+atc_assign_cookie(struct at_dma_chan *atchan, struct at_desc *desc)
+{
+	dma_cookie_t cookie = atchan->chan_common.cookie;
+
+	if (++cookie < 0)
+		cookie = 1;
+
+	atchan->chan_common.cookie = cookie;
+	desc->txd.cookie = cookie;
+
+	return cookie;
+}
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * atc_dostart - starts the DMA engine for real
  * @atchan: the channel we want to start
  * @first: first descriptor in the list we want to begin with
@@ -245,9 +300,13 @@ atc_chain_complete(struct at_dma_chan *atchan, struct at_desc *desc)
 	dev_vdbg(chan2dev(&atchan->chan_common),
 		"descriptor %u complete\n", txd->cookie);
 
+<<<<<<< HEAD
 	/* mark the descriptor as complete for non cyclic cases only */
 	if (!atc_chan_is_cyclic(atchan))
 		dma_cookie_complete(txd);
+=======
+	atchan->completed_cookie = txd->cookie;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* move children to free_list */
 	list_splice_init(&desc->tx_list, &atchan->free_list);
@@ -281,7 +340,11 @@ atc_chain_complete(struct at_dma_chan *atchan, struct at_desc *desc)
 
 	/* for cyclic transfers,
 	 * no need to replay callback function while stopping */
+<<<<<<< HEAD
 	if (!atc_chan_is_cyclic(atchan)) {
+=======
+	if (!test_bit(ATC_IS_CYCLIC, &atchan->status)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dma_async_tx_callback	callback = txd->callback;
 		void			*param = txd->callback_param;
 
@@ -453,17 +516,29 @@ static void atc_handle_cyclic(struct at_dma_chan *atchan)
 static void atc_tasklet(unsigned long data)
 {
 	struct at_dma_chan *atchan = (struct at_dma_chan *)data;
+<<<<<<< HEAD
 	unsigned long flags;
 
 	spin_lock_irqsave(&atchan->lock, flags);
 	if (test_and_clear_bit(ATC_IS_ERROR, &atchan->status))
 		atc_handle_error(atchan);
 	else if (atc_chan_is_cyclic(atchan))
+=======
+
+	spin_lock(&atchan->lock);
+	if (test_and_clear_bit(ATC_IS_ERROR, &atchan->status))
+		atc_handle_error(atchan);
+	else if (test_bit(ATC_IS_CYCLIC, &atchan->status))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		atc_handle_cyclic(atchan);
 	else
 		atc_advance_work(atchan);
 
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&atchan->lock, flags);
+=======
+	spin_unlock(&atchan->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static irqreturn_t at_dma_interrupt(int irq, void *dev_id)
@@ -522,10 +597,16 @@ static dma_cookie_t atc_tx_submit(struct dma_async_tx_descriptor *tx)
 	struct at_desc		*desc = txd_to_at_desc(tx);
 	struct at_dma_chan	*atchan = to_at_dma_chan(tx->chan);
 	dma_cookie_t		cookie;
+<<<<<<< HEAD
 	unsigned long		flags;
 
 	spin_lock_irqsave(&atchan->lock, flags);
 	cookie = dma_cookie_assign(tx);
+=======
+
+	spin_lock_bh(&atchan->lock);
+	cookie = atc_assign_cookie(atchan, desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (list_empty(&atchan->active_list)) {
 		dev_vdbg(chan2dev(tx->chan), "tx_submit: started %u\n",
@@ -538,7 +619,11 @@ static dma_cookie_t atc_tx_submit(struct dma_async_tx_descriptor *tx)
 		list_add_tail(&desc->desc_node, &atchan->queue);
 	}
 
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&atchan->lock, flags);
+=======
+	spin_unlock_bh(&atchan->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return cookie;
 }
@@ -637,6 +722,7 @@ err_desc_get:
  * @sg_len: number of entries in @scatterlist
  * @direction: DMA direction
  * @flags: tx descriptor status flags
+<<<<<<< HEAD
  * @context: transaction context (ignored)
  */
 static struct dma_async_tx_descriptor *
@@ -647,6 +733,16 @@ atc_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
 	struct at_dma_chan	*atchan = to_at_dma_chan(chan);
 	struct at_dma_slave	*atslave = chan->private;
 	struct dma_slave_config	*sconfig = &atchan->dma_sconfig;
+=======
+ */
+static struct dma_async_tx_descriptor *
+atc_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+		unsigned int sg_len, enum dma_data_direction direction,
+		unsigned long flags)
+{
+	struct at_dma_chan	*atchan = to_at_dma_chan(chan);
+	struct at_dma_slave	*atslave = chan->private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct at_desc		*first = NULL;
 	struct at_desc		*prev = NULL;
 	u32			ctrla;
@@ -660,6 +756,7 @@ atc_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
 
 	dev_vdbg(chan2dev(chan), "prep_slave_sg (%d): %s f0x%lx\n",
 			sg_len,
+<<<<<<< HEAD
 			direction == DMA_MEM_TO_DEV ? "TO DEVICE" : "FROM DEVICE",
 			flags);
 
@@ -668,18 +765,38 @@ atc_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
 		return NULL;
 	}
 
+=======
+			direction == DMA_TO_DEVICE ? "TO DEVICE" : "FROM DEVICE",
+			flags);
+
+	if (unlikely(!atslave || !sg_len)) {
+		dev_dbg(chan2dev(chan), "prep_dma_memcpy: length is zero!\n");
+		return NULL;
+	}
+
+	reg_width = atslave->reg_width;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ctrla = ATC_DEFAULT_CTRLA | atslave->ctrla;
 	ctrlb = ATC_IEN;
 
 	switch (direction) {
+<<<<<<< HEAD
 	case DMA_MEM_TO_DEV:
 		reg_width = convert_buswidth(sconfig->dst_addr_width);
+=======
+	case DMA_TO_DEVICE:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ctrla |=  ATC_DST_WIDTH(reg_width);
 		ctrlb |=  ATC_DST_ADDR_MODE_FIXED
 			| ATC_SRC_ADDR_MODE_INCR
 			| ATC_FC_MEM2PER
 			| ATC_SIF(AT_DMA_MEM_IF) | ATC_DIF(AT_DMA_PER_IF);
+<<<<<<< HEAD
 		reg = sconfig->dst_addr;
+=======
+		reg = atslave->tx_reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for_each_sg(sgl, sg, sg_len, i) {
 			struct at_desc	*desc;
 			u32		len;
@@ -691,11 +808,14 @@ atc_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
 
 			mem = sg_dma_address(sg);
 			len = sg_dma_len(sg);
+<<<<<<< HEAD
 			if (unlikely(!len)) {
 				dev_dbg(chan2dev(chan),
 					"prep_slave_sg: sg(%d) data length is zero\n", i);
 				goto err;
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mem_width = 2;
 			if (unlikely(mem & 3 || len & 3))
 				mem_width = 0;
@@ -711,15 +831,23 @@ atc_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
 			total_len += len;
 		}
 		break;
+<<<<<<< HEAD
 	case DMA_DEV_TO_MEM:
 		reg_width = convert_buswidth(sconfig->src_addr_width);
+=======
+	case DMA_FROM_DEVICE:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ctrla |=  ATC_SRC_WIDTH(reg_width);
 		ctrlb |=  ATC_DST_ADDR_MODE_INCR
 			| ATC_SRC_ADDR_MODE_FIXED
 			| ATC_FC_PER2MEM
 			| ATC_SIF(AT_DMA_PER_IF) | ATC_DIF(AT_DMA_MEM_IF);
 
+<<<<<<< HEAD
 		reg = sconfig->src_addr;
+=======
+		reg = atslave->rx_reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for_each_sg(sgl, sg, sg_len, i) {
 			struct at_desc	*desc;
 			u32		len;
@@ -731,11 +859,14 @@ atc_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
 
 			mem = sg_dma_address(sg);
 			len = sg_dma_len(sg);
+<<<<<<< HEAD
 			if (unlikely(!len)) {
 				dev_dbg(chan2dev(chan),
 					"prep_slave_sg: sg(%d) data length is zero\n", i);
 				goto err;
 			}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mem_width = 2;
 			if (unlikely(mem & 3 || len & 3))
 				mem_width = 0;
@@ -769,7 +900,10 @@ atc_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
 
 err_desc_get:
 	dev_err(chan2dev(chan), "not enough descriptors available\n");
+<<<<<<< HEAD
 err:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atc_desc_put(atchan, first);
 	return NULL;
 }
@@ -780,7 +914,11 @@ err:
  */
 static int
 atc_dma_cyclic_check_values(unsigned int reg_width, dma_addr_t buf_addr,
+<<<<<<< HEAD
 		size_t period_len, enum dma_transfer_direction direction)
+=======
+		size_t period_len, enum dma_data_direction direction)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (period_len > (ATC_BTSIZE_MAX << reg_width))
 		goto err_out;
@@ -788,7 +926,11 @@ atc_dma_cyclic_check_values(unsigned int reg_width, dma_addr_t buf_addr,
 		goto err_out;
 	if (unlikely(buf_addr & ((1 << reg_width) - 1)))
 		goto err_out;
+<<<<<<< HEAD
 	if (unlikely(!(direction & (DMA_DEV_TO_MEM | DMA_MEM_TO_DEV))))
+=======
+	if (unlikely(!(direction & (DMA_TO_DEVICE | DMA_FROM_DEVICE))))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err_out;
 
 	return 0;
@@ -801,6 +943,7 @@ err_out:
  * atc_dma_cyclic_fill_desc - Fill one period decriptor
  */
 static int
+<<<<<<< HEAD
 atc_dma_cyclic_fill_desc(struct dma_chan *chan, struct at_desc *desc,
 		unsigned int period_index, dma_addr_t buf_addr,
 		unsigned int reg_width, size_t period_len,
@@ -810,6 +953,14 @@ atc_dma_cyclic_fill_desc(struct dma_chan *chan, struct at_desc *desc,
 	struct at_dma_slave	*atslave = chan->private;
 	struct dma_slave_config	*sconfig = &atchan->dma_sconfig;
 	u32			ctrla;
+=======
+atc_dma_cyclic_fill_desc(struct at_dma_slave *atslave, struct at_desc *desc,
+		unsigned int period_index, dma_addr_t buf_addr,
+		size_t period_len, enum dma_data_direction direction)
+{
+	u32		ctrla;
+	unsigned int	reg_width = atslave->reg_width;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* prepare common CRTLA value */
 	ctrla =   ATC_DEFAULT_CTRLA | atslave->ctrla
@@ -818,9 +969,15 @@ atc_dma_cyclic_fill_desc(struct dma_chan *chan, struct at_desc *desc,
 		| period_len >> reg_width;
 
 	switch (direction) {
+<<<<<<< HEAD
 	case DMA_MEM_TO_DEV:
 		desc->lli.saddr = buf_addr + (period_len * period_index);
 		desc->lli.daddr = sconfig->dst_addr;
+=======
+	case DMA_TO_DEVICE:
+		desc->lli.saddr = buf_addr + (period_len * period_index);
+		desc->lli.daddr = atslave->tx_reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		desc->lli.ctrla = ctrla;
 		desc->lli.ctrlb = ATC_DST_ADDR_MODE_FIXED
 				| ATC_SRC_ADDR_MODE_INCR
@@ -829,8 +986,13 @@ atc_dma_cyclic_fill_desc(struct dma_chan *chan, struct at_desc *desc,
 				| ATC_DIF(AT_DMA_PER_IF);
 		break;
 
+<<<<<<< HEAD
 	case DMA_DEV_TO_MEM:
 		desc->lli.saddr = sconfig->src_addr;
+=======
+	case DMA_FROM_DEVICE:
+		desc->lli.saddr = atslave->rx_reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		desc->lli.daddr = buf_addr + (period_len * period_index);
 		desc->lli.ctrla = ctrla;
 		desc->lli.ctrlb = ATC_DST_ADDR_MODE_INCR
@@ -854,6 +1016,7 @@ atc_dma_cyclic_fill_desc(struct dma_chan *chan, struct at_desc *desc,
  * @buf_len: total number of bytes for the entire buffer
  * @period_len: number of bytes for each period
  * @direction: transfer direction, to or from device
+<<<<<<< HEAD
  * @context: transfer context (ignored)
  */
 static struct dma_async_tx_descriptor *
@@ -868,11 +1031,27 @@ atc_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t buf_addr, size_t buf_len,
 	struct at_desc		*prev = NULL;
 	unsigned long		was_cyclic;
 	unsigned int		reg_width;
+=======
+ */
+static struct dma_async_tx_descriptor *
+atc_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t buf_addr, size_t buf_len,
+		size_t period_len, enum dma_data_direction direction)
+{
+	struct at_dma_chan	*atchan = to_at_dma_chan(chan);
+	struct at_dma_slave	*atslave = chan->private;
+	struct at_desc		*first = NULL;
+	struct at_desc		*prev = NULL;
+	unsigned long		was_cyclic;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int		periods = buf_len / period_len;
 	unsigned int		i;
 
 	dev_vdbg(chan2dev(chan), "prep_dma_cyclic: %s buf@0x%08x - %d (%d/%d)\n",
+<<<<<<< HEAD
 			direction == DMA_MEM_TO_DEV ? "TO DEVICE" : "FROM DEVICE",
+=======
+			direction == DMA_TO_DEVICE ? "TO DEVICE" : "FROM DEVICE",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			buf_addr,
 			periods, buf_len, period_len);
 
@@ -887,6 +1066,7 @@ atc_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t buf_addr, size_t buf_len,
 		return NULL;
 	}
 
+<<<<<<< HEAD
 	if (sconfig->direction == DMA_MEM_TO_DEV)
 		reg_width = convert_buswidth(sconfig->dst_addr_width);
 	else
@@ -894,6 +1074,10 @@ atc_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t buf_addr, size_t buf_len,
 
 	/* Check for too big/unaligned periods and unaligned DMA buffer */
 	if (atc_dma_cyclic_check_values(reg_width, buf_addr,
+=======
+	/* Check for too big/unaligned periods and unaligned DMA buffer */
+	if (atc_dma_cyclic_check_values(atslave->reg_width, buf_addr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					period_len, direction))
 		goto err_out;
 
@@ -905,8 +1089,13 @@ atc_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t buf_addr, size_t buf_len,
 		if (!desc)
 			goto err_desc_get;
 
+<<<<<<< HEAD
 		if (atc_dma_cyclic_fill_desc(chan, desc, i, buf_addr,
 					     reg_width, period_len, direction))
+=======
+		if (atc_dma_cyclic_fill_desc(atslave, desc, i, buf_addr,
+						period_len, direction))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto err_desc_get;
 
 		atc_desc_chain(&first, &prev, desc);
@@ -929,6 +1118,7 @@ err_out:
 	return NULL;
 }
 
+<<<<<<< HEAD
 static int set_runtime_config(struct dma_chan *chan,
 			      struct dma_slave_config *sconfig)
 {
@@ -946,6 +1136,8 @@ static int set_runtime_config(struct dma_chan *chan,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int atc_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
 		       unsigned long arg)
@@ -953,29 +1145,49 @@ static int atc_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
 	struct at_dma_chan	*atchan = to_at_dma_chan(chan);
 	struct at_dma		*atdma = to_at_dma(chan->device);
 	int			chan_id = atchan->chan_common.chan_id;
+<<<<<<< HEAD
 	unsigned long		flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	LIST_HEAD(list);
 
 	dev_vdbg(chan2dev(chan), "atc_control (%d)\n", cmd);
 
 	if (cmd == DMA_PAUSE) {
+<<<<<<< HEAD
 		spin_lock_irqsave(&atchan->lock, flags);
+=======
+		spin_lock_bh(&atchan->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		dma_writel(atdma, CHER, AT_DMA_SUSP(chan_id));
 		set_bit(ATC_IS_PAUSED, &atchan->status);
 
+<<<<<<< HEAD
 		spin_unlock_irqrestore(&atchan->lock, flags);
 	} else if (cmd == DMA_RESUME) {
 		if (!atc_chan_is_paused(atchan))
 			return 0;
 
 		spin_lock_irqsave(&atchan->lock, flags);
+=======
+		spin_unlock_bh(&atchan->lock);
+	} else if (cmd == DMA_RESUME) {
+		if (!test_bit(ATC_IS_PAUSED, &atchan->status))
+			return 0;
+
+		spin_lock_bh(&atchan->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		dma_writel(atdma, CHDR, AT_DMA_RES(chan_id));
 		clear_bit(ATC_IS_PAUSED, &atchan->status);
 
+<<<<<<< HEAD
 		spin_unlock_irqrestore(&atchan->lock, flags);
+=======
+		spin_unlock_bh(&atchan->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (cmd == DMA_TERMINATE_ALL) {
 		struct at_desc	*desc, *_desc;
 		/*
@@ -984,7 +1196,11 @@ static int atc_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
 		 * channel. We still have to poll the channel enable bit due
 		 * to AHB/HSB limitations.
 		 */
+<<<<<<< HEAD
 		spin_lock_irqsave(&atchan->lock, flags);
+=======
+		spin_lock_bh(&atchan->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* disabling channel: must also remove suspend state */
 		dma_writel(atdma, CHDR, AT_DMA_RES(chan_id) | atchan->mask);
@@ -1005,9 +1221,13 @@ static int atc_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
 		/* if channel dedicated to cyclic operations, free it */
 		clear_bit(ATC_IS_CYCLIC, &atchan->status);
 
+<<<<<<< HEAD
 		spin_unlock_irqrestore(&atchan->lock, flags);
 	} else if (cmd == DMA_SLAVE_CONFIG) {
 		return set_runtime_config(chan, (struct dma_slave_config *)arg);
+=======
+		spin_unlock_bh(&atchan->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		return -ENXIO;
 	}
@@ -1033,6 +1253,7 @@ atc_tx_status(struct dma_chan *chan,
 	struct at_dma_chan	*atchan = to_at_dma_chan(chan);
 	dma_cookie_t		last_used;
 	dma_cookie_t		last_complete;
+<<<<<<< HEAD
 	unsigned long		flags;
 	enum dma_status		ret;
 
@@ -1054,6 +1275,34 @@ atc_tx_status(struct dma_chan *chan,
 		dma_set_residue(txstate, atc_first_active(atchan)->len);
 
 	if (atc_chan_is_paused(atchan))
+=======
+	enum dma_status		ret;
+
+	spin_lock_bh(&atchan->lock);
+
+	last_complete = atchan->completed_cookie;
+	last_used = chan->cookie;
+
+	ret = dma_async_is_complete(cookie, last_complete, last_used);
+	if (ret != DMA_SUCCESS) {
+		atc_cleanup_descriptors(atchan);
+
+		last_complete = atchan->completed_cookie;
+		last_used = chan->cookie;
+
+		ret = dma_async_is_complete(cookie, last_complete, last_used);
+	}
+
+	spin_unlock_bh(&atchan->lock);
+
+	if (ret != DMA_SUCCESS)
+		dma_set_tx_state(txstate, last_complete, last_used,
+			atc_first_active(atchan)->len);
+	else
+		dma_set_tx_state(txstate, last_complete, last_used, 0);
+
+	if (test_bit(ATC_IS_PAUSED, &atchan->status))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = DMA_PAUSED;
 
 	dev_vdbg(chan2dev(chan), "tx_status %d: cookie = %d (d%d, u%d)\n",
@@ -1070,11 +1319,15 @@ atc_tx_status(struct dma_chan *chan,
 static void atc_issue_pending(struct dma_chan *chan)
 {
 	struct at_dma_chan	*atchan = to_at_dma_chan(chan);
+<<<<<<< HEAD
 	unsigned long		flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev_vdbg(chan2dev(chan), "issue_pending\n");
 
 	/* Not needed for cyclic transfers */
+<<<<<<< HEAD
 	if (atc_chan_is_cyclic(atchan))
 		return;
 
@@ -1083,6 +1336,16 @@ static void atc_issue_pending(struct dma_chan *chan)
 		atc_advance_work(atchan);
 	}
 	spin_unlock_irqrestore(&atchan->lock, flags);
+=======
+	if (test_bit(ATC_IS_CYCLIC, &atchan->status))
+		return;
+
+	spin_lock_bh(&atchan->lock);
+	if (!atc_chan_is_enabled(atchan)) {
+		atc_advance_work(atchan);
+	}
+	spin_unlock_bh(&atchan->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1098,7 +1361,10 @@ static int atc_alloc_chan_resources(struct dma_chan *chan)
 	struct at_dma		*atdma = to_at_dma(chan->device);
 	struct at_desc		*desc;
 	struct at_dma_slave	*atslave;
+<<<<<<< HEAD
 	unsigned long		flags;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			i;
 	u32			cfg;
 	LIST_HEAD(tmp_list);
@@ -1142,11 +1408,19 @@ static int atc_alloc_chan_resources(struct dma_chan *chan)
 		list_add_tail(&desc->desc_node, &tmp_list);
 	}
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&atchan->lock, flags);
 	atchan->descs_allocated = i;
 	list_splice(&tmp_list, &atchan->free_list);
 	dma_cookie_init(chan);
 	spin_unlock_irqrestore(&atchan->lock, flags);
+=======
+	spin_lock_bh(&atchan->lock);
+	atchan->descs_allocated = i;
+	list_splice(&tmp_list, &atchan->free_list);
+	atchan->completed_cookie = chan->cookie = 1;
+	spin_unlock_bh(&atchan->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* channel parameters */
 	channel_writel(atchan, CFG, cfg);
@@ -1193,6 +1467,7 @@ static void atc_free_chan_resources(struct dma_chan *chan)
 
 /*--  Module Management  -----------------------------------------------*/
 
+<<<<<<< HEAD
 /* cap_mask is a multi-u32 bitfield, fill it with proper C code. */
 static struct at_dma_platform_data at91sam9rl_config = {
 	.nr_channels = 2,
@@ -1243,6 +1518,8 @@ static inline struct at_dma_platform_data * __init at_dma_get_driver_data(
 			platform_get_device_id(pdev)->driver_data;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * at_dma_off - disable DMA controller
  * @atdma: the Atmel HDAMC device
@@ -1261,12 +1538,17 @@ static void at_dma_off(struct at_dma *atdma)
 
 static int __init at_dma_probe(struct platform_device *pdev)
 {
+<<<<<<< HEAD
+=======
+	struct at_dma_platform_data *pdata;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct resource		*io;
 	struct at_dma		*atdma;
 	size_t			size;
 	int			irq;
 	int			err;
 	int			i;
+<<<<<<< HEAD
 	struct at_dma_platform_data *plat_dat;
 
 	/* setup platform data for each SoC */
@@ -1278,6 +1560,13 @@ static int __init at_dma_probe(struct platform_device *pdev)
 	plat_dat = at_dma_get_driver_data(pdev);
 	if (!plat_dat)
 		return -ENODEV;
+=======
+
+	/* get DMA Controller parameters from platform */
+	pdata = pdev->dev.platform_data;
+	if (!pdata || pdata->nr_channels > AT_DMA_MAX_NR_CHANNELS)
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	io = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	if (!io)
@@ -1288,16 +1577,28 @@ static int __init at_dma_probe(struct platform_device *pdev)
 		return irq;
 
 	size = sizeof(struct at_dma);
+<<<<<<< HEAD
 	size += plat_dat->nr_channels * sizeof(struct at_dma_chan);
+=======
+	size += pdata->nr_channels * sizeof(struct at_dma_chan);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atdma = kzalloc(size, GFP_KERNEL);
 	if (!atdma)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	/* discover transaction capabilities */
 	atdma->dma_common.cap_mask = plat_dat->cap_mask;
 	atdma->all_chan_mask = (1 << plat_dat->nr_channels) - 1;
 
 	size = resource_size(io);
+=======
+	/* discover transaction capabilites from the platform data */
+	atdma->dma_common.cap_mask = pdata->cap_mask;
+	atdma->all_chan_mask = (1 << pdata->nr_channels) - 1;
+
+	size = io->end - io->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!request_mem_region(io->start, size, pdev->dev.driver->name)) {
 		err = -EBUSY;
 		goto err_kfree;
@@ -1341,11 +1642,20 @@ static int __init at_dma_probe(struct platform_device *pdev)
 
 	/* initialize channels related values */
 	INIT_LIST_HEAD(&atdma->dma_common.channels);
+<<<<<<< HEAD
 	for (i = 0; i < plat_dat->nr_channels; i++) {
 		struct at_dma_chan	*atchan = &atdma->chan[i];
 
 		atchan->chan_common.device = &atdma->dma_common;
 		dma_cookie_init(&atchan->chan_common);
+=======
+	for (i = 0; i < pdata->nr_channels; i++, atdma->dma_common.chancnt++) {
+		struct at_dma_chan	*atchan = &atdma->chan[i];
+
+		atchan->chan_common.device = &atdma->dma_common;
+		atchan->chan_common.cookie = atchan->completed_cookie = 1;
+		atchan->chan_common.chan_id = i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_add_tail(&atchan->chan_common.device_node,
 				&atdma->dma_common.channels);
 
@@ -1373,6 +1683,7 @@ static int __init at_dma_probe(struct platform_device *pdev)
 	if (dma_has_cap(DMA_MEMCPY, atdma->dma_common.cap_mask))
 		atdma->dma_common.device_prep_dma_memcpy = atc_prep_dma_memcpy;
 
+<<<<<<< HEAD
 	if (dma_has_cap(DMA_SLAVE, atdma->dma_common.cap_mask)) {
 		atdma->dma_common.device_prep_slave_sg = atc_prep_slave_sg;
 		/* controller can do slave DMA: can trigger cyclic transfers */
@@ -1380,13 +1691,28 @@ static int __init at_dma_probe(struct platform_device *pdev)
 		atdma->dma_common.device_prep_dma_cyclic = atc_prep_dma_cyclic;
 		atdma->dma_common.device_control = atc_control;
 	}
+=======
+	if (dma_has_cap(DMA_SLAVE, atdma->dma_common.cap_mask))
+		atdma->dma_common.device_prep_slave_sg = atc_prep_slave_sg;
+
+	if (dma_has_cap(DMA_CYCLIC, atdma->dma_common.cap_mask))
+		atdma->dma_common.device_prep_dma_cyclic = atc_prep_dma_cyclic;
+
+	if (dma_has_cap(DMA_SLAVE, atdma->dma_common.cap_mask) ||
+	    dma_has_cap(DMA_CYCLIC, atdma->dma_common.cap_mask))
+		atdma->dma_common.device_control = atc_control;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dma_writel(atdma, EN, AT_DMA_ENABLE);
 
 	dev_info(&pdev->dev, "Atmel AHB DMA Controller ( %s%s), %d channels\n",
 	  dma_has_cap(DMA_MEMCPY, atdma->dma_common.cap_mask) ? "cpy " : "",
 	  dma_has_cap(DMA_SLAVE, atdma->dma_common.cap_mask)  ? "slave " : "",
+<<<<<<< HEAD
 	  plat_dat->nr_channels);
+=======
+	  atdma->dma_common.chancnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dma_async_device_register(&atdma->dma_common);
 
@@ -1440,7 +1766,11 @@ static int __exit at_dma_remove(struct platform_device *pdev)
 	atdma->regs = NULL;
 
 	io = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+<<<<<<< HEAD
 	release_mem_region(io->start, resource_size(io));
+=======
+	release_mem_region(io->start, io->end - io->start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kfree(atdma);
 
@@ -1455,6 +1785,7 @@ static void at_dma_shutdown(struct platform_device *pdev)
 	clk_disable(atdma->clk);
 }
 
+<<<<<<< HEAD
 static int at_dma_prepare(struct device *dev)
 {
 	struct platform_device *pdev = to_platform_device(dev);
@@ -1490,10 +1821,13 @@ static void atc_suspend_cyclic(struct at_dma_chan *atchan)
 	vdbg_dump_regs(atchan);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int at_dma_suspend_noirq(struct device *dev)
 {
 	struct platform_device *pdev = to_platform_device(dev);
 	struct at_dma *atdma = platform_get_drvdata(pdev);
+<<<<<<< HEAD
 	struct dma_chan *chan, *_chan;
 
 	/* preserve data */
@@ -1509,10 +1843,15 @@ static int at_dma_suspend_noirq(struct device *dev)
 
 	/* disable DMA controller */
 	at_dma_off(atdma);
+=======
+
+	at_dma_off(platform_get_drvdata(pdev));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clk_disable(atdma->clk);
 	return 0;
 }
 
+<<<<<<< HEAD
 static void atc_resume_cyclic(struct at_dma_chan *atchan)
 {
 	struct at_dma	*atdma = to_at_dma(atchan->chan_common.device);
@@ -1532,10 +1871,13 @@ static void atc_resume_cyclic(struct at_dma_chan *atchan)
 	vdbg_dump_regs(atchan);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int at_dma_resume_noirq(struct device *dev)
 {
 	struct platform_device *pdev = to_platform_device(dev);
 	struct at_dma *atdma = platform_get_drvdata(pdev);
+<<<<<<< HEAD
 	struct dma_chan *chan, *_chan;
 
 	/* bring back DMA controller */
@@ -1556,11 +1898,19 @@ static int at_dma_resume_noirq(struct device *dev)
 		if (atc_chan_is_cyclic(atchan))
 			atc_resume_cyclic(atchan);
 	}
+=======
+
+	clk_enable(atdma->clk);
+	dma_writel(atdma, EN, AT_DMA_ENABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static const struct dev_pm_ops at_dma_dev_pm_ops = {
+<<<<<<< HEAD
 	.prepare = at_dma_prepare,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.suspend_noirq = at_dma_suspend_noirq,
 	.resume_noirq = at_dma_resume_noirq,
 };
@@ -1568,11 +1918,17 @@ static const struct dev_pm_ops at_dma_dev_pm_ops = {
 static struct platform_driver at_dma_driver = {
 	.remove		= __exit_p(at_dma_remove),
 	.shutdown	= at_dma_shutdown,
+<<<<<<< HEAD
 	.id_table	= atdma_devtypes,
 	.driver = {
 		.name	= "at_hdmac",
 		.pm	= &at_dma_dev_pm_ops,
 		.of_match_table	= of_match_ptr(atmel_dma_dt_ids),
+=======
+	.driver = {
+		.name	= "at_hdmac",
+		.pm	= &at_dma_dev_pm_ops,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

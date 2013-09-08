@@ -154,6 +154,11 @@ int drm_getsareactx(struct drm_device *dev, void *data,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
+=======
+	mutex_unlock(&dev->struct_mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	request->handle = NULL;
 	list_for_each_entry(_entry, &dev->maplist, head) {
 		if (_entry->map == map) {
@@ -162,9 +167,12 @@ int drm_getsareactx(struct drm_device *dev, void *data,
 			break;
 		}
 	}
+<<<<<<< HEAD
 
 	mutex_unlock(&dev->struct_mutex);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (request->handle == NULL)
 		return -EINVAL;
 

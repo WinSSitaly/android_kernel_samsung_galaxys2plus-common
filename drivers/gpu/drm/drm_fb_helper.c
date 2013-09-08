@@ -31,7 +31,10 @@
 #include <linux/sysrq.h>
 #include <linux/slab.h>
 #include <linux/fb.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drmP.h"
 #include "drm_crtc.h"
 #include "drm_fb_helper.h"
@@ -255,6 +258,7 @@ bool drm_fb_helper_force_kernel_mode(void)
 int drm_fb_helper_panic(struct notifier_block *n, unsigned long ununsed,
 			void *panic_str)
 {
+<<<<<<< HEAD
 	/*
 	 * It's a waste of time and effort to switch back to text console
 	 * if the kernel should reboot before panic messages can be seen.
@@ -264,6 +268,11 @@ int drm_fb_helper_panic(struct notifier_block *n, unsigned long ununsed,
 
 	printk(KERN_ERR "panic occurred, switching back to text console\n");
 	return drm_fb_helper_force_kernel_mode();
+=======
+	printk(KERN_ERR "panic occurred, switching back to text console\n");
+	return drm_fb_helper_force_kernel_mode();
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(drm_fb_helper_panic);
 
@@ -306,40 +315,128 @@ static struct sysrq_key_op sysrq_drm_fb_helper_restore_op = {
 static struct sysrq_key_op sysrq_drm_fb_helper_restore_op = { };
 #endif
 
+<<<<<<< HEAD
 static void drm_fb_helper_dpms(struct fb_info *info, int dpms_mode)
+=======
+static void drm_fb_helper_on(struct fb_info *info)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_fb_helper *fb_helper = info->par;
 	struct drm_device *dev = fb_helper->dev;
 	struct drm_crtc *crtc;
+<<<<<<< HEAD
 	struct drm_connector *connector;
 	int i, j;
 
 	/*
 	 * For each CRTC in this fb, turn the connectors on/off.
+=======
+	struct drm_crtc_helper_funcs *crtc_funcs;
+	struct drm_connector *connector;
+	struct drm_encoder *encoder;
+	int i, j;
+
+	/*
+	 * For each CRTC in this fb, turn the crtc on then,
+	 * find all associated encoders and turn them on.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	mutex_lock(&dev->mode_config.mutex);
 	for (i = 0; i < fb_helper->crtc_count; i++) {
 		crtc = fb_helper->crtc_info[i].mode_set.crtc;
+<<<<<<< HEAD
+=======
+		crtc_funcs = crtc->helper_private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (!crtc->enabled)
 			continue;
 
+<<<<<<< HEAD
 		/* Walk the connectors & encoders on this fb turning them on/off */
 		for (j = 0; j < fb_helper->connector_count; j++) {
 			connector = fb_helper->connector_info[j]->connector;
 			drm_helper_connector_dpms(connector, dpms_mode);
 			drm_connector_property_set_value(connector,
 				dev->mode_config.dpms_property, dpms_mode);
+=======
+		crtc_funcs->dpms(crtc, DRM_MODE_DPMS_ON);
+
+		/* Walk the connectors & encoders on this fb turning them on */
+		for (j = 0; j < fb_helper->connector_count; j++) {
+			connector = fb_helper->connector_info[j]->connector;
+			connector->dpms = DRM_MODE_DPMS_ON;
+			drm_connector_property_set_value(connector,
+							 dev->mode_config.dpms_property,
+							 DRM_MODE_DPMS_ON);
+		}
+		/* Found a CRTC on this fb, now find encoders */
+		list_for_each_entry(encoder, &dev->mode_config.encoder_list, head) {
+			if (encoder->crtc == crtc) {
+				struct drm_encoder_helper_funcs *encoder_funcs;
+
+				encoder_funcs = encoder->helper_private;
+				encoder_funcs->dpms(encoder, DRM_MODE_DPMS_ON);
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	mutex_unlock(&dev->mode_config.mutex);
 }
 
+<<<<<<< HEAD
+=======
+static void drm_fb_helper_off(struct fb_info *info, int dpms_mode)
+{
+	struct drm_fb_helper *fb_helper = info->par;
+	struct drm_device *dev = fb_helper->dev;
+	struct drm_crtc *crtc;
+	struct drm_crtc_helper_funcs *crtc_funcs;
+	struct drm_connector *connector;
+	struct drm_encoder *encoder;
+	int i, j;
+
+	/*
+	 * For each CRTC in this fb, find all associated encoders
+	 * and turn them off, then turn off the CRTC.
+	 */
+	mutex_lock(&dev->mode_config.mutex);
+	for (i = 0; i < fb_helper->crtc_count; i++) {
+		crtc = fb_helper->crtc_info[i].mode_set.crtc;
+		crtc_funcs = crtc->helper_private;
+
+		if (!crtc->enabled)
+			continue;
+
+		/* Walk the connectors on this fb and mark them off */
+		for (j = 0; j < fb_helper->connector_count; j++) {
+			connector = fb_helper->connector_info[j]->connector;
+			connector->dpms = dpms_mode;
+			drm_connector_property_set_value(connector,
+							 dev->mode_config.dpms_property,
+							 dpms_mode);
+		}
+		/* Found a CRTC on this fb, now find encoders */
+		list_for_each_entry(encoder, &dev->mode_config.encoder_list, head) {
+			if (encoder->crtc == crtc) {
+				struct drm_encoder_helper_funcs *encoder_funcs;
+
+				encoder_funcs = encoder->helper_private;
+				encoder_funcs->dpms(encoder, dpms_mode);
+			}
+		}
+		crtc_funcs->dpms(crtc, DRM_MODE_DPMS_OFF);
+	}
+	mutex_unlock(&dev->mode_config.mutex);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int drm_fb_helper_blank(int blank, struct fb_info *info)
 {
 	switch (blank) {
 	/* Display: On; HSync: On, VSync: On */
 	case FB_BLANK_UNBLANK:
+<<<<<<< HEAD
 		drm_fb_helper_dpms(info, DRM_MODE_DPMS_ON);
 		break;
 	/* Display: Off; HSync: On, VSync: On */
@@ -357,6 +454,25 @@ int drm_fb_helper_blank(int blank, struct fb_info *info)
 	/* Display: Off; HSync: Off, VSync: Off */
 	case FB_BLANK_POWERDOWN:
 		drm_fb_helper_dpms(info, DRM_MODE_DPMS_OFF);
+=======
+		drm_fb_helper_on(info);
+		break;
+	/* Display: Off; HSync: On, VSync: On */
+	case FB_BLANK_NORMAL:
+		drm_fb_helper_off(info, DRM_MODE_DPMS_STANDBY);
+		break;
+	/* Display: Off; HSync: Off, VSync: On */
+	case FB_BLANK_HSYNC_SUSPEND:
+		drm_fb_helper_off(info, DRM_MODE_DPMS_STANDBY);
+		break;
+	/* Display: Off; HSync: On, VSync: Off */
+	case FB_BLANK_VSYNC_SUSPEND:
+		drm_fb_helper_off(info, DRM_MODE_DPMS_SUSPEND);
+		break;
+	/* Display: Off; HSync: Off, VSync: Off */
+	case FB_BLANK_POWERDOWN:
+		drm_fb_helper_off(info, DRM_MODE_DPMS_OFF);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 	return 0;
@@ -370,11 +486,16 @@ static void drm_fb_helper_crtc_free(struct drm_fb_helper *helper)
 	for (i = 0; i < helper->connector_count; i++)
 		kfree(helper->connector_info[i]);
 	kfree(helper->connector_info);
+<<<<<<< HEAD
 	for (i = 0; i < helper->crtc_count; i++) {
 		kfree(helper->crtc_info[i].mode_set.connectors);
 		if (helper->crtc_info[i].mode_set.mode)
 			drm_mode_destroy(helper->dev, helper->crtc_info[i].mode_set.mode);
 	}
+=======
+	for (i = 0; i < helper->crtc_count; i++)
+		kfree(helper->crtc_info[i].mode_set.connectors);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(helper->crtc_info);
 }
 
@@ -417,10 +538,18 @@ int drm_fb_helper_init(struct drm_device *dev,
 
 	i = 0;
 	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
+<<<<<<< HEAD
 		fb_helper->crtc_info[i].mode_set.crtc = crtc;
 		i++;
 	}
 
+=======
+		fb_helper->crtc_info[i].crtc_id = crtc->base.id;
+		fb_helper->crtc_info[i].mode_set.crtc = crtc;
+		i++;
+	}
+	fb_helper->conn_limit = max_conn_count;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 out_free:
 	drm_fb_helper_crtc_free(fb_helper);

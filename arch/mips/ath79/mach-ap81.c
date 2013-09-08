@@ -10,11 +10,18 @@
  */
 
 #include "machtypes.h"
+<<<<<<< HEAD
 #include "dev-wmac.h"
 #include "dev-gpio-buttons.h"
 #include "dev-leds-gpio.h"
 #include "dev-spi.h"
 #include "dev-usb.h"
+=======
+#include "dev-ar913x-wmac.h"
+#include "dev-gpio-buttons.h"
+#include "dev-leds-gpio.h"
+#include "dev-spi.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AP81_GPIO_LED_STATUS	1
 #define AP81_GPIO_LED_AOSS	3
@@ -92,8 +99,12 @@ static void __init ap81_setup(void)
 					ap81_gpio_keys);
 	ath79_register_spi(&ap81_spi_data, ap81_spi_info,
 			   ARRAY_SIZE(ap81_spi_info));
+<<<<<<< HEAD
 	ath79_register_wmac(cal_data);
 	ath79_register_usb();
+=======
+	ath79_register_ar913x_wmac(cal_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 MIPS_MACHINE(ATH79_MACH_AP81, "AP81", "Atheros AP81 reference board",

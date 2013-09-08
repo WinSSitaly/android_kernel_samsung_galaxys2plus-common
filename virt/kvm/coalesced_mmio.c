@@ -24,6 +24,7 @@ static inline struct kvm_coalesced_mmio_dev *to_mmio(struct kvm_io_device *dev)
 static int coalesced_mmio_in_range(struct kvm_coalesced_mmio_dev *dev,
 				   gpa_t addr, int len)
 {
+<<<<<<< HEAD
 	/* is it in a batchable area ?
 	 * (addr,len) is fully included in
 	 * (zone->addr, zone->size)
@@ -43,6 +44,12 @@ static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev)
 {
 	struct kvm_coalesced_mmio_ring *ring;
 	unsigned avail;
+=======
+	struct kvm_coalesced_mmio_zone *zone;
+	struct kvm_coalesced_mmio_ring *ring;
+	unsigned avail;
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Are we able to batch it ? */
 
@@ -52,12 +59,33 @@ static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev)
 	 */
 	ring = dev->kvm->coalesced_mmio_ring;
 	avail = (ring->first - ring->last - 1) % KVM_COALESCED_MMIO_MAX;
+<<<<<<< HEAD
 	if (avail == 0) {
+=======
+	if (avail < KVM_MAX_VCPUS) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* full */
 		return 0;
 	}
 
+<<<<<<< HEAD
 	return 1;
+=======
+	/* is it in a batchable area ? */
+
+	for (i = 0; i < dev->nb_zones; i++) {
+		zone = &dev->zone[i];
+
+		/* (addr,len) is fully included in
+		 * (zone->addr, zone->size)
+		 */
+
+		if (zone->addr <= addr &&
+		    addr + len <= zone->addr + zone->size)
+			return 1;
+	}
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int coalesced_mmio_write(struct kvm_io_device *this,
@@ -65,6 +93,7 @@ static int coalesced_mmio_write(struct kvm_io_device *this,
 {
 	struct kvm_coalesced_mmio_dev *dev = to_mmio(this);
 	struct kvm_coalesced_mmio_ring *ring = dev->kvm->coalesced_mmio_ring;
+<<<<<<< HEAD
 
 	if (!coalesced_mmio_in_range(dev, addr, len))
 		return -EOPNOTSUPP;
@@ -75,6 +104,12 @@ static int coalesced_mmio_write(struct kvm_io_device *this,
 		spin_unlock(&dev->kvm->ring_lock);
 		return -EOPNOTSUPP;
 	}
+=======
+	if (!coalesced_mmio_in_range(dev, addr, len))
+		return -EOPNOTSUPP;
+
+	spin_lock(&dev->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* copy data in first free entry of the ring */
 
@@ -83,7 +118,11 @@ static int coalesced_mmio_write(struct kvm_io_device *this,
 	memcpy(ring->coalesced_mmio[ring->last].data, val, len);
 	smp_wmb();
 	ring->last = (ring->last + 1) % KVM_COALESCED_MMIO_MAX;
+<<<<<<< HEAD
 	spin_unlock(&dev->kvm->ring_lock);
+=======
+	spin_unlock(&dev->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -91,8 +130,11 @@ static void coalesced_mmio_destructor(struct kvm_io_device *this)
 {
 	struct kvm_coalesced_mmio_dev *dev = to_mmio(this);
 
+<<<<<<< HEAD
 	list_del(&dev->list);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(dev);
 }
 
@@ -103,6 +145,10 @@ static const struct kvm_io_device_ops coalesced_mmio_ops = {
 
 int kvm_coalesced_mmio_init(struct kvm *kvm)
 {
+<<<<<<< HEAD
+=======
+	struct kvm_coalesced_mmio_dev *dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct page *page;
 	int ret;
 
@@ -110,6 +156,7 @@ int kvm_coalesced_mmio_init(struct kvm *kvm)
 	page = alloc_page(GFP_KERNEL | __GFP_ZERO);
 	if (!page)
 		goto out_err;
+<<<<<<< HEAD
 
 	ret = 0;
 	kvm->coalesced_mmio_ring = page_address(page);
@@ -122,6 +169,33 @@ int kvm_coalesced_mmio_init(struct kvm *kvm)
 	spin_lock_init(&kvm->ring_lock);
 	INIT_LIST_HEAD(&kvm->coalesced_zones);
 
+=======
+	kvm->coalesced_mmio_ring = page_address(page);
+
+	ret = -ENOMEM;
+	dev = kzalloc(sizeof(struct kvm_coalesced_mmio_dev), GFP_KERNEL);
+	if (!dev)
+		goto out_free_page;
+	spin_lock_init(&dev->lock);
+	kvm_iodevice_init(&dev->dev, &coalesced_mmio_ops);
+	dev->kvm = kvm;
+	kvm->coalesced_mmio_dev = dev;
+
+	mutex_lock(&kvm->slots_lock);
+	ret = kvm_io_bus_register_dev(kvm, KVM_MMIO_BUS, &dev->dev);
+	mutex_unlock(&kvm->slots_lock);
+	if (ret < 0)
+		goto out_free_dev;
+
+	return ret;
+
+out_free_dev:
+	kvm->coalesced_mmio_dev = NULL;
+	kfree(dev);
+out_free_page:
+	kvm->coalesced_mmio_ring = NULL;
+	__free_page(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_err:
 	return ret;
 }
@@ -135,6 +209,7 @@ void kvm_coalesced_mmio_free(struct kvm *kvm)
 int kvm_vm_ioctl_register_coalesced_mmio(struct kvm *kvm,
 					 struct kvm_coalesced_mmio_zone *zone)
 {
+<<<<<<< HEAD
 	int ret;
 	struct kvm_coalesced_mmio_dev *dev;
 
@@ -164,12 +239,30 @@ out_free_dev:
 	if (dev == NULL)
 		return -ENXIO;
 
+=======
+	struct kvm_coalesced_mmio_dev *dev = kvm->coalesced_mmio_dev;
+
+	if (dev == NULL)
+		return -ENXIO;
+
+	mutex_lock(&kvm->slots_lock);
+	if (dev->nb_zones >= KVM_COALESCED_MMIO_ZONE_MAX) {
+		mutex_unlock(&kvm->slots_lock);
+		return -ENOBUFS;
+	}
+
+	dev->zone[dev->nb_zones] = *zone;
+	dev->nb_zones++;
+
+	mutex_unlock(&kvm->slots_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 int kvm_vm_ioctl_unregister_coalesced_mmio(struct kvm *kvm,
 					   struct kvm_coalesced_mmio_zone *zone)
 {
+<<<<<<< HEAD
 	struct kvm_coalesced_mmio_dev *dev, *tmp;
 
 	mutex_lock(&kvm->slots_lock);
@@ -179,6 +272,32 @@ int kvm_vm_ioctl_unregister_coalesced_mmio(struct kvm *kvm,
 			kvm_io_bus_unregister_dev(kvm, KVM_MMIO_BUS, &dev->dev);
 			kvm_iodevice_destructor(&dev->dev);
 		}
+=======
+	int i;
+	struct kvm_coalesced_mmio_dev *dev = kvm->coalesced_mmio_dev;
+	struct kvm_coalesced_mmio_zone *z;
+
+	if (dev == NULL)
+		return -ENXIO;
+
+	mutex_lock(&kvm->slots_lock);
+
+	i = dev->nb_zones;
+	while (i) {
+		z = &dev->zone[i - 1];
+
+		/* unregister all zones
+		 * included in (zone->addr, zone->size)
+		 */
+
+		if (zone->addr <= z->addr &&
+		    z->addr + z->size <= zone->addr + zone->size) {
+			dev->nb_zones--;
+			*z = dev->zone[dev->nb_zones];
+		}
+		i--;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_unlock(&kvm->slots_lock);
 

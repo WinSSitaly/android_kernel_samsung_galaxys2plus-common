@@ -11,7 +11,11 @@
 #include <linux/init.h>
 #include <linux/errno.h>
 #include <linux/cpu.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/workqueue.h>
 #include <asm/smp.h>
 
@@ -31,14 +35,23 @@ static struct work_struct sclp_cpu_change_work;
 static void sclp_cpu_capability_notify(struct work_struct *work)
 {
 	int cpu;
+<<<<<<< HEAD
 	struct device *dev;
+=======
+	struct sys_device *sysdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	s390_adjust_jiffies();
 	pr_warning("cpu capability changed.\n");
 	get_online_cpus();
 	for_each_online_cpu(cpu) {
+<<<<<<< HEAD
 		dev = get_cpu_device(cpu);
 		kobject_uevent(&dev->kobj, KOBJ_CHANGE);
+=======
+		sysdev = get_cpu_sysdev(cpu);
+		kobject_uevent(&sysdev->kobj, KOBJ_CHANGE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	put_online_cpus();
 }

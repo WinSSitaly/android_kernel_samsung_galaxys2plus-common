@@ -17,6 +17,10 @@
 #include <linux/types.h>
 
 #include <asm/sysreg.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AVR32_PERFCTR_IRQ_GROUP	0
 #define AVR32_PERFCTR_IRQ_LINE	1

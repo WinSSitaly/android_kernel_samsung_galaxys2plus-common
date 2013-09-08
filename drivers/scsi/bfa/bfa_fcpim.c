@@ -19,12 +19,19 @@
 #include "bfa_modules.h"
 
 BFA_TRC_FILE(HAL, FCPIM);
+<<<<<<< HEAD
+=======
+BFA_MODULE(fcpim);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  *  BFA ITNIM Related definitions
  */
 static void bfa_itnim_update_del_itn_stats(struct bfa_itnim_s *itnim);
+<<<<<<< HEAD
 static void bfa_ioim_lm_init(struct bfa_s *bfa);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define BFA_ITNIM_FROM_TAG(_fcpim, _tag)                                \
 	(((_fcpim)->itnim_arr + ((_tag) & ((_fcpim)->num_itnims - 1))))
@@ -67,11 +74,14 @@ static void bfa_ioim_lm_init(struct bfa_s *bfa);
 	}								\
 } while (0)
 
+<<<<<<< HEAD
 enum bfa_ioim_lm_ua_status {
 	BFA_IOIM_LM_UA_RESET = 0,
 	BFA_IOIM_LM_UA_SET = 1,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *  itnim state machine event
  */
@@ -292,16 +302,36 @@ static void     bfa_tskim_sm_hcb(struct bfa_tskim_s *tskim,
  * Compute and return memory needed by FCP(im) module.
  */
 static void
+<<<<<<< HEAD
 bfa_fcpim_meminfo(struct bfa_iocfc_cfg_s *cfg, u32 *km_len)
 {
 	bfa_itnim_meminfo(cfg, km_len);
+=======
+bfa_fcpim_meminfo(struct bfa_iocfc_cfg_s *cfg, u32 *km_len,
+		u32 *dm_len)
+{
+	bfa_itnim_meminfo(cfg, km_len, dm_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * IO memory
 	 */
+<<<<<<< HEAD
 	*km_len += cfg->fwcfg.num_ioim_reqs *
 	  (sizeof(struct bfa_ioim_s) + sizeof(struct bfa_ioim_sp_s));
 
+=======
+	if (cfg->fwcfg.num_ioim_reqs < BFA_IOIM_MIN)
+		cfg->fwcfg.num_ioim_reqs = BFA_IOIM_MIN;
+	else if (cfg->fwcfg.num_ioim_reqs > BFA_IOIM_MAX)
+		cfg->fwcfg.num_ioim_reqs = BFA_IOIM_MAX;
+
+	*km_len += cfg->fwcfg.num_ioim_reqs *
+	  (sizeof(struct bfa_ioim_s) + sizeof(struct bfa_ioim_sp_s));
+
+	*dm_len += cfg->fwcfg.num_ioim_reqs * BFI_IOIM_SNSLEN;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * task management command memory
 	 */
@@ -312,26 +342,40 @@ bfa_fcpim_meminfo(struct bfa_iocfc_cfg_s *cfg, u32 *km_len)
 
 
 static void
+<<<<<<< HEAD
 bfa_fcpim_attach(struct bfa_fcp_mod_s *fcp, void *bfad,
 		struct bfa_iocfc_cfg_s *cfg, struct bfa_pcidev_s *pcidev)
 {
 	struct bfa_fcpim_s *fcpim = &fcp->fcpim;
 	struct bfa_s *bfa = fcp->bfa;
+=======
+bfa_fcpim_attach(struct bfa_s *bfa, void *bfad, struct bfa_iocfc_cfg_s *cfg,
+		struct bfa_meminfo_s *meminfo, struct bfa_pcidev_s *pcidev)
+{
+	struct bfa_fcpim_mod_s *fcpim = BFA_FCPIM_MOD(bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bfa_trc(bfa, cfg->drvcfg.path_tov);
 	bfa_trc(bfa, cfg->fwcfg.num_rports);
 	bfa_trc(bfa, cfg->fwcfg.num_ioim_reqs);
 	bfa_trc(bfa, cfg->fwcfg.num_tskim_reqs);
 
+<<<<<<< HEAD
 	fcpim->fcp		= fcp;
 	fcpim->bfa		= bfa;
 	fcpim->num_itnims	= cfg->fwcfg.num_rports;
+=======
+	fcpim->bfa		= bfa;
+	fcpim->num_itnims	= cfg->fwcfg.num_rports;
+	fcpim->num_ioim_reqs  = cfg->fwcfg.num_ioim_reqs;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fcpim->num_tskim_reqs = cfg->fwcfg.num_tskim_reqs;
 	fcpim->path_tov		= cfg->drvcfg.path_tov;
 	fcpim->delay_comp	= cfg->drvcfg.delay_comp;
 	fcpim->profile_comp = NULL;
 	fcpim->profile_start = NULL;
 
+<<<<<<< HEAD
 	bfa_itnim_attach(fcpim);
 	bfa_tskim_attach(fcpim);
 	bfa_ioim_attach(fcpim);
@@ -494,12 +538,67 @@ bfa_fcpim_profile_off(struct bfa_s *bfa)
 	fcpim->profile_comp = NULL;
 	fcpim->profile_start = NULL;
 	return BFA_STATUS_OK;
+=======
+	bfa_itnim_attach(fcpim, meminfo);
+	bfa_tskim_attach(fcpim, meminfo);
+	bfa_ioim_attach(fcpim, meminfo);
+}
+
+static void
+bfa_fcpim_detach(struct bfa_s *bfa)
+{
+}
+
+static void
+bfa_fcpim_start(struct bfa_s *bfa)
+{
+}
+
+static void
+bfa_fcpim_stop(struct bfa_s *bfa)
+{
+}
+
+static void
+bfa_fcpim_iocdisable(struct bfa_s *bfa)
+{
+	struct bfa_fcpim_mod_s *fcpim = BFA_FCPIM_MOD(bfa);
+	struct bfa_itnim_s *itnim;
+	struct list_head *qe, *qen;
+
+	list_for_each_safe(qe, qen, &fcpim->itnim_q) {
+		itnim = (struct bfa_itnim_s *) qe;
+		bfa_itnim_iocdisable(itnim);
+	}
+}
+
+void
+bfa_fcpim_path_tov_set(struct bfa_s *bfa, u16 path_tov)
+{
+	struct bfa_fcpim_mod_s *fcpim = BFA_FCPIM_MOD(bfa);
+
+	fcpim->path_tov = path_tov * 1000;
+	if (fcpim->path_tov > BFA_FCPIM_PATHTOV_MAX)
+		fcpim->path_tov = BFA_FCPIM_PATHTOV_MAX;
+}
+
+u16
+bfa_fcpim_path_tov_get(struct bfa_s *bfa)
+{
+	struct bfa_fcpim_mod_s *fcpim = BFA_FCPIM_MOD(bfa);
+
+	return fcpim->path_tov / 1000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 u16
 bfa_fcpim_qdepth_get(struct bfa_s *bfa)
 {
+<<<<<<< HEAD
 	struct bfa_fcpim_s *fcpim = BFA_FCPIM(bfa);
+=======
+	struct bfa_fcpim_mod_s *fcpim = BFA_FCPIM_MOD(bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return fcpim->q_depth;
 }
@@ -1101,7 +1200,12 @@ bfa_itnim_tskdone(struct bfa_itnim_s *itnim)
 }
 
 void
+<<<<<<< HEAD
 bfa_itnim_meminfo(struct bfa_iocfc_cfg_s *cfg, u32 *km_len)
+=======
+bfa_itnim_meminfo(struct bfa_iocfc_cfg_s *cfg, u32 *km_len,
+		u32 *dm_len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * ITN memory
@@ -1110,16 +1214,26 @@ bfa_itnim_meminfo(struct bfa_iocfc_cfg_s *cfg, u32 *km_len)
 }
 
 void
+<<<<<<< HEAD
 bfa_itnim_attach(struct bfa_fcpim_s *fcpim)
 {
 	struct bfa_s	*bfa = fcpim->bfa;
 	struct bfa_fcp_mod_s	*fcp = fcpim->fcp;
+=======
+bfa_itnim_attach(struct bfa_fcpim_mod_s *fcpim, struct bfa_meminfo_s *minfo)
+{
+	struct bfa_s	*bfa = fcpim->bfa;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfa_itnim_s *itnim;
 	int	i, j;
 
 	INIT_LIST_HEAD(&fcpim->itnim_q);
 
+<<<<<<< HEAD
 	itnim = (struct bfa_itnim_s *) bfa_mem_kva_curp(fcp);
+=======
+	itnim = (struct bfa_itnim_s *) bfa_meminfo_kva(minfo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fcpim->itnim_arr = itnim;
 
 	for (i = 0; i < fcpim->num_itnims; i++, itnim++) {
@@ -1141,7 +1255,11 @@ bfa_itnim_attach(struct bfa_fcpim_s *fcpim)
 		bfa_sm_set_state(itnim, bfa_itnim_sm_uninit);
 	}
 
+<<<<<<< HEAD
 	bfa_mem_kva_curp(fcp) = (u8 *) itnim;
+=======
+	bfa_meminfo_kva(minfo) = (u8 *) itnim;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void
@@ -1154,7 +1272,11 @@ bfa_itnim_iocdisable(struct bfa_itnim_s *itnim)
 static bfa_boolean_t
 bfa_itnim_send_fwcreate(struct bfa_itnim_s *itnim)
 {
+<<<<<<< HEAD
 	struct bfi_itn_create_req_s *m;
+=======
+	struct bfi_itnim_create_req_s *m;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	itnim->msg_no++;
 
@@ -1167,8 +1289,13 @@ bfa_itnim_send_fwcreate(struct bfa_itnim_s *itnim)
 		return BFA_FALSE;
 	}
 
+<<<<<<< HEAD
 	bfi_h2i_set(m->mh, BFI_MC_ITN, BFI_ITN_H2I_CREATE_REQ,
 			bfa_fn_lpu(itnim->bfa));
+=======
+	bfi_h2i_set(m->mh, BFI_MC_ITNIM, BFI_ITNIM_H2I_CREATE_REQ,
+			bfa_lpuid(itnim->bfa));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	m->fw_handle = itnim->rport->fw_handle;
 	m->class = FC_CLASS_3;
 	m->seq_rec = itnim->seq_rec;
@@ -1178,14 +1305,22 @@ bfa_itnim_send_fwcreate(struct bfa_itnim_s *itnim)
 	/*
 	 * queue I/O message to firmware
 	 */
+<<<<<<< HEAD
 	bfa_reqq_produce(itnim->bfa, itnim->reqq, m->mh);
+=======
+	bfa_reqq_produce(itnim->bfa, itnim->reqq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return BFA_TRUE;
 }
 
 static bfa_boolean_t
 bfa_itnim_send_fwdelete(struct bfa_itnim_s *itnim)
 {
+<<<<<<< HEAD
 	struct bfi_itn_delete_req_s *m;
+=======
+	struct bfi_itnim_delete_req_s *m;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * check for room in queue to send request now
@@ -1196,15 +1331,24 @@ bfa_itnim_send_fwdelete(struct bfa_itnim_s *itnim)
 		return BFA_FALSE;
 	}
 
+<<<<<<< HEAD
 	bfi_h2i_set(m->mh, BFI_MC_ITN, BFI_ITN_H2I_DELETE_REQ,
 			bfa_fn_lpu(itnim->bfa));
+=======
+	bfi_h2i_set(m->mh, BFI_MC_ITNIM, BFI_ITNIM_H2I_DELETE_REQ,
+			bfa_lpuid(itnim->bfa));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	m->fw_handle = itnim->rport->fw_handle;
 	bfa_stats(itnim, fw_delete);
 
 	/*
 	 * queue I/O message to firmware
 	 */
+<<<<<<< HEAD
 	bfa_reqq_produce(itnim->bfa, itnim->reqq, m->mh);
+=======
+	bfa_reqq_produce(itnim->bfa, itnim->reqq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return BFA_TRUE;
 }
 
@@ -1335,7 +1479,11 @@ bfa_itnim_iotov_delete(struct bfa_itnim_s *itnim)
 static void
 bfa_itnim_update_del_itn_stats(struct bfa_itnim_s *itnim)
 {
+<<<<<<< HEAD
 	struct bfa_fcpim_s *fcpim = BFA_FCPIM(itnim->bfa);
+=======
+	struct bfa_fcpim_mod_s *fcpim = BFA_FCPIM_MOD(itnim->bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fcpim->del_itn_stats.del_itn_iocomp_aborted +=
 		itnim->stats.iocomp_aborted;
 	fcpim->del_itn_stats.del_itn_iocomp_timedout +=
@@ -1361,8 +1509,13 @@ bfa_itnim_update_del_itn_stats(struct bfa_itnim_s *itnim)
 void
 bfa_itnim_isr(struct bfa_s *bfa, struct bfi_msg_s *m)
 {
+<<<<<<< HEAD
 	struct bfa_fcpim_s *fcpim = BFA_FCPIM(bfa);
 	union bfi_itn_i2h_msg_u msg;
+=======
+	struct bfa_fcpim_mod_s *fcpim = BFA_FCPIM_MOD(bfa);
+	union bfi_itnim_i2h_msg_u msg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfa_itnim_s *itnim;
 
 	bfa_trc(bfa, m->mhdr.msg_id);
@@ -1370,7 +1523,11 @@ bfa_itnim_isr(struct bfa_s *bfa, struct bfi_msg_s *m)
 	msg.msg = m;
 
 	switch (m->mhdr.msg_id) {
+<<<<<<< HEAD
 	case BFI_ITN_I2H_CREATE_RSP:
+=======
+	case BFI_ITNIM_I2H_CREATE_RSP:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		itnim = BFA_ITNIM_FROM_TAG(fcpim,
 						msg.create_rsp->bfa_handle);
 		WARN_ON(msg.create_rsp->status != BFA_STATUS_OK);
@@ -1378,7 +1535,11 @@ bfa_itnim_isr(struct bfa_s *bfa, struct bfi_msg_s *m)
 		bfa_sm_send_event(itnim, BFA_ITNIM_SM_FWRSP);
 		break;
 
+<<<<<<< HEAD
 	case BFI_ITN_I2H_DELETE_RSP:
+=======
+	case BFI_ITNIM_I2H_DELETE_RSP:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		itnim = BFA_ITNIM_FROM_TAG(fcpim,
 						msg.delete_rsp->bfa_handle);
 		WARN_ON(msg.delete_rsp->status != BFA_STATUS_OK);
@@ -1386,7 +1547,11 @@ bfa_itnim_isr(struct bfa_s *bfa, struct bfi_msg_s *m)
 		bfa_sm_send_event(itnim, BFA_ITNIM_SM_FWRSP);
 		break;
 
+<<<<<<< HEAD
 	case BFI_ITN_I2H_SLER_EVENT:
+=======
+	case BFI_ITNIM_I2H_SLER_EVENT:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		itnim = BFA_ITNIM_FROM_TAG(fcpim,
 						msg.sler_event->bfa_handle);
 		bfa_stats(itnim, sler_events);
@@ -1406,11 +1571,17 @@ bfa_itnim_isr(struct bfa_s *bfa, struct bfi_msg_s *m)
 struct bfa_itnim_s *
 bfa_itnim_create(struct bfa_s *bfa, struct bfa_rport_s *rport, void *ditn)
 {
+<<<<<<< HEAD
 	struct bfa_fcpim_s *fcpim = BFA_FCPIM(bfa);
 	struct bfa_itnim_s *itnim;
 
 	bfa_itn_create(bfa, rport, bfa_itnim_isr);
 
+=======
+	struct bfa_fcpim_mod_s *fcpim = BFA_FCPIM_MOD(bfa);
+	struct bfa_itnim_s *itnim;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	itnim = BFA_ITNIM_FROM_TAG(fcpim, rport->rport_tag);
 	WARN_ON(itnim->rport != rport);
 
@@ -1460,6 +1631,7 @@ bfa_itnim_hold_io(struct bfa_itnim_s *itnim)
 		 bfa_sm_cmp_state(itnim, bfa_itnim_sm_iocdisable));
 }
 
+<<<<<<< HEAD
 #define bfa_io_lat_clock_res_div	HZ
 #define bfa_io_lat_clock_res_mul	1000
 bfa_status_t
@@ -1480,6 +1652,8 @@ bfa_itnim_get_ioprofile(struct bfa_itnim_s *itnim,
 	return BFA_STATUS_OK;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void
 bfa_itnim_clear_stats(struct bfa_itnim_s *itnim)
 {
@@ -1548,7 +1722,11 @@ bfa_ioim_sm_uninit(struct bfa_ioim_s *ioim, enum bfa_ioim_event event)
 		bfa_sm_set_state(ioim, bfa_ioim_sm_hcb);
 		WARN_ON(!bfa_q_is_on_q(&ioim->itnim->pending_q, ioim));
 		bfa_cb_queue(ioim->bfa, &ioim->hcb_qe,
+<<<<<<< HEAD
 			__bfa_cb_ioim_abort, ioim);
+=======
+				__bfa_cb_ioim_abort, ioim);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	default:
@@ -2088,6 +2266,7 @@ bfa_ioim_sm_resfree(struct bfa_ioim_s *ioim, enum bfa_ioim_event event)
 	}
 }
 
+<<<<<<< HEAD
 /*
  * This is called from bfa_fcpim_start after the bfa_init() with flash read
  * is complete by driver. now invalidate the stale content of lun mask
@@ -2109,6 +2288,8 @@ bfa_ioim_lm_init(struct bfa_s *bfa)
 		lunm_list[i].rp_tag = BFA_RPORT_TAG_INVALID;
 	}
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void
 __bfa_cb_ioim_good_comp(void *cbarg, bfa_boolean_t complete)
@@ -2145,8 +2326,12 @@ __bfa_cb_ioim_comp(void *cbarg, bfa_boolean_t complete)
 		if ((m->scsi_status == SCSI_STATUS_CHECK_CONDITION) &&
 					m->sns_len) {
 			sns_len = m->sns_len;
+<<<<<<< HEAD
 			snsinfo = BFA_SNSINFO_FROM_TAG(ioim->fcpim->fcp,
 						ioim->iotag);
+=======
+			snsinfo = ioim->iosp->snsinfo;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/*
@@ -2167,6 +2352,7 @@ __bfa_cb_ioim_comp(void *cbarg, bfa_boolean_t complete)
 			  m->scsi_status, sns_len, snsinfo, residue);
 }
 
+<<<<<<< HEAD
 void
 bfa_fcpim_lunmask_rp_update(struct bfa_s *bfa, wwn_t lp_wwn, wwn_t rp_wwn,
 			u16 rp_tag, u8 lp_tag)
@@ -2385,6 +2571,8 @@ bfa_fcpim_lunmask_delete(struct bfa_s *bfa, u16 vf_id, wwn_t *pwwn,
 	return BFA_STATUS_ENTRY_NOT_EXISTS;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 __bfa_cb_ioim_failed(void *cbarg, bfa_boolean_t complete)
 {
@@ -2562,12 +2750,20 @@ bfa_ioim_send_ioreq(struct bfa_ioim_s *ioim)
 	 */
 	switch (m->cmnd.iodir) {
 	case FCP_IODIR_READ:
+<<<<<<< HEAD
 		bfi_h2i_set(m->mh, BFI_MC_IOIM_READ, 0, bfa_fn_lpu(ioim->bfa));
+=======
+		bfi_h2i_set(m->mh, BFI_MC_IOIM_READ, 0, bfa_lpuid(ioim->bfa));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bfa_stats(itnim, input_reqs);
 		ioim->itnim->stats.rd_throughput += fcp_dl;
 		break;
 	case FCP_IODIR_WRITE:
+<<<<<<< HEAD
 		bfi_h2i_set(m->mh, BFI_MC_IOIM_WRITE, 0, bfa_fn_lpu(ioim->bfa));
+=======
+		bfi_h2i_set(m->mh, BFI_MC_IOIM_WRITE, 0, bfa_lpuid(ioim->bfa));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bfa_stats(itnim, output_reqs);
 		ioim->itnim->stats.wr_throughput += fcp_dl;
 		break;
@@ -2575,16 +2771,28 @@ bfa_ioim_send_ioreq(struct bfa_ioim_s *ioim)
 		bfa_stats(itnim, input_reqs);
 		bfa_stats(itnim, output_reqs);
 	default:
+<<<<<<< HEAD
 		bfi_h2i_set(m->mh, BFI_MC_IOIM_IO, 0, bfa_fn_lpu(ioim->bfa));
 	}
 	if (itnim->seq_rec ||
 	    (scsi_bufflen(cmnd) & (sizeof(u32) - 1)))
 		bfi_h2i_set(m->mh, BFI_MC_IOIM_IO, 0, bfa_fn_lpu(ioim->bfa));
+=======
+		bfi_h2i_set(m->mh, BFI_MC_IOIM_IO, 0, bfa_lpuid(ioim->bfa));
+	}
+	if (itnim->seq_rec ||
+	    (scsi_bufflen(cmnd) & (sizeof(u32) - 1)))
+		bfi_h2i_set(m->mh, BFI_MC_IOIM_IO, 0, bfa_lpuid(ioim->bfa));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * queue I/O message to firmware
 	 */
+<<<<<<< HEAD
 	bfa_reqq_produce(ioim->bfa, ioim->reqq, m->mh);
+=======
+	bfa_reqq_produce(ioim->bfa, ioim->reqq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return BFA_TRUE;
 }
 
@@ -2642,14 +2850,22 @@ bfa_ioim_send_abort(struct bfa_ioim_s *ioim)
 	else
 		msgop = BFI_IOIM_H2I_IOCLEANUP_REQ;
 
+<<<<<<< HEAD
 	bfi_h2i_set(m->mh, BFI_MC_IOIM, msgop, bfa_fn_lpu(ioim->bfa));
+=======
+	bfi_h2i_set(m->mh, BFI_MC_IOIM, msgop, bfa_lpuid(ioim->bfa));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	m->io_tag    = cpu_to_be16(ioim->iotag);
 	m->abort_tag = ++ioim->abort_tag;
 
 	/*
 	 * queue I/O message to firmware
 	 */
+<<<<<<< HEAD
 	bfa_reqq_produce(ioim->bfa, ioim->reqq, m->mh);
+=======
+	bfa_reqq_produce(ioim->bfa, ioim->reqq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return BFA_TRUE;
 }
 
@@ -2733,16 +2949,27 @@ bfa_ioim_delayed_comp(struct bfa_ioim_s *ioim, bfa_boolean_t iotov)
  * Memory allocation and initialization.
  */
 void
+<<<<<<< HEAD
 bfa_ioim_attach(struct bfa_fcpim_s *fcpim)
 {
 	struct bfa_ioim_s		*ioim;
 	struct bfa_fcp_mod_s	*fcp = fcpim->fcp;
 	struct bfa_ioim_sp_s	*iosp;
 	u16		i;
+=======
+bfa_ioim_attach(struct bfa_fcpim_mod_s *fcpim, struct bfa_meminfo_s *minfo)
+{
+	struct bfa_ioim_s		*ioim;
+	struct bfa_ioim_sp_s	*iosp;
+	u16		i;
+	u8			*snsinfo;
+	u32		snsbufsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * claim memory first
 	 */
+<<<<<<< HEAD
 	ioim = (struct bfa_ioim_s *) bfa_mem_kva_curp(fcp);
 	fcpim->ioim_arr = ioim;
 	bfa_mem_kva_curp(fcp) = (u8 *) (ioim + fcpim->fcp->num_ioim_reqs);
@@ -2750,15 +2977,45 @@ bfa_ioim_attach(struct bfa_fcpim_s *fcpim)
 	iosp = (struct bfa_ioim_sp_s *) bfa_mem_kva_curp(fcp);
 	fcpim->ioim_sp_arr = iosp;
 	bfa_mem_kva_curp(fcp) = (u8 *) (iosp + fcpim->fcp->num_ioim_reqs);
+=======
+	ioim = (struct bfa_ioim_s *) bfa_meminfo_kva(minfo);
+	fcpim->ioim_arr = ioim;
+	bfa_meminfo_kva(minfo) = (u8 *) (ioim + fcpim->num_ioim_reqs);
+
+	iosp = (struct bfa_ioim_sp_s *) bfa_meminfo_kva(minfo);
+	fcpim->ioim_sp_arr = iosp;
+	bfa_meminfo_kva(minfo) = (u8 *) (iosp + fcpim->num_ioim_reqs);
+
+	/*
+	 * Claim DMA memory for per IO sense data.
+	 */
+	snsbufsz = fcpim->num_ioim_reqs * BFI_IOIM_SNSLEN;
+	fcpim->snsbase.pa  = bfa_meminfo_dma_phys(minfo);
+	bfa_meminfo_dma_phys(minfo) += snsbufsz;
+
+	fcpim->snsbase.kva = bfa_meminfo_dma_virt(minfo);
+	bfa_meminfo_dma_virt(minfo) += snsbufsz;
+	snsinfo = fcpim->snsbase.kva;
+	bfa_iocfc_set_snsbase(fcpim->bfa, fcpim->snsbase.pa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Initialize ioim free queues
 	 */
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&fcpim->ioim_resfree_q);
 	INIT_LIST_HEAD(&fcpim->ioim_comp_q);
 
 	for (i = 0; i < fcpim->fcp->num_ioim_reqs;
 	     i++, ioim++, iosp++) {
+=======
+	INIT_LIST_HEAD(&fcpim->ioim_free_q);
+	INIT_LIST_HEAD(&fcpim->ioim_resfree_q);
+	INIT_LIST_HEAD(&fcpim->ioim_comp_q);
+
+	for (i = 0; i < fcpim->num_ioim_reqs;
+	     i++, ioim++, iosp++, snsinfo += BFI_IOIM_SNSLEN) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * initialize IOIM
 		 */
@@ -2767,19 +3024,32 @@ bfa_ioim_attach(struct bfa_fcpim_s *fcpim)
 		ioim->bfa     = fcpim->bfa;
 		ioim->fcpim   = fcpim;
 		ioim->iosp    = iosp;
+<<<<<<< HEAD
+=======
+		iosp->snsinfo = snsinfo;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		INIT_LIST_HEAD(&ioim->sgpg_q);
 		bfa_reqq_winit(&ioim->iosp->reqq_wait,
 				   bfa_ioim_qresume, ioim);
 		bfa_sgpg_winit(&ioim->iosp->sgpg_wqe,
 				   bfa_ioim_sgpg_alloced, ioim);
 		bfa_sm_set_state(ioim, bfa_ioim_sm_uninit);
+<<<<<<< HEAD
+=======
+
+		list_add_tail(&ioim->qe, &fcpim->ioim_free_q);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
 void
 bfa_ioim_isr(struct bfa_s *bfa, struct bfi_msg_s *m)
 {
+<<<<<<< HEAD
 	struct bfa_fcpim_s *fcpim = BFA_FCPIM(bfa);
+=======
+	struct bfa_fcpim_mod_s *fcpim = BFA_FCPIM_MOD(bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfi_ioim_rsp_s *rsp = (struct bfi_ioim_rsp_s *) m;
 	struct bfa_ioim_s *ioim;
 	u16	iotag;
@@ -2863,7 +3133,11 @@ bfa_ioim_isr(struct bfa_s *bfa, struct bfi_msg_s *m)
 void
 bfa_ioim_good_comp_isr(struct bfa_s *bfa, struct bfi_msg_s *m)
 {
+<<<<<<< HEAD
 	struct bfa_fcpim_s *fcpim = BFA_FCPIM(bfa);
+=======
+	struct bfa_fcpim_mod_s *fcpim = BFA_FCPIM_MOD(bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfi_ioim_rsp_s *rsp = (struct bfi_ioim_rsp_s *) m;
 	struct bfa_ioim_s *ioim;
 	u16	iotag;
@@ -2874,7 +3148,10 @@ bfa_ioim_good_comp_isr(struct bfa_s *bfa, struct bfi_msg_s *m)
 	WARN_ON(BFA_IOIM_TAG_2_ID(ioim->iotag) != iotag);
 
 	bfa_ioim_cb_profile_comp(fcpim, ioim);
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_sm_send_event(ioim, BFA_IOIM_SM_COMP_GOOD);
 }
 
@@ -2930,21 +3207,34 @@ struct bfa_ioim_s *
 bfa_ioim_alloc(struct bfa_s *bfa, struct bfad_ioim_s *dio,
 		struct bfa_itnim_s *itnim, u16 nsges)
 {
+<<<<<<< HEAD
 	struct bfa_fcpim_s *fcpim = BFA_FCPIM(bfa);
 	struct bfa_ioim_s *ioim;
 	struct bfa_iotag_s *iotag = NULL;
+=======
+	struct bfa_fcpim_mod_s *fcpim = BFA_FCPIM_MOD(bfa);
+	struct bfa_ioim_s *ioim;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * alocate IOIM resource
 	 */
+<<<<<<< HEAD
 	bfa_q_deq(&fcpim->fcp->iotag_ioim_free_q, &iotag);
 	if (!iotag) {
+=======
+	bfa_q_deq(&fcpim->ioim_free_q, &ioim);
+	if (!ioim) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bfa_stats(itnim, no_iotags);
 		return NULL;
 	}
 
+<<<<<<< HEAD
 	ioim = BFA_IOIM_FROM_TAG(fcpim, iotag->tag);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ioim->dio = dio;
 	ioim->itnim = itnim;
 	ioim->nsges = nsges;
@@ -2961,8 +3251,12 @@ bfa_ioim_alloc(struct bfa_s *bfa, struct bfad_ioim_s *dio,
 void
 bfa_ioim_free(struct bfa_ioim_s *ioim)
 {
+<<<<<<< HEAD
 	struct bfa_fcpim_s *fcpim = ioim->fcpim;
 	struct bfa_iotag_s *iotag;
+=======
+	struct bfa_fcpim_mod_s *fcpim = ioim->fcpim;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ioim->nsgpgs > 0)
 		bfa_sgpg_mfree(ioim->bfa, &ioim->sgpg_q, ioim->nsgpgs);
@@ -2971,6 +3265,7 @@ bfa_ioim_free(struct bfa_ioim_s *ioim)
 	fcpim->ios_active--;
 
 	ioim->iotag &= BFA_IOIM_IOTAG_MASK;
+<<<<<<< HEAD
 
 	WARN_ON(!(ioim->iotag <
 		(fcpim->fcp->num_ioim_reqs + fcpim->fcp->num_fwtio_reqs)));
@@ -2982,6 +3277,10 @@ bfa_ioim_free(struct bfa_ioim_s *ioim)
 		list_add_tail(&iotag->qe, &fcpim->fcp->iotag_tio_free_q);
 
 	list_del(&ioim->qe);
+=======
+	list_del(&ioim->qe);
+	list_add_tail(&ioim->qe, &fcpim->ioim_free_q);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void
@@ -3391,7 +3690,11 @@ bfa_tskim_send(struct bfa_tskim_s *tskim)
 	 * build i/o request message next
 	 */
 	bfi_h2i_set(m->mh, BFI_MC_TSKIM, BFI_TSKIM_H2I_TM_REQ,
+<<<<<<< HEAD
 			bfa_fn_lpu(tskim->bfa));
+=======
+			bfa_lpuid(tskim->bfa));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	m->tsk_tag = cpu_to_be16(tskim->tsk_tag);
 	m->itn_fhdl = tskim->itnim->rport->fw_handle;
@@ -3402,7 +3705,11 @@ bfa_tskim_send(struct bfa_tskim_s *tskim)
 	/*
 	 * queue I/O message to firmware
 	 */
+<<<<<<< HEAD
 	bfa_reqq_produce(tskim->bfa, itnim->reqq, m->mh);
+=======
+	bfa_reqq_produce(tskim->bfa, itnim->reqq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return BFA_TRUE;
 }
 
@@ -3426,14 +3733,22 @@ bfa_tskim_send_abort(struct bfa_tskim_s *tskim)
 	 * build i/o request message next
 	 */
 	bfi_h2i_set(m->mh, BFI_MC_TSKIM, BFI_TSKIM_H2I_ABORT_REQ,
+<<<<<<< HEAD
 			bfa_fn_lpu(tskim->bfa));
+=======
+			bfa_lpuid(tskim->bfa));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	m->tsk_tag  = cpu_to_be16(tskim->tsk_tag);
 
 	/*
 	 * queue I/O message to firmware
 	 */
+<<<<<<< HEAD
 	bfa_reqq_produce(tskim->bfa, itnim->reqq, m->mh);
+=======
+	bfa_reqq_produce(tskim->bfa, itnim->reqq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return BFA_TRUE;
 }
 
@@ -3499,6 +3814,7 @@ bfa_tskim_cleanup(struct bfa_tskim_s *tskim)
  * Memory allocation and initialization.
  */
 void
+<<<<<<< HEAD
 bfa_tskim_attach(struct bfa_fcpim_s *fcpim)
 {
 	struct bfa_tskim_s *tskim;
@@ -3509,6 +3825,16 @@ bfa_tskim_attach(struct bfa_fcpim_s *fcpim)
 	INIT_LIST_HEAD(&fcpim->tskim_unused_q);
 
 	tskim = (struct bfa_tskim_s *) bfa_mem_kva_curp(fcp);
+=======
+bfa_tskim_attach(struct bfa_fcpim_mod_s *fcpim, struct bfa_meminfo_s *minfo)
+{
+	struct bfa_tskim_s *tskim;
+	u16	i;
+
+	INIT_LIST_HEAD(&fcpim->tskim_free_q);
+
+	tskim = (struct bfa_tskim_s *) bfa_meminfo_kva(minfo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fcpim->tskim_arr = tskim;
 
 	for (i = 0; i < fcpim->num_tskim_reqs; i++, tskim++) {
@@ -3527,13 +3853,21 @@ bfa_tskim_attach(struct bfa_fcpim_s *fcpim)
 		list_add_tail(&tskim->qe, &fcpim->tskim_free_q);
 	}
 
+<<<<<<< HEAD
 	bfa_mem_kva_curp(fcp) = (u8 *) tskim;
+=======
+	bfa_meminfo_kva(minfo) = (u8 *) tskim;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void
 bfa_tskim_isr(struct bfa_s *bfa, struct bfi_msg_s *m)
 {
+<<<<<<< HEAD
 	struct bfa_fcpim_s *fcpim = BFA_FCPIM(bfa);
+=======
+	struct bfa_fcpim_mod_s *fcpim = BFA_FCPIM_MOD(bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfi_tskim_rsp_s *rsp = (struct bfi_tskim_rsp_s *) m;
 	struct bfa_tskim_s *tskim;
 	u16	tsk_tag = be16_to_cpu(rsp->tsk_tag);
@@ -3560,7 +3894,11 @@ bfa_tskim_isr(struct bfa_s *bfa, struct bfi_msg_s *m)
 struct bfa_tskim_s *
 bfa_tskim_alloc(struct bfa_s *bfa, struct bfad_tskim_s *dtsk)
 {
+<<<<<<< HEAD
 	struct bfa_fcpim_s *fcpim = BFA_FCPIM(bfa);
+=======
+	struct bfa_fcpim_mod_s *fcpim = BFA_FCPIM_MOD(bfa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfa_tskim_s *tskim;
 
 	bfa_q_deq(&fcpim->tskim_free_q, &tskim);
@@ -3605,6 +3943,7 @@ bfa_tskim_start(struct bfa_tskim_s *tskim, struct bfa_itnim_s *itnim,
 	list_add_tail(&tskim->qe, &itnim->tsk_q);
 	bfa_sm_send_event(tskim, BFA_TSKIM_SM_START);
 }
+<<<<<<< HEAD
 
 void
 bfa_tskim_res_recfg(struct bfa_s *bfa, u16 num_tskim_fw)
@@ -3823,3 +4162,5 @@ bfa_iotag_attach(struct bfa_fcp_mod_s *fcp)
 
 	bfa_mem_kva_curp(fcp) = (u8 *) iotag;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

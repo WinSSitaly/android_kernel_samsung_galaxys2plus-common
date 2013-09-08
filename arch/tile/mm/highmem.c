@@ -224,12 +224,20 @@ void *kmap_atomic_prot(struct page *page, pgprot_t prot)
 }
 EXPORT_SYMBOL(kmap_atomic_prot);
 
+<<<<<<< HEAD
 void *kmap_atomic(struct page *page)
+=======
+void *__kmap_atomic(struct page *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* PAGE_NONE is a magic value that tells us to check immutability. */
 	return kmap_atomic_prot(page, PAGE_NONE);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(kmap_atomic);
+=======
+EXPORT_SYMBOL(__kmap_atomic);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void __kunmap_atomic(void *kvaddr)
 {

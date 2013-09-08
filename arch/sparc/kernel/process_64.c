@@ -12,7 +12,11 @@
 #include <stdarg.h>
 
 #include <linux/errno.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/kernel.h>
 #include <linux/mm.h>
@@ -32,6 +36,10 @@
 #include <linux/nmi.h>
 
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/page.h>
 #include <asm/pgalloc.h>
 #include <asm/pgtable.h>
@@ -94,12 +102,17 @@ void cpu_idle(void)
 	set_thread_flag(TIF_POLLING_NRFLAG);
 
 	while(1) {
+<<<<<<< HEAD
 		tick_nohz_idle_enter();
 		rcu_idle_enter();
+=======
+		tick_nohz_stop_sched_tick(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		while (!need_resched() && !cpu_is_offline(cpu))
 			sparc64_yield(cpu);
 
+<<<<<<< HEAD
 		rcu_idle_exit();
 		tick_nohz_idle_exit();
 
@@ -110,6 +123,19 @@ void cpu_idle(void)
 		}
 #endif
 		schedule_preempt_disabled();
+=======
+		tick_nohz_restart_sched_tick();
+
+		preempt_enable_no_resched();
+
+#ifdef CONFIG_HOTPLUG_CPU
+		if (cpu_is_offline(cpu))
+			cpu_play_dead();
+#endif
+
+		schedule();
+		preempt_disable();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -367,6 +393,12 @@ void flush_thread(void)
 
 	/* Clear FPU register state. */
 	t->fpsaved[0] = 0;
+<<<<<<< HEAD
+=======
+	
+	if (get_thread_current_ds() != ASI_AIUS)
+		set_fs(USER_DS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* It's a bit more tricky when 64-bit tasks are involved... */

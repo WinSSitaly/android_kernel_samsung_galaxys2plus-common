@@ -44,7 +44,11 @@
 
 #include <asm/mach/irq.h>
 
+<<<<<<< HEAD
 #include <asm/gpio.h>
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/menelaus.h>
 
 #define DRIVER_NAME			"menelaus"
@@ -1226,7 +1230,11 @@ static int menelaus_probe(struct i2c_client *client,
 	menelaus_write_reg(MENELAUS_MCT_CTRL1, 0x73);
 
 	if (client->irq > 0) {
+<<<<<<< HEAD
 		err = request_irq(client->irq, menelaus_irq, 0,
+=======
+		err = request_irq(client->irq, menelaus_irq, IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  DRIVER_NAME, menelaus);
 		if (err) {
 			dev_dbg(&client->dev,  "can't get IRQ %d, err %d\n",

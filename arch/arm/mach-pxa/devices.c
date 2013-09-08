@@ -12,7 +12,10 @@
 #include <mach/pxafb.h>
 #include <mach/mmc.h>
 #include <mach/irda.h>
+<<<<<<< HEAD
 #include <mach/irqs.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/ohci.h>
 #include <plat/pxa27x_keypad.h>
 #include <mach/camera.h>
@@ -407,17 +410,31 @@ static struct resource pxa_rtc_resources[] = {
 	[1] = {
 		.start  = IRQ_RTC1Hz,
 		.end    = IRQ_RTC1Hz,
+<<<<<<< HEAD
 		.name	= "rtc 1Hz",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags  = IORESOURCE_IRQ,
 	},
 	[2] = {
 		.start  = IRQ_RTCAlrm,
 		.end    = IRQ_RTCAlrm,
+<<<<<<< HEAD
 		.name	= "rtc alarm",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags  = IORESOURCE_IRQ,
 	},
 };
 
+<<<<<<< HEAD
+=======
+struct platform_device sa1100_device_rtc = {
+	.name		= "sa1100-rtc",
+	.id		= -1,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct platform_device pxa_device_rtc = {
 	.name		= "pxa-rtc",
 	.id		= -1,
@@ -425,6 +442,7 @@ struct platform_device pxa_device_rtc = {
 	.resource       = pxa_rtc_resources,
 };
 
+<<<<<<< HEAD
 static struct resource sa1100_rtc_resources[] = {
 	{
 		.start  = IRQ_RTC1Hz,
@@ -446,6 +464,8 @@ struct platform_device sa1100_device_rtc = {
 	.resource	= sa1100_rtc_resources,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct resource pxa_ac97_resources[] = {
 	[0] = {
 		.start  = 0x40500000,
@@ -1070,6 +1090,7 @@ struct platform_device pxa3xx_device_ssp4 = {
 };
 #endif /* CONFIG_PXA3xx || CONFIG_PXA95x */
 
+<<<<<<< HEAD
 struct resource pxa_resource_gpio[] = {
 	{
 		.start	= 0x40e00000,
@@ -1100,6 +1121,8 @@ struct platform_device pxa_device_gpio = {
 	.resource	= pxa_resource_gpio,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* pxa2xx-spi platform-device ID equals respective SSP platform-device ID + 1.
  * See comment in arch/arm/mach-pxa/ssp.c::ssp_probe() */
 void __init pxa2xx_set_spi_info(unsigned id, struct pxa2xx_spi_master *info)

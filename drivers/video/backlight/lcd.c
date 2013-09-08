@@ -97,6 +97,7 @@ static ssize_t lcd_store_power(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
 	int rc = -ENXIO;
+<<<<<<< HEAD
 	struct lcd_device *ld = to_lcd_device(dev);
 	unsigned long power;
 
@@ -107,6 +108,21 @@ static ssize_t lcd_store_power(struct device *dev,
 	mutex_lock(&ld->ops_lock);
 	if (ld->ops && ld->ops->set_power) {
 		pr_debug("lcd: set power to %lu\n", power);
+=======
+	char *endp;
+	struct lcd_device *ld = to_lcd_device(dev);
+	int power = simple_strtoul(buf, &endp, 0);
+	size_t size = endp - buf;
+
+	if (isspace(*endp))
+		size++;
+	if (size != count)
+		return -EINVAL;
+
+	mutex_lock(&ld->ops_lock);
+	if (ld->ops && ld->ops->set_power) {
+		pr_debug("lcd: set power to %d\n", power);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ld->ops->set_power(ld, power);
 		rc = count;
 	}
@@ -133,6 +149,7 @@ static ssize_t lcd_store_contrast(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
 	int rc = -ENXIO;
+<<<<<<< HEAD
 	struct lcd_device *ld = to_lcd_device(dev);
 	unsigned long contrast;
 
@@ -143,6 +160,21 @@ static ssize_t lcd_store_contrast(struct device *dev,
 	mutex_lock(&ld->ops_lock);
 	if (ld->ops && ld->ops->set_contrast) {
 		pr_debug("lcd: set contrast to %lu\n", contrast);
+=======
+	char *endp;
+	struct lcd_device *ld = to_lcd_device(dev);
+	int contrast = simple_strtoul(buf, &endp, 0);
+	size_t size = endp - buf;
+
+	if (isspace(*endp))
+		size++;
+	if (size != count)
+		return -EINVAL;
+
+	mutex_lock(&ld->ops_lock);
+	if (ld->ops && ld->ops->set_contrast) {
+		pr_debug("lcd: set contrast to %d\n", contrast);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ld->ops->set_contrast(ld, contrast);
 		rc = count;
 	}
@@ -167,10 +199,26 @@ static void lcd_device_release(struct device *dev)
 	kfree(ld);
 }
 
+<<<<<<< HEAD
+=======
+static ssize_t show_lcd_info(struct device *dev, struct device_attribute *attr, char *buf)
+{
+#if defined(CONFIG_LCD_LD9040) 
+    return sprintf(buf, "%s","SMD_APA1427GL1\n" );
+#else
+    return sprintf(buf, "%s","SMC_LMS501KF09\n" );
+#endif
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct device_attribute lcd_device_attributes[] = {
 	__ATTR(lcd_power, 0644, lcd_show_power, lcd_store_power),
 	__ATTR(contrast, 0644, lcd_show_contrast, lcd_store_contrast),
 	__ATTR(max_contrast, 0444, lcd_show_max_contrast, NULL),
+<<<<<<< HEAD
+=======
+	__ATTR(lcd_type, S_IRUGO, show_lcd_info, NULL),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__ATTR_NULL,
 };
 

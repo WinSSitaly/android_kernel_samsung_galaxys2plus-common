@@ -23,6 +23,109 @@
 #include <asm/sizes.h>
 #include <asm/mach/flash.h>
 
+<<<<<<< HEAD
+=======
+#if 0
+/*
+ * This is here for documentation purposes only - until these people
+ * submit their machine types.  It will be gone January 2005.
+ */
+static struct mtd_partition consus_partitions[] = {
+	{
+		.name		= "Consus boot firmware",
+		.offset		= 0,
+		.size		= 0x00040000,
+		.mask_flags	= MTD_WRITABLE, /* force read-only */
+	}, {
+		.name		= "Consus kernel",
+		.offset		= 0x00040000,
+		.size		= 0x00100000,
+		.mask_flags	= 0,
+	}, {
+		.name		= "Consus disk",
+		.offset		= 0x00140000,
+		/* The rest (up to 16M) for jffs.  We could put 0 and
+		   make it find the size automatically, but right now
+		   i have 32 megs.  jffs will use all 32 megs if given
+		   the chance, and this leads to horrible problems
+		   when you try to re-flash the image because blob
+		   won't erase the whole partition. */
+		.size		= 0x01000000 - 0x00140000,
+		.mask_flags	= 0,
+	}, {
+		/* this disk is a secondary disk, which can be used as
+		   needed, for simplicity, make it the size of the other
+		   consus partition, although realistically it could be
+		   the remainder of the disk (depending on the file
+		   system used) */
+		 .name		= "Consus disk2",
+		 .offset	= 0x01000000,
+		 .size		= 0x01000000 - 0x00140000,
+		 .mask_flags	= 0,
+	}
+};
+
+/* Frodo has 2 x 16M 28F128J3A flash chips in bank 0: */
+static struct mtd_partition frodo_partitions[] =
+{
+	{
+		.name		= "bootloader",
+		.size		= 0x00040000,
+		.offset		= 0x00000000,
+		.mask_flags	= MTD_WRITEABLE
+	}, {
+		.name		= "bootloader params",
+		.size		= 0x00040000,
+		.offset		= MTDPART_OFS_APPEND,
+		.mask_flags	= MTD_WRITEABLE
+	}, {
+		.name		= "kernel",
+		.size		= 0x00100000,
+		.offset		= MTDPART_OFS_APPEND,
+		.mask_flags	= MTD_WRITEABLE
+	}, {
+		.name		= "ramdisk",
+		.size		= 0x00400000,
+		.offset		= MTDPART_OFS_APPEND,
+		.mask_flags	= MTD_WRITEABLE
+	}, {
+		.name		= "file system",
+		.size		= MTDPART_SIZ_FULL,
+		.offset		= MTDPART_OFS_APPEND
+	}
+};
+
+static struct mtd_partition jornada56x_partitions[] = {
+	{
+		.name		= "bootldr",
+		.size		= 0x00040000,
+		.offset		= 0,
+		.mask_flags	= MTD_WRITEABLE,
+	}, {
+		.name		= "rootfs",
+		.size		= MTDPART_SIZ_FULL,
+		.offset		= MTDPART_OFS_APPEND,
+	}
+};
+
+static void jornada56x_set_vpp(int vpp)
+{
+	if (vpp)
+		GPSR = GPIO_GPIO26;
+	else
+		GPCR = GPIO_GPIO26;
+	GPDR |= GPIO_GPIO26;
+}
+
+/*
+ * Machine        Phys          Size    set_vpp
+ * Consus    : SA1100_CS0_PHYS SZ_32M
+ * Frodo     : SA1100_CS0_PHYS SZ_32M
+ * Jornada56x: SA1100_CS0_PHYS SZ_32M jornada56x_set_vpp
+ */
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct sa_subdev_info {
 	char name[16];
 	struct map_info map;
@@ -31,6 +134,7 @@ struct sa_subdev_info {
 };
 
 struct sa_info {
+<<<<<<< HEAD
 	struct mtd_info		*mtd;
 	int			num_subdev;
 	struct sa_subdev_info	subdev[0];
@@ -52,6 +156,19 @@ static void sa1100_set_vpp(struct map_info *map, int on)
 			subdev->plat->set_vpp(0);
 	}
 	spin_unlock_irqrestore(&sa1100_vpp_lock, flags);
+=======
+	struct mtd_partition	*parts;
+	struct mtd_info		*mtd;
+	int			num_subdev;
+	unsigned int		nr_parts;
+	struct sa_subdev_info	subdev[0];
+};
+
+static void sa1100_set_vpp(struct map_info *map, int on)
+{
+	struct sa_subdev_info *subdev = container_of(map, struct sa_subdev_info, map);
+	subdev->plat->set_vpp(on);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void sa1100_destroy_subdev(struct sa_subdev_info *subdev)
@@ -141,6 +258,11 @@ static void sa1100_destroy(struct sa_info *info, struct flash_platform_data *pla
 			mtd_concat_destroy(info->mtd);
 	}
 
+<<<<<<< HEAD
+=======
+	kfree(info->parts);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = info->num_subdev - 1; i >= 0; i--)
 		sa1100_destroy_subdev(&info->subdev[i]);
 	kfree(info);
@@ -249,8 +371,15 @@ static const char *part_probes[] = { "cmdlinepart", "RedBoot", NULL };
 static int __devinit sa1100_mtd_probe(struct platform_device *pdev)
 {
 	struct flash_platform_data *plat = pdev->dev.platform_data;
+<<<<<<< HEAD
 	struct sa_info *info;
 	int err;
+=======
+	struct mtd_partition *parts;
+	const char *part_type = NULL;
+	struct sa_info *info;
+	int err, nr_parts = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!plat)
 		return -ENODEV;
@@ -264,8 +393,31 @@ static int __devinit sa1100_mtd_probe(struct platform_device *pdev)
 	/*
 	 * Partition selection stuff.
 	 */
+<<<<<<< HEAD
 	mtd_device_parse_register(info->mtd, part_probes, NULL, plat->parts,
 				  plat->nr_parts);
+=======
+	nr_parts = parse_mtd_partitions(info->mtd, part_probes, &parts, 0);
+	if (nr_parts > 0) {
+		info->parts = parts;
+		part_type = "dynamic";
+	} else {
+		parts = plat->parts;
+		nr_parts = plat->nr_parts;
+		part_type = "static";
+	}
+
+	if (nr_parts == 0)
+		printk(KERN_NOTICE "SA1100 flash: no partition info "
+			"available, registering whole flash\n");
+	else
+		printk(KERN_NOTICE "SA1100 flash: using %s partition "
+			"definition\n", part_type);
+
+	mtd_device_register(info->mtd, parts, nr_parts);
+
+	info->nr_parts = nr_parts;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	platform_set_drvdata(pdev, info);
 	err = 0;
@@ -285,16 +437,49 @@ static int __exit sa1100_mtd_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct platform_driver sa1100_mtd_driver = {
 	.probe		= sa1100_mtd_probe,
 	.remove		= __exit_p(sa1100_mtd_remove),
+=======
+#ifdef CONFIG_PM
+static void sa1100_mtd_shutdown(struct platform_device *dev)
+{
+	struct sa_info *info = platform_get_drvdata(dev);
+	if (info && info->mtd->suspend(info->mtd) == 0)
+		info->mtd->resume(info->mtd);
+}
+#else
+#define sa1100_mtd_shutdown NULL
+#endif
+
+static struct platform_driver sa1100_mtd_driver = {
+	.probe		= sa1100_mtd_probe,
+	.remove		= __exit_p(sa1100_mtd_remove),
+	.shutdown	= sa1100_mtd_shutdown,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.driver		= {
 		.name	= "sa1100-mtd",
 		.owner	= THIS_MODULE,
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(sa1100_mtd_driver);
+=======
+static int __init sa1100_mtd_init(void)
+{
+	return platform_driver_register(&sa1100_mtd_driver);
+}
+
+static void __exit sa1100_mtd_exit(void)
+{
+	platform_driver_unregister(&sa1100_mtd_driver);
+}
+
+module_init(sa1100_mtd_init);
+module_exit(sa1100_mtd_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Nicolas Pitre");
 MODULE_DESCRIPTION("SA1100 CFI map driver");

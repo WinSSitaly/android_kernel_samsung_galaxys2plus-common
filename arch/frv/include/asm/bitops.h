@@ -403,7 +403,12 @@ int __ilog2_u64(u64 n)
 
 #include <asm-generic/bitops/le.h>
 
+<<<<<<< HEAD
 #include <asm-generic/bitops/ext2-atomic-setbit.h>
+=======
+#define ext2_set_bit_atomic(lock,nr,addr)	test_and_set_bit  ((nr) ^ 0x18, (addr))
+#define ext2_clear_bit_atomic(lock,nr,addr)	test_and_clear_bit((nr) ^ 0x18, (addr))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __KERNEL__ */
 

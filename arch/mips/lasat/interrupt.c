@@ -105,7 +105,10 @@ asmlinkage void plat_irq_dispatch(void)
 static struct irqaction cascade = {
 	.handler	= no_action,
 	.name		= "cascade",
+<<<<<<< HEAD
 	.flags		= IRQF_NO_THREAD,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void __init arch_init_irq(void)

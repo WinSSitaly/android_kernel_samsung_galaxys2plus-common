@@ -43,15 +43,23 @@
  * enabled capacitance sensing inputs and its run/suspend mode.
  */
 #define ELECTRODE_CONF_ADDR		0x5e
+<<<<<<< HEAD
 #define ELECTRODE_CONF_QUICK_CHARGE	0x80
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define AUTO_CONFIG_CTRL_ADDR		0x7b
 #define AUTO_CONFIG_USL_ADDR		0x7d
 #define AUTO_CONFIG_LSL_ADDR		0x7e
 #define AUTO_CONFIG_TL_ADDR		0x7f
 
 /* Threshold of touch/release trigger */
+<<<<<<< HEAD
 #define TOUCH_THRESHOLD			0x08
 #define RELEASE_THRESHOLD		0x05
+=======
+#define TOUCH_THRESHOLD			0x0f
+#define RELEASE_THRESHOLD		0x0a
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Masks for touch and release triggers */
 #define TOUCH_STATUS_MASK		0xfff
 /* MPR121 has 12 keys */
@@ -128,7 +136,11 @@ static int __devinit mpr121_phys_init(const struct mpr121_platform_data *pdata,
 				      struct i2c_client *client)
 {
 	const struct mpr121_init_register *reg;
+<<<<<<< HEAD
 	unsigned char usl, lsl, tl, eleconf;
+=======
+	unsigned char usl, lsl, tl;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i, t, vdd, ret;
 
 	/* Set up touch/release threshold for ele0-ele11 */
@@ -164,6 +176,7 @@ static int __devinit mpr121_phys_init(const struct mpr121_platform_data *pdata,
 	ret = i2c_smbus_write_byte_data(client, AUTO_CONFIG_USL_ADDR, usl);
 	ret |= i2c_smbus_write_byte_data(client, AUTO_CONFIG_LSL_ADDR, lsl);
 	ret |= i2c_smbus_write_byte_data(client, AUTO_CONFIG_TL_ADDR, tl);
+<<<<<<< HEAD
 
 	/*
 	 * Quick charge bit will let the capacitive charge to ready
@@ -173,6 +186,10 @@ static int __devinit mpr121_phys_init(const struct mpr121_platform_data *pdata,
 	eleconf = mpr121->keycount | ELECTRODE_CONF_QUICK_CHARGE;
 	ret |= i2c_smbus_write_byte_data(client, ELECTRODE_CONF_ADDR,
 					 eleconf);
+=======
+	ret |= i2c_smbus_write_byte_data(client, ELECTRODE_CONF_ADDR,
+					 mpr121->keycount);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret != 0)
 		goto err_i2c_write;
 
@@ -330,7 +347,21 @@ static struct i2c_driver mpr_touchkey_driver = {
 	.remove		= __devexit_p(mpr_touchkey_remove),
 };
 
+<<<<<<< HEAD
 module_i2c_driver(mpr_touchkey_driver);
+=======
+static int __init mpr_touchkey_init(void)
+{
+	return i2c_add_driver(&mpr_touchkey_driver);
+}
+module_init(mpr_touchkey_init);
+
+static void __exit mpr_touchkey_exit(void)
+{
+	i2c_del_driver(&mpr_touchkey_driver);
+}
+module_exit(mpr_touchkey_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Zhang Jiejing <jiejing.zhang@freescale.com>");

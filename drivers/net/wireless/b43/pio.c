@@ -4,7 +4,11 @@
 
   PIO data transfer
 
+<<<<<<< HEAD
   Copyright (c) 2005-2008 Michael Buesch <m@bues.ch>
+=======
+  Copyright (c) 2005-2008 Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -111,7 +115,11 @@ static u16 index_to_pioqueue_base(struct b43_wldev *dev,
 		B43_MMIO_PIO11_BASE5,
 	};
 
+<<<<<<< HEAD
 	if (dev->dev->core_rev >= 11) {
+=======
+	if (dev->sdev->id.revision >= 11) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		B43_WARN_ON(index >= ARRAY_SIZE(bases_rev11));
 		return bases_rev11[index];
 	}
@@ -121,14 +129,22 @@ static u16 index_to_pioqueue_base(struct b43_wldev *dev,
 
 static u16 pio_txqueue_offset(struct b43_wldev *dev)
 {
+<<<<<<< HEAD
 	if (dev->dev->core_rev >= 11)
+=======
+	if (dev->sdev->id.revision >= 11)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0x18;
 	return 0;
 }
 
 static u16 pio_rxqueue_offset(struct b43_wldev *dev)
 {
+<<<<<<< HEAD
 	if (dev->dev->core_rev >= 11)
+=======
+	if (dev->sdev->id.revision >= 11)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0x38;
 	return 8;
 }
@@ -144,7 +160,11 @@ static struct b43_pio_txqueue *b43_setup_pioqueue_tx(struct b43_wldev *dev,
 	if (!q)
 		return NULL;
 	q->dev = dev;
+<<<<<<< HEAD
 	q->rev = dev->dev->core_rev;
+=======
+	q->rev = dev->sdev->id.revision;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	q->mmio_base = index_to_pioqueue_base(dev, index) +
 		       pio_txqueue_offset(dev);
 	q->index = index;
@@ -178,7 +198,11 @@ static struct b43_pio_rxqueue *b43_setup_pioqueue_rx(struct b43_wldev *dev,
 	if (!q)
 		return NULL;
 	q->dev = dev;
+<<<<<<< HEAD
 	q->rev = dev->dev->core_rev;
+=======
+	q->rev = dev->sdev->id.revision;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	q->mmio_base = index_to_pioqueue_base(dev, index) +
 		       pio_rxqueue_offset(dev);
 
@@ -196,7 +220,11 @@ static void b43_pio_cancel_tx_packets(struct b43_pio_txqueue *q)
 	for (i = 0; i < ARRAY_SIZE(q->packets); i++) {
 		pack = &(q->packets[i]);
 		if (pack->skb) {
+<<<<<<< HEAD
 			ieee80211_free_txskb(q->dev->wl->hw, pack->skb);
+=======
+			dev_kfree_skb_any(pack->skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pack->skb = NULL;
 		}
 	}
@@ -539,7 +567,11 @@ int b43_pio_tx(struct b43_wldev *dev, struct sk_buff *skb)
 		/* Not enough memory on the queue. */
 		err = -EBUSY;
 		ieee80211_stop_queue(dev->wl->hw, skb_get_queue_mapping(skb));
+<<<<<<< HEAD
 		q->stopped = true;
+=======
+		q->stopped = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
@@ -552,7 +584,11 @@ int b43_pio_tx(struct b43_wldev *dev, struct sk_buff *skb)
 	if (unlikely(err == -ENOKEY)) {
 		/* Drop this packet, as we don't have the encryption key
 		 * anymore and must not transmit it unencrypted. */
+<<<<<<< HEAD
 		ieee80211_free_txskb(dev->wl->hw, skb);
+=======
+		dev_kfree_skb_any(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = 0;
 		goto out;
 	}
@@ -566,7 +602,11 @@ int b43_pio_tx(struct b43_wldev *dev, struct sk_buff *skb)
 	    (q->free_packet_slots == 0)) {
 		/* The queue is full. */
 		ieee80211_stop_queue(dev->wl->hw, skb_get_queue_mapping(skb));
+<<<<<<< HEAD
 		q->stopped = true;
+=======
+		q->stopped = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 out:
@@ -601,7 +641,11 @@ void b43_pio_handle_txstatus(struct b43_wldev *dev,
 
 	if (q->stopped) {
 		ieee80211_wake_queue(dev->wl->hw, q->queue_prio);
+<<<<<<< HEAD
 		q->stopped = false;
+=======
+		q->stopped = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -611,12 +655,17 @@ static bool pio_rx_frame(struct b43_pio_rxqueue *q)
 	struct b43_wldev *dev = q->dev;
 	struct b43_wl *wl = dev->wl;
 	u16 len;
+<<<<<<< HEAD
 	u32 macstat = 0;
+=======
+	u32 macstat;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int i, padding;
 	struct sk_buff *skb;
 	const char *err_msg = NULL;
 	struct b43_rxhdr_fw4 *rxhdr =
 		(struct b43_rxhdr_fw4 *)wl->pio_scratchspace;
+<<<<<<< HEAD
 	size_t rxhdr_size = sizeof(*rxhdr);
 
 	BUILD_BUG_ON(sizeof(wl->pio_scratchspace) < sizeof(*rxhdr));
@@ -630,6 +679,11 @@ static bool pio_rx_frame(struct b43_pio_rxqueue *q)
 		break;
 	}
 	memset(rxhdr, 0, rxhdr_size);
+=======
+
+	BUILD_BUG_ON(sizeof(wl->pio_scratchspace) < sizeof(*rxhdr));
+	memset(rxhdr, 0, sizeof(*rxhdr));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Check if we have data and wait for it to get ready. */
 	if (q->rev >= 8) {
@@ -667,11 +721,19 @@ data_ready:
 
 	/* Get the preamble (RX header) */
 	if (q->rev >= 8) {
+<<<<<<< HEAD
 		b43_block_read(dev, rxhdr, rxhdr_size,
 			       q->mmio_base + B43_PIO8_RXDATA,
 			       sizeof(u32));
 	} else {
 		b43_block_read(dev, rxhdr, rxhdr_size,
+=======
+		b43_block_read(dev, rxhdr, sizeof(*rxhdr),
+			       q->mmio_base + B43_PIO8_RXDATA,
+			       sizeof(u32));
+	} else {
+		b43_block_read(dev, rxhdr, sizeof(*rxhdr),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       q->mmio_base + B43_PIO_RXDATA,
 			       sizeof(u16));
 	}
@@ -686,6 +748,7 @@ data_ready:
 		goto rx_error;
 	}
 
+<<<<<<< HEAD
 	switch (dev->fw.hdr_format) {
 	case B43_FW_HDR_598:
 		macstat = le32_to_cpu(rxhdr->format_598.mac_status);
@@ -695,6 +758,9 @@ data_ready:
 		macstat = le32_to_cpu(rxhdr->format_351.mac_status);
 		break;
 	}
+=======
+	macstat = le32_to_cpu(rxhdr->mac_status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (macstat & B43_RX_MAC_FCSERR) {
 		if (!(q->dev->wl->filter_flags & FIF_FCSFAIL)) {
 			/* Drop frames with failed FCS. */

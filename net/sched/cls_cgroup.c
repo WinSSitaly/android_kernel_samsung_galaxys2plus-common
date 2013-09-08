@@ -22,8 +22,14 @@
 #include <net/sock.h>
 #include <net/cls_cgroup.h>
 
+<<<<<<< HEAD
 static struct cgroup_subsys_state *cgrp_create(struct cgroup *cgrp);
 static void cgrp_destroy(struct cgroup *cgrp);
+=======
+static struct cgroup_subsys_state *cgrp_create(struct cgroup_subsys *ss,
+					       struct cgroup *cgrp);
+static void cgrp_destroy(struct cgroup_subsys *ss, struct cgroup *cgrp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int cgrp_populate(struct cgroup_subsys *ss, struct cgroup *cgrp);
 
 struct cgroup_subsys net_cls_subsys = {
@@ -50,7 +56,12 @@ static inline struct cgroup_cls_state *task_cls_state(struct task_struct *p)
 			    struct cgroup_cls_state, css);
 }
 
+<<<<<<< HEAD
 static struct cgroup_subsys_state *cgrp_create(struct cgroup *cgrp)
+=======
+static struct cgroup_subsys_state *cgrp_create(struct cgroup_subsys *ss,
+						 struct cgroup *cgrp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct cgroup_cls_state *cs;
 
@@ -64,7 +75,11 @@ static struct cgroup_subsys_state *cgrp_create(struct cgroup *cgrp)
 	return &cs->css;
 }
 
+<<<<<<< HEAD
 static void cgrp_destroy(struct cgroup *cgrp)
+=======
+static void cgrp_destroy(struct cgroup_subsys *ss, struct cgroup *cgrp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	kfree(cgrp_cls_state(cgrp));
 }
@@ -99,7 +114,11 @@ struct cls_cgroup_head {
 	struct tcf_ematch_tree	ematches;
 };
 
+<<<<<<< HEAD
 static int cls_cgroup_classify(struct sk_buff *skb, const struct tcf_proto *tp,
+=======
+static int cls_cgroup_classify(struct sk_buff *skb, struct tcf_proto *tp,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       struct tcf_result *res)
 {
 	struct cls_cgroup_head *head = tp->root;

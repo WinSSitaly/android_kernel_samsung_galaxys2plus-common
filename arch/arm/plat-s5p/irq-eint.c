@@ -14,7 +14,11 @@
 #include <linux/interrupt.h>
 #include <linux/irq.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/gpio.h>
 
 #include <asm/hardware/vic.h>
@@ -200,7 +204,11 @@ static struct irq_chip s5p_irq_vic_eint = {
 #endif
 };
 
+<<<<<<< HEAD
 static int __init s5p_init_irq_eint(void)
+=======
+int __init s5p_init_irq_eint(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int irq;
 

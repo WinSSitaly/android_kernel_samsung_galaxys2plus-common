@@ -47,10 +47,13 @@
  *   overwriting the new data.  We don't even need to clear the revoke
  *   bit here.
  *
+<<<<<<< HEAD
  * We cache revoke status of a buffer in the current transaction in b_states
  * bits.  As the name says, revokevalid flag indicates that the cached revoke
  * status of a buffer is valid and we can rely on the cached status.
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Revoke information on buffers is a tri-state value:
  *
  * RevokeValid clear:	no cached revoke status, need to look it up
@@ -483,6 +486,7 @@ int journal_cancel_revoke(handle_t *handle, struct journal_head *jh)
 	return did_revoke;
 }
 
+<<<<<<< HEAD
 /*
  * journal_clear_revoked_flags clears revoked flag of buffers in
  * revoke table to reflect there is no revoked buffer in the next
@@ -513,6 +517,8 @@ void journal_clear_buffer_revoked_flags(journal_t *journal)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* journal_switch_revoke table select j_revoke for next transaction
  * we do not want to suspend any processing until all revokes are
  * written -bzzz

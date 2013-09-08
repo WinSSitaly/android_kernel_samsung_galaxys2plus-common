@@ -3,7 +3,11 @@ menu "GCOV-based kernel profiling"
 config GCOV_KERNEL
 	bool "Enable gcov-based kernel profiling"
 	depends on DEBUG_FS
+<<<<<<< HEAD
 	select CONSTRUCTORS if !UML
+=======
+	select CONSTRUCTORS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default n
 	---help---
 	This option enables gcov-based code profiling (e.g. for code coverage

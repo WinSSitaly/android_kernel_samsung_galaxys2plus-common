@@ -103,9 +103,15 @@ static int vp7045_fe_get_tune_settings(struct dvb_frontend* fe, struct dvb_front
 	return 0;
 }
 
+<<<<<<< HEAD
 static int vp7045_fe_set_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *fep = &fe->dtv_property_cache;
+=======
+static int vp7045_fe_set_frontend(struct dvb_frontend* fe,
+				  struct dvb_frontend_parameters *fep)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct vp7045_fe_state *state = fe->demodulator_priv;
 	u8 buf[5];
 	u32 freq = fep->frequency / 1000;
@@ -115,6 +121,7 @@ static int vp7045_fe_set_frontend(struct dvb_frontend *fe)
 	buf[2] =  freq        & 0xff;
 	buf[3] = 0;
 
+<<<<<<< HEAD
 	switch (fep->bandwidth_hz) {
 	case 8000000:
 		buf[4] = 8;
@@ -127,12 +134,30 @@ static int vp7045_fe_set_frontend(struct dvb_frontend *fe)
 		break;
 	default:
 		return -EINVAL;
+=======
+	switch (fep->u.ofdm.bandwidth) {
+		case BANDWIDTH_8_MHZ: buf[4] = 8; break;
+		case BANDWIDTH_7_MHZ: buf[4] = 7; break;
+		case BANDWIDTH_6_MHZ: buf[4] = 6; break;
+		case BANDWIDTH_AUTO: return -EOPNOTSUPP;
+		default:
+			return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	vp7045_usb_op(state->d,LOCK_TUNER_COMMAND,buf,5,NULL,0,200);
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int vp7045_fe_get_frontend(struct dvb_frontend* fe,
+				  struct dvb_frontend_parameters *fep)
+{
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void vp7045_fe_release(struct dvb_frontend* fe)
 {
 	struct vp7045_fe_state *state = fe->demodulator_priv;
@@ -158,9 +183,15 @@ error:
 
 
 static struct dvb_frontend_ops vp7045_fe_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_DVBT },
 	.info = {
 		.name			= "Twinhan VP7045/46 USB DVB-T",
+=======
+	.info = {
+		.name			= "Twinhan VP7045/46 USB DVB-T",
+		.type			= FE_OFDM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min		= 44250000,
 		.frequency_max		= 867250000,
 		.frequency_stepsize	= 1000,
@@ -180,6 +211,10 @@ static struct dvb_frontend_ops vp7045_fe_ops = {
 	.sleep = vp7045_fe_sleep,
 
 	.set_frontend = vp7045_fe_set_frontend,
+<<<<<<< HEAD
+=======
+	.get_frontend = vp7045_fe_get_frontend,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.get_tune_settings = vp7045_fe_get_tune_settings,
 
 	.read_status = vp7045_fe_read_status,

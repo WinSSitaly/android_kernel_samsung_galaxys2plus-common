@@ -58,7 +58,10 @@
 #include <linux/mutex.h>
 #undef DEBUG
 #include <linux/usb.h>
+<<<<<<< HEAD
 #include <linux/ratelimit.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Version Information
@@ -349,7 +352,12 @@ static int usblp_check_status(struct usblp *usblp, int err)
 	mutex_lock(&usblp->mut);
 	if ((error = usblp_read_status(usblp, usblp->statusbuf)) < 0) {
 		mutex_unlock(&usblp->mut);
+<<<<<<< HEAD
 		printk_ratelimited(KERN_ERR
+=======
+		if (printk_ratelimit())
+			printk(KERN_ERR
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"usblp%d: error %d reading printer status\n",
 				usblp->minor, error);
 		return 0;
@@ -653,7 +661,12 @@ static long usblp_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 
 		case LPGETSTATUS:
 			if ((retval = usblp_read_status(usblp, usblp->statusbuf))) {
+<<<<<<< HEAD
 				printk_ratelimited(KERN_ERR "usblp%d:"
+=======
+				if (printk_ratelimit())
+					printk(KERN_ERR "usblp%d:"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					    "failed reading printer status (%d)\n",
 					    usblp->minor, retval);
 				retval = -EIO;
@@ -1045,7 +1058,11 @@ static const struct file_operations usblp_fops = {
 	.llseek =	noop_llseek,
 };
 
+<<<<<<< HEAD
 static char *usblp_devnode(struct device *dev, umode_t *mode)
+=======
+static char *usblp_devnode(struct device *dev, mode_t *mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return kasprintf(GFP_KERNEL, "usb/%s", dev_name(dev));
 }
@@ -1079,6 +1096,10 @@ static int usblp_probe(struct usb_interface *intf,
 	int protocol;
 	int retval;
 
+<<<<<<< HEAD
+=======
+	printk("USBD][%s] Probe USB Printer \n",__func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Malloc and start initializing usblp structure so we can use it
 	 * directly. */
 	usblp = kzalloc(sizeof(struct usblp), GFP_KERNEL);
@@ -1412,7 +1433,22 @@ static struct usb_driver usblp_driver = {
 	.supports_autosuspend =	1,
 };
 
+<<<<<<< HEAD
 module_usb_driver(usblp_driver);
+=======
+static int __init usblp_init(void)
+{
+	return usb_register(&usblp_driver);
+}
+
+static void __exit usblp_exit(void)
+{
+	usb_deregister(&usblp_driver);
+}
+
+module_init(usblp_init);
+module_exit(usblp_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR(DRIVER_AUTHOR);
 MODULE_DESCRIPTION(DRIVER_DESC);

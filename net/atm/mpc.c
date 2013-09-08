@@ -1005,7 +1005,11 @@ static int mpoa_event_listener(struct notifier_block *mpoa_notifier,
 	struct mpoa_client *mpc;
 	struct lec_priv *priv;
 
+<<<<<<< HEAD
 	dev = dev_ptr;
+=======
+	dev = (struct net_device *)dev_ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!net_eq(dev_net(dev), &init_net))
 		return NOTIFY_DONE;

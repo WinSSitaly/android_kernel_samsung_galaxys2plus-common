@@ -337,11 +337,17 @@ static void do_sys_vm86(struct kernel_vm86_struct *info, struct task_struct *tsk
 	if (info->flags & VM86_SCREEN_BITMAP)
 		mark_screen_rdonly(tsk->mm);
 
+<<<<<<< HEAD
 	/*call __audit_syscall_exit since we do not exit via the normal paths */
 #ifdef CONFIG_AUDITSYSCALL
 	if (unlikely(current->audit_context))
 		__audit_syscall_exit(1, 0);
 #endif
+=======
+	/*call audit_syscall_exit since we do not exit via the normal paths */
+	if (unlikely(current->audit_context))
+		audit_syscall_exit(AUDITSC_RESULT(0), 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	__asm__ __volatile__(
 		"movl %0,%%esp\n\t"
@@ -569,7 +575,11 @@ int handle_vm86_trap(struct kernel_vm86_regs *regs, long error_code, int trapno)
 	}
 	if (trapno != 1)
 		return 1; /* we let this handle by the calling routine */
+<<<<<<< HEAD
 	current->thread.trap_nr = trapno;
+=======
+	current->thread.trap_no = trapno;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	current->thread.error_code = error_code;
 	force_sig(SIGTRAP, current);
 	return 0;

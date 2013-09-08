@@ -1,7 +1,10 @@
 /*
  *	Sonix sn9c201 sn9c202 library
+<<<<<<< HEAD
  *
  * Copyright (C) 2012 Jean-Francois Moine <http://moinejf.free.fr>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	Copyright (C) 2008-2009 microdia project <microdia@googlegroups.com>
  *	Copyright (C) 2009 Brian Johnson <brijohn@gmail.com>
  *
@@ -20,8 +23,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/input.h>
 
 #include "gspca.h"
@@ -35,6 +41,11 @@ MODULE_AUTHOR("Brian Johnson <brijohn@gmail.com>, "
 MODULE_DESCRIPTION("GSPCA/SN9C20X USB Camera Driver");
 MODULE_LICENSE("GPL");
 
+<<<<<<< HEAD
+=======
+#define MODULE_NAME "sn9c20x"
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Pixel format private data
  */
@@ -66,6 +77,7 @@ MODULE_LICENSE("GPL");
 #define LED_REVERSE	0x2 /* some cameras unset gpio to turn on leds */
 #define FLIP_DETECT	0x4
 
+<<<<<<< HEAD
 enum e_ctrl {
 	BRIGHTNESS,
 	CONTRAST,
@@ -83,10 +95,13 @@ enum e_ctrl {
 	NCTRLS		/* number of controls */
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* specific webcam descriptor */
 struct sd {
 	struct gspca_dev gspca_dev;
 
+<<<<<<< HEAD
 	struct gspca_ctrl ctrls[NCTRLS];
 
 	struct work_struct work;
@@ -97,6 +112,8 @@ struct sd {
 	s8 nchg;
 	u8 fmt;				/* (used for JPEG QTAB update */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MIN_AVG_LUM 80
 #define MAX_AVG_LUM 130
 	atomic_t avg_lum;
@@ -104,18 +121,42 @@ struct sd {
 	u8 older_step;
 	u8 exposure_step;
 
+<<<<<<< HEAD
+=======
+	u8 brightness;
+	u8 contrast;
+	u8 saturation;
+	s16 hue;
+	u8 gamma;
+	u8 red;
+	u8 blue;
+
+	u8 hflip;
+	u8 vflip;
+	u8 gain;
+	u16 exposure;
+	u8 auto_exposure;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 i2c_addr;
 	u8 sensor;
 	u8 hstart;
 	u8 vstart;
 
 	u8 jpeg_hdr[JPEG_HDR_SZ];
+<<<<<<< HEAD
+=======
+	u8 quality;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	u8 flags;
 };
 
+<<<<<<< HEAD
 static void qual_upd(struct work_struct *work);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct i2c_reg_u8 {
 	u8 reg;
 	u8 val;
@@ -126,6 +167,34 @@ struct i2c_reg_u16 {
 	u16 val;
 };
 
+<<<<<<< HEAD
+=======
+static int sd_setbrightness(struct gspca_dev *gspca_dev, s32 val);
+static int sd_getbrightness(struct gspca_dev *gspca_dev, s32 *val);
+static int sd_setcontrast(struct gspca_dev *gspca_dev, s32 val);
+static int sd_getcontrast(struct gspca_dev *gspca_dev, s32 *val);
+static int sd_setsaturation(struct gspca_dev *gspca_dev, s32 val);
+static int sd_getsaturation(struct gspca_dev *gspca_dev, s32 *val);
+static int sd_sethue(struct gspca_dev *gspca_dev, s32 val);
+static int sd_gethue(struct gspca_dev *gspca_dev, s32 *val);
+static int sd_setgamma(struct gspca_dev *gspca_dev, s32 val);
+static int sd_getgamma(struct gspca_dev *gspca_dev, s32 *val);
+static int sd_setredbalance(struct gspca_dev *gspca_dev, s32 val);
+static int sd_getredbalance(struct gspca_dev *gspca_dev, s32 *val);
+static int sd_setbluebalance(struct gspca_dev *gspca_dev, s32 val);
+static int sd_getbluebalance(struct gspca_dev *gspca_dev, s32 *val);
+static int sd_setvflip(struct gspca_dev *gspca_dev, s32 val);
+static int sd_getvflip(struct gspca_dev *gspca_dev, s32 *val);
+static int sd_sethflip(struct gspca_dev *gspca_dev, s32 val);
+static int sd_gethflip(struct gspca_dev *gspca_dev, s32 *val);
+static int sd_setgain(struct gspca_dev *gspca_dev, s32 val);
+static int sd_getgain(struct gspca_dev *gspca_dev, s32 *val);
+static int sd_setexposure(struct gspca_dev *gspca_dev, s32 val);
+static int sd_getexposure(struct gspca_dev *gspca_dev, s32 *val);
+static int sd_setautoexposure(struct gspca_dev *gspca_dev, s32 val);
+static int sd_getautoexposure(struct gspca_dev *gspca_dev, s32 *val);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct dmi_system_id flip_dmi_table[] = {
 	{
 		.ident = "MSI MS-1034",
@@ -166,6 +235,7 @@ static const struct dmi_system_id flip_dmi_table[] = {
 	{}
 };
 
+<<<<<<< HEAD
 static void set_cmatrix(struct gspca_dev *gspca_dev);
 static void set_gamma(struct gspca_dev *gspca_dev);
 static void set_redblue(struct gspca_dev *gspca_dev);
@@ -176,6 +246,11 @@ static void set_quality(struct gspca_dev *gspca_dev);
 
 static const struct ctrl sd_ctrls[NCTRLS] = {
 [BRIGHTNESS] = {
+=======
+static const struct ctrl sd_ctrls[] = {
+	{
+#define BRIGHTNESS_IDX 0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    {
 		.id      = V4L2_CID_BRIGHTNESS,
 		.type    = V4L2_CTRL_TYPE_INTEGER,
@@ -183,11 +258,22 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = 0,
 		.maximum = 0xff,
 		.step    = 1,
+<<<<<<< HEAD
 		.default_value = 0x7f
 	    },
 	    .set_control = set_cmatrix
 	},
 [CONTRAST] = {
+=======
+#define BRIGHTNESS_DEFAULT 0x7f
+		.default_value = BRIGHTNESS_DEFAULT,
+	    },
+	    .set = sd_setbrightness,
+	    .get = sd_getbrightness,
+	},
+	{
+#define CONTRAST_IDX 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    {
 		.id      = V4L2_CID_CONTRAST,
 		.type    = V4L2_CTRL_TYPE_INTEGER,
@@ -195,11 +281,22 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = 0,
 		.maximum = 0xff,
 		.step    = 1,
+<<<<<<< HEAD
 		.default_value = 0x7f
 	    },
 	    .set_control = set_cmatrix
 	},
 [SATURATION] = {
+=======
+#define CONTRAST_DEFAULT 0x7f
+		.default_value = CONTRAST_DEFAULT,
+	    },
+	    .set = sd_setcontrast,
+	    .get = sd_getcontrast,
+	},
+	{
+#define SATURATION_IDX 2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    {
 		.id      = V4L2_CID_SATURATION,
 		.type    = V4L2_CTRL_TYPE_INTEGER,
@@ -207,11 +304,22 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = 0,
 		.maximum = 0xff,
 		.step    = 1,
+<<<<<<< HEAD
 		.default_value = 0x7f
 	    },
 	    .set_control = set_cmatrix
 	},
 [HUE] = {
+=======
+#define SATURATION_DEFAULT 0x7f
+		.default_value = SATURATION_DEFAULT,
+	    },
+	    .set = sd_setsaturation,
+	    .get = sd_getsaturation,
+	},
+	{
+#define HUE_IDX 3
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    {
 		.id      = V4L2_CID_HUE,
 		.type    = V4L2_CTRL_TYPE_INTEGER,
@@ -219,11 +327,22 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = -180,
 		.maximum = 180,
 		.step    = 1,
+<<<<<<< HEAD
 		.default_value = 0
 	    },
 	    .set_control = set_cmatrix
 	},
 [GAMMA] = {
+=======
+#define HUE_DEFAULT 0
+		.default_value = HUE_DEFAULT,
+	    },
+	    .set = sd_sethue,
+	    .get = sd_gethue,
+	},
+	{
+#define GAMMA_IDX 4
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    {
 		.id      = V4L2_CID_GAMMA,
 		.type    = V4L2_CTRL_TYPE_INTEGER,
@@ -231,11 +350,22 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = 0,
 		.maximum = 0xff,
 		.step    = 1,
+<<<<<<< HEAD
 		.default_value = 0x10
 	    },
 	    .set_control = set_gamma
 	},
 [BLUE] = {
+=======
+#define GAMMA_DEFAULT 0x10
+		.default_value = GAMMA_DEFAULT,
+	    },
+	    .set = sd_setgamma,
+	    .get = sd_getgamma,
+	},
+	{
+#define BLUE_IDX 5
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    {
 		.id	 = V4L2_CID_BLUE_BALANCE,
 		.type	 = V4L2_CTRL_TYPE_INTEGER,
@@ -243,11 +373,22 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = 0,
 		.maximum = 0x7f,
 		.step	 = 1,
+<<<<<<< HEAD
 		.default_value = 0x28
 	    },
 	    .set_control = set_redblue
 	},
 [RED] = {
+=======
+#define BLUE_DEFAULT 0x28
+		.default_value = BLUE_DEFAULT,
+	    },
+	    .set = sd_setbluebalance,
+	    .get = sd_getbluebalance,
+	},
+	{
+#define RED_IDX 6
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    {
 		.id	 = V4L2_CID_RED_BALANCE,
 		.type	 = V4L2_CTRL_TYPE_INTEGER,
@@ -255,11 +396,22 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = 0,
 		.maximum = 0x7f,
 		.step	 = 1,
+<<<<<<< HEAD
 		.default_value = 0x28
 	    },
 	    .set_control = set_redblue
 	},
 [HFLIP] = {
+=======
+#define RED_DEFAULT 0x28
+		.default_value = RED_DEFAULT,
+	    },
+	    .set = sd_setredbalance,
+	    .get = sd_getredbalance,
+	},
+	{
+#define HFLIP_IDX 7
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    {
 		.id      = V4L2_CID_HFLIP,
 		.type    = V4L2_CTRL_TYPE_BOOLEAN,
@@ -267,11 +419,22 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = 0,
 		.maximum = 1,
 		.step    = 1,
+<<<<<<< HEAD
 		.default_value = 0,
 	    },
 	    .set_control = set_hvflip
 	},
 [VFLIP] = {
+=======
+#define HFLIP_DEFAULT 0
+		.default_value = HFLIP_DEFAULT,
+	    },
+	    .set = sd_sethflip,
+	    .get = sd_gethflip,
+	},
+	{
+#define VFLIP_IDX 8
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    {
 		.id      = V4L2_CID_VFLIP,
 		.type    = V4L2_CTRL_TYPE_BOOLEAN,
@@ -279,11 +442,22 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = 0,
 		.maximum = 1,
 		.step    = 1,
+<<<<<<< HEAD
 		.default_value = 0,
 	    },
 	    .set_control = set_hvflip
 	},
 [EXPOSURE] = {
+=======
+#define VFLIP_DEFAULT 0
+		.default_value = VFLIP_DEFAULT,
+	    },
+	    .set = sd_setvflip,
+	    .get = sd_getvflip,
+	},
+	{
+#define EXPOSURE_IDX 9
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    {
 		.id      = V4L2_CID_EXPOSURE,
 		.type    = V4L2_CTRL_TYPE_INTEGER,
@@ -291,11 +465,22 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = 0,
 		.maximum = 0x1780,
 		.step    = 1,
+<<<<<<< HEAD
 		.default_value = 0x33,
 	    },
 	    .set_control = set_exposure
 	},
 [GAIN] = {
+=======
+#define EXPOSURE_DEFAULT 0x33
+		.default_value = EXPOSURE_DEFAULT,
+	    },
+	    .set = sd_setexposure,
+	    .get = sd_getexposure,
+	},
+	{
+#define GAIN_IDX 10
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    {
 		.id      = V4L2_CID_GAIN,
 		.type    = V4L2_CTRL_TYPE_INTEGER,
@@ -303,11 +488,22 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = 0,
 		.maximum = 28,
 		.step    = 1,
+<<<<<<< HEAD
 		.default_value = 0,
 	    },
 	    .set_control = set_gain
 	},
 [AUTOGAIN] = {
+=======
+#define GAIN_DEFAULT 0x00
+		.default_value = GAIN_DEFAULT,
+	    },
+	    .set = sd_setgain,
+	    .get = sd_getgain,
+	},
+	{
+#define AUTOGAIN_IDX 11
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    {
 		.id      = V4L2_CID_AUTOGAIN,
 		.type    = V4L2_CTRL_TYPE_BOOLEAN,
@@ -315,6 +511,7 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.minimum = 0,
 		.maximum = 1,
 		.step    = 1,
+<<<<<<< HEAD
 		.default_value = 1,
 	    },
 	},
@@ -332,6 +529,13 @@ static const struct ctrl sd_ctrls[NCTRLS] = {
 		.default_value = QUALITY_DEF,
 	    },
 	    .set_control = set_quality
+=======
+#define AUTO_EXPOSURE_DEFAULT 1
+		.default_value = AUTO_EXPOSURE_DEFAULT,
+	    },
+	    .set = sd_setautoexposure,
+	    .get = sd_getautoexposure,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 
@@ -851,7 +1055,11 @@ static u8 hv7131r_gain[] = {
 };
 
 static struct i2c_reg_u8 soi968_init[] = {
+<<<<<<< HEAD
 	{0x0c, 0x00}, {0x0f, 0x1f},
+=======
+	{0x12, 0x80}, {0x0c, 0x00}, {0x0f, 0x1f},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{0x11, 0x80}, {0x38, 0x52}, {0x1e, 0x00},
 	{0x33, 0x08}, {0x35, 0x8c}, {0x36, 0x0c},
 	{0x37, 0x04}, {0x45, 0x04}, {0x47, 0xff},
@@ -877,7 +1085,11 @@ static struct i2c_reg_u8 ov7660_init[] = {
 };
 
 static struct i2c_reg_u8 ov7670_init[] = {
+<<<<<<< HEAD
 	{0x11, 0x80}, {0x3a, 0x04}, {0x12, 0x01},
+=======
+	{0x12, 0x80}, {0x11, 0x80}, {0x3a, 0x04}, {0x12, 0x01},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{0x32, 0xb6}, {0x03, 0x0a}, {0x0c, 0x00}, {0x3e, 0x00},
 	{0x70, 0x3a}, {0x71, 0x35}, {0x72, 0x11}, {0x73, 0xf0},
 	{0xa2, 0x02}, {0x13, 0xe0}, {0x00, 0x00}, {0x10, 0x00},
@@ -934,7 +1146,11 @@ static struct i2c_reg_u8 ov7670_init[] = {
 };
 
 static struct i2c_reg_u8 ov9650_init[] = {
+<<<<<<< HEAD
 	{0x00, 0x00}, {0x01, 0x78},
+=======
+	{0x12, 0x80}, {0x00, 0x00}, {0x01, 0x78},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{0x02, 0x78}, {0x03, 0x36}, {0x04, 0x03},
 	{0x05, 0x00}, {0x06, 0x00}, {0x08, 0x00},
 	{0x09, 0x01}, {0x0c, 0x00}, {0x0d, 0x00},
@@ -964,7 +1180,11 @@ static struct i2c_reg_u8 ov9650_init[] = {
 };
 
 static struct i2c_reg_u8 ov9655_init[] = {
+<<<<<<< HEAD
 	{0x0e, 0x61}, {0x11, 0x80}, {0x13, 0xba},
+=======
+	{0x12, 0x80}, {0x0e, 0x61}, {0x11, 0x80}, {0x13, 0xba},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{0x14, 0x2e}, {0x16, 0x24}, {0x1e, 0x04}, {0x27, 0x08},
 	{0x28, 0x08}, {0x29, 0x15}, {0x2c, 0x08}, {0x34, 0x3d},
 	{0x35, 0x00}, {0x38, 0x12}, {0x0f, 0x42}, {0x39, 0x57},
@@ -1087,6 +1307,7 @@ static struct i2c_reg_u8 hv7131r_init[] = {
 	{0x23, 0x09}, {0x01, 0x08},
 };
 
+<<<<<<< HEAD
 static void reg_r(struct gspca_dev *gspca_dev, u16 reg, u16 length)
 {
 	struct usb_device *dev = gspca_dev->dev;
@@ -1094,6 +1315,12 @@ static void reg_r(struct gspca_dev *gspca_dev, u16 reg, u16 length)
 
 	if (gspca_dev->usb_err < 0)
 		return;
+=======
+static int reg_r(struct gspca_dev *gspca_dev, u16 reg, u16 length)
+{
+	struct usb_device *dev = gspca_dev->dev;
+	int result;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	result = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
 			0x00,
 			USB_DIR_IN | USB_TYPE_VENDOR | USB_RECIP_INTERFACE,
@@ -1103,19 +1330,32 @@ static void reg_r(struct gspca_dev *gspca_dev, u16 reg, u16 length)
 			length,
 			500);
 	if (unlikely(result < 0 || result != length)) {
+<<<<<<< HEAD
 		pr_err("Read register %02x failed %d\n", reg, result);
 		gspca_dev->usb_err = result;
 	}
 }
 
 static void reg_w(struct gspca_dev *gspca_dev, u16 reg,
+=======
+		err("Read register failed 0x%02X", reg);
+		return -EIO;
+	}
+	return 0;
+}
+
+static int reg_w(struct gspca_dev *gspca_dev, u16 reg,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 const u8 *buffer, int length)
 {
 	struct usb_device *dev = gspca_dev->dev;
 	int result;
+<<<<<<< HEAD
 
 	if (gspca_dev->usb_err < 0)
 		return;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy(gspca_dev->usb_buf, buffer, length);
 	result = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
 			0x08,
@@ -1126,6 +1366,7 @@ static void reg_w(struct gspca_dev *gspca_dev, u16 reg,
 			length,
 			500);
 	if (unlikely(result < 0 || result != length)) {
+<<<<<<< HEAD
 		pr_err("Write register %02x failed %d\n", reg, result);
 		gspca_dev->usb_err = result;
 	}
@@ -1161,6 +1402,40 @@ static void i2c_w(struct gspca_dev *gspca_dev, const u8 *buffer)
 static void i2c_w1(struct gspca_dev *gspca_dev, u8 reg, u8 val)
 {
 	struct sd *sd = (struct sd *) gspca_dev;
+=======
+		err("Write register failed index 0x%02X", reg);
+		return -EIO;
+	}
+	return 0;
+}
+
+static int reg_w1(struct gspca_dev *gspca_dev, u16 reg, const u8 value)
+{
+	u8 data[1] = {value};
+	return reg_w(gspca_dev, reg, data, 1);
+}
+
+static int i2c_w(struct gspca_dev *gspca_dev, const u8 *buffer)
+{
+	int i;
+	reg_w(gspca_dev, 0x10c0, buffer, 8);
+	for (i = 0; i < 5; i++) {
+		reg_r(gspca_dev, 0x10c0, 1);
+		if (gspca_dev->usb_buf[0] & 0x04) {
+			if (gspca_dev->usb_buf[0] & 0x08)
+				return -EIO;
+			return 0;
+		}
+		msleep(1);
+	}
+	return -EIO;
+}
+
+static int i2c_w1(struct gspca_dev *gspca_dev, u8 reg, u8 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 row[8];
 
 	/*
@@ -1176,6 +1451,7 @@ static void i2c_w1(struct gspca_dev *gspca_dev, u8 reg, u8 val)
 	row[6] = 0x00;
 	row[7] = 0x10;
 
+<<<<<<< HEAD
 	i2c_w(gspca_dev, row);
 }
 
@@ -1189,6 +1465,12 @@ static void i2c_w1_buf(struct gspca_dev *gspca_dev,
 }
 
 static void i2c_w2(struct gspca_dev *gspca_dev, u8 reg, u16 val)
+=======
+	return i2c_w(gspca_dev, row);
+}
+
+static int i2c_w2(struct gspca_dev *gspca_dev, u8 reg, u16 val)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sd *sd = (struct sd *) gspca_dev;
 	u8 row[8];
@@ -1200,12 +1482,18 @@ static void i2c_w2(struct gspca_dev *gspca_dev, u8 reg, u16 val)
 	row[0] = 0x81 | (3 << 4);
 	row[1] = sd->i2c_addr;
 	row[2] = reg;
+<<<<<<< HEAD
 	row[3] = val >> 8;
 	row[4] = val;
+=======
+	row[3] = (val >> 8) & 0xff;
+	row[4] = val & 0xff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	row[5] = 0x00;
 	row[6] = 0x00;
 	row[7] = 0x10;
 
+<<<<<<< HEAD
 	i2c_w(gspca_dev, row);
 }
 
@@ -1219,6 +1507,12 @@ static void i2c_w2_buf(struct gspca_dev *gspca_dev,
 }
 
 static void i2c_r1(struct gspca_dev *gspca_dev, u8 reg, u8 *val)
+=======
+	return i2c_w(gspca_dev, row);
+}
+
+static int i2c_r1(struct gspca_dev *gspca_dev, u8 reg, u8 *val)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sd *sd = (struct sd *) gspca_dev;
 	u8 row[8];
@@ -1231,6 +1525,7 @@ static void i2c_r1(struct gspca_dev *gspca_dev, u8 reg, u8 *val)
 	row[5] = 0;
 	row[6] = 0;
 	row[7] = 0x10;
+<<<<<<< HEAD
 	i2c_w(gspca_dev, row);
 	row[0] = 0x81 | (1 << 4) | 0x02;
 	row[2] = 0;
@@ -1240,6 +1535,21 @@ static void i2c_r1(struct gspca_dev *gspca_dev, u8 reg, u8 *val)
 }
 
 static void i2c_r2(struct gspca_dev *gspca_dev, u8 reg, u16 *val)
+=======
+	if (i2c_w(gspca_dev, row) < 0)
+		return -EIO;
+	row[0] = 0x81 | (1 << 4) | 0x02;
+	row[2] = 0;
+	if (i2c_w(gspca_dev, row) < 0)
+		return -EIO;
+	if (reg_r(gspca_dev, 0x10c2, 5) < 0)
+		return -EIO;
+	*val = gspca_dev->usb_buf[4];
+	return 0;
+}
+
+static int i2c_r2(struct gspca_dev *gspca_dev, u8 reg, u16 *val)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sd *sd = (struct sd *) gspca_dev;
 	u8 row[8];
@@ -1252,6 +1562,7 @@ static void i2c_r2(struct gspca_dev *gspca_dev, u8 reg, u16 *val)
 	row[5] = 0;
 	row[6] = 0;
 	row[7] = 0x10;
+<<<<<<< HEAD
 	i2c_w(gspca_dev, row);
 	row[0] = 0x81 | (2 << 4) | 0x02;
 	row[2] = 0;
@@ -1359,10 +1670,142 @@ static void mt9v_init_sensor(struct gspca_dev *gspca_dev)
 		if (gspca_dev->usb_err < 0) {
 			pr_err("MT9V011 sensor initialization failed\n");
 			return;
+=======
+	if (i2c_w(gspca_dev, row) < 0)
+		return -EIO;
+	row[0] = 0x81 | (2 << 4) | 0x02;
+	row[2] = 0;
+	if (i2c_w(gspca_dev, row) < 0)
+		return -EIO;
+	if (reg_r(gspca_dev, 0x10c2, 5) < 0)
+		return -EIO;
+	*val = (gspca_dev->usb_buf[3] << 8) | gspca_dev->usb_buf[4];
+	return 0;
+}
+
+static int ov9650_init_sensor(struct gspca_dev *gspca_dev)
+{
+	int i;
+	u16 id;
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	if (i2c_r2(gspca_dev, 0x1c, &id) < 0)
+		return -EINVAL;
+
+	if (id != 0x7fa2) {
+		err("sensor id for ov9650 doesn't match (0x%04x)", id);
+		return -ENODEV;
+	}
+
+	for (i = 0; i < ARRAY_SIZE(ov9650_init); i++) {
+		if (i2c_w1(gspca_dev, ov9650_init[i].reg,
+				ov9650_init[i].val) < 0) {
+			err("OV9650 sensor initialization failed");
+			return -ENODEV;
+		}
+	}
+	sd->hstart = 1;
+	sd->vstart = 7;
+	return 0;
+}
+
+static int ov9655_init_sensor(struct gspca_dev *gspca_dev)
+{
+	int i;
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	for (i = 0; i < ARRAY_SIZE(ov9655_init); i++) {
+		if (i2c_w1(gspca_dev, ov9655_init[i].reg,
+				ov9655_init[i].val) < 0) {
+			err("OV9655 sensor initialization failed");
+			return -ENODEV;
+		}
+	}
+	/* disable hflip and vflip */
+	gspca_dev->ctrl_dis = (1 << HFLIP_IDX) | (1 << VFLIP_IDX);
+	sd->hstart = 1;
+	sd->vstart = 2;
+	return 0;
+}
+
+static int soi968_init_sensor(struct gspca_dev *gspca_dev)
+{
+	int i;
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	for (i = 0; i < ARRAY_SIZE(soi968_init); i++) {
+		if (i2c_w1(gspca_dev, soi968_init[i].reg,
+				soi968_init[i].val) < 0) {
+			err("SOI968 sensor initialization failed");
+			return -ENODEV;
+		}
+	}
+	/* disable hflip and vflip */
+	gspca_dev->ctrl_dis = (1 << HFLIP_IDX) | (1 << VFLIP_IDX)
+				| (1 << EXPOSURE_IDX);
+	sd->hstart = 60;
+	sd->vstart = 11;
+	return 0;
+}
+
+static int ov7660_init_sensor(struct gspca_dev *gspca_dev)
+{
+	int i;
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	for (i = 0; i < ARRAY_SIZE(ov7660_init); i++) {
+		if (i2c_w1(gspca_dev, ov7660_init[i].reg,
+				ov7660_init[i].val) < 0) {
+			err("OV7660 sensor initialization failed");
+			return -ENODEV;
+		}
+	}
+	sd->hstart = 3;
+	sd->vstart = 3;
+	return 0;
+}
+
+static int ov7670_init_sensor(struct gspca_dev *gspca_dev)
+{
+	int i;
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	for (i = 0; i < ARRAY_SIZE(ov7670_init); i++) {
+		if (i2c_w1(gspca_dev, ov7670_init[i].reg,
+				ov7670_init[i].val) < 0) {
+			err("OV7670 sensor initialization failed");
+			return -ENODEV;
+		}
+	}
+	/* disable hflip and vflip */
+	gspca_dev->ctrl_dis = (1 << HFLIP_IDX) | (1 << VFLIP_IDX);
+	sd->hstart = 0;
+	sd->vstart = 1;
+	return 0;
+}
+
+static int mt9v_init_sensor(struct gspca_dev *gspca_dev)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	int i;
+	u16 value;
+	int ret;
+
+	sd->i2c_addr = 0x5d;
+	ret = i2c_r2(gspca_dev, 0xff, &value);
+	if ((ret == 0) && (value == 0x8243)) {
+		for (i = 0; i < ARRAY_SIZE(mt9v011_init); i++) {
+			if (i2c_w2(gspca_dev, mt9v011_init[i].reg,
+					mt9v011_init[i].val) < 0) {
+				err("MT9V011 sensor initialization failed");
+				return -ENODEV;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		sd->hstart = 2;
 		sd->vstart = 2;
 		sd->sensor = SENSOR_MT9V011;
+<<<<<<< HEAD
 		pr_info("MT9V011 sensor detected\n");
 		return;
 	}
@@ -1403,10 +1846,52 @@ static void mt9v_init_sensor(struct gspca_dev *gspca_dev)
 		if (gspca_dev->usb_err < 0) {
 			pr_err("MT9V112 sensor initialization failed\n");
 			return;
+=======
+		info("MT9V011 sensor detected");
+		return 0;
+	}
+
+	sd->i2c_addr = 0x5c;
+	i2c_w2(gspca_dev, 0x01, 0x0004);
+	ret = i2c_r2(gspca_dev, 0xff, &value);
+	if ((ret == 0) && (value == 0x823a)) {
+		for (i = 0; i < ARRAY_SIZE(mt9v111_init); i++) {
+			if (i2c_w2(gspca_dev, mt9v111_init[i].reg,
+					mt9v111_init[i].val) < 0) {
+				err("MT9V111 sensor initialization failed");
+				return -ENODEV;
+			}
+		}
+		gspca_dev->ctrl_dis = (1 << EXPOSURE_IDX)
+					| (1 << AUTOGAIN_IDX)
+					| (1 << GAIN_IDX);
+		sd->hstart = 2;
+		sd->vstart = 2;
+		sd->sensor = SENSOR_MT9V111;
+		info("MT9V111 sensor detected");
+		return 0;
+	}
+
+	sd->i2c_addr = 0x5d;
+	ret = i2c_w2(gspca_dev, 0xf0, 0x0000);
+	if (ret < 0) {
+		sd->i2c_addr = 0x48;
+		i2c_w2(gspca_dev, 0xf0, 0x0000);
+	}
+	ret = i2c_r2(gspca_dev, 0x00, &value);
+	if ((ret == 0) && (value == 0x1229)) {
+		for (i = 0; i < ARRAY_SIZE(mt9v112_init); i++) {
+			if (i2c_w2(gspca_dev, mt9v112_init[i].reg,
+					mt9v112_init[i].val) < 0) {
+				err("MT9V112 sensor initialization failed");
+				return -ENODEV;
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		sd->hstart = 6;
 		sd->vstart = 2;
 		sd->sensor = SENSOR_MT9V112;
+<<<<<<< HEAD
 		pr_info("MT9V112 sensor detected\n");
 		return;
 	}
@@ -1450,11 +1935,65 @@ static void mt9m001_init_sensor(struct gspca_dev *gspca_dev)
 	i2c_r2(gspca_dev, 0x00, &id);
 	if (gspca_dev->usb_err < 0)
 		return;
+=======
+		info("MT9V112 sensor detected");
+		return 0;
+	}
+
+	return -ENODEV;
+}
+
+static int mt9m112_init_sensor(struct gspca_dev *gspca_dev)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	int i;
+	for (i = 0; i < ARRAY_SIZE(mt9m112_init); i++) {
+		if (i2c_w2(gspca_dev, mt9m112_init[i].reg,
+				mt9m112_init[i].val) < 0) {
+			err("MT9M112 sensor initialization failed");
+			return -ENODEV;
+		}
+	}
+	gspca_dev->ctrl_dis = (1 << EXPOSURE_IDX) | (1 << AUTOGAIN_IDX)
+				| (1 << GAIN_IDX);
+	sd->hstart = 0;
+	sd->vstart = 2;
+	return 0;
+}
+
+static int mt9m111_init_sensor(struct gspca_dev *gspca_dev)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	int i;
+	for (i = 0; i < ARRAY_SIZE(mt9m111_init); i++) {
+		if (i2c_w2(gspca_dev, mt9m111_init[i].reg,
+				mt9m111_init[i].val) < 0) {
+			err("MT9M111 sensor initialization failed");
+			return -ENODEV;
+		}
+	}
+	gspca_dev->ctrl_dis = (1 << EXPOSURE_IDX) | (1 << AUTOGAIN_IDX)
+				| (1 << GAIN_IDX);
+	sd->hstart = 0;
+	sd->vstart = 2;
+	return 0;
+}
+
+static int mt9m001_init_sensor(struct gspca_dev *gspca_dev)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	int i;
+	u16 id;
+
+	if (i2c_r2(gspca_dev, 0x00, &id) < 0)
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* must be 0x8411 or 0x8421 for colour sensor and 8431 for bw */
 	switch (id) {
 	case 0x8411:
 	case 0x8421:
+<<<<<<< HEAD
 		pr_info("MT9M001 color sensor detected\n");
 		break;
 	case 0x8431:
@@ -1534,6 +2073,94 @@ static void set_gamma(struct gspca_dev *gspca_dev)
 	struct sd *sd = (struct sd *) gspca_dev;
 	u8 gamma[17];
 	u8 gval = sd->ctrls[GAMMA].val * 0xb8 / 0x100;
+=======
+		info("MT9M001 color sensor detected");
+		break;
+	case 0x8431:
+		info("MT9M001 mono sensor detected");
+		break;
+	default:
+		err("No MT9M001 chip detected, ID = %x\n", id);
+		return -ENODEV;
+	}
+
+	for (i = 0; i < ARRAY_SIZE(mt9m001_init); i++) {
+		if (i2c_w2(gspca_dev, mt9m001_init[i].reg,
+				mt9m001_init[i].val) < 0) {
+			err("MT9M001 sensor initialization failed");
+			return -ENODEV;
+		}
+	}
+	/* disable hflip and vflip */
+	gspca_dev->ctrl_dis = (1 << HFLIP_IDX) | (1 << VFLIP_IDX);
+	sd->hstart = 1;
+	sd->vstart = 1;
+	return 0;
+}
+
+static int hv7131r_init_sensor(struct gspca_dev *gspca_dev)
+{
+	int i;
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	for (i = 0; i < ARRAY_SIZE(hv7131r_init); i++) {
+		if (i2c_w1(gspca_dev, hv7131r_init[i].reg,
+				hv7131r_init[i].val) < 0) {
+			err("HV7131R Sensor initialization failed");
+			return -ENODEV;
+		}
+	}
+	sd->hstart = 0;
+	sd->vstart = 1;
+	return 0;
+}
+
+static int set_cmatrix(struct gspca_dev *gspca_dev)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	s32 hue_coord, hue_index = 180 + sd->hue;
+	u8 cmatrix[21];
+
+	memset(cmatrix, 0, sizeof cmatrix);
+	cmatrix[2] = (sd->contrast * 0x25 / 0x100) + 0x26;
+	cmatrix[0] = 0x13 + (cmatrix[2] - 0x26) * 0x13 / 0x25;
+	cmatrix[4] = 0x07 + (cmatrix[2] - 0x26) * 0x07 / 0x25;
+	cmatrix[18] = sd->brightness - 0x80;
+
+	hue_coord = (hsv_red_x[hue_index] * sd->saturation) >> 8;
+	cmatrix[6] = hue_coord;
+	cmatrix[7] = (hue_coord >> 8) & 0x0f;
+
+	hue_coord = (hsv_red_y[hue_index] * sd->saturation) >> 8;
+	cmatrix[8] = hue_coord;
+	cmatrix[9] = (hue_coord >> 8) & 0x0f;
+
+	hue_coord = (hsv_green_x[hue_index] * sd->saturation) >> 8;
+	cmatrix[10] = hue_coord;
+	cmatrix[11] = (hue_coord >> 8) & 0x0f;
+
+	hue_coord = (hsv_green_y[hue_index] * sd->saturation) >> 8;
+	cmatrix[12] = hue_coord;
+	cmatrix[13] = (hue_coord >> 8) & 0x0f;
+
+	hue_coord = (hsv_blue_x[hue_index] * sd->saturation) >> 8;
+	cmatrix[14] = hue_coord;
+	cmatrix[15] = (hue_coord >> 8) & 0x0f;
+
+	hue_coord = (hsv_blue_y[hue_index] * sd->saturation) >> 8;
+	cmatrix[16] = hue_coord;
+	cmatrix[17] = (hue_coord >> 8) & 0x0f;
+
+	return reg_w(gspca_dev, 0x10e1, cmatrix, 21);
+}
+
+static int set_gamma(struct gspca_dev *gspca_dev)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	u8 gamma[17];
+	u8 gval = sd->gamma * 0xb8 / 0x100;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	gamma[0] = 0x0a;
 	gamma[1] = 0x13 + (gval * (0xcb - 0x13) / 0xb8);
@@ -1553,6 +2180,7 @@ static void set_gamma(struct gspca_dev *gspca_dev)
 	gamma[15] = 0xea + (gval * (0xf9 - 0xea) / 0xb8);
 	gamma[16] = 0xf5;
 
+<<<<<<< HEAD
 	reg_w(gspca_dev, 0x1190, gamma, 17);
 }
 
@@ -1565,17 +2193,39 @@ static void set_redblue(struct gspca_dev *gspca_dev)
 }
 
 static void set_hvflip(struct gspca_dev *gspca_dev)
+=======
+	return reg_w(gspca_dev, 0x1190, gamma, 17);
+}
+
+static int set_redblue(struct gspca_dev *gspca_dev)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	reg_w1(gspca_dev, 0x118c, sd->red);
+	reg_w1(gspca_dev, 0x118f, sd->blue);
+	return 0;
+}
+
+static int set_hvflip(struct gspca_dev *gspca_dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u8 value, tslb, hflip, vflip;
 	u16 value2;
 	struct sd *sd = (struct sd *) gspca_dev;
 
 	if ((sd->flags & FLIP_DETECT) && dmi_check_system(flip_dmi_table)) {
+<<<<<<< HEAD
 		hflip = !sd->ctrls[HFLIP].val;
 		vflip = !sd->ctrls[VFLIP].val;
 	} else {
 		hflip = sd->ctrls[HFLIP].val;
 		vflip = sd->ctrls[VFLIP].val;
+=======
+		hflip = !sd->hflip;
+		vflip = !sd->vflip;
+	} else {
+		hflip = sd->hflip;
+		vflip = sd->vflip;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	switch (sd->sensor) {
@@ -1586,9 +2236,14 @@ static void set_hvflip(struct gspca_dev *gspca_dev)
 		if (vflip) {
 			value |= 0x10;
 			sd->vstart = 2;
+<<<<<<< HEAD
 		} else {
 			sd->vstart = 3;
 		}
+=======
+		} else
+			sd->vstart = 3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reg_w1(gspca_dev, 0x1182, sd->vstart);
 		i2c_w1(gspca_dev, 0x1e, value);
 		break;
@@ -1636,6 +2291,7 @@ static void set_hvflip(struct gspca_dev *gspca_dev)
 		i2c_w1(gspca_dev, 0x01, value);
 		break;
 	}
+<<<<<<< HEAD
 }
 
 static void set_exposure(struct gspca_dev *gspca_dev)
@@ -1645,6 +2301,15 @@ static void set_exposure(struct gspca_dev *gspca_dev)
 	int expo;
 
 	expo = sd->ctrls[EXPOSURE].val;
+=======
+	return 0;
+}
+
+static int set_exposure(struct gspca_dev *gspca_dev)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	u8 exp[8] = {0x81, sd->i2c_addr, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1e};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (sd->sensor) {
 	case SENSOR_OV7660:
 	case SENSOR_OV7670:
@@ -1652,20 +2317,31 @@ static void set_exposure(struct gspca_dev *gspca_dev)
 	case SENSOR_OV9650:
 		exp[0] |= (3 << 4);
 		exp[2] = 0x2d;
+<<<<<<< HEAD
 		exp[3] = expo;
 		exp[4] = expo >> 8;
+=======
+		exp[3] = sd->exposure & 0xff;
+		exp[4] = sd->exposure >> 8;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case SENSOR_MT9M001:
 	case SENSOR_MT9V112:
 	case SENSOR_MT9V011:
 		exp[0] |= (3 << 4);
 		exp[2] = 0x09;
+<<<<<<< HEAD
 		exp[3] = expo >> 8;
 		exp[4] = expo;
+=======
+		exp[3] = sd->exposure >> 8;
+		exp[4] = sd->exposure & 0xff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case SENSOR_HV7131R:
 		exp[0] |= (4 << 4);
 		exp[2] = 0x25;
+<<<<<<< HEAD
 		exp[3] = expo >> 5;
 		exp[4] = expo << 3;
 		exp[5] = 0;
@@ -1683,6 +2359,23 @@ static void set_gain(struct gspca_dev *gspca_dev)
 	int g;
 
 	g = sd->ctrls[GAIN].val;
+=======
+		exp[3] = (sd->exposure >> 5) & 0xff;
+		exp[4] = (sd->exposure << 3) & 0xff;
+		exp[5] = 0;
+		break;
+	default:
+		return 0;
+	}
+	i2c_w(gspca_dev, exp);
+	return 0;
+}
+
+static int set_gain(struct gspca_dev *gspca_dev)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	u8 gain[8] = {0x81, sd->i2c_addr, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1d};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (sd->sensor) {
 	case SENSOR_OV7660:
 	case SENSOR_OV7670:
@@ -1690,29 +2383,49 @@ static void set_gain(struct gspca_dev *gspca_dev)
 	case SENSOR_OV9655:
 	case SENSOR_OV9650:
 		gain[0] |= (2 << 4);
+<<<<<<< HEAD
 		gain[3] = ov_gain[g];
+=======
+		gain[3] = ov_gain[sd->gain];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case SENSOR_MT9V011:
 		gain[0] |= (3 << 4);
 		gain[2] = 0x35;
+<<<<<<< HEAD
 		gain[3] = micron1_gain[g] >> 8;
 		gain[4] = micron1_gain[g];
+=======
+		gain[3] = micron1_gain[sd->gain] >> 8;
+		gain[4] = micron1_gain[sd->gain] & 0xff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case SENSOR_MT9V112:
 		gain[0] |= (3 << 4);
 		gain[2] = 0x2f;
+<<<<<<< HEAD
 		gain[3] = micron1_gain[g] >> 8;
 		gain[4] = micron1_gain[g];
+=======
+		gain[3] = micron1_gain[sd->gain] >> 8;
+		gain[4] = micron1_gain[sd->gain] & 0xff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case SENSOR_MT9M001:
 		gain[0] |= (3 << 4);
 		gain[2] = 0x2f;
+<<<<<<< HEAD
 		gain[3] = micron2_gain[g] >> 8;
 		gain[4] = micron2_gain[g];
+=======
+		gain[3] = micron2_gain[sd->gain] >> 8;
+		gain[4] = micron2_gain[sd->gain] & 0xff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case SENSOR_HV7131R:
 		gain[0] |= (2 << 4);
 		gain[2] = 0x30;
+<<<<<<< HEAD
 		gain[3] = hv7131r_gain[g];
 		break;
 	default:
@@ -1734,6 +2447,217 @@ static void set_quality(struct gspca_dev *gspca_dev)
 	reg_w1(gspca_dev, 0x10e0, sd->fmt);
 	sd->fmt ^= 0x0c;			/* invert QTAB use + write */
 	reg_w1(gspca_dev, 0x10e0, sd->fmt);
+=======
+		gain[3] = hv7131r_gain[sd->gain];
+		break;
+	default:
+		return 0;
+	}
+	i2c_w(gspca_dev, gain);
+	return 0;
+}
+
+static int sd_setbrightness(struct gspca_dev *gspca_dev, s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->brightness = val;
+	if (gspca_dev->streaming)
+		return set_cmatrix(gspca_dev);
+	return 0;
+}
+
+static int sd_getbrightness(struct gspca_dev *gspca_dev, s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	*val = sd->brightness;
+	return 0;
+}
+
+
+static int sd_setcontrast(struct gspca_dev *gspca_dev, s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->contrast = val;
+	if (gspca_dev->streaming)
+		return set_cmatrix(gspca_dev);
+	return 0;
+}
+
+static int sd_getcontrast(struct gspca_dev *gspca_dev, s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	*val = sd->contrast;
+	return 0;
+}
+
+static int sd_setsaturation(struct gspca_dev *gspca_dev, s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->saturation = val;
+	if (gspca_dev->streaming)
+		return set_cmatrix(gspca_dev);
+	return 0;
+}
+
+static int sd_getsaturation(struct gspca_dev *gspca_dev, s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	*val = sd->saturation;
+	return 0;
+}
+
+static int sd_sethue(struct gspca_dev *gspca_dev, s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->hue = val;
+	if (gspca_dev->streaming)
+		return set_cmatrix(gspca_dev);
+	return 0;
+}
+
+static int sd_gethue(struct gspca_dev *gspca_dev, s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	*val = sd->hue;
+	return 0;
+}
+
+static int sd_setgamma(struct gspca_dev *gspca_dev, s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->gamma = val;
+	if (gspca_dev->streaming)
+		return set_gamma(gspca_dev);
+	return 0;
+}
+
+static int sd_getgamma(struct gspca_dev *gspca_dev, s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	*val = sd->gamma;
+	return 0;
+}
+
+static int sd_setredbalance(struct gspca_dev *gspca_dev, s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->red = val;
+	if (gspca_dev->streaming)
+		return set_redblue(gspca_dev);
+	return 0;
+}
+
+static int sd_getredbalance(struct gspca_dev *gspca_dev, s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	*val = sd->red;
+	return 0;
+}
+
+static int sd_setbluebalance(struct gspca_dev *gspca_dev, s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->blue = val;
+	if (gspca_dev->streaming)
+		return set_redblue(gspca_dev);
+	return 0;
+}
+
+static int sd_getbluebalance(struct gspca_dev *gspca_dev, s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	*val = sd->blue;
+	return 0;
+}
+
+static int sd_sethflip(struct gspca_dev *gspca_dev, s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->hflip = val;
+	if (gspca_dev->streaming)
+		return set_hvflip(gspca_dev);
+	return 0;
+}
+
+static int sd_gethflip(struct gspca_dev *gspca_dev, s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	*val = sd->hflip;
+	return 0;
+}
+
+static int sd_setvflip(struct gspca_dev *gspca_dev, s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->vflip = val;
+	if (gspca_dev->streaming)
+		return set_hvflip(gspca_dev);
+	return 0;
+}
+
+static int sd_getvflip(struct gspca_dev *gspca_dev, s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	*val = sd->vflip;
+	return 0;
+}
+
+static int sd_setexposure(struct gspca_dev *gspca_dev, s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->exposure = val;
+	if (gspca_dev->streaming)
+		return set_exposure(gspca_dev);
+	return 0;
+}
+
+static int sd_getexposure(struct gspca_dev *gspca_dev, s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	*val = sd->exposure;
+	return 0;
+}
+
+static int sd_setgain(struct gspca_dev *gspca_dev, s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+
+	sd->gain = val;
+	if (gspca_dev->streaming)
+		return set_gain(gspca_dev);
+	return 0;
+}
+
+static int sd_getgain(struct gspca_dev *gspca_dev, s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	*val = sd->gain;
+	return 0;
+}
+
+static int sd_setautoexposure(struct gspca_dev *gspca_dev, s32 val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	sd->auto_exposure = val;
+	return 0;
+}
+
+static int sd_getautoexposure(struct gspca_dev *gspca_dev, s32 *val)
+{
+	struct sd *sd = (struct sd *) gspca_dev;
+	*val = sd->auto_exposure;
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_VIDEO_ADV_DEBUG
@@ -1741,26 +2665,46 @@ static int sd_dbg_g_register(struct gspca_dev *gspca_dev,
 			struct v4l2_dbg_register *reg)
 {
 	struct sd *sd = (struct sd *) gspca_dev;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (reg->match.type) {
 	case V4L2_CHIP_MATCH_HOST:
 		if (reg->match.addr != 0)
 			return -EINVAL;
 		if (reg->reg < 0x1000 || reg->reg > 0x11ff)
 			return -EINVAL;
+<<<<<<< HEAD
 		reg_r(gspca_dev, reg->reg, 1);
 		reg->val = gspca_dev->usb_buf[0];
 		return gspca_dev->usb_err;
+=======
+		if (reg_r(gspca_dev, reg->reg, 1) < 0)
+			return -EINVAL;
+		reg->val = gspca_dev->usb_buf[0];
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case V4L2_CHIP_MATCH_I2C_ADDR:
 		if (reg->match.addr != sd->i2c_addr)
 			return -EINVAL;
 		if (sd->sensor >= SENSOR_MT9V011 &&
 		    sd->sensor <= SENSOR_MT9M112) {
+<<<<<<< HEAD
 			i2c_r2(gspca_dev, reg->reg, (u16 *) &reg->val);
 		} else {
 			i2c_r1(gspca_dev, reg->reg, (u8 *) &reg->val);
 		}
 		return gspca_dev->usb_err;
+=======
+			if (i2c_r2(gspca_dev, reg->reg, (u16 *)&reg->val) < 0)
+				return -EINVAL;
+		} else {
+			if (i2c_r1(gspca_dev, reg->reg, (u8 *)&reg->val) < 0)
+				return -EINVAL;
+		}
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return -EINVAL;
 }
@@ -1769,25 +2713,44 @@ static int sd_dbg_s_register(struct gspca_dev *gspca_dev,
 			struct v4l2_dbg_register *reg)
 {
 	struct sd *sd = (struct sd *) gspca_dev;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (reg->match.type) {
 	case V4L2_CHIP_MATCH_HOST:
 		if (reg->match.addr != 0)
 			return -EINVAL;
 		if (reg->reg < 0x1000 || reg->reg > 0x11ff)
 			return -EINVAL;
+<<<<<<< HEAD
 		reg_w1(gspca_dev, reg->reg, reg->val);
 		return gspca_dev->usb_err;
+=======
+		if (reg_w1(gspca_dev, reg->reg, reg->val) < 0)
+			return -EINVAL;
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case V4L2_CHIP_MATCH_I2C_ADDR:
 		if (reg->match.addr != sd->i2c_addr)
 			return -EINVAL;
 		if (sd->sensor >= SENSOR_MT9V011 &&
 		    sd->sensor <= SENSOR_MT9M112) {
+<<<<<<< HEAD
 			i2c_w2(gspca_dev, reg->reg, reg->val);
 		} else {
 			i2c_w1(gspca_dev, reg->reg, reg->val);
 		}
 		return gspca_dev->usb_err;
+=======
+			if (i2c_w2(gspca_dev, reg->reg, reg->val) < 0)
+				return -EINVAL;
+		} else {
+			if (i2c_w1(gspca_dev, reg->reg, reg->val) < 0)
+				return -EINVAL;
+		}
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return -EINVAL;
 }
@@ -1822,11 +2785,18 @@ static int sd_config(struct gspca_dev *gspca_dev,
 	struct cam *cam;
 
 	cam = &gspca_dev->cam;
+<<<<<<< HEAD
 	cam->needs_full_bandwidth = 1;
 
 	sd->sensor = id->driver_info >> 8;
 	sd->i2c_addr = id->driver_info;
 	sd->flags = id->driver_info >> 16;
+=======
+
+	sd->sensor = (id->driver_info >> 8) & 0xff;
+	sd->i2c_addr = id->driver_info & 0xff;
+	sd->flags = (id->driver_info >> 16) & 0xff;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (sd->sensor) {
 	case SENSOR_MT9M112:
@@ -1850,9 +2820,27 @@ static int sd_config(struct gspca_dev *gspca_dev,
 	sd->older_step = 0;
 	sd->exposure_step = 16;
 
+<<<<<<< HEAD
 	gspca_dev->cam.ctrls = sd->ctrls;
 
 	INIT_WORK(&sd->work, qual_upd);
+=======
+	sd->brightness = BRIGHTNESS_DEFAULT;
+	sd->contrast = CONTRAST_DEFAULT;
+	sd->saturation = SATURATION_DEFAULT;
+	sd->hue = HUE_DEFAULT;
+	sd->gamma = GAMMA_DEFAULT;
+	sd->red = RED_DEFAULT;
+	sd->blue = BLUE_DEFAULT;
+
+	sd->hflip = HFLIP_DEFAULT;
+	sd->vflip = VFLIP_DEFAULT;
+	sd->exposure = EXPOSURE_DEFAULT;
+	sd->gain = GAIN_DEFAULT;
+	sd->auto_exposure = AUTO_EXPOSURE_DEFAULT;
+
+	sd->quality = 95;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1867,10 +2855,16 @@ static int sd_init(struct gspca_dev *gspca_dev)
 
 	for (i = 0; i < ARRAY_SIZE(bridge_init); i++) {
 		value = bridge_init[i][1];
+<<<<<<< HEAD
 		reg_w(gspca_dev, bridge_init[i][0], &value, 1);
 		if (gspca_dev->usb_err < 0) {
 			pr_err("Device initialization failed\n");
 			return gspca_dev->usb_err;
+=======
+		if (reg_w(gspca_dev, bridge_init[i][0], &value, 1) < 0) {
+			err("Device initialization failed");
+			return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -1879,14 +2873,21 @@ static int sd_init(struct gspca_dev *gspca_dev)
 	else
 		reg_w1(gspca_dev, 0x1006, 0x20);
 
+<<<<<<< HEAD
 	reg_w(gspca_dev, 0x10c0, i2c_init, 9);
 	if (gspca_dev->usb_err < 0) {
 		pr_err("Device initialization failed\n");
 		return gspca_dev->usb_err;
+=======
+	if (reg_w(gspca_dev, 0x10c0, i2c_init, 9) < 0) {
+		err("Device initialization failed");
+		return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	switch (sd->sensor) {
 	case SENSOR_OV9650:
+<<<<<<< HEAD
 		ov9650_init_sensor(gspca_dev);
 		if (gspca_dev->usb_err < 0)
 			break;
@@ -1951,13 +2952,71 @@ static int sd_init(struct gspca_dev *gspca_dev)
 	}
 
 	return gspca_dev->usb_err;
+=======
+		if (ov9650_init_sensor(gspca_dev) < 0)
+			return -ENODEV;
+		info("OV9650 sensor detected");
+		break;
+	case SENSOR_OV9655:
+		if (ov9655_init_sensor(gspca_dev) < 0)
+			return -ENODEV;
+		info("OV9655 sensor detected");
+		break;
+	case SENSOR_SOI968:
+		if (soi968_init_sensor(gspca_dev) < 0)
+			return -ENODEV;
+		info("SOI968 sensor detected");
+		break;
+	case SENSOR_OV7660:
+		if (ov7660_init_sensor(gspca_dev) < 0)
+			return -ENODEV;
+		info("OV7660 sensor detected");
+		break;
+	case SENSOR_OV7670:
+		if (ov7670_init_sensor(gspca_dev) < 0)
+			return -ENODEV;
+		info("OV7670 sensor detected");
+		break;
+	case SENSOR_MT9VPRB:
+		if (mt9v_init_sensor(gspca_dev) < 0)
+			return -ENODEV;
+		break;
+	case SENSOR_MT9M111:
+		if (mt9m111_init_sensor(gspca_dev) < 0)
+			return -ENODEV;
+		info("MT9M111 sensor detected");
+		break;
+	case SENSOR_MT9M112:
+		if (mt9m112_init_sensor(gspca_dev) < 0)
+			return -ENODEV;
+		info("MT9M112 sensor detected");
+		break;
+	case SENSOR_MT9M001:
+		if (mt9m001_init_sensor(gspca_dev) < 0)
+			return -ENODEV;
+		break;
+	case SENSOR_HV7131R:
+		if (hv7131r_init_sensor(gspca_dev) < 0)
+			return -ENODEV;
+		info("HV7131R sensor detected");
+		break;
+	default:
+		info("Unsupported Sensor");
+		return -ENODEV;
+	}
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void configure_sensor_output(struct gspca_dev *gspca_dev, int mode)
 {
 	struct sd *sd = (struct sd *) gspca_dev;
 	u8 value;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (sd->sensor) {
 	case SENSOR_SOI968:
 		if (mode & MODE_SXGA) {
@@ -2010,6 +3069,7 @@ static void configure_sensor_output(struct gspca_dev *gspca_dev, int mode)
 	}
 }
 
+<<<<<<< HEAD
 static int sd_isoc_init(struct gspca_dev *gspca_dev)
 {
 	struct usb_interface *intf;
@@ -2047,6 +3107,8 @@ static int sd_isoc_init(struct gspca_dev *gspca_dev)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define HW_WIN(mode, hstart, vstart) \
 ((const u8 []){hstart, 0, vstart, 0, \
 (mode & MODE_SXGA ? 1280 >> 4 : 640 >> 4), \
@@ -2067,19 +3129,30 @@ static int sd_start(struct gspca_dev *gspca_dev)
 
 	jpeg_define(sd->jpeg_hdr, height, width,
 			0x21);
+<<<<<<< HEAD
 	jpeg_set_qual(sd->jpeg_hdr, sd->ctrls[QUALITY].val);
+=======
+	jpeg_set_qual(sd->jpeg_hdr, sd->quality);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mode & MODE_RAW)
 		fmt = 0x2d;
 	else if (mode & MODE_JPEG)
+<<<<<<< HEAD
 		fmt = 0x24;
 	else
 		fmt = 0x2f;	/* YUV 420 */
 	sd->fmt = fmt;
+=======
+		fmt = 0x2c;
+	else
+		fmt = 0x2f;	/* YUV 420 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (mode & SCALE_MASK) {
 	case SCALE_1280x1024:
 		scale = 0xc0;
+<<<<<<< HEAD
 		pr_info("Set 1280x1024\n");
 		break;
 	case SCALE_640x480:
@@ -2093,6 +3166,21 @@ static int sd_start(struct gspca_dev *gspca_dev)
 	case SCALE_160x120:
 		scale = 0xa0;
 		pr_info("Set 160x120\n");
+=======
+		info("Set 1280x1024");
+		break;
+	case SCALE_640x480:
+		scale = 0x80;
+		info("Set 640x480");
+		break;
+	case SCALE_320x240:
+		scale = 0x90;
+		info("Set 320x240");
+		break;
+	case SCALE_160x120:
+		scale = 0xa0;
+		info("Set 160x120");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -2112,6 +3200,7 @@ static int sd_start(struct gspca_dev *gspca_dev)
 	set_hvflip(gspca_dev);
 
 	reg_w1(gspca_dev, 0x1007, 0x20);
+<<<<<<< HEAD
 	reg_w1(gspca_dev, 0x1061, 0x03);
 
 	/* if JPEG, prepare the compression quality update */
@@ -2123,11 +3212,18 @@ static int sd_start(struct gspca_dev *gspca_dev)
 	}
 
 	return gspca_dev->usb_err;
+=======
+
+	reg_r(gspca_dev, 0x1061, 1);
+	reg_w1(gspca_dev, 0x1061, gspca_dev->usb_buf[0] | 0x02);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void sd_stopN(struct gspca_dev *gspca_dev)
 {
 	reg_w1(gspca_dev, 0x1007, 0x00);
+<<<<<<< HEAD
 	reg_w1(gspca_dev, 0x1061, 0x01);
 }
 
@@ -2143,6 +3239,11 @@ static void sd_stop0(struct gspca_dev *gspca_dev)
 		mutex_lock(&gspca_dev->usb_lock);
 		sd->work_thread = NULL;
 	}
+=======
+
+	reg_r(gspca_dev, 0x1061, 1);
+	reg_w1(gspca_dev, 0x1061, gspca_dev->usb_buf[0] & ~0x02);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void do_autoexposure(struct gspca_dev *gspca_dev, u16 avg_lum)
@@ -2156,15 +3257,26 @@ static void do_autoexposure(struct gspca_dev *gspca_dev, u16 avg_lum)
 	 * and exposure steps
 	 */
 	if (avg_lum < MIN_AVG_LUM) {
+<<<<<<< HEAD
 		if (sd->ctrls[EXPOSURE].val > 0x1770)
 			return;
 
 		new_exp = sd->ctrls[EXPOSURE].val + sd->exposure_step;
+=======
+		if (sd->exposure > 0x1770)
+			return;
+
+		new_exp = sd->exposure + sd->exposure_step;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (new_exp > 0x1770)
 			new_exp = 0x1770;
 		if (new_exp < 0x10)
 			new_exp = 0x10;
+<<<<<<< HEAD
 		sd->ctrls[EXPOSURE].val = new_exp;
+=======
+		sd->exposure = new_exp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_exposure(gspca_dev);
 
 		sd->older_step = sd->old_step;
@@ -2176,14 +3288,24 @@ static void do_autoexposure(struct gspca_dev *gspca_dev, u16 avg_lum)
 			sd->exposure_step += 2;
 	}
 	if (avg_lum > MAX_AVG_LUM) {
+<<<<<<< HEAD
 		if (sd->ctrls[EXPOSURE].val < 0x10)
 			return;
 		new_exp = sd->ctrls[EXPOSURE].val - sd->exposure_step;
+=======
+		if (sd->exposure < 0x10)
+			return;
+		new_exp = sd->exposure - sd->exposure_step;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (new_exp > 0x1700)
 			new_exp = 0x1770;
 		if (new_exp < 0x10)
 			new_exp = 0x10;
+<<<<<<< HEAD
 		sd->ctrls[EXPOSURE].val = new_exp;
+=======
+		sd->exposure = new_exp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		set_exposure(gspca_dev);
 		sd->older_step = sd->old_step;
 		sd->old_step = 0;
@@ -2200,14 +3322,24 @@ static void do_autogain(struct gspca_dev *gspca_dev, u16 avg_lum)
 	struct sd *sd = (struct sd *) gspca_dev;
 
 	if (avg_lum < MIN_AVG_LUM) {
+<<<<<<< HEAD
 		if (sd->ctrls[GAIN].val + 1 <= 28) {
 			sd->ctrls[GAIN].val++;
+=======
+		if (sd->gain + 1 <= 28) {
+			sd->gain++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			set_gain(gspca_dev);
 		}
 	}
 	if (avg_lum > MAX_AVG_LUM) {
+<<<<<<< HEAD
 		if (sd->ctrls[GAIN].val > 0) {
 			sd->ctrls[GAIN].val--;
+=======
+		if (sd->gain > 0) {
+			sd->gain--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			set_gain(gspca_dev);
 		}
 	}
@@ -2218,7 +3350,11 @@ static void sd_dqcallback(struct gspca_dev *gspca_dev)
 	struct sd *sd = (struct sd *) gspca_dev;
 	int avg_lum;
 
+<<<<<<< HEAD
 	if (!sd->ctrls[AUTOGAIN].val)
+=======
+	if (!sd->auto_exposure)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	avg_lum = atomic_read(&sd->avg_lum);
@@ -2228,6 +3364,7 @@ static void sd_dqcallback(struct gspca_dev *gspca_dev)
 		do_autoexposure(gspca_dev, avg_lum);
 }
 
+<<<<<<< HEAD
 /* JPEG quality update */
 /* This function is executed from a work queue. */
 static void qual_upd(struct work_struct *work)
@@ -2241,12 +3378,15 @@ static void qual_upd(struct work_struct *work)
 	mutex_unlock(&gspca_dev->usb_lock);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
 static int sd_int_pkt_scan(struct gspca_dev *gspca_dev,
 			u8 *data,		/* interrupt packet */
 			int len)		/* interrupt packet length */
 {
 	struct sd *sd = (struct sd *) gspca_dev;
+<<<<<<< HEAD
 
 	if (!(sd->flags & HAS_NO_BUTTON) && len == 1) {
 		input_report_key(gspca_dev->input_dev, KEY_CAMERA, 1);
@@ -2303,17 +3443,38 @@ static void transfer_check(struct gspca_dev *gspca_dev,
 	sd->pktsz = sd->npkt = 0;
 }
 
+=======
+	int ret = -EINVAL;
+	if (!(sd->flags & HAS_NO_BUTTON) && len == 1) {
+			input_report_key(gspca_dev->input_dev, KEY_CAMERA, 1);
+			input_sync(gspca_dev->input_dev);
+			input_report_key(gspca_dev->input_dev, KEY_CAMERA, 0);
+			input_sync(gspca_dev->input_dev);
+			ret = 0;
+	}
+	return ret;
+}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void sd_pkt_scan(struct gspca_dev *gspca_dev,
 			u8 *data,			/* isoc packet */
 			int len)			/* iso packet length */
 {
 	struct sd *sd = (struct sd *) gspca_dev;
+<<<<<<< HEAD
 	int avg_lum, is_jpeg;
 	static u8 frame_header[] =
 		{0xff, 0xff, 0x00, 0xc4, 0xc4, 0x96};
 
 	is_jpeg = (sd->fmt & 0x03) == 0;
 	if (len >= 64 && memcmp(data, frame_header, 6) == 0) {
+=======
+	int avg_lum;
+	static u8 frame_header[] =
+		{0xff, 0xff, 0x00, 0xc4, 0xc4, 0x96};
+	if (len == 64 && memcmp(data, frame_header, 6) == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		avg_lum = ((data[35] >> 2) & 3) |
 			   (data[20] << 2) |
 			   (data[19] << 10);
@@ -2340,6 +3501,7 @@ static void sd_pkt_scan(struct gspca_dev *gspca_dev,
 			    (data[33] << 10);
 		avg_lum >>= 9;
 		atomic_set(&sd->avg_lum, avg_lum);
+<<<<<<< HEAD
 
 		if (is_jpeg)
 			transfer_check(gspca_dev, data);
@@ -2352,6 +3514,14 @@ static void sd_pkt_scan(struct gspca_dev *gspca_dev,
 	}
 	if (gspca_dev->last_packet_type == LAST_PACKET) {
 		if (is_jpeg) {
+=======
+		gspca_frame_add(gspca_dev, LAST_PACKET, NULL, 0);
+		return;
+	}
+	if (gspca_dev->last_packet_type == LAST_PACKET) {
+		if (gspca_dev->cam.cam_mode[(int) gspca_dev->curr_mode].priv
+				& MODE_JPEG) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			gspca_frame_add(gspca_dev, FIRST_PACKET,
 				sd->jpeg_hdr, JPEG_HDR_SZ);
 			gspca_frame_add(gspca_dev, INTER_PACKET,
@@ -2361,26 +3531,38 @@ static void sd_pkt_scan(struct gspca_dev *gspca_dev,
 				data, len);
 		}
 	} else {
+<<<<<<< HEAD
 		/* if JPEG, count the packets and their size */
 		if (is_jpeg) {
 			sd->npkt++;
 			sd->pktsz += len;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		gspca_frame_add(gspca_dev, INTER_PACKET, data, len);
 	}
 }
 
 /* sub-driver description */
 static const struct sd_desc sd_desc = {
+<<<<<<< HEAD
 	.name = KBUILD_MODNAME,
+=======
+	.name = MODULE_NAME,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ctrls = sd_ctrls,
 	.nctrls = ARRAY_SIZE(sd_ctrls),
 	.config = sd_config,
 	.init = sd_init,
+<<<<<<< HEAD
 	.isoc_init = sd_isoc_init,
 	.start = sd_start,
 	.stopN = sd_stopN,
 	.stop0 = sd_stop0,
+=======
+	.start = sd_start,
+	.stopN = sd_stopN,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.pkt_scan = sd_pkt_scan,
 #if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
 	.int_pkt_scan = sd_int_pkt_scan,
@@ -2421,7 +3603,11 @@ static const struct usb_device_id device_table[] = {
 	{USB_DEVICE(0x0c45, 0x628f), SN9C20X(OV9650, 0x30, 0)},
 	{USB_DEVICE(0x0c45, 0x62a0), SN9C20X(OV7670, 0x21, 0)},
 	{USB_DEVICE(0x0c45, 0x62b0), SN9C20X(MT9VPRB, 0x00, 0)},
+<<<<<<< HEAD
 	{USB_DEVICE(0x0c45, 0x62b3), SN9C20X(OV9655, 0x30, LED_REVERSE)},
+=======
+	{USB_DEVICE(0x0c45, 0x62b3), SN9C20X(OV9655, 0x30, 0)},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{USB_DEVICE(0x0c45, 0x62bb), SN9C20X(OV7660, 0x21, LED_REVERSE)},
 	{USB_DEVICE(0x0c45, 0x62bc), SN9C20X(HV7131R, 0x11, 0)},
 	{USB_DEVICE(0x045e, 0x00f4), SN9C20X(OV9650, 0x30, 0)},
@@ -2449,7 +3635,11 @@ static int sd_probe(struct usb_interface *intf,
 }
 
 static struct usb_driver sd_driver = {
+<<<<<<< HEAD
 	.name = KBUILD_MODNAME,
+=======
+	.name = MODULE_NAME,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.id_table = device_table,
 	.probe = sd_probe,
 	.disconnect = gspca_disconnect,
@@ -2460,4 +3650,19 @@ static struct usb_driver sd_driver = {
 #endif
 };
 
+<<<<<<< HEAD
 module_usb_driver(sd_driver);
+=======
+/* -- module insert / remove -- */
+static int __init sd_mod_init(void)
+{
+	return usb_register(&sd_driver);
+}
+static void __exit sd_mod_exit(void)
+{
+	usb_deregister(&sd_driver);
+}
+
+module_init(sd_mod_init);
+module_exit(sd_mod_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

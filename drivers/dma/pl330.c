@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 /*
  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
  *		http://www.samsung.com
+=======
+/* linux/drivers/dma/pl330.c
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Copyright (C) 2010 Samsung Electronics Co. Ltd.
  *	Jaswinder Singh <jassi.brar@samsung.com>
@@ -9,6 +13,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
+<<<<<<< HEAD
  */
 
 #include <linux/kernel.h>
@@ -2207,6 +2212,104 @@ static void pl330_del(struct pl330_info *pi)
 
 /* forward declaration */
 static struct amba_driver pl330_driver;
+=======
+ */
+
+#include <linux/io.h>
+#include <linux/init.h>
+#include <linux/slab.h>
+#include <linux/module.h>
+#include <linux/dmaengine.h>
+#include <linux/interrupt.h>
+#include <linux/amba/bus.h>
+#include <linux/amba/pl330.h>
+
+#define NR_DEFAULT_DESC	16
+
+enum desc_status {
+	/* In the DMAC pool */
+	FREE,
+	/*
+	 * Allocted to some channel during prep_xxx
+	 * Also may be sitting on the work_list.
+	 */
+	PREP,
+	/*
+	 * Sitting on the work_list and already submitted
+	 * to the PL330 core. Not more than two descriptors
+	 * of a channel can be BUSY at any time.
+	 */
+	BUSY,
+	/*
+	 * Sitting on the channel work_list but xfer done
+	 * by PL330 core
+	 */
+	DONE,
+};
+
+struct dma_pl330_chan {
+	/* Schedule desc completion */
+	struct tasklet_struct task;
+
+	/* DMA-Engine Channel */
+	struct dma_chan chan;
+
+	/* Last completed cookie */
+	dma_cookie_t completed;
+
+	/* List of to be xfered descriptors */
+	struct list_head work_list;
+
+	/* Pointer to the DMAC that manages this channel,
+	 * NULL if the channel is available to be acquired.
+	 * As the parent, this DMAC also provides descriptors
+	 * to the channel.
+	 */
+	struct dma_pl330_dmac *dmac;
+
+	/* To protect channel manipulation */
+	spinlock_t lock;
+
+	/* Token of a hardware channel thread of PL330 DMAC
+	 * NULL if the channel is available to be acquired.
+	 */
+	void *pl330_chid;
+};
+
+struct dma_pl330_dmac {
+	struct pl330_info pif;
+
+	/* DMA-Engine Device */
+	struct dma_device ddma;
+
+	/* Pool of descriptors available for the DMAC's channels */
+	struct list_head desc_pool;
+	/* To protect desc_pool manipulation */
+	spinlock_t pool_lock;
+
+	/* Peripheral channels connected to this DMAC */
+	struct dma_pl330_chan peripherals[0]; /* keep at end */
+};
+
+struct dma_pl330_desc {
+	/* To attach to a queue as child */
+	struct list_head node;
+
+	/* Descriptor for the DMA Engine API */
+	struct dma_async_tx_descriptor txd;
+
+	/* Xfer for PL330 core */
+	struct pl330_xfer px;
+
+	struct pl330_reqcfg rqcfg;
+	struct pl330_req req;
+
+	enum desc_status status;
+
+	/* The channel which currently holds this desc */
+	struct dma_pl330_chan *pchan;
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline struct dma_pl330_chan *
 to_pchan(struct dma_chan *ch)
@@ -2227,9 +2330,18 @@ static inline void free_desc_list(struct list_head *list)
 {
 	struct dma_pl330_dmac *pdmac;
 	struct dma_pl330_desc *desc;
+<<<<<<< HEAD
 	struct dma_pl330_chan *pch = NULL;
 	unsigned long flags;
 
+=======
+	struct dma_pl330_chan *pch;
+	unsigned long flags;
+
+	if (list_empty(list))
+		return;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Finish off the work list */
 	list_for_each_entry(desc, list, node) {
 		dma_async_tx_callback callback;
@@ -2246,10 +2358,13 @@ static inline void free_desc_list(struct list_head *list)
 		desc->pchan = NULL;
 	}
 
+<<<<<<< HEAD
 	/* pch will be unset if list was empty */
 	if (!pch)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pdmac = pch->dmac;
 
 	spin_lock_irqsave(&pdmac->pool_lock, flags);
@@ -2257,6 +2372,7 @@ static inline void free_desc_list(struct list_head *list)
 	spin_unlock_irqrestore(&pdmac->pool_lock, flags);
 }
 
+<<<<<<< HEAD
 static inline void handle_cyclic_desc_list(struct list_head *list)
 {
 	struct dma_pl330_desc *desc;
@@ -2283,6 +2399,8 @@ static inline void handle_cyclic_desc_list(struct list_head *list)
 	spin_unlock_irqrestore(&pch->lock, flags);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void fill_queue(struct dma_pl330_chan *pch)
 {
 	struct dma_pl330_desc *desc;
@@ -2324,8 +2442,12 @@ static void pl330_tasklet(unsigned long data)
 	/* Pick up ripe tomatoes */
 	list_for_each_entry_safe(desc, _dt, &pch->work_list, node)
 		if (desc->status == DONE) {
+<<<<<<< HEAD
 			if (!pch->cyclic)
 				dma_cookie_complete(&desc->txd);
+=======
+			pch->completed = desc->txd.cookie;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			list_move_tail(&desc->node, &list);
 		}
 
@@ -2337,10 +2459,14 @@ static void pl330_tasklet(unsigned long data)
 
 	spin_unlock_irqrestore(&pch->lock, flags);
 
+<<<<<<< HEAD
 	if (pch->cyclic)
 		handle_cyclic_desc_list(&list);
 	else
 		free_desc_list(&list);
+=======
+	free_desc_list(&list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void dma_pl330_rqcb(void *token, enum pl330_op_err err)
@@ -2362,6 +2488,7 @@ static void dma_pl330_rqcb(void *token, enum pl330_op_err err)
 	tasklet_schedule(&pch->task);
 }
 
+<<<<<<< HEAD
 bool pl330_filter(struct dma_chan *chan, void *param)
 {
 	u8 *peri_id;
@@ -2388,6 +2515,8 @@ bool pl330_filter(struct dma_chan *chan, void *param)
 }
 EXPORT_SYMBOL(pl330_filter);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int pl330_alloc_chan_resources(struct dma_chan *chan)
 {
 	struct dma_pl330_chan *pch = to_pchan(chan);
@@ -2396,8 +2525,12 @@ static int pl330_alloc_chan_resources(struct dma_chan *chan)
 
 	spin_lock_irqsave(&pch->lock, flags);
 
+<<<<<<< HEAD
 	dma_cookie_init(chan);
 	pch->cyclic = false;
+=======
+	pch->completed = chan->cookie = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pch->pl330_chid = pl330_request_channel(&pdmac->pif);
 	if (!pch->pl330_chid) {
@@ -2415,6 +2548,7 @@ static int pl330_alloc_chan_resources(struct dma_chan *chan)
 static int pl330_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd, unsigned long arg)
 {
 	struct dma_pl330_chan *pch = to_pchan(chan);
+<<<<<<< HEAD
 	struct dma_pl330_desc *desc, *_dt;
 	unsigned long flags;
 	struct dma_pl330_dmac *pdmac = pch->dmac;
@@ -2460,6 +2594,27 @@ static int pl330_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd, unsigned 
 		dev_err(pch->dmac->pif.dev, "Not supported command.\n");
 		return -ENXIO;
 	}
+=======
+	struct dma_pl330_desc *desc;
+	unsigned long flags;
+
+	/* Only supports DMA_TERMINATE_ALL */
+	if (cmd != DMA_TERMINATE_ALL)
+		return -ENXIO;
+
+	spin_lock_irqsave(&pch->lock, flags);
+
+	/* FLUSH the PL330 Channel thread */
+	pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
+
+	/* Mark all desc done */
+	list_for_each_entry(desc, &pch->work_list, node)
+		desc->status = DONE;
+
+	spin_unlock_irqrestore(&pch->lock, flags);
+
+	pl330_tasklet((unsigned long) pch);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -2469,6 +2624,7 @@ static void pl330_free_chan_resources(struct dma_chan *chan)
 	struct dma_pl330_chan *pch = to_pchan(chan);
 	unsigned long flags;
 
+<<<<<<< HEAD
 	tasklet_kill(&pch->task);
 
 	spin_lock_irqsave(&pch->lock, flags);
@@ -2479,6 +2635,15 @@ static void pl330_free_chan_resources(struct dma_chan *chan)
 	if (pch->cyclic)
 		list_splice_tail_init(&pch->work_list, &pch->dmac->desc_pool);
 
+=======
+	spin_lock_irqsave(&pch->lock, flags);
+
+	tasklet_kill(&pch->task);
+
+	pl330_release_channel(pch->pl330_chid);
+	pch->pl330_chid = NULL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&pch->lock, flags);
 }
 
@@ -2486,7 +2651,22 @@ static enum dma_status
 pl330_tx_status(struct dma_chan *chan, dma_cookie_t cookie,
 		 struct dma_tx_state *txstate)
 {
+<<<<<<< HEAD
 	return dma_cookie_status(chan, cookie, txstate);
+=======
+	struct dma_pl330_chan *pch = to_pchan(chan);
+	dma_cookie_t last_done, last_used;
+	int ret;
+
+	last_done = pch->completed;
+	last_used = chan->cookie;
+
+	ret = dma_async_is_complete(cookie, last_done, last_used);
+
+	dma_set_tx_state(txstate, last_done, last_used, 0);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void pl330_issue_pending(struct dma_chan *chan)
@@ -2509,16 +2689,38 @@ static dma_cookie_t pl330_tx_submit(struct dma_async_tx_descriptor *tx)
 	spin_lock_irqsave(&pch->lock, flags);
 
 	/* Assign cookies to all nodes */
+<<<<<<< HEAD
 	while (!list_empty(&last->node)) {
 		desc = list_entry(last->node.next, struct dma_pl330_desc, node);
 
 		dma_cookie_assign(&desc->txd);
+=======
+	cookie = tx->chan->cookie;
+
+	while (!list_empty(&last->node)) {
+		desc = list_entry(last->node.next, struct dma_pl330_desc, node);
+
+		if (++cookie < 0)
+			cookie = 1;
+		desc->txd.cookie = cookie;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		list_move_tail(&desc->node, &pch->work_list);
 	}
 
+<<<<<<< HEAD
 	cookie = dma_cookie_assign(&last->txd);
 	list_add_tail(&last->node, &pch->work_list);
+=======
+	if (++cookie < 0)
+		cookie = 1;
+	last->txd.cookie = cookie;
+
+	list_add_tail(&last->node, &pch->work_list);
+
+	tx->chan->cookie = cookie;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&pch->lock, flags);
 
 	return cookie;
@@ -2596,7 +2798,11 @@ pluck_desc(struct dma_pl330_dmac *pdmac)
 static struct dma_pl330_desc *pl330_get_desc(struct dma_pl330_chan *pch)
 {
 	struct dma_pl330_dmac *pdmac = pch->dmac;
+<<<<<<< HEAD
 	u8 *peri_id = pch->chan.private;
+=======
+	struct dma_pl330_peri *peri = pch->chan.private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dma_pl330_desc *desc;
 
 	/* Pluck one desc from the pool of DMAC */
@@ -2621,8 +2827,13 @@ static struct dma_pl330_desc *pl330_get_desc(struct dma_pl330_chan *pch)
 	desc->txd.cookie = 0;
 	async_tx_ack(&desc->txd);
 
+<<<<<<< HEAD
 	desc->req.peri = peri_id ? pch->chan.chan_id : 0;
 	desc->rqcfg.pcfg = &pch->dmac->pif.pcfg;
+=======
+	desc->req.rqtype = peri->rqtype;
+	desc->req.peri = peri->peri_id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dma_async_tx_descriptor_init(&desc->txd, &pch->chan);
 
@@ -2689,6 +2900,7 @@ static inline int get_burst_len(struct dma_pl330_desc *desc, size_t len)
 	return burst_len;
 }
 
+<<<<<<< HEAD
 static struct dma_async_tx_descriptor *pl330_prep_dma_cyclic(
 		struct dma_chan *chan, dma_addr_t dma_addr, size_t len,
 		size_t period_len, enum dma_transfer_direction direction,
@@ -2737,16 +2949,29 @@ static struct dma_async_tx_descriptor *pl330_prep_dma_cyclic(
 	return &desc->txd;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct dma_async_tx_descriptor *
 pl330_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dst,
 		dma_addr_t src, size_t len, unsigned long flags)
 {
 	struct dma_pl330_desc *desc;
 	struct dma_pl330_chan *pch = to_pchan(chan);
+<<<<<<< HEAD
 	struct pl330_info *pi;
 	int burst;
 
 	if (unlikely(!pch || !len))
+=======
+	struct dma_pl330_peri *peri = chan->private;
+	struct pl330_info *pi;
+	int burst;
+
+	if (unlikely(!pch || !len || !peri))
+		return NULL;
+
+	if (peri->rqtype != MEMTOMEM)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 
 	pi = &pch->dmac->pif;
@@ -2757,7 +2982,10 @@ pl330_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dst,
 
 	desc->rqcfg.src_inc = 1;
 	desc->rqcfg.dst_inc = 1;
+<<<<<<< HEAD
 	desc->req.rqtype = MEMTOMEM;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Select max possible burst size */
 	burst = pi->pcfg.data_bus_width / 8;
@@ -2781,6 +3009,7 @@ pl330_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dst,
 
 static struct dma_async_tx_descriptor *
 pl330_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+<<<<<<< HEAD
 		unsigned int sg_len, enum dma_transfer_direction direction,
 		unsigned long flg, void *context)
 {
@@ -2789,12 +3018,38 @@ pl330_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
 	struct scatterlist *sg;
 	unsigned long flags;
 	int i;
+=======
+		unsigned int sg_len, enum dma_data_direction direction,
+		unsigned long flg)
+{
+	struct dma_pl330_desc *first, *desc = NULL;
+	struct dma_pl330_chan *pch = to_pchan(chan);
+	struct dma_pl330_peri *peri = chan->private;
+	struct scatterlist *sg;
+	unsigned long flags;
+	int i, burst_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dma_addr_t addr;
 
 	if (unlikely(!pch || !sgl || !sg_len))
 		return NULL;
 
+<<<<<<< HEAD
 	addr = pch->fifo_addr;
+=======
+	/* Make sure the direction is consistent */
+	if ((direction == DMA_TO_DEVICE &&
+				peri->rqtype != MEMTODEV) ||
+			(direction == DMA_FROM_DEVICE &&
+				peri->rqtype != DEVTOMEM)) {
+		dev_err(pch->dmac->pif.dev, "%s:%d Invalid Direction\n",
+				__func__, __LINE__);
+		return NULL;
+	}
+
+	addr = peri->fifo_addr;
+	burst_size = peri->burst_sz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	first = NULL;
 
@@ -2830,21 +3085,34 @@ pl330_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
 		else
 			list_add_tail(&desc->node, &first->node);
 
+<<<<<<< HEAD
 		if (direction == DMA_MEM_TO_DEV) {
 			desc->rqcfg.src_inc = 1;
 			desc->rqcfg.dst_inc = 0;
 			desc->req.rqtype = MEMTODEV;
+=======
+		if (direction == DMA_TO_DEVICE) {
+			desc->rqcfg.src_inc = 1;
+			desc->rqcfg.dst_inc = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			fill_px(&desc->px,
 				addr, sg_dma_address(sg), sg_dma_len(sg));
 		} else {
 			desc->rqcfg.src_inc = 0;
 			desc->rqcfg.dst_inc = 1;
+<<<<<<< HEAD
 			desc->req.rqtype = DEVTOMEM;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			fill_px(&desc->px,
 				sg_dma_address(sg), addr, sg_dma_len(sg));
 		}
 
+<<<<<<< HEAD
 		desc->rqcfg.brst_size = pch->burst_sz;
+=======
+		desc->rqcfg.brst_size = burst_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		desc->rqcfg.brst_len = 1;
 	}
 
@@ -2871,12 +3139,26 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
 	struct dma_device *pd;
 	struct resource *res;
 	int i, ret, irq;
+<<<<<<< HEAD
 	int num_chan;
 
 	pdat = adev->dev.platform_data;
 
 	/* Allocate a new DMAC and its Channels */
 	pdmac = kzalloc(sizeof(*pdmac), GFP_KERNEL);
+=======
+
+	pdat = adev->dev.platform_data;
+
+	if (!pdat || !pdat->nr_valid_peri) {
+		dev_err(&adev->dev, "platform data missing\n");
+		return -ENODEV;
+	}
+
+	/* Allocate a new DMAC and its Channels */
+	pdmac = kzalloc(pdat->nr_valid_peri * sizeof(*pch)
+				+ sizeof(*pdmac), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!pdmac) {
 		dev_err(&adev->dev, "unable to allocate mem\n");
 		return -ENOMEM;
@@ -2885,7 +3167,11 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
 	pi = &pdmac->pif;
 	pi->dev = &adev->dev;
 	pi->pl330_data = NULL;
+<<<<<<< HEAD
 	pi->mcbufsz = pdat ? pdat->mcbuf_sz : 0;
+=======
+	pi->mcbufsz = pdat->mcbuf_sz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	res = &adev->res;
 	request_mem_region(res->start, resource_size(res), "dma-pl330");
@@ -2896,6 +3182,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
 		goto probe_err1;
 	}
 
+<<<<<<< HEAD
 	pdmac->clk = clk_get(&adev->dev, "dma");
 	if (IS_ERR(pdmac->clk)) {
 		dev_err(&adev->dev, "Cannot get operation clock.\n");
@@ -2910,15 +3197,25 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
 	clk_enable(pdmac->clk);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	irq = adev->irq[0];
 	ret = request_irq(irq, pl330_irq_handler, 0,
 			dev_name(&adev->dev), pi);
 	if (ret)
+<<<<<<< HEAD
 		goto probe_err3;
 
 	ret = pl330_add(pi);
 	if (ret)
 		goto probe_err4;
+=======
+		goto probe_err2;
+
+	ret = pl330_add(pi);
+	if (ret)
+		goto probe_err3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	INIT_LIST_HEAD(&pdmac->desc_pool);
 	spin_lock_init(&pdmac->pool_lock);
@@ -2931,6 +3228,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
 	INIT_LIST_HEAD(&pd->channels);
 
 	/* Initialize channel parameters */
+<<<<<<< HEAD
 	if (pdat)
 		num_chan = max_t(int, pdat->nr_valid_peri, pi->pcfg.num_chan);
 	else
@@ -2949,18 +3247,47 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
 			pch->chan.private = pdat ? &pdat->peri_id[i] : NULL;
 		else
 			pch->chan.private = adev->dev.of_node;
+=======
+	for (i = 0; i < pdat->nr_valid_peri; i++) {
+		struct dma_pl330_peri *peri = &pdat->peri[i];
+		pch = &pdmac->peripherals[i];
+
+		switch (peri->rqtype) {
+		case MEMTOMEM:
+			dma_cap_set(DMA_MEMCPY, pd->cap_mask);
+			break;
+		case MEMTODEV:
+		case DEVTOMEM:
+			dma_cap_set(DMA_SLAVE, pd->cap_mask);
+			break;
+		default:
+			dev_err(&adev->dev, "DEVTODEV Not Supported\n");
+			continue;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		INIT_LIST_HEAD(&pch->work_list);
 		spin_lock_init(&pch->lock);
 		pch->pl330_chid = NULL;
+<<<<<<< HEAD
 		pch->chan.device = pd;
 		pch->dmac = pdmac;
 
 		/* Add the channel to the DMAC list */
+=======
+		pch->chan.private = peri;
+		pch->chan.device = pd;
+		pch->chan.chan_id = i;
+		pch->dmac = pdmac;
+
+		/* Add the channel to the DMAC list */
+		pd->chancnt++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_add_tail(&pch->chan.device_node, &pd->channels);
 	}
 
 	pd->dev = &adev->dev;
+<<<<<<< HEAD
 	if (pdat) {
 		pd->cap_mask = pdat->cap_mask;
 	} else {
@@ -2970,11 +3297,16 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
 			dma_cap_set(DMA_CYCLIC, pd->cap_mask);
 		}
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pd->device_alloc_chan_resources = pl330_alloc_chan_resources;
 	pd->device_free_chan_resources = pl330_free_chan_resources;
 	pd->device_prep_dma_memcpy = pl330_prep_dma_memcpy;
+<<<<<<< HEAD
 	pd->device_prep_dma_cyclic = pl330_prep_dma_cyclic;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pd->device_tx_status = pl330_tx_status;
 	pd->device_prep_slave_sg = pl330_prep_slave_sg;
 	pd->device_control = pl330_control;
@@ -2983,9 +3315,17 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
 	ret = dma_async_device_register(pd);
 	if (ret) {
 		dev_err(&adev->dev, "unable to register DMAC\n");
+<<<<<<< HEAD
 		goto probe_err5;
 	}
 
+=======
+		goto probe_err4;
+	}
+
+	amba_set_drvdata(adev, pdmac);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_info(&adev->dev,
 		"Loaded driver for PL330 DMAC-%d\n", adev->periphid);
 	dev_info(&adev->dev,
@@ -2996,6 +3336,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
 
 	return 0;
 
+<<<<<<< HEAD
 probe_err5:
 	pl330_del(pi);
 probe_err4:
@@ -3005,6 +3346,12 @@ probe_err3:
 	clk_disable(pdmac->clk);
 #endif
 	clk_put(pdmac->clk);
+=======
+probe_err4:
+	pl330_del(pi);
+probe_err3:
+	free_irq(irq, pi);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 probe_err2:
 	iounmap(pi->base);
 probe_err1:
@@ -3051,10 +3398,13 @@ static int __devexit pl330_remove(struct amba_device *adev)
 	res = &adev->res;
 	release_mem_region(res->start, resource_size(res));
 
+<<<<<<< HEAD
 #ifndef CONFIG_PM_RUNTIME
 	clk_disable(pdmac->clk);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(pdmac);
 
 	return 0;
@@ -3068,6 +3418,7 @@ static struct amba_id pl330_ids[] = {
 	{ 0, 0 },
 };
 
+<<<<<<< HEAD
 MODULE_DEVICE_TABLE(amba, pl330_ids);
 
 #ifdef CONFIG_PM_RUNTIME
@@ -3108,18 +3459,38 @@ static const struct dev_pm_ops pl330_pm_ops = {
 	.runtime_resume = pl330_runtime_resume,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct amba_driver pl330_driver = {
 	.drv = {
 		.owner = THIS_MODULE,
 		.name = "dma-pl330",
+<<<<<<< HEAD
 		.pm = &pl330_pm_ops,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.id_table = pl330_ids,
 	.probe = pl330_probe,
 	.remove = pl330_remove,
 };
 
+<<<<<<< HEAD
 module_amba_driver(pl330_driver);
+=======
+static int __init pl330_init(void)
+{
+	return amba_driver_register(&pl330_driver);
+}
+module_init(pl330_init);
+
+static void __exit pl330_exit(void)
+{
+	amba_driver_unregister(&pl330_driver);
+	return;
+}
+module_exit(pl330_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Jaswinder Singh <jassi.brar@samsung.com>");
 MODULE_DESCRIPTION("API Driver for PL330 DMAC");

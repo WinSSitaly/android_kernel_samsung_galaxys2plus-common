@@ -41,7 +41,10 @@
 #include <linux/pnp.h>
 #include <linux/vga_switcheroo.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <acpi/video.h>
 
 static void i915_write_hws_pga(struct drm_device *dev)
@@ -781,12 +784,15 @@ static int i915_getparam(struct drm_device *dev, void *data,
 	case I915_PARAM_HAS_RELAXED_DELTA:
 		value = 1;
 		break;
+<<<<<<< HEAD
 	case I915_PARAM_HAS_GEN7_SOL_RESET:
 		value = 1;
 		break;
 	case I915_PARAM_HAS_LLC:
 		value = HAS_LLC(dev);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		DRM_DEBUG_DRIVER("Unknown parameter %d\n",
 				 param->param);
@@ -891,7 +897,11 @@ static int i915_get_bridge_dev(struct drm_device *dev)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
 
+<<<<<<< HEAD
 	dev_priv->bridge_dev = pci_get_bus_and_slot(0, PCI_DEVFN(0, 0));
+=======
+	dev_priv->bridge_dev = pci_get_bus_and_slot(0, PCI_DEVFN(0,0));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!dev_priv->bridge_dev) {
 		DRM_ERROR("bridge device not found\n");
 		return -1;
@@ -1078,9 +1088,12 @@ static void i915_setup_compression(struct drm_device *dev, int size)
 	unsigned long cfb_base;
 	unsigned long ll_base = 0;
 
+<<<<<<< HEAD
 	/* Just in case the BIOS is doing something questionable. */
 	intel_disable_fbc(dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	compressed_fb = drm_mm_search_free(&dev_priv->mm.stolen, size, 4096, 0);
 	if (compressed_fb)
 		compressed_fb = drm_mm_get_block(compressed_fb, size, 4096);
@@ -1107,6 +1120,10 @@ static void i915_setup_compression(struct drm_device *dev, int size)
 
 	dev_priv->cfb_size = size;
 
+<<<<<<< HEAD
+=======
+	intel_disable_fbc(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_priv->compressed_fb = compressed_fb;
 	if (HAS_PCH_SPLIT(dev))
 		I915_WRITE(ILK_DPFC_CB_BASE, compressed_fb->start);
@@ -1183,6 +1200,7 @@ static bool i915_switcheroo_can_switch(struct pci_dev *pdev)
 	return can_switch;
 }
 
+<<<<<<< HEAD
 static bool
 intel_enable_ppgtt(struct drm_device *dev)
 {
@@ -1198,6 +1216,8 @@ intel_enable_ppgtt(struct drm_device *dev)
 	return true;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int i915_load_gem_init(struct drm_device *dev)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
@@ -1211,6 +1231,7 @@ static int i915_load_gem_init(struct drm_device *dev)
 	/* Basic memrange allocator for stolen space */
 	drm_mm_init(&dev_priv->mm.stolen, 0, prealloc_size);
 
+<<<<<<< HEAD
 	mutex_lock(&dev->struct_mutex);
 	if (intel_enable_ppgtt(dev) && HAS_ALIASING_PPGTT(dev)) {
 		/* PPGTT pdes are stolen from global gtt ptes, so shrink the
@@ -1246,6 +1267,24 @@ static int i915_load_gem_init(struct drm_device *dev)
 		i915_gem_cleanup_aliasing_ppgtt(dev);
 		return ret;
 	}
+=======
+	/* Let GEM Manage all of the aperture.
+	 *
+	 * However, leave one page at the end still bound to the scratch page.
+	 * There are a number of places where the hardware apparently
+	 * prefetches past the end of the object, and we've seen multiple
+	 * hangs with the GPU head pointer stuck in a batchbuffer bound
+	 * at the last page of the aperture.  One page should be enough to
+	 * keep any prefetching inside of the aperture.
+	 */
+	i915_gem_do_init(dev, 0, mappable_size, gtt_size - PAGE_SIZE);
+
+	mutex_lock(&dev->struct_mutex);
+	ret = i915_gem_init_ringbuffer(dev);
+	mutex_unlock(&dev->struct_mutex);
+	if (ret)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Try to set up FBC with a reasonable compressed buffer size */
 	if (I915_HAS_FBC(dev) && i915_powersave) {
@@ -1332,7 +1371,10 @@ cleanup_gem:
 	mutex_lock(&dev->struct_mutex);
 	i915_gem_cleanup_ringbuffer(dev);
 	mutex_unlock(&dev->struct_mutex);
+<<<<<<< HEAD
 	i915_gem_cleanup_aliasing_ppgtt(dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 cleanup_vga_switcheroo:
 	vga_switcheroo_unregister_client(dev->pdev);
 cleanup_vga_client:
@@ -1701,9 +1743,12 @@ void i915_update_gfx_val(struct drm_i915_private *dev_priv)
 	unsigned long diffms;
 	u32 count;
 
+<<<<<<< HEAD
 	if (dev_priv->info->gen != 5)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	getrawmonotonic(&now);
 	diff1 = timespec_sub(now, dev_priv->last_time2);
 
@@ -1785,10 +1830,17 @@ static DEFINE_SPINLOCK(mchdev_lock);
  */
 unsigned long i915_read_mch_val(void)
 {
+<<<<<<< HEAD
 	struct drm_i915_private *dev_priv;
 	unsigned long chipset_val, graphics_val, ret = 0;
 
 	spin_lock(&mchdev_lock);
+=======
+  	struct drm_i915_private *dev_priv;
+	unsigned long chipset_val, graphics_val, ret = 0;
+
+  	spin_lock(&mchdev_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!i915_mch_dev)
 		goto out_unlock;
 	dev_priv = i915_mch_dev;
@@ -1799,9 +1851,15 @@ unsigned long i915_read_mch_val(void)
 	ret = chipset_val + graphics_val;
 
 out_unlock:
+<<<<<<< HEAD
 	spin_unlock(&mchdev_lock);
 
 	return ret;
+=======
+  	spin_unlock(&mchdev_lock);
+
+  	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(i915_read_mch_val);
 
@@ -1812,10 +1870,17 @@ EXPORT_SYMBOL_GPL(i915_read_mch_val);
  */
 bool i915_gpu_raise(void)
 {
+<<<<<<< HEAD
 	struct drm_i915_private *dev_priv;
 	bool ret = true;
 
 	spin_lock(&mchdev_lock);
+=======
+  	struct drm_i915_private *dev_priv;
+	bool ret = true;
+
+  	spin_lock(&mchdev_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!i915_mch_dev) {
 		ret = false;
 		goto out_unlock;
@@ -1826,9 +1891,15 @@ bool i915_gpu_raise(void)
 		dev_priv->max_delay--;
 
 out_unlock:
+<<<<<<< HEAD
 	spin_unlock(&mchdev_lock);
 
 	return ret;
+=======
+  	spin_unlock(&mchdev_lock);
+
+  	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(i915_gpu_raise);
 
@@ -1840,10 +1911,17 @@ EXPORT_SYMBOL_GPL(i915_gpu_raise);
  */
 bool i915_gpu_lower(void)
 {
+<<<<<<< HEAD
 	struct drm_i915_private *dev_priv;
 	bool ret = true;
 
 	spin_lock(&mchdev_lock);
+=======
+  	struct drm_i915_private *dev_priv;
+	bool ret = true;
+
+  	spin_lock(&mchdev_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!i915_mch_dev) {
 		ret = false;
 		goto out_unlock;
@@ -1854,9 +1932,15 @@ bool i915_gpu_lower(void)
 		dev_priv->max_delay++;
 
 out_unlock:
+<<<<<<< HEAD
 	spin_unlock(&mchdev_lock);
 
 	return ret;
+=======
+  	spin_unlock(&mchdev_lock);
+
+  	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(i915_gpu_lower);
 
@@ -1867,10 +1951,17 @@ EXPORT_SYMBOL_GPL(i915_gpu_lower);
  */
 bool i915_gpu_busy(void)
 {
+<<<<<<< HEAD
 	struct drm_i915_private *dev_priv;
 	bool ret = false;
 
 	spin_lock(&mchdev_lock);
+=======
+  	struct drm_i915_private *dev_priv;
+	bool ret = false;
+
+  	spin_lock(&mchdev_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!i915_mch_dev)
 		goto out_unlock;
 	dev_priv = i915_mch_dev;
@@ -1878,9 +1969,15 @@ bool i915_gpu_busy(void)
 	ret = dev_priv->busy;
 
 out_unlock:
+<<<<<<< HEAD
 	spin_unlock(&mchdev_lock);
 
 	return ret;
+=======
+  	spin_unlock(&mchdev_lock);
+
+  	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(i915_gpu_busy);
 
@@ -1892,10 +1989,17 @@ EXPORT_SYMBOL_GPL(i915_gpu_busy);
  */
 bool i915_gpu_turbo_disable(void)
 {
+<<<<<<< HEAD
 	struct drm_i915_private *dev_priv;
 	bool ret = true;
 
 	spin_lock(&mchdev_lock);
+=======
+  	struct drm_i915_private *dev_priv;
+	bool ret = true;
+
+  	spin_lock(&mchdev_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!i915_mch_dev) {
 		ret = false;
 		goto out_unlock;
@@ -1908,9 +2012,15 @@ bool i915_gpu_turbo_disable(void)
 		ret = false;
 
 out_unlock:
+<<<<<<< HEAD
 	spin_unlock(&mchdev_lock);
 
 	return ret;
+=======
+  	spin_unlock(&mchdev_lock);
+
+  	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(i915_gpu_turbo_disable);
 
@@ -1971,8 +2081,11 @@ int i915_driver_load(struct drm_device *dev, unsigned long flags)
 		goto free_priv;
 	}
 
+<<<<<<< HEAD
 	pci_set_master(dev->pdev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* overlay on gen2 is broken and can't address above 1G */
 	if (IS_GEN2(dev))
 		dma_set_coherent_mask(&dev->pdev->dev, DMA_BIT_MASK(30));
@@ -2005,7 +2118,11 @@ int i915_driver_load(struct drm_device *dev, unsigned long flags)
 
 	agp_size = dev_priv->mm.gtt->gtt_mappable_entries << PAGE_SHIFT;
 
+<<<<<<< HEAD
 	dev_priv->mm.gtt_mapping =
+=======
+        dev_priv->mm.gtt_mapping =
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		io_mapping_create_wc(dev->agp->base, agp_size);
 	if (dev_priv->mm.gtt_mapping == NULL) {
 		ret = -EIO;
@@ -2088,14 +2205,21 @@ int i915_driver_load(struct drm_device *dev, unsigned long flags)
 	if (!IS_I945G(dev) && !IS_I945GM(dev))
 		pci_enable_msi(dev->pdev);
 
+<<<<<<< HEAD
 	spin_lock_init(&dev_priv->gt_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_init(&dev_priv->irq_lock);
 	spin_lock_init(&dev_priv->error_lock);
 	spin_lock_init(&dev_priv->rps_lock);
 
+<<<<<<< HEAD
 	if (IS_IVYBRIDGE(dev))
 		dev_priv->num_pipe = 3;
 	else if (IS_MOBILE(dev) || !IS_GEN2(dev))
+=======
+	if (IS_MOBILE(dev) || !IS_GEN2(dev))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_priv->num_pipe = 2;
 	else
 		dev_priv->num_pipe = 1;
@@ -2124,6 +2248,7 @@ int i915_driver_load(struct drm_device *dev, unsigned long flags)
 	setup_timer(&dev_priv->hangcheck_timer, i915_hangcheck_elapsed,
 		    (unsigned long) dev);
 
+<<<<<<< HEAD
 	if (IS_GEN5(dev)) {
 		spin_lock(&mchdev_lock);
 		i915_mch_dev = dev_priv;
@@ -2132,6 +2257,14 @@ int i915_driver_load(struct drm_device *dev, unsigned long flags)
 
 		ips_ping_for_i915_load();
 	}
+=======
+	spin_lock(&mchdev_lock);
+	i915_mch_dev = dev_priv;
+	dev_priv->mchdev_lock = &mchdev_lock;
+	spin_unlock(&mchdev_lock);
+
+	ips_ping_for_i915_load();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
@@ -2174,7 +2307,11 @@ int i915_driver_unload(struct drm_device *dev)
 		unregister_shrinker(&dev_priv->mm.inactive_shrinker);
 
 	mutex_lock(&dev->struct_mutex);
+<<<<<<< HEAD
 	ret = i915_gpu_idle(dev, true);
+=======
+	ret = i915_gpu_idle(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		DRM_ERROR("failed to idle hardware: %d\n", ret);
 	mutex_unlock(&dev->struct_mutex);
@@ -2227,7 +2364,10 @@ int i915_driver_unload(struct drm_device *dev)
 		i915_gem_free_all_phys_object(dev);
 		i915_gem_cleanup_ringbuffer(dev);
 		mutex_unlock(&dev->struct_mutex);
+<<<<<<< HEAD
 		i915_gem_cleanup_aliasing_ppgtt(dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (I915_HAS_FBC(dev) && i915_powersave)
 			i915_cleanup_compression(dev);
 		drm_mm_takedown(&dev_priv->mm.stolen);
@@ -2293,12 +2433,25 @@ void i915_driver_lastclose(struct drm_device * dev)
 
 	i915_gem_lastclose(dev);
 
+<<<<<<< HEAD
+=======
+	if (dev_priv->agp_heap)
+		i915_mem_takedown(&(dev_priv->agp_heap));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	i915_dma_cleanup(dev);
 }
 
 void i915_driver_preclose(struct drm_device * dev, struct drm_file *file_priv)
 {
+<<<<<<< HEAD
 	i915_gem_release(dev, file_priv);
+=======
+	drm_i915_private_t *dev_priv = dev->dev_private;
+	i915_gem_release(dev, file_priv);
+	if (!drm_core_check_feature(dev, DRIVER_MODESET))
+		i915_mem_release(dev, file_priv, dev_priv->agp_heap);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void i915_driver_postclose(struct drm_device *dev, struct drm_file *file)
@@ -2317,11 +2470,19 @@ struct drm_ioctl_desc i915_ioctls[] = {
 	DRM_IOCTL_DEF_DRV(I915_IRQ_WAIT, i915_irq_wait, DRM_AUTH),
 	DRM_IOCTL_DEF_DRV(I915_GETPARAM, i915_getparam, DRM_AUTH),
 	DRM_IOCTL_DEF_DRV(I915_SETPARAM, i915_setparam, DRM_AUTH|DRM_MASTER|DRM_ROOT_ONLY),
+<<<<<<< HEAD
 	DRM_IOCTL_DEF_DRV(I915_ALLOC, drm_noop, DRM_AUTH),
 	DRM_IOCTL_DEF_DRV(I915_FREE, drm_noop, DRM_AUTH),
 	DRM_IOCTL_DEF_DRV(I915_INIT_HEAP, drm_noop, DRM_AUTH|DRM_MASTER|DRM_ROOT_ONLY),
 	DRM_IOCTL_DEF_DRV(I915_CMDBUFFER, i915_cmdbuffer, DRM_AUTH),
 	DRM_IOCTL_DEF_DRV(I915_DESTROY_HEAP,  drm_noop, DRM_AUTH|DRM_MASTER|DRM_ROOT_ONLY),
+=======
+	DRM_IOCTL_DEF_DRV(I915_ALLOC, i915_mem_alloc, DRM_AUTH),
+	DRM_IOCTL_DEF_DRV(I915_FREE, i915_mem_free, DRM_AUTH),
+	DRM_IOCTL_DEF_DRV(I915_INIT_HEAP, i915_mem_init_heap, DRM_AUTH|DRM_MASTER|DRM_ROOT_ONLY),
+	DRM_IOCTL_DEF_DRV(I915_CMDBUFFER, i915_cmdbuffer, DRM_AUTH),
+	DRM_IOCTL_DEF_DRV(I915_DESTROY_HEAP,  i915_mem_destroy_heap, DRM_AUTH|DRM_MASTER|DRM_ROOT_ONLY),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DRM_IOCTL_DEF_DRV(I915_SET_VBLANK_PIPE,  i915_vblank_pipe_set, DRM_AUTH|DRM_MASTER|DRM_ROOT_ONLY),
 	DRM_IOCTL_DEF_DRV(I915_GET_VBLANK_PIPE,  i915_vblank_pipe_get, DRM_AUTH),
 	DRM_IOCTL_DEF_DRV(I915_VBLANK_SWAP, i915_vblank_swap, DRM_AUTH),
@@ -2349,8 +2510,11 @@ struct drm_ioctl_desc i915_ioctls[] = {
 	DRM_IOCTL_DEF_DRV(I915_GEM_MADVISE, i915_gem_madvise_ioctl, DRM_UNLOCKED),
 	DRM_IOCTL_DEF_DRV(I915_OVERLAY_PUT_IMAGE, intel_overlay_put_image, DRM_MASTER|DRM_CONTROL_ALLOW|DRM_UNLOCKED),
 	DRM_IOCTL_DEF_DRV(I915_OVERLAY_ATTRS, intel_overlay_attrs, DRM_MASTER|DRM_CONTROL_ALLOW|DRM_UNLOCKED),
+<<<<<<< HEAD
 	DRM_IOCTL_DEF_DRV(I915_SET_SPRITE_COLORKEY, intel_sprite_set_colorkey, DRM_MASTER|DRM_CONTROL_ALLOW|DRM_UNLOCKED),
 	DRM_IOCTL_DEF_DRV(I915_GET_SPRITE_COLORKEY, intel_sprite_get_colorkey, DRM_MASTER|DRM_CONTROL_ALLOW|DRM_UNLOCKED),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int i915_max_ioctl = DRM_ARRAY_SIZE(i915_ioctls);

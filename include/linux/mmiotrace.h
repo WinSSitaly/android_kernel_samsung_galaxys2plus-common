@@ -49,7 +49,12 @@ extern void mmiotrace_ioremap(resource_size_t offset, unsigned long size,
 extern void mmiotrace_iounmap(volatile void __iomem *addr);
 
 /* For anyone to insert markers. Remember trailing newline. */
+<<<<<<< HEAD
 extern __printf(1, 2) int mmiotrace_printk(const char *fmt, ...);
+=======
+extern int mmiotrace_printk(const char *fmt, ...)
+				__attribute__ ((format (printf, 1, 2)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else /* !CONFIG_MMIOTRACE: */
 static inline int is_kmmio_active(void)
 {
@@ -70,7 +75,14 @@ static inline void mmiotrace_iounmap(volatile void __iomem *addr)
 {
 }
 
+<<<<<<< HEAD
 static inline __printf(1, 2) int mmiotrace_printk(const char *fmt, ...)
+=======
+static inline int mmiotrace_printk(const char *fmt, ...)
+				__attribute__ ((format (printf, 1, 0)));
+
+static inline int mmiotrace_printk(const char *fmt, ...)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 0;
 }

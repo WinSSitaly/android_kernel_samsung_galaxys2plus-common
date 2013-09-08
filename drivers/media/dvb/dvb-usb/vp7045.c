@@ -214,7 +214,11 @@ static int vp7045_frontend_attach(struct dvb_usb_adapter *adap)
 /*	Dump the EEPROM */
 /*	vp7045_read_eeprom(d,buf, 255, FX2_ID_ADDR); */
 
+<<<<<<< HEAD
 	adap->fe_adap[0].fe = vp7045_fe_attach(adap->dev);
+=======
+	adap->fe = vp7045_fe_attach(adap->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -245,8 +249,11 @@ static struct dvb_usb_device_properties vp7045_properties = {
 	.num_adapters = 1,
 	.adapter = {
 		{
+<<<<<<< HEAD
 		.num_frontends = 1,
 		.fe = {{
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.frontend_attach  = vp7045_frontend_attach,
 			/* parameter for the MPEG2-data transfer */
 			.stream = {
@@ -259,7 +266,10 @@ static struct dvb_usb_device_properties vp7045_properties = {
 					}
 				}
 			},
+<<<<<<< HEAD
 		}},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	},
 	.power_ctrl       = vp7045_power_ctrl,
@@ -294,7 +304,30 @@ static struct usb_driver vp7045_usb_driver = {
 	.id_table	= vp7045_usb_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(vp7045_usb_driver);
+=======
+/* module stuff */
+static int __init vp7045_usb_module_init(void)
+{
+	int result;
+	if ((result = usb_register(&vp7045_usb_driver))) {
+		err("usb_register failed. (%d)",result);
+		return result;
+	}
+
+	return 0;
+}
+
+static void __exit vp7045_usb_module_exit(void)
+{
+	/* deregister this driver from the USB subsystem */
+	usb_deregister(&vp7045_usb_driver);
+}
+
+module_init(vp7045_usb_module_init);
+module_exit(vp7045_usb_module_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Patrick Boettcher <patrick.boettcher@desy.de>");
 MODULE_DESCRIPTION("Driver for Twinhan MagicBox/Alpha and DNTV tinyUSB2 DVB-T USB2.0");

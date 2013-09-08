@@ -219,10 +219,19 @@
 #define IRQ_MMP2_MUX_END		(IRQ_MMP2_SSP_BASE + 2)
 
 #define IRQ_GPIO_START			128
+<<<<<<< HEAD
 #define MMP_NR_BUILTIN_GPIO		192
 #define MMP_GPIO_TO_IRQ(gpio)		(IRQ_GPIO_START + (gpio))
 
 #define IRQ_BOARD_START			(IRQ_GPIO_START + MMP_NR_BUILTIN_GPIO)
 #define MMP_NR_IRQS			IRQ_BOARD_START
+=======
+#define IRQ_GPIO_NUM			192
+#define IRQ_GPIO(x)			(IRQ_GPIO_START + (x))
+
+#define IRQ_BOARD_START			(IRQ_GPIO_START + IRQ_GPIO_NUM)
+
+#define NR_IRQS				(IRQ_BOARD_START)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __ASM_MACH_IRQS_H */

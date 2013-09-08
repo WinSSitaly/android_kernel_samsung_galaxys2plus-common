@@ -23,6 +23,7 @@
 #include "ath5k.h"
 #include "reg.h"
 #include "debug.h"
+<<<<<<< HEAD
 
 
 /**
@@ -51,6 +52,14 @@
  */
 void
 ath5k_hw_set_ledstate(struct ath5k_hw *ah, unsigned int state)
+=======
+#include "base.h"
+
+/*
+ * Set led state
+ */
+void ath5k_hw_set_ledstate(struct ath5k_hw *ah, unsigned int state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 led;
 	/*5210 has different led mode handling*/
@@ -97,6 +106,7 @@ ath5k_hw_set_ledstate(struct ath5k_hw *ah, unsigned int state)
 		AR5K_REG_ENABLE_BITS(ah, AR5K_PCICFG, led_5210);
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_set_gpio_input() - Set GPIO inputs
  * @ah: The &struct ath5k_hw
@@ -104,6 +114,12 @@ ath5k_hw_set_ledstate(struct ath5k_hw *ah, unsigned int state)
  */
 int
 ath5k_hw_set_gpio_input(struct ath5k_hw *ah, u32 gpio)
+=======
+/*
+ * Set GPIO inputs
+ */
+int ath5k_hw_set_gpio_input(struct ath5k_hw *ah, u32 gpio)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (gpio >= AR5K_NUM_GPIO)
 		return -EINVAL;
@@ -115,6 +131,7 @@ ath5k_hw_set_gpio_input(struct ath5k_hw *ah, u32 gpio)
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_set_gpio_output() - Set GPIO outputs
  * @ah: The &struct ath5k_hw
@@ -122,6 +139,12 @@ ath5k_hw_set_gpio_input(struct ath5k_hw *ah, u32 gpio)
  */
 int
 ath5k_hw_set_gpio_output(struct ath5k_hw *ah, u32 gpio)
+=======
+/*
+ * Set GPIO outputs
+ */
+int ath5k_hw_set_gpio_output(struct ath5k_hw *ah, u32 gpio)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (gpio >= AR5K_NUM_GPIO)
 		return -EINVAL;
@@ -133,6 +156,7 @@ ath5k_hw_set_gpio_output(struct ath5k_hw *ah, u32 gpio)
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_get_gpio() - Get GPIO state
  * @ah: The &struct ath5k_hw
@@ -140,6 +164,12 @@ ath5k_hw_set_gpio_output(struct ath5k_hw *ah, u32 gpio)
  */
 u32
 ath5k_hw_get_gpio(struct ath5k_hw *ah, u32 gpio)
+=======
+/*
+ * Get GPIO state
+ */
+u32 ath5k_hw_get_gpio(struct ath5k_hw *ah, u32 gpio)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (gpio >= AR5K_NUM_GPIO)
 		return 0xffffffff;
@@ -149,6 +179,7 @@ ath5k_hw_get_gpio(struct ath5k_hw *ah, u32 gpio)
 		0x1;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_set_gpio() - Set GPIO state
  * @ah: The &struct ath5k_hw
@@ -157,6 +188,12 @@ ath5k_hw_get_gpio(struct ath5k_hw *ah, u32 gpio)
  */
 int
 ath5k_hw_set_gpio(struct ath5k_hw *ah, u32 gpio, u32 val)
+=======
+/*
+ * Set GPIO state
+ */
+int ath5k_hw_set_gpio(struct ath5k_hw *ah, u32 gpio, u32 val)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 data;
 
@@ -174,6 +211,7 @@ ath5k_hw_set_gpio(struct ath5k_hw *ah, u32 gpio, u32 val)
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_set_gpio_intr() - Initialize the GPIO interrupt (RFKill switch)
  * @ah: The &struct ath5k_hw
@@ -187,6 +225,12 @@ ath5k_hw_set_gpio(struct ath5k_hw *ah, u32 gpio, u32 val)
  */
 void
 ath5k_hw_set_gpio_intr(struct ath5k_hw *ah, unsigned int gpio,
+=======
+/*
+ * Initialize the GPIO interrupt (RFKill switch)
+ */
+void ath5k_hw_set_gpio_intr(struct ath5k_hw *ah, unsigned int gpio,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u32 interrupt_level)
 {
 	u32 data;

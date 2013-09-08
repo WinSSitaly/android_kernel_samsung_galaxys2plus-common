@@ -13,7 +13,10 @@
 #include <asm/io.h>
 #include <asm/pal.h>
 #include <asm/sal.h>
+<<<<<<< HEAD
 #include <asm/setup.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "ssc.h"
 
@@ -161,19 +164,41 @@ sal_emulator (long index, unsigned long in1, unsigned long in2,
 	 */
 	status = 0;
 	if (index == SAL_FREQ_BASE) {
+<<<<<<< HEAD
 		if (in1 == SAL_FREQ_BASE_PLATFORM)
 			r9 = 200000000;
 		else if (in1 == SAL_FREQ_BASE_INTERVAL_TIMER) {
+=======
+		switch (in1) {
+		      case SAL_FREQ_BASE_PLATFORM:
+			r9 = 200000000;
+			break;
+
+		      case SAL_FREQ_BASE_INTERVAL_TIMER:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * Is this supposed to be the cr.itc frequency
 			 * or something platform specific?  The SAL
 			 * doc ain't exactly clear on this...
 			 */
 			r9 = 700000000;
+<<<<<<< HEAD
 		} else if (in1 == SAL_FREQ_BASE_REALTIME_CLOCK)
 			r9 = 1;
 		else
 			status = -1;
+=======
+			break;
+
+		      case SAL_FREQ_BASE_REALTIME_CLOCK:
+			r9 = 1;
+			break;
+
+		      default:
+			status = -1;
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (index == SAL_SET_VECTORS) {
 		;
 	} else if (index == SAL_GET_STATE_INFO) {

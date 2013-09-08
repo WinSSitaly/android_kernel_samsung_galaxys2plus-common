@@ -208,8 +208,27 @@ static struct i2c_driver max6875_driver = {
 	.id_table	= max6875_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(max6875_driver);
+=======
+static int __init max6875_init(void)
+{
+	return i2c_add_driver(&max6875_driver);
+}
+
+static void __exit max6875_exit(void)
+{
+	i2c_del_driver(&max6875_driver);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Ben Gardner <bgardner@wabtec.com>");
 MODULE_DESCRIPTION("MAX6875 driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(max6875_init);
+module_exit(max6875_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

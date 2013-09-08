@@ -17,9 +17,13 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/types.h>
 #include <linux/gpio.h>
 #include <linux/module.h>
+=======
+#include <linux/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <sound/soc.h>
 #include <sound/jack.h>
@@ -91,6 +95,15 @@ static struct snd_soc_dai_link rx1950_uda1380_dai[] = {
 	},
 };
 
+<<<<<<< HEAD
+=======
+static struct snd_soc_card rx1950_asoc = {
+	.name = "rx1950",
+	.dai_link = rx1950_uda1380_dai,
+	.num_links = ARRAY_SIZE(rx1950_uda1380_dai),
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* rx1950 machine dapm widgets */
 static const struct snd_soc_dapm_widget uda1380_dapm_widgets[] = {
 	SND_SOC_DAPM_HP("Headphone Jack", NULL),
@@ -112,6 +125,7 @@ static const struct snd_soc_dapm_route audio_map[] = {
 	{"VINM", NULL, "Mic Jack"},
 };
 
+<<<<<<< HEAD
 static struct snd_soc_card rx1950_asoc = {
 	.name = "rx1950",
 	.owner = THIS_MODULE,
@@ -124,6 +138,8 @@ static struct snd_soc_card rx1950_asoc = {
 	.num_dapm_routes = ARRAY_SIZE(audio_map),
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_device *s3c24xx_snd_device;
 
 static int rx1950_startup(struct snd_pcm_substream *substream)
@@ -227,10 +243,32 @@ static int rx1950_uda1380_init(struct snd_soc_pcm_runtime *rtd)
 	struct snd_soc_dapm_context *dapm = &codec->dapm;
 	int err;
 
+<<<<<<< HEAD
+=======
+	/* Add rx1950 specific widgets */
+	err = snd_soc_dapm_new_controls(dapm, uda1380_dapm_widgets,
+				  ARRAY_SIZE(uda1380_dapm_widgets));
+
+	if (err)
+		return err;
+
+	/* Set up rx1950 specific audio path audio_mapnects */
+	err = snd_soc_dapm_add_routes(dapm, audio_map,
+				      ARRAY_SIZE(audio_map));
+
+	if (err)
+		return err;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_soc_dapm_enable_pin(dapm, "Headphone Jack");
 	snd_soc_dapm_enable_pin(dapm, "Speaker");
 	snd_soc_dapm_enable_pin(dapm, "Mic Jack");
 
+<<<<<<< HEAD
+=======
+	snd_soc_dapm_sync(dapm);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_soc_jack_new(codec, "Headphone Jack", SND_JACK_HEADPHONE,
 		&hp_jack);
 

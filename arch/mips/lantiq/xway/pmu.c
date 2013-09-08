@@ -8,6 +8,10 @@
 
 #include <linux/kernel.h>
 #include <linux/module.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ioport.h>
 
 #include <lantiq_soc.h>
@@ -40,7 +44,11 @@ void ltq_pmu_enable(unsigned int module)
 	do {} while (--err && (ltq_pmu_r32(LTQ_PMU_PWDSR) & module));
 
 	if (!err)
+<<<<<<< HEAD
 		panic("activating PMU module failed!");
+=======
+		panic("activating PMU module failed!\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(ltq_pmu_enable);
 
@@ -53,16 +61,28 @@ EXPORT_SYMBOL(ltq_pmu_disable);
 int __init ltq_pmu_init(void)
 {
 	if (insert_resource(&iomem_resource, &ltq_pmu_resource) < 0)
+<<<<<<< HEAD
 		panic("Failed to insert pmu memory");
 
 	if (request_mem_region(ltq_pmu_resource.start,
 			resource_size(&ltq_pmu_resource), "pmu") < 0)
 		panic("Failed to request pmu memory");
+=======
+		panic("Failed to insert pmu memory\n");
+
+	if (request_mem_region(ltq_pmu_resource.start,
+			resource_size(&ltq_pmu_resource), "pmu") < 0)
+		panic("Failed to request pmu memory\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ltq_pmu_membase = ioremap_nocache(ltq_pmu_resource.start,
 				resource_size(&ltq_pmu_resource));
 	if (!ltq_pmu_membase)
+<<<<<<< HEAD
 		panic("Failed to remap pmu memory");
+=======
+		panic("Failed to remap pmu memory\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

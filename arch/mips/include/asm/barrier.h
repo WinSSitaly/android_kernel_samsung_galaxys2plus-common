@@ -8,8 +8,11 @@
 #ifndef __ASM_BARRIER_H
 #define __ASM_BARRIER_H
 
+<<<<<<< HEAD
 #include <asm/addrspace.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * read_barrier_depends - Flush all pending reads that subsequents reads
  * depend on.

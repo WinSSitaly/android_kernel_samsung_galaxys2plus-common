@@ -16,7 +16,11 @@
 #include <linux/spinlock.h>
 #include <linux/types.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * IN_* from inotfy.h lines up EXACTLY with FS_*, this is so we can easily

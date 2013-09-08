@@ -17,8 +17,13 @@
 #include <asm/assembler.h>
 #include <asm/ptrace.h>
 #include <asm/asm-offsets.h>
+<<<<<<< HEAD
 #include <asm/cp15.h>
 #include <asm/thread_info.h>
+=======
+#include <asm/thread_info.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Kernel startup entry point.
@@ -32,6 +37,7 @@
  * numbers for r1.
  *
  */
+<<<<<<< HEAD
 	.arm
 
 	__HEAD
@@ -42,6 +48,10 @@ ENTRY(stext)
  THUMB(	.thumb			)	@ switch to Thumb now.
  THUMB(1:			)
 
+=======
+	__HEAD
+ENTRY(stext)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	setmode	PSR_F_BIT | PSR_I_BIT | SVC_MODE, r9 @ ensure svc mode
 						@ and irqs disabled
 #ifndef CONFIG_CPU_CP15

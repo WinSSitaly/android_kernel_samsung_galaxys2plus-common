@@ -26,8 +26,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MODULE_NAME "vicam"
 #define HEADER_SIZE 64
 
@@ -119,7 +122,11 @@ static int vicam_control_msg(struct gspca_dev *gspca_dev, u8 request,
 			      USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
 			      value, index, data, len, 1000);
 	if (ret < 0)
+<<<<<<< HEAD
 		pr_err("control msg req %02X error %d\n", request, ret);
+=======
+		err("control msg req %02X error %d", request, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -191,8 +198,13 @@ static int vicam_read_frame(struct gspca_dev *gspca_dev, u8 *data, int size)
 			   data, size, &act_len, 10000);
 	/* successful, it returns 0, otherwise  negative */
 	if (ret < 0 || act_len != size) {
+<<<<<<< HEAD
 		pr_err("bulk read fail (%d) len %d/%d\n",
 		       ret, act_len, size);
+=======
+		err("bulk read fail (%d) len %d/%d",
+			ret, act_len, size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	}
 	return 0;
@@ -218,7 +230,11 @@ static void vicam_dostream(struct work_struct *work)
 		   HEADER_SIZE;
 	buffer = kmalloc(frame_sz, GFP_KERNEL | GFP_DMA);
 	if (!buffer) {
+<<<<<<< HEAD
 		pr_err("Couldn't allocate USB buffer\n");
+=======
+		err("Couldn't allocate USB buffer");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto exit;
 	}
 
@@ -271,7 +287,11 @@ static int sd_init(struct gspca_dev *gspca_dev)
 	ret = request_ihex_firmware(&fw, "vicam/firmware.fw",
 				    &gspca_dev->dev->dev);
 	if (ret) {
+<<<<<<< HEAD
 		pr_err("Failed to load \"vicam/firmware.fw\": %d\n", ret);
+=======
+		err("Failed to load \"vicam/firmware.fw\": %d\n", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 
@@ -324,8 +344,12 @@ static void sd_stop0(struct gspca_dev *gspca_dev)
 	dev->work_thread = NULL;
 	mutex_lock(&gspca_dev->usb_lock);
 
+<<<<<<< HEAD
 	if (gspca_dev->present)
 		vicam_set_camera_power(gspca_dev, 0);
+=======
+	vicam_set_camera_power(gspca_dev, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Table of supported USB devices */
@@ -369,4 +393,20 @@ static struct usb_driver sd_driver = {
 #endif
 };
 
+<<<<<<< HEAD
 module_usb_driver(sd_driver);
+=======
+/* -- module insert / remove -- */
+static int __init sd_mod_init(void)
+{
+	return usb_register(&sd_driver);
+}
+
+static void __exit sd_mod_exit(void)
+{
+	usb_deregister(&sd_driver);
+}
+
+module_init(sd_mod_init);
+module_exit(sd_mod_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

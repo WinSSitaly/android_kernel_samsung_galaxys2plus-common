@@ -23,7 +23,10 @@
 #include <linux/rtc.h>
 #include <linux/platform_device.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRV_VERSION "0.6"
 
@@ -491,7 +494,11 @@ ds1511_rtc_probe(struct platform_device *pdev)
 	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
 	if (!pdata)
 		return -ENOMEM;
+<<<<<<< HEAD
 	pdata->size = resource_size(res);
+=======
+	pdata->size = res->end - res->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!devm_request_mem_region(&pdev->dev, res->start, pdata->size,
 			pdev->name))
 		return -EBUSY;
@@ -532,7 +539,11 @@ ds1511_rtc_probe(struct platform_device *pdev)
 	if (pdata->irq > 0) {
 		rtc_read(RTC_CMD1);
 		if (devm_request_irq(&pdev->dev, pdata->irq, ds1511_interrupt,
+<<<<<<< HEAD
 			IRQF_SHARED, pdev->name, pdev) < 0) {
+=======
+			IRQF_DISABLED | IRQF_SHARED, pdev->name, pdev) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			dev_warn(&pdev->dev, "interrupt not available.\n");
 			pdata->irq = 0;
@@ -580,7 +591,24 @@ static struct platform_driver ds1511_rtc_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(ds1511_rtc_driver);
+=======
+ static int __init
+ds1511_rtc_init(void)
+{
+	return platform_driver_register(&ds1511_rtc_driver);
+}
+
+ static void __exit
+ds1511_rtc_exit(void)
+{
+	platform_driver_unregister(&ds1511_rtc_driver);
+}
+
+module_init(ds1511_rtc_init);
+module_exit(ds1511_rtc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Andrew Sharp <andy.sharp@lsi.com>");
 MODULE_DESCRIPTION("Dallas DS1511 RTC driver");

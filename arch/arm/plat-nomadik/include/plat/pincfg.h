@@ -37,6 +37,10 @@
  *		     SLPM value = same as normal
  *
  * PIN_CFG	   - default config with alternate function
+<<<<<<< HEAD
+=======
+ * PIN_CFG_PULL	   - default config with alternate function and pull up/down
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 typedef unsigned long pin_cfg_t;
@@ -132,6 +136,13 @@ typedef unsigned long pin_cfg_t;
 	(PIN_CFG_DEFAULT |\
 	 (PIN_NUM(num) | PIN_##alt | PIN_OUTPUT_##val))
 
+<<<<<<< HEAD
+=======
+#define PIN_CFG_PULL(num, alt, pull)	\
+	((PIN_CFG_DEFAULT & ~PIN_PULL_MASK) |\
+	 (PIN_NUM(num) | PIN_##alt | PIN_PULL_##pull))
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int nmk_config_pin(pin_cfg_t cfg, bool sleep);
 extern int nmk_config_pins(pin_cfg_t *cfgs, int num);
 extern int nmk_config_pins_sleep(pin_cfg_t *cfgs, int num);

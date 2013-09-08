@@ -8,6 +8,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/module.h>
@@ -34,6 +46,10 @@
 #include <asm/byteorder.h>
 #include <linux/io.h>
 #include <linux/irq.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/uaccess.h>
 #include <asm/unaligned.h>
 
@@ -79,7 +95,12 @@ struct printer_dev {
 	u8			config;
 	s8			interface;
 	struct usb_ep		*in_ep, *out_ep;
+<<<<<<< HEAD
 
+=======
+	const struct usb_endpoint_descriptor
+				*in, *out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head	rx_reqs;	/* List of free RX structs */
 	struct list_head	rx_reqs_active;	/* List of Active RX xfers */
 	struct list_head	rx_buffers;	/* List of completed xfers */
@@ -784,6 +805,7 @@ printer_write(struct file *fd, const char __user *buf, size_t len, loff_t *ptr)
 }
 
 static int
+<<<<<<< HEAD
 printer_fsync(struct file *fd, loff_t start, loff_t end, int datasync)
 {
 	struct printer_dev	*dev = fd->private_data;
@@ -792,6 +814,14 @@ printer_fsync(struct file *fd, loff_t start, loff_t end, int datasync)
 	int			tx_list_empty;
 
 	mutex_lock(&inode->i_mutex);
+=======
+printer_fsync(struct file *fd, int datasync)
+{
+	struct printer_dev	*dev = fd->private_data;
+	unsigned long		flags;
+	int			tx_list_empty;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&dev->lock, flags);
 	tx_list_empty = (likely(list_empty(&dev->tx_reqs)));
 	spin_unlock_irqrestore(&dev->lock, flags);
@@ -801,7 +831,10 @@ printer_fsync(struct file *fd, loff_t start, loff_t end, int datasync)
 		wait_event_interruptible(dev->tx_flush_wait,
 				(likely(list_empty(&dev->tx_reqs_active))));
 	}
+<<<<<<< HEAD
 	mutex_unlock(&inode->i_mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -887,6 +920,7 @@ set_printer_interface(struct printer_dev *dev)
 {
 	int			result = 0;
 
+<<<<<<< HEAD
 	dev->in_ep->desc = ep_desc(dev->gadget, &hs_ep_in_desc, &fs_ep_in_desc);
 	dev->in_ep->driver_data = dev;
 
@@ -895,12 +929,25 @@ set_printer_interface(struct printer_dev *dev)
 	dev->out_ep->driver_data = dev;
 
 	result = usb_ep_enable(dev->in_ep);
+=======
+	dev->in = ep_desc(dev->gadget, &hs_ep_in_desc, &fs_ep_in_desc);
+	dev->in_ep->driver_data = dev;
+
+	dev->out = ep_desc(dev->gadget, &hs_ep_out_desc, &fs_ep_out_desc);
+	dev->out_ep->driver_data = dev;
+
+	result = usb_ep_enable(dev->in_ep, dev->in);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (result != 0) {
 		DBG(dev, "enable %s --> %d\n", dev->in_ep->name, result);
 		goto done;
 	}
 
+<<<<<<< HEAD
 	result = usb_ep_enable(dev->out_ep);
+=======
+	result = usb_ep_enable(dev->out_ep, dev->out);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (result != 0) {
 		DBG(dev, "enable %s --> %d\n", dev->in_ep->name, result);
 		goto done;
@@ -911,8 +958,13 @@ done:
 	if (result != 0) {
 		(void) usb_ep_disable(dev->in_ep);
 		(void) usb_ep_disable(dev->out_ep);
+<<<<<<< HEAD
 		dev->in_ep->desc = NULL;
 		dev->out_ep->desc = NULL;
+=======
+		dev->in = NULL;
+		dev->out = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* caller is responsible for cleanup on error */
@@ -926,6 +978,7 @@ static void printer_reset_interface(struct printer_dev *dev)
 
 	DBG(dev, "%s\n", __func__);
 
+<<<<<<< HEAD
 	if (dev->in_ep->desc)
 		usb_ep_disable(dev->in_ep);
 
@@ -934,6 +987,14 @@ static void printer_reset_interface(struct printer_dev *dev)
 
 	dev->in_ep->desc = NULL;
 	dev->out_ep->desc = NULL;
+=======
+	if (dev->in)
+		usb_ep_disable(dev->in_ep);
+
+	if (dev->out)
+		usb_ep_disable(dev->out_ep);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->interface = -1;
 }
 
@@ -961,15 +1022,33 @@ printer_set_config(struct printer_dev *dev, unsigned number)
 		usb_gadget_vbus_draw(dev->gadget,
 				dev->gadget->is_otg ? 8 : 100);
 	} else {
+<<<<<<< HEAD
+=======
+		char *speed;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned power;
 
 		power = 2 * config_desc.bMaxPower;
 		usb_gadget_vbus_draw(dev->gadget, power);
 
+<<<<<<< HEAD
 		dev->config = number;
 		INFO(dev, "%s config #%d: %d mA, %s\n",
 		     usb_speed_string(gadget->speed),
 		     number, power, driver_desc);
+=======
+		switch (gadget->speed) {
+		case USB_SPEED_FULL:	speed = "full"; break;
+#ifdef CONFIG_USB_GADGET_DUALSPEED
+		case USB_SPEED_HIGH:	speed = "high"; break;
+#endif
+		default:		speed = "?"; break;
+		}
+
+		dev->config = number;
+		INFO(dev, "%s speed config #%d: %d mA, %s\n",
+				speed, number, power, driver_desc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return result;
 }
@@ -1091,9 +1170,15 @@ static void printer_soft_reset(struct printer_dev *dev)
 		list_add(&req->list, &dev->tx_reqs);
 	}
 
+<<<<<<< HEAD
 	if (usb_ep_enable(dev->in_ep))
 		DBG(dev, "Failed to enable USB in_ep\n");
 	if (usb_ep_enable(dev->out_ep))
+=======
+	if (usb_ep_enable(dev->in_ep, dev->in))
+		DBG(dev, "Failed to enable USB in_ep\n");
+	if (usb_ep_enable(dev->out_ep, dev->out))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		DBG(dev, "Failed to enable USB out_ep\n");
 
 	wake_up_interruptible(&dev->rx_wait);
@@ -1133,13 +1218,17 @@ printer_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 			switch (wValue >> 8) {
 
 			case USB_DT_DEVICE:
+<<<<<<< HEAD
 				device_desc.bMaxPacketSize0 =
 					gadget->ep0->maxpacket;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				value = min(wLength, (u16) sizeof device_desc);
 				memcpy(req->buf, &device_desc, value);
 				break;
 #ifdef CONFIG_USB_GADGET_DUALSPEED
 			case USB_DT_DEVICE_QUALIFIER:
+<<<<<<< HEAD
 				if (!gadget_is_dualspeed(gadget))
 					break;
 				/*
@@ -1148,13 +1237,21 @@ printer_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 				 */
 				dev_qualifier.bMaxPacketSize0 =
 					gadget->ep0->maxpacket;
+=======
+				if (!gadget->is_dualspeed)
+					break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				value = min(wLength,
 						(u16) sizeof dev_qualifier);
 				memcpy(req->buf, &dev_qualifier, value);
 				break;
 
 			case USB_DT_OTHER_SPEED_CONFIG:
+<<<<<<< HEAD
 				if (!gadget_is_dualspeed(gadget))
+=======
+				if (!gadget->is_dualspeed)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					break;
 				/* FALLTHROUGH */
 #endif /* CONFIG_USB_GADGET_DUALSPEED */
@@ -1443,11 +1540,22 @@ autoconf_fail:
 	out_ep->driver_data = out_ep;	/* claim */
 
 #ifdef	CONFIG_USB_GADGET_DUALSPEED
+<<<<<<< HEAD
 	/* assumes that all endpoints are dual-speed */
+=======
+	/* assumes ep0 uses the same value for both speeds ... */
+	dev_qualifier.bMaxPacketSize0 = device_desc.bMaxPacketSize0;
+
+	/* and that all endpoints are dual-speed */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hs_ep_in_desc.bEndpointAddress = fs_ep_in_desc.bEndpointAddress;
 	hs_ep_out_desc.bEndpointAddress = fs_ep_out_desc.bEndpointAddress;
 #endif	/* DUALSPEED */
 
+<<<<<<< HEAD
+=======
+	device_desc.bMaxPacketSize0 = gadget->ep0->maxpacket;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usb_gadget_set_selfpowered(gadget);
 
 	if (gadget->is_otg) {
@@ -1534,7 +1642,11 @@ fail:
 /*-------------------------------------------------------------------------*/
 
 static struct usb_gadget_driver printer_driver = {
+<<<<<<< HEAD
 	.max_speed	= DEVSPEED,
+=======
+	.speed		= DEVSPEED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.function	= (char *) driver_desc,
 	.unbind		= printer_unbind,

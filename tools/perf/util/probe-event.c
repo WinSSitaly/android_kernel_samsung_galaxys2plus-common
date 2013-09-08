@@ -19,6 +19,10 @@
  *
  */
 
+<<<<<<< HEAD
+=======
+#define _GNU_SOURCE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sys/utsname.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -32,8 +36,15 @@
 #include <limits.h>
 #include <elf.h>
 
+<<<<<<< HEAD
 #include "util.h"
 #include "event.h"
+=======
+#undef _GNU_SOURCE
+#include "util.h"
+#include "event.h"
+#include "string.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "strlist.h"
 #include "debug.h"
 #include "cache.h"
@@ -114,10 +125,13 @@ static struct map *kernel_get_module_map(const char *module)
 	struct rb_node *nd;
 	struct map_groups *grp = &machine.kmaps;
 
+<<<<<<< HEAD
 	/* A file path -- this is an offline module */
 	if (module && strchr(module, '/'))
 		return machine__new_module(&machine, 0, module);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!module)
 		module = "kernel";
 
@@ -171,6 +185,7 @@ const char *kernel_get_module_path(const char *module)
 }
 
 #ifdef DWARF_SUPPORT
+<<<<<<< HEAD
 /* Open new debuginfo of given module */
 static struct debuginfo *open_debuginfo(const char *module)
 {
@@ -189,6 +204,18 @@ static struct debuginfo *open_debuginfo(const char *module)
 		}
 	}
 	return debuginfo__new(path);
+=======
+static int open_vmlinux(const char *module)
+{
+	const char *path = kernel_get_module_path(module);
+	if (!path) {
+		pr_err("Failed to find path of %s module.\n",
+		       module ?: "kernel");
+		return -ENOENT;
+	}
+	pr_debug("Try to open %s\n", path);
+	return open(path, O_RDONLY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -202,13 +229,17 @@ static int kprobe_convert_to_perf_probe(struct probe_trace_point *tp,
 	struct map *map;
 	u64 addr;
 	int ret = -ENOENT;
+<<<<<<< HEAD
 	struct debuginfo *dinfo;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sym = __find_kernel_function_by_name(tp->symbol, &map);
 	if (sym) {
 		addr = map->unmap_ip(map, sym->start + tp->offset);
 		pr_debug("try to find %s+%ld@%" PRIx64 "\n", tp->symbol,
 			 tp->offset, addr);
+<<<<<<< HEAD
 
 		dinfo = debuginfo__new_online_kernel(addr);
 		if (dinfo) {
@@ -220,6 +251,9 @@ static int kprobe_convert_to_perf_probe(struct probe_trace_point *tp,
 				 addr);
 			ret = -ENOENT;
 		}
+=======
+		ret = find_perf_probe_point((unsigned long)addr, pp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (ret <= 0) {
 		pr_debug("Failed to find corresponding probes from "
@@ -234,6 +268,7 @@ static int kprobe_convert_to_perf_probe(struct probe_trace_point *tp,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int add_module_to_probe_trace_events(struct probe_trace_event *tevs,
 					    int ntevs, const char *module)
 {
@@ -298,6 +333,32 @@ static int try_to_find_probe_trace_events(struct perf_probe_event *pev,
 			ret = add_module_to_probe_trace_events(*tevs, ntevs,
 							       target);
 		return ret < 0 ? ret : ntevs;
+=======
+/* Try to find perf_probe_event with debuginfo */
+static int try_to_find_probe_trace_events(struct perf_probe_event *pev,
+					   struct probe_trace_event **tevs,
+					   int max_tevs, const char *module)
+{
+	bool need_dwarf = perf_probe_event_need_dwarf(pev);
+	int fd, ntevs;
+
+	fd = open_vmlinux(module);
+	if (fd < 0) {
+		if (need_dwarf) {
+			pr_warning("Failed to open debuginfo file.\n");
+			return fd;
+		}
+		pr_debug("Could not open vmlinux. Try to use symbols.\n");
+		return 0;
+	}
+
+	/* Searching trace events corresponding to probe event */
+	ntevs = find_probe_trace_events(fd, pev, tevs, max_tevs);
+
+	if (ntevs > 0) {	/* Succeeded to find trace events */
+		pr_debug("find %d probe_trace_events.\n", ntevs);
+		return ntevs;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (ntevs == 0)	{	/* No error but failed to find probe point. */
@@ -431,9 +492,14 @@ int show_line_range(struct line_range *lr, const char *module)
 {
 	int l = 1;
 	struct line_node *ln;
+<<<<<<< HEAD
 	struct debuginfo *dinfo;
 	FILE *fp;
 	int ret;
+=======
+	FILE *fp;
+	int fd, ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *tmp;
 
 	/* Search a line range */
@@ -441,6 +507,7 @@ int show_line_range(struct line_range *lr, const char *module)
 	if (ret < 0)
 		return ret;
 
+<<<<<<< HEAD
 	dinfo = open_debuginfo(module);
 	if (!dinfo) {
 		pr_warning("Failed to open debuginfo file.\n");
@@ -449,6 +516,15 @@ int show_line_range(struct line_range *lr, const char *module)
 
 	ret = debuginfo__find_line_range(dinfo, lr);
 	debuginfo__delete(dinfo);
+=======
+	fd = open_vmlinux(module);
+	if (fd < 0) {
+		pr_warning("Failed to open debuginfo file.\n");
+		return fd;
+	}
+
+	ret = find_line_range(fd, lr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret == 0) {
 		pr_warning("Specified source line is not found.\n");
 		return -ENOENT;
@@ -510,8 +586,12 @@ end:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int show_available_vars_at(struct debuginfo *dinfo,
 				  struct perf_probe_event *pev,
+=======
+static int show_available_vars_at(int fd, struct perf_probe_event *pev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  int max_vls, struct strfilter *_filter,
 				  bool externs)
 {
@@ -526,8 +606,12 @@ static int show_available_vars_at(struct debuginfo *dinfo,
 		return -EINVAL;
 	pr_debug("Searching variables at %s\n", buf);
 
+<<<<<<< HEAD
 	ret = debuginfo__find_available_vars_at(dinfo, pev, &vls,
 						max_vls, externs);
+=======
+	ret = find_available_vars_at(fd, pev, &vls, max_vls, externs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret <= 0) {
 		pr_err("Failed to find variables at %s (%d)\n", buf, ret);
 		goto end;
@@ -568,13 +652,18 @@ int show_available_vars(struct perf_probe_event *pevs, int npevs,
 			int max_vls, const char *module,
 			struct strfilter *_filter, bool externs)
 {
+<<<<<<< HEAD
 	int i, ret = 0;
 	struct debuginfo *dinfo;
+=======
+	int i, fd, ret = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = init_vmlinux();
 	if (ret < 0)
 		return ret;
 
+<<<<<<< HEAD
 	dinfo = open_debuginfo(module);
 	if (!dinfo) {
 		pr_warning("Failed to open debuginfo file.\n");
@@ -588,6 +677,20 @@ int show_available_vars(struct perf_probe_event *pevs, int npevs,
 					     externs);
 
 	debuginfo__delete(dinfo);
+=======
+	setup_pager();
+
+	for (i = 0; i < npevs && ret >= 0; i++) {
+		fd = open_vmlinux(module);
+		if (fd < 0) {
+			pr_warning("Failed to open debug information file.\n");
+			ret = fd;
+			break;
+		}
+		ret = show_available_vars_at(fd, &pevs[i], max_vls, _filter,
+					     externs);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -1056,7 +1159,11 @@ bool perf_probe_event_need_dwarf(struct perf_probe_event *pev)
 
 /* Parse probe_events event into struct probe_point */
 static int parse_probe_trace_command(const char *cmd,
+<<<<<<< HEAD
 				     struct probe_trace_event *tev)
+=======
+					struct probe_trace_event *tev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct probe_trace_point *tp = &tev->point;
 	char pr;
@@ -1089,6 +1196,7 @@ static int parse_probe_trace_command(const char *cmd,
 
 	tp->retprobe = (pr == 'r');
 
+<<<<<<< HEAD
 	/* Scan module name(if there), function name and offset */
 	p = strchr(argv[1], ':');
 	if (p) {
@@ -1097,6 +1205,10 @@ static int parse_probe_trace_command(const char *cmd,
 	} else
 		p = argv[1];
 	ret = sscanf(p, "%a[^+]+%lu", (float *)(void *)&tp->symbol,
+=======
+	/* Scan function name and offset */
+	ret = sscanf(argv[1], "%a[^+]+%lu", (float *)(void *)&tp->symbol,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     &tp->offset);
 	if (ret == 1)
 		tp->offset = 0;
@@ -1341,10 +1453,16 @@ char *synthesize_probe_trace_command(struct probe_trace_event *tev)
 	if (buf == NULL)
 		return NULL;
 
+<<<<<<< HEAD
 	len = e_snprintf(buf, MAX_CMDLEN, "%c:%s/%s %s%s%s+%lu",
 			 tp->retprobe ? 'r' : 'p',
 			 tev->group, tev->event,
 			 tp->module ?: "", tp->module ? ":" : "",
+=======
+	len = e_snprintf(buf, MAX_CMDLEN, "%c:%s/%s %s+%lu",
+			 tp->retprobe ? 'r' : 'p',
+			 tev->group, tev->event,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 tp->symbol, tp->offset);
 	if (len <= 0)
 		goto error;
@@ -1451,8 +1569,11 @@ static void clear_probe_trace_event(struct probe_trace_event *tev)
 		free(tev->group);
 	if (tev->point.symbol)
 		free(tev->point.symbol);
+<<<<<<< HEAD
 	if (tev->point.module)
 		free(tev->point.module);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < tev->nargs; i++) {
 		if (tev->args[i].name)
 			free(tev->args[i].name);
@@ -1728,7 +1849,11 @@ static int __add_probe_trace_events(struct perf_probe_event *pev,
 	}
 
 	ret = 0;
+<<<<<<< HEAD
 	printf("Added new event%s\n", (ntevs > 1) ? "s:" : ":");
+=======
+	printf("Add new event%s\n", (ntevs > 1) ? "s:" : ":");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < ntevs; i++) {
 		tev = &tevs[i];
 		if (pev->event)
@@ -1783,7 +1908,11 @@ static int __add_probe_trace_events(struct perf_probe_event *pev,
 
 	if (ret >= 0) {
 		/* Show how to use the event. */
+<<<<<<< HEAD
 		printf("\nYou can now use it in all perf tools, such as:\n\n");
+=======
+		printf("\nYou can now use it on all perf tools, such as:\n\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printf("\tperf record -e %s:%s -aR sleep 1\n\n", tev->group,
 			 tev->event);
 	}
@@ -1795,16 +1924,26 @@ static int __add_probe_trace_events(struct perf_probe_event *pev,
 
 static int convert_to_probe_trace_events(struct perf_probe_event *pev,
 					  struct probe_trace_event **tevs,
+<<<<<<< HEAD
 					  int max_tevs, const char *target)
+=======
+					  int max_tevs, const char *module)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct symbol *sym;
 	int ret = 0, i;
 	struct probe_trace_event *tev;
 
 	/* Convert perf_probe_event with debuginfo */
+<<<<<<< HEAD
 	ret = try_to_find_probe_trace_events(pev, tevs, max_tevs, target);
 	if (ret != 0)
 		return ret;	/* Found in debuginfo or got an error */
+=======
+	ret = try_to_find_probe_trace_events(pev, tevs, max_tevs, module);
+	if (ret != 0)
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Allocate trace event buffer */
 	tev = *tevs = zalloc(sizeof(struct probe_trace_event));
@@ -1817,6 +1956,7 @@ static int convert_to_probe_trace_events(struct perf_probe_event *pev,
 		ret = -ENOMEM;
 		goto error;
 	}
+<<<<<<< HEAD
 
 	if (target) {
 		tev->point.module = strdup(target);
@@ -1826,6 +1966,8 @@ static int convert_to_probe_trace_events(struct perf_probe_event *pev,
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tev->point.offset = pev->point.offset;
 	tev->point.retprobe = pev->point.retprobe;
 	tev->nargs = pev->nargs;
@@ -1866,12 +2008,15 @@ static int convert_to_probe_trace_events(struct perf_probe_event *pev,
 			   tev->point.symbol);
 		ret = -ENOENT;
 		goto error;
+<<<<<<< HEAD
 	} else if (tev->point.offset > sym->end - sym->start) {
 		pr_warning("Offset specified is greater than size of %s\n",
 			   tev->point.symbol);
 		ret = -ENOENT;
 		goto error;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 1;
@@ -1889,7 +2034,11 @@ struct __event_package {
 };
 
 int add_perf_probe_events(struct perf_probe_event *pevs, int npevs,
+<<<<<<< HEAD
 			  int max_tevs, const char *target, bool force_add)
+=======
+			  int max_tevs, const char *module, bool force_add)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i, j, ret;
 	struct __event_package *pkgs;
@@ -1912,7 +2061,11 @@ int add_perf_probe_events(struct perf_probe_event *pevs, int npevs,
 		ret  = convert_to_probe_trace_events(pkgs[i].pev,
 						     &pkgs[i].tevs,
 						     max_tevs,
+<<<<<<< HEAD
 						     target);
+=======
+						     module);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0)
 			goto end;
 		pkgs[i].ntevs = ret;
@@ -1964,7 +2117,11 @@ static int __del_trace_probe_event(int fd, struct str_node *ent)
 		goto error;
 	}
 
+<<<<<<< HEAD
 	printf("Removed event: %s\n", ent->s);
+=======
+	printf("Remove event: %s\n", ent->s);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 error:
 	pr_warning("Failed to delete event: %s\n", strerror(-ret));
@@ -2068,7 +2225,11 @@ static int filter_available_functions(struct map *map __unused,
 	return 1;
 }
 
+<<<<<<< HEAD
 int show_available_funcs(const char *target, struct strfilter *_filter)
+=======
+int show_available_funcs(const char *module, struct strfilter *_filter)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct map *map;
 	int ret;
@@ -2079,9 +2240,15 @@ int show_available_funcs(const char *target, struct strfilter *_filter)
 	if (ret < 0)
 		return ret;
 
+<<<<<<< HEAD
 	map = kernel_get_module_map(target);
 	if (!map) {
 		pr_err("Failed to find %s map.\n", (target) ? : "kernel");
+=======
+	map = kernel_get_module_map(module);
+	if (!map) {
+		pr_err("Failed to find %s map.\n", (module) ? : "kernel");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 	available_func_filter = _filter;

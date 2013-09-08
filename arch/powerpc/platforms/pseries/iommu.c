@@ -29,7 +29,10 @@
 #include <linux/slab.h>
 #include <linux/mm.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/sched.h>	/* for show_stack */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/string.h>
 #include <linux/pci.h>
 #include <linux/dma-mapping.h>
@@ -52,6 +55,7 @@
 #include "plpar_wrappers.h"
 
 
+<<<<<<< HEAD
 static void tce_invalidate_pSeries_sw(struct iommu_table *tbl,
 				      u64 *startp, u64 *endp)
 {
@@ -81,13 +85,19 @@ static void tce_invalidate_pSeries_sw(struct iommu_table *tbl,
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int tce_build_pSeries(struct iommu_table *tbl, long index,
 			      long npages, unsigned long uaddr,
 			      enum dma_data_direction direction,
 			      struct dma_attrs *attrs)
 {
 	u64 proto_tce;
+<<<<<<< HEAD
 	u64 *tcep, *tces;
+=======
+	u64 *tcep;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64 rpn;
 
 	proto_tce = TCE_PCI_READ; // Read allowed
@@ -95,7 +105,11 @@ static int tce_build_pSeries(struct iommu_table *tbl, long index,
 	if (direction != DMA_TO_DEVICE)
 		proto_tce |= TCE_PCI_WRITE;
 
+<<<<<<< HEAD
 	tces = tcep = ((u64 *)tbl->it_base) + index;
+=======
+	tcep = ((u64 *)tbl->it_base) + index;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (npages--) {
 		/* can't move this out since we might cross MEMBLOCK boundary */
@@ -105,15 +119,19 @@ static int tce_build_pSeries(struct iommu_table *tbl, long index,
 		uaddr += TCE_PAGE_SIZE;
 		tcep++;
 	}
+<<<<<<< HEAD
 
 	if (tbl->it_type & TCE_PCI_SWINV_CREATE)
 		tce_invalidate_pSeries_sw(tbl, tces, tcep - 1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 
 static void tce_free_pSeries(struct iommu_table *tbl, long index, long npages)
 {
+<<<<<<< HEAD
 	u64 *tcep, *tces;
 
 	tces = tcep = ((u64 *)tbl->it_base) + index;
@@ -123,6 +141,14 @@ static void tce_free_pSeries(struct iommu_table *tbl, long index, long npages)
 
 	if (tbl->it_type & TCE_PCI_SWINV_FREE)
 		tce_invalidate_pSeries_sw(tbl, tces, tcep - 1);
+=======
+	u64 *tcep;
+
+	tcep = ((u64 *)tbl->it_base) + index;
+
+	while (npages--)
+		*(tcep++) = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static unsigned long tce_get_pseries(struct iommu_table *tbl, long index)
@@ -460,7 +486,11 @@ static void iommu_table_setparms(struct pci_controller *phb,
 				 struct iommu_table *tbl)
 {
 	struct device_node *node;
+<<<<<<< HEAD
 	const unsigned long *basep, *sw_inval;
+=======
+	const unsigned long *basep;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const u32 *sizep;
 
 	node = phb->dn;
@@ -497,6 +527,7 @@ static void iommu_table_setparms(struct pci_controller *phb,
 	tbl->it_index = 0;
 	tbl->it_blocksize = 16;
 	tbl->it_type = TCE_PCI;
+<<<<<<< HEAD
 
 	sw_inval = of_get_property(node, "linux,tce-sw-invalidate-info", NULL);
 	if (sw_inval) {
@@ -513,6 +544,8 @@ static void iommu_table_setparms(struct pci_controller *phb,
 		tbl->it_busno = sw_inval[1]; /* overload this with magic */
 		tbl->it_type = TCE_PCI_SWINV_CREATE | TCE_PCI_SWINV_FREE;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -809,7 +842,12 @@ machine_arch_initcall(pseries, find_existing_ddw_windows);
 static int query_ddw(struct pci_dev *dev, const u32 *ddw_avail,
 			struct ddw_query_response *query)
 {
+<<<<<<< HEAD
 	struct eeh_dev *edev;
+=======
+	struct device_node *dn;
+	struct pci_dn *pcidn;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 cfg_addr;
 	u64 buid;
 	int ret;
@@ -820,12 +858,21 @@ static int query_ddw(struct pci_dev *dev, const u32 *ddw_avail,
 	 * Retrieve them from the pci device, not the node with the
 	 * dma-window property
 	 */
+<<<<<<< HEAD
 	edev = pci_dev_to_eeh_dev(dev);
 	cfg_addr = edev->config_addr;
 	if (edev->pe_config_addr)
 		cfg_addr = edev->pe_config_addr;
 	buid = edev->phb->buid;
 
+=======
+	dn = pci_device_to_OF_node(dev);
+	pcidn = PCI_DN(dn);
+	cfg_addr = pcidn->eeh_config_addr;
+	if (pcidn->eeh_pe_config_addr)
+		cfg_addr = pcidn->eeh_pe_config_addr;
+	buid = pcidn->phb->buid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = rtas_call(ddw_avail[0], 3, 5, (u32 *)query,
 		  cfg_addr, BUID_HI(buid), BUID_LO(buid));
 	dev_info(&dev->dev, "ibm,query-pe-dma-windows(%x) %x %x %x"
@@ -838,7 +885,12 @@ static int create_ddw(struct pci_dev *dev, const u32 *ddw_avail,
 			struct ddw_create_response *create, int page_shift,
 			int window_shift)
 {
+<<<<<<< HEAD
 	struct eeh_dev *edev;
+=======
+	struct device_node *dn;
+	struct pci_dn *pcidn;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 cfg_addr;
 	u64 buid;
 	int ret;
@@ -849,11 +901,20 @@ static int create_ddw(struct pci_dev *dev, const u32 *ddw_avail,
 	 * Retrieve them from the pci device, not the node with the
 	 * dma-window property
 	 */
+<<<<<<< HEAD
 	edev = pci_dev_to_eeh_dev(dev);
 	cfg_addr = edev->config_addr;
 	if (edev->pe_config_addr)
 		cfg_addr = edev->pe_config_addr;
 	buid = edev->phb->buid;
+=======
+	dn = pci_device_to_OF_node(dev);
+	pcidn = PCI_DN(dn);
+	cfg_addr = pcidn->eeh_config_addr;
+	if (pcidn->eeh_pe_config_addr)
+		cfg_addr = pcidn->eeh_pe_config_addr;
+	buid = pcidn->phb->buid;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	do {
 		/* extra outputs are LIOBN and dma-addr (hi, lo) */
@@ -988,14 +1049,22 @@ static u64 enable_ddw(struct pci_dev *dev, struct device_node *pdn)
 	if (ret) {
 		dev_info(&dev->dev, "failed to map direct window for %s: %d\n",
 			 dn->full_name, ret);
+<<<<<<< HEAD
 		goto out_free_window;
+=======
+		goto out_clear_window;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ret = prom_add_property(pdn, win64);
 	if (ret) {
 		dev_err(&dev->dev, "unable to add dma window property for %s: %d",
 			 pdn->full_name, ret);
+<<<<<<< HEAD
 		goto out_free_window;
+=======
+		goto out_clear_window;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	window->device = pdn;
@@ -1007,9 +1076,12 @@ static u64 enable_ddw(struct pci_dev *dev, struct device_node *pdn)
 	dma_addr = of_read_number(&create.addr_hi, 2);
 	goto out_unlock;
 
+<<<<<<< HEAD
 out_free_window:
 	kfree(window);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_clear_window:
 	remove_ddw(pdn);
 
@@ -1129,6 +1201,7 @@ check_mask:
 	return 0;
 }
 
+<<<<<<< HEAD
 static u64 dma_get_required_mask_pSeriesLP(struct device *dev)
 {
 	if (!dev->dma_mask)
@@ -1154,13 +1227,18 @@ static u64 dma_get_required_mask_pSeriesLP(struct device *dev)
 	return dma_iommu_ops.get_required_mask(dev);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else  /* CONFIG_PCI */
 #define pci_dma_bus_setup_pSeries	NULL
 #define pci_dma_dev_setup_pSeries	NULL
 #define pci_dma_bus_setup_pSeriesLP	NULL
 #define pci_dma_dev_setup_pSeriesLP	NULL
 #define dma_set_mask_pSeriesLP		NULL
+<<<<<<< HEAD
 #define dma_get_required_mask_pSeriesLP	NULL
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* !CONFIG_PCI */
 
 static int iommu_mem_notifier(struct notifier_block *nb, unsigned long action,
@@ -1264,7 +1342,10 @@ void iommu_init_early_pSeries(void)
 		ppc_md.pci_dma_bus_setup = pci_dma_bus_setup_pSeriesLP;
 		ppc_md.pci_dma_dev_setup = pci_dma_dev_setup_pSeriesLP;
 		ppc_md.dma_set_mask = dma_set_mask_pSeriesLP;
+<<<<<<< HEAD
 		ppc_md.dma_get_required_mask = dma_get_required_mask_pSeriesLP;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		ppc_md.tce_build = tce_build_pSeries;
 		ppc_md.tce_free  = tce_free_pSeries;

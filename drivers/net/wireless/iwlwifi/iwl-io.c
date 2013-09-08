@@ -1,6 +1,10 @@
 /******************************************************************************
  *
+<<<<<<< HEAD
  * Copyright(c) 2003 - 2012 Intel Corporation. All rights reserved.
+=======
+ * Copyright(c) 2003 - 2011 Intel Corporation. All rights reserved.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Portions of this file are derived from the ipw3945 project.
  *
@@ -25,6 +29,7 @@
  * Intel Corporation, 5200 N.E. Elam Young Parkway, Hillsboro, OR 97124-6497
  *
  *****************************************************************************/
+<<<<<<< HEAD
 #include <linux/delay.h>
 #include <linux/device.h>
 
@@ -63,12 +68,52 @@ void iwl_clear_bit(struct iwl_trans *trans, u32 reg, u32 mask)
 }
 
 int iwl_poll_bit(struct iwl_trans *trans, u32 addr,
+=======
+
+#include "iwl-io.h"
+
+#define IWL_POLL_INTERVAL 10	/* microseconds */
+
+static inline void __iwl_set_bit(struct iwl_priv *priv, u32 reg, u32 mask)
+{
+	iwl_write32(priv, reg, iwl_read32(priv, reg) | mask);
+}
+
+static inline void __iwl_clear_bit(struct iwl_priv *priv, u32 reg, u32 mask)
+{
+	iwl_write32(priv, reg, iwl_read32(priv, reg) & ~mask);
+}
+
+void iwl_set_bit(struct iwl_priv *priv, u32 reg, u32 mask)
+{
+	unsigned long flags;
+
+	spin_lock_irqsave(&priv->reg_lock, flags);
+	__iwl_set_bit(priv, reg, mask);
+	spin_unlock_irqrestore(&priv->reg_lock, flags);
+}
+
+void iwl_clear_bit(struct iwl_priv *priv, u32 reg, u32 mask)
+{
+	unsigned long flags;
+
+	spin_lock_irqsave(&priv->reg_lock, flags);
+	__iwl_clear_bit(priv, reg, mask);
+	spin_unlock_irqrestore(&priv->reg_lock, flags);
+}
+
+int iwl_poll_bit(struct iwl_priv *priv, u32 addr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 u32 bits, u32 mask, int timeout)
 {
 	int t = 0;
 
 	do {
+<<<<<<< HEAD
 		if ((iwl_read32(trans, addr) & mask) == (bits & mask))
+=======
+		if ((iwl_read32(priv, addr) & mask) == (bits & mask))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return t;
 		udelay(IWL_POLL_INTERVAL);
 		t += IWL_POLL_INTERVAL;
@@ -77,6 +122,7 @@ int iwl_poll_bit(struct iwl_trans *trans, u32 addr,
 	return -ETIMEDOUT;
 }
 
+<<<<<<< HEAD
 int iwl_grab_nic_access_silent(struct iwl_trans *trans)
 {
 	int ret;
@@ -86,6 +132,16 @@ int iwl_grab_nic_access_silent(struct iwl_trans *trans)
 	/* this bit wakes up the NIC */
 	__iwl_set_bit(trans, CSR_GP_CNTRL,
 		      CSR_GP_CNTRL_REG_FLAG_MAC_ACCESS_REQ);
+=======
+int iwl_grab_nic_access_silent(struct iwl_priv *priv)
+{
+	int ret;
+
+	lockdep_assert_held(&priv->reg_lock);
+
+	/* this bit wakes up the NIC */
+	__iwl_set_bit(priv, CSR_GP_CNTRL, CSR_GP_CNTRL_REG_FLAG_MAC_ACCESS_REQ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * These bits say the device is running, and should keep running for
@@ -106,18 +162,27 @@ int iwl_grab_nic_access_silent(struct iwl_trans *trans)
 	 * 5000 series and later (including 1000 series) have non-volatile SRAM,
 	 * and do not save/restore SRAM when power cycling.
 	 */
+<<<<<<< HEAD
 	ret = iwl_poll_bit(trans, CSR_GP_CNTRL,
+=======
+	ret = iwl_poll_bit(priv, CSR_GP_CNTRL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   CSR_GP_CNTRL_REG_VAL_MAC_ACCESS_EN,
 			   (CSR_GP_CNTRL_REG_FLAG_MAC_CLOCK_READY |
 			    CSR_GP_CNTRL_REG_FLAG_GOING_TO_SLEEP), 15000);
 	if (ret < 0) {
+<<<<<<< HEAD
 		iwl_write32(trans, CSR_RESET, CSR_RESET_REG_FLAG_FORCE_NMI);
+=======
+		iwl_write32(priv, CSR_RESET, CSR_RESET_REG_FLAG_FORCE_NMI);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	}
 
 	return 0;
 }
 
+<<<<<<< HEAD
 bool iwl_grab_nic_access(struct iwl_trans *trans)
 {
 	int ret = iwl_grab_nic_access_silent(trans);
@@ -146,19 +211,50 @@ void iwl_release_nic_access(struct iwl_trans *trans)
 }
 
 u32 iwl_read_direct32(struct iwl_trans *trans, u32 reg)
+=======
+int iwl_grab_nic_access(struct iwl_priv *priv)
+{
+	int ret = iwl_grab_nic_access_silent(priv);
+	if (ret) {
+		u32 val = iwl_read32(priv, CSR_GP_CNTRL);
+		IWL_ERR(priv,
+			"MAC is in deep sleep!. CSR_GP_CNTRL = 0x%08X\n", val);
+	}
+
+	return ret;
+}
+
+void iwl_release_nic_access(struct iwl_priv *priv)
+{
+	lockdep_assert_held(&priv->reg_lock);
+	__iwl_clear_bit(priv, CSR_GP_CNTRL,
+			CSR_GP_CNTRL_REG_FLAG_MAC_ACCESS_REQ);
+}
+
+u32 iwl_read_direct32(struct iwl_priv *priv, u32 reg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 value;
 	unsigned long flags;
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&trans->reg_lock, flags);
 	iwl_grab_nic_access(trans);
 	value = iwl_read32(trans, reg);
 	iwl_release_nic_access(trans);
 	spin_unlock_irqrestore(&trans->reg_lock, flags);
+=======
+	spin_lock_irqsave(&priv->reg_lock, flags);
+	iwl_grab_nic_access(priv);
+	value = iwl_read32(priv, reg);
+	iwl_release_nic_access(priv);
+	spin_unlock_irqrestore(&priv->reg_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return value;
 }
 
+<<<<<<< HEAD
 void iwl_write_direct32(struct iwl_trans *trans, u32 reg, u32 value)
 {
 	unsigned long flags;
@@ -172,12 +268,31 @@ void iwl_write_direct32(struct iwl_trans *trans, u32 reg, u32 value)
 }
 
 int iwl_poll_direct_bit(struct iwl_trans *trans, u32 addr, u32 mask,
+=======
+void iwl_write_direct32(struct iwl_priv *priv, u32 reg, u32 value)
+{
+	unsigned long flags;
+
+	spin_lock_irqsave(&priv->reg_lock, flags);
+	if (!iwl_grab_nic_access(priv)) {
+		iwl_write32(priv, reg, value);
+		iwl_release_nic_access(priv);
+	}
+	spin_unlock_irqrestore(&priv->reg_lock, flags);
+}
+
+int iwl_poll_direct_bit(struct iwl_priv *priv, u32 addr, u32 mask,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			int timeout)
 {
 	int t = 0;
 
 	do {
+<<<<<<< HEAD
 		if ((iwl_read_direct32(trans, addr) & mask) == mask)
+=======
+		if ((iwl_read_direct32(priv, addr) & mask) == mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return t;
 		udelay(IWL_POLL_INTERVAL);
 		t += IWL_POLL_INTERVAL;
@@ -186,6 +301,7 @@ int iwl_poll_direct_bit(struct iwl_trans *trans, u32 addr, u32 mask,
 	return -ETIMEDOUT;
 }
 
+<<<<<<< HEAD
 static inline u32 __iwl_read_prph(struct iwl_trans *trans, u32 reg)
 {
 	iwl_write32(trans, HBUS_TARG_PRPH_RADDR, reg | (3 << 24));
@@ -200,10 +316,29 @@ static inline void __iwl_write_prph(struct iwl_trans *trans, u32 addr, u32 val)
 }
 
 u32 iwl_read_prph(struct iwl_trans *trans, u32 reg)
+=======
+static inline u32 __iwl_read_prph(struct iwl_priv *priv, u32 reg)
+{
+	iwl_write32(priv, HBUS_TARG_PRPH_RADDR, reg | (3 << 24));
+	rmb();
+	return iwl_read32(priv, HBUS_TARG_PRPH_RDAT);
+}
+
+static inline void __iwl_write_prph(struct iwl_priv *priv, u32 addr, u32 val)
+{
+	iwl_write32(priv, HBUS_TARG_PRPH_WADDR,
+		    ((addr & 0x0000FFFF) | (3 << 24)));
+	wmb();
+	iwl_write32(priv, HBUS_TARG_PRPH_WDAT, val);
+}
+
+u32 iwl_read_prph(struct iwl_priv *priv, u32 reg)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags;
 	u32 val;
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&trans->reg_lock, flags);
 	iwl_grab_nic_access(trans);
 	val = __iwl_read_prph(trans, reg);
@@ -238,10 +373,45 @@ void iwl_set_bits_prph(struct iwl_trans *trans, u32 reg, u32 mask)
 }
 
 void iwl_set_bits_mask_prph(struct iwl_trans *trans, u32 reg,
+=======
+	spin_lock_irqsave(&priv->reg_lock, flags);
+	iwl_grab_nic_access(priv);
+	val = __iwl_read_prph(priv, reg);
+	iwl_release_nic_access(priv);
+	spin_unlock_irqrestore(&priv->reg_lock, flags);
+	return val;
+}
+
+void iwl_write_prph(struct iwl_priv *priv, u32 addr, u32 val)
+{
+	unsigned long flags;
+
+	spin_lock_irqsave(&priv->reg_lock, flags);
+	if (!iwl_grab_nic_access(priv)) {
+		__iwl_write_prph(priv, addr, val);
+		iwl_release_nic_access(priv);
+	}
+	spin_unlock_irqrestore(&priv->reg_lock, flags);
+}
+
+void iwl_set_bits_prph(struct iwl_priv *priv, u32 reg, u32 mask)
+{
+	unsigned long flags;
+
+	spin_lock_irqsave(&priv->reg_lock, flags);
+	iwl_grab_nic_access(priv);
+	__iwl_write_prph(priv, reg, __iwl_read_prph(priv, reg) | mask);
+	iwl_release_nic_access(priv);
+	spin_unlock_irqrestore(&priv->reg_lock, flags);
+}
+
+void iwl_set_bits_mask_prph(struct iwl_priv *priv, u32 reg,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    u32 bits, u32 mask)
 {
 	unsigned long flags;
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&trans->reg_lock, flags);
 	if (likely(iwl_grab_nic_access(trans))) {
 		__iwl_write_prph(trans, reg,
@@ -252,10 +422,22 @@ void iwl_set_bits_mask_prph(struct iwl_trans *trans, u32 reg,
 }
 
 void iwl_clear_bits_prph(struct iwl_trans *trans, u32 reg, u32 mask)
+=======
+	spin_lock_irqsave(&priv->reg_lock, flags);
+	iwl_grab_nic_access(priv);
+	__iwl_write_prph(priv, reg,
+			 (__iwl_read_prph(priv, reg) & mask) | bits);
+	iwl_release_nic_access(priv);
+	spin_unlock_irqrestore(&priv->reg_lock, flags);
+}
+
+void iwl_clear_bits_prph(struct iwl_priv *priv, u32 reg, u32 mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags;
 	u32 val;
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&trans->reg_lock, flags);
 	if (likely(iwl_grab_nic_access(trans))) {
 		val = __iwl_read_prph(trans, reg);
@@ -266,12 +448,24 @@ void iwl_clear_bits_prph(struct iwl_trans *trans, u32 reg, u32 mask)
 }
 
 void _iwl_read_targ_mem_words(struct iwl_trans *trans, u32 addr,
+=======
+	spin_lock_irqsave(&priv->reg_lock, flags);
+	iwl_grab_nic_access(priv);
+	val = __iwl_read_prph(priv, reg);
+	__iwl_write_prph(priv, reg, (val & ~mask));
+	iwl_release_nic_access(priv);
+	spin_unlock_irqrestore(&priv->reg_lock, flags);
+}
+
+void _iwl_read_targ_mem_words(struct iwl_priv *priv, u32 addr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      void *buf, int words)
 {
 	unsigned long flags;
 	int offs;
 	u32 *vals = buf;
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&trans->reg_lock, flags);
 	if (likely(iwl_grab_nic_access(trans))) {
 		iwl_write32(trans, HBUS_TARG_MEM_RADDR, addr);
@@ -287,10 +481,31 @@ u32 iwl_read_targ_mem(struct iwl_trans *trans, u32 addr)
 	u32 value;
 
 	_iwl_read_targ_mem_words(trans, addr, &value, 1);
+=======
+	spin_lock_irqsave(&priv->reg_lock, flags);
+	iwl_grab_nic_access(priv);
+
+	iwl_write32(priv, HBUS_TARG_MEM_RADDR, addr);
+	rmb();
+
+	for (offs = 0; offs < words; offs++)
+		vals[offs] = iwl_read32(priv, HBUS_TARG_MEM_RDAT);
+
+	iwl_release_nic_access(priv);
+	spin_unlock_irqrestore(&priv->reg_lock, flags);
+}
+
+u32 iwl_read_targ_mem(struct iwl_priv *priv, u32 addr)
+{
+	u32 value;
+
+	_iwl_read_targ_mem_words(priv, addr, &value, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return value;
 }
 
+<<<<<<< HEAD
 int _iwl_write_targ_mem_words(struct iwl_trans *trans, u32 addr,
 				void *buf, int words)
 {
@@ -314,4 +529,18 @@ int _iwl_write_targ_mem_words(struct iwl_trans *trans, u32 addr,
 int iwl_write_targ_mem(struct iwl_trans *trans, u32 addr, u32 val)
 {
 	return _iwl_write_targ_mem_words(trans, addr, &val, 1);
+=======
+void iwl_write_targ_mem(struct iwl_priv *priv, u32 addr, u32 val)
+{
+	unsigned long flags;
+
+	spin_lock_irqsave(&priv->reg_lock, flags);
+	if (!iwl_grab_nic_access(priv)) {
+		iwl_write32(priv, HBUS_TARG_MEM_WADDR, addr);
+		wmb();
+		iwl_write32(priv, HBUS_TARG_MEM_WDAT, val);
+		iwl_release_nic_access(priv);
+	}
+	spin_unlock_irqrestore(&priv->reg_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

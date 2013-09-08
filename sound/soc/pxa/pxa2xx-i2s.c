@@ -17,7 +17,10 @@
 #include <linux/delay.h>
 #include <linux/clk.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/io.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/pcm.h>
 #include <sound/initval.h>
@@ -332,7 +335,11 @@ static int  pxa2xx_i2s_remove(struct snd_soc_dai *dai)
 		SNDRV_PCM_RATE_16000 | SNDRV_PCM_RATE_22050 | SNDRV_PCM_RATE_44100 | \
 		SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_96000)
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops pxa_i2s_dai_ops = {
+=======
+static struct snd_soc_dai_ops pxa_i2s_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.startup	= pxa2xx_i2s_startup,
 	.shutdown	= pxa2xx_i2s_shutdown,
 	.trigger	= pxa2xx_i2s_trigger,

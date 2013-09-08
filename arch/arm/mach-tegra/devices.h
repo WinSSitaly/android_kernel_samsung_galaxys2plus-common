@@ -20,6 +20,7 @@
 #define __MACH_TEGRA_DEVICES_H
 
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/platform_data/tegra_usb.h>
 
 extern struct tegra_ehci_platform_data tegra_ehci1_pdata;
@@ -28,6 +29,9 @@ extern struct tegra_ehci_platform_data tegra_ehci3_pdata;
 
 extern struct platform_device tegra_gpio_device;
 extern struct platform_device tegra_pinmux_device;
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct platform_device tegra_sdhci_device1;
 extern struct platform_device tegra_sdhci_device2;
 extern struct platform_device tegra_sdhci_device3;

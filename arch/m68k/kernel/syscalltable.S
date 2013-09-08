@@ -189,7 +189,11 @@ ENTRY(sys_call_table)
 	.long sys_getpagesize
 	.long sys_ni_syscall		/* old "query_module" */
 	.long sys_poll
+<<<<<<< HEAD
 	.long sys_ni_syscall		/* old nfsservctl */
+=======
+	.long sys_nfsservctl
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.long sys_setresgid16		/* 170 */
 	.long sys_getresgid16
 	.long sys_prctl
@@ -365,6 +369,9 @@ ENTRY(sys_call_table)
 	.long sys_clock_adjtime
 	.long sys_syncfs
 	.long sys_setns
+<<<<<<< HEAD
 	.long sys_process_vm_readv	/* 345 */
 	.long sys_process_vm_writev
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 

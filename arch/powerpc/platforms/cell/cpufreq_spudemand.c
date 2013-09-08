@@ -22,10 +22,16 @@
 
 #include <linux/cpufreq.h>
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/timer.h>
 #include <linux/workqueue.h>
 #include <linux/atomic.h>
+=======
+#include <linux/timer.h>
+#include <linux/workqueue.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/machdep.h>
 #include <asm/spu.h>
 

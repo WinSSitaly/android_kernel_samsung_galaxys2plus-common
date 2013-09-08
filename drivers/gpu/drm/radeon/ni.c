@@ -24,7 +24,10 @@
 #include <linux/firmware.h>
 #include <linux/platform_device.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "drmP.h"
 #include "radeon.h"
 #include "radeon_asic.h"
@@ -41,9 +44,12 @@ extern void evergreen_mc_program(struct radeon_device *rdev);
 extern void evergreen_irq_suspend(struct radeon_device *rdev);
 extern int evergreen_mc_init(struct radeon_device *rdev);
 extern void evergreen_fix_pci_max_read_req_size(struct radeon_device *rdev);
+<<<<<<< HEAD
 extern void evergreen_pcie_gen2_enable(struct radeon_device *rdev);
 extern void si_rlc_fini(struct radeon_device *rdev);
 extern int si_rlc_init(struct radeon_device *rdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define EVERGREEN_PFP_UCODE_SIZE 1120
 #define EVERGREEN_PM4_UCODE_SIZE 1376
@@ -55,8 +61,11 @@ extern int si_rlc_init(struct radeon_device *rdev);
 #define CAYMAN_RLC_UCODE_SIZE 1024
 #define CAYMAN_MC_UCODE_SIZE 6037
 
+<<<<<<< HEAD
 #define ARUBA_RLC_UCODE_SIZE 1536
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Firmware Names */
 MODULE_FIRMWARE("radeon/BARTS_pfp.bin");
 MODULE_FIRMWARE("radeon/BARTS_me.bin");
@@ -72,9 +81,12 @@ MODULE_FIRMWARE("radeon/CAYMAN_pfp.bin");
 MODULE_FIRMWARE("radeon/CAYMAN_me.bin");
 MODULE_FIRMWARE("radeon/CAYMAN_mc.bin");
 MODULE_FIRMWARE("radeon/CAYMAN_rlc.bin");
+<<<<<<< HEAD
 MODULE_FIRMWARE("radeon/ARUBA_pfp.bin");
 MODULE_FIRMWARE("radeon/ARUBA_me.bin");
 MODULE_FIRMWARE("radeon/ARUBA_rlc.bin");
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define BTC_IO_MC_REGS_SIZE 29
 
@@ -269,11 +281,16 @@ int ni_mc_load_microcode(struct radeon_device *rdev)
 		WREG32(MC_SEQ_SUP_CNTL, 0x00000001);
 
 		/* wait for training to complete */
+<<<<<<< HEAD
 		for (i = 0; i < rdev->usec_timeout; i++) {
 			if (RREG32(MC_IO_PAD_CNTL_D0) & MEM_FALL_OUT_CMD)
 				break;
 			udelay(1);
 		}
+=======
+		while (!(RREG32(MC_IO_PAD_CNTL_D0) & MEM_FALL_OUT_CMD))
+			udelay(10);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (running)
 			WREG32(MC_SHARED_BLACKOUT_CNTL, blackout);
@@ -333,6 +350,7 @@ int ni_init_microcode(struct radeon_device *rdev)
 		rlc_req_size = CAYMAN_RLC_UCODE_SIZE * 4;
 		mc_req_size = CAYMAN_MC_UCODE_SIZE * 4;
 		break;
+<<<<<<< HEAD
 	case CHIP_ARUBA:
 		chip_name = "ARUBA";
 		rlc_chip_name = "ARUBA";
@@ -342,6 +360,8 @@ int ni_init_microcode(struct radeon_device *rdev)
 		rlc_req_size = ARUBA_RLC_UCODE_SIZE * 4;
 		mc_req_size = 0;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default: BUG();
 	}
 
@@ -381,6 +401,7 @@ int ni_init_microcode(struct radeon_device *rdev)
 		err = -EINVAL;
 	}
 
+<<<<<<< HEAD
 	/* no MC ucode on TN */
 	if (!(rdev->flags & RADEON_IS_IGP)) {
 		snprintf(fw_name, sizeof(fw_name), "radeon/%s_mc.bin", chip_name);
@@ -393,6 +414,17 @@ int ni_init_microcode(struct radeon_device *rdev)
 			       rdev->mc_fw->size, fw_name);
 			err = -EINVAL;
 		}
+=======
+	snprintf(fw_name, sizeof(fw_name), "radeon/%s_mc.bin", chip_name);
+	err = request_firmware(&rdev->mc_fw, fw_name, &pdev->dev);
+	if (err)
+		goto out;
+	if (rdev->mc_fw->size != mc_req_size) {
+		printk(KERN_ERR
+		       "ni_mc: Bogus length %zu in firmware \"%s\"\n",
+		       rdev->mc_fw->size, fw_name);
+		err = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 out:
 	platform_device_unregister(pdev);
@@ -497,7 +529,10 @@ static u32 cayman_get_tile_pipe_to_backend_map(struct radeon_device *rdev,
 	memset((uint8_t *)&swizzle_pipe[0], 0, sizeof(u32) * CAYMAN_MAX_PIPES);
 	switch (rdev->family) {
 	case CHIP_CAYMAN:
+<<<<<<< HEAD
 	case CHIP_ARUBA:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		force_no_swizzle = true;
 		break;
 	default:
@@ -630,6 +665,10 @@ static void cayman_gpu_init(struct radeon_device *rdev)
 
 	switch (rdev->family) {
 	case CHIP_CAYMAN:
+<<<<<<< HEAD
+=======
+	default:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rdev->config.cayman.max_shader_engines = 2;
 		rdev->config.cayman.max_pipes_per_simd = 4;
 		rdev->config.cayman.max_tile_pipes = 8;
@@ -651,6 +690,7 @@ static void cayman_gpu_init(struct radeon_device *rdev)
 		rdev->config.cayman.sc_hiz_tile_fifo_size = 0x30;
 		rdev->config.cayman.sc_earlyz_tile_fifo_size = 0x130;
 		break;
+<<<<<<< HEAD
 	case CHIP_ARUBA:
 	default:
 		rdev->config.cayman.max_shader_engines = 1;
@@ -712,6 +752,8 @@ static void cayman_gpu_init(struct radeon_device *rdev)
 		rdev->config.cayman.sc_hiz_tile_fifo_size = 0x30;
 		rdev->config.cayman.sc_earlyz_tile_fifo_size = 0x130;
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Initialize HDP */
@@ -732,9 +774,13 @@ static void cayman_gpu_init(struct radeon_device *rdev)
 
 	cc_rb_backend_disable = RREG32(CC_RB_BACKEND_DISABLE);
 	cc_gc_shader_pipe_config = RREG32(CC_GC_SHADER_PIPE_CONFIG);
+<<<<<<< HEAD
 	cgts_tcc_disable = 0xffff0000;
 	for (i = 0; i < rdev->config.cayman.max_texture_channel_caches; i++)
 		cgts_tcc_disable &= ~(1 << (16 + i));
+=======
+	cgts_tcc_disable = 0xff000000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gc_user_rb_backend_disable = RREG32(GC_USER_RB_BACKEND_DISABLE);
 	gc_user_shader_pipe_config = RREG32(GC_USER_SHADER_PIPE_CONFIG);
 	cgts_user_tcc_disable = RREG32(CGTS_USER_TCC_DISABLE);
@@ -886,6 +932,7 @@ static void cayman_gpu_init(struct radeon_device *rdev)
 		rdev->config.cayman.tile_config |= (3 << 0);
 		break;
 	}
+<<<<<<< HEAD
 
 	/* num banks is 8 on all fusion asics. 0 = 4, 1 = 8, 2 = 16 */
 	if (rdev->flags & RADEON_IS_IGP)
@@ -904,17 +951,27 @@ static void cayman_gpu_init(struct radeon_device *rdev)
 			break;
 		}
 	}
+=======
+	rdev->config.cayman.tile_config |=
+		((mc_arb_ramcfg & NOOFBANK_MASK) >> NOOFBANK_SHIFT) << 4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rdev->config.cayman.tile_config |=
 		((gb_addr_config & PIPE_INTERLEAVE_SIZE_MASK) >> PIPE_INTERLEAVE_SIZE_SHIFT) << 8;
 	rdev->config.cayman.tile_config |=
 		((gb_addr_config & ROW_SIZE_MASK) >> ROW_SIZE_SHIFT) << 12;
 
+<<<<<<< HEAD
 	rdev->config.cayman.backend_map = gb_backend_map;
 	WREG32(GB_BACKEND_MAP, gb_backend_map);
 	WREG32(GB_ADDR_CONFIG, gb_addr_config);
 	WREG32(DMIF_ADDR_CONFIG, gb_addr_config);
 	if (ASIC_IS_DCE6(rdev))
 		WREG32(DMIF_ADDR_CALC, gb_addr_config);
+=======
+	WREG32(GB_BACKEND_MAP, gb_backend_map);
+	WREG32(GB_ADDR_CONFIG, gb_addr_config);
+	WREG32(DMIF_ADDR_CONFIG, gb_addr_config);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	WREG32(HDP_ADDR_CONFIG, gb_addr_config);
 
 	/* primary versions */
@@ -1034,9 +1091,15 @@ void cayman_pcie_gart_tlb_flush(struct radeon_device *rdev)
 
 int cayman_pcie_gart_enable(struct radeon_device *rdev)
 {
+<<<<<<< HEAD
 	int i, r;
 
 	if (rdev->gart.robj == NULL) {
+=======
+	int r;
+
+	if (rdev->gart.table.vram.robj == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_err(rdev->dev, "No VRAM object for PCIE GART.\n");
 		return -EINVAL;
 	}
@@ -1045,12 +1108,18 @@ int cayman_pcie_gart_enable(struct radeon_device *rdev)
 		return r;
 	radeon_gart_restore(rdev);
 	/* Setup TLB control */
+<<<<<<< HEAD
 	WREG32(MC_VM_MX_L1_TLB_CNTL,
 	       (0xA << 7) |
 	       ENABLE_L1_TLB |
 	       ENABLE_L1_FRAGMENT_PROCESSING |
 	       SYSTEM_ACCESS_MODE_NOT_IN_SYS |
 	       ENABLE_ADVANCED_DRIVER_MODEL |
+=======
+	WREG32(MC_VM_MX_L1_TLB_CNTL, ENABLE_L1_TLB |
+	       ENABLE_L1_FRAGMENT_PROCESSING |
+	       SYSTEM_ACCESS_MODE_NOT_IN_SYS |
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       SYSTEM_APERTURE_UNMAPPED_ACCESS_PASS_THRU);
 	/* Setup L2 cache */
 	WREG32(VM_L2_CNTL, ENABLE_L2_CACHE |
@@ -1070,6 +1139,7 @@ int cayman_pcie_gart_enable(struct radeon_device *rdev)
 	WREG32(VM_CONTEXT0_CNTL2, 0);
 	WREG32(VM_CONTEXT0_CNTL, ENABLE_CONTEXT | PAGE_TABLE_DEPTH(0) |
 				RANGE_PROTECTION_FAULT_ENABLE_DEFAULT);
+<<<<<<< HEAD
 
 	WREG32(0x15D4, 0);
 	WREG32(0x15D8, 0);
@@ -1095,12 +1165,24 @@ int cayman_pcie_gart_enable(struct radeon_device *rdev)
 	DRM_INFO("PCIE GART of %uM enabled (table at 0x%016llX).\n",
 		 (unsigned)(rdev->mc.gtt_size >> 20),
 		 (unsigned long long)rdev->gart.table_addr);
+=======
+	/* disable context1-7 */
+	WREG32(VM_CONTEXT1_CNTL2, 0);
+	WREG32(VM_CONTEXT1_CNTL, 0);
+
+	cayman_pcie_gart_tlb_flush(rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rdev->gart.ready = true;
 	return 0;
 }
 
 void cayman_pcie_gart_disable(struct radeon_device *rdev)
 {
+<<<<<<< HEAD
+=======
+	int r;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Disable all tables */
 	WREG32(VM_CONTEXT0_CNTL, 0);
 	WREG32(VM_CONTEXT1_CNTL, 0);
@@ -1116,7 +1198,18 @@ void cayman_pcie_gart_disable(struct radeon_device *rdev)
 	WREG32(VM_L2_CNTL2, 0);
 	WREG32(VM_L2_CNTL3, L2_CACHE_BIGK_ASSOCIATIVITY |
 	       L2_CACHE_BIGK_FRAGMENT_SIZE(6));
+<<<<<<< HEAD
 	radeon_gart_table_vram_unpin(rdev);
+=======
+	if (rdev->gart.table.vram.robj) {
+		r = radeon_bo_reserve(rdev->gart.table.vram.robj, false);
+		if (likely(r == 0)) {
+			radeon_bo_kunmap(rdev->gart.table.vram.robj);
+			radeon_bo_unpin(rdev->gart.table.vram.robj);
+			radeon_bo_unreserve(rdev->gart.table.vram.robj);
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void cayman_pcie_gart_fini(struct radeon_device *rdev)
@@ -1126,6 +1219,7 @@ void cayman_pcie_gart_fini(struct radeon_device *rdev)
 	radeon_gart_fini(rdev);
 }
 
+<<<<<<< HEAD
 void cayman_cp_int_cntl_setup(struct radeon_device *rdev,
 			      int ring, u32 cp_int_cntl)
 {
@@ -1189,6 +1283,11 @@ void cayman_ring_ib_execute(struct radeon_device *rdev, struct radeon_ib *ib)
 	radeon_ring_write(ring, 10); /* poll interval */
 }
 
+=======
+/*
+ * CP.
+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void cayman_cp_enable(struct radeon_device *rdev, bool enable)
 {
 	if (enable)
@@ -1229,14 +1328,21 @@ static int cayman_cp_load_microcode(struct radeon_device *rdev)
 
 static int cayman_cp_start(struct radeon_device *rdev)
 {
+<<<<<<< HEAD
 	struct radeon_ring *ring = &rdev->ring[RADEON_RING_TYPE_GFX_INDEX];
 	int r, i;
 
 	r = radeon_ring_lock(rdev, ring, 7);
+=======
+	int r, i;
+
+	r = radeon_ring_lock(rdev, 7);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (r) {
 		DRM_ERROR("radeon: cp failed to lock ring (%d).\n", r);
 		return r;
 	}
+<<<<<<< HEAD
 	radeon_ring_write(ring, PACKET3(PACKET3_ME_INITIALIZE, 5));
 	radeon_ring_write(ring, 0x1);
 	radeon_ring_write(ring, 0x0);
@@ -1249,12 +1355,27 @@ static int cayman_cp_start(struct radeon_device *rdev)
 	cayman_cp_enable(rdev, true);
 
 	r = radeon_ring_lock(rdev, ring, cayman_default_size + 19);
+=======
+	radeon_ring_write(rdev, PACKET3(PACKET3_ME_INITIALIZE, 5));
+	radeon_ring_write(rdev, 0x1);
+	radeon_ring_write(rdev, 0x0);
+	radeon_ring_write(rdev, rdev->config.cayman.max_hw_contexts - 1);
+	radeon_ring_write(rdev, PACKET3_ME_INITIALIZE_DEVICE_ID(1));
+	radeon_ring_write(rdev, 0);
+	radeon_ring_write(rdev, 0);
+	radeon_ring_unlock_commit(rdev);
+
+	cayman_cp_enable(rdev, true);
+
+	r = radeon_ring_lock(rdev, cayman_default_size + 19);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (r) {
 		DRM_ERROR("radeon: cp failed to lock ring (%d).\n", r);
 		return r;
 	}
 
 	/* setup clear context state */
+<<<<<<< HEAD
 	radeon_ring_write(ring, PACKET3(PACKET3_PREAMBLE_CNTL, 0));
 	radeon_ring_write(ring, PACKET3_PREAMBLE_BEGIN_CLEAR_STATE);
 
@@ -1287,6 +1408,40 @@ static int cayman_cp_start(struct radeon_device *rdev)
 	radeon_ring_write(ring, 0x00000010); /*  */
 
 	radeon_ring_unlock_commit(rdev, ring);
+=======
+	radeon_ring_write(rdev, PACKET3(PACKET3_PREAMBLE_CNTL, 0));
+	radeon_ring_write(rdev, PACKET3_PREAMBLE_BEGIN_CLEAR_STATE);
+
+	for (i = 0; i < cayman_default_size; i++)
+		radeon_ring_write(rdev, cayman_default_state[i]);
+
+	radeon_ring_write(rdev, PACKET3(PACKET3_PREAMBLE_CNTL, 0));
+	radeon_ring_write(rdev, PACKET3_PREAMBLE_END_CLEAR_STATE);
+
+	/* set clear context state */
+	radeon_ring_write(rdev, PACKET3(PACKET3_CLEAR_STATE, 0));
+	radeon_ring_write(rdev, 0);
+
+	/* SQ_VTX_BASE_VTX_LOC */
+	radeon_ring_write(rdev, 0xc0026f00);
+	radeon_ring_write(rdev, 0x00000000);
+	radeon_ring_write(rdev, 0x00000000);
+	radeon_ring_write(rdev, 0x00000000);
+
+	/* Clear consts */
+	radeon_ring_write(rdev, 0xc0036f00);
+	radeon_ring_write(rdev, 0x00000bc4);
+	radeon_ring_write(rdev, 0xffffffff);
+	radeon_ring_write(rdev, 0xffffffff);
+	radeon_ring_write(rdev, 0xffffffff);
+
+	radeon_ring_write(rdev, 0xc0026900);
+	radeon_ring_write(rdev, 0x00000316);
+	radeon_ring_write(rdev, 0x0000000e); /* VGT_VERTEX_REUSE_BLOCK_CNTL */
+	radeon_ring_write(rdev, 0x00000010); /*  */
+
+	radeon_ring_unlock_commit(rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* XXX init other rings */
 
@@ -1296,12 +1451,19 @@ static int cayman_cp_start(struct radeon_device *rdev)
 static void cayman_cp_fini(struct radeon_device *rdev)
 {
 	cayman_cp_enable(rdev, false);
+<<<<<<< HEAD
 	radeon_ring_fini(rdev, &rdev->ring[RADEON_RING_TYPE_GFX_INDEX]);
+=======
+	radeon_ring_fini(rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int cayman_cp_resume(struct radeon_device *rdev)
 {
+<<<<<<< HEAD
 	struct radeon_ring *ring;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 tmp;
 	u32 rb_bufsz;
 	int r;
@@ -1318,8 +1480,12 @@ int cayman_cp_resume(struct radeon_device *rdev)
 	WREG32(GRBM_SOFT_RESET, 0);
 	RREG32(GRBM_SOFT_RESET);
 
+<<<<<<< HEAD
 	WREG32(CP_SEM_WAIT_TIMER, 0x0);
 	WREG32(CP_SEM_INCOMPLETE_TIMER_CNTL, 0x0);
+=======
+	WREG32(CP_SEM_WAIT_TIMER, 0x4);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Set the write pointer delay */
 	WREG32(CP_RB_WPTR_DELAY, 0);
@@ -1328,8 +1494,12 @@ int cayman_cp_resume(struct radeon_device *rdev)
 
 	/* ring 0 - compute and gfx */
 	/* Set ring buffer size */
+<<<<<<< HEAD
 	ring = &rdev->ring[RADEON_RING_TYPE_GFX_INDEX];
 	rb_bufsz = drm_order(ring->ring_size / 8);
+=======
+	rb_bufsz = drm_order(rdev->cp.ring_size / 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tmp = (drm_order(RADEON_GPU_PAGE_SIZE/8) << 8) | rb_bufsz;
 #ifdef __BIG_ENDIAN
 	tmp |= BUF_SWAP_32BIT;
@@ -1338,8 +1508,13 @@ int cayman_cp_resume(struct radeon_device *rdev)
 
 	/* Initialize the ring buffer's read and write pointers */
 	WREG32(CP_RB0_CNTL, tmp | RB_RPTR_WR_ENA);
+<<<<<<< HEAD
 	ring->wptr = 0;
 	WREG32(CP_RB0_WPTR, ring->wptr);
+=======
+	rdev->cp.wptr = 0;
+	WREG32(CP_RB0_WPTR, rdev->cp.wptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* set the wb address wether it's enabled or not */
 	WREG32(CP_RB0_RPTR_ADDR, (rdev->wb.gpu_addr + RADEON_WB_CP_RPTR_OFFSET) & 0xFFFFFFFC);
@@ -1356,6 +1531,7 @@ int cayman_cp_resume(struct radeon_device *rdev)
 	mdelay(1);
 	WREG32(CP_RB0_CNTL, tmp);
 
+<<<<<<< HEAD
 	WREG32(CP_RB0_BASE, ring->gpu_addr >> 8);
 
 	ring->rptr = RREG32(CP_RB0_RPTR);
@@ -1364,6 +1540,15 @@ int cayman_cp_resume(struct radeon_device *rdev)
 	/* Set ring buffer size */
 	ring = &rdev->ring[CAYMAN_RING_TYPE_CP1_INDEX];
 	rb_bufsz = drm_order(ring->ring_size / 8);
+=======
+	WREG32(CP_RB0_BASE, rdev->cp.gpu_addr >> 8);
+
+	rdev->cp.rptr = RREG32(CP_RB0_RPTR);
+
+	/* ring1  - compute only */
+	/* Set ring buffer size */
+	rb_bufsz = drm_order(rdev->cp1.ring_size / 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tmp = (drm_order(RADEON_GPU_PAGE_SIZE/8) << 8) | rb_bufsz;
 #ifdef __BIG_ENDIAN
 	tmp |= BUF_SWAP_32BIT;
@@ -1372,8 +1557,13 @@ int cayman_cp_resume(struct radeon_device *rdev)
 
 	/* Initialize the ring buffer's read and write pointers */
 	WREG32(CP_RB1_CNTL, tmp | RB_RPTR_WR_ENA);
+<<<<<<< HEAD
 	ring->wptr = 0;
 	WREG32(CP_RB1_WPTR, ring->wptr);
+=======
+	rdev->cp1.wptr = 0;
+	WREG32(CP_RB1_WPTR, rdev->cp1.wptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* set the wb address wether it's enabled or not */
 	WREG32(CP_RB1_RPTR_ADDR, (rdev->wb.gpu_addr + RADEON_WB_CP1_RPTR_OFFSET) & 0xFFFFFFFC);
@@ -1382,6 +1572,7 @@ int cayman_cp_resume(struct radeon_device *rdev)
 	mdelay(1);
 	WREG32(CP_RB1_CNTL, tmp);
 
+<<<<<<< HEAD
 	WREG32(CP_RB1_BASE, ring->gpu_addr >> 8);
 
 	ring->rptr = RREG32(CP_RB1_RPTR);
@@ -1390,6 +1581,15 @@ int cayman_cp_resume(struct radeon_device *rdev)
 	/* Set ring buffer size */
 	ring = &rdev->ring[CAYMAN_RING_TYPE_CP2_INDEX];
 	rb_bufsz = drm_order(ring->ring_size / 8);
+=======
+	WREG32(CP_RB1_BASE, rdev->cp1.gpu_addr >> 8);
+
+	rdev->cp1.rptr = RREG32(CP_RB1_RPTR);
+
+	/* ring2 - compute only */
+	/* Set ring buffer size */
+	rb_bufsz = drm_order(rdev->cp2.ring_size / 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tmp = (drm_order(RADEON_GPU_PAGE_SIZE/8) << 8) | rb_bufsz;
 #ifdef __BIG_ENDIAN
 	tmp |= BUF_SWAP_32BIT;
@@ -1398,8 +1598,13 @@ int cayman_cp_resume(struct radeon_device *rdev)
 
 	/* Initialize the ring buffer's read and write pointers */
 	WREG32(CP_RB2_CNTL, tmp | RB_RPTR_WR_ENA);
+<<<<<<< HEAD
 	ring->wptr = 0;
 	WREG32(CP_RB2_WPTR, ring->wptr);
+=======
+	rdev->cp2.wptr = 0;
+	WREG32(CP_RB2_WPTR, rdev->cp2.wptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* set the wb address wether it's enabled or not */
 	WREG32(CP_RB2_RPTR_ADDR, (rdev->wb.gpu_addr + RADEON_WB_CP2_RPTR_OFFSET) & 0xFFFFFFFC);
@@ -1408,6 +1613,7 @@ int cayman_cp_resume(struct radeon_device *rdev)
 	mdelay(1);
 	WREG32(CP_RB2_CNTL, tmp);
 
+<<<<<<< HEAD
 	WREG32(CP_RB2_BASE, ring->gpu_addr >> 8);
 
 	ring->rptr = RREG32(CP_RB2_RPTR);
@@ -1423,13 +1629,34 @@ int cayman_cp_resume(struct radeon_device *rdev)
 		rdev->ring[RADEON_RING_TYPE_GFX_INDEX].ready = false;
 		rdev->ring[CAYMAN_RING_TYPE_CP1_INDEX].ready = false;
 		rdev->ring[CAYMAN_RING_TYPE_CP2_INDEX].ready = false;
+=======
+	WREG32(CP_RB2_BASE, rdev->cp2.gpu_addr >> 8);
+
+	rdev->cp2.rptr = RREG32(CP_RB2_RPTR);
+
+	/* start the rings */
+	cayman_cp_start(rdev);
+	rdev->cp.ready = true;
+	rdev->cp1.ready = true;
+	rdev->cp2.ready = true;
+	/* this only test cp0 */
+	r = radeon_ring_test(rdev);
+	if (r) {
+		rdev->cp.ready = false;
+		rdev->cp1.ready = false;
+		rdev->cp2.ready = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return r;
 	}
 
 	return 0;
 }
 
+<<<<<<< HEAD
 bool cayman_gpu_is_lockup(struct radeon_device *rdev, struct radeon_ring *ring)
+=======
+bool cayman_gpu_is_lockup(struct radeon_device *rdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 srbm_status;
 	u32 grbm_status;
@@ -1442,6 +1669,7 @@ bool cayman_gpu_is_lockup(struct radeon_device *rdev, struct radeon_ring *ring)
 	grbm_status_se0 = RREG32(GRBM_STATUS_SE0);
 	grbm_status_se1 = RREG32(GRBM_STATUS_SE1);
 	if (!(grbm_status & GUI_ACTIVE)) {
+<<<<<<< HEAD
 		r100_gpu_lockup_update(lockup, ring);
 		return false;
 	}
@@ -1456,6 +1684,22 @@ bool cayman_gpu_is_lockup(struct radeon_device *rdev, struct radeon_ring *ring)
 	/* XXX deal with CP0,1,2 */
 	ring->rptr = RREG32(ring->rptr_reg);
 	return r100_gpu_cp_is_lockup(rdev, lockup, ring);
+=======
+		r100_gpu_lockup_update(lockup, &rdev->cp);
+		return false;
+	}
+	/* force CP activities */
+	r = radeon_ring_lock(rdev, 2);
+	if (!r) {
+		/* PACKET2 NOP */
+		radeon_ring_write(rdev, 0x80000000);
+		radeon_ring_write(rdev, 0x80000000);
+		radeon_ring_unlock_commit(rdev);
+	}
+	/* XXX deal with CP0,1,2 */
+	rdev->cp.rptr = RREG32(CP_RB0_RPTR);
+	return r100_gpu_cp_is_lockup(rdev, lockup, &rdev->cp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int cayman_gpu_soft_reset(struct radeon_device *rdev)
@@ -1475,6 +1719,7 @@ static int cayman_gpu_soft_reset(struct radeon_device *rdev)
 		RREG32(GRBM_STATUS_SE1));
 	dev_info(rdev->dev, "  SRBM_STATUS=0x%08X\n",
 		RREG32(SRBM_STATUS));
+<<<<<<< HEAD
 	dev_info(rdev->dev, "  VM_CONTEXT0_PROTECTION_FAULT_ADDR   0x%08X\n",
 		 RREG32(0x14F8));
 	dev_info(rdev->dev, "  VM_CONTEXT0_PROTECTION_FAULT_STATUS 0x%08X\n",
@@ -1484,6 +1729,8 @@ static int cayman_gpu_soft_reset(struct radeon_device *rdev)
 	dev_info(rdev->dev, "  VM_CONTEXT1_PROTECTION_FAULT_STATUS 0x%08X\n",
 		 RREG32(0x14DC));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	evergreen_mc_stop(rdev, &save);
 	if (evergreen_mc_wait_for_idle(rdev)) {
 		dev_warn(rdev->dev, "Wait for MC idle timedout !\n");
@@ -1514,7 +1761,10 @@ static int cayman_gpu_soft_reset(struct radeon_device *rdev)
 	(void)RREG32(GRBM_SOFT_RESET);
 	/* Wait a little for things to settle down */
 	udelay(50);
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_info(rdev->dev, "  GRBM_STATUS=0x%08X\n",
 		RREG32(GRBM_STATUS));
 	dev_info(rdev->dev, "  GRBM_STATUS_SE0=0x%08X\n",
@@ -1534,6 +1784,7 @@ int cayman_asic_reset(struct radeon_device *rdev)
 
 static int cayman_startup(struct radeon_device *rdev)
 {
+<<<<<<< HEAD
 	struct radeon_ring *ring = &rdev->ring[RADEON_RING_TYPE_GFX_INDEX];
 	int r;
 
@@ -1567,6 +1818,22 @@ static int cayman_startup(struct radeon_device *rdev)
 	r = r600_vram_scratch_init(rdev);
 	if (r)
 		return r;
+=======
+	int r;
+
+	if (!rdev->me_fw || !rdev->pfp_fw || !rdev->rlc_fw || !rdev->mc_fw) {
+		r = ni_init_microcode(rdev);
+		if (r) {
+			DRM_ERROR("Failed to load firmware!\n");
+			return r;
+		}
+	}
+	r = ni_mc_load_microcode(rdev);
+	if (r) {
+		DRM_ERROR("Failed to load MC firmware!\n");
+		return r;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	evergreen_mc_program(rdev);
 	r = cayman_pcie_gart_enable(rdev);
@@ -1576,6 +1843,7 @@ static int cayman_startup(struct radeon_device *rdev)
 
 	r = evergreen_blit_init(rdev);
 	if (r) {
+<<<<<<< HEAD
 		r600_blit_fini(rdev);
 		rdev->asic->copy.copy = NULL;
 		dev_warn(rdev->dev, "failed blitter (%d) falling back to memcpy\n", r);
@@ -1590,11 +1858,19 @@ static int cayman_startup(struct radeon_device *rdev)
 		}
 	}
 
+=======
+		evergreen_blit_fini(rdev);
+		rdev->asic->copy = NULL;
+		dev_warn(rdev->dev, "failed blitter (%d) falling back to memcpy\n", r);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* allocate wb buffer */
 	r = radeon_wb_init(rdev);
 	if (r)
 		return r;
 
+<<<<<<< HEAD
 	r = radeon_fence_driver_start_ring(rdev, RADEON_RING_TYPE_GFX_INDEX);
 	if (r) {
 		dev_err(rdev->dev, "failed initializing CP fences (%d).\n", r);
@@ -1620,6 +1896,9 @@ static int cayman_startup(struct radeon_device *rdev)
 			return r;
 	}
 
+=======
+	/* Enable IRQ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = r600_irq_init(rdev);
 	if (r) {
 		DRM_ERROR("radeon: IH init failed (%d).\n", r);
@@ -1628,9 +1907,13 @@ static int cayman_startup(struct radeon_device *rdev)
 	}
 	evergreen_irq_set(rdev);
 
+<<<<<<< HEAD
 	r = radeon_ring_init(rdev, ring, ring->ring_size, RADEON_WB_CP_RPTR_OFFSET,
 			     CP_RB0_RPTR, CP_RB0_WPTR,
 			     0, 0xfffff, RADEON_CP_PACKET2);
+=======
+	r = radeon_ring_init(rdev, rdev->cp.ring_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (r)
 		return r;
 	r = cayman_cp_load_microcode(rdev);
@@ -1640,6 +1923,7 @@ static int cayman_startup(struct radeon_device *rdev)
 	if (r)
 		return r;
 
+<<<<<<< HEAD
 	r = radeon_ib_pool_start(rdev);
 	if (r)
 		return r;
@@ -1655,6 +1939,8 @@ static int cayman_startup(struct radeon_device *rdev)
 	if (r)
 		return r;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1669,6 +1955,7 @@ int cayman_resume(struct radeon_device *rdev)
 	/* post card */
 	atom_asic_init(rdev->mode_info.atom_context);
 
+<<<<<<< HEAD
 	rdev->accel_working = true;
 	r = cayman_startup(rdev);
 	if (r) {
@@ -1677,10 +1964,27 @@ int cayman_resume(struct radeon_device *rdev)
 		return r;
 	}
 	return r;
+=======
+	r = cayman_startup(rdev);
+	if (r) {
+		DRM_ERROR("cayman startup failed on resume\n");
+		return r;
+	}
+
+	r = r600_ib_test(rdev);
+	if (r) {
+		DRM_ERROR("radeon: failled testing IB (%d).\n", r);
+		return r;
+	}
+
+	return r;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int cayman_suspend(struct radeon_device *rdev)
 {
+<<<<<<< HEAD
 	/* FIXME: we should wait for ring to be empty */
 	radeon_ib_pool_suspend(rdev);
 	radeon_vm_manager_suspend(rdev);
@@ -1690,6 +1994,24 @@ int cayman_suspend(struct radeon_device *rdev)
 	evergreen_irq_suspend(rdev);
 	radeon_wb_disable(rdev);
 	cayman_pcie_gart_disable(rdev);
+=======
+	int r;
+
+	/* FIXME: we should wait for ring to be empty */
+	cayman_cp_enable(rdev, false);
+	rdev->cp.ready = false;
+	evergreen_irq_suspend(rdev);
+	radeon_wb_disable(rdev);
+	cayman_pcie_gart_disable(rdev);
+
+	/* unpin shaders bo */
+	r = radeon_bo_reserve(rdev->r600_blit.shader_obj, false);
+	if (likely(r == 0)) {
+		radeon_bo_unpin(rdev->r600_blit.shader_obj);
+		radeon_bo_unreserve(rdev->r600_blit.shader_obj);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1701,7 +2023,10 @@ int cayman_suspend(struct radeon_device *rdev)
  */
 int cayman_init(struct radeon_device *rdev)
 {
+<<<<<<< HEAD
 	struct radeon_ring *ring = &rdev->ring[RADEON_RING_TYPE_GFX_INDEX];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int r;
 
 	/* This don't do much */
@@ -1750,8 +2075,17 @@ int cayman_init(struct radeon_device *rdev)
 	if (r)
 		return r;
 
+<<<<<<< HEAD
 	ring->ring_obj = NULL;
 	r600_ring_init(rdev, ring, 1024 * 1024);
+=======
+	r = radeon_irq_kms_init(rdev);
+	if (r)
+		return r;
+
+	rdev->cp.ring_obj = NULL;
+	r600_ring_init(rdev, 1024 * 1024);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rdev->ih.ring_obj = NULL;
 	r600_ih_ring_init(rdev, 64 * 1024);
@@ -1760,6 +2094,7 @@ int cayman_init(struct radeon_device *rdev)
 	if (r)
 		return r;
 
+<<<<<<< HEAD
 	r = radeon_ib_pool_init(rdev);
 	rdev->accel_working = true;
 	if (r) {
@@ -1771,29 +2106,56 @@ int cayman_init(struct radeon_device *rdev)
 		dev_err(rdev->dev, "vm manager initialization failed (%d).\n", r);
 	}
 
+=======
+	rdev->accel_working = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = cayman_startup(rdev);
 	if (r) {
 		dev_err(rdev->dev, "disabling GPU acceleration\n");
 		cayman_cp_fini(rdev);
 		r600_irq_fini(rdev);
+<<<<<<< HEAD
 		if (rdev->flags & RADEON_IS_IGP)
 			si_rlc_fini(rdev);
 		radeon_wb_fini(rdev);
 		r100_ib_fini(rdev);
 		radeon_vm_manager_fini(rdev);
+=======
+		radeon_wb_fini(rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		radeon_irq_kms_fini(rdev);
 		cayman_pcie_gart_fini(rdev);
 		rdev->accel_working = false;
 	}
+<<<<<<< HEAD
+=======
+	if (rdev->accel_working) {
+		r = radeon_ib_pool_init(rdev);
+		if (r) {
+			DRM_ERROR("radeon: failed initializing IB pool (%d).\n", r);
+			rdev->accel_working = false;
+		}
+		r = r600_ib_test(rdev);
+		if (r) {
+			DRM_ERROR("radeon: failed testing IB (%d).\n", r);
+			rdev->accel_working = false;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Don't start up if the MC ucode is missing.
 	 * The default clocks and voltages before the MC ucode
 	 * is loaded are not suffient for advanced operations.
+<<<<<<< HEAD
 	 *
 	 * We can skip this check for TN, because there is no MC
 	 * ucode.
 	 */
 	if (!rdev->mc_fw && !(rdev->flags & RADEON_IS_IGP)) {
+=======
+	 */
+	if (!rdev->mc_fw) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		DRM_ERROR("radeon: MC ucode required for NI+.\n");
 		return -EINVAL;
 	}
@@ -1803,6 +2165,7 @@ int cayman_init(struct radeon_device *rdev)
 
 void cayman_fini(struct radeon_device *rdev)
 {
+<<<<<<< HEAD
 	r600_blit_fini(rdev);
 	cayman_cp_fini(rdev);
 	r600_irq_fini(rdev);
@@ -1816,6 +2179,16 @@ void cayman_fini(struct radeon_device *rdev)
 	r600_vram_scratch_fini(rdev);
 	radeon_gem_fini(rdev);
 	radeon_semaphore_driver_fini(rdev);
+=======
+	evergreen_blit_fini(rdev);
+	cayman_cp_fini(rdev);
+	r600_irq_fini(rdev);
+	radeon_wb_fini(rdev);
+	radeon_ib_pool_fini(rdev);
+	radeon_irq_kms_fini(rdev);
+	cayman_pcie_gart_fini(rdev);
+	radeon_gem_fini(rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	radeon_fence_driver_fini(rdev);
 	radeon_bo_fini(rdev);
 	radeon_atombios_fini(rdev);
@@ -1823,6 +2196,7 @@ void cayman_fini(struct radeon_device *rdev)
 	rdev->bios = NULL;
 }
 
+<<<<<<< HEAD
 /*
  * vm
  */
@@ -1909,3 +2283,5 @@ void cayman_vm_set_page(struct radeon_device *rdev, struct radeon_vm *vm,
 	addr |= flags;
 	writeq(addr, ptr + (pfn * 8));
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -11,8 +11,13 @@
  * warranty of any kind, whether express or implied.
  */
 
+<<<<<<< HEAD
 #ifndef LINUX_MMC_SDHCI_SPEAR_H
 #define LINUX_MMC_SDHCI_SPEAR_H
+=======
+#ifndef MMC_SDHCI_SPEAR_H
+#define MMC_SDHCI_SPEAR_H
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/platform_device.h>
 /*
@@ -39,4 +44,8 @@ sdhci_set_plat_data(struct platform_device *pdev, struct sdhci_plat_data *data)
 	pdev->dev.platform_data = data;
 }
 
+<<<<<<< HEAD
 #endif /* LINUX_MMC_SDHCI_SPEAR_H */
+=======
+#endif /* MMC_SDHCI_SPEAR_H */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

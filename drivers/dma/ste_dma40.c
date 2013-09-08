@@ -6,14 +6,20 @@
  * License terms: GNU General Public License (GPL) version 2
  */
 
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
 #include <linux/kernel.h>
 #include <linux/slab.h>
 #include <linux/export.h>
+=======
+#include <linux/kernel.h>
+#include <linux/slab.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/dmaengine.h>
 #include <linux/platform_device.h>
 #include <linux/clk.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/pm.h>
 #include <linux/pm_runtime.h>
 #include <linux/err.h>
@@ -23,6 +29,12 @@
 #include <plat/ste_dma40.h>
 
 #include "dmaengine.h"
+=======
+#include <linux/err.h>
+
+#include <plat/ste_dma40.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "ste_dma40_ll.h"
 
 #define D40_NAME "dma40"
@@ -36,9 +48,12 @@
 /* Maximum iterations taken before giving up suspending a channel */
 #define D40_SUSPEND_MAX_IT 500
 
+<<<<<<< HEAD
 /* Milliseconds */
 #define DMA40_AUTOSUSPEND_DELAY	100
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Hardware requirement on LCLA alignment */
 #define LCLA_ALIGNMENT 0x40000
 
@@ -54,6 +69,12 @@
 #define D40_ALLOC_PHY		(1 << 30)
 #define D40_ALLOC_LOG_FREE	0
 
+<<<<<<< HEAD
+=======
+/* Hardware designer of the block */
+#define D40_HW_DESIGNER 0x8
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * enum 40_command - The different commands and/or statuses.
  *
@@ -69,6 +90,7 @@ enum d40_command {
 	D40_DMA_SUSPENDED	= 3
 };
 
+<<<<<<< HEAD
 /*
  * enum d40_events - The different Event Enables for the event lines.
  *
@@ -134,6 +156,8 @@ static u32 d40_backup_regs_chan[] = {
 	D40_CHAN_REG_SDLNK,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct d40_lli_pool - Structure for keeping LLIs in memory
  *
@@ -168,7 +192,11 @@ struct d40_lli_pool {
  * during a transfer.
  * @node: List entry.
  * @is_in_client_list: true if the client owns this descriptor.
+<<<<<<< HEAD
  * @cyclic: true if this is a cyclic job
+=======
+ * the previous one.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This descriptor is used for both logical and physical transfers.
  */
@@ -215,7 +243,10 @@ struct d40_lcla_pool {
  * channels.
  *
  * @lock: A lock protection this entity.
+<<<<<<< HEAD
  * @reserved: True if used by secure world or otherwise.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @num: The physical channel number of this entity.
  * @allocated_src: Bit mapped to show which src event line's are mapped to
  * this physical channel. Can also be free or physically allocated.
@@ -225,7 +256,10 @@ struct d40_lcla_pool {
  */
 struct d40_phy_res {
 	spinlock_t lock;
+<<<<<<< HEAD
 	bool	   reserved;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int	   num;
 	u32	   allocated_src;
 	u32	   allocated_dst;
@@ -238,6 +272,11 @@ struct d40_base;
  *
  * @lock: A spinlock to protect this struct.
  * @log_num: The logical number, if any of this channel.
+<<<<<<< HEAD
+=======
+ * @completed: Starts with 1, after first interrupt it is set to dma engine's
+ * current cookie.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @pending_tx: The number of pending transfers. Used between interrupt handler
  * and tasklet.
  * @busy: Set to true when transfer is ongoing on this channel.
@@ -247,35 +286,55 @@ struct d40_base;
  * @tasklet: Tasklet that gets scheduled from interrupt context to complete a
  * transfer and call client callback.
  * @client: Cliented owned descriptor list.
+<<<<<<< HEAD
  * @pending_queue: Submitted jobs, to be issued by issue_pending()
  * @active: Active descriptor.
  * @queue: Queued jobs.
  * @prepare_queue: Prepared jobs.
+=======
+ * @active: Active descriptor.
+ * @queue: Queued jobs.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @dma_cfg: The client configuration of this dma channel.
  * @configured: whether the dma_cfg configuration is valid
  * @base: Pointer to the device instance struct.
  * @src_def_cfg: Default cfg register setting for src.
  * @dst_def_cfg: Default cfg register setting for dst.
  * @log_def: Default logical channel settings.
+<<<<<<< HEAD
  * @lcpa: Pointer to dst and src lcpa settings.
  * @runtime_addr: runtime configured address.
  * @runtime_direction: runtime configured direction.
+=======
+ * @lcla: Space for one dst src pair for logical channel transfers.
+ * @lcpa: Pointer to dst and src lcpa settings.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This struct can either "be" a logical or a physical channel.
  */
 struct d40_chan {
 	spinlock_t			 lock;
 	int				 log_num;
+<<<<<<< HEAD
+=======
+	/* ID of the most recent completed transfer */
+	int				 completed;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int				 pending_tx;
 	bool				 busy;
 	struct d40_phy_res		*phy_chan;
 	struct dma_chan			 chan;
 	struct tasklet_struct		 tasklet;
 	struct list_head		 client;
+<<<<<<< HEAD
 	struct list_head		 pending_queue;
 	struct list_head		 active;
 	struct list_head		 queue;
 	struct list_head		 prepare_queue;
+=======
+	struct list_head		 active;
+	struct list_head		 queue;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct stedma40_chan_cfg	 dma_cfg;
 	bool				 configured;
 	struct d40_base			*base;
@@ -286,7 +345,11 @@ struct d40_chan {
 	struct d40_log_lli_full		*lcpa;
 	/* Runtime reconfiguration */
 	dma_addr_t			runtime_addr;
+<<<<<<< HEAD
 	enum dma_transfer_direction	runtime_direction;
+=======
+	enum dma_data_direction		runtime_direction;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -310,7 +373,10 @@ struct d40_chan {
  * @dma_both: dma_device channels that can do both memcpy and slave transfers.
  * @dma_slave: dma_device channels that can do only do slave transfers.
  * @dma_memcpy: dma_device channels that can do only do memcpy transfers.
+<<<<<<< HEAD
  * @phy_chans: Room for all possible physical channels in system.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @log_chans: Room for all possible logical channels in system.
  * @lookup_log_chans: Used to map interrupt number to logical channel. Points
  * to log_chans entries.
@@ -318,13 +384,17 @@ struct d40_chan {
  * to phy_chans entries.
  * @plat_data: Pointer to provided platform_data which is the driver
  * configuration.
+<<<<<<< HEAD
  * @lcpa_regulator: Pointer to hold the regulator for the esram bank for lcla.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @phy_res: Vector containing all physical channels.
  * @lcla_pool: lcla pool settings and data.
  * @lcpa_base: The virtual mapped address of LCPA.
  * @phy_lcpa: The physical address of the LCPA.
  * @lcpa_size: The size of the LCPA area.
  * @desc_slab: cache for descriptors.
+<<<<<<< HEAD
  * @reg_val_backup: Here the values of some hardware registers are stored
  * before the DMA is powered off. They are restored when the power is back on.
  * @reg_val_backup_v3: Backup of registers that only exits on dma40 v3 and
@@ -332,6 +402,8 @@ struct d40_chan {
  * @reg_val_backup_chan: Backup data for standard channel parameter registers.
  * @gcc_pwr_off_mask: Mask to maintain the channels that can be turned off.
  * @initialized: true if the dma has been initialized
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct d40_base {
 	spinlock_t			 interrupt_lock;
@@ -353,7 +425,10 @@ struct d40_base {
 	struct d40_chan			**lookup_log_chans;
 	struct d40_chan			**lookup_phy_chans;
 	struct stedma40_platform_data	 *plat_data;
+<<<<<<< HEAD
 	struct regulator		 *lcpa_regulator;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Physical half channels */
 	struct d40_phy_res		 *phy_res;
 	struct d40_lcla_pool		  lcla_pool;
@@ -361,11 +436,14 @@ struct d40_base {
 	dma_addr_t			  phy_lcpa;
 	resource_size_t			  lcpa_size;
 	struct kmem_cache		 *desc_slab;
+<<<<<<< HEAD
 	u32				  reg_val_backup[BACKUP_REGS_SZ];
 	u32				  reg_val_backup_v3[BACKUP_REGS_SZ_V3];
 	u32				 *reg_val_backup_chan;
 	u16				  gcc_pwr_off_mask;
 	bool				  initialized;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -563,14 +641,23 @@ static struct d40_desc *d40_desc_get(struct d40_chan *d40c)
 		struct d40_desc *d;
 		struct d40_desc *_d;
 
+<<<<<<< HEAD
 		list_for_each_entry_safe(d, _d, &d40c->client, node) {
 			if (async_tx_test_ack(&d->txd)) {
+=======
+		list_for_each_entry_safe(d, _d, &d40c->client, node)
+			if (async_tx_test_ack(&d->txd)) {
+				d40_pool_lli_free(d40c, d);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				d40_desc_remove(d);
 				desc = d;
 				memset(desc, 0, sizeof(*desc));
 				break;
 			}
+<<<<<<< HEAD
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (!desc)
@@ -621,7 +708,10 @@ static void d40_log_lli_to_lcxa(struct d40_chan *chan, struct d40_desc *desc)
 	bool cyclic = desc->cyclic;
 	int curr_lcla = -EINVAL;
 	int first_lcla = 0;
+<<<<<<< HEAD
 	bool use_esram_lcla = chan->base->plat_data->use_esram_lcla;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool linkback;
 
 	/*
@@ -694,6 +784,7 @@ static void d40_log_lli_to_lcxa(struct d40_chan *chan, struct d40_desc *desc)
 				       &lli->src[lli_current],
 				       next_lcla, flags);
 
+<<<<<<< HEAD
 		/*
 		 * Cache maintenance is not needed if lcla is
 		 * mapped in esram
@@ -704,6 +795,13 @@ static void d40_log_lli_to_lcxa(struct d40_chan *chan, struct d40_desc *desc)
 						2 * sizeof(struct d40_log_lli),
 						DMA_TO_DEVICE);
 		}
+=======
+		dma_sync_single_range_for_device(chan->base->dev,
+					pool->dma_addr, lcla_offset,
+					2 * sizeof(struct d40_log_lli),
+					DMA_TO_DEVICE);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		curr_lcla = next_lcla;
 
 		if (curr_lcla == -EINVAL || curr_lcla == first_lcla) {
@@ -738,6 +836,7 @@ static struct d40_desc *d40_first_active_get(struct d40_chan *d40c)
 	return d;
 }
 
+<<<<<<< HEAD
 /* remove desc from current queue and add it to the pending_queue */
 static void d40_desc_queue(struct d40_chan *d40c, struct d40_desc *desc)
 {
@@ -757,6 +856,11 @@ static struct d40_desc *d40_first_pending(struct d40_chan *d40c)
 			     struct d40_desc,
 			     node);
 	return d;
+=======
+static void d40_desc_queue(struct d40_chan *d40c, struct d40_desc *desc)
+{
+	list_add_tail(&desc->node, &d40c->queue);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct d40_desc *d40_first_queued(struct d40_chan *d40c)
@@ -831,6 +935,7 @@ static int d40_sg_2_dmalen(struct scatterlist *sgl, int sg_len,
 	return len;
 }
 
+<<<<<<< HEAD
 
 #ifdef CONFIG_PM
 static void dma40_backup(void __iomem *baseaddr, u32 *backup,
@@ -889,6 +994,12 @@ static void d40_save_restore_registers(struct d40_base *base, bool save)
 
 static int __d40_execute_command_phy(struct d40_chan *d40c,
 				     enum d40_command command)
+=======
+/* Support functions for logical channels */
+
+static int d40_channel_execute_command(struct d40_chan *d40c,
+				       enum d40_command command)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 status;
 	int i;
@@ -897,12 +1008,15 @@ static int __d40_execute_command_phy(struct d40_chan *d40c,
 	unsigned long flags;
 	u32 wmask;
 
+<<<<<<< HEAD
 	if (command == D40_DMA_STOP) {
 		ret = __d40_execute_command_phy(d40c, D40_DMA_SUSPEND_REQ);
 		if (ret)
 			return ret;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&d40c->base->execmd_lock, flags);
 
 	if (d40c->phy_chan->num % 2 == 0)
@@ -960,7 +1074,10 @@ done:
 static void d40_term_all(struct d40_chan *d40c)
 {
 	struct d40_desc *d40d;
+<<<<<<< HEAD
 	struct d40_desc *_d;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Release active descriptors */
 	while ((d40d = d40_first_active_get(d40c))) {
@@ -974,6 +1091,7 @@ static void d40_term_all(struct d40_chan *d40c)
 		d40_desc_free(d40c, d40d);
 	}
 
+<<<<<<< HEAD
 	/* Release pending descriptors */
 	while ((d40d = d40_first_pending(d40c))) {
 		d40_desc_remove(d40d);
@@ -1050,11 +1168,31 @@ static void __d40_config_set_event(struct d40_chan *d40c,
 		break;
 
 	case D40_ACTIVATE_EVENTLINE:
+=======
+
+	d40c->pending_tx = 0;
+	d40c->busy = false;
+}
+
+static void __d40_config_set_event(struct d40_chan *d40c, bool enable,
+				   u32 event, int reg)
+{
+	void __iomem *addr = chan_base(d40c) + reg;
+	int tries;
+
+	if (!enable) {
+		writel((D40_DEACTIVATE_EVENTLINE << D40_EVENTLINE_POS(event))
+		       | ~D40_EVENTLINE_MASK(event), addr);
+		return;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * The hardware sometimes doesn't register the enable when src and dst
 	 * event lines are active on the same logical channel.  Retry to ensure
 	 * it does.  Usually only one retry is sufficient.
 	 */
+<<<<<<< HEAD
 		tries = 100;
 		while (--tries) {
 			writel((D40_ACTIVATE_EVENTLINE <<
@@ -1084,21 +1222,59 @@ static void __d40_config_set_event(struct d40_chan *d40c,
 static void d40_config_set_event(struct d40_chan *d40c,
 				 enum d40_events event_type)
 {
+=======
+	tries = 100;
+	while (--tries) {
+		writel((D40_ACTIVATE_EVENTLINE << D40_EVENTLINE_POS(event))
+		       | ~D40_EVENTLINE_MASK(event), addr);
+
+		if (readl(addr) & D40_EVENTLINE_MASK(event))
+			break;
+	}
+
+	if (tries != 99)
+		dev_dbg(chan2dev(d40c),
+			"[%s] workaround enable S%cLNK (%d tries)\n",
+			__func__, reg == D40_CHAN_REG_SSLNK ? 'S' : 'D',
+			100 - tries);
+
+	WARN_ON(!tries);
+}
+
+static void d40_config_set_event(struct d40_chan *d40c, bool do_enable)
+{
+	unsigned long flags;
+
+	spin_lock_irqsave(&d40c->phy_chan->lock, flags);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Enable event line connected to device (or memcpy) */
 	if ((d40c->dma_cfg.dir ==  STEDMA40_PERIPH_TO_MEM) ||
 	    (d40c->dma_cfg.dir == STEDMA40_PERIPH_TO_PERIPH)) {
 		u32 event = D40_TYPE_TO_EVENT(d40c->dma_cfg.src_dev_type);
 
+<<<<<<< HEAD
 		__d40_config_set_event(d40c, event_type, event,
+=======
+		__d40_config_set_event(d40c, do_enable, event,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				       D40_CHAN_REG_SSLNK);
 	}
 
 	if (d40c->dma_cfg.dir !=  STEDMA40_PERIPH_TO_MEM) {
 		u32 event = D40_TYPE_TO_EVENT(d40c->dma_cfg.dst_dev_type);
 
+<<<<<<< HEAD
 		__d40_config_set_event(d40c, event_type, event,
 				       D40_CHAN_REG_SDLNK);
 	}
+=======
+		__d40_config_set_event(d40c, do_enable, event,
+				       D40_CHAN_REG_SDLNK);
+	}
+
+	spin_unlock_irqrestore(&d40c->phy_chan->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static u32 d40_chan_has_events(struct d40_chan *d40c)
@@ -1112,6 +1288,7 @@ static u32 d40_chan_has_events(struct d40_chan *d40c)
 	return val;
 }
 
+<<<<<<< HEAD
 static int
 __d40_execute_command_log(struct d40_chan *d40c, enum d40_command command)
 {
@@ -1170,6 +1347,8 @@ static int d40_channel_execute_command(struct d40_chan *d40c,
 		return __d40_execute_command_phy(d40c, command);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u32 d40_get_prmo(struct d40_chan *d40c)
 {
 	static const unsigned int phy_map[] = {
@@ -1224,10 +1403,13 @@ static void d40_config_write(struct d40_chan *d40c)
 		/* Set LIDX for lcla */
 		writel(lidx, chanbase + D40_CHAN_REG_SSELT);
 		writel(lidx, chanbase + D40_CHAN_REG_SDELT);
+<<<<<<< HEAD
 
 		/* Clear LNK which will be used by d40_chan_has_events() */
 		writel(0, chanbase + D40_CHAN_REG_SSLNK);
 		writel(0, chanbase + D40_CHAN_REG_SDLNK);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -1268,6 +1450,7 @@ static int d40_pause(struct d40_chan *d40c)
 	if (!d40c->busy)
 		return 0;
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(d40c->base->dev);
 	spin_lock_irqsave(&d40c->lock, flags);
 
@@ -1275,6 +1458,21 @@ static int d40_pause(struct d40_chan *d40c)
 
 	pm_runtime_mark_last_busy(d40c->base->dev);
 	pm_runtime_put_autosuspend(d40c->base->dev);
+=======
+	spin_lock_irqsave(&d40c->lock, flags);
+
+	res = d40_channel_execute_command(d40c, D40_DMA_SUSPEND_REQ);
+	if (res == 0) {
+		if (chan_is_logical(d40c)) {
+			d40_config_set_event(d40c, false);
+			/* Resume the other logical channels if any */
+			if (d40_chan_has_events(d40c))
+				res = d40_channel_execute_command(d40c,
+								  D40_DMA_RUN);
+		}
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&d40c->lock, flags);
 	return res;
 }
@@ -1288,6 +1486,7 @@ static int d40_resume(struct d40_chan *d40c)
 		return 0;
 
 	spin_lock_irqsave(&d40c->lock, flags);
+<<<<<<< HEAD
 	pm_runtime_get_sync(d40c->base->dev);
 
 	/* If bytes left to transfer or linked tx resume job */
@@ -1296,10 +1495,49 @@ static int d40_resume(struct d40_chan *d40c)
 
 	pm_runtime_mark_last_busy(d40c->base->dev);
 	pm_runtime_put_autosuspend(d40c->base->dev);
+=======
+
+	if (d40c->base->rev == 0)
+		if (chan_is_logical(d40c)) {
+			res = d40_channel_execute_command(d40c,
+							  D40_DMA_SUSPEND_REQ);
+			goto no_suspend;
+		}
+
+	/* If bytes left to transfer or linked tx resume job */
+	if (d40_residue(d40c) || d40_tx_is_linked(d40c)) {
+
+		if (chan_is_logical(d40c))
+			d40_config_set_event(d40c, true);
+
+		res = d40_channel_execute_command(d40c, D40_DMA_RUN);
+	}
+
+no_suspend:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&d40c->lock, flags);
 	return res;
 }
 
+<<<<<<< HEAD
+=======
+static int d40_terminate_all(struct d40_chan *chan)
+{
+	unsigned long flags;
+	int ret = 0;
+
+	ret = d40_pause(chan);
+	if (!ret && chan_is_physical(chan))
+		ret = d40_channel_execute_command(chan, D40_DMA_STOP);
+
+	spin_lock_irqsave(&chan->lock, flags);
+	d40_term_all(chan);
+	spin_unlock_irqrestore(&chan->lock, flags);
+
+	return ret;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static dma_cookie_t d40_tx_submit(struct dma_async_tx_descriptor *tx)
 {
 	struct d40_chan *d40c = container_of(tx->chan,
@@ -1307,6 +1545,7 @@ static dma_cookie_t d40_tx_submit(struct dma_async_tx_descriptor *tx)
 					     chan);
 	struct d40_desc *d40d = container_of(tx, struct d40_desc, txd);
 	unsigned long flags;
+<<<<<<< HEAD
 	dma_cookie_t cookie;
 
 	spin_lock_irqsave(&d40c->lock, flags);
@@ -1315,10 +1554,44 @@ static dma_cookie_t d40_tx_submit(struct dma_async_tx_descriptor *tx)
 	spin_unlock_irqrestore(&d40c->lock, flags);
 
 	return cookie;
+=======
+
+	spin_lock_irqsave(&d40c->lock, flags);
+
+	d40c->chan.cookie++;
+
+	if (d40c->chan.cookie < 0)
+		d40c->chan.cookie = 1;
+
+	d40d->txd.cookie = d40c->chan.cookie;
+
+	d40_desc_queue(d40c, d40d);
+
+	spin_unlock_irqrestore(&d40c->lock, flags);
+
+	return tx->cookie;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int d40_start(struct d40_chan *d40c)
 {
+<<<<<<< HEAD
+=======
+	if (d40c->base->rev == 0) {
+		int err;
+
+		if (chan_is_logical(d40c)) {
+			err = d40_channel_execute_command(d40c,
+							  D40_DMA_SUSPEND_REQ);
+			if (err)
+				return err;
+		}
+	}
+
+	if (chan_is_logical(d40c))
+		d40_config_set_event(d40c, true);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return d40_channel_execute_command(d40c, D40_DMA_RUN);
 }
 
@@ -1331,10 +1604,14 @@ static struct d40_desc *d40_queue_start(struct d40_chan *d40c)
 	d40d = d40_first_queued(d40c);
 
 	if (d40d != NULL) {
+<<<<<<< HEAD
 		if (!d40c->busy) {
 			d40c->busy = true;
 			pm_runtime_get_sync(d40c->base->dev);
 		}
+=======
+		d40c->busy = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Remove from queue */
 		d40_desc_remove(d40d);
@@ -1395,8 +1672,11 @@ static void dma_tc_handle(struct d40_chan *d40c)
 
 		if (d40_queue_start(d40c) == NULL)
 			d40c->busy = false;
+<<<<<<< HEAD
 		pm_runtime_mark_last_busy(d40c->base->dev);
 		pm_runtime_put_autosuspend(d40c->base->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	d40c->pending_tx++;
@@ -1420,7 +1700,11 @@ static void dma_tasklet(unsigned long data)
 		goto err;
 
 	if (!d40d->cyclic)
+<<<<<<< HEAD
 		dma_cookie_complete(&d40d->txd);
+=======
+		d40c->completed = d40d->txd.cookie;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If terminating a channel pending_tx is set to zero.
@@ -1437,6 +1721,10 @@ static void dma_tasklet(unsigned long data)
 
 	if (!d40d->cyclic) {
 		if (async_tx_test_ack(&d40d->txd)) {
+<<<<<<< HEAD
+=======
+			d40_pool_lli_free(d40c, d40d);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			d40_desc_remove(d40d);
 			d40_desc_free(d40c, d40d);
 		} else {
@@ -1461,8 +1749,13 @@ static void dma_tasklet(unsigned long data)
 
 	return;
 
+<<<<<<< HEAD
 err:
 	/* Rescue manouver if receiving double interrupts */
+=======
+ err:
+	/* Rescue manoeuvre if receiving double interrupts */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (d40c->pending_tx > 0)
 		d40c->pending_tx--;
 	spin_unlock_irqrestore(&d40c->lock, flags);
@@ -1612,6 +1905,7 @@ static int d40_validate_conf(struct d40_chan *d40c,
 	return res;
 }
 
+<<<<<<< HEAD
 static bool d40_alloc_mask_set(struct d40_phy_res *phy,
 			       bool is_src, int log_event_line, bool is_log,
 			       bool *first_user)
@@ -1622,6 +1916,13 @@ static bool d40_alloc_mask_set(struct d40_phy_res *phy,
 	*first_user = ((phy->allocated_src | phy->allocated_dst)
 			== D40_ALLOC_FREE);
 
+=======
+static bool d40_alloc_mask_set(struct d40_phy_res *phy, bool is_src,
+			       int log_event_line, bool is_log)
+{
+	unsigned long flags;
+	spin_lock_irqsave(&phy->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!is_log) {
 		/* Physical interrupts are masked per physical full channel */
 		if (phy->allocated_src == D40_ALLOC_FREE &&
@@ -1702,7 +2003,11 @@ out:
 	return is_free;
 }
 
+<<<<<<< HEAD
 static int d40_allocate_channel(struct d40_chan *d40c, bool *first_phy_user)
+=======
+static int d40_allocate_channel(struct d40_chan *d40c)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int dev_type;
 	int event_group;
@@ -1738,8 +2043,12 @@ static int d40_allocate_channel(struct d40_chan *d40c, bool *first_phy_user)
 			for (i = 0; i < d40c->base->num_phy_chans; i++) {
 
 				if (d40_alloc_mask_set(&phys[i], is_src,
+<<<<<<< HEAD
 						       0, is_log,
 						       first_phy_user))
+=======
+						       0, is_log))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					goto found_phy;
 			}
 		} else
@@ -1749,8 +2058,12 @@ static int d40_allocate_channel(struct d40_chan *d40c, bool *first_phy_user)
 					if (d40_alloc_mask_set(&phys[i],
 							       is_src,
 							       0,
+<<<<<<< HEAD
 							       is_log,
 							       first_phy_user))
+=======
+							       is_log))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						goto found_phy;
 				}
 			}
@@ -1766,6 +2079,7 @@ found_phy:
 	/* Find logical channel */
 	for (j = 0; j < d40c->base->num_phy_chans; j += 8) {
 		int phy_num = j + event_group * 2;
+<<<<<<< HEAD
 
 		if (d40c->dma_cfg.use_fixed_channel) {
 			i = d40c->dma_cfg.phy_channel;
@@ -1785,6 +2099,8 @@ found_phy:
 			return -EINVAL;
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Spread logical channels across all available physical rather
 		 * than pack every logical channel at the first available phy
@@ -1793,15 +2109,23 @@ found_phy:
 		if (is_src) {
 			for (i = phy_num; i < phy_num + 2; i++) {
 				if (d40_alloc_mask_set(&phys[i], is_src,
+<<<<<<< HEAD
 						       event_line, is_log,
 						       first_phy_user))
+=======
+						       event_line, is_log))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					goto found_log;
 			}
 		} else {
 			for (i = phy_num + 1; i >= phy_num; i--) {
 				if (d40_alloc_mask_set(&phys[i], is_src,
+<<<<<<< HEAD
 						       event_line, is_log,
 						       first_phy_user))
+=======
+						       event_line, is_log))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					goto found_log;
 			}
 		}
@@ -1843,6 +2167,10 @@ static int d40_config_memcpy(struct d40_chan *d40c)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int d40_free_dma(struct d40_chan *d40c)
 {
 
@@ -1850,10 +2178,27 @@ static int d40_free_dma(struct d40_chan *d40c)
 	u32 event;
 	struct d40_phy_res *phy = d40c->phy_chan;
 	bool is_src;
+<<<<<<< HEAD
+=======
+	struct d40_desc *d;
+	struct d40_desc *_d;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Terminate all queued and active transfers */
 	d40_term_all(d40c);
 
+<<<<<<< HEAD
+=======
+	/* Release client owned descriptors */
+	if (!list_empty(&d40c->client))
+		list_for_each_entry_safe(d, _d, &d40c->client, node) {
+			d40_pool_lli_free(d40c, d);
+			d40_desc_remove(d);
+			d40_desc_free(d40c, d);
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (phy == NULL) {
 		chan_err(d40c, "phy == null\n");
 		return -EINVAL;
@@ -1877,6 +2222,7 @@ static int d40_free_dma(struct d40_chan *d40c)
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(d40c->base->dev);
 	res = d40_channel_execute_command(d40c, D40_DMA_STOP);
 	if (res) {
@@ -1904,6 +2250,52 @@ out:
 	pm_runtime_mark_last_busy(d40c->base->dev);
 	pm_runtime_put_autosuspend(d40c->base->dev);
 	return res;
+=======
+	res = d40_channel_execute_command(d40c, D40_DMA_SUSPEND_REQ);
+	if (res) {
+		chan_err(d40c, "suspend failed\n");
+		return res;
+	}
+
+	if (chan_is_logical(d40c)) {
+		/* Release logical channel, deactivate the event line */
+
+		d40_config_set_event(d40c, false);
+		d40c->base->lookup_log_chans[d40c->log_num] = NULL;
+
+		/*
+		 * Check if there are more logical allocation
+		 * on this phy channel.
+		 */
+		if (!d40_alloc_mask_free(phy, is_src, event)) {
+			/* Resume the other logical channels if any */
+			if (d40_chan_has_events(d40c)) {
+				res = d40_channel_execute_command(d40c,
+								  D40_DMA_RUN);
+				if (res) {
+					chan_err(d40c,
+						"Executing RUN command\n");
+					return res;
+				}
+			}
+			return 0;
+		}
+	} else {
+		(void) d40_alloc_mask_free(phy, is_src, 0);
+	}
+
+	/* Release physical channel */
+	res = d40_channel_execute_command(d40c, D40_DMA_STOP);
+	if (res) {
+		chan_err(d40c, "Failed to stop channel\n");
+		return res;
+	}
+	d40c->phy_chan = NULL;
+	d40c->configured = false;
+	d40c->base->lookup_phy_chans[phy->num] = NULL;
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static bool d40_is_paused(struct d40_chan *d40c)
@@ -2072,7 +2464,11 @@ err:
 }
 
 static dma_addr_t
+<<<<<<< HEAD
 d40_get_dev_addr(struct d40_chan *chan, enum dma_transfer_direction direction)
+=======
+d40_get_dev_addr(struct d40_chan *chan, enum dma_data_direction direction)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct stedma40_platform_data *plat = chan->base->plat_data;
 	struct stedma40_chan_cfg *cfg = &chan->dma_cfg;
@@ -2081,9 +2477,15 @@ d40_get_dev_addr(struct d40_chan *chan, enum dma_transfer_direction direction)
 	if (chan->runtime_addr)
 		return chan->runtime_addr;
 
+<<<<<<< HEAD
 	if (direction == DMA_DEV_TO_MEM)
 		addr = plat->dev_rx[cfg->src_dev_type];
 	else if (direction == DMA_MEM_TO_DEV)
+=======
+	if (direction == DMA_FROM_DEVICE)
+		addr = plat->dev_rx[cfg->src_dev_type];
+	else if (direction == DMA_TO_DEVICE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		addr = plat->dev_tx[cfg->dst_dev_type];
 
 	return addr;
@@ -2092,7 +2494,11 @@ d40_get_dev_addr(struct d40_chan *chan, enum dma_transfer_direction direction)
 static struct dma_async_tx_descriptor *
 d40_prep_sg(struct dma_chan *dchan, struct scatterlist *sg_src,
 	    struct scatterlist *sg_dst, unsigned int sg_len,
+<<<<<<< HEAD
 	    enum dma_transfer_direction direction, unsigned long dma_flags)
+=======
+	    enum dma_data_direction direction, unsigned long dma_flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct d40_chan *chan = container_of(dchan, struct d40_chan, chan);
 	dma_addr_t src_dev_addr = 0;
@@ -2116,12 +2522,21 @@ d40_prep_sg(struct dma_chan *dchan, struct scatterlist *sg_src,
 	if (sg_next(&sg_src[sg_len - 1]) == sg_src)
 		desc->cyclic = true;
 
+<<<<<<< HEAD
 	if (direction != DMA_TRANS_NONE) {
 		dma_addr_t dev_addr = d40_get_dev_addr(chan, direction);
 
 		if (direction == DMA_DEV_TO_MEM)
 			src_dev_addr = dev_addr;
 		else if (direction == DMA_MEM_TO_DEV)
+=======
+	if (direction != DMA_NONE) {
+		dma_addr_t dev_addr = d40_get_dev_addr(chan, direction);
+
+		if (direction == DMA_FROM_DEVICE)
+			src_dev_addr = dev_addr;
+		else if (direction == DMA_TO_DEVICE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dst_dev_addr = dev_addr;
 	}
 
@@ -2138,12 +2553,15 @@ d40_prep_sg(struct dma_chan *dchan, struct scatterlist *sg_src,
 		goto err;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * add descriptor to the prepare queue in order to be able
 	 * to free them later in terminate_all
 	 */
 	list_add_tail(&desc->node, &chan->prepare_queue);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&chan->lock, flags);
 
 	return &desc->txd;
@@ -2218,7 +2636,11 @@ static int d40_alloc_chan_resources(struct dma_chan *chan)
 	bool is_free_phy;
 	spin_lock_irqsave(&d40c->lock, flags);
 
+<<<<<<< HEAD
 	dma_cookie_init(chan);
+=======
+	d40c->completed = chan->cookie = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* If no dma configuration is set use default configuration (memcpy) */
 	if (!d40c->configured) {
@@ -2228,6 +2650,7 @@ static int d40_alloc_chan_resources(struct dma_chan *chan)
 			goto fail;
 		}
 	}
+<<<<<<< HEAD
 
 	err = d40_allocate_channel(d40c, &is_free_phy);
 	if (err) {
@@ -2237,6 +2660,16 @@ static int d40_alloc_chan_resources(struct dma_chan *chan)
 	}
 
 	pm_runtime_get_sync(d40c->base->dev);
+=======
+	is_free_phy = (d40c->phy_chan == NULL);
+
+	err = d40_allocate_channel(d40c);
+	if (err) {
+		chan_err(d40c, "Failed to allocate channel\n");
+		goto fail;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Fill in basic CFG register values */
 	d40_phy_cfg(&d40c->dma_cfg, &d40c->src_def_cfg,
 		    &d40c->dst_def_cfg, chan_is_logical(d40c));
@@ -2256,12 +2689,15 @@ static int d40_alloc_chan_resources(struct dma_chan *chan)
 			  D40_LCPA_CHAN_SIZE + D40_LCPA_CHAN_DST_DELTA;
 	}
 
+<<<<<<< HEAD
 	dev_dbg(chan2dev(d40c), "allocated %s channel (phy %d%s)\n",
 		 chan_is_logical(d40c) ? "logical" : "physical",
 		 d40c->phy_chan->num,
 		 d40c->dma_cfg.use_fixed_channel ? ", fixed" : "");
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Only write channel configuration to the DMA if the physical
 	 * resource is free. In case of multiple logical channels
@@ -2270,8 +2706,11 @@ static int d40_alloc_chan_resources(struct dma_chan *chan)
 	if (is_free_phy)
 		d40_config_write(d40c);
 fail:
+<<<<<<< HEAD
 	pm_runtime_mark_last_busy(d40c->base->dev);
 	pm_runtime_put_autosuspend(d40c->base->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&d40c->lock, flags);
 	return err;
 }
@@ -2334,11 +2773,18 @@ d40_prep_memcpy_sg(struct dma_chan *chan,
 static struct dma_async_tx_descriptor *d40_prep_slave_sg(struct dma_chan *chan,
 							 struct scatterlist *sgl,
 							 unsigned int sg_len,
+<<<<<<< HEAD
 							 enum dma_transfer_direction direction,
 							 unsigned long dma_flags,
 							 void *context)
 {
 	if (direction != DMA_DEV_TO_MEM && direction != DMA_MEM_TO_DEV)
+=======
+							 enum dma_data_direction direction,
+							 unsigned long dma_flags)
+{
+	if (direction != DMA_FROM_DEVICE && direction != DMA_TO_DEVICE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 
 	return d40_prep_sg(chan, sgl, sgl, sg_len, direction, dma_flags);
@@ -2347,14 +2793,22 @@ static struct dma_async_tx_descriptor *d40_prep_slave_sg(struct dma_chan *chan,
 static struct dma_async_tx_descriptor *
 dma40_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t dma_addr,
 		     size_t buf_len, size_t period_len,
+<<<<<<< HEAD
 		     enum dma_transfer_direction direction, void *context)
+=======
+		     enum dma_data_direction direction)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int periods = buf_len / period_len;
 	struct dma_async_tx_descriptor *txd;
 	struct scatterlist *sg;
 	int i;
 
+<<<<<<< HEAD
 	sg = kcalloc(periods + 1, sizeof(struct scatterlist), GFP_NOWAIT);
+=======
+	sg = kcalloc(periods + 1, sizeof(struct scatterlist), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < periods; i++) {
 		sg_dma_address(&sg[i]) = dma_addr;
 		sg_dma_len(&sg[i]) = period_len;
@@ -2379,19 +2833,38 @@ static enum dma_status d40_tx_status(struct dma_chan *chan,
 				     struct dma_tx_state *txstate)
 {
 	struct d40_chan *d40c = container_of(chan, struct d40_chan, chan);
+<<<<<<< HEAD
 	enum dma_status ret;
+=======
+	dma_cookie_t last_used;
+	dma_cookie_t last_complete;
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (d40c->phy_chan == NULL) {
 		chan_err(d40c, "Cannot read status of unallocated channel\n");
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	ret = dma_cookie_status(chan, cookie, txstate);
 	if (ret != DMA_SUCCESS)
 		dma_set_residue(txstate, stedma40_residue(chan));
 
 	if (d40_is_paused(d40c))
 		ret = DMA_PAUSED;
+=======
+	last_complete = d40c->completed;
+	last_used = chan->cookie;
+
+	if (d40_is_paused(d40c))
+		ret = DMA_PAUSED;
+	else
+		ret = dma_async_is_complete(cookie, last_complete, last_used);
+
+	dma_set_tx_state(txstate, last_complete, last_used,
+			 stedma40_residue(chan));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -2408,15 +2881,20 @@ static void d40_issue_pending(struct dma_chan *chan)
 
 	spin_lock_irqsave(&d40c->lock, flags);
 
+<<<<<<< HEAD
 	list_splice_tail_init(&d40c->pending_queue, &d40c->queue);
 
 	/* Busy means that queued jobs are already being processed */
+=======
+	/* Busy means that pending jobs are already being processed */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!d40c->busy)
 		(void) d40_queue_start(d40c);
 
 	spin_unlock_irqrestore(&d40c->lock, flags);
 }
 
+<<<<<<< HEAD
 static void d40_terminate_all(struct dma_chan *chan)
 {
 	unsigned long flags;
@@ -2516,6 +2994,21 @@ static int d40_set_runtime_config(struct dma_chan *chan,
 	dst_maxburst = config->dst_maxburst;
 
 	if (config->direction == DMA_DEV_TO_MEM) {
+=======
+/* Runtime reconfiguration extension */
+static void d40_set_runtime_config(struct dma_chan *chan,
+			       struct dma_slave_config *config)
+{
+	struct d40_chan *d40c = container_of(chan, struct d40_chan, chan);
+	struct stedma40_chan_cfg *cfg = &d40c->dma_cfg;
+	enum dma_slave_buswidth config_addr_width;
+	dma_addr_t config_addr;
+	u32 config_maxburst;
+	enum stedma40_periph_data_width addr_width;
+	int psize;
+
+	if (config->direction == DMA_FROM_DEVICE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dma_addr_t dev_addr_rx =
 			d40c->base->plat_data->dev_rx[cfg->src_dev_type];
 
@@ -2532,6 +3025,7 @@ static int d40_set_runtime_config(struct dma_chan *chan,
 				cfg->dir);
 		cfg->dir = STEDMA40_PERIPH_TO_MEM;
 
+<<<<<<< HEAD
 		/* Configure the memory side */
 		if (dst_addr_width == DMA_SLAVE_BUSWIDTH_UNDEFINED)
 			dst_addr_width = src_addr_width;
@@ -2539,6 +3033,12 @@ static int d40_set_runtime_config(struct dma_chan *chan,
 			dst_maxburst = src_maxburst;
 
 	} else if (config->direction == DMA_MEM_TO_DEV) {
+=======
+		config_addr_width = config->src_addr_width;
+		config_maxburst = config->src_maxburst;
+
+	} else if (config->direction == DMA_TO_DEVICE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dma_addr_t dev_addr_tx =
 			d40c->base->plat_data->dev_tx[cfg->dst_dev_type];
 
@@ -2555,15 +3055,22 @@ static int d40_set_runtime_config(struct dma_chan *chan,
 				cfg->dir);
 		cfg->dir = STEDMA40_MEM_TO_PERIPH;
 
+<<<<<<< HEAD
 		/* Configure the memory side */
 		if (src_addr_width == DMA_SLAVE_BUSWIDTH_UNDEFINED)
 			src_addr_width = dst_addr_width;
 		if (src_maxburst == 0)
 			src_maxburst = dst_maxburst;
+=======
+		config_addr_width = config->dst_addr_width;
+		config_maxburst = config->dst_maxburst;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		dev_err(d40c->base->dev,
 			"unrecognized channel direction %d\n",
 			config->direction);
+<<<<<<< HEAD
 		return -EINVAL;
 	}
 
@@ -2588,6 +3095,63 @@ static int d40_set_runtime_config(struct dma_chan *chan,
 					  dst_maxburst);
 	if (ret)
 		return ret;
+=======
+		return;
+	}
+
+	switch (config_addr_width) {
+	case DMA_SLAVE_BUSWIDTH_1_BYTE:
+		addr_width = STEDMA40_BYTE_WIDTH;
+		break;
+	case DMA_SLAVE_BUSWIDTH_2_BYTES:
+		addr_width = STEDMA40_HALFWORD_WIDTH;
+		break;
+	case DMA_SLAVE_BUSWIDTH_4_BYTES:
+		addr_width = STEDMA40_WORD_WIDTH;
+		break;
+	case DMA_SLAVE_BUSWIDTH_8_BYTES:
+		addr_width = STEDMA40_DOUBLEWORD_WIDTH;
+		break;
+	default:
+		dev_err(d40c->base->dev,
+			"illegal peripheral address width "
+			"requested (%d)\n",
+			config->src_addr_width);
+		return;
+	}
+
+	if (chan_is_logical(d40c)) {
+		if (config_maxburst >= 16)
+			psize = STEDMA40_PSIZE_LOG_16;
+		else if (config_maxburst >= 8)
+			psize = STEDMA40_PSIZE_LOG_8;
+		else if (config_maxburst >= 4)
+			psize = STEDMA40_PSIZE_LOG_4;
+		else
+			psize = STEDMA40_PSIZE_LOG_1;
+	} else {
+		if (config_maxburst >= 16)
+			psize = STEDMA40_PSIZE_PHY_16;
+		else if (config_maxburst >= 8)
+			psize = STEDMA40_PSIZE_PHY_8;
+		else if (config_maxburst >= 4)
+			psize = STEDMA40_PSIZE_PHY_4;
+		else if (config_maxburst >= 2)
+			psize = STEDMA40_PSIZE_PHY_2;
+		else
+			psize = STEDMA40_PSIZE_PHY_1;
+	}
+
+	/* Set up all the endpoint configs */
+	cfg->src_info.data_width = addr_width;
+	cfg->src_info.psize = psize;
+	cfg->src_info.big_endian = false;
+	cfg->src_info.flow_ctrl = STEDMA40_NO_FLOW_CTRL;
+	cfg->dst_info.data_width = addr_width;
+	cfg->dst_info.psize = psize;
+	cfg->dst_info.big_endian = false;
+	cfg->dst_info.flow_ctrl = STEDMA40_NO_FLOW_CTRL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Fill in register values */
 	if (chan_is_logical(d40c))
@@ -2600,6 +3164,7 @@ static int d40_set_runtime_config(struct dma_chan *chan,
 	d40c->runtime_addr = config_addr;
 	d40c->runtime_direction = config->direction;
 	dev_dbg(d40c->base->dev,
+<<<<<<< HEAD
 		"configured channel %s for %s, data width %d/%d, "
 		"maxburst %d/%d elements, LE, no flow control\n",
 		dma_chan_name(chan),
@@ -2608,6 +3173,14 @@ static int d40_set_runtime_config(struct dma_chan *chan,
 		src_maxburst, dst_maxburst);
 
 	return 0;
+=======
+		"configured channel %s for %s, data width %d, "
+		"maxburst %d bytes, LE, no flow control\n",
+		dma_chan_name(chan),
+		(config->direction == DMA_FROM_DEVICE) ? "RX" : "TX",
+		config_addr_width,
+		config_maxburst);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int d40_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
@@ -2622,15 +3195,25 @@ static int d40_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
 
 	switch (cmd) {
 	case DMA_TERMINATE_ALL:
+<<<<<<< HEAD
 		d40_terminate_all(chan);
 		return 0;
+=======
+		return d40_terminate_all(d40c);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case DMA_PAUSE:
 		return d40_pause(d40c);
 	case DMA_RESUME:
 		return d40_resume(d40c);
 	case DMA_SLAVE_CONFIG:
+<<<<<<< HEAD
 		return d40_set_runtime_config(chan,
 			(struct dma_slave_config *) arg);
+=======
+		d40_set_runtime_config(chan,
+			(struct dma_slave_config *) arg);
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		break;
 	}
@@ -2661,9 +3244,13 @@ static void __init d40_chan_init(struct d40_base *base, struct dma_device *dma,
 
 		INIT_LIST_HEAD(&d40c->active);
 		INIT_LIST_HEAD(&d40c->queue);
+<<<<<<< HEAD
 		INIT_LIST_HEAD(&d40c->pending_queue);
 		INIT_LIST_HEAD(&d40c->client);
 		INIT_LIST_HEAD(&d40c->prepare_queue);
+=======
+		INIT_LIST_HEAD(&d40c->client);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		tasklet_init(&d40c->tasklet, dma_tasklet,
 			     (unsigned long) d40c);
@@ -2766,6 +3353,7 @@ failure1:
 	return err;
 }
 
+<<<<<<< HEAD
 /* Suspend resume functionality */
 #ifdef CONFIG_PM
 static int dma40_pm_suspend(struct device *dev)
@@ -2832,6 +3420,8 @@ static const struct dev_pm_ops dma40_pm_ops = {
 #define DMA40_PM_OPS	NULL
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Initialization functions. */
 
 static int __init d40_phy_res_init(struct d40_base *base)
@@ -2840,7 +3430,10 @@ static int __init d40_phy_res_init(struct d40_base *base)
 	int num_phy_chans_avail = 0;
 	u32 val[2];
 	int odd_even_bit = -2;
+<<<<<<< HEAD
 	int gcc = D40_DREG_GCC_ENA;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	val[0] = readl(base->virtbase + D40_DREG_PRSME);
 	val[1] = readl(base->virtbase + D40_DREG_PRSMO);
@@ -2852,6 +3445,7 @@ static int __init d40_phy_res_init(struct d40_base *base)
 			/* Mark security only channels as occupied */
 			base->phy_res[i].allocated_src = D40_ALLOC_PHY;
 			base->phy_res[i].allocated_dst = D40_ALLOC_PHY;
+<<<<<<< HEAD
 			base->phy_res[i].reserved = true;
 			gcc |= D40_DREG_GCC_EVTGRP_ENA(D40_PHYS_TO_GROUP(i),
 						       D40_DREG_GCC_SRC);
@@ -2863,6 +3457,11 @@ static int __init d40_phy_res_init(struct d40_base *base)
 			base->phy_res[i].allocated_src = D40_ALLOC_FREE;
 			base->phy_res[i].allocated_dst = D40_ALLOC_FREE;
 			base->phy_res[i].reserved = false;
+=======
+		} else {
+			base->phy_res[i].allocated_src = D40_ALLOC_FREE;
+			base->phy_res[i].allocated_dst = D40_ALLOC_FREE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			num_phy_chans_avail++;
 		}
 		spin_lock_init(&base->phy_res[i].lock);
@@ -2874,11 +3473,14 @@ static int __init d40_phy_res_init(struct d40_base *base)
 
 		base->phy_res[chan].allocated_src = D40_ALLOC_PHY;
 		base->phy_res[chan].allocated_dst = D40_ALLOC_PHY;
+<<<<<<< HEAD
 		base->phy_res[chan].reserved = true;
 		gcc |= D40_DREG_GCC_EVTGRP_ENA(D40_PHYS_TO_GROUP(chan),
 					       D40_DREG_GCC_SRC);
 		gcc |= D40_DREG_GCC_EVTGRP_ENA(D40_PHYS_TO_GROUP(chan),
 					       D40_DREG_GCC_DST);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		num_phy_chans_avail--;
 	}
 
@@ -2899,6 +3501,7 @@ static int __init d40_phy_res_init(struct d40_base *base)
 		val[0] = val[0] >> 2;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * To keep things simple, Enable all clocks initially.
 	 * The clocks will get managed later post channel allocation.
@@ -2908,11 +3511,35 @@ static int __init d40_phy_res_init(struct d40_base *base)
 	writel(D40_DREG_GCC_ENABLE_ALL, base->virtbase + D40_DREG_GCC);
 	base->gcc_pwr_off_mask = gcc;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return num_phy_chans_avail;
 }
 
 static struct d40_base * __init d40_hw_detect_init(struct platform_device *pdev)
 {
+<<<<<<< HEAD
+=======
+	static const struct d40_reg_val dma_id_regs[] = {
+		/* Peripheral Id */
+		{ .reg = D40_DREG_PERIPHID0, .val = 0x0040},
+		{ .reg = D40_DREG_PERIPHID1, .val = 0x0000},
+		/*
+		 * D40_DREG_PERIPHID2 Depends on HW revision:
+		 *  DB8500ed has 0x0008,
+		 *  ? has 0x0018,
+		 *  DB8500v1 has 0x0028
+		 *  DB8500v2 has 0x0038
+		 */
+		{ .reg = D40_DREG_PERIPHID3, .val = 0x0000},
+
+		/* PCell Id */
+		{ .reg = D40_DREG_CELLID0, .val = 0x000d},
+		{ .reg = D40_DREG_CELLID1, .val = 0x00f0},
+		{ .reg = D40_DREG_CELLID2, .val = 0x0005},
+		{ .reg = D40_DREG_CELLID3, .val = 0x00b1}
+	};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct stedma40_platform_data *plat_data;
 	struct clk *clk = NULL;
 	void __iomem *virtbase = NULL;
@@ -2921,9 +3548,14 @@ static struct d40_base * __init d40_hw_detect_init(struct platform_device *pdev)
 	int num_log_chans = 0;
 	int num_phy_chans;
 	int i;
+<<<<<<< HEAD
 	u32 pid;
 	u32 cid;
 	u8 rev;
+=======
+	u32 val;
+	u32 rev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	clk = clk_get(&pdev->dev, NULL);
 
@@ -2947,6 +3579,7 @@ static struct d40_base * __init d40_hw_detect_init(struct platform_device *pdev)
 	if (!virtbase)
 		goto failure;
 
+<<<<<<< HEAD
 	/* This is just a regular AMBA PrimeCell ID actually */
 	for (pid = 0, i = 0; i < 4; i++)
 		pid |= (readl(virtbase + resource_size(res) - 0x20 + 4 * i)
@@ -2973,6 +3606,34 @@ static struct d40_base * __init d40_hw_detect_init(struct platform_device *pdev)
 	 * DB8500v2 has revision 3
 	 */
 	rev = AMBA_REV_BITS(pid);
+=======
+	/* HW version check */
+	for (i = 0; i < ARRAY_SIZE(dma_id_regs); i++) {
+		if (dma_id_regs[i].val !=
+		    readl(virtbase + dma_id_regs[i].reg)) {
+			d40_err(&pdev->dev,
+				"Unknown hardware! Expected 0x%x at 0x%x but got 0x%x\n",
+				dma_id_regs[i].val,
+				dma_id_regs[i].reg,
+				readl(virtbase + dma_id_regs[i].reg));
+			goto failure;
+		}
+	}
+
+	/* Get silicon revision and designer */
+	val = readl(virtbase + D40_DREG_PERIPHID2);
+
+	if ((val & D40_DREG_PERIPHID2_DESIGNER_MASK) !=
+	    D40_HW_DESIGNER) {
+		d40_err(&pdev->dev, "Unknown designer! Got %x wanted %x\n",
+			val & D40_DREG_PERIPHID2_DESIGNER_MASK,
+			D40_HW_DESIGNER);
+		goto failure;
+	}
+
+	rev = (val & D40_DREG_PERIPHID2_REV_MASK) >>
+		D40_DREG_PERIPHID2_REV_POS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* The number of physical channels on this HW */
 	num_phy_chans = 4 * (readl(virtbase + D40_DREG_ICFG) & 0x7) + 4;
@@ -2980,12 +3641,15 @@ static struct d40_base * __init d40_hw_detect_init(struct platform_device *pdev)
 	dev_info(&pdev->dev, "hardware revision: %d @ 0x%x\n",
 		 rev, res->start);
 
+<<<<<<< HEAD
 	if (rev < 2) {
 		d40_err(&pdev->dev, "hardware revision: %d is not supported",
 			rev);
 		goto failure;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	plat_data = pdev->dev.platform_data;
 
 	/* Count the number of logical channels in use */
@@ -3041,6 +3705,7 @@ static struct d40_base * __init d40_hw_detect_init(struct platform_device *pdev)
 			goto failure;
 	}
 
+<<<<<<< HEAD
 	base->reg_val_backup_chan = kmalloc(base->num_phy_chans *
 					    sizeof(d40_backup_regs_chan),
 					    GFP_KERNEL);
@@ -3050,6 +3715,12 @@ static struct d40_base * __init d40_hw_detect_init(struct platform_device *pdev)
 	base->lcla_pool.alloc_map =
 		kzalloc(num_phy_chans * sizeof(struct d40_desc *)
 			* D40_LCLA_LINK_PER_EVENT_GRP, GFP_KERNEL);
+=======
+	base->lcla_pool.alloc_map = kzalloc(num_phy_chans *
+					    sizeof(struct d40_desc *) *
+					    D40_LCLA_LINK_PER_EVENT_GRP,
+					    GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!base->lcla_pool.alloc_map)
 		goto failure;
 
@@ -3076,7 +3747,10 @@ failure:
 
 	if (base) {
 		kfree(base->lcla_pool.alloc_map);
+<<<<<<< HEAD
 		kfree(base->reg_val_backup_chan);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(base->lookup_log_chans);
 		kfree(base->lookup_phy_chans);
 		kfree(base->phy_res);
@@ -3089,9 +3763,15 @@ failure:
 static void __init d40_hw_init(struct d40_base *base)
 {
 
+<<<<<<< HEAD
 	static struct d40_reg_val dma_init_reg[] = {
 		/* Clock every part of the DMA block from start */
 		{ .reg = D40_DREG_GCC,    .val = D40_DREG_GCC_ENABLE_ALL},
+=======
+	static const struct d40_reg_val dma_init_reg[] = {
+		/* Clock every part of the DMA block from start */
+		{ .reg = D40_DREG_GCC,    .val = 0x0000ff01},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Interrupts on all logical channels */
 		{ .reg = D40_DREG_LCMIS0, .val = 0xFFFFFFFF},
@@ -3291,6 +3971,7 @@ static int __init d40_probe(struct platform_device *pdev)
 		d40_err(&pdev->dev, "Failed to ioremap LCPA region\n");
 		goto failure;
 	}
+<<<<<<< HEAD
 	/* If lcla has to be located in ESRAM we don't need to allocate */
 	if (base->plat_data->use_esram_lcla) {
 		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
@@ -3316,6 +3997,13 @@ static int __init d40_probe(struct platform_device *pdev)
 			d40_err(&pdev->dev, "Failed to allocate LCLA area\n");
 			goto failure;
 		}
+=======
+
+	ret = d40_lcla_allocate(base);
+	if (ret) {
+		d40_err(&pdev->dev, "Failed to allocate LCLA area\n");
+		goto failure;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	spin_lock_init(&base->lcla_pool.lock);
@@ -3328,6 +4016,7 @@ static int __init d40_probe(struct platform_device *pdev)
 		goto failure;
 	}
 
+<<<<<<< HEAD
 	pm_runtime_irq_safe(base->dev);
 	pm_runtime_set_autosuspend_delay(base->dev, DMA40_AUTOSUSPEND_DELAY);
 	pm_runtime_use_autosuspend(base->dev);
@@ -3354,6 +4043,8 @@ static int __init d40_probe(struct platform_device *pdev)
 	}
 
 	base->initialized = true;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = d40_dmaengine_init(base, num_reserved_chans);
 	if (err)
 		goto failure;
@@ -3370,11 +4061,14 @@ failure:
 		if (base->virtbase)
 			iounmap(base->virtbase);
 
+<<<<<<< HEAD
 		if (base->lcla_pool.base && base->plat_data->use_esram_lcla) {
 			iounmap(base->lcla_pool.base);
 			base->lcla_pool.base = NULL;
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (base->lcla_pool.dma_addr)
 			dma_unmap_single(base->dev, base->lcla_pool.dma_addr,
 					 SZ_1K * base->num_phy_chans,
@@ -3397,11 +4091,14 @@ failure:
 			clk_put(base->clk);
 		}
 
+<<<<<<< HEAD
 		if (base->lcpa_regulator) {
 			regulator_disable(base->lcpa_regulator);
 			regulator_put(base->lcpa_regulator);
 		}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(base->lcla_pool.alloc_map);
 		kfree(base->lookup_log_chans);
 		kfree(base->lookup_phy_chans);
@@ -3417,7 +4114,10 @@ static struct platform_driver d40_driver = {
 	.driver = {
 		.owner = THIS_MODULE,
 		.name  = D40_NAME,
+<<<<<<< HEAD
 		.pm = DMA40_PM_OPS,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 };
 

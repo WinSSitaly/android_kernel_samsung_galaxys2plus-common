@@ -9,4 +9,8 @@ TODO:
 	- smcommon.h & smilsub.c: use kernel hweight8(), hweight16()
 
 Please send any patches for this driver to Al Cho <acho@novell.com> and
+<<<<<<< HEAD
 Greg Kroah-Hartman <gregkh@linuxfoundation.org>.
+=======
+Greg Kroah-Hartman <gregkh@suse.de>.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -59,16 +59,22 @@ SUBSYS(net_cls)
 SUBSYS(blkio)
 #endif
 
+<<<<<<< HEAD
 /* */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_CGROUP_PERF
 SUBSYS(perf)
 #endif
 
 /* */
+<<<<<<< HEAD
 
 #ifdef CONFIG_NETPRIO_CGROUP
 SUBSYS(net_prio)
 #endif
 
 /* */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

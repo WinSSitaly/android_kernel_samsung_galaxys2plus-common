@@ -127,6 +127,10 @@ struct ibmvscsi_ops {
 	int (*resume) (struct ibmvscsi_host_data *hostdata);
 };
 
+<<<<<<< HEAD
+=======
+extern struct ibmvscsi_ops iseriesvscsi_ops;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct ibmvscsi_ops rpavscsi_ops;
 
 #endif				/* IBMVSCSI_H */

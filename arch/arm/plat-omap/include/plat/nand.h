@@ -19,11 +19,23 @@ enum nand_io {
 };
 
 struct omap_nand_platform_data {
+<<<<<<< HEAD
 	int			cs;
 	struct mtd_partition	*parts;
 	struct gpmc_timings	*gpmc_t;
 	int			nr_parts;
 	bool			dev_ready;
+=======
+	unsigned int		options;
+	int			cs;
+	int			gpio_irq;
+	struct mtd_partition	*parts;
+	struct gpmc_timings	*gpmc_t;
+	int			nr_parts;
+	int			(*nand_setup)(void);
+	int			(*dev_ready)(struct omap_nand_platform_data *);
+	int			dma_channel;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			gpmc_irq;
 	enum nand_io		xfer_type;
 	unsigned long		phys_base;

@@ -35,11 +35,19 @@
 #include <linux/input/eeti_ts.h>
 #include <linux/slab.h>
 
+<<<<<<< HEAD
 static bool flip_x;
 module_param(flip_x, bool, 0644);
 MODULE_PARM_DESC(flip_x, "flip x coordinate");
 
 static bool flip_y;
+=======
+static int flip_x;
+module_param(flip_x, bool, 0644);
+MODULE_PARM_DESC(flip_x, "flip x coordinate");
+
+static int flip_y;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(flip_y, bool, 0644);
 MODULE_PARM_DESC(flip_y, "flip y coordinate");
 
@@ -48,7 +56,11 @@ struct eeti_ts_priv {
 	struct input_dev *input;
 	struct work_struct work;
 	struct mutex mutex;
+<<<<<<< HEAD
 	int irq_gpio, irq, irq_active_high;
+=======
+	int irq, irq_active_high;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define EETI_TS_BITDEPTH	(11)
@@ -62,7 +74,11 @@ struct eeti_ts_priv {
 
 static inline int eeti_ts_irq_active(struct eeti_ts_priv *priv)
 {
+<<<<<<< HEAD
 	return gpio_get_value(priv->irq_gpio) == priv->irq_active_high;
+=======
+	return gpio_get_value(irq_to_gpio(priv->irq)) == priv->irq_active_high;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void eeti_ts_read(struct work_struct *work)
@@ -157,7 +173,11 @@ static void eeti_ts_close(struct input_dev *dev)
 static int __devinit eeti_ts_probe(struct i2c_client *client,
 				   const struct i2c_device_id *idp)
 {
+<<<<<<< HEAD
 	struct eeti_ts_platform_data *pdata = client->dev.platform_data;
+=======
+	struct eeti_ts_platform_data *pdata;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct eeti_ts_priv *priv;
 	struct input_dev *input;
 	unsigned int irq_flags;
@@ -199,12 +219,18 @@ static int __devinit eeti_ts_probe(struct i2c_client *client,
 
 	priv->client = client;
 	priv->input = input;
+<<<<<<< HEAD
 	priv->irq_gpio = pdata->irq_gpio;
 	priv->irq = gpio_to_irq(pdata->irq_gpio);
 
 	err = gpio_request_one(pdata->irq_gpio, GPIOF_IN, client->name);
 	if (err < 0)
 		goto err1;
+=======
+	priv->irq = client->irq;
+
+	pdata = client->dev.platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (pdata)
 		priv->irq_active_high = pdata->irq_active_high;
@@ -218,13 +244,21 @@ static int __devinit eeti_ts_probe(struct i2c_client *client,
 
 	err = input_register_device(input);
 	if (err)
+<<<<<<< HEAD
 		goto err2;
+=======
+		goto err1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = request_irq(priv->irq, eeti_ts_isr, irq_flags,
 			  client->name, priv);
 	if (err) {
 		dev_err(&client->dev, "Unable to request touchscreen IRQ.\n");
+<<<<<<< HEAD
 		goto err3;
+=======
+		goto err2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -236,11 +270,17 @@ static int __devinit eeti_ts_probe(struct i2c_client *client,
 	device_init_wakeup(&client->dev, 0);
 	return 0;
 
+<<<<<<< HEAD
 err3:
 	input_unregister_device(input);
 	input = NULL; /* so we dont try to free it below */
 err2:
 	gpio_free(pdata->irq_gpio);
+=======
+err2:
+	input_unregister_device(input);
+	input = NULL; /* so we dont try to free it below */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err1:
 	input_free_device(input);
 	kfree(priv);
@@ -325,8 +365,27 @@ static struct i2c_driver eeti_ts_driver = {
 	.id_table = eeti_ts_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(eeti_ts_driver);
+=======
+static int __init eeti_ts_init(void)
+{
+	return i2c_add_driver(&eeti_ts_driver);
+}
+
+static void __exit eeti_ts_exit(void)
+{
+	i2c_del_driver(&eeti_ts_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("EETI Touchscreen driver");
 MODULE_AUTHOR("Daniel Mack <daniel@caiaq.de>");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(eeti_ts_init);
+module_exit(eeti_ts_exit);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

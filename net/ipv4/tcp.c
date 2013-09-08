@@ -245,8 +245,11 @@
  *	TCP_CLOSE		socket is finished
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) "TCP: " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/types.h>
@@ -268,11 +271,21 @@
 #include <linux/crypto.h>
 #include <linux/time.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
+=======
+#include <linux/uid_stat.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <net/icmp.h>
 #include <net/tcp.h>
 #include <net/xfrm.h>
 #include <net/ip.h>
+<<<<<<< HEAD
+=======
+#include <net/ip6_route.h>
+#include <net/ipv6.h>
+#include <net/transp_v6.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/netdma.h>
 #include <net/sock.h>
 
@@ -284,9 +297,17 @@ int sysctl_tcp_fin_timeout __read_mostly = TCP_FIN_TIMEOUT;
 struct percpu_counter tcp_orphan_count;
 EXPORT_SYMBOL_GPL(tcp_orphan_count);
 
+<<<<<<< HEAD
 int sysctl_tcp_wmem[3] __read_mostly;
 int sysctl_tcp_rmem[3] __read_mostly;
 
+=======
+long sysctl_tcp_mem[3] __read_mostly;
+int sysctl_tcp_wmem[3] __read_mostly;
+int sysctl_tcp_rmem[3] __read_mostly;
+
+EXPORT_SYMBOL(sysctl_tcp_mem);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL(sysctl_tcp_rmem);
 EXPORT_SYMBOL(sysctl_tcp_wmem);
 
@@ -374,7 +395,11 @@ unsigned int tcp_poll(struct file *file, struct socket *sock, poll_table *wait)
 {
 	unsigned int mask;
 	struct sock *sk = sock->sk;
+<<<<<<< HEAD
 	const struct tcp_sock *tp = tcp_sk(sk);
+=======
+	struct tcp_sock *tp = tcp_sk(sk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sock_poll_wait(file, sk_sleep(sk), wait);
 	if (sk->sk_state == TCP_LISTEN)
@@ -481,12 +506,23 @@ int tcp_ioctl(struct sock *sk, int cmd, unsigned long arg)
 			 !tp->urg_data ||
 			 before(tp->urg_seq, tp->copied_seq) ||
 			 !before(tp->urg_seq, tp->rcv_nxt)) {
+<<<<<<< HEAD
 
 			answ = tp->rcv_nxt - tp->copied_seq;
 
 			/* Subtract 1, if FIN was received */
 			if (answ && sock_flag(sk, SOCK_DONE))
 				answ--;
+=======
+			struct sk_buff *skb;
+
+			answ = tp->rcv_nxt - tp->copied_seq;
+
+			/* Subtract 1, if FIN is in queue. */
+			skb = skb_peek_tail(&sk->sk_receive_queue);
+			if (answ && skb)
+				answ -= tcp_hdr(skb)->fin;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else
 			answ = tp->urg_seq - tp->copied_seq;
 		release_sock(sk);
@@ -522,11 +558,19 @@ EXPORT_SYMBOL(tcp_ioctl);
 
 static inline void tcp_mark_push(struct tcp_sock *tp, struct sk_buff *skb)
 {
+<<<<<<< HEAD
 	TCP_SKB_CB(skb)->tcp_flags |= TCPHDR_PSH;
 	tp->pushed_seq = tp->write_seq;
 }
 
 static inline int forced_push(const struct tcp_sock *tp)
+=======
+	TCP_SKB_CB(skb)->flags |= TCPHDR_PSH;
+	tp->pushed_seq = tp->write_seq;
+}
+
+static inline int forced_push(struct tcp_sock *tp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return after(tp->write_seq, tp->pushed_seq + (tp->max_window >> 1));
 }
@@ -538,7 +582,11 @@ static inline void skb_entail(struct sock *sk, struct sk_buff *skb)
 
 	skb->csum    = 0;
 	tcb->seq     = tcb->end_seq = tp->write_seq;
+<<<<<<< HEAD
 	tcb->tcp_flags = TCPHDR_ACK;
+=======
+	tcb->flags   = TCPHDR_ACK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tcb->sacked  = 0;
 	skb_header_release(skb);
 	tcp_add_write_queue_tail(sk, skb);
@@ -699,12 +747,19 @@ struct sk_buff *sk_stream_alloc_skb(struct sock *sk, int size, gfp_t gfp)
 	skb = alloc_skb_fclone(size + sk->sk_prot->max_header, gfp);
 	if (skb) {
 		if (sk_wmem_schedule(sk, skb->truesize)) {
+<<<<<<< HEAD
 			skb_reserve(skb, sk->sk_prot->max_header);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * Make sure that we have exactly size bytes
 			 * available to the caller, no more, no less.
 			 */
+<<<<<<< HEAD
 			skb->reserved_tailroom = skb->end - skb->tail - size;
+=======
+			skb_reserve(skb, skb_tailroom(skb) - size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return skb;
 		}
 		__kfree_skb(skb);
@@ -738,9 +793,13 @@ static unsigned int tcp_xmit_size_goal(struct sock *sk, u32 mss_now,
 			   old_size_goal + mss_now > xmit_size_goal)) {
 			xmit_size_goal = old_size_goal;
 		} else {
+<<<<<<< HEAD
 			tp->xmit_size_goal_segs =
 				min_t(u16, xmit_size_goal / mss_now,
 				      sk->sk_gso_max_segs);
+=======
+			tp->xmit_size_goal_segs = xmit_size_goal / mss_now;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			xmit_size_goal = tp->xmit_size_goal_segs * mss_now;
 		}
 	}
@@ -814,7 +873,11 @@ new_segment:
 			goto wait_for_memory;
 
 		if (can_coalesce) {
+<<<<<<< HEAD
 			skb_frag_size_add(&skb_shinfo(skb)->frags[i - 1], copy);
+=======
+			skb_shinfo(skb)->frags[i - 1].size += copy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			get_page(page);
 			skb_fill_page_desc(skb, i, page, offset, copy);
@@ -831,7 +894,11 @@ new_segment:
 		skb_shinfo(skb)->gso_segs = 0;
 
 		if (!copied)
+<<<<<<< HEAD
 			TCP_SKB_CB(skb)->tcp_flags &= ~TCPHDR_PSH;
+=======
+			TCP_SKB_CB(skb)->flags &= ~TCPHDR_PSH;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		copied += copy;
 		poffset += copy;
@@ -851,7 +918,12 @@ new_segment:
 wait_for_sndbuf:
 		set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
 wait_for_memory:
+<<<<<<< HEAD
 		tcp_push(sk, flags & ~MSG_MORE, mss_now, TCP_NAGLE_PUSH);
+=======
+		if (copied)
+			tcp_push(sk, flags & ~MSG_MORE, mss_now, TCP_NAGLE_PUSH);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if ((err = sk_stream_wait_memory(sk, &timeo)) != 0)
 			goto do_error;
@@ -888,6 +960,7 @@ int tcp_sendpage(struct sock *sk, struct page *page, int offset,
 }
 EXPORT_SYMBOL(tcp_sendpage);
 
+<<<<<<< HEAD
 static inline int select_size(const struct sock *sk, bool sg)
 {
 	const struct tcp_sock *tp = tcp_sk(sk);
@@ -900,6 +973,20 @@ static inline int select_size(const struct sock *sk, bool sg)
 			 */
 			tmp = SKB_WITH_OVERHEAD(2048 - MAX_TCP_HEADER);
 		} else {
+=======
+#define TCP_PAGE(sk)	(sk->sk_sndmsg_page)
+#define TCP_OFF(sk)	(sk->sk_sndmsg_off)
+
+static inline int select_size(struct sock *sk, int sg)
+{
+	struct tcp_sock *tp = tcp_sk(sk);
+	int tmp = tp->mss_cache;
+
+	if (sg) {
+		if (sk_can_gso(sk))
+			tmp = 0;
+		else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			int pgbreak = SKB_MAX_HEAD(MAX_TCP_HEADER);
 
 			if (tmp >= pgbreak &&
@@ -917,9 +1004,15 @@ int tcp_sendmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 	struct iovec *iov;
 	struct tcp_sock *tp = tcp_sk(sk);
 	struct sk_buff *skb;
+<<<<<<< HEAD
 	int iovlen, flags, err, copied;
 	int mss_now, size_goal;
 	bool sg;
+=======
+	int iovlen, flags;
+	int mss_now, size_goal;
+	int sg, err, copied;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	long timeo;
 
 	lock_sock(sk);
@@ -946,7 +1039,11 @@ int tcp_sendmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 	if (sk->sk_err || (sk->sk_shutdown & SEND_SHUTDOWN))
 		goto out_err;
 
+<<<<<<< HEAD
 	sg = !!(sk->sk_route_caps & NETIF_F_SG);
+=======
+	sg = sk->sk_route_caps & NETIF_F_SG;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (--iovlen >= 0) {
 		size_t seglen = iov->iov_len;
@@ -995,15 +1092,23 @@ new_segment:
 				copy = seglen;
 
 			/* Where to copy to? */
+<<<<<<< HEAD
 			if (skb_availroom(skb) > 0) {
 				/* We have some space in skb head. Superb! */
 				copy = min_t(int, copy, skb_availroom(skb));
+=======
+			if (skb_tailroom(skb) > 0) {
+				/* We have some space in skb head. Superb! */
+				if (copy > skb_tailroom(skb))
+					copy = skb_tailroom(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				err = skb_add_data_nocache(sk, skb, from, copy);
 				if (err)
 					goto do_fault;
 			} else {
 				int merge = 0;
 				int i = skb_shinfo(skb)->nr_frags;
+<<<<<<< HEAD
 				struct page *page = sk->sk_sndmsg_page;
 				int off;
 
@@ -1011,6 +1116,10 @@ new_segment:
 					sk->sk_sndmsg_off = 0;
 
 				off = sk->sk_sndmsg_off;
+=======
+				struct page *page = TCP_PAGE(sk);
+				int off = TCP_OFF(sk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 				if (skb_can_coalesce(skb, i, page, off) &&
 				    off != PAGE_SIZE) {
@@ -1027,7 +1136,11 @@ new_segment:
 				} else if (page) {
 					if (off == PAGE_SIZE) {
 						put_page(page);
+<<<<<<< HEAD
 						sk->sk_sndmsg_page = page = NULL;
+=======
+						TCP_PAGE(sk) = page = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						off = 0;
 					}
 				} else
@@ -1053,15 +1166,22 @@ new_segment:
 					/* If this page was new, give it to the
 					 * socket so it does not get leaked.
 					 */
+<<<<<<< HEAD
 					if (!sk->sk_sndmsg_page) {
 						sk->sk_sndmsg_page = page;
 						sk->sk_sndmsg_off = 0;
+=======
+					if (!TCP_PAGE(sk)) {
+						TCP_PAGE(sk) = page;
+						TCP_OFF(sk) = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 					goto do_error;
 				}
 
 				/* Update the skb. */
 				if (merge) {
+<<<<<<< HEAD
 					skb_frag_size_add(&skb_shinfo(skb)->frags[i - 1], copy);
 				} else {
 					skb_fill_page_desc(skb, i, page, off, copy);
@@ -1078,6 +1198,25 @@ new_segment:
 
 			if (!copied)
 				TCP_SKB_CB(skb)->tcp_flags &= ~TCPHDR_PSH;
+=======
+					skb_shinfo(skb)->frags[i - 1].size +=
+									copy;
+				} else {
+					skb_fill_page_desc(skb, i, page, off, copy);
+					if (TCP_PAGE(sk)) {
+						get_page(page);
+					} else if (off + copy < PAGE_SIZE) {
+						get_page(page);
+						TCP_PAGE(sk) = page;
+					}
+				}
+
+				TCP_OFF(sk) = off + copy;
+			}
+
+			if (!copied)
+				TCP_SKB_CB(skb)->flags &= ~TCPHDR_PSH;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			tp->write_seq += copy;
 			TCP_SKB_CB(skb)->end_seq += copy;
@@ -1115,6 +1254,12 @@ out:
 	if (copied)
 		tcp_push(sk, flags, mss_now, tp->nonagle);
 	release_sock(sk);
+<<<<<<< HEAD
+=======
+
+	if (copied > 0)
+		uid_stat_tcp_snd(current_uid(), copied);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return copied;
 
 do_fault:
@@ -1197,11 +1342,19 @@ void tcp_cleanup_rbuf(struct sock *sk, int copied)
 	struct tcp_sock *tp = tcp_sk(sk);
 	int time_to_ack = 0;
 
+<<<<<<< HEAD
+=======
+#if TCP_DEBUG
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sk_buff *skb = skb_peek(&sk->sk_receive_queue);
 
 	WARN(skb && !before(tp->copied_seq, TCP_SKB_CB(skb)->end_seq),
 	     "cleanup rbuf bug: copied %X seq %X rcvnxt %X\n",
 	     tp->copied_seq, TCP_SKB_CB(skb)->end_seq, tp->rcv_nxt);
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (inet_csk_ack_scheduled(sk)) {
 		const struct inet_connection_sock *icsk = inet_csk(sk);
@@ -1389,8 +1542,16 @@ int tcp_read_sock(struct sock *sk, read_descriptor_t *desc,
 	tcp_rcv_space_adjust(sk);
 
 	/* Clean up data we have read: This will do ACK frames. */
+<<<<<<< HEAD
 	if (copied > 0)
 		tcp_cleanup_rbuf(sk, copied);
+=======
+	if (copied > 0) {
+		tcp_cleanup_rbuf(sk, copied);
+		uid_stat_tcp_rcv(current_uid(), copied);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return copied;
 }
 EXPORT_SYMBOL(tcp_read_sock);
@@ -1451,7 +1612,11 @@ int tcp_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 		if ((available < target) &&
 		    (len > sysctl_tcp_dma_copybreak) && !(flags & MSG_PEEK) &&
 		    !sysctl_tcp_low_latency &&
+<<<<<<< HEAD
 		    net_dma_find_channel()) {
+=======
+		    dma_find_channel(DMA_MEMCPY)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			preempt_enable_no_resched();
 			tp->ucopy.pinned_list =
 					dma_pin_iovec_pages(msg->msg_iov, len);
@@ -1592,6 +1757,7 @@ int tcp_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 		}
 
 #ifdef CONFIG_NET_DMA
+<<<<<<< HEAD
 		if (tp->ucopy.dma_chan) {
 			if (tp->rcv_wnd == 0 &&
 			    !skb_queue_empty(&sk->sk_async_wait_queue)) {
@@ -1600,6 +1766,10 @@ int tcp_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 			} else
 				dma_async_memcpy_issue_pending(tp->ucopy.dma_chan);
 		}
+=======
+		if (tp->ucopy.dma_chan)
+			dma_async_memcpy_issue_pending(tp->ucopy.dma_chan);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 		if (copied >= target) {
 			/* Do not sleep, just process backlog. */
@@ -1672,7 +1842,11 @@ do_prequeue:
 		if (!(flags & MSG_TRUNC)) {
 #ifdef CONFIG_NET_DMA
 			if (!tp->ucopy.dma_chan && tp->ucopy.pinned_list)
+<<<<<<< HEAD
 				tp->ucopy.dma_chan = net_dma_find_channel();
+=======
+				tp->ucopy.dma_chan = dma_find_channel(DMA_MEMCPY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (tp->ucopy.dma_chan) {
 				tp->ucopy.dma_cookie = dma_skb_copy_datagram_iovec(
@@ -1682,8 +1856,12 @@ do_prequeue:
 
 				if (tp->ucopy.dma_cookie < 0) {
 
+<<<<<<< HEAD
 					pr_alert("%s: dma_cookie < 0\n",
 						 __func__);
+=======
+					printk(KERN_ALERT "dma_cookie < 0\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 					/* Exception. Bailout! */
 					if (!copied)
@@ -1779,6 +1957,12 @@ skip_copy:
 	tcp_cleanup_rbuf(sk, copied);
 
 	release_sock(sk);
+<<<<<<< HEAD
+=======
+
+	if (copied > 0)
+		uid_stat_tcp_rcv(current_uid(), copied);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return copied;
 
 out:
@@ -1787,6 +1971,11 @@ out:
 
 recv_urg:
 	err = tcp_recv_urg(sk, msg, len, flags);
+<<<<<<< HEAD
+=======
+	if (err > 0)
+		uid_stat_tcp_rcv(current_uid(), err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	goto out;
 }
 EXPORT_SYMBOL(tcp_recvmsg);
@@ -1884,6 +2073,7 @@ void tcp_shutdown(struct sock *sk, int how)
 }
 EXPORT_SYMBOL(tcp_shutdown);
 
+<<<<<<< HEAD
 bool tcp_check_oom(struct sock *sk, int shift)
 {
 	bool too_many_orphans, out_of_socket_memory;
@@ -1898,6 +2088,8 @@ bool tcp_check_oom(struct sock *sk, int shift)
 	return too_many_orphans || out_of_socket_memory;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void tcp_close(struct sock *sk, long timeout)
 {
 	struct sk_buff *skb;
@@ -2037,7 +2229,14 @@ adjudge_to_death:
 	}
 	if (sk->sk_state != TCP_CLOSE) {
 		sk_mem_reclaim(sk);
+<<<<<<< HEAD
 		if (tcp_check_oom(sk, 0)) {
+=======
+		if (tcp_too_many_orphans(sk, 0)) {
+			if (net_ratelimit())
+				printk(KERN_INFO "TCP: too many of orphaned "
+				       "sockets\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			tcp_set_state(sk, TCP_CLOSE);
 			tcp_send_active_reset(sk, GFP_ATOMIC);
 			NET_INC_STATS_BH(sock_net(sk),
@@ -2414,10 +2613,14 @@ static int do_tcp_setsockopt(struct sock *sk, int level,
 		/* Cap the max timeout in ms TCP will retry/retrans
 		 * before giving up and aborting (ETIMEDOUT) a connection.
 		 */
+<<<<<<< HEAD
 		if (val < 0)
 			err = -EINVAL;
 		else
 			icsk->icsk_user_timeout = msecs_to_jiffies(val);
+=======
+		icsk->icsk_user_timeout = msecs_to_jiffies(val);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		err = -ENOPROTOOPT;
@@ -2431,7 +2634,11 @@ static int do_tcp_setsockopt(struct sock *sk, int level,
 int tcp_setsockopt(struct sock *sk, int level, int optname, char __user *optval,
 		   unsigned int optlen)
 {
+<<<<<<< HEAD
 	const struct inet_connection_sock *icsk = inet_csk(sk);
+=======
+	struct inet_connection_sock *icsk = inet_csk(sk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (level != SOL_TCP)
 		return icsk->icsk_af_ops->setsockopt(sk, level, optname,
@@ -2453,9 +2660,15 @@ EXPORT_SYMBOL(compat_tcp_setsockopt);
 #endif
 
 /* Return information about state of tcp endpoint in API format. */
+<<<<<<< HEAD
 void tcp_get_info(const struct sock *sk, struct tcp_info *info)
 {
 	const struct tcp_sock *tp = tcp_sk(sk);
+=======
+void tcp_get_info(struct sock *sk, struct tcp_info *info)
+{
+	struct tcp_sock *tp = tcp_sk(sk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const struct inet_connection_sock *icsk = inet_csk(sk);
 	u32 now = tcp_time_stamp;
 
@@ -2477,10 +2690,15 @@ void tcp_get_info(const struct sock *sk, struct tcp_info *info)
 		info->tcpi_rcv_wscale = tp->rx_opt.rcv_wscale;
 	}
 
+<<<<<<< HEAD
 	if (tp->ecn_flags & TCP_ECN_OK)
 		info->tcpi_options |= TCPI_OPT_ECN;
 	if (tp->ecn_flags & TCP_ECN_SEEN)
 		info->tcpi_options |= TCPI_OPT_ECN_SEEN;
+=======
+	if (tp->ecn_flags&TCP_ECN_OK)
+		info->tcpi_options |= TCPI_OPT_ECN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	info->tcpi_rto = jiffies_to_usecs(icsk->icsk_rto);
 	info->tcpi_ato = jiffies_to_usecs(icsk->icsk_ack.ato);
@@ -2678,8 +2896,12 @@ int compat_tcp_getsockopt(struct sock *sk, int level, int optname,
 EXPORT_SYMBOL(compat_tcp_getsockopt);
 #endif
 
+<<<<<<< HEAD
 struct sk_buff *tcp_tso_segment(struct sk_buff *skb,
 	netdev_features_t features)
+=======
+struct sk_buff *tcp_tso_segment(struct sk_buff *skb, u32 features)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct sk_buff *segs = ERR_PTR(-EINVAL);
 	struct tcphdr *th;
@@ -2882,6 +3104,7 @@ EXPORT_SYMBOL(tcp_gro_complete);
 
 #ifdef CONFIG_TCP_MD5SIG
 static unsigned long tcp_md5sig_users;
+<<<<<<< HEAD
 static struct tcp_md5sig_pool __percpu *tcp_md5sig_pool;
 static DEFINE_SPINLOCK(tcp_md5sig_pool_lock);
 
@@ -2894,13 +3117,32 @@ static void __tcp_free_md5sig_pool(struct tcp_md5sig_pool __percpu *pool)
 
 		if (p->md5_desc.tfm)
 			crypto_free_hash(p->md5_desc.tfm);
+=======
+static struct tcp_md5sig_pool * __percpu *tcp_md5sig_pool;
+static DEFINE_SPINLOCK(tcp_md5sig_pool_lock);
+
+static void __tcp_free_md5sig_pool(struct tcp_md5sig_pool * __percpu *pool)
+{
+	int cpu;
+	for_each_possible_cpu(cpu) {
+		struct tcp_md5sig_pool *p = *per_cpu_ptr(pool, cpu);
+		if (p) {
+			if (p->md5_desc.tfm)
+				crypto_free_hash(p->md5_desc.tfm);
+			kfree(p);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	free_percpu(pool);
 }
 
 void tcp_free_md5sig_pool(void)
 {
+<<<<<<< HEAD
 	struct tcp_md5sig_pool __percpu *pool = NULL;
+=======
+	struct tcp_md5sig_pool * __percpu *pool = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_bh(&tcp_md5sig_pool_lock);
 	if (--tcp_md5sig_users == 0) {
@@ -2913,6 +3155,7 @@ void tcp_free_md5sig_pool(void)
 }
 EXPORT_SYMBOL(tcp_free_md5sig_pool);
 
+<<<<<<< HEAD
 static struct tcp_md5sig_pool __percpu *
 __tcp_alloc_md5sig_pool(struct sock *sk)
 {
@@ -2920,17 +3163,41 @@ __tcp_alloc_md5sig_pool(struct sock *sk)
 	struct tcp_md5sig_pool __percpu *pool;
 
 	pool = alloc_percpu(struct tcp_md5sig_pool);
+=======
+static struct tcp_md5sig_pool * __percpu *
+__tcp_alloc_md5sig_pool(struct sock *sk)
+{
+	int cpu;
+	struct tcp_md5sig_pool * __percpu *pool;
+
+	pool = alloc_percpu(struct tcp_md5sig_pool *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!pool)
 		return NULL;
 
 	for_each_possible_cpu(cpu) {
+<<<<<<< HEAD
 		struct crypto_hash *hash;
 
+=======
+		struct tcp_md5sig_pool *p;
+		struct crypto_hash *hash;
+
+		p = kzalloc(sizeof(*p), sk->sk_allocation);
+		if (!p)
+			goto out_free;
+		*per_cpu_ptr(pool, cpu) = p;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hash = crypto_alloc_hash("md5", 0, CRYPTO_ALG_ASYNC);
 		if (!hash || IS_ERR(hash))
 			goto out_free;
 
+<<<<<<< HEAD
 		per_cpu_ptr(pool, cpu)->md5_desc.tfm = hash;
+=======
+		p->md5_desc.tfm = hash;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return pool;
 out_free:
@@ -2938,9 +3205,15 @@ out_free:
 	return NULL;
 }
 
+<<<<<<< HEAD
 struct tcp_md5sig_pool __percpu *tcp_alloc_md5sig_pool(struct sock *sk)
 {
 	struct tcp_md5sig_pool __percpu *pool;
+=======
+struct tcp_md5sig_pool * __percpu *tcp_alloc_md5sig_pool(struct sock *sk)
+{
+	struct tcp_md5sig_pool * __percpu *pool;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int alloc = 0;
 
 retry:
@@ -2959,7 +3232,11 @@ retry:
 
 	if (alloc) {
 		/* we cannot hold spinlock here because this may sleep. */
+<<<<<<< HEAD
 		struct tcp_md5sig_pool __percpu *p;
+=======
+		struct tcp_md5sig_pool * __percpu *p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		p = __tcp_alloc_md5sig_pool(sk);
 		spin_lock_bh(&tcp_md5sig_pool_lock);
@@ -2992,7 +3269,11 @@ EXPORT_SYMBOL(tcp_alloc_md5sig_pool);
  */
 struct tcp_md5sig_pool *tcp_get_md5sig_pool(void)
 {
+<<<<<<< HEAD
 	struct tcp_md5sig_pool __percpu *p;
+=======
+	struct tcp_md5sig_pool * __percpu *p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	local_bh_disable();
 
@@ -3003,7 +3284,11 @@ struct tcp_md5sig_pool *tcp_get_md5sig_pool(void)
 	spin_unlock(&tcp_md5sig_pool_lock);
 
 	if (p)
+<<<<<<< HEAD
 		return this_cpu_ptr(p);
+=======
+		return *this_cpu_ptr(p);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	local_bh_enable();
 	return NULL;
@@ -3018,6 +3303,7 @@ void tcp_put_md5sig_pool(void)
 EXPORT_SYMBOL(tcp_put_md5sig_pool);
 
 int tcp_md5_hash_header(struct tcp_md5sig_pool *hp,
+<<<<<<< HEAD
 			const struct tcphdr *th)
 {
 	struct scatterlist sg;
@@ -3031,12 +3317,29 @@ int tcp_md5_hash_header(struct tcp_md5sig_pool *hp,
 	/* options aren't included in the hash */
 	sg_init_one(&sg, &hdr, sizeof(hdr));
 	err = crypto_hash_update(&hp->md5_desc, &sg, sizeof(hdr));
+=======
+			struct tcphdr *th)
+{
+	struct scatterlist sg;
+	int err;
+
+	__sum16 old_checksum = th->check;
+	th->check = 0;
+	/* options aren't included in the hash */
+	sg_init_one(&sg, th, sizeof(struct tcphdr));
+	err = crypto_hash_update(&hp->md5_desc, &sg, sizeof(struct tcphdr));
+	th->check = old_checksum;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 EXPORT_SYMBOL(tcp_md5_hash_header);
 
 int tcp_md5_hash_skb_data(struct tcp_md5sig_pool *hp,
+<<<<<<< HEAD
 			  const struct sk_buff *skb, unsigned int header_len)
+=======
+			  struct sk_buff *skb, unsigned header_len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct scatterlist sg;
 	const struct tcphdr *tp = tcp_hdr(skb);
@@ -3055,12 +3358,17 @@ int tcp_md5_hash_skb_data(struct tcp_md5sig_pool *hp,
 
 	for (i = 0; i < shi->nr_frags; ++i) {
 		const struct skb_frag_struct *f = &shi->frags[i];
+<<<<<<< HEAD
 		unsigned int offset = f->page_offset;
 		struct page *page = skb_frag_page(f) + (offset >> PAGE_SHIFT);
 
 		sg_set_page(&sg, page, skb_frag_size(f),
 			    offset_in_page(offset));
 		if (crypto_hash_update(desc, &sg, skb_frag_size(f)))
+=======
+		sg_set_page(&sg, f->page, f->size, f->page_offset);
+		if (crypto_hash_update(desc, &sg, f->size))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 1;
 	}
 
@@ -3072,7 +3380,11 @@ int tcp_md5_hash_skb_data(struct tcp_md5sig_pool *hp,
 }
 EXPORT_SYMBOL(tcp_md5_hash_skb_data);
 
+<<<<<<< HEAD
 int tcp_md5_hash_key(struct tcp_md5sig_pool *hp, const struct tcp_md5sig_key *key)
+=======
+int tcp_md5_hash_key(struct tcp_md5sig_pool *hp, struct tcp_md5sig_key *key)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct scatterlist sg;
 
@@ -3241,6 +3553,7 @@ static int __init set_thash_entries(char *str)
 }
 __setup("thash_entries=", set_thash_entries);
 
+<<<<<<< HEAD
 void tcp_init_mem(struct net *net)
 {
 	unsigned long limit = nr_free_buffer_pages() / 8;
@@ -3250,12 +3563,18 @@ void tcp_init_mem(struct net *net)
 	net->ipv4.sysctl_tcp_mem[2] = net->ipv4.sysctl_tcp_mem[0] * 2;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init tcp_init(void)
 {
 	struct sk_buff *skb = NULL;
 	unsigned long limit;
+<<<<<<< HEAD
 	int max_rshare, max_wshare, cnt;
 	unsigned int i;
+=======
+	int i, max_share, cnt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long jiffy = jiffies;
 
 	BUILD_BUG_ON(sizeof(struct tcp_skb_cb) > sizeof(skb->cb));
@@ -3298,7 +3617,11 @@ void __init tcp_init(void)
 					&tcp_hashinfo.bhash_size,
 					NULL,
 					64 * 1024);
+<<<<<<< HEAD
 	tcp_hashinfo.bhash_size = 1U << tcp_hashinfo.bhash_size;
+=======
+	tcp_hashinfo.bhash_size = 1 << tcp_hashinfo.bhash_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < tcp_hashinfo.bhash_size; i++) {
 		spin_lock_init(&tcp_hashinfo.bhash[i].lock);
 		INIT_HLIST_HEAD(&tcp_hashinfo.bhash[i].chain);
@@ -3311,6 +3634,7 @@ void __init tcp_init(void)
 	sysctl_tcp_max_orphans = cnt / 2;
 	sysctl_max_syn_backlog = max(128, cnt / 256);
 
+<<<<<<< HEAD
 	tcp_init_mem(&init_net);
 	/* Set per-socket limits to no more than 1/128 the pressure threshold */
 	limit = nr_free_buffer_pages() << (PAGE_SHIFT - 7);
@@ -3327,6 +3651,29 @@ void __init tcp_init(void)
 
 	pr_info("Hash tables configured (established %u bind %u)\n",
 		tcp_hashinfo.ehash_mask + 1, tcp_hashinfo.bhash_size);
+=======
+	limit = nr_free_buffer_pages() / 8;
+	limit = max(limit, 128UL);
+	sysctl_tcp_mem[0] = limit / 4 * 3;
+	sysctl_tcp_mem[1] = limit;
+	sysctl_tcp_mem[2] = sysctl_tcp_mem[0] * 2;
+
+	/* Set per-socket limits to no more than 1/128 the pressure threshold */
+	limit = ((unsigned long)sysctl_tcp_mem[1]) << (PAGE_SHIFT - 7);
+	max_share = min(4UL*1024*1024, limit);
+
+	sysctl_tcp_wmem[0] = SK_MEM_QUANTUM;
+	sysctl_tcp_wmem[1] = 16*1024;
+	sysctl_tcp_wmem[2] = max(64*1024, max_share);
+
+	sysctl_tcp_rmem[0] = SK_MEM_QUANTUM;
+	sysctl_tcp_rmem[1] = 87380;
+	sysctl_tcp_rmem[2] = max(87380, max_share);
+
+	printk(KERN_INFO "TCP: Hash tables configured "
+	       "(established %u bind %u)\n",
+	       tcp_hashinfo.ehash_mask + 1, tcp_hashinfo.bhash_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tcp_register_congestion_control(&tcp_reno);
 
@@ -3339,3 +3686,110 @@ void __init tcp_init(void)
 	tcp_secret_retiring = &tcp_secret_two;
 	tcp_secret_secondary = &tcp_secret_two;
 }
+<<<<<<< HEAD
+=======
+
+static int tcp_is_local(struct net *net, __be32 addr) {
+	struct rtable *rt;
+	struct flowi4 fl4 = { .daddr = addr };
+	rt = ip_route_output_key(net, &fl4);
+	if (IS_ERR_OR_NULL(rt))
+		return 0;
+	return rt->dst.dev && (rt->dst.dev->flags & IFF_LOOPBACK);
+}
+
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+static int tcp_is_local6(struct net *net, struct in6_addr *addr) {
+	struct rt6_info *rt6 = rt6_lookup(net, addr, addr, 0, 0);
+	return rt6 && rt6->rt6i_dev && (rt6->rt6i_dev->flags & IFF_LOOPBACK);
+}
+#endif
+
+/*
+ * tcp_nuke_addr - destroy all sockets on the given local address
+ * if local address is the unspecified address (0.0.0.0 or ::), destroy all
+ * sockets with local addresses that are not configured.
+ */
+int tcp_nuke_addr(struct net *net, struct sockaddr *addr)
+{
+	int family = addr->sa_family;
+	unsigned int bucket;
+
+	struct in_addr *in;
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+	struct in6_addr *in6;
+#endif
+	if (family == AF_INET) {
+		in = &((struct sockaddr_in *)addr)->sin_addr;
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+	} else if (family == AF_INET6) {
+		in6 = &((struct sockaddr_in6 *)addr)->sin6_addr;
+#endif
+	} else {
+		return -EAFNOSUPPORT;
+	}
+
+	for (bucket = 0; bucket < tcp_hashinfo.ehash_mask; bucket++) {
+		struct hlist_nulls_node *node;
+		struct sock *sk;
+		spinlock_t *lock = inet_ehash_lockp(&tcp_hashinfo, bucket);
+
+restart:
+		spin_lock_bh(lock);
+		sk_nulls_for_each(sk, node, &tcp_hashinfo.ehash[bucket].chain) {
+			struct inet_sock *inet = inet_sk(sk);
+
+			if (sysctl_ip_dynaddr && sk->sk_state == TCP_SYN_SENT)
+				continue;
+			if (sock_flag(sk, SOCK_DEAD))
+				continue;
+
+			if (family == AF_INET) {
+				__be32 s4 = inet->inet_rcv_saddr;
+				if (s4 == LOOPBACK4_IPV6)
+					continue;
+
+				if (in->s_addr != s4 &&
+				    !(in->s_addr == INADDR_ANY &&
+				      !tcp_is_local(net, s4)))
+					continue;
+			}
+
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+			if (family == AF_INET6) {
+				struct in6_addr *s6;
+				if (!inet->pinet6)
+					continue;
+
+				s6 = &inet->pinet6->rcv_saddr;
+				if (ipv6_addr_type(s6) == IPV6_ADDR_MAPPED)
+					continue;
+
+				if (!ipv6_addr_equal(in6, s6) &&
+				    !(ipv6_addr_equal(in6, &in6addr_any) &&
+				      !tcp_is_local6(net, s6)))
+				continue;
+			}
+#endif
+
+			sock_hold(sk);
+			spin_unlock_bh(lock);
+
+			local_bh_disable();
+			bh_lock_sock(sk);
+			sk->sk_err = ETIMEDOUT;
+			sk->sk_error_report(sk);
+
+			tcp_done(sk);
+			bh_unlock_sock(sk);
+			local_bh_enable();
+			sock_put(sk);
+
+			goto restart;
+		}
+		spin_unlock_bh(lock);
+	}
+
+	return 0;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

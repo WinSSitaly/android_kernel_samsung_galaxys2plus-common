@@ -96,7 +96,11 @@ static void s3c64xx_irq_pm_resume(void)
 	S3C_PMDBG("%s: IRQ configuration restored\n", __func__);
 }
 
+<<<<<<< HEAD
 static struct syscore_ops s3c64xx_irq_syscore_ops = {
+=======
+struct syscore_ops s3c64xx_irq_syscore_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.suspend = s3c64xx_irq_pm_suspend,
 	.resume	 = s3c64xx_irq_pm_resume,
 };

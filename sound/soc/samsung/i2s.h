@@ -3,7 +3,11 @@
  * ALSA SoC Audio Layer - Samsung I2S Controller driver
  *
  * Copyright (c) 2010 Samsung Electronics Co. Ltd.
+<<<<<<< HEAD
  *	Jaswinder Singh <jassisinghbrar@gmail.com>
+=======
+ *	Jaswinder Singh <jassi.brar@samsung.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as

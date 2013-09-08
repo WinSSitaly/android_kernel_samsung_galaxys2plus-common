@@ -12,7 +12,10 @@
 #include <linux/user.h>
 #include <linux/elf.h>
 #include <linux/elfcore.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/highmem.h>
 #include <linux/bootmem.h>
@@ -700,6 +703,7 @@ static int __init vmcore_init(void)
 	return 0;
 }
 module_init(vmcore_init)
+<<<<<<< HEAD
 
 /* Cleanup function for vmcore module. */
 void vmcore_cleanup(void)
@@ -723,3 +727,5 @@ void vmcore_cleanup(void)
 	elfcorebuf = NULL;
 }
 EXPORT_SYMBOL_GPL(vmcore_cleanup);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -22,6 +22,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+<<<<<<< HEAD
+=======
+#include <ctype.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <errno.h>
 
 #include "../perf.h"
@@ -38,7 +42,11 @@ static int stop_script_unsupported(void)
 static void process_event_unsupported(union perf_event *event __unused,
 				      struct perf_sample *sample __unused,
 				      struct perf_evsel *evsel __unused,
+<<<<<<< HEAD
 				      struct machine *machine __unused,
+=======
+				      struct perf_session *session __unused,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      struct thread *thread __unused)
 {
 }

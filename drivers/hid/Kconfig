@@ -31,11 +31,14 @@ config HID
 
 	  If unsure, say Y.
 
+<<<<<<< HEAD
 config HID_BATTERY_STRENGTH
 	bool
 	depends on HID && POWER_SUPPLY && HID = POWER_SUPPLY
 	default n
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config HIDRAW
 	bool "/dev/hidraw raw HID device support"
 	depends on HID
@@ -55,6 +58,30 @@ config HIDRAW
 
 	If unsure, say Y.
 
+<<<<<<< HEAD
+=======
+config UHID
+        tristate "User-space I/O driver support for HID subsystem"
+        depends on HID
+	default n
+        ---help---
+        Say Y here if you want to provide HID I/O Drivers from user-space.
+        This allows to write I/O drivers in user-space and feed the data from
+        the device into the kernel. The kernel parses the HID reports, loads the
+        corresponding HID Device Driver or provides input devices on top of your
+        user-space device.
+
+        This driver cannot be used to parse HID-reports in user-space and write
+        special HID-drivers. You should use hidraw for that.
+        Instead, this driver allows to write the transport-layer driver in
+        user-space like USB-HID and Bluetooth-HID do in kernel-space.
+
+        If unsure, say N.
+
+        To compile this driver as a module, choose M here: the
+        module will be called uhid.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 source "drivers/hid/usbhid/Kconfig"
 
 menu "Special HID drivers"
@@ -177,6 +204,7 @@ config HID_EZKEY
 	---help---
 	Support for Ezkey BTC 8193 keyboard.
 
+<<<<<<< HEAD
 config HID_HOLTEK
 	tristate "Holtek On Line Grip based game controller support"
 	depends on USB_HID
@@ -191,6 +219,8 @@ config HOLTEK_FF
 	  Say Y here if you have a Holtek On Line Grip based game controller
 	  and want to have force feedback support for it.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config HID_KEYTOUCH
 	tristate "Keytouch HID devices"
 	depends on USB_HID
@@ -200,6 +230,7 @@ config HID_KEYTOUCH
 		- Keytouch IEC 60945
 
 config HID_KYE
+<<<<<<< HEAD
 	tristate "KYE/Genius devices"
 	depends on USB_HID
 	---help---
@@ -208,6 +239,13 @@ config HID_KYE
 	- EasyPen i405X tablet
 	- MousePen i608X tablet
 	- EasyPen M610X tablet
+=======
+	tristate "Kye/Genius Ergo Mouse" if EXPERT
+	depends on USB_HID
+	default !EXPERT
+	---help---
+	Support for Kye/Genius Ergo Mouse.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config HID_UCLOGIC
 	tristate "UC-Logic"
@@ -253,6 +291,7 @@ config HID_LOGITECH
 	---help---
 	Support for Logitech devices that are not fully compliant with HID standard.
 
+<<<<<<< HEAD
 config HID_LOGITECH_DJ
 	tristate "Logitech Unifying receivers full support"
 	depends on HID_LOGITECH
@@ -264,6 +303,8 @@ config HID_LOGITECH_DJ
 	generic USB_HID driver and all incomming events will be multiplexed
 	into a single mouse and a single keyboard device.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config LOGITECH_FF
 	bool "Logitech force feedback support"
 	depends on HID_LOGITECH
@@ -297,6 +338,7 @@ config LOGIG940_FF
 	  Say Y here if you want to enable force feedback support for Logitech
 	  Flight System G940 devices.
 
+<<<<<<< HEAD
 config LOGIWHEELS_FF
 	bool "Logitech wheels configuration and force feedback support"
 	depends on HID_LOGITECH
@@ -312,6 +354,15 @@ config LOGIWHEELS_FF
 	  - Logitech G27
 	  - Logitech MOMO/MOMO 2
 	  - Logitech Formula Force EX
+=======
+config LOGIWII_FF
+	bool "Logitech Speed Force Wireless force feedback support"
+	depends on HID_LOGITECH
+	select INPUT_FF_MEMLESS
+	help
+	  Say Y here if you want to enable force feedback support for Logitech
+	  Speed Force Wireless (Wii) devices.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config HID_MAGICMOUSE
 	tristate "Apple MagicMouse multi-touch support"
@@ -345,7 +396,10 @@ config HID_MULTITOUCH
 	  Say Y here if you have one of the following devices:
 	  - 3M PCT touch screens
 	  - ActionStar dual touch panels
+<<<<<<< HEAD
 	  - Atmel panels
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	  - Cando dual touch panels
 	  - Chunghwa panels
 	  - CVTouch panels
@@ -359,18 +413,26 @@ config HID_MULTITOUCH
 	  - LG Display panels (Dell ST2220Tc)
 	  - Lumio CrystalTouch panels
 	  - MosArt dual-touch panels
+<<<<<<< HEAD
 	  - Panasonic multitouch panels
 	  - PenMount dual touch panels
 	  - Perixx Peripad 701 touchpad
 	  - PixArt optical touch screen
 	  - Pixcir dual touch panels
 	  - Quanta panels
+=======
+	  - PenMount dual touch panels
+	  - Pixcir dual touch panels
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	  - eGalax dual-touch panels, including the Joojoo and Wetab tablets
 	  - Stantum multitouch panels
 	  - Touch International Panels
 	  - Unitec Panels
+<<<<<<< HEAD
 	  - XAT optical touch panels
 	  - Xiroku optical touch panels
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	  If unsure, say N.
 
@@ -475,6 +537,7 @@ config HID_PICOLCD_LEDS
 	---help---
 	  Provide access to PicoLCD's GPO pins via leds class.
 
+<<<<<<< HEAD
 config HID_PRIMAX
 	tristate "Primax non-fully HID-compliant devices"
 	depends on USB_HID
@@ -502,6 +565,68 @@ config HID_SAITEK
 config HID_SAMSUNG
 	tristate "Samsung InfraRed remote control or keyboards"
 	depends on USB_HID
+=======
+config HID_QUANTA
+	tristate "Quanta Optical Touch panels"
+	depends on USB_HID
+	---help---
+	Support for Quanta Optical Touch dual-touch panels.
+
+config HID_ROCCAT
+	tristate "Roccat special event support"
+	depends on USB_HID
+	---help---
+	Support for Roccat special events.
+	Say Y here if you have a Roccat mouse or keyboard and want OSD or
+	macro execution support.
+
+config HID_ROCCAT_COMMON
+	tristate
+
+config HID_ROCCAT_ARVO
+	tristate "Roccat Arvo keyboard support"
+	depends on USB_HID
+	select HID_ROCCAT
+	select HID_ROCCAT_COMMON
+	---help---
+	Support for Roccat Arvo keyboard.
+
+config HID_ROCCAT_KONE
+	tristate "Roccat Kone Mouse support"
+	depends on USB_HID
+	select HID_ROCCAT
+	select HID_ROCCAT_COMMON
+	---help---
+	Support for Roccat Kone mouse.
+
+config HID_ROCCAT_KONEPLUS
+	tristate "Roccat Kone[+] mouse support"
+	depends on USB_HID
+	select HID_ROCCAT
+	select HID_ROCCAT_COMMON
+	---help---
+	Support for Roccat Kone[+] mouse.
+
+config HID_ROCCAT_KOVAPLUS
+	tristate "Roccat Kova[+] mouse support"
+	depends on USB_HID
+	select HID_ROCCAT
+	select HID_ROCCAT_COMMON
+	---help---
+	Support for Roccat Kova[+] mouse.
+
+config HID_ROCCAT_PYRA
+	tristate "Roccat Pyra mouse support"
+	depends on USB_HID
+	select HID_ROCCAT
+	select HID_ROCCAT_COMMON
+	---help---
+	Support for Roccat Pyra mouse.
+
+config HID_SAMSUNG
+	tristate "Samsung InfraRed remote control or keyboards"
+	depends on (USB_HID || BT_HIDP)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	---help---
 	Support for Samsung InfraRed remote control or keyboards.
 
@@ -511,12 +636,15 @@ config HID_SONY
 	---help---
 	Support for Sony PS3 controller.
 
+<<<<<<< HEAD
 config HID_SPEEDLINK
 	tristate "Speedlink VAD Cezanne mouse support"
 	depends on USB_HID
 	---help---
 	Support for Speedlink Vicious and Divine Cezanne mouse.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config HID_SUNPLUS
 	tristate "Sunplus wireless desktop"
 	depends on USB_HID
@@ -539,21 +667,28 @@ config GREENASIA_FF
 	(like MANTA Warrior MM816 and SpeedLink Strike2 SL-6635) or adapter
 	and want to enable force feedback support for it.
 
+<<<<<<< HEAD
 config HID_HYPERV_MOUSE
 	tristate "Microsoft Hyper-V mouse driver"
 	depends on HYPERV
 	---help---
 	Select this option to enable the Hyper-V mouse driver.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config HID_SMARTJOYPLUS
 	tristate "SmartJoy PLUS PS2/USB adapter support"
 	depends on USB_HID
 	---help---
+<<<<<<< HEAD
 	Support for SmartJoy PLUS PS2/USB adapter, Super Dual Box,
 	Super Joy Box 3 Pro, Super Dual Box Pro, and Super Joy Box 5 Pro.
 
 	Note that DDR (Dance Dance Revolution) mode is not supported, nor
 	is pressure sensitive buttons on the pro models.
+=======
+	Support for SmartJoy PLUS PS2/USB adapter.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config SMARTJOYPLUS_FF
 	bool "SmartJoy PLUS PS2/USB adapter force feedback support"
@@ -563,12 +698,15 @@ config SMARTJOYPLUS_FF
 	Say Y here if you have a SmartJoy PLUS PS2/USB adapter and want to
 	enable force feedback support for it.
 
+<<<<<<< HEAD
 config HID_TIVO
 	tristate "TiVo Slide Bluetooth remote control support"
 	depends on (USB_HID || BT_HIDP)
 	---help---
 	Say Y if you have a TiVo Slide Bluetooth remote control.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config HID_TOPSEED
 	tristate "TopSeed Cyberlink, BTC Emprex, Conceptronic remote control support"
 	depends on USB_HID
@@ -606,6 +744,7 @@ config HID_WACOM_POWER_SUPPLY
 	  Say Y here if you want to enable power supply status monitoring for
 	  Wacom Bluetooth devices.
 
+<<<<<<< HEAD
 config HID_WIIMOTE
 	tristate "Nintendo Wii Remote support"
 	depends on BT_HIDP
@@ -624,6 +763,8 @@ config HID_WIIMOTE_EXT
 	here if you want to use the Nintendo Motion+, Nunchuck or Classic
 	extension controllers with your Wii Remote.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config HID_ZEROPLUS
 	tristate "Zeroplus based game controller support"
 	depends on USB_HID

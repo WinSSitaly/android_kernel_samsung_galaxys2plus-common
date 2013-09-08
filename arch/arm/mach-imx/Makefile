@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 obj-$(CONFIG_SOC_IMX1) += clock-imx1.o mm-imx1.o
 obj-$(CONFIG_SOC_IMX21) += clock-imx21.o mm-imx21.o
 
@@ -10,6 +11,21 @@ obj-$(CONFIG_SOC_IMX31) += mm-imx3.o cpu-imx31.o clock-imx31.o iomux-imx31.o ehc
 obj-$(CONFIG_SOC_IMX35) += mm-imx3.o cpu-imx35.o clock-imx35.o ehci-imx35.o pm-imx3.o
 
 obj-$(CONFIG_SOC_IMX5) += cpu-imx5.o mm-imx5.o clock-mx51-mx53.o ehci-imx5.o pm-imx5.o cpu_op-mx51.o
+=======
+obj-$(CONFIG_IMX_HAVE_DMA_V1) += dma-v1.o
+
+obj-$(CONFIG_ARCH_MX1) += clock-imx1.o mm-imx1.o
+obj-$(CONFIG_MACH_MX21) += clock-imx21.o mm-imx21.o
+
+obj-$(CONFIG_ARCH_MX25) += clock-imx25.o mm-imx25.o ehci-imx25.o
+
+obj-$(CONFIG_MACH_MX27) += cpu-imx27.o pm-imx27.o
+obj-$(CONFIG_MACH_MX27) += clock-imx27.o mm-imx27.o ehci-imx27.o
+
+obj-$(CONFIG_SOC_IMX31) += mm-imx31.o cpu-imx31.o clock-imx31.o iomux-imx31.o ehci-imx31.o
+obj-$(CONFIG_SOC_IMX35) += mm-imx35.o cpu-imx35.o clock-imx35.o ehci-imx35.o
+obj-$(CONFIG_CACHE_L2X0) += cache-l2x0.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # Support for CMOS sensor interface
 obj-$(CONFIG_MX1_VIDEO) += mx1-camera-fiq.o mx1-camera-fiq-ksym.o
@@ -24,7 +40,11 @@ obj-$(CONFIG_MACH_MX21ADS) += mach-mx21ads.o
 
 # i.MX25 based machines
 obj-$(CONFIG_MACH_MX25_3DS) += mach-mx25_3ds.o
+<<<<<<< HEAD
 obj-$(CONFIG_MACH_EUKREA_CPUIMX25SD) += mach-eukrea_cpuimx25.o
+=======
+obj-$(CONFIG_MACH_EUKREA_CPUIMX25) += mach-eukrea_cpuimx25.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_MACH_EUKREA_MBIMXSD25_BASEBOARD) += eukrea_mbimxsd25-baseboard.o
 
 # i.MX27 based machines
@@ -39,7 +59,10 @@ obj-$(CONFIG_MACH_EUKREA_MBIMX27_BASEBOARD) += eukrea_mbimx27-baseboard.o
 obj-$(CONFIG_MACH_PCA100) += mach-pca100.o
 obj-$(CONFIG_MACH_MXT_TD60) += mach-mxt_td60.o
 obj-$(CONFIG_MACH_IMX27IPCAM) += mach-imx27ipcam.o
+<<<<<<< HEAD
 obj-$(CONFIG_MACH_IMX27_DT) += imx27-dt.o
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # i.MX31 based machines
 obj-$(CONFIG_MACH_MX31ADS) += mach-mx31ads.o
@@ -58,6 +81,7 @@ obj-$(CONFIG_MACH_BUG) += mach-bug.o
 # i.MX35 based machines
 obj-$(CONFIG_MACH_PCM043) += mach-pcm043.o
 obj-$(CONFIG_MACH_MX35_3DS) += mach-mx35_3ds.o
+<<<<<<< HEAD
 obj-$(CONFIG_MACH_EUKREA_CPUIMX35SD) += mach-cpuimx35.o
 obj-$(CONFIG_MACH_EUKREA_MBIMXSD35_BASEBOARD) += eukrea_mbimxsd35-baseboard.o
 obj-$(CONFIG_MACH_VPR200) += mach-vpr200.o
@@ -94,3 +118,8 @@ obj-$(CONFIG_MACH_MX50_RDP) += mach-mx50_rdp.o
 
 obj-$(CONFIG_MACH_IMX51_DT) += imx51-dt.o
 obj-$(CONFIG_MACH_IMX53_DT) += imx53-dt.o
+=======
+obj-$(CONFIG_MACH_EUKREA_CPUIMX35) += mach-cpuimx35.o
+obj-$(CONFIG_MACH_EUKREA_MBIMXSD35_BASEBOARD) += eukrea_mbimxsd35-baseboard.o
+obj-$(CONFIG_MACH_VPR200) += mach-vpr200.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

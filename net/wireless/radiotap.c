@@ -15,7 +15,10 @@
  */
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/cfg80211.h>
 #include <net/ieee80211_radiotap.h>
 #include <asm/unaligned.h>

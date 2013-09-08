@@ -22,9 +22,13 @@
 #include <linux/font.h>
 
 #include <asm/hardware.h>
+<<<<<<< HEAD
 #include <asm/page.h>
 #include <asm/parisc-device.h>
 #include <asm/pdc.h>
+=======
+#include <asm/parisc-device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/cacheflush.h>
 #include <asm/grfioctl.h>
 

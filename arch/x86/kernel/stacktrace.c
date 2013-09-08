@@ -66,7 +66,11 @@ void save_stack_trace(struct stack_trace *trace)
 }
 EXPORT_SYMBOL_GPL(save_stack_trace);
 
+<<<<<<< HEAD
 void save_stack_trace_regs(struct pt_regs *regs, struct stack_trace *trace)
+=======
+void save_stack_trace_regs(struct stack_trace *trace, struct pt_regs *regs)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	dump_trace(current, regs, NULL, 0, &save_stack_ops, trace);
 	if (trace->nr_entries < trace->max_entries)

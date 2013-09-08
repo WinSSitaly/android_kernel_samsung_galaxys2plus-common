@@ -92,6 +92,10 @@ typedef struct tagSRSNCapObject {
 } SRSNCapObject, *PSRSNCapObject;
 
 // BSS info(AP)
+<<<<<<< HEAD
+=======
+#pragma pack(1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef struct tagKnownBSS {
     // BSS info
     BOOL            bActive;

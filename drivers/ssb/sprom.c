@@ -2,7 +2,11 @@
  * Sonics Silicon Backplane
  * Common SPROM support routines
  *
+<<<<<<< HEAD
  * Copyright (C) 2005-2008 Michael Buesch <m@bues.ch>
+=======
+ * Copyright (C) 2005-2008 Michael Buesch <mb@bu3sch.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (C) 2005 Martin Langer <martin-langer@gmx.de>
  * Copyright (C) 2005 Stefano Brivio <st3@riseup.net>
  * Copyright (C) 2005 Danny van Dyk <kugelfang@gentoo.org>

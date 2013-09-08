@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ccflags-y := -Idrivers/net/ethernet/chelsio/cxgb3
+=======
+ccflags-y := -Idrivers/net/cxgb3
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 obj-$(CONFIG_INFINIBAND_CXGB3) += iw_cxgb3.o
 

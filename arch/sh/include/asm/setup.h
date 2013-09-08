@@ -20,7 +20,10 @@
 
 void sh_mv_setup(void);
 void check_for_initrd(void);
+<<<<<<< HEAD
 void per_cpu_trap_init(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __KERNEL__ */
 

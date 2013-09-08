@@ -168,6 +168,15 @@ static int oxygen_open(struct snd_pcm_substream *substream,
 		if (err < 0)
 			return err;
 	}
+<<<<<<< HEAD
+=======
+	if (channel == PCM_MULTICH) {
+		err = snd_pcm_hw_constraint_minmax
+			(runtime, SNDRV_PCM_HW_PARAM_PERIOD_TIME, 0, 8192000);
+		if (err < 0)
+			return err;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_pcm_set_sync(substream);
 	chip->streams[channel] = substream;
 

@@ -37,6 +37,12 @@ static int emi26_set_reset(struct usb_device *dev, unsigned char reset_bit);
 static int emi26_load_firmware (struct usb_device *dev);
 static int emi26_probe(struct usb_interface *intf, const struct usb_device_id *id);
 static void emi26_disconnect(struct usb_interface *intf);
+<<<<<<< HEAD
+=======
+static int __init emi26_init (void);
+static void __exit emi26_exit (void);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* thanks to drivers/usb/serial/keyspan_pda.c code */
 static int emi26_writememory (struct usb_device *dev, int address,
@@ -273,7 +279,22 @@ static struct usb_driver emi26_driver = {
 	.id_table	= id_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(emi26_driver);
+=======
+static int __init emi26_init (void)
+{
+	return usb_register(&emi26_driver);
+}
+
+static void __exit emi26_exit (void)
+{
+	usb_deregister (&emi26_driver);
+}
+
+module_init(emi26_init);
+module_exit(emi26_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Tapio Laxström");
 MODULE_DESCRIPTION("Emagic EMI 2|6 firmware loader.");

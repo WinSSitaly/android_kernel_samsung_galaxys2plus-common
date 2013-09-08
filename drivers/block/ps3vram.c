@@ -10,7 +10,10 @@
 
 #include <linux/blkdev.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
 #include <linux/slab.h>
@@ -597,7 +600,11 @@ out:
 	return next;
 }
 
+<<<<<<< HEAD
 static void ps3vram_make_request(struct request_queue *q, struct bio *bio)
+=======
+static int ps3vram_make_request(struct request_queue *q, struct bio *bio)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ps3_system_bus_device *dev = q->queuedata;
 	struct ps3vram_priv *priv = ps3_system_bus_get_drvdata(dev);
@@ -611,11 +618,20 @@ static void ps3vram_make_request(struct request_queue *q, struct bio *bio)
 	spin_unlock_irq(&priv->lock);
 
 	if (busy)
+<<<<<<< HEAD
 		return;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	do {
 		bio = ps3vram_do_bio(dev, bio);
 	} while (bio);
+<<<<<<< HEAD
+=======
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __devinit ps3vram_probe(struct ps3_system_bus_device *dev)

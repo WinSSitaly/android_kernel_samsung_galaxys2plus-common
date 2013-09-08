@@ -35,7 +35,10 @@
 #include "core_priv.h"
 
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/stat.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/string.h>
 
 #include <rdma/ib_mad.h>
@@ -179,7 +182,11 @@ static ssize_t rate_show(struct ib_port *p, struct port_attribute *unused,
 {
 	struct ib_port_attr attr;
 	char *speed = "";
+<<<<<<< HEAD
 	int rate;		/* in deci-Gb/sec */
+=======
+	int rate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ssize_t ret;
 
 	ret = ib_query_port(p->ibdev, p->port_num, &attr);
@@ -187,6 +194,7 @@ static ssize_t rate_show(struct ib_port *p, struct port_attribute *unused,
 		return ret;
 
 	switch (attr.active_speed) {
+<<<<<<< HEAD
 	case IB_SPEED_DDR:
 		speed = " DDR";
 		rate = 50;
@@ -214,6 +222,13 @@ static ssize_t rate_show(struct ib_port *p, struct port_attribute *unused,
 	}
 
 	rate *= ib_width_enum_to_int(attr.active_width);
+=======
+	case 2: speed = " DDR"; break;
+	case 4: speed = " QDR"; break;
+	}
+
+	rate = 25 * ib_width_enum_to_int(attr.active_width) * attr.active_speed;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rate < 0)
 		return -EINVAL;
 

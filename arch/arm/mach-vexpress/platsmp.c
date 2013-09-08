@@ -12,6 +12,7 @@
 #include <linux/errno.h>
 #include <linux/smp.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/of_fdt.h>
 
 #include <asm/smp_scu.h>
@@ -19,11 +20,19 @@
 #include <asm/mach/map.h>
 
 #include <mach/motherboard.h>
+=======
+
+#include <asm/unified.h>
+
+#include <mach/motherboard.h>
+#define V2M_PA_CS7 0x10000000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "core.h"
 
 extern void versatile_secondary_startup(void);
 
+<<<<<<< HEAD
 #if defined(CONFIG_OF)
 
 static enum {
@@ -163,17 +172,23 @@ void __init vexpress_dt_smp_prepare_cpus(unsigned int max_cpus)
 
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Initialise the CPU possible map early - this describes the CPUs
  * which may be present or become present in the system.
  */
 void __init smp_init_cpus(void)
 {
+<<<<<<< HEAD
 	if (ct_desc)
 		ct_desc->init_cpu_map();
 	else
 		vexpress_dt_smp_init_cpus();
 
+=======
+	ct_desc->init_cpu_map();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __init platform_smp_prepare_cpus(unsigned int max_cpus)
@@ -182,10 +197,14 @@ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
 	 * Initialise the present map, which describes the set of CPUs
 	 * actually populated at the present time.
 	 */
+<<<<<<< HEAD
 	if (ct_desc)
 		ct_desc->smp_enable(max_cpus);
 	else
 		vexpress_dt_smp_prepare_cpus(max_cpus);
+=======
+	ct_desc->smp_enable(max_cpus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Write the address of secondary startup into the
@@ -193,5 +212,11 @@ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
 	 * until it receives a soft interrupt, and then the
 	 * secondary CPU branches to this address.
 	 */
+<<<<<<< HEAD
 	v2m_flags_set(virt_to_phys(versatile_secondary_startup));
+=======
+	writel(~0, MMIO_P2V(V2M_SYS_FLAGSCLR));
+	writel(BSYM(virt_to_phys(versatile_secondary_startup)),
+		MMIO_P2V(V2M_SYS_FLAGSSET));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

@@ -17,12 +17,21 @@
 #ifndef _HOST_OS_H_
 #define _HOST_OS_H_
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/semaphore.h>
 #include <linux/uaccess.h>
 #include <linux/irq.h>
 #include <linux/io.h>
 #include <linux/syscalls.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/string.h>
 #include <linux/stddef.h>

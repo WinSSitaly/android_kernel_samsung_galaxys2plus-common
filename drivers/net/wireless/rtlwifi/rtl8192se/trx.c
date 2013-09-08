@@ -1,6 +1,10 @@
 /******************************************************************************
  *
+<<<<<<< HEAD
  * Copyright(c) 2009-2012  Realtek Corporation.
+=======
+ * Copyright(c) 2009-2010  Realtek Corporation.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
@@ -51,6 +55,107 @@ static u8 _rtl92se_map_hwqueue_to_fwqueue(struct sk_buff *skb,	u8 skb_queue)
 	return skb->priority;
 }
 
+<<<<<<< HEAD
+=======
+static int _rtl92se_rate_mapping(bool isht, u8 desc_rate, bool first_ampdu)
+{
+	int rate_idx = 0;
+
+	if (first_ampdu) {
+		if (false == isht) {
+			switch (desc_rate) {
+			case DESC92S_RATE1M:
+				rate_idx = 0;
+				break;
+			case DESC92S_RATE2M:
+				rate_idx = 1;
+				break;
+			case DESC92S_RATE5_5M:
+				rate_idx = 2;
+				break;
+			case DESC92S_RATE11M:
+				rate_idx = 3;
+				break;
+			case DESC92S_RATE6M:
+				rate_idx = 4;
+				break;
+			case DESC92S_RATE9M:
+				rate_idx = 5;
+				break;
+			case DESC92S_RATE12M:
+				rate_idx = 6;
+				break;
+			case DESC92S_RATE18M:
+				rate_idx = 7;
+				break;
+			case DESC92S_RATE24M:
+				rate_idx = 8;
+				break;
+			case DESC92S_RATE36M:
+				rate_idx = 9;
+				break;
+			case DESC92S_RATE48M:
+				rate_idx = 10;
+				break;
+			case DESC92S_RATE54M:
+				rate_idx = 11;
+				break;
+			default:
+				rate_idx = 0;
+				break;
+			}
+		} else {
+			rate_idx = 11;
+		}
+
+		return rate_idx;
+	}
+
+	switch (desc_rate) {
+	case DESC92S_RATE1M:
+		rate_idx = 0;
+		break;
+	case DESC92S_RATE2M:
+		rate_idx = 1;
+		break;
+	case DESC92S_RATE5_5M:
+		rate_idx = 2;
+		break;
+	case DESC92S_RATE11M:
+		rate_idx = 3;
+		break;
+	case DESC92S_RATE6M:
+		rate_idx = 4;
+		break;
+	case DESC92S_RATE9M:
+		rate_idx = 5;
+		break;
+	case DESC92S_RATE12M:
+		rate_idx = 6;
+		break;
+	case DESC92S_RATE18M:
+		rate_idx = 7;
+		break;
+	case DESC92S_RATE24M:
+		rate_idx = 8;
+		break;
+	case DESC92S_RATE36M:
+		rate_idx = 9;
+		break;
+	case DESC92S_RATE48M:
+		rate_idx = 10;
+		break;
+	case DESC92S_RATE54M:
+		rate_idx = 11;
+		break;
+	default:
+		rate_idx = 11;
+		break;
+	}
+	return rate_idx;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u8 _rtl92s_query_rxpwrpercentage(char antpower)
 {
 	if ((antpower <= -100) || (antpower >= 20))
@@ -124,6 +229,7 @@ static void _rtl92se_query_rxphystatus(struct ieee80211_hw *hw,
 	u8 i, max_spatial_stream;
 	u32 rssi, total_rssi = 0;
 	bool in_powersavemode = false;
+<<<<<<< HEAD
 	bool is_cck = pstats->is_cck;
 
 	pstats->packet_matchbssid = packet_match_bssid;
@@ -133,6 +239,20 @@ static void _rtl92se_query_rxphystatus(struct ieee80211_hw *hw,
 	pstats->rx_mimo_signalquality[1] = -1;
 
 	if (is_cck) {
+=======
+	bool is_cck_rate;
+
+	is_cck_rate = RX_HAL_IS_CCK_RATE(pdesc);
+	pstats->packet_matchbssid = packet_match_bssid;
+	pstats->packet_toself = packet_toself;
+	pstats->is_cck = is_cck_rate;
+	pstats->packet_beacon = packet_beacon;
+	pstats->is_cck = is_cck_rate;
+	pstats->rx_mimo_signalquality[0] = -1;
+	pstats->rx_mimo_signalquality[1] = -1;
+
+	if (is_cck_rate) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u8 report, cck_highpwr;
 		cck_buf = (struct phy_sts_cck_8192s_t *)p_drvinfo;
 
@@ -243,8 +363,14 @@ static void _rtl92se_query_rxphystatus(struct ieee80211_hw *hw,
 		pstats->rxpower = rx_pwr_all;
 		pstats->recvsignalpower = rx_pwr_all;
 
+<<<<<<< HEAD
 		if (pstats->is_ht && pstats->rate >= DESC92_RATEMCS8 &&
 		    pstats->rate <= DESC92_RATEMCS15)
+=======
+		if (GET_RX_STATUS_DESC_RX_HT(pdesc) &&
+			GET_RX_STATUS_DESC_RX_MCS(pdesc) >= DESC92S_RATEMCS8 &&
+		    GET_RX_STATUS_DESC_RX_MCS(pdesc) <= DESC92S_RATEMCS15)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			max_spatial_stream = 2;
 		else
 			max_spatial_stream = 1;
@@ -262,7 +388,11 @@ static void _rtl92se_query_rxphystatus(struct ieee80211_hw *hw,
 		}
 	}
 
+<<<<<<< HEAD
 	if (is_cck)
+=======
+	if (is_cck_rate)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pstats->signalstrength = (u8)(_rtl92se_signal_scale_mapping(hw,
 					 pwdb_all));
 	else if (rf_rx_num != 0)
@@ -479,6 +609,10 @@ static void _rtl92se_translate_rx_signal_stuff(struct ieee80211_hw *hw,
 	struct ieee80211_hdr *hdr;
 	u8 *tmp_buf;
 	u8 *praddr;
+<<<<<<< HEAD
+=======
+	u8 *psaddr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__le16 fc;
 	u16 type, cfc;
 	bool packet_matchbssid, packet_toself, packet_beacon;
@@ -490,6 +624,10 @@ static void _rtl92se_translate_rx_signal_stuff(struct ieee80211_hw *hw,
 	cfc = le16_to_cpu(fc);
 	type = WLAN_FC_GET_TYPE(fc);
 	praddr = hdr->addr1;
+<<<<<<< HEAD
+=======
+	psaddr = hdr->addr2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	packet_matchbssid = ((IEEE80211_FTYPE_CTL != type) &&
 	     (!compare_ether_addr(mac->bssid, (cfc & IEEE80211_FCTL_TODS) ?
@@ -514,8 +652,11 @@ bool rtl92se_rx_query_desc(struct ieee80211_hw *hw, struct rtl_stats *stats,
 {
 	struct rx_fwinfo *p_drvinfo;
 	u32 phystatus = (u32)GET_RX_STATUS_DESC_PHY_STATUS(pdesc);
+<<<<<<< HEAD
 	struct ieee80211_hdr *hdr;
 	bool first_ampdu = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	stats->length = (u16)GET_RX_STATUS_DESC_PKT_LEN(pdesc);
 	stats->rx_drvinfo_size = (u8)GET_RX_STATUS_DESC_DRVINFO_SIZE(pdesc) * 8;
@@ -528,12 +669,17 @@ bool rtl92se_rx_query_desc(struct ieee80211_hw *hw, struct rtl_stats *stats,
 	stats->rate = (u8)GET_RX_STATUS_DESC_RX_MCS(pdesc);
 	stats->shortpreamble = (u16)GET_RX_STATUS_DESC_SPLCP(pdesc);
 	stats->isampdu = (bool)(GET_RX_STATUS_DESC_PAGGR(pdesc) == 1);
+<<<<<<< HEAD
 	stats->isfirst_ampdu = (bool) ((GET_RX_STATUS_DESC_PAGGR(pdesc) == 1)
 			       && (GET_RX_STATUS_DESC_FAGGR(pdesc) == 1));
 	stats->timestamp_low = GET_RX_STATUS_DESC_TSFL(pdesc);
 	stats->rx_is40Mhzpacket = (bool)GET_RX_STATUS_DESC_BW(pdesc);
 	stats->is_ht = (bool)GET_RX_STATUS_DESC_RX_HT(pdesc);
 	stats->is_cck = SE_RX_HAL_IS_CCK_RATE(pdesc);
+=======
+	stats->timestamp_low = GET_RX_STATUS_DESC_TSFL(pdesc);
+	stats->rx_is40Mhzpacket = (bool)GET_RX_STATUS_DESC_BW(pdesc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (stats->hwerror)
 		return false;
@@ -541,6 +687,7 @@ bool rtl92se_rx_query_desc(struct ieee80211_hw *hw, struct rtl_stats *stats,
 	rx_status->freq = hw->conf.channel->center_freq;
 	rx_status->band = hw->conf.channel->band;
 
+<<<<<<< HEAD
 	hdr = (struct ieee80211_hdr *)(skb->data + stats->rx_drvinfo_size
 	      + stats->rx_bufshift);
 
@@ -551,10 +698,23 @@ bool rtl92se_rx_query_desc(struct ieee80211_hw *hw, struct rtl_stats *stats,
 		rx_status->flag |= RX_FLAG_40MHZ;
 
 	if (stats->is_ht)
+=======
+	if (GET_RX_STATUS_DESC_CRC32(pdesc))
+		rx_status->flag |= RX_FLAG_FAILED_FCS_CRC;
+
+	if (!GET_RX_STATUS_DESC_SWDEC(pdesc))
+		rx_status->flag |= RX_FLAG_DECRYPTED;
+
+	if (GET_RX_STATUS_DESC_BW(pdesc))
+		rx_status->flag |= RX_FLAG_40MHZ;
+
+	if (GET_RX_STATUS_DESC_RX_HT(pdesc))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rx_status->flag |= RX_FLAG_HT;
 
 	rx_status->flag |= RX_FLAG_MACTIME_MPDU;
 
+<<<<<<< HEAD
 	/* hw will set stats->decrypted true, if it finds the
 	 * frame is open data frame or mgmt frame,
 	 * hw will not decrypt robust managment frame
@@ -575,6 +735,19 @@ bool rtl92se_rx_query_desc(struct ieee80211_hw *hw, struct rtl_stats *stats,
 
 	rx_status->mactime = stats->timestamp_low;
 	if (phystatus) {
+=======
+	if (stats->decrypted)
+		rx_status->flag |= RX_FLAG_DECRYPTED;
+
+	rx_status->rate_idx = _rtl92se_rate_mapping((bool)
+			GET_RX_STATUS_DESC_RX_HT(pdesc),
+			(u8)GET_RX_STATUS_DESC_RX_MCS(pdesc),
+			(bool)GET_RX_STATUS_DESC_PAGGR(pdesc));
+
+
+	rx_status->mactime = GET_RX_STATUS_DESC_TSFL(pdesc);
+	if (phystatus == true) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		p_drvinfo = (struct rx_fwinfo *)(skb->data +
 						 stats->rx_bufshift);
 		_rtl92se_translate_rx_signal_stuff(hw, skb, stats, pdesc,
@@ -636,6 +809,7 @@ void rtl92se_tx_fill_desc(struct ieee80211_hw *hw,
 		SET_TX_DESC_RSVD_MACID(pdesc, reserved_macid);
 
 		SET_TX_DESC_TXHT(pdesc, ((ptcb_desc->hw_rate >=
+<<<<<<< HEAD
 				 DESC92_RATEMCS0) ? 1 : 0));
 
 		if (rtlhal->version == VERSION_8192S_ACUT) {
@@ -644,6 +818,16 @@ void rtl92se_tx_fill_desc(struct ieee80211_hw *hw,
 				ptcb_desc->hw_rate == DESC92_RATE5_5M ||
 				ptcb_desc->hw_rate == DESC92_RATE11M) {
 				ptcb_desc->hw_rate = DESC92_RATE12M;
+=======
+				 DESC92S_RATEMCS0) ? 1 : 0));
+
+		if (rtlhal->version == VERSION_8192S_ACUT) {
+			if (ptcb_desc->hw_rate == DESC92S_RATE1M ||
+				ptcb_desc->hw_rate  == DESC92S_RATE2M ||
+				ptcb_desc->hw_rate == DESC92S_RATE5_5M ||
+				ptcb_desc->hw_rate == DESC92S_RATE11M) {
+				ptcb_desc->hw_rate = DESC92S_RATE12M;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
@@ -672,7 +856,11 @@ void rtl92se_tx_fill_desc(struct ieee80211_hw *hw,
 		SET_TX_DESC_RTS_BANDWIDTH(pdesc, 0);
 		SET_TX_DESC_RTS_SUB_CARRIER(pdesc, ptcb_desc->rts_sc);
 		SET_TX_DESC_RTS_SHORT(pdesc, ((ptcb_desc->rts_rate <=
+<<<<<<< HEAD
 		       DESC92_RATE54M) ?
+=======
+		       DESC92S_RATE54M) ?
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       (ptcb_desc->rts_use_shortpreamble ? 1 : 0)
 		       : (ptcb_desc->rts_use_shortgi ? 1 : 0)));
 
@@ -756,7 +944,11 @@ void rtl92se_tx_fill_desc(struct ieee80211_hw *hw,
 	/* DOWRD 8 */
 	SET_TX_DESC_TX_BUFFER_ADDRESS(pdesc, cpu_to_le32(mapping));
 
+<<<<<<< HEAD
 	RT_TRACE(rtlpriv, COMP_SEND, DBG_TRACE, "\n");
+=======
+	RT_TRACE(rtlpriv, COMP_SEND, DBG_TRACE, ("\n"));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void rtl92se_tx_fill_cmddesc(struct ieee80211_hw *hw, u8 *pdesc,
@@ -786,7 +978,10 @@ void rtl92se_tx_fill_cmddesc(struct ieee80211_hw *hw, u8 *pdesc,
 		SET_TX_DESC_TX_BUFFER_SIZE(pdesc, (u16)(skb->len));
 		SET_TX_DESC_TX_BUFFER_ADDRESS(pdesc, cpu_to_le32(mapping));
 
+<<<<<<< HEAD
 		wmb();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		SET_TX_DESC_OWN(pdesc, 1);
 	} else { /* H2C Command Desc format (Host TXCMD) */
 		/* 92SE must set as 1 for firmware download HW DMA error */
@@ -805,7 +1000,10 @@ void rtl92se_tx_fill_cmddesc(struct ieee80211_hw *hw, u8 *pdesc,
 		SET_TX_DESC_TX_BUFFER_SIZE(pdesc, (u16)(skb->len));
 		SET_TX_DESC_TX_BUFFER_ADDRESS(pdesc, cpu_to_le32(mapping));
 
+<<<<<<< HEAD
 		wmb();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		SET_TX_DESC_OWN(pdesc, 1);
 
 	}
@@ -813,24 +1011,38 @@ void rtl92se_tx_fill_cmddesc(struct ieee80211_hw *hw, u8 *pdesc,
 
 void rtl92se_set_desc(u8 *pdesc, bool istx, u8 desc_name, u8 *val)
 {
+<<<<<<< HEAD
 	if (istx) {
 		switch (desc_name) {
 		case HW_DESC_OWN:
 			wmb();
+=======
+	if (istx == true) {
+		switch (desc_name) {
+		case HW_DESC_OWN:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			SET_TX_DESC_OWN(pdesc, 1);
 			break;
 		case HW_DESC_TX_NEXTDESC_ADDR:
 			SET_TX_DESC_NEXT_DESC_ADDRESS(pdesc, *(u32 *) val);
 			break;
 		default:
+<<<<<<< HEAD
 			RT_ASSERT(false, "ERR txdesc :%d not process\n",
 				  desc_name);
+=======
+			RT_ASSERT(false, ("ERR txdesc :%d not process\n",
+				  desc_name));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	} else {
 		switch (desc_name) {
 		case HW_DESC_RXOWN:
+<<<<<<< HEAD
 			wmb();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			SET_RX_STATUS_DESC_OWN(pdesc, 1);
 			break;
 		case HW_DESC_RXBUFF_ADDR:
@@ -843,8 +1055,13 @@ void rtl92se_set_desc(u8 *pdesc, bool istx, u8 desc_name, u8 *val)
 			SET_RX_STATUS_DESC_EOR(pdesc, 1);
 			break;
 		default:
+<<<<<<< HEAD
 			RT_ASSERT(false, "ERR rxdesc :%d not process\n",
 				  desc_name);
+=======
+			RT_ASSERT(false, ("ERR rxdesc :%d not process\n",
+				  desc_name));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	}
@@ -854,7 +1071,11 @@ u32 rtl92se_get_desc(u8 *desc, bool istx, u8 desc_name)
 {
 	u32 ret = 0;
 
+<<<<<<< HEAD
 	if (istx) {
+=======
+	if (istx == true) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		switch (desc_name) {
 		case HW_DESC_OWN:
 			ret = GET_TX_DESC_OWN(desc);
@@ -863,8 +1084,13 @@ u32 rtl92se_get_desc(u8 *desc, bool istx, u8 desc_name)
 			ret = GET_TX_DESC_TX_BUFFER_ADDRESS(desc);
 			break;
 		default:
+<<<<<<< HEAD
 			RT_ASSERT(false, "ERR txdesc :%d not process\n",
 				  desc_name);
+=======
+			RT_ASSERT(false, ("ERR txdesc :%d not process\n",
+				  desc_name));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	} else {
@@ -876,8 +1102,13 @@ u32 rtl92se_get_desc(u8 *desc, bool istx, u8 desc_name)
 			ret = GET_RX_STATUS_DESC_PKT_LEN(desc);
 			break;
 		default:
+<<<<<<< HEAD
 			RT_ASSERT(false, "ERR rxdesc :%d not process\n",
 				  desc_name);
+=======
+			RT_ASSERT(false, ("ERR rxdesc :%d not process\n",
+				  desc_name));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 	}

@@ -16,8 +16,11 @@
 #include <linux/interrupt.h>
 #include <linux/kernel_stat.h>
 
+<<<<<<< HEAD
 #include <trace/events/irq.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "internals.h"
 
 /**
@@ -28,7 +31,11 @@
 int irq_set_chip(unsigned int irq, struct irq_chip *chip)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	struct irq_desc *desc = irq_get_desc_lock(irq, &flags, 0);
+=======
+	struct irq_desc *desc = irq_get_desc_lock(irq, &flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!desc)
 		return -EINVAL;
@@ -56,7 +63,11 @@ EXPORT_SYMBOL(irq_set_chip);
 int irq_set_irq_type(unsigned int irq, unsigned int type)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	struct irq_desc *desc = irq_get_desc_buslock(irq, &flags, IRQ_GET_DESC_CHECK_GLOBAL);
+=======
+	struct irq_desc *desc = irq_get_desc_buslock(irq, &flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	if (!desc)
@@ -79,7 +90,11 @@ EXPORT_SYMBOL(irq_set_irq_type);
 int irq_set_handler_data(unsigned int irq, void *data)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	struct irq_desc *desc = irq_get_desc_lock(irq, &flags, 0);
+=======
+	struct irq_desc *desc = irq_get_desc_lock(irq, &flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!desc)
 		return -EINVAL;
@@ -99,7 +114,11 @@ EXPORT_SYMBOL(irq_set_handler_data);
 int irq_set_msi_desc(unsigned int irq, struct msi_desc *entry)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	struct irq_desc *desc = irq_get_desc_lock(irq, &flags, IRQ_GET_DESC_CHECK_GLOBAL);
+=======
+	struct irq_desc *desc = irq_get_desc_lock(irq, &flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!desc)
 		return -EINVAL;
@@ -120,7 +139,11 @@ int irq_set_msi_desc(unsigned int irq, struct msi_desc *entry)
 int irq_set_chip_data(unsigned int irq, void *data)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	struct irq_desc *desc = irq_get_desc_lock(irq, &flags, 0);
+=======
+	struct irq_desc *desc = irq_get_desc_lock(irq, &flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!desc)
 		return -EINVAL;
@@ -208,6 +231,7 @@ void irq_disable(struct irq_desc *desc)
 	}
 }
 
+<<<<<<< HEAD
 void irq_percpu_enable(struct irq_desc *desc, unsigned int cpu)
 {
 	if (desc->irq_data.chip->irq_enable)
@@ -226,6 +250,8 @@ void irq_percpu_disable(struct irq_desc *desc, unsigned int cpu)
 	cpumask_clear_cpu(cpu, desc->percpu_enabled);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void mask_ack_irq(struct irq_desc *desc)
 {
 	if (desc->irq_data.chip->irq_mask_ack)
@@ -518,7 +544,10 @@ handle_edge_irq(unsigned int irq, struct irq_desc *desc)
 out_unlock:
 	raw_spin_unlock(&desc->lock);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(handle_edge_irq);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_IRQ_EDGE_EOI_HANDLER
 /**
@@ -588,6 +617,7 @@ handle_percpu_irq(unsigned int irq, struct irq_desc *desc)
 		chip->irq_eoi(&desc->irq_data);
 }
 
+<<<<<<< HEAD
 /**
  * handle_percpu_devid_irq - Per CPU local irq handler with per cpu dev ids
  * @irq:	the interrupt number
@@ -620,12 +650,18 @@ void handle_percpu_devid_irq(unsigned int irq, struct irq_desc *desc)
 		chip->irq_eoi(&desc->irq_data);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void
 __irq_set_handler(unsigned int irq, irq_flow_handler_t handle, int is_chained,
 		  const char *name)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	struct irq_desc *desc = irq_get_desc_buslock(irq, &flags, 0);
+=======
+	struct irq_desc *desc = irq_get_desc_buslock(irq, &flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!desc)
 		return;
@@ -669,7 +705,11 @@ irq_set_chip_and_handler_name(unsigned int irq, struct irq_chip *chip,
 void irq_modify_status(unsigned int irq, unsigned long clr, unsigned long set)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	struct irq_desc *desc = irq_get_desc_lock(irq, &flags, 0);
+=======
+	struct irq_desc *desc = irq_get_desc_lock(irq, &flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!desc)
 		return;

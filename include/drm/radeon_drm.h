@@ -509,7 +509,10 @@ typedef struct {
 #define DRM_RADEON_GEM_SET_TILING	0x28
 #define DRM_RADEON_GEM_GET_TILING	0x29
 #define DRM_RADEON_GEM_BUSY		0x2a
+<<<<<<< HEAD
 #define DRM_RADEON_GEM_VA		0x2b
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRM_IOCTL_RADEON_CP_INIT    DRM_IOW( DRM_COMMAND_BASE + DRM_RADEON_CP_INIT, drm_radeon_init_t)
 #define DRM_IOCTL_RADEON_CP_START   DRM_IO(  DRM_COMMAND_BASE + DRM_RADEON_CP_START)
@@ -551,7 +554,10 @@ typedef struct {
 #define DRM_IOCTL_RADEON_GEM_SET_TILING	DRM_IOWR(DRM_COMMAND_BASE + DRM_RADEON_GEM_SET_TILING, struct drm_radeon_gem_set_tiling)
 #define DRM_IOCTL_RADEON_GEM_GET_TILING	DRM_IOWR(DRM_COMMAND_BASE + DRM_RADEON_GEM_GET_TILING, struct drm_radeon_gem_get_tiling)
 #define DRM_IOCTL_RADEON_GEM_BUSY	DRM_IOWR(DRM_COMMAND_BASE + DRM_RADEON_GEM_BUSY, struct drm_radeon_gem_busy)
+<<<<<<< HEAD
 #define DRM_IOCTL_RADEON_GEM_VA		DRM_IOWR(DRM_COMMAND_BASE + DRM_RADEON_GEM_VA, struct drm_radeon_gem_va)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef struct drm_radeon_init {
 	enum {
@@ -804,6 +810,7 @@ struct drm_radeon_gem_create {
 	uint32_t	flags;
 };
 
+<<<<<<< HEAD
 #define RADEON_TILING_MACRO				0x1
 #define RADEON_TILING_MICRO				0x2
 #define RADEON_TILING_SWAP_16BIT			0x4
@@ -821,6 +828,15 @@ struct drm_radeon_gem_create {
 #define RADEON_TILING_EG_TILE_SPLIT_MASK		0xf
 #define RADEON_TILING_EG_STENCIL_TILE_SPLIT_SHIFT	28
 #define RADEON_TILING_EG_STENCIL_TILE_SPLIT_MASK	0xf
+=======
+#define RADEON_TILING_MACRO       0x1
+#define RADEON_TILING_MICRO       0x2
+#define RADEON_TILING_SWAP_16BIT  0x4
+#define RADEON_TILING_SWAP_32BIT  0x8
+#define RADEON_TILING_SURFACE     0x10 /* this object requires a surface
+					* when mapped - i.e. front buffer */
+#define RADEON_TILING_MICRO_SQUARE 0x20
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct drm_radeon_gem_set_tiling {
 	uint32_t	handle;
@@ -884,6 +900,7 @@ struct drm_radeon_gem_pwrite {
 	uint64_t data_ptr;
 };
 
+<<<<<<< HEAD
 #define RADEON_VA_MAP			1
 #define RADEON_VA_UNMAP			2
 
@@ -918,6 +935,10 @@ struct drm_radeon_gem_va {
 #define RADEON_CS_RING_COMPUTE      1
 /* The third dword of RADEON_CHUNK_ID_FLAGS is a sint32 that sets the priority */
 /* 0 = normal, + = higher priority, - = lower priority */
+=======
+#define RADEON_CHUNK_ID_RELOCS	0x01
+#define RADEON_CHUNK_ID_IB	0x02
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct drm_radeon_cs_chunk {
 	uint32_t		chunk_id;
@@ -925,9 +946,12 @@ struct drm_radeon_cs_chunk {
 	uint64_t		chunk_data;
 };
 
+<<<<<<< HEAD
 /* drm_radeon_cs_reloc.flags */
 #define RADEON_RELOC_DONT_SYNC		0x01
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct drm_radeon_cs_reloc {
 	uint32_t		handle;
 	uint32_t		read_domains;
@@ -958,6 +982,7 @@ struct drm_radeon_cs {
 #define RADEON_INFO_NUM_BACKENDS	0x0a /* DB/backends for r600+ - need for OQ */
 #define RADEON_INFO_NUM_TILE_PIPES	0x0b /* tile pipes for r600+ */
 #define RADEON_INFO_FUSION_GART_WORKING	0x0c /* fusion writes to GTT were broken before this */
+<<<<<<< HEAD
 #define RADEON_INFO_BACKEND_MAP		0x0d /* pipe to backend map, needed by mesa */
 /* virtual address start, va < start are reserved by the kernel */
 #define RADEON_INFO_VA_START		0x0e
@@ -965,6 +990,8 @@ struct drm_radeon_cs {
 #define RADEON_INFO_IB_VM_MAX_SIZE	0x0f
 /* max pipes - needed for compute shaders */
 #define RADEON_INFO_MAX_PIPES		0x10
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct drm_radeon_info {
 	uint32_t		request;

@@ -36,7 +36,10 @@
 #include <linux/netdevice.h>
 #include <linux/etherdevice.h>
 #include <linux/inetdevice.h>
+<<<<<<< HEAD
 #include <linux/interrupt.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/delay.h>
 #include <linux/ethtool.h>
 #include <linux/mii.h>
@@ -800,10 +803,20 @@ static int c2_xmit_frame(struct sk_buff *skb, struct net_device *netdev)
 	/* Loop thru additional data fragments and queue them */
 	if (skb_shinfo(skb)->nr_frags) {
 		for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
+<<<<<<< HEAD
 			const skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
 			maplen = skb_frag_size(frag);
 			mapaddr = skb_frag_dma_map(&c2dev->pcidev->dev, frag,
 						   0, maplen, DMA_TO_DEVICE);
+=======
+			skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
+			maplen = frag->size;
+			mapaddr =
+			    pci_map_page(c2dev->pcidev, frag->page,
+					 frag->page_offset, maplen,
+					 PCI_DMA_TODEVICE);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			elem = elem->next;
 			elem->skb = NULL;
 			elem->mapaddr = mapaddr;

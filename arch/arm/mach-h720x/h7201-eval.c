@@ -29,10 +29,17 @@
 
 MACHINE_START(H7201, "Hynix GMS30C7201")
 	/* Maintainer: Robert Schwebel, Pengutronix */
+<<<<<<< HEAD
 	.atag_offset	= 0x1000,
 	.map_io		= h720x_map_io,
 	.init_irq	= h720x_init_irq,
 	.timer		= &h7201_timer,
 	.dma_zone_size	= SZ_256M,
 	.restart	= h720x_restart,
+=======
+	.boot_params	= 0xc0001000,
+	.map_io		= h720x_map_io,
+	.init_irq	= h720x_init_irq,
+	.timer		= &h7201_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

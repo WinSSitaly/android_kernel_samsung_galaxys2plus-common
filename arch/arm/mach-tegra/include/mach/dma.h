@@ -23,6 +23,14 @@
 
 #include <linux/list.h>
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_TEGRA_SYSTEM_DMA)
+
+struct tegra_dma_req;
+struct tegra_dma_channel;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define TEGRA_DMA_REQ_SEL_CNTR			0
 #define TEGRA_DMA_REQ_SEL_I2S_2			1
 #define TEGRA_DMA_REQ_SEL_I2S_1			2
@@ -51,11 +59,14 @@
 #define TEGRA_DMA_REQ_SEL_OWR			25
 #define TEGRA_DMA_REQ_SEL_INVALID		31
 
+<<<<<<< HEAD
 #if defined(CONFIG_TEGRA_SYSTEM_DMA)
 
 struct tegra_dma_req;
 struct tegra_dma_channel;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum tegra_dma_mode {
 	TEGRA_DMA_SHARED = 1,
 	TEGRA_DMA_MODE_CONTINOUS = 2,

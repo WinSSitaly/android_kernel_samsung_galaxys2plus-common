@@ -19,6 +19,16 @@
 #include <linux/moduleloader.h>
 #include <linux/vmalloc.h>
 
+<<<<<<< HEAD
+=======
+void *module_alloc(unsigned long size)
+{
+	if (size == 0)
+		return NULL;
+	return vmalloc(size);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void module_free(struct module *mod, void *module_region)
 {
 	vfree(mod->arch.syminfo);
@@ -264,7 +274,11 @@ int apply_relocate_add(Elf32_Shdr *sechdrs, const char *strtab,
 			break;
 		case R_AVR32_GOT18SW:
 			if ((relocation & 0xfffe0003) != 0
+<<<<<<< HEAD
 			    && (relocation & 0xfffc0000) != 0xfffc0000)
+=======
+			    && (relocation & 0xfffc0003) != 0xffff0000)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return reloc_overflow(module, "R_AVR32_GOT18SW",
 						     relocation);
 			relocation >>= 2;
@@ -292,6 +306,18 @@ int apply_relocate_add(Elf32_Shdr *sechdrs, const char *strtab,
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+int apply_relocate(Elf32_Shdr *sechdrs, const char *strtab,
+		   unsigned int symindex, unsigned int relindex,
+		   struct module *module)
+{
+	printk(KERN_ERR "module %s: REL relocations are not supported\n",
+		module->name);
+	return -ENOEXEC;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int module_finalize(const Elf_Ehdr *hdr, const Elf_Shdr *sechdrs,
 		    struct module *module)
 {
@@ -300,3 +326,10 @@ int module_finalize(const Elf_Ehdr *hdr, const Elf_Shdr *sechdrs,
 
 	return 0;
 }
+<<<<<<< HEAD
+=======
+
+void module_arch_cleanup(struct module *module)
+{
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

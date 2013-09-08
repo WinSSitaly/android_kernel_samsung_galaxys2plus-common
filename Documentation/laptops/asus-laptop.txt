@@ -45,7 +45,11 @@ Status
 Usage
 -----
 
+<<<<<<< HEAD
   Try "modprobe asus-laptop". Check your dmesg (simply type dmesg). You should
+=======
+  Try "modprobe asus_acpi". Check your dmesg (simply type dmesg). You should
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   see some lines like this :
 
       Asus Laptop Extras version 0.42

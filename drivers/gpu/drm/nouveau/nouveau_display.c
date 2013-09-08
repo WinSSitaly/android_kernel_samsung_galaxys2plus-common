@@ -32,8 +32,11 @@
 #include "nouveau_hw.h"
 #include "nouveau_crtc.h"
 #include "nouveau_dma.h"
+<<<<<<< HEAD
 #include "nouveau_connector.h"
 #include "nouveau_gpio.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "nv50_display.h"
 
 static void
@@ -66,7 +69,11 @@ static const struct drm_framebuffer_funcs nouveau_framebuffer_funcs = {
 int
 nouveau_framebuffer_init(struct drm_device *dev,
 			 struct nouveau_framebuffer *nv_fb,
+<<<<<<< HEAD
 			 struct drm_mode_fb_cmd2 *mode_cmd,
+=======
+			 struct drm_mode_fb_cmd *mode_cmd,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 struct nouveau_bo *nvbo)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
@@ -107,6 +114,7 @@ nouveau_framebuffer_init(struct drm_device *dev,
 		if (dev_priv->chipset == 0x50)
 			nv_fb->r_format |= (tile_flags << 8);
 
+<<<<<<< HEAD
 		if (!tile_flags) {
 			if (dev_priv->card_type < NV_D0)
 				nv_fb->r_pitch = 0x00100000 | fb->pitches[0];
@@ -117,6 +125,15 @@ nouveau_framebuffer_init(struct drm_device *dev,
 			if (dev_priv->card_type >= NV_C0)
 				mode >>= 4;
 			nv_fb->r_pitch = ((fb->pitches[0] / 4) << 4) | mode;
+=======
+		if (!tile_flags)
+			nv_fb->r_pitch = 0x00100000 | fb->pitch;
+		else {
+			u32 mode = nvbo->tile_mode;
+			if (dev_priv->card_type >= NV_C0)
+				mode >>= 4;
+			nv_fb->r_pitch = ((fb->pitch / 4) << 4) | mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -126,13 +143,21 @@ nouveau_framebuffer_init(struct drm_device *dev,
 static struct drm_framebuffer *
 nouveau_user_framebuffer_create(struct drm_device *dev,
 				struct drm_file *file_priv,
+<<<<<<< HEAD
 				struct drm_mode_fb_cmd2 *mode_cmd)
+=======
+				struct drm_mode_fb_cmd *mode_cmd)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct nouveau_framebuffer *nouveau_fb;
 	struct drm_gem_object *gem;
 	int ret;
 
+<<<<<<< HEAD
 	gem = drm_gem_object_lookup(dev, file_priv, mode_cmd->handles[0]);
+=======
+	gem = drm_gem_object_lookup(dev, file_priv, mode_cmd->handle);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!gem)
 		return ERR_PTR(-ENOENT);
 
@@ -149,11 +174,16 @@ nouveau_user_framebuffer_create(struct drm_device *dev,
 	return &nouveau_fb->base;
 }
 
+<<<<<<< HEAD
 static const struct drm_mode_config_funcs nouveau_mode_config_funcs = {
+=======
+const struct drm_mode_config_funcs nouveau_mode_config_funcs = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.fb_create = nouveau_user_framebuffer_create,
 	.output_poll_changed = nouveau_fbcon_output_poll_changed,
 };
 
+<<<<<<< HEAD
 
 struct nouveau_drm_prop_enum_list {
 	u8 gen_mask;
@@ -350,6 +380,8 @@ nouveau_display_destroy(struct drm_device *dev)
 	drm_mode_config_cleanup(dev);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int
 nouveau_vblank_enable(struct drm_device *dev, int crtc)
 {
@@ -441,6 +473,7 @@ nouveau_page_flip_emit(struct nouveau_channel *chan,
 		goto fail;
 
 	/* Emit the pageflip */
+<<<<<<< HEAD
 	ret = RING_SPACE(chan, 3);
 	if (ret)
 		goto fail;
@@ -454,6 +487,17 @@ nouveau_page_flip_emit(struct nouveau_channel *chan,
 		OUT_RING  (chan, ++chan->fence.sequence);
 		BEGIN_NVC0(chan, 8, 0, NVSW_SUBCHAN_PAGE_FLIP, 0x0000);
 	}
+=======
+	ret = RING_SPACE(chan, 2);
+	if (ret)
+		goto fail;
+
+	if (dev_priv->card_type < NV_C0)
+		BEGIN_RING(chan, NvSubSw, NV_SW_PAGE_FLIP, 1);
+	else
+		BEGIN_NVC0(chan, 2, NvSubM2MF, 0x0500, 1);
+	OUT_RING  (chan, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	FIRE_RING (chan);
 
 	ret = nouveau_fence_new(chan, pfence, true);
@@ -496,7 +540,11 @@ nouveau_crtc_page_flip(struct drm_crtc *crtc, struct drm_framebuffer *fb,
 	/* Initialize a page flip struct */
 	*s = (struct nouveau_page_flip_state)
 		{ { }, event, nouveau_crtc(crtc)->index,
+<<<<<<< HEAD
 		  fb->bits_per_pixel, fb->pitches[0], crtc->x, crtc->y,
+=======
+		  fb->bits_per_pixel, fb->pitch, crtc->x, crtc->y,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  new_bo->bo.offset };
 
 	/* Choose the channel the flip will be handled in */
@@ -507,10 +555,14 @@ nouveau_crtc_page_flip(struct drm_crtc *crtc, struct drm_framebuffer *fb,
 
 	/* Emit a page flip */
 	if (dev_priv->card_type >= NV_50) {
+<<<<<<< HEAD
 		if (dev_priv->card_type >= NV_D0)
 			ret = nvd0_display_flip_next(crtc, fb, chan, 0);
 		else
 			ret = nv50_display_flip_next(crtc, fb, chan);
+=======
+		ret = nv50_display_flip_next(crtc, fb, chan);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret) {
 			nouveau_channel_put(&chan);
 			goto fail_unreserve;
@@ -574,6 +626,7 @@ nouveau_finish_page_flip(struct nouveau_channel *chan,
 	spin_unlock_irqrestore(&dev->event_lock, flags);
 	return 0;
 }
+<<<<<<< HEAD
 
 int
 nouveau_display_dumb_create(struct drm_file *file_priv, struct drm_device *dev,
@@ -619,3 +672,5 @@ nouveau_display_dumb_map_offset(struct drm_file *file_priv,
 
 	return -ENOENT;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

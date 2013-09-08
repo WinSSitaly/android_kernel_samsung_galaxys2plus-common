@@ -34,13 +34,20 @@
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/acpi.h>
+<<<<<<< HEAD
 #include <linux/acpi_io.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/io.h>
 #include <linux/kref.h>
 #include <linux/rculist.h>
 #include <linux/interrupt.h>
 #include <linux/debugfs.h>
+<<<<<<< HEAD
+=======
+#include <acpi/atomicio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "apei-internal.h"
 
@@ -70,7 +77,11 @@ int __apei_exec_read_register(struct acpi_whea_header *entry, u64 *val)
 {
 	int rc;
 
+<<<<<<< HEAD
 	rc = apei_read(val, &entry->register_region);
+=======
+	rc = acpi_atomic_read(val, &entry->register_region);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc)
 		return rc;
 	*val >>= entry->register_region.bit_offset;
@@ -116,13 +127,21 @@ int __apei_exec_write_register(struct acpi_whea_header *entry, u64 val)
 	val <<= entry->register_region.bit_offset;
 	if (entry->flags & APEI_EXEC_PRESERVE_REGISTER) {
 		u64 valr = 0;
+<<<<<<< HEAD
 		rc = apei_read(&valr, &entry->register_region);
+=======
+		rc = acpi_atomic_read(&valr, &entry->register_region);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rc)
 			return rc;
 		valr &= ~(entry->mask << entry->register_region.bit_offset);
 		val |= valr;
 	}
+<<<<<<< HEAD
 	rc = apei_write(val, &entry->register_region);
+=======
+	rc = acpi_atomic_write(val, &entry->register_region);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return rc;
 }
@@ -157,10 +176,16 @@ EXPORT_SYMBOL_GPL(apei_exec_noop);
  * Interpret the specified action. Go through whole action table,
  * execute all instructions belong to the action.
  */
+<<<<<<< HEAD
 int __apei_exec_run(struct apei_exec_context *ctx, u8 action,
 		    bool optional)
 {
 	int rc = -ENOENT;
+=======
+int apei_exec_run(struct apei_exec_context *ctx, u8 action)
+{
+	int rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 i, ip;
 	struct acpi_whea_header *entry;
 	apei_exec_ins_func_t run;
@@ -199,9 +224,15 @@ rewind:
 			goto rewind;
 	}
 
+<<<<<<< HEAD
 	return !optional && rc < 0 ? rc : 0;
 }
 EXPORT_SYMBOL_GPL(__apei_exec_run);
+=======
+	return 0;
+}
+EXPORT_SYMBOL_GPL(apei_exec_run);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 typedef int (*apei_exec_entry_func_t)(struct apei_exec_context *ctx,
 				      struct acpi_whea_header *entry,
@@ -243,7 +274,11 @@ static int pre_map_gar_callback(struct apei_exec_context *ctx,
 	u8 ins = entry->instruction;
 
 	if (ctx->ins_table[ins].flags & APEI_EXEC_INS_ACCESS_REGISTER)
+<<<<<<< HEAD
 		return apei_map_generic_address(&entry->register_region);
+=======
+		return acpi_pre_map_gar(&entry->register_region);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -276,7 +311,11 @@ static int post_unmap_gar_callback(struct apei_exec_context *ctx,
 	u8 ins = entry->instruction;
 
 	if (ctx->ins_table[ins].flags & APEI_EXEC_INS_ACCESS_REGISTER)
+<<<<<<< HEAD
 		apei_unmap_generic_address(&entry->register_region);
+=======
+		acpi_post_unmap_gar(&entry->register_region);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -421,6 +460,7 @@ static int apei_resources_merge(struct apei_resources *resources1,
 	return 0;
 }
 
+<<<<<<< HEAD
 int apei_resources_add(struct apei_resources *resources,
 		       unsigned long start, unsigned long size,
 		       bool iomem)
@@ -432,6 +472,8 @@ int apei_resources_add(struct apei_resources *resources,
 }
 EXPORT_SYMBOL_GPL(apei_resources_add);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * EINJ has two groups of GARs (EINJ table entry and trigger table
  * entry), so common resources are subtracted from the trigger table
@@ -449,6 +491,7 @@ int apei_resources_sub(struct apei_resources *resources1,
 }
 EXPORT_SYMBOL_GPL(apei_resources_sub);
 
+<<<<<<< HEAD
 static int apei_get_nvs_callback(__u64 start, __u64 size, void *data)
 {
 	struct apei_resources *resources = data;
@@ -462,6 +505,10 @@ static int apei_get_nvs_resources(struct apei_resources *resources)
 
 /*
  * IO memory/port resource management mechanism is used to check
+=======
+/*
+ * IO memory/port rersource management mechanism is used to check
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * whether memory/port area used by GARs conflicts with normal memory
  * or IO memory/port of devices.
  */
@@ -470,13 +517,17 @@ int apei_resources_request(struct apei_resources *resources,
 {
 	struct apei_res *res, *res_bak = NULL;
 	struct resource *r;
+<<<<<<< HEAD
 	struct apei_resources nvs_resources;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rc;
 
 	rc = apei_resources_sub(resources, &apei_resources_all);
 	if (rc)
 		return rc;
 
+<<<<<<< HEAD
 	/*
 	 * Some firmware uses ACPI NVS region, that has been marked as
 	 * busy, so exclude it from APEI resources to avoid false
@@ -490,15 +541,23 @@ int apei_resources_request(struct apei_resources *resources,
 	if (rc)
 		goto res_fini;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = -EINVAL;
 	list_for_each_entry(res, &resources->iomem, list) {
 		r = request_mem_region(res->start, res->end - res->start,
 				       desc);
 		if (!r) {
 			pr_err(APEI_PFX
+<<<<<<< HEAD
 		"Can not request [mem %#010llx-%#010llx] for %s registers\n",
 			       (unsigned long long)res->start,
 			       (unsigned long long)res->end - 1, desc);
+=======
+		"Can not request iomem region <%016llx-%016llx> for GARs.\n",
+			       (unsigned long long)res->start,
+			       (unsigned long long)res->end);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			res_bak = res;
 			goto err_unmap_iomem;
 		}
@@ -508,9 +567,15 @@ int apei_resources_request(struct apei_resources *resources,
 		r = request_region(res->start, res->end - res->start, desc);
 		if (!r) {
 			pr_err(APEI_PFX
+<<<<<<< HEAD
 		"Can not request [io  %#06llx-%#06llx] for %s registers\n",
 			       (unsigned long long)res->start,
 			       (unsigned long long)res->end - 1, desc);
+=======
+		"Can not request ioport region <%016llx-%016llx> for GARs.\n",
+			       (unsigned long long)res->start,
+			       (unsigned long long)res->end);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			res_bak = res;
 			goto err_unmap_ioport;
 		}
@@ -536,8 +601,11 @@ err_unmap_iomem:
 			break;
 		release_mem_region(res->start, res->end - res->start);
 	}
+<<<<<<< HEAD
 res_fini:
 	apei_resources_fini(&nvs_resources);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 EXPORT_SYMBOL_GPL(apei_resources_request);
@@ -558,6 +626,7 @@ void apei_resources_release(struct apei_resources *resources)
 }
 EXPORT_SYMBOL_GPL(apei_resources_release);
 
+<<<<<<< HEAD
 static int apei_check_gar(struct acpi_generic_address *reg, u64 *paddr,
 				u32 *access_bit_width)
 {
@@ -566,11 +635,19 @@ static int apei_check_gar(struct acpi_generic_address *reg, u64 *paddr,
 	bit_width = reg->bit_width;
 	bit_offset = reg->bit_offset;
 	access_size_code = reg->access_width;
+=======
+static int apei_check_gar(struct acpi_generic_address *reg, u64 *paddr)
+{
+	u32 width, space_id;
+
+	width = reg->bit_width;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	space_id = reg->space_id;
 	/* Handle possible alignment issues */
 	memcpy(paddr, &reg->address, sizeof(*paddr));
 	if (!*paddr) {
 		pr_warning(FW_BUG APEI_PFX
+<<<<<<< HEAD
 			   "Invalid physical address in GAR [0x%llx/%u/%u/%u/%u]\n",
 			   *paddr, bit_width, bit_offset, access_size_code,
 			   space_id);
@@ -596,12 +673,24 @@ static int apei_check_gar(struct acpi_generic_address *reg, u64 *paddr,
 			   "Invalid bit width + offset in GAR [0x%llx/%u/%u/%u/%u]\n",
 			   *paddr, bit_width, bit_offset, access_size_code,
 			   space_id);
+=======
+			   "Invalid physical address in GAR [0x%llx/%u/%u]\n",
+			   *paddr, width, space_id);
+		return -EINVAL;
+	}
+
+	if ((width != 8) && (width != 16) && (width != 32) && (width != 64)) {
+		pr_warning(FW_BUG APEI_PFX
+			   "Invalid bit width in GAR [0x%llx/%u/%u]\n",
+			   *paddr, width, space_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
 	if (space_id != ACPI_ADR_SPACE_SYSTEM_MEMORY &&
 	    space_id != ACPI_ADR_SPACE_SYSTEM_IO) {
 		pr_warning(FW_BUG APEI_PFX
+<<<<<<< HEAD
 			   "Invalid address space type in GAR [0x%llx/%u/%u/%u/%u]\n",
 			   *paddr, bit_width, bit_offset, access_size_code,
 			   space_id);
@@ -651,11 +740,16 @@ int apei_read(u64 *val, struct acpi_generic_address *reg)
 			return -EIO;
 		break;
 	default:
+=======
+			   "Invalid address space type in GAR [0x%llx/%u/%u]\n",
+			   *paddr, width, space_id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(apei_read);
 
 /* write GAR in interrupt (including NMI) or process context */
@@ -689,6 +783,8 @@ int apei_write(u64 val, struct acpi_generic_address *reg)
 	return 0;
 }
 EXPORT_SYMBOL_GPL(apei_write);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int collect_res_callback(struct apei_exec_context *ctx,
 				struct acpi_whea_header *entry,
@@ -697,24 +793,38 @@ static int collect_res_callback(struct apei_exec_context *ctx,
 	struct apei_resources *resources = data;
 	struct acpi_generic_address *reg = &entry->register_region;
 	u8 ins = entry->instruction;
+<<<<<<< HEAD
 	u32 access_bit_width;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64 paddr;
 	int rc;
 
 	if (!(ctx->ins_table[ins].flags & APEI_EXEC_INS_ACCESS_REGISTER))
 		return 0;
 
+<<<<<<< HEAD
 	rc = apei_check_gar(reg, &paddr, &access_bit_width);
+=======
+	rc = apei_check_gar(reg, &paddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc)
 		return rc;
 
 	switch (reg->space_id) {
 	case ACPI_ADR_SPACE_SYSTEM_MEMORY:
 		return apei_res_add(&resources->iomem, paddr,
+<<<<<<< HEAD
 				    access_bit_width / 8);
 	case ACPI_ADR_SPACE_SYSTEM_IO:
 		return apei_res_add(&resources->ioport, paddr,
 				    access_bit_width / 8);
+=======
+				    reg->bit_width / 8);
+	case ACPI_ADR_SPACE_SYSTEM_IO:
+		return apei_res_add(&resources->ioport, paddr,
+				    reg->bit_width / 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return -EINVAL;
 	}
@@ -742,6 +852,7 @@ struct dentry *apei_get_debugfs_dir(void)
 	return dapei;
 }
 EXPORT_SYMBOL_GPL(apei_get_debugfs_dir);
+<<<<<<< HEAD
 
 int apei_osc_setup(void)
 {
@@ -768,3 +879,5 @@ int apei_osc_setup(void)
 	}
 }
 EXPORT_SYMBOL_GPL(apei_osc_setup);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

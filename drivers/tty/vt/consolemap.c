@@ -619,7 +619,11 @@ int con_set_default_unimap(struct vc_data *vc)
 			return 0;
 		dflt->refcount++;
 		*vc->vc_uni_pagedir_loc = (unsigned long)dflt;
+<<<<<<< HEAD
 		if (p && !--p->refcount) {
+=======
+		if (p && --p->refcount) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			con_release_unimap(p);
 			kfree(p);
 		}

@@ -54,8 +54,11 @@ MODULE_ALIAS("wmi:"DELL_EVENT_GUID);
  */
 
 static const struct key_entry dell_wmi_legacy_keymap[] __initconst = {
+<<<<<<< HEAD
 	{ KE_IGNORE, 0x003a, { KEY_CAPSLOCK } },
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ KE_KEY, 0xe045, { KEY_PROG1 } },
 	{ KE_KEY, 0xe009, { KEY_EJECTCD } },
 
@@ -87,11 +90,14 @@ static const struct key_entry dell_wmi_legacy_keymap[] __initconst = {
 	{ KE_IGNORE, 0xe013, { KEY_RESERVED } },
 
 	{ KE_IGNORE, 0xe020, { KEY_MUTE } },
+<<<<<<< HEAD
 
 	/* Shortcut and audio panel keys */
 	{ KE_IGNORE, 0xe025, { KEY_RESERVED } },
 	{ KE_IGNORE, 0xe026, { KEY_RESERVED } },
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ KE_IGNORE, 0xe02e, { KEY_VOLUMEDOWN } },
 	{ KE_IGNORE, 0xe030, { KEY_VOLUMEUP } },
 	{ KE_IGNORE, 0xe033, { KEY_KBDILLUMUP } },
@@ -99,9 +105,12 @@ static const struct key_entry dell_wmi_legacy_keymap[] __initconst = {
 	{ KE_IGNORE, 0xe03a, { KEY_CAPSLOCK } },
 	{ KE_IGNORE, 0xe045, { KEY_NUMLOCK } },
 	{ KE_IGNORE, 0xe046, { KEY_SCROLLLOCK } },
+<<<<<<< HEAD
 	{ KE_IGNORE, 0xe0f7, { KEY_MUTE } },
 	{ KE_IGNORE, 0xe0f8, { KEY_VOLUMEDOWN } },
 	{ KE_IGNORE, 0xe0f9, { KEY_VOLUMEUP } },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ KE_END, 0 }
 };
 

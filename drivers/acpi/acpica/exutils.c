@@ -6,7 +6,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -435,6 +439,7 @@ void acpi_ex_integer_to_string(char *out_string, u64 value)
 	}
 }
 
+<<<<<<< HEAD
 /*******************************************************************************
  *
  * FUNCTION:    acpi_is_valid_space_id
@@ -460,4 +465,6 @@ u8 acpi_is_valid_space_id(u8 space_id)
 	return (TRUE);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

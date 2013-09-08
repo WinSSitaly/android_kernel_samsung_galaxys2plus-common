@@ -23,7 +23,10 @@
 #include <linux/slab.h>
 #include <linux/time.h>
 #include <linux/math64.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/control.h>
 #include <sound/info.h>
@@ -129,8 +132,12 @@ void snd_pcm_playback_silence(struct snd_pcm_substream *substream, snd_pcm_ufram
 	}
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_SND_DEBUG
 void snd_pcm_debug_name(struct snd_pcm_substream *substream,
+=======
+static void pcm_debug_name(struct snd_pcm_substream *substream,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   char *name, size_t len)
 {
 	snprintf(name, len, "pcmC%dD%d%c:%d",
@@ -139,8 +146,11 @@ void snd_pcm_debug_name(struct snd_pcm_substream *substream,
 		 substream->stream ? 'c' : 'p',
 		 substream->number);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(snd_pcm_debug_name);
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define XRUN_DEBUG_BASIC	(1<<0)
 #define XRUN_DEBUG_STACK	(1<<1)	/* dump also stack */
@@ -172,7 +182,11 @@ static void xrun(struct snd_pcm_substream *substream)
 	snd_pcm_stop(substream, SNDRV_PCM_STATE_XRUN);
 	if (xrun_debug(substream, XRUN_DEBUG_BASIC)) {
 		char name[16];
+<<<<<<< HEAD
 		snd_pcm_debug_name(substream, name, sizeof(name));
+=======
+		pcm_debug_name(substream, name, sizeof(name));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printd(KERN_DEBUG "XRUN: %s\n", name);
 		dump_stack_on_xrun(substream);
 	}
@@ -247,7 +261,11 @@ static void xrun_log_show(struct snd_pcm_substream *substream)
 		return;
 	if (xrun_debug(substream, XRUN_DEBUG_LOGONCE) && log->hit)
 		return;
+<<<<<<< HEAD
 	snd_pcm_debug_name(substream, name, sizeof(name));
+=======
+	pcm_debug_name(substream, name, sizeof(name));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (cnt = 0, idx = log->idx; cnt < XRUN_LOG_CNT; cnt++) {
 		entry = &log->entries[idx];
 		if (entry->period_size == 0)
@@ -323,7 +341,11 @@ static int snd_pcm_update_hw_ptr0(struct snd_pcm_substream *substream,
 	if (pos >= runtime->buffer_size) {
 		if (printk_ratelimit()) {
 			char name[16];
+<<<<<<< HEAD
 			snd_pcm_debug_name(substream, name, sizeof(name));
+=======
+			pcm_debug_name(substream, name, sizeof(name));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			xrun_log_show(substream);
 			snd_printd(KERN_ERR  "BUG: %s, pos = %ld, "
 				   "buffer size = %ld, period size = %ld\n",
@@ -368,7 +390,11 @@ static int snd_pcm_update_hw_ptr0(struct snd_pcm_substream *substream,
 	if (xrun_debug(substream, in_interrupt ?
 			XRUN_DEBUG_PERIODUPDATE : XRUN_DEBUG_HWPTRUPDATE)) {
 		char name[16];
+<<<<<<< HEAD
 		snd_pcm_debug_name(substream, name, sizeof(name));
+=======
+		pcm_debug_name(substream, name, sizeof(name));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printd("%s_update: %s: pos=%u/%u/%u, "
 			   "hwptr=%ld/%ld/%ld/%ld\n",
 			   in_interrupt ? "period" : "hwptr",
@@ -1029,8 +1055,12 @@ static int snd_interval_ratden(struct snd_interval *i,
  *
  * Returns non-zero if the value is changed, zero if not changed.
  */
+<<<<<<< HEAD
 int snd_interval_list(struct snd_interval *i, unsigned int count,
 		      const unsigned int *list, unsigned int mask)
+=======
+int snd_interval_list(struct snd_interval *i, unsigned int count, unsigned int *list, unsigned int mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
         unsigned int k;
 	struct snd_interval list_range;
@@ -1401,6 +1431,7 @@ int snd_pcm_hw_constraint_pow2(struct snd_pcm_runtime *runtime,
 
 EXPORT_SYMBOL(snd_pcm_hw_constraint_pow2);
 
+<<<<<<< HEAD
 static int snd_pcm_hw_rule_noresample_func(struct snd_pcm_hw_params *params,
 					   struct snd_pcm_hw_rule *rule)
 {
@@ -1427,6 +1458,8 @@ int snd_pcm_hw_rule_noresample(struct snd_pcm_runtime *runtime,
 }
 EXPORT_SYMBOL(snd_pcm_hw_rule_noresample);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void _snd_pcm_hw_param_any(struct snd_pcm_hw_params *params,
 				  snd_pcm_hw_param_t var)
 {

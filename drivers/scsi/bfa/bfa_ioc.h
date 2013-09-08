@@ -85,6 +85,7 @@ struct bfa_sge_s {
 #endif
 
 /*
+<<<<<<< HEAD
  * BFA memory resources
  */
 struct bfa_mem_dma_s {
@@ -147,13 +148,18 @@ struct bfa_meminfo_s {
 	 BFI_MEM_SEG_REQ_OFFSET(_tag, _rqsz) * (_rqsz))
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * PCI device information required by IOC
  */
 struct bfa_pcidev_s {
 	int		pci_slot;
 	u8		pci_func;
 	u16		device_id;
+<<<<<<< HEAD
 	u16		ssid;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void __iomem	*pci_bar_kva;
 };
 
@@ -175,6 +181,7 @@ struct bfa_dma_s {
 #define BFI_SMEM_CB_SIZE	0x200000U	/* ! 2MB for crossbow	*/
 #define BFI_SMEM_CT_SIZE	0x280000U	/* ! 2.5MB for catapult	*/
 
+<<<<<<< HEAD
 #define bfa_dma_be_addr_set(dma_addr, pa)	\
 		__bfa_dma_be_addr_set(&dma_addr, (u64)pa)
 static inline void
@@ -192,6 +199,27 @@ __bfa_alen_set(struct bfi_alen_s *alen, u32 len, u64 pa)
 {
 	alen->al_len = cpu_to_be32(len);
 	bfa_dma_be_addr_set(alen->al_addr, pa);
+=======
+
+#define bfa_dma_addr_set(dma_addr, pa)	\
+		__bfa_dma_addr_set(&dma_addr, (u64)pa)
+
+static inline void
+__bfa_dma_addr_set(union bfi_addr_u *dma_addr, u64 pa)
+{
+	dma_addr->a32.addr_lo = (__be32) pa;
+	dma_addr->a32.addr_hi = (__be32) (pa >> 32);
+}
+
+
+#define bfa_dma_be_addr_set(dma_addr, pa)	\
+		__bfa_dma_be_addr_set(&dma_addr, (u64)pa)
+static inline void
+__bfa_dma_be_addr_set(union bfi_addr_u *dma_addr, u64 pa)
+{
+	dma_addr->a32.addr_lo = cpu_to_be32(pa);
+	dma_addr->a32.addr_hi = cpu_to_be32(pa >> 32);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct bfa_ioc_regs_s {
@@ -199,7 +227,10 @@ struct bfa_ioc_regs_s {
 	void __iomem *hfn_mbox;
 	void __iomem *lpu_mbox_cmd;
 	void __iomem *lpu_mbox;
+<<<<<<< HEAD
 	void __iomem *lpu_read_stat;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void __iomem *pss_ctl_reg;
 	void __iomem *pss_err_status_reg;
 	void __iomem *app_pll_fast_ctl_reg;
@@ -261,6 +292,7 @@ struct bfa_ioc_cbfn_s {
 };
 
 /*
+<<<<<<< HEAD
  * IOC event notification mechanism.
  */
 enum bfa_ioc_event_e {
@@ -274,13 +306,26 @@ typedef void (*bfa_ioc_notify_cbfn_t)(void *, enum bfa_ioc_event_e);
 struct bfa_ioc_notify_s {
 	struct list_head		qe;
 	bfa_ioc_notify_cbfn_t	cbfn;
+=======
+ * Heartbeat failure notification queue element.
+ */
+struct bfa_ioc_hbfail_notify_s {
+	struct list_head		qe;
+	bfa_ioc_hbfail_cbfn_t	cbfn;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void			*cbarg;
 };
 
 /*
+<<<<<<< HEAD
  * Initialize a IOC event notification structure
  */
 #define bfa_ioc_notify_init(__notify, __cbfn, __cbarg) do {	\
+=======
+ * Initialize a heartbeat failure notification structure
+ */
+#define bfa_ioc_hbfail_init(__notify, __cbfn, __cbarg) do {	\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	(__notify)->cbfn = (__cbfn);      \
 	(__notify)->cbarg = (__cbarg);      \
 } while (0)
@@ -288,9 +333,14 @@ struct bfa_ioc_notify_s {
 struct bfa_iocpf_s {
 	bfa_fsm_t		fsm;
 	struct bfa_ioc_s	*ioc;
+<<<<<<< HEAD
 	bfa_boolean_t		fw_mismatch_notified;
 	bfa_boolean_t		auto_recover;
 	u32			poll_time;
+=======
+	u32		retry_count;
+	bfa_boolean_t		auto_recover;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct bfa_ioc_s {
@@ -302,15 +352,28 @@ struct bfa_ioc_s {
 	struct bfa_timer_s	sem_timer;
 	struct bfa_timer_s	hb_timer;
 	u32		hb_count;
+<<<<<<< HEAD
 	struct list_head	notify_q;
 	void			*dbg_fwsave;
 	int			dbg_fwsave_len;
 	bfa_boolean_t		dbg_fwsave_once;
 	enum bfi_pcifn_class	clscode;
+=======
+	struct list_head		hb_notify_q;
+	void			*dbg_fwsave;
+	int			dbg_fwsave_len;
+	bfa_boolean_t		dbg_fwsave_once;
+	enum bfi_mclass		ioc_mc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct bfa_ioc_regs_s	ioc_regs;
 	struct bfa_trc_mod_s	*trcmod;
 	struct bfa_ioc_drv_stats_s	stats;
 	bfa_boolean_t		fcmode;
+<<<<<<< HEAD
+=======
+	bfa_boolean_t		ctdev;
+	bfa_boolean_t		cna;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_boolean_t		pllinit;
 	bfa_boolean_t		stats_busy;	/*  outstanding stats */
 	u8			port_id;
@@ -320,6 +383,7 @@ struct bfa_ioc_s {
 	struct bfa_ioc_mbox_mod_s mbox_mod;
 	struct bfa_ioc_hwif_s	*ioc_hwif;
 	struct bfa_iocpf_s	iocpf;
+<<<<<<< HEAD
 	enum bfi_asic_gen	asic_gen;
 	enum bfi_asic_mode	asic_mode;
 	enum bfi_port_mode	port0_mode;
@@ -332,6 +396,12 @@ struct bfa_ioc_s {
 
 struct bfa_ioc_hwif_s {
 	bfa_status_t (*ioc_pll_init) (void __iomem *rb, enum bfi_asic_mode m);
+=======
+};
+
+struct bfa_ioc_hwif_s {
+	bfa_status_t (*ioc_pll_init) (void __iomem *rb, bfa_boolean_t fcmode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bfa_boolean_t	(*ioc_firmware_lock)	(struct bfa_ioc_s *ioc);
 	void		(*ioc_firmware_unlock)	(struct bfa_ioc_s *ioc);
 	void		(*ioc_reg_init)	(struct bfa_ioc_s *ioc);
@@ -345,6 +415,7 @@ struct bfa_ioc_hwif_s {
 	void		(*ioc_sync_leave)	(struct bfa_ioc_s *ioc);
 	void		(*ioc_sync_ack)		(struct bfa_ioc_s *ioc);
 	bfa_boolean_t	(*ioc_sync_complete)	(struct bfa_ioc_s *ioc);
+<<<<<<< HEAD
 	bfa_boolean_t	(*ioc_lpu_read_stat)	(struct bfa_ioc_s *ioc);
 };
 
@@ -746,14 +817,21 @@ bfa_status_t	bfa_dconf_update(struct bfa_s *bfa);
 /*
  *	IOC specfic macros
  */
+=======
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define bfa_ioc_pcifn(__ioc)		((__ioc)->pcidev.pci_func)
 #define bfa_ioc_devid(__ioc)		((__ioc)->pcidev.device_id)
 #define bfa_ioc_bar0(__ioc)		((__ioc)->pcidev.pci_bar_kva)
 #define bfa_ioc_portid(__ioc)		((__ioc)->port_id)
+<<<<<<< HEAD
 #define bfa_ioc_asic_gen(__ioc)		((__ioc)->asic_gen)
 #define bfa_ioc_is_cna(__ioc)	\
 	((bfa_ioc_get_type(__ioc) == BFA_IOC_TYPE_FCoE) ||	\
 	 (bfa_ioc_get_type(__ioc) == BFA_IOC_TYPE_LL))
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define bfa_ioc_fetch_stats(__ioc, __stats) \
 		(((__stats)->drv_stats) = (__ioc)->stats)
 #define bfa_ioc_clr_stats(__ioc)	\
@@ -767,9 +845,18 @@ bfa_status_t	bfa_dconf_update(struct bfa_s *bfa);
 
 #define bfa_ioc_stats(_ioc, _stats)	((_ioc)->stats._stats++)
 #define BFA_IOC_FWIMG_MINSZ	(16 * 1024)
+<<<<<<< HEAD
 #define BFA_IOC_FW_SMEM_SIZE(__ioc)			\
 	((bfa_ioc_asic_gen(__ioc) == BFI_ASIC_GEN_CB)	\
 	 ? BFI_SMEM_CB_SIZE : BFI_SMEM_CT_SIZE)
+=======
+#define BFA_IOC_FWIMG_TYPE(__ioc)					\
+	(((__ioc)->ctdev) ?						\
+	 (((__ioc)->fcmode) ? BFI_IMAGE_CT_FC : BFI_IMAGE_CT_CNA) :	\
+	 BFI_IMAGE_CB_FC)
+#define BFA_IOC_FW_SMEM_SIZE(__ioc)					\
+	(((__ioc)->ctdev) ? BFI_SMEM_CT_SIZE : BFI_SMEM_CB_SIZE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define BFA_IOC_FLASH_CHUNK_NO(off)		(off / BFI_FLASH_CHUNK_SZ_WORDS)
 #define BFA_IOC_FLASH_OFFSET_IN_CHUNK(off)	(off % BFI_FLASH_CHUNK_SZ_WORDS)
 #define BFA_IOC_FLASH_CHUNK_ADDR(chunkno)  (chunkno * BFI_FLASH_CHUNK_SZ_WORDS)
@@ -782,7 +869,11 @@ void bfa_ioc_mbox_register(struct bfa_ioc_s *ioc,
 		bfa_ioc_mbox_mcfunc_t *mcfuncs);
 void bfa_ioc_mbox_isr(struct bfa_ioc_s *ioc);
 void bfa_ioc_mbox_send(struct bfa_ioc_s *ioc, void *ioc_msg, int len);
+<<<<<<< HEAD
 bfa_boolean_t bfa_ioc_msgget(struct bfa_ioc_s *ioc, void *mbmsg);
+=======
+void bfa_ioc_msgget(struct bfa_ioc_s *ioc, void *mbmsg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void bfa_ioc_mbox_regisr(struct bfa_ioc_s *ioc, enum bfi_mclass mc,
 		bfa_ioc_mbox_mcfunc_t cbfn, void *cbarg);
 
@@ -792,6 +883,7 @@ void bfa_ioc_mbox_regisr(struct bfa_ioc_s *ioc, enum bfi_mclass mc,
 
 #define bfa_ioc_pll_init_asic(__ioc) \
 	((__ioc)->ioc_hwif->ioc_pll_init((__ioc)->pcidev.pci_bar_kva, \
+<<<<<<< HEAD
 			   (__ioc)->asic_mode))
 
 bfa_status_t bfa_ioc_pll_init(struct bfa_ioc_s *ioc);
@@ -815,26 +907,54 @@ void bfa_ioc_set_cb_hwif(struct bfa_ioc_s *ioc);
 void bfa_ioc_set_ct_hwif(struct bfa_ioc_s *ioc);
 void bfa_ioc_set_ct2_hwif(struct bfa_ioc_s *ioc);
 void bfa_ioc_ct2_poweron(struct bfa_ioc_s *ioc);
+=======
+			   (__ioc)->fcmode))
+
+bfa_status_t bfa_ioc_pll_init(struct bfa_ioc_s *ioc);
+bfa_status_t bfa_ioc_cb_pll_init(void __iomem *rb, bfa_boolean_t fcmode);
+bfa_boolean_t bfa_ioc_ct_pll_init_complete(void __iomem *rb);
+bfa_status_t bfa_ioc_ct_pll_init(void __iomem *rb, bfa_boolean_t fcmode);
+
+#define	bfa_ioc_isr_mode_set(__ioc, __msix)			\
+			((__ioc)->ioc_hwif->ioc_isr_mode_set(__ioc, __msix))
+#define	bfa_ioc_ownership_reset(__ioc)				\
+			((__ioc)->ioc_hwif->ioc_ownership_reset(__ioc))
+
+
+void bfa_ioc_set_ct_hwif(struct bfa_ioc_s *ioc);
+void bfa_ioc_set_cb_hwif(struct bfa_ioc_s *ioc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void bfa_ioc_attach(struct bfa_ioc_s *ioc, void *bfa,
 		struct bfa_ioc_cbfn_s *cbfn, struct bfa_timer_mod_s *timer_mod);
 void bfa_ioc_auto_recover(bfa_boolean_t auto_recover);
 void bfa_ioc_detach(struct bfa_ioc_s *ioc);
 void bfa_ioc_pci_init(struct bfa_ioc_s *ioc, struct bfa_pcidev_s *pcidev,
+<<<<<<< HEAD
 		enum bfi_pcifn_class clscode);
+=======
+		enum bfi_mclass mc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void bfa_ioc_mem_claim(struct bfa_ioc_s *ioc,  u8 *dm_kva, u64 dm_pa);
 void bfa_ioc_enable(struct bfa_ioc_s *ioc);
 void bfa_ioc_disable(struct bfa_ioc_s *ioc);
 bfa_boolean_t bfa_ioc_intx_claim(struct bfa_ioc_s *ioc);
 
 void bfa_ioc_boot(struct bfa_ioc_s *ioc, u32 boot_type,
+<<<<<<< HEAD
 		u32 boot_env);
+=======
+		u32 boot_param);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void bfa_ioc_isr(struct bfa_ioc_s *ioc, struct bfi_mbmsg_s *msg);
 void bfa_ioc_error_isr(struct bfa_ioc_s *ioc);
 bfa_boolean_t bfa_ioc_is_operational(struct bfa_ioc_s *ioc);
 bfa_boolean_t bfa_ioc_is_initialized(struct bfa_ioc_s *ioc);
 bfa_boolean_t bfa_ioc_is_disabled(struct bfa_ioc_s *ioc);
+<<<<<<< HEAD
 bfa_boolean_t bfa_ioc_is_acq_addr(struct bfa_ioc_s *ioc);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bfa_boolean_t bfa_ioc_fw_mismatch(struct bfa_ioc_s *ioc);
 bfa_boolean_t bfa_ioc_adapter_is_disabled(struct bfa_ioc_s *ioc);
 void bfa_ioc_reset_fwstate(struct bfa_ioc_s *ioc);
@@ -858,16 +978,25 @@ bfa_status_t bfa_ioc_debug_fwtrc(struct bfa_ioc_s *ioc, void *trcdata,
 				 int *trclen);
 bfa_status_t bfa_ioc_debug_fwcore(struct bfa_ioc_s *ioc, void *buf,
 	u32 *offset, int *buflen);
+<<<<<<< HEAD
+=======
+void bfa_ioc_set_fcmode(struct bfa_ioc_s *ioc);
+bfa_boolean_t bfa_ioc_get_fcmode(struct bfa_ioc_s *ioc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bfa_boolean_t bfa_ioc_sem_get(void __iomem *sem_reg);
 void bfa_ioc_fwver_get(struct bfa_ioc_s *ioc,
 			struct bfi_ioc_image_hdr_s *fwhdr);
 bfa_boolean_t bfa_ioc_fwver_cmp(struct bfa_ioc_s *ioc,
 			struct bfi_ioc_image_hdr_s *fwhdr);
+<<<<<<< HEAD
 void bfa_ioc_aen_post(struct bfa_ioc_s *ioc, enum bfa_ioc_aen_event event);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bfa_status_t bfa_ioc_fw_stats_get(struct bfa_ioc_s *ioc, void *stats);
 bfa_status_t bfa_ioc_fw_stats_clear(struct bfa_ioc_s *ioc);
 
 /*
+<<<<<<< HEAD
  * asic block configuration related APIs
  */
 u32	bfa_ablk_meminfo(void);
@@ -895,6 +1024,8 @@ bfa_status_t bfa_ablk_optrom_dis(struct bfa_ablk_s *ablk,
 		bfa_ablk_cbfn_t cbfn, void *cbarg);
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * bfa mfg wwn API functions
  */
 mac_t bfa_ioc_get_mac(struct bfa_ioc_s *ioc);
@@ -903,6 +1034,7 @@ mac_t bfa_ioc_get_mfg_mac(struct bfa_ioc_s *ioc);
 /*
  * F/W Image Size & Chunk
  */
+<<<<<<< HEAD
 extern u32 bfi_image_cb_size;
 extern u32 bfi_image_ct_size;
 extern u32 bfi_image_ct2_size;
@@ -943,10 +1075,43 @@ bfa_cb_image_get_chunk(enum bfi_asic_gen asic_gen, u32 off)
 		break;
 	default:
 		return NULL;
+=======
+extern u32 bfi_image_ct_fc_size;
+extern u32 bfi_image_ct_cna_size;
+extern u32 bfi_image_cb_fc_size;
+extern u32 *bfi_image_ct_fc;
+extern u32 *bfi_image_ct_cna;
+extern u32 *bfi_image_cb_fc;
+
+static inline u32 *
+bfi_image_ct_fc_get_chunk(u32 off)
+{	return (u32 *)(bfi_image_ct_fc + off); }
+
+static inline u32 *
+bfi_image_ct_cna_get_chunk(u32 off)
+{	return (u32 *)(bfi_image_ct_cna + off); }
+
+static inline u32 *
+bfi_image_cb_fc_get_chunk(u32 off)
+{	return (u32 *)(bfi_image_cb_fc + off); }
+
+static inline u32*
+bfa_cb_image_get_chunk(int type, u32 off)
+{
+	switch (type) {
+	case BFI_IMAGE_CT_FC:
+		return bfi_image_ct_fc_get_chunk(off);	break;
+	case BFI_IMAGE_CT_CNA:
+		return bfi_image_ct_cna_get_chunk(off);	break;
+	case BFI_IMAGE_CB_FC:
+		return bfi_image_cb_fc_get_chunk(off);	break;
+	default: return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
 static inline u32
+<<<<<<< HEAD
 bfa_cb_image_get_size(enum bfi_asic_gen asic_gen)
 {
 	switch (asic_gen) {
@@ -961,6 +1126,18 @@ bfa_cb_image_get_size(enum bfi_asic_gen asic_gen)
 		break;
 	default:
 		return 0;
+=======
+bfa_cb_image_get_size(int type)
+{
+	switch (type) {
+	case BFI_IMAGE_CT_FC:
+		return bfi_image_ct_fc_size;	break;
+	case BFI_IMAGE_CT_CNA:
+		return bfi_image_ct_cna_size;	break;
+	case BFI_IMAGE_CB_FC:
+		return bfi_image_cb_fc_size;	break;
+	default: return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 

@@ -29,7 +29,10 @@
 #include <asm/irq_regs.h>
 
 struct seq_file;
+<<<<<<< HEAD
 struct module;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct irq_desc;
 struct irq_data;
 typedef	void (*irq_flow_handler_t)(unsigned int irq,
@@ -49,12 +52,15 @@ typedef	void (*irq_preflow_handler_t)(struct irq_data *data);
  * IRQ_TYPE_LEVEL_LOW		- low level triggered
  * IRQ_TYPE_LEVEL_MASK		- Mask to filter out the level bits
  * IRQ_TYPE_SENSE_MASK		- Mask for all the above bits
+<<<<<<< HEAD
  * IRQ_TYPE_DEFAULT		- For use by some PICs to ask irq_set_type
  *				  to setup the HW to a sane default (used
  *                                by irqdomain map() callbacks to synchronize
  *                                the HW state and SW flags for a newly
  *                                allocated descriptor).
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * IRQ_TYPE_PROBE		- Special flag for probing in progress
  *
  * Bits which can be modified via irq_set/clear/modify_status_flags()
@@ -72,7 +78,10 @@ typedef	void (*irq_preflow_handler_t)(struct irq_data *data);
  * IRQ_NO_BALANCING		- Interrupt cannot be balanced (affinity set)
  * IRQ_MOVE_PCNTXT		- Interrupt can be migrated from process context
  * IRQ_NESTED_TRHEAD		- Interrupt nests into another thread
+<<<<<<< HEAD
  * IRQ_PER_CPU_DEVID		- Dev_id is a per-cpu variable
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 enum {
 	IRQ_TYPE_NONE		= 0x00000000,
@@ -83,7 +92,10 @@ enum {
 	IRQ_TYPE_LEVEL_LOW	= 0x00000008,
 	IRQ_TYPE_LEVEL_MASK	= (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH),
 	IRQ_TYPE_SENSE_MASK	= 0x0000000f,
+<<<<<<< HEAD
 	IRQ_TYPE_DEFAULT	= IRQ_TYPE_SENSE_MASK,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	IRQ_TYPE_PROBE		= 0x00000010,
 
@@ -96,16 +108,31 @@ enum {
 	IRQ_MOVE_PCNTXT		= (1 << 14),
 	IRQ_NESTED_THREAD	= (1 << 15),
 	IRQ_NOTHREAD		= (1 << 16),
+<<<<<<< HEAD
 	IRQ_PER_CPU_DEVID	= (1 << 17),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define IRQF_MODIFY_MASK	\
 	(IRQ_TYPE_SENSE_MASK | IRQ_NOPROBE | IRQ_NOREQUEST | \
 	 IRQ_NOAUTOEN | IRQ_MOVE_PCNTXT | IRQ_LEVEL | IRQ_NO_BALANCING | \
+<<<<<<< HEAD
 	 IRQ_PER_CPU | IRQ_NESTED_THREAD | IRQ_NOTHREAD | IRQ_PER_CPU_DEVID)
 
 #define IRQ_NO_BALANCING_MASK	(IRQ_PER_CPU | IRQ_NO_BALANCING)
 
+=======
+	 IRQ_PER_CPU | IRQ_NESTED_THREAD)
+
+#define IRQ_NO_BALANCING_MASK	(IRQ_PER_CPU | IRQ_NO_BALANCING)
+
+static inline __deprecated bool CHECK_IRQ_PER_CPU(unsigned int status)
+{
+	return status & IRQ_PER_CPU;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Return value for chip->irq_set_affinity()
  *
@@ -118,18 +145,27 @@ enum {
 };
 
 struct msi_desc;
+<<<<<<< HEAD
 struct irq_domain;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * struct irq_data - per irq and irq chip data passed down to chip functions
  * @irq:		interrupt number
+<<<<<<< HEAD
  * @hwirq:		hardware interrupt number, local to the interrupt domain
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @node:		node index useful for balancing
  * @state_use_accessors: status information for irq chip functions.
  *			Use accessor functions to deal with it
  * @chip:		low level interrupt hardware access
+<<<<<<< HEAD
  * @domain:		Interrupt translation domain; responsible for mapping
  *			between hwirq number and linux irq number.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @handler_data:	per-IRQ data for the irq_chip methods
  * @chip_data:		platform-specific per-chip private data for the chip
  *			methods, to allow shared chip implementations
@@ -142,11 +178,17 @@ struct irq_domain;
  */
 struct irq_data {
 	unsigned int		irq;
+<<<<<<< HEAD
 	unsigned long		hwirq;
 	unsigned int		node;
 	unsigned int		state_use_accessors;
 	struct irq_chip		*chip;
 	struct irq_domain	*domain;
+=======
+	unsigned int		node;
+	unsigned int		state_use_accessors;
+	struct irq_chip		*chip;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void			*handler_data;
 	void			*chip_data;
 	struct msi_desc		*msi_desc;
@@ -270,11 +312,14 @@ static inline void irqd_clr_chained_irq_inprogress(struct irq_data *d)
 	d->state_use_accessors &= ~IRQD_IRQ_INPROGRESS;
 }
 
+<<<<<<< HEAD
 static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
 {
 	return d->hwirq;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct irq_chip - hardware interrupt chip descriptor
  *
@@ -350,14 +395,20 @@ struct irq_chip {
  * IRQCHIP_MASK_ON_SUSPEND:	Mask non wake irqs in the suspend path
  * IRQCHIP_ONOFFLINE_ENABLED:	Only call irq_on/off_line callbacks
  *				when irq enabled
+<<<<<<< HEAD
  * IRQCHIP_SKIP_SET_WAKE:	Skip chip.irq_set_wake(), for this irq chip
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 enum {
 	IRQCHIP_SET_TYPE_MASKED		= (1 <<  0),
 	IRQCHIP_EOI_IF_HANDLED		= (1 <<  1),
 	IRQCHIP_MASK_ON_SUSPEND		= (1 <<  2),
 	IRQCHIP_ONOFFLINE_ENABLED	= (1 <<  3),
+<<<<<<< HEAD
 	IRQCHIP_SKIP_SET_WAKE		= (1 <<  4),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* This include will go away once we isolated irq_desc usage to core code */
@@ -381,8 +432,11 @@ enum {
 struct irqaction;
 extern int setup_irq(unsigned int irq, struct irqaction *new);
 extern void remove_irq(unsigned int irq, struct irqaction *act);
+<<<<<<< HEAD
 extern int setup_percpu_irq(unsigned int irq, struct irqaction *new);
 extern void remove_percpu_irq(unsigned int irq, struct irqaction *act);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void irq_cpu_online(void);
 extern void irq_cpu_offline(void);
@@ -410,7 +464,10 @@ extern void handle_edge_irq(unsigned int irq, struct irq_desc *desc);
 extern void handle_edge_eoi_irq(unsigned int irq, struct irq_desc *desc);
 extern void handle_simple_irq(unsigned int irq, struct irq_desc *desc);
 extern void handle_percpu_irq(unsigned int irq, struct irq_desc *desc);
+<<<<<<< HEAD
 extern void handle_percpu_devid_irq(unsigned int irq, struct irq_desc *desc);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void handle_bad_irq(unsigned int irq, struct irq_desc *desc);
 extern void handle_nested_irq(unsigned int irq);
 
@@ -439,8 +496,11 @@ static inline void irq_set_chip_and_handler(unsigned int irq, struct irq_chip *c
 	irq_set_chip_and_handler_name(irq, chip, handle, NULL);
 }
 
+<<<<<<< HEAD
 extern int irq_set_percpu_devid(unsigned int irq);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void
 __irq_set_handler(unsigned int irq, irq_flow_handler_t handle, int is_chained,
 		  const char *name);
@@ -502,6 +562,7 @@ static inline void irq_set_nested_thread(unsigned int irq, bool nest)
 		irq_clear_status_flags(irq, IRQ_NESTED_THREAD);
 }
 
+<<<<<<< HEAD
 static inline void irq_set_percpu_devid_flags(unsigned int irq)
 {
 	irq_set_status_flags(irq,
@@ -509,6 +570,8 @@ static inline void irq_set_percpu_devid_flags(unsigned int irq)
 			     IRQ_NOPROBE | IRQ_PER_CPU_DEVID);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Handle dynamic irq creation and destruction */
 extern unsigned int create_irq_nr(unsigned int irq_want, int node);
 extern int create_irq(void);
@@ -576,6 +639,7 @@ static inline struct msi_desc *irq_data_get_msi(struct irq_data *d)
 	return d->msi_desc;
 }
 
+<<<<<<< HEAD
 int __irq_alloc_descs(int irq, unsigned int from, unsigned int cnt, int node,
 		struct module *owner);
 
@@ -594,6 +658,26 @@ int __irq_alloc_descs(int irq, unsigned int from, unsigned int cnt, int node,
 
 void irq_free_descs(unsigned int irq, unsigned int cnt);
 int irq_reserve_irqs(unsigned int from, unsigned int cnt);
+=======
+int irq_alloc_descs(int irq, unsigned int from, unsigned int cnt, int node);
+void irq_free_descs(unsigned int irq, unsigned int cnt);
+int irq_reserve_irqs(unsigned int from, unsigned int cnt);
+
+static inline int irq_alloc_desc(int node)
+{
+	return irq_alloc_descs(-1, 0, 1, node);
+}
+
+static inline int irq_alloc_desc_at(unsigned int at, int node)
+{
+	return irq_alloc_descs(at, at, 1, node);
+}
+
+static inline int irq_alloc_desc_from(unsigned int from, int node)
+{
+	return irq_alloc_descs(-1, from, 1, node);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void irq_free_desc(unsigned int irq)
 {

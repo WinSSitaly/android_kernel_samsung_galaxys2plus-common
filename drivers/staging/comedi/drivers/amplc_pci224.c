@@ -384,9 +384,18 @@ static const struct pci224_board pci224_boards[] = {
  */
 
 static DEFINE_PCI_DEVICE_TABLE(pci224_pci_table) = {
+<<<<<<< HEAD
 	{ PCI_DEVICE(PCI_VENDOR_ID_AMPLICON, PCI_DEVICE_ID_AMPLICON_PCI224) },
 	{ PCI_DEVICE(PCI_VENDOR_ID_AMPLICON, PCI_DEVICE_ID_AMPLICON_PCI234) },
 	{0}
+=======
+	{
+	PCI_VENDOR_ID_AMPLICON, PCI_DEVICE_ID_AMPLICON_PCI224,
+		    PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+	PCI_VENDOR_ID_AMPLICON, PCI_DEVICE_ID_AMPLICON_PCI234,
+		    PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+	0}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 MODULE_DEVICE_TABLE(pci, pci224_pci_table);

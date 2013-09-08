@@ -1,7 +1,10 @@
 # Platform specific code goes here
 obj-y	+= ce4100/
 obj-y	+= efi/
+<<<<<<< HEAD
 obj-y	+= geode/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-y	+= iris/
 obj-y	+= mrst/
 obj-y	+= olpc/

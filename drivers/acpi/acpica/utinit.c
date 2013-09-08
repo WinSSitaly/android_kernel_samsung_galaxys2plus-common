@@ -5,7 +5,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,6 +57,7 @@ ACPI_MODULE_NAME("utinit")
 /* Local prototypes */
 static void acpi_ut_terminate(void);
 
+<<<<<<< HEAD
 #if (!ACPI_REDUCED_HARDWARE)
 
 static void acpi_ut_free_gpe_lists(void);
@@ -66,22 +71,40 @@ static void acpi_ut_free_gpe_lists(void);
 /******************************************************************************
  *
  * FUNCTION:    acpi_ut_free_gpe_lists
+=======
+/******************************************************************************
+ *
+ * FUNCTION:    acpi_ut_terminate
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * PARAMETERS:  none
  *
  * RETURN:      none
  *
+<<<<<<< HEAD
  * DESCRIPTION: Free global GPE lists
  *
  ******************************************************************************/
 
 static void acpi_ut_free_gpe_lists(void)
+=======
+ * DESCRIPTION: Free global memory
+ *
+ ******************************************************************************/
+
+static void acpi_ut_terminate(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct acpi_gpe_block_info *gpe_block;
 	struct acpi_gpe_block_info *next_gpe_block;
 	struct acpi_gpe_xrupt_info *gpe_xrupt_info;
 	struct acpi_gpe_xrupt_info *next_gpe_xrupt_info;
 
+<<<<<<< HEAD
+=======
+	ACPI_FUNCTION_TRACE(ut_terminate);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Free global GPE blocks and related info structures */
 
 	gpe_xrupt_info = acpi_gbl_gpe_xrupt_list_head;
@@ -99,6 +122,7 @@ static void acpi_ut_free_gpe_lists(void)
 		ACPI_FREE(gpe_xrupt_info);
 		gpe_xrupt_info = next_gpe_xrupt_info;
 	}
+<<<<<<< HEAD
 }
 #endif				/* !ACPI_REDUCED_HARDWARE */
 
@@ -120,6 +144,9 @@ static void acpi_ut_terminate(void)
 
 	acpi_ut_free_gpe_lists();
 	acpi_ut_delete_address_lists();
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return_VOID;
 }
 

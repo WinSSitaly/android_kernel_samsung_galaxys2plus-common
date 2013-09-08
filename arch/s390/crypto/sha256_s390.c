@@ -1,12 +1,24 @@
 /*
  * Cryptographic API.
  *
+<<<<<<< HEAD
  * s390 implementation of the SHA256 and SHA224 Secure Hash Algorithm.
  *
  * s390 Version:
  *   Copyright IBM Corp. 2005,2011
  *   Author(s): Jan Glauber (jang@de.ibm.com)
  *
+=======
+ * s390 implementation of the SHA256 Secure Hash Algorithm.
+ *
+ * s390 Version:
+ *   Copyright IBM Corp. 2005,2007
+ *   Author(s): Jan Glauber (jang@de.ibm.com)
+ *
+ * Derived from "crypto/sha256_generic.c"
+ * and "arch/s390/crypto/sha1_s390.c"
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
@@ -62,7 +74,11 @@ static int sha256_import(struct shash_desc *desc, const void *in)
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct shash_alg sha256_alg = {
+=======
+static struct shash_alg alg = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.digestsize	=	SHA256_DIGEST_SIZE,
 	.init		=	sha256_init,
 	.update		=	s390_sha_update,
@@ -81,6 +97,7 @@ static struct shash_alg sha256_alg = {
 	}
 };
 
+<<<<<<< HEAD
 static int sha224_init(struct shash_desc *desc)
 {
 	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
@@ -132,18 +149,35 @@ static int __init sha256_s390_init(void)
 		crypto_unregister_shash(&sha256_alg);
 out:
 	return ret;
+=======
+static int sha256_s390_init(void)
+{
+	if (!crypt_s390_func_available(KIMD_SHA_256, CRYPT_S390_MSA))
+		return -EOPNOTSUPP;
+
+	return crypto_register_shash(&alg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit sha256_s390_fini(void)
 {
+<<<<<<< HEAD
 	crypto_unregister_shash(&sha224_alg);
 	crypto_unregister_shash(&sha256_alg);
+=======
+	crypto_unregister_shash(&alg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(sha256_s390_init);
 module_exit(sha256_s390_fini);
 
 MODULE_ALIAS("sha256");
+<<<<<<< HEAD
 MODULE_ALIAS("sha224");
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("SHA256 and SHA224 Secure Hash Algorithm");
+=======
+MODULE_LICENSE("GPL");
+MODULE_DESCRIPTION("SHA256 Secure Hash Algorithm");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

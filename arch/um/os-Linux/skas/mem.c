@@ -9,6 +9,10 @@
 #include <string.h>
 #include <sys/mman.h>
 #include "init.h"
+<<<<<<< HEAD
+=======
+#include "kern_constants.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "as-layout.h"
 #include "mm_id.h"
 #include "os.h"
@@ -16,6 +20,10 @@
 #include "ptrace_user.h"
 #include "registers.h"
 #include "skas.h"
+<<<<<<< HEAD
+=======
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "sysdep/ptrace.h"
 #include "sysdep/stub.h"
 
@@ -37,7 +45,11 @@ static unsigned long syscall_regs[MAX_REG_NR];
 
 static int __init init_syscall_regs(void)
 {
+<<<<<<< HEAD
 	get_safe_registers(syscall_regs, NULL);
+=======
+	get_safe_registers(syscall_regs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	syscall_regs[REGS_IP_INDEX] = STUB_CODE +
 		((unsigned long) &batch_syscall_stub -
 		 (unsigned long) &__syscall_stub_start);

@@ -14,7 +14,10 @@
  */
 
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <sound/core.h>
 #include <sound/pcm.h>
 #include <sound/pcm_params.h>
@@ -89,6 +92,7 @@ static struct snd_soc_platform_driver dummy_platform = {
 	.ops = &dummy_dma_ops,
 };
 
+<<<<<<< HEAD
 static struct snd_soc_codec_driver dummy_codec;
 static struct snd_soc_dai_driver dummy_dai = {
 	.name = "snd-soc-dummy-dai",
@@ -109,12 +113,20 @@ static __devinit int snd_soc_dummy_probe(struct platform_device *pdev)
 	}
 
 	return ret;
+=======
+static __devinit int snd_soc_dummy_probe(struct platform_device *pdev)
+{
+	return snd_soc_register_platform(&pdev->dev, &dummy_platform);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static __devexit int snd_soc_dummy_remove(struct platform_device *pdev)
 {
 	snd_soc_unregister_platform(&pdev->dev);
+<<<<<<< HEAD
 	snd_soc_unregister_codec(&pdev->dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

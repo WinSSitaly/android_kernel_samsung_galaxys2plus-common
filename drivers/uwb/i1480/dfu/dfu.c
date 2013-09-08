@@ -33,7 +33,10 @@
 #include <linux/device.h>
 #include <linux/uwb.h>
 #include <linux/random.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * i1480_rceb_check - Check RCEB for expected field values

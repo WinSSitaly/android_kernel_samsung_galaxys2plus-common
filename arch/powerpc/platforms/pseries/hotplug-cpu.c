@@ -21,8 +21,13 @@
 #include <linux/kernel.h>
 #include <linux/interrupt.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/sched.h>	/* for idle_task_exit */
 #include <linux/cpu.h>
+=======
+#include <linux/cpu.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/prom.h>
 #include <asm/rtas.h>
 #include <asm/firmware.h>
@@ -135,7 +140,11 @@ static void pseries_mach_cpu_die(void)
 		get_lppaca()->idle = 0;
 
 		if (get_preferred_offline_state(cpu) == CPU_STATE_ONLINE) {
+<<<<<<< HEAD
 			unregister_slb_shadow(hwcpu);
+=======
+			unregister_slb_shadow(hwcpu, __pa(get_slb_shadow()));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/*
 			 * Call to start_secondary_resume() will not return.
@@ -150,7 +159,11 @@ static void pseries_mach_cpu_die(void)
 	WARN_ON(get_preferred_offline_state(cpu) != CPU_STATE_OFFLINE);
 
 	set_cpu_current_state(cpu, CPU_STATE_OFFLINE);
+<<<<<<< HEAD
 	unregister_slb_shadow(hwcpu);
+=======
+	unregister_slb_shadow(hwcpu, __pa(get_slb_shadow()));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtas_stop_self();
 
 	/* Should never get here... */
@@ -330,17 +343,34 @@ static void pseries_remove_processor(struct device_node *np)
 static int pseries_smp_notifier(struct notifier_block *nb,
 				unsigned long action, void *node)
 {
+<<<<<<< HEAD
 	int err = 0;
 
 	switch (action) {
 	case PSERIES_RECONFIG_ADD:
 		err = pseries_add_processor(node);
+=======
+	int err = NOTIFY_OK;
+
+	switch (action) {
+	case PSERIES_RECONFIG_ADD:
+		if (pseries_add_processor(node))
+			err = NOTIFY_BAD;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case PSERIES_RECONFIG_REMOVE:
 		pseries_remove_processor(node);
 		break;
+<<<<<<< HEAD
 	}
 	return notifier_from_errno(err);
+=======
+	default:
+		err = NOTIFY_DONE;
+		break;
+	}
+	return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct notifier_block pseries_smp_nb = {

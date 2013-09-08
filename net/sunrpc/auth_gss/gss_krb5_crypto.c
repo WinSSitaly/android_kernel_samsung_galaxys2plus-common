@@ -600,6 +600,7 @@ gss_krb5_cts_crypt(struct crypto_blkcipher *cipher, struct xdr_buf *buf,
 	u32 ret;
 	struct scatterlist sg[1];
 	struct blkcipher_desc desc = { .tfm = cipher, .info = iv };
+<<<<<<< HEAD
 	u8 data[GSS_KRB5_MAX_BLOCKSIZE * 2];
 	struct page **save_pages;
 	u32 len = buf->len - offset;
@@ -608,6 +609,13 @@ gss_krb5_cts_crypt(struct crypto_blkcipher *cipher, struct xdr_buf *buf,
 		WARN_ON(0);
 		return -ENOMEM;
 	}
+=======
+	u8 data[crypto_blkcipher_blocksize(cipher) * 2];
+	struct page **save_pages;
+	u32 len = buf->len - offset;
+
+	BUG_ON(len > crypto_blkcipher_blocksize(cipher) * 2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * For encryption, we want to read from the cleartext

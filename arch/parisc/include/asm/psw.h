@@ -59,6 +59,7 @@
 #define USER_PSW_MASK (WIDE_PSW | PSW_T | PSW_N | PSW_X | PSW_B | PSW_V | PSW_CB)
 #define USER_PSW      (PSW_C | PSW_Q | PSW_P | PSW_D | PSW_I)
 
+<<<<<<< HEAD
 #ifndef __ASSEMBLY__
 
 /* The program status word as bitfields.  */
@@ -100,4 +101,6 @@ struct pa_psw {
 
 #endif /* !__ASSEMBLY__ */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

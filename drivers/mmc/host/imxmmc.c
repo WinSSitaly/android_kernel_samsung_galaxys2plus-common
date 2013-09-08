@@ -942,7 +942,11 @@ static int __init imxmci_probe(struct platform_device *pdev)
 	int ret = 0, irq;
 	u16 rev_no;
 
+<<<<<<< HEAD
 	pr_info("i.MX mmc driver\n");
+=======
+	printk(KERN_INFO "i.MX mmc driver\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	irq = platform_get_irq(pdev, 0);

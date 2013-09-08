@@ -14,10 +14,21 @@
 
 #ifdef __KERNEL__
 #include <asm-generic/pci-dma-compat.h>
+<<<<<<< HEAD
 #include <asm-generic/pci-bridge.h>
 #include <asm-generic/pci.h>
 #include <mach/hardware.h> /* for PCIBIOS_MIN_* */
 
+=======
+#include <asm-generic/pci.h>
+#include <mach/hardware.h> /* for PCIBIOS_MIN_* */
+
+static inline void pcibios_set_master(struct pci_dev *dev)
+{
+	/* No special bus mastering setup handling */
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void pcibios_penalize_isa_irq(int irq, int active)
 {
 	/* We don't do dynamic PCI IRQ allocation */

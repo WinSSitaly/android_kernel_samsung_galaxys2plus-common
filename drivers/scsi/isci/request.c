@@ -53,7 +53,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+<<<<<<< HEAD
 #include <scsi/scsi_cmnd.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "isci.h"
 #include "task.h"
 #include "request.h"
@@ -61,6 +64,7 @@
 #include "scu_event_codes.h"
 #include "sas.h"
 
+<<<<<<< HEAD
 #undef C
 #define C(a) (#a)
 const char *req_state_name(enum sci_base_request_states state)
@@ -71,6 +75,8 @@ const char *req_state_name(enum sci_base_request_states state)
 }
 #undef C
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct scu_sgl_element_pair *to_sgl_element_pair(struct isci_request *ireq,
 							int idx)
 {
@@ -202,7 +208,11 @@ static void sci_task_request_build_ssp_task_iu(struct isci_request *ireq)
 
 	task_iu->task_func = isci_tmf->tmf_code;
 	task_iu->task_tag =
+<<<<<<< HEAD
 		(test_bit(IREQ_TMF, &ireq->flags)) ?
+=======
+		(ireq->ttype == tmf_task) ?
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		isci_tmf->io_tag :
 		SCI_CONTROLLER_INVALID_IO_TAG;
 }
@@ -275,6 +285,7 @@ static void scu_ssp_reqeust_construct_task_context(
 	task_context->response_iu_lower = lower_32_bits(dma_addr);
 }
 
+<<<<<<< HEAD
 static u8 scu_bg_blk_size(struct scsi_device *sdp)
 {
 	switch (sdp->sector_size) {
@@ -410,6 +421,8 @@ static void scu_ssp_ireq_dif_strip(struct isci_request *ireq, u8 type, u8 op)
 	tc->ref_tag_seed_gen = 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * This method is will fill in the SCU Task Context for a SSP IO request.
  * @sci_req:
@@ -420,10 +433,13 @@ static void scu_ssp_io_request_construct_task_context(struct isci_request *ireq,
 						      u32 len)
 {
 	struct scu_task_context *task_context = ireq->tc;
+<<<<<<< HEAD
 	struct sas_task *sas_task = ireq->ttype_ptr.io_task_ptr;
 	struct scsi_cmnd *scmd = sas_task->uldd_task;
 	u8 prot_type = scsi_get_prot_type(scmd);
 	u8 prot_op = scsi_get_prot_op(scmd);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	scu_ssp_reqeust_construct_task_context(ireq, task_context);
 
@@ -446,6 +462,7 @@ static void scu_ssp_io_request_construct_task_context(struct isci_request *ireq,
 
 	if (task_context->transfer_length_bytes > 0)
 		sci_request_build_sgl(ireq);
+<<<<<<< HEAD
 
 	if (prot_type != SCSI_PROT_DIF_TYPE0) {
 		if (prot_op == SCSI_PROT_READ_STRIP)
@@ -453,6 +470,8 @@ static void scu_ssp_io_request_construct_task_context(struct isci_request *ireq,
 		else if (prot_op == SCSI_PROT_WRITE_INSERT)
 			scu_ssp_ireq_dif_insert(ireq, prot_type, prot_op);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -638,6 +657,7 @@ static void sci_stp_optimized_request_construct(struct isci_request *ireq,
 	}
 }
 
+<<<<<<< HEAD
 static void sci_atapi_construct(struct isci_request *ireq)
 {
 	struct host_to_dev_fis *h2d_fis = &ireq->stp.cmd;
@@ -661,6 +681,9 @@ static void sci_atapi_construct(struct isci_request *ireq)
 	 */
 	ireq->stp.rsp.fis_type = 0;
 }
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static enum sci_status
 sci_io_request_construct_sata(struct isci_request *ireq,
@@ -670,6 +693,7 @@ sci_io_request_construct_sata(struct isci_request *ireq,
 {
 	enum sci_status status = SCI_SUCCESS;
 	struct sas_task *task = isci_request_access_task(ireq);
+<<<<<<< HEAD
 	struct domain_device *dev = ireq->target_device->domain_dev;
 
 	/* check for management protocols */
@@ -682,6 +706,25 @@ sci_io_request_construct_sata(struct isci_request *ireq,
 			__func__, ireq, tmf->tmf_code);
 
 		return SCI_FAILURE;
+=======
+
+	/* check for management protocols */
+	if (ireq->ttype == tmf_task) {
+		struct isci_tmf *tmf = isci_request_access_tmf(ireq);
+
+		if (tmf->tmf_code == isci_tmf_sata_srst_high ||
+		    tmf->tmf_code == isci_tmf_sata_srst_low) {
+			scu_stp_raw_request_construct_task_context(ireq);
+			return SCI_SUCCESS;
+		} else {
+			dev_err(&ireq->owning_controller->pdev->dev,
+				"%s: Request 0x%p received un-handled SAT "
+				"management protocol 0x%x.\n",
+				__func__, ireq, tmf->tmf_code);
+
+			return SCI_FAILURE;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (!sas_protocol_ata(task->task_proto)) {
@@ -693,6 +736,7 @@ sci_io_request_construct_sata(struct isci_request *ireq,
 
 	}
 
+<<<<<<< HEAD
 	/* ATAPI */
 	if (dev->sata_dev.command_set == ATAPI_COMMAND_SET &&
 	    task->ata_task.fis.command == ATA_CMD_PACKET) {
@@ -700,6 +744,8 @@ sci_io_request_construct_sata(struct isci_request *ireq,
 		return SCI_SUCCESS;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* non data */
 	if (task->data_dir == DMA_NONE) {
 		scu_stp_raw_request_construct_task_context(ireq);
@@ -778,9 +824,43 @@ static enum sci_status sci_io_request_construct_basic_sata(struct isci_request *
 	return status;
 }
 
+<<<<<<< HEAD
 /**
  * sci_req_tx_bytes - bytes transferred when reply underruns request
  * @ireq: request that was terminated early
+=======
+enum sci_status sci_task_request_construct_sata(struct isci_request *ireq)
+{
+	enum sci_status status = SCI_SUCCESS;
+
+	/* check for management protocols */
+	if (ireq->ttype == tmf_task) {
+		struct isci_tmf *tmf = isci_request_access_tmf(ireq);
+
+		if (tmf->tmf_code == isci_tmf_sata_srst_high ||
+		    tmf->tmf_code == isci_tmf_sata_srst_low) {
+			scu_stp_raw_request_construct_task_context(ireq);
+		} else {
+			dev_err(&ireq->owning_controller->pdev->dev,
+				"%s: Request 0x%p received un-handled SAT "
+				"Protocol 0x%x.\n",
+				__func__, ireq, tmf->tmf_code);
+
+			return SCI_FAILURE;
+		}
+	}
+
+	if (status != SCI_SUCCESS)
+		return status;
+	sci_change_state(&ireq->sm, SCI_REQ_CONSTRUCTED);
+
+	return status;
+}
+
+/**
+ * sci_req_tx_bytes - bytes transferred when reply underruns request
+ * @sci_req: request that was terminated early
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 #define SCU_TASK_CONTEXT_SRAM 0x200000
 static u32 sci_req_tx_bytes(struct isci_request *ireq)
@@ -879,10 +959,16 @@ sci_io_request_terminate(struct isci_request *ireq)
 	case SCI_REQ_STP_PIO_WAIT_FRAME:
 	case SCI_REQ_STP_PIO_DATA_IN:
 	case SCI_REQ_STP_PIO_DATA_OUT:
+<<<<<<< HEAD
 	case SCI_REQ_ATAPI_WAIT_H2D:
 	case SCI_REQ_ATAPI_WAIT_PIO_SETUP:
 	case SCI_REQ_ATAPI_WAIT_D2H:
 	case SCI_REQ_ATAPI_WAIT_TC_COMP:
+=======
+	case SCI_REQ_STP_SOFT_RESET_WAIT_H2D_ASSERTED:
+	case SCI_REQ_STP_SOFT_RESET_WAIT_H2D_DIAG:
+	case SCI_REQ_STP_SOFT_RESET_WAIT_D2H:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sci_change_state(&ireq->sm, SCI_REQ_ABORTING);
 		return SCI_SUCCESS;
 	case SCI_REQ_TASK_WAIT_TC_RESP:
@@ -920,8 +1006,12 @@ enum sci_status sci_request_complete(struct isci_request *ireq)
 
 	state = ireq->sm.current_state_id;
 	if (WARN_ONCE(state != SCI_REQ_COMPLETED,
+<<<<<<< HEAD
 		      "isci: request completion from wrong state (%s)\n",
 		      req_state_name(state)))
+=======
+		      "isci: request completion from wrong state (%d)\n", state))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 
 	if (ireq->saved_rx_frame_index != SCU_INVALID_FRAME_INDEX)
@@ -942,8 +1032,13 @@ enum sci_status sci_io_request_event_handler(struct isci_request *ireq,
 	state = ireq->sm.current_state_id;
 
 	if (state != SCI_REQ_STP_PIO_DATA_IN) {
+<<<<<<< HEAD
 		dev_warn(&ihost->pdev->dev, "%s: (%x) in wrong state %s\n",
 			 __func__, event_code, req_state_name(state));
+=======
+		dev_warn(&ihost->pdev->dev, "%s: (%x) in wrong state %d\n",
+			 __func__, event_code, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		return SCI_FAILURE_INVALID_STATE;
 	}
@@ -1349,8 +1444,13 @@ static enum sci_status sci_stp_request_pio_data_out_transmit_data(struct isci_re
 {
 	struct isci_stp_request *stp_req = &ireq->stp.req;
 	struct scu_sgl_element_pair *sgl_pair;
+<<<<<<< HEAD
 	enum sci_status status = SCI_SUCCESS;
 	struct scu_sgl_element *sgl;
+=======
+	struct scu_sgl_element *sgl;
+	enum sci_status status;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 offset;
 	u32 len = 0;
 
@@ -1404,7 +1504,11 @@ static enum sci_status sci_stp_request_pio_data_out_transmit_data(struct isci_re
  */
 static enum sci_status
 sci_stp_request_pio_data_in_copy_data_buffer(struct isci_stp_request *stp_req,
+<<<<<<< HEAD
 					     u8 *data_buf, u32 len)
+=======
+						  u8 *data_buf, u32 len)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct isci_request *ireq;
 	u8 *src_addr;
@@ -1425,9 +1529,15 @@ sci_stp_request_pio_data_in_copy_data_buffer(struct isci_stp_request *stp_req,
 			struct page *page = sg_page(sg);
 
 			copy_len = min_t(int, total_len, sg_dma_len(sg));
+<<<<<<< HEAD
 			kaddr = kmap_atomic(page);
 			memcpy(kaddr + sg->offset, src_addr, copy_len);
 			kunmap_atomic(kaddr);
+=======
+			kaddr = kmap_atomic(page, KM_IRQ0);
+			memcpy(kaddr + sg->offset, src_addr, copy_len);
+			kunmap_atomic(kaddr, KM_IRQ0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			total_len -= copy_len;
 			src_addr += copy_len;
 			sg = sg_next(sg);
@@ -1578,6 +1688,7 @@ static enum sci_status sci_stp_request_udma_general_frame_handler(struct isci_re
 	return status;
 }
 
+<<<<<<< HEAD
 static enum sci_status process_unsolicited_fis(struct isci_request *ireq,
 					       u32 frame_index)
 {
@@ -1700,6 +1811,8 @@ static void scu_atapi_construct_task_context(struct isci_request *ireq)
 	sci_request_build_sgl(ireq);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum sci_status
 sci_io_request_frame_handler(struct isci_request *ireq,
 				  u32 frame_index)
@@ -1775,7 +1888,11 @@ sci_io_request_frame_handler(struct isci_request *ireq,
 		sci_unsolicited_frame_control_get_header(&ihost->uf_control,
 							 frame_index,
 							 &frame_header);
+<<<<<<< HEAD
 		kaddr = kmap_atomic(sg_page(sg));
+=======
+		kaddr = kmap_atomic(sg_page(sg), KM_IRQ0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rsp = kaddr + sg->offset;
 		sci_swab32_cpy(rsp, frame_header, 1);
 
@@ -1812,7 +1929,11 @@ sci_io_request_frame_handler(struct isci_request *ireq,
 			ireq->sci_status = SCI_FAILURE_CONTROLLER_SPECIFIC_IO_ERR;
 			sci_change_state(&ireq->sm, SCI_REQ_COMPLETED);
 		}
+<<<<<<< HEAD
 		kunmap_atomic(kaddr);
+=======
+		kunmap_atomic(kaddr, KM_IRQ0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		sci_controller_release_frame(ihost, frame_index);
 
@@ -1970,7 +2091,11 @@ sci_io_request_frame_handler(struct isci_request *ireq,
 								      frame_index,
 								      (void **)&frame_buffer);
 
+<<<<<<< HEAD
 			sci_controller_copy_sata_response(&ireq->stp.rsp,
+=======
+			sci_controller_copy_sata_response(&ireq->stp.req,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 							       frame_header,
 							       frame_buffer);
 
@@ -2059,6 +2184,7 @@ sci_io_request_frame_handler(struct isci_request *ireq,
 		return status;
 	}
 
+<<<<<<< HEAD
 	case SCI_REQ_ATAPI_WAIT_PIO_SETUP: {
 		struct sas_task *task = isci_request_access_task(ireq);
 
@@ -2077,6 +2203,61 @@ sci_io_request_frame_handler(struct isci_request *ireq,
 	}
 	case SCI_REQ_ATAPI_WAIT_D2H:
 		return atapi_d2h_reg_frame_handler(ireq, frame_index);
+=======
+	case SCI_REQ_STP_SOFT_RESET_WAIT_D2H: {
+		struct dev_to_host_fis *frame_header;
+		u32 *frame_buffer;
+
+		status = sci_unsolicited_frame_control_get_header(&ihost->uf_control,
+								       frame_index,
+								       (void **)&frame_header);
+		if (status != SCI_SUCCESS) {
+			dev_err(&ihost->pdev->dev,
+				"%s: SCIC IO Request 0x%p could not get frame "
+				"header for frame index %d, status %x\n",
+				__func__,
+				stp_req,
+				frame_index,
+				status);
+			return status;
+		}
+
+		switch (frame_header->fis_type) {
+		case FIS_REGD2H:
+			sci_unsolicited_frame_control_get_buffer(&ihost->uf_control,
+								      frame_index,
+								      (void **)&frame_buffer);
+
+			sci_controller_copy_sata_response(&ireq->stp.rsp,
+							       frame_header,
+							       frame_buffer);
+
+			/* The command has completed with error */
+			ireq->scu_status = SCU_TASK_DONE_CHECK_RESPONSE;
+			ireq->sci_status = SCI_FAILURE_IO_RESPONSE_VALID;
+			break;
+
+		default:
+			dev_warn(&ihost->pdev->dev,
+				 "%s: IO Request:0x%p Frame Id:%d protocol "
+				 "violation occurred\n",
+				 __func__,
+				 stp_req,
+				 frame_index);
+
+			ireq->scu_status = SCU_TASK_DONE_UNEXP_FIS;
+			ireq->sci_status = SCI_FAILURE_PROTOCOL_VIOLATION;
+			break;
+		}
+
+		sci_change_state(&ireq->sm, SCI_REQ_COMPLETED);
+
+		/* Frame has been decoded return it to the controller */
+		sci_controller_release_frame(ihost, frame_index);
+
+		return status;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SCI_REQ_ABORTING:
 		/*
 		 * TODO: Is it even possible to get an unsolicited frame in the
@@ -2142,9 +2323,16 @@ static enum sci_status stp_request_udma_await_tc_event(struct isci_request *ireq
 	case SCU_MAKE_COMPLETION_STATUS(SCU_TASK_DONE_MAX_PLD_ERR):
 	case SCU_MAKE_COMPLETION_STATUS(SCU_TASK_DONE_LL_R_ERR):
 	case SCU_MAKE_COMPLETION_STATUS(SCU_TASK_DONE_CMD_LL_R_ERR):
+<<<<<<< HEAD
 		sci_remote_device_suspend(ireq->target_device,
 			SCU_EVENT_SPECIFIC(SCU_NORMALIZE_COMPLETION_STATUS(completion_code)));
 		/* Fall through to the default case */
+=======
+	case SCU_MAKE_COMPLETION_STATUS(SCU_TASK_DONE_CRC_ERR):
+		sci_remote_device_suspend(ireq->target_device,
+			SCU_EVENT_SPECIFIC(SCU_NORMALIZE_COMPLETION_STATUS(completion_code)));
+	/* Fall through to the default case */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		/* All other completion status cause the IO to be complete. */
 		ireq->scu_status = SCU_NORMALIZE_COMPLETION_STATUS(completion_code);
@@ -2156,29 +2344,49 @@ static enum sci_status stp_request_udma_await_tc_event(struct isci_request *ireq
 	return status;
 }
 
+<<<<<<< HEAD
 static enum sci_status atapi_raw_completion(struct isci_request *ireq, u32 completion_code,
 						  enum sci_base_request_states next)
 {
 	enum sci_status status = SCI_SUCCESS;
 
+=======
+static enum sci_status
+stp_request_soft_reset_await_h2d_asserted_tc_event(struct isci_request *ireq,
+						   u32 completion_code)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (SCU_GET_COMPLETION_TL_STATUS(completion_code)) {
 	case SCU_MAKE_COMPLETION_STATUS(SCU_TASK_DONE_GOOD):
 		ireq->scu_status = SCU_TASK_DONE_GOOD;
 		ireq->sci_status = SCI_SUCCESS;
+<<<<<<< HEAD
 		sci_change_state(&ireq->sm, next);
 		break;
 	default:
 		/* All other completion status cause the IO to be complete.
+=======
+		sci_change_state(&ireq->sm, SCI_REQ_STP_SOFT_RESET_WAIT_H2D_DIAG);
+		break;
+
+	default:
+		/*
+		 * All other completion status cause the IO to be complete.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * If a NAK was received, then it is up to the user to retry
 		 * the request.
 		 */
 		ireq->scu_status = SCU_NORMALIZE_COMPLETION_STATUS(completion_code);
 		ireq->sci_status = SCI_FAILURE_CONTROLLER_SPECIFIC_IO_ERR;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		sci_change_state(&ireq->sm, SCI_REQ_COMPLETED);
 		break;
 	}
 
+<<<<<<< HEAD
 	return status;
 }
 
@@ -2260,6 +2468,34 @@ static enum sci_status atapi_data_tc_completion_handler(struct isci_request *ire
 	}
 
 	return status;
+=======
+	return SCI_SUCCESS;
+}
+
+static enum sci_status
+stp_request_soft_reset_await_h2d_diagnostic_tc_event(struct isci_request *ireq,
+						     u32 completion_code)
+{
+	switch (SCU_GET_COMPLETION_TL_STATUS(completion_code)) {
+	case SCU_MAKE_COMPLETION_STATUS(SCU_TASK_DONE_GOOD):
+		ireq->scu_status = SCU_TASK_DONE_GOOD;
+		ireq->sci_status = SCI_SUCCESS;
+		sci_change_state(&ireq->sm, SCI_REQ_STP_SOFT_RESET_WAIT_D2H);
+		break;
+
+	default:
+		/* All other completion status cause the IO to be complete.  If
+		 * a NAK was received, then it is up to the user to retry the
+		 * request.
+		 */
+		ireq->scu_status = SCU_NORMALIZE_COMPLETION_STATUS(completion_code);
+		ireq->sci_status = SCI_FAILURE_CONTROLLER_SPECIFIC_IO_ERR;
+		sci_change_state(&ireq->sm, SCI_REQ_COMPLETED);
+		break;
+	}
+
+	return SCI_SUCCESS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 enum sci_status
@@ -2301,10 +2537,22 @@ sci_io_request_tc_completion(struct isci_request *ireq,
 	case SCI_REQ_STP_PIO_DATA_OUT:
 		return pio_data_out_tx_done_tc_event(ireq, completion_code);
 
+<<<<<<< HEAD
+=======
+	case SCI_REQ_STP_SOFT_RESET_WAIT_H2D_ASSERTED:
+		return stp_request_soft_reset_await_h2d_asserted_tc_event(ireq,
+									  completion_code);
+
+	case SCI_REQ_STP_SOFT_RESET_WAIT_H2D_DIAG:
+		return stp_request_soft_reset_await_h2d_diagnostic_tc_event(ireq,
+									    completion_code);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SCI_REQ_ABORTING:
 		return request_aborting_state_tc_event(ireq,
 						       completion_code);
 
+<<<<<<< HEAD
 	case SCI_REQ_ATAPI_WAIT_H2D:
 		return atapi_raw_completion(ireq, completion_code,
 					    SCI_REQ_ATAPI_WAIT_PIO_SETUP);
@@ -2319,6 +2567,15 @@ sci_io_request_tc_completion(struct isci_request *ireq,
 	default:
 		dev_warn(&ihost->pdev->dev, "%s: %x in wrong state %s\n",
 			 __func__, completion_code, req_state_name(state));
+=======
+	default:
+		dev_warn(&ihost->pdev->dev,
+			 "%s: SCIC IO Request given task completion "
+			 "notification %x while in wrong state %d\n",
+			 __func__,
+			 completion_code,
+			 state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 	}
 }
@@ -2635,8 +2892,19 @@ static void isci_task_save_for_upper_layer_completion(
 	switch (task_notification_selection) {
 
 	case isci_perform_normal_io_completion:
+<<<<<<< HEAD
 		/* Normal notification (task_done) */
 
+=======
+
+		/* Normal notification (task_done) */
+		dev_dbg(&host->pdev->dev,
+			"%s: Normal - task = %p, response=%d (%d), status=%d (%d)\n",
+			__func__,
+			task,
+			task->task_status.resp, response,
+			task->task_status.stat, status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Add to the completed list. */
 		list_add(&request->completed_node,
 			 &host->requests_to_complete);
@@ -2649,6 +2917,16 @@ static void isci_task_save_for_upper_layer_completion(
 		/* No notification to libsas because this request is
 		 * already in the abort path.
 		 */
+<<<<<<< HEAD
+=======
+		dev_dbg(&host->pdev->dev,
+			 "%s: Aborted - task = %p, response=%d (%d), status=%d (%d)\n",
+			 __func__,
+			 task,
+			 task->task_status.resp, response,
+			 task->task_status.stat, status);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Wake up whatever process was waiting for this
 		 * request to complete.
 		 */
@@ -2665,22 +2943,44 @@ static void isci_task_save_for_upper_layer_completion(
 
 	case isci_perform_error_io_completion:
 		/* Use sas_task_abort */
+<<<<<<< HEAD
+=======
+		dev_dbg(&host->pdev->dev,
+			 "%s: Error - task = %p, response=%d (%d), status=%d (%d)\n",
+			 __func__,
+			 task,
+			 task->task_status.resp, response,
+			 task->task_status.stat, status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Add to the aborted list. */
 		list_add(&request->completed_node,
 			 &host->requests_to_errorback);
 		break;
 
 	default:
+<<<<<<< HEAD
+=======
+		dev_dbg(&host->pdev->dev,
+			 "%s: Unknown - task = %p, response=%d (%d), status=%d (%d)\n",
+			 __func__,
+			 task,
+			 task->task_status.resp, response,
+			 task->task_status.stat, status);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Add to the error to libsas list. */
 		list_add(&request->completed_node,
 			 &host->requests_to_errorback);
 		break;
 	}
+<<<<<<< HEAD
 	dev_dbg(&host->pdev->dev,
 		"%s: %d - task = %p, response=%d (%d), status=%d (%d)\n",
 		__func__, task_notification_selection, task,
 		(task) ? task->task_status.resp : 0, response,
 		(task) ? task->task_status.stat : 0, status);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void isci_process_stp_response(struct sas_task *task, struct dev_to_host_fis *fis)
@@ -2697,8 +2997,11 @@ static void isci_process_stp_response(struct sas_task *task, struct dev_to_host_
 	 */
 	if (fis->status & ATA_DF)
 		ts->stat = SAS_PROTO_RESPONSE;
+<<<<<<< HEAD
 	else if (fis->status & ATA_ERR)
 		ts->stat = SAM_STAT_CHECK_CONDITION;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		ts->stat = SAM_STAT_GOOD;
 
@@ -2712,9 +3015,15 @@ static void isci_request_io_request_complete(struct isci_host *ihost,
 	struct sas_task *task = isci_request_access_task(request);
 	struct ssp_response_iu *resp_iu;
 	unsigned long task_flags;
+<<<<<<< HEAD
 	struct isci_remote_device *idev = request->target_device;
 	enum service_response response = SAS_TASK_UNDELIVERED;
 	enum exec_status status = SAS_ABORTED_TASK;
+=======
+	struct isci_remote_device *idev = isci_lookup_device(task->dev);
+	enum service_response response       = SAS_TASK_UNDELIVERED;
+	enum exec_status status         = SAS_ABORTED_TASK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	enum isci_request_status request_status;
 	enum isci_completion_selection complete_to_host
 		= isci_perform_normal_io_completion;
@@ -3028,10 +3337,17 @@ static void isci_request_io_request_complete(struct isci_host *ihost,
 		dma_unmap_sg(&ihost->pdev->dev, sg, 1, DMA_TO_DEVICE);
 
 		/* need to swab it back in case the command buffer is re-used */
+<<<<<<< HEAD
 		kaddr = kmap_atomic(sg_page(sg));
 		smp_req = kaddr + sg->offset;
 		sci_swab32_cpy(smp_req, smp_req, sg->length / sizeof(u32));
 		kunmap_atomic(kaddr);
+=======
+		kaddr = kmap_atomic(sg_page(sg), KM_IRQ0);
+		smp_req = kaddr + sg->offset;
+		sci_swab32_cpy(smp_req, smp_req, sg->length / sizeof(u32));
+		kunmap_atomic(kaddr, KM_IRQ0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 	default:
@@ -3045,6 +3361,10 @@ static void isci_request_io_request_complete(struct isci_host *ihost,
 
 	/* complete the io request to the core. */
 	sci_controller_complete_io(ihost, request->target_device, request);
+<<<<<<< HEAD
+=======
+	isci_put_device(idev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* set terminated handle so it cannot be completed or
 	 * terminated again, and to cause any calls into abort
@@ -3057,18 +3377,26 @@ static void sci_request_started_state_enter(struct sci_base_state_machine *sm)
 {
 	struct isci_request *ireq = container_of(sm, typeof(*ireq), sm);
 	struct domain_device *dev = ireq->target_device->domain_dev;
+<<<<<<< HEAD
 	enum sci_base_request_states state;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct sas_task *task;
 
 	/* XXX as hch said always creating an internal sas_task for tmf
 	 * requests would simplify the driver
 	 */
+<<<<<<< HEAD
 	task = (test_bit(IREQ_TMF, &ireq->flags)) ? NULL : isci_request_access_task(ireq);
+=======
+	task = ireq->ttype == io_task ? isci_request_access_task(ireq) : NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* all unaccelerated request types (non ssp or ncq) handled with
 	 * substates
 	 */
 	if (!task && dev->dev_type == SAS_END_DEV) {
+<<<<<<< HEAD
 		state = SCI_REQ_TASK_WAIT_TC_COMP;
 	} else if (task && task->task_proto == SAS_PROTOCOL_SMP) {
 		state = SCI_REQ_SMP_WAIT_RESP;
@@ -3089,6 +3417,28 @@ static void sci_request_started_state_enter(struct sci_base_state_machine *sm)
 		return;
 	}
 	sci_change_state(sm, state);
+=======
+		sci_change_state(sm, SCI_REQ_TASK_WAIT_TC_COMP);
+	} else if (!task &&
+		   (isci_request_access_tmf(ireq)->tmf_code == isci_tmf_sata_srst_high ||
+		    isci_request_access_tmf(ireq)->tmf_code == isci_tmf_sata_srst_low)) {
+		sci_change_state(sm, SCI_REQ_STP_SOFT_RESET_WAIT_H2D_ASSERTED);
+	} else if (task && task->task_proto == SAS_PROTOCOL_SMP) {
+		sci_change_state(sm, SCI_REQ_SMP_WAIT_RESP);
+	} else if (task && sas_protocol_ata(task->task_proto) &&
+		   !task->ata_task.use_ncq) {
+		u32 state;
+
+		if (task->data_dir == DMA_NONE)
+			state = SCI_REQ_STP_NON_DATA_WAIT_H2D;
+		else if (task->ata_task.dma_xfer)
+			state = SCI_REQ_STP_UDMA_WAIT_TC_COMP;
+		else /* PIO */
+			state = SCI_REQ_STP_PIO_WAIT_H2D;
+
+		sci_change_state(sm, state);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void sci_request_completed_state_enter(struct sci_base_state_machine *sm)
@@ -3126,6 +3476,34 @@ static void sci_stp_request_started_pio_await_h2d_completion_enter(struct sci_ba
 	ireq->target_device->working_request = ireq;
 }
 
+<<<<<<< HEAD
+=======
+static void sci_stp_request_started_soft_reset_await_h2d_asserted_completion_enter(struct sci_base_state_machine *sm)
+{
+	struct isci_request *ireq = container_of(sm, typeof(*ireq), sm);
+
+	ireq->target_device->working_request = ireq;
+}
+
+static void sci_stp_request_started_soft_reset_await_h2d_diagnostic_completion_enter(struct sci_base_state_machine *sm)
+{
+	struct isci_request *ireq = container_of(sm, typeof(*ireq), sm);
+	struct scu_task_context *tc = ireq->tc;
+	struct host_to_dev_fis *h2d_fis;
+	enum sci_status status;
+
+	/* Clear the SRST bit */
+	h2d_fis = &ireq->stp.cmd;
+	h2d_fis->control = 0;
+
+	/* Clear the TC control bit */
+	tc->control_frame = 0;
+
+	status = sci_controller_continue_io(ireq);
+	WARN_ONCE(status != SCI_SUCCESS, "isci: continue io failure\n");
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct sci_base_state sci_request_state_table[] = {
 	[SCI_REQ_INIT] = { },
 	[SCI_REQ_CONSTRUCTED] = { },
@@ -3144,14 +3522,27 @@ static const struct sci_base_state sci_request_state_table[] = {
 	[SCI_REQ_STP_PIO_DATA_OUT] = { },
 	[SCI_REQ_STP_UDMA_WAIT_TC_COMP] = { },
 	[SCI_REQ_STP_UDMA_WAIT_D2H] = { },
+<<<<<<< HEAD
+=======
+	[SCI_REQ_STP_SOFT_RESET_WAIT_H2D_ASSERTED] = {
+		.enter_state = sci_stp_request_started_soft_reset_await_h2d_asserted_completion_enter,
+	},
+	[SCI_REQ_STP_SOFT_RESET_WAIT_H2D_DIAG] = {
+		.enter_state = sci_stp_request_started_soft_reset_await_h2d_diagnostic_completion_enter,
+	},
+	[SCI_REQ_STP_SOFT_RESET_WAIT_D2H] = { },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[SCI_REQ_TASK_WAIT_TC_COMP] = { },
 	[SCI_REQ_TASK_WAIT_TC_RESP] = { },
 	[SCI_REQ_SMP_WAIT_RESP] = { },
 	[SCI_REQ_SMP_WAIT_TC_COMP] = { },
+<<<<<<< HEAD
 	[SCI_REQ_ATAPI_WAIT_H2D] = { },
 	[SCI_REQ_ATAPI_WAIT_PIO_SETUP] = { },
 	[SCI_REQ_ATAPI_WAIT_D2H] = { },
 	[SCI_REQ_ATAPI_WAIT_TC_COMP] = { },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[SCI_REQ_COMPLETED] = {
 		.enter_state = sci_request_completed_state_enter,
 	},
@@ -3280,7 +3671,11 @@ sci_io_request_construct_smp(struct device *dev,
 	u8 req_len;
 	u32 cmd;
 
+<<<<<<< HEAD
 	kaddr = kmap_atomic(sg_page(sg));
+=======
+	kaddr = kmap_atomic(sg_page(sg), KM_IRQ0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	smp_req = kaddr + sg->offset;
 	/*
 	 * Look at the SMP requests' header fields; for certain SAS 1.x SMP
@@ -3306,7 +3701,11 @@ sci_io_request_construct_smp(struct device *dev,
 	req_len = smp_req->req_len;
 	sci_swab32_cpy(smp_req, smp_req, sg->length / sizeof(u32));
 	cmd = *(u32 *) smp_req;
+<<<<<<< HEAD
 	kunmap_atomic(kaddr);
+=======
+	kunmap_atomic(kaddr, KM_IRQ0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!dma_map_sg(dev, sg, 1, DMA_TO_DEVICE))
 		return SCI_FAILURE;
@@ -3511,7 +3910,11 @@ static struct isci_request *isci_io_request_from_tag(struct isci_host *ihost,
 
 	ireq = isci_request_from_tag(ihost, tag);
 	ireq->ttype_ptr.io_task_ptr = task;
+<<<<<<< HEAD
 	clear_bit(IREQ_TMF, &ireq->flags);
+=======
+	ireq->ttype = io_task;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	task->lldd_task = ireq;
 
 	return ireq;
@@ -3525,7 +3928,11 @@ struct isci_request *isci_tmf_request_from_tag(struct isci_host *ihost,
 
 	ireq = isci_request_from_tag(ihost, tag);
 	ireq->ttype_ptr.tmf_task_ptr = isci_tmf;
+<<<<<<< HEAD
 	set_bit(IREQ_TMF, &ireq->flags);
+=======
+	ireq->ttype = tmf_task;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ireq;
 }
@@ -3618,7 +4025,12 @@ int isci_request_execute(struct isci_host *ihost, struct isci_remote_device *ide
 		/* Cause this task to be scheduled in the SCSI error
 		 * handler thread.
 		 */
+<<<<<<< HEAD
 		sas_task_abort(task);
+=======
+		isci_execpath_callback(ihost, task,
+				       sas_task_abort);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Change the status, since we are holding
 		 * the I/O until it is managed by the SCSI

@@ -13,7 +13,11 @@
 #include <asm/mach/map.h>
 #include <asm/pmu.h>
 
+<<<<<<< HEAD
 #include <plat/gpio-nomadik.h>
+=======
+#include <plat/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/hardware.h>
 #include <mach/devices.h>
@@ -30,11 +34,20 @@ static struct map_desc u5500_uart_io_desc[] __initdata = {
 };
 
 static struct map_desc u5500_io_desc[] __initdata = {
+<<<<<<< HEAD
 	/* SCU base also covers GIC CPU BASE and TWD with its 4K page */
 	__IO_DEV_DESC(U5500_SCU_BASE, SZ_4K),
 	__IO_DEV_DESC(U5500_GIC_DIST_BASE, SZ_4K),
 	__IO_DEV_DESC(U5500_L2CC_BASE, SZ_4K),
 	__IO_DEV_DESC(U5500_MTU0_BASE, SZ_4K),
+=======
+	__IO_DEV_DESC(U5500_GIC_CPU_BASE, SZ_4K),
+	__IO_DEV_DESC(U5500_GIC_DIST_BASE, SZ_4K),
+	__IO_DEV_DESC(U5500_L2CC_BASE, SZ_4K),
+	__IO_DEV_DESC(U5500_TWD_BASE, SZ_4K),
+	__IO_DEV_DESC(U5500_MTU0_BASE, SZ_4K),
+	__IO_DEV_DESC(U5500_SCU_BASE, SZ_4K),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__IO_DEV_DESC(U5500_BACKUPRAM0_BASE, SZ_8K),
 
 	__IO_DEV_DESC(U5500_GPIO0_BASE, SZ_4K),
@@ -43,7 +56,30 @@ static struct map_desc u5500_io_desc[] __initdata = {
 	__IO_DEV_DESC(U5500_GPIO3_BASE, SZ_4K),
 	__IO_DEV_DESC(U5500_GPIO4_BASE, SZ_4K),
 	__IO_DEV_DESC(U5500_PRCMU_BASE, SZ_4K),
+<<<<<<< HEAD
 	__IO_DEV_DESC(U5500_PRCMU_TCDM_BASE, SZ_4K),
+=======
+};
+
+static struct resource db5500_pmu_resources[] = {
+	[0] = {
+		.start		= IRQ_DB5500_PMU0,
+		.end		= IRQ_DB5500_PMU0,
+		.flags		= IORESOURCE_IRQ,
+	},
+	[1] = {
+		.start		= IRQ_DB5500_PMU1,
+		.end		= IRQ_DB5500_PMU1,
+		.flags		= IORESOURCE_IRQ,
+	},
+};
+
+static struct platform_device db5500_pmu_device = {
+	.name			= "arm-pmu",
+	.id			= ARM_PMU_DEVICE_CPU,
+	.num_resources		= ARRAY_SIZE(db5500_pmu_resources),
+	.resource		= db5500_pmu_resources,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct resource mbox0_resources[] = {
@@ -131,6 +167,10 @@ static struct platform_device mbox2_device = {
 };
 
 static struct platform_device *db5500_platform_devs[] __initdata = {
+<<<<<<< HEAD
+=======
+	&db5500_pmu_device,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&mbox0_device,
 	&mbox1_device,
 	&mbox2_device,
@@ -147,13 +187,21 @@ static resource_size_t __initdata db5500_gpio_base[] = {
 	U5500_GPIOBANK7_BASE,
 };
 
+<<<<<<< HEAD
 static void __init db5500_add_gpios(struct device *parent)
+=======
+static void __init db5500_add_gpios(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct nmk_gpio_platform_data pdata = {
 		/* No custom data yet */
 	};
 
+<<<<<<< HEAD
 	dbx500_add_gpios(parent, ARRAY_AND_SIZE(db5500_gpio_base),
+=======
+	dbx500_add_gpios(ARRAY_AND_SIZE(db5500_gpio_base),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 IRQ_DB5500_GPIO0, &pdata);
 }
 
@@ -171,6 +219,7 @@ void __init u5500_map_io(void)
 	_PRCMU_BASE = __io_address(U5500_PRCMU_BASE);
 }
 
+<<<<<<< HEAD
 static void __init db5500_pmu_init(void)
 {
 	struct resource res[] = {
@@ -190,6 +239,8 @@ static void __init db5500_pmu_init(void)
 					res, ARRAY_SIZE(res));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int usb_db5500_rx_dma_cfg[] = {
 	DB5500_DMA_DEV4_USB_OTG_IEP_1_9,
 	DB5500_DMA_DEV5_USB_OTG_IEP_2_10,
@@ -212,6 +263,7 @@ static int usb_db5500_tx_dma_cfg[] = {
 	DB5500_DMA_DEV38_USB_OTG_OEP_8
 };
 
+<<<<<<< HEAD
 static const char *db5500_read_soc_id(void)
 {
 	return kasprintf(GFP_KERNEL, "u5500 currently unsupported\n");
@@ -244,4 +296,15 @@ struct device * __init u5500_init_devices(void)
 			     ARRAY_SIZE(db5500_platform_devs));
 
 	return parent;
+=======
+void __init u5500_init_devices(void)
+{
+	db5500_add_gpios();
+	db5500_dma_init();
+	db5500_add_rtc();
+	db5500_add_usb(usb_db5500_rx_dma_cfg, usb_db5500_tx_dma_cfg);
+
+	platform_add_devices(db5500_platform_devs,
+			     ARRAY_SIZE(db5500_platform_devs));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

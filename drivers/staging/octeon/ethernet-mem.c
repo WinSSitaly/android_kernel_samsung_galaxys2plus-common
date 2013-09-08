@@ -32,7 +32,11 @@
 
 #include "ethernet-defines.h"
 
+<<<<<<< HEAD
 #include <asm/octeon/cvmx-fpa.h>
+=======
+#include "cvmx-fpa.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * cvm_oct_fill_hw_skbuff - fill the supplied hardware pool with skbuffs

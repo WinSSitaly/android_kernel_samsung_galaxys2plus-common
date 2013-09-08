@@ -19,7 +19,11 @@
 #include <linux/interrupt.h>
 #include <linux/ioport.h>
 #include <linux/ptrace.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 
 #include <asm/irq.h>
@@ -28,8 +32,11 @@
 #include <mach/hardware.h>
 #include <mach/regs-irq.h>
 
+<<<<<<< HEAD
 #include "nuc9xx.h"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct group_irq {
 	unsigned long		gpen;
 	unsigned int		enabled;

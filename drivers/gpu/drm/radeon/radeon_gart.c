@@ -49,27 +49,46 @@ int radeon_gart_table_ram_alloc(struct radeon_device *rdev)
 			      rdev->gart.table_size >> PAGE_SHIFT);
 	}
 #endif
+<<<<<<< HEAD
 	rdev->gart.ptr = ptr;
 	memset((void *)rdev->gart.ptr, 0, rdev->gart.table_size);
+=======
+	rdev->gart.table.ram.ptr = ptr;
+	memset((void *)rdev->gart.table.ram.ptr, 0, rdev->gart.table_size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 void radeon_gart_table_ram_free(struct radeon_device *rdev)
 {
+<<<<<<< HEAD
 	if (rdev->gart.ptr == NULL) {
+=======
+	if (rdev->gart.table.ram.ptr == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 #ifdef CONFIG_X86
 	if (rdev->family == CHIP_RS400 || rdev->family == CHIP_RS480 ||
 	    rdev->family == CHIP_RS690 || rdev->family == CHIP_RS740) {
+<<<<<<< HEAD
 		set_memory_wb((unsigned long)rdev->gart.ptr,
+=======
+		set_memory_wb((unsigned long)rdev->gart.table.ram.ptr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			      rdev->gart.table_size >> PAGE_SHIFT);
 	}
 #endif
 	pci_free_consistent(rdev->pdev, rdev->gart.table_size,
+<<<<<<< HEAD
 			    (void *)rdev->gart.ptr,
 			    rdev->gart.table_addr);
 	rdev->gart.ptr = NULL;
+=======
+			    (void *)rdev->gart.table.ram.ptr,
+			    rdev->gart.table_addr);
+	rdev->gart.table.ram.ptr = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rdev->gart.table_addr = 0;
 }
 
@@ -77,10 +96,17 @@ int radeon_gart_table_vram_alloc(struct radeon_device *rdev)
 {
 	int r;
 
+<<<<<<< HEAD
 	if (rdev->gart.robj == NULL) {
 		r = radeon_bo_create(rdev, rdev->gart.table_size,
 				     PAGE_SIZE, true, RADEON_GEM_DOMAIN_VRAM,
 				     &rdev->gart.robj);
+=======
+	if (rdev->gart.table.vram.robj == NULL) {
+		r = radeon_bo_create(rdev, rdev->gart.table_size,
+				     PAGE_SIZE, true, RADEON_GEM_DOMAIN_VRAM,
+				     &rdev->gart.table.vram.robj);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (r) {
 			return r;
 		}
@@ -93,6 +119,7 @@ int radeon_gart_table_vram_pin(struct radeon_device *rdev)
 	uint64_t gpu_addr;
 	int r;
 
+<<<<<<< HEAD
 	r = radeon_bo_reserve(rdev->gart.robj, false);
 	if (unlikely(r != 0))
 		return r;
@@ -106,10 +133,27 @@ int radeon_gart_table_vram_pin(struct radeon_device *rdev)
 	if (r)
 		radeon_bo_unpin(rdev->gart.robj);
 	radeon_bo_unreserve(rdev->gart.robj);
+=======
+	r = radeon_bo_reserve(rdev->gart.table.vram.robj, false);
+	if (unlikely(r != 0))
+		return r;
+	r = radeon_bo_pin(rdev->gart.table.vram.robj,
+				RADEON_GEM_DOMAIN_VRAM, &gpu_addr);
+	if (r) {
+		radeon_bo_unreserve(rdev->gart.table.vram.robj);
+		return r;
+	}
+	r = radeon_bo_kmap(rdev->gart.table.vram.robj,
+				(void **)&rdev->gart.table.vram.ptr);
+	if (r)
+		radeon_bo_unpin(rdev->gart.table.vram.robj);
+	radeon_bo_unreserve(rdev->gart.table.vram.robj);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rdev->gart.table_addr = gpu_addr;
 	return r;
 }
 
+<<<<<<< HEAD
 void radeon_gart_table_vram_unpin(struct radeon_device *rdev)
 {
 	int r;
@@ -133,6 +177,22 @@ void radeon_gart_table_vram_free(struct radeon_device *rdev)
 	}
 	radeon_gart_table_vram_unpin(rdev);
 	radeon_bo_unref(&rdev->gart.robj);
+=======
+void radeon_gart_table_vram_free(struct radeon_device *rdev)
+{
+	int r;
+
+	if (rdev->gart.table.vram.robj == NULL) {
+		return;
+	}
+	r = radeon_bo_reserve(rdev->gart.table.vram.robj, false);
+	if (likely(r == 0)) {
+		radeon_bo_kunmap(rdev->gart.table.vram.robj);
+		radeon_bo_unpin(rdev->gart.table.vram.robj);
+		radeon_bo_unreserve(rdev->gart.table.vram.robj);
+	}
+	radeon_bo_unref(&rdev->gart.table.vram.robj);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -150,20 +210,34 @@ void radeon_gart_unbind(struct radeon_device *rdev, unsigned offset,
 	u64 page_base;
 
 	if (!rdev->gart.ready) {
+<<<<<<< HEAD
 		WARN(1, "trying to unbind memory from uninitialized GART !\n");
+=======
+		WARN(1, "trying to unbind memory to unitialized GART !\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 	t = offset / RADEON_GPU_PAGE_SIZE;
 	p = t / (PAGE_SIZE / RADEON_GPU_PAGE_SIZE);
 	for (i = 0; i < pages; i++, p++) {
 		if (rdev->gart.pages[p]) {
+<<<<<<< HEAD
+=======
+			if (!rdev->gart.ttm_alloced[p])
+				pci_unmap_page(rdev->pdev, rdev->gart.pages_addr[p],
+				       		PAGE_SIZE, PCI_DMA_BIDIRECTIONAL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rdev->gart.pages[p] = NULL;
 			rdev->gart.pages_addr[p] = rdev->dummy_page.addr;
 			page_base = rdev->gart.pages_addr[p];
 			for (j = 0; j < (PAGE_SIZE / RADEON_GPU_PAGE_SIZE); j++, t++) {
+<<<<<<< HEAD
 				if (rdev->gart.ptr) {
 					radeon_gart_set_page(rdev, t, page_base);
 				}
+=======
+				radeon_gart_set_page(rdev, t, page_base);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				page_base += RADEON_GPU_PAGE_SIZE;
 			}
 		}
@@ -181,13 +255,18 @@ int radeon_gart_bind(struct radeon_device *rdev, unsigned offset,
 	int i, j;
 
 	if (!rdev->gart.ready) {
+<<<<<<< HEAD
 		WARN(1, "trying to bind memory to uninitialized GART !\n");
+=======
+		WARN(1, "trying to bind memory to unitialized GART !\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 	t = offset / RADEON_GPU_PAGE_SIZE;
 	p = t / (PAGE_SIZE / RADEON_GPU_PAGE_SIZE);
 
 	for (i = 0; i < pages; i++, p++) {
+<<<<<<< HEAD
 		rdev->gart.pages_addr[p] = dma_addr[i];
 		rdev->gart.pages[p] = pagelist[i];
 		if (rdev->gart.ptr) {
@@ -197,6 +276,31 @@ int radeon_gart_bind(struct radeon_device *rdev, unsigned offset,
 				page_base += RADEON_GPU_PAGE_SIZE;
 			}
 		}
+=======
+		/* we reverted the patch using dma_addr in TTM for now but this
+		 * code stops building on alpha so just comment it out for now */
+		if (0) { /*dma_addr[i] != DMA_ERROR_CODE) */
+			rdev->gart.ttm_alloced[p] = true;
+			rdev->gart.pages_addr[p] = dma_addr[i];
+		} else {
+			/* we need to support large memory configurations */
+			/* assume that unbind have already been call on the range */
+			rdev->gart.pages_addr[p] = pci_map_page(rdev->pdev, pagelist[i],
+							0, PAGE_SIZE,
+							PCI_DMA_BIDIRECTIONAL);
+			if (pci_dma_mapping_error(rdev->pdev, rdev->gart.pages_addr[p])) {
+				/* FIXME: failed to map page (return -ENOMEM?) */
+				radeon_gart_unbind(rdev, offset, pages);
+				return -ENOMEM;
+			}
+		}
+		rdev->gart.pages[p] = pagelist[i];
+		page_base = rdev->gart.pages_addr[p];
+		for (j = 0; j < (PAGE_SIZE / RADEON_GPU_PAGE_SIZE); j++, t++) {
+			radeon_gart_set_page(rdev, t, page_base);
+			page_base += RADEON_GPU_PAGE_SIZE;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	mb();
 	radeon_gart_tlb_flush(rdev);
@@ -208,9 +312,12 @@ void radeon_gart_restore(struct radeon_device *rdev)
 	int i, j, t;
 	u64 page_base;
 
+<<<<<<< HEAD
 	if (!rdev->gart.ptr) {
 		return;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0, t = 0; i < rdev->gart.num_cpu_pages; i++) {
 		page_base = rdev->gart.pages_addr[i];
 		for (j = 0; j < (PAGE_SIZE / RADEON_GPU_PAGE_SIZE); j++, t++) {
@@ -255,6 +362,15 @@ int radeon_gart_init(struct radeon_device *rdev)
 		radeon_gart_fini(rdev);
 		return -ENOMEM;
 	}
+<<<<<<< HEAD
+=======
+	rdev->gart.ttm_alloced = kzalloc(sizeof(bool) *
+					 rdev->gart.num_cpu_pages, GFP_KERNEL);
+	if (rdev->gart.ttm_alloced == NULL) {
+		radeon_gart_fini(rdev);
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* set GART entry to point to the dummy page by default */
 	for (i = 0; i < rdev->gart.num_cpu_pages; i++) {
 		rdev->gart.pages_addr[i] = rdev->dummy_page.addr;
@@ -271,6 +387,7 @@ void radeon_gart_fini(struct radeon_device *rdev)
 	rdev->gart.ready = false;
 	kfree(rdev->gart.pages);
 	kfree(rdev->gart.pages_addr);
+<<<<<<< HEAD
 	rdev->gart.pages = NULL;
 	rdev->gart.pages_addr = NULL;
 
@@ -686,3 +803,12 @@ void radeon_vm_fini(struct radeon_device *rdev, struct radeon_vm *vm)
 	}
 	mutex_unlock(&vm->mutex);
 }
+=======
+	kfree(rdev->gart.ttm_alloced);
+	rdev->gart.pages = NULL;
+	rdev->gart.pages_addr = NULL;
+	rdev->gart.ttm_alloced = NULL;
+
+	radeon_dummy_page_fini(rdev);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

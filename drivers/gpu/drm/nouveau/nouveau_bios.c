@@ -27,7 +27,10 @@
 #include "nouveau_drv.h"
 #include "nouveau_hw.h"
 #include "nouveau_encoder.h"
+<<<<<<< HEAD
 #include "nouveau_gpio.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/io-mapping.h>
 
@@ -35,6 +38,12 @@
 #define NV_CIO_CRE_44_HEADA 0x0
 #define NV_CIO_CRE_44_HEADB 0x3
 #define FEATURE_MOBILE 0x10	/* also FEATURE_QUADRO for BMP */
+<<<<<<< HEAD
+=======
+#define LEGACY_I2C_CRT 0x80
+#define LEGACY_I2C_PANEL 0x81
+#define LEGACY_I2C_TV 0x82
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define EDID1_LEN 128
 
@@ -65,6 +74,7 @@ static bool nv_cksum(const uint8_t *data, unsigned int length)
 }
 
 static int
+<<<<<<< HEAD
 score_vbios(struct nvbios *bios, const bool writeable)
 {
 	if (!bios->data || bios->data[0] != 0x55 || bios->data[1] != 0xAA) {
@@ -225,10 +235,140 @@ bios_shadow_acpi(struct nvbios *bios)
 		len -= size;
 		ptr += size;
 	}
+=======
+score_vbios(struct drm_device *dev, const uint8_t *data, const bool writeable)
+{
+	if (!(data[0] == 0x55 && data[1] == 0xAA)) {
+		NV_TRACEWARN(dev, "... BIOS signature not found\n");
+		return 0;
+	}
+
+	if (nv_cksum(data, data[2] * 512)) {
+		NV_TRACEWARN(dev, "... BIOS checksum invalid\n");
+		/* if a ro image is somewhat bad, it's probably all rubbish */
+		return writeable ? 2 : 1;
+	} else
+		NV_TRACE(dev, "... appears to be valid\n");
+
+	return 3;
+}
+
+static void load_vbios_prom(struct drm_device *dev, uint8_t *data)
+{
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	uint32_t pci_nv_20, save_pci_nv_20;
+	int pcir_ptr;
+	int i;
+
+	if (dev_priv->card_type >= NV_50)
+		pci_nv_20 = 0x88050;
+	else
+		pci_nv_20 = NV_PBUS_PCI_NV_20;
+
+	/* enable ROM access */
+	save_pci_nv_20 = nvReadMC(dev, pci_nv_20);
+	nvWriteMC(dev, pci_nv_20,
+		  save_pci_nv_20 & ~NV_PBUS_PCI_NV_20_ROM_SHADOW_ENABLED);
+
+	/* bail if no rom signature */
+	if (nv_rd08(dev, NV_PROM_OFFSET) != 0x55 ||
+	    nv_rd08(dev, NV_PROM_OFFSET + 1) != 0xaa)
+		goto out;
+
+	/* additional check (see note below) - read PCI record header */
+	pcir_ptr = nv_rd08(dev, NV_PROM_OFFSET + 0x18) |
+		   nv_rd08(dev, NV_PROM_OFFSET + 0x19) << 8;
+	if (nv_rd08(dev, NV_PROM_OFFSET + pcir_ptr) != 'P' ||
+	    nv_rd08(dev, NV_PROM_OFFSET + pcir_ptr + 1) != 'C' ||
+	    nv_rd08(dev, NV_PROM_OFFSET + pcir_ptr + 2) != 'I' ||
+	    nv_rd08(dev, NV_PROM_OFFSET + pcir_ptr + 3) != 'R')
+		goto out;
+
+	/* on some 6600GT/6800LE prom reads are messed up.  nvclock alleges a
+	 * a good read may be obtained by waiting or re-reading (cargocult: 5x)
+	 * each byte.  we'll hope pramin has something usable instead
+	 */
+	for (i = 0; i < NV_PROM_SIZE; i++)
+		data[i] = nv_rd08(dev, NV_PROM_OFFSET + i);
+
+out:
+	/* disable ROM access */
+	nvWriteMC(dev, pci_nv_20,
+		  save_pci_nv_20 | NV_PBUS_PCI_NV_20_ROM_SHADOW_ENABLED);
+}
+
+static void load_vbios_pramin(struct drm_device *dev, uint8_t *data)
+{
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	uint32_t old_bar0_pramin = 0;
+	int i;
+
+	if (dev_priv->card_type >= NV_50) {
+		uint32_t vbios_vram = (nv_rd32(dev, 0x619f04) & ~0xff) << 8;
+
+		if (!vbios_vram)
+			vbios_vram = (nv_rd32(dev, 0x1700) << 16) + 0xf0000;
+
+		old_bar0_pramin = nv_rd32(dev, 0x1700);
+		nv_wr32(dev, 0x1700, vbios_vram >> 16);
+	}
+
+	/* bail if no rom signature */
+	if (nv_rd08(dev, NV_PRAMIN_OFFSET) != 0x55 ||
+	    nv_rd08(dev, NV_PRAMIN_OFFSET + 1) != 0xaa)
+		goto out;
+
+	for (i = 0; i < NV_PROM_SIZE; i++)
+		data[i] = nv_rd08(dev, NV_PRAMIN_OFFSET + i);
+
+out:
+	if (dev_priv->card_type >= NV_50)
+		nv_wr32(dev, 0x1700, old_bar0_pramin);
+}
+
+static void load_vbios_pci(struct drm_device *dev, uint8_t *data)
+{
+	void __iomem *rom = NULL;
+	size_t rom_len;
+	int ret;
+
+	ret = pci_enable_rom(dev->pdev);
+	if (ret)
+		return;
+
+	rom = pci_map_rom(dev->pdev, &rom_len);
+	if (!rom)
+		goto out;
+	memcpy_fromio(data, rom, rom_len);
+	pci_unmap_rom(dev->pdev, rom);
+
+out:
+	pci_disable_rom(dev->pdev);
+}
+
+static void load_vbios_acpi(struct drm_device *dev, uint8_t *data)
+{
+	int i;
+	int ret;
+	int size = 64 * 1024;
+
+	if (!nouveau_acpi_rom_supported(dev->pdev))
+		return;
+
+	for (i = 0; i < (size / ROM_BIOS_PAGE); i++) {
+		ret = nouveau_acpi_get_bios_chunk(data,
+						  (i * ROM_BIOS_PAGE),
+						  ROM_BIOS_PAGE);
+		if (ret <= 0)
+			break;
+	}
+	return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct methods {
 	const char desc[8];
+<<<<<<< HEAD
 	void (*shadow)(struct nvbios *);
 	const bool rw;
 	int score;
@@ -262,10 +402,44 @@ bios_shadow(struct drm_device *dev)
 			if (mthd->score)
 				return true;
 		} while ((++mthd)->shadow);
+=======
+	void (*loadbios)(struct drm_device *, uint8_t *);
+	const bool rw;
+};
+
+static struct methods shadow_methods[] = {
+	{ "PRAMIN", load_vbios_pramin, true },
+	{ "PROM", load_vbios_prom, false },
+	{ "PCIROM", load_vbios_pci, true },
+	{ "ACPI", load_vbios_acpi, true },
+};
+#define NUM_SHADOW_METHODS ARRAY_SIZE(shadow_methods)
+
+static bool NVShadowVBIOS(struct drm_device *dev, uint8_t *data)
+{
+	struct methods *methods = shadow_methods;
+	int testscore = 3;
+	int scores[NUM_SHADOW_METHODS], i;
+
+	if (nouveau_vbios) {
+		for (i = 0; i < NUM_SHADOW_METHODS; i++)
+			if (!strcasecmp(nouveau_vbios, methods[i].desc))
+				break;
+
+		if (i < NUM_SHADOW_METHODS) {
+			NV_INFO(dev, "Attempting to use BIOS image from %s\n",
+				methods[i].desc);
+
+			methods[i].loadbios(dev, data);
+			if (score_vbios(dev, data, methods[i].rw))
+				return true;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		NV_ERROR(dev, "VBIOS source \'%s\' invalid\n", nouveau_vbios);
 	}
 
+<<<<<<< HEAD
 	mthd = shadow_methods;
 	do {
 		NV_TRACE(dev, "Checking %s for VBIOS\n", mthd->desc);
@@ -292,6 +466,30 @@ bios_shadow(struct drm_device *dev)
 	}
 
 	NV_ERROR(dev, "No valid VBIOS image found\n");
+=======
+	for (i = 0; i < NUM_SHADOW_METHODS; i++) {
+		NV_TRACE(dev, "Attempting to load BIOS image from %s\n",
+			 methods[i].desc);
+		data[0] = data[1] = 0;	/* avoid reuse of previous image */
+		methods[i].loadbios(dev, data);
+		scores[i] = score_vbios(dev, data, methods[i].rw);
+		if (scores[i] == testscore)
+			return true;
+	}
+
+	while (--testscore > 0) {
+		for (i = 0; i < NUM_SHADOW_METHODS; i++) {
+			if (scores[i] == testscore) {
+				NV_TRACE(dev, "Using BIOS image from %s\n",
+					 methods[i].desc);
+				methods[i].loadbios(dev, data);
+				return true;
+			}
+		}
+	}
+
+	NV_ERROR(dev, "No valid BIOS image found\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return false;
 }
 
@@ -332,11 +530,14 @@ munge_reg(struct nvbios *bios, uint32_t reg)
 	if (dev_priv->card_type < NV_50)
 		return reg;
 
+<<<<<<< HEAD
 	if (reg & 0x80000000) {
 		BUG_ON(bios->display.crtc < 0);
 		reg += bios->display.crtc * 0x800;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (reg & 0x40000000) {
 		BUG_ON(!dcbent);
 
@@ -345,7 +546,11 @@ munge_reg(struct nvbios *bios, uint32_t reg)
 			reg += 0x00000080;
 	}
 
+<<<<<<< HEAD
 	reg &= ~0xe0000000;
+=======
+	reg &= ~0x60000000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return reg;
 }
 
@@ -676,9 +881,16 @@ static int
 nv50_pll_set(struct drm_device *dev, uint32_t reg, uint32_t clk)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
+<<<<<<< HEAD
 	struct nouveau_pll_vals pll;
 	struct pll_lims pll_limits;
 	u32 ctrl, mask, coef;
+=======
+	uint32_t reg0 = nv_rd32(dev, reg + 0);
+	uint32_t reg1 = nv_rd32(dev, reg + 4);
+	struct nouveau_pll_vals pll;
+	struct pll_lims pll_limits;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	ret = get_pll_limits(dev, reg, &pll_limits);
@@ -689,6 +901,7 @@ nv50_pll_set(struct drm_device *dev, uint32_t reg, uint32_t clk)
 	if (!clk)
 		return -ERANGE;
 
+<<<<<<< HEAD
 	coef = pll.N1 << 8 | pll.M1;
 	ctrl = pll.log2P << 16;
 	mask = 0x00070000;
@@ -703,6 +916,17 @@ nv50_pll_set(struct drm_device *dev, uint32_t reg, uint32_t clk)
 
 	nv_mask(dev, reg + 0, mask, ctrl);
 	nv_wr32(dev, reg + 4, coef);
+=======
+	reg0 = (reg0 & 0xfff8ffff) | (pll.log2P << 16);
+	reg1 = (reg1 & 0xffff0000) | (pll.N1 << 8) | pll.M1;
+
+	if (dev_priv->vbios.execute) {
+		still_alive();
+		nv_wr32(dev, reg + 4, reg1);
+		nv_wr32(dev, reg + 0, reg0);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -759,6 +983,7 @@ static int dcb_entry_idx_from_crtchead(struct drm_device *dev)
 	return dcb_entry;
 }
 
+<<<<<<< HEAD
 static struct nouveau_i2c_chan *
 init_i2c_device_find(struct drm_device *dev, int i2c_index)
 {
@@ -772,6 +997,117 @@ init_i2c_device_find(struct drm_device *dev, int i2c_index)
 		if (idx != 0x7f && dcb->entry[idx].i2c_upper_default)
 			i2c_index = NV_I2C_DEFAULT(1);
 	}
+=======
+static int
+read_dcb_i2c_entry(struct drm_device *dev, int dcb_version, uint8_t *i2ctable, int index, struct dcb_i2c_entry *i2c)
+{
+	uint8_t dcb_i2c_ver = dcb_version, headerlen = 0, entry_len = 4;
+	int i2c_entries = DCB_MAX_NUM_I2C_ENTRIES;
+	int recordoffset = 0, rdofs = 1, wrofs = 0;
+	uint8_t port_type = 0;
+
+	if (!i2ctable)
+		return -EINVAL;
+
+	if (dcb_version >= 0x30) {
+		if (i2ctable[0] != dcb_version) /* necessary? */
+			NV_WARN(dev,
+				"DCB I2C table version mismatch (%02X vs %02X)\n",
+				i2ctable[0], dcb_version);
+		dcb_i2c_ver = i2ctable[0];
+		headerlen = i2ctable[1];
+		if (i2ctable[2] <= DCB_MAX_NUM_I2C_ENTRIES)
+			i2c_entries = i2ctable[2];
+		else
+			NV_WARN(dev,
+				"DCB I2C table has more entries than indexable "
+				"(%d entries, max %d)\n", i2ctable[2],
+				DCB_MAX_NUM_I2C_ENTRIES);
+		entry_len = i2ctable[3];
+		/* [4] is i2c_default_indices, read in parse_dcb_table() */
+	}
+	/*
+	 * It's your own fault if you call this function on a DCB 1.1 BIOS --
+	 * the test below is for DCB 1.2
+	 */
+	if (dcb_version < 0x14) {
+		recordoffset = 2;
+		rdofs = 0;
+		wrofs = 1;
+	}
+
+	if (index == 0xf)
+		return 0;
+	if (index >= i2c_entries) {
+		NV_ERROR(dev, "DCB I2C index too big (%d >= %d)\n",
+			 index, i2ctable[2]);
+		return -ENOENT;
+	}
+	if (i2ctable[headerlen + entry_len * index + 3] == 0xff) {
+		NV_ERROR(dev, "DCB I2C entry invalid\n");
+		return -EINVAL;
+	}
+
+	if (dcb_i2c_ver >= 0x30) {
+		port_type = i2ctable[headerlen + recordoffset + 3 + entry_len * index];
+
+		/*
+		 * Fixup for chips using same address offset for read and
+		 * write.
+		 */
+		if (port_type == 4)	/* seen on C51 */
+			rdofs = wrofs = 1;
+		if (port_type >= 5)	/* G80+ */
+			rdofs = wrofs = 0;
+	}
+
+	if (dcb_i2c_ver >= 0x40) {
+		if (port_type != 5 && port_type != 6)
+			NV_WARN(dev, "DCB I2C table has port type %d\n", port_type);
+
+		i2c->entry = ROM32(i2ctable[headerlen + recordoffset + entry_len * index]);
+	}
+
+	i2c->port_type = port_type;
+	i2c->read = i2ctable[headerlen + recordoffset + rdofs + entry_len * index];
+	i2c->write = i2ctable[headerlen + recordoffset + wrofs + entry_len * index];
+
+	return 0;
+}
+
+static struct nouveau_i2c_chan *
+init_i2c_device_find(struct drm_device *dev, int i2c_index)
+{
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	struct dcb_table *dcb = &dev_priv->vbios.dcb;
+
+	if (i2c_index == 0xff) {
+		/* note: dcb_entry_idx_from_crtchead needs pre-script set-up */
+		int idx = dcb_entry_idx_from_crtchead(dev), shift = 0;
+		int default_indices = dcb->i2c_default_indices;
+
+		if (idx != 0x7f && dcb->entry[idx].i2c_upper_default)
+			shift = 4;
+
+		i2c_index = (default_indices >> shift) & 0xf;
+	}
+	if (i2c_index == 0x80)	/* g80+ */
+		i2c_index = dcb->i2c_default_indices & 0xf;
+	else
+	if (i2c_index == 0x81)
+		i2c_index = (dcb->i2c_default_indices & 0xf0) >> 4;
+
+	if (i2c_index >= DCB_MAX_NUM_I2C_ENTRIES) {
+		NV_ERROR(dev, "invalid i2c_index 0x%x\n", i2c_index);
+		return NULL;
+	}
+
+	/* Make sure i2c table entry has been parsed, it may not
+	 * have been if this is a bus not referenced by a DCB encoder
+	 */
+	read_dcb_i2c_entry(dev, dcb->version, dcb->i2c_table,
+			   i2c_index, &dcb->i2c[i2c_index]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return nouveau_i2c_find(dev, i2c_index);
 }
@@ -1123,16 +1459,25 @@ init_dp_condition(struct nvbios *bios, uint16_t offset, struct init_exec *iexec)
 	 *
 	 */
 
+<<<<<<< HEAD
 	struct dcb_entry *dcb = bios->display.output;
 	struct drm_device *dev = bios->dev;
 	uint8_t cond = bios->data[offset + 1];
 	uint8_t *table, *entry;
+=======
+	struct bit_displayport_encoder_table *dpe = NULL;
+	struct dcb_entry *dcb = bios->display.output;
+	struct drm_device *dev = bios->dev;
+	uint8_t cond = bios->data[offset + 1];
+	int dummy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BIOSLOG(bios, "0x%04X: subop 0x%02X\n", offset, cond);
 
 	if (!iexec->execute)
 		return 3;
 
+<<<<<<< HEAD
 	table = nouveau_dp_bios_data(dev, dcb, &entry);
 	if (!table)
 		return 3;
@@ -1147,6 +1492,27 @@ init_dp_condition(struct nvbios *bios, uint16_t offset, struct init_exec *iexec)
 	case 2:
 		if ((table[0]  < 0x40 && !(entry[5] & cond)) ||
 		    (table[0] == 0x40 && !(entry[4] & cond)))
+=======
+	dpe = nouveau_bios_dp_table(dev, dcb, &dummy);
+	if (!dpe) {
+		NV_ERROR(dev, "0x%04X: INIT_3A: no encoder table!!\n", offset);
+		return 3;
+	}
+
+	switch (cond) {
+	case 0:
+	{
+		struct dcb_connector_table_entry *ent =
+			&bios->dcb.connector.entry[dcb->connector];
+
+		if (ent->type != DCB_CONNECTOR_eDP)
+			iexec->execute = false;
+	}
+		break;
+	case 1:
+	case 2:
+		if (!(dpe->unknown & cond))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			iexec->execute = false;
 		break;
 	case 5:
@@ -3176,8 +3542,54 @@ init_gpio(struct nvbios *bios, uint16_t offset, struct init_exec *iexec)
 	 * each GPIO according to various values listed in each entry
 	 */
 
+<<<<<<< HEAD
 	if (iexec->execute && bios->execute)
 		nouveau_gpio_reset(bios->dev);
+=======
+	struct drm_nouveau_private *dev_priv = bios->dev->dev_private;
+	struct nouveau_gpio_engine *pgpio = &dev_priv->engine.gpio;
+	const uint32_t nv50_gpio_ctl[2] = { 0xe100, 0xe28c };
+	int i;
+
+	if (dev_priv->card_type < NV_50) {
+		NV_ERROR(bios->dev, "INIT_GPIO on unsupported chipset\n");
+		return 1;
+	}
+
+	if (!iexec->execute)
+		return 1;
+
+	for (i = 0; i < bios->dcb.gpio.entries; i++) {
+		struct dcb_gpio_entry *gpio = &bios->dcb.gpio.entry[i];
+		uint32_t r, s, v;
+
+		BIOSLOG(bios, "0x%04X: Entry: 0x%08X\n", offset, gpio->entry);
+
+		BIOSLOG(bios, "0x%04X: set gpio 0x%02x, state %d\n",
+			offset, gpio->tag, gpio->state_default);
+		if (bios->execute)
+			pgpio->set(bios->dev, gpio->tag, gpio->state_default);
+
+		/* The NVIDIA binary driver doesn't appear to actually do
+		 * any of this, my VBIOS does however.
+		 */
+		/* Not a clue, needs de-magicing */
+		r = nv50_gpio_ctl[gpio->line >> 4];
+		s = (gpio->line & 0x0f);
+		v = bios_rd32(bios, r) & ~(0x00010001 << s);
+		switch ((gpio->entry & 0x06000000) >> 25) {
+		case 1:
+			v |= (0x00000001 << s);
+			break;
+		case 2:
+			v |= (0x00010000 << s);
+			break;
+		default:
+			break;
+		}
+		bios_wr32(bios, r, v);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 1;
 }
@@ -3639,10 +4051,13 @@ parse_init_table(struct nvbios *bios, uint16_t offset, struct init_exec *iexec)
 	int count = 0, i, ret;
 	uint8_t id;
 
+<<<<<<< HEAD
 	/* catch NULL script pointers */
 	if (offset == 0)
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Loop until INIT_DONE causes us to break out of the loop
 	 * (or until offset > bios length just in case... )
@@ -4274,6 +4689,21 @@ int nouveau_bios_parse_lvds_table(struct drm_device *dev, int pxclk, bool *dl, b
 		break;
 	}
 
+<<<<<<< HEAD
+=======
+	/* Dell Latitude D620 reports a too-high value for the dual-link
+	 * transition freq, causing us to program the panel incorrectly.
+	 *
+	 * It doesn't appear the VBIOS actually uses its transition freq
+	 * (90000kHz), instead it uses the "Number of LVDS channels" field
+	 * out of the panel ID structure (http://www.spwg.org/).
+	 *
+	 * For the moment, a quirk will do :)
+	 */
+	if (nv_match_device(dev, 0x01d7, 0x1028, 0x01c2))
+		bios->fp.duallink_transition_clk = 80000;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* set dual_link flag for EDID case */
 	if (pxclk && (chip_version < 0x25 || chip_version > 0x28))
 		bios->fp.dual_link = (pxclk >= bios->fp.duallink_transition_clk);
@@ -4283,6 +4713,7 @@ int nouveau_bios_parse_lvds_table(struct drm_device *dev, int pxclk, bool *dl, b
 	return 0;
 }
 
+<<<<<<< HEAD
 /* BIT 'U'/'d' table encoder subtables have hashes matching them to
  * a particular set of encoders.
  *
@@ -4314,6 +4745,88 @@ bios_encoder_match(struct dcb_entry *dcb, u32 hash)
 int
 nouveau_bios_run_display_table(struct drm_device *dev, u16 type, int pclk,
 			       struct dcb_entry *dcbent, int crtc)
+=======
+static uint8_t *
+bios_output_config_match(struct drm_device *dev, struct dcb_entry *dcbent,
+			 uint16_t record, int record_len, int record_nr,
+			 bool match_link)
+{
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	struct nvbios *bios = &dev_priv->vbios;
+	uint32_t entry;
+	uint16_t table;
+	int i, v;
+
+	switch (dcbent->type) {
+	case OUTPUT_TMDS:
+	case OUTPUT_LVDS:
+	case OUTPUT_DP:
+		break;
+	default:
+		match_link = false;
+		break;
+	}
+
+	for (i = 0; i < record_nr; i++, record += record_len) {
+		table = ROM16(bios->data[record]);
+		if (!table)
+			continue;
+		entry = ROM32(bios->data[table]);
+
+		if (match_link) {
+			v = (entry & 0x00c00000) >> 22;
+			if (!(v & dcbent->sorconf.link))
+				continue;
+		}
+
+		v = (entry & 0x000f0000) >> 16;
+		if (!(v & dcbent->or))
+			continue;
+
+		v = (entry & 0x000000f0) >> 4;
+		if (v != dcbent->location)
+			continue;
+
+		v = (entry & 0x0000000f);
+		if (v != dcbent->type)
+			continue;
+
+		return &bios->data[table];
+	}
+
+	return NULL;
+}
+
+void *
+nouveau_bios_dp_table(struct drm_device *dev, struct dcb_entry *dcbent,
+		      int *length)
+{
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	struct nvbios *bios = &dev_priv->vbios;
+	uint8_t *table;
+
+	if (!bios->display.dp_table_ptr) {
+		NV_ERROR(dev, "No pointer to DisplayPort table\n");
+		return NULL;
+	}
+	table = &bios->data[bios->display.dp_table_ptr];
+
+	if (table[0] != 0x20 && table[0] != 0x21) {
+		NV_ERROR(dev, "DisplayPort table version 0x%02x unknown\n",
+			 table[0]);
+		return NULL;
+	}
+
+	*length = table[4];
+	return bios_output_config_match(dev, dcbent,
+					bios->display.dp_table_ptr + table[1],
+					table[2], table[3], table[0] >= 0x21);
+}
+
+int
+nouveau_bios_run_display_table(struct drm_device *dev, struct dcb_entry *dcbent,
+			       uint32_t sub, int pxclk)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * The display script table is located by the BIT 'U' table.
@@ -4343,7 +4856,11 @@ nouveau_bios_run_display_table(struct drm_device *dev, u16 type, int pclk,
 	uint8_t *table = &bios->data[bios->display.script_table_ptr];
 	uint8_t *otable = NULL;
 	uint16_t script;
+<<<<<<< HEAD
 	int i;
+=======
+	int i = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!bios->display.script_table_ptr) {
 		NV_ERROR(dev, "No pointer to output script table\n");
@@ -4395,33 +4912,54 @@ nouveau_bios_run_display_table(struct drm_device *dev, u16 type, int pclk,
 
 	NV_DEBUG_KMS(dev, "Searching for output entry for %d %d %d\n",
 			dcbent->type, dcbent->location, dcbent->or);
+<<<<<<< HEAD
 	for (i = 0; i < table[3]; i++) {
 		otable = ROMPTR(dev, table[table[1] + (i * table[2])]);
 		if (otable && bios_encoder_match(dcbent, ROM32(otable[0])))
 			break;
 	}
 
+=======
+	otable = bios_output_config_match(dev, dcbent, table[1] +
+					  bios->display.script_table_ptr,
+					  table[2], table[3], table[0] >= 0x21);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!otable) {
 		NV_DEBUG_KMS(dev, "failed to match any output table\n");
 		return 1;
 	}
 
+<<<<<<< HEAD
 	if (pclk < -2 || pclk > 0) {
 		/* Try to find matching script table entry */
 		for (i = 0; i < otable[5]; i++) {
 			if (ROM16(otable[table[4] + i*6]) == type)
+=======
+	if (pxclk < -2 || pxclk > 0) {
+		/* Try to find matching script table entry */
+		for (i = 0; i < otable[5]; i++) {
+			if (ROM16(otable[table[4] + i*6]) == sub)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				break;
 		}
 
 		if (i == otable[5]) {
 			NV_ERROR(dev, "Table 0x%04x not found for %d/%d, "
 				      "using first\n",
+<<<<<<< HEAD
 				 type, dcbent->type, dcbent->or);
+=======
+				 sub, dcbent->type, dcbent->or);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			i = 0;
 		}
 	}
 
+<<<<<<< HEAD
 	if (pclk == 0) {
+=======
+	if (pxclk == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		script = ROM16(otable[6]);
 		if (!script) {
 			NV_DEBUG_KMS(dev, "output script 0 not found\n");
@@ -4429,9 +4967,15 @@ nouveau_bios_run_display_table(struct drm_device *dev, u16 type, int pclk,
 		}
 
 		NV_DEBUG_KMS(dev, "0x%04X: parsing output script 0\n", script);
+<<<<<<< HEAD
 		nouveau_bios_run_init_table(dev, script, dcbent, crtc);
 	} else
 	if (pclk == -1) {
+=======
+		nouveau_bios_run_init_table(dev, script, dcbent);
+	} else
+	if (pxclk == -1) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		script = ROM16(otable[8]);
 		if (!script) {
 			NV_DEBUG_KMS(dev, "output script 1 not found\n");
@@ -4439,9 +4983,15 @@ nouveau_bios_run_display_table(struct drm_device *dev, u16 type, int pclk,
 		}
 
 		NV_DEBUG_KMS(dev, "0x%04X: parsing output script 1\n", script);
+<<<<<<< HEAD
 		nouveau_bios_run_init_table(dev, script, dcbent, crtc);
 	} else
 	if (pclk == -2) {
+=======
+		nouveau_bios_run_init_table(dev, script, dcbent);
+	} else
+	if (pxclk == -2) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (table[4] >= 12)
 			script = ROM16(otable[10]);
 		else
@@ -4452,31 +5002,53 @@ nouveau_bios_run_display_table(struct drm_device *dev, u16 type, int pclk,
 		}
 
 		NV_DEBUG_KMS(dev, "0x%04X: parsing output script 2\n", script);
+<<<<<<< HEAD
 		nouveau_bios_run_init_table(dev, script, dcbent, crtc);
 	} else
 	if (pclk > 0) {
 		script = ROM16(otable[table[4] + i*6 + 2]);
 		if (script)
 			script = clkcmptable(bios, script, pclk);
+=======
+		nouveau_bios_run_init_table(dev, script, dcbent);
+	} else
+	if (pxclk > 0) {
+		script = ROM16(otable[table[4] + i*6 + 2]);
+		if (script)
+			script = clkcmptable(bios, script, pxclk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!script) {
 			NV_DEBUG_KMS(dev, "clock script 0 not found\n");
 			return 1;
 		}
 
 		NV_DEBUG_KMS(dev, "0x%04X: parsing clock script 0\n", script);
+<<<<<<< HEAD
 		nouveau_bios_run_init_table(dev, script, dcbent, crtc);
 	} else
 	if (pclk < 0) {
 		script = ROM16(otable[table[4] + i*6 + 4]);
 		if (script)
 			script = clkcmptable(bios, script, -pclk);
+=======
+		nouveau_bios_run_init_table(dev, script, dcbent);
+	} else
+	if (pxclk < 0) {
+		script = ROM16(otable[table[4] + i*6 + 4]);
+		if (script)
+			script = clkcmptable(bios, script, -pxclk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!script) {
 			NV_DEBUG_KMS(dev, "clock script 1 not found\n");
 			return 1;
 		}
 
 		NV_DEBUG_KMS(dev, "0x%04X: parsing clock script 1\n", script);
+<<<<<<< HEAD
 		nouveau_bios_run_init_table(dev, script, dcbent, crtc);
+=======
+		nouveau_bios_run_init_table(dev, script, dcbent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -4574,7 +5146,11 @@ static struct pll_mapping nv84_pll_mapping[] = {
 	{ PLL_CORE  , 0x004028 },
 	{ PLL_SHADER, 0x004020 },
 	{ PLL_MEMORY, 0x004008 },
+<<<<<<< HEAD
 	{ PLL_VDEC  , 0x004030 },
+=======
+	{ PLL_UNK05 , 0x004030 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ PLL_UNK41 , 0x00e818 },
 	{ PLL_VPLL0 , 0x614100 },
 	{ PLL_VPLL1 , 0x614900 },
@@ -5035,7 +5611,11 @@ static int parse_bit_A_tbl_entry(struct drm_device *dev, struct nvbios *bios, st
 	load_table_ptr = ROM16(bios->data[bitentry->offset]);
 
 	if (load_table_ptr == 0x0) {
+<<<<<<< HEAD
 		NV_DEBUG(dev, "Pointer to BIT loadval table invalid\n");
+=======
+		NV_ERROR(dev, "Pointer to BIT loadval table invalid\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -5326,6 +5906,17 @@ parse_bit_U_tbl_entry(struct drm_device *dev, struct nvbios *bios,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int
+parse_bit_displayport_tbl_entry(struct drm_device *dev, struct nvbios *bios,
+				struct bit_entry *bitentry)
+{
+	bios->display.dp_table_ptr = ROM16(bios->data[bitentry->offset]);
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct bit_table {
 	const char id;
 	int (* const parse_fn)(struct drm_device *, struct nvbios *, struct bit_entry *);
@@ -5340,9 +5931,12 @@ bit_table(struct drm_device *dev, u8 id, struct bit_entry *bit)
 	struct nvbios *bios = &dev_priv->vbios;
 	u8 entries, *entry;
 
+<<<<<<< HEAD
 	if (bios->type != NVBIOS_BIT)
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	entries = bios->data[bios->offset + 10];
 	entry   = &bios->data[bios->offset + 12];
 	while (entries--) {
@@ -5351,7 +5945,11 @@ bit_table(struct drm_device *dev, u8 id, struct bit_entry *bit)
 			bit->version = entry[1];
 			bit->length = ROM16(entry[2]);
 			bit->offset = ROM16(entry[4]);
+<<<<<<< HEAD
 			bit->data = ROMPTR(dev, entry[4]);
+=======
+			bit->data = ROMPTR(bios, entry[4]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 0;
 		}
 
@@ -5402,6 +6000,10 @@ parse_bit_structure(struct nvbios *bios, const uint16_t bitoffset)
 	parse_bit_table(bios, bitoffset, &BIT_TABLE('L', lvds));
 	parse_bit_table(bios, bitoffset, &BIT_TABLE('T', tmds));
 	parse_bit_table(bios, bitoffset, &BIT_TABLE('U', U));
+<<<<<<< HEAD
+=======
+	parse_bit_table(bios, bitoffset, &BIT_TABLE('d', displayport));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -5456,6 +6058,13 @@ static int parse_bmp_structure(struct drm_device *dev, struct nvbios *bios, unsi
 	uint16_t legacy_scripts_offset, legacy_i2c_offset;
 
 	/* load needed defaults in case we can't parse this info */
+<<<<<<< HEAD
+=======
+	bios->dcb.i2c[0].write = NV_CIO_CRE_DDC_WR__INDEX;
+	bios->dcb.i2c[0].read = NV_CIO_CRE_DDC_STATUS__INDEX;
+	bios->dcb.i2c[1].write = NV_CIO_CRE_DDC0_WR__INDEX;
+	bios->dcb.i2c[1].read = NV_CIO_CRE_DDC0_STATUS__INDEX;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bios->digital_min_front_porch = 0x4b;
 	bios->fmaxvco = 256000;
 	bios->fminvco = 128000;
@@ -5563,6 +6172,17 @@ static int parse_bmp_structure(struct drm_device *dev, struct nvbios *bios, unsi
 	bios->legacy.i2c_indices.crt = bios->data[legacy_i2c_offset];
 	bios->legacy.i2c_indices.tv = bios->data[legacy_i2c_offset + 1];
 	bios->legacy.i2c_indices.panel = bios->data[legacy_i2c_offset + 2];
+<<<<<<< HEAD
+=======
+	if (bios->data[legacy_i2c_offset + 4])
+		bios->dcb.i2c[0].write = bios->data[legacy_i2c_offset + 4];
+	if (bios->data[legacy_i2c_offset + 5])
+		bios->dcb.i2c[0].read = bios->data[legacy_i2c_offset + 5];
+	if (bios->data[legacy_i2c_offset + 6])
+		bios->dcb.i2c[1].write = bios->data[legacy_i2c_offset + 6];
+	if (bios->data[legacy_i2c_offset + 7])
+		bios->dcb.i2c[1].read = bios->data[legacy_i2c_offset + 7];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (bmplength > 74) {
 		bios->fmaxvco = ROM32(bmp[67]);
@@ -5613,6 +6233,7 @@ static uint16_t findstr(uint8_t *data, int n, const uint8_t *str, int len)
 	return 0;
 }
 
+<<<<<<< HEAD
 void *
 dcb_table(struct drm_device *dev)
 {
@@ -5735,6 +6356,276 @@ dcb_conn(struct drm_device *dev, u8 idx)
 	if (conntab && idx < conntab[2])
 		return conntab + conntab[1] + (idx * conntab[3]);
 	return NULL;
+=======
+static struct dcb_gpio_entry *
+new_gpio_entry(struct nvbios *bios)
+{
+	struct drm_device *dev = bios->dev;
+	struct dcb_gpio_table *gpio = &bios->dcb.gpio;
+
+	if (gpio->entries >= DCB_MAX_NUM_GPIO_ENTRIES) {
+		NV_ERROR(dev, "exceeded maximum number of gpio entries!!\n");
+		return NULL;
+	}
+
+	return &gpio->entry[gpio->entries++];
+}
+
+struct dcb_gpio_entry *
+nouveau_bios_gpio_entry(struct drm_device *dev, enum dcb_gpio_tag tag)
+{
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	struct nvbios *bios = &dev_priv->vbios;
+	int i;
+
+	for (i = 0; i < bios->dcb.gpio.entries; i++) {
+		if (bios->dcb.gpio.entry[i].tag != tag)
+			continue;
+
+		return &bios->dcb.gpio.entry[i];
+	}
+
+	return NULL;
+}
+
+static void
+parse_dcb_gpio_table(struct nvbios *bios)
+{
+	struct drm_device *dev = bios->dev;
+	struct dcb_gpio_entry *e;
+	u8 headerlen, entries, recordlen;
+	u8 *dcb, *gpio = NULL, *entry;
+	int i;
+
+	dcb = ROMPTR(bios, bios->data[0x36]);
+	if (dcb[0] >= 0x30) {
+		gpio = ROMPTR(bios, dcb[10]);
+		if (!gpio)
+			goto no_table;
+
+		headerlen = gpio[1];
+		entries   = gpio[2];
+		recordlen = gpio[3];
+	} else
+	if (dcb[0] >= 0x22 && dcb[-1] >= 0x13) {
+		gpio = ROMPTR(bios, dcb[-15]);
+		if (!gpio)
+			goto no_table;
+
+		headerlen = 3;
+		entries   = gpio[2];
+		recordlen = gpio[1];
+	} else
+	if (dcb[0] >= 0x22) {
+		/* No GPIO table present, parse the TVDAC GPIO data. */
+		uint8_t *tvdac_gpio = &dcb[-5];
+
+		if (tvdac_gpio[0] & 1) {
+			e = new_gpio_entry(bios);
+			e->tag = DCB_GPIO_TVDAC0;
+			e->line = tvdac_gpio[1] >> 4;
+			e->invert = tvdac_gpio[0] & 2;
+		}
+
+		goto no_table;
+	} else {
+		NV_DEBUG(dev, "no/unknown gpio table on DCB 0x%02x\n", dcb[0]);
+		goto no_table;
+	}
+
+	entry = gpio + headerlen;
+	for (i = 0; i < entries; i++, entry += recordlen) {
+		e = new_gpio_entry(bios);
+		if (!e)
+			break;
+
+		if (gpio[0] < 0x40) {
+			e->entry = ROM16(entry[0]);
+			e->tag = (e->entry & 0x07e0) >> 5;
+			if (e->tag == 0x3f) {
+				bios->dcb.gpio.entries--;
+				continue;
+			}
+
+			e->line = (e->entry & 0x001f);
+			e->invert = ((e->entry & 0xf800) >> 11) != 4;
+		} else {
+			e->entry = ROM32(entry[0]);
+			e->tag = (e->entry & 0x0000ff00) >> 8;
+			if (e->tag == 0xff) {
+				bios->dcb.gpio.entries--;
+				continue;
+			}
+
+			e->line = (e->entry & 0x0000001f) >> 0;
+			e->state_default = (e->entry & 0x01000000) >> 24;
+			e->state[0] = (e->entry & 0x18000000) >> 27;
+			e->state[1] = (e->entry & 0x60000000) >> 29;
+		}
+	}
+
+no_table:
+	/* Apple iMac G4 NV18 */
+	if (nv_match_device(dev, 0x0189, 0x10de, 0x0010)) {
+		e = new_gpio_entry(bios);
+		if (e) {
+			e->tag = DCB_GPIO_TVDAC0;
+			e->line = 4;
+		}
+	}
+}
+
+struct dcb_connector_table_entry *
+nouveau_bios_connector_entry(struct drm_device *dev, int index)
+{
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	struct nvbios *bios = &dev_priv->vbios;
+	struct dcb_connector_table_entry *cte;
+
+	if (index >= bios->dcb.connector.entries)
+		return NULL;
+
+	cte = &bios->dcb.connector.entry[index];
+	if (cte->type == 0xff)
+		return NULL;
+
+	return cte;
+}
+
+static enum dcb_connector_type
+divine_connector_type(struct nvbios *bios, int index)
+{
+	struct dcb_table *dcb = &bios->dcb;
+	unsigned encoders = 0, type = DCB_CONNECTOR_NONE;
+	int i;
+
+	for (i = 0; i < dcb->entries; i++) {
+		if (dcb->entry[i].connector == index)
+			encoders |= (1 << dcb->entry[i].type);
+	}
+
+	if (encoders & (1 << OUTPUT_DP)) {
+		if (encoders & (1 << OUTPUT_TMDS))
+			type = DCB_CONNECTOR_DP;
+		else
+			type = DCB_CONNECTOR_eDP;
+	} else
+	if (encoders & (1 << OUTPUT_TMDS)) {
+		if (encoders & (1 << OUTPUT_ANALOG))
+			type = DCB_CONNECTOR_DVI_I;
+		else
+			type = DCB_CONNECTOR_DVI_D;
+	} else
+	if (encoders & (1 << OUTPUT_ANALOG)) {
+		type = DCB_CONNECTOR_VGA;
+	} else
+	if (encoders & (1 << OUTPUT_LVDS)) {
+		type = DCB_CONNECTOR_LVDS;
+	} else
+	if (encoders & (1 << OUTPUT_TV)) {
+		type = DCB_CONNECTOR_TV_0;
+	}
+
+	return type;
+}
+
+static void
+apply_dcb_connector_quirks(struct nvbios *bios, int idx)
+{
+	struct dcb_connector_table_entry *cte = &bios->dcb.connector.entry[idx];
+	struct drm_device *dev = bios->dev;
+
+	/* Gigabyte NX85T */
+	if (nv_match_device(dev, 0x0421, 0x1458, 0x344c)) {
+		if (cte->type == DCB_CONNECTOR_HDMI_1)
+			cte->type = DCB_CONNECTOR_DVI_I;
+	}
+}
+
+static const u8 hpd_gpio[16] = {
+	0xff, 0x07, 0x08, 0xff, 0xff, 0x51, 0x52, 0xff,
+	0xff, 0xff, 0xff, 0xff, 0xff, 0x5e, 0x5f, 0x60,
+};
+
+static void
+parse_dcb_connector_table(struct nvbios *bios)
+{
+	struct drm_device *dev = bios->dev;
+	struct dcb_connector_table *ct = &bios->dcb.connector;
+	struct dcb_connector_table_entry *cte;
+	uint8_t *conntab = &bios->data[bios->dcb.connector_table_ptr];
+	uint8_t *entry;
+	int i;
+
+	if (!bios->dcb.connector_table_ptr) {
+		NV_DEBUG_KMS(dev, "No DCB connector table present\n");
+		return;
+	}
+
+	NV_INFO(dev, "DCB connector table: VHER 0x%02x %d %d %d\n",
+		conntab[0], conntab[1], conntab[2], conntab[3]);
+	if ((conntab[0] != 0x30 && conntab[0] != 0x40) ||
+	    (conntab[3] != 2 && conntab[3] != 4)) {
+		NV_ERROR(dev, "  Unknown!  Please report.\n");
+		return;
+	}
+
+	ct->entries = conntab[2];
+
+	entry = conntab + conntab[1];
+	cte = &ct->entry[0];
+	for (i = 0; i < conntab[2]; i++, entry += conntab[3], cte++) {
+		cte->index = i;
+		if (conntab[3] == 2)
+			cte->entry = ROM16(entry[0]);
+		else
+			cte->entry = ROM32(entry[0]);
+
+		cte->type  = (cte->entry & 0x000000ff) >> 0;
+		cte->index2 = (cte->entry & 0x00000f00) >> 8;
+
+		cte->gpio_tag = ffs((cte->entry & 0x07033000) >> 12);
+		cte->gpio_tag = hpd_gpio[cte->gpio_tag];
+
+		if (cte->type == 0xff)
+			continue;
+
+		apply_dcb_connector_quirks(bios, i);
+
+		NV_INFO(dev, "  %d: 0x%08x: type 0x%02x idx %d tag 0x%02x\n",
+			i, cte->entry, cte->type, cte->index, cte->gpio_tag);
+
+		/* check for known types, fallback to guessing the type
+		 * from attached encoders if we hit an unknown.
+		 */
+		switch (cte->type) {
+		case DCB_CONNECTOR_VGA:
+		case DCB_CONNECTOR_TV_0:
+		case DCB_CONNECTOR_TV_1:
+		case DCB_CONNECTOR_TV_3:
+		case DCB_CONNECTOR_DVI_I:
+		case DCB_CONNECTOR_DVI_D:
+		case DCB_CONNECTOR_LVDS:
+		case DCB_CONNECTOR_LVDS_SPWG:
+		case DCB_CONNECTOR_DP:
+		case DCB_CONNECTOR_eDP:
+		case DCB_CONNECTOR_HDMI_0:
+		case DCB_CONNECTOR_HDMI_1:
+			break;
+		default:
+			cte->type = divine_connector_type(bios, cte->index);
+			NV_WARN(dev, "unknown type, using 0x%02x\n", cte->type);
+			break;
+		}
+
+		if (nouveau_override_conntype) {
+			int type = divine_connector_type(bios, cte->index);
+			if (type != cte->type)
+				NV_WARN(dev, " -> type 0x%02x\n", cte->type);
+		}
+
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct dcb_entry *new_dcb_entry(struct dcb_table *dcb)
@@ -5767,7 +6658,12 @@ parse_dcb20_entry(struct drm_device *dev, struct dcb_table *dcb,
 	entry->type = conn & 0xf;
 	entry->i2c_index = (conn >> 4) & 0xf;
 	entry->heads = (conn >> 8) & 0xf;
+<<<<<<< HEAD
 	entry->connector = (conn >> 12) & 0xf;
+=======
+	if (dcb->version >= 0x40)
+		entry->connector = (conn >> 12) & 0xf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	entry->bus = (conn >> 16) & 0xf;
 	entry->location = (conn >> 20) & 0x3;
 	entry->or = (conn >> 24) & 0xf;
@@ -5833,6 +6729,7 @@ parse_dcb20_entry(struct drm_device *dev, struct dcb_table *dcb,
 	}
 	case OUTPUT_DP:
 		entry->dpconf.sor.link = (conf & 0x00000030) >> 4;
+<<<<<<< HEAD
 		switch ((conf & 0x00e00000) >> 21) {
 		case 0:
 			entry->dpconf.link_bw = 162000;
@@ -5841,6 +6738,9 @@ parse_dcb20_entry(struct drm_device *dev, struct dcb_table *dcb,
 			entry->dpconf.link_bw = 270000;
 			break;
 		}
+=======
+		entry->dpconf.link_bw = (conf & 0x00e00000) >> 21;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		switch ((conf & 0x0f000000) >> 24) {
 		case 0xf:
 			entry->dpconf.link_nr = 4;
@@ -5939,6 +6839,28 @@ parse_dcb15_entry(struct drm_device *dev, struct dcb_table *dcb,
 	return true;
 }
 
+<<<<<<< HEAD
+=======
+static bool parse_dcb_entry(struct drm_device *dev, struct dcb_table *dcb,
+			    uint32_t conn, uint32_t conf)
+{
+	struct dcb_entry *entry = new_dcb_entry(dcb);
+	bool ret;
+
+	if (dcb->version >= 0x20)
+		ret = parse_dcb20_entry(dev, dcb, conn, conf, entry);
+	else
+		ret = parse_dcb15_entry(dev, dcb, conn, conf, entry);
+	if (!ret)
+		return ret;
+
+	read_dcb_i2c_entry(dev, dcb->version, dcb->i2c_table,
+			   entry->i2c_index, &dcb->i2c[entry->i2c_index]);
+
+	return true;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static
 void merge_like_dcb_entries(struct drm_device *dev, struct dcb_table *dcb)
 {
@@ -6049,6 +6971,7 @@ apply_dcb_encoder_quirks(struct drm_device *dev, int idx, u32 *conn, u32 *conf)
 		}
 	}
 
+<<<<<<< HEAD
 	/* Some other twisted XFX board (rhbz#694914)
 	 *
 	 * The DVI/VGA encoder combo that's supposed to represent the
@@ -6080,6 +7003,8 @@ apply_dcb_encoder_quirks(struct drm_device *dev, int idx, u32 *conn, u32 *conf)
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return true;
 }
 
@@ -6099,22 +7024,34 @@ fabricate_dcb_encoder_table(struct drm_device *dev, struct nvbios *bios)
 #endif
 
 	/* Make up some sane defaults */
+<<<<<<< HEAD
 	fabricate_dcb_output(dcb, OUTPUT_ANALOG,
 			     bios->legacy.i2c_indices.crt, 1, 1);
 
 	if (nv04_tv_identify(dev, bios->legacy.i2c_indices.tv) >= 0)
 		fabricate_dcb_output(dcb, OUTPUT_TV,
 				     bios->legacy.i2c_indices.tv,
+=======
+	fabricate_dcb_output(dcb, OUTPUT_ANALOG, LEGACY_I2C_CRT, 1, 1);
+
+	if (nv04_tv_identify(dev, bios->legacy.i2c_indices.tv) >= 0)
+		fabricate_dcb_output(dcb, OUTPUT_TV, LEGACY_I2C_TV,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     all_heads, 0);
 
 	else if (bios->tmds.output0_script_ptr ||
 		 bios->tmds.output1_script_ptr)
+<<<<<<< HEAD
 		fabricate_dcb_output(dcb, OUTPUT_TMDS,
 				     bios->legacy.i2c_indices.panel,
+=======
+		fabricate_dcb_output(dcb, OUTPUT_TMDS, LEGACY_I2C_PANEL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     all_heads, 1);
 }
 
 static int
+<<<<<<< HEAD
 parse_dcb_entry(struct drm_device *dev, void *data, int idx, u8 *outp)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
@@ -6215,6 +7152,143 @@ parse_dcb_table(struct drm_device *dev, struct nvbios *bios)
 
 	dcb->version = dcbt[0];
 	dcb_outp_foreach(dev, NULL, parse_dcb_entry);
+=======
+parse_dcb_table(struct drm_device *dev, struct nvbios *bios)
+{
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	struct dcb_table *dcb = &bios->dcb;
+	uint16_t dcbptr = 0, i2ctabptr = 0;
+	uint8_t *dcbtable;
+	uint8_t headerlen = 0x4, entries = DCB_MAX_NUM_ENTRIES;
+	bool configblock = true;
+	int recordlength = 8, confofs = 4;
+	int i;
+
+	/* get the offset from 0x36 */
+	if (dev_priv->card_type > NV_04) {
+		dcbptr = ROM16(bios->data[0x36]);
+		if (dcbptr == 0x0000)
+			NV_WARN(dev, "No output data (DCB) found in BIOS\n");
+	}
+
+	/* this situation likely means a really old card, pre DCB */
+	if (dcbptr == 0x0) {
+		fabricate_dcb_encoder_table(dev, bios);
+		return 0;
+	}
+
+	dcbtable = &bios->data[dcbptr];
+
+	/* get DCB version */
+	dcb->version = dcbtable[0];
+	NV_TRACE(dev, "Found Display Configuration Block version %d.%d\n",
+		 dcb->version >> 4, dcb->version & 0xf);
+
+	if (dcb->version >= 0x20) { /* NV17+ */
+		uint32_t sig;
+
+		if (dcb->version >= 0x30) { /* NV40+ */
+			headerlen = dcbtable[1];
+			entries = dcbtable[2];
+			recordlength = dcbtable[3];
+			i2ctabptr = ROM16(dcbtable[4]);
+			sig = ROM32(dcbtable[6]);
+			dcb->gpio_table_ptr = ROM16(dcbtable[10]);
+			dcb->connector_table_ptr = ROM16(dcbtable[20]);
+		} else {
+			i2ctabptr = ROM16(dcbtable[2]);
+			sig = ROM32(dcbtable[4]);
+			headerlen = 8;
+		}
+
+		if (sig != 0x4edcbdcb) {
+			NV_ERROR(dev, "Bad Display Configuration Block "
+					"signature (%08X)\n", sig);
+			return -EINVAL;
+		}
+	} else if (dcb->version >= 0x15) { /* some NV11 and NV20 */
+		char sig[8] = { 0 };
+
+		strncpy(sig, (char *)&dcbtable[-7], 7);
+		i2ctabptr = ROM16(dcbtable[2]);
+		recordlength = 10;
+		confofs = 6;
+
+		if (strcmp(sig, "DEV_REC")) {
+			NV_ERROR(dev, "Bad Display Configuration Block "
+					"signature (%s)\n", sig);
+			return -EINVAL;
+		}
+	} else {
+		/*
+		 * v1.4 (some NV15/16, NV11+) seems the same as v1.5, but always
+		 * has the same single (crt) entry, even when tv-out present, so
+		 * the conclusion is this version cannot really be used.
+		 * v1.2 tables (some NV6/10, and NV15+) normally have the same
+		 * 5 entries, which are not specific to the card and so no use.
+		 * v1.2 does have an I2C table that read_dcb_i2c_table can
+		 * handle, but cards exist (nv11 in #14821) with a bad i2c table
+		 * pointer, so use the indices parsed in parse_bmp_structure.
+		 * v1.1 (NV5+, maybe some NV4) is entirely unhelpful
+		 */
+		NV_TRACEWARN(dev, "No useful information in BIOS output table; "
+				  "adding all possible outputs\n");
+		fabricate_dcb_encoder_table(dev, bios);
+		return 0;
+	}
+
+	if (!i2ctabptr)
+		NV_WARN(dev, "No pointer to DCB I2C port table\n");
+	else {
+		dcb->i2c_table = &bios->data[i2ctabptr];
+		if (dcb->version >= 0x30)
+			dcb->i2c_default_indices = dcb->i2c_table[4];
+
+		/*
+		 * Parse the "management" I2C bus, used for hardware
+		 * monitoring and some external TMDS transmitters.
+		 */
+		if (dcb->version >= 0x22) {
+			int idx = (dcb->version >= 0x40 ?
+				   dcb->i2c_default_indices & 0xf :
+				   2);
+
+			read_dcb_i2c_entry(dev, dcb->version, dcb->i2c_table,
+					   idx, &dcb->i2c[idx]);
+		}
+	}
+
+	if (entries > DCB_MAX_NUM_ENTRIES)
+		entries = DCB_MAX_NUM_ENTRIES;
+
+	for (i = 0; i < entries; i++) {
+		uint32_t connection, config = 0;
+
+		connection = ROM32(dcbtable[headerlen + recordlength * i]);
+		if (configblock)
+			config = ROM32(dcbtable[headerlen + confofs + recordlength * i]);
+
+		/* seen on an NV11 with DCB v1.5 */
+		if (connection == 0x00000000)
+			break;
+
+		/* seen on an NV17 with DCB v2.0 */
+		if (connection == 0xffffffff)
+			break;
+
+		if ((connection & 0x0000000f) == 0x0000000f)
+			continue;
+
+		if (!apply_dcb_encoder_quirks(dev, i, &connection, &config))
+			continue;
+
+		NV_TRACEWARN(dev, "Raw DCB entry %d: %08x %08x\n",
+			     dcb->entries, connection, config);
+
+		if (!parse_dcb_entry(dev, dcb, connection, config))
+			break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * apart for v2.1+ not being known for requiring merging, this
@@ -6226,6 +7300,7 @@ parse_dcb_table(struct drm_device *dev, struct nvbios *bios)
 	if (!dcb->entries)
 		return -ENXIO;
 
+<<<<<<< HEAD
 	/* dump connector table entries to log, if any exist */
 	idx = -1;
 	while ((conn = dcb_conn(dev, ++idx))) {
@@ -6239,6 +7314,79 @@ parse_dcb_table(struct drm_device *dev, struct nvbios *bios)
 	}
 	dcb_fake_connectors(bios);
 	return 0;
+=======
+	parse_dcb_gpio_table(bios);
+	parse_dcb_connector_table(bios);
+	return 0;
+}
+
+static void
+fixup_legacy_connector(struct nvbios *bios)
+{
+	struct dcb_table *dcb = &bios->dcb;
+	int i, i2c, i2c_conn[DCB_MAX_NUM_I2C_ENTRIES] = { };
+
+	/*
+	 * DCB 3.0 also has the table in most cases, but there are some cards
+	 * where the table is filled with stub entries, and the DCB entriy
+	 * indices are all 0.  We don't need the connector indices on pre-G80
+	 * chips (yet?) so limit the use to DCB 4.0 and above.
+	 */
+	if (dcb->version >= 0x40)
+		return;
+
+	dcb->connector.entries = 0;
+
+	/*
+	 * No known connector info before v3.0, so make it up.  the rule here
+	 * is: anything on the same i2c bus is considered to be on the same
+	 * connector.  any output without an associated i2c bus is assigned
+	 * its own unique connector index.
+	 */
+	for (i = 0; i < dcb->entries; i++) {
+		/*
+		 * Ignore the I2C index for on-chip TV-out, as there
+		 * are cards with bogus values (nv31m in bug 23212),
+		 * and it's otherwise useless.
+		 */
+		if (dcb->entry[i].type == OUTPUT_TV &&
+		    dcb->entry[i].location == DCB_LOC_ON_CHIP)
+			dcb->entry[i].i2c_index = 0xf;
+		i2c = dcb->entry[i].i2c_index;
+
+		if (i2c_conn[i2c]) {
+			dcb->entry[i].connector = i2c_conn[i2c] - 1;
+			continue;
+		}
+
+		dcb->entry[i].connector = dcb->connector.entries++;
+		if (i2c != 0xf)
+			i2c_conn[i2c] = dcb->connector.entries;
+	}
+
+	/* Fake the connector table as well as just connector indices */
+	for (i = 0; i < dcb->connector.entries; i++) {
+		dcb->connector.entry[i].index = i;
+		dcb->connector.entry[i].type = divine_connector_type(bios, i);
+		dcb->connector.entry[i].gpio_tag = 0xff;
+	}
+}
+
+static void
+fixup_legacy_i2c(struct nvbios *bios)
+{
+	struct dcb_table *dcb = &bios->dcb;
+	int i;
+
+	for (i = 0; i < dcb->entries; i++) {
+		if (dcb->entry[i].i2c_index == LEGACY_I2C_CRT)
+			dcb->entry[i].i2c_index = bios->legacy.i2c_indices.crt;
+		if (dcb->entry[i].i2c_index == LEGACY_I2C_PANEL)
+			dcb->entry[i].i2c_index = bios->legacy.i2c_indices.panel;
+		if (dcb->entry[i].i2c_index == LEGACY_I2C_TV)
+			dcb->entry[i].i2c_index = bios->legacy.i2c_indices.tv;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int load_nv17_hwsq_ucode_entry(struct drm_device *dev, struct nvbios *bios, uint16_t hwsq_offset, int entry)
@@ -6344,7 +7492,11 @@ uint8_t *nouveau_bios_embedded_edid(struct drm_device *dev)
 
 void
 nouveau_bios_run_init_table(struct drm_device *dev, uint16_t table,
+<<<<<<< HEAD
 			    struct dcb_entry *dcbent, int crtc)
+=======
+			    struct dcb_entry *dcbent)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct nvbios *bios = &dev_priv->vbios;
@@ -6352,12 +7504,16 @@ nouveau_bios_run_init_table(struct drm_device *dev, uint16_t table,
 
 	spin_lock_bh(&bios->lock);
 	bios->display.output = dcbent;
+<<<<<<< HEAD
 	bios->display.crtc = crtc;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	parse_init_table(bios, table, &iexec);
 	bios->display.output = NULL;
 	spin_unlock_bh(&bios->lock);
 }
 
+<<<<<<< HEAD
 void
 nouveau_bios_init_exec(struct drm_device *dev, uint16_t table)
 {
@@ -6368,6 +7524,8 @@ nouveau_bios_init_exec(struct drm_device *dev, uint16_t table)
 	parse_init_table(bios, table, &iexec);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static bool NVInitVBIOS(struct drm_device *dev)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
@@ -6377,7 +7535,15 @@ static bool NVInitVBIOS(struct drm_device *dev)
 	spin_lock_init(&bios->lock);
 	bios->dev = dev;
 
+<<<<<<< HEAD
 	return bios_shadow(dev);
+=======
+	if (!NVShadowVBIOS(dev, bios->data))
+		return false;
+
+	bios->length = NV_PROM_SIZE;
+	return true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int nouveau_parse_vbios_struct(struct drm_device *dev)
@@ -6445,14 +7611,36 @@ nouveau_run_vbios_init(struct drm_device *dev)
 
 	if (dev_priv->card_type >= NV_50) {
 		for (i = 0; i < bios->dcb.entries; i++) {
+<<<<<<< HEAD
 			nouveau_bios_run_display_table(dev, 0, 0,
 						       &bios->dcb.entry[i], -1);
+=======
+			nouveau_bios_run_display_table(dev,
+						       &bios->dcb.entry[i],
+						       0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+static void
+nouveau_bios_i2c_devices_takedown(struct drm_device *dev)
+{
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	struct nvbios *bios = &dev_priv->vbios;
+	struct dcb_i2c_entry *entry;
+	int i;
+
+	entry = &bios->dcb.i2c[0];
+	for (i = 0; i < DCB_MAX_NUM_I2C_ENTRIES; i++, entry++)
+		nouveau_i2c_fini(dev, entry);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static bool
 nouveau_bios_posted(struct drm_device *dev)
 {
@@ -6489,6 +7677,7 @@ nouveau_bios_init(struct drm_device *dev)
 	if (ret)
 		return ret;
 
+<<<<<<< HEAD
 	ret = nouveau_i2c_init(dev);
 	if (ret)
 		return ret;
@@ -6497,10 +7686,18 @@ nouveau_bios_init(struct drm_device *dev)
 	if (ret)
 		return ret;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = parse_dcb_table(dev, bios);
 	if (ret)
 		return ret;
 
+<<<<<<< HEAD
+=======
+	fixup_legacy_i2c(bios);
+	fixup_legacy_connector(bios);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!bios->major_version)	/* we don't run version 0 bios */
 		return 0;
 
@@ -6537,10 +7734,14 @@ nouveau_bios_init(struct drm_device *dev)
 void
 nouveau_bios_takedown(struct drm_device *dev)
 {
+<<<<<<< HEAD
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 
 	nouveau_mxm_fini(dev);
 	nouveau_i2c_fini(dev);
 
 	kfree(dev_priv->vbios.data);
+=======
+	nouveau_bios_i2c_devices_takedown(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

@@ -63,10 +63,17 @@
 #include <linux/spinlock.h>
 #include <linux/sysrq.h>
 #include <linux/tty.h>
+<<<<<<< HEAD
 #include <linux/tty_flip.h>
 #include <linux/types.h>
 
 #include <linux/atomic.h>
+=======
+#include <linux/types.h>
+
+#include <asm/atomic.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/dec/interrupts.h>
 #include <asm/dec/ioasic_addrs.h>

@@ -376,6 +376,7 @@ static int blocks;
 module_param(blocks, int, 0604);
 MODULE_PARM_DESC(blocks, "max_blocks_to_send");
 
+<<<<<<< HEAD
 static bool dump;
 module_param(dump, bool, 0604);
 MODULE_PARM_DESC(dump, "dump_hex_content");
@@ -390,6 +391,22 @@ static bool checksum = 1;
 module_param(checksum, bool, 0604);
 
 static bool fw_download = 1;
+=======
+static int dump;
+module_param(dump, bool, 0604);
+MODULE_PARM_DESC(dump, "dump_hex_content");
+
+static int jump = 1;
+module_param(jump, bool, 0604);
+
+static int direct = 1;
+module_param(direct, bool, 0604);
+
+static int checksum = 1;
+module_param(checksum, bool, 0604);
+
+static int fw_download = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(fw_download, bool, 0604);
 
 static int block_size = IWMC_SDIO_BLK_SIZE;
@@ -398,7 +415,11 @@ module_param(block_size, int, 0404);
 static int download_trans_blks = IWMC_DEFAULT_TR_BLK;
 module_param(download_trans_blks, int, 0604);
 
+<<<<<<< HEAD
 static bool rubbish_barker;
+=======
+static int rubbish_barker;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(rubbish_barker, bool, 0604);
 
 #ifdef CONFIG_IWMC3200TOP_DEBUG

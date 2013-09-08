@@ -1596,16 +1596,30 @@ int rtsx_write_cfg_seq(struct rtsx_chip *chip, u8 func, u16 addr, u8 *buf, int l
 	}
 	RTSX_DEBUGP("dw_len = %d\n", dw_len);
 
+<<<<<<< HEAD
 	data = vzalloc(dw_len * 4);
 	if (!data) {
 		TRACE_RET(chip, STATUS_NOMEM);
 	}
 
 	mask = vzalloc(dw_len * 4);
+=======
+	data = (u32 *)vmalloc(dw_len * 4);
+	if (!data) {
+		TRACE_RET(chip, STATUS_NOMEM);
+	}
+	memset(data, 0, dw_len * 4);
+
+	mask = (u32 *)vmalloc(dw_len * 4);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!mask) {
 		vfree(data);
 		TRACE_RET(chip, STATUS_NOMEM);
 	}
+<<<<<<< HEAD
+=======
+	memset(mask, 0, dw_len * 4);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	j = 0;
 	for (i = 0; i < len; i++) {

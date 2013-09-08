@@ -18,6 +18,10 @@
 #include <asm/page.h>
 #include <asm/pgtable.h>
 #include <asm/mmu_context.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/isadep.h>
 #include <asm/io.h>
 #include <asm/bootinfo.h>
@@ -252,11 +256,14 @@ static void tx39_flush_icache_range(unsigned long start, unsigned long end)
 	}
 }
 
+<<<<<<< HEAD
 static void tx39_flush_kernel_vmap_range(unsigned long vaddr, int size)
 {
 	BUG();
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void tx39_dma_cache_wback_inv(unsigned long addr, unsigned long size)
 {
 	unsigned long end;
@@ -398,8 +405,11 @@ void __cpuinit tx39_cache_init(void)
 		flush_icache_range = tx39_flush_icache_range;
 		local_flush_icache_range = tx39_flush_icache_range;
 
+<<<<<<< HEAD
 		__flush_kernel_vmap_range = tx39_flush_kernel_vmap_range;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		flush_cache_sigtramp = tx39_flush_cache_sigtramp;
 		local_flush_data_cache_page = local_tx39_flush_data_cache_page;
 		flush_data_cache_page = tx39_flush_data_cache_page;

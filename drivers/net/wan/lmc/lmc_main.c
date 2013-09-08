@@ -497,6 +497,10 @@ int lmc_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd) /*fold00*/
 
                     data = kmalloc(xc.len, GFP_KERNEL);
                     if (!data) {
+<<<<<<< HEAD
+=======
+                            printk(KERN_WARNING "%s: Failed to allocate memory for copy\n", dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
                             ret = -ENOMEM;
                             break;
                     }

@@ -205,7 +205,12 @@ static void find_export_symbols(char * filename)
 				PATH_MAX - strlen(real_filename));
 		sym = add_new_file(filename);
 		fp = fopen(real_filename, "r");
+<<<<<<< HEAD
 		if (fp == NULL)	{
+=======
+		if (fp == NULL)
+		{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			fprintf(stderr, "docproc: ");
 			perror(real_filename);
 			exit(1);
@@ -486,7 +491,12 @@ static void parse_file(FILE *infile)
 				default:
 					defaultline(line);
 			}
+<<<<<<< HEAD
 		} else {
+=======
+		}
+		else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			defaultline(line);
 		}
 	}
@@ -517,7 +527,12 @@ int main(int argc, char *argv[])
                 exit(2);
         }
 
+<<<<<<< HEAD
 	if (strcmp("doc", argv[1]) == 0) {
+=======
+	if (strcmp("doc", argv[1]) == 0)
+	{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Need to do this in two passes.
 		 * First pass is used to collect all symbols exported
 		 * in the various files;
@@ -553,7 +568,13 @@ int main(int argc, char *argv[])
 			fprintf(stderr, "Warning: didn't use docs for %s\n",
 				all_list[i]);
 		}
+<<<<<<< HEAD
 	} else if (strcmp("depend", argv[1]) == 0) {
+=======
+	}
+	else if (strcmp("depend", argv[1]) == 0)
+	{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Create first part of dependency chain
 		 * file.tmpl */
 		printf("%s\t", argv[2]);
@@ -566,7 +587,13 @@ int main(int argc, char *argv[])
 		findall           = adddep;
 		parse_file(infile);
 		printf("\n");
+<<<<<<< HEAD
 	} else {
+=======
+	}
+	else
+	{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fprintf(stderr, "Unknown option: %s\n", argv[1]);
 		exit(1);
 	}

@@ -364,12 +364,19 @@ static void notify_ring(struct drm_device *dev,
 
 	ring->irq_seqno = seqno;
 	wake_up_all(&ring->irq_queue);
+<<<<<<< HEAD
 	if (i915_enable_hangcheck) {
 		dev_priv->hangcheck_count = 0;
 		mod_timer(&dev_priv->hangcheck_timer,
 			  jiffies +
 			  msecs_to_jiffies(DRM_I915_HANGCHECK_PERIOD));
 	}
+=======
+
+	dev_priv->hangcheck_count = 0;
+	mod_timer(&dev_priv->hangcheck_timer,
+		  jiffies + msecs_to_jiffies(DRM_I915_HANGCHECK_PERIOD));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void gen6_pm_rps_work(struct work_struct *work)
@@ -383,7 +390,10 @@ static void gen6_pm_rps_work(struct work_struct *work)
 	pm_iir = dev_priv->pm_iir;
 	dev_priv->pm_iir = 0;
 	pm_imr = I915_READ(GEN6_PMIMR);
+<<<<<<< HEAD
 	I915_WRITE(GEN6_PMIMR, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irq(&dev_priv->rps_lock);
 
 	if (!pm_iir)
@@ -421,6 +431,7 @@ static void gen6_pm_rps_work(struct work_struct *work)
 	 * an *extremely* unlikely race with gen6_rps_enable() that is prevented
 	 * by holding struct_mutex for the duration of the write.
 	 */
+<<<<<<< HEAD
 	mutex_unlock(&dev_priv->dev->struct_mutex);
 }
 
@@ -453,6 +464,20 @@ static void pch_irq_handler(struct drm_device *dev, u32 pch_iir)
 	drm_i915_private_t *dev_priv = (drm_i915_private_t *) dev->dev_private;
 	int pipe;
 
+=======
+	I915_WRITE(GEN6_PMIMR, pm_imr & ~pm_iir);
+	mutex_unlock(&dev_priv->dev->struct_mutex);
+}
+
+static void pch_irq_handler(struct drm_device *dev)
+{
+	drm_i915_private_t *dev_priv = (drm_i915_private_t *) dev->dev_private;
+	u32 pch_iir;
+	int pipe;
+
+	pch_iir = I915_READ(SDEIIR);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pch_iir & SDE_AUDIO_POWER_MASK)
 		DRM_DEBUG_DRIVER("PCH audio power change on port %d\n",
 				 (pch_iir & SDE_AUDIO_POWER_MASK) >>
@@ -530,12 +555,15 @@ static irqreturn_t ivybridge_irq_handler(DRM_IRQ_ARGS)
 	if (de_iir & DE_GSE_IVB)
 		intel_opregion_gse_intr(dev);
 
+<<<<<<< HEAD
 	if (de_iir & DE_PIPEA_VBLANK_IVB)
 		drm_handle_vblank(dev, 0);
 
 	if (de_iir & DE_PIPEB_VBLANK_IVB)
 		drm_handle_vblank(dev, 1);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (de_iir & DE_PLANEA_FLIP_DONE_IVB) {
 		intel_prepare_page_flip(dev, 0);
 		intel_finish_page_flip_plane(dev, 0);
@@ -546,15 +574,39 @@ static irqreturn_t ivybridge_irq_handler(DRM_IRQ_ARGS)
 		intel_finish_page_flip_plane(dev, 1);
 	}
 
+<<<<<<< HEAD
+=======
+	if (de_iir & DE_PIPEA_VBLANK_IVB)
+		drm_handle_vblank(dev, 0);
+
+	if (de_iir & DE_PIPEB_VBLANK_IVB)
+		drm_handle_vblank(dev, 1);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* check event from PCH */
 	if (de_iir & DE_PCH_EVENT_IVB) {
 		if (pch_iir & SDE_HOTPLUG_MASK_CPT)
 			queue_work(dev_priv->wq, &dev_priv->hotplug_work);
+<<<<<<< HEAD
 		pch_irq_handler(dev, pch_iir);
 	}
 
 	if (pm_iir & GEN6_PM_DEFERRED_EVENTS)
 		gen6_queue_rps_work(dev_priv, pm_iir);
+=======
+		pch_irq_handler(dev);
+	}
+
+	if (pm_iir & GEN6_PM_DEFERRED_EVENTS) {
+		unsigned long flags;
+		spin_lock_irqsave(&dev_priv->rps_lock, flags);
+		WARN(dev_priv->pm_iir & pm_iir, "Missed a PM interrupt\n");
+		I915_WRITE(GEN6_PMIMR, pm_iir);
+		dev_priv->pm_iir |= pm_iir;
+		spin_unlock_irqrestore(&dev_priv->rps_lock, flags);
+		queue_work(dev_priv->wq, &dev_priv->rps_work);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* should clear PCH hotplug event before clear CPU irq */
 	I915_WRITE(SDEIIR, pch_iir);
@@ -622,12 +674,15 @@ static irqreturn_t ironlake_irq_handler(DRM_IRQ_ARGS)
 	if (de_iir & DE_GSE)
 		intel_opregion_gse_intr(dev);
 
+<<<<<<< HEAD
 	if (de_iir & DE_PIPEA_VBLANK)
 		drm_handle_vblank(dev, 0);
 
 	if (de_iir & DE_PIPEB_VBLANK)
 		drm_handle_vblank(dev, 1);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (de_iir & DE_PLANEA_FLIP_DONE) {
 		intel_prepare_page_flip(dev, 0);
 		intel_finish_page_flip_plane(dev, 0);
@@ -638,11 +693,24 @@ static irqreturn_t ironlake_irq_handler(DRM_IRQ_ARGS)
 		intel_finish_page_flip_plane(dev, 1);
 	}
 
+<<<<<<< HEAD
+=======
+	if (de_iir & DE_PIPEA_VBLANK)
+		drm_handle_vblank(dev, 0);
+
+	if (de_iir & DE_PIPEB_VBLANK)
+		drm_handle_vblank(dev, 1);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* check event from PCH */
 	if (de_iir & DE_PCH_EVENT) {
 		if (pch_iir & hotplug_mask)
 			queue_work(dev_priv->wq, &dev_priv->hotplug_work);
+<<<<<<< HEAD
 		pch_irq_handler(dev, pch_iir);
+=======
+		pch_irq_handler(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (de_iir & DE_PCU_EVENT) {
@@ -650,8 +718,29 @@ static irqreturn_t ironlake_irq_handler(DRM_IRQ_ARGS)
 		i915_handle_rps_change(dev);
 	}
 
+<<<<<<< HEAD
 	if (IS_GEN6(dev) && pm_iir & GEN6_PM_DEFERRED_EVENTS)
 		gen6_queue_rps_work(dev_priv, pm_iir);
+=======
+	if (IS_GEN6(dev) && pm_iir & GEN6_PM_DEFERRED_EVENTS) {
+		/*
+		 * IIR bits should never already be set because IMR should
+		 * prevent an interrupt from being shown in IIR. The warning
+		 * displays a case where we've unsafely cleared
+		 * dev_priv->pm_iir. Although missing an interrupt of the same
+		 * type is not a problem, it displays a problem in the logic.
+		 *
+		 * The mask bit in IMR is cleared by rps_work.
+		 */
+		unsigned long flags;
+		spin_lock_irqsave(&dev_priv->rps_lock, flags);
+		WARN(dev_priv->pm_iir & pm_iir, "Missed a PM interrupt\n");
+		I915_WRITE(GEN6_PMIMR, pm_iir);
+		dev_priv->pm_iir |= pm_iir;
+		spin_unlock_irqrestore(&dev_priv->rps_lock, flags);
+		queue_work(dev_priv->wq, &dev_priv->rps_work);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* should clear PCH hotplug event before clear CPU irq */
 	I915_WRITE(SDEIIR, pch_iir);
@@ -709,13 +798,21 @@ i915_error_object_create(struct drm_i915_private *dev_priv,
 
 	page_count = src->base.size / PAGE_SIZE;
 
+<<<<<<< HEAD
 	dst = kmalloc(sizeof(*dst) + page_count * sizeof(u32 *), GFP_ATOMIC);
+=======
+	dst = kmalloc(sizeof(*dst) + page_count * sizeof (u32 *), GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dst == NULL)
 		return NULL;
 
 	reloc_offset = src->gtt_offset;
 	for (page = 0; page < page_count; page++) {
 		unsigned long flags;
+<<<<<<< HEAD
+=======
+		void __iomem *s;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		void *d;
 
 		d = kmalloc(PAGE_SIZE, GFP_ATOMIC);
@@ -723,6 +820,7 @@ i915_error_object_create(struct drm_i915_private *dev_priv,
 			goto unwind;
 
 		local_irq_save(flags);
+<<<<<<< HEAD
 		if (reloc_offset < dev_priv->mm.gtt_mappable_end) {
 			void __iomem *s;
 
@@ -746,6 +844,12 @@ i915_error_object_create(struct drm_i915_private *dev_priv,
 
 			drm_clflush_pages(&src->pages[page], 1);
 		}
+=======
+		s = io_mapping_map_atomic_wc(dev_priv->mm.gtt_mapping,
+					     reloc_offset);
+		memcpy_fromio(d, s, PAGE_SIZE);
+		io_mapping_unmap_atomic(s);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		local_irq_restore(flags);
 
 		dst->pages[page] = d;
@@ -784,11 +888,19 @@ i915_error_state_free(struct drm_device *dev,
 {
 	int i;
 
+<<<<<<< HEAD
 	for (i = 0; i < ARRAY_SIZE(error->ring); i++) {
 		i915_error_object_free(error->ring[i].batchbuffer);
 		i915_error_object_free(error->ring[i].ringbuffer);
 		kfree(error->ring[i].requests);
 	}
+=======
+	for (i = 0; i < ARRAY_SIZE(error->batchbuffer); i++)
+		i915_error_object_free(error->batchbuffer[i]);
+
+	for (i = 0; i < ARRAY_SIZE(error->ringbuffer); i++)
+		i915_error_object_free(error->ringbuffer[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kfree(error->active_bo);
 	kfree(error->overlay);
@@ -818,7 +930,11 @@ static u32 capture_bo_list(struct drm_i915_error_buffer *err,
 		err->tiling = obj->tiling_mode;
 		err->dirty = obj->dirty;
 		err->purgeable = obj->madv != I915_MADV_WILLNEED;
+<<<<<<< HEAD
 		err->ring = obj->ring ? obj->ring->id : -1;
+=======
+		err->ring = obj->ring ? obj->ring->id : 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err->cache_level = obj->cache_level;
 
 		if (++i == count)
@@ -890,6 +1006,7 @@ i915_error_first_batchbuffer(struct drm_i915_private *dev_priv,
 	return NULL;
 }
 
+<<<<<<< HEAD
 static void i915_record_ring_state(struct drm_device *dev,
 				   struct drm_i915_error_state *error,
 				   struct intel_ring_buffer *ring)
@@ -976,6 +1093,8 @@ static void i915_gem_record_rings(struct drm_device *dev,
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * i915_capture_error_state - capture an error record for later analysis
  * @dev: drm device
@@ -1000,7 +1119,11 @@ static void i915_capture_error_state(struct drm_device *dev)
 		return;
 
 	/* Account for pipe specific data like PIPE*STAT */
+<<<<<<< HEAD
 	error = kzalloc(sizeof(*error), GFP_ATOMIC);
+=======
+	error = kmalloc(sizeof(*error), GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!error) {
 		DRM_DEBUG_DRIVER("out of memory, not capturing error state\n");
 		return;
@@ -1009,10 +1132,15 @@ static void i915_capture_error_state(struct drm_device *dev)
 	DRM_INFO("capturing error event; look for more information in /debug/dri/%d/i915_error_state\n",
 		 dev->primary->index);
 
+<<<<<<< HEAD
+=======
+	error->seqno = dev_priv->ring[RCS].get_seqno(&dev_priv->ring[RCS]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	error->eir = I915_READ(EIR);
 	error->pgtbl_er = I915_READ(PGTBL_ER);
 	for_each_pipe(pipe)
 		error->pipestat[pipe] = I915_READ(PIPESTAT(pipe));
+<<<<<<< HEAD
 
 	if (INTEL_INFO(dev)->gen >= 6) {
 		error->error = I915_READ(ERROR_GEN6);
@@ -1021,6 +1149,56 @@ static void i915_capture_error_state(struct drm_device *dev)
 
 	i915_gem_record_fences(dev, error);
 	i915_gem_record_rings(dev, error);
+=======
+	error->instpm = I915_READ(INSTPM);
+	error->error = 0;
+	if (INTEL_INFO(dev)->gen >= 6) {
+		error->error = I915_READ(ERROR_GEN6);
+
+		error->bcs_acthd = I915_READ(BCS_ACTHD);
+		error->bcs_ipehr = I915_READ(BCS_IPEHR);
+		error->bcs_ipeir = I915_READ(BCS_IPEIR);
+		error->bcs_instdone = I915_READ(BCS_INSTDONE);
+		error->bcs_seqno = 0;
+		if (dev_priv->ring[BCS].get_seqno)
+			error->bcs_seqno = dev_priv->ring[BCS].get_seqno(&dev_priv->ring[BCS]);
+
+		error->vcs_acthd = I915_READ(VCS_ACTHD);
+		error->vcs_ipehr = I915_READ(VCS_IPEHR);
+		error->vcs_ipeir = I915_READ(VCS_IPEIR);
+		error->vcs_instdone = I915_READ(VCS_INSTDONE);
+		error->vcs_seqno = 0;
+		if (dev_priv->ring[VCS].get_seqno)
+			error->vcs_seqno = dev_priv->ring[VCS].get_seqno(&dev_priv->ring[VCS]);
+	}
+	if (INTEL_INFO(dev)->gen >= 4) {
+		error->ipeir = I915_READ(IPEIR_I965);
+		error->ipehr = I915_READ(IPEHR_I965);
+		error->instdone = I915_READ(INSTDONE_I965);
+		error->instps = I915_READ(INSTPS);
+		error->instdone1 = I915_READ(INSTDONE1);
+		error->acthd = I915_READ(ACTHD_I965);
+		error->bbaddr = I915_READ64(BB_ADDR);
+	} else {
+		error->ipeir = I915_READ(IPEIR);
+		error->ipehr = I915_READ(IPEHR);
+		error->instdone = I915_READ(INSTDONE);
+		error->acthd = I915_READ(ACTHD);
+		error->bbaddr = 0;
+	}
+	i915_gem_record_fences(dev, error);
+
+	/* Record the active batch and ring buffers */
+	for (i = 0; i < I915_NUM_RINGS; i++) {
+		error->batchbuffer[i] =
+			i915_error_first_batchbuffer(dev_priv,
+						     &dev_priv->ring[i]);
+
+		error->ringbuffer[i] =
+			i915_error_object_create(dev_priv,
+						 dev_priv->ring[i].obj);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Record buffers on the active and pinned lists. */
 	error->active_bo = NULL;
@@ -1076,12 +1254,20 @@ void i915_destroy_error_state(struct drm_device *dev)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
 	struct drm_i915_error_state *error;
+<<<<<<< HEAD
 	unsigned long flags;
 
 	spin_lock_irqsave(&dev_priv->error_lock, flags);
 	error = dev_priv->first_error;
 	dev_priv->first_error = NULL;
 	spin_unlock_irqrestore(&dev_priv->error_lock, flags);
+=======
+
+	spin_lock(&dev_priv->error_lock);
+	error = dev_priv->first_error;
+	dev_priv->first_error = NULL;
+	spin_unlock(&dev_priv->error_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (error)
 		i915_error_state_free(dev, error);
@@ -1265,7 +1451,11 @@ static void i915_pageflip_stall_check(struct drm_device *dev, int pipe)
 	} else {
 		int dspaddr = DSPADDR(intel_crtc->plane);
 		stall_detected = I915_READ(dspaddr) == (obj->gtt_offset +
+<<<<<<< HEAD
 							crtc->y * crtc->fb->pitches[0] +
+=======
+							crtc->y * crtc->fb->pitch +
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 							crtc->x * crtc->fb->bits_per_pixel/8);
 	}
 
@@ -1556,7 +1746,11 @@ static int ironlake_enable_vblank(struct drm_device *dev, int pipe)
 
 	spin_lock_irqsave(&dev_priv->irq_lock, irqflags);
 	ironlake_enable_display_irq(dev_priv, (pipe == 0) ?
+<<<<<<< HEAD
 				    DE_PIPEA_VBLANK : DE_PIPEB_VBLANK);
+=======
+				    DE_PIPEA_VBLANK: DE_PIPEB_VBLANK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&dev_priv->irq_lock, irqflags);
 
 	return 0;
@@ -1604,7 +1798,11 @@ static void ironlake_disable_vblank(struct drm_device *dev, int pipe)
 
 	spin_lock_irqsave(&dev_priv->irq_lock, irqflags);
 	ironlake_disable_display_irq(dev_priv, (pipe == 0) ?
+<<<<<<< HEAD
 				     DE_PIPEA_VBLANK : DE_PIPEB_VBLANK);
+=======
+				     DE_PIPEA_VBLANK: DE_PIPEB_VBLANK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&dev_priv->irq_lock, irqflags);
 }
 
@@ -1709,6 +1907,16 @@ static bool kick_ring(struct intel_ring_buffer *ring)
 		I915_WRITE_CTL(ring, tmp);
 		return true;
 	}
+<<<<<<< HEAD
+=======
+	if (IS_GEN6(dev) &&
+	    (tmp & RING_WAIT_SEMAPHORE)) {
+		DRM_ERROR("Kicking stuck semaphore on %s\n",
+			  ring->name);
+		I915_WRITE_CTL(ring, tmp);
+		return true;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return false;
 }
 
@@ -1725,9 +1933,12 @@ void i915_hangcheck_elapsed(unsigned long data)
 	uint32_t acthd, instdone, instdone1, acthd_bsd, acthd_blt;
 	bool err = false;
 
+<<<<<<< HEAD
 	if (!i915_enable_hangcheck)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* If all work is done then ACTHD clearly hasn't advanced. */
 	if (i915_hangcheck_ring_idle(&dev_priv->ring[RCS], &err) &&
 	    i915_hangcheck_ring_idle(&dev_priv->ring[VCS], &err) &&
@@ -1758,7 +1969,10 @@ void i915_hangcheck_elapsed(unsigned long data)
 	    dev_priv->last_instdone1 == instdone1) {
 		if (dev_priv->hangcheck_count++ > 1) {
 			DRM_ERROR("Hangcheck timer elapsed... GPU hung\n");
+<<<<<<< HEAD
 			i915_handle_error(dev, true);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (!IS_GEN2(dev)) {
 				/* Is the chip hanging on a WAIT_FOR_EVENT?
@@ -1766,6 +1980,10 @@ void i915_hangcheck_elapsed(unsigned long data)
 				 * and break the hang. This should work on
 				 * all but the second generation chipsets.
 				 */
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				if (kick_ring(&dev_priv->ring[RCS]))
 					goto repeat;
 
@@ -1778,6 +1996,10 @@ void i915_hangcheck_elapsed(unsigned long data)
 					goto repeat;
 			}
 
+<<<<<<< HEAD
+=======
+			i915_handle_error(dev, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 		}
 	} else {
@@ -1810,6 +2032,20 @@ static void ironlake_irq_preinstall(struct drm_device *dev)
 		INIT_WORK(&dev_priv->rps_work, gen6_pm_rps_work);
 
 	I915_WRITE(HWSTAM, 0xeffe);
+<<<<<<< HEAD
+=======
+	if (IS_GEN6(dev) || IS_GEN7(dev)) {
+		/* Workaround stalls observed on Sandy Bridge GPUs by
+		 * making the blitter command streamer generate a
+		 * write to the Hardware Status Page for
+		 * MI_USER_INTERRUPT.  This appears to serialize the
+		 * previous seqno write out before the interrupt
+		 * happens.
+		 */
+		I915_WRITE(GEN6_BLITTER_HWSTAM, ~GEN6_BLITTER_USER_INTERRUPT);
+		I915_WRITE(GEN6_BSD_HWSTAM, ~GEN6_BSD_USER_INTERRUPT);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* XXX hotplug from PCH */
 
@@ -1828,6 +2064,7 @@ static void ironlake_irq_preinstall(struct drm_device *dev)
 	POSTING_READ(SDEIER);
 }
 
+<<<<<<< HEAD
 /*
  * Enable digital hotplug on the PCH, and configure the DP short pulse
  * duration to 2ms (which is the minimum in the Display Port spec)
@@ -1848,6 +2085,8 @@ static void ironlake_enable_pch_hotplug(struct drm_device *dev)
 	I915_WRITE(PCH_PORT_HOTPLUG, hotplug);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ironlake_irq_postinstall(struct drm_device *dev)
 {
 	drm_i915_private_t *dev_priv = (drm_i915_private_t *) dev->dev_private;
@@ -1910,8 +2149,11 @@ static int ironlake_irq_postinstall(struct drm_device *dev)
 	I915_WRITE(SDEIER, hotplug_mask);
 	POSTING_READ(SDEIER);
 
+<<<<<<< HEAD
 	ironlake_enable_pch_hotplug(dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_IRONLAKE_M(dev)) {
 		/* Clear & enable PCU event interrupts */
 		I915_WRITE(DEIIR, DE_PCU_EVENT);
@@ -1969,8 +2211,11 @@ static int ivybridge_irq_postinstall(struct drm_device *dev)
 	I915_WRITE(SDEIER, hotplug_mask);
 	POSTING_READ(SDEIER);
 
+<<<<<<< HEAD
 	ironlake_enable_pch_hotplug(dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -2051,6 +2296,7 @@ static int i915_driver_irq_postinstall(struct drm_device *dev)
 			hotplug_en |= HDMIC_HOTPLUG_INT_EN;
 		if (dev_priv->hotplug_supported_mask & HDMID_HOTPLUG_INT_STATUS)
 			hotplug_en |= HDMID_HOTPLUG_INT_EN;
+<<<<<<< HEAD
 		if (IS_G4X(dev)) {
 			if (dev_priv->hotplug_supported_mask & SDVOC_HOTPLUG_INT_STATUS_G4X)
 				hotplug_en |= SDVOC_HOTPLUG_INT_EN;
@@ -2067,6 +2313,12 @@ static int i915_driver_irq_postinstall(struct drm_device *dev)
 			if (dev_priv->hotplug_supported_mask & SDVOB_HOTPLUG_INT_STATUS_I915)
 				hotplug_en |= SDVOB_HOTPLUG_INT_EN;
 		}
+=======
+		if (dev_priv->hotplug_supported_mask & SDVOC_HOTPLUG_INT_STATUS)
+			hotplug_en |= SDVOC_HOTPLUG_INT_EN;
+		if (dev_priv->hotplug_supported_mask & SDVOB_HOTPLUG_INT_STATUS)
+			hotplug_en |= SDVOB_HOTPLUG_INT_EN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (dev_priv->hotplug_supported_mask & CRT_HOTPLUG_INT_STATUS) {
 			hotplug_en |= CRT_HOTPLUG_INT_EN;
 
@@ -2107,10 +2359,13 @@ static void ironlake_irq_uninstall(struct drm_device *dev)
 	I915_WRITE(GTIMR, 0xffffffff);
 	I915_WRITE(GTIER, 0x0);
 	I915_WRITE(GTIIR, I915_READ(GTIIR));
+<<<<<<< HEAD
 
 	I915_WRITE(SDEIMR, 0xffffffff);
 	I915_WRITE(SDEIER, 0x0);
 	I915_WRITE(SDEIIR, I915_READ(SDEIIR));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void i915_driver_irq_uninstall(struct drm_device * dev)
@@ -2149,10 +2404,15 @@ void intel_irq_init(struct drm_device *dev)
 		dev->driver->get_vblank_counter = gm45_get_vblank_counter;
 	}
 
+<<<<<<< HEAD
 	if (drm_core_check_feature(dev, DRIVER_MODESET))
 		dev->driver->get_vblank_timestamp = i915_get_vblank_timestamp;
 	else
 		dev->driver->get_vblank_timestamp = NULL;
+=======
+
+	dev->driver->get_vblank_timestamp = i915_get_vblank_timestamp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev->driver->get_scanout_position = i915_get_crtc_scanoutpos;
 
 	if (IS_IVYBRIDGE(dev)) {

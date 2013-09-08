@@ -56,19 +56,34 @@ static void inftl_add_mtd(struct mtd_blktrans_ops *tr, struct mtd_info *mtd)
 	if (memcmp(mtd->name, "DiskOnChip", 10))
 		return;
 
+<<<<<<< HEAD
 	if (!mtd->_block_isbad) {
+=======
+	if (!mtd->block_isbad) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR
 "INFTL no longer supports the old DiskOnChip drivers loaded via docprobe.\n"
 "Please use the new diskonchip driver under the NAND subsystem.\n");
 		return;
 	}
 
+<<<<<<< HEAD
 	pr_debug("INFTL: add_mtd for %s\n", mtd->name);
 
 	inftl = kzalloc(sizeof(*inftl), GFP_KERNEL);
 
 	if (!inftl)
 		return;
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "INFTL: add_mtd for %s\n", mtd->name);
+
+	inftl = kzalloc(sizeof(*inftl), GFP_KERNEL);
+
+	if (!inftl) {
+		printk(KERN_WARNING "INFTL: Out of memory for data structures\n");
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	inftl->mbd.mtd = mtd;
 	inftl->mbd.devnum = -1;
@@ -131,7 +146,11 @@ static void inftl_remove_dev(struct mtd_blktrans_dev *dev)
 {
 	struct INFTLrecord *inftl = (void *)dev;
 
+<<<<<<< HEAD
 	pr_debug("INFTL: remove_dev (i=%d)\n", dev->devnum);
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "INFTL: remove_dev (i=%d)\n", dev->devnum);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	del_mtd_blktrans_dev(dev);
 
@@ -152,13 +171,21 @@ int inftl_read_oob(struct mtd_info *mtd, loff_t offs, size_t len,
 	struct mtd_oob_ops ops;
 	int res;
 
+<<<<<<< HEAD
 	ops.mode = MTD_OPS_PLACE_OOB;
+=======
+	ops.mode = MTD_OOB_PLACE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ops.ooboffs = offs & (mtd->writesize - 1);
 	ops.ooblen = len;
 	ops.oobbuf = buf;
 	ops.datbuf = NULL;
 
+<<<<<<< HEAD
 	res = mtd_read_oob(mtd, offs & ~(mtd->writesize - 1), &ops);
+=======
+	res = mtd->read_oob(mtd, offs & ~(mtd->writesize - 1), &ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*retlen = ops.oobretlen;
 	return res;
 }
@@ -172,13 +199,21 @@ int inftl_write_oob(struct mtd_info *mtd, loff_t offs, size_t len,
 	struct mtd_oob_ops ops;
 	int res;
 
+<<<<<<< HEAD
 	ops.mode = MTD_OPS_PLACE_OOB;
+=======
+	ops.mode = MTD_OOB_PLACE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ops.ooboffs = offs & (mtd->writesize - 1);
 	ops.ooblen = len;
 	ops.oobbuf = buf;
 	ops.datbuf = NULL;
 
+<<<<<<< HEAD
 	res = mtd_write_oob(mtd, offs & ~(mtd->writesize - 1), &ops);
+=======
+	res = mtd->write_oob(mtd, offs & ~(mtd->writesize - 1), &ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*retlen = ops.oobretlen;
 	return res;
 }
@@ -192,14 +227,22 @@ static int inftl_write(struct mtd_info *mtd, loff_t offs, size_t len,
 	struct mtd_oob_ops ops;
 	int res;
 
+<<<<<<< HEAD
 	ops.mode = MTD_OPS_PLACE_OOB;
+=======
+	ops.mode = MTD_OOB_PLACE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ops.ooboffs = offs;
 	ops.ooblen = mtd->oobsize;
 	ops.oobbuf = oob;
 	ops.datbuf = buf;
 	ops.len = len;
 
+<<<<<<< HEAD
 	res = mtd_write_oob(mtd, offs & ~(mtd->writesize - 1), &ops);
+=======
+	res = mtd->write_oob(mtd, offs & ~(mtd->writesize - 1), &ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*retlen = ops.retlen;
 	return res;
 }
@@ -213,16 +256,26 @@ static u16 INFTL_findfreeblock(struct INFTLrecord *inftl, int desperate)
 	u16 pot = inftl->LastFreeEUN;
 	int silly = inftl->nb_blocks;
 
+<<<<<<< HEAD
 	pr_debug("INFTL: INFTL_findfreeblock(inftl=%p,desperate=%d)\n",
 			inftl, desperate);
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "INFTL: INFTL_findfreeblock(inftl=%p,"
+		"desperate=%d)\n", inftl, desperate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Normally, we force a fold to happen before we run out of free
 	 * blocks completely.
 	 */
 	if (!desperate && inftl->numfreeEUNs < 2) {
+<<<<<<< HEAD
 		pr_debug("INFTL: there are too few free EUNs (%d)\n",
 				inftl->numfreeEUNs);
+=======
+		DEBUG(MTD_DEBUG_LEVEL1, "INFTL: there are too few free "
+			"EUNs (%d)\n", inftl->numfreeEUNs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return BLOCK_NIL;
 	}
 
@@ -257,8 +310,13 @@ static u16 INFTL_foldchain(struct INFTLrecord *inftl, unsigned thisVUC, unsigned
 	struct inftl_oob oob;
 	size_t retlen;
 
+<<<<<<< HEAD
 	pr_debug("INFTL: INFTL_foldchain(inftl=%p,thisVUC=%d,pending=%d)\n",
 			inftl, thisVUC, pendingblock);
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "INFTL: INFTL_foldchain(inftl=%p,thisVUC=%d,"
+		"pending=%d)\n", inftl, thisVUC, pendingblock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memset(BlockMap, 0xff, sizeof(BlockMap));
 	memset(BlockDeleted, 0, sizeof(BlockDeleted));
@@ -321,7 +379,12 @@ static u16 INFTL_foldchain(struct INFTLrecord *inftl, unsigned thisVUC, unsigned
 	 * Chain, and the Erase Unit into which we are supposed to be copying.
 	 * Go for it.
 	 */
+<<<<<<< HEAD
 	pr_debug("INFTL: folding chain %d into unit %d\n", thisVUC, targetEUN);
+=======
+	DEBUG(MTD_DEBUG_LEVEL1, "INFTL: folding chain %d into unit %d\n",
+		thisVUC, targetEUN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (block = 0; block < inftl->EraseSize/SECTORSIZE ; block++) {
 		unsigned char movebuf[SECTORSIZE];
@@ -343,6 +406,7 @@ static u16 INFTL_foldchain(struct INFTLrecord *inftl, unsigned thisVUC, unsigned
 		if (BlockMap[block] == BLOCK_NIL)
 			continue;
 
+<<<<<<< HEAD
 		ret = mtd_read(mtd,
 			       (inftl->EraseSize * BlockMap[block]) + (block * SECTORSIZE),
 			       SECTORSIZE,
@@ -356,6 +420,19 @@ static u16 INFTL_foldchain(struct INFTLrecord *inftl, unsigned thisVUC, unsigned
 				       movebuf);
 			if (ret != -EIO)
 				pr_debug("INFTL: error went away on retry?\n");
+=======
+		ret = mtd->read(mtd, (inftl->EraseSize * BlockMap[block]) +
+				(block * SECTORSIZE), SECTORSIZE, &retlen,
+				movebuf);
+		if (ret < 0 && ret != -EUCLEAN) {
+			ret = mtd->read(mtd,
+					(inftl->EraseSize * BlockMap[block]) +
+					(block * SECTORSIZE), SECTORSIZE,
+					&retlen, movebuf);
+			if (ret != -EIO)
+				DEBUG(MTD_DEBUG_LEVEL1, "INFTL: error went "
+				      "away on retry?\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		memset(&oob, 0xff, sizeof(struct inftl_oob));
 		oob.b.Status = oob.b.Status1 = SECTOR_USED;
@@ -371,7 +448,12 @@ static u16 INFTL_foldchain(struct INFTLrecord *inftl, unsigned thisVUC, unsigned
 	 * is important, by doing oldest first if we crash/reboot then it
 	 * it is relatively simple to clean up the mess).
 	 */
+<<<<<<< HEAD
 	pr_debug("INFTL: want to erase virtual chain %d\n", thisVUC);
+=======
+	DEBUG(MTD_DEBUG_LEVEL1, "INFTL: want to erase virtual chain %d\n",
+		thisVUC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (;;) {
 		/* Find oldest unit in chain. */
@@ -419,7 +501,11 @@ static u16 INFTL_makefreeblock(struct INFTLrecord *inftl, unsigned pendingblock)
 	u16 ChainLength = 0, thislen;
 	u16 chain, EUN;
 
+<<<<<<< HEAD
 	pr_debug("INFTL: INFTL_makefreeblock(inftl=%p,"
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "INFTL: INFTL_makefreeblock(inftl=%p,"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"pending=%d)\n", inftl, pendingblock);
 
 	for (chain = 0; chain < inftl->nb_blocks; chain++) {
@@ -482,8 +568,13 @@ static inline u16 INFTL_findwriteunit(struct INFTLrecord *inftl, unsigned block)
 	size_t retlen;
 	int silly, silly2 = 3;
 
+<<<<<<< HEAD
 	pr_debug("INFTL: INFTL_findwriteunit(inftl=%p,block=%d)\n",
 			inftl, block);
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "INFTL: INFTL_findwriteunit(inftl=%p,"
+		"block=%d)\n", inftl, block);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	do {
 		/*
@@ -499,8 +590,13 @@ static inline u16 INFTL_findwriteunit(struct INFTLrecord *inftl, unsigned block)
 				       blockofs, 8, &retlen, (char *)&bci);
 
 			status = bci.Status | bci.Status1;
+<<<<<<< HEAD
 			pr_debug("INFTL: status of block %d in EUN %d is %x\n",
 					block , writeEUN, status);
+=======
+			DEBUG(MTD_DEBUG_LEVEL3, "INFTL: status of block %d in "
+				"EUN %d is %x\n", block , writeEUN, status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			switch(status) {
 			case SECTOR_FREE:
@@ -553,9 +649,15 @@ hitused:
 			 * Hopefully we free something, lets try again.
 			 * This time we are desperate...
 			 */
+<<<<<<< HEAD
 			pr_debug("INFTL: using desperate==1 to find free EUN "
 					"to accommodate write to VUC %d\n",
 					thisVUC);
+=======
+			DEBUG(MTD_DEBUG_LEVEL1, "INFTL: using desperate==1 "
+				"to find free EUN to accommodate write to "
+				"VUC %d\n", thisVUC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			writeEUN = INFTL_findfreeblock(inftl, 1);
 			if (writeEUN == BLOCK_NIL) {
 				/*
@@ -645,7 +747,11 @@ static void INFTL_trydeletechain(struct INFTLrecord *inftl, unsigned thisVUC)
 	struct inftl_bci bci;
 	size_t retlen;
 
+<<<<<<< HEAD
 	pr_debug("INFTL: INFTL_trydeletechain(inftl=%p,"
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "INFTL: INFTL_trydeletechain(inftl=%p,"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"thisVUC=%d)\n", inftl, thisVUC);
 
 	memset(BlockUsed, 0, sizeof(BlockUsed));
@@ -709,7 +815,11 @@ static void INFTL_trydeletechain(struct INFTLrecord *inftl, unsigned thisVUC)
 	 * For each block in the chain free it and make it available
 	 * for future use. Erase from the oldest unit first.
 	 */
+<<<<<<< HEAD
 	pr_debug("INFTL: deleting empty VUC %d\n", thisVUC);
+=======
+	DEBUG(MTD_DEBUG_LEVEL1, "INFTL: deleting empty VUC %d\n", thisVUC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (;;) {
 		u16 *prevEUN = &inftl->VUtable[thisVUC];
@@ -717,7 +827,11 @@ static void INFTL_trydeletechain(struct INFTLrecord *inftl, unsigned thisVUC)
 
 		/* If the chain is all gone already, we're done */
 		if (thisEUN == BLOCK_NIL) {
+<<<<<<< HEAD
 			pr_debug("INFTL: Empty VUC %d for deletion was already absent\n", thisEUN);
+=======
+			DEBUG(MTD_DEBUG_LEVEL2, "INFTL: Empty VUC %d for deletion was already absent\n", thisEUN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return;
 		}
 
@@ -729,7 +843,11 @@ static void INFTL_trydeletechain(struct INFTLrecord *inftl, unsigned thisVUC)
 			thisEUN = *prevEUN;
 		}
 
+<<<<<<< HEAD
 		pr_debug("Deleting EUN %d from VUC %d\n",
+=======
+		DEBUG(MTD_DEBUG_LEVEL3, "Deleting EUN %d from VUC %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      thisEUN, thisVUC);
 
 		if (INFTL_formatblock(inftl, thisEUN) < 0) {
@@ -765,7 +883,11 @@ static int INFTL_deleteblock(struct INFTLrecord *inftl, unsigned block)
 	size_t retlen;
 	struct inftl_bci bci;
 
+<<<<<<< HEAD
 	pr_debug("INFTL: INFTL_deleteblock(inftl=%p,"
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "INFTL: INFTL_deleteblock(inftl=%p,"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"block=%d)\n", inftl, block);
 
 	while (thisEUN < inftl->nb_blocks) {
@@ -824,7 +946,11 @@ static int inftl_writeblock(struct mtd_blktrans_dev *mbd, unsigned long block,
 	struct inftl_oob oob;
 	char *p, *pend;
 
+<<<<<<< HEAD
 	pr_debug("INFTL: inftl_writeblock(inftl=%p,block=%ld,"
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "INFTL: inftl_writeblock(inftl=%p,block=%ld,"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"buffer=%p)\n", inftl, block, buffer);
 
 	/* Is block all zero? */
@@ -874,7 +1000,11 @@ static int inftl_readblock(struct mtd_blktrans_dev *mbd, unsigned long block,
 	struct inftl_bci bci;
 	size_t retlen;
 
+<<<<<<< HEAD
 	pr_debug("INFTL: inftl_readblock(inftl=%p,block=%ld,"
+=======
+	DEBUG(MTD_DEBUG_LEVEL3, "INFTL: inftl_readblock(inftl=%p,block=%ld,"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"buffer=%p)\n", inftl, block, buffer);
 
 	while (thisEUN < inftl->nb_blocks) {
@@ -917,10 +1047,17 @@ foundit:
 	} else {
 		size_t retlen;
 		loff_t ptr = (thisEUN * inftl->EraseSize) + blockofs;
+<<<<<<< HEAD
 		int ret = mtd_read(mtd, ptr, SECTORSIZE, &retlen, buffer);
 
 		/* Handle corrected bit flips gracefully */
 		if (ret < 0 && !mtd_is_bitflip(ret))
+=======
+		int ret = mtd->read(mtd, ptr, SECTORSIZE, &retlen, buffer);
+
+		/* Handle corrected bit flips gracefully */
+		if (ret < 0 && ret != -EUCLEAN)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EIO;
 	}
 	return 0;

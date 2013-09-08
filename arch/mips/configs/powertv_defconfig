@@ -6,7 +6,11 @@ CONFIG_HZ_1000=y
 CONFIG_PREEMPT=y
 # CONFIG_SECCOMP is not set
 CONFIG_EXPERIMENTAL=y
+<<<<<<< HEAD
 CONFIG_CROSS_COMPILE=""
+=======
+CONFIG_CROSS_COMPILE="mips-linux-"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # CONFIG_SWAP is not set
 CONFIG_SYSVIPC=y
 CONFIG_LOG_BUF_SHIFT=16

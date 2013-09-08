@@ -67,6 +67,7 @@ struct renesas_usbhs_platform_callback {
 	/*
 	 * option:
 	 *
+<<<<<<< HEAD
 	 * for board specific clock control
 	 */
 	void (*power_ctrl)(struct platform_device *pdev,
@@ -75,6 +76,8 @@ struct renesas_usbhs_platform_callback {
 	/*
 	 * option:
 	 *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Phy reset for platform
 	 */
 	void (*phy_reset)(struct platform_device *pdev);
@@ -90,6 +93,7 @@ struct renesas_usbhs_platform_callback {
 	 * get VBUS status function.
 	 */
 	int (*get_vbus)(struct platform_device *pdev);
+<<<<<<< HEAD
 
 	/*
 	 * option:
@@ -97,6 +101,8 @@ struct renesas_usbhs_platform_callback {
 	 * VBUS control is needed for Host
 	 */
 	int (*set_vbus)(struct platform_device *pdev, int enable);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -116,8 +122,11 @@ struct renesas_usbhs_driver_param {
 	 * option:
 	 *
 	 * for BUSWAIT :: BWAIT
+<<<<<<< HEAD
 	 * see
 	 *	renesas_usbhs/common.c :: usbhsc_set_buswait()
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * */
 	int buswait_bwait;
 
@@ -126,6 +135,7 @@ struct renesas_usbhs_driver_param {
 	 *
 	 * delay time from notify_hotplug callback
 	 */
+<<<<<<< HEAD
 	int detection_delay; /* msec */
 
 	/*
@@ -150,6 +160,9 @@ struct renesas_usbhs_driver_param {
 	 */
 	u32 has_otg:1; /* for controlling PWEN/EXTLP */
 	u32 has_sudmac:1; /* for SUDMAC */
+=======
+	int detection_delay;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*

@@ -5,8 +5,11 @@
 
 struct acpi_device;
 
+<<<<<<< HEAD
 #define ACPI_VIDEO_CLASS	"video"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ACPI_VIDEO_DISPLAY_CRT  1
 #define ACPI_VIDEO_DISPLAY_TV   2
 #define ACPI_VIDEO_DISPLAY_DVI  3

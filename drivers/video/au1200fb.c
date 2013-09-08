@@ -44,6 +44,7 @@
 #include <linux/slab.h>
 
 #include <asm/mach-au1x00/au1000.h>
+<<<<<<< HEAD
 #include <asm/mach-au1x00/au1200fb.h>	/* platform_data */
 #include "au1200fb.h"
 
@@ -51,6 +52,22 @@
 #define DRIVER_DESC "LCD controller driver for AU1200 processors"
 
 #define DEBUG 0
+=======
+#include "au1200fb.h"
+
+#ifdef CONFIG_PM
+#include <asm/mach-au1x00/au1xxx_pm.h>
+#endif
+
+#ifndef CONFIG_FB_AU1200_DEVS
+#define CONFIG_FB_AU1200_DEVS 4
+#endif
+
+#define DRIVER_NAME "au1200fb"
+#define DRIVER_DESC "LCD controller driver for AU1200 processors"
+
+#define DEBUG 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define print_err(f, arg...) printk(KERN_ERR DRIVER_NAME ": " f "\n", ## arg)
 #define print_warn(f, arg...) printk(KERN_WARNING DRIVER_NAME ": " f "\n", ## arg)
@@ -143,8 +160,12 @@ struct au1200_lcd_iodata_t {
 
 /* Private, per-framebuffer management information (independent of the panel itself) */
 struct au1200fb_device {
+<<<<<<< HEAD
 	struct fb_info *fb_info;		/* FB driver info record */
 	struct au1200fb_platdata *pd;
+=======
+	struct fb_info fb_info;			/* FB driver info record */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int					plane;
 	unsigned char* 		fb_mem;		/* FrameBuffer memory map */
@@ -152,6 +173,10 @@ struct au1200fb_device {
 	dma_addr_t    		fb_phys;
 };
 
+<<<<<<< HEAD
+=======
+static struct au1200fb_device _au1200fb_devices[CONFIG_FB_AU1200_DEVS];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /********************************************************************/
 
 /* LCD controller restrictions */
@@ -164,6 +189,7 @@ struct au1200fb_device {
 /* Default number of visible screen buffer to allocate */
 #define AU1200FB_NBR_VIDEO_BUFFERS 1
 
+<<<<<<< HEAD
 /* Default maximum number of fb devices to create */
 #define MAX_DEVICE_COUNT	4
 
@@ -176,6 +202,12 @@ static struct fb_info *_au1200fb_infos[MAX_DEVICE_COUNT];
 static struct au1200_lcd *lcd = (struct au1200_lcd *) AU1200_LCD_ADDR;
 static int device_count = MAX_DEVICE_COUNT;
 static int window_index = DEFAULT_WINDOW_INDEX;	/* default is zero */
+=======
+/********************************************************************/
+
+static struct au1200_lcd *lcd = (struct au1200_lcd *) AU1200_LCD_ADDR;
+static int window_index = 2; /* default is zero */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int panel_index = 2; /* default is zero */
 static struct window_settings *win;
 static struct panel_settings *panel;
@@ -203,6 +235,18 @@ struct window_settings {
 #define LCD_WINCTRL1_PO_16BPP LCD_WINCTRL1_PO_01
 #endif
 
+<<<<<<< HEAD
+=======
+extern int board_au1200fb_panel_init (void);
+extern int board_au1200fb_panel_shutdown (void);
+
+#ifdef CONFIG_PM
+int au1200fb_pm_callback(au1xxx_power_dev_t *dev,
+		au1xxx_request_t request, void *data);
+au1xxx_power_dev_t *LCD_pm_dev;
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Default window configurations
  */
@@ -333,6 +377,11 @@ struct panel_settings
 	uint32 mode_toyclksrc;
 	uint32 mode_backlight;
 	uint32 mode_auxpll;
+<<<<<<< HEAD
+=======
+	int (*device_init)(void);
+	int (*device_shutdown)(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define Xres min_xres
 #define Yres min_yres
 	u32	min_xres;		/* Minimum horizontal resolution */
@@ -382,6 +431,11 @@ static struct panel_settings known_lcd_panels[] =
 		.mode_toyclksrc	= 0x00000004, /* AUXPLL directly */
 		.mode_backlight	= 0x00000000,
 		.mode_auxpll		= 8, /* 96MHz AUXPLL */
+<<<<<<< HEAD
+=======
+		.device_init		= NULL,
+		.device_shutdown	= NULL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		320, 320,
 		240, 240,
 	},
@@ -410,6 +464,11 @@ static struct panel_settings known_lcd_panels[] =
 		.mode_toyclksrc	= 0x00000004, /* AUXPLL directly */
 		.mode_backlight	= 0x00000000,
 		.mode_auxpll		= 8, /* 96MHz AUXPLL */
+<<<<<<< HEAD
+=======
+		.device_init		= NULL,
+		.device_shutdown	= NULL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		640, 480,
 		640, 480,
 	},
@@ -438,6 +497,11 @@ static struct panel_settings known_lcd_panels[] =
 		.mode_toyclksrc	= 0x00000004, /* AUXPLL directly */
 		.mode_backlight	= 0x00000000,
 		.mode_auxpll		= 8, /* 96MHz AUXPLL */
+<<<<<<< HEAD
+=======
+		.device_init		= NULL,
+		.device_shutdown	= NULL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		800, 800,
 		600, 600,
 	},
@@ -466,6 +530,11 @@ static struct panel_settings known_lcd_panels[] =
 		.mode_toyclksrc	= 0x00000004, /* AUXPLL directly */
 		.mode_backlight	= 0x00000000,
 		.mode_auxpll		= 6, /* 72MHz AUXPLL */
+<<<<<<< HEAD
+=======
+		.device_init		= NULL,
+		.device_shutdown	= NULL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		1024, 1024,
 		768, 768,
 	},
@@ -494,6 +563,11 @@ static struct panel_settings known_lcd_panels[] =
 		.mode_toyclksrc	= 0x00000004, /* AUXPLL directly */
 		.mode_backlight	= 0x00000000,
 		.mode_auxpll		= 10, /* 120MHz AUXPLL */
+<<<<<<< HEAD
+=======
+		.device_init		= NULL,
+		.device_shutdown	= NULL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		1280, 1280,
 		1024, 1024,
 	},
@@ -522,6 +596,11 @@ static struct panel_settings known_lcd_panels[] =
 		.mode_toyclksrc	= 0x00000004, /* AUXPLL directly */
 		.mode_backlight	= 0x00000000,
 		.mode_auxpll		= 8, /* 96MHz AUXPLL */
+<<<<<<< HEAD
+=======
+		.device_init		= board_au1200fb_panel_init,
+		.device_shutdown	= board_au1200fb_panel_shutdown,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		1024, 1024,
 		768, 768,
 	},
@@ -553,6 +632,11 @@ static struct panel_settings known_lcd_panels[] =
 		.mode_toyclksrc	= 0x00000004, /* AUXPLL directly */
 		.mode_backlight	= 0x00000000,
 		.mode_auxpll		= 8, /* 96MHz AUXPLL */
+<<<<<<< HEAD
+=======
+		.device_init		= board_au1200fb_panel_init,
+		.device_shutdown	= board_au1200fb_panel_shutdown,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		640, 480,
 		640, 480,
 	},
@@ -584,6 +668,11 @@ static struct panel_settings known_lcd_panels[] =
 		.mode_toyclksrc	= 0x00000004, /* AUXPLL directly */
 		.mode_backlight	= 0x00000000,
 		.mode_auxpll		= 8, /* 96MHz AUXPLL */
+<<<<<<< HEAD
+=======
+		.device_init		= board_au1200fb_panel_init,
+		.device_shutdown	= board_au1200fb_panel_shutdown,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		320, 320,
 		240, 240,
 	},
@@ -615,6 +704,7 @@ static struct panel_settings known_lcd_panels[] =
 		.mode_toyclksrc	= 0x00000004, /* AUXPLL directly */
 		.mode_backlight	= 0x00000000,
 		.mode_auxpll		= 8, /* 96MHz AUXPLL */
+<<<<<<< HEAD
 		856, 856,
 		480, 480,
 	},
@@ -652,12 +742,41 @@ static struct panel_settings known_lcd_panels[] =
 		800, 800,
 		480, 480,
 	},
+=======
+		.device_init		= board_au1200fb_panel_init,
+		.device_shutdown	= board_au1200fb_panel_shutdown,
+		856, 856,
+		480, 480,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define NUM_PANELS (ARRAY_SIZE(known_lcd_panels))
 
 /********************************************************************/
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_PM
+static int set_brightness(unsigned int brightness)
+{
+	unsigned int hi1, divider;
+
+	/* limit brightness pwm duty to >= 30/1600 */
+	if (brightness < 30) {
+		brightness = 30;
+	}
+	divider = (lcd->pwmdiv & 0x3FFFF) + 1;
+	hi1 = (lcd->pwmhi >> 16) + 1;
+	hi1 = (((brightness & 0xFF) + 1) * divider >> 8);
+	lcd->pwmhi &= 0xFFFF;
+	lcd->pwmhi |= (hi1 << 16);
+
+	return brightness;
+}
+#endif /* CONFIG_PM */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int winbpp (unsigned int winctrl1)
 {
 	int bits = 0;
@@ -699,8 +818,13 @@ static int fbinfo2index (struct fb_info *fb_info)
 {
 	int i;
 
+<<<<<<< HEAD
 	for (i = 0; i < device_count; ++i) {
 		if (fb_info == _au1200fb_infos[i])
+=======
+	for (i = 0; i < CONFIG_FB_AU1200_DEVS; ++i) {
+		if (fb_info == (struct fb_info *)(&_au1200fb_devices[i].fb_info))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return i;
 	}
 	printk("au1200fb: ERROR: fbinfo2index failed!\n");
@@ -777,8 +901,12 @@ static int au1200_setlocation (struct au1200fb_device *fbdev, int plane,
 	return 0;
 }
 
+<<<<<<< HEAD
 static void au1200_setpanel(struct panel_settings *newpanel,
 			    struct au1200fb_platdata *pd)
+=======
+static void au1200_setpanel (struct panel_settings *newpanel)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * Perform global setup/init of LCD controller
@@ -812,8 +940,13 @@ static void au1200_setpanel(struct panel_settings *newpanel,
 		    the controller, the clock cannot be turned off before first
 			shutting down the controller.
 		 */
+<<<<<<< HEAD
 		if (pd->panel_shutdown)
 			pd->panel_shutdown();
+=======
+		if (panel->device_shutdown != NULL)
+			panel->device_shutdown();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Newpanel == NULL indicates a shutdown operation only */
@@ -866,8 +999,12 @@ static void au1200_setpanel(struct panel_settings *newpanel,
 	au_sync();
 
 	/* Call init of panel */
+<<<<<<< HEAD
 	if (pd->panel_init)
 		pd->panel_init();
+=======
+	if (panel->device_init != NULL) panel->device_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* FIX!!!! not appropriate on panel change!!! Global setup/init */
 	lcd->intenable = 0;
@@ -951,7 +1088,11 @@ static void au1200_setmode(struct au1200fb_device *fbdev)
 	lcd->window[plane].winctrl2 = ( 0
 		| LCD_WINCTRL2_CKMODE_00
 		| LCD_WINCTRL2_DBM
+<<<<<<< HEAD
 		| LCD_WINCTRL2_BX_N(fbdev->fb_info->fix.line_length)
+=======
+		| LCD_WINCTRL2_BX_N( fbdev->fb_info.fix.line_length)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		| LCD_WINCTRL2_SCX_1
 		| LCD_WINCTRL2_SCY_1
 		) ;
@@ -1039,7 +1180,11 @@ static void au1200fb_update_fbinfo(struct fb_info *fbi)
 static int au1200fb_fb_check_var(struct fb_var_screeninfo *var,
 	struct fb_info *fbi)
 {
+<<<<<<< HEAD
 	struct au1200fb_device *fbdev = fbi->par;
+=======
+	struct au1200fb_device *fbdev = (struct au1200fb_device *)fbi;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 pixclock;
 	int screen_size, plane;
 
@@ -1131,7 +1276,11 @@ static int au1200fb_fb_check_var(struct fb_var_screeninfo *var,
  */
 static int au1200fb_fb_set_par(struct fb_info *fbi)
 {
+<<<<<<< HEAD
 	struct au1200fb_device *fbdev = fbi->par;
+=======
+	struct au1200fb_device *fbdev = (struct au1200fb_device *)fbi;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	au1200fb_update_fbinfo(fbi);
 	au1200_setmode(fbdev);
@@ -1200,8 +1349,11 @@ static int au1200fb_fb_setcolreg(unsigned regno, unsigned red, unsigned green,
  */
 static int au1200fb_fb_blank(int blank_mode, struct fb_info *fbi)
 {
+<<<<<<< HEAD
 	struct au1200fb_device *fbdev = fbi->par;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Short-circuit screen blanking */
 	if (noblanking)
 		return 0;
@@ -1211,13 +1363,21 @@ static int au1200fb_fb_blank(int blank_mode, struct fb_info *fbi)
 	case FB_BLANK_UNBLANK:
 	case FB_BLANK_NORMAL:
 		/* printk("turn on panel\n"); */
+<<<<<<< HEAD
 		au1200_setpanel(panel, fbdev->pd);
+=======
+		au1200_setpanel(panel);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case FB_BLANK_VSYNC_SUSPEND:
 	case FB_BLANK_HSYNC_SUSPEND:
 	case FB_BLANK_POWERDOWN:
 		/* printk("turn off panel\n"); */
+<<<<<<< HEAD
 		au1200_setpanel(NULL, fbdev->pd);
+=======
+		au1200_setpanel(NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		break;
@@ -1237,7 +1397,15 @@ static int au1200fb_fb_mmap(struct fb_info *info, struct vm_area_struct *vma)
 {
 	unsigned int len;
 	unsigned long start=0, off;
+<<<<<<< HEAD
 	struct au1200fb_device *fbdev = info->par;
+=======
+	struct au1200fb_device *fbdev = (struct au1200fb_device *) info;
+
+#ifdef CONFIG_PM
+	au1xxx_pm_access(LCD_pm_dev);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (vma->vm_pgoff > (~0UL >> PAGE_SHIFT)) {
 		return -EINVAL;
@@ -1445,10 +1613,20 @@ static void get_window(unsigned int plane,
 static int au1200fb_ioctl(struct fb_info *info, unsigned int cmd,
                           unsigned long arg)
 {
+<<<<<<< HEAD
 	struct au1200fb_device *fbdev = info->par;
 	int plane;
 	int val;
 
+=======
+	int plane;
+	int val;
+
+#ifdef CONFIG_PM
+	au1xxx_pm_access(LCD_pm_dev);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	plane = fbinfo2index(info);
 	print_dbg("au1200fb: ioctl %d on plane %d\n", cmd, plane);
 
@@ -1490,7 +1668,11 @@ static int au1200fb_ioctl(struct fb_info *info, unsigned int cmd,
 				struct panel_settings *newpanel;
 				panel_index = iodata.global.panel_choice;
 				newpanel = &known_lcd_panels[panel_index];
+<<<<<<< HEAD
 				au1200_setpanel(newpanel, fbdev->pd);
+=======
+				au1200_setpanel(newpanel);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			break;
 
@@ -1520,11 +1702,17 @@ static struct fb_ops au1200fb_fb_ops = {
 	.fb_set_par	= au1200fb_fb_set_par,
 	.fb_setcolreg	= au1200fb_fb_setcolreg,
 	.fb_blank	= au1200fb_fb_blank,
+<<<<<<< HEAD
 	.fb_fillrect	= sys_fillrect,
 	.fb_copyarea	= sys_copyarea,
 	.fb_imageblit	= sys_imageblit,
 	.fb_read	= fb_sys_read,
 	.fb_write	= fb_sys_write,
+=======
+	.fb_fillrect	= cfb_fillrect,
+	.fb_copyarea	= cfb_copyarea,
+	.fb_imageblit	= cfb_imageblit,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.fb_sync	= NULL,
 	.fb_ioctl	= au1200fb_ioctl,
 	.fb_mmap	= au1200fb_fb_mmap,
@@ -1547,9 +1735,16 @@ static irqreturn_t au1200fb_handle_irq(int irq, void* dev_id)
 
 static int au1200fb_init_fbinfo(struct au1200fb_device *fbdev)
 {
+<<<<<<< HEAD
 	struct fb_info *fbi = fbdev->fb_info;
 	int bpp;
 
+=======
+	struct fb_info *fbi = &fbdev->fb_info;
+	int bpp;
+
+	memset(fbi, 0, sizeof(struct fb_info));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fbi->fbops = &au1200fb_fb_ops;
 
 	bpp = winbpp(win->w[fbdev->plane].mode_winctrl1);
@@ -1606,6 +1801,7 @@ static int au1200fb_init_fbinfo(struct au1200fb_device *fbdev)
 
 /*-------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 
 static int au1200fb_setup(struct au1200fb_platdata *pd)
 {
@@ -1703,12 +1899,27 @@ static int __devinit au1200fb_drv_probe(struct platform_device *dev)
 	fbdev = NULL;
 
 	for (plane = 0; plane < device_count; ++plane) {
+=======
+/* AU1200 LCD controller device driver */
+
+static int au1200fb_drv_probe(struct platform_device *dev)
+{
+	struct au1200fb_device *fbdev;
+	unsigned long page;
+	int bpp, plane, ret;
+
+	if (!dev)
+		return -EINVAL;
+
+	for (plane = 0; plane < CONFIG_FB_AU1200_DEVS; ++plane) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bpp = winbpp(win->w[plane].mode_winctrl1);
 		if (win->w[plane].xres == 0)
 			win->w[plane].xres = panel->Xres;
 		if (win->w[plane].yres == 0)
 			win->w[plane].yres = panel->Yres;
 
+<<<<<<< HEAD
 		fbi = framebuffer_alloc(sizeof(struct au1200fb_device),
 					&dev->dev);
 		if (!fbi)
@@ -1719,12 +1930,20 @@ static int __devinit au1200fb_drv_probe(struct platform_device *dev)
 		fbdev->fb_info = fbi;
 		fbdev->pd = pd;
 
+=======
+		fbdev = &_au1200fb_devices[plane];
+		memset(fbdev, 0, sizeof(struct au1200fb_device));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fbdev->plane = plane;
 
 		/* Allocate the framebuffer to the maximum screen size */
 		fbdev->fb_len = (win->w[plane].xres * win->w[plane].yres * bpp) / 8;
 
+<<<<<<< HEAD
 		fbdev->fb_mem = dmam_alloc_noncoherent(&dev->dev,
+=======
+		fbdev->fb_mem = dma_alloc_noncoherent(&dev->dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				PAGE_ALIGN(fbdev->fb_len),
 				&fbdev->fb_phys, GFP_KERNEL);
 		if (!fbdev->fb_mem) {
@@ -1751,12 +1970,17 @@ static int __devinit au1200fb_drv_probe(struct platform_device *dev)
 			goto failed;
 
 		/* Register new framebuffer */
+<<<<<<< HEAD
 		ret = register_framebuffer(fbi);
 		if (ret < 0) {
+=======
+		if ((ret = register_framebuffer(&fbdev->fb_info)) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			print_err("cannot register new framebuffer");
 			goto failed;
 		}
 
+<<<<<<< HEAD
 		au1200fb_fb_set_par(fbi);
 
 #if !defined(CONFIG_FRAMEBUFFER_CONSOLE) && defined(CONFIG_LOGO)
@@ -1765,11 +1989,24 @@ static int __devinit au1200fb_drv_probe(struct platform_device *dev)
 				/* Start display and show logo on boot */
 				fb_set_cmap(&fbi->cmap, fbi);
 				fb_show_logo(fbi, FB_ROTATE_UR);
+=======
+		au1200fb_fb_set_par(&fbdev->fb_info);
+
+#if !defined(CONFIG_FRAMEBUFFER_CONSOLE) && defined(CONFIG_LOGO)
+		if (plane == 0)
+			if (fb_prepare_logo(&fbdev->fb_info, FB_ROTATE_UR)) {
+				/* Start display and show logo on boot */
+				fb_set_cmap(&fbdev->fb_info.cmap,
+						&fbdev->fb_info);
+
+				fb_show_logo(&fbdev->fb_info, FB_ROTATE_UR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 #endif
 	}
 
 	/* Now hook interrupt too */
+<<<<<<< HEAD
 	irq = platform_get_irq(dev, 0);
 	ret = request_irq(irq, au1200fb_handle_irq,
 			  IRQF_SHARED, "lcd", (void *)dev);
@@ -1784,20 +2021,40 @@ static int __devinit au1200fb_drv_probe(struct platform_device *dev)
 	/* Kickstart the panel */
 	au1200_setpanel(panel, pd);
 
+=======
+	if ((ret = request_irq(AU1200_LCD_INT, au1200fb_handle_irq,
+		 	  IRQF_DISABLED | IRQF_SHARED, "lcd", (void *)dev)) < 0) {
+		print_err("fail to request interrupt line %d (err: %d)",
+			  AU1200_LCD_INT, ret);
+		goto failed;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 failed:
 	/* NOTE: This only does the current plane/window that failed; others are still active */
+<<<<<<< HEAD
 	if (fbi) {
 		if (fbi->cmap.len != 0)
 			fb_dealloc_cmap(&fbi->cmap);
 		kfree(fbi->pseudo_palette);
 	}
+=======
+	if (fbdev->fb_mem)
+		dma_free_noncoherent(dev, PAGE_ALIGN(fbdev->fb_len),
+				fbdev->fb_mem, fbdev->fb_phys);
+	if (fbdev->fb_info.cmap.len != 0)
+		fb_dealloc_cmap(&fbdev->fb_info.cmap);
+	if (fbdev->fb_info.pseudo_palette)
+		kfree(fbdev->fb_info.pseudo_palette);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (plane == 0)
 		free_irq(AU1200_LCD_INT, (void*)dev);
 	return ret;
 }
 
+<<<<<<< HEAD
 static int __devexit au1200fb_drv_remove(struct platform_device *dev)
 {
 	struct au1200fb_platdata *pd = platform_get_drvdata(dev);
@@ -1823,11 +2080,42 @@ static int __devexit au1200fb_drv_remove(struct platform_device *dev)
 	}
 
 	free_irq(platform_get_irq(dev, 0), (void *)dev);
+=======
+static int au1200fb_drv_remove(struct platform_device *dev)
+{
+	struct au1200fb_device *fbdev;
+	int plane;
+
+	if (!dev)
+		return -ENODEV;
+
+	/* Turn off the panel */
+	au1200_setpanel(NULL);
+
+	for (plane = 0; plane < CONFIG_FB_AU1200_DEVS; ++plane)
+	{
+		fbdev = &_au1200fb_devices[plane];
+
+		/* Clean up all probe data */
+		unregister_framebuffer(&fbdev->fb_info);
+		if (fbdev->fb_mem)
+			dma_free_noncoherent(&dev->dev,
+					PAGE_ALIGN(fbdev->fb_len),
+					fbdev->fb_mem, fbdev->fb_phys);
+		if (fbdev->fb_info.cmap.len != 0)
+			fb_dealloc_cmap(&fbdev->fb_info.cmap);
+		if (fbdev->fb_info.pseudo_palette)
+			kfree(fbdev->fb_info.pseudo_palette);
+	}
+
+	free_irq(AU1200_LCD_INT, (void *)dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 #ifdef CONFIG_PM
+<<<<<<< HEAD
 static int au1200fb_drv_suspend(struct device *dev)
 {
 	struct au1200fb_platdata *pd = dev_get_drvdata(dev);
@@ -1867,22 +2155,183 @@ static const struct dev_pm_ops au1200fb_pmops = {
 
 #else
 #define AU1200FB_PMOPS	NULL
+=======
+static int au1200fb_drv_suspend(struct platform_device *dev, u32 state)
+{
+	/* TODO */
+	return 0;
+}
+
+static int au1200fb_drv_resume(struct platform_device *dev)
+{
+	/* TODO */
+	return 0;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_PM */
 
 static struct platform_driver au1200fb_driver = {
 	.driver = {
+<<<<<<< HEAD
 		.name	= "au1200-lcd",
 		.owner	= THIS_MODULE,
 		.pm	= AU1200FB_PMOPS,
 	},
 	.probe		= au1200fb_drv_probe,
 	.remove		= __devexit_p(au1200fb_drv_remove),
+=======
+		.name		= "au1200-lcd",
+		.owner          = THIS_MODULE,
+	},
+	.probe		= au1200fb_drv_probe,
+	.remove		= au1200fb_drv_remove,
+#ifdef CONFIG_PM
+	.suspend	= au1200fb_drv_suspend,
+	.resume		= au1200fb_drv_resume,
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*-------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 static int __init au1200fb_init(void)
 {
+=======
+/* Kernel driver */
+
+static void au1200fb_setup(void)
+{
+	char* options = NULL;
+	char* this_opt;
+	int num_panels = ARRAY_SIZE(known_lcd_panels);
+	int panel_idx = -1;
+
+	fb_get_options(DRIVER_NAME, &options);
+
+	if (options) {
+		while ((this_opt = strsep(&options,",")) != NULL) {
+			/* Panel option - can be panel name,
+			 * "bs" for board-switch, or number/index */
+			if (!strncmp(this_opt, "panel:", 6)) {
+				int i;
+				long int li;
+				char *endptr;
+				this_opt += 6;
+				/* First check for index, which allows
+				 * to short circuit this mess */
+				li = simple_strtol(this_opt, &endptr, 0);
+				if (*endptr == '\0') {
+					panel_idx = (int)li;
+				}
+				else if (strcmp(this_opt, "bs") == 0) {
+					extern int board_au1200fb_panel(void);
+					panel_idx = board_au1200fb_panel();
+				}
+
+				else
+				for (i = 0; i < num_panels; i++) {
+					if (!strcmp(this_opt, known_lcd_panels[i].name)) {
+						panel_idx = i;
+						break;
+					}
+				}
+
+				if ((panel_idx < 0) || (panel_idx >= num_panels)) {
+						print_warn("Panel %s not supported!", this_opt);
+				}
+				else
+					panel_index = panel_idx;
+			}
+
+			else if (strncmp(this_opt, "nohwcursor", 10) == 0) {
+				nohwcursor = 1;
+			}
+
+			/* Unsupported option */
+			else {
+				print_warn("Unsupported option \"%s\"", this_opt);
+			}
+		}
+	}
+}
+
+#ifdef CONFIG_PM
+static int au1200fb_pm_callback(au1xxx_power_dev_t *dev,
+		au1xxx_request_t request, void *data) {
+	int retval = -1;
+	unsigned int d = 0;
+	unsigned int brightness = 0;
+
+	if (request == AU1XXX_PM_SLEEP) {
+		board_au1200fb_panel_shutdown();
+	}
+	else if (request == AU1XXX_PM_WAKEUP) {
+		if(dev->prev_state == SLEEP_STATE)
+		{
+			int plane;
+			au1200_setpanel(panel);
+			for (plane = 0; plane < CONFIG_FB_AU1200_DEVS; ++plane) 	{
+				struct au1200fb_device *fbdev;
+				fbdev = &_au1200fb_devices[plane];
+				au1200fb_fb_set_par(&fbdev->fb_info);
+			}
+		}
+
+		d = *((unsigned int*)data);
+		if(d <=10) brightness = 26;
+		else if(d<=20) brightness = 51;
+		else if(d<=30) brightness = 77;
+		else if(d<=40) brightness = 102;
+		else if(d<=50) brightness = 128;
+		else if(d<=60) brightness = 153;
+		else if(d<=70) brightness = 179;
+		else if(d<=80) brightness = 204;
+		else if(d<=90) brightness = 230;
+		else brightness = 255;
+		set_brightness(brightness);
+	} else if (request == AU1XXX_PM_GETSTATUS) {
+		return dev->cur_state;
+	} else if (request == AU1XXX_PM_ACCESS) {
+		if (dev->cur_state != SLEEP_STATE)
+			return retval;
+		else {
+			au1200_setpanel(panel);
+		}
+	} else if (request == AU1XXX_PM_IDLE) {
+	} else if (request == AU1XXX_PM_CLEANUP) {
+	}
+
+	return retval;
+}
+#endif
+
+static int __init au1200fb_init(void)
+{
+	print_info("" DRIVER_DESC "");
+
+	/* Setup driver with options */
+	au1200fb_setup();
+
+	/* Point to the panel selected */
+	panel = &known_lcd_panels[panel_index];
+	win = &windows[window_index];
+
+	printk(DRIVER_NAME ": Panel %d %s\n", panel_index, panel->name);
+	printk(DRIVER_NAME ": Win %d %s\n", window_index, win->name);
+
+	/* Kickstart the panel, the framebuffers/windows come soon enough */
+	au1200_setpanel(panel);
+
+	#ifdef CONFIG_PM
+	LCD_pm_dev = new_au1xxx_power_device("LCD", &au1200fb_pm_callback, NULL);
+	if ( LCD_pm_dev == NULL)
+		printk(KERN_INFO "Unable to create a power management device entry for the au1200fb.\n");
+	else
+		printk(KERN_INFO "Power management device entry for the au1200fb loaded.\n");
+	#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return platform_driver_register(&au1200fb_driver);
 }
 

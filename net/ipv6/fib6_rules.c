@@ -14,7 +14,10 @@
  */
 
 #include <linux/netdevice.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <net/fib_rules.h>
 #include <net/ipv6.h>
@@ -96,7 +99,11 @@ static int fib6_rule_action(struct fib_rule *rule, struct flowi *flp,
 			if (!ipv6_prefix_equal(&saddr, &r->src.addr,
 					       r->src.plen))
 				goto again;
+<<<<<<< HEAD
 			flp6->saddr = saddr;
+=======
+			ipv6_addr_copy(&flp6->saddr, &saddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		goto out;
 	}

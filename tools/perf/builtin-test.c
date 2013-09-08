@@ -7,16 +7,24 @@
 
 #include "util/cache.h"
 #include "util/debug.h"
+<<<<<<< HEAD
 #include "util/debugfs.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "util/evlist.h"
 #include "util/parse-options.h"
 #include "util/parse-events.h"
 #include "util/symbol.h"
 #include "util/thread_map.h"
+<<<<<<< HEAD
 #include "util/pmu.h"
 #include "../../include/linux/hw_breakpoint.h"
 
 #include <sys/mman.h>
+=======
+
+static long page_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int vmlinux_matches_kallsyms_filter(struct map *map __used, struct symbol *sym)
 {
@@ -33,7 +41,10 @@ static int test__vmlinux_matches_kallsyms(void)
 	struct map *kallsyms_map, *vmlinux_map;
 	struct machine kallsyms, vmlinux;
 	enum map_type type = MAP__FUNCTION;
+<<<<<<< HEAD
 	long page_size = sysconf(_SC_PAGE_SIZE);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ref_reloc_sym ref_reloc_sym = { .name = "_stext", };
 
 	/*
@@ -249,8 +260,13 @@ static int trace_event__id(const char *evname)
 	int err = -1, fd;
 
 	if (asprintf(&filename,
+<<<<<<< HEAD
 		     "%s/syscalls/%s/id",
 		     tracing_events_path, evname) < 0)
+=======
+		     "/sys/kernel/debug/tracing/events/syscalls/%s/id",
+		     evname) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 
 	fd = open(filename, O_RDONLY);
@@ -279,7 +295,11 @@ static int test__open_syscall_event(void)
 		return -1;
 	}
 
+<<<<<<< HEAD
 	threads = thread_map__new(-1, getpid(), UINT_MAX);
+=======
+	threads = thread_map__new(-1, getpid());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (threads == NULL) {
 		pr_debug("thread_map__new\n");
 		return -1;
@@ -294,7 +314,11 @@ static int test__open_syscall_event(void)
 		goto out_thread_map_delete;
 	}
 
+<<<<<<< HEAD
 	if (perf_evsel__open_per_thread(evsel, threads, false, NULL) < 0) {
+=======
+	if (perf_evsel__open_per_thread(evsel, threads, false) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_debug("failed to open counter: %s, "
 			 "tweak /proc/sys/kernel/perf_event_paranoid?\n",
 			 strerror(errno));
@@ -345,7 +369,11 @@ static int test__open_syscall_event_on_all_cpus(void)
 		return -1;
 	}
 
+<<<<<<< HEAD
 	threads = thread_map__new(-1, getpid(), UINT_MAX);
+=======
+	threads = thread_map__new(-1, getpid());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (threads == NULL) {
 		pr_debug("thread_map__new\n");
 		return -1;
@@ -369,7 +397,11 @@ static int test__open_syscall_event_on_all_cpus(void)
 		goto out_thread_map_delete;
 	}
 
+<<<<<<< HEAD
 	if (perf_evsel__open(evsel, cpus, threads, false, NULL) < 0) {
+=======
+	if (perf_evsel__open(evsel, cpus, threads, false) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_debug("failed to open counter: %s, "
 			 "tweak /proc/sys/kernel/perf_event_paranoid?\n",
 			 strerror(errno));
@@ -493,7 +525,11 @@ static int test__basic_mmap(void)
 		expected_nr_events[i] = random() % 257;
 	}
 
+<<<<<<< HEAD
 	threads = thread_map__new(-1, getpid(), UINT_MAX);
+=======
+	threads = thread_map__new(-1, getpid());
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (threads == NULL) {
 		pr_debug("thread_map__new\n");
 		return -1;
@@ -534,7 +570,11 @@ static int test__basic_mmap(void)
 
 		perf_evlist__add(evlist, evsels[i]);
 
+<<<<<<< HEAD
 		if (perf_evsel__open(evsels[i], cpus, threads, false, NULL) < 0) {
+=======
+		if (perf_evsel__open(evsels[i], cpus, threads, false) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pr_debug("failed to open counter: %s, "
 				 "tweak /proc/sys/kernel/perf_event_paranoid?\n",
 				 strerror(errno));
@@ -564,7 +604,11 @@ static int test__basic_mmap(void)
 		}
 
 		err = perf_event__parse_sample(event, attr.sample_type, sample_size,
+<<<<<<< HEAD
 					       false, &sample, false);
+=======
+					       false, &sample);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err) {
 			pr_err("Can't parse sample, err = %d\n", err);
 			goto out_munmap;
@@ -604,6 +648,7 @@ out_free_threads:
 #undef nsyscalls
 }
 
+<<<<<<< HEAD
 #define TEST_ASSERT_VAL(text, cond) \
 do { \
 	if (!(cond)) { \
@@ -1638,6 +1683,8 @@ static int test__perf_pmu(void)
 	return perf_pmu__test();
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct test {
 	const char *desc;
 	int (*func)(void);
@@ -1659,6 +1706,7 @@ static struct test {
 		.func = test__basic_mmap,
 	},
 	{
+<<<<<<< HEAD
 		.desc = "parse events tests",
 		.func = test__parse_events,
 	},
@@ -1677,10 +1725,13 @@ static struct test {
 		.func = test__perf_pmu,
 	},
 	{
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.func = NULL,
 	},
 };
 
+<<<<<<< HEAD
 static bool perf_test__matches(int curr, int argc, const char *argv[])
 {
 	int i;
@@ -1720,11 +1771,28 @@ static int __cmd_test(int argc, const char *argv[])
 		err = tests[curr].func();
 		pr_debug("---- end ----\n%s:", tests[curr].desc);
 		pr_info(" %s\n", err ? "FAILED!\n" : "Ok");
+=======
+static int __cmd_test(void)
+{
+	int i = 0;
+
+	page_size = sysconf(_SC_PAGE_SIZE);
+
+	while (tests[i].func) {
+		int err;
+		pr_info("%2d: %s:", i + 1, tests[i].desc);
+		pr_debug("\n--- start ---\n");
+		err = tests[i].func();
+		pr_debug("---- end ----\n%s:", tests[i].desc);
+		pr_info(" %s\n", err ? "FAILED!\n" : "Ok");
+		++i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int perf_test__list(int argc, const char **argv)
 {
 	int i = 0;
@@ -1756,6 +1824,24 @@ int cmd_test(int argc, const char **argv, const char *prefix __used)
 	argc = parse_options(argc, argv, test_options, test_usage, 0);
 	if (argc >= 1 && !strcmp(argv[0], "list"))
 		return perf_test__list(argc, argv);
+=======
+static const char * const test_usage[] = {
+	"perf test [<options>]",
+	NULL,
+};
+
+static const struct option test_options[] = {
+	OPT_INTEGER('v', "verbose", &verbose,
+		    "be more verbose (show symbol address, etc)"),
+	OPT_END()
+};
+
+int cmd_test(int argc, const char **argv, const char *prefix __used)
+{
+	argc = parse_options(argc, argv, test_options, test_usage, 0);
+	if (argc)
+		usage_with_options(test_usage, test_options);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	symbol_conf.priv_size = sizeof(int);
 	symbol_conf.sort_by_name = true;
@@ -1764,5 +1850,11 @@ int cmd_test(int argc, const char **argv, const char *prefix __used)
 	if (symbol__init() < 0)
 		return -1;
 
+<<<<<<< HEAD
 	return __cmd_test(argc, argv);
+=======
+	setup_pager();
+
+	return __cmd_test();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

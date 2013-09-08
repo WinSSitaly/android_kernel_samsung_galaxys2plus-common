@@ -455,9 +455,28 @@ static struct i2c_driver isl29003_driver = {
 	.id_table = isl29003_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(isl29003_driver);
+=======
+static int __init isl29003_init(void)
+{
+	return i2c_add_driver(&isl29003_driver);
+}
+
+static void __exit isl29003_exit(void)
+{
+	i2c_del_driver(&isl29003_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Daniel Mack <daniel@caiaq.de>");
 MODULE_DESCRIPTION("ISL29003 ambient light sensor driver");
 MODULE_LICENSE("GPL v2");
 MODULE_VERSION(DRIVER_VERSION);
+<<<<<<< HEAD
+=======
+
+module_init(isl29003_init);
+module_exit(isl29003_exit);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

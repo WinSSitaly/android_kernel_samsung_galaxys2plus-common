@@ -17,7 +17,11 @@
 #include <linux/errno.h>
 #include <linux/err.h>
 #include <linux/clk.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 #include <asm/div64.h>
 
@@ -38,7 +42,10 @@ struct clk clk_ext_xtal_mux = {
 struct clk clk_xusbxti = {
 	.name		= "xusbxti",
 	.id		= -1,
+<<<<<<< HEAD
 	.rate		= 24000000,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct clk s5p_clk_27m = {
@@ -62,6 +69,7 @@ struct clk clk_fout_apll = {
 	.id		= -1,
 };
 
+<<<<<<< HEAD
 /* BPLL clock output */
 
 struct clk clk_fout_bpll = {
@@ -76,6 +84,8 @@ struct clk clk_fout_cpll = {
 	.id		= -1,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* MPLL clock output
  * No need .ctrlbit, this is always on
 */
@@ -116,6 +126,7 @@ struct clksrc_sources clk_src_apll = {
 	.nr_sources	= ARRAY_SIZE(clk_src_apll_list),
 };
 
+<<<<<<< HEAD
 /* Possible clock sources for BPLL Mux */
 static struct clk *clk_src_bpll_list[] = {
 	[0] = &clk_fin_bpll,
@@ -138,6 +149,8 @@ struct clksrc_sources clk_src_cpll = {
 	.nr_sources	= ARRAY_SIZE(clk_src_cpll_list),
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Possible clock sources for MPLL Mux */
 static struct clk *clk_src_mpll_list[] = {
 	[0] = &clk_fin_mpll,
@@ -205,6 +218,7 @@ unsigned long s5p_epll_get_rate(struct clk *clk)
 	return clk->rate;
 }
 
+<<<<<<< HEAD
 int s5p_spdif_set_rate(struct clk *clk, unsigned long rate)
 {
 	struct clk *pclk;
@@ -240,6 +254,8 @@ struct clk_ops s5p_sclk_spdif_ops = {
 	.get_rate	= s5p_spdif_get_rate,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct clk *s5p_clks[] __initdata = {
 	&clk_ext_xtal_mux,
 	&clk_48m,

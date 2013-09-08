@@ -37,6 +37,10 @@
 #include <linux/list.h>
 #include <linux/timer.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
+=======
+#include <linux/init.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/device.h>
 #include <linux/interrupt.h>
 
@@ -87,6 +91,10 @@ static int service_tx_status_request(
 	case USB_RECIP_DEVICE:
 		result[0] = musb->is_self_powered << USB_DEVICE_SELF_POWERED;
 		result[0] |= musb->may_wakeup << USB_DEVICE_REMOTE_WAKEUP;
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_MUSB_OTG
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (musb->g.is_otg) {
 			result[0] |= musb->g.b_hnp_enable
 				<< USB_DEVICE_B_HNP_ENABLE;
@@ -95,6 +103,10 @@ static int service_tx_status_request(
 			result[0] |= musb->g.a_hnp_support
 				<< USB_DEVICE_A_HNP_SUPPORT;
 		}
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case USB_RECIP_INTERFACE:
@@ -389,6 +401,10 @@ __acquires(musb->lock)
 					if (handled > 0)
 						musb->test_mode = true;
 					break;
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_MUSB_OTG
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				case USB_DEVICE_B_HNP_ENABLE:
 					if (!musb->g.is_otg)
 						goto stall;
@@ -405,6 +421,10 @@ __acquires(musb->lock)
 						goto stall;
 					musb->g.a_alt_hnp_support = 1;
 					break;
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				case USB_DEVICE_DEBUG_MODE:
 					handled = 0;
 					break;
@@ -678,6 +698,7 @@ irqreturn_t musb_g_ep0_irq(struct musb *musb)
 			musb_readb(mbase, MUSB_FADDR),
 			decode_ep0stage(musb->ep0_state));
 
+<<<<<<< HEAD
 	if (csr & MUSB_CSR0_P_DATAEND) {
 		/*
 		 * If DATAEND is set we should not call the callback,
@@ -686,6 +707,8 @@ irqreturn_t musb_g_ep0_irq(struct musb *musb)
 		return IRQ_HANDLED;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* I sent a stall.. need to acknowledge it now.. */
 	if (csr & MUSB_CSR0_P_SENTSTALL) {
 		musb_writew(regs, MUSB_CSR0,

@@ -175,7 +175,11 @@ void cond_policydb_destroy(struct policydb *p)
 int cond_init_bool_indexes(struct policydb *p)
 {
 	kfree(p->bool_val_to_struct);
+<<<<<<< HEAD
 	p->bool_val_to_struct =
+=======
+	p->bool_val_to_struct = (struct cond_bool_datum **)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kmalloc(p->p_bools.nprim * sizeof(struct cond_bool_datum *), GFP_KERNEL);
 	if (!p->bool_val_to_struct)
 		return -ENOMEM;
@@ -555,7 +559,11 @@ static int cond_write_av_list(struct policydb *p,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int cond_write_node(struct policydb *p, struct cond_node *node,
+=======
+int cond_write_node(struct policydb *p, struct cond_node *node,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    struct policy_file *fp)
 {
 	struct cond_expr *cur_expr;

@@ -62,7 +62,10 @@ struct atmel_lcdfb_info {
 	void (*atmel_lcdfb_power_control)(int on);
 	struct fb_monspecs	*default_monspecs;
 	u32			pseudo_palette[16];
+<<<<<<< HEAD
 	bool			have_intensity_bit;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define ATMEL_LCDC_DMABADDR1	0x00

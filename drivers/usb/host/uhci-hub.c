@@ -196,12 +196,20 @@ static int uhci_hub_status_data(struct usb_hcd *hcd, char *buf)
 	status = get_hub_status_data(uhci, buf);
 
 	switch (uhci->rh_state) {
+<<<<<<< HEAD
 	    case UHCI_RH_SUSPENDED:
 		/* if port change, ask to be resumed */
 		if (status || uhci->resuming_ports) {
 			status = 1;
 			usb_hcd_resume_root_hub(hcd);
 		}
+=======
+	    case UHCI_RH_SUSPENDING:
+	    case UHCI_RH_SUSPENDED:
+		/* if port change, ask to be resumed */
+		if (status || uhci->resuming_ports)
+			usb_hcd_resume_root_hub(hcd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	    case UHCI_RH_AUTO_STOPPED:
@@ -222,8 +230,12 @@ static int uhci_hub_status_data(struct usb_hcd *hcd, char *buf)
 		/* auto-stop if nothing connected for 1 second */
 		if (any_ports_active(uhci))
 			uhci->rh_state = UHCI_RH_RUNNING;
+<<<<<<< HEAD
 		else if (time_after_eq(jiffies, uhci->auto_stop_time) &&
 				!uhci->wait_for_hp)
+=======
+		else if (time_after_eq(jiffies, uhci->auto_stop_time))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			suspend_rh(uhci, UHCI_RH_AUTO_STOPPED);
 		break;
 

@@ -15,7 +15,11 @@
 #include <linux/platform_device.h>
 #include <linux/rtc.h>
 #include <linux/mfd/abx500.h>
+<<<<<<< HEAD
 #include <linux/mfd/abx500/ab8500.h>
+=======
+#include <linux/mfd/ab8500.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/delay.h>
 
 #define AB8500_RTC_SOFF_STAT_REG	0x00
@@ -90,7 +94,11 @@ static int ab8500_rtc_read_time(struct device *dev, struct rtc_time *tm)
 
 	/* Early AB8500 chips will not clear the rtc read request bit */
 	if (abx500_get_chip_id(dev) == 0) {
+<<<<<<< HEAD
 		usleep_range(1000, 1000);
+=======
+		msleep(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		/* Wait for some cycles after enabling the rtc read in ab8500 */
 		while (time_before(jiffies, timeout)) {
@@ -102,7 +110,11 @@ static int ab8500_rtc_read_time(struct device *dev, struct rtc_time *tm)
 			if (!(value & RTC_READ_REQUEST))
 				break;
 
+<<<<<<< HEAD
 			usleep_range(1000, 5000);
+=======
+			msleep(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -258,6 +270,7 @@ static int ab8500_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alarm)
 	return ab8500_rtc_irq_enable(dev, alarm->enabled);
 }
 
+<<<<<<< HEAD
 
 static int ab8500_rtc_set_calibration(struct device *dev, int calibration)
 {
@@ -361,6 +374,8 @@ static void ab8500_sysfs_rtc_unregister(struct device *dev)
 	device_remove_file(dev, &dev_attr_rtc_calibration);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static irqreturn_t rtc_alarm_handler(int irq, void *data)
 {
 	struct rtc_device *rtc = data;
@@ -398,7 +413,11 @@ static int __devinit ab8500_rtc_probe(struct platform_device *pdev)
 		return err;
 
 	/* Wait for reset by the PorRtc */
+<<<<<<< HEAD
 	usleep_range(1000, 5000);
+=======
+	msleep(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = abx500_get_register_interruptible(&pdev->dev, AB8500_RTC,
 		AB8500_RTC_STAT_REG, &rtc_ctrl);
@@ -411,8 +430,11 @@ static int __devinit ab8500_rtc_probe(struct platform_device *pdev)
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	device_init_wakeup(&pdev->dev, true);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rtc = rtc_device_register("ab8500-rtc", &pdev->dev, &ab8500_rtc_ops,
 			THIS_MODULE);
 	if (IS_ERR(rtc)) {
@@ -421,8 +443,13 @@ static int __devinit ab8500_rtc_probe(struct platform_device *pdev)
 		return err;
 	}
 
+<<<<<<< HEAD
 	err = request_threaded_irq(irq, NULL, rtc_alarm_handler,
 		IRQF_NO_SUSPEND | IRQF_ONESHOT, "ab8500-rtc", rtc);
+=======
+	err = request_threaded_irq(irq, NULL, rtc_alarm_handler, 0,
+				   "ab8500-rtc", rtc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0) {
 		rtc_device_unregister(rtc);
 		return err;
@@ -430,6 +457,7 @@ static int __devinit ab8500_rtc_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, rtc);
 
+<<<<<<< HEAD
 
 	err = ab8500_sysfs_rtc_register(&pdev->dev);
 	if (err) {
@@ -437,6 +465,8 @@ static int __devinit ab8500_rtc_probe(struct platform_device *pdev)
 		return err;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -445,8 +475,11 @@ static int __devexit ab8500_rtc_remove(struct platform_device *pdev)
 	struct rtc_device *rtc = platform_get_drvdata(pdev);
 	int irq = platform_get_irq_byname(pdev, "ALARM");
 
+<<<<<<< HEAD
 	ab8500_sysfs_rtc_unregister(&pdev->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	free_irq(irq, rtc);
 	rtc_device_unregister(rtc);
 	platform_set_drvdata(pdev, NULL);
@@ -463,8 +496,23 @@ static struct platform_driver ab8500_rtc_driver = {
 	.remove = __devexit_p(ab8500_rtc_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(ab8500_rtc_driver);
 
+=======
+static int __init ab8500_rtc_init(void)
+{
+	return platform_driver_register(&ab8500_rtc_driver);
+}
+
+static void __exit ab8500_rtc_exit(void)
+{
+	platform_driver_unregister(&ab8500_rtc_driver);
+}
+
+module_init(ab8500_rtc_init);
+module_exit(ab8500_rtc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_AUTHOR("Virupax Sadashivpetimath <virupax.sadashivpetimath@stericsson.com>");
 MODULE_DESCRIPTION("AB8500 RTC Driver");
 MODULE_LICENSE("GPL v2");

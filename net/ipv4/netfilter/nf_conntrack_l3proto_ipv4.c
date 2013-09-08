@@ -74,16 +74,25 @@ static int ipv4_get_l4proto(const struct sk_buff *skb, unsigned int nhoff,
 
 	iph = skb_header_pointer(skb, nhoff, sizeof(_iph), &_iph);
 	if (iph == NULL)
+<<<<<<< HEAD
 		return -NF_ACCEPT;
+=======
+		return -NF_DROP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Conntrack defragments packets, we might still see fragments
 	 * inside ICMP packets though. */
 	if (iph->frag_off & htons(IP_OFFSET))
+<<<<<<< HEAD
 		return -NF_ACCEPT;
+=======
+		return -NF_DROP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	*dataoff = nhoff + (iph->ihl << 2);
 	*protonum = iph->protocol;
 
+<<<<<<< HEAD
 	/* Check bogus IP headers */
 	if (*dataoff > skb->len) {
 		pr_debug("nf_conntrack_ipv4: bogus IPv4 packet: "
@@ -92,6 +101,8 @@ static int ipv4_get_l4proto(const struct sk_buff *skb, unsigned int nhoff,
 		return -NF_ACCEPT;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return NF_ACCEPT;
 }
 

@@ -9,6 +9,15 @@
 #define SD_MAJORS	16
 
 /*
+<<<<<<< HEAD
+=======
+ * This is limited by the naming scheme enforced in sd_probe,
+ * add another character to it if you really need more disks.
+ */
+#define SD_MAX_DISKS	(((26 * 26) + 26 + 1) * 26)
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Time out in seconds for disks and Magneto-opticals (which are slower).
  */
 #define SD_TIMEOUT		(30 * HZ)
@@ -20,7 +29,10 @@
  */
 #define SD_MAX_RETRIES		5
 #define SD_PASSTHROUGH_RETRIES	1
+<<<<<<< HEAD
 #define SD_MAX_MEDIUM_TIMEOUTS	2
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Size of the initial data buffer for mode and read capacity data
@@ -60,14 +72,20 @@ struct scsi_disk {
 	u32		unmap_alignment;
 	u32		index;
 	unsigned int	physical_block_size;
+<<<<<<< HEAD
 	unsigned int	max_medium_access_timeouts;
 	unsigned int	medium_access_timed_out;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8		media_present;
 	u8		write_prot;
 	u8		protection_type;/* Data Integrity Field */
 	u8		provisioning_mode;
 	unsigned	ATO : 1;	/* state of disk ATO bit */
+<<<<<<< HEAD
 	unsigned	cache_override : 1; /* temp override of WCE,RCD */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned	WCE : 1;	/* state of disk WCE bit */
 	unsigned	RCD : 1;	/* state of disk RCD bit, unused */
 	unsigned	DPOFUA : 1;	/* state of disk DPOFUA bit */
@@ -78,6 +96,17 @@ struct scsi_disk {
 	unsigned	lbpws : 1;
 	unsigned	lbpws10 : 1;
 	unsigned	lbpvpd : 1;
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_STORAGE_MEDIA_SCAN
+	wait_queue_head_t	delay_wait;
+	struct completion	scanning_done;
+	struct task_struct	*th;
+	int		thread_remove;
+	int		async_end;
+	int		prv_media_present;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 #define to_scsi_disk(obj) container_of(obj,struct scsi_disk,dev)
 
@@ -92,6 +121,7 @@ static inline struct scsi_disk *scsi_disk(struct gendisk *disk)
 		    (sdsk)->disk->disk_name, ##a) :			\
 	sdev_printk(prefix, (sdsk)->device, fmt, ##a)
 
+<<<<<<< HEAD
 static inline int scsi_medium_access_command(struct scsi_cmnd *scmd)
 {
 	switch (scmd->cmnd[0]) {
@@ -124,6 +154,8 @@ static inline int scsi_medium_access_command(struct scsi_cmnd *scmd)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * A DIF-capable target device can be formatted with different
  * protection schemes.  Currently 0 through 3 are defined:

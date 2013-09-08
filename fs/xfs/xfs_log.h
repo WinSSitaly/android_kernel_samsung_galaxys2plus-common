@@ -53,6 +53,18 @@ static inline xfs_lsn_t	_lsn_cmp(xfs_lsn_t lsn1, xfs_lsn_t lsn2)
 #define XFS_LOG_REL_PERM_RESERV	0x1
 
 /*
+<<<<<<< HEAD
+=======
+ * Flags to xfs_log_reserve()
+ *
+ *	XFS_LOG_PERM_RESERV: Permanent reservation.  When writes are
+ *		performed against this type of reservation, the reservation
+ *		is not decreased.  Long running transactions should use this.
+ */
+#define XFS_LOG_PERM_RESERV	0x2
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Flags to xfs_log_force()
  *
  *	XFS_LOG_SYNC:	Synchronous force in-core log to disk
@@ -128,7 +140,11 @@ struct xfs_trans;
 void	xfs_log_item_init(struct xfs_mount	*mp,
 			struct xfs_log_item	*item,
 			int			type,
+<<<<<<< HEAD
 			const struct xfs_item_ops *ops);
+=======
+			struct xfs_item_ops	*ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 xfs_lsn_t xfs_log_done(struct xfs_mount *mp,
 		       struct xlog_ticket *ticket,
@@ -151,8 +167,13 @@ int	  xfs_log_mount(struct xfs_mount	*mp,
 			xfs_daddr_t		start_block,
 			int		 	num_bblocks);
 int	  xfs_log_mount_finish(struct xfs_mount *mp);
+<<<<<<< HEAD
 xfs_lsn_t xlog_assign_tail_lsn(struct xfs_mount *mp);
 void	  xfs_log_space_wake(struct xfs_mount *mp);
+=======
+void	  xfs_log_move_tail(struct xfs_mount	*mp,
+			    xfs_lsn_t		tail_lsn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int	  xfs_log_notify(struct xfs_mount	*mp,
 			 struct xlog_in_core	*iclog,
 			 xfs_log_callback_t	*callback_entry);
@@ -163,9 +184,19 @@ int	  xfs_log_reserve(struct xfs_mount *mp,
 			  int		   count,
 			  struct xlog_ticket **ticket,
 			  __uint8_t	   clientid,
+<<<<<<< HEAD
 			  bool		   permanent,
 			  uint		   t_type);
 int	  xfs_log_regrant(struct xfs_mount *mp, struct xlog_ticket *tic);
+=======
+			  uint		   flags,
+			  uint		   t_type);
+int	  xfs_log_write(struct xfs_mount *mp,
+			xfs_log_iovec_t  region[],
+			int		 nentries,
+			struct xlog_ticket *ticket,
+			xfs_lsn_t	 *start_lsn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int	  xfs_log_unmount_write(struct xfs_mount *mp);
 void      xfs_log_unmount(struct xfs_mount *mp);
 int	  xfs_log_force_umount(struct xfs_mount *mp, int logerror);
@@ -176,7 +207,12 @@ void	  xlog_iodone(struct xfs_buf *);
 struct xlog_ticket *xfs_log_ticket_get(struct xlog_ticket *ticket);
 void	  xfs_log_ticket_put(struct xlog_ticket *ticket);
 
+<<<<<<< HEAD
 int	xfs_log_commit_cil(struct xfs_mount *mp, struct xfs_trans *tp,
+=======
+void	xfs_log_commit_cil(struct xfs_mount *mp, struct xfs_trans *tp,
+				struct xfs_log_vec *log_vector,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				xfs_lsn_t *commit_lsn, int flags);
 bool	xfs_log_item_in_current_chkpt(struct xfs_log_item *lip);
 

@@ -44,8 +44,14 @@
 #include <linux/slab.h>
 #include <linux/numa.h>
 #include <asm/page.h>
+<<<<<<< HEAD
 #include <asm/pgtable.h>
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <asm/pgtable.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/tlbflush.h>
 #include <asm/uncached.h>
 #include <asm/sn/addrs.h>
@@ -283,7 +289,11 @@ mspec_mmap(struct file *file, struct vm_area_struct *vma,
 	vdata->flags = flags;
 	vdata->type = type;
 	spin_lock_init(&vdata->lock);
+<<<<<<< HEAD
 	atomic_set(&vdata->refcnt, 1);
+=======
+	vdata->refcnt = ATOMIC_INIT(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	vma->vm_private_data = vdata;
 
 	vma->vm_flags |= (VM_IO | VM_RESERVED | VM_PFNMAP | VM_DONTEXPAND);

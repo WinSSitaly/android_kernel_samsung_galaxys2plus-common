@@ -98,7 +98,11 @@ static inline void fd_disable_irq(void)
 static inline int fd_request_irq(void)
 {
 	return request_irq(FLOPPY_IRQ, floppy_interrupt,
+<<<<<<< HEAD
 	                   0, "floppy", NULL);
+=======
+	                   IRQF_DISABLED, "floppy", NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void fd_free_irq(void)

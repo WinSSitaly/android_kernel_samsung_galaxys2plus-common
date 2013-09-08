@@ -35,6 +35,10 @@
 #include <linux/bitops.h>
 
 #include <asm/ptrace.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/dma.h>
 #include <asm/irq.h>
 #include <asm/mmu_context.h>
@@ -64,7 +68,11 @@ nautilus_init_irq(void)
 }
 
 static int __init
+<<<<<<< HEAD
 nautilus_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+=======
+nautilus_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Preserve the IRQ set up by the console.  */
 
@@ -188,10 +196,13 @@ nautilus_machine_check(unsigned long vector, unsigned long la_ptr)
 extern void free_reserved_mem(void *, void *);
 extern void pcibios_claim_one_bus(struct pci_bus *);
 
+<<<<<<< HEAD
 static struct resource irongate_io = {
 	.name	= "Irongate PCI IO",
 	.flags	= IORESOURCE_IO,
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct resource irongate_mem = {
 	.name	= "Irongate PCI MEM",
 	.flags	= IORESOURCE_MEM,
@@ -213,7 +224,10 @@ nautilus_init_pci(void)
 
 	irongate = pci_get_bus_and_slot(0, 0);
 	bus->self = irongate;
+<<<<<<< HEAD
 	bus->resource[0] = &irongate_io;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bus->resource[1] = &irongate_mem;
 
 	pci_bus_size_bridges(bus);

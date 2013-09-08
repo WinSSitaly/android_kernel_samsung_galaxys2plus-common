@@ -160,7 +160,11 @@ nv50_mpeg_init(struct drm_device *dev, int engine)
 }
 
 static int
+<<<<<<< HEAD
 nv50_mpeg_fini(struct drm_device *dev, int engine, bool suspend)
+=======
+nv50_mpeg_fini(struct drm_device *dev, int engine)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*XXX: context save for s/r */
 	nv_mask(dev, 0x00b32c, 0x00000001, 0x00000000);

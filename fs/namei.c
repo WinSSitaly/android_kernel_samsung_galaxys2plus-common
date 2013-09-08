@@ -15,7 +15,11 @@
  */
 
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/fs.h>
 #include <linux/namei.h>
@@ -32,11 +36,17 @@
 #include <linux/fcntl.h>
 #include <linux/device_cgroup.h>
 #include <linux/fs_struct.h>
+<<<<<<< HEAD
 #include <linux/posix_acl.h>
 #include <asm/uaccess.h>
 
 #include "internal.h"
 #include "mount.h"
+=======
+#include <asm/uaccess.h>
+
+#include "internal.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* [Feb-1997 T. Schoebel-Theuer]
  * Fundamental changes in the pathname lookup mechanisms (namei)
@@ -140,6 +150,7 @@ static int do_getname(const char __user *filename, char *page)
 
 static char *getname_flags(const char __user *filename, int flags, int *empty)
 {
+<<<<<<< HEAD
 	char *result = __getname();
 	int retval;
 
@@ -153,6 +164,23 @@ static char *getname_flags(const char __user *filename, int flags, int *empty)
 		if (retval != -ENOENT || !(flags & LOOKUP_EMPTY)) {
 			__putname(result);
 			return ERR_PTR(retval);
+=======
+	char *tmp, *result;
+
+	result = ERR_PTR(-ENOMEM);
+	tmp = __getname();
+	if (tmp)  {
+		int retval = do_getname(filename, tmp);
+
+		result = tmp;
+		if (retval < 0) {
+			if (retval == -ENOENT && empty)
+				*empty = 1;
+			if (retval != -ENOENT || !(flags & LOOKUP_EMPTY)) {
+				__putname(tmp);
+				result = ERR_PTR(retval);
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	audit_getname(result);
@@ -161,7 +189,11 @@ static char *getname_flags(const char __user *filename, int flags, int *empty)
 
 char *getname(const char __user * filename)
 {
+<<<<<<< HEAD
 	return getname_flags(filename, 0, NULL);
+=======
+	return getname_flags(filename, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_AUDITSYSCALL
@@ -175,6 +207,7 @@ void putname(const char *name)
 EXPORT_SYMBOL(putname);
 #endif
 
+<<<<<<< HEAD
 static int check_acl(struct inode *inode, int mask)
 {
 #ifdef CONFIG_FS_POSIX_ACL
@@ -236,6 +269,26 @@ static int acl_permission_check(struct inode *inode, int mask)
 	else {
 		if (IS_POSIXACL(inode) && (mode & S_IRWXG)) {
 			int error = check_acl(inode, mask);
+=======
+/*
+ * This does basic POSIX ACL permission checking
+ */
+static int acl_permission_check(struct inode *inode, int mask, unsigned int flags,
+		int (*check_acl)(struct inode *inode, int mask, unsigned int flags))
+{
+	unsigned int mode = inode->i_mode;
+
+	mask &= MAY_READ | MAY_WRITE | MAY_EXEC;
+
+	if (current_user_ns() != inode_userns(inode))
+		goto other_perms;
+
+	if (current_fsuid() == inode->i_uid)
+		mode >>= 6;
+	else {
+		if (IS_POSIXACL(inode) && (mode & S_IRWXG) && check_acl) {
+			int error = check_acl(inode, mask, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (error != -EAGAIN)
 				return error;
 		}
@@ -248,7 +301,11 @@ other_perms:
 	/*
 	 * If the DACs are ok we don't need any capability check.
 	 */
+<<<<<<< HEAD
 	if ((mask & ~mode & (MAY_READ | MAY_WRITE | MAY_EXEC)) == 0)
+=======
+	if ((mask & ~mode) == 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	return -EACCES;
 }
@@ -256,7 +313,13 @@ other_perms:
 /**
  * generic_permission -  check for access rights on a Posix-like filesystem
  * @inode:	inode to check access rights for
+<<<<<<< HEAD
  * @mask:	right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC, ...)
+=======
+ * @mask:	right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC)
+ * @check_acl:	optional callback to check for Posix ACLs
+ * @flags:	IPERM_FLAG_ flags.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Used to check for read/write/execute permissions on a file.
  * We use "fsuid" for this, letting us set arbitrary permissions
@@ -267,11 +330,17 @@ other_perms:
  * request cannot be satisfied (eg. requires blocking or too much complexity).
  * It would then be called again in ref-walk mode.
  */
+<<<<<<< HEAD
 int generic_permission(struct inode *inode, int mask)
+=======
+int generic_permission(struct inode *inode, int mask, unsigned int flags,
+	int (*check_acl)(struct inode *inode, int mask, unsigned int flags))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 
 	/*
+<<<<<<< HEAD
 	 * Do the basic permission checks.
 	 */
 	ret = acl_permission_check(inode, mask);
@@ -293,6 +362,20 @@ int generic_permission(struct inode *inode, int mask)
 	 * at least one exec bit set.
 	 */
 	if (!(mask & MAY_EXEC) || (inode->i_mode & S_IXUGO))
+=======
+	 * Do the basic POSIX ACL permission checks.
+	 */
+	ret = acl_permission_check(inode, mask, flags, check_acl);
+	if (ret != -EACCES)
+		return ret;
+
+	/*
+	 * Read/write DACs are always overridable.
+	 * Executable DACs are overridable for all directories and
+	 * for non-directories that have least one exec bit set.
+	 */
+	if (!(mask & MAY_EXEC) || execute_ok(inode))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ns_capable(inode_userns(inode), CAP_DAC_OVERRIDE))
 			return 0;
 
@@ -300,13 +383,18 @@ int generic_permission(struct inode *inode, int mask)
 	 * Searching includes executable on directories, else just read.
 	 */
 	mask &= MAY_READ | MAY_WRITE | MAY_EXEC;
+<<<<<<< HEAD
 	if (mask == MAY_READ)
+=======
+	if (mask == MAY_READ || (S_ISDIR(inode->i_mode) && !(mask & MAY_WRITE)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ns_capable(inode_userns(inode), CAP_DAC_READ_SEARCH))
 			return 0;
 
 	return -EACCES;
 }
 
+<<<<<<< HEAD
 /*
  * We _really_ want to just do "generic_permission()" without
  * even looking at the inode->i_op values. So we keep a cache
@@ -331,19 +419,32 @@ static inline int do_inode_permission(struct inode *inode, int mask)
  * inode_permission  -  check for access rights to a given inode
  * @inode:	inode to check permission on
  * @mask:	right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC, ...)
+=======
+/**
+ * inode_permission  -  check for access rights to a given inode
+ * @inode:	inode to check permission on
+ * @mask:	right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Used to check for read/write/execute permissions on an inode.
  * We use "fsuid" for this, letting us set arbitrary permissions
  * for filesystem access without changing the "normal" uids which
  * are used for other things.
+<<<<<<< HEAD
  *
  * When checking for MAY_APPEND, MAY_WRITE must also be set in @mask.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int inode_permission(struct inode *inode, int mask)
 {
 	int retval;
 
+<<<<<<< HEAD
 	if (unlikely(mask & MAY_WRITE)) {
+=======
+	if (mask & MAY_WRITE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		umode_t mode = inode->i_mode;
 
 		/*
@@ -360,7 +461,16 @@ int inode_permission(struct inode *inode, int mask)
 			return -EACCES;
 	}
 
+<<<<<<< HEAD
 	retval = do_inode_permission(inode, mask);
+=======
+	if (inode->i_op->permission)
+		retval = inode->i_op->permission(inode, mask, 0);
+	else
+		retval = generic_permission(inode, mask, 0,
+				inode->i_op->check_acl);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval)
 		return retval;
 
@@ -372,6 +482,72 @@ int inode_permission(struct inode *inode, int mask)
 }
 
 /**
+<<<<<<< HEAD
+=======
+ * file_permission  -  check for additional access rights to a given file
+ * @file:	file to check access rights for
+ * @mask:	right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC)
+ *
+ * Used to check for read/write/execute permissions on an already opened
+ * file.
+ *
+ * Note:
+ *	Do not use this function in new code.  All access checks should
+ *	be done using inode_permission().
+ */
+int file_permission(struct file *file, int mask)
+{
+	return inode_permission(file->f_path.dentry->d_inode, mask);
+}
+
+/*
+ * get_write_access() gets write permission for a file.
+ * put_write_access() releases this write permission.
+ * This is used for regular files.
+ * We cannot support write (and maybe mmap read-write shared) accesses and
+ * MAP_DENYWRITE mmappings simultaneously. The i_writecount field of an inode
+ * can have the following values:
+ * 0: no writers, no VM_DENYWRITE mappings
+ * < 0: (-i_writecount) vm_area_structs with VM_DENYWRITE set exist
+ * > 0: (i_writecount) users are writing to the file.
+ *
+ * Normally we operate on that counter with atomic_{inc,dec} and it's safe
+ * except for the cases where we don't hold i_writecount yet. Then we need to
+ * use {get,deny}_write_access() - these functions check the sign and refuse
+ * to do the change if sign is wrong. Exclusion between them is provided by
+ * the inode->i_lock spinlock.
+ */
+
+int get_write_access(struct inode * inode)
+{
+	spin_lock(&inode->i_lock);
+	if (atomic_read(&inode->i_writecount) < 0) {
+		spin_unlock(&inode->i_lock);
+		return -ETXTBSY;
+	}
+	atomic_inc(&inode->i_writecount);
+	spin_unlock(&inode->i_lock);
+
+	return 0;
+}
+
+int deny_write_access(struct file * file)
+{
+	struct inode *inode = file->f_path.dentry->d_inode;
+
+	spin_lock(&inode->i_lock);
+	if (atomic_read(&inode->i_writecount) > 0) {
+		spin_unlock(&inode->i_lock);
+		return -ETXTBSY;
+	}
+	atomic_dec(&inode->i_writecount);
+	spin_unlock(&inode->i_lock);
+
+	return 0;
+}
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * path_get - get a reference to a path
  * @path: path to get the reference to
  *
@@ -497,6 +673,31 @@ static inline int d_revalidate(struct dentry *dentry, struct nameidata *nd)
 	return dentry->d_op->d_revalidate(dentry, nd);
 }
 
+<<<<<<< HEAD
+=======
+static struct dentry *
+do_revalidate(struct dentry *dentry, struct nameidata *nd)
+{
+	int status = d_revalidate(dentry, nd);
+	if (unlikely(status <= 0)) {
+		/*
+		 * The dentry failed validation.
+		 * If d_revalidate returned 0 attempt to invalidate
+		 * the dentry otherwise d_revalidate is asking us
+		 * to return a fail status.
+		 */
+		if (status < 0) {
+			dput(dentry);
+			dentry = ERR_PTR(status);
+		} else if (!d_invalidate(dentry)) {
+			dput(dentry);
+			dentry = NULL;
+		}
+	}
+	return dentry;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * complete_walk - successful completion of path walk
  * @nd:  pointer nameidata
@@ -551,6 +752,43 @@ static int complete_walk(struct nameidata *nd)
 	return status;
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * Short-cut version of permission(), for calling on directories
+ * during pathname resolution.  Combines parts of permission()
+ * and generic_permission(), and tests ONLY for MAY_EXEC permission.
+ *
+ * If appropriate, check DAC only.  If not appropriate, or
+ * short-cut DAC fails, then call ->permission() to do more
+ * complete permission check.
+ */
+static inline int exec_permission(struct inode *inode, unsigned int flags)
+{
+	int ret;
+	struct user_namespace *ns = inode_userns(inode);
+
+	if (inode->i_op->permission) {
+		ret = inode->i_op->permission(inode, MAY_EXEC, flags);
+	} else {
+		ret = acl_permission_check(inode, MAY_EXEC, flags,
+				inode->i_op->check_acl);
+	}
+	if (likely(!ret))
+		goto ok;
+	if (ret == -ECHILD)
+		return ret;
+
+	if (ns_capable(ns, CAP_DAC_OVERRIDE) ||
+			ns_capable(ns, CAP_DAC_READ_SEARCH))
+		goto ok;
+
+	return ret;
+ok:
+	return security_inode_exec_permission(inode, flags);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __always_inline void set_root(struct nameidata *nd)
 {
 	if (!nd->root.mnt)
@@ -642,7 +880,11 @@ follow_link(struct path *link, struct nameidata *nd, void **p)
 	cond_resched();
 	current->total_link_count++;
 
+<<<<<<< HEAD
 	touch_atime(link);
+=======
+	touch_atime(link->mnt, dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nd_set_link(nd, NULL);
 
 	error = security_inode_follow_link(link->dentry, nd);
@@ -675,6 +917,7 @@ follow_link(struct path *link, struct nameidata *nd, void **p)
 
 static int follow_up_rcu(struct path *path)
 {
+<<<<<<< HEAD
 	struct mount *mnt = real_mount(path->mnt);
 	struct mount *parent;
 	struct dentry *mountpoint;
@@ -685,11 +928,23 @@ static int follow_up_rcu(struct path *path)
 	mountpoint = mnt->mnt_mountpoint;
 	path->dentry = mountpoint;
 	path->mnt = &parent->mnt;
+=======
+	struct vfsmount *parent;
+	struct dentry *mountpoint;
+
+	parent = path->mnt->mnt_parent;
+	if (parent == path->mnt)
+		return 0;
+	mountpoint = path->mnt->mnt_mountpoint;
+	path->dentry = mountpoint;
+	path->mnt = parent;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
 int follow_up(struct path *path)
 {
+<<<<<<< HEAD
 	struct mount *mnt = real_mount(path->mnt);
 	struct mount *parent;
 	struct dentry *mountpoint;
@@ -702,11 +957,28 @@ int follow_up(struct path *path)
 	}
 	mntget(&parent->mnt);
 	mountpoint = dget(mnt->mnt_mountpoint);
+=======
+	struct vfsmount *parent;
+	struct dentry *mountpoint;
+
+	br_read_lock(vfsmount_lock);
+	parent = path->mnt->mnt_parent;
+	if (parent == path->mnt) {
+		br_read_unlock(vfsmount_lock);
+		return 0;
+	}
+	mntget(parent);
+	mountpoint = dget(path->mnt->mnt_mountpoint);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	br_read_unlock(vfsmount_lock);
 	dput(path->dentry);
 	path->dentry = mountpoint;
 	mntput(path->mnt);
+<<<<<<< HEAD
 	path->mnt = &parent->mnt;
+=======
+	path->mnt = parent;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
@@ -724,6 +996,15 @@ static int follow_automount(struct path *path, unsigned flags,
 	if (!path->dentry->d_op || !path->dentry->d_op->d_automount)
 		return -EREMOTE;
 
+<<<<<<< HEAD
+=======
+	/* We don't want to mount if someone supplied AT_NO_AUTOMOUNT
+	 * and this is the terminal part of the path.
+	 */
+	if ((flags & LOOKUP_NO_AUTOMOUNT) && !(flags & LOOKUP_CONTINUE))
+		return -EISDIR; /* we actually want to stop here */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* We don't want to mount if someone's just doing a stat -
 	 * unless they're stat'ing a directory and appended a '/' to
 	 * the name.
@@ -735,7 +1016,11 @@ static int follow_automount(struct path *path, unsigned flags,
 	 * as being automount points.  These will need the attentions
 	 * of the daemon to instantiate them before they can be used.
 	 */
+<<<<<<< HEAD
 	if (!(flags & (LOOKUP_PARENT | LOOKUP_DIRECTORY |
+=======
+	if (!(flags & (LOOKUP_CONTINUE | LOOKUP_DIRECTORY |
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     LOOKUP_OPEN | LOOKUP_CREATE | LOOKUP_AUTOMOUNT)) &&
 	    path->dentry->d_inode)
 		return -EISDIR;
@@ -755,7 +1040,11 @@ static int follow_automount(struct path *path, unsigned flags,
 		 * the path being looked up; if it wasn't then the remainder of
 		 * the path is inaccessible and we should say so.
 		 */
+<<<<<<< HEAD
 		if (PTR_ERR(mnt) == -EISDIR && (flags & LOOKUP_PARENT))
+=======
+		if (PTR_ERR(mnt) == -EISDIR && (flags & LOOKUP_CONTINUE))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EREMOTE;
 		return PTR_ERR(mnt);
 	}
@@ -885,7 +1174,11 @@ static bool __follow_mount_rcu(struct nameidata *nd, struct path *path,
 			       struct inode **inode)
 {
 	for (;;) {
+<<<<<<< HEAD
 		struct mount *mounted;
+=======
+		struct vfsmount *mounted;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Don't forget we might have a non-mountpoint managed dentry
 		 * that wants to block transit.
@@ -899,8 +1192,13 @@ static bool __follow_mount_rcu(struct nameidata *nd, struct path *path,
 		mounted = __lookup_mnt(path->mnt, path->dentry, 1);
 		if (!mounted)
 			break;
+<<<<<<< HEAD
 		path->mnt = &mounted->mnt;
 		path->dentry = mounted->mnt.mnt_root;
+=======
+		path->mnt = mounted;
+		path->dentry = mounted->mnt_root;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nd->flags |= LOOKUP_JUMPED;
 		nd->seq = read_seqcount_begin(&path->dentry->d_seq);
 		/*
@@ -916,12 +1214,21 @@ static bool __follow_mount_rcu(struct nameidata *nd, struct path *path,
 static void follow_mount_rcu(struct nameidata *nd)
 {
 	while (d_mountpoint(nd->path.dentry)) {
+<<<<<<< HEAD
 		struct mount *mounted;
 		mounted = __lookup_mnt(nd->path.mnt, nd->path.dentry, 1);
 		if (!mounted)
 			break;
 		nd->path.mnt = &mounted->mnt;
 		nd->path.dentry = mounted->mnt.mnt_root;
+=======
+		struct vfsmount *mounted;
+		mounted = __lookup_mnt(nd->path.mnt, nd->path.dentry, 1);
+		if (!mounted)
+			break;
+		nd->path.mnt = mounted;
+		nd->path.dentry = mounted->mnt_root;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nd->seq = read_seqcount_begin(&nd->path.dentry->d_seq);
 	}
 }
@@ -1054,6 +1361,7 @@ static void follow_dotdot(struct nameidata *nd)
 }
 
 /*
+<<<<<<< HEAD
  * This looks up the name in dcache, possibly revalidates the old dentry and
  * allocates a new one if not found or not valid.  In the need_lookup argument
  * returns whether i_op->lookup is necessary.
@@ -1113,6 +1421,29 @@ static struct dentry *lookup_real(struct inode *dir, struct dentry *dentry,
 	}
 
 	old = dir->i_op->lookup(dir, dentry, nd);
+=======
+ * Allocate a dentry with name and parent, and perform a parent
+ * directory ->lookup on it. Returns the new dentry, or ERR_PTR
+ * on error. parent->d_inode->i_mutex must be held. d_lookup must
+ * have verified that no child exists while under i_mutex.
+ */
+static struct dentry *d_alloc_and_lookup(struct dentry *parent,
+				struct qstr *name, struct nameidata *nd)
+{
+	struct inode *inode = parent->d_inode;
+	struct dentry *dentry;
+	struct dentry *old;
+
+	/* Don't create child dentry for a dead directory. */
+	if (unlikely(IS_DEADDIR(inode)))
+		return ERR_PTR(-ENOENT);
+
+	dentry = d_alloc(parent, name);
+	if (unlikely(!dentry))
+		return ERR_PTR(-ENOMEM);
+
+	old = inode->i_op->lookup(inode, dentry, nd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(old)) {
 		dput(dentry);
 		dentry = old;
@@ -1120,6 +1451,7 @@ static struct dentry *lookup_real(struct inode *dir, struct dentry *dentry,
 	return dentry;
 }
 
+<<<<<<< HEAD
 static struct dentry *__lookup_hash(struct qstr *name,
 		struct dentry *base, struct nameidata *nd)
 {
@@ -1133,6 +1465,8 @@ static struct dentry *__lookup_hash(struct qstr *name,
 	return lookup_real(base->d_inode, dentry, nd);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *  It's more convoluted than I'd like it to be, but... it's still fairly
  *  small and for now I'd prefer to have fast path as straight as possible.
@@ -1164,8 +1498,11 @@ static int do_lookup(struct nameidata *nd, struct qstr *name,
 			return -ECHILD;
 		nd->seq = seq;
 
+<<<<<<< HEAD
 		if (unlikely(d_need_lookup(dentry)))
 			goto unlazy;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (unlikely(dentry->d_flags & DCACHE_OP_REVALIDATE)) {
 			status = d_revalidate(dentry, nd);
 			if (unlikely(status <= 0)) {
@@ -1188,6 +1525,7 @@ unlazy:
 		dentry = __d_lookup(parent, name);
 	}
 
+<<<<<<< HEAD
 	if (unlikely(!dentry))
 		goto need_lookup;
 
@@ -1196,6 +1534,27 @@ unlazy:
 		goto need_lookup;
 	}
 
+=======
+retry:
+	if (unlikely(!dentry)) {
+		struct inode *dir = parent->d_inode;
+		BUG_ON(nd->inode != dir);
+
+		mutex_lock(&dir->i_mutex);
+		dentry = d_lookup(parent, name);
+		if (likely(!dentry)) {
+			dentry = d_alloc_and_lookup(parent, name, nd);
+			if (IS_ERR(dentry)) {
+				mutex_unlock(&dir->i_mutex);
+				return PTR_ERR(dentry);
+			}
+			/* known good */
+			need_reval = 0;
+			status = 1;
+		}
+		mutex_unlock(&dir->i_mutex);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(dentry->d_flags & DCACHE_OP_REVALIDATE) && need_reval)
 		status = d_revalidate(dentry, nd);
 	if (unlikely(status <= 0)) {
@@ -1205,10 +1564,19 @@ unlazy:
 		}
 		if (!d_invalidate(dentry)) {
 			dput(dentry);
+<<<<<<< HEAD
 			goto need_lookup;
 		}
 	}
 done:
+=======
+			dentry = NULL;
+			need_reval = 1;
+			goto retry;
+		}
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	path->mnt = mnt;
 	path->dentry = dentry;
 	err = follow_managed(path, nd->flags);
@@ -1220,6 +1588,7 @@ done:
 		nd->flags |= LOOKUP_JUMPED;
 	*inode = path->dentry->d_inode;
 	return 0;
+<<<<<<< HEAD
 
 need_lookup:
 	BUG_ON(nd->inode != parent->d_inode);
@@ -1230,18 +1599,28 @@ need_lookup:
 	if (IS_ERR(dentry))
 		return PTR_ERR(dentry);
 	goto done;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int may_lookup(struct nameidata *nd)
 {
 	if (nd->flags & LOOKUP_RCU) {
+<<<<<<< HEAD
 		int err = inode_permission(nd->inode, MAY_EXEC|MAY_NOT_BLOCK);
+=======
+		int err = exec_permission(nd->inode, IPERM_FLAG_RCU);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err != -ECHILD)
 			return err;
 		if (unlazy_walk(nd, NULL))
 			return -ECHILD;
 	}
+<<<<<<< HEAD
 	return inode_permission(nd->inode, MAY_EXEC);
+=======
+	return exec_permission(nd->inode, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int handle_dots(struct nameidata *nd, int type)
@@ -1269,6 +1648,7 @@ static void terminate_walk(struct nameidata *nd)
 	}
 }
 
+<<<<<<< HEAD
 /*
  * Do we need to follow links? We _really_ want to be able
  * to do this check without having to look at inode->i_op,
@@ -1289,6 +1669,8 @@ static inline int should_follow_link(struct inode *inode, int follow)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int walk_component(struct nameidata *nd, struct path *path,
 		struct qstr *name, int type, int follow)
 {
@@ -1311,7 +1693,11 @@ static inline int walk_component(struct nameidata *nd, struct path *path,
 		terminate_walk(nd);
 		return -ENOENT;
 	}
+<<<<<<< HEAD
 	if (should_follow_link(inode, follow)) {
+=======
+	if (unlikely(inode->i_op->follow_link) && follow) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (nd->flags & LOOKUP_RCU) {
 			if (unlikely(unlazy_walk(nd, path->dentry))) {
 				terminate_walk(nd);
@@ -1364,6 +1750,7 @@ static inline int nested_symlink(struct path *path, struct nameidata *nd)
 }
 
 /*
+<<<<<<< HEAD
  * We really don't want to look at inode->i_op->lookup
  * when we don't have to. So we keep a cache bit in
  * the inode ->i_opflags field that says "yes, we can
@@ -1506,6 +1893,8 @@ static inline unsigned long hash_name(const char *name, unsigned int *hashp)
 #endif
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Name resolution.
  * This is the basic name resolution function, turning a pathname into
  * the final dentry. We expect 'base' to be positive and a directory.
@@ -1517,6 +1906,10 @@ static int link_path_walk(const char *name, struct nameidata *nd)
 {
 	struct path next;
 	int err;
+<<<<<<< HEAD
+=======
+	unsigned int lookup_flags = nd->flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	
 	while (*name=='/')
 		name++;
@@ -1525,14 +1918,25 @@ static int link_path_walk(const char *name, struct nameidata *nd)
 
 	/* At this point we know we have a real path component. */
 	for(;;) {
+<<<<<<< HEAD
 		struct qstr this;
 		long len;
 		int type;
 
+=======
+		unsigned long hash;
+		struct qstr this;
+		unsigned int c;
+		int type;
+
+		nd->flags |= LOOKUP_CONTINUE;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = may_lookup(nd);
  		if (err)
 			break;
 
+<<<<<<< HEAD
 		len = hash_name(name, &this.hash);
 		this.name = name;
 		this.len = len;
@@ -1541,6 +1945,24 @@ static int link_path_walk(const char *name, struct nameidata *nd)
 		if (name[0] == '.') switch (len) {
 			case 2:
 				if (name[1] == '.') {
+=======
+		this.name = name;
+		c = *(const unsigned char *)name;
+
+		hash = init_name_hash();
+		do {
+			name++;
+			hash = partial_name_hash(c, hash);
+			c = *(const unsigned char *)name;
+		} while (c && (c != '/'));
+		this.len = name - (const char *) this.name;
+		this.hash = end_name_hash(hash);
+
+		type = LAST_NORM;
+		if (this.name[0] == '.') switch (this.len) {
+			case 2:
+				if (this.name[1] == '.') {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					type = LAST_DOTDOT;
 					nd->flags |= LOOKUP_JUMPED;
 				}
@@ -1559,6 +1981,7 @@ static int link_path_walk(const char *name, struct nameidata *nd)
 			}
 		}
 
+<<<<<<< HEAD
 		if (!name[len])
 			goto last_component;
 		/*
@@ -1571,6 +1994,14 @@ static int link_path_walk(const char *name, struct nameidata *nd)
 		if (!name[len])
 			goto last_component;
 		name += len;
+=======
+		/* remove trailing slashes? */
+		if (!c)
+			goto last_component;
+		while (*++name == '/');
+		if (!*name)
+			goto last_component;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		err = walk_component(nd, &next, &this, type, LOOKUP_FOLLOW);
 		if (err < 0)
@@ -1581,6 +2012,7 @@ static int link_path_walk(const char *name, struct nameidata *nd)
 			if (err)
 				return err;
 		}
+<<<<<<< HEAD
 		if (can_lookup(nd->inode))
 			continue;
 		err = -ENOTDIR; 
@@ -1588,6 +2020,17 @@ static int link_path_walk(const char *name, struct nameidata *nd)
 		/* here ends the main loop */
 
 last_component:
+=======
+		err = -ENOTDIR; 
+		if (!nd->inode->i_op->lookup)
+			break;
+		continue;
+		/* here ends the main loop */
+
+last_component:
+		/* Clear LOOKUP_CONTINUE iff it was previously unset */
+		nd->flags &= lookup_flags | ~LOOKUP_CONTINUE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nd->last = this;
 		nd->last_type = type;
 		return 0;
@@ -1670,7 +2113,11 @@ static int path_init(int dfd, const char *name, unsigned int flags,
 			if (!S_ISDIR(dentry->d_inode->i_mode))
 				goto fput_fail;
 
+<<<<<<< HEAD
 			retval = inode_permission(dentry->d_inode, MAY_EXEC);
+=======
+			retval = file_permission(file, MAY_EXEC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (retval)
 				goto fput_fail;
 		}
@@ -1808,6 +2255,7 @@ int kern_path(const char *name, unsigned int flags, struct path *path)
  * @mnt: pointer to vfs mount of the base directory
  * @name: pointer to file name
  * @flags: lookup flags
+<<<<<<< HEAD
  * @path: pointer to struct path to fill
  */
 int vfs_path_lookup(struct dentry *dentry, struct vfsmount *mnt,
@@ -1824,6 +2272,45 @@ int vfs_path_lookup(struct dentry *dentry, struct vfsmount *mnt,
 	if (!err)
 		*path = nd.path;
 	return err;
+=======
+ * @nd: pointer to nameidata
+ */
+int vfs_path_lookup(struct dentry *dentry, struct vfsmount *mnt,
+		    const char *name, unsigned int flags,
+		    struct nameidata *nd)
+{
+	nd->root.dentry = dentry;
+	nd->root.mnt = mnt;
+	/* the first argument of do_path_lookup() is ignored with LOOKUP_ROOT */
+	return do_path_lookup(AT_FDCWD, name, flags | LOOKUP_ROOT, nd);
+}
+
+static struct dentry *__lookup_hash(struct qstr *name,
+		struct dentry *base, struct nameidata *nd)
+{
+	struct inode *inode = base->d_inode;
+	struct dentry *dentry;
+	int err;
+
+	err = exec_permission(inode, 0);
+	if (err)
+		return ERR_PTR(err);
+
+	/*
+	 * Don't bother with __d_lookup: callers are for creat as
+	 * well as unlink, so a lot of the time it would cost
+	 * a double lookup.
+	 */
+	dentry = d_lookup(base, name);
+
+	if (dentry && (dentry->d_flags & DCACHE_OP_REVALIDATE))
+		dentry = do_revalidate(dentry, nd);
+
+	if (!dentry)
+		dentry = d_alloc_and_lookup(base, name, nd);
+
+	return dentry;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1850,22 +2337,40 @@ static struct dentry *lookup_hash(struct nameidata *nd)
 struct dentry *lookup_one_len(const char *name, struct dentry *base, int len)
 {
 	struct qstr this;
+<<<<<<< HEAD
 	unsigned int c;
 	int err;
+=======
+	unsigned long hash;
+	unsigned int c;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	WARN_ON_ONCE(!mutex_is_locked(&base->d_inode->i_mutex));
 
 	this.name = name;
 	this.len = len;
+<<<<<<< HEAD
 	this.hash = full_name_hash(name, len);
 	if (!len)
 		return ERR_PTR(-EACCES);
 
+=======
+	if (!len)
+		return ERR_PTR(-EACCES);
+
+	hash = init_name_hash();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (len--) {
 		c = *(const unsigned char *)name++;
 		if (c == '/' || c == '\0')
 			return ERR_PTR(-EACCES);
+<<<<<<< HEAD
 	}
+=======
+		hash = partial_name_hash(c, hash);
+	}
+	this.hash = end_name_hash(hash);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * See if the low-level filesystem might want
 	 * to use its own hash..
@@ -1876,10 +2381,13 @@ struct dentry *lookup_one_len(const char *name, struct dentry *base, int len)
 			return ERR_PTR(err);
 	}
 
+<<<<<<< HEAD
 	err = inode_permission(base->d_inode, MAY_EXEC);
 	if (err)
 		return ERR_PTR(err);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return __lookup_hash(&this, base, NULL);
 }
 
@@ -1904,7 +2412,11 @@ int user_path_at_empty(int dfd, const char __user *name, unsigned flags,
 int user_path_at(int dfd, const char __user *name, unsigned flags,
 		 struct path *path)
 {
+<<<<<<< HEAD
 	return user_path_at_empty(dfd, name, flags, path, NULL);
+=======
+	return user_path_at_empty(dfd, name, flags, path, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int user_path_parent(int dfd, const char __user *path,
@@ -2056,7 +2568,11 @@ void unlock_rename(struct dentry *p1, struct dentry *p2)
 	}
 }
 
+<<<<<<< HEAD
 int vfs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+=======
+int vfs_create(struct inode *dir, struct dentry *dentry, int mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct nameidata *nd)
 {
 	int error = may_create(dir, dentry);
@@ -2126,7 +2642,14 @@ static int may_open(struct path *path, int acc_mode, int flag)
 	if (flag & O_NOATIME && !inode_owner_or_capable(inode))
 		return -EPERM;
 
+<<<<<<< HEAD
 	return 0;
+=======
+	/*
+	 * Ensure there are no outstanding leases on the file.
+	 */
+	return break_lease(inode, flag);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int handle_truncate(struct file *filp)
@@ -2151,10 +2674,34 @@ static int handle_truncate(struct file *filp)
 	return error;
 }
 
+<<<<<<< HEAD
 static inline int open_to_namei_flags(int flag)
 {
 	if ((flag & O_ACCMODE) == 3)
 		flag--;
+=======
+/*
+ * Note that while the flag value (low two bits) for sys_open means:
+ *	00 - read-only
+ *	01 - write-only
+ *	10 - read-write
+ *	11 - special
+ * it is changed into
+ *	00 - no permissions needed
+ *	01 - read-permission
+ *	10 - write-permission
+ *	11 - read-write
+ * for the internal routines (ie open_namei()/follow_link() etc)
+ * This is more logical, and also allows the 00 "no perm needed"
+ * to be used for symlinks (where the permissions are checked
+ * later).
+ *
+*/
+static inline int open_to_namei_flags(int flag)
+{
+	if ((flag+1) & O_ACCMODE)
+		flag++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return flag;
 }
 
@@ -2257,7 +2804,11 @@ static struct file *do_last(struct nameidata *nd, struct path *path,
 
 	/* Negative dentry, just create the file */
 	if (!dentry->d_inode) {
+<<<<<<< HEAD
 		umode_t mode = op->mode;
+=======
+		int mode = op->mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!IS_POSIXACL(dir->d_inode))
 			mode &= ~current_umask();
 		/*
@@ -2460,6 +3011,7 @@ struct file *do_file_open_root(struct dentry *dentry, struct vfsmount *mnt,
 	return file;
 }
 
+<<<<<<< HEAD
 struct dentry *kern_path_create(int dfd, const char *pathname, struct path *path, int is_dir)
 {
 	struct dentry *dentry = ERR_PTR(-EEXIST);
@@ -2468,21 +3020,50 @@ struct dentry *kern_path_create(int dfd, const char *pathname, struct path *path
 	if (error)
 		return ERR_PTR(error);
 
+=======
+/**
+ * lookup_create - lookup a dentry, creating it if it doesn't exist
+ * @nd: nameidata info
+ * @is_dir: directory flag
+ *
+ * Simple function to lookup and return a dentry and create it
+ * if it doesn't exist.  Is SMP-safe.
+ *
+ * Returns with nd->path.dentry->d_inode->i_mutex locked.
+ */
+struct dentry *lookup_create(struct nameidata *nd, int is_dir)
+{
+	struct dentry *dentry = ERR_PTR(-EEXIST);
+
+	mutex_lock_nested(&nd->path.dentry->d_inode->i_mutex, I_MUTEX_PARENT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Yucky last component or no last component at all?
 	 * (foo/., foo/.., /////)
 	 */
+<<<<<<< HEAD
 	if (nd.last_type != LAST_NORM)
 		goto out;
 	nd.flags &= ~LOOKUP_PARENT;
 	nd.flags |= LOOKUP_CREATE | LOOKUP_EXCL;
 	nd.intent.open.flags = O_EXCL;
+=======
+	if (nd->last_type != LAST_NORM)
+		goto fail;
+	nd->flags &= ~LOOKUP_PARENT;
+	nd->flags |= LOOKUP_CREATE | LOOKUP_EXCL;
+	nd->intent.open.flags = O_EXCL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Do the final lookup.
 	 */
+<<<<<<< HEAD
 	mutex_lock_nested(&nd.path.dentry->d_inode->i_mutex, I_MUTEX_PARENT);
 	dentry = lookup_hash(&nd);
+=======
+	dentry = lookup_hash(nd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(dentry))
 		goto fail;
 
@@ -2494,17 +3075,25 @@ struct dentry *kern_path_create(int dfd, const char *pathname, struct path *path
 	 * all is fine. Let's be bastards - you had / on the end, you've
 	 * been asking for (non-existent) directory. -ENOENT for you.
 	 */
+<<<<<<< HEAD
 	if (unlikely(!is_dir && nd.last.name[nd.last.len])) {
 		dput(dentry);
 		dentry = ERR_PTR(-ENOENT);
 		goto fail;
 	}
 	*path = nd.path;
+=======
+	if (unlikely(!is_dir && nd->last.name[nd->last.len])) {
+		dput(dentry);
+		dentry = ERR_PTR(-ENOENT);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return dentry;
 eexist:
 	dput(dentry);
 	dentry = ERR_PTR(-EEXIST);
 fail:
+<<<<<<< HEAD
 	mutex_unlock(&nd.path.dentry->d_inode->i_mutex);
 out:
 	path_put(&nd.path);
@@ -2525,6 +3114,13 @@ struct dentry *user_path_create(int dfd, const char __user *pathname, struct pat
 EXPORT_SYMBOL(user_path_create);
 
 int vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
+=======
+	return dentry;
+}
+EXPORT_SYMBOL_GPL(lookup_create);
+
+int vfs_mknod(struct inode *dir, struct dentry *dentry, int mode, dev_t dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int error = may_create(dir, dentry);
 
@@ -2552,7 +3148,11 @@ int vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
 	return error;
 }
 
+<<<<<<< HEAD
 static int may_mknod(umode_t mode)
+=======
+static int may_mknod(mode_t mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	switch (mode & S_IFMT) {
 	case S_IFREG:
@@ -2569,33 +3169,64 @@ static int may_mknod(umode_t mode)
 	}
 }
 
+<<<<<<< HEAD
 SYSCALL_DEFINE4(mknodat, int, dfd, const char __user *, filename, umode_t, mode,
 		unsigned, dev)
 {
 	struct dentry *dentry;
 	struct path path;
 	int error;
+=======
+SYSCALL_DEFINE4(mknodat, int, dfd, const char __user *, filename, int, mode,
+		unsigned, dev)
+{
+	int error;
+	char *tmp;
+	struct dentry *dentry;
+	struct nameidata nd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (S_ISDIR(mode))
 		return -EPERM;
 
+<<<<<<< HEAD
 	dentry = user_path_create(dfd, filename, &path, 0);
 	if (IS_ERR(dentry))
 		return PTR_ERR(dentry);
 
 	if (!IS_POSIXACL(path.dentry->d_inode))
+=======
+	error = user_path_parent(dfd, filename, &nd, &tmp);
+	if (error)
+		return error;
+
+	dentry = lookup_create(&nd, 0);
+	if (IS_ERR(dentry)) {
+		error = PTR_ERR(dentry);
+		goto out_unlock;
+	}
+	if (!IS_POSIXACL(nd.path.dentry->d_inode))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mode &= ~current_umask();
 	error = may_mknod(mode);
 	if (error)
 		goto out_dput;
+<<<<<<< HEAD
 	error = mnt_want_write(path.mnt);
 	if (error)
 		goto out_dput;
 	error = security_path_mknod(&path, dentry, mode, dev);
+=======
+	error = mnt_want_write(nd.path.mnt);
+	if (error)
+		goto out_dput;
+	error = security_path_mknod(&nd.path, dentry, mode, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (error)
 		goto out_drop_write;
 	switch (mode & S_IFMT) {
 		case 0: case S_IFREG:
+<<<<<<< HEAD
 			error = vfs_create(path.dentry->d_inode,dentry,mode,NULL);
 			break;
 		case S_IFCHR: case S_IFBLK:
@@ -2612,19 +3243,49 @@ out_dput:
 	dput(dentry);
 	mutex_unlock(&path.dentry->d_inode->i_mutex);
 	path_put(&path);
+=======
+			error = vfs_create(nd.path.dentry->d_inode,dentry,mode,&nd);
+			break;
+		case S_IFCHR: case S_IFBLK:
+			error = vfs_mknod(nd.path.dentry->d_inode,dentry,mode,
+					new_decode_dev(dev));
+			break;
+		case S_IFIFO: case S_IFSOCK:
+			error = vfs_mknod(nd.path.dentry->d_inode,dentry,mode,0);
+			break;
+	}
+out_drop_write:
+	mnt_drop_write(nd.path.mnt);
+out_dput:
+	dput(dentry);
+out_unlock:
+	mutex_unlock(&nd.path.dentry->d_inode->i_mutex);
+	path_put(&nd.path);
+	putname(tmp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return error;
 }
 
+<<<<<<< HEAD
 SYSCALL_DEFINE3(mknod, const char __user *, filename, umode_t, mode, unsigned, dev)
+=======
+SYSCALL_DEFINE3(mknod, const char __user *, filename, int, mode, unsigned, dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return sys_mknodat(AT_FDCWD, filename, mode, dev);
 }
 
+<<<<<<< HEAD
 int vfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
 {
 	int error = may_create(dir, dentry);
 	unsigned max_links = dir->i_sb->s_max_links;
+=======
+int vfs_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+{
+	int error = may_create(dir, dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (error)
 		return error;
@@ -2637,15 +3298,19 @@ int vfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
 	if (error)
 		return error;
 
+<<<<<<< HEAD
 	if (max_links && dir->i_nlink >= max_links)
 		return -EMLINK;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	error = dir->i_op->mkdir(dir, dentry, mode);
 	if (!error)
 		fsnotify_mkdir(dir, dentry);
 	return error;
 }
 
+<<<<<<< HEAD
 SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
 {
 	struct dentry *dentry;
@@ -2675,13 +3340,57 @@ out_dput:
 }
 
 SYSCALL_DEFINE2(mkdir, const char __user *, pathname, umode_t, mode)
+=======
+SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, int, mode)
+{
+	int error = 0;
+	char * tmp;
+	struct dentry *dentry;
+	struct nameidata nd;
+
+	error = user_path_parent(dfd, pathname, &nd, &tmp);
+	if (error)
+		goto out_err;
+
+	dentry = lookup_create(&nd, 1);
+	error = PTR_ERR(dentry);
+	if (IS_ERR(dentry))
+		goto out_unlock;
+
+	if (!IS_POSIXACL(nd.path.dentry->d_inode))
+		mode &= ~current_umask();
+	error = mnt_want_write(nd.path.mnt);
+	if (error)
+		goto out_dput;
+	error = security_path_mkdir(&nd.path, dentry, mode);
+	if (error)
+		goto out_drop_write;
+	error = vfs_mkdir(nd.path.dentry->d_inode, dentry, mode);
+out_drop_write:
+	mnt_drop_write(nd.path.mnt);
+out_dput:
+	dput(dentry);
+out_unlock:
+	mutex_unlock(&nd.path.dentry->d_inode->i_mutex);
+	path_put(&nd.path);
+	putname(tmp);
+out_err:
+	return error;
+}
+
+SYSCALL_DEFINE2(mkdir, const char __user *, pathname, int, mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return sys_mkdirat(AT_FDCWD, pathname, mode);
 }
 
 /*
  * The dentry_unhash() helper will try to drop the dentry early: we
+<<<<<<< HEAD
  * should have a usage count of 1 if we're the only user of this
+=======
+ * should have a usage count of 2 if we're the only user of this
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * dentry, and if that is true (possibly after pruning the dcache),
  * then we drop the dentry now.
  *
@@ -2932,13 +3641,20 @@ SYSCALL_DEFINE3(symlinkat, const char __user *, oldname,
 {
 	int error;
 	char *from;
+<<<<<<< HEAD
 	struct dentry *dentry;
 	struct path path;
+=======
+	char *to;
+	struct dentry *dentry;
+	struct nameidata nd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	from = getname(oldname);
 	if (IS_ERR(from))
 		return PTR_ERR(from);
 
+<<<<<<< HEAD
 	dentry = user_path_create(newdfd, newname, &path, 0);
 	error = PTR_ERR(dentry);
 	if (IS_ERR(dentry))
@@ -2957,6 +3673,32 @@ out_dput:
 	dput(dentry);
 	mutex_unlock(&path.dentry->d_inode->i_mutex);
 	path_put(&path);
+=======
+	error = user_path_parent(newdfd, newname, &nd, &to);
+	if (error)
+		goto out_putname;
+
+	dentry = lookup_create(&nd, 0);
+	error = PTR_ERR(dentry);
+	if (IS_ERR(dentry))
+		goto out_unlock;
+
+	error = mnt_want_write(nd.path.mnt);
+	if (error)
+		goto out_dput;
+	error = security_path_symlink(&nd.path, dentry, from);
+	if (error)
+		goto out_drop_write;
+	error = vfs_symlink(nd.path.dentry->d_inode, dentry, from);
+out_drop_write:
+	mnt_drop_write(nd.path.mnt);
+out_dput:
+	dput(dentry);
+out_unlock:
+	mutex_unlock(&nd.path.dentry->d_inode->i_mutex);
+	path_put(&nd.path);
+	putname(to);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_putname:
 	putname(from);
 	return error;
@@ -2970,7 +3712,10 @@ SYSCALL_DEFINE2(symlink, const char __user *, oldname, const char __user *, newn
 int vfs_link(struct dentry *old_dentry, struct inode *dir, struct dentry *new_dentry)
 {
 	struct inode *inode = old_dentry->d_inode;
+<<<<<<< HEAD
 	unsigned max_links = dir->i_sb->s_max_links;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int error;
 
 	if (!inode)
@@ -3001,8 +3746,11 @@ int vfs_link(struct dentry *old_dentry, struct inode *dir, struct dentry *new_de
 	/* Make sure we don't allow creating hardlink to an unlinked file */
 	if (inode->i_nlink == 0)
 		error =  -ENOENT;
+<<<<<<< HEAD
 	else if (max_links && inode->i_nlink >= max_links)
 		error = -EMLINK;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else
 		error = dir->i_op->link(old_dentry, dir, new_dentry);
 	mutex_unlock(&inode->i_mutex);
@@ -3024,9 +3772,17 @@ SYSCALL_DEFINE5(linkat, int, olddfd, const char __user *, oldname,
 		int, newdfd, const char __user *, newname, int, flags)
 {
 	struct dentry *new_dentry;
+<<<<<<< HEAD
 	struct path old_path, new_path;
 	int how = 0;
 	int error;
+=======
+	struct nameidata nd;
+	struct path old_path;
+	int how = 0;
+	int error;
+	char *to;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((flags & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH)) != 0)
 		return -EINVAL;
@@ -3048,6 +3804,7 @@ SYSCALL_DEFINE5(linkat, int, olddfd, const char __user *, oldname,
 	if (error)
 		return error;
 
+<<<<<<< HEAD
 	new_dentry = user_path_create(newdfd, newname, &new_path, 0);
 	error = PTR_ERR(new_dentry);
 	if (IS_ERR(new_dentry))
@@ -3069,6 +3826,34 @@ out_dput:
 	dput(new_dentry);
 	mutex_unlock(&new_path.dentry->d_inode->i_mutex);
 	path_put(&new_path);
+=======
+	error = user_path_parent(newdfd, newname, &nd, &to);
+	if (error)
+		goto out;
+	error = -EXDEV;
+	if (old_path.mnt != nd.path.mnt)
+		goto out_release;
+	new_dentry = lookup_create(&nd, 0);
+	error = PTR_ERR(new_dentry);
+	if (IS_ERR(new_dentry))
+		goto out_unlock;
+	error = mnt_want_write(nd.path.mnt);
+	if (error)
+		goto out_dput;
+	error = security_path_link(old_path.dentry, &nd.path, new_dentry);
+	if (error)
+		goto out_drop_write;
+	error = vfs_link(old_path.dentry, nd.path.dentry->d_inode, new_dentry);
+out_drop_write:
+	mnt_drop_write(nd.path.mnt);
+out_dput:
+	dput(new_dentry);
+out_unlock:
+	mutex_unlock(&nd.path.dentry->d_inode->i_mutex);
+out_release:
+	path_put(&nd.path);
+	putname(to);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	path_put(&old_path);
 
@@ -3112,7 +3897,10 @@ static int vfs_rename_dir(struct inode *old_dir, struct dentry *old_dentry,
 {
 	int error = 0;
 	struct inode *target = new_dentry->d_inode;
+<<<<<<< HEAD
 	unsigned max_links = new_dir->i_sb->s_max_links;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If we are going to change the parent - check write permissions,
@@ -3136,11 +3924,14 @@ static int vfs_rename_dir(struct inode *old_dir, struct dentry *old_dentry,
 	if (d_mountpoint(old_dentry) || d_mountpoint(new_dentry))
 		goto out;
 
+<<<<<<< HEAD
 	error = -EMLINK;
 	if (max_links && !target && new_dir != old_dir &&
 	    new_dir->i_nlink >= max_links)
 		goto out;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (target)
 		shrink_dcache_parent(new_dentry);
 	error = old_dir->i_op->rename(old_dir, old_dentry, new_dir, new_dentry);
@@ -3439,9 +4230,15 @@ retry:
 	if (err)
 		goto fail;
 
+<<<<<<< HEAD
 	kaddr = kmap_atomic(page);
 	memcpy(kaddr, symname, len-1);
 	kunmap_atomic(kaddr);
+=======
+	kaddr = kmap_atomic(page, KM_USER0);
+	memcpy(kaddr, symname, len-1);
+	kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = pagecache_write_end(NULL, mapping, 0, len-1, len-1,
 							page, fsdata);
@@ -3482,9 +4279,17 @@ EXPORT_SYMBOL(page_readlink);
 EXPORT_SYMBOL(__page_symlink);
 EXPORT_SYMBOL(page_symlink);
 EXPORT_SYMBOL(page_symlink_inode_operations);
+<<<<<<< HEAD
 EXPORT_SYMBOL(kern_path);
 EXPORT_SYMBOL(vfs_path_lookup);
 EXPORT_SYMBOL(inode_permission);
+=======
+EXPORT_SYMBOL(kern_path_parent);
+EXPORT_SYMBOL(kern_path);
+EXPORT_SYMBOL(vfs_path_lookup);
+EXPORT_SYMBOL(inode_permission);
+EXPORT_SYMBOL(file_permission);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL(unlock_rename);
 EXPORT_SYMBOL(vfs_create);
 EXPORT_SYMBOL(vfs_follow_link);

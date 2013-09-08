@@ -1692,7 +1692,11 @@ int ocfs2_open_lock(struct inode *inode)
 	mlog(0, "inode %llu take PRMODE open lock\n",
 	     (unsigned long long)OCFS2_I(inode)->ip_blkno);
 
+<<<<<<< HEAD
 	if (ocfs2_is_hard_readonly(osb) || ocfs2_mount_local(osb))
+=======
+	if (ocfs2_mount_local(osb))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	lockres = &OCFS2_I(inode)->ip_open_lockres;
@@ -1718,12 +1722,15 @@ int ocfs2_try_open_lock(struct inode *inode, int write)
 	     (unsigned long long)OCFS2_I(inode)->ip_blkno,
 	     write ? "EXMODE" : "PRMODE");
 
+<<<<<<< HEAD
 	if (ocfs2_is_hard_readonly(osb)) {
 		if (write)
 			status = -EROFS;
 		goto out;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ocfs2_mount_local(osb))
 		goto out;
 
@@ -2098,7 +2105,11 @@ static void ocfs2_refresh_inode_from_lvb(struct inode *inode)
 	inode->i_uid     = be32_to_cpu(lvb->lvb_iuid);
 	inode->i_gid     = be32_to_cpu(lvb->lvb_igid);
 	inode->i_mode    = be16_to_cpu(lvb->lvb_imode);
+<<<<<<< HEAD
 	set_nlink(inode, be16_to_cpu(lvb->lvb_inlink));
+=======
+	inode->i_nlink   = be16_to_cpu(lvb->lvb_inlink);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ocfs2_unpack_timespec(&inode->i_atime,
 			      be64_to_cpu(lvb->lvb_iatime_packed));
 	ocfs2_unpack_timespec(&inode->i_mtime,
@@ -2304,7 +2315,11 @@ int ocfs2_inode_lock_full_nested(struct inode *inode,
 	if (ocfs2_is_hard_readonly(osb)) {
 		if (ex)
 			status = -EROFS;
+<<<<<<< HEAD
 		goto getbh;
+=======
+		goto bail;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (ocfs2_mount_local(osb))
@@ -2362,7 +2377,11 @@ local:
 			mlog_errno(status);
 		goto bail;
 	}
+<<<<<<< HEAD
 getbh:
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret_bh) {
 		status = ocfs2_assign_bh(inode, ret_bh, local_bh);
 		if (status < 0) {
@@ -2545,7 +2564,10 @@ int ocfs2_super_lock(struct ocfs2_super *osb,
 	 * everything is up to the caller :) */
 	status = ocfs2_should_refresh_lock_res(lockres);
 	if (status < 0) {
+<<<<<<< HEAD
 		ocfs2_cluster_unlock(osb, lockres, level);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mlog_errno(status);
 		goto bail;
 	}
@@ -2554,10 +2576,15 @@ int ocfs2_super_lock(struct ocfs2_super *osb,
 
 		ocfs2_complete_lock_res_refresh(lockres, status);
 
+<<<<<<< HEAD
 		if (status < 0) {
 			ocfs2_cluster_unlock(osb, lockres, level);
 			mlog_errno(status);
 		}
+=======
+		if (status < 0)
+			mlog_errno(status);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ocfs2_track_lock_refresh(lockres);
 	}
 bail:
@@ -2637,11 +2664,16 @@ int ocfs2_dentry_lock(struct dentry *dentry, int ex)
 
 	BUG_ON(!dl);
 
+<<<<<<< HEAD
 	if (ocfs2_is_hard_readonly(osb)) {
 		if (ex)
 			return -EROFS;
 		return 0;
 	}
+=======
+	if (ocfs2_is_hard_readonly(osb))
+		return -EROFS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ocfs2_mount_local(osb))
 		return 0;
@@ -2659,7 +2691,11 @@ void ocfs2_dentry_unlock(struct dentry *dentry, int ex)
 	struct ocfs2_dentry_lock *dl = dentry->d_fsdata;
 	struct ocfs2_super *osb = OCFS2_SB(dentry->d_sb);
 
+<<<<<<< HEAD
 	if (!ocfs2_is_hard_readonly(osb) && !ocfs2_mount_local(osb))
+=======
+	if (!ocfs2_mount_local(osb))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ocfs2_cluster_unlock(osb, &dl->dl_lockres, level);
 }
 

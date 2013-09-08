@@ -16,7 +16,10 @@
  */
 
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "ath9k.h"
 
@@ -380,6 +383,7 @@ static const struct ath_rate_table ar5416_11g_ratetable = {
 };
 
 static int ath_rc_get_rateindex(const struct ath_rate_table *rate_table,
+<<<<<<< HEAD
 				struct ieee80211_tx_rate *rate)
 {
 	int rix = 0, i = 0;
@@ -404,6 +408,9 @@ static int ath_rc_get_rateindex(const struct ath_rate_table *rate_table,
 
 	return rix;
 }
+=======
+				struct ieee80211_tx_rate *rate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void ath_rc_sort_validrates(const struct ath_rate_table *rate_table,
 				   struct ath_rate_priv *ath_rc_priv)
@@ -557,7 +564,11 @@ static u8 ath_rc_setvalid_rates(struct ath_rate_priv *ath_rc_priv,
 					[valid_rate_count] = j;
 				ath_rc_priv->valid_phy_ratecnt[phy] += 1;
 				ath_rc_set_valid_rate_idx(ath_rc_priv, j, 1);
+<<<<<<< HEAD
 				hi = max(hi, j);
+=======
+				hi = A_MAX(hi, j);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 	}
@@ -567,8 +578,15 @@ static u8 ath_rc_setvalid_rates(struct ath_rate_priv *ath_rc_priv,
 
 static u8 ath_rc_setvalid_htrates(struct ath_rate_priv *ath_rc_priv,
 				  const struct ath_rate_table *rate_table,
+<<<<<<< HEAD
 				  struct ath_rateset *rateset, u32 capflag)
 {
+=======
+				  u8 *mcs_set, u32 capflag)
+{
+	struct ath_rateset *rateset = (struct ath_rateset *)mcs_set;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 i, j, hi = 0;
 
 	/* Use intersection of working rates and valid rates */
@@ -591,7 +609,11 @@ static u8 ath_rc_setvalid_htrates(struct ath_rate_priv *ath_rc_priv,
 				[ath_rc_priv->valid_phy_ratecnt[phy]] = j;
 			ath_rc_priv->valid_phy_ratecnt[phy] += 1;
 			ath_rc_set_valid_rate_idx(ath_rc_priv, j, 1);
+<<<<<<< HEAD
 			hi = max(hi, j);
+=======
+			hi = A_MAX(hi, j);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -602,8 +624,12 @@ static u8 ath_rc_setvalid_htrates(struct ath_rate_priv *ath_rc_priv,
 static u8 ath_rc_get_highest_rix(struct ath_softc *sc,
 			         struct ath_rate_priv *ath_rc_priv,
 				 const struct ath_rate_table *rate_table,
+<<<<<<< HEAD
 				 int *is_probing,
 				 bool legacy)
+=======
+				 int *is_probing)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 best_thruput, this_thruput, now_msec;
 	u8 rate, next_rate, best_rate, maxindex, minindex;
@@ -624,8 +650,11 @@ static u8 ath_rc_get_highest_rix(struct ath_softc *sc,
 		u8 per_thres;
 
 		rate = ath_rc_priv->valid_rate_index[index];
+<<<<<<< HEAD
 		if (legacy && !(rate_table->info[rate].rate_flags & RC_LEGACY))
 			continue;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rate > ath_rc_priv->rate_max_phy)
 			continue;
 
@@ -692,7 +721,11 @@ static u8 ath_rc_get_highest_rix(struct ath_softc *sc,
 		return rate;
 
 	/* This should not happen */
+<<<<<<< HEAD
 	WARN_ON_ONCE(1);
+=======
+	WARN_ON(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rate = ath_rc_priv->valid_rate_index[0];
 
@@ -748,8 +781,12 @@ static void ath_rc_rate_set_rtscts(struct ath_softc *sc,
 	 * If 802.11g protection is enabled, determine whether to use RTS/CTS or
 	 * just CTS.  Note that this is only done for OFDM/HT unicast frames.
 	 */
+<<<<<<< HEAD
 	if ((tx_info->control.vif &&
 	     tx_info->control.vif->bss_conf.use_cts_prot) &&
+=======
+	if ((sc->sc_flags & SC_OP_PROTECT_ENABLE) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    (rate_table->info[rix].phy == WLAN_RC_PHY_OFDM ||
 	     WLAN_RC_PHY_HT(rate_table->info[rix].phy))) {
 		rates[0].flags |= IEEE80211_TX_RC_USE_CTS_PROTECT;
@@ -770,7 +807,11 @@ static void ath_get_rate(void *priv, struct ieee80211_sta *sta, void *priv_sta,
 	struct ieee80211_tx_rate *rates = tx_info->control.rates;
 	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;
 	__le16 fc = hdr->frame_control;
+<<<<<<< HEAD
 	u8 try_per_rate, i = 0, rix, high_rix;
+=======
+	u8 try_per_rate, i = 0, rix;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int is_probe = 0;
 
 	if (rate_control_send_low(sta, priv_sta, txrc))
@@ -789,9 +830,13 @@ static void ath_get_rate(void *priv, struct ieee80211_sta *sta, void *priv_sta,
 	try_per_rate = 4;
 
 	rate_table = ath_rc_priv->rate_table;
+<<<<<<< HEAD
 	rix = ath_rc_get_highest_rix(sc, ath_rc_priv, rate_table,
 				     &is_probe, false);
 	high_rix = rix;
+=======
+	rix = ath_rc_get_highest_rix(sc, ath_rc_priv, rate_table, &is_probe);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If we're in HT mode and both us and our peer supports LDPC.
@@ -827,7 +872,14 @@ static void ath_get_rate(void *priv, struct ieee80211_sta *sta, void *priv_sta,
 	}
 
 	/* Fill in the other rates for multirate retry */
+<<<<<<< HEAD
 	for ( ; i < 3; i++) {
+=======
+	for ( ; i < 4; i++) {
+		/* Use twice the number of tries for the last MRR segment. */
+		if (i + 1 == 4)
+			try_per_rate = 8;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ath_rc_get_lower_rix(rate_table, ath_rc_priv, rix, &rix);
 		/* All other rates in the series have RTS enabled */
@@ -835,6 +887,7 @@ static void ath_get_rate(void *priv, struct ieee80211_sta *sta, void *priv_sta,
 				       try_per_rate, rix, 1);
 	}
 
+<<<<<<< HEAD
 	/* Use twice the number of tries for the last MRR segment. */
 	try_per_rate = 8;
 
@@ -853,6 +906,8 @@ static void ath_get_rate(void *priv, struct ieee80211_sta *sta, void *priv_sta,
 	/* All other rates in the series have RTS enabled */
 	ath_rc_rate_set_series(rate_table, &rates[i], txrc,
 			       try_per_rate, rix, 1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * NB:Change rate series to enable aggregation when operating
 	 * at lower MCS rates. When first rate in series is MCS2
@@ -1123,6 +1178,34 @@ static void ath_rc_update_ht(struct ath_softc *sc,
 
 }
 
+<<<<<<< HEAD
+=======
+static int ath_rc_get_rateindex(const struct ath_rate_table *rate_table,
+				struct ieee80211_tx_rate *rate)
+{
+	int rix = 0, i = 0;
+	static const int mcs_rix_off[] = { 7, 15, 20, 21, 22, 23 };
+
+	if (!(rate->flags & IEEE80211_TX_RC_MCS))
+		return rate->idx;
+
+	while (i < ARRAY_SIZE(mcs_rix_off) && rate->idx > mcs_rix_off[i]) {
+		rix++; i++;
+	}
+
+	rix += rate->idx + rate_table->mcs_start;
+
+	if ((rate->flags & IEEE80211_TX_RC_40_MHZ_WIDTH) &&
+	    (rate->flags & IEEE80211_TX_RC_SHORT_GI))
+		rix = rate_table->info[rix].ht_index;
+	else if (rate->flags & IEEE80211_TX_RC_SHORT_GI)
+		rix = rate_table->info[rix].sgi_index;
+	else if (rate->flags & IEEE80211_TX_RC_40_MHZ_WIDTH)
+		rix = rate_table->info[rix].cw40index;
+
+	return rix;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void ath_rc_tx_status(struct ath_softc *sc,
 			     struct ath_rate_priv *ath_rc_priv,
@@ -1198,7 +1281,11 @@ struct ath_rate_table *ath_choose_rate_table(struct ath_softc *sc,
 			return &ar5416_11na_ratetable;
 		return &ar5416_11a_ratetable;
 	default:
+<<<<<<< HEAD
 		ath_dbg(common, CONFIG, "Invalid band\n");
+=======
+		ath_dbg(common, ATH_DBG_CONFIG, "Invalid band\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 	}
 }
@@ -1211,7 +1298,11 @@ static void ath_rc_init(struct ath_softc *sc,
 {
 	struct ath_rateset *rateset = &ath_rc_priv->neg_rates;
 	struct ath_common *common = ath9k_hw_common(sc->sc_ah);
+<<<<<<< HEAD
 	struct ath_rateset *ht_mcs = &ath_rc_priv->neg_ht_rates;
+=======
+	u8 *ht_mcs = (u8 *)&ath_rc_priv->neg_ht_rates;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 i, j, k, hi = 0, hthi = 0;
 
 	/* Initial rate table size. Will change depending
@@ -1227,7 +1318,11 @@ static void ath_rc_init(struct ath_softc *sc,
 	ath_rc_init_valid_rate_idx(ath_rc_priv);
 
 	for (i = 0; i < WLAN_RC_PHY_MAX; i++) {
+<<<<<<< HEAD
 		for (j = 0; j < RATE_TABLE_SIZE; j++)
+=======
+		for (j = 0; j < MAX_TX_RATE_PHY; j++)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ath_rc_priv->valid_phy_rateidx[i][j] = 0;
 		ath_rc_priv->valid_phy_ratecnt[i] = 0;
 	}
@@ -1246,7 +1341,11 @@ static void ath_rc_init(struct ath_softc *sc,
 						       ht_mcs,
 						       ath_rc_priv->ht_cap);
 		}
+<<<<<<< HEAD
 		hi = max(hi, hthi);
+=======
+		hi = A_MAX(hi, hthi);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ath_rc_priv->rate_table_size = hi + 1;
@@ -1275,7 +1374,12 @@ static void ath_rc_init(struct ath_softc *sc,
 					ath_rc_priv->valid_rate_index[k-1];
 	ath_rc_priv->rate_table = rate_table;
 
+<<<<<<< HEAD
 	ath_dbg(common, CONFIG, "RC Initialized with capabilities: 0x%x\n",
+=======
+	ath_dbg(common, ATH_DBG_CONFIG,
+		"RC Initialized with capabilities: 0x%x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ath_rc_priv->ht_cap);
 }
 
@@ -1299,6 +1403,7 @@ static u8 ath_rc_build_ht_caps(struct ath_softc *sc, struct ieee80211_sta *sta,
 	return caps;
 }
 
+<<<<<<< HEAD
 static bool ath_tx_aggr_check(struct ath_softc *sc, struct ieee80211_sta *sta,
 			      u8 tidno)
 {
@@ -1306,6 +1411,14 @@ static bool ath_tx_aggr_check(struct ath_softc *sc, struct ieee80211_sta *sta,
 	struct ath_atx_tid *txtid;
 
 	if (!sta->ht_cap.ht_supported)
+=======
+static bool ath_tx_aggr_check(struct ath_softc *sc, struct ath_node *an,
+			      u8 tidno)
+{
+	struct ath_atx_tid *txtid;
+
+	if (!(sc->sc_flags & SC_OP_TXAGGR))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return false;
 
 	txtid = ATH_AN_2_TID(an, tidno);
@@ -1364,6 +1477,15 @@ static void ath_tx_status(void *priv, struct ieee80211_supported_band *sband,
 	if (tx_info->flags & IEEE80211_TX_STAT_TX_FILTERED)
 		return;
 
+<<<<<<< HEAD
+=======
+	if (!(tx_info->flags & IEEE80211_TX_STAT_AMPDU)) {
+		tx_info->status.ampdu_ack_len =
+			(tx_info->flags & IEEE80211_TX_STAT_ACK ? 1 : 0);
+		tx_info->status.ampdu_len = 1;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!(tx_info->flags & IEEE80211_TX_STAT_ACK))
 		tx_status = 1;
 
@@ -1376,11 +1498,21 @@ static void ath_tx_status(void *priv, struct ieee80211_supported_band *sband,
 		if (ieee80211_is_data_qos(fc) &&
 		    skb_get_queue_mapping(skb) != IEEE80211_AC_VO) {
 			u8 *qc, tid;
+<<<<<<< HEAD
 
 			qc = ieee80211_get_qos_ctl(hdr);
 			tid = qc[0] & 0xf;
 
 			if(ath_tx_aggr_check(sc, sta, tid))
+=======
+			struct ath_node *an;
+
+			qc = ieee80211_get_qos_ctl(hdr);
+			tid = qc[0] & 0xf;
+			an = (struct ath_node *)sta->drv_priv;
+
+			if(ath_tx_aggr_check(sc, an, tid))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ieee80211_start_tx_ba_session(sta, tid, 0);
 		}
 	}
@@ -1471,7 +1603,11 @@ static void ath_rate_update(void *priv, struct ieee80211_supported_band *sband,
 						   oper_cw40, oper_sgi);
 			ath_rc_init(sc, priv_sta, sband, sta, rate_table);
 
+<<<<<<< HEAD
 			ath_dbg(ath9k_hw_common(sc->sc_ah), CONFIG,
+=======
+			ath_dbg(ath9k_hw_common(sc->sc_ah), ATH_DBG_CONFIG,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"Operating HT Bandwidth changed to: %d\n",
 				sc->hw->conf.channel_type);
 		}
@@ -1480,6 +1616,15 @@ static void ath_rate_update(void *priv, struct ieee80211_supported_band *sband,
 
 #ifdef CONFIG_ATH9K_DEBUGFS
 
+<<<<<<< HEAD
+=======
+static int ath9k_debugfs_open(struct inode *inode, struct file *file)
+{
+	file->private_data = inode->i_private;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t read_file_rcstat(struct file *file, char __user *user_buf,
 				size_t count, loff_t *ppos)
 {
@@ -1492,7 +1637,11 @@ static ssize_t read_file_rcstat(struct file *file, char __user *user_buf,
 	if (rc->rate_table == NULL)
 		return 0;
 
+<<<<<<< HEAD
 	max = 80 + rc->rate_table_size * 1024 + 1;
+=======
+	max = 80 + rc->rate_table->rate_cnt * 1024 + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	buf = kmalloc(max, GFP_KERNEL);
 	if (buf == NULL)
 		return -ENOMEM;
@@ -1502,7 +1651,11 @@ static ssize_t read_file_rcstat(struct file *file, char __user *user_buf,
 		       "HT", "MCS", "Rate",
 		       "Success", "Retries", "XRetries", "PER");
 
+<<<<<<< HEAD
 	for (i = 0; i < rc->rate_table_size; i++) {
+=======
+	for (i = 0; i < rc->rate_table->rate_cnt; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u32 ratekbps = rc->rate_table->info[i].ratekbps;
 		struct ath_rc_stats *stats = &rc->rcstats[i];
 		char mcs[5];
@@ -1547,7 +1700,11 @@ static ssize_t read_file_rcstat(struct file *file, char __user *user_buf,
 
 static const struct file_operations fops_rcstat = {
 	.read = read_file_rcstat,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE
 };
 

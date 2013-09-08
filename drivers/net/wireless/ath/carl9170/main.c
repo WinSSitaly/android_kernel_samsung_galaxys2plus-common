@@ -48,7 +48,11 @@
 #include "carl9170.h"
 #include "cmd.h"
 
+<<<<<<< HEAD
 static bool modparam_nohwcrypt;
+=======
+static int modparam_nohwcrypt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param_named(nohwcrypt, modparam_nohwcrypt, bool, S_IRUGO);
 MODULE_PARM_DESC(nohwcrypt, "Disable hardware crypto offload.");
 
@@ -345,11 +349,19 @@ static int carl9170_op_start(struct ieee80211_hw *hw)
 	carl9170_zap_queues(ar);
 
 	/* reset QoS defaults */
+<<<<<<< HEAD
 	CARL9170_FILL_QUEUE(ar->edcf[AR9170_TXQ_VO], 2, 3,     7, 47);
 	CARL9170_FILL_QUEUE(ar->edcf[AR9170_TXQ_VI], 2, 7,    15, 94);
 	CARL9170_FILL_QUEUE(ar->edcf[AR9170_TXQ_BE], 3, 15, 1023,  0);
 	CARL9170_FILL_QUEUE(ar->edcf[AR9170_TXQ_BK], 7, 15, 1023,  0);
 	CARL9170_FILL_QUEUE(ar->edcf[AR9170_TXQ_SPECIAL], 2, 3, 7, 0);
+=======
+	CARL9170_FILL_QUEUE(ar->edcf[0], 3, 15, 1023,  0); /* BEST EFFORT */
+	CARL9170_FILL_QUEUE(ar->edcf[1], 2, 7,    15, 94); /* VIDEO */
+	CARL9170_FILL_QUEUE(ar->edcf[2], 2, 3,     7, 47); /* VOICE */
+	CARL9170_FILL_QUEUE(ar->edcf[3], 7, 15, 1023,  0); /* BACKGROUND */
+	CARL9170_FILL_QUEUE(ar->edcf[4], 2, 3,     7,  0); /* SPECIAL */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ar->current_factor = ar->current_density = -1;
 	/* "The first key is unique." */
@@ -413,9 +425,12 @@ static int carl9170_op_start(struct ieee80211_hw *hw)
 
 	carl9170_set_state_when(ar, CARL9170_IDLE, CARL9170_STARTED);
 
+<<<<<<< HEAD
 	ieee80211_queue_delayed_work(ar->hw, &ar->stat_work,
 		round_jiffies(msecs_to_jiffies(CARL9170_STAT_WORK)));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ieee80211_wake_queues(ar->hw);
 	err = 0;
 
@@ -426,7 +441,10 @@ out:
 
 static void carl9170_cancel_worker(struct ar9170 *ar)
 {
+<<<<<<< HEAD
 	cancel_delayed_work_sync(&ar->stat_work);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cancel_delayed_work_sync(&ar->tx_janitor);
 #ifdef CONFIG_CARL9170_LEDS
 	cancel_delayed_work_sync(&ar->led_work);
@@ -446,7 +464,11 @@ static void carl9170_op_stop(struct ieee80211_hw *hw)
 
 	mutex_lock(&ar->mutex);
 	if (IS_ACCEPTING_CMD(ar)) {
+<<<<<<< HEAD
 		RCU_INIT_POINTER(ar->beacon_iter, NULL);
+=======
+		rcu_assign_pointer(ar->beacon_iter, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		carl9170_led_set_state(ar, 0);
 
@@ -678,7 +700,11 @@ unlock:
 		vif_priv->active = false;
 		bitmap_release_region(&ar->vif_bitmap, vif_id, 0);
 		ar->vifs--;
+<<<<<<< HEAD
 		RCU_INIT_POINTER(ar->vif_priv[vif_id].vif, NULL);
+=======
+		rcu_assign_pointer(ar->vif_priv[vif_id].vif, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_del_rcu(&vif_priv->list);
 		mutex_unlock(&ar->mutex);
 		synchronize_rcu();
@@ -716,7 +742,11 @@ static void carl9170_op_remove_interface(struct ieee80211_hw *hw,
 	WARN_ON(vif_priv->enable_beacon);
 	vif_priv->enable_beacon = false;
 	list_del_rcu(&vif_priv->list);
+<<<<<<< HEAD
 	RCU_INIT_POINTER(ar->vif_priv[id].vif, NULL);
+=======
+	rcu_assign_pointer(ar->vif_priv[id].vif, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (vif == main_vif) {
 		rcu_read_unlock();
@@ -798,6 +828,7 @@ static void carl9170_ps_work(struct work_struct *work)
 	mutex_unlock(&ar->mutex);
 }
 
+<<<<<<< HEAD
 static int carl9170_update_survey(struct ar9170 *ar, bool flush, bool noise)
 {
 	int err;
@@ -835,6 +866,8 @@ static void carl9170_stat_work(struct work_struct *work)
 	ieee80211_queue_delayed_work(ar->hw, &ar->stat_work,
 		round_jiffies(msecs_to_jiffies(CARL9170_STAT_WORK)));
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int carl9170_op_config(struct ieee80211_hw *hw, u32 changed)
 {
@@ -853,6 +886,14 @@ static int carl9170_op_config(struct ieee80211_hw *hw, u32 changed)
 			goto out;
 	}
 
+<<<<<<< HEAD
+=======
+	if (changed & IEEE80211_CONF_CHANGE_POWER) {
+		/* TODO */
+		err = 0;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (changed & IEEE80211_CONF_CHANGE_SMPS) {
 		/* TODO */
 		err = 0;
@@ -864,19 +905,25 @@ static int carl9170_op_config(struct ieee80211_hw *hw, u32 changed)
 		if (err)
 			goto out;
 
+<<<<<<< HEAD
 		err = carl9170_update_survey(ar, true, false);
 		if (err)
 			goto out;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = carl9170_set_channel(ar, hw->conf.channel,
 			hw->conf.channel_type, CARL9170_RFI_NONE);
 		if (err)
 			goto out;
 
+<<<<<<< HEAD
 		err = carl9170_update_survey(ar, false, true);
 		if (err)
 			goto out;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = carl9170_set_dyn_sifs_ack(ar);
 		if (err)
 			goto out;
@@ -886,12 +933,15 @@ static int carl9170_op_config(struct ieee80211_hw *hw, u32 changed)
 			goto out;
 	}
 
+<<<<<<< HEAD
 	if (changed & IEEE80211_CONF_CHANGE_POWER) {
 		err = carl9170_set_mac_tpc(ar, ar->hw->conf.channel);
 		if (err)
 			goto out;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	mutex_unlock(&ar->mutex);
 	return err;
@@ -1079,8 +1129,12 @@ out:
 	mutex_unlock(&ar->mutex);
 }
 
+<<<<<<< HEAD
 static u64 carl9170_op_get_tsf(struct ieee80211_hw *hw,
 			       struct ieee80211_vif *vif)
+=======
+static u64 carl9170_op_get_tsf(struct ieee80211_hw *hw)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ar9170 *ar = hw->priv;
 	struct carl9170_tsf_rsp tsf;
@@ -1259,7 +1313,11 @@ static int carl9170_op_sta_add(struct ieee80211_hw *hw,
 		}
 
 		for (i = 0; i < CARL9170_NUM_TID; i++)
+<<<<<<< HEAD
 			RCU_INIT_POINTER(sta_info->agg[i], NULL);
+=======
+			rcu_assign_pointer(sta_info->agg[i], NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		sta_info->ampdu_max_len = 1 << (3 + sta->ht_cap.ampdu_factor);
 		sta_info->ht_sta = true;
@@ -1286,7 +1344,11 @@ static int carl9170_op_sta_remove(struct ieee80211_hw *hw,
 			struct carl9170_sta_tid *tid_info;
 
 			tid_info = rcu_dereference(sta_info->agg[i]);
+<<<<<<< HEAD
 			RCU_INIT_POINTER(sta_info->agg[i], NULL);
+=======
+			rcu_assign_pointer(sta_info->agg[i], NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			if (!tid_info)
 				continue;
@@ -1306,8 +1368,12 @@ static int carl9170_op_sta_remove(struct ieee80211_hw *hw,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int carl9170_op_conf_tx(struct ieee80211_hw *hw,
 			       struct ieee80211_vif *vif, u16 queue,
+=======
+static int carl9170_op_conf_tx(struct ieee80211_hw *hw, u16 queue,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       const struct ieee80211_tx_queue_params *param)
 {
 	struct ar9170 *ar = hw->priv;
@@ -1399,7 +1465,11 @@ static int carl9170_op_ampdu_action(struct ieee80211_hw *hw,
 			spin_unlock_bh(&ar->tx_ampdu_list_lock);
 		}
 
+<<<<<<< HEAD
 		RCU_INIT_POINTER(sta_info->agg[tid], NULL);
+=======
+		rcu_assign_pointer(sta_info->agg[tid], NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rcu_read_unlock();
 
 		ieee80211_stop_tx_ba_cb_irqsafe(vif, sta->addr, tid);
@@ -1473,6 +1543,7 @@ static int carl9170_register_wps_button(struct ar9170 *ar)
 }
 #endif /* CONFIG_CARL9170_WPC */
 
+<<<<<<< HEAD
 #ifdef CONFIG_CARL9170_HWRNG
 static int carl9170_rng_get(struct ar9170 *ar)
 {
@@ -1626,6 +1697,26 @@ found:
 				  SURVEY_INFO_CHANNEL_TIME_TX;
 	}
 
+=======
+static int carl9170_op_get_survey(struct ieee80211_hw *hw, int idx,
+				struct survey_info *survey)
+{
+	struct ar9170 *ar = hw->priv;
+	int err;
+
+	if (idx != 0)
+		return -ENOENT;
+
+	mutex_lock(&ar->mutex);
+	err = carl9170_get_noisefloor(ar);
+	mutex_unlock(&ar->mutex);
+	if (err)
+		return err;
+
+	survey->channel = ar->channel;
+	survey->filled = SURVEY_INFO_NOISE_DBM;
+	survey->noise = ar->noise[0];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1673,6 +1764,7 @@ static void carl9170_op_sta_notify(struct ieee80211_hw *hw,
 	}
 }
 
+<<<<<<< HEAD
 static bool carl9170_tx_frames_pending(struct ieee80211_hw *hw)
 {
 	struct ar9170 *ar = hw->priv;
@@ -1680,6 +1772,8 @@ static bool carl9170_tx_frames_pending(struct ieee80211_hw *hw)
 	return !!atomic_read(&ar->tx_total_queued);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct ieee80211_ops carl9170_ops = {
 	.start			= carl9170_op_start,
 	.stop			= carl9170_op_stop,
@@ -1700,7 +1794,10 @@ static const struct ieee80211_ops carl9170_ops = {
 	.get_survey		= carl9170_op_get_survey,
 	.get_stats		= carl9170_op_get_stats,
 	.ampdu_action		= carl9170_op_ampdu_action,
+<<<<<<< HEAD
 	.tx_frames_pending	= carl9170_tx_frames_pending,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void *carl9170_alloc(size_t priv_size)
@@ -1758,7 +1855,10 @@ void *carl9170_alloc(size_t priv_size)
 	INIT_WORK(&ar->ping_work, carl9170_ping_work);
 	INIT_WORK(&ar->restart_work, carl9170_restart_work);
 	INIT_WORK(&ar->ampdu_work, carl9170_ampdu_work);
+<<<<<<< HEAD
 	INIT_DELAYED_WORK(&ar->stat_work, carl9170_stat_work);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_DELAYED_WORK(&ar->tx_janitor, carl9170_tx_janitor);
 	INIT_LIST_HEAD(&ar->tx_ampdu_list);
 	rcu_assign_pointer(ar->tx_ampdu_iter,
@@ -1775,7 +1875,10 @@ void *carl9170_alloc(size_t priv_size)
 		     IEEE80211_HW_REPORTS_TX_ACK_STATUS |
 		     IEEE80211_HW_SUPPORTS_PS |
 		     IEEE80211_HW_PS_NULLFUNC_STACK |
+<<<<<<< HEAD
 		     IEEE80211_HW_NEED_DTIM_PERIOD |
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     IEEE80211_HW_SIGNAL_DBM;
 
 	if (!modparam_noht) {
@@ -1797,9 +1900,12 @@ void *carl9170_alloc(size_t priv_size)
 		ar->noise[i] = -95; /* ATH_DEFAULT_NOISE_FLOOR */
 
 	hw->wiphy->flags &= ~WIPHY_FLAG_PS_ON_BY_DEFAULT;
+<<<<<<< HEAD
 
 	/* As IBSS Encryption is software-based, IBSS RSN is supported. */
 	hw->wiphy->flags |= WIPHY_FLAG_IBSS_RSN;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ar;
 
 err_nomem:
@@ -1823,7 +1929,11 @@ static int carl9170_read_eeprom(struct ar9170 *ar)
 	BUILD_BUG_ON(sizeof(ar->eeprom) % RB);
 #endif
 
+<<<<<<< HEAD
 	for (i = 0; i < sizeof(ar->eeprom) / RB; i++) {
+=======
+	for (i = 0; i < sizeof(ar->eeprom)/RB; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		for (j = 0; j < RW; j++)
 			offsets[j] = cpu_to_le32(AR9170_EEPROM_START +
 						 RB * i + 4 * j);
@@ -1845,7 +1955,10 @@ static int carl9170_parse_eeprom(struct ar9170 *ar)
 	struct ath_regulatory *regulatory = &ar->common.regulatory;
 	unsigned int rx_streams, tx_streams, tx_params = 0;
 	int bands = 0;
+<<<<<<< HEAD
 	int chans = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ar->eeprom.length == cpu_to_le16(0xffff))
 		return -ENODATA;
@@ -1869,12 +1982,16 @@ static int carl9170_parse_eeprom(struct ar9170 *ar)
 	if (ar->eeprom.operating_flags & AR9170_OPFLAG_2GHZ) {
 		ar->hw->wiphy->bands[IEEE80211_BAND_2GHZ] =
 			&carl9170_band_2GHz;
+<<<<<<< HEAD
 		chans += carl9170_band_2GHz.n_channels;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bands++;
 	}
 	if (ar->eeprom.operating_flags & AR9170_OPFLAG_5GHZ) {
 		ar->hw->wiphy->bands[IEEE80211_BAND_5GHZ] =
 			&carl9170_band_5GHz;
+<<<<<<< HEAD
 		chans += carl9170_band_5GHz.n_channels;
 		bands++;
 	}
@@ -1887,6 +2004,11 @@ static int carl9170_parse_eeprom(struct ar9170 *ar)
 		return -ENOMEM;
 	ar->num_channels = chans;
 
+=======
+		bands++;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * I measured this, a bandswitch takes roughly
 	 * 135 ms and a frequency switch about 80.
@@ -1900,11 +2022,19 @@ static int carl9170_parse_eeprom(struct ar9170 *ar)
 		ar->hw->channel_change_time = 80 * 1000;
 
 	regulatory->current_rd = le16_to_cpu(ar->eeprom.reg_domain[0]);
+<<<<<<< HEAD
+=======
+	regulatory->current_rd_ext = le16_to_cpu(ar->eeprom.reg_domain[1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* second part of wiphy init */
 	SET_IEEE80211_PERM_ADDR(ar->hw, ar->eeprom.mac_address);
 
+<<<<<<< HEAD
 	return 0;
+=======
+	return bands ? 0 : -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int carl9170_reg_notifier(struct wiphy *wiphy,
@@ -1935,6 +2065,13 @@ int carl9170_register(struct ar9170 *ar)
 	if (err)
 		return err;
 
+<<<<<<< HEAD
+=======
+	err = carl9170_fw_fix_eeprom(ar);
+	if (err)
+		return err;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = carl9170_parse_eeprom(ar);
 	if (err)
 		return err;
@@ -1984,12 +2121,15 @@ int carl9170_register(struct ar9170 *ar)
 		goto err_unreg;
 #endif /* CONFIG_CARL9170_WPC */
 
+<<<<<<< HEAD
 #ifdef CONFIG_CARL9170_HWRNG
 	err = carl9170_register_hwrng(ar);
 	if (err)
 		goto err_unreg;
 #endif /* CONFIG_CARL9170_HWRNG */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_info(&ar->udev->dev, "Atheros AR9170 is registered as '%s'\n",
 		 wiphy_name(ar->hw->wiphy));
 
@@ -2022,10 +2162,13 @@ void carl9170_unregister(struct ar9170 *ar)
 	}
 #endif /* CONFIG_CARL9170_WPC */
 
+<<<<<<< HEAD
 #ifdef CONFIG_CARL9170_HWRNG
 	carl9170_unregister_hwrng(ar);
 #endif /* CONFIG_CARL9170_HWRNG */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	carl9170_cancel_worker(ar);
 	cancel_work_sync(&ar->restart_work);
 
@@ -2043,9 +2186,12 @@ void carl9170_free(struct ar9170 *ar)
 	kfree(ar->mem_bitmap);
 	ar->mem_bitmap = NULL;
 
+<<<<<<< HEAD
 	kfree(ar->survey);
 	ar->survey = NULL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_destroy(&ar->mutex);
 
 	ieee80211_free_hw(ar->hw);

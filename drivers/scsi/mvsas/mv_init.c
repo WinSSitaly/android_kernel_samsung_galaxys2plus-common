@@ -34,6 +34,7 @@ MODULE_PARM_DESC(collector, "\n"
 	"\tThe mvsas SAS LLDD supports both modes.\n"
 	"\tDefault: 1 (Direct Mode).\n");
 
+<<<<<<< HEAD
 int interrupt_coalescing = 0x80;
 
 static struct scsi_transport_template *mvs_stt;
@@ -53,13 +54,36 @@ static const struct mvs_chip_info mvs_chips[] = {
 struct device_attribute *mvst_host_attrs[];
 
 #define SOC_SAS_NUM 2
+=======
+static struct scsi_transport_template *mvs_stt;
+struct kmem_cache *mvs_task_list_cache;
+static const struct mvs_chip_info mvs_chips[] = {
+	[chip_6320] =	{ 1, 2, 0x400, 17, 16,  9, &mvs_64xx_dispatch, },
+	[chip_6440] =	{ 1, 4, 0x400, 17, 16,  9, &mvs_64xx_dispatch, },
+	[chip_6485] =	{ 1, 8, 0x800, 33, 32, 10, &mvs_64xx_dispatch, },
+	[chip_9180] =	{ 2, 4, 0x800, 17, 64,  9, &mvs_94xx_dispatch, },
+	[chip_9480] =	{ 2, 4, 0x800, 17, 64,  9, &mvs_94xx_dispatch, },
+	[chip_9445] =	{ 1, 4, 0x800, 17, 64, 11, &mvs_94xx_dispatch, },
+	[chip_9485] =	{ 2, 4, 0x800, 17, 64, 11, &mvs_94xx_dispatch, },
+	[chip_1300] =	{ 1, 4, 0x400, 17, 16,  9, &mvs_64xx_dispatch, },
+	[chip_1320] =	{ 2, 4, 0x800, 17, 64,  9, &mvs_94xx_dispatch, },
+};
+
+#define SOC_SAS_NUM 2
+#define SG_MX 64
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct scsi_host_template mvs_sht = {
 	.module			= THIS_MODULE,
 	.name			= DRV_NAME,
 	.queuecommand		= sas_queuecommand,
 	.target_alloc		= sas_target_alloc,
+<<<<<<< HEAD
 	.slave_configure	= sas_slave_configure,
+=======
+	.slave_configure	= mvs_slave_configure,
+	.slave_destroy		= sas_slave_destroy,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.scan_finished		= mvs_scan_finished,
 	.scan_start		= mvs_scan_start,
 	.change_queue_depth	= sas_change_queue_depth,
@@ -68,14 +92,24 @@ static struct scsi_host_template mvs_sht = {
 	.can_queue		= 1,
 	.cmd_per_lun		= 1,
 	.this_id		= -1,
+<<<<<<< HEAD
 	.sg_tablesize		= SG_ALL,
+=======
+	.sg_tablesize		= SG_MX,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.max_sectors		= SCSI_DEFAULT_MAX_SECTORS,
 	.use_clustering		= ENABLE_CLUSTERING,
 	.eh_device_reset_handler = sas_eh_device_reset_handler,
 	.eh_bus_reset_handler	= sas_eh_bus_reset_handler,
+<<<<<<< HEAD
 	.target_destroy		= sas_target_destroy,
 	.ioctl			= sas_ioctl,
 	.shost_attrs		= mvst_host_attrs,
+=======
+	.slave_alloc		= mvs_slave_alloc,
+	.target_destroy		= sas_target_destroy,
+	.ioctl			= sas_ioctl,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct sas_domain_function_template mvs_transport_ops = {
@@ -102,7 +136,10 @@ static void __devinit mvs_phy_init(struct mvs_info *mvi, int phy_id)
 	struct asd_sas_phy *sas_phy = &phy->sas_phy;
 
 	phy->mvi = mvi;
+<<<<<<< HEAD
 	phy->port = NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	init_timer(&phy->timer);
 	sas_phy->enabled = (phy_id < mvi->chip->n_phy) ? 1 : 0;
 	sas_phy->class = SAS;
@@ -131,7 +168,11 @@ static void mvs_free(struct mvs_info *mvi)
 	if (mvi->flags & MVF_FLAG_SOC)
 		slot_nr = MVS_SOC_SLOTS;
 	else
+<<<<<<< HEAD
 		slot_nr = MVS_CHIP_SLOT_SZ;
+=======
+		slot_nr = MVS_SLOTS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mvi->dma_pool)
 		pci_pool_destroy(mvi->dma_pool);
@@ -151,6 +192,7 @@ static void mvs_free(struct mvs_info *mvi)
 		dma_free_coherent(mvi->dev,
 				  sizeof(*mvi->slot) * slot_nr,
 				  mvi->slot, mvi->slot_dma);
+<<<<<<< HEAD
 
 	if (mvi->bulk_buffer)
 		dma_free_coherent(mvi->dev, TRASH_BUCKET_SIZE,
@@ -158,12 +200,20 @@ static void mvs_free(struct mvs_info *mvi)
 	if (mvi->bulk_buffer1)
 		dma_free_coherent(mvi->dev, TRASH_BUCKET_SIZE,
 				  mvi->bulk_buffer1, mvi->bulk_buffer_dma1);
+=======
+#ifndef DISABLE_HOTPLUG_DMA_FIX
+	if (mvi->bulk_buffer)
+		dma_free_coherent(mvi->dev, TRASH_BUCKET_SIZE,
+				  mvi->bulk_buffer, mvi->bulk_buffer_dma);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	MVS_CHIP_DISP->chip_iounmap(mvi);
 	if (mvi->shost)
 		scsi_host_put(mvi->shost);
 	list_for_each_entry(mwq, &mvi->wq_list, entry)
 		cancel_delayed_work(&mwq->work_q);
+<<<<<<< HEAD
 	kfree(mvi->tags);
 	kfree(mvi);
 }
@@ -171,6 +221,16 @@ static void mvs_free(struct mvs_info *mvi)
 #ifdef CONFIG_SCSI_MVSAS_TASKLET
 static void mvs_tasklet(unsigned long opaque)
 {
+=======
+	kfree(mvi);
+}
+
+#ifdef MVS_USE_TASKLET
+struct tasklet_struct	mv_tasklet;
+static void mvs_tasklet(unsigned long opaque)
+{
+	unsigned long flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 stat;
 	u16 core_nr, i = 0;
 
@@ -183,6 +243,7 @@ static void mvs_tasklet(unsigned long opaque)
 	if (unlikely(!mvi))
 		BUG_ON(1);
 
+<<<<<<< HEAD
 	stat = MVS_CHIP_DISP->isr_status(mvi, mvi->pdev->irq);
 	if (!stat)
 		goto out;
@@ -193,12 +254,21 @@ static void mvs_tasklet(unsigned long opaque)
 	}
 out:
 	MVS_CHIP_DISP->interrupt_enable(mvi);
+=======
+	for (i = 0; i < core_nr; i++) {
+		mvi = ((struct mvs_prv_info *)sha->lldd_ha)->mvi[i];
+		stat = MVS_CHIP_DISP->isr_status(mvi, mvi->irq);
+		if (stat)
+			MVS_CHIP_DISP->isr(mvi, mvi->irq, stat);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 }
 #endif
 
 static irqreturn_t mvs_interrupt(int irq, void *opaque)
 {
+<<<<<<< HEAD
 	u32 core_nr;
 	u32 stat;
 	struct mvs_info *mvi;
@@ -206,12 +276,19 @@ static irqreturn_t mvs_interrupt(int irq, void *opaque)
 #ifndef CONFIG_SCSI_MVSAS_TASKLET
 	u32 i;
 #endif
+=======
+	u32 core_nr, i = 0;
+	u32 stat;
+	struct mvs_info *mvi;
+	struct sas_ha_struct *sha = opaque;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	core_nr = ((struct mvs_prv_info *)sha->lldd_ha)->n_host;
 	mvi = ((struct mvs_prv_info *)sha->lldd_ha)->mvi[0];
 
 	if (unlikely(!mvi))
 		return IRQ_NONE;
+<<<<<<< HEAD
 #ifdef CONFIG_SCSI_MVSAS_TASKLET
 	MVS_CHIP_DISP->interrupt_disable(mvi);
 #endif
@@ -226,6 +303,15 @@ static irqreturn_t mvs_interrupt(int irq, void *opaque)
 
 #ifdef CONFIG_SCSI_MVSAS_TASKLET
 	tasklet_schedule(&((struct mvs_prv_info *)sha->lldd_ha)->mv_tasklet);
+=======
+
+	stat = MVS_CHIP_DISP->isr_status(mvi, irq);
+	if (!stat)
+		return IRQ_NONE;
+
+#ifdef MVS_USE_TASKLET
+	tasklet_schedule(&mv_tasklet);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 	for (i = 0; i < core_nr; i++) {
 		mvi = ((struct mvs_prv_info *)sha->lldd_ha)->mvi[i];
@@ -243,7 +329,11 @@ static int __devinit mvs_alloc(struct mvs_info *mvi, struct Scsi_Host *shost)
 	if (mvi->flags & MVF_FLAG_SOC)
 		slot_nr = MVS_SOC_SLOTS;
 	else
+<<<<<<< HEAD
 		slot_nr = MVS_CHIP_SLOT_SZ;
+=======
+		slot_nr = MVS_SLOTS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_init(&mvi->lock);
 	for (i = 0; i < mvi->chip->n_phy; i++) {
@@ -291,11 +381,16 @@ static int __devinit mvs_alloc(struct mvs_info *mvi, struct Scsi_Host *shost)
 		goto err_out;
 	memset(mvi->slot, 0, sizeof(*mvi->slot) * slot_nr);
 
+<<<<<<< HEAD
+=======
+#ifndef DISABLE_HOTPLUG_DMA_FIX
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mvi->bulk_buffer = dma_alloc_coherent(mvi->dev,
 				       TRASH_BUCKET_SIZE,
 				       &mvi->bulk_buffer_dma, GFP_KERNEL);
 	if (!mvi->bulk_buffer)
 		goto err_out;
+<<<<<<< HEAD
 
 	mvi->bulk_buffer1 = dma_alloc_coherent(mvi->dev,
 				       TRASH_BUCKET_SIZE,
@@ -303,6 +398,9 @@ static int __devinit mvs_alloc(struct mvs_info *mvi, struct Scsi_Host *shost)
 	if (!mvi->bulk_buffer1)
 		goto err_out;
 
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sprintf(pool_name, "%s%d", "mvs_dma_pool", mvi->id);
 	mvi->dma_pool = pci_pool_create(pool_name, mvi->pdev, MVS_SLOT_BUF_SZ, 16, 0);
 	if (!mvi->dma_pool) {
@@ -377,12 +475,20 @@ static struct mvs_info *__devinit mvs_pci_alloc(struct pci_dev *pdev,
 				const struct pci_device_id *ent,
 				struct Scsi_Host *shost, unsigned int id)
 {
+<<<<<<< HEAD
 	struct mvs_info *mvi = NULL;
 	struct sas_ha_struct *sha = SHOST_TO_SAS_HA(shost);
 
 	mvi = kzalloc(sizeof(*mvi) +
 		(1L << mvs_chips[ent->driver_data].slot_width) *
 		sizeof(struct mvs_slot_info), GFP_KERNEL);
+=======
+	struct mvs_info *mvi;
+	struct sas_ha_struct *sha = SHOST_TO_SAS_HA(shost);
+
+	mvi = kzalloc(sizeof(*mvi) + MVS_SLOTS * sizeof(struct mvs_slot_info),
+			GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!mvi)
 		return NULL;
 
@@ -391,6 +497,10 @@ static struct mvs_info *__devinit mvs_pci_alloc(struct pci_dev *pdev,
 	mvi->chip_id = ent->driver_data;
 	mvi->chip = &mvs_chips[mvi->chip_id];
 	INIT_LIST_HEAD(&mvi->wq_list);
+<<<<<<< HEAD
+=======
+	mvi->irq = pdev->irq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	((struct mvs_prv_info *)sha->lldd_ha)->mvi[id] = mvi;
 	((struct mvs_prv_info *)sha->lldd_ha)->n_phy = mvi->chip->n_phy;
@@ -398,10 +508,16 @@ static struct mvs_info *__devinit mvs_pci_alloc(struct pci_dev *pdev,
 	mvi->id = id;
 	mvi->sas = sha;
 	mvi->shost = shost;
+<<<<<<< HEAD
 
 	mvi->tags = kzalloc(MVS_CHIP_SLOT_SZ>>3, GFP_KERNEL);
 	if (!mvi->tags)
 		goto err_out;
+=======
+#ifdef MVS_USE_TASKLET
+	tasklet_init(&mv_tasklet, mvs_tasklet, (unsigned long)sha);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (MVS_CHIP_DISP->chip_ioremap(mvi))
 		goto err_out;
@@ -412,6 +528,10 @@ err_out:
 	return NULL;
 }
 
+<<<<<<< HEAD
+=======
+/* move to PCI layer or libata core? */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int pci_go_64(struct pci_dev *pdev)
 {
 	int rc;
@@ -473,7 +593,11 @@ static int __devinit mvs_prep_sas_ha_init(struct Scsi_Host *shost,
 	((struct mvs_prv_info *)sha->lldd_ha)->n_host = core_nr;
 
 	shost->transportt = mvs_stt;
+<<<<<<< HEAD
 	shost->max_id = MVS_MAX_DEVICES;
+=======
+	shost->max_id = 128;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	shost->max_lun = ~0;
 	shost->max_channel = 1;
 	shost->max_cmd_len = 16;
@@ -516,12 +640,20 @@ static void  __devinit mvs_post_sas_ha_init(struct Scsi_Host *shost,
 	if (mvi->flags & MVF_FLAG_SOC)
 		can_queue = MVS_SOC_CAN_QUEUE;
 	else
+<<<<<<< HEAD
 		can_queue = MVS_CHIP_SLOT_SZ;
 
 	sha->lldd_queue_size = can_queue;
 	shost->sg_tablesize = min_t(u16, SG_ALL, MVS_MAX_SG);
 	shost->can_queue = can_queue;
 	mvi->shost->cmd_per_lun = MVS_QUEUE_SIZE;
+=======
+		can_queue = MVS_CAN_QUEUE;
+
+	sha->lldd_queue_size = can_queue;
+	shost->can_queue = can_queue;
+	mvi->shost->cmd_per_lun = MVS_SLOTS/sha->num_phys;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sha->core.shost = mvi->shost;
 }
 
@@ -542,7 +674,10 @@ static int __devinit mvs_pci_init(struct pci_dev *pdev,
 {
 	unsigned int rc, nhost = 0;
 	struct mvs_info *mvi;
+<<<<<<< HEAD
 	struct mvs_prv_info *mpi;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	irq_handler_t irq_handler = mvs_interrupt;
 	struct Scsi_Host *shost = NULL;
 	const struct mvs_chip_info *chip;
@@ -594,9 +729,12 @@ static int __devinit mvs_pci_init(struct pci_dev *pdev,
 			goto err_out_regions;
 		}
 
+<<<<<<< HEAD
 		memset(&mvi->hba_info_param, 0xFF,
 			sizeof(struct hba_info_page));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mvs_init_sas_add(mvi);
 
 		mvi->instance = nhost;
@@ -607,9 +745,14 @@ static int __devinit mvs_pci_init(struct pci_dev *pdev,
 		}
 		nhost++;
 	} while (nhost < chip->n_host);
+<<<<<<< HEAD
 	mpi = (struct mvs_prv_info *)(SHOST_TO_SAS_HA(shost)->lldd_ha);
 #ifdef CONFIG_SCSI_MVSAS_TASKLET
 	tasklet_init(&(mpi->mv_tasklet), mvs_tasklet,
+=======
+#ifdef MVS_USE_TASKLET
+	tasklet_init(&mv_tasklet, mvs_tasklet,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     (unsigned long)SHOST_TO_SAS_HA(shost));
 #endif
 
@@ -654,8 +797,13 @@ static void __devexit mvs_pci_remove(struct pci_dev *pdev)
 	core_nr = ((struct mvs_prv_info *)sha->lldd_ha)->n_host;
 	mvi = ((struct mvs_prv_info *)sha->lldd_ha)->mvi[0];
 
+<<<<<<< HEAD
 #ifdef CONFIG_SCSI_MVSAS_TASKLET
 	tasklet_kill(&((struct mvs_prv_info *)sha->lldd_ha)->mv_tasklet);
+=======
+#ifdef MVS_USE_TASKLET
+	tasklet_kill(&mv_tasklet);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 	pci_set_drvdata(pdev, NULL);
@@ -664,7 +812,11 @@ static void __devexit mvs_pci_remove(struct pci_dev *pdev)
 	scsi_remove_host(mvi->shost);
 
 	MVS_CHIP_DISP->interrupt_disable(mvi);
+<<<<<<< HEAD
 	free_irq(mvi->pdev->irq, sha);
+=======
+	free_irq(mvi->irq, sha);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < core_nr; i++) {
 		mvi = ((struct mvs_prv_info *)sha->lldd_ha)->mvi[i];
 		mvs_free(mvi);
@@ -705,6 +857,7 @@ static struct pci_device_id __devinitdata mvs_pci_table[] = {
 	{ PCI_VDEVICE(TTI, 0x2760), chip_9480 },
 	{
 		.vendor		= 0x1b4b,
+<<<<<<< HEAD
 		.device		= 0x9480,
 		.subvendor	= PCI_ANY_ID,
 		.subdevice	= 0x9480,
@@ -714,6 +867,8 @@ static struct pci_device_id __devinitdata mvs_pci_table[] = {
 	},
 	{
 		.vendor		= 0x1b4b,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.device		= 0x9445,
 		.subvendor	= PCI_ANY_ID,
 		.subdevice	= 0x9480,
@@ -730,6 +885,7 @@ static struct pci_device_id __devinitdata mvs_pci_table[] = {
 		.class_mask	= 0,
 		.driver_data	= chip_9485,
 	},
+<<<<<<< HEAD
 	{ PCI_VDEVICE(OCZ, 0x1021), chip_9485}, /* OCZ RevoDrive3 */
 	{ PCI_VDEVICE(OCZ, 0x1022), chip_9485}, /* OCZ RevoDrive3/zDriveR4 (exact model unknown) */
 	{ PCI_VDEVICE(OCZ, 0x1040), chip_9485}, /* OCZ RevoDrive3/zDriveR4 (exact model unknown) */
@@ -740,6 +896,8 @@ static struct pci_device_id __devinitdata mvs_pci_table[] = {
 	{ PCI_VDEVICE(OCZ, 0x1080), chip_9485}, /* OCZ RevoDrive3/zDriveR4 (exact model unknown) */
 	{ PCI_VDEVICE(OCZ, 0x1083), chip_9485}, /* OCZ RevoDrive3/zDriveR4 (exact model unknown) */
 	{ PCI_VDEVICE(OCZ, 0x1084), chip_9485}, /* OCZ RevoDrive3/zDriveR4 (exact model unknown) */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	{ }	/* terminate list */
 };
@@ -751,6 +909,7 @@ static struct pci_driver mvs_pci_driver = {
 	.remove		= __devexit_p(mvs_pci_remove),
 };
 
+<<<<<<< HEAD
 static ssize_t
 mvs_show_driver_version(struct device *cdev,
 		struct device_attribute *attr,  char *buffer)
@@ -815,6 +974,8 @@ static DEVICE_ATTR(interrupt_coalescing,
 			 mvs_show_interrupt_coalescing,
 			 mvs_store_interrupt_coalescing);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* task handler */
 struct task_struct *mvs_th;
 static int __init mvs_init(void)
@@ -851,12 +1012,15 @@ static void __exit mvs_exit(void)
 	kmem_cache_destroy(mvs_task_list_cache);
 }
 
+<<<<<<< HEAD
 struct device_attribute *mvst_host_attrs[] = {
 	&dev_attr_driver_version,
 	&dev_attr_interrupt_coalescing,
 	NULL,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_init(mvs_init);
 module_exit(mvs_exit);
 

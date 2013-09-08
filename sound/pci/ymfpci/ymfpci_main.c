@@ -27,7 +27,10 @@
 #include <linux/slab.h>
 #include <linux/vmalloc.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <sound/core.h>
 #include <sound/control.h>
@@ -898,6 +901,7 @@ static int snd_ymfpci_playback_open_1(struct snd_pcm_substream *substream)
 	struct snd_ymfpci *chip = snd_pcm_substream_chip(substream);
 	struct snd_pcm_runtime *runtime = substream->runtime;
 	struct snd_ymfpci_pcm *ypcm;
+<<<<<<< HEAD
 	int err;
 
 	runtime->hw = snd_ymfpci_playback;
@@ -910,6 +914,8 @@ static int snd_ymfpci_playback_open_1(struct snd_pcm_substream *substream)
 	err = snd_pcm_hw_rule_noresample(runtime, 48000);
 	if (err < 0)
 		return err;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ypcm = kzalloc(sizeof(*ypcm), GFP_KERNEL);
 	if (ypcm == NULL)
@@ -917,8 +923,16 @@ static int snd_ymfpci_playback_open_1(struct snd_pcm_substream *substream)
 	ypcm->chip = chip;
 	ypcm->type = PLAYBACK_VOICE;
 	ypcm->substream = substream;
+<<<<<<< HEAD
 	runtime->private_data = ypcm;
 	runtime->private_free = snd_ymfpci_pcm_free_substream;
+=======
+	runtime->hw = snd_ymfpci_playback;
+	runtime->private_data = ypcm;
+	runtime->private_free = snd_ymfpci_pcm_free_substream;
+	/* FIXME? True value is 256/48 = 5.33333 ms */
+	snd_pcm_hw_constraint_minmax(runtime, SNDRV_PCM_HW_PARAM_PERIOD_TIME, 5333, UINT_MAX);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1023,6 +1037,7 @@ static int snd_ymfpci_capture_open(struct snd_pcm_substream *substream,
 	struct snd_ymfpci *chip = snd_pcm_substream_chip(substream);
 	struct snd_pcm_runtime *runtime = substream->runtime;
 	struct snd_ymfpci_pcm *ypcm;
+<<<<<<< HEAD
 	int err;
 
 	runtime->hw = snd_ymfpci_capture;
@@ -1035,6 +1050,8 @@ static int snd_ymfpci_capture_open(struct snd_pcm_substream *substream,
 	err = snd_pcm_hw_rule_noresample(runtime, 48000);
 	if (err < 0)
 		return err;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ypcm = kzalloc(sizeof(*ypcm), GFP_KERNEL);
 	if (ypcm == NULL)
@@ -1044,6 +1061,12 @@ static int snd_ymfpci_capture_open(struct snd_pcm_substream *substream,
 	ypcm->substream = substream;	
 	ypcm->capture_bank_number = capture_bank_number;
 	chip->capture_substream[capture_bank_number] = substream;
+<<<<<<< HEAD
+=======
+	runtime->hw = snd_ymfpci_capture;
+	/* FIXME? True value is 256/48 = 5.33333 ms */
+	snd_pcm_hw_constraint_minmax(runtime, SNDRV_PCM_HW_PARAM_PERIOD_TIME, 5333, UINT_MAX);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	runtime->private_data = ypcm;
 	runtime->private_free = snd_ymfpci_pcm_free_substream;
 	snd_ymfpci_hw_start(chip);
@@ -1614,6 +1637,7 @@ static int snd_ymfpci_put_dup4ch(struct snd_kcontrol *kcontrol, struct snd_ctl_e
 	return change;
 }
 
+<<<<<<< HEAD
 static struct snd_kcontrol_new snd_ymfpci_dup4ch __devinitdata = {
 	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
 	.name = "4ch Duplication",
@@ -1622,6 +1646,8 @@ static struct snd_kcontrol_new snd_ymfpci_dup4ch __devinitdata = {
 	.get = snd_ymfpci_get_dup4ch,
 	.put = snd_ymfpci_put_dup4ch,
 };
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct snd_kcontrol_new snd_ymfpci_controls[] __devinitdata = {
 {
@@ -1642,7 +1668,11 @@ YMFPCI_DOUBLE("ADC Playback Volume", 0, YDSXGR_PRIADCOUTVOL),
 YMFPCI_DOUBLE("ADC Capture Volume", 0, YDSXGR_PRIADCLOOPVOL),
 YMFPCI_DOUBLE("ADC Playback Volume", 1, YDSXGR_SECADCOUTVOL),
 YMFPCI_DOUBLE("ADC Capture Volume", 1, YDSXGR_SECADCLOOPVOL),
+<<<<<<< HEAD
 YMFPCI_DOUBLE("FM Legacy Playback Volume", 0, YDSXGR_LEGACYOUTVOL),
+=======
+YMFPCI_DOUBLE("FM Legacy Volume", 0, YDSXGR_LEGACYOUTVOL),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 YMFPCI_DOUBLE(SNDRV_CTL_NAME_IEC958("AC97 ", PLAYBACK,VOLUME), 0, YDSXGR_ZVOUTVOL),
 YMFPCI_DOUBLE(SNDRV_CTL_NAME_IEC958("", CAPTURE,VOLUME), 0, YDSXGR_ZVLOOPVOL),
 YMFPCI_DOUBLE(SNDRV_CTL_NAME_IEC958("AC97 ",PLAYBACK,VOLUME), 1, YDSXGR_SPDIFOUTVOL),
@@ -1650,6 +1680,16 @@ YMFPCI_DOUBLE(SNDRV_CTL_NAME_IEC958("",CAPTURE,VOLUME), 1, YDSXGR_SPDIFLOOPVOL),
 YMFPCI_SINGLE(SNDRV_CTL_NAME_IEC958("",PLAYBACK,SWITCH), 0, YDSXGR_SPDIFOUTCTRL, 0),
 YMFPCI_SINGLE(SNDRV_CTL_NAME_IEC958("",CAPTURE,SWITCH), 0, YDSXGR_SPDIFINCTRL, 0),
 YMFPCI_SINGLE(SNDRV_CTL_NAME_IEC958("Loop",NONE,NONE), 0, YDSXGR_SPDIFINCTRL, 4),
+<<<<<<< HEAD
+=======
+{
+	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
+	.name = "4ch Duplication",
+	.info = snd_ymfpci_info_dup4ch,
+	.get = snd_ymfpci_get_dup4ch,
+	.put = snd_ymfpci_put_dup4ch,
+},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -1839,12 +1879,15 @@ int __devinit snd_ymfpci_mixer(struct snd_ymfpci *chip, int rear_switch)
 		if ((err = snd_ctl_add(chip->card, snd_ctl_new1(&snd_ymfpci_controls[idx], chip))) < 0)
 			return err;
 	}
+<<<<<<< HEAD
 	if (chip->ac97->ext_id & AC97_EI_SDAC) {
 		kctl = snd_ctl_new1(&snd_ymfpci_dup4ch, chip);
 		err = snd_ctl_add(chip->card, kctl);
 		if (err < 0)
 			return err;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* add S/PDIF control */
 	if (snd_BUG_ON(!chip->pcm_spdif))
@@ -2317,10 +2360,13 @@ int snd_ymfpci_suspend(struct pci_dev *pci, pm_message_t state)
 	for (i = 0; i < YDSXGR_NUM_SAVED_REGS; i++)
 		chip->saved_regs[i] = snd_ymfpci_readl(chip, saved_regs_index[i]);
 	chip->saved_ydsxgr_mode = snd_ymfpci_readl(chip, YDSXGR_MODE);
+<<<<<<< HEAD
 	pci_read_config_word(chip->pci, PCIR_DSXG_LEGACY,
 			     &chip->saved_dsxg_legacy);
 	pci_read_config_word(chip->pci, PCIR_DSXG_ELEGACY,
 			     &chip->saved_dsxg_elegacy);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_ymfpci_writel(chip, YDSXGR_NATIVEDACOUTVOL, 0);
 	snd_ymfpci_writel(chip, YDSXGR_BUF441OUTVOL, 0);
 	snd_ymfpci_disable_dsp(chip);
@@ -2355,11 +2401,14 @@ int snd_ymfpci_resume(struct pci_dev *pci)
 
 	snd_ac97_resume(chip->ac97);
 
+<<<<<<< HEAD
 	pci_write_config_word(chip->pci, PCIR_DSXG_LEGACY,
 			      chip->saved_dsxg_legacy);
 	pci_write_config_word(chip->pci, PCIR_DSXG_ELEGACY,
 			      chip->saved_dsxg_elegacy);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* start hw again */
 	if (chip->start_count > 0) {
 		spin_lock_irq(&chip->reg_lock);
@@ -2415,7 +2464,11 @@ int __devinit snd_ymfpci_create(struct snd_card *card,
 		return -EBUSY;
 	}
 	if (request_irq(pci->irq, snd_ymfpci_interrupt, IRQF_SHARED,
+<<<<<<< HEAD
 			KBUILD_MODNAME, chip)) {
+=======
+			"YMFPCI", chip)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		snd_printk(KERN_ERR "unable to grab IRQ %d\n", pci->irq);
 		snd_ymfpci_free(chip);
 		return -EBUSY;

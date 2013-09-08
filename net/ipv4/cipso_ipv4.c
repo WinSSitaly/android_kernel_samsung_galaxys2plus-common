@@ -50,7 +50,11 @@
 #include <net/tcp.h>
 #include <net/netlabel.h>
 #include <net/cipso_ipv4.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/bug.h>
 #include <asm/unaligned.h>
 
@@ -476,7 +480,11 @@ int cipso_v4_doi_add(struct cipso_v4_doi *doi_def,
 	doi = doi_def->doi;
 	doi_type = doi_def->type;
 
+<<<<<<< HEAD
 	if (doi_def->doi == CIPSO_V4_DOI_UNKNOWN)
+=======
+	if (doi_def == NULL || doi_def->doi == CIPSO_V4_DOI_UNKNOWN)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto doi_add_return;
 	for (iter = 0; iter < CIPSO_V4_TAG_MAXCNT; iter++) {
 		switch (doi_def->tags[iter]) {
@@ -1725,10 +1733,15 @@ int cipso_v4_validate(const struct sk_buff *skb, unsigned char **option)
 		case CIPSO_V4_TAG_LOCAL:
 			/* This is a non-standard tag that we only allow for
 			 * local connections, so if the incoming interface is
+<<<<<<< HEAD
 			 * not the loopback device drop the packet. Further,
 			 * there is no legitimate reason for setting this from
 			 * userspace so reject it if skb is NULL. */
 			if (skb == NULL || !(skb->dev->flags & IFF_LOOPBACK)) {
+=======
+			 * not the loopback device drop the packet. */
+			if (!(skb->dev->flags & IFF_LOOPBACK)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				err_offset = opt_iter;
 				goto validate_return_locked;
 			}
@@ -1859,6 +1872,14 @@ static int cipso_v4_genopt(unsigned char *buf, u32 buf_len,
 	return CIPSO_V4_HDR_LEN + ret_val;
 }
 
+<<<<<<< HEAD
+=======
+static void opt_kfree_rcu(struct rcu_head *head)
+{
+	kfree(container_of(head, struct ip_options_rcu, rcu));
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * cipso_v4_sock_setattr - Add a CIPSO option to a socket
  * @sk: the socket
@@ -1935,7 +1956,11 @@ int cipso_v4_sock_setattr(struct sock *sk,
 	}
 	rcu_assign_pointer(sk_inet->inet_opt, opt);
 	if (old)
+<<<<<<< HEAD
 		kfree_rcu(old, rcu);
+=======
+		call_rcu(&old->rcu, opt_kfree_rcu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
@@ -2002,7 +2027,11 @@ int cipso_v4_req_setattr(struct request_sock *req,
 	req_inet = inet_rsk(req);
 	opt = xchg(&req_inet->opt, opt);
 	if (opt)
+<<<<<<< HEAD
 		kfree_rcu(opt, rcu);
+=======
+		call_rcu(&opt->rcu, opt_kfree_rcu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
@@ -2072,7 +2101,11 @@ static int cipso_v4_delopt(struct ip_options_rcu **opt_ptr)
 		 * remove the entire option struct */
 		*opt_ptr = NULL;
 		hdr_delta = opt->opt.optlen;
+<<<<<<< HEAD
 		kfree_rcu(opt, rcu);
+=======
+		call_rcu(&opt->rcu, opt_kfree_rcu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return hdr_delta;

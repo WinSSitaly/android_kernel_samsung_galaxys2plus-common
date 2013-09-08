@@ -14,7 +14,10 @@
 #include <asm/thread_info.h>
 #include <asm/ppc_asm.h>
 #include <asm/asm-offsets.h>
+<<<<<<< HEAD
 #include <asm/irqflags.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #undef DEBUG
 
@@ -30,6 +33,7 @@ END_FTR_SECTION_IFCLR(CPU_FTR_CAN_NAP)
 	cmpwi	0,r4,0
 	beqlr
 
+<<<<<<< HEAD
 	/* Hard disable interrupts */
 	mfmsr	r7
 	rldicl	r0,r7,48,1
@@ -55,6 +59,16 @@ END_FTR_SECTION_IFCLR(CPU_FTR_CAN_NAP)
 
 	li	r0,1
 	stb	r0,PACASOFTIRQEN(r13)	/* we'll hard-enable shortly */
+=======
+	/* Go to NAP now */
+	mfmsr	r7
+	rldicl	r0,r7,48,1
+	rotldi	r0,r0,16
+	mtmsrd	r0,1			/* hard-disable interrupts */
+	li	r0,1
+	stb	r0,PACASOFTIRQEN(r13)	/* we'll hard-enable shortly */
+	stb	r0,PACAHARDIRQEN(r13)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 BEGIN_FTR_SECTION
 	DSSALL
 	sync

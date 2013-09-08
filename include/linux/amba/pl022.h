@@ -25,7 +25,11 @@
 #ifndef _SSP_PL022_H
 #define _SSP_PL022_H
 
+<<<<<<< HEAD
 #include <linux/types.h>
+=======
+#include <linux/device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * whether SSP is in loopback mode or not
@@ -238,11 +242,14 @@ struct dma_chan;
  * @enable_dma: if true enables DMA driven transfers.
  * @dma_rx_param: parameter to locate an RX DMA channel.
  * @dma_tx_param: parameter to locate a TX DMA channel.
+<<<<<<< HEAD
  * @autosuspend_delay: delay in ms following transfer completion before the
  *     runtime power management system suspends the device. A setting of 0
  *     indicates no delay and the device will be suspended immediately.
  * @rt: indicates the controller should run the message pump with realtime
  *     priority to minimise the transfer latency on the bus.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct pl022_ssp_controller {
 	u16 bus_id;
@@ -251,8 +258,11 @@ struct pl022_ssp_controller {
 	bool (*dma_filter)(struct dma_chan *chan, void *filter_param);
 	void *dma_rx_param;
 	void *dma_tx_param;
+<<<<<<< HEAD
 	int autosuspend_delay;
 	bool rt;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**

@@ -7,6 +7,7 @@
  *  For licencing details see kernel-base/COPYING
  */
 
+<<<<<<< HEAD
 #include <linux/perf_event.h>
 
 #include <asm/perf_event_p4.h>
@@ -14,6 +15,11 @@
 #include <asm/apic.h>
 
 #include "perf_event.h"
+=======
+#ifdef CONFIG_CPU_SUP_INTEL
+
+#include <asm/perf_event_p4.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define P4_CNTR_LIMIT 3
 /*
@@ -558,6 +564,7 @@ static __initconst const u64 p4_hw_cache_event_ids
 		[ C(RESULT_MISS)   ] = -1,
 	},
  },
+<<<<<<< HEAD
  [ C(NODE) ] = {
 	[ C(OP_READ) ] = {
 		[ C(RESULT_ACCESS) ] = -1,
@@ -648,12 +655,20 @@ static u64 p4_get_alias_event(u64 config)
 	return config_match | (config & P4_CONFIG_EVENT_ALIAS_IMMUTABLE_BITS);
 }
 
+=======
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u64 p4_general_events[PERF_COUNT_HW_MAX] = {
   /* non-halted CPU clocks */
   [PERF_COUNT_HW_CPU_CYCLES] =
 	p4_config_pack_escr(P4_ESCR_EVENT(P4_EVENT_GLOBAL_POWER_EVENTS)		|
+<<<<<<< HEAD
 		P4_ESCR_EMASK_BIT(P4_EVENT_GLOBAL_POWER_EVENTS, RUNNING))	|
 		P4_CONFIG_ALIASABLE,
+=======
+		P4_ESCR_EMASK_BIT(P4_EVENT_GLOBAL_POWER_EVENTS, RUNNING)),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
   /*
    * retired instructions
@@ -1038,7 +1053,11 @@ static int p4_pmu_handle_irq(struct pt_regs *regs)
 
 		if (!x86_perf_event_set_period(event))
 			continue;
+<<<<<<< HEAD
 		if (perf_event_overflow(event, &data, regs))
+=======
+		if (perf_event_overflow(event, 1, &data, regs))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			x86_pmu_stop(event, 0);
 	}
 
@@ -1213,8 +1232,11 @@ static int p4_pmu_schedule_events(struct cpu_hw_events *cpuc, int n, int *assign
 	struct p4_event_bind *bind;
 	unsigned int i, thread, num;
 	int cntr_idx, escr_idx;
+<<<<<<< HEAD
 	u64 config_alias;
 	int pass;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	bitmap_zero(used_mask, X86_PMC_IDX_MAX);
 	bitmap_zero(escr_mask, P4_ESCR_MSR_TABLE_SIZE);
@@ -1223,6 +1245,7 @@ static int p4_pmu_schedule_events(struct cpu_hw_events *cpuc, int n, int *assign
 
 		hwc = &cpuc->event_list[i]->hw;
 		thread = p4_ht_thread(cpu);
+<<<<<<< HEAD
 		pass = 0;
 
 again:
@@ -1234,6 +1257,8 @@ again:
 		if (pass > 2)
 			goto done;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bind = p4_config_get_bind(hwc->config);
 		escr_idx = p4_get_escr_idx(bind->escr_msr[thread]);
 		if (unlikely(escr_idx == -1))
@@ -1247,6 +1272,7 @@ again:
 		}
 
 		cntr_idx = p4_next_cntr(thread, used_mask, bind);
+<<<<<<< HEAD
 		if (cntr_idx == -1 || test_bit(escr_idx, escr_mask)) {
 			/*
 			 * Check whether an event alias is still available.
@@ -1258,6 +1284,10 @@ again:
 			pass++;
 			goto again;
 		}
+=======
+		if (cntr_idx == -1 || test_bit(escr_idx, escr_mask))
+			goto done;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		p4_pmu_swap_config_ts(hwc, cpu);
 		if (assign)
@@ -1268,6 +1298,7 @@ reserve:
 	}
 
 done:
+<<<<<<< HEAD
 	return num ? -EINVAL : 0;
 }
 
@@ -1282,6 +1313,11 @@ static struct attribute *intel_p4_formats_attr[] = {
 	NULL,
 };
 
+=======
+	return num ? -ENOSPC : 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static __initconst const struct x86_pmu p4_pmu = {
 	.name			= "Netburst P4/Xeon",
 	.handle_irq		= p4_pmu_handle_irq,
@@ -1316,11 +1352,17 @@ static __initconst const struct x86_pmu p4_pmu = {
 	 * the former idea is taken from OProfile code
 	 */
 	.perfctr_second_write	= 1,
+<<<<<<< HEAD
 
 	.format_attrs		= intel_p4_formats_attr,
 };
 
 __init int p4_pmu_init(void)
+=======
+};
+
+static __init int p4_pmu_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int low, high;
 
@@ -1343,3 +1385,8 @@ __init int p4_pmu_init(void)
 
 	return 0;
 }
+<<<<<<< HEAD
+=======
+
+#endif /* CONFIG_CPU_SUP_INTEL */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

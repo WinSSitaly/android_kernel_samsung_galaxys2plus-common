@@ -7,9 +7,17 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/wait.h>
+<<<<<<< HEAD
 #include "net_user.h"
 #include "os.h"
 #include "slirp.h"
+=======
+#include "kern_constants.h"
+#include "net_user.h"
+#include "os.h"
+#include "slirp.h"
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int slirp_user_init(void *data, void *dev)
 {

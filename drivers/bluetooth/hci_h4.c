@@ -69,7 +69,11 @@ static int h4_open(struct hci_uart *hu)
 
 	BT_DBG("hu %p", hu);
 
+<<<<<<< HEAD
 	h4 = kzalloc(sizeof(*h4), GFP_KERNEL);
+=======
+	h4 = kzalloc(sizeof(*h4), GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!h4)
 		return -ENOMEM;
 

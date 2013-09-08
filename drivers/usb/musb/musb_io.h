@@ -39,8 +39,12 @@
 
 #if !defined(CONFIG_ARM) && !defined(CONFIG_SUPERH) \
 	&& !defined(CONFIG_AVR32) && !defined(CONFIG_PPC32) \
+<<<<<<< HEAD
 	&& !defined(CONFIG_PPC64) && !defined(CONFIG_BLACKFIN) \
 	&& !defined(CONFIG_MIPS)
+=======
+	&& !defined(CONFIG_PPC64) && !defined(CONFIG_BLACKFIN)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void readsl(const void __iomem *addr, void *buf, int len)
 	{ insl((unsigned long)addr, buf, len); }
 static inline void readsw(const void __iomem *addr, void *buf, int len)
@@ -75,7 +79,11 @@ static inline void musb_writel(void __iomem *addr, unsigned offset, u32 data)
 	{ __raw_writel(data, addr + offset); }
 
 
+<<<<<<< HEAD
 #if defined(CONFIG_USB_MUSB_TUSB6010) || defined (CONFIG_USB_MUSB_TUSB6010_MODULE)
+=======
+#ifdef CONFIG_USB_MUSB_TUSB6010
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * TUSB6010 doesn't allow 8-bit access; 16-bit access is the minimum.

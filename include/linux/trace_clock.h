@@ -15,6 +15,9 @@
 extern u64 notrace trace_clock_local(void);
 extern u64 notrace trace_clock(void);
 extern u64 notrace trace_clock_global(void);
+<<<<<<< HEAD
 extern u64 notrace trace_clock_counter(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* _LINUX_TRACE_CLOCK_H */

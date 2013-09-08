@@ -1,6 +1,7 @@
 #include <linux/linkage.h>
 #include <linux/init.h>
 
+<<<<<<< HEAD
 #include <asm/cache.h>
 
 #include <mach/iomap.h>
@@ -18,6 +19,8 @@
 	movt	\reg, #:upper16:\val
 	.endm
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         .section ".text.head", "ax"
 	__CPUINIT
 
@@ -64,6 +67,7 @@ ENTRY(v7_invalidate_l1)
         mov     pc, lr
 ENDPROC(v7_invalidate_l1)
 
+<<<<<<< HEAD
 
 ENTRY(tegra_secondary_startup)
         bl      v7_invalidate_l1
@@ -210,3 +214,17 @@ __tegra_cpu_reset_handler_data:
 	.align L1_CACHE_SHIFT
 
 ENTRY(__tegra_cpu_reset_handler_end)
+=======
+ENTRY(tegra_secondary_startup)
+	msr	cpsr_fsxc, #0xd3
+        bl      v7_invalidate_l1
+	mrc	p15, 0, r0, c0, c0, 5
+        and	r0, r0, #15
+        ldr     r1, =0x6000f100
+        str     r0, [r1]
+1:      ldr     r2, [r1]
+        cmp     r0, r2
+        beq     1b
+        b       secondary_startup
+ENDPROC(tegra_secondary_startup)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

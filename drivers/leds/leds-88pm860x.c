@@ -18,7 +18,10 @@
 #include <linux/slab.h>
 #include <linux/workqueue.h>
 #include <linux/mfd/88pm860x.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define LED_PWM_SHIFT		(3)
 #define LED_PWM_MASK		(0x1F)
@@ -114,6 +117,7 @@ static inline int __blink_ctl_mask(int port)
 	return ret;
 }
 
+<<<<<<< HEAD
 static int led_power_set(struct pm860x_chip *chip, int port, int on)
 {
 	int ret = -EINVAL;
@@ -135,6 +139,8 @@ static int led_power_set(struct pm860x_chip *chip, int port, int on)
 	return ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void pm860x_led_work(struct work_struct *work)
 {
 
@@ -147,7 +153,10 @@ static void pm860x_led_work(struct work_struct *work)
 	chip = led->chip;
 	mutex_lock(&led->lock);
 	if ((led->current_brightness == 0) && led->brightness) {
+<<<<<<< HEAD
 		led_power_set(chip, led->port, 1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (led->iset) {
 			pm860x_set_bits(led->i2c, __led_off(led->port),
 					LED_CURRENT_MASK, led->iset);
@@ -171,7 +180,10 @@ static void pm860x_led_work(struct work_struct *work)
 					LED_CURRENT_MASK, 0);
 			mask = __blink_ctl_mask(led->port);
 			pm860x_set_bits(led->i2c, PM8606_WLED3B, mask, 0);
+<<<<<<< HEAD
 			led_power_set(chip, led->port, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	led->current_brightness = led->brightness;
@@ -261,7 +273,21 @@ static struct platform_driver pm860x_led_driver = {
 	.remove	= pm860x_led_remove,
 };
 
+<<<<<<< HEAD
 module_platform_driver(pm860x_led_driver);
+=======
+static int __devinit pm860x_led_init(void)
+{
+	return platform_driver_register(&pm860x_led_driver);
+}
+module_init(pm860x_led_init);
+
+static void __devexit pm860x_led_exit(void)
+{
+	platform_driver_unregister(&pm860x_led_driver);
+}
+module_exit(pm860x_led_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("LED driver for Marvell PM860x");
 MODULE_AUTHOR("Haojian Zhuang <haojian.zhuang@marvell.com>");

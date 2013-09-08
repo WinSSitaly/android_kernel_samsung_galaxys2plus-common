@@ -4,7 +4,11 @@
 
 # Object file lists.
 
+<<<<<<< HEAD
 obj-y			:= common.o
+=======
+obj-y			:= irq.o mm.o time.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-m			:=
 obj-n			:=
 obj-			:=

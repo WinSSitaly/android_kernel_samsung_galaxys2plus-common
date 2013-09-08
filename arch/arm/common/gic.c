@@ -24,6 +24,7 @@
  */
 #include <linux/init.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/err.h>
 #include <linux/module.h>
 #include <linux/list.h>
@@ -69,6 +70,28 @@ struct gic_chip_data {
 
 static DEFINE_RAW_SPINLOCK(irq_controller_lock);
 
+=======
+#include <linux/list.h>
+#include <linux/smp.h>
+#include <linux/cpumask.h>
+#include <linux/io.h>
+
+#include <asm/irq.h>
+#include <asm/mach/irq.h>
+#include <asm/hardware/gic.h>
+
+static DEFINE_SPINLOCK(irq_controller_lock);
+
+/* Address of GIC 0 CPU interface */
+void __iomem *gic_cpu_base_addr __read_mostly;
+
+struct gic_chip_data {
+	unsigned int irq_offset;
+	void __iomem *dist_base;
+	void __iomem *cpu_base;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Supported arch specific GIC irq extension.
  * Default make them NULL.
@@ -88,6 +111,7 @@ struct irq_chip gic_arch_extn = {
 
 static struct gic_chip_data gic_data[MAX_GIC_NR] __read_mostly;
 
+<<<<<<< HEAD
 #ifdef CONFIG_GIC_NON_BANKED
 static void __iomem *gic_get_percpu_base(union gic_base *base)
 {
@@ -124,17 +148,32 @@ static inline void __iomem *gic_dist_base(struct irq_data *d)
 {
 	struct gic_chip_data *gic_data = irq_data_get_irq_chip_data(d);
 	return gic_data_dist_base(gic_data);
+=======
+static inline void __iomem *gic_dist_base(struct irq_data *d)
+{
+	struct gic_chip_data *gic_data = irq_data_get_irq_chip_data(d);
+	return gic_data->dist_base;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void __iomem *gic_cpu_base(struct irq_data *d)
 {
 	struct gic_chip_data *gic_data = irq_data_get_irq_chip_data(d);
+<<<<<<< HEAD
 	return gic_data_cpu_base(gic_data);
+=======
+	return gic_data->cpu_base;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline unsigned int gic_irq(struct irq_data *d)
 {
+<<<<<<< HEAD
 	return d->hwirq;
+=======
+	struct gic_chip_data *gic_data = irq_data_get_irq_chip_data(d);
+	return d->irq - gic_data->irq_offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -142,6 +181,7 @@ static inline unsigned int gic_irq(struct irq_data *d)
  */
 static void gic_mask_irq(struct irq_data *d)
 {
+<<<<<<< HEAD
 	u32 mask = 1 << (gic_irq(d) % 32);
 
 	raw_spin_lock(&irq_controller_lock);
@@ -149,10 +189,20 @@ static void gic_mask_irq(struct irq_data *d)
 	if (gic_arch_extn.irq_mask)
 		gic_arch_extn.irq_mask(d);
 	raw_spin_unlock(&irq_controller_lock);
+=======
+	u32 mask = 1 << (d->irq % 32);
+
+	spin_lock(&irq_controller_lock);
+	writel_relaxed(mask, gic_dist_base(d) + GIC_DIST_ENABLE_CLEAR + (gic_irq(d) / 32) * 4);
+	if (gic_arch_extn.irq_mask)
+		gic_arch_extn.irq_mask(d);
+	spin_unlock(&irq_controller_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void gic_unmask_irq(struct irq_data *d)
 {
+<<<<<<< HEAD
 	u32 mask = 1 << (gic_irq(d) % 32);
 
 	raw_spin_lock(&irq_controller_lock);
@@ -160,14 +210,29 @@ static void gic_unmask_irq(struct irq_data *d)
 		gic_arch_extn.irq_unmask(d);
 	writel_relaxed(mask, gic_dist_base(d) + GIC_DIST_ENABLE_SET + (gic_irq(d) / 32) * 4);
 	raw_spin_unlock(&irq_controller_lock);
+=======
+	u32 mask = 1 << (d->irq % 32);
+
+	spin_lock(&irq_controller_lock);
+	if (gic_arch_extn.irq_unmask)
+		gic_arch_extn.irq_unmask(d);
+	writel_relaxed(mask, gic_dist_base(d) + GIC_DIST_ENABLE_SET + (gic_irq(d) / 32) * 4);
+	spin_unlock(&irq_controller_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void gic_eoi_irq(struct irq_data *d)
 {
 	if (gic_arch_extn.irq_eoi) {
+<<<<<<< HEAD
 		raw_spin_lock(&irq_controller_lock);
 		gic_arch_extn.irq_eoi(d);
 		raw_spin_unlock(&irq_controller_lock);
+=======
+		spin_lock(&irq_controller_lock);
+		gic_arch_extn.irq_eoi(d);
+		spin_unlock(&irq_controller_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	writel_relaxed(gic_irq(d), gic_cpu_base(d) + GIC_CPU_EOI);
@@ -191,7 +256,11 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
 	if (type != IRQ_TYPE_LEVEL_HIGH && type != IRQ_TYPE_EDGE_RISING)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	raw_spin_lock(&irq_controller_lock);
+=======
+	spin_lock(&irq_controller_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (gic_arch_extn.irq_set_type)
 		gic_arch_extn.irq_set_type(d, type);
@@ -216,7 +285,11 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
 	if (enabled)
 		writel_relaxed(enablemask, base + GIC_DIST_ENABLE_SET + enableoff);
 
+<<<<<<< HEAD
 	raw_spin_unlock(&irq_controller_lock);
+=======
+	spin_unlock(&irq_controller_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -234,6 +307,7 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
 			    bool force)
 {
 	void __iomem *reg = gic_dist_base(d) + GIC_DIST_TARGET + (gic_irq(d) & ~3);
+<<<<<<< HEAD
 	unsigned int shift = (gic_irq(d) % 4) * 8;
 	unsigned int cpu = cpumask_any_and(mask_val, cpu_online_mask);
 	u32 val, mask, bit;
@@ -250,6 +324,25 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
 	raw_spin_unlock(&irq_controller_lock);
 
 	return IRQ_SET_MASK_OK;
+=======
+	unsigned int shift = (d->irq % 4) * 8;
+	unsigned int cpu = cpumask_first(mask_val);
+	u32 val, mask, bit;
+
+	if (cpu >= 8)
+		return -EINVAL;
+
+	mask = 0xff << shift;
+	bit = 1 << (cpu + shift);
+
+	spin_lock(&irq_controller_lock);
+	d->node = cpu;
+	val = readl_relaxed(reg) & ~mask;
+	writel_relaxed(val | bit, reg);
+	spin_unlock(&irq_controller_lock);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif
 
@@ -268,6 +361,7 @@ static int gic_set_wake(struct irq_data *d, unsigned int on)
 #define gic_set_wake	NULL
 #endif
 
+<<<<<<< HEAD
 asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
 {
 	u32 irqstat, irqnr;
@@ -294,6 +388,8 @@ asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
 	} while (1);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void gic_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
 {
 	struct gic_chip_data *chip_data = irq_get_handler_data(irq);
@@ -303,16 +399,27 @@ static void gic_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
 
 	chained_irq_enter(chip, desc);
 
+<<<<<<< HEAD
 	raw_spin_lock(&irq_controller_lock);
 	status = readl_relaxed(gic_data_cpu_base(chip_data) + GIC_CPU_INTACK);
 	raw_spin_unlock(&irq_controller_lock);
+=======
+	spin_lock(&irq_controller_lock);
+	status = readl_relaxed(chip_data->cpu_base + GIC_CPU_INTACK);
+	spin_unlock(&irq_controller_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	gic_irq = (status & 0x3ff);
 	if (gic_irq == 1023)
 		goto out;
 
+<<<<<<< HEAD
 	cascade_irq = irq_find_mapping(chip_data->domain, gic_irq);
 	if (unlikely(gic_irq < 32 || gic_irq > 1020))
+=======
+	cascade_irq = gic_irq + chip_data->irq_offset;
+	if (unlikely(gic_irq < 32 || gic_irq > 1020 || cascade_irq >= NR_IRQS))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		do_bad_IRQ(cascade_irq, desc);
 	else
 		generic_handle_irq(cascade_irq);
@@ -343,6 +450,7 @@ void __init gic_cascade_irq(unsigned int gic_nr, unsigned int irq)
 	irq_set_chained_handler(irq, gic_handle_cascade_irq);
 }
 
+<<<<<<< HEAD
 static void __init gic_dist_init(struct gic_chip_data *gic)
 {
 	unsigned int i;
@@ -352,12 +460,33 @@ static void __init gic_dist_init(struct gic_chip_data *gic)
 	u32 cpu = cpu_logical_map(smp_processor_id());
 
 	cpumask = 1 << cpu;
+=======
+static void __init gic_dist_init(struct gic_chip_data *gic,
+	unsigned int irq_start)
+{
+	unsigned int gic_irqs, irq_limit, i;
+	void __iomem *base = gic->dist_base;
+	u32 cpumask = 1 << smp_processor_id();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cpumask |= cpumask << 8;
 	cpumask |= cpumask << 16;
 
 	writel_relaxed(0, base + GIC_DIST_CTRL);
 
 	/*
+<<<<<<< HEAD
+=======
+	 * Find out how many interrupts are supported.
+	 * The GIC only supports up to 1020 interrupt sources.
+	 */
+	gic_irqs = readl_relaxed(base + GIC_DIST_CTR) & 0x1f;
+	gic_irqs = (gic_irqs + 1) * 32;
+	if (gic_irqs > 1020)
+		gic_irqs = 1020;
+
+	/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Set all global interrupts to be level triggered, active low.
 	 */
 	for (i = 32; i < gic_irqs; i += 16)
@@ -382,13 +511,37 @@ static void __init gic_dist_init(struct gic_chip_data *gic)
 	for (i = 32; i < gic_irqs; i += 32)
 		writel_relaxed(0xffffffff, base + GIC_DIST_ENABLE_CLEAR + i * 4 / 32);
 
+<<<<<<< HEAD
+=======
+	/*
+	 * Limit number of interrupts registered to the platform maximum
+	 */
+	irq_limit = gic->irq_offset + gic_irqs;
+	if (WARN_ON(irq_limit > NR_IRQS))
+		irq_limit = NR_IRQS;
+
+	/*
+	 * Setup the Linux IRQ subsystem.
+	 */
+	for (i = irq_start; i < irq_limit; i++) {
+		irq_set_chip_and_handler(i, &gic_chip, handle_fasteoi_irq);
+		irq_set_chip_data(i, gic);
+		set_irq_flags(i, IRQF_VALID | IRQF_PROBE);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writel_relaxed(1, base + GIC_DIST_CTRL);
 }
 
 static void __cpuinit gic_cpu_init(struct gic_chip_data *gic)
 {
+<<<<<<< HEAD
 	void __iomem *dist_base = gic_data_dist_base(gic);
 	void __iomem *base = gic_data_cpu_base(gic);
+=======
+	void __iomem *dist_base = gic->dist_base;
+	void __iomem *base = gic->cpu_base;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	/*
@@ -408,6 +561,7 @@ static void __cpuinit gic_cpu_init(struct gic_chip_data *gic)
 	writel_relaxed(1, base + GIC_CPU_CTRL);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_CPU_PM
 /*
  * Saves the GIC distributor registers during suspend or idle.  Must be called
@@ -647,10 +801,17 @@ void __init gic_init_bases(unsigned int gic_nr, int irq_start,
 	irq_hw_number_t hwirq_base;
 	struct gic_chip_data *gic;
 	int gic_irqs, irq_base;
+=======
+void __init gic_init(unsigned int gic_nr, unsigned int irq_start,
+	void __iomem *dist_base, void __iomem *cpu_base)
+{
+	struct gic_chip_data *gic;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BUG_ON(gic_nr >= MAX_GIC_NR);
 
 	gic = &gic_data[gic_nr];
+<<<<<<< HEAD
 #ifdef CONFIG_GIC_NON_BANKED
 	if (percpu_offset) { /* Frankein-GIC without banked registers... */
 		unsigned int cpu;
@@ -720,6 +881,17 @@ void __init gic_init_bases(unsigned int gic_nr, int irq_start,
 	gic_dist_init(gic);
 	gic_cpu_init(gic);
 	gic_pm_init(gic);
+=======
+	gic->dist_base = dist_base;
+	gic->cpu_base = cpu_base;
+	gic->irq_offset = (irq_start - 1) & ~31;
+
+	if (gic_nr == 0)
+		gic_cpu_base_addr = cpu_base;
+
+	gic_dist_init(gic, irq_start);
+	gic_cpu_init(gic);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __cpuinit gic_secondary_init(unsigned int gic_nr)
@@ -729,6 +901,7 @@ void __cpuinit gic_secondary_init(unsigned int gic_nr)
 	gic_cpu_init(&gic_data[gic_nr]);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_SMP
 void gic_raise_softirq(const struct cpumask *mask, unsigned int irq)
 {
@@ -738,6 +911,22 @@ void gic_raise_softirq(const struct cpumask *mask, unsigned int irq)
 	/* Convert our logical CPU mask into a physical one. */
 	for_each_cpu(cpu, mask)
 		map |= 1 << cpu_logical_map(cpu);
+=======
+void __cpuinit gic_enable_ppi(unsigned int irq)
+{
+	unsigned long flags;
+
+	local_irq_save(flags);
+	irq_set_status_flags(irq, IRQ_NOPROBE);
+	gic_unmask_irq(irq_get_irq_data(irq));
+	local_irq_restore(flags);
+}
+
+#ifdef CONFIG_SMP
+void gic_raise_softirq(const struct cpumask *mask, unsigned int irq)
+{
+	unsigned long map = *cpus_addr(*mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Ensure that stores to Normal memory are visible to the
@@ -746,6 +935,7 @@ void gic_raise_softirq(const struct cpumask *mask, unsigned int irq)
 	dsb();
 
 	/* this always happens on GIC0 */
+<<<<<<< HEAD
 	writel_relaxed(map << 16 | irq, gic_data_dist_base(&gic_data[0]) + GIC_DIST_SOFTINT);
 }
 #endif
@@ -780,5 +970,8 @@ int __init gic_of_init(struct device_node *node, struct device_node *parent)
 	}
 	gic_cnt++;
 	return 0;
+=======
+	writel_relaxed(map << 16 | irq, gic_data[0].dist_base + GIC_DIST_SOFTINT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif

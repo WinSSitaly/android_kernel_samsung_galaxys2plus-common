@@ -1,7 +1,11 @@
 /*
  * Freescale eSDHC controller driver.
  *
+<<<<<<< HEAD
  * Copyright (c) 2007, 2010, 2012 Freescale Semiconductor, Inc.
+=======
+ * Copyright (c) 2007 Freescale Semiconductor, Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (c) 2009 MontaVista Software, Inc.
  *
  * Authors: Xiaobo Xie <X.Xie@freescale.com>
@@ -14,16 +18,24 @@
  */
 
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/of.h>
 #include <linux/delay.h>
 #include <linux/module.h>
 #include <linux/mmc/host.h>
 #include "sdhci-pltfm.h"
+=======
+#include <linux/delay.h>
+#include <linux/mmc/host.h>
+#include "sdhci-of.h"
+#include "sdhci.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "sdhci-esdhc.h"
 
 static u16 esdhc_readw(struct sdhci_host *host, int reg)
 {
 	u16 ret;
+<<<<<<< HEAD
 	int base = reg & ~0x3;
 	int shift = (reg & 0x2) * 8;
 
@@ -56,6 +68,13 @@ static u8 esdhc_readb(struct sdhci_host *host, int reg)
 		ret |= dma_bits;
 	}
 
+=======
+
+	if (unlikely(reg == SDHCI_HOST_VERSION))
+		ret = in_be16(host->ioaddr + reg);
+	else
+		ret = sdhci_be32bs_readw(host, reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -74,6 +93,7 @@ static void esdhc_writew(struct sdhci_host *host, u16 val, int reg)
 
 static void esdhc_writeb(struct sdhci_host *host, u8 val, int reg)
 {
+<<<<<<< HEAD
 	/*
 	 * "DMA select" location is offset 0x28 in SD specification, but on
 	 * P5020 or P3041, it's located at 0x29.
@@ -89,6 +109,8 @@ static void esdhc_writeb(struct sdhci_host *host, u8 val, int reg)
 		val |= in_be32(host->ioaddr + reg) & SDHCI_CTRL_DMA_MASK;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Prevent SDHCI core from writing reserved bits (e.g. HISPD). */
 	if (reg == SDHCI_HOST_CONTROL)
 		val &= ~ESDHC_HOST_CONTROL_RES;
@@ -103,13 +125,20 @@ static int esdhc_of_enable_dma(struct sdhci_host *host)
 
 static unsigned int esdhc_of_get_max_clock(struct sdhci_host *host)
 {
+<<<<<<< HEAD
 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
 
 	return pltfm_host->clock;
+=======
+	struct sdhci_of_host *of_host = sdhci_priv(host);
+
+	return of_host->clock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static unsigned int esdhc_of_get_min_clock(struct sdhci_host *host)
 {
+<<<<<<< HEAD
 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
 
 	return pltfm_host->clock / 256 / 16;
@@ -202,3 +231,27 @@ MODULE_DESCRIPTION("SDHCI OF driver for Freescale MPC eSDHC");
 MODULE_AUTHOR("Xiaobo Xie <X.Xie@freescale.com>, "
 	      "Anton Vorontsov <avorontsov@ru.mvista.com>");
 MODULE_LICENSE("GPL v2");
+=======
+	struct sdhci_of_host *of_host = sdhci_priv(host);
+
+	return of_host->clock / 256 / 16;
+}
+
+struct sdhci_of_data sdhci_esdhc = {
+	/* card detection could be handled via GPIO */
+	.quirks = ESDHC_DEFAULT_QUIRKS | SDHCI_QUIRK_BROKEN_CARD_DETECTION
+		| SDHCI_QUIRK_NO_CARD_NO_RESET,
+	.ops = {
+		.read_l = sdhci_be32bs_readl,
+		.read_w = esdhc_readw,
+		.read_b = sdhci_be32bs_readb,
+		.write_l = sdhci_be32bs_writel,
+		.write_w = esdhc_writew,
+		.write_b = esdhc_writeb,
+		.set_clock = esdhc_set_clock,
+		.enable_dma = esdhc_of_enable_dma,
+		.get_max_clock = esdhc_of_get_max_clock,
+		.get_min_clock = esdhc_of_get_min_clock,
+	},
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

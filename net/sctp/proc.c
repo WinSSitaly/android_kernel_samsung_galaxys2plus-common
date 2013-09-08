@@ -37,7 +37,10 @@
 #include <linux/types.h>
 #include <linux/seq_file.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/sctp/sctp.h>
 #include <net/ip.h> /* for snmp_fold_field */
 

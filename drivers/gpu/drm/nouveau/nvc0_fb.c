@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright 2011 Red Hat Inc.
+=======
+ * Copyright 2010 Red Hat Inc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -23,6 +27,7 @@
  */
 
 #include "drmP.h"
+<<<<<<< HEAD
 #include "drm.h"
 #include "nouveau_drv.h"
 #include "nouveau_drm.h"
@@ -108,10 +113,15 @@ nvc0_fb_create(struct drm_device *dev)
 	nouveau_irq_register(dev, 25, nvc0_mfb_isr);
 	return 0;
 }
+=======
+
+#include "nouveau_drv.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int
 nvc0_fb_init(struct drm_device *dev)
 {
+<<<<<<< HEAD
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct nvc0_fb_priv *priv;
 	int ret;
@@ -124,11 +134,16 @@ nvc0_fb_init(struct drm_device *dev)
 	priv = dev_priv->engine.fb.priv;
 
 	nv_wr32(dev, 0x100c10, priv->r100c10 >> 8);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 void
 nvc0_fb_takedown(struct drm_device *dev)
 {
+<<<<<<< HEAD
 	nvc0_fb_destroy(dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

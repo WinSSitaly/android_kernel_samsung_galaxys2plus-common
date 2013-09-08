@@ -44,6 +44,7 @@
 #include <asm/irq.h>
 #include <asm/q40ints.h>
 
+<<<<<<< HEAD
 #define DRV_NAME	"q40kbd"
 
 MODULE_AUTHOR("Vojtech Pavlik <vojtech@ucw.cz>");
@@ -69,6 +70,28 @@ static irqreturn_t q40kbd_interrupt(int irq, void *dev_id)
 	master_outb(-1, KEYBOARD_UNLOCK_REG);
 
 	spin_unlock_irqrestore(&q40kbd->lock, flags);
+=======
+MODULE_AUTHOR("Vojtech Pavlik <vojtech@ucw.cz>");
+MODULE_DESCRIPTION("Q40 PS/2 keyboard controller driver");
+MODULE_LICENSE("GPL");
+
+static DEFINE_SPINLOCK(q40kbd_lock);
+static struct serio *q40kbd_port;
+static struct platform_device *q40kbd_device;
+
+static irqreturn_t q40kbd_interrupt(int irq, void *dev_id)
+{
+	unsigned long flags;
+
+	spin_lock_irqsave(&q40kbd_lock, flags);
+
+	if (Q40_IRQ_KEYB_MASK & master_inb(INTERRUPT_REG))
+		serio_interrupt(q40kbd_port, master_inb(KEYCODE_REG), 0);
+
+	master_outb(-1, KEYBOARD_UNLOCK_REG);
+
+	spin_unlock_irqrestore(&q40kbd_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return IRQ_HANDLED;
 }
@@ -77,16 +100,25 @@ static irqreturn_t q40kbd_interrupt(int irq, void *dev_id)
  * q40kbd_flush() flushes all data that may be in the keyboard buffers
  */
 
+<<<<<<< HEAD
 static void q40kbd_flush(struct q40kbd *q40kbd)
+=======
+static void q40kbd_flush(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int maxread = 100;
 	unsigned long flags;
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&q40kbd->lock, flags);
+=======
+	spin_lock_irqsave(&q40kbd_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (maxread-- && (Q40_IRQ_KEYB_MASK & master_inb(INTERRUPT_REG)))
 		master_inb(KEYCODE_REG);
 
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&q40kbd->lock, flags);
 }
 
@@ -94,6 +126,9 @@ static void q40kbd_stop(void)
 {
 	master_outb(0, KEY_IRQ_ENABLE_REG);
 	master_outb(-1, KEYBOARD_UNLOCK_REG);
+=======
+	spin_unlock_irqrestore(&q40kbd_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -103,9 +138,18 @@ static void q40kbd_stop(void)
 
 static int q40kbd_open(struct serio *port)
 {
+<<<<<<< HEAD
 	struct q40kbd *q40kbd = port->port_data;
 
 	q40kbd_flush(q40kbd);
+=======
+	q40kbd_flush();
+
+	if (request_irq(Q40_IRQ_KEYBOARD, q40kbd_interrupt, 0, "q40kbd", NULL)) {
+		printk(KERN_ERR "q40kbd.c: Can't get irq %d.\n", Q40_IRQ_KEYBOARD);
+		return -EBUSY;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* off we go */
 	master_outb(-1, KEYBOARD_UNLOCK_REG);
@@ -116,6 +160,7 @@ static int q40kbd_open(struct serio *port)
 
 static void q40kbd_close(struct serio *port)
 {
+<<<<<<< HEAD
 	struct q40kbd *q40kbd = port->port_data;
 
 	q40kbd_stop();
@@ -182,6 +227,38 @@ static int __devexit q40kbd_remove(struct platform_device *pdev)
 	kfree(q40kbd);
 
 	platform_set_drvdata(pdev, NULL);
+=======
+	master_outb(0, KEY_IRQ_ENABLE_REG);
+	master_outb(-1, KEYBOARD_UNLOCK_REG);
+	free_irq(Q40_IRQ_KEYBOARD, NULL);
+
+	q40kbd_flush();
+}
+
+static int __devinit q40kbd_probe(struct platform_device *dev)
+{
+	q40kbd_port = kzalloc(sizeof(struct serio), GFP_KERNEL);
+	if (!q40kbd_port)
+		return -ENOMEM;
+
+	q40kbd_port->id.type	= SERIO_8042;
+	q40kbd_port->open	= q40kbd_open;
+	q40kbd_port->close	= q40kbd_close;
+	q40kbd_port->dev.parent	= &dev->dev;
+	strlcpy(q40kbd_port->name, "Q40 Kbd Port", sizeof(q40kbd_port->name));
+	strlcpy(q40kbd_port->phys, "Q40", sizeof(q40kbd_port->phys));
+
+	serio_register_port(q40kbd_port);
+	printk(KERN_INFO "serio: Q40 kbd registered\n");
+
+	return 0;
+}
+
+static int __devexit q40kbd_remove(struct platform_device *dev)
+{
+	serio_unregister_port(q40kbd_port);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -190,16 +267,51 @@ static struct platform_driver q40kbd_driver = {
 		.name	= "q40kbd",
 		.owner	= THIS_MODULE,
 	},
+<<<<<<< HEAD
+=======
+	.probe		= q40kbd_probe,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.remove		= __devexit_p(q40kbd_remove),
 };
 
 static int __init q40kbd_init(void)
 {
+<<<<<<< HEAD
 	return platform_driver_probe(&q40kbd_driver, q40kbd_probe);
+=======
+	int error;
+
+	if (!MACH_IS_Q40)
+		return -ENODEV;
+
+	error = platform_driver_register(&q40kbd_driver);
+	if (error)
+		return error;
+
+	q40kbd_device = platform_device_alloc("q40kbd", -1);
+	if (!q40kbd_device)
+		goto err_unregister_driver;
+
+	error = platform_device_add(q40kbd_device);
+	if (error)
+		goto err_free_device;
+
+	return 0;
+
+ err_free_device:
+	platform_device_put(q40kbd_device);
+ err_unregister_driver:
+	platform_driver_unregister(&q40kbd_driver);
+	return error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit q40kbd_exit(void)
 {
+<<<<<<< HEAD
+=======
+	platform_device_unregister(q40kbd_device);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_driver_unregister(&q40kbd_driver);
 }
 

@@ -16,8 +16,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "m5602_ov9650.h"
 #include "m5602_ov7660.h"
 #include "m5602_mt9m111.h"
@@ -27,8 +30,13 @@
 
 /* Kernel module parameters */
 int force_sensor;
+<<<<<<< HEAD
 static bool dump_bridge;
 bool dump_sensor;
+=======
+static int dump_bridge;
+int dump_sensor;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const struct usb_device_id m5602_table[] = {
 	{USB_DEVICE(0x0402, 0x5602)},
@@ -194,9 +202,16 @@ static void m5602_dump_bridge(struct sd *sd)
 	for (i = 0; i < 0x80; i++) {
 		unsigned char val = 0;
 		m5602_read_bridge(sd, i, &val);
+<<<<<<< HEAD
 		pr_info("ALi m5602 address 0x%x contains 0x%x\n", i, val);
 	}
 	pr_info("Warning: The ALi m5602 webcam probably won't work until it's power cycled\n");
+=======
+		info("ALi m5602 address 0x%x contains 0x%x", i, val);
+	}
+	info("Warning: The ALi m5602 webcam probably won't work "
+		"until it's power cycled");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int m5602_probe_sensor(struct sd *sd)
@@ -232,7 +247,11 @@ static int m5602_probe_sensor(struct sd *sd)
 		return 0;
 
 	/* More sensor probe function goes here */
+<<<<<<< HEAD
 	pr_info("Failed to find a sensor\n");
+=======
+	info("Failed to find a sensor");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sd->sensor = NULL;
 	return -ENODEV;
 }
@@ -404,7 +423,23 @@ static struct usb_driver sd_driver = {
 	.disconnect = m5602_disconnect
 };
 
+<<<<<<< HEAD
 module_usb_driver(sd_driver);
+=======
+/* -- module insert / remove -- */
+static int __init mod_m5602_init(void)
+{
+	return usb_register(&sd_driver);
+}
+
+static void __exit mod_m5602_exit(void)
+{
+	usb_deregister(&sd_driver);
+}
+
+module_init(mod_m5602_init);
+module_exit(mod_m5602_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR(DRIVER_AUTHOR);
 MODULE_DESCRIPTION(DRIVER_DESC);

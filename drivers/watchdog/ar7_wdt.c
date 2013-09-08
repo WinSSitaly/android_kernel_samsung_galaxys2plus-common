@@ -23,8 +23,11 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/errno.h>
@@ -41,6 +44,10 @@
 #include <asm/addrspace.h>
 #include <asm/mach-ar7/ar7.h>
 
+<<<<<<< HEAD
+=======
+#define DRVNAME "ar7_wdt"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define LONGNAME "TI AR7 Watchdog Timer"
 
 MODULE_AUTHOR("Nicolas Thill <nico@openwrt.org>");
@@ -52,8 +59,13 @@ static int margin = 60;
 module_param(margin, int, 0);
 MODULE_PARM_DESC(margin, "Watchdog margin in seconds");
 
+<<<<<<< HEAD
 static bool nowayout = WATCHDOG_NOWAYOUT;
 module_param(nowayout, bool, 0);
+=======
+static int nowayout = WATCHDOG_NOWAYOUT;
+module_param(nowayout, int, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_PARM_DESC(nowayout, "Disable watchdog shutdown on close");
 
 #define READ_REG(x) readl((void __iomem *)&(x))
@@ -71,8 +83,13 @@ struct ar7_wdt {
 };
 
 static unsigned long wdt_is_open;
+<<<<<<< HEAD
 static unsigned expect_close;
 static DEFINE_SPINLOCK(wdt_lock);
+=======
+static spinlock_t wdt_lock;
+static unsigned expect_close;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* XXX currently fixed, allows max margin ~68.72 secs */
 #define prescale_value 0xffff
@@ -94,7 +111,11 @@ static void ar7_wdt_kick(u32 value)
 			return;
 		}
 	}
+<<<<<<< HEAD
 	pr_err("failed to unlock WDT kick reg\n");
+=======
+	printk(KERN_ERR DRVNAME ": failed to unlock WDT kick reg\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void ar7_wdt_prescale(u32 value)
@@ -107,7 +128,11 @@ static void ar7_wdt_prescale(u32 value)
 			return;
 		}
 	}
+<<<<<<< HEAD
 	pr_err("failed to unlock WDT prescale reg\n");
+=======
+	printk(KERN_ERR DRVNAME ": failed to unlock WDT prescale reg\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void ar7_wdt_change(u32 value)
@@ -120,7 +145,11 @@ static void ar7_wdt_change(u32 value)
 			return;
 		}
 	}
+<<<<<<< HEAD
 	pr_err("failed to unlock WDT change reg\n");
+=======
+	printk(KERN_ERR DRVNAME ": failed to unlock WDT change reg\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void ar7_wdt_disable(u32 value)
@@ -136,7 +165,11 @@ static void ar7_wdt_disable(u32 value)
 			}
 		}
 	}
+<<<<<<< HEAD
 	pr_err("failed to unlock WDT disable reg\n");
+=======
+	printk(KERN_ERR DRVNAME ": failed to unlock WDT disable reg\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void ar7_wdt_update_margin(int new_margin)
@@ -152,20 +185,34 @@ static void ar7_wdt_update_margin(int new_margin)
 		change = 0xffff;
 	ar7_wdt_change(change);
 	margin = change * prescale_value / vbus_rate;
+<<<<<<< HEAD
 	pr_info("timer margin %d seconds (prescale %d, change %d, freq %d)\n",
 		margin, prescale_value, change, vbus_rate);
+=======
+	printk(KERN_INFO DRVNAME
+	       ": timer margin %d seconds (prescale %d, change %d, freq %d)\n",
+	       margin, prescale_value, change, vbus_rate);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void ar7_wdt_enable_wdt(void)
 {
+<<<<<<< HEAD
 	pr_debug("enabling watchdog timer\n");
+=======
+	printk(KERN_DEBUG DRVNAME ": enabling watchdog timer\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ar7_wdt_disable(1);
 	ar7_wdt_kick(1);
 }
 
 static void ar7_wdt_disable_wdt(void)
 {
+<<<<<<< HEAD
 	pr_debug("disabling watchdog timer\n");
+=======
+	printk(KERN_DEBUG DRVNAME ": disabling watchdog timer\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ar7_wdt_disable(0);
 }
 
@@ -183,7 +230,13 @@ static int ar7_wdt_open(struct inode *inode, struct file *file)
 static int ar7_wdt_release(struct inode *inode, struct file *file)
 {
 	if (!expect_close)
+<<<<<<< HEAD
 		pr_warn("watchdog device closed unexpectedly, will not disable the watchdog timer\n");
+=======
+		printk(KERN_WARNING DRVNAME
+		": watchdog device closed unexpectedly,"
+		"will not disable the watchdog timer\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else if (!nowayout)
 		ar7_wdt_disable_wdt();
 	clear_bit(0, &wdt_is_open);
@@ -278,31 +331,52 @@ static int __devinit ar7_wdt_probe(struct platform_device *pdev)
 {
 	int rc;
 
+<<<<<<< HEAD
 	ar7_regs_wdt =
 		platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
 	if (!ar7_regs_wdt) {
 		pr_err("could not get registers resource\n");
+=======
+	spin_lock_init(&wdt_lock);
+
+	ar7_regs_wdt =
+		platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
+	if (!ar7_regs_wdt) {
+		printk(KERN_ERR DRVNAME ": could not get registers resource\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -ENODEV;
 		goto out;
 	}
 
 	if (!request_mem_region(ar7_regs_wdt->start,
 				resource_size(ar7_regs_wdt), LONGNAME)) {
+<<<<<<< HEAD
 		pr_warn("watchdog I/O region busy\n");
+=======
+		printk(KERN_WARNING DRVNAME ": watchdog I/O region busy\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -EBUSY;
 		goto out;
 	}
 
 	ar7_wdt = ioremap(ar7_regs_wdt->start, resource_size(ar7_regs_wdt));
 	if (!ar7_wdt) {
+<<<<<<< HEAD
 		pr_err("could not ioremap registers\n");
+=======
+		printk(KERN_ERR DRVNAME ": could not ioremap registers\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -ENXIO;
 		goto out_mem_region;
 	}
 
 	vbus_clk = clk_get(NULL, "vbus");
 	if (IS_ERR(vbus_clk)) {
+<<<<<<< HEAD
 		pr_err("could not get vbus clock\n");
+=======
+		printk(KERN_ERR DRVNAME ": could not get vbus clock\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = PTR_ERR(vbus_clk);
 		goto out_mem_region;
 	}
@@ -313,7 +387,11 @@ static int __devinit ar7_wdt_probe(struct platform_device *pdev)
 
 	rc = misc_register(&ar7_wdt_miscdev);
 	if (rc) {
+<<<<<<< HEAD
 		pr_err("unable to register misc device\n");
+=======
+		printk(KERN_ERR DRVNAME ": unable to register misc device\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_alloc;
 	}
 	goto out;
@@ -351,4 +429,19 @@ static struct platform_driver ar7_wdt_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(ar7_wdt_driver);
+=======
+static int __init ar7_wdt_init(void)
+{
+	return platform_driver_register(&ar7_wdt_driver);
+}
+
+static void __exit ar7_wdt_cleanup(void)
+{
+	platform_driver_unregister(&ar7_wdt_driver);
+}
+
+module_init(ar7_wdt_init);
+module_exit(ar7_wdt_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -450,13 +450,21 @@ static struct attribute *tsc2005_attrs[] = {
 	NULL
 };
 
+<<<<<<< HEAD
 static umode_t tsc2005_attr_is_visible(struct kobject *kobj,
+=======
+static mode_t tsc2005_attr_is_visible(struct kobject *kobj,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				      struct attribute *attr, int n)
 {
 	struct device *dev = container_of(kobj, struct device, kobj);
 	struct spi_device *spi = to_spi_device(dev);
 	struct tsc2005 *ts = spi_get_drvdata(spi);
+<<<<<<< HEAD
 	umode_t mode = attr->mode;
+=======
+	mode_t mode = attr->mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (attr == &dev_attr_selftest.attr) {
 		if (!ts->set_reset)
@@ -747,7 +755,21 @@ static struct spi_driver tsc2005_driver = {
 	.remove	= __devexit_p(tsc2005_remove),
 };
 
+<<<<<<< HEAD
 module_spi_driver(tsc2005_driver);
+=======
+static int __init tsc2005_init(void)
+{
+	return spi_register_driver(&tsc2005_driver);
+}
+module_init(tsc2005_init);
+
+static void __exit tsc2005_exit(void)
+{
+	spi_unregister_driver(&tsc2005_driver);
+}
+module_exit(tsc2005_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Lauri Leukkunen <lauri.leukkunen@nokia.com>");
 MODULE_DESCRIPTION("TSC2005 Touchscreen Driver");

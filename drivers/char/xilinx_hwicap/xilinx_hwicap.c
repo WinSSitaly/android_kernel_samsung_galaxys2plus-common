@@ -89,6 +89,10 @@
 
 #include <asm/io.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_OF
 /* For open firmware. */
@@ -620,7 +624,11 @@ static int __devinit hwicap_setup(struct device *dev, int id,
 
 	drvdata->mem_start = regs_res->start;
 	drvdata->mem_end = regs_res->end;
+<<<<<<< HEAD
 	drvdata->mem_size = resource_size(regs_res);
+=======
+	drvdata->mem_size = regs_res->end - regs_res->start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!request_mem_region(drvdata->mem_start,
 					drvdata->mem_size, DRIVER_NAME)) {

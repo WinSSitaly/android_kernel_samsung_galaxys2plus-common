@@ -106,6 +106,10 @@ struct thread_struct {
 
 #define start_thread(regs, new_pc, new_spu) 				\
 	do {								\
+<<<<<<< HEAD
+=======
+		set_fs(USER_DS); 					\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		regs->psw = (regs->psw | USERPS_BPSW) & 0x0000FFFFUL;	\
 		regs->bpc = new_pc;					\
 		regs->spu = new_spu;					\

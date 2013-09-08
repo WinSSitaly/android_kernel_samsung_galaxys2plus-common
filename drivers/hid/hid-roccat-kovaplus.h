@@ -83,6 +83,18 @@ enum kovaplus_commands {
 	KOVAPLUS_COMMAND_A = 0xa,
 };
 
+<<<<<<< HEAD
+=======
+enum kovaplus_usb_commands {
+	KOVAPLUS_USB_COMMAND_CONTROL = 0x304,
+	KOVAPLUS_USB_COMMAND_ACTUAL_PROFILE = 0x305,
+	KOVAPLUS_USB_COMMAND_PROFILE_SETTINGS = 0x306,
+	KOVAPLUS_USB_COMMAND_PROFILE_BUTTONS = 0x307,
+	KOVAPLUS_USB_COMMAND_INFO = 0x309,
+	KOVAPLUS_USB_COMMAND_A = 0x30a,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum kovaplus_mouse_report_numbers {
 	KOVAPLUS_MOUSE_REPORT_NUMBER_MOUSE = 1,
 	KOVAPLUS_MOUSE_REPORT_NUMBER_AUDIO = 2,

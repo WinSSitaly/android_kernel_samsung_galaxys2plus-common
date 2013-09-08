@@ -36,6 +36,7 @@
 #include "nouveau_crtc.h"
 #include "nv50_display.h"
 
+<<<<<<< HEAD
 static u32
 nv50_sor_dp_lane_map(struct drm_device *dev, struct dcb_entry *dcb, u8 lane)
 {
@@ -223,6 +224,8 @@ nv50_sor_dp_calc_tu(struct drm_device *dev, int or, int link, u32 clk, u32 bpp)
 							     bestVTUi << 8 |
 							     unk);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 nv50_sor_disconnect(struct drm_encoder *encoder)
 {
@@ -247,8 +250,11 @@ nv50_sor_disconnect(struct drm_encoder *encoder)
 	BEGIN_RING(evo, 0, NV50_EVO_UPDATE, 1);
 	OUT_RING  (evo, 0);
 
+<<<<<<< HEAD
 	nouveau_hdmi_mode_set(encoder, NULL);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nv_encoder->crtc = NULL;
 	nv_encoder->last_dpms = DRM_MODE_DPMS_OFF;
 }
@@ -304,6 +310,7 @@ nv50_sor_dpms(struct drm_encoder *encoder, int mode)
 	}
 
 	if (nv_encoder->dcb->type == OUTPUT_DP) {
+<<<<<<< HEAD
 		struct dp_train_func func = {
 			.link_set = nv50_sor_dp_link_set,
 			.train_set = nv50_sor_dp_train_set,
@@ -311,6 +318,22 @@ nv50_sor_dpms(struct drm_encoder *encoder, int mode)
 		};
 
 		nouveau_dp_dpms(encoder, mode, nv_encoder->dp.datarate, &func);
+=======
+		struct nouveau_i2c_chan *auxch;
+
+		auxch = nouveau_i2c_find(dev, nv_encoder->dcb->i2c_index);
+		if (!auxch)
+			return;
+
+		if (mode == DRM_MODE_DPMS_ON) {
+			u8 status = DP_SET_POWER_D0;
+			nouveau_dp_auxch(auxch, 8, DP_SET_POWER, &status, 1);
+			nouveau_dp_link_train(encoder);
+		} else {
+			u8 status = DP_SET_POWER_D3;
+			nouveau_dp_auxch(auxch, 8, DP_SET_POWER, &status, 1);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -342,8 +365,16 @@ nv50_sor_mode_fixup(struct drm_encoder *encoder, struct drm_display_mode *mode,
 	}
 
 	if (connector->scaling_mode != DRM_MODE_SCALE_NONE &&
+<<<<<<< HEAD
 	     connector->native_mode)
 		drm_mode_copy(adjusted_mode, connector->native_mode);
+=======
+	     connector->native_mode) {
+		int id = adjusted_mode->base.id;
+		*adjusted_mode = *connector->native_mode;
+		adjusted_mode->base.id = id;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return true;
 }
@@ -351,12 +382,15 @@ nv50_sor_mode_fixup(struct drm_encoder *encoder, struct drm_display_mode *mode,
 static void
 nv50_sor_prepare(struct drm_encoder *encoder)
 {
+<<<<<<< HEAD
 	struct nouveau_encoder *nv_encoder = nouveau_encoder(encoder);
 	nv50_sor_disconnect(encoder);
 	if (nv_encoder->dcb->type == OUTPUT_DP) {
 		/* avoid race between link training and supervisor intr */
 		nv50_display_sync(encoder->dev);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -365,30 +399,48 @@ nv50_sor_commit(struct drm_encoder *encoder)
 }
 
 static void
+<<<<<<< HEAD
 nv50_sor_mode_set(struct drm_encoder *encoder, struct drm_display_mode *umode,
 		  struct drm_display_mode *mode)
+=======
+nv50_sor_mode_set(struct drm_encoder *encoder, struct drm_display_mode *mode,
+		  struct drm_display_mode *adjusted_mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct nouveau_channel *evo = nv50_display(encoder->dev)->master;
 	struct nouveau_encoder *nv_encoder = nouveau_encoder(encoder);
 	struct drm_device *dev = encoder->dev;
 	struct nouveau_crtc *crtc = nouveau_crtc(encoder->crtc);
+<<<<<<< HEAD
 	struct nouveau_connector *nv_connector;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint32_t mode_ctl = 0;
 	int ret;
 
 	NV_DEBUG_KMS(dev, "or %d type %d -> crtc %d\n",
 		     nv_encoder->or, nv_encoder->dcb->type, crtc->index);
+<<<<<<< HEAD
 	nv_encoder->crtc = encoder->crtc;
+=======
+
+	nv50_sor_dpms(encoder, DRM_MODE_DPMS_ON);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (nv_encoder->dcb->type) {
 	case OUTPUT_TMDS:
 		if (nv_encoder->dcb->sorconf.link & 1) {
+<<<<<<< HEAD
 			if (mode->clock < 165000)
+=======
+			if (adjusted_mode->clock < 165000)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				mode_ctl = 0x0100;
 			else
 				mode_ctl = 0x0500;
 		} else
 			mode_ctl = 0x0200;
+<<<<<<< HEAD
 
 		nouveau_hdmi_mode_set(encoder, mode);
 		break;
@@ -402,6 +454,11 @@ nv50_sor_mode_set(struct drm_encoder *encoder, struct drm_display_mode *umode,
 			mode_ctl |= 0x00050000;
 		}
 
+=======
+		break;
+	case OUTPUT_DP:
+		mode_ctl |= (nv_encoder->dp.mc_unknown << 16);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (nv_encoder->dcb->sorconf.link & 1)
 			mode_ctl |= 0x00000800;
 		else
@@ -416,6 +473,7 @@ nv50_sor_mode_set(struct drm_encoder *encoder, struct drm_display_mode *umode,
 	else
 		mode_ctl |= NV50_EVO_SOR_MODE_CTRL_CRTC0;
 
+<<<<<<< HEAD
 	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
 		mode_ctl |= NV50_EVO_SOR_MODE_CTRL_NHSYNC;
 
@@ -428,10 +486,26 @@ nv50_sor_mode_set(struct drm_encoder *encoder, struct drm_display_mode *umode,
 	if (ret) {
 		NV_ERROR(dev, "no space while connecting SOR\n");
 		nv_encoder->crtc = NULL;
+=======
+	if (adjusted_mode->flags & DRM_MODE_FLAG_NHSYNC)
+		mode_ctl |= NV50_EVO_SOR_MODE_CTRL_NHSYNC;
+
+	if (adjusted_mode->flags & DRM_MODE_FLAG_NVSYNC)
+		mode_ctl |= NV50_EVO_SOR_MODE_CTRL_NVSYNC;
+
+	ret = RING_SPACE(evo, 2);
+	if (ret) {
+		NV_ERROR(dev, "no space while connecting SOR\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 	BEGIN_RING(evo, 0, NV50_EVO_SOR(nv_encoder->or, MODE_CTRL), 1);
 	OUT_RING(evo, mode_ctl);
+<<<<<<< HEAD
+=======
+
+	nv_encoder->crtc = encoder->crtc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct drm_crtc *
@@ -509,6 +583,32 @@ nv50_sor_create(struct drm_connector *connector, struct dcb_entry *entry)
 	encoder->possible_crtcs = entry->heads;
 	encoder->possible_clones = 0;
 
+<<<<<<< HEAD
+=======
+	if (nv_encoder->dcb->type == OUTPUT_DP) {
+		int or = nv_encoder->or, link = !(entry->dpconf.sor.link & 1);
+		uint32_t tmp;
+
+		tmp = nv_rd32(dev, 0x61c700 + (or * 0x800));
+
+		switch ((tmp & 0x00000f00) >> 8) {
+		case 8:
+		case 9:
+			nv_encoder->dp.mc_unknown = (tmp & 0x000f0000) >> 16;
+			tmp = nv_rd32(dev, NV50_SOR_DP_CTRL(or, link));
+			nv_encoder->dp.unk0 = tmp & 0x000001fc;
+			tmp = nv_rd32(dev, NV50_SOR_DP_UNK128(or, link));
+			nv_encoder->dp.unk1 = tmp & 0x010f7f3f;
+			break;
+		default:
+			break;
+		}
+
+		if (!nv_encoder->dp.mc_unknown)
+			nv_encoder->dp.mc_unknown = 5;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	drm_mode_connector_attach_encoder(connector, encoder);
 	return 0;
 }

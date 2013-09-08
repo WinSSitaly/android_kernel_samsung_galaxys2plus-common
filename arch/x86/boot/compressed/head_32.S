@@ -32,6 +32,7 @@
 
 	__HEAD
 ENTRY(startup_32)
+<<<<<<< HEAD
 #ifdef CONFIG_EFI_STUB
 	jmp	preferred_addr
 
@@ -62,6 +63,8 @@ ENTRY(startup_32)
 
 preferred_addr:
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cld
 	/*
 	 * Test KEEP_SEGMENTS flag to see if the bootloader is asking

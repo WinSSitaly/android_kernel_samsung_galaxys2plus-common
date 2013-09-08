@@ -25,6 +25,7 @@
 #ifndef PWC_DEC23_H
 #define PWC_DEC23_H
 
+<<<<<<< HEAD
 struct pwc_device;
 
 struct pwc_dec23_private
@@ -33,12 +34,21 @@ struct pwc_dec23_private
 
 	unsigned char last_cmd, last_cmd_valid;
 
+=======
+#include "pwc.h"
+
+struct pwc_dec23_private
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   unsigned int scalebits;
   unsigned int nbitsmask, nbits; /* Number of bits of a color in the compressed stream */
 
   unsigned int reservoir;
   unsigned int nbits_in_reservoir;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   const unsigned char *stream;
   int temp_colors[16];
 
@@ -54,8 +64,27 @@ struct pwc_dec23_private
 
 };
 
+<<<<<<< HEAD
 void pwc_dec23_init(struct pwc_device *pdev, const unsigned char *cmd);
 void pwc_dec23_decompress(struct pwc_device *pdev,
 			  const void *src,
 			  void *dst);
 #endif
+=======
+
+int pwc_dec23_alloc(struct pwc_device *pwc);
+int pwc_dec23_init(struct pwc_device *pwc, int type, unsigned char *cmd);
+void pwc_dec23_exit(void);
+void pwc_dec23_decompress(const struct pwc_device *pwc,
+			  const void *src,
+			  void *dst,
+			  int flags);
+
+
+
+#endif
+
+
+/* vim: set cino= formatoptions=croql cindent shiftwidth=8 tabstop=8: */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

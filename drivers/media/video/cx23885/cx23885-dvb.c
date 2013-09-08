@@ -37,7 +37,10 @@
 #include "tda8290.h"
 #include "tda18271.h"
 #include "lgdt330x.h"
+<<<<<<< HEAD
 #include "xc4000.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "xc5000.h"
 #include "max2165.h"
 #include "tda10048.h"
@@ -61,8 +64,11 @@
 #include "cx23885-f300.h"
 #include "altera-ci.h"
 #include "stv0367.h"
+<<<<<<< HEAD
 #include "drxk.h"
 #include "mt2063.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static unsigned int debug;
 
@@ -113,8 +119,11 @@ static void dvb_buf_release(struct videobuf_queue *q,
 	cx23885_free_buffer(q, (struct cx23885_buffer *)vb);
 }
 
+<<<<<<< HEAD
 static int cx23885_dvb_set_frontend(struct dvb_frontend *fe);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void cx23885_dvb_gate_ctrl(struct cx23885_tsport  *port, int open)
 {
 	struct videobuf_dvb_frontends *f;
@@ -129,12 +138,15 @@ static void cx23885_dvb_gate_ctrl(struct cx23885_tsport  *port, int open)
 
 	if (fe && fe->dvb.frontend && fe->dvb.frontend->ops.i2c_gate_ctrl)
 		fe->dvb.frontend->ops.i2c_gate_ctrl(fe->dvb.frontend, open);
+<<<<<<< HEAD
 
 	/*
 	 * FIXME: Improve this path to avoid calling the
 	 * cx23885_dvb_set_frontend() every time it passes here.
 	 */
 	cx23885_dvb_set_frontend(fe->dvb.frontend);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct videobuf_queue_ops dvb_qops = {
@@ -489,15 +501,25 @@ static struct xc5000_config mygica_x8506_xc5000_config = {
 	.if_khz = 5380,
 };
 
+<<<<<<< HEAD
 static int cx23885_dvb_set_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int cx23885_dvb_set_frontend(struct dvb_frontend *fe,
+				    struct dvb_frontend_parameters *param)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct cx23885_tsport *port = fe->dvb->priv;
 	struct cx23885_dev *dev = port->dev;
 
 	switch (dev->board) {
 	case CX23885_BOARD_HAUPPAUGE_HVR1275:
+<<<<<<< HEAD
 		switch (p->modulation) {
+=======
+		switch (param->u.vsb.modulation) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case VSB_8:
 			cx23885_gpio_clear(dev, GPIO_5);
 			break;
@@ -517,6 +539,34 @@ static int cx23885_dvb_set_frontend(struct dvb_frontend *fe)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int cx23885_dvb_fe_ioctl_override(struct dvb_frontend *fe,
+					 unsigned int cmd, void *parg,
+					 unsigned int stage)
+{
+	int err = 0;
+
+	switch (stage) {
+	case DVB_FE_IOCTL_PRE:
+
+		switch (cmd) {
+		case FE_SET_FRONTEND:
+			err = cx23885_dvb_set_frontend(fe,
+				(struct dvb_frontend_parameters *) parg);
+			break;
+		}
+		break;
+
+	case DVB_FE_IOCTL_POST:
+		/* no post-ioctl handling required */
+		break;
+	}
+	return err;
+};
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct lgs8gxx_config magicpro_prohdtve2_lgs8g75_config = {
 	.prod = LGS8GXX_PROD_LGS8G75,
 	.demod_address = 0x19,
@@ -602,6 +652,7 @@ static struct xc5000_config netup_xc5000_config[] = {
 	},
 };
 
+<<<<<<< HEAD
 static struct drxk_config terratec_drxk_config[] = {
 	{
 		.adr = 0x29,
@@ -620,6 +671,8 @@ static struct mt2063_config terratec_mt2063_config[] = {
 	},
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int netup_altera_fpga_rw(void *device, int flag, int data, int read)
 {
 	struct cx23885_dev *dev = (struct cx23885_dev *)device;
@@ -925,6 +978,7 @@ static int dvb_register(struct cx23885_tsport *port)
 				fe->ops.tuner_ops.set_config(fe, &ctl);
 		}
 		break;
+<<<<<<< HEAD
 	case CX23885_BOARD_LEADTEK_WINFAST_PXDVR3200_H_XC4000:
 		i2c_bus = &dev->i2c_bus[0];
 
@@ -950,6 +1004,8 @@ static int dvb_register(struct cx23885_tsport *port)
 			}
 		}
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case CX23885_BOARD_TBS_6920:
 		i2c_bus = &dev->i2c_bus[1];
 
@@ -1051,6 +1107,7 @@ static int dvb_register(struct cx23885_tsport *port)
 		}
 		break;
 	case CX23885_BOARD_HAUPPAUGE_HVR1850:
+<<<<<<< HEAD
 		i2c_bus = &dev->i2c_bus[0];
 		fe0->dvb.frontend = dvb_attach(s5h1411_attach,
 			&hcw_s5h1411_config,
@@ -1065,6 +1122,8 @@ static int dvb_register(struct cx23885_tsport *port)
 			&hauppauge_tda18271_config);
 
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case CX23885_BOARD_HAUPPAUGE_HVR1290:
 		i2c_bus = &dev->i2c_bus[0];
 		fe0->dvb.frontend = dvb_attach(s5h1411_attach,
@@ -1140,6 +1199,7 @@ static int dvb_register(struct cx23885_tsport *port)
 				goto frontend_detach;
 		}
 		break;
+<<<<<<< HEAD
 	case CX23885_BOARD_TERRATEC_CINERGY_T_PCIE_DUAL:
 		i2c_bus = &dev->i2c_bus[0];
 		i2c_bus2 = &dev->i2c_bus[1];
@@ -1173,6 +1233,8 @@ static int dvb_register(struct cx23885_tsport *port)
 			break;
 		}
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		printk(KERN_INFO "%s: The frontend of your DVB/ATSC card "
 			" isn't supported yet\n",
@@ -1206,7 +1268,11 @@ static int dvb_register(struct cx23885_tsport *port)
 	/* register everything */
 	ret = videobuf_dvb_register_bus(&port->frontends, THIS_MODULE, port,
 					&dev->pci->dev, adapter_nr, mfe_shared,
+<<<<<<< HEAD
 					NULL);
+=======
+					cx23885_dvb_fe_ioctl_override);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto frontend_detach;
 
@@ -1325,7 +1391,11 @@ int cx23885_dvb_unregister(struct cx23885_tsport *port)
 	 * implement MFE support.
 	 */
 	fe0 = videobuf_dvb_get_frontend(&port->frontends, 1);
+<<<<<<< HEAD
 	if (fe0 && fe0->dvb.frontend)
+=======
+	if (fe0->dvb.frontend)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		videobuf_dvb_unregister_bus(&port->frontends);
 
 	switch (port->dev->board) {

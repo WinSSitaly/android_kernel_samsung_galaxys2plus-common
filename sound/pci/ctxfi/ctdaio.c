@@ -22,9 +22,26 @@
 #include <linux/slab.h>
 #include <linux/kernel.h>
 
+<<<<<<< HEAD
 #define DAIO_OUT_MAX		SPDIFOO
 
 struct daio_usage {
+=======
+#define DAIO_RESOURCE_NUM	NUM_DAIOTYP
+#define DAIO_OUT_MAX		SPDIFOO
+
+union daio_usage {
+	struct {
+		unsigned short lineo1:1;
+		unsigned short lineo2:1;
+		unsigned short lineo3:1;
+		unsigned short lineo4:1;
+		unsigned short spdifoo:1;
+		unsigned short lineim:1;
+		unsigned short spdifio:1;
+		unsigned short spdifi1:1;
+	} bf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned short data;
 };
 
@@ -50,7 +67,10 @@ struct daio_rsc_idx idx_20k2[NUM_DAIOTYP] = {
 	[LINEO3] = {.left = 0x50, .right = 0x51},
 	[LINEO4] = {.left = 0x70, .right = 0x71},
 	[LINEIM] = {.left = 0x45, .right = 0xc5},
+<<<<<<< HEAD
 	[MIC]	 = {.left = 0x55, .right = 0xd5},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[SPDIFOO] = {.left = 0x00, .right = 0x01},
 	[SPDIFIO] = {.left = 0x05, .right = 0x85},
 };
@@ -128,7 +148,10 @@ static unsigned int daio_device_index(enum DAIOTYP type, struct hw *hw)
 		case LINEO3:	return 5;
 		case LINEO4:	return 6;
 		case LINEIM:	return 4;
+<<<<<<< HEAD
 		case MIC:	return 5;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:	return -EINVAL;
 		}
 	default:
@@ -510,17 +533,28 @@ static int dai_rsc_uninit(struct dai *dai)
 
 static int daio_mgr_get_rsc(struct rsc_mgr *mgr, enum DAIOTYP type)
 {
+<<<<<<< HEAD
 	if (((struct daio_usage *)mgr->rscs)->data & (0x1 << type))
 		return -ENOENT;
 
 	((struct daio_usage *)mgr->rscs)->data |= (0x1 << type);
+=======
+	if (((union daio_usage *)mgr->rscs)->data & (0x1 << type))
+		return -ENOENT;
+
+	((union daio_usage *)mgr->rscs)->data |= (0x1 << type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
 static int daio_mgr_put_rsc(struct rsc_mgr *mgr, enum DAIOTYP type)
 {
+<<<<<<< HEAD
 	((struct daio_usage *)mgr->rscs)->data &= ~(0x1 << type);
+=======
+	((union daio_usage *)mgr->rscs)->data &= ~(0x1 << type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -703,7 +737,11 @@ int daio_mgr_create(void *hw, struct daio_mgr **rdaio_mgr)
 	if (!daio_mgr)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	err = rsc_mgr_init(&daio_mgr->mgr, DAIO, NUM_DAIOTYP, hw);
+=======
+	err = rsc_mgr_init(&daio_mgr->mgr, DAIO, DAIO_RESOURCE_NUM, hw);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		goto error1;
 

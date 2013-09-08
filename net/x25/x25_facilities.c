@@ -44,7 +44,11 @@
 int x25_parse_facilities(struct sk_buff *skb, struct x25_facilities *facilities,
 		struct x25_dte_facilities *dte_facs, unsigned long *vc_fac_mask)
 {
+<<<<<<< HEAD
 	unsigned char *p;
+=======
+	unsigned char *p = skb->data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int len;
 
 	*vc_fac_mask = 0;
@@ -60,6 +64,7 @@ int x25_parse_facilities(struct sk_buff *skb, struct x25_facilities *facilities,
 	memset(dte_facs->called_ae, '\0', sizeof(dte_facs->called_ae));
 	memset(dte_facs->calling_ae, '\0', sizeof(dte_facs->calling_ae));
 
+<<<<<<< HEAD
 	if (!pskb_may_pull(skb, 1))
 		return 0;
 
@@ -70,6 +75,16 @@ int x25_parse_facilities(struct sk_buff *skb, struct x25_facilities *facilities,
 
 	p = skb->data + 1;
 
+=======
+	if (skb->len < 1)
+		return 0;
+
+	len = *p++;
+
+	if (len >= skb->len)
+		return -1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	while (len > 0) {
 		switch (*p & X25_FAC_CLASS_MASK) {
 		case X25_FAC_CLASS_A:

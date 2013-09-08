@@ -36,18 +36,25 @@
 #include <linux/pci.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/msi.h>
 #include <linux/mm.h>
 #include <linux/irq.h>
 #include <linux/irqdesc.h>
+=======
+#include <linux/mm.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/console.h>
 
 #include <asm/io.h>
 
 #include <asm/netlogic/interrupt.h>
+<<<<<<< HEAD
 #include <asm/netlogic/haldefs.h>
 
 #include <asm/netlogic/xlr/msidef.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/netlogic/xlr/iomap.h>
 #include <asm/netlogic/xlr/pic.h>
 #include <asm/netlogic/xlr/xlr.h>
@@ -156,7 +163,11 @@ struct pci_controller nlm_pci_controller = {
 	.io_offset      = 0x00000000UL,
 };
 
+<<<<<<< HEAD
 static int get_irq_vector(const struct pci_dev *dev)
+=======
+int __init pcibios_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (!nlm_chip_is_xls())
 		return	PIC_PCIX_IRQ;	/* for XLR just one IRQ*/
@@ -188,6 +199,7 @@ static int get_irq_vector(const struct pci_dev *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PCI_MSI
 void destroy_irq(unsigned int irq)
 {
@@ -283,6 +295,8 @@ int __init pcibios_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
 	return get_irq_vector(dev);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Do platform specific device initialization at pci_enable_device() time */
 int pcibios_plat_dev_init(struct pci_dev *dev)
 {
@@ -292,7 +306,11 @@ int pcibios_plat_dev_init(struct pci_dev *dev)
 static int __init pcibios_init(void)
 {
 	/* PSB assigns PCI resources */
+<<<<<<< HEAD
 	pci_set_flags(PCI_PROBE_ONLY);
+=======
+	pci_probe_only = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pci_config_base = ioremap(DEFAULT_PCI_CONFIG_BASE, 16 << 20);
 
 	/* Extend IO port for memory mapped io */
@@ -305,6 +323,7 @@ static int __init pcibios_init(void)
 	pr_info("Registering XLR/XLS PCIX/PCIE Controller.\n");
 	register_pci_controller(&nlm_pci_controller);
 
+<<<<<<< HEAD
 	/*
 	 * For PCI interrupts, we need to ack the PCI controller too, overload
 	 * irq handler data to do this
@@ -330,6 +349,8 @@ static int __init pcibios_init(void)
 		irq_set_handler_data(PIC_PCIE_XLSB0_LINK3_IRQ, xlr_pci_ack);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

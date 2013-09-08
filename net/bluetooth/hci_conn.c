@@ -35,14 +35,24 @@
 #include <linux/init.h>
 #include <linux/skbuff.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <net/sock.h>
 
+=======
+#include <linux/notifier.h>
+#include <net/sock.h>
+
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/uaccess.h>
 #include <asm/unaligned.h>
 
 #include <net/bluetooth/bluetooth.h>
 #include <net/bluetooth/hci_core.h>
+<<<<<<< HEAD
 #include <net/bluetooth/smp.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void hci_le_connect(struct hci_conn *conn)
 {
@@ -50,11 +60,16 @@ static void hci_le_connect(struct hci_conn *conn)
 	struct hci_cp_le_create_conn cp;
 
 	conn->state = BT_CONNECT;
+<<<<<<< HEAD
 	conn->out = true;
+=======
+	conn->out = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	conn->link_mode |= HCI_LM_MASTER;
 	conn->sec_level = BT_SECURITY_LOW;
 
 	memset(&cp, 0, sizeof(cp));
+<<<<<<< HEAD
 	cp.scan_interval = cpu_to_le16(0x0060);
 	cp.scan_window = cpu_to_le16(0x0030);
 	bacpy(&cp.peer_addr, &conn->dst);
@@ -64,6 +79,17 @@ static void hci_le_connect(struct hci_conn *conn)
 	cp.supervision_timeout = cpu_to_le16(0x002a);
 	cp.min_ce_len = cpu_to_le16(0x0000);
 	cp.max_ce_len = cpu_to_le16(0x0000);
+=======
+	cp.scan_interval = cpu_to_le16(0x0004);
+	cp.scan_window = cpu_to_le16(0x0004);
+	bacpy(&cp.peer_addr, &conn->dst);
+	cp.peer_addr_type = conn->dst_type;
+	cp.conn_interval_min = cpu_to_le16(0x0008);
+	cp.conn_interval_max = cpu_to_le16(0x0100);
+	cp.supervision_timeout = cpu_to_le16(0x0064);
+	cp.min_ce_len = cpu_to_le16(0x0001);
+	cp.max_ce_len = cpu_to_le16(0x0001);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hci_send_cmd(hdev, HCI_OP_LE_CREATE_CONN, sizeof(cp), &cp);
 }
@@ -79,10 +105,17 @@ void hci_acl_connect(struct hci_conn *conn)
 	struct inquiry_entry *ie;
 	struct hci_cp_create_conn cp;
 
+<<<<<<< HEAD
 	BT_DBG("hcon %p", conn);
 
 	conn->state = BT_CONNECT;
 	conn->out = true;
+=======
+	BT_DBG("%p", conn);
+
+	conn->state = BT_CONNECT;
+	conn->out = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	conn->link_mode = HCI_LM_MASTER;
 
@@ -104,8 +137,12 @@ void hci_acl_connect(struct hci_conn *conn)
 		}
 
 		memcpy(conn->dev_class, ie->data.dev_class, 3);
+<<<<<<< HEAD
 		if (ie->data.ssp_mode > 0)
 			set_bit(HCI_CONN_SSP_ENABLED, &conn->flags);
+=======
+		conn->ssp_mode = ie->data.ssp_mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	cp.pkt_type = cpu_to_le16(conn->pkt_type);
@@ -123,7 +160,11 @@ static void hci_acl_connect_cancel(struct hci_conn *conn)
 
 	BT_DBG("%p", conn);
 
+<<<<<<< HEAD
 	if (conn->hdev->hci_ver < BLUETOOTH_VER_1_2)
+=======
+	if (conn->hdev->hci_ver < 2)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	bacpy(&cp.bdaddr, &conn->dst);
@@ -151,7 +192,11 @@ void hci_add_sco(struct hci_conn *conn, __u16 handle)
 	BT_DBG("%p", conn);
 
 	conn->state = BT_CONNECT;
+<<<<<<< HEAD
 	conn->out = true;
+=======
+	conn->out = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	conn->attempt++;
 
@@ -169,6 +214,7 @@ void hci_setup_sync(struct hci_conn *conn, __u16 handle)
 	BT_DBG("%p", conn);
 
 	conn->state = BT_CONNECT;
+<<<<<<< HEAD
 	conn->out = true;
 
 	conn->attempt++;
@@ -178,6 +224,17 @@ void hci_setup_sync(struct hci_conn *conn, __u16 handle)
 
 	cp.tx_bandwidth   = cpu_to_le32(0x00001f40);
 	cp.rx_bandwidth   = cpu_to_le32(0x00001f40);
+=======
+	conn->out = 1;
+
+	conn->attempt++;
+
+	cp.handle = cpu_to_le16(handle);
+	cp.pkt_type = cpu_to_le16(conn->pkt_type);
+
+	cp.tx_bandwidth = cpu_to_le32(0x00001f40);
+	cp.rx_bandwidth = cpu_to_le32(0x00001f40);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cp.max_latency    = cpu_to_le16(0xffff);
 	cp.voice_setting  = cpu_to_le16(hdev->voice_setting);
 	cp.retrans_effort = 0xff;
@@ -218,7 +275,11 @@ void hci_le_start_enc(struct hci_conn *conn, __le16 ediv, __u8 rand[8],
 	cp.handle = cpu_to_le16(conn->handle);
 	memcpy(cp.ltk, ltk, sizeof(cp.ltk));
 	cp.ediv = ediv;
+<<<<<<< HEAD
 	memcpy(cp.rand, rand, sizeof(cp.rand));
+=======
+	memcpy(cp.rand, rand, sizeof(rand));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hci_send_cmd(hdev, HCI_OP_LE_START_ENC, sizeof(cp), &cp);
 }
@@ -275,6 +336,7 @@ void hci_sco_setup(struct hci_conn *conn, __u8 status)
 	}
 }
 
+<<<<<<< HEAD
 static void hci_conn_timeout(struct work_struct *work)
 {
 	struct hci_conn *conn = container_of(work, struct hci_conn,
@@ -282,10 +344,24 @@ static void hci_conn_timeout(struct work_struct *work)
 	__u8 reason;
 
 	BT_DBG("conn %p state %s", conn, state_to_string(conn->state));
+=======
+static void hci_conn_timeout(unsigned long arg)
+{
+	struct hci_conn *conn = (void *) arg;
+	struct hci_dev *hdev = conn->hdev;
+	__u8 reason;
+
+	BT_DBG("conn %p state %d", conn, conn->state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (atomic_read(&conn->refcnt))
 		return;
 
+<<<<<<< HEAD
+=======
+	hci_dev_lock(hdev);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (conn->state) {
 	case BT_CONNECT:
 	case BT_CONNECT2:
@@ -305,6 +381,7 @@ static void hci_conn_timeout(struct work_struct *work)
 		conn->state = BT_CLOSED;
 		break;
 	}
+<<<<<<< HEAD
 }
 
 /* Enter sniff mode */
@@ -341,6 +418,10 @@ static void hci_conn_enter_sniff_mode(struct hci_conn *conn)
 		cp.timeout      = cpu_to_le16(1);
 		hci_send_cmd(hdev, HCI_OP_SNIFF_MODE, sizeof(cp), &cp);
 	}
+=======
+
+	hci_dev_unlock(hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void hci_conn_idle(unsigned long arg)
@@ -357,17 +438,34 @@ static void hci_conn_auto_accept(unsigned long arg)
 	struct hci_conn *conn = (void *) arg;
 	struct hci_dev *hdev = conn->hdev;
 
+<<<<<<< HEAD
 	hci_send_cmd(hdev, HCI_OP_USER_CONFIRM_REPLY, sizeof(conn->dst),
 								&conn->dst);
 }
 
 struct hci_conn *hci_conn_add(struct hci_dev *hdev, int type, bdaddr_t *dst)
+=======
+	hci_dev_lock(hdev);
+
+	hci_send_cmd(hdev, HCI_OP_USER_CONFIRM_REPLY, sizeof(conn->dst),
+								&conn->dst);
+
+	hci_dev_unlock(hdev);
+}
+
+struct hci_conn *hci_conn_add(struct hci_dev *hdev, int type,
+					__u16 pkt_type, bdaddr_t *dst)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hci_conn *conn;
 
 	BT_DBG("%s dst %s", hdev->name, batostr(dst));
 
+<<<<<<< HEAD
 	conn = kzalloc(sizeof(struct hci_conn), GFP_KERNEL);
+=======
+	conn = kzalloc(sizeof(struct hci_conn), GFP_ATOMIC);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!conn)
 		return NULL;
 
@@ -381,7 +479,11 @@ struct hci_conn *hci_conn_add(struct hci_dev *hdev, int type, bdaddr_t *dst)
 	conn->remote_auth = 0xff;
 	conn->key_type = 0xff;
 
+<<<<<<< HEAD
 	set_bit(HCI_CONN_POWER_SAVE, &conn->flags);
+=======
+	conn->power_save = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	conn->disc_timeout = HCI_DISCONN_TIMEOUT;
 
 	switch (type) {
@@ -389,6 +491,7 @@ struct hci_conn *hci_conn_add(struct hci_dev *hdev, int type, bdaddr_t *dst)
 		conn->pkt_type = hdev->pkt_type & ACL_PTYPE_MASK;
 		break;
 	case SCO_LINK:
+<<<<<<< HEAD
 		if (lmp_esco_capable(hdev))
 			conn->pkt_type = (hdev->esco_type & SCO_ESCO_MASK) |
 					(hdev->esco_type & EDR_ESCO_MASK);
@@ -397,14 +500,36 @@ struct hci_conn *hci_conn_add(struct hci_dev *hdev, int type, bdaddr_t *dst)
 		break;
 	case ESCO_LINK:
 		conn->pkt_type = hdev->esco_type & ~EDR_ESCO_MASK;
+=======
+		if (!pkt_type)
+			pkt_type = SCO_ESCO_MASK;
+	case ESCO_LINK:
+		if (!pkt_type)
+			pkt_type = ALL_ESCO_MASK;
+		if (lmp_esco_capable(hdev)) {
+			/* HCI Setup Synchronous Connection Command uses
+			   reverse logic on the EDR_ESCO_MASK bits */
+			conn->pkt_type = (pkt_type ^ EDR_ESCO_MASK) &
+					hdev->esco_type;
+		} else {
+			/* Legacy HCI Add Sco Connection Command uses a
+			   shifted bitmask */
+			conn->pkt_type = (pkt_type << 5) & hdev->pkt_type &
+					SCO_PTYPE_MASK;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
 	skb_queue_head_init(&conn->data_q);
 
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&conn->chan_list);
 
 	INIT_DELAYED_WORK(&conn->disc_work, hci_conn_timeout);
+=======
+	setup_timer(&conn->disc_timer, hci_conn_timeout, (unsigned long)conn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	setup_timer(&conn->idle_timer, hci_conn_idle, (unsigned long)conn);
 	setup_timer(&conn->auto_accept_timer, hci_conn_auto_accept,
 							(unsigned long) conn);
@@ -413,6 +538,11 @@ struct hci_conn *hci_conn_add(struct hci_dev *hdev, int type, bdaddr_t *dst)
 
 	hci_dev_hold(hdev);
 
+<<<<<<< HEAD
+=======
+	tasklet_disable(&hdev->tx_task);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	hci_conn_hash_add(hdev, conn);
 	if (hdev->notify)
 		hdev->notify(hdev, HCI_NOTIFY_CONN_ADD);
@@ -421,6 +551,11 @@ struct hci_conn *hci_conn_add(struct hci_dev *hdev, int type, bdaddr_t *dst)
 
 	hci_conn_init_sysfs(conn);
 
+<<<<<<< HEAD
+=======
+	tasklet_enable(&hdev->tx_task);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return conn;
 }
 
@@ -432,7 +567,11 @@ int hci_conn_del(struct hci_conn *conn)
 
 	del_timer(&conn->idle_timer);
 
+<<<<<<< HEAD
 	cancel_delayed_work_sync(&conn->disc_work);
+=======
+	del_timer(&conn->disc_timer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	del_timer(&conn->auto_accept_timer);
 
@@ -456,13 +595,22 @@ int hci_conn_del(struct hci_conn *conn)
 		}
 	}
 
+<<<<<<< HEAD
 
 	hci_chan_list_flush(conn);
+=======
+	tasklet_disable(&hdev->tx_task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hci_conn_hash_del(hdev, conn);
 	if (hdev->notify)
 		hdev->notify(hdev, HCI_NOTIFY_CONN_DEL);
 
+<<<<<<< HEAD
+=======
+	tasklet_enable(&hdev->tx_task);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	skb_queue_purge(&conn->data_q);
 
 	hci_conn_put_device(conn);
@@ -478,6 +626,7 @@ int hci_conn_del(struct hci_conn *conn)
 struct hci_dev *hci_get_route(bdaddr_t *dst, bdaddr_t *src)
 {
 	int use_src = bacmp(src, BDADDR_ANY);
+<<<<<<< HEAD
 	struct hci_dev *hdev = NULL, *d;
 
 	BT_DBG("%s -> %s", batostr(src), batostr(dst));
@@ -485,6 +634,18 @@ struct hci_dev *hci_get_route(bdaddr_t *dst, bdaddr_t *src)
 	read_lock(&hci_dev_list_lock);
 
 	list_for_each_entry(d, &hci_dev_list, list) {
+=======
+	struct hci_dev *hdev = NULL;
+	struct list_head *p;
+
+	BT_DBG("%s -> %s", batostr(src), batostr(dst));
+
+	read_lock_bh(&hci_dev_list_lock);
+
+	list_for_each(p, &hci_dev_list) {
+		struct hci_dev *d = list_entry(p, struct hci_dev, list);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!test_bit(HCI_UP, &d->flags) || test_bit(HCI_RAW, &d->flags))
 			continue;
 
@@ -507,18 +668,32 @@ struct hci_dev *hci_get_route(bdaddr_t *dst, bdaddr_t *src)
 	if (hdev)
 		hdev = hci_dev_hold(hdev);
 
+<<<<<<< HEAD
 	read_unlock(&hci_dev_list_lock);
+=======
+	read_unlock_bh(&hci_dev_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return hdev;
 }
 EXPORT_SYMBOL(hci_get_route);
 
 /* Create SCO, ACL or LE connection.
  * Device _must_ be locked */
+<<<<<<< HEAD
 struct hci_conn *hci_connect(struct hci_dev *hdev, int type, bdaddr_t *dst, __u8 sec_level, __u8 auth_type)
+=======
+struct hci_conn *hci_connect(struct hci_dev *hdev, int type,
+					__u16 pkt_type, bdaddr_t *dst,
+					__u8 sec_level, __u8 auth_type)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hci_conn *acl;
 	struct hci_conn *sco;
 	struct hci_conn *le;
+<<<<<<< HEAD
+=======
+	struct inquiry_entry *ie;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BT_DBG("%s dst %s", hdev->name, batostr(dst));
 
@@ -533,7 +708,11 @@ struct hci_conn *hci_connect(struct hci_dev *hdev, int type, bdaddr_t *dst, __u8
 		if (!entry)
 			return ERR_PTR(-EHOSTUNREACH);
 
+<<<<<<< HEAD
 		le = hci_conn_add(hdev, LE_LINK, dst);
+=======
+		le = hci_conn_add(hdev, LE_LINK, 0, dst);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!le)
 			return ERR_PTR(-ENOMEM);
 
@@ -548,9 +727,15 @@ struct hci_conn *hci_connect(struct hci_dev *hdev, int type, bdaddr_t *dst, __u8
 
 	acl = hci_conn_hash_lookup_ba(hdev, ACL_LINK, dst);
 	if (!acl) {
+<<<<<<< HEAD
 		acl = hci_conn_add(hdev, ACL_LINK, dst);
 		if (!acl)
 			return ERR_PTR(-ENOMEM);
+=======
+		acl = hci_conn_add(hdev, ACL_LINK, 0, dst);
+		if (!acl)
+			return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	hci_conn_hold(acl);
@@ -567,10 +752,17 @@ struct hci_conn *hci_connect(struct hci_dev *hdev, int type, bdaddr_t *dst, __u8
 
 	sco = hci_conn_hash_lookup_ba(hdev, type, dst);
 	if (!sco) {
+<<<<<<< HEAD
 		sco = hci_conn_add(hdev, type, dst);
 		if (!sco) {
 			hci_conn_put(acl);
 			return ERR_PTR(-ENOMEM);
+=======
+		sco = hci_conn_add(hdev, type, pkt_type, dst);
+		if (!sco) {
+			hci_conn_put(acl);
+			return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -581,12 +773,21 @@ struct hci_conn *hci_connect(struct hci_dev *hdev, int type, bdaddr_t *dst, __u8
 
 	if (acl->state == BT_CONNECTED &&
 			(sco->state == BT_OPEN || sco->state == BT_CLOSED)) {
+<<<<<<< HEAD
 		set_bit(HCI_CONN_POWER_SAVE, &acl->flags);
 		hci_conn_enter_active_mode(acl, BT_POWER_FORCE_ACTIVE_ON);
 
 		if (test_bit(HCI_CONN_MODE_CHANGE_PEND, &acl->flags)) {
 			/* defer SCO setup until mode change completed */
 			set_bit(HCI_CONN_SCO_SETUP_PEND, &acl->flags);
+=======
+		acl->power_save = 1;
+		hci_conn_enter_active_mode(acl, BT_POWER_FORCE_ACTIVE_ON);
+
+		if (test_bit(HCI_CONN_MODE_CHANGE_PEND, &acl->pend)) {
+			/* defer SCO setup until mode change completed */
+			set_bit(HCI_CONN_SCO_SETUP_PEND, &acl->pend);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return sco;
 		}
 
@@ -602,7 +803,12 @@ int hci_conn_check_link_mode(struct hci_conn *conn)
 {
 	BT_DBG("conn %p", conn);
 
+<<<<<<< HEAD
 	if (hci_conn_ssp_enabled(conn) && !(conn->link_mode & HCI_LM_ENCRYPT))
+=======
+	if (conn->ssp_mode > 0 && conn->hdev->ssp_mode > 0 &&
+					!(conn->link_mode & HCI_LM_ENCRYPT))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	return 1;
@@ -627,17 +833,29 @@ static int hci_conn_auth(struct hci_conn *conn, __u8 sec_level, __u8 auth_type)
 
 	conn->auth_type = auth_type;
 
+<<<<<<< HEAD
 	if (!test_and_set_bit(HCI_CONN_AUTH_PEND, &conn->flags)) {
 		struct hci_cp_auth_requested cp;
 
 		/* encrypt must be pending if auth is also pending */
 		set_bit(HCI_CONN_ENCRYPT_PEND, &conn->flags);
+=======
+	if (!test_and_set_bit(HCI_CONN_AUTH_PEND, &conn->pend)) {
+		struct hci_cp_auth_requested cp;
+
+		/* encrypt must be pending if auth is also pending */
+		set_bit(HCI_CONN_ENCRYPT_PEND, &conn->pend);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		cp.handle = cpu_to_le16(conn->handle);
 		hci_send_cmd(conn->hdev, HCI_OP_AUTH_REQUESTED,
 							sizeof(cp), &cp);
 		if (conn->key_type != 0xff)
+<<<<<<< HEAD
 			set_bit(HCI_CONN_REAUTH_PEND, &conn->flags);
+=======
+			set_bit(HCI_CONN_REAUTH_PEND, &conn->pend);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -648,7 +866,11 @@ static void hci_conn_encrypt(struct hci_conn *conn)
 {
 	BT_DBG("conn %p", conn);
 
+<<<<<<< HEAD
 	if (!test_and_set_bit(HCI_CONN_ENCRYPT_PEND, &conn->flags)) {
+=======
+	if (!test_and_set_bit(HCI_CONN_ENCRYPT_PEND, &conn->pend)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct hci_cp_set_conn_encrypt cp;
 		cp.handle  = cpu_to_le16(conn->handle);
 		cp.encrypt = 0x01;
@@ -662,16 +884,24 @@ int hci_conn_security(struct hci_conn *conn, __u8 sec_level, __u8 auth_type)
 {
 	BT_DBG("conn %p", conn);
 
+<<<<<<< HEAD
 	if (conn->type == LE_LINK)
 		return smp_conn_security(conn, sec_level);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* For sdp we don't need the link key. */
 	if (sec_level == BT_SECURITY_SDP)
 		return 1;
 
 	/* For non 2.1 devices and low security level we don't need the link
 	   key. */
+<<<<<<< HEAD
 	if (sec_level == BT_SECURITY_LOW && !hci_conn_ssp_enabled(conn))
+=======
+	if (sec_level == BT_SECURITY_LOW &&
+				(!conn->ssp_mode || !conn->hdev->ssp_mode))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 
 	/* For other security levels we need the link key. */
@@ -700,7 +930,11 @@ int hci_conn_security(struct hci_conn *conn, __u8 sec_level, __u8 auth_type)
 		goto encrypt;
 
 auth:
+<<<<<<< HEAD
 	if (test_bit(HCI_CONN_ENCRYPT_PEND, &conn->flags))
+=======
+	if (test_bit(HCI_CONN_ENCRYPT_PEND, &conn->pend))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 
 	if (!hci_conn_auth(conn, sec_level, auth_type))
@@ -735,7 +969,11 @@ int hci_conn_change_link_key(struct hci_conn *conn)
 {
 	BT_DBG("conn %p", conn);
 
+<<<<<<< HEAD
 	if (!test_and_set_bit(HCI_CONN_AUTH_PEND, &conn->flags)) {
+=======
+	if (!test_and_set_bit(HCI_CONN_AUTH_PEND, &conn->pend)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct hci_cp_change_conn_link_key cp;
 		cp.handle = cpu_to_le16(conn->handle);
 		hci_send_cmd(conn->hdev, HCI_OP_CHANGE_CONN_LINK_KEY,
@@ -754,7 +992,11 @@ int hci_conn_switch_role(struct hci_conn *conn, __u8 role)
 	if (!role && conn->link_mode & HCI_LM_MASTER)
 		return 1;
 
+<<<<<<< HEAD
 	if (!test_and_set_bit(HCI_CONN_RSWITCH_PEND, &conn->flags)) {
+=======
+	if (!test_and_set_bit(HCI_CONN_RSWITCH_PEND, &conn->pend)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct hci_cp_switch_role cp;
 		bacpy(&cp.bdaddr, &conn->dst);
 		cp.role = role;
@@ -765,6 +1007,37 @@ int hci_conn_switch_role(struct hci_conn *conn, __u8 role)
 }
 EXPORT_SYMBOL(hci_conn_switch_role);
 
+<<<<<<< HEAD
+=======
+/* BEGIN SS_BLUEZ_BT +kjh 2011.06.23 : */
+/* workaround for a2dp chopping in multi connection. */
+/* Change Policy */
+int hci_conn_change_policy(struct hci_conn *conn, __u8 policy)
+{
+	struct hci_cp_write_link_policy cp;
+	cp.handle = cpu_to_le16(conn->handle);
+	cp.policy = policy;
+	hci_send_cmd(conn->hdev, HCI_OP_WRITE_LINK_POLICY, sizeof(cp), &cp);
+
+	return 0;
+}
+EXPORT_SYMBOL(hci_conn_change_policy);
+
+/* Set Encrypt*/
+int hci_conn_set_encrypt(struct hci_conn *conn, __u8 enable)
+{
+	struct hci_cp_set_conn_encrypt cp;
+	cp.handle  = cpu_to_le16(conn->handle);
+	cp.encrypt = enable;
+	hci_send_cmd(conn->hdev, HCI_OP_SET_CONN_ENCRYPT, sizeof(cp), &cp);
+
+	return 0;
+}
+EXPORT_SYMBOL(hci_conn_set_encrypt);
+/* END SS_BLUEZ_BT */
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Enter active mode */
 void hci_conn_enter_active_mode(struct hci_conn *conn, __u8 force_active)
 {
@@ -778,10 +1051,17 @@ void hci_conn_enter_active_mode(struct hci_conn *conn, __u8 force_active)
 	if (conn->mode != HCI_CM_SNIFF)
 		goto timer;
 
+<<<<<<< HEAD
 	if (!test_bit(HCI_CONN_POWER_SAVE, &conn->flags) && !force_active)
 		goto timer;
 
 	if (!test_and_set_bit(HCI_CONN_MODE_CHANGE_PEND, &conn->flags)) {
+=======
+	if (!conn->power_save && !force_active)
+		goto timer;
+
+	if (!test_and_set_bit(HCI_CONN_MODE_CHANGE_PEND, &conn->pend)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct hci_cp_exit_sniff_mode cp;
 		cp.handle = cpu_to_le16(conn->handle);
 		hci_send_cmd(hdev, HCI_OP_EXIT_SNIFF_MODE, sizeof(cp), &cp);
@@ -793,10 +1073,50 @@ timer:
 			jiffies + msecs_to_jiffies(hdev->idle_timeout));
 }
 
+<<<<<<< HEAD
+=======
+/* Enter sniff mode */
+void hci_conn_enter_sniff_mode(struct hci_conn *conn)
+{
+	struct hci_dev *hdev = conn->hdev;
+
+	BT_DBG("conn %p mode %d", conn, conn->mode);
+
+	if (test_bit(HCI_RAW, &hdev->flags))
+		return;
+
+	if (!lmp_sniff_capable(hdev) || !lmp_sniff_capable(conn))
+		return;
+
+	if (conn->mode != HCI_CM_ACTIVE || !(conn->link_policy & HCI_LP_SNIFF))
+		return;
+
+	if (lmp_sniffsubr_capable(hdev) && lmp_sniffsubr_capable(conn)) {
+		struct hci_cp_sniff_subrate cp;
+		cp.handle             = cpu_to_le16(conn->handle);
+		cp.max_latency        = cpu_to_le16(0);
+		cp.min_remote_timeout = cpu_to_le16(0);
+		cp.min_local_timeout  = cpu_to_le16(0);
+		hci_send_cmd(hdev, HCI_OP_SNIFF_SUBRATE, sizeof(cp), &cp);
+	}
+
+	if (!test_and_set_bit(HCI_CONN_MODE_CHANGE_PEND, &conn->pend)) {
+		struct hci_cp_sniff_mode cp;
+		cp.handle       = cpu_to_le16(conn->handle);
+		cp.max_interval = cpu_to_le16(hdev->sniff_max_interval);
+		cp.min_interval = cpu_to_le16(hdev->sniff_min_interval);
+		cp.attempt      = cpu_to_le16(4);
+		cp.timeout      = cpu_to_le16(1);
+		hci_send_cmd(hdev, HCI_OP_SNIFF_MODE, sizeof(cp), &cp);
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Drop all connection on the device */
 void hci_conn_hash_flush(struct hci_dev *hdev)
 {
 	struct hci_conn_hash *h = &hdev->conn_hash;
+<<<<<<< HEAD
 	struct hci_conn *c, *n;
 
 	BT_DBG("hdev %s", hdev->name);
@@ -805,6 +1125,22 @@ void hci_conn_hash_flush(struct hci_dev *hdev)
 		c->state = BT_CLOSED;
 
 		hci_proto_disconn_cfm(c, HCI_ERROR_LOCAL_HOST_TERM);
+=======
+	struct list_head *p;
+
+	BT_DBG("hdev %s", hdev->name);
+
+	p = h->list.next;
+	while (p != &h->list) {
+		struct hci_conn *c;
+
+		c = list_entry(p, struct hci_conn, list);
+		p = p->next;
+
+		c->state = BT_CLOSED;
+
+		hci_proto_disconn_cfm(c, 0x16);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		hci_conn_del(c);
 	}
 }
@@ -840,10 +1176,17 @@ EXPORT_SYMBOL(hci_conn_put_device);
 
 int hci_get_conn_list(void __user *arg)
 {
+<<<<<<< HEAD
 	register struct hci_conn *c;
 	struct hci_conn_list_req req, *cl;
 	struct hci_conn_info *ci;
 	struct hci_dev *hdev;
+=======
+	struct hci_conn_list_req req, *cl;
+	struct hci_conn_info *ci;
+	struct hci_dev *hdev;
+	struct list_head *p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int n = 0, size, err;
 
 	if (copy_from_user(&req, arg, sizeof(req)))
@@ -866,18 +1209,42 @@ int hci_get_conn_list(void __user *arg)
 
 	ci = cl->conn_info;
 
+<<<<<<< HEAD
 	hci_dev_lock(hdev);
 	list_for_each_entry(c, &hdev->conn_hash.list, list) {
+=======
+	hci_dev_lock_bh(hdev);
+	list_for_each(p, &hdev->conn_hash.list) {
+		register struct hci_conn *c;
+		c = list_entry(p, struct hci_conn, list);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bacpy(&(ci + n)->bdaddr, &c->dst);
 		(ci + n)->handle = c->handle;
 		(ci + n)->type  = c->type;
 		(ci + n)->out   = c->out;
 		(ci + n)->state = c->state;
 		(ci + n)->link_mode = c->link_mode;
+<<<<<<< HEAD
 		if (++n >= req.conn_num)
 			break;
 	}
 	hci_dev_unlock(hdev);
+=======
+		if (c->type == SCO_LINK) {
+			(ci + n)->mtu = hdev->sco_mtu;
+			(ci + n)->cnt = hdev->sco_cnt;
+			(ci + n)->pkts = hdev->sco_pkts;
+		} else {
+			(ci + n)->mtu = hdev->acl_mtu;
+			(ci + n)->cnt = hdev->acl_cnt;
+			(ci + n)->pkts = hdev->acl_pkts;
+		}
+		if (++n >= req.conn_num)
+			break;
+	}
+	hci_dev_unlock_bh(hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cl->dev_id = hdev->id;
 	cl->conn_num = n;
@@ -901,7 +1268,11 @@ int hci_get_conn_info(struct hci_dev *hdev, void __user *arg)
 	if (copy_from_user(&req, arg, sizeof(req)))
 		return -EFAULT;
 
+<<<<<<< HEAD
 	hci_dev_lock(hdev);
+=======
+	hci_dev_lock_bh(hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	conn = hci_conn_hash_lookup_ba(hdev, req.type, &req.bdaddr);
 	if (conn) {
 		bacpy(&ci.bdaddr, &conn->dst);
@@ -910,8 +1281,22 @@ int hci_get_conn_info(struct hci_dev *hdev, void __user *arg)
 		ci.out   = conn->out;
 		ci.state = conn->state;
 		ci.link_mode = conn->link_mode;
+<<<<<<< HEAD
 	}
 	hci_dev_unlock(hdev);
+=======
+		if (req.type == SCO_LINK) {
+			ci.mtu = hdev->sco_mtu;
+			ci.cnt = hdev->sco_cnt;
+			ci.pkts = hdev->sco_pkts;
+		} else {
+			ci.mtu = hdev->acl_mtu;
+			ci.cnt = hdev->acl_cnt;
+			ci.pkts = hdev->acl_pkts;
+		}
+	}
+	hci_dev_unlock_bh(hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!conn)
 		return -ENOENT;
@@ -927,17 +1312,26 @@ int hci_get_auth_info(struct hci_dev *hdev, void __user *arg)
 	if (copy_from_user(&req, arg, sizeof(req)))
 		return -EFAULT;
 
+<<<<<<< HEAD
 	hci_dev_lock(hdev);
 	conn = hci_conn_hash_lookup_ba(hdev, ACL_LINK, &req.bdaddr);
 	if (conn)
 		req.type = conn->auth_type;
 	hci_dev_unlock(hdev);
+=======
+	hci_dev_lock_bh(hdev);
+	conn = hci_conn_hash_lookup_ba(hdev, ACL_LINK, &req.bdaddr);
+	if (conn)
+		req.type = conn->auth_type;
+	hci_dev_unlock_bh(hdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!conn)
 		return -ENOENT;
 
 	return copy_to_user(arg, &req, sizeof(req)) ? -EFAULT : 0;
 }
+<<<<<<< HEAD
 
 struct hci_chan *hci_chan_create(struct hci_conn *conn)
 {
@@ -984,3 +1378,5 @@ void hci_chan_list_flush(struct hci_conn *conn)
 	list_for_each_entry_safe(chan, n, &conn->chan_list, list)
 		hci_chan_del(chan);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

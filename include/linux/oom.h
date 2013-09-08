@@ -40,16 +40,26 @@ enum oom_constraint {
 	CONSTRAINT_MEMCG,
 };
 
+<<<<<<< HEAD
 extern void compare_swap_oom_score_adj(int old_val, int new_val);
 extern int test_set_oom_score_adj(int new_val);
 
 extern unsigned int oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
+=======
+extern int test_set_oom_score_adj(int new_val);
+
+extern unsigned int oom_badness(struct task_struct *p, struct mem_cgroup *mem,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			const nodemask_t *nodemask, unsigned long totalpages);
 extern int try_set_zonelist_oom(struct zonelist *zonelist, gfp_t gfp_flags);
 extern void clear_zonelist_oom(struct zonelist *zonelist, gfp_t gfp_flags);
 
 extern void out_of_memory(struct zonelist *zonelist, gfp_t gfp_mask,
+<<<<<<< HEAD
 		int order, nodemask_t *mask, bool force_kill);
+=======
+		int order, nodemask_t *mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int register_oom_notifier(struct notifier_block *nb);
 extern int unregister_oom_notifier(struct notifier_block *nb);
 
@@ -65,6 +75,13 @@ static inline void oom_killer_enable(void)
 	oom_killer_disabled = false;
 }
 
+<<<<<<< HEAD
+=======
+/* The badness from the OOM killer */
+extern unsigned long badness(struct task_struct *p, struct mem_cgroup *mem,
+		      const nodemask_t *nodemask, unsigned long uptime);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct task_struct *find_lock_task_mm(struct task_struct *p);
 
 /* sysctls */

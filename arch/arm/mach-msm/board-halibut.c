@@ -68,11 +68,14 @@ static struct platform_device *devices[] __initdata = {
 
 extern struct sys_timer msm_timer;
 
+<<<<<<< HEAD
 static void __init halibut_init_early(void)
 {
 	arch_ioremap_caller = __msm_ioremap_caller;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init halibut_init_irq(void)
 {
 	msm_init_irq();
@@ -83,9 +86,18 @@ static void __init halibut_init(void)
 	platform_add_devices(devices, ARRAY_SIZE(devices));
 }
 
+<<<<<<< HEAD
 static void __init halibut_fixup(struct tag *tags, char **cmdline,
 				 struct meminfo *mi)
 {
+=======
+static void __init halibut_fixup(struct machine_desc *desc, struct tag *tags,
+				 char **cmdline, struct meminfo *mi)
+{
+	mi->nr_banks=1;
+	mi->bank[0].start = PHYS_OFFSET;
+	mi->bank[0].size = (101*1024*1024);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __init halibut_map_io(void)
@@ -95,10 +107,16 @@ static void __init halibut_map_io(void)
 }
 
 MACHINE_START(HALIBUT, "Halibut Board (QCT SURF7200A)")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.fixup		= halibut_fixup,
 	.map_io		= halibut_map_io,
 	.init_early	= halibut_init_early,
+=======
+	.boot_params	= 0x10000100,
+	.fixup		= halibut_fixup,
+	.map_io		= halibut_map_io,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_irq	= halibut_init_irq,
 	.init_machine	= halibut_init,
 	.timer		= &msm_timer,

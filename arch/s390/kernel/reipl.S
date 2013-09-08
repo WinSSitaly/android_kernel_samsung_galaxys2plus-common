@@ -6,6 +6,7 @@
  *    Author(s): Holger Smolinski (Holger.Smolinski@de.ibm.com)
  */
 
+<<<<<<< HEAD
 #include <linux/linkage.h>
 #include <asm/asm-offsets.h>
 
@@ -21,6 +22,16 @@ ENTRY(store_status)
 #
 ENTRY(do_reipl_asm)
 		basr	%r13,0
+=======
+#include <asm/asm-offsets.h>
+
+#
+# do_reipl_asm
+# Parameter: r2 = schid of reipl device
+#
+		.globl	do_reipl_asm
+do_reipl_asm:	basr	%r13,0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 .Lpg0:		lpsw	.Lnewpsw-.Lpg0(%r13)
 .Lpg1:		# do store status of all registers
 

@@ -230,6 +230,7 @@ struct edid {
 
 #define EDID_PRODUCT_ID(e) ((e)->prod_code[0] | ((e)->prod_code[1] << 8))
 
+<<<<<<< HEAD
 struct drm_encoder;
 struct drm_connector;
 struct drm_display_mode;
@@ -240,4 +241,6 @@ struct drm_connector *drm_select_eld(struct drm_encoder *encoder,
 				     struct drm_display_mode *mode);
 int drm_load_edid_firmware(struct drm_connector *connector);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __DRM_EDID_H__ */

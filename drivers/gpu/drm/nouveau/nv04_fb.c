@@ -4,6 +4,7 @@
 #include "nouveau_drm.h"
 
 int
+<<<<<<< HEAD
 nv04_fb_vram_init(struct drm_device *dev)
 {
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
@@ -38,6 +39,8 @@ nv04_fb_vram_init(struct drm_device *dev)
 }
 
 int
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 nv04_fb_init(struct drm_device *dev)
 {
 	/* This is what the DDX did for NV_ARCH_04, but a mmio-trace shows

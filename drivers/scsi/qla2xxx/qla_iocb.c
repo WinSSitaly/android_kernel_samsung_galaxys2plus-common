@@ -11,6 +11,11 @@
 
 #include <scsi/scsi_tcq.h>
 
+<<<<<<< HEAD
+=======
+static void qla2x00_isp_cmd(struct scsi_qla_host *, struct req_que *);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void qla25xx_set_que(srb_t *, struct rsp_que **);
 /**
  * qla2x00_get_cmd_direction() - Determine control_flag data direction.
@@ -22,11 +27,15 @@ static inline uint16_t
 qla2x00_get_cmd_direction(srb_t *sp)
 {
 	uint16_t cflags;
+<<<<<<< HEAD
 	struct scsi_cmnd *cmd = GET_CMD_SP(sp);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cflags = 0;
 
 	/* Set transfer direction */
+<<<<<<< HEAD
 	if (cmd->sc_data_direction == DMA_TO_DEVICE) {
 		cflags = CF_WRITE;
 		sp->fcport->vha->hw->qla_stats.output_bytes +=
@@ -35,6 +44,16 @@ qla2x00_get_cmd_direction(srb_t *sp)
 		cflags = CF_READ;
 		sp->fcport->vha->hw->qla_stats.input_bytes +=
 		    scsi_bufflen(cmd);
+=======
+	if (sp->cmd->sc_data_direction == DMA_TO_DEVICE) {
+		cflags = CF_WRITE;
+		sp->fcport->vha->hw->qla_stats.output_bytes +=
+		    scsi_bufflen(sp->cmd);
+	} else if (sp->cmd->sc_data_direction == DMA_FROM_DEVICE) {
+		cflags = CF_READ;
+		sp->fcport->vha->hw->qla_stats.input_bytes +=
+		    scsi_bufflen(sp->cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return (cflags);
 }
@@ -119,10 +138,18 @@ qla2x00_prep_cont_type0_iocb(struct scsi_qla_host *vha)
  * Returns a pointer to the continuation type 1 IOCB packet.
  */
 static inline cont_a64_entry_t *
+<<<<<<< HEAD
 qla2x00_prep_cont_type1_iocb(scsi_qla_host_t *vha, struct req_que *req)
 {
 	cont_a64_entry_t *cont_pkt;
 
+=======
+qla2x00_prep_cont_type1_iocb(scsi_qla_host_t *vha)
+{
+	cont_a64_entry_t *cont_pkt;
+
+	struct req_que *req = vha->req;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Adjust ring index. */
 	req->ring_index++;
 	if (req->ring_index == req->length) {
@@ -144,6 +171,7 @@ qla2x00_prep_cont_type1_iocb(scsi_qla_host_t *vha, struct req_que *req)
 static inline int
 qla24xx_configure_prot_mode(srb_t *sp, uint16_t *fw_prot_opts)
 {
+<<<<<<< HEAD
 	struct scsi_cmnd *cmd = GET_CMD_SP(sp);
 	uint8_t	guard = scsi_host_get_guard(cmd->device->host);
 
@@ -151,6 +179,13 @@ qla24xx_configure_prot_mode(srb_t *sp, uint16_t *fw_prot_opts)
 	if (guard != SHOST_DIX_GUARD_CRC) {
 		ql_dbg(ql_dbg_io, sp->fcport->vha, 0x3007,
 		    "Unsupported guard: %d for cmd=%p.\n", guard, cmd);
+=======
+	uint8_t	guard = scsi_host_get_guard(sp->cmd->device->host);
+
+	/* We only support T10 DIF right now */
+	if (guard != SHOST_DIX_GUARD_CRC) {
+		DEBUG2(printk(KERN_ERR "Unsupported guard: %d\n", guard));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
@@ -158,7 +193,11 @@ qla24xx_configure_prot_mode(srb_t *sp, uint16_t *fw_prot_opts)
 	*fw_prot_opts = 0;
 
 	/* Translate SCSI opcode to a protection opcode */
+<<<<<<< HEAD
 	switch (scsi_get_prot_op(cmd)) {
+=======
+	switch (scsi_get_prot_op(sp->cmd)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SCSI_PROT_READ_STRIP:
 		*fw_prot_opts |= PO_MODE_DIF_REMOVE;
 		break;
@@ -182,7 +221,11 @@ qla24xx_configure_prot_mode(srb_t *sp, uint16_t *fw_prot_opts)
 		break;
 	}
 
+<<<<<<< HEAD
 	return scsi_prot_sg_count(cmd);
+=======
+	return scsi_prot_sg_count(sp->cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -203,7 +246,11 @@ void qla2x00_build_scsi_iocbs_32(srb_t *sp, cmd_entry_t *cmd_pkt,
 	struct scatterlist *sg;
 	int i;
 
+<<<<<<< HEAD
 	cmd = GET_CMD_SP(sp);
+=======
+	cmd = sp->cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Update entry type to indicate Command Type 2 IOCB */
 	*((uint32_t *)(&cmd_pkt->entry_type)) =
@@ -261,7 +308,11 @@ void qla2x00_build_scsi_iocbs_64(srb_t *sp, cmd_entry_t *cmd_pkt,
 	struct scatterlist *sg;
 	int i;
 
+<<<<<<< HEAD
 	cmd = GET_CMD_SP(sp);
+=======
+	cmd = sp->cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Update entry type to indicate Command Type 3 IOCB */
 	*((uint32_t *)(&cmd_pkt->entry_type)) =
@@ -291,7 +342,11 @@ void qla2x00_build_scsi_iocbs_64(srb_t *sp, cmd_entry_t *cmd_pkt,
 			 * Five DSDs are available in the Continuation
 			 * Type 1 IOCB.
 			 */
+<<<<<<< HEAD
 			cont_pkt = qla2x00_prep_cont_type1_iocb(vha, vha->req);
+=======
+			cont_pkt = qla2x00_prep_cont_type1_iocb(vha);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cur_dsd = (uint32_t *)cont_pkt->dseg_0_address;
 			avail_dsds = 5;
 		}
@@ -335,7 +390,11 @@ qla2x00_start_scsi(srb_t *sp)
 	vha = sp->fcport->vha;
 	ha = vha->hw;
 	reg = &ha->iobase->isp;
+<<<<<<< HEAD
 	cmd = GET_CMD_SP(sp);
+=======
+	cmd = sp->cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	req = ha->req_q_map[0];
 	rsp = ha->rsp_q_map[0];
 	/* So we know we haven't pci_map'ed anything yet */
@@ -343,10 +402,16 @@ qla2x00_start_scsi(srb_t *sp)
 
 	/* Send marker if required */
 	if (vha->marker_needed != 0) {
+<<<<<<< HEAD
 		if (qla2x00_marker(vha, req, rsp, 0, 0, MK_SYNC_ALL) !=
 		    QLA_SUCCESS) {
 			return (QLA_FUNCTION_FAILED);
 		}
+=======
+		if (qla2x00_marker(vha, req, rsp, 0, 0, MK_SYNC_ALL)
+							!= QLA_SUCCESS)
+			return (QLA_FUNCTION_FAILED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		vha->marker_needed = 0;
 	}
 
@@ -393,7 +458,11 @@ qla2x00_start_scsi(srb_t *sp)
 	req->current_outstanding_cmd = handle;
 	req->outstanding_cmds[handle] = sp;
 	sp->handle = handle;
+<<<<<<< HEAD
 	cmd->host_scribble = (unsigned char *)(unsigned long)handle;
+=======
+	sp->cmd->host_scribble = (unsigned char *)(unsigned long)handle;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	req->cnt -= req_cnt;
 
 	cmd_pkt = (cmd_entry_t *)req->ring_ptr;
@@ -405,7 +474,11 @@ qla2x00_start_scsi(srb_t *sp)
 
 	/* Set target ID and LUN number*/
 	SET_TARGET_ID(ha, cmd_pkt->target, sp->fcport->loop_id);
+<<<<<<< HEAD
 	cmd_pkt->lun = cpu_to_le16(cmd->device->lun);
+=======
+	cmd_pkt->lun = cpu_to_le16(sp->cmd->device->lun);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Update tagged queuing modifier */
 	if (scsi_populate_tag_msg(cmd, tag)) {
@@ -423,8 +496,11 @@ qla2x00_start_scsi(srb_t *sp)
 			    __constant_cpu_to_le16(CF_SIMPLE_TAG);
 			break;
 		}
+<<<<<<< HEAD
 	} else {
 		cmd_pkt->control_flags = __constant_cpu_to_le16(CF_SIMPLE_TAG);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Load SCSI command packet. */
@@ -470,6 +546,7 @@ queuing_error:
 }
 
 /**
+<<<<<<< HEAD
  * qla2x00_start_iocbs() - Execute the IOCB command
  */
 static void
@@ -505,6 +582,8 @@ qla2x00_start_iocbs(struct scsi_qla_host *vha, struct req_que *req)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * qla2x00_marker() - Send a marker IOCB to the firmware.
  * @ha: HA context
  * @loop_id: loop ID
@@ -526,11 +605,18 @@ __qla2x00_marker(struct scsi_qla_host *vha, struct req_que *req,
 	scsi_qla_host_t *base_vha = pci_get_drvdata(ha->pdev);
 
 	mrk24 = NULL;
+<<<<<<< HEAD
 	req = ha->req_q_map[0];
 	mrk = (mrk_entry_t *)qla2x00_alloc_iocbs(vha, 0);
 	if (mrk == NULL) {
 		ql_log(ql_log_warn, base_vha, 0x3026,
 		    "Failed to allocate Marker IOCB.\n");
+=======
+	mrk = (mrk_entry_t *)qla2x00_alloc_iocbs(vha, 0);
+	if (mrk == NULL) {
+		DEBUG2_3(printk("%s(%ld): failed to allocate Marker IOCB.\n",
+		    __func__, base_vha->host_no));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		return (QLA_FUNCTION_FAILED);
 	}
@@ -553,7 +639,11 @@ __qla2x00_marker(struct scsi_qla_host *vha, struct req_que *req,
 	}
 	wmb();
 
+<<<<<<< HEAD
 	qla2x00_start_iocbs(vha, req);
+=======
+	qla2x00_isp_cmd(vha, req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return (QLA_SUCCESS);
 }
@@ -574,6 +664,7 @@ qla2x00_marker(struct scsi_qla_host *vha, struct req_que *req,
 }
 
 /**
+<<<<<<< HEAD
  * qla24xx_calc_iocbs() - Determine number of Command Type 3 and
  * Continuation Type 1 IOCBs to allocate.
  *
@@ -708,6 +799,92 @@ qla24xx_calc_dsd_lists(uint16_t dsds)
 }
 
 
+=======
+ * qla2x00_isp_cmd() - Modify the request ring pointer.
+ * @ha: HA context
+ *
+ * Note: The caller must hold the hardware lock before calling this routine.
+ */
+static void
+qla2x00_isp_cmd(struct scsi_qla_host *vha, struct req_que *req)
+{
+	struct qla_hw_data *ha = vha->hw;
+	device_reg_t __iomem *reg = ISP_QUE_REG(ha, req->id);
+	struct device_reg_2xxx __iomem *ioreg = &ha->iobase->isp;
+
+	DEBUG5(printk("%s(): IOCB data:\n", __func__));
+	DEBUG5(qla2x00_dump_buffer(
+	    (uint8_t *)req->ring_ptr, REQUEST_ENTRY_SIZE));
+
+	/* Adjust ring index. */
+	req->ring_index++;
+	if (req->ring_index == req->length) {
+		req->ring_index = 0;
+		req->ring_ptr = req->ring;
+	} else
+		req->ring_ptr++;
+
+	/* Set chip new ring index. */
+	if (IS_QLA82XX(ha)) {
+		uint32_t dbval = 0x04 | (ha->portnum << 5);
+
+		/* write, read and verify logic */
+		dbval = dbval | (req->id << 8) | (req->ring_index << 16);
+		if (ql2xdbwr)
+			qla82xx_wr_32(ha, ha->nxdb_wr_ptr, dbval);
+		else {
+			WRT_REG_DWORD(
+				(unsigned long __iomem *)ha->nxdb_wr_ptr,
+				dbval);
+			wmb();
+			while (RD_REG_DWORD(ha->nxdb_rd_ptr) != dbval) {
+				WRT_REG_DWORD((unsigned long __iomem *)
+					ha->nxdb_wr_ptr, dbval);
+				wmb();
+			}
+		}
+	} else if (ha->mqenable) {
+		/* Set chip new ring index. */
+		WRT_REG_DWORD(&reg->isp25mq.req_q_in, req->ring_index);
+		RD_REG_DWORD(&ioreg->hccr);
+	} else {
+		if (IS_FWI2_CAPABLE(ha)) {
+			WRT_REG_DWORD(&reg->isp24.req_q_in, req->ring_index);
+			RD_REG_DWORD_RELAXED(&reg->isp24.req_q_in);
+		} else {
+			WRT_REG_WORD(ISP_REQ_Q_IN(ha, &reg->isp),
+				req->ring_index);
+			RD_REG_WORD_RELAXED(ISP_REQ_Q_IN(ha, &reg->isp));
+		}
+	}
+
+}
+
+/**
+ * qla24xx_calc_iocbs() - Determine number of Command Type 3 and
+ * Continuation Type 1 IOCBs to allocate.
+ *
+ * @dsds: number of data segment decriptors needed
+ *
+ * Returns the number of IOCB entries needed to store @dsds.
+ */
+inline uint16_t
+qla24xx_calc_iocbs(uint16_t dsds)
+{
+	uint16_t iocbs;
+
+	iocbs = 1;
+	if (dsds > 1) {
+		iocbs += (dsds - 1) / 5;
+		if ((dsds - 1) % 5)
+			iocbs++;
+	}
+	DEBUG3(printk(KERN_DEBUG "%s(): Required PKT(s) = %d\n",
+	    __func__, iocbs));
+	return iocbs;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * qla24xx_build_scsi_iocbs() - Build IOCB command utilizing Command Type 7
  * IOCB types.
@@ -728,7 +905,11 @@ qla24xx_build_scsi_iocbs(srb_t *sp, struct cmd_type_7 *cmd_pkt,
 	int i;
 	struct req_que *req;
 
+<<<<<<< HEAD
 	cmd = GET_CMD_SP(sp);
+=======
+	cmd = sp->cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Update entry type to indicate Command Type 3 IOCB */
 	*((uint32_t *)(&cmd_pkt->entry_type)) =
@@ -748,12 +929,20 @@ qla24xx_build_scsi_iocbs(srb_t *sp, struct cmd_type_7 *cmd_pkt,
 		cmd_pkt->task_mgmt_flags =
 		    __constant_cpu_to_le16(TMF_WRITE_DATA);
 		sp->fcport->vha->hw->qla_stats.output_bytes +=
+<<<<<<< HEAD
 		    scsi_bufflen(cmd);
+=======
+		    scsi_bufflen(sp->cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (cmd->sc_data_direction == DMA_FROM_DEVICE) {
 		cmd_pkt->task_mgmt_flags =
 		    __constant_cpu_to_le16(TMF_READ_DATA);
 		sp->fcport->vha->hw->qla_stats.input_bytes +=
+<<<<<<< HEAD
 		    scsi_bufflen(cmd);
+=======
+		    scsi_bufflen(sp->cmd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* One DSD is available in the Command Type 3 IOCB */
@@ -772,7 +961,11 @@ qla24xx_build_scsi_iocbs(srb_t *sp, struct cmd_type_7 *cmd_pkt,
 			 * Five DSDs are available in the Continuation
 			 * Type 1 IOCB.
 			 */
+<<<<<<< HEAD
 			cont_pkt = qla2x00_prep_cont_type1_iocb(vha, vha->req);
+=======
+			cont_pkt = qla2x00_prep_cont_type1_iocb(vha);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cur_dsd = (uint32_t *)cont_pkt->dseg_0_address;
 			avail_dsds = 5;
 		}
@@ -797,6 +990,7 @@ struct fw_dif_context {
  *
  */
 static inline void
+<<<<<<< HEAD
 qla24xx_set_t10dif_tags(srb_t *sp, struct fw_dif_context *pkt,
     unsigned int protcnt)
 {
@@ -819,6 +1013,21 @@ qla24xx_set_t10dif_tags(srb_t *sp, struct fw_dif_context *pkt,
 		pkt->ref_tag_mask[1] = 0xff;
 		pkt->ref_tag_mask[2] = 0xff;
 		pkt->ref_tag_mask[3] = 0xff;
+=======
+qla24xx_set_t10dif_tags(struct scsi_cmnd *cmd, struct fw_dif_context *pkt,
+    unsigned int protcnt)
+{
+	struct sd_dif_tuple *spt;
+	unsigned char op = scsi_get_prot_op(cmd);
+
+	switch (scsi_get_prot_type(cmd)) {
+	/* For TYPE 0 protection: no checking */
+	case SCSI_PROT_DIF_TYPE0:
+		pkt->ref_tag_mask[0] = 0x00;
+		pkt->ref_tag_mask[1] = 0x00;
+		pkt->ref_tag_mask[2] = 0x00;
+		pkt->ref_tag_mask[3] = 0x00;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	/*
@@ -826,16 +1035,32 @@ qla24xx_set_t10dif_tags(srb_t *sp, struct fw_dif_context *pkt,
 	 * match LBA in CDB + N
 	 */
 	case SCSI_PROT_DIF_TYPE2:
+<<<<<<< HEAD
 		pkt->app_tag = __constant_cpu_to_le16(0);
 		pkt->app_tag_mask[0] = 0x0;
 		pkt->app_tag_mask[1] = 0x0;
+=======
+		if (!ql2xenablehba_err_chk)
+			break;
+
+		if (scsi_prot_sg_count(cmd)) {
+			spt = page_address(sg_page(scsi_prot_sglist(cmd))) +
+			    scsi_prot_sglist(cmd)[0].offset;
+			pkt->app_tag = swab32(spt->app_tag);
+			pkt->app_tag_mask[0] =  0xff;
+			pkt->app_tag_mask[1] =  0xff;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		pkt->ref_tag = cpu_to_le32((uint32_t)
 		    (0xffffffff & scsi_get_lba(cmd)));
 
+<<<<<<< HEAD
 		if (!qla2x00_hba_err_chk_enabled(sp))
 			break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* enable ALL bytes of the ref tag */
 		pkt->ref_tag_mask[0] = 0xff;
 		pkt->ref_tag_mask[1] = 0xff;
@@ -855,6 +1080,7 @@ qla24xx_set_t10dif_tags(srb_t *sp, struct fw_dif_context *pkt,
 	 * 16 bit app tag.
 	 */
 	case SCSI_PROT_DIF_TYPE1:
+<<<<<<< HEAD
 		pkt->ref_tag = cpu_to_le32((uint32_t)
 		    (0xffffffff & scsi_get_lba(cmd)));
 		pkt->app_tag = __constant_cpu_to_le16(0);
@@ -864,6 +1090,28 @@ qla24xx_set_t10dif_tags(srb_t *sp, struct fw_dif_context *pkt,
 		if (!qla2x00_hba_err_chk_enabled(sp))
 			break;
 
+=======
+		if (!ql2xenablehba_err_chk)
+			break;
+
+		if (protcnt && (op == SCSI_PROT_WRITE_STRIP ||
+		    op == SCSI_PROT_WRITE_PASS)) {
+			spt = page_address(sg_page(scsi_prot_sglist(cmd))) +
+			    scsi_prot_sglist(cmd)[0].offset;
+			DEBUG18(printk(KERN_DEBUG
+			    "%s(): LBA from user %p, lba = 0x%x\n",
+			    __func__, spt, (int)spt->ref_tag));
+			pkt->ref_tag = swab32(spt->ref_tag);
+			pkt->app_tag_mask[0] = 0x0;
+			pkt->app_tag_mask[1] = 0x0;
+		} else {
+			pkt->ref_tag = cpu_to_le32((uint32_t)
+			    (0xffffffff & scsi_get_lba(cmd)));
+			pkt->app_tag = __constant_cpu_to_le16(0);
+			pkt->app_tag_mask[0] = 0x0;
+			pkt->app_tag_mask[1] = 0x0;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* enable ALL bytes of the ref tag */
 		pkt->ref_tag_mask[0] = 0xff;
 		pkt->ref_tag_mask[1] = 0xff;
@@ -872,6 +1120,7 @@ qla24xx_set_t10dif_tags(srb_t *sp, struct fw_dif_context *pkt,
 		break;
 	}
 
+<<<<<<< HEAD
 	ql_dbg(ql_dbg_io, vha, 0x3009,
 	    "Setting protection Tags: (BIG) ref tag = 0x%x, app tag = 0x%x, "
 	    "prot SG count %d, cmd lba 0x%x, prot_type=%u cmd=%p.\n",
@@ -1034,6 +1283,15 @@ alloc_and_fill:
 	*cur_dsd++ = 0;
 	return 0;
 }
+=======
+	DEBUG18(printk(KERN_DEBUG
+	    "%s(): Setting protection Tags: (BIG) ref tag = 0x%x,"
+	    " app tag = 0x%x, prot SG count %d , cmd lba 0x%x,"
+	    " prot_type=%u\n", __func__, pkt->ref_tag, pkt->app_tag, protcnt,
+	    (int)scsi_get_lba(cmd), scsi_get_prot_type(cmd)));
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int
 qla24xx_walk_and_build_sglist(struct qla_hw_data *ha, srb_t *sp, uint32_t *dsd,
@@ -1047,12 +1305,19 @@ qla24xx_walk_and_build_sglist(struct qla_hw_data *ha, srb_t *sp, uint32_t *dsd,
 	uint32_t *cur_dsd = dsd;
 	int	i;
 	uint16_t	used_dsds = tot_dsds;
+<<<<<<< HEAD
 	struct scsi_cmnd *cmd = GET_CMD_SP(sp);
 	scsi_qla_host_t *vha = shost_priv(cmd->device->host);
 
 	uint8_t		*cp;
 
 	scsi_for_each_sg(cmd, sg, tot_dsds, i) {
+=======
+
+	uint8_t		*cp;
+
+	scsi_for_each_sg(sp->cmd, sg, tot_dsds, i) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dma_addr_t	sle_dma;
 
 		/* Allocate additional continuation packets? */
@@ -1082,7 +1347,11 @@ qla24xx_walk_and_build_sglist(struct qla_hw_data *ha, srb_t *sp, uint32_t *dsd,
 			}
 
 			list_add_tail(&dsd_ptr->list,
+<<<<<<< HEAD
 			    &((struct crc_context *)sp->u.scmd.ctx)->dsd_list);
+=======
+			    &((struct crc_context *)sp->ctx)->dsd_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			sp->flags |= SRB_CRC_CTX_DSD_VALID;
 
@@ -1093,18 +1362,31 @@ qla24xx_walk_and_build_sglist(struct qla_hw_data *ha, srb_t *sp, uint32_t *dsd,
 			cur_dsd = (uint32_t *)next_dsd;
 		}
 		sle_dma = sg_dma_address(sg);
+<<<<<<< HEAD
 		ql_dbg(ql_dbg_io, vha, 0x300a,
 		    "sg entry %d - addr=0x%x 0x%x, " "len=%d for cmd=%p.\n",
 		    i, LSD(sle_dma), MSD(sle_dma), sg_dma_len(sg), cmd);
+=======
+		DEBUG18(printk("%s(): %p, sg entry %d - addr =0x%x 0x%x,"
+		    " len =%d\n", __func__ , cur_dsd, i, LSD(sle_dma),
+		    MSD(sle_dma), sg_dma_len(sg)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*cur_dsd++ = cpu_to_le32(LSD(sle_dma));
 		*cur_dsd++ = cpu_to_le32(MSD(sle_dma));
 		*cur_dsd++ = cpu_to_le32(sg_dma_len(sg));
 		avail_dsds--;
 
+<<<<<<< HEAD
 		if (scsi_get_prot_op(cmd) == SCSI_PROT_WRITE_PASS) {
 			cp = page_address(sg_page(sg)) + sg->offset;
 			ql_dbg(ql_dbg_io, vha, 0x300b,
 			    "User data buffer=%p for cmd=%p.\n", cp, cmd);
+=======
+		if (scsi_get_prot_op(sp->cmd) == SCSI_PROT_WRITE_PASS) {
+			cp = page_address(sg_page(sg)) + sg->offset;
+			DEBUG18(printk("%s(): User Data buffer= %p:\n",
+			    __func__ , cp));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	/* Null termination */
@@ -1128,10 +1410,18 @@ qla24xx_walk_and_build_prot_sglist(struct qla_hw_data *ha, srb_t *sp,
 	struct scsi_cmnd *cmd;
 	uint32_t *cur_dsd = dsd;
 	uint16_t	used_dsds = tot_dsds;
+<<<<<<< HEAD
 	scsi_qla_host_t *vha = pci_get_drvdata(ha->pdev);
 	uint8_t		*cp;
 
 	cmd = GET_CMD_SP(sp);
+=======
+
+	uint8_t		*cp;
+
+
+	cmd = sp->cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	scsi_for_each_prot_sg(cmd, sg, tot_dsds, i) {
 		dma_addr_t	sle_dma;
 
@@ -1162,7 +1452,11 @@ qla24xx_walk_and_build_prot_sglist(struct qla_hw_data *ha, srb_t *sp,
 			}
 
 			list_add_tail(&dsd_ptr->list,
+<<<<<<< HEAD
 			    &((struct crc_context *)sp->u.scmd.ctx)->dsd_list);
+=======
+			    &((struct crc_context *)sp->ctx)->dsd_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			sp->flags |= SRB_CRC_CTX_DSD_VALID;
 
@@ -1173,22 +1467,37 @@ qla24xx_walk_and_build_prot_sglist(struct qla_hw_data *ha, srb_t *sp,
 			cur_dsd = (uint32_t *)next_dsd;
 		}
 		sle_dma = sg_dma_address(sg);
+<<<<<<< HEAD
 		if (scsi_get_prot_op(cmd) == SCSI_PROT_WRITE_PASS) {
 			ql_dbg(ql_dbg_io, vha, 0x3027,
 			    "%s(): %p, sg_entry %d - "
 			    "addr=0x%x0x%x, len=%d.\n",
 			    __func__, cur_dsd, i,
 			    LSD(sle_dma), MSD(sle_dma), sg_dma_len(sg));
+=======
+		if (scsi_get_prot_op(sp->cmd) == SCSI_PROT_WRITE_PASS) {
+			DEBUG18(printk(KERN_DEBUG
+			    "%s(): %p, sg entry %d - addr =0x%x"
+			    "0x%x, len =%d\n", __func__ , cur_dsd, i,
+			    LSD(sle_dma), MSD(sle_dma), sg_dma_len(sg)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		*cur_dsd++ = cpu_to_le32(LSD(sle_dma));
 		*cur_dsd++ = cpu_to_le32(MSD(sle_dma));
 		*cur_dsd++ = cpu_to_le32(sg_dma_len(sg));
 
+<<<<<<< HEAD
 		if (scsi_get_prot_op(cmd) == SCSI_PROT_WRITE_PASS) {
 			cp = page_address(sg_page(sg)) + sg->offset;
 			ql_dbg(ql_dbg_io, vha, 0x3028,
 			    "%s(): Protection Data buffer = %p.\n", __func__,
 			    cp);
+=======
+		if (scsi_get_prot_op(sp->cmd) == SCSI_PROT_WRITE_PASS) {
+			cp = page_address(sg_page(sg)) + sg->offset;
+			DEBUG18(printk("%s(): Protection Data buffer = %p:\n",
+			    __func__ , cp));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		avail_dsds--;
 	}
@@ -1216,7 +1525,11 @@ qla24xx_build_scsi_crc_2_iocbs(srb_t *sp, struct cmd_type_crc_2 *cmd_pkt,
 	struct scsi_cmnd	*cmd;
 	struct scatterlist	*cur_seg;
 	int			sgc;
+<<<<<<< HEAD
 	uint32_t		total_bytes = 0;
+=======
+	uint32_t		total_bytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint32_t		data_bytes;
 	uint32_t		dif_bytes;
 	uint8_t			bundling = 1;
@@ -1230,23 +1543,45 @@ qla24xx_build_scsi_crc_2_iocbs(srb_t *sp, struct cmd_type_crc_2 *cmd_pkt,
 	dma_addr_t		crc_ctx_dma;
 	char			tag[2];
 
+<<<<<<< HEAD
 	cmd = GET_CMD_SP(sp);
+=======
+	cmd = sp->cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sgc = 0;
 	/* Update entry type to indicate Command Type CRC_2 IOCB */
 	*((uint32_t *)(&cmd_pkt->entry_type)) =
 	    __constant_cpu_to_le32(COMMAND_TYPE_CRC_2);
 
+<<<<<<< HEAD
 	vha = sp->fcport->vha;
 	ha = vha->hw;
 
 	/* No data transfer */
 	data_bytes = scsi_bufflen(cmd);
 	if (!data_bytes || cmd->sc_data_direction == DMA_NONE) {
+=======
+	/* No data transfer */
+	data_bytes = scsi_bufflen(cmd);
+	if (!data_bytes || cmd->sc_data_direction == DMA_NONE) {
+		DEBUG18(printk(KERN_INFO "%s: Zero data bytes or DMA-NONE %d\n",
+		    __func__, data_bytes));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cmd_pkt->byte_count = __constant_cpu_to_le32(0);
 		return QLA_SUCCESS;
 	}
 
+<<<<<<< HEAD
+=======
+	vha = sp->fcport->vha;
+	ha = vha->hw;
+
+	DEBUG18(printk(KERN_DEBUG
+	    "%s(%ld): Executing cmd sp %p, prot_op=%u.\n", __func__,
+	    vha->host_no, sp, scsi_get_prot_op(sp->cmd)));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cmd_pkt->vp_index = sp->fcport->vp_idx;
 
 	/* Set transfer direction */
@@ -1258,6 +1593,7 @@ qla24xx_build_scsi_crc_2_iocbs(srb_t *sp, struct cmd_type_crc_2 *cmd_pkt,
 		    __constant_cpu_to_le16(CF_READ_DATA);
 	}
 
+<<<<<<< HEAD
 	if ((scsi_get_prot_op(cmd) == SCSI_PROT_READ_INSERT) ||
 	    (scsi_get_prot_op(cmd) == SCSI_PROT_WRITE_STRIP) ||
 	    (scsi_get_prot_op(cmd) == SCSI_PROT_READ_STRIP) ||
@@ -1267,6 +1603,15 @@ qla24xx_build_scsi_crc_2_iocbs(srb_t *sp, struct cmd_type_crc_2 *cmd_pkt,
 	/* Allocate CRC context from global pool */
 	crc_ctx_pkt = sp->u.scmd.ctx =
 	    dma_pool_alloc(ha->dl_dma_pool, GFP_ATOMIC, &crc_ctx_dma);
+=======
+	tot_prot_dsds = scsi_prot_sg_count(cmd);
+	if (!tot_prot_dsds)
+		bundling = 0;
+
+	/* Allocate CRC context from global pool */
+	crc_ctx_pkt = sp->ctx = dma_pool_alloc(ha->dl_dma_pool,
+	    GFP_ATOMIC, &crc_ctx_dma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!crc_ctx_pkt)
 		goto crc_queuing_error;
@@ -1284,7 +1629,11 @@ qla24xx_build_scsi_crc_2_iocbs(srb_t *sp, struct cmd_type_crc_2 *cmd_pkt,
 
 	INIT_LIST_HEAD(&crc_ctx_pkt->dsd_list);
 
+<<<<<<< HEAD
 	qla24xx_set_t10dif_tags(sp, (struct fw_dif_context *)
+=======
+	qla24xx_set_t10dif_tags(cmd, (struct fw_dif_context *)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    &crc_ctx_pkt->ref_tag, tot_prot_dsds);
 
 	cmd_pkt->crc_context_address[0] = cpu_to_le32(LSD(crc_ctx_dma));
@@ -1293,6 +1642,11 @@ qla24xx_build_scsi_crc_2_iocbs(srb_t *sp, struct cmd_type_crc_2 *cmd_pkt,
 
 	/* Determine SCSI command length -- align to 4 byte boundary */
 	if (cmd->cmd_len > 16) {
+<<<<<<< HEAD
+=======
+		DEBUG18(printk(KERN_INFO "%s(): **** SCSI CMD > 16\n",
+		    __func__));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		additional_fcpcdb_len = cmd->cmd_len - 16;
 		if ((cmd->cmd_len % 4) != 0) {
 			/* SCSI cmd > 16 bytes must be multiple of 4 */
@@ -1312,7 +1666,12 @@ qla24xx_build_scsi_crc_2_iocbs(srb_t *sp, struct cmd_type_crc_2 *cmd_pkt,
 	else if (cmd->sc_data_direction == DMA_FROM_DEVICE)
 		fcp_cmnd->additional_cdb_len |= 2;
 
+<<<<<<< HEAD
 	int_to_scsilun(cmd->device->lun, &fcp_cmnd->lun);
+=======
+	int_to_scsilun(sp->cmd->device->lun, &fcp_cmnd->lun);
+	host_to_fcp_swap((uint8_t *)&fcp_cmnd->lun, sizeof(fcp_cmnd->lun));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy(fcp_cmnd->cdb, cmd->cmnd, cmd->cmd_len);
 	cmd_pkt->fcp_cmnd_dseg_len = cpu_to_le16(fcp_cmnd_len);
 	cmd_pkt->fcp_cmnd_dseg_address[0] = cpu_to_le32(
@@ -1333,15 +1692,24 @@ qla24xx_build_scsi_crc_2_iocbs(srb_t *sp, struct cmd_type_crc_2 *cmd_pkt,
 		    fcp_cmnd->task_attribute = TSK_ORDERED;
 		    break;
 		default:
+<<<<<<< HEAD
 		    fcp_cmnd->task_attribute = TSK_SIMPLE;
 		    break;
 		}
 	} else {
 		fcp_cmnd->task_attribute = TSK_SIMPLE;
+=======
+		    fcp_cmnd->task_attribute = 0;
+		    break;
+		}
+	} else {
+		fcp_cmnd->task_attribute = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	cmd_pkt->fcp_rsp_dseg_len = 0; /* Let response come in status iocb */
 
+<<<<<<< HEAD
 	/* Compute dif len and adjust data len to incude protection */
 	dif_bytes = 0;
 	blk_size = cmd->device->sector_size;
@@ -1365,6 +1733,23 @@ qla24xx_build_scsi_crc_2_iocbs(srb_t *sp, struct cmd_type_crc_2 *cmd_pkt,
 	}
 
 	if (!qla2x00_hba_err_chk_enabled(sp))
+=======
+	DEBUG18(printk(KERN_INFO "%s(%ld): Total SG(s) Entries %d, Data"
+	    "entries %d, data bytes %d, Protection entries %d\n",
+	    __func__, vha->host_no, tot_dsds, (tot_dsds-tot_prot_dsds),
+	    data_bytes, tot_prot_dsds));
+
+	/* Compute dif len and adjust data len to incude protection */
+	total_bytes = data_bytes;
+	dif_bytes = 0;
+	blk_size = cmd->device->sector_size;
+	if (scsi_get_prot_op(cmd) != SCSI_PROT_NORMAL) {
+		dif_bytes = (data_bytes / blk_size) * 8;
+		total_bytes += dif_bytes;
+	}
+
+	if (!ql2xenablehba_err_chk)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fw_prot_opts |= 0x10; /* Disable Guard tag checking */
 
 	if (!bundling) {
@@ -1392,7 +1777,18 @@ qla24xx_build_scsi_crc_2_iocbs(srb_t *sp, struct cmd_type_crc_2 *cmd_pkt,
 	    additional_fcpcdb_len);
 	*fcp_dl = htonl(total_bytes);
 
+<<<<<<< HEAD
 	if (!data_bytes || cmd->sc_data_direction == DMA_NONE) {
+=======
+	DEBUG18(printk(KERN_INFO "%s(%ld): dif bytes = 0x%x (%d), total bytes"
+	    " = 0x%x (%d), dat block size =0x%x (%d)\n", __func__,
+	    vha->host_no, dif_bytes, dif_bytes, total_bytes, total_bytes,
+	    crc_ctx_pkt->blk_size, crc_ctx_pkt->blk_size));
+
+	if (!data_bytes || cmd->sc_data_direction == DMA_NONE) {
+		DEBUG18(printk(KERN_INFO "%s: Zero data bytes or DMA-NONE %d\n",
+		    __func__, data_bytes));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cmd_pkt->byte_count = __constant_cpu_to_le32(0);
 		return QLA_SUCCESS;
 	}
@@ -1400,12 +1796,16 @@ qla24xx_build_scsi_crc_2_iocbs(srb_t *sp, struct cmd_type_crc_2 *cmd_pkt,
 
 	cmd_pkt->control_flags |=
 	    __constant_cpu_to_le16(CF_DATA_SEG_DESCR_ENABLE);
+<<<<<<< HEAD
 
 	if (!bundling && tot_prot_dsds) {
 		if (qla24xx_walk_and_build_sglist_no_difb(ha, sp,
 		    cur_dsd, tot_dsds))
 			goto crc_queuing_error;
 	} else if (qla24xx_walk_and_build_sglist(ha, sp, cur_dsd,
+=======
+	if (qla24xx_walk_and_build_sglist(ha, sp, cur_dsd,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    (tot_dsds - tot_prot_dsds)))
 		goto crc_queuing_error;
 
@@ -1422,6 +1822,11 @@ qla24xx_build_scsi_crc_2_iocbs(srb_t *sp, struct cmd_type_crc_2 *cmd_pkt,
 	return QLA_SUCCESS;
 
 crc_queuing_error:
+<<<<<<< HEAD
+=======
+	DEBUG18(qla_printk(KERN_INFO, ha,
+	    "CMD sent FAILED crc_q error:sp = %p\n", sp));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Cleanup will be performed by the caller */
 
 	return QLA_FUNCTION_FAILED;
@@ -1447,7 +1852,11 @@ qla24xx_start_scsi(srb_t *sp)
 	uint16_t	tot_dsds;
 	struct req_que *req = NULL;
 	struct rsp_que *rsp = NULL;
+<<<<<<< HEAD
 	struct scsi_cmnd *cmd = GET_CMD_SP(sp);
+=======
+	struct scsi_cmnd *cmd = sp->cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct scsi_qla_host *vha = sp->fcport->vha;
 	struct qla_hw_data *ha = vha->hw;
 	char		tag[2];
@@ -1463,8 +1872,13 @@ qla24xx_start_scsi(srb_t *sp)
 
 	/* Send marker if required */
 	if (vha->marker_needed != 0) {
+<<<<<<< HEAD
 		if (qla2x00_marker(vha, req, rsp, 0, 0, MK_SYNC_ALL) !=
 		    QLA_SUCCESS)
+=======
+		if (qla2x00_marker(vha, req, rsp, 0, 0, MK_SYNC_ALL)
+							!= QLA_SUCCESS)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return QLA_FUNCTION_FAILED;
 		vha->marker_needed = 0;
 	}
@@ -1481,9 +1895,14 @@ qla24xx_start_scsi(srb_t *sp)
 		if (!req->outstanding_cmds[handle])
 			break;
 	}
+<<<<<<< HEAD
 	if (index == MAX_OUTSTANDING_COMMANDS) {
 		goto queuing_error;
 	}
+=======
+	if (index == MAX_OUTSTANDING_COMMANDS)
+		goto queuing_error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Map the sg table so we have an accurate count of sg entries needed */
 	if (scsi_sg_count(cmd)) {
@@ -1495,7 +1914,12 @@ qla24xx_start_scsi(srb_t *sp)
 		nseg = 0;
 
 	tot_dsds = nseg;
+<<<<<<< HEAD
 	req_cnt = qla24xx_calc_iocbs(vha, tot_dsds);
+=======
+
+	req_cnt = qla24xx_calc_iocbs(tot_dsds);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (req->cnt < (req_cnt + 2)) {
 		cnt = RD_REG_DWORD_RELAXED(req->req_q_out);
 
@@ -1512,7 +1936,11 @@ qla24xx_start_scsi(srb_t *sp)
 	req->current_outstanding_cmd = handle;
 	req->outstanding_cmds[handle] = sp;
 	sp->handle = handle;
+<<<<<<< HEAD
 	cmd->host_scribble = (unsigned char *)(unsigned long)handle;
+=======
+	sp->cmd->host_scribble = (unsigned char *)(unsigned long)handle;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	req->cnt -= req_cnt;
 
 	cmd_pkt = (struct cmd_type_7 *)req->ring_ptr;
@@ -1531,7 +1959,11 @@ qla24xx_start_scsi(srb_t *sp)
 	cmd_pkt->port_id[2] = sp->fcport->d_id.b.domain;
 	cmd_pkt->vp_index = sp->fcport->vp_idx;
 
+<<<<<<< HEAD
 	int_to_scsilun(cmd->device->lun, &cmd_pkt->lun);
+=======
+	int_to_scsilun(sp->cmd->device->lun, &cmd_pkt->lun);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	host_to_fcp_swap((uint8_t *)&cmd_pkt->lun, sizeof(cmd_pkt->lun));
 
 	/* Update tagged queuing modifier -- default is TSK_SIMPLE (0). */
@@ -1543,12 +1975,16 @@ qla24xx_start_scsi(srb_t *sp)
 		case ORDERED_QUEUE_TAG:
 			cmd_pkt->task = TSK_ORDERED;
 			break;
+<<<<<<< HEAD
 		default:
 		    cmd_pkt->task = TSK_SIMPLE;
 		    break;
 		}
 	} else {
 		cmd_pkt->task = TSK_SIMPLE;
+=======
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Load SCSI command packet. */
@@ -1565,6 +2001,10 @@ qla24xx_start_scsi(srb_t *sp)
 	/* Specify response queue number where completion should happen */
 	cmd_pkt->entry_status = (uint8_t) rsp->id;
 	wmb();
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Adjust ring index. */
 	req->ring_index++;
 	if (req->ring_index == req->length) {
@@ -1618,7 +2058,11 @@ qla24xx_dif_start_scsi(srb_t *sp)
 	uint16_t		fw_prot_opts = 0;
 	struct req_que		*req = NULL;
 	struct rsp_que		*rsp = NULL;
+<<<<<<< HEAD
 	struct scsi_cmnd	*cmd = GET_CMD_SP(sp);
+=======
+	struct scsi_cmnd	*cmd = sp->cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct scsi_qla_host	*vha = sp->fcport->vha;
 	struct qla_hw_data	*ha = vha->hw;
 	struct cmd_type_crc_2	*cmd_pkt;
@@ -1673,6 +2117,7 @@ qla24xx_dif_start_scsi(srb_t *sp)
 			goto queuing_error;
 		else
 			sp->flags |= SRB_DMA_VALID;
+<<<<<<< HEAD
 
 		if ((scsi_get_prot_op(cmd) == SCSI_PROT_READ_INSERT) ||
 		    (scsi_get_prot_op(cmd) == SCSI_PROT_WRITE_STRIP)) {
@@ -1689,6 +2134,8 @@ qla24xx_dif_start_scsi(srb_t *sp)
 			    cmd->device->sector_size, &sgx, &partial))
 				nseg++;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		nseg = 0;
 
@@ -1703,11 +2150,14 @@ qla24xx_dif_start_scsi(srb_t *sp)
 			goto queuing_error;
 		else
 			sp->flags |= SRB_CRC_PROT_DMA_VALID;
+<<<<<<< HEAD
 
 		if ((scsi_get_prot_op(cmd) == SCSI_PROT_READ_INSERT) ||
 		    (scsi_get_prot_op(cmd) == SCSI_PROT_WRITE_STRIP)) {
 			nseg = scsi_bufflen(cmd) / cmd->device->sector_size;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		nseg = 0;
 	}
@@ -1734,8 +2184,12 @@ qla24xx_dif_start_scsi(srb_t *sp)
 	/* Build header part of command packet (excluding the OPCODE). */
 	req->current_outstanding_cmd = handle;
 	req->outstanding_cmds[handle] = sp;
+<<<<<<< HEAD
 	sp->handle = handle;
 	cmd->host_scribble = (unsigned char *)(unsigned long)handle;
+=======
+	sp->cmd->host_scribble = (unsigned char *)(unsigned long)handle;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	req->cnt -= req_cnt;
 
 	/* Fill-in common area */
@@ -1751,7 +2205,11 @@ qla24xx_dif_start_scsi(srb_t *sp)
 	cmd_pkt->port_id[1] = sp->fcport->d_id.b.area;
 	cmd_pkt->port_id[2] = sp->fcport->d_id.b.domain;
 
+<<<<<<< HEAD
 	int_to_scsilun(cmd->device->lun, &cmd_pkt->lun);
+=======
+	int_to_scsilun(sp->cmd->device->lun, &cmd_pkt->lun);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	host_to_fcp_swap((uint8_t *)&cmd_pkt->lun, sizeof(cmd_pkt->lun));
 
 	/* Total Data and protection segment(s) */
@@ -1798,13 +2256,23 @@ queuing_error:
 	/* Cleanup will be performed by the caller (queuecommand) */
 
 	spin_unlock_irqrestore(&ha->hardware_lock, flags);
+<<<<<<< HEAD
+=======
+
+	DEBUG18(qla_printk(KERN_INFO, ha,
+	    "CMD sent FAILED SCSI prot_op:%02x\n", scsi_get_prot_op(cmd)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return QLA_FUNCTION_FAILED;
 }
 
 
 static void qla25xx_set_que(srb_t *sp, struct rsp_que **rsp)
 {
+<<<<<<< HEAD
 	struct scsi_cmnd *cmd = GET_CMD_SP(sp);
+=======
+	struct scsi_cmnd *cmd = sp->cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct qla_hw_data *ha = sp->fcport->vha->hw;
 	int affinity = cmd->request->cpu;
 
@@ -1842,17 +2310,23 @@ qla2x00_alloc_iocbs(scsi_qla_host_t *vha, srb_t *sp)
 		if (!req->outstanding_cmds[handle])
 			break;
 	}
+<<<<<<< HEAD
 	if (index == MAX_OUTSTANDING_COMMANDS) {
 		ql_log(ql_log_warn, vha, 0x700b,
 		    "No room on oustanding cmd array.\n");
 		goto queuing_error;
 	}
+=======
+	if (index == MAX_OUTSTANDING_COMMANDS)
+		goto queuing_error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Prep command array. */
 	req->current_outstanding_cmd = handle;
 	req->outstanding_cmds[handle] = sp;
 	sp->handle = handle;
 
+<<<<<<< HEAD
 	/* Adjust entry-counts as needed. */
 	if (sp->type != SRB_SCSI_CMD)
 		req_cnt = sp->iocbs;
@@ -1861,6 +2335,12 @@ skip_cmd_array:
 	/* Check for room on request queue. */
 	if (req->cnt < req_cnt) {
 		if (ha->mqenable || IS_QLA83XX(ha))
+=======
+skip_cmd_array:
+	/* Check for room on request queue. */
+	if (req->cnt < req_cnt) {
+		if (ha->mqenable)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cnt = RD_REG_DWORD(&reg->isp25mq.req_q_out);
 		else if (IS_QLA82XX(ha))
 			cnt = RD_REG_DWORD(&reg->isp82.req_q_out);
@@ -1891,9 +2371,52 @@ queuing_error:
 }
 
 static void
+<<<<<<< HEAD
 qla24xx_login_iocb(srb_t *sp, struct logio_entry_24xx *logio)
 {
 	struct srb_iocb *lio = &sp->u.iocb_cmd;
+=======
+qla2x00_start_iocbs(srb_t *sp)
+{
+	struct qla_hw_data *ha = sp->fcport->vha->hw;
+	struct req_que *req = ha->req_q_map[0];
+	device_reg_t __iomem *reg = ISP_QUE_REG(ha, req->id);
+	struct device_reg_2xxx __iomem *ioreg = &ha->iobase->isp;
+
+	if (IS_QLA82XX(ha)) {
+		qla82xx_start_iocbs(sp);
+	} else {
+		/* Adjust ring index. */
+		req->ring_index++;
+		if (req->ring_index == req->length) {
+			req->ring_index = 0;
+			req->ring_ptr = req->ring;
+		} else
+			req->ring_ptr++;
+
+		/* Set chip new ring index. */
+		if (ha->mqenable) {
+			WRT_REG_DWORD(&reg->isp25mq.req_q_in, req->ring_index);
+			RD_REG_DWORD(&ioreg->hccr);
+		} else if (IS_QLA82XX(ha)) {
+			qla82xx_start_iocbs(sp);
+		} else if (IS_FWI2_CAPABLE(ha)) {
+			WRT_REG_DWORD(&reg->isp24.req_q_in, req->ring_index);
+			RD_REG_DWORD_RELAXED(&reg->isp24.req_q_in);
+		} else {
+			WRT_REG_WORD(ISP_REQ_Q_IN(ha, &reg->isp),
+				req->ring_index);
+			RD_REG_WORD_RELAXED(ISP_REQ_Q_IN(ha, &reg->isp));
+		}
+	}
+}
+
+static void
+qla24xx_login_iocb(srb_t *sp, struct logio_entry_24xx *logio)
+{
+	struct srb_ctx *ctx = sp->ctx;
+	struct srb_iocb *lio = ctx->u.iocb_cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	logio->entry_type = LOGINOUT_PORT_IOCB_TYPE;
 	logio->control_flags = cpu_to_le16(LCF_COMMAND_PLOGI);
@@ -1912,7 +2435,12 @@ static void
 qla2x00_login_iocb(srb_t *sp, struct mbx_entry *mbx)
 {
 	struct qla_hw_data *ha = sp->fcport->vha->hw;
+<<<<<<< HEAD
 	struct srb_iocb *lio = &sp->u.iocb_cmd;
+=======
+	struct srb_ctx *ctx = sp->ctx;
+	struct srb_iocb *lio = ctx->u.iocb_cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint16_t opts;
 
 	mbx->entry_type = MBX_IOCB_TYPE;
@@ -2001,7 +2529,12 @@ qla24xx_tm_iocb(srb_t *sp, struct tsk_mgmt_entry *tsk)
 	struct fc_port *fcport = sp->fcport;
 	scsi_qla_host_t *vha = fcport->vha;
 	struct qla_hw_data *ha = vha->hw;
+<<<<<<< HEAD
 	struct srb_iocb *iocb = &sp->u.iocb_cmd;
+=======
+	struct srb_ctx *ctx = sp->ctx;
+	struct srb_iocb *iocb = ctx->u.iocb_cmd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct req_que *req = vha->req;
 
 	flags = iocb->u.tmf.flags;
@@ -2028,7 +2561,11 @@ qla24xx_tm_iocb(srb_t *sp, struct tsk_mgmt_entry *tsk)
 static void
 qla24xx_els_iocb(srb_t *sp, struct els_entry_24xx *els_iocb)
 {
+<<<<<<< HEAD
 	struct fc_bsg_job *bsg_job = sp->u.bsg_job;
+=======
+	struct fc_bsg_job *bsg_job = ((struct srb_ctx *)sp->ctx)->u.bsg_job;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
         els_iocb->entry_type = ELS_IOCB_TYPE;
         els_iocb->entry_count = 1;
@@ -2042,7 +2579,11 @@ qla24xx_els_iocb(srb_t *sp, struct els_entry_24xx *els_iocb)
         els_iocb->rx_dsd_count = __constant_cpu_to_le16(bsg_job->reply_payload.sg_cnt);
 
 	els_iocb->opcode =
+<<<<<<< HEAD
 	    sp->type == SRB_ELS_CMD_RPT ?
+=======
+	    (((struct srb_ctx *)sp->ctx)->type == SRB_ELS_CMD_RPT) ?
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    bsg_job->request->rqst_data.r_els.els_code :
 	    bsg_job->request->rqst_data.h_els.command_code;
         els_iocb->port_id[0] = sp->fcport->d_id.b.al_pa;
@@ -2079,7 +2620,11 @@ qla2x00_ct_iocb(srb_t *sp, ms_iocb_entry_t *ct_iocb)
 	uint16_t tot_dsds;
 	scsi_qla_host_t *vha = sp->fcport->vha;
 	struct qla_hw_data *ha = vha->hw;
+<<<<<<< HEAD
 	struct fc_bsg_job *bsg_job = sp->u.bsg_job;
+=======
+	struct fc_bsg_job *bsg_job = ((struct srb_ctx *)sp->ctx)->u.bsg_job;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int loop_iterartion = 0;
 	int cont_iocb_prsnt = 0;
 	int entry_count = 1;
@@ -2128,8 +2673,12 @@ qla2x00_ct_iocb(srb_t *sp, ms_iocb_entry_t *ct_iocb)
 			* Five DSDs are available in the Cont.
 			* Type 1 IOCB.
 			       */
+<<<<<<< HEAD
 			cont_pkt = qla2x00_prep_cont_type1_iocb(vha,
 			    vha->hw->req_q_map[0]);
+=======
+			cont_pkt = qla2x00_prep_cont_type1_iocb(vha);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cur_dsd = (uint32_t *) cont_pkt->dseg_0_address;
 			avail_dsds = 5;
 			cont_iocb_prsnt = 1;
@@ -2155,8 +2704,12 @@ qla24xx_ct_iocb(srb_t *sp, struct ct_entry_24xx *ct_iocb)
 	int index;
 	uint16_t tot_dsds;
         scsi_qla_host_t *vha = sp->fcport->vha;
+<<<<<<< HEAD
 	struct qla_hw_data *ha = vha->hw;
 	struct fc_bsg_job *bsg_job = sp->u.bsg_job;
+=======
+	struct fc_bsg_job *bsg_job = ((struct srb_ctx *)sp->ctx)->u.bsg_job;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int loop_iterartion = 0;
 	int cont_iocb_prsnt = 0;
 	int entry_count = 1;
@@ -2201,8 +2754,12 @@ qla24xx_ct_iocb(srb_t *sp, struct ct_entry_24xx *ct_iocb)
 			* Five DSDs are available in the Cont.
 			* Type 1 IOCB.
 			       */
+<<<<<<< HEAD
 			cont_pkt = qla2x00_prep_cont_type1_iocb(vha,
 			    ha->req_q_map[0]);
+=======
+			cont_pkt = qla2x00_prep_cont_type1_iocb(vha);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cur_dsd = (uint32_t *) cont_pkt->dseg_0_address;
 			avail_dsds = 5;
 			cont_iocb_prsnt = 1;
@@ -2219,6 +2776,7 @@ qla24xx_ct_iocb(srb_t *sp, struct ct_entry_24xx *ct_iocb)
         ct_iocb->entry_count = entry_count;
 }
 
+<<<<<<< HEAD
 /*
  * qla82xx_start_scsi() - Send a SCSI command to the ISP
  * @sp: command to send to the ISP
@@ -2596,17 +3154,24 @@ queuing_error:
 	return QLA_FUNCTION_FAILED;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int
 qla2x00_start_sp(srb_t *sp)
 {
 	int rval;
 	struct qla_hw_data *ha = sp->fcport->vha->hw;
 	void *pkt;
+<<<<<<< HEAD
+=======
+	struct srb_ctx *ctx = sp->ctx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	rval = QLA_FUNCTION_FAILED;
 	spin_lock_irqsave(&ha->hardware_lock, flags);
 	pkt = qla2x00_alloc_iocbs(sp->fcport->vha, sp);
+<<<<<<< HEAD
 	if (!pkt) {
 		ql_log(ql_log_warn, sp->fcport->vha, 0x700c,
 		    "qla2x00_alloc_iocbs failed.\n");
@@ -2615,6 +3180,13 @@ qla2x00_start_sp(srb_t *sp)
 
 	rval = QLA_SUCCESS;
 	switch (sp->type) {
+=======
+	if (!pkt)
+		goto done;
+
+	rval = QLA_SUCCESS;
+	switch (ctx->type) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case SRB_LOGIN_CMD:
 		IS_FWI2_CAPABLE(ha) ?
 		    qla24xx_login_iocb(sp, pkt) :
@@ -2631,8 +3203,13 @@ qla2x00_start_sp(srb_t *sp)
 		break;
 	case SRB_CT_CMD:
 		IS_FWI2_CAPABLE(ha) ?
+<<<<<<< HEAD
 		    qla24xx_ct_iocb(sp, pkt) :
 		    qla2x00_ct_iocb(sp, pkt);
+=======
+		qla24xx_ct_iocb(sp, pkt) :
+		qla2x00_ct_iocb(sp, pkt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case SRB_ADISC_CMD:
 		IS_FWI2_CAPABLE(ha) ?
@@ -2647,7 +3224,11 @@ qla2x00_start_sp(srb_t *sp)
 	}
 
 	wmb();
+<<<<<<< HEAD
 	qla2x00_start_iocbs(sp->fcport->vha, ha->req_q_map[0]);
+=======
+	qla2x00_start_iocbs(sp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 done:
 	spin_unlock_irqrestore(&ha->hardware_lock, flags);
 	return rval;

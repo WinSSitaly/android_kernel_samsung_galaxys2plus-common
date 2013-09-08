@@ -152,6 +152,12 @@ struct rtc_class_ops {
 	int (*set_mmss)(struct device *, unsigned long secs);
 	int (*read_callback)(struct device *, int data);
 	int (*alarm_irq_enable)(struct device *, unsigned int enabled);
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_RTC_CHN_ALARM_BOOT)
+	int (*set_alarm_boot)(struct device *, struct rtc_wkalrm *); 
+#endif 	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define RTC_DEVICE_NAME_SIZE 20
@@ -202,8 +208,12 @@ struct rtc_device
 	struct hrtimer pie_timer; /* sub second exp, so needs hrtimer */
 	int pie_enabled;
 	struct work_struct irqwork;
+<<<<<<< HEAD
 	/* Some hardware can't support UIE mode */
 	int uie_unsupported;
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_RTC_INTF_DEV_UIE_EMUL
 	struct work_struct uie_task;
@@ -268,6 +278,15 @@ int rtc_timer_start(struct rtc_device *rtc, struct rtc_timer* timer,
 int rtc_timer_cancel(struct rtc_device *rtc, struct rtc_timer* timer);
 void rtc_timer_do_work(struct work_struct *work);
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_RTC_CHN_ALARM_BOOT)
+extern int rtc_set_alarm_boot(struct rtc_device *rtc, 
+				struct rtc_wkalrm *alarm); 
+#endif 
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline bool is_leap_year(unsigned int year)
 {
 	return (!(year % 4) && (year % 100)) || !(year % 400);

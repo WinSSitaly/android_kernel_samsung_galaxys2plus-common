@@ -16,7 +16,10 @@
  * __put_user_X
  *
  * Inputs:	r0 contains the address
+<<<<<<< HEAD
  *		r1 contains the address limit, which must be preserved
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *		r2, r3 contains the value
  * Outputs:	r0 is the error code
  *		lr corrupted
@@ -28,18 +31,26 @@
  * Note also that it is intended that __put_user_bad is not global.
  */
 #include <linux/linkage.h>
+<<<<<<< HEAD
 #include <asm/assembler.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/errno.h>
 #include <asm/domain.h>
 
 ENTRY(__put_user_1)
+<<<<<<< HEAD
 	check_uaccess r0, 1, r1, ip, __put_user_bad
 1: TUSER(strb)	r2, [r0]
+=======
+1:	T(strb)	r2, [r0]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mov	r0, #0
 	mov	pc, lr
 ENDPROC(__put_user_1)
 
 ENTRY(__put_user_2)
+<<<<<<< HEAD
 	check_uaccess r0, 2, r1, ip, __put_user_bad
 	mov	ip, r2, lsr #8
 #ifdef CONFIG_THUMB2_KERNEL
@@ -57,6 +68,24 @@ ENTRY(__put_user_2)
 #else
 2: TUSER(strb)	ip, [r0], #1
 3: TUSER(strb)	r2, [r0]
+=======
+	mov	ip, r2, lsr #8
+#ifdef CONFIG_THUMB2_KERNEL
+#ifndef __ARMEB__
+2:	T(strb)	r2, [r0]
+3:	T(strb)	ip, [r0, #1]
+#else
+2:	T(strb)	ip, [r0]
+3:	T(strb)	r2, [r0, #1]
+#endif
+#else	/* !CONFIG_THUMB2_KERNEL */
+#ifndef __ARMEB__
+2:	T(strb)	r2, [r0], #1
+3:	T(strb)	ip, [r0]
+#else
+2:	T(strb)	ip, [r0], #1
+3:	T(strb)	r2, [r0]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 #endif	/* CONFIG_THUMB2_KERNEL */
 	mov	r0, #0
@@ -64,13 +93,18 @@ ENTRY(__put_user_2)
 ENDPROC(__put_user_2)
 
 ENTRY(__put_user_4)
+<<<<<<< HEAD
 	check_uaccess r0, 4, r1, ip, __put_user_bad
 4: TUSER(str)	r2, [r0]
+=======
+4:	T(str)	r2, [r0]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mov	r0, #0
 	mov	pc, lr
 ENDPROC(__put_user_4)
 
 ENTRY(__put_user_8)
+<<<<<<< HEAD
 	check_uaccess r0, 8, r1, ip, __put_user_bad
 #ifdef CONFIG_THUMB2_KERNEL
 5: TUSER(str)	r2, [r0]
@@ -78,6 +112,14 @@ ENTRY(__put_user_8)
 #else
 5: TUSER(str)	r2, [r0], #4
 6: TUSER(str)	r3, [r0]
+=======
+#ifdef CONFIG_THUMB2_KERNEL
+5:	T(str)	r2, [r0]
+6:	T(str)	r3, [r0, #4]
+#else
+5:	T(str)	r2, [r0], #4
+6:	T(str)	r3, [r0]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	mov	r0, #0
 	mov	pc, lr

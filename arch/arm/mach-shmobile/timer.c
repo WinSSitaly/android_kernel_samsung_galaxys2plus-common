@@ -20,7 +20,10 @@
  */
 #include <linux/platform_device.h>
 #include <asm/mach/time.h>
+<<<<<<< HEAD
 #include <asm/smp_twd.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void __init shmobile_late_time_init(void)
 {
@@ -37,6 +40,7 @@ static void __init shmobile_late_time_init(void)
 	early_platform_driver_probe("earlytimer", 2, 0);
 }
 
+<<<<<<< HEAD
 void __init shmobile_earlytimer_init(void)
 {
 	late_time_init = shmobile_late_time_init;
@@ -44,6 +48,11 @@ void __init shmobile_earlytimer_init(void)
 
 static void __init shmobile_timer_init(void)
 {
+=======
+static void __init shmobile_timer_init(void)
+{
+	late_time_init = shmobile_late_time_init;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct sys_timer shmobile_timer = {

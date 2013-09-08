@@ -83,7 +83,10 @@ int usbnet_generic_cdc_bind(struct usbnet *dev, struct usb_interface *intf)
 	struct cdc_state		*info = (void *) &dev->data;
 	int				status;
 	int				rndis;
+<<<<<<< HEAD
 	bool				android_rndis_quirk = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct usb_driver		*driver = driver_of(intf);
 	struct usb_cdc_mdlm_desc	*desc = NULL;
 	struct usb_cdc_mdlm_detail_desc *detail = NULL;
@@ -196,11 +199,14 @@ int usbnet_generic_cdc_bind(struct usbnet *dev, struct usb_interface *intf)
 					info->control,
 					info->u->bSlaveInterface0,
 					info->data);
+<<<<<<< HEAD
 				/* fall back to hard-wiring for RNDIS */
 				if (rndis) {
 					android_rndis_quirk = true;
 					goto next_desc;
 				}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto bad_desc;
 			}
 			if (info->control != intf) {
@@ -277,6 +283,7 @@ next_desc:
 	/* Microsoft ActiveSync based and some regular RNDIS devices lack the
 	 * CDC descriptors, so we'll hard-wire the interfaces and not check
 	 * for descriptors.
+<<<<<<< HEAD
 	 *
 	 * Some Android RNDIS devices have a CDC Union descriptor pointing
 	 * to non-existing interfaces.  Ignore that and attempt the same
@@ -286,6 +293,13 @@ next_desc:
 		info->control = usb_ifnum_to_if(dev->udev, 0);
 		info->data = usb_ifnum_to_if(dev->udev, 1);
 		if (!info->control || !info->data || info->control != intf) {
+=======
+	 */
+	if (rndis && !info->u) {
+		info->control = usb_ifnum_to_if(dev->udev, 0);
+		info->data = usb_ifnum_to_if(dev->udev, 1);
+		if (!info->control || !info->data) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev_dbg(&intf->dev,
 				"rndis: master #0/%p slave #1/%p\n",
 				info->control,
@@ -435,9 +449,12 @@ int usbnet_cdc_bind(struct usbnet *dev, struct usb_interface *intf)
 	int				status;
 	struct cdc_state		*info = (void *) &dev->data;
 
+<<<<<<< HEAD
 	BUILD_BUG_ON((sizeof(((struct usbnet *)0)->data)
 			< sizeof(struct cdc_state)));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = usbnet_generic_cdc_bind(dev, intf);
 	if (status < 0)
 		return status;
@@ -485,7 +502,10 @@ static const struct driver_info wwan_info = {
 /*-------------------------------------------------------------------------*/
 
 #define HUAWEI_VENDOR_ID	0x12D1
+<<<<<<< HEAD
 #define NOVATEL_VENDOR_ID	0x1410
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const struct usb_device_id	products [] = {
 /*
@@ -581,7 +601,11 @@ static const struct usb_device_id	products [] = {
 {
 	USB_DEVICE_AND_INTERFACE_INFO(0x1004, 0x61aa, USB_CLASS_COMM,
 			USB_CDC_SUBCLASS_ETHERNET, USB_CDC_PROTO_NONE),
+<<<<<<< HEAD
 	.driver_info = 0,
+=======
+	.driver_info = (unsigned long)&wwan_info,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 },
 
 /* Logitech Harmony 900 - uses the pseudo-MDLM (BLAN) driver */
@@ -603,6 +627,7 @@ static const struct usb_device_id	products [] = {
  * because of bugs/quirks in a given product (like Zaurus, above).
  */
 {
+<<<<<<< HEAD
 	/* Novatel USB551L */
 	/* This match must come *before* the generic CDC-ETHER match so that
 	 * we get FLAG_WWAN set on the device, since it's descriptors are
@@ -623,6 +648,8 @@ static const struct usb_device_id	products [] = {
 			USB_CDC_SUBCLASS_ETHERNET, USB_CDC_PROTO_NONE),
 	.driver_info = (kernel_ulong_t) &wwan_info,
 }, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	USB_INTERFACE_INFO(USB_CLASS_COMM, USB_CDC_SUBCLASS_ETHERNET,
 			USB_CDC_PROTO_NONE),
 	.driver_info = (unsigned long) &cdc_info,
@@ -656,7 +683,25 @@ static struct usb_driver cdc_driver = {
 	.supports_autosuspend = 1,
 };
 
+<<<<<<< HEAD
 module_usb_driver(cdc_driver);
+=======
+
+static int __init cdc_init(void)
+{
+	BUILD_BUG_ON((sizeof(((struct usbnet *)0)->data)
+			< sizeof(struct cdc_state)));
+
+ 	return usb_register(&cdc_driver);
+}
+module_init(cdc_init);
+
+static void __exit cdc_exit(void)
+{
+ 	usb_deregister(&cdc_driver);
+}
+module_exit(cdc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("David Brownell");
 MODULE_DESCRIPTION("USB CDC Ethernet devices");

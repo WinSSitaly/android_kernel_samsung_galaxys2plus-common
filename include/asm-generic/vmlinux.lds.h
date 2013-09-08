@@ -167,7 +167,10 @@
 	CPU_KEEP(exit.data)						\
 	MEM_KEEP(init.data)						\
 	MEM_KEEP(exit.data)						\
+<<<<<<< HEAD
 	*(.data.unlikely)						\
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	STRUCT_ALIGN();							\
 	*(__tracepoints)						\
 	/* implement dynamic printk debug */				\
@@ -223,6 +226,10 @@
 		VMLINUX_SYMBOL(__start___tracepoints_ptrs) = .;		\
 		*(__tracepoints_ptrs)	/* Tracepoints: pointer array */\
 		VMLINUX_SYMBOL(__stop___tracepoints_ptrs) = .;		\
+<<<<<<< HEAD
+=======
+		*(__markers_strings)	/* Markers: strings */		\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*(__tracepoints_strings)/* Tracepoints: strings */	\
 	}								\
 									\
@@ -616,6 +623,7 @@
 		*(.init.setup)						\
 		VMLINUX_SYMBOL(__setup_end) = .;
 
+<<<<<<< HEAD
 #define INIT_CALLS_LEVEL(level)						\
 		VMLINUX_SYMBOL(__initcall##level##_start) = .;		\
 		*(.initcall##level##.init)				\
@@ -633,6 +641,32 @@
 		INIT_CALLS_LEVEL(rootfs)				\
 		INIT_CALLS_LEVEL(6)					\
 		INIT_CALLS_LEVEL(7)					\
+=======
+#define INITCALLS							\
+	*(.initcallearly.init)						\
+	VMLINUX_SYMBOL(__early_initcall_end) = .;			\
+  	*(.initcall0.init)						\
+  	*(.initcall0s.init)						\
+  	*(.initcall1.init)						\
+  	*(.initcall1s.init)						\
+  	*(.initcall2.init)						\
+  	*(.initcall2s.init)						\
+  	*(.initcall3.init)						\
+  	*(.initcall3s.init)						\
+  	*(.initcall4.init)						\
+  	*(.initcall4s.init)						\
+  	*(.initcall5.init)						\
+  	*(.initcall5s.init)						\
+	*(.initcallrootfs.init)						\
+  	*(.initcall6.init)						\
+  	*(.initcall6s.init)						\
+  	*(.initcall7.init)						\
+  	*(.initcall7s.init)
+
+#define INIT_CALLS							\
+		VMLINUX_SYMBOL(__initcall_start) = .;			\
+		INITCALLS						\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		VMLINUX_SYMBOL(__initcall_end) = .;
 
 #define CON_INITCALL							\

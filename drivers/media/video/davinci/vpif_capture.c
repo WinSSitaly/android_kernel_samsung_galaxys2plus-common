@@ -33,6 +33,10 @@
 #include <linux/i2c.h>
 #include <linux/platform_device.h>
 #include <linux/io.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <media/v4l2-device.h>
 #include <media/v4l2-ioctl.h>
@@ -43,7 +47,10 @@
 
 MODULE_DESCRIPTION("TI DaVinci VPIF Capture driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_VERSION(VPIF_CAPTURE_VERSION);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define vpif_err(fmt, arg...)	v4l2_err(&vpif_obj.v4l2_dev, fmt, ## arg)
 #define vpif_dbg(level, debug, fmt, arg...)	\
@@ -1677,6 +1684,10 @@ static int vpif_querycap(struct file *file, void  *priv,
 {
 	struct vpif_capture_config *config = vpif_dev->platform_data;
 
+<<<<<<< HEAD
+=======
+	cap->version = VPIF_CAPTURE_VERSION_CODE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cap->capabilities = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
 	strlcpy(cap->driver, "vpif capture", sizeof(cap->driver));
 	strlcpy(cap->bus_info, "DM646x Platform", sizeof(cap->bus_info));
@@ -2177,12 +2188,15 @@ static __init int vpif_probe(struct platform_device *pdev)
 		return err;
 	}
 
+<<<<<<< HEAD
 	err = v4l2_device_register(vpif_dev, &vpif_obj.v4l2_dev);
 	if (err) {
 		v4l2_err(vpif_dev->driver, "Error registering v4l2 device\n");
 		return err;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	k = 0;
 	while ((res = platform_get_resource(pdev, IORESOURCE_IRQ, k))) {
 		for (i = res->start; i <= res->end; i++) {
@@ -2216,8 +2230,15 @@ static __init int vpif_probe(struct platform_device *pdev)
 		vfd->v4l2_dev = &vpif_obj.v4l2_dev;
 		vfd->release = video_device_release;
 		snprintf(vfd->name, sizeof(vfd->name),
+<<<<<<< HEAD
 			 "DM646x_VPIFCapture_DRIVER_V%s",
 			 VPIF_CAPTURE_VERSION);
+=======
+			 "DM646x_VPIFCapture_DRIVER_V%d.%d.%d",
+			 (VPIF_CAPTURE_VERSION_CODE >> 16) & 0xff,
+			 (VPIF_CAPTURE_VERSION_CODE >> 8) & 0xff,
+			 (VPIF_CAPTURE_VERSION_CODE) & 0xff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Set video_dev to the video device */
 		ch->video_dev = vfd;
 	}
@@ -2252,6 +2273,15 @@ static __init int vpif_probe(struct platform_device *pdev)
 		goto probe_out;
 	}
 
+<<<<<<< HEAD
+=======
+	err = v4l2_device_register(vpif_dev, &vpif_obj.v4l2_dev);
+	if (err) {
+		v4l2_err(vpif_dev->driver, "Error registering v4l2 device\n");
+		goto probe_subdev_out;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < subdev_count; i++) {
 		subdevdata = &config->subdev_info[i];
 		vpif_obj.sd[i] =
@@ -2281,6 +2311,10 @@ probe_subdev_out:
 
 	j = VPIF_CAPTURE_MAX_DEVICES;
 probe_out:
+<<<<<<< HEAD
+=======
+	v4l2_device_unregister(&vpif_obj.v4l2_dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (k = 0; k < j; k++) {
 		/* Get the pointer to the channel object */
 		ch = vpif_obj.dev[k];
@@ -2302,7 +2336,10 @@ vpif_int_err:
 		if (res)
 			i = res->end;
 	}
+<<<<<<< HEAD
 	v4l2_device_unregister(&vpif_obj.v4l2_dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 

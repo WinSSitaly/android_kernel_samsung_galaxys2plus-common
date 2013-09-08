@@ -72,8 +72,13 @@ typedef struct _TARGET_PARAMS
 	// removed SHUT down related 'unused' params from here to sync 4.x and 5.x CFG files..
 
     //BAMC Related Parameters
+<<<<<<< HEAD
     //Bit 0-15 Band AMC signaling configuration: Bit 1 = 1 Â– Enable Band AMC signaling.
     //bit 16-31 Band AMC Data configuration: Bit 16 = 1 Â– Band AMC 2x3 support.
+=======
+    //Bit 0-15 Band AMC signaling configuration: Bit 1 = 1 – Enable Band AMC signaling.
+    //bit 16-31 Band AMC Data configuration: Bit 16 = 1 – Band AMC 2x3 support.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	B_UINT32 m_u32BandAMCEnable;
 
 } stTargetParams,TARGET_PARAMS,*PTARGET_PARAMS, STARGETPARAMS, *PSTARGETPARAMS;

@@ -58,7 +58,11 @@
 typedef struct tagSKeyItem
 {
     BOOL        bKeyValid;
+<<<<<<< HEAD
 	u32 uKeyLength;
+=======
+    unsigned long       uKeyLength;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     BYTE        abyKey[MAX_KEY_LEN];
     QWORD       KeyRSC;
     DWORD       dwTSC47_16;
@@ -107,7 +111,11 @@ BOOL KeybSetKey(
     PSKeyManagement pTable,
     PBYTE           pbyBSSID,
     DWORD           dwKeyIndex,
+<<<<<<< HEAD
 	u32 uKeyLength,
+=======
+    unsigned long           uKeyLength,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     PQWORD          pKeyRSC,
     PBYTE           pbyKey,
     BYTE            byKeyDecMode
@@ -146,7 +154,11 @@ BOOL KeybSetDefaultKey(
     void *pDeviceHandler,
     PSKeyManagement pTable,
     DWORD           dwKeyIndex,
+<<<<<<< HEAD
 	u32 uKeyLength,
+=======
+    unsigned long           uKeyLength,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     PQWORD          pKeyRSC,
     PBYTE           pbyKey,
     BYTE            byKeyDecMode
@@ -156,7 +168,11 @@ BOOL KeybSetAllGroupKey(
     void *pDeviceHandler,
     PSKeyManagement pTable,
     DWORD           dwKeyIndex,
+<<<<<<< HEAD
 	u32 uKeyLength,
+=======
+    unsigned long           uKeyLength,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     PQWORD          pKeyRSC,
     PBYTE           pbyKey,
     BYTE            byKeyDecMode

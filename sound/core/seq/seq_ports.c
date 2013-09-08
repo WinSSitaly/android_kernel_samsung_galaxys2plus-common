@@ -22,7 +22,10 @@
 
 #include <sound/core.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "seq_system.h"
 #include "seq_ports.h"
 #include "seq_clientmgr.h"

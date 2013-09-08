@@ -185,17 +185,29 @@
 #define NO_DATA_SLEEP_MSECS	(MSEC_PER_SEC / 4)
 
 /* Control touchpad's No Deceleration option */
+<<<<<<< HEAD
 static bool no_decel = 1;
+=======
+static int no_decel = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(no_decel, bool, 0644);
 MODULE_PARM_DESC(no_decel, "No Deceleration. Default = 1 (on)");
 
 /* Control touchpad's Reduced Reporting option */
+<<<<<<< HEAD
 static bool reduce_report;
+=======
+static int reduce_report;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(reduce_report, bool, 0644);
 MODULE_PARM_DESC(reduce_report, "Reduced Reporting. Default = 0 (off)");
 
 /* Control touchpad's No Filter option */
+<<<<<<< HEAD
 static bool no_filter;
+=======
+static int no_filter;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(no_filter, bool, 0644);
 MODULE_PARM_DESC(no_filter, "No Filter. Default = 0 (off)");
 
@@ -570,7 +582,11 @@ static int __devinit synaptics_i2c_probe(struct i2c_client *client,
 			 "Requesting IRQ: %d\n", touch->client->irq);
 
 		ret = request_irq(touch->client->irq, synaptics_i2c_irq,
+<<<<<<< HEAD
 				  IRQ_TYPE_EDGE_FALLING,
+=======
+				  IRQF_DISABLED|IRQ_TYPE_EDGE_FALLING,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  DRIVER_NAME, touch);
 		if (ret) {
 			dev_warn(&touch->client->dev,
@@ -619,7 +635,11 @@ static int __devexit synaptics_i2c_remove(struct i2c_client *client)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM_SLEEP
+=======
+#ifdef CONFIG_PM
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int synaptics_i2c_suspend(struct device *dev)
 {
 	struct i2c_client *client = to_i2c_client(dev);
@@ -672,7 +692,22 @@ static struct i2c_driver synaptics_i2c_driver = {
 	.id_table	= synaptics_i2c_id_table,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(synaptics_i2c_driver);
+=======
+static int __init synaptics_i2c_init(void)
+{
+	return i2c_add_driver(&synaptics_i2c_driver);
+}
+
+static void __exit synaptics_i2c_exit(void)
+{
+	i2c_del_driver(&synaptics_i2c_driver);
+}
+
+module_init(synaptics_i2c_init);
+module_exit(synaptics_i2c_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Synaptics I2C touchpad driver");
 MODULE_AUTHOR("Mike Rapoport, Igor Grinberg, Compulab");

@@ -46,11 +46,21 @@
 #define MSM_DMOV_PHYS         0xAC400000
 #define MSM_DMOV_SIZE         SZ_4K
 
+<<<<<<< HEAD
 #define MSM7X30_GPIO1_PHYS        0xAC001000
 #define MSM7X30_GPIO1_SIZE        SZ_4K
 
 #define MSM7X30_GPIO2_PHYS        0xAC101000
 #define MSM7X30_GPIO2_SIZE        SZ_4K
+=======
+#define MSM_GPIO1_BASE        IOMEM(0xE0003000)
+#define MSM_GPIO1_PHYS        0xAC001000
+#define MSM_GPIO1_SIZE        SZ_4K
+
+#define MSM_GPIO2_BASE        IOMEM(0xE0004000)
+#define MSM_GPIO2_PHYS        0xAC101000
+#define MSM_GPIO2_SIZE        SZ_4K
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MSM_CLK_CTL_BASE      IOMEM(0xE0005000)
 #define MSM_CLK_CTL_PHYS      0xAB800000
@@ -89,6 +99,21 @@
 #define MSM_UART3_PHYS        0xACC00000
 #define MSM_UART3_SIZE        SZ_4K
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MSM_DEBUG_UART
+#define MSM_DEBUG_UART_BASE   0xE1000000
+#if CONFIG_MSM_DEBUG_UART == 1
+#define MSM_DEBUG_UART_PHYS   MSM_UART1_PHYS
+#elif CONFIG_MSM_DEBUG_UART == 2
+#define MSM_DEBUG_UART_PHYS   MSM_UART2_PHYS
+#elif CONFIG_MSM_DEBUG_UART == 3
+#define MSM_DEBUG_UART_PHYS   MSM_UART3_PHYS
+#endif
+#define MSM_DEBUG_UART_SIZE   SZ_4K
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MSM_MDC_BASE	      IOMEM(0xE0200000)
 #define MSM_MDC_PHYS	      0xAA500000
 #define MSM_MDC_SIZE	      SZ_1M
@@ -100,8 +125,11 @@
 #define MSM_HSUSB_PHYS        0xA3600000
 #define MSM_HSUSB_SIZE        SZ_1K
 
+<<<<<<< HEAD
 #ifndef __ASSEMBLY__
 extern void msm_map_msm7x30_io(void);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

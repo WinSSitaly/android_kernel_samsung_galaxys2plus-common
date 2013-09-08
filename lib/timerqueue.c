@@ -22,10 +22,16 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+<<<<<<< HEAD
 #include <linux/bug.h>
 #include <linux/timerqueue.h>
 #include <linux/rbtree.h>
 #include <linux/export.h>
+=======
+#include <linux/timerqueue.h>
+#include <linux/rbtree.h>
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * timerqueue_add - Adds timer to timerqueue.

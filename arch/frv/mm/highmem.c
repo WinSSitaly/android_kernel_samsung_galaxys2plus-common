@@ -37,7 +37,11 @@ struct page *kmap_atomic_to_page(void *ptr)
 	return virt_to_page(ptr);
 }
 
+<<<<<<< HEAD
 void *kmap_atomic(struct page *page)
+=======
+void *__kmap_atomic(struct page *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long paddr;
 	int type;
@@ -64,7 +68,11 @@ void *kmap_atomic(struct page *page)
 		return NULL;
 	}
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(kmap_atomic);
+=======
+EXPORT_SYMBOL(__kmap_atomic);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void __kunmap_atomic(void *kvaddr)
 {

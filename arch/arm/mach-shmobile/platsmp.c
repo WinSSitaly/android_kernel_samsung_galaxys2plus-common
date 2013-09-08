@@ -17,6 +17,7 @@
 #include <linux/smp.h>
 #include <linux/io.h>
 #include <asm/hardware/gic.h>
+<<<<<<< HEAD
 #include <asm/mach-types.h>
 #include <mach/common.h>
 
@@ -31,11 +32,23 @@ static unsigned int __init shmobile_smp_get_core_count(void)
 	if (is_r8a7779())
 		return r8a7779_get_core_count();
 
+=======
+#include <asm/localtimer.h>
+#include <asm/mach-types.h>
+#include <mach/common.h>
+
+static unsigned int __init shmobile_smp_get_core_count(void)
+{
+	if (machine_is_ag5evm())
+		return sh73a0_get_core_count();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
 static void __init shmobile_smp_prepare_cpus(void)
 {
+<<<<<<< HEAD
 	if (is_sh73a0())
 		sh73a0_smp_prepare_cpus();
 
@@ -49,27 +62,42 @@ int shmobile_platform_cpu_kill(unsigned int cpu)
 		return r8a7779_platform_cpu_kill(cpu);
 
 	return 1;
+=======
+	if (machine_is_ag5evm())
+		sh73a0_smp_prepare_cpus();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __cpuinit platform_secondary_init(unsigned int cpu)
 {
 	trace_hardirqs_off();
 
+<<<<<<< HEAD
 	if (is_sh73a0())
 		sh73a0_secondary_init(cpu);
 
 	if (is_r8a7779())
 		r8a7779_secondary_init(cpu);
+=======
+	if (machine_is_ag5evm())
+		sh73a0_secondary_init(cpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
 {
+<<<<<<< HEAD
 	if (is_sh73a0())
 		return sh73a0_boot_secondary(cpu);
 
 	if (is_r8a7779())
 		return r8a7779_boot_secondary(cpu);
 
+=======
+	if (machine_is_ag5evm())
+		return sh73a0_boot_secondary(cpu);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -ENOSYS;
 }
 
@@ -78,12 +106,15 @@ void __init smp_init_cpus(void)
 	unsigned int ncores = shmobile_smp_get_core_count();
 	unsigned int i;
 
+<<<<<<< HEAD
 	if (ncores > nr_cpu_ids) {
 		pr_warn("SMP: %u cores greater than maximum (%u), clipping\n",
 			ncores, nr_cpu_ids);
 		ncores = nr_cpu_ids;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < ncores; i++)
 		set_cpu_possible(i, true);
 
@@ -92,5 +123,13 @@ void __init smp_init_cpus(void)
 
 void __init platform_smp_prepare_cpus(unsigned int max_cpus)
 {
+<<<<<<< HEAD
+=======
+	int i;
+
+	for (i = 0; i < max_cpus; i++)
+		set_cpu_present(i, true);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	shmobile_smp_prepare_cpus();
 }

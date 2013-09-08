@@ -16,6 +16,10 @@
 #define __ARCH_PXA_MTD_XIP_H__
 
 #include <mach/regs-ost.h>
+<<<<<<< HEAD
+=======
+#include <mach/regs-intc.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define xip_irqpending()	(ICIP & ICMR)
 

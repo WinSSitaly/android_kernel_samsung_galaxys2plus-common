@@ -21,7 +21,10 @@
 #include <linux/interrupt.h>
 #include <linux/irq.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/of.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/hardware/gic.h>
 
@@ -29,6 +32,13 @@
 
 #include "board.h"
 
+<<<<<<< HEAD
+=======
+#define INT_SYS_NR	(INT_GPIO_BASE - INT_PRI_BASE)
+#define INT_SYS_SZ	(INT_SEC_BASE - INT_PRI_BASE)
+#define PPI_NR		((INT_SYS_NR+INT_SYS_SZ-1)/INT_SYS_SZ)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ICTLR_CPU_IEP_VFIQ	0x08
 #define ICTLR_CPU_IEP_FIR	0x14
 #define ICTLR_CPU_IEP_FIR_SET	0x18
@@ -44,16 +54,25 @@
 #define ICTLR_COP_IER_CLR	0x38
 #define ICTLR_COP_IEP_CLASS	0x3c
 
+<<<<<<< HEAD
 #define FIRST_LEGACY_IRQ 32
 
 static int num_ictlrs;
 
+=======
+#define NUM_ICTLRS 4
+#define FIRST_LEGACY_IRQ 32
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __iomem *ictlr_reg_base[] = {
 	IO_ADDRESS(TEGRA_PRIMARY_ICTLR_BASE),
 	IO_ADDRESS(TEGRA_SECONDARY_ICTLR_BASE),
 	IO_ADDRESS(TEGRA_TERTIARY_ICTLR_BASE),
 	IO_ADDRESS(TEGRA_QUATERNARY_ICTLR_BASE),
+<<<<<<< HEAD
 	IO_ADDRESS(TEGRA_QUINARY_ICTLR_BASE),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline void tegra_irq_write_mask(unsigned int irq, unsigned long reg)
@@ -62,7 +81,11 @@ static inline void tegra_irq_write_mask(unsigned int irq, unsigned long reg)
 	u32 mask;
 
 	BUG_ON(irq < FIRST_LEGACY_IRQ ||
+<<<<<<< HEAD
 		irq >= FIRST_LEGACY_IRQ + num_ictlrs * 32);
+=======
+		irq >= FIRST_LEGACY_IRQ + NUM_ICTLRS * 32);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	base = ictlr_reg_base[(irq - FIRST_LEGACY_IRQ) / 32];
 	mask = BIT((irq - FIRST_LEGACY_IRQ) % 32);
@@ -115,6 +138,7 @@ static int tegra_retrigger(struct irq_data *d)
 void __init tegra_init_irq(void)
 {
 	int i;
+<<<<<<< HEAD
 	void __iomem *distbase;
 
 	distbase = IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE);
@@ -127,6 +151,10 @@ void __init tegra_init_irq(void)
 	}
 
 	for (i = 0; i < num_ictlrs; i++) {
+=======
+
+	for (i = 0; i < NUM_ICTLRS; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		void __iomem *ictlr = ictlr_reg_base[i];
 		writel(~0, ictlr + ICTLR_CPU_IER_CLR);
 		writel(0, ictlr + ICTLR_CPU_IEP_CLASS);
@@ -138,6 +166,7 @@ void __init tegra_init_irq(void)
 	gic_arch_extn.irq_unmask = tegra_unmask;
 	gic_arch_extn.irq_retrigger = tegra_retrigger;
 
+<<<<<<< HEAD
 	/*
 	 * Check if there is a devicetree present, since the GIC will be
 	 * initialized elsewhere under DT.
@@ -145,4 +174,8 @@ void __init tegra_init_irq(void)
 	if (!of_have_populated_dt())
 		gic_init(0, 29, distbase,
 			IO_ADDRESS(TEGRA_ARM_PERIF_BASE + 0x100));
+=======
+	gic_init(0, 29, IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE),
+		 IO_ADDRESS(TEGRA_ARM_PERIF_BASE + 0x100));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

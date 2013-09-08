@@ -25,12 +25,19 @@
 
 #include <video/platform_lcd.h>
 
+<<<<<<< HEAD
 #include <asm/hardware/vic.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 #include <asm/mach/irq.h>
 
 #include <mach/hardware.h>
+<<<<<<< HEAD
+=======
+#include <mach/regs-fb.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/map.h>
 
 #include <asm/irq.h>
@@ -40,12 +47,19 @@
 #include <plat/iic.h>
 #include <plat/fb.h>
 
+<<<<<<< HEAD
 #include <plat/clock.h>
 #include <plat/devs.h>
 #include <plat/cpu.h>
 #include <plat/regs-fb-v4.h>
 
 #include "common.h"
+=======
+#include <mach/s3c6410.h>
+#include <plat/clock.h>
+#include <plat/devs.h>
+#include <plat/cpu.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define UCON S3C2410_UCON_DEFAULT
 #define ULCON S3C2410_LCON_CS8 | S3C2410_LCON_PNONE
@@ -99,6 +113,7 @@ static void __init ncp_machine_init(void)
 
 MACHINE_START(NCP, "NCP")
 	/* Maintainer: Samsung Electronics */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.init_irq	= s3c6410_init_irq,
 	.handle_irq	= vic_handle_irq,
@@ -106,4 +121,11 @@ MACHINE_START(NCP, "NCP")
 	.init_machine	= ncp_machine_init,
 	.timer		= &s3c24xx_timer,
 	.restart	= s3c64xx_restart,
+=======
+	.boot_params	= S3C64XX_PA_SDRAM + 0x100,
+	.init_irq	= s3c6410_init_irq,
+	.map_io		= ncp_map_io,
+	.init_machine	= ncp_machine_init,
+	.timer		= &s3c24xx_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

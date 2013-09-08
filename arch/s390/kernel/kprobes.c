@@ -635,7 +635,11 @@ void __kprobes jprobe_return(void)
 	asm volatile(".word 0x0002");
 }
 
+<<<<<<< HEAD
 static void __used __kprobes jprobe_return_end(void)
+=======
+void __kprobes jprobe_return_end(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	asm volatile("bcr 0,0");
 }

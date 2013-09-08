@@ -79,7 +79,10 @@ static struct ccw_driver dasd_fba_driver = {
 	.freeze      = dasd_generic_pm_freeze,
 	.thaw	     = dasd_generic_restore_device,
 	.restore     = dasd_generic_restore_device,
+<<<<<<< HEAD
 	.int_class   = IOINT_DAS,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void

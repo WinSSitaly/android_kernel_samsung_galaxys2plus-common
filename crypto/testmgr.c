@@ -1534,6 +1534,7 @@ static int alg_test_null(const struct alg_test_desc *desc,
 /* Please keep this list sorted by algorithm name. */
 static const struct alg_test_desc alg_test_descs[] = {
 	{
+<<<<<<< HEAD
 		.alg = "__cbc-serpent-sse2",
 		.test = alg_test_null,
 		.suite = {
@@ -1549,6 +1550,8 @@ static const struct alg_test_desc alg_test_descs[] = {
 			}
 		}
 	}, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.alg = "__driver-cbc-aes-aesni",
 		.test = alg_test_null,
 		.suite = {
@@ -1564,6 +1567,7 @@ static const struct alg_test_desc alg_test_descs[] = {
 			}
 		}
 	}, {
+<<<<<<< HEAD
 		.alg = "__driver-cbc-serpent-sse2",
 		.test = alg_test_null,
 		.suite = {
@@ -1579,6 +1583,8 @@ static const struct alg_test_desc alg_test_descs[] = {
 			}
 		}
 	}, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.alg = "__driver-ecb-aes-aesni",
 		.test = alg_test_null,
 		.suite = {
@@ -1594,6 +1600,7 @@ static const struct alg_test_desc alg_test_descs[] = {
 			}
 		}
 	}, {
+<<<<<<< HEAD
 		.alg = "__driver-ecb-serpent-sse2",
 		.test = alg_test_null,
 		.suite = {
@@ -1609,6 +1616,8 @@ static const struct alg_test_desc alg_test_descs[] = {
 			}
 		}
 	}, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.alg = "__ghash-pclmulqdqni",
 		.test = alg_test_null,
 		.suite = {
@@ -1720,6 +1729,7 @@ static const struct alg_test_desc alg_test_descs[] = {
 			}
 		}
 	}, {
+<<<<<<< HEAD
 		.alg = "cbc(serpent)",
 		.test = alg_test_skcipher,
 		.suite = {
@@ -1735,6 +1745,8 @@ static const struct alg_test_desc alg_test_descs[] = {
 			}
 		}
 	}, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.alg = "cbc(twofish)",
 		.test = alg_test_skcipher,
 		.suite = {
@@ -1791,6 +1803,7 @@ static const struct alg_test_desc alg_test_descs[] = {
 			}
 		}
 	}, {
+<<<<<<< HEAD
 		.alg = "cryptd(__driver-ecb-serpent-sse2)",
 		.test = alg_test_null,
 		.suite = {
@@ -1806,6 +1819,8 @@ static const struct alg_test_desc alg_test_descs[] = {
 			}
 		}
 	}, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.alg = "cryptd(__ghash-pclmulqdqni)",
 		.test = alg_test_null,
 		.suite = {
@@ -1831,6 +1846,7 @@ static const struct alg_test_desc alg_test_descs[] = {
 			}
 		}
 	}, {
+<<<<<<< HEAD
 		.alg = "ctr(blowfish)",
 		.test = alg_test_skcipher,
 		.suite = {
@@ -1891,6 +1907,8 @@ static const struct alg_test_desc alg_test_descs[] = {
 			}
 		}
 	}, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.alg = "cts(cbc(aes))",
 		.test = alg_test_skcipher,
 		.suite = {
@@ -2312,6 +2330,7 @@ static const struct alg_test_desc alg_test_descs[] = {
 			}
 		}
 	}, {
+<<<<<<< HEAD
 		.alg = "lrw(camellia)",
 		.test = alg_test_skcipher,
 		.suite = {
@@ -2357,6 +2376,8 @@ static const struct alg_test_desc alg_test_descs[] = {
 			}
 		}
 	}, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.alg = "lzo",
 		.test = alg_test_comp,
 		.suite = {
@@ -2664,6 +2685,7 @@ static const struct alg_test_desc alg_test_descs[] = {
 			}
 		}
 	}, {
+<<<<<<< HEAD
 		.alg = "xts(camellia)",
 		.test = alg_test_skcipher,
 		.suite = {
@@ -2709,6 +2731,8 @@ static const struct alg_test_desc alg_test_descs[] = {
 			}
 		}
 	}, {
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.alg = "zlib",
 		.test = alg_test_pcomp,
 		.suite = {

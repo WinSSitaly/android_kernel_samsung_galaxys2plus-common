@@ -28,6 +28,10 @@
 #include <asm/memory.h>
 #include <asm/mach/map.h>
 #include <mach/common.h>
+<<<<<<< HEAD
+=======
+#include <mach/board-mx31ads.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/iomux-mx3.h>
 
 #ifdef CONFIG_MACH_MX31ADS_WM1133_EV1
@@ -38,9 +42,12 @@
 
 #include "devices-imx31.h"
 
+<<<<<<< HEAD
 /* Base address of PBC controller */
 #define PBC_BASE_ADDRESS	MX31_CS4_BASE_ADDR_VIRT
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* PBC Board interrupt status register */
 #define PBC_INTSTATUS           0x000016
 
@@ -64,7 +71,10 @@
 #define PBC_INTMASK_CLEAR_REG	(PBC_INTMASK_CLEAR + PBC_BASE_ADDRESS)
 #define EXPIO_PARENT_INT	IOMUX_TO_IRQ(MX31_PIN_GPIO1_4)
 
+<<<<<<< HEAD
 #define MXC_EXP_IO_BASE		MXC_BOARD_IRQ_START
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MXC_IRQ_TO_EXPIO(irq)	((irq) - MXC_EXP_IO_BASE)
 
 #define EXPIO_INT_XUART_INTA	(MXC_EXP_IO_BASE + 10)
@@ -72,10 +82,13 @@
 
 #define MXC_MAX_EXP_IO_LINES	16
 
+<<<<<<< HEAD
 /* CS8900 */
 #define EXPIO_INT_ENET_INT	(MXC_EXP_IO_BASE + 8)
 #define CS4_CS8900_MMIO_START	0x20000
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The serial port definition structure.
  */
@@ -108,6 +121,7 @@ static struct platform_device serial_device = {
 	},
 };
 
+<<<<<<< HEAD
 static const struct resource mx31ads_cs8900_resources[] __initconst = {
 	DEFINE_RES_MEM(MX31_CS4_BASE_ADDR + CS4_CS8900_MMIO_START, SZ_64K),
 	DEFINE_RES_IRQ(EXPIO_INT_ENET_INT),
@@ -120,17 +134,22 @@ static const struct platform_device_info mx31ads_cs8900_devinfo __initconst = {
 	.num_res = ARRAY_SIZE(mx31ads_cs8900_resources),
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init mxc_init_extuart(void)
 {
 	return platform_device_register(&serial_device);
 }
 
+<<<<<<< HEAD
 static void __init mxc_init_ext_ethernet(void)
 {
 	platform_device_register_full(
 		(struct platform_device_info *)&mx31ads_cs8900_devinfo);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct imxuart_platform_data uart_pdata __initconst = {
 	.flags = IMXUART_HAVE_RTSCTS,
 };
@@ -493,7 +512,11 @@ static struct i2c_board_info __initdata mx31ads_i2c1_devices[] = {
 #endif
 };
 
+<<<<<<< HEAD
 static void __init mxc_init_i2c(void)
+=======
+static void mxc_init_i2c(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	i2c_register_board_info(1, mx31ads_i2c1_devices,
 				ARRAY_SIZE(mx31ads_i2c1_devices));
@@ -511,21 +534,33 @@ static unsigned int ssi_pins[] = {
 	MX31_PIN_STXD5__STXD5,
 };
 
+<<<<<<< HEAD
 static void __init mxc_init_audio(void)
+=======
+static void mxc_init_audio(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	imx31_add_imx_ssi(0, NULL);
 	mxc_iomux_setup_multiple_pins(ssi_pins, ARRAY_SIZE(ssi_pins), "ssi");
 }
 
+<<<<<<< HEAD
 /*
  * Static mappings, starting from the CS4 start address up to the start address
  * of the CS8900.
  */
+=======
+/* static mappings */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct map_desc mx31ads_io_desc[] __initdata = {
 	{
 		.virtual	= MX31_CS4_BASE_ADDR_VIRT,
 		.pfn		= __phys_to_pfn(MX31_CS4_BASE_ADDR),
+<<<<<<< HEAD
 		.length		= CS4_CS8900_MMIO_START,
+=======
+		.length		= MX31_CS4_SIZE / 2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.type		= MT_DEVICE
 	},
 };
@@ -544,13 +579,19 @@ static void __init mx31ads_init_irq(void)
 
 static void __init mx31ads_init(void)
 {
+<<<<<<< HEAD
 	imx31_soc_init();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mxc_init_extuart();
 	mxc_init_imx_uart();
 	mxc_init_i2c();
 	mxc_init_audio();
+<<<<<<< HEAD
 	mxc_init_ext_ethernet();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __init mx31ads_timer_init(void)
@@ -564,6 +605,7 @@ static struct sys_timer mx31ads_timer = {
 
 MACHINE_START(MX31ADS, "Freescale MX31ADS")
 	/* Maintainer: Freescale Semiconductor, Inc. */
+<<<<<<< HEAD
 	.atag_offset = 0x100,
 	.map_io = mx31ads_map_io,
 	.init_early = imx31_init_early,
@@ -572,4 +614,12 @@ MACHINE_START(MX31ADS, "Freescale MX31ADS")
 	.timer = &mx31ads_timer,
 	.init_machine = mx31ads_init,
 	.restart	= mxc_restart,
+=======
+	.boot_params = MX3x_PHYS_OFFSET + 0x100,
+	.map_io = mx31ads_map_io,
+	.init_early = imx31_init_early,
+	.init_irq = mx31ads_init_irq,
+	.timer = &mx31ads_timer,
+	.init_machine = mx31ads_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

@@ -10,12 +10,19 @@
  * Copyright (C) 2011 Bart Van Assche.  All Rights Reserved.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ":%s: " fmt, __func__
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/kallsyms.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/types.h>
 #include <linux/mutex.h>
 #include <linux/proc_fs.h>
@@ -31,8 +38,11 @@
 #include <linux/jump_label.h>
 #include <linux/hardirq.h>
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <linux/device.h>
 #include <linux/netdevice.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern struct _ddebug __start___verbose[];
 extern struct _ddebug __stop___verbose[];
@@ -41,6 +51,10 @@ struct ddebug_table {
 	struct list_head link;
 	char *mod_name;
 	unsigned int num_ddebugs;
+<<<<<<< HEAD
+=======
+	unsigned int num_enabled;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct _ddebug *ddebugs;
 };
 
@@ -60,7 +74,10 @@ struct ddebug_iter {
 static DEFINE_MUTEX(ddebug_lock);
 static LIST_HEAD(ddebug_tables);
 static int verbose = 0;
+<<<<<<< HEAD
 module_param(verbose, int, 0644);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Return the last part of a pathname */
 static inline const char *basename(const char *path)
@@ -69,6 +86,7 @@ static inline const char *basename(const char *path)
 	return tail ? tail+1 : path;
 }
 
+<<<<<<< HEAD
 /* Return the path relative to source root */
 static inline const char *trim_prefix(const char *path)
 {
@@ -80,13 +98,18 @@ static inline const char *trim_prefix(const char *path)
 	return path + skip;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct { unsigned flag:8; char opt_char; } opt_array[] = {
 	{ _DPRINTK_FLAGS_PRINT, 'p' },
 	{ _DPRINTK_FLAGS_INCL_MODNAME, 'm' },
 	{ _DPRINTK_FLAGS_INCL_FUNCNAME, 'f' },
 	{ _DPRINTK_FLAGS_INCL_LINENO, 'l' },
 	{ _DPRINTK_FLAGS_INCL_TID, 't' },
+<<<<<<< HEAD
 	{ _DPRINTK_FLAGS_NONE, '_' },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* format a string into buf[] which describes the _ddebug's flags */
@@ -96,17 +119,26 @@ static char *ddebug_describe_flags(struct _ddebug *dp, char *buf,
 	char *p = buf;
 	int i;
 
+<<<<<<< HEAD
 	BUG_ON(maxlen < 6);
+=======
+	BUG_ON(maxlen < 4);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < ARRAY_SIZE(opt_array); ++i)
 		if (dp->flags & opt_array[i].flag)
 			*p++ = opt_array[i].opt_char;
 	if (p == buf)
+<<<<<<< HEAD
 		*p++ = '_';
+=======
+		*p++ = '-';
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*p = '\0';
 
 	return buf;
 }
 
+<<<<<<< HEAD
 #define vpr_info_dq(q, msg)						\
 do {									\
 	if (verbose)							\
@@ -131,25 +163,45 @@ do {									\
  */
 static int ddebug_change(const struct ddebug_query *query,
 			unsigned int flags, unsigned int mask)
+=======
+/*
+ * Search the tables for _ddebug's which match the given
+ * `query' and apply the `flags' and `mask' to them.  Tells
+ * the user which ddebug's were changed, or whether none
+ * were matched.
+ */
+static void ddebug_change(const struct ddebug_query *query,
+			   unsigned int flags, unsigned int mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 	struct ddebug_table *dt;
 	unsigned int newflags;
 	unsigned int nfound = 0;
+<<<<<<< HEAD
 	char flagbuf[10];
+=======
+	char flagbuf[8];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* search for matching ddebugs */
 	mutex_lock(&ddebug_lock);
 	list_for_each_entry(dt, &ddebug_tables, link) {
 
 		/* match against the module name */
+<<<<<<< HEAD
 		if (query->module && strcmp(query->module, dt->mod_name))
+=======
+		if (query->module != NULL &&
+		    strcmp(query->module, dt->mod_name))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 
 		for (i = 0 ; i < dt->num_ddebugs ; i++) {
 			struct _ddebug *dp = &dt->ddebugs[i];
 
 			/* match against the source filename */
+<<<<<<< HEAD
 			if (query->filename &&
 			    strcmp(query->filename, dp->filename) &&
 			    strcmp(query->filename, basename(dp->filename)) &&
@@ -158,12 +210,26 @@ static int ddebug_change(const struct ddebug_query *query,
 
 			/* match against the function */
 			if (query->function &&
+=======
+			if (query->filename != NULL &&
+			    strcmp(query->filename, dp->filename) &&
+			    strcmp(query->filename, basename(dp->filename)))
+				continue;
+
+			/* match against the function */
+			if (query->function != NULL &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    strcmp(query->function, dp->function))
 				continue;
 
 			/* match against the format */
+<<<<<<< HEAD
 			if (query->format &&
 			    !strstr(dp->format, query->format))
+=======
+			if (query->format != NULL &&
+			    strstr(dp->format, query->format) == NULL)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				continue;
 
 			/* match against the line number range */
@@ -179,10 +245,27 @@ static int ddebug_change(const struct ddebug_query *query,
 			newflags = (dp->flags & mask) | flags;
 			if (newflags == dp->flags)
 				continue;
+<<<<<<< HEAD
 			dp->flags = newflags;
 			if (verbose)
 				pr_info("changed %s:%d [%s]%s =%s\n",
 					trim_prefix(dp->filename), dp->lineno,
+=======
+
+			if (!newflags)
+				dt->num_enabled--;
+			else if (!dp->flags)
+				dt->num_enabled++;
+			dp->flags = newflags;
+			if (newflags)
+				dp->enabled = 1;
+			else
+				dp->enabled = 0;
+			if (verbose)
+				printk(KERN_INFO
+					"ddebug: changed %s:%d [%s]%s %s\n",
+					dp->filename, dp->lineno,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					dt->mod_name, dp->function,
 					ddebug_describe_flags(dp, flagbuf,
 							sizeof(flagbuf)));
@@ -191,9 +274,13 @@ static int ddebug_change(const struct ddebug_query *query,
 	mutex_unlock(&ddebug_lock);
 
 	if (!nfound && verbose)
+<<<<<<< HEAD
 		pr_info("no matches for query\n");
 
 	return nfound;
+=======
+		printk(KERN_INFO "ddebug: no matches for query\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -213,10 +300,15 @@ static int ddebug_tokenize(char *buf, char *words[], int maxwords)
 		buf = skip_spaces(buf);
 		if (!*buf)
 			break;	/* oh, it was trailing whitespace */
+<<<<<<< HEAD
 		if (*buf == '#')
 			break;	/* token starts comment, skip rest of line */
 
 		/* find `end' of word, whitespace separated or quoted */
+=======
+
+		/* Run `end' over a word, either whitespace separated or quoted */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (*buf == '"' || *buf == '\'') {
 			int quote = *buf++;
 			for (end = buf ; *end && *end != quote ; end++)
@@ -228,8 +320,13 @@ static int ddebug_tokenize(char *buf, char *words[], int maxwords)
 				;
 			BUG_ON(end == buf);
 		}
+<<<<<<< HEAD
 
 		/* `buf' is start of word, `end' is one past its end */
+=======
+		/* Here `buf' is the start of the word, `end' is one past the end */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (nwords == maxwords)
 			return -EINVAL;	/* ran out of words[] before bytes */
 		if (*end)
@@ -240,10 +337,17 @@ static int ddebug_tokenize(char *buf, char *words[], int maxwords)
 
 	if (verbose) {
 		int i;
+<<<<<<< HEAD
 		pr_info("split into words:");
 		for (i = 0 ; i < nwords ; i++)
 			pr_cont(" \"%s\"", words[i]);
 		pr_cont("\n");
+=======
+		printk(KERN_INFO "%s: split into words:", __func__);
+		for (i = 0 ; i < nwords ; i++)
+			printk(" \"%s\"", words[i]);
+		printk("\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return nwords;
@@ -308,6 +412,7 @@ static char *unescape(char *str)
 	return str;
 }
 
+<<<<<<< HEAD
 static int check_set(const char **dest, char *src, char *name)
 {
 	int rc = 0;
@@ -321,6 +426,8 @@ static int check_set(const char **dest, char *src, char *name)
 	return rc;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Parse words[] as a ddebug query specification, which is a series
  * of (keyword, value) pairs chosen from these possibilities:
@@ -332,15 +439,21 @@ static int check_set(const char **dest, char *src, char *name)
  * format <escaped-string-to-find-in-format>
  * line <lineno>
  * line <first-lineno>-<last-lineno> // where either may be empty
+<<<<<<< HEAD
  *
  * Only 1 of each type is allowed.
  * Returns 0 on success, <0 on error.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int ddebug_parse_query(char *words[], int nwords,
 			       struct ddebug_query *query)
 {
 	unsigned int i;
+<<<<<<< HEAD
 	int rc;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* check we have an even number of words */
 	if (nwords % 2 != 0)
@@ -349,6 +462,7 @@ static int ddebug_parse_query(char *words[], int nwords,
 
 	for (i = 0 ; i < nwords ; i += 2) {
 		if (!strcmp(words[i], "func"))
+<<<<<<< HEAD
 			rc = check_set(&query->function, words[i+1], "func");
 		else if (!strcmp(words[i], "file"))
 			rc = check_set(&query->filename, words[i+1], "file");
@@ -364,10 +478,23 @@ static int ddebug_parse_query(char *words[], int nwords,
 				pr_err("match-spec:line given 2 times\n");
 				return -EINVAL;
 			}
+=======
+			query->function = words[i+1];
+		else if (!strcmp(words[i], "file"))
+			query->filename = words[i+1];
+		else if (!strcmp(words[i], "module"))
+			query->module = words[i+1];
+		else if (!strcmp(words[i], "format"))
+			query->format = unescape(words[i+1]);
+		else if (!strcmp(words[i], "line")) {
+			char *first = words[i+1];
+			char *last = strchr(first, '-');
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (last)
 				*last++ = '\0';
 			if (parse_lineno(first, &query->first_lineno) < 0)
 				return -EINVAL;
+<<<<<<< HEAD
 			if (last) {
 				/* range <first>-<last> */
 				if (parse_lineno(last, &query->last_lineno)
@@ -375,10 +502,17 @@ static int ddebug_parse_query(char *words[], int nwords,
 					pr_err("last-line < 1st-line\n");
 					return -EINVAL;
 				}
+=======
+			if (last != NULL) {
+				/* range <first>-<last> */
+				if (parse_lineno(last, &query->last_lineno) < 0)
+					return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else {
 				query->last_lineno = query->first_lineno;
 			}
 		} else {
+<<<<<<< HEAD
 			pr_err("unknown keyword \"%s\"\n", words[i]);
 			return -EINVAL;
 		}
@@ -386,6 +520,22 @@ static int ddebug_parse_query(char *words[], int nwords,
 			return rc;
 	}
 	vpr_info_dq(query, "parsed");
+=======
+			if (verbose)
+				printk(KERN_ERR "%s: unknown keyword \"%s\"\n",
+					__func__, words[i]);
+			return -EINVAL;
+		}
+	}
+
+	if (verbose)
+		printk(KERN_INFO "%s: q->function=\"%s\" q->filename=\"%s\" "
+		       "q->module=\"%s\" q->format=\"%s\" q->lineno=%u-%u\n",
+			__func__, query->function, query->filename,
+			query->module, query->format, query->first_lineno,
+			query->last_lineno);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -411,7 +561,11 @@ static int ddebug_parse_flags(const char *str, unsigned int *flagsp,
 		return -EINVAL;
 	}
 	if (verbose)
+<<<<<<< HEAD
 		pr_info("op='%c'\n", op);
+=======
+		printk(KERN_INFO "%s: op='%c'\n", __func__, op);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for ( ; *str ; ++str) {
 		for (i = ARRAY_SIZE(opt_array) - 1; i >= 0; i--) {
@@ -423,8 +577,15 @@ static int ddebug_parse_flags(const char *str, unsigned int *flagsp,
 		if (i < 0)
 			return -EINVAL;
 	}
+<<<<<<< HEAD
 	if (verbose)
 		pr_info("flags=0x%x\n", flags);
+=======
+	if (flags == 0)
+		return -EINVAL;
+	if (verbose)
+		printk(KERN_INFO "%s: flags=0x%x\n", __func__, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* calculate final *flagsp, *maskp according to mask and op */
 	switch (op) {
@@ -442,7 +603,12 @@ static int ddebug_parse_flags(const char *str, unsigned int *flagsp,
 		break;
 	}
 	if (verbose)
+<<<<<<< HEAD
 		pr_info("*flagsp=0x%x *maskp=0x%x\n", *flagsp, *maskp);
+=======
+		printk(KERN_INFO "%s: *flagsp=0x%x *maskp=0x%x\n",
+			__func__, *flagsp, *maskp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -451,7 +617,11 @@ static int ddebug_exec_query(char *query_string)
 	unsigned int flags = 0, mask = 0;
 	struct ddebug_query query;
 #define MAXWORDS 9
+<<<<<<< HEAD
 	int nwords, nfound;
+=======
+	int nwords;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *words[MAXWORDS];
 
 	nwords = ddebug_tokenize(query_string, words, MAXWORDS);
@@ -463,6 +633,7 @@ static int ddebug_exec_query(char *query_string)
 		return -EINVAL;
 
 	/* actually go and implement the change */
+<<<<<<< HEAD
 	nfound = ddebug_change(&query, flags, mask);
 	vpr_info_dq((&query), (nfound) ? "applied" : "no-match");
 
@@ -547,26 +718,53 @@ static char *dynamic_emit_prefix(const struct _ddebug *desc, char *buf)
 	return buf;
 }
 
+=======
+	ddebug_change(&query, flags, mask);
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int __dynamic_pr_debug(struct _ddebug *descriptor, const char *fmt, ...)
 {
 	va_list args;
 	int res;
+<<<<<<< HEAD
 	struct va_format vaf;
 	char buf[PREFIX_SIZE];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BUG_ON(!descriptor);
 	BUG_ON(!fmt);
 
 	va_start(args, fmt);
+<<<<<<< HEAD
 	vaf.fmt = fmt;
 	vaf.va = &args;
 	res = printk("%s%pV", dynamic_emit_prefix(descriptor, buf), &vaf);
+=======
+	res = printk(KERN_DEBUG);
+	if (descriptor->flags & _DPRINTK_FLAGS_INCL_TID) {
+		if (in_interrupt())
+			res += printk(KERN_CONT "<intr> ");
+		else
+			res += printk(KERN_CONT "[%d] ", task_pid_vnr(current));
+	}
+	if (descriptor->flags & _DPRINTK_FLAGS_INCL_MODNAME)
+		res += printk(KERN_CONT "%s:", descriptor->modname);
+	if (descriptor->flags & _DPRINTK_FLAGS_INCL_FUNCNAME)
+		res += printk(KERN_CONT "%s:", descriptor->function);
+	if (descriptor->flags & _DPRINTK_FLAGS_INCL_LINENO)
+		res += printk(KERN_CONT "%d ", descriptor->lineno);
+	res += vprintk(fmt, args);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	va_end(args);
 
 	return res;
 }
 EXPORT_SYMBOL(__dynamic_pr_debug);
 
+<<<<<<< HEAD
 int __dynamic_dev_dbg(struct _ddebug *descriptor,
 		      const struct device *dev, const char *fmt, ...)
 {
@@ -623,6 +821,16 @@ static __init int ddebug_setup_query(char *str)
 		return 0;
 	}
 	strlcpy(ddebug_setup_string, str, DDEBUG_STRING_SIZE);
+=======
+static __initdata char ddebug_setup_string[1024];
+static __init int ddebug_setup_query(char *str)
+{
+	if (strlen(str) >= 1024) {
+		pr_warning("ddebug boot param string too large\n");
+		return 0;
+	}
+	strcpy(ddebug_setup_string, str);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
@@ -632,15 +840,23 @@ __setup("ddebug_query=", ddebug_setup_query);
  * File_ops->write method for <debugfs>/dynamic_debug/conrol.  Gathers the
  * command text from userspace, parses and executes it.
  */
+<<<<<<< HEAD
 #define USER_BUF_PAGE 4096
 static ssize_t ddebug_proc_write(struct file *file, const char __user *ubuf,
 				  size_t len, loff_t *offp)
 {
 	char *tmpbuf;
+=======
+static ssize_t ddebug_proc_write(struct file *file, const char __user *ubuf,
+				  size_t len, loff_t *offp)
+{
+	char tmpbuf[256];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	if (len == 0)
 		return 0;
+<<<<<<< HEAD
 	if (len > USER_BUF_PAGE - 1) {
 		pr_warn("expected <%d bytes into control\n", USER_BUF_PAGE);
 		return -E2BIG;
@@ -659,6 +875,20 @@ static ssize_t ddebug_proc_write(struct file *file, const char __user *ubuf,
 	ret = ddebug_exec_queries(tmpbuf);
 	kfree(tmpbuf);
 	if (ret < 0)
+=======
+	/* we don't check *offp -- multiple writes() are allowed */
+	if (len > sizeof(tmpbuf)-1)
+		return -E2BIG;
+	if (copy_from_user(tmpbuf, ubuf, len))
+		return -EFAULT;
+	tmpbuf[len] = '\0';
+	if (verbose)
+		printk(KERN_INFO "%s: read %d bytes from userspace\n",
+			__func__, (int)len);
+
+	ret = ddebug_exec_query(tmpbuf);
+	if (ret)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 
 	*offp += len;
@@ -718,7 +948,12 @@ static void *ddebug_proc_start(struct seq_file *m, loff_t *pos)
 	int n = *pos;
 
 	if (verbose)
+<<<<<<< HEAD
 		pr_info("called m=%p *pos=%lld\n", m, (unsigned long long)*pos);
+=======
+		printk(KERN_INFO "%s: called m=%p *pos=%lld\n",
+			__func__, m, (unsigned long long)*pos);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&ddebug_lock);
 
@@ -743,8 +978,13 @@ static void *ddebug_proc_next(struct seq_file *m, void *p, loff_t *pos)
 	struct _ddebug *dp;
 
 	if (verbose)
+<<<<<<< HEAD
 		pr_info("called m=%p p=%p *pos=%lld\n",
 			m, p, (unsigned long long)*pos);
+=======
+		printk(KERN_INFO "%s: called m=%p p=%p *pos=%lld\n",
+			__func__, m, p, (unsigned long long)*pos);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (p == SEQ_START_TOKEN)
 		dp = ddebug_iter_first(iter);
@@ -764,10 +1004,18 @@ static int ddebug_proc_show(struct seq_file *m, void *p)
 {
 	struct ddebug_iter *iter = m->private;
 	struct _ddebug *dp = p;
+<<<<<<< HEAD
 	char flagsbuf[10];
 
 	if (verbose)
 		pr_info("called m=%p p=%p\n", m, p);
+=======
+	char flagsbuf[8];
+
+	if (verbose)
+		printk(KERN_INFO "%s: called m=%p p=%p\n",
+			__func__, m, p);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (p == SEQ_START_TOKEN) {
 		seq_puts(m,
@@ -775,10 +1023,17 @@ static int ddebug_proc_show(struct seq_file *m, void *p)
 		return 0;
 	}
 
+<<<<<<< HEAD
 	seq_printf(m, "%s:%u [%s]%s =%s \"",
 		trim_prefix(dp->filename), dp->lineno,
 		iter->table->mod_name, dp->function,
 		ddebug_describe_flags(dp, flagsbuf, sizeof(flagsbuf)));
+=======
+	seq_printf(m, "%s:%u [%s]%s %s \"",
+		   dp->filename, dp->lineno,
+		   iter->table->mod_name, dp->function,
+		   ddebug_describe_flags(dp, flagsbuf, sizeof(flagsbuf)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	seq_escape(m, dp->format, "\t\r\n\"");
 	seq_puts(m, "\"\n");
 
@@ -792,7 +1047,12 @@ static int ddebug_proc_show(struct seq_file *m, void *p)
 static void ddebug_proc_stop(struct seq_file *m, void *p)
 {
 	if (verbose)
+<<<<<<< HEAD
 		pr_info("called m=%p p=%p\n", m, p);
+=======
+		printk(KERN_INFO "%s: called m=%p p=%p\n",
+			__func__, m, p);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&ddebug_lock);
 }
 
@@ -804,11 +1064,18 @@ static const struct seq_operations ddebug_proc_seqops = {
 };
 
 /*
+<<<<<<< HEAD
  * File_ops->open method for <debugfs>/dynamic_debug/control.  Does
  * the seq_file setup dance, and also creates an iterator to walk the
  * _ddebugs.  Note that we create a seq_file always, even for O_WRONLY
  * files where it's not needed, as doing so simplifies the ->release
  * method.
+=======
+ * File_ops->open method for <debugfs>/dynamic_debug/control.  Does the seq_file
+ * setup dance, and also creates an iterator to walk the _ddebugs.
+ * Note that we create a seq_file always, even for O_WRONLY files
+ * where it's not needed, as doing so simplifies the ->release method.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int ddebug_proc_open(struct inode *inode, struct file *file)
 {
@@ -816,7 +1083,11 @@ static int ddebug_proc_open(struct inode *inode, struct file *file)
 	int err;
 
 	if (verbose)
+<<<<<<< HEAD
 		pr_info("called\n");
+=======
+		printk(KERN_INFO "%s: called\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	iter = kzalloc(sizeof(*iter), GFP_KERNEL);
 	if (iter == NULL)
@@ -860,6 +1131,10 @@ int ddebug_add_module(struct _ddebug *tab, unsigned int n,
 	}
 	dt->mod_name = new_name;
 	dt->num_ddebugs = n;
+<<<<<<< HEAD
+=======
+	dt->num_enabled = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dt->ddebugs = tab;
 
 	mutex_lock(&ddebug_lock);
@@ -867,7 +1142,12 @@ int ddebug_add_module(struct _ddebug *tab, unsigned int n,
 	mutex_unlock(&ddebug_lock);
 
 	if (verbose)
+<<<<<<< HEAD
 		pr_info("%u debug prints in module %s\n", n, dt->mod_name);
+=======
+		printk(KERN_INFO "%u debug prints in module %s\n",
+				 n, dt->mod_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL_GPL(ddebug_add_module);
@@ -889,7 +1169,12 @@ int ddebug_remove_module(const char *mod_name)
 	int ret = -ENOENT;
 
 	if (verbose)
+<<<<<<< HEAD
 		pr_info("removing module \"%s\"\n", mod_name);
+=======
+		printk(KERN_INFO "%s: removing module \"%s\"\n",
+				__func__, mod_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&ddebug_lock);
 	list_for_each_entry_safe(dt, nextdt, &ddebug_tables, link) {
@@ -943,6 +1228,7 @@ static int __init dynamic_debug_init(void)
 	int ret = 0;
 	int n = 0;
 
+<<<<<<< HEAD
 	if (__start___verbose == __stop___verbose) {
 		pr_warn("_ddebug table is empty in a "
 			"CONFIG_DYNAMIC_DEBUG build");
@@ -977,6 +1263,35 @@ static int __init dynamic_debug_init(void)
 
 		/* keep tables even on ddebug_query parse error */
 		ret = 0;
+=======
+	if (__start___verbose != __stop___verbose) {
+		iter = __start___verbose;
+		modname = iter->modname;
+		iter_start = iter;
+		for (; iter < __stop___verbose; iter++) {
+			if (strcmp(modname, iter->modname)) {
+				ret = ddebug_add_module(iter_start, n, modname);
+				if (ret)
+					goto out_free;
+				n = 0;
+				modname = iter->modname;
+				iter_start = iter;
+			}
+			n++;
+		}
+		ret = ddebug_add_module(iter_start, n, modname);
+	}
+
+	/* ddebug_query boot param got passed -> set it up */
+	if (ddebug_setup_string[0] != '\0') {
+		ret = ddebug_exec_query(ddebug_setup_string);
+		if (ret)
+			pr_warning("Invalid ddebug boot param %s",
+				   ddebug_setup_string);
+		else
+			pr_info("ddebug initialized with string %s",
+				ddebug_setup_string);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 out_free:

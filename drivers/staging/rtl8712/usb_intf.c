@@ -28,10 +28,13 @@
 
 #define _HCI_INTF_C_
 
+<<<<<<< HEAD
 #include <linux/usb.h>
 #include <linux/module.h>
 #include <linux/firmware.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "osdep_service.h"
 #include "drv_types.h"
 #include "recv_osdep.h"
@@ -66,8 +69,11 @@ static struct usb_device_id rtl871x_usb_id_tbl[] = {
 	{USB_DEVICE(0x0B05, 0x1791)}, /* 11n mode disable */
 	/* Belkin */
 	{USB_DEVICE(0x050D, 0x945A)},
+<<<<<<< HEAD
 	/* ISY IWL - Belkin clone */
 	{USB_DEVICE(0x050D, 0x11F1)},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Corega */
 	{USB_DEVICE(0x07AA, 0x0047)},
 	/* D-Link */
@@ -104,16 +110,26 @@ static struct usb_device_id rtl871x_usb_id_tbl[] = {
 	/* - */
 	{USB_DEVICE(0x20F4, 0x646B)},
 	{USB_DEVICE(0x083A, 0xC512)},
+<<<<<<< HEAD
 	{USB_DEVICE(0x25D4, 0x4CA1)},
 	{USB_DEVICE(0x25D4, 0x4CAB)},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* RTL8191SU */
 	/* Realtek */
 	{USB_DEVICE(0x0BDA, 0x8172)},
+<<<<<<< HEAD
 	{USB_DEVICE(0x0BDA, 0x8192)},
 	/* Amigo */
 	{USB_DEVICE(0x0EB0, 0x9061)},
 	/* ASUS/EKB */
+=======
+	/* Amigo */
+	{USB_DEVICE(0x0EB0, 0x9061)},
+	/* ASUS/EKB */
+	{USB_DEVICE(0x0BDA, 0x8172)},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{USB_DEVICE(0x13D3, 0x3323)},
 	{USB_DEVICE(0x13D3, 0x3311)}, /* 11n mode disable */
 	{USB_DEVICE(0x13D3, 0x3342)},
@@ -165,6 +181,10 @@ static struct usb_device_id rtl871x_usb_id_tbl[] = {
 /* RTL8192SU */
 	/* Realtek */
 	{USB_DEVICE(0x0BDA, 0x8174)},
+<<<<<<< HEAD
+=======
+	{USB_DEVICE(0x0BDA, 0x8174)},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Belkin */
 	{USB_DEVICE(0x050D, 0x845A)},
 	/* Corega */
@@ -285,6 +305,10 @@ static uint r8712_usb_dvobj_init(struct _adapter *padapter)
 	}
 	if ((r8712_alloc_io_queue(padapter)) == _FAIL)
 		status = _FAIL;
+<<<<<<< HEAD
+=======
+	sema_init(&(padapter->dvobjpriv.usb_suspend_sema), 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return status;
 }
 
@@ -374,26 +398,41 @@ static int r871xu_drv_init(struct usb_interface *pusb_intf,
 	struct _adapter *padapter = NULL;
 	struct dvobj_priv *pdvobjpriv;
 	struct net_device *pnetdev;
+<<<<<<< HEAD
 	struct usb_device *udev;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	printk(KERN_INFO "r8712u: DriverVersion: %s\n", DRVER);
 	/* In this probe function, O.S. will provide the usb interface pointer
 	 * to driver. We have to increase the reference count of the usb device
 	 * structure by using the usb_get_dev function.
 	 */
+<<<<<<< HEAD
 	udev = interface_to_usbdev(pusb_intf);
 	usb_get_dev(udev);
+=======
+	usb_get_dev(interface_to_usbdev(pusb_intf));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pintf = pusb_intf;
 	/* step 1. */
 	pnetdev = r8712_init_netdev();
 	if (!pnetdev)
 		goto error;
+<<<<<<< HEAD
 	padapter = netdev_priv(pnetdev);
 	disable_ht_for_spec_devid(pdid, padapter);
 	pdvobjpriv = &padapter->dvobjpriv;
 	pdvobjpriv->padapter = padapter;
 	padapter->dvobjpriv.pusbdev = udev;
 	padapter->pusb_intf = pusb_intf;
+=======
+	padapter = (struct _adapter *)_netdev_priv(pnetdev);
+	disable_ht_for_spec_devid(pdid, padapter);
+	pdvobjpriv = &padapter->dvobjpriv;
+	pdvobjpriv->padapter = padapter;
+	padapter->dvobjpriv.pusbdev = interface_to_usbdev(pusb_intf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usb_set_intfdata(pusb_intf, pnetdev);
 	SET_NETDEV_DEV(pnetdev, &pusb_intf->dev);
 	/* step 2. */
@@ -600,6 +639,7 @@ static int r871xu_drv_init(struct usb_interface *pusb_intf,
 			       "%pM\n", mac);
 		memcpy(pnetdev->dev_addr, mac, ETH_ALEN);
 	}
+<<<<<<< HEAD
 	/* step 6. Load the firmware asynchronously */
 	if (rtl871x_load_fw(padapter))
 		goto error;
@@ -608,11 +648,23 @@ static int r871xu_drv_init(struct usb_interface *pusb_intf,
 	return 0;
 error:
 	usb_put_dev(udev);
+=======
+	/* step 6. Tell the network stack we exist */
+	if (register_netdev(pnetdev) != 0)
+		goto error;
+	return 0;
+error:
+	usb_put_dev(interface_to_usbdev(pusb_intf));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	usb_set_intfdata(pusb_intf, NULL);
 	if (padapter->dvobj_deinit != NULL)
 		padapter->dvobj_deinit(padapter);
 	if (pnetdev)
+<<<<<<< HEAD
 		free_netdev(pnetdev);
+=======
+		os_free_netdev(pnetdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -ENODEV;
 }
 
@@ -624,12 +676,16 @@ static void r871xu_dev_remove(struct usb_interface *pusb_intf)
 	struct _adapter *padapter = netdev_priv(pnetdev);
 	struct usb_device *udev = interface_to_usbdev(pusb_intf);
 
+<<<<<<< HEAD
 	usb_set_intfdata(pusb_intf, NULL);
 	if (padapter) {
 		if (padapter->fw_found)
 			release_firmware(padapter->fw);
 		/* never exit with a firmware callback pending */
 		wait_for_completion(&padapter->rtl8712_fw_ready);
+=======
+	if (padapter) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (drvpriv.drv_registered == true)
 			padapter->bSurpriseRemoved = true;
 		if (pnetdev != NULL) {
@@ -638,9 +694,12 @@ static void r871xu_dev_remove(struct usb_interface *pusb_intf)
 		}
 		flush_scheduled_work();
 		udelay(1);
+<<<<<<< HEAD
 		/*Stop driver mlme relation timer */
 		if (padapter->fw_found)
 			r8712_stop_drv_timers(padapter);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		r871x_dev_unload(padapter);
 		r8712_free_drv_sw(padapter);
 	}

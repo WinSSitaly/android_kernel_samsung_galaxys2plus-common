@@ -384,7 +384,11 @@ static int bfin_kpad_resume(struct platform_device *pdev)
 # define bfin_kpad_resume  NULL
 #endif
 
+<<<<<<< HEAD
 static struct platform_driver bfin_kpad_device_driver = {
+=======
+struct platform_driver bfin_kpad_device_driver = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.driver		= {
 		.name	= DRV_NAME,
 		.owner	= THIS_MODULE,
@@ -394,7 +398,23 @@ static struct platform_driver bfin_kpad_device_driver = {
 	.suspend	= bfin_kpad_suspend,
 	.resume		= bfin_kpad_resume,
 };
+<<<<<<< HEAD
 module_platform_driver(bfin_kpad_device_driver);
+=======
+
+static int __init bfin_kpad_init(void)
+{
+	return platform_driver_register(&bfin_kpad_device_driver);
+}
+
+static void __exit bfin_kpad_exit(void)
+{
+	platform_driver_unregister(&bfin_kpad_device_driver);
+}
+
+module_init(bfin_kpad_init);
+module_exit(bfin_kpad_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Michael Hennerich <hennerich@blackfin.uclinux.org>");

@@ -18,10 +18,17 @@
 #include <linux/irq.h>
 #include <linux/interrupt.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/gpio.h>
 #include <linux/regulator/consumer.h>
 #include <linux/videodev2.h>
 #include <linux/module.h>
+=======
+#include <linux/version.h>
+#include <linux/gpio.h>
+#include <linux/regulator/consumer.h>
+#include <linux/videodev2.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/v4l2-ctrls.h>
 #include <media/v4l2-device.h>
 #include <media/v4l2-subdev.h>
@@ -135,13 +142,19 @@ static u32 m5mols_swap_byte(u8 *data, u8 length)
  * @reg: combination of size, category and command for the I2C packet
  * @size: desired size of I2C packet
  * @val: read value
+<<<<<<< HEAD
  *
  * Returns 0 on success, or else negative errno.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int m5mols_read(struct v4l2_subdev *sd, u32 size, u32 reg, u32 *val)
 {
 	struct i2c_client *client = v4l2_get_subdevdata(sd);
+<<<<<<< HEAD
 	struct m5mols_info *info = to_m5mols(sd);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 rbuf[M5MOLS_I2C_MAX_SIZE + 1];
 	u8 category = I2C_CATEGORY(reg);
 	u8 cmd = I2C_COMMAND(reg);
@@ -171,6 +184,7 @@ static int m5mols_read(struct v4l2_subdev *sd, u32 size, u32 reg, u32 *val)
 	usleep_range(200, 200);
 
 	ret = i2c_transfer(client->adapter, msg, 2);
+<<<<<<< HEAD
 
 	if (ret == 2) {
 		*val = m5mols_swap_byte(&rbuf[1], size);
@@ -182,6 +196,17 @@ static int m5mols_read(struct v4l2_subdev *sd, u32 size, u32 reg, u32 *val)
 			 size, category, cmd, ret);
 
 	return ret < 0 ? ret : -EIO;
+=======
+	if (ret < 0) {
+		v4l2_err(sd, "read failed: size:%d cat:%02x cmd:%02x. %d\n",
+			 size, category, cmd, ret);
+		return ret;
+	}
+
+	*val = m5mols_swap_byte(&rbuf[1], size);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int m5mols_read_u8(struct v4l2_subdev *sd, u32 reg, u8 *val)
@@ -234,13 +259,19 @@ int m5mols_read_u32(struct v4l2_subdev *sd, u32 reg, u32 *val)
  * m5mols_write - I2C command write function
  * @reg: combination of size, category and command for the I2C packet
  * @val: value to write
+<<<<<<< HEAD
  *
  * Returns 0 on success, or else negative errno.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 int m5mols_write(struct v4l2_subdev *sd, u32 reg, u32 val)
 {
 	struct i2c_client *client = v4l2_get_subdevdata(sd);
+<<<<<<< HEAD
 	struct m5mols_info *info = to_m5mols(sd);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 wbuf[M5MOLS_I2C_MAX_SIZE + 4];
 	u8 category = I2C_CATEGORY(reg);
 	u8 cmd = I2C_COMMAND(reg);
@@ -271,6 +302,7 @@ int m5mols_write(struct v4l2_subdev *sd, u32 reg, u32 val)
 	usleep_range(200, 200);
 
 	ret = i2c_transfer(client->adapter, msg, 1);
+<<<<<<< HEAD
 	if (ret == 1)
 		return 0;
 
@@ -310,6 +342,30 @@ int m5mols_busy_wait(struct v4l2_subdev *sd, u32 reg, u32 value, u32 mask,
 		usleep_range(100, 250);
 	} while (ms > 0 && time_is_after_jiffies(end));
 
+=======
+	if (ret < 0) {
+		v4l2_err(sd, "write failed: size:%d cat:%02x cmd:%02x. %d\n",
+			size, category, cmd, ret);
+		return ret;
+	}
+
+	return 0;
+}
+
+int m5mols_busy(struct v4l2_subdev *sd, u8 category, u8 cmd, u8 mask)
+{
+	u8 busy;
+	int i;
+	int ret;
+
+	for (i = 0; i < M5MOLS_I2C_CHECK_RETRY; i++) {
+		ret = m5mols_read_u8(sd, I2C_REG(category, cmd, 1), &busy);
+		if (ret < 0)
+			return ret;
+		if ((busy & mask) == mask)
+			return 0;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -EBUSY;
 }
 
@@ -332,6 +388,7 @@ int m5mols_enable_interrupt(struct v4l2_subdev *sd, u8 reg)
 	return ret;
 }
 
+<<<<<<< HEAD
 int m5mols_wait_interrupt(struct v4l2_subdev *sd, u8 irq_mask, u32 timeout)
 {
 	struct m5mols_info *info = to_m5mols(sd);
@@ -346,6 +403,8 @@ int m5mols_wait_interrupt(struct v4l2_subdev *sd, u8 irq_mask, u32 timeout)
 				M5MOLS_I2C_RDY_WAIT_FL | irq_mask, -1);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * m5mols_reg_mode - Write the mode and check busy status
  *
@@ -355,10 +414,15 @@ int m5mols_wait_interrupt(struct v4l2_subdev *sd, u8 irq_mask, u32 timeout)
 static int m5mols_reg_mode(struct v4l2_subdev *sd, u8 mode)
 {
 	int ret = m5mols_write(sd, SYSTEM_SYSMODE, mode);
+<<<<<<< HEAD
 	if (ret < 0)
 		return ret;
 	return m5mols_busy_wait(sd, SYSTEM_SYSMODE, mode, 0xff,
 				M5MOLS_MODE_CHANGE_TIMEOUT);
+=======
+
+	return ret ? ret : m5mols_busy(sd, CAT_SYSTEM, CAT0_SYSMODE, mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -375,17 +439,29 @@ int m5mols_mode(struct m5mols_info *info, u8 mode)
 	int ret = -EINVAL;
 	u8 reg;
 
+<<<<<<< HEAD
 	if (mode < REG_PARAMETER || mode > REG_CAPTURE)
 		return ret;
 
 	ret = m5mols_read_u8(sd, SYSTEM_SYSMODE, &reg);
 	if (ret || reg == mode)
+=======
+	if (mode < REG_PARAMETER && mode > REG_CAPTURE)
+		return ret;
+
+	ret = m5mols_read_u8(sd, SYSTEM_SYSMODE, &reg);
+	if ((!ret && reg == mode) || ret)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 
 	switch (reg) {
 	case REG_PARAMETER:
 		ret = m5mols_reg_mode(sd, REG_MONITOR);
+<<<<<<< HEAD
 		if (mode == REG_MONITOR)
+=======
+		if (!ret && mode == REG_MONITOR)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		if (!ret)
 			ret = m5mols_reg_mode(sd, REG_CAPTURE);
@@ -402,7 +478,11 @@ int m5mols_mode(struct m5mols_info *info, u8 mode)
 
 	case REG_CAPTURE:
 		ret = m5mols_reg_mode(sd, REG_MONITOR);
+<<<<<<< HEAD
 		if (mode == REG_MONITOR)
+=======
+		if (!ret && mode == REG_MONITOR)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		if (!ret)
 			ret = m5mols_reg_mode(sd, REG_PARAMETER);
@@ -552,6 +632,12 @@ static int m5mols_get_fmt(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh,
 	struct m5mols_info *info = to_m5mols(sd);
 	struct v4l2_mbus_framefmt *format;
 
+<<<<<<< HEAD
+=======
+	if (fmt->pad != 0)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	format = __find_format(info, fh, fmt->which, info->res_type);
 	if (!format)
 		return -EINVAL;
@@ -570,6 +656,12 @@ static int m5mols_set_fmt(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh,
 	u32 resolution = 0;
 	int ret;
 
+<<<<<<< HEAD
+=======
+	if (fmt->pad != 0)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = __find_resolution(sd, format, &type, &resolution);
 	if (ret < 0)
 		return ret;
@@ -578,6 +670,7 @@ static int m5mols_set_fmt(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh,
 	if (!sfmt)
 		return 0;
 
+<<<<<<< HEAD
 
 	format->code = m5mols_default_ffmt[type].code;
 	format->colorspace = V4L2_COLORSPACE_JPEG;
@@ -586,6 +679,15 @@ static int m5mols_set_fmt(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh,
 	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
 		*sfmt = *format;
 		info->resolution = resolution;
+=======
+	*sfmt		= m5mols_default_ffmt[type];
+	sfmt->width	= format->width;
+	sfmt->height	= format->height;
+
+	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
+		info->resolution = resolution;
+		info->code = format->code;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		info->res_type = type;
 	}
 
@@ -611,6 +713,7 @@ static struct v4l2_subdev_pad_ops m5mols_pad_ops = {
 };
 
 /**
+<<<<<<< HEAD
  * m5mols_restore_controls - Apply current control values to the registers
  *
  * m5mols_do_scenemode() handles all parameters for which there is yet no
@@ -630,6 +733,28 @@ int m5mols_restore_controls(struct m5mols_info *info)
 
 	ret = v4l2_ctrl_handler_setup(&info->handle);
 	info->ctrl_sync = !ret;
+=======
+ * m5mols_sync_controls - Apply default scene mode and the current controls
+ *
+ * This is used only streaming for syncing between v4l2_ctrl framework and
+ * m5mols's controls. First, do the scenemode to the sensor, then call
+ * v4l2_ctrl_handler_setup. It can be same between some commands and
+ * the scenemode's in the default v4l2_ctrls. But, such commands of control
+ * should be prior to the scenemode's one.
+ */
+int m5mols_sync_controls(struct m5mols_info *info)
+{
+	int ret = -EINVAL;
+
+	if (!is_ctrl_synced(info)) {
+		ret = m5mols_do_scenemode(info, REG_SCENE_NORMAL);
+		if (ret)
+			return ret;
+
+		v4l2_ctrl_handler_setup(&info->handle);
+		info->ctrl_sync = true;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -653,7 +778,11 @@ static int m5mols_start_monitor(struct m5mols_info *info)
 	if (!ret)
 		ret = m5mols_mode(info, REG_MONITOR);
 	if (!ret)
+<<<<<<< HEAD
 		ret = m5mols_restore_controls(info);
+=======
+		ret = m5mols_sync_controls(info);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -661,14 +790,23 @@ static int m5mols_start_monitor(struct m5mols_info *info)
 static int m5mols_s_stream(struct v4l2_subdev *sd, int enable)
 {
 	struct m5mols_info *info = to_m5mols(sd);
+<<<<<<< HEAD
 	u32 code = info->ffmt[info->res_type].code;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (enable) {
 		int ret = -EINVAL;
 
+<<<<<<< HEAD
 		if (is_code(code, M5MOLS_RESTYPE_MONITOR))
 			ret = m5mols_start_monitor(info);
 		if (is_code(code, M5MOLS_RESTYPE_CAPTURE))
+=======
+		if (is_code(info->code, M5MOLS_RESTYPE_MONITOR))
+			ret = m5mols_start_monitor(info);
+		if (is_code(info->code, M5MOLS_RESTYPE_CAPTURE))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ret = m5mols_start_capture(info);
 
 		return ret;
@@ -685,6 +823,7 @@ static int m5mols_s_ctrl(struct v4l2_ctrl *ctrl)
 {
 	struct v4l2_subdev *sd = to_sd(ctrl);
 	struct m5mols_info *info = to_m5mols(sd);
+<<<<<<< HEAD
 	int ispstate = info->mode;
 	int ret;
 
@@ -704,6 +843,19 @@ static int m5mols_s_ctrl(struct v4l2_ctrl *ctrl)
 	if (ret < 0)
 		return ret;
 	return m5mols_mode(info, ispstate);
+=======
+	int ret;
+
+	info->mode_save = info->mode;
+
+	ret = m5mols_mode(info, REG_PARAMETER);
+	if (!ret)
+		ret = m5mols_set_ctrl(ctrl);
+	if (!ret)
+		ret = m5mols_mode(info, info->mode_save);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct v4l2_ctrl_ops m5mols_ctrl_ops = {
@@ -717,10 +869,17 @@ static int m5mols_sensor_power(struct m5mols_info *info, bool enable)
 	const struct m5mols_platform_data *pdata = info->pdata;
 	int ret;
 
+<<<<<<< HEAD
 	if (info->power == enable)
 		return 0;
 
 	if (enable) {
+=======
+	if (enable) {
+		if (is_powered(info))
+			return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (info->set_power) {
 			ret = info->set_power(&client->dev, 1);
 			if (ret)
@@ -734,11 +893,22 @@ static int m5mols_sensor_power(struct m5mols_info *info, bool enable)
 		}
 
 		gpio_set_value(pdata->gpio_reset, !pdata->reset_polarity);
+<<<<<<< HEAD
 		info->power = 1;
+=======
+		usleep_range(1000, 1000);
+		info->power = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		return ret;
 	}
 
+<<<<<<< HEAD
+=======
+	if (!is_powered(info))
+		return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = regulator_bulk_disable(ARRAY_SIZE(supplies), supplies);
 	if (ret)
 		return ret;
@@ -747,9 +917,14 @@ static int m5mols_sensor_power(struct m5mols_info *info, bool enable)
 		info->set_power(&client->dev, 0);
 
 	gpio_set_value(pdata->gpio_reset, pdata->reset_polarity);
+<<<<<<< HEAD
 
 	info->isp_ready = 0;
 	info->power = 0;
+=======
+	usleep_range(1000, 1000);
+	info->power = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -762,6 +937,7 @@ int __attribute__ ((weak)) m5mols_update_fw(struct v4l2_subdev *sd,
 }
 
 /**
+<<<<<<< HEAD
  * m5mols_fw_start - M-5MOLS internal ARM controller initialization
  *
  * Execute the M-5MOLS internal ARM controller initialization sequence.
@@ -785,6 +961,23 @@ static int m5mols_fw_start(struct v4l2_subdev *sd)
 		return ret;
 
 	info->isp_ready = 1;
+=======
+ * m5mols_sensor_armboot - Booting M-5MOLS internal ARM core.
+ *
+ * Booting internal ARM core makes the M-5MOLS is ready for getting commands
+ * with I2C. It's the first thing to be done after it powered up. It must wait
+ * at least 520ms recommended by M-5MOLS datasheet, after executing arm booting.
+ */
+static int m5mols_sensor_armboot(struct v4l2_subdev *sd)
+{
+	int ret;
+
+	ret = m5mols_write(sd, FLASH_CAM_START, REG_START_ARM_BOOT);
+	if (ret < 0)
+		return ret;
+
+	msleep(520);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = m5mols_get_version(sd);
 	if (!ret)
@@ -796,8 +989,12 @@ static int m5mols_fw_start(struct v4l2_subdev *sd)
 
 	ret = m5mols_write(sd, PARM_INTERFACE, REG_INTERFACE_MIPI);
 	if (!ret)
+<<<<<<< HEAD
 		ret = m5mols_enable_interrupt(sd,
 				REG_INT_AF | REG_INT_CAPTURE);
+=======
+		ret = m5mols_enable_interrupt(sd, REG_INT_AF);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -834,7 +1031,11 @@ static int m5mols_init_controls(struct m5mols_info *info)
 			4, (1 << V4L2_COLORFX_BW), V4L2_COLORFX_NONE);
 	info->autoexposure = v4l2_ctrl_new_std_menu(&info->handle,
 			&m5mols_ctrl_ops, V4L2_CID_EXPOSURE_AUTO,
+<<<<<<< HEAD
 			1, 0, V4L2_EXPOSURE_AUTO);
+=======
+			1, 0, V4L2_EXPOSURE_MANUAL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sd->ctrl_handler = &info->handle;
 	if (info->handle.error) {
@@ -863,7 +1064,20 @@ static int m5mols_s_power(struct v4l2_subdev *sd, int on)
 	if (on) {
 		ret = m5mols_sensor_power(info, true);
 		if (!ret)
+<<<<<<< HEAD
 			ret = m5mols_fw_start(sd);
+=======
+			ret = m5mols_sensor_armboot(sd);
+		if (!ret)
+			ret = m5mols_init_controls(info);
+		if (ret)
+			return ret;
+
+		info->ffmt[M5MOLS_RESTYPE_MONITOR] =
+			m5mols_default_ffmt[M5MOLS_RESTYPE_MONITOR];
+		info->ffmt[M5MOLS_RESTYPE_CAPTURE] =
+			m5mols_default_ffmt[M5MOLS_RESTYPE_CAPTURE];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 
@@ -874,6 +1088,7 @@ static int m5mols_s_power(struct v4l2_subdev *sd, int on)
 		if (!ret)
 			ret = m5mols_write(sd, AF_MODE, REG_AF_POWEROFF);
 		if (!ret)
+<<<<<<< HEAD
 			ret = m5mols_busy_wait(sd, SYSTEM_STATUS, REG_AF_IDLE,
 					       0xff, -1);
 		if (ret < 0)
@@ -882,6 +1097,19 @@ static int m5mols_s_power(struct v4l2_subdev *sd, int on)
 
 	ret = m5mols_sensor_power(info, false);
 	info->ctrl_sync = 0;
+=======
+			ret = m5mols_busy(sd, CAT_SYSTEM, CAT0_STATUS,
+					REG_AF_IDLE);
+		if (!ret)
+			v4l2_info(sd, "Success soft-landing lens\n");
+	}
+
+	ret = m5mols_sensor_power(info, false);
+	if (!ret) {
+		v4l2_ctrl_handler_free(&info->handle);
+		info->ctrl_sync = false;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -907,6 +1135,7 @@ static const struct v4l2_subdev_core_ops m5mols_core_ops = {
 	.log_status	= m5mols_log_status,
 };
 
+<<<<<<< HEAD
 /*
  * V4L2 subdev internal operations
  */
@@ -922,18 +1151,63 @@ static const struct v4l2_subdev_internal_ops m5mols_subdev_internal_ops = {
 	.open		= m5mols_open,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct v4l2_subdev_ops m5mols_ops = {
 	.core		= &m5mols_core_ops,
 	.pad		= &m5mols_pad_ops,
 	.video		= &m5mols_video_ops,
 };
 
+<<<<<<< HEAD
 static irqreturn_t m5mols_irq_handler(int irq, void *data)
 {
 	struct m5mols_info *info = to_m5mols(data);
 
 	atomic_set(&info->irq_done, 1);
 	wake_up_interruptible(&info->irq_waitq);
+=======
+static void m5mols_irq_work(struct work_struct *work)
+{
+	struct m5mols_info *info =
+		container_of(work, struct m5mols_info, work_irq);
+	struct v4l2_subdev *sd = &info->sd;
+	u8 reg;
+	int ret;
+
+	if (!is_powered(info) ||
+			m5mols_read_u8(sd, SYSTEM_INT_FACTOR, &info->interrupt))
+		return;
+
+	switch (info->interrupt & REG_INT_MASK) {
+	case REG_INT_AF:
+		if (!is_available_af(info))
+			break;
+		ret = m5mols_read_u8(sd, AF_STATUS, &reg);
+		v4l2_dbg(2, m5mols_debug, sd, "AF %s\n",
+			 reg == REG_AF_FAIL ? "Failed" :
+			 reg == REG_AF_SUCCESS ? "Success" :
+			 reg == REG_AF_IDLE ? "Idle" : "Busy");
+		break;
+	case REG_INT_CAPTURE:
+		if (!test_and_set_bit(ST_CAPT_IRQ, &info->flags))
+			wake_up_interruptible(&info->irq_waitq);
+
+		v4l2_dbg(2, m5mols_debug, sd, "CAPTURE\n");
+		break;
+	default:
+		v4l2_dbg(2, m5mols_debug, sd, "Undefined: %02x\n", reg);
+		break;
+	};
+}
+
+static irqreturn_t m5mols_irq_handler(int irq, void *data)
+{
+	struct v4l2_subdev *sd = data;
+	struct m5mols_info *info = to_m5mols(sd);
+
+	schedule_work(&info->work_irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return IRQ_HANDLED;
 }
@@ -956,7 +1230,11 @@ static int __devinit m5mols_probe(struct i2c_client *client,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	if (!client->irq) {
+=======
+	if (!pdata->irq) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_err(&client->dev, "Interrupt not assigned\n");
 		return -EINVAL;
 	}
@@ -982,11 +1260,17 @@ static int __devinit m5mols_probe(struct i2c_client *client,
 	}
 
 	sd = &info->sd;
+<<<<<<< HEAD
 	v4l2_i2c_subdev_init(sd, client, &m5mols_ops);
 	strlcpy(sd->name, MODULE_NAME, sizeof(sd->name));
 	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
 
 	sd->internal_ops = &m5mols_subdev_internal_ops;
+=======
+	strlcpy(sd->name, MODULE_NAME, sizeof(sd->name));
+	v4l2_i2c_subdev_init(sd, client, &m5mols_ops);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info->pad.flags = MEDIA_PAD_FL_SOURCE;
 	ret = media_entity_init(&sd->entity, 1, &info->pad, 0);
 	if (ret < 0)
@@ -994,13 +1278,19 @@ static int __devinit m5mols_probe(struct i2c_client *client,
 	sd->entity.type = MEDIA_ENT_T_V4L2_SUBDEV_SENSOR;
 
 	init_waitqueue_head(&info->irq_waitq);
+<<<<<<< HEAD
 	ret = request_irq(client->irq, m5mols_irq_handler,
+=======
+	INIT_WORK(&info->work_irq, m5mols_irq_work);
+	ret = request_irq(pdata->irq, m5mols_irq_handler,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  IRQF_TRIGGER_RISING, MODULE_NAME, sd);
 	if (ret) {
 		dev_err(&client->dev, "Interrupt request failed: %d\n", ret);
 		goto out_me;
 	}
 	info->res_type = M5MOLS_RESTYPE_MONITOR;
+<<<<<<< HEAD
 	info->ffmt[0] = m5mols_default_ffmt[0];
 	info->ffmt[1] =	m5mols_default_ffmt[1];
 
@@ -1015,6 +1305,9 @@ static int __devinit m5mols_probe(struct i2c_client *client,
 	m5mols_sensor_power(info, false);
 	if (!ret)
 		return 0;
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_me:
 	media_entity_cleanup(&sd->entity);
 out_reg:
@@ -1032,8 +1325,12 @@ static int __devexit m5mols_remove(struct i2c_client *client)
 	struct m5mols_info *info = to_m5mols(sd);
 
 	v4l2_device_unregister_subdev(sd);
+<<<<<<< HEAD
 	v4l2_ctrl_handler_free(sd->ctrl_handler);
 	free_irq(client->irq, sd);
+=======
+	free_irq(info->pdata->irq, sd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	regulator_bulk_free(ARRAY_SIZE(supplies), supplies);
 	gpio_free(info->pdata->gpio_reset);
@@ -1057,7 +1354,22 @@ static struct i2c_driver m5mols_i2c_driver = {
 	.id_table	= m5mols_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(m5mols_i2c_driver);
+=======
+static int __init m5mols_mod_init(void)
+{
+	return i2c_add_driver(&m5mols_i2c_driver);
+}
+
+static void __exit m5mols_mod_exit(void)
+{
+	i2c_del_driver(&m5mols_i2c_driver);
+}
+
+module_init(m5mols_mod_init);
+module_exit(m5mols_mod_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("HeungJun Kim <riverful.kim@samsung.com>");
 MODULE_AUTHOR("Dongsoo Kim <dongsoo45.kim@samsung.com>");

@@ -25,9 +25,15 @@
 #include <linux/err.h>
 #include <linux/fs.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/rcupdate.h>
 #include <asm/uaccess.h>
 #include <asm/pgtable.h>
+=======
+#include <asm/uaccess.h>
+#include <asm/pgtable.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/processor.h>
 #include <asm/mmu_context.h>
@@ -108,7 +114,10 @@ void cpu_idle(void)
 {
 	/* endless idle loop with no priority at all */
 	for (;;) {
+<<<<<<< HEAD
 		rcu_idle_enter();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		while (!need_resched()) {
 			void (*idle)(void);
 
@@ -123,9 +132,16 @@ void cpu_idle(void)
 			}
 			idle();
 		}
+<<<<<<< HEAD
 		rcu_idle_exit();
 
 		schedule_preempt_disabled();
+=======
+
+		preempt_enable_no_resched();
+		schedule();
+		preempt_disable();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 

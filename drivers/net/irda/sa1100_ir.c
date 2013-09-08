@@ -15,7 +15,11 @@
  *  This driver takes one kernel command line parameter, sa1100ir=, with
  *  the following options:
  *	max_rate:baudrate	- set the maximum baud rate
+<<<<<<< HEAD
  *	power_level:level	- set the transmitter power level
+=======
+ *	power_leve:level	- set the transmitter power level
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	tx_lpm:0|1		- set transmit low power mode
  */
 #include <linux/module.h>
@@ -30,13 +34,21 @@
 #include <linux/delay.h>
 #include <linux/platform_device.h>
 #include <linux/dma-mapping.h>
+<<<<<<< HEAD
 #include <linux/dmaengine.h>
 #include <linux/sa11x0-dma.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <net/irda/irda.h>
 #include <net/irda/wrapper.h>
 #include <net/irda/irda_device.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/irq.h>
+#include <mach/dma.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/hardware.h>
 #include <asm/mach/irda.h>
 
@@ -44,6 +56,7 @@ static int power_level = 3;
 static int tx_lpm;
 static int max_rate = 4000000;
 
+<<<<<<< HEAD
 struct sa1100_buf {
 	struct device		*dev;
 	struct sk_buff		*skb;
@@ -53,6 +66,10 @@ struct sa1100_buf {
 };
 
 struct sa1100_irda {
+=======
+struct sa1100_irda {
+	unsigned char		hscr0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned char		utcr4;
 	unsigned char		power;
 	unsigned char		open;
@@ -60,8 +77,17 @@ struct sa1100_irda {
 	int			speed;
 	int			newspeed;
 
+<<<<<<< HEAD
 	struct sa1100_buf	dma_rx;
 	struct sa1100_buf	dma_tx;
+=======
+	struct sk_buff		*txskb;
+	struct sk_buff		*rxskb;
+	dma_addr_t		txbuf_dma;
+	dma_addr_t		rxbuf_dma;
+	dma_regs_t		*txdma;
+	dma_regs_t		*rxdma;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct device		*dev;
 	struct irda_platform_data *pdata;
@@ -70,6 +96,7 @@ struct sa1100_irda {
 
 	iobuff_t		tx_buff;
 	iobuff_t		rx_buff;
+<<<<<<< HEAD
 
 	int (*tx_start)(struct sk_buff *, struct net_device *, struct sa1100_irda *);
 	irqreturn_t (*irq)(struct net_device *, struct sa1100_irda *);
@@ -77,10 +104,15 @@ struct sa1100_irda {
 
 static int sa1100_irda_set_speed(struct sa1100_irda *, int);
 
+=======
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define IS_FIR(si)		((si)->speed >= 4000000)
 
 #define HPSIR_MAX_RXLEN		2047
 
+<<<<<<< HEAD
 static struct dma_slave_config sa1100_irda_sir_tx = {
 	.direction	= DMA_TO_DEVICE,
 	.dst_addr	= __PREG(Ser2UTDR),
@@ -157,16 +189,27 @@ static void sa1100_irda_dma_start(struct sa1100_buf *buf,
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Allocate and map the receive buffer, unless it is already allocated.
  */
 static int sa1100_irda_rx_alloc(struct sa1100_irda *si)
 {
+<<<<<<< HEAD
 	if (si->dma_rx.skb)
 		return 0;
 
 	si->dma_rx.skb = alloc_skb(HPSIR_MAX_RXLEN + 1, GFP_ATOMIC);
 	if (!si->dma_rx.skb) {
+=======
+	if (si->rxskb)
+		return 0;
+
+	si->rxskb = alloc_skb(HPSIR_MAX_RXLEN + 1, GFP_ATOMIC);
+
+	if (!si->rxskb) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR "sa1100_ir: out of memory for RX SKB\n");
 		return -ENOMEM;
 	}
@@ -175,6 +218,7 @@ static int sa1100_irda_rx_alloc(struct sa1100_irda *si)
 	 * Align any IP headers that may be contained
 	 * within the frame.
 	 */
+<<<<<<< HEAD
 	skb_reserve(si->dma_rx.skb, 1);
 
 	sg_set_buf(&si->dma_rx.sg, si->dma_rx.skb->data, HPSIR_MAX_RXLEN);
@@ -183,6 +227,13 @@ static int sa1100_irda_rx_alloc(struct sa1100_irda *si)
 		return -ENOMEM;
 	}
 
+=======
+	skb_reserve(si->rxskb, 1);
+
+	si->rxbuf_dma = dma_map_single(si->dev, si->rxskb->data,
+					HPSIR_MAX_RXLEN,
+					DMA_FROM_DEVICE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -192,7 +243,11 @@ static int sa1100_irda_rx_alloc(struct sa1100_irda *si)
  */
 static void sa1100_irda_rx_dma_start(struct sa1100_irda *si)
 {
+<<<<<<< HEAD
 	if (!si->dma_rx.skb) {
+=======
+	if (!si->rxskb) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR "sa1100_ir: rx buffer went missing\n");
 		return;
 	}
@@ -200,11 +255,16 @@ static void sa1100_irda_rx_dma_start(struct sa1100_irda *si)
 	/*
 	 * First empty receive FIFO
 	 */
+<<<<<<< HEAD
 	Ser2HSCR0 = HSCR0_HSSP;
+=======
+	Ser2HSCR0 = si->hscr0 | HSCR0_HSSP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Enable the DMA, receiver and receive interrupt.
 	 */
+<<<<<<< HEAD
 	dmaengine_terminate_all(si->dma_rx.chan);
 	sa1100_irda_dma_start(&si->dma_rx, DMA_DEV_TO_MEM, NULL, NULL);
 
@@ -281,6 +341,251 @@ static int sa1100_irda_sir_tx_start(struct sk_buff *skb, struct net_device *dev,
 
 static irqreturn_t sa1100_irda_sir_irq(struct net_device *dev, struct sa1100_irda *si)
 {
+=======
+	sa1100_clear_dma(si->rxdma);
+	sa1100_start_dma(si->rxdma, si->rxbuf_dma, HPSIR_MAX_RXLEN);
+	Ser2HSCR0 = si->hscr0 | HSCR0_HSSP | HSCR0_RXE;
+}
+
+/*
+ * Set the IrDA communications speed.
+ */
+static int sa1100_irda_set_speed(struct sa1100_irda *si, int speed)
+{
+	unsigned long flags;
+	int brd, ret = -EINVAL;
+
+	switch (speed) {
+	case 9600:	case 19200:	case 38400:
+	case 57600:	case 115200:
+		brd = 3686400 / (16 * speed) - 1;
+
+		/*
+		 * Stop the receive DMA.
+		 */
+		if (IS_FIR(si))
+			sa1100_stop_dma(si->rxdma);
+
+		local_irq_save(flags);
+
+		Ser2UTCR3 = 0;
+		Ser2HSCR0 = HSCR0_UART;
+
+		Ser2UTCR1 = brd >> 8;
+		Ser2UTCR2 = brd;
+
+		/*
+		 * Clear status register
+		 */
+		Ser2UTSR0 = UTSR0_REB | UTSR0_RBB | UTSR0_RID;
+		Ser2UTCR3 = UTCR3_RIE | UTCR3_RXE | UTCR3_TXE;
+
+		if (si->pdata->set_speed)
+			si->pdata->set_speed(si->dev, speed);
+
+		si->speed = speed;
+
+		local_irq_restore(flags);
+		ret = 0;
+		break;
+
+	case 4000000:
+		local_irq_save(flags);
+
+		si->hscr0 = 0;
+
+		Ser2HSSR0 = 0xff;
+		Ser2HSCR0 = si->hscr0 | HSCR0_HSSP;
+		Ser2UTCR3 = 0;
+
+		si->speed = speed;
+
+		if (si->pdata->set_speed)
+			si->pdata->set_speed(si->dev, speed);
+
+		sa1100_irda_rx_alloc(si);
+		sa1100_irda_rx_dma_start(si);
+
+		local_irq_restore(flags);
+
+		break;
+
+	default:
+		break;
+	}
+
+	return ret;
+}
+
+/*
+ * Control the power state of the IrDA transmitter.
+ * State:
+ *  0 - off
+ *  1 - short range, lowest power
+ *  2 - medium range, medium power
+ *  3 - maximum range, high power
+ *
+ * Currently, only assabet is known to support this.
+ */
+static int
+__sa1100_irda_set_power(struct sa1100_irda *si, unsigned int state)
+{
+	int ret = 0;
+	if (si->pdata->set_power)
+		ret = si->pdata->set_power(si->dev, state);
+	return ret;
+}
+
+static inline int
+sa1100_set_power(struct sa1100_irda *si, unsigned int state)
+{
+	int ret;
+
+	ret = __sa1100_irda_set_power(si, state);
+	if (ret == 0)
+		si->power = state;
+
+	return ret;
+}
+
+static int sa1100_irda_startup(struct sa1100_irda *si)
+{
+	int ret;
+
+	/*
+	 * Ensure that the ports for this device are setup correctly.
+	 */
+	if (si->pdata->startup)	{
+		ret = si->pdata->startup(si->dev);
+		if (ret)
+			return ret;
+	}
+
+	/*
+	 * Configure PPC for IRDA - we want to drive TXD2 low.
+	 * We also want to drive this pin low during sleep.
+	 */
+	PPSR &= ~PPC_TXD2;
+	PSDR &= ~PPC_TXD2;
+	PPDR |= PPC_TXD2;
+
+	/*
+	 * Enable HP-SIR modulation, and ensure that the port is disabled.
+	 */
+	Ser2UTCR3 = 0;
+	Ser2HSCR0 = HSCR0_UART;
+	Ser2UTCR4 = si->utcr4;
+	Ser2UTCR0 = UTCR0_8BitData;
+	Ser2HSCR2 = HSCR2_TrDataH | HSCR2_RcDataL;
+
+	/*
+	 * Clear status register
+	 */
+	Ser2UTSR0 = UTSR0_REB | UTSR0_RBB | UTSR0_RID;
+
+	ret = sa1100_irda_set_speed(si, si->speed = 9600);
+	if (ret) {
+		Ser2UTCR3 = 0;
+		Ser2HSCR0 = 0;
+
+		if (si->pdata->shutdown)
+			si->pdata->shutdown(si->dev);
+	}
+
+	return ret;
+}
+
+static void sa1100_irda_shutdown(struct sa1100_irda *si)
+{
+	/*
+	 * Stop all DMA activity.
+	 */
+	sa1100_stop_dma(si->rxdma);
+	sa1100_stop_dma(si->txdma);
+
+	/* Disable the port. */
+	Ser2UTCR3 = 0;
+	Ser2HSCR0 = 0;
+
+	if (si->pdata->shutdown)
+		si->pdata->shutdown(si->dev);
+}
+
+#ifdef CONFIG_PM
+/*
+ * Suspend the IrDA interface.
+ */
+static int sa1100_irda_suspend(struct platform_device *pdev, pm_message_t state)
+{
+	struct net_device *dev = platform_get_drvdata(pdev);
+	struct sa1100_irda *si;
+
+	if (!dev)
+		return 0;
+
+	si = netdev_priv(dev);
+	if (si->open) {
+		/*
+		 * Stop the transmit queue
+		 */
+		netif_device_detach(dev);
+		disable_irq(dev->irq);
+		sa1100_irda_shutdown(si);
+		__sa1100_irda_set_power(si, 0);
+	}
+
+	return 0;
+}
+
+/*
+ * Resume the IrDA interface.
+ */
+static int sa1100_irda_resume(struct platform_device *pdev)
+{
+	struct net_device *dev = platform_get_drvdata(pdev);
+	struct sa1100_irda *si;
+
+	if (!dev)
+		return 0;
+
+	si = netdev_priv(dev);
+	if (si->open) {
+		/*
+		 * If we missed a speed change, initialise at the new speed
+		 * directly.  It is debatable whether this is actually
+		 * required, but in the interests of continuing from where
+		 * we left off it is desirable.  The converse argument is
+		 * that we should re-negotiate at 9600 baud again.
+		 */
+		if (si->newspeed) {
+			si->speed = si->newspeed;
+			si->newspeed = 0;
+		}
+
+		sa1100_irda_startup(si);
+		__sa1100_irda_set_power(si, si->power);
+		enable_irq(dev->irq);
+
+		/*
+		 * This automatically wakes up the queue
+		 */
+		netif_device_attach(dev);
+	}
+
+	return 0;
+}
+#else
+#define sa1100_irda_suspend	NULL
+#define sa1100_irda_resume	NULL
+#endif
+
+/*
+ * HP-SIR format interrupt service routines.
+ */
+static void sa1100_irda_hpsir_irq(struct net_device *dev)
+{
+	struct sa1100_irda *si = netdev_priv(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int status;
 
 	status = Ser2UTSR0;
@@ -333,6 +638,7 @@ static irqreturn_t sa1100_irda_sir_irq(struct net_device *dev, struct sa1100_ird
 
 	}
 
+<<<<<<< HEAD
 	return IRQ_HANDLED;
 }
 
@@ -418,11 +724,57 @@ static int sa1100_irda_fir_tx_start(struct sk_buff *skb, struct net_device *dev,
 	Ser2HSCR0 = HSCR0_HSSP | HSCR0_TXE;
 
 	return NETDEV_TX_OK;
+=======
+	if (status & UTSR0_TFS && si->tx_buff.len) {
+		/*
+		 * Transmitter FIFO is not full
+		 */
+		do {
+			Ser2UTDR = *si->tx_buff.data++;
+			si->tx_buff.len -= 1;
+		} while (Ser2UTSR1 & UTSR1_TNF && si->tx_buff.len);
+
+		if (si->tx_buff.len == 0) {
+			dev->stats.tx_packets++;
+			dev->stats.tx_bytes += si->tx_buff.data -
+					      si->tx_buff.head;
+
+			/*
+			 * We need to ensure that the transmitter has
+			 * finished.
+			 */
+			do
+				rmb();
+			while (Ser2UTSR1 & UTSR1_TBY);
+
+			/*
+			 * Ok, we've finished transmitting.  Now enable
+			 * the receiver.  Sometimes we get a receive IRQ
+			 * immediately after a transmit...
+			 */
+			Ser2UTSR0 = UTSR0_REB | UTSR0_RBB | UTSR0_RID;
+			Ser2UTCR3 = UTCR3_RIE | UTCR3_RXE | UTCR3_TXE;
+
+			if (si->newspeed) {
+				sa1100_irda_set_speed(si, si->newspeed);
+				si->newspeed = 0;
+			}
+
+			/* I'm hungry! */
+			netif_wake_queue(dev);
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void sa1100_irda_fir_error(struct sa1100_irda *si, struct net_device *dev)
 {
+<<<<<<< HEAD
 	struct sk_buff *skb = si->dma_rx.skb;
+=======
+	struct sk_buff *skb = si->rxskb;
+	dma_addr_t dma_addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int len, stat, data;
 
 	if (!skb) {
@@ -433,10 +785,18 @@ static void sa1100_irda_fir_error(struct sa1100_irda *si, struct net_device *dev
 	/*
 	 * Get the current data position.
 	 */
+<<<<<<< HEAD
 	len = sa1100_irda_dma_xferred(&si->dma_rx);
 	if (len > HPSIR_MAX_RXLEN)
 		len = HPSIR_MAX_RXLEN;
 	dma_unmap_sg(si->dma_rx.dev, &si->dma_rx.sg, 1, DMA_FROM_DEVICE);
+=======
+	dma_addr = sa1100_get_dma_pos(si->rxdma);
+	len = dma_addr - si->rxbuf_dma;
+	if (len > HPSIR_MAX_RXLEN)
+		len = HPSIR_MAX_RXLEN;
+	dma_unmap_single(si->dev, si->rxbuf_dma, len, DMA_FROM_DEVICE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	do {
 		/*
@@ -464,7 +824,11 @@ static void sa1100_irda_fir_error(struct sa1100_irda *si, struct net_device *dev
 	} while (Ser2HSSR0 & HSSR0_EIF);
 
 	if (stat & HSSR1_EOF) {
+<<<<<<< HEAD
 		si->dma_rx.skb = NULL;
+=======
+		si->rxskb = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		skb_put(skb, len);
 		skb->dev = dev;
@@ -481,14 +845,23 @@ static void sa1100_irda_fir_error(struct sa1100_irda *si, struct net_device *dev
 		netif_rx(skb);
 	} else {
 		/*
+<<<<<<< HEAD
 		 * Remap the buffer - it was previously mapped, and we
 		 * hope that this succeeds.
 		 */
 		dma_map_sg(si->dma_rx.dev, &si->dma_rx.sg, 1, DMA_FROM_DEVICE);
+=======
+		 * Remap the buffer.
+		 */
+		si->rxbuf_dma = dma_map_single(si->dev, si->rxskb->data,
+						HPSIR_MAX_RXLEN,
+						DMA_FROM_DEVICE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
 /*
+<<<<<<< HEAD
  * We only have to handle RX events here; transmit events go via the TX
  * DMA handler. We disable RX, process, and the restart RX.
  */
@@ -498,6 +871,21 @@ static irqreturn_t sa1100_irda_fir_irq(struct net_device *dev, struct sa1100_ird
 	 * Stop RX DMA
 	 */
 	dmaengine_pause(si->dma_rx.chan);
+=======
+ * FIR format interrupt service routine.  We only have to
+ * handle RX events; transmit events go via the TX DMA handler.
+ *
+ * No matter what, we disable RX, process, and the restart RX.
+ */
+static void sa1100_irda_fir_irq(struct net_device *dev)
+{
+	struct sa1100_irda *si = netdev_priv(dev);
+
+	/*
+	 * Stop RX DMA
+	 */
+	sa1100_stop_dma(si->rxdma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Framing error - we throw away the packet completely.
@@ -513,7 +901,11 @@ static irqreturn_t sa1100_irda_fir_irq(struct net_device *dev, struct sa1100_ird
 		/*
 		 * Clear out the DMA...
 		 */
+<<<<<<< HEAD
 		Ser2HSCR0 = HSCR0_HSSP;
+=======
+		Ser2HSCR0 = si->hscr0 | HSCR0_HSSP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * Clear selected status bits now, so we
@@ -535,6 +927,7 @@ static irqreturn_t sa1100_irda_fir_irq(struct net_device *dev, struct sa1100_ird
 	 * No matter what happens, we must restart reception.
 	 */
 	sa1100_irda_rx_dma_start(si);
+<<<<<<< HEAD
 
 	return IRQ_HANDLED;
 }
@@ -653,6 +1046,76 @@ static irqreturn_t sa1100_irda_irq(int irq, void *dev_id)
 	struct sa1100_irda *si = netdev_priv(dev);
 
 	return si->irq(dev, si);
+=======
+}
+
+static irqreturn_t sa1100_irda_irq(int irq, void *dev_id)
+{
+	struct net_device *dev = dev_id;
+	if (IS_FIR(((struct sa1100_irda *)netdev_priv(dev))))
+		sa1100_irda_fir_irq(dev);
+	else
+		sa1100_irda_hpsir_irq(dev);
+	return IRQ_HANDLED;
+}
+
+/*
+ * TX DMA completion handler.
+ */
+static void sa1100_irda_txdma_irq(void *id)
+{
+	struct net_device *dev = id;
+	struct sa1100_irda *si = netdev_priv(dev);
+	struct sk_buff *skb = si->txskb;
+
+	si->txskb = NULL;
+
+	/*
+	 * Wait for the transmission to complete.  Unfortunately,
+	 * the hardware doesn't give us an interrupt to indicate
+	 * "end of frame".
+	 */
+	do
+		rmb();
+	while (!(Ser2HSSR0 & HSSR0_TUR) || Ser2HSSR1 & HSSR1_TBY);
+
+	/*
+	 * Clear the transmit underrun bit.
+	 */
+	Ser2HSSR0 = HSSR0_TUR;
+
+	/*
+	 * Do we need to change speed?  Note that we're lazy
+	 * here - we don't free the old rxskb.  We don't need
+	 * to allocate a buffer either.
+	 */
+	if (si->newspeed) {
+		sa1100_irda_set_speed(si, si->newspeed);
+		si->newspeed = 0;
+	}
+
+	/*
+	 * Start reception.  This disables the transmitter for
+	 * us.  This will be using the existing RX buffer.
+	 */
+	sa1100_irda_rx_dma_start(si);
+
+	/*
+	 * Account and free the packet.
+	 */
+	if (skb) {
+		dma_unmap_single(si->dev, si->txbuf_dma, skb->len, DMA_TO_DEVICE);
+		dev->stats.tx_packets ++;
+		dev->stats.tx_bytes += skb->len;
+		dev_kfree_skb_irq(skb);
+	}
+
+	/*
+	 * Make sure that the TX queue is available for sending
+	 * (for retries).  TX has priority over RX at all times.
+	 */
+	netif_wake_queue(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int sa1100_irda_hard_xmit(struct sk_buff *skb, struct net_device *dev)
@@ -668,19 +1131,77 @@ static int sa1100_irda_hard_xmit(struct sk_buff *skb, struct net_device *dev)
 	if (speed != si->speed && speed != -1)
 		si->newspeed = speed;
 
+<<<<<<< HEAD
 	/* If this is an empty frame, we can bypass a lot. */
 	if (skb->len == 0) {
 		sa1100_irda_check_speed(si);
+=======
+	/*
+	 * If this is an empty frame, we can bypass a lot.
+	 */
+	if (skb->len == 0) {
+		if (si->newspeed) {
+			si->newspeed = 0;
+			sa1100_irda_set_speed(si, speed);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_kfree_skb(skb);
 		return NETDEV_TX_OK;
 	}
 
+<<<<<<< HEAD
 	netif_stop_queue(dev);
 
 	/* We must not already have a skb to transmit... */
 	BUG_ON(si->dma_tx.skb);
 
 	return si->tx_start(skb, dev, si);
+=======
+	if (!IS_FIR(si)) {
+		netif_stop_queue(dev);
+
+		si->tx_buff.data = si->tx_buff.head;
+		si->tx_buff.len  = async_wrap_skb(skb, si->tx_buff.data,
+						  si->tx_buff.truesize);
+
+		/*
+		 * Set the transmit interrupt enable.  This will fire
+		 * off an interrupt immediately.  Note that we disable
+		 * the receiver so we won't get spurious characteres
+		 * received.
+		 */
+		Ser2UTCR3 = UTCR3_TIE | UTCR3_TXE;
+
+		dev_kfree_skb(skb);
+	} else {
+		int mtt = irda_get_mtt(skb);
+
+		/*
+		 * We must not be transmitting...
+		 */
+		BUG_ON(si->txskb);
+
+		netif_stop_queue(dev);
+
+		si->txskb = skb;
+		si->txbuf_dma = dma_map_single(si->dev, skb->data,
+					 skb->len, DMA_TO_DEVICE);
+
+		sa1100_start_dma(si->txdma, si->txbuf_dma, skb->len);
+
+		/*
+		 * If we have a mean turn-around time, impose the specified
+		 * specified delay.  We could shorten this by timing from
+		 * the point we received the packet.
+		 */
+		if (mtt)
+			udelay(mtt);
+
+		Ser2HSCR0 = si->hscr0 | HSCR0_HSSP | HSCR0_TXE;
+	}
+
+	return NETDEV_TX_OK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -727,6 +1248,7 @@ sa1100_irda_ioctl(struct net_device *dev, struct ifreq *ifreq, int cmd)
 	return ret;
 }
 
+<<<<<<< HEAD
 static int sa1100_irda_startup(struct sa1100_irda *si)
 {
 	int ret;
@@ -790,6 +1312,8 @@ static void sa1100_irda_shutdown(struct sa1100_irda *si)
 		si->pdata->shutdown(si->dev);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int sa1100_irda_start(struct net_device *dev)
 {
 	struct sa1100_irda *si = netdev_priv(dev);
@@ -797,6 +1321,7 @@ static int sa1100_irda_start(struct net_device *dev)
 
 	si->speed = 9600;
 
+<<<<<<< HEAD
 	err = sa1100_irda_dma_request(si->dev, &si->dma_rx, "Ser2ICPRc",
 				&sa1100_irda_fir_rx);
 	if (err)
@@ -804,10 +1329,31 @@ static int sa1100_irda_start(struct net_device *dev)
 
 	err = sa1100_irda_dma_request(si->dev, &si->dma_tx, "Ser2ICPTr",
 				&sa1100_irda_sir_tx);
+=======
+	err = request_irq(dev->irq, sa1100_irda_irq, 0, dev->name, dev);
+	if (err)
+		goto err_irq;
+
+	err = sa1100_request_dma(DMA_Ser2HSSPRd, "IrDA receive",
+				 NULL, NULL, &si->rxdma);
+	if (err)
+		goto err_rx_dma;
+
+	err = sa1100_request_dma(DMA_Ser2HSSPWr, "IrDA transmit",
+				 sa1100_irda_txdma_irq, dev, &si->txdma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		goto err_tx_dma;
 
 	/*
+<<<<<<< HEAD
+=======
+	 * The interrupt must remain disabled for now.
+	 */
+	disable_irq(dev->irq);
+
+	/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Setup the serial port for the specified speed.
 	 */
 	err = sa1100_irda_startup(si);
@@ -822,35 +1368,55 @@ static int sa1100_irda_start(struct net_device *dev)
 	if (!si->irlap)
 		goto err_irlap;
 
+<<<<<<< HEAD
 	err = request_irq(dev->irq, sa1100_irda_irq, 0, dev->name, dev);
 	if (err)
 		goto err_irq;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Now enable the interrupt and start the queue
 	 */
 	si->open = 1;
 	sa1100_set_power(si, power_level); /* low power mode */
+<<<<<<< HEAD
 
 	netif_start_queue(dev);
 	return 0;
 
 err_irq:
 	irlap_close(si->irlap);
+=======
+	enable_irq(dev->irq);
+	netif_start_queue(dev);
+	return 0;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_irlap:
 	si->open = 0;
 	sa1100_irda_shutdown(si);
 err_startup:
+<<<<<<< HEAD
 	dma_release_channel(si->dma_tx.chan);
 err_tx_dma:
 	dma_release_channel(si->dma_rx.chan);
 err_rx_dma:
+=======
+	sa1100_free_dma(si->txdma);
+err_tx_dma:
+	sa1100_free_dma(si->rxdma);
+err_rx_dma:
+	free_irq(dev->irq, dev);
+err_irq:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
 static int sa1100_irda_stop(struct net_device *dev)
 {
 	struct sa1100_irda *si = netdev_priv(dev);
+<<<<<<< HEAD
 	struct sk_buff *skb;
 
 	netif_stop_queue(dev);
@@ -876,6 +1442,21 @@ static int sa1100_irda_stop(struct net_device *dev)
 			     DMA_TO_DEVICE);
 		dev_kfree_skb(skb);
 		si->dma_tx.skb = NULL;
+=======
+
+	disable_irq(dev->irq);
+	sa1100_irda_shutdown(si);
+
+	/*
+	 * If we have been doing DMA receive, make sure we
+	 * tidy that up cleanly.
+	 */
+	if (si->rxskb) {
+		dma_unmap_single(si->dev, si->rxbuf_dma, HPSIR_MAX_RXLEN,
+				 DMA_FROM_DEVICE);
+		dev_kfree_skb(si->rxskb);
+		si->rxskb = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Stop IrLAP */
@@ -884,11 +1465,22 @@ static int sa1100_irda_stop(struct net_device *dev)
 		si->irlap = NULL;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * Free resources
 	 */
 	dma_release_channel(si->dma_tx.chan);
 	dma_release_channel(si->dma_rx.chan);
+=======
+	netif_stop_queue(dev);
+	si->open = 0;
+
+	/*
+	 * Free resources
+	 */
+	sa1100_free_dma(si->txdma);
+	sa1100_free_dma(si->rxdma);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	free_irq(dev->irq, dev);
 
 	sa1100_set_power(si, 0);
@@ -920,15 +1512,22 @@ static int sa1100_irda_probe(struct platform_device *pdev)
 	struct net_device *dev;
 	struct sa1100_irda *si;
 	unsigned int baudrate_mask;
+<<<<<<< HEAD
 	int err, irq;
+=======
+	int err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!pdev->dev.platform_data)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	irq = platform_get_irq(pdev, 0);
 	if (irq <= 0)
 		return irq < 0 ? irq : -ENXIO;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = request_mem_region(__PREG(Ser2UTCR0), 0x24, "IrDA") ? 0 : -EBUSY;
 	if (err)
 		goto err_mem_1;
@@ -943,27 +1542,41 @@ static int sa1100_irda_probe(struct platform_device *pdev)
 	if (!dev)
 		goto err_mem_4;
 
+<<<<<<< HEAD
 	SET_NETDEV_DEV(dev, &pdev->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	si = netdev_priv(dev);
 	si->dev = &pdev->dev;
 	si->pdata = pdev->dev.platform_data;
 
+<<<<<<< HEAD
 	sg_init_table(&si->dma_rx.sg, 1);
 	sg_init_table(&si->dma_tx.sg, 1);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Initialise the HP-SIR buffers
 	 */
 	err = sa1100_irda_init_iobuf(&si->rx_buff, 14384);
 	if (err)
 		goto err_mem_5;
+<<<<<<< HEAD
 	err = sa1100_irda_init_iobuf(&si->tx_buff, IRDA_SIR_MAX_FRAME);
+=======
+	err = sa1100_irda_init_iobuf(&si->tx_buff, 4000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		goto err_mem_5;
 
 	dev->netdev_ops	= &sa1100_irda_netdev_ops;
+<<<<<<< HEAD
 	dev->irq	= irq;
+=======
+	dev->irq	= IRQ_Ser2ICP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	irda_init_max_qos_capabilies(&si->qos);
 
@@ -1037,6 +1650,7 @@ static int sa1100_irda_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 /*
  * Suspend the IrDA interface.
@@ -1105,6 +1719,8 @@ static int sa1100_irda_resume(struct platform_device *pdev)
 #define sa1100_irda_resume	NULL
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct platform_driver sa1100ir_driver = {
 	.probe		= sa1100_irda_probe,
 	.remove		= sa1100_irda_remove,

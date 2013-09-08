@@ -104,7 +104,11 @@ nv50_crtc_blank(struct nouveau_crtc *nv_crtc, bool blanked)
 		OUT_RING(evo, nv_crtc->lut.depth == 8 ?
 				NV50_EVO_CRTC_CLUT_MODE_OFF :
 				NV50_EVO_CRTC_CLUT_MODE_ON);
+<<<<<<< HEAD
 		OUT_RING(evo, nv_crtc->lut.nvbo->bo.offset >> 8);
+=======
+		OUT_RING(evo, (nv_crtc->lut.nvbo->bo.mem.start << PAGE_SHIFT) >> 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (dev_priv->chipset != 0x50) {
 			BEGIN_RING(evo, 0, NV84_EVO_CRTC(index, CLUT_DMA), 1);
 			OUT_RING(evo, NvEvoVRAM);
@@ -132,6 +136,7 @@ nv50_crtc_blank(struct nouveau_crtc *nv_crtc, bool blanked)
 }
 
 static int
+<<<<<<< HEAD
 nv50_crtc_set_dither(struct nouveau_crtc *nv_crtc, bool update)
 {
 	struct nouveau_channel *evo = nv50_display(nv_crtc->base.dev)->master;
@@ -172,10 +177,14 @@ nv50_crtc_set_dither(struct nouveau_crtc *nv_crtc, bool update)
 
 static int
 nv50_crtc_set_color_vibrance(struct nouveau_crtc *nv_crtc, bool update)
+=======
+nv50_crtc_set_dither(struct nouveau_crtc *nv_crtc, bool on, bool update)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_device *dev = nv_crtc->base.dev;
 	struct nouveau_channel *evo = nv50_display(dev)->master;
 	int ret;
+<<<<<<< HEAD
 	int adj;
 	u32 hue, vib;
 
@@ -200,6 +209,27 @@ nv50_crtc_set_color_vibrance(struct nouveau_crtc *nv_crtc, bool update)
 		BEGIN_RING(evo, 0, NV50_EVO_UPDATE, 1);
 		OUT_RING  (evo, 0);
 		FIRE_RING (evo);
+=======
+
+	NV_DEBUG_KMS(dev, "\n");
+
+	ret = RING_SPACE(evo, 2 + (update ? 2 : 0));
+	if (ret) {
+		NV_ERROR(dev, "no space while setting dither\n");
+		return ret;
+	}
+
+	BEGIN_RING(evo, 0, NV50_EVO_CRTC(nv_crtc->index, DITHER_CTRL), 1);
+	if (on)
+		OUT_RING(evo, NV50_EVO_CRTC_DITHER_CTRL_ON);
+	else
+		OUT_RING(evo, NV50_EVO_CRTC_DITHER_CTRL_OFF);
+
+	if (update) {
+		BEGIN_RING(evo, 0, NV50_EVO_UPDATE, 1);
+		OUT_RING(evo, 0);
+		FIRE_RING(evo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -224,6 +254,7 @@ nouveau_crtc_connector_get(struct nouveau_crtc *nv_crtc)
 }
 
 static int
+<<<<<<< HEAD
 nv50_crtc_set_scale(struct nouveau_crtc *nv_crtc, bool update)
 {
 	struct nouveau_connector *nv_connector;
@@ -321,6 +352,82 @@ nv50_crtc_set_scale(struct nouveau_crtc *nv_crtc, bool update)
 		nv50_display_flip_stop(crtc);
 		nv50_display_sync(dev);
 		nv50_display_flip_next(crtc, crtc->fb, NULL);
+=======
+nv50_crtc_set_scale(struct nouveau_crtc *nv_crtc, int scaling_mode, bool update)
+{
+	struct nouveau_connector *nv_connector =
+		nouveau_crtc_connector_get(nv_crtc);
+	struct drm_device *dev = nv_crtc->base.dev;
+	struct nouveau_channel *evo = nv50_display(dev)->master;
+	struct drm_display_mode *native_mode = NULL;
+	struct drm_display_mode *mode = &nv_crtc->base.mode;
+	uint32_t outX, outY, horiz, vert;
+	int ret;
+
+	NV_DEBUG_KMS(dev, "\n");
+
+	switch (scaling_mode) {
+	case DRM_MODE_SCALE_NONE:
+		break;
+	default:
+		if (!nv_connector || !nv_connector->native_mode) {
+			NV_ERROR(dev, "No native mode, forcing panel scaling\n");
+			scaling_mode = DRM_MODE_SCALE_NONE;
+		} else {
+			native_mode = nv_connector->native_mode;
+		}
+		break;
+	}
+
+	switch (scaling_mode) {
+	case DRM_MODE_SCALE_ASPECT:
+		horiz = (native_mode->hdisplay << 19) / mode->hdisplay;
+		vert = (native_mode->vdisplay << 19) / mode->vdisplay;
+
+		if (vert > horiz) {
+			outX = (mode->hdisplay * horiz) >> 19;
+			outY = (mode->vdisplay * horiz) >> 19;
+		} else {
+			outX = (mode->hdisplay * vert) >> 19;
+			outY = (mode->vdisplay * vert) >> 19;
+		}
+		break;
+	case DRM_MODE_SCALE_FULLSCREEN:
+		outX = native_mode->hdisplay;
+		outY = native_mode->vdisplay;
+		break;
+	case DRM_MODE_SCALE_CENTER:
+	case DRM_MODE_SCALE_NONE:
+	default:
+		outX = mode->hdisplay;
+		outY = mode->vdisplay;
+		break;
+	}
+
+	ret = RING_SPACE(evo, update ? 7 : 5);
+	if (ret)
+		return ret;
+
+	/* Got a better name for SCALER_ACTIVE? */
+	/* One day i've got to really figure out why this is needed. */
+	BEGIN_RING(evo, 0, NV50_EVO_CRTC(nv_crtc->index, SCALE_CTRL), 1);
+	if ((mode->flags & DRM_MODE_FLAG_DBLSCAN) ||
+	    (mode->flags & DRM_MODE_FLAG_INTERLACE) ||
+	    mode->hdisplay != outX || mode->vdisplay != outY) {
+		OUT_RING(evo, NV50_EVO_CRTC_SCALE_CTRL_ACTIVE);
+	} else {
+		OUT_RING(evo, NV50_EVO_CRTC_SCALE_CTRL_INACTIVE);
+	}
+
+	BEGIN_RING(evo, 0, NV50_EVO_CRTC(nv_crtc->index, SCALE_RES1), 2);
+	OUT_RING(evo, outY << 16 | outX);
+	OUT_RING(evo, outY << 16 | outX);
+
+	if (update) {
+		BEGIN_RING(evo, 0, NV50_EVO_UPDATE, 1);
+		OUT_RING(evo, 0);
+		FIRE_RING(evo);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -396,10 +503,19 @@ nv50_crtc_destroy(struct drm_crtc *crtc)
 
 	drm_crtc_cleanup(&nv_crtc->base);
 
+<<<<<<< HEAD
+=======
+	nv50_cursor_fini(nv_crtc);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nouveau_bo_unmap(nv_crtc->lut.nvbo);
 	nouveau_bo_ref(NULL, &nv_crtc->lut.nvbo);
 	nouveau_bo_unmap(nv_crtc->cursor.nvbo);
 	nouveau_bo_ref(NULL, &nv_crtc->cursor.nvbo);
+<<<<<<< HEAD
+=======
+	kfree(nv_crtc->mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(nv_crtc);
 }
 
@@ -436,7 +552,11 @@ nv50_crtc_cursor_set(struct drm_crtc *crtc, struct drm_file *file_priv,
 
 	nouveau_bo_unmap(cursor);
 
+<<<<<<< HEAD
 	nv_crtc->cursor.set_offset(nv_crtc, nv_crtc->cursor.nvbo->bo.offset);
+=======
+	nv_crtc->cursor.set_offset(nv_crtc, nv_crtc->cursor.nvbo->bo.mem.start << PAGE_SHIFT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nv_crtc->cursor.show(nv_crtc, true);
 
 out:
@@ -507,6 +627,42 @@ nv50_crtc_dpms(struct drm_crtc *crtc, int mode)
 {
 }
 
+<<<<<<< HEAD
+=======
+static int
+nv50_crtc_wait_complete(struct drm_crtc *crtc)
+{
+	struct drm_device *dev = crtc->dev;
+	struct drm_nouveau_private *dev_priv = dev->dev_private;
+	struct nouveau_timer_engine *ptimer = &dev_priv->engine.timer;
+	struct nv50_display *disp = nv50_display(dev);
+	struct nouveau_channel *evo = disp->master;
+	u64 start;
+	int ret;
+
+	ret = RING_SPACE(evo, 6);
+	if (ret)
+		return ret;
+	BEGIN_RING(evo, 0, 0x0084, 1);
+	OUT_RING  (evo, 0x80000000);
+	BEGIN_RING(evo, 0, 0x0080, 1);
+	OUT_RING  (evo, 0);
+	BEGIN_RING(evo, 0, 0x0084, 1);
+	OUT_RING  (evo, 0x00000000);
+
+	nv_wo32(disp->ntfy, 0x000, 0x00000000);
+	FIRE_RING (evo);
+
+	start = ptimer->read(dev);
+	do {
+		if (nv_ro32(disp->ntfy, 0x000))
+			return 0;
+	} while (ptimer->read(dev) - start < 2000000000ULL);
+
+	return -EBUSY;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 nv50_crtc_prepare(struct drm_crtc *crtc)
 {
@@ -530,7 +686,11 @@ nv50_crtc_commit(struct drm_crtc *crtc)
 
 	nv50_crtc_blank(nv_crtc, false);
 	drm_vblank_post_modeset(dev, nv_crtc->index);
+<<<<<<< HEAD
 	nv50_display_sync(dev);
+=======
+	nv50_crtc_wait_complete(crtc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nv50_display_flip_next(crtc, crtc->fb, NULL);
 }
 
@@ -550,18 +710,26 @@ nv50_crtc_do_mode_set_base(struct drm_crtc *crtc,
 	struct drm_device *dev = nv_crtc->base.dev;
 	struct drm_nouveau_private *dev_priv = dev->dev_private;
 	struct nouveau_channel *evo = nv50_display(dev)->master;
+<<<<<<< HEAD
 	struct drm_framebuffer *drm_fb;
 	struct nouveau_framebuffer *fb;
+=======
+	struct drm_framebuffer *drm_fb = nv_crtc->base.fb;
+	struct nouveau_framebuffer *fb = nouveau_framebuffer(drm_fb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	NV_DEBUG_KMS(dev, "index %d\n", nv_crtc->index);
 
+<<<<<<< HEAD
 	/* no fb bound */
 	if (!atomic && !crtc->fb) {
 		NV_DEBUG_KMS(dev, "No FB bound\n");
 		return 0;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* If atomic, we want to switch to the fb we were passed, so
 	 * now we update pointers to do that.  (We don't pin; just
 	 * assume we're already pinned and update the base address.)
@@ -570,8 +738,11 @@ nv50_crtc_do_mode_set_base(struct drm_crtc *crtc,
 		drm_fb = passed_fb;
 		fb = nouveau_framebuffer(passed_fb);
 	} else {
+<<<<<<< HEAD
 		drm_fb = crtc->fb;
 		fb = nouveau_framebuffer(crtc->fb);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* If not atomic, we can go ahead and pin, and unpin the
 		 * old fb we were passed.
 		 */
@@ -585,7 +756,11 @@ nv50_crtc_do_mode_set_base(struct drm_crtc *crtc,
 		}
 	}
 
+<<<<<<< HEAD
 	nv_crtc->fb.offset = fb->nvbo->bo.offset;
+=======
+	nv_crtc->fb.offset = fb->nvbo->bo.mem.start << PAGE_SHIFT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nv_crtc->fb.tile_flags = nouveau_bo_tile_layout(fb->nvbo);
 	nv_crtc->fb.cpp = drm_fb->bits_per_pixel / 8;
 	if (!nv_crtc->fb.blanked && dev_priv->chipset != 0x50) {
@@ -612,6 +787,11 @@ nv50_crtc_do_mode_set_base(struct drm_crtc *crtc,
 	OUT_RING  (evo, fb->base.depth == 8 ?
 		   NV50_EVO_CRTC_CLUT_MODE_OFF : NV50_EVO_CRTC_CLUT_MODE_ON);
 
+<<<<<<< HEAD
+=======
+	BEGIN_RING(evo, 0, NV50_EVO_CRTC(nv_crtc->index, COLOR_CTRL), 1);
+	OUT_RING  (evo, NV50_EVO_CRTC_COLOR_CTRL_COLOR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BEGIN_RING(evo, 0, NV50_EVO_CRTC(nv_crtc->index, FB_POS), 1);
 	OUT_RING  (evo, (y << 16) | x);
 
@@ -624,13 +804,19 @@ nv50_crtc_do_mode_set_base(struct drm_crtc *crtc,
 }
 
 static int
+<<<<<<< HEAD
 nv50_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *umode,
 		   struct drm_display_mode *mode, int x, int y,
+=======
+nv50_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
+		   struct drm_display_mode *adjusted_mode, int x, int y,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		   struct drm_framebuffer *old_fb)
 {
 	struct drm_device *dev = crtc->dev;
 	struct nouveau_channel *evo = nv50_display(dev)->master;
 	struct nouveau_crtc *nv_crtc = nouveau_crtc(crtc);
+<<<<<<< HEAD
 	u32 head = nv_crtc->index * 0x400;
 	u32 ilace = (mode->flags & DRM_MODE_FLAG_INTERLACE) ? 2 : 1;
 	u32 vscan = (mode->flags & DRM_MODE_FLAG_DBLSCAN) ? 2 : 1;
@@ -695,6 +881,85 @@ nv50_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *umode,
 	nv_crtc->set_dither(nv_crtc, false);
 	nv_crtc->set_scale(nv_crtc, false);
 	nv_crtc->set_color_vibrance(nv_crtc, false);
+=======
+	struct nouveau_connector *nv_connector = NULL;
+	uint32_t hsync_dur,  vsync_dur, hsync_start_to_end, vsync_start_to_end;
+	uint32_t hunk1, vunk1, vunk2a, vunk2b;
+	int ret;
+
+	/* Find the connector attached to this CRTC */
+	nv_connector = nouveau_crtc_connector_get(nv_crtc);
+
+	*nv_crtc->mode = *adjusted_mode;
+
+	NV_DEBUG_KMS(dev, "index %d\n", nv_crtc->index);
+
+	hsync_dur = adjusted_mode->hsync_end - adjusted_mode->hsync_start;
+	vsync_dur = adjusted_mode->vsync_end - adjusted_mode->vsync_start;
+	hsync_start_to_end = adjusted_mode->htotal - adjusted_mode->hsync_start;
+	vsync_start_to_end = adjusted_mode->vtotal - adjusted_mode->vsync_start;
+	/* I can't give this a proper name, anyone else can? */
+	hunk1 = adjusted_mode->htotal -
+		adjusted_mode->hsync_start + adjusted_mode->hdisplay;
+	vunk1 = adjusted_mode->vtotal -
+		adjusted_mode->vsync_start + adjusted_mode->vdisplay;
+	/* Another strange value, this time only for interlaced adjusted_modes. */
+	vunk2a = 2 * adjusted_mode->vtotal -
+		 adjusted_mode->vsync_start + adjusted_mode->vdisplay;
+	vunk2b = adjusted_mode->vtotal -
+		 adjusted_mode->vsync_start + adjusted_mode->vtotal;
+
+	if (adjusted_mode->flags & DRM_MODE_FLAG_INTERLACE) {
+		vsync_dur /= 2;
+		vsync_start_to_end  /= 2;
+		vunk1 /= 2;
+		vunk2a /= 2;
+		vunk2b /= 2;
+		/* magic */
+		if (adjusted_mode->flags & DRM_MODE_FLAG_DBLSCAN) {
+			vsync_start_to_end -= 1;
+			vunk1 -= 1;
+			vunk2a -= 1;
+			vunk2b -= 1;
+		}
+	}
+
+	ret = RING_SPACE(evo, 17);
+	if (ret)
+		return ret;
+
+	BEGIN_RING(evo, 0, NV50_EVO_CRTC(nv_crtc->index, CLOCK), 2);
+	OUT_RING(evo, adjusted_mode->clock | 0x800000);
+	OUT_RING(evo, (adjusted_mode->flags & DRM_MODE_FLAG_INTERLACE) ? 2 : 0);
+
+	BEGIN_RING(evo, 0, NV50_EVO_CRTC(nv_crtc->index, DISPLAY_START), 5);
+	OUT_RING(evo, 0);
+	OUT_RING(evo, (adjusted_mode->vtotal << 16) | adjusted_mode->htotal);
+	OUT_RING(evo, (vsync_dur - 1) << 16 | (hsync_dur - 1));
+	OUT_RING(evo, (vsync_start_to_end - 1) << 16 |
+			(hsync_start_to_end - 1));
+	OUT_RING(evo, (vunk1 - 1) << 16 | (hunk1 - 1));
+
+	if (adjusted_mode->flags & DRM_MODE_FLAG_INTERLACE) {
+		BEGIN_RING(evo, 0, NV50_EVO_CRTC(nv_crtc->index, UNK0824), 1);
+		OUT_RING(evo, (vunk2b - 1) << 16 | (vunk2a - 1));
+	} else {
+		OUT_RING(evo, 0);
+		OUT_RING(evo, 0);
+	}
+
+	BEGIN_RING(evo, 0, NV50_EVO_CRTC(nv_crtc->index, UNK082C), 1);
+	OUT_RING(evo, 0);
+
+	/* This is the actual resolution of the mode. */
+	BEGIN_RING(evo, 0, NV50_EVO_CRTC(nv_crtc->index, REAL_RES), 1);
+	OUT_RING(evo, (mode->vdisplay << 16) | mode->hdisplay);
+	BEGIN_RING(evo, 0, NV50_EVO_CRTC(nv_crtc->index, SCALE_CENTER_OFFSET), 1);
+	OUT_RING(evo, NV50_EVO_CRTC_SCALE_CENTER_OFFSET_VAL(0, 0));
+
+	nv_crtc->set_dither(nv_crtc, nv_connector->use_dithering, false);
+	nv_crtc->set_scale(nv_crtc, nv_connector->scaling_mode, false);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return nv50_crtc_do_mode_set_base(crtc, old_fb, x, y, false);
 }
@@ -710,7 +975,11 @@ nv50_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
 	if (ret)
 		return ret;
 
+<<<<<<< HEAD
 	ret = nv50_display_sync(crtc->dev);
+=======
+	ret = nv50_crtc_wait_complete(crtc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		return ret;
 
@@ -729,7 +998,11 @@ nv50_crtc_mode_set_base_atomic(struct drm_crtc *crtc,
 	if (ret)
 		return ret;
 
+<<<<<<< HEAD
 	return nv50_display_sync(crtc->dev);
+=======
+	return nv50_crtc_wait_complete(crtc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct drm_crtc_helper_funcs nv50_crtc_helper_funcs = {
@@ -755,8 +1028,16 @@ nv50_crtc_create(struct drm_device *dev, int index)
 	if (!nv_crtc)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	nv_crtc->color_vibrance = 50;
 	nv_crtc->vibrant_hue = 0;
+=======
+	nv_crtc->mode = kzalloc(sizeof(*nv_crtc->mode), GFP_KERNEL);
+	if (!nv_crtc->mode) {
+		kfree(nv_crtc);
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Default CLUT parameters, will be activated on the hw upon
 	 * first mode set.
@@ -768,7 +1049,11 @@ nv50_crtc_create(struct drm_device *dev, int index)
 	}
 	nv_crtc->lut.depth = 0;
 
+<<<<<<< HEAD
 	ret = nouveau_bo_new(dev, 4096, 0x100, TTM_PL_FLAG_VRAM,
+=======
+	ret = nouveau_bo_new(dev, NULL, 4096, 0x100, TTM_PL_FLAG_VRAM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     0, 0x0000, &nv_crtc->lut.nvbo);
 	if (!ret) {
 		ret = nouveau_bo_pin(nv_crtc->lut.nvbo, TTM_PL_FLAG_VRAM);
@@ -779,6 +1064,10 @@ nv50_crtc_create(struct drm_device *dev, int index)
 	}
 
 	if (ret) {
+<<<<<<< HEAD
+=======
+		kfree(nv_crtc->mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(nv_crtc);
 		return ret;
 	}
@@ -788,13 +1077,20 @@ nv50_crtc_create(struct drm_device *dev, int index)
 	/* set function pointers */
 	nv_crtc->set_dither = nv50_crtc_set_dither;
 	nv_crtc->set_scale = nv50_crtc_set_scale;
+<<<<<<< HEAD
 	nv_crtc->set_color_vibrance = nv50_crtc_set_color_vibrance;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	drm_crtc_init(dev, &nv_crtc->base, &nv50_crtc_funcs);
 	drm_crtc_helper_add(&nv_crtc->base, &nv50_crtc_helper_funcs);
 	drm_mode_crtc_set_gamma_size(&nv_crtc->base, 256);
 
+<<<<<<< HEAD
 	ret = nouveau_bo_new(dev, 64*64*4, 0x100, TTM_PL_FLAG_VRAM,
+=======
+	ret = nouveau_bo_new(dev, NULL, 64*64*4, 0x100, TTM_PL_FLAG_VRAM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     0, 0x0000, &nv_crtc->cursor.nvbo);
 	if (!ret) {
 		ret = nouveau_bo_pin(nv_crtc->cursor.nvbo, TTM_PL_FLAG_VRAM);

@@ -1,6 +1,7 @@
 dm-flakey
 =========
 
+<<<<<<< HEAD
 This target is the same as the linear target except that it exhibits
 unreliable behaviour periodically.  It's been found useful in simulating
 failing devices for testing purposes.
@@ -19,11 +20,23 @@ Table parameters
     [<num_features> [<feature arguments>]]
 
 Mandatory parameters:
+=======
+This target is the same as the linear target except that it returns I/O
+errors periodically.  It's been found useful in simulating failing
+devices for testing purposes.
+
+Starting from the time the table is loaded, the device is available for
+<up interval> seconds, then returns errors for <down interval> seconds,
+and then this cycle repeats.
+
+Parameters: <dev path> <offset> <up interval> <down interval>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     <dev path>: Full pathname to the underlying block-device, or a
                 "major:minor" device-number.
     <offset>: Starting sector within the device.
     <up interval>: Number of seconds device is available.
     <down interval>: Number of seconds device returns errors.
+<<<<<<< HEAD
 
 Optional feature parameters:
   If no feature parameters are present, during the periods of
@@ -51,3 +64,5 @@ Examples:
 
   corrupt_bio_byte 224 w 0 32
 	- replaces the 224th byte of REQ_META (=32) bios with the value 0
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

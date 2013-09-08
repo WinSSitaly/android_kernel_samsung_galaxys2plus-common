@@ -304,6 +304,17 @@ plt_target (struct plt_entry *plt)
 
 #endif /* !USE_BRL */
 
+<<<<<<< HEAD
+=======
+void *
+module_alloc (unsigned long size)
+{
+	if (!size)
+		return NULL;
+	return vmalloc(size);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void
 module_free (struct module *mod, void *module_region)
 {
@@ -845,6 +856,17 @@ apply_relocate_add (Elf64_Shdr *sechdrs, const char *strtab, unsigned int symind
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+int
+apply_relocate (Elf64_Shdr *sechdrs, const char *strtab, unsigned int symindex,
+		unsigned int relsec, struct module *mod)
+{
+	printk(KERN_ERR "module %s: REL relocs in section %u unsupported\n", mod->name, relsec);
+	return -ENOEXEC;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Modules contain a single unwind table which covers both the core and the init text
  * sections but since the two are not contiguous, we need to split this table up such that

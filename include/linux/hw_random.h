@@ -25,7 +25,11 @@
  *			there is always data available.  *OBSOLETE*
  * @data_read:		Read data from the RNG device.
  *			Returns the number of lower random bytes in "data".
+<<<<<<< HEAD
  *			Must not be NULL.    *OBSOLETE*
+=======
+ *			Must not be NULL.    *OSOLETE*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @read:		New API. drivers can fill up to max bytes of data
  *			into the buffer. The buffer is aligned for any type.
  * @priv:		Private data, for use by the RNG driver.

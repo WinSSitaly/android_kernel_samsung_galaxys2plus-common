@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #ifndef __M68K_HARDIRQ_H
 #define __M68K_HARDIRQ_H
 
@@ -36,4 +37,10 @@ typedef struct {
 
 #endif /* !CONFIG_MMU */
 
+=======
+#ifdef __uClinux__
+#include "hardirq_no.h"
+#else
+#include "hardirq_mm.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

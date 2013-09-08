@@ -27,6 +27,10 @@
 
 
 #include <asm/uaccess.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/bitops.h>
 #include <linux/capability.h>
 #include <linux/module.h>
@@ -58,6 +62,10 @@
 
 #include <net/arp.h>
 #include <net/ip.h>
+<<<<<<< HEAD
+=======
+#include <net/tcp.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/route.h>
 #include <net/ip_fib.h>
 #include <net/rtnetlink.h>
@@ -290,7 +298,11 @@ static void inetdev_destroy(struct in_device *in_dev)
 		inet_free_ifa(ifa);
 	}
 
+<<<<<<< HEAD
 	RCU_INIT_POINTER(dev->ip_ptr, NULL);
+=======
+	rcu_assign_pointer(dev->ip_ptr, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	devinet_sysctl_unregister(in_dev);
 	neigh_parms_release(&arp_tbl, in_dev->arp_parms);
@@ -734,6 +746,10 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 	case SIOCSIFBRDADDR:	/* Set the broadcast address */
 	case SIOCSIFDSTADDR:	/* Set the destination address */
 	case SIOCSIFNETMASK: 	/* Set the netmask for the interface */
+<<<<<<< HEAD
+=======
+	case SIOCKILLADDR:	/* Nuke all sockets on this address */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EACCES;
 		if (!capable(CAP_NET_ADMIN))
 			goto out;
@@ -785,7 +801,12 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 	}
 
 	ret = -EADDRNOTAVAIL;
+<<<<<<< HEAD
 	if (!ifa && cmd != SIOCSIFADDR && cmd != SIOCSIFFLAGS)
+=======
+	if (!ifa && cmd != SIOCSIFADDR && cmd != SIOCSIFFLAGS
+	    && cmd != SIOCKILLADDR)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto done;
 
 	switch (cmd) {
@@ -911,6 +932,12 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 			inet_insert_ifa(ifa);
 		}
 		break;
+<<<<<<< HEAD
+=======
+	case SIOCKILLADDR:	/* Nuke all connections on this address */
+		ret = tcp_nuke_addr(net, (struct sockaddr *) sin);
+		break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 done:
 	rtnl_unlock();
@@ -1078,7 +1105,10 @@ __be32 inet_confirm_addr(struct in_device *in_dev,
 
 	return addr;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(inet_confirm_addr);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  *	Device notifier
@@ -1175,7 +1205,11 @@ static int inetdev_event(struct notifier_block *this, unsigned long event,
 	switch (event) {
 	case NETDEV_REGISTER:
 		printk(KERN_DEBUG "inetdev_event: bug\n");
+<<<<<<< HEAD
 		RCU_INIT_POINTER(dev->ip_ptr, NULL);
+=======
+		rcu_assign_pointer(dev->ip_ptr, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case NETDEV_UP:
 		if (!inetdev_valid_mtu(dev->mtu))
@@ -1838,8 +1872,14 @@ void __init devinet_init(void)
 
 	rtnl_af_register(&inet_af_ops);
 
+<<<<<<< HEAD
 	rtnl_register(PF_INET, RTM_NEWADDR, inet_rtm_newaddr, NULL, NULL);
 	rtnl_register(PF_INET, RTM_DELADDR, inet_rtm_deladdr, NULL, NULL);
 	rtnl_register(PF_INET, RTM_GETADDR, NULL, inet_dump_ifaddr, NULL);
+=======
+	rtnl_register(PF_INET, RTM_NEWADDR, inet_rtm_newaddr, NULL);
+	rtnl_register(PF_INET, RTM_DELADDR, inet_rtm_deladdr, NULL);
+	rtnl_register(PF_INET, RTM_GETADDR, NULL, inet_dump_ifaddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 

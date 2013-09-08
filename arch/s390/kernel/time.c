@@ -27,7 +27,11 @@
 #include <linux/cpu.h>
 #include <linux/stop_machine.h>
 #include <linux/time.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/delay.h>
 #include <linux/init.h>
 #include <linux/smp.h>
@@ -48,7 +52,10 @@
 #include <asm/timer.h>
 #include <asm/etr.h>
 #include <asm/cio.h>
+<<<<<<< HEAD
 #include "entry.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* change this if you have some constant time drift */
 #define USECS_PER_JIFFY     ((unsigned long) 1000000/HZ)
@@ -64,7 +71,11 @@ static DEFINE_PER_CPU(struct clock_event_device, comparators);
  */
 unsigned long long notrace __kprobes sched_clock(void)
 {
+<<<<<<< HEAD
 	return tod_to_ns(get_clock_monotonic());
+=======
+	return (get_clock_monotonic() * 125) >> 9;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -110,6 +121,7 @@ static void fixup_clock_comparator(unsigned long long delta)
 	set_clock_comparator(S390_lowcore.clock_comparator);
 }
 
+<<<<<<< HEAD
 static int s390_next_ktime(ktime_t expires,
 			   struct clock_event_device *evt)
 {
@@ -124,6 +136,12 @@ static int s390_next_ktime(ktime_t expires,
 	/* Program the maximum value if we have an overflow (== year 2042) */
 	if (unlikely(S390_lowcore.clock_comparator < sched_clock_base_cc))
 		S390_lowcore.clock_comparator = -1ULL;
+=======
+static int s390_next_event(unsigned long delta,
+			   struct clock_event_device *evt)
+{
+	S390_lowcore.clock_comparator = get_clock() + delta;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_clock_comparator(S390_lowcore.clock_comparator);
 	return 0;
 }
@@ -148,15 +166,23 @@ void init_cpu_timer(void)
 	cpu = smp_processor_id();
 	cd = &per_cpu(comparators, cpu);
 	cd->name		= "comparator";
+<<<<<<< HEAD
 	cd->features		= CLOCK_EVT_FEAT_ONESHOT |
 				  CLOCK_EVT_FEAT_KTIME;
+=======
+	cd->features		= CLOCK_EVT_FEAT_ONESHOT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cd->mult		= 16777;
 	cd->shift		= 12;
 	cd->min_delta_ns	= 1;
 	cd->max_delta_ns	= LONG_MAX;
 	cd->rating		= 400;
 	cd->cpumask		= cpumask_of(cpu);
+<<<<<<< HEAD
 	cd->set_next_ktime	= s390_next_ktime;
+=======
+	cd->set_next_event	= s390_next_event;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cd->set_mode		= s390_set_mode;
 
 	clockevents_register_device(cd);
@@ -168,7 +194,11 @@ void init_cpu_timer(void)
 	__ctl_set_bit(0, 4);
 }
 
+<<<<<<< HEAD
 static void clock_comparator_interrupt(struct ext_code ext_code,
+=======
+static void clock_comparator_interrupt(unsigned int ext_int_code,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				       unsigned int param32,
 				       unsigned long param64)
 {
@@ -180,7 +210,11 @@ static void clock_comparator_interrupt(struct ext_code ext_code,
 static void etr_timing_alert(struct etr_irq_parm *);
 static void stp_timing_alert(struct stp_irq_parm *);
 
+<<<<<<< HEAD
 static void timing_alert_interrupt(struct ext_code ext_code,
+=======
+static void timing_alert_interrupt(unsigned int ext_int_code,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   unsigned int param32, unsigned long param64)
 {
 	kstat_cpu(smp_processor_id()).irqs[EXTINT_TLA]++;
@@ -1122,6 +1156,7 @@ out_unlock:
 /*
  * Sysfs interface functions
  */
+<<<<<<< HEAD
 static struct bus_type etr_subsys = {
 	.name		= "etr",
 	.dev_name	= "etr",
@@ -1142,15 +1177,43 @@ static struct device etr_port1_dev = {
  */
 static ssize_t etr_stepping_port_show(struct device *dev,
 					struct device_attribute *attr,
+=======
+static struct sysdev_class etr_sysclass = {
+	.name	= "etr",
+};
+
+static struct sys_device etr_port0_dev = {
+	.id	= 0,
+	.cls	= &etr_sysclass,
+};
+
+static struct sys_device etr_port1_dev = {
+	.id	= 1,
+	.cls	= &etr_sysclass,
+};
+
+/*
+ * ETR class attributes
+ */
+static ssize_t etr_stepping_port_show(struct sysdev_class *class,
+					struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					char *buf)
 {
 	return sprintf(buf, "%i\n", etr_port0.esw.p);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(stepping_port, 0400, etr_stepping_port_show, NULL);
 
 static ssize_t etr_stepping_mode_show(struct device *dev,
 					struct device_attribute *attr,
+=======
+static SYSDEV_CLASS_ATTR(stepping_port, 0400, etr_stepping_port_show, NULL);
+
+static ssize_t etr_stepping_mode_show(struct sysdev_class *class,
+				      	struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					char *buf)
 {
 	char *mode_str;
@@ -1164,12 +1227,20 @@ static ssize_t etr_stepping_mode_show(struct device *dev,
 	return sprintf(buf, "%s\n", mode_str);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(stepping_mode, 0400, etr_stepping_mode_show, NULL);
+=======
+static SYSDEV_CLASS_ATTR(stepping_mode, 0400, etr_stepping_mode_show, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * ETR port attributes
  */
+<<<<<<< HEAD
 static inline struct etr_aib *etr_aib_from_dev(struct device *dev)
+=======
+static inline struct etr_aib *etr_aib_from_dev(struct sys_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (dev == &etr_port0_dev)
 		return etr_port0_online ? &etr_port0 : NULL;
@@ -1177,8 +1248,13 @@ static inline struct etr_aib *etr_aib_from_dev(struct device *dev)
 		return etr_port1_online ? &etr_port1 : NULL;
 }
 
+<<<<<<< HEAD
 static ssize_t etr_online_show(struct device *dev,
 				struct device_attribute *attr,
+=======
+static ssize_t etr_online_show(struct sys_device *dev,
+				struct sysdev_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				char *buf)
 {
 	unsigned int online;
@@ -1187,8 +1263,13 @@ static ssize_t etr_online_show(struct device *dev,
 	return sprintf(buf, "%i\n", online);
 }
 
+<<<<<<< HEAD
 static ssize_t etr_online_store(struct device *dev,
 				struct device_attribute *attr,
+=======
+static ssize_t etr_online_store(struct sys_device *dev,
+				struct sysdev_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				const char *buf, size_t count)
 {
 	unsigned int value;
@@ -1225,20 +1306,34 @@ out:
 	return count;
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(online, 0600, etr_online_show, etr_online_store);
 
 static ssize_t etr_stepping_control_show(struct device *dev,
 					struct device_attribute *attr,
+=======
+static SYSDEV_ATTR(online, 0600, etr_online_show, etr_online_store);
+
+static ssize_t etr_stepping_control_show(struct sys_device *dev,
+					struct sysdev_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					char *buf)
 {
 	return sprintf(buf, "%i\n", (dev == &etr_port0_dev) ?
 		       etr_eacr.e0 : etr_eacr.e1);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(stepping_control, 0400, etr_stepping_control_show, NULL);
 
 static ssize_t etr_mode_code_show(struct device *dev,
 				struct device_attribute *attr, char *buf)
+=======
+static SYSDEV_ATTR(stepping_control, 0400, etr_stepping_control_show, NULL);
+
+static ssize_t etr_mode_code_show(struct sys_device *dev,
+				struct sysdev_attribute *attr, char *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (!etr_port0_online && !etr_port1_online)
 		/* Status word is not uptodate if both ports are offline. */
@@ -1247,10 +1342,17 @@ static ssize_t etr_mode_code_show(struct device *dev,
 		       etr_port0.esw.psc0 : etr_port0.esw.psc1);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(state_code, 0400, etr_mode_code_show, NULL);
 
 static ssize_t etr_untuned_show(struct device *dev,
 				struct device_attribute *attr, char *buf)
+=======
+static SYSDEV_ATTR(state_code, 0400, etr_mode_code_show, NULL);
+
+static ssize_t etr_untuned_show(struct sys_device *dev,
+				struct sysdev_attribute *attr, char *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct etr_aib *aib = etr_aib_from_dev(dev);
 
@@ -1259,10 +1361,17 @@ static ssize_t etr_untuned_show(struct device *dev,
 	return sprintf(buf, "%i\n", aib->edf1.u);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(untuned, 0400, etr_untuned_show, NULL);
 
 static ssize_t etr_network_id_show(struct device *dev,
 				struct device_attribute *attr, char *buf)
+=======
+static SYSDEV_ATTR(untuned, 0400, etr_untuned_show, NULL);
+
+static ssize_t etr_network_id_show(struct sys_device *dev,
+				struct sysdev_attribute *attr, char *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct etr_aib *aib = etr_aib_from_dev(dev);
 
@@ -1271,10 +1380,17 @@ static ssize_t etr_network_id_show(struct device *dev,
 	return sprintf(buf, "%i\n", aib->edf1.net_id);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(network, 0400, etr_network_id_show, NULL);
 
 static ssize_t etr_id_show(struct device *dev,
 			struct device_attribute *attr, char *buf)
+=======
+static SYSDEV_ATTR(network, 0400, etr_network_id_show, NULL);
+
+static ssize_t etr_id_show(struct sys_device *dev,
+			struct sysdev_attribute *attr, char *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct etr_aib *aib = etr_aib_from_dev(dev);
 
@@ -1283,10 +1399,17 @@ static ssize_t etr_id_show(struct device *dev,
 	return sprintf(buf, "%i\n", aib->edf1.etr_id);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(id, 0400, etr_id_show, NULL);
 
 static ssize_t etr_port_number_show(struct device *dev,
 			struct device_attribute *attr, char *buf)
+=======
+static SYSDEV_ATTR(id, 0400, etr_id_show, NULL);
+
+static ssize_t etr_port_number_show(struct sys_device *dev,
+			struct sysdev_attribute *attr, char *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct etr_aib *aib = etr_aib_from_dev(dev);
 
@@ -1295,10 +1418,17 @@ static ssize_t etr_port_number_show(struct device *dev,
 	return sprintf(buf, "%i\n", aib->edf1.etr_pn);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(port, 0400, etr_port_number_show, NULL);
 
 static ssize_t etr_coupled_show(struct device *dev,
 			struct device_attribute *attr, char *buf)
+=======
+static SYSDEV_ATTR(port, 0400, etr_port_number_show, NULL);
+
+static ssize_t etr_coupled_show(struct sys_device *dev,
+			struct sysdev_attribute *attr, char *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct etr_aib *aib = etr_aib_from_dev(dev);
 
@@ -1307,10 +1437,17 @@ static ssize_t etr_coupled_show(struct device *dev,
 	return sprintf(buf, "%i\n", aib->edf3.c);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(coupled, 0400, etr_coupled_show, NULL);
 
 static ssize_t etr_local_time_show(struct device *dev,
 			struct device_attribute *attr, char *buf)
+=======
+static SYSDEV_ATTR(coupled, 0400, etr_coupled_show, NULL);
+
+static ssize_t etr_local_time_show(struct sys_device *dev,
+			struct sysdev_attribute *attr, char *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct etr_aib *aib = etr_aib_from_dev(dev);
 
@@ -1319,10 +1456,17 @@ static ssize_t etr_local_time_show(struct device *dev,
 	return sprintf(buf, "%i\n", aib->edf3.blto);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(local_time, 0400, etr_local_time_show, NULL);
 
 static ssize_t etr_utc_offset_show(struct device *dev,
 			struct device_attribute *attr, char *buf)
+=======
+static SYSDEV_ATTR(local_time, 0400, etr_local_time_show, NULL);
+
+static ssize_t etr_utc_offset_show(struct sys_device *dev,
+			struct sysdev_attribute *attr, char *buf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct etr_aib *aib = etr_aib_from_dev(dev);
 
@@ -1331,6 +1475,7 @@ static ssize_t etr_utc_offset_show(struct device *dev,
 	return sprintf(buf, "%i\n", aib->edf3.buo);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(utc_offset, 0400, etr_utc_offset_show, NULL);
 
 static struct device_attribute *etr_port_attributes[] = {
@@ -1357,18 +1502,52 @@ static int __init etr_register_port(struct device *dev)
 		goto out;
 	for (attr = etr_port_attributes; *attr; attr++) {
 		rc = device_create_file(dev, *attr);
+=======
+static SYSDEV_ATTR(utc_offset, 0400, etr_utc_offset_show, NULL);
+
+static struct sysdev_attribute *etr_port_attributes[] = {
+	&attr_online,
+	&attr_stepping_control,
+	&attr_state_code,
+	&attr_untuned,
+	&attr_network,
+	&attr_id,
+	&attr_port,
+	&attr_coupled,
+	&attr_local_time,
+	&attr_utc_offset,
+	NULL
+};
+
+static int __init etr_register_port(struct sys_device *dev)
+{
+	struct sysdev_attribute **attr;
+	int rc;
+
+	rc = sysdev_register(dev);
+	if (rc)
+		goto out;
+	for (attr = etr_port_attributes; *attr; attr++) {
+		rc = sysdev_create_file(dev, *attr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rc)
 			goto out_unreg;
 	}
 	return 0;
 out_unreg:
 	for (; attr >= etr_port_attributes; attr--)
+<<<<<<< HEAD
 		device_remove_file(dev, *attr);
 	device_unregister(dev);
+=======
+		sysdev_remove_file(dev, *attr);
+	sysdev_unregister(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return rc;
 }
 
+<<<<<<< HEAD
 static void __init etr_unregister_port(struct device *dev)
 {
 	struct device_attribute **attr;
@@ -1376,12 +1555,22 @@ static void __init etr_unregister_port(struct device *dev)
 	for (attr = etr_port_attributes; *attr; attr++)
 		device_remove_file(dev, *attr);
 	device_unregister(dev);
+=======
+static void __init etr_unregister_port(struct sys_device *dev)
+{
+	struct sysdev_attribute **attr;
+
+	for (attr = etr_port_attributes; *attr; attr++)
+		sysdev_remove_file(dev, *attr);
+	sysdev_unregister(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __init etr_init_sysfs(void)
 {
 	int rc;
 
+<<<<<<< HEAD
 	rc = subsys_system_register(&etr_subsys, NULL);
 	if (rc)
 		goto out;
@@ -1389,6 +1578,15 @@ static int __init etr_init_sysfs(void)
 	if (rc)
 		goto out_unreg_subsys;
 	rc = device_create_file(etr_subsys.dev_root, &dev_attr_stepping_mode);
+=======
+	rc = sysdev_class_register(&etr_sysclass);
+	if (rc)
+		goto out;
+	rc = sysdev_class_create_file(&etr_sysclass, &attr_stepping_port);
+	if (rc)
+		goto out_unreg_class;
+	rc = sysdev_class_create_file(&etr_sysclass, &attr_stepping_mode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc)
 		goto out_remove_stepping_port;
 	rc = etr_register_port(&etr_port0_dev);
@@ -1402,11 +1600,19 @@ static int __init etr_init_sysfs(void)
 out_remove_port0:
 	etr_unregister_port(&etr_port0_dev);
 out_remove_stepping_mode:
+<<<<<<< HEAD
 	device_remove_file(etr_subsys.dev_root, &dev_attr_stepping_mode);
 out_remove_stepping_port:
 	device_remove_file(etr_subsys.dev_root, &dev_attr_stepping_port);
 out_unreg_subsys:
 	bus_unregister(&etr_subsys);
+=======
+	sysdev_class_remove_file(&etr_sysclass, &attr_stepping_mode);
+out_remove_stepping_port:
+	sysdev_class_remove_file(&etr_sysclass, &attr_stepping_port);
+out_unreg_class:
+	sysdev_class_unregister(&etr_sysclass);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return rc;
 }
@@ -1606,6 +1812,7 @@ out_unlock:
 }
 
 /*
+<<<<<<< HEAD
  * STP subsys sysfs interface functions
  */
 static struct bus_type stp_subsys = {
@@ -1615,6 +1822,16 @@ static struct bus_type stp_subsys = {
 
 static ssize_t stp_ctn_id_show(struct device *dev,
 				struct device_attribute *attr,
+=======
+ * STP class sysfs interface functions
+ */
+static struct sysdev_class stp_sysclass = {
+	.name	= "stp",
+};
+
+static ssize_t stp_ctn_id_show(struct sysdev_class *class,
+				struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				char *buf)
 {
 	if (!stp_online)
@@ -1623,10 +1840,17 @@ static ssize_t stp_ctn_id_show(struct device *dev,
 		       *(unsigned long long *) stp_info.ctnid);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(ctn_id, 0400, stp_ctn_id_show, NULL);
 
 static ssize_t stp_ctn_type_show(struct device *dev,
 				struct device_attribute *attr,
+=======
+static SYSDEV_CLASS_ATTR(ctn_id, 0400, stp_ctn_id_show, NULL);
+
+static ssize_t stp_ctn_type_show(struct sysdev_class *class,
+				struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				char *buf)
 {
 	if (!stp_online)
@@ -1634,10 +1858,17 @@ static ssize_t stp_ctn_type_show(struct device *dev,
 	return sprintf(buf, "%i\n", stp_info.ctn);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(ctn_type, 0400, stp_ctn_type_show, NULL);
 
 static ssize_t stp_dst_offset_show(struct device *dev,
 				   struct device_attribute *attr,
+=======
+static SYSDEV_CLASS_ATTR(ctn_type, 0400, stp_ctn_type_show, NULL);
+
+static ssize_t stp_dst_offset_show(struct sysdev_class *class,
+				   struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   char *buf)
 {
 	if (!stp_online || !(stp_info.vbits & 0x2000))
@@ -1645,10 +1876,17 @@ static ssize_t stp_dst_offset_show(struct device *dev,
 	return sprintf(buf, "%i\n", (int)(s16) stp_info.dsto);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(dst_offset, 0400, stp_dst_offset_show, NULL);
 
 static ssize_t stp_leap_seconds_show(struct device *dev,
 					struct device_attribute *attr,
+=======
+static SYSDEV_CLASS_ATTR(dst_offset, 0400, stp_dst_offset_show, NULL);
+
+static ssize_t stp_leap_seconds_show(struct sysdev_class *class,
+					struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					char *buf)
 {
 	if (!stp_online || !(stp_info.vbits & 0x8000))
@@ -1656,10 +1894,17 @@ static ssize_t stp_leap_seconds_show(struct device *dev,
 	return sprintf(buf, "%i\n", (int)(s16) stp_info.leaps);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(leap_seconds, 0400, stp_leap_seconds_show, NULL);
 
 static ssize_t stp_stratum_show(struct device *dev,
 				struct device_attribute *attr,
+=======
+static SYSDEV_CLASS_ATTR(leap_seconds, 0400, stp_leap_seconds_show, NULL);
+
+static ssize_t stp_stratum_show(struct sysdev_class *class,
+				struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				char *buf)
 {
 	if (!stp_online)
@@ -1667,10 +1912,17 @@ static ssize_t stp_stratum_show(struct device *dev,
 	return sprintf(buf, "%i\n", (int)(s16) stp_info.stratum);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(stratum, 0400, stp_stratum_show, NULL);
 
 static ssize_t stp_time_offset_show(struct device *dev,
 				struct device_attribute *attr,
+=======
+static SYSDEV_CLASS_ATTR(stratum, 0400, stp_stratum_show, NULL);
+
+static ssize_t stp_time_offset_show(struct sysdev_class *class,
+				struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				char *buf)
 {
 	if (!stp_online || !(stp_info.vbits & 0x0800))
@@ -1678,10 +1930,17 @@ static ssize_t stp_time_offset_show(struct device *dev,
 	return sprintf(buf, "%i\n", (int) stp_info.tto);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(time_offset, 0400, stp_time_offset_show, NULL);
 
 static ssize_t stp_time_zone_offset_show(struct device *dev,
 				struct device_attribute *attr,
+=======
+static SYSDEV_CLASS_ATTR(time_offset, 0400, stp_time_offset_show, NULL);
+
+static ssize_t stp_time_zone_offset_show(struct sysdev_class *class,
+				struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				char *buf)
 {
 	if (!stp_online || !(stp_info.vbits & 0x4000))
@@ -1689,11 +1948,19 @@ static ssize_t stp_time_zone_offset_show(struct device *dev,
 	return sprintf(buf, "%i\n", (int)(s16) stp_info.tzo);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(time_zone_offset, 0400,
 			 stp_time_zone_offset_show, NULL);
 
 static ssize_t stp_timing_mode_show(struct device *dev,
 				struct device_attribute *attr,
+=======
+static SYSDEV_CLASS_ATTR(time_zone_offset, 0400,
+			 stp_time_zone_offset_show, NULL);
+
+static ssize_t stp_timing_mode_show(struct sysdev_class *class,
+				struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				char *buf)
 {
 	if (!stp_online)
@@ -1701,10 +1968,17 @@ static ssize_t stp_timing_mode_show(struct device *dev,
 	return sprintf(buf, "%i\n", stp_info.tmd);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(timing_mode, 0400, stp_timing_mode_show, NULL);
 
 static ssize_t stp_timing_state_show(struct device *dev,
 				struct device_attribute *attr,
+=======
+static SYSDEV_CLASS_ATTR(timing_mode, 0400, stp_timing_mode_show, NULL);
+
+static ssize_t stp_timing_state_show(struct sysdev_class *class,
+				struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				char *buf)
 {
 	if (!stp_online)
@@ -1712,17 +1986,29 @@ static ssize_t stp_timing_state_show(struct device *dev,
 	return sprintf(buf, "%i\n", stp_info.tst);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(timing_state, 0400, stp_timing_state_show, NULL);
 
 static ssize_t stp_online_show(struct device *dev,
 				struct device_attribute *attr,
+=======
+static SYSDEV_CLASS_ATTR(timing_state, 0400, stp_timing_state_show, NULL);
+
+static ssize_t stp_online_show(struct sysdev_class *class,
+				struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				char *buf)
 {
 	return sprintf(buf, "%i\n", stp_online);
 }
 
+<<<<<<< HEAD
 static ssize_t stp_online_store(struct device *dev,
 				struct device_attribute *attr,
+=======
+static ssize_t stp_online_store(struct sysdev_class *class,
+				struct sysdev_class_attribute *attr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				const char *buf, size_t count)
 {
 	unsigned int value;
@@ -1744,15 +2030,23 @@ static ssize_t stp_online_store(struct device *dev,
 }
 
 /*
+<<<<<<< HEAD
  * Can't use DEVICE_ATTR because the attribute should be named
  * stp/online but dev_attr_online already exists in this file ..
  */
 static struct device_attribute dev_attr_stp_online = {
+=======
+ * Can't use SYSDEV_CLASS_ATTR because the attribute should be named
+ * stp/online but attr_online already exists in this file ..
+ */
+static struct sysdev_class_attribute attr_stp_online = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.attr = { .name = "online", .mode = 0600 },
 	.show	= stp_online_show,
 	.store	= stp_online_store,
 };
 
+<<<<<<< HEAD
 static struct device_attribute *stp_attributes[] = {
 	&dev_attr_ctn_id,
 	&dev_attr_ctn_type,
@@ -1764,11 +2058,25 @@ static struct device_attribute *stp_attributes[] = {
 	&dev_attr_time_zone_offset,
 	&dev_attr_timing_mode,
 	&dev_attr_timing_state,
+=======
+static struct sysdev_class_attribute *stp_attributes[] = {
+	&attr_ctn_id,
+	&attr_ctn_type,
+	&attr_dst_offset,
+	&attr_leap_seconds,
+	&attr_stp_online,
+	&attr_stratum,
+	&attr_time_offset,
+	&attr_time_zone_offset,
+	&attr_timing_mode,
+	&attr_timing_state,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NULL
 };
 
 static int __init stp_init_sysfs(void)
 {
+<<<<<<< HEAD
 	struct device_attribute **attr;
 	int rc;
 
@@ -1777,14 +2085,29 @@ static int __init stp_init_sysfs(void)
 		goto out;
 	for (attr = stp_attributes; *attr; attr++) {
 		rc = device_create_file(stp_subsys.dev_root, *attr);
+=======
+	struct sysdev_class_attribute **attr;
+	int rc;
+
+	rc = sysdev_class_register(&stp_sysclass);
+	if (rc)
+		goto out;
+	for (attr = stp_attributes; *attr; attr++) {
+		rc = sysdev_class_create_file(&stp_sysclass, *attr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (rc)
 			goto out_unreg;
 	}
 	return 0;
 out_unreg:
 	for (; attr >= stp_attributes; attr--)
+<<<<<<< HEAD
 		device_remove_file(stp_subsys.dev_root, *attr);
 	bus_unregister(&stp_subsys);
+=======
+		sysdev_class_remove_file(&stp_sysclass, *attr);
+	sysdev_class_unregister(&stp_sysclass);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return rc;
 }

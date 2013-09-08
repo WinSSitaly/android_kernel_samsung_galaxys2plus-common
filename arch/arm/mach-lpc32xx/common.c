@@ -95,6 +95,7 @@ struct platform_device lpc32xx_i2c2_device = {
 	},
 };
 
+<<<<<<< HEAD
 /* TSC (Touch Screen Controller) */
 
 static struct resource lpc32xx_tsc_resources[] = {
@@ -206,6 +207,8 @@ struct platform_device lpc32xx_net_device = {
 	.resource = net_resources,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Returns the unique ID for the device
  */
@@ -233,7 +236,11 @@ int clk_is_sysclk_mainosc(void)
 /*
  * System reset via the watchdog timer
  */
+<<<<<<< HEAD
 static void lpc32xx_watchdog_reset(void)
+=======
+void lpc32xx_watchdog_reset(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Make sure WDT clocks are enabled */
 	__raw_writel(LPC32XX_CLKPWR_PWMCLK_WDOG_EN,
@@ -380,6 +387,7 @@ void __init lpc32xx_map_io(void)
 {
 	iotable_init(lpc32xx_io_desc, ARRAY_SIZE(lpc32xx_io_desc));
 }
+<<<<<<< HEAD
 
 void lpc23xx_restart(char mode, const char *cmd)
 {
@@ -398,3 +406,5 @@ void lpc23xx_restart(char mode, const char *cmd)
 	while (1)
 		;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -121,6 +121,12 @@ struct tmio_nand {
 
 #define mtd_to_tmio(m)			container_of(m, struct tmio_nand, mtd)
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MTD_CMDLINE_PARTS
+static const char *part_probes[] = { "cmdlinepart", NULL };
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*--------------------------------------------------------------------------*/
 
@@ -378,6 +384,11 @@ static int tmio_probe(struct platform_device *dev)
 	struct tmio_nand *tmio;
 	struct mtd_info *mtd;
 	struct nand_chip *nand_chip;
+<<<<<<< HEAD
+=======
+	struct mtd_partition *parts;
+	int nbparts = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int retval;
 
 	if (data == NULL)
@@ -430,7 +441,10 @@ static int tmio_probe(struct platform_device *dev)
 	nand_chip->ecc.mode = NAND_ECC_HW;
 	nand_chip->ecc.size = 512;
 	nand_chip->ecc.bytes = 6;
+<<<<<<< HEAD
 	nand_chip->ecc.strength = 2;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nand_chip->ecc.hwctl = tmio_nand_enable_hwecc;
 	nand_chip->ecc.calculate = tmio_nand_calculate_ecc;
 	nand_chip->ecc.correct = tmio_nand_correct_data;
@@ -457,9 +471,21 @@ static int tmio_probe(struct platform_device *dev)
 		goto err_scan;
 	}
 	/* Register the partitions */
+<<<<<<< HEAD
 	retval = mtd_device_parse_register(mtd, NULL, NULL,
 					   data ? data->partition : NULL,
 					   data ? data->num_partitions : 0);
+=======
+#ifdef CONFIG_MTD_CMDLINE_PARTS
+	nbparts = parse_mtd_partitions(mtd, part_probes, &parts, 0);
+#endif
+	if (nbparts <= 0 && data) {
+		parts = data->partition;
+		nbparts = data->num_partitions;
+	}
+
+	retval = mtd_device_register(mtd, parts, nbparts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!retval)
 		return retval;
 
@@ -534,7 +560,22 @@ static struct platform_driver tmio_driver = {
 	.resume		= tmio_resume,
 };
 
+<<<<<<< HEAD
 module_platform_driver(tmio_driver);
+=======
+static int __init tmio_init(void)
+{
+	return platform_driver_register(&tmio_driver);
+}
+
+static void __exit tmio_exit(void)
+{
+	platform_driver_unregister(&tmio_driver);
+}
+
+module_init(tmio_init);
+module_exit(tmio_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL v2");
 MODULE_AUTHOR("Ian Molton, Dirk Opfer, Chris Humbert, Dmitry Baryshkov");

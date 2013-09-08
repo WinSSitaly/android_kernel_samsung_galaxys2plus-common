@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 Everything you ever wanted to know about Linux -stable releases.
+=======
+Everything you ever wanted to know about Linux 2.6 -stable releases.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 Rules on what kind of patches are accepted, and which ones are not, into the
 "-stable" tree:
@@ -12,12 +16,15 @@ Rules on what kind of patches are accepted, and which ones are not, into the
    marked CONFIG_BROKEN), an oops, a hang, data corruption, a real
    security issue, or some "oh, that's not good" issue.  In short, something
    critical.
+<<<<<<< HEAD
  - Serious issues as reported by a user of a distribution kernel may also
    be considered if they fix a notable performance or interactivity issue.
    As these fixes are not as obvious and have a higher risk of a subtle
    regression they should only be submitted by a distribution kernel
    maintainer and include an addendum linking to a bugzilla entry if it
    exists and additional information on the user-visible impact.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  - New device IDs and quirks are also accepted.
  - No "theoretical race condition" issues, unless an explanation of how the
    race can be exploited is also provided.
@@ -31,8 +38,12 @@ Procedure for submitting patches to the -stable tree:
 
  - Send the patch, after verifying that it follows the above rules, to
    stable@vger.kernel.org.  You must note the upstream commit ID in the
+<<<<<<< HEAD
    changelog of your submission, as well as the kernel version you wish
    it to be applied to.
+=======
+   changelog of your submission.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  - To have the patch automatically included in the stable tree, add the tag
      Cc: stable@vger.kernel.org
    in the sign-off area. Once the patch is merged it will be applied to
@@ -42,10 +53,17 @@ Procedure for submitting patches to the -stable tree:
    cherry-picked than this can be specified in the following format in
    the sign-off area:
 
+<<<<<<< HEAD
      Cc: <stable@vger.kernel.org> # 3.3.x: a1f84a3: sched: Check for idle
      Cc: <stable@vger.kernel.org> # 3.3.x: 1b9508f: sched: Rate-limit newidle
      Cc: <stable@vger.kernel.org> # 3.3.x: fd21073: sched: Fix affinity logic
      Cc: <stable@vger.kernel.org> # 3.3.x
+=======
+     Cc: <stable@vger.kernel.org> # .32.x: a1f84a3: sched: Check for idle
+     Cc: <stable@vger.kernel.org> # .32.x: 1b9508f: sched: Rate-limit newidle
+     Cc: <stable@vger.kernel.org> # .32.x: fd21073: sched: Fix affinity logic
+     Cc: <stable@vger.kernel.org> # .32.x
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     Signed-off-by: Ingo Molnar <mingo@elte.hu>
 
    The tag sequence has the meaning of:
@@ -79,6 +97,7 @@ Review cycle:
    security kernel team, and not go through the normal review cycle.
    Contact the kernel security team for more details on this procedure.
 
+<<<<<<< HEAD
 Trees:
 
  - The queues of patches, for both completed versions and in progress
@@ -88,6 +107,8 @@ Trees:
    in separate branches per version at:
 	http://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 Review committee:
 

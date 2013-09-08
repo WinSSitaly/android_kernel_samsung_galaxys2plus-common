@@ -112,8 +112,13 @@ struct firedtv {
 /* firedtv-avc.c */
 int avc_recv(struct firedtv *fdtv, void *data, size_t length);
 int avc_tuner_status(struct firedtv *fdtv, struct firedtv_tuner_status *stat);
+<<<<<<< HEAD
 struct dtv_frontend_properties;
 int avc_tuner_dsd(struct firedtv *fdtv, struct dtv_frontend_properties *params);
+=======
+struct dvb_frontend_parameters;
+int avc_tuner_dsd(struct firedtv *fdtv, struct dvb_frontend_parameters *params);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int avc_tuner_set_pids(struct firedtv *fdtv, unsigned char pidc, u16 pid[]);
 int avc_tuner_get_ts(struct firedtv *fdtv);
 int avc_identify_subunit(struct firedtv *fdtv);

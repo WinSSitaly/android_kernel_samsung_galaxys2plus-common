@@ -3,6 +3,7 @@
 
 #include <linux/ioport.h>
 
+<<<<<<< HEAD
 #ifdef CONFIG_SUPERH
 #define INTC_NR_IRQS	512
 #else
@@ -20,6 +21,8 @@
 #define irq2evt(irq)		(irq)
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef unsigned char intc_enum;
 
 struct intc_vect {
@@ -112,7 +115,10 @@ struct intc_desc {
 	unsigned int num_resources;
 	intc_enum force_enable;
 	intc_enum force_disable;
+<<<<<<< HEAD
 	bool skip_syscore_suspend;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct intc_hw_desc hw;
 };
 

@@ -67,7 +67,11 @@ ret_from_signal:
 	jra	ret_from_exception
 
 ENTRY(system_call)
+<<<<<<< HEAD
 	SAVE_ALL_SYS
+=======
+	SAVE_ALL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* save top of frame*/
 	pea	%sp@
@@ -129,7 +133,11 @@ Lsignal_return:
  * This is the main interrupt handler, responsible for calling process_int()
  */
 inthandler1:
+<<<<<<< HEAD
 	SAVE_ALL_INT
+=======
+	SAVE_ALL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	movew	%sp@(PT_OFF_FORMATVEC), %d0
 	and	#0x3ff, %d0
 
@@ -140,7 +148,11 @@ inthandler1:
 	bra	ret_from_interrupt
 
 inthandler2:
+<<<<<<< HEAD
 	SAVE_ALL_INT
+=======
+	SAVE_ALL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	movew	%sp@(PT_OFF_FORMATVEC), %d0
 	and	#0x3ff, %d0
 
@@ -151,7 +163,11 @@ inthandler2:
 	bra	ret_from_interrupt
 
 inthandler3:
+<<<<<<< HEAD
 	SAVE_ALL_INT
+=======
+	SAVE_ALL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	movew	%sp@(PT_OFF_FORMATVEC), %d0
 	and	#0x3ff, %d0
 
@@ -162,7 +178,11 @@ inthandler3:
 	bra	ret_from_interrupt
 
 inthandler4:
+<<<<<<< HEAD
 	SAVE_ALL_INT
+=======
+	SAVE_ALL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	movew	%sp@(PT_OFF_FORMATVEC), %d0
 	and	#0x3ff, %d0
 
@@ -173,7 +193,11 @@ inthandler4:
 	bra	ret_from_interrupt
 
 inthandler5:
+<<<<<<< HEAD
 	SAVE_ALL_INT
+=======
+	SAVE_ALL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	movew	%sp@(PT_OFF_FORMATVEC), %d0
 	and	#0x3ff, %d0
 
@@ -184,7 +208,11 @@ inthandler5:
 	bra	ret_from_interrupt
 
 inthandler6:
+<<<<<<< HEAD
 	SAVE_ALL_INT
+=======
+	SAVE_ALL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	movew	%sp@(PT_OFF_FORMATVEC), %d0
 	and	#0x3ff, %d0
 
@@ -195,7 +223,11 @@ inthandler6:
 	bra	ret_from_interrupt
 
 inthandler7:
+<<<<<<< HEAD
 	SAVE_ALL_INT
+=======
+	SAVE_ALL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	movew	%sp@(PT_OFF_FORMATVEC), %d0
 	and	#0x3ff, %d0
 
@@ -206,7 +238,11 @@ inthandler7:
 	bra	ret_from_interrupt
 
 inthandler:
+<<<<<<< HEAD
 	SAVE_ALL_INT
+=======
+	SAVE_ALL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	movew	%sp@(PT_OFF_FORMATVEC), %d0
 	and	#0x3ff, %d0
 
@@ -236,17 +272,26 @@ ret_from_interrupt:
  * Handler for uninitialized and spurious interrupts.
  */
 ENTRY(bad_interrupt)
+<<<<<<< HEAD
 	addql	#1,irq_err_count
+=======
+	addql	#1,num_spurious
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rte
 
 /*
  * Beware - when entering resume, prev (the current task) is
+<<<<<<< HEAD
  * in a0, next (the new task) is in a1, so don't change these
+=======
+ * in a0, next (the new task) is in a1,so don't change these
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * registers until their contents are no longer needed.
  */
 ENTRY(resume)
 	movel	%a0,%d1				/* save prev thread in d1 */
 	movew	%sr,%a0@(TASK_THREAD+THREAD_SR)	/* save sr */
+<<<<<<< HEAD
 	SAVE_SWITCH_STACK
 	movel	%sp,%a0@(TASK_THREAD+THREAD_KSP) /* save kernel stack */
 	movel	%usp,%a3			/* save usp */
@@ -256,6 +301,18 @@ ENTRY(resume)
 	movel	%a3,%usp
 	movel	%a1@(TASK_THREAD+THREAD_KSP),%sp /* restore new thread stack */
 	RESTORE_SWITCH_STACK
+=======
+	movel	%usp,%a2			/* save usp */
+	movel	%a2,%a0@(TASK_THREAD+THREAD_USP)
+
+	SAVE_SWITCH_STACK
+	movel	%sp,%a0@(TASK_THREAD+THREAD_KSP) /* save kernel stack */
+	movel	%a1@(TASK_THREAD+THREAD_KSP),%sp /* restore new thread stack */
+	RESTORE_SWITCH_STACK
+
+	movel	%a1@(TASK_THREAD+THREAD_USP),%a0 /* restore user stack */
+	movel	%a0,%usp
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	movew	%a1@(TASK_THREAD+THREAD_SR),%sr	/* restore thread status reg */
 	rts
 

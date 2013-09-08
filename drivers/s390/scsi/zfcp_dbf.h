@@ -154,7 +154,10 @@ enum zfcp_dbf_hba_id {
 	ZFCP_DBF_HBA_RES	= 1,
 	ZFCP_DBF_HBA_USS	= 2,
 	ZFCP_DBF_HBA_BIT	= 3,
+<<<<<<< HEAD
 	ZFCP_DBF_HBA_BASIC	= 4,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**

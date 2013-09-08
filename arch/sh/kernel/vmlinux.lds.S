@@ -23,7 +23,11 @@ OUTPUT_ARCH(sh)
 ENTRY(_start)
 SECTIONS
 {
+<<<<<<< HEAD
 	. = PAGE_OFFSET + MEMORY_OFFSET + PHYSICAL_OFFSET + CONFIG_ZERO_PAGE_OFFSET;
+=======
+	. = PAGE_OFFSET + MEMORY_OFFSET + CONFIG_ZERO_PAGE_OFFSET;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	_text = .;		/* Text and read-only data */
 

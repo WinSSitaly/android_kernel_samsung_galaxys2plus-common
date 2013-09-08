@@ -35,6 +35,10 @@
 #include "qlogicpti.h"
 
 #include <asm/dma.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/ptrace.h>
 #include <asm/pgtable.h>
 #include <asm/oplib.h>
@@ -879,7 +883,11 @@ static inline void cmd_frob(struct Command_Entry *cmd, struct scsi_cmnd *Cmnd,
 		cmd->control_flags |= CFLAG_WRITE;
 	else
 		cmd->control_flags |= CFLAG_READ;
+<<<<<<< HEAD
 	cmd->time_out = Cmnd->request->timeout/HZ;
+=======
+	cmd->time_out = 30;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy(cmd->cdb, Cmnd->cmnd, Cmnd->cmd_len);
 }
 

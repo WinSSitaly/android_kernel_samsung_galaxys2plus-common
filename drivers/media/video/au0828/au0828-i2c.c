@@ -348,7 +348,11 @@ static void do_i2c_scan(char *name, struct i2c_client *c)
 	}
 }
 
+<<<<<<< HEAD
 /* init + register i2c adapter */
+=======
+/* init + register i2c algo-bit adapter */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int au0828_i2c_register(struct au0828_dev *dev)
 {
 	dprintk(1, "%s()\n", __func__);

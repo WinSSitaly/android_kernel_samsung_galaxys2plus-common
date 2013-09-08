@@ -38,11 +38,19 @@
 #include "stk-webcam.h"
 
 
+<<<<<<< HEAD
 static bool hflip = 1;
 module_param(hflip, bool, 0444);
 MODULE_PARM_DESC(hflip, "Horizontal image flip (mirror). Defaults to 1");
 
 static bool vflip = 1;
+=======
+static int hflip = 1;
+module_param(hflip, bool, 0444);
+MODULE_PARM_DESC(hflip, "Horizontal image flip (mirror). Defaults to 1");
+
+static int vflip = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(vflip, bool, 0444);
 MODULE_PARM_DESC(vflip, "Vertical image flip. Defaults to 1");
 
@@ -55,8 +63,11 @@ MODULE_AUTHOR("Jaime Velasco Juan <jsagarribay@gmail.com> and Nicolas VIVIEN");
 MODULE_DESCRIPTION("Syntek DC1125 webcam driver");
 
 
+<<<<<<< HEAD
 /* bool for webcam LED management */
 int first_init = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Some cameras have audio interfaces, we aren't interested in those */
 static struct usb_device_id stkwebcam_table[] = {
@@ -377,8 +388,13 @@ static int stk_prepare_iso(struct stk_camera *dev)
 	if (dev->isobufs)
 		STK_ERROR("isobufs already allocated. Bad\n");
 	else
+<<<<<<< HEAD
 		dev->isobufs = kcalloc(MAX_ISO_BUFS, sizeof(*dev->isobufs),
 				       GFP_KERNEL);
+=======
+		dev->isobufs = kzalloc(MAX_ISO_BUFS * sizeof(*dev->isobufs),
+					GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dev->isobufs == NULL) {
 		STK_ERROR("Unable to allocate iso buffers\n");
 		return -ENOMEM;
@@ -520,7 +536,11 @@ static int stk_prepare_sio_buffers(struct stk_camera *dev, unsigned n_sbufs)
 			return -ENOMEM;
 		for (i = 0; i < n_sbufs; i++) {
 			if (stk_setup_siobuf(dev, i))
+<<<<<<< HEAD
 				return (dev->n_sbufs > 1 ? 0 : -ENOMEM);
+=======
+				return (dev->n_sbufs > 1)? 0 : -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev->n_sbufs = i+1;
 		}
 	}
@@ -560,6 +580,7 @@ static int v4l_stk_open(struct file *fp)
 	vdev = video_devdata(fp);
 	dev = vdev_to_camera(vdev);
 
+<<<<<<< HEAD
 	if (dev == NULL || !is_present(dev))
 		return -ENXIO;
 
@@ -568,6 +589,11 @@ static int v4l_stk_open(struct file *fp)
 	else
 		first_init = 0;
 
+=======
+	if (dev == NULL || !is_present(dev)) {
+		return -ENXIO;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fp->private_data = dev;
 	usb_autopm_get_interface(dev->interface);
 
@@ -581,12 +607,19 @@ static int v4l_stk_release(struct file *fp)
 	if (dev->owner == fp) {
 		stk_stop_stream(dev);
 		stk_free_buffers(dev);
+<<<<<<< HEAD
 		stk_camera_write_reg(dev, 0x0, 0x49); /* turn off the LED */
 		unset_initialised(dev);
 		dev->owner = NULL;
 	}
 
 	if (is_present(dev))
+=======
+		dev->owner = NULL;
+	}
+
+	if(is_present(dev))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		usb_autopm_put_interface(dev->interface);
 
 	return 0;
@@ -663,7 +696,11 @@ static unsigned int v4l_stk_poll(struct file *fp, poll_table *wait)
 		return POLLERR;
 
 	if (!list_empty(&dev->sio_full))
+<<<<<<< HEAD
 		return POLLIN | POLLRDNORM;
+=======
+		return (POLLIN | POLLRDNORM);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -900,9 +937,15 @@ static int stk_vidioc_g_fmt_vid_cap(struct file *filp,
 	struct stk_camera *dev = priv;
 	int i;
 
+<<<<<<< HEAD
 	for (i = 0; i < ARRAY_SIZE(stk_sizes) &&
 			stk_sizes[i].m != dev->vsettings.mode; i++)
 		;
+=======
+	for (i = 0; i < ARRAY_SIZE(stk_sizes)
+			&& stk_sizes[i].m != dev->vsettings.mode;
+		i++);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (i == ARRAY_SIZE(stk_sizes)) {
 		STK_ERROR("ERROR: mode invalid\n");
 		return -EINVAL;
@@ -1314,8 +1357,14 @@ static int stk_camera_probe(struct usb_interface *interface,
 	usb_set_intfdata(interface, dev);
 
 	err = stk_register_video_device(dev);
+<<<<<<< HEAD
 	if (err)
 		goto error;
+=======
+	if (err) {
+		goto error;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
@@ -1358,7 +1407,10 @@ static int stk_camera_resume(struct usb_interface *intf)
 		return 0;
 	unset_initialised(dev);
 	stk_initialise(dev);
+<<<<<<< HEAD
 	stk_camera_write_reg(dev, 0x0, 0x49);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	stk_setup_format(dev);
 	if (is_streaming(dev))
 		stk_start_stream(dev);
@@ -1377,4 +1429,29 @@ static struct usb_driver stk_camera_driver = {
 #endif
 };
 
+<<<<<<< HEAD
 module_usb_driver(stk_camera_driver);
+=======
+
+static int __init stk_camera_init(void)
+{
+	int result;
+
+	result = usb_register(&stk_camera_driver);
+	if (result)
+		STK_ERROR("usb_register failed ! Error number %d\n", result);
+
+
+	return result;
+}
+
+static void __exit stk_camera_exit(void)
+{
+	usb_deregister(&stk_camera_driver);
+}
+
+module_init(stk_camera_init);
+module_exit(stk_camera_exit);
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

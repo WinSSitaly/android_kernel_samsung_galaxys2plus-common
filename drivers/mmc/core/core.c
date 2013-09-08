@@ -23,9 +23,13 @@
 #include <linux/log2.h>
 #include <linux/regulator/consumer.h>
 #include <linux/pm_runtime.h>
+<<<<<<< HEAD
 #include <linux/suspend.h>
 #include <linux/fault-inject.h>
 #include <linux/random.h>
+=======
+#include <linux/wakelock.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/mmc/card.h>
 #include <linux/mmc/host.h>
@@ -48,7 +52,11 @@ static struct workqueue_struct *workqueue;
  * performance cost, and for other reasons may not always be desired.
  * So we allow it it to be disabled.
  */
+<<<<<<< HEAD
 bool use_spi_crc = 1;
+=======
+int use_spi_crc = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(use_spi_crc, bool, 0);
 
 /*
@@ -58,9 +66,15 @@ module_param(use_spi_crc, bool, 0);
  * overridden if necessary.
  */
 #ifdef CONFIG_MMC_UNSAFE_RESUME
+<<<<<<< HEAD
 bool mmc_assume_removable;
 #else
 bool mmc_assume_removable = 1;
+=======
+int mmc_assume_removable;
+#else
+int mmc_assume_removable = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 EXPORT_SYMBOL(mmc_assume_removable);
 module_param_named(removable, mmc_assume_removable, bool, 0644);
@@ -85,6 +99,7 @@ static void mmc_flush_scheduled_work(void)
 	flush_workqueue(workqueue);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_FAIL_MMC_REQUEST
 
 /*
@@ -122,6 +137,8 @@ static inline void mmc_should_fail_request(struct mmc_host *host,
 
 #endif /* CONFIG_FAIL_MMC_REQUEST */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  *	mmc_request_done - finish processing an MMC request
  *	@host: MMC host which completed request
@@ -140,6 +157,7 @@ void mmc_request_done(struct mmc_host *host, struct mmc_request *mrq)
 			cmd->retries = 0;
 	}
 
+<<<<<<< HEAD
 	if (err && cmd->retries && !mmc_card_removed(host->card)) {
 		/*
 		 * Request starter must handle retries - see
@@ -150,6 +168,16 @@ void mmc_request_done(struct mmc_host *host, struct mmc_request *mrq)
 	} else {
 		mmc_should_fail_request(host, mrq);
 
+=======
+	if (err && cmd->retries) {
+		pr_debug("%s: req failed (CMD%u): %d, retrying...\n",
+			mmc_hostname(host), cmd->opcode, err);
+
+		cmd->retries--;
+		cmd->error = 0;
+		host->ops->request(host, mrq);
+	} else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		led_trigger_event(host->led, LED_OFF);
 
 		pr_debug("%s: req done (CMD%u): %d: %08x %08x %08x %08x\n",
@@ -188,12 +216,15 @@ mmc_start_request(struct mmc_host *host, struct mmc_request *mrq)
 	struct scatterlist *sg;
 #endif
 
+<<<<<<< HEAD
 	if (mrq->sbc) {
 		pr_debug("<%s: starting CMD%u arg %08x flags %08x>\n",
 			 mmc_hostname(host), mrq->sbc->opcode,
 			 mrq->sbc->arg, mrq->sbc->flags);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pr_debug("%s: starting CMD%u arg %08x flags %08x\n",
 		 mmc_hostname(host), mrq->cmd->opcode,
 		 mrq->cmd->arg, mrq->cmd->flags);
@@ -246,6 +277,7 @@ mmc_start_request(struct mmc_host *host, struct mmc_request *mrq)
 
 static void mmc_wait_done(struct mmc_request *mrq)
 {
+<<<<<<< HEAD
 	complete(&mrq->completion);
 }
 
@@ -377,6 +409,12 @@ struct mmc_async_req *mmc_start_req(struct mmc_host *host,
 EXPORT_SYMBOL(mmc_start_req);
 
 /**
+=======
+	complete(mrq->done_data);
+}
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	mmc_wait_for_req - start a request and wait for completion
  *	@host: MMC host to start command
  *	@mrq: MMC request to start
@@ -387,6 +425,7 @@ EXPORT_SYMBOL(mmc_start_req);
  */
 void mmc_wait_for_req(struct mmc_host *host, struct mmc_request *mrq)
 {
+<<<<<<< HEAD
 	__mmc_start_req(host, mrq);
 	mmc_wait_for_req_done(host, mrq);
 }
@@ -448,6 +487,19 @@ out:
 	return err;
 }
 EXPORT_SYMBOL(mmc_interrupt_hpi);
+=======
+	DECLARE_COMPLETION_ONSTACK(complete);
+
+	mrq->done_data = &complete;
+	mrq->done = mmc_wait_done;
+
+	mmc_start_request(host, mrq);
+
+	wait_for_completion(&complete);
+}
+
+EXPORT_SYMBOL(mmc_wait_for_req);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  *	mmc_wait_for_cmd - start a command and wait for completion
@@ -461,7 +513,11 @@ EXPORT_SYMBOL(mmc_interrupt_hpi);
  */
 int mmc_wait_for_cmd(struct mmc_host *host, struct mmc_command *cmd, int retries)
 {
+<<<<<<< HEAD
 	struct mmc_request mrq = {NULL};
+=======
+	struct mmc_request mrq = {0};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	WARN_ON(!host->claimed);
 
@@ -527,6 +583,7 @@ void mmc_set_data_timeout(struct mmc_data *data, const struct mmc_card *card)
 
 		if (data->flags & MMC_DATA_WRITE)
 			/*
+<<<<<<< HEAD
 			 * The MMC spec "It is strongly recommended
 			 * for hosts to implement more than 500ms
 			 * timeout value even if the card indicates
@@ -535,6 +592,12 @@ void mmc_set_data_timeout(struct mmc_data *data, const struct mmc_card *card)
 			 * insufficient for some cards.
 			 */
 			limit_us = 3000000;
+=======
+			 * The limit is really 250 ms, but that is
+			 * insufficient for some crappy cards.
+			 */
+			limit_us = 300000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		else
 			limit_us = 100000;
 
@@ -546,6 +609,7 @@ void mmc_set_data_timeout(struct mmc_data *data, const struct mmc_card *card)
 			data->timeout_clks = 0;
 		}
 	}
+<<<<<<< HEAD
 
 	/*
 	 * Some cards require longer data read timeout than indicated in CSD.
@@ -558,6 +622,8 @@ void mmc_set_data_timeout(struct mmc_data *data, const struct mmc_card *card)
 		data->timeout_clks = 0;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Some cards need very high timeouts if driven in SPI mode.
 	 * The worst observed timeout was 900ms after writing a
@@ -604,6 +670,104 @@ unsigned int mmc_align_data_size(struct mmc_card *card, unsigned int sz)
 EXPORT_SYMBOL(mmc_align_data_size);
 
 /**
+<<<<<<< HEAD
+=======
+ *	mmc_host_enable - enable a host.
+ *	@host: mmc host to enable
+ *
+ *	Hosts that support power saving can use the 'enable' and 'disable'
+ *	methods to exit and enter power saving states. For more information
+ *	see comments for struct mmc_host_ops.
+ */
+int mmc_host_enable(struct mmc_host *host)
+{
+	if (!(host->caps & MMC_CAP_DISABLE))
+		return 0;
+
+	if (host->en_dis_recurs)
+		return 0;
+
+	if (host->nesting_cnt++)
+		return 0;
+
+	cancel_delayed_work_sync(&host->disable);
+
+	if (host->enabled)
+		return 0;
+
+	if (host->ops->enable) {
+		int err;
+
+		host->en_dis_recurs = 1;
+		err = host->ops->enable(host);
+		host->en_dis_recurs = 0;
+
+		if (err) {
+			pr_debug("%s: enable error %d\n",
+				 mmc_hostname(host), err);
+			return err;
+		}
+	}
+	host->enabled = 1;
+	return 0;
+}
+EXPORT_SYMBOL(mmc_host_enable);
+
+static int mmc_host_do_disable(struct mmc_host *host, int lazy)
+{
+	if (host->ops->disable) {
+		int err;
+
+		host->en_dis_recurs = 1;
+		err = host->ops->disable(host, lazy);
+		host->en_dis_recurs = 0;
+
+		if (err < 0) {
+			pr_debug("%s: disable error %d\n",
+				 mmc_hostname(host), err);
+			return err;
+		}
+		if (err > 0) {
+			unsigned long delay = msecs_to_jiffies(err);
+
+			mmc_schedule_delayed_work(&host->disable, delay);
+		}
+	}
+	host->enabled = 0;
+	return 0;
+}
+
+/**
+ *	mmc_host_disable - disable a host.
+ *	@host: mmc host to disable
+ *
+ *	Hosts that support power saving can use the 'enable' and 'disable'
+ *	methods to exit and enter power saving states. For more information
+ *	see comments for struct mmc_host_ops.
+ */
+int mmc_host_disable(struct mmc_host *host)
+{
+	int err;
+
+	if (!(host->caps & MMC_CAP_DISABLE))
+		return 0;
+
+	if (host->en_dis_recurs)
+		return 0;
+
+	if (--host->nesting_cnt)
+		return 0;
+
+	if (!host->enabled)
+		return 0;
+
+	err = mmc_host_do_disable(host, 0);
+	return err;
+}
+EXPORT_SYMBOL(mmc_host_disable);
+
+/**
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	__mmc_claim_host - exclusively claim a host
  *	@host: mmc host to claim
  *	@abort: whether or not the operation should be aborted
@@ -641,8 +805,13 @@ int __mmc_claim_host(struct mmc_host *host, atomic_t *abort)
 		wake_up(&host->wq);
 	spin_unlock_irqrestore(&host->lock, flags);
 	remove_wait_queue(&host->wq, &wait);
+<<<<<<< HEAD
 	if (host->ops->enable && !stop && host->claim_cnt == 1)
 		host->ops->enable(host);
+=======
+	if (!stop)
+		mmc_host_enable(host);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return stop;
 }
 
@@ -667,13 +836,17 @@ int mmc_try_claim_host(struct mmc_host *host)
 		claimed_host = 1;
 	}
 	spin_unlock_irqrestore(&host->lock, flags);
+<<<<<<< HEAD
 	if (host->ops->enable && claimed_host && host->claim_cnt == 1)
 		host->ops->enable(host);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return claimed_host;
 }
 EXPORT_SYMBOL(mmc_try_claim_host);
 
 /**
+<<<<<<< HEAD
  *	mmc_release_host - release a host
  *	@host: mmc host to release
  *
@@ -689,6 +862,18 @@ void mmc_release_host(struct mmc_host *host)
 	if (host->ops->disable && host->claim_cnt == 1)
 		host->ops->disable(host);
 
+=======
+ *	mmc_do_release_host - release a claimed host
+ *	@host: mmc host to release
+ *
+ *	If you successfully claimed a host, this function will
+ *	release it again.
+ */
+void mmc_do_release_host(struct mmc_host *host)
+{
+	unsigned long flags;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&host->lock, flags);
 	if (--host->claim_cnt) {
 		/* Release for nested claim */
@@ -700,6 +885,70 @@ void mmc_release_host(struct mmc_host *host)
 		wake_up(&host->wq);
 	}
 }
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL(mmc_do_release_host);
+
+void mmc_host_deeper_disable(struct work_struct *work)
+{
+	struct mmc_host *host =
+		container_of(work, struct mmc_host, disable.work);
+
+	/* If the host is claimed then we do not want to disable it anymore */
+	if (!mmc_try_claim_host(host))
+		return;
+	mmc_host_do_disable(host, 1);
+	mmc_do_release_host(host);
+}
+
+/**
+ *	mmc_host_lazy_disable - lazily disable a host.
+ *	@host: mmc host to disable
+ *
+ *	Hosts that support power saving can use the 'enable' and 'disable'
+ *	methods to exit and enter power saving states. For more information
+ *	see comments for struct mmc_host_ops.
+ */
+int mmc_host_lazy_disable(struct mmc_host *host)
+{
+	if (!(host->caps & MMC_CAP_DISABLE))
+		return 0;
+
+	if (host->en_dis_recurs)
+		return 0;
+
+	if (--host->nesting_cnt)
+		return 0;
+
+	if (!host->enabled)
+		return 0;
+
+	if (host->disable_delay) {
+		mmc_schedule_delayed_work(&host->disable,
+				msecs_to_jiffies(host->disable_delay));
+		return 0;
+	} else
+		return mmc_host_do_disable(host, 1);
+}
+EXPORT_SYMBOL(mmc_host_lazy_disable);
+
+/**
+ *	mmc_release_host - release a host
+ *	@host: mmc host to release
+ *
+ *	Release a MMC host, allowing others to claim the host
+ *	for their operations.
+ */
+void mmc_release_host(struct mmc_host *host)
+{
+	WARN_ON(!host->claimed);
+
+	mmc_host_lazy_disable(host);
+
+	mmc_do_release_host(host);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL(mmc_release_host);
 
 /*
@@ -983,10 +1232,13 @@ int mmc_regulator_set_ocr(struct mmc_host *mmc,
 		 * might not allow this operation
 		 */
 		voltage = regulator_get_voltage(supply);
+<<<<<<< HEAD
 
 		if (mmc->caps2 & MMC_CAP2_BROKEN_VOLTAGE)
 			min_uV = max_uV = voltage;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (voltage < 0)
 			result = voltage;
 		else if (voltage < min_uV || voltage > max_uV)
@@ -1069,11 +1321,16 @@ int mmc_set_signal_voltage(struct mmc_host *host, int signal_voltage, bool cmd11
 
 	host->ios.signal_voltage = signal_voltage;
 
+<<<<<<< HEAD
 	if (host->ops->start_signal_voltage_switch) {
 		mmc_host_clk_hold(host);
 		err = host->ops->start_signal_voltage_switch(host, &host->ios);
 		mmc_host_clk_release(host);
 	}
+=======
+	if (host->ops->start_signal_voltage_switch)
+		err = host->ops->start_signal_voltage_switch(host, &host->ios);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }
@@ -1100,6 +1357,7 @@ void mmc_set_driver_type(struct mmc_host *host, unsigned int drv_type)
 	mmc_host_clk_release(host);
 }
 
+<<<<<<< HEAD
 static void mmc_poweroff_notify(struct mmc_host *host)
 {
 	struct mmc_card *card;
@@ -1142,6 +1400,8 @@ static void mmc_poweroff_notify(struct mmc_host *host)
 	mmc_release_host(host);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Apply power to the MMC stack.  This is a two-stage process.
  * First, we enable power to the card without the clock running.
@@ -1165,12 +1425,25 @@ static void mmc_power_up(struct mmc_host *host)
 	else
 		bit = fls(host->ocr_avail) - 1;
 
+<<<<<<< HEAD
 	host->ios.vdd = bit;
 	if (mmc_host_is_spi(host))
 		host->ios.chip_select = MMC_CS_HIGH;
 	else
 		host->ios.chip_select = MMC_CS_DONTCARE;
 	host->ios.bus_mode = MMC_BUSMODE_PUSHPULL;
+=======
+	printk(KERN_DEBUG "%s: ocr=%x,ocr_avail=%x\n", __func__, host->ocr, host->ocr_avail);
+
+	host->ios.vdd = bit;
+	if (mmc_host_is_spi(host)) {
+		host->ios.chip_select = MMC_CS_HIGH;
+		host->ios.bus_mode = MMC_BUSMODE_PUSHPULL;
+	} else {
+		host->ios.chip_select = MMC_CS_DONTCARE;
+		host->ios.bus_mode = MMC_BUSMODE_OPENDRAIN;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	host->ios.power_mode = MMC_POWER_UP;
 	host->ios.bus_width = MMC_BUS_WIDTH_1;
 	host->ios.timing = MMC_TIMING_LEGACY;
@@ -1198,13 +1471,17 @@ static void mmc_power_up(struct mmc_host *host)
 
 void mmc_power_off(struct mmc_host *host)
 {
+<<<<<<< HEAD
 	int err = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mmc_host_clk_hold(host);
 
 	host->ios.clock = 0;
 	host->ios.vdd = 0;
 
 	/*
+<<<<<<< HEAD
 	 * For eMMC 4.5 device send AWAKE command before
 	 * POWER_OFF_NOTIFY command, because in sleep state
 	 * eMMC 4.5 devices respond to only RESET and AWAKE cmd
@@ -1222,6 +1499,8 @@ void mmc_power_off(struct mmc_host *host)
 	}
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * Reset ocr mask to be the highest possible voltage supported for
 	 * this mmc host. This value will be used at next power up.
 	 */
@@ -1236,6 +1515,7 @@ void mmc_power_off(struct mmc_host *host)
 	host->ios.timing = MMC_TIMING_LEGACY;
 	mmc_set_ios(host);
 
+<<<<<<< HEAD
 	/*
 	 * Some configurations, such as the 802.11 SDIO card in the OLPC
 	 * XO-1.5, require a short delay after poweroff before the card
@@ -1243,6 +1523,8 @@ void mmc_power_off(struct mmc_host *host)
 	 */
 	mmc_delay(1);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mmc_host_clk_release(host);
 }
 
@@ -1285,6 +1567,39 @@ static inline void mmc_bus_put(struct mmc_host *host)
 	spin_unlock_irqrestore(&host->lock, flags);
 }
 
+<<<<<<< HEAD
+=======
+int mmc_resume_bus(struct mmc_host *host)
+{
+	unsigned long flags;
+
+	if (!mmc_bus_needs_resume(host))
+		return -EINVAL;
+
+	printk("%s: Starting deferred resume\n", mmc_hostname(host));
+	spin_lock_irqsave(&host->lock, flags);
+	host->bus_resume_flags &= ~MMC_BUSRESUME_NEEDS_RESUME;
+	host->rescan_disable = 0;
+	spin_unlock_irqrestore(&host->lock, flags);
+
+	mmc_bus_get(host);
+	if (host->bus_ops && !host->bus_dead) {
+		mmc_power_up(host);
+		BUG_ON(!host->bus_ops->resume);
+		host->bus_ops->resume(host);
+	}
+
+	if (host->bus_ops && host->bus_ops->detect && !host->bus_dead)
+		host->bus_ops->detect(host);
+
+	mmc_bus_put(host);
+	printk("%s: Deferred resume completed\n", mmc_hostname(host));
+	return 0;
+}
+
+EXPORT_SYMBOL(mmc_resume_bus);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Assign a mmc bus handler to a host. Only one bus handler may control a
  * host at any given time.
@@ -1349,7 +1664,12 @@ void mmc_detect_change(struct mmc_host *host, unsigned long delay)
 	WARN_ON(host->removed);
 	spin_unlock_irqrestore(&host->lock, flags);
 #endif
+<<<<<<< HEAD
 	host->detect_change = 1;
+=======
+
+	wake_lock(&host->detect_wake_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mmc_schedule_delayed_work(&host->detect, delay);
 }
 
@@ -1409,10 +1729,14 @@ static unsigned int mmc_mmc_erase_timeout(struct mmc_card *card,
 {
 	unsigned int erase_timeout;
 
+<<<<<<< HEAD
 	if (arg == MMC_DISCARD_ARG ||
 	    (arg == MMC_TRIM_ARG && card->ext_csd.rev >= 6)) {
 		erase_timeout = card->ext_csd.trim_timeout;
 	} else if (card->ext_csd.erase_group_def & 1) {
+=======
+	if (card->ext_csd.erase_group_def & 1) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* High Capacity Erase Group Size uses HC timeouts */
 		if (arg == MMC_TRIM_ARG)
 			erase_timeout = card->ext_csd.trim_timeout;
@@ -1548,9 +1872,15 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
 	cmd.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_AC;
 	err = mmc_wait_for_cmd(card->host, &cmd, 0);
 	if (err) {
+<<<<<<< HEAD
 		pr_err("mmc_erase: group start error %d, "
 		       "status %#x\n", err, cmd.resp[0]);
 		err = -EIO;
+=======
+		printk(KERN_ERR "mmc_erase: group start error %d, "
+		       "status %#x\n", err, cmd.resp[0]);
+		err = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
@@ -1563,9 +1893,15 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
 	cmd.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_AC;
 	err = mmc_wait_for_cmd(card->host, &cmd, 0);
 	if (err) {
+<<<<<<< HEAD
 		pr_err("mmc_erase: group end error %d, status %#x\n",
 		       err, cmd.resp[0]);
 		err = -EIO;
+=======
+		printk(KERN_ERR "mmc_erase: group end error %d, status %#x\n",
+		       err, cmd.resp[0]);
+		err = -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
@@ -1576,7 +1912,11 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
 	cmd.cmd_timeout_ms = mmc_erase_timeout(card, arg, qty);
 	err = mmc_wait_for_cmd(card->host, &cmd, 0);
 	if (err) {
+<<<<<<< HEAD
 		pr_err("mmc_erase: erase error %d, status %#x\n",
+=======
+		printk(KERN_ERR "mmc_erase: erase error %d, status %#x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		       err, cmd.resp[0]);
 		err = -EIO;
 		goto out;
@@ -1593,13 +1933,21 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
 		/* Do not retry else we can't see errors */
 		err = mmc_wait_for_cmd(card->host, &cmd, 0);
 		if (err || (cmd.resp[0] & 0xFDF92000)) {
+<<<<<<< HEAD
 			pr_err("error %d requesting status %#x\n",
+=======
+			printk(KERN_ERR "error %d requesting status %#x\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				err, cmd.resp[0]);
 			err = -EIO;
 			goto out;
 		}
 	} while (!(cmd.resp[0] & R1_READY_FOR_DATA) ||
+<<<<<<< HEAD
 		 R1_CURRENT_STATE(cmd.resp[0]) == R1_STATE_PRG);
+=======
+		 R1_CURRENT_STATE(cmd.resp[0]) == 7);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return err;
 }
@@ -1667,6 +2015,22 @@ int mmc_erase(struct mmc_card *card, unsigned int from, unsigned int nr,
 	/* 'from' and 'to' are inclusive */
 	to -= 1;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * Aligned Trim
+	 * to set the address in 16k (32sectors)
+	 */
+	if(arg == MMC_TRIM_ARG) {
+		if ((from % 32) != 0)
+			from = ((from >> 5) + 1) << 5;
+
+		to = (to >> 5) << 5;
+		if (from >= to)
+			return 0;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return mmc_do_erase(card, from, to, arg);
 }
 EXPORT_SYMBOL(mmc_erase);
@@ -1688,12 +2052,18 @@ int mmc_can_trim(struct mmc_card *card)
 }
 EXPORT_SYMBOL(mmc_can_trim);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MMC_45_FEATURE_SUPPORT
+#ifdef CONFIG_MMC_DISCARD_SUPPORT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int mmc_can_discard(struct mmc_card *card)
 {
 	/*
 	 * As there's no way to detect the discard support bit at v4.5
 	 * use the s/w feature support filed.
 	 */
+<<<<<<< HEAD
 	if (card->ext_csd.feature_support & MMC_DISCARD_FEATURE)
 		return 1;
 	return 0;
@@ -1709,6 +2079,32 @@ int mmc_can_sanitize(struct mmc_card *card)
 	return 0;
 }
 EXPORT_SYMBOL(mmc_can_sanitize);
+=======
+	if (card->ext_csd.rev >= 6)
+		return 1;
+
+#ifdef CONFIG_MMC_DISCARD_SAMSUNG_eMMC_SUPPORT
+	if (card->ext_csd.optimized_features & MMC_DISCARD_FEATURE)
+		return 1;
+#endif
+
+
+	return 0;
+}
+EXPORT_SYMBOL(mmc_can_discard);
+#endif
+
+int mmc_can_sanitize(struct mmc_card *card)
+{
+#ifndef CONFIG_MMC_NOT_USE_SANITIZE
+	if (card->ext_csd.sec_feature_support & EXT_CSD_SEC_SANITIZE)
+		return 1;
+#endif
+	return 0;
+}
+EXPORT_SYMBOL(mmc_can_sanitize);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int mmc_can_secure_erase_trim(struct mmc_card *card)
 {
@@ -1729,6 +2125,10 @@ int mmc_erase_group_aligned(struct mmc_card *card, unsigned int from,
 }
 EXPORT_SYMBOL(mmc_erase_group_aligned);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MMC_DISCARD_SUPPORT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned int mmc_do_calc_max_discard(struct mmc_card *card,
 					    unsigned int arg)
 {
@@ -1804,6 +2204,10 @@ unsigned int mmc_calc_max_discard(struct mmc_card *card)
 	return max_discard;
 }
 EXPORT_SYMBOL(mmc_calc_max_discard);
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int mmc_set_blocklen(struct mmc_card *card, unsigned int blocklen)
 {
@@ -1819,6 +2223,7 @@ int mmc_set_blocklen(struct mmc_card *card, unsigned int blocklen)
 }
 EXPORT_SYMBOL(mmc_set_blocklen);
 
+<<<<<<< HEAD
 static void mmc_hw_reset_for_init(struct mmc_host *host)
 {
 	if (!(host->caps & MMC_CAP_HW_RESET) || !host->ops->hw_reset)
@@ -1907,6 +2312,8 @@ int mmc_hw_reset_check(struct mmc_host *host)
 }
 EXPORT_SYMBOL(mmc_hw_reset_check);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int mmc_rescan_try_freq(struct mmc_host *host, unsigned freq)
 {
 	host->f_init = freq;
@@ -1918,6 +2325,7 @@ static int mmc_rescan_try_freq(struct mmc_host *host, unsigned freq)
 	mmc_power_up(host);
 
 	/*
+<<<<<<< HEAD
 	 * Some eMMCs (with VCCQ always on) may not be reset after power up, so
 	 * do a hardware reset if possible.
 	 */
@@ -1927,6 +2335,8 @@ static int mmc_rescan_try_freq(struct mmc_host *host, unsigned freq)
 	mmc_set_signal_voltage(host, MMC_SIGNAL_VOLTAGE_330, 0);
 
 	/*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * sdio_reset sends CMD52 to reset card.  Since we do not know
 	 * if the card is being re-initialized, just send it.  CMD52
 	 * should be ignored by SD/eMMC cards.
@@ -1948,6 +2358,7 @@ static int mmc_rescan_try_freq(struct mmc_host *host, unsigned freq)
 	return -EIO;
 }
 
+<<<<<<< HEAD
 int _mmc_detect_card_removed(struct mmc_host *host)
 {
 	int ret;
@@ -2003,15 +2414,27 @@ int mmc_detect_card_removed(struct mmc_host *host)
 }
 EXPORT_SYMBOL(mmc_detect_card_removed);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void mmc_rescan(struct work_struct *work)
 {
 	static const unsigned freqs[] = { 400000, 300000, 200000, 100000 };
 	struct mmc_host *host =
 		container_of(work, struct mmc_host, detect.work);
 	int i;
+<<<<<<< HEAD
 
 	if (host->rescan_disable)
 		return;
+=======
+	bool extend_wakelock = false;
+
+	if (host->rescan_disable) {
+		if (mmc_bus_needs_resume(host))
+			wake_unlock(&host->detect_wake_lock);
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mmc_bus_get(host);
 
@@ -2023,7 +2446,15 @@ void mmc_rescan(struct work_struct *work)
 	    && !(host->caps & MMC_CAP_NONREMOVABLE))
 		host->bus_ops->detect(host);
 
+<<<<<<< HEAD
 	host->detect_change = 0;
+=======
+	/* If the card was removed the bus will be marked
+	 * as dead - extend the wakelock so userspace
+	 * can respond */
+	if (host->bus_dead)
+		extend_wakelock = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Let mmc_bus_put() free the bus/bus_ops if we've found that
@@ -2049,6 +2480,7 @@ void mmc_rescan(struct work_struct *work)
 
 	mmc_claim_host(host);
 	for (i = 0; i < ARRAY_SIZE(freqs); i++) {
+<<<<<<< HEAD
 		if (!mmc_rescan_try_freq(host, max(freqs[i], host->f_min)))
 			break;
 		if (freqs[i] <= host->f_min)
@@ -2059,6 +2491,47 @@ void mmc_rescan(struct work_struct *work)
  out:
 	if (host->caps & MMC_CAP_NEEDS_POLL)
 		mmc_schedule_delayed_work(&host->detect, HZ);
+=======
+		if (!mmc_rescan_try_freq(host, max(freqs[i], host->f_min))) {
+			extend_wakelock = true;
+			break;
+		}
+		if (freqs[i] <= host->f_min)
+			break;
+	}
+
+	if(!extend_wakelock){
+		printk("%s- failed to rescan %s, maybe shorted SD-->try power off\n"
+							,__func__,mmc_hostname(host));
+		if(host->ops->set_timeout)
+			host->ops->set_timeout(host,1000);//set the power-off timeout as 1 sec. 
+		
+	}
+	else{
+		printk("%s- success to rescan %s, try to set the default timeout\n"
+							,__func__,mmc_hostname(host));
+		
+		if(host->ops->get_timeout){
+			unsigned int default_timeout;
+
+			if(!(host->ops->get_timeout(host,true,&default_timeout)))
+				if(host->ops->set_timeout)
+					host->ops->set_timeout(host,default_timeout);		
+		}		
+	}
+
+	mmc_release_host(host);
+
+ out:
+	if (extend_wakelock)
+		wake_lock_timeout(&host->detect_wake_lock, HZ / 2);
+	else
+		wake_unlock(&host->detect_wake_lock);
+	if (host->caps & MMC_CAP_NEEDS_POLL) {
+		wake_lock(&host->detect_wake_lock);
+		mmc_schedule_delayed_work(&host->detect, HZ);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void mmc_start_host(struct mmc_host *host)
@@ -2076,7 +2549,14 @@ void mmc_stop_host(struct mmc_host *host)
 	spin_unlock_irqrestore(&host->lock, flags);
 #endif
 
+<<<<<<< HEAD
 	cancel_delayed_work_sync(&host->detect);
+=======
+	if (host->caps & MMC_CAP_DISABLE)
+		cancel_delayed_work(&host->disable);
+	if (cancel_delayed_work_sync(&host->detect))
+		wake_unlock(&host->detect_wake_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mmc_flush_scheduled_work();
 
 	/* clear pm flags now and let card drivers set them as needed */
@@ -2084,7 +2564,10 @@ void mmc_stop_host(struct mmc_host *host)
 
 	mmc_bus_get(host);
 	if (host->bus_ops && !host->bus_dead) {
+<<<<<<< HEAD
 		/* Calling bus_ops->remove() with a claimed host can deadlock */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (host->bus_ops->remove)
 			host->bus_ops->remove(host);
 
@@ -2106,10 +2589,13 @@ int mmc_power_save_host(struct mmc_host *host)
 {
 	int ret = 0;
 
+<<<<<<< HEAD
 #ifdef CONFIG_MMC_DEBUG
 	pr_info("%s: %s: powering down\n", mmc_hostname(host), __func__);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mmc_bus_get(host);
 
 	if (!host->bus_ops || host->bus_dead || !host->bus_ops->power_restore) {
@@ -2132,10 +2618,13 @@ int mmc_power_restore_host(struct mmc_host *host)
 {
 	int ret;
 
+<<<<<<< HEAD
 #ifdef CONFIG_MMC_DEBUG
 	pr_info("%s: %s: powering up\n", mmc_hostname(host), __func__);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mmc_bus_get(host);
 
 	if (!host->bus_ops || host->bus_dead || !host->bus_ops->power_restore) {
@@ -2156,9 +2645,12 @@ int mmc_card_awake(struct mmc_host *host)
 {
 	int err = -ENOSYS;
 
+<<<<<<< HEAD
 	if (host->caps2 & MMC_CAP2_NO_SLEEP_CMD)
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mmc_bus_get(host);
 
 	if (host->bus_ops && !host->bus_dead && host->bus_ops->awake)
@@ -2174,12 +2666,18 @@ int mmc_card_sleep(struct mmc_host *host)
 {
 	int err = -ENOSYS;
 
+<<<<<<< HEAD
 	if (host->caps2 & MMC_CAP2_NO_SLEEP_CMD)
 		return 0;
 
 	mmc_bus_get(host);
 
 	if (host->bus_ops && !host->bus_dead && host->bus_ops->sleep)
+=======
+	mmc_bus_get(host);
+
+	if (host->bus_ops && !host->bus_dead && host->bus_ops->awake)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = host->bus_ops->sleep(host);
 
 	mmc_bus_put(host);
@@ -2198,6 +2696,7 @@ int mmc_card_can_sleep(struct mmc_host *host)
 }
 EXPORT_SYMBOL(mmc_card_can_sleep);
 
+<<<<<<< HEAD
 /*
  * Flush the cache to the non-volatile storage.
  */
@@ -2262,6 +2761,8 @@ int mmc_cache_ctrl(struct mmc_host *host, u8 enable)
 }
 EXPORT_SYMBOL(mmc_cache_ctrl);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_PM
 
 /**
@@ -2272,6 +2773,7 @@ int mmc_suspend_host(struct mmc_host *host)
 {
 	int err = 0;
 
+<<<<<<< HEAD
 	cancel_delayed_work(&host->detect);
 	mmc_flush_scheduled_work();
 
@@ -2291,6 +2793,25 @@ int mmc_suspend_host(struct mmc_host *host)
 			 * It will be redetected on resume.  (Calling
 			 * bus_ops->remove() with a claimed host can
 			 * deadlock.)
+=======
+	if (mmc_bus_needs_resume(host))
+		return 0;
+
+	if (host->caps & MMC_CAP_DISABLE)
+		cancel_delayed_work(&host->disable);
+	if (cancel_delayed_work(&host->detect))
+		wake_unlock(&host->detect_wake_lock);
+	mmc_flush_scheduled_work();
+
+	mmc_bus_get(host);
+	if (host->bus_ops && !host->bus_dead) {
+		if (host->bus_ops->suspend)
+			err = host->bus_ops->suspend(host);
+		if (err == -ENOSYS || !host->bus_ops->resume) {
+			/*
+			 * We simply "remove" the card in this case.
+			 * It will be redetected on resume.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 */
 			if (host->bus_ops->remove)
 				host->bus_ops->remove(host);
@@ -2307,7 +2828,10 @@ int mmc_suspend_host(struct mmc_host *host)
 	if (!err && !mmc_card_keep_power(host))
 		mmc_power_off(host);
 
+<<<<<<< HEAD
 out:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -2322,6 +2846,15 @@ int mmc_resume_host(struct mmc_host *host)
 	int err = 0;
 
 	mmc_bus_get(host);
+<<<<<<< HEAD
+=======
+	if (mmc_bus_manual_resume(host)) {
+		host->bus_resume_flags |= MMC_BUSRESUME_NEEDS_RESUME;
+		mmc_bus_put(host);
+		return 0;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (host->bus_ops && !host->bus_dead) {
 		if (!mmc_card_keep_power(host)) {
 			mmc_power_up(host);
@@ -2342,7 +2875,11 @@ int mmc_resume_host(struct mmc_host *host)
 		BUG_ON(!host->bus_ops->resume);
 		err = host->bus_ops->resume(host);
 		if (err) {
+<<<<<<< HEAD
 			pr_warning("%s: error %d during resume "
+=======
+			printk(KERN_WARNING "%s: error %d during resume "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					    "(card was removed?)\n",
 					    mmc_hostname(host), err);
 			err = 0;
@@ -2372,19 +2909,38 @@ int mmc_pm_notify(struct notifier_block *notify_block,
 	case PM_SUSPEND_PREPARE:
 
 		spin_lock_irqsave(&host->lock, flags);
+<<<<<<< HEAD
 		host->rescan_disable = 1;
 		host->power_notify_type = MMC_HOST_PW_NOTIFY_SHORT;
 		spin_unlock_irqrestore(&host->lock, flags);
 		cancel_delayed_work_sync(&host->detect);
+=======
+		if (mmc_bus_needs_resume(host)) {
+			spin_unlock_irqrestore(&host->lock, flags);
+			break;
+		}
+		host->rescan_disable = 1;
+		spin_unlock_irqrestore(&host->lock, flags);
+		if (cancel_delayed_work_sync(&host->detect))
+			wake_unlock(&host->detect_wake_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (!host->bus_ops || host->bus_ops->suspend)
 			break;
 
+<<<<<<< HEAD
 		/* Calling bus_ops->remove() with a claimed host can deadlock */
 		if (host->bus_ops->remove)
 			host->bus_ops->remove(host);
 
 		mmc_claim_host(host);
+=======
+		mmc_claim_host(host);
+
+		if (host->bus_ops->remove)
+			host->bus_ops->remove(host);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mmc_detach_bus(host);
 		mmc_power_off(host);
 		mmc_release_host(host);
@@ -2396,17 +2952,67 @@ int mmc_pm_notify(struct notifier_block *notify_block,
 	case PM_POST_RESTORE:
 
 		spin_lock_irqsave(&host->lock, flags);
+<<<<<<< HEAD
 		host->rescan_disable = 0;
 		host->power_notify_type = MMC_HOST_PW_NOTIFY_LONG;
 		spin_unlock_irqrestore(&host->lock, flags);
 		mmc_detect_change(host, 0);
 
+=======
+		if (mmc_bus_manual_resume(host)) {
+			spin_unlock_irqrestore(&host->lock, flags);
+			break;
+		}
+		host->rescan_disable = 0;
+		spin_unlock_irqrestore(&host->lock, flags);
+		if (!host->card_detect_cap) {
+
+#if defined(CONFIG_BCM4334) || defined(CONFIG_BCM4334_MODULE) || defined(CONFIG_BCM4330)
+		if (host->card && host->card->type == MMC_TYPE_SDIO)
+			printk(KERN_INFO"%s(): WLAN SKIP DETECT CHANGE\n",
+					__func__);
+		else{
+#endif
+			mmc_detect_change(host, 0);
+			/* Add a flush here to make sure mmc_detect completes
+			* executing. In absence of this there is a race
+			* condition where multiple wakelocks could be taken
+			* by mmc_detect_change and the first unlock triggering
+			* the suspend (and a suspend  failure). This sort of
+			* loops in the same cycle and the system never enters
+			* suspend.
+			*/
+			mmc_flush_scheduled_work();
+#if defined(CONFIG_BCM4334) || defined(CONFIG_BCM4334_MODULE) || defined(CONFIG_BCM4330)
+			}
+#endif
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
 }
 #endif
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MMC_EMBEDDED_SDIO
+void mmc_set_embedded_sdio_data(struct mmc_host *host,
+				struct sdio_cis *cis,
+				struct sdio_cccr *cccr,
+				struct sdio_embedded_func *funcs,
+				int num_funcs)
+{
+	host->embedded_sdio_data.cis = cis;
+	host->embedded_sdio_data.cccr = cccr;
+	host->embedded_sdio_data.funcs = funcs;
+	host->embedded_sdio_data.num_funcs = num_funcs;
+}
+
+EXPORT_SYMBOL(mmc_set_embedded_sdio_data);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init mmc_init(void)
 {
 	int ret;

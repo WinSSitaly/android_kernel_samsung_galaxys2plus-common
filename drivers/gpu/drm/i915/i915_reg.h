@@ -27,8 +27,11 @@
 
 #define _PIPE(pipe, a, b) ((a) + (pipe)*((b)-(a)))
 
+<<<<<<< HEAD
 #define _MASKED_BIT_ENABLE(a) (((a) << 16) | (a))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * The Bridge device's PCI config space has information about the
  * fb aperture size and the amount of pre-reserved memory.
@@ -80,6 +83,7 @@
 #define  GRDOM_RENDER	(1<<2)
 #define  GRDOM_MEDIA	(3<<2)
 
+<<<<<<< HEAD
 #define GEN6_MBCUNIT_SNPCR	0x900c /* for LLC config */
 #define   GEN6_MBC_SNPCR_SHIFT	21
 #define   GEN6_MBC_SNPCR_MASK	(3<<21)
@@ -95,12 +99,15 @@
 #define   GEN6_MBCTL_MAE_UPDATE_ENABLE	(1 << 1)
 #define   GEN6_MBCTL_BOOT_FETCH_MECH	(1 << 0)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define GEN6_GDRST	0x941c
 #define  GEN6_GRDOM_FULL		(1 << 0)
 #define  GEN6_GRDOM_RENDER		(1 << 1)
 #define  GEN6_GRDOM_MEDIA		(1 << 2)
 #define  GEN6_GRDOM_BLT			(1 << 3)
 
+<<<<<<< HEAD
 /* PPGTT stuff */
 #define GEN6_GTT_ADDR_ENCODE(addr)	((addr) | (((addr) >> 28) & 0xff0))
 
@@ -127,6 +134,8 @@
 #define   ECOCHK_PPGTT_CACHE64B		(0x3<<3)
 #define   ECOCHK_PPGTT_CACHE4B		(0x0<<3)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* VGA stuff */
 
 #define VGA_ST01_MDA 0x3ba
@@ -191,7 +200,11 @@
 #define MI_SUSPEND_FLUSH	MI_INSTR(0x0b, 0)
 #define   MI_SUSPEND_FLUSH_EN	(1<<0)
 #define MI_REPORT_HEAD		MI_INSTR(0x07, 0)
+<<<<<<< HEAD
 #define MI_OVERLAY_FLIP		MI_INSTR(0x11, 0)
+=======
+#define MI_OVERLAY_FLIP		MI_INSTR(0x11,0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define   MI_OVERLAY_CONTINUE	(0x0<<21)
 #define   MI_OVERLAY_ON		(0x1<<21)
 #define   MI_OVERLAY_OFF	(0x2<<21)
@@ -199,6 +212,7 @@
 #define MI_DISPLAY_FLIP		MI_INSTR(0x14, 2)
 #define MI_DISPLAY_FLIP_I915	MI_INSTR(0x14, 1)
 #define   MI_DISPLAY_FLIP_PLANE(n) ((n) << 20)
+<<<<<<< HEAD
 /* IVB has funny definitions for which plane to flip. */
 #define   MI_DISPLAY_FLIP_IVB_PLANE_A  (0 << 19)
 #define   MI_DISPLAY_FLIP_IVB_PLANE_B  (1 << 19)
@@ -207,6 +221,8 @@
 #define   MI_DISPLAY_FLIP_IVB_PLANE_C  (4 << 19)
 #define   MI_DISPLAY_FLIP_IVB_SPRITE_C (5 << 19)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MI_SET_CONTEXT		MI_INSTR(0x18, 0)
 #define   MI_MM_SPACE_GTT		(1<<8)
 #define   MI_MM_SPACE_PHYSICAL		(0<<8)
@@ -237,6 +253,7 @@
 #define  MI_SEMAPHORE_UPDATE	    (1<<21)
 #define  MI_SEMAPHORE_COMPARE	    (1<<20)
 #define  MI_SEMAPHORE_REGISTER	    (1<<18)
+<<<<<<< HEAD
 #define  MI_SEMAPHORE_SYNC_RV	    (2<<16)
 #define  MI_SEMAPHORE_SYNC_RB	    (0<<16)
 #define  MI_SEMAPHORE_SYNC_VR	    (0<<16)
@@ -244,6 +261,8 @@
 #define  MI_SEMAPHORE_SYNC_BR	    (2<<16)
 #define  MI_SEMAPHORE_SYNC_BV	    (0<<16)
 #define  MI_SEMAPHORE_SYNC_INVALID  (1<<0)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * 3D instructions used by the kernel
  */
@@ -285,6 +304,7 @@
 #define   ASYNC_FLIP                (1<<22)
 #define   DISPLAY_PLANE_A           (0<<20)
 #define   DISPLAY_PLANE_B           (1<<20)
+<<<<<<< HEAD
 #define GFX_OP_PIPE_CONTROL(len)	((0x3<<29)|(0x3<<27)|(0x2<<24)|(len-2))
 #define   PIPE_CONTROL_CS_STALL				(1<<20)
 #define   PIPE_CONTROL_QW_WRITE				(1<<14)
@@ -301,6 +321,18 @@
 #define   PIPE_CONTROL_STALL_AT_SCOREBOARD		(1<<1)
 #define   PIPE_CONTROL_DEPTH_CACHE_FLUSH		(1<<0)
 #define   PIPE_CONTROL_GLOBAL_GTT (1<<2) /* in addr dword */
+=======
+#define GFX_OP_PIPE_CONTROL	((0x3<<29)|(0x3<<27)|(0x2<<24)|2)
+#define   PIPE_CONTROL_QW_WRITE	(1<<14)
+#define   PIPE_CONTROL_DEPTH_STALL (1<<13)
+#define   PIPE_CONTROL_WC_FLUSH	(1<<12)
+#define   PIPE_CONTROL_IS_FLUSH	(1<<11) /* MBZ on Ironlake */
+#define   PIPE_CONTROL_TC_FLUSH (1<<10) /* GM45+ only */
+#define   PIPE_CONTROL_ISP_DIS	(1<<9)
+#define   PIPE_CONTROL_NOTIFY	(1<<8)
+#define   PIPE_CONTROL_GLOBAL_GTT (1<<2) /* in addr dword */
+#define   PIPE_CONTROL_STALL_EN	(1<<1) /* in addr word, Ironlake+ only */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /*
@@ -338,12 +370,15 @@
 #define FENCE_REG_SANDYBRIDGE_0		0x100000
 #define   SANDYBRIDGE_FENCE_PITCH_SHIFT	32
 
+<<<<<<< HEAD
 /* control register for cpu gtt access */
 #define TILECTL				0x101000
 #define   TILECTL_SWZCTL			(1 << 0)
 #define   TILECTL_TLB_PREFETCH_DIS	(1 << 2)
 #define   TILECTL_BACKSNOOP_DIS		(1 << 3)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Instruction and interrupt control regs
  */
@@ -358,6 +393,7 @@
 #define RING_CTL(base)		((base)+0x3c)
 #define RING_SYNC_0(base)	((base)+0x40)
 #define RING_SYNC_1(base)	((base)+0x44)
+<<<<<<< HEAD
 #define GEN6_RVSYNC (RING_SYNC_0(RENDER_RING_BASE))
 #define GEN6_RBSYNC (RING_SYNC_1(RENDER_RING_BASE))
 #define GEN6_VRSYNC (RING_SYNC_1(GEN6_BSD_RING_BASE))
@@ -375,6 +411,12 @@
 #define RENDER_HWS_PGA_GEN7	(0x04080)
 #define RING_FAULT_REG(ring)	(0x4094 + 0x100*(ring)->id)
 #define DONE_REG		0x40b0
+=======
+#define RING_MAX_IDLE(base)	((base)+0x54)
+#define RING_HWS_PGA(base)	((base)+0x80)
+#define RING_HWS_PGA_GEN6(base)	((base)+0x2080)
+#define RENDER_HWS_PGA_GEN7	(0x04080)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define BSD_HWS_PGA_GEN7	(0x04180)
 #define BLT_HWS_PGA_GEN7	(0x04280)
 #define RING_ACTHD(base)	((base)+0x74)
@@ -408,12 +450,15 @@
 #define IPEIR_I965	0x02064
 #define IPEHR_I965	0x02068
 #define INSTDONE_I965	0x0206c
+<<<<<<< HEAD
 #define RING_IPEIR(base)	((base)+0x64)
 #define RING_IPEHR(base)	((base)+0x68)
 #define RING_INSTDONE(base)	((base)+0x6c)
 #define RING_INSTPS(base)	((base)+0x70)
 #define RING_DMA_FADD(base)	((base)+0x78)
 #define RING_INSTPM(base)	((base)+0xc0)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define INSTPS		0x02070 /* 965+ only */
 #define INSTDONE1	0x0207c /* 965+ only */
 #define ACTHD_I965	0x02074
@@ -427,6 +472,17 @@
 #define INSTDONE	0x02090
 #define NOPID		0x02094
 #define HWSTAM		0x02098
+<<<<<<< HEAD
+=======
+#define VCS_INSTDONE	0x1206C
+#define VCS_IPEIR	0x12064
+#define VCS_IPEHR	0x12068
+#define VCS_ACTHD	0x12074
+#define BCS_INSTDONE	0x2206C
+#define BCS_IPEIR	0x22064
+#define BCS_IPEHR	0x22068
+#define BCS_ACTHD	0x22074
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define ERROR_GEN6	0x040a0
 
@@ -435,7 +491,10 @@
  * the enables for writing to the corresponding low bit.
  */
 #define _3D_CHICKEN	0x02084
+<<<<<<< HEAD
 #define _3D_CHICKEN_HIZ_PLANE_DISABLE_MSAA_4X_SNB	(1 << 10)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define _3D_CHICKEN2	0x0208c
 /* Disables pipelining of read flushes past the SF-WIZ interface.
  * Required on all Ironlake steppings according to the B-Spec, but the
@@ -446,6 +505,7 @@
 
 #define MI_MODE		0x0209c
 # define VS_TIMER_DISPATCH				(1 << 6)
+<<<<<<< HEAD
 # define MI_FLUSH_ENABLE				(1 << 12)
 
 #define GEN6_GT_MODE	0x20d0
@@ -454,6 +514,11 @@
 #define GFX_MODE	0x02520
 #define GFX_MODE_GEN7	0x0229c
 #define RING_MODE_GEN7(ring)	((ring)->mmio_base+0x29c)
+=======
+# define MI_FLUSH_ENABLE				(1 << 11)
+
+#define GFX_MODE	0x02520
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define   GFX_RUN_LIST_ENABLE		(1<<15)
 #define   GFX_TLB_INVALIDATE_ALWAYS	(1<<13)
 #define   GFX_SURFACE_FAULT_ENABLE	(1<<12)
@@ -461,9 +526,12 @@
 #define   GFX_PSMI_GRANULARITY		(1<<10)
 #define   GFX_PPGTT_ENABLE		(1<<9)
 
+<<<<<<< HEAD
 #define GFX_MODE_ENABLE(bit) (((bit) << 16) | (bit))
 #define GFX_MODE_DISABLE(bit) (((bit) << 16) | (0))
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SCPD0		0x0209c /* 915+ only */
 #define IER		0x020a0
 #define IIR		0x020a4
@@ -501,9 +569,12 @@
 #define   INSTPM_AGPBUSY_DIS (1<<11) /* gen3: when disabled, pending interrupts
 					will not assert AGPBUSY# and will only
 					be delivered when out of C3. */
+<<<<<<< HEAD
 #define   INSTPM_FORCE_ORDERING				(1<<7) /* GEN6+ */
 #define   INSTPM_TLB_INVALIDATE	(1<<9)
 #define   INSTPM_SYNC_FLUSH	(1<<5)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ACTHD	        0x020c8
 #define FW_BLC		0x020d8
 #define FW_BLC2		0x020dc
@@ -551,7 +622,11 @@
 
 /* Enables non-sequential data reads through arbiter
  */
+<<<<<<< HEAD
 #define   MI_ARB_DUAL_DATA_PHASE_DISABLE	(1 << 9)
+=======
+#define   MI_ARB_DUAL_DATA_PHASE_DISABLE       	(1 << 9)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Disable FSB snooping of cacheable write cycles from binner/render
  * command stream
@@ -584,7 +659,10 @@
 #define   CM0_MASK_SHIFT          16
 #define   CM0_IZ_OPT_DISABLE      (1<<6)
 #define   CM0_ZR_OPT_DISABLE      (1<<5)
+<<<<<<< HEAD
 #define	  CM0_STC_EVICT_DISABLE_LRA_SNB	(1<<5)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define   CM0_DEPTH_EVICT_DISABLE (1<<4)
 #define   CM0_COLOR_EVICT_DISABLE (1<<3)
 #define   CM0_DEPTH_WRITE_DISABLE (1<<1)
@@ -631,6 +709,7 @@
 
 #define GEN6_BSD_RNCID			0x12198
 
+<<<<<<< HEAD
 #define GEN7_FF_THREAD_MODE		0x20a0
 #define   GEN7_FF_SCHED_MASK		0x0077070
 #define   GEN7_FF_TS_SCHED_HS1		(0x5<<16)
@@ -646,6 +725,8 @@
 #define   GEN7_FF_DS_SCHED_LOAD_BALANCE	(0x1<<4)  /* Default */
 #define   GEN7_FF_DS_SCHED_HW		(0x0<<4)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Framebuffer compression (915+ only)
  */
@@ -688,7 +769,10 @@
 #define   DPFC_CTL_PLANEA	(0<<30)
 #define   DPFC_CTL_PLANEB	(1<<30)
 #define   DPFC_CTL_FENCE_EN	(1<<29)
+<<<<<<< HEAD
 #define   DPFC_CTL_PERSISTENT_MODE	(1<<25)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define   DPFC_SR_EN		(1<<10)
 #define   DPFC_CTL_LIMIT_1X	(0<<6)
 #define   DPFC_CTL_LIMIT_2X	(1<<6)
@@ -723,7 +807,11 @@
 
 #define ILK_DISPLAY_CHICKEN1	0x42000
 #define   ILK_FBCQ_DIS		(1<<22)
+<<<<<<< HEAD
 #define	  ILK_PABSTRETCH_DIS	(1<<21)
+=======
+#define   ILK_PABSTRETCH_DIS 	(1<<21)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /*
@@ -1114,6 +1202,7 @@
 #define C0DRB3			0x10206
 #define C1DRB3			0x10606
 
+<<<<<<< HEAD
 /** snb MCH registers for reading the DRAM channel configuration */
 #define MAD_DIMM_C0			(MCHBAR_MIRROR_BASE_SNB + 0x5004)
 #define MAD_DIMM_C1			(MCHBAR_MIRROR_BASE_SNB + 0x5008)
@@ -1137,6 +1226,8 @@
 #define   MAD_DIMM_A_SIZE_MASK		(0xff << MAD_DIMM_A_SIZE_SHIFT)
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Clocking configuration register */
 #define CLKCFG			0x10c00
 #define CLKCFG_FSB_400					(5 << 0)	/* hrawclk 100 */
@@ -1416,7 +1507,10 @@
 #define _VSYNC_A		0x60014
 #define _PIPEASRC	0x6001c
 #define _BCLRPAT_A	0x60020
+<<<<<<< HEAD
 #define _VSYNCSHIFT_A	0x60028
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Pipe B timing regs */
 #define _HTOTAL_B	0x61000
@@ -1427,8 +1521,11 @@
 #define _VSYNC_B		0x61014
 #define _PIPEBSRC	0x6101c
 #define _BCLRPAT_B	0x61020
+<<<<<<< HEAD
 #define _VSYNCSHIFT_B	0x61028
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define HTOTAL(pipe) _PIPE(pipe, _HTOTAL_A, _HTOTAL_B)
 #define HBLANK(pipe) _PIPE(pipe, _HBLANK_A, _HBLANK_B)
@@ -1437,7 +1534,10 @@
 #define VBLANK(pipe) _PIPE(pipe, _VBLANK_A, _VBLANK_B)
 #define VSYNC(pipe) _PIPE(pipe, _VSYNC_A, _VSYNC_B)
 #define BCLRPAT(pipe) _PIPE(pipe, _BCLRPAT_A, _BCLRPAT_B)
+<<<<<<< HEAD
 #define VSYNCSHIFT(pipe) _PIPE(pipe, _VSYNCSHIFT_A, _VSYNCSHIFT_B)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* VGA port control */
 #define ADPA			0x61100
@@ -1446,7 +1546,10 @@
 #define   ADPA_PIPE_SELECT_MASK	(1<<30)
 #define   ADPA_PIPE_A_SELECT	0
 #define   ADPA_PIPE_B_SELECT	(1<<30)
+<<<<<<< HEAD
 #define   ADPA_PIPE_SELECT(pipe) ((pipe) << 30)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define   ADPA_USE_VGA_HVPOLARITY (1<<15)
 #define   ADPA_SETS_HVPOLARITY	0
 #define   ADPA_VSYNC_CNTL_DISABLE (1<<11)
@@ -1499,13 +1602,17 @@
 #define   DPC_HOTPLUG_INT_STATUS		(1 << 28)
 #define   HDMID_HOTPLUG_INT_STATUS		(1 << 27)
 #define   DPD_HOTPLUG_INT_STATUS		(1 << 27)
+<<<<<<< HEAD
 /* CRT/TV common between gen3+ */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define   CRT_HOTPLUG_INT_STATUS		(1 << 11)
 #define   TV_HOTPLUG_INT_STATUS			(1 << 10)
 #define   CRT_HOTPLUG_MONITOR_MASK		(3 << 8)
 #define   CRT_HOTPLUG_MONITOR_COLOR		(3 << 8)
 #define   CRT_HOTPLUG_MONITOR_MONO		(2 << 8)
 #define   CRT_HOTPLUG_MONITOR_NONE		(0 << 8)
+<<<<<<< HEAD
 /* SDVO is different across gen3/4 */
 #define   SDVOC_HOTPLUG_INT_STATUS_G4X		(1 << 3)
 #define   SDVOB_HOTPLUG_INT_STATUS_G4X		(1 << 2)
@@ -1513,6 +1620,10 @@
 #define   SDVOB_HOTPLUG_INT_STATUS_I965		(3 << 2)
 #define   SDVOC_HOTPLUG_INT_STATUS_I915		(1 << 7)
 #define   SDVOB_HOTPLUG_INT_STATUS_I915		(1 << 6)
+=======
+#define   SDVOC_HOTPLUG_INT_STATUS		(1 << 7)
+#define   SDVOB_HOTPLUG_INT_STATUS		(1 << 6)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* SDVO port control */
 #define SDVOB			0x61140
@@ -1595,7 +1706,10 @@
 /* Selects pipe B for LVDS data.  Must be set on pre-965. */
 #define   LVDS_PIPEB_SELECT		(1 << 30)
 #define   LVDS_PIPE_MASK		(1 << 30)
+<<<<<<< HEAD
 #define   LVDS_PIPE(pipe)		((pipe) << 30)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* LVDS dithering flag on 965/g4x platform */
 #define   LVDS_ENABLE_DITHER		(1 << 25)
 /* LVDS sync polarity flags. Set to invert (i.e. negative) */
@@ -1635,6 +1749,12 @@
 #define   LVDS_B0B3_POWER_DOWN		(0 << 2)
 #define   LVDS_B0B3_POWER_UP		(3 << 2)
 
+<<<<<<< HEAD
+=======
+#define LVDS_PIPE_ENABLED(V, P) \
+	(((V) & (LVDS_PIPE_MASK | LVDS_PORT_EN)) == ((P) << 30 | LVDS_PORT_EN))
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Video Data Island Packet control */
 #define VIDEO_DIP_DATA		0x61178
 #define VIDEO_DIP_CTL		0x61170
@@ -1647,7 +1767,10 @@
 #define   VIDEO_DIP_SELECT_AVI		(0 << 19)
 #define   VIDEO_DIP_SELECT_VENDOR	(1 << 19)
 #define   VIDEO_DIP_SELECT_SPD		(3 << 19)
+<<<<<<< HEAD
 #define   VIDEO_DIP_SELECT_MASK		(3 << 19)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define   VIDEO_DIP_FREQ_ONCE		(0 << 16)
 #define   VIDEO_DIP_FREQ_VSYNC		(1 << 16)
 #define   VIDEO_DIP_FREQ_2VSYNC		(2 << 16)
@@ -1664,6 +1787,7 @@
  */
 #define   PP_READY		(1 << 30)
 #define   PP_SEQUENCE_NONE	(0 << 28)
+<<<<<<< HEAD
 #define   PP_SEQUENCE_POWER_UP	(1 << 28)
 #define   PP_SEQUENCE_POWER_DOWN (2 << 28)
 #define   PP_SEQUENCE_MASK	(3 << 28)
@@ -1679,6 +1803,14 @@
 #define   PP_SEQUENCE_STATE_ON_S1_2	(0xa << 0)
 #define   PP_SEQUENCE_STATE_ON_S1_3	(0xb << 0)
 #define   PP_SEQUENCE_STATE_RESET	(0xf << 0)
+=======
+#define   PP_SEQUENCE_ON	(1 << 28)
+#define   PP_SEQUENCE_OFF	(2 << 28)
+#define   PP_SEQUENCE_MASK	0x30000000
+#define   PP_CYCLE_DELAY_ACTIVE	(1 << 27)
+#define   PP_SEQUENCE_STATE_ON_IDLE (1 << 3)
+#define   PP_SEQUENCE_STATE_MASK 0x0000000f
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PP_CONTROL	0x61204
 #define   POWER_TARGET_ON	(1 << 0)
 #define PP_ON_DELAYS	0x61208
@@ -2235,6 +2367,12 @@
 #define   DP_PIPEB_SELECT		(1 << 30)
 #define   DP_PIPE_MASK			(1 << 30)
 
+<<<<<<< HEAD
+=======
+#define DP_PIPE_ENABLED(V, P) \
+	(((V) & (DP_PIPE_MASK | DP_PORT_EN)) == ((P) << 30 | DP_PORT_EN))
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Link training mode - select a suitable mode for each stage */
 #define   DP_LINK_TRAIN_PAT_1		(0 << 28)
 #define   DP_LINK_TRAIN_PAT_2		(1 << 28)
@@ -2430,6 +2568,7 @@
 #define   PIPECONF_PALETTE	0
 #define   PIPECONF_GAMMA		(1<<24)
 #define   PIPECONF_FORCE_BORDER	(1<<25)
+<<<<<<< HEAD
 #define   PIPECONF_INTERLACE_MASK	(7 << 21)
 /* Note that pre-gen3 does not support interlaced display directly. Panel
  * fitting must be disabled on pre-ilk for interlaced. */
@@ -2445,6 +2584,11 @@
 #define   PIPECONF_INTERLACED_ILK		(3 << 21)
 #define   PIPECONF_INTERLACED_DBL_ILK		(4 << 21) /* ilk/snb only */
 #define   PIPECONF_PFIT_PF_INTERLACED_DBL_ILK	(5 << 21) /* ilk/snb only */
+=======
+#define   PIPECONF_PROGRESSIVE	(0 << 21)
+#define   PIPECONF_INTERLACE_W_FIELD_INDICATION	(6 << 21)
+#define   PIPECONF_INTERLACE_FIELD_0_ONLY		(7 << 21)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define   PIPECONF_CXSR_DOWNCLOCK	(1<<16)
 #define   PIPECONF_BPP_MASK	(0x000000e0)
 #define   PIPECONF_BPP_8	(0<<5)
@@ -2510,7 +2654,11 @@
 
 #define DSPFW1			0x70034
 #define   DSPFW_SR_SHIFT	23
+<<<<<<< HEAD
 #define   DSPFW_SR_MASK		(0x1ff<<23)
+=======
+#define   DSPFW_SR_MASK 	(0x1ff<<23)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define   DSPFW_CURSORB_SHIFT	16
 #define   DSPFW_CURSORB_MASK	(0x3f<<16)
 #define   DSPFW_PLANEB_SHIFT	8
@@ -2568,7 +2716,10 @@
 #define  WM0_PIPE_CURSOR_MASK	(0x1f)
 
 #define WM0_PIPEB_ILK		0x45104
+<<<<<<< HEAD
 #define WM0_PIPEC_IVB		0x45200
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define WM1_LP_ILK		0x45108
 #define  WM1_LP_SR_EN		(1<<31)
 #define  WM1_LP_LATENCY_SHIFT	24
@@ -2583,8 +2734,11 @@
 #define WM3_LP_ILK		0x45110
 #define  WM3_LP_EN		(1<<31)
 #define WM1S_LP_ILK		0x45120
+<<<<<<< HEAD
 #define WM2S_LP_IVB		0x45124
 #define WM3S_LP_IVB		0x45128
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define  WM1S_LP_EN		(1<<31)
 
 /* Memory latency timer register */
@@ -2801,6 +2955,7 @@
 #define _DSPBSURF		0x7119C
 #define _DSPBTILEOFF		0x711A4
 
+<<<<<<< HEAD
 /* Sprite A control */
 #define _DVSACNTR		0x72180
 #define   DVS_ENABLE		(1<<31)
@@ -2935,6 +3090,8 @@
 #define SPRSCALE(pipe) _PIPE(pipe, _SPRA_SCALE, _SPRB_SCALE)
 #define SPRGAMC(pipe) _PIPE(pipe, _SPRA_GAMC, _SPRB_GAMC)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* VBIOS regs */
 #define VGACNTRL		0x71400
 # define VGA_DISP_DISABLE			(1 << 31)
@@ -3037,8 +3194,11 @@
 #define _PFA_CTL_1               0x68080
 #define _PFB_CTL_1               0x68880
 #define  PF_ENABLE              (1<<31)
+<<<<<<< HEAD
 #define  PF_PIPE_SEL_MASK_IVB	(3<<29)
 #define  PF_PIPE_SEL_IVB(pipe)	((pipe)<<29)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define  PF_FILTER_MASK		(3<<23)
 #define  PF_FILTER_PROGRAMMED	(0<<23)
 #define  PF_FILTER_MED_3x3	(1<<23)
@@ -3144,10 +3304,13 @@
 #define   ILK_DPFC_DIS1		(1<<8)
 #define   ILK_DPFC_DIS2		(1<<9)
 
+<<<<<<< HEAD
 #define IVB_CHICKEN3	0x4200c
 # define CHICKEN3_DGMG_REQ_OUT_FIX_DISABLE	(1 << 5)
 # define CHICKEN3_DGMG_DONE_FIX_DISABLE		(1 << 2)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DISP_ARB_CTL	0x45000
 #define  DISP_TILE_SURFACE_SWIZZLING	(1<<13)
 #define  DISP_FBC_WM_DIS		(1<<15)
@@ -3220,13 +3383,20 @@
 #define SDEIER  0xc400c
 
 /* digital port hotplug */
+<<<<<<< HEAD
 #define PCH_PORT_HOTPLUG        0xc4030		/* SHOTPLUG_CTL */
+=======
+#define PCH_PORT_HOTPLUG        0xc4030
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PORTD_HOTPLUG_ENABLE            (1 << 20)
 #define PORTD_PULSE_DURATION_2ms        (0)
 #define PORTD_PULSE_DURATION_4_5ms      (1 << 18)
 #define PORTD_PULSE_DURATION_6ms        (2 << 18)
 #define PORTD_PULSE_DURATION_100ms      (3 << 18)
+<<<<<<< HEAD
 #define PORTD_PULSE_DURATION_MASK	(3 << 18)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PORTD_HOTPLUG_NO_DETECT         (0)
 #define PORTD_HOTPLUG_SHORT_DETECT      (1 << 16)
 #define PORTD_HOTPLUG_LONG_DETECT       (1 << 17)
@@ -3235,7 +3405,10 @@
 #define PORTC_PULSE_DURATION_4_5ms      (1 << 10)
 #define PORTC_PULSE_DURATION_6ms        (2 << 10)
 #define PORTC_PULSE_DURATION_100ms      (3 << 10)
+<<<<<<< HEAD
 #define PORTC_PULSE_DURATION_MASK	(3 << 10)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PORTC_HOTPLUG_NO_DETECT         (0)
 #define PORTC_HOTPLUG_SHORT_DETECT      (1 << 8)
 #define PORTC_HOTPLUG_LONG_DETECT       (1 << 9)
@@ -3244,7 +3417,10 @@
 #define PORTB_PULSE_DURATION_4_5ms      (1 << 2)
 #define PORTB_PULSE_DURATION_6ms        (2 << 2)
 #define PORTB_PULSE_DURATION_100ms      (3 << 2)
+<<<<<<< HEAD
 #define PORTB_PULSE_DURATION_MASK	(3 << 2)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PORTB_HOTPLUG_NO_DETECT         (0)
 #define PORTB_HOTPLUG_SHORT_DETECT      (1 << 0)
 #define PORTB_HOTPLUG_LONG_DETECT       (1 << 1)
@@ -3265,15 +3441,24 @@
 
 #define _PCH_DPLL_A              0xc6014
 #define _PCH_DPLL_B              0xc6018
+<<<<<<< HEAD
 #define PCH_DPLL(pipe) (pipe == 0 ?  _PCH_DPLL_A : _PCH_DPLL_B)
+=======
+#define PCH_DPLL(pipe) _PIPE(pipe, _PCH_DPLL_A, _PCH_DPLL_B)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define _PCH_FPA0                0xc6040
 #define  FP_CB_TUNE		(0x3<<22)
 #define _PCH_FPA1                0xc6044
 #define _PCH_FPB0                0xc6048
 #define _PCH_FPB1                0xc604c
+<<<<<<< HEAD
 #define PCH_FP0(pipe) (pipe == 0 ? _PCH_FPA0 : _PCH_FPB0)
 #define PCH_FP1(pipe) (pipe == 0 ? _PCH_FPA1 : _PCH_FPB1)
+=======
+#define PCH_FP0(pipe) _PIPE(pipe, _PCH_FPA0, _PCH_FPB0)
+#define PCH_FP1(pipe) _PIPE(pipe, _PCH_FPA1, _PCH_FPB1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PCH_DPLL_TEST           0xc606c
 
@@ -3343,7 +3528,10 @@
 #define _TRANS_VSYNC_A           0xe0014
 #define  TRANS_VSYNC_END_SHIFT  16
 #define  TRANS_VSYNC_START_SHIFT 0
+<<<<<<< HEAD
 #define _TRANS_VSYNCSHIFT_A	0xe0028
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define _TRANSA_DATA_M1          0xe0030
 #define _TRANSA_DATA_N1          0xe0034
@@ -3354,6 +3542,7 @@
 #define _TRANSA_DP_LINK_M2       0xe0048
 #define _TRANSA_DP_LINK_N2       0xe004c
 
+<<<<<<< HEAD
 /* Per-transcoder DIP controls */
 
 #define _VIDEO_DIP_CTL_A         0xe0200
@@ -3368,13 +3557,18 @@
 #define TVIDEO_DIP_DATA(pipe) _PIPE(pipe, _VIDEO_DIP_DATA_A, _VIDEO_DIP_DATA_B)
 #define TVIDEO_DIP_GCP(pipe) _PIPE(pipe, _VIDEO_DIP_GCP_A, _VIDEO_DIP_GCP_B)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define _TRANS_HTOTAL_B          0xe1000
 #define _TRANS_HBLANK_B          0xe1004
 #define _TRANS_HSYNC_B           0xe1008
 #define _TRANS_VTOTAL_B          0xe100c
 #define _TRANS_VBLANK_B          0xe1010
 #define _TRANS_VSYNC_B           0xe1014
+<<<<<<< HEAD
 #define _TRANS_VSYNCSHIFT_B	 0xe1028
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define TRANS_HTOTAL(pipe) _PIPE(pipe, _TRANS_HTOTAL_A, _TRANS_HTOTAL_B)
 #define TRANS_HBLANK(pipe) _PIPE(pipe, _TRANS_HBLANK_A, _TRANS_HBLANK_B)
@@ -3382,8 +3576,11 @@
 #define TRANS_VTOTAL(pipe) _PIPE(pipe, _TRANS_VTOTAL_A, _TRANS_VTOTAL_B)
 #define TRANS_VBLANK(pipe) _PIPE(pipe, _TRANS_VBLANK_A, _TRANS_VBLANK_B)
 #define TRANS_VSYNC(pipe) _PIPE(pipe, _TRANS_VSYNC_A, _TRANS_VSYNC_B)
+<<<<<<< HEAD
 #define TRANS_VSYNCSHIFT(pipe) _PIPE(pipe, _TRANS_VSYNCSHIFT_A, \
 				     _TRANS_VSYNCSHIFT_B)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define _TRANSB_DATA_M1          0xe1030
 #define _TRANSB_DATA_N1          0xe1034
@@ -3417,15 +3614,20 @@
 #define  TRANS_FSYNC_DELAY_HB4  (3<<27)
 #define  TRANS_DP_AUDIO_ONLY    (1<<26)
 #define  TRANS_DP_VIDEO_AUDIO   (0<<26)
+<<<<<<< HEAD
 #define  TRANS_INTERLACE_MASK   (7<<21)
 #define  TRANS_PROGRESSIVE      (0<<21)
 #define  TRANS_INTERLACED       (3<<21)
 #define  TRANS_LEGACY_INTERLACED_ILK (2<<21)
+=======
+#define  TRANS_PROGRESSIVE      (0<<21)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define  TRANS_8BPC             (0<<5)
 #define  TRANS_10BPC            (1<<5)
 #define  TRANS_6BPC             (2<<5)
 #define  TRANS_12BPC            (3<<5)
 
+<<<<<<< HEAD
 #define _TRANSA_CHICKEN2	 0xf0064
 #define _TRANSB_CHICKEN2	 0xf1064
 #define TRANS_CHICKEN2(pipe) _PIPE(pipe, _TRANSA_CHICKEN2, _TRANSB_CHICKEN2)
@@ -3436,6 +3638,8 @@
 #define  FDIA_PHASE_SYNC_SHIFT_EN	18
 #define FDI_PHASE_SYNC_OVR(pipe) (1<<(FDIA_PHASE_SYNC_SHIFT_OVR - ((pipe) * 2)))
 #define FDI_PHASE_SYNC_EN(pipe) (1<<(FDIA_PHASE_SYNC_SHIFT_EN - ((pipe) * 2)))
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define SOUTH_CHICKEN2		0xc2004
 #define  DPLS_EDP_PPS_FIX_DIS	(1<<0)
 
@@ -3587,6 +3791,7 @@
 #define  ADPA_CRT_HOTPLUG_VOLREF_475MV  (1<<17)
 #define  ADPA_CRT_HOTPLUG_FORCE_TRIGGER (1<<16)
 
+<<<<<<< HEAD
 /* or SDVOB */
 #define HDMIB   0xe1140
 #define  PORT_ENABLE    (1 << 31)
@@ -3594,6 +3799,17 @@
 #define  TRANSCODER_CPT(pipe)   ((pipe) << 29)
 #define  TRANSCODER_MASK        (1 << 30)
 #define  TRANSCODER_MASK_CPT    (3 << 29)
+=======
+#define ADPA_PIPE_ENABLED(V, P) \
+	(((V) & (ADPA_TRANS_SELECT_MASK | ADPA_DAC_ENABLE)) == ((P) << 30 | ADPA_DAC_ENABLE))
+
+/* or SDVOB */
+#define HDMIB   0xe1140
+#define  PORT_ENABLE    (1 << 31)
+#define  TRANSCODER_A   (0)
+#define  TRANSCODER_B   (1 << 30)
+#define  TRANSCODER_MASK   (1 << 30)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define  COLOR_FORMAT_8bpc      (0)
 #define  COLOR_FORMAT_12bpc     (3 << 26)
 #define  SDVOB_HOTPLUG_ENABLE   (1 << 23)
@@ -3609,6 +3825,12 @@
 #define  HSYNC_ACTIVE_HIGH      (1 << 3)
 #define  PORT_DETECTED          (1 << 2)
 
+<<<<<<< HEAD
+=======
+#define HDMI_PIPE_ENABLED(V, P) \
+	(((V) & (TRANSCODER_MASK | PORT_ENABLE)) == ((P) << 30 | PORT_ENABLE))
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* PCH SDVOB multiplex with HDMIB */
 #define PCH_SDVOB	HDMIB
 
@@ -3636,13 +3858,17 @@
 #define PCH_PP_STATUS		0xc7200
 #define PCH_PP_CONTROL		0xc7204
 #define  PANEL_UNLOCK_REGS	(0xabcd << 16)
+<<<<<<< HEAD
 #define  PANEL_UNLOCK_MASK	(0xffff << 16)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define  EDP_FORCE_VDD		(1 << 3)
 #define  EDP_BLC_ENABLE		(1 << 2)
 #define  PANEL_POWER_RESET	(1 << 1)
 #define  PANEL_POWER_OFF	(0 << 0)
 #define  PANEL_POWER_ON		(1 << 0)
 #define PCH_PP_ON_DELAYS	0xc7208
+<<<<<<< HEAD
 #define  PANEL_PORT_SELECT_MASK	(3 << 30)
 #define  PANEL_PORT_SELECT_LVDS	(0 << 30)
 #define  PANEL_PORT_SELECT_DPA	(1 << 30)
@@ -3665,6 +3891,11 @@
 #define  PP_REFERENCE_DIVIDER_SHIFT	8
 #define  PANEL_POWER_CYCLE_DELAY_MASK	(0x1f)
 #define  PANEL_POWER_CYCLE_DELAY_SHIFT	0
+=======
+#define  EDP_PANEL		(1 << 30)
+#define PCH_PP_OFF_DELAYS	0xc720c
+#define PCH_PP_DIVISOR		0xc7210
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define PCH_DP_B		0xe4100
 #define PCH_DPB_AUX_CH_CTL	0xe4110
@@ -3695,7 +3926,10 @@
 #define  PORT_TRANS_B_SEL_CPT	(1<<29)
 #define  PORT_TRANS_C_SEL_CPT	(2<<29)
 #define  PORT_TRANS_SEL_MASK	(3<<29)
+<<<<<<< HEAD
 #define  PORT_TRANS_SEL_CPT(pipe)	((pipe) << 29)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define TRANS_DP_CTL_A		0xe0300
 #define TRANS_DP_CTL_B		0xe1300
@@ -3734,6 +3968,7 @@
 #define  EDP_LINK_TRAIN_800_1200MV_0DB_SNB_B	(0x38<<22)
 #define  EDP_LINK_TRAIN_VOL_EMP_MASK_SNB	(0x3f<<22)
 
+<<<<<<< HEAD
 /* IVB */
 #define EDP_LINK_TRAIN_400MV_0DB_IVB		(0x24 <<22)
 #define EDP_LINK_TRAIN_400MV_3_5DB_IVB		(0x2a <<22)
@@ -3770,6 +4005,12 @@
 
 #define GEN6_UCGCTL1				0x9400
 # define GEN6_BLBUNIT_CLOCK_GATE_DISABLE		(1 << 5)
+=======
+#define  FORCEWAKE				0xA18C
+#define  FORCEWAKE_ACK				0x130090
+
+#define  GT_FIFO_FREE_ENTRIES			0x120008
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define GEN6_UCGCTL2				0x9404
 # define GEN6_RCZUNIT_CLOCK_GATE_DISABLE		(1 << 13)
@@ -3797,11 +4038,15 @@
 #define   GEN6_CAGF_MASK			(0x7f << GEN6_CAGF_SHIFT)
 #define GEN6_RP_CONTROL				0xA024
 #define   GEN6_RP_MEDIA_TURBO			(1<<11)
+<<<<<<< HEAD
 #define   GEN6_RP_MEDIA_MODE_MASK		(3<<9)
 #define   GEN6_RP_MEDIA_HW_TURBO_MODE		(3<<9)
 #define   GEN6_RP_MEDIA_HW_NORMAL_MODE		(2<<9)
 #define   GEN6_RP_MEDIA_HW_MODE			(1<<9)
 #define   GEN6_RP_MEDIA_SW_MODE			(0<<9)
+=======
+#define   GEN6_RP_USE_NORMAL_FREQ		(1<<9)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define   GEN6_RP_MEDIA_IS_GFX			(1<<8)
 #define   GEN6_RP_ENABLE			(1<<7)
 #define   GEN6_RP_UP_IDLE_MIN			(0x1<<3)
@@ -3853,6 +4098,7 @@
 #define GEN6_PCODE_MAILBOX			0x138124
 #define   GEN6_PCODE_READY			(1<<31)
 #define   GEN6_READ_OC_PARAMS			0xc
+<<<<<<< HEAD
 #define   GEN6_PCODE_WRITE_MIN_FREQ_TABLE	0x8
 #define   GEN6_PCODE_READ_MIN_FREQ_TABLE	0x9
 #define GEN6_PCODE_DATA				0x138128
@@ -3908,5 +4154,9 @@
 #define   AUD_CONFIG_PIXEL_CLOCK_HDMI_SHIFT	16
 #define   AUD_CONFIG_PIXEL_CLOCK_HDMI		(0xf << 16)
 #define   AUD_CONFIG_DISABLE_NCTS		(1 << 3)
+=======
+#define   GEN6_PCODE_WRITE_MIN_FREQ_TABLE	0x9
+#define GEN6_PCODE_DATA				0x138128
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* _I915_REG_H_ */

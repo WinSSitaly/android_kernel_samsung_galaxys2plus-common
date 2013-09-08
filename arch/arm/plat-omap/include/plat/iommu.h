@@ -25,17 +25,27 @@ struct iotlb_entry {
 	};
 };
 
+<<<<<<< HEAD
 struct omap_iommu {
+=======
+struct iommu {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const char	*name;
 	struct module	*owner;
 	struct clk	*clk;
 	void __iomem	*regbase;
 	struct device	*dev;
 	void		*isr_priv;
+<<<<<<< HEAD
 	struct iommu_domain *domain;
 
 	unsigned int	refcount;
 	spinlock_t	iommu_lock;	/* global for this whole object */
+=======
+
+	unsigned int	refcount;
+	struct mutex	iommu_lock;	/* global for this whole object */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * We don't change iopgd for a situation like pgd for a task,
@@ -49,6 +59,11 @@ struct omap_iommu {
 	struct list_head	mmap;
 	struct mutex		mmap_lock; /* protect mmap */
 
+<<<<<<< HEAD
+=======
+	int (*isr)(struct iommu *obj, u32 da, u32 iommu_errs, void *priv);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *ctx; /* iommu context: registres saved area */
 	u32 da_start;
 	u32 da_end;
@@ -80,6 +95,7 @@ struct iotlb_lock {
 struct iommu_functions {
 	unsigned long	version;
 
+<<<<<<< HEAD
 	int (*enable)(struct omap_iommu *obj);
 	void (*disable)(struct omap_iommu *obj);
 	void (*set_twl)(struct omap_iommu *obj, bool on);
@@ -101,6 +117,27 @@ struct iommu_functions {
 	void (*save_ctx)(struct omap_iommu *obj);
 	void (*restore_ctx)(struct omap_iommu *obj);
 	ssize_t (*dump_ctx)(struct omap_iommu *obj, char *buf, ssize_t len);
+=======
+	int (*enable)(struct iommu *obj);
+	void (*disable)(struct iommu *obj);
+	void (*set_twl)(struct iommu *obj, bool on);
+	u32 (*fault_isr)(struct iommu *obj, u32 *ra);
+
+	void (*tlb_read_cr)(struct iommu *obj, struct cr_regs *cr);
+	void (*tlb_load_cr)(struct iommu *obj, struct cr_regs *cr);
+
+	struct cr_regs *(*alloc_cr)(struct iommu *obj, struct iotlb_entry *e);
+	int (*cr_valid)(struct cr_regs *cr);
+	u32 (*cr_to_virt)(struct cr_regs *cr);
+	void (*cr_to_e)(struct cr_regs *cr, struct iotlb_entry *e);
+	ssize_t (*dump_cr)(struct iommu *obj, struct cr_regs *cr, char *buf);
+
+	u32 (*get_pte_attr)(struct iotlb_entry *e);
+
+	void (*save_ctx)(struct iommu *obj);
+	void (*restore_ctx)(struct iommu *obj);
+	ssize_t (*dump_ctx)(struct iommu *obj, char *buf, ssize_t len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct iommu_platform_data {
@@ -111,6 +148,7 @@ struct iommu_platform_data {
 	u32 da_end;
 };
 
+<<<<<<< HEAD
 /**
  * struct iommu_arch_data - omap iommu private data
  * @name: name of the iommu device
@@ -137,6 +175,8 @@ static inline struct omap_iommu *dev_to_omap_iommu(struct device *dev)
 	return arch_data->iommu_dev;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* IOMMU errors */
 #define OMAP_IOMMU_ERR_TLB_MISS		(1 << 0)
 #define OMAP_IOMMU_ERR_TRANS_FAULT	(1 << 1)
@@ -177,6 +217,7 @@ static inline struct omap_iommu *dev_to_omap_iommu(struct device *dev)
 /*
  * global functions
  */
+<<<<<<< HEAD
 extern u32 omap_iommu_arch_version(void);
 
 extern void omap_iotlb_cr_to_e(struct cr_regs *cr, struct iotlb_entry *e);
@@ -202,5 +243,42 @@ extern ssize_t
 omap_iommu_dump_ctx(struct omap_iommu *obj, char *buf, ssize_t len);
 extern size_t
 omap_dump_tlb_entries(struct omap_iommu *obj, char *buf, ssize_t len);
+=======
+extern u32 iommu_arch_version(void);
+
+extern void iotlb_cr_to_e(struct cr_regs *cr, struct iotlb_entry *e);
+extern u32 iotlb_cr_to_virt(struct cr_regs *cr);
+
+extern int load_iotlb_entry(struct iommu *obj, struct iotlb_entry *e);
+extern void iommu_set_twl(struct iommu *obj, bool on);
+extern void flush_iotlb_page(struct iommu *obj, u32 da);
+extern void flush_iotlb_range(struct iommu *obj, u32 start, u32 end);
+extern void flush_iotlb_all(struct iommu *obj);
+
+extern int iopgtable_store_entry(struct iommu *obj, struct iotlb_entry *e);
+extern void iopgtable_lookup_entry(struct iommu *obj, u32 da, u32 **ppgd,
+				   u32 **ppte);
+extern size_t iopgtable_clear_entry(struct iommu *obj, u32 iova);
+
+extern int iommu_set_da_range(struct iommu *obj, u32 start, u32 end);
+extern struct iommu *iommu_get(const char *name);
+extern void iommu_put(struct iommu *obj);
+extern int iommu_set_isr(const char *name,
+			 int (*isr)(struct iommu *obj, u32 da, u32 iommu_errs,
+				    void *priv),
+			 void *isr_priv);
+
+extern void iommu_save_ctx(struct iommu *obj);
+extern void iommu_restore_ctx(struct iommu *obj);
+
+extern int install_iommu_arch(const struct iommu_functions *ops);
+extern void uninstall_iommu_arch(const struct iommu_functions *ops);
+
+extern int foreach_iommu_device(void *data,
+				int (*fn)(struct device *, void *));
+
+extern ssize_t iommu_dump_ctx(struct iommu *obj, char *buf, ssize_t len);
+extern size_t dump_tlb_entries(struct iommu *obj, char *buf, ssize_t len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __MACH_IOMMU_H */

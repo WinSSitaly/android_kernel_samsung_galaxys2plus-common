@@ -35,6 +35,10 @@
 #include <asm/irq.h>
 #include <asm/io.h>
 #include <asm/smp.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mmu.h>
 #include <asm/pgtable.h>
 #include <asm/pci.h>
@@ -42,11 +46,25 @@
 #include <asm/btext.h>
 #include <asm/sections.h>
 #include <asm/machdep.h>
+<<<<<<< HEAD
 #include <asm/opal.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/linux_logo.h>
 
 /*
+<<<<<<< HEAD
+=======
+ * Properties whose value is longer than this get excluded from our
+ * copy of the device tree. This value does need to be big enough to
+ * ensure that we don't lose things like the interrupt-map property
+ * on a PCI-PCI bridge.
+ */
+#define MAX_PROPERTY_LENGTH	(1UL * 1024 * 1024)
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Eventually bump that one up
  */
 #define DEVTREE_CHUNK_SIZE	0x100000
@@ -131,9 +149,13 @@ struct mem_map_entry {
 
 typedef u32 cell_t;
 
+<<<<<<< HEAD
 extern void __start(unsigned long r3, unsigned long r4, unsigned long r5,
 		    unsigned long r6, unsigned long r7, unsigned long r8,
 		    unsigned long r9);
+=======
+extern void __start(unsigned long r3, unsigned long r4, unsigned long r5);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_PPC64
 extern int enter_prom(struct prom_args *args, unsigned long entry);
@@ -179,7 +201,10 @@ static unsigned long __initdata prom_tce_alloc_end;
 #define PLATFORM_LPAR		0x0001
 #define PLATFORM_POWERMAC	0x0400
 #define PLATFORM_GENERIC	0x0500
+<<<<<<< HEAD
 #define PLATFORM_OPAL		0x0600
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __initdata of_platform;
 
@@ -446,7 +471,11 @@ static void __init __attribute__((noreturn)) prom_panic(const char *reason)
 	if (RELOC(of_platform) == PLATFORM_POWERMAC)
 		asm("trap\n");
 
+<<<<<<< HEAD
 	/* ToDo: should put up an SRC here on pSeries */
+=======
+	/* ToDo: should put up an SRC here on p/iSeries */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	call_prom("exit", 0, 0);
 
 	for (;;)			/* should never get here */
@@ -639,7 +668,11 @@ static void __init early_cmdline_parse(void)
 	}
 }
 
+<<<<<<< HEAD
 #if defined(CONFIG_PPC_PSERIES) || defined(CONFIG_PPC_POWERNV)
+=======
+#ifdef CONFIG_PPC_PSERIES
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * There are two methods for telling firmware what our capabilities are.
  * Newer machines have an "ibm,client-architecture-support" method on the
@@ -733,7 +766,11 @@ static unsigned char ibm_architecture_vec[] = {
 	W(0xffffffff),			/* virt_base */
 	W(0xffffffff),			/* virt_size */
 	W(0xffffffff),			/* load_base */
+<<<<<<< HEAD
 	W(256),				/* 256MB min RMA */
+=======
+	W(64),				/* 64MB min RMA */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	W(0xffffffff),			/* full client load */
 	0,				/* min RMA percentage of total RAM */
 	48,				/* max log_2(hash table size) */
@@ -1215,6 +1252,17 @@ static void __init prom_init_mem(void)
 
 	RELOC(alloc_bottom) = PAGE_ALIGN((unsigned long)&RELOC(_end) + 0x4000);
 
+<<<<<<< HEAD
+=======
+	/* Check if we have an initrd after the kernel, if we do move our bottom
+	 * point to after it
+	 */
+	if (RELOC(prom_initrd_start)) {
+		if (RELOC(prom_initrd_end) > RELOC(alloc_bottom))
+			RELOC(alloc_bottom) = PAGE_ALIGN(RELOC(prom_initrd_end));
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * If prom_memory_limit is set we reduce the upper limits *except* for
 	 * alloc_top_high. This must be the real top of RAM so we can put
@@ -1252,6 +1300,7 @@ static void __init prom_init_mem(void)
 	RELOC(alloc_top) = RELOC(rmo_top);
 	RELOC(alloc_top_high) = RELOC(ram_top);
 
+<<<<<<< HEAD
 	/*
 	 * Check if we have an initrd after the kernel but still inside
 	 * the RMO.  If we do move our bottom point to after it.
@@ -1261,6 +1310,8 @@ static void __init prom_init_mem(void)
 	    RELOC(prom_initrd_end) > RELOC(alloc_bottom))
 		RELOC(alloc_bottom) = PAGE_ALIGN(RELOC(prom_initrd_end));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	prom_printf("memory layout at init:\n");
 	prom_printf("  memory_limit : %x (16 MB aligned)\n", RELOC(prom_memory_limit));
 	prom_printf("  alloc_bottom : %x\n", RELOC(alloc_bottom));
@@ -1270,6 +1321,7 @@ static void __init prom_init_mem(void)
 	prom_printf("  ram_top      : %x\n", RELOC(ram_top));
 }
 
+<<<<<<< HEAD
 static void __init prom_close_stdin(void)
 {
 	struct prom_t *_prom = &RELOC(prom);
@@ -1548,6 +1600,8 @@ static void __init prom_instantiate_opal(void)
 }
 
 #endif /* CONFIG_PPC_POWERNV */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Allocate room for and instantiate RTAS
@@ -1571,8 +1625,15 @@ static void __init prom_instantiate_rtas(void)
 		return;
 
 	base = alloc_down(size, PAGE_SIZE, 0);
+<<<<<<< HEAD
 	if (base == 0)
 		prom_panic("Could not allocate memory for RTAS\n");
+=======
+	if (base == 0) {
+		prom_printf("RTAS allocation failed !\n");
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rtas_inst = call_prom("open", 1, 1, ADDR("/rtas"));
 	if (!IHANDLE_VALID(rtas_inst)) {
@@ -1598,12 +1659,15 @@ static void __init prom_instantiate_rtas(void)
 	prom_setprop(rtas_node, "/rtas", "linux,rtas-entry",
 		     &entry, sizeof(entry));
 
+<<<<<<< HEAD
 #ifdef CONFIG_PPC_POWERNV
 	/* PowerVN takeover hack */
 	RELOC(prom_rtas_data) = base;
 	RELOC(prom_rtas_entry) = entry;
 	prom_getprop(rtas_node, "start-cpu", &RELOC(prom_rtas_start_cpu), 4);
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	prom_debug("rtas base     = 0x%x\n", base);
 	prom_debug("rtas entry    = 0x%x\n", entry);
 	prom_debug("rtas size     = 0x%x\n", (long)size);
@@ -1821,7 +1885,11 @@ static void __init prom_hold_cpus(void)
 		*acknowledge = (unsigned long)-1;
 
 		if (reg != _prom->cpu) {
+<<<<<<< HEAD
 			/* Primary Thread of non-boot cpu or any thread */
+=======
+			/* Primary Thread of non-boot cpu */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			prom_printf("starting cpu hw idx %lu... ", reg);
 			call_prom("start-cpu", 3, 0, node,
 				  secondary_hold, reg);
@@ -1930,6 +1998,18 @@ static void __init prom_init_stdout(void)
 		prom_setprop(val, path, "linux,boot-display", NULL, 0);
 }
 
+<<<<<<< HEAD
+=======
+static void __init prom_close_stdin(void)
+{
+	struct prom_t *_prom = &RELOC(prom);
+	ihandle val;
+
+	if (prom_getprop(_prom->chosen, "stdin", &val, sizeof(val)) > 0)
+		call_prom("close", 1, 0, val);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init prom_find_machine_type(void)
 {
 	struct prom_t *_prom = &RELOC(prom);
@@ -1940,7 +2020,11 @@ static int __init prom_find_machine_type(void)
 	int x;
 #endif
 
+<<<<<<< HEAD
 	/* Look for a PowerMac or a Cell */
+=======
+	/* Look for a PowerMac */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	len = prom_getprop(_prom->root, "compatible",
 			   compat, sizeof(compat)-1);
 	if (len > 0) {
@@ -1966,11 +2050,15 @@ static int __init prom_find_machine_type(void)
 		}
 	}
 #ifdef CONFIG_PPC64
+<<<<<<< HEAD
 	/* Try to detect OPAL */
 	if (PHANDLE_VALID(call_prom("finddevice", 1, 1, ADDR("/ibm,opal"))))
 		return PLATFORM_OPAL;
 
 	/* Try to figure out if it's an IBM pSeries or any other
+=======
+	/* If not a mac, try to figure out if it's an IBM pSeries or any other
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * PAPR compliant platform. We assume it is if :
 	 *  - /device_type is "chrp" (please, do NOT use that for future
 	 *    non-IBM designs !
@@ -2071,7 +2159,11 @@ static void __init prom_check_displays(void)
 		/* Setup a usable color table when the appropriate
 		 * method is available. Should update this to set-colors */
 		clut = RELOC(default_colors);
+<<<<<<< HEAD
 		for (i = 0; i < 16; i++, clut += 3)
+=======
+		for (i = 0; i < 32; i++, clut += 3)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (prom_set_color(ih, i, clut[0], clut[1],
 					   clut[2]) != 0)
 				break;
@@ -2103,12 +2195,19 @@ static void __init *make_room(unsigned long *mem_start, unsigned long *mem_end,
 		if (room > DEVTREE_CHUNK_SIZE)
 			room = DEVTREE_CHUNK_SIZE;
 		if (room < PAGE_SIZE)
+<<<<<<< HEAD
 			prom_panic("No memory for flatten_device_tree "
 				   "(no room)\n");
 		chunk = alloc_up(room, 0);
 		if (chunk == 0)
 			prom_panic("No memory for flatten_device_tree "
 				   "(claim failed)\n");
+=======
+			prom_panic("No memory for flatten_device_tree (no room)");
+		chunk = alloc_up(room, 0);
+		if (chunk == 0)
+			prom_panic("No memory for flatten_device_tree (claim failed)");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*mem_end = chunk + room;
 	}
 
@@ -2197,7 +2296,11 @@ static void __init scan_dt_build_struct(phandle node, unsigned long *mem_start,
 	unsigned long soff;
 	unsigned char *valp;
 	static char pname[MAX_PROPERTY_NAME];
+<<<<<<< HEAD
 	int l, room, has_phandle = 0;
+=======
+	int l, room;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dt_push_token(OF_DT_BEGIN_NODE, mem_start, mem_end);
 
@@ -2264,6 +2367,16 @@ static void __init scan_dt_build_struct(phandle node, unsigned long *mem_start,
 		/* sanity checks */
 		if (l == PROM_ERROR)
 			continue;
+<<<<<<< HEAD
+=======
+		if (l > MAX_PROPERTY_LENGTH) {
+			prom_printf("WARNING: ignoring large property ");
+			/* It seems OF doesn't null-terminate the path :-( */
+			prom_printf("[%s] ", path);
+			prom_printf("%s length 0x%x\n", RELOC(pname), l);
+			continue;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* push property head */
 		dt_push_token(OF_DT_PROP, mem_start, mem_end);
@@ -2274,6 +2387,7 @@ static void __init scan_dt_build_struct(phandle node, unsigned long *mem_start,
 		valp = make_room(mem_start, mem_end, l, 4);
 		call_prom("getprop", 4, 1, node, RELOC(pname), valp, l);
 		*mem_start = _ALIGN(*mem_start, 4);
+<<<<<<< HEAD
 
 		if (!strcmp(RELOC(pname), RELOC("phandle")))
 			has_phandle = 1;
@@ -2294,6 +2408,21 @@ static void __init scan_dt_build_struct(phandle node, unsigned long *mem_start,
 			valp = make_room(mem_start, mem_end, 4, 4);
 			*(u32 *)valp = node;
 		}
+=======
+	}
+
+	/* Add a "linux,phandle" property. */
+	soff = dt_find_string(RELOC("linux,phandle"));
+	if (soff == 0)
+		prom_printf("WARNING: Can't find string index for"
+			    " <linux-phandle> node %s\n", path);
+	else {
+		dt_push_token(OF_DT_PROP, mem_start, mem_end);
+		dt_push_token(4, mem_start, mem_end);
+		dt_push_token(soff, mem_start, mem_end);
+		valp = make_room(mem_start, mem_end, 4, 4);
+		*(u32 *)valp = node;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* do all our children */
@@ -2317,7 +2446,11 @@ static void __init flatten_device_tree(void)
 
 	/*
 	 * Check how much room we have between alloc top & bottom (+/- a
+<<<<<<< HEAD
 	 * few pages), crop to 1MB, as this is our "chunk" size
+=======
+	 * few pages), crop to 4Mb, as this is our "chuck" size
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	room = RELOC(alloc_top) - RELOC(alloc_bottom) - 0x4000;
 	if (room > DEVTREE_CHUNK_SIZE)
@@ -2777,7 +2910,10 @@ static void __init prom_check_initrd(unsigned long r3, unsigned long r4)
 #endif /* CONFIG_BLK_DEV_INITRD */
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * We enter here early on, when the Open Firmware prom is still
  * handling exceptions and the MMU hash table for us.
@@ -2827,9 +2963,14 @@ unsigned long __init prom_init(unsigned long r3, unsigned long r4,
 	 * between pSeries SMP and pSeries LPAR
 	 */
 	RELOC(of_platform) = prom_find_machine_type();
+<<<<<<< HEAD
 	prom_printf("Detected machine type: %x\n", RELOC(of_platform));
 
 #ifndef CONFIG_NONSTATIC_KERNEL
+=======
+
+#ifndef CONFIG_RELOCATABLE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Bail if this is a kdump kernel. */
 	if (PHYSICAL_START > 0)
 		prom_panic("Error: You can't boot a kdump kernel from OF!\n");
@@ -2840,7 +2981,11 @@ unsigned long __init prom_init(unsigned long r3, unsigned long r4,
 	 */
 	prom_check_initrd(r3, r4);
 
+<<<<<<< HEAD
 #if defined(CONFIG_PPC_PSERIES) || defined(CONFIG_PPC_POWERNV)
+=======
+#ifdef CONFIG_PPC_PSERIES
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * On pSeries, inform the firmware about our capabilities
 	 */
@@ -2886,6 +3031,7 @@ unsigned long __init prom_init(unsigned long r3, unsigned long r4,
 #endif
 
 	/*
+<<<<<<< HEAD
 	 * On non-powermacs, try to instantiate RTAS. PowerMacs don't
 	 * have a usable RTAS implementation.
 	 */
@@ -2913,6 +3059,16 @@ unsigned long __init prom_init(unsigned long r3, unsigned long r4,
 	if (RELOC(of_platform) != PLATFORM_POWERMAC &&
 	    RELOC(of_platform) != PLATFORM_OPAL)
 		prom_hold_cpus();
+=======
+	 * On non-powermacs, try to instantiate RTAS and puts all CPUs
+	 * in spin-loops. PowerMacs don't have a working RTAS and use
+	 * a different way to spin CPUs
+	 */
+	if (RELOC(of_platform) != PLATFORM_POWERMAC) {
+		prom_instantiate_rtas();
+		prom_hold_cpus();
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Fill in some infos for use by the kernel later on
@@ -2954,11 +3110,17 @@ unsigned long __init prom_init(unsigned long r3, unsigned long r4,
 	/*
 	 * in case stdin is USB and still active on IBM machines...
 	 * Unfortunately quiesce crashes on some powermacs if we have
+<<<<<<< HEAD
 	 * closed stdin already (in particular the powerbook 101). It
 	 * appears that the OPAL version of OFW doesn't like it either.
 	 */
 	if (RELOC(of_platform) != PLATFORM_POWERMAC &&
 	    RELOC(of_platform) != PLATFORM_OPAL)
+=======
+	 * closed stdin already (in particular the powerbook 101).
+	 */
+	if (RELOC(of_platform) != PLATFORM_POWERMAC)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		prom_close_stdin();
 
 	/*
@@ -2974,17 +3136,23 @@ unsigned long __init prom_init(unsigned long r3, unsigned long r4,
 	 * is common to us and kexec
 	 */
 	hdr = RELOC(dt_header_start);
+<<<<<<< HEAD
 
 	/* Don't print anything after quiesce under OPAL, it crashes OFW */
 	if (RELOC(of_platform) != PLATFORM_OPAL) {
 		prom_printf("returning from prom_init\n");
 		prom_debug("->dt_header_start=0x%x\n", hdr);
 	}
+=======
+	prom_printf("returning from prom_init\n");
+	prom_debug("->dt_header_start=0x%x\n", hdr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_PPC32
 	reloc_got2(-offset);
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_PPC_EARLY_DEBUG_OPAL
 	/* OPAL early debug gets the OPAL base & entry in r8 and r9 */
 	__start(hdr, kbase, 0, 0, 0,
@@ -2992,6 +3160,9 @@ unsigned long __init prom_init(unsigned long r3, unsigned long r4,
 #else
 	__start(hdr, kbase, 0, 0, 0, 0, 0);
 #endif
+=======
+	__start(hdr, kbase, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

@@ -145,9 +145,14 @@ int ida_get_new(struct ida *ida, int *p_id);
 void ida_remove(struct ida *ida, int id);
 void ida_destroy(struct ida *ida);
 void ida_init(struct ida *ida);
+<<<<<<< HEAD
 
 int ida_simple_get(struct ida *ida, unsigned int start, unsigned int end,
 		   gfp_t gfp_mask);
+=======
+int ida_simple_get(struct ida *ida, unsigned int start, unsigned int end,
+                   gfp_t gfp_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void ida_simple_remove(struct ida *ida, unsigned int id);
 
 void __init idr_init_cache(void);

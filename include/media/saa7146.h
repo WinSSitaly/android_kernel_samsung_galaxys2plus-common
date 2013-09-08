@@ -1,6 +1,10 @@
 #ifndef __SAA7146__
 #define __SAA7146__
 
+<<<<<<< HEAD
+=======
+#include <linux/module.h>	/* for module-version */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/delay.h>	/* for delay-stuff */
 #include <linux/slab.h>		/* for kmalloc/kfree */
 #include <linux/pci.h>		/* for pci-config-stuff, vendor ids etc. */
@@ -24,10 +28,16 @@
 
 extern unsigned int saa7146_debug;
 
+<<<<<<< HEAD
+=======
+//#define DEBUG_PROLOG printk("(0x%08x)(0x%08x) %s: %s(): ",(dev==0?-1:(dev->mem==0?-1:saa7146_read(dev,RPS_ADDR0))),(dev==0?-1:(dev->mem==0?-1:saa7146_read(dev,IER))),KBUILD_MODNAME,__func__)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef DEBUG_VARIABLE
 	#define DEBUG_VARIABLE saa7146_debug
 #endif
 
+<<<<<<< HEAD
 #define ERR(fmt, ...)	pr_err("%s: " fmt, __func__, ##__VA_ARGS__)
 
 #define _DBG(mask, fmt, ...)						\
@@ -50,12 +60,29 @@ do {									\
 #define DEB_INT(fmt, ...)	_DBG(0x20, fmt, ##__VA_ARGS__)
 /* capture debug messages */
 #define DEB_CAP(fmt, ...)	_DBG(0x40, fmt, ##__VA_ARGS__)
+=======
+#define DEBUG_PROLOG printk("%s: %s(): ",KBUILD_MODNAME, __func__)
+#define INFO(x) { printk("%s: ",KBUILD_MODNAME); printk x; }
+
+#define ERR(x) { DEBUG_PROLOG; printk x; }
+
+#define DEB_S(x)    if (0!=(DEBUG_VARIABLE&0x01)) { DEBUG_PROLOG; printk x; } /* simple debug messages */
+#define DEB_D(x)    if (0!=(DEBUG_VARIABLE&0x02)) { DEBUG_PROLOG; printk x; } /* more detailed debug messages */
+#define DEB_EE(x)   if (0!=(DEBUG_VARIABLE&0x04)) { DEBUG_PROLOG; printk x; } /* print enter and exit of functions */
+#define DEB_I2C(x)  if (0!=(DEBUG_VARIABLE&0x08)) { DEBUG_PROLOG; printk x; } /* i2c debug messages */
+#define DEB_VBI(x)  if (0!=(DEBUG_VARIABLE&0x10)) { DEBUG_PROLOG; printk x; } /* vbi debug messages */
+#define DEB_INT(x)  if (0!=(DEBUG_VARIABLE&0x20)) { DEBUG_PROLOG; printk x; } /* interrupt debug messages */
+#define DEB_CAP(x)  if (0!=(DEBUG_VARIABLE&0x40)) { DEBUG_PROLOG; printk x; } /* capture debug messages */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define SAA7146_ISR_CLEAR(x,y) \
 	saa7146_write(x, ISR, (y));
 
+<<<<<<< HEAD
 struct module;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct saa7146_dev;
 struct saa7146_extension;
 struct saa7146_vv;

@@ -23,13 +23,26 @@
 #include <linux/io.h>
 #include <linux/of_platform.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/v4l2-common.h>
 #include <media/v4l2-device.h>
 #include <media/v4l2-ioctl.h>
 #include <media/videobuf-dma-contig.h>
 
 #define DRV_NAME		"fsl_viu"
+<<<<<<< HEAD
 #define VIU_VERSION		"0.5.1"
+=======
+#define VIU_MAJOR_VERSION	0
+#define VIU_MINOR_VERSION	5
+#define VIU_RELEASE		0
+#define VIU_VERSION		KERNEL_VERSION(VIU_MAJOR_VERSION, \
+					       VIU_MINOR_VERSION, \
+					       VIU_RELEASE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define BUFFER_TIMEOUT		msecs_to_jiffies(500)  /* 0.5 seconds */
 
@@ -604,6 +617,10 @@ static int vidioc_querycap(struct file *file, void *priv,
 {
 	strcpy(cap->driver, "viu");
 	strcpy(cap->card, "viu");
+<<<<<<< HEAD
+=======
+	cap->version = VIU_VERSION;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cap->capabilities =	V4L2_CAP_VIDEO_CAPTURE |
 				V4L2_CAP_STREAMING     |
 				V4L2_CAP_VIDEO_OVERLAY |
@@ -1661,9 +1678,27 @@ static struct platform_driver viu_of_platform_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(viu_of_platform_driver);
+=======
+static int __init viu_init(void)
+{
+	return platform_driver_register(&viu_of_platform_driver);
+}
+
+static void __exit viu_exit(void)
+{
+	platform_driver_unregister(&viu_of_platform_driver);
+}
+
+module_init(viu_init);
+module_exit(viu_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Freescale Video-In(VIU)");
 MODULE_AUTHOR("Hongjun Chen");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_VERSION(VIU_VERSION);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

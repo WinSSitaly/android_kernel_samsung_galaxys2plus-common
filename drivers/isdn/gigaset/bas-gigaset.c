@@ -410,10 +410,17 @@ static void check_pending(struct bas_cardstate *ucs)
 		if (!(ucs->basstate & BS_RESETTING))
 			ucs->pending = 0;
 		break;
+<<<<<<< HEAD
 		/*
 		 * HD_READ_ATMESSAGE and HD_WRITE_ATMESSAGE are handled separately
 		 * and should never end up here
 		 */
+=======
+	/*
+	 * HD_READ_ATMESSAGE and HD_WRITE_ATMESSAGE are handled separately
+	 * and should never end up here
+	 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		dev_warn(&ucs->interface->dev,
 			 "unknown pending request 0x%02x cleared\n",
@@ -491,7 +498,11 @@ static void read_ctrl_callback(struct urb *urb)
 		numbytes = urb->actual_length;
 		if (unlikely(numbytes != ucs->rcvbuf_size)) {
 			dev_warn(cs->dev,
+<<<<<<< HEAD
 				 "control read: received %d chars, expected %d\n",
+=======
+			       "control read: received %d chars, expected %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 numbytes, ucs->rcvbuf_size);
 			if (numbytes > ucs->rcvbuf_size)
 				numbytes = ucs->rcvbuf_size;
@@ -616,6 +627,7 @@ static void int_in_work(struct work_struct *work)
 	if (rc == 0)
 		/* success, resubmit interrupt read URB */
 		rc = usb_submit_urb(urb, GFP_ATOMIC);
+<<<<<<< HEAD
 
 	switch (rc) {
 	case 0:		/* success */
@@ -623,6 +635,9 @@ static void int_in_work(struct work_struct *work)
 	case -EINVAL:	/* URB already resubmitted, or terminal badness */
 		break;
 	default:	/* failure: try to recover by resetting the device */
+=======
+	if (rc != 0 && rc != -ENODEV) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_err(cs->dev, "clear halt failed: %s\n", get_usb_rcmsg(rc));
 		rc = usb_lock_device_for_reset(ucs->udev, ucs->interface);
 		if (rc == 0) {
@@ -716,7 +731,11 @@ static void read_int_callback(struct urb *urb)
 	}
 
 	l = (unsigned) ucs->int_in_buf[1] +
+<<<<<<< HEAD
 		(((unsigned) ucs->int_in_buf[2]) << 8);
+=======
+	    (((unsigned) ucs->int_in_buf[2]) << 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	gig_dbg(DEBUG_USBREQ, "<-------%d: 0x%02x (%u [0x%02x 0x%02x])",
 		urb->actual_length, (int)ucs->int_in_buf[0], l,
@@ -776,14 +795,22 @@ static void read_int_callback(struct urb *urb)
 	case HD_RECEIVEATDATA_ACK:	/* AT response ready to be received */
 		if (!l) {
 			dev_warn(cs->dev,
+<<<<<<< HEAD
 				 "HD_RECEIVEATDATA_ACK with length 0 ignored\n");
+=======
+				"HD_RECEIVEATDATA_ACK with length 0 ignored\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 		spin_lock_irqsave(&cs->lock, flags);
 		if (ucs->basstate & BS_ATRDPEND) {
 			spin_unlock_irqrestore(&cs->lock, flags);
 			dev_warn(cs->dev,
+<<<<<<< HEAD
 				 "HD_RECEIVEATDATA_ACK(%d) during HD_READ_ATMESSAGE(%d) ignored\n",
+=======
+	"HD_RECEIVEATDATA_ACK(%d) during HD_READ_ATMESSAGE(%d) ignored\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 l, ucs->rcvbuf_size);
 			break;
 		}
@@ -884,7 +911,11 @@ static void read_iso_callback(struct urb *urb)
 			ubc->isoinlost += urb->iso_frame_desc[i].actual_length;
 			if (unlikely(urb->iso_frame_desc[i].status != 0 &&
 				     urb->iso_frame_desc[i].status !=
+<<<<<<< HEAD
 				     -EINPROGRESS))
+=======
+								-EINPROGRESS))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				ubc->loststatus = urb->iso_frame_desc[i].status;
 			urb->iso_frame_desc[i].status = 0;
 			urb->iso_frame_desc[i].actual_length = 0;
@@ -897,7 +928,11 @@ static void read_iso_callback(struct urb *urb)
 			rc = usb_submit_urb(urb, GFP_ATOMIC);
 			if (unlikely(rc != 0 && rc != -ENODEV)) {
 				dev_err(bcs->cs->dev,
+<<<<<<< HEAD
 					"could not resubmit isoc read URB: %s\n",
+=======
+				       "could not resubmit isoc read URB: %s\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					get_usb_rcmsg(rc));
 				dump_urb(DEBUG_ISO, "isoc read", urb);
 				error_hangup(bcs);
@@ -1023,17 +1058,28 @@ static int starturbs(struct bc_state *bcs)
 	}
 
 	/* keep one URB free, submit the others */
+<<<<<<< HEAD
 	for (k = 0; k < BAS_OUTURBS - 1; ++k) {
+=======
+	for (k = 0; k < BAS_OUTURBS-1; ++k) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dump_urb(DEBUG_ISO, "Initial isoc write", urb);
 		rc = usb_submit_urb(ubc->isoouturbs[k].urb, GFP_ATOMIC);
 		if (rc != 0)
 			goto error;
 	}
 	dump_urb(DEBUG_ISO, "Initial isoc write (free)", urb);
+<<<<<<< HEAD
 	ubc->isooutfree = &ubc->isoouturbs[BAS_OUTURBS - 1];
 	ubc->isooutdone = ubc->isooutovfl = NULL;
 	return 0;
 error:
+=======
+	ubc->isooutfree = &ubc->isoouturbs[BAS_OUTURBS-1];
+	ubc->isooutdone = ubc->isooutovfl = NULL;
+	return 0;
+ error:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	stopurbs(ubc);
 	return rc;
 }
@@ -1235,7 +1281,11 @@ static void write_iso_tasklet(unsigned long data)
 				if (ifd->status ||
 				    ifd->actual_length != ifd->length) {
 					dev_warn(cs->dev,
+<<<<<<< HEAD
 						 "isoc write: frame %d[%d/%d]: %s\n",
+=======
+					    "isoc write: frame %d[%d/%d]: %s\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						 i, ifd->actual_length,
 						 ifd->length,
 						 get_usb_statmsg(ifd->status));
@@ -1322,7 +1372,11 @@ static void read_iso_tasklet(unsigned long data)
 		ubc->isoindone = NULL;
 		if (unlikely(ubc->loststatus != -EINPROGRESS)) {
 			dev_warn(cs->dev,
+<<<<<<< HEAD
 				 "isoc read overrun, URB dropped (status: %s, %d bytes)\n",
+=======
+		"isoc read overrun, URB dropped (status: %s, %d bytes)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 get_usb_statmsg(ubc->loststatus),
 				 ubc->isoinlost);
 			ubc->loststatus = -EINPROGRESS;
@@ -1971,7 +2025,11 @@ static int gigaset_write_cmd(struct cardstate *cs, struct cmdbuf_t *cb)
 	int rc;
 
 	gigaset_dbg_buffer(cs->mstate != MS_LOCKED ?
+<<<<<<< HEAD
 			   DEBUG_TRANSCMD : DEBUG_LOCKCMD,
+=======
+			     DEBUG_TRANSCMD : DEBUG_LOCKCMD,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   "CMD Transmit", cb->len, cb->buf);
 
 	/* translate "+++" escape sequence sent as a single separate command
@@ -2443,9 +2501,13 @@ static void gigaset_disconnect(struct usb_interface *interface)
 }
 
 /* gigaset_suspend
+<<<<<<< HEAD
  * This function is called before the USB connection is suspended
  * or before the USB device is reset.
  * In the latter case, message == PMSG_ON.
+=======
+ * This function is called before the USB connection is suspended.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int gigaset_suspend(struct usb_interface *intf, pm_message_t message)
 {
@@ -2461,6 +2523,7 @@ static int gigaset_suspend(struct usb_interface *intf, pm_message_t message)
 
 	/* wait a bit for blocking conditions to go away */
 	rc = wait_event_timeout(ucs->waitqueue,
+<<<<<<< HEAD
 				!(ucs->basstate &
 				  (BS_B1OPEN | BS_B2OPEN | BS_ATRDPEND | BS_ATWRPEND)),
 				BAS_TIMEOUT * HZ / 10);
@@ -2468,6 +2531,15 @@ static int gigaset_suspend(struct usb_interface *intf, pm_message_t message)
 
 	/* check for conditions preventing suspend */
 	if (ucs->basstate & (BS_B1OPEN | BS_B2OPEN | BS_ATRDPEND | BS_ATWRPEND)) {
+=======
+			!(ucs->basstate &
+			  (BS_B1OPEN|BS_B2OPEN|BS_ATRDPEND|BS_ATWRPEND)),
+			BAS_TIMEOUT*HZ/10);
+	gig_dbg(DEBUG_SUSPEND, "wait_event_timeout() -> %d", rc);
+
+	/* check for conditions preventing suspend */
+	if (ucs->basstate & (BS_B1OPEN|BS_B2OPEN|BS_ATRDPEND|BS_ATWRPEND)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_warn(cs->dev, "cannot suspend:\n");
 		if (ucs->basstate & BS_B1OPEN)
 			dev_warn(cs->dev, " B channel 1 open\n");
@@ -2490,7 +2562,11 @@ static int gigaset_suspend(struct usb_interface *intf, pm_message_t message)
 			return rc;
 		}
 		wait_event_timeout(ucs->waitqueue, !ucs->pending,
+<<<<<<< HEAD
 				   BAS_TIMEOUT * HZ / 10);
+=======
+				   BAS_TIMEOUT*HZ/10);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* in case of timeout, proceed anyway */
 	}
 
@@ -2501,12 +2577,16 @@ static int gigaset_suspend(struct usb_interface *intf, pm_message_t message)
 	del_timer_sync(&ucs->timer_atrdy);
 	del_timer_sync(&ucs->timer_cmd_in);
 	del_timer_sync(&ucs->timer_int_in);
+<<<<<<< HEAD
 
 	/* don't try to cancel int_in_wq from within reset as it
 	 * might be the one requesting the reset
 	 */
 	if (message.event != PM_EVENT_ON)
 		cancel_work_sync(&ucs->int_in_wq);
+=======
+	cancel_work_sync(&ucs->int_in_wq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	gig_dbg(DEBUG_SUSPEND, "suspend complete");
 	return 0;

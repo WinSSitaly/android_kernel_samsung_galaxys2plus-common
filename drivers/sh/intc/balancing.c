@@ -9,7 +9,11 @@
  */
 #include "internals.h"
 
+<<<<<<< HEAD
 static unsigned long dist_handle[INTC_NR_IRQS];
+=======
+static unsigned long dist_handle[NR_IRQS];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void intc_balancing_enable(unsigned int irq)
 {

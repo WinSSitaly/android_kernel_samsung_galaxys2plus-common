@@ -365,7 +365,11 @@ static int __devinit xenfb_probe(struct xenbus_device *dev,
 	struct fb_info *fb_info;
 	int fb_size;
 	int val;
+<<<<<<< HEAD
 	int ret = 0;
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	info = kzalloc(sizeof(*info), GFP_KERNEL);
 	if (info == NULL) {
@@ -458,6 +462,7 @@ static int __devinit xenfb_probe(struct xenbus_device *dev,
 	xenfb_init_shared_page(info, fb_info);
 
 	ret = xenfb_connect_backend(dev, info);
+<<<<<<< HEAD
 	if (ret < 0) {
 		xenbus_dev_fatal(dev, ret, "xenfb_connect_backend");
 		goto error_fb;
@@ -467,12 +472,25 @@ static int __devinit xenfb_probe(struct xenbus_device *dev,
 	if (ret) {
 		xenbus_dev_fatal(dev, ret, "register_framebuffer");
 		goto error_fb;
+=======
+	if (ret < 0)
+		goto error;
+
+	ret = register_framebuffer(fb_info);
+	if (ret) {
+		fb_deferred_io_cleanup(fb_info);
+		fb_dealloc_cmap(&fb_info->cmap);
+		framebuffer_release(fb_info);
+		xenbus_dev_fatal(dev, ret, "register_framebuffer");
+		goto error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	info->fb_info = fb_info;
 
 	xenfb_make_preferred_console();
 	return 0;
 
+<<<<<<< HEAD
 error_fb:
 	fb_deferred_io_cleanup(fb_info);
 	fb_dealloc_cmap(&fb_info->cmap);
@@ -483,6 +501,12 @@ error_nomem:
 		xenbus_dev_fatal(dev, ret, "allocating device memory");
 	}
 error:
+=======
+ error_nomem:
+	ret = -ENOMEM;
+	xenbus_dev_fatal(dev, ret, "allocating device memory");
+ error:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	xenfb_remove(dev);
 	return ret;
 }
@@ -676,17 +700,32 @@ InitWait:
 	}
 }
 
+<<<<<<< HEAD
 static const struct xenbus_device_id xenfb_ids[] = {
+=======
+static struct xenbus_device_id xenfb_ids[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ "vfb" },
 	{ "" }
 };
 
+<<<<<<< HEAD
 static DEFINE_XENBUS_DRIVER(xenfb, ,
+=======
+static struct xenbus_driver xenfb_driver = {
+	.name = "vfb",
+	.owner = THIS_MODULE,
+	.ids = xenfb_ids,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.probe = xenfb_probe,
 	.remove = xenfb_remove,
 	.resume = xenfb_resume,
 	.otherend_changed = xenfb_backend_changed,
+<<<<<<< HEAD
 );
+=======
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int __init xenfb_init(void)
 {

@@ -242,6 +242,20 @@ long compat_sys_fallocate(int fd, int mode,
 long compat_sys_sched_rr_get_interval(compat_pid_t pid,
 				      struct compat_timespec __user *interval);
 
+<<<<<<< HEAD
+=======
+/* Versions of compat functions that differ from generic Linux. */
+struct compat_msgbuf;
+long tile_compat_sys_msgsnd(int msqid,
+			    struct compat_msgbuf __user *msgp,
+			    size_t msgsz, int msgflg);
+long tile_compat_sys_msgrcv(int msqid,
+			    struct compat_msgbuf __user *msgp,
+			    size_t msgsz, long msgtyp, int msgflg);
+long tile_compat_sys_ptrace(compat_long_t request, compat_long_t pid,
+			    compat_long_t addr, compat_long_t data);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Tilera Linux syscalls that don't have "compat" versions. */
 #define compat_sys_flush_cache sys_flush_cache
 

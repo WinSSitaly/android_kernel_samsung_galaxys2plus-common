@@ -22,7 +22,11 @@
 #include <linux/slab.h>
 #include <linux/init.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mempool.h>
 #include <linux/workqueue.h>
 #include <scsi/sg.h>		/* for struct sg_iovec */
@@ -255,6 +259,10 @@ void bio_init(struct bio *bio)
 {
 	memset(bio, 0, sizeof(*bio));
 	bio->bi_flags = 1 << BIO_UPTODATE;
+<<<<<<< HEAD
+=======
+	bio->bi_comp_cpu = -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atomic_set(&bio->bi_cnt, 1);
 }
 EXPORT_SYMBOL(bio_init);
@@ -337,7 +345,11 @@ static void bio_fs_destructor(struct bio *bio)
  *	RETURNS:
  *	Pointer to new bio on success, NULL on failure.
  */
+<<<<<<< HEAD
 struct bio *bio_alloc(gfp_t gfp_mask, unsigned int nr_iovecs)
+=======
+struct bio *bio_alloc(gfp_t gfp_mask, int nr_iovecs)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bio *bio = bio_alloc_bioset(gfp_mask, nr_iovecs, fs_bio_set);
 
@@ -365,7 +377,11 @@ static void bio_kmalloc_destructor(struct bio *bio)
  *   %__GFP_WAIT, the allocation is guaranteed to succeed.
  *
  **/
+<<<<<<< HEAD
 struct bio *bio_kmalloc(gfp_t gfp_mask, unsigned int nr_iovecs)
+=======
+struct bio *bio_kmalloc(gfp_t gfp_mask, int nr_iovecs)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bio *bio;
 
@@ -507,12 +523,20 @@ int bio_get_nr_vecs(struct block_device *bdev)
 	struct request_queue *q = bdev_get_queue(bdev);
 	int nr_pages;
 
+<<<<<<< HEAD
 	nr_pages = min_t(unsigned,
 		     queue_max_segments(q),
 		     queue_max_sectors(q) / (PAGE_SIZE >> 9) + 1);
 
 	return min_t(unsigned, nr_pages, BIO_MAX_PAGES);
 
+=======
+	nr_pages = ((queue_max_sectors(q) << 9) + PAGE_SIZE - 1) >> PAGE_SHIFT;
+	if (nr_pages > queue_max_segments(q))
+		nr_pages = queue_max_segments(q);
+
+	return nr_pages;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(bio_get_nr_vecs);
 
@@ -697,8 +721,12 @@ static void bio_free_map_data(struct bio_map_data *bmd)
 	kfree(bmd);
 }
 
+<<<<<<< HEAD
 static struct bio_map_data *bio_alloc_map_data(int nr_segs,
 					       unsigned int iov_count,
+=======
+static struct bio_map_data *bio_alloc_map_data(int nr_segs, int iov_count,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					       gfp_t gfp_mask)
 {
 	struct bio_map_data *bmd;
@@ -787,6 +815,7 @@ static int __bio_copy_iov(struct bio *bio, struct bio_vec *iovecs,
 int bio_uncopy_user(struct bio *bio)
 {
 	struct bio_map_data *bmd = bio->bi_private;
+<<<<<<< HEAD
 	struct bio_vec *bvec;
 	int ret = 0, i;
 
@@ -803,6 +832,14 @@ int bio_uncopy_user(struct bio *bio)
 			__bio_for_each_segment(bvec, bio, i, 0)
 				__free_page(bvec->bv_page);
 	}
+=======
+	int ret = 0;
+
+	if (!bio_flagged(bio, BIO_NULL_MAPPED))
+		ret = __bio_copy_iov(bio, bmd->iovecs, bmd->sgvecs,
+				     bmd->nr_sgvecs, bio_data_dir(bio) == READ,
+				     0, bmd->is_our_pages);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bio_free_map_data(bmd);
 	bio_put(bio);
 	return ret;

@@ -186,7 +186,12 @@ static int usbtmc_ioctl_abort_bulk_in(struct usbtmc_device_data *data)
 	for (n = 0; n < current_setting->desc.bNumEndpoints; n++)
 		if (current_setting->endpoint[n].desc.bEndpointAddress ==
 			data->bulk_in)
+<<<<<<< HEAD
 			max_size = usb_endpoint_maxp(&current_setting->endpoint[n].desc);
+=======
+			max_size = le16_to_cpu(current_setting->endpoint[n].
+						desc.wMaxPacketSize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (max_size == 0) {
 		dev_err(dev, "Couldn't get wMaxPacketSize\n");
@@ -635,7 +640,11 @@ static int usbtmc_ioctl_clear(struct usbtmc_device_data *data)
 	for (n = 0; n < current_setting->desc.bNumEndpoints; n++) {
 		desc = &current_setting->endpoint[n].desc;
 		if (desc->bEndpointAddress == data->bulk_in)
+<<<<<<< HEAD
 			max_size = usb_endpoint_maxp(desc);
+=======
+			max_size = le16_to_cpu(desc->wMaxPacketSize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (max_size == 0) {
@@ -1116,6 +1125,25 @@ static struct usb_driver usbtmc_driver = {
 	.resume		= usbtmc_resume,
 };
 
+<<<<<<< HEAD
 module_usb_driver(usbtmc_driver);
+=======
+static int __init usbtmc_init(void)
+{
+	int retcode;
+
+	retcode = usb_register(&usbtmc_driver);
+	if (retcode)
+		printk(KERN_ERR KBUILD_MODNAME": Unable to register driver\n");
+	return retcode;
+}
+module_init(usbtmc_init);
+
+static void __exit usbtmc_exit(void)
+{
+	usb_deregister(&usbtmc_driver);
+}
+module_exit(usbtmc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");

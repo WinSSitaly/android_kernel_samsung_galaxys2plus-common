@@ -6,7 +6,10 @@
 #include <linux/mm.h>
 #include <linux/sched.h>
 #include <linux/hardirq.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/current.h>
 #include <asm/pgtable.h>
 #include <asm/tlbflush.h>
@@ -15,6 +18,10 @@
 #include "kern_util.h"
 #include "os.h"
 #include "skas.h"
+<<<<<<< HEAD
+=======
+#include "sysdep/sigcontext.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Note this is constrained to return 0, -EFAULT, -EACCESS, -ENOMEM by
@@ -112,7 +119,10 @@ out_of_memory:
 	pagefault_out_of_memory();
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(handle_page_fault);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void show_segv_info(struct uml_pt_regs *regs)
 {

@@ -8,12 +8,23 @@
  */
 
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <asm/asm-offsets.h>
 #include <asm/pal.h>
 #include <asm/setup.h>
 
 __HEAD
 .globl _stext
+=======
+#include <asm/system.h>
+#include <asm/asm-offsets.h>
+
+__HEAD
+.globl swapper_pg_dir
+.globl _stext
+swapper_pg_dir=SWAPPER_PGD
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.set noreorder
 	.globl	__start
 	.ent	__start

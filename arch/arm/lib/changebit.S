@@ -12,4 +12,10 @@
 #include "bitops.h"
                 .text
 
+<<<<<<< HEAD
 bitop	_change_bit, eor
+=======
+ENTRY(_change_bit)
+	bitop	eor
+ENDPROC(_change_bit)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

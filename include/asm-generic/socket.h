@@ -64,6 +64,7 @@
 #define SO_DOMAIN		39
 
 #define SO_RXQ_OVFL             40
+<<<<<<< HEAD
 
 #define SO_WIFI_STATUS		41
 #define SCM_WIFI_STATUS	SO_WIFI_STATUS
@@ -72,4 +73,6 @@
 /* Instruct lower device to use last 4-bytes of skb data as FCS */
 #define SO_NOFCS		43
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ASM_GENERIC_SOCKET_H */

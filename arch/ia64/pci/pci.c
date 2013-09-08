@@ -20,10 +20,17 @@
 #include <linux/slab.h>
 #include <linux/spinlock.h>
 #include <linux/bootmem.h>
+<<<<<<< HEAD
 #include <linux/export.h>
 
 #include <asm/machvec.h>
 #include <asm/page.h>
+=======
+
+#include <asm/machvec.h>
+#include <asm/page.h>
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/sal.h>
 #include <asm/smp.h>
@@ -133,7 +140,10 @@ alloc_pci_controller (int seg)
 struct pci_root_info {
 	struct acpi_device *bridge;
 	struct pci_controller *controller;
+<<<<<<< HEAD
 	struct list_head resources;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *name;
 };
 
@@ -315,6 +325,7 @@ static __devinit acpi_status add_window(struct acpi_resource *res, void *data)
 				 &window->resource);
 	}
 
+<<<<<<< HEAD
 	/* HP's firmware has a hack to work around a Windows bug.
 	 * Ignore these tiny memory ranges */
 	if (!((window->resource.flags & IORESOURCE_MEM) &&
@@ -325,6 +336,28 @@ static __devinit acpi_status add_window(struct acpi_resource *res, void *data)
 	return AE_OK;
 }
 
+=======
+	return AE_OK;
+}
+
+static void __devinit
+pcibios_setup_root_windows(struct pci_bus *bus, struct pci_controller *ctrl)
+{
+	int i;
+
+	pci_bus_remove_resources(bus);
+	for (i = 0; i < ctrl->windows; i++) {
+		struct resource *res = &ctrl->window[i].resource;
+		/* HP's firmware has a hack to work around a Windows bug.
+		 * Ignore these tiny memory ranges */
+		if ((res->flags & IORESOURCE_MEM) &&
+		    (res->end - res->start < 16))
+			continue;
+		pci_bus_add_resource(bus, res, 0);
+	}
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct pci_bus * __devinit
 pci_acpi_scan_root(struct acpi_pci_root *root)
 {
@@ -333,7 +366,10 @@ pci_acpi_scan_root(struct acpi_pci_root *root)
 	int bus = root->secondary.start;
 	struct pci_controller *controller;
 	unsigned int windows = 0;
+<<<<<<< HEAD
 	struct pci_root_info info;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct pci_bus *pbus;
 	char *name;
 	int pxm;
@@ -350,10 +386,18 @@ pci_acpi_scan_root(struct acpi_pci_root *root)
 		controller->node = pxm_to_node(pxm);
 #endif
 
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&info.resources);
 	acpi_walk_resources(device->handle, METHOD_NAME__CRS, count_window,
 			&windows);
 	if (windows) {
+=======
+	acpi_walk_resources(device->handle, METHOD_NAME__CRS, count_window,
+			&windows);
+	if (windows) {
+		struct pci_root_info info;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		controller->window =
 			kmalloc_node(sizeof(*controller->window) * windows,
 				     GFP_KERNEL, controller->node);
@@ -377,6 +421,7 @@ pci_acpi_scan_root(struct acpi_pci_root *root)
 	 * should handle the case here, but it appears that IA64 hasn't
 	 * such quirk. So we just ignore the case now.
 	 */
+<<<<<<< HEAD
 	pbus = pci_create_root_bus(NULL, bus, &pci_root_ops, controller,
 				   &info.resources);
 	if (!pbus) {
@@ -385,6 +430,10 @@ pci_acpi_scan_root(struct acpi_pci_root *root)
 	}
 
 	pbus->subordinate = pci_scan_child_bus(pbus);
+=======
+	pbus = pci_scan_bus_parented(NULL, bus, &pci_root_ops, controller);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return pbus;
 
 out3:
@@ -395,6 +444,57 @@ out1:
 	return NULL;
 }
 
+<<<<<<< HEAD
+=======
+void pcibios_resource_to_bus(struct pci_dev *dev,
+		struct pci_bus_region *region, struct resource *res)
+{
+	struct pci_controller *controller = PCI_CONTROLLER(dev);
+	unsigned long offset = 0;
+	int i;
+
+	for (i = 0; i < controller->windows; i++) {
+		struct pci_window *window = &controller->window[i];
+		if (!(window->resource.flags & res->flags))
+			continue;
+		if (window->resource.start > res->start)
+			continue;
+		if (window->resource.end < res->end)
+			continue;
+		offset = window->offset;
+		break;
+	}
+
+	region->start = res->start - offset;
+	region->end = res->end - offset;
+}
+EXPORT_SYMBOL(pcibios_resource_to_bus);
+
+void pcibios_bus_to_resource(struct pci_dev *dev,
+		struct resource *res, struct pci_bus_region *region)
+{
+	struct pci_controller *controller = PCI_CONTROLLER(dev);
+	unsigned long offset = 0;
+	int i;
+
+	for (i = 0; i < controller->windows; i++) {
+		struct pci_window *window = &controller->window[i];
+		if (!(window->resource.flags & res->flags))
+			continue;
+		if (window->resource.start - window->offset > region->start)
+			continue;
+		if (window->resource.end - window->offset < region->end)
+			continue;
+		offset = window->offset;
+		break;
+	}
+
+	res->start = region->start + offset;
+	res->end = region->end + offset;
+}
+EXPORT_SYMBOL(pcibios_bus_to_resource);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit is_valid_resource(struct pci_dev *dev, int idx)
 {
 	unsigned int i, type_mask = IORESOURCE_IO | IORESOURCE_MEM;
@@ -416,11 +516,21 @@ static int __devinit is_valid_resource(struct pci_dev *dev, int idx)
 static void __devinit
 pcibios_fixup_resources(struct pci_dev *dev, int start, int limit)
 {
+<<<<<<< HEAD
+=======
+	struct pci_bus_region region;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	for (i = start; i < limit; i++) {
 		if (!dev->resource[i].flags)
 			continue;
+<<<<<<< HEAD
+=======
+		region.start = dev->resource[i].start;
+		region.end = dev->resource[i].end;
+		pcibios_bus_to_resource(dev, &dev->resource[i], &region);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if ((is_valid_resource(dev, i)))
 			pci_claim_resource(dev, i);
 	}
@@ -448,15 +558,25 @@ pcibios_fixup_bus (struct pci_bus *b)
 	if (b->self) {
 		pci_read_bridge_bases(b);
 		pcibios_fixup_bridge_resources(b->self);
+<<<<<<< HEAD
+=======
+	} else {
+		pcibios_setup_root_windows(b, b->sysdata);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	list_for_each_entry(dev, &b->devices, bus_list)
 		pcibios_fixup_device_resources(dev);
 	platform_pci_fixup_bus(b);
+<<<<<<< HEAD
 }
 
 void pcibios_set_master (struct pci_dev *dev)
 {
 	/* No special bus mastering setup handling */
+=======
+
+	return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void __devinit

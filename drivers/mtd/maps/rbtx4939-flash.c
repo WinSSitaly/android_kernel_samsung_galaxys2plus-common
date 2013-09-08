@@ -25,6 +25,11 @@
 struct rbtx4939_flash_info {
 	struct mtd_info *mtd;
 	struct map_info map;
+<<<<<<< HEAD
+=======
+	int nr_parts;
+	struct mtd_partition *parts;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int rbtx4939_flash_remove(struct platform_device *dev)
@@ -39,6 +44,11 @@ static int rbtx4939_flash_remove(struct platform_device *dev)
 	if (info->mtd) {
 		struct rbtx4939_flash_data *pdata = dev->dev.platform_data;
 
+<<<<<<< HEAD
+=======
+		if (info->nr_parts)
+			kfree(info->parts);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mtd_device_unregister(info->mtd);
 		map_destroy(info->mtd);
 	}
@@ -46,6 +56,10 @@ static int rbtx4939_flash_remove(struct platform_device *dev)
 }
 
 static const char *rom_probe_types[] = { "cfi_probe", "jedec_probe", NULL };
+<<<<<<< HEAD
+=======
+static const char *part_probe_types[] = { "cmdlinepart", NULL };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int rbtx4939_flash_probe(struct platform_device *dev)
 {
@@ -102,11 +116,30 @@ static int rbtx4939_flash_probe(struct platform_device *dev)
 	info->mtd->owner = THIS_MODULE;
 	if (err)
 		goto err_out;
+<<<<<<< HEAD
 	err = mtd_device_parse_register(info->mtd, NULL, NULL, pdata->parts,
 					pdata->nr_parts);
 
 	if (err)
 		goto err_out;
+=======
+
+	err = parse_mtd_partitions(info->mtd, part_probe_types,
+				&info->parts, 0);
+	if (err > 0) {
+		mtd_device_register(info->mtd, info->parts, err);
+		info->nr_parts = err;
+		return 0;
+	}
+
+	if (pdata->nr_parts) {
+		pr_notice("Using rbtx4939 partition information\n");
+		mtd_device_register(info->mtd, pdata->parts, pdata->nr_parts);
+		return 0;
+	}
+
+	mtd_device_register(info->mtd, NULL, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 err_out:
@@ -119,8 +152,14 @@ static void rbtx4939_flash_shutdown(struct platform_device *dev)
 {
 	struct rbtx4939_flash_info *info = platform_get_drvdata(dev);
 
+<<<<<<< HEAD
 	if (mtd_suspend(info->mtd) == 0)
 		mtd_resume(info->mtd);
+=======
+	if (info->mtd->suspend && info->mtd->resume)
+		if (info->mtd->suspend(info->mtd) == 0)
+			info->mtd->resume(info->mtd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #else
 #define rbtx4939_flash_shutdown NULL
@@ -136,7 +175,22 @@ static struct platform_driver rbtx4939_flash_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(rbtx4939_flash_driver);
+=======
+static int __init rbtx4939_flash_init(void)
+{
+	return platform_driver_register(&rbtx4939_flash_driver);
+}
+
+static void __exit rbtx4939_flash_exit(void)
+{
+	platform_driver_unregister(&rbtx4939_flash_driver);
+}
+
+module_init(rbtx4939_flash_init);
+module_exit(rbtx4939_flash_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("RBTX4939 MTD map driver");

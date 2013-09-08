@@ -157,8 +157,12 @@ static int kcore_update_ram(void)
 
 #ifdef CONFIG_SPARSEMEM_VMEMMAP
 /* calculate vmemmap's address from given system ram pfn and register it */
+<<<<<<< HEAD
 static int
 get_sparsemem_vmemmap_info(struct kcore_list *ent, struct list_head *head)
+=======
+int get_sparsemem_vmemmap_info(struct kcore_list *ent, struct list_head *head)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long pfn = __pa(ent->addr) >> PAGE_SHIFT;
 	unsigned long nr_pages = ent->size >> PAGE_SHIFT;
@@ -190,8 +194,12 @@ get_sparsemem_vmemmap_info(struct kcore_list *ent, struct list_head *head)
 
 }
 #else
+<<<<<<< HEAD
 static int
 get_sparsemem_vmemmap_info(struct kcore_list *ent, struct list_head *head)
+=======
+int get_sparsemem_vmemmap_info(struct kcore_list *ent, struct list_head *head)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return 1;
 }
@@ -515,7 +523,11 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
 
 				n = copy_to_user(buffer, (char *)start, tsz);
 				/*
+<<<<<<< HEAD
 				 * We cannot distinguish between fault on source
+=======
+				 * We cannot distingush between fault on source
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 * and fault on destination. When this happens
 				 * we clear too and hope it will trigger the
 				 * EFAULT again.

@@ -29,7 +29,10 @@
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/spinlock.h>
 #include <linux/platform_device.h>
 #include <linux/gpio.h>

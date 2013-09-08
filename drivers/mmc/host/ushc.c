@@ -562,7 +562,21 @@ static struct usb_driver ushc_driver = {
 	.disconnect = ushc_disconnect,
 };
 
+<<<<<<< HEAD
 module_usb_driver(ushc_driver);
+=======
+static int __init ushc_init(void)
+{
+	return usb_register(&ushc_driver);
+}
+module_init(ushc_init);
+
+static void __exit ushc_exit(void)
+{
+	usb_deregister(&ushc_driver);
+}
+module_exit(ushc_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("USB SD Host Controller driver");
 MODULE_AUTHOR("David Vrabel <david.vrabel@csr.com>");

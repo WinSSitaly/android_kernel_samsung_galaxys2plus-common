@@ -44,12 +44,15 @@ extern void error(char *);
 #include "../../../../lib/decompress_unlzma.c"
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_KERNEL_XZ
 #define memmove memmove
 #define memcpy memcpy
 #include "../../../../lib/decompress_unxz.c"
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int do_decompress(u8 *input, int len, u8 *output, void (*error)(char *x))
 {
 	return decompress(input, len, NULL, NULL, output, NULL, error);

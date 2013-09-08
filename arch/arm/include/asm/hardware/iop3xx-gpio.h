@@ -28,8 +28,11 @@
 #include <mach/hardware.h>
 #include <asm-generic/gpio.h>
 
+<<<<<<< HEAD
 #define __ARM_GPIOLIB_COMPLEX
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define IOP3XX_N_GPIOS	8
 
 static inline int gpio_get_value(unsigned gpio)

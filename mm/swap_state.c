@@ -6,6 +6,10 @@
  *
  *  Rewritten to use page cache, (C) 1998 Stephen Tweedie
  */
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mm.h>
 #include <linux/gfp.h>
 #include <linux/kernel_stat.h>
@@ -13,6 +17,10 @@
 #include <linux/swapops.h>
 #include <linux/init.h>
 #include <linux/pagemap.h>
+<<<<<<< HEAD
+=======
+#include <linux/buffer_head.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/backing-dev.h>
 #include <linux/pagevec.h>
 #include <linux/migrate.h>
@@ -313,6 +321,7 @@ struct page *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
 		 * Swap entry may have been freed since our caller observed it.
 		 */
 		err = swapcache_prepare(entry);
+<<<<<<< HEAD
 		if (err == -EEXIST) {
 			radix_tree_preload_end();
 			/*
@@ -331,6 +340,10 @@ struct page *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
 			 * tasks to run.
 			 */
 			cond_resched();
+=======
+		if (err == -EEXIST) {	/* seems racy */
+			radix_tree_preload_end();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		}
 		if (err) {		/* swp entry is obsolete ? */
@@ -388,6 +401,7 @@ struct page *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
 struct page *swapin_readahead(swp_entry_t entry, gfp_t gfp_mask,
 			struct vm_area_struct *vma, unsigned long addr)
 {
+<<<<<<< HEAD
 	struct page *page;
 	unsigned long offset = swp_offset(entry);
 	unsigned long start_offset, end_offset;
@@ -400,11 +414,31 @@ struct page *swapin_readahead(swp_entry_t entry, gfp_t gfp_mask,
 		start_offset++;
 
 	for (offset = start_offset; offset <= end_offset ; offset++) {
+=======
+	int nr_pages;
+	struct page *page;
+	unsigned long offset;
+	unsigned long end_offset;
+
+	/*
+	 * Get starting offset for readaround, and number of pages to read.
+	 * Adjust starting address by readbehind (for NUMA interleave case)?
+	 * No, it's very unlikely that swap layout would follow vma layout,
+	 * more likely that neighbouring swap pages came from the same node:
+	 * so use the same "addr" to choose the same node for each swap read.
+	 */
+	nr_pages = valid_swaphandles(entry, &offset);
+	for (end_offset = offset + nr_pages; offset < end_offset; offset++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Ok, do the async read-ahead now */
 		page = read_swap_cache_async(swp_entry(swp_type(entry), offset),
 						gfp_mask, vma, addr);
 		if (!page)
+<<<<<<< HEAD
 			continue;
+=======
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		page_cache_release(page);
 	}
 	lru_add_drain();	/* Push any new pages onto the LRU now */

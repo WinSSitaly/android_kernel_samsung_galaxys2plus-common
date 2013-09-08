@@ -83,7 +83,14 @@ int ceph_check_fsid(struct ceph_client *client, struct ceph_fsid *fsid)
 			return -1;
 		}
 	} else {
+<<<<<<< HEAD
 		memcpy(&client->fsid, fsid, sizeof(*fsid));
+=======
+		pr_info("client%lld fsid %pU\n", ceph_client_id(client), fsid);
+		memcpy(&client->fsid, fsid, sizeof(*fsid));
+		ceph_debugfs_client_init(client);
+		client->have_fsid = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }
@@ -200,9 +207,13 @@ enum {
 	Opt_ip,
 	Opt_last_string,
 	/* string args above */
+<<<<<<< HEAD
 	Opt_share,
 	Opt_noshare,
 	Opt_crc,
+=======
+	Opt_noshare,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	Opt_nocrc,
 };
 
@@ -218,9 +229,13 @@ static match_table_t opt_tokens = {
 	{Opt_key, "key=%s"},
 	{Opt_ip, "ip=%s"},
 	/* string args above */
+<<<<<<< HEAD
 	{Opt_share, "share"},
 	{Opt_noshare, "noshare"},
 	{Opt_crc, "crc"},
+=======
+	{Opt_noshare, "noshare"},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{Opt_nocrc, "nocrc"},
 	{-1, NULL}
 };
@@ -233,7 +248,10 @@ void ceph_destroy_options(struct ceph_options *opt)
 		ceph_crypto_key_destroy(opt->key);
 		kfree(opt->key);
 	}
+<<<<<<< HEAD
 	kfree(opt->mon_addr);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(opt);
 }
 EXPORT_SYMBOL(ceph_destroy_options);
@@ -280,11 +298,18 @@ out:
 	return err;
 }
 
+<<<<<<< HEAD
 struct ceph_options *
 ceph_parse_options(char *options, const char *dev_name,
 			const char *dev_name_end,
 			int (*parse_extra_token)(char *c, void *private),
 			void *private)
+=======
+int ceph_parse_options(struct ceph_options **popt, char *options,
+		       const char *dev_name, const char *dev_name_end,
+		       int (*parse_extra_token)(char *c, void *private),
+		       void *private)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ceph_options *opt;
 	const char *c;
@@ -293,7 +318,11 @@ ceph_parse_options(char *options, const char *dev_name,
 
 	opt = kzalloc(sizeof(*opt), GFP_KERNEL);
 	if (!opt)
+<<<<<<< HEAD
 		return ERR_PTR(-ENOMEM);
+=======
+		return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	opt->mon_addr = kcalloc(CEPH_MAX_MON, sizeof(*opt->mon_addr),
 				GFP_KERNEL);
 	if (!opt->mon_addr)
@@ -304,6 +333,10 @@ ceph_parse_options(char *options, const char *dev_name,
 
 	/* start with defaults */
 	opt->flags = CEPH_OPT_DEFAULT;
+<<<<<<< HEAD
+=======
+	opt->osd_timeout = CEPH_OSD_TIMEOUT_DEFAULT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	opt->osd_keepalive_timeout = CEPH_OSD_KEEPALIVE_DEFAULT;
 	opt->mount_timeout = CEPH_MOUNT_TIMEOUT_DEFAULT; /* seconds */
 	opt->osd_idle_ttl = CEPH_OSD_IDLE_TTL_DEFAULT;   /* seconds */
@@ -389,7 +422,11 @@ ceph_parse_options(char *options, const char *dev_name,
 
 			/* misc */
 		case Opt_osdtimeout:
+<<<<<<< HEAD
 			pr_warning("ignoring deprecated osdtimeout option\n");
+=======
+			opt->osd_timeout = intval;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case Opt_osdkeepalivetimeout:
 			opt->osd_keepalive_timeout = intval;
@@ -401,16 +438,22 @@ ceph_parse_options(char *options, const char *dev_name,
 			opt->mount_timeout = intval;
 			break;
 
+<<<<<<< HEAD
 		case Opt_share:
 			opt->flags &= ~CEPH_OPT_NOSHARE;
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case Opt_noshare:
 			opt->flags |= CEPH_OPT_NOSHARE;
 			break;
 
+<<<<<<< HEAD
 		case Opt_crc:
 			opt->flags &= ~CEPH_OPT_NOCRC;
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case Opt_nocrc:
 			opt->flags |= CEPH_OPT_NOCRC;
 			break;
@@ -421,11 +464,20 @@ ceph_parse_options(char *options, const char *dev_name,
 	}
 
 	/* success */
+<<<<<<< HEAD
 	return opt;
 
 out:
 	ceph_destroy_options(opt);
 	return ERR_PTR(err);
+=======
+	*popt = opt;
+	return 0;
+
+out:
+	ceph_destroy_options(opt);
+	return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(ceph_parse_options);
 
@@ -438,12 +490,18 @@ EXPORT_SYMBOL(ceph_client_id);
 /*
  * create a fresh client instance
  */
+<<<<<<< HEAD
 struct ceph_client *ceph_create_client(struct ceph_options *opt, void *private,
 				       unsigned supported_features,
 				       unsigned required_features)
 {
 	struct ceph_client *client;
 	struct ceph_entity_addr *myaddr = NULL;
+=======
+struct ceph_client *ceph_create_client(struct ceph_options *opt, void *private)
+{
+	struct ceph_client *client;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err = -ENOMEM;
 
 	client = kzalloc(sizeof(*client), GFP_KERNEL);
@@ -458,6 +516,7 @@ struct ceph_client *ceph_create_client(struct ceph_options *opt, void *private,
 	client->auth_err = 0;
 
 	client->extra_mon_dispatch = NULL;
+<<<<<<< HEAD
 	client->supported_features = CEPH_FEATURE_SUPPORTED_DEFAULT |
 		supported_features;
 	client->required_features = CEPH_FEATURE_REQUIRED_DEFAULT |
@@ -470,6 +529,12 @@ struct ceph_client *ceph_create_client(struct ceph_options *opt, void *private,
 		client->supported_features,
 		client->required_features,
 		ceph_test_opt(client, NOCRC));
+=======
+	client->supported_features = CEPH_FEATURE_SUPPORTED_DEFAULT;
+	client->required_features = CEPH_FEATURE_REQUIRED_DEFAULT;
+
+	client->msgr = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* subsystems */
 	err = ceph_monc_init(&client->monc, client);
@@ -493,15 +558,34 @@ void ceph_destroy_client(struct ceph_client *client)
 {
 	dout("destroy_client %p\n", client);
 
+<<<<<<< HEAD
 	atomic_set(&client->msgr.stopping, 1);
 
 	/* unmount */
 	ceph_osdc_stop(&client->osdc);
 
+=======
+	/* unmount */
+	ceph_osdc_stop(&client->osdc);
+
+	/*
+	 * make sure osd connections close out before destroying the
+	 * auth module, which is needed to free those connections'
+	 * ceph_authorizers.
+	 */
+	ceph_msgr_flush();
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ceph_monc_stop(&client->monc);
 
 	ceph_debugfs_client_cleanup(client);
 
+<<<<<<< HEAD
+=======
+	if (client->msgr)
+		ceph_messenger_destroy(client->msgr);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ceph_destroy_options(client->options);
 
 	kfree(client);
@@ -523,9 +607,30 @@ static int have_mon_and_osd_map(struct ceph_client *client)
  */
 int __ceph_open_session(struct ceph_client *client, unsigned long started)
 {
+<<<<<<< HEAD
 	int err;
 	unsigned long timeout = client->options->mount_timeout * HZ;
 
+=======
+	struct ceph_entity_addr *myaddr = NULL;
+	int err;
+	unsigned long timeout = client->options->mount_timeout * HZ;
+
+	/* initialize the messenger */
+	if (client->msgr == NULL) {
+		if (ceph_test_opt(client, MYIP))
+			myaddr = &client->options->my_addr;
+		client->msgr = ceph_messenger_create(myaddr,
+					client->supported_features,
+					client->required_features);
+		if (IS_ERR(client->msgr)) {
+			client->msgr = NULL;
+			return PTR_ERR(client->msgr);
+		}
+		client->msgr->nocrc = ceph_test_opt(client, NOCRC);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* open session, and wait for mon and osd maps */
 	err = ceph_monc_open_session(&client->monc);
 	if (err < 0)

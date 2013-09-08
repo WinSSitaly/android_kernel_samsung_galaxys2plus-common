@@ -11,7 +11,10 @@
  */
 
 #include <linux/clk.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <sound/soc.h>
 
@@ -160,7 +163,10 @@ static struct snd_soc_dai_link smdk_dai = {
 
 static struct snd_soc_card smdk = {
 	.name = "SMDK-S/PDIF",
+<<<<<<< HEAD
 	.owner = THIS_MODULE,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.dai_link = &smdk_dai,
 	.num_links = 1,
 };

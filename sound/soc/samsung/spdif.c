@@ -12,7 +12,10 @@
 
 #include <linux/clk.h>
 #include <linux/io.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <sound/soc.h>
 #include <sound/pcm_params.h>
@@ -334,14 +337,22 @@ static int spdif_resume(struct snd_soc_dai *cpu_dai)
 #define spdif_resume NULL
 #endif
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops spdif_dai_ops = {
+=======
+static struct snd_soc_dai_ops spdif_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.set_sysclk	= spdif_set_sysclk,
 	.trigger	= spdif_trigger,
 	.hw_params	= spdif_hw_params,
 	.shutdown	= spdif_shutdown,
 };
 
+<<<<<<< HEAD
 static struct snd_soc_dai_driver samsung_spdif_dai = {
+=======
+struct snd_soc_dai_driver samsung_spdif_dai = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name = "samsung-spdif",
 	.playback = {
 		.stream_name = "S/PDIF Playback",
@@ -476,14 +487,32 @@ static __devexit int spdif_remove(struct platform_device *pdev)
 
 static struct platform_driver samsung_spdif_driver = {
 	.probe	= spdif_probe,
+<<<<<<< HEAD
 	.remove	= __devexit_p(spdif_remove),
+=======
+	.remove	= spdif_remove,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.driver	= {
 		.name	= "samsung-spdif",
 		.owner	= THIS_MODULE,
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(samsung_spdif_driver);
+=======
+static int __init spdif_init(void)
+{
+	return platform_driver_register(&samsung_spdif_driver);
+}
+module_init(spdif_init);
+
+static void __exit spdif_exit(void)
+{
+	platform_driver_unregister(&samsung_spdif_driver);
+}
+module_exit(spdif_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Seungwhan Youn, <sw.youn@samsung.com>");
 MODULE_DESCRIPTION("Samsung S/PDIF Controller Driver");

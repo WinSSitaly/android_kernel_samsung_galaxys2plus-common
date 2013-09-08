@@ -414,11 +414,15 @@ static int fips_cprng_get_random(struct crypto_rng *tfm, u8 *rdata,
 static int fips_cprng_reset(struct crypto_rng *tfm, u8 *seed, unsigned int slen)
 {
 	u8 rdata[DEFAULT_BLK_SZ];
+<<<<<<< HEAD
 	u8 *key = seed + DEFAULT_BLK_SZ;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rc;
 
 	struct prng_context *prng = crypto_rng_ctx(tfm);
 
+<<<<<<< HEAD
 	if (slen < DEFAULT_PRNG_KSZ + DEFAULT_BLK_SZ)
 		return -EINVAL;
 
@@ -426,6 +430,8 @@ static int fips_cprng_reset(struct crypto_rng *tfm, u8 *seed, unsigned int slen)
 	if (!memcmp(seed, key, DEFAULT_PRNG_KSZ))
 		return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = cprng_reset(tfm, seed, slen);
 
 	if (!rc)

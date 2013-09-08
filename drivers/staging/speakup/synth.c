@@ -22,7 +22,11 @@ static struct spk_synth *synths[MAXSYNTHS];
 struct spk_synth *synth;
 char pitch_buff[32] = "";
 static int module_status;
+<<<<<<< HEAD
 bool quiet_boot;
+=======
+int quiet_boot;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct speakup_info_t speakup_info = {
 	.spinlock = __SPIN_LOCK_UNLOCKED(speakup_info.spinlock),
@@ -34,7 +38,11 @@ static int do_synth_init(struct spk_synth *in_synth);
 
 int serial_synth_probe(struct spk_synth *synth)
 {
+<<<<<<< HEAD
 	const struct old_serial_port *ser;
+=======
+	struct serial_state *ser;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int failed = 0;
 
 	if ((synth->ser >= SPK_LO_TTY) && (synth->ser <= SPK_HI_TTY)) {
@@ -342,7 +350,11 @@ int synth_init(char *synth_name)
 
 	mutex_lock(&spk_mutex);
 	/* First, check if we already have it loaded. */
+<<<<<<< HEAD
 	for (i = 0; i < MAXSYNTHS && synths[i] != NULL; i++)
+=======
+	for (i = 0; synths[i] != NULL && i < MAXSYNTHS; i++)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (strcmp(synths[i]->name, synth_name) == 0)
 			synth = synths[i];
 
@@ -423,7 +435,11 @@ int synth_add(struct spk_synth *in_synth)
 	int i;
 	int status = 0;
 	mutex_lock(&spk_mutex);
+<<<<<<< HEAD
 	for (i = 0; i < MAXSYNTHS && synths[i] != NULL; i++)
+=======
+	for (i = 0; synths[i] != NULL && i < MAXSYNTHS; i++)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* synth_remove() is responsible for rotating the array down */
 		if (in_synth == synths[i]) {
 			mutex_unlock(&spk_mutex);

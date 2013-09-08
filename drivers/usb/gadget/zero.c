@@ -8,6 +8,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 
@@ -81,7 +93,11 @@ module_param(buflen, uint, 0);
  * work better with hosts where config changes are problematic or
  * controllers (like original superh) that only support one config.
  */
+<<<<<<< HEAD
 static bool loopdefault = 0;
+=======
+static int loopdefault = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(loopdefault, bool, S_IRUGO|S_IWUSR);
 
 /*-------------------------------------------------------------------------*/
@@ -123,6 +139,7 @@ static struct usb_device_descriptor device_desc = {
 	.bNumConfigurations =	2,
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_USB_OTG
 static struct usb_otg_descriptor otg_descriptor = {
 	.bLength =		sizeof otg_descriptor,
@@ -140,6 +157,8 @@ const struct usb_descriptor_header *otg_desc[] = {
 };
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* string IDs are assigned dynamically */
 
 #define STRING_MANUFACTURER_IDX		0
@@ -331,7 +350,10 @@ static struct usb_composite_driver zero_driver = {
 	.name		= "zero",
 	.dev		= &device_desc,
 	.strings	= dev_strings,
+<<<<<<< HEAD
 	.max_speed	= USB_SPEED_SUPER,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.unbind		= zero_unbind,
 	.suspend	= zero_suspend,
 	.resume		= zero_resume,

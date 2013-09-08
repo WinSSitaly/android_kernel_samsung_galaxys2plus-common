@@ -43,9 +43,15 @@
 #define DRIVER_DESC	"Streamzap Remote Control driver"
 
 #ifdef CONFIG_USB_DEBUG
+<<<<<<< HEAD
 static bool debug = 1;
 #else
 static bool debug;
+=======
+static int debug = 1;
+#else
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #define USB_STREAMZAP_VENDOR_ID		0x0e9c
@@ -523,7 +529,37 @@ static int streamzap_resume(struct usb_interface *intf)
 	return 0;
 }
 
+<<<<<<< HEAD
 module_usb_driver(streamzap_driver);
+=======
+/**
+ *	streamzap_init
+ */
+static int __init streamzap_init(void)
+{
+	int ret;
+
+	/* register this driver with the USB subsystem */
+	ret = usb_register(&streamzap_driver);
+	if (ret < 0)
+		printk(KERN_ERR DRIVER_NAME ": usb register failed, "
+		       "result = %d\n", ret);
+
+	return ret;
+}
+
+/**
+ *	streamzap_exit
+ */
+static void __exit streamzap_exit(void)
+{
+	usb_deregister(&streamzap_driver);
+}
+
+
+module_init(streamzap_init);
+module_exit(streamzap_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Jarod Wilson <jarod@wilsonet.com>");
 MODULE_DESCRIPTION(DRIVER_DESC);

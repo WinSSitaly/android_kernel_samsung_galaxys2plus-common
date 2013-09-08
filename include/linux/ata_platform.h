@@ -27,7 +27,14 @@ extern int __devexit __pata_platform_remove(struct device *dev);
 /*
  * Marvell SATA private data
  */
+<<<<<<< HEAD
 struct mv_sata_platform_data {
+=======
+struct mbus_dram_target_info;
+
+struct mv_sata_platform_data {
+	struct mbus_dram_target_info	*dram;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int	n_ports; /* number of sata ports */
 };
 

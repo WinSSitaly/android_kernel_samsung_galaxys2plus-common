@@ -72,14 +72,20 @@
 #include <linux/string.h>
 #include <linux/tick.h>
 #include <linux/timer.h>
+<<<<<<< HEAD
 #include <linux/dmi.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <drm/i915_drm.h>
 #include <asm/msr.h>
 #include <asm/processor.h>
 #include "intel_ips.h"
 
+<<<<<<< HEAD
 #include <asm-generic/io-64-nonatomic-lo-hi.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PCI_DEVICE_ID_INTEL_THERMAL_SENSOR 0x3b32
 
 /*
@@ -347,6 +353,22 @@ struct ips_driver {
 static bool
 ips_gpu_turbo_enabled(struct ips_driver *ips);
 
+<<<<<<< HEAD
+=======
+#ifndef readq
+static inline __u64 readq(const volatile void __iomem *addr)
+{
+	const volatile u32 __iomem *p = addr;
+	u32 low, high;
+
+	low = readl(p);
+	high = readl(p + 1);
+
+	return low + ((u64)high << 32);
+}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * ips_cpu_busy - is CPU busy?
  * @ips: IPS driver struct
@@ -393,7 +415,11 @@ static void ips_cpu_raise(struct ips_driver *ips)
 
 	thm_writew(THM_MPCPC, (new_tdp_limit * 10) / 8);
 
+<<<<<<< HEAD
 	turbo_override |= TURBO_TDC_OVR_EN | TURBO_TDP_OVR_EN;
+=======
+	turbo_override |= TURBO_TDC_OVR_EN | TURBO_TDC_OVR_EN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wrmsrl(TURBO_POWER_CURRENT_LIMIT, turbo_override);
 
 	turbo_override &= ~TURBO_TDP_MASK;
@@ -428,7 +454,11 @@ static void ips_cpu_lower(struct ips_driver *ips)
 
 	thm_writew(THM_MPCPC, (new_limit * 10) / 8);
 
+<<<<<<< HEAD
 	turbo_override |= TURBO_TDC_OVR_EN | TURBO_TDP_OVR_EN;
+=======
+	turbo_override |= TURBO_TDC_OVR_EN | TURBO_TDC_OVR_EN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wrmsrl(TURBO_POWER_CURRENT_LIMIT, turbo_override);
 
 	turbo_override &= ~TURBO_TDP_MASK;
@@ -610,16 +640,37 @@ static bool mcp_exceeded(struct ips_driver *ips)
 	bool ret = false;
 	u32 temp_limit;
 	u32 avg_power;
+<<<<<<< HEAD
+=======
+	const char *msg = "MCP limit exceeded: ";
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&ips->turbo_status_lock, flags);
 
 	temp_limit = ips->mcp_temp_limit * 100;
+<<<<<<< HEAD
 	if (ips->mcp_avg_temp > temp_limit)
 		ret = true;
 
 	avg_power = ips->cpu_avg_power + ips->mch_avg_power;
 	if (avg_power > ips->mcp_power_limit)
 		ret = true;
+=======
+	if (ips->mcp_avg_temp > temp_limit) {
+		dev_info(&ips->dev->dev,
+			"%sAvg temp %u, limit %u\n", msg, ips->mcp_avg_temp,
+			temp_limit);
+		ret = true;
+	}
+
+	avg_power = ips->cpu_avg_power + ips->mch_avg_power;
+	if (avg_power > ips->mcp_power_limit) {
+		dev_info(&ips->dev->dev,
+			"%sAvg power %u, limit %u\n", msg, avg_power,
+			ips->mcp_power_limit);
+		ret = true;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_irqrestore(&ips->turbo_status_lock, flags);
 
@@ -1486,6 +1537,7 @@ static DEFINE_PCI_DEVICE_TABLE(ips_id_table) = {
 
 MODULE_DEVICE_TABLE(pci, ips_id_table);
 
+<<<<<<< HEAD
 static int ips_blacklist_callback(const struct dmi_system_id *id)
 {
 	pr_info("Blacklisted intel_ips for %s\n", id->ident);
@@ -1504,6 +1556,8 @@ static const struct dmi_system_id ips_blacklist[] = {
 	{ }	/* terminating entry */
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int ips_probe(struct pci_dev *dev, const struct pci_device_id *id)
 {
 	u64 platform_info;
@@ -1513,9 +1567,12 @@ static int ips_probe(struct pci_dev *dev, const struct pci_device_id *id)
 	u16 htshi, trc, trc_required_mask;
 	u8 tse;
 
+<<<<<<< HEAD
 	if (dmi_check_system(ips_blacklist))
 		return -ENODEV;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ips = kzalloc(sizeof(struct ips_driver), GFP_KERNEL);
 	if (!ips)
 		return -ENOMEM;
@@ -1587,7 +1644,11 @@ static int ips_probe(struct pci_dev *dev, const struct pci_device_id *id)
 		ips->poll_turbo_status = true;
 
 	if (!ips_get_i915_syms(ips)) {
+<<<<<<< HEAD
 		dev_info(&dev->dev, "failed to get i915 symbols, graphics turbo disabled until i915 loads\n");
+=======
+		dev_err(&dev->dev, "failed to get i915 symbols, graphics turbo disabled\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ips->gpu_turbo_enabled = false;
 	} else {
 		dev_dbg(&dev->dev, "graphics turbo enabled\n");

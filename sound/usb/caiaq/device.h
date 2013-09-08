@@ -18,7 +18,10 @@
 #define USB_PID_TRAKTORKONTROLX1	0x2305
 #define USB_PID_TRAKTORKONTROLS4	0xbaff
 #define USB_PID_TRAKTORAUDIO2		0x041d
+<<<<<<< HEAD
 #define USB_PID_MASCHINECONTROLLER  0x0808
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define EP1_BUFSIZE 64
 #define EP4_BUFSIZE 512

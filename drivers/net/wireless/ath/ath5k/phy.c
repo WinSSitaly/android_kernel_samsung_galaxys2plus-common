@@ -1,4 +1,9 @@
 /*
+<<<<<<< HEAD
+=======
+ * PHY functions
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Copyright (c) 2004-2007 Reyk Floeter <reyk@openbsd.org>
  * Copyright (c) 2006-2009 Nick Kossifidis <mickflemm@gmail.com>
  * Copyright (c) 2007-2008 Jiri Slaby <jirislaby@gmail.com>
@@ -18,6 +23,7 @@
  *
  */
 
+<<<<<<< HEAD
 /***********************\
 * PHY related functions *
 \***********************/
@@ -64,12 +70,23 @@
  * functions, what we have comes mostly from Atheros's code, reverse
  * engineering and patent docs/presentations etc.
  */
+=======
+#include <linux/delay.h>
+#include <linux/slab.h>
+
+#include "ath5k.h"
+#include "reg.h"
+#include "base.h"
+#include "rfbuffer.h"
+#include "rfgain.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /******************\
 * Helper functions *
 \******************/
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_radio_revision() - Get the PHY Chip revision
  * @ah: The &struct ath5k_hw
@@ -80,6 +97,12 @@
  */
 u16
 ath5k_hw_radio_revision(struct ath5k_hw *ah, enum ieee80211_band band)
+=======
+/*
+ * Get the PHY Chip revision
+ */
+u16 ath5k_hw_radio_revision(struct ath5k_hw *ah, unsigned int chan)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int i;
 	u32 srev;
@@ -88,18 +111,30 @@ ath5k_hw_radio_revision(struct ath5k_hw *ah, enum ieee80211_band band)
 	/*
 	 * Set the radio chip access register
 	 */
+<<<<<<< HEAD
 	switch (band) {
 	case IEEE80211_BAND_2GHZ:
 		ath5k_hw_reg_write(ah, AR5K_PHY_SHIFT_2GHZ, AR5K_PHY(0));
 		break;
 	case IEEE80211_BAND_5GHZ:
+=======
+	switch (chan) {
+	case CHANNEL_2GHZ:
+		ath5k_hw_reg_write(ah, AR5K_PHY_SHIFT_2GHZ, AR5K_PHY(0));
+		break;
+	case CHANNEL_5GHZ:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ath5k_hw_reg_write(ah, AR5K_PHY_SHIFT_5GHZ, AR5K_PHY(0));
 		break;
 	default:
 		return 0;
 	}
 
+<<<<<<< HEAD
 	usleep_range(2000, 2500);
+=======
+	mdelay(2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* ...wait until PHY is ready and read the selected radio revision */
 	ath5k_hw_reg_write(ah, 0x00001c16, AR5K_PHY(0x34));
@@ -122,6 +157,7 @@ ath5k_hw_radio_revision(struct ath5k_hw *ah, enum ieee80211_band band)
 	return ret;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_channel_ok() - Check if a channel is supported by the hw
  * @ah: The &struct ath5k_hw
@@ -141,6 +177,19 @@ ath5k_channel_ok(struct ath5k_hw *ah, struct ieee80211_channel *channel)
 		    (freq <= ah->ah_capabilities.cap_range.range_2ghz_max))
 			return true;
 	} else if (channel->band == IEEE80211_BAND_5GHZ)
+=======
+/*
+ * Check if a channel is supported
+ */
+bool ath5k_channel_ok(struct ath5k_hw *ah, u16 freq, unsigned int flags)
+{
+	/* Check if the channel is in our supported range */
+	if (flags & CHANNEL_2GHZ) {
+		if ((freq >= ah->ah_capabilities.cap_range.range_2ghz_min) &&
+		    (freq <= ah->ah_capabilities.cap_range.range_2ghz_max))
+			return true;
+	} else if (flags & CHANNEL_5GHZ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if ((freq >= ah->ah_capabilities.cap_range.range_5ghz_min) &&
 		    (freq <= ah->ah_capabilities.cap_range.range_5ghz_max))
 			return true;
@@ -148,6 +197,7 @@ ath5k_channel_ok(struct ath5k_hw *ah, struct ieee80211_channel *channel)
 	return false;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_chan_has_spur_noise() - Check if channel is sensitive to spur noise
  * @ah: The &struct ath5k_hw
@@ -155,13 +205,19 @@ ath5k_channel_ok(struct ath5k_hw *ah, struct ieee80211_channel *channel)
  */
 bool
 ath5k_hw_chan_has_spur_noise(struct ath5k_hw *ah,
+=======
+bool ath5k_hw_chan_has_spur_noise(struct ath5k_hw *ah,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				struct ieee80211_channel *channel)
 {
 	u8 refclk_freq;
 
 	if ((ah->ah_radio == AR5K_RF5112) ||
 	(ah->ah_radio == AR5K_RF5413) ||
+<<<<<<< HEAD
 	(ah->ah_radio == AR5K_RF2413) ||
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	(ah->ah_mac_version == (AR5K_SREV_AR2417 >> 4)))
 		refclk_freq = 40;
 	else
@@ -175,6 +231,7 @@ ath5k_hw_chan_has_spur_noise(struct ath5k_hw *ah,
 		return false;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_rfb_op() - Perform an operation on the given RF Buffer
  * @ah: The &struct ath5k_hw
@@ -189,6 +246,13 @@ ath5k_hw_chan_has_spur_noise(struct ath5k_hw *ah,
  */
 static unsigned int
 ath5k_hw_rfb_op(struct ath5k_hw *ah, const struct ath5k_rf_reg *rf_regs,
+=======
+/*
+ * Used to modify RF Banks before writing them to AR5K_RF_BUFFER
+ */
+static unsigned int ath5k_hw_rfb_op(struct ath5k_hw *ah,
+					const struct ath5k_rf_reg *rf_regs,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					u32 val, u8 reg_id, bool set)
 {
 	const struct ath5k_rf_reg *rfreg = NULL;
@@ -239,7 +303,11 @@ ath5k_hw_rfb_op(struct ath5k_hw *ah, const struct ath5k_rf_reg *rf_regs,
 		data = ath5k_hw_bitswap(val, num_bits);
 
 	for (bits_shifted = 0, bits_left = num_bits; bits_left > 0;
+<<<<<<< HEAD
 	     position = 0, entry++) {
+=======
+	position = 0, entry++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		last_bit = (position + bits_left > 8) ? 8 :
 					position + bits_left;
@@ -266,7 +334,12 @@ ath5k_hw_rfb_op(struct ath5k_hw *ah, const struct ath5k_rf_reg *rf_regs,
 }
 
 /**
+<<<<<<< HEAD
  * ath5k_hw_write_ofdm_timings() - set OFDM timings on AR5212
+=======
+ * ath5k_hw_write_ofdm_timings - set OFDM timings on AR5212
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @ah: the &struct ath5k_hw
  * @channel: the currently set channel upon reset
  *
@@ -277,18 +350,29 @@ ath5k_hw_rfb_op(struct ath5k_hw *ah, const struct ath5k_rf_reg *rf_regs,
  * mantissa and provide these values on hw.
  *
  * For more infos i think this patent is related
+<<<<<<< HEAD
  * "http://www.freepatentsonline.com/7184495.html"
  */
 static inline int
 ath5k_hw_write_ofdm_timings(struct ath5k_hw *ah,
 				struct ieee80211_channel *channel)
+=======
+ * http://www.freepatentsonline.com/7184495.html
+ */
+static inline int ath5k_hw_write_ofdm_timings(struct ath5k_hw *ah,
+	struct ieee80211_channel *channel)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Get exponent and mantissa and set it */
 	u32 coef_scaled, coef_exp, coef_man,
 		ds_coef_exp, ds_coef_man, clock;
 
 	BUG_ON(!(ah->ah_version == AR5K_AR5212) ||
+<<<<<<< HEAD
 		(channel->hw_value == AR5K_MODE_11B));
+=======
+		!(channel->hw_value & CHANNEL_OFDM));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Get coefficient
 	 * ALGO: coef = (5 * clock / carrier_freq) / 2
@@ -340,10 +424,13 @@ ath5k_hw_write_ofdm_timings(struct ath5k_hw *ah,
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_phy_disable() - Disable PHY
  * @ah: The &struct ath5k_hw
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int ath5k_hw_phy_disable(struct ath5k_hw *ah)
 {
 	/*Just a try M.F.*/
@@ -352,6 +439,7 @@ int ath5k_hw_phy_disable(struct ath5k_hw *ah)
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_wait_for_synth() - Wait for synth to settle
  * @ah: The &struct ath5k_hw
@@ -359,6 +447,12 @@ int ath5k_hw_phy_disable(struct ath5k_hw *ah)
  */
 static void
 ath5k_hw_wait_for_synth(struct ath5k_hw *ah,
+=======
+/*
+ * Wait for synth to settle
+ */
+static void ath5k_hw_wait_for_synth(struct ath5k_hw *ah,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			struct ieee80211_channel *channel)
 {
 	/*
@@ -369,7 +463,11 @@ ath5k_hw_wait_for_synth(struct ath5k_hw *ah,
 		u32 delay;
 		delay = ath5k_hw_reg_read(ah, AR5K_PHY_RX_DELAY) &
 			AR5K_PHY_RX_DELAY_M;
+<<<<<<< HEAD
 		delay = (channel->hw_value == AR5K_MODE_11B) ?
+=======
+		delay = (channel->hw_value & CHANNEL_CCK) ?
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			((delay << 2) / 22) : (delay / 10);
 		if (ah->ah_bwmode == AR5K_BWMODE_10MHZ)
 			delay = delay << 1;
@@ -377,9 +475,15 @@ ath5k_hw_wait_for_synth(struct ath5k_hw *ah,
 			delay = delay << 2;
 		/* XXX: /2 on turbo ? Let's be safe
 		 * for now */
+<<<<<<< HEAD
 		usleep_range(100 + delay, 100 + (2 * delay));
 	} else {
 		usleep_range(1000, 1500);
+=======
+		udelay(100 + delay);
+	} else {
+		mdelay(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -388,9 +492,13 @@ ath5k_hw_wait_for_synth(struct ath5k_hw *ah,
 * RF Gain optimization *
 \**********************/
 
+<<<<<<< HEAD
 /**
  * DOC: RF Gain optimization
  *
+=======
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * This code is used to optimize RF gain on different environments
  * (temperature mostly) based on feedback from a power detector.
  *
@@ -399,6 +507,7 @@ ath5k_hw_wait_for_synth(struct ath5k_hw *ah,
  * no gain optimization ladder-.
  *
  * For more infos check out this patent doc
+<<<<<<< HEAD
  * "http://www.freepatentsonline.com/7400691.html"
  *
  * This paper describes power drops as seen on the receiver due to
@@ -415,6 +524,24 @@ ath5k_hw_wait_for_synth(struct ath5k_hw *ah,
  * ath5k_hw_rfgain_opt_init() - Initialize ah_gain during attach
  * @ah: The &struct ath5k_hw
  */
+=======
+ * http://www.freepatentsonline.com/7400691.html
+ *
+ * This paper describes power drops as seen on the receiver due to
+ * probe packets
+ * http://www.cnri.dit.ie/publications/ICT08%20-%20Practical%20Issues
+ * %20of%20Power%20Control.pdf
+ *
+ * And this is the MadWiFi bug entry related to the above
+ * http://madwifi-project.org/ticket/1659
+ * with various measurements and diagrams
+ *
+ * TODO: Deal with power drops due to probes by setting an appropriate
+ * tx power on the probe packets ! Make this part of the calibration process.
+ */
+
+/* Initialize ah_gain during attach */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int ath5k_hw_rfgain_opt_init(struct ath5k_hw *ah)
 {
 	/* Initialize the gain optimization values */
@@ -438,21 +565,34 @@ int ath5k_hw_rfgain_opt_init(struct ath5k_hw *ah)
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_request_rfgain_probe() - Request a PAPD probe packet
  * @ah: The &struct ath5k_hw
  *
  * Schedules a gain probe check on the next transmitted packet.
+=======
+/* Schedule a gain probe check on the next transmited packet.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * That means our next packet is going to be sent with lower
  * tx power and a Peak to Average Power Detector (PAPD) will try
  * to measure the gain.
  *
+<<<<<<< HEAD
  * TODO: Force a tx packet (bypassing PCU arbitrator etc)
  * just after we enable the probe so that we don't mess with
  * standard traffic.
  */
 static void
 ath5k_hw_request_rfgain_probe(struct ath5k_hw *ah)
+=======
+ * XXX:  How about forcing a tx packet (bypassing PCU arbitrator etc)
+ * just after we enable the probe so that we don't mess with
+ * standard traffic ? Maybe it's time to use sw interrupts and
+ * a probe tasklet !!!
+ */
+static void ath5k_hw_request_rfgain_probe(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 
 	/* Skip if gain calibration is inactive or
@@ -470,6 +610,7 @@ ath5k_hw_request_rfgain_probe(struct ath5k_hw *ah)
 
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_rf_gainf_corr() - Calculate Gain_F measurement correction
  * @ah: The &struct ath5k_hw
@@ -479,6 +620,11 @@ ath5k_hw_request_rfgain_probe(struct ath5k_hw *ah)
  */
 static u32
 ath5k_hw_rf_gainf_corr(struct ath5k_hw *ah)
+=======
+/* Calculate gain_F measurement correction
+ * based on the current step for RF5112 rev. 2 */
+static u32 ath5k_hw_rf_gainf_corr(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 mix, step;
 	u32 *rf;
@@ -531,6 +677,7 @@ ath5k_hw_rf_gainf_corr(struct ath5k_hw *ah)
 	return ah->ah_gain.g_f_corr;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_rf_check_gainf_readback() - Validate Gain_F feedback from detector
  * @ah: The &struct ath5k_hw
@@ -544,6 +691,13 @@ ath5k_hw_rf_gainf_corr(struct ath5k_hw *ah)
  */
 static bool
 ath5k_hw_rf_check_gainf_readback(struct ath5k_hw *ah)
+=======
+/* Check if current gain_F measurement is in the range of our
+ * power detector windows. If we get a measurement outside range
+ * we know it's not accurate (detectors can't measure anything outside
+ * their detection window) so we must ignore it */
+static bool ath5k_hw_rf_check_gainf_readback(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const struct ath5k_rf_reg *rf_regs;
 	u32 step, mix_ovr, level[4];
@@ -565,7 +719,11 @@ ath5k_hw_rf_check_gainf_readback(struct ath5k_hw *ah)
 		level[0] = 0;
 		level[1] = (step == 63) ? 50 : step + 4;
 		level[2] = (step != 63) ? 64 : level[0];
+<<<<<<< HEAD
 		level[3] = level[2] + 50;
+=======
+		level[3] = level[2] + 50 ;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ah->ah_gain.g_high = level[3] -
 			(step == 63 ? AR5K_GAIN_DYN_ADJUST_HI_MARGIN : -5);
@@ -595,6 +753,7 @@ ath5k_hw_rf_check_gainf_readback(struct ath5k_hw *ah)
 			ah->ah_gain.g_current <= level[3]);
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_rf_gainf_adjust() - Perform Gain_F adjustment
  * @ah: The &struct ath5k_hw
@@ -604,6 +763,11 @@ ath5k_hw_rf_check_gainf_readback(struct ath5k_hw *ah)
  */
 static s8
 ath5k_hw_rf_gainf_adjust(struct ath5k_hw *ah)
+=======
+/* Perform gain_F adjustment by choosing the right set
+ * of parameters from RF gain optimization ladder */
+static s8 ath5k_hw_rf_gainf_adjust(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const struct ath5k_gain_opt *go;
 	const struct ath5k_gain_opt_step *g_step;
@@ -648,7 +812,11 @@ ath5k_hw_rf_gainf_adjust(struct ath5k_hw *ah)
 
 		for (ah->ah_gain.g_target = ah->ah_gain.g_current;
 				ah->ah_gain.g_target <= ah->ah_gain.g_low &&
+<<<<<<< HEAD
 				ah->ah_gain.g_step_idx < go->go_steps_count - 1;
+=======
+				ah->ah_gain.g_step_idx < go->go_steps_count-1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				g_step = &go->go_step[ah->ah_gain.g_step_idx])
 			ah->ah_gain.g_target -= 2 *
 			    (go->go_step[++ah->ah_gain.g_step_idx].gos_gain -
@@ -659,7 +827,11 @@ ath5k_hw_rf_gainf_adjust(struct ath5k_hw *ah)
 	}
 
 done:
+<<<<<<< HEAD
 	ATH5K_DBG(ah, ATH5K_DEBUG_CALIBRATE,
+=======
+	ATH5K_DBG(ah->ah_sc, ATH5K_DEBUG_CALIBRATE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"ret %d, gain step %u, current gain %u, target gain %u\n",
 		ret, ah->ah_gain.g_step_idx, ah->ah_gain.g_current,
 		ah->ah_gain.g_target);
@@ -667,6 +839,7 @@ done:
 	return ret;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_gainf_calibrate() - Do a gain_F calibration
  * @ah: The &struct ath5k_hw
@@ -679,6 +852,15 @@ done:
  */
 enum ath5k_rfgain
 ath5k_hw_gainf_calibrate(struct ath5k_hw *ah)
+=======
+/* Main callback for thermal RF gain calibration engine
+ * Check for a new gain reading and schedule an adjustment
+ * if needed.
+ *
+ * TODO: Use sw interrupt to schedule reset if gain_F needs
+ * adjustment */
+enum ath5k_rfgain ath5k_hw_gainf_calibrate(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 data, type;
 	struct ath5k_eeprom_info *ee = &ah->ah_capabilities.cap_eeprom;
@@ -718,13 +900,21 @@ ath5k_hw_gainf_calibrate(struct ath5k_hw *ah)
 			ath5k_hw_rf_gainf_corr(ah);
 			ah->ah_gain.g_current =
 				ah->ah_gain.g_current >= ah->ah_gain.g_f_corr ?
+<<<<<<< HEAD
 				(ah->ah_gain.g_current - ah->ah_gain.g_f_corr) :
+=======
+				(ah->ah_gain.g_current-ah->ah_gain.g_f_corr) :
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				0;
 		}
 
 		/* Check if measurement is ok and if we need
 		 * to adjust gain, schedule a gain adjustment,
+<<<<<<< HEAD
 		 * else switch back to the active state */
+=======
+		 * else switch back to the acive state */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ath5k_hw_rf_check_gainf_readback(ah) &&
 		AR5K_GAIN_CHECK_ADJUST(&ah->ah_gain) &&
 		ath5k_hw_rf_gainf_adjust(ah)) {
@@ -738,6 +928,7 @@ done:
 	return ah->ah_gain.g_state;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_rfgain_init() - Write initial RF gain settings to hw
  * @ah: The &struct ath5k_hw
@@ -750,6 +941,12 @@ done:
  */
 static int
 ath5k_hw_rfgain_init(struct ath5k_hw *ah, enum ieee80211_band band)
+=======
+/* Write initial RF gain table to set the RF sensitivity
+ * this one works on all RF chips and has nothing to do
+ * with gain_F calibration */
+static int ath5k_hw_rfgain_init(struct ath5k_hw *ah, enum ieee80211_band band)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const struct ath5k_ini_rfgain *ath5k_rfg;
 	unsigned int i, size, index;
@@ -796,10 +993,15 @@ ath5k_hw_rfgain_init(struct ath5k_hw *ah, enum ieee80211_band band)
 }
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /********************\
 * RF Registers setup *
 \********************/
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_rfregs_init() - Initialize RF register settings
  * @ah: The &struct ath5k_hw
@@ -813,6 +1015,13 @@ static int
 ath5k_hw_rfregs_init(struct ath5k_hw *ah,
 			struct ieee80211_channel *channel,
 			unsigned int mode)
+=======
+/*
+ * Setup RF registers by writing RF buffer on hw
+ */
+static int ath5k_hw_rfregs_init(struct ath5k_hw *ah,
+	struct ieee80211_channel *channel, unsigned int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const struct ath5k_rf_reg *rf_regs;
 	const struct ath5k_ini_rfbuffer *ini_rfb;
@@ -891,7 +1100,11 @@ ath5k_hw_rfregs_init(struct ath5k_hw *ah,
 		ah->ah_rf_banks = kmalloc(sizeof(u32) * ah->ah_rf_banks_size,
 								GFP_KERNEL);
 		if (ah->ah_rf_banks == NULL) {
+<<<<<<< HEAD
 			ATH5K_ERR(ah, "out of memory\n");
+=======
+			ATH5K_ERR(ah->ah_sc, "out of memory\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ENOMEM;
 		}
 	}
@@ -901,7 +1114,11 @@ ath5k_hw_rfregs_init(struct ath5k_hw *ah,
 
 	for (i = 0; i < ah->ah_rf_banks_size; i++) {
 		if (ini_rfb[i].rfb_bank >= AR5K_MAX_RF_BANKS) {
+<<<<<<< HEAD
 			ATH5K_ERR(ah, "invalid bank\n");
+=======
+			ATH5K_ERR(ah->ah_sc, "invalid bank\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -EINVAL;
 		}
 
@@ -915,9 +1132,15 @@ ath5k_hw_rfregs_init(struct ath5k_hw *ah,
 	}
 
 	/* Set Output and Driver bias current (OB/DB) */
+<<<<<<< HEAD
 	if (channel->band == IEEE80211_BAND_2GHZ) {
 
 		if (channel->hw_value == AR5K_MODE_11B)
+=======
+	if (channel->hw_value & CHANNEL_2GHZ) {
+
+		if (channel->hw_value & CHANNEL_CCK)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ee_mode = AR5K_EEPROM_MODE_11B;
 		else
 			ee_mode = AR5K_EEPROM_MODE_11G;
@@ -926,7 +1149,11 @@ ath5k_hw_rfregs_init(struct ath5k_hw *ah,
 		 * use b_OB and b_DB parameters stored
 		 * in eeprom on ee->ee_ob[ee_mode][0]
 		 *
+<<<<<<< HEAD
 		 * For all other chips we use OB/DB for 2GHz
+=======
+		 * For all other chips we use OB/DB for 2Ghz
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * stored in the b/g modal section just like
 		 * 802.11a on ee->ee_ob[ee_mode][1] */
 		if ((ah->ah_radio == AR5K_RF5111) ||
@@ -942,7 +1169,11 @@ ath5k_hw_rfregs_init(struct ath5k_hw *ah,
 						AR5K_RF_DB_2GHZ, true);
 
 	/* RF5111 always needs OB/DB for 5GHz, even if we use 2GHz */
+<<<<<<< HEAD
 	} else if ((channel->band == IEEE80211_BAND_5GHZ) ||
+=======
+	} else if ((channel->hw_value & CHANNEL_5GHZ) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			(ah->ah_radio == AR5K_RF5111)) {
 
 		/* For 11a, Turbo and XR we need to choose
@@ -974,7 +1205,11 @@ ath5k_hw_rfregs_init(struct ath5k_hw *ah,
 	if (ah->ah_radio == AR5K_RF5111) {
 
 		/* Set gain_F settings according to current step */
+<<<<<<< HEAD
 		if (channel->hw_value != AR5K_MODE_11B) {
+=======
+		if (channel->hw_value & CHANNEL_OFDM) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			AR5K_REG_WRITE_BITS(ah, AR5K_PHY_FRAME_CTL,
 					AR5K_PHY_FRAME_CTL_TX_CLIP,
@@ -1031,7 +1266,11 @@ ath5k_hw_rfregs_init(struct ath5k_hw *ah,
 	if (ah->ah_radio == AR5K_RF5112) {
 
 		/* Set gain_F settings according to current step */
+<<<<<<< HEAD
 		if (channel->hw_value != AR5K_MODE_11B) {
+=======
+		if (channel->hw_value & CHANNEL_OFDM) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			ath5k_hw_rfb_op(ah, rf_regs, g_step->gos_param[0],
 						AR5K_RF_MIXGAIN_OVR, true);
@@ -1089,6 +1328,7 @@ ath5k_hw_rfregs_init(struct ath5k_hw *ah,
 			}
 
 			/* Lower synth voltage on Rev 2 */
+<<<<<<< HEAD
 			if (ah->ah_radio == AR5K_RF5112 &&
 			    (ah->ah_radio_5ghz_revision & AR5K_SREV_REV) > 0) {
 				ath5k_hw_rfb_op(ah, rf_regs, 2,
@@ -1103,6 +1343,19 @@ ath5k_hw_rfregs_init(struct ath5k_hw *ah,
 				ath5k_hw_rfb_op(ah, rf_regs, 2,
 						AR5K_RF_PUSH_UP, true);
 			}
+=======
+			ath5k_hw_rfb_op(ah, rf_regs, 2,
+					AR5K_RF_HIGH_VC_CP, true);
+
+			ath5k_hw_rfb_op(ah, rf_regs, 2,
+					AR5K_RF_MID_VC_CP, true);
+
+			ath5k_hw_rfb_op(ah, rf_regs, 2,
+					AR5K_RF_LOW_VC_CP, true);
+
+			ath5k_hw_rfb_op(ah, rf_regs, 2,
+					AR5K_RF_PUSH_UP, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* Decrease power consumption on 5213+ BaseBand */
 			if (ah->ah_phy_revision >= AR5K_SREV_PHY_5212A) {
@@ -1143,7 +1396,11 @@ ath5k_hw_rfregs_init(struct ath5k_hw *ah,
 	}
 
 	if (ah->ah_radio == AR5K_RF5413 &&
+<<<<<<< HEAD
 	channel->band == IEEE80211_BAND_2GHZ) {
+=======
+	channel->hw_value & CHANNEL_2GHZ) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ath5k_hw_rfb_op(ah, rf_regs, 1, AR5K_RF_DERBY_CHAN_SEL_MODE,
 									true);
@@ -1170,6 +1427,7 @@ ath5k_hw_rfregs_init(struct ath5k_hw *ah,
   PHY/RF channel functions
 \**************************/
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_rf5110_chan2athchan() - Convert channel freq on RF5110
  * @channel: The &struct ieee80211_channel
@@ -1182,6 +1440,21 @@ ath5k_hw_rf5110_chan2athchan(struct ieee80211_channel *channel)
 {
 	u32 athchan;
 
+=======
+/*
+ * Conversion needed for RF5110
+ */
+static u32 ath5k_hw_rf5110_chan2athchan(struct ieee80211_channel *channel)
+{
+	u32 athchan;
+
+	/*
+	 * Convert IEEE channel/MHz to an internal channel value used
+	 * by the AR5210 chipset. This has not been verified with
+	 * newer chipsets like the AR5212A who have a completely
+	 * different RF/PHY part.
+	 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	athchan = (ath5k_hw_bitswap(
 			(ieee80211_frequency_to_channel(
 				channel->center_freq) - 24) / 2, 5)
@@ -1189,6 +1462,7 @@ ath5k_hw_rf5110_chan2athchan(struct ieee80211_channel *channel)
 	return athchan;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_rf5110_channel() - Set channel frequency on RF5110
  * @ah: The &struct ath5k_hw
@@ -1196,6 +1470,12 @@ ath5k_hw_rf5110_chan2athchan(struct ieee80211_channel *channel)
  */
 static int
 ath5k_hw_rf5110_channel(struct ath5k_hw *ah,
+=======
+/*
+ * Set channel on RF5110
+ */
+static int ath5k_hw_rf5110_channel(struct ath5k_hw *ah,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct ieee80211_channel *channel)
 {
 	u32 data;
@@ -1206,11 +1486,16 @@ ath5k_hw_rf5110_channel(struct ath5k_hw *ah,
 	data = ath5k_hw_rf5110_chan2athchan(channel);
 	ath5k_hw_reg_write(ah, data, AR5K_RF_BUFFER);
 	ath5k_hw_reg_write(ah, 0, AR5K_RF_BUFFER_CONTROL_0);
+<<<<<<< HEAD
 	usleep_range(1000, 1500);
+=======
+	mdelay(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_rf5111_chan2athchan() - Handle 2GHz channels on RF5111/2111
  * @ieee: IEEE channel number
@@ -1223,6 +1508,12 @@ ath5k_hw_rf5110_channel(struct ath5k_hw *ah,
  */
 static int
 ath5k_hw_rf5111_chan2athchan(unsigned int ieee,
+=======
+/*
+ * Conversion needed for 5111
+ */
+static int ath5k_hw_rf5111_chan2athchan(unsigned int ieee,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct ath5k_athchan_2ghz *athchan)
 {
 	int channel;
@@ -1248,6 +1539,7 @@ ath5k_hw_rf5111_chan2athchan(unsigned int ieee,
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_rf5111_channel() - Set channel frequency on RF5111/2111
  * @ah: The &struct ath5k_hw
@@ -1255,6 +1547,12 @@ ath5k_hw_rf5111_chan2athchan(unsigned int ieee,
  */
 static int
 ath5k_hw_rf5111_channel(struct ath5k_hw *ah,
+=======
+/*
+ * Set channel on 5111
+ */
+static int ath5k_hw_rf5111_channel(struct ath5k_hw *ah,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct ieee80211_channel *channel)
 {
 	struct ath5k_athchan_2ghz ath5k_channel_2ghz;
@@ -1268,7 +1566,11 @@ ath5k_hw_rf5111_channel(struct ath5k_hw *ah,
 	 */
 	data0 = data1 = 0;
 
+<<<<<<< HEAD
 	if (channel->band == IEEE80211_BAND_2GHZ) {
+=======
+	if (channel->hw_value & CHANNEL_2GHZ) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Map 2GHz channel to 5GHz Atheros channel ID */
 		ret = ath5k_hw_rf5111_chan2athchan(
 			ieee80211_frequency_to_channel(channel->center_freq),
@@ -1299,6 +1601,7 @@ ath5k_hw_rf5111_channel(struct ath5k_hw *ah,
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_rf5112_channel() - Set channel frequency on 5112 and newer
  * @ah: The &struct ath5k_hw
@@ -1313,6 +1616,12 @@ ath5k_hw_rf5111_channel(struct ath5k_hw *ah,
  */
 static int
 ath5k_hw_rf5112_channel(struct ath5k_hw *ah,
+=======
+/*
+ * Set channel on 5112 and newer
+ */
+static int ath5k_hw_rf5112_channel(struct ath5k_hw *ah,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct ieee80211_channel *channel)
 {
 	u32 data, data0, data1, data2;
@@ -1321,6 +1630,7 @@ ath5k_hw_rf5112_channel(struct ath5k_hw *ah,
 	data = data0 = data1 = data2 = 0;
 	c = channel->center_freq;
 
+<<<<<<< HEAD
 	/* My guess based on code:
 	 * 2GHz RF has 2 synth modes, one with a Local Oscillator
 	 * at 2224Hz and one with a LO at 2192Hz. IF is 1520Hz
@@ -1337,12 +1647,20 @@ ath5k_hw_rf5112_channel(struct ath5k_hw *ah,
 		 * below/above (standard channels without channel 14) */
 		} else if (!((c - 2192) % 5)) {
 			/* Same as (c - 2192) / 5 */
+=======
+	if (c < 4800) {
+		if (!((c - 2224) % 5)) {
+			data0 = ((2 * (c - 704)) - 3040) / 10;
+			data1 = 1;
+		} else if (!((c - 2192) % 5)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			data0 = ((2 * (c - 672)) - 3040) / 10;
 			data1 = 0;
 		} else
 			return -EINVAL;
 
 		data0 = ath5k_hw_bitswap((data0 << 2) & 0xff, 8);
+<<<<<<< HEAD
 	/* This is more complex, we have a single synthesizer with
 	 * 4 reference clock settings (?) based on frequency spacing
 	 * and set using data2. LO is at 4800Hz and data0 is again used
@@ -1352,6 +1670,8 @@ ath5k_hw_rf5112_channel(struct ath5k_hw *ah,
 	 * that mentions a method called dual direct conversion
 	 * with 1GHz sliding IF for RF5110. Maybe that's what we
 	 * have here, or an updated version. */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if ((c % 5) != 2 || c > 5435) {
 		if (!(c % 20) && c >= 5120) {
 			data0 = ath5k_hw_bitswap(((c - 4800) / 20 << 2), 8);
@@ -1377,6 +1697,7 @@ ath5k_hw_rf5112_channel(struct ath5k_hw *ah,
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_rf2425_channel() - Set channel frequency on RF2425
  * @ah: The &struct ath5k_hw
@@ -1387,6 +1708,12 @@ ath5k_hw_rf5112_channel(struct ath5k_hw *ah,
  */
 static int
 ath5k_hw_rf2425_channel(struct ath5k_hw *ah,
+=======
+/*
+ * Set the channel on the RF2425
+ */
+static int ath5k_hw_rf2425_channel(struct ath5k_hw *ah,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct ieee80211_channel *channel)
 {
 	u32 data, data0, data2;
@@ -1422,6 +1749,7 @@ ath5k_hw_rf2425_channel(struct ath5k_hw *ah,
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_channel() - Set a channel on the radio chip
  * @ah: The &struct ath5k_hw
@@ -1432,15 +1760,30 @@ ath5k_hw_rf2425_channel(struct ath5k_hw *ah,
  */
 static int
 ath5k_hw_channel(struct ath5k_hw *ah,
+=======
+/*
+ * Set a channel on the radio chip
+ */
+static int ath5k_hw_channel(struct ath5k_hw *ah,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct ieee80211_channel *channel)
 {
 	int ret;
 	/*
+<<<<<<< HEAD
 	 * Check bounds supported by the PHY (we don't care about regulatory
 	 * restrictions at this point).
 	 */
 	if (!ath5k_channel_ok(ah, channel)) {
 		ATH5K_ERR(ah,
+=======
+	 * Check bounds supported by the PHY (we don't care about regultory
+	 * restrictions at this point). Note: hw_value already has the band
+	 * (CHANNEL_2GHZ, or CHANNEL_5GHZ) so we inform ath5k_channel_ok()
+	 * of the band by that */
+	if (!ath5k_channel_ok(ah, channel->center_freq, channel->hw_value)) {
+		ATH5K_ERR(ah->ah_sc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"channel frequency (%u MHz) out of supported "
 			"band range\n",
 			channel->center_freq);
@@ -1483,11 +1826,15 @@ ath5k_hw_channel(struct ath5k_hw *ah,
 	return 0;
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*****************\
   PHY calibration
 \*****************/
 
+<<<<<<< HEAD
 /**
  * DOC: PHY Calibration routines
  *
@@ -1523,6 +1870,9 @@ ath5k_hw_channel(struct ath5k_hw *ah,
  */
 static s32
 ath5k_hw_read_measured_noise_floor(struct ath5k_hw *ah)
+=======
+static s32 ath5k_hw_read_measured_noise_floor(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	s32 val;
 
@@ -1530,12 +1880,16 @@ ath5k_hw_read_measured_noise_floor(struct ath5k_hw *ah)
 	return sign_extend32(AR5K_REG_MS(val, AR5K_PHY_NF_MINCCA_PWR), 8);
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_init_nfcal_hist() - Initialize NF calibration history buffer
  * @ah: The &struct ath5k_hw
  */
 void
 ath5k_hw_init_nfcal_hist(struct ath5k_hw *ah)
+=======
+void ath5k_hw_init_nfcal_hist(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 
@@ -1544,6 +1898,7 @@ ath5k_hw_init_nfcal_hist(struct ath5k_hw *ah)
 		ah->ah_nfcal_hist.nfval[i] = AR5K_TUNE_CCA_MAX_GOOD_VALUE;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_update_nfcal_hist() - Update NF calibration history buffer
  * @ah: The &struct ath5k_hw
@@ -1562,6 +1917,16 @@ static void ath5k_hw_update_nfcal_hist(struct ath5k_hw *ah, s16 noise_floor)
  */
 static s16
 ath5k_hw_get_median_noise_floor(struct ath5k_hw *ah)
+=======
+static void ath5k_hw_update_nfcal_hist(struct ath5k_hw *ah, s16 noise_floor)
+{
+	struct ath5k_nfcal_hist *hist = &ah->ah_nfcal_hist;
+	hist->index = (hist->index + 1) & (ATH5K_NF_CAL_HIST_MAX-1);
+	hist->nfval[hist->index] = noise_floor;
+}
+
+static s16 ath5k_hw_get_median_noise_floor(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	s16 sort[ATH5K_NF_CAL_HIST_MAX];
 	s16 tmp;
@@ -1570,14 +1935,22 @@ ath5k_hw_get_median_noise_floor(struct ath5k_hw *ah)
 	memcpy(sort, ah->ah_nfcal_hist.nfval, sizeof(sort));
 	for (i = 0; i < ATH5K_NF_CAL_HIST_MAX - 1; i++) {
 		for (j = 1; j < ATH5K_NF_CAL_HIST_MAX - i; j++) {
+<<<<<<< HEAD
 			if (sort[j] > sort[j - 1]) {
 				tmp = sort[j];
 				sort[j] = sort[j - 1];
 				sort[j - 1] = tmp;
+=======
+			if (sort[j] > sort[j-1]) {
+				tmp = sort[j];
+				sort[j] = sort[j-1];
+				sort[j-1] = tmp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 	}
 	for (i = 0; i < ATH5K_NF_CAL_HIST_MAX; i++) {
+<<<<<<< HEAD
 		ATH5K_DBG(ah, ATH5K_DEBUG_CALIBRATE,
 			"cal %d:%d\n", i, sort[i]);
 	}
@@ -1594,6 +1967,26 @@ ath5k_hw_get_median_noise_floor(struct ath5k_hw *ah)
  */
 void
 ath5k_hw_update_noise_floor(struct ath5k_hw *ah)
+=======
+		ATH5K_DBG(ah->ah_sc, ATH5K_DEBUG_CALIBRATE,
+			"cal %d:%d\n", i, sort[i]);
+	}
+	return sort[(ATH5K_NF_CAL_HIST_MAX-1) / 2];
+}
+
+/*
+ * When we tell the hardware to perform a noise floor calibration
+ * by setting the AR5K_PHY_AGCCTL_NF bit, it will periodically
+ * sample-and-hold the minimum noise level seen at the antennas.
+ * This value is then stored in a ring buffer of recently measured
+ * noise floor values so we have a moving window of the last few
+ * samples.
+ *
+ * The median of the values in the history is then loaded into the
+ * hardware for its own use for RSSI and CCA measurements.
+ */
+void ath5k_hw_update_noise_floor(struct ath5k_hw *ah)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ath5k_eeprom_info *ee = &ah->ah_capabilities.cap_eeprom;
 	u32 val;
@@ -1602,14 +1995,21 @@ ath5k_hw_update_noise_floor(struct ath5k_hw *ah)
 
 	/* keep last value if calibration hasn't completed */
 	if (ath5k_hw_reg_read(ah, AR5K_PHY_AGCCTL) & AR5K_PHY_AGCCTL_NF) {
+<<<<<<< HEAD
 		ATH5K_DBG(ah, ATH5K_DEBUG_CALIBRATE,
+=======
+		ATH5K_DBG(ah->ah_sc, ATH5K_DEBUG_CALIBRATE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"NF did not complete in calibration window\n");
 
 		return;
 	}
 
+<<<<<<< HEAD
 	ah->ah_cal_mask |= AR5K_CALIBRATION_NF;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ee_mode = ath5k_eeprom_mode_from_channel(ah->ah_current_channel);
 
 	/* completed NF calibration, test threshold */
@@ -1617,7 +2017,11 @@ ath5k_hw_update_noise_floor(struct ath5k_hw *ah)
 	threshold = ee->ee_noise_floor_thr[ee_mode];
 
 	if (nf > threshold) {
+<<<<<<< HEAD
 		ATH5K_DBG(ah, ATH5K_DEBUG_CALIBRATE,
+=======
+		ATH5K_DBG(ah->ah_sc, ATH5K_DEBUG_CALIBRATE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"noise floor failure detected; "
 			"read %d, threshold %d\n",
 			nf, threshold);
@@ -1654,6 +2058,7 @@ ath5k_hw_update_noise_floor(struct ath5k_hw *ah)
 
 	ah->ah_noise_floor = nf;
 
+<<<<<<< HEAD
 	ah->ah_cal_mask &= ~AR5K_CALIBRATION_NF;
 
 	ATH5K_DBG(ah, ATH5K_DEBUG_CALIBRATE,
@@ -1669,14 +2074,28 @@ ath5k_hw_update_noise_floor(struct ath5k_hw *ah)
  */
 static int
 ath5k_hw_rf5110_calibrate(struct ath5k_hw *ah,
+=======
+	ATH5K_DBG(ah->ah_sc, ATH5K_DEBUG_CALIBRATE,
+		"noise floor calibrated: %d\n", nf);
+}
+
+/*
+ * Perform a PHY calibration on RF5110
+ * -Fix BPSK/QAM Constellation (I/Q correction)
+ */
+static int ath5k_hw_rf5110_calibrate(struct ath5k_hw *ah,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct ieee80211_channel *channel)
 {
 	u32 phy_sig, phy_agc, phy_sat, beacon;
 	int ret;
 
+<<<<<<< HEAD
 	if (!(ah->ah_cal_mask & AR5K_CALIBRATION_FULL))
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Disable beacons and RX/TX queues, wait
 	 */
@@ -1685,7 +2104,11 @@ ath5k_hw_rf5110_calibrate(struct ath5k_hw *ah,
 	beacon = ath5k_hw_reg_read(ah, AR5K_BEACON_5210);
 	ath5k_hw_reg_write(ah, beacon & ~AR5K_BEACON_ENABLE, AR5K_BEACON_5210);
 
+<<<<<<< HEAD
 	usleep_range(2000, 2500);
+=======
+	mdelay(2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Set the channel (with AGC turned off)
@@ -1698,7 +2121,11 @@ ath5k_hw_rf5110_calibrate(struct ath5k_hw *ah,
 	 * Activate PHY and wait
 	 */
 	ath5k_hw_reg_write(ah, AR5K_PHY_ACT_ENABLE, AR5K_PHY_ACT);
+<<<<<<< HEAD
 	usleep_range(1000, 1500);
+=======
+	mdelay(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	AR5K_REG_DISABLE_BITS(ah, AR5K_PHY_AGC, AR5K_PHY_AGC_DISABLE);
 
@@ -1735,7 +2162,11 @@ ath5k_hw_rf5110_calibrate(struct ath5k_hw *ah,
 	ath5k_hw_reg_write(ah, AR5K_PHY_RFSTG_DISABLE, AR5K_PHY_RFSTG);
 	AR5K_REG_DISABLE_BITS(ah, AR5K_PHY_AGC, AR5K_PHY_AGC_DISABLE);
 
+<<<<<<< HEAD
 	usleep_range(1000, 1500);
+=======
+	mdelay(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Enable calibration and wait until completion
@@ -1751,7 +2182,11 @@ ath5k_hw_rf5110_calibrate(struct ath5k_hw *ah,
 	ath5k_hw_reg_write(ah, phy_sat, AR5K_PHY_ADCSAT);
 
 	if (ret) {
+<<<<<<< HEAD
 		ATH5K_ERR(ah, "calibration timeout (%uMHz)\n",
+=======
+		ATH5K_ERR(ah->ah_sc, "calibration timeout (%uMHz)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				channel->center_freq);
 		return ret;
 	}
@@ -1766,9 +2201,14 @@ ath5k_hw_rf5110_calibrate(struct ath5k_hw *ah,
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_rf511x_iq_calibrate() - Perform I/Q calibration on RF5111 and newer
  * @ah: The &struct ath5k_hw
+=======
+/*
+ * Perform I/Q calibration on RF5111/5112 and newer chips
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int
 ath5k_hw_rf511x_iq_calibrate(struct ath5k_hw *ah)
@@ -1777,6 +2217,7 @@ ath5k_hw_rf511x_iq_calibrate(struct ath5k_hw *ah)
 	s32 iq_corr, i_coff, i_coffd, q_coff, q_coffd;
 	int i;
 
+<<<<<<< HEAD
 	/* Skip if I/Q calibration is not needed or if it's still running */
 	if (!ah->ah_iq_cal_needed)
 		return -EINVAL;
@@ -1790,11 +2231,23 @@ ath5k_hw_rf511x_iq_calibrate(struct ath5k_hw *ah)
 
 	/* Work around for empty results which can apparently happen on 5212:
 	 * Read registers up to 10 times until we get both i_pr and q_pwr */
+=======
+	if (!ah->ah_calibration ||
+		ath5k_hw_reg_read(ah, AR5K_PHY_IQ) & AR5K_PHY_IQ_RUN)
+		return 0;
+
+	/* Calibration has finished, get the results and re-run */
+	/* work around empty results which can apparently happen on 5212 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i <= 10; i++) {
 		iq_corr = ath5k_hw_reg_read(ah, AR5K_PHY_IQRES_CAL_CORR);
 		i_pwr = ath5k_hw_reg_read(ah, AR5K_PHY_IQRES_CAL_PWR_I);
 		q_pwr = ath5k_hw_reg_read(ah, AR5K_PHY_IQRES_CAL_PWR_Q);
+<<<<<<< HEAD
 		ATH5K_DBG_UNLIMIT(ah, ATH5K_DEBUG_CALIBRATE,
+=======
+		ATH5K_DBG_UNLIMIT(ah->ah_sc, ATH5K_DEBUG_CALIBRATE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"iq_corr:%x i_pwr:%x q_pwr:%x", iq_corr, i_pwr, q_pwr);
 		if (i_pwr && q_pwr)
 			break;
@@ -1807,6 +2260,7 @@ ath5k_hw_rf511x_iq_calibrate(struct ath5k_hw *ah)
 	else
 		q_coffd = q_pwr >> 7;
 
+<<<<<<< HEAD
 	/* In case i_coffd became zero, cancel calibration
 	 * not only it's too small, it'll also result a divide
 	 * by zero later on. */
@@ -1814,6 +2268,11 @@ ath5k_hw_rf511x_iq_calibrate(struct ath5k_hw *ah)
 		return -ECANCELED;
 
 	/* Protect against loss of sign bits */
+=======
+	/* protect against divide by 0 and loss of sign bits */
+	if (i_coffd == 0 || q_coffd < 2)
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	i_coff = (-iq_corr) / i_coffd;
 	i_coff = clamp(i_coff, -32, 31); /* signed 6 bit */
@@ -1824,7 +2283,11 @@ ath5k_hw_rf511x_iq_calibrate(struct ath5k_hw *ah)
 		q_coff = (i_pwr / q_coffd) - 128;
 	q_coff = clamp(q_coff, -16, 15); /* signed 5 bit */
 
+<<<<<<< HEAD
 	ATH5K_DBG_UNLIMIT(ah, ATH5K_DEBUG_CALIBRATE,
+=======
+	ATH5K_DBG_UNLIMIT(ah->ah_sc, ATH5K_DEBUG_CALIBRATE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"new I:%d Q:%d (i_coffd:%x q_coffd:%x)",
 			i_coff, q_coff, i_coffd, q_coffd);
 
@@ -1842,6 +2305,7 @@ ath5k_hw_rf511x_iq_calibrate(struct ath5k_hw *ah)
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_phy_calibrate() - Perform a PHY calibration
  * @ah: The &struct ath5k_hw
@@ -1853,11 +2317,18 @@ ath5k_hw_rf511x_iq_calibrate(struct ath5k_hw *ah)
  */
 int
 ath5k_hw_phy_calibrate(struct ath5k_hw *ah,
+=======
+/*
+ * Perform a PHY calibration
+ */
+int ath5k_hw_phy_calibrate(struct ath5k_hw *ah,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct ieee80211_channel *channel)
 {
 	int ret;
 
 	if (ah->ah_radio == AR5K_RF5110)
+<<<<<<< HEAD
 		return ath5k_hw_rf5110_calibrate(ah, channel);
 
 	ret = ath5k_hw_rf511x_iq_calibrate(ah);
@@ -1882,6 +2353,13 @@ ath5k_hw_phy_calibrate(struct ath5k_hw *ah,
 	/* Update noise floor */
 	if (!(ah->ah_cal_mask & AR5K_CALIBRATION_NF))
 		ath5k_hw_update_noise_floor(ah);
+=======
+		ret = ath5k_hw_rf5110_calibrate(ah, channel);
+	else {
+		ret = ath5k_hw_rf511x_iq_calibrate(ah);
+		ath5k_hw_request_rfgain_probe(ah);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -1891,6 +2369,7 @@ ath5k_hw_phy_calibrate(struct ath5k_hw *ah,
 * Spur mitigation functions *
 \***************************/
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_set_spur_mitigation_filter() - Configure SPUR filter
  * @ah: The &struct ath5k_hw
@@ -1901,6 +2380,8 @@ ath5k_hw_phy_calibrate(struct ath5k_hw *ah,
  * generated due to "reflection" effects, for more information on this
  * method check out patent US7643810
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 ath5k_hw_set_spur_mitigation_filter(struct ath5k_hw *ah,
 				struct ieee80211_channel *channel)
@@ -1917,7 +2398,11 @@ ath5k_hw_set_spur_mitigation_filter(struct ath5k_hw *ah,
 	/* Convert current frequency to fbin value (the same way channels
 	 * are stored on EEPROM, check out ath5k_eeprom_bin2freq) and scale
 	 * up by 2 so we can compare it later */
+<<<<<<< HEAD
 	if (channel->band == IEEE80211_BAND_2GHZ) {
+=======
+	if (channel->hw_value & CHANNEL_2GHZ) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		chan_fbin = (channel->center_freq - 2300) * 10;
 		freq_band = AR5K_EEPROM_BAND_2GHZ;
 	} else {
@@ -1979,7 +2464,11 @@ ath5k_hw_set_spur_mitigation_filter(struct ath5k_hw *ah,
 			spur_freq_sigma_delta = (spur_delta_phase >> 10);
 			symbol_width = AR5K_SPUR_SYMBOL_WIDTH_BASE_100Hz / 4;
 		default:
+<<<<<<< HEAD
 			if (channel->band == IEEE80211_BAND_5GHZ) {
+=======
+			if (channel->hw_value == CHANNEL_A) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/* Both sample_freq and chip_freq are 40MHz */
 				spur_delta_phase = (spur_offset << 17) / 25;
 				spur_freq_sigma_delta =
@@ -2098,7 +2587,11 @@ ath5k_hw_set_spur_mitigation_filter(struct ath5k_hw *ah,
 
 	} else if (ath5k_hw_reg_read(ah, AR5K_PHY_IQ) &
 	AR5K_PHY_IQ_SPUR_FILT_EN) {
+<<<<<<< HEAD
 		/* Clean up spur mitigation settings and disable filter */
+=======
+		/* Clean up spur mitigation settings and disable fliter */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		AR5K_REG_WRITE_BITS(ah, AR5K_PHY_BIN_MASK_CTL,
 					AR5K_PHY_BIN_MASK_CTL_RATE, 0);
 		AR5K_REG_DISABLE_BITS(ah, AR5K_PHY_IQ,
@@ -2140,6 +2633,7 @@ ath5k_hw_set_spur_mitigation_filter(struct ath5k_hw *ah,
 * Antenna control *
 \*****************/
 
+<<<<<<< HEAD
 /**
  * DOC: Antenna control
  *
@@ -2196,17 +2690,25 @@ ath5k_hw_set_spur_mitigation_filter(struct ath5k_hw *ah,
  * @ant: Antenna number
  */
 static void
+=======
+static void /*TODO:Boundary check*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ath5k_hw_set_def_antenna(struct ath5k_hw *ah, u8 ant)
 {
 	if (ah->ah_version != AR5K_AR5210)
 		ath5k_hw_reg_write(ah, ant & 0x7, AR5K_DEFAULT_ANTENNA);
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_set_fast_div() -  Enable/disable fast rx antenna diversity
  * @ah: The &struct ath5k_hw
  * @ee_mode: One of enum ath5k_driver_mode
  * @enable: True to enable, false to disable
+=======
+/*
+ * Enable/disable fast rx antenna diversity
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void
 ath5k_hw_set_fast_div(struct ath5k_hw *ah, u8 ee_mode, bool enable)
@@ -2246,6 +2748,7 @@ ath5k_hw_set_fast_div(struct ath5k_hw *ah, u8 ee_mode, bool enable)
 	}
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_set_antenna_switch() - Set up antenna switch table
  * @ah: The &struct ath5k_hw
@@ -2254,6 +2757,8 @@ ath5k_hw_set_fast_div(struct ath5k_hw *ah, u8 ee_mode, bool enable)
  * Switch table comes from EEPROM and includes information on controlling
  * the 2 antenna RX attenuators
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void
 ath5k_hw_set_antenna_switch(struct ath5k_hw *ah, u8 ee_mode)
 {
@@ -2285,10 +2790,15 @@ ath5k_hw_set_antenna_switch(struct ath5k_hw *ah, u8 ee_mode)
 		AR5K_PHY_ANT_SWITCH_TABLE_1);
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_set_antenna_mode() -  Set antenna operating mode
  * @ah: The &struct ath5k_hw
  * @ant_mode: One of enum ath5k_ant_mode
+=======
+/*
+ * Set antenna operating mode
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void
 ath5k_hw_set_antenna_mode(struct ath5k_hw *ah, u8 ant_mode)
@@ -2311,7 +2821,11 @@ ath5k_hw_set_antenna_mode(struct ath5k_hw *ah, u8 ant_mode)
 
 	ee_mode = ath5k_eeprom_mode_from_channel(channel);
 	if (ee_mode < 0) {
+<<<<<<< HEAD
 		ATH5K_ERR(ah,
+=======
+		ATH5K_ERR(ah->ah_sc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"invalid channel: %d\n", channel->center_freq);
 		return;
 	}
@@ -2411,6 +2925,7 @@ ath5k_hw_set_antenna_mode(struct ath5k_hw *ah, u8 ant_mode)
  * Helper functions
  */
 
+<<<<<<< HEAD
 /**
  * ath5k_get_interpolated_value() - Get interpolated Y val between two points
  * @target: X value of the middle point
@@ -2418,6 +2933,10 @@ ath5k_hw_set_antenna_mode(struct ath5k_hw *ah, u8 ant_mode)
  * @x_right: X value of the right point
  * @y_left: Y value of the left point
  * @y_right: Y value of the right point
+=======
+/*
+ * Do linear interpolation between two given (x, y) points
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static s16
 ath5k_get_interpolated_value(s16 target, s16 x_left, s16 x_right,
@@ -2436,7 +2955,11 @@ ath5k_get_interpolated_value(s16 target, s16 x_left, s16 x_right,
 	 * always 1 instead of 1.25, 1.75 etc). We scale up by 100
 	 * to have some accuracy both for 0.5 and 0.25 steps.
 	 */
+<<<<<<< HEAD
 	ratio = ((100 * y_right - 100 * y_left) / (x_right - x_left));
+=======
+	ratio = ((100 * y_right - 100 * y_left)/(x_right - x_left));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Now scale down to be in range */
 	result = y_left + (ratio * (target - x_left) / 100);
@@ -2444,6 +2967,7 @@ ath5k_get_interpolated_value(s16 target, s16 x_left, s16 x_right,
 	return result;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_get_linear_pcdac_min() - Find vertical boundary (min pwr) for the
  * linear PCDAC curve
@@ -2456,6 +2980,15 @@ ath5k_get_interpolated_value(s16 target, s16 x_left, s16 x_right,
  * until we reach 1 (1 pcdac step) we need to know which point
  * (x value) that is so that we don't go below x axis and have negative
  * pcdac values when creating the curve, or fill the table with zeros.
+=======
+/*
+ * Find vertical boundary (min pwr) for the linear PCDAC curve.
+ *
+ * Since we have the top of the curve and we draw the line below
+ * until we reach 1 (1 pcdac step) we need to know which point
+ * (x value) that is so that we don't go below y axis and have negative
+ * pcdac values when creating the curve, or fill the table with zeroes.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static s16
 ath5k_get_linear_pcdac_min(const u8 *stepL, const u8 *stepR,
@@ -2501,6 +3034,7 @@ ath5k_get_linear_pcdac_min(const u8 *stepL, const u8 *stepR,
 	return max(min_pwrL, min_pwrR);
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_create_power_curve() - Create a Power to PDADC or PCDAC curve
  * @pmin: Minimum power value (xmin)
@@ -2511,6 +3045,9 @@ ath5k_get_linear_pcdac_min(const u8 *stepL, const u8 *stepR,
  * @vpd_table: Array to fill with the full PCDAC/PDADC values (y values)
  * @type: One of enum ath5k_powertable_type (eeprom.h)
  *
+=======
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Interpolate (pwr,vpd) points to create a Power to PDADC or a
  * Power to PCDAC curve.
  *
@@ -2529,7 +3066,11 @@ ath5k_create_power_curve(s16 pmin, s16 pmax,
 			u8 *vpd_table, u8 type)
 {
 	u8 idx[2] = { 0, 1 };
+<<<<<<< HEAD
 	s16 pwr_i = 2 * pmin;
+=======
+	s16 pwr_i = 2*pmin;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	if (num_points < 2)
@@ -2568,6 +3109,7 @@ ath5k_create_power_curve(s16 pmin, s16 pmax,
 	}
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_get_chan_pcal_surrounding_piers() - Get surrounding calibration piers
  * for a given channel.
@@ -2576,6 +3118,9 @@ ath5k_create_power_curve(s16 pmin, s16 pmax,
  * @pcinfo_l: The &struct ath5k_chan_pcal_info to put the left cal. pier
  * @pcinfo_r: The &struct ath5k_chan_pcal_info to put the right cal. pier
  *
+=======
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Get the surrounding per-channel power calibration piers
  * for a given frequency so that we can interpolate between
  * them and come up with an appropriate dataset for our current
@@ -2596,6 +3141,7 @@ ath5k_get_chan_pcal_surrounding_piers(struct ath5k_hw *ah,
 	idx_l = 0;
 	idx_r = 0;
 
+<<<<<<< HEAD
 	switch (channel->hw_value) {
 	case AR5K_EEPROM_MODE_11A:
 		pcinfo = ee->ee_pwr_cal_a;
@@ -2610,6 +3156,17 @@ ath5k_get_chan_pcal_surrounding_piers(struct ath5k_hw *ah,
 		pcinfo = ee->ee_pwr_cal_g;
 		mode = AR5K_EEPROM_MODE_11G;
 		break;
+=======
+	if (!(channel->hw_value & CHANNEL_OFDM)) {
+		pcinfo = ee->ee_pwr_cal_b;
+		mode = AR5K_EEPROM_MODE_11B;
+	} else if (channel->hw_value & CHANNEL_2GHZ) {
+		pcinfo = ee->ee_pwr_cal_g;
+		mode = AR5K_EEPROM_MODE_11G;
+	} else {
+		pcinfo = ee->ee_pwr_cal_a;
+		mode = AR5K_EEPROM_MODE_11A;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	max = ee->ee_n_piers[mode] - 1;
 
@@ -2658,6 +3215,7 @@ done:
 	*pcinfo_r = &pcinfo[idx_r];
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_get_rate_pcal_data() - Get the interpolated per-rate power
  * calibration data
@@ -2669,6 +3227,13 @@ done:
  * for a given frequency and interpolate between power
  * values to set max target power supported by hw for
  * each rate on this frequency.
+=======
+/*
+ * Get the surrounding per-rate power calibration data
+ * for a given frequency and interpolate between power
+ * values to set max target power supported by hw for
+ * each rate.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void
 ath5k_get_rate_pcal_data(struct ath5k_hw *ah,
@@ -2684,6 +3249,7 @@ ath5k_get_rate_pcal_data(struct ath5k_hw *ah,
 	idx_l = 0;
 	idx_r = 0;
 
+<<<<<<< HEAD
 	switch (channel->hw_value) {
 	case AR5K_MODE_11A:
 		rpinfo = ee->ee_rate_tpwr_a;
@@ -2698,6 +3264,17 @@ ath5k_get_rate_pcal_data(struct ath5k_hw *ah,
 		rpinfo = ee->ee_rate_tpwr_g;
 		mode = AR5K_EEPROM_MODE_11G;
 		break;
+=======
+	if (!(channel->hw_value & CHANNEL_OFDM)) {
+		rpinfo = ee->ee_rate_tpwr_b;
+		mode = AR5K_EEPROM_MODE_11B;
+	} else if (channel->hw_value & CHANNEL_2GHZ) {
+		rpinfo = ee->ee_rate_tpwr_g;
+		mode = AR5K_EEPROM_MODE_11G;
+	} else {
+		rpinfo = ee->ee_rate_tpwr_a;
+		mode = AR5K_EEPROM_MODE_11A;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	max = ee->ee_rate_target_pwr_num[mode] - 1;
 
@@ -2756,11 +3333,15 @@ done:
 					rpinfo[idx_r].target_power_54);
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_get_max_ctl_power() - Get max edge power for a given frequency
  * @ah: the &struct ath5k_hw
  * @channel: The &struct ieee80211_channel
  *
+=======
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Get the max edge power for this channel if
  * we have such data from EEPROM's Conformance Test
  * Limits (CTL), and limit max power if needed.
@@ -2782,22 +3363,39 @@ ath5k_get_max_ctl_power(struct ath5k_hw *ah,
 
 	ctl_mode = ath_regd_get_band_ctl(regulatory, channel->band);
 
+<<<<<<< HEAD
 	switch (channel->hw_value) {
 	case AR5K_MODE_11A:
+=======
+	switch (channel->hw_value & CHANNEL_MODES) {
+	case CHANNEL_A:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ah->ah_bwmode == AR5K_BWMODE_40MHZ)
 			ctl_mode |= AR5K_CTL_TURBO;
 		else
 			ctl_mode |= AR5K_CTL_11A;
 		break;
+<<<<<<< HEAD
 	case AR5K_MODE_11G:
+=======
+	case CHANNEL_G:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ah->ah_bwmode == AR5K_BWMODE_40MHZ)
 			ctl_mode |= AR5K_CTL_TURBOG;
 		else
 			ctl_mode |= AR5K_CTL_11G;
 		break;
+<<<<<<< HEAD
 	case AR5K_MODE_11B:
 		ctl_mode |= AR5K_CTL_11B;
 		break;
+=======
+	case CHANNEL_B:
+		ctl_mode |= AR5K_CTL_11B;
+		break;
+	case CHANNEL_XR:
+		/* Fall through */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return;
 	}
@@ -2832,7 +3430,11 @@ ath5k_get_max_ctl_power(struct ath5k_hw *ah,
 	}
 
 	if (edge_pwr)
+<<<<<<< HEAD
 		ah->ah_txpower.txp_max_pwr = 4 * min(edge_pwr, max_chan_pwr);
+=======
+		ah->ah_txpower.txp_max_pwr = 4*min(edge_pwr, max_chan_pwr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -2840,6 +3442,7 @@ ath5k_get_max_ctl_power(struct ath5k_hw *ah,
  * Power to PCDAC table functions
  */
 
+<<<<<<< HEAD
 /**
  * DOC: Power to PCDAC table functions
  *
@@ -2873,6 +3476,10 @@ ath5k_get_max_ctl_power(struct ath5k_hw *ah,
  * @ah: The &struct ath5k_hw
  * @table_min: Minimum power (x min)
  * @table_max: Maximum power (x max)
+=======
+/*
+ * Fill Power to PCDAC table on RF5111
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * No further processing is needed for RF5111, the only thing we have to
  * do is fill the values below and above calibration range since eeprom data
@@ -2882,7 +3489,11 @@ static void
 ath5k_fill_pwr_to_pcdac_table(struct ath5k_hw *ah, s16* table_min,
 							s16 *table_max)
 {
+<<<<<<< HEAD
 	u8	*pcdac_out = ah->ah_txpower.txp_pd_table;
+=======
+	u8 	*pcdac_out = ah->ah_txpower.txp_pd_table;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8	*pcdac_tmp = ah->ah_txpower.tmpL[0];
 	u8	pcdac_0, pcdac_n, pcdac_i, pwr_idx, i;
 	s16	min_pwr, max_pwr;
@@ -2901,8 +3512,13 @@ ath5k_fill_pwr_to_pcdac_table(struct ath5k_hw *ah, s16* table_min,
 
 	/* Copy values from pcdac_tmp */
 	pwr_idx = min_pwr;
+<<<<<<< HEAD
 	for (i = 0; pwr_idx <= max_pwr &&
 		    pcdac_i < AR5K_EEPROM_POWER_TABLE_SIZE; i++) {
+=======
+	for (i = 0 ; pwr_idx <= max_pwr &&
+	pcdac_i < AR5K_EEPROM_POWER_TABLE_SIZE; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pcdac_out[pcdac_i++] = pcdac_tmp[i];
 		pwr_idx++;
 	}
@@ -2913,6 +3529,7 @@ ath5k_fill_pwr_to_pcdac_table(struct ath5k_hw *ah, s16* table_min,
 
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_combine_linear_pcdac_curves() - Combine available PCDAC Curves
  * @ah: The &struct ath5k_hw
@@ -2921,6 +3538,12 @@ ath5k_fill_pwr_to_pcdac_table(struct ath5k_hw *ah, s16* table_min,
  * @pdcurves: Number of pd curves
  *
  * Combine available XPD Curves and fill Linear Power to PCDAC table on RF5112
+=======
+/*
+ * Combine available XPD Curves and fill Linear Power to PCDAC table
+ * on RF5112
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * RFX112 can have up to 2 curves (one for low txpower range and one for
  * higher txpower range). We need to put them both on pcdac_out and place
  * them in the correct location. In case we only have one curve available
@@ -2932,7 +3555,11 @@ static void
 ath5k_combine_linear_pcdac_curves(struct ath5k_hw *ah, s16* table_min,
 						s16 *table_max, u8 pdcurves)
 {
+<<<<<<< HEAD
 	u8	*pcdac_out = ah->ah_txpower.txp_pd_table;
+=======
+	u8 	*pcdac_out = ah->ah_txpower.txp_pd_table;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8	*pcdac_low_pwr;
 	u8	*pcdac_high_pwr;
 	u8	*pcdac_tmp;
@@ -2940,8 +3567,13 @@ ath5k_combine_linear_pcdac_curves(struct ath5k_hw *ah, s16* table_min,
 	s16	max_pwr_idx;
 	s16	min_pwr_idx;
 	s16	mid_pwr_idx = 0;
+<<<<<<< HEAD
 	/* Edge flag turns on the 7nth bit on the PCDAC
 	 * to declare the higher power curve (force values
+=======
+	/* Edge flag turs on the 7nth bit on the PCDAC
+	 * to delcare the higher power curve (force values
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * to be greater than 64). If we only have one curve
 	 * we don't need to set this, if we have 2 curves and
 	 * fill the table backwards this can also be used to
@@ -2982,7 +3614,11 @@ ath5k_combine_linear_pcdac_curves(struct ath5k_hw *ah, s16* table_min,
 	}
 
 	/* This is used when setting tx power*/
+<<<<<<< HEAD
 	ah->ah_txpower.txp_min_idx = min_pwr_idx / 2;
+=======
+	ah->ah_txpower.txp_min_idx = min_pwr_idx/2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Fill Power to PCDAC table backwards */
 	pwr = max_pwr_idx;
@@ -2991,6 +3627,7 @@ ath5k_combine_linear_pcdac_curves(struct ath5k_hw *ah, s16* table_min,
 		 * edge flag and set pcdac_tmp to lower
 		 * power curve.*/
 		if (edge_flag == 0x40 &&
+<<<<<<< HEAD
 		(2 * pwr <= (table_max[1] - table_min[0]) || pwr == 0)) {
 			edge_flag = 0x00;
 			pcdac_tmp = pcdac_low_pwr;
@@ -2999,6 +3636,16 @@ ath5k_combine_linear_pcdac_curves(struct ath5k_hw *ah, s16* table_min,
 
 		/* Don't go below 1, extrapolate below if we have
 		 * already switched to the lower power curve -or
+=======
+		(2*pwr <= (table_max[1] - table_min[0]) || pwr == 0)) {
+			edge_flag = 0x00;
+			pcdac_tmp = pcdac_low_pwr;
+			pwr = mid_pwr_idx/2;
+		}
+
+		/* Don't go below 1, extrapolate below if we have
+		 * already swithced to the lower power curve -or
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * we only have one curve and edge_flag is zero
 		 * anyway */
 		if (pcdac_tmp[pwr] < 1 && (edge_flag == 0x00)) {
@@ -3022,6 +3669,7 @@ ath5k_combine_linear_pcdac_curves(struct ath5k_hw *ah, s16* table_min,
 	}
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_write_pcdac_table() - Write the PCDAC values on hw
  * @ah: The &struct ath5k_hw
@@ -3030,6 +3678,13 @@ static void
 ath5k_write_pcdac_table(struct ath5k_hw *ah)
 {
 	u8	*pcdac_out = ah->ah_txpower.txp_pd_table;
+=======
+/* Write PCDAC values on hw */
+static void
+ath5k_write_pcdac_table(struct ath5k_hw *ah)
+{
+	u8 	*pcdac_out = ah->ah_txpower.txp_pd_table;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int	i;
 
 	/*
@@ -3037,8 +3692,13 @@ ath5k_write_pcdac_table(struct ath5k_hw *ah)
 	 */
 	for (i = 0; i < (AR5K_EEPROM_POWER_TABLE_SIZE / 2); i++) {
 		ath5k_hw_reg_write(ah,
+<<<<<<< HEAD
 			(((pcdac_out[2 * i + 0] << 8 | 0xff) & 0xffff) << 0) |
 			(((pcdac_out[2 * i + 1] << 8 | 0xff) & 0xffff) << 16),
+=======
+			(((pcdac_out[2*i + 0] << 8 | 0xff) & 0xffff) << 0) |
+			(((pcdac_out[2*i + 1] << 8 | 0xff) & 0xffff) << 16),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			AR5K_PHY_PCDAC_TXPOWER(i));
 	}
 }
@@ -3048,6 +3708,7 @@ ath5k_write_pcdac_table(struct ath5k_hw *ah)
  * Power to PDADC table functions
  */
 
+<<<<<<< HEAD
 /**
  * DOC: Power to PDADC table functions
  *
@@ -3074,6 +3735,11 @@ ath5k_write_pcdac_table(struct ath5k_hw *ah)
  * @pdcurves: Number of available curves
  *
  * Combine the various pd curves and create the final Power to PDADC table
+=======
+/*
+ * Set the gain boundaries and create final Power to PDADC table
+ *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * We can have up to 4 pd curves, we need to do a similar process
  * as we do for RF5112. This time we don't have an edge_flag but we
  * set the gain boundaries on a separate register.
@@ -3197,11 +3863,15 @@ ath5k_combine_pwr_to_pdadc_curves(struct ath5k_hw *ah,
 
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_write_pwr_to_pdadc_table() - Write the PDADC values on hw
  * @ah: The &struct ath5k_hw
  * @ee_mode: One of enum ath5k_driver_mode
  */
+=======
+/* Write PDADC values on hw */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 ath5k_write_pwr_to_pdadc_table(struct ath5k_hw *ah, u8 ee_mode)
 {
@@ -3248,8 +3918,17 @@ ath5k_write_pwr_to_pdadc_table(struct ath5k_hw *ah, u8 ee_mode)
 	 * Write TX power values
 	 */
 	for (i = 0; i < (AR5K_EEPROM_POWER_TABLE_SIZE / 2); i++) {
+<<<<<<< HEAD
 		u32 val = get_unaligned_le32(&pdadc_out[4 * i]);
 		ath5k_hw_reg_write(ah, val, AR5K_PHY_PDADC_TXPOWER(i));
+=======
+		ath5k_hw_reg_write(ah,
+			((pdadc_out[4*i + 0] & 0xff) << 0) |
+			((pdadc_out[4*i + 1] & 0xff) << 8) |
+			((pdadc_out[4*i + 2] & 0xff) << 16) |
+			((pdadc_out[4*i + 3] & 0xff) << 24),
+			AR5K_PHY_PDADC_TXPOWER(i));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -3258,6 +3937,7 @@ ath5k_write_pwr_to_pdadc_table(struct ath5k_hw *ah, u8 ee_mode)
  * Common code for PCDAC/PDADC tables
  */
 
+<<<<<<< HEAD
 /**
  * ath5k_setup_channel_powertable() - Set up power table for this channel
  * @ah: The &struct ath5k_hw
@@ -3268,6 +3948,12 @@ ath5k_write_pwr_to_pdadc_table(struct ath5k_hw *ah, u8 ee_mode)
  * This is the main function that uses all of the above
  * to set PCDAC/PDADC table on hw for the current channel.
  * This table is used for tx power calibration on the baseband,
+=======
+/*
+ * This is the main function that uses all of the above
+ * to set PCDAC/PDADC table on hw for the current channel.
+ * This table is used for tx power calibration on the basband,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * without it we get weird tx power levels and in some cases
  * distorted spectral mask
  */
@@ -3462,12 +4148,16 @@ ath5k_setup_channel_powertable(struct ath5k_hw *ah,
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_write_channel_powertable() - Set power table for current channel on hw
  * @ah: The &struct ath5k_hw
  * @ee_mode: One of enum ath5k_driver_mode
  * @type: One of enum ath5k_powertable_type (eeprom.h)
  */
+=======
+/* Write power table for current channel to hw */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 ath5k_write_channel_powertable(struct ath5k_hw *ah, u8 ee_mode, u8 type)
 {
@@ -3477,6 +4167,7 @@ ath5k_write_channel_powertable(struct ath5k_hw *ah, u8 ee_mode, u8 type)
 		ath5k_write_pcdac_table(ah);
 }
 
+<<<<<<< HEAD
 
 /**
  * DOC: Per-rate tx power setting
@@ -3495,10 +4186,31 @@ ath5k_write_channel_powertable(struct ath5k_hw *ah, u8 ee_mode, u8 type)
  *
  * Rate power table contains indices to PCDAC/PDADC table (0.5dB steps -
  * x values) and is indexed as follows:
+=======
+/*
+ * Per-rate tx power setting
+ *
+ * This is the code that sets the desired tx power (below
+ * maximum) on hw for each rate (we also have TPC that sets
+ * power per packet). We do that by providing an index on the
+ * PCDAC/PDADC table we set up.
+ */
+
+/*
+ * Set rate power table
+ *
+ * For now we only limit txpower based on maximum tx power
+ * supported by hw (what's inside rate_info). We need to limit
+ * this even more, based on regulatory domain etc.
+ *
+ * Rate power table contains indices to PCDAC/PDADC table (0.5dB steps)
+ * and is indexed as follows:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * rates[0] - rates[7] -> OFDM rates
  * rates[8] - rates[14] -> CCK rates
  * rates[15] -> XR rates (they all have the same power)
  */
+<<<<<<< HEAD
 
 /**
  * ath5k_setup_rate_powertable() - Set up rate power table for a given tx power
@@ -3507,6 +4219,8 @@ ath5k_write_channel_powertable(struct ath5k_hw *ah, u8 ee_mode, u8 type)
  * @rate_info: The &struct ath5k_rate_pcal_info to fill
  * @ee_mode: One of enum ath5k_driver_mode
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void
 ath5k_setup_rate_powertable(struct ath5k_hw *ah, u16 max_pwr,
 			struct ath5k_rate_pcal_info *rate_info,
@@ -3577,6 +4291,7 @@ ath5k_setup_rate_powertable(struct ath5k_hw *ah, u16 max_pwr,
 }
 
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_txpower() - Set transmission power limit for a given channel
  * @ah: The &struct ath5k_hw
@@ -3585,6 +4300,10 @@ ath5k_setup_rate_powertable(struct ath5k_hw *ah, u16 max_pwr,
  *
  * Combines all of the above to set the requested tx power limit
  * on hw.
+=======
+/*
+ * Set transmission power
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static int
 ath5k_hw_txpower(struct ath5k_hw *ah, struct ieee80211_channel *channel,
@@ -3597,13 +4316,21 @@ ath5k_hw_txpower(struct ath5k_hw *ah, struct ieee80211_channel *channel,
 	int ret;
 
 	if (txpower > AR5K_TUNE_MAX_TXPOWER) {
+<<<<<<< HEAD
 		ATH5K_ERR(ah, "invalid tx power: %u\n", txpower);
+=======
+		ATH5K_ERR(ah->ah_sc, "invalid tx power: %u\n", txpower);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
 	ee_mode = ath5k_eeprom_mode_from_channel(channel);
 	if (ee_mode < 0) {
+<<<<<<< HEAD
 		ATH5K_ERR(ah,
+=======
+		ATH5K_ERR(ah->ah_sc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"invalid channel: %d\n", channel->center_freq);
 		return -EINVAL;
 	}
@@ -3702,6 +4429,7 @@ ath5k_hw_txpower(struct ath5k_hw *ah, struct ieee80211_channel *channel,
 	return 0;
 }
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_set_txpower_limit() - Set txpower limit for the current channel
  * @ah: The &struct ath5k_hw
@@ -3714,16 +4442,25 @@ int
 ath5k_hw_set_txpower_limit(struct ath5k_hw *ah, u8 txpower)
 {
 	ATH5K_DBG(ah, ATH5K_DEBUG_TXPOWER,
+=======
+int ath5k_hw_set_txpower_limit(struct ath5k_hw *ah, u8 txpower)
+{
+	ATH5K_DBG(ah->ah_sc, ATH5K_DEBUG_TXPOWER,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"changing txpower to %d\n", txpower);
 
 	return ath5k_hw_txpower(ah, ah->ah_current_channel, txpower);
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*************\
  Init function
 \*************/
 
+<<<<<<< HEAD
 /**
  * ath5k_hw_phy_init() - Initialize PHY
  * @ah: The &struct ath5k_hw
@@ -3739,6 +4476,9 @@ ath5k_hw_set_txpower_limit(struct ath5k_hw *ah, u8 txpower)
  */
 int
 ath5k_hw_phy_init(struct ath5k_hw *ah, struct ieee80211_channel *channel,
+=======
+int ath5k_hw_phy_init(struct ath5k_hw *ah, struct ieee80211_channel *channel,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      u8 mode, bool fast)
 {
 	struct ieee80211_channel *curr_channel;
@@ -3794,7 +4534,11 @@ ath5k_hw_phy_init(struct ath5k_hw *ah, struct ieee80211_channel *channel,
 
 	/* Write OFDM timings on 5212*/
 	if (ah->ah_version == AR5K_AR5212 &&
+<<<<<<< HEAD
 		channel->hw_value != AR5K_MODE_11B) {
+=======
+		channel->hw_value & CHANNEL_OFDM) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ret = ath5k_hw_write_ofdm_timings(ah, channel);
 		if (ret)
@@ -3848,7 +4592,11 @@ ath5k_hw_phy_init(struct ath5k_hw *ah, struct ieee80211_channel *channel,
 		if (ret)
 			return ret;
 
+<<<<<<< HEAD
 		usleep_range(1000, 1500);
+=======
+		mdelay(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * Write RF buffer
@@ -3869,10 +4617,17 @@ ath5k_hw_phy_init(struct ath5k_hw *ah, struct ieee80211_channel *channel,
 		}
 
 	} else if (ah->ah_version == AR5K_AR5210) {
+<<<<<<< HEAD
 		usleep_range(1000, 1500);
 		/* Disable phy and wait */
 		ath5k_hw_reg_write(ah, AR5K_PHY_ACT_DISABLE, AR5K_PHY_ACT);
 		usleep_range(1000, 1500);
+=======
+		mdelay(1);
+		/* Disable phy and wait */
+		ath5k_hw_reg_write(ah, AR5K_PHY_ACT_DISABLE, AR5K_PHY_ACT);
+		mdelay(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Set channel on PHY */
@@ -3898,7 +4653,11 @@ ath5k_hw_phy_init(struct ath5k_hw *ah, struct ieee80211_channel *channel,
 	for (i = 0; i <= 20; i++) {
 		if (!(ath5k_hw_reg_read(ah, AR5K_PHY_ADC_TEST) & 0x10))
 			break;
+<<<<<<< HEAD
 		usleep_range(200, 250);
+=======
+		udelay(200);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	ath5k_hw_reg_write(ah, phy_tst1, AR5K_PHY_TST1);
 
@@ -3926,9 +4685,15 @@ ath5k_hw_phy_init(struct ath5k_hw *ah, struct ieee80211_channel *channel,
 
 	/* At the same time start I/Q calibration for QAM constellation
 	 * -no need for CCK- */
+<<<<<<< HEAD
 	ah->ah_iq_cal_needed = false;
 	if (!(mode == AR5K_MODE_11B)) {
 		ah->ah_iq_cal_needed = true;
+=======
+	ah->ah_calibration = false;
+	if (!(mode == AR5K_MODE_11B)) {
+		ah->ah_calibration = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		AR5K_REG_WRITE_BITS(ah, AR5K_PHY_IQ,
 				AR5K_PHY_IQ_CAL_NUM_LOG_MAX, 15);
 		AR5K_REG_ENABLE_BITS(ah, AR5K_PHY_IQ,
@@ -3939,7 +4704,11 @@ ath5k_hw_phy_init(struct ath5k_hw *ah, struct ieee80211_channel *channel,
 	 * during ath5k_phy_calibrate) */
 	if (ath5k_hw_register_timeout(ah, AR5K_PHY_AGCCTL,
 			AR5K_PHY_AGCCTL_CAL, 0, false)) {
+<<<<<<< HEAD
 		ATH5K_ERR(ah, "gain calibration timeout (%uMHz)\n",
+=======
+		ATH5K_ERR(ah->ah_sc, "gain calibration timeout (%uMHz)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			channel->center_freq);
 	}
 

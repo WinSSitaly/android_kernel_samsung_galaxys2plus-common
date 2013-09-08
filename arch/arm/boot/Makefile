@@ -11,6 +11,12 @@
 # Copyright (C) 1995-2002 Russell King
 #
 
+<<<<<<< HEAD
+=======
+MKIMAGE         := $(srctree)/scripts/mkuboot.sh
+MKDTB           := $(srctree)/scripts/mkdtb.sh
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ifneq ($(MACHINE),)
 include $(srctree)/$(MACHINE)/Makefile.boot
 endif
@@ -25,7 +31,23 @@ INITRD_PHYS := $(initrd_phys-y)
 
 export ZRELADDR INITRD_PHYS PARAMS_PHYS
 
+<<<<<<< HEAD
 targets := Image zImage xipImage bootpImage uImage
+=======
+targets := Image zImage xipImage bootpImage uImage dt-blob
+
+$(obj)/dt-blob: FORCE
+ifeq ($(CONFIG_KONA_ATAG_DT),y)
+	$(CONFIG_SHELL) $(MKDTB) $(srctree)/arch/arm/boot/dts/$(CONFIG_KONA_ATAG_DT_DTS_FILE).dts \
+				$(objtree)/arch/arm/boot/dt-blob
+	@echo '  dt-blob is ready.'
+else
+ifneq ($(wildcard $(objtree)/arch/arm/boot/dt-blob),)
+	rm -f $(objtree)/arch/arm/boot/dt-blob
+endif
+	@echo '  dt-blob is not needed.'
+endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 ifeq ($(CONFIG_XIP_KERNEL),y)
 
@@ -67,6 +89,7 @@ $(obj)/dtbs: $(addprefix $(obj)/, $(dtb-y))
 
 clean-files := *.dtb
 
+<<<<<<< HEAD
 ifneq ($(LOADADDR),)
   UIMAGE_LOADADDR=$(LOADADDR)
 else
@@ -87,6 +110,22 @@ fi
 
 $(obj)/uImage:	$(obj)/zImage FORCE
 	@$(check_for_multiple_loadaddr)
+=======
+quiet_cmd_uimage = UIMAGE  $@
+      cmd_uimage = $(CONFIG_SHELL) $(MKIMAGE) -A arm -O linux -T kernel \
+		   -C none -a $(LOADADDR) -e $(STARTADDR) \
+		   -n 'Linux-$(KERNELRELEASE)' -d $< $@
+
+ifeq ($(CONFIG_ZBOOT_ROM),y)
+$(obj)/uImage: LOADADDR=$(CONFIG_ZBOOT_ROM_TEXT)
+else
+$(obj)/uImage: LOADADDR=$(ZRELADDR)
+endif
+
+$(obj)/uImage: STARTADDR=$(LOADADDR)
+
+$(obj)/uImage:	$(obj)/zImage FORCE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	$(call if_changed,uimage)
 	@echo '  Image $@ is ready'
 

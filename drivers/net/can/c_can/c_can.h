@@ -76,7 +76,10 @@ struct c_can_priv {
 	unsigned int tx_next;
 	unsigned int tx_echo;
 	void *priv;		/* for board-specific data */
+<<<<<<< HEAD
 	u16 irqstatus;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct net_device *alloc_c_can_dev(void);

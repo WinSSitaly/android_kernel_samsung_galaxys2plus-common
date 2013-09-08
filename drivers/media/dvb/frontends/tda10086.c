@@ -267,7 +267,11 @@ static int tda10086_send_burst (struct dvb_frontend* fe, fe_sec_mini_cmd_t minic
 }
 
 static int tda10086_set_inversion(struct tda10086_state *state,
+<<<<<<< HEAD
 				  struct dtv_frontend_properties *fe_params)
+=======
+				  struct dvb_frontend_parameters *fe_params)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u8 invval = 0x80;
 
@@ -292,7 +296,11 @@ static int tda10086_set_inversion(struct tda10086_state *state,
 }
 
 static int tda10086_set_symbol_rate(struct tda10086_state *state,
+<<<<<<< HEAD
 				    struct dtv_frontend_properties *fe_params)
+=======
+				    struct dvb_frontend_parameters *fe_params)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u8 dfn = 0;
 	u8 afs = 0;
@@ -303,7 +311,11 @@ static int tda10086_set_symbol_rate(struct tda10086_state *state,
 	u32 tmp;
 	u32 bdr;
 	u32 bdri;
+<<<<<<< HEAD
 	u32 symbol_rate = fe_params->symbol_rate;
+=======
+	u32 symbol_rate = fe_params->u.qpsk.symbol_rate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dprintk ("%s %i\n", __func__, symbol_rate);
 
@@ -367,6 +379,7 @@ static int tda10086_set_symbol_rate(struct tda10086_state *state,
 }
 
 static int tda10086_set_fec(struct tda10086_state *state,
+<<<<<<< HEAD
 			    struct dtv_frontend_properties *fe_params)
 {
 	u8 fecval;
@@ -374,6 +387,15 @@ static int tda10086_set_fec(struct tda10086_state *state,
 	dprintk("%s %i\n", __func__, fe_params->fec_inner);
 
 	switch (fe_params->fec_inner) {
+=======
+			    struct dvb_frontend_parameters *fe_params)
+{
+	u8 fecval;
+
+	dprintk ("%s %i\n", __func__, fe_params->u.qpsk.fec_inner);
+
+	switch(fe_params->u.qpsk.fec_inner) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case FEC_1_2:
 		fecval = 0x00;
 		break;
@@ -409,9 +431,15 @@ static int tda10086_set_fec(struct tda10086_state *state,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int tda10086_set_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *fe_params = &fe->dtv_property_cache;
+=======
+static int tda10086_set_frontend(struct dvb_frontend* fe,
+				 struct dvb_frontend_parameters *fe_params)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct tda10086_state *state = fe->demodulator_priv;
 	int ret;
 	u32 freq = 0;
@@ -425,7 +453,11 @@ static int tda10086_set_frontend(struct dvb_frontend *fe)
 
 	/* set params */
 	if (fe->ops.tuner_ops.set_params) {
+<<<<<<< HEAD
 		fe->ops.tuner_ops.set_params(fe);
+=======
+		fe->ops.tuner_ops.set_params(fe, fe_params);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 0);
 
@@ -452,14 +484,23 @@ static int tda10086_set_frontend(struct dvb_frontend *fe)
 	tda10086_write_mask(state, 0x10, 0x40, 0x40);
 	tda10086_write_mask(state, 0x00, 0x01, 0x00);
 
+<<<<<<< HEAD
 	state->symbol_rate = fe_params->symbol_rate;
+=======
+	state->symbol_rate = fe_params->u.qpsk.symbol_rate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	state->frequency = fe_params->frequency;
 	return 0;
 }
 
+<<<<<<< HEAD
 static int tda10086_get_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *fe_params = &fe->dtv_property_cache;
+=======
+static int tda10086_get_frontend(struct dvb_frontend* fe, struct dvb_frontend_parameters *fe_params)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct tda10086_state* state = fe->demodulator_priv;
 	u8 val;
 	int tmp;
@@ -468,7 +509,11 @@ static int tda10086_get_frontend(struct dvb_frontend *fe)
 	dprintk ("%s\n", __func__);
 
 	/* check for invalid symbol rate */
+<<<<<<< HEAD
 	if (fe_params->symbol_rate < 500000)
+=======
+	if (fe_params->u.qpsk.symbol_rate < 500000)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	/* calculate the updated frequency (note: we convert from Hz->kHz) */
@@ -517,12 +562,17 @@ static int tda10086_get_frontend(struct dvb_frontend *fe)
 		tmp |= 0xffffff00;
 	tmp = (tmp * 480 * (1<<1)) / 128;
 	tmp = ((state->symbol_rate/1000) * tmp) / (1000000/1000);
+<<<<<<< HEAD
 	fe_params->symbol_rate = state->symbol_rate + tmp;
+=======
+	fe_params->u.qpsk.symbol_rate = state->symbol_rate + tmp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* the FEC */
 	val = (tda10086_read_byte(state, 0x0d) & 0x70) >> 4;
 	switch(val) {
 	case 0x00:
+<<<<<<< HEAD
 		fe_params->fec_inner = FEC_1_2;
 		break;
 	case 0x01:
@@ -545,6 +595,30 @@ static int tda10086_get_frontend(struct dvb_frontend *fe)
 		break;
 	case 0x07:
 		fe_params->fec_inner = FEC_8_9;
+=======
+		fe_params->u.qpsk.fec_inner = FEC_1_2;
+		break;
+	case 0x01:
+		fe_params->u.qpsk.fec_inner = FEC_2_3;
+		break;
+	case 0x02:
+		fe_params->u.qpsk.fec_inner = FEC_3_4;
+		break;
+	case 0x03:
+		fe_params->u.qpsk.fec_inner = FEC_4_5;
+		break;
+	case 0x04:
+		fe_params->u.qpsk.fec_inner = FEC_5_6;
+		break;
+	case 0x05:
+		fe_params->u.qpsk.fec_inner = FEC_6_7;
+		break;
+	case 0x06:
+		fe_params->u.qpsk.fec_inner = FEC_7_8;
+		break;
+	case 0x07:
+		fe_params->u.qpsk.fec_inner = FEC_8_9;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -665,6 +739,7 @@ static int tda10086_i2c_gate_ctrl(struct dvb_frontend* fe, int enable)
 
 static int tda10086_get_tune_settings(struct dvb_frontend* fe, struct dvb_frontend_tune_settings* fesettings)
 {
+<<<<<<< HEAD
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
 
 	if (p->symbol_rate > 20000000) {
@@ -690,6 +765,31 @@ static int tda10086_get_tune_settings(struct dvb_frontend* fe, struct dvb_fronte
 	} else {
 		fesettings->min_delay_ms = 200;
 		fesettings->step_size =  p->symbol_rate / 8000;
+=======
+	if (fesettings->parameters.u.qpsk.symbol_rate > 20000000) {
+		fesettings->min_delay_ms = 50;
+		fesettings->step_size = 2000;
+		fesettings->max_drift = 8000;
+	} else if (fesettings->parameters.u.qpsk.symbol_rate > 12000000) {
+		fesettings->min_delay_ms = 100;
+		fesettings->step_size = 1500;
+		fesettings->max_drift = 9000;
+	} else if (fesettings->parameters.u.qpsk.symbol_rate > 8000000) {
+		fesettings->min_delay_ms = 100;
+		fesettings->step_size = 1000;
+		fesettings->max_drift = 8000;
+	} else if (fesettings->parameters.u.qpsk.symbol_rate > 4000000) {
+		fesettings->min_delay_ms = 100;
+		fesettings->step_size = 500;
+		fesettings->max_drift = 7000;
+	} else if (fesettings->parameters.u.qpsk.symbol_rate > 2000000) {
+		fesettings->min_delay_ms = 200;
+		fesettings->step_size = (fesettings->parameters.u.qpsk.symbol_rate / 8000);
+		fesettings->max_drift = 14 * fesettings->step_size;
+	} else {
+		fesettings->min_delay_ms = 200;
+		fesettings->step_size = (fesettings->parameters.u.qpsk.symbol_rate / 8000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		fesettings->max_drift = 18 * fesettings->step_size;
 	}
 
@@ -704,9 +804,16 @@ static void tda10086_release(struct dvb_frontend* fe)
 }
 
 static struct dvb_frontend_ops tda10086_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_DVBS },
 	.info = {
 		.name     = "Philips TDA10086 DVB-S",
+=======
+
+	.info = {
+		.name     = "Philips TDA10086 DVB-S",
+		.type     = FE_QPSK,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min    = 950000,
 		.frequency_max    = 2150000,
 		.frequency_stepsize = 125,     /* kHz for QPSK frontends */

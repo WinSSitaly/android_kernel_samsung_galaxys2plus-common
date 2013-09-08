@@ -1,6 +1,7 @@
 #ifndef __LINUX_MFD_TPS6586X_H
 #define __LINUX_MFD_TPS6586X_H
 
+<<<<<<< HEAD
 #define TPS6586X_SLEW_RATE_INSTANTLY	0x00
 #define TPS6586X_SLEW_RATE_110UV	0x01
 #define TPS6586X_SLEW_RATE_220UV	0x02
@@ -13,6 +14,8 @@
 #define TPS6586X_SLEW_RATE_SET		0x08
 #define TPS6586X_SLEW_RATE_MASK         0x07
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum {
 	TPS6586X_ID_SM_0,
 	TPS6586X_ID_SM_1,
@@ -60,10 +63,13 @@ enum {
 	TPS6586X_INT_RTC_ALM2,
 };
 
+<<<<<<< HEAD
 struct tps6586x_settings {
 	int slew_rate;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct tps6586x_subdev_info {
 	int		id;
 	const char	*name;

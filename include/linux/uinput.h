@@ -68,7 +68,11 @@ struct uinput_device {
 	unsigned char		head;
 	unsigned char		tail;
 	struct input_event	buff[UINPUT_BUFFER_SIZE];
+<<<<<<< HEAD
 	unsigned int		ff_effects_max;
+=======
+	int			ff_effects_max;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	struct uinput_request	*requests[UINPUT_NUM_REQUESTS];
 	wait_queue_head_t	requests_waitq;

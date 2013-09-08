@@ -5,6 +5,7 @@
 #define _TRACE_WRITEBACK_H
 
 #include <linux/backing-dev.h>
+<<<<<<< HEAD
 #include <linux/writeback.h>
 
 #define show_inode_state(state)					\
@@ -30,6 +31,11 @@
 		{WB_REASON_FS_FREE_SPACE,	"fs_free_space"},	\
 		{WB_REASON_FORKER_THREAD,	"forker_thread"}
 
+=======
+#include <linux/device.h>
+#include <linux/writeback.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct wb_writeback_work;
 
 DECLARE_EVENT_CLASS(writeback_work_class,
@@ -43,7 +49,10 @@ DECLARE_EVENT_CLASS(writeback_work_class,
 		__field(int, for_kupdate)
 		__field(int, range_cyclic)
 		__field(int, for_background)
+<<<<<<< HEAD
 		__field(int, reason)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	),
 	TP_fast_assign(
 		struct device *dev = bdi->dev;
@@ -56,18 +65,28 @@ DECLARE_EVENT_CLASS(writeback_work_class,
 		__entry->for_kupdate = work->for_kupdate;
 		__entry->range_cyclic = work->range_cyclic;
 		__entry->for_background	= work->for_background;
+<<<<<<< HEAD
 		__entry->reason = work->reason;
 	),
 	TP_printk("bdi %s: sb_dev %d:%d nr_pages=%ld sync_mode=%d "
 		  "kupdate=%d range_cyclic=%d background=%d reason=%s",
+=======
+	),
+	TP_printk("bdi %s: sb_dev %d:%d nr_pages=%ld sync_mode=%d "
+		  "kupdate=%d range_cyclic=%d background=%d",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  __entry->name,
 		  MAJOR(__entry->sb_dev), MINOR(__entry->sb_dev),
 		  __entry->nr_pages,
 		  __entry->sync_mode,
 		  __entry->for_kupdate,
 		  __entry->range_cyclic,
+<<<<<<< HEAD
 		  __entry->for_background,
 		  __print_symbolic(__entry->reason, WB_WORK_REASON)
+=======
+		  __entry->for_background
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	)
 );
 #define DEFINE_WRITEBACK_WORK_EVENT(name) \
@@ -77,9 +96,12 @@ DEFINE_EVENT(writeback_work_class, name, \
 DEFINE_WRITEBACK_WORK_EVENT(writeback_nothread);
 DEFINE_WRITEBACK_WORK_EVENT(writeback_queue);
 DEFINE_WRITEBACK_WORK_EVENT(writeback_exec);
+<<<<<<< HEAD
 DEFINE_WRITEBACK_WORK_EVENT(writeback_start);
 DEFINE_WRITEBACK_WORK_EVENT(writeback_written);
 DEFINE_WRITEBACK_WORK_EVENT(writeback_wait);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 TRACE_EVENT(writeback_pages_written,
 	TP_PROTO(long pages_written),
@@ -132,6 +154,11 @@ DECLARE_EVENT_CLASS(wbc_class,
 		__field(int, for_background)
 		__field(int, for_reclaim)
 		__field(int, range_cyclic)
+<<<<<<< HEAD
+=======
+		__field(int, more_io)
+		__field(unsigned long, older_than_this)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__field(long, range_start)
 		__field(long, range_end)
 	),
@@ -145,12 +172,22 @@ DECLARE_EVENT_CLASS(wbc_class,
 		__entry->for_background	= wbc->for_background;
 		__entry->for_reclaim	= wbc->for_reclaim;
 		__entry->range_cyclic	= wbc->range_cyclic;
+<<<<<<< HEAD
+=======
+		__entry->more_io	= wbc->more_io;
+		__entry->older_than_this = wbc->older_than_this ?
+						*wbc->older_than_this : 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__entry->range_start	= (long)wbc->range_start;
 		__entry->range_end	= (long)wbc->range_end;
 	),
 
 	TP_printk("bdi %s: towrt=%ld skip=%ld mode=%d kupd=%d "
+<<<<<<< HEAD
 		"bgrd=%d reclm=%d cyclic=%d "
+=======
+		"bgrd=%d reclm=%d cyclic=%d more=%d older=0x%lx "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"start=0x%lx end=0x%lx",
 		__entry->name,
 		__entry->nr_to_write,
@@ -160,6 +197,11 @@ DECLARE_EVENT_CLASS(wbc_class,
 		__entry->for_background,
 		__entry->for_reclaim,
 		__entry->range_cyclic,
+<<<<<<< HEAD
+=======
+		__entry->more_io,
+		__entry->older_than_this,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__entry->range_start,
 		__entry->range_end)
 )
@@ -168,6 +210,7 @@ DECLARE_EVENT_CLASS(wbc_class,
 DEFINE_EVENT(wbc_class, name, \
 	TP_PROTO(struct writeback_control *wbc, struct backing_dev_info *bdi), \
 	TP_ARGS(wbc, bdi))
+<<<<<<< HEAD
 DEFINE_WBC_EVENT(wbc_writepage);
 
 TRACE_EVENT(writeback_queue_io,
@@ -372,6 +415,16 @@ TRACE_EVENT(balance_dirty_pages,
 	  )
 );
 
+=======
+DEFINE_WBC_EVENT(wbc_writeback_start);
+DEFINE_WBC_EVENT(wbc_writeback_written);
+DEFINE_WBC_EVENT(wbc_writeback_wait);
+DEFINE_WBC_EVENT(wbc_balance_dirty_start);
+DEFINE_WBC_EVENT(wbc_balance_dirty_written);
+DEFINE_WBC_EVENT(wbc_balance_dirty_wait);
+DEFINE_WBC_EVENT(wbc_writepage);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 DECLARE_EVENT_CLASS(writeback_congest_waited_template,
 
 	TP_PROTO(unsigned int usec_timeout, unsigned int usec_delayed),
@@ -407,6 +460,7 @@ DEFINE_EVENT(writeback_congest_waited_template, writeback_wait_iff_congested,
 	TP_ARGS(usec_timeout, usec_delayed)
 );
 
+<<<<<<< HEAD
 DECLARE_EVENT_CLASS(writeback_single_inode_template,
 
 	TP_PROTO(struct inode *inode,
@@ -464,6 +518,8 @@ DEFINE_EVENT(writeback_single_inode_template, writeback_single_inode,
 	TP_ARGS(inode, wbc, nr_to_write)
 );
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _TRACE_WRITEBACK_H */
 
 /* This part must be outside protection */

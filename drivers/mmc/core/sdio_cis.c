@@ -132,7 +132,11 @@ static int cis_tpl_parse(struct mmc_card *card, struct sdio_func *func,
 			ret = -EINVAL;
 		}
 		if (ret && ret != -EILSEQ && ret != -ENOENT) {
+<<<<<<< HEAD
 			pr_err("%s: bad %s tuple 0x%02x (%u bytes)\n",
+=======
+			printk(KERN_ERR "%s: bad %s tuple 0x%02x (%u bytes)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       mmc_hostname(card->host), tpl_descr, code, size);
 		}
 	} else {
@@ -313,7 +317,11 @@ static int sdio_read_cis(struct mmc_card *card, struct sdio_func *func)
 
 			if (ret == -ENOENT) {
 				/* warn about unknown tuples */
+<<<<<<< HEAD
 				pr_warning("%s: queuing unknown"
+=======
+				printk(KERN_WARNING "%s: queuing unknown"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				       " CIS tuple 0x%02x (%u bytes)\n",
 				       mmc_hostname(card->host),
 				       tpl_code, tpl_link);

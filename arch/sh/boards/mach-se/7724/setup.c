@@ -23,13 +23,20 @@
 #include <linux/input.h>
 #include <linux/input/sh_keysc.h>
 #include <linux/usb/r8a66597.h>
+<<<<<<< HEAD
 #include <linux/sh_eth.h>
 #include <linux/videodev2.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <video/sh_mobile_lcdc.h>
 #include <media/sh_mobile_ceu.h>
 #include <sound/sh_fsi.h>
 #include <asm/io.h>
 #include <asm/heartbeat.h>
+<<<<<<< HEAD
+=======
+#include <asm/sh_eth.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/clock.h>
 #include <asm/suspend.h>
 #include <cpu/sh7724.h>
@@ -146,7 +153,11 @@ static struct platform_device nor_flash_device = {
 };
 
 /* LCDC */
+<<<<<<< HEAD
 static const struct fb_videomode lcdc_720p_modes[] = {
+=======
+const static struct fb_videomode lcdc_720p_modes[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.name		= "LB070WV1",
 		.sync		= 0, /* hsync and vsync are active low */
@@ -161,7 +172,11 @@ static const struct fb_videomode lcdc_720p_modes[] = {
 	},
 };
 
+<<<<<<< HEAD
 static const struct fb_videomode lcdc_vga_modes[] = {
+=======
+const static struct fb_videomode lcdc_vga_modes[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{
 		.name		= "LB070WV1",
 		.sync		= 0, /* hsync and vsync are active low */
@@ -180,12 +195,23 @@ static struct sh_mobile_lcdc_info lcdc_info = {
 	.clock_source = LCDC_CLK_EXTERNAL,
 	.ch[0] = {
 		.chan = LCDC_CHAN_MAINLCD,
+<<<<<<< HEAD
 		.fourcc = V4L2_PIX_FMT_RGB565,
 		.clock_divider = 1,
 		.panel_cfg = { /* 7.0 inch */
 			.width = 152,
 			.height = 91,
 		},
+=======
+		.bpp = 16,
+		.clock_divider = 1,
+		.lcd_size_cfg = { /* 7.0 inch */
+			.width = 152,
+			.height = 91,
+		},
+		.board_cfg = {
+		},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 };
 
@@ -209,6 +235,12 @@ static struct platform_device lcdc_device = {
 	.dev		= {
 		.platform_data	= &lcdc_info,
 	},
+<<<<<<< HEAD
+=======
+	.archdata = {
+		.hwblk_id = HWBLK_LCDC,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* CEU0 */
@@ -240,6 +272,12 @@ static struct platform_device ceu0_device = {
 	.dev	= {
 		.platform_data	= &sh_mobile_ceu0_info,
 	},
+<<<<<<< HEAD
+=======
+	.archdata = {
+		.hwblk_id = HWBLK_CEU0,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* CEU1 */
@@ -271,14 +309,24 @@ static struct platform_device ceu1_device = {
 	.dev	= {
 		.platform_data	= &sh_mobile_ceu1_info,
 	},
+<<<<<<< HEAD
+=======
+	.archdata = {
+		.hwblk_id = HWBLK_CEU1,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* FSI */
 /* change J20, J21, J22 pin to 1-2 connection to use slave mode */
 static struct sh_fsi_platform_info fsi_info = {
+<<<<<<< HEAD
 	.port_a = {
 		.flags = SH_FSI_BRS_INV,
 	},
+=======
+	.porta_flags = SH_FSI_BRS_INV,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct resource fsi_resources[] = {
@@ -302,6 +350,7 @@ static struct platform_device fsi_device = {
 	.dev	= {
 		.platform_data	= &fsi_info,
 	},
+<<<<<<< HEAD
 };
 
 static struct fsi_ak4642_info fsi_ak4642_info = {
@@ -318,6 +367,15 @@ static struct platform_device fsi_ak4642_device = {
 	.dev	= {
 		.platform_data	= &fsi_ak4642_info,
 	},
+=======
+	.archdata = {
+		.hwblk_id = HWBLK_SPU, /* FSI needs SPU hwblk */
+	},
+};
+
+static struct platform_device fsi_ak4642_device = {
+	.name		= "sh_fsi_a_ak4642",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* KEYSC in SoC (Needs SW33-2 set to ON) */
@@ -356,6 +414,12 @@ static struct platform_device keysc_device = {
 	.dev	= {
 		.platform_data	= &keysc_info,
 	},
+<<<<<<< HEAD
+=======
+	.archdata = {
+		.hwblk_id = HWBLK_KEYSC,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* SH Eth */
@@ -384,6 +448,12 @@ static struct platform_device sh_eth_device = {
 	},
 	.num_resources = ARRAY_SIZE(sh_eth_resources),
 	.resource = sh_eth_resources,
+<<<<<<< HEAD
+=======
+	.archdata = {
+		.hwblk_id = HWBLK_ETHER,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct r8a66597_platdata sh7724_usb0_host_data = {
@@ -413,6 +483,12 @@ static struct platform_device sh7724_usb0_host_device = {
 	},
 	.num_resources	= ARRAY_SIZE(sh7724_usb0_host_resources),
 	.resource	= sh7724_usb0_host_resources,
+<<<<<<< HEAD
+=======
+	.archdata = {
+		.hwblk_id = HWBLK_USB0,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct r8a66597_platdata sh7724_usb1_gadget_data = {
@@ -471,6 +547,12 @@ static struct platform_device sdhi0_cn7_device = {
 	.dev = {
 		.platform_data	= &sh7724_sdhi0_data,
 	},
+<<<<<<< HEAD
+=======
+	.archdata = {
+		.hwblk_id = HWBLK_SDHI0,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct resource sdhi1_cn8_resources[] = {
@@ -500,6 +582,12 @@ static struct platform_device sdhi1_cn8_device = {
 	.dev = {
 		.platform_data	= &sh7724_sdhi1_data,
 	},
+<<<<<<< HEAD
+=======
+	.archdata = {
+		.hwblk_id = HWBLK_SDHI1,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* IrDA */
@@ -562,6 +650,12 @@ static struct platform_device vou_device = {
 	.dev		= {
 		.platform_data	= &sh_vou_pdata,
 	},
+<<<<<<< HEAD
+=======
+	.archdata	= {
+		.hwblk_id	= HWBLK_VOU,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device *ms7724se_devices[] __initdata = {
@@ -888,12 +982,21 @@ static int __init devices_setup(void)
 
 	if (sw & SW41_B) {
 		/* 720p */
+<<<<<<< HEAD
 		lcdc_info.ch[0].lcd_modes = lcdc_720p_modes;
 		lcdc_info.ch[0].num_modes = ARRAY_SIZE(lcdc_720p_modes);
 	} else {
 		/* VGA */
 		lcdc_info.ch[0].lcd_modes = lcdc_vga_modes;
 		lcdc_info.ch[0].num_modes = ARRAY_SIZE(lcdc_vga_modes);
+=======
+		lcdc_info.ch[0].lcd_cfg	= lcdc_720p_modes;
+		lcdc_info.ch[0].num_cfg	= ARRAY_SIZE(lcdc_720p_modes);
+	} else {
+		/* VGA */
+		lcdc_info.ch[0].lcd_cfg	= lcdc_vga_modes;
+		lcdc_info.ch[0].num_cfg	= ARRAY_SIZE(lcdc_vga_modes);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (sw & SW41_A) {

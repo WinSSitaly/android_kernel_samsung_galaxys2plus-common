@@ -42,7 +42,11 @@
 #include <linux/mutex.h>
 #include <linux/err.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define CONFIGFS_ITEM_NAME_LEN	20
 
@@ -124,7 +128,11 @@ extern struct config_item *config_group_find_item(struct config_group *,
 struct configfs_attribute {
 	const char		*ca_name;
 	struct module 		*ca_owner;
+<<<<<<< HEAD
 	umode_t			ca_mode;
+=======
+	mode_t			ca_mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*

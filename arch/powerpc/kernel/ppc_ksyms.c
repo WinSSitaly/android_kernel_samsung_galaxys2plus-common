@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/threads.h>
 #include <linux/smp.h>
 #include <linux/sched.h>
@@ -18,7 +22,11 @@
 #include <asm/cacheflush.h>
 #include <asm/uaccess.h>
 #include <asm/io.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/checksum.h>
 #include <asm/pgtable.h>
 #include <asm/tlbflush.h>
@@ -26,6 +34,10 @@
 #include <linux/cuda.h>
 #include <linux/pmu.h>
 #include <asm/prom.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/pci-bridge.h>
 #include <asm/irq.h>
 #include <asm/pmac_feature.h>
@@ -42,7 +54,10 @@
 #include <asm/signal.h>
 #include <asm/dcr.h>
 #include <asm/ftrace.h>
+<<<<<<< HEAD
 #include <asm/switch_to.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_PPC32
 extern void transfer_to_handler(void);

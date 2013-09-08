@@ -14,9 +14,23 @@
 #include "dlm_internal.h"
 #include "lock.h"
 #include "user.h"
+<<<<<<< HEAD
 
 static uint64_t			dlm_cb_seq;
 static spinlock_t		dlm_cb_seq_spin;
+=======
+#include "ast.h"
+
+#define WAKE_ASTS  0
+
+static uint64_t			ast_seq_count;
+static struct list_head		ast_queue;
+static spinlock_t		ast_queue_lock;
+static struct task_struct *	astd_task;
+static unsigned long		astd_wakeflags;
+static struct mutex		astd_running;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void dlm_dump_lkb_callbacks(struct dlm_lkb *lkb)
 {
@@ -49,13 +63,28 @@ static void dlm_dump_lkb_callbacks(struct dlm_lkb *lkb)
 	}
 }
 
+<<<<<<< HEAD
+=======
+void dlm_del_ast(struct dlm_lkb *lkb)
+{
+	spin_lock(&ast_queue_lock);
+	if (!list_empty(&lkb->lkb_astqueue))
+		list_del_init(&lkb->lkb_astqueue);
+	spin_unlock(&ast_queue_lock);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int dlm_add_lkb_callback(struct dlm_lkb *lkb, uint32_t flags, int mode,
 			 int status, uint32_t sbflags, uint64_t seq)
 {
 	struct dlm_ls *ls = lkb->lkb_resource->res_ls;
 	uint64_t prev_seq;
 	int prev_mode;
+<<<<<<< HEAD
 	int i, rv;
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < DLM_CALLBACKS_SIZE; i++) {
 		if (lkb->lkb_callbacks[i].seq)
@@ -84,8 +113,12 @@ int dlm_add_lkb_callback(struct dlm_lkb *lkb, uint32_t flags, int mode,
 					  mode,
 					  (unsigned long long)prev_seq,
 					  prev_mode);
+<<<<<<< HEAD
 				rv = 0;
 				goto out;
+=======
+				return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
@@ -94,7 +127,10 @@ int dlm_add_lkb_callback(struct dlm_lkb *lkb, uint32_t flags, int mode,
 		lkb->lkb_callbacks[i].mode = mode;
 		lkb->lkb_callbacks[i].sb_status = status;
 		lkb->lkb_callbacks[i].sb_flags = (sbflags & 0x000000FF);
+<<<<<<< HEAD
 		rv = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
@@ -103,16 +139,24 @@ int dlm_add_lkb_callback(struct dlm_lkb *lkb, uint32_t flags, int mode,
 			  lkb->lkb_id, (unsigned long long)seq,
 			  flags, mode, status, sbflags);
 		dlm_dump_lkb_callbacks(lkb);
+<<<<<<< HEAD
 		rv = -1;
 		goto out;
 	}
  out:
 	return rv;
+=======
+		return -1;
+	}
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int dlm_rem_lkb_callback(struct dlm_ls *ls, struct dlm_lkb *lkb,
 			 struct dlm_callback *cb, int *resid)
 {
+<<<<<<< HEAD
 	int i, rv;
 
 	*resid = 0;
@@ -121,6 +165,14 @@ int dlm_rem_lkb_callback(struct dlm_ls *ls, struct dlm_lkb *lkb,
 		rv = -ENOENT;
 		goto out;
 	}
+=======
+	int i;
+
+	*resid = 0;
+
+	if (!lkb->lkb_callbacks[0].seq)
+		return -ENOENT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* oldest undelivered cb is callbacks[0] */
 
@@ -152,8 +204,12 @@ int dlm_rem_lkb_callback(struct dlm_ls *ls, struct dlm_lkb *lkb,
 				  cb->mode,
 				  (unsigned long long)lkb->lkb_last_cast.seq,
 				  lkb->lkb_last_cast.mode);
+<<<<<<< HEAD
 			rv = 0;
 			goto out;
+=======
+			return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -166,6 +222,7 @@ int dlm_rem_lkb_callback(struct dlm_ls *ls, struct dlm_lkb *lkb,
 		memcpy(&lkb->lkb_last_bast, cb, sizeof(struct dlm_callback));
 		lkb->lkb_last_bast_time = ktime_get();
 	}
+<<<<<<< HEAD
 	rv = 0;
  out:
 	return rv;
@@ -213,11 +270,55 @@ void dlm_callback_work(struct work_struct *work)
 {
 	struct dlm_lkb *lkb = container_of(work, struct dlm_lkb, lkb_cb_work);
 	struct dlm_ls *ls = lkb->lkb_resource->res_ls;
+=======
+
+	return 0;
+}
+
+void dlm_add_ast(struct dlm_lkb *lkb, uint32_t flags, int mode, int status,
+		 uint32_t sbflags)
+{
+	uint64_t seq;
+	int rv;
+
+	spin_lock(&ast_queue_lock);
+
+	seq = ++ast_seq_count;
+
+	if (lkb->lkb_flags & DLM_IFL_USER) {
+		spin_unlock(&ast_queue_lock);
+		dlm_user_add_ast(lkb, flags, mode, status, sbflags, seq);
+		return;
+	}
+
+	rv = dlm_add_lkb_callback(lkb, flags, mode, status, sbflags, seq);
+	if (rv < 0) {
+		spin_unlock(&ast_queue_lock);
+		return;
+	}
+
+	if (list_empty(&lkb->lkb_astqueue)) {
+		kref_get(&lkb->lkb_ref);
+		list_add_tail(&lkb->lkb_astqueue, &ast_queue);
+	}
+	spin_unlock(&ast_queue_lock);
+
+	set_bit(WAKE_ASTS, &astd_wakeflags);
+	wake_up_process(astd_task);
+}
+
+static void process_asts(void)
+{
+	struct dlm_ls *ls = NULL;
+	struct dlm_rsb *r = NULL;
+	struct dlm_lkb *lkb;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void (*castfn) (void *astparam);
 	void (*bastfn) (void *astparam, int mode);
 	struct dlm_callback callbacks[DLM_CALLBACKS_SIZE];
 	int i, rv, resid;
 
+<<<<<<< HEAD
 	memset(&callbacks, 0, sizeof(callbacks));
 
 	mutex_lock(&lkb->lkb_cb_mutex);
@@ -274,10 +375,91 @@ int dlm_callback_start(struct dlm_ls *ls)
 	if (!ls->ls_callback_wq) {
 		log_print("can't start dlm_callback workqueue");
 		return -ENOMEM;
+=======
+repeat:
+	spin_lock(&ast_queue_lock);
+	list_for_each_entry(lkb, &ast_queue, lkb_astqueue) {
+		r = lkb->lkb_resource;
+		ls = r->res_ls;
+
+		if (dlm_locking_stopped(ls))
+			continue;
+
+		/* we remove from astqueue list and remove everything in
+		   lkb_callbacks before releasing the spinlock so empty
+		   lkb_astqueue is always consistent with empty lkb_callbacks */
+
+		list_del_init(&lkb->lkb_astqueue);
+
+		castfn = lkb->lkb_astfn;
+		bastfn = lkb->lkb_bastfn;
+
+		memset(&callbacks, 0, sizeof(callbacks));
+
+		for (i = 0; i < DLM_CALLBACKS_SIZE; i++) {
+			rv = dlm_rem_lkb_callback(ls, lkb, &callbacks[i], &resid);
+			if (rv < 0)
+				break;
+		}
+		spin_unlock(&ast_queue_lock);
+
+		if (resid) {
+			/* shouldn't happen, for loop should have removed all */
+			log_error(ls, "callback resid %d lkb %x",
+				  resid, lkb->lkb_id);
+		}
+
+		for (i = 0; i < DLM_CALLBACKS_SIZE; i++) {
+			if (!callbacks[i].seq)
+				break;
+			if (callbacks[i].flags & DLM_CB_SKIP) {
+				continue;
+			} else if (callbacks[i].flags & DLM_CB_BAST) {
+				bastfn(lkb->lkb_astparam, callbacks[i].mode);
+			} else if (callbacks[i].flags & DLM_CB_CAST) {
+				lkb->lkb_lksb->sb_status = callbacks[i].sb_status;
+				lkb->lkb_lksb->sb_flags = callbacks[i].sb_flags;
+				castfn(lkb->lkb_astparam);
+			}
+		}
+
+		/* removes ref for ast_queue, may cause lkb to be freed */
+		dlm_put_lkb(lkb);
+
+		cond_resched();
+		goto repeat;
+	}
+	spin_unlock(&ast_queue_lock);
+}
+
+static inline int no_asts(void)
+{
+	int ret;
+
+	spin_lock(&ast_queue_lock);
+	ret = list_empty(&ast_queue);
+	spin_unlock(&ast_queue_lock);
+	return ret;
+}
+
+static int dlm_astd(void *data)
+{
+	while (!kthread_should_stop()) {
+		set_current_state(TASK_INTERRUPTIBLE);
+		if (!test_bit(WAKE_ASTS, &astd_wakeflags))
+			schedule();
+		set_current_state(TASK_RUNNING);
+
+		mutex_lock(&astd_running);
+		if (test_and_clear_bit(WAKE_ASTS, &astd_wakeflags))
+			process_asts();
+		mutex_unlock(&astd_running);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }
 
+<<<<<<< HEAD
 void dlm_callback_stop(struct dlm_ls *ls)
 {
 	if (ls->ls_callback_wq)
@@ -311,5 +493,45 @@ void dlm_callback_resume(struct dlm_ls *ls)
 	mutex_unlock(&ls->ls_cb_mutex);
 
 	log_debug(ls, "dlm_callback_resume %d", count);
+=======
+void dlm_astd_wake(void)
+{
+	if (!no_asts()) {
+		set_bit(WAKE_ASTS, &astd_wakeflags);
+		wake_up_process(astd_task);
+	}
+}
+
+int dlm_astd_start(void)
+{
+	struct task_struct *p;
+	int error = 0;
+
+	INIT_LIST_HEAD(&ast_queue);
+	spin_lock_init(&ast_queue_lock);
+	mutex_init(&astd_running);
+
+	p = kthread_run(dlm_astd, NULL, "dlm_astd");
+	if (IS_ERR(p))
+		error = PTR_ERR(p);
+	else
+		astd_task = p;
+	return error;
+}
+
+void dlm_astd_stop(void)
+{
+	kthread_stop(astd_task);
+}
+
+void dlm_astd_suspend(void)
+{
+	mutex_lock(&astd_running);
+}
+
+void dlm_astd_resume(void)
+{
+	mutex_unlock(&astd_running);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 

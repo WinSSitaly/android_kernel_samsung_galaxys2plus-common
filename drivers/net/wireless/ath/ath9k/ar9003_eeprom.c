@@ -14,7 +14,10 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+<<<<<<< HEAD
 #include <asm/unaligned.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "hw.h"
 #include "ar9003_phy.h"
 #include "ar9003_eeprom.h"
@@ -22,6 +25,28 @@
 #define COMP_HDR_LEN 4
 #define COMP_CKSUM_LEN 2
 
+<<<<<<< HEAD
+=======
+#define AR_CH0_TOP (0x00016288)
+#define AR_CH0_TOP_XPABIASLVL (0x300)
+#define AR_CH0_TOP_XPABIASLVL_S (8)
+
+#define AR_CH0_THERM (0x00016290)
+#define AR_CH0_THERM_XPABIASLVL_MSB 0x3
+#define AR_CH0_THERM_XPABIASLVL_MSB_S 0
+#define AR_CH0_THERM_XPASHORT2GND 0x4
+#define AR_CH0_THERM_XPASHORT2GND_S 2
+
+#define AR_SWITCH_TABLE_COM_ALL (0xffff)
+#define AR_SWITCH_TABLE_COM_ALL_S (0)
+
+#define AR_SWITCH_TABLE_COM2_ALL (0xffffff)
+#define AR_SWITCH_TABLE_COM2_ALL_S (0)
+
+#define AR_SWITCH_TABLE_ALL (0xfff)
+#define AR_SWITCH_TABLE_ALL_S (0)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define LE16(x) __constant_cpu_to_le16(x)
 #define LE32(x) __constant_cpu_to_le32(x)
 
@@ -121,8 +146,15 @@ static const struct ar9300_eeprom ar9300_default = {
 		 * if the register is per chain
 		 */
 		.noiseFloorThreshCh = {-1, 0, 0},
+<<<<<<< HEAD
 		.reserved = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		.quick_drop = 0,
+=======
+		.ob = {1, 1, 1},/* 3 chain */
+		.db_stage2 = {1, 1, 1}, /* 3 chain  */
+		.db_stage3 = {0, 0, 0},
+		.db_stage4 = {0, 0, 0},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.xpaBiasLvl = 0,
 		.txFrameToDataStart = 0x0e,
 		.txFrameToPaOn = 0x0e,
@@ -137,12 +169,20 @@ static const struct ar9300_eeprom ar9300_default = {
 		.papdRateMaskHt20 = LE32(0x0cf0e0e0),
 		.papdRateMaskHt40 = LE32(0x6cf0e0e0),
 		.futureModal = {
+<<<<<<< HEAD
 			0, 0, 0, 0, 0, 0, 0, 0,
+=======
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 	 },
 	.base_ext1 = {
 		.ant_div_control = 0,
+<<<<<<< HEAD
 		.future = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+=======
+		.future = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.calFreqPier2G = {
 		FREQ2FBIN(2412, 1),
@@ -321,8 +361,15 @@ static const struct ar9300_eeprom ar9300_default = {
 		.spurChans = {0, 0, 0, 0, 0},
 		/* noiseFloorThreshCh Check if the register is per chain */
 		.noiseFloorThreshCh = {-1, 0, 0},
+<<<<<<< HEAD
 		.reserved = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		.quick_drop = 0,
+=======
+		.ob = {3, 3, 3}, /* 3 chain */
+		.db_stage2 = {3, 3, 3}, /* 3 chain */
+		.db_stage3 = {3, 3, 3}, /* doesn't exist for 2G */
+		.db_stage4 = {3, 3, 3},	 /* don't exist for 2G */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.xpaBiasLvl = 0,
 		.txFrameToDataStart = 0x0e,
 		.txFrameToPaOn = 0x0e,
@@ -337,7 +384,11 @@ static const struct ar9300_eeprom ar9300_default = {
 		.papdRateMaskHt20 = LE32(0x0c80c080),
 		.papdRateMaskHt40 = LE32(0x0080c080),
 		.futureModal = {
+<<<<<<< HEAD
 			0, 0, 0, 0, 0, 0, 0, 0,
+=======
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 	 },
 	.base_ext2 = {
@@ -694,8 +745,15 @@ static const struct ar9300_eeprom ar9300_x113 = {
 		 * if the register is per chain
 		 */
 		.noiseFloorThreshCh = {-1, 0, 0},
+<<<<<<< HEAD
 		.reserved = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		.quick_drop = 0,
+=======
+		.ob = {1, 1, 1},/* 3 chain */
+		.db_stage2 = {1, 1, 1}, /* 3 chain  */
+		.db_stage3 = {0, 0, 0},
+		.db_stage4 = {0, 0, 0},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.xpaBiasLvl = 0,
 		.txFrameToDataStart = 0x0e,
 		.txFrameToPaOn = 0x0e,
@@ -710,12 +768,20 @@ static const struct ar9300_eeprom ar9300_x113 = {
 		.papdRateMaskHt20 = LE32(0x0c80c080),
 		.papdRateMaskHt40 = LE32(0x0080c080),
 		.futureModal = {
+<<<<<<< HEAD
 			0, 0, 0, 0, 0, 0, 0, 0,
+=======
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 	 },
 	 .base_ext1 = {
 		.ant_div_control = 0,
+<<<<<<< HEAD
 		.future = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+=======
+		.future = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 },
 	.calFreqPier2G = {
 		FREQ2FBIN(2412, 1),
@@ -894,8 +960,15 @@ static const struct ar9300_eeprom ar9300_x113 = {
 		.spurChans = {FREQ2FBIN(5500, 0), 0, 0, 0, 0},
 		/* noiseFloorThreshCh Check if the register is per chain */
 		.noiseFloorThreshCh = {-1, 0, 0},
+<<<<<<< HEAD
 		.reserved = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		.quick_drop = 0,
+=======
+		.ob = {3, 3, 3}, /* 3 chain */
+		.db_stage2 = {3, 3, 3}, /* 3 chain */
+		.db_stage3 = {3, 3, 3}, /* doesn't exist for 2G */
+		.db_stage4 = {3, 3, 3},	 /* don't exist for 2G */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.xpaBiasLvl = 0xf,
 		.txFrameToDataStart = 0x0e,
 		.txFrameToPaOn = 0x0e,
@@ -910,7 +983,11 @@ static const struct ar9300_eeprom ar9300_x113 = {
 		.papdRateMaskHt20 = LE32(0x0cf0e0e0),
 		.papdRateMaskHt40 = LE32(0x6cf0e0e0),
 		.futureModal = {
+<<<<<<< HEAD
 			0, 0, 0, 0, 0, 0, 0, 0,
+=======
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 	 },
 	.base_ext2 = {
@@ -1268,8 +1345,15 @@ static const struct ar9300_eeprom ar9300_h112 = {
 		 * if the register is per chain
 		 */
 		.noiseFloorThreshCh = {-1, 0, 0},
+<<<<<<< HEAD
 		.reserved = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		.quick_drop = 0,
+=======
+		.ob = {1, 1, 1},/* 3 chain */
+		.db_stage2 = {1, 1, 1}, /* 3 chain  */
+		.db_stage3 = {0, 0, 0},
+		.db_stage4 = {0, 0, 0},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.xpaBiasLvl = 0,
 		.txFrameToDataStart = 0x0e,
 		.txFrameToPaOn = 0x0e,
@@ -1281,20 +1365,35 @@ static const struct ar9300_eeprom ar9300_h112 = {
 		.txEndToRxOn = 0x2,
 		.txFrameToXpaOn = 0xe,
 		.thresh62 = 28,
+<<<<<<< HEAD
 		.papdRateMaskHt20 = LE32(0x0c80c080),
 		.papdRateMaskHt40 = LE32(0x0080c080),
 		.futureModal = {
 			0, 0, 0, 0, 0, 0, 0, 0,
+=======
+		.papdRateMaskHt20 = LE32(0x80c080),
+		.papdRateMaskHt40 = LE32(0x80c080),
+		.futureModal = {
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 	},
 	.base_ext1 = {
 		.ant_div_control = 0,
+<<<<<<< HEAD
 		.future = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+=======
+		.future = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.calFreqPier2G = {
 		FREQ2FBIN(2412, 1),
 		FREQ2FBIN(2437, 1),
+<<<<<<< HEAD
 		FREQ2FBIN(2462, 1),
+=======
+		FREQ2FBIN(2472, 1),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	/* ar9300_cal_data_per_freq_op_loop 2g */
 	.calPierData2G = {
@@ -1304,7 +1403,11 @@ static const struct ar9300_eeprom ar9300_h112 = {
 	},
 	.calTarget_freqbin_Cck = {
 		FREQ2FBIN(2412, 1),
+<<<<<<< HEAD
 		FREQ2FBIN(2472, 1),
+=======
+		FREQ2FBIN(2484, 1),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.calTarget_freqbin_2G = {
 		FREQ2FBIN(2412, 1),
@@ -1433,7 +1536,11 @@ static const struct ar9300_eeprom ar9300_h112 = {
 		{ { CTL(60, 0), CTL(60, 1), CTL(60, 0), CTL(60, 0) } },
 		{ { CTL(60, 1), CTL(60, 0), CTL(60, 0), CTL(60, 1) } },
 
+<<<<<<< HEAD
 		{ { CTL(60, 1), CTL(60, 0), CTL(60, 0), CTL(60, 0) } },
+=======
+		{ { CTL(60, 1), CTL(60, 0), CTL(0, 0), CTL(0, 0) } },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		{ { CTL(60, 0), CTL(60, 1), CTL(60, 0), CTL(60, 0) } },
 		{ { CTL(60, 0), CTL(60, 1), CTL(60, 0), CTL(60, 0) } },
 
@@ -1468,8 +1575,15 @@ static const struct ar9300_eeprom ar9300_h112 = {
 		.spurChans = {0, 0, 0, 0, 0},
 		/* noiseFloorThreshCh Check if the register is per chain */
 		.noiseFloorThreshCh = {-1, 0, 0},
+<<<<<<< HEAD
 		.reserved = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		.quick_drop = 0,
+=======
+		.ob = {3, 3, 3}, /* 3 chain */
+		.db_stage2 = {3, 3, 3}, /* 3 chain */
+		.db_stage3 = {3, 3, 3}, /* doesn't exist for 2G */
+		.db_stage4 = {3, 3, 3},	 /* don't exist for 2G */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.xpaBiasLvl = 0,
 		.txFrameToDataStart = 0x0e,
 		.txFrameToPaOn = 0x0e,
@@ -1484,7 +1598,11 @@ static const struct ar9300_eeprom ar9300_h112 = {
 		.papdRateMaskHt20 = LE32(0x0cf0e0e0),
 		.papdRateMaskHt40 = LE32(0x6cf0e0e0),
 		.futureModal = {
+<<<<<<< HEAD
 			0, 0, 0, 0, 0, 0, 0, 0,
+=======
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 	},
 	.base_ext2 = {
@@ -1503,7 +1621,11 @@ static const struct ar9300_eeprom ar9300_h112 = {
 		FREQ2FBIN(5500, 0),
 		FREQ2FBIN(5600, 0),
 		FREQ2FBIN(5700, 0),
+<<<<<<< HEAD
 		FREQ2FBIN(5785, 0)
+=======
+		FREQ2FBIN(5825, 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.calPierData5G = {
 		{
@@ -1842,8 +1964,15 @@ static const struct ar9300_eeprom ar9300_x112 = {
 		 * if the register is per chain
 		 */
 		.noiseFloorThreshCh = {-1, 0, 0},
+<<<<<<< HEAD
 		.reserved = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		.quick_drop = 0,
+=======
+		.ob = {1, 1, 1},/* 3 chain */
+		.db_stage2 = {1, 1, 1}, /* 3 chain  */
+		.db_stage3 = {0, 0, 0},
+		.db_stage4 = {0, 0, 0},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.xpaBiasLvl = 0,
 		.txFrameToDataStart = 0x0e,
 		.txFrameToPaOn = 0x0e,
@@ -1858,12 +1987,20 @@ static const struct ar9300_eeprom ar9300_x112 = {
 		.papdRateMaskHt20 = LE32(0x0c80c080),
 		.papdRateMaskHt40 = LE32(0x0080c080),
 		.futureModal = {
+<<<<<<< HEAD
 			0, 0, 0, 0, 0, 0, 0, 0,
+=======
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 	},
 	.base_ext1 = {
 		.ant_div_control = 0,
+<<<<<<< HEAD
 		.future = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+=======
+		.future = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	},
 	.calFreqPier2G = {
 		FREQ2FBIN(2412, 1),
@@ -2042,8 +2179,15 @@ static const struct ar9300_eeprom ar9300_x112 = {
 		.spurChans = {0, 0, 0, 0, 0},
 		/* noiseFloorThreshch check if the register is per chain */
 		.noiseFloorThreshCh = {-1, 0, 0},
+<<<<<<< HEAD
 		.reserved = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		.quick_drop = 0,
+=======
+		.ob = {3, 3, 3}, /* 3 chain */
+		.db_stage2 = {3, 3, 3}, /* 3 chain */
+		.db_stage3 = {3, 3, 3}, /* doesn't exist for 2G */
+		.db_stage4 = {3, 3, 3},	 /* don't exist for 2G */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.xpaBiasLvl = 0,
 		.txFrameToDataStart = 0x0e,
 		.txFrameToPaOn = 0x0e,
@@ -2058,7 +2202,11 @@ static const struct ar9300_eeprom ar9300_x112 = {
 		.papdRateMaskHt20 = LE32(0x0cf0e0e0),
 		.papdRateMaskHt40 = LE32(0x6cf0e0e0),
 		.futureModal = {
+<<<<<<< HEAD
 			0, 0, 0, 0, 0, 0, 0, 0,
+=======
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 	},
 	.base_ext2 = {
@@ -2415,8 +2563,15 @@ static const struct ar9300_eeprom ar9300_h116 = {
 		 * if the register is per chain
 		 */
 		.noiseFloorThreshCh = {-1, 0, 0},
+<<<<<<< HEAD
 		.reserved = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		.quick_drop = 0,
+=======
+		.ob = {1, 1, 1},/* 3 chain */
+		.db_stage2 = {1, 1, 1}, /* 3 chain  */
+		.db_stage3 = {0, 0, 0},
+		.db_stage4 = {0, 0, 0},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.xpaBiasLvl = 0,
 		.txFrameToDataStart = 0x0e,
 		.txFrameToPaOn = 0x0e,
@@ -2431,17 +2586,29 @@ static const struct ar9300_eeprom ar9300_h116 = {
 		.papdRateMaskHt20 = LE32(0x0c80C080),
 		.papdRateMaskHt40 = LE32(0x0080C080),
 		.futureModal = {
+<<<<<<< HEAD
 			0, 0, 0, 0, 0, 0, 0, 0,
+=======
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 	 },
 	 .base_ext1 = {
 		.ant_div_control = 0,
+<<<<<<< HEAD
 		.future = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+=======
+		.future = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 },
 	.calFreqPier2G = {
 		FREQ2FBIN(2412, 1),
 		FREQ2FBIN(2437, 1),
+<<<<<<< HEAD
 		FREQ2FBIN(2462, 1),
+=======
+		FREQ2FBIN(2472, 1),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 },
 	/* ar9300_cal_data_per_freq_op_loop 2g */
 	.calPierData2G = {
@@ -2580,7 +2747,11 @@ static const struct ar9300_eeprom ar9300_h116 = {
 		 { { CTL(60, 0), CTL(60, 1), CTL(60, 0), CTL(60, 0) } },
 		 { { CTL(60, 1), CTL(60, 0), CTL(60, 0), CTL(60, 1) } },
 
+<<<<<<< HEAD
 		 { { CTL(60, 1), CTL(60, 0), CTL(60, 0), CTL(60, 0) } },
+=======
+		 { { CTL(60, 1), CTL(60, 0), CTL(0, 0), CTL(0, 0) } },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 { { CTL(60, 0), CTL(60, 1), CTL(60, 0), CTL(60, 0) } },
 		 { { CTL(60, 0), CTL(60, 1), CTL(60, 0), CTL(60, 0) } },
 
@@ -2615,8 +2786,15 @@ static const struct ar9300_eeprom ar9300_h116 = {
 		.spurChans = {0, 0, 0, 0, 0},
 		/* noiseFloorThreshCh Check if the register is per chain */
 		.noiseFloorThreshCh = {-1, 0, 0},
+<<<<<<< HEAD
 		.reserved = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		.quick_drop = 0,
+=======
+		.ob = {3, 3, 3}, /* 3 chain */
+		.db_stage2 = {3, 3, 3}, /* 3 chain */
+		.db_stage3 = {3, 3, 3}, /* doesn't exist for 2G */
+		.db_stage4 = {3, 3, 3},	 /* don't exist for 2G */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.xpaBiasLvl = 0,
 		.txFrameToDataStart = 0x0e,
 		.txFrameToPaOn = 0x0e,
@@ -2631,7 +2809,11 @@ static const struct ar9300_eeprom ar9300_h116 = {
 		.papdRateMaskHt20 = LE32(0x0cf0e0e0),
 		.papdRateMaskHt40 = LE32(0x6cf0e0e0),
 		.futureModal = {
+<<<<<<< HEAD
 			0, 0, 0, 0, 0, 0, 0, 0,
+=======
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 	 },
 	.base_ext2 = {
@@ -2643,7 +2825,11 @@ static const struct ar9300_eeprom ar9300_h116 = {
 		.xatten1MarginHigh = {0, 0, 0}
 	 },
 	.calFreqPier5G = {
+<<<<<<< HEAD
 		FREQ2FBIN(5160, 0),
+=======
+		FREQ2FBIN(5180, 0),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		FREQ2FBIN(5220, 0),
 		FREQ2FBIN(5320, 0),
 		FREQ2FBIN(5400, 0),
@@ -2968,6 +3154,7 @@ static u32 ath9k_hw_ar9300_get_eeprom(struct ath_hw *ah,
 
 	switch (param) {
 	case EEP_MAC_LSW:
+<<<<<<< HEAD
 		return get_unaligned_be16(eep->macAddr);
 	case EEP_MAC_MID:
 		return get_unaligned_be16(eep->macAddr + 2);
@@ -2975,6 +3162,17 @@ static u32 ath9k_hw_ar9300_get_eeprom(struct ath_hw *ah,
 		return get_unaligned_be16(eep->macAddr + 4);
 	case EEP_REG_0:
 		return le16_to_cpu(pBase->regDmn[0]);
+=======
+		return eep->macAddr[0] << 8 | eep->macAddr[1];
+	case EEP_MAC_MID:
+		return eep->macAddr[2] << 8 | eep->macAddr[3];
+	case EEP_MAC_MSW:
+		return eep->macAddr[4] << 8 | eep->macAddr[5];
+	case EEP_REG_0:
+		return le16_to_cpu(pBase->regDmn[0]);
+	case EEP_REG_1:
+		return le16_to_cpu(pBase->regDmn[1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case EEP_OP_CAP:
 		return pBase->deviceCap;
 	case EEP_OP_MODE:
@@ -2998,6 +3196,7 @@ static u32 ath9k_hw_ar9300_get_eeprom(struct ath_hw *ah,
 	case EEP_CHAIN_MASK_REDUCE:
 		return (pBase->miscConfiguration >> 0x3) & 0x1;
 	case EEP_ANT_DIV_CTL1:
+<<<<<<< HEAD
 		return eep->base_ext1.ant_div_control;
 	case EEP_ANTENNA_GAIN_5G:
 		return eep->modalHeader5G.antennaGain;
@@ -3005,6 +3204,9 @@ static u32 ath9k_hw_ar9300_get_eeprom(struct ath_hw *ah,
 		return eep->modalHeader2G.antennaGain;
 	case EEP_QUICK_DROP:
 		return pBase->miscConfiguration & BIT(1);
+=======
+		return le32_to_cpu(eep->base_ext1.ant_div_control);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return 0;
 	}
@@ -3043,7 +3245,12 @@ static bool ar9300_read_eeprom(struct ath_hw *ah, int address, u8 *buffer,
 	int i;
 
 	if ((address < 0) || ((address + count) / 2 > AR9300_EEPROM_SIZE - 1)) {
+<<<<<<< HEAD
 		ath_dbg(common, EEPROM, "eeprom address not in range\n");
+=======
+		ath_dbg(common, ATH_DBG_EEPROM,
+			"eeprom address not in range\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return false;
 	}
 
@@ -3074,8 +3281,13 @@ static bool ar9300_read_eeprom(struct ath_hw *ah, int address, u8 *buffer,
 	return true;
 
 error:
+<<<<<<< HEAD
 	ath_dbg(common, EEPROM, "unable to read eeprom region at offset %d\n",
 		address);
+=======
+	ath_dbg(common, ATH_DBG_EEPROM,
+		"unable to read eeprom region at offset %d\n", address);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return false;
 }
 
@@ -3159,13 +3371,21 @@ static bool ar9300_uncompress_block(struct ath_hw *ah,
 		length &= 0xff;
 
 		if (length > 0 && spot >= 0 && spot+length <= mdataSize) {
+<<<<<<< HEAD
 			ath_dbg(common, EEPROM,
+=======
+			ath_dbg(common, ATH_DBG_EEPROM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"Restore at %d: spot=%d offset=%d length=%d\n",
 				it, spot, offset, length);
 			memcpy(&mptr[spot], &block[it+2], length);
 			spot += length;
 		} else if (length > 0) {
+<<<<<<< HEAD
 			ath_dbg(common, EEPROM,
+=======
+			ath_dbg(common, ATH_DBG_EEPROM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"Bad restore at %d: spot=%d offset=%d length=%d\n",
 				it, spot, offset, length);
 			return false;
@@ -3187,13 +3407,21 @@ static int ar9300_compress_decision(struct ath_hw *ah,
 	switch (code) {
 	case _CompressNone:
 		if (length != mdata_size) {
+<<<<<<< HEAD
 			ath_dbg(common, EEPROM,
+=======
+			ath_dbg(common, ATH_DBG_EEPROM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"EEPROM structure size mismatch memory=%d eeprom=%d\n",
 				mdata_size, length);
 			return -1;
 		}
 		memcpy(mptr, (u8 *) (word + COMP_HDR_LEN), length);
+<<<<<<< HEAD
 		ath_dbg(common, EEPROM,
+=======
+		ath_dbg(common, ATH_DBG_EEPROM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"restored eeprom %d: uncompressed, length %d\n",
 			it, length);
 		break;
@@ -3202,21 +3430,34 @@ static int ar9300_compress_decision(struct ath_hw *ah,
 		} else {
 			eep = ar9003_eeprom_struct_find_by_id(reference);
 			if (eep == NULL) {
+<<<<<<< HEAD
 				ath_dbg(common, EEPROM,
+=======
+				ath_dbg(common, ATH_DBG_EEPROM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"can't find reference eeprom struct %d\n",
 					reference);
 				return -1;
 			}
 			memcpy(mptr, eep, mdata_size);
 		}
+<<<<<<< HEAD
 		ath_dbg(common, EEPROM,
+=======
+		ath_dbg(common, ATH_DBG_EEPROM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"restore eeprom %d: block, reference %d, length %d\n",
 			it, reference, length);
 		ar9300_uncompress_block(ah, mptr, mdata_size,
 					(u8 *) (word + COMP_HDR_LEN), length);
 		break;
 	default:
+<<<<<<< HEAD
 		ath_dbg(common, EEPROM, "unknown compression code %d\n", code);
+=======
+		ath_dbg(common, ATH_DBG_EEPROM,
+			"unknown compression code %d\n", code);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -1;
 	}
 	return 0;
@@ -3281,43 +3522,73 @@ static int ar9300_eeprom_restore_internal(struct ath_hw *ah,
 
 	word = kzalloc(2048, GFP_KERNEL);
 	if (!word)
+<<<<<<< HEAD
 		return -ENOMEM;
+=======
+		return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memcpy(mptr, &ar9300_default, mdata_size);
 
 	read = ar9300_read_eeprom;
 	if (AR_SREV_9485(ah))
 		cptr = AR9300_BASE_ADDR_4K;
+<<<<<<< HEAD
 	else if (AR_SREV_9330(ah))
 		cptr = AR9300_BASE_ADDR_512;
 	else
 		cptr = AR9300_BASE_ADDR;
 	ath_dbg(common, EEPROM, "Trying EEPROM access at Address 0x%04x\n",
 		cptr);
+=======
+	else
+		cptr = AR9300_BASE_ADDR;
+	ath_dbg(common, ATH_DBG_EEPROM,
+		"Trying EEPROM access at Address 0x%04x\n", cptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ar9300_check_eeprom_header(ah, read, cptr))
 		goto found;
 
 	cptr = AR9300_BASE_ADDR_512;
+<<<<<<< HEAD
 	ath_dbg(common, EEPROM, "Trying EEPROM access at Address 0x%04x\n",
 		cptr);
+=======
+	ath_dbg(common, ATH_DBG_EEPROM,
+		"Trying EEPROM access at Address 0x%04x\n", cptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ar9300_check_eeprom_header(ah, read, cptr))
 		goto found;
 
 	read = ar9300_read_otp;
 	cptr = AR9300_BASE_ADDR;
+<<<<<<< HEAD
 	ath_dbg(common, EEPROM, "Trying OTP access at Address 0x%04x\n", cptr);
+=======
+	ath_dbg(common, ATH_DBG_EEPROM,
+		"Trying OTP access at Address 0x%04x\n", cptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ar9300_check_eeprom_header(ah, read, cptr))
 		goto found;
 
 	cptr = AR9300_BASE_ADDR_512;
+<<<<<<< HEAD
 	ath_dbg(common, EEPROM, "Trying OTP access at Address 0x%04x\n", cptr);
+=======
+	ath_dbg(common, ATH_DBG_EEPROM,
+		"Trying OTP access at Address 0x%04x\n", cptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ar9300_check_eeprom_header(ah, read, cptr))
 		goto found;
 
 	goto fail;
 
 found:
+<<<<<<< HEAD
 	ath_dbg(common, EEPROM, "Found valid EEPROM data\n");
+=======
+	ath_dbg(common, ATH_DBG_EEPROM, "Found valid EEPROM data\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (it = 0; it < MSTATE; it++) {
 		if (!read(ah, cptr, word, COMP_HDR_LEN))
@@ -3328,12 +3599,21 @@ found:
 
 		ar9300_comp_hdr_unpack(word, &code, &reference,
 				       &length, &major, &minor);
+<<<<<<< HEAD
 		ath_dbg(common, EEPROM,
+=======
+		ath_dbg(common, ATH_DBG_EEPROM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"Found block at %x: code=%d ref=%d length=%d major=%d minor=%d\n",
 			cptr, code, reference, length, major, minor);
 		if ((!AR_SREV_9485(ah) && length >= 1024) ||
 		    (AR_SREV_9485(ah) && length > EEPROM_DATA_LEN_9485)) {
+<<<<<<< HEAD
 			ath_dbg(common, EEPROM, "Skipping bad header\n");
+=======
+			ath_dbg(common, ATH_DBG_EEPROM,
+				"Skipping bad header\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cptr -= COMP_HDR_LEN;
 			continue;
 		}
@@ -3341,14 +3621,25 @@ found:
 		osize = length;
 		read(ah, cptr, word, COMP_HDR_LEN + osize + COMP_CKSUM_LEN);
 		checksum = ar9300_comp_cksum(&word[COMP_HDR_LEN], length);
+<<<<<<< HEAD
 		mchecksum = get_unaligned_le16(&word[COMP_HDR_LEN + osize]);
 		ath_dbg(common, EEPROM, "checksum %x %x\n",
 			checksum, mchecksum);
+=======
+		mchecksum = word[COMP_HDR_LEN + osize] |
+		    (word[COMP_HDR_LEN + osize + 1] << 8);
+		ath_dbg(common, ATH_DBG_EEPROM,
+			"checksum %x %x\n", checksum, mchecksum);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (checksum == mchecksum) {
 			ar9300_compress_decision(ah, it, code, reference, mptr,
 						 word, length, mdata_size);
 		} else {
+<<<<<<< HEAD
 			ath_dbg(common, EEPROM,
+=======
+			ath_dbg(common, ATH_DBG_EEPROM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"skipping block with bad checksum\n");
 		}
 		cptr -= (COMP_HDR_LEN + osize + COMP_CKSUM_LEN);
@@ -3378,6 +3669,7 @@ static bool ath9k_hw_ar9300_fill_eeprom(struct ath_hw *ah)
 	return true;
 }
 
+<<<<<<< HEAD
 #if defined(CONFIG_ATH9K_DEBUGFS) || defined(CONFIG_ATH9K_HTC_DEBUGFS)
 static u32 ar9003_dump_modal_eeprom(char *buf, u32 len, u32 size,
 				    struct ar9300_modal_eep_header *modal_hdr)
@@ -3495,6 +3787,8 @@ static u32 ath9k_hw_ar9003_dump_eeprom(struct ath_hw *ah, bool dump_base_hdr,
 }
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* XXX: review hardware docs */
 static int ath9k_hw_ar9300_get_eeprom_ver(struct ath_hw *ah)
 {
@@ -3521,10 +3815,15 @@ static void ar9003_hw_xpa_bias_level_apply(struct ath_hw *ah, bool is2ghz)
 {
 	int bias = ar9003_hw_xpa_bias_level_get(ah, is2ghz);
 
+<<<<<<< HEAD
 	if (AR_SREV_9485(ah) || AR_SREV_9330(ah) || AR_SREV_9340(ah))
 		REG_RMW_FIELD(ah, AR_CH0_TOP2, AR_CH0_TOP2_XPABIASLVL, bias);
 	else if (AR_SREV_9462(ah))
 		REG_RMW_FIELD(ah, AR_CH0_TOP, AR_CH0_TOP_XPABIASLVL, bias);
+=======
+	if (AR_SREV_9485(ah) || AR_SREV_9340(ah))
+		REG_RMW_FIELD(ah, AR_CH0_TOP2, AR_CH0_TOP2_XPABIASLVL, bias);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	else {
 		REG_RMW_FIELD(ah, AR_CH0_TOP, AR_CH0_TOP_XPABIASLVL, bias);
 		REG_RMW_FIELD(ah, AR_CH0_THERM,
@@ -3535,6 +3834,7 @@ static void ar9003_hw_xpa_bias_level_apply(struct ath_hw *ah, bool is2ghz)
 	}
 }
 
+<<<<<<< HEAD
 static u16 ar9003_switch_com_spdt_get(struct ath_hw *ah, bool is_2ghz)
 {
 	struct ar9300_eeprom *eep = &ah->eeprom.ar9300_eep;
@@ -3548,6 +3848,8 @@ static u16 ar9003_switch_com_spdt_get(struct ath_hw *ah, bool is_2ghz)
 }
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static u32 ar9003_hw_ant_ctrl_common_get(struct ath_hw *ah, bool is2ghz)
 {
 	struct ar9300_eeprom *eep = &ah->eeprom.ar9300_eep;
@@ -3602,6 +3904,7 @@ static void ar9003_hw_ant_ctrl_apply(struct ath_hw *ah, bool is2ghz)
 
 	u32 value = ar9003_hw_ant_ctrl_common_get(ah, is2ghz);
 
+<<<<<<< HEAD
 	if (AR_SREV_9462(ah)) {
 		REG_RMW_FIELD(ah, AR_PHY_SWITCH_COM,
 				AR_SWITCH_TABLE_COM_AR9462_ALL, value);
@@ -3628,6 +3931,9 @@ static void ar9003_hw_ant_ctrl_apply(struct ath_hw *ah, bool is2ghz)
 		REG_RMW_FIELD(ah, AR_PHY_GLB_CONTROL,
 				AR_SWITCH_TABLE_COM_SPDT_ALL, value);
 	}
+=======
+	REG_RMW_FIELD(ah, AR_PHY_SWITCH_COM, AR_SWITCH_TABLE_COM_ALL, value);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	value = ar9003_hw_ant_ctrl_common_2_get(ah, is2ghz);
 	REG_RMW_FIELD(ah, AR_PHY_SWITCH_COM_2, AR_SWITCH_TABLE_COM2_ALL, value);
@@ -3642,7 +3948,11 @@ static void ar9003_hw_ant_ctrl_apply(struct ath_hw *ah, bool is2ghz)
 		}
 	}
 
+<<<<<<< HEAD
 	if (AR_SREV_9330(ah) || AR_SREV_9485(ah)) {
+=======
+	if (AR_SREV_9485(ah)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		value = ath9k_hw_ar9300_get_eeprom(ah, EEP_ANT_DIV_CTL1);
 		/*
 		 * main_lnaconf, alt_lnaconf, main_tb, alt_tb
@@ -3827,10 +4137,16 @@ static void ar9003_hw_internal_regulator_apply(struct ath_hw *ah)
 {
 	int internal_regulator =
 		ath9k_hw_ar9300_get_eeprom(ah, EEP_INTERNAL_REGULATOR);
+<<<<<<< HEAD
 	u32 reg_val;
 
 	if (internal_regulator) {
 		if (AR_SREV_9330(ah) || AR_SREV_9485(ah)) {
+=======
+
+	if (internal_regulator) {
+		if (AR_SREV_9485(ah)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			int reg_pmu_set;
 
 			reg_pmu_set = REG_READ(ah, AR_PHY_PMU2) & ~AR_PHY_PMU2_PGM;
@@ -3838,6 +4154,7 @@ static void ar9003_hw_internal_regulator_apply(struct ath_hw *ah)
 			if (!is_pmu_set(ah, AR_PHY_PMU2, reg_pmu_set))
 				return;
 
+<<<<<<< HEAD
 			if (AR_SREV_9330(ah)) {
 				if (ah->is_clk_25mhz) {
 					reg_pmu_set = (3 << 1) | (8 << 4) |
@@ -3856,6 +4173,11 @@ static void ar9003_hw_internal_regulator_apply(struct ath_hw *ah)
 					      (6 << 17) | (1 << 20) |
 					      (3 << 24) | (1 << 28);
 			}
+=======
+			reg_pmu_set = (5 << 1) | (7 << 4) | (1 << 8) |
+				      (2 << 14) | (6 << 17) | (1 << 20) |
+				      (3 << 24) | (1 << 28);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			REG_WRITE(ah, AR_PHY_PMU1, reg_pmu_set);
 			if (!is_pmu_set(ah, AR_PHY_PMU1, reg_pmu_set))
@@ -3872,6 +4194,7 @@ static void ar9003_hw_internal_regulator_apply(struct ath_hw *ah)
 			REG_WRITE(ah, AR_PHY_PMU2, reg_pmu_set);
 			if (!is_pmu_set(ah, AR_PHY_PMU2, reg_pmu_set))
 				return;
+<<<<<<< HEAD
 		} else if (AR_SREV_9462(ah)) {
 			reg_val = ath9k_hw_ar9300_get_eeprom(ah, EEP_SWREG);
 			REG_WRITE(ah, AR_PHY_PMU1, reg_val);
@@ -3882,6 +4205,15 @@ static void ar9003_hw_internal_regulator_apply(struct ath_hw *ah)
 				  REG_READ(ah, AR_RTC_REG_CONTROL1) &
 				  (~AR_RTC_REG_CONTROL1_SWREG_PROGRAM));
 			REG_WRITE(ah, AR_RTC_REG_CONTROL0, reg_val);
+=======
+		} else {
+			/* Internal regulator is ON. Write swreg register. */
+			int swreg = ath9k_hw_ar9300_get_eeprom(ah, EEP_SWREG);
+			REG_WRITE(ah, AR_RTC_REG_CONTROL1,
+				  REG_READ(ah, AR_RTC_REG_CONTROL1) &
+				  (~AR_RTC_REG_CONTROL1_SWREG_PROGRAM));
+			REG_WRITE(ah, AR_RTC_REG_CONTROL0, swreg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Set REG_CONTROL1.SWREG_PROGRAM */
 			REG_WRITE(ah, AR_RTC_REG_CONTROL1,
 				  REG_READ(ah,
@@ -3889,14 +4221,22 @@ static void ar9003_hw_internal_regulator_apply(struct ath_hw *ah)
 					   AR_RTC_REG_CONTROL1_SWREG_PROGRAM);
 		}
 	} else {
+<<<<<<< HEAD
 		if (AR_SREV_9330(ah) || AR_SREV_9485(ah)) {
 			REG_RMW_FIELD(ah, AR_PHY_PMU2, AR_PHY_PMU2_PGM, 0);
 			while (REG_READ_FIELD(ah, AR_PHY_PMU2,
 						AR_PHY_PMU2_PGM))
+=======
+		if (AR_SREV_9485(ah)) {
+			REG_RMW_FIELD(ah, AR_PHY_PMU2, AR_PHY_PMU2_PGM, 0);
+			while (REG_READ_FIELD(ah, AR_PHY_PMU2,
+					      AR_PHY_PMU2_PGM))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				udelay(10);
 
 			REG_RMW_FIELD(ah, AR_PHY_PMU1, AR_PHY_PMU1_PWD, 0x1);
 			while (!REG_READ_FIELD(ah, AR_PHY_PMU1,
+<<<<<<< HEAD
 						AR_PHY_PMU1_PWD))
 				udelay(10);
 			REG_RMW_FIELD(ah, AR_PHY_PMU2, AR_PHY_PMU2_PGM, 0x1);
@@ -3910,6 +4250,19 @@ static void ar9003_hw_internal_regulator_apply(struct ath_hw *ah)
 				AR_RTC_FORCE_SWREG_PRD;
 			REG_WRITE(ah, AR_RTC_SLEEP_CLK, reg_val);
 		}
+=======
+					       AR_PHY_PMU1_PWD))
+				udelay(10);
+			REG_RMW_FIELD(ah, AR_PHY_PMU2, AR_PHY_PMU2_PGM, 0x1);
+			while (!REG_READ_FIELD(ah, AR_PHY_PMU2,
+					      AR_PHY_PMU2_PGM))
+				udelay(10);
+		} else
+			REG_WRITE(ah, AR_RTC_SLEEP_CLK,
+				  (REG_READ(ah,
+				   AR_RTC_SLEEP_CLK) |
+				   AR_RTC_FORCE_SWREG_PRD));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 }
@@ -3928,6 +4281,7 @@ static void ar9003_hw_apply_tuning_caps(struct ath_hw *ah)
 	}
 }
 
+<<<<<<< HEAD
 static void ar9003_hw_quick_drop_apply(struct ath_hw *ah, u16 freq)
 {
 	struct ar9300_eeprom *eep = &ah->eeprom.ar9300_eep;
@@ -3962,6 +4316,8 @@ static void ar9003_hw_txend_to_xpa_off_apply(struct ath_hw *ah, u16 freq)
 		      AR_PHY_XPA_TIMING_CTL_TX_END_XPAA_OFF, value);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void ath9k_hw_ar9300_set_board_values(struct ath_hw *ah,
 					     struct ath9k_channel *chan)
 {
@@ -3969,12 +4325,19 @@ static void ath9k_hw_ar9300_set_board_values(struct ath_hw *ah,
 	ar9003_hw_ant_ctrl_apply(ah, IS_CHAN_2GHZ(chan));
 	ar9003_hw_drive_strength_apply(ah);
 	ar9003_hw_atten_apply(ah, chan);
+<<<<<<< HEAD
 	ar9003_hw_quick_drop_apply(ah, chan->channel);
 	if (!AR_SREV_9330(ah) && !AR_SREV_9340(ah))
 		ar9003_hw_internal_regulator_apply(ah);
 	if (AR_SREV_9485(ah) || AR_SREV_9330(ah) || AR_SREV_9340(ah))
 		ar9003_hw_apply_tuning_caps(ah);
 	ar9003_hw_txend_to_xpa_off_apply(ah, chan->channel);
+=======
+	if (!AR_SREV_9340(ah))
+		ar9003_hw_internal_regulator_apply(ah);
+	if (AR_SREV_9485(ah) || AR_SREV_9340(ah))
+		ar9003_hw_apply_tuning_caps(ah);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void ath9k_hw_ar9300_set_addac(struct ath_hw *ah,
@@ -4220,7 +4583,11 @@ static int ar9003_hw_tx_power_regwrite(struct ath_hw *ah, u8 * pPwrArray)
         /* Write the power for duplicated frames - HT40 */
 
         /* dup40_cck (LSB), dup40_ofdm, ext20_cck, ext20_ofdm (MSB) */
+<<<<<<< HEAD
 	REG_WRITE(ah, AR_PHY_POWER_TX_RATE(8),
+=======
+	REG_WRITE(ah, 0xa3e0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  POW_SM(pPwrArray[ALL_TARGET_LEGACY_6_24], 24) |
 		  POW_SM(pPwrArray[ALL_TARGET_LEGACY_1L_5L], 16) |
 		  POW_SM(pPwrArray[ALL_TARGET_LEGACY_6_24],  8) |
@@ -4415,8 +4782,13 @@ static void ar9003_hw_set_target_power_eeprom(struct ath_hw *ah, u16 freq,
 					      is2GHz) + ht40PowerIncForPdadc;
 
 	for (i = 0; i < ar9300RateSize; i++) {
+<<<<<<< HEAD
 		ath_dbg(common, EEPROM, "TPC[%02d] 0x%08x\n",
 			i, targetPowerValT2[i]);
+=======
+		ath_dbg(common, ATH_DBG_EEPROM,
+			"TPC[%02d] 0x%08x\n", i, targetPowerValT2[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -4435,7 +4807,11 @@ static int ar9003_hw_cal_pier_get(struct ath_hw *ah,
 	struct ath_common *common = ath9k_hw_common(ah);
 
 	if (ichain >= AR9300_MAX_CHAINS) {
+<<<<<<< HEAD
 		ath_dbg(common, EEPROM,
+=======
+		ath_dbg(common, ATH_DBG_EEPROM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"Invalid chain index, must be less than %d\n",
 			AR9300_MAX_CHAINS);
 		return -1;
@@ -4443,7 +4819,11 @@ static int ar9003_hw_cal_pier_get(struct ath_hw *ah,
 
 	if (mode) {		/* 5GHz */
 		if (ipier >= AR9300_NUM_5G_CAL_PIERS) {
+<<<<<<< HEAD
 			ath_dbg(common, EEPROM,
+=======
+			ath_dbg(common, ATH_DBG_EEPROM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"Invalid 5GHz cal pier index, must be less than %d\n",
 				AR9300_NUM_5G_CAL_PIERS);
 			return -1;
@@ -4453,7 +4833,11 @@ static int ar9003_hw_cal_pier_get(struct ath_hw *ah,
 		is2GHz = 0;
 	} else {
 		if (ipier >= AR9300_NUM_2G_CAL_PIERS) {
+<<<<<<< HEAD
 			ath_dbg(common, EEPROM,
+=======
+			ath_dbg(common, ATH_DBG_EEPROM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"Invalid 2GHz cal pier index, must be less than %d\n",
 				AR9300_NUM_2G_CAL_PIERS);
 			return -1;
@@ -4525,12 +4909,15 @@ static int ar9003_hw_power_control_override(struct ath_hw *ah,
 		tempSlope = eep->modalHeader5G.tempSlope;
 
 	REG_RMW_FIELD(ah, AR_PHY_TPC_19, AR_PHY_TPC_19_ALPHA_THERM, tempSlope);
+<<<<<<< HEAD
 
 	if (AR_SREV_9462_20(ah))
 		REG_RMW_FIELD(ah, AR_PHY_TPC_19_B1,
 			      AR_PHY_TPC_19_B1_ALPHA_THERM, tempSlope);
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	REG_RMW_FIELD(ah, AR_PHY_TPC_18, AR_PHY_TPC_18_THERM_CAL_VALUE,
 		      temperature[0]);
 
@@ -4615,7 +5002,12 @@ static int ar9003_hw_calibration_apply(struct ath_hw *ah, int frequency)
 
 	/* interpolate  */
 	for (ichain = 0; ichain < AR9300_MAX_CHAINS; ichain++) {
+<<<<<<< HEAD
 		ath_dbg(common, EEPROM, "ch=%d f=%d low=%d %d h=%d %d\n",
+=======
+		ath_dbg(common, ATH_DBG_EEPROM,
+			"ch=%d f=%d low=%d %d h=%d %d\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ichain, frequency, lfrequency[ichain],
 			lcorrection[ichain], hfrequency[ichain],
 			hcorrection[ichain]);
@@ -4670,7 +5062,11 @@ static int ar9003_hw_calibration_apply(struct ath_hw *ah, int frequency)
 	ar9003_hw_power_control_override(ah, frequency, correction, voltage,
 					 temperature);
 
+<<<<<<< HEAD
 	ath_dbg(common, EEPROM,
+=======
+	ath_dbg(common, ATH_DBG_EEPROM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		"for frequency=%d, calibration correction = %d %d %d\n",
 		frequency, correction[0], correction[1], correction[2]);
 
@@ -4764,6 +5160,7 @@ static u16 ar9003_hw_get_max_edge_power(struct ar9300_eeprom *eep,
 static void ar9003_hw_set_power_per_rate_table(struct ath_hw *ah,
 					       struct ath9k_channel *chan,
 					       u8 *pPwrArray, u16 cfgCtl,
+<<<<<<< HEAD
 					       u8 antenna_reduction,
 					       u16 powerLimit)
 {
@@ -4772,6 +5169,22 @@ static void ar9003_hw_set_power_per_rate_table(struct ath_hw *ah,
 	u16 twiceMaxEdgePower;
 	int i;
 	u16 scaledPower = 0, minCtlPower;
+=======
+					       u8 twiceAntennaReduction,
+					       u8 twiceMaxRegulatoryPower,
+					       u16 powerLimit)
+{
+	struct ath_regulatory *regulatory = ath9k_hw_regulatory(ah);
+	struct ath_common *common = ath9k_hw_common(ah);
+	struct ar9300_eeprom *pEepData = &ah->eeprom.ar9300_eep;
+	u16 twiceMaxEdgePower = MAX_RATE_POWER;
+	static const u16 tpScaleReductionTable[5] = {
+		0, 3, 6, 9, MAX_RATE_POWER
+	};
+	int i;
+	int16_t  twiceLargestAntenna;
+	u16 scaledPower = 0, minCtlPower, maxRegAllowedPower;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	static const u16 ctlModesFor11a[] = {
 		CTL_11A, CTL_5GHT20, CTL_11A_EXT, CTL_5GHT40
 	};
@@ -4789,7 +5202,32 @@ static void ar9003_hw_set_power_per_rate_table(struct ath_hw *ah,
 	bool is2ghz = IS_CHAN_2GHZ(chan);
 
 	ath9k_hw_get_channel_centers(ah, chan, &centers);
+<<<<<<< HEAD
 	scaledPower = powerLimit - antenna_reduction;
+=======
+
+	/* Compute TxPower reduction due to Antenna Gain */
+	if (is2ghz)
+		twiceLargestAntenna = pEepData->modalHeader2G.antennaGain;
+	else
+		twiceLargestAntenna = pEepData->modalHeader5G.antennaGain;
+
+	twiceLargestAntenna = (int16_t)min((twiceAntennaReduction) -
+				twiceLargestAntenna, 0);
+
+	/*
+	 * scaledPower is the minimum of the user input power level
+	 * and the regulatory allowed power level
+	 */
+	maxRegAllowedPower = twiceMaxRegulatoryPower + twiceLargestAntenna;
+
+	if (regulatory->tp_scale != ATH9K_TP_SCALE_MAX) {
+		maxRegAllowedPower -=
+			(tpScaleReductionTable[(regulatory->tp_scale)] * 2);
+	}
+
+	scaledPower = min(powerLimit, maxRegAllowedPower);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Reduce scaled Power by number of chains active to get
@@ -4856,7 +5294,11 @@ static void ar9003_hw_set_power_per_rate_table(struct ath_hw *ah,
 		else
 			freq = centers.ctl_center;
 
+<<<<<<< HEAD
 		ath_dbg(common, REGULATORY,
+=======
+		ath_dbg(common, ATH_DBG_REGULATORY,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"LOOP-Mode ctlMode %d < %d, isHt40CtlMode %d, EXT_ADDITIVE %d\n",
 			ctlMode, numCtlModes, isHt40CtlMode,
 			(pCtlMode[ctlMode] & EXT_ADDITIVE));
@@ -4870,9 +5312,14 @@ static void ar9003_hw_set_power_per_rate_table(struct ath_hw *ah,
 			ctlNum = AR9300_NUM_CTLS_5G;
 		}
 
+<<<<<<< HEAD
 		twiceMaxEdgePower = MAX_RATE_POWER;
 		for (i = 0; (i < ctlNum) && ctlIndex[i]; i++) {
 			ath_dbg(common, REGULATORY,
+=======
+		for (i = 0; (i < ctlNum) && ctlIndex[i]; i++) {
+			ath_dbg(common, ATH_DBG_REGULATORY,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"LOOP-Ctlidx %d: cfgCtl 0x%2.2x pCtlMode 0x%2.2x ctlIndex 0x%2.2x chan %d\n",
 				i, cfgCtl, pCtlMode[ctlMode], ctlIndex[i],
 				chan->channel);
@@ -4914,7 +5361,11 @@ static void ar9003_hw_set_power_per_rate_table(struct ath_hw *ah,
 
 			minCtlPower = (u8)min(twiceMaxEdgePower, scaledPower);
 
+<<<<<<< HEAD
 			ath_dbg(common, REGULATORY,
+=======
+			ath_dbg(common, ATH_DBG_REGULATORY,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"SEL-Min ctlMode %d pCtlMode %d 2xMaxEdge %d sP %d minCtlPwr %d\n",
 				ctlMode, pCtlMode[ctlMode], twiceMaxEdgePower,
 				scaledPower, minCtlPower);
@@ -4977,6 +5428,10 @@ static inline u8 mcsidx_to_tgtpwridx(unsigned int mcs_idx, u8 base_pwridx)
 static void ath9k_hw_ar9300_set_txpower(struct ath_hw *ah,
 					struct ath9k_channel *chan, u16 cfgCtl,
 					u8 twiceAntennaReduction,
+<<<<<<< HEAD
+=======
+					u8 twiceMaxRegulatoryPower,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					u8 powerLimit, bool test)
 {
 	struct ath_regulatory *regulatory = ath9k_hw_regulatory(ah);
@@ -5029,6 +5484,10 @@ static void ath9k_hw_ar9300_set_txpower(struct ath_hw *ah,
 	ar9003_hw_set_power_per_rate_table(ah, chan,
 					   targetPowerValT2, cfgCtl,
 					   twiceAntennaReduction,
+<<<<<<< HEAD
+=======
+					   twiceMaxRegulatoryPower,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					   powerLimit);
 
 	if (ah->eep_ops->get_eeprom(ah, EEP_PAPRD)) {
@@ -5038,7 +5497,11 @@ static void ath9k_hw_ar9300_set_txpower(struct ath_hw *ah,
 				target_power_val_t2_eep[i]) >
 			    paprd_scale_factor)) {
 				ah->paprd_ratemask &= ~(1 << i);
+<<<<<<< HEAD
 				ath_dbg(common, EEPROM,
+=======
+				ath_dbg(common, ATH_DBG_EEPROM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"paprd disabled for mcs %d\n", i);
 			}
 		}
@@ -5050,17 +5513,46 @@ static void ath9k_hw_ar9300_set_txpower(struct ath_hw *ah,
 			regulatory->max_power_level = targetPowerValT2[i];
 	}
 
+<<<<<<< HEAD
 	ath9k_hw_update_regulatory_maxpower(ah);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (test)
 		return;
 
 	for (i = 0; i < ar9300RateSize; i++) {
+<<<<<<< HEAD
 		ath_dbg(common, EEPROM, "TPC[%02d] 0x%08x\n",
 			i, targetPowerValT2[i]);
 	}
 
 	ah->txpower_limit = regulatory->max_power_level;
+=======
+		ath_dbg(common, ATH_DBG_EEPROM,
+			"TPC[%02d] 0x%08x\n", i, targetPowerValT2[i]);
+	}
+
+	/*
+	 * This is the TX power we send back to driver core,
+	 * and it can use to pass to userspace to display our
+	 * currently configured TX power setting.
+	 *
+	 * Since power is rate dependent, use one of the indices
+	 * from the AR9300_Rates enum to select an entry from
+	 * targetPowerValT2[] to report. Currently returns the
+	 * power for HT40 MCS 0, HT20 MCS 0, or OFDM 6 Mbps
+	 * as CCK power is less interesting (?).
+	 */
+	i = ALL_TARGET_LEGACY_6_24; /* legacy */
+	if (IS_CHAN_HT40(chan))
+		i = ALL_TARGET_HT40_0_8_16; /* ht40 */
+	else if (IS_CHAN_HT20(chan))
+		i = ALL_TARGET_HT20_0_8_16; /* ht20 */
+
+	ah->txpower_limit = targetPowerValT2[i];
+	regulatory->max_power_level = targetPowerValT2[i];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Write target power array to registers */
 	ar9003_hw_tx_power_regwrite(ah, targetPowerValT2);
@@ -5135,7 +5627,10 @@ const struct eeprom_ops eep_ar9300_ops = {
 	.check_eeprom = ath9k_hw_ar9300_check_eeprom,
 	.get_eeprom = ath9k_hw_ar9300_get_eeprom,
 	.fill_eeprom = ath9k_hw_ar9300_fill_eeprom,
+<<<<<<< HEAD
 	.dump_eeprom = ath9k_hw_ar9003_dump_eeprom,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.get_eeprom_ver = ath9k_hw_ar9300_get_eeprom_ver,
 	.get_eeprom_rev = ath9k_hw_ar9300_get_eeprom_rev,
 	.set_board_values = ath9k_hw_ar9300_set_board_values,

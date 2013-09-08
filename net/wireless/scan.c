@@ -12,13 +12,20 @@
 #include <linux/etherdevice.h>
 #include <net/arp.h>
 #include <net/cfg80211.h>
+<<<<<<< HEAD
 #include <net/cfg80211-wext.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/iw_handler.h>
 #include "core.h"
 #include "nl80211.h"
 #include "wext-compat.h"
 
+<<<<<<< HEAD
 #define IEEE80211_SCAN_RESULT_EXPIRE	(15 * HZ)
+=======
+#define IEEE80211_SCAN_RESULT_EXPIRE	(3 * HZ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void ___cfg80211_scan_done(struct cfg80211_registered_device *rdev, bool leak)
 {
@@ -133,17 +140,29 @@ EXPORT_SYMBOL(cfg80211_sched_scan_stopped);
 int __cfg80211_stop_sched_scan(struct cfg80211_registered_device *rdev,
 			       bool driver_initiated)
 {
+<<<<<<< HEAD
+=======
+	int err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct net_device *dev;
 
 	lockdep_assert_held(&rdev->sched_scan_mtx);
 
 	if (!rdev->sched_scan_req)
+<<<<<<< HEAD
 		return -ENOENT;
+=======
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dev = rdev->sched_scan_req->dev;
 
 	if (!driver_initiated) {
+<<<<<<< HEAD
 		int err = rdev->ops->sched_scan_stop(&rdev->wiphy, dev);
+=======
+		err = rdev->ops->sched_scan_stop(&rdev->wiphy, dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err)
 			return err;
 	}
@@ -153,7 +172,11 @@ int __cfg80211_stop_sched_scan(struct cfg80211_registered_device *rdev,
 	kfree(rdev->sched_scan_req);
 	rdev->sched_scan_req = NULL;
 
+<<<<<<< HEAD
 	return 0;
+=======
+	return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void bss_release(struct kref *ref)
@@ -228,6 +251,7 @@ const u8 *cfg80211_find_ie(u8 eid, const u8 *ies, int len)
 }
 EXPORT_SYMBOL(cfg80211_find_ie);
 
+<<<<<<< HEAD
 const u8 *cfg80211_find_vendor_ie(unsigned int oui, u8 oui_type,
 				  const u8 *ies, int len)
 {
@@ -255,10 +279,13 @@ const u8 *cfg80211_find_vendor_ie(unsigned int oui, u8 oui_type,
 }
 EXPORT_SYMBOL(cfg80211_find_vendor_ie);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int cmp_ies(u8 num, u8 *ies1, size_t len1, u8 *ies2, size_t len2)
 {
 	const u8 *ie1 = cfg80211_find_ie(num, ies1, len1);
 	const u8 *ie2 = cfg80211_find_ie(num, ies2, len2);
+<<<<<<< HEAD
 
 	/* equal if both missing */
 	if (!ie1 && !ie2)
@@ -273,6 +300,19 @@ static int cmp_ies(u8 num, u8 *ies1, size_t len1, u8 *ies2, size_t len2)
 	if (ie1[1] != ie2[1])
 		return ie2[1] - ie1[1];
 	return memcmp(ie1 + 2, ie2 + 2, ie1[1]);
+=======
+	int r;
+
+	if (!ie1 && !ie2)
+		return 0;
+	if (!ie1 || !ie2)
+		return -1;
+
+	r = memcmp(ie1 + 2, ie2 + 2, min(ie1[1], ie2[1]));
+	if (r == 0 && ie1[1] != ie2[1])
+		return ie2[1] - ie1[1];
+	return r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static bool is_bss(struct cfg80211_bss *a,
@@ -355,8 +395,13 @@ static bool is_mesh(struct cfg80211_bss *a,
 	    sizeof(struct ieee80211_meshconf_ie) - 2) == 0;
 }
 
+<<<<<<< HEAD
 static int cmp_bss_core(struct cfg80211_bss *a,
 			struct cfg80211_bss *b)
+=======
+static int cmp_bss(struct cfg80211_bss *a,
+		   struct cfg80211_bss *b)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int r;
 
@@ -378,6 +423,7 @@ static int cmp_bss_core(struct cfg80211_bss *a,
 			       b->len_information_elements);
 	}
 
+<<<<<<< HEAD
 	return memcmp(a->bssid, b->bssid, ETH_ALEN);
 }
 
@@ -387,6 +433,9 @@ static int cmp_bss(struct cfg80211_bss *a,
 	int r;
 
 	r = cmp_bss_core(a, b);
+=======
+	r = memcmp(a->bssid, b->bssid, ETH_ALEN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (r)
 		return r;
 
@@ -397,6 +446,7 @@ static int cmp_bss(struct cfg80211_bss *a,
 		       b->len_information_elements);
 }
 
+<<<<<<< HEAD
 static int cmp_hidden_bss(struct cfg80211_bss *a,
 		   struct cfg80211_bss *b)
 {
@@ -443,6 +493,8 @@ static int cmp_hidden_bss(struct cfg80211_bss *a,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct cfg80211_bss *cfg80211_get_bss(struct wiphy *wiphy,
 				      struct ieee80211_channel *channel,
 				      const u8 *bssid,
@@ -453,6 +505,12 @@ struct cfg80211_bss *cfg80211_get_bss(struct wiphy *wiphy,
 	struct cfg80211_internal_bss *bss, *res = NULL;
 	unsigned long now = jiffies;
 
+<<<<<<< HEAD
+=======
+	if ((bssid == NULL) || (ssid == NULL))
+		return NULL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_bh(&dev->bss_lock);
 
 	list_for_each_entry(bss, &dev->bss_list, list) {
@@ -559,6 +617,7 @@ rb_find_bss(struct cfg80211_registered_device *dev,
 }
 
 static struct cfg80211_internal_bss *
+<<<<<<< HEAD
 rb_find_hidden_bss(struct cfg80211_registered_device *dev,
 	    struct cfg80211_internal_bss *res)
 {
@@ -601,6 +660,8 @@ copy_hidden_ies(struct cfg80211_internal_bss *res,
 }
 
 static struct cfg80211_internal_bss *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 cfg80211_bss_update(struct cfg80211_registered_device *dev,
 		    struct cfg80211_internal_bss *res)
 {
@@ -703,6 +764,7 @@ cfg80211_bss_update(struct cfg80211_registered_device *dev,
 
 		kref_put(&res->ref, bss_release);
 	} else {
+<<<<<<< HEAD
 		struct cfg80211_internal_bss *hidden;
 
 		/* First check if the beacon is a probe response from
@@ -718,6 +780,8 @@ cfg80211_bss_update(struct cfg80211_registered_device *dev,
 		if (hidden)
 			copy_hidden_ies(res, hidden);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* this "consumes" the reference */
 		list_add_tail(&res->list, &dev->bss_list);
 		rb_insert_bss(dev, res);
@@ -734,8 +798,14 @@ cfg80211_bss_update(struct cfg80211_registered_device *dev,
 struct cfg80211_bss*
 cfg80211_inform_bss(struct wiphy *wiphy,
 		    struct ieee80211_channel *channel,
+<<<<<<< HEAD
 		    const u8 *bssid, u64 tsf, u16 capability,
 		    u16 beacon_interval, const u8 *ie, size_t ielen,
+=======
+		    const u8 *bssid,
+		    u64 timestamp, u16 capability, u16 beacon_interval,
+		    const u8 *ie, size_t ielen,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    s32 signal, gfp_t gfp)
 {
 	struct cfg80211_internal_bss *res;
@@ -757,7 +827,11 @@ cfg80211_inform_bss(struct wiphy *wiphy,
 	memcpy(res->pub.bssid, bssid, ETH_ALEN);
 	res->pub.channel = channel;
 	res->pub.signal = signal;
+<<<<<<< HEAD
 	res->pub.tsf = tsf;
+=======
+	res->pub.tsf = timestamp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	res->pub.beacon_interval = beacon_interval;
 	res->pub.capability = capability;
 	/*
@@ -860,6 +934,7 @@ cfg80211_inform_bss_frame(struct wiphy *wiphy,
 }
 EXPORT_SYMBOL(cfg80211_inform_bss_frame);
 
+<<<<<<< HEAD
 void cfg80211_ref_bss(struct cfg80211_bss *pub)
 {
 	struct cfg80211_internal_bss *bss;
@@ -872,6 +947,8 @@ void cfg80211_ref_bss(struct cfg80211_bss *pub)
 }
 EXPORT_SYMBOL(cfg80211_ref_bss);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void cfg80211_put_bss(struct cfg80211_bss *pub)
 {
 	struct cfg80211_internal_bss *bss;
@@ -1015,10 +1092,13 @@ int cfg80211_wext_siwscan(struct net_device *dev,
 			creq->n_ssids = 0;
 	}
 
+<<<<<<< HEAD
 	for (i = 0; i < IEEE80211_NUM_BANDS; i++)
 		if (wiphy->bands[i])
 			creq->rates[i] = (1 << wiphy->bands[i]->n_bitrates) - 1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rdev->scan_req = creq;
 	err = rdev->ops->scan(wiphy, dev, creq);
 	if (err) {

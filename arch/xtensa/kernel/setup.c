@@ -34,6 +34,10 @@
 # include <linux/seq_file.h>
 #endif
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/bootparam.h>
 #include <asm/pgtable.h>
 #include <asm/processor.h>

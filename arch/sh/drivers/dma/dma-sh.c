@@ -95,7 +95,11 @@ static int sh_dmac_request_dma(struct dma_channel *chan)
 #if defined(CONFIG_SH_DMA_IRQ_MULTI)
 				IRQF_SHARED,
 #else
+<<<<<<< HEAD
 				0,
+=======
+				IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 				chan->dev_id, chan);
 }
@@ -305,7 +309,11 @@ static int __init sh_dmac_init(void)
 #if defined(CONFIG_SH_DMA_IRQ_MULTI)
 				IRQF_SHARED,
 #else
+<<<<<<< HEAD
 				0,
+=======
+				IRQF_DISABLED,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 				dmae_name[n], (void *)dmae_name[n]);
 		if (unlikely(i < 0)) {

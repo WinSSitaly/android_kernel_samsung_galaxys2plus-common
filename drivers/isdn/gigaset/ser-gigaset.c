@@ -246,7 +246,11 @@ static int gigaset_write_cmd(struct cardstate *cs, struct cmdbuf_t *cb)
 	unsigned long flags;
 
 	gigaset_dbg_buffer(cs->mstate != MS_LOCKED ?
+<<<<<<< HEAD
 			   DEBUG_TRANSCMD : DEBUG_LOCKCMD,
+=======
+				DEBUG_TRANSCMD : DEBUG_LOCKCMD,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   "CMD Transmit", cb->len, cb->buf);
 
 	spin_lock_irqsave(&cs->cmdlock, flags);
@@ -773,8 +777,13 @@ static int __init ser_gigaset_init(void)
 
 	/* allocate memory for our driver state and initialize it */
 	driver = gigaset_initdriver(GIGASET_MINOR, GIGASET_MINORS,
+<<<<<<< HEAD
 				    GIGASET_MODULENAME, GIGASET_DEVNAME,
 				    &ops, THIS_MODULE);
+=======
+					  GIGASET_MODULENAME, GIGASET_DEVNAME,
+					  &ops, THIS_MODULE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!driver)
 		goto error;
 

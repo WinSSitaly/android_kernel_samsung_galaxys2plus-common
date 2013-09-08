@@ -25,15 +25,30 @@
  *  675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <linux/init.h>
 #include <linux/interrupt.h>
+=======
+#include <linux/bitops.h>
+#include <linux/init.h>
+#include <linux/interrupt.h>
+#include <linux/irq.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/syscore_ops.h>
 
 #include <asm/irq_cpu.h>
+<<<<<<< HEAD
 #include <asm/mach-au1x00/au1000.h>
 #include <asm/mach-au1x00/gpio-au1300.h>
+=======
+#include <asm/mipsregs.h>
+#include <asm/mach-au1x00/au1000.h>
+#ifdef CONFIG_MIPS_PB1000
+#include <asm/mach-pb1x00/pb1000.h>
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Interrupt Controller register offsets */
 #define IC_CFG0RD	0x40
@@ -65,6 +80,7 @@
 #define IC_FALLINGCLR	0x7C
 #define IC_TESTBIT	0x80
 
+<<<<<<< HEAD
 /* per-processor fixed function irqs */
 struct alchemy_irqmap {
 	int irq;	/* linux IRQ number */
@@ -76,6 +92,9 @@ struct alchemy_irqmap {
 static int au1x_ic_settype(struct irq_data *d, unsigned int type);
 static int au1300_gpic_settype(struct irq_data *d, unsigned int type);
 
+=======
+static int au1x_ic_settype(struct irq_data *d, unsigned int flow_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* NOTE on interrupt priorities: The original writers of this code said:
  *
@@ -83,6 +102,7 @@ static int au1300_gpic_settype(struct irq_data *d, unsigned int type);
  * the USB devices-side packet complete interrupt (USB_DEV_REQ_INT)
  * needs the highest priority.
  */
+<<<<<<< HEAD
 struct alchemy_irqmap au1000_irqmap[] __initdata = {
 	{ AU1000_UART0_INT,	  IRQ_TYPE_LEVEL_HIGH,  1, 0 },
 	{ AU1000_UART1_INT,	  IRQ_TYPE_LEVEL_HIGH,  1, 0 },
@@ -284,6 +304,178 @@ static struct alchemy_irqmap au1300_irqmap[] __initdata = {
 };
 
 /******************************************************************************/
+=======
+
+/* per-processor fixed function irqs */
+struct au1xxx_irqmap {
+	int im_irq;
+	int im_type;
+	int im_request;		/* set 1 to get higher priority */
+};
+
+struct au1xxx_irqmap au1000_irqmap[] __initdata = {
+	{ AU1000_UART0_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_UART1_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_UART2_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_UART3_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_SSI0_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_SSI1_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_DMA_INT_BASE,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_DMA_INT_BASE+1,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_DMA_INT_BASE+2,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_DMA_INT_BASE+3,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_DMA_INT_BASE+4,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_DMA_INT_BASE+5,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_DMA_INT_BASE+6,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_DMA_INT_BASE+7,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_TOY_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1000_TOY_MATCH0_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1000_TOY_MATCH1_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1000_TOY_MATCH2_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1000_RTC_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1000_RTC_MATCH0_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1000_RTC_MATCH1_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1000_RTC_MATCH2_INT,  IRQ_TYPE_EDGE_RISING, 1 },
+	{ AU1000_IRDA_TX_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_IRDA_RX_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_USB_DEV_REQ_INT, IRQ_TYPE_LEVEL_HIGH,  1 },
+	{ AU1000_USB_DEV_SUS_INT, IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1000_USB_HOST_INT,	  IRQ_TYPE_LEVEL_LOW,   0 },
+	{ AU1000_ACSYNC_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1000_MAC0_DMA_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_MAC1_DMA_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1000_AC97C_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ -1, },
+};
+
+struct au1xxx_irqmap au1500_irqmap[] __initdata = {
+	{ AU1500_UART0_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1500_PCI_INTA,	  IRQ_TYPE_LEVEL_LOW,   0 },
+	{ AU1500_PCI_INTB,	  IRQ_TYPE_LEVEL_LOW,   0 },
+	{ AU1500_UART3_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1500_PCI_INTC,	  IRQ_TYPE_LEVEL_LOW,   0 },
+	{ AU1500_PCI_INTD,	  IRQ_TYPE_LEVEL_LOW,   0 },
+	{ AU1500_DMA_INT_BASE,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1500_DMA_INT_BASE+1,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1500_DMA_INT_BASE+2,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1500_DMA_INT_BASE+3,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1500_DMA_INT_BASE+4,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1500_DMA_INT_BASE+5,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1500_DMA_INT_BASE+6,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1500_DMA_INT_BASE+7,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1500_TOY_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1500_TOY_MATCH0_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1500_TOY_MATCH1_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1500_TOY_MATCH2_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1500_RTC_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1500_RTC_MATCH0_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1500_RTC_MATCH1_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1500_RTC_MATCH2_INT,  IRQ_TYPE_EDGE_RISING, 1 },
+	{ AU1500_USB_DEV_REQ_INT, IRQ_TYPE_LEVEL_HIGH,  1 },
+	{ AU1500_USB_DEV_SUS_INT, IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1500_USB_HOST_INT,	  IRQ_TYPE_LEVEL_LOW,   0 },
+	{ AU1500_ACSYNC_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1500_MAC0_DMA_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1500_MAC1_DMA_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1500_AC97C_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ -1, },
+};
+
+struct au1xxx_irqmap au1100_irqmap[] __initdata = {
+	{ AU1100_UART0_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_UART1_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_SD_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_UART3_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_SSI0_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_SSI1_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_DMA_INT_BASE,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_DMA_INT_BASE+1,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_DMA_INT_BASE+2,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_DMA_INT_BASE+3,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_DMA_INT_BASE+4,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_DMA_INT_BASE+5,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_DMA_INT_BASE+6,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_DMA_INT_BASE+7,  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_TOY_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1100_TOY_MATCH0_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1100_TOY_MATCH1_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1100_TOY_MATCH2_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1100_RTC_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1100_RTC_MATCH0_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1100_RTC_MATCH1_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1100_RTC_MATCH2_INT,  IRQ_TYPE_EDGE_RISING, 1 },
+	{ AU1100_IRDA_TX_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_IRDA_RX_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_USB_DEV_REQ_INT, IRQ_TYPE_LEVEL_HIGH,  1 },
+	{ AU1100_USB_DEV_SUS_INT, IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1100_USB_HOST_INT,	  IRQ_TYPE_LEVEL_LOW,   0 },
+	{ AU1100_ACSYNC_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1100_MAC0_DMA_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_LCD_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1100_AC97C_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ -1, },
+};
+
+struct au1xxx_irqmap au1550_irqmap[] __initdata = {
+	{ AU1550_UART0_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1550_PCI_INTA,	  IRQ_TYPE_LEVEL_LOW,   0 },
+	{ AU1550_PCI_INTB,	  IRQ_TYPE_LEVEL_LOW,   0 },
+	{ AU1550_DDMA_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1550_CRYPTO_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1550_PCI_INTC,	  IRQ_TYPE_LEVEL_LOW,   0 },
+	{ AU1550_PCI_INTD,	  IRQ_TYPE_LEVEL_LOW,   0 },
+	{ AU1550_PCI_RST_INT,	  IRQ_TYPE_LEVEL_LOW,   0 },
+	{ AU1550_UART1_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1550_UART3_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1550_PSC0_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1550_PSC1_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1550_PSC2_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1550_PSC3_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1550_TOY_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1550_TOY_MATCH0_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1550_TOY_MATCH1_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1550_TOY_MATCH2_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1550_RTC_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1550_RTC_MATCH0_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1550_RTC_MATCH1_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1550_RTC_MATCH2_INT,  IRQ_TYPE_EDGE_RISING, 1 },
+	{ AU1550_NAND_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1550_USB_DEV_REQ_INT, IRQ_TYPE_LEVEL_HIGH,  1 },
+	{ AU1550_USB_DEV_SUS_INT, IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1550_USB_HOST_INT,	  IRQ_TYPE_LEVEL_LOW,   0 },
+	{ AU1550_MAC0_DMA_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1550_MAC1_DMA_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ -1, },
+};
+
+struct au1xxx_irqmap au1200_irqmap[] __initdata = {
+	{ AU1200_UART0_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1200_SWT_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1200_SD_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1200_DDMA_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1200_MAE_BE_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1200_UART1_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1200_MAE_FE_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1200_PSC0_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1200_PSC1_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1200_AES_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1200_CAMERA_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1200_TOY_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1200_TOY_MATCH0_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1200_TOY_MATCH1_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1200_TOY_MATCH2_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1200_RTC_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1200_RTC_MATCH0_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1200_RTC_MATCH1_INT,  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1200_RTC_MATCH2_INT,  IRQ_TYPE_EDGE_RISING, 1 },
+	{ AU1200_NAND_INT,	  IRQ_TYPE_EDGE_RISING, 0 },
+	{ AU1200_USB_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1200_LCD_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ AU1200_MAE_BOTH_INT,	  IRQ_TYPE_LEVEL_HIGH,  0 },
+	{ -1, },
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void au1x_ic0_unmask(struct irq_data *d)
 {
@@ -302,6 +494,17 @@ static void au1x_ic1_unmask(struct irq_data *d)
 
 	__raw_writel(1 << bit, base + IC_MASKSET);
 	__raw_writel(1 << bit, base + IC_WAKESET);
+<<<<<<< HEAD
+=======
+
+/* very hacky. does the pb1000 cpld auto-disable this int?
+ * nowhere in the current kernel sources is it disabled.	--mlau
+ */
+#if defined(CONFIG_MIPS_PB1000)
+	if (d->irq == AU1000_GPIO15_INT)
+		__raw_writel(0x4000, (void __iomem *)PB1000_MDR); /* enable int */
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wmb();
 }
 
@@ -499,6 +702,7 @@ static int au1x_ic_settype(struct irq_data *d, unsigned int flow_type)
 	return ret;
 }
 
+<<<<<<< HEAD
 /******************************************************************************/
 
 /*
@@ -712,6 +916,42 @@ static int au1300_gpic_settype(struct irq_data *d, unsigned int type)
 }
 
 /******************************************************************************/
+=======
+asmlinkage void plat_irq_dispatch(void)
+{
+	unsigned int pending = read_c0_status() & read_c0_cause();
+	unsigned long s, off;
+
+	if (pending & CAUSEF_IP7) {
+		off = MIPS_CPU_IRQ_BASE + 7;
+		goto handle;
+	} else if (pending & CAUSEF_IP2) {
+		s = KSEG1ADDR(AU1000_IC0_PHYS_ADDR) + IC_REQ0INT;
+		off = AU1000_INTC0_INT_BASE;
+	} else if (pending & CAUSEF_IP3) {
+		s = KSEG1ADDR(AU1000_IC0_PHYS_ADDR) + IC_REQ1INT;
+		off = AU1000_INTC0_INT_BASE;
+	} else if (pending & CAUSEF_IP4) {
+		s = KSEG1ADDR(AU1000_IC1_PHYS_ADDR) + IC_REQ0INT;
+		off = AU1000_INTC1_INT_BASE;
+	} else if (pending & CAUSEF_IP5) {
+		s = KSEG1ADDR(AU1000_IC1_PHYS_ADDR) + IC_REQ1INT;
+		off = AU1000_INTC1_INT_BASE;
+	} else
+		goto spurious;
+
+	s = __raw_readl((void __iomem *)s);
+	if (unlikely(!s)) {
+spurious:
+		spurious_interrupt();
+		return;
+	}
+	off += __ffs(s);
+handle:
+	do_IRQ(off);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void ic_init(void __iomem *base)
 {
@@ -729,6 +969,7 @@ static inline void ic_init(void __iomem *base)
 	wmb();
 }
 
+<<<<<<< HEAD
 static unsigned long alchemy_gpic_pmdata[ALCHEMY_GPIC_INT_NUM + 6];
 
 static inline void alchemy_ic_suspend_one(void __iomem *base, unsigned long *d)
@@ -875,13 +1116,19 @@ static void alchemy_gpic_dispatch(unsigned int irq, struct irq_desc *d)
 /******************************************************************************/
 
 static void __init au1000_init_irq(struct alchemy_irqmap *map)
+=======
+static void __init au1000_init_irq(struct au1xxx_irqmap *map)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int bit, irq_nr;
 	void __iomem *base;
 
 	ic_init((void __iomem *)KSEG1ADDR(AU1000_IC0_PHYS_ADDR));
 	ic_init((void __iomem *)KSEG1ADDR(AU1000_IC1_PHYS_ADDR));
+<<<<<<< HEAD
 	register_syscore_ops(&alchemy_ic_pmops);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mips_cpu_irq_init();
 
 	/* register all 64 possible IC0+IC1 irq sources as type "none".
@@ -898,8 +1145,13 @@ static void __init au1000_init_irq(struct alchemy_irqmap *map)
 	/*
 	 * Initialize IC0, which is fixed per processor.
 	 */
+<<<<<<< HEAD
 	while (map->irq != -1) {
 		irq_nr = map->irq;
+=======
+	while (map->im_irq != -1) {
+		irq_nr = map->im_irq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (irq_nr >= AU1000_INTC1_INT_BASE) {
 			bit = irq_nr - AU1000_INTC1_INT_BASE;
@@ -908,6 +1160,7 @@ static void __init au1000_init_irq(struct alchemy_irqmap *map)
 			bit = irq_nr - AU1000_INTC0_INT_BASE;
 			base = (void __iomem *)KSEG1ADDR(AU1000_IC0_PHYS_ADDR);
 		}
+<<<<<<< HEAD
 		if (map->prio == 0)
 			__raw_writel(1 << bit, base + IC_ASSIGNSET);
 
@@ -963,6 +1216,18 @@ static void __init alchemy_gpic_init_irq(const struct alchemy_irqmap *dints)
 
 /******************************************************************************/
 
+=======
+		if (map->im_request)
+			__raw_writel(1 << bit, base + IC_ASSIGNSET);
+
+		au1x_ic_settype(irq_get_irq_data(irq_nr), map->im_type);
+		++map;
+	}
+
+	set_c0_status(IE_IRQ0 | IE_IRQ1 | IE_IRQ2 | IE_IRQ3);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init arch_init_irq(void)
 {
 	switch (alchemy_get_cputype()) {
@@ -981,6 +1246,7 @@ void __init arch_init_irq(void)
 	case ALCHEMY_CPU_AU1200:
 		au1000_init_irq(au1200_irqmap);
 		break;
+<<<<<<< HEAD
 	case ALCHEMY_CPU_AU1300:
 		alchemy_gpic_init_irq(au1300_irqmap);
 		break;
@@ -995,3 +1261,67 @@ asmlinkage void plat_irq_dispatch(void)
 	unsigned long r = (read_c0_status() & read_c0_cause()) >> 8;
 	do_IRQ(MIPS_CPU_IRQ_BASE + __ffs(r & 0xff));
 }
+=======
+	}
+}
+
+
+static unsigned long alchemy_ic_pmdata[7 * 2];
+
+static inline void alchemy_ic_suspend_one(void __iomem *base, unsigned long *d)
+{
+	d[0] = __raw_readl(base + IC_CFG0RD);
+	d[1] = __raw_readl(base + IC_CFG1RD);
+	d[2] = __raw_readl(base + IC_CFG2RD);
+	d[3] = __raw_readl(base + IC_SRCRD);
+	d[4] = __raw_readl(base + IC_ASSIGNRD);
+	d[5] = __raw_readl(base + IC_WAKERD);
+	d[6] = __raw_readl(base + IC_MASKRD);
+	ic_init(base);		/* shut it up too while at it */
+}
+
+static inline void alchemy_ic_resume_one(void __iomem *base, unsigned long *d)
+{
+	ic_init(base);
+
+	__raw_writel(d[0], base + IC_CFG0SET);
+	__raw_writel(d[1], base + IC_CFG1SET);
+	__raw_writel(d[2], base + IC_CFG2SET);
+	__raw_writel(d[3], base + IC_SRCSET);
+	__raw_writel(d[4], base + IC_ASSIGNSET);
+	__raw_writel(d[5], base + IC_WAKESET);
+	wmb();
+
+	__raw_writel(d[6], base + IC_MASKSET);
+	wmb();
+}
+
+static int alchemy_ic_suspend(void)
+{
+	alchemy_ic_suspend_one((void __iomem *)KSEG1ADDR(AU1000_IC0_PHYS_ADDR),
+			       alchemy_ic_pmdata);
+	alchemy_ic_suspend_one((void __iomem *)KSEG1ADDR(AU1000_IC1_PHYS_ADDR),
+			       &alchemy_ic_pmdata[7]);
+	return 0;
+}
+
+static void alchemy_ic_resume(void)
+{
+	alchemy_ic_resume_one((void __iomem *)KSEG1ADDR(AU1000_IC1_PHYS_ADDR),
+			      &alchemy_ic_pmdata[7]);
+	alchemy_ic_resume_one((void __iomem *)KSEG1ADDR(AU1000_IC0_PHYS_ADDR),
+			      alchemy_ic_pmdata);
+}
+
+static struct syscore_ops alchemy_ic_syscore_ops = {
+	.suspend	= alchemy_ic_suspend,
+	.resume		= alchemy_ic_resume,
+};
+
+static int __init alchemy_ic_pm_init(void)
+{
+	register_syscore_ops(&alchemy_ic_syscore_ops);
+	return 0;
+}
+device_initcall(alchemy_ic_pm_init);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

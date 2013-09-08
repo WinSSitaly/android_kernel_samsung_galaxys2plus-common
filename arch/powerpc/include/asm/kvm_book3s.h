@@ -24,6 +24,23 @@
 #include <linux/kvm_host.h>
 #include <asm/kvm_book3s_asm.h>
 
+<<<<<<< HEAD
+=======
+struct kvmppc_slb {
+	u64 esid;
+	u64 vsid;
+	u64 orige;
+	u64 origv;
+	bool valid	: 1;
+	bool Ks		: 1;
+	bool Kp		: 1;
+	bool nx		: 1;
+	bool large	: 1;	/* PTEs are 16MB */
+	bool tb		: 1;	/* 1TB segment */
+	bool class	: 1;
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct kvmppc_bat {
 	u64 raw;
 	u32 bepi;
@@ -53,6 +70,7 @@ struct kvmppc_sid_map {
 #define VSID_POOL_SIZE	(SID_CONTEXTS * 16)
 #endif
 
+<<<<<<< HEAD
 struct hpte_cache {
 	struct hlist_node list_pte;
 	struct hlist_node list_pte_long;
@@ -65,10 +83,16 @@ struct hpte_cache {
 	struct kvmppc_pte pte;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct kvmppc_vcpu_book3s {
 	struct kvm_vcpu vcpu;
 	struct kvmppc_book3s_shadow_vcpu *shadow_vcpu;
 	struct kvmppc_sid_map sid_map[SID_MAP_NUM];
+<<<<<<< HEAD
+=======
+	struct kvmppc_slb slb[64];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct {
 		u64 esid;
 		u64 vsid;
@@ -78,6 +102,7 @@ struct kvmppc_vcpu_book3s {
 	struct kvmppc_bat dbat[8];
 	u64 hid[6];
 	u64 gqr[8];
+<<<<<<< HEAD
 	u64 sdr1;
 	u64 hior;
 	u64 msr_mask;
@@ -99,6 +124,21 @@ struct kvmppc_vcpu_book3s {
 	struct hlist_head hpte_hash_vpte_long[HPTEG_HASH_NUM_VPTE_LONG];
 	int hpte_cache_count;
 	spinlock_t mmu_lock;
+=======
+	int slb_nr;
+	u64 sdr1;
+	u64 hior;
+	u64 msr_mask;
+	u64 vsid_next;
+#ifdef CONFIG_PPC_BOOK3S_32
+	u32 vsid_pool[VSID_POOL_SIZE];
+#else
+	u64 vsid_first;
+	u64 vsid_max;
+#endif
+	int context_id[SID_CONTEXTS];
+	ulong prog_flags; /* flags to inject when giving a 700 trap */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define CONTEXT_HOST		0
@@ -115,6 +155,7 @@ extern void kvmppc_mmu_pte_flush(struct kvm_vcpu *vcpu, ulong ea, ulong ea_mask)
 extern void kvmppc_mmu_pte_vflush(struct kvm_vcpu *vcpu, u64 vp, u64 vp_mask);
 extern void kvmppc_mmu_pte_pflush(struct kvm_vcpu *vcpu, ulong pa_start, ulong pa_end);
 extern void kvmppc_set_msr(struct kvm_vcpu *vcpu, u64 new_msr);
+<<<<<<< HEAD
 extern void kvmppc_set_pvr(struct kvm_vcpu *vcpu, u32 pvr);
 extern void kvmppc_mmu_book3s_64_init(struct kvm_vcpu *vcpu);
 extern void kvmppc_mmu_book3s_32_init(struct kvm_vcpu *vcpu);
@@ -127,6 +168,13 @@ extern int kvmppc_book3s_hv_page_fault(struct kvm_run *run,
 			unsigned long status);
 extern long kvmppc_hv_find_lock_hpte(struct kvm *kvm, gva_t eaddr,
 			unsigned long slb_v, unsigned long valid);
+=======
+extern void kvmppc_mmu_book3s_64_init(struct kvm_vcpu *vcpu);
+extern void kvmppc_mmu_book3s_32_init(struct kvm_vcpu *vcpu);
+extern int kvmppc_mmu_map_page(struct kvm_vcpu *vcpu, struct kvmppc_pte *pte);
+extern int kvmppc_mmu_map_segment(struct kvm_vcpu *vcpu, ulong eaddr);
+extern void kvmppc_mmu_flush_segments(struct kvm_vcpu *vcpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void kvmppc_mmu_hpte_cache_map(struct kvm_vcpu *vcpu, struct hpte_cache *pte);
 extern struct hpte_cache *kvmppc_mmu_hpte_cache_next(struct kvm_vcpu *vcpu);
@@ -135,17 +183,24 @@ extern int kvmppc_mmu_hpte_init(struct kvm_vcpu *vcpu);
 extern void kvmppc_mmu_invalidate_pte(struct kvm_vcpu *vcpu, struct hpte_cache *pte);
 extern int kvmppc_mmu_hpte_sysinit(void);
 extern void kvmppc_mmu_hpte_sysexit(void);
+<<<<<<< HEAD
 extern int kvmppc_mmu_hv_init(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int kvmppc_ld(struct kvm_vcpu *vcpu, ulong *eaddr, int size, void *ptr, bool data);
 extern int kvmppc_st(struct kvm_vcpu *vcpu, ulong *eaddr, int size, void *ptr, bool data);
 extern void kvmppc_book3s_queue_irqprio(struct kvm_vcpu *vcpu, unsigned int vec);
+<<<<<<< HEAD
 extern void kvmppc_inject_interrupt(struct kvm_vcpu *vcpu, int vec, u64 flags);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void kvmppc_set_bat(struct kvm_vcpu *vcpu, struct kvmppc_bat *bat,
 			   bool upper, u32 val);
 extern void kvmppc_giveup_ext(struct kvm_vcpu *vcpu, ulong msr);
 extern int kvmppc_emulate_paired_single(struct kvm_run *run, struct kvm_vcpu *vcpu);
 extern pfn_t kvmppc_gfn_to_pfn(struct kvm_vcpu *vcpu, gfn_t gfn);
+<<<<<<< HEAD
 extern void kvmppc_add_revmap_chain(struct kvm *kvm, struct revmap_entry *rev,
 			unsigned long *rmap, long pte_index, int realmode);
 extern void kvmppc_invalidate_hpte(struct kvm *kvm, unsigned long *hptep,
@@ -164,18 +219,28 @@ extern long kvmppc_hv_get_dirty_log(struct kvm *kvm,
 
 extern void kvmppc_entry_trampoline(void);
 extern void kvmppc_hv_entry_trampoline(void);
+=======
+
+extern ulong kvmppc_trampoline_lowmem;
+extern ulong kvmppc_trampoline_enter;
+extern void kvmppc_rmcall(ulong srr0, ulong srr1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void kvmppc_load_up_fpu(void);
 extern void kvmppc_load_up_altivec(void);
 extern void kvmppc_load_up_vsx(void);
 extern u32 kvmppc_alignment_dsisr(struct kvm_vcpu *vcpu, unsigned int inst);
 extern ulong kvmppc_alignment_dar(struct kvm_vcpu *vcpu, unsigned int inst);
+<<<<<<< HEAD
 extern int kvmppc_h_pr(struct kvm_vcpu *vcpu, unsigned long cmd);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline struct kvmppc_vcpu_book3s *to_book3s(struct kvm_vcpu *vcpu)
 {
 	return container_of(vcpu, struct kvmppc_vcpu_book3s, vcpu);
 }
 
+<<<<<<< HEAD
 extern void kvm_return_point(void);
 
 /* Also add subarch specific defines */
@@ -202,13 +267,28 @@ static inline void kvmppc_update_int_pending(struct kvm_vcpu *vcpu,
 	else if (old_pending)
 		vcpu->arch.shared->int_pending = 0;
 }
+=======
+static inline ulong dsisr(void)
+{
+	ulong r;
+	asm ( "mfdsisr %0 " : "=r" (r) );
+	return r;
+}
+
+extern void kvm_return_point(void);
+static inline struct kvmppc_book3s_shadow_vcpu *to_svcpu(struct kvm_vcpu *vcpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline void kvmppc_set_gpr(struct kvm_vcpu *vcpu, int num, ulong val)
 {
 	if ( num < 14 ) {
+<<<<<<< HEAD
 		struct kvmppc_book3s_shadow_vcpu *svcpu = svcpu_get(vcpu);
 		svcpu->gpr[num] = val;
 		svcpu_put(svcpu);
+=======
+		to_svcpu(vcpu)->gpr[num] = val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		to_book3s(vcpu)->shadow_vcpu->gpr[num] = val;
 	} else
 		vcpu->arch.gpr[num] = val;
@@ -216,108 +296,160 @@ static inline void kvmppc_set_gpr(struct kvm_vcpu *vcpu, int num, ulong val)
 
 static inline ulong kvmppc_get_gpr(struct kvm_vcpu *vcpu, int num)
 {
+<<<<<<< HEAD
 	if ( num < 14 ) {
 		struct kvmppc_book3s_shadow_vcpu *svcpu = svcpu_get(vcpu);
 		ulong r = svcpu->gpr[num];
 		svcpu_put(svcpu);
 		return r;
 	} else
+=======
+	if ( num < 14 )
+		return to_svcpu(vcpu)->gpr[num];
+	else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return vcpu->arch.gpr[num];
 }
 
 static inline void kvmppc_set_cr(struct kvm_vcpu *vcpu, u32 val)
 {
+<<<<<<< HEAD
 	struct kvmppc_book3s_shadow_vcpu *svcpu = svcpu_get(vcpu);
 	svcpu->cr = val;
 	svcpu_put(svcpu);
+=======
+	to_svcpu(vcpu)->cr = val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	to_book3s(vcpu)->shadow_vcpu->cr = val;
 }
 
 static inline u32 kvmppc_get_cr(struct kvm_vcpu *vcpu)
 {
+<<<<<<< HEAD
 	struct kvmppc_book3s_shadow_vcpu *svcpu = svcpu_get(vcpu);
 	u32 r;
 	r = svcpu->cr;
 	svcpu_put(svcpu);
 	return r;
+=======
+	return to_svcpu(vcpu)->cr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void kvmppc_set_xer(struct kvm_vcpu *vcpu, u32 val)
 {
+<<<<<<< HEAD
 	struct kvmppc_book3s_shadow_vcpu *svcpu = svcpu_get(vcpu);
 	svcpu->xer = val;
 	to_book3s(vcpu)->shadow_vcpu->xer = val;
 	svcpu_put(svcpu);
+=======
+	to_svcpu(vcpu)->xer = val;
+	to_book3s(vcpu)->shadow_vcpu->xer = val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline u32 kvmppc_get_xer(struct kvm_vcpu *vcpu)
 {
+<<<<<<< HEAD
 	struct kvmppc_book3s_shadow_vcpu *svcpu = svcpu_get(vcpu);
 	u32 r;
 	r = svcpu->xer;
 	svcpu_put(svcpu);
 	return r;
+=======
+	return to_svcpu(vcpu)->xer;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void kvmppc_set_ctr(struct kvm_vcpu *vcpu, ulong val)
 {
+<<<<<<< HEAD
 	struct kvmppc_book3s_shadow_vcpu *svcpu = svcpu_get(vcpu);
 	svcpu->ctr = val;
 	svcpu_put(svcpu);
+=======
+	to_svcpu(vcpu)->ctr = val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline ulong kvmppc_get_ctr(struct kvm_vcpu *vcpu)
 {
+<<<<<<< HEAD
 	struct kvmppc_book3s_shadow_vcpu *svcpu = svcpu_get(vcpu);
 	ulong r;
 	r = svcpu->ctr;
 	svcpu_put(svcpu);
 	return r;
+=======
+	return to_svcpu(vcpu)->ctr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void kvmppc_set_lr(struct kvm_vcpu *vcpu, ulong val)
 {
+<<<<<<< HEAD
 	struct kvmppc_book3s_shadow_vcpu *svcpu = svcpu_get(vcpu);
 	svcpu->lr = val;
 	svcpu_put(svcpu);
+=======
+	to_svcpu(vcpu)->lr = val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline ulong kvmppc_get_lr(struct kvm_vcpu *vcpu)
 {
+<<<<<<< HEAD
 	struct kvmppc_book3s_shadow_vcpu *svcpu = svcpu_get(vcpu);
 	ulong r;
 	r = svcpu->lr;
 	svcpu_put(svcpu);
 	return r;
+=======
+	return to_svcpu(vcpu)->lr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void kvmppc_set_pc(struct kvm_vcpu *vcpu, ulong val)
 {
+<<<<<<< HEAD
 	struct kvmppc_book3s_shadow_vcpu *svcpu = svcpu_get(vcpu);
 	svcpu->pc = val;
 	svcpu_put(svcpu);
+=======
+	to_svcpu(vcpu)->pc = val;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline ulong kvmppc_get_pc(struct kvm_vcpu *vcpu)
 {
+<<<<<<< HEAD
 	struct kvmppc_book3s_shadow_vcpu *svcpu = svcpu_get(vcpu);
 	ulong r;
 	r = svcpu->pc;
 	svcpu_put(svcpu);
 	return r;
+=======
+	return to_svcpu(vcpu)->pc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline u32 kvmppc_get_last_inst(struct kvm_vcpu *vcpu)
 {
 	ulong pc = kvmppc_get_pc(vcpu);
+<<<<<<< HEAD
 	struct kvmppc_book3s_shadow_vcpu *svcpu = svcpu_get(vcpu);
 	u32 r;
+=======
+	struct kvmppc_book3s_shadow_vcpu *svcpu = to_svcpu(vcpu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Load the instruction manually if it failed to do so in the
 	 * exit path */
 	if (svcpu->last_inst == KVM_INST_FETCH_FAILED)
 		kvmppc_ld(vcpu, &pc, sizeof(u32), &svcpu->last_inst, false);
 
+<<<<<<< HEAD
 	r = svcpu->last_inst;
 	svcpu_put(svcpu);
 	return r;
@@ -433,10 +565,14 @@ static inline u32 kvmppc_get_last_inst(struct kvm_vcpu *vcpu)
 		kvmppc_ld(vcpu, &pc, sizeof(u32), &vcpu->arch.last_inst, false);
 
 	return vcpu->arch.last_inst;
+=======
+	return svcpu->last_inst;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline ulong kvmppc_get_fault_dar(struct kvm_vcpu *vcpu)
 {
+<<<<<<< HEAD
 	return vcpu->arch.fault_dar;
 }
 
@@ -446,6 +582,11 @@ static inline bool kvmppc_critical_section(struct kvm_vcpu *vcpu)
 }
 #endif
 
+=======
+	return to_svcpu(vcpu)->fault_dar;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Magic register values loaded into r3 and r4 before the 'sc' assembly
  * instruction for the OSI hypercalls */
 #define OSI_SC_MAGIC_R3			0x113724FA
@@ -453,4 +594,15 @@ static inline bool kvmppc_critical_section(struct kvm_vcpu *vcpu)
 
 #define INS_DCBZ			0x7c0007ec
 
+<<<<<<< HEAD
+=======
+/* Also add subarch specific defines */
+
+#ifdef CONFIG_PPC_BOOK3S_32
+#include <asm/kvm_book3s_32.h>
+#else
+#include <asm/kvm_book3s_64.h>
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __ASM_KVM_BOOK3S_H__ */

@@ -20,6 +20,10 @@
  */
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/interrupt.h>
 #include <linux/delay.h>
@@ -27,6 +31,10 @@
 #include <linux/if_arp.h>
 #include <linux/if_ether.h>
 #include <linux/list.h>
+<<<<<<< HEAD
+=======
+#include <linux/delay.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/io.h>
 #include <linux/platform_device.h>
 #include <linux/clk.h>
@@ -197,7 +205,21 @@ static struct platform_driver c_can_plat_driver = {
 	.remove = __devexit_p(c_can_plat_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(c_can_plat_driver);
+=======
+static int __init c_can_plat_init(void)
+{
+	return platform_driver_register(&c_can_plat_driver);
+}
+module_init(c_can_plat_init);
+
+static void __exit c_can_plat_exit(void)
+{
+	platform_driver_unregister(&c_can_plat_driver);
+}
+module_exit(c_can_plat_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Bhupesh Sharma <bhupesh.sharma@st.com>");
 MODULE_LICENSE("GPL v2");

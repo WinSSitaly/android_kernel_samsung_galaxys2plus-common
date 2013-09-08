@@ -13,6 +13,10 @@
 #include <linux/list.h>
 #include <linux/spinlock.h>
 #include <linux/device.h>
+<<<<<<< HEAD
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/timer.h>
 #include <linux/err.h>
 #include <linux/ctype.h>

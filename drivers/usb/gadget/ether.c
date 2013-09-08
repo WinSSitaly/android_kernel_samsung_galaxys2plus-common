@@ -9,6 +9,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
+<<<<<<< HEAD
+=======
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 /* #define VERBOSE_DEBUG */
@@ -180,6 +192,7 @@ static struct usb_device_descriptor device_desc = {
 	.bNumConfigurations =	1,
 };
 
+<<<<<<< HEAD
 static struct usb_otg_descriptor otg_descriptor = {
 	.bLength =		sizeof otg_descriptor,
 	.bDescriptorType =	USB_DT_OTG,
@@ -195,6 +208,8 @@ static const struct usb_descriptor_header *otg_desc[] = {
 	NULL,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* string IDs are assigned dynamically */
 
@@ -232,12 +247,16 @@ static int __init rndis_do_config(struct usb_configuration *c)
 {
 	/* FIXME alloc iConfiguration string, set it in c->strings */
 
+<<<<<<< HEAD
 	if (gadget_is_otg(c->cdev->gadget)) {
 		c->descriptors = otg_desc;
 		c->bmAttributes |= USB_CONFIG_ATT_WAKEUP;
 	}
 
 	return rndis_bind_config(c, hostaddr);
+=======
+	return rndis_bind_config(c, hostaddr, device_desc.idVendor, manufacturer );
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct usb_configuration rndis_config_driver = {
@@ -250,9 +269,15 @@ static struct usb_configuration rndis_config_driver = {
 /*-------------------------------------------------------------------------*/
 
 #ifdef CONFIG_USB_ETH_EEM
+<<<<<<< HEAD
 static bool use_eem = 1;
 #else
 static bool use_eem;
+=======
+static int use_eem = 1;
+#else
+static int use_eem;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 module_param(use_eem, bool, 0);
 MODULE_PARM_DESC(use_eem, "use CDC EEM mode");
@@ -264,11 +289,14 @@ static int __init eth_do_config(struct usb_configuration *c)
 {
 	/* FIXME alloc iConfiguration string, set it in c->strings */
 
+<<<<<<< HEAD
 	if (gadget_is_otg(c->cdev->gadget)) {
 		c->descriptors = otg_desc;
 		c->bmAttributes |= USB_CONFIG_ATT_WAKEUP;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (use_eem)
 		return eem_bind_config(c);
 	else if (can_support_ecm(c->cdev->gadget))
@@ -392,7 +420,10 @@ static struct usb_composite_driver eth_driver = {
 	.name		= "g_ether",
 	.dev		= &device_desc,
 	.strings	= dev_strings,
+<<<<<<< HEAD
 	.max_speed	= USB_SPEED_SUPER,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.unbind		= __exit_p(eth_unbind),
 };
 

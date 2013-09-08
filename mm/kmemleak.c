@@ -69,7 +69,11 @@
 #include <linux/sched.h>
 #include <linux/jiffies.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kthread.h>
 #include <linux/prio_tree.h>
 #include <linux/fs.h>
@@ -96,11 +100,18 @@
 
 #include <asm/sections.h>
 #include <asm/processor.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
 
 #include <linux/kmemcheck.h>
 #include <linux/kmemleak.h>
 #include <linux/memory_hotplug.h>
+=======
+#include <asm/atomic.h>
+
+#include <linux/kmemcheck.h>
+#include <linux/kmemleak.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Kmemleak configuration and common defines.
@@ -197,9 +208,13 @@ static atomic_t kmemleak_enabled = ATOMIC_INIT(0);
 static atomic_t kmemleak_initialized = ATOMIC_INIT(0);
 /* enables or disables early logging of the memory operations */
 static atomic_t kmemleak_early_log = ATOMIC_INIT(1);
+<<<<<<< HEAD
 /* set if a kmemleak warning was issued */
 static atomic_t kmemleak_warning = ATOMIC_INIT(0);
 /* set if a fatal kmemleak error has occurred */
+=======
+/* set if a fata kmemleak error has occurred */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static atomic_t kmemleak_error = ATOMIC_INIT(0);
 
 /* minimum and maximum address that may be valid pointers */
@@ -231,10 +246,15 @@ static int kmemleak_skip_disable;
 /* kmemleak operation type for early logging */
 enum {
 	KMEMLEAK_ALLOC,
+<<<<<<< HEAD
 	KMEMLEAK_ALLOC_PERCPU,
 	KMEMLEAK_FREE,
 	KMEMLEAK_FREE_PART,
 	KMEMLEAK_FREE_PERCPU,
+=======
+	KMEMLEAK_FREE,
+	KMEMLEAK_FREE_PART,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	KMEMLEAK_NOT_LEAK,
 	KMEMLEAK_IGNORE,
 	KMEMLEAK_SCAN_AREA,
@@ -264,10 +284,16 @@ static void kmemleak_disable(void);
 /*
  * Print a warning and dump the stack trace.
  */
+<<<<<<< HEAD
 #define kmemleak_warn(x...)	do {		\
 	pr_warning(x);				\
 	dump_stack();				\
 	atomic_set(&kmemleak_warning, 1);	\
+=======
+#define kmemleak_warn(x...)	do {	\
+	pr_warning(x);			\
+	dump_stack();			\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } while (0)
 
 /*
@@ -409,8 +435,13 @@ static struct kmemleak_object *lookup_object(unsigned long ptr, int alias)
 		object = prio_tree_entry(node, struct kmemleak_object,
 					 tree_node);
 		if (!alias && object->pointer != ptr) {
+<<<<<<< HEAD
 			kmemleak_warn("Found object by alias at 0x%08lx\n",
 				      ptr);
+=======
+			pr_warning("Found object by alias at 0x%08lx\n", ptr);
+			dump_stack();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dump_object_info(object);
 			object = NULL;
 		}
@@ -800,6 +831,7 @@ static void __init log_early(int op_type, const void *ptr, size_t size,
 	unsigned long flags;
 	struct early_log *log;
 
+<<<<<<< HEAD
 	if (atomic_read(&kmemleak_error)) {
 		/* kmemleak stopped recording, just count the requests */
 		crt_early_log++;
@@ -807,6 +839,11 @@ static void __init log_early(int op_type, const void *ptr, size_t size,
 	}
 
 	if (crt_early_log >= ARRAY_SIZE(early_log)) {
+=======
+	if (crt_early_log >= ARRAY_SIZE(early_log)) {
+		pr_warning("Early log buffer exceeded, "
+			   "please increase DEBUG_KMEMLEAK_EARLY_LOG_SIZE\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kmemleak_disable();
 		return;
 	}
@@ -821,7 +858,12 @@ static void __init log_early(int op_type, const void *ptr, size_t size,
 	log->ptr = ptr;
 	log->size = size;
 	log->min_count = min_count;
+<<<<<<< HEAD
 	log->trace_len = __save_stack_trace(log->trace);
+=======
+	if (op_type == KMEMLEAK_ALLOC)
+		log->trace_len = __save_stack_trace(log->trace);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	crt_early_log++;
 	local_irq_restore(flags);
 }
@@ -855,6 +897,7 @@ out:
 	rcu_read_unlock();
 }
 
+<<<<<<< HEAD
 /*
  * Log an early allocated block and populate the stack trace.
  */
@@ -869,6 +912,8 @@ static void early_alloc_percpu(struct early_log *log)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * kmemleak_alloc - register a newly allocated object
  * @ptr:	pointer to beginning of the object
@@ -896,6 +941,7 @@ void __ref kmemleak_alloc(const void *ptr, size_t size, int min_count,
 EXPORT_SYMBOL_GPL(kmemleak_alloc);
 
 /**
+<<<<<<< HEAD
  * kmemleak_alloc_percpu - register a newly allocated __percpu object
  * @ptr:	__percpu pointer to beginning of the object
  * @size:	size of the object
@@ -924,6 +970,8 @@ void __ref kmemleak_alloc_percpu(const void __percpu *ptr, size_t size)
 EXPORT_SYMBOL_GPL(kmemleak_alloc_percpu);
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * kmemleak_free - unregister a previously registered object
  * @ptr:	pointer to beginning of the object
  *
@@ -962,6 +1010,7 @@ void __ref kmemleak_free_part(const void *ptr, size_t size)
 EXPORT_SYMBOL_GPL(kmemleak_free_part);
 
 /**
+<<<<<<< HEAD
  * kmemleak_free_percpu - unregister a previously registered __percpu object
  * @ptr:	__percpu pointer to beginning of the object
  *
@@ -984,6 +1033,8 @@ void __ref kmemleak_free_percpu(const void __percpu *ptr)
 EXPORT_SYMBOL_GPL(kmemleak_free_percpu);
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * kmemleak_not_leak - mark an allocated object as false positive
  * @ptr:	pointer to beginning of the object
  *
@@ -1036,7 +1087,11 @@ void __ref kmemleak_scan_area(const void *ptr, size_t size, gfp_t gfp)
 {
 	pr_debug("%s(0x%p)\n", __func__, ptr);
 
+<<<<<<< HEAD
 	if (atomic_read(&kmemleak_enabled) && ptr && size && !IS_ERR(ptr))
+=======
+	if (atomic_read(&kmemleak_enabled) && ptr && !IS_ERR(ptr))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		add_scan_area((unsigned long)ptr, size, gfp);
 	else if (atomic_read(&kmemleak_early_log))
 		log_early(KMEMLEAK_SCAN_AREA, ptr, size, 0);
@@ -1293,9 +1348,15 @@ static void kmemleak_scan(void)
 #endif
 
 	/*
+<<<<<<< HEAD
 	 * Struct page scanning for each node.
 	 */
 	lock_memory_hotplug();
+=======
+	 * Struct page scanning for each node. The code below is not yet safe
+	 * with MEMORY_HOTPLUG.
+	 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for_each_online_node(i) {
 		pg_data_t *pgdat = NODE_DATA(i);
 		unsigned long start_pfn = pgdat->node_start_pfn;
@@ -1314,7 +1375,10 @@ static void kmemleak_scan(void)
 			scan_block(page, page + 1, NULL, 1);
 		}
 	}
+<<<<<<< HEAD
 	unlock_memory_hotplug();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Scanning the task stacks (may introduce false negatives).
@@ -1541,6 +1605,12 @@ static const struct seq_operations kmemleak_seq_ops = {
 
 static int kmemleak_open(struct inode *inode, struct file *file)
 {
+<<<<<<< HEAD
+=======
+	if (!atomic_read(&kmemleak_enabled))
+		return -EBUSY;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return seq_open(file, &kmemleak_seq_ops);
 }
 
@@ -1614,9 +1684,12 @@ static ssize_t kmemleak_write(struct file *file, const char __user *user_buf,
 	int buf_size;
 	int ret;
 
+<<<<<<< HEAD
 	if (!atomic_read(&kmemleak_enabled))
 		return -EBUSY;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	buf_size = min(size, (sizeof(buf) - 1));
 	if (strncpy_from_user(buf, user_buf, buf_size) < 0)
 		return -EFAULT;
@@ -1676,24 +1749,39 @@ static const struct file_operations kmemleak_fops = {
 };
 
 /*
+<<<<<<< HEAD
  * Stop the memory scanning thread and free the kmemleak internal objects if
  * no previous scan thread (otherwise, kmemleak may still have some useful
  * information on memory leaks).
+=======
+ * Perform the freeing of the kmemleak internal objects after waiting for any
+ * current memory scan to complete.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static void kmemleak_do_cleanup(struct work_struct *work)
 {
 	struct kmemleak_object *object;
+<<<<<<< HEAD
 	bool cleanup = scan_thread == NULL;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&scan_mutex);
 	stop_scan_thread();
 
+<<<<<<< HEAD
 	if (cleanup) {
 		rcu_read_lock();
 		list_for_each_entry_rcu(object, &object_list, object_list)
 			delete_object_full(object->pointer);
 		rcu_read_unlock();
 	}
+=======
+	rcu_read_lock();
+	list_for_each_entry_rcu(object, &object_list, object_list)
+		delete_object_full(object->pointer);
+	rcu_read_unlock();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&scan_mutex);
 }
 
@@ -1710,6 +1798,10 @@ static void kmemleak_disable(void)
 		return;
 
 	/* stop any memory operation tracing */
+<<<<<<< HEAD
+=======
+	atomic_set(&kmemleak_early_log, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	atomic_set(&kmemleak_enabled, 0);
 
 	/* check whether it is too early for a kernel thread */
@@ -1736,6 +1828,7 @@ static int kmemleak_boot_config(char *str)
 }
 early_param("kmemleak", kmemleak_boot_config);
 
+<<<<<<< HEAD
 static void __init print_log_trace(struct early_log *log)
 {
 	struct stack_trace trace;
@@ -1747,6 +1840,8 @@ static void __init print_log_trace(struct early_log *log)
 	print_stack_trace(&trace, 2);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Kmemleak initialization.
  */
@@ -1757,7 +1852,10 @@ void __init kmemleak_init(void)
 
 #ifdef CONFIG_DEBUG_KMEMLEAK_DEFAULT_OFF
 	if (!kmemleak_skip_disable) {
+<<<<<<< HEAD
 		atomic_set(&kmemleak_early_log, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kmemleak_disable();
 		return;
 	}
@@ -1770,6 +1868,7 @@ void __init kmemleak_init(void)
 	scan_area_cache = KMEM_CACHE(kmemleak_scan_area, SLAB_NOLEAKTRACE);
 	INIT_PRIO_TREE_ROOT(&object_tree_root);
 
+<<<<<<< HEAD
 	if (crt_early_log >= ARRAY_SIZE(early_log))
 		pr_warning("Early log buffer exceeded (%d), please increase "
 			   "DEBUG_KMEMLEAK_EARLY_LOG_SIZE\n", crt_early_log);
@@ -1782,6 +1881,14 @@ void __init kmemleak_init(void)
 		return;
 	} else
 		atomic_set(&kmemleak_enabled, 1);
+=======
+	/* the kernel is still in UP mode, so disabling the IRQs is enough */
+	local_irq_save(flags);
+	if (!atomic_read(&kmemleak_error)) {
+		atomic_set(&kmemleak_enabled, 1);
+		atomic_set(&kmemleak_early_log, 0);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_irq_restore(flags);
 
 	/*
@@ -1796,18 +1903,24 @@ void __init kmemleak_init(void)
 		case KMEMLEAK_ALLOC:
 			early_alloc(log);
 			break;
+<<<<<<< HEAD
 		case KMEMLEAK_ALLOC_PERCPU:
 			early_alloc_percpu(log);
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case KMEMLEAK_FREE:
 			kmemleak_free(log->ptr);
 			break;
 		case KMEMLEAK_FREE_PART:
 			kmemleak_free_part(log->ptr, log->size);
 			break;
+<<<<<<< HEAD
 		case KMEMLEAK_FREE_PERCPU:
 			kmemleak_free_percpu(log->ptr);
 			break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case KMEMLEAK_NOT_LEAK:
 			kmemleak_not_leak(log->ptr);
 			break;
@@ -1821,6 +1934,7 @@ void __init kmemleak_init(void)
 			kmemleak_no_scan(log->ptr);
 			break;
 		default:
+<<<<<<< HEAD
 			kmemleak_warn("Unknown early log operation: %d\n",
 				      log->op_type);
 		}
@@ -1828,6 +1942,9 @@ void __init kmemleak_init(void)
 		if (atomic_read(&kmemleak_warning)) {
 			print_log_trace(log);
 			atomic_set(&kmemleak_warning, 0);
+=======
+			WARN_ON(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }

@@ -29,6 +29,10 @@
 #include <linux/module.h>
 
 #include <asm/bootinfo.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/pgtable.h>
 #include <asm/setup.h>
 #include <asm/irq.h>
@@ -116,13 +120,18 @@ static void mvme16x_get_hardware_list(struct seq_file *m)
 
 static void __init mvme16x_init_IRQ (void)
 {
+<<<<<<< HEAD
 	m68k_setup_user_interrupt(VEC_USER, 192);
+=======
+	m68k_setup_user_interrupt(VEC_USER, 192, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #define pcc2chip	((volatile u_char *)0xfff42000)
 #define PccSCCMICR	0x1d
 #define PccSCCTICR	0x1e
 #define PccSCCRICR	0x1f
+<<<<<<< HEAD
 #define PccTPIACKR	0x25
 
 #ifdef CONFIG_EARLY_PRINTK
@@ -280,6 +289,8 @@ static void __init mvme16x_early_console(void)
 	printk(KERN_INFO "MVME16x: early console registered\n");
 }
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void __init config_mvme16x(void)
 {
@@ -339,9 +350,12 @@ void __init config_mvme16x(void)
 	pcc2chip[PccSCCMICR] = 0x10;
 	pcc2chip[PccSCCTICR] = 0x10;
 	pcc2chip[PccSCCRICR] = 0x10;
+<<<<<<< HEAD
 #ifdef CONFIG_EARLY_PRINTK
 	mvme16x_early_console();
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     }
 }
 

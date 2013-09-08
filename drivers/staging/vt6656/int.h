@@ -34,6 +34,10 @@
 #include "device.h"
 
 /*---------------------  Export Definitions -------------------------*/
+<<<<<<< HEAD
+=======
+#pragma pack(1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 typedef struct tagSINTData {
     BYTE    byTSR0;
     BYTE    byPkt0;
@@ -67,6 +71,10 @@ SINTData, *PSINTData;
 /*---------------------  Export Functions  --------------------------*/
 
 void INTvWorkItem(void *Context);
+<<<<<<< HEAD
 void INTnsProcessData(PSDevice pDevice);
+=======
+int INTnsProcessData(PSDevice pDevice);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __INT_H__ */
